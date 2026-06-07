@@ -76,7 +76,7 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 namespace DeHoopMalchukov2008
 
-open Core.Optimization.Evaluation (superoptimal superoptimalSet
+open Phonology.Constraint (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
 open Phonology.Constraint.OT
 open Features.Prominence

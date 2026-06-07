@@ -39,7 +39,7 @@ gives `|D| × |S_y| = n!`, hence `|S_y| = n!/|D|`.
 Specialized to head-in-Y predicates on `Equiv.Perm (Fin n)`. A more
 general factoring theorem for arbitrary D-determined predicates is
 feasible (via orbit-stabilizer on the fixing subgroup of `Dᶜ`) but
-currently has no downstream consumer.
+
 -/
 
 namespace Core.Optimization.PermSubsetCombinatorics

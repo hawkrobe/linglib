@@ -52,7 +52,7 @@ def paretoPullbackPreorder [Preorder β]
 -- ============================================================================
 
 /-- The set of indices at which the score is nonzero. -/
-def violatedSet [DecidableEq β] [Zero β]
+def nonzeroSet [DecidableEq β] [Zero β]
     (score : Cand → Profile β n) (c : Cand) : Finset (Fin n) :=
   Finset.univ.filter (fun i => score c i ≠ 0)
 
@@ -65,7 +65,7 @@ def violatedSet [DecidableEq β] [Zero β]
 def qualitativePullbackPreorder [DecidableEq β] [Zero β]
     (score : Cand → Profile β n) :
     PullbackPreorder Cand (Finset (Fin n)) :=
-  PullbackPreorder.ofProj (violatedSet score) (fun _ _ => inferInstance)
+  PullbackPreorder.ofProj (nonzeroSet score) (fun _ _ => inferInstance)
 
 -- ============================================================================
 -- § 3: The coarsening — pointwise dominance ⇒ qualitative dominance
@@ -73,7 +73,7 @@ def qualitativePullbackPreorder [DecidableEq β] [Zero β]
 
 /-- The violated-set extractor `Profile β n → Finset (Fin n)`, as a function
     of the score profile alone (no `ConstraintSystem` needed). -/
-def violatedSetOf [DecidableEq β] [Zero β] (p : Profile β n) : Finset (Fin n) :=
+def nonzeroSetOf [DecidableEq β] [Zero β] (p : Profile β n) : Finset (Fin n) :=
   Finset.univ.filter (fun i => p i ≠ 0)
 
 /-- The violated-set extractor is monotone in the pointwise order on
@@ -82,17 +82,17 @@ def violatedSetOf [DecidableEq β] [Zero β] (p : Profile β n) : Finset (Fin n)
     minimum), `p'` is also nonzero
     (`p' i ≥ p i > 0`). Without zero-as-min the implication can fail
     (e.g. `p i = -5, p' i = 0` over `ℝ`). -/
-theorem violatedSetOf_monotone [PartialOrder β] [Zero β] [DecidableEq β]
+theorem nonzeroSetOf_monotone [PartialOrder β] [Zero β] [DecidableEq β]
     (h_zero_min : ∀ b : β, 0 ≤ b) :
-    Monotone (violatedSetOf (β := β) (n := n)) := by
+    Monotone (nonzeroSetOf (β := β) (n := n)) := by
   intro p p' h i hi
-  simp only [violatedSetOf, Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
+  simp only [nonzeroSetOf, Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
   have h_pos : 0 < p i := lt_of_le_of_ne (h_zero_min _) (Ne.symm hi)
   exact ne_of_gt (lt_of_lt_of_le h_pos (h i))
 
 /-- **Pointwise dominance implies qualitative dominance** (when zero is
     the minimum value of `β`). A one-line corollary of
-    `PullbackPreorder.coarsen_via_monotone` applied to `violatedSetOf` as
+    `PullbackPreorder.coarsen_via_monotone` applied to `nonzeroSetOf` as
     the connecting monotone map between the two feature spaces.
 
     The converse fails by design: equal nonzero values at a single index
@@ -107,7 +107,7 @@ theorem paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le
     (qualitativePullbackPreorder score).le c c' :=
   PullbackPreorder.coarsen_via_monotone
     (paretoPullbackPreorder score) (qualitativePullbackPreorder score)
-    violatedSetOf (violatedSetOf_monotone h_zero_min)
+    nonzeroSetOf (nonzeroSetOf_monotone h_zero_min)
     (fun _ => rfl) h
 
 end Core.Optimization

@@ -70,7 +70,7 @@ open Semantics.Gradability (ThresholdPair inGapRegion
 open Semantics.Gradability.Antonymy
 open Semantics.Degree (positiveMeaning)
 open Phenomena.Negation.FlexibleNegation
-open Core.Optimization.Evaluation (superoptimal superoptimalSet
+open Phonology.Constraint (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
 open Phonology.Constraint.OT (NamedConstraint)
 
