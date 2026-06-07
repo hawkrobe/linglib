@@ -159,7 +159,7 @@ def widePseudoDeDictoTC
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
   ∀ w' ∈ worlds, R agent w₀ w' →
-    ¬vp (f w' (nounProp w')) w'
+    ¬vp (f.applyIntensionAt .bound w' w₀ nounProp) w'
 
 /-- The truth conditions for the genuine wide scope de re reading.
 
@@ -175,7 +175,7 @@ def wideDeReTC
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
   ∀ w' ∈ worlds, R agent w₀ w' →
-    ¬vp (f w₀ (nounProp w₀)) w'
+    ¬vp (f.applyIntensionAt .free w' w₀ nounProp) w'
 
 /-- The key structural fact: de re and pseudo-de dicto differ exactly in
     whether the CF's world argument is bound (varies with w') or free
@@ -194,7 +194,8 @@ theorem deRe_eq_pseudoDeDicto_when_rigid
     (hRigidCF : ∀ w, f w = f w₀) :
     widePseudoDeDictoTC W E f R agent worlds nounProp vp w₀ ↔
     wideDeReTC W E f R agent worlds nounProp vp w₀ := by
-  unfold widePseudoDeDictoTC wideDeReTC
+  unfold widePseudoDeDictoTC wideDeReTC SkolemCF.applyIntensionAt
+    SkolemCF.applyIntension
   constructor <;> intro h w' hw' hR
   · rw [← hRigidNP w', ← hRigidCF w']; exact h w' hw' hR
   · rw [hRigidNP w', hRigidCF w']; exact h w' hw' hR
