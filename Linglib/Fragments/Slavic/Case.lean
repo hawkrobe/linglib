@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 
 /-!
 # Shared Slavic Case Inventories
@@ -24,13 +24,13 @@ namespace Slavic.Case
 /-! ## Inventories -/
 
 /-- The 6-case core: NOM, ACC, GEN, DAT, LOC, INST. -/
-abbrev coreInventory : Finset Features.Case :=
+abbrev coreInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .inst}
 
 /-- The 6-case core extended with vocative; the inventory of
     Ukrainian, Polish, Czech, and Serbo-Croat. Does **not** satisfy
-    `Features.Case.IsValidInventory` — see `sevenCaseInventory_not_isValid`. -/
-abbrev sevenCaseInventory : Finset Features.Case :=
+    `Case.IsValidInventory` — see `sevenCaseInventory_not_isValid`. -/
+abbrev sevenCaseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .inst, .voc}
 
 /-! ## API -/
@@ -42,11 +42,11 @@ theorem sevenCaseInventory_card : sevenCaseInventory.card = 7 := by decide
 /-! ## Blake (typological hierarchy) -/
 
 theorem coreInventory_isValid :
-    Features.Case.IsValidInventory coreInventory := by decide
+    Case.IsValidInventory coreInventory := by decide
 
 /-- VOC at Blake-rank 0 leaves a gap at rank 1 (COM/spatial), breaking
     contiguity. -/
 theorem sevenCaseInventory_not_isValid :
-    ¬ Features.Case.IsValidInventory sevenCaseInventory := by decide
+    ¬ Case.IsValidInventory sevenCaseInventory := by decide
 
 end Slavic.Case

@@ -168,10 +168,10 @@ theorem freeWord_maps_to_freeWord :
 -- ============================================================================
 
 /-- The feature types that MAG condition (a) requires agreement for.
-    φ-features map to `Minimalist.PhiFeature`, κ-features to `Features.Case`. -/
+    φ-features map to `Minimalist.PhiFeature`, κ-features to `Case`. -/
 inductive MAGFeatureType where
   | phi : Minimalist.PhiFeature → MAGFeatureType
-  | kappa : Features.Case → MAGFeatureType
+  | kappa : Case → MAGFeatureType
   deriving DecidableEq, Repr
 
 /-- An adjective agreement entry: which features are morphologically

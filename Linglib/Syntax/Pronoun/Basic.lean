@@ -1,6 +1,6 @@
 import Mathlib.Order.Nat
 import Linglib.Data.UD.Basic
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender.Basic
@@ -120,7 +120,7 @@ structure Pronoun where
       minimal/augmented values have no UD tag). -/
   number : Option Number := none
   /-- Grammatical case. -/
-  case_ : Option Features.Case := none
+  case_ : Option Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
       (French il/elle, German er/sie/es, …). 1st/2nd-person pronouns and
       languages without pronominal gender leave this `none`. -/
@@ -188,7 +188,7 @@ def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
     features := { person := p.person.map Person.toUD,
                   number := p.number.bind Number.toUD,
-                  case_ := p.case_,
+                  case_ := p.case_.map Case.toUD,
                   gender := p.gender.bind (·.toUD),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup

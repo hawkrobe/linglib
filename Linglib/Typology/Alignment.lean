@@ -1,7 +1,7 @@
 import Linglib.Data.WALS.Features.F98A
 import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F100A
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 
 /-!
 # Typology.Alignment
@@ -280,7 +280,7 @@ A `SplitErgativity Factor` is parameterised by the conditioning factor
 or accusative family. The Hindi aspect-conditioned split (perfective ⇒
 ergative; imperfective ⇒ accusative) is the canonical worked example. -/
 
-open Features (Case AlignmentFamily)
+open Features (AlignmentFamily)
 
 /-- A split-ergative system ([blake-1994], [dixon-1994]):
     alignment varies by some conditioning factor. -/

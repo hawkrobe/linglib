@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Syntax.Minimalist.Voice
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Typology.Alignment
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -235,7 +235,7 @@ theorem shared_ergative :
     ERG and GEN are both realized by set A (they are homophonous in Mayan).
     ABS is realized by set B. The wildcard maps non-Mayan cases (NOM, ACC,
     DAT, etc.) to set A — these should never appear in Mayan fragments. -/
-def caseToMarker : Features.Case → MarkerSet
+def caseToMarker : Case → MarkerSet
   | .erg => .setA
   | .gen => .setA
   | .abs => .setB

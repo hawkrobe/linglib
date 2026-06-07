@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
@@ -33,11 +33,11 @@ namespace Telugu.Case
 /-- Telugu 5-case core inventory.
     ACC, GEN, DAT are inflectional suffixes within the prosodic word;
     LOC is realized by a postposition (-lō) in a separate prosodic word. -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 3).
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Containment Properties
@@ -62,7 +62,7 @@ theorem nom_vs_oblique_contiguous :
 /-- Telugu and Tamil share the same core case spine on Blake's hierarchy.
     Both have NOM, ACC, GEN, DAT, LOC (Tamil additionally has ABL, INST, COM). -/
 theorem telugu_subset_tamil :
-    caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Features.Case) := by
+    caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Case) := by
   decide
 
 end Telugu.Case

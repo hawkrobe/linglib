@@ -23,6 +23,6 @@ outliers in losing it.
 
 namespace Cassubian.Case
 
-abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
+abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
 
 end Cassubian.Case

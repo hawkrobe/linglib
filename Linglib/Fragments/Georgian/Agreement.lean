@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Typology.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 /-!
@@ -120,13 +120,13 @@ theorem evidential_accusative :
     georgianSplit.alignment .evidential = .accusative := rfl
 
 /-- Case frame for the subject (A/S) in each tense series. -/
-def subjectCase : TenseSeries → Features.Case
+def subjectCase : TenseSeries → Case
   | .present    => .nom   -- A = NOM
   | .aorist     => .erg   -- A = ERG
   | .evidential => .dat   -- A = DAT (inversion)
 
 /-- Case frame for the object (P/R) in each tense series. -/
-def objectCase : TenseSeries → Features.Case
+def objectCase : TenseSeries → Case
   | .present    => .dat   -- P = DAT
   | .aorist     => .nom   -- P = NOM
   | .evidential => .nom   -- P = NOM
@@ -137,7 +137,7 @@ def objectCase : TenseSeries → Features.Case
     and INST (instrumental), yielding {NOM, ERG, GEN, DAT, INST} which
     satisfies contiguity. Here we validate only the agreement-visible
     subset, which also satisfies contiguity (all rank ≥ 4). -/
-def caseInventory : Finset Features.Case := {.nom, .erg, .dat}
+def caseInventory : Finset Case := {.nom, .erg, .dat}
 
 /-- The inventory covers all tense-series case frames. -/
 def allTenseSeries : List TenseSeries := [.present, .aorist, .evidential]
@@ -159,9 +159,9 @@ theorem inventory_covers_objects :
     part of the agreement system.
 
     We validate the full case system instead. -/
-def fullCaseInventory : Finset Features.Case := {.nom, .erg, .gen, .dat}
+def fullCaseInventory : Finset Case := {.nom, .erg, .gen, .dat}
 
-example : Features.Case.IsValidInventory fullCaseInventory := by decide
+example : Case.IsValidInventory fullCaseInventory := by decide
 
 -- ============================================================================
 -- § 6: Verb Classes ([harris-1981], [marantz-1991])
@@ -202,7 +202,7 @@ theorem class4_no_erg : takesErgInAorist .class4 = false := rfl
     Present/aorist patterns from [marantz-1991]. Evidential follows
     the general inversion pattern: all subjects surface as DAT
     ([harris-1981]). -/
-def verbClassSubjectCase : VerbClass → TenseSeries → Features.Case
+def verbClassSubjectCase : VerbClass → TenseSeries → Case
   | .class1, .present    => .nom
   | .class1, .aorist     => .erg
   | .class1, .evidential => .dat
@@ -216,7 +216,7 @@ def verbClassSubjectCase : VerbClass → TenseSeries → Features.Case
 
 /-- Object case by verb class and tense series.
     Classes 2 and 3 are intransitive (no direct object). -/
-def verbClassObjectCase : VerbClass → TenseSeries → Option Features.Case
+def verbClassObjectCase : VerbClass → TenseSeries → Option Case
   | .class1, .present    => some .dat
   | .class1, .aorist     => some .nom
   | .class1, .evidential => some .nom

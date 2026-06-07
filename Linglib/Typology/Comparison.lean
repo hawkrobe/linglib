@@ -1,5 +1,5 @@
 import Linglib.Data.WALS.Features.F121A
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 
 /-!
 # Typology.Comparison
@@ -236,7 +236,7 @@ particular language: standard case, how that case is assigned, optional
 fixed-encoding role, the standard marker (e.g., *than*, *より*), and
 whether the construction has dedicated degree morphology. -/
 
-open Features (Case CaseAssignment FixedCaseEncoding)
+open Features (CaseAssignment FixedCaseEncoding)
 
 /-- A language's comparative construction entry ([stassen-1985]). -/
 structure ComparativeEntry where

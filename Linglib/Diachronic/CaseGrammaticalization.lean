@@ -1,6 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Logic.Relation
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Core.Relation.ReflTransGen
 /-!
 # Case Grammaticalization
@@ -21,7 +21,6 @@ two-step or n-step predicate to maintain.
 
 namespace Diachronic
 
-open Features (Case)
 
 /-! ## Case-marker cline -/
 
@@ -65,8 +64,8 @@ end Diachronic
 /-! ## Case-extension dot-methods
 
 These live under `namespace Features` so they project onto the `Case`
-type via dot-notation (mirroring `Features.Case.hierarchyRank` in
-`Features/Case.lean`). -/
+type via dot-notation (mirroring `Case.hierarchyRank` in
+`Features/Case/Basic.lean`). -/
 
 namespace Features
 
@@ -80,7 +79,7 @@ namespace Features
     See also `Typology.Possession.PossessionSource` for
     [heine-2009] Table 29.5 (possessive case sources, adapted from
     [heine-1997]). -/
-def Case.Extends : Case → Case → Prop
+def _root_.Case.Extends : Case → Case → Prop
   | .abl,  .caus | .abl,  .gen  | .abl,  .part | .abl,  .inst => True
   | .all,  .ben  | .all,  .dat  | .all,  .acc                 => True
   | .com,  .inst | .com,  .erg  | .com,  .gen                 => True
@@ -94,10 +93,10 @@ instance : DecidableRel Case.Extends := fun c₁ c₂ => by
 
 /-- Direct-extension targets of `c`, as a `Finset` derived from
     `Case.Extends`. Useful for membership queries by `decide`. -/
-def Case.extensionTargets (c : Case) : Finset Case :=
+def _root_.Case.extensionTargets (c : Case) : Finset Case :=
   (Finset.univ : Finset Case).filter (Case.Extends c)
 
-theorem Case.mem_extensionTargets {c₁ c₂ : Case} :
+theorem _root_.Case.mem_extensionTargets {c₁ c₂ : Case} :
     c₂ ∈ c₁.extensionTargets ↔ Case.Extends c₁ c₂ := by
   simp [Case.extensionTargets]
 
@@ -125,7 +124,7 @@ theorem chain_loc_com_inst :
 /-- Multi-step extension reachability — the transitive closure of
     `Case.Extends`. Composing chain rows of Table 29.6 produces an
     extension path of any finite length. -/
-abbrev Case.ExtensionReachable : Case → Case → Prop :=
+abbrev _root_.Case.ExtensionReachable : Case → Case → Prop :=
   Relation.TransGen Case.Extends
 
 /-- `Case.ExtensionReachable` is decidable via the

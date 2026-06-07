@@ -56,7 +56,7 @@ structure TurkishAnaphor where
   /-- Reciprocal or reflexive -/
   anaphorType : AnaphorType
   /-- Case marking on the anaphor (determined by the verb/postposition) -/
-  caseMarking : Features.Case
+  caseMarking : Case
   /-- Preverbal: appears before the verb in head-final Turkish.
       Relevant for processing studies: the anaphor region precedes
       the verb region. -/
@@ -109,7 +109,7 @@ example : Bound.IsAnaphor birbirleriAcc := by decide
 theorem birbirleriAcc_bindingClass : Bound.bindingClass birbirleriAcc = .reciprocal := rfl
 
 /-- The case inventory of birbirleri forms used in [bakay-etal-2026] -/
-def experimentalCases : List Features.Case :=
+def experimentalCases : List Case :=
   [birbirleriAcc.caseMarking, birbirleriDat.caseMarking, birbirleriGen.caseMarking]
 
 /-- All experimental cases are in the Turkish case inventory -/

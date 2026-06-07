@@ -278,15 +278,15 @@ end CaseExamples
 -- §6: Connection to Morphology.Case.Allomorphy
 -- ============================================================================
 
-/-- Map a `Features.Case` to a Nanosyntax target rank via the existing
+/-- Map a `Case` to a Nanosyntax target rank via the existing
     containment hierarchy. Returns `none` for cases not on the
     standard fseq (e.g., ERG/ABS). -/
-def caseToRank (c : Features.Case) : Option Nat :=
+def caseToRank (c : Case) : Option Nat :=
   Syntax.Case.containmentRank c
 
 /-- Spellout a case directly: look up the case's rank, then
     apply phrasal spellout. -/
-def spelloutCase (entries : List LexEntry) (c : Features.Case) :
+def spelloutCase (entries : List LexEntry) (c : Case) :
     Option String :=
   match caseToRank c with
   | some r => spellout entries r

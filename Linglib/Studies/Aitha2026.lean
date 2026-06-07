@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Phonology.Constraint.System
@@ -71,7 +71,7 @@ inductive TeluguCase where
   deriving DecidableEq, Repr
 
 /-- Map Telugu cases to the core `Case` type. -/
-def TeluguCase.toCore : TeluguCase → Features.Case
+def TeluguCase.toCore : TeluguCase → Case
   | .nom => .nom
   | .acc => .acc
   | .gen => .gen
@@ -946,7 +946,7 @@ theorem weak_is_outward_sensitive :
 
 -- The Telugu 5-case inventory is contiguous on Blake's typological
 -- hierarchy ([blake-1994]).
-example : Features.Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Features.Case) := by
+example : Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Case) := by
   decide
 
 /-- The strong alternation pattern derived from VI output matches the

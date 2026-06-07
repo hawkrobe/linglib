@@ -2,8 +2,8 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
@@ -59,7 +59,6 @@ two-feature simplification).
 
 namespace AndersonJM2006
 
-open Features (Case)
 open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
 open Semantics.ArgumentStructure.EntailmentProfile
 open English.Predicates.Verbal
@@ -201,10 +200,8 @@ end AndersonJM2006
 
 /-! Anderson's `Case → CaseRelation` map lives under `namespace Syntax` so
 it can be invoked via dot-notation on `c : Case` (mirroring how
-`Features.Case.hierarchyRank` and the Caha containment defs project onto
+`Case.hierarchyRank` and the Caha containment defs project onto
 the type). -/
-namespace Features
-
 /-- Canonical mapping from Blake's morphological cases to Anderson's
     case-feature bundles (Ch. 6). -/
 def Case.toCaseRelation : Case → Option AndersonJM2006.CaseRelation
@@ -223,11 +220,8 @@ theorem Case.nom_erg_same_relation :
 theorem Case.acc_abs_same_relation :
     Case.toCaseRelation .acc = Case.toCaseRelation .abs := rfl
 
-end Features
-
 namespace AndersonJM2006
 
-open Features (Case)
 open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
 open Semantics.ArgumentStructure.EntailmentProfile
 open English.Predicates.Verbal
@@ -436,9 +430,9 @@ theorem experiencer_verbs_correct :
     (subjectRank 2 > 1). Both are inverse to Caha's containment
     hierarchy. -/
 theorem anderson_blake_concordant :
-    Features.Case.hierarchyRank .nom ≥ Features.Case.hierarchyRank .acc ∧
+    Case.hierarchyRank .nom ≥ Case.hierarchyRank .acc ∧
     CaseRelation.srcAbs.subjectRank > CaseRelation.absolutive.subjectRank ∧
-    Features.Case.hierarchyRank .nom = Features.Case.hierarchyRank .acc ∧
+    Case.hierarchyRank .nom = Case.hierarchyRank .acc ∧
     CaseRelation.srcAbs.subjectRank ≠ CaseRelation.absolutive.subjectRank := by
   exact ⟨by decide, by decide, rfl, by decide⟩
 

@@ -37,7 +37,7 @@ private def what : Word := { form :="what", cat := .PRON, features := { pronType
 private def did : Word := { form :="did", cat := .AUX, features := {}}
 private def john : Word := { form :="John", cat := .DET, features := { number := some .Sing, person := some .third }}
 private def buy : Word := { form :="buy", cat := .VERB, features := { number := some .Plur }}
-private def you : Word := { form :="you", cat := .DET, features := { person := some .second, case_ := some .nom }}
+private def you : Word := { form :="you", cat := .DET, features := { person := some .second, case_ := some .Nom }}
 private def wonder : Word := { form :="wonder", cat := .VERB, features := { number := some .Plur }}
 private def who : Word := { form :="who", cat := .PRON, features := { pronType := some .Int }}
 private def bought : Word := { form :="bought", cat := .VERB, features := { verbForm := some .Fin }}

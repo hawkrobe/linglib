@@ -1,5 +1,4 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
 
@@ -21,11 +20,11 @@ German has extensive syncretism, especially in the definite article:
 namespace German.Case
 
 /-- German 4-case inventory. -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4).
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 /-- NOM/ACC syncretism in neuter and feminine.
     Instantiates the cross-linguistic NOM/ACC pattern from `Morphology.Case.Allomorphy`. -/

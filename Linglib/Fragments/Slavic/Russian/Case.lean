@@ -15,6 +15,6 @@ reduction, see `Pesetsky2013`.
 
 namespace Russian.Case
 
-abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
+abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
 
 end Russian.Case
