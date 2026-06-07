@@ -3,6 +3,7 @@ import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.IntervalContent
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Entailment.Extremum
@@ -93,18 +94,15 @@ variable {α : Type*} [AddCommMonoid α] [LinearOrder α]
 
 /-! ### Time measure -/
 
-/-- A temporal measure: assigns durations in an ordered additive monoid `α`
-    to intervals. [rouillard-2026] §2.2.2: temporal measure units (days,
-    hours) are additive (eq. 6) and positive (eq. 7); richness of `Time`
-    additionally lets any interval be padded or trimmed to any target
-    measure within a one-sided bound, with left-padding available at a
-    fixed right endpoint (PTSs are right-anchored at speech time).
-    Instantiate `α := ℕ` for the discrete integer-numeral reading or
-    `α := ℚ≥0` over dense time for the reading that drives the G-TIA
-    collapse (`ratLength` below). -/
+/-- A temporal measure: an `IsIntervalContent` (additivity, [rouillard-2026]
+    eq. 6; positivity, eq. 7) together with two saturation axioms — richness
+    of `Time` lets any interval be trimmed or right-anchored-extended to any
+    target measure (PTSs are anchored at speech time). Instantiate `α := ℕ`
+    for the discrete integer-numeral reading or `α := ℚ≥0` over dense time
+    for the reading that drives the G-TIA collapse (`ratLength` below). -/
 class TimeMeasure (Time : Type*) [LinearOrder Time] {α : Type*}
     [AddCommMonoid α] [LinearOrder α]
-    (μ : NonemptyInterval Time → α) : Prop where
+    (μ : NonemptyInterval Time → α) : Prop extends IsIntervalContent μ where
   /-- Any interval can be subdivided to a subinterval with a given smaller
       measure. -/
   subdivisible : ∀ (i : NonemptyInterval Time) (m : α), m ≤ μ i →
@@ -113,11 +111,6 @@ class TimeMeasure (Time : Type*) [LinearOrder Time] {α : Type*}
       given larger measure keeping its right endpoint fixed. -/
   extensibleLeft : ∀ (i : NonemptyInterval Time) (m : α), μ i ≤ m →
     ∃ j : NonemptyInterval Time, i ≤ j ∧ j.snd = i.snd ∧ μ j = m
-  /-- Additivity over interval concatenation ([rouillard-2026] eq. 6). -/
-  additive : ∀ (a b c : Time) (hab : a ≤ b) (hbc : b ≤ c),
-    μ ⟨⟨a, c⟩, hab.trans hbc⟩ = μ ⟨⟨a, b⟩, hab⟩ + μ ⟨⟨b, c⟩, hbc⟩
-  /-- Positivity on nondegenerate intervals ([rouillard-2026] eq. 7). -/
-  positive : ∀ (a b : Time) (h : a < b), 0 < μ ⟨⟨a, b⟩, h.le⟩
 
 namespace TimeMeasure
 
@@ -128,15 +121,6 @@ theorem extensible {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     ∃ j : NonemptyInterval Time, i ≤ j ∧ μ j = m :=
   let ⟨j, hij, _, hjμ⟩ := TimeMeasure.extensibleLeft i m h
   ⟨j, hij, hjμ⟩
-
-/-- Moving the left endpoint strictly right strictly decreases measure:
-    additivity plus positivity. The engine of the G-TIA shrink argument. -/
-theorem measure_lt_of_left_lt [AddRightStrictMono α]
-    (μ : NonemptyInterval Time → α) [TimeMeasure Time μ]
-    {a b s : Time} (hab : a < b) (hbs : b ≤ s) :
-    μ ⟨⟨b, s⟩, hbs⟩ < μ ⟨⟨a, s⟩, hab.le.trans hbs⟩ := by
-  rw [TimeMeasure.additive (μ := μ) a b s hab.le hbs]
-  exact lt_add_of_pos_left _ (TimeMeasure.positive (μ := μ) a b hab)
 
 end TimeMeasure
 
@@ -478,7 +462,7 @@ theorem gTIAOpen_no_isLeast [DenselyOrdered Time] [AddRightStrictMono α]
     NonemptyInterval.ext (Prod.ext rfl hRight')
   have hlt : μ ptsGI'.toInterval < x := by
     rw [← hμ, he]
-    exact TimeMeasure.measure_lt_of_left_lt μ hLeft' (hRight' ▸ ptsGI'.valid)
+    exact IsIntervalContent.measure_lt_of_left_lt μ hLeft' (hRight' ▸ ptsGI'.valid)
   exact absurd (hLB hmem) (not_le.mpr hlt)
 
 /-- **Positive G-TIAs are not MIP-licensed** over dense time: the
@@ -501,6 +485,16 @@ jointly satisfiable at a concrete dense model. -/
 def ratLength (i : NonemptyInterval ℚ) : ℚ≥0 :=
   ⟨i.snd - i.fst, sub_nonneg.mpr i.fst_le_snd⟩
 
+instance : IsIntervalContent ratLength where
+  additive a b c hab hbc := by
+    apply NNRat.ext
+    show c - a = (b - a) + (c - b)
+    ring
+  positive a b h := by
+    rw [← NNRat.coe_pos]
+    show (0 : ℚ) < b - a
+    linarith
+
 instance : TimeMeasure ℚ ratLength where
   subdivisible i m h := by
     have hm : (m : ℚ) ≤ i.snd - i.fst := NNRat.coe_le_coe.mpr h
@@ -520,14 +514,6 @@ instance : TimeMeasure ℚ ratLength where
     · apply NNRat.ext
       show i.snd - (i.snd - (m : ℚ)) = (m : ℚ)
       ring
-  additive a b c hab hbc := by
-    apply NNRat.ext
-    show c - a = (b - a) + (c - b)
-    ring
-  positive a b h := by
-    rw [← NNRat.coe_pos]
-    show (0 : ℚ) < b - a
-    linarith
 
 /-- The blocking theorem's hypotheses discharge at the rational length
     model: positive G-TIAs over `ℚ`-time are not MIP-licensed. -/
