@@ -86,35 +86,37 @@ def interpFA {F : Frame} {σ τ : Ty}
     (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ) : F.Denot τ :=
   f x
 
-/-- Try FA in both orders, sequencing effects in linear order (the left
-daughter's effects fire first regardless of which daughter is the
-function). -/
+/-- Forward FA: the function is the left daughter `df`, the argument `da`. -/
+def applyForward {F : Frame} {M : Type → Type} [Applicative M]
+    (df da : TypedDenot F M) : Option (TypedDenot F M) :=
+  match hf : df.ty with
+  | .fn σ τ =>
+    if ha : σ = da.ty then
+      let f : M (F.Denot (σ ⇒ τ)) := hf ▸ df.val
+      let a : M (F.Denot σ) := ha ▸ da.val
+      some ⟨τ, f <*> a⟩
+    else none
+  | _ => none
+
+/-- Backward FA: the function is the right daughter `df`, the argument `da`. The
+left daughter `da` sequences first, hence the `(λ x g => g x)` combinator. -/
+def applyBackward {F : Frame} {M : Type → Type} [Applicative M]
+    (da df : TypedDenot F M) : Option (TypedDenot F M) :=
+  match hf : df.ty with
+  | .fn σ τ =>
+    if ha : σ = da.ty then
+      let f : M (F.Denot (σ ⇒ τ)) := hf ▸ df.val
+      let a : M (F.Denot σ) := ha ▸ da.val
+      some ⟨τ, (λ x g => g x) <$> a <*> f⟩
+    else none
+  | _ => none
+
+/-- Try FA in both orders, sequencing effects in linear order (the left daughter's
+effects fire first regardless of which daughter is the function): function on the
+left (`applyForward`), else on the right (`applyBackward`). -/
 def tryFA {F : Frame} {M : Type → Type} [Applicative M]
     (d1 d2 : TypedDenot F M) : Option (TypedDenot F M) :=
-  match hf : d1.ty with
-  | .fn σ τ =>
-    if ha : σ = d2.ty then
-      let f : M (F.Denot (σ ⇒ τ)) := hf ▸ d1.val
-      let a : M (F.Denot σ) := ha ▸ d2.val
-      some ⟨τ, f <*> a⟩
-    else
-      match hf' : d2.ty with
-      | .fn σ' τ' =>
-        if ha' : σ' = d1.ty then
-          let f : M (F.Denot (σ' ⇒ τ')) := hf' ▸ d2.val
-          let a : M (F.Denot σ') := ha' ▸ d1.val
-          some ⟨τ', (λ x g => g x) <$> a <*> f⟩
-        else none
-      | _ => none
-  | _ =>
-    match hf : d2.ty with
-    | .fn σ τ =>
-      if ha : σ = d1.ty then
-        let f : M (F.Denot (σ ⇒ τ)) := hf ▸ d2.val
-        let a : M (F.Denot σ) := ha ▸ d1.val
-        some ⟨τ, (λ x g => g x) <$> a <*> f⟩
-      else none
-    | _ => none
+  applyForward d1 d2 <|> applyBackward d1 d2
 
 /-- IFA: Intensional Functional Application ([von-fintel-heim-2011] Step 10).
 
@@ -299,6 +301,19 @@ variable {C : Type} {F : Frame} {M : Type → Type} [Applicative M] [PredAbs M F
 omit [Applicative M] [PredAbs M F] in
 @[simp] theorem interpTerminal_lookup (lex : Lexicon F M) (w : String) :
     interpTerminal F lex w = (lex w).map fun e => ⟨e.ty, e.denot⟩ := rfl
+
+omit [PredAbs M F] in
+/-- Forward FA reduces generally (abstract `σ τ`) — unblocked by the
+`applyForward`/`applyBackward` split. (Backward FA stays type-shape-specific
+because forward fires first when the left daughter is itself a function.) -/
+@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (x : M (F.Denot σ)) :
+    applyForward (⟨σ ⇒ τ, f⟩ : TypedDenot F M) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [applyForward, ↓reduceDIte]
+
+omit [PredAbs M F] in
+@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (x : M (F.Denot σ)) :
+    tryFA (⟨σ ⇒ τ, f⟩ : TypedDenot F M) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [tryFA, applyForward_fn]; rfl
 
 end Reduction
 
