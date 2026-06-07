@@ -351,6 +351,46 @@ instance {C W : Type} : Core.Order.HasContent (Tree C W) W where
     | .terminal _ w => some w
     | _ => none
 
+/-! ### `Branching.yield`-instance simp lemmas
+
+Make the generic `Branching.yield` reduce by `simp`/`decide` at
+concrete `Tree` constructors — the prerequisite for consumers (Studies,
+Phenomena) to replace bespoke yield computations with the generic API. -/
+
+@[simp] theorem branching_content_terminal {C W : Type} (c : C) (w : W) :
+    Core.Order.HasContent.content? (Tree.terminal c w) = some w := rfl
+
+@[simp] theorem branching_content_node {C W : Type} (c : C)
+    (cs : List (Tree C W)) :
+    Core.Order.HasContent.content? (Tree.node c cs) = (none : Option W) := rfl
+
+@[simp] theorem branching_content_trace {C W : Type} (n : Nat) (c : C) :
+    Core.Order.HasContent.content? (Tree.trace (W := W) n c) = none := rfl
+
+@[simp] theorem branching_content_bind {C W : Type} (n : Nat) (c : C)
+    (body : Tree C W) :
+    Core.Order.HasContent.content? (Tree.bind n c body) = none := rfl
+
+@[simp] theorem branching_yield_terminal {C W : Type} (c : C) (w : W) :
+    Core.Order.Branching.yield (Tree.terminal c w) = [w] := by
+  rw [Core.Order.Branching.yield_def]; rfl
+
+@[simp] theorem branching_yield_node {C W : Type} (c : C) (cs : List (Tree C W)) :
+    Core.Order.Branching.yield (W := W) (Tree.node c cs) = cs.flatMap Core.Order.Branching.yield := by
+  rw [Core.Order.Branching.yield_def]; rfl
+
+@[simp] theorem branching_yield_trace {C W : Type} (n : Nat) (c : C) :
+    Core.Order.Branching.yield (Tree.trace (W := W) n c) = [] := by
+  rw [Core.Order.Branching.yield_def]; rfl
+
+@[simp] theorem branching_yield_bind {C W : Type} (n : Nat) (c : C)
+    (body : Tree C W) :
+    Core.Order.Branching.yield (W := W) (Tree.bind n c body)
+      = Core.Order.Branching.yield body := by
+  rw [Core.Order.Branching.yield_def]
+  show ([] : List W) ++ ([body].flatMap Core.Order.Branching.yield) = _
+  simp
+
 end Syntax
 
 /-! ### FreeMagma → Tree forgetful map -/

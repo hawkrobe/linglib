@@ -252,6 +252,34 @@ theorem yield_def (t : T) :
   rw [yield_eq]
   simp [List.flatMap_def]
 
+/-! ### Yield with positions — the precedence-is-yield-order substrate
+
+`yieldWithPaths` pairs each terminal with its Gorn address. Defined
+via `WellFounded.fix` (not Lean's WF elaborator) so its unfold lemma is
+a one-liner via `WellFounded.fix_eq` — the mathlib-reviewer's escape
+from the equation-compiler timeout that the earlier
+`attach.zipIdx.flatMap` formulation hit. The pairwise-Precedes bridge
+(`Precedes` *is* yield order, [kayne-1994] LCA-style) is a follow-up
+that builds on this substrate. -/
+
+/-- Yield with positions: each terminal paired with its Gorn address. -/
+def yieldWithPaths (t : T) : List (TreePath × W) :=
+  IsFiniteBranching.wf.fix (fun t ih =>
+    (content? t).toList.map (⟨⊥, ·⟩) ++
+    (children t).attach.zipIdx.flatMap fun ci =>
+      (ih ci.1.val ci.1.property).map fun pw =>
+        (⟨ci.2 :: pw.1.toList⟩, pw.2)) t
+
+/-- One-step unfolding of `yieldWithPaths`, by `WellFounded.fix_eq` —
+the lemma that the old WF-elaborator approach could not produce. -/
+theorem yieldWithPaths_eq (t : T) :
+    yieldWithPaths t =
+      (content? t).toList.map (⟨⊥, ·⟩) ++
+      (children t).attach.zipIdx.flatMap fun ci =>
+        (yieldWithPaths ci.1.val).map fun pw =>
+          (⟨ci.2 :: pw.1.toList⟩, pw.2) :=
+  IsFiniteBranching.wf.fix_eq _ t
+
 end Branching
 
 /-! ### Instance: `FreeMagma`
