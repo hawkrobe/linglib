@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Scales.MereoDim
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Gradability.StatesBased
 import Linglib.Semantics.Kinds.MeaningPreservation
@@ -88,17 +87,13 @@ inductive MereologicalStatus where
     QUA → inherent endpoint → closed scale (→ licensed degree modifiers)
 
     This connects cross-categorial classification to Kennedy's
-    scale structure, via the existing `cumBoundedness`/`quaBoundedness`
-    annotations in `Core.MereoDim`. -/
+    scale structure: CUM predicates admit ever-larger sums
+    (`Mereology.cum_measure_unbounded`), so their scale has no inherent
+    endpoint; QUA predicates measure to a definite value
+    ([kennedy-2007], [rouillard-2026]). -/
 def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Scale.Boundedness
   | .cumulative => .open_
   | .quantized  => .closed
-
-/-- The `toBoundedness` mapping agrees with the existing mereological
-    scale annotations in `Core.MereoDim`. -/
-theorem toBoundedness_coherent :
-    MereologicalStatus.cumulative.toBoundedness = cumBoundedness ∧
-    MereologicalStatus.quantized.toBoundedness = quaBoundedness := ⟨rfl, rfl⟩
 
 /-- Direct conversion from [wellwood-2015]'s `MereologicalStatus` to
     the cross-framework `Core.Scale.MereoTag` substrate. Wellwood's
@@ -133,7 +128,7 @@ instance : Core.Scale.LicensingPipeline MereologicalStatus where
 -- ════════════════════════════════════════════════════
 
 /-- Every `MereoDim` witness yields the unbundled `admissibleMeasure`
-    Prop. `MereoDim` (Core/Scales/MereoDim.lean) bundles `StrictMono` in a
+    Prop. `MereoDim` (`Core/Order/Mereology.lean`) bundles `StrictMono` in a
     typeclass with `[PartialOrder]` carriers; `admissibleMeasure`
     (Semantics/Gradability/StatesBased.lean) is the equivalent
     Prop with the more permissive `[Preorder]` carriers. The single

@@ -4,6 +4,7 @@ import Linglib.Semantics.Gradability.MaximalInformativity
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
+import Linglib.Studies.Rouillard2026
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Core.Logic.Intensional.WorldTimeIndex

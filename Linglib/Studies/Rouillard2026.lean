@@ -84,6 +84,31 @@ Sections:
   boundedness chain is retained as substrate-internal plumbing.
 -/
 
+namespace NonemptyInterval
+
+/-- Interval boundary type maps to scale boundedness — [rouillard-2026]'s
+    "interval generalization", consumed by the MIP licensing pipeline here
+    and in `Studies/Rouillard2026Gradability.lean`.
+    [rouillard-2026]: closed runtimes correspond to closed scales
+    (licensed); open PTSs correspond to open scales (blocked/information
+    collapse). This is the "interval generalization":
+    `NonemptyInterval.BoundaryType.closed`/`.open_` is isomorphic to
+    `Core.Scale.Boundedness.closed`/`.open_`. -/
+def BoundaryType.toBoundedness : BoundaryType → Core.Scale.Boundedness
+  | .closed => .closed
+  | .open_ => .open_
+
+theorem closedBoundary_licensed :
+    (BoundaryType.toBoundedness .closed).isLicensed = true := rfl
+
+theorem openBoundary_blocked :
+    (BoundaryType.toBoundedness .open_).isLicensed = false := rfl
+
+instance : Core.Scale.LicensingPipeline BoundaryType where
+  toBoundedness := BoundaryType.toBoundedness
+
+end NonemptyInterval
+
 namespace Rouillard2026
 
 open NonemptyInterval

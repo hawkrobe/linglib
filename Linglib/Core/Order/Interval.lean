@@ -1,5 +1,4 @@
 import Mathlib.Order.Interval.Basic
-import Linglib.Core.Scales.Scale
 
 /-!
 # Relational vocabulary for nonempty intervals
@@ -198,24 +197,5 @@ inductive BoundaryType where
   | closed  -- boundary moment included in the interval
   | open_   -- boundary moment excluded from the interval
   deriving DecidableEq, Repr
-
-/-- Interval boundary type maps to scale boundedness.
-    [rouillard-2026]: closed runtimes correspond to closed scales
-    (licensed); open PTSs correspond to open scales (blocked/information
-    collapse). This is the "interval generalization":
-    `NonemptyInterval.BoundaryType.closed`/`.open_` is isomorphic to
-    `Core.Scale.Boundedness.closed`/`.open_`. -/
-def BoundaryType.toBoundedness : BoundaryType → Core.Scale.Boundedness
-  | .closed => .closed
-  | .open_ => .open_
-
-theorem closedBoundary_licensed :
-    (BoundaryType.toBoundedness .closed).isLicensed = true := rfl
-
-theorem openBoundary_blocked :
-    (BoundaryType.toBoundedness .open_).isLicensed = false := rfl
-
-instance : Core.Scale.LicensingPipeline BoundaryType where
-  toBoundedness := BoundaryType.toBoundedness
 
 end NonemptyInterval

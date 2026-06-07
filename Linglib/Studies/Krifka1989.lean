@@ -652,9 +652,10 @@ def k89Section7Data : List K89QuantDatum :=
     `Core.Scale.MereoTag.qua = .closed` as a lexical-classification tag
     that conflates the two levels. That conflation is convenient for
     cross-framework gluing across [krifka-1989], [kennedy-2007],
-    [rouillard-2026] (see `Core/Scales/MereoDim.lean` for the
-    structural bridges that DO hold — e.g. `singleton_qua_closed`,
-    `qua_kennedy_licensed`), but it does not follow from K89's definitions.
+    [rouillard-2026] (see the mereological-dimension lemmas in
+    `Core/Order/Mereology.lean` for the structural facts that DO hold —
+    e.g. `qua_pullback_mereoDim`, `cum_measure_unbounded`), but it does
+    not follow from K89's definitions.
     The two examples below show the gap in both directions.
 
     The defeasible cross-domain bridge `closed scale → telic verb` for

@@ -1,4 +1,6 @@
 import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Archimedean.Basic
+import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Lattice
 import Mathlib.Order.Basic
 import Mathlib.Data.Fintype.Basic
@@ -854,5 +856,254 @@ theorem subserves {α : Type*} [Preorder α] {q p : α → Prop}
     (h : IsContentPart q p) : Subserves q p := h.2
 
 end IsContentPart
+
+
+/-! ### Mereological dimensions
+
+Strictly monotone maps along which QUA pulls back — the dimension
+chains of [krifka-1989]'s linking theory (`Events →θ Entities →μ ℚ`),
+bundling the three sources of `StrictMono` (`ExtMeasure`, injective
+`IsSumHom`, compositions). -/
+
+/-- CUM predicates with incomparable elements can always produce larger
+    measure values via sum.
+
+    If P is CUM and has elements x, y where x ≤ y fails (they are
+    incomparable), then x ⊔ y satisfies P (by CUM) and μ(x ⊔ y) > μ(y)
+    (because y < x ⊔ y and μ is StrictMono).
+
+    This is the structural mechanism behind open/unbounded scales for
+    CUM predicates: given fresh material, CUM can always produce a
+    larger measurement. The incomparability condition is satisfied
+    whenever two P-elements have non-overlapping parts (e.g., two
+    distinct portions of rice, two non-overlapping running events). -/
+theorem cum_sum_exceeds {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {P : α → Prop} (hCum : CUM P)
+    {x y : α} (hx : P x) (hy : P y) (h_not_le : ¬ x ≤ y) :
+    P (x ⊔ y) ∧ μ (x ⊔ y) > μ y := by
+  constructor
+  · exact hCum x y hx hy
+  · have hle : y ≤ x ⊔ y := le_sup_right
+    have hne : y ≠ x ⊔ y := by
+      intro heq; exact h_not_le (heq ▸ le_sup_left)
+    exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
+
+/-- CUM predicates with incomparable elements yield measure values
+    strictly exceeding both inputs.
+
+    Symmetric version of `cum_sum_exceeds`: μ(x ⊔ y) > μ(x) AND
+    μ(x ⊔ y) > μ(y) when x and y are incomparable. -/
+theorem cum_sum_exceeds_both {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {P : α → Prop} (hCum : CUM P)
+    {x y : α} (hx : P x) (hy : P y)
+    (hxy : ¬ x ≤ y) (hyx : ¬ y ≤ x) :
+    P (x ⊔ y) ∧ μ (x ⊔ y) > μ x ∧ μ (x ⊔ y) > μ y := by
+  refine ⟨hCum x y hx hy, ?_, (cum_sum_exceeds hCum hx hy hxy).2⟩
+  have hle : x ≤ x ⊔ y := le_sup_left
+  have hne : x ≠ x ⊔ y := by
+    intro heq; exact hyx (heq ▸ le_sup_right)
+  exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
+/-- Morphism class of Mereo^op: the category of partially ordered types
+    with strictly monotone maps. A `MereoDim d` instance witnesses that
+    `d` is a mereological dimension — a map along which QUA pulls back.
+
+    Unifies three sources of `StrictMono`:
+    - `ExtMeasure` (via `extMeasure_strictMono`)
+    - `IsSumHom` + `Injective` (via `strictMono_of_injective`)
+    - Compositions of the above (Krifka dimension chains) -/
+class MereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
+    (d : α → β) : Prop where
+  /-- The underlying strict monotonicity proof. -/
+  toStrictMono : StrictMono d
+
+-- ════════════════════════════════════════════════════
+-- § 6. MereoDim Instances and Constructors
+-- ════════════════════════════════════════════════════
+
+/-- Any `ExtMeasure` is automatically a `MereoDim`: extensive measures
+    are strictly monotone by `extMeasure_strictMono`. -/
+instance instMereoDimOfExtMeasure {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ] : MereoDim μ :=
+  ⟨extMeasure_strictMono hμ⟩
+
+/-- An injective sum homomorphism is a `MereoDim`. Not an instance because
+    `Function.Injective` is not inferrable by typeclass search. -/
+def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f) : MereoDim f :=
+  ⟨hf.strictMono_of_injective hinj⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. MereoDim Composition
+-- ════════════════════════════════════════════════════
+
+/-- Composition of `MereoDim` morphisms. Captures Krifka's dimension
+    chains: `Events →θ Entities →μ ℚ` gives `MereoDim (μ ∘ θ)` when
+    both components are `MereoDim`.
+
+    Stated as a theorem (not an instance) to avoid typeclass inference
+    loops from decomposing arbitrary composed functions. -/
+theorem MereoDim.comp {α β γ : Type*}
+    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
+    {f : β → γ} {g : α → β} (hf : MereoDim f) (hg : MereoDim g) :
+    MereoDim (f ∘ g) :=
+  ⟨hf.toStrictMono.comp hg.toStrictMono⟩
+
+-- ════════════════════════════════════════════════════
+-- § 8. MereoDim QUA Pullback
+-- ════════════════════════════════════════════════════
+
+/-- QUA pullback via `MereoDim`: typeclass-dispatched version of
+    `qua_pullback`. When `[MereoDim d]` is available (automatically
+    for any `ExtMeasure`), QUA pulls back without manual `StrictMono`
+    threading. -/
+theorem qua_pullback_mereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
+    {d : α → β} [hd : MereoDim d] {P : β → Prop} (hP : QUA P) :
+    QUA (P ∘ d) :=
+  qua_pullback hd.toStrictMono hP
+
+/-- QUA pullback along a composed dimension chain. Given two `MereoDim`
+    morphisms `d₁ : α → β` and `d₂ : β → γ`, QUA on γ pulls back to
+    QUA on α through the chain `d₂ ∘ d₁`. -/
+theorem qua_pullback_mereoDim_comp {α β γ : Type*}
+    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
+    {d₁ : α → β} {d₂ : β → γ} (hd₁ : MereoDim d₁) (hd₂ : MereoDim d₂)
+    {P : γ → Prop} (hP : QUA P) :
+    QUA (P ∘ d₂ ∘ d₁) :=
+  qua_pullback (hd₂.comp hd₁).toStrictMono hP
+/-- Every `MereoDim d` is `Monotone`: the forgetful map from the category
+    of partial orders with strict monotone maps to the category of
+    preorders with monotone maps. -/
+theorem mereoDim_monotone {α β : Type*}
+    [PartialOrder α] [PartialOrder β]
+    {d : α → β} (hd : MereoDim d) :
+    Monotone d :=
+  hd.toStrictMono.monotone
+
+/-- Every `ExtMeasure μ` gives a monotone map to (ℚ, ≤). -/
+theorem extMeasure_monotone {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} (hμ : ExtMeasure α μ) :
+    Monotone μ :=
+  (extMeasure_strictMono hμ).monotone
+/-- A mereological dimension chain: a two-leg pipeline
+    Source →f Inter →μ Measure where both legs are MereoDim.
+    The three canonical instances:
+    - Temporal: Events →τ Intervals →dur ℚ
+    - Spatial: Events →σ Paths →dist ℚ
+    - Object: Events →θ Entities →μ ℚ -/
+structure DimensionChain
+    {Source Inter Measure : Type*}
+    [PartialOrder Source] [PartialOrder Inter] [PartialOrder Measure]
+    (f : Source → Inter) (μ : Inter → Measure) where
+  leg₁ : MereoDim f
+  leg₂ : MereoDim μ
+
+namespace DimensionChain
+
+variable {Source Inter Measure : Type*}
+    [PartialOrder Source] [PartialOrder Inter] [PartialOrder Measure]
+    {f : Source → Inter} {μ : Inter → Measure}
+
+/-- The composed map is a MereoDim. -/
+def composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
+  MereoDim.comp dc.leg₂ dc.leg₁
+
+/-- QUA on Measure pulls back to QUA on Source through the full chain. -/
+theorem qua_transfer (dc : DimensionChain f μ)
+    {P : Measure → Prop} (hP : QUA P) :
+    QUA (P ∘ μ ∘ f) := by
+  haveI := dc.composed
+  exact qua_pullback_mereoDim hP
+
+/-- QUA on Inter pulls back to QUA on Source through the first leg. -/
+theorem qua_transfer_leg₁ (dc : DimensionChain f μ)
+    {P : Inter → Prop} (hP : QUA P) :
+    QUA (P ∘ f) := by
+  haveI := dc.leg₁
+  exact qua_pullback_mereoDim hP
+
+/-- QUA on Measure pulls back to QUA on Inter through the second leg. -/
+theorem qua_transfer_leg₂ (dc : DimensionChain f μ)
+    {P : Measure → Prop} (hP : QUA P) :
+    QUA (P ∘ μ) := by
+  haveI := dc.leg₂
+  exact qua_pullback_mereoDim hP
+
+end DimensionChain
+/-- CUM + fresh incomparable element → exists P-element with strictly
+    larger measure. The structural content of "CUM → open scale."
+
+    Given P(x) and fresh y with P(y) and ¬ y ≤ x, then x ⊔ y satisfies P
+    (by CUM) and μ(x ⊔ y) > μ(x) (by StrictMono, since x < x ⊔ y). -/
+theorem cum_exceeds_source {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {P : α → Prop} (hCum : CUM P)
+    {x y : α} (hx : P x) (hy : P y) (hyx : ¬ y ≤ x) :
+    P (x ⊔ y) ∧ μ (x ⊔ y) > μ x := by
+  constructor
+  · exact hCum x y hx hy
+  · have hle : x ≤ x ⊔ y := le_sup_left
+    have hne : x ≠ x ⊔ y := fun heq => hyx (heq ▸ le_sup_right)
+    exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
+
+/-- CUM + disjoint fresh supply with minimum measure → measurement unbounded.
+
+    If P is CUM and for every P-element x there exists a disjoint P-element y
+    with μ(y) ≥ δ > 0, then P-elements achieve arbitrarily large measure.
+    This is the structural content of information collapse: CUM predicates
+    with enough disjoint material have no inherent measurement ceiling.
+
+    The hypothesis requires `¬ Overlap x y` (not merely `¬ y ≤ x`) because
+    overlap allows the increment μ(x ⊔ y) - μ(x) to shrink to zero, making
+    the series of increments convergent. With `¬ Overlap`, additivity gives
+    μ(x ⊔ y) = μ(x) + μ(y) ≥ μ(x) + δ, guaranteeing linear growth.
+
+    The proof iterates `k` disjoint extensions from `x₀`, each adding at
+    least δ to the measure. By the Archimedean property of ℚ, choosing
+    k > (M - μ(x₀)) / δ suffices. -/
+theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {P : α → Prop} (hCum : CUM P)
+    {δ : ℚ} (hδ : 0 < δ)
+    (hSupply : ∀ (x : α), P x → ∃ (y : α), P y ∧ ¬ Overlap x y ∧ δ ≤ μ y)
+    (x₀ : α) (hx₀ : P x₀) (M : ℚ) :
+    ∃ (z : α), P z ∧ μ z > M := by
+  -- After k disjoint extensions from any P-element, measure grows by ≥ k * δ
+  have iterate : ∀ (k : ℕ) (x : α), P x →
+      ∃ (z : α), P z ∧ μ z ≥ μ x + ↑k * δ := by
+    intro k
+    induction k with
+    | zero => intro x hx; exact ⟨x, hx, by simp⟩
+    | succ k ih =>
+      intro x hx
+      obtain ⟨z, hPz, hμz⟩ := ih x hx
+      obtain ⟨y, hPy, hDisj, hμy⟩ := hSupply z hPz
+      refine ⟨z ⊔ y, hCum z y hPz hPy, ?_⟩
+      rw [hμ.additive z y hDisj, Nat.cast_succ, add_mul, one_mul]
+      linarith
+  -- By Archimedean ℚ, find n with n * δ > M - μ(x₀)
+  obtain ⟨n, hn⟩ := exists_nat_gt ((M - μ x₀) / δ)
+  obtain ⟨z, hPz, hμz⟩ := iterate n x₀ hx₀
+  exact ⟨z, hPz, by rw [div_lt_iff₀ hδ] at hn; linarith⟩
+/-- The three dimension chains all instantiate the same pattern:
+    IsSumHom + Injective → MereoDim → QUA pullback.
+    This theorem states the pattern for any sum homomorphism. -/
+theorem sumHom_qua_pullback_pattern {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f)
+    {P : β → Prop} (hP : QUA P) :
+    QUA (P ∘ f) := by
+  haveI := MereoDim.ofInjSumHom hinj
+  exact qua_pullback_mereoDim hP
+
+/-- CUM always pulls back through any sum homomorphism (no injectivity needed).
+    All three dimension chains preserve atelicity/cumulativity. -/
+theorem sumHom_cum_pullback_pattern {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} [hf : IsSumHom f]
+    {P : β → Prop} (hP : CUM P) :
+    CUM (P ∘ f) :=
+  cum_pullback hf hP
 
 end Mereology

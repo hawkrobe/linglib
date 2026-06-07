@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Scales.MereoDim
+import Linglib.Core.Order.Mereology
 import Linglib.Semantics.Events.Basic
 import Linglib.Features.Aktionsart
 
@@ -22,9 +22,9 @@ open Features
 open _root_.Mereology
 
 -- Generic mereological vocabulary (CUM/QUA/AlgClosure/QMOD/ExtMeasure
--- /MereoDim/LaxMeasureSquare/...) lives in `Mereology` and
--- `Core.Scales.MereoDim`. Consumers do `open Mereology` to bring it
--- into scope rather than relying on re-exports here.
+-- /MereoDim/DimensionChain/...) lives in `Mereology`
+-- (`Core/Order/Mereology.lean`). Consumers do `open Mereology` to bring
+-- it into scope rather than relying on re-exports here.
 
 /-! ### Event CEM (Classical Extensional Mereology) -/
 
