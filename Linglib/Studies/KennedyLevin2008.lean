@@ -331,7 +331,7 @@ open Semantics.ArgumentStructure.Affectedness.Hierarchy
 open ScalarTelicity
 
 /-- *straighten* measures straightness — a closed scale — so a telic reading is
-    available, derived from the dimension's `OrderTop` (not a stored `hasMax`). -/
+    available, derived from the dimension's `OrderTop` (not a stored `HasMax`). -/
 theorem straighten_telic :
     ∃ g : Dimension.straightness.degree,
       Quantized (reachesTop (δ := Dimension.straightness.degree)) g :=

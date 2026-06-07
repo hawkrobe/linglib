@@ -25,7 +25,7 @@ and Phenomena data (`closurePuzzle`, `completelyModifier`).
    empirical patterns recorded in `closurePuzzle` and `completelyModifier`.
 
 3. **LicensingPipeline**: the same prediction is available through the
-   universal `LicensingPipeline.isLicensed` interface, connecting
+   universal `LicensingPipeline.IsLicensed` interface, connecting
    adjective licensing to telicity, path shape, and mereological licensing.
 
 -/
@@ -607,7 +607,7 @@ theorem k2007_matrix_agrees_with_typology :
     with `licenses` on the corresponding `Boundedness` cases. AGAMax
     cases under the existing data are interpreted at the canonical
     totally-closed scale (`.closed`, e.g. *full*) since the data's
-    `worksWithAGAMax = true` for *slightly* requires `b.hasMin = true`
+    `worksWithAGAMax = true` for *slightly* requires `b.HasMin`
     — only `.closed` and `.lowerBounded` satisfy that, of which `.closed`
     is the natural reading for the *full*-class data. -/
 theorem k2007_modifier_data_agrees :

@@ -1,6 +1,7 @@
 import Mathlib.Order.Basic
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.ComparativeScale
+import Linglib.Semantics.Degree.Predicate
 
 /-!
 # Directed measurement primitive
@@ -15,6 +16,9 @@ semantics.
 
 - `DirectedMeasure`: the bundled measure structure.
 - `DirectedMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
+- `DirectedMeasure.degreeProperty`: the degree property derived from
+  `direction` (`atLeastDeg` positive, `atMostDeg` negative); its maximal
+  informativity is characterized in `Semantics/Entailment/Extremum.lean`.
 - `DirectedMeasure.numeral`, `DirectedMeasure.adjective`: Kennedy-style
   numeral and gradable-adjective domains.
 
@@ -64,13 +68,22 @@ namespace DirectedMeasure
 variable {D : Type*} [LinearOrder D] {E : Type*}
 
 /-- Licensing: licensed iff the bounded scale admits an optimum.
-    See `Boundedness.isLicensed` for the caveat — this checks
+    See `Boundedness.IsLicensed` for the caveat — this checks
     "any endpoint exists", not [kennedy-2007]'s full
     modifier-class licensing matrix. -/
 def IsLicensed (dm : DirectedMeasure D E) : Prop := dm.boundedness.IsLicensed
 
 instance (dm : DirectedMeasure D E) : Decidable dm.IsLicensed :=
   inferInstanceAs (Decidable dm.boundedness.IsLicensed)
+
+/-- The degree property derived from the measure's direction: `atLeastDeg`
+    for positive scales (tall, likely), `atMostDeg` for negative ones
+    (short, unlikely). The derivation the structure docstring promises:
+    `direction` is the stored parameter, the property follows. -/
+def degreeProperty (dm : DirectedMeasure D E) : D → E → Prop :=
+  match dm.direction with
+  | .positive => atLeastDeg dm.μ
+  | .negative => atMostDeg dm.μ
 
 end DirectedMeasure
 

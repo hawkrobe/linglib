@@ -412,7 +412,7 @@ their scale. `dry` (upper-bounded, has max) is productive; `wet`
 (lower-bounded, no max) is not. `flat`, `clean`, `shut`, `dead`, `open`,
 `full`, `empty` are all closed-scale (has max).
 
-The aspectual chain: `hasMax → bounded RP → telic resultative`. -/
+The aspectual chain: `HasMax → bounded RP → telic resultative`. -/
 
 /-- Map [kennedy-2007]'s scale boundedness to [goldberg-jackendoff-2004]'s
 RP boundedness. Scales with a maximum endpoint yield bounded RPs (the RP denotes
@@ -437,7 +437,7 @@ theorem lower_bounded_scale_unbounded :
     adjScaleToRPBoundedness .lowerBounded = .unbounded := rfl
 
 /-- The full aspectual chain: a closed-scale adjective as RP yields a telic
-    resultative. `hasMax → bounded → telic → accomplishment`. -/
+    resultative. `HasMax → bounded → telic → accomplishment`. -/
 theorem closed_scale_telic_resultative (b : Core.Order.Boundedness) (hMax : b.HasMax) :
     resultativeVendlerClass (adjScaleToRPBoundedness b) = .accomplishment := by
   cases b <;> simp [Core.Order.Boundedness.HasMax] at hMax <;>
