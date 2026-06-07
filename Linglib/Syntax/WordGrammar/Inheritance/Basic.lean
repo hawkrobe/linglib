@@ -46,7 +46,7 @@ set_option autoImplicit false
 
 universe u v
 
-namespace Core.Inheritance
+namespace WordGrammar.Inheritance
 
 -- ============================================================================
 -- Links
@@ -127,7 +127,7 @@ instance (net : Network α R) (a b : α) : Decidable (isAEdge net a b) :=
 /-- Reflexive-transitive `isA`: `a` inherits from `b` along the chain of isA
 links. Defined as `Relation.ReflTransGen` of the parent edge — the same
 construction mathlib uses for transitive closures elsewhere, so every lemma
-about `ReflTransGen` (and the `Preorder` structure in `Core.Inheritance.Order`)
+about `ReflTransGen` (and the `Preorder` structure in `WordGrammar.Inheritance.Order`)
 applies for free. -/
 def IsA (net : Network α R) (a b : α) : Prop := Relation.ReflTransGen (isAEdge net) a b
 
@@ -164,4 +164,4 @@ instance IsA.decidable (net : Network α R) (a b : α) : Decidable (IsA net a b)
 
 end NetworkOps
 
-end Core.Inheritance
+end WordGrammar.Inheritance

@@ -1,4 +1,4 @@
-import Linglib.Core.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
 
 /-!
 # Default Inheritance — Local Properties + BFS Lookup + Best Fit Principle
@@ -26,7 +26,7 @@ verb's subject slot but overrides its direction.
 
 set_option autoImplicit false
 
-namespace Core.Inheritance
+namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]
 
@@ -99,4 +99,4 @@ theorem localProps_monotone_in_links (net₁ net₂ : Network α R) (node : α) 
   obtain ⟨l, ⟨hmem₁, hcond⟩, htgt⟩ := hmem
   exact ⟨l, ⟨hsub hmem₁, hcond⟩, htgt⟩
 
-end Core.Inheritance
+end WordGrammar.Inheritance

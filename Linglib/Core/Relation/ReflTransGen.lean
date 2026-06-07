@@ -34,7 +34,7 @@ consecutive list elements without fixed endpoints).
 
 ## Provenance
 
-Lifted from `Core/Inheritance/Basic.lean` where it was first proved for
+Lifted from `Syntax/WordGrammar/Inheritance/Basic.lean` where it was first proved for
 Hudson's Word Grammar `IsA` relation. Generalised to be reusable across
 `Network.IsA`, `CausalGraph.IsAncestor`, 
 `SDRT.availableViaChain`.

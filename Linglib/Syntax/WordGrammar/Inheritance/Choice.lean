@@ -1,4 +1,4 @@
-import Linglib.Core.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
 
 /-!
 # Choice Sets (OR / Mutual Exclusivity)
@@ -18,7 +18,7 @@ provable.
 
 set_option autoImplicit false
 
-namespace Core.Inheritance
+namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]
 
@@ -46,4 +46,4 @@ theorem mem_choiceSet_iff (net : Network α R) (node a : α) :
     refine ⟨⟨LinkKind.or, a, node, label⟩, ⟨hmem, ?_⟩, rfl⟩
     simp
 
-end Core.Inheritance
+end WordGrammar.Inheritance
