@@ -1,6 +1,6 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Semantics.Definiteness.Basic
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -516,7 +516,7 @@ open Semantics.Definiteness (modifierNecessary)
 open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
-open Core.Nominal (russellIotaList)
+open Semantics.Definiteness (russellIotaList)
 
 /-- Toy discourse entity for the uniqueness worked example. -/
 inductive DiscEntity where

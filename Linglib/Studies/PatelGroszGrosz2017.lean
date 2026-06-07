@@ -1,5 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
-import Linglib.Core.Nominal.Determiner
+import Linglib.Features.Determiner
 import Linglib.Fragments.German.Definiteness
 import Linglib.Studies.Schwarz2009
 import Linglib.Semantics.Presupposition.PhiFeatures
@@ -29,7 +29,7 @@ by an added pragmatic effect (emotivity §5.1, disambiguation §5.2, register §
 The contributions are made *true by construction* on shared substrate:
 
 * **DEM = PER + anaphoric index** is the [schwarz-2009] weak/strong refinement
-  `Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`: the strong description
+  `Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`: the strong description
   (DEM, `.anaphoric`) and the weak description (PER, `.unique`) over one restrictor
   pick the same referent exactly when the indexed entity is the unique satisfier —
   off that, DEM is anaphoric in a way PER is not. Both denote via
@@ -148,14 +148,14 @@ theorem schwarz_pgg_german_consistent :
     *different* referents. Reusing [schwarz-2009] §8's two-satisfier scenario:
     the weak PER fails uniqueness (two satisfiers → `none`) while the strong DEM
     reads off the discourse index. This is the divergence direction the convergence
-    theorem (`Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`) rules out
+    theorem (`Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`) rules out
     only under uniqueness. -/
 theorem der_er_can_diverge :
-    Core.Nominal.interpret
-        (Core.Nominal.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
+    Semantics.Definiteness.interpret
+        (Semantics.Definiteness.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0
-      ≠ Core.Nominal.interpret
-        (Core.Nominal.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
+      ≠ Semantics.Definiteness.interpret
+        (Semantics.Definiteness.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0 :=
   Schwarz2009.two_articles_can_disagree
 
@@ -177,19 +177,19 @@ open Semantics.Presupposition.PhiFeatures (femSem)
     feature *drives* the definite description's restrictor rather than re-stipulating it. -/
 theorem feminine_per_restrictor_is_femSem {F : Core.Logic.Intensional.Frame}
     (isFemale : F.Entity → Prop) (sIdx : Nat) :
-    Core.Nominal.Description.ofPresupType .uniqueness
+    Semantics.Definiteness.Description.ofPresupType .uniqueness
         (fun _ _ x => (femSem isFemale).presup x) sIdx
-      = Core.Nominal.Description.unique (fun _ _ x => isFemale x) sIdx := rfl
+      = Semantics.Definiteness.Description.unique (fun _ _ x => isFemale x) sIdx := rfl
 
 /-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
     restrictor of the weak-article definite (`ιx[isFemale x]`). -/
 theorem feminine_per_picks_unique_female {F : Core.Logic.Intensional.Frame}
     (isFemale : F.Entity → Prop) (sIdx : Nat)
     (g : Core.Assignment F.Entity) (gs : Core.Logic.Intensional.Variables.SitAssignment F) :
-    Core.Nominal.interpret
-        (Core.Nominal.Description.ofPresupType .uniqueness
+    Semantics.Definiteness.interpret
+        (Semantics.Definiteness.Description.ofPresupType .uniqueness
           (fun _ _ x => (femSem isFemale).presup x) sIdx) g gs
-      = Core.Nominal.russellIota (fun x => isFemale x) :=
-  Core.Nominal.interpret_unique (fun _ _ x => isFemale x) sIdx g gs
+      = Semantics.Definiteness.russellIota (fun x => isFemale x) :=
+  Semantics.Definiteness.interpret_unique (fun _ _ x => isFemale x) sIdx g gs
 
 end PatelGroszGrosz2017

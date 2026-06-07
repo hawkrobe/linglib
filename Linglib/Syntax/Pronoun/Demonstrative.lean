@@ -32,7 +32,7 @@ set_option autoImplicit false
 /-- A deictic demonstrative pronoun: the general `Pronoun` (form + φ) plus the
     `Features.Deixis.Feature` it encodes — its proximal/medial/distal contrast (or `unspecified`
     for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;
-    its meaning is the deictic `Core.Nominal.Description.demonstrative` over its restrictor. -/
+    its meaning is the deictic `Semantics.Definiteness.Description.demonstrative` over its restrictor. -/
 structure DemonstrativePronoun extends Pronoun where
   /-- Demonstratives are UD `PronType=Dem`; the *type* fixes the morphology. -/
   pronType := some UD.PronType.Dem

@@ -1,4 +1,4 @@
-import Linglib.Core.Nominal.Determiner
+import Linglib.Features.Determiner
 
 /-!
 # Thai Definiteness Fragment

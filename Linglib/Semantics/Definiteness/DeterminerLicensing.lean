@@ -1,5 +1,5 @@
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.Description
+import Linglib.Features.Determiner
+import Linglib.Semantics.Definiteness.Description
 
 /-!
 # Determiner licensing
@@ -12,7 +12,7 @@ Frame-parameterized `Description` substrate.
 
 open Core.Logic.Intensional (Frame)
 open Core.Logic.Intensional.Variables (DenotGS)
-open Core.Nominal (Description)
+open Semantics.Definiteness (Description)
 open Features.Definiteness (DefPresupType)
 
 namespace Determiner

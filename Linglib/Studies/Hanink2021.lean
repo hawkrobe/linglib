@@ -1,6 +1,6 @@
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Interpret
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Syntax.Pronoun.Demonstrative
 
 /-!
@@ -22,7 +22,7 @@ The IL substrate operationalizes this in two parallel pieces:
 - **`SitAssignment F := Nat → F.Index`** in `Core.Logic.Intensional.Variables`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
-- **`Description.unique R sIdx`** in `Core.Nominal.Description`
+- **`Description.unique R sIdx`** in `Semantics.Definiteness.Description`
   carries a `situationIdx : Nat` recording *which* situation pronoun
   the description is bound to.
 
@@ -51,7 +51,7 @@ namespace Hanink2021
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal
+open Semantics.Definiteness
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: A two-room frame for the resource-situation diagnostic
@@ -160,7 +160,7 @@ theorem same_description_different_referents :
 /-- The index argument to `.unique` does not select among situations at
     the interpretation layer — the restrictor `R` already takes the full
     situation assignment, and the index records *which* pronoun is
-    bound. (`Core.Nominal.interpret_unique_index_irrelevant` makes this
+    bound. (`Semantics.Definiteness.interpret_unique_index_irrelevant` makes this
     explicit.) The Hanink claim is recovered via the restrictor calling
     `interpSitPronoun sIdx`, not via the interpreter inspecting `sIdx`. -/
 theorem unique_index_does_not_alter_referent_directly :

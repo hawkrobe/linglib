@@ -7,7 +7,7 @@ import Linglib.Semantics.Evidential.Defs
 Derived predicates and the Aikhenvald-cell mapping that lets typological
 classifications be DERIVED from declared inventories rather than hardcoded
 per-language. Mirrors the `Determiner.markingStrategy` pattern at
-`Core/Nominal/Determiner.lean`: typological classifications are theorems
+`Semantics/Definiteness/Determiner.lean`: typological classifications are theorems
 about the declared inventory, not stipulations.
 
 ## Main declarations

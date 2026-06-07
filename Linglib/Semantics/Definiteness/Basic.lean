@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Reference.Donnellan
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Fragments.English.Determiners
 
 /-!
@@ -13,7 +13,7 @@ import Linglib.Fragments.English.Determiners
 Connective tissue between definite-description denotations and the rest of
 the library. The denotational layer itself lives in two canonical pieces:
 
-- `Core.Nominal.russellIotaList` (the per-context referent selector,
+- `Semantics.Definiteness.russellIotaList` (the per-context referent selector,
   Russellian iota over a `List E` filtered by a `Bool` predicate), and
 - `Semantics.Presupposition.PrProp.presupOfReferent` (the combinator lifting a
   referent selector and a scope predicate into a `PrProp W`).
@@ -58,7 +58,7 @@ open Features.Definiteness (DefPresupType Definiteness)
 been introduced into the discourse and are available for anaphoric reference.
 Familiarity-based definites (Schwarz's strong article) are evaluated by
 running the canonical Russellian-iota selector
-(`Core.Nominal.russellIotaList`) over `dc.salient` rather than the full
+(`Semantics.Definiteness.russellIotaList`) over `dc.salient` rather than the full
 domain. -/
 structure DiscourseContext (E : Type) where
   /-- Entities currently salient/familiar in discourse -/

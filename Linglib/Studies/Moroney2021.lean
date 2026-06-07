@@ -1,9 +1,9 @@
 import Linglib.Features.Definiteness
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.DeterminerLicensing
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Interpret
+import Linglib.Features.Determiner
+import Linglib.Semantics.Definiteness.DeterminerLicensing
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Definiteness.Basic
@@ -445,7 +445,7 @@ theorem derive_consistent_with_stipulated :
 -- §8: Bridge to the canonical referent selector
 -- ============================================================================
 
-open Core.Nominal (russellIotaList)
+open Semantics.Definiteness (russellIotaList)
 
 /-- The type-shift system and the canonical referent selector agree:
 
@@ -623,14 +623,14 @@ theorem demonstrative_adds_spatial_info {E : Type}
     (spatialPred : Feature → E → Bool) :
     Shan.Definiteness.demDenotation domain
       Shan.Definiteness.naj restrictor spatialPred =
-      Core.Nominal.russellIotaList domain
+      Semantics.Definiteness.russellIotaList domain
         (fun e => restrictor e && spatialPred .proximal e) ∧
     Shan.Definiteness.demDenotation domain
       Shan.Definiteness.nan restrictor spatialPred =
-      Core.Nominal.russellIotaList domain
+      Semantics.Definiteness.russellIotaList domain
         (fun e => restrictor e && spatialPred .distal e) ∧
     Shan.Definiteness.bareDefinite domain restrictor =
-      Core.Nominal.russellIotaList domain restrictor :=
+      Semantics.Definiteness.russellIotaList domain restrictor :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -652,7 +652,7 @@ theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
     = Semantics.Classifier.clfForNoun P := rfl
 
 -- ============================================================================
--- §14: Integration with the Core.Nominal API
+-- §14: Integration with the Semantics.Definiteness API
 -- ============================================================================
 
 /-! The §1–§7 derivation works at the level of `DefMarkingParams` (three
@@ -667,7 +667,7 @@ finding: Shan licenses anaphoric definiteness without any anaphoric article. -/
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal (Description)
+open Semantics.Definiteness (Description)
 
 /-- Shorthand handles for the four Table 4.4 determiner sets, each defined in
     its language fragment (`Fragments.{Lang}.Definiteness.determiners`).
@@ -758,7 +758,7 @@ theorem english_mandarin_articleType_collapse :
 theorem english_mandarin_inventory_distinct :
     englishDets ≠ mandarinDets := by decide
 
-/-- Shan-specific consequence of `Core.Nominal.interpret_bare_eq_unique`:
+/-- Shan-specific consequence of `Semantics.Definiteness.interpret_bare_eq_unique`:
     a bare definite description and a uniqueness definite over the same
     restrictor select the same referent. This is the Core-API analogue of
     Moroney's claim that bare nouns in Shan express weak/uniqueness
@@ -767,10 +767,10 @@ theorem shan_bare_unique_agreement {F : Frame}
     (R : DenotGS F .et) (sIdx : Nat)
     (g : Core.Assignment F.Entity)
     (gs : SitAssignment F) :
-    Core.Nominal.interpret (.bare R) g gs =
-      Core.Nominal.interpret (.unique R sIdx) g gs := rfl
+    Semantics.Definiteness.interpret (.bare R) g gs =
+      Semantics.Definiteness.interpret (.unique R sIdx) g gs := rfl
 
-/-- Shan-specific consequence of `Core.Nominal.interpret_demonstrative_eq_anaphoric`:
+/-- Shan-specific consequence of `Semantics.Definiteness.interpret_demonstrative_eq_anaphoric`:
     the demonstrative's deictic feature is a presupposition filter, not a
     referent selector. Demonstrative- and anaphoric-marked descriptions
     over the same restrictor and discourse index pick the same entity.
@@ -780,8 +780,8 @@ theorem shan_demonstrative_anaphoric_agreement {F : Frame}
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
     (g : Core.Assignment F.Entity)
     (gs : SitAssignment F) :
-    Core.Nominal.interpret (.demonstrative R deictic sIdx d) g gs =
-      Core.Nominal.interpret (.anaphoric R d) g gs := rfl
+    Semantics.Definiteness.interpret (.demonstrative R deictic sIdx d) g gs =
+      Semantics.Definiteness.interpret (.anaphoric R d) g gs := rfl
 
 -- ============================================================================
 -- §15: Refutation of [jenks-2018]'s Typological Prediction

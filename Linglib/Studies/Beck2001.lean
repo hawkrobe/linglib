@@ -116,7 +116,7 @@ for the right-hand-spine entailments. -/
     (the simplest case, paper p. 92), this is `A \ {x}`.
 
     *Layered-grounding gap*: the full eq 76 invokes Sharvy max
-    (`Core/Nominal/Maximality.lean` provides the substrate) and Link `*`
+    (`Semantics/Definiteness/Maximality.lean` provides the substrate) and Link `*`
     (`Plurality/Algebra.lean`); current `A.erase x` is the simplest
     case. Promoting `otherOnesAmongThem` to consume `Nominal/Maximality`
     is queued (Tier-4 of the cross-framework auditor's recommendation

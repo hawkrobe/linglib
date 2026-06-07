@@ -1,6 +1,6 @@
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Interpret
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Semantics.Definiteness.Maximality
 
 /-!
 # Coppock & Beaver (2015): Definiteness and Determinacy
@@ -21,7 +21,7 @@ loses this distinction.
 
 ## What this file tests
 
-The factorization is operationalized in `Core.Nominal.Maximality` as
+The factorization is operationalized in `Semantics.Definiteness.Maximality` as
 `Existence`, `Uniqueness`, and `existsUnique` over `F.Denot .et`. This
 study file builds three concrete restrictors over a tiny frame (sun /
 moon / mars; one index) and verifies:
@@ -31,7 +31,7 @@ moon / mars; one index) and verifies:
    Uniqueness (the multi-witness `planet` extension).
 2. **Russellian collapse** — `existsUnique` is true exactly for
    restrictors with a singleton extension (`theSun`).
-3. **Interpretation alignment** — `Core.Nominal.interpret` on a
+3. **Interpretation alignment** — `Semantics.Definiteness.interpret` on a
    `.unique` description returns `none` precisely in the Russellian
    failure cases (no extension, or non-unique extension).
 4. **Negation-projection contrast** — the Uniqueness component projects
@@ -43,7 +43,7 @@ namespace CoppockBeaver2015
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal
+open Semantics.Definiteness
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: A tiny frame for the projection diagnostics
@@ -133,7 +133,7 @@ theorem planet_not_existsUnique :
   exact planet_existence_without_uniqueness.2 hUniq
 
 -- ════════════════════════════════════════════════════════════════
--- §4: Alignment with `Core.Nominal.interpret`
+-- §4: Alignment with `Semantics.Definiteness.interpret`
 -- ════════════════════════════════════════════════════════════════
 
 /-- A trivial bi-assignment: every entity slot is `sun`, every situation
