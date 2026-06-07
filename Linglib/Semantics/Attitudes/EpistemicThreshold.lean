@@ -639,9 +639,11 @@ theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
 /-- The epistemic scale is licensed: closed → admits absolute standards.
 
     Since credence is bounded by [0, 1], [kennedy-2007]'s licensing
-    prediction says epistemic adjectives like `certain` can use endpoint
-    standards (θ ≈ 1.0). This unifies with the five-framework licensing
-    agreement from `Core/Scales/EpistemicScale.lean`. -/
+    prediction says epistemic adjectives like `certain` license endpoint
+    standards and maximizers ("completely certain") via the same
+    `Boundedness.closed` route as closed-scale adjectives ("completely
+    full"); cross-source agreement is `LicensingPipeline.universal`
+    (`Core/Order/Boundedness.lean`). -/
 theorem epistemicScale_licensed :
     epistemicBoundedness.isLicensed = true := rfl
 
