@@ -1,6 +1,6 @@
 import Linglib.Phonology.Process.Harmony.Defs
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Core.Optimization.OT.Basic
+import Linglib.Phonology.Constraint.OT.Basic
 
 /-!
 # Harmony–OT Bridge
@@ -8,7 +8,7 @@ import Linglib.Core.Optimization.OT.Basic
 
 Derives OT constraints from a `HarmonySystem`, connecting the direct
 computation in `Harmony.Defs` to the OT evaluation framework in
-`Core.Optimization.OT` and `Phonology.Constraints`.
+`Phonology.Constraint.OT` and `Phonology.Constraints`.
 
 ## Constraints
 
@@ -35,7 +35,7 @@ namespace Phonology.Harmony
 
 open Phonology (Segment Feature)
 open Phonology.Correspondence (Corr)
-open Core.Optimization.OT
+open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: Feature BEq Helper

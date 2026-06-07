@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.Separability
+import Linglib.Phonology.Constraint.Separability
 import Linglib.Studies.Zuraw2010
 
 /-!
@@ -58,7 +58,7 @@ sub-grid.
 
 namespace ZurawHayes2017
 
-open Core.Optimization Core.Optimization.OT Phonology.Constraints
+open Phonology.Constraint Core.Optimization Phonology.Constraint.OT Phonology.Constraints
 
 /-! ## § 1: 2×2 Square — Underlying Forms -/
 

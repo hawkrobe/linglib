@@ -4,7 +4,7 @@ import Linglib.Morphology.DM.Categorizer
 import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Tone.Constraints
-import Linglib.Core.Optimization.OT.HarmonicSerialism
+import Linglib.Phonology.Constraint.OT.HarmonicSerialism
 import Linglib.Studies.Hyman2006
 
 /-!
@@ -69,7 +69,7 @@ anchor combinators defined in §2 below.
 
 namespace AkinboFwangwar2026
 
-open Core.Optimization.OT
+open Phonology.Constraint.OT
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (integrityTone)

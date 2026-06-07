@@ -3,10 +3,10 @@ import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
 import Mathlib.Algebra.Tropical.BigOperators
 
 /-!
-# Semiring View of Deterministic Decoders
+# Semiring view of deterministic decoders
 
-When the noise kernel is `dirac` (no noise), score aggregation in a
-constraint system is itself an algebraic operation: the *additive*
+When the noise kernel is `dirac` (no noise), aggregating scores across
+a finite candidate set is itself an algebraic operation — the additive
 operation in a tropical or max-plus semiring. This is the bridge from
 the RUM/decoder picture to the parsing-theoretic semiring picture
 ([goodman-1999]; [eisner-2002]; [mohri-2002]).
@@ -17,7 +17,7 @@ the RUM/decoder picture to the parsing-theoretic semiring picture
 | `argmaxDecoder`    | max-plus semiring (= tropical over `OrderDual R`) |
 | `softmaxDecoder α` | log-sum-exp ("warped") semiring on `ℝ`            |
 
-In each row, the *additive* identity of the semiring is the "winner
+In each row, the *additive* identity of the semiring is the "maximizer/minimizer
 takes all" choice operation across alternatives, and the *multiplicative*
 identity is the per-candidate score-combination operation. The decoder's
 job is then to identify which candidates realise the additive identity.
@@ -29,10 +29,9 @@ sum of `trop`-tagged scores is `trop` of their `inf`. Specialised to a
 Finset of candidates, this says that choosing the additive identity in
 the tropical semiring picks out exactly the score that `argminDecoder`
 distributes its mass over — making the algebraic and operational views
-of OT coincide.
+of lex-min coincide.
 
-The max-plus dual follows by replacing `R` with `OrderDual R`: HG's
-argmax is then the same algebraic operation in the dual semiring.
+The max-plus dual follows by replacing `R` with `OrderDual R`: argmax is then the same algebraic operation in the dual semiring.
 
 ## The dequantized bridge
 
@@ -40,9 +39,9 @@ argmax is then the same algebraic operation in the dual semiring.
 finite temperature, in `Dequantization/LogSumExp/Basic.lean`) to argmax
 via the `α → ∞` limit (`lseFinset_tendsto_sup'` in
 `Dequantization/LogSumExp/Limit.lean`):
-a candidate is an argmax winner exactly when its score equals
+a candidate is an argmax optimum exactly when its score equals
 `lim_{α → ∞} lseFinset α cands score`. This is the semiring-level
-statement of MaxEnt → HG: as the inverse temperature sweeps to its
+statement of the softmax → argmax limit: as the inverse temperature sweeps to its
 limit, the soft "log-sum-exp aggregator" deforms to the hard "max
 aggregator", and "this candidate's score equals the aggregate" is
 exactly the argmax condition.
@@ -60,7 +59,7 @@ open Tropical Filter Topology
 
     Aggregating "or" alternatives in `Tropical R` (where `+` is `min`)
     computes the minimum. This is the algebraic statement underlying
-    `argminDecoder`: the OT winner is the candidate realising the
+    `argminDecoder`: the argmin selects the candidate realising the
     tropical sum.
 
     Direct restatement of mathlib's `Finset.untrop_sum'` for clarity in
@@ -78,8 +77,8 @@ theorem trop_sum_eq_inf_score {Cand R : Type*} [LinearOrder R] [OrderTop R]
 /-- A candidate `c ∈ cands` is an `argminDecoder` winner exactly when its
     score equals the tropical-semiring sum of all candidate scores.
 
-    This is the operational ↔ algebraic bridge for OT: the decoder's
-    notion of "winner" coincides with the candidate realising the
+    This is the operational ↔ algebraic bridge for lex-min decoding: the decoder's
+    notion of "optimum" coincides with the candidate realising the
     additive identity of the tropical semiring. -/
 theorem argmin_winner_iff_trop_sum {Cand R : Type*}
     [LinearOrder R] [OrderTop R]
@@ -101,21 +100,21 @@ theorem argmin_winner_iff_trop_sum {Cand R : Type*}
 -- ============================================================================
 
 /-!
-## Max-plus semiring for HG
+## Max-plus semiring
 
 The max-plus semiring on `R` is the tropical semiring on `OrderDual R`:
 addition is `max` (= `min` in the dual order), multiplication is the
-underlying `+`. For real-valued harmony scores in HG, the relevant
+underlying `+`. For real-valued real-valued scores, the relevant
 structure is max-plus on `WithBot ℝ` (with `-∞` as the additive identity).
 
 The argmax decoder is the max-plus analogue of `argminDecoder`:
 `argmaxDecoder` picks the candidate(s) realising the max-plus sum of
-all candidate scores, i.e., the maximum harmony.
+all candidate scores, i.e., the maximum.
 
 Stating this via the existing tropical machinery requires going through
 `OrderDual` plus `WithTop` instances; for our purposes the concrete
 `argminDecoder ↔ trop_sum` bridge above is the main statement, and the
-HG case is its dual.
+argmax case is its dual.
 -/
 
 -- ============================================================================

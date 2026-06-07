@@ -42,7 +42,7 @@ that phonological behavior tracks paradigm structure. See
 
 namespace Phonology.ParadigmUniformity
 
-open Core.Optimization.OT (NamedConstraint ConstraintFamily)
+open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
 open Phonology.Correspondence (Corr)
 
 -- ============================================================================

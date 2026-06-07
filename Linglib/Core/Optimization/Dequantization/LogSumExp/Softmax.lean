@@ -26,10 +26,10 @@ the lse → max limit (`lse_tendsto_max`):
   `0` for the unique maximizer (probability → 1) and to `−∞` for any
   loser (probability → 0).
 
-That gives a uniform algebraic explanation for OT-as-MaxEnt-limit:
-the softmax decoder is "exp of the gap between this candidate's score
-and the lse-summary score," and the gap closes exactly on the winners
-when the warped semiring is dequantized.
+That gives a uniform algebraic explanation for the softmax → argmax
+limit: the softmax decoder is "`exp` of the gap between this
+candidate's score and the lse-summary score," and the gap closes exactly
+on the maximizers when the warped semiring is dequantized.
 -/
 
 namespace Core.Optimization

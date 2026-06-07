@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Optimization.Dequantization.OTLimit
+import Linglib.Phonology.Constraint.Dequantization.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
 /-!
@@ -31,7 +31,7 @@ This map always preserves ⊗ (merge/tropical multiplication — linearity
 of the dot product). It preserves ⊕ (min/tropical addition) when weights
 are exponentially separated — which is exactly the content of the HG–OT
 agreement theorem ([smolensky-legendre-2006], formalized in
-`Core.Optimization.OTLimit`).
+`Phonology.Constraint.OTLimit`).
 
 ## Monotonicity (Dijkstra's Principle)
 
@@ -41,9 +41,10 @@ algorithms applicable to OT optimization. Riggle: "every subpath of
 an optimal input–output mapping is itself an optimal mapping."
 -/
 
-namespace Core.Optimization.ViolationSemiring
+namespace Phonology.Constraint.ViolationSemiring
 
-open Core.Optimization.Evaluation Core.Optimization
+
+open Core.Optimization.Evaluation Phonology.Constraint
 
 -- ============================================================================
 -- § 1: The Violation Semiring V
@@ -140,7 +141,7 @@ abbrev weightedSum {n : Nat} (w : Fin n → ℚ) (v : ViolationProfile n) : ℚ 
 -- ============================================================================
 
 /-- `weightMap` is definitionally equal to `weightedViolations`
-    from `Core.Optimization.OTLimit`.
+    from `Phonology.Constraint.OTLimit`.
 
     This bridges the semiring-theoretic framework (violation profiles as
     algebraic objects) to the existing HG–OT agreement machinery
@@ -214,4 +215,4 @@ theorem weightMap_preserves_minimum {n : Nat} (w : Fin n → ℚ) (M : Nat)
   fun b hb => weightMap_mono w M hw a b
     (fun i => ⟨hM a ha i, hM b hb i⟩) (hmin b hb)
 
-end Core.Optimization.ViolationSemiring
+end Phonology.Constraint.ViolationSemiring

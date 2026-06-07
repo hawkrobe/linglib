@@ -42,7 +42,8 @@ the iteration loop — see
 `Phonology/OptimalityTheory/Stratal.lean`.)
 -/
 
-namespace Core.Optimization.OT
+namespace Phonology.Constraint.OT
+
 
 variable {C : Type*}
 
@@ -251,4 +252,4 @@ theorem iterateGen_eventually_constant [DecidableEq C]
                 iterateGen_succ_of_step _ hcv hp,
                 IH' n hn']
 
-end Core.Optimization.OT
+end Phonology.Constraint.OT

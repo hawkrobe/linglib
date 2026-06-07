@@ -41,7 +41,7 @@ to a possible OT grammar.
 namespace Aissen2003
 
 open Features.Prominence
-open Core.Optimization.OT Phonology.Constraints
+open Phonology.Constraint.OT Phonology.Constraints
 
 open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
 

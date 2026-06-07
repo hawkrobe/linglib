@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.Weighted
+import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Agent.Thurstone
 
 /-!
@@ -30,7 +30,8 @@ of the violation profile elsewhere. NHG lacks this property because its
 noise variance σ_d depends on the violation profile.
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
+
 
 open Core Real
 
@@ -304,4 +305,4 @@ theorem nhgCovariance_self {C : Type*}
   congr 1 with acc con
   ring
 
-end Core.Optimization
+end Phonology.Constraint

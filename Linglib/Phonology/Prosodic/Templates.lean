@@ -32,7 +32,7 @@ the first place — the central analytical move of [faust-2026] §4.
 namespace Phonology.Templates
 
 open Morphology
-open Core.Optimization.OT (NamedConstraint)
+open Phonology.Constraint.OT (NamedConstraint)
 open Phonology.Constraints (mkAlign)
 
 -- ============================================================================

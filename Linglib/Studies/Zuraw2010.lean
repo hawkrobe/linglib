@@ -1,5 +1,5 @@
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Core.Optimization.PartiallyOrderedConstraints
+import Linglib.Phonology.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 
 /-!
@@ -25,7 +25,7 @@ Constraints) substrate. For each stem-initial consonant `c`:
   computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
   `{i : vp c .yes i < vp c .no i}` respectively), with concrete
   `decide`-discharged values.
-- `subProb c : ℚ` is `Core.Optimization.PartialOrderConstraints.pocPredict`
+- `subProb c : ℚ` is `Phonology.Constraint.PartialOrderConstraints.pocPredict`
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
@@ -94,9 +94,9 @@ those definitions must remain stable.
 
 namespace Zuraw2010
 
-open Core.Optimization Core.Optimization.OT Phonology.Constraints
-open Core.Optimization.PartialOrderConstraints
-open Core.Optimization.PermSubsetCombinatorics
+open Phonology.Constraint Core.Optimization Phonology.Constraint.OT Phonology.Constraints
+open Core.Optimization Phonology.Constraint.PartialOrderConstraints
+open Core.Optimization Core.Optimization.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
 
