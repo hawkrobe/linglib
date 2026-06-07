@@ -105,10 +105,6 @@ variable {α : Type*} [AddCommMonoid α] [LinearOrder α]
 class TimeMeasure (Time : Type*) [LinearOrder Time] {α : Type*}
     [AddCommMonoid α] [LinearOrder α]
     (μ : NonemptyInterval Time → α) : Prop where
-  /-- Any interval can be extended to a superinterval with a given larger
-      measure. -/
-  extensible : ∀ (i : NonemptyInterval Time) (m : α), μ i ≤ m →
-    ∃ j : NonemptyInterval Time, i ≤ j ∧ μ j = m
   /-- Any interval can be subdivided to a subinterval with a given smaller
       measure. -/
   subdivisible : ∀ (i : NonemptyInterval Time) (m : α), m ≤ μ i →
@@ -124,6 +120,14 @@ class TimeMeasure (Time : Type*) [LinearOrder Time] {α : Type*}
   positive : ∀ (a b : Time) (h : a < b), 0 < μ ⟨⟨a, b⟩, h.le⟩
 
 namespace TimeMeasure
+
+/-- Any interval can be extended to a superinterval with a given larger
+    measure: weakening of `extensibleLeft` (forget the right anchor). -/
+theorem extensible {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
+    (i : NonemptyInterval Time) (m : α) (h : μ i ≤ m) :
+    ∃ j : NonemptyInterval Time, i ≤ j ∧ μ j = m :=
+  let ⟨j, hij, _, hjμ⟩ := TimeMeasure.extensibleLeft i m h
+  ⟨j, hij, hjμ⟩
 
 /-- Moving the left endpoint strictly right strictly decreases measure:
     additivity plus positivity. The engine of the G-TIA shrink argument. -/
@@ -399,7 +403,9 @@ theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → α} [TimeMeasu
 /-- For an upward-monotone family with a witness at some world, the
     per-world set `{y | P y w}` has a least element via `Nat.find`. The
     statement is in mathlib idiom (`IsLeast`); the cross-world `IsMaxInf`
-    bridge is in `Extremum.lean` (`isMaxInf_of_isLeast_upward`). -/
+    bridge is in `Extremum.lean` (`isMaxInf_of_isLeast_upward`). Pinned to
+    `ℕ`: extremum existence needs a well-founded codomain, which dense `α`
+    deliberately lacks (that failure IS the G-TIA collapse below). -/
 theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
     {P : ℕ → W → Prop} (_hUp : IsUpwardMonotone P) (w : W)
     [DecidablePred (fun n => P n w)]
@@ -429,8 +435,8 @@ theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     ∃ ptsGI' : GInterval Time,
       ptsGI'.isOpen ∧
       (GInterval.closed rt).gsubinterval ptsGI' ∧
-      ptsGI'.toInterval ≤ ptsGI.toInterval ∧
-      ptsGI'.left ≠ ptsGI.left := by
+      ptsGI'.right = ptsGI.right ∧
+      ptsGI.left < ptsGI'.left := by
   obtain ⟨h_strict_left, h_strict_right⟩ :=
     GInterval.gsubinterval_closed_open_strict rt ptsGI h_open h_sub
   obtain ⟨m, hm_left, hm_right⟩ := DenselyOrdered.dense _ _ h_strict_left
@@ -441,19 +447,18 @@ theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     { left := m, right := ptsGI.right
     , leftType := .open_, rightType := .open_
     , valid := hm_valid }
-  refine ⟨ptsGI', ⟨rfl, rfl⟩, ?_, ?_, hm_left.ne'⟩
-  · intro p hp
-    -- hp : (closed rt).gcontains p, definitionally rt.fst ≤ p ∧ p ≤ rt.snd.
-    have hp1 : rt.fst ≤ p := hp.1
-    have hp2 : p ≤ rt.snd := hp.2
-    refine ⟨?_, ?_⟩
-    · -- ptsGI'.gcontains p (left side, open): m < p
-      show m < p
-      exact lt_of_lt_of_le hm_right hp1
-    · -- ptsGI'.gcontains p (right side, open): p < ptsGI.right
-      show p < ptsGI.right
-      exact lt_of_le_of_lt hp2 h_strict_right
-  · refine ⟨le_of_lt hm_left, le_refl _⟩
+  refine ⟨ptsGI', ⟨rfl, rfl⟩, ?_, rfl, hm_left⟩
+  intro p hp
+  -- hp : (closed rt).gcontains p, definitionally rt.fst ≤ p ∧ p ≤ rt.snd.
+  have hp1 : rt.fst ≤ p := hp.1
+  have hp2 : p ≤ rt.snd := hp.2
+  refine ⟨?_, ?_⟩
+  · -- ptsGI'.gcontains p (left side, open): m < p
+    show m < p
+    exact lt_of_lt_of_le hm_right hp1
+  · -- ptsGI'.gcontains p (right side, open): p < ptsGI.right
+    show p < ptsGI.right
+    exact lt_of_le_of_lt hp2 h_strict_right
 
 /-- **Positive G-TIA: no least true value**. Under dense `Time`, additivity
     and positivity let every witnessing open PTS shrink to a strictly
@@ -464,18 +469,16 @@ theorem gTIAOpen_no_isLeast [DenselyOrdered Time] [AddRightStrictMono α]
     (P : W → Event Time → Prop) (s : Time) (w : W) (x : α) :
     ¬ IsLeast {y | gTIAPropertyOpen P μ s y w} x := by
   rintro ⟨⟨ptsGI, hOpen, hRight, hμ, e, hP, hSub⟩, hLB⟩
-  obtain ⟨hL, hR⟩ := GInterval.gsubinterval_closed_open_strict e.τ ptsGI hOpen hSub
-  obtain ⟨m, hm_left, hm_right⟩ := DenselyOrdered.dense _ _ hL
-  have hms : m ≤ ptsGI.right :=
-    le_of_lt (lt_of_lt_of_le hm_right (le_trans e.τ.fst_le_snd (le_of_lt hR)))
+  obtain ⟨ptsGI', hOpen', hSub', hRight', hLeft'⟩ :=
+    no_smallest_open_PTS_geometric e.τ ptsGI hOpen hSub
   -- the shrunken open PTS witnesses a strictly smaller true value
-  have hmem : gTIAPropertyOpen P μ s (μ ⟨⟨m, ptsGI.right⟩, hms⟩) w := by
-    refine ⟨⟨m, ptsGI.right, .open_, .open_, hms⟩, ⟨rfl, rfl⟩, hRight, rfl, e, hP, ?_⟩
-    intro p hp
-    exact ⟨lt_of_lt_of_le hm_right hp.1, lt_of_le_of_lt hp.2 hR⟩
-  have hlt : μ ⟨⟨m, ptsGI.right⟩, hms⟩ < x := by
-    rw [← hμ]
-    exact TimeMeasure.measure_lt_of_left_lt μ hm_left hms
+  have hmem : gTIAPropertyOpen P μ s (μ ptsGI'.toInterval) w :=
+    ⟨ptsGI', hOpen', hRight'.trans hRight, rfl, e, hP, hSub'⟩
+  have he : ptsGI'.toInterval = ⟨⟨ptsGI'.left, ptsGI.right⟩, hRight' ▸ ptsGI'.valid⟩ :=
+    NonemptyInterval.ext (Prod.ext rfl hRight')
+  have hlt : μ ptsGI'.toInterval < x := by
+    rw [← hμ, he]
+    exact TimeMeasure.measure_lt_of_left_lt μ hLeft' (hRight' ▸ ptsGI'.valid)
   exact absurd (hLB hmem) (not_le.mpr hlt)
 
 /-- **Positive G-TIAs are not MIP-licensed** over dense time: the
@@ -499,15 +502,6 @@ def ratLength (i : NonemptyInterval ℚ) : ℚ≥0 :=
   ⟨i.snd - i.fst, sub_nonneg.mpr i.fst_le_snd⟩
 
 instance : TimeMeasure ℚ ratLength where
-  extensible i m h := by
-    have hm : i.snd - i.fst ≤ (m : ℚ) := NNRat.coe_le_coe.mpr h
-    refine ⟨⟨⟨i.snd - (m : ℚ), i.snd⟩, by linarith [m.coe_nonneg]⟩,
-      ⟨?_, le_refl _⟩, ?_⟩
-    · show i.snd - (m : ℚ) ≤ i.fst
-      linarith
-    · apply NNRat.ext
-      show i.snd - (i.snd - (m : ℚ)) = (m : ℚ)
-      ring
   subdivisible i m h := by
     have hm : (m : ℚ) ≤ i.snd - i.fst := NNRat.coe_le_coe.mpr h
     refine ⟨⟨⟨i.fst, i.fst + (m : ℚ)⟩, by linarith [m.coe_nonneg]⟩,
@@ -546,7 +540,8 @@ example {W : Type*} (P : W → Event ℚ → Prop) (s : ℚ) :
 /-- For a downward-monotone family over ℕ with a true witness and a failing
     bound at world `w`, the per-world set `{y | P y w}` has a greatest
     element. Dual of `upwardMonotone_hasIsLeast_of_witness`; the cross-world
-    bridge is `Extremum.isMaxInf_of_isGreatest_downward`. -/
+    bridge is `Extremum.isMaxInf_of_isGreatest_downward`. Pinned to `ℕ` for
+    the same well-foundedness reason as its dual. -/
 theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
     {P : ℕ → W → Prop} (hDown : IsDownwardMonotone P) (w : W)
     [DecidablePred (fun n => P n w)]
@@ -866,7 +861,9 @@ is originally [von-fintel-iatridou-2019]'s; the density mechanism is
 mechanism for the blocked E-perfect reading is `gTIAOpen_not_MIP_licensed`
 (its Hamblin-set application is not formalized at this substrate level). -/
 
-/-- Since-when question datum: which perfect readings are available? -/
+/-- Since-when question datum: which perfect readings are available?
+    Observation-only (no prediction sentry): the Hamblin-set derivation
+    is not formalized at this substrate level. -/
 structure SinceWhenDatum where
   sentence : String
   uPerfect : Prop
