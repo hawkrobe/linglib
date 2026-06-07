@@ -392,14 +392,15 @@ def npMates {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set (Node
 | Definition 3 | Command Relation | `commandRelation` |
 | Theorem 1 | Intersection Theorem | `intersection_theorem` |
 | Corollary | Antitone Map | `command_antitone`, `command_converts_sup_to_inf` |
-| Theorem 2 | Reflexivity | `command_reflexive` |
+| (prose, p. 4) | Reflexivity | `command_reflexive` |
 | Theorem 3 | Ambidextrousness | `command_ambidextrous` |
-| Theorem 5 | Descent/Constituency | `command_descent`, `command_constituency` |
+| Theorem 5 | Descent | `command_descent`, `command_descent'` |
+| Theorem 7 | Constituency (via CAC) | *(not formalized)* |
 | Theorem 6 | Fairness | `command_fair` |
 | Section 3 | Mate Relations | `mateRelation`, `mate_symmetric`, `mate_reflexive`, `mate_intersection` |
 | - | Generalized Intersection | `command_sInter` |
 | - | Closure System | `command_closure_system` |
-| - | IDc-command is bottom | `idc_is_bottom` |
+| Theorem 2 | IDc-command is smallest | `idc_is_bottom` |
 | - | Universal command is top | `universal_is_top` |
 | Theorem 4 | Boundedness | `command_bounded` |
 | Theorem 8 | Embeddability | `command_embeddable_simple`, `command_embeddable_cac` |

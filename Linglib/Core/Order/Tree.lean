@@ -19,8 +19,10 @@ A `TreeOrder` only adds what is tree-specific: a designated `root`, the
 `nodes` subset that participates in the tree, the **Connected Ancestor
 Condition (CAC)**, and dominance closure on `nodes`.
 
-The CAC is needed for B&P's Embeddability Theorem (Theorem 8) and the
-Boundedness Theorem (Theorem 4).
+The CAC is what B&P's Constituency Theorem (Theorem 7), the
+Embeddability Theorem (Theorem 8), and the reverse direction of the
+Union Theorem (Theorem 9) require; Boundedness (Theorem 4) uses only
+the root.
 
 ## Main Definitions
 
@@ -35,7 +37,9 @@ namespace Core.Order
 open Set
 
 /-- Tree-shaped subset of a partially-ordered `Node` type
-    ([barker-pullum-1990] Definition 1).
+    ([barker-pullum-1990] Definitions 1 and 15 consolidated: Def 1 is
+    the Wall-style tree — Single Root, Exclusivity, Nontangling — and
+    Def 15 is the CAC, which B&P prove Def-1 trees entail, p. 22).
 
     The dominance order is `(· ≤ ·)` from `[PartialOrder Node]`; this
     structure adds tree-specific data: a designated root, the `nodes`
