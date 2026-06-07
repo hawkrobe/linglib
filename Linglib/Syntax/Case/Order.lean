@@ -46,16 +46,16 @@ open Core.Order (RankLT RankLE)
     (e.g., ERG/ABS in ergative systems, or minor cases whose containment
     structure is less well established).
 
-    **Encoding caveat.** [caha-2009] (10b), p. 10 gives the Universal
-    Case sequence NOM-ACC-GEN-DAT-INST-COM (no LOC); the Russian-specific
-    sequence (16) p. 12 inserts PREP between GEN and DAT. The encoding
+    **Encoding caveat.** [caha-2009]'s Universal Case sequence is
+    NOM-ACC-GEN-DAT-INST-COM (no LOC); his Russian-specific sequence
+    inserts the prepositional/locative between GEN and DAT. The encoding
     below — NOM=0, ACC=1, GEN=2, DAT=3, LOC=4, INST=none — matches
     neither verbatim; it is closer to Blake's typological hierarchy
-    ([blake-1994] §5.8, which Caha himself argues on p. 31 should
-    coincide with his sequence). For Slavic 6-case inventories the
-    encoding choice is verdict-equivalent; inventories with INST or COM
-    *without* LOC may diverge. For paradigm-shape work that needs Caha's
-    actual Slavic ordering, see `cahaSlavicRank` below. -/
+    ([blake-1994], which Caha argues should coincide with his sequence).
+    For Slavic 6-case inventories the encoding choice is
+    verdict-equivalent; inventories with INST or COM *without* LOC may
+    diverge. For paradigm-shape work that needs Caha's actual Slavic
+    ordering, see `cahaSlavicRank` below. -/
 def containmentRank : _root_.Case → Option Nat
   | .nom => some 0
   | .acc => some 1
@@ -64,19 +64,18 @@ def containmentRank : _root_.Case → Option Nat
   | .loc => some 4
   | _ => none
 
-/-- Caha's Slavic-specific Case sequence ([caha-2009] (16) p. 12 for
-    Russian; (7) p. 238 confirms the same for Serbian): NOM – ACC – GEN –
-    PREP/LOC – DAT – INS. Differs from `containmentRank` in placing LOC
-    between GEN and DAT (not at top) and INST at the top (not
-    off-hierarchy). Use this rank for paradigm-shape contiguity claims
-    referencing Caha's Slavic data; use `containmentRank` for inventory
-    downward-closure verdicts (where the choice is Slavic-equivalent).
+/-- Caha's Slavic-specific Case sequence ([caha-2009]; stated for
+    Russian and confirmed for Serbian): NOM – ACC – GEN – PREP/LOC –
+    DAT – INS. Differs from `containmentRank` in placing LOC between GEN
+    and DAT (not at top) and INST at the top (not off-hierarchy). Use
+    this rank for paradigm-shape contiguity claims referencing Caha's
+    Slavic data; use `containmentRank` for inventory downward-closure
+    verdicts (where the choice is Slavic-equivalent).
 
-    Returns `Fin 6` rather than `Option Nat`: all six cases are
-    on-hierarchy in Caha's Slavic encoding; there are no off-hierarchy
-    cases for the Slavic noun system. The `Option` is preserved for
-    consistency with `containmentRank`'s API and to flag non-Slavic
-    cases as not-in-the-Slavic-sequence. -/
+    Codomain `Option (Fin 6)`: the six cases of the Slavic noun system
+    are all on-hierarchy in Caha's Slavic encoding (hence `Fin 6`); the
+    remaining `Case` cells, which are not part of that system, map to
+    `none`. -/
 def cahaSlavicRank : _root_.Case → Option (Fin 6)
   | .nom  => some 0
   | .acc  => some 1
@@ -162,20 +161,22 @@ end Caha
 open scoped Caha
 
 /-- A case is **nonnominative** iff its representation contains ACC's, i.e.
-    `(.acc : Case) ≤ c` in the Caha order. [mcfadden-2018] argues this is
-    the key natural class for stem allomorphy: a VI rule conditioned on
-    `[ACC]` captures the NOM-vs-oblique split found cross-linguistically. -/
+    `(.acc : Case) ≤ c` in the Caha order. [mcfadden-2018] argues this
+    natural class underlies NOM-vs-oblique stem allomorphy: a VI rule
+    conditioned on `[ACC]` captures the split found cross-linguistically
+    (one of his arguments that the nominative is featurally empty). -/
 def IsNonnominative (c : _root_.Case) : Prop := (.acc : _root_.Case) ≤ c
 
 instance (c : _root_.Case) : Decidable (IsNonnominative c) :=
   inferInstanceAs (Decidable ((.acc : _root_.Case) ≤ c))
 
 /-- A case is **oblique** iff its representation contains GEN's, i.e.
-    `(.gen : Case) ≤ c` in the Caha order. Per [caha-2009]'s
-    Unmarked-Dependent vs Oblique split, NOM/ACC are unmarked-dependent
-    and GEN/DAT/LOC/INS/COM/etc. are oblique. Ergative-aligned ABS/ERG
-    are off-hierarchy in `containmentRank` and so satisfy `¬ IsOblique`
-    (consistent with their parallel-to-NOM/ACC structural status). -/
+    `(.gen : Case) ≤ c` in the Caha order — the traditional
+    structural-vs-oblique split (NOM/ACC vs GEN and above), stated
+    through the containment encoding ([caha-2009] supplies the encoding,
+    not the terminology). Ergative-aligned ABS/ERG are off-hierarchy in
+    `containmentRank` and so satisfy `¬ IsOblique` (consistent with
+    their parallel-to-NOM/ACC structural status). -/
 def IsOblique (c : _root_.Case) : Prop := (.gen : _root_.Case) ≤ c
 
 instance (c : _root_.Case) : Decidable (IsOblique c) :=
@@ -189,7 +190,9 @@ theorem isOblique_split_core :
 
 /-- Ergative-aligned ABS/ERG are not oblique under the Caha hierarchy
     (off-hierarchy → incomparable with GEN). This makes the predicate
-    usable for SMSE 2019-style ergative paradigms (Wardaman, Khinalugh). -/
+    usable for the ergative pronominal paradigms of
+    [smith-moskal-xu-kang-bobaljik-2019] (Wardaman, Khinalugh —
+    `Studies/SmithMoskalEtAl2019.lean`). -/
 theorem isOblique_erg_abs_false :
     ¬ IsOblique .erg ∧ ¬ IsOblique .abs := by
   refine ⟨?_, ?_⟩ <;> decide

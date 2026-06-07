@@ -1,4 +1,4 @@
-import Mathlib.Order.Basic
+import Mathlib.Order.RelClasses
 
 /-!
 # Partial-Rank Orders
@@ -15,17 +15,23 @@ says nothing about ERG or ABS, and the silence is theoretical content.
 No pullback produces this. `Preorder.lift` through `r` (the
 `PullbackPreorder` construction) would make all unranked elements
 mutually equivalent — `r a = r b = none` gives `a ≤ b ≤ a` — losing
-antisymmetry and the isolation. Hence the direct construction: `RankLE`
-is the reflexive closure of the strict comparison `RankLT`, which is
-asymmetric and transitive whenever `<` on `β` is, so the closure is a
-genuine partial order.
+antisymmetry and the isolation.
+
+The order structure itself is mathlib's: `RankLT` is a strict order
+(`IsStrictOrder` instance below), so `partialOrderOfRank` is
+`partialOrderOfSO (RankLT r)` and `RankLE` is its reflexive closure
+(the `Relation.ReflGen` shape). This file's value-add is `RankLT`
+itself, its decidability, and the isolation lemmas. There is no total
+variant: isolation precludes totality whenever any element is unranked.
 
 ## Main declarations
 
 * `Core.Order.RankLT` — strict comparison through a partial rank
 * `Core.Order.RankLE` — its reflexive closure
-* `Core.Order.partialOrderOfRank` — the bundled `PartialOrder`, with
-  `<` definitionally `RankLT`
+* `Core.Order.rankLE_iff_eq_left`/`rankLE_iff_eq_right` — isolation:
+  an unranked element is `≤`-related only to itself
+* `Core.Order.partialOrderOfRank` — `partialOrderOfSO` at `RankLT r`;
+  `<` is definitionally `RankLT` and `≤` is `RankLE`
 -/
 
 namespace Core.Order
@@ -65,10 +71,6 @@ theorem rankLT_iff :
   unfold RankLT
   split <;> simp_all
 
-theorem RankLT.rankLE (h : RankLT r a b) : RankLE r a b := Or.inr h
-
-theorem rankLE_refl (a : α) : RankLE r a a := Or.inl rfl
-
 /-- An unranked element is `≤`-related only to itself (left). -/
 theorem rankLE_iff_eq_left (h : r a = none) : RankLE r a b ↔ a = b := by
   refine ⟨fun hab => hab.resolve_right fun hlt => ?_, Or.inl⟩
@@ -101,39 +103,22 @@ theorem rankLT_irrefl (a : α) : ¬RankLT r a a := fun h => by
   obtain rfl := Option.some.inj (hx.symm.trans hy)
   exact lt_irrefl x hxy
 
-theorem RankLT.asymm (hab : RankLT r a b) : ¬RankLT r b a := fun hba =>
-  rankLT_irrefl a (hab.trans hba)
+/-- `RankLT` is a strict order — the bridge to mathlib's order
+    constructors. -/
+instance (r : α → Option β) [Preorder β] : IsStrictOrder α (RankLT r) where
+  irrefl := rankLT_irrefl
+  trans _ _ _ := RankLT.trans
 
-theorem rankLE_trans (hab : RankLE r a b) (hbc : RankLE r b c) :
-    RankLE r a c := by
-  rcases hab with rfl | hab
-  · exact hbc
-  rcases hbc with rfl | hbc
-  · exact Or.inr hab
-  · exact Or.inr (hab.trans hbc)
+/-- The partial order induced by a partial rank: `partialOrderOfSO` at
+    `RankLT r`, so `<` is definitionally `RankLT r` and `≤` is
+    `RankLE r`. Intended for `scoped instance`s: a theoretical hierarchy
+    is borne by a feature type as an opt-in commitment, never as a
+    global instance.
 
-theorem rankLE_antisymm (hab : RankLE r a b) (hba : RankLE r b a) :
-    a = b := by
-  rcases hab with rfl | hab
-  · rfl
-  rcases hba with rfl | hba
-  · rfl
-  · exact absurd hba hab.asymm
-
-/-- The partial order induced by a partial rank. `≤` is `RankLE r`; `<`
-    is definitionally `RankLT r`. Intended for `scoped instance`s: a
-    theoretical hierarchy is borne by a feature type as an opt-in
-    commitment, never as a global instance. -/
-@[reducible] def partialOrderOfRank (r : α → Option β) [Preorder β] :
-    PartialOrder α where
-  le := RankLE r
-  lt := RankLT r
-  le_refl := rankLE_refl
-  le_trans _ _ _ := rankLE_trans
-  le_antisymm _ _ := rankLE_antisymm
-  lt_iff_le_not_ge a _ :=
-    ⟨fun h => ⟨h.rankLE, fun hba => hba.elim (fun he => rankLT_irrefl a (he ▸ h)) h.asymm⟩,
-     fun ⟨hab, hba⟩ => hab.resolve_left fun he => hba (Or.inl he.symm)⟩
+    See note [reducible non-instances]. -/
+abbrev partialOrderOfRank (r : α → Option β) [Preorder β] :
+    PartialOrder α :=
+  partialOrderOfSO (RankLT r)
 
 end Preorder
 
