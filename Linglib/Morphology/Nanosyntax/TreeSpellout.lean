@@ -317,8 +317,9 @@ instance {F : Type} : Core.Order.Branching (NanoTree F) where
 @[simp] theorem branching_children_node {F : Type} (f : F) (cs : List (NanoTree F)) :
     Core.Order.Branching.children (NanoTree.node f cs) = cs := rfl
 
-instance {F : Type} : Core.Order.FiniteBranching (NanoTree F) where
-  sizeOf_children {c t} hc := by
+noncomputable instance {F : Type} : Core.Order.FiniteBranching (NanoTree F) where
+  measure := sizeOf
+  measure_children {c t} hc := by
     cases t with
     | leaf _ => simp at hc
     | node f cs =>

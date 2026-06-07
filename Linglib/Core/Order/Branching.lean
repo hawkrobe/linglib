@@ -1,5 +1,6 @@
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Tree
+import Linglib.Core.Order.Command
 import Mathlib.Algebra.Free
 
 /-!
@@ -115,25 +116,37 @@ end Branching
 Recursion *on the carrier* (size, subtree enumeration, yield,
 induction) is not definable from `Branching` alone: Lean cannot see
 structural decrease through a class field. The mixin supplies the
-missing law — children strictly decrease `sizeOf` — which concrete
-inductive carriers discharge by `cases` + `omega` over their
-auto-derived `SizeOf`. -/
+missing data — a `Nat`-valued `measure` that children strictly
+decrease — which concrete inductive carriers discharge by `cases` +
+`omega` over their auto-derived `SizeOf` (the canonical choice
+`measure := sizeOf`).
 
-/-- A `Branching` carrier whose children strictly decrease `sizeOf`.
-Unlocks carrier recursion: `size`, `subtrees`, `yield`, `inductionOn`. -/
-class FiniteBranching (T : Type*) [SizeOf T] extends Branching T where
-  /-- Children are `sizeOf`-smaller than their parent. -/
-  sizeOf_children : ∀ {c t : T}, c ∈ Branching.children t → sizeOf c < sizeOf t
+The measure is carried as class *data* rather than reusing an ambient
+`[SizeOf T]` index: a class indexed by `[SizeOf T]` cannot have its
+instances synthesised (the type parameter stays a metavariable through
+the rigid `SizeOf` index — `FiniteBranching (Tree ℕ String)` fails to
+unify with `FiniteBranching (Tree ?m ?n)`), so the recursion API would
+be unusable. An owned `measure : T → Nat` field sidesteps this while
+keeping `termination_by FiniteBranching.measure t` available. -/
+
+/-- A `Branching` carrier with a `Nat` `measure` that children strictly
+decrease. Unlocks carrier recursion: `size`, `subtrees`, `yield`,
+`inductionOn`. Concrete inductives instantiate `measure := sizeOf`. -/
+class FiniteBranching (T : Type*) extends Branching T where
+  /-- A well-founded measure for carrier recursion (canonically `sizeOf`). -/
+  measure : T → Nat
+  /-- Children strictly decrease the `measure`. -/
+  measure_children : ∀ {c t : T}, c ∈ Branching.children t → measure c < measure t
 
 namespace Branching
 
-variable {T : Type*} [SizeOf T] [FiniteBranching T]
+variable {T : Type*} [FiniteBranching T]
 
 /-- Number of nodes. -/
 def size (t : T) : Nat :=
   1 + ((children t).attach.map (fun ⟨c, hc⟩ => size c)).sum
-termination_by sizeOf t
-decreasing_by exact FiniteBranching.sizeOf_children hc
+termination_by FiniteBranching.measure t
+decreasing_by exact FiniteBranching.measure_children hc
 
 /-- Attach-free unfolding of `size`, for concrete computation. -/
 theorem size_def (t : T) :
@@ -143,8 +156,8 @@ theorem size_def (t : T) :
 /-- All subtrees including self, pre-order. -/
 def subtrees (t : T) : List T :=
   t :: (children t).attach.flatMap (fun ⟨c, hc⟩ => subtrees c)
-termination_by sizeOf t
-decreasing_by exact FiniteBranching.sizeOf_children hc
+termination_by FiniteBranching.measure t
+decreasing_by exact FiniteBranching.measure_children hc
 
 /-- Attach-free unfolding of `subtrees`, for concrete computation. -/
 theorem subtrees_def (t : T) :
@@ -159,11 +172,12 @@ theorem self_mem_subtrees (t : T) : t ∈ subtrees t := by
 from `motive` on all children. -/
 theorem inductionOn {motive : T → Prop} (t : T)
     (ih : ∀ t, (∀ c ∈ children t, motive c) → motive t) : motive t := by
-  induction ht : sizeOf t using Nat.strong_induction_on generalizing t with
+  induction ht : FiniteBranching.measure t using Nat.strong_induction_on
+    generalizing t with
   | _ n ihn =>
     subst ht
     exact ih t fun c hc =>
-      ihn (sizeOf c) (FiniteBranching.sizeOf_children hc) c rfl
+      ihn (FiniteBranching.measure c) (FiniteBranching.measure_children hc) c rfl
 
 end Branching
 
@@ -182,14 +196,14 @@ export HasContent (content?)
 
 namespace Branching
 
-variable {T W : Type*} [SizeOf T] [FiniteBranching T] [HasContent T W]
+variable {T W : Type*} [FiniteBranching T] [HasContent T W]
 
 /-- Terminal yield, left to right: the frontier string. The most basic
 tree-to-string map — linear precedence lives over it. -/
 def yield (t : T) : List W :=
   (content? t).toList ++ (children t).attach.flatMap (fun ⟨c, hc⟩ => yield c)
-termination_by sizeOf t
-decreasing_by exact FiniteBranching.sizeOf_children hc
+termination_by FiniteBranching.measure t
+decreasing_by exact FiniteBranching.measure_children hc
 
 /-- Attach-free unfolding of `yield`, for concrete computation. -/
 theorem yield_def (t : T) :
@@ -213,12 +227,84 @@ instance {α : Type*} : Branching (FreeMagma α) where
     | .mul l r => [l, r]
 
 instance {α : Type*} : FiniteBranching (FreeMagma α) where
-  sizeOf_children {c t} hc := by
+  measure := sizeOf
+  measure_children {c t} hc := by
     cases t with
     | of _ => simp [Branching.children] at hc
     | mul l r =>
       simp only [Branching.children, List.mem_cons, List.not_mem_nil, or_false] at hc
       have hmul : sizeOf (FreeMagma.mul l r) = 1 + sizeOf l + sizeOf r := rfl
       rcases hc with rfl | rfl <;> omega
+
+/-! ### Decidable command relations over `toTreeOrder`
+
+`commandRelation (toTreeOrder t) P` is decidable at concrete positions:
+the dominators of `a` are exactly the prefixes of `a`'s path
+(`List.inits`), a finite list, so the defining universal collapses to a
+`List`-bounded one. This unlocks `decide` for c-command facts on
+concrete trees ([barker-pullum-1990], [reinhart-1976]). The branching
+property is supplied by `isBranchingAt` (≥ 2 children at the position),
+the geometric reading of [reinhart-1976]'s "branching node". -/
+
+namespace Branching
+
+variable {T : Type*} [Branching T]
+
+/-- Dominance (`p ≤ q`, prefix order) on positions is decidable. -/
+instance : DecidableLE TreePath := fun p q =>
+  decidable_of_iff _ TreePath.le_def.symm
+
+/-- A position `p` is a **branching node** of `t` when its subtree has at
+least two children — the geometric reading of [reinhart-1976]'s "first
+branching node" generating relation. -/
+def isBranchingAt (t : T) (p : TreePath) : Prop :=
+  ∃ s, subtreeAt t p.toList = some s ∧ 2 ≤ (children s).length
+
+instance decIsBranchingAt (t : T) (p : TreePath) : Decidable (isBranchingAt t p) :=
+  match h : subtreeAt t p.toList with
+  | none => isFalse (by rintro ⟨s, hs, _⟩; rw [h] at hs; simp at hs)
+  | some s =>
+    if hlen : 2 ≤ (children s).length then
+      isTrue ⟨s, h, hlen⟩
+    else
+      isFalse (by rintro ⟨s', hs', hlen'⟩; rw [h] at hs'; cases hs'; exact hlen hlen')
+
+instance (t : T) : DecidablePred (isBranchingAt t) := fun p => decIsBranchingAt t p
+
+/-- Membership in `commandRelation (toTreeOrder t) P` collapses to a
+finite universal over the proper prefixes of `a`: the only nodes that
+properly dominate `a` are its proper prefixes (`a.toList.inits`). This
+is the key reduction making c-command facts `decide`-able. -/
+theorem mem_commandRelation_toTreeOrder_iff
+    (t : T) (P : Set TreePath) (a b : TreePath) :
+    (a, b) ∈ commandRelation (toTreeOrder t) P ↔
+      ∀ x ∈ a.toList.inits.map TreePath.mk, x ≠ a → x ∈ P → x ≤ b := by
+  simp only [commandRelation, upperBounds, TreeOrder.properDom, Set.mem_setOf_eq]
+  constructor
+  · intro h x hx hne hP
+    rw [List.mem_map] at hx
+    obtain ⟨l, hl, rfl⟩ := hx
+    exact h ⟨l⟩ ⟨⟨(List.mem_inits _ _).mp hl, hne⟩, hP⟩
+  · intro h x ⟨⟨hxa, hne⟩, hP⟩
+    refine h x ?_ hne hP
+    rw [List.mem_map]
+    exact ⟨x.toList, (List.mem_inits _ _).mpr (TreePath.le_def.mp hxa), rfl⟩
+
+instance decMemCommandRelation
+    (t : T) (P : Set TreePath) [DecidablePred (· ∈ P)] (a b : TreePath) :
+    Decidable ((a, b) ∈ commandRelation (toTreeOrder t) P) :=
+  decidable_of_iff _ (mem_commandRelation_toTreeOrder_iff t P a b).symm
+
+/-- **K-command** over a concrete carrier ([reinhart-1976]'s c-command):
+the [barker-pullum-1990] command relation generated by the geometric
+branching nodes `isBranchingAt t`. Unlike the abstract `kCommand`
+(`Core/Order/Command.lean`, parameterised by the order-theoretic
+`branchingNodes`), this reads the branching property directly off the
+carrier, so it is decidable and matches sister-form c-command on binary
+trees. `abbrev` so membership inherits `decMemCommandRelation`. -/
+abbrev kCommandAt (t : T) : Set (TreePath × TreePath) :=
+  commandRelation (toTreeOrder t) {p | isBranchingAt t p}
+
+end Branching
 
 end Core.Order

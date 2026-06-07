@@ -321,10 +321,15 @@ instance {C W : Type} : Core.Order.Branching (Tree C W) where
     | .trace _ _ => []
     | .bind _ _ body => [body]
 
-/-- Children strictly decrease `sizeOf`, unlocking the generic
-recursion API (`Branching.size`, `subtrees`, `yield`, `inductionOn`). -/
-instance {C W : Type} : Core.Order.FiniteBranching (Tree C W) where
-  sizeOf_children {c t} hc := by
+/-- Children strictly decrease the `sizeOf` measure, unlocking the
+generic recursion API (`Branching.size`, `subtrees`, `yield`,
+`inductionOn`). `noncomputable` because the `measure` field stores
+`sizeOf`, whose nested-`List` IR the LCNF boxing pass cannot compile;
+the measure is only a termination witness, and `yield`/`size` reduce
+symbolically via their `_def` lemmas. -/
+noncomputable instance {C W : Type} : Core.Order.FiniteBranching (Tree C W) where
+  measure := sizeOf
+  measure_children {c t} hc := by
     cases t with
     | terminal _ _ => simp [Core.Order.Branching.children] at hc
     | node _ cs =>

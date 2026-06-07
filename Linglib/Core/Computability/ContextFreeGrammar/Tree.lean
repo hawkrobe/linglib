@@ -1125,8 +1125,9 @@ instance : Core.Order.Branching (CFGTree T N) where
 @[simp] theorem branching_children_node (nt : N) (cs : List (CFGTree T N)) :
     Core.Order.Branching.children (CFGTree.node nt cs) = cs := rfl
 
-instance : Core.Order.FiniteBranching (CFGTree T N) where
-  sizeOf_children {c t} hc := by
+noncomputable instance : Core.Order.FiniteBranching (CFGTree T N) where
+  measure := sizeOf
+  measure_children {c t} hc := by
     cases t with
     | leaf _ => simp at hc
     | node nt cs =>
