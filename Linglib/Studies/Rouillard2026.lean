@@ -1,3 +1,7 @@
+import Mathlib.Data.NNRat.Order
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 import Linglib.Core.Order.Boundedness
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Interval
@@ -43,6 +47,9 @@ numeral exists ("information collapse"), the TIA is blocked.
   event duration.
 - `no_smallest_open_PTS_geometric`: density witness — no smallest open
   PTS contains a given closed runtime.
+- `gTIAOpen_not_MIP_licensed`: positive G-TIAs over dense time are not
+  MIP-licensed (the end-to-end information-collapse discharge), with the
+  `ratLength` model over `ℚ` witnessing satisfiability.
 - `downwardMonotone_hasIsGreatest_of_bound` / `gTIANeg_hasIsGreatest`:
   negated G-TIAs have a greatest true numeral — the gap length.
 - `eTIA_all_predicted` / `gTIA_all_predicted` / `surviving_is_neg_gtia_pfv`:
@@ -82,26 +89,52 @@ open Semantics.Entailment.Extremum
 open English.TemporalExpressions
 
 variable {W Time : Type*} [LinearOrder Time]
+variable {α : Type*} [AddCommMonoid α] [LinearOrder α]
 
 /-! ### Time measure -/
 
-/-- A temporal measure: assigns natural-number durations to intervals,
-    extensible upward and subdivisible downward. [rouillard-2026] §2.2.2:
-    temporal measure units (days, hours) are additive, hence any interval
-    can be padded or trimmed to any target measure within a one-sided bound.
-    (`Mereology.ExtMeasure` is ℚ-valued over `[SemilatticeSup α]`; intervals
-    are not join-semilattices, so this is the interval-specific ℕ-valued
-    companion, matching the paper's integer-numeral data.) -/
-class TimeMeasure (Time : Type*) [LinearOrder Time]
-    (μ : NonemptyInterval Time → ℕ) : Prop where
+/-- A temporal measure: assigns durations in an ordered additive monoid `α`
+    to intervals. [rouillard-2026] §2.2.2: temporal measure units (days,
+    hours) are additive (eq. 6) and positive (eq. 7); richness of `Time`
+    additionally lets any interval be padded or trimmed to any target
+    measure within a one-sided bound, with left-padding available at a
+    fixed right endpoint (PTSs are right-anchored at speech time).
+    Instantiate `α := ℕ` for the discrete integer-numeral reading or
+    `α := ℚ≥0` over dense time for the reading that drives the G-TIA
+    collapse (`ratLength` below). -/
+class TimeMeasure (Time : Type*) [LinearOrder Time] {α : Type*}
+    [AddCommMonoid α] [LinearOrder α]
+    (μ : NonemptyInterval Time → α) : Prop where
   /-- Any interval can be extended to a superinterval with a given larger
       measure. -/
-  extensible : ∀ (i : NonemptyInterval Time) (m : ℕ), μ i ≤ m →
+  extensible : ∀ (i : NonemptyInterval Time) (m : α), μ i ≤ m →
     ∃ j : NonemptyInterval Time, i ≤ j ∧ μ j = m
   /-- Any interval can be subdivided to a subinterval with a given smaller
       measure. -/
-  subdivisible : ∀ (i : NonemptyInterval Time) (m : ℕ), m ≤ μ i →
+  subdivisible : ∀ (i : NonemptyInterval Time) (m : α), m ≤ μ i →
     ∃ j : NonemptyInterval Time, j ≤ i ∧ μ j = m
+  /-- Right-anchored left-extension: any interval can be extended to a
+      given larger measure keeping its right endpoint fixed. -/
+  extensibleLeft : ∀ (i : NonemptyInterval Time) (m : α), μ i ≤ m →
+    ∃ j : NonemptyInterval Time, i ≤ j ∧ j.snd = i.snd ∧ μ j = m
+  /-- Additivity over interval concatenation ([rouillard-2026] eq. 6). -/
+  additive : ∀ (a b c : Time) (hab : a ≤ b) (hbc : b ≤ c),
+    μ ⟨⟨a, c⟩, hab.trans hbc⟩ = μ ⟨⟨a, b⟩, hab⟩ + μ ⟨⟨b, c⟩, hbc⟩
+  /-- Positivity on nondegenerate intervals ([rouillard-2026] eq. 7). -/
+  positive : ∀ (a b : Time) (h : a < b), 0 < μ ⟨⟨a, b⟩, h.le⟩
+
+namespace TimeMeasure
+
+/-- Moving the left endpoint strictly right strictly decreases measure:
+    additivity plus positivity. The engine of the G-TIA shrink argument. -/
+theorem measure_lt_of_left_lt [AddRightStrictMono α]
+    (μ : NonemptyInterval Time → α) [TimeMeasure Time μ]
+    {a b s : Time} (hab : a < b) (hbs : b ≤ s) :
+    μ ⟨⟨b, s⟩, hbs⟩ < μ ⟨⟨a, s⟩, hab.le.trans hbs⟩ := by
+  rw [TimeMeasure.additive (μ := μ) a b s hab.le hbs]
+  exact lt_add_of_pos_left _ (TimeMeasure.positive (μ := μ) a b hab)
+
+end TimeMeasure
 
 /-! ### Generalized intervals with open/closed boundaries -/
 
@@ -228,7 +261,7 @@ end GInterval
 /-- Prior time span: the maximal interval right-bounded by `s` with
     measure `n`, over `GInterval` so open-vs-closed boundary tags are
     carried structurally. [rouillard-2026] eq. (50). -/
-def pts (n : ℕ) (μ : NonemptyInterval Time → ℕ) [TimeMeasure Time μ] (s : Time)
+def pts (n : α) (μ : NonemptyInterval Time → α) [TimeMeasure Time μ] (s : Time)
     (gi : GInterval Time) : Prop :=
   gi.right = s ∧ μ gi.toInterval = n
 
@@ -243,8 +276,8 @@ def inETIA (e : Event Time) (bound : NonemptyInterval Time) : Prop :=
 /-- E-TIA derived property: at world `w`, value `n` is true iff there is
     a P-event whose runtime is included in some `n`-unit time, and that
     `n`-unit time falls within `g1`. [rouillard-2026] eq. (77). -/
-def eTIAProperty (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
-    [TimeMeasure Time μ] (g1 : NonemptyInterval Time) : ℕ → W → Prop :=
+def eTIAProperty (P : W → Event Time → Prop) (μ : NonemptyInterval Time → α)
+    [TimeMeasure Time μ] (g1 : NonemptyInterval Time) : α → W → Prop :=
   fun n w => ∃ t : NonemptyInterval Time, μ t = n ∧
     ∃ e : Event Time, P w e ∧ e.τ ≤ g1 ∧ e.τ ≤ t
 
@@ -254,8 +287,8 @@ def eTIAProperty (P : W → Event Time → Prop) (μ : NonemptyInterval Time →
     an OPEN PTS of measure `n` ending at `s` containing the closed runtime
     of a P-event. The openness of the PTS is carried structurally by
     `GInterval`. [rouillard-2026] eq. (94) revised with eq. (101). -/
-def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
-    [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
+def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : NonemptyInterval Time → α)
+    [TimeMeasure Time μ] (s : Time) : α → W → Prop :=
   fun n w => ∃ ptsGI : GInterval Time,
     ptsGI.isOpen ∧
     ptsGI.right = s ∧
@@ -265,9 +298,41 @@ def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : NonemptyInterval Time
 /-- The negation of `gTIAPropertyOpen`, used for G-TIAs in negative
     contexts (where the property "no event in the n-unit open PTS" holds
     iff `gTIAPropertyOpen` is false). -/
-def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
-    [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
+def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval Time → α)
+    [TimeMeasure Time μ] (s : Time) : α → W → Prop :=
   fun n w => ¬ gTIAPropertyOpen P μ s n w
+
+/-- The positive G-TIA property is upward monotone: a wider gap window with
+    the same right anchor still contains the event runtime, via
+    `TimeMeasure.extensibleLeft`. -/
+theorem gTIAPropertyOpen_upwardMonotone {μ : NonemptyInterval Time → α}
+    [TimeMeasure Time μ] (P : W → Event Time → Prop) (s : Time) :
+    IsUpwardMonotone (gTIAPropertyOpen P μ s) := by
+  rintro n m hnm w ⟨ptsGI, hOpen, hRight, hμ, e, hP, hSub⟩
+  obtain ⟨j, hij, hjsnd, hjμ⟩ :=
+    TimeMeasure.extensibleLeft ptsGI.toInterval m (hμ ▸ hnm)
+  obtain ⟨hL, hR⟩ := GInterval.gsubinterval_closed_open_strict e.τ ptsGI hOpen hSub
+  refine ⟨⟨j.fst, j.snd, .open_, .open_, j.fst_le_snd⟩, ⟨rfl, rfl⟩, ?_, hjμ, e, hP, ?_⟩
+  · show j.snd = s
+    rw [hjsnd]; exact hRight
+  · intro p hp
+    have hp1 : e.τ.fst ≤ p := hp.1
+    have hp2 : p ≤ e.τ.snd := hp.2
+    refine ⟨?_, ?_⟩
+    · show j.fst < p
+      exact lt_of_le_of_lt hij.1 (lt_of_lt_of_le hL hp1)
+    · show p < j.snd
+      rw [hjsnd]
+      exact lt_of_le_of_lt hp2 hR
+
+/-- The negated G-TIA property is downward monotone: if no event sits in
+    the `n`-unit gap window, none sits in any narrower one. Discharges the
+    monotonicity that `gTIANeg_hasIsGreatest` needs. -/
+theorem gTIAPropertyOpenNeg_downwardMonotone {μ : NonemptyInterval Time → α}
+    [TimeMeasure Time μ] (P : W → Event Time → Prop) (s : Time) :
+    IsDownwardMonotone (gTIAPropertyOpenNeg P μ s) :=
+  fun x y hxy w hy hx =>
+    hy (gTIAPropertyOpen_upwardMonotone P s x y hxy w hx)
 
 /-! ### The MIP licensing predicate
 
@@ -286,10 +351,10 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval T
     subinterval property, the E-TIA derived property is constant: every
     numeral yields a true proposition at any world where any does, so no
     numeral is more informative than another. [rouillard-2026] §4.1.1. -/
-theorem eTIA_atelic_collapse {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+theorem eTIA_atelic_collapse {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
-    IsConstant (α := ℕ) (eTIAProperty P μ g1) := by
+    IsConstant (α := α) (eTIAProperty P μ g1) := by
   suffices h : ∀ n m w, eTIAProperty P μ g1 n w → eTIAProperty P μ g1 m w from
     fun n m w => ⟨h n m w, h m n w⟩
   intro n m w ⟨_, _, e, hP, hg1, _⟩
@@ -303,14 +368,14 @@ theorem eTIA_atelic_collapse {μ : NonemptyInterval Time → ℕ} [TimeMeasure T
     exact ⟨j, hj_μ, e, hP, hg1, hj_sup⟩
 
 /-- Atelic E-TIA fails the `AdmitsOptimum` half of MIP licensing. -/
-theorem eTIA_atelic_no_optimum {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+theorem eTIA_atelic_no_optimum {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
     ¬ AdmitsOptimum (eTIAProperty P μ g1) :=
   fun h => h (eTIA_atelic_collapse P g1 hSub)
 
 /-- Atelic E-TIA is not MIP-licensed. -/
-theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
     ¬ MIP_Licensed (eTIAProperty P μ g1) :=
@@ -322,7 +387,7 @@ theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → ℕ} [TimeMeasu
     [rouillard-2026] §4.1.1: when P is telic, the derived E-TIA
     property is upward monotone — the same event witnesses larger
     measures via `TimeMeasure.extensible`. -/
-theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : NonemptyInterval Time) :
     IsUpwardMonotone (eTIAProperty P μ g1) := by
   intro n m hnm w ⟨t, hμ, e, hP, hg1, hsub⟩
@@ -351,12 +416,12 @@ theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
     a closed runtime always has a strictly smaller open PTS still containing
     it — pick a moment between the open boundary and the closed start.
 
-    This geometric witness alone does NOT discharge
-    `InformationCollapse (gTIAPropertyOpen ...)`: with the ℕ-valued measure,
-    a smallest ℕ-measure open PTS exists at any specific world. The empirical
-    predictions below are therefore stated at the polarity-and-perfect level
-    (matching the paper's Table 1); a ℚ-valued time-measure rebuild would let
-    the collapse argument discharge end-to-end. TODO: ℚ-valued substrate. -/
+    `gTIAOpen_no_isLeast` below turns this into measure-level collapse via
+    additivity and positivity; `gTIAOpen_not_MIP_licensed` is the end-to-end
+    blocking result. (For `α := ℕ` over dense time the `TimeMeasure` axioms
+    are unsatisfiable — positivity forces an infinite descending ℕ-chain —
+    so the discrete reading lives on discrete `Time` only, where E-TIA
+    results apply but the density argument does not.) -/
 theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     (rt : NonemptyInterval Time) (ptsGI : GInterval Time)
     (h_open : ptsGI.isOpen)
@@ -390,6 +455,92 @@ theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
       exact lt_of_le_of_lt hp2 h_strict_right
   · refine ⟨le_of_lt hm_left, le_refl _⟩
 
+/-- **Positive G-TIA: no least true value**. Under dense `Time`, additivity
+    and positivity let every witnessing open PTS shrink to a strictly
+    smaller-measure open PTS still containing the runtime, so the per-world
+    true set has no least element. [rouillard-2026] §4.2.2. -/
+theorem gTIAOpen_no_isLeast [DenselyOrdered Time] [AddRightStrictMono α]
+    {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (s : Time) (w : W) (x : α) :
+    ¬ IsLeast {y | gTIAPropertyOpen P μ s y w} x := by
+  rintro ⟨⟨ptsGI, hOpen, hRight, hμ, e, hP, hSub⟩, hLB⟩
+  obtain ⟨hL, hR⟩ := GInterval.gsubinterval_closed_open_strict e.τ ptsGI hOpen hSub
+  obtain ⟨m, hm_left, hm_right⟩ := DenselyOrdered.dense _ _ hL
+  have hms : m ≤ ptsGI.right :=
+    le_of_lt (lt_of_lt_of_le hm_right (le_trans e.τ.fst_le_snd (le_of_lt hR)))
+  -- the shrunken open PTS witnesses a strictly smaller true value
+  have hmem : gTIAPropertyOpen P μ s (μ ⟨⟨m, ptsGI.right⟩, hms⟩) w := by
+    refine ⟨⟨m, ptsGI.right, .open_, .open_, hms⟩, ⟨rfl, rfl⟩, hRight, rfl, e, hP, ?_⟩
+    intro p hp
+    exact ⟨lt_of_lt_of_le hm_right hp.1, lt_of_le_of_lt hp.2 hR⟩
+  have hlt : μ ⟨⟨m, ptsGI.right⟩, hms⟩ < x := by
+    rw [← hμ]
+    exact TimeMeasure.measure_lt_of_left_lt μ hm_left hms
+  exact absurd (hLB hmem) (not_le.mpr hlt)
+
+/-- **Positive G-TIAs are not MIP-licensed** over dense time: the
+    least-true-numeral leg of `MIP_Licensed` fails at every world. The
+    end-to-end discharge of the information-collapse argument
+    ([rouillard-2026] §4.2.2) that the ℕ-valued measure could not provide. -/
+theorem gTIAOpen_not_MIP_licensed [DenselyOrdered Time] [AddRightStrictMono α]
+    {μ : NonemptyInterval Time → α} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (s : Time) :
+    ¬ MIP_Licensed (gTIAPropertyOpen P μ s) :=
+  fun ⟨_, w, x, hLeast⟩ => gTIAOpen_no_isLeast P s w x hLeast
+
+/-! ### The rational length model
+
+Non-vacuity witness: over `Time := ℚ`, interval length valued in `ℚ≥0` is
+a `TimeMeasure`, so the hypotheses of `gTIAOpen_not_MIP_licensed` are
+jointly satisfiable at a concrete dense model. -/
+
+/-- Interval length over rational time, as a nonnegative rational. -/
+def ratLength (i : NonemptyInterval ℚ) : ℚ≥0 :=
+  ⟨i.snd - i.fst, sub_nonneg.mpr i.fst_le_snd⟩
+
+instance : TimeMeasure ℚ ratLength where
+  extensible i m h := by
+    have hm : i.snd - i.fst ≤ (m : ℚ) := NNRat.coe_le_coe.mpr h
+    refine ⟨⟨⟨i.snd - (m : ℚ), i.snd⟩, by linarith [m.coe_nonneg]⟩,
+      ⟨?_, le_refl _⟩, ?_⟩
+    · show i.snd - (m : ℚ) ≤ i.fst
+      linarith
+    · apply NNRat.ext
+      show i.snd - (i.snd - (m : ℚ)) = (m : ℚ)
+      ring
+  subdivisible i m h := by
+    have hm : (m : ℚ) ≤ i.snd - i.fst := NNRat.coe_le_coe.mpr h
+    refine ⟨⟨⟨i.fst, i.fst + (m : ℚ)⟩, by linarith [m.coe_nonneg]⟩,
+      ⟨le_refl _, ?_⟩, ?_⟩
+    · show i.fst + (m : ℚ) ≤ i.snd
+      linarith
+    · apply NNRat.ext
+      show i.fst + (m : ℚ) - i.fst = (m : ℚ)
+      ring
+  extensibleLeft i m h := by
+    have hm : i.snd - i.fst ≤ (m : ℚ) := NNRat.coe_le_coe.mpr h
+    refine ⟨⟨⟨i.snd - (m : ℚ), i.snd⟩, by linarith [m.coe_nonneg]⟩,
+      ⟨?_, le_refl _⟩, rfl, ?_⟩
+    · show i.snd - (m : ℚ) ≤ i.fst
+      linarith
+    · apply NNRat.ext
+      show i.snd - (i.snd - (m : ℚ)) = (m : ℚ)
+      ring
+  additive a b c hab hbc := by
+    apply NNRat.ext
+    show c - a = (b - a) + (c - b)
+    ring
+  positive a b h := by
+    rw [← NNRat.coe_pos]
+    show (0 : ℚ) < b - a
+    linarith
+
+/-- The blocking theorem's hypotheses discharge at the rational length
+    model: positive G-TIAs over `ℚ`-time are not MIP-licensed. -/
+example {W : Type*} (P : W → Event ℚ → Prop) (s : ℚ) :
+    ¬ MIP_Licensed (gTIAPropertyOpen P ratLength s) :=
+  gTIAOpen_not_MIP_licensed P s
+
 /-! ### Negated G-TIA: greatest true numeral at the gap length -/
 
 /-- For a downward-monotone family over ℕ with a true witness and a failing
@@ -414,21 +565,20 @@ theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
     exact Nat.find_spec h_bound (hDown _ y (not_lt.mp h_ge) w hy)
   omega
 
-/-- **Negated G-TIAs satisfy the MIP at the gap length**. When the negated
-    gap property is downward monotone (no event in `n` units entails no event
-    in `m ≤ n` units) with a true witness and a failing bound, a greatest true
-    numeral exists — [rouillard-2026] eq. (104)/(110): there can be a largest
-    open interval *excluding* a closed time, though never a smallest one
-    including it. Downward monotonicity is hypothesis-gated pending the
-    ℚ-valued rebuild (it needs right-anchored extensibility). -/
+/-- **Negated G-TIAs satisfy the MIP at the gap length**. With a true
+    witness and a failing bound, a greatest true numeral exists —
+    [rouillard-2026] eq. (104)/(110): there can be a largest open interval
+    *excluding* a closed time, though never a smallest one including it.
+    Downward monotonicity is supplied by
+    `gTIAPropertyOpenNeg_downwardMonotone` (no longer hypothesis-gated). -/
 theorem gTIANeg_hasIsGreatest {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (s : Time) (w : W)
-    (hDown : IsDownwardMonotone (gTIAPropertyOpenNeg P μ s))
     [DecidablePred (fun n => gTIAPropertyOpenNeg P μ s n w)]
     (h_witness : ∃ n, gTIAPropertyOpenNeg P μ s n w)
     (h_bound : ∃ n, ¬ gTIAPropertyOpenNeg P μ s n w) :
     ∃ x, IsGreatest {y | gTIAPropertyOpenNeg P μ s y w} x :=
-  downwardMonotone_hasIsGreatest_of_bound hDown w h_witness h_bound
+  downwardMonotone_hasIsGreatest_of_bound
+    (gTIAPropertyOpenNeg_downwardMonotone P s) w h_witness h_bound
 
 /-! ### Boundedness pipeline
 
@@ -601,9 +751,9 @@ def gTIAData : List GTIADatum := [datum_2a, datum_2b, datum_48]
 
 /-- G-TIA acceptability matches the polarity ∧ perfect prediction.
     [rouillard-2026] Table 1: only NEG + PFV with G-TIA reading survives
-    MIP filtering. Stated at the surface polarity-and-perfect level — the
-    structural MIP derivation needs the ℚ-valued rebuild (see
-    `no_smallest_open_PTS_geometric`). -/
+    MIP filtering. Stated at the surface polarity-and-perfect level; the
+    structural halves are `gTIAOpen_not_MIP_licensed` (positive blocked)
+    and `gTIANeg_hasIsGreatest` (negative licensed at the gap length). -/
 def gTIA_predicted (d : GTIADatum) : Prop :=
   (d.isNegative ∧ d.hasPerfect) ↔ d.acceptable
 
@@ -712,9 +862,9 @@ Rouillard derives this via the MIP over the Hamblin sets: eq. (135) gives
 the U-perfect ANS, while the E-perfect set (reformulated as eq. (137)) has
 no maximally informative true answer (open-PTS density). The observation
 is originally [von-fintel-iatridou-2019]'s; the density mechanism is
-[fox-hackl-2006]'s. The datum below records the observation — the density
-derivation is not formalized at this substrate level (see
-`no_smallest_open_PTS_geometric`). -/
+[fox-hackl-2006]'s. The datum below records the observation; the density
+mechanism for the blocked E-perfect reading is `gTIAOpen_not_MIP_licensed`
+(its Hamblin-set application is not formalized at this substrate level). -/
 
 /-- Since-when question datum: which perfect readings are available? -/
 structure SinceWhenDatum where
