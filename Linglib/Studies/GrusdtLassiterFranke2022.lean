@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Causal.BayesNet
+import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Necessity
@@ -68,8 +68,8 @@ set_option autoImplicit false
 
 namespace GrusdtLassiterFranke2022
 
-open Core.Causal
-open Core.Causal.BayesNet
+open Semantics.Causation
+open Semantics.Causation.BayesNet
 open Semantics.Probabilistic.ConditionalAssertability
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Linglib.Core.Causal.SEM.Bool
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Bool
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # A Communication-First Account of Explanation
@@ -63,7 +63,7 @@ predictions:
 
 namespace HardingGerstenbergIcard2025
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 open BoolSEM (causallySufficientOn completesForEffectOn manipulates)
 
 /-! ## §3 Substrate: ExplanationGame -/

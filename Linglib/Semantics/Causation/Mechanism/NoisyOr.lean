@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.Mechanism.Defs
-import Linglib.Core.Causal.Mechanism.PMF
+import Linglib.Semantics.Causation.Mechanism.Defs
+import Linglib.Semantics.Causation.Mechanism.PMF
 import Mathlib.Data.Rat.Defs
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -21,10 +21,10 @@ mechanism. If consumers need it, a separate `Core/Causal/Distribution.lean`
 is the right home.
 -/
 
-namespace Core.Causal.Mechanism
+namespace Semantics.Causation.Mechanism
 
 /-- Noisy-OR parameters for a single inhibitory link. Migrated from
-    `Core.Causal.BayesNet.NoisyOR`. -/
+    `Semantics.Causation.BayesNet.NoisyOR`. -/
 structure NoisyOrParams where
   /-- Background rate: `P(effect | ¬cause)`. -/
   background : ℚ
@@ -59,4 +59,4 @@ def alwaysOn : NoisyOrParams := ⟨1, 0⟩
 
 end NoisyOrParams
 
-end Core.Causal.Mechanism
+end Semantics.Causation.Mechanism

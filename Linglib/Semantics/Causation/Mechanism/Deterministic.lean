@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.Mechanism.Defs
+import Linglib.Semantics.Causation.Mechanism.Defs
 
 /-!
 # Mechanism.deterministic: Deterministic-as-Dirac Constructor (V2)
@@ -9,7 +9,7 @@ is built as a Dirac PMF — the exact mathlib pattern from
 `Kernel.deterministic (f) := dirac ∘ f`.
 -/
 
-namespace Core.Causal.Mechanism
+namespace Semantics.Causation.Mechanism
 
 variable {V : Type*} {α : V → Type*} {G : CausalGraph V} {v : V}
 
@@ -47,4 +47,4 @@ noncomputable def const (x : α v) : Mechanism G α v := deterministic (fun _ =>
 instance (x : α v) : IsDeterministic (const (G := G) x) :=
   inferInstanceAs (IsDeterministic (deterministic _))
 
-end Core.Causal.Mechanism
+end Semantics.Causation.Mechanism

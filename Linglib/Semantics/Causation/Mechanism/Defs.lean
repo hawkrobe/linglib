@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.Graph.Defs
-import Linglib.Core.Causal.Valuation
+import Linglib.Semantics.Causation.Graph.Defs
+import Linglib.Semantics.Causation.Valuation
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
@@ -21,7 +21,7 @@ when they need to extract the deterministic function (mirroring
 `IsMarkovKernel` in `Mathlib/Probability/Kernel/Defs.lean`).
 -/
 
-namespace Core.Causal
+namespace Semantics.Causation
 
 variable {V : Type*}
 
@@ -52,4 +52,4 @@ class IsDeterministic (m : Mechanism G α v) where
 
 end Mechanism
 
-end Core.Causal
+end Semantics.Causation

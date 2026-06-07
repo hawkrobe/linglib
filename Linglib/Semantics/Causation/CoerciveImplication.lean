@@ -15,7 +15,7 @@ examples were deleted in Phase D-H. The polymorphic V2
 
 namespace Semantics.Causation.CoerciveImplication
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/
 inductive ActionType

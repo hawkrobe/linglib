@@ -3,7 +3,7 @@ import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Implicative Verbs ([nadathur-2024])
@@ -43,7 +43,7 @@ namespace Semantics.Causation.Implicative
 
 open Features (Implicative)
 open Features
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 -- ════════════════════════════════════════════════════
 -- § Prerequisite Types ([nadathur-2024])
@@ -212,14 +212,14 @@ end Semantics.Causation.Implicative
 -- ════════════════════════════════════════════════════
 
 /-! Lives here rather than in `Features/Causation.lean` because the
-dispatch needs `Core.Causal.SEM` + the `Implicative.manageSem`/`failSem`
+dispatch needs `Semantics.Causation.SEM` + the `Implicative.manageSem`/`failSem`
 machinery defined above; `Features/Causation.lean` is kept import-free.
 Standard mathlib pattern: methods on a type may live in a sibling
 file via `namespace TypeName` block when import weight matters. -/
 
 namespace Features.Implicative
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 dispatch: map an `Implicative` polarity to its V2 polymorphic
     semantic function. -/

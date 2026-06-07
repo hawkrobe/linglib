@@ -22,7 +22,7 @@ The polymorphic V2 versions are promoted to canonical here.
 
 namespace Semantics.Causation.CCSelection
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- How a causative construction selects its cause from a causal model. -/
 inductive CCSelectionMode where

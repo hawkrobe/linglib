@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # [bar-asher-siegal-2026]: Causation and Causal Relations
@@ -36,14 +36,14 @@ Member-mode (Def 10b causally-necessary) divergence between *open* and
 *cause* awaits substrate support for multi-parent disjunctive mechanisms.
 
 Sufficiency/completion predicates are imported from
-`Core.Causal.BoolSEM` (`causallySufficientOn`, `completesForEffectOn`)
+`Semantics.Causation.BoolSEM` (`causallySufficientOn`, `completesForEffectOn`)
 rather than re-stipulated locally — see CLAUDE.md "Theory-hub denotation
 as study-file constraint."
 -/
 
 namespace BarAsherSiegal2026
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 
 /-- Six-vertex door scenario. Inductive enum so `Fintype.elems`
     gives a fixed canonical order and `developDet` reduces structurally. -/

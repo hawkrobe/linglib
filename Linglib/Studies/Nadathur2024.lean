@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Nadathur 2024: Causal Semantics for Implicative Verbs
@@ -53,7 +53,7 @@ multi-parent disjunctive cases.
 
 namespace Nadathur2024
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 
 /-- Dreyfus scenario vertices ([nadathur-2024] §6.1.1, Figure 3). -/
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY

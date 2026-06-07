@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.Mechanism.Defs
+import Linglib.Semantics.Causation.Mechanism.Defs
 
 /-!
 # Mechanism.pmf: Stochastic Mechanism Constructor (V2)
@@ -8,7 +8,7 @@ Symmetric counterpart to `Mechanism.deterministic` — kept for naming
 parallelism and discoverability.
 -/
 
-namespace Core.Causal.Mechanism
+namespace Semantics.Causation.Mechanism
 
 variable {V : Type*} {α : V → Type*} {G : CausalGraph V} {v : V}
 
@@ -22,4 +22,4 @@ def pmf (f : (∀ u : G.parents v, α u.val) → PMF (α v)) :
     (ρ : ∀ u : G.parents v, α u.val) :
     (pmf f).run ρ = f ρ := rfl
 
-end Core.Causal.Mechanism
+end Semantics.Causation.Mechanism

@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Prevention Semantics
@@ -23,7 +23,7 @@ dispatches uniformly across all five force-dynamic variants.
 
 namespace Semantics.Causation.Prevention
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 prevention semantics: preventer-as-`xPrev` blocks effect-from-
     being-`xE`, AND there exists some alternative preventer value that

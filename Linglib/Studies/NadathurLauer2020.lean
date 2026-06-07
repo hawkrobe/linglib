@@ -64,7 +64,7 @@ discussion for the cross-paper consequence.
 
 namespace NadathurLauer2020
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 open Semantics.Causation.Sufficiency (makeSem)
 open Semantics.Causation.Necessity (causeSem)
 

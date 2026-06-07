@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
@@ -497,7 +497,7 @@ a lexically noncausative.
 Per-scenario causal models for these contrasts live below in §7
 (`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
 substrate, using `BoolSEM.causallySufficientOn` / `completesForEffectOn`
-from `Core.Causal.SEM.Counterfactual`. -/
+from `Semantics.Causation.SEM.Counterfactual`. -/
 
 /-- *Freeze* independently shows the causative alternation;
     *push* does not. This confirms the classification: *freeze solid*
@@ -991,7 +991,7 @@ Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
 so `developDetOn` reduces structurally without `native_decide`. -/
 
 section Scenarios
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 open BoolSEM (causallySufficientOn completesForEffectOn)
 
 namespace HammerFlat

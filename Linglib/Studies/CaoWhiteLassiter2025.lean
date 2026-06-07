@@ -41,16 +41,16 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
-import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.Causal.SEM.Interventional
+import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Interventional
 import Linglib.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 
 open Core (WorldTimeIndex)
-open Core.Causal (BoolSEM CausalGraph Valuation Mechanism)
-open Core.Causal.Mechanism (const)
-open Core.Causal.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
+open Semantics.Causation (BoolSEM CausalGraph Valuation Mechanism)
+open Semantics.Causation.Mechanism (const)
+open Semantics.Causation.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
 open Semantics.Causation.CoerciveImplication (ActionType)
 open Features (Causative)
 open Features
@@ -84,10 +84,10 @@ that recovers this special case from the canonical PMF form. -/
     `IsDeterministic`. -/
 noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.SEM.IsDeterministic M]
+    [Semantics.Causation.SEM.IsDeterministic M]
     (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
-  if Core.Causal.BoolSEM.causallySufficient M background cause effect then 1 else 0
+  if Semantics.Causation.BoolSEM.causallySufficient M background cause effect then 1 else 0
 
 /-- **Grounding theorem**: under `IsDeterministic`, the canonical PMF-valued
     `probabilisticSuf` collapses to the deterministic {0,1} indicator.
@@ -95,13 +95,13 @@ noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     a parallel definition. -/
 theorem probabilisticSuf_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.SEM.IsDeterministic M]
+    [Semantics.Causation.SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (c e : V)
     (hc : bg.get c = none) :
     probabilisticSuf M bg c true e true = deterministicSuf M bg c e := by
   unfold deterministicSuf
   rw [probabilisticSuf_of_deterministic]
-  rw [Core.Causal.SEM.developDet_intervene_eq_developDet_extend M bg c true hc]
+  rw [Semantics.Causation.SEM.developDet_intervene_eq_developDet_extend M bg c true hc]
   congr 1
 
 /-! ## ALT → ActionType Bridge

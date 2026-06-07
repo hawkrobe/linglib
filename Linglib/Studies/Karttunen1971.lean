@@ -52,7 +52,7 @@ open Features (Causative)
 open English.Predicates.Verbal
 open English.Predicates.Copular (beAble)
 open Semantics.Lexical
-open Core.Causal
+open Semantics.Causation
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Karttunen's Four-Cell Classification (§§9–11)

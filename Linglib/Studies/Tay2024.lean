@@ -345,9 +345,9 @@ Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
 Direct causation = single edge, no intermediate with an independent
 energy source. This is the same tightness constraint identified for
 English resultatives by [levin-2019] — formalized via the canonical
-`completesForEffectOn` predicate from `Core.Causal.SEM.Counterfactual`. -/
+`completesForEffectOn` predicate from `Semantics.Causation.SEM.Counterfactual`. -/
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 open BoolSEM (causallySufficientOn completesForEffectOn)
 
 namespace Dasi

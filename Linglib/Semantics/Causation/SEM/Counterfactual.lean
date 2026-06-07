@@ -1,6 +1,6 @@
-import Linglib.Core.Causal.SEM.Basic
-import Linglib.Core.Causal.SEM.Bool
-import Linglib.Core.Causal.SEM.Deterministic
+import Linglib.Semantics.Causation.SEM.Basic
+import Linglib.Semantics.Causation.SEM.Bool
+import Linglib.Semantics.Causation.SEM.Deterministic
 
 /-!
 # SEM: Causal Counterfactual Predicates (V2)
@@ -50,7 +50,7 @@ Matches the mathlib `Polynomial.eval` precedent: noncomputable canonical
 definition, structurally reducible per-vertex unfolding lemmas.
 -/
 
-namespace Core.Causal.SEM
+namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 variable [Fintype V] [DecidableEq V] [DecidableValuation α]
@@ -267,18 +267,18 @@ theorem whetherCause_eq_indicator_of_deterministic
     polymorphic generalization to multi-valued α can come if a consumer
     needs it. -/
 
-end Core.Causal.SEM
+end Semantics.Causation.SEM
 
 -- ════════════════════════════════════════════════════
 -- § BoolSEM specializations (legacy SBH-style binary semantics)
 -- ════════════════════════════════════════════════════
 
-namespace Core.Causal.BoolSEM
+namespace Semantics.Causation.BoolSEM
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-open Core.Causal (SEM Valuation BoolSEM)
-open Core.Causal.SEM (developsToValue causallySufficient)
+open Semantics.Causation (SEM Valuation BoolSEM)
+open Semantics.Causation.SEM (developsToValue causallySufficient)
 
 /-- `BoolSEM`-flavored `developsToValue`: vertex `v` develops to `true`. -/
 abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
@@ -286,7 +286,7 @@ abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
   developsToValue M s v true
 
 /-- `BoolSEM`-flavored `causallySufficient`: setting `cause = true` develops
-    `effect = true`. Matches old `Core.Causal.causallySufficient` semantics. -/
+    `effect = true`. Matches old `Semantics.Causation.causallySufficient` semantics. -/
 abbrev causallySufficient (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.causallySufficient M s cause true effect true
@@ -394,9 +394,9 @@ theorem not_manipulates_of_developDetOn_eq (M : BoolSEM V)
   rw [h1', h2']
   exact fun h => h rfl
 
-end Core.Causal.BoolSEM
+end Semantics.Causation.BoolSEM
 
-namespace Core.Causal.SEM
+namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -500,13 +500,13 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessary M s cause xC effect xE) := Classical.dec _
 
-end Core.Causal.SEM
+end Semantics.Causation.SEM
 
-namespace Core.Causal.BoolSEM
+namespace Semantics.Causation.BoolSEM
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-open Core.Causal (SEM Valuation BoolSEM)
+open Semantics.Causation (SEM Valuation BoolSEM)
 
 /-- `BoolSEM`-flavored `causallyNecessary`: setting `cause = true` is
     necessary (Def 10b) for `effect = true`. -/
@@ -519,4 +519,4 @@ noncomputable instance (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation _) (cause effect : V) :
     Decidable (causallyNecessary M s cause effect) := Classical.dec _
 
-end Core.Causal.BoolSEM
+end Semantics.Causation.BoolSEM

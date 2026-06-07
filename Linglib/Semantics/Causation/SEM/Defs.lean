@@ -1,6 +1,6 @@
-import Linglib.Core.Causal.Graph.Basic
-import Linglib.Core.Causal.Mechanism.Defs
-import Linglib.Core.Causal.Valuation
+import Linglib.Semantics.Causation.Graph.Basic
+import Linglib.Semantics.Causation.Mechanism.Defs
+import Linglib.Semantics.Causation.Valuation
 
 /-!
 # SEM: Bundled Structural Equation Model (V2)
@@ -18,7 +18,7 @@ Phase A scope: structure + mixins only. Forward propagation, intervention,
 and counterfactual queries live in `SEM/Basic.lean`.
 -/
 
-namespace Core.Causal
+namespace Semantics.Causation
 
 /-- A **structural equation model**: a causal graph with a mechanism at
     every vertex over a per-vertex value type `α`.
@@ -48,4 +48,4 @@ instance (M : SEM V α) [h : IsDeterministic M] (v : V) :
 end SEM
 
 
-end Core.Causal
+end Semantics.Causation
