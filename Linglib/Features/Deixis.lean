@@ -33,7 +33,7 @@ when a fragment actually needs it, not in anticipation. Specifically:
   invisible` constructors when a fragment needs them.
 - **Elevation contrasts** (Dyirbal, Nepali): add when needed.
 
-This is the centralized type referenced by `Core.Nominal.Description.deictic`
+This is the centralized type referenced by `Semantics.Definiteness.Description.deictic`
 (forthcoming) and by demonstrative entries in `Fragments/`.
 -/
 

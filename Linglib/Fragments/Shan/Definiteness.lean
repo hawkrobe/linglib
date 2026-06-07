@@ -1,7 +1,7 @@
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.Maximality
+import Linglib.Syntax.Determiner.Basic
+import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.MeaningPreservation
@@ -146,12 +146,12 @@ theorem shan_demonstratives_encode_distance :
 
     The demonstrative combines the restrictor P with a spatial filter
     encoding proximity to the speaker. The cardinality presupposition
-    (|P_s| = 1) is handled by `Core.Nominal.russellIotaList` returning
+    (|P_s| = 1) is handled by `Semantics.Definiteness.russellIotaList` returning
     `none` when no unique satisfier exists. -/
 def demDenotation {E : Type} (domain : List E) (dem : ShanDemonstrative)
     (restrictor : E → Bool) (spatialPred : Features.Deixis.Feature → E → Bool) :
     Option E :=
-  Core.Nominal.russellIotaList domain
+  Semantics.Definiteness.russellIotaList domain
     (fun e => restrictor e && spatialPred dem.spatial e)
 
 /-- A bare definite description (no demonstrative) uses no filter:
@@ -159,7 +159,7 @@ def demDenotation {E : Type} (domain : List E) (dem : ShanDemonstrative)
     spatial location. This is the uniqueness-based (weak) reading. -/
 def bareDefinite {E : Type} (domain : List E) (restrictor : E → Bool) :
     Option E :=
-  Core.Nominal.russellIotaList domain restrictor
+  Semantics.Definiteness.russellIotaList domain restrictor
 
 /-- The demonstrative refines the bare definite: when the bare description
     selects a referent that also satisfies the spatial predicate, both
@@ -172,8 +172,8 @@ theorem dem_refines_bare {E : Type} (domain : List E)
     (hBare : bareDefinite domain restrictor = some e)
     (hSpatial : spatialPred dem.spatial e = true) :
     demDenotation domain dem restrictor spatialPred = some e := by
-  rw [bareDefinite, Core.Nominal.russellIotaList_eq_some_iff] at hBare
-  rw [demDenotation, Core.Nominal.russellIotaList_eq_some_iff]
+  rw [bareDefinite, Semantics.Definiteness.russellIotaList_eq_some_iff] at hBare
+  rw [demDenotation, Semantics.Definiteness.russellIotaList_eq_some_iff]
   have : domain.filter (fun e' => restrictor e' && spatialPred dem.spatial e') =
          (domain.filter restrictor).filter (fun e' => spatialPred dem.spatial e') := by
     rw [List.filter_filter]

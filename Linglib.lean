@@ -275,11 +275,12 @@ import Linglib.Semantics.Focus.Comparability
 import Linglib.Features.Prosody
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Maximality
-import Linglib.Core.Nominal.Interpret
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.DeterminerLicensing
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Syntax.Determiner.Basic
+import Linglib.Semantics.Definiteness.DeterminerLicensing
+import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.OntologicalCategory

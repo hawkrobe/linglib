@@ -1,4 +1,4 @@
-import Linglib.Core.Nominal.Determiner
+import Linglib.Syntax.Determiner.Basic
 
 /-!
 # Haitian Creole Definiteness Fragment

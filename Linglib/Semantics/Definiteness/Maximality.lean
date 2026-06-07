@@ -5,7 +5,7 @@ import Linglib.Core.Logic.Intensional.Variables
 [sharvy-1980] [kriz-2015] [coppock-beaver-2015] [russell-1905]
 
 Predicate operators consumed by the `Description` interpretation function in
-`Core/Nominal/Interpret.lean`. All operators live over
+`Semantics/Definiteness/Interpret.lean`. All operators live over
 `Core.Logic.Intensional.Frame.Denot` so they slot directly into the IL stack.
 
 ## What this module provides
@@ -31,7 +31,7 @@ Predicate operators consumed by the `Description` interpretation function in
 ## Design notes
 
 - **No semantic interpretation here.** This file provides only the operators.
-  `Core/Nominal/Interpret.lean` wires `Description` constructors to them.
+  `Semantics/Definiteness/Interpret.lean` wires `Description` constructors to them.
 
 - **Ord-free vs. order-relative.** `russellIota` uses only `Eq`; `sharvyMax`
   requires `PartialOrder F.Entity`. This is the [sharvy-1980] /
@@ -42,11 +42,11 @@ Predicate operators consumed by the `Description` interpretation function in
 - **`Option` is the right return type.** A definite description with an
   unsatisfied uniqueness presupposition has no referent; rather than throw
   an exception or produce an arbitrary witness, we return `none`. The
-  interpretation function in `Core/Nominal/Interpret.lean` lifts this to
+  interpretation function in `Semantics/Definiteness/Interpret.lean` lifts this to
   presupposition failure at the propositional level.
 -/
 
-namespace Core.Nominal
+namespace Semantics.Definiteness
 
 open Core.Logic.Intensional
 
@@ -245,4 +245,4 @@ theorem uniqueness_implies_homogeneous_classical
       rw [hxe] at hSx; exact hS hSx
   · left; intro x hx; exact (h ⟨x, hx⟩).elim
 
-end Core.Nominal
+end Semantics.Definiteness

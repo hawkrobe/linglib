@@ -35,10 +35,9 @@ localized to a single declaration.
 
 An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
-(`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
+(`Semantics/Definiteness/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description.
-`DemonstrativeDeterminer.denote` (deictic), the `Quantifier` generalized quantifier
 (`Core/Logic/Quantification`), and the `Possessive` possession relation remain
 deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `form`.
 This file stays the Frame-free lexical/typological layer.

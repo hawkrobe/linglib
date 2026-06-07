@@ -1,12 +1,12 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Interpret
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.DeterminerLicensing
+import Linglib.Syntax.Determiner.Basic
+import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness
 
@@ -24,8 +24,8 @@ Maximize Presupposition + [schlenker-2012] Gricean reduction)
 selects between them.
 
 The substrate already operationalizes the inventory layer:
-`Core.Nominal.Description.{unique,anaphoric}` are ι and ι^x;
-`Core.Nominal.Determiner.markingStrategy` derives the four-cell
+`Semantics.Definiteness.Description.{unique,anaphoric}` are ι and ι^x;
+`Semantics.Definiteness.Determiner.markingStrategy` derives the four-cell
 typology directly named after Jenks 2018 in `Features.Definiteness`.
 The Mandarin Fragment commits `marking := .markedAnaphoric`.
 This file focuses on what is distinctly Jenks: the typological
@@ -40,7 +40,7 @@ namespace Jenks2018
 open Features.Definiteness
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal
+open Semantics.Definiteness
 
 abbrev mandarinDets := Mandarin.Definiteness.determiners
 abbrev cantoneseDets := Cantonese.Definiteness.determiners
@@ -273,7 +273,7 @@ Dem-Clf-N`).
 
 Faithfully formalizing §4.4 requires a property-typed-index variant
 on `Description.anaphoric`. This is recorded as a TODO at the substrate
-level (`Core/Nominal/Description.lean`) rather than encoded as a
+level (`Semantics/Definiteness/Description.lean`) rather than encoded as a
 placeholder theorem. -/
 
 -- ════════════════════════════════════════════════════════════════

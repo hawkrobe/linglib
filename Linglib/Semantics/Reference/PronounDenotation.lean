@@ -4,7 +4,7 @@ import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
-import Linglib.Core.Nominal.Interpret
+import Linglib.Semantics.Definiteness.Interpret
 
 /-!
 # The denotation of a pronoun
@@ -129,7 +129,7 @@ personal/demonstrative split is the [schwarz-2009] weak/strong-article split:
 PER (*er*) the **weak** article (`Description.ofPresupType .uniqueness` = `.unique`),
 "DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
 the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
-weak/strong refinement `Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`;
+weak/strong refinement `Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`;
 the strength round-trips through `expectedPresupType`. The extra layer is that index,
 **not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
 separate type; genuine deictic demonstratives are `Description.demonstrative`.
@@ -145,13 +145,13 @@ exactly when `g i` is the unique satisfier. -/
 description whenever the restrictor holds of the indexed referent: the
 **strong-article** (`Description.ofPresupType .familiarity`) reading, since the
 anaphoric index *is* the indexed entity. The **weak** reading coincides too when
-that entity is the unique satisfier (`Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`). -/
+that entity is the unique satisfier (`Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`). -/
 theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrder F.Entity]
     (e : PersonalPronoun) (i : ℕ) (R : DenotGS F .et)
     (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
     (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit)
     (h : R g gs (g i)) :
     (e.denote i speaker addressee isFemale isInanimate).selector g w
-      = Core.Nominal.interpret (Core.Nominal.Description.ofPresupType .familiarity R i) g gs := by
-  show some (g i) = Core.Nominal.interpret (.anaphoric R i) g gs
-  rw [Core.Nominal.interpret_anaphoric, if_pos h]
+      = Semantics.Definiteness.interpret (Semantics.Definiteness.Description.ofPresupType .familiarity R i) g gs := by
+  show some (g i) = Semantics.Definiteness.interpret (.anaphoric R i) g gs
+  rw [Semantics.Definiteness.interpret_anaphoric, if_pos h]

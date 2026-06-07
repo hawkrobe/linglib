@@ -57,10 +57,10 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 
 - **No semantic interpretation here.** This file only declares the type and
   a handful of classification predicates. The interpretation function lives
-  in `Core/Nominal/Interpret.lean`.
+  in `Semantics/Definiteness/Interpret.lean`.
 -/
 
-namespace Core.Nominal
+namespace Semantics.Definiteness
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
@@ -194,4 +194,4 @@ theorem expectedPresupType_ofPresupType
 
 end Description
 
-end Core.Nominal
+end Semantics.Definiteness

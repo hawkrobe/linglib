@@ -1,5 +1,5 @@
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Maximality
 
 /-!
 # Interpretation of Nominal Descriptions
@@ -12,7 +12,7 @@ failure (no unique satisfier; no satisfying antecedent at the discourse
 index) or inapplicability (indefinites do not denote a single entity at
 this layer — they need separate existential-closure machinery).
 
-The interpretation composes the operators in `Core/Nominal/Maximality.lean`:
+The interpretation composes the operators in `Semantics/Definiteness/Maximality.lean`:
 
 - `bare` and `unique` ↦ `russellIota` (order-free uniqueness; languages with
   mereological structure can opt into `sharvyMax` instead by providing a
@@ -30,10 +30,11 @@ and discourse index (the deictic feature is for presupposition checking,
 not referent selection).
 -/
 
-namespace Core.Nominal
+namespace Semantics.Definiteness
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
+open Core (Assignment)
 
 variable {F : Frame}
 
@@ -217,4 +218,4 @@ theorem interpret_anaphoric_eq_unique_of_existsUnique
   rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,
       interpret_anaphoric, if_pos hSat]
 
-end Core.Nominal
+end Semantics.Definiteness

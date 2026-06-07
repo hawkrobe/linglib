@@ -1,7 +1,7 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.Determiner
-import Linglib.Core.Nominal.Description
-import Linglib.Core.Nominal.Interpret
+import Linglib.Syntax.Determiner.Basic
+import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.English.Definiteness
 
@@ -30,13 +30,13 @@ the distinction at the surface.
 
 The split is operationalized in the Core layer by:
 
-- **`Core.Nominal.Description`** — distinct `.unique` (weak) and
+- **`Semantics.Definiteness.Description`** — distinct `.unique` (weak) and
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Core.Nominal.Description.expectedPresupType`** — projects each kind
+- **`Semantics.Definiteness.Description.expectedPresupType`** — projects each kind
   to the [schwarz-2009] presupposition type it expresses.
-- **`Core.Nominal.Determiner`** — the declared determiner set records the
+- **`Semantics.Definiteness.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.IsSyncretic` is the predicate that
   distinguishes English-style syncretism from German-style bipartition.
 
@@ -66,7 +66,7 @@ namespace Schwarz2009
 open Features.Definiteness
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal
+open Semantics.Definiteness
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The two presupposition types are genuinely distinct

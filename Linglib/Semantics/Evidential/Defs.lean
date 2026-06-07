@@ -5,7 +5,7 @@ import Linglib.Features.Evidentiality
 [aikhenvald-2004] [de-haan-2013] [murray-2017]
 
 The evidential as a lexical object, following the Determiner-API pattern
-(`Core/Nominal/Determiner.lean`). The base `Evidential` carries only what is
+(`Semantics/Definiteness/Determiner.lean`). The base `Evidential` carries only what is
 universal to all evidential markers — a surface `form`; each specialization
 (`DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential`) adds
 its own structure: an `Exponent` (realization strategy) plus a fine-grained
@@ -32,7 +32,7 @@ a language's WALS cell is a theorem about its declared evidentials.
   temporal anchoring) is deferred to `Studies/{Author}{Year}.lean` files
   which provide opt-in typeclass instances on `Entry`. This file is the
   framework-agnostic lexical and typological-derivation substrate only.
-* Mirrors the `Core/Nominal/Determiner.lean` pattern: structure +
+* Mirrors the `Semantics/Definiteness/Determiner.lean` pattern: structure +
   `Exponent` realization enum + `Entry` heterogeneous sum + typological
   derivations as theorems about the declared inventory.
 -/

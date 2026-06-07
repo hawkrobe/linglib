@@ -40,7 +40,7 @@ content (singularProp = false), but is used referentially.
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Nominal.Maximality
+import Linglib.Semantics.Definiteness.Maximality
 
 namespace Semantics.Reference.Donnellan
 
@@ -49,7 +49,7 @@ open Core.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PrProp (presupOfReferent)
 open Semantics.Reference.Basic
-open Core.Nominal (russellIotaList)
+open Semantics.Definiteness (russellIotaList)
 
 /-! ## Use Modes -/
 
