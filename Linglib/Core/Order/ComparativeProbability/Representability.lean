@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Order.ComparativeProbability.Systems
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.FinCases
@@ -28,7 +28,7 @@ gives a non-representable FA system at each cardinality (**Theorem 8b**).
    (`representable_fin3`, `representable_fin4`).
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 /-- An FA system is **representable** when some finitely additive probability
     measure induces exactly its comparison relation. -/
@@ -604,4 +604,4 @@ theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
     obtain ⟨sys, hsys⟩ := ih
     exact ⟨padFA sys, fun h => hsys (representable_of_padFA h)⟩
 
-end Core.Scale
+end ComparativeProbability

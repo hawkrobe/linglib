@@ -1,5 +1,5 @@
-import Linglib.Core.Scales.EpistemicScale.Entailments
-import Linglib.Core.Scales.EpistemicScale.Completeness
+import Linglib.Core.Order.ComparativeProbability.Entailments
+import Linglib.Core.Order.ComparativeProbability.Completeness
 
 /-!
 # Holliday & Icard (2013): Measure semantics for epistemic comparatives
@@ -37,7 +37,7 @@ See also [yalcin-2010] for the inference-pattern inventory V1–V13/I1–I3 and
 
 namespace HollidayIcard2013
 
-open Core.Scale ComparativeProbability
+open ComparativeProbability ComparativeProbability
 
 /-! ### Fact 1: the disjunction problem -/
 

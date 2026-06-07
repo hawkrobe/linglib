@@ -1,5 +1,5 @@
 import Linglib.Core.Order.ComparativeProbability.Patterns
-import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Order.ComparativeProbability.Systems
 import Mathlib.Data.Set.Card
 
 /-!
@@ -37,9 +37,8 @@ intended. V11 and V13 are invalid for l-lifting (Fact 1 in the paper).
 Completeness of the l-lifting logic is due to [halpern-2003].
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
-open ComparativeProbability
 
 variable {W : Type*}
 
@@ -717,4 +716,4 @@ theorem matchingLift_not_total :
 
 end MLift
 
-end Core.Scale
+end ComparativeProbability

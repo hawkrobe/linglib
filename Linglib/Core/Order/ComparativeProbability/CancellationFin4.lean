@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.Cancellation
+import Linglib.Core.Order.ComparativeProbability.Cancellation
 import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic
@@ -13,9 +13,9 @@ Scott cancellation, hence is representable by a finitely additive measure
 
 ## Main declarations
 
-* `Core.Scale.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
-* `Core.Scale.representable_fin4` — every FA system on `Fin 4` is representable.
-* `Core.Scale.no_null_cancellation` — cancellation for systems with no null atoms.
+* `ComparativeProbability.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
+* `ComparativeProbability.representable_fin4` — every FA system on `Fin 4` is representable.
+* `ComparativeProbability.no_null_cancellation` — cancellation for systems with no null atoms.
 
 ## Implementation notes
 
@@ -29,7 +29,7 @@ vector calculus (`cmpVec`, `mergeCmp`, `cvSumList`) and the merge recursion
 itself are private plumbing; only the theorems above are exported.
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 /-! ### Merge-to-single infrastructure
 
@@ -818,4 +818,4 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
 theorem representable_fin4 (sys : EpistemicSystemFA (Fin 4)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
-end Core.Scale
+end ComparativeProbability

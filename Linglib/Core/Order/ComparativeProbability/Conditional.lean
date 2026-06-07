@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Order.ComparativeProbability.Systems
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Tactic.Ring
 
@@ -26,7 +26,7 @@ order-of-magnitude analogue. Bayesian conditioning is the point-partition
 special case of Jeffrey's rule (`bayesian_is_jeffrey`).
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 /-! ### Conditional probability measure (Popper space) -/
 
@@ -200,4 +200,4 @@ theorem condMeasure_reflexive_per_evidence {W : Type*}
     EpistemicAxiom.R (fun A C => m.condGe A C B) :=
   fun _ => le_refl _
 
-end Core.Scale
+end ComparativeProbability

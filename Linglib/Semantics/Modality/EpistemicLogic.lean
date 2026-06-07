@@ -1,6 +1,6 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Core.Logic.Modal.Basic
-import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Order.ComparativeProbability.Systems
 
 /-!
 # Multi-Agent Epistemic Logic
@@ -268,7 +268,7 @@ def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
     The reflexivity of R gives reflexivity of the world ordering;
     `dominationLiftSystemW` does the rest. -/
 def s5ToSystemW {W : Type*} (R : AccessRel W) [hRefl : Std.Refl R] :
-    Core.Scale.EpistemicSystemW W :=
-  Core.Scale.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
+    ComparativeProbability.EpistemicSystemW W :=
+  ComparativeProbability.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
 
 end Semantics.Modality.EpistemicLogic
