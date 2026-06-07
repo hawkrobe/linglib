@@ -1,6 +1,5 @@
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Discourse.IllocutionaryForce
-import Linglib.Discourse.Intentionality
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 
 /-!
@@ -343,8 +342,8 @@ NB: `.interrogative =>.speaker` because the holder is who PERFORMS the
 speech act (always the speaker in Hacquard's framework). This is distinct
 from the SEAT OF KNOWLEDGE, which is the hearer for
 interrogatives — that notion captures who has epistemic authority over
-the content, not who initiates the speech event. The bridge between these
-is in `IllocutionaryForce.lean`: `seat_of_knowledge_agrees_with_epistemic_authority`. -/
+the content, not who initiates the speech event. That notion is tracked per-mood by
+`Semantics.Mood.moodAuthority`. -/
 def speechActProjection : EventProjection SpeechActType Interlocutor SpeechTime where
   holder
     | .declarative => .speaker

@@ -385,8 +385,7 @@ import Linglib.Morphology.MorphWord
 import Linglib.Semantics.Lexical.Roots.Operators
 import Linglib.Discourse.Coherence
 import Linglib.Features.Accessibility
-import Linglib.Discourse.IllocutionaryForce
-import Linglib.Discourse.Intentionality
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.Commitment.Frame

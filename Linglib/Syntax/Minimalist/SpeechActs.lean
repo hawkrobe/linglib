@@ -2,9 +2,8 @@ import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Basic
-import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Semantics.Mood.ClauseType
-import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns

@@ -1,5 +1,4 @@
-import Linglib.Discourse.IllocutionaryForce
-import Linglib.Discourse.Intentionality
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Modality.ModalTypes
 
@@ -52,7 +51,6 @@ set_option autoImplicit false
 
 namespace FrancikClark1985
 
-open Discourse (PreparatoryCondition)
 open Semantics.Modality (ModalFlavor)
 
 

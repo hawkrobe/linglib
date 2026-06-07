@@ -1,6 +1,6 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
-import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Gunlogson
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
@@ -88,7 +88,7 @@ def baraMetaContent (p : W → Prop) (K : GunlogsonState W) : Prop :=
 
 /-- The illocutionary acts surveyed by [deo-2025-bara].
 
-    Refines `Discourse.IllocutionaryForce.SearleClass` for the
+    Refines `SearleClass` for the
     directive subset (warning/advice/reminder/command/strongRec/
     request/plea/offer/permission/concession/curse all `.directive`),
     plus `commissive` (`.commissive`) and `agreement` (`.assertive`).
