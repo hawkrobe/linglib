@@ -1,6 +1,6 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.TCT
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Optimization.OT.Basic
 
 /-!
 # Transderivational Paradigm Uniformity — Benua 1997
@@ -35,7 +35,7 @@ namespace Phonology.ParadigmUniformity.Transderivational
 
 open Phonology.Correspondence (Corr)
 open Phonology.TCT (Role)
-open Core.Constraint.OT (NamedConstraint ConstraintFamily)
+open Core.Optimization.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
 -- § 1: TCT Diagram constructors

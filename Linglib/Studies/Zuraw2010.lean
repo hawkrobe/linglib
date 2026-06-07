@@ -1,6 +1,6 @@
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Core.Constraint.PartiallyOrderedConstraints
-import Linglib.Core.Constraint.PermSubsetCombinatorics
+import Linglib.Core.Optimization.PartiallyOrderedConstraints
+import Linglib.Core.Optimization.PermSubsetCombinatorics
 
 /-!
 # [zuraw-2010]: Factorial Typology of Nasal Substitution
@@ -25,7 +25,7 @@ Constraints) substrate. For each stem-initial consonant `c`:
   computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
   `{i : vp c .yes i < vp c .no i}` respectively), with concrete
   `decide`-discharged values.
-- `subProb c : ℚ` is `Core.Constraint.PartialOrderConstraints.pocPredict`
+- `subProb c : ℚ` is `Core.Optimization.PartialOrderConstraints.pocPredict`
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
@@ -34,7 +34,7 @@ Constraints) substrate. For each stem-initial consonant `c`:
   no enumeration of 6! = 720 rankings.
 
 The structural implication theorems in §7 reuse
-`Core.Constraint.PermSubsetCombinatorics.head_filter_subset_extends`
+`Core.Optimization.PermSubsetCombinatorics.head_filter_subset_extends`
 and `head_filter_smaller_inherits` (lifted from earlier versions of
 this file's private helpers) — pure list-filter monotonicity facts
 that any binary-output OT factorial-typology study can consume.
@@ -94,9 +94,9 @@ those definitions must remain stable.
 
 namespace Zuraw2010
 
-open Core.Constraint Core.Constraint.OT Phonology.Constraints
-open Core.Constraint.PartialOrderConstraints
-open Core.Constraint.PermSubsetCombinatorics
+open Core.Optimization Core.Optimization.OT Phonology.Constraints
+open Core.Optimization.PartialOrderConstraints
+open Core.Optimization.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
 
@@ -397,7 +397,7 @@ cross-linguistic implicational universals established in
 obstruent, it applies to the corresponding voiceless obstruent;
 if NS applies to a stop, it applies to any fronter stop of the same
 voicing*. The substrate proofs go via the lifted helpers
-`Core.Constraint.PermSubsetCombinatorics.head_filter_subset_extends`
+`Core.Optimization.PermSubsetCombinatorics.head_filter_subset_extends`
 and `head_filter_smaller_inherits` (originally private here, lifted to
 substrate alongside `perm_filter_head_in_card`). -/
 
