@@ -1,7 +1,8 @@
 import Mathlib.Order.Interval.Basic
-import Mathlib.Order.Bounds.Basic
+import Mathlib.Order.Bounds.Image
 import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 import Mathlib.Algebra.Order.Group.Defs
+import Mathlib.Algebra.Order.Interval.Basic
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Abel
 
@@ -15,6 +16,11 @@ order-theoretic sibling of `ExtMeasure` (`Core/Order/Mereology.lean`,
 [krifka-1998]'s extensive measure functions over a `SemilatticeSup`):
 disjoint intervals have no interval join, so the two substrates coexist
 rather than one subsuming the other.
+
+Mathlib's `NonemptyInterval.length` is the canonical group-valued example
+(`ofStrictMono` at `F = id`); its `length_add` is additivity over
+*Minkowski* interval addition, orthogonal to the *concatenation*
+additivity axiomatized here, which mathlib does not state.
 
 ## Main declarations
 
@@ -45,16 +51,6 @@ class IsIntervalContent [Preorder α] [AddCommMonoid M] [PartialOrder M]
     μ ⟨⟨a, c⟩, hab.trans hbc⟩ = μ ⟨⟨a, b⟩, hab⟩ + μ ⟨⟨b, c⟩, hbc⟩
   /-- Strict positivity on nondegenerate intervals. -/
   positive : ∀ (a b : α) (h : a < b), 0 < μ ⟨⟨a, b⟩, h.le⟩
-
-/-- A strictly antitone image of a set with no greatest element has no
-    least element. -/
-theorem _root_.StrictAntiOn.not_isLeast_image {β γ : Type*} [Preorder β]
-    [Preorder γ] {f : β → γ} {t : Set β} (hf : StrictAntiOn f t)
-    (ht : ∀ x ∈ t, ∃ y ∈ t, x < y) (x : γ) :
-    ¬ IsLeast (f '' t) x := by
-  rintro ⟨⟨l, hl, rfl⟩, hLB⟩
-  obtain ⟨l', hl', hll'⟩ := ht l hl
-  exact (lt_iff_le_not_ge.mp (hf hl hl' hll')).2 (hLB ⟨l', hl', rfl⟩)
 
 namespace IsIntervalContent
 
@@ -95,16 +91,21 @@ variable [LinearOrder α] [DenselyOrdered α] [AddCommMonoid M]
     of intervals `[l, s]` with left endpoint strictly below `a` have no
     least element — the domain-general form of [rouillard-2026]'s G-TIA
     information collapse ("there cannot be a smallest open interval to
-    include a closed time"). -/
+    include a closed time"). Decomposes through `StrictAnti.map_isLeast`:
+    a least measure would be a greatest left endpoint, which density
+    forbids. -/
 theorem not_isLeast_rightAnchored {a s : α} (has : a ≤ s) (x : M) :
     ¬ IsLeast (Set.range fun l : Set.Iio a =>
       μ ⟨⟨l.1, s⟩, (l.2.trans_le has).le⟩) x := by
-  rw [← Set.image_univ]
-  refine StrictAntiOn.not_isLeast_image ?_ (fun p _ => ?_) x
-  · intro p _ q _ hpq
-    exact measure_lt_of_left_lt μ hpq (q.2.trans_le has).le
-  · obtain ⟨m, hm₁, hm₂⟩ := exists_between p.2
-    exact ⟨⟨m, hm₂⟩, Set.mem_univ _, hm₁⟩
+  intro h
+  obtain ⟨l, rfl⟩ := h.1
+  have hanti : StrictAnti fun l : Set.Iio a =>
+      μ ⟨⟨l.1, s⟩, (l.2.trans_le has).le⟩ :=
+    fun p q hpq => measure_lt_of_left_lt μ hpq (q.2.trans_le has).le
+  rw [← Set.image_univ] at h
+  have hg : IsGreatest Set.univ l := hanti.map_isLeast.mp h
+  obtain ⟨m, hm₁, hm₂⟩ := exists_between l.2
+  exact absurd (hg.2 (Set.mem_univ (⟨m, hm₂⟩ : Set.Iio a))) (not_le.mpr hm₁)
 
 end Dense
 
@@ -115,14 +116,15 @@ variable [Preorder α] {G : Type*} [AddCommGroup G] [PartialOrder G]
 
 /-- Stieltjes-style constructor: a strictly monotone potential into an
     ordered group induces an interval content. Additivity is telescoping;
-    positivity is the strict monotonicity. -/
+    positivity is the strict monotonicity. At `F = id` this recovers
+    `NonemptyInterval.length`. -/
 theorem ofStrictMono (F : α → G) (hF : StrictMono F) :
     IsIntervalContent (fun i : NonemptyInterval α => F i.snd - F i.fst) where
   additive a b c _ _ := by dsimp only; abel
   positive a b h := sub_pos.mpr (hF h)
 
-/-- Interval length on `ℚ` is a content (non-vacuity witness). -/
-example : IsIntervalContent (fun i : NonemptyInterval ℚ => i.snd - i.fst) :=
+/-- `NonemptyInterval.length` on `ℚ` is a content (non-vacuity witness). -/
+example : IsIntervalContent (NonemptyInterval.length (α := ℚ)) :=
   ofStrictMono _ strictMono_id
 
 end OfStrictMono
