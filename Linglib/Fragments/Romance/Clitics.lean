@@ -16,9 +16,15 @@ Italian (`Fragments/Italian/Pronouns.lean`) and Spanish
 data; the syncretism predicates drive [munoz-perez-2026]'s stylistic
 applicatives.
 
-REFL is a paradigm cell, not a case value: Romance reflexive clitics
-neutralize the accusative/dative contrast, so `CliticCase.toCase` sends
-it to `none` while ACC/DAT project to the analytical inventory.
+REFL is a paradigm cell, not a case value. In the languages instantiated
+here (Italian, Spanish) the third-person reflexive (*si*/*se*) is a
+single form that does not determine the accusative/dative contrast — at
+first/second person the contrast is syncretic throughout — so
+`CliticCase.toCase` sends REFL to `none` while ACC/DAT project to the
+analytical inventory. This is a commitment scoped to those languages:
+Romanian contrasts reflexive accusative *se* with reflexive dative *își*,
+so a Romanian instantiation must split the REFL cell (or make the
+projection person-sensitive) rather than reuse this `toCase`.
 
 The clitic is its own bespoke struct — capabilities (`Proform`, `Bound`,
 `HasPerson`, `HasNumber`, `HasCase`) abstract over it without merging it
@@ -38,8 +44,9 @@ inductive CliticCase where
   deriving DecidableEq, Repr
 
 /-- Project a paradigm cell to the analytical case inventory. REFL
-    neutralizes the accusative/dative contrast, so it projects to
-    `none`. -/
+    projects to `none`: in Italian/Spanish the reflexive does not
+    determine the accusative/dative contrast. (Romanian, contrasting
+    reflexive *se*/*își*, needs a split REFL cell instead.) -/
 def CliticCase.toCase : CliticCase → Option Case
   | .accusative => some .acc
   | .dative => some .dat
