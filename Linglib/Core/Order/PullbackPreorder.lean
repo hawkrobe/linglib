@@ -16,7 +16,7 @@ several constructions in linglib:
 - `Core.Order.SatisfactionOrdering α Criterion` — the projection is the
   satisfied criterion set, the target is `(Finset Criterion)ᵒᵈ` (or
   equivalently, the violated set with standard ⊆).
-- `Core.Constraint.ConstraintSystem.paretoPullbackPreorder` — the
+- `Phonology.Constraint.ConstraintSystem.paretoPullbackPreorder` — the
   projection is the score vector, the target is `Profile β n` with
   pointwise ≤.
 - `Semantics.Modality.Kratzer.worldOrdering` — the projection is the
@@ -78,7 +78,7 @@ def ofProj (proj : Carrier → Target)
     The converse generally fails: collapsing the target discards
     information. This is the schema behind every "qualitative
     coarsening" bridge — e.g. pointwise-Pareto-on-violations ⇒
-    subset-of-satisfied in `Core/Constraint/Pareto.lean`. -/
+    subset-of-satisfied in `Core/Optimization/Pareto.lean`. -/
 theorem coarsen_via_monotone {Carrier F1 F2 : Type*}
     [Preorder F1] [Preorder F2]
     (o1 : PullbackPreorder Carrier F1) (o2 : PullbackPreorder Carrier F2)

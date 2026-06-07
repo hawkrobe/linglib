@@ -1,7 +1,7 @@
-import Linglib.Core.Constraint.Weighted
-import Linglib.Core.Constraint.System
-import Linglib.Core.Constraint.PartiallyOrderedConstraints
-import Linglib.Core.Constraint.PermSubsetCombinatorics
+import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.Constraint.PartiallyOrderedConstraints
+import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -49,8 +49,8 @@ modeling phonological variation, illustrated with English t/d-deletion.
 
 namespace CoetzeePater2011
 
-open Core.Constraint.OT Core.Constraint.Evaluation
-open Core.Constraint
+open Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
+open Core.Optimization Phonology.Constraint
 open Phonology.Constraints
 
 /-! ### Empirical data (tables 7 and 10) -/
@@ -287,7 +287,7 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
     encodes "no rankings imposed" — uniform sampling over all 4! = 24
     total orders. -/
 
-open Core.Constraint.PermSubsetCombinatorics in
+open Core.Optimization Core.Optimization.PermSubsetCombinatorics in
 /-- Probability that POC sampling selects deletion at context `ctx`,
     under the discrete partial order. -/
 def deletionProb (ctx : Context) : ℚ :=

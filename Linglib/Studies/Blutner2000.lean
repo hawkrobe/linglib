@@ -1,5 +1,5 @@
-import Linglib.Core.Constraint.Evaluation
-import Linglib.Core.Constraint.Superoptimal
+import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Pragmatics.Bidirectional
 import Linglib.Semantics.Presupposition.Accommodation
 
@@ -68,7 +68,7 @@ set_option autoImplicit false
 
 namespace Blutner2000
 
-open Core.Constraint.Evaluation
+open Core.Optimization.Evaluation
 
 -- ============================================================================
 -- § 1: Projection Sites

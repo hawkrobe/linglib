@@ -1,5 +1,5 @@
-import Linglib.Core.Constraint.MaxEnt
-import Linglib.Core.Constraint.Weighted
+import Linglib.Phonology.Constraint.MaxEnt
+import Linglib.Phonology.Constraint.Weighted
 import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
@@ -68,7 +68,7 @@ contradicting the paper's findings.
 
 ## Bridges
 
-- `Core.Constraint.MaxEntGrammar` — the grammar packages as a generic
+- `Phonology.Constraint.MaxEntGrammar` — the grammar packages as a generic
   MaxEnt grammar (`maxEntGrammar`), making the softmax probability
   machinery available without redefinition.
 - `Features.BinaryGivenness` — discourse-status partition. The paper
@@ -101,7 +101,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Core.Constraint.OT Core.Constraint Features
+open Phonology.Constraint.OT Core.Optimization Phonology.Constraint Features
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================

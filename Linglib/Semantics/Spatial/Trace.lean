@@ -143,9 +143,9 @@ theorem unbounded_atelic : pathShapeToTelicity .unbounded = .atelic := rfl
     telic ↔ licensed (closed scale), atelic ↔ blocked (open scale).
     This connects the spatial classification to the scale-theoretic one. -/
 theorem telicity_boundedness_agree (s : PathShape) :
-    (pathShapeToTelicity s = .telic) ↔ (s.toBoundedness.isLicensed = true) := by
+    (pathShapeToTelicity s = .telic) ↔ s.toBoundedness.IsLicensed := by
   cases s <;> simp [pathShapeToTelicity, PathShape.toBoundedness,
-    Core.Order.Boundedness.isLicensed]
+    Core.Order.Boundedness.IsLicensed]
 
 /-- LicensingPipeline instance for PathShape via the `pathShapeToTelicity`
     bridge. Co-located with the bridge per the convention noted in

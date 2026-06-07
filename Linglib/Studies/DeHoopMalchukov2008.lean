@@ -1,6 +1,6 @@
-import Linglib.Core.Constraint.OT.Basic
-import Linglib.Core.Constraint.Evaluation
-import Linglib.Core.Constraint.Superoptimal
+import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Features.Prominence
 import Linglib.Studies.Aissen2003
 
@@ -28,7 +28,7 @@ the hearer's perspective via **superoptimality** ([blutner-2000] eq. 14,
 "weak optimality"): a form–meaning pair ⟨f, m⟩ is superoptimal iff no other
 superoptimal pair with the same form or same meaning is strictly more harmonic.
 This is a greatest-fixed-point computation
-(`Core.Constraint.Evaluation.superoptimal`).
+(`Core.Optimization.Evaluation.superoptimal`).
 
 Under weak BiOT, the 2×2 form-meaning game (2 forms × 2 meanings) always
 produces Horn's division of pragmatic labour regardless of ranking — the
@@ -76,9 +76,9 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 namespace DeHoopMalchukov2008
 
-open Core.Constraint.Evaluation (superoptimal superoptimalSet
+open Core.Optimization.Evaluation (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Core.Constraint.OT
+open Phonology.Constraint.OT
 open Features.Prominence
 open Aissen2003
 open Aissen2003

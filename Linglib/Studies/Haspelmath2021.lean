@@ -81,7 +81,7 @@ claims about token frequencies.
 namespace Haspelmath2021
 
 open Features.Prominence
-open Core.Constraint.Evaluation
+open Core.Optimization.Evaluation
 open Aissen2003
 open DeHoopMalchukov2008
 open Typology.Alignment

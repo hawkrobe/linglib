@@ -135,8 +135,8 @@ theorem eat_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "arrive": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem arrive_full_pipeline :
@@ -144,8 +144,8 @@ theorem arrive_full_pipeline :
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "sleep": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem sleep_full_pipeline :
@@ -153,8 +153,8 @@ theorem sleep_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "run": activity → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem run_full_pipeline :
@@ -162,8 +162,8 @@ theorem run_full_pipeline :
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "see": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem see_full_pipeline :
@@ -171,8 +171,8 @@ theorem see_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "leave": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem leave_full_pipeline :
@@ -180,8 +180,8 @@ theorem leave_full_pipeline :
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "kill": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem kill_full_pipeline :
@@ -189,8 +189,8 @@ theorem kill_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 -- Accomplishment verbs (telic, "in X")
 
@@ -200,8 +200,8 @@ theorem give_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "cover": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem cover_full_pipeline :
@@ -209,8 +209,8 @@ theorem cover_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "buy": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem buy_full_pipeline :
@@ -218,8 +218,8 @@ theorem buy_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "sell": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem sell_full_pipeline :
@@ -227,8 +227,8 @@ theorem sell_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "break": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem break_full_pipeline :
@@ -236,8 +236,8 @@ theorem break_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "tear": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem tear_full_pipeline :
@@ -245,8 +245,8 @@ theorem tear_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "burn": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem burn_full_pipeline :
@@ -254,8 +254,8 @@ theorem burn_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "destroy": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem destroy_full_pipeline :
@@ -263,8 +263,8 @@ theorem destroy_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "melt": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem melt_full_pipeline :
@@ -272,8 +272,8 @@ theorem melt_full_pipeline :
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .accomplishment = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 -- Achievement verbs (telic, "in X")
 
@@ -283,8 +283,8 @@ theorem put_full_pipeline :
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "meet": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem meet_full_pipeline :
@@ -292,8 +292,8 @@ theorem meet_full_pipeline :
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    inXPrediction .achievement = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 -- Activity verbs (atelic, "for X")
 
@@ -303,8 +303,8 @@ theorem chase_full_pipeline :
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "hit": activity → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem hit_full_pipeline :
@@ -312,8 +312,8 @@ theorem hit_full_pipeline :
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .activity = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 -- State verbs (atelic, "for X")
 
@@ -323,8 +323,8 @@ theorem weigh_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "measure": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem measure_full_pipeline :
@@ -332,8 +332,8 @@ theorem measure_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "enjoy": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem enjoy_full_pipeline :
@@ -341,8 +341,8 @@ theorem enjoy_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "like": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem like_full_pipeline :
@@ -350,8 +350,8 @@ theorem like_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "hate": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem hate_full_pipeline :
@@ -359,8 +359,8 @@ theorem hate_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "admire": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem admire_full_pipeline :
@@ -368,8 +368,8 @@ theorem admire_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "envy": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem envy_full_pipeline :
@@ -377,8 +377,8 @@ theorem envy_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "respect": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem respect_full_pipeline :
@@ -386,8 +386,8 @@ theorem respect_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 /-- "value": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem value_full_pipeline :
@@ -395,8 +395,8 @@ theorem value_full_pipeline :
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    forXPrediction .state = .accept := ⟨rfl, rfl, rfl, rfl, by decide, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Motion Verb Cross-Classification
@@ -431,28 +431,31 @@ theorem run_motion_consistent :
 
 /-! These tests loop over `allVerbs` so adding a new verb to the fragment
     automatically includes it in the test suite — no per-verb theorem needed.
-    If a new verb has an inconsistent annotation, `native_decide` fails. -/
+    If a new verb has an inconsistent annotation, the decision-procedure
+    checks fail. -/
 
 /-- Pipeline consistency: for any verb with a vendlerClass annotation,
     the VendlerClass → Telicity → MereoTag → Boundedness chain must
     produce a licensing prediction that agrees with the for/in diagnostic.
-    Returns `true` for verbs without vendlerClass (vacuously OK). -/
-def pipelineOK (v : VerbEntry) : Bool :=
+    Vacuously OK for verbs without vendlerClass. Licensed (telic) verbs
+    accept "in X"; blocked (atelic) verbs accept or are coerced with
+    "for X" (semelfactives are coerced). -/
+def PipelineOK (v : VerbEntry) : Prop :=
   match v.toVerb.vendlerClass with
-  | none => true
+  | none => True
   | some vc =>
-    let tel := vc.telicity
-    let mt := tel.toMereoTag
-    let bnd := mt.toBoundedness
-    let licensed := LicensingPipeline.isLicensed bnd
-    -- Licensed (telic) verbs accept "in X"; blocked (atelic) verbs
-    -- accept or are coerced with "for X" (semelfactives are coerced).
-    if licensed then inXPrediction vc == .accept
-    else forXPrediction vc == .accept || forXPrediction vc == .coerced
+    (LicensingPipeline.IsLicensed vc.telicity.toMereoTag.toBoundedness ∧
+      inXPrediction vc = .accept) ∨
+    (¬ LicensingPipeline.IsLicensed vc.telicity.toMereoTag.toBoundedness ∧
+      (forXPrediction vc = .accept ∨ forXPrediction vc = .coerced))
 
+instance (v : VerbEntry) : Decidable (PipelineOK v) := by
+  unfold PipelineOK
+  split <;> infer_instance
+
+set_option maxRecDepth 2048 in
 /-- Every verb in the fragment passes pipeline consistency. -/
-theorem all_verbs_pipeline_ok :
-    allVerbs.all pipelineOK = true := by native_decide
+theorem all_verbs_pipeline_ok : ∀ v ∈ allVerbs, PipelineOK v := by decide
 
 /-- VendlerClass × VerbIncClass coherence: sinc/inc verbs must be
     accomplishments (telic), cumOnly verbs must be activities (atelic).

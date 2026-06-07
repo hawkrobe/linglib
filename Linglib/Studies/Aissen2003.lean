@@ -41,9 +41,9 @@ to a possible OT grammar.
 namespace Aissen2003
 
 open Features.Prominence
-open Core.Constraint.OT Phonology.Constraints
+open Phonology.Constraint.OT Phonology.Constraints
 
-open Core.Constraint.Evaluation (Finset.checkAll Finset.checkAny)
+open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
 
 -- ============================================================================
 -- §0. DOM language profiles (Aissen 2003 empirical core)

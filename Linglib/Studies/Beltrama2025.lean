@@ -377,15 +377,15 @@ open Core.Order (LicensingPipeline)
     while their resistance to *very*/*extremely* is pragmatic (§6.2),
     not structural. -/
 theorem mpa_licensed_by_pipeline :
-    LicensingPipeline.isLicensed decent.scaleType = true ∧
-    LicensingPipeline.isLicensed acceptable.scaleType = true ∧
-    LicensingPipeline.isLicensed adequate.scaleType = true := ⟨rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed decent.scaleType ∧
+    LicensingPipeline.IsLicensed acceptable.scaleType ∧
+    LicensingPipeline.IsLicensed adequate.scaleType := ⟨trivial, trivial, trivial⟩
 
 /-- *good* is also licensed (same scale structure). The difference
     between MPAs and *good* is in standard type, not in structural
     licensing. -/
 theorem good_also_licensed :
-    LicensingPipeline.isLicensed good.scaleType = true := rfl
+    LicensingPipeline.IsLicensed good.scaleType := trivial
 
 -- ============================================================================
 -- § 11. Integration: Evaluative Valence

@@ -1,5 +1,5 @@
 import Linglib.Phonology.Process.Harmony.OT
-import Linglib.Core.Constraint.System
+import Linglib.Phonology.Constraint.System
 import Linglib.Fragments.Hungarian.VowelHarmony
 
 /-!
@@ -12,7 +12,7 @@ End-to-end OT analysis of Hungarian vowel harmony, connecting:
 2. **Harmony system** (`Harmony.Defs`) — trigger/target/transparent predicates
 3. **OT constraints** (`Harmony.OT`) — SPREAD and IDENT derived from
    `HarmonySystem`
-4. **Tableaux** (`Core.Constraint.OT`) — `mkTableau` + `optimal` select winner
+4. **Tableaux** (`Phonology.Constraint.OT`) — `mkTableau` + `optimal` select winner
 5. **Hungarian fragments** (`Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
 
@@ -41,7 +41,7 @@ namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
 open Phonology.Harmony
-open Core.Constraint.OT Core.Constraint.Evaluation
+open Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
 
 -- ============================================================================
@@ -188,7 +188,7 @@ here both expose `predict : Cand → ℝ`; for the deterministic OT case,
 `predict winner = 1` and `predict loser = 0`. -/
 
 section PredictAPI
-open Core.Constraint
+open Core.Optimization Phonology.Constraint
 
 /-- *ház* SPREAD ≫ IDENT tableau as a generic `ConstraintSystem`. -/
 noncomputable def házSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=

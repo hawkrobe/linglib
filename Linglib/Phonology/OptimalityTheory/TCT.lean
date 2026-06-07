@@ -1,5 +1,5 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.OT.Basic
 
 /-!
 # Transderivational Correspondence Theory (TCT)
@@ -60,7 +60,7 @@ within-paradigm OO-Faith) lives in
 namespace Phonology.TCT
 
 open Phonology.Correspondence (Corr)
-open Core.Constraint.OT (NamedConstraint ConstraintFamily)
+open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
 -- § 1: TCT Roles

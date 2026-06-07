@@ -1,6 +1,6 @@
-import Linglib.Core.Constraint.MaxEnt
-import Linglib.Core.Constraint.System
-import Linglib.Core.Constraint.Weighted
+import Linglib.Phonology.Constraint.MaxEnt
+import Linglib.Phonology.Constraint.System
+import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
@@ -46,9 +46,9 @@ Following standard OT/MaxEnt constraint families:
 
 namespace Storme2026
 
-open Core.Constraint Phonology.Constraints
+open Core.Optimization Phonology.Constraint Phonology.Constraints
 open Farsi.Phonology
-open Core.Constraint.OT
+open Core.Optimization Phonology.Constraint.OT
 
 -- Fintype instances for HiatusInput/Output (Fintype requires Mathlib,
 -- which is available here via MaxEnt → RationalAction)

@@ -1,5 +1,5 @@
-import Linglib.Core.Constraint.Weighted
-import Linglib.Core.Constraint.System
+import Linglib.Phonology.Constraint.Weighted
+import Linglib.Phonology.Constraint.System
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Prosodic.Syllable.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
@@ -57,10 +57,10 @@ paper notes these as partly idiosyncratic (Table 7).
 
 namespace AfkirZellou2025
 
-open Core.Constraint Phonology.Constraints
+open Core.Optimization Phonology.Constraint Phonology.Constraints
 open Phonology.Syllable
 open Tarifit.Inventory
-open Core.Constraint.OT
+open Core.Optimization Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: Surface Forms and Candidates
@@ -342,7 +342,7 @@ theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
 -- ============================================================================
 
 /-! [afkir-zellou-2025]'s MaxEnt grammar realised through the
-generic `ConstraintSystem` API in `Core.Constraint.System`. The same
+generic `ConstraintSystem` API in `Phonology.Constraint.System`. The same
 softmax decoder used for English onset phonotactics
 (`HayesWilson2008.onsetSystem`), French hiatus resolution
 (`Storme2026.stormeSystem`), and AAVE t/d-deletion
@@ -350,7 +350,7 @@ softmax decoder used for English onset phonotactics
 
 section PredictAPI
 
-open Core.Constraint Core.Constraint.OT
+open Phonology.Constraint Core.Optimization Phonology.Constraint.OT
 
 instance : Fintype SurfaceForm where
   elems := {.faithful, .intrusive, .vowelless}
