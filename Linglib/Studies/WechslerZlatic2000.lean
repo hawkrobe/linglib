@@ -4,59 +4,51 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
+import Linglib.Morphology.Word
+import Linglib.Syntax.Agreement.Basic
 
 /-!
 # Wechsler & Zlatić 2000: Agreement via the Declension–Concord–Index–Semantics chain
-[wechsler-zlatic-2000] [corbett-1991] [pollard-sag-1994]
+[wechsler-zlatic-2000] [corbett-1991] [corbett-1998] [pollard-sag-1994]
+[dalrymple-kaplan-2000]
 
-Four lexical features of a noun are relevant to agreement — declension
-class, CONCORD features (case, number, gender), the referential INDEX's
-features (person, number, gender), and semantic conditions on reference
-— correlated by a chain of binary constraints (their ex. 4):
+A noun carries two feature bundles — CONCORD (case, number, gender),
+read by NP-internal targets, and the referential INDEX (person, number,
+gender), read by pronouns and finite verbs — correlated with declension
+class and semantics by a chain of binary constraints (their ex. 4):
 
     declension ⇔ concord ⇔ index ⇔ semantics
 
-Regular nouns (*knjiga* 'book', *žena* 'woman') satisfy every link.
-Hybrid nouns break exactly one link — *Steva*-type masculine names in
-the feminine declension (declension ∥ concord, their ex. 29), *deca*
-'children'-type collectives (concord ∥ index, ex. 46), pluralia tantum
-*makaze* 'scissors' on nonaggregate reference (index ∥ semantics,
-ex. 35) — and *braća* 'brothers' breaks two (ex. 39). The headline
-prediction (their §9, n. 3): of the seven logically possible two-type
-mismatch patterns, only the **three contiguous** ones can arise, and
-exactly those three are attested (`seven_logical_three_contiguous`,
-`attested_patterns_are_contiguous`).
-
-NP-internal targets (determiners, attributive adjectives) check CONCORD
-— case, number, gender — while pronouns and finite verbs check INDEX —
-person, number, gender (§3.3). Both checks run through the shared
-carrier mixins (`HasCase`/`HasNumber`/`HasGender`/`HasPerson` and their
-`Compatible` relations), so *ova dobra deca* / *ona su spavala* (exs.
-41–42) verify by concord- and index-compatibility respectively, and the
-mismatched variants fail. Corbett's AGREEMENT HIERARCHY
-(attributive < predicate < relative pronoun < personal pronoun,
-[corbett-1991]) falls out: attributives lack referential indices, so
-they can only read CONCORD; pronouns read INDEX, which alone connects
-to the semantics (their §8) — `indexAccess_monotone`.
-
-Not formalized here: the nominative f.sg ~ nt.pl syncretism of concord
-endings (their Table 2) and the resulting participle indeterminacy
-(§7.3, left open by the paper); pragmatic agreement (masculine plural
-pronouns for mixed groups, §3.1); the HPSG spell-out function φ
-(Appendix).
+Regular nouns satisfy every link; hybrid nouns break one (or, *braća*,
+two). The theory predicts exactly the three contiguous break patterns of
+the seven a-priori possibilities, all attested (their §9, n. 3).
 
 ## Main declarations
 
-* `WechslerZlatic2000.Noun` — lexical entry: declension, CONCORD,
-  INDEX, semantic conditions (sex restriction, COUNT)
-* `WechslerZlatic2000.DecCon`/`ConInd`/`IndSem` — the three chain
-  constraints (their exs. 15, 17, 18 + 22)
-* `WechslerZlatic2000.brokenLinks` — a noun's mismatch pattern
-* `WechslerZlatic2000.seven_logical_three_contiguous` — 7 bipartitions
-  of the chain, 3 contiguous; `attested_patterns_are_contiguous`
-* `WechslerZlatic2000.concordAgrees`/`indexAgrees` — target checking
-  through the `HasX.Compatible` mixins, with the *deca* paradigm
-  (exs. 41–42) as positive/negative tests
+* `Noun`, `DecCon`/`ConInd`/`IndSem` — the lexical entry and the three
+  chain constraints (their exs. 15, 17, 18+22)
+* `brokenLinks`, `seven_logical_patterns`/`three_contiguous_predicted` —
+  the mismatch pattern of a noun, and the 7-logical/3-contiguous count
+* `concordAgrees`/`indexAgrees` — target checking through the
+  `HasX.Compatible` mixins, with the *deca* paradigm (exs. 41–42)
+* `no_single_phi_bundle_for_deca` — the §3.3 single-bundle "illusion" as
+  a refutation against `Word.Agree`
+* `indexReaders_lowerSet` — the Agreement Hierarchy skeleton over
+  `Agreement.AgreementTarget`, robust to the open predicate position
+
+Coordinate resolution (their fn. 18) is handled in
+`Studies/DalrympleKaplan2000.lean`, to which the paper defers; the HPSG
+spell-out function φ (Appendix) is out of scope.
+
+## TODO
+
+* Concord-ending syncretism (Table 2) and the participle indeterminacy
+  it causes (§7.3, left open in the paper).
+* The *sudija*/*mušterija* disjunctive sex specification (exs. 20,
+  31–32), here flattened to resolved variants.
+* Pragmatic agreement: masculine-plural pronouns for mixed groups
+  (§3.1).
+
 -/
 
 set_option autoImplicit false
@@ -70,11 +62,16 @@ number, and gender. Case is contextual (valued in syntax), so the
 lexical CONCORD carries number and gender; a *realized* NP-internal
 target adds the case value. -/
 
-/-- Serbo-Croatian declension classes (their Table 1). -/
+/-- Serbo-Croatian declension classes (their Table 1). The singular
+    citation-form classes are I/II/III; pluralia tantum sit outside this
+    classification (their Table 3 lists their declension as a distinct
+    value "pl", §6), so they get their own constructor rather than being
+    forced into a numbered class. -/
 inductive Declension where
   | I
   | II
   | III
+  | pluralia
   deriving DecidableEq, Repr
 
 /-- Lexical CONCORD features: number and gender (case is contextual). -/
@@ -119,11 +116,15 @@ structure Noun where
 /-! ### The three chain constraints (their exs. 15, 17, 18, 22) -/
 
 /-- DecCon (ex. 15): class I nouns have masculine or neuter concord
-    gender; class II/III nouns have feminine concord gender. -/
+    gender; class II/III nouns have feminine concord gender. Pluralia
+    tantum lie outside the singular declension classification (their §6),
+    so the constraint is vacuous for them — their break, when any, is at
+    a later link. -/
 def DecCon (n : Noun) : Prop :=
   match n.decl with
   | .I => n.concord.gender = .masculine ∨ n.concord.gender = .neuter
   | .II | .III => n.concord.gender = .feminine
+  | .pluralia => True
 
 /-- ConInd (ex. 17): the noun's CONCORD and INDEX share number and
     gender (structure sharing in the original). -/
@@ -237,9 +238,12 @@ def gospoda : Noun :=
 /-- *makaze* 'scissors' on its nonaggregate reading ('one pair'):
     plural declension/concord/index against singular reference — the
     index ∥ semantics break (their exs. 34–35, with *naočare*
-    'glasses'). -/
+    'glasses'). Declension is `pluralia` (Table 3 value "pl", not a
+    numbered class); the feminine concord gender is supplied (Table 3
+    leaves makaze's gender unspecified) and is inessential to the
+    break. -/
 def makazeNonAggregate : Noun :=
-  { lemma_ := "makaze", decl := .II,
+  { lemma_ := "makaze", decl := .pluralia,
     concord := ⟨.plural, .feminine⟩,
     index := ⟨.third, .plural, .feminine⟩,
     sex := .unrestricted, count := some .one }
@@ -312,11 +316,14 @@ def cellOfBreak : ChainLink → Finset (Fin 4)
   | .conInd => {0, 1}
   | .indSem => {0, 1, 2}
 
-/-- **Seven logically possible two-type patterns, three contiguous**
-    (their §9: "there are seven logical possibilities a priori …
-    our theory predicts three to be possible"). -/
-theorem seven_logical_three_contiguous :
-    bipartitions.card = 7 ∧
+/-- Seven logically possible two-type mismatch patterns a priori (their
+    §9, n. 3). -/
+theorem seven_logical_patterns : bipartitions.card = 7 := by decide
+
+/-- Of the seven, the theory predicts the three contiguous ones — the
+    initial-segment cells realized by *Steva*, *deca*, *makaze* (their
+    §9: "our theory predicts three to be possible"). -/
+theorem three_contiguous_predicted :
     (bipartitions.filter
       (fun S => ∃ l : ChainLink, S = cellOfBreak l)).card = 3 := by
   decide
@@ -334,25 +341,28 @@ theorem attested_patterns_are_contiguous :
 
 NP-internal targets (determiners, attributive adjectives) check
 CONCORD: case, number, gender. Pronouns and finite verbs check INDEX:
-person, number, gender. Both run through the shared
-`HasX.Compatible` relations — concord checking is the first live
-consumer of `HasCase.Compatible`. -/
+person, number, gender. Both run through the shared `HasX.Compatible`
+relations. A target may be underspecified for a feature (`none`), where
+the flat-order wildcard semantics of `Compatible` does real work — see
+`kojih`, the concord-underspecified plural relative pronoun (§7.4). -/
 
 /-- A realized NP-internal target's inflectional features: the noun's
-    lexical concord plus contextual case (their ex. 12). -/
+    lexical concord plus contextual case (their ex. 12). A feature is
+    `none` when the target is unmarked for it (e.g. *kojih*, §7.4). -/
 structure ConcordTarget where
-  case : Case
-  number : Number
-  gender : Gender
+  case : Option Case
+  number : Option Number
+  gender : Option Gender
   deriving DecidableEq, Repr
 
-instance : HasCase ConcordTarget := ⟨fun t => some t.case⟩
-instance : HasNumber ConcordTarget := ⟨fun t => some t.number⟩
-instance : HasGender ConcordTarget := ⟨fun t => some t.gender⟩
+instance : HasCase ConcordTarget := ⟨ConcordTarget.case⟩
+instance : HasNumber ConcordTarget := ⟨ConcordTarget.number⟩
+instance : HasGender ConcordTarget := ⟨ConcordTarget.gender⟩
 
-/-- The noun's realized concord bundle at a contextual case value. -/
+/-- The noun's realized concord bundle at a contextual case value (the
+    noun's own concord is always fully specified). -/
 def Noun.concordAt (n : Noun) (c : Case) : ConcordTarget :=
-  ⟨c, n.concord.number, n.concord.gender⟩
+  ⟨some c, some n.concord.number, some n.concord.gender⟩
 
 /-- An index-checking target's features (pronoun, finite verb). -/
 structure IndexTarget where
@@ -397,7 +407,7 @@ the accusative determiner and adjective (CONCORD), neuter plural on the
 coreferential pronoun (INDEX); the crossed combinations fail. -/
 
 /-- *ovu*/*dobru*: accusative feminine singular modifier (ex. 41). -/
-def ovu : ConcordTarget := ⟨.acc, .singular, .feminine⟩
+def ovu : ConcordTarget := ⟨some .acc, some .singular, some .feminine⟩
 
 /-- *ona*: neuter plural pronoun (ex. 41). -/
 def ona : IndexTarget := ⟨.third, .plural, .neuter⟩
@@ -405,7 +415,7 @@ def ona : IndexTarget := ⟨.third, .plural, .neuter⟩
 /-- *ova stara* (nominative feminine singular, ex. 6) agrees with
     regular *knjiga* in concord — and *je* (3sg feminine) in index. -/
 theorem knjiga_regular_targets :
-    concordAgrees ⟨.nom, .singular, .feminine⟩ knjiga .nom ∧
+    concordAgrees ⟨some .nom, some .singular, some .feminine⟩ knjiga .nom ∧
     indexAgrees ⟨.third, .singular, .feminine⟩ knjiga := by decide
 
 /-- **Mixed agreement with *deca*** (exs. 41–42): the f.sg modifier
@@ -419,66 +429,82 @@ theorem deca_mixed_agreement :
     pronoun does not stand in index agreement with it (cf. *je* in
     their ex. 62). -/
 theorem deca_crossed_combinations_fail :
-    ¬ concordAgrees ⟨.acc, .plural, .neuter⟩ deca .acc ∧
+    ¬ concordAgrees ⟨some .acc, some .plural, some .neuter⟩ deca .acc ∧
     ¬ indexAgrees ⟨.third, .singular, .feminine⟩ deca := by decide
 
-/-- For chain-intact nouns the distinction is invisible: any target
-    agreeing in concord number/gender also agrees in index
-    number/gender (the "illusion … that a single feature bundle on the
-    noun is responsible for all the agreeing items", their §3.3). -/
+/-- *kojih*: the genitive plural relative pronoun, unmarked for CONCORD
+    gender and number (§7.4). Its wildcard concord features make it
+    compatible with *deca* (and with a feminine-singular noun) — the
+    case where `Compatible`'s flat-order semantics is not mere equality. -/
+def kojih : ConcordTarget := ⟨some .gen, none, none⟩
+
+/-- *kojih* agrees in concord with *deca* despite *deca*'s f.sg concord
+    and *kojih*'s plural index — its underspecified concord is a
+    wildcard. A fully-specified neuter-plural modifier does not
+    (`deca_crossed_combinations_fail`). -/
+theorem kojih_underspecified_agrees :
+    concordAgrees kojih deca .gen := by decide
+
+/-- For chain-intact nouns the split is invisible: a target's concord
+    agreement coincides with index agreement on the shared number/gender
+    features (the "illusion … that a single feature bundle on the noun
+    is responsible for all the agreeing items", their §3.3). -/
 theorem regular_nouns_mask_the_split (n : Noun) (hn : ConInd n)
-    (num : Number) (g : Gender) :
-    (num = n.concord.number ∧ g = n.concord.gender) ↔
-    (num = n.index.number ∧ g = n.index.gender) := by
-  obtain ⟨hnum, hgen⟩ := hn
-  rw [hnum, hgen]
+    (t : IndexTarget) :
+    HasNumber.Compatible t n.indexTarget ↔
+      HasNumber.Compatible t (n.concordAt .nom) := by
+  obtain ⟨hnum, _⟩ := hn
+  simp only [HasNumber.Compatible, Noun.indexTarget, Noun.concordAt,
+    HasNumber.numberOf, hnum]
+
+/-- The single-φ-bundle view (`Word.phi`/`Word.Agree`) cannot host
+    *deca*: its CONCORD-bearing attributive (f.sg) and its INDEX-bearing
+    pronoun (nt.pl) do not `Word.Agree`, so they cannot both copy one
+    fully-valued source bundle. This is §3.3's "illusion", as a
+    refutation against the library's one-bundle primitive — note a
+    *featureless* word would tolerate both (wildcards), so the claim is
+    about the two specified surface forms, not about compatibility. -/
+theorem no_single_phi_bundle_for_deca :
+    ¬ Word.Agree
+        ⟨"dobra", .ADJ, { gender := some .Fem, number := some .Sing }⟩
+        ⟨"ona", .PRON, { gender := some .Neut, number := some .Plur }⟩ := by
+  decide
 
 /-! ### The Agreement Hierarchy, derived (their §8)
 
-Corbett's hierarchy — attributive < predicate < relative pronoun <
-personal pronoun, with semantic agreement increasing monotonically
-([corbett-1991]) — follows from which bundle each target can read:
-attributives lack referential indices and read only CONCORD; relative
-pronouns are NP-internal *and* bound, reading both (their §7.4);
-personal pronouns read only INDEX. Since INDEX alone is linked to the
-semantics, semantic agreement can only surface where INDEX is read. -/
+Corbett's hierarchy lives as `Agreement.AgreementTarget`; W&Z's
+contribution is `readsIndex`, the bundle-access derivation of it.
+Attributives lack referential indices (read only CONCORD); pronouns and
+verbs read INDEX, which alone connects to the semantics. The predicate
+position is open in the paper (§7.3): secondary predication points to
+concord (ex. 50), coordination to index (exs. 51–53). -/
 
-/-- Corbett's target positions, ordered (their ex. 63). Predicates are
-    placed by the paper between attributives and relative pronouns;
-    whether Serbo-Croatian participles read concord or index is left
-    open by their §7.3. -/
-inductive Target where
-  | attributive
-  | predicate
-  | relativePronoun
-  | personalPronoun
-  deriving DecidableEq, Repr, Fintype
+open _root_.Agreement (AgreementTarget)
 
-/-- Hierarchy position (ex. 63, left to right). -/
-def Target.rank : Target → Fin 4
-  | .attributive => 0
-  | .predicate => 1
-  | .relativePronoun => 2
-  | .personalPronoun => 3
-
-/-- Whether a target can read the INDEX bundle — the precondition for
-    semantic agreement (their §8: attributives "lack referential
-    indices"; relative pronouns are bound; predicates pattern with
-    index targets in primary predication, their §7.3 ex. 51–53). -/
-def Target.readsIndex : Target → Prop
+/-- Whether a target reads the INDEX bundle — the precondition for
+    semantic agreement (their §8). `predReadsIndex` is the open predicate
+    position (§7.3, "left for future research"); the hierarchy's
+    monotonicity (`indexReaders_lowerSet`) holds for either value. -/
+def readsIndex (predReadsIndex : Bool) : AgreementTarget → Prop
   | .attributive => False
-  | _ => True
+  | .predicate => predReadsIndex
+  | .relativePronoun => True
+  | .personalPronoun => True
+  | .verb => True
 
-instance : DecidablePred Target.readsIndex := fun t => by
-  cases t <;> simp only [Target.readsIndex] <;> infer_instance
+instance (p : Bool) : DecidablePred (readsIndex p) := fun t => by
+  cases t <;> simp only [readsIndex] <;> infer_instance
 
-/-- **The hierarchy as monotonicity**: index access never decreases
-    rightward along Corbett's hierarchy — so semantic agreement, which
-    requires reading INDEX, increases monotonically (their §8:
-    "concord elements should never show semantic agreement unless the
-    pronouns do so"). -/
-theorem indexAccess_monotone :
-    ∀ t u : Target, t.rank ≤ u.rank → t.readsIndex → u.readsIndex := by
-  decide
+/-- **The hierarchy skeleton**: the index readers form a lower set in the
+    `AgreementTarget` rank (higher rank = more syntactic), so semantic
+    agreement can surface only at more-semantic targets — and this holds
+    whichever way the open predicate position resolves. This is the
+    *categorical* claim W&Z derive (their §8, "concord elements should
+    never show semantic agreement unless the pronouns do"); it explains
+    but does not reproduce Corbett's gradient, corpus-level likelihood
+    law ([corbett-1998]; their fn. 21). -/
+theorem indexReaders_lowerSet (p : Bool) (t u : AgreementTarget)
+    (h : u.rank ≤ t.rank) : readsIndex p t → readsIndex p u := by
+  cases p <;> revert t u <;> decide
 
 end WechslerZlatic2000
