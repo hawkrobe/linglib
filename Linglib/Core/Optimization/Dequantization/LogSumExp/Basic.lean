@@ -3,7 +3,7 @@ import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Log-Sum-Exp: The Warped Semiring Bridging MaxEnt and Max-Plus
+# Log-sum-exp: the warped semiring deforming to max-plus
 [cohen-smith-zaidan-2008] [eisner-2002]
 
 The log-sum-exp operator at temperature `α > 0`,

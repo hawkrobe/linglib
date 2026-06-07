@@ -63,13 +63,14 @@ share one notion of directional EVAL.
 
 This file does **not** modify `NamedConstraint.eval : C → Nat` (which is
 load-bearing for `Weighted.lean`/`MaxEnt.lean`/`NoisyHG.lean` — see
-`Core/Optimization/Evaluation.lean`). The directional dispatch is consumed
+`Phonology/Constraint/Evaluation.lean`). The directional dispatch is consumed
 by `HarmonicSerialism.lean`'s combinator, which currently routes the
 `directional` arm to the parallel optimum as a stub; a true
 `DirectionalTableau` consumer lands when a study file requires it.
 -/
 
-namespace Core.Optimization.OT
+namespace Phonology.Constraint.OT
+
 
 /-- Direction of lex comparison on violation position vectors.
     [eisner-2000] §3, [eisner-2002]. -/
@@ -131,7 +132,7 @@ instance (m : EvalMode) (a b : List Nat) : Decidable (le m a b) := by
       exact (inferInstance : Decidable (Core.Optimization.Evaluation.LexLE a.reverse b.reverse))
 
 /-- Single-element `LexLE` reduces to `Nat ≤`. Local helper used to
-    close `le_singleton`; not promoted to `Core/Optimization/Evaluation.lean`
+    close `le_singleton`; not promoted to `Phonology/Constraint/Evaluation.lean`
     because that file is not in scope for substrate-extension. -/
 private theorem lexLE_singleton_iff (k k' : Nat) :
     Core.Optimization.Evaluation.LexLE [k] [k'] ↔ k ≤ k' := by
@@ -155,4 +156,4 @@ theorem le_singleton (m : EvalMode) (k k' : Nat) :
 
 end EvalMode
 
-end Core.Optimization.OT
+end Phonology.Constraint.OT

@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.Dequantization.OTLimit
+import Linglib.Phonology.Constraint.Dequantization.OTLimit
 
 /-!
 # The Cumulativity Gap: HG ⊋ OT
@@ -52,9 +52,10 @@ likewise consume `hg_strictly_contains_ot` rather than re-deriving the
 gap per-paper.
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
 
-open Core.Optimization.OT Finset
+
+open Phonology.Constraint.OT Finset
 
 -- ============================================================================
 -- § 1: Decidable Lex Comparison
@@ -258,4 +259,4 @@ theorem hg_strictly_contains_ot :
     Cumulativity.lyman_isHGRealizable,
     Cumulativity.lyman_not_isOTRealizable⟩
 
-end Core.Optimization
+end Phonology.Constraint

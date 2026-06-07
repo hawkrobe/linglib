@@ -9,12 +9,10 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Permutation-Subset Combinatorics
-[anttila-1997] [zuraw-2010]
+# Permutation-subset combinatorics
 
 A closed-form count of `Equiv.Perm (Fin n)` filtered by predicates
-of the form "the highest-ranked constraint in `D` lies in `Y`" — the
-canonical OT factorial-typology pattern.
+of the form "the head of a list filtered by `D` lies in `Y`".
 
 ## Main result
 
@@ -41,7 +39,7 @@ gives `|D| × |S_y| = n!`, hence `|S_y| = n!/|D|`.
 Specialized to head-in-Y predicates on `Equiv.Perm (Fin n)`. A more
 general factoring theorem for arbitrary D-determined predicates is
 feasible (via orbit-stabilizer on the fixing subgroup of `Dᶜ`) but
-currently has no consumer in the OT-variation literature.
+currently has no downstream consumer.
 -/
 
 namespace Core.Optimization.PermSubsetCombinatorics

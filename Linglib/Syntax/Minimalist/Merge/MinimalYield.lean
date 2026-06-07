@@ -104,7 +104,7 @@ on the `(b₀ᵒᵈ, α)` signature: `noDivergence` reverses the order on `b₀`
 (larger is "better"). Wrapping the relation as a
 `Core.Order.PullbackPreorder` exposes this Pareto structure: same shape
 as `Minimalist.DerivationCost.pullbackPreorder` (4-d cost) and
-`Core.Optimization.ConstraintSystem.paretoPullbackPreorder` (OT/HG
+`Phonology.Constraint.ConstraintSystem.paretoPullbackPreorder` (OT/HG
 violation profile).
 
 Reflexivity (`MYWeak F F`) and transitivity (`MYWeak F F' → MYWeak F' F'' →

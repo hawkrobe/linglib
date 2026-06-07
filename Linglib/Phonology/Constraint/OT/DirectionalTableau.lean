@@ -1,11 +1,11 @@
-import Linglib.Core.Optimization.OT.Basic
-import Linglib.Core.Optimization.OT.EvalMode
+import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.OT.EvalMode
 
 /-!
 # Directional Tableau — Position-Vector EVAL
 [eisner-2000] [eisner-2002] [lamont-2022b]
 
-Sibling to `Core/Optimization/OT/Basic.lean`'s parallel `Tableau`. Where
+Sibling to `Phonology/Constraint/OT/Basic.lean`'s parallel `Tableau`. Where
 parallel OT compares candidates by **count** of violations
 (`NamedConstraint.eval : C → Nat`), directional OT compares by
 **position vector** (`DirectionalConstraint.eval : C → List Nat`,
@@ -38,7 +38,8 @@ It deliberately does NOT yet ship:
   `HSDerivation` dispatches on `evalMode`; deferred to follow-up)
 -/
 
-namespace Core.Optimization.OT
+namespace Phonology.Constraint.OT
+
 
 open Core.Optimization.Evaluation
 
@@ -203,4 +204,4 @@ example : LexLEByMode .parallel [[2]] [[2]] := by decide
 
 end SmokeTest
 
-end Core.Optimization.OT
+end Phonology.Constraint.OT

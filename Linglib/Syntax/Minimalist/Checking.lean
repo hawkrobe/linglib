@@ -8,11 +8,11 @@ import Linglib.Syntax.Minimalist.Agree
 
 The four-stage lifecycle of formal features in the Minimalist Program
 (Ch 4 §4.5; extended with [preminger-2014] §5 "derivational time
-bombs" and [hewett-2026] Def 23):
+bombs" and [hewett-2026] ex. (23)):
 
 0. **Inactive**: feature is present but dormant — not yet accessible to
    checking. Must be activated by a syntactic trigger (feature
-   activation, [hewett-2026] Def 23) before entering the
+   activation, [hewett-2026] ex. (23)) before entering the
    checking lifecycle. Inactive –Interpretable features crash at LF.
 1. **Active**: feature is present and accessible to computation
 2. **Checked** (= deleted): feature has entered a checking relation;
@@ -52,7 +52,7 @@ checking + deletion in one step. This module formalizes the finer-grained
 ## Activation Indices
 
 `ActivationIndex α` (§ 7) formalizes ordered n-tuple activation from
-[hewett-2026] Def 23: a feature carries a tuple of keys
+[hewett-2026] ex. (23): a feature carries a tuple of keys
 `(c₁, …, cₙ)`, and each c-commanding head strips `c₁` if it matches.
 When the tuple is empty the feature transitions from `.inactive` to
 `.active`. Parametric over the key type `α`.
@@ -115,7 +115,7 @@ inductive FeatureStatus where
       operations — must be activated first. Used for selectional
       features that await licensing by a specific syntactic trigger
       ([preminger-2014] "derivational time bombs";
-      [hewett-2026] Def 23: selectional features activated
+      [hewett-2026] ex. (23): selectional features activated
       stepwise by categorizing head and template). -/
   | inactive
   /-- Active: present and accessible to all computation. -/
@@ -168,7 +168,7 @@ def TrackedFeature.erase (tf : TrackedFeature) : Option TrackedFeature :=
 
 /-- Activate a dormant feature: transition from inactive to active.
     This models [preminger-2014]'s "derivational time bombs" and
-    [hewett-2026] Def 23: a selectional feature begins dormant
+    [hewett-2026] ex. (23): a selectional feature begins dormant
     and is activated by a specific syntactic trigger (a categorizing
     head, a template-defining head, etc.).
     Returns `none` if the feature is not inactive. -/
@@ -326,7 +326,7 @@ theorem full_lifecycle (fv : FeatureVal) (host : Cat)
 
 /-- The extended lifecycle: an inactive –Interpretable feature can be
     activated, checked, and then erased.
-    This is the full chain for [hewett-2026] Def 23 selectional
+    This is the full chain for [hewett-2026] ex. (23) selectional
     features: inactive → active → checked → erased. -/
 theorem extended_lifecycle (fv : FeatureVal) (host : Cat) :
     let tf : TrackedFeature := ⟨fv, host, .uninterpretable, .inactive⟩
@@ -402,12 +402,12 @@ example : convergesAtLF [⟨.case .nom, .N, .uninterpretable, .inactive⟩] = fa
 example : convergesAtLF [⟨.case .nom, .N, .uninterpretable, .checked⟩] = true := rfl
 
 -- ============================================================================
--- § 7: Feature Activation Indices (Def 23)
+-- § 7: Feature Activation Indices (ex. (23))
 -- ============================================================================
 
 /-! ### Ordered Activation Tuples
 
-[hewett-2026] Def 23 (adapted from [merchant-2019]): a feature
+[hewett-2026] ex. (23) (adapted from [merchant-2015]): a feature
 can be indexed by an ordered tuple of category keys `(c₁, …, cₙ)`. Each
 c-commanding head bearing key `k` strips `c₁` from the tuple **if `k = c₁`**
 (matching activation). When the tuple is exhausted the feature transitions

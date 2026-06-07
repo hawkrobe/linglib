@@ -185,7 +185,7 @@ def paretoPreorder : PullbackPreorder ViolationProfile ViolationProfile :=
     applies. -/
 def qualPreorder : PullbackPreorder ViolationProfile (Finset (Fin 4)) :=
   PullbackPreorder.ofProj
-    Core.Optimization.ConstraintSystem.violatedSetOf
+    Core.Optimization.violatedSetOf
     (fun _ _ => inferInstance)
 
 /-- **Pointwise dominance ⇒ qualitative dominance.** A one-line corollary of
@@ -198,8 +198,8 @@ theorem paretoPreorder_le_implies_qualPreorder_le
     qualPreorder.le v v' :=
   PullbackPreorder.coarsen_via_monotone
     paretoPreorder qualPreorder
-    Core.Optimization.ConstraintSystem.violatedSetOf
-    (Core.Optimization.ConstraintSystem.violatedSetOf_monotone (fun _ => Nat.zero_le _))
+    Core.Optimization.violatedSetOf
+    (Core.Optimization.violatedSetOf_monotone (fun _ => Nat.zero_le _))
     (fun _ => rfl) h
 
 -- ============================================================================

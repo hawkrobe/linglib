@@ -1,5 +1,5 @@
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Core.Optimization.OT.DirectionalTableau
+import Linglib.Phonology.Constraint.OT.DirectionalTableau
 
 /-!
 # Tonal Constraints — Generic Constructors over `FloatingForm`
@@ -39,7 +39,7 @@ namespace Phonology.Tone
 
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Core.Optimization.OT (DirectionalConstraint ConstraintFamily)
+open Phonology.Constraint.OT (DirectionalConstraint ConstraintFamily)
 
 variable {S : Type} [DecidableEq S]
 

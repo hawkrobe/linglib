@@ -2,8 +2,8 @@ import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Semantics.Gradability.AntonymPrediction
 import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Phenomena.Negation.FlexibleNegation
-import Linglib.Core.Optimization.OT.Basic
-import Linglib.Core.Optimization.Superoptimal
+import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Superoptimal
 
 /-!
 # [krifka-2007b] — Negated Antonyms: Creating and Filling the Gap
@@ -72,7 +72,7 @@ open Semantics.Degree (positiveMeaning)
 open Phenomena.Negation.FlexibleNegation
 open Core.Optimization.Evaluation (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Core.Optimization.OT (NamedConstraint)
+open Phonology.Constraint.OT (NamedConstraint)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Quadruplet: The Central Data Structure

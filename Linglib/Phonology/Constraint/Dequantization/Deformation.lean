@@ -1,7 +1,7 @@
 import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
-import Linglib.Core.Optimization.Dequantization.ViolationSemiring
-import Linglib.Core.Optimization.Dequantization.OTLimit
+import Linglib.Phonology.Constraint.Dequantization.ViolationSemiring
+import Linglib.Phonology.Constraint.Dequantization.OTLimit
 
 /-!
 # The Constraint-Framework Deformation Lattice
@@ -71,10 +71,13 @@ harmony "tracks the soft aggregator all the way to the limit." Every
 other candidate's softmax probability decays exponentially in the gap.
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
+
+open Core.Optimization
+
 
 open Real Filter Topology Finset
-open Core.Optimization.OT Core.Optimization.ViolationSemiring
+open Phonology.Constraint.OT Phonology.Constraint.ViolationSemiring
 
 -- ============================================================================
 -- § 1: The Soft Aggregator on Harmony Scores
@@ -138,4 +141,4 @@ theorem softmax_decoder_gap_form {Cand : Type*} (α : ℝ) (hα : α ≠ 0)
       = exp (α * (score c - lseFinset α cands score)) :=
   softmaxDecoder_eq_exp_score_sub_lse α hα score hc
 
-end Core.Optimization
+end Phonology.Constraint

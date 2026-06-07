@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.Weighted
+import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Agent.RationalAction
 
 /-!
@@ -33,9 +33,10 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 - `maxent_ot_limit`: main limit theorem
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
 
-open Core Core.Optimization.OT Core.Optimization.Evaluation Real Finset
+
+open Core Phonology.Constraint.OT Core.Optimization.Evaluation Real Finset
 
 -- ============================================================================
 -- § 1: OT → HG Weight Construction
@@ -386,4 +387,4 @@ theorem maxent_ot_limit {C : Type} [Fintype C] [Nonempty C] [DecidableEq C]
     (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩)
     (hlex c hc)
 
-end Core.Optimization
+end Phonology.Constraint

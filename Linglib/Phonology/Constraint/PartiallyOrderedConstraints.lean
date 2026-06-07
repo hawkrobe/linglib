@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.Cumulativity
+import Linglib.Phonology.Constraint.Cumulativity
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 
 /-!
@@ -54,7 +54,10 @@ A follow-up refactor would have CoetzeePater consume `pocPredict` and
 substrate-level POC theorems instead.
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
+
+open Core.Optimization
+
 
 open Finset
 
@@ -383,7 +386,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
   -- Step 1: PicksAt with binary cands reduces to LexStrictlyBetter on chosen vs other
   have h_picksAt_iff_lex :
       PicksAt cands vp σ i chosen ↔
-      Core.Optimization.LexStrictlyBetter
+      Phonology.Constraint.LexStrictlyBetter
         (fun k => vp i chosen (σ k)) (fun k => vp i other (σ k)) := by
     unfold PicksAt
     constructor
@@ -547,4 +550,4 @@ theorem pocPredict_discrete_binary_rate
 
 end PartialOrderConstraints
 
-end Core.Optimization
+end Phonology.Constraint

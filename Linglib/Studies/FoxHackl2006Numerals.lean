@@ -110,4 +110,13 @@ theorem foxHackl_atLeast_verified :
 theorem kennedy_numeral_licensed {W : Type*} (μ : W → ℕ) :
     (DirectedMeasure.numeral μ).IsLicensed := trivial
 
+/-- [kennedy-2015]'s de-Fregean type-shift at the `DirectedMeasure`
+    constructor level: the maximally informative degree of a numeral
+    domain's derived property is the true cardinality — the bundled form
+    of `isMaxInf_atLeast_iff_eq`. -/
+theorem kennedy_numeral_isMaxInf {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (DirectedMeasure.numeral μ).degreeProperty m w ↔ μ w = m :=
+  (DirectedMeasure.numeral μ).isMaxInf_degreeProperty_iff m w hSurj
+
 end FoxHackl2006Numerals
