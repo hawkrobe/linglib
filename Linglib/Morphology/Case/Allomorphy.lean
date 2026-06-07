@@ -120,23 +120,23 @@ structure Syncretism where
   deriving Repr
 
 /-- Are two cases adjacent on the hierarchy (same rank or ranks differ by 1)? -/
-def HierarchyAdjacent (c1 c2 : Case) : Prop :=
+def _root_.Case.HierarchyAdjacent (c1 c2 : Case) : Prop :=
   c1.hierarchyRank = c2.hierarchyRank ∨
   c1.hierarchyRank + 1 = c2.hierarchyRank ∨
   c2.hierarchyRank + 1 = c1.hierarchyRank
 
-instance : DecidableRel HierarchyAdjacent := λ _ _ =>
+instance : DecidableRel Case.HierarchyAdjacent := λ _ _ =>
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- Relaxed adjacency: no case in the inventory falls strictly between
     the two syncretic cases on the hierarchy. -/
-def InventoryAdjacent (inv : Finset Case) (c1 c2 : Case) : Prop :=
+def _root_.Case.InventoryAdjacent (inv : Finset Case) (c1 c2 : Case) : Prop :=
   let lo := min c1.hierarchyRank c2.hierarchyRank
   let hi := max c1.hierarchyRank c2.hierarchyRank
   ∀ c ∈ inv, c = c1 ∨ c = c2 ∨ c.hierarchyRank ≤ lo ∨ c.hierarchyRank ≥ hi
 
-instance (inv : Finset Case) (c1 c2 : Case) : Decidable (InventoryAdjacent inv c1 c2) := by
-  unfold InventoryAdjacent; infer_instance
+instance (inv : Finset Case) (c1 c2 : Case) : Decidable (Case.InventoryAdjacent inv c1 c2) := by
+  unfold Case.InventoryAdjacent; infer_instance
 
 -- ============================================================================
 -- § 5: Well-Known Syncretism Patterns
@@ -159,25 +159,25 @@ def comInstSyncretism : Syncretism :=
     as `theorem` because it is parametric over the hierarchy ranks
     (not a fixed pair). -/
 
-example : HierarchyAdjacent .nom .acc := by decide
-example : HierarchyAdjacent .com .inst := by decide
-example : HierarchyAdjacent .dat .loc := by decide
-example : HierarchyAdjacent .gen .dat := by decide
+example : Case.HierarchyAdjacent .nom .acc := by decide
+example : Case.HierarchyAdjacent .com .inst := by decide
+example : Case.HierarchyAdjacent .dat .loc := by decide
+example : Case.HierarchyAdjacent .gen .dat := by decide
 
 /-- ERG/INST hierarchy non-adjacency (ranks 6, 2): Blake's known
     exception, explained by historical derivation. -/
-example : ¬ HierarchyAdjacent .erg .inst := by decide
+example : ¬ Case.HierarchyAdjacent .erg .inst := by decide
 
 /-- ERG/INST IS inventory-adjacent in a system with only
     {ERG, ABS, INST}. -/
-example : InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
+example : Case.InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
   decide
 
 /-- Same-tier cases are always strictly adjacent. (Parametric over
     the rank — kept as named `theorem` for downstream re-use.) -/
-theorem same_tier_adjacent (c1 c2 : Case)
+theorem _root_.Case.same_tier_adjacent (c1 c2 : Case)
     (h : c1.hierarchyRank = c2.hierarchyRank) :
-    HierarchyAdjacent c1 c2 := Or.inl h
+    Case.HierarchyAdjacent c1 c2 := Or.inl h
 
 -- ============================================================================
 -- § 7: *ABA and Syncretism Examples

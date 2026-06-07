@@ -60,7 +60,7 @@ set_option autoImplicit false
 namespace Bubnov2026
 
 open DeganoAloni2025
-open scoped Syntax.Case.Caha
+open scoped Case.Caha
 open DeganoAloni2025.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021

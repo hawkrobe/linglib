@@ -1,3 +1,4 @@
+import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.Features
 
 /-!
@@ -64,9 +65,18 @@ def DPFeatures.withUnvaluedCase (phi : List PhiFeature) : DPFeatures :=
 def DPFeatures.withCase (phi : List PhiFeature) (c : Case) : DPFeatures :=
   ⟨phi, .valued (.case c)⟩
 
-/-- Does a DP satisfy the Case Filter? (has valued Case) -/
+/-- A DP bears the case its valued Case feature carries; an unvalued
+    Case feature (or a degenerate non-Case feature in the slot) is
+    caseless. -/
+instance : HasCase DPFeatures :=
+  ⟨fun dp => match dp.caseFeature with
+    | .valued (.case c) => some c
+    | _ => none⟩
+
+/-- Does a DP satisfy the Case Filter? — it bears a case
+    (`HasCase.caseOf` is `some`). -/
 def satisfiesCaseFilter (dp : DPFeatures) : Bool :=
-  dp.caseFeature.isValued
+  (HasCase.caseOf dp).isSome
 
 /-- Convert DPFeatures to a FeatureBundle. -/
 def DPFeatures.toBundle (dp : DPFeatures) : FeatureBundle :=
