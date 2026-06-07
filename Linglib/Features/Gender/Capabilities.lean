@@ -46,11 +46,8 @@ variable {α : Type*} {β : Type*} [HasGender α] [HasGender β]
     the slot values are compatible in the flat information order (`Compat`)
     — valued genders must coincide; an unvalued carrier is a wildcard.
     The gender axis of φ-agreement (`UD.MorphFeatures.compatible`). -/
-def Compatible (a : α) (b : β) : Prop :=
+abbrev Compatible (a : α) (b : β) : Prop :=
   Compat (α := Flat Gender) (genderOf a) (genderOf b)
-
-instance (a : α) (b : β) : Decidable (Compatible a b) := by
-  unfold Compatible; infer_instance
 
 theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
     Compatible b a :=
@@ -59,9 +56,8 @@ theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
 /-- An unvalued carrier is compatible with everything. -/
 theorem compatible_of_none {a : α} (h : genderOf a = none) (b : β) :
     Compatible a b := by
-  unfold Compatible
-  rw [h]
-  exact bot_compat _
+  show Compat (α := Flat Gender) (genderOf a) (genderOf b)
+  rw [h]; exact bot_compat _
 
 end HasGender
 
@@ -70,28 +66,8 @@ end HasGender
     (`UD.MorphFeatures.compatible`). -/
 theorem UD.MorphFeatures.compatible_hasGender {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
-    HasGender.Compatible f1 f2 := by
-  unfold HasGender.Compatible
-  rw [Flat.compat_iff]
-  intro ga ha gb hb
-  have hg : (f1.gender.isNone || f2.gender.isNone || f1.gender == f2.gender)
-      = true := by
+    HasGender.Compatible f1 f2 :=
+  Flat.compat_of_clause_map Gender.fromUD <| by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto
-  simp only [HasGender.genderOf] at ha hb
-  rcases h1 : f1.gender with _ | u1
-  · rw [h1] at ha
-    exact absurd ha (Option.not_mem_none _)
-  · rcases h2 : f2.gender with _ | u2
-    · rw [h2] at hb
-      exact absurd hb (Option.not_mem_none _)
-    · rw [h1] at ha
-      rw [h2] at hb
-      rw [h1, h2] at hg
-      simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
-                 Option.some.injEq] at hg
-      subst hg
-      have ha' : Gender.fromUD u1 = ga := Option.some.inj ha
-      have hb' : Gender.fromUD u1 = gb := Option.some.inj hb
-      rw [← ha', ← hb']
