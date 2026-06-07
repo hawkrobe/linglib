@@ -41,7 +41,7 @@ variable {T : Type*} [Branching T]
 /-- The valid positions of `t`, as a subtype of `TreePath`. Inherits
 the rooted-tree order stack (root, parent, LCA, finite depth) from
 `TreePath` via prefix-closure. -/
-@[reducible] def Positions (t : T) : Type := {p : TreePath // p ∈ validPaths t}
+abbrev Positions (t : T) : Type := {p : TreePath // p ∈ validPaths t}
 
 namespace Positions
 
@@ -52,6 +52,9 @@ instance : PartialOrder (Positions t) :=
 
 @[simp] theorem mk_le_mk {p q : TreePath} {hp hq} :
     (⟨p, hp⟩ : Positions t) ≤ ⟨q, hq⟩ ↔ p ≤ q := Iff.rfl
+
+@[simp] theorem mk_lt_mk {p q : TreePath} {hp hq} :
+    (⟨p, hp⟩ : Positions t) < ⟨q, hq⟩ ↔ p < q := Iff.rfl
 
 /-- The root position. -/
 instance : OrderBot (Positions t) where
@@ -100,6 +103,10 @@ instance : IsPredArchimedean (Positions t) where
     obtain ⟨n, hn⟩ :=
       IsPredArchimedean.exists_pred_iterate_of_le (α := TreePath) h
     exact ⟨n, Subtype.ext (by rw [pred_iterate_val]; exact hn)⟩
+
+/-- The positions of `t` as a mathlib `RootedTree`
+(`Mathlib.Order.SuccPred.Tree`): the inherited stack, bundled. -/
+def Positions.rootedTree (t : T) : RootedTree := ⟨Positions t⟩
 
 end Positions
 

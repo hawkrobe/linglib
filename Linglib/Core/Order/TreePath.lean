@@ -1,6 +1,7 @@
 import Mathlib.Data.List.Infix
 import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.Atoms
+import Mathlib.Order.SuccPred.Tree
 
 /-!
 # Tree Positions: `TreePath` and the Rooted-Tree Order Stack
@@ -28,6 +29,49 @@ trees via Gorn addresses, Hopf-algebra rooted trees, constituency
 trees) without importing linguistic theory.
 -/
 
+/-! ### Generic list API: longest common prefix
+
+Upstream-shaped for `Mathlib/Data/List/Prefix.lean` (no
+`commonPrefix` exists in mathlib or Batteries as of 2026-06). -/
+
+namespace List
+
+/-- Longest common prefix of two lists. -/
+def commonPrefix {α : Type*} [DecidableEq α] : List α → List α → List α
+  | a :: as, b :: bs => if a = b then a :: commonPrefix as bs else []
+  | _, _ => []
+
+theorem commonPrefix_prefix_left {α : Type*} [DecidableEq α] :
+    ∀ (l₁ l₂ : List α), commonPrefix l₁ l₂ <+: l₁
+  | [], _ => by simp [commonPrefix]
+  | _ :: _, [] => by simp [commonPrefix]
+  | a :: as, b :: bs => by
+    by_cases h : a = b
+    · simpa [commonPrefix, h] using commonPrefix_prefix_left as bs
+    · simp [commonPrefix, h]
+
+theorem commonPrefix_prefix_right {α : Type*} [DecidableEq α] :
+    ∀ (l₁ l₂ : List α), commonPrefix l₁ l₂ <+: l₂
+  | [], _ => by simp [commonPrefix]
+  | _ :: _, [] => by simp [commonPrefix]
+  | a :: as, b :: bs => by
+    by_cases h : a = b
+    · subst h
+      simpa [commonPrefix] using commonPrefix_prefix_right as bs
+    · simp [commonPrefix, h]
+
+theorem prefix_commonPrefix {α : Type*} [DecidableEq α] :
+    ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: l₂ → r <+: commonPrefix l₁ l₂
+  | [], _, _, _, _ => List.nil_prefix
+  | x :: rs, l₁, l₂, h₁, h₂ => by
+    obtain ⟨s₁, hs₁⟩ := h₁
+    obtain ⟨s₂, hs₂⟩ := h₂
+    subst hs₁ hs₂
+    simpa [commonPrefix] using
+      prefix_commonPrefix (r := rs) (List.prefix_append _ _) (List.prefix_append _ _)
+
+end List
+
 namespace Core.Order
 
 /-- A position (Gorn address) in a rose tree: a list of child indices.
@@ -54,15 +98,10 @@ instance : PartialOrder TreePath where
 
 /-- Two prefixes of the same list are comparable: the **Connected
 Ancestor Condition (CAC)** for the prefix order ([barker-pullum-1990]'s
-defining tree condition). -/
+Definition 15). Delegates to `List.prefix_or_prefix_of_prefix`. -/
 theorem prefix_or_prefix {p q r : TreePath} (hp : p ≤ r) (hq : q ≤ r) :
-    p ≤ q ∨ q ≤ p := by
-  obtain ⟨s, hs⟩ := hp
-  obtain ⟨t, ht⟩ := hq
-  have heq : p.toList ++ s = q.toList ++ t := hs.trans ht.symm
-  rcases List.append_eq_append_iff.1 heq with ⟨a', hqeq, _⟩ | ⟨c', hpeq, _⟩
-  · left; exact ⟨a', hqeq.symm⟩
-  · right; exact ⟨c', hpeq.symm⟩
+    p ≤ q ∨ q ≤ p :=
+  List.prefix_or_prefix_of_prefix hp hq
 
 /-! ### The root: `OrderBot` -/
 
@@ -93,6 +132,20 @@ def parent (p : TreePath) : TreePath := ⟨p.toList.dropLast⟩
 
 theorem parent_le (p : TreePath) : p.parent ≤ p := by
   simpa [parent, le_def] using List.dropLast_prefix p.toList
+
+/-- A non-root position is properly dominated by its parent — the
+**Single Mother Condition** reading: every node except the root has a
+mother that is a proper ancestor. (`Order.pred ⊥ = ⊥` is mathlib's
+convention; linguistic axioms quantifying over mothers need this
+`≠ ⊥` guard.) -/
+theorem parent_lt_of_ne_bot {p : TreePath} (hp : p ≠ ⊥) : p.parent < p := by
+  refine lt_of_le_of_ne (parent_le p) fun heq => hp ?_
+  have := congrArg (List.length ∘ TreePath.toList) heq
+  simp only [Function.comp, parent_toList, List.length_dropLast] at this
+  cases p with | mk l =>
+  cases l with
+  | nil => rfl
+  | cons a as => simp at this
 
 theorem le_parent_of_lt {p q : TreePath} (h : p < q) : p ≤ q.parent := by
   obtain ⟨⟨s, hs⟩, hne⟩ := lt_iff_le_and_ne.mp h
@@ -152,47 +205,16 @@ instance : IsPredArchimedean TreePath where
 /-! ### Least common ancestor: `SemilatticeInf`
 
 `p ⊓ q` is the longest common prefix — the deepest position dominating
-both, i.e. the smallest constituent position containing both. -/
-
-/-- Longest common prefix of two index lists. -/
-def commonPrefix : List Nat → List Nat → List Nat
-  | a :: as, b :: bs => if a = b then a :: commonPrefix as bs else []
-  | _, _ => []
-
-theorem commonPrefix_prefix_left :
-    ∀ (l₁ l₂ : List Nat), commonPrefix l₁ l₂ <+: l₁
-  | [], _ => by simp [commonPrefix]
-  | _ :: _, [] => by simp [commonPrefix]
-  | a :: as, b :: bs => by
-    by_cases h : a = b
-    · simpa [commonPrefix, h] using commonPrefix_prefix_left as bs
-    · simp [commonPrefix, h]
-
-theorem commonPrefix_prefix_right :
-    ∀ (l₁ l₂ : List Nat), commonPrefix l₁ l₂ <+: l₂
-  | [], _ => by simp [commonPrefix]
-  | _ :: _, [] => by simp [commonPrefix]
-  | a :: as, b :: bs => by
-    by_cases h : a = b
-    · subst h
-      simpa [commonPrefix] using commonPrefix_prefix_right as bs
-    · simp [commonPrefix, h]
-
-theorem prefix_commonPrefix :
-    ∀ {r l₁ l₂ : List Nat}, r <+: l₁ → r <+: l₂ → r <+: commonPrefix l₁ l₂
-  | [], _, _, _, _ => List.nil_prefix
-  | x :: rs, l₁, l₂, h₁, h₂ => by
-    obtain ⟨s₁, hs₁⟩ := h₁
-    obtain ⟨s₂, hs₂⟩ := h₂
-    subst hs₁ hs₂
-    simpa [commonPrefix] using
-      prefix_commonPrefix (r := rs) (List.prefix_append _ _) (List.prefix_append _ _)
+both, i.e. the smallest constituent position containing both.
+(`List.commonPrefix` and its lemmas live in the `_root_.List`
+namespace at the top of this file; they are generic list API,
+upstream-shaped for `Mathlib/Data/List/Prefix.lean`.) -/
 
 instance : SemilatticeInf TreePath where
-  inf p q := ⟨commonPrefix p.toList q.toList⟩
-  inf_le_left p q := commonPrefix_prefix_left p.toList q.toList
-  inf_le_right p q := commonPrefix_prefix_right p.toList q.toList
-  le_inf _ _ _ h₁ h₂ := prefix_commonPrefix h₁ h₂
+  inf p q := ⟨List.commonPrefix p.toList q.toList⟩
+  inf_le_left p q := List.commonPrefix_prefix_left p.toList q.toList
+  inf_le_right p q := List.commonPrefix_prefix_right p.toList q.toList
+  le_inf _ _ _ h₁ h₂ := List.prefix_commonPrefix h₁ h₂
 
 /-- Least common ancestor, by its linguistic name. `lca p q` is the
 deepest position dominating both `p` and `q` — the smallest constituent
@@ -250,6 +272,15 @@ theorem not_ge {p q : TreePath} (h : Precedes p q) : ¬ q ≤ p := by
   exact absurd (branch_unique hi (hj.trans hle)) (Nat.ne_of_lt hij)
 
 end Precedes
+
+/-! ### The bundled mathlib rooted tree
+
+`TreePath` carries all four classes of `Mathlib.Order.SuccPred.Tree`'s
+`RootedTree`; the bundling makes the alignment true by construction
+and opens mathlib's `findAtom`/`subtree` API. -/
+
+/-- `TreePath` as a mathlib `RootedTree`. -/
+def rootedTree : RootedTree := ⟨TreePath⟩
 
 end TreePath
 
