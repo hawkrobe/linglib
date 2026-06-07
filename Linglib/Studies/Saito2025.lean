@@ -1,5 +1,6 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Training
 
 /-!
 # Saito, Tomaschek & Baayen (2025): frequency × inflectional status via the DLM
@@ -23,6 +24,9 @@ production models with an intermediate morpheme layer such as WEAVER++
   (paper §3.1).
 * `close_meanings_imply_close_form`: the substrate Lipschitz bound at those carriers —
   close meanings yield close predicted articulations.
+* `semSup_lt_of_forms_lt`: when the suffix triphone is linearly decodable from
+  meanings, training alone gives suffix-bearing (inflected) words strictly greater
+  suffix support — the direction of the paper's headline contrast.
 
 ## Implementation notes
 
@@ -65,5 +69,23 @@ theorem close_meanings_imply_close_form
     ‖D.production s₁ - D.production s₂‖ ≤
       ‖D.production.toContinuousLinearMap‖ * ε :=
   dlm_neighbor_centroids_imply_neighbor_contours D h
+
+/-- If the suffix-triphone coordinate is linearly decodable from word meanings —
+the paper's §4 mechanism, inflectional semantics tied to the suffix — then a
+trained DLM's `SemSupSuffix` reproduces it exactly, so a word carrying the
+suffix triphone (an inflected word) gets strictly greater suffix support than
+one lacking it: the direction of the paper's headline contrast (its Fig. 11),
+from the linear architecture alone. -/
+theorem semSup_lt_of_forms_lt
+    {m : ℕ} {D : GermanInflectionalDLM}
+    {data : TrainingExperience m TriphoneCount Word2VecGermanDim}
+    {q : FrequencyVector m}
+    (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
+    {suffixIdx : Fin TriphoneCount} {w : GermanWord2VecVec →ₗ[ℝ] ℝ}
+    (hw : ∀ i, w (data.meanings i) = data.forms i suffixIdx)
+    {i k : Fin m} (hik : data.forms i suffixIdx < data.forms k suffixIdx) :
+    semSup D (data.meanings i) suffixIdx < semSup D (data.meanings k) suffixIdx := by
+  rw [hD.semSup_eq_of_decodable hq hw i, hD.semSup_eq_of_decodable hq hw k]
+  exact hik
 
 end Saito2025
