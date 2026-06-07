@@ -16,7 +16,7 @@ several constructions in linglib:
 - `Core.Order.SatisfactionOrdering α Criterion` — the projection is the
   satisfied criterion set, the target is `(Finset Criterion)ᵒᵈ` (or
   equivalently, the violated set with standard ⊆).
-- `Phonology.Constraint.ConstraintSystem.paretoPullbackPreorder` — the
+- `Core.Optimization.paretoPullbackPreorder` — the
   projection is the score vector, the target is `Profile β n` with
   pointwise ≤.
 - `Semantics.Modality.Kratzer.worldOrdering` — the projection is the

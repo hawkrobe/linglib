@@ -40,10 +40,10 @@ instances so they fit the schema established in `Core/Optimization/Pareto.lean`:
 | view              | feature                          | feature-space order |
 |-------------------|----------------------------------|---------------------|
 | `paretoPreorder`  | `id : ViolationProfile → ViolationProfile` | pointwise `≤` |
-| `qualPreorder`    | `violatedSetOf : … → Finset (Fin 4)` | subset `⊆` |
+| `qualPreorder`    | `nonzeroSetOf : … → Finset (Fin 4)` | subset `⊆` |
 
 `paretoPreorder_le_implies_qualPreorder_le` is a one-line application of
-`PullbackPreorder.coarsen_via_monotone` with `violatedSetOf` as the
+`PullbackPreorder.coarsen_via_monotone` with `nonzeroSetOf` as the
 connecting monotone map. The legacy criterion-based view via
 `SatisfactionOrdering` is preserved as `cumminsOrdering`.
 
@@ -185,7 +185,7 @@ def paretoPreorder : PullbackPreorder ViolationProfile ViolationProfile :=
     applies. -/
 def qualPreorder : PullbackPreorder ViolationProfile (Finset (Fin 4)) :=
   PullbackPreorder.ofProj
-    Core.Optimization.violatedSetOf
+    Core.Optimization.nonzeroSetOf
     (fun _ _ => inferInstance)
 
 /-- **Pointwise dominance ⇒ qualitative dominance.** A one-line corollary of
@@ -198,8 +198,8 @@ theorem paretoPreorder_le_implies_qualPreorder_le
     qualPreorder.le v v' :=
   PullbackPreorder.coarsen_via_monotone
     paretoPreorder qualPreorder
-    Core.Optimization.violatedSetOf
-    (Core.Optimization.violatedSetOf_monotone (fun _ => Nat.zero_le _))
+    Core.Optimization.nonzeroSetOf
+    (Core.Optimization.nonzeroSetOf_monotone (fun _ => Nat.zero_le _))
     (fun _ => rfl) h
 
 -- ============================================================================

@@ -22,8 +22,6 @@ emphasises the analogy with the classical limit of quantum mechanics:
 the smooth, fluctuation-tolerant semiring becomes a sharp, "winner takes
 all" semiring.
 
-The linguistic-framework packaging of this limit lives in
-`Phonology/Constraint/Dequantization/{OTLimit,Deformation}.lean`.
 
 ## Proof outline
 

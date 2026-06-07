@@ -56,7 +56,7 @@ to a linear order.
 
 ## Connection to `SatisfactionOrdering`
 
-`Core.SatisfactionOrdering.SatisfactionOrdering` is the binary case
+`Core.Order.SatisfactionOrdering` is the binary case
 (`0` = "satisfied", `≥ 1` = "violated") with subset-inclusion comparison.
 -/
 
@@ -67,27 +67,24 @@ namespace Core.Optimization.Evaluation
 -- § 1: Prop Relations
 -- ============================================================================
 
-/-- Lexicographic ≤ on violation profiles.
+/-- Lexicographic ≤ on `List Nat` (interpretable as cost vectors).
 
-    `LexLE a b` holds iff `a` is at least as harmonic as `b` — at the first
-    position where profiles differ, `a` has fewer violations. Missing entries
-    are implicitly 0. -/
+    `LexLE a b` holds iff `a` is below `b` at the first position where they differ.
+    Trailing entries are implicitly 0. -/
 def LexLE : List Nat → List Nat → Prop
   | [], _ => True
   | a :: as, [] => a = 0 ∧ LexLE as []
   | a :: as, b :: bs => a < b ∨ (a = b ∧ LexLE as bs)
 
-/-- Subset-inclusion ≤ on violation profiles.
+/-- Subset-inclusion ≤ on `List Nat`.
 
-    `SatLE a b` holds iff every constraint that `b` satisfies (has 0
-    violations), `a` also satisfies. This is a **preorder** (reflexive,
-    transitive) but not a partial order on `List Nat` — non-zero values
-    are interchangeable (e.g., `SatLE [1] [2]` and `SatLE [2] [1]` both
-    hold). On binary {0,1} profiles it becomes a partial order.
-
-    Unlike `LexLE`, `SatLE` is not total — incomparable candidates are
-    possible. This is [kratzer-1991]'s ordering on worlds relative
-    to a premise set. -/
+    `SatLE a b` holds iff every coordinate at which `b` is `0`, `a` is also `0`. A
+    **preorder** (reflexive, transitive) but not a partial order on
+    `List Nat` — non-zero values are interchangeable (e.g., `SatLE [1] [2]`
+    and `SatLE [2] [1]` both hold). On binary `{0,1}` profiles it becomes
+    a partial order. Unlike `LexLE`, `SatLE` is not total. See
+    [kratzer-1991] for the linguistic application (ordering of worlds
+    relative to a premise set). -/
 def SatLE : List Nat → List Nat → Prop
   | [], _ => True
   | a :: as, [] => a = 0 ∧ SatLE as []
@@ -135,8 +132,8 @@ theorem satLE_refl : (a : List Nat) → SatLE a a
   | [] => trivial
   | x :: xs => ⟨if h : x = 0 then .inr h else .inl h, satLE_refl xs⟩
 
-/-- Lexicographic ≤ is total for equal-length profiles: OT always
-    determines a winner (modulo ties). Key difference from `SatLE`. -/
+/-- Lexicographic ≤ is total for equal-length profiles. Key difference
+    from `SatLE`. -/
 theorem lexLE_total (a b : List Nat) (h : a.length = b.length) :
     LexLE a b ∨ LexLE b a := by
   induction a generalizing b with
@@ -157,8 +154,8 @@ theorem lexLE_total (a b : List Nat) (h : a.length = b.length) :
             (fun h => Or.inl (.inr ⟨rfl, h⟩))
             (fun h => Or.inr (.inr ⟨rfl, h⟩))
 
-/-- `SatLE` is NOT total: candidates can be incomparable when each
-    satisfies a constraint the other violates. -/
+/-- `SatLE` is NOT total: profiles can be incomparable when each is
+    nonzero where the other is zero, and vice versa. -/
 theorem satLE_not_total : ¬∀ (a b : List Nat), SatLE a b ∨ SatLE b a := by
   intro h
   have := h [0, 1] [1, 0]
@@ -170,8 +167,8 @@ theorem satLE_not_total : ¬∀ (a b : List Nat), SatLE a b ∨ SatLE b a := by
 -- § 3b: LexLE Structural Lemmas
 -- ============================================================================
 
-/-- `LexLE [] b` holds for any `b`: the empty profile is vacuously
-    at least as harmonic as any profile. -/
+/-- `LexLE [] b` holds for any `b`: the empty list is vacuously
+    at-most-as-large-as any list. -/
 theorem lexLE_nil (b : List Nat) : LexLE [] b := by
   cases b <;> trivial
 
@@ -210,7 +207,7 @@ theorem lexLE_of_nil_right : ∀ (a : List Nat),
 /-- Lexicographic ≤ is transitive. Together with `lexLE_refl` and
     `lexLE_total`, this makes `LexLE` a **total preorder** on
     equal-length profiles — the correct algebraic structure for
-    OT harmony ordering. -/
+    lex order. -/
 theorem lexLE_trans : ∀ (a b c : List Nat),
     LexLE a b → LexLE b c → LexLE a c
   | [], _, c, _, _ => lexLE_nil c
@@ -268,7 +265,7 @@ theorem lexLE_antisymm : ∀ (a b : List Nat),
 
 /-- A non-empty list has a minimum element under `LexLE`, provided all
     profiles have equal length. This is the key ingredient for
-    `optimal_nonempty`: OT always picks at least one winner. -/
+    `optimal_nonempty`: the lex-min set is non-empty. -/
 theorem exists_lexLE_minimum {α : Type} (xs : List α) (hne : xs ≠ [])
     (f : α → List Nat)
     (hlen : ∀ a ∈ xs, ∀ b ∈ xs, (f a).length = (f b).length) :
@@ -334,7 +331,7 @@ theorem satLE_of_nil_right : ∀ (a : List Nat),
     | cons _ zs => exact ⟨.inr rfl, satLE_of_nil_right xs hxs zs⟩
 
 /-- Satisfaction ≤ is transitive. Together with `satLE_refl`, this
-    makes `SatLE` a **preorder** on violation profiles. Unlike `LexLE`,
+    makes `SatLE` a **preorder**. Unlike `LexLE`,
     `SatLE` is NOT antisymmetric on `List Nat` (see `satLE_not_antisymm`)
     — it IS antisymmetric on binary {0,1} profiles, where it becomes a
     partial order. -/
@@ -364,46 +361,13 @@ theorem satLE_not_antisymm :
 
 
 -- ============================================================================
--- § 5: Bidirectional OT — Blocking ([blutner-2000])
--- ============================================================================
-
-/-! [blutner-2000]'s blocking relation lives at maximum generality in
-    `Core/Optimization/Superoptimal.lean` as the Set-valued
-    `Blocks profile S p` (Prop, decidable on Finset witnesses via
-    `Blocks.decidableOnFinset`). The legacy List-based `IsBlocked`/`blocked`
-    pair was retired at 0.230.570 in favour of the Set/Finset substrate +
-    `superoptimalSet`/`superoptimal` API. -/
-
-/-! [blutner-2000]'s superoptimality (weak BiOT, eq. 14) lives at
-    `Core/Optimization/Superoptimal.lean` as the dual API:
-
-    - **`superoptimalSet pairs profile`** — Set-valued, anchored in mathlib's
-      `OrderHom.gfp` over the `Set α` complete lattice. The abstract canonical
-      form for structural arguments (uniqueness, ranking-invariance across
-      BiOT variants, strong⊂weak meta-theorem).
-    - **`superoptimal pairs profile`** — Finset-native computable form,
-      consumer-facing for per-paper `decide` proofs. Bridge to the abstract
-      gfp via `superoptimal_coe_eq_set`.
-
-    Strong BiOT (eq. 9) is in the same file as `IsStrongOptimal` (Set-valued
-    Prop) + `strongOptimal` (Finset-native), with the structural
-    `isStrongOptimal_imp_mem_superoptimalSet` meta-theorem (Blutner p. 12)
-    proved coinductively against `OrderHom.gfp` — no algorithmic detour
-    through iterated removal.
-
-    Iterative removal (the algorithm equivalent to strong BiOT for typical
-    cases) is no longer formalized: `strongOptimal` IS the strong-BiOT
-    Finset, and `superoptimal` IS the weak-BiOT Finset. The illustrative
-    "iterative ≠ weak" point is captured directly by the existence of the
-    re-admission step in `superoptimalLoop`. -/
-
 -- ============================================================================
 -- § 10: LexProfile — Variable-Length Lexicographic Preorder
 -- ============================================================================
 
-/-- Violation profile ordered by lexicographic ≤ (OT harmony ordering).
+/-- Violation profile ordered by lexicographic ≤ (lex order).
 
-    Wraps `List Nat` so that `≤` means `LexLE` — the standard OT
+    Wraps `List Nat` so that `≤` means `LexLE` — the standard
     comparison where the first differing constraint determines the winner.
     This is a `Preorder` (reflexive, transitive) but not a `PartialOrder`
     on `List Nat`: trailing zeros are invisible (`LexLE [] [0]` and
@@ -482,24 +446,24 @@ theorem SatProfile.not_le_total :
 -- § 12: ViolationProfile n — Fixed-Length Lexicographic Linear Order
 -- ============================================================================
 
-/-- Fixed-length violation profile: `n` constraints, each recording a natural
+/-- Fixed-length cost vector: `n` coordinates, each holding a natural
     number of violations.
 
     Defined as `Lex (Fin n → Nat)` — mathlib's type synonym that equips
     Pi-types with lexicographic ordering. The three layers of structure are:
 
     - **`LinearOrder`**: from `Pi.Lex` — lexicographic comparison
-      (`min` = Riggle's ⊗, choose winner)
-    - **`AddCommMonoid`**: componentwise addition of violation counts
-      (Riggle's ⊎, merge violations)
+      (`min` = the ⊗, choose winner)
+    - **`AddCommMonoid`**: componentwise addition
+      (the ⊎, merge violations)
     - **`IsOrderedCancelAddMonoid`**: compatibility — adding violations
-      preserves the harmony ordering (Riggle's distributivity, Dijkstra's
+      preserves the lex order (additive monotonicity / Dijkstra's
       principle)
 
     Unlike `LexProfile` (which wraps `List Nat` and is only a `Preorder`),
     `ViolationProfile n` is a full `LinearOrder`: reflexive, transitive,
     **antisymmetric**, and **total**. The linear order guarantees that every
-    non-empty candidate set has a unique minimum (= the OT winner). -/
+    non-empty candidate set has a unique minimum (= the lex-min). -/
 abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
 -- The linear order comes from mathlib's Pi.Lex:
@@ -532,7 +496,7 @@ instance (n : Nat) : AddCommMonoid (ViolationProfile n) where
 
 /-- `ViolationProfile n` is an ordered additive commutative monoid:
     componentwise addition of violations preserves the lexicographic
-    ordering. This is [riggle-2009]'s violation semiring — the
+    ordering. This is tropical semiring view (cf. [riggle-2009]) — the
     `AddCommMonoid` is the ⊎ (merge) operation, and `min` from the
     `LinearOrder` is the ⊗ (choose winner) operation. Distributivity
     of ⊗ over ⊎ is exactly `add_le_add_left`.
@@ -636,7 +600,7 @@ theorem vpLE_iff_le {n : Nat} (a b : ViolationProfile n) :
     This makes `ViolationProfile n` computationally comparable despite
     the `LinearOrder` being noncomputable (from `Pi.Lex`). With this
     instance, `Tableau.optimal` becomes computable: study files can use
-    `by decide` to verify OT winners on `Tableau C n`. -/
+    `by decide` to verify the lex-min set on `Tableau C n`. -/
 instance instDecidableVpProfileLE {n : Nat} (a b : ViolationProfile n) :
     Decidable (a ≤ b) :=
   decidable_of_iff (vpLE n a b) (vpLE_iff_le a b)
@@ -653,8 +617,8 @@ instance instDecidableVpProfileLT {n : Nat} (a b : ViolationProfile n) :
 /-- Build a `ViolationProfile n` from `n` constraint evaluation functions.
 
     Given constraints as `Fin n → C → Nat` (constraint `i` evaluated on
-    candidate `c` yields violation count `constraints i c`), produce the
-    fixed-length violation profile for candidate `c`.
+    candidate `c` yields the `i`-th coordinate `constraints i c`), produce
+    the fixed-length cost vector for `c`.
 
     This is the bridge between the study-file workflow (define individual
     constraint functions) and the algebraic `Tableau C n` infrastructure. -/
@@ -663,11 +627,11 @@ def buildViolationProfile {C : Type*} {n : Nat}
   toLex fun i => constraints i c
 
 -- ============================================================================
--- § 12c: Tropical Semiring Derivation ([riggle-2009])
+-- § 12c: Tropical Semiring Derivation ((tropical semiring view; cf. [riggle-2009]))
 -- ============================================================================
 
 /-- `WithTop (ViolationProfile n)` is a `LinearOrderedAddCommMonoidWithTop`:
-    it extends the ordered cancel monoid with a top element (V^∞ in Riggle's
+    it extends the ordered cancel monoid with a top element (`V^∞` in
     notation) that absorbs addition. This is the final prerequisite for the
     tropical semiring — mathlib's `Tropical` wrapper then gives us
     `CommSemiring (Tropical (WithTop (ViolationProfile n)))` for free. -/
@@ -698,14 +662,14 @@ noncomputable instance (n : Nat) :
             (le_of_add_le_add_left (le_of_eq h))
             (le_of_add_le_add_left (le_of_eq h.symm)))
 
-/-- **Riggle's violation semiring**: for any number of constraints `n`,
+/-- The standard tropical semiring on cost vectors: for any `n`,
     `Tropical (WithTop (ViolationProfile n))` is automatically a
     `CommSemiring` where:
 
     - **Tropical addition** (`⊕`) = `min` under harmonic inequality —
-      choosing the more harmonic candidate (Riggle's ⊗)
-    - **Tropical multiplication** (`⊗`) = componentwise `+` of violation
-      counts — merging violations from multiple constraints (Riggle's ⊎)
+      choosing the more harmonic candidate (the ⊗)
+    - **Tropical multiplication** (`⊗`) = componentwise `+` of coordinate
+      counts — merging violations from multiple constraints (the ⊎)
     - **Additive identity** (`0`) = `⊤` (V^∞) — the infinitely bad candidate
       that loses to everything
     - **Multiplicative identity** (`1`) = the zero profile — the perfect
@@ -735,7 +699,7 @@ def svpLE {n : Nat} (a b : Fin n → Nat) : Prop :=
 instance {n : Nat} (a b : Fin n → Nat) : Decidable (svpLE a b) :=
   Fintype.decidableForallFintype
 
-/-- Fixed-length violation profile ordered by satisfaction ≤
+/-- Fixed-length cost vector ordered by subset-inclusion ≤
     (Kratzer ordering). `a ≤ b` iff `a` satisfies every constraint that `b`
     satisfies. -/
 @[ext]
@@ -757,10 +721,10 @@ instance {n : Nat} (a b : SatViolationProfile n) : Decidable (a < b) :=
   inferInstanceAs (Decidable (a ≤ b ∧ ¬ b ≤ a))
 
 -- ============================================================================
--- § 14: Tableau — Finset-Based OT Tableau
+-- § 14: Lex-min problem (`Tableau`)
 -- ============================================================================
 
-/-- An OT tableau with `n` ranked constraints and candidate type `C`.
+/-- A finite candidate set with a `Fin n → Nat`-valued cost vector.
 
     Uses `Finset C` for the candidate set (guaranteeing finiteness and
     deduplication) and `ViolationProfile n` for fixed-length profiles with
@@ -778,7 +742,7 @@ def Tableau.IsOptimal (t : Tableau C n) (c : C) : Prop :=
   c ∈ t.candidates ∧ ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
 
 /-- **Every tableau has an optimal candidate.** This is the structural
-    guarantee of OT: the `LinearOrder` on `ViolationProfile n` ensures
+    guarantee: the `LinearOrder` on `ViolationProfile n` ensures
     a minimum always exists in any non-empty finite set.
 
     Proof delegates to `Finset.exists_min_image` — the general fact that
@@ -790,7 +754,7 @@ theorem Tableau.exists_optimal (t : Tableau C n) : ∃ c, t.IsOptimal c := by
 /-- Set of optimal candidates. Computable via `instDecidableVpProfileLE`:
     the `Finset.filter` tests `∀ c' ∈ candidates, profile c ≤ profile c'`
     using the decidable ≤ on `ViolationProfile n`. Study files can verify
-    OT winners with `by decide` on concrete tableaux. -/
+    the lex-min set with `by decide` on concrete tableaux. -/
 def Tableau.optimal (t : Tableau C n) : Finset C :=
   t.candidates.filter fun c =>
     ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
@@ -800,7 +764,7 @@ theorem Tableau.mem_optimal_iff (t : Tableau C n) (c : C) :
     c ∈ t.optimal ↔ t.IsOptimal c := by
   simp only [Tableau.optimal, Finset.mem_filter, Tableau.IsOptimal]
 
-/-- The optimal set is always non-empty: OT always picks a winner. -/
+/-- The optimal set is always non-empty: the lex-min set is non-empty. -/
 theorem Tableau.optimal_nonempty (t : Tableau C n) : t.optimal.Nonempty := by
   obtain ⟨c, hc⟩ := t.exists_optimal
   exact ⟨c, (t.mem_optimal_iff c).mpr hc⟩

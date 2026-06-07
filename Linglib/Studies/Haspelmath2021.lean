@@ -82,6 +82,7 @@ namespace Haspelmath2021
 
 open Features.Prominence
 open Core.Optimization.Evaluation
+open Phonology.Constraint
 open Aissen2003
 open DeHoopMalchukov2008
 open Typology.Alignment
