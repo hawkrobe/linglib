@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Case.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 
@@ -91,6 +92,8 @@ theorem Word.Agree.not_transitive :
 instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
 
 instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
+
+instance : HasCase Word := ⟨fun w => w.features.case_.map Case.fromUD⟩
 
 /-- The φ-projection preserves `numberOf`: a word and its `phi` bundle bear
     the same number — the defeq `Word.Agree.hasNumber_compatible` relies on. -/

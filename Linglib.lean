@@ -305,6 +305,7 @@ import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
 import Linglib.Core.Computability.StringHom
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
 import Linglib.Diachronic.CaseGrammaticalization
@@ -680,6 +681,7 @@ import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
+import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Slavic.Case
 import Linglib.Fragments.Slavic.Cassubian.Case
 import Linglib.Fragments.Slavic.Params

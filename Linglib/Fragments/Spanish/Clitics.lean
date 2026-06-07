@@ -1,7 +1,5 @@
-import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
+import Linglib.Fragments.Romance.Clitics
 
 /-!
 # Spanish Clitic Paradigm
@@ -27,37 +25,12 @@ This syncretism drives the availability of stylistic applicatives.
 
 namespace Spanish.Clitics
 
--- ============================================================================
--- § 1: Clitic Cases
--- ============================================================================
+open Romance.Clitics (CliticEntry CliticCase)
 
-/-- The three-way case distinction for Spanish clitics. -/
-inductive CliticCase where
-  | accusative
-  | dative
-  | reflexive
-  deriving DecidableEq, Repr
+/-! ### Paradigm data
 
--- ============================================================================
--- § 2: Clitic Entries
--- ============================================================================
-
-/-- A single clitic form in the paradigm. -/
-structure CliticEntry where
-  form : String
-  person : UD.Person
-  number : UD.Number
-  case_ : CliticCase
-  deriving Repr, BEq
-
-/-- A clitic bears its φ-slot's number (`HasNumber`). -/
-instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
-
-instance : HasPerson CliticEntry := ⟨fun c => some (Person.fromUD c.person)⟩
-
--- ============================================================================
--- § 3: Paradigm Data
--- ============================================================================
+Schema and capability instances are the shared Romance clitic schema
+(`Fragments/Romance/Clitics.lean`). -/
 
 -- 1SG clitics
 def me_acc : CliticEntry := { form := "me", person := .first, number := .Sing, case_ := .accusative }
@@ -86,9 +59,7 @@ def las : CliticEntry := { form := "las", person := .third, number := .Plur, cas
 def les_dat : CliticEntry := { form := "les", person := .third, number := .Plur, case_ := .dative }
 def se_refl_pl : CliticEntry := { form := "se", person := .third, number := .Plur, case_ := .reflexive }
 
--- ============================================================================
--- § 4: Paradigm and Syncretism
--- ============================================================================
+/-! ### Paradigm and syncretism -/
 
 /-- The full clitic paradigm as a flat list. -/
 def paradigm : List CliticEntry :=
@@ -99,25 +70,20 @@ def paradigm : List CliticEntry :=
     los, las, les_dat, se_refl_pl ]
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm (p : UD.Person) (n : UD.Number) (c : CliticCase) : Option String :=
-  (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map (·.form)
+def lookupForm : UD.Person → UD.Number → CliticCase → Option String :=
+  Romance.Clitics.lookupForm paradigm
 
 /-- Are two clitic cases syncretic for a given person/number combination?
-    DERIVED from the paradigm data: syncretism holds iff the looked-up
-    forms are identical (and both exist). -/
-def isSyncretic (p : UD.Person) (n : UD.Number) (c1 c2 : CliticCase) : Bool :=
-  match lookupForm p n c1, lookupForm p n c2 with
-  | some f1, some f2 => f1 == f2
-  | _, _ => false
+    Derived from the paradigm data. -/
+def isSyncretic : UD.Person → UD.Number → CliticCase → CliticCase → Bool :=
+  Romance.Clitics.isSyncretic paradigm
 
 /-- The set of person/number combinations where DAT and REFL are syncretic.
     This is the key condition for SE-optionality. -/
-def datReflSyncretic (p : UD.Person) (n : UD.Number) : Bool :=
-  isSyncretic p n .dative .reflexive
+def datReflSyncretic : UD.Person → UD.Number → Bool :=
+  Romance.Clitics.datReflSyncretic paradigm
 
--- ============================================================================
--- § 5: Verification Theorems
--- ============================================================================
+/-! ### Verification theorems -/
 
 /-- 1SG: dative and reflexive are syncretic (both "me"). -/
 theorem syncretic_1sg : datReflSyncretic .first .Sing = true := rfl
