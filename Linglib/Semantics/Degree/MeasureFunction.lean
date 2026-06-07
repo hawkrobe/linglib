@@ -45,7 +45,7 @@ This maps directly onto Beavers eq. (60):
 
 The bridge is `MeasureFunction.toHasScalarResult` below: any
 time-indexed measure function induces a `HasScalarResult` instance
-where `resultAt x g e := m x e.runtime.finish = g`. Verb-specific
+where `resultAt x g e := m x e.runtime.snd = g`. Verb-specific
 `IsQuantizedAffected` / `IsNonQuantizedAffected` instances then
 quantify over the scale's maximum (or its absence).
 
@@ -210,7 +210,7 @@ theorem measureOfChange_eq_final {α δ Time : Type*} [LinearOrder δ]
     init/fin times from the event's runtime interval. -/
 def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Time]
     (m : MeasureFunction α δ Time) (x : α) (e : Event Time) : δ :=
-  measureOfChange m x e.runtime.start e.runtime.finish
+  measureOfChange m x e.runtime.fst e.runtime.snd
 
 -- ════════════════════════════════════════════════════
 -- § 5. Auto-synthesis bridges to Beavers' substrate
@@ -220,7 +220,7 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
     function (`[HasMeasureFunction α δ Time]`) automatically has a
     Beavers `HasScalarResult` instance.
 
-    `HasScalarResult.resultAt x g e := measure x e.runtime.finish = g`
+    `HasScalarResult.resultAt x g e := measure x e.runtime.snd = g`
     — patient `x` ends event `e` holding degree `g` of the property
     measured by the verb's measure function.
 
@@ -237,7 +237,7 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
 instance HasScalarResult.ofHasMeasureFunction
     {α δ Time : Type*} [LinearOrder Time] [HasMeasureFunction α δ Time] :
     HasScalarResult α δ (Event Time) where
-  resultAt x g e := HasMeasureFunction.measure x e.runtime.finish = g
+  resultAt x g e := HasMeasureFunction.measure x e.runtime.snd = g
 
 /-- Companion smart constructor: `HasMeasureFunction`-backed verbs
     can also be given a Beavers `HasLatentScale` instance via this

@@ -609,7 +609,6 @@ import Linglib.Data.WALS.Features.F144X
 import Linglib.Data.WALS.Features.F144Y
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
-import Linglib.Tactics.OntSort
 import Linglib.Tactics.ENNRealArith
 -- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
 import Linglib.Paradigms.VisualWorld

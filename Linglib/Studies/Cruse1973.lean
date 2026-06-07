@@ -288,7 +288,7 @@ theorem stative_can_pass_doTest :
       e.sort = .stative ∧ passesDoTest x e profile := by
   -- Witness: a profile where () has volitive in a stative event
   refine ⟨⟨λ _ _ => True, λ _ _ => False, λ _ _ => False, λ _ _ => False⟩,
-          (), ⟨⟨0, 10, by omega⟩, .stative⟩, rfl, ?_⟩
+          (), ⟨⟨⟨0, 10⟩, by omega⟩, .stative⟩, rfl, ?_⟩
   exact Or.inl trivial
 
 /-- Parsons' `agent_selects_action` is NOT contradicted by stative

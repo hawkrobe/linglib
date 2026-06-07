@@ -45,7 +45,6 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 namespace Semantics.Aspect.SubeventStructure
 
-open Core.Order
 open Features
 
 /-! ### Subevent Phases -/
@@ -55,11 +54,11 @@ open Features
     The activity phase must precede or meet the result phase. -/
 structure SubeventPhases (Time : Type*) [LinearOrder Time] where
   /-- Temporal extent of the activity/process phase -/
-  activityTrace : Interval Time
+  activityTrace : NonemptyInterval Time
   /-- Temporal extent of the result state phase -/
-  resultTrace : Interval Time
+  resultTrace : NonemptyInterval Time
   /-- Activity precedes or meets result: activity ends ≤ result starts -/
-  activity_precedes_result : activityTrace.finish ≤ resultTrace.start
+  activity_precedes_result : activityTrace.snd ≤ resultTrace.fst
 
 /-! ### Temporal Decomposition -/
 
@@ -70,31 +69,31 @@ structure SubeventPhases (Time : Type*) [LinearOrder Time] where
       decomposes into an activity phase and a result phase. -/
 inductive TemporalDecomposition (Time : Type*) [LinearOrder Time] where
   /-- Simple event: a single runtime interval with no internal structure. -/
-  | simple (runtime : Interval Time)
+  | simple (runtime : NonemptyInterval Time)
   /-- Complex event: overall runtime with activity and result subphases.
       Both subphases are contained within the overall runtime. -/
   | complex
-    (runtime : Interval Time)
+    (runtime : NonemptyInterval Time)
     (phases : SubeventPhases Time)
-    (activity_in_runtime : phases.activityTrace.subinterval runtime)
-    (result_in_runtime : phases.resultTrace.subinterval runtime)
+    (activity_in_runtime : phases.activityTrace ≤ runtime)
+    (result_in_runtime : phases.resultTrace ≤ runtime)
 
 namespace TemporalDecomposition
 
 variable {Time : Type*} [LinearOrder Time]
 
 /-- Extract the overall runtime from any decomposition. -/
-def runtime : TemporalDecomposition Time → Interval Time
+def runtime : TemporalDecomposition Time → NonemptyInterval Time
   | .simple r => r
   | .complex r _ _ _ => r
 
 /-- Extract the activity phase (only available for complex events). -/
-def activityPhase : TemporalDecomposition Time → Option (Interval Time)
+def activityPhase : TemporalDecomposition Time → Option (NonemptyInterval Time)
   | .simple _ => none
   | .complex _ phases _ _ => some phases.activityTrace
 
 /-- Extract the result phase (only available for complex events). -/
-def resultPhase : TemporalDecomposition Time → Option (Interval Time)
+def resultPhase : TemporalDecomposition Time → Option (NonemptyInterval Time)
   | .simple _ => none
   | .complex _ phases _ _ => some phases.resultTrace
 
@@ -150,8 +149,8 @@ def _root_.Event.withSimpleDecomposition {Time : Type*} [LinearOrder Time]
 /-- Attach a complex decomposition to an event (for accomplishments/achievements). -/
 def _root_.Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
     (e : Event Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval e.runtime)
-    (h_res : phases.resultTrace.subinterval e.runtime) : DecomposedEv Time where
+    (h_act : phases.activityTrace ≤ e.runtime)
+    (h_res : phases.resultTrace ≤ e.runtime) : DecomposedEv Time where
   event := e
   decomposition := .complex e.runtime phases h_act h_res
   runtime_consistent := rfl
@@ -160,27 +159,27 @@ def _root_.Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
 
 /-- Activity precedes result in any SubeventPhases (direct accessor). -/
 theorem SubeventPhases.ordering {Time : Type*} [LinearOrder Time]
-    (p : SubeventPhases Time) : p.activityTrace.finish ≤ p.resultTrace.start :=
+    (p : SubeventPhases Time) : p.activityTrace.snd ≤ p.resultTrace.fst :=
   p.activity_precedes_result
 
 /-- Both subevent phases are contained in the overall runtime of a complex
     decomposition (by construction). -/
 theorem complex_phases_in_runtime {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval rt)
-    (h_res : phases.resultTrace.subinterval rt) :
-    phases.activityTrace.subinterval rt ∧
-    phases.resultTrace.subinterval rt :=
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace ≤ rt)
+    (h_res : phases.resultTrace ≤ rt) :
+    phases.activityTrace ≤ rt ∧
+    phases.resultTrace ≤ rt :=
   ⟨h_act, h_res⟩
 
 /-- A simple decomposition has no result phase. -/
 theorem simple_no_result {Time : Type*} [LinearOrder Time]
-    (r : Interval Time) :
+    (r : NonemptyInterval Time) :
     (TemporalDecomposition.simple r).resultPhase = none := rfl
 
 /-- A simple decomposition has no activity phase. -/
 theorem simple_no_activity {Time : Type*} [LinearOrder Time]
-    (r : Interval Time) :
+    (r : NonemptyInterval Time) :
     (TemporalDecomposition.simple r).activityPhase = none := rfl
 
 /-! ### Phase Event Predicates -/
@@ -196,14 +195,14 @@ open Semantics.Aspect
     is world-independent (following the same convention as
     `Giannakidou.lean`). -/
 def phasePred {Time : Type*} [LinearOrder Time]
-    (phase : Interval Time) : Unit → Event Time → Prop :=
+    (phase : NonemptyInterval Time) : Unit → Event Time → Prop :=
   λ _ ev => ev.runtime = phase
 
 /-- IMPF applied to a phase predicate reduces to the reference time being
     properly inside that phase interval. -/
 theorem impf_phasePred {Time : Type*} [LinearOrder Time]
-    (phase t : Interval Time) :
-    IMPF (phasePred phase) () t ↔ t.properSubinterval phase := by
+    (phase t : NonemptyInterval Time) :
+    IMPF (phasePred phase) () t ↔ t < phase := by
   simp only [IMPF, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
@@ -212,8 +211,8 @@ theorem impf_phasePred {Time : Type*} [LinearOrder Time]
 /-- PRFV applied to a phase predicate reduces to the phase interval being
     contained in the reference time. -/
 theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
-    (phase t : Interval Time) :
-    PRFV (phasePred phase) () t ↔ phase.subinterval t := by
+    (phase t : NonemptyInterval Time) :
+    PRFV (phasePred phase) () t ↔ phase ≤ t := by
   simp only [PRFV, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
@@ -234,14 +233,14 @@ theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
     (progressive holds) but an intervening event can prevent token-level
     completion (perfective fails). -/
 theorem progressive_before_result :
-    ∃ (phases : SubeventPhases ℤ) (t : Interval ℤ),
+    ∃ (phases : SubeventPhases ℤ) (t : NonemptyInterval ℤ),
       IMPF (phasePred phases.activityTrace) () t ∧
       t.isBefore phases.resultTrace := by
-  refine ⟨⟨⟨0, 10, by omega⟩, ⟨15, 20, by omega⟩, by dsimp; omega⟩,
-         ⟨3, 7, by omega⟩, ?_, ?_⟩
+  refine ⟨⟨⟨⟨0, 10⟩, by omega⟩, ⟨⟨15, 20⟩, by omega⟩, by decide⟩,
+         ⟨⟨3, 7⟩, by omega⟩, ?_, ?_⟩
   · rw [impf_phasePred]
-    refine ⟨⟨?_, ?_⟩, Or.inl ?_⟩ <;> dsimp [Interval.subinterval] <;> omega
-  · dsimp [Interval.isBefore]; omega
+    decide
+  · decide
 
 /-- PRFV on the full event entails the result trace is within the reference
     time. "Built a house" entails the building was completed: the result
@@ -250,22 +249,22 @@ theorem progressive_before_result :
     Proof: result ⊆ runtime (by `h_res`) and runtime ⊆ ref (by PRFV),
     so result ⊆ ref by transitivity. -/
 theorem perfective_full_entails_result {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_res : phases.resultTrace.subinterval rt)
-    (t : Interval Time)
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_res : phases.resultTrace ≤ rt)
+    (t : NonemptyInterval Time)
     (h_prfv : PRFV (phasePred rt) () t) :
-    phases.resultTrace.subinterval t := by
+    phases.resultTrace ≤ t := by
   rw [prfv_phasePred] at h_prfv
   exact ⟨le_trans h_prfv.1 h_res.1, le_trans h_res.2 h_prfv.2⟩
 
 /-- PRFV on the full event entails the activity trace is within the
     reference time. The process phase is also covered. -/
 theorem perfective_full_entails_activity {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval rt)
-    (t : Interval Time)
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace ≤ rt)
+    (t : NonemptyInterval Time)
     (h_prfv : PRFV (phasePred rt) () t) :
-    phases.activityTrace.subinterval t := by
+    phases.activityTrace ≤ t := by
   rw [prfv_phasePred] at h_prfv
   exact ⟨le_trans h_prfv.1 h_act.1, le_trans h_act.2 h_prfv.2⟩
 
@@ -273,12 +272,12 @@ theorem perfective_full_entails_activity {Time : Type*} [LinearOrder Time]
     are within the reference time. This is the compositional account of why
     perfective aspect entails completion for accomplishments. -/
 theorem perfective_full_covers_phases {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval rt)
-    (h_res : phases.resultTrace.subinterval rt)
-    (t : Interval Time)
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace ≤ rt)
+    (h_res : phases.resultTrace ≤ rt)
+    (t : NonemptyInterval Time)
     (h_prfv : PRFV (phasePred rt) () t) :
-    phases.activityTrace.subinterval t ∧ phases.resultTrace.subinterval t :=
+    phases.activityTrace ≤ t ∧ phases.resultTrace ≤ t :=
   ⟨perfective_full_entails_activity rt phases h_act t h_prfv,
    perfective_full_entails_result rt phases h_res t h_prfv⟩
 
@@ -291,20 +290,21 @@ theorem perfective_full_covers_phases {Time : Type*} [LinearOrder Time]
     activity ⊆ ref. Combined with ref ⊆ activity (from IMPF), this forces
     ref = activity, contradicting the strict inequality in properSubinterval. -/
 theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval rt)
-    (t : Interval Time) :
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace ≤ rt)
+    (t : NonemptyInterval Time) :
     IMPF (phasePred phases.activityTrace) () t →
     ¬ PRFV (phasePred rt) () t := by
   rw [impf_phasePred, prfv_phasePred]
-  intro ⟨⟨h1, h2⟩, h_strict⟩ ⟨h3, h4⟩
-  -- h1 : activity.start ≤ t.start, h2 : t.finish ≤ activity.finish
-  -- h3 : t.start ≤ rt.start, h4 : rt.finish ≤ t.finish
-  -- h_act : rt.start ≤ activity.start ∧ activity.finish ≤ rt.finish
-  -- Chain: activity.start ≤ t.start ≤ rt.start ≤ activity.start → equal
-  -- Chain: t.finish ≤ activity.finish ≤ rt.finish ≤ t.finish → equal
-  have heq_s := le_antisymm h1 (le_trans h3 h_act.1)
-  have heq_f := le_antisymm h2 (le_trans h_act.2 h4)
+  intro hlt hle
+  obtain ⟨hsub, h_strict⟩ := NonemptyInterval.lt_def.mp hlt
+  obtain ⟨h1, h2⟩ := NonemptyInterval.le_def.mp hsub
+  obtain ⟨h3, h4⟩ := NonemptyInterval.le_def.mp hle
+  obtain ⟨ha1, ha2⟩ := NonemptyInterval.le_def.mp h_act
+  -- Chain: activity.fst ≤ t.fst ≤ rt.fst ≤ activity.fst → equal
+  -- Chain: t.snd ≤ activity.snd ≤ rt.snd ≤ t.snd → equal
+  have heq_s := le_antisymm h1 (le_trans h3 ha1)
+  have heq_f := le_antisymm h2 (le_trans ha2 h4)
   cases h_strict with
   | inl h => exact absurd heq_s (ne_of_lt h)
   | inr h => exact absurd heq_f (ne_of_lt h)
@@ -430,15 +430,15 @@ theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
     [moens-steedman-1988] -/
 structure Nucleus (Time : Type*) [LinearOrder Time] where
   /-- Preparatory process leading to culmination -/
-  prepProcess : Option (Interval Time)
+  prepProcess : Option (NonemptyInterval Time)
   /-- The culmination point: instantaneous transition -/
   culmination : Time
   /-- Consequent state persisting after culmination -/
-  consState : Option (Interval Time)
+  consState : Option (NonemptyInterval Time)
   /-- Prep process ends at or before culmination -/
-  prep_le_culm : ∀ i, prepProcess = some i → i.finish ≤ culmination
+  prep_le_culm : ∀ i, prepProcess = some i → i.snd ≤ culmination
   /-- Consequent state starts at or after culmination -/
-  culm_le_cons : ∀ i, consState = some i → culmination ≤ i.start
+  culm_le_cons : ∀ i, consState = some i → culmination ≤ i.fst
 
 namespace Nucleus
 
@@ -454,7 +454,7 @@ def eventType (n : Nucleus Time) : MoensSteedmanClass :=
 /-- A full nucleus (both prep and cons present) yields SubeventPhases.
     The ordering proof follows from transitivity through the culmination. -/
 def toSubeventPhases (n : Nucleus Time)
-    (prep cons : Interval Time)
+    (prep cons : NonemptyInterval Time)
     (h_prep : n.prepProcess = some prep)
     (h_cons : n.consState = some cons) :
     SubeventPhases Time where
@@ -465,14 +465,14 @@ def toSubeventPhases (n : Nucleus Time)
 
 /-- A full nucleus has event type culminatedProcess. -/
 theorem full_is_culminatedProcess (n : Nucleus Time)
-    {p c : Interval Time}
+    {p c : NonemptyInterval Time}
     (hp : n.prepProcess = some p) (hc : n.consState = some c) :
     n.eventType = .culminatedProcess := by
   simp [eventType, hp, hc]
 
 /-- A nucleus with consequent state has M&S's consequent state feature. -/
 theorem hasConsState_of_consState (n : Nucleus Time)
-    {c : Interval Time} (hc : n.consState = some c) :
+    {c : NonemptyInterval Time} (hc : n.consState = some c) :
     n.eventType.toProfile.hasConsequentState = true := by
   simp only [eventType]
   split <;> simp_all [MoensSteedmanClass.toProfile]

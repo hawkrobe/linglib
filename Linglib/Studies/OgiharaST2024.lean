@@ -449,30 +449,30 @@ theorem before_nonveridicality_derived :
     - arriving event at time 0
     O&ST predicts: after(leave, arrive) holds (τ(arrive) ≺ τ(leave)). -/
 theorem scenario_after_punctual :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
     AnscombeEvent.after (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨1, 1, le_refl _⟩, .dynamic⟩, ⟨⟨0, 0, le_refl _⟩, .dynamic⟩, rfl, rfl, ?_⟩
-  simp [Core.Order.Interval.precedes, Event.τ]
+  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩, rfl, rfl, ?_⟩
+  simp [NonemptyInterval.precedes, Event.τ]
 
 /-- Scenario: "He left₁ before she arrived₃" with punctual events.
     - leaving event at time 1
     - arriving event at time 3
     O&ST predicts: before(leave, arrive) holds (τ(leave) ≺ τ(arrive)). -/
 theorem scenario_before_punctual :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
     AnscombeEvent.before (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨1, 1, le_refl _⟩, .dynamic⟩, rfl, ?_⟩
+  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩, rfl, ?_⟩
   intro e₂ rfl
-  simp [Core.Order.Interval.precedes, Event.τ]
+  simp [NonemptyInterval.precedes, Event.τ]
 
 /-- Scenario: "The bomb exploded₅ before anyone defused it" (nobody defused it).
     O&ST predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
 theorem scenario_before_counterfactual :
-    let explode : Event ℤ := ⟨⟨5, 5, le_refl _⟩, .dynamic⟩
+    let explode : Event ℤ := ⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩
     AnscombeEvent.before (· = explode) (fun _ => False) := by
-  exact ⟨⟨⟨5, 5, le_refl _⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
+  exact ⟨⟨⟨⟨5, 5⟩, le_refl _⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13: Cross-Level Projection Verification
@@ -481,15 +481,15 @@ theorem scenario_before_counterfactual :
 /-- The punctual after-scenario projects correctly through eventDenotation:
     O&ST.after implies Anscombe.after on the projected interval sets. -/
 theorem scenario_after_projects :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .dynamic⟩
     Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.after_implies_anscombe _ _ scenario_after_punctual
 
 /-- The punctual before-scenario projects correctly through eventDenotation. -/
 theorem scenario_before_projects :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
-    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .dynamic⟩
+    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
     Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
 
@@ -501,8 +501,8 @@ theorem scenario_before_projects :
     directly from the quantificational structure. We verify each on
     concrete interval scenarios over ℤ, matching the B&C diagrams. -/
 
-private def i_cleo_b : Core.Order.Interval ℤ := ⟨1, 5, by omega⟩
-private def i_david_b : Core.Order.Interval ℤ := ⟨8, 12, by omega⟩
+private def i_cleo_b : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by omega⟩
+private def i_david_b : NonemptyInterval ℤ := ⟨⟨8, 12⟩, by omega⟩
 
 /-- *Before* is antisymmetric on non-overlapping statives: if A before B,
     then ¬(B before A). ([beaver-condoravdi-2003], exx. 3-4)
@@ -515,15 +515,15 @@ private def i_david_b : Core.Order.Interval ℤ := ⟨8, 12, by omega⟩
 theorem before_antisymmetric_scenario :
     Anscombe.before (stativeDenotation i_cleo_b) (stativeDenotation i_david_b) ∧
     ¬Anscombe.before (stativeDenotation i_david_b) (stativeDenotation i_cleo_b) := by
-  simp only [Anscombe.before, timeTrace_stativeDenotation, Core.Order.Interval.contains,
+  simp only [Anscombe.before, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
     i_cleo_b, i_david_b, Set.mem_setOf_eq]
   constructor
   · exact ⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩
   · intro ⟨t, ⟨ht1, ht2⟩, hall⟩
     have := hall 1 ⟨le_refl _, by omega⟩; omega
 
-private def i_cleo_a : Core.Order.Interval ℤ := ⟨1, 8, by omega⟩
-private def i_david_a : Core.Order.Interval ℤ := ⟨5, 12, by omega⟩
+private def i_cleo_a : NonemptyInterval ℤ := ⟨⟨1, 8⟩, by omega⟩
+private def i_david_a : NonemptyInterval ℤ := ⟨⟨5, 12⟩, by omega⟩
 
 /-- *After* is NOT antisymmetric: overlapping intervals allow both
     after(A,B) and after(B,A). ([beaver-condoravdi-2003], exx. 5-7, diagram 7)
@@ -533,16 +533,16 @@ private def i_david_a : Core.Order.Interval ℤ := ⟨5, 12, by omega⟩
 theorem after_not_antisymmetric_scenario :
     Anscombe.after (stativeDenotation i_cleo_a) (stativeDenotation i_david_a) ∧
     Anscombe.after (stativeDenotation i_david_a) (stativeDenotation i_cleo_a) := by
-  simp only [Anscombe.after, timeTrace_stativeDenotation, Core.Order.Interval.contains,
+  simp only [Anscombe.after, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
     i_cleo_a, i_david_a, Set.mem_setOf_eq]
   exact ⟨⟨8, ⟨by omega, le_refl _⟩, 5, ⟨le_refl _, by omega⟩, by omega⟩,
          ⟨12, ⟨by omega, le_refl _⟩, 1, ⟨le_refl _, by omega⟩, by omega⟩⟩
 
 /-- Helper intervals for the transitivity scenarios. Using top-level defs
     so `simp` can unfold interval fields for `omega`. -/
-private def i_delores_t : Core.Order.Interval ℤ := ⟨1, 3, by omega⟩
-private def i_ginger_t : Core.Order.Interval ℤ := ⟨6, 8, by omega⟩
-private def i_fred_t : Core.Order.Interval ℤ := ⟨11, 13, by omega⟩
+private def i_delores_t : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
+private def i_ginger_t : NonemptyInterval ℤ := ⟨⟨6, 8⟩, by omega⟩
+private def i_fred_t : NonemptyInterval ℤ := ⟨⟨11, 13⟩, by omega⟩
 
 /-- *Before* is transitive: A before B ∧ B before C → A before C.
     ([beaver-condoravdi-2003], exx. 12-14)
@@ -552,15 +552,15 @@ theorem before_transitive_scenario :
     Anscombe.before (stativeDenotation i_delores_t) (stativeDenotation i_ginger_t) ∧
     Anscombe.before (stativeDenotation i_ginger_t) (stativeDenotation i_fred_t) ∧
     Anscombe.before (stativeDenotation i_delores_t) (stativeDenotation i_fred_t) := by
-  simp only [Anscombe.before, timeTrace_stativeDenotation, Core.Order.Interval.contains,
+  simp only [Anscombe.before, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
     i_delores_t, i_ginger_t, i_fred_t, Set.mem_setOf_eq]
   exact ⟨⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩,
          ⟨6, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩,
          ⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩⟩
 
-private def i_fred_a : Core.Order.Interval ℤ := ⟨1, 3, by omega⟩
-private def i_ginger_a : Core.Order.Interval ℤ := ⟨2, 5, by omega⟩
-private def i_delores_a : Core.Order.Interval ℤ := ⟨4, 7, by omega⟩
+private def i_fred_a : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
+private def i_ginger_a : NonemptyInterval ℤ := ⟨⟨2, 5⟩, by omega⟩
+private def i_delores_a : NonemptyInterval ℤ := ⟨⟨4, 7⟩, by omega⟩
 
 /-- *After* is NOT transitive: overlapping intervals allow
     after(A,B) ∧ after(B,C) ∧ ¬after(A,C). ([beaver-condoravdi-2003], exx. 8-11)
@@ -574,7 +574,7 @@ theorem after_not_transitive_scenario :
     Anscombe.after (stativeDenotation i_fred_a) (stativeDenotation i_ginger_a) ∧
     Anscombe.after (stativeDenotation i_ginger_a) (stativeDenotation i_delores_a) ∧
     ¬Anscombe.after (stativeDenotation i_fred_a) (stativeDenotation i_delores_a) := by
-  simp only [Anscombe.after, timeTrace_stativeDenotation, Core.Order.Interval.contains,
+  simp only [Anscombe.after, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
     i_fred_a, i_ginger_a, i_delores_a, Set.mem_setOf_eq]
   refine ⟨⟨3, ⟨by omega, by omega⟩, 2, ⟨by omega, by omega⟩, by omega⟩,
           ⟨5, ⟨by omega, by omega⟩, 4, ⟨by omega, by omega⟩, by omega⟩, ?_⟩
@@ -701,7 +701,7 @@ The following theorems make this structural parallel precise. -/
 theorem csip_entails_completion
     {W Time : Type*} [LinearOrder Time]
     (P : W → Event Time → Prop) (hCSIP : HasClosedSubintervalProp P)
-    (w : W) (t : Core.Order.Interval Time) :
+    (w : W) (t : NonemptyInterval Time) :
     IMPF P w t → PRFV P w t :=
   fun h => impf_entails_prfv_of_csip P hCSIP w t h
 
@@ -732,11 +732,11 @@ theorem progressive_before_modal_resolution
     {W Time : Type*} [LinearOrder Time]
     (P Q : W → Event Time → Prop)
     (alternatives : Event Time → Set W)
-    (w : W) (t : Core.Order.Interval Time)
+    (w : W) (t : NonemptyInterval Time)
     (hIMPF : IMPF P w t)
-    (hContinuation : ∀ e, P w e → t.properSubinterval e.τ →
+    (hContinuation : ∀ e, P w e → t < e.τ →
       ∀ w' ∈ alternatives e, ∃ e', Q w' e') :
-    ∃ e, t.properSubinterval e.τ ∧ P w e ∧
+    ∃ e, t < e.τ ∧ P w e ∧
       ∀ w' ∈ alternatives e, ∃ e', Q w' e' := by
   obtain ⟨e, hSub, hP⟩ := hIMPF
   exact ⟨e, hSub, hP, hContinuation e hP hSub⟩
@@ -753,13 +753,13 @@ theorem progressive_before_modal_resolution
     resolution (the progressive / anti-veridical *before*). -/
 theorem csip_determines_modal_need
     {W Time : Type*} [LinearOrder Time]
-    (P : W → Event Time → Prop) (w : W) (t : Core.Order.Interval Time) :
+    (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time) :
     (HasClosedSubintervalProp P → IMPF P w t → PRFV P w t) ∧
     (IMPF P w t → ¬HasClosedSubintervalProp P →
-      ¬(∀ (t' : Core.Order.Interval Time), t'.subinterval t →
+      ¬(∀ (t' : NonemptyInterval Time), t' ≤ t →
         ∃ e, e.τ = t' ∧ P w e) →
       -- Modal resolution needed: must appeal to alternative worlds
-      ∃ e, t.properSubinterval e.τ ∧ P w e) := by
+      ∃ e, t < e.τ ∧ P w e) := by
   constructor
   · intro hCSIP; exact impf_entails_prfv_of_csip P hCSIP w t
   · intro ⟨e, hSub, hP⟩ _ _
@@ -797,33 +797,33 @@ section Def19
 variable {W T E : Type*} [LinearOrder T]
 
 /-- Two intervals abut: the first ends where the second begins (no gap). -/
-def abuts (I₀ I₁ : Core.Order.Interval T) : Prop :=
-  I₀.finish = I₁.start
+def abuts (I₀ I₁ : NonemptyInterval T) : Prop :=
+  I₀.snd = I₁.fst
 
 /-- An eventuality e₁ "holds throughout" an interval that abuts I₀:
     e₁'s runtime extends from before I₀ through to (at least) I₀'s start. -/
-def holdsAtAbutting (runtime : E → Core.Order.Interval T) (e₁ : E)
-    (I₀ : Core.Order.Interval T) : Prop :=
-  (runtime e₁).start ≤ I₀.start ∧ I₀.start ≤ (runtime e₁).finish
+def holdsAtAbutting (runtime : E → NonemptyInterval T) (e₁ : E)
+    (I₀ : NonemptyInterval T) : Prop :=
+  (runtime e₁).fst ≤ I₀.fst ∧ I₀.fst ≤ (runtime e₁).snd
 
 /-- Denotation type for O&ST's truth conditions: sets of
     world–interval–eventuality triples. -/
-abbrev SitDenot (W T E : Type*) [LinearOrder T] := Set (W × Core.Order.Interval T × E)
+abbrev SitDenot (W T E : Type*) [LinearOrder T] := Set (W × NonemptyInterval T × E)
 
 /-- **Case (i)**: ⟦A before B⟧ = 1 when the complement B already holds
     at some interval after I₀ in the actual world w₀. -/
 def beforeCase_veridical
     (A B : SitDenot W T E)
-    (w₀ : W) (I₀ : Core.Order.Interval T) (e₀ : E) : Prop :=
-  (w₀, I₀, e₀) ∈ A ∧ ∃ I₂ : Core.Order.Interval T, I₀.finish < I₂.start ∧
+    (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) : Prop :=
+  (w₀, I₀, e₀) ∈ A ∧ ∃ I₂ : NonemptyInterval T, I₀.snd < I₂.fst ∧
     ∃ e₄ : E, (w₀, I₂, e₄) ∈ B
 
 /-- **Case (ii)**: ⟦A before B⟧ = 0 when the complement B already holds
     at some interval at or before I₀ in the actual world w₀. -/
 def beforeCase_false
     (A B : SitDenot W T E)
-    (w₀ : W) (I₀ : Core.Order.Interval T) (e₀ : E) : Prop :=
-  (w₀, I₀, e₀) ∈ A ∧ ∃ I₂ : Core.Order.Interval T, I₂.finish ≤ I₀.start ∧
+    (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) : Prop :=
+  (w₀, I₀, e₀) ∈ A ∧ ∃ I₂ : NonemptyInterval T, I₂.snd ≤ I₀.fst ∧
     ∃ e₅ : E, (w₀, I₂, e₅) ∈ B
 
 /-- **Case (iii)**: The modal case. ⟦A before B⟧ = 1 when A holds at ⟨w₀,I₀,e₀⟩
@@ -834,14 +834,14 @@ def beforeCase_false
     - ⟨w₁, I₁, e₃⟩ ∈ ⟦B⟧. -/
 def beforeCase_modal
     (A B : SitDenot W T E)
-    (runtime : E → Core.Order.Interval T)
-    (alt : W → Core.Order.Interval T → E → Set W)
+    (runtime : E → NonemptyInterval T)
+    (alt : W → NonemptyInterval T → E → Set W)
     (cause : W → E → E → Prop)
     (counterpart : W → E → W → E → Prop)
-    (w₀ : W) (I₀ : Core.Order.Interval T) (e₀ : E) : Prop :=
+    (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) : Prop :=
   (w₀, I₀, e₀) ∈ A ∧
-  ∃ I₁ : Core.Order.Interval T,
-    I₀.finish < I₁.start ∧  -- I₀ precedes I₁
+  ∃ I₁ : NonemptyInterval T,
+    I₀.snd < I₁.fst ∧  -- I₀ precedes I₁
     ∃ e₁ : E,
       holdsAtAbutting runtime e₁ I₀ ∧  -- e₁ ongoing at I₀
       ∃ w₁ ∈ alt w₀ I₀ e₁,  -- alternative world
@@ -858,11 +858,11 @@ def beforeCase_modal
     AND case (ii) does not hold (B did not already occur before I₀). -/
 def OST.before
     (A B : SitDenot W T E)
-    (runtime : E → Core.Order.Interval T)
-    (alt : W → Core.Order.Interval T → E → Set W)
+    (runtime : E → NonemptyInterval T)
+    (alt : W → NonemptyInterval T → E → Set W)
     (cause : W → E → E → Prop)
     (counterpart : W → E → W → E → Prop)
-    (w₀ : W) (I₀ : Core.Order.Interval T) (e₀ : E) : Prop :=
+    (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) : Prop :=
   ¬beforeCase_false A B w₀ I₀ e₀ ∧
   (beforeCase_veridical A B w₀ I₀ e₀ ∨
    beforeCase_modal A B runtime alt cause counterpart w₀ I₀ e₀)
@@ -875,7 +875,7 @@ def OST.before
     the complement is instantiated in the actual world. -/
 theorem beforeCase_veridical_entails_complement
     (A B : SitDenot W T E)
-    (w₀ : W) (I₀ : Core.Order.Interval T) (e₀ : E) :
+    (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) :
     beforeCase_veridical A B w₀ I₀ e₀ → ∃ I e, (w₀, I, e) ∈ B := by
   rintro ⟨_, I₂, _, e₄, hB⟩
   exact ⟨I₂, e₄, hB⟩
@@ -890,21 +890,21 @@ theorem beforeCase_veridical_entails_complement
     But B has no witness in w₀. -/
 theorem beforeCase_modal_nonveridical :
     ∃ (A B : SitDenot Bool ℤ Unit)
-      (runtime : Unit → Core.Order.Interval ℤ)
-      (alt : Bool → Core.Order.Interval ℤ → Unit → Set Bool)
+      (runtime : Unit → NonemptyInterval ℤ)
+      (alt : Bool → NonemptyInterval ℤ → Unit → Set Bool)
       (cause : Bool → Unit → Unit → Prop)
       (counterpart : Bool → Unit → Bool → Unit → Prop)
-      (w₀ : Bool) (I₀ : Core.Order.Interval ℤ) (e₀ : Unit),
+      (w₀ : Bool) (I₀ : NonemptyInterval ℤ) (e₀ : Unit),
     beforeCase_modal A B runtime alt cause counterpart w₀ I₀ e₀ ∧
     ¬∃ I e, (w₀, I, e) ∈ B := by
-  refine ⟨{(false, ⟨0, 0, le_refl _⟩, ())},
-          {(true, ⟨2, 2, le_refl _⟩, ())},
-          fun _ => ⟨-1, 0, by omega⟩,
+  refine ⟨{(false, ⟨⟨0, 0⟩, le_refl _⟩, ())},
+          {(true, ⟨⟨2, 2⟩, le_refl _⟩, ())},
+          fun _ => ⟨⟨-1, 0⟩, by omega⟩,
           fun _ _ _ => {true},
           fun _ _ _ => True,      -- cause : W → E → E → Prop
           fun _ _ _ _ => True,    -- counterpart : W → E → W → E → Prop
-          false, ⟨0, 0, le_refl _⟩, (), ?_, ?_⟩
-  · refine ⟨rfl, ⟨2, 2, le_refl _⟩, ?_, (), ⟨?_, true, rfl, (),
+          false, ⟨⟨0, 0⟩, le_refl _⟩, (), ?_, ?_⟩
+  · refine ⟨rfl, ⟨⟨2, 2⟩, le_refl _⟩, ?_, (), ⟨?_, true, rfl, (),
       ⟨trivial, (), trivial, rfl⟩⟩⟩
     · show (0 : ℤ) < 2; omega
     · exact ⟨by show (-1 : ℤ) ≤ 0; omega, by show (0 : ℤ) ≤ 0; omega⟩
@@ -915,12 +915,12 @@ theorem beforeCase_modal_nonveridical :
 /-- Cases (i) and (ii) are mutually exclusive when the complement occurs at
     a single interval: it cannot be both before and after I₀. -/
 theorem cases_i_ii_exclusive
-    (I₀ I_B : Core.Order.Interval T)
-    (hAfter : I₀.finish < I_B.start)
-    (hBefore : I_B.finish ≤ I₀.start) :
+    (I₀ I_B : NonemptyInterval T)
+    (hAfter : I₀.snd < I_B.fst)
+    (hBefore : I_B.snd ≤ I₀.fst) :
     False := by
-  have : I_B.finish < I_B.start := lt_of_le_of_lt hBefore (lt_of_le_of_lt I₀.valid hAfter)
-  exact absurd this (not_lt.mpr I_B.valid)
+  have : I_B.snd < I_B.fst := lt_of_le_of_lt hBefore (lt_of_le_of_lt I₀.fst_le_snd hAfter)
+  exact absurd this (not_lt.mpr I_B.fst_le_snd)
 
 /-- The Mozart scenario: "Mozart died before he finished the Requiem."
     This is the anti-veridical reading (case iii). Mozart's death (e₀) is at
@@ -930,11 +930,11 @@ theorem cases_i_ii_exclusive
 theorem mozart_is_case_iii
     {W E : Type*}
     (A B : SitDenot W ℤ E)
-    (runtime : E → Core.Order.Interval ℤ)
-    (alt : W → Core.Order.Interval ℤ → E → Set W)
+    (runtime : E → NonemptyInterval ℤ)
+    (alt : W → NonemptyInterval ℤ → E → Set W)
     (cause : W → E → E → Prop)
     (counterpart : W → E → W → E → Prop)
-    (w₀ : W) (I₀ : Core.Order.Interval ℤ) (e₀ : E)
+    (w₀ : W) (I₀ : NonemptyInterval ℤ) (e₀ : E)
     (hNoFinish : ¬∃ I e, (w₀, I, e) ∈ B)
     (hModal : beforeCase_modal A B runtime alt cause counterpart w₀ I₀ e₀) :
     OST.before A B runtime alt cause counterpart w₀ I₀ e₀ := by
@@ -967,7 +967,7 @@ For each temporal connective, the Fragment's `complementVeridical` field is
 namespace OgiharaST2024.VeridicalityBridge
 
 open Core.Order
-open Core.Order.Interval
+open NonemptyInterval
 open Semantics.Tense.TemporalConnectives
 open English.TemporalExpressions
 open OgiharaST2024
@@ -1021,8 +1021,8 @@ theorem by_veridicality_grounded :
 theorem before_nonveridicality_grounded :
     before_.complementVeridical = false ∧
     (∃ (A B : SentDenotation ℤ), Anscombe.before A B ∧ ¬∃ t, t ∈ timeTrace B) := by
-  refine ⟨rfl, ⟨{ Interval.point 0 }, ∅, ?_, ?_⟩⟩
-  · exact ⟨0, ⟨Interval.point 0, rfl, le_refl _, le_refl _⟩,
+  refine ⟨rfl, ⟨{ NonemptyInterval.pure 0 }, ∅, ?_, ?_⟩⟩
+  · exact ⟨0, ⟨NonemptyInterval.pure 0, rfl, le_refl _, le_refl _⟩,
       fun t' ⟨i, hi, _⟩ => absurd hi (Set.mem_empty_iff_false i).mp⟩
   · intro ⟨_, i, hi, _⟩; exact absurd hi (Set.mem_empty_iff_false i).mp
 

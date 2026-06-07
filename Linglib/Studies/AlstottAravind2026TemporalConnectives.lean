@@ -57,7 +57,7 @@ open Semantics.Tense.TemporalConnectives
 open English.TemporalExpressions
 open Phenomena.TemporalConnectives.AspectInteractionData
 open Core.Order
-open Core.Order.Interval
+open NonemptyInterval
 
 -- ============================================================================
 -- § 1: Telicity Sensitivity Pattern
@@ -143,15 +143,15 @@ theorem until_selectional_restriction_grounded :
 /-- INCHOAT extracts the onset of an atelic/stative denotation.
     The theory proves this equals the start point — connecting the
     Fragment's `triggeredCoercion = "INCHOAT"` to concrete behavior. -/
-theorem inchoat_extracts_onset (i : Interval ℕ) :
-    INCHOAT (stativeDenotation i) = { j | j = Interval.point i.start } :=
+theorem inchoat_extracts_onset (i : NonemptyInterval ℕ) :
+    INCHOAT (stativeDenotation i) = { j | j = NonemptyInterval.pure i.fst } :=
   inchoat_bridges_inception i
 
 /-- COMPLET extracts the telos of a telic denotation.
     The theory proves this equals the finish point — connecting the
     Fragment's `triggeredCoercion = "COMPLET"` to concrete behavior. -/
-theorem complet_extracts_telos (i : Interval ℕ) :
-    COMPLET (accomplishmentDenotation i) = { j | j = Interval.point i.finish } :=
+theorem complet_extracts_telos (i : NonemptyInterval ℕ) :
+    COMPLET (accomplishmentDenotation i) = { j | j = NonemptyInterval.pure i.snd } :=
   complet_bridges_cessation i
 
 /-- The Fragment entries that specify `triggeredCoercion` are exactly those

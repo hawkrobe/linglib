@@ -203,7 +203,7 @@ Simultaneity (identity of time points) is too strong — it predicts that
 contour segments and geminates are impossible, since two distinct elements
 cannot both be identical to the same time point (§5.2.2). Overlap is the
 correct relation: it is reflexive and symmetric but crucially NOT transitive
-(`Interval.overlaps_not_transitive`), which is what allows the NCC proof to
+(`NonemptyInterval.overlaps_not_transitive`), which is what allows the NCC proof to
 go through via a contradiction chain (§5.2.3, fn. 6).
 
 The derivation (§5.3, p.294): if timing₁ ≺ timing₂ on the timing tier but
@@ -212,7 +212,7 @@ associations produce a chain melody₂.finish < melody₁.start ≤ timing₁.fi
 < timing₂.start ≤ melody₂.finish — a contradiction. Crossing is therefore
 logically impossible for valid associations.
 
-This section formalizes the derivation using `Core.Order.Interval` for
+This section formalizes the derivation using `NonemptyInterval` for
 temporal intervals and its `precedes`/`overlaps` relations.
 -/
 
@@ -220,11 +220,10 @@ section NoCrossing
 
 variable {T : Type*} [LinearOrder T]
 
-open Core.Order (Interval)
 
 /-- A position on an autosegmental tier, occupying a temporal interval. -/
 structure TierPosition (T : Type*) [LinearOrder T] where
-  interval : Interval T
+  interval : NonemptyInterval T
 
 /-- An association between a timing-tier position and a melody-tier position.
     An association line represents temporal overlap: the melody element is
@@ -273,17 +272,17 @@ theorem no_crossing (a₁ a₂ : Association T)
     ¬ crosses a₁ a₂ := by
   intro ⟨htime, hmelody⟩
   -- Unpack definitions
-  simp only [Interval.precedes] at htime hmelody
-  simp only [validAssociation, Interval.overlaps] at h₁ h₂
+  simp only [NonemptyInterval.precedes] at htime hmelody
+  simp only [validAssociation, NonemptyInterval.overlaps] at h₁ h₂
   obtain ⟨h₁_tm, h₁_mt⟩ := h₁
   obtain ⟨h₂_tm, h₂_mt⟩ := h₂
   -- Chain: melody₂.finish < melody₁.start ≤ timing₁.finish < timing₂.start ≤ melody₂.finish
-  have : a₂.melody.interval.finish < a₂.melody.interval.finish :=
-    calc a₂.melody.interval.finish
-        < a₁.melody.interval.start := hmelody
-      _ ≤ a₁.timing.interval.finish := h₁_mt
-      _ < a₂.timing.interval.start := htime
-      _ ≤ a₂.melody.interval.finish := h₂_tm
+  have : a₂.melody.interval.snd < a₂.melody.interval.snd :=
+    calc a₂.melody.interval.snd
+        < a₁.melody.interval.fst := hmelody
+      _ ≤ a₁.timing.interval.snd := h₁_mt
+      _ < a₂.timing.interval.fst := htime
+      _ ≤ a₂.melody.interval.snd := h₂_tm
   exact lt_irrefl _ this
 
 /-- Crossing is also impossible in the symmetric direction: if timing₂ ≺ timing₁
@@ -320,7 +319,7 @@ end Association
 /-! ### Concrete demonstrations -/
 
 /-- Helper: build an interval from start and finish with a proof of validity. -/
-private def mkInterval (s f : T) (h : s ≤ f) : Interval T := ⟨s, f, h⟩
+private def mkInterval (s f : T) (h : s ≤ f) : NonemptyInterval T := ⟨⟨s, f⟩, h⟩
 
 /-- A geminate consonant: two adjacent timing positions associated to a single
     melodic element. The melodic element's interval spans both timing slots.

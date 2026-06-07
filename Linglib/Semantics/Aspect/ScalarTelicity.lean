@@ -62,12 +62,12 @@ instance : HasLatentScale Patient (Event δ) :=
 /-- Telic reading: the patient reaches the maximal degree `⊤` by the event's end.
     Available only when the scale has a greatest element (`OrderTop`). -/
 def reachesTop [OrderTop δ] : Patient → Event δ → Prop :=
-  fun _ e => e.runtime.finish = (⊤ : δ)
+  fun _ e => e.runtime.snd = (⊤ : δ)
 
 /-- Atelic ('comparative') reading: the patient reaches *some* degree by the end —
     always satisfiable, hence `NonQuantized` for any scale. -/
 def reachesSome : Patient → Event δ → Prop :=
-  fun _ e => ∃ g : δ, e.runtime.finish = g
+  fun _ e => ∃ g : δ, e.runtime.snd = g
 
 theorem reachesSome_nonQuantized : NonQuantized (δ := δ) (reachesSome (δ := δ)) :=
   fun _ _ h => h
@@ -94,7 +94,7 @@ theorem atelic_of_noMaxOrder [NoMaxOrder δ] :
     ¬ ∃ g : δ, Quantized (reachesSome (δ := δ)) g := by
   rintro ⟨g, hg⟩
   obtain ⟨b, hb⟩ := exists_gt g
-  have hbg : b = g := hg Patient.mk ⟨⟨b, b, le_refl b⟩, .dynamic⟩ ⟨_, rfl⟩
+  have hbg : b = g := hg Patient.mk ⟨⟨⟨b, b⟩, le_refl b⟩, .dynamic⟩ ⟨_, rfl⟩
   exact absurd hbg hb.ne'
 
 /-- Synthesis: with a greatest degree, the telic reading builds the full Beavers

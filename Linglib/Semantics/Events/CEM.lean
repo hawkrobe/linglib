@@ -18,7 +18,6 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 
 namespace Semantics.Events.CEM
 
-open Core.Order
 open Features
 open _root_.Mereology
 
@@ -40,7 +39,7 @@ class EventCEM (Time : Type*) [LinearOrder Time]
   le_eq_partOf : ∀ (e₁ e₂ : Event Time),
     @LE.le (Event Time) evSemilatticeSup.toLE e₁ e₂ ↔ partOf e₁ e₂
   /-- Intervals form a join semilattice (for τ homomorphism). -/
-  intervalSemilatticeSup : SemilatticeSup (Interval Time)
+  intervalSemilatticeSup : SemilatticeSup (NonemptyInterval Time)
   /-- τ is a sum homomorphism: τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
       [champollion-2017] §2.5.1. -/
   τ_hom : ∀ (e₁ e₂ : Event Time),

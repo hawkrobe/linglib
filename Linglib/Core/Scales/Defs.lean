@@ -1,5 +1,4 @@
 import Mathlib.Order.Basic
-import Linglib.Tactics.OntSort
 
 /-!
 # Core/Scales/Defs.lean — basic types

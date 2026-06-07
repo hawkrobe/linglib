@@ -27,33 +27,32 @@ Level 1: Set Time (point sets)
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Order
-open Core.Order.Interval
+open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================
--- § 1: Sentence Denotations as Interval Sets
+-- § 1: Sentence Denotations as NonemptyInterval Sets
 -- ============================================================================
 
 /-- A sentence denotes a set of temporal intervals (its "run-times").
     Statives denote homogeneous interval sets; accomplishments denote singletons. -/
-abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (Interval Time)
+abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval Time)
 
 /-- The set of all time points contained in some interval of a denotation.
     This projects from interval-set representation to time-set representation,
     which is what [rett-2020]'s formalization quantifies over. -/
 def timeTrace (p : SentDenotation Time) : Set Time :=
-  { t | ∃ i ∈ p, i.contains t }
+  { t | ∃ i ∈ p, t ∈ i }
 
 /-- Stative denotation: the maximal interval `i` plus all its subintervals.
     Captures the subinterval (homogeneity) property of states/activities. -/
-def stativeDenotation (i : Interval Time) : SentDenotation Time :=
-  { j | subinterval j i }
+def stativeDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
+  { j | j ≤ i }
 
 /-- Accomplishment denotation: exactly the singleton interval `i`.
     Captures the quantized property of telic events. -/
-def accomplishmentDenotation (i : Interval Time) : SentDenotation Time :=
+def accomplishmentDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
   { j | j = i }
 
 -- ============================================================================
@@ -63,45 +62,45 @@ def accomplishmentDenotation (i : Interval Time) : SentDenotation Time :=
 /-- Stative denotations are closed under subintervals (the subinterval property).
     This connects to Krifka's CUM (cumulative reference): if an interval is in
     the denotation, all its subintervals are too. -/
-theorem stative_denotation_subinterval_closed (i : Interval Time) :
+theorem stative_denotation_subinterval_closed (i : NonemptyInterval Time) :
     ∀ j ∈ stativeDenotation i,
-      ∀ k, subinterval k j → k ∈ stativeDenotation i := by
+      ∀ k, k ≤ j → k ∈ stativeDenotation i := by
   intro j hj k hkj
   exact ⟨le_trans hj.1 hkj.1, le_trans hkj.2 hj.2⟩
 
 /-- Every point subinterval of a stative denotation's maximal interval is in the set. -/
-theorem stativeDenotation_contains_point (i : Interval Time) (t : Time)
-    (ht : i.contains t) : Interval.point t ∈ stativeDenotation i :=
+theorem stativeDenotation_contains_point (i : NonemptyInterval Time) (t : Time)
+    (ht : t ∈ i) : NonemptyInterval.pure t ∈ stativeDenotation i :=
   ⟨ht.1, ht.2⟩
 
 /-- An accomplishment denotation has exactly one member. -/
-theorem accomplishmentDenotation_singleton (i : Interval Time) :
+theorem accomplishmentDenotation_singleton (i : NonemptyInterval Time) :
     ∀ j, j ∈ accomplishmentDenotation i ↔ j = i :=
   λ _ => Iff.rfl
 
 /-- The maximal interval is in its own stative denotation (reflexivity). -/
-theorem stativeDenotation_self (i : Interval Time) :
+theorem stativeDenotation_self (i : NonemptyInterval Time) :
     i ∈ stativeDenotation i :=
   ⟨le_refl _, le_refl _⟩
 
 /-- The time trace of a stative denotation is exactly the set of times
     contained in the maximal interval. -/
-theorem timeTrace_stativeDenotation (i : Interval Time) :
-    timeTrace (stativeDenotation i) = { t | i.contains t } := by
+theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
+    timeTrace (stativeDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, stativeDenotation, Set.mem_setOf_eq, contains, subinterval]
+  simp only [timeTrace, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.mem_def, NonemptyInterval.le_def]
   constructor
   · rintro ⟨j, ⟨hjs, hjf⟩, hjt_s, hjt_f⟩
     exact ⟨le_trans hjs hjt_s, le_trans hjt_f hjf⟩
   · rintro ⟨hs, hf⟩
-    exact ⟨Interval.point t, ⟨hs, hf⟩, le_refl _, le_refl _⟩
+    exact ⟨NonemptyInterval.pure t, ⟨hs, hf⟩, le_refl _, le_refl _⟩
 
 /-- The time trace of an accomplishment denotation is exactly the set of times
     contained in the unique interval. -/
-theorem timeTrace_accomplishmentDenotation (i : Interval Time) :
-    timeTrace (accomplishmentDenotation i) = { t | i.contains t } := by
+theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
+    timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, accomplishmentDenotation, Set.mem_setOf_eq, contains]
+  simp only [timeTrace, accomplishmentDenotation, Set.mem_setOf_eq, NonemptyInterval.mem_def]
   constructor
   · rintro ⟨j, rfl, hs, hf⟩
     exact ⟨hs, hf⟩

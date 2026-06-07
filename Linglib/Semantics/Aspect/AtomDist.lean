@@ -28,7 +28,6 @@ Mandarin perfective particles in [zhao-2025] (le, méi-yǒu).
 
 namespace Semantics.Aspect
 
-open Core.Order
 
 /-- An event quantifier: a predicate on event predicates.
     V(P) holds iff "there is an event satisfying P" according to V's
@@ -48,10 +47,10 @@ abbrev EvQuant (Event : Type*) := (Event → Prop) → Prop
     cross-domain hypothesis is that the same definition applies to any
     `[LinearOrder α]`). -/
 def AtomDist {Event : Type*} {α : Type*} [LinearOrder α]
-    (τ : Event → Interval α) (V : EvQuant Event) : Prop :=
+    (τ : Event → NonemptyInterval α) (V : EvQuant Event) : Prop :=
   ∀ (P : Event → Prop), V P →
     ∀ (e : Event), P e →
-      ∀ (i' : Interval α), i'.subinterval (τ e) →
+      ∀ (i' : NonemptyInterval α), i' ≤ τ e →
         V (λ e' => P e' ∧ τ e' = i')
 
 /-- NOT-ATOM-DIST_α licensing condition:
@@ -59,7 +58,7 @@ def AtomDist {Event : Type*} {α : Type*} [LinearOrder α]
     V does NOT satisfy ATOM-DIST_α. This is the presupposition of
     Mandarin le and méi-yǒu ([zhao-2025] eq. 5.42). -/
 def antiAtomDistLicensed {Event : Type*} {α : Type*} [LinearOrder α]
-    (τ : Event → Interval α) (V : EvQuant Event) : Prop :=
+    (τ : Event → NonemptyInterval α) (V : EvQuant Event) : Prop :=
   ¬ AtomDist τ V
 
 namespace EvQuant

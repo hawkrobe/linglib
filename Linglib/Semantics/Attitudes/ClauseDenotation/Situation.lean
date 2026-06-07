@@ -1,5 +1,4 @@
 import Linglib.Core.Logic.Intensional.Situations
-import Linglib.Tactics.OntSort
 
 /-!
 # Clause Denotation: Situation [bondarenko-2022] [moltmann-2021]
@@ -63,7 +62,7 @@ namespace Semantics.Attitudes.ClauseDenotation.Situation
     typically a `Core.Logic.Intensional.SituationFrame.Index` carrying
     a parthood preorder, but this file does not require `[PartialOrder S]`
     so that downstream consumers can specialize freely. -/
-@[ont_sort] structure SituationIndividual (S : Type*) where
+structure SituationIndividual (S : Type*) where
   /-- Situation predicate: SIT(s_i) -/
   sit : S → Prop
 

@@ -1,5 +1,4 @@
 import Mathlib.Logic.Basic
-import Linglib.Tactics.OntSort
 
 /-!
 # Content Individuals ([kratzer-2006]; [liefke-2024] §4.3) [kratzer-2006]
@@ -50,7 +49,7 @@ namespace Semantics.Attitudes
     The `cont` field is Kratzer's CONT function: the propositional content
     this mental state carries. Two distinct content individuals can share
     the same content (my belief that p ≠ your belief that p). -/
-@[ont_sort] structure ContentIndividual (W : Type*) where
+structure ContentIndividual (W : Type*) where
   /-- Propositional content: CONT(c) -/
   cont : W → Prop
 

@@ -55,7 +55,6 @@ Goldsmith-style index-NCC to Sagey-style interval-NCC by construction.
 
 namespace Phonology.Autosegmental
 
-open Core.Order (Interval)
 
 /-! ### Candidate-level crossing predicate -/
 
@@ -124,15 +123,15 @@ theorem IsNoCrossing.insert_of_not_indexCrosses
     hom from the index-NCC substrate (`IndexCrosses`) to the interval-NCC
     substrate (`crosses`). -/
 def linkToPointAssociation (l : ℕ × ℕ) : Association ℕ where
-  timing := ⟨Interval.point l.fst⟩
-  melody := ⟨Interval.point l.snd⟩
+  timing := ⟨NonemptyInterval.pure l.fst⟩
+  melody := ⟨NonemptyInterval.pure l.snd⟩
 
 /-- **Substrate bridge.** Crossing between the point-interval associations
     of two index links agrees with the index-ordering condition. -/
 theorem indexCrosses_iff_crosses_pointAssociation (l₁ l₂ : ℕ × ℕ) :
     (l₁.fst < l₂.fst ∧ l₂.snd < l₁.snd) ↔
     crosses (linkToPointAssociation l₁) (linkToPointAssociation l₂) := by
-  unfold crosses linkToPointAssociation Interval.precedes Interval.point
+  unfold crosses linkToPointAssociation NonemptyInterval.precedes NonemptyInterval.pure
   simp
 
 end Phonology.Autosegmental

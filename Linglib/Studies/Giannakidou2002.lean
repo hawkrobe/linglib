@@ -67,7 +67,7 @@ strict/non-strict distinction and the non-strict version connects cleanly to
 namespace Giannakidou2002
 
 open Core.Order
-open Core.Order.Interval
+open NonemptyInterval
 open Semantics.Aspect
 open Semantics.Tense.TemporalConnectives
 
@@ -102,7 +102,7 @@ def prfvDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
     is preserved under subintervals. This is Karttunen's selectional restriction
     for durative *until*: the main clause must be homogeneous. -/
 def IsHomogeneous (D : SentDenotation Time) : Prop :=
-  ∀ t ∈ D, ∀ t', t'.subinterval t → t' ∈ D
+  ∀ t ∈ D, ∀ t', t' ≤ t → t' ∈ D
 
 /-- IMPF denotation satisfies the subinterval property.
 
@@ -111,8 +111,8 @@ def IsHomogeneous (D : SentDenotation Time) : Prop :=
     provides this automatically: since the event extends beyond any reference
     interval, every sub-window into the event is equally valid. -/
 theorem impfDen_subinterval_closed (P : Unit → Event Time → Prop)
-    (t : Interval Time) (ht : t ∈ impfDen P)
-    (t' : Interval Time) (ht' : t'.subinterval t) :
+    (t : NonemptyInterval Time) (ht : t ∈ impfDen P)
+    (t' : NonemptyInterval Time) (ht' : t' ≤ t) :
     t' ∈ impfDen P := by
   obtain ⟨e, hSub, hP⟩ := ht
   exact ⟨e, ⟨le_trans hSub.1 ht'.1, le_trans ht'.2 hSub.2⟩, hP⟩
@@ -121,7 +121,7 @@ theorem impfDen_subinterval_closed (P : Unit → Event Time → Prop)
 theorem impfDen_contains_runtime (P : Unit → Event Time → Prop)
     (e : Event Time) (hP : P () e) :
     e.τ ∈ impfDen P :=
-  ⟨e, subinterval_refl _, hP⟩
+  ⟨e, le_refl _, hP⟩
 
 /-- PRFV denotation does NOT have the subinterval property.
 
@@ -132,23 +132,23 @@ theorem impfDen_contains_runtime (P : Unit → Event Time → Prop)
     This is why perfective clauses cannot be main clauses of durative
     *until*: they lack the homogeneity that *until* requires. -/
 theorem prfvDen_not_subinterval_closed :
-    ¬ ∀ (P : Unit → Event ℤ → Prop) (t : Interval ℤ),
-      t ∈ prfvDen P → ∀ t', t'.subinterval t → t' ∈ prfvDen P := by
+    ¬ ∀ (P : Unit → Event ℤ → Prop) (t : NonemptyInterval ℤ),
+      t ∈ prfvDen P → ∀ t', t' ≤ t → t' ∈ prfvDen P := by
   intro h
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
   let P : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let sub : Interval ℤ := ⟨1, 3, by omega⟩
+  let sub : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
   have hrt : e₀.τ ∈ prfvDen P := ⟨e₀, rfl, rfl⟩
-  have hsub : sub.subinterval e₀.τ := by
+  have hsub : sub ≤ e₀.τ := by
     dsimp only [sub, e₀]
-    simp only [subinterval, Event.τ]; omega
+    simp only [NonemptyInterval.le_def, Event.τ]; omega
   have hmem := h P e₀.τ hrt sub hsub
   obtain ⟨e', he', hτ⟩ := hmem
   dsimp only [P] at he'
   subst he'
   simp only [Event.τ] at hτ
-  have : (0 : ℤ) = 1 := congrArg Interval.start hτ
+  have : (0 : ℤ) = 1 := congrArg (fun i => i.fst) hτ
   omega
 
 -- ============================================================================
@@ -188,7 +188,7 @@ theorem scope_pattern_derived :
     aspect bridge to the existing temporal connective infrastructure
     in `Basic.lean`. -/
 theorem impfDen_singleton_eq_stativeDenotation
-    (i : Interval Time) :
+    (i : NonemptyInterval Time) :
     impfDen (fun () (e : Event Time) => e.τ = i) =
     stativeDenotation i := by
   ext j
@@ -201,7 +201,7 @@ theorem impfDen_singleton_eq_stativeDenotation
 /-- For a single event, the PRFV denotation is exactly the accomplishment
     denotation (singleton containing just the runtime). -/
 theorem prfvDen_singleton_eq_accomplishmentDenotation
-    (i : Interval Time) :
+    (i : NonemptyInterval Time) :
     prfvDen (fun () (e : Event Time) => e.τ = i) =
     accomplishmentDenotation i := by
   ext j
@@ -231,7 +231,7 @@ theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     exact ⟨e.τ, ⟨e, hP, rfl⟩,
       ⟨le_trans hSub.1 ht.1, le_trans ht.2 hSub.2⟩⟩
   · rintro ⟨i, ⟨e, hP, rfl⟩, ht⟩
-    exact ⟨Interval.point t,
+    exact ⟨NonemptyInterval.pure t,
       ⟨e, ⟨ht.1, ht.2⟩, hP⟩, ⟨le_refl _, le_refl _⟩⟩
 
 -- ============================================================================
@@ -280,9 +280,9 @@ theorem scope_readings_distinct :
     ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let iB : Interval ℤ := ⟨7, 7, by omega⟩
+  let iB : NonemptyInterval ℤ := ⟨⟨7, 7⟩, by omega⟩
   let B : SentDenotation ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
   · intro ⟨t, ht_A, ht_B⟩
@@ -290,15 +290,15 @@ theorem scope_readings_distinct :
     dsimp only [A] at he; subst he
     obtain ⟨j, (hj : j = iB), hjt⟩ := ht_B
     subst hj
-    simp only [subinterval, contains, Event.τ, e₀, iB] at hSub hi hjt
+    simp only [NonemptyInterval.le_def, NonemptyInterval.mem_def, Event.τ, e₀, iB] at hSub hi hjt
     omega
   · intro hNot
     apply hNot
     refine ⟨0, ⟨e₀.τ, ⟨e₀, rfl, rfl⟩, ?_⟩, ?_⟩
-    · simp only [contains, Event.τ, e₀]; omega
+    · simp only [NonemptyInterval.mem_def, Event.τ, e₀]; omega
     · intro t' ⟨j, (hj : j = iB), hjt⟩
       subst hj
-      simp only [contains, iB] at hjt; omega
+      simp only [NonemptyInterval.mem_def, iB] at hjt; omega
 
 /-- The reverse also holds: there exist A, B where narrow-scope holds
     but wide-scope fails. This confirms the two readings are genuinely
@@ -307,26 +307,26 @@ theorem scope_readings_independent :
     ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨5, 10, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨5, 10⟩, by omega⟩, .dynamic⟩
   let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
-  let iB : Interval ℤ := ⟨3, 7, by omega⟩
+  let iB : NonemptyInterval ℤ := ⟨⟨3, 7⟩, by omega⟩
   let B : SentDenotation ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
   · intro hWide
     apply hWide
     refine ⟨5,
-      ⟨Interval.point 5, ⟨e₀, by
-        simp only [subinterval, Interval.point, Event.τ, e₀]; omega,
+      ⟨NonemptyInterval.pure 5, ⟨e₀, by
+        simp only [NonemptyInterval.le_def, NonemptyInterval.pure, Event.τ, e₀]; omega,
         rfl⟩,
-        by simp only [contains, Interval.point]; omega⟩,
-      ⟨iB, rfl, by simp only [contains, iB]; omega⟩⟩
+        by simp only [NonemptyInterval.mem_def, NonemptyInterval.pure]; omega⟩,
+      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩⟩
   · intro ⟨t, ht_A, hall⟩
     obtain ⟨i, ⟨e, he, hτ⟩, hi⟩ := ht_A
     dsimp only [A] at he; subst he
     rw [← hτ] at hi
-    simp only [contains, Event.τ, e₀] at hi
+    simp only [NonemptyInterval.mem_def, Event.τ, e₀] at hi
     have h3 : (3 : ℤ) ∈ timeTrace B :=
-      ⟨iB, rfl, by simp only [contains, iB]; omega⟩
+      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩
     have := hall 3 h3
     omega
 
@@ -384,7 +384,7 @@ theorem eventiveUntil_entails_when (A B : SentDenotation Time) :
 theorem notUntil_not_implies_eventiveUntil :
     ∃ (A B : SentDenotation ℤ),
       Karttunen.notUntil A B ∧ ¬ eventiveUntil A B := by
-  refine ⟨∅, { Interval.point 0 }, ?_, ?_⟩
+  refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
     exact absurd hi (Set.mem_empty_iff_false i).mp
   · intro ⟨⟨t, ⟨i, hi, _⟩, _⟩, _⟩
@@ -409,7 +409,7 @@ theorem wideScopeNotUntil_compatible_with_empty_main :
     ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       wideScopeNotUntil A B ∧ ¬ ∃ t, t ∈ timeTrace (impfDen A) := by
   let A : Unit → Event ℤ → Prop := fun _ _ => False
-  let B : SentDenotation ℤ := { Interval.point 0 }
+  let B : SentDenotation ℤ := { NonemptyInterval.pure 0 }
   refine ⟨A, B, ?_, ?_⟩
   · intro ⟨t, ⟨i, ⟨e, _, habs⟩, _⟩, _⟩; exact habs
   · intro ⟨t, i, ⟨e, _, habs⟩, _⟩; exact habs
@@ -424,17 +424,17 @@ theorem wideScopeNotUntil_compatible_with_empty_main :
 theorem durative_compatible_with_before :
     ∃ (A B : SentDenotation ℤ),
       Karttunen.until A B ∧ Anscombe.before A B := by
-  let iA : Interval ℤ := ⟨0, 10, by omega⟩
-  let iB : Interval ℤ := ⟨5, 5, by omega⟩
+  let iA : NonemptyInterval ℤ := ⟨⟨0, 10⟩, by omega⟩
+  let iB : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
   refine ⟨stativeDenotation iA, {iB}, ?_, ?_⟩
   · exact ⟨5,
-      ⟨iA, stativeDenotation_self iA, by simp only [contains, iA]; omega⟩,
-      ⟨iB, rfl, by simp only [contains, iB]; omega⟩⟩
+      ⟨iA, stativeDenotation_self iA, by simp only [NonemptyInterval.mem_def, iA]; omega⟩,
+      ⟨iB, rfl, by simp only [NonemptyInterval.mem_def, iB]; omega⟩⟩
   · refine ⟨0,
-      ⟨iA, stativeDenotation_self iA, by simp only [contains, iA]; omega⟩, ?_⟩
+      ⟨iA, stativeDenotation_self iA, by simp only [NonemptyInterval.mem_def, iA]; omega⟩, ?_⟩
     intro t' ⟨j, hj, hjt⟩
     simp only [Set.mem_singleton_iff] at hj; subst hj
-    simp only [contains, iB] at hjt; omega
+    simp only [NonemptyInterval.mem_def, iB] at hjt; omega
 
 /-- **Eventive UNTIL is strictly stronger than Karttunen's notUntil.**
     - eventiveUntil → notUntil (actualization + lateness → lateness)
@@ -645,7 +645,7 @@ theorem english_past_perfective_default :
 theorem negBefore_lacks_actualization :
     ∃ (A B : SentDenotation ℤ),
       Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
-  refine ⟨∅, { Interval.point 0 }, ?_, ?_⟩
+  refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
     exact absurd hi (Set.mem_empty_iff_false i).mp
   · intro ⟨t, i, hi, _⟩
