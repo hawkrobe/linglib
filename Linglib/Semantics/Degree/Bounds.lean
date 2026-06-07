@@ -40,7 +40,7 @@ variable {α : Type*} [LinearOrder α]
     strictly larger value exists.
 
     This is the typeclass-level counterpart of the data-level prediction
-    `Boundedness.open_.isLicensed = false`: open scales block degree
+    `¬ Boundedness.open_.IsLicensed`: open scales block degree
     modification and TIA licensing because no element is maximal.
 
     Proof sketch: For any `x`, `NoMaxOrder` gives `y > x`. If `P` is
