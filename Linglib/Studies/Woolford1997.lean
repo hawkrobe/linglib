@@ -265,19 +265,19 @@ def predictDitransitive (p : DitransPattern) : Bool :=
 
 /-- All allowed transitive patterns are predicted as allowed. -/
 theorem trans_allowed_predicted :
-    npTransAllowed.all predictTransitive = true := by native_decide
+    npTransAllowed.all predictTransitive = true := by decide
 
 /-- All prohibited transitive patterns are predicted as prohibited. -/
 theorem trans_prohibited_predicted :
-    npTransProhibited.all (λ p => !predictTransitive p) = true := by native_decide
+    npTransProhibited.all (λ p => !predictTransitive p) = true := by decide
 
 /-- The allowed/prohibited lists are disjoint. -/
 theorem trans_disjoint :
-    npTransAllowed.all (λ p => npTransProhibited.all (· != p)) = true := by native_decide
+    npTransAllowed.all (λ p => npTransProhibited.all (· != p)) = true := by decide
 
 /-- The allowed/prohibited lists cover all NOM/ERG × ACC/OBJ combinations. -/
 theorem trans_complete :
-    npTransAllowed.length + npTransProhibited.length = 4 := by native_decide
+    npTransAllowed.length + npTransProhibited.length = 4 := by decide
 
 /-- maxAcc for transitives: NOM subject → 1 ACC slot. -/
 theorem trans_nom_maxAcc : maxAcc 2 0 = 1 := rfl
@@ -291,21 +291,21 @@ theorem trans_erg_maxAcc : maxAcc 2 1 = 0 := rfl
 
 /-- All allowed ditransitive patterns are predicted. -/
 theorem ditrans_allowed_predicted :
-    npDitransAllowed.all predictDitransitive = true := by native_decide
+    npDitransAllowed.all predictDitransitive = true := by decide
 
 /-- All prohibited ditransitive patterns are rejected. -/
 theorem ditrans_prohibited_predicted :
-    npDitransProhibited.all (λ p => !predictDitransitive p) = true := by native_decide
+    npDitransProhibited.all (λ p => !predictDitransitive p) = true := by decide
 
 /-- The allowed/prohibited lists are disjoint. -/
 theorem ditrans_disjoint :
     npDitransAllowed.all (λ p => npDitransProhibited.all (· != p)) = true := by
-  native_decide
+  decide
 
 /-- The allowed/prohibited lists cover all 12 NOM/ERG × {ACC,OBJ,DAT}² patterns
     (excluding DAT-DAT which never arises). -/
 theorem ditrans_complete :
-    npDitransAllowed.length + npDitransProhibited.length = 12 := by native_decide
+    npDitransAllowed.length + npDitransProhibited.length = 12 := by decide
 
 /-- maxAcc for ditransitives: ERG subject, no DAT → 1 ACC slot. -/
 theorem ditrans_erg_maxAcc : maxAcc 3 1 = 1 := rfl
@@ -460,12 +460,12 @@ theorem kalkatungu_ditrans :
     passes the prediction function. -/
 theorem all_predicted_trans_valid :
     [nezPerce, thangu, kalkatungu].all (λ params =>
-      (availableTransPatterns params).all predictTransitive) = true := by native_decide
+      (availableTransPatterns params).all predictTransitive) = true := by decide
 
 /-- All predicted ditransitive patterns pass the prediction function. -/
 theorem all_predicted_ditrans_valid :
     [nezPerce, thangu, kalkatungu].all (λ params =>
-      (availableDitransPatterns params).all predictDitransitive) = true := by native_decide
+      (availableDitransPatterns params).all predictDitransitive) = true := by decide
 
 -- ============================================================================
 -- § 13: Mapping to Case
@@ -523,7 +523,7 @@ theorem agree_on_nom_acc_transitive :
     getCaseOf "obj" depResult = some .acc ∧
     (TransPattern.mk .nom .acc).object.toCoreCase = .acc := by
   constructor
-  · native_decide
+  · decide
   · rfl
 
 /-- Where they diverge: Woolford distinguishes OBJ from ACC.

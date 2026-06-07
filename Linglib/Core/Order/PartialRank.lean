@@ -19,10 +19,11 @@ antisymmetry and the isolation.
 
 The order structure itself is mathlib's: `RankLT` is a strict order
 (`IsStrictOrder` instance below), so `partialOrderOfRank` is
-`partialOrderOfSO (RankLT r)` and `RankLE` is its reflexive closure
-(the `Relation.ReflGen` shape). This file's value-add is `RankLT`
-itself, its decidability, and the isolation lemmas. There is no total
-variant: isolation precludes totality whenever any element is unranked.
+`partialOrderOfSO (RankLT r)` and `RankLE` (`a = b ∨ RankLT r a b`) is
+exactly the reflexive-closure shape `partialOrderOfSO` uses for `≤`.
+This file's value-add is `RankLT` itself, its decidability, and the
+isolation lemmas. There is no total variant: isolation precludes
+totality whenever any element is unranked.
 
 ## Main declarations
 

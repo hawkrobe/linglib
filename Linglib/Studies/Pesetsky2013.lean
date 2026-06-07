@@ -565,7 +565,7 @@ theorem russian_obliques_in_pesetsky_core :
     (NOM⊂ACC⊂GEN⊂DAT⊂LOC⊂...), coincides with the standard
     five-case core. Pesetsky additionally puts INST in `pesetskyCore`
     (via `.P`) — this is the case Caha's hierarchy doesn't rank
-    (compare `Core/Case/Order.lean`'s docstring listing
+    (compare `Syntax/Case/Order.lean`'s docstring listing
     "ERG, ABS, INST, COM" as off-hierarchy).
 
     A non-trivial *agreement* — not refutation. The two frameworks

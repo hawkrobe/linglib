@@ -1,3 +1,4 @@
+import Mathlib.Order.UpperLower.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
@@ -45,7 +46,7 @@ inserts a "prepositional" between GEN and DAT ([caha-2009] (16),
 p. 12). Vocatives are explicitly excluded from Caha's scope
 ([caha-2009] §1.1 fn. 4, p. 9). For the substrate's encoding of
 this hierarchy and how it relates to Caha's actual sequence, see
-`Core/Case/Order.lean`.
+`Syntax/Case/Order.lean`.
 
 Of 22 Fragment case inventories, 19 conform; the three principled
 exceptions are: Dargwa (ergative — Caha is keyed to accusative
@@ -62,7 +63,7 @@ open scoped Case.Caha
 
 Does an inventory respect Caha's containment hierarchy? True iff `inv`
 is downward-closed under the scoped Caha order (`Case.Caha`;
-containment) defined in `Core/Case/Order.lean`: whenever `c ∈ inv` and
+containment) defined in `Syntax/Case/Order.lean`: whenever `c ∈ inv` and
 `d ≤ c`, then `d ∈ inv`. Off-hierarchy cases (ERG, ABS, INST, COM, …)
 impose no constraint — in the Caha order they only have `c ≤ c`, so
 the downward-closure condition is vacuous. On-hierarchy `c` of rank
@@ -78,6 +79,16 @@ def RespectsCahaContainment (inv : Finset Case) : Prop :=
 
 instance (inv : Finset Case) : Decidable (RespectsCahaContainment inv) := by
   unfold RespectsCahaContainment; infer_instance
+
+/-- Containment-respect is `IsLowerSet` under the scoped Caha order — the
+    Caha analogue of `Case.isValidInventory_iff_ordConnected` (Blake).
+    The two contiguity predicates on `Finset Case` are thus both
+    order-theoretic closure properties, on the partial Caha order and the
+    total Blake rank respectively. -/
+theorem respectsCahaContainment_iff_isLowerSet (inv : Finset Case) :
+    RespectsCahaContainment inv ↔ IsLowerSet (inv : Set Case) := by
+  simp only [RespectsCahaContainment, IsLowerSet, Finset.mem_coe]
+  exact ⟨fun h _ _ hba ha => h _ ha _ hba, fun h _ hc _ hdc => h hdc hc⟩
 
 /-! ## Slavic substrate: containment lemmas
 
