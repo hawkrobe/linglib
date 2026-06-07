@@ -370,10 +370,10 @@ import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.AsymmetricCommunication
 import Linglib.Core.Relation.ReflTransGen
-import Linglib.Core.Inheritance.Basic
-import Linglib.Core.Inheritance.Choice
-import Linglib.Core.Inheritance.Default
-import Linglib.Core.Inheritance.Order
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Choice
+import Linglib.Syntax.WordGrammar.Inheritance.Default
+import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence

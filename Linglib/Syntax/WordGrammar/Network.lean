@@ -1,12 +1,12 @@
-import Linglib.Core.Inheritance.Basic
-import Linglib.Core.Inheritance.Default
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Features.ClauseForm
 import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # WG Network Integration
 
-Connects `Core.Inheritance` (Hudson's isA/prop network model) to the
+Connects `WordGrammar.Inheritance` (Hudson's isA/prop network model) to the
 dependency grammar module so that word classes and their argument structures
 live in a single WG network. [hudson-2010]
 
@@ -27,7 +27,7 @@ set_option autoImplicit false
 namespace WordGrammar
 
 open Features
-open Core.Inheritance
+open WordGrammar.Inheritance
 open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
 
 -- ============================================================================

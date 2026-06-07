@@ -1,6 +1,6 @@
 import Mathlib.Logic.Relation
-import Linglib.Core.Inheritance.Basic
-import Linglib.Core.Inheritance.Order
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.Network
 
 /-!
@@ -15,7 +15,7 @@ syntactic triangle of Figure 7.6 (p. 161, "A triangle in syntax and in
 kinship").
 
 This study file is the Phenomena-level demonstration that the *same*
-`Core.Inheritance.Network` infrastructure used by `WordGrammar.englishAuxNet`
+`WordGrammar.Inheritance.Network` infrastructure used by `WordGrammar.englishAuxNet`
 also supports a kinship hierarchy. Two demos:
 
 1. A small kinship taxonomy as a `Network`, with isA links
@@ -38,7 +38,7 @@ set_option autoImplicit false
 
 namespace Hudson2010
 
-open Core.Inheritance
+open WordGrammar.Inheritance
 
 -- ============================================================================
 -- Kinship roles and a small inheritance taxonomy
@@ -88,7 +88,7 @@ theorem grandmother_IsA_ancestor : IsA kinshipNet .grandmother .ancestor := by d
 /-- A `mother` is **not** a `grandmother` — the taxonomy doesn't conflate the
 two, even though both are `ancestor`s. Now stated as the full propositional
 `¬ IsA kinshipNet .mother .grandmother`, decidable thanks to path compression
-landed in `Core.Inheritance.Basic`. -/
+landed in `WordGrammar.Inheritance.Basic`. -/
 theorem mother_not_IsA_grandmother :
     ¬ IsA kinshipNet .mother .grandmother := by decide
 
@@ -158,7 +158,7 @@ end KinshipTriangle
 -- The "one network" thesis: same `Network` type, two domains
 -- ============================================================================
 
-/-- Witness that `Core.Inheritance.Network` accommodates both the syntactic
+/-- Witness that `WordGrammar.Inheritance.Network` accommodates both the syntactic
 word-class hierarchy (`WordGrammar.englishAuxNet`) and the kinship taxonomy
 (`kinshipNet`) by inhabiting the *same* parameterized type. The structural
 identity is at the type level — no Bridge theorem needed.

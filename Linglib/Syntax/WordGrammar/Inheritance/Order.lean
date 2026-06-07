@@ -1,11 +1,11 @@
-import Linglib.Core.Inheritance.Basic
+import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Mathlib.Order.Defs.PartialOrder
 
 /-!
 # Inheritance Order — Preorder view of an isA taxonomy
 
 [hudson-2010]'s isA backbone is reflexive and transitive (`IsA.refl`,
-`IsA.trans` in `Core.Inheritance.Basic`), which makes it a `Preorder` on the
+`IsA.trans` in `WordGrammar.Inheritance.Basic`), which makes it a `Preorder` on the
 node type. Once the instance is in place, every preorder lemma (`le_trans`,
 `le_refl`, `Antichain`, `LowerSet`, `UpperSet`, `OrderHom`) is available for
 free over the isA backbone of any concrete network.
@@ -47,7 +47,7 @@ find `LE α`. The `mk` function-call carries the wrapper through elaboration.
 
 set_option autoImplicit false
 
-namespace Core.Inheritance
+namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]
 
@@ -81,4 +81,4 @@ instance preorder (net : Network α R) : Preorder (IsAOrder net) where
 
 end IsAOrder
 
-end Core.Inheritance
+end WordGrammar.Inheritance
