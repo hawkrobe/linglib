@@ -5,6 +5,7 @@ import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
+import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!
@@ -32,69 +33,28 @@ containing the TIA, the numeral must be capable of being the maximally
 informative value of γ's derived property. Where no maximally informative
 numeral exists ("information collapse"), the TIA is blocked.
 
-## Architecture of the formalization
+## Main declarations
 
-This file consolidates Rouillard's formal apparatus and the empirical
-verification into a single Studies file. The companion
-`MaximalInformativity.lean` was deleted in this rebuild — its content was
-absorbed here, with substrate primitives lifted to `Semantics.Degree`.
-
-Sections:
-
-1. Re-export of substrate (`Semantics.Degree` informativity primitives).
-2. `TimeMeasure` typeclass (replaces the prior `MeasureFun` struct).
-2a. Generalized intervals with open/closed boundaries (`GInterval`,
-   eq. 14a–b, 99a–b) — paper-specific apparatus, single consumer.
-3. Prior time spans over `GInterval` (open/closed boundary tags structurally
-   carried, eliminating the prior `PERF_open` hand-waving).
-4. E-TIA semantics: `eTIAProperty`.
-5. G-TIA semantics over open generalized intervals: `gTIAPropertyOpen`.
-6. The MIP licensing predicate (imported from `Entailment.Extremum`),
-   combining `AdmitsOptimum` (atelic-collapse failure mode) with per-world
-   `IsLeast` / `IsGreatest` from mathlib (no-extremum failure mode).
-7. E-TIA: `HasSubintervalProp → IsConstant → ¬ AdmitsOptimum` (atelic block).
-8. E-TIA: telicity → upward monotone → `IsLeast {y | P y w}` exists at event-duration.
-9. G-TIA: geometric no-smallest-open-PTS (the density witness Rouillard
-   uses). The full MIP-collapse claim under just `[DenselyOrdered Time]`
-   with ℕ-valued measure does NOT follow without additional
-   threshold-richness assumptions on the world space; we prove the
-   geometric witness and note the gap. (See § 9 docstring for details.)
-10. G-TIA negative: downward monotone → `IsGreatest {y | P y w}` exists at gap-length.
-11. Boundedness pipeline (Vendler→Telicity→MereoTag→Boundedness, used by
-    `LicensingPipeline` for the empirical predictions in § 13).
-12. Paper-specific apparatus (TIAType, AdverbialPosition, projection from
-    consensus Fragment fields).
-13. E-TIA empirical data (Prop fields, decided via the boundedness chain).
-14. G-TIA empirical data (Prop fields, decided via polarity ∧ perfect).
-15. Table 1 (8 cells of paper eq. (112), survivor derived not stipulated).
-16. Stacking constraint (paper §3.2, ex. 60).
-17. Since-when questions (paper §5.2).
-18. Fragment bridges (consensus → Rouillard projection).
-
-## Scope notes
-
-- Cross-framework refutation theorems (Ladusaw 1979 DE-overprediction,
-  Krifka 1989 ATM-vs-QUA divergence, Champollion stratified reference
-  divergence, Pancheva/Kiparsky perfect bridge) are out of scope for this
-  file by user direction; they belong in dedicated cross-framework Studies.
-- The `LicensingMechanism` enum + `mip_subsumes_de` strawman of the prior
-  file is dropped — a real DE comparison would need to engage
-  `Studies/Ladusaw1979.lean` rather than stipulate.
-- The "Kennedy–Rouillard isomorphism" framing of the prior file's § 7 is
-  dropped — Rouillard does not invoke Kennedy adjectival scales. The
-  boundedness chain is retained as substrate-internal plumbing.
+- `eTIA_atelic_not_licensed`: atelic E-TIAs fail MIP licensing — the
+  subinterval property makes the derived property constant (information
+  collapse).
+- `eTIA_telic_upwardMonotone` / `upwardMonotone_hasIsLeast_of_witness`:
+  telic E-TIAs are upward monotone, with a least-true numeral at the
+  event duration.
+- `no_smallest_open_PTS_geometric`: density witness — no smallest open
+  PTS contains a given closed runtime.
+- `downwardMonotone_hasIsGreatest_of_bound` / `gTIANeg_hasIsGreatest`:
+  negated G-TIAs have a greatest true numeral — the gap length.
+- `eTIA_all_predicted` / `gTIA_all_predicted` / `surviving_is_neg_gtia_pfv`:
+  the empirical predictions (the paper's Table 1).
 -/
 
 namespace NonemptyInterval
 
-/-- Interval boundary type maps to scale boundedness — [rouillard-2026]'s
-    "interval generalization", consumed by the MIP licensing pipeline here
-    and in `Studies/Rouillard2026Gradability.lean`.
-    [rouillard-2026]: closed runtimes correspond to closed scales
-    (licensed); open PTSs correspond to open scales (blocked/information
-    collapse). This is the "interval generalization":
-    `NonemptyInterval.BoundaryType.closed`/`.open_` is isomorphic to
-    `Core.Order.Boundedness.closed`/`.open_`. -/
+/-- Interval boundary type maps to scale boundedness: closed runtimes
+    correspond to closed scales (licensed), open PTSs to open scales
+    (blocked/information collapse). [rouillard-2026]'s interval
+    generalization, consumed by the MIP licensing pipeline below. -/
 def BoundaryType.toBoundedness : BoundaryType → Core.Order.Boundedness
   | .closed => .closed
   | .open_ => .open_
@@ -123,26 +83,15 @@ open English.TemporalExpressions
 
 variable {W Time : Type*} [LinearOrder Time]
 
--- ════════════════════════════════════════════════════
--- § 2. Time measure typeclass
--- ════════════════════════════════════════════════════
+/-! ### Time measure -/
 
 /-- A temporal measure: assigns natural-number durations to intervals,
-    extensible upward and subdivisible downward. Replaces the prior
-    `MeasureFun` struct (a thin-bundled struct anti-pattern); the `μ`
-    function is now a bare typeclass parameter so projections like
-    `μ i ≤ m` need no `μ.μ` double-dotting.
-
-    [rouillard-2026] §2.2.2: temporal measure units (days, hours)
-    are additive, hence any interval can be padded or trimmed to any
-    target measure within a one-sided bound.
-
-    Mathlib correspondence: `Mereology.ExtMeasure` is ℚ-valued and
-    requires `[SemilatticeSup α]` on the carrier. Intervals are not
-    join-semilattices (disjoint intervals cannot be joined into an
-    interval), so `ExtMeasure` does not apply directly. `TimeMeasure`
-    is the interval-specific ℕ-valued companion; the discrete-measure
-    domain matches Rouillard's integer-numeral data ("in three days"). -/
+    extensible upward and subdivisible downward. [rouillard-2026] §2.2.2:
+    temporal measure units (days, hours) are additive, hence any interval
+    can be padded or trimmed to any target measure within a one-sided bound.
+    (`Mereology.ExtMeasure` is ℚ-valued over `[SemilatticeSup α]`; intervals
+    are not join-semilattices, so this is the interval-specific ℕ-valued
+    companion, matching the paper's integer-numeral data.) -/
 class TimeMeasure (Time : Type*) [LinearOrder Time]
     (μ : NonemptyInterval Time → ℕ) : Prop where
   /-- Any interval can be extended to a superinterval with a given larger
@@ -154,9 +103,7 @@ class TimeMeasure (Time : Type*) [LinearOrder Time]
   subdivisible : ∀ (i : NonemptyInterval Time) (m : ℕ), m ≤ μ i →
     ∃ j : NonemptyInterval Time, j ≤ i ∧ μ j = m
 
--- ════════════════════════════════════════════════════
--- § 2a. Generalized intervals with open/closed boundaries
--- ════════════════════════════════════════════════════
+/-! ### Generalized intervals with open/closed boundaries -/
 
 /-- A generalized interval with specified boundary types.
     Extends the basic `NonemptyInterval` with open/closed annotations on each end.
@@ -255,10 +202,8 @@ def toInterval (gi : GInterval Time) : NonemptyInterval Time :=
     (closed i).gcontains i.snd := ⟨i.fst_le_snd, le_refl _⟩
 
 /-- A closed interval contained in an open generalized interval forces strict
-    inequalities at both endpoints. The right hypothesis the prior MaxInfo
-    `no_smallest_open_including_closed` had to *assume* (`pts.left < runtime.start`)
-    is *derivable* once openness is enforced structurally — instantiate
-    `gsubinterval` at the closed endpoints and unfold `gcontains`. -/
+    inequalities at both endpoints: instantiate `gsubinterval` at the closed
+    endpoints and unfold `gcontains`. -/
 theorem gsubinterval_closed_open_strict
     (rt : NonemptyInterval Time) (gi : GInterval Time)
     (h_open : gi.isOpen) (h_sub : (closed rt).gsubinterval gi) :
@@ -278,22 +223,16 @@ theorem gsubinterval_closed_open_strict
 
 end GInterval
 
--- ════════════════════════════════════════════════════
--- § 3. Prior time spans (over GInterval)
--- ════════════════════════════════════════════════════
+/-! ### Prior time spans -/
 
 /-- Prior time span: the maximal interval right-bounded by `s` with
-    measure `n`. Lifted to `GInterval` so open-vs-closed boundary tags
-    are carried structurally — the prior file's `pts` operated on plain
-    `NonemptyInterval` and the open-PTS revision was enforced only in prose.
-    [rouillard-2026] eq. (50). -/
+    measure `n`, over `GInterval` so open-vs-closed boundary tags are
+    carried structurally. [rouillard-2026] eq. (50). -/
 def pts (n : ℕ) (μ : NonemptyInterval Time → ℕ) [TimeMeasure Time μ] (s : Time)
     (gi : GInterval Time) : Prop :=
   gi.right = s ∧ μ gi.toInterval = n
 
--- ════════════════════════════════════════════════════
--- § 4. E-TIA semantics
--- ════════════════════════════════════════════════════
+/-! ### E-TIA semantics -/
 
 /-- The preposition *in* as an event-level adverbial (E-TIA reading).
     The event's runtime is included in the measure-phrase's bound.
@@ -309,19 +248,12 @@ def eTIAProperty (P : W → Event Time → Prop) (μ : NonemptyInterval Time →
   fun n w => ∃ t : NonemptyInterval Time, μ t = n ∧
     ∃ e : Event Time, P w e ∧ e.τ ≤ g1 ∧ e.τ ≤ t
 
--- ════════════════════════════════════════════════════
--- § 5. G-TIA semantics over open generalized intervals
--- ════════════════════════════════════════════════════
+/-! ### G-TIA semantics over open generalized intervals -/
 
 /-- G-TIA derived property: at world `w`, value `n` is true iff there is
-    an OPEN PTS of measure `n` ending at `s` containing the closed
-    runtime of a P-event.
-
-    The openness of the PTS is now carried structurally by `GInterval`
-    rather than admitted vacuously in prose (the prior file's `PERF_open`
-    explicitly noted "the openness constraint is enforced at the level of
-    the G-TIA semantics rather than structurally" — i.e., not at all).
-    [rouillard-2026] eq. (94) revised with eq. (101). -/
+    an OPEN PTS of measure `n` ending at `s` containing the closed runtime
+    of a P-event. The openness of the PTS is carried structurally by
+    `GInterval`. [rouillard-2026] eq. (94) revised with eq. (101). -/
 def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ∃ ptsGI : GInterval Time,
@@ -337,11 +269,9 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval T
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ¬ gTIAPropertyOpen P μ s n w
 
--- ════════════════════════════════════════════════════
--- § 6. The MIP licensing predicate (imported from Extremum)
--- ════════════════════════════════════════════════════
+/-! ### The MIP licensing predicate
 
-/-! `MIP_Licensed` and `MIP_LicensedDown` are defined in
+`MIP_Licensed` and `MIP_LicensedDown` are defined in
     `Semantics/Entailment/Extremum.lean` and reused here. They
     combine `Semantics.Degree.AdmitsOptimum P` (non-constancy: the *atelic*
     failure mode) with the per-world existence of a `Set.IsLeast` /
@@ -350,9 +280,7 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval T
     information collapse (E-TIA atelic; fails `AdmitsOptimum`) and
     no-extremum (positive G-TIA; fails per-world `IsLeast`). -/
 
--- ════════════════════════════════════════════════════
--- § 7. E-TIA atelic case: subinterval property → information collapse
--- ════════════════════════════════════════════════════
+/-! ### E-TIA atelic case: subinterval property → information collapse -/
 
 /-- **E-TIA information collapse for atelic VPs**. When a VP has the
     subinterval property, the E-TIA derived property is constant: every
@@ -388,9 +316,7 @@ theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → ℕ} [TimeMeasu
     ¬ MIP_Licensed (eTIAProperty P μ g1) :=
   fun ⟨hAdm, _⟩ => eTIA_atelic_no_optimum P g1 hSub hAdm
 
--- ════════════════════════════════════════════════════
--- § 8. E-TIA telic case: upward monotone, smallest-true at event duration
--- ════════════════════════════════════════════════════
+/-! ### E-TIA telic case: upward monotone, smallest-true at event duration -/
 
 /-- **Quantized predicates yield upward-monotone E-TIA properties**.
     [rouillard-2026] §4.1.1: when P is telic, the derived E-TIA
@@ -418,34 +344,19 @@ theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
   refine ⟨Nat.find h_witness, Nat.find_spec h_witness, fun y hy => ?_⟩
   exact Nat.find_le hy
 
--- ════════════════════════════════════════════════════
--- § 9. G-TIA geometric density: no smallest open PTS
--- ════════════════════════════════════════════════════
+/-! ### G-TIA geometric density: no smallest open PTS -/
 
 /-- **No smallest open PTS includes a closed runtime** (geometric witness).
-    [rouillard-2026] §4.2.2: under density on `Time`, given a closed
-    event runtime contained in an open PTS, there is always a *strictly
-    smaller* (in the proper-subinterval sense) open PTS still containing
-    the runtime. Construction: pick a moment between the open boundary
-    and the closed start.
+    [rouillard-2026] §4.2.2: under density on `Time`, an open PTS containing
+    a closed runtime always has a strictly smaller open PTS still containing
+    it — pick a moment between the open boundary and the closed start.
 
-    This is the **geometric** density witness. The full MIP-collapse
-    claim "no numeral `n` is maximally informative for `gTIAPropertyOpen`"
-    additionally requires either rational/real-valued measure (so the
-    chain of ℚ-measures has no min) or threshold-rich worlds (so the
-    cross-world entailment leg of `Semantics.Entailment.Extremum.IsMaxInf`
-      fails at a
-    witness world). With the present ℕ-valued measure and no threshold
-    assumption, the geometric witness alone does NOT discharge
-    `InformationCollapse (gTIAPropertyOpen ...)` — at any specific
-    world, the smallest ℕ-measure open PTS containing the runtime
-    exists (it is `⌈gap⌉ + 1` for an integer-discrete model). The
-    empirical predictions in § 14 are stated at the polarity-and-perfect
-    level (matching Rouillard's Table 1) without claiming a structural
-    derivation through the MIP at this level of substrate generality. A
-    follow-up rebuild on ℚ-valued time-measure substrate (paralleling
-    `Mereology.ExtMeasure`) would let the collapse argument
-    discharge end-to-end. -/
+    This geometric witness alone does NOT discharge
+    `InformationCollapse (gTIAPropertyOpen ...)`: with the ℕ-valued measure,
+    a smallest ℕ-measure open PTS exists at any specific world. The empirical
+    predictions below are therefore stated at the polarity-and-perfect level
+    (matching the paper's Table 1); a ℚ-valued time-measure rebuild would let
+    the collapse argument discharge end-to-end. TODO: ℚ-valued substrate. -/
 theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     (rt : NonemptyInterval Time) (ptsGI : GInterval Time)
     (h_open : ptsGI.isOpen)
@@ -479,19 +390,52 @@ theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
       exact lt_of_le_of_lt hp2 h_strict_right
   · refine ⟨le_of_lt hm_left, le_refl _⟩
 
--- ════════════════════════════════════════════════════
--- § 11. Boundedness pipeline
--- ════════════════════════════════════════════════════
+/-! ### Negated G-TIA: greatest true numeral at the gap length -/
 
-/-! The Vendler-class boundedness pipeline used by `LicensingPipeline`.
-    NOT a claim Rouillard makes about Kennedy adjectival scales (the prior
-    file's "Kennedy–Rouillard isomorphism" framing was a formaliser
-    invention not present in the paper); this is the codebase's
-    mereological-tag chain (`Features.Aktionsart`) consumed here for the
-    empirical predictions in § 13. The chain
-    `VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness`
-    is definitional, with `LicensingPipeline VendlerClass` registered in
-    `Features/Aktionsart.lean`. -/
+/-- For a downward-monotone family over ℕ with a true witness and a failing
+    bound at world `w`, the per-world set `{y | P y w}` has a greatest
+    element. Dual of `upwardMonotone_hasIsLeast_of_witness`; the cross-world
+    bridge is `Extremum.isMaxInf_of_isGreatest_downward`. -/
+theorem downwardMonotone_hasIsGreatest_of_bound {W : Type*}
+    {P : ℕ → W → Prop} (hDown : IsDownwardMonotone P) (w : W)
+    [DecidablePred (fun n => P n w)]
+    (h_witness : ∃ n, P n w) (h_bound : ∃ n, ¬ P n w) :
+    ∃ x, IsGreatest {y | P y w} x := by
+  classical
+  obtain ⟨n₀, hn₀⟩ := h_witness
+  have h_pos : 0 < Nat.find h_bound :=
+    Nat.pos_of_ne_zero fun h =>
+      (h ▸ Nat.find_spec h_bound) (hDown 0 n₀ (Nat.zero_le _) w hn₀)
+  refine ⟨Nat.find h_bound - 1,
+    not_not.mp (Nat.find_min h_bound (Nat.sub_lt h_pos one_pos)),
+    fun y hy => ?_⟩
+  have h_lt : y < Nat.find h_bound := by
+    by_contra h_ge
+    exact Nat.find_spec h_bound (hDown _ y (not_lt.mp h_ge) w hy)
+  omega
+
+/-- **Negated G-TIAs satisfy the MIP at the gap length**. When the negated
+    gap property is downward monotone (no event in `n` units entails no event
+    in `m ≤ n` units) with a true witness and a failing bound, a greatest true
+    numeral exists — [rouillard-2026] eq. (104)/(110): there can be a largest
+    open interval *excluding* a closed time, though never a smallest one
+    including it. Downward monotonicity is hypothesis-gated pending the
+    ℚ-valued rebuild (it needs right-anchored extensibility). -/
+theorem gTIANeg_hasIsGreatest {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (s : Time) (w : W)
+    (hDown : IsDownwardMonotone (gTIAPropertyOpenNeg P μ s))
+    [DecidablePred (fun n => gTIAPropertyOpenNeg P μ s n w)]
+    (h_witness : ∃ n, gTIAPropertyOpenNeg P μ s n w)
+    (h_bound : ∃ n, ¬ gTIAPropertyOpenNeg P μ s n w) :
+    ∃ x, IsGreatest {y | gTIAPropertyOpenNeg P μ s y w} x :=
+  downwardMonotone_hasIsGreatest_of_bound hDown w h_witness h_bound
+
+/-! ### Boundedness pipeline
+
+The Vendler-class boundedness chain
+`VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness`
+consumed by the empirical predictions below. Codebase plumbing
+(`Features.Aktionsart`), not a claim from [rouillard-2026]. -/
 
 /-- Telic VPs route through `LicensingPipeline` to the licensed (closed)
     boundedness tag. -/
@@ -507,13 +451,43 @@ theorem atelic_predicts_blocking (c : VendlerClass) (h : c.telicity = .atelic) :
   show (c.telicity.toMereoTag.toBoundedness).isLicensed = false
   rw [h]; rfl
 
--- ════════════════════════════════════════════════════
--- § 12. Rouillard's analytical apparatus
--- ════════════════════════════════════════════════════
+/-! ### Cross-source licensing sentry
 
-/-- Rouillard's TIA-type classification. Paper-specific apparatus
-    (per `feedback_fragment_schema_consensus_only`); not on Fragment
-    entries themselves. -/
+Formalizer synthesis, not attributable to [rouillard-2026] — the paper
+engages only telicity/Vendler aspect and its own closed/open interval
+distinction. These sentries pin the bodies of every registered
+`LicensingPipeline` instance in one place, so a silent instance change is
+caught here; pairwise agreement between any two sources is
+`LicensingPipeline.universal`. -/
+
+/-- Every registered `LicensingPipeline` source maps its "closed" variant to
+    licensed. -/
+theorem sources_agree_closed :
+    LicensingPipeline.isLicensed Boundedness.closed = true ∧
+    LicensingPipeline.isLicensed MereoTag.qua = true ∧
+    LicensingPipeline.isLicensed Telicity.telic = true ∧
+    LicensingPipeline.isLicensed VendlerClass.accomplishment = true ∧
+    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.closed = true ∧
+    LicensingPipeline.isLicensed SituationBoundedness.bounded = true ∧
+    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Every registered `LicensingPipeline` source maps its "open" variant to
+    blocked. -/
+theorem sources_agree_open :
+    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
+    LicensingPipeline.isLicensed MereoTag.cum = false ∧
+    LicensingPipeline.isLicensed Telicity.atelic = false ∧
+    LicensingPipeline.isLicensed VendlerClass.state = false ∧
+    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.open_ = false ∧
+    LicensingPipeline.isLicensed SituationBoundedness.unbounded = false ∧
+    LicensingPipeline.isLicensed EpistemicTag.qualitative = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-! ### Rouillard's analytical apparatus -/
+
+/-- Rouillard's TIA-type classification. Paper-specific apparatus;
+    not on Fragment entries themselves. -/
 inductive TIAType where
   | eTIA
   | gTIA
@@ -521,7 +495,7 @@ inductive TIAType where
 
 /-- Rouillard's syntactic position for the *in*-adverbial.
     E-TIAs are VP-adjacent (event-level); G-TIAs are AspP-adjacent
-    (perfect-level). [rouillard-2026] §3.2, schemata (57)/(61). -/
+    (perfect-level). [rouillard-2026] schemata (57) (§3.2) and (61) (§3.3). -/
 inductive AdverbialPosition where
   | eventLevel
   | perfectLevel
@@ -535,8 +509,7 @@ structure RouillardClassification where
 
 /-- Project a `DurationExprEntry` to Rouillard's analytical labels.
     Returns `none` for entries outside the *in*-adverbial paradigm
-    (`forDur`, `ago`). Co-located in this Studies file (NOT
-    `_root_.Fragments.…`) per the audit's namespace-discipline finding. -/
+    (`forDur`, `ago`). -/
 def rouillardClassification? (e : DurationExprEntry) :
     Option RouillardClassification :=
   match e.kind with
@@ -544,14 +517,10 @@ def rouillardClassification? (e : DurationExprEntry) :
   | .npiGap          => some ⟨.gTIA, .perfectLevel⟩
   | _                => none
 
--- ════════════════════════════════════════════════════
--- § 13. E-TIA empirical data
--- ════════════════════════════════════════════════════
+/-! ### E-TIA empirical data -/
 
 /-- E-TIA acceptability datum: VP class → acceptable with E-TIA?
-    Acceptability is a `Prop` field (was `Bool` in the prior file —
-    the project memory `feedback_no_intrinsic_bool.md` discourages
-    propositional Bool). -/
+    Acceptability is a decidable `Prop` field. -/
 structure ETIADatum where
   /-- Description of the VP -/
   vp : String
@@ -594,9 +563,7 @@ instance (d : ETIADatum) : Decidable (eTIA_predicted d) := by
 
 theorem eTIA_all_predicted : ∀ d ∈ eTIAData, eTIA_predicted d := by decide
 
--- ════════════════════════════════════════════════════
--- § 14. G-TIA empirical data
--- ════════════════════════════════════════════════════
+/-! ### G-TIA empirical data -/
 
 /-- G-TIA acceptability datum: polarity × perfect → acceptable. -/
 structure GTIADatum where
@@ -633,11 +600,10 @@ def datum_48 : GTIADatum :=
 def gTIAData : List GTIADatum := [datum_2a, datum_2b, datum_48]
 
 /-- G-TIA acceptability matches the polarity ∧ perfect prediction.
-    [rouillard-2026] Table 1: only NEG + PFV with G-TIA reading
-    survives MIP filtering. The structural derivation through MIP
-    requires either rational-valued measure or threshold-rich worlds
-    (see § 9 docstring); the prediction is stated here at the surface
-    polarity-and-perfect level matching Rouillard's empirical claim. -/
+    [rouillard-2026] Table 1: only NEG + PFV with G-TIA reading survives
+    MIP filtering. Stated at the surface polarity-and-perfect level — the
+    structural MIP derivation needs the ℚ-valued rebuild (see
+    `no_smallest_open_PTS_geometric`). -/
 def gTIA_predicted (d : GTIADatum) : Prop :=
   (d.isNegative ∧ d.hasPerfect) ↔ d.acceptable
 
@@ -646,9 +612,7 @@ instance (d : GTIADatum) : Decidable (gTIA_predicted d) := by
 
 theorem gTIA_all_predicted : ∀ d ∈ gTIAData, gTIA_predicted d := by decide
 
--- ════════════════════════════════════════════════════
--- § 15. Table 1 (eq. 112): 8 cells with derived blocking
--- ════════════════════════════════════════════════════
+/-! ### Table 1 (eq. 112): 8 cells with derived blocking -/
 
 /-- [rouillard-2026] Table 1: readings for "*Mary has been sick in
     three days*" and its negation crossed with TIA type and aspect.
@@ -691,11 +655,9 @@ theorem surviving_is_neg_gtia_pfv :
     table1.filter (fun c => decide (table1Survives c)) =
     [⟨.negative, .gTIA, .pfv⟩] := by decide
 
--- ════════════════════════════════════════════════════
--- § 16. Stacking constraint (§3.2, ex. 60)
--- ════════════════════════════════════════════════════
+/-! ### Stacking constraint
 
-/-! [rouillard-2026] §3.2, ex. (60). When two TIAs stack, the inner
+[rouillard-2026] §3.2, ex. (60). When two TIAs stack, the inner
     (VP-adjacent) one must be E-TIA and the outer must be G-TIA. The
     reverse order is ungrammatical. The position constraint follows from
     `AdverbialPosition`: E-TIA = eventLevel (VP-adjacent), G-TIA =
@@ -732,7 +694,7 @@ def stacking_60b : StackingDatum :=
 def stackingData : List StackingDatum := [stacking_60a, stacking_60b]
 
 /-- Stacking is acceptable iff inner is event-level and outer is
-    perfect-level. [rouillard-2026] §3.2 schemata (57), (61). -/
+    perfect-level. [rouillard-2026] schemata (57) (§3.2) and (61) (§3.3). -/
 def stacking_predicted (d : StackingDatum) : Prop :=
   (d.innerPosition = .eventLevel ∧ d.outerPosition = .perfectLevel) ↔ d.acceptable
 
@@ -742,21 +704,17 @@ instance (d : StackingDatum) : Decidable (stacking_predicted d) := by
 theorem stacking_all_predicted : ∀ d ∈ stackingData, stacking_predicted d := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 17. Since-when questions (§5.2, ex. 131)
--- ════════════════════════════════════════════════════
+/-! ### Since-when questions
 
-/-! [rouillard-2026] §5.2, ex. (131): "Since when has Mary been sick?"
-    lacks the E-perfect/U-perfect ambiguity of the corresponding
-    declarative. Rouillard derives this from MIP applied to the Hamblin
-    set (eq. 135 ANS): the E-perfect Hamblin set has no maximally
-    informative true answer (open-PTS density argument), the U-perfect
-    Hamblin set does.
-
-    The since-when observation itself is originally
-    [von-fintel-iatridou-2019]'s "Since *since*"; the explanatory
-    mechanism (open-PTS density on dense time) is from
-    [fox-hackl-2006]'s Universal Density of Measurement. -/
+[rouillard-2026] §5.2, ex. (131): "Since when has Mary been sick?" lacks
+the E-perfect/U-perfect ambiguity of the corresponding declarative.
+Rouillard derives this via the MIP over the Hamblin sets: eq. (135) gives
+the U-perfect ANS, while the E-perfect set (reformulated as eq. (137)) has
+no maximally informative true answer (open-PTS density). The observation
+is originally [von-fintel-iatridou-2019]'s; the density mechanism is
+[fox-hackl-2006]'s. The datum below records the observation — the density
+derivation is not formalized at this substrate level (see
+`no_smallest_open_PTS_geometric`). -/
 
 /-- Since-when question datum: which perfect readings are available? -/
 structure SinceWhenDatum where
@@ -774,22 +732,13 @@ def sinceWhen_131 : SinceWhenDatum :=
     uPerfect := True
     ePerfect := False }
 
-/-- Since-when questions block the E-perfect reading.
-    [fox-hackl-2006] density argument applied to Rouillard's
-    eq. (137) E-perfect Hamblin set: no maximally informative true
-    answer survives MIP filtering. -/
-theorem sinceWhen_blocks_ePerfect : ¬ sinceWhen_131.ePerfect := by
-  intro h; exact h
+/-! ### Fragment bridges -/
 
 /-- Fragment bridge: *since* is veridical and pins the PTS left
     boundary, matching the since-when question's presupposition. -/
 theorem since_fragment_bridge :
     since_conn.complementVeridical = true ∧
     since_conn.order = TemporalOrder.since_ := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 18. Fragment bridges
--- ════════════════════════════════════════════════════
 
 /-- The Rouillard projection assigns the expected analytical labels:
     E-TIA at event-level for telic-completion *in*; G-TIA at
@@ -805,8 +754,5 @@ theorem rouillard_partial :
     rouillardClassification? forDur = none ∧
     rouillardClassification? ago    = none :=
   ⟨rfl, rfl⟩
-
-/-- E-TIA and G-TIA share the preposition *in* (consensus Fragment fact). -/
-theorem shared_preposition : inTelic.form = inGap.form := rfl
 
 end Rouillard2026
