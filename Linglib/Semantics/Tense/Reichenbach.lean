@@ -1,5 +1,5 @@
-import Linglib.Core.Time.Domain
-import Linglib.Core.Time.System
+import Linglib.Semantics.Tense.Domain
+import Linglib.Semantics.Tense.System
 
 /-!
 # Reichenbach's Temporal Framework
@@ -20,21 +20,20 @@ Tense relates R to P; Aspect relates E to R.
 
 `ReichenbachFrame` is the four-slot point-time record used throughout
 linglib's tense modules. The `toDomain` builder lifts it to a generic
-`Core.Time.Domain` (central = S, sub-TOs = [P, R, E], all as point
-intervals via `TO.point`). The `*_iff_relatedByName` bridge theorems
+`Semantics.Tense.Domain` (central = S, sub-TOs = [P, R, E], all as point
+intervals via `TO.pure`). The `*_iff_relatedByName` bridge theorems
 re-express each Boolean predicate (`isPast`, `isPerfect`, …) as a
 `Domain.relatedByName` query against named atom-sets from the Allen
 algebra. This grounds the Reichenbach predicates in the Allen
-projection function (`Interval.allenRel`) without changing the
+projection function (`NonemptyInterval.allenRel`) without changing the
 existing four-field record — downstream call sites continue to use
 `f.referenceTime`, `f.isPast`, etc., while domain-level tooling can
 work with `f.toDomain` and `relatedByName`.
 -/
 
-namespace Core.Time.Reichenbach
+namespace Semantics.Tense.Reichenbach
 
-open Core.Time (Domain NamedTO TO Orientation)
-open Core.Time.AllenRelation (precedesSet equalSet)
+open AllenRelation (precedesSet equalSet)
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
@@ -115,7 +114,7 @@ def isProspective (f : ReichenbachFrame Time) : Prop :=
 /-- The Reichenbach frame as a generic temporal `Domain` over the
     universal `Orientation` role vocabulary: central = utterance
     (S), sub-TOs = [perspective (P), topic (R), situation (E)], every
-    TO a point interval (degenerate via `TO.point`). This is the
+    TO a point interval (degenerate via `TO.pure`). This is the
     canonical bridge from the four-field record to the
     framework-agnostic `Domain` substrate.
 
@@ -134,33 +133,33 @@ def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
     f.toDomain.labels = Domain.reichenbachLabels := rfl
 
 @[simp] theorem toDomain_findUtterance (f : ReichenbachFrame Time) :
-    f.toDomain.find? .utterance = some (TO.point f.speechTime) := rfl
+    f.toDomain.find? .utterance = some (TO.pure f.speechTime) := rfl
 
 @[simp] theorem toDomain_findPerspective (f : ReichenbachFrame Time) :
-    f.toDomain.find? .perspective = some (TO.point f.perspectiveTime) := rfl
+    f.toDomain.find? .perspective = some (TO.pure f.perspectiveTime) := rfl
 
 @[simp] theorem toDomain_findTopic (f : ReichenbachFrame Time) :
-    f.toDomain.find? .topic = some (TO.point f.referenceTime) := rfl
+    f.toDomain.find? .topic = some (TO.pure f.referenceTime) := rfl
 
 @[simp] theorem toDomain_findSituation (f : ReichenbachFrame Time) :
-    f.toDomain.find? .situation = some (TO.point f.eventTime) := rfl
+    f.toDomain.find? .situation = some (TO.pure f.eventTime) := rfl
 
 -- ──── Predicate bridges: each Boolean predicate as a `relatedByName` query ────
 
 /-- Helper: for point intervals at times `s` and `t`, `precedesSet`
     holds iff `s < t`. -/
 private theorem point_precedes_iff (s t : Time) :
-    Core.Time.AllenRelation.holdsIn precedesSet (TO.point s) (TO.point t) ↔ s < t := by
+    AllenRelation.holdsIn precedesSet (TO.pure s) (TO.pure t) ↔ s < t := by
   unfold precedesSet
-  rw [Core.Time.AllenRelation.holdsIn_singleton]
+  rw [AllenRelation.holdsIn_singleton]
   rfl
 
 /-- Helper: for point intervals at times `s` and `t`, `equalSet`
     holds iff `s = t`. -/
 private theorem point_equal_iff (s t : Time) :
-    Core.Time.AllenRelation.holdsIn equalSet (TO.point s) (TO.point t) ↔ s = t := by
+    AllenRelation.holdsIn equalSet (TO.pure s) (TO.pure t) ↔ s = t := by
   unfold equalSet
-  rw [Core.Time.AllenRelation.holdsIn_singleton]
+  rw [AllenRelation.holdsIn_singleton]
   refine ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
 
 /-- `isPast` is exactly `topic precedes perspective` in the Allen
@@ -170,7 +169,7 @@ theorem isPast_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPast ↔ f.toDomain.relatedByName precedesSet .topic .perspective := by
   unfold isPast Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.referenceTime, TO.point f.perspectiveTime,
+  · refine ⟨TO.pure f.referenceTime, TO.pure f.perspectiveTime,
             toDomain_findTopic f, toDomain_findPerspective f, ?_⟩
     exact (point_precedes_iff _ _).mpr h
   · rw [toDomain_findTopic] at hi; rw [toDomain_findPerspective] at hj
@@ -184,7 +183,7 @@ theorem isFuture_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isFuture ↔ f.toDomain.relatedByName precedesSet .perspective .topic := by
   unfold isFuture Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.perspectiveTime, TO.point f.referenceTime,
+  · refine ⟨TO.pure f.perspectiveTime, TO.pure f.referenceTime,
             toDomain_findPerspective f, toDomain_findTopic f, ?_⟩
     exact (point_precedes_iff _ _).mpr h
   · rw [toDomain_findPerspective] at hi; rw [toDomain_findTopic] at hj
@@ -198,7 +197,7 @@ theorem isPresent_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPresent ↔ f.toDomain.relatedByName equalSet .topic .perspective := by
   unfold isPresent Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.referenceTime, TO.point f.perspectiveTime,
+  · refine ⟨TO.pure f.referenceTime, TO.pure f.perspectiveTime,
             toDomain_findTopic f, toDomain_findPerspective f, ?_⟩
     exact (point_equal_iff _ _).mpr h
   · rw [toDomain_findTopic] at hi; rw [toDomain_findPerspective] at hj
@@ -212,7 +211,7 @@ theorem isPerfect_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfect ↔ f.toDomain.relatedByName precedesSet .situation .topic := by
   unfold isPerfect Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.eventTime, TO.point f.referenceTime,
+  · refine ⟨TO.pure f.eventTime, TO.pure f.referenceTime,
             toDomain_findSituation f, toDomain_findTopic f, ?_⟩
     exact (point_precedes_iff _ _).mpr h
   · rw [toDomain_findSituation] at hi; rw [toDomain_findTopic] at hj
@@ -226,7 +225,7 @@ theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isProspective ↔ f.toDomain.relatedByName precedesSet .topic .situation := by
   unfold isProspective Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.referenceTime, TO.point f.eventTime,
+  · refine ⟨TO.pure f.referenceTime, TO.pure f.eventTime,
             toDomain_findTopic f, toDomain_findSituation f, ?_⟩
     exact (point_precedes_iff _ _).mpr h
   · rw [toDomain_findTopic] at hi; rw [toDomain_findSituation] at hj
@@ -242,7 +241,7 @@ theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfective ↔ f.toDomain.relatedByName equalSet .situation .topic := by
   unfold isPerfective Domain.relatedByName Domain.relatedBy
   refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.point f.eventTime, TO.point f.referenceTime,
+  · refine ⟨TO.pure f.eventTime, TO.pure f.referenceTime,
             toDomain_findSituation f, toDomain_findTopic f, ?_⟩
     exact (point_equal_iff _ _).mpr h
   · rw [toDomain_findSituation] at hi; rw [toDomain_findTopic] at hj
@@ -256,8 +255,8 @@ end ReichenbachFrame
 -- § TenseSystem and AspectSystem Instances
 -- ════════════════════════════════════════════════════
 
-/-! Reichenbach as a `Core.Time.TenseSystem` (anchor = P, situation = R)
-    and `Core.Time.AspectSystem` (event = E, reference = R) instance.
+/-! Reichenbach as a `TenseSystem` (anchor = P, situation = R)
+    and `AspectSystem` (event = E, reference = R) instance.
     The instances commit Reichenbach to the `Orientation` role
     vocabulary so generic Domain-level tooling (e.g.
     `relatedByName`-driven analyses) can dispatch over any tense or
@@ -266,15 +265,15 @@ end ReichenbachFrame
     (`*_iff_relatedByName`) show how they project into the algebra. -/
 
 instance reichenbachFrame_tenseSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.TenseSystem (ReichenbachFrame Time) Time Orientation where
+    TenseSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   anchor := .perspective
   situation := .topic
 
 instance reichenbachFrame_aspectSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.AspectSystem (ReichenbachFrame Time) Time Orientation where
+    AspectSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   event := .situation
   reference := .topic
 
-end Core.Time.Reichenbach
+end Semantics.Tense.Reichenbach

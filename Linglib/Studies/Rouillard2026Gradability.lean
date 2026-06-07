@@ -4,8 +4,8 @@ import Linglib.Semantics.Gradability.MaximalInformativity
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Time.Interval.Basic
-import Linglib.Core.Time.Boundedness
+import Linglib.Core.Order.Interval
+import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
 
 /-!
@@ -44,7 +44,7 @@ Each arrow encodes an independently motivated theoretical insight:
 | Mereological tag     | `MereoTag`          | `.qua`          | Core/Scale        |
 | Telicity             | `Telicity`          | `.telic`        | Events/Aspect     |
 | Vendler class        | `VendlerClass`      | `.accomplishment`| Events/Aspect    |
-| Interval boundary    | `BoundaryType`      | `.closed`       | Core/Time         |
+| NonemptyInterval boundary    | `BoundaryType`      | `.closed`       | Core/Time         |
 | Situation boundedness| `SituationBoundedness`| `.bounded`    | Core/Time         |
 
 All six have `LicensingPipeline` instances mapping their closed/open variants
@@ -57,7 +57,7 @@ namespace Rouillard2026
 open Core (WorldTimeIndex)
 
 open Core.Scale
-open Core.Time
+open Semantics.Aspect
 open Semantics.Gradability
 open Features
 open English.Predicates.Adjectival
@@ -72,7 +72,7 @@ theorem six_sources_agree_closed :
     LicensingPipeline.isLicensed MereoTag.qua = true ∧
     LicensingPipeline.isLicensed Telicity.telic = true ∧
     LicensingPipeline.isLicensed VendlerClass.accomplishment = true ∧
-    LicensingPipeline.isLicensed Interval.BoundaryType.closed = true ∧
+    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.closed = true ∧
     LicensingPipeline.isLicensed SituationBoundedness.bounded = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
@@ -86,7 +86,7 @@ theorem six_sources_agree_open :
     LicensingPipeline.isLicensed MereoTag.cum = false ∧
     LicensingPipeline.isLicensed Telicity.atelic = false ∧
     LicensingPipeline.isLicensed VendlerClass.state = false ∧
-    LicensingPipeline.isLicensed Interval.BoundaryType.open_ = false ∧
+    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.open_ = false ∧
     LicensingPipeline.isLicensed SituationBoundedness.unbounded = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
@@ -129,7 +129,7 @@ theorem activity_eq_state :
     (both → Boundedness.closed → licensed). -/
 theorem bounded_eq_closedBoundary :
     LicensingPipeline.isLicensed SituationBoundedness.bounded =
-    LicensingPipeline.isLicensed Interval.BoundaryType.closed := rfl
+    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.closed := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Epistemic Modal Domain ([lassiter-goodman-2017])

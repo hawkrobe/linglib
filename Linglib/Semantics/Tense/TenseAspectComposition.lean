@@ -40,7 +40,7 @@ namespace Semantics.Tense.TenseAspectComposition
 
 open Core (WorldTimeIndex)
 
-open Core.Time
+open Core.Order
 open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -108,7 +108,7 @@ def pastPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
 /-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
 theorem simplePresent_unfold (V : W → Event Time → Prop) (tc : Time) (w : W) :
     simplePresent V tc w ↔
-    ∃ e : Event Time, (Interval.point tc).properSubinterval e.τ ∧ V w e := by
+    ∃ e : Event Time, NonemptyInterval.pure tc < e.τ ∧ V w e := by
   rfl
 
 /-- Present perfect progressive with XN unfolds to K&S eq. 39b:
@@ -116,7 +116,7 @@ theorem simplePresent_unfold (V : W → Event Time → Prop) (tc : Time) (w : W)
 theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
     (tc : Time) (w : W) :
     presPerfProgXN V tᵣ tc w ↔
-    ∃ pts : Interval Time, ∃ tLB ∈ tᵣ,
+    ∃ pts : NonemptyInterval Time, ∃ tLB ∈ tᵣ,
       LB tLB pts ∧ RB pts tc ∧ IMPF V w pts := by
   rfl
 
@@ -133,16 +133,20 @@ theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
 
     Proof sketch: Given PERF_XN(IMPF(V), tᵣ)(w)(tc), we have PTS with
     RB(PTS, tc) and ∃e with PTS ⊂ τ(e). Since [tc,tc] ⊆ PTS (because
-    tc = PTS.finish) and PTS ⊂ τ(e), we get [tc,tc] ⊂ τ(e). -/
+    tc = PTS.snd) and PTS ⊂ τ(e), we get [tc,tc] ⊂ τ(e). -/
 theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
     (tᵣ : Set Time) (tc : Time) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
-  intro ⟨pts, _, _, _, hRB, e, ⟨⟨hS1, hS2⟩, hOr⟩, hV⟩
-  exact ⟨e, ⟨⟨le_trans hS1 (le_trans pts.valid (le_of_eq hRB)),
-              le_trans (le_of_eq hRB.symm) hS2⟩,
-             hOr.elim
-               (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.valid (le_of_eq hRB))))
-               (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
+  intro ⟨pts, _, _, _, hRB, e, hlt, hV⟩
+  obtain ⟨hsub, hOr⟩ := NonemptyInterval.lt_def.mp hlt
+  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
+  exact ⟨e, NonemptyInterval.lt_def.mpr
+    ⟨NonemptyInterval.le_def.mpr
+        ⟨le_trans hS1 (le_trans pts.fst_le_snd (le_of_eq hRB)),
+         le_trans (le_of_eq hRB.symm) hS2⟩,
+     hOr.elim
+       (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.fst_le_snd (le_of_eq hRB))))
+       (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
 
 /-- **Theorem 4** ([knick-sharf-2026]): U-perf with maximal domain ↔ simple present.
 
@@ -151,15 +155,15 @@ theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
     is imposed.
 
     Proof sketch: (→) by Theorem 3. (←) Given simplePresent, we have
-    ∃e with [tc,tc] ⊂ τ(e). Construct PTS = [e.τ.start, tc]. Then
-    LB(e.τ.start, PTS) ∈ Set.univ, RB(PTS, tc), and PTS ⊆ τ(e) with
-    PTS ⊂ τ(e) (since tc < e.τ.finish by properSubinterval). -/
+    ∃e with [tc,tc] ⊂ τ(e). Construct PTS = [e.τ.fst, tc]. Then
+    LB(e.τ.fst, PTS) ∈ Set.univ, RB(PTS, tc), and PTS ⊆ τ(e) with
+    PTS ⊂ τ(e) (since tc < e.τ.snd by properSubinterval). -/
 theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
   constructor
   · exact u_perf_entails_simple_present V Set.univ tc w
   · intro h
-    exact ⟨Interval.point tc, tc, Set.mem_univ _, rfl, rfl, h⟩
+    exact ⟨NonemptyInterval.pure tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
 /-- **Theorem 5** ([knick-sharf-2026]): Earlier LB is stronger under IMPF.
 
@@ -177,17 +181,20 @@ theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
 theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
-  intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨⟨hS1, hS2⟩, _hOr⟩, hV⟩
+  intro ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩
+  obtain ⟨hsub, _hOr⟩ := NonemptyInterval.lt_def.mp hlt
+  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
   -- tLB = tLB₁ (from singleton), pts = [tLB₁, tc]
-  -- e.τ ⊃ pts, so e.τ.start ≤ tLB₁ < tLB₂ and tc ≤ e.τ.finish
+  -- e.τ ⊃ pts, so e.τ.fst ≤ tLB₁ < tLB₂ and tc ≤ e.τ.snd
   -- Construct new PTS = [tLB₂, tc]
-  refine ⟨⟨tLB₂, tc, htc⟩, tLB₂, rfl, rfl, rfl, e, ⟨⟨?_, ?_⟩, ?_⟩, hV⟩
-  · -- e.τ.start ≤ tLB₂: from e.τ.start ≤ pts.start = tLB₁ < tLB₂
+  refine ⟨⟨⟨tLB₂, tc⟩, htc⟩, tLB₂, rfl, rfl, rfl, e,
+    NonemptyInterval.lt_def.mpr ⟨NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, ?_⟩, hV⟩
+  · -- e.τ.fst ≤ tLB₂: from e.τ.fst ≤ pts.fst = tLB₁ < tLB₂
     have : tLB = tLB₁ := htLB
     exact le_of_lt (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
-  · -- tc ≤ e.τ.finish
+  · -- tc ≤ e.τ.snd
     exact le_trans (le_of_eq hRB.symm) hS2
-  · -- proper: e.τ.start < tLB₂ (left disjunct)
+  · -- proper: e.τ.fst < tLB₂ (left disjunct)
     have : tLB = tLB₁ := htLB
     exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
 
@@ -207,16 +214,18 @@ theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
 theorem later_lb_stronger_prfv (V : W → Event Time → Prop)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) :
     PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
-  intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨hS1, hS2⟩, hV⟩
+  intro ⟨pts, tLB, htLB, hLB, hRB, e, hle, hV⟩
+  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hle
   -- tLB = tLB₂ (singleton), pts = [tLB₂, tc]
-  -- e.τ ⊆ pts: pts.start ≤ e.τ.start ∧ e.τ.finish ≤ pts.finish
+  -- e.τ ⊆ pts: pts.fst ≤ e.τ.fst ∧ e.τ.snd ≤ pts.snd
   -- Construct PTS' = [tLB₁, tc], which is larger, so e.τ ⊆ PTS' too
   have htLBeq : tLB = tLB₂ := htLB
-  have htc : tLB₂ ≤ tc := htLBeq ▸ hLB ▸ le_trans pts.valid (le_of_eq hRB)
-  refine ⟨⟨tLB₁, tc, le_of_lt (lt_of_lt_of_le h htc)⟩, tLB₁, rfl, rfl, rfl, e, ⟨?_, ?_⟩, hV⟩
-  · -- e.τ.start ≥ tLB₁: from tLB₁ < tLB₂ = pts.start ≤ e.τ.start
+  have htc : tLB₂ ≤ tc := htLBeq ▸ hLB ▸ le_trans pts.fst_le_snd (le_of_eq hRB)
+  refine ⟨⟨⟨tLB₁, tc⟩, le_of_lt (lt_of_lt_of_le h htc)⟩, tLB₁, rfl, rfl, rfl, e,
+    NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, hV⟩
+  · -- e.τ.fst ≥ tLB₁: from tLB₁ < tLB₂ = pts.fst ≤ e.τ.fst
     exact le_of_lt (lt_of_lt_of_le h (htLBeq ▸ hLB ▸ hS1))
-  · -- e.τ.finish ≤ tc: from e.τ.finish ≤ pts.finish = tc
+  · -- e.τ.snd ≤ tc: from e.τ.snd ≤ pts.snd = tc
     exact le_trans hS2 (le_of_eq hRB)
 
 /-- **Theorem 7** ([knick-sharf-2026]): Converse of Theorem 5 is FALSE.
@@ -236,21 +245,21 @@ theorem earlier_lb_not_weaker_impf :
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨1, 5, by omega⟩, .dynamic⟩
+  let e₀ : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
   let V : Unit → Event ℤ → Prop := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
   have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by
-    refine ⟨⟨2, 4, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
+    refine ⟨⟨⟨2, 4⟩, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
     dsimp only [e₀]
-    simp only [Interval.properSubinterval, Interval.subinterval, Event.τ]
-    omega
+    decide
   -- Conclusion: PERF_XN(IMPF(V), {0})((), 4) — should be false
   have concl := hall V 0 2 4 () (by omega) prem
-  obtain ⟨pts, tLB, htLB, hLB, hRB, e, ⟨⟨hS1, _⟩, _⟩, hV⟩ := concl
-  -- htLB : tLB = 0, hLB : pts.start = tLB, so pts.start = 0
-  -- hV : e = e₀, so e.τ.start = 1
-  -- hS1 : e.τ.start ≤ pts.start, i.e. 1 ≤ 0 — contradiction
+  obtain ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩ := concl
+  have hS1 := (NonemptyInterval.le_def.mp (NonemptyInterval.lt_def.mp hlt).1).1
+  -- htLB : tLB = 0, hLB : pts.fst = tLB, so pts.fst = 0
+  -- hV : e = e₀, so e.τ.fst = 1
+  -- hS1 : e.τ.fst ≤ pts.fst, i.e. 1 ≤ 0 — contradiction
   have htLBeq : tLB = (0 : ℤ) := htLB
   subst htLBeq
   dsimp only [V] at hV

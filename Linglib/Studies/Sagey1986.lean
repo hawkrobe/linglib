@@ -209,15 +209,14 @@ section NoCrossing
 
 open Phonology.Autosegmental (Association TierPosition
   validAssociation crosses no_crossing)
-open Core.Time (Interval)
 
 /-- Helper: build a ℤ interval. -/
-private def mkI (s f : ℤ) (h : s ≤ f := by omega) : Interval ℤ := ⟨s, f, h⟩
+private def mkI (s f : ℤ) (h : s ≤ f := by omega) : NonemptyInterval ℤ := ⟨⟨s, f⟩, h⟩
 
 /-- Helper: build an association from four ℤ values. -/
 private def mkAssoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by omega)
     : Association ℤ :=
-  ⟨⟨⟨ts, tf, ht⟩⟩, ⟨⟨ms, mf, hm⟩⟩⟩
+  ⟨⟨⟨⟨ts, tf⟩, ht⟩⟩, ⟨⟨⟨ms, mf⟩, hm⟩⟩⟩
 
 /-- A concrete geminate /t:/ occupying timing slots [0,1] and [2,3],
     with the melodic element spanning [0,3]. -/
@@ -227,7 +226,7 @@ def geminate_tt : Association ℤ × Association ℤ :=
 /-- Both associations in the geminate are valid (timing overlaps melody). -/
 theorem geminate_tt_valid :
     validAssociation geminate_tt.1 ∧ validAssociation geminate_tt.2 := by
-  simp only [geminate_tt, mkAssoc, validAssociation, Interval.overlaps]
+  simp only [geminate_tt, mkAssoc, validAssociation, NonemptyInterval.overlaps]
   omega
 
 /-- A concrete falling contour tone: timing [0,4], H tone [0,2], L tone [2,4]. -/
@@ -237,7 +236,7 @@ def contour_HL : Association ℤ × Association ℤ :=
 /-- Both associations in the contour tone are valid. -/
 theorem contour_HL_valid :
     validAssociation contour_HL.1 ∧ validAssociation contour_HL.2 := by
-  simp only [contour_HL, mkAssoc, validAssociation, Interval.overlaps]
+  simp only [contour_HL, mkAssoc, validAssociation, NonemptyInterval.overlaps]
   omega
 
 /-- **Crossing forces invalidity** ([sagey-1986] §5.3):
@@ -254,7 +253,7 @@ theorem crossing_forces_invalidity :
     let a₂ := mkAssoc 2 3 0 1
     crosses a₁ a₂ ∧ ¬ validAssociation a₁ := by
   simp only [mkAssoc, crosses, validAssociation,
-    Interval.precedes, Interval.overlaps]
+    NonemptyInterval.precedes, NonemptyInterval.overlaps]
   omega
 
 end NoCrossing

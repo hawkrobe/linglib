@@ -3,7 +3,6 @@ import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.Truth3
-import Linglib.Tactics.OntSort
 
 /-!
 # Generalized Quantifier Definitions
@@ -37,7 +36,7 @@ namespace Core.Quantification
 
     Under the Pi-of-Prop ordering (`α → Prop` ordered by pointwise
     implication), a GQ is just a binary relation between predicates. -/
-@[ont_sort] abbrev GQ (α : Type*) := (α → Prop) → (α → Prop) → Prop
+abbrev GQ (α : Type*) := (α → Prop) → (α → Prop) → Prop
 
 variable {α : Type*}
 

@@ -42,8 +42,8 @@ linguistically. *after* and *while* are not ambidirectional.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open NonemptyInterval
 open Features
 open Features.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
@@ -78,9 +78,9 @@ def Rett.after (A B : SentDenotation Time) : Prop :=
     Tagalog PFV.NEUT). -/
 def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
   { i | ∃ onset : Time,
-    (∀ j ∈ p, onset ≤ j.start) ∧
-    (∀ t, (∀ j ∈ p, t ≤ j.start) → t ≤ onset) ∧
-    i = Interval.point onset }
+    (∀ j ∈ p, onset ≤ j.fst) ∧
+    (∀ t, (∀ j ∈ p, t ≤ j.fst) → t ≤ onset) ∧
+    i = NonemptyInterval.pure onset }
 
 /-- Completive coercion / LUB ([rett-2020], eq. 21; [dolling-2014]).
     Maps a culmination (telic) denotation to a singleton containing its telos.
@@ -91,39 +91,39 @@ def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
     (Tagalog AIA). -/
 def COMPLET (p : SentDenotation Time) : SentDenotation Time :=
   { i | ∃ telos : Time,
-    (∀ j ∈ p, j.finish ≤ telos) ∧
-    (∀ t, (∀ j ∈ p, j.finish ≤ t) → telos ≤ t) ∧
-    i = Interval.point telos }
+    (∀ j ∈ p, j.snd ≤ telos) ∧
+    (∀ t, (∀ j ∈ p, j.snd ≤ t) → telos ≤ t) ∧
+    i = NonemptyInterval.pure telos }
 
 -- ============================================================================
 -- § 3: INCHOAT / COMPLET Bridge Theorems
 -- ============================================================================
 
 /-- INCHOAT extracts the start point of a stative denotation. -/
-theorem inchoat_bridges_inception (i : Interval Time) :
-    INCHOAT (stativeDenotation i) = { j | j = Interval.point i.start } := by
+theorem inchoat_bridges_inception (i : NonemptyInterval Time) :
+    INCHOAT (stativeDenotation i) = { j | j = NonemptyInterval.pure i.fst } := by
   ext k
-  simp only [INCHOAT, stativeDenotation, Set.mem_setOf_eq, subinterval]
+  simp only [INCHOAT, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.le_def]
   constructor
   · rintro ⟨onset, h_lb, h_glb, rfl⟩
-    have h1 : onset ≤ i.start := h_lb i ⟨le_refl _, le_refl _⟩
-    have h2 : i.start ≤ onset := h_glb i.start (λ j ⟨hjs, _⟩ => hjs)
-    exact congrArg Interval.point (le_antisymm h1 h2)
+    have h1 : onset ≤ i.fst := h_lb i ⟨le_refl _, le_refl _⟩
+    have h2 : i.fst ≤ onset := h_glb i.fst (λ j ⟨hjs, _⟩ => hjs)
+    exact congrArg NonemptyInterval.pure (le_antisymm h1 h2)
   · rintro rfl
-    exact ⟨i.start, λ j ⟨hjs, _⟩ => hjs, λ t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
+    exact ⟨i.fst, λ j ⟨hjs, _⟩ => hjs, λ t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
 /-- COMPLET extracts the finish point of an accomplishment denotation. -/
-theorem complet_bridges_cessation (i : Interval Time) :
-    COMPLET (accomplishmentDenotation i) = { j | j = Interval.point i.finish } := by
+theorem complet_bridges_cessation (i : NonemptyInterval Time) :
+    COMPLET (accomplishmentDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
   simp only [COMPLET, accomplishmentDenotation, Set.mem_setOf_eq]
   constructor
   · rintro ⟨telos, h_ub, h_lub, rfl⟩
-    have h1 : i.finish ≤ telos := h_ub i rfl
-    have h2 : telos ≤ i.finish := h_lub i.finish (λ j hj => hj ▸ le_refl _)
-    exact congrArg Interval.point (le_antisymm h2 h1)
+    have h1 : i.snd ≤ telos := h_ub i rfl
+    have h2 : telos ≤ i.snd := h_lub i.snd (λ j hj => hj ▸ le_refl _)
+    exact congrArg NonemptyInterval.pure (le_antisymm h2 h1)
   · rintro rfl
-    exact ⟨i.finish, λ j hj => hj ▸ le_refl _, λ t ht => ht i rfl, rfl⟩
+    exact ⟨i.snd, λ j hj => hj ▸ le_refl _, λ t ht => ht i rfl, rfl⟩
 
 -- ============================================================================
 -- § 4: Theory Agreement (Anscombe ↔ Rett)
@@ -134,17 +134,17 @@ theorem complet_bridges_cessation (i : Interval Time) :
     When B is stative (subinterval-closed), both theories reduce to
     "some time in A precedes all times in B":
     - Anscombe directly: ∃ t ∈ A, ∀ t' ∈ B, t < t'
-    - Rett: ∃ t ∈ A, t < MAX(B_≺). For statives, MAX on ≺ picks B.start
-      (the GLB), and t < B.start ↔ t < all times in B. -/
+    - Rett: ∃ t ∈ A, t < MAX(B_≺). For statives, MAX on ≺ picks B.fst
+      (the GLB), and t < B.fst ↔ t < all times in B. -/
 theorem anscombe_rett_agree_stative_before_start
-    (A : SentDenotation Time) (i_B : Interval Time) :
+    (A : SentDenotation Time) (i_B : NonemptyInterval Time) :
     (Anscombe.before A (stativeDenotation i_B) ↔
      Rett.before A (stativeDenotation i_B)) := by
   constructor
   · rintro ⟨t, ht_A, h_all⟩
-    have h_start_mem : i_B.start ∈ timeTrace (stativeDenotation i_B) := by
-      rw [timeTrace_stativeDenotation]; exact ⟨le_refl _, i_B.valid⟩
-    exact ⟨t, ht_A, i_B.start,
+    have h_start_mem : i_B.fst ∈ timeTrace (stativeDenotation i_B) := by
+      rw [timeTrace_stativeDenotation]; exact ⟨le_refl _, i_B.fst_le_snd⟩
+    exact ⟨t, ht_A, i_B.fst,
       ⟨h_start_mem, fun t' ht' hne => by
         rw [timeTrace_stativeDenotation] at ht'
         exact lt_of_le_of_ne ht'.1 (Ne.symm hne)⟩,
@@ -159,10 +159,10 @@ theorem anscombe_rett_agree_stative_before_start
 
     The converse does NOT hold: Anscombe.after only requires *some* point
     of B to precede some point of A (∃ t' ∈ B, t' < t), while Rett requires
-    A to follow B's *finish* (t > MAX₍>₎(B) = i_B.finish). These differ
+    A to follow B's *finish* (t > MAX₍>₎(B) = i_B.snd). These differ
     when A overlaps B without extending past B's endpoint. -/
 theorem rett_implies_anscombe_telic_after_finish
-    (A : SentDenotation Time) (i_B : Interval Time) :
+    (A : SentDenotation Time) (i_B : NonemptyInterval Time) :
     Rett.after A (accomplishmentDenotation i_B) →
     Anscombe.after A (accomplishmentDenotation i_B) := by
   rintro ⟨t, ht_A, m, ⟨hm_mem, _⟩, htm⟩
@@ -232,48 +232,48 @@ theorem rett_before_closedTrace_eq (A B : SentDenotation Time) (s f : Time) (hsf
   · rintro ⟨t, ht, htm⟩; exact ⟨t, ht, s, rfl, htm⟩
 
 /-- COMPLET on a stative denotation extracts the finish point. -/
-theorem complet_stative (i : Interval Time) :
-    COMPLET (stativeDenotation i) = { j | j = Interval.point i.finish } := by
+theorem complet_stative (i : NonemptyInterval Time) :
+    COMPLET (stativeDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
-  simp only [COMPLET, stativeDenotation, Set.mem_setOf_eq, subinterval]
+  simp only [COMPLET, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.le_def]
   constructor
   · rintro ⟨telos, h_ub, h_lub, rfl⟩
-    have h1 : i.finish ≤ telos := h_ub i ⟨le_refl _, le_refl _⟩
-    have h2 : telos ≤ i.finish := h_lub i.finish (fun j ⟨_, hjf⟩ => hjf)
-    exact congrArg Interval.point (le_antisymm h2 h1)
+    have h1 : i.snd ≤ telos := h_ub i ⟨le_refl _, le_refl _⟩
+    have h2 : telos ≤ i.snd := h_lub i.snd (fun j ⟨_, hjf⟩ => hjf)
+    exact congrArg NonemptyInterval.pure (le_antisymm h2 h1)
   · rintro rfl
-    exact ⟨i.finish, fun j ⟨_, hjf⟩ => hjf, fun t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
+    exact ⟨i.snd, fun j ⟨_, hjf⟩ => hjf, fun t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
 /-- The pre-event complement of an event interval [s, f]. -/
-def preEventDenotation (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+def preEventDenotation (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
     SentDenotation Time :=
-  stativeDenotation ⟨bot, i.start, hbot⟩
+  stativeDenotation ⟨⟨bot, i.fst⟩, hbot⟩
 
 /-- The time trace of a stative denotation is the closed interval [start, finish]. -/
-theorem timeTrace_stative_closedInterval (i : Interval Time) :
-    timeTrace (stativeDenotation i) = { t | i.start ≤ t ∧ t ≤ i.finish } := by
-  rw [timeTrace_stativeDenotation]; ext; simp [contains]
+theorem timeTrace_stative_closedInterval (i : NonemptyInterval Time) :
+    timeTrace (stativeDenotation i) = { t | i.fst ≤ t ∧ t ≤ i.snd } := by
+  rw [timeTrace_stativeDenotation]; ext; simp [NonemptyInterval.mem_def]
 
 /-- MAX₍<₎ of a stative denotation's time trace is {start}. -/
-theorem maxOnScale_lt_stative (i : Interval Time) :
-    maxOnScale (· < ·) (timeTrace (stativeDenotation i)) = {i.start} := by
-  rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.valid]
+theorem maxOnScale_lt_stative (i : NonemptyInterval Time) :
+    maxOnScale (· < ·) (timeTrace (stativeDenotation i)) = {i.fst} := by
+  rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
 
 /-- The time trace of `COMPLET(preEventDenotation bot i)` is the degenerate
-    interval `{i.start}`. -/
-theorem timeTrace_complet_preEvent (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+    interval `{i.fst}`. -/
+theorem timeTrace_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
     timeTrace (COMPLET (preEventDenotation bot i hbot)) =
-    { t | i.start ≤ t ∧ t ≤ i.start } := by
+    { t | i.fst ≤ t ∧ t ≤ i.fst } := by
   unfold preEventDenotation
   rw [complet_stative]
-  show timeTrace (accomplishmentDenotation (Interval.point i.start)) = _
+  show timeTrace (accomplishmentDenotation (NonemptyInterval.pure i.fst)) = _
   rw [timeTrace_accomplishmentDenotation]
-  ext; simp [contains, point]
+  ext; simp [NonemptyInterval.mem_def, NonemptyInterval.mem_pure]
 
 /-- MAX₍<₎ of the COMPLET of a pre-event denotation is {start}. -/
-theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
     maxOnScale (· < ·) (timeTrace (COMPLET (preEventDenotation bot i hbot))) =
-    {i.start} := by
+    {i.fst} := by
   rw [timeTrace_complet_preEvent, maxOnScale_lt_closedInterval _ _ (le_refl _)]
 
 /-- *Before* is truth-conditionally insensitive to event polarity.
@@ -282,8 +282,8 @@ theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : Interval Time) (hbot : 
     the original uses the default *before*-start reading (MAX₍<₎),
     while the negated version requires COMPLET coercion to extract the
     end of the pre-event interval. -/
-theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : Interval Time)
-    (bot : Time) (hbot : bot ≤ i_B.start) :
+theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : NonemptyInterval Time)
+    (bot : Time) (hbot : bot ≤ i_B.fst) :
     Rett.before A (stativeDenotation i_B) ↔
     Rett.before A (COMPLET (preEventDenotation bot i_B hbot)) := by
   apply before_determined_by_max
@@ -296,16 +296,16 @@ theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
       isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· > ·) X, t > m) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
-  have h_amb := h {Interval.point b} {a}
-  have h_fB : ∃ t ∈ timeTrace ({Interval.point b} : SentDenotation Time),
+  have h_amb := h {NonemptyInterval.pure b} {a}
+  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : SentDenotation Time),
       ∃ m ∈ maxOnScale (· > ·) ({a} : Set Time), t > m :=
-    ⟨b, ⟨Interval.point b, rfl, le_refl _, le_refl _⟩,
+    ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
      a, ⟨rfl, fun _ hx' hne => absurd hx' hne⟩, hab⟩
   obtain ⟨t, ht_A, m, ⟨hm_mem, hm_dom⟩, htm⟩ := h_amb.mp h_fB
   obtain ⟨j, hj_mem, hj_s, hj_f⟩ := ht_A
   simp only [Set.mem_singleton_iff] at hj_mem
   subst hj_mem
-  simp only [Interval.point] at hj_s hj_f
+  simp only [NonemptyInterval.pure] at hj_s hj_f
   have ht_eq : t = b := le_antisymm hj_f hj_s
   have hb_compl : b ∈ ({a} : Set Time)ᶜ := by
     simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; exact ne_of_gt hab
@@ -362,8 +362,8 @@ Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 namespace Rett2020.Examples
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open NonemptyInterval
 open Semantics.Tense.TemporalConnectives
 
 -- ============================================================================
@@ -371,21 +371,21 @@ open Semantics.Tense.TemporalConnectives
 -- ============================================================================
 
 /-- ME: "John left" — punctual event at time 1 (early). -/
-def me_early : Interval ℕ := Interval.point 1
+def me_early : NonemptyInterval ℕ := NonemptyInterval.pure 1
 
 /-- ME: "John left" — punctual event at time 12 (late). -/
-def me_late : Interval ℕ := Interval.point 12
+def me_late : NonemptyInterval ℕ := NonemptyInterval.pure 12
 
 /-- ME: punctual event at time 7 (inside the stative EE). -/
-def me_inside : Interval ℕ := Interval.point 7
+def me_inside : NonemptyInterval ℕ := NonemptyInterval.pure 7
 
 /-- EE: "she was president" — stative, running [5, 10]. -/
-def ee_stative : Interval ℕ :=
-  { start := 5, finish := 10, valid := by omega }
+def ee_stative : NonemptyInterval ℕ :=
+  ⟨⟨5, 10⟩, by omega⟩
 
 /-- EE: "she climbed the mountain" — accomplishment, [3, 8]. -/
-def ee_accomplishment : Interval ℕ :=
-  { start := 3, finish := 8, valid := by omega }
+def ee_accomplishment : NonemptyInterval ℕ :=
+  ⟨⟨3, 8⟩, by omega⟩
 
 -- Sentence denotations
 abbrev A_early := accomplishmentDenotation me_early
@@ -398,33 +398,33 @@ abbrev B_telic := accomplishmentDenotation ee_accomplishment
 private theorem mem_tt_stative {t : ℕ} :
     t ∈ timeTrace B_stative ↔ 5 ≤ t ∧ t ≤ 10 := by
   rw [timeTrace_stativeDenotation]
-  simp [contains, ee_stative]
+  simp [NonemptyInterval.mem_def, ee_stative]
 
 /-- Rewriting lemma: membership in timeTrace of our telic denotation. -/
 private theorem mem_tt_telic {t : ℕ} :
     t ∈ timeTrace B_telic ↔ 3 ≤ t ∧ t ≤ 8 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp [contains, ee_accomplishment]
+  simp [NonemptyInterval.mem_def, ee_accomplishment]
 
 /-- Rewriting lemma: membership in timeTrace of early ME. -/
 private theorem mem_tt_early {t : ℕ} :
     t ∈ timeTrace A_early ↔ t = 1 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_early, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_early, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of late ME. -/
 private theorem mem_tt_late {t : ℕ} :
     t ∈ timeTrace A_late ↔ t = 12 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_late, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_late, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of inside ME. -/
 private theorem mem_tt_inside {t : ℕ} :
     t ∈ timeTrace A_inside ↔ t = 7 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_inside, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_inside, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 -- ============================================================================
@@ -559,13 +559,13 @@ theorem scenario4_agree : Anscombe.after A_late B_telic ∧
 /-- INCHOAT of "she was president₅₋₁₀" = {point(5)}.
     Verifies that inchoative coercion extracts the onset. -/
 theorem inchoat_stative_ee :
-    INCHOAT B_stative = { j | j = Interval.point 5 } :=
+    INCHOAT B_stative = { j | j = NonemptyInterval.pure 5 } :=
   inchoat_bridges_inception ee_stative
 
 /-- COMPLET of "she climbed the mountain₃₋₈" = {point(8)}.
     Verifies that completive coercion extracts the telos. -/
 theorem complet_telic_ee :
-    COMPLET B_telic = { j | j = Interval.point 8 } :=
+    COMPLET B_telic = { j | j = NonemptyInterval.pure 8 } :=
   complet_bridges_cessation ee_accomplishment
 
 -- ============================================================================
@@ -576,36 +576,36 @@ theorem complet_telic_ee :
 abbrev A_stative := stativeDenotation ee_stative
 
 /-- EE: punctual event at time 5 — "she arrived." -/
-def ee_onset : Interval ℕ := Interval.point 5
+def ee_onset : NonemptyInterval ℕ := NonemptyInterval.pure 5
 abbrev B_onset := accomplishmentDenotation ee_onset
 
 /-- Rewriting lemma: membership in timeTrace of onset EE. -/
 private theorem mem_tt_onset {t : ℕ} :
     t ∈ timeTrace B_onset ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, ee_onset, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_onset, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- ME: punctual event at time 3 — "arrived at 3pm" (for *by* coincidence case). -/
-def me_at_deadline : Interval ℕ := Interval.point 3
+def me_at_deadline : NonemptyInterval ℕ := NonemptyInterval.pure 3
 abbrev A_at_deadline := accomplishmentDenotation me_at_deadline
 
 /-- EE: punctual event at time 3 — "3pm" (deadline). -/
-def ee_deadline : Interval ℕ := Interval.point 3
+def ee_deadline : NonemptyInterval ℕ := NonemptyInterval.pure 3
 abbrev B_deadline := accomplishmentDenotation ee_deadline
 
 /-- Rewriting lemma: membership in timeTrace of the at-deadline ME. -/
 private theorem mem_tt_at_deadline {t : ℕ} :
     t ∈ timeTrace A_at_deadline ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_at_deadline, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_at_deadline, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of the deadline EE. -/
 private theorem mem_tt_deadline {t : ℕ} :
     t ∈ timeTrace B_deadline ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, ee_deadline, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_deadline, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- "He has been happy₅₋₁₀ since she arrived₅" — True under `Karttunen.since`.
@@ -675,10 +675,10 @@ We verify this on concrete time points.
 -/
 
 /-- ME: "The princess woke up" — punctual event at time 3 (early). -/
-def me_wake_early : Interval ℕ := Interval.point 3
+def me_wake_early : NonemptyInterval ℕ := NonemptyInterval.pure 3
 
 /-- EE: "The prince kissed her" — punctual event at time 5. -/
-def ee_kiss : Interval ℕ := Interval.point 5
+def ee_kiss : NonemptyInterval ℕ := NonemptyInterval.pure 5
 
 abbrev A_wake_early := accomplishmentDenotation me_wake_early
 abbrev B_kiss := accomplishmentDenotation ee_kiss
@@ -687,14 +687,14 @@ abbrev B_kiss := accomplishmentDenotation ee_kiss
 private theorem mem_tt_wake {t : ℕ} :
     t ∈ timeTrace A_wake_early ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_wake_early, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_early, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of kiss event. -/
 private theorem mem_tt_kiss {t : ℕ} :
     t ∈ timeTrace B_kiss ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, ee_kiss, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_kiss, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Scenario 11: "The princess woke up₃ before the prince kissed her₅" — TRUE.
@@ -710,13 +710,13 @@ theorem scenario11_notUntil_false : ¬ Karttunen.notUntil A_wake_early B_kiss :=
   intro h; exact h scenario11_before_true
 
 /-- ME: "The princess woke up" — punctual event at time 5 (AT the kiss). -/
-def me_wake_at_kiss : Interval ℕ := Interval.point 5
+def me_wake_at_kiss : NonemptyInterval ℕ := NonemptyInterval.pure 5
 abbrev A_wake_at := accomplishmentDenotation me_wake_at_kiss
 
 private theorem mem_tt_wake_at {t : ℕ} :
     t ∈ timeTrace A_wake_at ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_wake_at_kiss, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_at_kiss, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Scenario 12: "The princess didn't wake up₅ until the prince kissed her₅"
@@ -743,13 +743,13 @@ theorem scenario12_derives_when :
     scenario12_presupposition scenario12_notUntil_true
 
 /-- ME: "The princess woke up" — punctual event at time 7 (AFTER the kiss). -/
-def me_wake_late : Interval ℕ := Interval.point 7
+def me_wake_late : NonemptyInterval ℕ := NonemptyInterval.pure 7
 abbrev A_wake_late := accomplishmentDenotation me_wake_late
 
 private theorem mem_tt_wake_late {t : ℕ} :
     t ∈ timeTrace A_wake_late ↔ t = 7 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [contains, me_wake_late, Interval.point, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_late, NonemptyInterval.pure, Set.mem_setOf_eq]
   omega
 
 /-- Scenario 13: "The princess didn't wake up₇ until the prince kissed her₅"

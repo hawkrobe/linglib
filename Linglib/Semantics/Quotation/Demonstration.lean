@@ -93,7 +93,6 @@ their own performance type.
 namespace Semantics.Quotation.Demonstration
 
 open Semantics.ArgumentStructure (EventRel)
-open Core.Time
 
 -- ════════════════════════════════════════════════════
 -- § 1. Performance Ontology

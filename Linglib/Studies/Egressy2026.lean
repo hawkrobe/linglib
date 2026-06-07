@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.GramTense
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Hungarian.Predicates
@@ -41,7 +41,7 @@ and temporal adverb diagnostics.
 namespace Egressy2026
 
 open Semantics.Tense
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 
 
 -- ════════════════════════════════════════════════════════════════

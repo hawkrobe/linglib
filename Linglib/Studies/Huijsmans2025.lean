@@ -71,7 +71,7 @@ structure Stimulus (Time : Type) where
 
 /-- The three MBT-presupposition profiles Huijsmans's four lexical items
     instantiate. A domain-flavored selector over the abstract
-    `Core.Time.Relation` partition (cf. `EPCondition` in
+    `Core.Order.Relation` partition (cf. `EPCondition` in
     `Tense/Evidential.lean`, which selects from the same partition for
     the EAT/ET slot pair). Only three of the five abstract relations
     name a Huijsmans modal; the others are unused here. -/
@@ -89,7 +89,7 @@ inductive MBTProfile where
 /-- Underlying point-relation: the slot pair is `(earliestMBT, earliestPrejT)`,
     and each profile picks one shape from `Relation`. Mirrors
     `EPCondition.toRelation` in `Tense/Evidential.lean`. -/
-def MBTProfile.toRelation : MBTProfile → Core.Time.Relation
+def MBTProfile.toRelation : MBTProfile → Core.Order.Relation
   | .strictPrior    => .before
   | .nonProspective => .notBefore        -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
   | .unrestricted   => .unrestricted

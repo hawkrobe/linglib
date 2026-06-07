@@ -46,8 +46,7 @@ collects the paper-attributed theorems.
 namespace VonStechow2009
 
 open Semantics.Tense
-open Core.Time.Reichenbach
-open Core.Time
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 
 

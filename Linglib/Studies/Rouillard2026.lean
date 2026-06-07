@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Time.Interval.Generalized
+import Linglib.Core.Order.Interval
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
@@ -36,13 +36,14 @@ numeral exists ("information collapse"), the TIA is blocked.
 This file consolidates Rouillard's formal apparatus and the empirical
 verification into a single Studies file. The companion
 `MaximalInformativity.lean` was deleted in this rebuild — its content was
-absorbed here, with substrate primitives lifted to `Core.Scale` and
-`Core.Time.Interval.Generalized`.
+absorbed here, with substrate primitives lifted to `Core.Scale`.
 
 Sections:
 
 1. Re-export of substrate (`Core.Scale` informativity primitives).
 2. `TimeMeasure` typeclass (replaces the prior `MeasureFun` struct).
+2a. Generalized intervals with open/closed boundaries (`GInterval`,
+   eq. 14a–b, 99a–b) — paper-specific apparatus, single consumer.
 3. Prior time spans over `GInterval` (open/closed boundary tags structurally
    carried, eliminating the prior `PERF_open` hand-waving).
 4. E-TIA semantics: `eTIAProperty`.
@@ -85,8 +86,7 @@ Sections:
 
 namespace Rouillard2026
 
-open Core.Time
-open Core.Time.Interval
+open NonemptyInterval
 open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Features
@@ -117,15 +117,139 @@ variable {W Time : Type*} [LinearOrder Time]
     is the interval-specific ℕ-valued companion; the discrete-measure
     domain matches Rouillard's integer-numeral data ("in three days"). -/
 class TimeMeasure (Time : Type*) [LinearOrder Time]
-    (μ : Interval Time → ℕ) : Prop where
+    (μ : NonemptyInterval Time → ℕ) : Prop where
   /-- Any interval can be extended to a superinterval with a given larger
       measure. -/
-  extensible : ∀ (i : Interval Time) (m : ℕ), μ i ≤ m →
-    ∃ j : Interval Time, i.subinterval j ∧ μ j = m
+  extensible : ∀ (i : NonemptyInterval Time) (m : ℕ), μ i ≤ m →
+    ∃ j : NonemptyInterval Time, i ≤ j ∧ μ j = m
   /-- Any interval can be subdivided to a subinterval with a given smaller
       measure. -/
-  subdivisible : ∀ (i : Interval Time) (m : ℕ), m ≤ μ i →
-    ∃ j : Interval Time, j.subinterval i ∧ μ j = m
+  subdivisible : ∀ (i : NonemptyInterval Time) (m : ℕ), m ≤ μ i →
+    ∃ j : NonemptyInterval Time, j ≤ i ∧ μ j = m
+
+-- ════════════════════════════════════════════════════
+-- § 2a. Generalized intervals with open/closed boundaries
+-- ════════════════════════════════════════════════════
+
+/-- A generalized interval with specified boundary types.
+    Extends the basic `NonemptyInterval` with open/closed annotations on each end.
+    [rouillard-2026] eq. (14a–b), (99a–b). -/
+structure GInterval (Time : Type*) [LinearOrder Time] where
+  /-- Left endpoint -/
+  left : Time
+  /-- Right endpoint -/
+  right : Time
+  /-- Left boundary type: closed [m or open]m -/
+  leftType : BoundaryType
+  /-- Right boundary type: closed m] or open m[ -/
+  rightType : BoundaryType
+  /-- The endpoints are ordered -/
+  valid : left ≤ right
+
+namespace GInterval
+
+/-- A closed interval [m₁, m₂]: both endpoints included.
+    [rouillard-2026] eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
+def closed (i : NonemptyInterval Time) : GInterval Time where
+  left := i.fst
+  right := i.snd
+  leftType := .closed
+  rightType := .closed
+  valid := i.fst_le_snd
+
+/-- An open interval]m₁, m₂[: both endpoints excluded.
+    [rouillard-2026] eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
+def open_ (i : NonemptyInterval Time) : GInterval Time where
+  left := i.fst
+  right := i.snd
+  leftType := .open_
+  rightType := .open_
+  valid := i.fst_le_snd
+
+/-- The o(t) operation: open counterpart of a time.
+    [rouillard-2026] eq. (99a): if t is open, o(t) = t; if t is closed,
+    o(t) is the open interval with the same endpoints. -/
+def toOpen (gi : GInterval Time) : GInterval Time :=
+  { gi with leftType := .open_, rightType := .open_ }
+
+/-- The c(t) operation: closed counterpart of a time.
+    [rouillard-2026] eq. (99b): if t is closed, c(t) = t; if t is open,
+    c(t) adds the endpoints. -/
+def toClosed (gi : GInterval Time) : GInterval Time :=
+  { gi with leftType := .closed, rightType := .closed }
+
+/-- Is this interval closed (both boundaries included)? -/
+def isClosed (gi : GInterval Time) : Prop :=
+  gi.leftType = .closed ∧ gi.rightType = .closed
+
+/-- Is this interval open (both boundaries excluded)? -/
+def isOpen (gi : GInterval Time) : Prop :=
+  gi.leftType = .open_ ∧ gi.rightType = .open_
+
+/-- Containment for generalized intervals: m is in gi.
+    For closed endpoints, ≤ is used; for open endpoints, <. -/
+def gcontains (gi : GInterval Time) (m : Time) : Prop :=
+  (match gi.leftType with
+   | .closed => gi.left ≤ m
+   | .open_ => gi.left < m) ∧
+  (match gi.rightType with
+   | .closed => m ≤ gi.right
+   | .open_ => m < gi.right)
+
+/-- Generalized subinterval: gi₁ ⊆ gi₂ (every moment in gi₁ is in gi₂). -/
+def gsubinterval (gi₁ gi₂ : GInterval Time) : Prop :=
+  ∀ m : Time, gi₁.gcontains m → gi₂.gcontains m
+
+/-- Convert a closed GInterval back to the basic NonemptyInterval type. -/
+def toInterval (gi : GInterval Time) : NonemptyInterval Time :=
+  ⟨⟨gi.left, gi.right⟩, gi.valid⟩
+
+/-- The closed counterpart of an open interval is always closed. -/
+@[simp] theorem toClosed_isClosed (gi : GInterval Time) : gi.toClosed.isClosed :=
+  ⟨rfl, rfl⟩
+
+/-- The open counterpart is always open. -/
+@[simp] theorem toOpen_isOpen (gi : GInterval Time) : gi.toOpen.isOpen :=
+  ⟨rfl, rfl⟩
+
+/-- toClosed is idempotent. -/
+@[simp] theorem toClosed_idempotent (gi : GInterval Time) :
+    gi.toClosed.toClosed = gi.toClosed := rfl
+
+/-- toOpen is idempotent. -/
+@[simp] theorem toOpen_idempotent (gi : GInterval Time) :
+    gi.toOpen.toOpen = gi.toOpen := rfl
+
+/-- The closed counterpart of an interval contains its endpoints (definitional). -/
+@[simp] theorem closed_gcontains_start (i : NonemptyInterval Time) :
+    (closed i).gcontains i.fst := ⟨le_refl _, i.fst_le_snd⟩
+
+@[simp] theorem closed_gcontains_finish (i : NonemptyInterval Time) :
+    (closed i).gcontains i.snd := ⟨i.fst_le_snd, le_refl _⟩
+
+/-- A closed interval contained in an open generalized interval forces strict
+    inequalities at both endpoints. The right hypothesis the prior MaxInfo
+    `no_smallest_open_including_closed` had to *assume* (`pts.left < runtime.start`)
+    is *derivable* once openness is enforced structurally — instantiate
+    `gsubinterval` at the closed endpoints and unfold `gcontains`. -/
+theorem gsubinterval_closed_open_strict
+    (rt : NonemptyInterval Time) (gi : GInterval Time)
+    (h_open : gi.isOpen) (h_sub : (closed rt).gsubinterval gi) :
+    gi.left < rt.fst ∧ rt.snd < gi.right := by
+  have h_start := h_sub rt.fst (closed_gcontains_start rt)
+  have h_finish := h_sub rt.snd (closed_gcontains_finish rt)
+  obtain ⟨hL, hR⟩ := h_open
+  refine ⟨?_, ?_⟩
+  · -- gi.left < rt.fst: from h_start.1 with leftType = .open_
+    have := h_start.1
+    rw [hL] at this
+    exact this
+  · -- rt.snd < gi.right: from h_finish.2 with rightType = .open_
+    have := h_finish.2
+    rw [hR] at this
+    exact this
+
+end GInterval
 
 -- ════════════════════════════════════════════════════
 -- § 3. Prior time spans (over GInterval)
@@ -134,9 +258,9 @@ class TimeMeasure (Time : Type*) [LinearOrder Time]
 /-- Prior time span: the maximal interval right-bounded by `s` with
     measure `n`. Lifted to `GInterval` so open-vs-closed boundary tags
     are carried structurally — the prior file's `pts` operated on plain
-    `Interval` and the open-PTS revision was enforced only in prose.
+    `NonemptyInterval` and the open-PTS revision was enforced only in prose.
     [rouillard-2026] eq. (50). -/
-def pts (n : ℕ) (μ : Interval Time → ℕ) [TimeMeasure Time μ] (s : Time)
+def pts (n : ℕ) (μ : NonemptyInterval Time → ℕ) [TimeMeasure Time μ] (s : Time)
     (gi : GInterval Time) : Prop :=
   gi.right = s ∧ μ gi.toInterval = n
 
@@ -147,16 +271,16 @@ def pts (n : ℕ) (μ : Interval Time → ℕ) [TimeMeasure Time μ] (s : Time)
 /-- The preposition *in* as an event-level adverbial (E-TIA reading).
     The event's runtime is included in the measure-phrase's bound.
     [rouillard-2026] eq. (62) instantiated at M = τ. -/
-def inETIA (e : Event Time) (bound : Interval Time) : Prop :=
-  e.τ.subinterval bound
+def inETIA (e : Event Time) (bound : NonemptyInterval Time) : Prop :=
+  e.τ ≤ bound
 
 /-- E-TIA derived property: at world `w`, value `n` is true iff there is
     a P-event whose runtime is included in some `n`-unit time, and that
     `n`-unit time falls within `g1`. [rouillard-2026] eq. (77). -/
-def eTIAProperty (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
-    [TimeMeasure Time μ] (g1 : Interval Time) : ℕ → W → Prop :=
-  fun n w => ∃ t : Interval Time, μ t = n ∧
-    ∃ e : Event Time, P w e ∧ e.τ.subinterval g1 ∧ e.τ.subinterval t
+def eTIAProperty (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
+    [TimeMeasure Time μ] (g1 : NonemptyInterval Time) : ℕ → W → Prop :=
+  fun n w => ∃ t : NonemptyInterval Time, μ t = n ∧
+    ∃ e : Event Time, P w e ∧ e.τ ≤ g1 ∧ e.τ ≤ t
 
 -- ════════════════════════════════════════════════════
 -- § 5. G-TIA semantics over open generalized intervals
@@ -171,7 +295,7 @@ def eTIAProperty (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     explicitly noted "the openness constraint is enforced at the level of
     the G-TIA semantics rather than structurally" — i.e., not at all).
     [rouillard-2026] eq. (94) revised with eq. (101). -/
-def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
+def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ∃ ptsGI : GInterval Time,
     ptsGI.isOpen ∧
@@ -182,7 +306,7 @@ def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : Interval Time → ℕ
 /-- The negation of `gTIAPropertyOpen`, used for G-TIAs in negative
     contexts (where the property "no event in the n-unit open PTS" holds
     iff `gTIAPropertyOpen` is false). -/
-def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
+def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ¬ gTIAPropertyOpen P μ s n w
 
@@ -207,8 +331,8 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : Interval Time → 
     subinterval property, the E-TIA derived property is constant: every
     numeral yields a true proposition at any world where any does, so no
     numeral is more informative than another. [rouillard-2026] §4.1.1. -/
-theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : W → Event Time → Prop) (g1 : Interval Time)
+theorem eTIA_atelic_collapse {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
     IsConstant (α := ℕ) (eTIAProperty P μ g1) := by
   suffices h : ∀ n m w, eTIAProperty P μ g1 n w → eTIAProperty P μ g1 m w from
@@ -224,15 +348,15 @@ theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
     exact ⟨j, hj_μ, e, hP, hg1, hj_sup⟩
 
 /-- Atelic E-TIA fails the `AdmitsOptimum` half of MIP licensing. -/
-theorem eTIA_atelic_no_optimum {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : W → Event Time → Prop) (g1 : Interval Time)
+theorem eTIA_atelic_no_optimum {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
     ¬ AdmitsOptimum (eTIAProperty P μ g1) :=
   fun h => h (eTIA_atelic_collapse P g1 hSub)
 
 /-- Atelic E-TIA is not MIP-licensed. -/
-theorem eTIA_atelic_not_licensed {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : W → Event Time → Prop) (g1 : Interval Time)
+theorem eTIA_atelic_not_licensed {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (g1 : NonemptyInterval Time)
     (hSub : HasSubintervalProp P) :
     ¬ MIP_Licensed (eTIAProperty P μ g1) :=
   fun ⟨hAdm, _⟩ => eTIA_atelic_no_optimum P g1 hSub hAdm
@@ -245,8 +369,8 @@ theorem eTIA_atelic_not_licensed {μ : Interval Time → ℕ} [TimeMeasure Time 
     [rouillard-2026] §4.1.1: when P is telic, the derived E-TIA
     property is upward monotone — the same event witnesses larger
     measures via `TimeMeasure.extensible`. -/
-theorem eTIA_telic_upwardMonotone {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : W → Event Time → Prop) (g1 : Interval Time) :
+theorem eTIA_telic_upwardMonotone {μ : NonemptyInterval Time → ℕ} [TimeMeasure Time μ]
+    (P : W → Event Time → Prop) (g1 : NonemptyInterval Time) :
     IsUpwardMonotone (eTIAProperty P μ g1) := by
   intro n m hnm w ⟨t, hμ, e, hP, hg1, hsub⟩
   have h_le : μ t ≤ m := by rw [hμ]; exact hnm
@@ -296,29 +420,29 @@ theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
     `Mereology.ExtMeasure`) would let the collapse argument
     discharge end-to-end. -/
 theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
-    (rt : Interval Time) (ptsGI : GInterval Time)
+    (rt : NonemptyInterval Time) (ptsGI : GInterval Time)
     (h_open : ptsGI.isOpen)
     (h_sub : (GInterval.closed rt).gsubinterval ptsGI) :
     ∃ ptsGI' : GInterval Time,
       ptsGI'.isOpen ∧
       (GInterval.closed rt).gsubinterval ptsGI' ∧
-      ptsGI'.toInterval.subinterval ptsGI.toInterval ∧
+      ptsGI'.toInterval ≤ ptsGI.toInterval ∧
       ptsGI'.left ≠ ptsGI.left := by
   obtain ⟨h_strict_left, h_strict_right⟩ :=
     GInterval.gsubinterval_closed_open_strict rt ptsGI h_open h_sub
   obtain ⟨m, hm_left, hm_right⟩ := DenselyOrdered.dense _ _ h_strict_left
-  -- m sits strictly between ptsGI.left and rt.start.
+  -- m sits strictly between ptsGI.left and rt.fst.
   have hm_valid : m ≤ ptsGI.right :=
-    le_of_lt (lt_of_lt_of_le hm_right (le_trans rt.valid (le_of_lt h_strict_right)))
+    le_of_lt (lt_of_lt_of_le hm_right (le_trans rt.fst_le_snd (le_of_lt h_strict_right)))
   let ptsGI' : GInterval Time :=
     { left := m, right := ptsGI.right
     , leftType := .open_, rightType := .open_
     , valid := hm_valid }
   refine ⟨ptsGI', ⟨rfl, rfl⟩, ?_, ?_, hm_left.ne'⟩
   · intro p hp
-    -- hp : (closed rt).gcontains p, definitionally rt.start ≤ p ∧ p ≤ rt.finish.
-    have hp1 : rt.start ≤ p := hp.1
-    have hp2 : p ≤ rt.finish := hp.2
+    -- hp : (closed rt).gcontains p, definitionally rt.fst ≤ p ∧ p ≤ rt.snd.
+    have hp1 : rt.fst ≤ p := hp.1
+    have hp2 : p ≤ rt.snd := hp.2
     refine ⟨?_, ?_⟩
     · -- ptsGI'.gcontains p (left side, open): m < p
       show m < p

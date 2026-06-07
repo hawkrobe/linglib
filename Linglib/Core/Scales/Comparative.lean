@@ -1,6 +1,5 @@
 import Mathlib.Order.Basic
 import Mathlib.Order.Lattice
-import Linglib.Tactics.OntSort
 import Linglib.Core.Scales.Defs
 
 /-!
@@ -37,7 +36,7 @@ namespace Core.Scale
 
     [krantz-1971]: a comparative scale is an ordered set with
     enough structure to support qualitative comparison. -/
-@[ont_sort] structure ComparativeScale (α : Type*) [Preorder α] where
+structure ComparativeScale (α : Type*) [Preorder α] where
   /-- Scale boundedness classification -/
   boundedness : Boundedness
 

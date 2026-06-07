@@ -24,7 +24,7 @@ particular analysis.
 
 namespace Semantics.Aspect.SubintervalProperty
 
-open Core.Time
+open Semantics.Aspect
 open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -47,7 +47,7 @@ variable {W Time : Type*} [LinearOrder Time]
 def HasSubintervalProp (P : W → Event Time → Prop) : Prop :=
   ∀ (e₁ : Event Time) (w : W),
     P w e₁ →
-    ∀ (t : Interval Time), t.subinterval e₁.τ →
+    ∀ (t : NonemptyInterval Time), t ≤ e₁.τ →
     ∀ (e₂ : Event Time), e₂.τ = t →
     P w e₂
 
@@ -58,7 +58,7 @@ def HasSubintervalProp (P : W → Event Time → Prop) : Prop :=
 def HasClosedSubintervalProp (P : W → Event Time → Prop) : Prop :=
   ∀ (e₁ : Event Time) (w : W),
     P w e₁ →
-    ∀ (t : Interval Time), t.subinterval e₁.τ →
+    ∀ (t : NonemptyInterval Time), t ≤ e₁.τ →
     ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂
 
 -- ════════════════════════════════════════════════════
@@ -95,7 +95,7 @@ open Features
 theorem activity_entailment
     (P : W → Event Time → Prop) (hSub : HasClosedSubintervalProp P)
     (w : W) (e₁ : Event Time) (hP : P w e₁)
-    (t : Interval Time) (hSub' : t.subinterval e₁.τ) :
+    (t : NonemptyInterval Time) (hSub' : t ≤ e₁.τ) :
     ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂ :=
   hSub e₁ w hP t hSub'
 
@@ -115,15 +115,15 @@ theorem imperfective_paradox_possible
     ¬ (∀ (P : W → Event Time → Prop), HasSubintervalProp P) := by
   intro hall
   -- Define a "telic" predicate: P holds iff the event's runtime ends at t₂
-  let P : W → Event Time → Prop := λ _ e => e.τ.finish = t₂
+  let P : W → Event Time → Prop := λ _ e => e.τ.snd = t₂
   have hSub := hall P
   -- Construct an event e₁ with runtime [t₁, t₂]; P holds (finish = t₂)
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₁ : Event Time := ⟨⟨t₁, t₂, le_of_lt hlt⟩, .dynamic⟩
+  let e₁ : Event Time := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .dynamic⟩
   have hPe₁ : P w e₁ := rfl
   -- [t₁, t₁] is a subinterval of [t₁, t₂]
-  let sub : Interval Time := ⟨t₁, t₁, le_refl t₁⟩
-  have hSI : sub.subinterval e₁.τ := ⟨le_refl t₁, le_of_lt hlt⟩
+  let sub : NonemptyInterval Time := ⟨⟨t₁, t₁⟩, le_refl t₁⟩
+  have hSI : sub ≤ e₁.τ := NonemptyInterval.le_def.mpr ⟨le_refl t₁, le_of_lt hlt⟩
   -- SIP says P must hold for any event with runtime [t₁, t₁]
   -- sort defaults to .action; the proof doesn't reference .sort
   let e₂ : Event Time := ⟨sub, .dynamic⟩
@@ -170,16 +170,16 @@ theorem imperfective_paradox_possible
     IS exactly t, which satisfies the PRFV containment requirement. -/
 theorem impf_entails_prfv_of_csip
     (P : W → Event Time → Prop) (hCSIP : HasClosedSubintervalProp P)
-    (w : W) (t : Interval Time) :
+    (w : W) (t : NonemptyInterval Time) :
     IMPF P w t → PRFV P w t := by
   intro ⟨e, hPSub, hP⟩
-  -- hPSub : t.properSubinterval e.τ — reference time properly inside event
-  -- hPSub.1 : t.subinterval e.τ — non-strict containment (first component)
+  -- hPSub : t < e.τ — reference time properly inside event
+  -- hPSub.1 : t ≤ e.τ — non-strict containment (first component)
   -- hP : P w e — the predicate holds for e
   obtain ⟨e₂, he₂, hPe₂⟩ := hCSIP e w hP t hPSub.1
   -- e₂ : event with τ(e₂) = t and P(w, e₂)
   -- For PRFV we need τ(e₂) ⊆ t, i.e. t ⊆ t (since τ(e₂) = t)
-  exact ⟨e₂, he₂ ▸ Interval.subinterval_refl t, hPe₂⟩
+  exact ⟨e₂, he₂ ▸ le_refl t, hPe₂⟩
 
 /-- **CSIP is necessary for IMPF→PRFV** (converse of `impf_entails_prfv_of_csip`):
     if IMPF entails PRFV for ALL predicates, then every predicate has CSIP.
@@ -194,7 +194,7 @@ theorem impf_entails_prfv_of_csip
     - Q gives t ⊆ τ(e₂) (from the predicate's second conjunct)
     - Mutual containment gives τ(e₂) = t (closing the ⊆ → = gap) -/
 theorem csip_necessary_for_impf_prfv :
-    (∀ (P : W → Event Time → Prop) (w : W) (t : Interval Time),
+    (∀ (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time),
       IMPF P w t → PRFV P w t) →
     ∀ (P : W → Event Time → Prop), HasClosedSubintervalProp P := by
   intro hall P e w hP t hSub
@@ -202,30 +202,14 @@ theorem csip_necessary_for_impf_prfv :
   by_cases heq : e.τ = t
   · -- τ(e) = t: e itself witnesses CSIP
     exact ⟨e, heq, hP⟩
-  · -- τ(e) ≠ t: t is a proper subinterval of τ(e)
-    -- Step 1: derive properness from subinterval + inequality
-    have hProper : t.properSubinterval e.τ := by
-      refine ⟨hSub, ?_⟩
-      by_contra hne
-      push Not at hne
-      -- hne : t.start ≤ e.τ.start ∧ e.τ.finish ≤ t.finish
-      apply heq
-      have ⟨h1, h2⟩ := hSub
-      -- h1 : e.τ.start ≤ t.start, h2 : t.finish ≤ e.τ.finish
-      have hs := le_antisymm h1 hne.1
-      have hf := le_antisymm hne.2 h2
-      rcases e with ⟨⟨_, _, _⟩⟩; rcases t with ⟨_, _, _⟩; simp_all
+  · -- τ(e) ≠ t: t is strictly contained in τ(e)
+    have hProper : t < e.τ := lt_of_le_of_ne hSub (fun h => heq (h ▸ rfl))
     -- Step 2: refined predicate Q carries reverse containment
-    let Q : W → Event Time → Prop := fun w' e' => P w' e' ∧ t.subinterval e'.τ
+    let Q : W → Event Time → Prop := fun w' e' => P w' e' ∧ t ≤ e'.τ
     -- IMPF(Q)(w)(t): witnessed by e (proper subinterval + P holds + t ⊆ τ(e))
     obtain ⟨e₂, hSub₂, hPe₂, hSubRev⟩ := hall Q w t ⟨e, hProper, hP, hSub⟩
     -- hSub₂ : τ(e₂) ⊆ t (from PRFV), hSubRev : t ⊆ τ(e₂) (from Q)
-    -- Mutual containment → equality
-    refine ⟨e₂, ?_, hPe₂⟩
-    have ⟨a1, a2⟩ := hSub₂
-    have ⟨b1, b2⟩ := hSubRev
-    rcases e₂ with ⟨⟨_, _, _⟩, _⟩; rcases t with ⟨_, _, _⟩
-    simp only [Event.τ, Interval.mk.injEq]
-    exact ⟨le_antisymm b1 a1, le_antisymm a2 b2⟩
+    -- Mutual containment → equality (antisymmetry of the containment order)
+    exact ⟨e₂, le_antisymm hSub₂ hSubRev, hPe₂⟩
 
 end Semantics.Aspect.SubintervalProperty

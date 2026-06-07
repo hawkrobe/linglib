@@ -1,5 +1,4 @@
 import Mathlib.Tactic.TypeStar
-import Linglib.Tactics.OntSort
 
 /-!
 # World–Time Indices
@@ -24,7 +23,7 @@ namespace Core
     This is the Lewis/Kaplan "index" — a coordinate tuple as point of
     evaluation, abstracting from the spatial/parthood structure of true
     Kratzer situations (see `Core.Logic.Intensional.Situations`). -/
-@[ont_sort] structure WorldTimeIndex (W Time : Type*) where
+structure WorldTimeIndex (W Time : Type*) where
   /-- The world coordinate -/
   world : W
   /-- The temporal coordinate -/

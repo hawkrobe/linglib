@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Events.Basic
 
 /-!
-# Event–Interval Bridge
+# Event–NonemptyInterval Bridge
 [krifka-1989] [parsons-1990]
 
 The projection from event predicates (Level 3) to interval sets (Level 2):
@@ -31,8 +31,7 @@ and point-level theories (Anscombe).
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -74,7 +73,7 @@ theorem eventDenotation_nonempty (P : Event Time → Prop) (e : Event Time) (he 
     This is the composition `timeTrace ∘ eventDenotation`, showing that
     the full projection chain Level 3 → Level 1 can be stated directly. -/
 theorem timeTrace_eventDenotation (P : Event Time → Prop) :
-    timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ e.τ.contains t } := by
+    timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ t ∈ e.τ } := by
   ext t
   simp only [timeTrace, eventDenotation, Set.mem_setOf_eq]
   constructor
@@ -102,8 +101,8 @@ theorem eventDenotation_singleton (e₀ : Event Time) :
 
     Note: this is a subset, not equality, because `stativeDenotation i` contains
     all subintervals including those that might not be runtimes of any event. -/
-theorem eventDenotation_sub_stative (i : Interval Time) (P : Event Time → Prop)
-    (hP : ∀ e, P e → e.τ.subinterval i) :
+theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time → Prop)
+    (hP : ∀ e, P e → e.τ ≤ i) :
     eventDenotation P ⊆ stativeDenotation i := by
   intro j ⟨e, he, hj⟩
   rw [← hj]

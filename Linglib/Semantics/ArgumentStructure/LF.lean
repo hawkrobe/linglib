@@ -27,7 +27,6 @@ forms, and adverbial modification (Davidson's key payoff).
 
 namespace Semantics.ArgumentStructure
 
-open Core.Time
 open Modifier (intersective intersective_apply)
 
 /-! ### Thematic axioms (Aktionsart selection + uniqueness) -/

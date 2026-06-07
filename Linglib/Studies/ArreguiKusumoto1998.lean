@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # [arregui-kusumoto-1998]: Tense in Temporal Adjunct Clauses
@@ -58,7 +58,7 @@ example.
 
 namespace ArreguiKusumoto1998
 
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES

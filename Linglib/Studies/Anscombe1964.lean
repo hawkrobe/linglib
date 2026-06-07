@@ -23,7 +23,6 @@ of the veridicality contrast.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -46,7 +45,7 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 -- ============================================================================
--- § [heinamaki-1974]: Reference Interval Semantics
+-- § [heinamaki-1974]: Reference NonemptyInterval Semantics
 -- ============================================================================
 
 /-! ### Heinämäki's analysis and equivalence with Anscombe
@@ -160,12 +159,12 @@ term breaks transitivity. -/
     B after A: t=3 ∈ B, t'=0 ∈ A, 0 < 3. -/
 theorem Anscombe.after_not_antisymmetric :
     ∃ (A B : SentDenotation ℤ), Anscombe.after A B ∧ Anscombe.after B A := by
-  refine ⟨{Interval.point 0, Interval.point 2},
-          {Interval.point 1, Interval.point 3}, ?_, ?_⟩
-  · exact ⟨2, ⟨Interval.point 2, Or.inr rfl, le_refl _, le_refl _⟩,
-           1, ⟨Interval.point 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
-  · exact ⟨3, ⟨Interval.point 3, Or.inr rfl, le_refl _, le_refl _⟩,
-           0, ⟨Interval.point 0, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
+  refine ⟨{NonemptyInterval.pure 0, NonemptyInterval.pure 2},
+          {NonemptyInterval.pure 1, NonemptyInterval.pure 3}, ?_, ?_⟩
+  · exact ⟨2, ⟨NonemptyInterval.pure 2, Or.inr rfl, le_refl _, le_refl _⟩,
+           1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
+  · exact ⟨3, ⟨NonemptyInterval.pure 3, Or.inr rfl, le_refl _, le_refl _⟩,
+           0, ⟨NonemptyInterval.pure 0, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
 
 /-- *After* is NOT transitive: A after B and B after C need not give A after C.
 
@@ -176,16 +175,16 @@ theorem Anscombe.after_not_antisymmetric :
 theorem Anscombe.after_not_transitive :
     ∃ (A B C : SentDenotation ℤ),
       Anscombe.after A B ∧ Anscombe.after B C ∧ ¬Anscombe.after A C := by
-  refine ⟨{Interval.point 2}, {Interval.point 1, Interval.point 4},
-          {Interval.point 3}, ?_, ?_, ?_⟩
-  · exact ⟨2, ⟨Interval.point 2, rfl, le_refl _, le_refl _⟩,
-           1, ⟨Interval.point 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
-  · exact ⟨4, ⟨Interval.point 4, Or.inr rfl, le_refl _, le_refl _⟩,
-           3, ⟨Interval.point 3, rfl, le_refl _, le_refl _⟩, by omega⟩
+  refine ⟨{NonemptyInterval.pure 2}, {NonemptyInterval.pure 1, NonemptyInterval.pure 4},
+          {NonemptyInterval.pure 3}, ?_, ?_, ?_⟩
+  · exact ⟨2, ⟨NonemptyInterval.pure 2, rfl, le_refl _, le_refl _⟩,
+           1, ⟨NonemptyInterval.pure 1, Or.inl rfl, le_refl _, le_refl _⟩, by omega⟩
+  · exact ⟨4, ⟨NonemptyInterval.pure 4, Or.inr rfl, le_refl _, le_refl _⟩,
+           3, ⟨NonemptyInterval.pure 3, rfl, le_refl _, le_refl _⟩, by omega⟩
   · rintro ⟨t, ⟨i, hi, hts, htf⟩, t', ⟨j, hj, ht's, ht'f⟩, hlt⟩
     simp only [Set.mem_singleton_iff] at hi hj
     subst hi; subst hj
-    simp only [Interval.point] at hts htf ht's ht'f
+    simp only [NonemptyInterval.pure] at hts htf ht's ht'f
     omega
 
 -- ============================================================================
@@ -273,8 +272,7 @@ while the event-level version requires entire-runtime precedence (`-precedence).
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -329,8 +327,8 @@ theorem AnscombeEvent.after_veridical_main (P Q : Event Time → Prop) :
     vacuously true. -/
 theorem AnscombeEvent.before_nonveridical :
     ∃ (P Q : Event ℤ → Prop), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e := by
-  refine ⟨fun e => e = ⟨⟨0, 1, by omega⟩, .dynamic⟩, fun _ => False, ?_, ?_⟩
-  · exact ⟨⟨⟨0, 1, by omega⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
+  refine ⟨fun e => e = ⟨⟨⟨0, 1⟩, by omega⟩, .dynamic⟩, fun _ => False, ?_, ?_⟩
+  · exact ⟨⟨⟨⟨0, 1⟩, by omega⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
   · rintro ⟨_, h⟩; exact h
 
 /-- *Before* is still veridical w.r.t. its main clause: the P-event must exist. -/
@@ -346,29 +344,29 @@ theorem AnscombeEvent.before_veridical_main (P Q : Event Time → Prop) :
 /-- Event-level *after* implies [anscombe-1964]'s *after* when projected
     through `eventDenotation`.
 
-    Proof: from `e`.`.precedes e`.`  (i.e., `e`.`.finish < e`.`.start`),
-    take `t = e`.`.start` and `t' = e`.`.finish`. -/
+    Proof: from `e`.`.precedes e`.`  (i.e., `e`.`.snd < e`.`.fst`),
+    take `t = e`.`.fst` and `t' = e`.`.snd`. -/
 theorem AnscombeEvent.after_implies_anscombe (P Q : Event Time → Prop) :
     AnscombeEvent.after P Q → Anscombe.after (eventDenotation P) (eventDenotation Q) := by
   rintro ⟨e₁, e₂, hp, hq, hprec⟩
-  refine ⟨e₁.τ.start, ?_, e₂.τ.finish, ?_, hprec⟩
+  refine ⟨e₁.τ.fst, ?_, e₂.τ.snd, ?_, hprec⟩
   · rw [timeTrace_eventDenotation]
-    exact ⟨e₁, hp, le_refl _, e₁.τ.valid⟩
+    exact ⟨e₁, hp, le_refl _, e₁.τ.fst_le_snd⟩
   · rw [timeTrace_eventDenotation]
-    exact ⟨e₂, hq, e₂.τ.valid, le_refl _⟩
+    exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_refl _⟩
 
 /-- Event-level *before* implies [anscombe-1964]'s *before* when projected.
 
-    Proof: from ``e`, Q(e`) ` e`.`.finish < e`.`.start`, take
-    `t = e`.`.finish`. For any `t' ` timeTrace(eventDenotation Q)`,
-    some `e`` has `Q(e`)` and `e`.`.start ` t'`, so
-    `t = e`.`.finish < e`.`.start ` t'`. -/
+    Proof: from ``e`, Q(e`) ` e`.`.snd < e`.`.fst`, take
+    `t = e`.`.snd`. For any `t' ` timeTrace(eventDenotation Q)`,
+    some `e`` has `Q(e`)` and `e`.`.fst ` t'`, so
+    `t = e`.`.snd < e`.`.fst ` t'`. -/
 theorem AnscombeEvent.before_implies_anscombe (P Q : Event Time → Prop) :
     AnscombeEvent.before P Q → Anscombe.before (eventDenotation P) (eventDenotation Q) := by
   rintro ⟨e₁, hp, hall⟩
-  refine ⟨e₁.τ.finish, ?_, ?_⟩
+  refine ⟨e₁.τ.snd, ?_, ?_⟩
   · rw [timeTrace_eventDenotation]
-    exact ⟨e₁, hp, e₁.τ.valid, le_refl _⟩
+    exact ⟨e₁, hp, e₁.τ.fst_le_snd, le_refl _⟩
   · intro t' ht'
     rw [timeTrace_eventDenotation] at ht'
     obtain ⟨e₂, hq, ht'_lo, _⟩ := ht'
@@ -383,7 +381,7 @@ theorem AnscombeEvent.before_implies_anscombe (P Q : Event Time → Prop) :
 
     Counterexample: P-event at [1,5], Q-event at [3,8].
     - Anscombe: t=1 ` timeTrace P, and 1 < all t' ` [3,8]. `
-    - Event-level: `(e`).finish = 5, `(e`).start = 3, and 5 < 3 is false. `
+    - Event-level: `(e`).snd = 5, `(e`).fst = 3, and 5 < 3 is false. `
 
     The point-level theory sees a point in A before all of B; the event-level
     theory requires the entire A-runtime to precede the entire B-runtime. -/
@@ -391,8 +389,8 @@ theorem anscombe_before_not_implies_event :
     ¬∀ (P Q : Event ℤ → Prop),
       Anscombe.before (eventDenotation P) (eventDenotation Q) → AnscombeEvent.before P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨1, 5, by omega⟩, .dynamic⟩
-  let eQ : Event ℤ := ⟨⟨3, 8, by omega⟩, .dynamic⟩
+  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
+  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by omega⟩, .dynamic⟩
   let P : Event ℤ → Prop := fun e => e = eP
   let Q : Event ℤ → Prop := fun e => e = eQ
   have hansc : Anscombe.before (eventDenotation P) (eventDenotation Q) := by
@@ -414,13 +412,13 @@ theorem anscombe_before_not_implies_event :
 
     Counterexample: P-event at [5,5], Q-event at [1,8].
     - Anscombe: t=5, t'=1, 1 < 5. `
-    - Event-level: `(eQ).finish = 8 > 5 = `(eP).start, so `precedes. ` -/
+    - Event-level: `(eQ).snd = 8 > 5 = `(eP).fst, so `precedes. ` -/
 theorem anscombe_after_not_implies_event :
     ¬∀ (P Q : Event ℤ → Prop),
       Anscombe.after (eventDenotation P) (eventDenotation Q) → AnscombeEvent.after P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨5, 5, by omega⟩, .dynamic⟩
-  let eQ : Event ℤ := ⟨⟨1, 8, by omega⟩, .dynamic⟩
+  let eP : Event ℤ := ⟨⟨⟨5, 5⟩, by omega⟩, .dynamic⟩
+  let eQ : Event ℤ := ⟨⟨⟨1, 8⟩, by omega⟩, .dynamic⟩
   let P : Event ℤ → Prop := fun e => e = eP
   let Q : Event ℤ → Prop := fun e => e = eQ
   have hansc : Anscombe.after (eventDenotation P) (eventDenotation Q) := by

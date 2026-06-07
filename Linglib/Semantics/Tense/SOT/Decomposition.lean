@@ -43,7 +43,7 @@ and simultaneous readings) but differ on what "past" means:
 namespace Semantics.Tense.SOT.Decomposition
 
 open Semantics.Tense
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 
 
@@ -211,14 +211,14 @@ theorem english_deictic_german_anaphoric (n : ℕ) :
 theorem english_past_eq_presPerfSimple {W Time : Type*} [LinearOrder Time]
     (V : W → Event Time → Prop) (tc : Time) (w : W) :
     presPerfSimple V tc w ↔
-    ∃ pts : Core.Time.Interval Time, RB pts tc ∧ PRFV V w pts := Iff.rfl
+    ∃ pts : NonemptyInterval Time, RB pts tc ∧ PRFV V w pts := Iff.rfl
 
 /-- German Preterit maps to `simplePast` from the pipeline: genuine
     past tense (existential over past times) + perfective aspect. -/
 theorem german_preterit_eq_simplePast {W Time : Type*} [LinearOrder Time]
     (V : W → Event Time → Prop) (tc : Time) (w : W) :
     simplePast V tc w ↔
-    ∃ t : Time, t < tc ∧ PRFV V w (Core.Time.Interval.point t) := Iff.rfl
+    ∃ t : Time, t < tc ∧ PRFV V w (NonemptyInterval.pure t) := Iff.rfl
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -1,5 +1,5 @@
-import Linglib.Core.Time.Allen
-import Linglib.Core.Time.Orientation
+import Linglib.Core.Order.AllenRelation
+import Linglib.Semantics.Tense.Orientation
 
 /-!
 # Temporal Domains
@@ -13,7 +13,7 @@ binding-TO + sub-TOs; a `Domain` is what they share.
 ## Concepts
 
 - **TO** (`Time of orientation`): a temporal anchor. Realized as
-  `Interval Time`; degenerate intervals (`start = finish`) model point
+  `NonemptyInterval Time`; degenerate intervals (`start = finish`) model point
   times like Reichenbach's S/P/R/E, while non-degenerate intervals
   model extended times-of-situation (Declerck's T-sit).
 - **NamedTO**: a TO together with a typed `Role` label. The `Role` is
@@ -23,7 +23,7 @@ binding-TO + sub-TOs; a `Domain` is what they share.
   Declerck, but a domain-specific framework could use its own enum.
 - **Domain**: a central NamedTO + list of sub-NamedTOs. Pairwise Allen
   relations are *computed* from the underlying linear order on `Time`
-  via `Interval.allenRel`; the domain does not store a relation table.
+  via `NonemptyInterval.allenRel`; the domain does not store a relation table.
 
 ## What's not here
 
@@ -32,7 +32,8 @@ or sector classification. `Domain` is the substrate; the
 domain-shaped theories build on top.
 -/
 
-namespace Core.Time
+namespace Semantics.Tense
+
 
 -- ════════════════════════════════════════════════════
 -- § Times of Orientation
@@ -40,8 +41,8 @@ namespace Core.Time
 
 /-- A **time of orientation** (TO, [declerck-2006]): a temporal
     anchor used by tense/aspect frameworks. Realized as
-    `Interval Time` so the same type covers both point times
-    (degenerate intervals via `Interval.point`) and extended
+    `NonemptyInterval Time` so the same type covers both point times
+    (degenerate intervals via `NonemptyInterval.pure`) and extended
     times-of-situation (general intervals).
 
     Allen relations between TOs are unique on **non-degenerate** pairs
@@ -49,11 +50,11 @@ namespace Core.Time
     uniqueness add a non-degeneracy hypothesis where needed. For
     point-time TOs (Reichenbach), the Allen algebra collapses to
     `{precedes, equal, precededBy}`. -/
-abbrev TO (Time : Type*) [LinearOrder Time] := Interval Time
+abbrev TO (Time : Type*) [LinearOrder Time] := NonemptyInterval Time
 
 /-- Construct a point TO from a single time (degenerate interval). -/
-abbrev TO.point {Time : Type*} [LinearOrder Time] (t : Time) : TO Time :=
-  Interval.point t
+abbrev TO.pure {Time : Type*} [LinearOrder Time] (t : Time) : TO Time :=
+  NonemptyInterval.pure t
 
 /-- A TO with an identifying typed role label. The `Role` parameter is
     abstract: framework-specific role types (`Orientation` for
@@ -71,15 +72,15 @@ namespace NamedTO
 variable {Time : Type*} {Role : Type*} [LinearOrder Time]
 
 /-- The starting time of a NamedTO. -/
-abbrev start (n : NamedTO Time Role) : Time := n.span.start
+abbrev start (n : NamedTO Time Role) : Time := n.span.fst
 
 /-- The ending time of a NamedTO. -/
-abbrev finish (n : NamedTO Time Role) : Time := n.span.finish
+abbrev finish (n : NamedTO Time Role) : Time := n.span.snd
 
 /-- Build a point NamedTO from a label and a single time. -/
 def ofPoint (name : Role) (t : Time) : NamedTO Time Role where
   name := name
-  span := TO.point t
+  span := TO.pure t
 
 end NamedTO
 
@@ -91,7 +92,7 @@ end NamedTO
     orientation (the *binding TO* of the domain) together with a list
     of related sub-TOs. The Allen relations between any pair of TOs
     are computed on-demand from the underlying linear order on `Time`
-    via `Interval.allenRel`; no relation table is stored.
+    via `NonemptyInterval.allenRel`; no relation table is stored.
 
     Two design choices worth noting:
 
@@ -194,17 +195,17 @@ def ofReichenbachPoints (S P R E : Time) : Domain Time Orientation where
     (ofReichenbachPoints S P R E).labels = reichenbachLabels := rfl
 
 @[simp] theorem ofReichenbachPoints_findUtterance (S P R E : Time) :
-    (ofReichenbachPoints S P R E).find? .utterance = some (TO.point S) := rfl
+    (ofReichenbachPoints S P R E).find? .utterance = some (TO.pure S) := rfl
 
 @[simp] theorem ofReichenbachPoints_findPerspective (S P R E : Time) :
-    (ofReichenbachPoints S P R E).find? .perspective = some (TO.point P) := rfl
+    (ofReichenbachPoints S P R E).find? .perspective = some (TO.pure P) := rfl
 
 @[simp] theorem ofReichenbachPoints_findTopic (S P R E : Time) :
-    (ofReichenbachPoints S P R E).find? .topic = some (TO.point R) := rfl
+    (ofReichenbachPoints S P R E).find? .topic = some (TO.pure R) := rfl
 
 @[simp] theorem ofReichenbachPoints_findSituation (S P R E : Time) :
-    (ofReichenbachPoints S P R E).find? .situation = some (TO.point E) := rfl
+    (ofReichenbachPoints S P R E).find? .situation = some (TO.pure E) := rfl
 
 end Domain
 
-end Core.Time
+end Semantics.Tense

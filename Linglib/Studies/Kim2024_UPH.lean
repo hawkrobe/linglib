@@ -54,7 +54,6 @@ namespace Kim2024_UPH
 open Minimalist
 open Semantics.Causation.Psych
 open Semantics.Causation.PsychLink
-open Core.Time (Interval)
 open English.Predicates.Verbal
 open Phenomena.PsychVerbs
 open SolstadBott2022
@@ -227,7 +226,7 @@ variable {Time : Type*} [LinearOrder Time]
     per-verb stipulation. -/
 theorem external_predicts_precedence :
     (CausalSource.toLink Time .external).temporalConstraint =
-      Interval.precedes ∧
+      NonemptyInterval.precedes ∧
     (CausalSource.toLink Time .external).involvesTransition = true :=
   ⟨rfl, rfl⟩
 
@@ -236,7 +235,7 @@ theorem external_predicts_precedence :
     Cause and effect coexist (maintenance relation). -/
 theorem internal_predicts_overlap :
     (CausalSource.toLink Time .internal).temporalConstraint =
-      Interval.overlaps ∧
+      NonemptyInterval.overlaps ∧
     (CausalSource.toLink Time .internal).involvesTransition = false :=
   ⟨rfl, rfl⟩
 
@@ -246,7 +245,7 @@ theorem internal_predicts_overlap :
 theorem frighten_temporal :
     frighten.causalSource = some .external ∧
     (CausalSource.toLink Time .external).temporalConstraint =
-      Interval.precedes ∧
+      NonemptyInterval.precedes ∧
     (CausalSource.toLink Time .external).involvesTransition = true :=
   ⟨rfl, rfl, rfl⟩
 
@@ -255,7 +254,7 @@ theorem frighten_temporal :
 theorem concern_temporal :
     concern.causalSource = some .internal ∧
     (CausalSource.toLink Time .internal).temporalConstraint =
-      Interval.overlaps ∧
+      NonemptyInterval.overlaps ∧
     (CausalSource.toLink Time .internal).involvesTransition = false :=
   ⟨rfl, rfl, rfl⟩
 
@@ -266,9 +265,9 @@ theorem concern_temporal :
 theorem uph_causal_link_level :
     -- Different temporal behavior
     (CausalSource.toLink Time .external).temporalConstraint =
-      Interval.precedes ∧
+      NonemptyInterval.precedes ∧
     (CausalSource.toLink Time .internal).temporalConstraint =
-      Interval.overlaps ∧
+      NonemptyInterval.overlaps ∧
     -- Different event structure
     (CausalSource.toLink Time .external).involvesTransition = true ∧
     (CausalSource.toLink Time .internal).involvesTransition = false :=

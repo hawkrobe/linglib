@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic
@@ -39,7 +39,7 @@ reference ("during then"), the presuppositions clash.
 
 namespace Zhao2025ThenPresent
 
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 open Semantics.Tense.Perspective
 

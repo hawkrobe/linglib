@@ -1,8 +1,8 @@
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
-import Linglib.Core.Time.Relation
-import Linglib.Core.Time.Reichenbach
+import Linglib.Core.Order.Relation
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Context.Shifts
 
@@ -35,8 +35,8 @@ and `Attitudes/` theories build on. The temporal primitives it imports
 
 namespace Semantics.Tense
 
-open Core.Time
-open Core.Time.Reichenbach
+open Core.Order
+open Semantics.Tense.Reichenbach
 open Core.ReferentialMode (ReferentialMode)
 open Core (Assignment WorldTimeIndex)
 
@@ -67,14 +67,14 @@ inductive GramTense where
 namespace GramTense
 
 /-- Convert tense to its corresponding temporal relation -/
-def toRelation : GramTense → Core.Time.Relation
+def toRelation : GramTense → Core.Order.Relation
   | .past => .before
   | .present => .overlapping
   | .future => .after
   | .nonpast => .notBefore
 
 /-- The inverse relation (for "backwards" reference) -/
-def inverseRelation : GramTense → Core.Time.Relation
+def inverseRelation : GramTense → Core.Order.Relation
   | .past => .after
   | .present => .overlapping
   | .future => .before

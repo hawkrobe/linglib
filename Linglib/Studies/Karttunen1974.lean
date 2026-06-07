@@ -42,8 +42,7 @@ punctual form is morphologically *before*, confirming Karttunen's analysis.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -150,7 +149,7 @@ theorem while_veridical_complement (A B : SentDenotation Time)
     ¬(A before B) holds vacuously when A is empty. -/
 theorem notUntil_not_veridical :
     ∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬∃ t, t ∈ timeTrace A := by
-  refine ⟨∅, { Interval.point 0 }, ?_, ?_⟩
+  refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
     exact absurd hi (Set.mem_empty_iff_false i).mp
   · intro ⟨t, i, hi, _⟩
@@ -232,12 +231,12 @@ theorem while_not_symmetric :
     ¬ ∀ (A B : SentDenotation ℤ),
       Karttunen.while_ A B → Karttunen.while_ B A := by
   intro h
-  let iA : Interval ℤ := ⟨5, 5, by omega⟩
-  let iB : Interval ℤ := ⟨1, 10, by omega⟩
-  have hAs : iA.start = 5 := rfl
-  have hAf : iA.finish = 5 := rfl
-  have hBs : iB.start = 1 := rfl
-  have hBf : iB.finish = 10 := rfl
+  let iA : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
+  let iB : NonemptyInterval ℤ := ⟨⟨1, 10⟩, by omega⟩
+  have hAs : iA.fst = 5 := rfl
+  have hAf : iA.snd = 5 := rfl
+  have hBs : iB.fst = 1 := rfl
+  have hBf : iB.snd = 10 := rfl
   have hw : Karttunen.while_ ({iA} : SentDenotation ℤ) (stativeDenotation iB) := by
     intro t ⟨i, hi, hts, htf⟩
     simp only [Set.mem_singleton_iff] at hi; subst hi
@@ -289,8 +288,8 @@ theorem veridicality_mirrors_quantifier_force :
   refine ⟨?_, ?_, ?_⟩
   · rintro A B ⟨_, _, _, ht', _⟩; exact ⟨_, ht'⟩
   · exact when_veridical_complement
-  · refine ⟨{ Interval.point 0 }, ∅, ?_, ?_⟩
-    · exact ⟨0, ⟨Interval.point 0, rfl, le_refl _, le_refl _⟩,
+  · refine ⟨{ NonemptyInterval.pure 0 }, ∅, ?_, ?_⟩
+    · exact ⟨0, ⟨NonemptyInterval.pure 0, rfl, le_refl _, le_refl _⟩,
         fun t' ⟨i, hi, _⟩ => absurd hi (Set.mem_empty_iff_false i).mp⟩
     · intro ⟨_, i, hi, _⟩; exact absurd hi (Set.mem_empty_iff_false i).mp
 
@@ -348,7 +347,7 @@ theorem by_not_implies_before :
     ¬ ∀ (A B : SentDenotation ℤ),
       Karttunen.by_ A B → Anscombe.before A B := by
   intro h
-  let iP : Interval ℤ := ⟨5, 5, by omega⟩
+  let iP : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
   have hmem : (5 : ℤ) ∈ timeTrace ({iP} : SentDenotation ℤ) :=
     ⟨iP, rfl, le_refl _, le_refl _⟩
   have hby : Karttunen.by_ ({iP} : SentDenotation ℤ) {iP} :=
@@ -360,8 +359,8 @@ theorem by_not_implies_before :
   have hlt := hall 5 hmem
   obtain ⟨i, hi, hts, htf⟩ := ht
   simp only [Set.mem_singleton_iff] at hi; subst hi
-  have hs : iP.start = 5 := rfl
-  have hf : iP.finish = 5 := rfl
+  have hs : iP.fst = 5 := rfl
+  have hf : iP.snd = 5 := rfl
   omega
 
 -- ============================================================================
@@ -404,12 +403,12 @@ theorem whenever_not_symmetric :
     ¬ ∀ (A B : SentDenotation ℤ),
       Karttunen.whenever A B → Karttunen.whenever B A := by
   intro h
-  let iA : Interval ℤ := ⟨1, 10, by omega⟩
-  let iB : Interval ℤ := ⟨5, 5, by omega⟩
-  have hAs : iA.start = 1 := rfl
-  have hAf : iA.finish = 10 := rfl
-  have hBs : iB.start = 5 := rfl
-  have hBf : iB.finish = 5 := rfl
+  let iA : NonemptyInterval ℤ := ⟨⟨1, 10⟩, by omega⟩
+  let iB : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
+  have hAs : iA.fst = 1 := rfl
+  have hAf : iA.snd = 10 := rfl
+  have hBs : iB.fst = 5 := rfl
+  have hBf : iB.snd = 5 := rfl
   -- whenever (stativeDenotation iA) {iB}: every time in {iB} (t=5) is in [1,10] ✓
   have hw : Karttunen.whenever (stativeDenotation iA) {iB} := by
     intro t ⟨i, hi, hts, htf⟩

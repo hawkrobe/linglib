@@ -41,7 +41,6 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
 
 namespace Condoravdi2002
 
-open Core.Time
 open Features (Dynamicity)
 open Semantics.Aspect
 open HistoricalAlternatives
@@ -73,7 +72,7 @@ def atState (P : W → Event Time → Prop) : IntervalPred W Time :=
 
 /-- The AT relation, dispatching on eventuality sort. The paper's third case
     (properties of times) is vacuous here: the event predicate is eventuality-valued. -/
-def at' (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
+def at' (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time) :
     Prop :=
   match sort with
   | .dynamic => atEvent P w t
@@ -81,40 +80,41 @@ def at' (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : Interva
 
 /-- Eventive instantiation is stronger than stative: an event included in the
     interval certainly overlaps it. -/
-theorem atState_of_atEvent (P : W → Event Time → Prop) (w : W) (t : Interval Time)
+theorem atState_of_atEvent (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time)
     (h : atEvent P w t) : atState P w t :=
   let ⟨e, hSub, hP⟩ := h
-  ⟨e, Interval.subinterval_overlaps hSub, hP⟩
+  ⟨e, NonemptyInterval.overlaps_of_le hSub, hP⟩
 
 /-- `atEvent` is monotone in the reference interval. -/
-theorem atEvent_mono {t₁ t₂ : Interval Time} (P : W → Event Time → Prop) (w : W)
-    (hSub : t₁.subinterval t₂) (h : atEvent P w t₁) : atEvent P w t₂ :=
+theorem atEvent_mono {t₁ t₂ : NonemptyInterval Time} (P : W → Event Time → Prop) (w : W)
+    (hSub : t₁ ≤ t₂) (h : atEvent P w t₁) : atEvent P w t₂ :=
   let ⟨e, heSub, hP⟩ := h
-  ⟨e, ⟨le_trans hSub.1 heSub.1, le_trans heSub.2 hSub.2⟩, hP⟩
+  ⟨e, le_trans heSub hSub, hP⟩
 
 /-- `atState` is monotone in the reference interval: overlap with a subinterval
     entails overlap with the containing interval. -/
-theorem atState_mono {t₁ t₂ : Interval Time} (P : W → Event Time → Prop) (w : W)
-    (hSub : t₁.subinterval t₂) (h : atState P w t₁) : atState P w t₂ :=
+theorem atState_mono {t₁ t₂ : NonemptyInterval Time} (P : W → Event Time → Prop) (w : W)
+    (hSub : t₁ ≤ t₂) (h : atState P w t₁) : atState P w t₂ :=
   let ⟨e, hOv, hP⟩ := h
-  ⟨e, ⟨le_trans hOv.1 hSub.2, le_trans hSub.1 hOv.2⟩, hP⟩
+  ⟨e, ⟨le_trans hOv.1 (NonemptyInterval.le_def.mp hSub).2,
+       le_trans (NonemptyInterval.le_def.mp hSub).1 hOv.2⟩, hP⟩
 
 /-! ### Forward expansion
 
 [condoravdi-2002]: modals expand the evaluation time forward to `[t, _)`
-rather than shifting it. Since `Interval` requires finite bounds, the
+rather than shifting it. Since `NonemptyInterval` requires finite bounds, the
 constraints are expressed directly: for events the runtime starts at or after
 `t`; for states it persists at or past `t`. -/
 
 /-- Event instantiated in the future of `t` — `AT([t, _), w, P)` for eventive
     `P`: the event starts at or after `t`. -/
 def atEventForward (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∃ e : Event Time, t ≤ e.τ.start ∧ P w e
+  ∃ e : Event Time, t ≤ e.τ.fst ∧ P w e
 
 /-- State instantiated through `t` — `AT([t, _), w, P)` for stative `P`: the
     state persists at or past `t`. -/
 def atStateForward (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∃ e : Event Time, t ≤ e.τ.finish ∧ P w e
+  ∃ e : Event Time, t ≤ e.τ.snd ∧ P w e
 
 /-- Forward AT, dispatching on eventuality sort. -/
 def atForward (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : Time) :
@@ -128,17 +128,17 @@ def atForward (sort : Dynamicity) (P : W → Event Time → Prop) (w : W) (t : T
 theorem atStateForward_of_atEventForward (P : W → Event Time → Prop) (w : W)
     (t : Time) (h : atEventForward P w t) : atStateForward P w t :=
   let ⟨e, hStart, hP⟩ := h
-  ⟨e, le_trans hStart e.τ.valid, hP⟩
+  ⟨e, le_trans hStart e.τ.fst_le_snd, hP⟩
 
 /-- `atEvent` at a point `[t, t]` implies `atEventForward` at `t`. -/
 theorem atEventForward_of_atEvent_point (P : W → Event Time → Prop) (w : W) (t : Time)
-    (h : atEvent P w (Interval.point t)) : atEventForward P w t :=
+    (h : atEvent P w (NonemptyInterval.pure t)) : atEventForward P w t :=
   let ⟨e, hSub, hP⟩ := h
   ⟨e, hSub.1, hP⟩
 
 /-- `atState` at a point `[t, t]` implies `atStateForward` at `t`. -/
 theorem atStateForward_of_atState_point (P : W → Event Time → Prop) (w : W) (t : Time)
-    (h : atState P w (Interval.point t)) : atStateForward P w t :=
+    (h : atState P w (NonemptyInterval.pure t)) : atStateForward P w t :=
   let ⟨e, hOv, hP⟩ := h
   ⟨e, hOv.2, hP⟩
 
@@ -153,13 +153,13 @@ variable {W Time : Type*} [LinearOrder Time]
     temporal anchor is a single point. -/
 def pres (sort : Dynamicity) (P : W → Event Time → Prop) (t : Time)
     (w : W) : Prop :=
-  at' sort P w (Interval.point t)
+  at' sort P w (NonemptyInterval.pure t)
 
 /-- Perfect: shifts evaluation to a prior time. There is some `t' < t` at
     which the property holds. -/
 def perf (sort : Dynamicity) (P : W → Event Time → Prop) (w : W)
     (t : Time) : Prop :=
-  ∃ t' : Time, t' < t ∧ at' sort P w (Interval.point t')
+  ∃ t' : Time, t' < t ∧ at' sort P w (NonemptyInterval.pure t')
 
 /-! ### Modal cores vs. prospective modals
 
@@ -175,7 +175,7 @@ prospective operator; `may_of_mayCore_dynamic` relates the two. -/
     the point `t` in `w'`. No forward expansion. -/
 def mayCore (MB : W → Time → Set W) (sort : Dynamicity)
     (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∃ w' ∈ MB w t, at' sort P w' (Interval.point t)
+  ∃ w' ∈ MB w t, at' sort P w' (NonemptyInterval.pure t)
 
 /-- MAY/MIGHT: existential quantification over the modal base, with
     forward temporal expansion. The English modal lexicalizes the
@@ -188,7 +188,7 @@ def may (MB : W → Time → Set W) (sort : Dynamicity)
     the point `t` in `w'`. No forward expansion. -/
 def wollCore (MB : W → Time → Set W) (sort : Dynamicity)
     (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
-  ∀ w' ∈ MB w t, at' sort P w' (Interval.point t)
+  ∀ w' ∈ MB w t, at' sort P w' (NonemptyInterval.pure t)
 
 /-- WOLL: universal quantification over the modal base, with forward
     temporal expansion. The untensed modal underlying *will* / *would*. -/
@@ -286,17 +286,17 @@ theorem perf_eventive_implies_perfSimple
     (P : W → Event Time → Prop) (w : W) (t : Time)
     (h : perf .dynamic P w t) : perfSimple P ⟨w, t⟩ := by
   obtain ⟨t', hlt, e, hSub, hP⟩ := h
-  exact ⟨⟨t', t, le_of_lt hlt⟩, rfl, e,
-    ⟨hSub.1, le_trans hSub.2 (le_of_lt hlt)⟩, hP⟩
+  exact ⟨⟨⟨t', t⟩, le_of_lt hlt⟩, rfl, e,
+    NonemptyInterval.le_def.mpr ⟨(NonemptyInterval.le_def.mp hSub).1,
+      le_trans (NonemptyInterval.le_def.mp hSub).2 (le_of_lt hlt)⟩, hP⟩
 
 /-- [klein-1994]'s imperfective entails Condoravdi's stative AT: proper
     inclusion of the reference interval in the event runtime implies overlap. -/
-theorem atState_of_impf (P : W → Event Time → Prop) (w : W) (t : Interval Time)
+theorem atState_of_impf (P : W → Event Time → Prop) (w : W) (t : NonemptyInterval Time)
     (h : IMPF P w t) : atState P w t :=
   let ⟨e, hPSub, hP⟩ := h
   have hOv : e.τ.overlaps t :=
-    Interval.overlaps_symm (Interval.subinterval_overlaps
-      (Interval.properSubinterval_implies_subinterval _ _ hPSub))
+    NonemptyInterval.overlaps_symm (NonemptyInterval.overlaps_of_le (le_of_lt hPSub))
   ⟨e, hOv, hP⟩
 
 end KleinBridge
@@ -378,7 +378,7 @@ def tomorrow (now : Time) : Set Time := {t | now < t}
       instantiation time. Projected region: `(-∞, now)`.
 
     Note: the eventive/stative distinction is *not* recorded here. The
-    AT relation permits `now = e.start` for `atEventForward`, so the
+    AT relation permits `now = e.fst` for `atEventForward`, so the
     table-style "now is incompatible with eventive future" prediction
     of the original paper is a pragmatic event-duration fact that
     `compatible` does not formally exclude. -/
