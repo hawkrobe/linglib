@@ -308,9 +308,8 @@ instance {α : Type*} : Core.Order.Branching (Planar α) := ⟨Planar.children�
 @[simp] theorem branching_children {α : Type*} (t : Planar α) :
     Core.Order.Branching.children t = t.children := rfl
 
-noncomputable instance {α : Type*} : Core.Order.FiniteBranching (Planar α) where
-  measure := sizeOf
-  measure_children {c t} hc := by
+instance {α : Type*} : Core.Order.IsFiniteBranching (Planar α) :=
+  .ofMeasure sizeOf fun {c t} hc => by
     cases t with
     | node a cs =>
       simp only [branching_children, Planar.children] at hc

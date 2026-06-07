@@ -2,6 +2,7 @@ import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command
 import Mathlib.Algebra.Free
+import Mathlib.Util.CompileInductive
 
 /-!
 # `Branching`: the rose-tree interface
@@ -27,8 +28,9 @@ machinery recurses on the *path* (structurally decreasing `List Nat`),
 not on `T`, so `Branching` is law-free on the carrier and still
 theorem-rich; carriers with infinite depth are admissible. Recursion
 *on the carrier* (`size`, `subtrees`, `yield`, `inductionOn`) needs
-the `FiniteBranching` mixin below, whose one law — children strictly
-decrease `sizeOf` — concrete inductives discharge by `cases` + `omega`.
+the `IsFiniteBranching` mixin below, a `Prop`-valued well-foundedness
+assertion on the child relation (mathlib idiom: structure-bearing
+class + `Is…` Prop mixin, like `RootedTree` + `IsPredArchimedean`).
 
 Known instance candidates across the library (2026-06-06 audit):
 `Syntax.Tree` (constituency), `NanoTree` (Nanosyntax features),
@@ -49,6 +51,9 @@ class Branching (T : Type*) where
 namespace Branching
 
 variable {T : Type*} [Branching T]
+
+/-- The "is a child of" relation on a `Branching` carrier. -/
+def IsChild (c t : T) : Prop := c ∈ children t
 
 /-- Daughters of a node — `children`, by its linguistic name. -/
 abbrev daughters (t : T) : List T := children t
@@ -117,73 +122,95 @@ def toTreeOrder (t : T) : TreeOrder TreePath where
 
 end Branching
 
-/-! ### `FiniteBranching`: the recursion mixin
+/-! ### `IsFiniteBranching`: the well-foundedness mixin
 
-Recursion *on the carrier* (size, subtree enumeration, yield,
-induction) is not definable from `Branching` alone: Lean cannot see
-structural decrease through a class field. The mixin supplies the
-missing data — a `Nat`-valued `measure` that children strictly
-decrease — which concrete inductive carriers discharge by `cases` +
-`omega` over their auto-derived `SizeOf` (the canonical choice
-`measure := sizeOf`).
+`Prop`-valued mixin asserting that `Branching.IsChild` is well-founded
+on `T` — i.e. every descent chain is finite. Unlocks carrier recursion
+(`size`, `subtrees`, `yield`, `inductionOn`) via `WellFounded.fix`.
 
-The measure is carried as class *data* rather than reusing an ambient
-`[SizeOf T]` index: a class indexed by `[SizeOf T]` cannot have its
-instances synthesised (the type parameter stays a metavariable through
-the rigid `SizeOf` index — `FiniteBranching (Tree ℕ String)` fails to
-unify with `FiniteBranching (Tree ?m ?n)`), so the recursion API would
-be unusable. An owned `measure : T → Nat` field sidesteps this while
-keeping `termination_by FiniteBranching.measure t` available. -/
+Mathlib idiom: structure-bearing class (`Branching`) + `Is…` Prop
+mixin asserting a property (`IsFiniteBranching`), like `PartialOrder`
++ `IsPredArchimedean` in `RootedTree`. The mixin is `Prop` so
+instances are never `noncomputable`; concrete inductives discharge it
+via `Subrelation.wf` against the auto-derived `sizeOf` well-founded
+relation (one-liner per instance). Carriers without auto-`SizeOf`
+(e.g. `FreeMagma`, whose `genSizeOfSpec` is `false`) discharge via
+`Acc.intro` + the carrier's recursor.
 
-/-- A `Branching` carrier with a `Nat` `measure` that children strictly
-decrease. Unlocks carrier recursion: `size`, `subtrees`, `yield`,
-`inductionOn`. Concrete inductives instantiate `measure := sizeOf`. -/
-class FiniteBranching (T : Type*) extends Branching T where
-  /-- A well-founded measure for carrier recursion (canonically `sizeOf`). -/
-  measure : T → Nat
-  /-- Children strictly decrease the `measure`. -/
-  measure_children : ∀ {c t : T}, c ∈ Branching.children t → measure c < measure t
+Previously this was a data class carrying `measure : T → Nat`, but
+that design forced `noncomputable` on inductive instances (LCNF crash
+on nested-`List` recursors) and broke equation-theorem elaboration
+for downstream WF defs. The redesign — `Prop` mixin +
+`compile_inductive%` at inductive definition sites — fixes both. -/
+
+/-- A `Branching` carrier whose "is a child of" relation is well-founded
+— i.e. every descent chain ends. Unlocks carrier recursion. -/
+class IsFiniteBranching (T : Type*) [Branching T] : Prop where
+  wf : WellFounded (Branching.IsChild : T → T → Prop)
+
+/-- Build `IsFiniteBranching T` from any `Nat`-valued measure that
+children strictly decrease (canonically `sizeOf` for inductives). -/
+theorem IsFiniteBranching.ofMeasure {T : Type*} [Branching T] (m : T → Nat)
+    (h : ∀ {c t : T}, c ∈ Branching.children t → m c < m t) :
+    IsFiniteBranching T :=
+  ⟨⟨fun t => by
+    suffices aux : ∀ n, ∀ t, m t = n → Acc (Branching.IsChild) t by exact aux _ t rfl
+    intro n
+    induction n using Nat.strong_induction_on with
+    | _ n ih =>
+      intro t ht
+      refine .intro _ (fun c hc => ?_)
+      exact ih (m c) (ht ▸ h hc) c rfl⟩⟩
 
 namespace Branching
 
-variable {T : Type*} [FiniteBranching T]
+variable {T : Type*} [Branching T] [IsFiniteBranching T]
 
 /-- Number of nodes. -/
 def size (t : T) : Nat :=
-  1 + ((children t).attach.map (fun ⟨c, hc⟩ => size c)).sum
-termination_by FiniteBranching.measure t
-decreasing_by exact FiniteBranching.measure_children hc
+  IsFiniteBranching.wf.fix (fun t ih => 1 + ((children t).attach.map
+    (fun ⟨c, hc⟩ => ih c hc)).sum) t
+
+/-- One-step unfolding of `size`. Proved by `WellFounded.fix_eq`. -/
+theorem size_eq (t : T) :
+    size t = 1 + ((children t).attach.map (fun ⟨c, _⟩ => size c)).sum :=
+  IsFiniteBranching.wf.fix_eq _ t
 
 /-- Attach-free unfolding of `size`, for concrete computation. -/
 theorem size_def (t : T) :
     size t = 1 + ((children t).map size).sum := by
-  rw [size, List.attach_map_val]
+  rw [size_eq, List.attach_map_val]
 
 /-- All subtrees including self, pre-order. -/
 def subtrees (t : T) : List T :=
-  t :: (children t).attach.flatMap (fun ⟨c, hc⟩ => subtrees c)
-termination_by FiniteBranching.measure t
-decreasing_by exact FiniteBranching.measure_children hc
+  IsFiniteBranching.wf.fix (fun t ih =>
+    t :: (children t).attach.flatMap (fun ⟨c, hc⟩ => ih c hc)) t
+
+theorem subtrees_eq (t : T) :
+    subtrees t = t :: (children t).attach.flatMap (fun ⟨c, _⟩ => subtrees c) :=
+  IsFiniteBranching.wf.fix_eq _ t
 
 /-- Attach-free unfolding of `subtrees`, for concrete computation. -/
 theorem subtrees_def (t : T) :
     subtrees t = t :: (children t).flatMap subtrees := by
-  rw [subtrees]
+  rw [subtrees_eq]
   simp [List.flatMap_def]
 
 theorem self_mem_subtrees (t : T) : t ∈ subtrees t := by
-  rw [subtrees]; exact List.mem_cons_self ..
+  rw [subtrees_eq]; exact List.mem_cons_self ..
 
-/-- Strong induction over a `FiniteBranching` carrier: prove `motive t`
-from `motive` on all children. -/
-theorem inductionOn {motive : T → Prop} (t : T)
-    (ih : ∀ t, (∀ c ∈ children t, motive c) → motive t) : motive t := by
-  induction ht : FiniteBranching.measure t using Nat.strong_induction_on
-    generalizing t with
-  | _ n ihn =>
-    subst ht
-    exact ih t fun c hc =>
-      ihn (FiniteBranching.measure c) (FiniteBranching.measure_children hc) c rfl
+/-- Strong induction over an `IsFiniteBranching` carrier: prove
+`motive t` from `motive` on all children. Canonical mathlib pattern —
+delegates to `WellFounded.fix`. -/
+@[elab_as_elim]
+def inductionOn {motive : T → Sort*} (t : T)
+    (ih : ∀ t, (∀ c, c ∈ children t → motive c) → motive t) : motive t :=
+  IsFiniteBranching.wf.fix (fun t IH => ih t fun c hc => IH c hc) t
+
+theorem inductionOn_eq {motive : T → Sort*} (t : T)
+    (ih : ∀ t, (∀ c, c ∈ children t → motive c) → motive t) :
+    inductionOn t ih = ih t (fun c _ => inductionOn c ih) :=
+  IsFiniteBranching.wf.fix_eq _ t
 
 end Branching
 
@@ -193,7 +220,10 @@ Separate class because not every rose-tree carrier has terminal
 content (Nanosyntax trees carry features on every node; CFG derivation
 trees distinguish terminal from nonterminal types). -/
 
-/-- Carriers whose nodes may carry pronounceable terminal content. -/
+/-- Carriers whose nodes may carry pronounceable terminal content.
+`W` is an `outParam`: in linguistics use each carrier has one content
+reading. (Multi-content scenarios — phonological vs orthographic — can
+be supported via different wrapper types if needed.) -/
 class HasContent (T : Type*) (W : outParam Type*) where
   /-- Terminal content, if any. -/
   content? : T → Option W
@@ -202,19 +232,24 @@ export HasContent (content?)
 
 namespace Branching
 
-variable {T W : Type*} [FiniteBranching T] [HasContent T W]
+variable {T W : Type*} [Branching T] [IsFiniteBranching T] [HasContent T W]
 
 /-- Terminal yield, left to right: the frontier string. The most basic
 tree-to-string map — linear precedence lives over it. -/
 def yield (t : T) : List W :=
-  (content? t).toList ++ (children t).attach.flatMap (fun ⟨c, hc⟩ => yield c)
-termination_by FiniteBranching.measure t
-decreasing_by exact FiniteBranching.measure_children hc
+  IsFiniteBranching.wf.fix (fun t ih =>
+    (content? t).toList ++
+      (children t).attach.flatMap (fun ⟨c, hc⟩ => ih c hc)) t
+
+theorem yield_eq (t : T) :
+    yield t = (content? t).toList ++
+      (children t).attach.flatMap (fun ⟨c, _⟩ => yield c) :=
+  IsFiniteBranching.wf.fix_eq _ t
 
 /-- Attach-free unfolding of `yield`, for concrete computation. -/
 theorem yield_def (t : T) :
     yield t = (content? t).toList ++ (children t).flatMap yield := by
-  rw [yield]
+  rw [yield_eq]
   simp [List.flatMap_def]
 
 end Branching
@@ -223,9 +258,10 @@ end Branching
 
 Mathlib's free magma is the binary rose tree (bare phrase structure in
 the Minimalist reading); the instance lives here because mathlib types
-take their instances in the class's home file. The bespoke
-`FreeMagma.toTree` bridge in `Syntax/Tree/Basic.lean` becomes one of
-two routes to the position machinery — this instance is the direct one. -/
+take their instances in the class's home file. `FreeMagma` is declared
+with `set_option genSizeOfSpec false`, so `IsFiniteBranching` cannot
+use the `sizeOf` shortcut — but the inductive recursor `FreeMagma.recOnMul`
+suffices for a direct `Acc.intro` proof. -/
 
 instance {α : Type*} : Branching (FreeMagma α) where
   children
@@ -238,15 +274,16 @@ instance {α : Type*} : Branching (FreeMagma α) where
 @[simp] theorem freeMagma_children_mul {α : Type*} (l r : FreeMagma α) :
     Branching.children (l.mul r) = [l, r] := rfl
 
-instance {α : Type*} : FiniteBranching (FreeMagma α) where
-  measure := sizeOf
-  measure_children {c t} hc := by
-    cases t with
-    | of _ => simp [Branching.children] at hc
-    | mul l r =>
-      simp only [Branching.children, List.mem_cons, List.not_mem_nil, or_false] at hc
-      have hmul : sizeOf (FreeMagma.mul l r) = 1 + sizeOf l + sizeOf r := rfl
-      rcases hc with rfl | rfl <;> omega
+instance {α : Type*} : IsFiniteBranching (FreeMagma α) where
+  wf := ⟨FreeMagma.rec
+    (fun _ => .intro _ (fun c hc => by
+      simp [Branching.IsChild, Branching.children] at hc))
+    (fun _ _ ihl ihr => .intro _ (fun c hc => by
+      simp only [Branching.IsChild, Branching.children, List.mem_cons,
+        List.not_mem_nil, or_false] at hc
+      rcases hc with rfl | rfl
+      · exact ihl
+      · exact ihr))⟩
 
 /-! ### Decidable command relations over `toTreeOrder`
 
@@ -318,5 +355,13 @@ abbrev cCommandAt (t : T) : Set (TreePath × TreePath) :=
   commandRelation (toTreeOrder t) {p | isBranchingAt t p}
 
 end Branching
+
+/-! ### Computability sentinels
+
+`Branching.size`/`yield` on `FreeMagma` reduce by `decide` at concrete
+data — protecting against `noncomputable`-regressions during refactors. -/
+
+example : Branching.size (FreeMagma.of (1 : ℕ)) = 1 := by
+  rw [Branching.size_def]; rfl
 
 end Core.Order
