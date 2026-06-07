@@ -7,100 +7,60 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# DLM training: Endstate Learning vs Frequency-Informed Learning
+# DLM training: endstate vs frequency-informed learning
 [baayen-2019] [gahl-baayen-2024] [heitmeier-chuang-baayen-2026]
 
-Sibling to `Defs.lean`, `Normed.lean`, `Measures.lean`. Hosts the
-substrate for **what counts as a learned production map** — the
-optimization characterization of EndState Learning (EL) and
-Frequency-Informed Learning (FIL).
+What counts as a learned production map: the optimization characterization
+of EndState Learning (EL) and Frequency-Informed Learning (FIL). The
+cognitive theory choice IS the choice of frequency weights `q`; the
+optimization — minimise the weighted squared loss — is fixed across
+theories. `FrequencyVector` is [gahl-baayen-2024]'s diagonal `Q`
+(appendix §A1.3); [heitmeier-chuang-baayen-2026] (ch. 6) introduces the
+same device with max-normalised entries applied as `√P` premultiplication
+of both `S` and `C` — `ermSolution_iff_rescaled` connects the two forms.
 
-## Paper-faithful representation: `FrequencyVector` (= paper's `Q`)
+## Main declarations
 
-`FrequencyVector m` is the type-faithful representation of paper
-[gahl-baayen-2024]'s diagonal frequency matrix `Q` (appendix §A1.3):
-one nonneg weight per usage event. The book
-[heitmeier-chuang-baayen-2026] introduces the same device (ch. 6,
-Background box on frequency-informed learning) as a diagonal `P` with
-max-normalised entries applied as `√P` premultiplication of both `S`
-and `C`; `ermSolution_iff_rescaled` connects the normalised and raw
-forms. We do *not* normalise to a probability distribution; the
-Gahl–Baayen paper works with raw counts. The PMF
-view is a derived bridge — call `PMF.ofRealWeightFn` from
-`Core.Probability.Constructions` directly when cross-tradition
-theorems require it. The ERM-equivalence between raw `q` and
-normalised `q.normalize` is proved in the sibling file
-`RescalingInvariance.lean`.
-
-The cognitive interpretation: `q i` is the number of times the
-learner has experienced event `i`. EL corresponds to type-uniform
-weights (`q ≡ 1`); FIL corresponds to token-frequency weights
-(`q i = #occurrences`).
-
-## What this file establishes
-
-The substantive cross-framework structure. Different cognitive
-theories of learning correspond to different choices of `q`; the
-substrate captures the architecture in which those theories diverge:
-
-- `weightedLoss data q G` — the per-event squared-error loss
-  weighted by `q`. Paper appendix §A1.3 of [gahl-baayen-2024].
-- `IsERMSolution data q G` — `G` minimises the weighted loss. The
-  cognitive theory choice IS the choice of `q`; the optimization
-  procedure is fixed.
-- `IsELSolution data G` and `IsFILSolution data q G` — abbrevs
-  capturing the type-uniform and frequency-weighted cases.
-- `weightedLoss_smul_frequency` — loss is linear in `q`.
-- `ermSolution_iff_rescaled` — **T-Rescaling**: the ERM solution
-  is invariant under positive rescaling of `q`. Relative
-  frequencies matter; absolute scale doesn't. (Paper §3.1
-  appendix discussion of the equivalent FIL forms.)
-- `weightedLoss_zero_event_drops` — **T-Support (weak form)**:
-  events with `q i = 0` contribute nothing to the loss. Novel
-  unattested events don't update the lexicon.
-- `isELSolution_eq_isERM_uniform` — **T-Uniform-EL-equivalence**:
-  EL is ERM under the constant-1 frequency vector. Definitional.
-- `IsERMSolution.coordResidual_le` — **T-Coordinate-optimality**:
-  the loss separates across form coordinates (each column of `G` an
-  independent regression, [heitmeier-chuang-baayen-2026] ch. 6), so
-  an ERM solution's weighted residual at any coordinate is at most
-  that of any linear decoder of it. No sign condition on `q`.
-- `IsERMSolution.coord_eq_of_decodable` — **T-Decodable-exact-fit**:
-  zero-residual case — an exactly decodable form coordinate is
-  reproduced exactly on every positively-weighted event. Corollaries
-  `IsTrainedOn.semSup_eq_of_decodable` / `semSupWord_eq_of_decodable`:
-  trained `semSup` (and the book's *Semantic Support for Form*)
-  equals the observed form values there — the architectural core of
+* `TrainingExperience`, `FrequencyVector`, `weightedLoss`,
+  `IsERMSolution` — data, weights, loss, and minimiser Prop;
+  `IsELSolution` / `IsFILSolution` are the uniform and
+  frequency-weighted cases.
+* `ermSolution_iff_rescaled` — **T-Rescaling**: ERM solutions are
+  invariant under positive rescaling of `q`.
+* `weightedLoss_zero_event_drops` — **T-Support**: unexperienced
+  events cannot update the lexicon.
+* `coordResidual`, `weightedLoss_eq_sum_coordResidual` —
+  **T-Separability**: the loss is a sum of per-coordinate regression
+  residuals.
+* `isERMSolution_iff_coordResidual` — **T-Coordinate-optimality**:
+  ERM = columnwise-unbeatable regression; no sign condition on `q`.
+* `IsERMSolution.coord_eq_of_decodable` — **T-Decodable-exact-fit**:
+  an exactly decodable form coordinate is reproduced exactly under
+  positive weights; corollaries `IsTrainedOn.semSup_eq_of_decodable`
+  and `semSupWord_eq_of_decodable` transfer this to the semantic-
+  support measures — the architectural core of
   [saito-tomaschek-baayen-2025]'s inflectional-status finding.
+* `isERMSolution_of_interpolates` — **T-Interpolation**:
+  interpolating maps are ERM, so `IsERMSolution` is nonvacuous on
+  interpolable data.
 
-## What this file does NOT do
+## Implementation notes
 
-This is **not** generic regression formalization. The substrate
-captures:
+This is not generic regression formalization: the loss function is the
+cognitive commitment ([gahl-baayen-2024] §3) and the frequency-weight
+parameterisation is the cross-theory axis. `squaredDist` is the L²
+kernel the quadratic loss uses, distinct from `Normed.lean`'s sup-norm
+carrier structure. The PMF view of `q.normalize` is a derived bridge
+(`PMF.ofRealWeightFn` in `Core.Probability.Constructions`).
 
-1. The **loss function** `weightedLoss` as the cognitive commitment
-   (paper §3 of [gahl-baayen-2024]: minimising squared error
-   per usage event is what the learner does).
-2. The **frequency-weight parameterisation** as the cross-theory
-   axis (paper §3.1 distinguishes EL from FIL only via `q`).
+## TODO
 
-We do *not* formalise:
-
-- The **closed-form** `(SᵀQS)⁻¹SᵀQC` — that's matrix algebra,
-  not theory-specific. A future `Training/ClosedForm.lean` could
-  derive it from the optimization characterization here as a
-  theorem (= "the closed form is the unique minimum when `SᵀQS`
-  is invertible") — but that's regression formalization in the
-  service of showing equivalence to the optimization picture.
-- The **iterative Widrow-Hoff** convergence to `IsFILSolution`
-  (paper appendix §A5.1; [heitmeier-chuang-baayen-2026]
-  Heitmeier 2024 argument). Defer until a 2nd consumer needs it.
-- The **PMF / ERM-theoretic** reformulation. Mathematically
-  equivalent in finite case, but interpretively additive — the
-  paper authors avoid framing this as ERM under empirical
-  distributions (see §6.4: "we would caution against reifying any
-  particular variable on the basis of its predictiveness"). A
-  derived PMF view is straightforward via normalization.
+* General existence `exists_isERMSolution` via the normal equations /
+  closed form `G = (SᵀS)⁻¹SᵀC` ([heitmeier-chuang-baayen-2026] ch. 6)
+  — a future `Training/ClosedForm.lean`.
+* Iterative Widrow-Hoff convergence to the FIL solution.
+* Approximate-decodability gap bounds for `semSup` (quantitative form
+  of the Saito contrast).
 -/
 
 namespace Processing.Lexical.Discriminative
@@ -177,6 +137,12 @@ def FrequencyVector.normalize (q : FrequencyVector m) : FrequencyVector m :=
 def squaredDist (a b : FormVec n) : ℝ :=
   ∑ j, (a j - b j) ^ 2
 
+theorem squaredDist_self (a : FormVec n) : squaredDist a a = 0 :=
+  Finset.sum_eq_zero fun _ _ => by rw [sub_self]; ring
+
+theorem squaredDist_nonneg (a b : FormVec n) : 0 ≤ squaredDist a b :=
+  Finset.sum_nonneg fun _ _ => sq_nonneg _
+
 /-- The **frequency-weighted training loss** for a candidate
     production map `G`:
 
@@ -195,6 +161,12 @@ def weightedLoss
     (data : TrainingExperience m n d) (q : FrequencyVector m)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : ℝ :=
   ∑ i, q i * squaredDist (G (data.meanings i)) (data.forms i)
+
+theorem weightedLoss_nonneg
+    (data : TrainingExperience m n d) {q : FrequencyVector m}
+    (hq : ∀ i, 0 ≤ q i) (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    0 ≤ weightedLoss data q G :=
+  Finset.sum_nonneg fun k _ => mul_nonneg (hq k) (squaredDist_nonneg _ _)
 
 /-! ### Solution Props: ERM, EL, FIL -/
 
@@ -323,13 +295,35 @@ theorem isELSolution_eq_isERM_uniform
 
 /-! ### Per-coordinate residual optimality
 
-The loss is separable across form coordinates: each column of `G`
+The loss separates across form coordinates: each column of `G`
 regresses one cue's support on the semantic dimensions, "optimal in
-the least-squares sense" ([heitmeier-chuang-baayen-2026] ch. 6).
-So an ERM solution must be coordinatewise unbeatable — replacing one
-coordinate of the map with any linear functional cannot lower the
-loss — and a coordinate that some functional decodes exactly is
-reproduced exactly. -/
+the least-squares sense" ([heitmeier-chuang-baayen-2026] ch. 6). So
+ERM is exactly columnwise unbeatability, and a coordinate that some
+functional decodes exactly is reproduced exactly. -/
+
+/-- Weighted squared residual of a predicted column `pred` against
+    form coordinate `j₀` of the training data. -/
+def coordResidual (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (pred : Fin m → ℝ) (j₀ : Fin n) : ℝ :=
+  ∑ k, q k * (pred k - data.forms k j₀) ^ 2
+
+theorem coordResidual_nonneg
+    (data : TrainingExperience m n d) {q : FrequencyVector m}
+    (hq : ∀ i, 0 ≤ q i) (pred : Fin m → ℝ) (j₀ : Fin n) :
+    0 ≤ coordResidual data q pred j₀ :=
+  Finset.sum_nonneg fun k _ => mul_nonneg (hq k) (sq_nonneg _)
+
+/-- **T-Separability**: the weighted loss is the sum over form
+    coordinates of the per-coordinate residuals — each column of the
+    production map is an independent regression. -/
+theorem weightedLoss_eq_sum_coordResidual
+    (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    weightedLoss data q G
+      = ∑ j, coordResidual data q (fun k => G (data.meanings k) j) j := by
+  unfold weightedLoss squaredDist coordResidual
+  simp_rw [Finset.mul_sum]
+  exact Finset.sum_comm
 
 private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
     squaredDist (Function.update a j₀ x) b
@@ -338,71 +332,99 @@ private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
   have h : ∀ j, (Function.update a j₀ x j - b j) ^ 2
       = Function.update (fun j' => (a j' - b j') ^ 2) j₀ ((x - b j₀) ^ 2) j := fun j => by
     rcases eq_or_ne j j₀ with hj | hj
-    · subst hj; simp
-    · simp [Function.update_of_ne hj]
+    · subst hj; simp only [Function.update_self]
+    · simp only [Function.update_of_ne hj]
   rw [Finset.sum_congr rfl fun j _ => h j,
     Finset.sum_update_of_mem (Finset.mem_univ j₀),
     Finset.sum_eq_sum_diff_singleton_add (Finset.mem_univ j₀)
       (fun j' => (a j' - b j') ^ 2)]
   ring
 
-/-- **T-Coordinate-optimality**: at any form coordinate `j₀`, an ERM solution's
-    weighted squared residual is at most that of any linear functional `w` of
-    the meanings — the endstate mappings have "the lowest possible error across
-    all word forms" ([heitmeier-chuang-baayen-2026] ch. 6) coordinatewise.
-    No sign condition on `q` is required. -/
-theorem IsERMSolution.coordResidual_le
-    {data : TrainingExperience m n d} {q : FrequencyVector m}
-    {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : IsERMSolution data q G)
-    (j₀ : Fin n) (w : MeaningVec d →ₗ[ℝ] ℝ) :
-    ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2
-      ≤ ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 := by
-  -- the competitor: `G` with coordinate `j₀` replaced by `w`
-  set G' : MeaningVec d →ₗ[ℝ] FormVec n :=
-    LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w) with hG'def
-  have hG'app : ∀ s, G' s = Function.update (G s) j₀ (w s) := fun s => by
-    funext j
-    rcases eq_or_ne j j₀ with hj | hj
-    · subst hj; simp [hG'def]
-    · simp [hG'def, Function.update_of_ne hj]
-  have hloss : weightedLoss data q G' = weightedLoss data q G
-      - ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2
-      + ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 := by
-    unfold weightedLoss
-    rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [hG'app, squaredDist_update]
-    ring
-  have h := hG G'
-  rw [hloss] at h
-  linarith
+/-- **T-Coordinate-optimality**: `G` is an ERM solution iff at every form
+    coordinate its column's residual is at most that of any linear
+    functional of the meanings — ERM is columnwise-unbeatable regression.
+    No sign condition on `q` in either direction. -/
+theorem isERMSolution_iff_coordResidual
+    (data : TrainingExperience m n d) (q : FrequencyVector m)
+    (G : MeaningVec d →ₗ[ℝ] FormVec n) :
+    IsERMSolution data q G ↔
+      ∀ (j₀ : Fin n) (w : MeaningVec d →ₗ[ℝ] ℝ),
+        coordResidual data q (fun k => G (data.meanings k) j₀) j₀
+          ≤ coordResidual data q (fun k => w (data.meanings k)) j₀ := by
+  constructor
+  · intro hG j₀ w
+    -- the competitor: `G` with coordinate `j₀` replaced by `w`
+    have happ : ∀ s,
+        LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w) s
+          = Function.update (G s) j₀ (w s) := fun s => by
+      funext j
+      rcases eq_or_ne j j₀ with hj | hj
+      · subst hj; simp only [LinearMap.pi_apply, Function.update_self]
+      · simp only [LinearMap.pi_apply, Function.update_of_ne hj,
+          LinearMap.comp_apply, LinearMap.proj_apply]
+    have hloss : weightedLoss data q
+          (LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w))
+        = weightedLoss data q G
+          - coordResidual data q (fun k => G (data.meanings k) j₀) j₀
+          + coordResidual data q (fun k => w (data.meanings k)) j₀ := by
+      unfold weightedLoss coordResidual
+      rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      rw [happ, squaredDist_update]
+      ring
+    have h := hG (LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w))
+    rw [hloss] at h
+    linarith
+  · intro h G'
+    rw [weightedLoss_eq_sum_coordResidual data q G,
+      weightedLoss_eq_sum_coordResidual data q G']
+    exact Finset.sum_le_sum fun j _ => h j ((LinearMap.proj j).comp G')
 
 /-- **T-Decodable-exact-fit**: if some linear functional `w` of the meanings
     exactly reproduces coordinate `j₀` of the observed forms, then any ERM
     solution under positive weights also reproduces it exactly on the
-    training events. Zero-residual case of `coordResidual_le`. -/
+    training events. Zero-residual case of `isERMSolution_iff_coordResidual`. -/
 theorem IsERMSolution.coord_eq_of_decodable
     {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 < q i)
     {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : IsERMSolution data q G)
     {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     G (data.meanings i) j₀ = data.forms i j₀ := by
-  have hle := hG.coordResidual_le j₀ w
-  have hB : ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 = 0 :=
-    Finset.sum_eq_zero fun k _ => by rw [hw k, sub_self]; ring
+  have hle := (isERMSolution_iff_coordResidual data q G).1 hG j₀ w
+  have hB : coordResidual data q (fun k => w (data.meanings k)) j₀ = 0 :=
+    Finset.sum_eq_zero fun k _ => by
+      show q k * (w (data.meanings k) - data.forms k j₀) ^ 2 = 0
+      rw [hw k, sub_self]; ring
   rw [hB] at hle
+  have h0 : coordResidual data q (fun k => G (data.meanings k) j₀) j₀ = 0 :=
+    le_antisymm hle (coordResidual_nonneg data (fun k => (hq k).le) _ _)
   have hnn : ∀ k ∈ Finset.univ,
       (0:ℝ) ≤ q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2 :=
     fun k _ => mul_nonneg (hq k).le (sq_nonneg _)
-  have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnn).1
-    (le_antisymm hle (Finset.sum_nonneg hnn)) i (Finset.mem_univ i)
+  have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnn).1 h0 i (Finset.mem_univ i)
   have hsq : (G (data.meanings i) j₀ - data.forms i j₀) ^ 2 = 0 :=
     (mul_eq_zero.1 hterm).resolve_left (hq i).ne'
   exact sub_eq_zero.1 (sq_eq_zero_iff.1 hsq)
 
+/-- **T-Interpolation**: a map that reproduces every training form exactly
+    is an ERM solution under any nonnegative weights — `IsERMSolution` is
+    nonvacuous whenever the data are linearly interpolable. -/
+theorem isERMSolution_of_interpolates
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 ≤ q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : ∀ i, G (data.meanings i) = data.forms i) :
+    IsERMSolution data q G := fun G' => by
+  have h0 : weightedLoss data q G = 0 :=
+    Finset.sum_eq_zero fun k _ => by rw [hG k, squaredDist_self, mul_zero]
+  rw [h0]
+  exact weightedLoss_nonneg data hq G'
+
 end TrainingSubstrate
 
 /-! ### Connection to `LinearDiscriminativeLexicon` -/
+
+section Connection
+
+variable {m n d : ℕ}
 
 /-- A `LinearDiscriminativeLexicon`'s production map is the
     **trained** production map for given training data and
@@ -413,7 +435,6 @@ end TrainingSubstrate
     a DLM's production map and a particular cognitive theory's
     training data. -/
 def LinearDiscriminativeLexicon.IsTrainedOn
-    {m n d : ℕ}
     (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
   IsERMSolution data q D.production
@@ -421,7 +442,6 @@ def LinearDiscriminativeLexicon.IsTrainedOn
 /-- A DLM is **EL-trained** for given data iff its production map is
     the type-uniform ERM solution. -/
 abbrev LinearDiscriminativeLexicon.IsELTrainedOn
-    {m n d : ℕ}
     (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) : Prop :=
   D.IsTrainedOn data (uniformFrequency m)
@@ -429,19 +449,18 @@ abbrev LinearDiscriminativeLexicon.IsELTrainedOn
 /-- A DLM is **FIL-trained** with a given frequency vector iff its
     production map is the corresponding ERM solution. -/
 abbrev LinearDiscriminativeLexicon.IsFILTrainedOn
-    {m n d : ℕ}
     (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
   D.IsTrainedOn data q
 
+variable {D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+  {data : TrainingExperience m n d} {q : FrequencyVector m}
+
 /-- A trained DLM's semantic support at a linearly decodable form coordinate
-    equals the observed form value on every training event. In particular any
-    contrast carried by that coordinate — categorical or graded — transfers
-    to `semSup` exactly. -/
+    equals the observed form value on every positively-weighted training
+    event; any contrast carried by that coordinate — categorical or graded —
+    transfers to `semSup` exactly. -/
 theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
-    {m n d : ℕ}
-    {D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
-    {data : TrainingExperience m n d} {q : FrequencyVector m}
     (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
@@ -452,9 +471,6 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
     over a word's cue coordinates — equals the sum of the observed form values
     whenever each coordinate is linearly decodable from the meanings. -/
 theorem LinearDiscriminativeLexicon.IsTrainedOn.semSupWord_eq_of_decodable
-    {m n d : ℕ}
-    {D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
-    {data : TrainingExperience m n d} {q : FrequencyVector m}
     (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
     {js : List (Fin n)}
     (hw : ∀ j ∈ js, ∃ w : MeaningVec d →ₗ[ℝ] ℝ,
@@ -466,5 +482,7 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSupWord_eq_of_decodable
   refine List.map_congr_left fun j hj => ?_
   obtain ⟨w, hwj⟩ := hw j hj
   exact hD.semSup_eq_of_decodable hq hwj i
+
+end Connection
 
 end Processing.Lexical.Discriminative

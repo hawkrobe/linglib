@@ -24,7 +24,7 @@ production models with an intermediate morpheme layer such as WEAVER++
   (paper §3.1).
 * `close_meanings_imply_close_form`: the substrate Lipschitz bound at those carriers —
   close meanings yield close predicted articulations.
-* `semSupSuffix_lt_of_forms_lt`: when the suffix triphone is linearly decodable from
+* `semSup_lt_of_forms_lt`: when the suffix triphone is linearly decodable from
   meanings, training alone gives suffix-bearing (inflected) words strictly greater
   suffix support — the direction of the paper's headline contrast.
 
@@ -76,7 +76,7 @@ trained DLM's `SemSupSuffix` reproduces it exactly, so a word carrying the
 suffix triphone (an inflected word) gets strictly greater suffix support than
 one lacking it: the direction of the paper's headline contrast (its Fig. 11),
 from the linear architecture alone. -/
-theorem semSupSuffix_lt_of_forms_lt
+theorem semSup_lt_of_forms_lt
     {m : ℕ} {D : GermanInflectionalDLM}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim}
     {q : FrequencyVector m}
