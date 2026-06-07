@@ -286,12 +286,6 @@ def sNodes {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set Node :
 def npNodes {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set Node :=
   {n | T.label n = .NP}
 
-/-- Branching nodes -/
-def branchingNodes {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set Node :=
-  {n | ∃ a b, T.properDom n a ∧ T.properDom n b ∧
-      (∀ c, T.properDom n c → T.properDom c a ∨ T.properDom c b ∨ c = a ∨ c = b) ∧
-      a ≠ b}
-
 /-- Maximal projections (simplified) -/
 def maximalProjections {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set Node :=
   {n | T.label n = .S ∨ T.label n = .NP ∨ T.label n = .VP ∨ T.label n = .PP}
@@ -301,10 +295,6 @@ def sCommand {Node : Type} [PartialOrder Node] (T : LabeledTree Node) := command
 
 /-- **NP-command** -/
 def npCommand {Node : Type} [PartialOrder Node] (T : LabeledTree Node) := commandRelation T.toTreeOrder (npNodes T)
-
-/-- **K-command** ([reinhart-1976]'s c-command, parameterized by branching nodes;
-    also [kayne-1984]) -/
-def kCommand {Node : Type} [PartialOrder Node] (T : TreeOrder Node) := commandRelation T (branchingNodes T)
 
 /-- **MAX-command** (approximates Chomsky's c-command) -/
 def maxCommand {Node : Type} [PartialOrder Node] (T : LabeledTree Node) := commandRelation T.toTreeOrder (maximalProjections T)

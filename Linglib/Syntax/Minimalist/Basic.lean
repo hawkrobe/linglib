@@ -3,6 +3,8 @@ import Mathlib.Data.Multiset.Basic
 import Mathlib.Algebra.Free
 import Linglib.Data.UD.Basic
 import Linglib.Core.Combinatorics.RootedTree.Decorated
+import Linglib.Core.Order.Branching
+import Linglib.Core.Order.Command
 
 /-!
 # Syntactic Objects and Containment
@@ -1145,6 +1147,44 @@ Cross-tradition unification via B&P's parametric command lives in
 `Core/Order/Command.lean` and is exercised by HPSG / DG, where its
 universal shape matches the native primitive. Minimalism's c-command
 does not reduce to it, so no bridge belongs here. -/
+
+/-- The B&P branching-node positions of the bare tree `a * (b * c)`
+    (the `FreeMagma` encoding, carrying the position tower of
+    `Core/Order/Branching.lean`). Leaf `a` sits at `⟨[0]⟩`, the root at
+    `⟨[]⟩`. -/
+private abbrev bpDivergenceTree : FreeMagma Nat :=
+  FreeMagma.mul (.of 0) (FreeMagma.mul (.of 1) (.of 2))
+
+/-- The `SyntacticObject` encoding of the same bare tree `a * (b * c)`,
+    on which `cCommandsIn` (sister-form c-command) is evaluated. -/
+private abbrev sisterDivergenceTree : SyntacticObject :=
+  SyntacticObject.leaf ⟨.simple .D [], 0⟩ *
+    (SyntacticObject.leaf ⟨.simple .V [], 1⟩ * SyntacticObject.leaf ⟨.simple .D [], 2⟩)
+
+/-- **B&P command ≠ sister-form c-command on `FreeMagma`.** On the bare
+    tree `a * (b * c)`, leaf `a` *does* B&P K-command the root
+    (`Core.Order.kCommand` over the dominance order: the only branching
+    strict ancestor of `a` is the root, which dominates everything, so
+    the defining universal holds), yet sister-form `cCommandsIn` rejects
+    `(a, root)` (`a`'s sister `b * c` does not contain the root). The two
+    relations are therefore not biconditionally equivalent, confirming
+    the note above ([barker-pullum-1990], [reinhart-1976]). -/
+theorem bp_command_ne_sister_cCommand :
+    (⟨[0]⟩, ⟨[]⟩) ∈
+      Core.Order.kCommand (Core.Order.Branching.toTreeOrder bpDivergenceTree) ∧
+    ¬ cCommandsIn sisterDivergenceTree
+        (SyntacticObject.leaf ⟨.simple .D [], 0⟩) sisterDivergenceTree := by
+  refine ⟨?_, by decide⟩
+  rw [Core.Order.kCommand, Core.Order.Branching.mem_commandRelation_toTreeOrder_iff]
+  intro x hx hne _
+  rw [List.mem_map] at hx
+  obtain ⟨l, hl, rfl⟩ := hx
+  have h0 : ([0] : List Nat).inits = [[], [0]] := by decide
+  rw [h0] at hl
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
+  rcases hl with rfl | rfl
+  · exact le_refl _
+  · exact absurd rfl hne
 
 /-! ## Multiset shape — abstract geometry over the nonplanar quotient
 

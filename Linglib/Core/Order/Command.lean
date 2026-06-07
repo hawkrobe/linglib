@@ -23,6 +23,8 @@ and s-command ([langacker-1969]).
 
 * `commandRelation T P` — pairs `(a, b)` where every P-upper-bound of `a`
   dominates `b`.
+* `branchingNodes T` / `kCommand T` — the branching-node generating
+  property and [reinhart-1976]'s c-command it generates.
 * `commandByRelation T R` — relation-based variant generalizing the
   property-based definition.
 * `mateRelation T P` — symmetric closure: `C_P ∩ (C_P)⁻¹`.
@@ -93,6 +95,29 @@ def idcCommand {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set (Nod
 /-- **Universal command**: `C_∅` — the least restrictive (everything commands everything). -/
 def universalCommand {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set (Node × Node) :=
   commandRelation T emptyProperty
+
+/-- **Branching nodes**: order-theoretic characterisation of nodes with
+    (at least) two distinct daughter-led descendant cones. A node `n` is
+    branching iff there are distinct `a, b` it properly dominates such
+    that every proper descendant `c` of `n` lies in `a`'s cone, `b`'s
+    cone, or is `a`/`b` itself.
+
+    This abstract characterisation is the generating property for
+    [reinhart-1976]'s c-command (`kCommand`). It is **not** the same set
+    as the carrier-geometric `Branching.isBranchingAt` (≥ 2 children at a
+    position): on small trees this set can be empty, making `kCommand`
+    vacuously universal — the divergence from sister-form c-command
+    proved in `Syntax/Minimalist/Basic.lean`. -/
+def branchingNodes {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set Node :=
+  {n | ∃ a b, T.properDom n a ∧ T.properDom n b ∧
+      (∀ c, T.properDom n c → T.properDom c a ∨ T.properDom c b ∨ c = a ∨ c = b) ∧
+      a ≠ b}
+
+/-- **K-command** ([reinhart-1976]'s c-command, parameterised by
+    branching nodes; also [kayne-1984]): the command relation generated
+    by `branchingNodes`. -/
+def kCommand {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set (Node × Node) :=
+  commandRelation T (branchingNodes T)
 
 /-- **IDc-command is the bottom** of the lattice: `IDc ⊆ C_P` for all `P ⊆ T.nodes`. -/
 theorem idc_is_bottom {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : Set Node) (hP : P ⊆ T.nodes) :
