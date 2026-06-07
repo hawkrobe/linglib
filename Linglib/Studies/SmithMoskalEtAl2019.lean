@@ -301,7 +301,7 @@ open Morphology.DomainLocality
     ABS, position 1 is ERG, position 2 is DAT. Positions outside this
     range have no case interpretation (`none`); they default to the
     non-oblique domain in `caseDomainPartition`. -/
-def caseAtPos : Nat → Option Features.Case
+def caseAtPos : Nat → Option Case
   | 0 => some .abs
   | 1 => some .erg
   | 2 => some .dat

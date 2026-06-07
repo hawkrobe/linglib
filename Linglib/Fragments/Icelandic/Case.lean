@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 /-!
 # Icelandic Case Inventory
 [thrainsson-2007]

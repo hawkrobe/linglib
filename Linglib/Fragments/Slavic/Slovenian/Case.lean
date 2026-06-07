@@ -16,6 +16,6 @@ directory name `Slovenian` is historical; Priestly's chapter title is
 
 namespace Slovenian.Case
 
-abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
+abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
 
 end Slovenian.Case

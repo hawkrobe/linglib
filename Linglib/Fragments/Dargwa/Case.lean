@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 /-!
 # Dargwa (Tanti) Case Inventory [sumbatova-2021]
 
@@ -32,12 +32,12 @@ namespace Dargwa.Case
 /-- Dargwa grammatical case inventory: ABS(∅), ERG(-li), GEN(-la, -lla),
     DAT(-ž), COM(-c:ele), ADV(-le).
 
-    We use `Features.Case` values. The adverbial case is mapped to `ess`
+    We use `Case` values. The adverbial case is mapped to `ess`
     (essive) as the closest typological equivalent — it marks
     "being-in-a-state" predicates, analogous to the Finnish essive.
 
     Genitive has two allomorphs: -la and -lla. -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.abs, .erg, .gen, .dat, .com, .ess}
 
 /-- Dargwa's grammatical case inventory violates strict contiguity
@@ -48,7 +48,7 @@ def caseInventory : Finset Features.Case :=
     encode in other languages. The grammatical vs. locative split is
     a structural feature of Nakh-Dagestanian languages. -/
 theorem inventory_not_strictly_contiguous :
-    ¬ Features.Case.IsValidInventory caseInventory := by decide
+    ¬ Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Consistent Ergative Alignment
@@ -60,10 +60,10 @@ theorem inventory_not_strictly_contiguous :
 def alignment : Features.AlignmentFamily := .ergative
 
 /-- Case of the transitive agent (A-argument): always ergative. -/
-def agentCase : Features.Case := .erg
+def agentCase : Case := .erg
 
 /-- Case of the S-argument and P-argument: always absolutive. -/
-def patientCase : Features.Case := .abs
+def patientCase : Case := .abs
 
 -- ============================================================================
 -- § 3: Verification

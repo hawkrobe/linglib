@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -85,13 +85,13 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- Perfective case assignment for Q'anjob'al. Shared with Chol via
     `Mayan.ergCaseQanjobalan` (= `Alignment.ergative.assignCase`). -/
-abbrev ArgPosition.case : ArgPosition → Features.Case := Mayan.ergCaseQanjobalan
+abbrev ArgPosition.case : ArgPosition → Case := Mayan.ergCaseQanjobalan
 
 /-- Non-perfective case assignment for Q'anjob'al. Shared with Chol via
     `Mayan.accCaseQanjobalan` (= `Alignment.extendedErgative.assignCase`).
     The shared substrate makes the Chol/Q'anjob'al accusative-side parallel
     explicit by construction rather than coincidentally true. -/
-abbrev ArgPosition.accCase : ArgPosition → Features.Case := Mayan.accCaseQanjobalan
+abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseQanjobalan
 
 -- ============================================================================
 -- § 2: Absolutive Position (HIGH-ABS)

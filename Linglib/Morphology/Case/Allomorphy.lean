@@ -1,5 +1,5 @@
 import Mathlib.Order.Fin.Basic
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Morphology.Containment
 
 /-!

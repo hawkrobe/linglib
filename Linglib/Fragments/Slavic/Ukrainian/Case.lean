@@ -14,6 +14,6 @@ core; `Slavic.Case.sevenCaseInventory` carries the +VOC form.
 
 namespace Ukrainian.Case
 
-abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
+abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
 
 end Ukrainian.Case

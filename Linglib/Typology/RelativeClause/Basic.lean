@@ -10,7 +10,7 @@ position relative to the head noun, what occupies the relativized position
 (NP_rel), and the `Marker` schema fragments instantiate. Fragments use these
 to encode relative-clause markers and their distributional properties;
 phenomenon studies use them to verify typological generalizations like the
-Accessibility Hierarchy. Mirrors `Features.Case` for case inventories.
+Accessibility Hierarchy. Mirrors `Case` for case inventories.
 
 ## Main declarations
 

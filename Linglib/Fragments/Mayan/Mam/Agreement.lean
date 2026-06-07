@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
@@ -143,7 +143,7 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
     P → ACC (structural from Voice), S → ABS (structural from Infl).
     The three distinct cases are tripartite alignment per Scott's
     analysis (ch. 3 §3.4). -/
-abbrev ArgPosition.case : ArgPosition → Features.Case :=
+abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.ergCaseMam
 
 /-- Does this argument position participate in φ-Agree?
@@ -223,7 +223,7 @@ theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
 -- ============================================================================
 
 /-- Mam case inventory, derived from argument position case values. -/
-def caseInventory : Finset Features.Case := {.erg, .acc, .abs}
+def caseInventory : Finset Case := {.erg, .acc, .abs}
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
@@ -231,7 +231,7 @@ theorem inventory_covers_positions :
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 6: Pronoun Internal Structure ([scott-2023], ch. 4)

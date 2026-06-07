@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
@@ -219,7 +219,7 @@ def ArgPosition.agreementSet : ArgPosition → AgreementSet
 /-- The case associated with each argument position. Definitionally
     equal to `Mayan.ergCaseKiche`, which derives from
     `Alignment.ergative.assignCase` in `Syntax/Case/Alignment.lean`. -/
-abbrev ArgPosition.case : ArgPosition → Features.Case :=
+abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.ergCaseKiche
 
 -- ============================================================================

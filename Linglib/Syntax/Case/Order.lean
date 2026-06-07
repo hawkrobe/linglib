@@ -1,13 +1,14 @@
-import Mathlib.Order.Basic
-import Linglib.Features.Case
+import Mathlib.Data.Finset.Basic
+import Linglib.Core.Order.PartialRank
+import Linglib.Features.Case.Basic
 /-!
 # Caha Containment Order on Case
 [caha-2009] [mcfadden-2018]
 
-Caha's containment order on `Features.Case`, as a **scoped** instance
-(`open scoped Syntax.Case.Caha` to use `≤`): theoretical orders are borne
-by features as opt-in commitments, not as global instances on the UD
-annotation enums — the annotation substrate default is order-free. Each case on the hierarchy literally
+Caha's containment order on `Case`, as a **scoped** instance
+(`open scoped Syntax.Case.Caha` to use `≤`): theoretical orders are
+borne by features as opt-in commitments, not as global instances — the
+inventory's default is order-free. Each case on the hierarchy literally
 *contains* the representations of all cases below it:
 
     [[[[[ NOM ] ACC ] GEN ] DAT ] LOC ]
@@ -15,17 +16,26 @@ annotation enums — the annotation substrate default is order-free. Each case o
 Cases without a `containmentRank` (ERG, ABS, INST, COM, …) are silent —
 incomparable with on-hierarchy cases under `≤`, except for reflexivity.
 That silence is the theoretical content: Caha's hierarchy is silent on
-those cases, and the `PartialOrder` structure preserves the silence.
+those cases. The order itself is `Core.Order.partialOrderOfRank` —
+the partial-rank gadget whose unranked elements are isolated — so
+reflexivity/transitivity/antisymmetry come from the substrate, not from
+per-hierarchy hand proofs.
 
-Other orders (Blake's typological frequency in `Features/Case.lean`,
-per-language syncretism graphs) likewise live as named `def`s or scoped
-instances rather than competing global instances on `Case`.
+`kshells` states the containment claim structurally — each on-hierarchy
+case is a downward-closed stack of case shells — and
+`cahaLT_iff_kshells_ssubset` certifies that the rank order is its
+shadow: the order is derived from the decomposition, not stipulated.
+
+Other orders (Blake's typological frequency in
+`Features/Case/Basic.lean`, per-language syncretism graphs) likewise
+live as named `def`s or scoped instances rather than competing global
+instances on `Case`.
 -/
-
-open Features (Case)
 
 namespace Syntax
 namespace Case
+
+open Core.Order (RankLT RankLE)
 
 /-- Caha's containment rank ([caha-2009]). Cases higher on the
     containment hierarchy have representations that include all lower cases.
@@ -46,7 +56,7 @@ namespace Case
     encoding choice is verdict-equivalent; inventories with INST or COM
     *without* LOC may diverge. For paradigm-shape work that needs Caha's
     actual Slavic ordering, see `cahaSlavicRank` below. -/
-def containmentRank : Case → Option Nat
+def containmentRank : _root_.Case → Option Nat
   | .nom => some 0
   | .acc => some 1
   | .gen => some 2
@@ -67,7 +77,7 @@ def containmentRank : Case → Option Nat
     cases for the Slavic noun system. The `Option` is preserved for
     consistency with `containmentRank`'s API and to flag non-Slavic
     cases as not-in-the-Slavic-sequence. -/
-def cahaSlavicRank : Case → Option (Fin 6)
+def cahaSlavicRank : _root_.Case → Option (Fin 6)
   | .nom  => some 0
   | .acc  => some 1
   | .gen  => some 2
@@ -94,70 +104,58 @@ theorem cahaSlavicRank_vs_containmentRank :
 /-- Strict containment on Caha-rank Cases: both must have a rank, and the
     first's must be strictly smaller. False whenever either side is
     off-hierarchy. -/
-def cahaLT (c₁ c₂ : Case) : Prop :=
-  match containmentRank c₁, containmentRank c₂ with
-  | some n, some m => n < m
-  | _, _ => False
-
-instance instDecidableCahaLT : DecidableRel cahaLT := fun c₁ c₂ => by
-  unfold cahaLT; split <;> infer_instance
+abbrev cahaLT : _root_.Case → _root_.Case → Prop := RankLT containmentRank
 
 /-- The Caha containment order. `c₁ ≤ c₂` iff either they are equal, or
     `cahaLT c₁ c₂`. Off-hierarchy cases are reflexively `≤` themselves and
     incomparable with everything else. -/
-def cahaLE (c₁ c₂ : Case) : Prop := c₁ = c₂ ∨ cahaLT c₁ c₂
+abbrev cahaLE : _root_.Case → _root_.Case → Prop := RankLE containmentRank
 
-instance : DecidableRel cahaLE := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∨ _))
+/-! ### The decomposition behind the order
 
-theorem cahaLE_refl (c : Case) : cahaLE c c := Or.inl rfl
+Caha's claim is structural: each case on the hierarchy *contains* the
+representations of the cases below it, as a stack of case shells. The
+rank encoding above is the shadow of that decomposition. -/
 
-theorem cahaLT_trans {a b c : Case} : cahaLT a b → cahaLT b c → cahaLT a c := by
-  unfold cahaLT
-  cases ha : containmentRank a <;> cases hb : containmentRank b <;>
-    cases hc : containmentRank c <;> simp_all
-  exact lt_trans
+/-- The shell stack of an on-hierarchy case: the downward-closed set of
+    case shells its representation contains ([caha-2009]'s nested
+    functional sequence, with shells indexed abstractly). Stipulated
+    independently of `containmentRank`; `cahaLT_iff_kshells_ssubset`
+    certifies the two agree. -/
+def kshells : _root_.Case → Option (Finset (Fin 5))
+  | .nom => some {0}
+  | .acc => some {0, 1}
+  | .gen => some {0, 1, 2}
+  | .dat => some {0, 1, 2, 3}
+  | .loc => some {0, 1, 2, 3, 4}
+  | _ => none
 
-theorem cahaLE_trans (a b c : Case) : cahaLE a b → cahaLE b c → cahaLE a c := by
-  intro hab hbc
-  rcases hab with rfl | hab
-  · exact hbc
-  rcases hbc with rfl | hbc
-  · exact Or.inr hab
-  exact Or.inr (cahaLT_trans hab hbc)
-
-theorem cahaLE_antisymm (a b : Case) : cahaLE a b → cahaLE b a → a = b := by
-  intro hab hba
-  rcases hab with rfl | hab
-  · rfl
-  rcases hba with rfl | hba
-  · rfl
-  exfalso
-  exact absurd (cahaLT_trans hab hba) (by
-    unfold cahaLT
-    cases ha : containmentRank a <;> simp_all)
+/-- **The order is the shadow of the decomposition**: the containment
+    order through the numeric rank coincides with the partial-rank order
+    through the shell stacks (`<` on `Finset` is strict inclusion `⊂`).
+    The rank encoding is certified against the structural containment
+    claim, not stipulated alongside it. -/
+theorem cahaLT_iff_kshells_ssubset (c₁ c₂ : _root_.Case) :
+    cahaLT c₁ c₂ ↔ RankLT kshells c₁ c₂ := by
+  revert c₁ c₂; decide
 
 /-! ### The Caha order as scoped instances
 
 A feature bears its theoretical order as an opt-in commitment
 (`open scoped Syntax.Case.Caha`), never as a global instance on the
-annotation enum. -/
+inventory. The instance is `Core.Order.partialOrderOfRank`, so `≤` is
+definitionally `cahaLE` and `<` is `cahaLT`. -/
 
 namespace Caha
 
-scoped instance instLECaha : LE Case := ⟨cahaLE⟩
+scoped instance instPartialOrderCaha : PartialOrder _root_.Case :=
+  Core.Order.partialOrderOfRank containmentRank
 
-scoped instance (c₁ c₂ : Case) : Decidable (c₁ ≤ c₂) :=
+scoped instance (c₁ c₂ : _root_.Case) : Decidable (c₁ ≤ c₂) :=
   inferInstanceAs (Decidable (cahaLE c₁ c₂))
 
-scoped instance instPreorderCaha : Preorder Case where
-  toLE := instLECaha
-  le_refl := cahaLE_refl
-  le_trans _ _ _ := cahaLE_trans _ _ _
-
-scoped instance : PartialOrder Case where
-  toPreorder := instPreorderCaha
-  le_antisymm _ _ := cahaLE_antisymm _ _
+scoped instance (c₁ c₂ : _root_.Case) : Decidable (c₁ < c₂) :=
+  inferInstanceAs (Decidable (cahaLT c₁ c₂))
 
 end Caha
 
@@ -167,10 +165,10 @@ open scoped Caha
     `(.acc : Case) ≤ c` in the Caha order. [mcfadden-2018] argues this is
     the key natural class for stem allomorphy: a VI rule conditioned on
     `[ACC]` captures the NOM-vs-oblique split found cross-linguistically. -/
-def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
+def IsNonnominative (c : _root_.Case) : Prop := (.acc : _root_.Case) ≤ c
 
-instance (c : Case) : Decidable (IsNonnominative c) :=
-  inferInstanceAs (Decidable ((.acc : Case) ≤ c))
+instance (c : _root_.Case) : Decidable (IsNonnominative c) :=
+  inferInstanceAs (Decidable ((.acc : _root_.Case) ≤ c))
 
 /-- A case is **oblique** iff its representation contains GEN's, i.e.
     `(.gen : Case) ≤ c` in the Caha order. Per [caha-2009]'s
@@ -178,10 +176,10 @@ instance (c : Case) : Decidable (IsNonnominative c) :=
     and GEN/DAT/LOC/INS/COM/etc. are oblique. Ergative-aligned ABS/ERG
     are off-hierarchy in `containmentRank` and so satisfy `¬ IsOblique`
     (consistent with their parallel-to-NOM/ACC structural status). -/
-def IsOblique (c : Case) : Prop := (.gen : Case) ≤ c
+def IsOblique (c : _root_.Case) : Prop := (.gen : _root_.Case) ≤ c
 
-instance (c : Case) : Decidable (IsOblique c) :=
-  inferInstanceAs (Decidable ((.gen : Case) ≤ c))
+instance (c : _root_.Case) : Decidable (IsOblique c) :=
+  inferInstanceAs (Decidable ((.gen : _root_.Case) ≤ c))
 
 /-- The four core McFadden-hierarchy cases stratify cleanly between
     non-oblique (NOM, ACC) and oblique (GEN, DAT). -/
@@ -196,29 +194,16 @@ theorem isOblique_erg_abs_false :
     ¬ IsOblique .erg ∧ ¬ IsOblique .abs := by
   refine ⟨?_, ?_⟩ <;> decide
 
--- ============================================================================
--- § Sanity Chain: NOM < ACC < GEN < DAT < LOC
--- ============================================================================
+/-! ### Sanity chain: NOM < ACC < GEN < DAT < LOC -/
 
-theorem nom_le_acc : (.nom : Case) ≤ .acc :=
-  Or.inr (show (0 : Nat) < 1 from Nat.lt_succ_self 0)
-theorem acc_le_gen : (.acc : Case) ≤ .gen :=
-  Or.inr (show (1 : Nat) < 2 from Nat.lt_succ_self 1)
-theorem gen_le_dat : (.gen : Case) ≤ .dat :=
-  Or.inr (show (2 : Nat) < 3 from Nat.lt_succ_self 2)
-theorem dat_le_loc : (.dat : Case) ≤ .loc :=
-  Or.inr (show (3 : Nat) < 4 from Nat.lt_succ_self 3)
+example : (.nom : _root_.Case) ≤ .acc := by decide
+example : (.acc : _root_.Case) ≤ .gen := by decide
+example : (.gen : _root_.Case) ≤ .dat := by decide
+example : (.dat : _root_.Case) ≤ .loc := by decide
 
 /-- Off-hierarchy cases (ERG) are incomparable with on-hierarchy cases. -/
-theorem erg_incomparable_nom : ¬ ((.erg : Case) ≤ .nom) := by
-  rintro (h | h)
-  · exact UD.Case.noConfusion h
-  · exact (show False from h)
-
-theorem nom_incomparable_erg : ¬ ((.nom : Case) ≤ .erg) := by
-  rintro (h | h)
-  · exact UD.Case.noConfusion h
-  · exact (show False from h)
+example : ¬ ((.erg : _root_.Case) ≤ .nom) := by decide
+example : ¬ ((.nom : _root_.Case) ≤ .erg) := by decide
 
 end Case
 end Syntax

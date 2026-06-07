@@ -658,11 +658,11 @@ theorem af_voice_never_traps (locus : CaseLocus) :
   cases locus <;> decide
 
 -- ============================================================================
--- § 16: Features.Case Bridge
+-- § 16: Case Bridge
 -- ============================================================================
 
-/-- The paper's `AbstractCase` maps to the framework's `Features.Case`. -/
-def AbstractCase.toCoreCase : AbstractCase → Features.Case
+/-- The paper's `AbstractCase` maps to the framework's `Case`. -/
+def AbstractCase.toCoreCase : AbstractCase → Case
   | .nom => .nom
   | .acc => .acc
   | .erg => .erg

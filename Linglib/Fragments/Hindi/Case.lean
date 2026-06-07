@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Typology.Alignment
 /-!
 # Hindi Case Inventory [blake-1994]
@@ -30,13 +30,13 @@ namespace Hindi.Case
 -- ============================================================================
 
 /-- Hindi case inventory. ACC/DAT share -ko; ABL/INST share -se.
-    Both syncretic pairs are included as distinct Features.Case values since
+    Both syncretic pairs are included as distinct Case values since
     they occupy different positions on Blake's hierarchy. -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- Section 2: Syncretism
@@ -47,7 +47,7 @@ theorem acc_dat_syncretic_marker : True := trivial
 
 /-- ABL/INST syncretism (-se marks both). Same-tier adjacency. -/
 theorem abl_inst_same_tier :
-    Features.Case.hierarchyRank .abl = Features.Case.hierarchyRank .inst := rfl
+    Case.hierarchyRank .abl = Case.hierarchyRank .inst := rfl
 
 -- ============================================================================
 -- Section 3: Split-Ergative Connection

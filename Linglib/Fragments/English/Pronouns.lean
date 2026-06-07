@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Features.Gender.Basic
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities

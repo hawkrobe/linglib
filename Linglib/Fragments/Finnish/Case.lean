@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
@@ -21,7 +21,7 @@ case systems in Europe:
   abessive (-ttA, 'without'), comitative (-ine-, 'with'),
   instructive (-n, 'by means of')
 
-Our 19-value `Features.Case` represents 12 of the 15 Finnish cases. The three
+Our 19-value `Case` represents 12 of the 15 Finnish cases. The three
 Finnish-specific semantic cases (essive, translative, abessive) are included
 directly; the internal/external local pairs (inessive/adessive → LOC,
 elative/ablative → ABL, illative/allative → ALL) are collapsed into a
@@ -40,16 +40,16 @@ namespace Finnish.Case
 -- § 1: Case Inventory
 -- ============================================================================
 
-/-- Finnish case inventory mapped to `Features.Case`.
+/-- Finnish case inventory mapped to `Case`.
 
-    All 15 Finnish cases now have Features.Case equivalents (essive, translative,
-    abessive added to Features.Case; internal/external local pairs collapsed):
+    All 15 Finnish cases now have Case equivalents (essive, translative,
+    abessive added to Case; internal/external local pairs collapsed):
     - NOM →.nom, ACC →.acc (pronoun/total-object accusative)
     - GEN →.gen, PART →.part
     - INE/ADE →.loc, ELA/ABL →.abl, ILL/ALL →.all
     - ESS →.ess, TRANSL →.transl, ABESS →.abess
     - INSTR →.inst, COM →.com -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com}
 
 /-- Finnish's mapped inventory **fails** strict contiguity: GEN (rank 5)
@@ -58,14 +58,14 @@ def caseInventory : Finset Features.Case :=
 
     This illustrates Blake's hedge: the hierarchy holds "usually" but
     languages like Finnish fill the dative slot with a local case
-    extension (ALL → DAT, formalized in `Features.Case.Extends`). -/
+    extension (ALL → DAT, formalized in `Case.Extends`). -/
 theorem inventory_fails_strict :
-    ¬ Features.Case.IsValidInventory caseInventory := by decide
+    ¬ Case.IsValidInventory caseInventory := by decide
 
 /-- The allative-for-dative substitution is exactly the extension path
-    in [heine-2009] Table 29.6, formalized in `Features.Case.Extends`. -/
+    in [heine-2009] Table 29.6, formalized in `Case.Extends`. -/
 theorem allative_extends_to_dative :
-    Features.Case.Extends .all .dat := by decide
+    Case.Extends .all .dat := by decide
 
 -- ============================================================================
 -- § 2: Syncretism
@@ -105,13 +105,13 @@ inductive LocationType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- A cell in the Finnish local case matrix: the case name, suffix,
-    directional coordinates, and mapping to `Features.Case`. -/
+    directional coordinates, and mapping to `Case`. -/
 structure LocalCase where
   name : String
   suffix : String
   direction : Direction
   locationType : LocationType
-  coreCase : Features.Case
+  coreCase : Case
   deriving DecidableEq, Repr, Inhabited
 
 /-- The 3×2 local case matrix.
@@ -122,7 +122,7 @@ structure LocalCase where
     | Source    | elative -stA  | ablative -ltA |
     | Goal      | illative -Vn  | allative -lle |
 
-    Features.Case collapses each row into a single value (static →.loc,
+    Case collapses each row into a single value (static →.loc,
     source →.abl, goal →.all). The matrix reveals the full structure. -/
 def localCaseMatrix : Direction → LocationType → LocalCase
   | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .loc⟩
@@ -144,7 +144,7 @@ def allLocalCases : List LocalCase :=
 /-- The matrix has exactly 6 cells. -/
 theorem localCases_count : allLocalCases.length = 6 := by native_decide
 
-/-- Features.Case collapses each direction row: both internal and external
+/-- Case collapses each direction row: both internal and external
     static cases map to.loc. -/
 theorem static_collapses_to_loc :
     (localCaseMatrix .static .internal).coreCase =

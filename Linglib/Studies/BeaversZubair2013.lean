@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.CauserSort
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Fragments.Sinhala.Verbs
 
 /-!
@@ -109,7 +109,7 @@ inductive Reading where
 /-- Case ↔ binding-mode bridge (B&Z 2013 §7.3): accusative case on
     the surface subject of an anticausative *signals* that the
     suppressed causer was bound existentially (not coindexed with
-    the patient). Re-uses `Features.Case` (= `UD.Case`) — the canonical
+    the patient). Re-uses `Case` (= `UD.Case`) — the canonical
     cross-linguistic case type — rather than introducing a local
     nom/acc enum.
 
@@ -120,7 +120,7 @@ inductive Reading where
     only on animate patients with overt accusative; the broader
     empirical picture requires an animacy parameter that we do not
     formalize here. -/
-def caseOfReading : Reading → Features.Case
+def caseOfReading : Reading → Case
   | .reflexive   => .nom
   | .existential => .acc
 

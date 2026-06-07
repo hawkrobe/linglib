@@ -8,7 +8,7 @@ import Linglib.Data.WALS.Features.F109A
 import Linglib.Data.WALS.Features.F109B
 import Linglib.Data.WALS.Features.F110A
 import Linglib.Data.WALS.Features.F111A
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 
 /-!
 # Typology.ArgumentStructure

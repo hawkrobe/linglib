@@ -119,7 +119,7 @@ Sells (1995, *Journal of East Asian Linguistics*) documents the parallel
 case-particle/postposition split for Korean *-i*/*-eseo* but does not
 engage S&K's homophony move for Korean equivalents of *ni*. This gap
 cannot be Lean-formalised until `Fragments/Korean/Case.lean` adopts
-Pattern B (rich marker structure); currently it's a `Finset Features.Case`
+Pattern B (rich marker structure); currently it's a `Finset Case`
 stipulation only. Documented here as future work.
 -/
 
@@ -181,19 +181,19 @@ def classify : MartinCategory → Option Classification
   | .H1 | .H2 | .H3 | .I  | .K  | .L1 | .M
   | .O2 | .R  | .T  | .U                     => some .postposition
 
-/-- Per-category footprint on the `Features.Case` lattice — what UD case
+/-- Per-category footprint on the `Case` lattice — what UD case
     feature(s) the *ni*-use of this Martin category corresponds to most
     directly. Categories whose *ni*-use does NOT fit any UD case feature
     Tsujimura's Fragment recognises (`Japanese.Case.ni.cases =
     {.dat, .loc, .all, .Tem}`) map to `∅`. This is study-internal
     stipulation (the lin agent verified F's mapping is empty per the
     *GB riron-ni motozuiteiru* example). -/
-def fragmentCases : MartinCategory → Finset Features.Case
+def fragmentCases : MartinCategory → Finset Case
   | .A                  => {.dat}            -- goal indirect object
   | .O1                 => {.dat, .all}      -- change of position (riding ON something)
   | .L1                 => {.loc}            -- locative-of-existence
   | .N1 | .N2           => {.dat, .all}      -- dative of direction (S&K-ambiguous)
-  | .M                  => {.Tem}            -- specific time
+  | .M                  => {.tem}            -- specific time
   | _                   => ∅                 -- not in Fragment.ni.cases coverage
 
 /-- Whether the Fragment's single `ni : CaseMarker` (with

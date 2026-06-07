@@ -53,12 +53,12 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
     `Mayan.caseTseltalan .Perf`, which derives from
     `Alignment.ergative.assignCase`. Tseltalan has no aspect-conditioned
     split. -/
-abbrev ArgPosition.case : ArgPosition → Features.Case :=
+abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.caseTseltalan .Perf
 
 /-- Non-perfective case assignment for Tsotsil. Identical to perfective
     (no aspect split per [polian-2013]). -/
-abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
+abbrev ArgPosition.accCase : ArgPosition → Case :=
   Mayan.caseTseltalan .Imp
 
 -- ============================================================================

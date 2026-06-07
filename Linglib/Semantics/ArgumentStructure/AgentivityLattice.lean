@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
@@ -43,7 +43,7 @@ All ordering infrastructure uses Mathlib typeclasses:
 
 - `AgentivityNode.fromEntailmentProfile` → `EntailmentProfile` (proto-roles)
 - `PersistenceLevel.fromEntailmentProfile` → `EntailmentProfile` (proto-roles)
-- `GrimmNode.toCaseRegion` → `Features.Case` (case assignment)
+- `GrimmNode.toCaseRegion` → `Case` (case assignment)
 - Transitivity hierarchy → `Tsunoda` verb classification
 -/
 
@@ -51,7 +51,6 @@ namespace Semantics.ArgumentStructure.AgentivityLattice
 
 open Semantics.ArgumentStructure.EntailmentProfile
 open Core
-open Features (Case)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Agentivity Primitives (Table 2, §2.1)

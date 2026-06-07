@@ -24,13 +24,13 @@ private def sees : Word := { form :="sees", cat := .VERB, features := { number :
 private def himself : Word := { form :="himself", cat := .PRON, features := { person := some .third, number := some .Sing, gender := some .Masc, reflex := true }}
 private def mary : Word := { form :="Mary", cat := .PROPN, features := { number := some .Sing, person := some .third, gender := some .Fem }}
 private def herself : Word := { form :="herself", cat := .PRON, features := { person := some .third, number := some .Sing, gender := some .Fem, reflex := true }}
-private def they : Word := { form :="they", cat := .PRON, features := { person := some .third, number := some .Plur, case_ := some .nom }}
+private def they : Word := { form :="they", cat := .PRON, features := { person := some .third, number := some .Plur, case_ := some .Nom }}
 private def see : Word := { form :="see", cat := .VERB, features := { number := some .Plur }}
 private def themselves : Word := { form :="themselves", cat := .PRON, features := { person := some .third, number := some .Plur, reflex := true }}
-private def him : Word := { form :="him", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .acc, gender := some .Masc }}
-private def her : Word := { form :="her", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .acc, gender := some .Fem }}
-private def he : Word := { form :="he", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .nom, gender := some .Masc }}
-private def them : Word := { form :="them", cat := .PRON, features := { person := some .third, number := some .Plur, case_ := some .acc }}
+private def him : Word := { form :="him", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .Acc, gender := some .Masc }}
+private def her : Word := { form :="her", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .Acc, gender := some .Fem }}
+private def he : Word := { form :="he", cat := .PRON, features := { person := some .third, number := some .Sing, case_ := some .Nom, gender := some .Masc }}
+private def them : Word := { form :="them", cat := .PRON, features := { person := some .third, number := some .Plur, case_ := some .Acc }}
 
 /-- Reflexives require local c-commanding antecedent. -/
 def reflexiveCoreferenceData : PhenomenonData := {

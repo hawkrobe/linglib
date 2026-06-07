@@ -1,4 +1,5 @@
 import Linglib.Morphology.Unification
+import Linglib.Features.Case.Basic
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Person.Resolve
 import Mathlib.Data.Fintype.Basic
@@ -49,7 +50,6 @@ collapse made explicit.
 
 namespace DalrympleKaplan2000
 
-open UD (Case)
 
 /-! ### §4: indeterminate values are sets; checking is membership -/
 
