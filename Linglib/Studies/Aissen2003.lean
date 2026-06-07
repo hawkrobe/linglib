@@ -129,26 +129,35 @@ def allDOMProfiles : List DOMProfile :=
   [spanishDOM, russianDOM, turkishDOM, hebrewDOM, persianDOM,
    catalanDOM, hindiDOM, noDOMProfile]
 
-theorem allDOMProfiles_count : allDOMProfiles.length = 8 := by native_decide
+theorem allDOMProfiles_count : allDOMProfiles.length = 8 := by decide
 
 -- §0.1 Per-language monotonicity (Aissen's central prediction: every DOM
--- pattern forms an upper set in the bidimensional animacy × definiteness grid)
+-- pattern forms an upper set in the bidimensional animacy × definiteness
+-- grid). The one-dimensional cutoff languages inherit it directly from the
+-- generic `animacyCutoffP_monotone`/`definitenessCutoffP_monotone` (proved
+-- once over the scale's `LinearOrder`), rather than re-deciding per language.
 
-theorem spanish_monotone : spanishDOM.isMonotone = true := by native_decide
-theorem russian_monotone : russianDOM.isMonotone = true := by native_decide
-theorem turkish_monotone : turkishDOM.isMonotone = true := by native_decide
-theorem hebrew_monotone : hebrewDOM.isMonotone = true := by native_decide
-theorem persian_monotone : persianDOM.isMonotone = true := by native_decide
-theorem catalan_monotone : catalanDOM.isMonotone = true := by native_decide
-theorem hindi_monotone : hindiDOM.isMonotone = true := by native_decide
-theorem no_dom_monotone : noDOMProfile.isMonotone = true := by native_decide
+theorem spanish_monotone : spanishDOM.isMonotone = true :=
+  animacyCutoffP_monotone .flagging .human
+theorem russian_monotone : russianDOM.isMonotone = true :=
+  animacyCutoffP_monotone .flagging .animate
+theorem turkish_monotone : turkishDOM.isMonotone = true :=
+  definitenessCutoffP_monotone .flagging .definite
+theorem hebrew_monotone : hebrewDOM.isMonotone = true :=
+  definitenessCutoffP_monotone .flagging .definite
+theorem persian_monotone : persianDOM.isMonotone = true :=
+  definitenessCutoffP_monotone .flagging .definite
+theorem catalan_monotone : catalanDOM.isMonotone = true :=
+  definitenessCutoffP_monotone .flagging .personalPronoun
+theorem hindi_monotone : hindiDOM.isMonotone = true := by decide
+theorem no_dom_monotone : noDOMProfile.isMonotone = true := by decide
 
 /-- **Aissen's DOM monotonicity universal**: all attested DOM patterns in
     the sample form upper sets in the bidimensional animacy × definiteness
     grid. No language marks a less-prominent object while leaving a
     more-prominent one unmarked. -/
 theorem dom_monotonicity_universal :
-    allDOMProfiles.all (·.isMonotone) = true := by native_decide
+    allDOMProfiles.all (·.isMonotone) = true := by decide
 
 -- §0.2 One-dimensional classification
 

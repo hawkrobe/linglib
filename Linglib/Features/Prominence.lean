@@ -1,5 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Core.Order.Markedness
 import Linglib.Features.Person.Basic
 
 /-!
@@ -80,7 +81,7 @@ instance : LinearOrder AnimacyLevel :=
 /-- All animacy levels (exhaustive enumeration for finite verification). -/
 def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
 
-theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
+theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by decide
 
 -- ============================================================================
 -- § 1b: Fine-Grained Animacy Hierarchy ([corbett-2000], [smith-stark-1974])
@@ -147,7 +148,7 @@ theorem AnimacyRank.hierarchy_ordering :
     AnimacyRank.higherAnimal.toNat > AnimacyRank.lowerAnimal.toNat ∧
     AnimacyRank.lowerAnimal.toNat > AnimacyRank.discreteInanimate.toNat ∧
     AnimacyRank.discreteInanimate.toNat > AnimacyRank.nondiscreteInanimate.toNat := by
-  native_decide
+  decide
 
 /-- The hierarchy predicts: if a language marks plural at rank r, it marks
     plural at all ranks above r. -/
@@ -185,12 +186,18 @@ def DefinitenessLevel.rank : DefinitenessLevel → Nat
   | .indefiniteSpecific => 1
   | .nonSpecific        => 0
 
+/-- NonSpecific < IndefiniteSpecific < Definite < ProperName < PersonalPronoun
+    (ordered by prominence rank). -/
+instance : LinearOrder DefinitenessLevel :=
+  LinearOrder.lift' DefinitenessLevel.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [DefinitenessLevel.rank])
+
 /-- All definiteness levels (exhaustive enumeration). -/
 def DefinitenessLevel.all : List DefinitenessLevel :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
 
 theorem DefinitenessLevel.all_length : DefinitenessLevel.all.length = 5 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 3: Scale Ordering Verification
@@ -388,6 +395,46 @@ def DifferentialMarkingProfile.isMonotoneA (p : DifferentialMarkingProfile) : Bo
             else true
       else true
 
+/-- **Wiring to the scale order**: pointwise monotonicity (marking closed under
+    moving *up* both scales) yields the `isMonotoneP` staircase. A
+    one-dimensional cutoff discharges the hypothesis with `le_trans` on the
+    scale's `LinearOrder` (`Core.Order.atOrAbove_isUpperSet`), so cutoff
+    profiles inherit monotonicity from the order rather than `decide`. -/
+theorem DifferentialMarkingProfile.isMonotoneP_of (p : DifferentialMarkingProfile)
+    (h : ∀ {a a' : AnimacyLevel} {d d' : DefinitenessLevel},
+      a ≤ a' → d ≤ d' → p.marks a d = true → p.marks a' d' = true) :
+    p.isMonotoneP = true := by
+  simp only [isMonotoneP, List.all_eq_true]
+  intro a _ d _
+  split
+  · next hm =>
+    simp only [List.all_eq_true]
+    intro a' _ d' _
+    split
+    · next hcond =>
+      simp only [Bool.and_eq_true, decide_eq_true_eq, ge_iff_le] at hcond
+      exact h hcond.1 hcond.2 hm
+    · rfl
+  · rfl
+
+/-- Anti-monotone (lower-set) counterpart of `isMonotoneP_of`, for A/R roles. -/
+theorem DifferentialMarkingProfile.isMonotoneA_of (p : DifferentialMarkingProfile)
+    (h : ∀ {a a' : AnimacyLevel} {d d' : DefinitenessLevel},
+      a' ≤ a → d' ≤ d → p.marks a d = true → p.marks a' d' = true) :
+    p.isMonotoneA = true := by
+  simp only [isMonotoneA, List.all_eq_true]
+  intro a _ d _
+  split
+  · next hm =>
+    simp only [List.all_eq_true]
+    intro a' _ d' _
+    split
+    · next hcond =>
+      simp only [Bool.and_eq_true, decide_eq_true_eq] at hcond
+      exact h hcond.1 hcond.2 hm
+    · rfl
+  · rfl
+
 /-- Role-appropriate monotonicity: low-default roles (P, T) must be monotone
     (upper set), high-default roles (A, R) must be anti-monotone (lower set).
     S profiles are vacuously monotone. -/
@@ -418,54 +465,71 @@ def DifferentialMarkingProfile.isDefinitenessOnly (p : DifferentialMarkingProfil
 -- ============================================================================
 
 /-- Construct a one-dimensional animacy-based P-marking profile: P arguments
-    at or above the cutoff are marked. (For A marking, use `animacyCutoffA`.) -/
+    at or above the cutoff are marked. (For A marking, use `animacyCutoffA`.)
+    The cutoff is the scale's `LinearOrder` (`Core.Order.atOrAbove`), not a
+    raw rank comparison. -/
 def DifferentialMarkingProfile.animacyCutoffP
     (name : String) (channel : MarkingChannel) (cutoff : AnimacyLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .P, channel, marks := λ a _ => a.rank ≥ cutoff.rank }
+  { name, role := .P, channel, marks := λ a _ => decide (cutoff ≤ a) }
 
 /-- Construct a one-dimensional definiteness-based P-marking profile. -/
 def DifferentialMarkingProfile.definitenessCutoffP
     (name : String) (channel : MarkingChannel) (cutoff : DefinitenessLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .P, channel, marks := λ _ d => d.rank ≥ cutoff.rank }
+  { name, role := .P, channel, marks := λ _ d => decide (cutoff ≤ d) }
 
 /-- Construct a one-dimensional animacy-based A-marking profile: A arguments
     at or below the cutoff are marked (anti-monotone / lower set). -/
 def DifferentialMarkingProfile.animacyCutoffA
     (name : String) (channel : MarkingChannel) (cutoff : AnimacyLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .A, channel, marks := λ a _ => a.rank ≤ cutoff.rank }
+  { name, role := .A, channel, marks := λ a _ => decide (a ≤ cutoff) }
 
 /-- Construct a one-dimensional definiteness-based A-marking profile. -/
 def DifferentialMarkingProfile.definitenessCutoffA
     (name : String) (channel : MarkingChannel) (cutoff : DefinitenessLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .A, channel, marks := λ _ d => d.rank ≤ cutoff.rank }
+  { name, role := .A, channel, marks := λ _ d => decide (d ≤ cutoff) }
 
 -- ============================================================================
 -- § 9: One-Dimensional Monotonicity Theorems
 -- ============================================================================
 
-/-- Animacy-cutoff P profiles are always monotone. -/
+/-- Animacy-cutoff P profiles are always monotone — the marked region is the
+    upper set `Core.Order.atOrAbove cutoff` on the animacy axis, lifted through
+    `isMonotoneP_of` by `le_trans`. -/
 theorem animacyCutoffP_monotone (ch : MarkingChannel) (cutoff : AnimacyLevel) :
     (DifferentialMarkingProfile.animacyCutoffP "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  apply DifferentialMarkingProfile.isMonotoneP_of
+  intro a a' _ _ haa' _ hm
+  simp only [DifferentialMarkingProfile.animacyCutoffP, decide_eq_true_eq] at hm ⊢
+  exact Core.Order.atOrAbove_isUpperSet cutoff haa' hm
 
-/-- Definiteness-cutoff P profiles are always monotone. -/
+/-- Definiteness-cutoff P profiles are always monotone — same `isMonotoneP_of`
+    + `le_trans`, now on the definiteness axis. -/
 theorem definitenessCutoffP_monotone (ch : MarkingChannel) (cutoff : DefinitenessLevel) :
     (DifferentialMarkingProfile.definitenessCutoffP "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  apply DifferentialMarkingProfile.isMonotoneP_of
+  intro _ _ d d' _ hdd' hm
+  simp only [DifferentialMarkingProfile.definitenessCutoffP, decide_eq_true_eq] at hm ⊢
+  exact Core.Order.atOrAbove_isUpperSet cutoff hdd' hm
 
-/-- Animacy-cutoff A profiles are always monotone (anti-monotone). -/
+/-- Animacy-cutoff A profiles are always anti-monotone (lower set). -/
 theorem animacyCutoffA_monotone (ch : MarkingChannel) (cutoff : AnimacyLevel) :
     (DifferentialMarkingProfile.animacyCutoffA "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  apply DifferentialMarkingProfile.isMonotoneA_of
+  intro a a' _ _ ha'a _ hm
+  simp only [DifferentialMarkingProfile.animacyCutoffA, decide_eq_true_eq] at hm ⊢
+  exact Core.Order.atOrBelow_isLowerSet cutoff ha'a hm
 
-/-- Definiteness-cutoff A profiles are always monotone (anti-monotone). -/
+/-- Definiteness-cutoff A profiles are always anti-monotone (lower set). -/
 theorem definitenessCutoffA_monotone (ch : MarkingChannel) (cutoff : DefinitenessLevel) :
     (DifferentialMarkingProfile.definitenessCutoffA "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  apply DifferentialMarkingProfile.isMonotoneA_of
+  intro _ _ d d' _ hd'd hm
+  simp only [DifferentialMarkingProfile.definitenessCutoffA, decide_eq_true_eq] at hm ⊢
+  exact Core.Order.atOrBelow_isLowerSet cutoff hd'd hm
 
 -- ============================================================================
 -- § 10: Mirror Image Theorem ([just-2024], §3)
@@ -480,7 +544,7 @@ theorem animacy_mirror_image (cutoff : AnimacyLevel) :
       DefinitenessLevel.all.all (λ d =>
         (DifferentialMarkingProfile.animacyCutoffP "" .indexing cutoff).marks a d ||
         (DifferentialMarkingProfile.animacyCutoffA "" .indexing cutoff).marks a d)) = true := by
-  cases cutoff <;> native_decide
+  cases cutoff <;> decide
 
 -- ============================================================================
 -- § 11: Scenarios ([haspelmath-2021], §6)
