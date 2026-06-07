@@ -57,8 +57,8 @@ evidential INFL. The algorithm covers present and aorist only.
 
 ## Abstract Case vs Morphological Case
 
-The dependent case algorithm produces *abstract* case values (`Features.Case`).
-These map to *morphological* surface forms (also `Features.Case`) via
+The dependent case algorithm produces *abstract* case values (`Case`).
+These map to *morphological* surface forms (also `Case`) via
 language-specific spell-out at Morphological Structure. In Georgian:
 abstract ACC → morphological DAT (dative and accusative case have fallen
 together), abstract ABS → morphological NOM (unmarked surface form).
@@ -334,7 +334,7 @@ def georgianNPs : VerbClass → List NPInDomain
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List CasedNP :=
   assignCases (georgianLangType ts) (georgianNPs vc)
 
-private def getCase! (label : String) (results : List CasedNP) : Features.Case :=
+private def getCase! (label : String) (results : List CasedNP) : Case :=
   match getCaseOf label results with
   | some c => c
   | none   => .dat  -- placeholder; the algorithm always returns every NP
@@ -353,7 +353,7 @@ private def getCase! (label : String) (results : List CasedNP) : Features.Case :
       is called "the dative case" — [marantz-1991] p. 12)
     - Abstract ABS → morphological NOM (unmarked surface form)
     - Abstract ERG → morphological ERG -/
-def georgianSpellout : Features.Case → Features.Case
+def georgianSpellout : Case → Case
   | .nom => .nom
   | .acc => .dat   -- Georgian objects surface with the dative suffix
   | .erg => .erg

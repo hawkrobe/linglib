@@ -1,6 +1,6 @@
 import Linglib.Typology.Comparison
 import Linglib.Studies.SarvasyAikhenvald2025
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
@@ -131,7 +131,7 @@ def ComparativeType1985.fixedEncoding :
 
 /-- Spatial case of the standard marker (only meaningful for adverbial types). -/
 def ComparativeType1985.spatialCase :
-    ComparativeType1985 → Option Features.Case
+    ComparativeType1985 → Option Case
   | .separative => some .abl
   | .allative => some .all
   | .locative => some .loc

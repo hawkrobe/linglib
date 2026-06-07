@@ -1,7 +1,7 @@
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Linglib.Features.Person.Decomposition
 
@@ -197,11 +197,11 @@ def objectSyntaxLicit (subjBearsErg : Bool) : ObjectSyntax → Bool
 
 /-- Shawi's morphological case inventory: nominative (unmarked) and
     ergative (-ri). No accusative; objects are unmarked. -/
-def caseInventory : Finset Features.Case := {.nom, .erg}
+def caseInventory : Finset Case := {.nom, .erg}
 
 /-- The {NOM, ERG} inventory passes the cross-linguistic case-hierarchy
     check (Blake's hierarchy: ERG and NOM are both rank-6 core cases). -/
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 8: Sanity checks on the paradigms

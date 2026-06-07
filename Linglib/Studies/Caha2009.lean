@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
@@ -56,7 +56,6 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 
 namespace Caha2009
 
-open Features (Case)
 open scoped Syntax.Case.Caha
 
 /-! ## Caha containment-respect predicate
@@ -241,7 +240,7 @@ namespace Slavic
     `Syntax.Case.Order.cahaSlavicRank` (the substrate definition). For
     the relationship to `containmentRank` (LOC at top, INST
     off-hierarchy), see `Syntax.Case.Order.cahaSlavicRank_vs_containmentRank`. -/
-abbrev slavicRank : Features.Case → Option (Fin 6) :=
+abbrev slavicRank : Case → Option (Fin 6) :=
   Syntax.Case.cahaSlavicRank
 
 /-- A morphological paradigm encoded as a form-class index per cell.

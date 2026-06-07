@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!

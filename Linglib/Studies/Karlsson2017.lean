@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Morphology.MorphRule
 
@@ -20,7 +20,7 @@ the VP:
 The partitive also appears obligatorily under negation:
   *En lukenut kirja-a.* 'I didn't read the book.'
 
-This is the first bridge in linglib connecting `Features.Case` to
+This is the first bridge in linglib connecting `Case` to
 `Features.Telicity`, making the case–aspect
 interaction formally verifiable.
 
@@ -43,7 +43,7 @@ open Features
 
 /-- The case of the Finnish direct object maps to VP telicity.
     Accusative/genitive → telic; partitive → atelic. -/
-def objectCaseToTelicity : Features.Case → Option Telicity
+def objectCaseToTelicity : Case → Option Telicity
   | .acc | .gen => some .telic     -- bounded object → telic VP
   | .part      => some .atelic    -- unbounded object → atelic VP
   | _          => none            -- not an object case
@@ -62,7 +62,7 @@ inductive PartitiveLicensor where
 structure PartitiveDatum where
   finnish : String
   gloss : String
-  objectCase : Features.Case
+  objectCase : Case
   licensor : Option PartitiveLicensor
   vpTelicity : Telicity
   deriving Repr, BEq

@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 /-!
 # Korean Case Inventory
 [blake-1994]
@@ -16,10 +16,10 @@ maps cleanly onto Blake's hierarchy with no gaps.
 namespace Korean.Case
 
 /-- Korean case inventory. -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
-example : Features.Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory caseInventory := by decide
 
 end Korean.Case

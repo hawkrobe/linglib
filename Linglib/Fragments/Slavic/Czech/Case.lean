@@ -13,6 +13,6 @@ numerals). `caseInventory` aliases the shared 6-case core;
 
 namespace Czech.Case
 
-abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
+abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
 
 end Czech.Case

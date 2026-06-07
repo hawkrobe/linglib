@@ -1,5 +1,5 @@
-import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
@@ -33,25 +33,25 @@ namespace Latin.Case
 -- ============================================================================
 
 /-- Standard Latin 6-case inventory (NOM ACC GEN DAT ABL VOC). -/
-def caseInventory : Finset Features.Case :=
+def caseInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl, .voc}
 
 /-- The hierarchy-relevant subset (excluding VOC at rank 0). -/
-def coreInventory : Finset Features.Case :=
+def coreInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl}
 
 /-- Latin's 5-case core inventory **fails** strict contiguity: DAT (rank 4)
     and ABL (rank 2) have no LOC (rank 3) between them. -/
 theorem core_inventory_fails_strict :
-    ¬ Features.Case.IsValidInventory coreInventory := by decide
+    ¬ Case.IsValidInventory coreInventory := by decide
 
 /-- With the vestigial locative, contiguous on ranks 6–2.
     VOC (rank 0) creates a gap at rank 1 under strict checking, so
     we validate the hierarchy-relevant subset without it. -/
-def inventoryWithLocative : Finset Features.Case :=
+def inventoryWithLocative : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl}
 
-example : Features.Case.IsValidInventory inventoryWithLocative := by decide
+example : Case.IsValidInventory inventoryWithLocative := by decide
 
 -- ============================================================================
 -- § 2: Syncretism Patterns ([blake-1994], pp. 19–24)
@@ -86,11 +86,11 @@ theorem dat_abl_inventory_adjacent :
     morphological form covers source (ablativus separativus), instrumental
     (ablativus instrumenti), and causal (ablativus causae) functions.
     These are exactly the ablative extension targets in [heine-2009]
-    Table 29.6, formalized in `Features.Case.Extends`. -/
+    Table 29.6, formalized in `Case.Extends`. -/
 theorem abl_extends_to_inst :
-    Features.Case.Extends .abl .inst := by decide
+    Case.Extends .abl .inst := by decide
 
 theorem abl_extends_to_caus :
-    Features.Case.Extends .abl .caus := by decide
+    Case.Extends .abl .caus := by decide
 
 end Latin.Case

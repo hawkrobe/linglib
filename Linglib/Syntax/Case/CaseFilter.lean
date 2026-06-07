@@ -41,7 +41,7 @@ def vAssignsAccusative : FeatureBundle :=
 /-- DP needs Case (Case Filter).
     All DPs have [uCase], must be valued by Agree. The `.dat` value here
     is a placeholder — `featuresMatch` ignores values for unvalued probes,
-    so any `Features.Case` would work; `.dat` is conventional. -/
+    so any `Case` would work; `.dat` is conventional. -/
 def dpNeedsCase : FeatureBundle :=
   [.unvalued (.case .dat)]
 
@@ -61,7 +61,7 @@ def DPFeatures.withUnvaluedCase (phi : List PhiFeature) : DPFeatures :=
   ⟨phi, .unvalued (.case .dat)⟩
 
 /-- Create DP features with valued Case. -/
-def DPFeatures.withCase (phi : List PhiFeature) (c : Features.Case) : DPFeatures :=
+def DPFeatures.withCase (phi : List PhiFeature) (c : Case) : DPFeatures :=
   ⟨phi, .valued (.case c)⟩
 
 /-- Does a DP satisfy the Case Filter? (has valued Case) -/

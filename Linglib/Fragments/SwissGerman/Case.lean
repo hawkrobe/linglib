@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 /-!
 # Swiss German Case and Verb Subcategorization [shieber-1985]
 
@@ -19,7 +19,7 @@ which is not context-free.
 namespace SwissGerman.Case
 
 /-- Swiss German uses the same 4-case inventory as Standard German. -/
-def caseInventory : Finset Features.Case := {.nom, .acc, .gen, .dat}
+def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
 
 /-- Verbs that participate in cross-serial subordinate clause constructions.
 
@@ -40,7 +40,7 @@ inductive CrossSerialVerb where
     verbs sort into dative-subcategorizing and accusative-subcategorizing
     classes, and in the cross-serial construction the case on each NP must
     match the requirement of its corresponding verb. -/
-def verbObjectCase : CrossSerialVerb → Features.Case
+def verbObjectCase : CrossSerialVerb → Case
   | .haelfe     => .dat
   | .loend      => .acc
   | .aastriiche => .acc

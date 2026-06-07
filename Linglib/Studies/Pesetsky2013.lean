@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.HeadFunction
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Morphology.DM.Categorizer
@@ -128,8 +128,8 @@ agreement bridge with [caha-2009].
 - `Morphology/DM/Categorizer.lean` ([harley-2014]) —
   the structural bridge `primevalN_via_dm_categorizer` connects
   `POSCat.N` to DM `Categorizer.n` via `Cat.N`.
-- `Features.Case` (Blake) gives the cross-linguistic case inventory; we
-  bridge `POSCat → Finset Features.Case` (`POSCat.cases`) so Pesetsky's
+- `Case` (Blake) gives the cross-linguistic case inventory; we
+  bridge `POSCat → Finset Case` (`POSCat.cases`) so Pesetsky's
   primitives plug into the existing typology.
 - `Syntax.Case.Order` provides Caha's `containmentRank`; the
   `pesetsky_caha_compatible_prefix` theorem records the cross-
@@ -192,12 +192,12 @@ instance : Coe POSCat Cat := ⟨toCat⟩
 theorem toCat_injective : Function.Injective toCat := by
   intro a b h; cases a <;> cases b <;> first | rfl | cases h
 
-/-- The cases each POSCat realizes as in `Features.Case`. N/D/V each map
+/-- The cases each POSCat realizes as in `Case`. N/D/V each map
     to a singleton; P maps to the Russian productive oblique series
     (DAT/INS/LOC, matching `Russian.Case.caseInventory`)
     since [pesetsky-2013] (p. 7) explicitly does *not* refine
     the obliques by POS. -/
-def cases : POSCat → Finset Features.Case
+def cases : POSCat → Finset Case
   | .N => {.gen}
   | .D => {.nom}
   | .V => {.acc}
@@ -206,7 +206,7 @@ def cases : POSCat → Finset Features.Case
 /-- The canonical exemplar case Pesetsky uses when naming each POSCat.
     For P, the exemplar is DAT (p. 7); see `cases` for the full
     oblique series. -/
-def canonicalExemplar : POSCat → Features.Case
+def canonicalExemplar : POSCat → Case
   | .N => .gen
   | .D => .nom
   | .V => .acc
@@ -293,7 +293,7 @@ where
     stratum (head of the stack) is realized as morphology; inner
     strata are deleted. Returns `none` for empty stacks (no overt
     case marker). Phase 1.0 noncomputable: depends on `caseStackAt`. -/
-noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Features.Case :=
+noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Case :=
   (caseStackAt so tok).head?.map POSCat.canonicalExemplar
 
 -- ============================================================================
@@ -524,12 +524,12 @@ theorem POSCat.image_in_cat :
     an explicit literal so membership reduces under `decide` —
     `Finset.biUnion` (the conceptually purer form) blocks `decide` on
     its `Multiset.Quot.lift` reduction. -/
-def pesetskyCore : Finset Features.Case :=
+def pesetskyCore : Finset Case :=
   {.gen, .nom, .acc, .dat, .inst, .loc}
 
 /-- `pesetskyCore` is the union of `POSCat.cases` over all four POS
     categories — the content the literal definition is shorthand for. -/
-theorem pesetskyCore_eq_biUnion_image (c : Features.Case) :
+theorem pesetskyCore_eq_biUnion_image (c : Case) :
     c ∈ pesetskyCore ↔ ∃ p : POSCat, c ∈ p.cases := by
   constructor
   · intro hc
@@ -555,9 +555,9 @@ theorem canonicalExemplar_image_in_russian_inventory (p : POSCat) :
 /-- The three productive Russian obliques are all in `pesetskyCore`,
     contributed by the P category per [pesetsky-2013] p. 7. -/
 theorem russian_obliques_in_pesetsky_core :
-    (.dat : Features.Case) ∈ pesetskyCore ∧
-    (.inst : Features.Case) ∈ pesetskyCore ∧
-    (.loc : Features.Case) ∈ pesetskyCore := by decide
+    (.dat : Case) ∈ pesetskyCore ∧
+    (.inst : Case) ∈ pesetskyCore ∧
+    (.loc : Case) ∈ pesetskyCore := by decide
 
 /-- **Cross-framework agreement with [caha-2009]**: Pesetsky's
     POS-as-case image, restricted to the cases that have a
@@ -573,7 +573,7 @@ theorem russian_obliques_in_pesetsky_core :
     outside the Caha hierarchy. -/
 theorem pesetsky_caha_compatible_prefix :
     pesetskyCore.filter (fun c => (Syntax.Case.containmentRank c).isSome) =
-      ({.nom, .acc, .gen, .dat, .loc} : Finset Features.Case) := by
+      ({.nom, .acc, .gen, .dat, .loc} : Finset Case) := by
   decide
 
 end Pesetsky2013

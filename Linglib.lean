@@ -92,6 +92,7 @@ import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
+import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PullbackPreorder
@@ -303,7 +304,7 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
 import Linglib.Core.Computability.StringHom
 import Linglib.Features.VerbCluster
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
 import Linglib.Diachronic.CaseGrammaticalization

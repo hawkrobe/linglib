@@ -1,4 +1,4 @@
-import Linglib.Features.Case
+import Linglib.Features.Case.Basic
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Chol.Agreement
 
