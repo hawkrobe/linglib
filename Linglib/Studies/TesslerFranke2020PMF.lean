@@ -31,7 +31,7 @@ set_option autoImplicit false
 namespace TesslerFranke2020.PMF
 
 open scoped ENNReal
-open Core.Scale (Degree Threshold deg thr)
+open Semantics.Degree (Degree Threshold deg thr)
 open Features (NegationType)
 open Semantics.Degree (positiveMeaning negativeMeaning)
 

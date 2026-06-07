@@ -13,7 +13,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Core.Scale
+namespace Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § 1a. Rational Unit Interval
@@ -61,4 +61,4 @@ instance (d θ : Rat01) : Decidable (exceeds d θ) :=
 
 end Rat01
 
-end Core.Scale
+end Core.Order

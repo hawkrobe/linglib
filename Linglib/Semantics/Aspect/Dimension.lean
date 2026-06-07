@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Defs
+import Linglib.Core.Order.Boundedness
 import Linglib.Features.Aktionsart
 
 /-!
@@ -18,7 +18,7 @@ targets a bounded `boiling` scale, *cool*/*warm* an open `temperature` one.
 
 namespace ScalarTelicity
 
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open Features (Telicity VendlerClass)
 
 /-- The scalar dimension a degree-achievement verb's base adjective measures. -/

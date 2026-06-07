@@ -79,7 +79,7 @@ derivation of the predictions from first principles.
 
 namespace AlexandropoulouGotzner2024JoS
 
-open Core.Scale (Degree Threshold)
+open Semantics.Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
 open Semantics.Gradability (GradableAdjEntry ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm

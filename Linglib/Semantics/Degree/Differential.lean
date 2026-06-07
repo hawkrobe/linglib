@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Degree.Basic
 import Mathlib.Tactic.Linarith
 

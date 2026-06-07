@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 
@@ -45,8 +45,8 @@ image `μ '' {x | R x}`, connecting to `gc_sSup_Iic` under
 
 namespace Semantics.Degree.Abstraction
 
-open Core.Scale
-
+open Core.Order
+open Semantics.Degree
 -- ════════════════════════════════════════════════════
 -- § 1. Degree Predicates and Maximality
 -- ════════════════════════════════════════════════════

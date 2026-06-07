@@ -47,8 +47,7 @@ It does NOT validate:
 namespace Semantics.Attitudes.Confidence
 
 open Semantics.Gradability.StatesBased
-open Core.Scale (ComparativeScale Boundedness)
-
+open Core.Order (ComparativeScale Boundedness)
 /-! ## §1. Confidence States -/
 
 /-- A confidence state: a state with a holder and a propositional theme.

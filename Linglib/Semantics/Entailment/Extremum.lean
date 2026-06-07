@@ -1,5 +1,6 @@
 import Mathlib.Order.Bounds.Image
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Cross-world extremum under entailment
@@ -57,8 +58,7 @@ not their primary formulation.
 
 namespace Semantics.Entailment.Extremum
 
-open Core.Scale
-
+open Semantics.Degree
 variable {α : Type*} [LinearOrder α]
 
 -- ════════════════════════════════════════════════════

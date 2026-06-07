@@ -1,6 +1,6 @@
 import Mathlib.Order.Basic
 import Mathlib.Order.Lattice
-import Linglib.Core.Scales.Defs
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Core/Scales/Comparative.lean — ComparativeScale + AdditiveScale
@@ -20,7 +20,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Core.Scale
+namespace Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § 1c. Comparative Scale (Root Algebraic Structure)
@@ -64,4 +64,4 @@ def isLicensed {α : Type*} [Preorder α] (S : ComparativeScale α) : Bool :=
 
 end ComparativeScale
 
-end Core.Scale
+end Core.Order

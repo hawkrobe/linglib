@@ -1,4 +1,5 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Numerals.Basic
 
@@ -15,7 +16,7 @@ density predictions.
 ## Bridge Structure
 
 The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
-`abbrev`s over `Core.Scale.{atLeastDeg, moreThanDeg, ...} id` in
+`abbrev`s over `Semantics.Degree.{atLeastDeg, moreThanDeg, ...} id` in
 `Semantics/Numerals/Basic.lean` §2 — the connection holds by
 construction, no bridge lemma needed.
 
@@ -32,7 +33,7 @@ construction, no bridge lemma needed.
 
 namespace FoxHackl2006Numerals
 
-open Core.Scale
+open Semantics.Degree
 open Semantics.Entailment.Extremum
 open Semantics.Numerals
 

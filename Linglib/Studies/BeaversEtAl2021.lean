@@ -1,3 +1,5 @@
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 import Linglib.Morphology.RootTypology
 import Linglib.Fragments.Chuj.VerbBuilding
 

@@ -67,7 +67,7 @@ import Linglib.Core.Logic.Aristotelian.Partition
 import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Linglib.Core.Logic.Aristotelian.Square
 import Linglib.Core.Logic.PolarizedIndividuals
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Intensional.Frame
@@ -317,9 +317,8 @@ import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem
 import Linglib.Semantics.Numerals.Roundness
-import Linglib.Core.Scales.Predicate
-import Linglib.Core.Scales.Comparison
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.Predicate
+import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Core.Order.ComparativeProbability.Entailments
 import Linglib.Core.Order.ComparativeProbability.Conditional

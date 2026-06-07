@@ -1,6 +1,6 @@
 import Mathlib.Order.Basic
-import Linglib.Core.Scales.Defs
-import Linglib.Core.Scales.Comparative
+import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.ComparativeScale
 
 /-!
 # Core/Scales/DirectedMeasure.lean — directed measurement primitive
@@ -33,7 +33,9 @@ Mathlib typeclass instances cannot be stored in record fields; the enum
 and the typeclass system serve different roles and both are real.
 -/
 
-namespace Core.Scale
+namespace Semantics.Degree
+
+open Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § 1e. Directed Measure (Root Algebraic Primitive)
@@ -156,4 +158,4 @@ end DirectedMeasure
     per master plan v4 Phase B (idea-named: `etia`/`gtia`). The
     cross-framework licensing equivalence theorems also live there. -/
 
-end Core.Scale
+end Semantics.Degree

@@ -28,7 +28,7 @@ import Linglib.Morphology.Word
 namespace English.Modifiers.Adjectives
 
 open Semantics.Gradability (AntonymRelation)
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open Features (NegationType)
 
 -- ============================================================================

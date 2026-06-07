@@ -1,7 +1,7 @@
 import Mathlib.Order.Basic
-import Linglib.Core.Scales.Defs
-import Linglib.Core.Scales.Comparative
-import Linglib.Core.Scales.DirectedMeasure
+import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.ComparativeScale
+import Linglib.Semantics.Degree.DirectedMeasure
 
 /-!
 # Maximal Informativity Principle (MIP)
@@ -44,8 +44,8 @@ commitment (the MIP's central insight: atMostDeg + monotone runtime).
 
 namespace Semantics.Gradability.MaximalInformativity
 
-open Core.Scale
-
+open Core.Order
+open Semantics.Degree
 variable {α : Type*} [LinearOrder α] {W : Type*}
 
 -- ════════════════════════════════════════════════════

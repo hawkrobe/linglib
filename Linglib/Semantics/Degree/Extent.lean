@@ -41,7 +41,7 @@ itself. A faithful sortal formalization (typed `PosExt D` / `NegExt D`
 with a partial DEG) is not provided here.
 -/
 
-namespace Core.Scale
+namespace Semantics.Degree
 
 variable {Entity D : Type*}
 
@@ -124,4 +124,4 @@ theorem crossExtent_always_false [LinearOrder D]
     (μ : Entity → D) (a b : Entity) : ¬ crossExtentInclusion μ a b :=
   fun h => absurd (h (min_le_left (μ a) (μ b))) (not_lt.mpr (min_le_right _ _))
 
-end Core.Scale
+end Semantics.Degree

@@ -1,6 +1,7 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.MeasureFunction
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -56,7 +57,7 @@ rather than docstring prose.
 
 namespace HayKennedyLevin1999
 
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

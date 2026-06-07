@@ -22,7 +22,10 @@ For the adjective classification hierarchy (intersective, subsective, privative,
 extensional), see `Classification.lean`.
 -/
 
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.Bounds
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -31,8 +34,8 @@ import Linglib.Semantics.Degree.Basic
 
 namespace Semantics.Gradability
 
-open Core.Scale (Boundedness Degree Threshold Degree.toNat Threshold.toNat
-  deg thr allDegrees allThresholds)
+open Core.Order (Boundedness)
+open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr allDegrees allThresholds)
 open Features (NegationType)
 
 -- Two-Threshold Model for Contrary Antonyms
@@ -250,10 +253,10 @@ def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingTyp
 -- Marginality Scales Account ([dinis-jacinto-2026])
 -- ════════════════════════════════════════════════════
 
-open Core.Scale
-
+open Core.Order
+open Semantics.Degree
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Core.Scale.DirectedMeasure α W where
+    Semantics.Degree.DirectedMeasure α W where
   ml : Semantics.Gradability.MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]

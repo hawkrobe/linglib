@@ -154,8 +154,7 @@ property of N₂. -/
 
 section EM
 open Semantics.Gradability.Intensification (EvaluativeMeasure intensifiedMeaning)
-open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat)
-
+open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat)
 /-- EM semantics: N₁ as evaluative modifier of a contextual property of N₂.
 
 "a hell of a game" = the game x such that the contextually-salient
@@ -244,8 +243,7 @@ Uses `muHorrible 10` as the evaluative measure for *hell*:
 
 section EMBIExample
 open Semantics.Gradability.Intensification (muHorrible EvaluativeMeasure)
-open Core.Scale (Degree deg thr)
-
+open Semantics.Degree (Degree deg thr)
 /-- Quality measure for EM: contextually-determined goodness as a doctor.
 George (9) is an outstanding doctor; Sarah (6) is decent; Floyd (3) is poor. -/
 def doctorQuality : GradableNouns.Person → Degree 10
@@ -312,7 +310,7 @@ The worked example witnesses both directions of independence:
     idiot-doctor) but fails `emSemantics` (she is not a hell-of-a-doctor). -/
 theorem ebnp_not_entails_em :
     ebnpSemantics exampleIdiot isDoctorB .sarah = true ∧
-    emSemantics hellEval doctorQuality (Core.Scale.thr 3) isDoctorB .sarah = false := by
+    emSemantics hellEval doctorQuality (Semantics.Degree.thr 3) isDoctorB .sarah = false := by
   constructor <;> native_decide
 
 end Semantics.Quantification.Binominal

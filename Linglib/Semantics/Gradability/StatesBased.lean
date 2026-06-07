@@ -1,4 +1,5 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.ComparativeScale
 import Linglib.Semantics.Gradability.Basic
 
 /-!
@@ -29,7 +30,7 @@ confidence ordering (CSW observation (72)).
 
 ## Architecture
 
-`StatesBasedEntry` extends `ComparativeScale` (from `Core.Scale`) with a
+`StatesBasedEntry` extends `ComparativeScale` (from `Semantics.Degree`) with a
 contrast point. The background ordering is the ambient `[Preorder S]`.
 This is a competing theory to the standard threshold model in `Theory.lean`; the
 bridge theorem `statesBased_iff_kennedy` shows when they agree.
@@ -38,8 +39,7 @@ bridge theorem `statesBased_iff_kennedy` shows when they agree.
 
 namespace Semantics.Gradability.StatesBased
 
-open Core.Scale (ComparativeScale Boundedness)
-
+open Core.Order (ComparativeScale Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. States-Based Entry
 -- ════════════════════════════════════════════════════

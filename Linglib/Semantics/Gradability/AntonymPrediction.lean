@@ -38,7 +38,7 @@ primitives via `Iff.rfl` bridges that survive substrate transparency
 
 namespace Semantics.Gradability
 
-open Core.Scale (Degree Threshold)
+open Semantics.Degree (Degree Threshold)
 open Features (NegationType Asymmetry)
 open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning)
 

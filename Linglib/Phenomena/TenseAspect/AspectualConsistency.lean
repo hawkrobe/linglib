@@ -36,7 +36,7 @@ open Semantics.Lexical
 open Features
 open English.Predicates.Verbal
 open Semantics.Aspect.Incremental (VerbIncClass)
-open Core.Scale (LicensingPipeline Boundedness MereoTag)
+open Core.Order (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
 open Champollion2017 (predictsSSR)

@@ -45,7 +45,7 @@ namespace KennedyLevin2008
 
 open English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Core.Scale (LicensingPipeline)
+open Core.Order (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 -- Fully qualified aliases for names shared between Verbal and Adjectival

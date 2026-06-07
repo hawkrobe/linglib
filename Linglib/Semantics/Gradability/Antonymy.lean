@@ -30,7 +30,7 @@ set_option autoImplicit false
 
 namespace Semantics.Gradability.Antonymy
 
-open Core.Scale (Degree Threshold Threshold.toNat)
+open Semantics.Degree (Degree Threshold Threshold.toNat)
 open Semantics.Gradability (ThresholdPair contradictoryNeg
   positiveMeaning' contraryNegMeaning notContraryNegMeaning inGapRegion)
 open Semantics.Degree (positiveMeaning antonymMeaning)

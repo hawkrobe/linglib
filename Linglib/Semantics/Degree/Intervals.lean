@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Basic
 
 /-!
@@ -31,8 +31,8 @@ degree morphology manipulates these intervals.
 
 namespace Semantics.Degree.Intervals
 
-open Core.Scale
-
+open Core.Order
+open Semantics.Degree
 -- ════════════════════════════════════════════════════
 -- § 1. Intervals as Degrees
 -- ════════════════════════════════════════════════════
@@ -107,13 +107,13 @@ def subcomparative {Entity D : Type*} [LinearOrder D]
 /-- The positive interval's membership predicate is exactly `posExt`:
     d is in the interval [⊥, μ(x)] iff d ∈ posExt(μ, x).
     This connects Schwarzschild's interval semantics to the algebraic
-    extent functions in `Core.Scale`. -/
+    extent functions in `Semantics.Degree`. -/
 theorem positiveInterval_iff_posExt {Entity D : Type*}
     [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) (d : D) :
     (positiveInterval μ x).lower ≤ d ∧ d ≤ (positiveInterval μ x).upper ↔
-      d ∈ Core.Scale.posExt μ x := by
-  simp [positiveInterval, Core.Scale.posExt]
+      d ∈ Semantics.Degree.posExt μ x := by
+  simp [positiveInterval, Semantics.Degree.posExt]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Negative Intervals and LITTLE

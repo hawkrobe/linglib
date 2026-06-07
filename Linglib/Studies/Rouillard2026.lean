@@ -1,4 +1,5 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Aspect.Basic
@@ -36,11 +37,11 @@ numeral exists ("information collapse"), the TIA is blocked.
 This file consolidates Rouillard's formal apparatus and the empirical
 verification into a single Studies file. The companion
 `MaximalInformativity.lean` was deleted in this rebuild — its content was
-absorbed here, with substrate primitives lifted to `Core.Scale`.
+absorbed here, with substrate primitives lifted to `Semantics.Degree`.
 
 Sections:
 
-1. Re-export of substrate (`Core.Scale` informativity primitives).
+1. Re-export of substrate (`Semantics.Degree` informativity primitives).
 2. `TimeMeasure` typeclass (replaces the prior `MeasureFun` struct).
 2a. Generalized intervals with open/closed boundaries (`GInterval`,
    eq. 14a–b, 99a–b) — paper-specific apparatus, single consumer.
@@ -93,8 +94,8 @@ namespace NonemptyInterval
     (licensed); open PTSs correspond to open scales (blocked/information
     collapse). This is the "interval generalization":
     `NonemptyInterval.BoundaryType.closed`/`.open_` is isomorphic to
-    `Core.Scale.Boundedness.closed`/`.open_`. -/
-def BoundaryType.toBoundedness : BoundaryType → Core.Scale.Boundedness
+    `Core.Order.Boundedness.closed`/`.open_`. -/
+def BoundaryType.toBoundedness : BoundaryType → Core.Order.Boundedness
   | .closed => .closed
   | .open_ => .open_
 
@@ -104,7 +105,7 @@ theorem closedBoundary_licensed :
 theorem openBoundary_blocked :
     (BoundaryType.toBoundedness .open_).isLicensed = false := rfl
 
-instance : Core.Scale.LicensingPipeline BoundaryType where
+instance : Core.Order.LicensingPipeline BoundaryType where
   toBoundedness := BoundaryType.toBoundedness
 
 end NonemptyInterval
@@ -115,7 +116,8 @@ open NonemptyInterval
 open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Features
-open Core.Scale
+open Core.Order
+open Semantics.Degree
 open Semantics.Entailment.Extremum
 open English.TemporalExpressions
 
@@ -341,7 +343,7 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : NonemptyInterval T
 
 /-! `MIP_Licensed` and `MIP_LicensedDown` are defined in
     `Semantics/Entailment/Extremum.lean` and reused here. They
-    combine `Core.Scale.AdmitsOptimum P` (non-constancy: the *atelic*
+    combine `Semantics.Degree.AdmitsOptimum P` (non-constancy: the *atelic*
     failure mode) with the per-world existence of a `Set.IsLeast` /
     `Set.IsGreatest` (mathlib): a most-informative numeral exists at some
     world. The two conjuncts capture two separate failure modes:

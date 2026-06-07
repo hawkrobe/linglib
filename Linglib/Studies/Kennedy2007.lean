@@ -1,7 +1,8 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Kennedy
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Kennedy Framework on Comparative Data
@@ -42,8 +43,7 @@ comparison ("3 inches taller", "twice as expensive", "much faster").
 namespace Kennedy2007
 
 open Semantics.Degree
-open Core.Scale (Boundedness)
-
+open Core.Order (Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. Interpretive Economy Predictions
 -- ════════════════════════════════════════════════════

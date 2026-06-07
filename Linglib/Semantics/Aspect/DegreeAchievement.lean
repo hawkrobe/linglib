@@ -1,4 +1,5 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Aspect.Dimension
 import Linglib.Features.Aktionsart
 
@@ -24,7 +25,7 @@ This module derives `VendlerClass` from `Boundedness`, connecting to the existin
 
 namespace Features.DegreeAchievement
 
-open Core.Scale (Boundedness LicensingPipeline)
+open Core.Order (Boundedness LicensingPipeline)
 open Features
 open Features
 

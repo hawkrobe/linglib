@@ -24,11 +24,11 @@ the degree argument.
 3. **Cross-polar anomaly**: "Kim is as tall as Lee is short" is anomalous
    because the equative tries to compare a positive extent with a negative
    extent — structurally incompatible (proved always-false in
-   `Core.Scale.crossExtent_always_false`).
+   `Semantics.Degree.crossExtent_always_false`).
 
 4. **Antonymy biconditional**: "BK is longer than The Idiot iff The Idiot is
    shorter than BK" is DERIVED from extent complementarity, not stipulated
-   as a lexical property (proved in `Core.Scale.antonymy_biconditional`).
+   as a lexical property (proved in `Semantics.Degree.antonymy_biconditional`).
 
 5. **DegP projection**: Degree morphemes head their own syntactic phrase.
    This has been refined by [heim-2001] (sentential operator approach)
@@ -64,9 +64,7 @@ namespace Kennedy1999
 open Semantics.Degree.Comparative (comparativeSem equativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
   equativeSem_iff_posExt_subset)
-open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false
-  posExt_subset_iff negExt_subset_iff extent_galois_antitone)
-
+open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_false posExt_subset_iff negExt_subset_iff extent_galois_antitone)
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Polar Anomaly Data
 -- ════════════════════════════════════════════════════
@@ -142,7 +140,7 @@ theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
 
 /-- "A is taller than B" iff B's positive extent is strictly contained
     in A's. Bridges the consensus comparative to the algebraic
-    `posExt_ssubset_iff` from `Core.Scale`. -/
+    `posExt_ssubset_iff` from `Semantics.Degree`. -/
 theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=

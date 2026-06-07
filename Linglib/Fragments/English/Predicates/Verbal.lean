@@ -23,7 +23,7 @@ export Features (Preferential Attitude Causative Implicative)
 open Features
 open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
 open Semantics.ArgumentStructure.EntailmentProfile
 

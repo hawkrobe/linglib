@@ -21,7 +21,7 @@ not encoded as aggregate-count theorems.
 `ClassifierStatus` (WALS Ch 55) and `fromWALS55A` live in
 `Typology/ClassifierSystem.lean` and are re-imported here.
 
-The lexical numeral object (`Core.Scale.Comparison`, `Numeral.Entry`) that
+The lexical numeral object (`Core.Order.Comparison`, `Numeral.Entry`) that
 Fragments instantiate, and its denotation, live in the sibling
 `Typology/Numeral/Basic.lean` + `Semantics/Numerals/`. This file is the WALS
 typological survey.

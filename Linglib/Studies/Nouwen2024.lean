@@ -603,10 +603,10 @@ namespace RSA.Nouwen2024
 
 instance : NeZero (6 : Nat) := ⟨by omega⟩
 
-abbrev Height := Core.Scale.Degree 6
-abbrev Threshold := Core.Scale.Threshold 6
+abbrev Height := Semantics.Degree.Degree 6
+abbrev Threshold := Semantics.Degree.Threshold 6
 
-open Core.Scale (deg thr)
+open Semantics.Degree (deg thr)
 open Features (EvaluativeValence)
 open Semantics.Gradability.Intensification (EvaluativeMeasure)
 open Semantics.Degree (positiveMeaning)
@@ -704,7 +704,7 @@ private lemma muHorrible_eq (h : Height) :
     (Semantics.Gradability.Intensification.muHorrible 6).mu h.toNat =
     (muHorrible h : ℚ) := by
   unfold Semantics.Gradability.Intensification.muHorrible muHorrible
-  fin_cases h <;> simp [Core.Scale.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Semantics.Degree.Degree.toNat] <;> norm_num
 
 /--
 The local horribly_warm meaning agrees with theory-layer `intensifiedMeaning`
@@ -723,7 +723,7 @@ private lemma muPleasant_eq (h : Height) :
     (Semantics.Gradability.Intensification.muPleasant 6).mu h.toNat =
     (muPleasant h : ℚ) := by
   unfold Semantics.Gradability.Intensification.muPleasant muPleasant
-  fin_cases h <;> simp [Core.Scale.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Semantics.Degree.Degree.toNat] <;> norm_num
 
 /--
 The local pleasantly_warm meaning agrees with theory-layer `intensifiedMeaning`

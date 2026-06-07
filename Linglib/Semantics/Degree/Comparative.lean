@@ -1,4 +1,5 @@
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
+import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Entailment.AntiAdditivity
 
@@ -39,8 +40,8 @@ manner implicature) lives in `Studies/Rett2026.lean`.
 
 namespace Semantics.Degree.Comparative
 
-open Core.Scale (ScalePolarity maxOnScale maxOnScale_singleton maxOnScale_ge_atMost)
-
+open Core.Order (ScalePolarity)
+open Semantics.Degree (maxOnScale maxOnScale_singleton maxOnScale_ge_atMost)
 -- ════════════════════════════════════════════════════
 -- § 1. Scale Direction
 -- ════════════════════════════════════════════════════
@@ -206,12 +207,12 @@ structure MannerEffect where
 
 /-- Comparative via extents: "A is taller than B" iff A's positive
     extent strictly contains B's. Bridges the point comparison
-    to the algebraic `posExt_ssubset_iff` from `Core.Scale`. -/
+    to the algebraic `posExt_ssubset_iff` from `Semantics.Degree`. -/
 theorem comparative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔
-      Core.Scale.posExt μ b ⊂ Core.Scale.posExt μ a := by
-  exact (Core.Scale.posExt_ssubset_iff μ b a).symm
+      Semantics.Degree.posExt μ b ⊂ Semantics.Degree.posExt μ a := by
+  exact (Semantics.Degree.posExt_ssubset_iff μ b a).symm
 
 
 -- ════════════════════════════════════════════════════
@@ -224,12 +225,12 @@ theorem comparative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
 
     This is [kennedy-1999]'s central result: antonymy equivalence
     follows from the algebra of extents. Delegates to
-    `Core.Scale.antonymy_biconditional`. -/
+    `Semantics.Degree.antonymy_biconditional`. -/
 theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔
-      Core.Scale.negExt μ a ⊂ Core.Scale.negExt μ b := by
-  rw [comparative_iff_posExt_ssubset, Core.Scale.antonymy_biconditional]
+      Semantics.Degree.negExt μ a ⊂ Semantics.Degree.negExt μ b := by
+  rw [comparative_iff_posExt_ssubset, Semantics.Degree.antonymy_biconditional]
 
 /-! ### Strengthened, negated, and extent-theoretic equatives
 [kennedy-2007] [rett-2020] [schwarzschild-2008] [thomas-deo-2020]
@@ -263,8 +264,7 @@ theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : E
     negatedEquative μ a b ↔ ¬ equativeSem μ a b .positive := by
   simp [negatedEquative, equativeSem, not_le]
 
-open Core.Scale (posExt posExt_subset_iff posExt_ssubset_iff)
-
+open Semantics.Degree (posExt posExt_subset_iff posExt_ssubset_iff)
 /-- Equative as positive extent inclusion ([kennedy-1999]):
 "A is as tall as B" iff `posExt(B) ⊆ posExt(A)` — every degree
 B has, A also has. -/
