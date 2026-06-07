@@ -70,6 +70,53 @@ theorem prefix_commonPrefix {α : Type*} [DecidableEq α] :
     simpa [commonPrefix] using
       prefix_commonPrefix (r := rs) (List.prefix_append _ _) (List.prefix_append _ _)
 
+theorem commonPrefix_comm {α : Type*} [DecidableEq α] :
+    ∀ (l₁ l₂ : List α), commonPrefix l₁ l₂ = commonPrefix l₂ l₁
+  | [], [] => rfl
+  | [], _ :: _ => rfl
+  | _ :: _, [] => rfl
+  | a :: as, b :: bs => by
+    by_cases h : a = b
+    · subst h
+      simp [commonPrefix, commonPrefix_comm as bs]
+    · simp [commonPrefix, h, Ne.symm h]
+
+/-- A prefix agrees with its extension below its length. -/
+theorem IsPrefix.getElem?_eq_of_lt {α : Type*} {l₁ l₂ : List α}
+    (h : l₁ <+: l₂) {i : Nat} (hi : i < l₁.length) : l₂[i]? = l₁[i]? := by
+  obtain ⟨s, rfl⟩ := h
+  rw [List.getElem?_append_left hi]
+
+/-- A prefix extends by the element sitting at its length. -/
+theorem append_singleton_prefix_of_getElem? {α : Type*} {cp l : List α}
+    (h : cp <+: l) {i : α} (hi : l[cp.length]? = some i) :
+    cp ++ [i] <+: l := by
+  obtain ⟨s, rfl⟩ := h
+  rcases s with _ | ⟨x, s'⟩
+  · simp at hi
+  · rw [List.getElem?_append_right (le_refl _)] at hi
+    simp only [Nat.sub_self, List.getElem?_cons_zero, Option.some.injEq] at hi
+    subst hi
+    exact ⟨s', by simp⟩
+
+/-- The lists genuinely diverge just past their common prefix. -/
+theorem getElem?_commonPrefix_ne {α : Type*} [DecidableEq α] :
+    ∀ {l₁ l₂ : List α} {i j : α},
+      l₁[(commonPrefix l₁ l₂).length]? = some i →
+      l₂[(commonPrefix l₁ l₂).length]? = some j → i ≠ j
+  | [], _, i, j => by simp
+  | _ :: _, [], i, j => by simp [commonPrefix]
+  | a :: as, b :: bs, i, j => by
+    by_cases h : a = b
+    · subst h
+      simp only [commonPrefix, if_pos rfl, List.length_cons,
+        List.getElem?_cons_succ]
+      exact getElem?_commonPrefix_ne
+    · simp only [commonPrefix, if_neg h, List.length_nil,
+        List.getElem?_cons_zero, Option.some.injEq]
+      rintro rfl rfl
+      exact h
+
 end List
 
 namespace Core.Order
@@ -270,6 +317,139 @@ theorem not_ge {p q : TreePath} (h : Precedes p q) : ¬ q ≤ p := by
   rintro hle
   obtain ⟨r, i, j, hij, hi, hj⟩ := h
   exact absurd (branch_unique hi (hj.trans hle)) (Nat.ne_of_lt hij)
+
+/-- **Nontangling** (downward inheritance; the third clause of Wall's
+tree definition, [barker-pullum-1990] Definition 1): precedence is
+inherited by descendants. -/
+theorem mono {p q p' q' : TreePath} (h : Precedes p q)
+    (hp : p ≤ p') (hq : q ≤ q') : Precedes p' q' := by
+  obtain ⟨r, i, j, hij, hi, hj⟩ := h
+  exact ⟨r, i, j, hij, hi.trans hp, hj.trans hq⟩
+
+/-- If `r ++ [i]` is a prefix of `l`, then `l` carries `i` at index
+`r.length`. -/
+private theorem getElem?_of_append_singleton_prefix {r : List Nat} {i : Nat}
+    {l : List Nat} (h : (r ++ [i]) <+: l) : l[r.length]? = some i := by
+  obtain ⟨s, rfl⟩ := h
+  rw [List.append_assoc, List.getElem?_append_right (le_refl _)]
+  simp
+
+/-- The divergence index of `Precedes` is exactly the common-prefix
+length: `p` precedes `q` iff at index `(commonPrefix p q).length` both
+paths continue and `p`'s branch index is smaller. The computable
+characterization behind `Decidable (Precedes p q)`. -/
+theorem precedes_iff {p q : TreePath} :
+    Precedes p q ↔
+    ∃ i j, p.toList[(List.commonPrefix p.toList q.toList).length]? = some i ∧
+      q.toList[(List.commonPrefix p.toList q.toList).length]? = some j ∧ i < j := by
+  set cp := List.commonPrefix p.toList q.toList with hcp
+  constructor
+  · rintro ⟨r, i, j, hij, hi, hj⟩
+    have hrp : r <+: p.toList := (List.prefix_append r [i]).trans hi
+    have hrq : r <+: q.toList := (List.prefix_append r [j]).trans hj
+    have hrcp : r <+: cp := List.prefix_commonPrefix hrp hrq
+    have hd : cp.length = r.length := by
+      refine le_antisymm ?_ hrcp.length_le
+      by_contra hlt
+      push_neg at hlt
+      have hpi := getElem?_of_append_singleton_prefix hi
+      have hqj := getElem?_of_append_singleton_prefix hj
+      have h1 := (List.commonPrefix_prefix_left p.toList q.toList).getElem?_eq_of_lt hlt
+      have h2 := (List.commonPrefix_prefix_right p.toList q.toList).getElem?_eq_of_lt hlt
+      rw [hpi] at h1
+      rw [hqj] at h2
+      exact absurd (Option.some_injective _ (h1.trans h2.symm))
+        (Nat.ne_of_lt hij)
+    rw [hd]
+    exact ⟨i, j, getElem?_of_append_singleton_prefix hi,
+      getElem?_of_append_singleton_prefix hj, hij⟩
+  · rintro ⟨i, j, hpi, hqj, hij⟩
+    refine ⟨cp, i, j, hij, ?_, ?_⟩
+    · have := List.commonPrefix_prefix_left p.toList q.toList
+      exact List.append_singleton_prefix_of_getElem? this hpi
+    · have := List.commonPrefix_prefix_right p.toList q.toList
+      exact List.append_singleton_prefix_of_getElem? this hqj
+
+instance (p q : TreePath) : Decidable (Precedes p q) := by
+  rcases hp : p.toList[(List.commonPrefix p.toList q.toList).length]? with _ | i
+  · exact .isFalse fun h => by
+      obtain ⟨i, _, hpi, _, _⟩ := precedes_iff.mp h
+      rw [hp] at hpi
+      simp at hpi
+  · rcases hq : q.toList[(List.commonPrefix p.toList q.toList).length]? with _ | j
+    · exact .isFalse fun h => by
+        obtain ⟨_, j, _, hqj, _⟩ := precedes_iff.mp h
+        rw [hq] at hqj
+        simp at hqj
+    · refine decidable_of_iff (i < j) ⟨fun hij => precedes_iff.mpr ⟨i, j, hp, hq, hij⟩,
+        fun h => ?_⟩
+      obtain ⟨i', j', hpi, hqj, hij⟩ := precedes_iff.mp h
+      rw [hp] at hpi
+      rw [hq] at hqj
+      obtain rfl := Option.some_injective _ hpi
+      obtain rfl := Option.some_injective _ hqj
+      exact hij
+
+/-- Precedence is asymmetric. -/
+theorem asymm {p q : TreePath} (h : Precedes p q) : ¬ Precedes q p := by
+  intro h'
+  obtain ⟨i, j, hpi, hqj, hij⟩ := precedes_iff.mp h
+  obtain ⟨i', j', hqi', hpj', hij'⟩ := precedes_iff.mp h'
+  rw [List.commonPrefix_comm] at hqi' hpj'
+  rw [hpi] at hpj'
+  rw [hqj] at hqi'
+  obtain rfl := Option.some_injective _ hpj'
+  obtain rfl := Option.some_injective _ hqi'
+  omega
+
+/-- Prepending a shared child index preserves precedence. -/
+theorem cons {p q : TreePath} (i : Nat) (h : Precedes p q) :
+    Precedes ⟨i :: p.toList⟩ ⟨i :: q.toList⟩ := by
+  obtain ⟨r, a, b, hab, ha, hb⟩ := h
+  exact ⟨i :: r, a, b, hab,
+    (List.cons_prefix_cons).mpr ⟨rfl, ha⟩, (List.cons_prefix_cons).mpr ⟨rfl, hb⟩⟩
+
+/-- Positions under distinct child indices are precedence-ordered by
+those indices (divergence at the root). -/
+theorem of_index_lt {i j : Nat} (hij : i < j) (p q : TreePath) :
+    Precedes ⟨i :: p.toList⟩ ⟨j :: q.toList⟩ :=
+  ⟨[], i, j, hij, by simpa using List.cons_prefix_cons.mpr ⟨rfl, p.toList.nil_prefix⟩,
+    by simpa using List.cons_prefix_cons.mpr ⟨rfl, q.toList.nil_prefix⟩⟩
+
+/-- **Totality over the dominance remainder**: any two positions are
+dominance-comparable or precedence-ordered — the exhaustiveness that
+linear-precedence statements need. -/
+theorem trichotomy (p q : TreePath) :
+    p ≤ q ∨ q ≤ p ∨ Precedes p q ∨ Precedes q p := by
+  set cp := List.commonPrefix p.toList q.toList with hcp
+  rcases hpd : p.toList[cp.length]? with _ | i
+  · -- `p` ends at or before the divergence: `p = cp ≤ q`.
+    left
+    have hple : p.toList.length ≤ cp.length := by
+      by_contra hlt
+      push_neg at hlt
+      exact absurd hpd (by simp [List.getElem?_eq_some_iff, hlt])
+    have : p.toList = cp :=
+      (List.commonPrefix_prefix_left p.toList q.toList).eq_of_length
+        (le_antisymm (List.commonPrefix_prefix_left p.toList q.toList).length_le hple) |>.symm
+    exact le_def.mpr (this ▸ List.commonPrefix_prefix_right p.toList q.toList)
+  · rcases hqd : q.toList[cp.length]? with _ | j
+    · right; left
+      have hqle : q.toList.length ≤ cp.length := by
+        by_contra hlt
+        push_neg at hlt
+        exact absurd hqd (by simp [List.getElem?_eq_some_iff, hlt])
+      have : q.toList = cp :=
+        (List.commonPrefix_prefix_right p.toList q.toList).eq_of_length
+          (le_antisymm (List.commonPrefix_prefix_right p.toList q.toList).length_le hqle) |>.symm
+      exact le_def.mpr (this ▸ List.commonPrefix_prefix_left p.toList q.toList)
+    · have hne : i ≠ j := List.getElem?_commonPrefix_ne hpd hqd
+      rcases Nat.lt_or_ge i j with hij | hge
+      · right; right; left
+        exact precedes_iff.mpr ⟨i, j, hpd, hqd, hij⟩
+      · right; right; right
+        exact precedes_iff.mpr ⟨j, i, by rwa [List.commonPrefix_comm],
+          by rwa [List.commonPrefix_comm], lt_of_le_of_ne hge (Ne.symm hne)⟩
 
 end Precedes
 

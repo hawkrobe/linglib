@@ -395,7 +395,7 @@ def npMates {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set (Node
 | (prose, p. 4) | Reflexivity | `command_reflexive` |
 | Theorem 3 | Ambidextrousness | `command_ambidextrous` |
 | Theorem 5 | Descent | `command_descent`, `command_descent'` |
-| Theorem 7 | Constituency (via CAC) | *(not formalized)* |
+| Theorem 7 | Constituency (via CAC) | `command_constituency` |
 | Theorem 6 | Fairness | `command_fair` |
 | Section 3 | Mate Relations | `mateRelation`, `mate_symmetric`, `mate_reflexive`, `mate_intersection` |
 | - | Generalized Intersection | `command_sInter` |
