@@ -3,11 +3,10 @@
 
 Textbook-consensus types for the Akan (Kwa, Niger-Congo) determiner
 system, with no analytical denotations. The inventory is uncontroversial
-across the Akan literature (Christaller 1875, Boadi 1974, [amfo-2010],
-[arkoh-matthewson-2013], [owusu-2022] Ch 1–2). Paper-specific
-denotations (Schwarz 2013 strong-DEF, [bombi-2018] weak-DEF,
-[owusu-2022] skolem-CF for *bí*, etc.) live in Studies files that
-consume these entries.
+across the Akan literature ([amfo-2010], [arkoh-matthewson-2013],
+[owusu-2022] Ch 2–3). Paper-specific denotations ([schwarz-2013]
+strong-DEF, [bombi-2018] weak-DEF, [owusu-2022] skolem-CF for *bí*,
+etc.) live in Studies files that consume these entries.
 
 ## Main declarations
 
@@ -18,9 +17,10 @@ consume these entries.
 
 The Akan DEF marker *nó* occurs both nominally and clausally
 ([owusu-2022] Ch 4); only the nominal use is typed here.
-Bare NPs appear under both definiteness values
-([owusu-2022] App. A) — the `bare` constructor is shared between
-the two inductives to reflect this.
+Bare NPs appear under both definiteness values ([owusu-2022] Ch 2 on
+definite bare nouns; App. A on bare-noun kind/indefinite readings) —
+the `bare` constructor is shared between the two inductives to reflect
+this.
 -/
 
 namespace Akan.Determiners

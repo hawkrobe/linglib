@@ -38,10 +38,11 @@ the actual world (de re). This is captured by connecting `SkolemCF` to
 [zimmermann-2008] analyses Hausa *wani/wata* as a standard
 ∃-quantifier, predicting flexible scope via QR.
 
-[owusu-2022] analyses Akan *bí* as a skolemized choice function
-with a situation parameter (`SkolemCF`), explaining why *bí* takes
-obligatory wide scope under negation: the choice function is evaluated
-relative to the resource situation, which negation cannot shift.
+[owusu-2022] analyses Akan *bí* as an unambiguous choice function whose
+situation pronoun ties the CF and the NP to a single index (`SkolemCF`),
+explaining why *bí* takes obligatory wide scope under negation: the
+contextually-given CF is fixed before negation applies, and negation
+binds no situation variable that could shift it.
 -/
 
 namespace Semantics.Quantification.ChoiceFunction
@@ -68,10 +69,12 @@ def cfIndefSem {E : Type*} (f : CF E) (nounProp : E → Prop) : E :=
 
 /-- A situation-indexed (skolemized) choice function.
 
-    [kratzer-1998]: the CF is parameterized by a situation `s`,
-    making the selected individual depend on the evaluation situation.
+    [kratzer-1998] introduced contextually-given CFs with pronoun-like
+    skolem indices (individual arguments); [owusu-2022] adds a situation
+    index shared by the CF and its NP argument, and [mirrazi-2024] a
+    world index. [owusu-2022]'s entry:
 
-    ⟦bí⟧ = λs.λP. CH(f_s). f_s(P(s))
+    ⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s))
 
     Scope is determined by the binding site of `s`:
     - `s` bound by a higher operator → wide scope
@@ -102,8 +105,8 @@ def SkolemCF.isCorrect {S E : Type*} (f : SkolemCF S E) : Prop :=
     force wide scope (∃ > ¬) because negation cannot shift the situation
     variable.
 
-    Cross-linguistic evidence: Hausa *wani/wata* (∃) vs Akan *bí* (CF).
-    [zimmermann-2026] §3.3. -/
+    Cross-linguistic evidence: Hausa *wani/wata* (∃) vs Akan *bí* (CF)
+    ([zimmermann-2026]). -/
 inductive IndefType where
   | existential    -- ∃-quantifier: scope via QR (wide + narrow)
   | choiceFunction -- Choice function: scope via situation binding
