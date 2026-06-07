@@ -44,6 +44,15 @@ pronoun's R on the left, scope may still invert — the antecedent outscopes
 the pronoun — yet binding never resolves: "anaphoric ships passing in the
 night." There is no recovery mechanism; the account is *categorical*.
 
+The `Crossover` namespace (§10) formalizes this: the dissociation
+(`scope_inversion_no_binding`), the structural derivation (`combine`/`derive`,
+returning either the bound co-unit reading or the Reader-retaining residual),
+and the phenomenon-neutral bridge `derive_bound_iff_precedes` — the bound
+reading derives iff the antecedent linearly precedes the pronoun. The
+Owusu/Chierchia *bí*/*biara* functional-reading asymmetry ([owusu-2022] §3.3.2,
+[chierchia-2001]) is one instance; superiority and primary/secondary crossover
+are others over the same `derive`.
+
 This diverges from [shan-barker-2006], whose left-to-right `Scope` rule
 admits a marked right-to-left `Z` variant that recovers weak crossover as a
 *gradient*, defeasible reading (their continuation-level mechanism: a binder
@@ -979,5 +988,151 @@ theorem indeterminacy_associativity {A B C : Type}
   bind_assoc m f g
 
 end IndeterminacyBridge
+
+-- ════════════════════════════════════════════════════════════════════
+-- §10 Crossover: the scope×binding dissociation
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### §10 Crossover
+
+[bumford-charlow-2024] §5.2 derive weak crossover from the **non-commutativity of
+the W⊣R co-unit**: `counitApp` fires ε only with the antecedent (W) as the left
+daughter, so scope (which may invert freely) and binding-availability **dissociate**
+— the antecedent must linearly *precede* the pronoun, "even while semantic scope
+may be arbitrarily inverted." This is phenomenon-neutral; weak crossover, the
+Owusu/Chierchia functional-reading asymmetry (below), superiority ([shan-barker-2006]:
+raised-*wh* trace = W, in-situ *wh* = R), and primary/secondary crossover are all
+instances over the one derivation. -/
+
+namespace Crossover
+
+/-! #### The two outcomes of combining an antecedent (W) and a pronoun (R)
+
+The pronoun is a Reader `pro : ι → ω`; the antecedent is a stored referent `a : ι`
+(W). The co-unit discharges the Reader — feeding `a` into `pro`'s index — only with
+the antecedent as the LEFT daughter. The result records which happened: a bound
+reading loses the Reader; a crossover keeps it. -/
+
+/-- Antecedent-left: the co-unit binds the pronoun's index to the antecedent
+(`= counitApp`, the C combinator). The Reader is discharged. -/
+def coUnitBinds {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) : ω :=
+  counitApp star (store a) pro
+
+/-- Pronoun-left: the antecedent is carried but the pronoun reads its own FREE index
+— never the antecedent ("ships passing in the night"). The Reader **persists**
+(result `ι → ω`). -/
+def shipsPassing {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) : ι → ω :=
+  fun i => star a (pro i)
+
+theorem coUnitBinds_is_counitApp {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    coUnitBinds star a pro = counitApp star (store a) pro := rfl
+
+/-- `ε ⟨pro, a⟩ = pro a`: the antecedent binds the pronoun's index. -/
+theorem coUnitBinds_eval {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    coUnitBinds star a pro = star a (pro a) := rfl
+
+theorem shipsPassing_at {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i : ι) :
+    shipsPassing star a pro i = star a (pro i) := rfl
+
+/-- The residual differs at two indices, so it is not a constant (bound) reading —
+the Reader is not dischargeable (the "R constructor remains open" of §5.14). -/
+theorem shipsPassing_reader_persists :
+    ∃ (ι ω : Type) (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i j : ι),
+      shipsPassing star a pro i ≠ shipsPassing star a pro j :=
+  ⟨Bool, Bool, fun _ b => b, true, id, false, true, by decide⟩
+
+/-- **The dissociation**: even with the antecedent quantified wide (W outscoping R),
+the pronoun reads its free index for *every* antecedent — binding never happens.
+Binding-availability depends on the antecedent/pronoun order alone, not on scope. -/
+theorem scope_inversion_no_binding {ι ω : Type} (pro : ι → ω) (i : ι) :
+    ∀ a : ι, shipsPassing (fun _ b => b) a pro i = pro i :=
+  fun _ => rfl
+
+/-! #### The derivation from structure, over real linear positions -/
+
+/-- A daughter in a binding configuration. -/
+inductive Daughter (ι ω : Type)
+  | antecedent (a : ι)        -- W
+  | pronoun (pro : ι → ω)     -- R
+
+/-- The reading the grammar derives: a bound value (Reader discharged) or a crossover
+residual (Reader retained). -/
+inductive Reading (ι ω : Type)
+  | bound (v : ω)
+  | crossover (residual : ι → ω)
+
+def Reading.isBound {ι ω : Type} : Reading ι ω → Bool
+  | .bound _ => true
+  | .crossover _ => false
+
+/-- Combine two ordered daughters STRUCTURALLY: W-left-R-right fires the co-unit
+(`coUnitBinds`); R-left-W-right is crossover, the residual being `shipsPassing`.
+(Same-role pairs are not binder+pronoun configs.) -/
+def combine {ι ω : Type} (star : ι → ω → ω) :
+    Daughter ι ω → Daughter ι ω → Option (Reading ι ω)
+  | .antecedent a, .pronoun pro => some (.bound (coUnitBinds star a pro))
+  | .pronoun pro, .antecedent a => some (.crossover (shipsPassing star a pro))
+  | _, _ => none
+
+/-- Order the W (at `wPos`) and R (at `rPos`) by real linear position, then combine. -/
+def derive {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω)
+    (wPos rPos : Nat) : Option (Reading ι ω) :=
+  if wPos < rPos then combine star (.antecedent a) (.pronoun pro)
+                 else combine star (.pronoun pro) (.antecedent a)
+
+/-- **The crossover bridge**: the bound reading derives iff the antecedent linearly
+precedes the pronoun. The `<` is on real positions, `combine` is structural, and the
+equivalence is proven — mutating `combine`'s W-left arm breaks it. -/
+theorem derive_bound_iff_precedes {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) :
+    (∃ v, derive star a pro wPos rPos = some (.bound v)) ↔ wPos < rPos := by
+  unfold derive; split <;> simp [combine] <;> omega
+
+/-- When the antecedent precedes, the derived reading is the co-unit binding. -/
+theorem derive_precedes_eq_bound {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) (h : wPos < rPos) :
+    derive star a pro wPos rPos = some (.bound (coUnitBinds star a pro)) := by
+  simp [derive, h, combine]
+
+/-- When the pronoun precedes (crossover), the derived reading retains the Reader,
+its residual exactly `shipsPassing`. -/
+theorem derive_crossover_residual {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) (h : ¬ wPos < rPos) :
+    derive star a pro wPos rPos = some (.crossover (shipsPassing star a pro)) := by
+  simp [derive, h, combine]
+
+/-! #### Instance: the Owusu/Chierchia functional-reading asymmetry
+
+[owusu-2022] §3.3.2 (after [chierchia-2001]): the Akan indefinite *bí*'s skolem
+index is a pronoun (R), bound by *biara* 'every' (the antecedent, W). Akan SVO fixes
+the linear order, and the subject/object asymmetry computes via the bridge. -/
+
+inductive Arg | subject | object
+  deriving DecidableEq, Repr
+
+/-- Akan SVO linear order: the subject precedes the object. -/
+def svoPos : Arg → Nat
+  | .subject => 0
+  | .object => 1
+
+/-- *bí*-OBJECT: *biara* (W) is the subject (0), *bí* (R) the object (1); `0 < 1`, so
+the functional reading derives — the co-unit binding. The attested ambiguity. -/
+theorem bi_object_functional {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    derive star a pro (svoPos .subject) (svoPos .object) =
+      some (.bound (coUnitBinds star a pro)) :=
+  derive_precedes_eq_bound _ _ _ _ _ (by decide)
+
+/-- *bí*-SUBJECT: *biara* (W) is the object (1), *bí* (R) the subject (0); `¬(1 < 0)`,
+so the functional reading does NOT derive — weak crossover. -/
+theorem bi_subject_crossover {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    ¬ ∃ v, derive star a pro (svoPos .object) (svoPos .subject) =
+      some (.bound v) := by
+  rw [derive_bound_iff_precedes]; decide
+
+end Crossover
 
 end BumfordCharlow2024
