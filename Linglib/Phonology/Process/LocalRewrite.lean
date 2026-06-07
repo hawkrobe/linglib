@@ -44,7 +44,7 @@ careful handling of word-boundary contexts via the augmented alphabet
 |---|---|---|
 | Tier-based alternation | `Process/Alternation.lean` | `TierRule` (Belth 2026); a single tier-adjacent context `LocalRewrite.Rule` is subsumed by `TierRule` (subsumption bridge deferred). |
 | Optimality Theory | `OptimalityTheory/` | Constraint-ranking (parallel evaluation); SPE-vs-OT is the central theoretical fault line of late-20th-century phonology. |
-| Harmonic Serialism | `Core/Constraint/OT/HarmonicSerialism.lean` | Iterative constraint-based; named in HS docstring as architecturally-distinct alternative for counterfeeding. |
+| Harmonic Serialism | `Core/Optimization/OT/HarmonicSerialism.lean` | Iterative constraint-based; named in HS docstring as architecturally-distinct alternative for counterfeeding. |
 | Stratal OT | `OptimalityTheory/Stratal.lean` | Constraint-ranking *within* strata, with extrinsic strata ordering — keeps SPE-style derivationality at the stratum boundary. |
 | Output-driven (OSL/WD) | `Core/Computability/Subregular/Function/{OSL,Hierarchy}.lean` | Iterative spreading and bidirectional harmony — strictly above the ISL class that LocalRewrite occupies. |
 

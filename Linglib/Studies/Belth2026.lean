@@ -2,7 +2,7 @@ import Linglib.Phonology.Process.Alternation
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
-import Linglib.Core.Constraint.OT.ERC
+import Linglib.Core.Optimization.OT.ERC
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 
@@ -325,12 +325,12 @@ def latinTSLGrammar : Core.Computability.Subregular.TSLGrammar 2 LatSeg :=
     `Phonology.Constraints.mkOCPOnTier`, which already accepts a generic
     `Core.Tier`. A tier-adjacent pair of identical liquids contributes
     one violation. -/
-def latinOCP : Core.Constraint.OT.NamedConstraint (List LatSeg) :=
+def latinOCP : Core.Optimization.OT.NamedConstraint (List LatSeg) :=
   Phonology.Constraints.mkOCPOnTier "OCP/[+cons]" LatSeg.consTier id
 
 /-- The OCP constraint is a markedness constraint by construction. -/
 theorem latinOCP_is_markedness :
-    latinOCP.family = Core.Constraint.OT.ConstraintFamily.markedness :=
+    latinOCP.family = Core.Optimization.OT.ConstraintFamily.markedness :=
   Phonology.Constraints.mkOCPOnTier_is_markedness _ _ _
 
 /-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
@@ -354,7 +354,7 @@ theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
   is unrankable — its ERC is contradictory (no W, one L), recapitulating
   the rule's empirical limit. -/
 
-open Core.Constraint.OT
+open Core.Optimization.OT
 
 /-- Substitute `val` for every `L` in a candidate string. The two
     surface candidates for an underlying form are `substL .l ur` and

@@ -45,7 +45,7 @@ open Phonology.Autosegmental.GrammaticalTone
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Autosegmental.BasemapCorrespondence
 open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
-open Core.Constraint.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.Optimization.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
 
 /-! ### Dominant cophonology selects basemap-faithful candidates -/
 

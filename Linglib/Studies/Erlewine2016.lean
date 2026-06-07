@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Syntax.Minimalist.Position
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Optimization.OT.Basic
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
@@ -55,10 +55,10 @@ many subsequent papers; [erlewine-2016]'s contribution is the
 specific application to Kichean AF as an OT-competing-candidate
 analysis.
 
-### Connection to Core.Constraint.OT
+### Connection to Core.Optimization.OT
 
 The OT tableau uses the lexicographic comparison from
-`Core/Constraint/OT/Basic.lean`. The key result `af_is_optimal` shows
+`Core/Optimization/OT/Basic.lean`. The key result `af_is_optimal` shows
 that AF beats the transitive under strict ranking — and
 `satisfaction_ordering_incomparable` shows this requires OT's
 lexicographic comparison, not satisfaction ordering's subset
@@ -88,7 +88,7 @@ derivation via AF (alternation strategy). Both use
 namespace Erlewine2016
 
 open Kaqchikel Minimalist
-open Core.Constraint.OT (mkTableau NamedConstraint ConstraintFamily)
+open Core.Optimization.OT (mkTableau NamedConstraint ConstraintFamily)
 
 -- ============================================================================
 -- § 1: Competing Derivations

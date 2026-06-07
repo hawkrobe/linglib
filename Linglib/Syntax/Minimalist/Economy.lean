@@ -45,7 +45,7 @@ use the `economy_winner_of_pair` helper.
 `DerivationCost` is a 4-Nat record. Its preorder is the pullback of
 `Pi.preorder` on `Fin 4 → Nat` through `DerivationCost.profile`,
 realized via `Core.Order.PullbackPreorder.ofProj`. Same shape as
-`Core/Constraint/Pareto.lean`'s `paretoPullbackPreorder` (used for OT/HG
+`Core/Optimization/Pareto.lean`'s `paretoPullbackPreorder` (used for OT/HG
 candidate comparison); the OT side wraps in `ConstraintSystem` with
 candidate set + decoder, but Minimalist economy needs neither, so we
 register `Preorder DerivationCost` directly. `coarsen_via_monotone` from
@@ -97,7 +97,7 @@ def profile (c : DerivationCost) : Fin 4 → Nat
     `Fin 4 → Nat` feature space.
 
     See module docstring § "Architectural realization" for the parallel
-    with `Core/Constraint/Pareto.lean`'s `paretoPullbackPreorder`. -/
+    with `Core/Optimization/Pareto.lean`'s `paretoPullbackPreorder`. -/
 def pullbackPreorder : Core.Order.PullbackPreorder DerivationCost (Fin 4 → Nat) :=
   Core.Order.PullbackPreorder.ofProj profile (fun a a' =>
     decidable_of_iff (∀ i, a.profile i ≤ a'.profile i) Iff.rfl)

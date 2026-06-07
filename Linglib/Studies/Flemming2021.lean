@@ -1,6 +1,6 @@
-import Linglib.Core.Constraint.NoisyHG
-import Linglib.Core.Constraint.Separability
-import Linglib.Core.Constraint.System
+import Linglib.Core.Optimization.NoisyHG
+import Linglib.Core.Optimization.Separability
+import Linglib.Core.Optimization.System
 import Linglib.Core.Agent.GumbelLuce
 
 /-!
@@ -53,7 +53,7 @@ under MaxEnt. We encode this data and verify:
 
 namespace Flemming2021
 
-open Core.Constraint Core Real
+open Core.Optimization Core Real
 
 -- ============================================================================
 -- § 1: MaxEnt as Gumbel RUM (McFadden)

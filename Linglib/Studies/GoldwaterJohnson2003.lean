@@ -1,5 +1,5 @@
-import Linglib.Core.Constraint.Dequantization.OTLimit
-import Linglib.Core.Constraint.MaxEnt
+import Linglib.Core.Optimization.Dequantization.OTLimit
+import Linglib.Core.Optimization.MaxEnt
 
 /-!
 # [goldwater-johnson-2003]: Learning OT Constraint Rankings Using a Maximum Entropy Model
@@ -42,7 +42,7 @@ models over weighted features, differing only in what the features measure.
 
 namespace GoldwaterJohnson2003
 
-open Core.Constraint Core Finset Real
+open Core.Optimization Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))
