@@ -261,6 +261,54 @@ theorem PathDir.lt_iff_shells_ssubset (d₁ d₂ : PathDir) :
     d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
   revert d₁ d₂; decide
 
+/-! ### Directional denotation ([pantcheva-2011] Ch. 5)
+
+The `interpret` affordance for the directional dimension. Each path head
+denotes a phase profile over the path interval — whether the Figure
+occupies the Place-region at the start / middle / end (Pantcheva's `+`/`−`
+sequences). Place is stative (located throughout); Goal is a transition
+*into* the region (`−−−−−+++++`, ends located, ex. 5); Source is the
+**reversal** of Goal (`+++++−−−−−`, starts located, §5.4); Route passes
+*through* it (`−−−−+++−−−−`, located in the middle, ex. 10). -/
+
+/-- Whether the Figure occupies the Place-region at the start, middle, and
+    end of the path — [pantcheva-2011]'s `+`/`−` phase profile sampled at
+    three points. -/
+structure PathProfile where
+  /-- The Figure is in the Place-region at the path's start. -/
+  atStart : Bool
+  /-- … at the middle. -/
+  atMid : Bool
+  /-- … at the end. -/
+  atEnd : Bool
+  deriving DecidableEq, Repr
+
+/-- Reverse a profile (swap start and end) — the Source head's semantic
+    operation ([pantcheva-2011] §5.4). -/
+def PathProfile.reverse (p : PathProfile) : PathProfile :=
+  ⟨p.atEnd, p.atMid, p.atStart⟩
+
+/-- The denotation of a path direction ([pantcheva-2011] Ch. 5): the phase
+    profile of the Figure–Place-region relation. -/
+def PathDir.denote : PathDir → PathProfile
+  | .place  => ⟨true, true, true⟩        -- stative: located throughout
+  | .goal   => ⟨false, false, true⟩      -- −−+ : transition INTO (ex. 5)
+  | .source => ⟨true, false, false⟩      -- +−− : reversal of Goal (§5.4)
+  | .route  => ⟨false, true, false⟩      -- −+− : through the region (ex. 10)
+
+/-- **Source is the reversal of Goal** ([pantcheva-2011] §5.4): the Source
+    head reverses the Goal path. This *grounds* the `*A&¬A` syncretism
+    constraint — a single Goal=Source marker would denote a path and its
+    reverse, a contradiction (cf. `Studies/Pantcheva2011.lean`). -/
+theorem PathDir.source_denote_eq_goal_reverse :
+    PathDir.source.denote = PathDir.goal.denote.reverse := rfl
+
+/-- Goal ends in the region; Source starts in it — the mirror-image
+    structure of the two mono-transitional paths (§5.4). -/
+theorem PathDir.goal_ends_source_starts :
+    PathDir.goal.denote.atEnd = true ∧
+    PathDir.source.denote.atStart = true := by decide
+
 /-- The path direction a spatial case expresses, if any. Robust across
     the inventory — direction is determinable even on the cells where
     region is conflated (`regionOf` is the partial companion). The
