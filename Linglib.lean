@@ -2305,7 +2305,6 @@ import Linglib.Semantics.Gradability.Classification
 import Linglib.Semantics.Gradability.Intensification
 import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.MaximalInformativity
 import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree

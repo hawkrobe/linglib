@@ -1,6 +1,5 @@
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Gradability.Basic
-import Linglib.Semantics.Gradability.MaximalInformativity
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Order.Boundedness
@@ -94,14 +93,8 @@ theorem six_sources_agree_open :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 3. Kennedy–Rouillard Isomorphism at Phenomena Level
+-- § 3. Adjective–VP Licensing Agreement
 -- ════════════════════════════════════════════════════
-
-/-- Kennedy adjective (closed) and Rouillard E-TIA (closed) agree. -/
-theorem kennedy_rouillard_agree {max : Nat} {W₁ W₂ : Type*}
-    (μ₁ : W₁ → Degree max) (μ₂ : W₂ → ℕ) :
-    (adjMeasure μ₁ full).licensed =
-    (Semantics.Gradability.MaximalInformativity.etia μ₂ .closed).licensed := rfl
 
 /-- Adjective licensing and VP licensing use the same reason:
     both derive from `Boundedness.closed.isLicensed`. -/
