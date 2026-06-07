@@ -303,9 +303,9 @@ omit [Applicative M] [PredAbs M F] in
     interpTerminal F lex w = (lex w).map fun e => ⟨e.ty, e.denot⟩ := rfl
 
 omit [PredAbs M F] in
-/-- Forward FA reduces generally (abstract `σ τ`) — unblocked by the
-`applyForward`/`applyBackward` split. (Backward FA stays type-shape-specific
-because forward fires first when the left daughter is itself a function.) -/
+/-- Forward FA reduces generally (abstract `σ τ`). Backward FA stays
+type-shape-specific, since forward fires first when the left daughter is itself a
+function. -/
 @[simp] theorem applyForward_fn {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (x : M (F.Denot σ)) :
     applyForward (⟨σ ⇒ τ, f⟩ : TypedDenot F M) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [applyForward, ↓reduceDIte]

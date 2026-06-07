@@ -741,15 +741,11 @@ framework-level identity, no toy lexicon required. Worked tree-level
 derivations at `M = Cont` (scope) and `M = Writer` (CI) live in
 `Studies/BumfordCharlow2024.lean` alongside the toy-model demonstrations. -/
 
-/-- The engine's FA mode applies the function daughter to the argument
-through `Applicative`'s `<*>`. With `aApp_eq_structuredApp_fa`, this
-composes into "FA = meta-combinator **A** at forward application": the
-H&K engine and the effect calculus share one application operation. -/
-theorem tryFA_function_left {F : Frame} {M : Type → Type} [Applicative M]
-    {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (a : M (F.Denot σ)) :
-    Tree.tryFA ⟨σ ⇒ τ, f⟩ (⟨σ, a⟩ : Tree.TypedDenot F M) =
-      some ⟨τ, f <*> a⟩ := by
-  simp [Tree.tryFA]
+/-! The engine's FA mode applies the function daughter to the argument through
+`Applicative`'s `<*>` — the substrate lemma `Tree.tryFA_forward`. With
+`aApp_eq_structuredApp_fa`, this composes into "FA = meta-combinator **A** at
+forward application": the H&K engine and the effect calculus share one application
+operation. -/
 
 end TreeEngine
 
