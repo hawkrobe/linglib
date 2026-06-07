@@ -1,6 +1,5 @@
 import Mathlib.Order.Basic
 import Linglib.Core.Order.Interval
-import Linglib.Tactics.OntSort
 import Linglib.Features.Aktionsart
 
 /-!
@@ -43,13 +42,12 @@ sortless construction sites default to `.dynamic`.
 * [liefke-2024] §4.3 (manner ontology)
 -/
 
-open Core.Order
 open Features
 
 /-- An event: a temporal individual with ontological sort. -/
-@[ont_sort] structure Event (Time : Type*) [LinearOrder Time] where
+structure Event (Time : Type*) [LinearOrder Time] where
   /-- The temporal extent of this event -/
-  runtime : Interval Time
+  runtime : NonemptyInterval Time
   /-- Ontological sort (aktionsart): `dynamic` or `stative` ([bach-1986]).
       This is the `Features.Dynamicity` feature — the action/state distinction
       at the event-token level. -/
@@ -63,7 +61,7 @@ variable {Time : Type*} [LinearOrder Time]
 
 /-- Temporal trace function τ(e) = the runtime interval of event e. -/
 @[simp]
-def τ (e : Event Time) : Interval Time :=
+def τ (e : Event Time) : NonemptyInterval Time :=
   e.runtime
 
 /-! ### Sort predicates -/
@@ -98,7 +96,7 @@ theorem isState_iff_not_isAction (e : Event Time) :
 
 /-- Is this event punctual (instantaneous)? Its runtime is a single point.
     The temporal-extent counterpart of the dynamicity sort; derived from the
-    runtime via `Interval.IsPoint`. -/
+    runtime via `NonemptyInterval.IsPoint`. -/
 def isPunctual (e : Event Time) : Prop :=
   e.τ.IsPoint
 
@@ -107,7 +105,7 @@ def isDurative (e : Event Time) : Prop :=
   ¬ e.isPunctual
 
 instance : DecidablePred (isPunctual (Time := Time)) :=
-  fun e => by unfold Event.isPunctual Interval.IsPoint; infer_instance
+  fun e => by unfold Event.isPunctual NonemptyInterval.IsPoint; infer_instance
 
 instance : DecidablePred (isDurative (Time := Time)) :=
   fun e => by unfold Event.isDurative; infer_instance
@@ -138,7 +136,7 @@ class Mereology (Time : Type*) [LinearOrder Time] where
   trans : ∀ e₁ e₂ e₃, partOf e₁ e₂ → partOf e₂ e₃ → partOf e₁ e₃
   /-- τ is monotone: if e₁ ⊑ e₂ then τ(e₁) ⊆ τ(e₂) -/
   τ_monotone : ∀ e₁ e₂, partOf e₁ e₂ →
-    e₁.runtime.subinterval e₂.runtime
+    e₁.runtime ≤ e₂.runtime
   /-- Sort is preserved under part-of: parts of actions are actions,
       parts of states are states -/
   sort_preserved : ∀ e₁ e₂, partOf e₁ e₂ → e₁.sort = e₂.sort
@@ -155,7 +153,7 @@ instance preorder (Time : Type*) [LinearOrder Time]
 /-- A manner: the "how" of an event, individuated as an equivalence class
     of events under a similarity relation ([liefke-2024] §4.3).
     Manners are to events what properties are to individuals. -/
-@[ont_sort] structure Manner (Time : Type*) [LinearOrder Time] where
+structure Manner (Time : Type*) [LinearOrder Time] where
   /-- The characteristic predicate: which events exhibit this manner -/
   exhibits : Event Time → Prop
 
@@ -174,11 +172,11 @@ end Event
 
 /-- Example: a running event from time 1 to 5. -/
 def exampleRun : Event ℤ :=
-  ⟨⟨1, 5, by omega⟩, .dynamic⟩
+  ⟨⟨⟨1, 5⟩, by omega⟩, .dynamic⟩
 
 /-- Example: a knowing state from time 0 to 10. -/
 def exampleKnow : Event ℤ :=
-  ⟨⟨0, 10, by omega⟩, .stative⟩
+  ⟨⟨⟨0, 10⟩, by omega⟩, .stative⟩
 
 /-- The run event is an action. -/
 theorem exampleRun_isAction : exampleRun.isAction := rfl
@@ -196,12 +194,12 @@ theorem exampleKnow_not_action : ¬ exampleKnow.isAction := by decide
 theorem exampleRun_isDurative : exampleRun.isDurative := by decide
 
 /-- The run event starts at 1. -/
-theorem exampleRun_start : exampleRun.τ.start = 1 := rfl
+theorem exampleRun_start : exampleRun.τ.fst = 1 := rfl
 
 /-- The run event ends at 5. -/
-theorem exampleRun_finish : exampleRun.τ.finish = 5 := rfl
+theorem exampleRun_finish : exampleRun.τ.snd = 5 := rfl
 
 /-- The know event spans 0 to 10. -/
 theorem exampleKnow_runtime :
-    exampleKnow.τ.start = 0 ∧ exampleKnow.τ.finish = 10 :=
+    exampleKnow.τ.fst = 0 ∧ exampleKnow.τ.snd = 10 :=
   ⟨rfl, rfl⟩

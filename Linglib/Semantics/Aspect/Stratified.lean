@@ -78,7 +78,6 @@ namespace Semantics.Aspect.Stratified
 
 open Semantics.Events.CEM
 open _root_.Mereology
-open Core.Order
 open Features
 
 /-! ### Stratified Reference ([champollion-2017] eq. 16/17) -/
@@ -119,9 +118,9 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
     instance via the entity lattice).
 
     For dimensions without a `PartialOrder` instance — notably the
-    runtime dimension (`Interval Time`) used by stativity — atomicity
-    is expressed dimension-natively (e.g., `Interval.IsPoint` for
-    `Interval Time`). The unification is at the `SR` parameter-space
+    runtime dimension (`NonemptyInterval Time`) used by stativity — atomicity
+    is expressed dimension-natively (e.g., `NonemptyInterval.IsPoint` for
+    `NonemptyInterval Time`). The unification is at the `SR` parameter-space
     level: both express "γ = inner is atomic in the dimension's
     natural sense" at different concrete instantiations. -/
 def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
@@ -151,8 +150,8 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- Proper-subinterval granularity: inner runtime is a proper subinterval
     of outer runtime. The binary `γ` for SSR. -/
 def SSRGranularity {Time : Type*} [LinearOrder Time]
-    (inner outer : Interval Time) : Prop :=
-  inner.properSubinterval outer
+    (inner outer : NonemptyInterval Time) : Prop :=
+  inner < outer
 
 /-- Stratified Subinterval Reference: dimension is τ (runtime),
     granularity is proper-subinterval. `SSR P e` holds iff `e` can be
@@ -369,7 +368,7 @@ theorem qua_incompatible_with_ssr
   obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSSR
   have hne : a ≠ e := by
     intro heq; rw [heq] at hGran
-    exact Interval.properSubinterval_irrefl _ hGran
+    exact lt_irrefl _ hGran
   exact hQua e a he (lt_of_le_of_ne hle hne) hPa
 
 /-! ### for-Adverbial Compatibility -/
@@ -379,7 +378,7 @@ theorem qua_incompatible_with_ssr
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SSR(V)(e). -/
 def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     [SemilatticeSup (Event Time)]
-    (V : Event Time → Prop) (duration : Interval Time) (e : Event Time) : Prop :=
+    (V : Event Time → Prop) (duration : NonemptyInterval Time) (e : Event Time) : Prop :=
   V e ∧ e.runtime = duration ∧ SSR V e
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).

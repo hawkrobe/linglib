@@ -22,7 +22,7 @@ differ along three dimensions:
 | Counterfactual | effect persists after cause ceases | effect ceases with cause |
 
 The first three properties are formalized using existing Linglib types:
-`Features.Dynamicity`, `Interval.precedes`/`.overlaps`.
+`Features.Dynamicity`, `NonemptyInterval.precedes`/`.overlaps`.
 The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 ## Key results
@@ -36,7 +36,6 @@ The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 namespace Semantics.Causation.PsychLink
 
-open Core.Order (Interval)
 open Semantics.Causation.Psych (CausalSource)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
@@ -60,7 +59,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
       Maintenance: [CAUSE [STATE]] — no. -/
   involvesTransition : Bool
   /-- Temporal constraint on the runtimes of cause and effect -/
-  temporalConstraint : Interval Time → Interval Time → Prop
+  temporalConstraint : NonemptyInterval Time → NonemptyInterval Time → Prop
 
 -- ════════════════════════════════════════════════════
 -- § 2. Eventive and Maintenance Links
@@ -76,7 +75,7 @@ def eventiveLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
   { causeSort := .dynamic
     effectSort := .dynamic
     involvesTransition := true
-    temporalConstraint := Interval.precedes }
+    temporalConstraint := NonemptyInterval.precedes }
 
 /-- Maintenance causation: a mental representation MAINTAINS a
     psychological state. Cause and effect are temporally contemporaneous.
@@ -94,7 +93,7 @@ def maintenanceLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
   { causeSort := .stative
     effectSort := .stative
     involvesTransition := false
-    temporalConstraint := Interval.overlaps }
+    temporalConstraint := NonemptyInterval.overlaps }
 
 -- ════════════════════════════════════════════════════
 -- § 3. CausalSource → PsychCausalLink
@@ -113,30 +112,30 @@ def CausalSource.toLink (Time : Type*) [LinearOrder Time] :
 -- ════════════════════════════════════════════════════
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
-    effect overlaps cause. Delegates to `Interval.overlaps_symm`. -/
+    effect overlaps cause. Delegates to `NonemptyInterval.overlaps_symm`. -/
 theorem maintenance_temporal_symmetric {Time : Type*} [LinearOrder Time]
-    (i₁ i₂ : Interval Time)
+    (i₁ i₂ : NonemptyInterval Time)
     (h : (maintenanceLink Time).temporalConstraint i₁ i₂) :
     (maintenanceLink Time).temporalConstraint i₂ i₁ :=
-  Interval.overlaps_symm h
+  NonemptyInterval.overlaps_symm h
 
 /-- Eventive causation is temporally irreflexive: no eventuality
-    can precede itself. Delegates to `Interval.precedes_irrefl`. -/
+    can precede itself. Delegates to `NonemptyInterval.precedes_irrefl`. -/
 theorem eventive_temporal_irrefl {Time : Type*} [LinearOrder Time]
-    (i : Interval Time) :
+    (i : NonemptyInterval Time) :
     ¬ (eventiveLink Time).temporalConstraint i i :=
-  Interval.precedes_irrefl i
+  NonemptyInterval.precedes_irrefl i
 
 /-- Precedence and overlap are mutually exclusive: if cause precedes
     effect, they cannot overlap. This is the structural basis for the
     eventive/stative dichotomy — the two temporal configurations are
     incompatible for any given pair of eventualities.
-    Delegates to `Interval.precedes_not_overlaps`. -/
+    Delegates to `NonemptyInterval.precedes_not_overlaps`. -/
 theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
-    (i₁ i₂ : Interval Time)
+    (i₁ i₂ : NonemptyInterval Time)
     (h : (eventiveLink Time).temporalConstraint i₁ i₂) :
     ¬ (maintenanceLink Time).temporalConstraint i₁ i₂ :=
-  Interval.precedes_not_overlaps h
+  NonemptyInterval.precedes_not_overlaps h
 
 -- ════════════════════════════════════════════════════
 -- § 5. Event Sort Properties
@@ -247,7 +246,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
     [kim-2024], formalized using existing infrastructure:
 
     (a) Relates two eventualities — both are states (`Features.Dynamicity.stative`)
-    (b) Temporal contemporaneity — `Interval.overlaps`
+    (b) Temporal contemporaneity — `NonemptyInterval.overlaps`
     (c) No transition — effect is a persisting state, not a change
 
     Property (c) is formalized structurally (no BECOME) rather than
@@ -261,7 +260,7 @@ theorem maintenance_three_properties {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).causeSort = .stative ∧
     (maintenanceLink Time).effectSort = .stative ∧
     -- (b) Temporal contemporaneity (overlaps, not precedes)
-    (maintenanceLink Time).temporalConstraint = Interval.overlaps ∧
+    (maintenanceLink Time).temporalConstraint = NonemptyInterval.overlaps ∧
     -- (c) No transition (no BECOME)
     (maintenanceLink Time).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩

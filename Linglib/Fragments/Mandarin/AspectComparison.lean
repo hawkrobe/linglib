@@ -25,7 +25,7 @@ guo has no such presupposition.
 
 namespace Mandarin.AspectComparison
 
-open Core.Order Semantics.Aspect
+open Semantics.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Domain Particle Entries
@@ -85,7 +85,7 @@ def guo : CrossDomainParticle :=
     Licensed iff either (a) the particle doesn't require anti-ATOM-DIST, or
     (b) V fails ATOM-DIST_α. -/
 def isLicensed {Event α : Type*} [LinearOrder α]
-    (p : CrossDomainParticle) (τ : Event → Interval α) (V : EvQuant Event) : Prop :=
+    (p : CrossDomainParticle) (τ : Event → NonemptyInterval α) (V : EvQuant Event) : Prop :=
   p.requiresAntiAtomDist = false ∨ antiAtomDistLicensed τ V
 
 -- ════════════════════════════════════════════════════
@@ -103,19 +103,19 @@ theorem guo_no_antiAtomDist : guo.requiresAntiAtomDist = false := rfl
 
 /-- le is licensed iff NOT-ATOM-DIST_α holds. -/
 theorem le_licensed_iff {Event α : Type*} [LinearOrder α]
-    (τ : Event → Interval α) (V : EvQuant Event) :
+    (τ : Event → NonemptyInterval α) (V : EvQuant Event) :
     isLicensed le τ V ↔ antiAtomDistLicensed τ V := by
   simp [isLicensed, le]
 
 /-- mei-you is licensed iff NOT-ATOM-DIST_α holds. -/
 theorem meiyou_licensed_iff {Event α : Type*} [LinearOrder α]
-    (τ : Event → Interval α) (V : EvQuant Event) :
+    (τ : Event → NonemptyInterval α) (V : EvQuant Event) :
     isLicensed meiyou τ V ↔ antiAtomDistLicensed τ V := by
   simp [isLicensed, meiyou]
 
 /-- guo is always licensed (no anti-ATOM-DIST requirement). -/
 theorem guo_always_licensed {Event α : Type*} [LinearOrder α]
-    (τ : Event → Interval α) (V : EvQuant Event) :
+    (τ : Event → NonemptyInterval α) (V : EvQuant Event) :
     isLicensed guo τ V := by
   left; rfl
 

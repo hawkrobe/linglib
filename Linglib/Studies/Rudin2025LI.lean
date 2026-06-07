@@ -183,7 +183,7 @@ postulates hold by `rfl`. The discriminator for verb classes is
 witnesses and exclusions. -/
 
 /-- A canonical event for each verb class, indexed by `runtime.start`. -/
-def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .dynamic⟩
+def E (n : ℕ) : Event ℕ := ⟨⟨⟨n, n⟩, le_refl _⟩, .dynamic⟩
 
 /-- The REENACT relation: per verb-class events have different REENACT
     targets, chosen so the postulates' universal quantifiers reduce to
@@ -191,7 +191,7 @@ def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .dynamic⟩
     LINGMAT performances, so SAY's postulate `∀u, REENACT → LINGMAT`
     is vacuously true). -/
 def rudinReenact (e : Event ℕ) (u : FBPerformance Bool) : Prop :=
-  match e.runtime.start with
+  match e.runtime.fst with
   | 0 => (fbOntology Bool).LINGMAT u                              -- say
   | 1 => (fbOntology Bool).LINGMAT u ∧ (fbOntology Bool).Commits u  -- assert
   | 2 => (fbOntology Bool).LINGMAT u ∧ (fbOntology Bool).Loud u     -- yell
@@ -203,7 +203,7 @@ def rudinReenact (e : Event ℕ) (u : FBPerformance Bool) : Prop :=
     content; ASK-class events take question (false) content; other
     events have no propositional content. -/
 def rudinContent (e : Event ℕ) (b : Bool) : Prop :=
-  match e.runtime.start with
+  match e.runtime.fst with
   | 0 | 1 | 2 | 3 => b = true
   | 4 => b = false
   | _ => False
@@ -351,14 +351,14 @@ def rudinModel : SpeechVerbs ℕ Bool (FBPerformance Bool) (fbOntology Bool) whe
   whisper_iff_say_and_whispered _ := Iff.rfl
   content_say_propositional := by
     intro e p hsay hcont
-    -- For e.runtime.start ∈ {0,1,2,3}, rudinContent e p = (p = true)
-    -- For e.runtime.start = 4, rudinContent e p = (p = false), but then
+    -- For e.runtime.fst ∈ {0,1,2,3}, rudinContent e p = (p = true)
+    -- For e.runtime.fst = 4, rudinContent e p = (p = false), but then
     --   hsay forces False via respNonLingmat (RESP but not LINGMAT)
-    -- For e.runtime.start ≥ 5, rudinContent e p = False, contradiction
+    -- For e.runtime.fst ≥ 5, rudinContent e p = False, contradiction
     show p = true
     unfold rudinContent at hcont
     unfold rudinSay rudinReenact at hsay
-    match h : e.runtime.start with
+    match h : e.runtime.fst with
     | 0 => rw [h] at hcont; exact hcont
     | 1 => rw [h] at hcont; exact hcont
     | 2 => rw [h] at hcont; exact hcont
@@ -377,7 +377,7 @@ def rudinModel : SpeechVerbs ℕ Bool (FBPerformance Bool) (fbOntology Bool) whe
     show q = false
     unfold rudinContent at hcont
     unfold rudinAsk rudinReenact at hask
-    match h : e.runtime.start with
+    match h : e.runtime.fst with
     | 0 =>
       -- SAY-class: hask says ∀u, LINGMAT u → RESP u. False (committing
       -- LINGMAT performance is not RESP). Use a committing decl.

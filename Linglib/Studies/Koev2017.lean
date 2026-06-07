@@ -200,7 +200,7 @@ def spatiotemporallyDistant {Time : Type*} [LinearOrder Time]
 theorem temporallyDisjoint_of_precedes {Time : Type*} [LinearOrder Time]
     (e₁ e₂ : Event Time)
     (h : e₁.τ.precedes e₂.τ) : temporallyDisjoint e₁ e₂ := by
-  unfold temporallyDisjoint Interval.overlaps Interval.precedes at *
+  unfold temporallyDisjoint NonemptyInterval.overlaps NonemptyInterval.precedes at *
   simp only [Event.τ] at *
   exact fun ⟨_, h2⟩ => absurd h2 (not_le.mpr h)
 
@@ -210,13 +210,13 @@ theorem temporallyDisjoint_of_precedes {Time : Type*} [LinearOrder Time]
 theorem disjoint_earlier_implies_isBefore {Time : Type*} [LinearOrder Time]
     (e₁ e₂ : Event Time)
     (hd : temporallyDisjoint e₁ e₂)
-    (hearlier : e₁.τ.start ≤ e₂.τ.start) : e₁.τ.isBefore e₂.τ := by
-  unfold temporallyDisjoint Interval.overlaps at hd
-  unfold Interval.isBefore
+    (hearlier : e₁.τ.fst ≤ e₂.τ.fst) : e₁.τ.isBefore e₂.τ := by
+  unfold temporallyDisjoint NonemptyInterval.overlaps at hd
+  unfold NonemptyInterval.isBefore
   simp only [Event.τ] at *
   by_contra h
   push_neg at h
-  exact hd ⟨le_trans hearlier e₂.runtime.valid, le_of_lt h⟩
+  exact hd ⟨le_trans hearlier e₂.runtime.fst_le_snd, le_of_lt h⟩
 
 /-- Overlapping runtimes are incompatible with temporal distance. -/
 theorem overlapping_not_disjoint {Time : Type*} [LinearOrder Time]
@@ -307,13 +307,13 @@ def LearningScenario.isSpatiotemporallyDistant {Time : Type*} [LinearOrder Time]
     Since integer comparison is decidable, we can evaluate △ from the
     event structure directly. -/
 def LearningScenario.triangleTemporalB (s : LearningScenario ℤ) : Bool :=
-  !(s.described.τ.start ≤ s.learning.τ.finish && s.learning.τ.start ≤ s.described.τ.finish)
+  !(s.described.τ.fst ≤ s.learning.τ.snd && s.learning.τ.fst ≤ s.described.τ.snd)
 
 /-- `triangleTemporalB` agrees with the propositional `isTemporallyDisjoint`:
     the Bool computation and the Prop predicate coincide for ℤ events. -/
 theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     s.triangleTemporalB = true ↔ s.isTemporallyDisjoint := by
-  unfold triangleTemporalB isTemporallyDisjoint temporallyDisjoint Interval.overlaps
+  unfold triangleTemporalB isTemporallyDisjoint temporallyDisjoint NonemptyInterval.overlaps
   simp only [Event.τ]
   constructor
   · intro h ⟨h1, h2⟩
@@ -345,17 +345,17 @@ def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
 /-! ### Concrete Scenarios -/
 
 /-- Described event: interval [0, 5]. -/
-def describedEvent : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
+def describedEvent : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .dynamic⟩
 
 /-- Learning event (indirect): interval [10, 15] — strictly later. -/
-def learningEventIndirect : Event ℤ := ⟨⟨10, 15, by omega⟩, .stative⟩
+def learningEventIndirect : Event ℤ := ⟨⟨⟨10, 15⟩, by omega⟩, .stative⟩
 
 /-- Learning event (direct witness): interval [2, 4] — overlaps described. -/
-def learningEventDirect : Event ℤ := ⟨⟨2, 4, by omega⟩, .stative⟩
+def learningEventDirect : Event ℤ := ⟨⟨⟨2, 4⟩, by omega⟩, .stative⟩
 
 /-- Learning event (spatial distance): interval [0, 5] — same time,
     different place (smoke from chimney). -/
-def learningEventSpatial : Event ℤ := ⟨⟨0, 5, by omega⟩, .stative⟩
+def learningEventSpatial : Event ℤ := ⟨⟨⟨0, 5⟩, by omega⟩, .stative⟩
 
 /-- Indirect evidence scenario: described event [0,5], learning event [10,15]. -/
 def indirectScenario : LearningScenario ℤ where
@@ -375,7 +375,7 @@ def smokeScenario : LearningScenario ℤ where
     [10,15] started. △ satisfied via temporal disjointness. -/
 theorem indirect_temporallyDisjoint :
     temporallyDisjoint indirectScenario.described indirectScenario.learning := by
-  unfold temporallyDisjoint Interval.overlaps indirectScenario describedEvent learningEventIndirect
+  unfold temporallyDisjoint NonemptyInterval.overlaps indirectScenario describedEvent learningEventIndirect
   simp only [Event.τ]
   omega
 
@@ -383,7 +383,7 @@ theorem indirect_temporallyDisjoint :
     They are NOT temporally disjoint — △ fails (when also co-located). -/
 theorem direct_not_disjoint :
     ¬ temporallyDisjoint describedEvent learningEventDirect := by
-  unfold temporallyDisjoint Interval.overlaps describedEvent learningEventDirect
+  unfold temporallyDisjoint NonemptyInterval.overlaps describedEvent learningEventDirect
   simp only [Event.τ]
   push_neg
   omega
@@ -392,7 +392,7 @@ theorem direct_not_disjoint :
     alone does NOT yield △ here. -/
 theorem smoke_temporally_overlapping :
     ¬ temporallyDisjoint smokeScenario.described smokeScenario.learning := by
-  unfold temporallyDisjoint Interval.overlaps smokeScenario describedEvent learningEventSpatial
+  unfold temporallyDisjoint NonemptyInterval.overlaps smokeScenario describedEvent learningEventSpatial
   simp only [Event.τ]
   push_neg
   omega
@@ -421,7 +421,7 @@ theorem smoke_spatiotemporallyDistant
     Paper (74b): τ(e) < τ(e_l). -/
 theorem indirect_tense_ordering :
     indirectScenario.described.τ.precedes indirectScenario.learning.τ := by
-  unfold Interval.precedes indirectScenario describedEvent learningEventIndirect
+  unfold NonemptyInterval.precedes indirectScenario describedEvent learningEventIndirect
   simp only [Event.τ]
   omega
 
@@ -430,7 +430,7 @@ theorem indirect_tense_ordering :
     ordering are independent constraints. -/
 theorem smoke_no_tense_ordering :
     ¬ smokeScenario.described.τ.precedes smokeScenario.learning.τ := by
-  unfold Interval.precedes smokeScenario describedEvent learningEventSpatial
+  unfold NonemptyInterval.precedes smokeScenario describedEvent learningEventSpatial
   simp only [Event.τ]
   omega
 
@@ -506,22 +506,22 @@ theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W �
 /-! ### Bridge to [cumming-2026]: △ → T ≤ A -/
 
 /-- For the indirect evidence case, temporal disjointness + ordering
-    gives isBefore: τ(e).finish ≤ τ(e_l).start. -/
+    gives isBefore: τ(e).snd ≤ τ(e_l).fst. -/
 theorem indirect_isBefore :
     indirectScenario.described.τ.isBefore indirectScenario.learning.τ := by
-  unfold Interval.isBefore indirectScenario describedEvent learningEventIndirect
+  unfold NonemptyInterval.isBefore indirectScenario describedEvent learningEventIndirect
   simp only [Event.τ]
   omega
 
 /-- Construct Cumming's EvidentialFrame from the learning scenario:
-    T = τ(e).finish, A = τ(e_l).start. This bridges Koev's event-based
+    T = τ(e).snd, A = τ(e_l).fst. This bridges Koev's event-based
     analysis to Cumming's point-based (S, A, T) frame. -/
 def indirectFrame : EvidentialFrame ℤ where
   speechTime := 20
   perspectiveTime := 20
   referenceTime := 20
-  eventTime := indirectScenario.described.τ.finish
-  acquisitionTime := indirectScenario.learning.τ.start
+  eventTime := indirectScenario.described.τ.snd
+  acquisitionTime := indirectScenario.learning.τ.fst
 
 /-- Cumming's downstream evidence (T ≤ A) holds for the indirect frame —
     the temporal special case of Koev's △. -/

@@ -43,7 +43,7 @@ variable {W Time : Type*} [LinearOrder Time]
 
 /-- A constraint on the Perfect Time Span.
     Adverbials restrict which PTS intervals are admissible. -/
-abbrev PTSConstraint (Time : Type*) [LinearOrder Time] := Interval Time → Prop
+abbrev PTSConstraint (Time : Type*) [LinearOrder Time] := NonemptyInterval Time → Prop
 
 /-- [iatridou-anagnostopoulou-izvorski-2001] adverbial type classification.
     - `durative`: specifies the left boundary (e.g., "since Monday")
@@ -58,15 +58,15 @@ inductive AdverbialType where
 -- ════════════════════════════════════════════════════
 
 /-- "ever since t₀": PTS must start at t₀.
-    E.g., "has been running since Monday" → PTS.start = Monday. -/
+    E.g., "has been running since Monday" → PTS.fst = Monday. -/
 def everSince (t₀ : Time) : PTSConstraint Time :=
-  λ pts => pts.start = t₀
+  λ pts => pts.fst = t₀
 
 /-- "for (duration) from tStart": PTS must start at tStart.
     Simplified duration adverbial — the duration is implicit in the
     interval length [tStart, RB]. -/
 def forDurationFrom (tStart : Time) : PTSConstraint Time :=
-  λ pts => pts.start = tStart
+  λ pts => pts.fst = tStart
 
 /-- "always" / no temporal adverbial: no constraint on PTS. -/
 def always : PTSConstraint Time :=
@@ -87,7 +87,7 @@ def before : PTSConstraint Time :=
     For a constraint C, the compatible LBs are those tLB ≤ tc such that
     C holds of the interval [tLB, tc]. -/
 def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :=
-  { tLB | tLB ≤ tc ∧ ∀ (h : tLB ≤ tc), adv ⟨tLB, tc, h⟩ }
+  { tLB | tLB ≤ tc ∧ ∀ (h : tLB ≤ tc), adv ⟨⟨tLB, tc⟩, h⟩ }
 
 -- ════════════════════════════════════════════════════
 -- § PERF with Adverbial
@@ -97,7 +97,7 @@ def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :
     Combines PERF with an adverbial constraint on the PTS.
     Equivalent to PERF_XN with the adverbial's derived LB domain. -/
 def PERF_ADV (p : IntervalPred W Time) (adv : PTSConstraint Time) : PointPred W Time :=
-  λ s => ∃ pts : Interval Time, RB pts s.time ∧ adv pts ∧ p s.world pts
+  λ s => ∃ pts : NonemptyInterval Time, RB pts s.time ∧ adv pts ∧ p s.world pts
 
 -- ════════════════════════════════════════════════════
 -- § Adverbial Type Properties
@@ -124,15 +124,15 @@ theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
     PERF_ADV p adv ⟨w, tc⟩ ↔ PERF_XN p (adv.toLBDomain tc) ⟨w, tc⟩ := by
   constructor
   · intro ⟨pts, hRB, hadv, hp⟩
-    refine ⟨pts, pts.start, ⟨le_trans pts.valid (le_of_eq hRB), fun h => ?_⟩, rfl, hRB, hp⟩
-    -- adv ⟨pts.start, tc, h⟩ = adv pts (since pts.finish = tc, proof irrelevance)
-    cases pts with | mk s f v =>
+    refine ⟨pts, pts.fst, ⟨le_trans pts.fst_le_snd (le_of_eq hRB), fun h => ?_⟩, rfl, hRB, hp⟩
+    -- adv ⟨pts.fst, tc, h⟩ = adv pts (since pts.snd = tc, proof irrelevance)
+    obtain ⟨⟨s, f⟩, v⟩ := pts
     simp only [RB] at hRB
     subst hRB
     exact hadv
   · intro ⟨pts, tLB, ⟨hle, hadv_cond⟩, hLB, hRB, hp⟩
     refine ⟨pts, hRB, ?_, hp⟩
-    cases pts with | mk s f v =>
+    obtain ⟨⟨s, f⟩, v⟩ := pts
     simp only [LB] at hLB
     simp only [RB] at hRB
     subst hLB; subst hRB

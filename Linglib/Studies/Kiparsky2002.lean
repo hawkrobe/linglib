@@ -90,17 +90,17 @@ inductive PerfectReading where
     runtime is contained within the PTS.
     "I have visited Paris" — ∃ visiting event inside the PTS. -/
 def existentialReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (pts : Interval Time)
+    (d : TemporalDecomposition Time) (pts : NonemptyInterval Time)
     (R : Time) : Prop :=
-  pts.finish = R ∧ d.runtime.subinterval pts
+  pts.snd = R ∧ d.runtime ≤ pts
 
 /-- Universal reading: the PTS is right-bounded at R, and the PTS is
     contained within the event runtime (event ongoing throughout PTS).
     "I have lived here since 2010" — PTS ⊆ event runtime. -/
 def universalReading {Time : Type*} [LinearOrder Time]
-    (d : TemporalDecomposition Time) (pts : Interval Time)
+    (d : TemporalDecomposition Time) (pts : NonemptyInterval Time)
     (R : Time) : Prop :=
-  pts.finish = R ∧ pts.subinterval d.runtime
+  pts.snd = R ∧ pts ≤ d.runtime
 
 /-- Resultative reading: the result phase contains R. Requires a complex
     decomposition (telic predicate with activity + result phases).
@@ -108,7 +108,7 @@ def universalReading {Time : Type*} [LinearOrder Time]
 def resultativeReading {Time : Type*} [LinearOrder Time]
     (d : TemporalDecomposition Time) (R : Time) : Prop :=
   match d with
-  | .complex _ phases _ _ => phases.resultTrace.contains R
+  | .complex _ phases _ _ => R ∈ phases.resultTrace
   | .simple _ => False
 
 /-- Present-state reading: result phase contains R, activity is implicit
@@ -117,7 +117,7 @@ def resultativeReading {Time : Type*} [LinearOrder Time]
 def presentStateReading {Time : Type*} [LinearOrder Time]
     (d : TemporalDecomposition Time) (R : Time) : Prop :=
   match d with
-  | .complex _ phases _ _ => phases.resultTrace.contains R
+  | .complex _ phases _ _ => R ∈ phases.resultTrace
   | .simple _ => False
 
 -- ════════════════════════════════════════════════════
@@ -152,7 +152,7 @@ theorem atelic_no_presentState (c : VendlerClass) (h : c.telicity = .atelic) :
 /-- The resultative reading requires a complex (telic) decomposition:
     simple decompositions make it trivially False. -/
 theorem resultative_requires_complex {Time : Type*} [LinearOrder Time]
-    (r : Interval Time) (R : Time) :
+    (r : NonemptyInterval Time) (R : Time) :
     ¬ resultativeReading (.simple r) R := by
   simp [resultativeReading]
 
@@ -287,11 +287,11 @@ theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
     `perfective_full_entails_result`), but the reading itself depends
     only on R's position relative to the result phase. -/
 theorem resultative_from_result_contains {Time : Type*} [LinearOrder Time]
-    (rt : Interval Time) (phases : SubeventPhases Time)
-    (h_act : phases.activityTrace.subinterval rt)
-    (h_res : phases.resultTrace.subinterval rt)
+    (rt : NonemptyInterval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace ≤ rt)
+    (h_res : phases.resultTrace ≤ rt)
     (R : Time)
-    (h_R_in_result : phases.resultTrace.contains R) :
+    (h_R_in_result : R ∈ phases.resultTrace) :
     resultativeReading (.complex rt phases h_act h_res) R :=
   h_R_in_result
 

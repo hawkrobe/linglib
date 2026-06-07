@@ -1,5 +1,4 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Tactics.OntSort
 
 /-!
 # Spatial Path Infrastructure
@@ -7,7 +6,7 @@ import Linglib.Tactics.OntSort
 
 Framework-agnostic types for spatial paths and their boundedness
 classification. Paths are the spatial analog of temporal intervals
-(`Core.Order.Interval`): directed stretches of space between locations.
+(`NonemptyInterval`): directed stretches of space between locations.
 
 The key linguistic insight: the boundedness of a directional
 PP determines whether the VP it creates is telic or atelic. Bounded PPs
@@ -34,10 +33,10 @@ set_option linter.dupNamespace false in
     [zwarts-2005]: paths are directed stretches of space with a
     source (starting point) and goal (endpoint).
 
-    Parallels `Core.Order.Interval` for the temporal domain. Unlike
+    Parallels `NonemptyInterval` for the temporal domain. Unlike
     intervals, paths have no `valid : source ≤ goal` constraint
     because spatial locations lack a canonical linear ordering. -/
-@[ont_sort] structure Path (Loc : Type*) where
+structure Path (Loc : Type*) where
   /-- Starting location of the path. -/
   source : Loc
   /-- Ending location of the path. -/

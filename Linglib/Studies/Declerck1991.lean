@@ -375,7 +375,7 @@ def preterit (t0 toSit : Time) : DeclercianSchema Time where
     but rather `TO_sit includes t₀`. For point times this degenerates to
     equality (captured by `.overlapping`), but for intervals "John is in
     London today" has TO_sit = today, which properly includes t₀. The
-    interval-level inclusion is handled by `Interval.subinterval`.
+    interval-level inclusion is handled by `NonemptyInterval.le_def`.
 
     Example: "John is in London."
     - TO_sit includes t₀ (= overlapping for point times)
@@ -895,7 +895,7 @@ variable {Time : Type*} [LinearOrder Time]
     every chain link as a point interval.
 
     The Allen relations between any pair of TOs are **computed** from
-    the underlying `LinearOrder Time` via `Interval.allenRel`; nothing
+    the underlying `LinearOrder Time` via `NonemptyInterval.allenRel`; nothing
     is stored. The chain's `relation` field encodes the *intended*
     Declercian temporal relation but is not consulted here — its job is
     to constrain admissible time assignments at the call site, not to

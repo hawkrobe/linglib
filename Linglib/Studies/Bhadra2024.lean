@@ -245,11 +245,11 @@ structure VerbRootVRO (Entity State Time : Type*) [LinearOrder Time] where
 
 def resState (stateAt : StateFunction Entity State Time)
     (e : Event Time) (x : Entity) : State :=
-  stateAt (Event.τ e).finish x
+  stateAt (Event.τ e).snd x
 
 def preState (stateAt : StateFunction Entity State Time)
     (e : Event Time) (x : Entity) : State :=
-  stateAt (Event.τ e).start x
+  stateAt (Event.τ e).fst x
 
 def Set.multiMembered (s : Set State) : Prop :=
   ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
@@ -653,15 +653,15 @@ section StressTests
 
 /-- Event from t=0 to t=5 (the base event, e.g. folding). -/
 private def ev₁ : Event ℤ where
-  runtime := ⟨0, 5, by omega⟩
+  runtime := ⟨⟨0, 5⟩, by omega⟩
   sort := .dynamic
 
 /-- Event from t=10 to t=15 (the reversal/restitution event, e.g. unfolding). -/
 private def ev₂ : Event ℤ where
-  runtime := ⟨10, 15, by omega⟩
+  runtime := ⟨⟨10, 15⟩, by omega⟩
   sort := .dynamic
 
-/-- ev₁ temporally precedes ev₂: τ(ev₁).finish < τ(ev₂).start. -/
+/-- ev₁ temporally precedes ev₂: τ(ev₁).snd < τ(ev₂).fst. -/
 private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
   show (5 : ℤ) < 10; omega
 
@@ -700,7 +700,7 @@ theorem fold_un_satisfiable :
 
 /-- Event from t=20 to t=25 (the re-event, e.g. re-folding). -/
 private def ev₃ : Event ℤ where
-  runtime := ⟨20, 25, by omega⟩
+  runtime := ⟨⟨20, 25⟩, by omega⟩
   sort := .dynamic
 
 /-- State function for fold/unfold/refold scenario:
@@ -788,7 +788,7 @@ theorem cross_layer_un_agreement :
 def destroyVRO_withApplies (stateAt : StateFunction Unit ObjectExistence ℤ)
     : VerbRootVRO Unit ObjectExistence ℤ where
   verb := λ _ _ => True
-  applies := λ _ e => stateAt (Event.τ e).start () = .exists_
+  applies := λ _ e => stateAt (Event.τ e).fst () = .exists_
   outcomes := {.ceasedToExist}
   thresholds := {.exists_}
 
@@ -803,13 +803,13 @@ private def postDestroyState : StateFunction Unit ObjectExistence ℤ := λ t _ 
     at t=0 when force is first exerted. -/
 private theorem destroy_applies_ev₁ :
     (destroyVRO_withApplies postDestroyState).applies () ev₁ := by
-  show postDestroyState (Event.τ ev₁).start () = .exists_; rfl
+  show postDestroyState (Event.τ ev₁).fst () = .exists_; rfl
 
 /-- APPLIES fails for any event after destruction: at t≥10, the object
     has ceased to exist. -/
 private theorem destroy_not_applies_ev₃ :
     ¬ (destroyVRO_withApplies postDestroyState).applies () ev₃ := by
-  show ¬ (postDestroyState (Event.τ ev₃).start () = .exists_)
+  show ¬ (postDestroyState (Event.τ ev₃).fst () = .exists_)
   simp [postDestroyState, ev₃, Event.τ]
 
 /-- **Compositional re- blocking for destroy.**

@@ -25,7 +25,7 @@ are consumed by:
     structure where events have `runtime : Interval Time`. -/
 def Event.adjacent {Time : Type*} [LinearOrder Time]
     (e1 e2 : Event Time) : Prop :=
-  e1.runtime.finish = e2.runtime.start ∨ e2.runtime.finish = e1.runtime.start
+  e1.runtime.snd = e2.runtime.fst ∨ e2.runtime.snd = e1.runtime.fst
 
 /-- Event temporal precedence (`«_E` in K98 §2.5): one event's runtime
     is entirely before the other's. Defined via `Interval.isBefore`
