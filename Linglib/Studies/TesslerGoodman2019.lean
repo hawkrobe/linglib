@@ -96,12 +96,11 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2019
 
-open Core.Scale (Degree Threshold deg thr allDegrees allThresholds
-  Degree.toNat Threshold.toNat)
+open Semantics.Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
 open Semantics.Degree (positiveMeaning)
 
 -- ============================================================================
--- § 1. Domain Types (reusing Core.Scale — same types as LassiterGoodman2017)
+-- § 1. Domain Types (reusing Semantics.Degree — same types as LassiterGoodman2017)
 -- ============================================================================
 
 /-- Discretized prevalence: 0%, 5%, ..., 100% (21 values).

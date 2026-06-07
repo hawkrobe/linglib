@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Sociolinguistics.SCM
@@ -179,16 +179,16 @@ def exampleImpreciseAmount : Nat := 207
 
 /-- Stimulus numerals are round: high roundness grade. -/
 theorem stimulus_is_round :
-    Core.Roundness.roundnessGrade exampleStatedAmount = .high := by native_decide
+    Semantics.Numerals.Roundness.roundnessGrade exampleStatedAmount = .high := by native_decide
 
 /-- The imprecise value is non-round: zero roundness. -/
 theorem imprecise_value_is_nonround :
-    Core.Roundness.roundnessGrade exampleImpreciseAmount = .none := by native_decide
+    Semantics.Numerals.Roundness.roundnessGrade exampleImpreciseAmount = .none := by native_decide
 
 /-- Roundness scores differ maximally: 6 vs 0. -/
 theorem roundness_gap :
-    Core.Roundness.roundnessScore exampleStatedAmount = 6 ∧
-    Core.Roundness.roundnessScore exampleImpreciseAmount = 0 := by
+    Semantics.Numerals.Roundness.roundnessScore exampleStatedAmount = 6 ∧
+    Semantics.Numerals.Roundness.roundnessScore exampleImpreciseAmount = 0 := by
   constructor <;> native_decide
 
 -- ============================================================================
@@ -432,7 +432,7 @@ theorem roundness_gates_persona :
 theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
     impreciseReadingAvailable n := by
   unfold impreciseReadingAvailable inferPrecisionMode
-  exact if_pos (Core.Roundness.score_ge_two_of_div10 n h10)
+  exact if_pos (Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10)
 
 -- ============================================================================
 -- Integration

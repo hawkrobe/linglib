@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Plausibility
-import Linglib.Core.Scales.EpistemicScale.Conditional
+import Linglib.Core.Order.ComparativeProbability.Conditional
 import Linglib.Core.Logic.RankingFunction
 import Mathlib.Data.Set.Basic
 
@@ -173,7 +173,7 @@ noncomputable def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
 -- § 3. FinAddMeasure Helpers
 -- ══════════════════════════════════════════════════════════════════════
 
-open Core.Scale in
+open ComparativeProbability in
 /-- In finite W, if every singleton in A has measure 0, then μ(A) = 0. -/
 private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
     (m : FinAddMeasure W) (A : Set W)
@@ -200,7 +200,7 @@ private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
 -- § 4. Bridge: Conditional Plausibility → AGM Revision
 -- ══════════════════════════════════════════════════════════════════════
 
-open Core.Scale in
+open ComparativeProbability in
 /-- P(φ|φ) = P(⊤|φ) when φ is normal (the common case). -/
 private theorem condMu_self_eq_univ {W : Type*}
     (m : CondMeasure W) (φ : Set W) (hn : m.condMu φ φ ≠ 0) :
@@ -210,7 +210,7 @@ private theorem condMu_self_eq_univ {W : Type*}
   have hnorm := m.cond_norm φ hn
   rw [hnorm] at hchain ⊢; linarith
 
-open Core.Scale in
+open ComparativeProbability in
 /-- P(ψ|φ) + P(ψᶜ|φ) = P(⊤|φ) by conditional additivity. -/
 private theorem condMu_compl {W : Type*}
     (m : CondMeasure W) (ψ φ : Set W) :
@@ -219,7 +219,7 @@ private theorem condMu_compl {W : Type*}
   rw [Set.union_compl_self] at this
   exact this.symm
 
-open Core.Scale in
+open ComparativeProbability in
 /-- Key lemma: if P(ψ|φ) = P(⊤|φ) and φ is normal, then μ(φ \ ψ) = 0.
     This is the algebraic core shared by the K*3, K*4, and K*5 proofs. -/
 private theorem mu_diff_eq_zero_of_condMu {W : Type*}
@@ -241,7 +241,7 @@ private theorem mu_diff_eq_zero_of_condMu {W : Type*}
     ext x; simp [Set.mem_diff, Set.mem_compl_iff, Set.mem_inter_iff, and_comm]
   rw [this]; exact hchain
 
-open Core.Scale in
+open ComparativeProbability in
 /-- If μ({w}) > 0 and μ(A) = 1, then w ∈ A.
     Worlds with positive measure satisfy all probability-1 beliefs. -/
 private theorem mem_of_mu_singleton_pos {W : Type*}
@@ -253,7 +253,7 @@ private theorem mem_of_mu_singleton_pos {W : Type*}
     rw [Set.mem_singleton_iff.mp hv]; exact hw_not
   linarith [m.mu_mono hsub]
 
-open Core.Scale in
+open ComparativeProbability in
 /-- A **regular** conditional measure: every satisfiable proposition is
     normal (P(φ|φ) ≠ 0 when φ ≠ ∅), and every satisfiable set has
     positive unconditional measure. The latter ("full support") ensures
@@ -263,16 +263,16 @@ open Core.Scale in
     is equivalent to: every singleton has positive measure.
 
     [halpern-2003]'s regularity condition. -/
-structure Core.Scale.RegularCondMeasure (W : Type*) extends Core.Scale.CondMeasure W where
+structure ComparativeProbability.RegularCondMeasure (W : Type*) extends ComparativeProbability.CondMeasure W where
   regular : ∀ (φ : Set W), (∃ w, w ∈ φ) → condMu φ φ ≠ 0
   muPositive : ∀ (φ : Set W), (∃ w, w ∈ φ) → 0 < mu φ
 
-open Core.Scale in
+open ComparativeProbability in
 /-- The core inclusion argument, factored as a helper for reuse by K*5.
     If P(ψ|φ) = P(⊤|φ) and w satisfies all probability-1 beliefs and φ,
     then w satisfies ψ. -/
 private theorem revised_entails {W : Type*}
-    (m : Core.Scale.RegularCondMeasure W) (ψ φ : Set W)
+    (m : ComparativeProbability.RegularCondMeasure W) (ψ φ : Set W)
     (hrev : m.condMu (fun w => ψ w : Set W) (fun w => φ w : Set W) =
             m.condMu Set.univ (fun w => φ w : Set W))
     (w : W) (hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w)
@@ -291,7 +291,7 @@ private theorem revised_entails {W : Type*}
     have := m.toFinAddMeasure.mu_compl ({w} : Set W); linarith
   exact absurd (hbeliefs (fun v => v ≠ w) hcompl) (not_not.mpr rfl)
 
-open Core.Scale in
+open ComparativeProbability in
 /-- **Theorem**: every regular conditional plausibility
     measure induces an AGM revision operator on finite W.
 
@@ -309,9 +309,9 @@ open Core.Scale in
       measure 0, so μ(φ \ ψ) = 0)
     - K*5 (consistency): finite W has a positive-measure φ-world satisfying
       all beliefs, which satisfies all of K*φ by K*3 -/
-noncomputable def Core.Scale.RegularCondMeasure.toAGM {W : Type*}
+noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
     [Fintype W] [DecidableEq W]
-    (m : Core.Scale.RegularCondMeasure W) : AGMRevision W where
+    (m : ComparativeProbability.RegularCondMeasure W) : AGMRevision W where
   beliefs := { ψ | m.mu (fun w => ψ w : Set W) = 1 }
   revise := fun φ =>
     { ψ | m.condMu (fun w => ψ w : Set W) (fun w => φ w : Set W) =

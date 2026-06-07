@@ -29,7 +29,7 @@ import Mathlib.Data.Rat.Defs
 namespace Implicature.Markedness
 
 open Semantics.Gradability
-open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
+open Semantics.Degree (Degree Threshold Degree.toNat Threshold.toNat deg thr)
 open Semantics.Gradability (ThresholdPair)
 open Features (NegationType)
 open English.Predicates.Adjectival (tall short happy unhappy)

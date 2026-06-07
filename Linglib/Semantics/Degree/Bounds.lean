@@ -2,8 +2,8 @@ import Mathlib.Order.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Scales.Defs
-import Linglib.Core.Scales.Predicate
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Predicate
 
 /-!
 # Core/Scales/Bounds.lean — bounded-scale theorems + maxOnScale
@@ -24,7 +24,9 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Core.Scale
+namespace Semantics.Degree
+
+open Core.Order
 
 variable {α : Type*} [LinearOrder α]
 
@@ -256,4 +258,4 @@ theorem maxOnScale_ge_atMost (b : α) :
     maxOnScale (· ≥ ·) {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
 
-end Core.Scale
+end Semantics.Degree

@@ -1,11 +1,11 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
-# Numeral Semantics over `HasDegree`
+# Numeral Semantics over `HasMeasure`
 
 [kennedy-2007] [schwarzschild-2005]
 
-Generic numeral predicates parameterized by the `Core.Scale.HasDegree`
+Generic numeral predicates parameterized by the `Semantics.Degree.HasMeasure`
 typeclass — applicable to any entity type carrying a measure into a totally
 ordered codomain. The `Nat` → ℚ instance for cardinalities lives here so
 this file is self-contained for callers that just want "compare a stated
@@ -18,11 +18,10 @@ counterpart for measurement domains (cost, height, weight, …).
 
 namespace Semantics.Numerals
 
-open Core.Scale
-
-/-- Cardinality (`Nat`) participates in the `HasMeasure`/`HasDegree` framework
+open Semantics.Degree
+/-- Cardinality (`Nat`) participates in the `HasMeasure`/`HasMeasure` framework
     via the canonical embedding into ℚ. -/
-instance CardinalityDegree : HasDegree Nat ℚ where
+instance CardinalityDegree : HasMeasure Nat ℚ where
   degree := λ n => (n : ℚ)
 
 end Semantics.Numerals

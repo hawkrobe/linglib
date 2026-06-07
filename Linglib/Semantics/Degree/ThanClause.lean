@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Basic
 
 /-!
@@ -88,7 +88,7 @@ theorem phrasal_clausal_equivalence {Entity D : Type*} [Preorder D]
     and Schwarzschild calls "positive interval". -/
 theorem thanClause_eq_posExt {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) :
-    thanClauseDenotation μ b = Core.Scale.posExt μ b :=
+    thanClauseDenotation μ b = Semantics.Degree.posExt μ b :=
   rfl
 
 end Semantics.Degree.ThanClause

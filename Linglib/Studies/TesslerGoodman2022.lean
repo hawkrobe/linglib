@@ -98,8 +98,7 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2022
 
-open Core.Scale (Degree Threshold deg thr allDegrees allThresholds
-  Degree.toNat Threshold.toNat)
+open Semantics.Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
 open Semantics.Degree (positiveMeaning negativeMeaning)
 
 -- ============================================================================
@@ -602,7 +601,7 @@ The chain connects three independent modules:
 open Semantics.Degree (interpretiveEconomy PositiveStandard IsClassA)
 
 /-- Height is an open-scale dimension: "tall" is relative (Class A). -/
-theorem height_is_classA : IsClassA Core.Scale.Boundedness.open_ := trivial
+theorem height_is_classA : IsClassA Core.Order.Boundedness.open_ := trivial
 
 /-- Open scale → contextual domain inference applies (the full chain).
     This is a three-step argument:

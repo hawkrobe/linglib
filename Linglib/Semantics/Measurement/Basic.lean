@@ -1,5 +1,7 @@
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
 
@@ -58,7 +60,7 @@ CARD Num-head itself lives at the syntactic level.
 
 ### Connection to Scale Infrastructure
 
-The `HasMeasure` (legacy `HasDegree`) typeclass in `Core/Scales/HasMeasure.lean`
+The `HasMeasure` (legacy `HasMeasure`) typeclass in `Core/Scales/HasMeasure.lean`
 gives `E → α`. This module adds:
 
 - typed dimensions (what μ measures), via `Features.Dimension.Dimension`
@@ -117,11 +119,11 @@ instance {E : Type*} : CoeFun (MeasureFn E) (fun _ => E → ℚ) where
 [scontras-2014]: measure terms are nouns that name specific measure
 functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral and return a
 predicate. This is the **exact (`=`) case of the shared comparison-over-a-
-measure primitive** `Core.Scale.Comparison.over`: `⟦kilo⟧(n)` is
+measure primitive** `Core.Order.Comparison.over`: `⟦kilo⟧(n)` is
 `Comparison.eq.over μ_kg n`. Modified readings (`> n`, `≥ n`, …) are the other
 `Comparison`s over the same `μ`. -/
 def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Prop :=
-  x ∈ Core.Scale.Comparison.eq.over μ.apply n
+  x ∈ Core.Order.Comparison.eq.over μ.apply n
 
 /-- `applyNumeral` is exact measure predication: `μ(x) = n` (definitionally,
     the `.eq` interval-membership). -/
@@ -175,18 +177,18 @@ def IsQuantityUniform {E : Type*} (P : E → Prop) (μ : MeasureFn E) : Prop :=
   ∀ x y, P x → P y → μ.apply x = μ.apply y
 
 -- ============================================================================
--- § 5. Bridge to HasDegree
+-- § 5. Bridge to HasMeasure
 -- ============================================================================
 
-/-- A `MeasureFn` induces a `HasDegree` instance: the degree of an entity
+/-- A `MeasureFn` induces a `HasMeasure` instance: the degree of an entity
 is its measure value.
 
-Note: `HasDegree` (= `HasMeasure`) is a typeclass with one designated degree
+Note: `HasMeasure` (= `HasMeasure`) is a typeclass with one designated degree
 per (entity, codomain) pair. For entities with multiple measurable dimensions,
 use `MeasureFn` directly — the typeclass projection is the specialization for
 when a single dimension is contextually salient. -/
 @[reducible]
-def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Core.Scale.HasDegree E ℚ :=
+def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Semantics.Degree.HasMeasure E ℚ :=
   { degree := μ.apply }
 
 -- ============================================================================
@@ -315,7 +317,7 @@ realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
 realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
 nouns realize only n ∈ ℕ. -/
 
-open Core.Scale (atLeastDeg)
+open Semantics.Degree (atLeastDeg)
 open Semantics.Entailment.Extremum (IsMaxInf HasMaxInf)
 
 /-- For a measure function μ on ℚ: when n is realized by some entity, the

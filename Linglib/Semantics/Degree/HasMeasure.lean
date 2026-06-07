@@ -11,7 +11,6 @@ import Mathlib.Tactic.NormNum
 `HasMeasure E α` is the formal-semantics "measure function" `μ : E → α`,
 parameterized over both the entity type and the codomain.
 
-Renames the legacy `HasDegree` typeclass — `HasDegree` is preserved as a
 deprecation alias for one version, then removed in a later refactor.
 
 `Degree max` and `Threshold max` are discretized scale types for gradable
@@ -29,7 +28,7 @@ signatures or newtype wrappers (mathlib `Additive`/`Multiplicative`
 precedent). This is a deliberate design choice per master plan v4.
 -/
 
-namespace Core.Scale
+namespace Semantics.Degree
 
 -- ════════════════════════════════════════════════════
 -- § 11. Discrete Bounded Scales
@@ -137,13 +136,4 @@ class HasMeasure (E : Type*) (α : Type*) where
 abbrev HasMeasure.measure {E α : Type*} [HasMeasure E α] : E → α :=
   HasMeasure.degree
 
-/-- Deprecation alias: `HasDegree` is the legacy name for `HasMeasure`.
-    One-version migration alias; will be removed in a follow-up refactor. -/
-abbrev HasDegree (E : Type*) (α : Type*) := HasMeasure E α
-
-/-- Explicit alias for the legacy field projection `HasDegree.degree`.
-    Needed because Lean does not auto-derive projection names through abbrevs. -/
-abbrev HasDegree.degree {E α : Type*} [HasDegree E α] : E → α :=
-  HasMeasure.degree
-
-end Core.Scale
+end Semantics.Degree

@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Scales.MereoDim
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Gradability.StatesBased
 import Linglib.Semantics.Kinds.MeaningPreservation
@@ -88,24 +87,20 @@ inductive MereologicalStatus where
     QUA → inherent endpoint → closed scale (→ licensed degree modifiers)
 
     This connects cross-categorial classification to Kennedy's
-    scale structure, via the existing `cumBoundedness`/`quaBoundedness`
-    annotations in `Core.MereoDim`. -/
-def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Scale.Boundedness
+    scale structure: CUM predicates admit ever-larger sums
+    (`Mereology.cum_measure_unbounded`), so their scale has no inherent
+    endpoint; QUA predicates measure to a definite value
+    ([kennedy-2007], [rouillard-2026]). -/
+def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Order.Boundedness
   | .cumulative => .open_
   | .quantized  => .closed
 
-/-- The `toBoundedness` mapping agrees with the existing mereological
-    scale annotations in `Core.MereoDim`. -/
-theorem toBoundedness_coherent :
-    MereologicalStatus.cumulative.toBoundedness = cumBoundedness ∧
-    MereologicalStatus.quantized.toBoundedness = quaBoundedness := ⟨rfl, rfl⟩
-
 /-- Direct conversion from [wellwood-2015]'s `MereologicalStatus` to
-    the cross-framework `Core.Scale.MereoTag` substrate. Wellwood's
+    the cross-framework `Core.Order.MereoTag` substrate. Wellwood's
     framework uses "monotonic" / "structure-preserving" terminology
     (see module docstring "Interpretive Note"); we lift to [krifka-1989]'s
     `cum`/`qua` labels for cross-framework dialogue. -/
-def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag
+def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Order.MereoTag
   | .cumulative => .cum
   | .quantized  => .qua
 
@@ -115,17 +110,17 @@ def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag
     cross-framework `MereoTag` substrate noted by the Scale.lean §1b
     "shared abstraction underlying all four licensing frameworks" claim. -/
 theorem toBoundedness_matches_mereoTag :
-    MereologicalStatus.cumulative.toBoundedness = Core.Scale.MereoTag.cum.toBoundedness ∧
-    MereologicalStatus.quantized.toBoundedness = Core.Scale.MereoTag.qua.toBoundedness :=
+    MereologicalStatus.cumulative.toBoundedness = Core.Order.MereoTag.cum.toBoundedness ∧
+    MereologicalStatus.quantized.toBoundedness = Core.Order.MereoTag.qua.toBoundedness :=
   ⟨rfl, rfl⟩
 
 /-- `MereologicalStatus` joins `Boundedness` and `MereoTag` as a
     `LicensingPipeline` instance, putting [wellwood-2015] in literal
     dialogue with [krifka-1989]/[kennedy-2007]/[rouillard-2026]
-    via `Core.Scale.LicensingPipeline.universal` (which now derives
+    via `Core.Order.LicensingPipeline.universal` (which now derives
     cross-framework licensing agreement automatically when the underlying
     boundedness coincides). -/
-instance : Core.Scale.LicensingPipeline MereologicalStatus where
+instance : Core.Order.LicensingPipeline MereologicalStatus where
   toBoundedness := MereologicalStatus.toBoundedness
 
 -- ════════════════════════════════════════════════════
@@ -133,7 +128,7 @@ instance : Core.Scale.LicensingPipeline MereologicalStatus where
 -- ════════════════════════════════════════════════════
 
 /-- Every `MereoDim` witness yields the unbundled `admissibleMeasure`
-    Prop. `MereoDim` (Core/Scales/MereoDim.lean) bundles `StrictMono` in a
+    Prop. `MereoDim` (`Core/Order/Mereology.lean`) bundles `StrictMono` in a
     typeclass with `[PartialOrder]` carriers; `admissibleMeasure`
     (Semantics/Gradability/StatesBased.lean) is the equivalent
     Prop with the more permissive `[Preorder]` carriers. The single

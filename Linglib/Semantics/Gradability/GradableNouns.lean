@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Gradable Nouns as Measure Functions
@@ -23,13 +23,12 @@ degree scale. The full denotation is:
 
 namespace Semantics.Gradability.GradableNouns
 
-open Core.Scale
-
+open Semantics.Degree
 /-- Degree on a 0–10 scale, backed by the canonical `Degree 10` type. -/
-abbrev Degree := Core.Scale.Degree 10
+abbrev Degree := Semantics.Degree.Degree 10
 
 /-- All degrees on the 0–10 scale. -/
-def allDegrees : List Degree := Core.Scale.allDegrees 10
+def allDegrees : List Degree := Semantics.Degree.allDegrees 10
 
 /-- d0 is the minimum degree (from BoundedOrder). -/
 theorem d0_is_minimum : ∀ d : Degree, deg 0 ≤ d := λ d => bot_le (a := d)
@@ -63,7 +62,7 @@ def bigness (d : Degree) : Degree := d
 
 /-- Small: inverted ordering (0 maximally small, 10 minimally small). -/
 def smallness (d : Degree) : Degree :=
-  Core.Scale.Degree.ofNat 10 (10 - d.toNat)
+  Semantics.Degree.Degree.ofNat 10 (10 - d.toNat)
 
 /-- Standard for "big" (contextual, typically middling). -/
 def bigStandard : Degree := deg 5

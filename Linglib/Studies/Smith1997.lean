@@ -328,7 +328,7 @@ theorem semelfactive_coercion_three_ways :
 /-- Smith's telicity matches Krifka's mereological quantization: a Vendler
     class is telic iff its telicity tag is the quantized `MereoTag.qua`. -/
 theorem telic_iff_toMereoTag_qua (c : VendlerClass) :
-    c.telicity = .telic ↔ c.telicity.toMereoTag = Core.Scale.MereoTag.qua := by
+    c.telicity = .telic ↔ c.telicity.toMereoTag = Core.Order.MereoTag.qua := by
   cases c <;> decide
 
 end Smith1997

@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Scales.Defs
-import Linglib.Core.Scales.Predicate
-import Linglib.Core.Scales.Comparative
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.Predicate
+import Linglib.Core.Order.ComparativeScale
 import Linglib.Core.Agent.BToM
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Attitudes.Confidence
@@ -607,7 +607,7 @@ expressions.
 
     This classifies the credence scale as `Boundedness.closed`, meaning
     epistemic adjectives like `certain` license absolute standards. -/
-def epistemicBoundedness : Core.Scale.Boundedness := .closed
+def epistemicBoundedness : Core.Order.Boundedness := .closed
 
 /-- An epistemic gradable predicate: an `EpistemicEntry` viewed as a
     `GradablePredicate` on the probability scale.
@@ -675,7 +675,7 @@ satisfies System FA (and hence all of W ⊂ F ⊂ FA).
 /-- Threshold semantics is upward monotone in the credence ordering:
     if `cr a φ ≥ θ` and `cr a φ ≤ cr a ψ`, then `cr a ψ ≥ θ`.
 
-    This is an instance of `Core.Scale.IsUpwardMonotone` applied to the
+    This is an instance of `Semantics.Degree.IsUpwardMonotone` applied to the
     epistemic scale. The family of propositions `P(θ) = meetsThreshold θ`
     is upward monotone in credence — higher credence always satisfies
     lower thresholds.
@@ -706,7 +706,7 @@ theorem failsThreshold_downwardMonotone (cr : AgentCredence E W)
     closed boundedness. This places it in the same categorical
     structure as Kennedy's adjective scales, Krifka's mereological
     scales, and Holliday–Icard's epistemic likelihood scales. -/
-def epistemicComparativeScale : Core.Scale.ComparativeScale ℚ where
+def epistemicComparativeScale : Core.Order.ComparativeScale ℚ where
   boundedness := epistemicBoundedness
 
 -- ============================================================================

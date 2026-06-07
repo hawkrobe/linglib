@@ -3,7 +3,7 @@ import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Rat01
 
 /-!
 # [grove-white-2025]
@@ -95,7 +95,7 @@ open Semantics.Probabilistic
 open Phenomena.Presupposition.Gradience
 open DegenTonhauser2021
 open DegenTonhauser2022
-open Core.Scale (Rat01)
+open Core.Order (Rat01)
 open scoped ENNReal NNReal
 
 /-! ## §1. Clause-embedding semantics -/

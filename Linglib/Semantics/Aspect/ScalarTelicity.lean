@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.Dimension
 import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
-import Linglib.Core.Scales.Bounds
+import Linglib.Semantics.Degree.Bounds
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Order.WithBot
@@ -118,8 +118,8 @@ fragment stores. Its boundedness is *not* stored: each dimension has a degree ty
 `hasGreatest_degree_iff_closed` grounds the derived `Dimension.boundedness` view to
 that order structure. -/
 
-open Core.Scale (Boundedness HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
-
+open Core.Order (Boundedness)
+open Semantics.Degree (HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
 /-- The degree type for each dimension. Boundedness is structural: closed
     dimensions carry `OrderTop` (`WithTop ℕ`), unbounded-above ones `NoMaxOrder`
     (`ℕ`). The carrier is a computable order-shape, not a real magnitude — only the

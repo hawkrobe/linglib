@@ -24,13 +24,13 @@ the latter factor through `Comparison.gt` (see `HasComparison.ofMeasure`).
 
 ## Main declarations
 
-* `Core.Scale.Comparison` — the reified comparison.
+* `Core.Order.Comparison` — the reified comparison.
 * `Comparison.isStrict` — Class A (`>`,`<`) vs. non-strict (`=`,`≥`,`≤`).
 * `Comparison.over` — preimage-of-interval predication.
 * `Comparison.boundary_mem` — Class A/B as interval-endpoint membership.
 -/
 
-namespace Core.Scale
+namespace Core.Order
 
 /-- [kennedy-2015]'s `REL` reified: the relation a degree modifier draws
     between a measured value and a threshold. -/
@@ -95,4 +95,4 @@ def Comparison.over {E α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
   cases c <;> simp [Comparison.interval, Comparison.isStrict]
 
-end Core.Scale
+end Core.Order

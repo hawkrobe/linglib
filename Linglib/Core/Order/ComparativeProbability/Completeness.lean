@@ -1,24 +1,24 @@
-import Linglib.Core.Scales.EpistemicScale.Representability
-import Linglib.Core.Scales.EpistemicScale.CancellationFin4
+import Linglib.Core.Order.ComparativeProbability.Representability
+import Linglib.Core.Order.ComparativeProbability.CancellationFin4
 import Mathlib.Tactic.IntervalCases
 
 /-! # KPS representation and completeness theorems
 
 The top-level results of [holliday-icard-2013] / [kraft-pratt-seidenberg-1959]:
 
-* `Core.Scale.representable_of_card_lt_five` — for `|W| < 5`, every FA model is
+* `ComparativeProbability.representable_of_card_lt_five` — for `|W| < 5`, every FA model is
   representable by a finitely additive probability measure (FA = FP∞ below
   five worlds).
-* `Core.Scale.exists_nonrepresentable_of_five_le_card` — for `|W| ≥ 5`, FA is
+* `ComparativeProbability.exists_nonrepresentable_of_five_le_card` — for `|W| ≥ 5`, FA is
   strictly weaker than FP∞ (the KPS counterexample, padded with null atoms).
-* `Core.Scale.exists_qualAddMeasure_repr`, `exists_dominationLift_repr` —
+* `ComparativeProbability.exists_qualAddMeasure_repr`, `exists_dominationLift_repr` —
   qualitative completeness results ([van-der-hoek-1996]; [halpern-2003]
   Thm. 7.5.1a).
-* `Core.Scale.axiomA_iff_fa` — Axiom A is equivalent to disjoint-union
+* `ComparativeProbability.axiomA_iff_fa` — Axiom A is equivalent to disjoint-union
   invariance (finite additivity).
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 
 -- ── Theorem 8 (Kraft, [kraft-pratt-seidenberg-1959]) ───
@@ -214,4 +214,4 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
     rw [Set.diff_union_inter A B, Set.inter_comm A B, Set.diff_union_inter B A] at h
     exact h.symm
 
-end Core.Scale
+end ComparativeProbability

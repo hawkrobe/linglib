@@ -8,7 +8,7 @@ Gradable adjective entries following [kennedy-2007]. Scale type, dimension, anto
 namespace English.Predicates.Adjectival
 
 open Semantics.Gradability (AntonymRelation GradableAdjEntry)
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open Features (EvaluativeValence)
 open Features (NegationType)
 

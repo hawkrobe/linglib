@@ -6,7 +6,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
 import Linglib.Studies.BeaversKoontzGarboden2020
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # [tham-2025]
@@ -84,7 +85,7 @@ the paper's argument is that disturbance predicates are a uniform class.
 
 namespace Tham2025
 
-open Core.Scale (Boundedness LicensingPipeline)
+open Core.Order (Boundedness LicensingPipeline)
 open Semantics.Gradability (DimensionBindingType GradableAdjEntry
   adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
 open Semantics.Gradability.Aggregation (weightedScore boolMeasures
@@ -486,7 +487,7 @@ theorem scratch_adj_verb_scale_agree :
 
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
-theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Core.Scale.Degree max) :
+theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
     (adjMeasure μ Adjectival.cracked).licensed = true :=
   closedAdj_licensed μ Adjectival.cracked rfl
 theorem cracked_pipeline_licensed :
@@ -623,7 +624,7 @@ theorem crack_refutes_strict_hkl_matrix :
     `Boundedness` level — both are `.closed`, hence both license degree
     modification. -/
 theorem cracked_licensing_converges_with_kennedy2007
-    {max : Nat} {W : Type*} (μ : W → Core.Scale.Degree max) :
+    {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
     (adjMeasure μ Adjectival.cracked).licensed =
     (adjMeasure μ Adjectival.full).licensed := by
   rw [closedAdj_licensed μ Adjectival.cracked rfl,

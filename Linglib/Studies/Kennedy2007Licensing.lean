@@ -1,7 +1,9 @@
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Semantics.Gradability.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 
@@ -171,7 +173,7 @@ structure AdjectiveTypologyDatum where
       the same redundancy `Boundedness.ofType` was dropped for in
       0.230.420 (audit-flagged: lexical data should use the canonical
       `Boundedness` enum, not Bool pairs that re-encode it). -/
-  scaleType : Core.Scale.Boundedness
+  scaleType : Core.Order.Boundedness
   /-- Natural with "slightly X"? -/
   naturalWithSlightly : Bool
   /-- Natural with "completely X"? -/
@@ -396,7 +398,7 @@ Per the matrix:
 This is the genuine Tier C #3 bridge from the §1 Boundedness audit
 (0.230.420) — supersedes the decorative `closedScale_satEntity_*`
 theorems landed and unanimously audit-flagged in 0.230.436. -/
-def licenses : DegreeModifierType → Core.Scale.Boundedness → Bool
+def licenses : DegreeModifierType → Core.Order.Boundedness → Bool
   | .proportional, b => b.hasMax
   | .diminisher, b => b.hasMin
   | .intensifier, _ => true
@@ -412,7 +414,8 @@ namespace Kennedy2007Licensing.Bridge
 
 open Semantics.Gradability
 open English.Predicates.Adjectival
-open Core.Scale
+open Core.Order
+open Semantics.Degree
 open Kennedy2007Licensing
 
 -- ════════════════════════════════════════════════════

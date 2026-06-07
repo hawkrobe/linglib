@@ -1,5 +1,5 @@
 import Linglib.Core.Order.FourierMotzkin
-import Linglib.Core.Scales.EpistemicScale.Representability
+import Linglib.Core.Order.ComparativeProbability.Representability
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
@@ -32,7 +32,7 @@ with a strict member.
 -- Cancellation conditions for comparative probability
 -- ═══════════════════════════════════════════════════════════════
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 attribute [local instance] Classical.propDecidable
 
@@ -736,4 +736,4 @@ theorem cancellation_of_null_atom {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2
   obtain ⟨m, hm⟩ := perm_repr σ sys (null_elem_reduce _ h0 hnn sub)
   exact representable_implies_cancellation m hm
 
-end Core.Scale
+end ComparativeProbability

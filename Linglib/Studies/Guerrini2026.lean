@@ -697,8 +697,7 @@ section DKPPrevalence
 variable {Atom W : Type}
 
 open TesslerGoodman2019 (genericMeaning GenThreshold Prevalence)
-open Core.Scale (deg thr)
-
+open Semantics.Degree (deg thr)
 /-- Prevalence of P among atoms in an extension at world w.
 
     This is the proportion of kind-instances satisfying P: |{a ∈ ext | P(a,w)}| / |ext|.

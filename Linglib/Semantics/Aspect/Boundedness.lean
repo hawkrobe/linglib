@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Aspectual boundedness
@@ -10,7 +10,7 @@ import Linglib.Core.Scales.Scale
 cross-cuts Vendler classes and aspectual viewpoint, and is consumed by
 event semantics, aspect theory, and temporal discourse interpretation.
 
-The bridge to `Core.Scale.MereoTag` (bounded ↔ quantized; unbounded ↔
+The bridge to `Core.Order.MereoTag` (bounded ↔ quantized; unbounded ↔
 cumulative) lets the licensing pipeline classify boundedness uniformly
 with other scale-style properties.
 -/
@@ -35,17 +35,17 @@ inductive SituationBoundedness where
 /-- SituationBoundedness → MereoTag: bounded = quantized, unbounded = cumulative.
     Bounded situations (telic/perfective) are mereologically quantized;
     unbounded situations (atelic/imperfective) are cumulative. -/
-def SituationBoundedness.toMereoTag : SituationBoundedness → Core.Scale.MereoTag
+def SituationBoundedness.toMereoTag : SituationBoundedness → Core.Order.MereoTag
   | .bounded   => .qua
   | .unbounded => .cum
 
-instance : Core.Scale.LicensingPipeline SituationBoundedness where
+instance : Core.Order.LicensingPipeline SituationBoundedness where
   toBoundedness s := s.toMereoTag.toBoundedness
 
 theorem bounded_licensed :
-    Core.Scale.LicensingPipeline.isLicensed SituationBoundedness.bounded = true := rfl
+    Core.Order.LicensingPipeline.isLicensed SituationBoundedness.bounded = true := rfl
 
 theorem unbounded_blocked :
-    Core.Scale.LicensingPipeline.isLicensed SituationBoundedness.unbounded = false := rfl
+    Core.Order.LicensingPipeline.isLicensed SituationBoundedness.unbounded = false := rfl
 
 end Semantics.Aspect

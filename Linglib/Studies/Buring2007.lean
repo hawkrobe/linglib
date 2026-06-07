@@ -52,7 +52,7 @@ disambiguate the two, favoring Analysis 1.
 ## Formal Connections
 
 - **LITTLE as extent complement**: `littlePred` maps `posExt` to `negExt`,
-  connecting to [kennedy-1999]'s extent algebra in `Core.Scale`.
+  connecting to [kennedy-1999]'s extent algebra in `Semantics.Degree`.
 - **Cross-polar anomaly = algebraic impossibility**: same-dimension
   cross-polar comparison requires `crossExtentInclusion`, which
   `crossExtent_always_false` proves is impossible on any linear order.
@@ -68,8 +68,7 @@ open Semantics.Degree.Comparative (comparativeSem ScaleDirection taller_shorter_
 open Semantics.Degree.Little (littlePred little_posExt_eq_negExt little_involution
   little_reverses_comparison)
 open Semantics.Degree.Intervals (subcomparative negativeInterval)
-open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
-
+open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_false)
 -- ════════════════════════════════════════════════════
 -- § 1. LITTLE: Degree Negation on Extents
 -- ════════════════════════════════════════════════════

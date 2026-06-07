@@ -18,7 +18,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 -/
 
-namespace Core.Scale
+namespace Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § 1. Scale Boundedness
@@ -178,4 +178,4 @@ inductive ScalePolarity where
   | negative
   deriving DecidableEq, Repr
 
-end Core.Scale
+end Core.Order

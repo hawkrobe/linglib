@@ -1,4 +1,3 @@
-import Linglib.Core.Scales.Scale
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Tauto
@@ -36,7 +35,7 @@ References:
 - van der Hoek, W. (1996). Qualitative modalities. IJUFKS 4(1).
 -/
 
-namespace Core.Scale
+namespace ComparativeProbability
 
 -- ── Axioms (Figures 4–6) ────────────────────────
 
@@ -489,4 +488,4 @@ instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toSystemFA.no
 
 end FinAddMeasure
 
-end Core.Scale
+end ComparativeProbability

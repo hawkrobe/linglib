@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -49,12 +49,12 @@ def matchesPrecision (mode : PrecisionMode) (stated actual : ℚ) (base : ℚ :=
 -- Adaptive Pragmatic Halo ([woodin-etal-2023], [krifka-2007], [lasersohn-1999])
 -- ════════════════════════════════════════════════════
 
-open Core.Roundness in
+open Semantics.Numerals.Roundness in
 
 /-- Adaptive rounding base: rounder numbers get a coarser base.
     Uses `RoundnessGrade` to avoid duplicating score-binning logic. -/
 def adaptiveBase (n : Nat) : ℚ :=
-  match Core.Roundness.roundnessGrade n with
+  match Semantics.Numerals.Roundness.roundnessGrade n with
   | .high =>
     if n % 1000 == 0 then 100
     else 10
@@ -62,30 +62,30 @@ def adaptiveBase (n : Nat) : ℚ :=
   | .low => 5
   | .none => 1
 
-open Core.Roundness in
+open Semantics.Numerals.Roundness in
 
 /-- Adaptive tolerance: scales a base tolerance by the roundness score. -/
 def adaptiveTolerance (n : Nat) (baseTol : ℚ) : ℚ :=
-  let score := Core.Roundness.roundnessScore n
+  let score := Semantics.Numerals.Roundness.roundnessScore n
   baseTol * (1 + score / 6)
 
-open Core.Roundness in
+open Semantics.Numerals.Roundness in
 
 /-- Pragmatic halo width as a function of roundness score. -/
 def haloWidth (n : Nat) : ℚ :=
-  let score := Core.Roundness.roundnessScore n
+  let score := Semantics.Numerals.Roundness.roundnessScore n
   let magnitudeFactor : ℚ := if n ≥ 1000 then 50
                               else if n ≥ 100 then 10
                               else if n ≥ 10 then 5
                               else 1
   magnitudeFactor * score / 6
 
-open Core.Roundness in
+open Semantics.Numerals.Roundness in
 
 /-- Infer precision mode from k-ness score.
     roundnessScore ≥ 2 → `.approximate`; roundnessScore < 2 → `.exact`. -/
 def inferPrecisionMode (n : Nat) : PrecisionMode :=
-  if Core.Roundness.roundnessScore n ≥ 2 then .approximate
+  if Semantics.Numerals.Roundness.roundnessScore n ≥ 2 then .approximate
   else .exact
 
 -- Verification
@@ -101,12 +101,12 @@ def inferPrecisionMode (n : Nat) : PrecisionMode :=
 theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
     adaptiveBase n ≥ 5 := by
   unfold adaptiveBase
-  have hs := Core.Roundness.score_ge_two_of_div10 n h10
+  have hs := Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10
   split
   · split <;> decide
   · decide
   · decide
-  · exact absurd ‹_› (Core.Roundness.grade_ne_none_of_score_ge_one n (by omega))
+  · exact absurd ‹_› (Semantics.Numerals.Roundness.grade_ne_none_of_score_ge_one n (by omega))
 
 -- ════════════════════════════════════════════════════
 -- Speaker-conditioned precision ([beltrama-schwarz-2024])

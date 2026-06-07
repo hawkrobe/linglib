@@ -44,8 +44,7 @@ predict the acceptability pattern recorded in the data below.
 namespace Morzycki2009
 
 open Semantics.Gradability.GradableNouns
-open Core.Scale (deg)
-
+open Semantics.Degree (deg)
 -- ═══════════════════════════════════════════════════════════════
 -- Data: Bigness Generalization (§2.2)
 -- ═══════════════════════════════════════════════════════════════

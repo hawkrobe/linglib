@@ -40,7 +40,8 @@ Two types of EN with different syntactic positions and licensing:
 
 namespace Rett2026
 
-open Core.Scale (Boundedness isAmbidirectional)
+open Core.Order (Boundedness)
+open Semantics.Degree (isAmbidirectional)
 open Semantics.Degree.Comparative (MannerEffect)
 open English.Modifiers.Adjectives (AdjModifierEntry)
 
@@ -351,8 +352,8 @@ theorem while_isAmbidirectional_witness :
     ENConstruction.while_.isAmbidirectional = false := rfl
 
 /-- Cross-references `isAmbidirectional .comparative = true` to
-    the boundary singletons `Core.Scale.maxOnScale_ge_atMost` /
-    `Core.Scale.maxOnScale_atLeast_singleton`, plus
+    the boundary singletons `Semantics.Degree.maxOnScale_ge_atMost` /
+    `Semantics.Degree.maxOnScale_atLeast_singleton`, plus
     `Semantics.Degree.Comparative.comparative_boundary`. -/
 theorem comparative_isAmbidirectional_witness :
     ENConstruction.comparative.isAmbidirectional = true := rfl

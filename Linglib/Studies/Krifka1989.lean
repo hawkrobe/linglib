@@ -4,7 +4,7 @@ import Linglib.Semantics.Plurality.Reference
 import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
@@ -77,7 +77,7 @@ open Semantics.Plurality.Reference (MassNoun CountNoun BarePlural barePlural_cum
 open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
-open Core.Scale (MereoTag)
+open Core.Order (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
 
@@ -649,12 +649,13 @@ def k89Section7Data : List K89QuantDatum :=
     (e.g. that it has Mathlib `OrderTop` / `OrderBot` instances).
 
     This matters because downstream linglib code uses
-    `Core.Scale.MereoTag.qua = .closed` as a lexical-classification tag
+    `Core.Order.MereoTag.qua = .closed` as a lexical-classification tag
     that conflates the two levels. That conflation is convenient for
     cross-framework gluing across [krifka-1989], [kennedy-2007],
-    [rouillard-2026] (see `Core/Scales/MereoDim.lean` for the
-    structural bridges that DO hold — e.g. `singleton_qua_closed`,
-    `qua_kennedy_licensed`), but it does not follow from K89's definitions.
+    [rouillard-2026] (see the mereological-dimension lemmas in
+    `Core/Order/Mereology.lean` for the structural facts that DO hold —
+    e.g. `qua_pullback_mereoDim`, `cum_measure_unbounded`), but it does
+    not follow from K89's definitions.
     The two examples below show the gap in both directions.
 
     The defeasible cross-domain bridge `closed scale → telic verb` for

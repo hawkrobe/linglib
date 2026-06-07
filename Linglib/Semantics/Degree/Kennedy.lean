@@ -25,8 +25,7 @@ standard — more informative than a contextual norm.
 
 namespace Semantics.Degree
 
-open Core.Scale (Boundedness)
-
+open Core.Order (Boundedness)
 /-- Interpretive Economy determines the standard from scale structure.
 When a scale has an endpoint, Interpretive Economy requires using it as
 the standard (more informative than a contextual norm). -/

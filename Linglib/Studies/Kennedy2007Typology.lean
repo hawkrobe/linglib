@@ -1,6 +1,7 @@
 import Linglib.Studies.Kennedy2007Licensing
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Gradability Typology Bridge
@@ -26,8 +27,8 @@ namespace Kennedy2007Typology
 
 open Kennedy2007Licensing
 open English.Predicates.Adjectival
-open Core.Scale
-
+open Core.Order
+open Semantics.Degree
 -- ════════════════════════════════════════════════════
 -- § 1. Form Match: Data.lean strings = Fragment forms
 -- ════════════════════════════════════════════════════

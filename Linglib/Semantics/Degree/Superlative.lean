@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 

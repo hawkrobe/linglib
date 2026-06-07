@@ -3,7 +3,8 @@ import Linglib.Semantics.Degree.Kennedy
 import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Beltrama 2025: Evaluation, thresholds, and practical commitments
@@ -39,7 +40,7 @@ the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
 
 namespace Beltrama2025
 
-open Core.Scale (Boundedness)
+open Core.Order (Boundedness)
 open Semantics.Degree (PositiveStandard interpretiveEconomy positiveMeaning)
 open Semantics.Degree (AdjectiveClass)
 
@@ -369,8 +370,7 @@ theorem mpa_not_relative :
 -- § 10. Integration: Kennedy 2007 Licensing Pipeline
 -- ============================================================================
 
-open Core.Scale (LicensingPipeline)
-
+open Core.Order (LicensingPipeline)
 /-- MPAs (lower-bounded scale) are licensed for degree modification by
     [kennedy-2007]'s scale-structure licensing pipeline. This is
     consistent with MPAs combining with *barely* and moderate modifiers,

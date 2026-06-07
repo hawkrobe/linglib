@@ -2,7 +2,7 @@ import Mathlib.Order.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Scales.Defs
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Core/Scales/Predicate.lean — degree predicates + monotonicity
@@ -22,10 +22,12 @@ This file is part of the Phase A decomposition of the legacy
 
 `relationalGQ` stays here as the canonical scale-comparison primitive: it is
 domain-general (numerals, measure phrases, and gradable comparatives all reduce
-to it), and the reified `Core.Scale.Comparison` interprets into it.
+to it), and the reified `Core.Order.Comparison` interprets into it.
 -/
 
-namespace Core.Scale
+namespace Semantics.Degree
+
+open Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § 3. Informativity on Scales
@@ -248,7 +250,7 @@ the corresponding relation. The Class A vs Class B distinction
 property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
 
 This is the canonical comparison primitive of the scale substrate; the reified
-`Core.Scale.Comparison` (in `Comparison.lean`) selects which `rel` to use. -/
+`Core.Order.Comparison` (in `Comparison.lean`) selects which `rel` to use. -/
 
 /-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
     properties are definitionally equal to instantiations of this. -/
@@ -382,4 +384,4 @@ theorem atMostDeg_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (atMostD
     `isMaxInf_atMost_iff_eq`) live in
     `Semantics/Entailment/Extremum.lean`. -/
 
-end Core.Scale
+end Semantics.Degree

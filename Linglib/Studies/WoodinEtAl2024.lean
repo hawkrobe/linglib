@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 
@@ -23,7 +23,7 @@ interacts with communicative goals.
 
 namespace WoodinEtAl2024
 
-open Core.Roundness
+open Semantics.Numerals.Roundness
 
 -- ============================================================================
 -- β coefficients from regression model (Table 3, [woodin-etal-2023])

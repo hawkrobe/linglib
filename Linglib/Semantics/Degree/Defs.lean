@@ -1,4 +1,6 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.DirectedMeasure
+import Linglib.Semantics.Degree.HasMeasure
 
 /-!
 # Degree Semantics: Type Definitions
@@ -21,8 +23,7 @@ economy classification is in `Kennedy.lean`. Klein-style delineation
 
 namespace Semantics.Degree
 
-open Core.Scale (Boundedness)
-
+open Core.Order (Boundedness)
 /-- Minimal interface for a gradable predicate: a measure function mapping
 entities to degrees on a scale with known boundedness.
 
@@ -31,7 +32,7 @@ degree framework (Kennedy, Heim, Schwarzschild) provides an instance;
 Klein's delineation approach does not use degrees and so does not instantiate
 this interface (see `Gradability/Delineation.lean`). -/
 structure GradablePredicate (Entity D : Type*) [LinearOrder D]
-    extends Core.Scale.DirectedMeasure D Entity where
+    extends Semantics.Degree.DirectedMeasure D Entity where
   /-- The adjective's lexical form (for identification). -/
   form : String
 

@@ -3,7 +3,9 @@ import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Gradability.MaximalInformativity
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
+import Linglib.Studies.Rouillard2026
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
@@ -56,7 +58,8 @@ namespace Rouillard2026
 
 open Core (WorldTimeIndex)
 
-open Core.Scale
+open Core.Order
+open Semantics.Degree
 open Semantics.Aspect
 open Semantics.Gradability
 open Features

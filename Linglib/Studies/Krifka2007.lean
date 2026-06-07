@@ -63,7 +63,7 @@ set_option autoImplicit false
 
 namespace Krifka2007
 
-open Core.Scale (Degree Threshold deg thr)
+open Semantics.Degree (Degree Threshold deg thr)
 open Semantics.Gradability (ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning contradictoryNeg
   AntonymForm contradictoryDenot_synonymy strengthenedDenot_breaks_synonymy)

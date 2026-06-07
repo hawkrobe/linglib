@@ -32,7 +32,7 @@ function can induce.
 
 ## Theorems in this file
 
-1. **measure_to_degree**: every `MeasureFn` induces a `HasDegree` instance
+1. **measure_to_degree**: every `MeasureFn` induces a `HasMeasure` instance
 2. **degree_to_delineation**: every degree function induces a Klein delineation
 3. **ordering_faithful**: the induced delineation's ordering = degree comparison
 4. **degree_delineations_are_linear**: all degree-induced delineations are linear
@@ -50,15 +50,14 @@ namespace Semantics.Gradability.Hierarchy
 open Semantics.Gradability.Delineation
 open Semantics.Measurement (MeasureFn)
 open Features.Dimension (Dimension)
-open Core.Scale (HasDegree)
-
+open Semantics.Degree (HasMeasure)
 -- ════════════════════════════════════════════════════
 -- § 1. Measurement → Degree
 -- ════════════════════════════════════════════════════
 
 /-! A `MeasureFn E` carries a typed dimension (mass, volume, cardinality, ...)
     and a non-negative measure `apply : E → ℚ`. Forgetting the dimension and
-    non-negativity constraint yields a `HasDegree E` instance: the degree of
+    non-negativity constraint yields a `HasMeasure E` instance: the degree of
     an entity is its measure value.
 
     This is [scontras-2014]'s key insight: measure terms (kilo, liter)
@@ -66,7 +65,7 @@ open Core.Scale (HasDegree)
 
 /-- Every measure function induces a degree assignment.
     This is `MeasureFn.toHasDegree` — restated here for the hierarchy. -/
-def measure_to_degree {E : Type} (μ : MeasureFn E) : HasDegree E ℚ :=
+def measure_to_degree {E : Type} (μ : MeasureFn E) : HasMeasure E ℚ :=
   μ.toHasDegree
 
 -- ════════════════════════════════════════════════════

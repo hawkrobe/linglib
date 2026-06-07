@@ -2,7 +2,9 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.Rat01
+import Linglib.Semantics.Degree.HasMeasure
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 /-!
@@ -14,7 +16,7 @@ projectivity. Mirrors the gradable-adjective pattern (degree > θ →
 positive meaning).
 -/
 namespace Discourse.AtIssueness
-open Core.Scale (Boundedness Rat01)
+open Core.Order (Boundedness Rat01)
 /-! ### Degree Types -/
 /-- A degree of at-issueness ∈ [0, 1].
     0 = fully backgrounded (not at-issue), 1 = fully at-issue. -/

@@ -31,8 +31,7 @@ is imported by `Fragments/English/` and `Phenomena/Gradability/` bridges.
 
 namespace Semantics.Degree
 
-open Core.Scale (Degree Threshold)
-
+open Semantics.Degree (Degree Threshold)
 section Abstract
 
 variable {Entity D : Type*} [LinearOrder D]

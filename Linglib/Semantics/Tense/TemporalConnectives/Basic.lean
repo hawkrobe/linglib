@@ -1,4 +1,3 @@
-import Linglib.Core.Scales.Scale
 import Linglib.Core.Order.Interval
 
 /-!

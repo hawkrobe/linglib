@@ -105,7 +105,7 @@ open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Semantics.Spatial (Trace)
 open Semantics.Spatial.Trace (pathShapeToTelicity)
 open Semantics.Spatial.Path (PathShape)
-open Core.Scale (LicensingPipeline)
+open Core.Order (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
 
 /-! ### Per-Verb Incrementality Verification -/
@@ -496,7 +496,7 @@ structure K98AtomicityDatum where
   sentence : String
   objectNP : String
   /-- Object NP's mereo reference type per K98 §3.3 (CUM or QUA). -/
-  objectRef : Core.Scale.MereoTag
+  objectRef : Core.Order.MereoTag
   /-- Diagnostic acceptance per K98 §3.4. -/
   inXAcceptance : DiagnosticResult
   deriving Repr
@@ -524,7 +524,7 @@ def maryAtePeanutsIn043Sec : K98AtomicityDatum :=
     event-CEM atom infrastructure beyond this file's scope, as
     documented in K89 study §5). -/
 theorem k98_eq58_cum_object_accepts_inX :
-    maryAtePeanutsIn043Sec.objectRef = Core.Scale.MereoTag.cum ∧
+    maryAtePeanutsIn043Sec.objectRef = Core.Order.MereoTag.cum ∧
     maryAtePeanutsIn043Sec.inXAcceptance = DiagnosticResult.accept := ⟨rfl, rfl⟩
 
 /-! ### K89 ↔ K98 Sister-Paper Bridge -/

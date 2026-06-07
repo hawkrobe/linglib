@@ -67,7 +67,7 @@ import Linglib.Core.Logic.Aristotelian.Partition
 import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Linglib.Core.Logic.Aristotelian.Square
 import Linglib.Core.Logic.PolarizedIndividuals
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Intensional.Frame
@@ -316,19 +316,17 @@ import Linglib.Morphology.DM.ContainmentVI
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem
-import Linglib.Core.Scales.Roundness
-import Linglib.Core.Scales.Predicate
-import Linglib.Core.Scales.Comparison
-import Linglib.Core.Scales.Scale
-import Linglib.Core.Scales.EpistemicScale.Defs
-import Linglib.Core.Scales.EpistemicScale.Entailments
-import Linglib.Core.Scales.EpistemicScale.Conditional
-import Linglib.Core.Scales.EpistemicScale.Cancellation
-import Linglib.Core.Scales.EpistemicScale.CancellationFin4
-import Linglib.Core.Scales.EpistemicScale.Completeness
-import Linglib.Core.Scales.EpistemicScale.Representability
+import Linglib.Semantics.Numerals.Roundness
+import Linglib.Semantics.Degree.Predicate
+import Linglib.Core.Order.Comparison
+import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Core.Order.ComparativeProbability.Entailments
+import Linglib.Core.Order.ComparativeProbability.Conditional
+import Linglib.Core.Order.ComparativeProbability.Cancellation
+import Linglib.Core.Order.ComparativeProbability.CancellationFin4
+import Linglib.Core.Order.ComparativeProbability.Completeness
+import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Scales.MereoDim
 import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
@@ -2351,7 +2349,6 @@ import Linglib.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
-import Linglib.Core.Categorical.ScaleCat
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 

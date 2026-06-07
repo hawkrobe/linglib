@@ -1,4 +1,6 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Comparison
+import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Typology.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic
@@ -12,8 +14,8 @@ import Mathlib.Order.Interval.Set.Basic
 The numeral surface forms ("three", "more than three", "at least three", "at
 most three", "fewer than three") are five `Nat`-instantiations of
 [kennedy-2015]'s unified de-Fregean GQ
-`λP. max{d | #P ≥ d} REL m`, captured in `Core.Scale.relationalGQ`. Each named
-meaning is the corresponding `Core.Scale.{...}Deg id` specialization, and so
+`λP. max{d | #P ≥ d} REL m`, captured in `Semantics.Degree.relationalGQ`. Each named
+meaning is the corresponding `Semantics.Degree.{...}Deg id` specialization, and so
 inherits the scale infrastructure (maximal informativity, monotonicity,
 density) by construction.
 
@@ -27,13 +29,13 @@ The only theory disagreement is the bare-numeral semantics:
 Modified numerals are theory-independent — everyone agrees "more than 3"
 means `> 3`. The Class A / Class B distinction ([geurts-nouwen-2007],
 [nouwen-2010]) reduces to reflexivity vs irreflexivity of the modifier's
-underlying relation; see `Core.Scale.relationalGQ_refl_at_boundary` and
-`Core.Scale.relationalGQ_irrefl_at_boundary`.
+underlying relation; see `Semantics.Degree.relationalGQ_refl_at_boundary` and
+`Semantics.Degree.relationalGQ_irrefl_at_boundary`.
 
 ## Sections
 
 1. Modifier classification (Class A/B, Bound direction)
-2. Numeral meaning functions (5 `def`s over `Core.Scale.{...}Deg id`)
+2. Numeral meaning functions (5 `def`s over `Semantics.Degree.{...}Deg id`)
 3. `BareNumeral`; `Comparison` interpretation (`Entry.denoteUnder`)
 4. Alternative sets (Kennedy §4.1)
 5. Class A/B corollaries, anti-Horn-scale corollaries
@@ -41,7 +43,7 @@ underlying relation; see `Core.Scale.relationalGQ_refl_at_boundary` and
 7. EXH–type-shift duality (Spector §6.2)
 8. GQT bridge (Bylinina & Nouwen)
 
-The `HasDegree`-based numeral predicates and `CardinalityDegree` instance
+The `HasMeasure`-based numeral predicates and `CardinalityDegree` instance
 live in `Numerals/Degree.lean`; precision/halo machinery lives in
 `Numerals/Precision.lean`.
 -/
@@ -57,8 +59,8 @@ numerals — a descriptive split due to [nouwen-2010].
 
 Truth-conditionally the split is the reflexive/irreflexive boundary behavior:
 Class A EXCLUDES the bare-numeral world, Class B INCLUDES it (Class B iff the
-underlying relation is reflexive; see `Core.Scale.relationalGQ_refl_at_boundary`
-and `Core.Scale.Comparison.boundary_mem`). The further claim that this predicts
+underlying relation is reflexive; see `Semantics.Degree.relationalGQ_refl_at_boundary`
+and `Core.Order.Comparison.boundary_mem`). The further claim that this predicts
 a *categorical* ignorance-implicature pattern (Class B carries ignorance, Class
 A not) is contested: [schwarz-buccola-hamilton-2012] show *at most* and *up
 to* dissociate (so "Class B" is not one class), and
@@ -85,31 +87,31 @@ inductive BoundDirection where
 -- ============================================================================
 
 /-! Five named meanings — one per surface form. Each is the `id`-instantiation
-of the corresponding `Core.Scale` degree property. They capture
+of the corresponding `Semantics.Degree` degree property. They capture
 [kennedy-2015]'s
 
   ⟦modifier m⟧ = λP. max{d | #P ≥ d} REL m
 
 where `n` plays the role of `max{d | #P ≥ d}` and `m` is the numeral.
 `bareMeaning` is the exact (Kennedy) reading; the lower-bound (Horn) reading
-of bare numerals is `atLeastMeaning`. Grounding in `Core.Scale` makes the
+of bare numerals is `atLeastMeaning`. Grounding in `Semantics.Degree` makes the
 density predictions (`atLeastDeg_downMono`, `moreThan_noMaxInf`,
 `atLeast_hasMaxInf`, etc.) hold by construction. -/
 
 /-- Bare numeral meaning (exact reading): `n = m`. -/
-def bareMeaning : Nat → Nat → Prop := Core.Scale.eqDeg id
+def bareMeaning : Nat → Nat → Prop := Semantics.Degree.eqDeg id
 
 /-- "More than `m`": `n > m`. -/
-def moreThanMeaning : Nat → Nat → Prop := Core.Scale.moreThanDeg id
+def moreThanMeaning : Nat → Nat → Prop := Semantics.Degree.moreThanDeg id
 
 /-- "Fewer than `m`": `n < m`. -/
-def fewerThanMeaning : Nat → Nat → Prop := Core.Scale.lessThanDeg id
+def fewerThanMeaning : Nat → Nat → Prop := Semantics.Degree.lessThanDeg id
 
 /-- "At least `m`": `n ≥ m`. -/
-def atLeastMeaning : Nat → Nat → Prop := Core.Scale.atLeastDeg id
+def atLeastMeaning : Nat → Nat → Prop := Semantics.Degree.atLeastDeg id
 
 /-- "At most `m`": `n ≤ m`. -/
-def atMostMeaning : Nat → Nat → Prop := Core.Scale.atMostDeg id
+def atMostMeaning : Nat → Nat → Prop := Semantics.Degree.atMostDeg id
 
 @[simp] theorem bareMeaning_def (m n : Nat) : bareMeaning m n ↔ n = m := Iff.rfl
 @[simp] theorem moreThanMeaning_def (m n : Nat) : moreThanMeaning m n ↔ n > m := Iff.rfl
@@ -154,7 +156,7 @@ instance : ToString BareNumeral where
     | .one => "one" | .two => "two" | .three => "three"
     | .four => "four" | .five => "five"
 
-/-! The five numeral forms are the five `Core.Scale.Comparison`s applied to an
+/-! The five numeral forms are the five `Core.Order.Comparison`s applied to an
     argument; the object lives in `Typology/Numeral/Basic.lean`. Here we give the
     semantics: the order relation each comparison names, and the theory-choice
     meaning. -/
@@ -168,13 +170,13 @@ def _root_.Numeral.Entry.denoteUnder (e : Numeral.Entry) (bare : Nat → Nat →
     Nat → Prop :=
   match e.comparison with
   | .eq => bare e.argument
-  | c   => Core.Scale.relationalGQ c.rel id e.argument
+  | c   => Semantics.Degree.relationalGQ c.rel id e.argument
 
 instance (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     [∀ m n, Decidable (bare m n)] (n : Nat) : Decidable (e.denoteUnder bare n) := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp only [Numeral.Entry.denoteUnder, Core.Scale.Comparison.rel, Core.Scale.relationalGQ] <;>
+    simp only [Numeral.Entry.denoteUnder, Core.Order.Comparison.rel, Semantics.Degree.relationalGQ] <;>
     infer_instance
 
 /-- The bare-world meaning of a *modified* numeral word (`comparison ≠ .eq`) is
@@ -185,19 +187,19 @@ theorem _root_.Numeral.Entry.denoteUnder_boundary (e : Numeral.Entry) (bare : Na
     e.denoteUnder bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp_all [Numeral.Entry.denoteUnder, Core.Scale.Comparison.interval,
-      Core.Scale.relationalGQ, Core.Scale.Comparison.rel]
+    simp_all [Numeral.Entry.denoteUnder, Core.Order.Comparison.interval,
+      Semantics.Degree.relationalGQ, Core.Order.Comparison.rel]
 
 -- ============================================================================
 -- Section 4: Alternative Set ([kennedy-2015] §4.1)
 -- ============================================================================
 
 /-- [kennedy-2015]'s single alternative set — the five numeral forms (bare
-    plus four modifications) as `Core.Scale.Comparison`s. The point is
+    plus four modifications) as `Core.Order.Comparison`s. The point is
     **anti-Horn-scale**: there is no fixed scale direction. The Class A / Class B
     split is read off asymmetric entailment (cf. `classA_excludes_bare_world`,
     `classB_includes_bare_world`), not from membership in a pre-split sublist. -/
-def kennedyAlternatives : List Core.Scale.Comparison :=
+def kennedyAlternatives : List Core.Order.Comparison :=
   [.eq, .gt, .lt, .ge, .le]
 
 -- ============================================================================
@@ -207,7 +209,7 @@ def kennedyAlternatives : List Core.Scale.Comparison :=
 /-! Class A/B is the central typological generalization ([geurts-nouwen-2007],
     [nouwen-2010]): strict modifiers (`>`, `<`) exclude the bare-numeral
     world; non-strict modifiers (`≥`, `≤`) include it. Both theorems below are
-    now corollaries of `Core.Scale.Comparison.boundary_mem` (Class A/B = whether the
+    now corollaries of `Core.Order.Comparison.boundary_mem` (Class A/B = whether the
     comparison's interval is closed at its endpoint) via `meaning_boundary`. -/
 
 /-- **Class A excludes the bare-numeral world** (universal). A strict comparison
@@ -217,7 +219,7 @@ theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
     (h : e.comparison.isStrict) :
     ¬ e.denoteUnder bare e.argument := by
   have hne : e.comparison ≠ .eq := by intro heq; rw [heq] at h; exact h
-  rw [e.denoteUnder_boundary bare hne, Core.Scale.Comparison.boundary_mem]
+  rw [e.denoteUnder_boundary bare hne, Core.Order.Comparison.boundary_mem]
   exact not_not_intro h
 
 /-- **Class B includes the bare-numeral world** (universal). A non-strict
@@ -226,45 +228,45 @@ theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
 theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     (h : ¬ e.comparison.isStrict) (hne : e.comparison ≠ .eq) :
     e.denoteUnder bare e.argument := by
-  rw [e.denoteUnder_boundary bare hne, Core.Scale.Comparison.boundary_mem]
+  rw [e.denoteUnder_boundary bare hne, Core.Order.Comparison.boundary_mem]
   exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
-    of `Core.Scale.eqDeg_imp_atLeastDeg`. -/
+    of `Semantics.Degree.eqDeg_imp_atLeastDeg`. -/
 theorem classB_entailed_by_bare (m n : Nat) :
     bareMeaning m n → atLeastMeaning m n :=
-  Core.Scale.eqDeg_imp_atLeastDeg id m n
+  Semantics.Degree.eqDeg_imp_atLeastDeg id m n
 
 /-- Exact bare numerals are not upward-monotone: the `id`-specialization of
-    `Core.Scale.eqDeg_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
+    `Semantics.Degree.eqDeg_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
 theorem bare_not_upward_monotone :
     ¬ ∀ m m' n, m ≤ m' → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact Core.Scale.eqDeg_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
+  exact Semantics.Degree.eqDeg_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
     (by decide) (by decide) (w := 3) rfl
     (fun x y hxy hex => h x y 3 hxy hex)
 
 /-- Bare numerals are not downward-monotone either, so they fail the
     Horn-scale criterion in both directions. The `id`-specialization of
-    `Core.Scale.eqDeg_not_downward_monotone`. -/
+    `Semantics.Degree.eqDeg_not_downward_monotone`. -/
 theorem bare_not_downward_monotone :
     ¬ ∀ m m' n, m' ≤ m → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact Core.Scale.eqDeg_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
+  exact Semantics.Degree.eqDeg_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
     (by decide) (by decide) (w := 3) rfl
     (fun x y hyx hex => h x y 3 hyx hex)
 
 /-- "At least `m`" is strictly weaker than "bare `m`" — the `id`-specialization
-    of `Core.Scale.atLeastDeg_strictly_weaker_than_eqDeg` (witness `d' = m+1`). -/
+    of `Semantics.Degree.atLeastDeg_strictly_weaker_than_eqDeg` (witness `d' = m+1`). -/
 theorem atLeast_strictly_weaker_than_bare (m : Nat) :
     atLeastMeaning m (m + 1) ∧ ¬ bareMeaning m (m + 1) :=
-  Core.Scale.atLeastDeg_strictly_weaker_than_eqDeg id (Nat.lt_succ_self m) (w := m + 1) rfl
+  Semantics.Degree.atLeastDeg_strictly_weaker_than_eqDeg id (Nat.lt_succ_self m) (w := m + 1) rfl
 
 /-- "More than `m`" and "bare `m`" have disjoint denotations — the
-    `id`-specialization of `Core.Scale.moreThanDeg_disjoint_eqDeg`. -/
+    `id`-specialization of `Semantics.Degree.moreThanDeg_disjoint_eqDeg`. -/
 theorem moreThan_disjoint_from_bare (m n : Nat) :
     ¬ (bareMeaning m n ∧ moreThanMeaning m n) :=
-  Core.Scale.moreThanDeg_disjoint_eqDeg id m n
+  Semantics.Degree.moreThanDeg_disjoint_eqDeg id m n
 
 -- ============================================================================
 -- Section 6: Type-Shifting ([kennedy-2015] §3.1)
@@ -272,19 +274,19 @@ theorem moreThan_disjoint_from_bare (m n : Nat) :
 
 /-! ## De-Fregean type-shifting: exact → lower-bound
 
-The general operation `Core.Scale.typeLower` (`∃ d' ≥ d, exact d' w`) and
+The general operation `Semantics.Degree.typeLower` (`∃ d' ≥ d, exact d' w`) and
 its collapse `typeLower_eqDeg_iff : typeLower (eqDeg μ) d w ↔ atLeastDeg μ d w`
 live in `Core/Scales/Scale.lean`. Numerals are the `id`-instantiation:
 `typeLower bareMeaning m n ↔ atLeastMeaning m n` follows by definitional
 unfolding (`bareMeaning ≡ eqDeg id`, `atLeastMeaning ≡ atLeastDeg id`).
 
-The general theorem `Core.Scale.distinct_no_universal_witness` rules out
+The general theorem `Semantics.Degree.distinct_no_universal_witness` rules out
 the alternative universal-closure reading of Partee's iota. -/
 
-/-- The numeral instantiation of `Core.Scale.typeLower_eqDeg_iff`. -/
+/-- The numeral instantiation of `Semantics.Degree.typeLower_eqDeg_iff`. -/
 theorem typeLower_bareMeaning_iff (m n : Nat) :
-    Core.Scale.typeLower bareMeaning m n ↔ atLeastMeaning m n :=
-  Core.Scale.typeLower_eqDeg_iff id m n
+    Semantics.Degree.typeLower bareMeaning m n ↔ atLeastMeaning m n :=
+  Semantics.Degree.typeLower_eqDeg_iff id m n
 
 -- ============================================================================
 -- Section 7: EXH–Type-Shift Duality ([spector-2013] §6.2 vs [kennedy-2015])
@@ -361,13 +363,13 @@ end GQTBridge
 
 /-! ### Denotation of the `Typology.Numeral` object
 
-The lexical numeral object (`Core.Scale.Comparison`, `Numeral.Entry`) is owned by
+The lexical numeral object (`Core.Order.Comparison`, `Numeral.Entry`) is owned by
 `Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
 that object and provides its `relationalGQ` denotation, mirroring how
 `Semantics/Reference/PronounDenotation.lean` denotes the `PersonalPronoun` object.
-The denotation is **by construction** a `Core.Scale.relationalGQ`, so every lemma
+The denotation is **by construction** a `Semantics.Degree.relationalGQ`, so every lemma
 about `relationalGQ` transfers to every numeral entry. `Comparison.rel` lives in
-`Core.Scale`; `Entry.denoteUnder` (the cardinal, theory-parameterized reading) is
+`Semantics.Degree`; `Entry.denoteUnder` (the cardinal, theory-parameterized reading) is
 in Section 3. -/
 
 /-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
@@ -376,7 +378,7 @@ in Section 3. -/
     `α = ℕ`. -/
 def _root_.Numeral.Entry.denote {E α : Type*} [LinearOrder α]
     (e : Numeral.Entry) (μ : E → α) (m : α) : E → Prop :=
-  Core.Scale.relationalGQ e.comparison.rel μ m
+  Semantics.Degree.relationalGQ e.comparison.rel μ m
 
 /-- Bare cardinal denotation: count with `μ = id` and the entry's own argument. -/
 def _root_.Numeral.Entry.denoteCard (e : Numeral.Entry) : Nat → Prop :=
@@ -401,7 +403,7 @@ theorem denote_at_boundary {E α : Type*} [LinearOrder α]
     e.denote μ m x ↔ ¬ e.comparison.isStrict := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp [Numeral.Entry.denote, Core.Scale.Comparison.rel, Core.Scale.Comparison.isStrict,
-      Core.Scale.relationalGQ, h]
+    simp [Numeral.Entry.denote, Core.Order.Comparison.rel, Core.Order.Comparison.isStrict,
+      Semantics.Degree.relationalGQ, h]
 
 end Semantics.Numerals

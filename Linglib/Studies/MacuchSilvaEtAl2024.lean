@@ -174,7 +174,7 @@ theorem eighteen_allows_some :
 theorem zero_allows_none :
     strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by native_decide
 
-/-- The quantifier ordering matches the Horn scale from Core.Scale -/
+/-- The quantifier ordering matches the Horn scale from `Semantics.Degree` -/
 theorem quantifier_ordering_matches_scale :
     Alternatives.Quantifiers.entails .all .most = true ∧
     Alternatives.Quantifiers.entails .most .some_ = true ∧

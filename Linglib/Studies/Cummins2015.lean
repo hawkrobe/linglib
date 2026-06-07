@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Constraint.Pareto
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Satisfaction
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Semantics.Numerals.Precision
 
@@ -65,7 +65,7 @@ anchors.
 
 namespace Cummins2015
 
-open Core.Roundness
+open Semantics.Numerals.Roundness
 open Core.Constraint (Profile)
 open Core.Order (PullbackPreorder SatisfactionOrdering)
 open Semantics.Numerals.Precision
@@ -294,7 +294,7 @@ theorem precision_7_exact :
 theorem multipleOf10_implies_approximate (n : Nat) (hr : n % 10 = 0) :
     inferPrecisionMode n = .approximate := by
   unfold inferPrecisionMode
-  have hs := Core.Roundness.score_ge_two_of_div10 n hr
+  have hs := Semantics.Numerals.Roundness.score_ge_two_of_div10 n hr
   split
   · rfl
   · omega
@@ -309,8 +309,8 @@ theorem multipleOf10_implies_approximate (n : Nat) (hr : n % 10 = 0) :
 theorem round_wider_halo :
     haloWidth 100 > haloWidth 7 := by
   unfold haloWidth
-  have h100 : Core.Roundness.roundnessScore 100 = 6 := by decide
-  have h7 : Core.Roundness.roundnessScore 7 = 0 := by decide
+  have h100 : Semantics.Numerals.Roundness.roundnessScore 100 = 6 := by decide
+  have h7 : Semantics.Numerals.Roundness.roundnessScore 7 = 0 := by decide
   rw [h100, h7]
   norm_num
 

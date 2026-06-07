@@ -59,7 +59,8 @@ bridge theorem all live in `AlexandropoulouGotzner2024JoS.lean`.
 
 namespace AlexandropoulouGotzner2024
 
-open Core.Scale (Boundedness Degree Threshold deg thr)
+open Core.Order (Boundedness)
+open Semantics.Degree (Degree Threshold deg thr)
 open Semantics.Gradability (GradableAdjEntry ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
 open Semantics.Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)

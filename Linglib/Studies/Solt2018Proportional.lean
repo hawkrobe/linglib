@@ -1,7 +1,8 @@
 import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Kinds.SortedOntology
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
+import Linglib.Semantics.Degree.HasMeasure
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum

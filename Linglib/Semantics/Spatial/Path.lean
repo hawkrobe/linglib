@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Spatial Path Infrastructure
@@ -71,7 +71,7 @@ inductive PathShape where
 /-- Path shape to scale boundedness: bounded/source paths correspond
     to closed scales, unbounded paths to open scales. Parallel to
     `quaBoundedness`/`cumBoundedness` in `Core/MereoDim.lean` §1. -/
-def PathShape.toBoundedness : PathShape → Core.Scale.Boundedness
+def PathShape.toBoundedness : PathShape → Core.Order.Boundedness
   | .bounded => .closed
   | .source => .closed
   | .unbounded => .open_

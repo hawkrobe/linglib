@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.Boundedness
 
 /-!
 # Features.Aktionsart
@@ -65,7 +65,7 @@ namespace Telicity
     Telic predicates are QUA (no proper part of a telic event is telic);
     atelic predicates are CUM (the sum of two atelic events is atelic). -/
 @[simp]
-def toMereoTag : Telicity → Core.Scale.MereoTag
+def toMereoTag : Telicity → Core.Order.MereoTag
   | .telic  => .qua
   | .atelic => .cum
 
@@ -123,10 +123,10 @@ end VendlerClass
 -- live with the type they classify. Both compose via
 -- `t.toMereoTag.toBoundedness`.
 
-instance : Core.Scale.LicensingPipeline Telicity where
+instance : Core.Order.LicensingPipeline Telicity where
   toBoundedness t := t.toMereoTag.toBoundedness
 
-instance : Core.Scale.LicensingPipeline VendlerClass where
+instance : Core.Order.LicensingPipeline VendlerClass where
   toBoundedness v := v.telicity.toMereoTag.toBoundedness
 
 /-- States are stative. -/

@@ -1,4 +1,5 @@
 import Linglib.Studies.Anscombe1964
+import Linglib.Semantics.Degree.Bounds
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974
@@ -23,7 +24,7 @@ reference point is selected (all of B vs MAX of B).
 ## Level
 
 **Level 2 (interval sets)**: operates on `SentDenotation` directly, using
-`maxOnScale` from `Core.Scale` to select the informative bound.
+`maxOnScale` from `Semantics.Degree` to select the informative bound.
 
 ## Bridges
 
@@ -46,9 +47,7 @@ open Core.Order
 open NonemptyInterval
 open Features
 open Features.ChangeOfState
-open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
-  maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
-
+open Semantics.Degree (maxOnScale isAmbidirectional maxOnScale_singleton maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
 variable {Time : Type*} [LinearOrder Time]
 
 -- ============================================================================

@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Extent
+import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Comparative
 
 /-!
@@ -41,8 +41,8 @@ complement of the degree predicate for 'tall', exactly the relation
 between `posExt` and `negExt` from [kennedy-1999]. -/
 theorem little_posExt_eq_negExt {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (x : Entity) (d : D) :
-    littlePred (· ∈ Core.Scale.posExt μ x) d ↔ d ∈ Core.Scale.negExt μ x := by
-  simp [littlePred, Core.Scale.posExt, Core.Scale.negExt]
+    littlePred (· ∈ Semantics.Degree.posExt μ x) d ↔ d ∈ Semantics.Degree.negExt μ x := by
+  simp [littlePred, Semantics.Degree.posExt, Semantics.Degree.negExt]
 
 /-- LITTLE is an involution: double degree negation cancels. -/
 theorem little_involution {D : Type*} (P : D → Prop) (d : D) :
