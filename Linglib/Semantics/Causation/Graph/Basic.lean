@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.Graph.Defs
+import Linglib.Semantics.Causation.Graph.Defs
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Order.RelClasses
 import Mathlib.Logic.Relation
@@ -16,7 +16,7 @@ intermediate adapter); consumers can use mathlib's existing API for
 reflexive-transitive closures.
 -/
 
-namespace Core.Causal.CausalGraph
+namespace Semantics.Causation.CausalGraph
 
 variable {V : Type*}
 
@@ -82,4 +82,4 @@ theorem IsDAG.of_depth (G : CausalGraph V) (depth : V → ℕ)
     exact Subrelation.wf (fun {a b} => hsub a b)
       (InvImage.wf depth Nat.lt_wfRel.wf)
 
-end Core.Causal.CausalGraph
+end Semantics.Causation.CausalGraph

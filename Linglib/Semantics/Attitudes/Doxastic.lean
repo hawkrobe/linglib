@@ -41,8 +41,8 @@ import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Modal.Basic
-import Linglib.Core.Causal.SEM.Bool
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Bool
+import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
@@ -189,11 +189,11 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (via Core.Causal)
+-- Causal Model Infrastructure (via Semantics.Causation)
 -- ============================================================================
 
 /-!
-The belief formation causal model uses `Core.Causal` — the V2 SEM
+The belief formation causal model uses `Semantics.Causation` — the V2 SEM
 substrate (PMF-canonical Mechanism, BoolSEM specialization for the
 deterministic-binary case). The PLC predicate is defined via
 `SEM.developDetOn` with an explicit vertex list so kernel reduction
@@ -201,7 +201,7 @@ works structurally (no `native_decide`; mathlib-quality `rfl`/`decide`
 proofs).
 -/
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 
 -- ============================================================================
 -- Belief Formation Causal Model (Roberts & Özyıldız 2025)

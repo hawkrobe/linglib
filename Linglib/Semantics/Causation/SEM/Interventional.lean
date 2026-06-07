@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.SEM.Basic
-import Linglib.Core.Causal.SEM.Deterministic
+import Linglib.Semantics.Causation.SEM.Basic
+import Linglib.Semantics.Causation.SEM.Deterministic
 
 /-!
 # SEM: Interventional Probability
@@ -36,7 +36,7 @@ it to a {0,1} indicator under `IsDeterministic` via
 `develop_eq_pure_of_deterministic` (Basic.lean). Sorry-free.
 -/
 
-namespace Core.Causal.SEM
+namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
 
@@ -71,4 +71,4 @@ theorem probabilisticSuf_of_deterministic
   · simp [h, PMF.pure_apply_self]
   · simp [h]
 
-end Core.Causal.SEM
+end Semantics.Causation.SEM

@@ -1,6 +1,6 @@
-import Linglib.Core.Causal.SEM.Defs
-import Linglib.Core.Causal.SEM.Deterministic
-import Linglib.Core.Causal.Mechanism.Deterministic
+import Linglib.Semantics.Causation.SEM.Defs
+import Linglib.Semantics.Causation.SEM.Deterministic
+import Linglib.Semantics.Causation.Mechanism.Deterministic
 import Mathlib.Logic.Function.Iterate
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -42,7 +42,7 @@ computable variants. Structural simp lemmas let proofs unfold via
 rewriting rather than runtime evaluation.
 -/
 
-namespace Core.Causal.SEM
+namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -875,4 +875,4 @@ DAG give the same PMF. Provable via `PMF.bind_comm` + a lemma showing
 ready. Not load-bearing for current consumers; deferred until a study
 needs to reason about `develop` against a hand-picked vertex order. -/
 
-end Core.Causal.SEM
+end Semantics.Causation.SEM

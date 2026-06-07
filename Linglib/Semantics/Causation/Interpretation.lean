@@ -46,7 +46,7 @@ disagreement is theorem-provable.
 -- ════════════════════════════════════════════════════
 
 /-! Methods on `Features.Causative` that depend on heavy semantic
-machinery (`Core.Causal.SEM`, `CausalGraph`, the `Necessity`/
+machinery (`Semantics.Causation.SEM`, `CausalGraph`, the `Necessity`/
 `Sufficiency`/`Prevention` modules) live here rather than in
 `Features/Causation.lean`, which is kept import-free per the
 "Features/ stays lightweight" convention. The `namespace
@@ -56,7 +56,7 @@ distributing methods on a type across files based on import weight. -/
 namespace Features.Causative
 
 open Semantics.Causation.CCSelection
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- The CC-selection mode associated with each variant.
 

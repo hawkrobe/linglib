@@ -15,7 +15,7 @@ because Pearl SEM API consumes parent enumerations directly (mechanisms
 fold over `parents v`).
 -/
 
-namespace Core.Causal
+namespace Semantics.Causation
 
 /-- A directed graph over `V` represented by parent finsets. The graph
     structure is value-type-agnostic: mechanisms and values layer on top
@@ -58,4 +58,4 @@ theorem isRoot_iff_card_zero (G : CausalGraph V) (v : V) :
 
 end CausalGraph
 
-end Core.Causal
+end Semantics.Causation

@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.SEM.Bool
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Bool
+import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Aspect.SubeventStructure
 
 /-!
@@ -36,7 +36,7 @@ during the V2 migration period).
 namespace Semantics.Causation.Progressive
 
 open Core (WorldTimeIndex)
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causal Process (V2)

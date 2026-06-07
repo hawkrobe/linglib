@@ -3546,7 +3546,7 @@ theorems above remain intact. -/
 
 namespace V2
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 open Features
 
 variable {V : Type*} {α : V → Type*}

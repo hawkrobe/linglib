@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Causal Sufficiency
@@ -28,7 +28,7 @@ study files (e.g., `Resultatives.HammerFlat`).
 
 namespace Semantics.Causation.Sufficiency
 
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
+open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 sufficiency for "make": setting `cause := xC` develops `effect = xE`.
     Polymorphic over the value type `α`. Bool models pass `xC = xE = true`

@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.SEM.Defs
-import Linglib.Core.Causal.Mechanism.Deterministic
+import Linglib.Semantics.Causation.SEM.Defs
+import Linglib.Semantics.Causation.Mechanism.Deterministic
 
 /-!
 # SEM: Deterministic Specialization (canonical `developDet`)
@@ -59,7 +59,7 @@ For 5-vertex SEMs, ~5 layers of unfolding suffice. No `Fintype` reasoning;
 no opaque `Multiset.toList`.
 -/
 
-namespace Core.Causal.SEM
+namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -146,4 +146,4 @@ theorem developDet_hasValue_iff (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (M.developDet s).hasValue v x ↔ developDetVtx M s v = x :=
   Option.some_inj
 
-end Core.Causal.SEM
+end Semantics.Causation.SEM

@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Glass 2023: Anna Karenina Principle and *cause*
@@ -37,7 +37,7 @@ needed.
 
 namespace Glass2023
 
-open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 
 /-! ## Local vs Global Sufficiency / Necessity (defs 8–11)
 
@@ -118,7 +118,7 @@ implicature. -/
 noncomputable def causeSemGlass {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
-  Core.Causal.BoolSEM.causallySufficient M bg cause effect
+  Semantics.Causation.BoolSEM.causallySufficient M bg cause effect
 
 /-- Glass's *cause* is truth-conditionally identical to N&L's *make*
     (`causallySufficient`). The difference is pragmatic. -/
@@ -126,6 +126,6 @@ theorem glass_cause_is_causallySufficient {V : Type*} [Fintype V] [DecidableEq V
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) :
     causeSemGlass M bg cause effect ↔
-      Core.Causal.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
+      Semantics.Causation.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
 
 end Glass2023
