@@ -760,17 +760,17 @@ theorem sleep_vendlerClass_state :
 /-- Bounded path → telic → licensed. K98 §4 eq. 74 *walked from X to Y*. -/
 theorem bounded_pipeline :
     pathShapeToTelicity .bounded = .telic ∧
-    LicensingPipeline.isLicensed PathShape.bounded = true := ⟨rfl, rfl⟩
+    LicensingPipeline.IsLicensed PathShape.bounded := ⟨rfl, trivial⟩
 
 /-- Source path → telic → licensed. K98 §4 eq. 73 *Mary left the house*. -/
 theorem source_pipeline :
     pathShapeToTelicity .source = .telic ∧
-    LicensingPipeline.isLicensed PathShape.source = true := ⟨rfl, rfl⟩
+    LicensingPipeline.IsLicensed PathShape.source := ⟨rfl, trivial⟩
 
 /-- Unbounded path → atelic → blocked. K98 §4 eq. 75 *walked towards X*. -/
 theorem unbounded_pipeline :
     pathShapeToTelicity .unbounded = .atelic ∧
-    LicensingPipeline.isLicensed PathShape.unbounded = false := ⟨rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed PathShape.unbounded := ⟨rfl, id⟩
 
 /-! ### Motion VP data (K98 §4.5 eq. 74-75) -/
 

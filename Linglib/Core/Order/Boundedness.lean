@@ -1,28 +1,27 @@
 import Mathlib.Order.Basic
 
 /-!
-# Core/Scales/Defs.lean — basic types
+# Scale boundedness and the licensing pipeline
 [kennedy-mcnally-2005] [kennedy-2007] [rotstein-winter-2004] [rouillard-2026]
 
 Foundational scale-classification types used across all gradability/degree
 substrate. No framework-specific operators here (those live in
 `Semantics/Gradability/`).
 
-Contents:
-- `Boundedness` enum + `hasMax`/`hasMin`/`isLicensed`
-- `MereoTag` + `toBoundedness`
-- `LicensingPipeline` typeclass + universal theorem
-- `ScalePolarity` enum
+## Main declarations
 
-This file is part of the Phase A decomposition of the legacy
-`Core/Scales/Scale.lean` dumping ground (master plan v4).
+- `Boundedness`: the four-way endpoint classification, with `HasMax` /
+  `HasMin` / `IsLicensed` predicates.
+- `MereoTag`, `EpistemicTag`: binary classifications mapping into
+  `Boundedness`.
+- `LicensingPipeline`: typeclass for types classifiable into `Boundedness`,
+  with the `universal` agreement theorem.
+- `ScalePolarity`.
 -/
 
 namespace Core.Order
 
--- ════════════════════════════════════════════════════
--- § 1. Scale Boundedness
--- ════════════════════════════════════════════════════
+/-! ### Scale boundedness -/
 
 /-- Classification of scale boundedness.
     [kennedy-mcnally-2005] eq (1) and [kennedy-2007] §4.2 eq (59):
@@ -57,38 +56,50 @@ inductive Boundedness where
   deriving DecidableEq, Repr
 
 /-- Does this scale have an inherent maximum? -/
-def Boundedness.hasMax : Boundedness → Bool
-  | .upperBounded | .closed => true
-  | .open_ | .lowerBounded => false
+def Boundedness.HasMax : Boundedness → Prop
+  | .upperBounded | .closed => True
+  | .open_ | .lowerBounded => False
+
+instance : DecidablePred Boundedness.HasMax
+  | .open_ => isFalse id
+  | .lowerBounded => isFalse id
+  | .upperBounded => isTrue trivial
+  | .closed => isTrue trivial
 
 /-- Does this scale have an inherent minimum? -/
-def Boundedness.hasMin : Boundedness → Bool
-  | .lowerBounded | .closed => true
-  | .open_ | .upperBounded => false
+def Boundedness.HasMin : Boundedness → Prop
+  | .lowerBounded | .closed => True
+  | .open_ | .upperBounded => False
 
-/-- "Any endpoint exists" predicate: returns `true` whenever the scale
-    has at least one bound (max or min). An open scale returns `false`.
+instance : DecidablePred Boundedness.HasMin
+  | .open_ => isFalse id
+  | .lowerBounded => isTrue trivial
+  | .upperBounded => isFalse id
+  | .closed => isTrue trivial
+
+/-- "Any endpoint exists": the scale has at least one bound (max or min);
+    an open scale has none.
 
     **NOT [kennedy-2007]'s full licensing prediction.** Kennedy's actual
     prediction is the 4×2 modifier-class matrix in [kennedy-2007]
     eq (61) (= [kennedy-mcnally-2005] eq (15)): maximizers
     (*completely, perfectly*) require an UPPER endpoint; minimizers
     (*slightly, partially*) require a LOWER endpoint; proportional modifiers
-    (*half*) require BOTH. A single Bool can't encode this — to be faithful,
-    split into `licensesMaximizer`/`licensesMinimizer`/`licensesProportional`.
+    (*half*) require BOTH — for modifier-specific licensing, consult
+    `HasMax`/`HasMin` directly. This predicate suffices for callers that
+    only distinguish "open" from "any-endpoint-exists" (Interpretive
+    Economy, [kennedy-2007] §4.3; Rouillard's MIP, [rouillard-2026]). -/
+def Boundedness.IsLicensed : Boundedness → Prop
+  | .closed | .lowerBounded | .upperBounded => True
+  | .open_ => False
 
-    The current Bool is sufficient for callers that only need to distinguish
-    "open" from "any-endpoint-exists" (e.g. Interpretive Economy gating a
-    relative vs. absolute interpretation, [kennedy-2007] §4.3, or
-    Rouillard's MIP, [rouillard-2026]). For modifier-specific
-    licensing, consumers must consult `hasMax`/`hasMin` directly. -/
-def Boundedness.isLicensed : Boundedness → Bool
-  | .closed | .lowerBounded | .upperBounded => true
-  | .open_ => false
+instance : DecidablePred Boundedness.IsLicensed
+  | .open_ => isFalse id
+  | .lowerBounded => isTrue trivial
+  | .upperBounded => isTrue trivial
+  | .closed => isTrue trivial
 
--- ════════════════════════════════════════════════════
--- § 1b. MereoTag + LicensingPipeline
--- ════════════════════════════════════════════════════
+/-! ### MereoTag and the licensing pipeline -/
 
 /-- Binary mereological classification: the shared abstraction underlying
     all four licensing frameworks (Kennedy, Rouillard, Krifka, Zwarts). -/
@@ -115,8 +126,12 @@ namespace LicensingPipeline
 
 variable {α : Type*} [LicensingPipeline α]
 
-def isLicensed (a : α) : Bool :=
-  (toBoundedness a).isLicensed
+/-- A pipeline input is licensed iff its boundedness classification is. -/
+def IsLicensed (a : α) : Prop :=
+  (toBoundedness a).IsLicensed
+
+instance : DecidablePred (IsLicensed (α := α)) := fun a =>
+  inferInstanceAs (Decidable (toBoundedness a).IsLicensed)
 
 instance : LicensingPipeline Boundedness where
   toBoundedness := id
@@ -129,8 +144,9 @@ instance : LicensingPipeline MereoTag where
     of which framework they come. -/
 theorem universal {α β : Type*} [LicensingPipeline α] [LicensingPipeline β]
     (a : α) (b : β) (h : toBoundedness a = toBoundedness b) :
-    isLicensed a = isLicensed b := by
-  simp only [isLicensed, h]
+    IsLicensed a ↔ IsLicensed b := by
+  unfold IsLicensed
+  rw [h]
 
 end LicensingPipeline
 
@@ -147,28 +163,26 @@ instance : LicensingPipeline EpistemicTag where
     | .qualitative => .open_
 
 theorem epistemicFA_licensed :
-    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive = true := rfl
+    LicensingPipeline.IsLicensed EpistemicTag.finitelyAdditive := trivial
 
 theorem epistemicQualitative_blocked :
-    LicensingPipeline.isLicensed EpistemicTag.qualitative = false := rfl
+    ¬ LicensingPipeline.IsLicensed EpistemicTag.qualitative := id
 
 theorem five_frameworks_agree
     (m : MereoTag) (e : EpistemicTag)
     (h : LicensingPipeline.toBoundedness m = LicensingPipeline.toBoundedness e) :
-    LicensingPipeline.isLicensed m = LicensingPipeline.isLicensed e :=
+    LicensingPipeline.IsLicensed m ↔ LicensingPipeline.IsLicensed e :=
   LicensingPipeline.universal m e h
 
-theorem epistemicFA_eq_qua :
-    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive =
-    LicensingPipeline.isLicensed MereoTag.qua := rfl
+theorem epistemicFA_iff_qua :
+    LicensingPipeline.IsLicensed EpistemicTag.finitelyAdditive ↔
+    LicensingPipeline.IsLicensed MereoTag.qua := Iff.rfl
 
-theorem epistemicQualitative_eq_cum :
-    LicensingPipeline.isLicensed EpistemicTag.qualitative =
-    LicensingPipeline.isLicensed MereoTag.cum := rfl
+theorem epistemicQualitative_iff_cum :
+    LicensingPipeline.IsLicensed EpistemicTag.qualitative ↔
+    LicensingPipeline.IsLicensed MereoTag.cum := Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 1d. Scale Polarity
--- ════════════════════════════════════════════════════
+/-! ### Scale polarity -/
 
 /-- Intrinsic polarity of a scale dimension.
     `positive`: the unmarked direction (tall, hot, confident).

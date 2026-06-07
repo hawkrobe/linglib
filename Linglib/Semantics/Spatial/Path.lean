@@ -80,17 +80,17 @@ def PathShape.toBoundedness : PathShape → Core.Order.Boundedness
     [zwarts-2005]: "to the store" creates a telic VP because the path
     set is bounded, corresponding to a closed scale. -/
 theorem bounded_path_licensed :
-    PathShape.bounded.toBoundedness.isLicensed = true := rfl
+    PathShape.bounded.toBoundedness.IsLicensed := trivial
 
 /-- Source paths are licensed (closed scale at the origin end). -/
 theorem source_path_licensed :
-    PathShape.source.toBoundedness.isLicensed = true := rfl
+    PathShape.source.toBoundedness.IsLicensed := trivial
 
 /-- Unbounded paths are blocked (open scale → no inherent endpoint).
     [zwarts-2005]: "towards the store" creates an atelic VP because
     the path set is unbounded, corresponding to an open scale. -/
 theorem unbounded_path_blocked :
-    PathShape.unbounded.toBoundedness.isLicensed = false := rfl
+    ¬ PathShape.unbounded.toBoundedness.IsLicensed := id
 
 -- ════════════════════════════════════════════════════
 -- § 4. Path Adjacency

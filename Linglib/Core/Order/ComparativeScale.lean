@@ -59,8 +59,12 @@ structure AdditiveScale (α : Type*) [SemilatticeSup α] extends ComparativeScal
 namespace ComparativeScale
 
 /-- Licensing prediction from the underlying boundedness. -/
-def isLicensed {α : Type*} [Preorder α] (S : ComparativeScale α) : Bool :=
-  S.boundedness.isLicensed
+def IsLicensed {α : Type*} [Preorder α] (S : ComparativeScale α) : Prop :=
+  S.boundedness.IsLicensed
+
+instance {α : Type*} [Preorder α] (S : ComparativeScale α) :
+    Decidable S.IsLicensed :=
+  inferInstanceAs (Decidable S.boundedness.IsLicensed)
 
 end ComparativeScale
 

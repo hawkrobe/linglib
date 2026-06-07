@@ -449,41 +449,41 @@ adjective fragment. -/
     minimum-standard absolutes (wet, dirty) and maximum-standard absolutes
     (dry, clean), which still license EN because only one endpoint is
     available for MAX to target. -/
-def licensesComparativeEN (b : Boundedness) : Bool :=
-  !(b.hasMax && b.hasMin)
+def LicensesComparativeEN (b : Boundedness) : Prop :=
+  ¬ (b.HasMax ∧ b.HasMin)
+
+instance (b : Boundedness) : Decidable (LicensesComparativeEN b) :=
+  inferInstanceAs (Decidable ¬ (b.HasMax ∧ b.HasMin))
 
 /-- "tall" (open scale) licenses EN in comparatives. -/
 theorem tall_licenses_EN :
-    licensesComparativeEN English.Modifiers.Adjectives.tall.scaleType = true := rfl
+    LicensesComparativeEN English.Modifiers.Adjectives.tall.scaleType := by decide
 
 /-- "full" (closed scale) does NOT license EN in comparatives. -/
 theorem full_blocks_EN :
-    licensesComparativeEN English.Modifiers.Adjectives.full.scaleType = false := rfl
+    ¬ LicensesComparativeEN English.Modifiers.Adjectives.full.scaleType := by decide
 
 /-- "expensive" (open scale) licenses EN in comparatives. -/
 theorem expensive_licenses_EN :
-    licensesComparativeEN English.Modifiers.Adjectives.expensive.scaleType = true := rfl
+    LicensesComparativeEN English.Modifiers.Adjectives.expensive.scaleType := by decide
 
 /-- "dead" (closed scale) does NOT license EN in comparatives. -/
 theorem dead_blocks_EN :
-    licensesComparativeEN English.Modifiers.Adjectives.dead.scaleType = false := rfl
+    ¬ LicensesComparativeEN English.Modifiers.Adjectives.dead.scaleType := by decide
 
-/-- `licensesComparativeEN` is the De Morgan dual of "both endpoints
-    exist" — EN is licensed iff some endpoint is open. This is now
-    `rfl` because the def itself is the structural form; the theorem
-    is retained as a named statement of the prediction's content. -/
+/-- `LicensesComparativeEN` is the De Morgan dual of "both endpoints
+    exist" — EN is licensed iff some endpoint is open. -/
 theorem licensesComparativeEN_iff_some_endpoint_open (b : Boundedness) :
-    licensesComparativeEN b = !b.hasMax || !b.hasMin := by
-  cases b <;> rfl
+    LicensesComparativeEN b ↔ (¬ b.HasMax ∨ ¬ b.HasMin) :=
+  not_and_or
 
 /-- The closed-scale exclusion: a fully closed scale never licenses
     comparative EN. Dual of `licensesComparativeEN_iff_some_endpoint_open`,
     stated in the form [kennedy-mcnally-2005] would recognize
     (absolute adjectives = closed scales = no EN). -/
 theorem closed_blocks_comparativeEN (b : Boundedness)
-    (h : (b.hasMax && b.hasMin) = true) : licensesComparativeEN b = false := by
-  unfold licensesComparativeEN
-  rw [h]; rfl
+    (h : b.HasMax ∧ b.HasMin) : ¬ LicensesComparativeEN b :=
+  not_not_intro h
 
 -- ════════════════════════════════════════════════════
 -- § 5. Manner Implicature Data

@@ -18,7 +18,7 @@ and Phenomena data (`closurePuzzle`, `completelyModifier`).
 ## Bridge Structure
 
 1. **Fragment → DirectedMeasure**: each Fragment entry's `scaleType`
-   determines a `DirectedMeasure`, whose `.licensed` field yields the
+   determines a `DirectedMeasure`, whose `IsLicensed` predicate yields the
    licensing prediction.
 
 2. **DirectedMeasure → Data**: the licensing prediction matches the
@@ -387,9 +387,9 @@ and the `Boundedness` scale-structure substrate.
 
 Per the matrix:
 - **Maximizers / proportional** (*completely, perfectly, absolutely, half*)
-  require an UPPER endpoint → license iff `Boundedness.hasMax = true`.
+  require an UPPER endpoint → license iff `Boundedness.HasMax`.
 - **Minimizers / diminishers** (*slightly, partially, somewhat*) require
-  a LOWER endpoint → license iff `Boundedness.hasMin = true`.
+  a LOWER endpoint → license iff `Boundedness.HasMin`.
 - **Intensifiers** (*very, extremely*) work on all scales (modulo
   pragmatic considerations).
 - **Measure phrases** (*6 feet tall*) work on all dimensional scales
@@ -398,11 +398,18 @@ Per the matrix:
 This is the genuine Tier C #3 bridge from the §1 Boundedness audit
 (0.230.420) — supersedes the decorative `closedScale_satEntity_*`
 theorems landed and unanimously audit-flagged in 0.230.436. -/
-def licenses : DegreeModifierType → Core.Order.Boundedness → Bool
-  | .proportional, b => b.hasMax
-  | .diminisher, b => b.hasMin
-  | .intensifier, _ => true
-  | .measurePhrase, _ => true
+def Licenses : DegreeModifierType → Core.Order.Boundedness → Prop
+  | .proportional, b => b.HasMax
+  | .diminisher, b => b.HasMin
+  | .intensifier, _ => True
+  | .measurePhrase, _ => True
+
+instance : ∀ (m : DegreeModifierType) (b : Core.Order.Boundedness),
+    Decidable (Licenses m b)
+  | .proportional, b => inferInstanceAs (Decidable b.HasMax)
+  | .diminisher, b => inferInstanceAs (Decidable b.HasMin)
+  | .intensifier, _ => isTrue trivial
+  | .measurePhrase, _ => isTrue trivial
 
 end Kennedy2007Licensing
 
@@ -424,25 +431,25 @@ open Kennedy2007Licensing
 
 /-- "tall" (open scale) → DirectedMeasure blocks degree modification. -/
 theorem tall_blocks_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ tall).licensed = false :=
+    ¬ (adjMeasure μ tall).IsLicensed :=
   openAdj_blocked μ tall rfl
 
 /-- "full" (closed scale) → DirectedMeasure licenses degree modification. -/
 theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ full).licensed = true :=
+    (adjMeasure μ full).IsLicensed :=
   closedAdj_licensed μ full rfl
 
 /-- "wet" (lower-bounded) → DirectedMeasure licenses. -/
 theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ wet).licensed = true := by
+    (adjMeasure μ wet).IsLicensed := by
   simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.licensed, wet, Boundedness.isLicensed]
+        DirectedMeasure.IsLicensed, wet, Boundedness.IsLicensed]
 
 /-- "dry" (upper-bounded) → DirectedMeasure licenses. -/
 theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ dry).licensed = true := by
+    (adjMeasure μ dry).IsLicensed := by
   simp only [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.licensed, dry, Boundedness.isLicensed]
+        DirectedMeasure.IsLicensed, dry, Boundedness.IsLicensed]
 
 -- ════════════════════════════════════════════════════
 -- § 2. DirectedMeasure → Data Bridges
@@ -452,16 +459,18 @@ theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
     closed-scale adjectives license "completely", open-scale ones don't.
     Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
 theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ full).licensed = closurePuzzle.worksWithClosed ∧
-    (adjMeasure μ tall).licensed = closurePuzzle.worksWithOpen := by
-  exact ⟨closedAdj_licensed μ full rfl, openAdj_blocked μ tall rfl⟩
+    ((adjMeasure μ full).IsLicensed ↔ closurePuzzle.worksWithClosed = true) ∧
+    ((adjMeasure μ tall).IsLicensed ↔ closurePuzzle.worksWithOpen = true) :=
+  ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
+   iff_of_false (openAdj_blocked μ tall rfl) (by decide)⟩
 
 /-- "completely" works with AGA-max (closed) but not RGA (open).
     `adjMeasure` licensing matches `completelyModifier` fields. -/
 theorem completely_distribution {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (adjMeasure μ full).licensed = completelyModifier.worksWithAGAMax ∧
-    (adjMeasure μ tall).licensed = completelyModifier.worksWithRGA := by
-  exact ⟨closedAdj_licensed μ full rfl, openAdj_blocked μ tall rfl⟩
+    ((adjMeasure μ full).IsLicensed ↔ completelyModifier.worksWithAGAMax = true) ∧
+    ((adjMeasure μ tall).IsLicensed ↔ completelyModifier.worksWithRGA = true) :=
+  ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
+   iff_of_false (openAdj_blocked μ tall rfl) (by decide)⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. LicensingPipeline Bridges
@@ -469,30 +478,27 @@ theorem completely_distribution {max : Nat} {W : Type*} (μ : W → Degree max) 
 
 /-- "tall" through the universal pipeline: open_ → blocked. -/
 theorem adj_pipeline_tall :
-    LicensingPipeline.isLicensed tall.scaleType = false := rfl
+    ¬ LicensingPipeline.IsLicensed tall.scaleType := id
 
 /-- "full" through the universal pipeline: closed → licensed. -/
 theorem adj_pipeline_full :
-    LicensingPipeline.isLicensed full.scaleType = true := rfl
+    LicensingPipeline.IsLicensed full.scaleType := trivial
 
 /-- "wet" through the universal pipeline: lowerBounded → licensed. -/
 theorem adj_pipeline_wet :
-    LicensingPipeline.isLicensed wet.scaleType = true := rfl
+    LicensingPipeline.IsLicensed wet.scaleType := trivial
 
 /-- "dry" through the universal pipeline: upperBounded → licensed. -/
 theorem adj_pipeline_dry :
-    LicensingPipeline.isLicensed dry.scaleType = true := rfl
+    LicensingPipeline.IsLicensed dry.scaleType := trivial
 
 /-- Pipeline agrees with DirectedMeasure for all four test adjectives. -/
 theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree max) :
-    LicensingPipeline.isLicensed tall.scaleType = (adjMeasure μ tall).licensed ∧
-    LicensingPipeline.isLicensed full.scaleType = (adjMeasure μ full).licensed ∧
-    LicensingPipeline.isLicensed wet.scaleType = (adjMeasure μ wet).licensed ∧
-    LicensingPipeline.isLicensed dry.scaleType = (adjMeasure μ dry).licensed := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
-          adjMeasure, DirectedMeasure.adjective, DirectedMeasure.licensed,
-          tall, full, wet, dry, Boundedness.isLicensed]
+    (LicensingPipeline.IsLicensed tall.scaleType ↔ (adjMeasure μ tall).IsLicensed) ∧
+    (LicensingPipeline.IsLicensed full.scaleType ↔ (adjMeasure μ full).IsLicensed) ∧
+    (LicensingPipeline.IsLicensed wet.scaleType ↔ (adjMeasure μ wet).IsLicensed) ∧
+    (LicensingPipeline.IsLicensed dry.scaleType ↔ (adjMeasure μ dry).IsLicensed) :=
+  ⟨Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Scale Structure → Comparison Class Sensitivity
@@ -559,16 +565,16 @@ theorem dry_no_cc_convergence :
     *wet*. Their resistance to *very*/*extremely* is pragmatic (conflicts
     with middling inference), not structural. -/
 theorem mpa_licensed :
-    LicensingPipeline.isLicensed decent.scaleType = true ∧
-    LicensingPipeline.isLicensed acceptable.scaleType = true ∧
-    LicensingPipeline.isLicensed adequate.scaleType = true := ⟨rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed decent.scaleType ∧
+    LicensingPipeline.IsLicensed acceptable.scaleType ∧
+    LicensingPipeline.IsLicensed adequate.scaleType := ⟨trivial, trivial, trivial⟩
 
 /-- MPAs and *good* have the same scale-structure licensing status
     (both lower-bounded → licensed). Their difference is in standard
     type (functional vs contextual), not in structural licensing. -/
 theorem mpa_good_same_licensing :
-    LicensingPipeline.isLicensed decent.scaleType =
-    LicensingPipeline.isLicensed good.scaleType := rfl
+    LicensingPipeline.IsLicensed decent.scaleType ↔
+    LicensingPipeline.IsLicensed good.scaleType := Iff.rfl
 
 /-- IE path diverges for MPAs: lower-bounded → minEndpoint, but MPAs
     actually receive a functional standard. This is a genuine exception
@@ -591,9 +597,9 @@ theorem mpa_ie_exception :
     `licenses .diminisher` and `naturalWithCompletely` from
     `licenses .proportional`. Provable by `decide` over the 5×2 grid. -/
 theorem k2007_matrix_agrees_with_typology :
-    adjectiveTypologyExamples.all (fun d =>
-      licenses .diminisher d.scaleType == d.naturalWithSlightly &&
-      licenses .proportional d.scaleType == d.naturalWithCompletely) = true := by
+    ∀ d ∈ adjectiveTypologyExamples,
+      (Licenses .diminisher d.scaleType ↔ d.naturalWithSlightly = true) ∧
+      (Licenses .proportional d.scaleType ↔ d.naturalWithCompletely = true) := by
   decide
 
 /-- Per-modifier consistency: each `DegreeModifierDatum`'s
@@ -605,10 +611,10 @@ theorem k2007_matrix_agrees_with_typology :
     — only `.closed` and `.lowerBounded` satisfy that, of which `.closed`
     is the natural reading for the *full*-class data. -/
 theorem k2007_modifier_data_agrees :
-    degreeModifierExamples.all (fun d =>
-      licenses d.modifierType .closed == d.worksWithAGAMax &&
-      licenses d.modifierType .lowerBounded == d.worksWithAGAMin &&
-      licenses d.modifierType .open_ == d.worksWithRGA) = true := by
+    ∀ d ∈ degreeModifierExamples,
+      (Licenses d.modifierType .closed ↔ d.worksWithAGAMax = true) ∧
+      (Licenses d.modifierType .lowerBounded ↔ d.worksWithAGAMin = true) ∧
+      (Licenses d.modifierType .open_ ↔ d.worksWithRGA = true) := by
   decide
 
 /-- The audit's `closurePuzzle` (full vs tall, completely modifier) is a
@@ -616,8 +622,8 @@ theorem k2007_modifier_data_agrees :
     matches `worksWithClosed`, and `licenses .proportional .open_ = false`
     matches `worksWithOpen`. -/
 theorem closurePuzzle_via_matrix :
-    licenses .proportional .closed = closurePuzzle.worksWithClosed ∧
-    licenses .proportional .open_ = closurePuzzle.worksWithOpen :=
-  ⟨rfl, rfl⟩
+    (Licenses .proportional .closed ↔ closurePuzzle.worksWithClosed = true) ∧
+    (Licenses .proportional .open_ ↔ closurePuzzle.worksWithOpen = true) := by
+  decide
 
 end Kennedy2007Licensing.Bridge
