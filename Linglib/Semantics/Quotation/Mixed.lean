@@ -157,10 +157,10 @@ def MQContext.applyMQ {W Expr Speaker Utt : Type} (ctx : MQContext W Expr Speake
     McCready 2010) and is what allows peripheral content from mixed
     quotation to interact with higher at-issue operators like negation
     and conditionals. In the Writer monad architecture for CI effects
-    (see `Semantics.Composition.Effects.twoDimToWriter`),
+    (see `BumfordCharlow2024.twoDimToWriter`),
     shunting corresponds to running the Writer by folding the CI log
     into the value via conjunction (see `runCIWriter` and
-    `runCIWriter_twoDim` in `Semantics.Composition.Effects`). -/
+    `runCIWriter_twoDim` in `Studies/BumfordCharlow2024.lean`). -/
 def shunt {W : Type} (p : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => p.atIssue w ∧ p.ci w
   , ci := λ _ => True }

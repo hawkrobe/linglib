@@ -11,51 +11,66 @@ import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
-# Effect-Driven Interpretation
-[bumford-charlow-2024]
+# [bumford-charlow-2024]: Effect-Driven Interpretation
 
-[bumford-charlow-2024] propose that diverse semantic phenomena — scope,
-binding, conventional implicatures, indeterminacy — are all instances of
-**algebraic effects** within the Functor → Applicative → Monad hierarchy.
-The grammar's composition rules are built from **meta-combinators** (F̄, F̃,
-A, J) that systematically lift basic modes of combination to work in the
-presence of effects.
+[bumford-charlow-2024] cast diverse semantic phenomena — scope, binding,
+conventional implicature, indeterminacy — as algebraic effects in the
+Functor → Applicative → Monad hierarchy, with **meta-combinators** lifting
+the basic modes of combination into the presence of effects. This study
+formalizes that framework over linglib's effect carriers:
 
-This file formalizes the core of their framework and bridges it to existing
-linglib infrastructure:
+| Effect | Type | linglib carrier |
+|--------|------|-----------------|
+| Scope | `(α → ρ) → ρ` | `Cont R A` (`Composition/Continuation`) |
+| CI / supplementation | `α × List P` | `Writer (List P) A` (`Composition/WriterMonad`) |
+| Input (binding) | `ι → α` | Reader (`Reference/Binding`) |
+| Output (antecedent) | `α × ι` | `Prod` |
+| Indeterminacy | `{α}` | `Set` |
 
-| Effect | Paper name | Type | linglib type |
-|--------|-----------|------|-------------|
-| Scope | C | `(α → ρ) → ρ` | `Cont R A` |
-| CI / supplementation | W | `α × List P` | `Writer (List P) A` |
-| Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
-| Output (antecedents) | W | `α × ι` | `Prod` |
-| Indeterminacy | S | `{α}` | `α → Prop` (mathlib's `Set`; details in `Studies/Charlow2020.lean`) |
+## Main declarations
 
-## Organization
+* `F̄`/`F̃` (Functor), `A` (Applicative), `J` (Monad), `counitApp` (the W⊣R
+  co-unit `C`) — modes of combination lifting application into effects.
+* The W⊣R adjunction `Φ`/`Ψ`/`adj_η`/`adj_ε`: binding is the co-unit.
+* `binding_C_agrees_with_hk` and the three-way unification: adjunction
+  binding ≡ Heim-Kratzer assignment binding ≡ the `W` combinator.
 
-- **§1** Typeclass instances (now supplied by mathlib's `WriterT` and
-  `Composition/Continuation.lean`)
-- **§2** Meta-combinators: F̄, F̃, A, J (the paper's core contribution)
-- **§3** Generalized Application and hierarchy theorems
-- **§4** The W ⊣ R adjunction for binding
-- **§5** Effect operations and handlers
-- **§6** Bridge theorems
-- **§7** General scope agreement (Cont ≡ GQ application)
-- **§8** Three-way binding unification (denotGJoin = W = adj_ε)
+## Crossover
 
-## Coverage
+[bumford-charlow-2024] §5.2: crossover is inherited from the
+*non-commutativity of the W⊣R adjunction*. `counitApp` fires the co-unit
+`ε` only when the W (antecedent) is the **left** daughter. With the
+pronoun's R on the left, scope may still invert — the antecedent outscopes
+the pronoun — yet binding never resolves: "anaphoric ships passing in the
+night." There is no recovery mechanism; the account is *categorical*.
 
-Of the 9 meta-combinators in Figure 10, this file formalizes 5:
-F̄ (Map Left), F̃ (Map Right), A (Structured App), J (Join), C (Co-unit).
+The `Crossover` namespace (§10) formalizes this: the dissociation
+(`scope_inversion_no_binding`), the structural derivation (`combine`/`derive`,
+returning either the bound co-unit reading or the Reader-retaining residual),
+and the phenomenon-neutral bridge `derive_bound_iff_precedes` — the bound
+reading derives iff the antecedent linearly precedes the pronoun. The
+Owusu/Chierchia *bí*/*biara* functional-reading asymmetry ([owusu-2022] §3.3.2,
+[chierchia-2001]) is one instance; superiority and primary/secondary crossover
+are others over the same `derive`.
 
-Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
-⊿̄/⊿̃ (Eject Left/Right) require the Υ isomorphism from §5.3.2
-(Kleisli arrow repackaging), which is not yet formalized.
+This diverges from [shan-barker-2006], whose left-to-right `Scope` rule
+admits a marked right-to-left `Z` variant that recovers weak crossover as a
+*gradient*, defeasible reading (their continuation-level mechanism: a binder
+must take effect at the pronoun's continuation level, so crossing fails to
+unify under `Down`). Formalizing the S&B continuation calculus and the
+non-coincidence theorem between the two accounts is deferred — there is no
+S&B substrate in linglib yet.
+
+## Implementation notes
+
+Scope-as-bind-order (`scope_ambiguity_is_bind_order` et al.) lives with the
+`Cont` monad in `Composition/Continuation`; this study consumes it.
+The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
 
-namespace Semantics.Composition.Effects
+namespace BumfordCharlow2024
 
+open Semantics.Composition
 open Semantics.Composition.Continuation
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
@@ -838,59 +853,9 @@ one particular syntax for specifying bind order. -/
 
 section GeneralScopeAgreement
 
-variable {E R : Type}
-
-/-- **Single scope reduction**: lowering a Cont-wrapped quantifier
-    with a pure scope predicate is plain GQ application.
-
-    `lower(Q >>= λx. pure(P x)) = Q(P)`
-
-    This is the general version of `scope_agrees_with_qr_everyStudentSleeps`
-    — it holds for ANY quantifier and ANY predicate, not just the toy model. -/
-theorem cont_scope_reduce (q : Cont R E) (scope : E → R) :
-    Cont.lower (Cont.bind q (fun x => Cont.pure (scope x))) = q scope := rfl
-
-/-- **Two-quantifier scope reduction**: nested Cont binds compute
-    nested GQ application. The bind nesting determines scope order.
-
-    `lower(Q₁ >>= λx. Q₂ >>= λy. pure(R x y)) = Q₁(λx. Q₂(λy. R x y))` -/
-theorem cont_scope_double (q₁ q₂ : Cont R E) (rel : E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
-    q₁ (fun x => q₂ (fun y => rel x y)) := rfl
-
-/-- **Scope ambiguity = bind order**. The two readings of "Q₁ R Q₂"
-    arise from nesting Q₁ outside Q₂ vs Q₂ outside Q₁.
-
-    Both reduce to GQ application in the corresponding order. -/
-theorem scope_ambiguity_is_bind_order (q₁ q₂ : Cont R E) (rel : E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
-    q₁ (fun x => q₂ (fun y => rel x y))
-    ∧
-    Cont.lower (Cont.bind q₂ (fun y =>
-      Cont.bind q₁ (fun x => Cont.pure (rel x y)))) =
-    q₂ (fun y => q₁ (fun x => rel x y)) :=
-  ⟨rfl, rfl⟩
-
-/-- **Three-quantifier scope**: the pattern extends to arbitrary depth. -/
-theorem cont_scope_triple (q₁ q₂ q₃ : Cont R E) (rel : E → E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y =>
-        Cont.bind q₃ (fun z => Cont.pure (rel x y z))))) =
-    q₁ (fun x => q₂ (fun y => q₃ (fun z => rel x y z))) := rfl
-
-/-- **Non-scope-taking = ordinary FA**: when all meanings are wrapped
-    in `Cont.pure`, Cont composition reduces to function application.
-
-    `lower(pure(f) >>= λg. pure(x) >>= λy. pure(g y)) = f x`
-
-    This is the embedding of Reader (the non-scope-taking fragment)
-    into Cont: [charlow-2018]'s `ρ(f) ⊛ ρ(x) = ρ(f x)` is
-    exactly the Cont homomorphism law. -/
-theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
-    Cont.lower (Cont.bind (Cont.pure f) (fun g =>
-      Cont.bind (Cont.pure x) (fun y => Cont.pure (g y)))) = f x := rfl
+/-! The generic scope-as-bind-order facts (`scope_ambiguity_is_bind_order`
+et al.) now live with the `Cont` monad in `Composition/Continuation`; this
+study consumes them. What remains here is the bridge to QR trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
     between QR trees and Cont derivations.
@@ -1024,4 +989,150 @@ theorem indeterminacy_associativity {A B C : Type}
 
 end IndeterminacyBridge
 
-end Semantics.Composition.Effects
+-- ════════════════════════════════════════════════════════════════════
+-- §10 Crossover: the scope×binding dissociation
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### §10 Crossover
+
+[bumford-charlow-2024] §5.2 derive weak crossover from the **non-commutativity of
+the W⊣R co-unit**: `counitApp` fires ε only with the antecedent (W) as the left
+daughter, so scope (which may invert freely) and binding-availability **dissociate**
+— the antecedent must linearly *precede* the pronoun, "even while semantic scope
+may be arbitrarily inverted." This is phenomenon-neutral; weak crossover, the
+Owusu/Chierchia functional-reading asymmetry (below), superiority ([shan-barker-2006]:
+raised-*wh* trace = W, in-situ *wh* = R), and primary/secondary crossover are all
+instances over the one derivation. -/
+
+namespace Crossover
+
+/-! #### The two outcomes of combining an antecedent (W) and a pronoun (R)
+
+The pronoun is a Reader `pro : ι → ω`; the antecedent is a stored referent `a : ι`
+(W). The co-unit discharges the Reader — feeding `a` into `pro`'s index — only with
+the antecedent as the LEFT daughter. The result records which happened: a bound
+reading loses the Reader; a crossover keeps it. -/
+
+/-- Antecedent-left: the co-unit binds the pronoun's index to the antecedent
+(`= counitApp`, the C combinator). The Reader is discharged. -/
+def coUnitBinds {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) : ω :=
+  counitApp star (store a) pro
+
+/-- Pronoun-left: the antecedent is carried but the pronoun reads its own FREE index
+— never the antecedent ("ships passing in the night"). The Reader **persists**
+(result `ι → ω`). -/
+def shipsPassing {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) : ι → ω :=
+  fun i => star a (pro i)
+
+theorem coUnitBinds_is_counitApp {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    coUnitBinds star a pro = counitApp star (store a) pro := rfl
+
+/-- `ε ⟨pro, a⟩ = pro a`: the antecedent binds the pronoun's index. -/
+theorem coUnitBinds_eval {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    coUnitBinds star a pro = star a (pro a) := rfl
+
+theorem shipsPassing_at {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i : ι) :
+    shipsPassing star a pro i = star a (pro i) := rfl
+
+/-- The residual differs at two indices, so it is not a constant (bound) reading —
+the Reader is not dischargeable (the "R constructor remains open" of §5.14). -/
+theorem shipsPassing_reader_persists :
+    ∃ (ι ω : Type) (star : ι → ω → ω) (a : ι) (pro : ι → ω) (i j : ι),
+      shipsPassing star a pro i ≠ shipsPassing star a pro j :=
+  ⟨Bool, Bool, fun _ b => b, true, id, false, true, by decide⟩
+
+/-- **The dissociation**: even with the antecedent quantified wide (W outscoping R),
+the pronoun reads its free index for *every* antecedent — binding never happens.
+Binding-availability depends on the antecedent/pronoun order alone, not on scope. -/
+theorem scope_inversion_no_binding {ι ω : Type} (pro : ι → ω) (i : ι) :
+    ∀ a : ι, shipsPassing (fun _ b => b) a pro i = pro i :=
+  fun _ => rfl
+
+/-! #### The derivation from structure, over real linear positions -/
+
+/-- A daughter in a binding configuration. -/
+inductive Daughter (ι ω : Type)
+  | antecedent (a : ι)        -- W
+  | pronoun (pro : ι → ω)     -- R
+
+/-- The reading the grammar derives: a bound value (Reader discharged) or a crossover
+residual (Reader retained). -/
+inductive Reading (ι ω : Type)
+  | bound (v : ω)
+  | crossover (residual : ι → ω)
+
+def Reading.isBound {ι ω : Type} : Reading ι ω → Bool
+  | .bound _ => true
+  | .crossover _ => false
+
+/-- Combine two ordered daughters STRUCTURALLY: W-left-R-right fires the co-unit
+(`coUnitBinds`); R-left-W-right is crossover, the residual being `shipsPassing`.
+(Same-role pairs are not binder+pronoun configs.) -/
+def combine {ι ω : Type} (star : ι → ω → ω) :
+    Daughter ι ω → Daughter ι ω → Option (Reading ι ω)
+  | .antecedent a, .pronoun pro => some (.bound (coUnitBinds star a pro))
+  | .pronoun pro, .antecedent a => some (.crossover (shipsPassing star a pro))
+  | _, _ => none
+
+/-- Order the W (at `wPos`) and R (at `rPos`) by real linear position, then combine. -/
+def derive {ι ω : Type} (star : ι → ω → ω) (a : ι) (pro : ι → ω)
+    (wPos rPos : Nat) : Option (Reading ι ω) :=
+  if wPos < rPos then combine star (.antecedent a) (.pronoun pro)
+                 else combine star (.pronoun pro) (.antecedent a)
+
+/-- **The crossover bridge**: the bound reading derives iff the antecedent linearly
+precedes the pronoun. The `<` is on real positions, `combine` is structural, and the
+equivalence is proven — mutating `combine`'s W-left arm breaks it. -/
+theorem derive_bound_iff_precedes {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) :
+    (∃ v, derive star a pro wPos rPos = some (.bound v)) ↔ wPos < rPos := by
+  unfold derive; split <;> simp [combine] <;> omega
+
+/-- When the antecedent precedes, the derived reading is the co-unit binding. -/
+theorem derive_precedes_eq_bound {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) (h : wPos < rPos) :
+    derive star a pro wPos rPos = some (.bound (coUnitBinds star a pro)) := by
+  simp [derive, h, combine]
+
+/-- When the pronoun precedes (crossover), the derived reading retains the Reader,
+its residual exactly `shipsPassing`. -/
+theorem derive_crossover_residual {ι ω : Type} (star : ι → ω → ω) (a : ι)
+    (pro : ι → ω) (wPos rPos : Nat) (h : ¬ wPos < rPos) :
+    derive star a pro wPos rPos = some (.crossover (shipsPassing star a pro)) := by
+  simp [derive, h, combine]
+
+/-! #### Instance: the Owusu/Chierchia functional-reading asymmetry
+
+[owusu-2022] §3.3.2 (after [chierchia-2001]): the Akan indefinite *bí*'s skolem
+index is a pronoun (R), bound by *biara* 'every' (the antecedent, W). Akan SVO fixes
+the linear order, and the subject/object asymmetry computes via the bridge. -/
+
+inductive Arg | subject | object
+  deriving DecidableEq, Repr
+
+/-- Akan SVO linear order: the subject precedes the object. -/
+def svoPos : Arg → Nat
+  | .subject => 0
+  | .object => 1
+
+/-- *bí*-OBJECT: *biara* (W) is the subject (0), *bí* (R) the object (1); `0 < 1`, so
+the functional reading derives — the co-unit binding. The attested ambiguity. -/
+theorem bi_object_functional {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    derive star a pro (svoPos .subject) (svoPos .object) =
+      some (.bound (coUnitBinds star a pro)) :=
+  derive_precedes_eq_bound _ _ _ _ _ (by decide)
+
+/-- *bí*-SUBJECT: *biara* (W) is the object (1), *bí* (R) the subject (0); `¬(1 < 0)`,
+so the functional reading does NOT derive — weak crossover. -/
+theorem bi_subject_crossover {ι ω : Type}
+    (star : ι → ω → ω) (a : ι) (pro : ι → ω) :
+    ¬ ∃ v, derive star a pro (svoPos .object) (svoPos .subject) =
+      some (.bound v) := by
+  rw [derive_bound_iff_precedes]; decide
+
+end Crossover
+
+end BumfordCharlow2024
