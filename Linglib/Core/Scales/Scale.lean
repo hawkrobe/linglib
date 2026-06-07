@@ -6,9 +6,6 @@ import Linglib.Core.Scales.Predicate
 import Linglib.Core.Scales.Comparison
 import Linglib.Core.Scales.Bounds
 import Linglib.Core.Scales.HasMeasure
-import Linglib.Core.Scales.HasComparison
-import Linglib.Core.Scales.LawfulComparison
-import Linglib.Core.Scales.HasPositiveForm
 
 /-!
 # Core/Scales/Scale.lean — re-export shim (A.9)
@@ -26,9 +23,6 @@ content has been carved into:
 - `Predicate.lean` — IsUpwardMonotone/etc. + eqDeg/atLeastDeg/etc. + relationalGQ
 - `Bounds.lean` — typeclass licensing theorems + maxOnScale/IsMaxDetermined
 - `HasMeasure.lean` — HasMeasure typeclass (renames HasDegree) + Degree/Threshold types
-- `HasComparison.lean` — primitive comparison typeclass + ofMeasure smart constructor
-- `LawfulComparison.lean` — opt-in lawfulness mixin (extends mathlib IsStrictOrder)
-- `HasPositiveForm.lean` — positive-form typeclass parameterized by Source
 
 All sub-files declare `namespace Core.Scale` (do-no-harm constraint #23).
 Consumers continue to work via this shim's re-exports through end of Phase F;

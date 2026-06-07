@@ -2351,7 +2351,6 @@ import Linglib.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
-import Linglib.Core.Categorical.ScaleCat
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
