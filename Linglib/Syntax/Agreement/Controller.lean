@@ -56,7 +56,7 @@ With the parametric form, the projection round-trips:
 - **Case** — case-marking (nom/erg/abs/dat/...) is orthogonal to
   grammatical role. Quirky-case subjects in Icelandic, ergative-case
   agents in Tsakhur, etc. are case phenomena, not controller-role
-  phenomena. Case lives in `Core/Case/`.
+  phenomena. Case lives in `Features/Case/` and `Syntax/Case/`.
 - **φ-features** (person, number, gender) — these are properties of
   the CONTROLLER NP that determine agreement values. Not encoded in
   the controller-role enum itself.

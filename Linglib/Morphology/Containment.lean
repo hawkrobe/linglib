@@ -17,7 +17,7 @@ predicate over `List Nat` (a list of form-class indices), with both a
 computable `Bool` decision procedure and a `Prop` wrapper carrying a
 `Decidable` instance. Domain-specific instantiations live elsewhere:
 
-- Case allomorphy (`Core/Case/Allomorphy.lean`)
+- Case allomorphy (`Morphology/Case/Allomorphy.lean`)
 - Degree morphology (`Morphology/DegreeContainment.lean`)
 
 What *explains* the gap is theory-laden and contested. The DM

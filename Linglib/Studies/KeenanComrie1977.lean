@@ -355,7 +355,7 @@ theorem kc_at_least_as_detailed_as_wals :
 /-! HC₂ ("any RC-forming strategy must apply to a continuous segment of the
 AH") is a paper-anchored claim. The contiguity machinery (`contiguousOnAH`,
 `AHPosition.rank`) lives in `Typology/RelativeClause/Basic.lean` because it
-mirrors `Core/Case/Hierarchy.lean::validInventory` and is genuinely
+mirrors `Features/Case/Basic.lean`'s `IsValidInventory` and is genuinely
 framework-agnostic. The specific contiguous-segment witnesses below
 exemplify HC₂ on the AH and are part of [keenan-comrie-1977]'s core
 argumentation. -/

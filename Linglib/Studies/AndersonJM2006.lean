@@ -71,7 +71,7 @@ open English.Predicates.Verbal
 that arise as their feature bundles, the subject-selection hierarchy over
 those bundles, predicate scenarios (argument-structure tuples of relations),
 and the morphological-case → relation map. Originally landed as standalone
-substrate in `Core/Case/FeatureBundle.lean`; inlined here because only this
+substrate in `Features/Case/Basic.lean`; inlined here because only this
 study consumes it. -/
 
 /-- Anderson's three first-order case features (Ch. 6). -/
