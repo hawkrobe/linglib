@@ -1,5 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Core.Order.Markedness
 import Linglib.Features.Person.Basic
 
 /-!
@@ -80,7 +81,7 @@ instance : LinearOrder AnimacyLevel :=
 /-- All animacy levels (exhaustive enumeration for finite verification). -/
 def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
 
-theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
+theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by decide
 
 -- ============================================================================
 -- § 1b: Fine-Grained Animacy Hierarchy ([corbett-2000], [smith-stark-1974])
@@ -147,7 +148,7 @@ theorem AnimacyRank.hierarchy_ordering :
     AnimacyRank.higherAnimal.toNat > AnimacyRank.lowerAnimal.toNat ∧
     AnimacyRank.lowerAnimal.toNat > AnimacyRank.discreteInanimate.toNat ∧
     AnimacyRank.discreteInanimate.toNat > AnimacyRank.nondiscreteInanimate.toNat := by
-  native_decide
+  decide
 
 /-- The hierarchy predicts: if a language marks plural at rank r, it marks
     plural at all ranks above r. -/
@@ -185,12 +186,18 @@ def DefinitenessLevel.rank : DefinitenessLevel → Nat
   | .indefiniteSpecific => 1
   | .nonSpecific        => 0
 
+/-- NonSpecific < IndefiniteSpecific < Definite < ProperName < PersonalPronoun
+    (ordered by prominence rank). -/
+instance : LinearOrder DefinitenessLevel :=
+  LinearOrder.lift' DefinitenessLevel.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [DefinitenessLevel.rank])
+
 /-- All definiteness levels (exhaustive enumeration). -/
 def DefinitenessLevel.all : List DefinitenessLevel :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
 
 theorem DefinitenessLevel.all_length : DefinitenessLevel.all.length = 5 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 3: Scale Ordering Verification
@@ -418,30 +425,32 @@ def DifferentialMarkingProfile.isDefinitenessOnly (p : DifferentialMarkingProfil
 -- ============================================================================
 
 /-- Construct a one-dimensional animacy-based P-marking profile: P arguments
-    at or above the cutoff are marked. (For A marking, use `animacyCutoffA`.) -/
+    at or above the cutoff are marked. (For A marking, use `animacyCutoffA`.)
+    The cutoff is the scale's `LinearOrder` (`Core.Order.atOrAbove`), not a
+    raw rank comparison. -/
 def DifferentialMarkingProfile.animacyCutoffP
     (name : String) (channel : MarkingChannel) (cutoff : AnimacyLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .P, channel, marks := λ a _ => a.rank ≥ cutoff.rank }
+  { name, role := .P, channel, marks := λ a _ => decide (cutoff ≤ a) }
 
 /-- Construct a one-dimensional definiteness-based P-marking profile. -/
 def DifferentialMarkingProfile.definitenessCutoffP
     (name : String) (channel : MarkingChannel) (cutoff : DefinitenessLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .P, channel, marks := λ _ d => d.rank ≥ cutoff.rank }
+  { name, role := .P, channel, marks := λ _ d => decide (cutoff ≤ d) }
 
 /-- Construct a one-dimensional animacy-based A-marking profile: A arguments
     at or below the cutoff are marked (anti-monotone / lower set). -/
 def DifferentialMarkingProfile.animacyCutoffA
     (name : String) (channel : MarkingChannel) (cutoff : AnimacyLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .A, channel, marks := λ a _ => a.rank ≤ cutoff.rank }
+  { name, role := .A, channel, marks := λ a _ => decide (a ≤ cutoff) }
 
 /-- Construct a one-dimensional definiteness-based A-marking profile. -/
 def DifferentialMarkingProfile.definitenessCutoffA
     (name : String) (channel : MarkingChannel) (cutoff : DefinitenessLevel)
     : DifferentialMarkingProfile :=
-  { name, role := .A, channel, marks := λ _ d => d.rank ≤ cutoff.rank }
+  { name, role := .A, channel, marks := λ _ d => decide (d ≤ cutoff) }
 
 -- ============================================================================
 -- § 9: One-Dimensional Monotonicity Theorems
@@ -450,22 +459,22 @@ def DifferentialMarkingProfile.definitenessCutoffA
 /-- Animacy-cutoff P profiles are always monotone. -/
 theorem animacyCutoffP_monotone (ch : MarkingChannel) (cutoff : AnimacyLevel) :
     (DifferentialMarkingProfile.animacyCutoffP "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  cases ch <;> cases cutoff <;> decide
 
 /-- Definiteness-cutoff P profiles are always monotone. -/
 theorem definitenessCutoffP_monotone (ch : MarkingChannel) (cutoff : DefinitenessLevel) :
     (DifferentialMarkingProfile.definitenessCutoffP "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  cases ch <;> cases cutoff <;> decide
 
 /-- Animacy-cutoff A profiles are always monotone (anti-monotone). -/
 theorem animacyCutoffA_monotone (ch : MarkingChannel) (cutoff : AnimacyLevel) :
     (DifferentialMarkingProfile.animacyCutoffA "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  cases ch <;> cases cutoff <;> decide
 
 /-- Definiteness-cutoff A profiles are always monotone (anti-monotone). -/
 theorem definitenessCutoffA_monotone (ch : MarkingChannel) (cutoff : DefinitenessLevel) :
     (DifferentialMarkingProfile.definitenessCutoffA "" ch cutoff).isMonotone = true := by
-  cases ch <;> cases cutoff <;> native_decide
+  cases ch <;> cases cutoff <;> decide
 
 -- ============================================================================
 -- § 10: Mirror Image Theorem ([just-2024], §3)
@@ -480,7 +489,7 @@ theorem animacy_mirror_image (cutoff : AnimacyLevel) :
       DefinitenessLevel.all.all (λ d =>
         (DifferentialMarkingProfile.animacyCutoffP "" .indexing cutoff).marks a d ||
         (DifferentialMarkingProfile.animacyCutoffA "" .indexing cutoff).marks a d)) = true := by
-  cases cutoff <;> native_decide
+  cases cutoff <;> decide
 
 -- ============================================================================
 -- § 11: Scenarios ([haspelmath-2021], §6)
