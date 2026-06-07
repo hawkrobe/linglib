@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Sociolinguistics.SCM
@@ -40,7 +40,7 @@ PCA-derived evaluation dimensions and four communicative scenarios.
 
 Stimuli use numerals 49 (precise) and 50 (round), with "about" as the
 tolerance modifier:
-- `Core.Roundness.roundnessScore`: 49 → 0, 50 → 4
+- `Semantics.Numerals.Roundness.roundnessScore`: 49 → 0, 50 → 4
 - `Semantics.Numerals.Precision.inferPrecisionMode`: 49 →.exact,
   50 →.approximate
 - `English.NumeralModifiers.about`: tolerance modifier
@@ -78,11 +78,11 @@ def stimRound : Nat := 50
 
 /-- 49 has zero roundness — no imprecise reading is possible. -/
 theorem stim_precise_not_round :
-    Core.Roundness.roundnessScore stimPrecise = 0 := by native_decide
+    Semantics.Numerals.Roundness.roundnessScore stimPrecise = 0 := by native_decide
 
 /-- 50 has moderate roundness (score 4) — imprecise readings available. -/
 theorem stim_round_is_round :
-    Core.Roundness.roundnessScore stimRound = 4 := by native_decide
+    Semantics.Numerals.Roundness.roundnessScore stimRound = 4 := by native_decide
 
 open Semantics.Numerals.Precision in
 /-- 49 → exact precision mode (roundnessScore 0 < 2). -/
@@ -108,13 +108,13 @@ theorem about_is_tolerance_modifier :
 /-- Classify a numeral into a variant based on roundness and modifier presence.
 
     End-to-end derivation chain:
-      Fragment modifier type + Core.Roundness score → Variant.
+      Fragment modifier type + Roundness score → Variant.
 
     - Non-round (score < 2): `.precise` regardless of modifier
     - Round + no modifier: `.underspecified` (imprecision available, not forced)
     - Round + tolerance modifier: `.approximate` (imprecision forced) -/
 def classifyVariant (n : Nat) (hasToleranceModifier : Bool) : Variant :=
-  if Core.Roundness.roundnessScore n < 2 then .precise
+  if Semantics.Numerals.Roundness.roundnessScore n < 2 then .precise
   else if hasToleranceModifier then .approximate
   else .underspecified
 
@@ -408,17 +408,17 @@ theorem context_crossover :
 /-- Non-round numerals collapse the three-way distinction to a single variant:
     `.precise`. There is nothing for social perception to modulate. -/
 theorem non_round_collapses (n : Nat)
-    (h : Core.Roundness.roundnessScore n < 2) :
+    (h : Semantics.Numerals.Roundness.roundnessScore n < 2) :
     classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
   unfold classifyVariant; constructor <;> simp [if_pos h]
 
 /-- Round numerals support the full three-way contrast: bare → underspecified,
     modified → approximate. -/
 theorem round_supports_contrast (n : Nat)
-    (h : Core.Roundness.roundnessScore n ≥ 2) :
+    (h : Semantics.Numerals.Roundness.roundnessScore n ≥ 2) :
     classifyVariant n false = .underspecified ∧
     classifyVariant n true = .approximate := by
-  have h' : ¬(Core.Roundness.roundnessScore n < 2) := by omega
+  have h' : ¬(Semantics.Numerals.Roundness.roundnessScore n < 2) := by omega
   unfold classifyVariant; constructor <;> simp [if_neg h']
 
 -- ============================================================================

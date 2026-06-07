@@ -316,7 +316,7 @@ import Linglib.Morphology.DM.ContainmentVI
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem
-import Linglib.Core.Scales.Roundness
+import Linglib.Semantics.Numerals.Roundness
 import Linglib.Core.Scales.Predicate
 import Linglib.Core.Scales.Comparison
 import Linglib.Core.Scales.Scale

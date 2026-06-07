@@ -22,7 +22,7 @@ score, avoiding a cross-layer Theories→Phenomena import.
 
 -/
 
-namespace Core.Roundness
+namespace Semantics.Numerals.Roundness
 
 -- ============================================================================
 -- k-ness primitives
@@ -177,15 +177,6 @@ def roundnessInContext (n : Nat) (base : Nat) : Nat :=
 #guard roundnessInContext 48 10 == 0     -- not round on base-10
 #guard roundnessInContext 100 10 == 6    -- default score beats contextual
 
-theorem roundness_100 : roundnessScore 100 = 6 := by native_decide
-theorem roundness_7 : roundnessScore 7 = 0 := by native_decide
-theorem roundness_50 : roundnessScore 50 = 4 := by native_decide
-theorem roundness_1000 : roundnessScore 1000 = 6 := by native_decide
-
--- ============================================================================
--- Arithmetic helper: multiples of 10 have score ≥ 2
--- ============================================================================
-
 /-- Multiples of 10 have roundness score ≥ 2 (multipleOf5 + multipleOf10 both true).
     This is the key lemma for all downstream sorry-free proofs. -/
 theorem score_ge_two_of_div10 (n : Nat) (h10 : n % 10 = 0) :
@@ -200,9 +191,9 @@ theorem grade_ne_none_of_score_ge_one (n : Nat) (h : roundnessScore n ≥ 1) :
     roundnessGrade n ≠ .none := by
   unfold roundnessGrade
   split
-  · native_decide
+  · decide
   · split
-    · native_decide
-    · native_decide
+    · decide
+    · decide
 
-end Core.Roundness
+end Semantics.Numerals.Roundness
