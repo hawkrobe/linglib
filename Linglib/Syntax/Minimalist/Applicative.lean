@@ -157,6 +157,21 @@ theorem low_no_event_requirement :
     ¬ ApplType.RequiresEventSemantics .lowRecipient ∧
     ¬ ApplType.RequiresEventSemantics .lowSource := ⟨by decide, by decide⟩
 
+/-- Low applicatives are licensed under any Voice head ([pylkkanen-2008]). -/
+theorem low_licensed_with_any (v : VoiceHead) :
+    applLowRecipient.licensedWith v = true ∧
+    applLowSource.licensedWith v = true := ⟨rfl, rfl⟩
+
+/-- θ-assigning Voice licenses high applicatives: θ-assignment entails event
+    semantics (`VoiceHead.AssignsTheta.hasSemantics`), which is all high Appl
+    requires. -/
+theorem high_licensed_of_assignsTheta (v : VoiceHead) (h : v.AssignsTheta) :
+    applHigh.licensedWith v = true := by
+  unfold ApplHead.licensedWith
+  split
+  · exact decide_eq_true h.hasSemantics
+  · rfl
+
 /-- Ethical datives (high Appl) are licensed with agentive Voice. -/
 theorem ethical_dative_with_agent :
     applHigh.licensedWith voiceAgent = true := rfl

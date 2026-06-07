@@ -166,6 +166,14 @@ def VoiceHead.HasSemantics (v : VoiceHead) : Prop :=
 instance (v : VoiceHead) : Decidable v.HasSemantics := by
   unfold VoiceHead.HasSemantics; infer_instance
 
+/-- θ-assignment entails semantic content: every θ-assigning Voice head
+    contributes event semantics. The converse fails — passive Voice has
+    semantics without θ (`passive_has_semantics`, `passive_no_theta`). -/
+theorem VoiceHead.AssignsTheta.hasSemantics {v : VoiceHead} (h : v.AssignsTheta) :
+    v.HasSemantics := by
+  unfold VoiceHead.HasSemantics
+  rcases h with h | h | h | h | h <;> rw [h] <;> exact ⟨nofun, nofun⟩
+
 /-- This Voice head subcategorizes for a specifier (Prop wrapper over
     the `hasD : Bool` data field). -/
 def VoiceHead.HasD (v : VoiceHead) : Prop := v.hasD = true

@@ -4,784 +4,486 @@ import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Studies.Baker1985
+import Linglib.Studies.Kratzer1996
+import Linglib.Studies.Wood2015
 
 /-!
 # Verbal Templates Can Influence L-Selection in Semitic
-[hewett-2026]
 
-*Linguistic Inquiry* 57(1): 197--215.
+Formalization of [hewett-2026] (*Linguistic Inquiry* 57(1), 197–215): l-selection —
+which preposition heads a verb's PP complement — varies by verbal template (binyan)
+in Tunisian Arabic, Syrian Arabic, and Hebrew. Neither the consonantal root nor the
+categorizing head varies across templates, so the data are problematic for
+root-based selection ([harley-2014]) and categorizer-based selection
+([merchant-2019]) alike. Hewett's solution is joint selection via Activate
+(ex. (23), adapted from [merchant-2015]): a root's selectional feature is indexed
+by an ordered tuple of category features — for Semitic `(V, Template)` — and each
+c-commanding head strips one index; the feature determines the l-selected P only
+once fully activated.
 
-L-selection — which specific preposition heads a PP complement —
-can vary by verbal template (binyan) in Tunisian Arabic, Syrian Arabic,
-and Hebrew. This falsifies both [harley-2014] (roots select) and
-[merchant-2019] (categorizing heads select), because neither
-root nor categorizer varies across templates.
+## Main declarations
 
-## Core Contribution
+* `SemiticTemplate`, `lSelect`: the binyan inventory and l-selection as a joint
+  function of root and template.
+* `lSelData`, `lSelect_consistent`: the paper's attested data (exx. (11)–(18)) and
+  the proof that `lSelect` matches every datum.
+* `templateInvariant`: the invariance prediction shared by root-only and
+  categorizer-only accounts; refuted by `krh_not_templateInvariant`,
+  `dwr_not_templateInvariant`, `Hkm_not_templateInvariant`.
+* `SelectionalFeature`: an l-selectional feature indexed by an `ActivationIndex`,
+  with the paper's worked derivations (exx. (24)–(25)).
 
-**Joint Selection via Activate** (Def 23, adapted from
-[merchant-2019]): roots carry inactive selectional features
-indexed by an ordered tuple of category features. Each head that
-c-commands the root strips one category from the tuple. When the
-tuple is exhausted, the feature is fully active and determines the
-l-selected P. For Semitic, the tuple is `(V, Template)`: the
-categorizing head V strips the first index, the template-defining
-head strips the second.
+## Implementation notes
 
-## Scope
-
-Templates are realized by nonconcatenative morphology (vocalic melodies
-applied to consonantal roots). The Mirror Principle
-([baker-1985]) explicitly scopes out nonconcatenative morphology
-(see `Morphology.MirrorPrinciple.MorphDomain.InScope`).
-Template-dependent l-selection is therefore a phenomenon that falls
-outside the domain where morphological and syntactic orderings are
-required to mirror each other.
+The Voice typing (`SemiticTemplate.toVoiceHead`), the bridges to [kratzer-1996],
+[wood-2015], and [pylkkanen-2008], and the verbal-decomposition rendering of
+mono-eventivity (fn. 11, [nie-2020]) are this formalization's connections to the
+linglib Voice substrate, not claims of [hewett-2026], which deliberately leaves the
+template-head inventory open (fn. 8; p. 201: templates realize "a head or series
+of heads capable of inducing changes in adicity, presumably v/Voice"). Likewise
+the Mirror-Principle observation (`templates_outside_mirror_scope`): [baker-1985]
+scopes the Mirror Principle to concatenative morphology, so templatic l-selection
+sits outside it — a linglib cross-reference Hewett does not draw.
 -/
 
 namespace Hewett2026
 
 open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
-  ActivationIndex ApplType ApplHead applHigh applLowRecipient applLowSource
-  buildDecomposition voiceAgent voiceCauser voiceAnticausative
-  voiceMiddle voicePassive voiceReflexive voiceExperiencer isCausative)
+  ActivationIndex ApplHead applHigh applLowRecipient buildDecomposition
+  voiceAgent voiceCauser voicePassive voiceAnticausative isCausative
+  low_licensed_with_any high_licensed_of_assignsTheta)
 open Morphology.DM (CategorizedRoot Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
+open Wood2015 (StType)
 
--- ============================================================================
--- S1: Semitic Verbal Templates (Binyanim)
--- ============================================================================
+/-! ### Semitic verbal templates (binyanim) -/
 
-/-- Semitic verbal templates (binyanim).
-
-    Each template is realized as a nonconcatenative vocalic pattern
-    applied to a consonantal root. Syntactically, templates correspond
-    to bundles of functional heads (v, Voice) — they are not
-    roots, and they are not categorizers.
-
-    [hewett-2026] assumes templates realize a head or series of
-    heads capable of inducing changes in adicity, presumably v/Voice
-    (p. 201). -/
+/-- Semitic verbal templates (binyanim) attested in the paper's l-selection data.
+    Realized as nonconcatenative vocalic patterns on consonantal roots (for the
+    phonological CV-skeleton view see `Phonology/Prosodic/Templates.lean`);
+    syntactically they realize functional heads above the root. -/
 inductive SemiticTemplate where
-  | XaYaZ     -- Form I: basic active (Arabic fal)
-  | XaYYaZ    -- Form II: intensive/causative (Arabic faal)
-  | nXaYaZ    -- Form VII: medio-passive (Arabic infaal)
-  | tXaYYaZ   -- Form V: reflexive/medio-passive (Arabic tafaal)
+  | XaYaZ     -- Form I: basic active (Arabic faʕal)
+  | XaYYaZ    -- Form II: intensive/causative (Arabic faʕʕal)
+  | nXaYaZ    -- Form VII: medio-passive (Arabic infaʕal)
+  | tXaYYaZ   -- Form V: reflexive/medio-passive (Arabic tafaʕʕal)
   | hiXYiZ    -- Hifil: causative (Hebrew)
   | huXYaZ    -- Hufal: passive of Hifil (Hebrew)
   | XiYeZ     -- Piel: intensive/causative (Hebrew)
   | XuYaZ     -- Pual: passive of Piel (Hebrew)
   deriving DecidableEq, Repr
 
-/-- `BEq` via `DecidableEq` so that `decide (a = b)` reduces
-    definitionally on concrete values — required for `rfl` proofs
-    in the activation mechanism. -/
-instance : BEq SemiticTemplate := ⟨λ a b => decide (a = b)⟩
+/-- Map each template to a canonical Voice head. Formalizer's bridge into the
+    linglib Voice substrate: [hewett-2026] assumes only that templates realize a
+    head or series of heads capable of inducing changes in adicity, presumably
+    v/Voice (p. 201), and deliberately leaves the inventory open (fn. 8); the
+    mapping below follows the templates' traditional active, causative, and
+    medio-passive glosses. -/
+def SemiticTemplate.toVoiceHead : SemiticTemplate → VoiceHead
+  | .XaYaZ => voiceAgent
+  | .XaYYaZ | .hiXYiZ | .XiYeZ => voiceCauser
+  | .nXaYaZ | .huXYaZ | .XuYaZ => voicePassive
+  | .tXaYYaZ => voiceAnticausative
 
-instance : LawfulBEq SemiticTemplate where
-  eq_of_beq h := of_decide_eq_true h
-  rfl := decide_eq_true rfl
+/-- The Voice flavor a template realizes, derived from `toVoiceHead`. -/
+def SemiticTemplate.toVoiceFlavor (t : SemiticTemplate) : VoiceFlavor :=
+  t.toVoiceHead.flavor
 
-/-- Map templates to Voice flavors.
-
-    Active templates (XaYaZ, XaYYaZ, XiYeZ, hiXYiZ) select agentive or
-    causer Voice. Passive/medio-passive templates (nXaYaZ, tXaYYaZ,
-    huXYaZ, XuYaZ) correspond to passive or non-thematic Voice.
-
-    XaYYaZ introduces a causer (intensive/causative), distinguished from
-    XaYaZ (basic agentive). This is the key structural difference that
-    drives l-selection variation: the template determines which Voice
-    head merges, and the Voice head is above the selectional domain. -/
-def SemiticTemplate.toVoiceFlavor : SemiticTemplate → VoiceFlavor
-  | .XaYaZ   => .agentive
-  | .XaYYaZ  => .causer
-  | .nXaYaZ  => .passive
-  | .tXaYYaZ => .nonThematic
-  | .hiXYiZ  => .causer
-  | .huXYaZ  => .passive
-  | .XiYeZ   => .causer
-  | .XuYaZ   => .passive
-
-/-- Does this template introduce a causer argument? -/
-def SemiticTemplate.introducesCauser : SemiticTemplate → Bool
-  | .XaYYaZ | .hiXYiZ | .XiYeZ => true
-  | _ => false
-
-/-- Is this template passive or medio-passive? -/
-def SemiticTemplate.isPassiveLike : SemiticTemplate → Bool
-  | .nXaYaZ | .tXaYYaZ | .huXYaZ | .XuYaZ => true
-  | _ => false
-
-/-- Templates are nonconcatenative morphology — outside the scope of
-    the Mirror Principle ([baker-1985] S5). -/
+/-- Templates are nonconcatenative, hence outside the Mirror Principle's scope as
+    formalized by [baker-1985]'s `MorphDomain.InScope` — a linglib cross-reference;
+    [hewett-2026] does not discuss the Mirror Principle. -/
 theorem templates_outside_mirror_scope :
     ¬ MorphDomain.InScope .nonconcatenative := by decide
 
--- ============================================================================
--- S2: Roots and Prepositions
--- ============================================================================
+/-! ### Roots and prepositions -/
 
-/-- Consonantal roots from the paper's examples.
-    Only roots with attested l-selection data are included.
-    Transliterated to ASCII-safe identifiers. -/
+/-- Consonantal roots with attested l-selection data, transliterated to ASCII-safe
+    identifiers. -/
 inductive RootLabel where
-  | xwf    -- xwf 'fear/frighten' (Tunisian Arabic, ex. 11)
-  | krh    -- krh 'hate/make hate' (Tunisian Arabic, ex. 13)
-  | dwr    -- dwr 'encircle/make encircle' (Tunisian Arabic, ex. 13b)
-  | Hkm    -- Hkm 'sentence/referee' (Syrian Arabic, ex. 14)
-  | tpl    -- tpl 'treat' (Hebrew, ex. 17)
-  | shps   -- shps 'influence' (Hebrew, ex. 18)
-  deriving DecidableEq, Repr, BEq
+  | xwf    -- xwf 'fear/frighten' (Tunisian Arabic, ex. (11))
+  | krh    -- krh 'hate/make hate' (Tunisian Arabic, ex. (13a))
+  | dwr    -- dwr 'encircle/make encircle' (Tunisian Arabic, ex. (13b))
+  | Hkm    -- ħkm 'sentence/referee' (Syrian Arabic, ex. (14))
+  | tpl    -- tpl 'treat' (Hebrew, ex. (17))
+  | shps   -- ʃpʕ 'influence' (Hebrew, ex. (18))
+  deriving DecidableEq, Repr
 
 /-- Prepositions attested in the paper's l-selection data. -/
 inductive SemiticPrep where
   | fi      -- 'in' (Tunisian Arabic)
   | bi      -- 'with/in' (Tunisian Arabic)
-  | Eala    -- 'on/over' (Tunisian Arabic: ʕla / ʕli:)
-  | min     -- 'from' (Tunisian/Syrian Arabic)
+  | Eala    -- 'on/over' (Tunisian Arabic: ʕla, clitic form ʕli:)
+  | min     -- 'from' (Tunisian Arabic)
   | Ealej   -- 'on' (Syrian Arabic: ʕalej)
   | be      -- 'in' (Hebrew)
   | al      -- 'on' (Hebrew)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Languages providing l-selection data in the paper. -/
 inductive SemiticLang where
   | tunisianArabic
   | syrianArabic
   | hebrew
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- S3: L-Selection Data
--- ============================================================================
+/-! ### L-selection data -/
 
-/-- An l-selection datum: a root in a specific template selects a
-    specific preposition (or none, for transitive/unergative uses
-    or passive P-suppression). -/
+/-- An l-selection datum: a root in a template selects a preposition, or none
+    (bare transitive use or passive P-suppression). -/
 structure LSelDatum where
   root : RootLabel
   template : SemiticTemplate
   prep : Option SemiticPrep
   lang : SemiticLang
-  deriving Repr, BEq
+  deriving Repr
 
-/-- Template-independent l-selection: xwf selects *min* 'from'
-    regardless of template.
-    XaYaZ: xa:f min l-?asad 'He was afraid of the lion.'
-    XaYYaZ: xawwaf-u min l-?asad 'He made him afraid of the lion.'
-    [hewett-2026] ex. (11). -/
+/-- Template-independent l-selection (ex. (11)): xwf 'fear' selects *min* 'from' in
+    both XaYaZ (xa:f min l-ʔasad 'He was afraid of the lion') and XaYYaZ
+    (xawwəf-u min l-ʔasad 'He made him afraid of the lion'). -/
 def xwf_XaYaZ : LSelDatum :=
   { root := .xwf, template := .XaYaZ, prep := some .min, lang := .tunisianArabic }
 
+/-- See `xwf_XaYaZ`. -/
 def xwf_XaYYaZ : LSelDatum :=
   { root := .xwf, template := .XaYYaZ, prep := some .min, lang := .tunisianArabic }
 
-/-- Template-dependent l-selection: krh 'hate'.
-    XaYaZ: kraht (*fi) Sami 'I hate (*in) Sami.' — no PP, transitive.
-    XaYYaZ: karraht-ha *(fi) Sami 'I made her hate *(in) Sami.' — requires *fi*.
-    [hewett-2026] ex. (13a). -/
+/-- Template-dependent l-selection (ex. (13a)): krh 'hate' is bare transitive in
+    XaYaZ (kraht (*fi) Sami 'I hate Sami') but requires *fi* in XaYYaZ
+    (karraht-ha *(fi) Sami 'I made her hate Sami'). -/
 def krh_XaYaZ : LSelDatum :=
   { root := .krh, template := .XaYaZ, prep := none, lang := .tunisianArabic }
 
+/-- See `krh_XaYaZ`. -/
 def krh_XaYYaZ : LSelDatum :=
   { root := .krh, template := .XaYYaZ, prep := some .fi, lang := .tunisianArabic }
 
-/-- Template-dependent l-selection: dwr 'encircle'.
-    XaYaZ: l-hnash da:r bi: k 'The snake encircled you.' — selects bi:.
-    XaYYaZ: dawwart l-hnash fli: k 'I made the snake encircle you.' — selects fli: (= Eala).
-    [hewett-2026] ex. (13b). -/
+/-- Template-dependent l-selection (ex. (13b)): dwr 'encircle' selects *bi:* in
+    XaYaZ (l-hnaʃ da:r bi:-k 'The snake encircled you') but *ʕla* in XaYYaZ
+    (dawwart l-hnaʃ ʕli:-k 'I made the snake encircle you'). -/
 def dwr_XaYaZ : LSelDatum :=
   { root := .dwr, template := .XaYaZ, prep := some .bi, lang := .tunisianArabic }
 
+/-- See `dwr_XaYaZ`. -/
 def dwr_XaYYaZ : LSelDatum :=
   { root := .dwr, template := .XaYYaZ, prep := some .Eala, lang := .tunisianArabic }
 
-/-- Template-dependent l-selection: Hkm 'sentence/referee' (Syrian Arabic).
-    XaYaZ: hakam Ealej-o b-s-sidjn 'He sentenced him to jail.' — selects *Ealej*.
-    XaYYaZ: Hakkam (l-muba:re:t) 'He refereed (the match).' — no PP (rejects Eala and b-).
-    [hewett-2026] ex. (14). -/
+/-- Direction-reversing case (ex. (14), Syrian Arabic): ħkm selects *ʕalej* in
+    XaYaZ (hakam ʕalej-o b-s-sidʒn 'He sentenced him to jail') but rejects any PP
+    in XaYYaZ (hakkam (l-muba:re:t) 'He refereed (the match)'). -/
 def Hkm_XaYaZ : LSelDatum :=
   { root := .Hkm, template := .XaYaZ, prep := some .Ealej, lang := .syrianArabic }
 
+/-- See `Hkm_XaYaZ`. -/
 def Hkm_XaYYaZ : LSelDatum :=
   { root := .Hkm, template := .XaYYaZ, prep := none, lang := .syrianArabic }
 
-/-- Template-dependent l-selection: tpl 'treat' (Hebrew).
-    XiYeZ: tipel be- NP 'treated in NP'. — selects *be*.
-    XuYaZ: NP tupal (al jedej NP) 'NP was treated (by NP).' — P suppressed by passive.
-    [hewett-2026] ex. (17). -/
+/-- Hebrew P-suppression (ex. (17)): tpl 'treat' selects *be* in XiYeZ (tipel be-)
+    and suppresses it in the passive XuYaZ (tupal). -/
 def tpl_XiYeZ : LSelDatum :=
   { root := .tpl, template := .XiYeZ, prep := some .be, lang := .hebrew }
 
+/-- See `tpl_XiYeZ`. -/
 def tpl_XuYaZ : LSelDatum :=
   { root := .tpl, template := .XuYaZ, prep := none, lang := .hebrew }
 
-/-- Template-dependent l-selection: shps 'influence' (Hebrew).
-    hiXYiZ: hishpia al NP 'influenced over NP'. — selects *al*.
-    huXYaZ: NP hushpa (al jedej NP) 'NP was influenced (by NP).' — P suppressed by passive.
-    [hewett-2026] ex. (18). -/
+/-- Hebrew P-suppression (ex. (18)): ʃpʕ 'influence' selects *al* in hiXYiZ
+    (hišpia al) and suppresses it in the passive huXYaZ (hušpa). -/
 def shps_hiXYiZ : LSelDatum :=
   { root := .shps, template := .hiXYiZ, prep := some .al, lang := .hebrew }
 
+/-- See `shps_hiXYiZ`. -/
 def shps_huXYaZ : LSelDatum :=
   { root := .shps, template := .huXYaZ, prep := none, lang := .hebrew }
 
--- ============================================================================
--- S4: Joint Selection Function
--- ============================================================================
+/-- The pooled l-selection data (exx. (11), (13), (14), (17), (18)). -/
+def lSelData : List LSelDatum :=
+  [xwf_XaYaZ, xwf_XaYYaZ, krh_XaYaZ, krh_XaYYaZ, dwr_XaYaZ, dwr_XaYYaZ,
+   Hkm_XaYaZ, Hkm_XaYYaZ, tpl_XiYeZ, tpl_XuYaZ, shps_hiXYiZ, shps_huXYaZ]
 
-/-- L-selection as a function of root AND template — the paper's core
-    insight. L-selection is NOT a function of root alone.
+/-! ### Joint selection -/
 
-    Returns `none` when the root+template combination does not select a
-    PP complement (transitive/unergative use or passive suppression).
-
-    xwf uses a wildcard: the paper attests *min* in both XaYaZ and
-    XaYYaZ, and the claim is that xwf is template-independent — we
-    generalize to all templates. -/
+/-- L-selection as a joint function of root and template — the paper's core claim.
+    `none` marks bare transitive use or passive P-suppression; unattested
+    root–template pairs also map to `none`. xwf is generalized to all templates per
+    the paper's claim that its l-selection is stable across templatic realizations
+    of the root (p. 202). -/
 def lSelect : RootLabel → SemiticTemplate → Option SemiticPrep
-  -- Template-independent: xwf always selects *min*
-  | .xwf,  _         => some .min
-  -- Template-dependent: krh
+  | .xwf,  _        => some .min
   | .krh,  .XaYaZ   => none
   | .krh,  .XaYYaZ  => some .fi
-  -- Template-dependent: dwr
   | .dwr,  .XaYaZ   => some .bi
   | .dwr,  .XaYYaZ  => some .Eala
-  -- Template-dependent: Hkm
   | .Hkm,  .XaYaZ   => some .Ealej
   | .Hkm,  .XaYYaZ  => none
-  -- Template-dependent: tpl (Hebrew)
   | .tpl,  .XiYeZ   => some .be
   | .tpl,  .XuYaZ   => none
-  -- Template-dependent: shps (Hebrew)
-  | .shps,  .hiXYiZ  => some .al
-  | .shps,  .huXYaZ  => none
-  -- Default: no data
+  | .shps, .hiXYiZ  => some .al
+  | .shps, .huXYaZ  => none
   | _, _ => none
 
-/-- Verify data consistency: `lSelect` matches each LSelDatum. -/
-theorem xwf_data_consistent :
-    lSelect xwf_XaYaZ.root xwf_XaYaZ.template = xwf_XaYaZ.prep ∧
-    lSelect xwf_XaYYaZ.root xwf_XaYYaZ.template = xwf_XaYYaZ.prep := ⟨rfl, rfl⟩
+/-- `lSelect` agrees with every attested datum. -/
+theorem lSelect_consistent :
+    ∀ d ∈ lSelData, lSelect d.root d.template = d.prep := by decide
 
-theorem krh_data_consistent :
-    lSelect krh_XaYaZ.root krh_XaYaZ.template = krh_XaYaZ.prep ∧
-    lSelect krh_XaYYaZ.root krh_XaYYaZ.template = krh_XaYYaZ.prep := ⟨rfl, rfl⟩
+/-! ### Template-(in)dependence
 
-theorem dwr_data_consistent :
-    lSelect dwr_XaYaZ.root dwr_XaYaZ.template = dwr_XaYaZ.prep ∧
-    lSelect dwr_XaYYaZ.root dwr_XaYYaZ.template = dwr_XaYYaZ.prep := ⟨rfl, rfl⟩
+`templateInvariant` is the prediction shared by root-only ([harley-2014]) and
+categorizer-only ([merchant-2019]) selection: since neither root nor categorizer
+varies across templates, l-selection should not either. The attested
+counterexamples refute it; xwf shows the invariant case also exists.
 
-theorem Hkm_data_consistent :
-    lSelect Hkm_XaYaZ.root Hkm_XaYaZ.template = Hkm_XaYaZ.prep ∧
-    lSelect Hkm_XaYYaZ.root Hkm_XaYYaZ.template = Hkm_XaYYaZ.prep := ⟨rfl, rfl⟩
+Template-dependence cannot be reduced to homophonous roots (krh₁ in XaYaZ, krh₂ in
+XaYYaZ): that would leave their mutually exclusive distribution unexplained,
+parallel to the nonoverlapping distribution of suppletive go ~ went (p. 208).
+`RootLabel` accordingly carries a single `krh` constructor. -/
 
-theorem tpl_data_consistent :
-    lSelect tpl_XiYeZ.root tpl_XiYeZ.template = tpl_XiYeZ.prep ∧
-    lSelect tpl_XuYaZ.root tpl_XuYaZ.template = tpl_XuYaZ.prep := ⟨rfl, rfl⟩
-
-theorem shps_data_consistent :
-    lSelect shps_hiXYiZ.root shps_hiXYiZ.template = shps_hiXYiZ.prep ∧
-    lSelect shps_huXYaZ.root shps_huXYaZ.template = shps_huXYaZ.prep := ⟨rfl, rfl⟩
-
--- ============================================================================
--- S5: Template-Dependence (Derived, Not Stipulated)
--- ============================================================================
-
-/-- A root is template-dependent for l-selection iff there exist two
-    *attested* template pairings for which `lSelect` returns different
-    prepositions. Derived from `lSelect`, not stipulated. -/
-def isTemplateDependentWitness (r : RootLabel) :
-    Option (SemiticTemplate × SemiticTemplate) :=
-  match r with
-  | .krh  => some (.XaYaZ, .XaYYaZ)
-  | .dwr  => some (.XaYaZ, .XaYYaZ)
-  | .Hkm  => some (.XaYaZ, .XaYYaZ)
-  | .tpl  => some (.XiYeZ, .XuYaZ)
-  | .shps => some (.hiXYiZ, .huXYaZ)
-  | .xwf  => none
-
-/-- Derived classification: a root is template-dependent iff a
-    witnessing pair exists AND its two values actually differ. -/
-def isTemplateDependent (r : RootLabel) : Bool :=
-  match isTemplateDependentWitness r with
-  | some (t1, t2) => lSelect r t1 != lSelect r t2
-  | none => false
-
-/-- xwf is template-independent: same P regardless of template. -/
-theorem xwf_template_independent :
-    lSelect .xwf .XaYaZ = lSelect .xwf .XaYYaZ := rfl
-
-/-- krh is template-dependent: different P across templates. -/
-theorem krh_template_dependent :
-    isTemplateDependent .krh = true := by native_decide
-
-/-- dwr is template-dependent: different P across templates. -/
-theorem dwr_template_dependent :
-    isTemplateDependent .dwr = true := by native_decide
-
-/-- Hkm is template-dependent: the direction reverses
-    (XaYaZ takes PP, XaYYaZ doesn't). -/
-theorem Hkm_template_dependent :
-    isTemplateDependent .Hkm = true := by native_decide
-
-/-- xwf is NOT template-dependent. -/
-theorem xwf_not_template_dependent :
-    isTemplateDependent .xwf = false := by native_decide
-
--- ============================================================================
--- S6: Falsification of Harley 2014 and Merchant 2019
--- ============================================================================
-
-/-- **Template-invariance prediction**: l-selection for a given root
-    is constant across all templates.
-
-    Both [harley-2014] (roots select) and [merchant-2019]
-    (categorizing heads select) predict this, for different reasons:
-    - Harley: the root takes its complement directly, so only the root
-      determines the l-selected P.
-    - Merchant: the categorizing head (V) selects, but since all
-      templates verbalize the root with the same categorizer V, the
-      l-selected P should be template-invariant.
-
-    Since neither root nor categorizer varies across templates,
-    both theories make the same prediction for verbs. The paper
-    shows this prediction is false. -/
+/-- L-selection for root `r` is constant across templates — the prediction both
+    root-only and categorizer-only accounts make. -/
 def templateInvariant (r : RootLabel) : Prop :=
   ∀ t1 t2 : SemiticTemplate, lSelect r t1 = lSelect r t2
 
-/-- [harley-2014] is falsified: krh is a counterexample.
-    XaYaZ krh is transitive (no PP), XaYYaZ krh requires *fi*. -/
-theorem harley_falsified : ¬ templateInvariant .krh := by
-  intro h
-  have := h .XaYaZ .XaYYaZ
-  simp [lSelect] at this
-
-/-- [merchant-2019] is falsified by independent data: dwr.
-    XaYaZ dwr selects *bi:*, XaYYaZ dwr selects *Eala*. -/
-theorem merchant_falsified : ¬ templateInvariant .dwr := by
-  intro h
-  have := h .XaYaZ .XaYYaZ
-  simp [lSelect] at this
-
-/-- Template-independent roots DO satisfy the invariance prediction.
-    Joint Selection is a refinement, not a wholesale rejection: it
-    reduces to root-level selection when the template dimension is
-    vacuous (the selectional feature's template index is the same
-    across all templates). -/
-theorem xwf_satisfies_invariance : templateInvariant .xwf := by
-  intro t1 t2
+/-- xwf 'fear' is template-independent: *min* in every template (ex. (11)). -/
+theorem xwf_templateInvariant : templateInvariant .xwf := fun t1 t2 => by
   cases t1 <;> cases t2 <;> rfl
 
-/-- **The homophony argument** (p. 208): template-dependent l-selection
-    cannot be explained by positing distinct homophonous roots
-    (krh₁ for XaYaZ, krh₂ for XaYYaZ), because this would fail to
-    explain mutual exclusivity — krh₁ only appears in XaYaZ and krh₂
-    only in XaYYaZ, parallel to the suppletive distribution of go~went.
+/-- krh 'hate' refutes template-invariance: bare transitive in XaYaZ but *fi* in
+    XaYYaZ (ex. (13a)) — the counterexample to [harley-2014]'s root-level
+    l-selection. -/
+theorem krh_not_templateInvariant : ¬ templateInvariant .krh :=
+  fun h => absurd (h .XaYaZ .XaYYaZ) (by decide)
 
-    If roots were truly distinct, we'd expect each to freely appear in
-    any template. The mutual exclusivity shows a single root with
-    template-sensitive selectional properties. -/
-theorem homophony_argument_krh :
-    -- A single root produces different l-selections in different templates
-    lSelect .krh .XaYaZ ≠ lSelect .krh .XaYYaZ ∧
-    -- But there is only ONE root entry — not two homophonous roots
-    -- (the enum has a single .krh constructor)
-    (∀ r : RootLabel, r = .krh → lSelect r .XaYaZ = none ∧ lSelect r .XaYYaZ = some .fi) := by
-  constructor
-  · decide
-  · intro r hr; subst hr; exact ⟨rfl, rfl⟩
+/-- dwr 'encircle' refutes template-invariance with two distinct prepositions:
+    *bi:* in XaYaZ vs *ʕla* in XaYYaZ (ex. (13b)) — an independent counterexample
+    to [merchant-2019]'s categorizer-level l-selection. -/
+theorem dwr_not_templateInvariant : ¬ templateInvariant .dwr :=
+  fun h => absurd (h .XaYaZ .XaYYaZ) (by decide)
 
-/-- C-selection (arity) IS root-level per [harley-2014] S3.
-    This connects to `complement_selection_at_root_level` in
-    Categorizer.lean. L-selection is the dimension that escapes
-    root determination, not c-selection. -/
+/-- ħkm refutes template-invariance in the reverse direction: PP in XaYaZ, none in
+    XaYYaZ (ex. (14)). -/
+theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
+  fun h => absurd (h .XaYaZ .XaYYaZ) (by decide)
+
+/-- C-selection (arity) is root-level ([harley-2014]; see
+    `complement_selection_at_root_level` in `Categorizer.lean`) but l-selection is
+    not: the two kinds of selection factor differently in the grammar. -/
 theorem cSelection_vs_lSelection :
-    -- Arity is root-invariant (from Categorizer.lean)
     (∀ (r : RootClassification) (c1 c2 : Categorizer),
-      (CategorizedRoot.mk r c1).root.arity =
-      (CategorizedRoot.mk r c2).root.arity) ∧
-    -- But l-selection is NOT root-invariant
-    (∃ r : RootLabel, ¬ templateInvariant r) := by
-  exact ⟨fun _ _ _ => rfl, ⟨.krh, harley_falsified⟩⟩
+      (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity) ∧
+    (∃ r : RootLabel, ¬ templateInvariant r) :=
+  ⟨fun _ _ _ => rfl, ⟨.krh, krh_not_templateInvariant⟩⟩
 
--- ============================================================================
--- S7: VerbalizedRoot — Bridging Categorizer and Voice
--- ============================================================================
+/-! ### Verbalized roots -/
 
-/-- A verbalized root: a root that has been categorized as a verb AND
-    placed in a specific template. This is the structure that jointly
-    determines l-selection.
-
-    `VerbalizedRoot` bridges two types that never previously appeared
-    together: `CategorizedRoot` (from Categorizer.lean) and `VoiceHead`
-    (from Voice.lean). The template connects them — it determines which
-    Voice flavor the root appears with AND which P is l-selected. -/
+/-- A root that has been categorized as a verb and placed in a template — the
+    structure that jointly determines l-selection. Bridges `CategorizedRoot`
+    (categorizer side) and the template's Voice contribution. -/
 structure VerbalizedRoot where
   /-- The root with its categorizer. -/
   categorized : CategorizedRoot
   /-- The Semitic template (functional head bundle). -/
   template : SemiticTemplate
-  /-- The paper-specific root label (for l-selection lookup). -/
+  /-- The root label for l-selection lookup. -/
   rootLabel : RootLabel
-  /-- The l-selected preposition, derived from root + template. -/
-  lSelectedP : Option SemiticPrep := lSelect rootLabel template
   deriving Repr
 
-/-- The Voice flavor is determined by the template, not the root. -/
+/-- The l-selected preposition, derived from root and template. -/
+def VerbalizedRoot.lSelectedP (vr : VerbalizedRoot) : Option SemiticPrep :=
+  lSelect vr.rootLabel vr.template
+
+/-- The Voice flavor, determined by the template rather than the root. -/
 def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : VoiceFlavor :=
   vr.template.toVoiceFlavor
 
-/-- Arity is template-invariant (root-level) but l-selection is not.
-    This is the core architectural claim: c-selection and l-selection
-    factor differently in the grammar. -/
+/-- Arity is template-invariant (root-level), unlike l-selection: c-selection and
+    l-selection factor differently in the grammar. -/
 theorem arity_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
     (t1 t2 : SemiticTemplate) :
-    ({ categorized := cr, template := t1, rootLabel := rl : VerbalizedRoot }).categorized.root.arity =
-    ({ categorized := cr, template := t2, rootLabel := rl : VerbalizedRoot }).categorized.root.arity := rfl
+    (VerbalizedRoot.mk cr t1 rl).categorized.root.arity =
+      (VerbalizedRoot.mk cr t2 rl).categorized.root.arity := rfl
 
--- ============================================================================
--- S7b: Voice Bridge Theorems
--- ============================================================================
+/-! ### Template-to-Voice correspondence
 
-/-- Causer templates map to theta-assigning Voice.
-    XaYYaZ introduces a causer → theta-assigning → vDO in decomposition.
-    This is why the template can influence l-selection: it determines
-    the functional structure above VP. -/
-theorem causer_template_assigns_theta :
-    let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYYaZ,
-                                hasD := true }
-    voice.AssignsTheta := by decide
+Formalizer's bridge (see the module docstring): the template determines the Voice
+head merged above the verbalized root, and that functional structure — above the
+selectional domain — is what varies across templates while root and categorizer
+stay fixed. -/
 
-/-- Basic active template maps to agentive Voice, also theta-assigning. -/
+/-- The basic active template maps to θ-assigning (agentive) Voice. -/
 theorem active_template_assigns_theta :
-    let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYaZ,
-                                hasD := true }
-    voice.AssignsTheta := by decide
+    (SemiticTemplate.toVoiceHead .XaYaZ).AssignsTheta := by decide
 
-/-- Passive templates do NOT assign theta — the external argument is
-    demoted or absent. This is the structural basis for Hebrew
-    P-suppression: the passivizing template head merged above the
-    verbalized root suppresses the l-selected P. -/
+/-- Causative templates map to θ-assigning (causer) Voice. -/
+theorem causer_template_assigns_theta :
+    (SemiticTemplate.toVoiceHead .XaYYaZ).AssignsTheta := by decide
+
+/-- Passive templates map to non-θ-assigning Voice — the structural basis for
+    Hebrew P-suppression under passivization (exx. (17b), (18b)). -/
 theorem passive_template_no_theta :
-    let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .huXYaZ,
-                                hasD := true }
-    ¬ voice.AssignsTheta := by decide
+    ¬ (SemiticTemplate.toVoiceHead .huXYaZ).AssignsTheta := by decide
 
-/-- XaYaZ and XaYYaZ differ in their Voice contribution: XaYaZ maps
-    to agentive, XaYYaZ maps to causer. This Voice difference is what
-    drives the l-selection variation — it's the functional structure
-    ABOVE the selectional domain that varies. -/
+/-- XaYaZ and XaYYaZ differ in Voice contribution (agentive vs causer): the
+    functional structure above the selectional domain varies even when root and
+    categorizer do not. -/
 theorem voice_distinguishes_templates :
-    SemiticTemplate.toVoiceFlavor .XaYaZ ≠
-    SemiticTemplate.toVoiceFlavor .XaYYaZ := by decide
+    SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ := by
+  decide
 
--- ============================================================================
--- S7c: Cross-Linguistic Voice Bridges
--- ============================================================================
-
-/-! ### Connection to [kratzer-1996] and [wood-2015]
-
-[kratzer-1996] argues that Voice is a separate head from V,
-introducing the external argument. [wood-2015] shows Icelandic
--st morphology spells out Voice across six distinct configurations
-(anticausative, middle, reflexive, experiencer, inherent, reciprocal),
-parameterized by ±θ (theta-assignment) and ±D (specifier requirement).
-
-Semitic templates instantiate the SAME Voice architecture:
-`toVoiceFlavor` maps each template to a `VoiceFlavor`, and the
-resulting `VoiceHead` determines theta-assignment via `assignsTheta`.
-The cross-linguistic parallel: Semitic templates and Icelandic -st are
-both morphology that realizes Voice heads, determining argument
-structure above the root.
-
-The key difference: Semitic templates are EACH associated with a
-SINGLE Voice flavor (XaYaZ → agentive, XaYYaZ → causer, etc.), while
-Icelandic -st spells out ALL non-agentive Voice types as an elsewhere
-exponent. The two languages carve up the VoiceFlavor space
-complementarily. -/
-
-/-- **Exhaustive theta classification**: every template maps to either
-    theta-assigning (+θ) or non-theta-assigning (-θ) Voice.
-    Active templates (XaYaZ, XaYYaZ, hiXYiZ, XiYeZ) are +θ;
-    passive/medio-passive templates (nXaYaZ, tXaYYaZ, huXYaZ, XuYaZ)
-    are -θ. This is an exhaustive partition with no exceptions. -/
-def SemiticTemplate.isTheta : SemiticTemplate → Bool
-  | .XaYaZ | .XaYYaZ | .hiXYiZ | .XiYeZ => true
-  | .nXaYaZ | .tXaYYaZ | .huXYaZ | .XuYaZ => false
-
-/-- `isTheta` agrees with `VoiceHead.AssignsTheta` for all templates. -/
-theorem isTheta_matches_assignsTheta (t : SemiticTemplate) :
-    let voice : VoiceHead := { flavor := t.toVoiceFlavor, hasD := true }
-    voice.AssignsTheta ↔ t.isTheta = true := by
-  cases t <;> simp [VoiceHead.AssignsTheta, SemiticTemplate.isTheta,
-    SemiticTemplate.toVoiceFlavor]
-
-/-- [kratzer-1996]'s severing instantiated for Semitic:
-    `VerbalizedRoot` factors argument structure into V (`CategorizedRoot`)
-    and Voice (`template.toVoiceFlavor`). The categorizer determines
-    arity (c-selection); Voice determines whether an external argument
-    is introduced. L-selection depends on both — it is determined by
-    the root AND the Voice-determining template jointly. -/
+/-- [kratzer-1996]'s severing instantiated for Semitic: root-level arity is
+    template-invariant while the Voice contribution varies by template. -/
 theorem severing_instantiated (cr : CategorizedRoot) (rl : RootLabel) :
-    -- V-level properties are template-invariant (root arity)
-    ({ categorized := cr, template := .XaYaZ, rootLabel := rl : VerbalizedRoot }).categorized.root.arity =
-    ({ categorized := cr, template := .XaYYaZ, rootLabel := rl : VerbalizedRoot }).categorized.root.arity ∧
-    -- Voice-level properties are template-VARIANT
-    SemiticTemplate.toVoiceFlavor .XaYaZ ≠
-    SemiticTemplate.toVoiceFlavor .XaYYaZ := by
-  exact ⟨rfl, by decide⟩
+    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.root.arity =
+      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.root.arity ∧
+    SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ :=
+  ⟨arity_template_invariant cr rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
 
-/-- **Semitic Voice coverage**: the four VoiceFlavor values that Semitic
-    templates produce. These are exactly the flavors relevant to
-    TRANSITIVE and PASSIVE argument structure. -/
+/-! ### Cross-linguistic Voice coverage
+
+Formalizer's bridge, not content of [hewett-2026] (which cites [wood-2015] only in
+passing, as a language where Voice is overt): Semitic templates and Icelandic -st
+both realize Voice heads, but carve up the `VoiceFlavor` space complementarily —
+each Semitic template realizes a single flavor, including the θ-assigning ones,
+while -st spells out only non-agentive flavors. The Icelandic coverage set is
+derived from [wood-2015]'s `StType.voiceFlavor`, so the complementarity theorem
+relates the two studies' actual Voice mappings. -/
+
+/-- The Voice flavors Semitic templates realize: the image of `toVoiceFlavor`. -/
 def semiticVoiceFlavors : List VoiceFlavor :=
-  [.agentive, .causer, .passive, .nonThematic]
+  [SemiticTemplate.XaYaZ.toVoiceFlavor, SemiticTemplate.XaYYaZ.toVoiceFlavor,
+   SemiticTemplate.nXaYaZ.toVoiceFlavor, SemiticTemplate.tXaYYaZ.toVoiceFlavor]
 
-/-- All template voice flavors are in the Semitic coverage set. -/
+/-- Every template's flavor is in the Semitic coverage set. -/
 theorem template_flavors_in_coverage (t : SemiticTemplate) :
-    semiticVoiceFlavors.contains (t.toVoiceFlavor) = true := by
-  cases t <;> native_decide
+    t.toVoiceFlavor ∈ semiticVoiceFlavors := by cases t <;> decide
 
-/-- **Icelandic -st Voice coverage**: the non-agentive flavors from
-    [wood-2015]. These are exactly the flavors relevant to
-    DETRANSITIVIZED and DERIVED argument structure. -/
+/-- The Voice flavors Icelandic -st realizes, derived from [wood-2015]'s
+    `StType.voiceFlavor`. -/
 def icelandicStFlavors : List VoiceFlavor :=
-  [.nonThematic, .expletive, .reflexive, .experiencer]
+  [StType.anticausative.voiceFlavor, StType.middle.voiceFlavor,
+   StType.reflexive.voiceFlavor, StType.subjectExp.voiceFlavor]
 
-/-- The Semitic and Icelandic coverage sets are complementary: they
-    share only `.nonThematic` (anticausative, which in Semitic is the
-    medio-passive template nXaYaZ/tXaYYaZ and in Icelandic is -st). -/
+/-- Every -st configuration's flavor is in the Icelandic coverage set (inherent and
+    reciprocal reuse flavors of the four representatives). -/
+theorem stType_flavors_in_coverage (st : StType) :
+    st.voiceFlavor ∈ icelandicStFlavors := by cases st <;> decide
+
+/-- The two coverage sets share only `.nonThematic` (Semitic medio-passive,
+    Icelandic anticausative -st); Semitic alone realizes the θ-assigning and
+    passive flavors, Icelandic -st alone the expletive, reflexive, and
+    experiencer flavors. -/
 theorem voice_coverage_complementary :
-    -- Shared: nonThematic
-    semiticVoiceFlavors.contains .nonThematic = true ∧
-    icelandicStFlavors.contains .nonThematic = true ∧
-    -- Semitic-only: agentive, causer, passive
-    icelandicStFlavors.contains .agentive = false ∧
-    icelandicStFlavors.contains .causer = false ∧
-    icelandicStFlavors.contains .passive = false ∧
-    -- Icelandic-only: expletive (middle), reflexive, experiencer
-    semiticVoiceFlavors.contains .expletive = false ∧
-    semiticVoiceFlavors.contains .reflexive = false ∧
-    semiticVoiceFlavors.contains .experiencer = false := by
-  native_decide
+    (.nonThematic : VoiceFlavor) ∈ semiticVoiceFlavors ∧
+    (.nonThematic : VoiceFlavor) ∈ icelandicStFlavors ∧
+    (.agentive : VoiceFlavor) ∉ icelandicStFlavors ∧
+    (.causer : VoiceFlavor) ∉ icelandicStFlavors ∧
+    (.passive : VoiceFlavor) ∉ icelandicStFlavors ∧
+    (.expletive : VoiceFlavor) ∉ semiticVoiceFlavors ∧
+    (.reflexive : VoiceFlavor) ∉ semiticVoiceFlavors ∧
+    (.experiencer : VoiceFlavor) ∉ semiticVoiceFlavors := by decide
 
-/-- The canonical Voice heads from Voice.lean that correspond to each
-    template family. Active templates map to `voiceAgent`/`voiceCauser`;
-    passive templates map to `voicePassive`/`voiceAnticausative`.
-    This is the same typology [kratzer-1996] uses for the causative
-    alternation and [wood-2015] extends for Icelandic -st. -/
-theorem templates_map_to_canonical_voices :
-    -- Active: agentive voice (= Kratzer's Voice_AG)
-    voiceAgent.flavor = SemiticTemplate.toVoiceFlavor .XaYaZ ∧
-    -- Causative: causer voice (= Schäfer's Voice_CAUSE)
-    voiceCauser.flavor = SemiticTemplate.toVoiceFlavor .XaYYaZ ∧
-    -- Passive: passive voice (= Collins's by-Voice)
-    voicePassive.flavor = SemiticTemplate.toVoiceFlavor .nXaYaZ ∧
-    -- Medio-passive: anticausative voice (= Wood's Voice_{D}/[-θ])
-    voiceAnticausative.flavor = SemiticTemplate.toVoiceFlavor .tXaYYaZ := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- [kratzer-1996]'s causative alternation parallels the Semitic
-    template alternation: both are Voice alternations over a shared VP.
-    Kratzer: "John broke the vase" (Voice_AG) ↔ "The vase broke" (Voice_∅).
-    Semitic: dar b- (XaYaZ/agentive) ↔ ndar (nXaYaZ/passive).
-    In both, the causal relation is shared; only Voice varies. -/
+/-- The Semitic XaYaZ ~ tXaYYaZ alternation instantiates [kratzer-1996]'s causative
+    alternation: `toVoiceHead` maps the two templates to the canonical heads, so the
+    Semitic statement *is* `Kratzer1996.causative_pair_voice_contrast`. -/
 theorem causative_alternation_parallel :
-    -- Kratzer: agentive assigns θ, anticausative does not
-    voiceAgent.AssignsTheta ∧
-    ¬ voiceAnticausative.AssignsTheta ∧
-    -- Semitic: active templates assign θ, passive templates do not
-    SemiticTemplate.isTheta .XaYaZ = true ∧
-    SemiticTemplate.isTheta .nXaYaZ = false := by decide
+    (SemiticTemplate.toVoiceHead .XaYaZ).AssignsTheta ∧
+    ¬ (SemiticTemplate.toVoiceHead .tXaYYaZ).AssignsTheta :=
+  Kratzer1996.causative_pair_voice_contrast
 
--- ============================================================================
--- S7d: Template → Voice → Applicative Licensing
--- ============================================================================
+/-! ### Template → Voice → applicative licensing
 
-/-! ### The Template → Voice → Applicative chain
+Formalizer's bridge to [pylkkanen-2008] (not cited by [hewett-2026]): high
+applicatives require Voice with event semantics, low applicatives are
+unconditional. Pulled back along `toVoiceHead`, the Voice-predicate chain
+`assignsTheta ⊂ hasSemantics = licenses high Appl ⊂ licenses low Appl = ⊤`
+yields: +θ templates ⊊ high-Appl-licensing templates ⊊ all templates. The general
+inclusions live in the substrate (`VoiceHead.AssignsTheta.hasSemantics`,
+`high_licensed_of_assignsTheta`, `low_licensed_with_any`); this section
+instantiates them for the Semitic template space, paralleling the Icelandic
+asymmetry in `Wood2015.dative_voice_asymmetry`. -/
 
-[pylkkanen-2008] establishes that high applicatives require Voice
-with event semantics, while low applicatives are independent of Voice.
-[hewett-2026]'s template system instantiates this: each template
-determines a VoiceFlavor (via `toVoiceFlavor`), and that flavor
-determines whether Voice has event semantics (via `hasSemantics`).
-
-The mathematical content is a chain of strict inclusions on Voice
-predicates:
-
-    assignsTheta ⊂ hasSemantics = licensesAppl(high) ⊂ licensesAppl(low) = ⊤
-
-The first inclusion is a general property of the Voice architecture
-(`theta_implies_hasSemantics`), not specific to Semitic: every θ-role
-assigning Voice head contributes event semantics, but the converse
-fails (passive and impersonal Voice have semantics without θ). The
-second inclusion is trivial — low applicatives are unconditional.
-
-For the Semitic template space, the pullback of this chain yields:
-+θ templates ⊂ high-Appl-licensing templates ⊂ all templates.
-The blocking set `{tXaYYaZ}` is a singleton because the Semitic
-inventory includes exactly one semantics-free flavor (`.nonThematic`).
-
-This instantiates for Semitic the same high/low asymmetry that
-[wood-2015] documents for Icelandic (`dative_voice_asymmetry`
-in `Wood2015.lean`): middles block ethical datives but license
-possessive datives. -/
-
--- ── General Voice properties (not template-specific) ─────────────────
-
-/-- θ-assignment entails event semantics: every Voice head that
-    introduces an external argument also contributes semantic content.
-    The converse fails (`hasSemantics_not_implies_theta`). -/
-theorem theta_implies_hasSemantics (v : VoiceHead) :
-    v.AssignsTheta → v.HasSemantics := by
-  intro h
-  rcases h with h | h | h | h | h <;>
-    (unfold VoiceHead.HasSemantics; rw [h]; decide)
-
-/-- The converse fails: passive Voice has semantics (it contributes
-    a *by*-phrase) but does not assign θ (the external argument is
-    demoted). Impersonal Voice is another counterexample (existential
-    closure without a projected specifier). -/
-theorem hasSemantics_not_implies_theta :
-    voicePassive.HasSemantics ∧ ¬ voicePassive.AssignsTheta ∧
-    ¬ voiceMiddle.HasSemantics ∧ ¬ voiceMiddle.AssignsTheta := by decide
-
-/-- Contrapositive: no event semantics entails no θ-assignment.
-    Derived from `theta_implies_hasSemantics` by `mt`. -/
-theorem no_semantics_implies_no_theta (v : VoiceHead) :
-    ¬ v.HasSemantics → ¬ v.AssignsTheta :=
-  mt (theta_implies_hasSemantics v)
-
-/-- Low applicatives are unconditionally licensed regardless of Voice.
-    The `if` on `requiresEventSemantics` takes the `else` branch for
-    both low types, yielding `true` for any Voice head. -/
-theorem low_appl_unconditional (v : VoiceHead) :
-    applLowRecipient.licensedWith v = true ∧
-    applLowSource.licensedWith v = true := ⟨rfl, rfl⟩
-
--- ── Template-level definitions ───────────────────────────────────────
-
-/-- Construct a canonical VoiceHead from a template. `hasD` is set to match
-    the template's θ properties; phasehood follows the flavor default
-    (which agrees with `t.isTheta` for all currently-defined templates).
-    Only `flavor` matters for applicative licensing (via `hasSemantics`). -/
-def SemiticTemplate.toVoiceHead (t : SemiticTemplate) : VoiceHead :=
-  { flavor := t.toVoiceFlavor, hasD := t.isTheta }
-
-/-- Does this template license a given applicative type?
-    Composes `licensedWith ∘ toVoiceHead`. -/
+/-- Does this template license a given applicative type? Composes the substrate's
+    `ApplHead.licensedWith` with `toVoiceHead`. -/
 def SemiticTemplate.licensesAppl (t : SemiticTemplate) (appl : ApplHead) : Bool :=
   appl.licensedWith t.toVoiceHead
 
--- ── Derived template-level theorems ──────────────────────────────────
-
-/-- Licensing factors through `HasSemantics` for high Appl. -/
+/-- High-Appl licensing factors through `HasSemantics`. -/
 theorem high_appl_iff_hasSemantics (t : SemiticTemplate) :
     t.licensesAppl applHigh = true ↔ t.toVoiceHead.HasSemantics := by
   cases t <;> decide
 
-/-- If a template blocks high applicatives, it also fails to assign θ.
-    Proved via the general implication `θ → hasSemantics`, not by
-    enumerating templates. -/
-theorem high_appl_blocked_implies_no_theta (t : SemiticTemplate) :
-    t.licensesAppl applHigh = false →
-    ¬ t.toVoiceHead.AssignsTheta := by
-  intro h hθ
-  have : t.licensesAppl applHigh = true :=
-    (high_appl_iff_hasSemantics t).mpr (theta_implies_hasSemantics _ hθ)
-  rw [this] at h
-  exact Bool.noConfusion h
+/-- A template that blocks high applicatives assigns no θ — via the substrate
+    implication, not template enumeration. -/
+theorem high_appl_blocked_implies_no_theta (t : SemiticTemplate)
+    (h : t.licensesAppl applHigh = false) : ¬ t.toVoiceHead.AssignsTheta :=
+  fun hθ => Bool.noConfusion
+    (h.symm.trans (high_licensed_of_assignsTheta t.toVoiceHead hθ))
 
-/-- If a template assigns θ, it licenses ALL applicative types.
-    Chain: θ → hasSemantics → high licensed; low always licensed.
-    Proved via the general implication, quantified over `ApplHead`. -/
-theorem theta_licenses_all_appl (t : SemiticTemplate) (appl : ApplHead) :
-    t.toVoiceHead.AssignsTheta →
-    t.licensesAppl appl = true := by
-  intro hθ
-  have hSem := theta_implies_hasSemantics _ hθ
+/-- A θ-assigning template licenses every applicative type. -/
+theorem theta_licenses_all_appl (t : SemiticTemplate) (appl : ApplHead)
+    (hθ : t.toVoiceHead.AssignsTheta) : t.licensesAppl appl = true := by
   simp only [SemiticTemplate.licensesAppl, ApplHead.licensedWith]
   split
-  · exact decide_eq_true hSem
+  · exact decide_eq_true hθ.hasSemantics
   · rfl
 
-/-- The full implication chain on Voice predicates, instantiated for the
-    Semitic template space. Both inclusions are STRICT:
-
-    1. +θ templates ⊂ high-Appl-licensing templates: nXaYaZ (passive)
-       licenses high Appl but assigns no θ.
-    2. High-Appl-licensing templates ⊂ all templates: tXaYYaZ blocks
-       high Appl.
-
-    The first inclusion is proved via the general `theta_implies_hasSemantics`,
-    not by enumerating templates. -/
+/-- The Voice-predicate chain pulled back to the Semitic template space; both
+    inclusions are strict: nXaYaZ licenses high Appl without assigning θ, and
+    tXaYYaZ blocks high Appl. -/
 theorem voice_predicate_chain :
-    (∀ t : SemiticTemplate, t.toVoiceHead.AssignsTheta → t.licensesAppl applHigh = true) ∧
-    (∃ t : SemiticTemplate, t.licensesAppl applHigh = true ∧ ¬ t.toVoiceHead.AssignsTheta) ∧
-    (∀ t : SemiticTemplate, t.licensesAppl applHigh = true → t.licensesAppl applLowRecipient = true) ∧
-    (∃ t : SemiticTemplate, t.licensesAppl applHigh = false) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · -- θ → high licensed (via general theta_implies_hasSemantics)
-    intro t hθ
-    exact (high_appl_iff_hasSemantics t).mpr (theta_implies_hasSemantics _ hθ)
-  · -- Proper: nXaYaZ (passive) licenses high but has no θ
-    exact ⟨.nXaYaZ, by decide, by decide⟩
-  · -- High licensed → low licensed (via unconditional low licensing)
-    intro t _; exact (low_appl_unconditional t.toVoiceHead).1
-  · -- Proper: tXaYYaZ blocks high
-    exact ⟨.tXaYYaZ, rfl⟩
+    (∀ t : SemiticTemplate,
+      t.toVoiceHead.AssignsTheta → t.licensesAppl applHigh = true) ∧
+    (∃ t : SemiticTemplate,
+      t.licensesAppl applHigh = true ∧ ¬ t.toVoiceHead.AssignsTheta) ∧
+    (∀ t : SemiticTemplate,
+      t.licensesAppl applHigh = true → t.licensesAppl applLowRecipient = true) ∧
+    (∃ t : SemiticTemplate, t.licensesAppl applHigh = false) :=
+  ⟨fun t hθ => high_licensed_of_assignsTheta t.toVoiceHead hθ,
+    ⟨.nXaYaZ, by decide, by decide⟩,
+    fun t _ => (low_licensed_with_any t.toVoiceHead).1,
+    ⟨.tXaYYaZ, rfl⟩⟩
 
--- ============================================================================
--- S8: Feature Activation (Def 23)
--- ============================================================================
+/-! ### Feature activation
 
-/-- Activation keys for Semitic l-selection. The activation tuple
-    `(c₁, …, cₙ)` in [hewett-2026] Def 23 mixes two sorts of key:
-    syntactic categories (`Cat` from the Minimalist architecture) and
-    template identities. This sum type makes the key space explicit. -/
+[hewett-2026] ex. (23) (adapted from [merchant-2015]): Activate(X,Y;F) — X bears a
+category feature c; Y bears an inactive feature F^C with C = (c₁,...,cₙ) an
+ordered tuple. If c = c₁, Activate strips c₁; when the tuple is exhausted, F is
+fully active. For Semitic l-selection the tuple is (V, Template): the categorizing
+head strips the first index, the template-defining head the second. The tuple
+machinery is `ActivationIndex` from `Checking.lean`. -/
+
+/-- Activation keys for Semitic l-selection: the activation tuple mixes syntactic
+    categories (stripped by the categorizing head) and template identities
+    (stripped by the template-defining head). -/
 inductive ActivationKey where
-  /-- A syntactic category key (stripped by a categorizing head). -/
+  /-- A syntactic category key. -/
   | cat : Cat → ActivationKey
-  /-- A template key (stripped by the template-defining head). -/
+  /-- A template key. -/
   | template : SemiticTemplate → ActivationKey
   deriving DecidableEq, Repr
 
-/-- `BEq` via `DecidableEq` ensures `LawfulBEq` follows trivially. -/
+/-- `BEq` via `decide` so that activation reduces definitionally on concrete keys
+    (`ActivationIndex` requires `[BEq α]`). -/
 instance : BEq ActivationKey := ⟨λ a b => decide (a = b)⟩
 
 instance : LawfulBEq ActivationKey where
   eq_of_beq h := of_decide_eq_true h
   rfl := decide_eq_true rfl
 
-/-- A selectional feature indexed by an ordered activation tuple.
-
-    [hewett-2026] Def 23 (adapted from [merchant-2019]):
-    Activate(X,Y;F) — X activates F on Y. X bears a category feature c,
-    Y bears an inactive feature F^C where C = (c₁,...,cₙ). If c = c₁,
-    Activate strips c₁ from C, leaving F^(c₂,...,cₙ). If n = 1 and
-    c = c₁, F^C becomes F (fully active).
-
-    The `activation` field uses the general `ActivationIndex` from
-    Checking.lean — the same ordered n-tuple stripping mechanism. For
-    Semitic l-selection, the tuple is `[.cat .v, .template T]`: the
-    categorizing head V strips the first index, the template-defining
-    head strips the second. -/
+/-- A selectional feature indexed by an ordered activation tuple ([hewett-2026]
+    ex. (23)): `selectedP` becomes visible to selection only once `activation` is
+    exhausted. -/
 structure SelectionalFeature where
-  /-- The preposition this feature selects when fully activated. -/
+  /-- The preposition selected when fully activated. -/
   selectedP : SemiticPrep
-  /-- Ordered activation tuple. Empty = fully active. -/
+  /-- Ordered activation tuple; empty = fully active. -/
   activation : ActivationIndex ActivationKey
   deriving Repr
 
-/-- The overall status of a selectional feature, derived from its
-    activation tuple. Maps to the `FeatureStatus` lifecycle in
-    Checking.lean via `ActivationIndex.toStatus`. -/
+/-- The feature's lifecycle status, via `ActivationIndex.toStatus`. -/
 def SelectionalFeature.status (sf : SelectionalFeature) : FeatureStatus :=
   sf.activation.toStatus
 
-/-- Attempt to activate this feature with the given key. Delegates to
-    `ActivationIndex.activate` (matching left-to-right stripping). -/
+/-- Attempt to activate with the given key (matching left-to-right stripping,
+    via `ActivationIndex.activate`). -/
 def SelectionalFeature.activate (sf : SelectionalFeature)
     (key : ActivationKey) : SelectionalFeature :=
   { sf with activation := sf.activation.activate key }
@@ -797,10 +499,10 @@ theorem dormant_is_inactive (p : SemiticPrep) (t : SemiticTemplate) :
 
 /-- Activating V alone strips one key but leaves the template key. -/
 theorem cat_alone_inactive (p : SemiticPrep) (t : SemiticTemplate) :
-    (SelectionalFeature.dormant p t |>.activate (.cat .v)).status
-    = .inactive := rfl
+    (SelectionalFeature.dormant p t |>.activate (.cat .v)).status = .inactive := rfl
 
-/-- Activating with a non-matching key (template before V) is a no-op. -/
+/-- Activating with a non-matching key (template before V) is a no-op: ex. (23)
+    strips only when the key matches the leftmost index. -/
 theorem wrong_order_noop (p : SemiticPrep) (t : SemiticTemplate) :
     (SelectionalFeature.dormant p t |>.activate (.template t)).status
     = .inactive := rfl
@@ -812,20 +514,8 @@ theorem both_activations_active (p : SemiticPrep) (t : SemiticTemplate) :
       |>.activate (.template t)).status = .active := by
   cases t <;> rfl
 
-/-- Connect to Checking.lean's lifecycle: a dormant selectional feature
-    uses the `.inactive` status, and after both activations it transitions
-    to `.active`, ready for the standard checking lifecycle. -/
-theorem activation_matches_lifecycle (p : SemiticPrep)
-    (t : SemiticTemplate) :
-    let dormant := SelectionalFeature.dormant p t
-    let activated := dormant.activate (.cat .v) |>.activate (.template t)
-    dormant.status = .inactive ∧ activated.status = .active := by
-  constructor
-  · rfl
-  · cases t <;> rfl
-
-/-- The Checking.lean lifecycle continues after activation: an activated
-    selectional feature can be checked and erased. -/
+/-- An activated feature enters the standard `Checking.lean` lifecycle: it can be
+    checked and erased. -/
 theorem activated_feature_enters_lifecycle :
     let tf : TrackedFeature := ⟨.phi (.person .first), .v, .uninterpretable, .inactive⟩
     ∃ tf1, tf.activate = some tf1 ∧
@@ -833,122 +523,84 @@ theorem activated_feature_enters_lifecycle :
     ∃ tf3, tf2.erase = some tf3 ∧ tf3.status = .erased := by
   simp [TrackedFeature.activate, TrackedFeature.check, TrackedFeature.erase]
 
--- ============================================================================
--- S8b: Worked Derivation (ex. 24--25)
--- ============================================================================
+/-! ### Worked derivation (exx. (24)–(25)) -/
 
-/-- The root dwr carries two selectional features, each indexed by
-    `[.cat .v, .template T]` for its specific template.
-    [SEL: bi^{V, XaYaZ}] selects *bi:* when activated by V + XaYaZ.
-    [SEL: Eala^{V, XaYYaZ}] selects *Eala* when activated by V + XaYYaZ.
-    [hewett-2026] ex. (24)--(25). -/
+/-- The root dwr carries one selectional feature per template pairing
+    ([hewett-2026] exx. (24)–(25)): `[SEL: bi^(V, XaYaZ)]` selects *bi:* when
+    activated by V and XaYaZ. -/
 def dwr_sel_XaYaZ : SelectionalFeature :=
   SelectionalFeature.dormant .bi .XaYaZ
+
+/-- `[SEL: ʕla^(V, XaYYaZ)]` selects *ʕla* when activated by V and XaYYaZ. -/
 def dwr_sel_XaYYaZ : SelectionalFeature :=
   SelectionalFeature.dormant .Eala .XaYYaZ
 
-/-- Derivation of ex. (24): dar b- 'encircled'.
-    Step 1: V merges → strips `.cat .v` from both features.
-    Step 2: XaYaZ merges → strips `.template .XaYaZ` from the bi: feature
-    (match!), but NOT from the Eala feature (`.template .XaYYaZ ≠
-    .template .XaYaZ` — no match, no strip).
-    Result: bi: feature is fully active; Eala feature stays inactive. -/
+/-- Ex. (24), dar b- 'encircled': V strips `.cat .v` from both features; XaYaZ then
+    strips the template key from the bi: feature only (template mismatch leaves the
+    ʕla feature inactive), and the active feature matches `lSelect`. -/
 theorem dwr_XaYaZ_derivation :
     let bi_afterV := dwr_sel_XaYaZ.activate (.cat .v)
     let bi_afterT := bi_afterV.activate (.template .XaYaZ)
     let eala_afterV := dwr_sel_XaYYaZ.activate (.cat .v)
     let eala_afterT := eala_afterV.activate (.template .XaYaZ)
-    -- The bi: feature is fully active
     bi_afterT.status = .active ∧
     bi_afterT.selectedP = .bi ∧
-    -- The Eala feature stays inactive (template mismatch!)
     eala_afterT.status = .inactive ∧
-    -- And the active feature matches lSelect
     some bi_afterT.selectedP = lSelect .dwr .XaYaZ := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Derivation of ex. (25): dawwar Eala 'made encircle'.
-    Same root, different template → different feature activated.
-    Now XaYYaZ strips `.template .XaYYaZ` from the Eala feature (match!),
-    but NOT from the bi: feature (`.template .XaYaZ ≠ .template .XaYYaZ`). -/
+/-- Ex. (25), dawwər ʕla 'made encircle': same root, different template — XaYYaZ
+    activates the ʕla feature and leaves the bi: feature inactive. -/
 theorem dwr_XaYYaZ_derivation :
     let eala_afterV := dwr_sel_XaYYaZ.activate (.cat .v)
     let eala_afterT := eala_afterV.activate (.template .XaYYaZ)
     let bi_afterV := dwr_sel_XaYaZ.activate (.cat .v)
     let bi_afterT := bi_afterV.activate (.template .XaYYaZ)
-    -- The Eala feature is fully active
     eala_afterT.status = .active ∧
     eala_afterT.selectedP = .Eala ∧
-    -- The bi: feature stays inactive (template mismatch!)
     bi_afterT.status = .inactive ∧
-    -- And the active feature matches lSelect
     some eala_afterT.selectedP = lSelect .dwr .XaYYaZ := ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- S9: Mono-Eventive Causatives (fn 11, p. 204)
--- ============================================================================
+/-! ### Mono-eventive causatives
 
-/-- XaYYaZ causatives are mono-eventive: they don't license conflicting
-    temporal adverbials (Nie 2020). If XaYYaZ were bi-eventive
-    (containing a syntactically represented causing event), we'd expect
-    multiple temporal adverbials to modify distinct subevents. The
-    prediction is not borne out (p. 204, fn 11).
+Fn. 11 (p. 204): XaYYaZ causatives reject conflicting temporal adverbials, which
+[hewett-2026] takes to show they are mono-eventive, assuming with [nie-2020] that
+morphological causatives are crosslinguistically mono-eventive. The decompositions
+below render this in the local `VerbHead` substrate — the formalizer's encoding,
+not the paper's ([nie-2020]'s own analysis is Voice-over-Voice, not a subevent
+inventory). -/
 
-    Formally: XaYYaZ's decomposition lacks vGO — it is [vDO, vCAUSE, vBE],
-    a direct causation structure without a separate becoming subevent.
-    This contrasts with analytic causatives that have the full
-    [vDO, vCAUSE, vGO, vBE] decomposition. -/
-def monoEventiveCausative : List VerbHead := [.vDO, .vCAUSE, .vBE]
+/-- Mono-eventive causative decomposition: θ-assigning Voice over a root structure
+    lacking the becoming subevent vGO. -/
+def monoEventiveCausative : List VerbHead :=
+  buildDecomposition voiceCauser [.vCAUSE, .vBE]
+
+/-- Bi-eventive causative decomposition (analytic causatives): θ-assigning Voice
+    over the full change-of-state root structure. -/
+def biEventiveCausative : List VerbHead :=
+  buildDecomposition voiceCauser [.vCAUSE, .vGO, .vBE]
 
 /-- Mono-eventive causatives have CAUSE but lack GO. -/
 theorem mono_eventive_has_cause_no_go :
-    monoEventiveCausative.contains .vCAUSE = true ∧
-    monoEventiveCausative.contains .vGO = false := by native_decide
+    VerbHead.vCAUSE ∈ monoEventiveCausative ∧
+    VerbHead.vGO ∉ monoEventiveCausative := by decide
 
-/-- Mono-eventive causatives are NOT classified as standard causatives
-    (which require vGO for the becoming subevent). -/
+/-- Mono-eventive causatives are not standard causatives (which require the vGO
+    becoming subevent). -/
 theorem mono_eventive_not_standard_causative :
-    isCausative monoEventiveCausative = false := by native_decide
+    isCausative monoEventiveCausative = false := by decide
 
-/-- The full bi-eventive causative decomposition from Voice.lean. -/
-def biEventiveCausative : List VerbHead := [.vDO, .vCAUSE, .vGO, .vBE]
-
-/-- Bi-eventive causatives ARE standard causatives. -/
+/-- Bi-eventive causatives are standard causatives. -/
 theorem bi_eventive_is_causative :
-    isCausative biEventiveCausative = true := by native_decide
+    isCausative biEventiveCausative = true := by decide
 
--- ============================================================================
--- S10: Summary Theorems
--- ============================================================================
+/-! ### Summary -/
 
-/-- **Main result**: l-selection is a function of root AND template
-    jointly. Neither root alone ([harley-2014]) nor categorizer
-    alone ([merchant-2019]) determines l-selection. -/
+/-- **Main result**: l-selection is a function of root and template jointly —
+    template-dependent and template-independent roots both exist, so neither root
+    alone ([harley-2014]) nor categorizer alone ([merchant-2019]) determines it. -/
 theorem joint_selection :
-    -- Template-dependent roots exist
-    (∃ r : RootLabel, isTemplateDependent r = true) ∧
-    -- Template-independent roots also exist
-    (∃ r : RootLabel, isTemplateDependent r = false) :=
-  ⟨⟨.krh, krh_template_dependent⟩, ⟨.xwf, xwf_not_template_dependent⟩⟩
-
-/-- Harley's root-level account of ARITY (c-selection) is correct.
-    His root-level account of L-SELECTION is not. The two types of
-    selection factor differently in the grammar. -/
-theorem selection_factors :
-    (∀ (r : RootClassification) (c1 c2 : Categorizer),
-      (CategorizedRoot.mk r c1).root.arity =
-      (CategorizedRoot.mk r c2).root.arity) ∧
-    (∃ r : RootLabel, ¬ templateInvariant r) :=
-  cSelection_vs_lSelection
-
-/-- The activation mechanism produces the correct l-selected P for
-    every root with data in both templates. Matching activation ensures
-    only the correct feature activates in each template environment. -/
-theorem activation_matches_lSelect_dwr :
-    let bi := dwr_sel_XaYaZ.activate (.cat .v) |>.activate (.template .XaYaZ)
-    let eala := dwr_sel_XaYYaZ.activate (.cat .v) |>.activate (.template .XaYYaZ)
-    bi.selectedP = .bi ∧
-    some .bi = lSelect .dwr .XaYaZ ∧
-    eala.selectedP = .Eala ∧
-    some .Eala = lSelect .dwr .XaYYaZ := ⟨rfl, rfl, rfl, rfl⟩
+    (∃ r : RootLabel, ¬ templateInvariant r) ∧
+    (∃ r : RootLabel, templateInvariant r) :=
+  ⟨⟨.krh, krh_not_templateInvariant⟩, ⟨.xwf, xwf_templateInvariant⟩⟩
 
 end Hewett2026
