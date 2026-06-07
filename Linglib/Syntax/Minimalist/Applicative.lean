@@ -1,3 +1,4 @@
+import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Syntax.Minimalist.Voice
 
@@ -201,20 +202,23 @@ theorem ethical_possessive_middle_asymmetry :
 /-- Can a given element merge in SpecApplP?
 
     [wood-2015] Ch. 5 (§5.3.2): Appl assigns **dative case** to its
-    specifier. Therefore only elements that can bear case can merge
-    in SpecApplP. The Icelandic clitic -st lacks case features and
-    is thus blocked from SpecApplP, even though it can merge in
-    SpecVoiceP and SpecpP (where no case is assigned to the specifier). -/
-def ApplHead.specCanBearCase (appl : ApplHead) (bearerHasCase : Bool) : Bool :=
-  if appl.assignsDative then bearerHasCase
+    specifier. Therefore only case-bearing elements (`HasCase` carriers
+    with `caseOf ≠ none`) can merge in SpecApplP. The Icelandic clitic
+    -st lacks case features and is thus blocked from SpecApplP, even
+    though it can merge in SpecVoiceP and SpecpP (where no case is
+    assigned to the specifier). -/
+def ApplHead.specCanBearCase {α : Type*} [HasCase α] (appl : ApplHead)
+    (x : α) : Bool :=
+  if appl.assignsDative then (HasCase.caseOf x).isSome
   else true
 
-/-- -st (caseless) cannot merge in SpecApplP ([wood-2015] §5.3.2). -/
+/-- -st (caseless: `caseOf = none`) cannot merge in SpecApplP
+    ([wood-2015] §5.3.2). -/
 theorem caseless_blocked_in_specAppl :
-    applLowRecipient.specCanBearCase false = false := rfl
+    applLowRecipient.specCanBearCase (none : Option Case) = false := rfl
 
 /-- A case-bearing DP CAN merge in SpecApplP. -/
 theorem caseful_ok_in_specAppl :
-    applLowRecipient.specCanBearCase true = true := rfl
+    applLowRecipient.specCanBearCase (some Case.dat) = true := rfl
 
 end Minimalist

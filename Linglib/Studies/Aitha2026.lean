@@ -79,7 +79,7 @@ def TeluguCase.toCore : TeluguCase → Case
   | .loc => .loc
 
 /-- Is this Telugu case nonnominative? Derived from
-    `Syntax.Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
+    `Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
     [caha-2009]/[mcfadden-2018] containment ordering. The full
     containment hierarchy lives at `Syntax.Case.Order` (`containmentRank`,
     `cahaLE`); Aitha's *n*-head VI rules condition on this binary
@@ -87,10 +87,10 @@ def TeluguCase.toCore : TeluguCase → Case
     the *n* head — the layered hierarchy is the substrate, the binary
     split is the Telugu-*n*-specific reduction. -/
 def TeluguCase.IsNonnom (c : TeluguCase) : Prop :=
-  Syntax.Case.IsNonnominative c.toCore
+  Case.IsNonnominative c.toCore
 
 instance (c : TeluguCase) : Decidable (TeluguCase.IsNonnom c) :=
-  inferInstanceAs (Decidable (Syntax.Case.IsNonnominative c.toCore))
+  inferInstanceAs (Decidable (Case.IsNonnominative c.toCore))
 
 -- ────────────────────────────────────────────────────────────────────
 -- Strong noun paradigm: *illu* 'house'

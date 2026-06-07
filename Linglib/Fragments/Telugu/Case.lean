@@ -44,11 +44,11 @@ example : Case.IsValidInventory caseInventory := by decide
 -- ============================================================================
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/
-theorem acc_nonnom : Syntax.Case.IsNonnominative .acc := by decide
-theorem gen_nonnom : Syntax.Case.IsNonnominative .gen := by decide
-theorem dat_nonnom : Syntax.Case.IsNonnominative .dat := by decide
-theorem loc_nonnom : Syntax.Case.IsNonnominative .loc := by decide
-theorem nom_not_nonnom : ¬ Syntax.Case.IsNonnominative .nom := by decide
+theorem acc_nonnom : Case.IsNonnominative .acc := by decide
+theorem gen_nonnom : Case.IsNonnominative .gen := by decide
+theorem dat_nonnom : Case.IsNonnominative .dat := by decide
+theorem loc_nonnom : Case.IsNonnominative .loc := by decide
+theorem nom_not_nonnom : ¬ Case.IsNonnominative .nom := by decide
 
 /-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
     containment hierarchy, consistent with case-conditioned VI. -/

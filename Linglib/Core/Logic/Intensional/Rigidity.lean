@@ -30,6 +30,8 @@ versions; `Frame.lean` provides the IL-typed versions.
 - `StableCharacter` — Kaplan's stable character predicate
 - `ReferentialMode` — Partee 1973's three-way classification
 - `SitVarStatus` — Elbourne 2013's two-way classification
+- `IsExtensionalAt` — operator extensionality (local truth-functionality);
+  the operator-side dual of `IsRigid`
 -/
 
 namespace Core
@@ -344,3 +346,92 @@ theorem sitVarStatus_roundtrip (s : SitVarStatus) :
     rcases hm with rfl | rfl <;> rfl
 
 end Core.SitVarStatus
+
+namespace Core
+
+/-! ### Operator extensionality
+
+The operator-side dual of `IsRigid`: an operator on intensions is
+*extensional at* `w` when its value at `w` depends on its argument only
+through the argument's extension at `w` (local truth-functionality at
+`β = Prop`). Negation and the other pointwise connectives are extensional
+everywhere; quantifiers over indices (`Core.Logic.Modal.box`) are not.
+`Semantics.Gradability.Classification.isExtensional` (Kamp 1975's
+extensional adjective operators) is the entity-indexed `∀ w`-closure of
+this notion. -/
+
+/-- `O` is extensional at `w`: its value at `w` depends on the argument
+intension only through the argument's extension at `w`. Equivalently,
+`O · w` factors through evaluation at `w` (`isExtensionalAt_iff_factorsThrough`). -/
+def IsExtensionalAt {W α β : Type*} (O : (W → α) → W → β) (w : W) : Prop :=
+  ∀ p q : W → α, p w = q w → O p w = O q w
+
+/-- `O` is extensional: extensional at every index. -/
+def IsExtensional {W α β : Type*} (O : (W → α) → W → β) : Prop :=
+  ∀ w, IsExtensionalAt O w
+
+/-- Extensionality at `w` is `O · w` factoring through evaluation at `w`. -/
+theorem isExtensionalAt_iff_factorsThrough {W α β : Type*}
+    (O : (W → α) → W → β) (w : W) :
+    IsExtensionalAt O w ↔ Function.FactorsThrough (O · w) (· w) :=
+  ⟨fun h _ _ hpq => h _ _ hpq, fun h _ _ hpq => h hpq⟩
+
+/-- The iff form at `β = Prop`, the shape semantic theorems consume. -/
+theorem isExtensionalAt_iff {W α : Type*} (O : (W → α) → W → Prop) (w : W) :
+    IsExtensionalAt O w ↔
+      ∀ p q : W → α, p w = q w → (O p w ↔ O q w) :=
+  ⟨fun h p q hpq => iff_of_eq (h p q hpq), fun h p q hpq => propext (h p q hpq)⟩
+
+/-- Refutation by witness: a pair agreeing at `w` on which `O` differs. -/
+theorem not_isExtensionalAt_iff_exists_witness {W α β : Type*}
+    {O : (W → α) → W → β} {w : W} :
+    ¬ IsExtensionalAt O w ↔ ∃ p q, p w = q w ∧ O p w ≠ O q w := by
+  simp only [IsExtensionalAt, not_forall, exists_prop]
+
+namespace IsExtensionalAt
+
+variable {W : Type*} {w : W}
+
+/-- Evaluation itself is extensional. -/
+theorem eval {α : Type*} : IsExtensionalAt (fun (p : W → α) w' => p w') w :=
+  fun _ _ hpq => hpq
+
+/-- Constant operators are extensional. -/
+theorem const {α : Type*} (P : W → Prop) :
+    IsExtensionalAt (fun (_ : W → α) w' => P w') w :=
+  fun _ _ _ => rfl
+
+/-- Pointwise negation is extensional — "negation is not an intensional
+operator". -/
+theorem neg : IsExtensionalAt (fun p (w' : W) => ¬ p w') w :=
+  fun _ _ hpq => congrArg Not hpq
+
+/-- Extensional operators are closed under pointwise conjunction. -/
+theorem and {α : Type*} {O₁ O₂ : (W → α) → W → Prop}
+    (h₁ : IsExtensionalAt O₁ w) (h₂ : IsExtensionalAt O₂ w) :
+    IsExtensionalAt (fun p w' => O₁ p w' ∧ O₂ p w') w :=
+  fun p q hpq => congrArg₂ And (h₁ p q hpq) (h₂ p q hpq)
+
+/-- Extensional operators are closed under pointwise disjunction. -/
+theorem or {α : Type*} {O₁ O₂ : (W → α) → W → Prop}
+    (h₁ : IsExtensionalAt O₁ w) (h₂ : IsExtensionalAt O₂ w) :
+    IsExtensionalAt (fun p w' => O₁ p w' ∨ O₂ p w') w :=
+  fun p q hpq => congrArg₂ Or (h₁ p q hpq) (h₂ p q hpq)
+
+/-- Extensional operators are closed under pointwise negation. -/
+theorem not {α : Type*} {O : (W → α) → W → Prop}
+    (h : IsExtensionalAt O w) :
+    IsExtensionalAt (fun p w' => ¬ O p w') w :=
+  fun p q hpq => congrArg Not (h p q hpq)
+
+/-- Towers of extensional operators are extensional: if `O₁`, `O₂` are
+extensional at `w`, so is `O₂` applied over `O₁`'s output intension.
+Scope-inertness lifts through whole stacks of extensional operators. -/
+theorem comp {α β : Type*} {O₁ : (W → α) → W → β} {O₂ : (W → β) → W → Prop}
+    (h₂ : IsExtensionalAt O₂ w) (h₁ : IsExtensionalAt O₁ w) :
+    IsExtensionalAt (fun p w' => O₂ (fun s => O₁ p s) w') w :=
+  fun p q hpq => h₂ _ _ (h₁ p q hpq)
+
+end IsExtensionalAt
+
+end Core

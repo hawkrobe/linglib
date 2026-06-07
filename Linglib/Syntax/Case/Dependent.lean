@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Features.Case.Capabilities
 /-!
 # Dependent Case Theory
 [marantz-1991] [baker-2015]
@@ -128,9 +129,12 @@ structure CasedNP where
   source : CaseSource
   deriving DecidableEq, Repr
 
+/-- A cased NP bears its assigned case. -/
+instance : HasCase CasedNP := ⟨fun np => some np.case⟩
+
 /-- Look up the assigned case for an NP by label. -/
 def getCaseOf (label : String) (results : List CasedNP) : Option Case :=
-  (results.find? (·.label == label)).map (·.case)
+  (results.find? (·.label == label)).bind HasCase.caseOf
 
 /-- Look up the case source for an NP by label. -/
 def getSourceOf (label : String) (results : List CasedNP) : Option CaseSource :=

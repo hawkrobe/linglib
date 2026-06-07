@@ -307,14 +307,14 @@ def caseAtPos : Nat → Option Case
   | 2 => some .dat
   | _ => none
 
-/-- Case partition: derived from `Syntax.Case.IsOblique` via `caseAtPos`.
+/-- Case partition: derived from `Case.IsOblique` via `caseAtPos`.
     ABS and ERG are off-hierarchy in `containmentRank` (`IsOblique` is
     `False` for them); DAT contains GEN's representation in the Caha
     order so `IsOblique .dat` is `True`. The boundary thus corresponds
     to [caha-2009]'s Unmarked-Dependent vs Oblique split — *as a
     consequence* of the order substrate, not as a stipulated threshold. -/
 def caseDomainPartition : DomainPartition Bool := λ i =>
-  (caseAtPos i).elim false (λ c => decide (Syntax.Case.IsOblique c))
+  (caseAtPos i).elim false (λ c => decide (Case.IsOblique c))
 
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).

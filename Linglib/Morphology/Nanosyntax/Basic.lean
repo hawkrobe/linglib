@@ -78,7 +78,7 @@ open Morphology.Case.Allomorphy
     (not necessarily contiguous on the fseq). -/
 structure LexEntry where
   /-- The rank (depth) of the stored tree on the fseq.
-      Corresponds to `Syntax.Case.Order.containmentRank`. -/
+      Corresponds to `Case.containmentRank`. -/
   rank : Nat
   /-- The phonological exponent. -/
   exponent : String
@@ -282,7 +282,7 @@ end CaseExamples
     containment hierarchy. Returns `none` for cases not on the
     standard fseq (e.g., ERG/ABS). -/
 def caseToRank (c : Case) : Option Nat :=
-  Syntax.Case.containmentRank c
+  Case.containmentRank c
 
 /-- Spellout a case directly: look up the case's rank, then
     apply phrasal spellout. -/

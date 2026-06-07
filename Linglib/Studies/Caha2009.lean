@@ -56,12 +56,12 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 
 namespace Caha2009
 
-open scoped Syntax.Case.Caha
+open scoped Case.Caha
 
 /-! ## Caha containment-respect predicate
 
 Does an inventory respect Caha's containment hierarchy? True iff `inv`
-is downward-closed under the scoped Caha order (`Syntax.Case.Caha`;
+is downward-closed under the scoped Caha order (`Case.Caha`;
 containment) defined in `Core/Case/Order.lean`: whenever `c ∈ inv` and
 `d ≤ c`, then `d ∈ inv`. Off-hierarchy cases (ERG, ABS, INST, COM, …)
 impose no constraint — in the Caha order they only have `c ≤ c`, so
@@ -88,7 +88,7 @@ predicate (which lives here in this study file, not in `Core/`). -/
 theorem slavicCore_respectsCaha :
     RespectsCahaContainment Slavic.Case.coreInventory := by decide
 
-/-- Vacuous: `Syntax.Case.Order.containmentRank .voc = none` faithfully
+/-- Vacuous: `Case.containmentRank .voc = none` faithfully
     encodes Caha's own scope choice ([caha-2009] §1.1 fn. 4,
     p. 9: "Vocatives ... are ignored throughout this dissertation"). -/
 theorem slavicSeven_respectsCaha :
@@ -237,11 +237,11 @@ namespace Slavic
 /-- Caha's Slavic-specific Case sequence ([caha-2009] (16), p. 12
     for Russian; (7) p. 238 confirms the same for Serbian): NOM – ACC –
     GEN – PREP/LOC – DAT – INS. Re-export from
-    `Syntax.Case.Order.cahaSlavicRank` (the substrate definition). For
+    `Case.cahaSlavicRank` (the substrate definition). For
     the relationship to `containmentRank` (LOC at top, INST
-    off-hierarchy), see `Syntax.Case.Order.cahaSlavicRank_vs_containmentRank`. -/
+    off-hierarchy), see `Case.cahaSlavicRank_vs_containmentRank`. -/
 abbrev slavicRank : Case → Option (Fin 6) :=
-  Syntax.Case.cahaSlavicRank
+  Case.cahaSlavicRank
 
 /-- A morphological paradigm encoded as a form-class index per cell.
     Indices correspond to the Slavic case sequence: 0=NOM, 1=ACC,

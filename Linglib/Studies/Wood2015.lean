@@ -401,8 +401,8 @@ theorem middle_predicts_none :
     SpecApplP because Appl assigns dative case and *-st* lacks case
     features. -/
 theorem st_blocked_from_specApplP :
-    applLowRecipient.specCanBearCase false = false ∧
-    applLowRecipient.specCanBearCase true = true := ⟨rfl, rfl⟩
+    applLowRecipient.specCanBearCase (none : Option Case) = false ∧
+    applLowRecipient.specCanBearCase (some Case.dat) = true := ⟨rfl, rfl⟩
 
 /-- In ditransitive *-st* alternations, Appl datives are retained
     because Appl assigns case independently of Voice
