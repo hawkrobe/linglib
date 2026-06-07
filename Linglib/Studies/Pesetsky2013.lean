@@ -572,7 +572,7 @@ theorem russian_obliques_in_pesetsky_core :
     identify the same five-case core, with Pesetsky adding INST
     outside the Caha hierarchy. -/
 theorem pesetsky_caha_compatible_prefix :
-    pesetskyCore.filter (fun c => (Syntax.Case.containmentRank c).isSome) =
+    pesetskyCore.filter (fun c => (Case.containmentRank c).isSome) =
       ({.nom, .acc, .gen, .dat, .loc} : Finset Case) := by
   decide
 

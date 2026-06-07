@@ -27,6 +27,10 @@ instance : HasCase UD.MorphFeatures :=
 
 instance : HasCase Case := ⟨some⟩
 
+/-- `Option Case` is the free case-bearer: `some c` bears `c`, `none` is
+    caseless. -/
+instance : HasCase (Option Case) := ⟨id⟩
+
 namespace HasCase
 
 variable {α β : Type*} [HasCase α] [HasCase β]

@@ -79,7 +79,7 @@ def finnishNomAccSync : Syncretism := nomAccSyncretism
     (-n) are distinct forms. Unlike many IE languages where ABL and INST
     merge, Finnish keeps them separate. -/
 theorem abl_inst_distinct :
-    HierarchyAdjacent .abl .inst := by decide
+    Case.HierarchyAdjacent .abl .inst := by decide
 
 -- ============================================================================
 -- § 3: Local Case Matrix (3 × 2)
