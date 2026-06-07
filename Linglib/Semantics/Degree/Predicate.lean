@@ -107,11 +107,11 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
 
 /-- Closed scales predict licensing (Kennedy: "completely full" ✓;
     Rouillard: telic VP E-TIA ✓). -/
-theorem closed_isLicensed : Boundedness.closed.isLicensed = true := rfl
+theorem closed_isLicensed : Boundedness.closed.IsLicensed := trivial
 
 /-- Open scales predict blocking (Kennedy: "??completely tall";
     Rouillard: atelic VP E-TIA ✗). -/
-theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
+theorem open_notLicensed : ¬ Boundedness.open_.IsLicensed := id
 
 -- ════════════════════════════════════════════════════
 -- § 6. Degree Properties ([fox-2007] §2)

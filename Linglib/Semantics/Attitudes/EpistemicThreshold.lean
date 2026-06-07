@@ -645,7 +645,7 @@ theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
     full"); cross-source agreement is `LicensingPipeline.universal`
     (`Core/Order/Boundedness.lean`). -/
 theorem epistemicScale_licensed :
-    epistemicBoundedness.isLicensed = true := rfl
+    epistemicBoundedness.IsLicensed := trivial
 
 -- ============================================================================
 -- §9. Connection to Holliday–Icard Epistemic Likelihood

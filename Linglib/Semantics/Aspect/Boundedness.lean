@@ -43,9 +43,9 @@ instance : Core.Order.LicensingPipeline SituationBoundedness where
   toBoundedness s := s.toMereoTag.toBoundedness
 
 theorem bounded_licensed :
-    Core.Order.LicensingPipeline.isLicensed SituationBoundedness.bounded = true := rfl
+    Core.Order.LicensingPipeline.IsLicensed SituationBoundedness.bounded := trivial
 
 theorem unbounded_blocked :
-    Core.Order.LicensingPipeline.isLicensed SituationBoundedness.unbounded = false := rfl
+    ¬ Core.Order.LicensingPipeline.IsLicensed SituationBoundedness.unbounded := id
 
 end Semantics.Aspect

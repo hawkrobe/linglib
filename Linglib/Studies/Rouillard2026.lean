@@ -60,10 +60,10 @@ def BoundaryType.toBoundedness : BoundaryType → Core.Order.Boundedness
   | .open_ => .open_
 
 theorem closedBoundary_licensed :
-    (BoundaryType.toBoundedness .closed).isLicensed = true := rfl
+    (BoundaryType.toBoundedness .closed).IsLicensed := trivial
 
 theorem openBoundary_blocked :
-    (BoundaryType.toBoundedness .open_).isLicensed = false := rfl
+    ¬ (BoundaryType.toBoundedness .open_).IsLicensed := id
 
 instance : Core.Order.LicensingPipeline BoundaryType where
   toBoundedness := BoundaryType.toBoundedness
@@ -440,16 +440,16 @@ consumed by the empirical predictions below. Codebase plumbing
 /-- Telic VPs route through `LicensingPipeline` to the licensed (closed)
     boundedness tag. -/
 theorem telic_predicts_licensing (c : VendlerClass) (h : c.telicity = .telic) :
-    (LicensingPipeline.toBoundedness c).isLicensed = true := by
-  show (c.telicity.toMereoTag.toBoundedness).isLicensed = true
-  rw [h]; rfl
+    (LicensingPipeline.toBoundedness c).IsLicensed := by
+  show (c.telicity.toMereoTag.toBoundedness).IsLicensed
+  rw [h]; trivial
 
 /-- Atelic VPs route through `LicensingPipeline` to the unlicensed (open)
     boundedness tag. -/
 theorem atelic_predicts_blocking (c : VendlerClass) (h : c.telicity = .atelic) :
-    (LicensingPipeline.toBoundedness c).isLicensed = false := by
-  show (c.telicity.toMereoTag.toBoundedness).isLicensed = false
-  rw [h]; rfl
+    ¬ (LicensingPipeline.toBoundedness c).IsLicensed := by
+  show ¬ (c.telicity.toMereoTag.toBoundedness).IsLicensed
+  rw [h]; exact id
 
 /-! ### Cross-source licensing sentry
 
@@ -463,26 +463,26 @@ caught here; pairwise agreement between any two sources is
 /-- Every registered `LicensingPipeline` source maps its "closed" variant to
     licensed. -/
 theorem sources_agree_closed :
-    LicensingPipeline.isLicensed Boundedness.closed = true ∧
-    LicensingPipeline.isLicensed MereoTag.qua = true ∧
-    LicensingPipeline.isLicensed Telicity.telic = true ∧
-    LicensingPipeline.isLicensed VendlerClass.accomplishment = true ∧
-    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.closed = true ∧
-    LicensingPipeline.isLicensed SituationBoundedness.bounded = true ∧
-    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Boundedness.closed ∧
+    LicensingPipeline.IsLicensed MereoTag.qua ∧
+    LicensingPipeline.IsLicensed Telicity.telic ∧
+    LicensingPipeline.IsLicensed VendlerClass.accomplishment ∧
+    LicensingPipeline.IsLicensed NonemptyInterval.BoundaryType.closed ∧
+    LicensingPipeline.IsLicensed SituationBoundedness.bounded ∧
+    LicensingPipeline.IsLicensed EpistemicTag.finitelyAdditive :=
+  ⟨trivial, trivial, trivial, trivial, trivial, trivial, trivial⟩
 
 /-- Every registered `LicensingPipeline` source maps its "open" variant to
     blocked. -/
 theorem sources_agree_open :
-    LicensingPipeline.isLicensed Boundedness.open_ = false ∧
-    LicensingPipeline.isLicensed MereoTag.cum = false ∧
-    LicensingPipeline.isLicensed Telicity.atelic = false ∧
-    LicensingPipeline.isLicensed VendlerClass.state = false ∧
-    LicensingPipeline.isLicensed NonemptyInterval.BoundaryType.open_ = false ∧
-    LicensingPipeline.isLicensed SituationBoundedness.unbounded = false ∧
-    LicensingPipeline.isLicensed EpistemicTag.qualitative = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ LicensingPipeline.IsLicensed Boundedness.open_ ∧
+    ¬ LicensingPipeline.IsLicensed MereoTag.cum ∧
+    ¬ LicensingPipeline.IsLicensed Telicity.atelic ∧
+    ¬ LicensingPipeline.IsLicensed VendlerClass.state ∧
+    ¬ LicensingPipeline.IsLicensed NonemptyInterval.BoundaryType.open_ ∧
+    ¬ LicensingPipeline.IsLicensed SituationBoundedness.unbounded ∧
+    ¬ LicensingPipeline.IsLicensed EpistemicTag.qualitative :=
+  ⟨id, id, id, id, id, id, id⟩
 
 /-! ### Rouillard's analytical apparatus -/
 
@@ -556,7 +556,7 @@ def eTIAData : List ETIADatum :=
     the datum is acceptable. The pipeline routes through the
     Telicity → MereoTag → Boundedness chain (§ 11). -/
 def eTIA_predicted (d : ETIADatum) : Prop :=
-  (LicensingPipeline.toBoundedness d.vendlerClass).isLicensed = true ↔ d.acceptable
+  (LicensingPipeline.toBoundedness d.vendlerClass).IsLicensed ↔ d.acceptable
 
 instance (d : ETIADatum) : Decidable (eTIA_predicted d) := by
   unfold eTIA_predicted; infer_instance

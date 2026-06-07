@@ -108,6 +108,6 @@ theorem foxHackl_atLeast_verified :
 
 /-- Kennedy numeral domains are always licensed (closed scale). -/
 theorem kennedy_numeral_licensed {W : Type*} (μ : W → ℕ) :
-    (DirectedMeasure.numeral μ).licensed = true := rfl
+    (DirectedMeasure.numeral μ).IsLicensed := trivial
 
 end FoxHackl2006Numerals
