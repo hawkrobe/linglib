@@ -100,4 +100,56 @@ end Instances
 /-- Lower of pure is identity. (Not a monad law — a fact about `Cont.lower`.) -/
 theorem Cont.lower_pure (a : A) : Cont.lower (Cont.pure a) = a := rfl
 
+/-! ### Scope as bind order
+
+Scope ambiguity in the continuation framework is the *order of monadic
+bind* — surface scope binds the subject first, inverse scope the object
+first — and `lower` is generalized-quantifier application
+([barker-shan-2014]). These hold for any quantifier and predicate. -/
+
+section ScopeAsBindOrder
+
+variable {E S : Type}
+
+/-- Lowering a `Cont`-wrapped quantifier with a pure scope predicate is
+plain GQ application: `lower (Q >>= λx. pure (P x)) = Q P`. -/
+theorem cont_scope_reduce (q : Cont S E) (scope : E → S) :
+    Cont.lower (Cont.bind q (fun x => Cont.pure (scope x))) = q scope := rfl
+
+/-- Nested `Cont` binds compute nested GQ application; the bind nesting
+determines scope order. -/
+theorem cont_scope_double (q₁ q₂ : Cont S E) (rel : E → E → S) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
+    q₁ (fun x => q₂ (fun y => rel x y)) := rfl
+
+/-- **Scope ambiguity = bind order**: the two readings of `Q₁ R Q₂` are
+`Q₁` nested outside `Q₂` vs `Q₂` outside `Q₁`, each reducing to GQ
+application in the corresponding order. -/
+theorem scope_ambiguity_is_bind_order (q₁ q₂ : Cont S E) (rel : E → E → S) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
+    q₁ (fun x => q₂ (fun y => rel x y))
+    ∧
+    Cont.lower (Cont.bind q₂ (fun y =>
+      Cont.bind q₁ (fun x => Cont.pure (rel x y)))) =
+    q₂ (fun y => q₁ (fun x => rel x y)) :=
+  ⟨rfl, rfl⟩
+
+/-- The bind-order pattern extends to arbitrary depth. -/
+theorem cont_scope_triple (q₁ q₂ q₃ : Cont S E) (rel : E → E → E → S) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y =>
+        Cont.bind q₃ (fun z => Cont.pure (rel x y z))))) =
+    q₁ (fun x => q₂ (fun y => q₃ (fun z => rel x y z))) := rfl
+
+/-- When all meanings are `Cont.pure`-wrapped, `Cont` composition reduces
+to function application — the non-scope-taking (Reader) fragment embeds
+into `Cont` ([charlow-2018]). -/
+theorem cont_pure_is_fa {A : Type} (f : A → S) (x : A) :
+    Cont.lower (Cont.bind (Cont.pure f) (fun g =>
+      Cont.bind (Cont.pure x) (fun y => Cont.pure (g y)))) = f x := rfl
+
+end ScopeAsBindOrder
+
 end Semantics.Composition.Continuation
