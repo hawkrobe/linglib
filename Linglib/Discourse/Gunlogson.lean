@@ -1,6 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.IllocutionaryForce
-import Linglib.Discourse.Intentionality
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Questions.Bias.Defs
 

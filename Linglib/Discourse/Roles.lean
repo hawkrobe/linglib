@@ -7,10 +7,10 @@ The two fundamental discourse participants — speaker and addressee — and
 the function that resolves them through a `ContextTower` to concrete
 entities.
 
-This file exists separately from `Discourse/IllocutionaryForce.lean`
+This file exists separately from `Discourse/SpeechAct/Basic.lean`
 to break a would-be cycle between `Semantics/Mood/IllocutionaryMood.lean` (which
 needs `DiscourseRole` for `moodAuthority`) and the act-side material in
-`IllocutionaryForce.lean` (which extends `IllocutionaryMood` with Searle
+`SpeechAct/Basic.lean` (which extends `IllocutionaryMood` with Searle
 classes and direction of fit).
 -/
 

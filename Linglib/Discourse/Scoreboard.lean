@@ -1,6 +1,5 @@
 import Mathlib.Data.List.Sort
-import Linglib.Discourse.IllocutionaryForce
-import Linglib.Discourse.Intentionality
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Move
 import Linglib.Semantics.Questions.Partition.QUD

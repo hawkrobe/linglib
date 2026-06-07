@@ -1,5 +1,5 @@
 import Linglib.Discourse.KOS.Defs
-import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.SpeechAct.Basic
 
 /-!
 # IllocMove ↔ Searle Bridge
@@ -27,7 +27,7 @@ Assert/accept/confirm are assertives (mind-to-world fit). Ask is a directive
 Check is a directive (requesting confirmation). Greet/counterGreet are
 expressives (null fit). -/
 def IllocMove.toSearleClass {Fact QContent : Type*} :
-    IllocMove Fact QContent → Discourse.SearleClass
+    IllocMove Fact QContent → SearleClass
   | .assert _   => .assertive
   | .accept _   => .assertive
   | .confirm _  => .assertive
@@ -38,7 +38,7 @@ def IllocMove.toSearleClass {Fact QContent : Type*} :
 
 /-- Direction of fit for an illocutionary move, derived via Searle class. -/
 def IllocMove.directionOfFit {Fact QContent : Type*}
-    (m : IllocMove Fact QContent) : Discourse.DirectionOfFit :=
+    (m : IllocMove Fact QContent) : DirectionOfFit :=
   m.toSearleClass.directionOfFit
 
 /-- Assertions have mind-to-world fit: the speaker is responsible if p is false. -/

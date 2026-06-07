@@ -4,6 +4,7 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Semantics.Mood.POSW
 import Linglib.Semantics.Mood.POSWTarget
 import Linglib.Discourse.Scoreboard
+import Linglib.Discourse.SpeechAct.Basic
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Modality.Assert
@@ -66,7 +67,8 @@ conservativity. Example "Have a cookie" is (60) in §2.2 (not §3).
 namespace Roberts2023
 
 open Core (WorldTimeIndex)
-open Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
+open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
+open Semantics.Mood.IllocutionaryMood (sincerityCondition)
 open Semantics.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
 open HistoricalAlternatives
 open Semantics.Modality.Kratzer
