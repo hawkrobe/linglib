@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Case.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.CoreferenceStatus
@@ -147,6 +148,26 @@ theorem personOf_toWord (p : Pronoun) :
   cases p.person with
   | none => rfl
   | some per => exact congrArg some (Person.fromUD_toUD per)
+
+/-! ### The case axis: `HasCase` instances and faithfulness -/
+
+/-- A pronoun bears its analytical case directly — the carrier field is
+root-`Case`-typed. -/
+instance : HasCase Pronoun := ⟨fun p => p.case_⟩
+
+instance : HasCase PersonalPronoun := ⟨fun p => HasCase.caseOf p.toPronoun⟩
+
+/-- Projecting a pronoun to a `Word` realizes its case through UD
+losslessly: `Case.toUD` is currently a bijection, so — unlike person
+(clusivity lost) and number (minimal/augmented lost) — the round-trip is
+the identity. This is the theorem that degrades when an analytical
+refinement splits a UD cell (`Case.fromUD_toUD`). -/
+theorem caseOf_toWord (p : Pronoun) :
+    HasCase.caseOf p.toWord = HasCase.caseOf p := by
+  show (p.case_.map Case.toUD).map Case.fromUD = p.case_
+  cases p.case_ with
+  | none => rfl
+  | some c => exact congrArg some (Case.fromUD_toUD c)
 
 /-! ### Orthogonal data-mixin: `Deictic` -/
 
