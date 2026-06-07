@@ -329,6 +329,7 @@ import Linglib.Core.Order.ComparativeProbability.CancellationFin4
 import Linglib.Core.Order.ComparativeProbability.Completeness
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.Mereology
+import Linglib.Core.Order.IntervalContent
 import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion

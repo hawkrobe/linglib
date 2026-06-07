@@ -290,7 +290,9 @@ theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
 
 /-- Extensive measure function: additive over non-overlapping entities.
     [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
-    Examples: weight, volume, number (cardinality). -/
+    Examples: weight, volume, number (cardinality). Order-interval sibling:
+    `IsIntervalContent` (`Core/Order/IntervalContent.lean`) — disjoint
+    intervals have no interval join, so the two substrates coexist. -/
 class ExtMeasure (α : Type*) [SemilatticeSup α]
     (μ : α → ℚ) : Prop where
   /-- Additivity: μ is additive over non-overlapping entities. -/
