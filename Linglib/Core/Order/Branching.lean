@@ -74,6 +74,26 @@ def validPaths (t : T) : Set TreePath :=
 theorem bot_mem_validPaths (t : T) : (⊥ : TreePath) ∈ validPaths t := by
   simp [validPaths, subtreeAt]
 
+/-- Gorn-address composition: descending along `p ++ q` is descending
+along `p`, then along `q` from there. -/
+theorem subtreeAt_append (t : T) (p q : List Nat) :
+    subtreeAt t (p ++ q) = (subtreeAt t p).bind (subtreeAt · q) := by
+  induction p generalizing t with
+  | nil => rfl
+  | cons i rest ih =>
+    rw [List.cons_append, subtreeAt_cons, subtreeAt_cons]
+    rcases hmem : (children t)[i]? with _ | c
+    · rfl
+    · exact ih c
+
+/-- Membership characterization for non-root positions: descend one
+child, then recurse. -/
+theorem mem_validPaths_cons {t : T} {i : Nat} {rest : List Nat} :
+    (⟨i :: rest⟩ : TreePath) ∈ validPaths t ↔
+    ∃ c, (children t)[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ validPaths c := by
+  simp only [validPaths, Set.mem_setOf_eq, subtreeAt_cons]
+  rcases hmem : (children t)[i]? with _ | c <;> simp
+
 /-- Valid paths are closed under prefixes (ancestors of a position are
 positions): the set of positions is downward closed, hence inherits
 the rooted-tree order stack from `TreePath`. -/
@@ -81,22 +101,8 @@ theorem validPaths_prefix_closed {t : T} {p q : TreePath}
     (hq : q ∈ validPaths t) (hpq : p ≤ q) : p ∈ validPaths t := by
   obtain ⟨s, hs⟩ := hpq
   simp only [validPaths, Set.mem_setOf_eq] at hq ⊢
-  -- `subtreeAt t (p.toList ++ s)` factors through `subtreeAt t p.toList`.
-  suffices h : ∀ (l₁ l₂ : List Nat) (t : T),
-      (subtreeAt t (l₁ ++ l₂)).isSome → (subtreeAt t l₁).isSome by
-    exact h p.toList s t (by rw [hs]; exact hq)
-  intro l₁
-  induction l₁ with
-  | nil => intro _ _ _; simp
-  | cons i rest ih =>
-    intro l₂ t h
-    rw [List.cons_append, subtreeAt_cons] at h
-    rw [subtreeAt_cons]
-    rcases hmem : (children t)[i]? with _ | c
-    · rw [hmem] at h
-      simp at h
-    · rw [hmem] at h
-      exact ih l₂ c h
+  rw [← hs, subtreeAt_append] at hq
+  exact Option.isSome_of_isSome_bind hq
 
 /-- The dominance order of any `Branching` carrier, as a
 [barker-pullum-1990] `TreeOrder` on positions. Every instance inherits
@@ -225,6 +231,12 @@ instance {α : Type*} : Branching (FreeMagma α) where
   children
     | .of _ => []
     | .mul l r => [l, r]
+
+@[simp] theorem freeMagma_children_of {α : Type*} (a : α) :
+    Branching.children (FreeMagma.of a) = [] := rfl
+
+@[simp] theorem freeMagma_children_mul {α : Type*} (l r : FreeMagma α) :
+    Branching.children (l.mul r) = [l, r] := rfl
 
 instance {α : Type*} : FiniteBranching (FreeMagma α) where
   measure := sizeOf
