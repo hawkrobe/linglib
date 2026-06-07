@@ -275,4 +275,31 @@ theorem interpBinary_eq {F : Frame} [Applicative M] (d1 d2 : TypedDenot F M) :
 
 end Properties
 
+/-! ### Reduction lemmas (the `interp` simp normal form)
+
+Per-constructor `@[simp]` lemmas so a derivation reduces by `simp` toward its
+composed denotation, instead of relying on opaque `rfl` over the whole engine
+call. Mode reduction (`tryFA`/`interpBinary` over concrete types) is the
+complementary layer, and is type-shape-specific because the modes case on `Ty`. -/
+
+section Reduction
+
+variable {C : Type} {F : Frame} {M : Type → Type} [Applicative M] [PredAbs M F]
+
+@[simp] theorem interp_terminal (lex : Lexicon F M) (g : Core.Assignment F.Entity)
+    (c : C) (w : String) :
+    interp F lex g (.terminal c w : Tree C String) = interpTerminal F lex w := rfl
+
+@[simp] theorem interp_node_binary (lex : Lexicon F M) (g : Core.Assignment F.Entity)
+    (c : C) (t₁ t₂ : Tree C String) :
+    interp F lex g (.node c (t₁ :: t₂ :: []))
+      = ((interp F lex g t₁).bind fun d₁ =>
+          (interp F lex g t₂).bind fun d₂ => interpBinary d₁ d₂) := rfl
+
+omit [Applicative M] [PredAbs M F] in
+@[simp] theorem interpTerminal_lookup (lex : Lexicon F M) (w : String) :
+    interpTerminal F lex w = (lex w).map fun e => ⟨e.ty, e.denot⟩ := rfl
+
+end Reduction
+
 end Semantics.Composition.Tree

@@ -166,6 +166,30 @@ theorem scope_readings_differ : surfaceScopeProp ≠ inverseScopeProp := by
   intro h
   exact inverse_scope_false (h ▸ surface_scope_true)
 
+/-! ### The engine computes the readings
+
+The QR trees and the hand-written `surfaceScopeProp`/`inverseScopeProp` are linked
+by `interp`: running the engine on a tree yields exactly the corresponding reading.
+So the scope-ambiguity result is a fact about the *engine's* output, not a parallel
+re-implementation alongside it. -/
+
+/-- Surface scope: the engine computes the hand-written reading. -/
+theorem interp_computes_surface :
+    interp toyFrame quantLex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+
+/-- Inverse scope: likewise. -/
+theorem interp_computes_inverse :
+    interp toyFrame quantLex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+
+/-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
+genuinely different meanings. -/
+theorem scope_ambiguity_computed :
+    interp toyFrame quantLex g₀ tree_surface ≠ interp toyFrame quantLex g₀ tree_inverse := by
+  rw [interp_computes_surface, interp_computes_inverse]
+  intro h
+  have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
+  exact scope_readings_differ this
+
 /-! ### Unified tree: the same sentence with UD categories
 
 The QR tree as `Tree Cat String` — carrying real UD-grounded categories
