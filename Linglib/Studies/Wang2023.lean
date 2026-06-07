@@ -504,7 +504,7 @@ it holds for arbitrary candidate sets. The proof is purely algebraic:
 section GeneralTheorem
 
 open Phonology.Constraint.OT (mkTableau_optimal_zero_first mkTableau_optimal_mem)
-open Core.Optimization.Evaluation (Tableau buildViolationProfile)
+open Phonology.Constraint.OT (Tableau buildViolationProfile)
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.

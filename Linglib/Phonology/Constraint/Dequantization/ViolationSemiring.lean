@@ -1,4 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.OT.Aliases
 import Linglib.Phonology.Constraint.Dequantization.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
@@ -45,6 +46,7 @@ namespace Phonology.Constraint.ViolationSemiring
 
 
 open Core.Optimization.Evaluation Phonology.Constraint
+open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: The Violation Semiring V

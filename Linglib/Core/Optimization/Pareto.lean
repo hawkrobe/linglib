@@ -12,7 +12,7 @@ pattern:
 | view                          | feature                      | feature-space order |
 |-------------------------------|------------------------------|---------------------|
 | `paretoPullbackPreorder`       | `score : Cand → Profile β n` | pointwise `≤`       |
-| `qualitativePullbackPreorder`  | `support : Cand → Finset (Fin n)` | subset `⊆` |
+| `supportPullbackPreorder`  | `support : Cand → Finset (Fin n)` | subset `⊆` |
 
 Recognising both as `PullbackPreorder` instances means the implication
 "pointwise dominance ⇒ subset-of-supports dominance" is a one-line
@@ -22,7 +22,7 @@ extractor as the connecting monotone map.
 When `0 ≤ b` for every `b : β` (so larger profile values are bigger),
 pointwise dominance implies subset dominance of the nonzero-coordinate
 set; the converse fails — see
-`paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le`.
+`paretoPullbackPreorder_le_implies_supportPullbackPreorder_le`.
 
 -/
 
@@ -62,7 +62,7 @@ def nonzeroSet [DecidableEq β] [Zero β]
     `c ≤ c'` iff the nonzero-index set of `c` is a subset of that of
     `c'` — every index at which `c' = 0`, also `c = 0`. This is the
     qualitative Pareto backbone underlying `Core.Order.SatisfactionOrdering`. -/
-def qualitativePullbackPreorder [DecidableEq β] [Zero β]
+def supportPullbackPreorder [DecidableEq β] [Zero β]
     (score : Cand → Profile β n) :
     PullbackPreorder Cand (Finset (Fin n)) :=
   PullbackPreorder.ofProj (nonzeroSet score) (fun _ _ => inferInstance)
@@ -98,15 +98,15 @@ theorem nonzeroSetOf_monotone [PartialOrder β] [Zero β] [DecidableEq β]
     The converse fails by design: equal nonzero values at a single index
     give qualitative equivalence but say nothing about further pointwise
     comparisons. -/
-theorem paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le
+theorem paretoPullbackPreorder_le_implies_supportPullbackPreorder_le
     [PartialOrder β] [Zero β] [DecidableEq β]
     [∀ x y : β, Decidable (x ≤ y)]
     (score : Cand → Profile β n)
     (h_zero_min : ∀ b : β, 0 ≤ b)
     {c c' : Cand} (h : (paretoPullbackPreorder score).le c c') :
-    (qualitativePullbackPreorder score).le c c' :=
+    (supportPullbackPreorder score).le c c' :=
   PullbackPreorder.coarsen_via_monotone
-    (paretoPullbackPreorder score) (qualitativePullbackPreorder score)
+    (paretoPullbackPreorder score) (supportPullbackPreorder score)
     nonzeroSetOf (nonzeroSetOf_monotone h_zero_min)
     (fun _ => rfl) h
 
