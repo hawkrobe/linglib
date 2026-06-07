@@ -19,8 +19,13 @@ Frequency-Informed Learning (FIL).
 
 `FrequencyVector m` is the type-faithful representation of paper
 [gahl-baayen-2024]'s diagonal frequency matrix `Q` (appendix §A1.3):
-one nonneg weight per usage event. We do *not* normalise to a
-probability distribution; the paper works with raw counts. The PMF
+one nonneg weight per usage event. The book
+[heitmeier-chuang-baayen-2026] introduces the same device (ch. 6,
+Background box on frequency-informed learning) as a diagonal `P` with
+max-normalised entries applied as `√P` premultiplication of both `S`
+and `C`; `ermSolution_iff_rescaled` connects the normalised and raw
+forms. We do *not* normalise to a probability distribution; the
+Gahl–Baayen paper works with raw counts. The PMF
 view is a derived bridge — call `PMF.ofRealWeightFn` from
 `Core.Probability.Constructions` directly when cross-tradition
 theorems require it. The ERM-equivalence between raw `q` and
@@ -55,12 +60,17 @@ substrate captures the architecture in which those theories diverge:
   unattested events don't update the lexicon.
 - `isELSolution_eq_isERM_uniform` — **T-Uniform-EL-equivalence**:
   EL is ERM under the constant-1 frequency vector. Definitional.
+- `IsERMSolution.coordResidual_le` — **T-Coordinate-optimality**:
+  the loss separates across form coordinates (each column of `G` an
+  independent regression, [heitmeier-chuang-baayen-2026] ch. 6), so
+  an ERM solution's weighted residual at any coordinate is at most
+  that of any linear decoder of it. No sign condition on `q`.
 - `IsERMSolution.coord_eq_of_decodable` — **T-Decodable-exact-fit**:
-  a form coordinate that is exactly linearly decodable from the
-  meanings is reproduced exactly by any ERM solution on every
-  positively-weighted event. Corollary
-  `IsTrainedOn.semSup_eq_of_decodable`: at such a coordinate, trained
-  `semSup` equals the observed form value — the architectural core of
+  zero-residual case — an exactly decodable form coordinate is
+  reproduced exactly on every positively-weighted event. Corollaries
+  `IsTrainedOn.semSup_eq_of_decodable` / `semSupWord_eq_of_decodable`:
+  trained `semSup` (and the book's *Semantic Support for Form*)
+  equals the observed form values there — the architectural core of
   [saito-tomaschek-baayen-2025]'s inflectional-status finding.
 
 ## What this file does NOT do
@@ -311,13 +321,15 @@ theorem isELSolution_eq_isERM_uniform
     IsELSolution data G ↔ IsERMSolution data (uniformFrequency m) G :=
   Iff.rfl
 
-/-! ### Exact reproduction of decodable targets
+/-! ### Per-coordinate residual optimality
 
-The loss is separable across form coordinates, so replacing one
-coordinate of a candidate map with a functional that exactly decodes
-that coordinate's targets can only lower the loss. At an ERM solution
-the replacement gains nothing, forcing the residual at that coordinate
-to vanish on every positively-weighted event. -/
+The loss is separable across form coordinates: each column of `G`
+regresses one cue's support on the semantic dimensions, "optimal in
+the least-squares sense" ([heitmeier-chuang-baayen-2026] ch. 6).
+So an ERM solution must be coordinatewise unbeatable — replacing one
+coordinate of the map with any linear functional cannot lower the
+loss — and a coordinate that some functional decodes exactly is
+reproduced exactly. -/
 
 private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
     squaredDist (Function.update a j₀ x) b
@@ -334,17 +346,18 @@ private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
       (fun j' => (a j' - b j') ^ 2)]
   ring
 
-/-- **T-Decodable-exact-fit**: if some linear functional `w` of the meanings
-    exactly reproduces coordinate `j₀` of the observed forms, then any ERM
-    solution under positive weights also reproduces it exactly on the
-    training events. -/
-theorem IsERMSolution.coord_eq_of_decodable
-    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 < q i)
+/-- **T-Coordinate-optimality**: at any form coordinate `j₀`, an ERM solution's
+    weighted squared residual is at most that of any linear functional `w` of
+    the meanings — the endstate mappings have "the lowest possible error across
+    all word forms" ([heitmeier-chuang-baayen-2026] ch. 6) coordinatewise.
+    No sign condition on `q` is required. -/
+theorem IsERMSolution.coordResidual_le
+    {data : TrainingExperience m n d} {q : FrequencyVector m}
     {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : IsERMSolution data q G)
-    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
-    (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
-    G (data.meanings i) j₀ = data.forms i j₀ := by
-  -- the competitor: `G` with coordinate `j₀` replaced by the decoding functional
+    (j₀ : Fin n) (w : MeaningVec d →ₗ[ℝ] ℝ) :
+    ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2
+      ≤ ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 := by
+  -- the competitor: `G` with coordinate `j₀` replaced by `w`
   set G' : MeaningVec d →ₗ[ℝ] FormVec n :=
     LinearMap.pi (Function.update (fun j => (LinearMap.proj j).comp G) j₀ w) with hG'def
   have hG'app : ∀ s, G' s = Function.update (G s) j₀ (w s) := fun s => by
@@ -353,21 +366,36 @@ theorem IsERMSolution.coord_eq_of_decodable
     · subst hj; simp [hG'def]
     · simp [hG'def, Function.update_of_ne hj]
   have hloss : weightedLoss data q G' = weightedLoss data q G
-      - ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2 := by
+      - ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2
+      + ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 := by
     unfold weightedLoss
-    rw [← Finset.sum_sub_distrib]
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [hG'app, squaredDist_update, hw k, sub_self]
+    rw [hG'app, squaredDist_update]
     ring
-  have hΔ : ∑ k, q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2 ≤ 0 := by
-    have h := hG G'
-    rw [hloss] at h
-    linarith
+  have h := hG G'
+  rw [hloss] at h
+  linarith
+
+/-- **T-Decodable-exact-fit**: if some linear functional `w` of the meanings
+    exactly reproduces coordinate `j₀` of the observed forms, then any ERM
+    solution under positive weights also reproduces it exactly on the
+    training events. Zero-residual case of `coordResidual_le`. -/
+theorem IsERMSolution.coord_eq_of_decodable
+    {data : TrainingExperience m n d} {q : FrequencyVector m} (hq : ∀ i, 0 < q i)
+    {G : MeaningVec d →ₗ[ℝ] FormVec n} (hG : IsERMSolution data q G)
+    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
+    (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
+    G (data.meanings i) j₀ = data.forms i j₀ := by
+  have hle := hG.coordResidual_le j₀ w
+  have hB : ∑ k, q k * (w (data.meanings k) - data.forms k j₀) ^ 2 = 0 :=
+    Finset.sum_eq_zero fun k _ => by rw [hw k, sub_self]; ring
+  rw [hB] at hle
   have hnn : ∀ k ∈ Finset.univ,
       (0:ℝ) ≤ q k * (G (data.meanings k) j₀ - data.forms k j₀) ^ 2 :=
     fun k _ => mul_nonneg (hq k).le (sq_nonneg _)
   have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnn).1
-    (le_antisymm hΔ (Finset.sum_nonneg hnn)) i (Finset.mem_univ i)
+    (le_antisymm hle (Finset.sum_nonneg hnn)) i (Finset.mem_univ i)
   have hsq : (G (data.meanings i) j₀ - data.forms i j₀) ^ 2 = 0 :=
     (mul_eq_zero.1 hterm).resolve_left (hq i).ne'
   exact sub_eq_zero.1 (sq_eq_zero_iff.1 hsq)
@@ -419,5 +447,24 @@ theorem LinearDiscriminativeLexicon.IsTrainedOn.semSup_eq_of_decodable
     (hw : ∀ i, w (data.meanings i) = data.forms i j₀) (i : Fin m) :
     semSup D (data.meanings i) j₀ = data.forms i j₀ :=
   IsERMSolution.coord_eq_of_decodable hq hD hw i
+
+/-- [heitmeier-chuang-baayen-2026]'s *Semantic Support for Form* — `semSupWord`
+    over a word's cue coordinates — equals the sum of the observed form values
+    whenever each coordinate is linearly decodable from the meanings. -/
+theorem LinearDiscriminativeLexicon.IsTrainedOn.semSupWord_eq_of_decodable
+    {m n d : ℕ}
+    {D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d)}
+    {data : TrainingExperience m n d} {q : FrequencyVector m}
+    (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
+    {js : List (Fin n)}
+    (hw : ∀ j ∈ js, ∃ w : MeaningVec d →ₗ[ℝ] ℝ,
+      ∀ i, w (data.meanings i) = data.forms i j)
+    (i : Fin m) :
+    semSupWord D (data.meanings i) js = (js.map fun j => data.forms i j).sum := by
+  unfold semSupWord
+  congr 1
+  refine List.map_congr_left fun j hj => ?_
+  obtain ⟨w, hwj⟩ := hw j hj
+  exact hD.semSup_eq_of_decodable hq hwj i
 
 end Processing.Lexical.Discriminative
