@@ -186,6 +186,51 @@ theorem compat_iff [DecidableEq α] {a b : Flat α} :
     · rw [if_neg hxy]
       exact iff_of_false (by simp) (λ h => hxy (h x rfl y rfl))
 
+/-- Compatibility lifts through an `Option`-projection. If two raw values
+    `a b : Option U` are equal-or-absent — the shape of one clause of a
+    feature-bundle compatibility check, `(a.isNone || b.isNone || a == b)`
+    — then their images under any ingest `ι : U → Option F` are `Compat`
+    in `Flat F`. The order-theoretic core shared by the per-feature
+    agreement-faithfulness theorems (`HasX.compatible_hasX`); the
+    feature-specific part is only selecting `a`/`b`'s clause out of the
+    full bundle check. -/
+theorem compat_of_clause {U F : Type*} [DecidableEq U] [DecidableEq F]
+    (ι : U → Option F) {a b : Option U}
+    (h : (a.isNone || b.isNone || a == b) = true) :
+    Compat (α := Flat F) (a.bind ι) (b.bind ι) := by
+  rw [compat_iff]
+  intro x hx y hy
+  cases a with
+  | none => exact absurd hx.symm (Option.some_ne_none x)
+  | some u =>
+    cases b with
+    | none => exact absurd hy.symm (Option.some_ne_none y)
+    | some v =>
+      simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
+        Option.some.injEq] at h
+      subst h
+      exact Option.some.inj (hx.symm.trans hy)
+
+/-- `compat_of_clause` for a total ingest `g : U → F` (lifted via
+    `Option.map`). The `Compat` conclusion is stated in `.map` form so it
+    unifies with `.map`-shaped carrier projections. -/
+theorem compat_of_clause_map {U F : Type*} [DecidableEq U] [DecidableEq F]
+    (g : U → F) {a b : Option U}
+    (h : (a.isNone || b.isNone || a == b) = true) :
+    Compat (α := Flat F) (a.map g) (b.map g) := by
+  rw [compat_iff]
+  intro x hx y hy
+  cases a with
+  | none => exact absurd hx.symm (Option.some_ne_none x)
+  | some u =>
+    cases b with
+    | none => exact absurd hy.symm (Option.some_ne_none y)
+    | some v =>
+      simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
+        Option.some.injEq] at h
+      subst h
+      exact Option.some.inj (hx.symm.trans hy)
+
 /-! ### The flat lattice is non-distributive
 
 A flat slot with three distinct atoms, lifted with a top, is the

@@ -36,12 +36,8 @@ variable {α β : Type*} [HasPerson α] [HasPerson β]
 /-- Two carriers are person-compatible: the slot values are compatible in
     the flat information order (`Compat`) — if both mark person, the values
     agree; unmarked carriers are wildcards. -/
-def Compatible (a : α) (b : β) : Prop :=
+abbrev Compatible (a : α) (b : β) : Prop :=
   Compat (α := Flat Person) (personOf a) (personOf b)
-
-instance (a : α) (b : β) : Decidable (Compatible a b) := by
-  unfold Compatible
-  infer_instance
 
 theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
     Compatible b a :=
@@ -49,9 +45,8 @@ theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
 
 theorem compatible_of_none {a : α} (h : personOf a = none) (b : β) :
     Compatible a b := by
-  unfold Compatible
-  rw [h]
-  exact bot_compat _
+  show Compat (α := Flat Person) (personOf a) (personOf b)
+  rw [h]; exact bot_compat _
 
 end HasPerson
 
@@ -61,27 +56,8 @@ end HasPerson
     `UD.MorphFeatures.compatible_hasNumber`. -/
 theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
-    HasPerson.Compatible f1 f2 := by
-  unfold HasPerson.Compatible
-  rw [Flat.compat_iff]
-  intro pa ha pb hb
-  have hp : (f1.person.isNone || f2.person.isNone || f1.person == f2.person)
-      = true := by
+    HasPerson.Compatible f1 f2 :=
+  Flat.compat_of_clause_map Person.fromUD <| by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto
-  simp only [HasPerson.personOf] at ha hb
-  rcases h1 : f1.person with _ | u1
-  · rw [h1] at ha
-    exact absurd ha (by simp)
-  · rcases h2 : f2.person with _ | u2
-    · rw [h2] at hb
-      exact absurd hb (by simp)
-    · rw [h1] at ha
-      rw [h2] at hb
-      rw [h1, h2] at hp
-      simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
-        Option.some.injEq] at hp
-      simp only [Option.map_some] at ha hb
-      subst hp
-      exact (Option.some.inj ha).symm.trans (Option.some.inj hb)
