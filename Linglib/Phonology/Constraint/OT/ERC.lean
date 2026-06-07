@@ -38,7 +38,8 @@ the winner α) is ranked above all L-constraints (preferring the loser β).
 ERC sets and antimatroids
 -/
 
-namespace Core.Optimization.OT
+namespace Phonology.Constraint.OT
+
 
 open Core.Optimization.Evaluation
 
@@ -432,4 +433,4 @@ theorem simpleERC_consistent {n : Nat} {i j : Fin n} (hij : i ≠ j) :
     rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact hij_lt
 
-end Core.Optimization.OT
+end Phonology.Constraint.OT

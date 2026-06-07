@@ -3,10 +3,10 @@ import Linglib.Core.Agent.GumbelLuce
 import Linglib.Core.Agent.Thurstone
 
 /-!
-# Noise Kernels — Random Utility Models for Constraint Decoders
+# Noise kernels — random utility models
 [mcfadden-1974] [thurstone-1927]
 
-A `NoiseKernel` names the noise distribution of a Random Utility Model
+A `NoiseKernel` names the noise distribution of a Random Utility Model (RUM)
 (RUM), in McFadden's sense ([mcfadden-1974]): each candidate's
 deterministic score `s(c)` is perturbed by an independent noise variable
 `ε(c)`, and the chosen candidate is the argmax of `s(c) + ε(c)`.

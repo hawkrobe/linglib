@@ -7,20 +7,12 @@ import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Finset.Max
 
 /-!
-# Constraint Profiles — General Codomain
+# Score profiles and their lexicographic order
 
-A `Profile β n` is a vector of `n` β-valued evaluations: the result of
-applying `n` constraints to one candidate. The codomain `β` is left
-generic so that the same algebraic apparatus serves several constraint
-frameworks:
-
-- `β = Nat` — standard OT violation counts
-- `β = ℚ` or `ℝ` — weighted Harmonic Grammar / MaxEnt scores
-- `β = Bool` — Stochastic OT satisfaction patterns
-
-`LexProfile β n` wraps `Fin n → β` in `Lex` so that `Pi.Lex`'s
-lexicographic order kicks in. The familiar OT type `ViolationProfile n`
-from `Core.Optimization.Evaluation` is exactly `LexProfile Nat n`.
+A `Profile β n` is a length-`n` vector of `β`-valued evaluations
+(`Fin n → β`), and `LexProfile β n` is `Lex (Fin n → β)` carrying
+`Pi.Lex`'s lexicographic order. Choices of `β` cover the standard
+numerical codomains: `Nat`, `ℚ`, `ℝ`, `Bool`.
 
 ## Why a separate file?
 
@@ -30,10 +22,6 @@ diamonds with `Pi.instMonoid`. This file lifts the algebraic structure
 back through `Lex` *only* under the lexicographic order, where the
 compatibility is sound, and in maximum generality so that downstream
 modules can specialize to whatever value type they need.
-
-The same proofs as `Core.Optimization.Evaluation` (for `Nat`), but
-generalized — `add_lt_add_left`, `add_left_cancel`, `lt_of_add_lt_add_left`
-in place of their `Nat.*` specializations.
 -/
 
 namespace Core.Optimization
@@ -42,9 +30,8 @@ namespace Core.Optimization
 -- § 1: Profile and LexProfile
 -- ============================================================================
 
-/-- A pure constraint profile: `n` evaluations, each yielding a value in `β`.
-    Carries no order — aggregators (lex, weighted-sum, ...) decide how
-    to combine. -/
+/-- A length-`n` vector of `β`-valued entries. Carries no order
+    — downstream aggregators decide. -/
 abbrev Profile (β : Type*) (n : Nat) : Type _ := Fin n → β
 
 /-- A lexicographically ordered profile: `Pi.Lex` of `Fin n → β`.
@@ -52,10 +39,7 @@ abbrev Profile (β : Type*) (n : Nat) : Type _ := Fin n → β
     With `[LinearOrder β]`, `LexProfile β n` is itself a `LinearOrder`
     (inherited from `Pi.Lex`). With `[AddCommMonoid β]` and the right
     monotonicity hypotheses on `β`, it carries `IsOrderedAddMonoid` and
-    `IsOrderedCancelAddMonoid` (proved below).
-
-    `ViolationProfile n` from `Core.Optimization.Evaluation` is the
-    `β = Nat` specialization. -/
+    `IsOrderedCancelAddMonoid` (proved below). -/
 abbrev LexProfile (β : Type*) (n : Nat) : Type _ := Lex (Fin n → β)
 
 namespace LexProfile

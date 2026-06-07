@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.PartiallyOrderedConstraints
+import Linglib.Phonology.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Tactic.NormNum
 
@@ -103,7 +103,7 @@ consumers.
 
 namespace Anttila1997
 
-open Core.Optimization Core.Optimization.PartialOrderConstraints
+open Core.Optimization Phonology.Constraint.PartialOrderConstraints
 
 /-! ## § 0: Variant type — strong vs weak genitive plural -/
 

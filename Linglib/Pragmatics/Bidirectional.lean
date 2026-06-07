@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Optimization.Superoptimal
+import Linglib.Phonology.Constraint.Superoptimal
 
 /-!
 # Bidirectional Optimality Theory
@@ -51,7 +51,7 @@ version incorrectly predicts that marked forms are blocked in ALL
 their interpretations.
 
 The structural meta-theorem `strong ⊂ weak` ([blutner-2000] p. 12)
-lives in `Core/Optimization/Evaluation/Superoptimal.lean` as
+lives in `Phonology/Constraint/Superoptimal.lean` as
 `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, coinductive
 proof against `OrderHom.gfp`) and its Finset corollary
 `strongOptimal_subset_superoptimal`.
@@ -263,7 +263,7 @@ theorem total_blocking_weak_vs_strong :
 
 /-! The structural meta-theorem `strongOptimal pairs profile ⊆ superoptimal
     pairs profile` ([blutner-2000] p. 12) is proved coinductively in the
-    substrate at `Core/Optimization/Evaluation/Superoptimal.lean` via
+    substrate at `Phonology/Constraint/Superoptimal.lean` via
     `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, against mathlib's
     `OrderHom.gfp`) and `strongOptimal_subset_superoptimal` (Finset
     corollary using the bridge theorem). The applications below are one-line

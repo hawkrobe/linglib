@@ -1,6 +1,6 @@
-import Linglib.Core.Optimization.OT.Basic
+import Linglib.Phonology.Constraint.OT.Basic
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Optimization.Superoptimal
+import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Features.Prominence
 import Linglib.Studies.Aissen2003
 
@@ -78,7 +78,7 @@ namespace DeHoopMalchukov2008
 
 open Core.Optimization.Evaluation (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Core.Optimization.OT
+open Phonology.Constraint.OT
 open Features.Prominence
 open Aissen2003
 open Aissen2003

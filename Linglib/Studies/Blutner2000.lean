@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Optimization.Superoptimal
+import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Pragmatics.Bidirectional
 import Linglib.Semantics.Presupposition.Accommodation
 
