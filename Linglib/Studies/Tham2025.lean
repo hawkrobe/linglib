@@ -450,7 +450,7 @@ theorem all_disturbance_compatible_with_much :
 /-! Verify that the Fragment adjective entries classify disturbance
     adjectives with the correct `Boundedness` value. These are
     consumption sites for the substrate, not bridges — `closedAdj_licensed`
-    and `LicensingPipeline.isLicensed` are foundational and are called
+    and `LicensingPipeline.IsLicensed` are foundational and are called
     inline. -/
 
 theorem cracked_is_closed : Adjectival.cracked.scaleType = .closed := rfl
@@ -488,10 +488,10 @@ theorem scratch_adj_verb_scale_agree :
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
 theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
-    (adjMeasure μ Adjectival.cracked).licensed = true :=
+    (adjMeasure μ Adjectival.cracked).IsLicensed :=
   closedAdj_licensed μ Adjectival.cracked rfl
 theorem cracked_pipeline_licensed :
-    LicensingPipeline.isLicensed Adjectival.cracked.scaleType = true := rfl
+    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType := trivial
 
 /-! Interpretive Economy predicts a max-endpoint standard for
     disturbance adjectives (closed → maxEndpoint). This interacts
@@ -625,18 +625,18 @@ theorem crack_refutes_strict_hkl_matrix :
     modification. -/
 theorem cracked_licensing_converges_with_kennedy2007
     {max : Nat} {W : Type*} (μ : W → Semantics.Degree.Degree max) :
-    (adjMeasure μ Adjectival.cracked).licensed =
-    (adjMeasure μ Adjectival.full).licensed := by
-  rw [closedAdj_licensed μ Adjectival.cracked rfl,
-      closedAdj_licensed μ Adjectival.full rfl]
+    (adjMeasure μ Adjectival.cracked).IsLicensed ↔
+    (adjMeasure μ Adjectival.full).IsLicensed :=
+  iff_of_true (closedAdj_licensed μ Adjectival.cracked rfl)
+    (closedAdj_licensed μ Adjectival.full rfl)
 
 /-- All three disturbance adjectives converge with Kennedy 2007 at
     `Boundedness`. -/
 theorem all_disturbance_pipeline_licensed :
-    LicensingPipeline.isLicensed Adjectival.cracked.scaleType = true ∧
-    LicensingPipeline.isLicensed Adjectival.dented.scaleType = true ∧
-    LicensingPipeline.isLicensed Adjectival.scratched.scaleType = true :=
-  ⟨rfl, rfl, rfl⟩
+    LicensingPipeline.IsLicensed Adjectival.cracked.scaleType ∧
+    LicensingPipeline.IsLicensed Adjectival.dented.scaleType ∧
+    LicensingPipeline.IsLicensed Adjectival.scratched.scaleType :=
+  ⟨trivial, trivial, trivial⟩
 
 -- ════════════════════════════════════════════════════
 -- § 12. Cross-paper engagement: Sassoon 2013 binding insufficiency

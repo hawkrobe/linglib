@@ -78,23 +78,23 @@ theorem bent_scaleType_consistency :
 
 /-- "tall" (open scale): pipeline blocked = "completely" doesn't work with RGA. -/
 theorem tall_completely_agrees :
-    LicensingPipeline.isLicensed tall.scaleType =
-    completelyModifier.worksWithRGA := rfl
+    LicensingPipeline.IsLicensed tall.scaleType ↔
+    completelyModifier.worksWithRGA = true := by decide
 
 /-- "full" (closed scale): pipeline licensed = "completely" works with AGA-max. -/
 theorem full_completely_agrees :
-    LicensingPipeline.isLicensed full.scaleType =
-    completelyModifier.worksWithAGAMax := rfl
+    LicensingPipeline.IsLicensed full.scaleType ↔
+    completelyModifier.worksWithAGAMax = true := by decide
 
 /-- "tall": typology's naturalWithCompletely matches pipeline prediction. -/
 theorem tall_completely_from_pipeline :
-    tallTypology.naturalWithCompletely =
-    LicensingPipeline.isLicensed tall.scaleType := rfl
+    tallTypology.naturalWithCompletely = true ↔
+    LicensingPipeline.IsLicensed tall.scaleType := by decide
 
 /-- "full": typology's naturalWithCompletely matches pipeline prediction. -/
 theorem full_completely_from_pipeline :
-    fullTypology.naturalWithCompletely =
-    LicensingPipeline.isLicensed full.scaleType := rfl
+    fullTypology.naturalWithCompletely = true ↔
+    LicensingPipeline.IsLicensed full.scaleType := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Threshold Shift ↔ Open Scale

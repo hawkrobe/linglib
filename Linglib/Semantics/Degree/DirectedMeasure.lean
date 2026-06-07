@@ -14,7 +14,7 @@ semantics.
 ## Main declarations
 
 - `DirectedMeasure`: the bundled measure structure.
-- `DirectedMeasure.licensed`: endpoint-based licensing via `Boundedness.isLicensed`.
+- `DirectedMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
 - `DirectedMeasure.numeral`, `DirectedMeasure.adjective`: Kennedy-style
   numeral and gradable-adjective domains.
 
@@ -67,7 +67,10 @@ variable {D : Type*} [LinearOrder D] {E : Type*}
     See `Boundedness.isLicensed` for the caveat — this checks
     "any endpoint exists", not [kennedy-2007]'s full
     modifier-class licensing matrix. -/
-def licensed (dm : DirectedMeasure D E) : Bool := dm.boundedness.isLicensed
+def IsLicensed (dm : DirectedMeasure D E) : Prop := dm.boundedness.IsLicensed
+
+instance (dm : DirectedMeasure D E) : Decidable dm.IsLicensed :=
+  inferInstanceAs (Decidable dm.boundedness.IsLicensed)
 
 end DirectedMeasure
 
@@ -100,15 +103,15 @@ def adjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
 
 /-- Numeral domains are always licensed (closed scale). -/
 theorem numeral_licensed (μ : W → α) :
-    (numeral μ).licensed = true := rfl
+    (numeral μ).IsLicensed := trivial
 
 /-- Class B adjectives (closed scale) are licensed. -/
 theorem classB_licensed (μ : W → α) :
-    (adjective μ .closed).licensed = true := rfl
+    (adjective μ .closed).IsLicensed := trivial
 
 /-- Class A adjectives (open scale) are blocked. -/
 theorem classA_blocked (μ : W → α) :
-    (adjective μ .open_).licensed = false := rfl
+    ¬ (adjective μ .open_).IsLicensed := id
 
 end DirectedMeasure
 

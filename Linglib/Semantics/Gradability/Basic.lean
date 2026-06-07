@@ -284,15 +284,15 @@ def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
 
 theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .closed) :
-    (adjMeasure μ entry).licensed = true := by
+    (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.licensed, Boundedness.isLicensed, h]
+        DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .open_) :
-    (adjMeasure μ entry).licensed = false := by
+    ¬ (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, DirectedMeasure.adjective,
-        DirectedMeasure.licensed, Boundedness.isLicensed, h]
+        DirectedMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
 theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
     ∃ x : Degree max, x ≠ ⊤ := by
