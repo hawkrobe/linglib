@@ -36,7 +36,7 @@ the sub-square setup from Z&H 2017).
 
 namespace Magri2025
 
-open Core.Constraint Core.Constraint.OT
+open Core.Optimization Core.Optimization.OT
 open ZurawHayes2017
 
 /-! ## § 1: Constraint Independence

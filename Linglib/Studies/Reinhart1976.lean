@@ -201,11 +201,11 @@ command relation the rest of the library attributes to [reinhart-1976]
 def johnSawMary : Tree Unit String :=
   bin (leaf "John") (bin (leaf "saw") (leaf "Mary"))
 
-/-- The yield is the surface string, left to right. -/
+/-- The yield is the surface string, left to right. With the
+per-instance simp lemmas (`branching_yield_terminal`/`_node`/...),
+the generic `Branching.yield` reduces on concrete `Tree` data by `simp`. -/
 theorem johnSawMary_yield : yield johnSawMary = ["John", "saw", "Mary"] := by
-  simp only [johnSawMary, Branching.yield_def, Branching.children,
-    HasContent.content?, Option.toList, List.flatMap_cons, List.flatMap_nil,
-    List.nil_append, List.append_nil, List.cons_append, List.singleton_append]
+  simp [johnSawMary]
 
 /-- The subject `⟨[0]⟩` k-commands the object `⟨[1,1]⟩`: the only
     branching node dominating the subject is the root, which dominates

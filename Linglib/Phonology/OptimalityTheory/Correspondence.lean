@@ -6,7 +6,7 @@ import Mathlib.Combinatorics.Quiver.Basic
 import Mathlib.Order.Hom.Basic
 import Mathlib.Order.Hom.Set
 import Mathlib.Data.Fintype.Card
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Optimization.OT.Basic
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -51,7 +51,7 @@ model-theoretic treatment of [payne-vu-heinz-2017] and
 
 namespace Phonology.Correspondence
 
-open Core.Constraint.OT
+open Core.Optimization.OT
 open Finset
 
 /-! ### Binary and ternary roles -/
@@ -524,7 +524,7 @@ theorem length_eq_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
 /-! ### NamedConstraint bridges -/
 
 /-- Bridge a `Corr`-violation function into a `NamedConstraint` — the single
-    plumbing point into `Core.Constraint.OT`'s evaluation machinery. -/
+    plumbing point into `Core.Optimization.OT`'s evaluation machinery. -/
 def toConstraint (family : ConstraintFamily) (label : String)
     (eval : Corr Role α → ℕ) : NamedConstraint (Corr Role α) where
   name := label

@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Constraint.Pareto
+import Linglib.Core.Optimization.Pareto
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Satisfaction
 import Linglib.Semantics.Numerals.Roundness
@@ -29,13 +29,13 @@ The empirical bridge to the k-ness model is `nsalViolations`: NSAL
 violations equal `maxRoundnessScore - roundnessScore(n)`, so rounder
 numbers incur fewer NSAL violations.
 
-A `ViolationProfile` is `Core.Constraint.Profile Nat 4` (i.e. `Fin 4 → Nat`),
+A `ViolationProfile` is `Core.Optimization.Profile Nat 4` (i.e. `Fin 4 → Nat`),
 matching the codebase's standard violation-profile abstraction. Profile
 indices fix the constraint order: 0 = INFO, 1 = Granularity, 2 = QSIMP,
 3 = NSAL.
 
 Two preorders on profiles are exposed, both as `Core.Order.PullbackPreorder`
-instances so they fit the schema established in `Core/Constraint/Pareto.lean`:
+instances so they fit the schema established in `Core/Optimization/Pareto.lean`:
 
 | view              | feature                          | feature-space order |
 |-------------------|----------------------------------|---------------------|
@@ -66,7 +66,7 @@ anchors.
 namespace Cummins2015
 
 open Semantics.Numerals.Roundness
-open Core.Constraint (Profile)
+open Core.Optimization (Profile)
 open Core.Order (PullbackPreorder SatisfactionOrdering)
 open Semantics.Numerals.Precision
 
@@ -152,8 +152,8 @@ theorem round_beats_nonround_nsal (n₁ n₂ : Nat)
 
 /-- A `ViolationProfile` is a `Profile Nat 4` — a 4-vector of violation
     counts indexed by `Fin 4`. Index order: 0 = INFO, 1 = Granularity,
-    2 = QSIMP, 3 = NSAL. Reusing `Core.Constraint.Profile` means the
-    abstractions in `Core/Constraint/Pareto.lean` (Pareto preorder,
+    2 = QSIMP, 3 = NSAL. Reusing `Core.Optimization.Profile` means the
+    abstractions in `Core/Optimization/Pareto.lean` (Pareto preorder,
     qualitative coarsening, `coarsen_via_monotone`) apply directly without
     an extra projection layer. -/
 abbrev ViolationProfile : Type := Profile Nat 4
@@ -185,21 +185,21 @@ def paretoPreorder : PullbackPreorder ViolationProfile ViolationProfile :=
     applies. -/
 def qualPreorder : PullbackPreorder ViolationProfile (Finset (Fin 4)) :=
   PullbackPreorder.ofProj
-    Core.Constraint.ConstraintSystem.violatedSetOf
+    Core.Optimization.ConstraintSystem.violatedSetOf
     (fun _ _ => inferInstance)
 
 /-- **Pointwise dominance ⇒ qualitative dominance.** A one-line corollary of
     `PullbackPreorder.coarsen_via_monotone` with the violated-index extractor
     as the connecting monotone map — identical in shape to
     `paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le` in
-    `Core/Constraint/Pareto.lean`. -/
+    `Core/Optimization/Pareto.lean`. -/
 theorem paretoPreorder_le_implies_qualPreorder_le
     {v v' : ViolationProfile} (h : paretoPreorder.le v v') :
     qualPreorder.le v v' :=
   PullbackPreorder.coarsen_via_monotone
     paretoPreorder qualPreorder
-    Core.Constraint.ConstraintSystem.violatedSetOf
-    (Core.Constraint.ConstraintSystem.violatedSetOf_monotone (fun _ => Nat.zero_le _))
+    Core.Optimization.ConstraintSystem.violatedSetOf
+    (Core.Optimization.ConstraintSystem.violatedSetOf_monotone (fun _ => Nat.zero_le _))
     (fun _ => rfl) h
 
 -- ============================================================================

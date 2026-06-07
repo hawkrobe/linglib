@@ -41,7 +41,7 @@ open Phonology.Constraints
 open Core Core.Computability.Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `Phonology.Constraints`
--- and `Core.Constraint.eval`, which are monomorphic in universe 0. See
+-- and `Core.Optimization.eval`, which are monomorphic in universe 0. See
 -- the parallel comment in `OCP.lean`.
 variable {α : Type}
 

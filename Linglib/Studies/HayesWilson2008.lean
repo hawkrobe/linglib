@@ -1,6 +1,6 @@
-import Linglib.Core.Constraint.Dequantization.OTLimit
-import Linglib.Core.Constraint.System
-import Linglib.Core.Constraint.Weighted
+import Linglib.Core.Optimization.Dequantization.OTLimit
+import Linglib.Core.Optimization.System
+import Linglib.Core.Optimization.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Process.LocalRewrite
 import Linglib.Fragments.English.Phonology
@@ -38,8 +38,8 @@ the model assigns higher harmony (= higher MaxEnt probability via
 
 namespace HayesWilson2008
 
-open Phonology Core.Constraint Phonology.Constraints
-open Core Core.Constraint.OT Finset Real
+open Phonology Core.Optimization Phonology.Constraints
+open Core Core.Optimization.OT Finset Real
 
 -- ============================================================================
 -- § 1: English Onset Constraints (Table (4) subset)
@@ -101,7 +101,7 @@ def onsetGrammar : List (WeightedConstraint Onset) :=
   [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
 
 -- ============================================================================
--- § 2: Harmony Predictions (using harmonyScore from Core.Constraint.Weighted)
+-- § 2: Harmony Predictions (using harmonyScore from Core.Optimization.Weighted)
 -- ============================================================================
 
 open English.Phonology in
@@ -136,7 +136,7 @@ open English.Phonology
 /-- **MaxEnt probability ordering**: higher harmony ⟹ higher
     `exp(harmonyScore)` ⟹ higher MaxEnt probability.
 
-    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (Core.Constraint.Weighted). -/
+    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (Core.Optimization.Weighted). -/
 theorem maxent_prob_k_gt_ŋ :
     exp (harmonyScoreR onsetGrammar [ŋ]) <
     exp (harmonyScoreR onsetGrammar [k]) := by
@@ -160,7 +160,7 @@ end MaxEntProb
 -- ============================================================================
 
 /-! Phonological MaxEnt is one instance of the framework-agnostic
-`ConstraintSystem` abstraction in `Core.Constraint.System`. The same
+`ConstraintSystem` abstraction in `Core.Optimization.System`. The same
 `maxEntSystem` constructor that scores phonological onsets here also
 scores syntactic candidates in HG/MaxEnt syntax models, RSA utterances
 in soft-max pragmatic listeners, etc. The decoder (`softmaxDecoder 1`)
