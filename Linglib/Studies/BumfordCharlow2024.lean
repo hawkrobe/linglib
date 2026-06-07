@@ -11,51 +11,57 @@ import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
-# Effect-Driven Interpretation
-[bumford-charlow-2024]
+# [bumford-charlow-2024]: Effect-Driven Interpretation
 
-[bumford-charlow-2024] propose that diverse semantic phenomena — scope,
-binding, conventional implicatures, indeterminacy — are all instances of
-**algebraic effects** within the Functor → Applicative → Monad hierarchy.
-The grammar's composition rules are built from **meta-combinators** (F̄, F̃,
-A, J) that systematically lift basic modes of combination to work in the
-presence of effects.
+[bumford-charlow-2024] cast diverse semantic phenomena — scope, binding,
+conventional implicature, indeterminacy — as algebraic effects in the
+Functor → Applicative → Monad hierarchy, with **meta-combinators** lifting
+the basic modes of combination into the presence of effects. This study
+formalizes that framework over linglib's effect carriers:
 
-This file formalizes the core of their framework and bridges it to existing
-linglib infrastructure:
+| Effect | Type | linglib carrier |
+|--------|------|-----------------|
+| Scope | `(α → ρ) → ρ` | `Cont R A` (`Composition/Continuation`) |
+| CI / supplementation | `α × List P` | `Writer (List P) A` (`Composition/WriterMonad`) |
+| Input (binding) | `ι → α` | Reader (`Reference/Binding`) |
+| Output (antecedent) | `α × ι` | `Prod` |
+| Indeterminacy | `{α}` | `Set` |
 
-| Effect | Paper name | Type | linglib type |
-|--------|-----------|------|-------------|
-| Scope | C | `(α → ρ) → ρ` | `Cont R A` |
-| CI / supplementation | W | `α × List P` | `Writer (List P) A` |
-| Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
-| Output (antecedents) | W | `α × ι` | `Prod` |
-| Indeterminacy | S | `{α}` | `α → Prop` (mathlib's `Set`; details in `Studies/Charlow2020.lean`) |
+## Main declarations
 
-## Organization
+* `F̄`/`F̃` (Functor), `A` (Applicative), `J` (Monad), `counitApp` (the W⊣R
+  co-unit `C`) — modes of combination lifting application into effects.
+* The W⊣R adjunction `Φ`/`Ψ`/`adj_η`/`adj_ε`: binding is the co-unit.
+* `binding_C_agrees_with_hk` and the three-way unification: adjunction
+  binding ≡ Heim-Kratzer assignment binding ≡ the `W` combinator.
 
-- **§1** Typeclass instances (now supplied by mathlib's `WriterT` and
-  `Composition/Continuation.lean`)
-- **§2** Meta-combinators: F̄, F̃, A, J (the paper's core contribution)
-- **§3** Generalized Application and hierarchy theorems
-- **§4** The W ⊣ R adjunction for binding
-- **§5** Effect operations and handlers
-- **§6** Bridge theorems
-- **§7** General scope agreement (Cont ≡ GQ application)
-- **§8** Three-way binding unification (denotGJoin = W = adj_ε)
+## Crossover
 
-## Coverage
+[bumford-charlow-2024] §5.2: crossover is inherited from the
+*non-commutativity of the W⊣R adjunction*. `counitApp` fires the co-unit
+`ε` only when the W (antecedent) is the **left** daughter. With the
+pronoun's R on the left, scope may still invert — the antecedent outscopes
+the pronoun — yet binding never resolves: "anaphoric ships passing in the
+night." There is no recovery mechanism; the account is *categorical*.
 
-Of the 9 meta-combinators in Figure 10, this file formalizes 5:
-F̄ (Map Left), F̃ (Map Right), A (Structured App), J (Join), C (Co-unit).
+This diverges from [shan-barker-2006], whose left-to-right `Scope` rule
+admits a marked right-to-left `Z` variant that recovers weak crossover as a
+*gradient*, defeasible reading (their continuation-level mechanism: a binder
+must take effect at the pronoun's continuation level, so crossing fails to
+unify under `Down`). Formalizing the S&B continuation calculus and the
+non-coincidence theorem between the two accounts is deferred — there is no
+S&B substrate in linglib yet.
 
-Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
-⊿̄/⊿̃ (Eject Left/Right) require the Υ isomorphism from §5.3.2
-(Kleisli arrow repackaging), which is not yet formalized.
+## Implementation notes
+
+Scope-as-bind-order (`scope_ambiguity_is_bind_order` et al.) lives with the
+`Cont` monad in `Composition/Continuation`; this study consumes it.
+The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
 
-namespace Semantics.Composition.Effects
+namespace BumfordCharlow2024
 
+open Semantics.Composition
 open Semantics.Composition.Continuation
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
@@ -838,59 +844,9 @@ one particular syntax for specifying bind order. -/
 
 section GeneralScopeAgreement
 
-variable {E R : Type}
-
-/-- **Single scope reduction**: lowering a Cont-wrapped quantifier
-    with a pure scope predicate is plain GQ application.
-
-    `lower(Q >>= λx. pure(P x)) = Q(P)`
-
-    This is the general version of `scope_agrees_with_qr_everyStudentSleeps`
-    — it holds for ANY quantifier and ANY predicate, not just the toy model. -/
-theorem cont_scope_reduce (q : Cont R E) (scope : E → R) :
-    Cont.lower (Cont.bind q (fun x => Cont.pure (scope x))) = q scope := rfl
-
-/-- **Two-quantifier scope reduction**: nested Cont binds compute
-    nested GQ application. The bind nesting determines scope order.
-
-    `lower(Q₁ >>= λx. Q₂ >>= λy. pure(R x y)) = Q₁(λx. Q₂(λy. R x y))` -/
-theorem cont_scope_double (q₁ q₂ : Cont R E) (rel : E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
-    q₁ (fun x => q₂ (fun y => rel x y)) := rfl
-
-/-- **Scope ambiguity = bind order**. The two readings of "Q₁ R Q₂"
-    arise from nesting Q₁ outside Q₂ vs Q₂ outside Q₁.
-
-    Both reduce to GQ application in the corresponding order. -/
-theorem scope_ambiguity_is_bind_order (q₁ q₂ : Cont R E) (rel : E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
-    q₁ (fun x => q₂ (fun y => rel x y))
-    ∧
-    Cont.lower (Cont.bind q₂ (fun y =>
-      Cont.bind q₁ (fun x => Cont.pure (rel x y)))) =
-    q₂ (fun y => q₁ (fun x => rel x y)) :=
-  ⟨rfl, rfl⟩
-
-/-- **Three-quantifier scope**: the pattern extends to arbitrary depth. -/
-theorem cont_scope_triple (q₁ q₂ q₃ : Cont R E) (rel : E → E → E → R) :
-    Cont.lower (Cont.bind q₁ (fun x =>
-      Cont.bind q₂ (fun y =>
-        Cont.bind q₃ (fun z => Cont.pure (rel x y z))))) =
-    q₁ (fun x => q₂ (fun y => q₃ (fun z => rel x y z))) := rfl
-
-/-- **Non-scope-taking = ordinary FA**: when all meanings are wrapped
-    in `Cont.pure`, Cont composition reduces to function application.
-
-    `lower(pure(f) >>= λg. pure(x) >>= λy. pure(g y)) = f x`
-
-    This is the embedding of Reader (the non-scope-taking fragment)
-    into Cont: [charlow-2018]'s `ρ(f) ⊛ ρ(x) = ρ(f x)` is
-    exactly the Cont homomorphism law. -/
-theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
-    Cont.lower (Cont.bind (Cont.pure f) (fun g =>
-      Cont.bind (Cont.pure x) (fun y => Cont.pure (g y)))) = f x := rfl
+/-! The generic scope-as-bind-order facts (`scope_ambiguity_is_bind_order`
+et al.) now live with the `Cont` monad in `Composition/Continuation`; this
+study consumes them. What remains here is the bridge to QR trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
     between QR trees and Cont derivations.
@@ -1024,4 +980,4 @@ theorem indeterminacy_associativity {A B C : Type}
 
 end IndeterminacyBridge
 
-end Semantics.Composition.Effects
+end BumfordCharlow2024

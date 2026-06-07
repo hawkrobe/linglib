@@ -2318,7 +2318,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.WriterMonad
 
 
-import Linglib.Semantics.Composition.Effects
+import Linglib.Studies.BumfordCharlow2024
 
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion

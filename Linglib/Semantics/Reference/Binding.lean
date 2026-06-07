@@ -76,58 +76,6 @@ theorem binding_is_contraction {A : Type} (rel : A → A → Prop) (x : A) :
 end CategoricalPerspective
 
 
-section EvaluationOrder
-
-/-- Evaluation context tracks which binders are "active". -/
-structure EvalContext (Entity : Type) where
-  activeBinders : List Entity
-  position : Nat
-  deriving Repr
-
-/-- A pronoun can be bound only if its binder is active. -/
-def canBind {Entity : Type}
-    (ctx : EvalContext Entity) (binder : Entity) : Prop :=
-  binder ∈ ctx.activeBinders
-
-/-- Crossover: pronoun position < binder position → binding fails. -/
-def crossover (pronounPos binderPos : Nat) : Prop :=
-  pronounPos < binderPos
-
-
-end EvaluationOrder
-
-section VPEllipsis
-
-/-- Strict reading: pronoun resolves to original antecedent. -/
-def strictReading {Entity : Type}
-    (vp : Entity → Entity → Prop)
-    (antecedent : Entity)
-    (ellipsisSite : Entity)
-    : Prop :=
-  vp ellipsisSite antecedent
-
-/-- Sloppy reading: pronoun re-binds to new subject. -/
-def sloppyReading {Entity : Type}
-    (vp : Entity → Entity → Prop)
-    (ellipsisSite : Entity)
-    : Prop :=
-  W vp ellipsisSite
-
-/-- VPE ambiguity: both readings available. -/
-structure VPEAmbiguity (Entity : Type) where
-  vp : Entity → Entity → Prop
-  antecedentSubj : Entity
-  ellipsisSite : Entity
-
-def VPEAmbiguity.strictValue {Entity : Type} (a : VPEAmbiguity Entity) : Prop :=
-  strictReading a.vp a.antecedentSubj a.ellipsisSite
-
-def VPEAmbiguity.sloppyValue {Entity : Type} (a : VPEAmbiguity Entity) : Prop :=
-  sloppyReading a.vp a.ellipsisSite
-
-
-end VPEllipsis
-
 end Continuations
 
 -- ════════════════════════════════════════════════════════════════
