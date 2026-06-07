@@ -1,5 +1,5 @@
-import Linglib.Core.Constraint.PartiallyOrderedConstraints
-import Linglib.Core.Constraint.PermSubsetCombinatorics
+import Linglib.Core.Optimization.PartiallyOrderedConstraints
+import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -103,7 +103,7 @@ consumers.
 
 namespace Anttila1997
 
-open Core.Constraint Core.Constraint.PartialOrderConstraints
+open Core.Optimization Core.Optimization.PartialOrderConstraints
 
 /-! ## § 0: Variant type — strong vs weak genitive plural -/
 

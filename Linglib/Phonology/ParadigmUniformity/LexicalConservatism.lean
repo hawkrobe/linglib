@@ -55,7 +55,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
 
 namespace Phonology.ParadigmUniformity
 
-open Core.Constraint.OT (NamedConstraint ConstraintFamily)
+open Core.Optimization.OT (NamedConstraint ConstraintFamily)
 open Phonology.Correspondence (Corr)
 
 -- ============================================================================

@@ -47,7 +47,7 @@ subregular hierarchy.
 -/
 
 -- ============================================================================
--- § 1. (NamedConstraint zero-set API moved to Core/Constraint/OT/Basic.lean
+-- § 1. (NamedConstraint zero-set API moved to Core/Optimization/OT/Basic.lean
 --       in PR-7d to make it visible to non-phonology consumers.)
 -- ============================================================================
 
@@ -55,7 +55,7 @@ namespace Phonology.Subregular.OTBound
 
 open Phonology.Constraints
 open Core Core.Computability.Subregular
-open Core.Constraint.OT (NamedConstraint mkMarkGrad)
+open Core.Optimization.OT (NamedConstraint mkMarkGrad)
 
 -- ============================================================================
 -- § 2. Existing bridges, restated in zero-set form

@@ -331,7 +331,7 @@ theorem pronoun_at_most_as_heavy :
 -- § 10. Cross-Study Bridge: [arnold-wasow-losongco-ginstrom-2000]
 -- ════════════════════════════════════════════════════
 
-open ArnoldEtAl2000 Core.Constraint
+open ArnoldEtAl2000 Core.Optimization
 
 /-- The goal argument receives a MORE REDUCED referential form than the
     source argument. This derived contrast — not the individual predictions —

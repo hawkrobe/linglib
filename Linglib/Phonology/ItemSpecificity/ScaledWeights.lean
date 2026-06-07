@@ -1,5 +1,5 @@
 import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Optimization.OT.Basic
 
 /-!
 # Frequency-Scaled Weights
@@ -40,7 +40,7 @@ remains a viable account.
 namespace Phonology.ItemSpecificity.Scaled
 
 open Phonology.ItemSpecificity
-open Core.Constraint.OT (NamedConstraint ConstraintFamily)
+open Core.Optimization.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
 -- § 1: Scaled weight

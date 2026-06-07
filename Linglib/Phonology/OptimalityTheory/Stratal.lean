@@ -1,7 +1,7 @@
 import Mathlib.Order.Nat
 import Mathlib.Data.List.Dedup
 import Mathlib.Logic.Relation
-import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Optimization.OT.Basic
 import Linglib.Core.Relation.ReflTransGen
 
 /-!
@@ -39,7 +39,7 @@ otherwise constraint-based framework. Linglib's siblings:
   ordering derivation via local rewrite rules; the modern subregular
   characterization grounds these as Input Strictly Local functions
   ([chandlee-heinz-2018]).
-* `Core/Constraint/OT/HarmonicSerialism.lean` — gradual constraint
+* `Core/Optimization/OT/HarmonicSerialism.lean` — gradual constraint
   optimization, no strata.
 * `Core/Computability/Subregular/Function/` — function-level subregular
   hierarchy (ISL ⊊ OSL ⊊ Subsequential ⊊ Weakly Deterministic) that
@@ -49,7 +49,7 @@ otherwise constraint-based framework. Linglib's siblings:
 
 ## Connection to Linglib
 
-Each individual stratum is evaluated using `Core.Constraint.OT.mkTableau` and
+Each individual stratum is evaluated using `Core.Optimization.OT.mkTableau` and
 `Tableau.optimal`. This module adds the stratal architecture:
 strata ordering, cross-stratal chaining, and reranking specification.
 
@@ -61,8 +61,8 @@ underlying form.
 
 namespace Phonology.Stratal
 
-open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau)
-open Core.Constraint.Evaluation
+open Core.Optimization.OT (NamedConstraint ConstraintFamily mkTableau)
+open Core.Optimization.Evaluation
 
 -- ============================================================================
 -- § 1: Strata
