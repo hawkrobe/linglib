@@ -1,5 +1,4 @@
 import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
 import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
@@ -140,9 +139,6 @@ def allLocalCases : List LocalCase :=
   , localCaseMatrix .source .external
   , localCaseMatrix .goal   .internal
   , localCaseMatrix .goal   .external ]
-
-/-- The matrix has exactly 6 cells. -/
-theorem localCases_count : allLocalCases.length = 6 := by native_decide
 
 /-- Case collapses each direction row: both internal and external
     static cases map to.loc. -/

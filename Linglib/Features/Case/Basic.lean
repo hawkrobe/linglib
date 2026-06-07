@@ -19,10 +19,10 @@ theoretical machinery — Blake's hierarchy (here), Caha containment
 corpora annotate — reachable by `toUD`/`fromUD`. The two inventories
 currently coincide cell-for-cell, so both round-trips hold; the
 analytical inventory is where refinements that UD conflates would land
-(e.g. Latin-type general ablative vs. the Uralic proximal-source cell
-both realize as `Abl`), breaking only `fromUD_toUD` — exactly as
-`Person.fromUD_toUD` degrades to `coarsen` under UD's clusivity
-conflation.
+(e.g. the Latin-type syncretic general ablative and the Finnish
+exterior-source ablative both realize as `Abl`), breaking only
+`fromUD_toUD` — exactly as `Person.fromUD_toUD` degrades to `coarsen`
+under UD's clusivity conflation.
 
 This mirrors the `Person`/`Number`/`Gender` API
 (`Features/{Person,Number,Gender}/Basic.lean`): canonical analytical
@@ -190,14 +190,16 @@ The fine-grained spatial cases all sit at the peripheral spatial tier
 (rank 1) since Blake's hierarchy collapses them into a single locative/
 spatial group. -/
 
-/-- Position on Blake's case hierarchy ([blake-1994], §5.8, ex. 68).
+/-- Position on Blake's case hierarchy ([blake-1994]).
 
     Higher rank = more likely to exist in a language's case inventory.
-
-    Ranks: 6 = core (NOM/ACC/ERG/ABS), 5 = GEN, 4 = DAT, 3 = LOC,
-    2 = ABL/INST, 1 = COM/ALL/PERL/BEN + fine-grained spatial cases
-    (ADE/INE/ILL/ELA/SUB/SUP/DEL — Finnish/Hungarian), 0 = peripheral
-    non-spatial (VOC/PART/CAUS/ESS/TRANSL/ABESS/TER/TEM).
+    Blake's hierarchy orders NOM/ACC/ERG/ABS > GEN > DAT > LOC >
+    ABL/INST and lumps everything below into a single undifferentiated
+    "others" tier; the further split of that tier into rank 1
+    (COM/ALL/PERL/BEN + fine-grained spatial cases — Finnish/Hungarian
+    ADE/INE/ILL/ELA/SUB/SUP/DEL) vs rank 0 (peripheral non-spatial:
+    VOC/PART/CAUS/ESS/TRANSL/ABESS/TER/TEM) is this formalization's
+    extrapolation, not Blake's.
 
     Codomain is `Fin 7` — the boundedness is encoded in the type, not as
     a separate `*_bounded` theorem. -/
@@ -214,7 +216,7 @@ def hierarchyRank : Case → Fin 7
 
 /-- An inventory is **contiguous** on Blake's hierarchy: every rank
     between two realized ranks is itself realized. Formalizes Blake's
-    implicational tendency ([blake-1994], §5.8), in a form `decide` can
+    implicational tendency ([blake-1994]), in a form `decide` can
     mechanically check; `isValidInventory_iff_ordConnected` is the
     order-theoretic content. -/
 def IsValidInventory (inv : Finset Case) : Prop :=
