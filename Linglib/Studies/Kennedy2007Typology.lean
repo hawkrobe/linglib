@@ -18,7 +18,7 @@ entry, we verify:
 
 1. **Form match**: `tallTypology.adjective = tall.form`
 2. **Scale-type consistency**: `tallTypology.scaleType = tall.scaleType`
-3. **Licensing agreement**: `LicensingPipeline.isLicensed tall.scaleType`
+3. **Licensing agreement**: `LicensingPipeline.IsLicensed tall.scaleType`
    matches the degree modifier compatibility from Data.lean
 
 -/
@@ -50,7 +50,7 @@ theorem wet_form_match : wetTypology.adjective = wet.form := rfl
     from the prior Bool-pair encoding in 0.230.437), the consistency
     theorems can now state full `Boundedness` equality between the
     typology data and the Fragment annotation, rather than just
-    projecting both onto `.hasMax`. -/
+    projecting both onto `.HasMax`. -/
 
 /-- "tall" (open): Data scaleType matches Fragment scaleType. -/
 theorem tall_scaleType_consistency :

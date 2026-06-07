@@ -431,7 +431,7 @@ adjective fragment. -/
 
 /-- An adjective licenses EN in its comparative iff its scale has at
     least one open endpoint — equivalently, iff it is NOT bidirectionally
-    bounded. Derived structurally from `Boundedness.hasMin/hasMax` rather
+    bounded. Derived structurally from `Boundedness.HasMin`/`HasMax` rather
     than by case-split, so the prediction follows from the scale-type
     classification rather than being stipulated per scale type.
 
