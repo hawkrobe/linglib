@@ -114,4 +114,18 @@ theorem source_contains_goal :
     one of the four possible patterns (Type 3). -/
 theorem georgian_loc_goal_possible : possible [0, 0, 1, 2] = true := by decide
 
+/-! ### The *A&¬A constraint, grounded in the denotation (Ch. 5)
+
+The Goal=Source exclusion (`goalSourceMerged`) is not a stipulation: it
+follows from the directional *interpretation*. Source denotes the
+**reversal** of Goal (`PathDir.source_denote_eq_goal_reverse`, §5.4), so
+Goal and Source have distinct, in fact opposite, denotations — a single
+marker for both would be semantically contradictory. -/
+
+/-- Goal and Source have distinct denotations (Source reverses Goal), so a
+    Goal=Source marker would be contradictory — the semantic ground of the
+    *A&¬A constraint that excludes `goalSourceMerged` patterns. -/
+theorem goalSource_distinct_denotation :
+    Case.PathDir.goal.denote ≠ Case.PathDir.source.denote := by decide
+
 end Pantcheva2011
