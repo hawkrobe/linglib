@@ -2876,3 +2876,4 @@ import Linglib.Fragments.Tariana.Evidentiality
 import Linglib.Fragments.WestGreenlandic.Evidentiality
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Finnish.Evidentiality
+import Linglib.Studies.Zimmermann2026

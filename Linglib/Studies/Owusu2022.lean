@@ -4,123 +4,115 @@ import Linglib.Semantics.Quantification.ChoiceFunction
 /-!
 # [owusu-2022]: Cross-Categorial Definiteness/Familiarity
 
-Selected formalization from Augustina Owusu's doctoral dissertation
-(Rutgers, 2022), focused here on the indefinite *bí* in Akan (Kwa,
-Niger-Congo). The dissertation's analysis of the definite *nó* and
-the clausal/cross-categorial uses is left for future Studies files,
-where it will sit alongside the rival analyses in [bombi-2018],
-[schwarz-2013], and [arkoh-matthewson-2013].
+[owusu-2022] Ch 3 analyses the Akan (Kwa, Niger-Congo) indefinite *bí* as
+an unambiguous choice function (after [kratzer-1998-pseudoscope]) whose
+situation pronoun ties the CF and the NP to a single index — entry (67):
+⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s)). The substrate type is
+`SkolemCF S E := S → CF E` (`ChoiceFunction.lean`). The *nó* chapters and
+the rival analyses in [bombi-2018], [schwarz-2013],
+[arkoh-matthewson-2013] are left for future Studies files.
 
 ## Main declarations
 
-* `Akan.Determiners.Indefinite.bi_wide_scope_under_negation`
-  — Owusu's prediction that *bí* under negation takes wide scope,
-  derived from the substrate's `cf_wide_scope_under_negation` applied
-  at a fixed situation of a `SkolemCF`.
-* `Owusu2022.Nipa` — a 2-person Akan-flavored domain (Kofi, Ama).
-* `Owusu2022.preferAma` — a `SkolemCF` witness that selects Ama
-  whenever the restrictor allows it.
-* `Owusu2022.bi_wide_scope_witnessed` — the wide-scope reading of
-  *Nipa bí an-ba* 'a certain person didn't come' is true in a model
-  where Ama is the non-comer.
+* `Owusu2022.skolemDenot` — denotation table for the Fragment's
+  `Akan.Determiners.Indefinite` contrast: `.bi` is a skolemized CF
+  applied at the situation of its argument; `.bare` is not CF-analyzed
+  here.
+* `Owusu2022.bi_wide_scope_specific` — the ∃ > ¬ reading of the `.bi`
+  denotation is specific (its witness is the CF's choice), derived from
+  the substrate's `cf_wide_scope_specific`.
+* `Owusu2022.Onipa`, `Owusu2022.preferAma` — a two-person model of
+  §3.2.5 ex. (21) *Onipa bí a-n-to dwom* 'a certain person didn't sing'.
+* `Owusu2022.bi_wide_scope_witnessed`, `Owusu2022.someone_sang` — on
+  that model the ∃ > ¬ reading is true while the ¬ > ∃ reading is false,
+  the configuration where the two readings diverge.
 
 ## Implementation notes
 
-Per [owusu-2022] Ch 3, *bí* is "an unambiguous choice function
-with an implicit skolemworld/situation variable" (Abstract p. iii),
-"always skolemized to the situation of its argument". The substrate
-type is `SkolemCF S E := S → CF E` (`ChoiceFunction.lean`); a
-*bí*-DP's denotation at evaluation situation s₀ is `f.apply s₀ N`
-for some correct skolem CF `f` and NP-property `N`. The wide-scope-
-under-negation prediction (Owusu §3.2.2; cf. [zimmermann-2026]
-§3.3 ex. 15) follows because negation is non-intensional and so
-cannot shift the situation argument; the skolem CF's output is fixed
-before negation applies. The narrow-scope readings within islands
-and opaque readings within intensional verbs that [owusu-2022]
-also documents (Abstract p. iii) require local situation-binding
-machinery beyond the present scope.
-
-## References
-
-* [owusu-2022] Ch 3 — the *bí* choice-function analysis.
-* [zimmermann-2026] §3.3 — the Hausa *wani* / Akan *bí* contrast.
+Wide scope under negation (data §3.2.5 exx. (21)–(22); analysis §3.3):
+the CF variable is contextually given (speaker-anchored), and negation
+binds no situation variable, so the CF's referent is fixed before
+negation applies and ¬ > ∃ is underivable. The general lemma states what
+the ∃ > ¬ reading entails; the two-person model witnesses it on a model
+falsifying ¬ > ∃ — the case where the readings come apart. The
+narrow-scope readings in conditional antecedents (situation pronoun
+bound locally) and the opaque readings under intensional verbs (a skolem
+*world* index, §3.3.3, following Mirrazi's world-skolemized CFs — a 2019
+ms., published as [mirrazi-2024]) need binding machinery beyond the
+fixed-situation fragment formalized here.
 
 ## Todo
 
-* Owusu's *nó* analysis (familiarity + non-uniqueness presuppositions,
-  Ch 2) — alongside [bombi-2018], [schwarz-2013],
+* The *nó* analysis (familiarity + non-uniqueness presuppositions,
+  Ch 2), alongside [bombi-2018], [schwarz-2013],
   [arkoh-matthewson-2013].
-* The clausal-determiner *nó* (Ch 4): definite propositions, NegP
+* The clausal determiner *nó* (Ch 4): definite propositions, NegP
   attachment, CPS/CG dual update.
-* Narrow-scope readings of *bí* within islands and opaque readings
-  within intensional verbs (Abstract p. iii) — requires local
-  situation binding.
-* The *bí nó* / *nó bí* word-order contrast (Ch 3.4): specific
-  definite vs. partitive.
+* Narrow-scope *bí* in conditional antecedents (situation pronoun bound
+  locally) and opaque *bí* under intensional verbs (skolem world index,
+  §3.3.3).
+* The *bí nó* (anaphoric definite) vs *nó bí* (partitive) order
+  contrast (§3.4).
 -/
 
 open Semantics.Quantification.ChoiceFunction
-
-namespace Akan.Determiners.Indefinite
-
-/-- [owusu-2022]'s wide-scope-under-negation prediction for the
-*bí* entry. Given a `SkolemCF` evaluated at situation `s₀` and a
-non-empty restrictor whose members all satisfy `VP`, the CF's output
-at `s₀` also satisfies `VP` — yielding the ∃ > ¬ reading. The
-situation argument `s₀` is shared between the CF and the NP-property
-(Owusu's "always skolemized to the situation of its argument",
-Abstract p. iii); since negation is non-intensional it cannot shift
-this situation, so the CF's output is fixed before negation applies. -/
-theorem bi_wide_scope_under_negation {S E : Type*}
-    (f : SkolemCF S E) (s₀ : S) (hf : (f s₀).isCorrect)
-    {N VP : E → Prop} (hN : ∃ x, N x) (hAll : ∀ x, N x → VP x) :
-    VP (f.apply s₀ N) :=
-  cf_wide_scope_under_negation (f s₀) hf N VP hN hAll
-
-end Akan.Determiners.Indefinite
 
 namespace Owusu2022
 
 open Akan.Determiners
 
-/-! ### A 2-person Akan-flavored domain
+/-- [owusu-2022]'s denotation table for the Akan indefinite contrast:
+*bí* applies a skolemized choice function at the situation of its
+argument (entry (67)). The `.bare` cell is `none` — *not CF-analyzed
+here*, not undefined: bare NPs receive kind/indefinite readings
+(App. A) outside the CF analysis. -/
+def skolemDenot {S E : Type*} (f : SkolemCF S E) (s₀ : S) :
+    Indefinite → Option ((E → Prop) → E)
+  | .bi => some (f.apply s₀)
+  | .bare => none
 
-Two people — *Kofi* and *Ama*, common Twi day-names — exhaust the
-domain *nipa* 'person'. *Ama* did not come (*an-ba*); *Kofi* did.
-This is the minimal domain on which Owusu's wide-scope-under-negation
-prediction for *bí* (Ch 3.2.2) is observable. -/
+@[simp] theorem skolemDenot_bi {S E : Type*} (f : SkolemCF S E) (s₀ : S) :
+    skolemDenot f s₀ .bi = some (f.apply s₀) := rfl
 
-/-- *nipa* 'person' (Akan/Twi). The atomic restrictor type. -/
-inductive Nipa where | kofi | ama
-  deriving DecidableEq, Repr
+@[simp] theorem skolemDenot_bare {S E : Type*} (f : SkolemCF S E) (s₀ : S) :
+    skolemDenot f s₀ .bare = none := rfl
 
-/-- *ba-e* 'came-PERF': Kofi came, Ama did not. -/
-def Baa : Nipa → Prop
+/-- [owusu-2022]'s wide-scope-under-negation prediction (§3.2.5, §3.3)
+for the `.bi` denotation: the ∃ > ¬ reading is *specific* — if the
+CF-selected member of the non-empty restrictor fails `VP`, some
+restrictor member fails `VP`, witnessed by the CF's choice. It does not
+entail the narrow-scope ¬ > ∃ (see the model below). -/
+theorem bi_wide_scope_specific {S E : Type*}
+    {f : SkolemCF S E} {s₀ : S} (hf : (f s₀).isCorrect)
+    {N VP : E → Prop} (hN : ∃ x, N x) :
+    ∀ d ∈ skolemDenot f s₀ .bi, ¬ VP (d N) → ∃ x, N x ∧ ¬ VP x := by
+  simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
+  exact cf_wide_scope_specific (f s₀) hf hN
+
+/-! ### A two-person model of ex. (21)
+
+*Onipa bí a-n-to dwom* 'person INDEF PERF-NEG-sing song' = 'A certain
+person didn't sing' ([owusu-2022] §3.2.5 ex. (21), judged
+Indefinite ≫ Neg only). Two people — *Kofi* and *Ama*, common Twi
+day-names — exhaust the domain *onipa* 'person'; Kofi sang, Ama did
+not. -/
+
+/-- *onipa* 'person' (Akan/Twi). The atomic restrictor type. -/
+inductive Onipa where | kofi | ama
+
+/-- *to dwom* 'sing (a) song': Kofi sang, Ama did not. -/
+def ToDwom : Onipa → Prop
   | .kofi => True
   | .ama => False
 
-instance : DecidablePred Baa := fun x => match x with
-  | .kofi => isTrue trivial
-  | .ama => isFalse id
-
-/-! ### A `SkolemCF` witness for *Nipa bí an-ba*
-
-The CF *preferAma* selects Ama whenever the restrictor admits her;
-otherwise it falls back to Kofi. The situation parameter is `Unit`
-(one situation suffices for this finite domain); the CF is constant
-across situations. -/
-
-section
-open Classical
-
-/-- A correct `SkolemCF` skolemized to the trivial situation `Unit`,
-which selects *Ama* whenever the restrictor allows it. -/
-noncomputable def preferAma : SkolemCF Unit Nipa :=
+open Classical in
+/-- A correct `SkolemCF` over the trivial situation `Unit` that selects
+*Ama* whenever the restrictor allows it, else *Kofi*. -/
+noncomputable def preferAma : SkolemCF Unit Onipa :=
   fun _ P => if P .ama then .ama else .kofi
 
 theorem preferAma_correct : preferAma.isCorrect := by
   intro _ P ⟨x, hPx⟩
-  show P (preferAma () P)
   unfold preferAma
   split_ifs with h
   · exact h
@@ -128,29 +120,16 @@ theorem preferAma_correct : preferAma.isCorrect := by
     · exact hPx
     · exact absurd hPx h
 
-end
-
-/-! ### Wide-scope reading of *Nipa bí an-ba*
-
-*Nipa bí an-ba* 'a certain person didn't come' under Owusu's
-wide-scope CF analysis: the skolem CF returns *Ama* (who did not
-come), so the ∃¬ reading holds. The narrow-scope (¬∃) reading would
-assert no one came, which is false on this model (Kofi came). -/
-
-/-- The wide-scope reading of *Nipa bí an-ba* is witnessed: there is
-a particular *nipa* — namely *Ama* — who did not come, and
-*preferAma* picks her out. -/
+/-- The wide-scope (∃ > ¬) reading of ex. (21) is witnessed: the `.bi`
+denotation picks *Ama* from the *onipa* domain, and she did not sing. -/
 theorem bi_wide_scope_witnessed :
-    ¬ Baa (preferAma.apply () (fun x => ¬ Baa x)) := by
-  show ¬ Baa (preferAma () (fun x => ¬ Baa x))
-  unfold preferAma
-  rw [if_pos (show ¬ Baa Nipa.ama from id)]
+    ∀ d ∈ skolemDenot preferAma () .bi, ¬ ToDwom (d (fun _ => True)) := by
+  simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
+  simp only [SkolemCF.apply, preferAma, if_true]
   exact id
 
-/-- The narrow-scope (¬∃) reading of *Nipa bí an-ba* would say that
-no *nipa* came. False on this model: Kofi came. -/
-theorem bi_narrow_scope_false :
-    ¬ ¬ ∃ x : Nipa, Baa x :=
-  fun h => h ⟨.kofi, trivial⟩
+/-- The narrow-scope (¬ > ∃) reading of ex. (21) — 'no person sang' —
+is false on this model: Kofi sang. -/
+theorem someone_sang : ∃ x : Onipa, ToDwom x := ⟨.kofi, trivial⟩
 
 end Owusu2022
