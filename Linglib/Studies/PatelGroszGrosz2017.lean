@@ -1,5 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
-import Linglib.Features.Determiner
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Fragments.German.Definiteness
 import Linglib.Studies.Schwarz2009
 import Linglib.Semantics.Presupposition.PhiFeatures

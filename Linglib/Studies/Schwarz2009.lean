@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Features.Determiner
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Fragments.German.Definiteness

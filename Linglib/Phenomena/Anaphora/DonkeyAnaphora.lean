@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Definiteness
-import Linglib.Features.Determiner
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness

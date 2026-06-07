@@ -34,6 +34,7 @@ namespace Semantics.Definiteness
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
+open Core (Assignment)
 
 variable {F : Frame}
 

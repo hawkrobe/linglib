@@ -278,8 +278,9 @@ import Linglib.Features.Deixis
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Definiteness.Interpret
-import Linglib.Features.Determiner
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Semantics.Definiteness.DeterminerLicensing
+import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.OntologicalCategory
