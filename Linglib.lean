@@ -1262,6 +1262,7 @@ import Linglib.Studies.BeaversUdayana2022
 import Linglib.Studies.Everdell2024
 import Linglib.Studies.Creissels2025
 import Linglib.Studies.Siloni2012
+import Linglib.Studies.WechslerZlatic2000
 import Linglib.Studies.Wood2015
 import Linglib.Studies.StapsRooryck2024
 import Linglib.Studies.Hewett2026

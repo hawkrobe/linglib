@@ -1,4 +1,5 @@
 import Mathlib.Order.Nat
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Agreement Target Hierarchy [corbett-1991]
@@ -32,7 +33,7 @@ inductive AgreementTarget where
   | relativePronoun   -- relative pronoun (e.g. German *der/die/das*)
   | personalPronoun   -- personal pronoun (e.g. English *he/she/it*)
   | verb              -- verb (e.g. Hindi *laRkaa aayaa / laRkii aayii*)
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Numeric rank in the Agreement Hierarchy: higher = more likely to show
     agreement (more syntactic); lower = less likely (more semantic). -/
