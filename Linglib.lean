@@ -232,6 +232,7 @@ import Linglib.Core.Agent.SocialUtility
 import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.SignalingGames
 import Linglib.Features.Evidentiality
+import Linglib.Features.Expressive
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
@@ -1344,6 +1345,7 @@ import Linglib.Studies.Faller2019
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
+import Linglib.Studies.Kubota2026
 import Linglib.Studies.OsborneGross2012.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs
 import Linglib.Studies.Dendikken1995ParticleVerbs
@@ -2355,7 +2357,7 @@ import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.ChoiceFunction
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Pragmatics.Expressives.OutlookMarker
+import Linglib.Pragmatics.Expressives.Outlook
 import Linglib.Semantics.Quotation.Mixed
 import Linglib.Semantics.Quotation.Demonstration
 import Linglib.Semantics.Probabilistic.Scenarios.Basic

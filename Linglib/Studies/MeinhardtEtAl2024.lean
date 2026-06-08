@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
 # Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification
@@ -69,11 +71,13 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
    predicts for the unidirectional pass.
 3. Decide-checks input/output examples corresponding to ex 1a-i and
    ex 1a-ii from the paper (encoded in the toy alphabet).
-4. Documents the **bidirectional upgrade** and its WD classification.
-   Formal proof deferred to `Function/WeaklyDeterministic.lean` (in
-   this PR), which lands both Heinz-Lai 2013 and Meinhardt et al. 2024
-   definitions side-by-side per linglib's "make incompatibilities
-   visible" thesis.
+4. Proves the **bidirectional** dominant-recessive map `maasai` is
+   **weakly deterministic** (`maasai_weaklyDeterministic`) via a
+   non-interacting bimachine, yet unbounded-circumambient *as
+   covariation* (`maasai_isUnboundedCircumambient`) — the same predicate
+   Tutrugbu satisfies — while *not* `RequiresBothSides`
+   (`maasai_not_requiresBothSides`). That asymmetry is the WD/ND boundary
+   [meinhardt-mai-bakovic-mccollum-2024] draws.
 
 ## What this file does NOT do
 
@@ -84,11 +88,11 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
 * Does not prove sour-grapes patterns are non-deterministic
   (impossibility argument requires a sophisticated pumping-style
   reasoning, deferred to a follow-up dedicated to negative results).
-* Does not encode the leftward pass or the bidirectional composition
-  (substrate ready: `SFST.compose` from `Function/Subsequential.lean`
-  and `IsLeftSubsequential.comp` from `Function/Subsequential.lean` would
-  be the building blocks; the WD predicate then certifies non-
-  interaction of the two passes).
+* Models the bidirectional map directly (`maasai`: raise a recessive iff
+  a dominant occurs anywhere) rather than as an explicit two-pass
+  composition `leftwardATR.runRight ∘ rightwardATR.run`, and omits the
+  opaque /a/ blocking — the non-opaque core already exhibits weak
+  determinism and the WD/ND covariation contrast.
 
 ## Scope note: cross-construction extrapolation
 
@@ -271,39 +275,129 @@ theorem rightwardATR_osl_isLeftSubsequential :
   isLeftOutputStrictlyLocal_left_subsequential
     rightwardATR_osl_isLeftOutputStrictlyLocal
 
-/-! ### Bidirectional Maasai harmony — WD classification
+/-! ### Bidirectional Maasai harmony — weakly deterministic (faithful)
 
-The full Maasai/Turkana pattern in (1a) is **bidirectional**: [+ATR]
-spreads from a dominant root vowel both leftward and rightward, with
-spread blocked by the opaque /a/ in either direction (per ex 1a-ii).
-The bidirectional function is the composition of `rightwardATR`
-(left-subsequential) with a `leftwardATR` (right-subsequential —
-mirror image via `SFST.runRight`):
+Maasai dominant-recessive ATR harmony spreads [+ATR] from a dominant root to recessive
+vowels on *both* sides. Modelled here in its non-opaque core: a recessive `recL` raises
+to `recH` iff the word contains a dominant vowel anywhere (`maasai`). This is a *union*
+of two independent spreading passes, so it is **weakly deterministic**
+([meinhardt-mai-bakovic-mccollum-2024], unbounded *semiambient*): the bimachine `maasaiBM`
+tracks a dominant seen on each side and its output is literally a `unite` of one-sided
+rules. Yet — like Tutrugbu — a recessive's surface ATR co-varies with information
+unboundedly far on either side, so `maasai` *also* satisfies `IsUnboundedCircumambient`.
+The contrast is exactly the WD/ND boundary the paper draws: both maps are circumambient
+*as covariation*, but only Tutrugbu `RequiresBothSides` (suppression/conjunction). -/
 
-```
-maasai := leftwardATR.runRight ∘ rightwardATR.run     -- (or vice versa)
-```
+open Core.Computability.Subregular.Function
 
-[meinhardt-mai-bakovic-mccollum-2024] call such *non-interacting*
-two-pass compositions **Weakly Deterministic**. The non-interaction
-condition is what their paper formalises and tightens compared to
-[heinz-lai-2013]'s original definition.
+/-- The word contains a dominant trigger. -/
+def hasDom (xs : List Seg) : Bool := xs.any (· == .dom)
 
-**Both definitions land in `Function/WeaklyDeterministic.lean`** (this
-PR) per linglib's "make incompatibilities visible" thesis: the
-`IsWeaklyDeterministic_HL2013` and `IsWeaklyDeterministic_MMBM2024`
-predicates state the contested pair side-by-side. The Maasai
-bidirectional function is claimed WD by both definitions; the
-divergence point — sour-grapes-style functions admitted by HL2013 but
-rejected by MMBM2024 — is where the patch matters.
+/-- Bidirectional dominant-recessive harmony (non-opaque core): a recessive raises iff the
+word has a dominant trigger anywhere. -/
+def maasai (xs : List Seg) : List Seg :=
+  xs.map (fun s => if hasDom xs && s == .recL then .recH else s)
 
-Sour grapes harmony ([wilson-2003]; [wilson-2006]) — where
-leftward spread fails *entirely* if blocked at any position — is the
-canonical example of a function above WD: the inner (rightward) and
-outer (leftward) passes interact, so no non-interacting two-pass
-composition can compute it. The paper argues sour grapes is unattested
-cross-linguistically; formalising the impossibility-of-WD claim is
-deferred to a follow-up.
--/
+/-- The non-interacting bimachine: each side's state tracks a dominant seen on that side;
+a recessive raises if *either* side has one — a union of one-sided rules. -/
+def maasaiBM : Bimachine Bool Bool Seg Seg where
+  lInit := false
+  lStep l s := l || (s == .dom)
+  rInit := false
+  rStep r s := r || (s == .dom)
+  out l s r := if (l || r) && s == .recL then .recH else s
+
+/-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
+theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
+  ⟨fun l s => if l && s == .recL then .recH else s,
+   fun r s => if r && s == .recL then .recH else s, by
+    intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
+
+/-- The left state after a prefix is exactly "a dominant occurs in it". -/
+theorem maasaiBM_lState (xs : List Seg) : maasaiBM.lState xs = xs.any (· == .dom) := by
+  show xs.foldl (fun l s => l || (s == .dom)) false = xs.any (· == .dom)
+  have : ∀ (acc : Bool) (ys : List Seg), ys.foldl (fun l s => l || (s == .dom)) acc
+      = (acc || ys.any (· == .dom)) := by
+    intro acc ys; induction ys generalizing acc with
+    | nil => simp
+    | cons y ys ih => simp [ih, Bool.or_assoc]
+  simpa using this false xs
+
+/-- The right state after a suffix is exactly "a dominant occurs in it". -/
+theorem maasaiBM_rState (xs : List Seg) : maasaiBM.rState xs = xs.any (· == .dom) := by
+  show xs.foldr (fun s r => r || (s == .dom)) false = xs.any (· == .dom)
+  induction xs with
+  | nil => rfl
+  | cons y ys ih => simp [ih, Bool.or_comm]
+
+private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
+    hasDom xs = (hasDom (xs.take i) || hasDom (xs.drop (i + 1)) || (xs[i] == .dom)) := by
+  simp only [hasDom]
+  have heq : xs = xs.take i ++ [xs[i]] ++ xs.drop (i + 1) := by
+    rw [List.append_assoc, List.singleton_append, ← List.drop_eq_getElem_cons hi,
+      List.take_append_drop]
+  conv_lhs => rw [heq]
+  simp only [List.any_append, List.any_cons, List.any_nil, Bool.or_false]
+  cases (xs.take i).any (· == .dom) <;> cases (xs.drop (i + 1)).any (· == .dom) <;>
+    cases (xs[i] == Seg.dom) <;> rfl
+
+private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
+    maasaiBM.out (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
+    = if hasDom xs && xs[i] == .recL then .recH else xs[i] := by
+  rw [maasaiBM_lState, maasaiBM_rState, hasDom_split xs i hi]
+  show (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom)) && xs[i] == .recL)
+      then .recH else xs[i]) =
+    (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom) || (xs[i] == .dom))
+      && xs[i] == .recL) then .recH else xs[i])
+  cases xs[i] <;> simp
+
+/-- The bimachine computes `maasai`. -/
+theorem maasaiBM_run : maasaiBM.run = maasai := by
+  funext xs
+  apply List.ext_getElem?
+  intro i
+  rw [maasaiBM.run_getElem?]
+  rcases lt_or_ge i xs.length with hi | hi
+  · rw [List.getElem?_eq_getElem hi, Option.map_some, maasaiBM_cell_eq xs i hi]
+    simp only [maasai, List.getElem?_map, List.getElem?_eq_getElem hi, Option.map_some, hasDom]
+  · rw [List.getElem?_eq_none hi, Option.map_none]
+    simp only [maasai, List.getElem?_map, List.getElem?_eq_none (by simpa using hi),
+      Option.map_none]
+
+/-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
+the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
+theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
+  ⟨Bool, Bool, inferInstance, inferInstance, maasaiBM, maasaiBM_run, maasaiBM_isNonInteracting⟩
+
+/-- **Maasai is unbounded-circumambient *as covariation*** — at every distance, a medial
+recessive's ATR flips under a dominant placed far to the left *or* far to the right. The
+same predicate Tutrugbu satisfies (`tutrugbu_isUnboundedCircumambient`); the difference is
+that Maasai does *not* `RequiresBothSides`. -/
+theorem maasai_isUnboundedCircumambient : IsUnboundedCircumambient maasai := by
+  intro d
+  refine ⟨List.replicate (2 * d + 3) .recL, d + 1, by simp; omega,
+    ⟨(List.replicate (2 * d + 3) .recL).set 0 .dom,
+    by simp, ?_, ?_⟩, ⟨(List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom, by simp, ?_, ?_⟩⟩
+  · intro k _; rw [List.getElem?_set_ne (by omega)]
+  · simp only [maasai]
+    rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 0 ≠ d + 1)]
+    have hd : hasDom ((List.replicate (2 * d + 3) .recL).set 0 .dom) = true := by
+      simp only [hasDom, List.any_eq_true]
+      exact ⟨Seg.dom, List.mem_set (by simp) Seg.dom, rfl⟩
+    have hb : hasDom (List.replicate (2 * d + 3) .recL) = false := by simp [hasDom]
+    simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
+  · intro k _; rw [List.getElem?_set_ne (by omega)]
+  · simp only [maasai]
+    rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]
+    have hd : hasDom ((List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom) = true := by
+      simp only [hasDom, List.any_eq_true]
+      exact ⟨Seg.dom, List.mem_set (by simp) Seg.dom, rfl⟩
+    have hb : hasDom (List.replicate (2 * d + 3) .recL) = false := by simp [hasDom]
+    simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
+
+/-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
+Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
+theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
+  not_isBimachineWeaklyDeterministic_of_requiresBothSides h maasai_weaklyDeterministic
 
 end MeinhardtEtAl2024
