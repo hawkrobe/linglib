@@ -119,4 +119,13 @@ theorem IsUnboundedCircumambient.not_myopic {f : List α → List β}
 @[simp] theorem not_isMyopicTowards_iff {f : List α → List β} {s : Direction} :
     ¬ IsMyopicTowards f s ↔ UnboundedDependence f s := not_not
 
+/-- **Prefix-determined ⟹ right-myopic.** A map each of whose output coordinates is
+fixed by the input's *strict prefix* (`{k | k < i}`) has no rightward look-ahead, so
+it is myopic towards the right. (The canonical left-to-right scan has this shape.) -/
+theorem IsMyopicTowards.right_of_prefixDetermined {f : List α → List β}
+    (h : ∀ i, OutputDependsOn f i {k | k < i}) : IsMyopicTowards f .right := by
+  intro hunb
+  obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
+  exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
+
 end Core.Computability.Subregular.Function

@@ -2,6 +2,7 @@ import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 
 /-!
 # Tier-based rules (`TierRule`)
@@ -316,5 +317,47 @@ theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
     -- `none = lastContextOf []` definitionally
     exact r.toIdTierSFST_runFrom_eq_applyToStringAux h_id h_side [] input
   exact h_run ▸ r.toIdTierSFST.isLeftSubsequential
+
+/-! ### Myopia: the tier-rule prediction has no look-ahead -/
+
+/-- `applyToString`'s coordinate `i` is the rule's prediction over the strict input
+prefix: `applyAt r (input.take i)` (in range; `none` otherwise). -/
+theorem applyToStringAux_getElem? (r : TierRule α) :
+    ∀ (input past : List α) (i : ℕ),
+      (applyToString.applyToStringAux r input past)[i]?
+        = if i < input.length then some (r.applyAt (past ++ input.take i)) else none
+  | [], _, i => by simp [applyToString.applyToStringAux]
+  | _ :: _, _, 0 => by simp [applyToString.applyToStringAux]
+  | x :: xs, past, i + 1 => by
+      simp only [applyToString.applyToStringAux, List.getElem?_cons_succ,
+        List.length_cons, List.take_succ_cons, Nat.add_lt_add_iff_right]
+      rw [applyToStringAux_getElem? r xs (past ++ [x]) i, List.append_assoc,
+        List.singleton_append]
+
+theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
+    (r.applyToString u)[i]?
+      = if i < u.length then some (r.applyAt (u.take i)) else none := by
+  rw [applyToString, applyToStringAux_getElem?]; simp
+
+/-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
+strict prefix `{k | k < i}`. -/
+theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
+    OutputDependsOn r.applyToString i {k | k < i} := by
+  intro u v hlen hag
+  rw [applyToString_getElem?, applyToString_getElem?, hlen]
+  have htake : u.take i = v.take i := by
+    apply List.ext_getElem?
+    intro k
+    rcases lt_or_ge k i with hk | hk
+    · simpa only [List.getElem?_take_of_lt hk] using hag k hk
+    · simp [List.getElem?_take_eq_none hk]
+  rw [htake]
+
+/-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
+Consequently no tier-rule-based prediction (the formal core of a `HarmonySystem`) can
+compute a *non-myopic* harmony, such as an unbounded-circumambient pattern. -/
+theorem applyToString_isRightMyopic (r : TierRule α) :
+    IsMyopicTowards r.applyToString .right :=
+  IsMyopicTowards.right_of_prefixDetermined (applyToString_prefixDetermined r)
 
 end Phonology.Subregular.TierRule
