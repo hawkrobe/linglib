@@ -307,6 +307,8 @@ import Linglib.Core.Computability.StringHom
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
+import Linglib.Syntax.Adposition.Basic
+import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
 import Linglib.Diachronic.CaseGrammaticalization
