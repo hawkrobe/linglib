@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
@@ -399,5 +400,12 @@ theorem maasai_isUnboundedCircumambient : IsUnboundedCircumambient maasai := by
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
   not_isBimachineWeaklyDeterministic_of_requiresBothSides h maasai_weaklyDeterministic
+
+/-- **Strictness witness `subsequential ⊊ WD`**: Maasai is weakly deterministic yet *not*
+left-subsequential. A synchronous left-subsequential map is right-myopic
+(`IsLetterLeftSubsequential.isRightMyopic`), but Maasai's bidirectional spread is not
+(`maasai_isUnboundedCircumambient`). -/
+theorem maasai_not_letterLeftSubsequential : ¬ IsLetterLeftSubsequential maasai := fun h =>
+  maasai_isUnboundedCircumambient.not_myopic .right h.isRightMyopic
 
 end MeinhardtEtAl2024
