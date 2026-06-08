@@ -35,7 +35,7 @@ rules or extrinsic ordering.
 Stratal OT keeps a derivational architecture (strata) inside an
 otherwise constraint-based framework. Linglib's siblings:
 
-* `Phonology/Process/LocalRewrite.lean` — full extrinsic-
+* `Phonology/Subregular/LocalRewrite.lean` — full extrinsic-
   ordering derivation via local rewrite rules; the modern subregular
   characterization grounds these as Input Strictly Local functions
   ([chandlee-heinz-2018]).

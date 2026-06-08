@@ -1,5 +1,5 @@
 import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Finnish Consonant Gradation [karlsson-2017]

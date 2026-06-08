@@ -1,8 +1,8 @@
 import Linglib.Phonology.Featural.Features
 import Linglib.Phonology.Featural.Geometry
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Autosegmental.Defs
-import Linglib.Phonology.Process.Harmony.Defs
+import Linglib.Phonology.Subregular.Harmony
 
 /-!
 # Turkish Vowel Harmony

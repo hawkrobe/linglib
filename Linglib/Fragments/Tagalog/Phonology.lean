@@ -1,5 +1,5 @@
 import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Tagalog Phonological Inventory and Nasal Substitution
@@ -23,7 +23,7 @@ p,b → m; t,d → n; k,g → ŋ.
 
 ## SPE encoding
 
-The `Rule` formalism in `Phonology/Process/LocalRewrite.lean`
+The `Rule` formalism in `Phonology/Subregular/LocalRewrite.lean`
 supports `changeFeatures` and `delete` effects, and segment / wordBoundary
 contexts. It does not support α-spreading (assimilatory rules where the
 target inherits a feature value from the context). Tagalog nasal

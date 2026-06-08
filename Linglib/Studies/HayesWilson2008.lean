@@ -2,7 +2,7 @@ import Linglib.Phonology.Constraint.Dequantization.OTLimit
 import Linglib.Phonology.Constraint.System
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Fragments.English.Phonology
 
 /-!

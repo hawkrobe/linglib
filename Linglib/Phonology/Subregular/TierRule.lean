@@ -4,14 +4,14 @@ import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
-# Tier-Based Alternation Rules
+# Tier-based rules (`TierRule`)
 [belth-2026] [goldsmith-1976]
 
 The canonical operational schema for SPE-style phonological alternations
 that factor through a tier projection. A rule has the shape
 
-  `Rel(A, F) / C __ ∘ proj(·, T)`        (left-context, eq. 6 of [belth-2026])
-  `Rel(A, F) / __ C ∘ proj(·, T)`        (right-context, eq. 8)
+  `Rel(A, F) / C __ ∘ proj(·, T)`        (left-context)
+  `Rel(A, F) / __ C ∘ proj(·, T)`        (right-context)
 
 where:
 
@@ -26,7 +26,7 @@ This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
 dissimilation, Turkish vowel harmony, Finnish backness harmony with
 neutral-vowel transparency — see [belth-2026]), Rose-Walker harmony
 systems (which structurally **contain** a `TierRule` as their value-prediction
-core — see `Phonology.Harmony.HarmonySystem` in `Harmony/Defs.lean`), and
+core — see `Phonology.Harmony.HarmonySystem` in `Subregular/Harmony.lean`), and
 any SPE rule whose context is a single tier-adjacent segment.
 
 The schema does **not** cover:
@@ -39,9 +39,9 @@ The schema does **not** cover:
 Both extensions are admittable on demand following the project's
 "infrastructure on demand" policy (see `CLAUDE.md`).
 
-## Relation to `Process/LocalRewrite.lean`
+## Relation to `Subregular/LocalRewrite.lean`
 
-`Phonology/Process/LocalRewrite.lean` defines `Rule` — full SPE
+`Phonology/Subregular/LocalRewrite.lean` defines `Rule` — full SPE
 notation with arbitrary-length left/right contexts. The single-tier-
 segment-context fragment of `Rule`s is structurally subsumed by `TierRule`
 (via the trivial-tier specialisation theorem `id_tier_left_is_strict_local`
@@ -53,7 +53,7 @@ is straightforward but requires careful threading of the trivial tier;
 land it once a Studies file needs to invoke the bridge concretely.
 -/
 
-namespace Phonology.Alternation
+namespace Phonology.Subregular
 
 open Core
 
@@ -61,7 +61,7 @@ open Core
 -- § 1: Schema
 -- ============================================================================
 
-/-- Belth's `Agree`/`Disagree` distinction ([belth-2026] eq. 9). -/
+/-- Belth's `Agree`/`Disagree` distinction ([belth-2026]). -/
 inductive Relation where
   | agree     -- target's feature value matches the context's
   | disagree  -- target's feature value is the negation of the context's
@@ -92,8 +92,8 @@ abbrev Side := Core.Direction
 
     - `tier`         : the erasing projection ([goldsmith-1976]) onto
       which the context-class check is performed.
-    - `side`         : whether the triggering context precedes (`.left`,
-      eq. 6) or follows (`.right`, eq. 8) the unspecified target slot.
+    - `side`         : whether the triggering context precedes (`.left`)
+      or follows (`.right`) the unspecified target slot.
     - `targetIsContext` : the natural class `C` — the rule fires only when
       the tier-adjacent segment satisfies this predicate. Following
       mathlib's `Finset.filter` convention this is `Prop`-valued with
@@ -102,8 +102,8 @@ abbrev Side := Core.Direction
     - `featureValue` : the value of `F` extracted from a context segment.
       `none` means the segment is itself underspecified for `F`, in which
       case the rule defers to `default`.
-    - `default`      : the Elsewhere value ([belth-2026] §2.3.3,
-      Finnish 52b). `none` means *no* default — when no context is found,
+    - `default`      : the Elsewhere value ([belth-2026]'s default
+      fallback). `none` means *no* default — when no context is found,
       `applyAt` returns `none`. `some v` is the concrete fallback. -/
 structure TierRule (α : Type) where
   tier : Tier α α
@@ -161,9 +161,9 @@ def flipRelation (r : TierRule α) : TierRule α :=
 /-- **Strict locality is the trivial-tier special case.** When the tier
     is the identity (every segment projects), `apply` (left-context)
     reduces to scanning the raw input for the context class — i.e., a
-    strictly local rule ([belth-2026] §2.4 example: Turkish voicing
-    assimilation eq. 49b is `Agree([?voice], {voice}) / [*] __` with the
-    trivial projection). -/
+    strictly local rule (e.g. Turkish voicing assimilation,
+    `Agree([?voice], {voice}) / [*] __` over the trivial projection —
+    [belth-2026]). -/
 theorem id_tier_left_is_strict_local (r : TierRule α)
     (h_id : r.tier = Tier.id) (h_side : r.side = .left) (pre : List α) :
     apply r pre [] =
@@ -197,9 +197,9 @@ where
 
 end TierRule
 
-end Phonology.Alternation
+end Phonology.Subregular
 
-/-! ## Bridge to function-level subregular substrate
+/-! ## Function-level subregular classification
 
 The `TierRule.applyToString` reification produces a string-to-string
 function classifiable in the function-level subregular hierarchy
@@ -214,13 +214,11 @@ per [aksenova-rawski-graf-heinz-2020]:
   Heinz-Rawski-Tanner 2011 tier-strictly-local family applied to
   function classes).
 
-This bridge theorem is **deferred** in this PR (substantive new
-construction; the SFST witness needs to thread the tier projection's
-state alongside the predicate-evaluation state). The substrate is in
-place to receive it; the natural follow-up file is
-`Phonology/Process/AlternationSubregular.lean` (or a small
-addition here once a Studies file consumes the classification). -/
-namespace Phonology.Alternation.TierRule
+The non-trivial-tier classification is **deferred** (the SFST witness
+needs to thread the tier projection's state alongside the
+predicate-evaluation state); the identity-tier case is discharged below.
+Land the general witness here once a Studies file consumes it. -/
+namespace Phonology.Subregular.TierRule
 
 open Core
 open Core.Computability.Subregular.Function
@@ -319,4 +317,4 @@ theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
     exact r.toIdTierSFST_runFrom_eq_applyToStringAux h_id h_side [] input
   exact h_run ▸ r.toIdTierSFST.isLeftSubsequential
 
-end Phonology.Alternation.TierRule
+end Phonology.Subregular.TierRule

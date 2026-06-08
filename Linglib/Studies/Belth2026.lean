@@ -1,4 +1,4 @@
-import Linglib.Phonology.Process.Alternation
+import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
@@ -19,10 +19,10 @@ tier and tries again, until either a tolerated rule is found or no further
 deletion helps.
 
 The output of D2L is a tier-based alternation rule, modelled here by the
-canonical `Phonology.Alternation.TierRule` schema (in
+canonical `Phonology.Subregular.TierRule` schema (in
 `Phonology/Alternation.lean`); the closely-related SPE
 non-tier `Phonology.LocalRewrite.Rule` schema in
-`Phonology/Process/LocalRewrite.lean` is the right substrate
+`Phonology/Subregular/LocalRewrite.lean` is the right substrate
 when the alternation does not factor through a tier projection.
 The function-level subregular classification of D2L outputs lives in
 `Core/Computability/Subregular/Function/`: tier-mediated dissimilation
@@ -81,7 +81,7 @@ licenses convergence.
 namespace Belth2026
 
 open Core
-open Phonology.Alternation
+open Phonology.Subregular
 
 -- ============================================================================
 -- § 1: A Minimal Latin Alphabet
@@ -533,7 +533,7 @@ D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
   — voicing assimilation: the projection component is the *trivial*
   identity tier (every segment projects). This is the strict-locality
   case captured generically by
-  `Phonology.Alternation.TierRule.id_tier_left_is_strict_local`.
+  `Phonology.Subregular.TierRule.id_tier_left_is_strict_local`.
 
 D2L's reported test accuracy on the two corpora exceeds 0.98, beating
 [hayes-wilson-2008] generative phonotactic learners and LSTM

@@ -2783,10 +2783,9 @@ import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
 import Linglib.Phonology.Prosodic.Accent
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Prosodic.Templates
-import Linglib.Phonology.Process.LocalRewrite
-import Linglib.Phonology.Process.Alternation
-import Linglib.Phonology.Process.Harmony.Defs
-import Linglib.Phonology.Process.Harmony.OT
+import Linglib.Phonology.Subregular.LocalRewrite
+import Linglib.Phonology.Subregular.TierRule
+import Linglib.Phonology.Subregular.Harmony
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.OptimalityTheory.TCT
