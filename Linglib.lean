@@ -1899,8 +1899,8 @@ import Linglib.Studies.Jaeger2007
 import Linglib.Studies.Kawahara2015
 import Linglib.Studies.Magri2025
 import Linglib.Studies.MarcoRasin2026
-import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.McCollumEtAl2020
+import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.RoseWalker2004
 import Linglib.Studies.Sagey1986
 import Linglib.Studies.Saito2025
