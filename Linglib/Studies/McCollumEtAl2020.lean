@@ -15,9 +15,11 @@ arbitrarily far away on *both* sides — the [ATR] value of the root (to the rig
 and the [high] value of the initial-syllable vowel (to the left). Circumambient
 patterns require **non-deterministic** regular power (above the weakly-deterministic
 upper bound of [heinz-lai-2013]); Tutrugbu is, in the authors' words, "a variation
-on the **sour grapes** pattern" — i.e. a *non-myopic* harmony ([wilson-2006]). It is
-thus an attested counterexample to the claim that all segmental harmony is myopic,
-the question debated in [walker-2010], [kimper-2012] and [mascaro-2019].
+on the **sour grapes** pattern" — i.e. a *non-myopic* harmony ([wilson-2003],
+[wilson-2006]). It is thus a robustly attested counterexample to the claim that
+unbounded spreading is always myopic: [walker-2010] argued (from Romance metaphony)
+that nonmyopic harmony exists; [kimper-2012] and [mascaro-2019] replied that harmony
+is myopic; Tutrugbu is the segmental case the myopic-side replies do not dissolve.
 
 ## The pattern (paper §2.1)
 
@@ -116,12 +118,13 @@ example : -- vary the LEFT (initial → [+high]): target blocked
 example : -- vary the RIGHT (root → [−ATR]): target unharmonised
     tutrugbuATR [.vLo, .vLo, .rM] = [.vLo, .vLo, .rM] := by decide
 
-/-- **Unbounded conditional blocking** (paper ex. (8)): the [+high] initial and the
-[−high] blocker stay interacting across growing gaps of [+high] vowels. -/
-example : tutrugbuATR [.vHi, .vLo, .rP] = [.vHi, .vLo, .rP] := by decide               -- gap 0
-example : tutrugbuATR [.vHi, .vHi, .vLo, .rP] = [.vHi, .vHi, .vLo, .rP] := by decide    -- gap 1
+/-- **Unbounded conditional blocking** (paper exx. (8c)/(8d); longer gaps schematised):
+the [+high] initial and the [−high] blocker keep interacting across arbitrarily many
+intervening [+high] vowels — the rule licenses an unbounded gap. -/
+example : tutrugbuATR [.vHi, .vLo, .rP] = [.vHi, .vLo, .rP] := by decide            -- (8c)
+example : tutrugbuATR [.vHi, .vHi, .vLo, .rP] = [.vHi, .vHi, .vLo, .rP] := by decide -- (8d)
 example : tutrugbuATR [.vHi, .vHi, .vHi, .vLo, .rP]
-        = [.vHi, .vHi, .vHi, .vLo, .rP] := by decide                                   -- gap 2
+        = [.vHi, .vHi, .vHi, .vLo, .rP] := by decide                               -- gap 2 (schem.)
 -- contrast: drop the [+high] initial (→ [−high]) and the SAME word harmonises fully
 example : tutrugbuATR [.vLo, .vHi, .vHi, .vLo, .rP]
         = [.vLoA, .vHiA, .vHiA, .vLoA, .rP] := by decide
@@ -139,28 +142,30 @@ def baseL (d : ℕ) : List Seg :=
 def baseR (d : ℕ) : List Seg :=
   .vLo :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi ++ [.rM]
 
-/-- **Tutrugbu ATR harmony is unbounded circumambient** ([mccollum-…-2020] §3, def. 13).
-At the medial target (index `d+1`): the base harmonises it ([+ATR]); flipping the
-initial-σ height `d` syllables to the left blocks it; flipping the root `d` syllables
-to the right removes the trigger — both from the one base word. -/
+/-- **Tutrugbu ATR harmony is unbounded circumambient**
+([mccollum-bakovic-mai-meinhardt-2020] §3, def. 13). At the medial target (index
+`d+1`): the base harmonises it ([+ATR]); flipping the initial-σ height `d` syllables
+to the left blocks it; flipping the root `d` syllables to the right removes the
+trigger — both from the one base word. -/
 theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbuATR := by
   intro d
   refine ⟨base d, d + 1, ?_, ⟨baseL d, ?_, ?_, ?_⟩, ⟨baseR d, ?_, ?_, ?_⟩⟩
-  all_goals sorry
-  -- WITNESS (all `decide`-true at each fixed `d`; the `∀ d` step is the routine
-  -- induction on `List.replicate d .vHi`):
-  --   `tutrugbuATR (base d) ! (d+1) = some .vLoA`   (initial [−high] ⟹ full harmony)
-  --   `tutrugbuATR (baseL d) ! (d+1) = some .vLo`   (initial [+high] ⟹ target blocked)
-  --   `tutrugbuATR (baseR d) ! (d+1) = some .vLo`   ([−ATR] root ⟹ no harmony)
-  --   AgreeFrom (base d) (baseL d) ((d+1)-d=1): differ only at index 0 (the initial)
-  --   AgreeUpto (base d) (baseR d) ((d+1)+d=2d+1): differ only at index 2d+2 (the root)
-  -- Helper lemmas needed: `spreadRTL ih true (replicate n .vHi ++ rest)`
-  --   `= replicate n .vHiA ++ spreadRTL ih true rest`; and the dual blocked form.
-  -- TODO(follow-up): discharge via those two `replicate` lemmas.
+  · simp only [base, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]; omega                       -- d + 1 < (base d).length  (= 2d+3)
+  · simp [baseL, base]                               -- (baseL d).length = (base d).length
+  · sorry  -- AgreeFrom (base d) (baseL d) 1: differ only at index 0 (the initial)
+  · sorry  -- (base)[d+1] = .vLoA ≠ .vLo = (baseL)[d+1]   (initial [+high] blocks)
+  · simp [baseR, base]                               -- (baseR d).length = (base d).length
+  · sorry  -- AgreeUpto (base d) (baseR d) (2d+1): differ only at the root index
+  · sorry  -- (base)[d+1] = .vLoA ≠ .vLo = (baseR)[d+1]   ([−ATR] root ⟹ no harmony)
+  -- The four output/agreement `sorry`s discharge via the `replicate` push-through
+  -- `spreadRTL ih true (.replicate n .vHi ++ rest) = .replicate n .vHiA ++ spreadRTL ih true rest`
+  -- (verified `decide`-true at each fixed `d`; the ∀d step is the induction on `n`).
 
 /-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
-([mccollum-…-2020]; [wilson-2006]). Settles the [walker-2010]/[mascaro-2019] myopia
-question on the *nonmyopic* side for this pattern. -/
+([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
+the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
+nonmyopic side argued by [walker-2010]. -/
 theorem tutrugbu_nonmyopic (s : Direction) : ¬ IsMyopicTowards tutrugbuATR s :=
   tutrugbu_isUnboundedCircumambient.not_myopic s
 

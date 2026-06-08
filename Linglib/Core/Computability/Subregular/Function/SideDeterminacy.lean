@@ -42,8 +42,9 @@ where neither side alone fixes the output) — the hook for the deferred
 
 ## Todo
 
-* The machine-level "circumambient ⟹ not weakly deterministic" theorem (needs
-  bimachine substrate; the co-located base is what its proof consumes).
+* The machine-level `IsUnboundedCircumambient f → ¬ IsWeaklyDeterministic f` theorem
+  (the bridge to `Function/WeaklyDeterministic.lean`; needs bimachine substrate, with
+  the co-located base as its automaton-context witness).
 -/
 
 namespace Core.Computability.Subregular.Function
@@ -112,5 +113,10 @@ theorem IsUnboundedCircumambient.not_myopic {f : List α → List β}
   cases s with
   | left => exact not_not_intro h.left
   | right => exact not_not_intro h.right
+
+/-- `f` is non-myopic towards `s` exactly when it has unbounded dependence there
+(`IsMyopicTowards` is by definition the negation of `UnboundedDependence`). -/
+@[simp] theorem not_isMyopicTowards_iff {f : List α → List β} {s : Direction} :
+    ¬ IsMyopicTowards f s ↔ UnboundedDependence f s := not_not
 
 end Core.Computability.Subregular.Function
