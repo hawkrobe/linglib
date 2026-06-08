@@ -122,4 +122,56 @@ theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) : IsMyopicTowards f .right :=
   IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
 
+/-! ### Myhill–Nerode converse
+
+`f` is letter-left-subsequential as soon as it admits a *finite-state, left-congruent
+summary that determines its output* — the constructive direction of Myhill–Nerode. The
+finite `state` plays the role of the prefix-congruence's quotient; `δ`/`out` are the
+induced transition and output. (The natural Nerode congruence, when of finite index, is
+one such summary — that instantiation is the Todo above.) -/
+
+/-- **Myhill–Nerode converse (constructive).** A length-preserving `f` with a finite
+`state : List α → σ` that is left-congruent (`hδ`) and determines `f`'s output at each
+position (`hout`) is letter-left-subsequential. -/
+theorem isLetterLeftSubsequential_of_stateSummary
+    {f : List α → List β} {σ : Type} [Fintype σ]
+    (state : List α → σ) (δ : σ → α → σ) (out : σ → α → β)
+    (hδ : ∀ u x, state (u ++ [x]) = δ (state u) x)
+    (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (state u) x))
+    (hlen : ∀ xs, (f xs).length = xs.length) :
+    IsLetterLeftSubsequential f := by
+  refine ⟨σ, inferInstance, { initial := state [], step := fun s x => (δ s x, out s x) }, ?_⟩
+  set T : LetterSFST σ α β := { initial := state [], step := fun s x => (δ s x, out s x) }
+  have hstate : ∀ (p₀ ps : List α), T.stateAfter (state p₀) ps = state (p₀ ++ ps) := by
+    intro p₀ ps
+    induction ps generalizing p₀ with
+    | nil => simp
+    | cons x xs ih =>
+      rw [LetterSFST.stateAfter_cons]
+      show T.stateAfter (δ (state p₀) x) xs = state (p₀ ++ x :: xs)
+      rw [← hδ p₀ x, ih (p₀ ++ [x])]
+      simp
+  funext xs
+  apply List.ext_getElem?
+  intro i
+  show (T.runFrom T.initial xs)[i]? = (f xs)[i]?
+  rw [LetterSFST.runFrom_getElem? T T.initial xs i]
+  show (xs[i]?).map (fun x => out (T.stateAfter (state []) (xs.take i)) x) = (f xs)[i]?
+  rw [hstate [] (xs.take i), List.nil_append]
+  rcases lt_or_ge i xs.length with hi | hi
+  · have hdecomp : xs.take i ++ xs[i] :: xs.drop (i + 1) = xs := by
+      rw [← List.drop_eq_getElem_cons hi, List.take_append_drop]
+    have htlen : (xs.take i).length = i := by rw [List.length_take, Nat.min_eq_left hi.le]
+    have key := hout (xs.take i) (xs[i]) (xs.drop (i + 1))
+    rw [htlen, hdecomp] at key
+    rw [List.getElem?_eq_getElem hi, Option.map_some, key]
+  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none (by rw [hlen]; exact hi)]
+    simp
+
+/-- Non-vacuity: the identity is letter-left-subsequential via a one-state summary. -/
+example : IsLetterLeftSubsequential (id : List α → List α) :=
+  isLetterLeftSubsequential_of_stateSummary
+    (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
+    (fun _ _ => rfl) (fun u x w => by simp) (fun _ => rfl)
+
 end Core.Computability.Subregular.Function
