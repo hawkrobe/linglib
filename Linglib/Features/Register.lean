@@ -19,7 +19,7 @@ goals, as in [yoon-etal-2020] for politeness).
 * `PersonalPronoun.register`: pronoun register (T/V/honorific)
 * `Pronoun.AllocutiveEntry.register`: allocutive marker register
 * `English.Auxiliaries.AuxEntry.register`: modal register
-* `Pragmatics.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions
+* `Kubota2026.ModalCompatibility`: outlook marker selectional restrictions
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
 Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.
