@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.OT.ERC
+import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Fintype.Card
@@ -326,10 +326,10 @@ def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
     union closure: any W-witness for an L-constraint in a prefix set
     must itself be in that prefix set. -/
 theorem maximalChain_dominance {n : Nat} (r : Ranking n) (k : Fin (n + 1))
-    (w l : Fin n) (hw : dominates r w l) (hl : l ∈ maximalChain r k) :
+    (w l : Fin n) (hw : r.dominates w l) (hl : l ∈ maximalChain r k) :
     w ∈ maximalChain r k := by
   simp only [maximalChain, Set.mem_setOf_eq] at hl ⊢
-  unfold dominates at hw; omega
+  unfold Ranking.dominates at hw; omega
 
 -- Helpers for the union closure construction
 
@@ -379,7 +379,7 @@ private theorem prefix_card {n : Nat} (r : Ranking n) (k : Fin (n + 1)) :
       exact ⟨⟨(r.symm i).val, hi⟩, by simp⟩
     · intro hi; simp only [Finset.mem_image, Finset.mem_univ, true_and] at hi
       obtain ⟨j, hj⟩ := hi
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and, ← hj, Ranking.symm_apply_apply]
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, ← hj, Equiv.symm_apply_apply]
       exact j.isLt
   rw [heq]
   have hinj : Function.Injective
@@ -494,9 +494,9 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
   -- r₃.symm = ff
   have hr₃ : ∀ i, r₃.symm i = ff i := by
     intro i; show e.symm.symm i = ff i; simp [Equiv.symm_symm, e]
-  -- dominates r₃ w l ↔ f w < f l
-  have hdom : ∀ w l, dominates r₃ w l ↔ f w < f l := by
-    intro w l; unfold dominates; constructor
+  -- r₃.dominates w l ↔ f w < f l
+  have hdom : ∀ w l, r₃.dominates w l ↔ f w < f l := by
+    intro w l; unfold Ranking.dominates; constructor
     · intro h; rw [hr₃, hr₃] at h; exact h
     · intro h; rw [hr₃, hr₃]; exact h
   -- Prefix set = S ∪ T
@@ -511,10 +511,12 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
         fun h => by rcases h with h | h <;> contradiction⟩
   -- ERC satisfaction
   have hsat : ERCSet.satisfiedBy r₃ E := by
-    intro α hα l hl_L
+    intro α hα
+    rw [ERC.satisfiedBy_iff_dominance]
+    intro l hl_L
     by_cases h1 : inS l
     · -- l ∈ S: use r₁
-      obtain ⟨w, hw_W, hw_dom⟩ := hr₁ α hα l hl_L
+      obtain ⟨w, hw_W, hw_dom⟩ := (ERC.satisfiedBy_iff_dominance r₁ α).mp (hr₁ α hα) l hl_L
       have hw_S : inS w := by
         have := maximalChain_dominance r₁ k₁ w l hw_dom
           (show l ∈ maximalChain r₁ k₁ by simp [maximalChain]; exact h1)
@@ -522,7 +524,7 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
       exact ⟨w, hw_W, (hdom w l).mpr (by simp only [f, if_pos hw_S, if_pos h1]; exact hw_dom)⟩
     · by_cases h2 : inT l
       · -- l ∈ T\S: use r₂
-        obtain ⟨w, hw_W, hw_dom⟩ := hr₂ α hα l hl_L
+        obtain ⟨w, hw_W, hw_dom⟩ := (ERC.satisfiedBy_iff_dominance r₂ α).mp (hr₂ α hα) l hl_L
         have hw_T : inT w := by
           have := maximalChain_dominance r₂ k₂ w l hw_dom
             (show l ∈ maximalChain r₂ k₂ by simp [maximalChain]; exact h2)
@@ -535,7 +537,7 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
           have := countBelow_strict_mono r₂ sTmS w l
             ((in_sTmS w).mpr ⟨hw_T, hw1⟩) ((in_sTmS l).mpr ⟨h2, h1⟩) hw_dom; omega
       · -- l ∈ rest: use r₁
-        obtain ⟨w, hw_W, hw_dom⟩ := hr₁ α hα l hl_L
+        obtain ⟨w, hw_W, hw_dom⟩ := (ERC.satisfiedBy_iff_dominance r₁ α).mp (hr₁ α hα) l hl_L
         refine ⟨w, hw_W, (hdom w l).mpr ?_⟩
         simp only [f, if_neg h1, if_neg h2]
         by_cases hw1 : inS w
@@ -579,7 +581,7 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
       exact Nat.lt_of_lt_of_le (r.symm i).isLt (by omega)
     refine ⟨r ⟨k.val, hkn⟩, Set.mem_univ _, ?_, r, hr, ⟨k.val + 1, by omega⟩, ?_⟩
     · -- r(k) ∉ S: its rank position is k, which is not < k
-      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Ranking.symm_apply_apply]; omega
+      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Equiv.symm_apply_apply]; omega
     · -- maximalChain r (k+1) = insert r(k) S
       rw [← hk]; ext i; simp only [maximalChain, Set.mem_insert_iff, Set.mem_setOf_eq]
       constructor
@@ -590,7 +592,7 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
           exact (Equiv.apply_symm_apply r i).symm.trans (congrArg r.toFun hsymm)
         · right; omega
       · rintro (rfl | h)
-        · simp only [Ranking.symm_apply_apply]; omega
+        · simp only [Equiv.symm_apply_apply]; omega
         · omega
   removal := fun S hS hne => by
     -- S = maximalChain r k with k > 0 (since S is nonempty).
@@ -603,12 +605,12 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
     have hkn1 : k.val - 1 < n := by omega
     refine ⟨r ⟨k.val - 1, hkn1⟩, ?_, r, hr, ⟨k.val - 1, by omega⟩, ?_⟩
     · -- r(k-1) ∈ S: its rank position is k-1 < k
-      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Ranking.symm_apply_apply]; omega
+      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Equiv.symm_apply_apply]; omega
     · -- S \ {r(k-1)} = maximalChain r (k-1)
       rw [← hk]; ext i; simp only [maximalChain, Set.mem_diff, Set.mem_setOf_eq, Set.mem_singleton_iff]
       constructor
       · intro h
-        exact ⟨by omega, fun heq => by rw [heq] at h; simp only [Ranking.symm_apply_apply] at h; omega⟩
+        exact ⟨by omega, fun heq => by rw [heq] at h; simp only [Equiv.symm_apply_apply] at h; omega⟩
       · intro ⟨h1, h2⟩
         have : (r.symm i).val ≠ k.val - 1 := by
           intro heq

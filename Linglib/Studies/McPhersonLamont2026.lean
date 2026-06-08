@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraint.OT.Basic
-import Linglib.Phonology.Constraint.OT.ERC
+import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
 import Linglib.Phonology.Constraint.OT.HarmonicSerialism
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Fragments.Poko.Tone
@@ -195,8 +195,8 @@ example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
 theorem parallel_OT_inadequate : ¬ ERCSet.consistent pokoSupport := by
   rintro ⟨r, hr⟩
   -- Both ERCs are satisfied by `r`.
-  have hA : ercA.satisfiedBy r := hr ercA (by simp [pokoSupport])
-  have hB : ercB.satisfiedBy r := hr ercB (by simp [pokoSupport])
+  have hA := (ERC.satisfiedBy_iff_dominance r ercA).mp (hr ercA (by simp [pokoSupport]))
+  have hB := (ERC.satisfiedBy_iff_dominance r ercB).mp (hr ercB (by simp [pokoSupport]))
   -- ercA: only W is at position 0 (MAX(H)). Verified per-position by
   -- `decide` on the derived ERC; can't `decide` the ∀ directly because
   -- reduction through `ercOfProfiles + mkProfile` stalls.
