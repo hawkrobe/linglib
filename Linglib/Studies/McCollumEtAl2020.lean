@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
 # McCollum, Baković, Mai & Meinhardt (2020): Tutrugbu ATR harmony is circumambient
@@ -289,5 +290,12 @@ the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
 nonmyopic side argued by [walker-2010]. -/
 theorem tutrugbu_nonmyopic (s : Direction) : ¬ IsMyopicTowards tutrugbuATR s :=
   tutrugbu_isUnboundedCircumambient.not_myopic s
+
+/-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
+non-deterministic regular power, above the weakly-deterministic upper bound of
+[heinz-lai-2013]. The capstone of the circumambience analysis: unbounded two-sided
+dependence defeats every non-interacting bimachine. -/
+theorem tutrugbu_not_weaklyDeterministic : ¬ IsBimachineWeaklyDeterministic tutrugbuATR :=
+  not_isBimachineWeaklyDeterministic_of_circumambient tutrugbu_isUnboundedCircumambient
 
 end McCollumEtAl2020
