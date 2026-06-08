@@ -9,23 +9,26 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 /-!
 # Bimachines and weak determinism
 
-A `Bimachine` (Schützenberger; Mohri) computes a letter-to-letter string function using
-**both** directions of context: a left automaton scans `→` and assigns a left state to
-each position, a right automaton scans `←` and assigns a right state, and the output at
+A `Bimachine` (Schützenberger; [mohri-1997]) computes a letter-to-letter string function
+using **both** directions of context: a left automaton scans `→` and assigns a left state
+to each position, a right automaton scans `←` and assigns a right state, and the output at
 position `i` is `out (leftState before i) (input i) (rightState after i)`.
 
-A bimachine is **non-interacting** ([heinz-lai-2013], [meinhardt-mai-mccollum-2024]) when
-every cell's output is fixed by the left state alone *or* the right state alone — the
-two directions never *both* matter at one cell. `IsBimachineWeaklyDeterministic` is
-computability by a non-interacting bimachine.
+Following [meinhardt-mai-bakovic-mccollum-2024] (Def. 5), a bimachine over a single
+alphabet is **non-interacting** when its output is a *union of one-sided change-rules over
+the identity*: each side may add its own change, but neither can suppress the other's.
+`IsBimachineWeaklyDeterministic` is computability by such a bimachine — the
+weakly-deterministic functions of [heinz-lai-2013].
 
 ## Main results
 
 * `Bimachine.run_getElem?` — output `i` is `out (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
-* `not_isBimachineWeaklyDeterministic_of_circumambient` — an unbounded-circumambient map
-  is **not** weakly deterministic: at a circumambient witness, perturbing one side keeps
-  that side's state fixed yet flips the output, so the cell is neither left- nor
-  right-determined — contradicting non-interaction. This is the McCollum et al. teeth.
+* `not_isBimachineWeaklyDeterministic_of_requiresBothSides` — a map with an unbounded
+  *interaction* (`RequiresBothSides`: the target is changed, yet perturbing either far side
+  reverts it) is **not** weakly deterministic. The far perturbations force both one-sided
+  rules inert at the witness cell while the base needs one to fire — the faithful McCollum
+  et al. teeth ([meinhardt-mai-bakovic-mccollum-2024] Def. 2). Conjunctive blocking
+  (Tutrugbu) satisfies it; union-spreading (Maasai) does not.
 -/
 
 namespace Core.Computability.Subregular.Function
@@ -113,58 +116,92 @@ theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]?
 
 /-! ### Weak determinism -/
 
-/-- A bimachine is **non-interacting**: every cell's output is fixed by the left state
-alone or by the right state alone. -/
-def Bimachine.IsNonInteracting (B : Bimachine L R α β) : Prop :=
-  ∀ l a r, (∀ r', B.out l a r' = B.out l a r) ∨ (∀ l', B.out l' a r = B.out l a r)
-
 /-- Computability by a finite bimachine (the length-preserving regular functions). -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β), B.run = f
 
-/-- **Weak determinism**: computability by a *non-interacting* finite bimachine. -/
-def IsBimachineWeaklyDeterministic (f : List α → List β) : Prop :=
-  ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β),
+section NonInteraction
+
+variable {L R α : Type*} [DecidableEq α]
+
+/-- Combine two one-sided change proposals over the identity default `a`: take the left
+rule's change if it fires (`≠ a`), else the right rule's, else leave the symbol. -/
+def unite (cL cR a : α) : α := if cL = a then (if cR = a then a else cR) else cL
+
+@[simp] theorem unite_self (a : α) : unite a a a = a := by simp [unite]
+
+/-- A combined value equal to the default forces *both* one-sided proposals to be inert. -/
+theorem unite_eq_default {cL cR a : α} (h : unite cL cR a = a) : cL = a ∧ cR = a := by
+  unfold unite at h; split_ifs at h with h1 h2 <;> simp_all
+
+/-- **Non-interaction** (faithful to [meinhardt-mai-bakovic-mccollum-2024] Def. 5): the cell
+output is a *union of one-sided change-rules over the identity default* — `ωL`/`ωR` each
+propose a change for their side, and the output takes whichever fires, else leaves the
+symbol unchanged. Neither side can *suppress* the other's change; that asymmetry is
+exactly what blocking (interaction) would require. -/
+def Bimachine.IsNonInteracting (B : Bimachine L R α α) : Prop :=
+  ∃ (ωL : L → α → α) (ωR : R → α → α), ∀ l a r, B.out l a r = unite (ωL l a) (ωR r a) a
+
+/-- **Weak determinism**: computability by a non-interacting finite bimachine. -/
+def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
+  ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
 
-/-- **Circumambient ⟹ not weakly deterministic** — the McCollum et al. teeth. At a
-distance-0 circumambient witness `(base, i)`: the right-perturbation `uR` agrees with
-`base` up to `i` (same left state, same symbol) yet flips the output, so the cell is not
-left-determined; the left-perturbation `uL` agrees from `i` (same right state, same
-symbol) yet flips the output, so it is not right-determined. Both fail at the *one* cell
-`(lState (base.take i), base[i], rState (base.drop (i+1)))` — contradicting
-non-interaction. -/
-theorem not_isBimachineWeaklyDeterministic_of_circumambient {f : List α → List β}
-    (hf : IsUnboundedCircumambient f) : ¬ IsBimachineWeaklyDeterministic f := by
-  rintro ⟨L, R, _, _, B, rfl, hni⟩
-  obtain ⟨base, i, hi, ⟨uL, hLlen, hLag, hLne⟩, ⟨uR, hRlen, hRag, hRne⟩⟩ := hf 0
+/-- A target whose spread **requires both sides**: `f` changes `base[i]` from its input,
+but perturbing either far side reverts it to identity. The suppression/conjunction
+structure of unbounded interaction ([meinhardt-mai-bakovic-mccollum-2024] Def. 2). Unlike
+`IsUnboundedCircumambient`, union-spreading (Maasai) does *not* satisfy it: removing one
+trigger leaves the other, so the output stays changed. -/
+def RequiresBothSides (f : List α → List α) : Prop :=
+  ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
+    (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
+      uL[i]? = base[i]? ∧ (f uL)[i]? = uL[i]?) ∧
+    (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
+      uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
+
+/-- **Unbounded interaction ⟹ not weakly deterministic** — the faithful McCollum et al.
+teeth. At the witness, the base spreads but each far perturbation reverts: the right
+perturbation keeps the left state, forcing `ωL` inert at this cell; the left perturbation
+keeps the right state, forcing `ωR` inert; yet the base needs one of them to fire — no
+union of one-sided rules can produce the spread. -/
+theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
+    (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
+  rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
+  obtain ⟨base, i, hi, hspread, ⟨uL, hLlen, hLag, hLsym, hLrev⟩,
+    ⟨uR, hRlen, hRag, hRsym, hRrev⟩⟩ := hf 0
   simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
   have hbi : base[i]? = some base[i] := List.getElem?_eq_getElem hi
-  have hbase : (B.run base)[i]? =
-      some (B.out (B.lState (base.take i)) base[i] (B.rState (base.drop (i + 1)))) := by
-    rw [B.run_getElem?, hbi]; rfl
-  -- `uL` agrees from `i`: same suffix (⇒ right state) and symbol; output differs.
-  have hLdrop : uL.drop (i + 1) = base.drop (i + 1) :=
-    drop_eq_of_agree fun k _ => (hLag k (by omega)).symm
-  have hLsym : uL[i]? = some base[i] := (hLag i le_rfl).symm.trans hbi
-  have hLout : (B.run uL)[i]? =
-      some (B.out (B.lState (uL.take i)) base[i] (B.rState (base.drop (i + 1)))) := by
-    rw [B.run_getElem?, hLsym, hLdrop]; rfl
-  have hLneq : B.out (B.lState (uL.take i)) base[i] (B.rState (base.drop (i + 1)))
-      ≠ B.out (B.lState (base.take i)) base[i] (B.rState (base.drop (i + 1))) :=
-    fun h => hLne (by rw [hbase, hLout, h])
-  -- `uR` agrees up to `i`: same prefix (⇒ left state) and symbol; output differs.
-  have hRtake : uR.take i = base.take i :=
-    take_eq_of_agree fun k hk => (hRag k (by omega)).symm
-  have hRsym : uR[i]? = some base[i] := (hRag i le_rfl).symm.trans hbi
+  -- right perturbation keeps the left state; its reverting output makes `ωL` inert here
+  have hRtake : uR.take i = base.take i := take_eq_of_agree fun k hk => (hRag k (by omega)).symm
+  have hRsym' : uR[i]? = some base[i] := hRsym.trans hbi
   have hRout : (B.run uR)[i]? =
-      some (B.out (B.lState (base.take i)) base[i] (B.rState (uR.drop (i + 1)))) := by
-    rw [B.run_getElem?, hRsym, hRtake]; rfl
-  have hRneq : B.out (B.lState (base.take i)) base[i] (B.rState (uR.drop (i + 1)))
-      ≠ B.out (B.lState (base.take i)) base[i] (B.rState (base.drop (i + 1))) :=
-    fun h => hRne (by rw [hbase, hRout, h])
-  rcases hni (B.lState (base.take i)) base[i] (B.rState (base.drop (i + 1))) with hLdet | hRdet
-  · exact hRneq (hLdet (B.rState (uR.drop (i + 1))))
-  · exact hLneq (hRdet (B.lState (uL.take i)))
+      some (unite (ωL (B.lState (base.take i)) base[i])
+        (ωR (B.rState (uR.drop (i + 1))) base[i]) base[i]) := by
+    rw [B.run_getElem?, hRsym', Option.map_some, hRtake, hω]
+  have hωL : ωL (B.lState (base.take i)) base[i] = base[i] :=
+    (unite_eq_default (Option.some_injective _ (hRout.symm.trans (by rw [hRrev, hRsym'])))).1
+  -- left perturbation keeps the right state; its reverting output makes `ωR` inert here
+  have hLdrop : uL.drop (i + 1) = base.drop (i + 1) := drop_eq_of_agree fun k _ => (hLag k (by omega)).symm
+  have hLsym' : uL[i]? = some base[i] := hLsym.trans hbi
+  have hLout : (B.run uL)[i]? =
+      some (unite (ωL (B.lState (uL.take i)) base[i])
+        (ωR (B.rState (base.drop (i + 1))) base[i]) base[i]) := by
+    rw [B.run_getElem?, hLsym', Option.map_some, hLdrop, hω]
+  have hωR : ωR (B.rState (base.drop (i + 1))) base[i] = base[i] :=
+    (unite_eq_default (Option.some_injective _ (hLout.symm.trans (by rw [hLrev, hLsym'])))).2
+  -- the base needs a change, but both rules are inert
+  apply hspread
+  rw [B.run_getElem?, hbi, Option.map_some, hω, hωL, hωR, unite_self]
+
+/-- Non-vacuity: any bimachine whose cell output is literally a `unite` of independent
+one-sided rules is non-interacting — the class genuinely admits two-sided union-spreading
+(the Maasai shape), which the per-cell notion wrongly excluded. -/
+example (ωL : L → α → α) (ωR : R → α → α) (lInit : L) (lStep : L → α → L)
+    (rInit : R) (rStep : R → α → R) :
+    (Bimachine.mk lInit lStep rInit rStep
+      (fun l a r => unite (ωL l a) (ωR r a) a)).IsNonInteracting :=
+  ⟨ωL, ωR, fun _ _ _ => rfl⟩
+
+end NonInteraction
 
 end Core.Computability.Subregular.Function

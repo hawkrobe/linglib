@@ -291,11 +291,59 @@ nonmyopic side argued by [walker-2010]. -/
 theorem tutrugbu_nonmyopic (s : Direction) : ¬ IsMyopicTowards tutrugbuATR s :=
   tutrugbu_isUnboundedCircumambient.not_myopic s
 
+/-- The input symbol at the target index is the recessive `.vLo` (for any initial and
+root): the prefix sequence places a `[−high]` vowel there. -/
+theorem pre_get_target (init : Seg) (d : ℕ) : (pre init d)[d + 1]? = some .vLo := by
+  simp only [pre, List.cons_append, List.getElem?_cons_succ]
+  rw [List.getElem?_append_right (by simp)]
+  simp
+
+/-- **Tutrugbu ATR harmony requires both sides** ([meinhardt-mai-bakovic-mccollum-2024]
+Def. 2): at the medial target the base spreads ([+ATR]), but flipping the initial height
+to the far left *or* the root ATR to the far right reverts it to its [−ATR] input — the
+suppression structure no union of one-sided rules can produce. -/
+theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
+  intro d
+  have hpl : (pre Seg.vLo d).length = 2 * d + 2 := by
+    simp only [pre, List.length_cons, List.length_append, List.length_replicate]; omega
+  have hplH : (pre Seg.vHi d).length = 2 * d + 2 := by
+    simp only [pre, List.length_cons, List.length_append, List.length_replicate]; omega
+  have hbin : (base d)[d + 1]? = some .vLo := by
+    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
+        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
+  have hLin : (baseL d)[d + 1]? = some .vLo := by
+    rw [show baseL d = pre Seg.vHi d ++ [.rP] from rfl,
+        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vHi d).length), pre_get_target]
+  have hRin : (baseR d)[d + 1]? = some .vLo := by
+    rw [show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
+        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
+  refine ⟨base d, d + 1, ?_, ?_, ⟨baseL d, ?_, ?_, ?_, ?_⟩, ⟨baseR d, ?_, ?_, ?_, ?_⟩⟩
+  · simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]; omega
+  · rw [base_get_target, hbin]; decide
+  · simp only [baseL, base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]
+  · intro k hk
+    cases k with
+    | zero => omega
+    | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
+  · rw [hLin, hbin]
+  · rw [baseL_get_target, hLin]
+  · simp only [baseR, base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]
+  · intro k hk
+    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
+        show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
+        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
+        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
+  · rw [hRin, hbin]
+  · rw [baseR_get_target, hRin]
+
 /-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
 non-deterministic regular power, above the weakly-deterministic upper bound of
-[heinz-lai-2013]. The capstone of the circumambience analysis: unbounded two-sided
-dependence defeats every non-interacting bimachine. -/
+[heinz-lai-2013]. The capstone: the conjunctive blocking (`tutrugbu_requiresBothSides`)
+cannot be a union of one-sided rules, so no non-interacting bimachine computes it. -/
 theorem tutrugbu_not_weaklyDeterministic : ¬ IsBimachineWeaklyDeterministic tutrugbuATR :=
-  not_isBimachineWeaklyDeterministic_of_circumambient tutrugbu_isUnboundedCircumambient
+  not_isBimachineWeaklyDeterministic_of_requiresBothSides tutrugbu_requiresBothSides
 
 end McCollumEtAl2020
