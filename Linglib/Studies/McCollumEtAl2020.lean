@@ -86,6 +86,40 @@ def spreadRTL (initialHi : Bool) : Bool → List Seg → List Seg
       else raisePfx v :: spreadRTL initialHi true rest
     else v :: spreadRTL initialHi false rest
 
+@[simp] theorem spreadRTL_nil (ih sp : Bool) : spreadRTL ih sp [] = [] := rfl
+
+theorem spreadRTL_cons (ih sp : Bool) (v : Seg) (rest : List Seg) :
+    spreadRTL ih sp (v :: rest) =
+      if sp then
+        (if v.isHiPfx then raisePfx v :: spreadRTL ih true rest
+         else if ih then v :: spreadRTL ih false rest
+         else raisePfx v :: spreadRTL ih true rest)
+      else v :: spreadRTL ih false rest := rfl
+
+/-- Once spreading has stopped, the scan leaves the list unchanged. -/
+theorem spreadRTL_stopped (ih : Bool) : ∀ L, spreadRTL ih false L = L
+  | [] => rfl
+  | v :: rest => by rw [spreadRTL_cons, if_neg (by decide), spreadRTL_stopped ih rest]
+
+/-- With an initial [−high] vowel (`ih = false`), nothing blocks: every prefix raises. -/
+theorem spreadRTL_false_true : ∀ L, spreadRTL false true L = L.map raisePfx
+  | [] => rfl
+  | v :: rest => by
+      rw [spreadRTL_cons, if_pos rfl]
+      have ih := spreadRTL_false_true rest
+      cases h : v.isHiPfx <;> simp [ih]
+
+/-- A `replicate`-block of [+high] fillers raises and keeps spreading. -/
+theorem spreadRTL_replicate_vHi (ih : Bool) (rest : List Seg) :
+    ∀ n, spreadRTL ih true (List.replicate n .vHi ++ rest)
+       = List.replicate n .vHiA ++ spreadRTL ih true rest
+  | 0 => by simp
+  | n + 1 => by
+      rw [List.replicate_succ, List.cons_append, spreadRTL_cons, if_pos rfl,
+          if_pos (by decide : (Seg.vHi).isHiPfx = true),
+          spreadRTL_replicate_vHi ih rest n, List.replicate_succ, List.cons_append]
+      rfl
+
 /-- Tutrugbu ATR harmony on `[prefix vowels…] ++ [root]`. Harmony applies only with a
 [+ATR] root; the initial-syllable height gates conditional blocking. -/
 def tutrugbuATR (xs : List Seg) : List Seg :=
@@ -131,16 +165,86 @@ example : tutrugbuATR [.vLo, .vHi, .vHi, .vLo, .rP]
 
 /-! ### Subregular classification -/
 
+/-- The prefix sequence of the witness: a [−high]/[+high] initial, then `d` [+high]
+fillers, the [−high] target, and `d` more [+high] fillers. -/
+def pre (init : Seg) (d : ℕ) : List Seg :=
+  init :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi
+
 /-- The unbounded-circumambience witness at distance `d`: a [−high] target flanked by
 `d` [+high] fillers on each side, a [−high] initial, and a [+ATR] root. -/
-def base (d : ℕ) : List Seg :=
-  .vLo :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi ++ [.rP]
+def base (d : ℕ) : List Seg := pre .vLo d ++ [.rP]
 /-- Far-LEFT perturbation: flip the initial to [+high] (blocks the target). -/
-def baseL (d : ℕ) : List Seg :=
-  .vHi :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi ++ [.rP]
+def baseL (d : ℕ) : List Seg := pre .vHi d ++ [.rP]
 /-- Far-RIGHT perturbation: flip the root to [−ATR] (removes the trigger). -/
-def baseR (d : ℕ) : List Seg :=
-  .vLo :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi ++ [.rM]
+def baseR (d : ℕ) : List Seg := pre .vLo d ++ [.rM]
+
+/-- `tutrugbuATR` on `base d`: with a [−high] initial nothing blocks, so every prefix
+raises; the target at index `d+1` surfaces [+ATR] (`.vLoA`). -/
+theorem tutrugbuATR_base (d : ℕ) :
+    tutrugbuATR (base d)
+      = .vLoA :: List.replicate d .vHiA ++ .vLoA :: List.replicate d .vHiA ++ [.rP] := by
+  have hLast : (base d).getLast? = some .rP := by simp [base]
+  have hDrop : (base d).dropLast = pre .vLo d := by simp [base]
+  have hHead : (pre .vLo d).head? = some .vLo := by simp [pre]
+  -- With ih=false, spreading raises every prefix
+  have hSpread : (spreadRTL false true (pre .vLo d).reverse).reverse = (pre .vLo d).map .raisePfx :=
+    by rw [spreadRTL_false_true, List.map_reverse, List.reverse_reverse]
+  -- First reduce tutrugbuATR using the computed pieces
+  rw [show tutrugbuATR (base d) =
+      (spreadRTL false true (pre .vLo d).reverse).reverse ++ [.rP] from by
+    simp only [tutrugbuATR, hLast, hDrop, hHead, Seg.isHiPfx]]
+  -- Now substitute the spread result and expand pre
+  rw [hSpread]
+  simp only [pre, List.map_cons, List.map_append, List.map_replicate, Seg.raisePfx,
+    List.cons_append, List.append_assoc]
+
+/-- `tutrugbuATR` on `baseL d`: a [+high] initial makes the [−high] target a blocker, so
+[+ATR] reaches only the root-side fillers; the target at index `d+1` stays [−ATR]. -/
+theorem tutrugbuATR_baseL (d : ℕ) :
+    tutrugbuATR (baseL d)
+      = List.replicate (d + 1) .vHi ++ .vLo :: List.replicate d .vHiA ++ [.rP] := by
+  have hLast : (baseL d).getLast? = some .rP := by simp [baseL]
+  have hDrop : (baseL d).dropLast = pre .vHi d := by simp [baseL]
+  have hHead : (pre .vHi d).head? = some .vHi := by simp [pre]
+  -- (pre .vHi d).reverse = replicate d .vHi ++ .vLo :: replicate (d+1) .vHi
+  have hRev : (pre .vHi d).reverse =
+      List.replicate d .vHi ++ .vLo :: List.replicate (d + 1) .vHi := by
+    simp only [pre, List.reverse_cons, List.reverse_append, List.reverse_replicate,
+      List.append_assoc, List.cons_append, List.nil_append, List.replicate_succ']
+  -- spreadRTL result: replicate d .vHiA ++ .vLo :: replicate (d+1) .vHi
+  have hSpread : spreadRTL true true ((pre .vHi d).reverse) =
+      List.replicate d .vHiA ++ .vLo :: List.replicate (d + 1) .vHi := by
+    rw [hRev, spreadRTL_replicate_vHi, spreadRTL_cons]
+    simp only [Seg.isHiPfx, if_true, if_false, Bool.false_eq_true, spreadRTL_stopped]
+  -- Reduce tutrugbuATR to the spread expression
+  rw [show tutrugbuATR (baseL d) =
+      (spreadRTL true true (pre .vHi d).reverse).reverse ++ [.rP] from by
+    simp only [tutrugbuATR, hLast, hDrop, hHead, Seg.isHiPfx]]
+  -- Substitute hSpread and reverse the result
+  rw [hSpread]
+  simp only [List.reverse_append, List.reverse_replicate, List.reverse_cons, List.nil_append,
+    List.append_assoc, List.cons_append]
+
+/-- `tutrugbuATR` on `baseR d`: a [−ATR] root provides no trigger, so the map is the
+identity; the target at index `d+1` stays [−ATR]. -/
+theorem tutrugbuATR_baseR (d : ℕ) : tutrugbuATR (baseR d) = baseR d := by
+  have hLast : (baseR d).getLast? = some .rM := by simp [baseR]
+  simp only [tutrugbuATR, hLast]
+
+/-- The base output at the target index is [+ATR]. -/
+theorem base_get_target (d : ℕ) : (tutrugbuATR (base d))[d + 1]? = some .vLoA := by
+  rw [tutrugbuATR_base]
+  simp
+
+/-- The `baseL` output at the target index is [−ATR] (blocked). -/
+theorem baseL_get_target (d : ℕ) : (tutrugbuATR (baseL d))[d + 1]? = some .vLo := by
+  rw [tutrugbuATR_baseL]
+  simp
+
+/-- The `baseR` output at the target index is [−ATR] (no trigger). -/
+theorem baseR_get_target (d : ℕ) : (tutrugbuATR (baseR d))[d + 1]? = some .vLo := by
+  rw [tutrugbuATR_baseR]
+  simp [baseR, pre]
 
 /-- **Tutrugbu ATR harmony is unbounded circumambient**
 ([mccollum-bakovic-mai-meinhardt-2020] §3, def. 13). At the medial target (index
@@ -150,17 +254,34 @@ trigger — both from the one base word. -/
 theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbuATR := by
   intro d
   refine ⟨base d, d + 1, ?_, ⟨baseL d, ?_, ?_, ?_⟩, ⟨baseR d, ?_, ?_, ?_⟩⟩
-  · simp only [base, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]; omega                       -- d + 1 < (base d).length  (= 2d+3)
-  · simp [baseL, base]                               -- (baseL d).length = (base d).length
-  · sorry  -- AgreeFrom (base d) (baseL d) 1: differ only at index 0 (the initial)
-  · sorry  -- (base)[d+1] = .vLoA ≠ .vLo = (baseL)[d+1]   (initial [+high] blocks)
-  · simp [baseR, base]                               -- (baseR d).length = (base d).length
-  · sorry  -- AgreeUpto (base d) (baseR d) (2d+1): differ only at the root index
-  · sorry  -- (base)[d+1] = .vLoA ≠ .vLo = (baseR)[d+1]   ([−ATR] root ⟹ no harmony)
-  -- The four output/agreement `sorry`s discharge via the `replicate` push-through
-  -- `spreadRTL ih true (.replicate n .vHi ++ rest) = .replicate n .vHiA ++ spreadRTL ih true rest`
-  -- (verified `decide`-true at each fixed `d`; the ∀d step is the induction on `n`).
+  · -- goal 1: d + 1 < (base d).length  (= 2d+3)
+    simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]; omega
+  · -- goal 2: (baseL d).length = (base d).length
+    simp only [baseL, base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]
+  · -- goal 3: AgreeFrom (base d) (baseL d) 1: they share the tail from index 1
+    intro k hk
+    cases k with
+    | zero => omega
+    | succ k' =>
+      simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
+  · -- goal 4: (tutrugbuATR (base d))[d+1]? ≠ (tutrugbuATR (baseL d))[d+1]?
+    rw [base_get_target, baseL_get_target]; decide
+  · -- goal 5: (baseR d).length = (base d).length
+    simp only [baseR, base, pre, List.length_cons, List.length_append, List.length_replicate,
+      List.length_nil]
+  · -- goal 6: AgreeUpto (base d) (baseR d) ((d+1)+d): differ only at the root index
+    intro k hk
+    have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
+      simp only [pre, List.length_cons, List.length_append, List.length_replicate]
+      omega
+    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
+        show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
+        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
+        List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
+  · -- goal 7: (tutrugbuATR (base d))[d+1]? ≠ (tutrugbuATR (baseR d))[d+1]?
+    rw [base_get_target, baseR_get_target]; decide
 
 /-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
 ([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
