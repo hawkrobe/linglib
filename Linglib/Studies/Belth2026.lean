@@ -2,7 +2,7 @@ import Linglib.Phonology.Process.Alternation
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
-import Linglib.Phonology.Constraint.OT.ERC
+import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 
@@ -510,7 +510,7 @@ theorem latinERCSet_consistent_without_lunaris :
 theorem latin_OCP_dominates_starR (r : Ranking 2)
     (hr : ERCSet.satisfiedBy r
       [popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC]) :
-    dominates r 0 1 := by
+    r.dominates 0 1 := by
   have hpop : popularisERC.satisfiedBy r :=
     hr popularisERC (List.mem_cons.mpr (Or.inl rfl))
   have : (simpleERC (n := 2) 0 1).satisfiedBy r := by

@@ -518,6 +518,47 @@ theorem lexFinNatLE_iff_le {n : Nat} (a b : Lex (Fin n → Nat)) :
   rw [show a ≤ b ↔ ¬ (b < a) from not_lt.symm]
   exact lexFinNatLE_iff_not_lt n a b
 
+/-- Lexicographic `≤` as "no uncompensated inversion": `toLex A ≤ toLex B` holds
+iff every coordinate where `A` strictly exceeds `B` is preceded (in index order)
+by one where `A` is strictly below `B`. Stated for any linearly-ordered codomain;
+used to ground OT's ERC satisfaction in the lex order. -/
+theorem lex_le_iff_forall {α : Type*} [LinearOrder α] {m : ℕ} (A B : Fin m → α) :
+    toLex A ≤ toLex B ↔ ∀ p, B p < A p → ∃ p' < p, A p' < B p' := by
+  rw [← not_lt]
+  constructor
+  · intro hnlt p hp
+    by_contra hcon
+    by_cases hS : (Finset.univ.filter (fun j : Fin m => j < p ∧ B j ≠ A j)).Nonempty
+    · set q := (Finset.univ.filter (fun j : Fin m => j < p ∧ B j ≠ A j)).min' hS with hq
+      have hmem := Finset.min'_mem _ hS
+      rw [← hq] at hmem
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
+      obtain ⟨hqp, hne⟩ := hmem
+      have hbefore : ∀ j, j < q → B j = A j := by
+        intro j hj
+        by_contra hjne
+        have hjmem : j ∈ Finset.univ.filter (fun j : Fin m => j < p ∧ B j ≠ A j) := by
+          simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+          exact ⟨lt_trans hj hqp, hjne⟩
+        have := Finset.min'_le _ _ hjmem
+        rw [← hq] at this
+        exact absurd hj (not_lt.mpr this)
+      rcases lt_or_ge (B q) (A q) with hlt | hge
+      · exact hnlt ⟨q, fun j hj => hbefore j hj, hlt⟩
+      · exact hcon ⟨q, hqp, lt_of_le_of_ne hge (fun h => hne h.symm)⟩
+    · rw [Finset.not_nonempty_iff_eq_empty] at hS
+      have hbefore : ∀ j, j < p → B j = A j := by
+        intro j hj
+        by_contra hjne
+        have hjmem : j ∈ Finset.univ.filter (fun j : Fin m => j < p ∧ B j ≠ A j) := by
+          simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨hj, hjne⟩
+        rw [hS] at hjmem; simp at hjmem
+      exact hnlt ⟨p, fun j hj => hbefore j hj, hp⟩
+  · intro hY hlt
+    obtain ⟨i, hpre, hi⟩ := hlt
+    obtain ⟨p', hp'lt, hp'⟩ := hY i hi
+    exact absurd (hpre p' hp'lt).symm (ne_of_lt hp')
+
 /-- Decidable `≤` on `Lex (Fin n → Nat)`. The `LinearOrder` from `Pi.Lex`
     is noncomputable, but this instance provides decidable comparison via
     the recursive `lexFinNatLE`, making downstream `by decide` work. -/

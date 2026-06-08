@@ -185,7 +185,7 @@ import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Phonology.Constraint.OT.Basic
-import Linglib.Phonology.Constraint.OT.ERC
+import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
 import Linglib.Phonology.Constraint.OT.Antimatroid
 import Linglib.Phonology.Constraint.OT.EvalMode
 import Linglib.Phonology.Constraint.OT.Iteration

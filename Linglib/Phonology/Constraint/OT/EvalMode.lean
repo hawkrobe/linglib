@@ -53,12 +53,14 @@ multi-violation profiles distinguish the modes — the paper's whole
 argument (paper, eqs. 60–62) hinges on parallel and directional eval
 giving different winners for `/kāk^H + rī^H + dō^H/`.
 
-## Why this lives in `Core/Optimization/OT/` rather than `Phonology/`
+## Placement
 
 `EvalMode` is a property of the OT evaluation procedure, not of the
-phonology-specific candidate type. Like `ERC`, it lives at the framework
-layer so that future phonology-, syntax-, and pragmatics-side users can
-share one notion of directional EVAL.
+phonology-specific candidate type. It sits in the OT constraint layer
+alongside `ERC`, on top of the neutral `Core.Optimization` machinery. All
+current consumers are phonology-side; were a syntax- or pragmatics-side user
+to share this notion of directional EVAL, the OT layer would be the level to
+lift it to.
 
 ## Sibling, not refactor
 
