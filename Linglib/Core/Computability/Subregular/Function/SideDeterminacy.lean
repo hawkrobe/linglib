@@ -128,4 +128,18 @@ theorem IsMyopicTowards.right_of_prefixDetermined {f : List α → List β}
   obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
   exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
 
+/-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}` (the right side is
+irrelevant) — the footprint shape of a left-to-right transducer. -/
+def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | k ≤ i}
+/-- Dually, fixed by the suffix `{k | i ≤ k}`. -/
+def RightDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | i ≤ k}
+
+/-- **Left-determined everywhere ⟹ right-myopic.** If every output coordinate is fixed
+by its prefix `{k | k ≤ i}`, the map has no rightward look-ahead. -/
+theorem IsMyopicTowards.right_of_leftDetermined {f : List α → List β}
+    (h : ∀ i, LeftDetermined f i) : IsMyopicTowards f .right := by
+  intro hunb
+  obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
+  exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
+
 end Core.Computability.Subregular.Function
