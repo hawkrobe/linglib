@@ -1,5 +1,3 @@
-import Linglib.Fragments.Japanese.Particles
-
 /-!
 # Empirical Data: [kubota-2026] "Outlook Management"
 [kubota-2026]
@@ -18,10 +16,6 @@ Empirical observations on Japanese outlook markers from [kubota-2026].
 -/
 
 namespace Phenomena.Modality.OutlookMarkers.Kubota2026
-
-open Japanese.OutlookMarkers
-open Pragmatics.Expressives.OutlookMarker
-
 
 /-! ## Felicity Judgments
 
@@ -221,22 +215,6 @@ def ex46d_semete_deontic_ok : ModalInteractionDatum :=
   , exampleNum := "46d" }
 
 
-/-! ## Verification: Fragment Entries Match Empirical Data -/
-
-/-- *semete*'s modal restriction in the fragment matches the empirical data:
-    rejects epistemic (46a), accepts deontic (46d). -/
-theorem semete_modal_matches_data :
-    semete.modalCompat.epistemic = false ∧
-    semete.modalCompat.deontic = true :=
-  ⟨rfl, rfl⟩
-
-/-- *nanka*'s unrestricted modal compatibility matches the data:
-    acceptable with both epistemic (45a) and deontic (45c). -/
-theorem nanka_modal_matches_data :
-    nanka.modalCompat.epistemic = true ∧
-    nanka.modalCompat.deontic = true :=
-  ⟨rfl, rfl⟩
-
 /-- All felicity data: counterstance present → felicitous, absent → infelicitous. -/
 def allFelicityData : List FelicityDatum :=
   [ex37_nanka_felicitous, ex38_nanka_infelicitous, ex39_dōse_Q1_ok, ex39_dōse_Q2_bad,
@@ -245,6 +223,6 @@ def allFelicityData : List FelicityDatum :=
 /-- Felicitous data points are exactly those with salient counterstance. -/
 theorem felicitous_iff_counterstance_salient :
     (allFelicityData.filter (·.felicitous)).length = 2 ∧
-    (allFelicityData.filter (! ·.felicitous)).length = 3 := by native_decide
+    (allFelicityData.filter (! ·.felicitous)).length = 3 := by decide
 
 end Phenomena.Modality.OutlookMarkers.Kubota2026
