@@ -3,6 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Computability.Subregular.Function.ISL
+import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
@@ -10,10 +12,10 @@ import Linglib.Core.Computability.Subregular.Function.Bimachine
 # The subregular function hierarchy
 
 Inclusions among the directionality classes of `Core/Computability/Subregular/Function/`,
-assembled from the synchronous-subsequential (`LetterSubsequential`) and bimachine
-(`Bimachine`) substrate:
+assembled from the strictly-local, synchronous-subsequential (`LetterSubsequential`) and
+bimachine (`Bimachine`) substrate:
 
-  `IsLetterLeftSubsequential ⊆ IsBimachineWeaklyDeterministic ⊆ IsBimachineComputable`
+  `single-symbol ISL/OSL ⊆ IsLetterLeftSubsequential ⊆ IsBimachineWeaklyDeterministic ⊆ IsBimachineComputable`
 
 A left-subsequential transducer is the degenerate bimachine whose right automaton is
 trivial, so its cell output is a *one-sided* rule — non-interacting.
@@ -23,6 +25,9 @@ trivial, so its cell output is a *one-sided* rule — non-interacting.
 * `IsBimachineWeaklyDeterministic.of_letterLeftSubsequential` — subsequential ⊆ WD.
 * `IsBimachineComputable.of_weaklyDeterministic` — WD ⊆ regular.
 * `weaklyDeterministic_strict_subset_regular` — the second inclusion is *proper*.
+* `isLetterLeftSubsequential_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
+  subsequential (the bounded window as a `LetterSFST` state); `.of_ISLRule` / `.of_OSLRule`
+  extend the chain to WD.
 
 ## Strictness
 
@@ -186,5 +191,86 @@ theorem weaklyDeterministic_strict_subset_regular :
       IsBimachineComputable f ∧ ¬ IsBimachineWeaklyDeterministic f :=
   ⟨conjBM.run, ⟨Bool, Bool, inferInstance, inferInstance, conjBM, rfl⟩,
    not_isBimachineWeaklyDeterministic_of_requiresBothSides conjBM_requiresBothSides⟩
+
+/-! ### The strictly-local lower end: single-symbol ISL/OSL ⊆ subsequential
+
+The ISL/OSL classes are block-output (length-changing) in general, so they sit outside the
+length-preserving lattice. Their **single-symbol** (length-preserving) fragment — the
+harmony-relevant case (e.g. `MeinhardtEtAl2024.rightwardATR_osl`) — embeds: the same
+bounded window that makes `toFinSFST` finite-state serves as a `LetterSFST` state, with the
+lone output symbol as the letter. This extends the chain to
+`single-symbol ISL/OSL ⊆ subsequential ⊆ WD ⊆ regular`. -/
+
+/-- A length-preserving (single-symbol) left-ISL rule as a synchronous transducer: the
+bounded input window is the state, the lone output symbol the letter. -/
+def ISLRule.toLetterSFST {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) :
+    LetterSFST {l : List α // l.length ≤ k - 1} α β where
+  initial := ⟨[], Nat.zero_le _⟩
+  step w x := (⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩,
+    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+
+theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
+  rw [← r.toFinSFST_run_eq_apply]
+  funext input
+  suffices h : ∀ w : {l : List α // l.length ≤ k - 1},
+      LetterSFST.runFrom (r.toLetterSFST hs) w input = SFST.runFrom r.toFinSFST w input from h _
+  intro w
+  induction input generalizing w with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [LetterSFST.runFrom_cons, SFST.runFrom_cons, ISLRule.toLetterSFST,
+      ISLRule.toFinSFST]
+    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
+    simp only [ha, List.head_cons, List.singleton_append]
+    exact congrArg (a :: ·) (ih _)
+
+/-- **Single-symbol left-ISL ⊆ left-subsequential.** -/
+theorem isLetterLeftSubsequential_of_ISLRule {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
+  ⟨_, fintypeListLengthLE _, r.toLetterSFST hs, r.toLetterSFST_run_eq_apply hs⟩
+
+/-- A length-preserving (single-symbol) left-OSL rule as a synchronous transducer: the
+bounded output window is the state. -/
+def OSLRule.toLetterSFST {α β : Type} {k : ℕ} (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) :
+    LetterSFST {l : List β // l.length ≤ k - 1} α β where
+  initial := ⟨[], Nat.zero_le _⟩
+  step w x := (⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x), lastN_length_le _ _⟩,
+    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+
+theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
+  rw [← r.toFinSFST_run_eq_apply]
+  funext input
+  suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
+      LetterSFST.runFrom (r.toLetterSFST hs) w input = SFST.runFrom r.toFinSFST w input from h _
+  intro w
+  induction input generalizing w with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [LetterSFST.runFrom_cons, SFST.runFrom_cons, OSLRule.toLetterSFST,
+      OSLRule.toFinSFST]
+    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
+    simp only [ha, List.head_cons, List.singleton_append]
+    exact congrArg (a :: ·) (ih _)
+
+/-- **Single-symbol left-OSL ⊆ left-subsequential.** -/
+theorem isLetterLeftSubsequential_of_OSLRule {α β : Type} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
+  ⟨_, fintypeListLengthLE _, r.toLetterSFST hs, r.toLetterSFST_run_eq_apply hs⟩
+
+/-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through subsequential. -/
+theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type} {k : ℕ} [Fintype α] [DecidableEq α]
+    (r : ISLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
+    IsBimachineWeaklyDeterministic r.apply :=
+  .of_letterLeftSubsequential (isLetterLeftSubsequential_of_ISLRule r hs)
+
+/-- **Single-symbol left-OSL ⊆ WD**. -/
+theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type} {k : ℕ} [Fintype α] [DecidableEq α]
+    (r : OSLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
+    IsBimachineWeaklyDeterministic r.apply :=
+  .of_letterLeftSubsequential (isLetterLeftSubsequential_of_OSLRule r hs)
 
 end Core.Computability.Subregular.Function
