@@ -1,7 +1,7 @@
 import Linglib.Phonology.Featural.ComplexSegments
 import Linglib.Phonology.Featural.Geometry
 import Linglib.Phonology.Autosegmental.Defs
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Sagey (1986) [sagey-1986]

@@ -1,5 +1,5 @@
 import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Data.PHOIBLE.Inventories.English
 
 /-!

@@ -1,4 +1,6 @@
-import Linglib.Phonology.Process.Harmony.OT
+import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.Constraint.OT.Basic
 import Linglib.Phonology.Constraint.System
 import Linglib.Fragments.Hungarian.VowelHarmony
 
@@ -9,9 +11,9 @@ import Linglib.Fragments.Hungarian.VowelHarmony
 End-to-end OT analysis of Hungarian vowel harmony, connecting:
 
 1. **Segment features** (`Features.lean`) — Hayes binary feature inventory
-2. **Harmony system** (`Harmony.Defs`) — trigger/target/transparent predicates
-3. **OT constraints** (`Harmony.OT`) — SPREAD and IDENT derived from
-   `HarmonySystem`
+2. **Harmony system** (`Subregular.Harmony`) — trigger/target/transparent predicates
+3. **OT constraints** (below) — SPREAD and IDENT derived from
+   `HarmonySystem` (folded in from the former `Harmony/OT.lean`, this file's sole consumer)
 4. **Tableaux** (`Phonology.Constraint.OT`) — `mkTableau` + `optimal` select winner
 5. **Hungarian fragments** (`Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
@@ -41,8 +43,148 @@ namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
 open Phonology.Harmony
+open Phonology.Correspondence (Corr)
 open Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
+
+-- ============================================================================
+-- § 0: OT constraints derived from a `HarmonySystem`
+--
+-- SPREAD (markedness) and IDENT-[F] (faithfulness) for any `HarmonySystem`,
+-- plus the `VHCandidate` evaluation type. Folded in from the former
+-- `Phonology/Process/Harmony/OT.lean` (this file was its sole consumer).
+-- ============================================================================
+
+/-- Feature BEq is reflexive. Needed because `Feature` derives `BEq`
+    separately from `DecidableEq`, so `beq_self_eq_true` may not
+    fire automatically. -/
+private theorem feature_beq_self (f : Feature) : (f == f) = true := by
+  cases f <;> rfl
+
+/-- SPREAD violations: count target segments whose harmony feature value
+    doesn't match `triggerVal`. -/
+def spreadViolations (sys : HarmonySystem) (triggerVal : Bool)
+    (suffix : List Segment) : Nat :=
+  suffix.filter (λ s =>
+    sys.isTarget s && !((s.spec sys.feature) == some triggerVal)
+  ) |>.length
+
+/-- IDENT-[F] violations: count positions where the harmony feature
+    changed between input and output.
+
+    **Derived from `Corr.identViol`** on the `(false, true)` edge of a
+    binary parallel-pair correspondence between the feature-projected
+    tiers `input.map (·.spec sys.feature)` and
+    `output.map (·.spec sys.feature)`. This structurally identifies
+    IDENT-[F] as IDENT-IO of [mccarthy-prince-1995] restricted to
+    the harmony feature. -/
+def identViolations (sys : HarmonySystem)
+    (input output : List Segment) : Nat :=
+  (Corr.parallel
+    (input.map  (·.spec sys.feature))
+    (output.map (·.spec sys.feature))).identViol .lhs .rhs
+
+/-- A vowel harmony candidate for OT evaluation.
+
+    The stem is fixed across candidates; only the suffix varies.
+    For rightward harmony, GEN produces candidates that differ only in
+    the feature values of suffix vowels. The stem determines the trigger
+    value; the suffix is the domain of evaluation. -/
+structure VHCandidate where
+  /-- The stem (unchanged across candidates). -/
+  stem : List Segment
+  /-- The underlying (input) suffix. -/
+  suffixIn : List Segment
+  /-- The surface (output) suffix. -/
+  suffixOut : List Segment
+  deriving DecidableEq
+
+/-- SPREAD as a `NamedConstraint`: penalizes unharmonized targets in the
+    output suffix. Returns 0 when the stem has no trigger. -/
+def mkSpread (sys : HarmonySystem) :
+    NamedConstraint VHCandidate where
+  name := "SPREAD"
+  family := .markedness
+  eval := λ c =>
+    match triggerValue sys c.stem with
+    | none => 0
+    | some val => spreadViolations sys val c.suffixOut
+
+/-- IDENT-[F] as a `NamedConstraint`: penalizes feature changes from
+    underlying to surface suffix. -/
+def mkIdentHarmony (sys : HarmonySystem) :
+    NamedConstraint VHCandidate where
+  name := "IDENT"
+  family := .faithfulness
+  eval := λ c => identViolations sys c.suffixIn c.suffixOut
+
+/-- After harmonization, a target's harmony feature is set to `val`. -/
+theorem harmonizeOne_spec_feature (sys : HarmonySystem) (val : Bool)
+    (s : Segment) (ht : sys.isTarget s = true) :
+    (harmonizeOne sys val s).spec sys.feature = some val := by
+  simp only [harmonizeOne, ht, ↓reduceIte, feature_beq_self]
+
+/-- `harmonizeOne` never creates SPREAD violations: the result either
+    has the correct feature value (target case) or isn't a target
+    (non-target case, returned unchanged). -/
+private theorem harmonizeOne_no_spread (sys : HarmonySystem) (val : Bool)
+    (s : Segment) :
+    (sys.isTarget (harmonizeOne sys val s) &&
+     !((harmonizeOne sys val s).spec sys.feature == some val)) = false := by
+  unfold harmonizeOne
+  by_cases ht : sys.isTarget s = true
+  · simp only [ht, ↓reduceIte, beq_self_eq_true,
+      Bool.not_true, Bool.and_false]
+  · have hf : sys.isTarget s = false := by
+      cases h : sys.isTarget s <;> simp_all
+    simp only [hf, Bool.false_eq_true, ↓reduceIte, Bool.false_and]
+
+/-- Cons lemma: if the head satisfies SPREAD, the violation count on a
+    cons equals the count on the tail. -/
+private theorem spreadViolations_cons_ok (sys : HarmonySystem) (val : Bool)
+    (s : Segment) (rest : List Segment)
+    (hp : (sys.isTarget s && !((s.spec sys.feature) == some val)) = false) :
+    spreadViolations sys val (s :: rest) = spreadViolations sys val rest := by
+  simp only [spreadViolations, List.filter_cons, hp, Bool.false_eq_true, ↓reduceIte]
+
+/-- **`spreadSuffix` produces zero SPREAD violations** (when no blockers
+    intervene). By induction: `harmonizeOne` fixes each target's feature
+    value, so no target in the output disagrees with the trigger. -/
+theorem spreadSuffix_zero_spread (sys : HarmonySystem) (val : Bool)
+    (suffix : List Segment)
+    (h : ∀ s ∈ suffix, sys.isBlocker s = false) :
+    spreadViolations sys val (spreadSuffix sys val suffix) = 0 := by
+  induction suffix with
+  | nil => rfl
+  | cons s rest ih =>
+    have hs : sys.isBlocker s = false := h s (.head _)
+    simp only [spreadSuffix, hs, Bool.false_eq_true, ↓reduceIte]
+    rw [spreadViolations_cons_ok sys val _ _ (harmonizeOne_no_spread sys val s)]
+    exact ih (λ s' hs' => h s' (.tail _ hs'))
+
+/-- The faithful candidate (no changes) has zero IDENT violations.
+    Derived from `Corr.identity_ident_zero`. -/
+theorem faithful_zero_ident (sys : HarmonySystem) (suffix : List Segment) :
+    identViolations sys suffix suffix = 0 := by
+  show (Corr.identity _).identViol .lhs .rhs = 0
+  exact Corr.identity_ident_zero _
+
+/-- IDENT on empty suffixes is zero. -/
+theorem identViolations_nil (sys : HarmonySystem) :
+    identViolations sys [] [] = 0 := faithful_zero_ident sys []
+
+/-- The output of `spreadSuffix` achieves zero SPREAD violations for the
+    harmonized candidate. With `faithful_zero_ident` this captures the OT
+    trade-off: the faithful candidate has SPREAD > 0, IDENT = 0; the
+    harmonized candidate has SPREAD = 0, IDENT ≥ 0. Under SPREAD ≫ IDENT,
+    the harmonized output wins. -/
+theorem spreadSuffix_ot_motivation (sys : HarmonySystem)
+    (stem suffix : List Segment) (val : Bool)
+    (h_no_blockers : ∀ s ∈ suffix, sys.isBlocker s = false)
+    (hv : triggerValue sys stem = some val) :
+    (mkSpread sys).eval ⟨stem, suffix, spreadSuffix sys val suffix⟩ = 0 := by
+  simp only [mkSpread, hv]
+  exact spreadSuffix_zero_spread sys val suffix h_no_blockers
 
 -- ============================================================================
 -- § 1: Constraint Rankings

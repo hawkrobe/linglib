@@ -16,7 +16,7 @@ rather than duplicating the case names.
 The type sits in `namespace Core`, so consumers `open Core` (or qualify) and
 use `Direction.left` / `Direction.right` directly. Reused outside the
 transducer setting where the same left-vs-right notion is needed (e.g.
-`Phonology/Process/Alternation.lean` aliases `Side := Direction` for the
+`Phonology/Subregular/TierRule.lean` aliases `Side := Direction` for the
 context side of a tier rule); the underlying type must be this one.
 -/
 

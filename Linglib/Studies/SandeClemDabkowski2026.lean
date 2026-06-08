@@ -395,9 +395,9 @@ def guebieVPPhaseSelector : SyntacticObject → Bool :=
 
 /-- The Guébie vP-cophonology bundle. The `subranking` is left as an
     empty list of constraints over `Unit` candidates because the
-    ATR-harmony cophonology's actual constraints live in
-    `Phonology/Process/Harmony/OT.lean` and would require
-    threading the OT-candidate type through this study file — out of
+    ATR-harmony cophonology's actual constraints (SPREAD/IDENT derived
+    from a `HarmonySystem`) would require threading the OT-candidate type
+    through this study file — out of
     scope. The substrate use is exhibited by the bundle's existence
     and the matched-phase predicate `appliesTo`. -/
 def guebieVPCophonology : PhrasalCophonology Unit :=

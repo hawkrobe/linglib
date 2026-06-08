@@ -1,5 +1,5 @@
 import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Process.Alternation
+import Linglib.Phonology.Subregular.TierRule
 
 /-!
 # Harmony Systems
@@ -12,34 +12,35 @@ segments, optionally skipping **transparent** segments and halting at
 
 ## Architecture
 
-A `HarmonySystem` is a thin typological wrapper around a *tier-based
-agreement rule* (the formal core, à la [belth-2026] / Heinz-style
-TSL phonology):
+A `HarmonySystem` bundles a tier-based AGREE rule (the value-prediction
+core, à la [belth-2026] / Heinz-style TSL phonology) with a spreading
+discipline:
 
 ```
-HarmonySystem  =  rule      : Phonology.Alternation.TierRule Segment   -- value prediction
-                 isTarget   : Segment → Bool                           -- spreading discipline
-                 isBlocker  : Segment → Bool                           -- iteration halt
-                 feature    : Phonology.Feature                        -- which Feature for harmonizeOne
+HarmonySystem  =  rule      : Phonology.Subregular.TierRule Segment   -- value prediction
+                 isTarget   : Segment → Bool                          -- spreading discipline
+                 isBlocker  : Segment → Bool                          -- iteration halt
+                 feature    : Phonology.Feature                       -- which Feature for harmonizeOne
 ```
 
-The `rule` field IS the formal pattern. Its tier projects out transparent
-segments; its context class is the trigger predicate; its relation is
-`.agree` (harmony is by definition assimilatory — dissimilatory tier
-patterns like Latin liquid dissimilation use `Disagree` and live outside
-this typology). `isTarget`/`isBlocker` are the *spreading discipline* —
-which segments accept the predicted value and where iteration halts.
+The `rule` field is the formal pattern: its tier projects out transparent
+segments, its context class is the trigger predicate, its relation is
+`.agree` (dissimilatory tier patterns like Latin liquid dissimilation use
+`Disagree` and live outside this typology). `isTarget`/`isBlocker` are the
+*spreading discipline* — which segments accept the predicted value and
+where iteration halts.
 
-Why this shape: in the modern computational/learnability framing
-([belth-2026] and the TSL literature), the tier projection plus a
-local rule on it is the central object; the Rose-Walker typological
-decomposition (trigger / target / transparent / blocker / direction) is
-the descriptive lens for cataloguing what languages do, not a separate
-formal primitive. So harmony systems *contain* tier rules rather than
-*reducing to them via a bridge theorem* — the relationship is
-true-by-construction.
+**This is the tier-based (TSL) analysis of harmony — one live account, not
+a settled reduction.** Vowel harmony is the contested non-local boundary
+case: autosegmental spreading ([goldsmith-1976]), Agreement-by-Correspondence
+([rose-walker-2004]), subregular TSL/OSL ([aksenova-rawski-graf-heinz-2020]),
+and OT SPREAD/ALIGN remain rivals with divergent predictions on transparency
+and opacity. The single-tier TSL commitment encoded here is not universally
+adequate — Uyghur backness harmony is provably non-TSL ([mayer-major-2018]).
+`HarmonySystem` *contains* a `TierRule` by construction (no bridge theorem);
+a theory-neutral harmony profile consumed by rival accounts is future work.
 
-## Components (§1) of [rose-walker-2011]
+## Components of the [rose-walker-2011] typology
 
 The smart constructor `HarmonySystem.mk'` exposes exactly Rose-Walker's
 six-way decomposition:
@@ -78,7 +79,7 @@ fields. After construction, the typology is recoverable: trigger =
 namespace Phonology.Harmony
 
 open Phonology (Segment Feature FeatureVal)
-open Phonology.Alternation
+open Phonology.Subregular
 
 -- ============================================================================
 -- § 1: Direction
