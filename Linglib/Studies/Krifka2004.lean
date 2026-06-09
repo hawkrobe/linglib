@@ -128,7 +128,7 @@ theorem kind_requires_topic {p : InfoStructure}
 A decidable mirror of the property denotation above, parallel to the Chierchia DKP
 machinery in `Semantics.Kinds.NMP` (`dkpApply`, `chierchiaDerivScrambled` /
 `chierchiaDerivUnscrambled`): `Bool`- and `List`-valued so the scrambling contrast in
-`Phenomena.Generics.Compare` reduces by `decide` / `rfl`. Krifka's type shift applies
+`Studies.LeBruynDeSwart2022` reduces by `decide` / `rfl`. Krifka's type shift applies
 "as late, or as locally, as possible" (§4.2), so the ∃-shift sits at the bare NP's
 surface position: a bare plural under negation scopes narrow, while one raised above
 negation scopes wide. -/

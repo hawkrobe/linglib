@@ -497,9 +497,8 @@ scrambling comparisons with [krifka-2004]. Uses `List Entity` and `Bool`
 (rather than `Set Atom` and `Prop`) so that examples reduce by `rfl`.
 
 The parallel Krifka machinery is in `Krifka2004.lean`; both are
-instantiated side-by-side in `Phenomena/Generics/Compare.lean`.
-
-See `Theories/Comparisons/KindReference.lean` for the formal comparison.
+instantiated side-by-side in `Studies/LeBruynDeSwart2022.lean`, where the
+scrambling data adjudicate the two accounts.
 -/
 
 section DKPDerivation

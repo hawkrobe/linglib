@@ -57,7 +57,8 @@ kind predication without any generic quantifier.
 - [krifka-2004]: Rejects kinds as basic; bare NPs are properties
 - [dayal-2004]: Extends with singular kinds and Meaning Preservation
 
-See `Phenomena/Generics/Compare.lean` for cross-theory comparison.
+See `Studies/LeBruynDeSwart2022.lean` for the Chierchia-vs-Krifka comparison
+on the scrambling data.
 -/
 
 namespace Semantics.Kinds.SortedOntology
