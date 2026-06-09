@@ -19,9 +19,11 @@ terms. Nothing model-theoretic lives on the objects or in the lexicon data.
 ## Main declarations
 
 * `Model` — entity domain `E`, worlds `W`, and a world-indexed family `interp : W → L.Structure E`
-* `Model.pred₁` / `Model.pred₂` — model-sourced predicate denotations
-* `interp_model_sourced` — the real `Tree.interp` composes a model-sourced lexicon to a
-  world-threading proposition, truth bottoming out in `RelMap`
+* `Model.pred₁` / `Model.pred₂` — model-sourced intensional predicate denotations;
+  `Model.const`, `Model.pred₁ext` / `Model.pred₂ext` — their extensions at a world
+* `LexNaming`, `Model.lexiconAt` — build a `Lexicon` from naming maps into the signature
+* `interp_model_sourced`, `interp_lexiconAt_predication` — the real `Tree.interp` composes a
+  model-sourced lexicon, truth bottoming out in `RelMap`
 * `barbara` — cross-model logical consequence (truth in all models), the payoff over a fixed
   entity/world frame
 * `interp_pronoun_trace`, `genderRestriction` — the projection discipline for API objects
@@ -58,10 +60,56 @@ def Model.pred₁ (m : Model L) (R : L.Relations 1) : Denot m.E m.W (.e ⇒ .int
   fun x w => (m.interp w).RelMap R (fun _ => x)
 
 /-- A binary content predicate's denotation, sourced from the model (`e ⇒ e ⇒ ⟨s,t⟩`,
-object-first then subject, matching `Frame`'s `eet` convention). -/
+object-first then subject, matching the `eet` convention). -/
 def Model.pred₂ (m : Model L) (R : L.Relations 2) :
     Denot m.E m.W (.e ⇒ .e ⇒ .intens .t) :=
   fun y x w => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
+
+/-- A constant's (proper name's) interpretation at world `w`. -/
+def Model.const (m : Model L) (c : L.Constants) (w : m.W) : Denot m.E m.W .e :=
+  (m.interp w).funMap c (fun i => i.elim0)
+
+/-- A unary predicate's extensional denotation at world `w` (`e ⇒ t`): the extension
+of `Model.pred₁`. -/
+def Model.pred₁ext (m : Model L) (R : L.Relations 1) (w : m.W) :
+    Denot m.E m.W (.e ⇒ .t) :=
+  fun x => (m.interp w).RelMap R (fun _ => x)
+
+/-- A binary predicate's extensional denotation at world `w` (`e ⇒ e ⇒ t`, object-first):
+the extension of `Model.pred₂`. -/
+def Model.pred₂ext (m : Model L) (R : L.Relations 2) (w : m.W) :
+    Denot m.E m.W (.e ⇒ .e ⇒ .t) :=
+  fun y x => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
+
+@[simp] theorem Model.pred₁_apply (m : Model L) (R : L.Relations 1) (x : m.E) (w : m.W) :
+    m.pred₁ R x w = m.pred₁ext R w x := rfl
+
+@[simp] theorem Model.pred₂_apply (m : Model L) (R : L.Relations 2) (y x : m.E) (w : m.W) :
+    m.pred₂ R y x w = m.pred₂ext R w y x := rfl
+
+/-! ### Lexicon from signature
+
+A fragment supplies *naming maps* from word forms into the signature; the model induces the
+lexicon. Denotations never live in the fragment data — they are read off `funMap`/`RelMap`. -/
+
+/-- Naming maps from word forms into a signature: proper names to constants, content words
+to relation symbols. -/
+structure LexNaming (L : Language.{u, v}) where
+  /-- Proper names denote constants. -/
+  names : String → Option L.Constants := fun _ => none
+  /-- Common nouns / intransitive verbs denote unary relation symbols. -/
+  preds₁ : String → Option (L.Relations 1) := fun _ => none
+  /-- Transitive verbs denote binary relation symbols. -/
+  preds₂ : String → Option (L.Relations 2) := fun _ => none
+
+/-- The extensional lexicon a naming map induces at world `w`: names denote constants'
+interpretations (`e`), unary symbols extensional predicates (`e ⇒ t`), binary symbols
+object-first relations (`e ⇒ e ⇒ t`) — all sourced from the model. -/
+def Model.lexiconAt (m : Model L) (nm : LexNaming L) (w : m.W) : Lexicon m.E m.W :=
+  fun s =>
+    (nm.names s).map (fun c => ⟨.e, m.const c w⟩) <|>
+    (nm.preds₁ s).map (fun R => ⟨.e ⇒ .t, m.pred₁ext R w⟩) <|>
+    (nm.preds₂ s).map (fun R => ⟨.e ⇒ .e ⇒ .t, m.pred₂ext R w⟩)
 
 /-! ### Engine integration: the real `Tree.interp` composes a model-sourced lexicon -/
 
@@ -84,6 +132,19 @@ theorem interp_model_sourced (m : Model L) (subj : m.E) (R : L.Relations 1)
     (g : Core.Assignment m.E) :
     interp m.E m.W (lexFromModel m subj R) g predicationTree
       = some ⟨.intens .t, fun w => (m.interp w).RelMap R (fun _ => subj)⟩ :=
+  rfl
+
+/-- **Engine integration for `lexiconAt`**: a name–verb predication composes (via real backward
+FA) to a truth value read off `RelMap` at the lexicon's world. The fragment supplies only the
+naming maps. -/
+theorem interp_lexiconAt_predication (m : Model L) (nm : LexNaming L) (w : m.W)
+    (g : Core.Assignment m.E) {s v : String} {c : L.Constants} {R : L.Relations 1}
+    (hs : nm.names s = some c) (hv : nm.names v = none) (hv₁ : nm.preds₁ v = some R) :
+    interp m.E m.W (m.lexiconAt nm w) g
+      (.node () [.terminal () s, .terminal () v] : Tree Unit String)
+      = some ⟨.t, (m.interp w).RelMap R (fun _ => m.const c w)⟩ := by
+  simp only [interp_node_binary, interp_terminal, interpTerminal_lookup, Model.lexiconAt,
+    hs, hv, hv₁]
   rfl
 
 /-! ### Cross-model logical consequence -/

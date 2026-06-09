@@ -34,7 +34,7 @@ theorem every_not_existential : ¬ Existential (every_sem (α := ToyEntity)) := 
   have hFwd := (h thing_sem student_sem).mpr
   have : every_sem (fun x => thing_sem x ∧ student_sem x) (fun _ => True) := by
     intro x _; trivial
-  exact absurd (hFwd this ToyEntity.pizza trivial) (by simp [student_sem])
+  exact absurd (hFwd this ToyEntity.pizza trivial) id
 
 /-- `⟦most⟧` is NOT existential (K&S §3.3). -/
 theorem most_not_existential : ¬ Existential (most_sem (α := ToyEntity)) := by

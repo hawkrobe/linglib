@@ -245,13 +245,13 @@ open Semantics.Montague.ToyLexicon (student_sem thing_sem)
 theorem every_not_symmetric : ¬ QSymmetric (every_sem (α := ToyEntity)) := by
   intro h
   have := (h student_sem thing_sem).mp (fun x _ => trivial)
-  exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
+  exact absurd (this ToyEntity.pizza trivial) id
 
 /-- `⟦no⟧` is NOT positive strong: no(A,A) = false when A is non-empty. -/
 theorem no_not_positive_strong : ¬ PositiveStrong (no_sem (α := ToyEntity)) := by
   intro h
   have := h student_sem
-  exact this ToyEntity.john (by simp [student_sem]) (by simp [student_sem])
+  exact this ToyEntity.john trivial trivial
 
 end ToyWitnesses
 
