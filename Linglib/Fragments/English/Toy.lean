@@ -1,4 +1,5 @@
 import Linglib.Semantics.Composition.Model
+import Linglib.Semantics.Composition.Reduction
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -216,6 +217,18 @@ def toyNaming : LexNaming toyLang where
 
 /-- The toy lexicon, induced by the naming maps over the model. -/
 def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexiconAt toyNaming ()
+
+/-- The toy naming maps classify each word once. -/
+theorem toyNaming_disjoint : toyNaming.Disjoint := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    · intro s R h
+      simp only [toyNaming] at h ⊢
+      split at h <;> simp_all
+
+/-- The default logical vocabulary is fresh for the toy naming maps. -/
+theorem toyNaming_freshFor : FOWords.FreshFor {} toyNaming := by
+  intro s hs
+  fin_cases hs <;> exact ⟨rfl, rfl, rfl⟩
 
 namespace ToyLexicon
 

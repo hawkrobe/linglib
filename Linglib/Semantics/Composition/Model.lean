@@ -76,9 +76,10 @@ def Model.pred₂ (m : Model L) (R : L.Relations 2) :
     Denot m.E m.W (.e ⇒ .e ⇒ .intens .t) :=
   fun y x w => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
 
-/-- A constant's (proper name's) interpretation at world `w`. -/
+/-- A constant's (proper name's) interpretation at world `w` (the world-indexed
+`Structure.constantMap`). -/
 def Model.const (m : Model L) (c : L.Constants) (w : m.W) : Denot m.E m.W .e :=
-  (m.interp w).funMap c (fun i => i.elim0)
+  (m.interp w).funMap c default
 
 /-- A unary predicate's extensional denotation at world `w` (`e ⇒ t`): the extension
 of `Model.pred₁`. -/
