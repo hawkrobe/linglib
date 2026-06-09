@@ -7,36 +7,43 @@ import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 The single `L0 → S1 → L1` pipeline for Rational Speech Act models
 [frank-goodman-2012] [degen-2023], built directly on the `Core/Probability`
-shell with no bundled configuration. The pragmatic speaker `S1` is the softmax
-of an RSA utility; the pragmatic listener `L1` is the joint Bayesian posterior
-over `world × latent`, with world/latent marginals recovered as `.fst`/`.snd`.
+shell with no bundled configuration.
 
-A prediction about a model is stated in the `*_prefers_iff` vocabulary, each of
-which is a thin wrapper over a decomposition lemma from `Core/Probability`
-(`PMF.softmax_lt_iff_score_lt`, `PMF.posterior_fst_lt_iff`): the partition
-function and the marginal cancel, leaving a comparison of pre-normalisation
-scores.
+The pragmatic speaker `S1` is the softmax of a *utility* `score : St → U → EReal`
+mapping a speaker state (a world, or a `world × latent` pair) to a per-utterance
+utility; an utterance is inapplicable exactly when its utility is `⊥` (softmax
+weight `0`). The standard informativity utility is `rsaUtility = α·(log L0 − cost)`,
+but any utility plugs in the same way — action-utility ([hawkins-etal-2025]) and
+belief-utility speakers included. The pragmatic listener `L1` is the joint
+Bayesian posterior over `world × latent`, with marginals `.fst`/`.snd`.
+
+Positivity is supplied once as a `ViableSpeaker` instance (no utterance has
+infinite utility; every state has an applicable utterance), so per-paper speakers
+carry no `tsum ≠ 0 / ≠ ⊤` plumbing.
+
+A prediction is stated in the `*_prefers_iff` vocabulary, each a one-line wrapper
+over a `Core/Probability` decomposition lemma (`PMF.softmax_lt_iff_score_lt`,
+`PMF.posterior_fst_lt_iff`): the partition and the marginal cancel, leaving a
+comparison of utilities / conditional-joint sums.
 
 ## Main definitions
 
-* `RSA.Canonical.rsaUtility` — the utility `α · (log L0 − cost)`, EReal-valued so
-  an inapplicable utterance (`L0 = 0`, hence `log = ⊥`) gets softmax weight `0`.
-* `RSA.Canonical.S1` — pragmatic speaker, `PMF.softmax` of `rsaUtility`.
+* `RSA.Canonical.ViableSpeaker` — positivity mixin discharging the softmax obligations.
+* `RSA.Canonical.S1` — pragmatic speaker, `PMF.softmax` of a viable utility.
+* `RSA.Canonical.rsaUtility` — the standard informativity utility `α·(log L0 − cost)`.
 * `RSA.Canonical.L1` — pragmatic listener, joint `PMF.posterior` over `world × latent`.
 
 ## Main statements
 
-* `RSA.Canonical.S1_utterance_prefers_iff` — speaker preference between utterances
-  reduces to comparing their utilities.
+* `RSA.Canonical.S1_prefers_iff` — speaker preference ↔ utility comparison.
 * `RSA.Canonical.L1_world_prefers_iff` / `L1_latent_prefers_iff` — listener marginal
-  preference reduces to comparing conditional-joint sums.
+  preference ↔ conditional-joint-sum comparison.
 
 ## Implementation notes
 
-Positivity hypotheses (`h_no_top`, `h_some_finite`, `marginal ≠ 0`) are threaded
-explicitly. A covering-style typeclass discharging them as instances is deferred.
-The rpow speaker `RSA.S1Belief` is the cost-free log special case of `S1`
-(bridge: `PMF.softmaxWeight_natMul_log_eq_pow`).
+Non-latent models take `St = W` and use the foundation `PMF.posterior_lt_iff_score_lt`
+directly (the `latent = Unit` collapse). The `IsCovering ⇒ ViableSpeaker (rsaUtility …)`
+bridge for standard informativity speakers is added when first needed.
 -/
 
 set_option autoImplicit false
@@ -49,41 +56,59 @@ open scoped ENNReal
 
 section Speaker
 
-variable {W Lat U : Type*} [Fintype U]
+variable {St U : Type*} [Fintype U]
 
-/-- RSA utility of utterance `u` at joint state `s = (world, latent)`:
-`α · (log L0(u | s) − cost u)`. EReal-valued, so an inapplicable utterance
-(`L0 = 0 ⇒ log = ⊥`) receives softmax weight `EReal.exp ⊥ = 0`. -/
-noncomputable def rsaUtility (L0 : U → W × Lat → ℝ≥0∞) (cost : U → ℝ) (α : ℝ)
-    (s : W × Lat) (u : U) : EReal :=
-  (α : EReal) * (ENNReal.log (L0 u s) - (cost u : EReal))
+/-- A speaker utility `score : St → U → EReal` is **viable** when no utterance has
+infinite utility and every state has at least one finite-utility (applicable)
+utterance — precisely the conditions under which the softmax speaker is
+well-defined. Supplied as an instance, it discharges the `PMF.softmax` positivity
+obligations so per-paper speakers need no explicit `tsum`-positivity plumbing. -/
+class ViableSpeaker (score : St → U → EReal) : Prop where
+  /-- No utterance has `+∞` utility. -/
+  no_top : ∀ s u, score s u ≠ ⊤
+  /-- Every state has at least one applicable (finite-utility) utterance. -/
+  some_finite : ∀ s, ∃ u, score s u ≠ ⊥
 
-/-- The **canonical pragmatic speaker** at state `s`: the softmax of `rsaUtility`.
-This is the single speaker the library instantiates; `RSA.S1Belief`'s rpow form
-is its cost-free log special case. -/
-noncomputable def S1 (L0 : U → W × Lat → ℝ≥0∞) (cost : U → ℝ) (α : ℝ) (s : W × Lat)
-    (h_no_top : ∀ u, rsaUtility L0 cost α s u ≠ ⊤)
-    (h_some_finite : ∃ u, rsaUtility L0 cost α s u ≠ ⊥) : PMF U :=
-  PMF.softmax (rsaUtility L0 cost α s) h_no_top h_some_finite
+/-- The **canonical pragmatic speaker** at state `s`: the softmax of a viable
+utility. The single speaker the library instantiates; the standard informativity
+form is `rsaUtility`, while action/belief-utility speakers supply their own `score`. -/
+noncomputable def S1 (score : St → U → EReal) [ViableSpeaker score] (s : St) : PMF U :=
+  PMF.softmax (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s)
 
-/-- **Cross-utterance prediction**: at state `s` the speaker prefers `u₂` to `u₁`
-iff `u₂` has the higher RSA utility. The partition function cancels. -/
-theorem S1_utterance_prefers_iff (L0 : U → W × Lat → ℝ≥0∞) (cost : U → ℝ) (α : ℝ)
-    (s : W × Lat) (h_no_top : ∀ u, rsaUtility L0 cost α s u ≠ ⊤)
-    (h_some_finite : ∃ u, rsaUtility L0 cost α s u ≠ ⊥) (u₁ u₂ : U) :
-    S1 L0 cost α s h_no_top h_some_finite u₁ < S1 L0 cost α s h_no_top h_some_finite u₂
-      ↔ rsaUtility L0 cost α s u₁ < rsaUtility L0 cost α s u₂ :=
-  PMF.softmax_lt_iff_score_lt (rsaUtility L0 cost α s) h_no_top h_some_finite u₁ u₂
+/-- **Cross-utterance prediction**: the speaker prefers `u₂` to `u₁` at state `s`
+iff `u₂` has the higher utility. The partition function cancels. -/
+theorem S1_prefers_iff (score : St → U → EReal) [ViableSpeaker score] (s : St) (u₁ u₂ : U) :
+    S1 score s u₁ < S1 score s u₂ ↔ score s u₁ < score s u₂ :=
+  PMF.softmax_lt_iff_score_lt (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
 
-/-- `≤` companion of `S1_utterance_prefers_iff`. -/
-theorem S1_utterance_prefers_le_iff (L0 : U → W × Lat → ℝ≥0∞) (cost : U → ℝ) (α : ℝ)
-    (s : W × Lat) (h_no_top : ∀ u, rsaUtility L0 cost α s u ≠ ⊤)
-    (h_some_finite : ∃ u, rsaUtility L0 cost α s u ≠ ⊥) (u₁ u₂ : U) :
-    S1 L0 cost α s h_no_top h_some_finite u₁ ≤ S1 L0 cost α s h_no_top h_some_finite u₂
-      ↔ rsaUtility L0 cost α s u₁ ≤ rsaUtility L0 cost α s u₂ :=
-  PMF.softmax_le_iff_score_le (rsaUtility L0 cost α s) h_no_top h_some_finite u₁ u₂
+/-- `≤` companion of `S1_prefers_iff`. -/
+theorem S1_prefers_le_iff (score : St → U → EReal) [ViableSpeaker score] (s : St) (u₁ u₂ : U) :
+    S1 score s u₁ ≤ S1 score s u₂ ↔ score s u₁ ≤ score s u₂ :=
+  PMF.softmax_le_iff_score_le (score s) (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u₁ u₂
+
+/-- The speaker assigns positive probability to any applicable (finite-utility)
+utterance — the witness for discharging `L1` marginal positivity. -/
+theorem S1_ne_zero (score : St → U → EReal) [ViableSpeaker score] {s : St} {u : U}
+    (h : score s u ≠ ⊥) : S1 score s u ≠ 0 :=
+  ((PMF.softmax_pos_iff_score_ne_bot (score s)
+    (ViableSpeaker.no_top s) (ViableSpeaker.some_finite s) u).mpr h).ne'
 
 end Speaker
+
+/-! ### Standard informativity utility -/
+
+section StandardSpeaker
+
+variable {W U : Type*}
+
+/-- The **standard informativity utility** `α·(log L0(u | w) − cost u)`, EReal-valued
+so an inapplicable utterance (`L0 = 0 ⇒ log = ⊥`) is `⊥` (softmax weight `0`).
+Plug into `S1`; the rpow speaker `RSA.S1Belief` is the cost-free case. -/
+noncomputable def rsaUtility (L0 : W → U → ℝ≥0∞) (cost : U → ℝ) (α : ℝ)
+    (w : W) (u : U) : EReal :=
+  (α : EReal) * (ENNReal.log (L0 w u) - (cost u : EReal))
+
+end StandardSpeaker
 
 /-! ### Pragmatic listener -/
 
@@ -92,8 +117,8 @@ section Listener
 variable {W Lat U : Type*} [Fintype W] [Fintype Lat]
 
 /-- The **canonical pragmatic listener**: the joint Bayesian posterior over
-`world × latent` given the observed utterance `u`. World and latent marginals
-are `.fst` and `.snd`. -/
+`world × latent` given the observed utterance `u`. World/latent marginals are
+`.fst`/`.snd`. -/
 noncomputable def L1 (S : W × Lat → PMF U) (joint : PMF (W × Lat)) (u : U)
     (h : PMF.marginal S joint u ≠ 0) : PMF (W × Lat) :=
   PMF.posterior S joint u h
