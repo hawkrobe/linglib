@@ -180,21 +180,97 @@ theorem upper_classA_no_competition :
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
   exact S1_3_lt_S1_2_for_fewerThan3
 
-/-! ## §5. Findings — partition-dominance leaves (non-pointwise) -/
+/-! ## §5. Findings — partition-dominance leaves
 
-/-- Class B: L1 of "atLeast3" prefers .4 over .3.
-**Friction**: numerators equal (both 1/3), but partition functions don't
-pointwise dominate. At .3 the alternatives are {bare3, atLeast3, atMost3};
-at .4 they are {moreThan3, atLeast3}. Neither set dominates the other.
-Needs partition function computation. -/
+The S1 partition `Z(w) = ∑_u L0(u)(w)` differs across worlds; with equal
+numerators, `L1` favours the world with the smaller partition. We evaluate the
+partitions FG12-style and cancel the shared alternatives — no reflection. -/
+
+private theorem univ_KUtt :
+    (Finset.univ : Finset KUtt) = {.bare3, .moreThan3, .fewerThan3, .atLeast3, .atMost3} := by
+  decide
+
+private theorem Z3 : (∑' u : KUtt, L0 u (3 : KCard)) = 1 + 3⁻¹ + 4⁻¹ := by
+  rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+      L0_apply_of_true (show kMeanBool .bare3 (3 : KCard) = true by decide),
+      L0_apply_of_false (show kMeanBool .moreThan3 (3 : KCard) ≠ true by decide),
+      L0_apply_of_false (show kMeanBool .fewerThan3 (3 : KCard) ≠ true by decide),
+      L0_apply_of_true (show kMeanBool .atLeast3 (3 : KCard) = true by decide),
+      L0_apply_of_true (show kMeanBool .atMost3 (3 : KCard) = true by decide),
+      show (extension .bare3).card = 1 from by decide,
+      show (extension .atLeast3).card = 3 from by decide,
+      show (extension .atMost3).card = 4 from by decide]
+  simp only [Nat.cast_one, inv_one, Nat.cast_ofNat, zero_add]
+  ring
+
+private theorem Z4 : (∑' u : KUtt, L0 u (4 : KCard)) = 2⁻¹ + 3⁻¹ := by
+  rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+      L0_apply_of_false (show kMeanBool .bare3 (4 : KCard) ≠ true by decide),
+      L0_apply_of_true (show kMeanBool .moreThan3 (4 : KCard) = true by decide),
+      L0_apply_of_false (show kMeanBool .fewerThan3 (4 : KCard) ≠ true by decide),
+      L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide),
+      L0_apply_of_false (show kMeanBool .atMost3 (4 : KCard) ≠ true by decide),
+      show (extension .moreThan3).card = 2 from by decide,
+      show (extension .atLeast3).card = 3 from by decide]
+  simp only [Nat.cast_ofNat, zero_add, add_zero]
+
+private theorem Z2 : (∑' u : KUtt, L0 u (2 : KCard)) = 3⁻¹ + 4⁻¹ := by
+  rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+      L0_apply_of_false (show kMeanBool .bare3 (2 : KCard) ≠ true by decide),
+      L0_apply_of_false (show kMeanBool .moreThan3 (2 : KCard) ≠ true by decide),
+      L0_apply_of_true (show kMeanBool .fewerThan3 (2 : KCard) = true by decide),
+      L0_apply_of_false (show kMeanBool .atLeast3 (2 : KCard) ≠ true by decide),
+      L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide),
+      show (extension .fewerThan3).card = 3 from by decide,
+      show (extension .atMost3).card = 4 from by decide]
+  simp only [Nat.cast_ofNat, zero_add, add_zero]
+
+private theorem Z4_lt_Z3 :
+    (∑' u : KUtt, L0 u (4 : KCard)) < ∑' u : KUtt, L0 u (3 : KCard) := by
+  rw [Z3, Z4, show (1 : ℝ≥0∞) + 3⁻¹ + 4⁻¹ = 3⁻¹ + (1 + 4⁻¹) from by ring,
+      show (2 : ℝ≥0∞)⁻¹ + 3⁻¹ = 3⁻¹ + 2⁻¹ from by ring,
+      ENNReal.add_lt_add_iff_left (ENNReal.inv_ne_top.mpr (by norm_num))]
+  exact lt_of_lt_of_le (ENNReal.inv_lt_one.mpr (by norm_num)) le_self_add
+
+private theorem Z2_lt_Z3 :
+    (∑' u : KUtt, L0 u (2 : KCard)) < ∑' u : KUtt, L0 u (3 : KCard) := by
+  rw [Z3, Z2, show (1 : ℝ≥0∞) + 3⁻¹ + 4⁻¹ = (3⁻¹ + 4⁻¹) + 1 from by ring]
+  exact ENNReal.lt_add_right (by rw [← Z2]; exact PMF.tsum_apply_ne_top L0 _) one_ne_zero
+
+/-- Class B: L1 of "atLeast3" prefers .4 over .3. Equal numerators (1/3); world 3
+has the larger partition (more competing alternatives), so L1 shifts toward .4. -/
 theorem classB_strengthened_above_bare :
     L1 .atLeast3 (4 : KCard) > L1 .atLeast3 (3 : KCard) := by
-  sorry  -- non-dominating partition functions; needs explicit Z computation
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atLeast3 (3 : KCard) = true by decide)),
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atLeast3 (4 : KCard) = true by decide))]
+  apply PMF.normalize_lt_of_apply_eq_of_sum_lt
+  · rw [L0_apply_of_true (show kMeanBool .atLeast3 (3 : KCard) = true by decide),
+        L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide)]
+  · rw [L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide)]
+    exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+  · exact PMF.apply_ne_top _ _
+  · exact Z4_lt_Z3
 
-/-- Upper Class B: L1 of "atMost3" prefers .2 over .3. Same friction as `classB_strengthened_above_bare`. -/
+/-- Upper Class B: L1 of "atMost3" prefers .2 over .3 (mirror of
+`classB_strengthened_above_bare`). -/
 theorem upper_classB_strengthened_below_bare :
     L1 .atMost3 (2 : KCard) > L1 .atMost3 (3 : KCard) := by
-  sorry  -- non-dominating partition functions
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atMost3 (3 : KCard) = true by decide)),
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atMost3 (2 : KCard) = true by decide))]
+  apply PMF.normalize_lt_of_apply_eq_of_sum_lt
+  · rw [L0_apply_of_true (show kMeanBool .atMost3 (3 : KCard) = true by decide),
+        L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide)]
+  · rw [L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide)]
+    exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+  · exact PMF.apply_ne_top _ _
+  · exact Z2_lt_Z3
 
 /-! ## §6. Findings — cross-observation (different utterance, same world) -/
 
