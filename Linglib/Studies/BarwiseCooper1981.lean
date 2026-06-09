@@ -1,4 +1,7 @@
 import Linglib.Features.Acceptability
+import Mathlib.Data.Finset.Fin
+import Mathlib.Data.Set.Card
+import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
 import Linglib.Phenomena.Quantification.Inventory
@@ -409,3 +412,347 @@ theorem domain_restriction_preserves_conservativity :
   exact conservative_domain_restricted (conservativity_universal q)
 
 end Phenomena.Quantification.Bridge
+
+/-! ### Appendix C: *more than half* is not first-order definable
+
+[barwise-cooper-1981] Appendix C (C12, p. 213): over a first-order language
+with equality and two unary predicate symbols `U`, `V`, **no sentence** is
+true in exactly the finite models where more than half the V's are U's
+(`2·|U∩V| > |V|`). B&C treat *most* via *more than half* "to avoid problems
+of vagueness"; the theorem is the formal core of their claim that *most*
+must be a determiner, not a quantifier (their C13, deferred).
+
+The proof is the paper's own (pp. 213–214), a hand-rolled Fraïssé argument:
+for each `m`, two structures on `Fin (3m+1)` — `V = [0,2m)`, `U₁ = [0,m)`,
+`U₂ = [0,m+1)` — disagree on *more than half* but agree on every formula
+with fewer than `m` quantifiers-plus-free-variables (their condition (6)),
+because a region-respecting correspondence can always be extended:
+"there is always enough room". -/
+
+namespace BarwiseCooper1981
+
+open FirstOrder Language
+
+/-- Relation symbols: two unary predicates. -/
+inductive uvRel : ℕ → Type
+  | U : uvRel 1
+  | V : uvRel 1
+  deriving DecidableEq
+
+/-- The monadic language of C12 (equality is built into the formula type). -/
+def L_UV : Language :=
+  { Functions := fun _ => Empty
+    Relations := uvRel }
+
+abbrev uRel : L_UV.Relations 1 := .U
+abbrev vRel : L_UV.Relations 1 := .V
+
+/-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
+B&C's notation). -/
+def numQuant : ∀ {α : Type} {n : ℕ}, L_UV.BoundedFormula α n → ℕ
+  | _, _, .falsum => 0
+  | _, _, .equal _ _ => 0
+  | _, _, .rel _ _ => 0
+  | _, _, .imp f₁ f₂ => numQuant f₁ + numQuant f₂
+  | _, _, .all f => numQuant f + 1
+
+/-- `M₁`: `U` is `[0, m)`, `V` is `[0, 2m)` — exactly half the V's are U's. -/
+@[reducible] def struc₁ (m : ℕ) : L_UV.Structure (Fin (3 * m + 1)) where
+  funMap := fun f _ => f.elim
+  RelMap {n} r v :=
+    match r, v with
+    | .U, v => (v 0).val < m
+    | .V, v => (v 0).val < 2 * m
+
+/-- `M₂`: `U` is `[0, m+1)`, `V` is `[0, 2m)` — more than half the V's are
+U's. -/
+@[reducible] def struc₂ (m : ℕ) : L_UV.Structure (Fin (3 * m + 1)) where
+  funMap := fun f _ => f.elim
+  RelMap {n} r v :=
+    match r, v with
+    | .U, v => (v 0).val < m + 1
+    | .V, v => (v 0).val < 2 * m
+
+/-- Realization in `M₁` (structures are term-level, so instances are pinned
+explicitly). -/
+def Realize₁ (m : ℕ) {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ)
+    (xs : Fin ℓ → Fin (3 * m + 1)) : Prop :=
+  @BoundedFormula.Realize L_UV _ (struc₁ m) Empty ℓ φ default xs
+
+/-- Realization in `M₂`. -/
+def Realize₂ (m : ℕ) {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ)
+    (xs : Fin ℓ → Fin (3 * m + 1)) : Prop :=
+  @BoundedFormula.Realize L_UV _ (struc₂ m) Empty ℓ φ default xs
+
+/-- B&C's one-one correspondence (proof of C12, condition on `aᵢ ↔ bᵢ`):
+pairing-injective, and respecting the `U`-regions (`U₁` against `U₂`) and
+the shared `V`-region. -/
+structure RegionMatch (m : ℕ) {ℓ : ℕ} (a b : Fin ℓ → Fin (3 * m + 1)) : Prop where
+  inj : ∀ i j, a i = a j ↔ b i = b j
+  inU : ∀ i, (a i).val < m ↔ (b i).val < m + 1
+  inV : ∀ i, (a i).val < 2 * m ↔ (b i).val < 2 * m
+
+/-- Every `L_UV`-term is a variable (the language has no function symbols). -/
+private theorem term_eq_var {γ : Type} (t : L_UV.Term γ) : ∃ i, t = Term.var i := by
+  cases t with
+  | var i => exact ⟨i, rfl⟩
+  | func f _ => exact f.elim
+
+/-- Fresh element in a value-interval of `Fin (3m+1)`: if fewer elements are
+used than the interval holds, something in it is unused. -/
+private theorem exists_fresh (m lo hi : ℕ) (hhi : hi ≤ 3 * m + 1)
+    (used : Finset (Fin (3 * m + 1))) (hcard : used.card < hi - lo) :
+    ∃ y : Fin (3 * m + 1), lo ≤ y.val ∧ y.val < hi ∧ y ∉ used := by
+  by_contra h
+  push_neg at h
+  have hsub : (Finset.Ico lo hi).attachFin
+      (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hhi) ⊆ used := by
+    intro y hy
+    have := (Finset.mem_attachFin _).mp hy
+    exact h y (Finset.mem_Ico.mp this).1 (Finset.mem_Ico.mp this).2
+  have := Finset.card_le_card hsub
+  rw [Finset.card_attachFin, Nat.card_Ico] at this
+  omega
+
+/-- Extending a correspondence with an already-matched pair. -/
+private theorem regionMatch_snoc_matched (m : ℕ) {ℓ : ℕ}
+    {a b : Fin ℓ → Fin (3 * m + 1)} (h : RegionMatch m a b) (i : Fin ℓ) :
+    RegionMatch m (Fin.snoc a (a i)) (Fin.snoc b (b i)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro p q
+    induction p using Fin.lastCases with
+    | last =>
+      induction q using Fin.lastCases with
+      | last => simp
+      | cast q => simpa only [Fin.snoc_last, Fin.snoc_castSucc] using h.inj i q
+    | cast p =>
+      induction q using Fin.lastCases with
+      | last => simpa only [Fin.snoc_last, Fin.snoc_castSucc] using h.inj p i
+      | cast q => simpa only [Fin.snoc_castSucc] using h.inj p q
+  · intro p
+    induction p using Fin.lastCases with
+    | last => simpa only [Fin.snoc_last] using h.inU i
+    | cast p => simpa only [Fin.snoc_castSucc] using h.inU p
+  · intro p
+    induction p using Fin.lastCases with
+    | last => simpa only [Fin.snoc_last] using h.inV i
+    | cast p => simpa only [Fin.snoc_castSucc] using h.inV p
+
+/-- Extending a correspondence with a fresh, region-matched pair. -/
+private theorem regionMatch_snoc_fresh (m : ℕ) {ℓ : ℕ}
+    {a b : Fin ℓ → Fin (3 * m + 1)} (h : RegionMatch m a b)
+    {x y : Fin (3 * m + 1)} (hxa : ∀ i, a i ≠ x) (hyb : ∀ i, b i ≠ y)
+    (hU : x.val < m ↔ y.val < m + 1) (hV : x.val < 2 * m ↔ y.val < 2 * m) :
+    RegionMatch m (Fin.snoc a x) (Fin.snoc b y) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro p q
+    induction p using Fin.lastCases with
+    | last =>
+      induction q using Fin.lastCases with
+      | last => simp
+      | cast q =>
+        simp only [Fin.snoc_last, Fin.snoc_castSucc]
+        exact iff_of_false (fun e => hxa q e.symm) (fun e => hyb q e.symm)
+    | cast p =>
+      induction q using Fin.lastCases with
+      | last =>
+        simp only [Fin.snoc_last, Fin.snoc_castSucc]
+        exact iff_of_false (hxa p) (hyb p)
+      | cast q => simpa only [Fin.snoc_castSucc] using h.inj p q
+  · intro p
+    induction p using Fin.lastCases with
+    | last => simpa only [Fin.snoc_last] using hU
+    | cast p => simpa only [Fin.snoc_castSucc] using h.inU p
+  · intro p
+    induction p using Fin.lastCases with
+    | last => simpa only [Fin.snoc_last] using hV
+    | cast p => simpa only [Fin.snoc_castSucc] using h.inV p
+
+/-- Extend a correspondence by an `M₁`-side element ("there is always enough
+room", B&C p. 214). -/
+private theorem extend₁₂ (m : ℕ) {ℓ : ℕ} (hℓ : ℓ + 1 < m)
+    {a b : Fin ℓ → Fin (3 * m + 1)} (h : RegionMatch m a b)
+    (x : Fin (3 * m + 1)) :
+    ∃ y, RegionMatch m (Fin.snoc a x) (Fin.snoc b y) := by
+  by_cases hx : ∃ i, a i = x
+  · obtain ⟨i, rfl⟩ := hx
+    exact ⟨b i, regionMatch_snoc_matched m h i⟩
+  · push_neg at hx
+    have hused : (Finset.image b Finset.univ).card ≤ ℓ :=
+      le_trans Finset.card_image_le (by simp)
+    have hbne : ∀ {y : Fin (3 * m + 1)}, y ∉ Finset.image b Finset.univ →
+        ∀ i, b i ≠ y := fun hy i hbi =>
+      hy (hbi ▸ Finset.mem_image_of_mem b (Finset.mem_univ i))
+    by_cases h1 : x.val < m
+    · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh m 0 (m + 1) (by omega)
+        (Finset.image b Finset.univ) (by omega)
+      exact ⟨y, regionMatch_snoc_fresh m h hx (hbne hy3)
+        (by omega) (by omega)⟩
+    · by_cases h2 : x.val < 2 * m
+      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh m (m + 1) (2 * m) (by omega)
+          (Finset.image b Finset.univ) (by omega)
+        exact ⟨y, regionMatch_snoc_fresh m h hx (hbne hy3)
+          (by omega) (by omega)⟩
+      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh m (2 * m) (3 * m + 1) (by omega)
+          (Finset.image b Finset.univ) (by omega)
+        exact ⟨y, regionMatch_snoc_fresh m h hx (hbne hy3)
+          (by omega) (by omega)⟩
+
+/-- Extend a correspondence by an `M₂`-side element. -/
+private theorem extend₂₁ (m : ℕ) {ℓ : ℕ} (hℓ : ℓ + 1 < m)
+    {a b : Fin ℓ → Fin (3 * m + 1)} (h : RegionMatch m a b)
+    (y : Fin (3 * m + 1)) :
+    ∃ x, RegionMatch m (Fin.snoc a x) (Fin.snoc b y) := by
+  by_cases hy : ∃ i, b i = y
+  · obtain ⟨i, rfl⟩ := hy
+    exact ⟨a i, regionMatch_snoc_matched m h i⟩
+  · push_neg at hy
+    have hused : (Finset.image a Finset.univ).card ≤ ℓ :=
+      le_trans Finset.card_image_le (by simp)
+    have hane : ∀ {x : Fin (3 * m + 1)}, x ∉ Finset.image a Finset.univ →
+        ∀ i, a i ≠ x := fun hx i hai =>
+      hx (hai ▸ Finset.mem_image_of_mem a (Finset.mem_univ i))
+    by_cases h1 : y.val < m + 1
+    · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh m 0 m (by omega)
+        (Finset.image a Finset.univ) (by omega)
+      exact ⟨x, regionMatch_snoc_fresh m h (hane hx3) hy
+        (by omega) (by omega)⟩
+    · by_cases h2 : y.val < 2 * m
+      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh m m (2 * m) (by omega)
+          (Finset.image a Finset.univ) (by omega)
+        exact ⟨x, regionMatch_snoc_fresh m h (hane hx3) hy
+          (by omega) (by omega)⟩
+      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh m (2 * m) (3 * m + 1) (by omega)
+          (Finset.image a Finset.univ) (by omega)
+        exact ⟨x, regionMatch_snoc_fresh m h (hane hx3) hy
+          (by omega) (by omega)⟩
+
+/-- B&C's condition (6) (p. 214): a formula whose quantifier count plus
+free-variable count is below `m` cannot distinguish region-matched tuples
+across `M₁`/`M₂`. Structural induction; at each quantifier "there is always
+enough room to extend the one-one correspondence one more step". -/
+theorem realize_iff_of_regionMatch (m : ℕ) :
+    ∀ {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ), numQuant φ + ℓ < m →
+      ∀ {a b : Fin ℓ → Fin (3 * m + 1)}, RegionMatch m a b →
+        (Realize₁ m φ a ↔ Realize₂ m φ b) := by
+  intro ℓ φ
+  induction φ with
+  | falsum =>
+    intro _ a b _
+    exact Iff.rfl
+  | equal t₁ t₂ =>
+    intro _ a b h
+    obtain ⟨i, rfl⟩ := term_eq_var t₁
+    obtain ⟨j, rfl⟩ := term_eq_var t₂
+    rcases i with e | i
+    · exact e.elim
+    rcases j with e | j
+    · exact e.elim
+    simpa [Realize₁, Realize₂, Term.realize] using h.inj i j
+  | rel R ts =>
+    intro _ a b h
+    cases R with
+    | U =>
+      obtain ⟨i, hi⟩ := term_eq_var (ts 0)
+      rcases i with e | i
+      · exact e.elim
+      show ((fun k => @Term.realize L_UV _ (struc₁ m) _ (Sum.elim default a) (ts k)) 0).val < m ↔
+        ((fun k => @Term.realize L_UV _ (struc₂ m) _ (Sum.elim default b) (ts k)) 0).val < m + 1
+      simp only [hi, Term.realize_var, Sum.elim_inr]
+      exact h.inU i
+    | V =>
+      obtain ⟨i, hi⟩ := term_eq_var (ts 0)
+      rcases i with e | i
+      · exact e.elim
+      show ((fun k => @Term.realize L_UV _ (struc₁ m) _ (Sum.elim default a) (ts k)) 0).val < 2 * m ↔
+        ((fun k => @Term.realize L_UV _ (struc₂ m) _ (Sum.elim default b) (ts k)) 0).val < 2 * m
+      simp only [hi, Term.realize_var, Sum.elim_inr]
+      exact h.inV i
+  | imp f₁ f₂ ih₁ ih₂ =>
+    intro hc a b h
+    simp only [numQuant] at hc
+    simp only [Realize₁, Realize₂, BoundedFormula.realize_imp] at *
+    exact imp_congr (ih₁ (by omega) h) (ih₂ (by omega) h)
+  | @all k f ih =>
+    intro hc a b h
+    simp only [numQuant] at hc
+    have hc' : numQuant f + (k + 1) < m := by omega
+    have hℓ : k + 1 < m := by omega
+    simp only [Realize₁, Realize₂, BoundedFormula.realize_all] at *
+    constructor
+    · intro hall y
+      obtain ⟨x, hx⟩ := extend₂₁ m hℓ h y
+      exact (ih hc' hx).mp (hall x)
+    · intro hall x
+      obtain ⟨y, hy⟩ := extend₁₂ m hℓ h x
+      exact (ih hc' hy).mpr (hall y)
+
+/-! ### The theorem -/
+
+/-- The *more than half* truth condition over a structure: more than half
+the V's are U's (`Card(U ∩ V) > ½ Card(V)`, B&C p. 213). -/
+def MoreThanHalf (M : Type) (S : L_UV.Structure M) : Prop :=
+  2 * Set.ncard {x : M | S.RelMap uRel ![x] ∧ S.RelMap vRel ![x]} >
+    Set.ncard {x : M | S.RelMap vRel ![x]}
+
+private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
+    Set.ncard {x : Fin n | x.val < c} = c := by
+  have hset : {x : Fin n | x.val < c} = ↑((Finset.Ico 0 c).attachFin
+      (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hc)) := by
+    ext x
+    simp [Finset.mem_attachFin, Finset.mem_Ico]
+  rw [hset, Set.ncard_coe_finset, Finset.card_attachFin, Nat.card_Ico]
+  omega
+
+/-- **C12** ([barwise-cooper-1981], Appendix C p. 213): no first-order
+sentence over two unary predicates is true in exactly the finite models
+where more than half the V's are U's. The formal core of B&C's claim that
+*most* is a determiner, not a quantifier. -/
+theorem more_than_half_not_definable :
+    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] (S : L_UV.Structure M),
+      (@Sentence.Realize L_UV M S φ ↔ MoreThanHalf M S) := by
+  rintro ⟨φ, hφ⟩
+  set m := numQuant φ + 1 with hm
+  have hm1 : 1 ≤ m := by omega
+  -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
+  have hmth₁ : ¬ MoreThanHalf (Fin (3 * m + 1)) (struc₁ m) := by
+    have hUV : {x : Fin (3 * m + 1) |
+        (struc₁ m).RelMap uRel ![x] ∧ (struc₁ m).RelMap vRel ![x]}
+        = {x : Fin (3 * m + 1) | x.val < m} := by
+      ext x
+      show (x.val < m ∧ x.val < 2 * m) ↔ x.val < m
+      omega
+    have hV : {x : Fin (3 * m + 1) | (struc₁ m).RelMap vRel ![x]}
+        = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
+    unfold MoreThanHalf
+    rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
+    omega
+  -- M₂ satisfies more-than-half: |U₂ ∩ V| = m + 1, |V| = 2m
+  have hmth₂ : MoreThanHalf (Fin (3 * m + 1)) (struc₂ m) := by
+    have hUV : {x : Fin (3 * m + 1) |
+        (struc₂ m).RelMap uRel ![x] ∧ (struc₂ m).RelMap vRel ![x]}
+        = {x : Fin (3 * m + 1) | x.val < m + 1} := by
+      ext x
+      show (x.val < m + 1 ∧ x.val < 2 * m) ↔ x.val < m + 1
+      omega
+    have hV : {x : Fin (3 * m + 1) | (struc₂ m).RelMap vRel ![x]}
+        = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
+    unfold MoreThanHalf
+    rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
+    omega
+  -- but they agree on φ, by condition (6) at the empty correspondence
+  have hagree : Realize₁ m φ default ↔ Realize₂ m φ default :=
+    realize_iff_of_regionMatch m φ (by omega)
+      ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
+  have hsent₁ : @Sentence.Realize L_UV _ (struc₁ m) φ ↔ Realize₁ m φ default := by
+    unfold Realize₁
+    exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₁ m) Empty 0 φ)
+      (funext fun e => e.elim) (funext fun i => i.elim0))
+  have hsent₂ : @Sentence.Realize L_UV _ (struc₂ m) φ ↔ Realize₂ m φ default := by
+    unfold Realize₂
+    exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₂ m) Empty 0 φ)
+      (funext fun e => e.elim) (funext fun i => i.elim0))
+  exact hmth₁ ((hφ _ (struc₁ m)).mp
+    (hsent₁.mpr (hagree.mpr (hsent₂.mp ((hφ _ (struc₂ m)).mpr hmth₂)))))
+
+end BarwiseCooper1981
