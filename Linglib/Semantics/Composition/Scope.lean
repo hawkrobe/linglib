@@ -72,17 +72,17 @@ A derivation that can be interpreted under multiple scope readings.
 The same syntactic derivation can yield different semantic values
 depending on scope resolution.
 -/
-structure ScopeDerivation (F : Frame) (τ : Ty) where
+structure ScopeDerivation (E W : Type) (τ : Ty) where
   /-- Surface form (string representation) -/
   surface : String
   /-- Semantic value as function of scope config -/
-  meaningAt : ScopeConfig → F.Denot τ
+  meaningAt : ScopeConfig → Denot E W τ
   /-- Available scope readings -/
   availableScopes : List ScopeConfig := [.surface, .inverse]
 
 /-- Get all meanings for a scope derivation -/
-def ScopeDerivation.allMeanings {F : Frame} {τ : Ty}
-    (d : ScopeDerivation F τ) : List (ScopeConfig × F.Denot τ) :=
+def ScopeDerivation.allMeanings {E W : Type} {τ : Ty}
+    (d : ScopeDerivation E W τ) : List (ScopeConfig × Denot E W τ) :=
   d.availableScopes.map λ s => (s, d.meaningAt s)
 
 -- Scoped Form (for HasAvailableScopes interface)
@@ -120,8 +120,8 @@ def allScopeConfigs : List ScopeConfig := [.surface, .inverse]
 def allQNScopes : List QNScope := [.forallNeg, .negForall]
 
 /-- Check if scope config yields true under given semantics -/
-def scopeYieldsTrue {F : Frame} [∀ (p : F.Denot .t), Decidable p]
-    (d : ScopeDerivation F .t) (s : ScopeConfig) : Bool :=
+def scopeYieldsTrue {E W : Type} [∀ (p : Denot E W .t), Decidable p]
+    (d : ScopeDerivation E W .t) (s : ScopeConfig) : Bool :=
   decide (d.meaningAt s)
 
 -- ============================================================================

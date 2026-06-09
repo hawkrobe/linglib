@@ -37,7 +37,7 @@ namespace Katzir2007
 
 open Syntax
 open Semantics.Composition.Tree
-open Semantics.Montague (toyFrame ToyEntity)
+open Semantics.Montague (ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem)
 open Semantics.Quantification.Quantifier (some_sem every_sem student_sem)
 

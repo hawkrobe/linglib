@@ -33,7 +33,7 @@ namespace Ladusaw1979
 open Core.Quantification
 open Typology.PolarityItem (LicensingContext)
 open Core.Logic.Intensional
-open Semantics.Montague (toyFrame ToyEntity)
+open Semantics.Montague (ToyEntity)
 open Semantics.Quantification.Quantifier
 
 -- ============================================================================

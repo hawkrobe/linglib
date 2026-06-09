@@ -35,8 +35,8 @@ def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 example : W (λ x y => x = y) 5 = (5 = 5) := rfl
 
 /-- H&K interpretation of binding. -/
-def hkBinding {F : Frame} (n : Nat) (body : F.Entity → Prop)
-    (binder : F.Entity) (g : Core.Assignment F.Entity) : Prop :=
+def hkBinding {E : Type} (n : Nat) (body : E → Prop)
+    (binder : E) (g : Core.Assignment E) : Prop :=
   body (g[n ↦ binder] n)
 
 /-- B&S interpretation of binding (continuation-based). -/
@@ -45,9 +45,9 @@ def bsBinding {Entity : Type} (body : Entity → Entity → Prop)
   W body binder
 
 /-- H&K and B&S agree for reflexive binding: both produce `body(binder, binder)`. -/
-theorem hk_bs_reflexive_equiv {F : Frame} (n : Nat)
-    (body : F.Entity → F.Entity → Prop)
-    (binder : F.Entity) (g : Core.Assignment F.Entity) :
+theorem hk_bs_reflexive_equiv {E : Type} (n : Nat)
+    (body : E → E → Prop)
+    (binder : E) (g : Core.Assignment E) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = W body binder := by
   simp only [W, Function.update_self]
 
@@ -104,15 +104,15 @@ section CylindricAlgebra
 After binding, `g(κ) = g(l)`, which is the diagonal element `Dκl`.
 The semantic effect on a predicate φ is `φ(g[κ↦g(l)])`, which is
 cylindric substitution `σ^κ_l(φ)`. -/
-theorem binding_eq_resolve {F : Frame} (κ l : Nat)
-    (φ : Core.Assignment F.Entity → Prop) (g : Core.Assignment F.Entity) :
+theorem binding_eq_resolve {E : Type} (κ l : Nat)
+    (φ : Core.Assignment E → Prop) (g : Core.Assignment E) :
     φ (g[κ ↦ g l]) = resolve κ l φ g := rfl
 
 /-- After binding, the bound pronoun and its binder agree:
 `(g[κ↦g(l)])(κ) = (g[κ↦g(l)])(l)`. This is the diagonal condition
 `Dκl` that cylindric substitution enforces. -/
-theorem binding_establishes_diagonal {F : Frame} (κ l : Nat)
-    (g : Core.Assignment F.Entity) (h : κ ≠ l) :
+theorem binding_establishes_diagonal {E : Type} (κ l : Nat)
+    (g : Core.Assignment E) (h : κ ≠ l) :
     diag κ l (g[κ ↦ g l]) := by
   simp [diag, Function.update_of_ne (Ne.symm h) (g l) g]
 

@@ -48,7 +48,7 @@ constraint rather than realized as a stand-alone constituent of type
 namespace LittleMoroneyRoyer2022
 
 open Typology
-open Core.Logic.Intensional (Frame Ty)
+open Core.Logic.Intensional (Ty)
 open Semantics.Montague (LexEntry Lexicon)
 open Semantics.Composition.Tree (interp)
 open Syntax (Tree)
@@ -102,19 +102,17 @@ denotations. -/
 inductive Dog | a | b | c
   deriving DecidableEq, Repr, Fintype
 
-/-- LMR's semantic frame: the carrier is `Finset Dog` (Link-style sums of
-dog-atoms with `∅` excluded downstream by `.Nonempty`). Extensional —
-`Index := Unit`. -/
-abbrev lmrFrame : Frame := { Entity := Finset Dog, Index := Unit }
+/-! LMR's semantic carrier is `Finset Dog` (Link-style sums of dog-atoms with
+`∅` excluded downstream by `.Nonempty`), with `Unit` indices (extensional). -/
 
 /-- Empty variable assignment; the §2.3 trees contain no traces. -/
-def emptyAssign : Core.Assignment lmrFrame.Entity := fun _ => ∅
+def emptyAssign : Core.Assignment (Finset Dog) := fun _ => ∅
 
 /-- Ch'ol lexicon. cha' is the measure-loaded numeral
 `λκ λP λx. P x ∧ κ x ∧ |x| = 2`; kojty contributes a (semantically
 vacuous) sortal restriction; ts'i' is the dog predicate. The
 `⟨e,n⟩` measure type is folded into cha'. -/
-def cholLex : Lexicon lmrFrame
+def cholLex : Lexicon (Finset Dog) Unit
   | "cha'" => some
       { ty := .fn (.fn .e .t) (.fn (.fn .e .t) (.fn .e .t))
         denot := fun (κ : Finset Dog → Prop) (P : Finset Dog → Prop)
@@ -130,7 +128,7 @@ def cholLex : Lexicon lmrFrame
 /-- Shan lexicon. tǒ atomizes the noun predicate (`λP λx. P x ∧ |x| = 1`);
 sǒŋ selects 2-element joins of distinct atoms from an atomized predicate;
 mǎa is the dog predicate. -/
-def shanLex : Lexicon lmrFrame
+def shanLex : Lexicon (Finset Dog) Unit
   | "sǒŋ" => some
       { ty := .fn (.fn .e .t) (.fn .e .t)
         denot := fun (P : Finset Dog → Prop) (x : Finset Dog) =>
@@ -170,13 +168,13 @@ def shanDenot : Finset Dog → Prop :=
 /-- The Ch'ol tree interprets to `cholDenot` via two FA steps under the
 Ch'ol lexicon. -/
 theorem cholTree_interprets :
-    interp lmrFrame cholLex emptyAssign cholTree =
+    interp (Finset Dog) Unit cholLex emptyAssign cholTree =
       some ⟨.fn .e .t, cholDenot⟩ := rfl
 
 /-- The Shan tree interprets to `shanDenot` via two FA steps under the
 Shan lexicon. -/
 theorem shanTree_interprets :
-    interp lmrFrame shanLex emptyAssign shanTree =
+    interp (Finset Dog) Unit shanLex emptyAssign shanTree =
       some ⟨.fn .e .t, shanDenot⟩ := rfl
 
 /-- LMR §5 main result: despite different constituency and different

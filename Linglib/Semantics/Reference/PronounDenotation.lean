@@ -43,7 +43,6 @@ open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)
 open Core (Assignment)
-open Core.Logic.Intensional (Frame)
 open Core.Logic.Intensional.Variables (interpPronoun DenotGS SitAssignment)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity
@@ -74,11 +73,11 @@ def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
 variable denotation `interpPronoun i` (always defined under a total
 assignment), and the intrinsic presupposition is the φ-feature presupposition
 imposed on the resolved referent `g i`. The static case; world is trivial. -/
-def PersonalPronoun.denote {F : Frame} [PartialOrder F.Entity] (e : PersonalPronoun) (i : ℕ)
-    (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop) :
-    NominalDenot (Assignment F.Entity) PUnit F.Entity where
+def PersonalPronoun.denote {E : Type} [PartialOrder E] (e : PersonalPronoun) (i : ℕ)
+    (speaker addressee : E) (isFemale isInanimate : E → Prop) :
+    NominalDenot (Assignment E) PUnit E where
   presup := fun g _ => (e.phiPresup speaker addressee isFemale isInanimate).presup (g i)
-  selector := fun g _ => some (interpPronoun (F := F) i g)
+  selector := fun g _ => some (interpPronoun (E := E) (W := PUnit) i g)
 
 /-! ### Fusion seam with the dynamic lookup interface -/
 
@@ -91,9 +90,9 @@ layer `Entry.denote` adds. This discharges the first step of the functor-
 parametric `NominalDenot` consolidation (`Nominal.lean`'s `Todo`): the remaining,
 higher-blast-radius stage makes `selector` itself functor-valued and *be*
 `iLookup`. -/
-theorem interpPronoun_eq_iLookup {F : Frame} (i : ℕ) (g : Assignment F.Entity)
+theorem interpPronoun_eq_iLookup {E W : Type} (i : ℕ) (g : Assignment E)
     (w : PUnit) :
-    interpPronoun (F := F) i g
+    interpPronoun (E := E) (W := W) i g
       = Semantics.Dynamic.Context.HasFiberedLookup.iLookup (M := Id) g i w :=
   rfl
 
@@ -113,9 +112,9 @@ example {E : Type*} [PartialOrder E] (speaker addressee : E)
 
 /-- Positive: under a feminine referent, the full pronoun denotation is
 defined (its presupposition holds). -/
-example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
-    (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
-    (scope : F.Entity → PUnit → Prop)
+example {E : Type} [PartialOrder E] (g : Assignment E) (i : ℕ)
+    (speaker addressee : E) (isFemale isInanimate : E → Prop)
+    (scope : E → PUnit → Prop)
     (hFem : isFemale (g i)) :
     ((ellas.denote i speaker addressee isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
@@ -146,10 +145,10 @@ description whenever the restrictor holds of the indexed referent: the
 **strong-article** (`Description.ofPresupType .familiarity`) reading, since the
 anaphoric index *is* the indexed entity. The **weak** reading coincides too when
 that entity is the unique satisfier (`Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`). -/
-theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrder F.Entity]
-    (e : PersonalPronoun) (i : ℕ) (R : DenotGS F .et)
-    (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
-    (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit)
+theorem PersonalPronoun.denote_selector_eq_ofPresupType {E W : Type} [PartialOrder E]
+    (e : PersonalPronoun) (i : ℕ) (R : DenotGS E W .et)
+    (speaker addressee : E) (isFemale isInanimate : E → Prop)
+    (g : Assignment E) (gs : SitAssignment W) (w : PUnit)
     (h : R g gs (g i)) :
     (e.denote i speaker addressee isFemale isInanimate).selector g w
       = Semantics.Definiteness.interpret (Semantics.Definiteness.Description.ofPresupType .familiarity R i) g gs := by

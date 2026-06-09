@@ -44,7 +44,7 @@ open Core.Logic.Intensional Core.Logic.Intensional.Variables
 
     `abbrev` because trace interpretation IS pronoun interpretation —
     the only difference is the syntactic source. -/
-abbrev interpTrace {F : Frame} (n : ℕ) : DenotG F .e :=
+abbrev interpTrace {E : Type} (n : ℕ) : DenotG E Unit .e :=
   interpPronoun n
 
 -- ============================================================================
@@ -58,8 +58,8 @@ Interpret a simple movement configuration:
 
 Returns the predicate λx. ⟦body(t_n := x)⟧
 -/
-def interpMovement {F : Frame} (n : ℕ)
-    (bodyWithTrace : DenotG F .t) : DenotG F (.e ⇒ .t) :=
+def interpMovement {E W : Type} (n : ℕ)
+    (bodyWithTrace : DenotG E W .t) : DenotG E W (.e ⇒ .t) :=
   lambdaAbsG n bodyWithTrace
 
 -- ============================================================================
@@ -69,8 +69,8 @@ def interpMovement {F : Frame} (n : ℕ)
 /--
 A semantic interpretation context pairs a model with an assignment.
 -/
-structure InterpContext (F : Frame) where
-  assignment : Core.Assignment F.Entity
+structure InterpContext (E : Type) where
+  assignment : Core.Assignment E
 
 /--
 The semantic type corresponding to a syntactic object.
@@ -88,7 +88,7 @@ Interpret a trace in a syntactic object.
 
 This extracts the trace index and interprets it via the assignment.
 -/
-def interpSOTrace {F : Frame} (so : SyntacticObject) : Option (DenotG F .e) :=
+def interpSOTrace {E : Type} (so : SyntacticObject) : Option (DenotG E Unit .e) :=
   match isTrace so with
   | some n => some (interpTrace n)
   | none => none
@@ -148,8 +148,8 @@ noncomputable def getTraceIndex (so : SyntacticObject) : Option ℕ :=
 -- ============================================================================
 
 /-- Different indices yield independent interpretations. -/
-theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
-    (x : F.Entity) (g : Core.Assignment F.Entity)
+theorem trace_indices_independent {E : Type} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
+    (x : E) (g : Core.Assignment E)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
   simp only [interpTrace, interpPronoun]
   exact Function.update_of_ne h x g
@@ -158,8 +158,8 @@ theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n�
 Predicate abstraction creates the right binding:
 the abstracted variable is bound, other variables are free.
 -/
-theorem abstraction_binds_correct_variable {F : Frame} (n : ℕ)
-    (g : Core.Assignment F.Entity) (x : F.Entity)
+theorem abstraction_binds_correct_variable {E : Type} (n : ℕ)
+    (g : Core.Assignment E) (x : E)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
   exact Function.update_self n x g

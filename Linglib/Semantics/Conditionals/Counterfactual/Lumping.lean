@@ -17,8 +17,8 @@ freely (the Paula-paints-a-still-life and zebra-escapes examples in
 [kratzer-2012], §5.4.1).
 
 This module sits on top of `Core/Logic/Intensional/Situations.lean`, which
-provides the `SituationFrame` carrier — a `Frame` whose `Index` carries
-a partial order representing parthood. Propositions are `Set F.Index`;
+provides the `SituationFrame` carrier — entity/index types whose `Index`
+carries a partial order representing parthood. Propositions are `Set F.Index`;
 the order grounds both lumping and persistence (= mathlib's `Monotone`,
 aliased as `Persistent` in `Situations.lean`).
 
@@ -217,23 +217,22 @@ end LumpingBridge
 
 /-! ## Possible-worlds reduction
 
-In a discrete situation frame (a `Frame` promoted via
-`Frame.toDiscreteSituationFrame`), parthood reduces to equality. The
-local-implication conjunct then collapses, and lumping at any index `w`
-becomes joint truth at `w` — a degenerate notion. This is the formal
-sense in which possible-worlds semantics flattens the distinctions
-Kratzer's lumping is designed to capture. -/
+In a discrete situation frame (built via `discreteSituationFrame`), parthood
+reduces to equality. The local-implication conjunct then collapses, and
+lumping at any index `w` becomes joint truth at `w` — a degenerate notion.
+This is the formal sense in which possible-worlds semantics flattens the
+distinctions Kratzer's lumping is designed to capture. -/
 
 section DiscreteCorollary
 
-variable (G : Frame)
+variable (G : Type)
 
-/-- Bring the discrete partial order on `G.Index` into scope so the
-    corollary below can quote `Lumps` without explicit `@`-application. -/
-local instance : PartialOrder G.Index := discreteOrder G.Index
+/-- Bring the discrete partial order on `G` into scope so the corollary below
+    can quote `Lumps` without explicit `@`-application. -/
+local instance : PartialOrder G := discreteOrder G
 
 /-- Lumping in a discrete frame collapses to joint truth at the index. -/
-theorem Lumps.discrete_iff (p q : Set G.Index) (w : G.Index) :
+theorem Lumps.discrete_iff (p q : Set G) (w : G) :
     Lumps p q w ↔ (w ∈ p ∧ w ∈ q) := by
   refine ⟨fun h => ⟨h.holds, h.holds_target⟩, fun ⟨hp, hq⟩ => ⟨hp, ?_⟩⟩
   intro s hs _

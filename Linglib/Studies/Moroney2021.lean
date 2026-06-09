@@ -704,24 +704,24 @@ theorem mandarin_in_markedAnaphoric :
     demonstratives. The licensing predicate makes this morphologically
     visible — `.anaphoric` is not licensed (no determiner expones a
     familiarity use). -/
-theorem shan_anaphoric_not_licensed_via_article {F : Frame}
-    (R : DenotGS F .et) (d : Nat) :
-    ¬ Determiner.licenses (F := F) shanDets (.anaphoric R d) := by
+theorem shan_anaphoric_not_licensed_via_article {E W : Type}
+    (R : DenotGS E W .et) (d : Nat) :
+    ¬ Determiner.licenses (E := E) (W := W) shanDets (.anaphoric R d) := by
   show ¬ Determiner.MarksPresup shanDets .familiarity
   decide
 
 /-- Bare nominals are licensed for Shan (and every language) — this is the
     morphological substrate for Moroney's analysis: Shan's anaphoric
     definites surface as bare nouns. -/
-theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
-    Determiner.licenses (F := F) shanDets (.bare R) := trivial
+theorem shan_bare_licensed {E W : Type} (R : DenotGS E W .et) :
+    Determiner.licenses (E := E) (W := W) shanDets (.bare R) := trivial
 
 /-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
     Combined with `shan_bare_licensed`, this gives the morphological
     inventory of strategies Shan deploys for definite reference. -/
-theorem shan_demonstrative_licensed {F : Frame}
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    Determiner.licenses (F := F) shanDets
+theorem shan_demonstrative_licensed {E W : Type}
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
+    Determiner.licenses (E := E) (W := W) shanDets
       (.demonstrative R deictic sIdx d) := by
   show ∃ e ∈ shanDets, Determiner.Entry.IsDemonstrative e
   decide
@@ -729,18 +729,18 @@ theorem shan_demonstrative_licensed {F : Frame}
 /-- English licenses `.anaphoric` via the syncretic *the* (which expones a
     familiarity use), *without* an independent strong article. Contrasts with
     Shan (no licensing form at all) and German (independent strong form). -/
-theorem english_anaphoric_licensed_via_syncretism {F : Frame}
-    (R : DenotGS F .et) (d : Nat) :
-    Determiner.licenses (F := F) englishDets (.anaphoric R d) := by
+theorem english_anaphoric_licensed_via_syncretism {E W : Type}
+    (R : DenotGS E W .et) (d : Nat) :
+    Determiner.licenses (E := E) (W := W) englishDets (.anaphoric R d) := by
   show Determiner.MarksPresup englishDets .familiarity
   decide
 
 /-- German licenses `.anaphoric` via its independent strong article (no
     syncretism). The unique vs anaphoric distinction is morphologically
     marked. -/
-theorem german_anaphoric_licensed_via_strong_article {F : Frame}
-    (R : DenotGS F .et) (d : Nat) :
-    Determiner.licenses (F := F) germanDets (.anaphoric R d) := by
+theorem german_anaphoric_licensed_via_strong_article {E W : Type}
+    (R : DenotGS E W .et) (d : Nat) :
+    Determiner.licenses (E := E) (W := W) germanDets (.anaphoric R d) := by
   show Determiner.MarksPresup germanDets .familiarity
   decide
 
@@ -763,10 +763,10 @@ theorem english_mandarin_inventory_distinct :
     restrictor select the same referent. This is the Core-API analogue of
     Moroney's claim that bare nouns in Shan express weak/uniqueness
     definiteness via unblocked ι. -/
-theorem shan_bare_unique_agreement {F : Frame}
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Core.Assignment F.Entity)
-    (gs : SitAssignment F) :
+theorem shan_bare_unique_agreement {E W : Type}
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Core.Assignment E)
+    (gs : SitAssignment W) :
     Semantics.Definiteness.interpret (.bare R) g gs =
       Semantics.Definiteness.interpret (.unique R sIdx) g gs := rfl
 
@@ -776,10 +776,10 @@ theorem shan_bare_unique_agreement {F : Frame}
     over the same restrictor and discourse index pick the same entity.
     This is the type-theoretic correlate of Moroney's claim that *nâj*/*nân*
     *add* spatial content rather than substituting a different selector. -/
-theorem shan_demonstrative_anaphoric_agreement {F : Frame}
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Core.Assignment F.Entity)
-    (gs : SitAssignment F) :
+theorem shan_demonstrative_anaphoric_agreement {E W : Type}
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
+    (g : Core.Assignment E)
+    (gs : SitAssignment W) :
     Semantics.Definiteness.interpret (.demonstrative R deictic sIdx d) g gs =
       Semantics.Definiteness.interpret (.anaphoric R d) g gs := rfl
 

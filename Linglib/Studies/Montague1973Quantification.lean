@@ -118,19 +118,25 @@ theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭�
 -- Section 4: Frame Structure
 
 /--
-Intensional Frame
+Intensional model
 
-A PTQ model uses the canonical `Semantics.Montague.Frame` which includes:
+A PTQ model carries:
 - `Entity` : domain of entities
 - `Index` : possible worlds (indices)
--/
-abbrev PTQModel := Frame
 
-/-- Denotation of a type in a frame (uses canonical Denot) -/
-abbrev PTQModel.Den (F : PTQModel) (τ : Ty) := F.Denot τ
+Denotations are computed from these via the canonical `Denot`.
+-/
+structure PTQModel where
+  /-- Domain of entities. -/
+  Entity : Type
+  /-- Possible worlds (indices). -/
+  Index : Type
+
+/-- Denotation of a type in a model (uses canonical `Denot`) -/
+abbrev PTQModel.Den (F : PTQModel) (τ : Ty) := Denot F.Entity F.Index τ
 
 /-- Intension: function from indices to extensions -/
-abbrev PTQModel.Intens (F : PTQModel) (a : Ty) := F.Index → F.Denot a
+abbrev PTQModel.Intens (F : PTQModel) (a : Ty) := F.Index → Denot F.Entity F.Index a
 
 -- Section 5: Lexical Entries and Translations
 

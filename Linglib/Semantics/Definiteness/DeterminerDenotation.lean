@@ -39,7 +39,7 @@ deictic feature projects: deixis filters the referent but never selects it
 
 ## Implementation notes
 
-Context is the bi-assignment `Assignment F.Entity × SitAssignment F` and the
+Context is the bi-assignment `Assignment E × SitAssignment W` and the
 world coordinate is trivial (`PUnit`), matching the static case of
 `PersonalPronoun.denote`. `Quantifier` (a generalized quantifier, not an
 individual denotation — it has no `NominalDenot`) and `Possessive` remain
@@ -49,12 +49,11 @@ deferred.
 namespace Semantics.Definiteness
 
 open Semantics.Reference (NominalDenot)
-open Core.Logic.Intensional (Frame)
 open Core.Logic.Intensional.Variables
 open Core (Assignment)
 open Features.Definiteness (DefPresupType)
 
-variable {F : Frame}
+variable {E W : Type}
 
 /-! ### Descriptions as nominal denotations -/
 
@@ -62,15 +61,15 @@ variable {F : Frame}
 canonical interpretation function `interpret`, and the intrinsic
 presupposition is vacuous — a definite's only presupposition is that the
 selector is defined. The static case; world is trivial. -/
-noncomputable def Description.denote (k : Description F) :
-    NominalDenot (Assignment F.Entity × SitAssignment F) PUnit F.Entity where
+noncomputable def Description.denote (k : Description E W) :
+    NominalDenot (Assignment E × SitAssignment W) PUnit E where
   presup := fun _ _ => True
   selector := fun gp _ => interpret k gp.1 gp.2
 
 /-- The by-construction identity: a description's selector *is* `interpret`. -/
 @[simp]
-theorem Description.denote_selector (k : Description F)
-    (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit) :
+theorem Description.denote_selector (k : Description E W)
+    (g : Assignment E) (gs : SitAssignment W) (w : PUnit) :
     k.denote.selector (g, gs) w = interpret k g gs := rfl
 
 /-! ### The demonstrative determiner's denotation -/
@@ -81,7 +80,7 @@ domain. The model supplies the proximity predicates the deixis cells need
 `PersonalPronoun.phiPresup`); an `unspecified` feature contributes the
 trivial presupposition. -/
 def _root_.DemonstrativeDeterminer.deixisPresup (dem : DemonstrativeDeterminer)
-    (proximal medial distal : F.Entity → Prop) : F.Entity → Prop :=
+    (proximal medial distal : E → Prop) : E → Prop :=
   match dem.deictic with
   | .proximal    => proximal
   | .medial      => medial
@@ -95,9 +94,9 @@ index `d`, and the intrinsic presupposition is the deictic presupposition
 imposed on the indexed referent `g d` — parallel to `PersonalPronoun.denote`,
 with deixis in place of φ-features. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer)
-    (R : DenotGS F .et) (sIdx d : Nat)
-    (proximal medial distal : F.Entity → Prop) :
-    NominalDenot (Assignment F.Entity × SitAssignment F) PUnit F.Entity where
+    (R : DenotGS E W .et) (sIdx d : Nat)
+    (proximal medial distal : E → Prop) :
+    NominalDenot (Assignment E × SitAssignment W) PUnit E where
   presup := fun gp _ => dem.deixisPresup proximal medial distal (gp.1 d)
   selector := fun gp _ =>
     interpret (.demonstrative R dem.deictic sIdx d) gp.1 gp.2
@@ -107,8 +106,8 @@ is exactly the bare anaphoric description's selector. The API-level form of
 `interpret_demonstrative_eq_anaphoric` — the deictic content lives entirely
 in the `presup` component. -/
 theorem DemonstrativeDeterminer.denote_selector_eq_anaphoric
-    (dem : DemonstrativeDeterminer) (R : DenotGS F .et) (sIdx d : Nat)
-    (proximal medial distal : F.Entity → Prop) :
+    (dem : DemonstrativeDeterminer) (R : DenotGS E W .et) (sIdx d : Nat)
+    (proximal medial distal : E → Prop) :
     (dem.denote R sIdx d proximal medial distal).selector
       = (Description.anaphoric R d).denote.selector := by
   funext gp w
@@ -118,8 +117,8 @@ theorem DemonstrativeDeterminer.denote_selector_eq_anaphoric
 selector — *this* and *that* pick the same referent and differ only in what
 they presuppose about it. -/
 theorem DemonstrativeDeterminer.denote_selector_congr
-    (dem₁ dem₂ : DemonstrativeDeterminer) (R : DenotGS F .et) (sIdx d : Nat)
-    (proximal medial distal : F.Entity → Prop) :
+    (dem₁ dem₂ : DemonstrativeDeterminer) (R : DenotGS E W .et) (sIdx d : Nat)
+    (proximal medial distal : E → Prop) :
     (dem₁.denote R sIdx d proximal medial distal).selector
       = (dem₂.denote R sIdx d proximal medial distal).selector := by
   rw [DemonstrativeDeterminer.denote_selector_eq_anaphoric,
@@ -132,17 +131,17 @@ descriptions (`Article.toDescriptions`). A syncretic article (English *the*)
 denotes both the weak and the strong description; a German weak or strong
 article denotes exactly one. -/
 noncomputable def _root_.Article.denotations (a : Article)
-    (R : DenotGS F .et) (idx : Nat) :
-    List (NominalDenot (Assignment F.Entity × SitAssignment F) PUnit F.Entity) :=
+    (R : DenotGS E W .et) (idx : Nat) :
+    List (NominalDenot (Assignment E × SitAssignment W) PUnit E) :=
   (a.toDescriptions R idx).map Description.denote
 
 /-- Every denotation of an article arises from a description the article
 licenses — the denotational pipeline and the licensing pipeline agree. -/
 theorem Article.denotations_licensed (a : Article)
-    (R : DenotGS F .et) (idx : Nat)
-    (nd : NominalDenot (Assignment F.Entity × SitAssignment F) PUnit F.Entity)
+    (R : DenotGS E W .et) (idx : Nat)
+    (nd : NominalDenot (Assignment E × SitAssignment W) PUnit E)
     (h : nd ∈ a.denotations R idx) :
-    ∃ k : Description F,
+    ∃ k : Description E W,
       Determiner.licenses [.article a] k ∧ nd = k.denote := by
   obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
   exact ⟨k, Determiner.licenses_mem_toDescriptions a R idx k hk, rfl⟩

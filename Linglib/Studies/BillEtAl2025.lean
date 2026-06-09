@@ -53,7 +53,6 @@ so the M&S derivation is the definition itself, not a theorem.
 namespace BillEtAl2025
 
 open Features.Coordination
-open Core.Logic.Intensional (Frame)
 
 -- Conjunction Particle Typology
 
@@ -485,18 +484,18 @@ is equivalent to applying the predicate directly.
 This is the core of the M&S decomposition: the roundtrip through
 ☉ + MU + J recovers ordinary conjunction semantics.
 -/
-theorem typeRaise_incl_reduces {F : Frame} (e : F.Entity) (p : F.Entity → Prop) :
-    typeRaise (F := F) e p = p e := rfl
+theorem typeRaise_incl_reduces {E W : Type} (e : E) (p : E → Prop) :
+    typeRaise (E := E) (W := W) e p = p e := rfl
 
 open Core.Logic.Intensional.Conjunction in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
 -/
-theorem ms_decomposition_eq_coord {F : Frame} (e1 e2 : F.Entity)
-    (p : F.Entity → Prop) :
-    (typeRaise (F := F) e1 p ∧ typeRaise (F := F) e2 p) =
-      coordEntities (F := F) e1 e2 p := rfl
+theorem ms_decomposition_eq_coord {E W : Type} (e1 e2 : E)
+    (p : E → Prop) :
+    (typeRaise (E := E) (W := W) e1 p ∧ typeRaise (E := E) (W := W) e2 p) =
+      coordEntities (E := E) (W := W) e1 e2 p := rfl
 
 -- ============================================================================
 -- § MU ↔ Distributivity: The Root Explanation
@@ -549,9 +548,9 @@ This can't be an `abbrev` — the types are different (Montague
 `Frame.Entity` vs `Finset Atom`). The theorem is the right tool
 for cross-theory unification.
 -/
-theorem mu_is_distributive_check {F : Frame} [DecidableEq F.Entity]
-    (e1 e2 : F.Entity) (P : F.Entity → Unit → Prop) [∀ a u, Decidable (P a u)] :
-    coordEntities (F := F) e1 e2 (fun a => P a ()) ↔
+theorem mu_is_distributive_check {E W : Type} [DecidableEq E]
+    (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
+    coordEntities (E := E) (W := W) e1 e2 (fun a => P a ()) ↔
     distMaximal P {e1, e2} () := by
   simp [coordEntities_both_satisfy, distMaximal_pair]
 

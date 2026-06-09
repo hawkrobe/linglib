@@ -8,7 +8,7 @@ import Linglib.Features.Definiteness
 [moroney-2021] [schwarz-2009] [schwarz-2013]
 [sharvy-1980] [kriz-2015]
 
-A single sum type `Description F` covering the principal flavors of nominal
+A single sum type `Description E W` covering the principal flavors of nominal
 description that the syntax–semantics interface needs to distinguish:
 
 - bare noun (number-neutral; covert type-shifts decide the reading)
@@ -18,13 +18,13 @@ description that the syntax–semantics interface needs to distinguish:
 - demonstrative (genuinely deictic this/that: a deictic feature, distinct from the strong article)
 - possessive (definite via a possession relation)
 
-The whole type is parameterized by a `Core.Logic.Intensional.Frame`, so all
+The whole type is parameterized by entity and index types `E`/`W`, so all
 restrictors, situation pronouns, and possessor expressions are typed via the
-unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
+unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
 
 ## Design notes
 
-- **Restrictors are `DenotGS F .et`.** Both entity assignments and situation
+- **Restrictors are `DenotGS E W .et`.** Both entity assignments and situation
   assignments are first-class. This is the [hanink-2021] position: a noun's
   resource situation is a *bound variable* in the structure, not a free
   contextual parameter.
@@ -72,29 +72,29 @@ open Core.Logic.Intensional.Variables
 /-- Principal flavors of nominal description — the *definiteness/reference*
     axis (bare/indefinite vs the definite subtypes), orthogonal to
     `Features.BindingClass` (binding distribution) and to a pronoun's lexical
-    kind. The frame parameter `F` supplies the entity domain and index set so
-    all subexpressions live in the same `F.Denot` universe. -/
-inductive Description (F : Frame) where
+    kind. The type parameters `E`/`W` supply the entity domain and index set so
+    all subexpressions live in the same `Denot E W` universe. -/
+inductive Description (E W : Type) where
   /-- Bare noun (no overt determiner). The actual reading — kind, indefinite,
       unique, or anaphoric — is selected by the language's covert type-shift
       hierarchy ([chierchia-1998], [dayal-2004]). -/
-  | bare (restrictor : DenotGS F .et)
+  | bare (restrictor : DenotGS E W .et)
   /-- Indefinite (∃). Introduces a new discourse referent and presupposes
       nothing about prior discourse. Heim (1982)/Kamp novelty. -/
-  | indefinite (restrictor : DenotGS F .et)
+  | indefinite (restrictor : DenotGS E W .et)
   /-- Coppock–Beaver weak/uniqueness definite (Sharvy/Križ maximal). The
       restrictor is evaluated at the resource situation pointed to by the
       `situationIdx`-th situation pronoun (Hanink 2021 binding). -/
-  | unique (restrictor : DenotGS F .et) (situationIdx : Nat)
+  | unique (restrictor : DenotGS E W .et) (situationIdx : Nat)
   /-- Schwarz strong-article / Hanink-indexed anaphoric definite. The
       `discourseIdx`-th entity-assignment slot is the antecedent. -/
-  | anaphoric (restrictor : DenotGS F .et) (discourseIdx : Nat)
+  | anaphoric (restrictor : DenotGS E W .et) (discourseIdx : Nat)
   /-- Demonstrative (genuinely deictic this/that). Carries a deictic feature
       ([moroney-2021] Shan *nâj*/*nân*) and a discourse/pointing index; the
       restrictor is checked at the resource situation `situationIdx`. Distinct from
       the [schwarz-2009] strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
-      (restrictor : DenotGS F .et)
+      (restrictor : DenotGS E W .et)
       (deictic : Features.Deixis.Feature)
       (situationIdx : Nat)
       (discourseIdx : Nat)
@@ -102,9 +102,9 @@ inductive Description (F : Frame) where
       restrictor and `relation` jointly pin down a unique satisfier related to
       `possessor`. -/
   | possessive
-      (restrictor : DenotGS F .et)
-      (possessor : DenotGS F .e)
-      (relation : DenotGS F .eet)
+      (restrictor : DenotGS E W .et)
+      (possessor : DenotGS E W .e)
+      (relation : DenotGS E W .eet)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Classification Predicates (derivable, no semantics yet)
@@ -112,11 +112,11 @@ inductive Description (F : Frame) where
 
 namespace Description
 
-variable {F : Frame}
+variable {E W : Type}
 
 /-- Is this a definite description (in the broad sense — uniqueness,
     familiarity, demonstrative, or possessive)? -/
-def isDefinite : Description F → Prop
+def isDefinite : Description E W → Prop
   | .bare _              => False
   | .indefinite _        => False
   | .unique _ _          => True
@@ -124,23 +124,23 @@ def isDefinite : Description F → Prop
   | .demonstrative ..    => True
   | .possessive ..       => True
 
-instance : DecidablePred (@isDefinite F) := fun n => by
+instance : DecidablePred (@isDefinite E W) := fun n => by
   cases n <;> unfold isDefinite <;> infer_instance
 
 /-- Does this description require a discourse antecedent? Anaphoric and
     demonstrative do; unique/possessive/bare/indefinite do not. -/
-def isAnaphoric : Description F → Prop
+def isAnaphoric : Description E W → Prop
   | .anaphoric _ _       => True
   | .demonstrative ..    => True
   | _                    => False
 
-instance : DecidablePred (@isAnaphoric F) := fun n => by
+instance : DecidablePred (@isAnaphoric E W) := fun n => by
   cases n <;> unfold isAnaphoric <;> infer_instance
 
 /-- Does this description bind a structural situation pronoun? Coppock–Beaver
     uniqueness and demonstratives do (resource situation for maximality and
     deictic check); the other constructors do not. -/
-def usesSituationPronoun : Description F → Bool
+def usesSituationPronoun : Description E W → Bool
   | .unique _ _          => true
   | .demonstrative ..    => true
   | _                    => false
@@ -149,7 +149,7 @@ def usesSituationPronoun : Description F → Bool
     presupposition type it expresses, where applicable. Bare and indefinite
     return `none` because they are not (in themselves) definites. -/
 def expectedPresupType :
-    Description F → Option Features.Definiteness.DefPresupType
+    Description E W → Option Features.Definiteness.DefPresupType
   | .bare _              => none
   | .indefinite _        => none
   | .unique _ _          => some .uniqueness
@@ -159,12 +159,12 @@ def expectedPresupType :
 
 /-- Definites are exactly those flavors with a non-`none` expected
     presupposition type. By construction. -/
-theorem isDefinite_iff_expectedPresup_some (n : Description F) :
+theorem isDefinite_iff_expectedPresup_some (n : Description E W) :
     n.isDefinite ↔ n.expectedPresupType.isSome = true := by
   cases n <;> simp [isDefinite, expectedPresupType]
 
 /-- Anaphoric flavors all carry the familiarity presupposition type. -/
-theorem isAnaphoric_implies_familiarity (n : Description F)
+theorem isAnaphoric_implies_familiarity (n : Description E W)
     (h : n.isAnaphoric) :
     n.expectedPresupType = some .familiarity := by
   cases n <;> simp [isAnaphoric] at h
@@ -181,14 +181,14 @@ theorem isAnaphoric_implies_familiarity (n : Description F)
     it fills the situation-pronoun slot, which `interpret` discards
     (`interpret_unique_index_irrelevant`). -/
 def ofPresupType (p : Features.Definiteness.DefPresupType)
-    (restrictor : DenotGS F .et) (idx : Nat) : Description F :=
+    (restrictor : DenotGS E W .et) (idx : Nat) : Description E W :=
   match p with
   | .uniqueness  => .unique restrictor idx
   | .familiarity => .anaphoric restrictor idx
 
 /-- `ofPresupType` is a section of `expectedPresupType`: the strength round-trips. -/
 theorem expectedPresupType_ofPresupType
-    (p : Features.Definiteness.DefPresupType) (R : DenotGS F .et) (idx : Nat) :
+    (p : Features.Definiteness.DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
     (ofPresupType p R idx).expectedPresupType = some p := by
   cases p <;> rfl
 

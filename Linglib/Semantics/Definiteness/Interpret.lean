@@ -6,7 +6,7 @@ import Linglib.Semantics.Definiteness.Maximality
 [coppock-beaver-2015] [hanink-2021] [schwarz-2009]
 [patel-grosz-grosz-2017] [sharvy-1980]
 
-Maps `Description F` to a referent in `Option F.Entity`, relative to a
+Maps `Description E W` to a referent in `Option E`, relative to a
 (entity, situation) bi-assignment. `none` represents either presupposition
 failure (no unique satisfier; no satisfying antecedent at the discourse
 index) or inapplicability (indefinites do not denote a single entity at
@@ -16,7 +16,7 @@ The interpretation composes the operators in `Semantics/Definiteness/Maximality.
 
 - `bare` and `unique` ↦ `russellIota` (order-free uniqueness; languages with
   mereological structure can opt into `sharvyMax` instead by providing a
-  `[PartialOrder F.Entity]` instance and using a separate plural-aware
+  `[PartialOrder E]` instance and using a separate plural-aware
   interpreter)
 - `anaphoric` and `demonstrative` ↦ entity-assignment lookup, accepted iff
   the restrictor holds of the indexed entity
@@ -36,16 +36,16 @@ open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Core (Assignment)
 
-variable {F : Frame}
+variable {E W : Type}
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Interpretation Function
 -- ════════════════════════════════════════════════════════════════
 
-/-- Denotation of a `Description` at a bi-assignment, as `Option F.Entity`.
+/-- Denotation of a `Description` at a bi-assignment, as `Option E`.
     `none` is presupposition failure or inapplicability. -/
-noncomputable def interpret (k : Description F)
-    (g : Assignment F.Entity) (gs : SitAssignment F) : Option F.Entity :=
+noncomputable def interpret (k : Description E W)
+    (g : Assignment E) (gs : SitAssignment W) : Option E :=
   match k with
   | .bare R                     => russellIota (fun x => R g gs x)
   | .indefinite _               => none
@@ -64,37 +64,37 @@ noncomputable def interpret (k : Description F)
 -- ════════════════════════════════════════════════════════════════
 
 @[simp]
-theorem interpret_bare (R : DenotGS F .et)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+theorem interpret_bare (R : DenotGS E W .et)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.bare R) g gs = russellIota (fun x => R g gs x) := rfl
 
 @[simp]
-theorem interpret_indefinite (R : DenotGS F .et)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
-    interpret (F := F) (.indefinite R) g gs = none := rfl
+theorem interpret_indefinite (R : DenotGS E W .et)
+    (g : Assignment E) (gs : SitAssignment W) :
+    interpret (E := E) (W := W) (.indefinite R) g gs = none := rfl
 
 @[simp]
-theorem interpret_unique (R : DenotGS F .et) (sIdx : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+theorem interpret_unique (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx) g gs = russellIota (fun x => R g gs x) := rfl
 
-theorem interpret_anaphoric (R : DenotGS F .et) (d : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+theorem interpret_anaphoric (R : DenotGS E W .et) (d : Nat)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs =
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
 
 theorem interpret_demonstrative
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature)
-    (sIdx d : Nat) (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
+    (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
 
 @[simp]
 theorem interpret_possessive
-    (R : DenotGS F .et) (possessor : DenotGS F .e) (rel : DenotGS F .eet)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.possessive R possessor rel) g gs =
       russellIota (fun x => R g gs x ∧ rel g gs (possessor g gs) x) := rfl
 
@@ -107,8 +107,8 @@ theorem interpret_possessive
     Languages whose bare nouns shift to ∃ or kind readings override this
     via fragment-specific interpreters. -/
 theorem interpret_bare_eq_unique
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.bare R) g gs = interpret (.unique R sIdx) g gs := rfl
 
 /-- The deictic feature on a demonstrative does not affect referent
@@ -116,8 +116,8 @@ theorem interpret_bare_eq_unique
     when they share restrictor and discourse index. The deictic content is
     a presupposition filter, not a selector. -/
 theorem interpret_demonstrative_eq_anaphoric
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature)
-    (sIdx d : Nat) (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
+    (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
     interpret (.anaphoric R d) g gs := rfl
 
@@ -126,8 +126,8 @@ theorem interpret_demonstrative_eq_anaphoric
     situation assignment, so the index records *which* pronoun is bound
     but does not change what is computed by the operator. -/
 theorem interpret_unique_index_irrelevant
-    (R : DenotGS F .et) (sIdx₁ sIdx₂ : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (sIdx₁ sIdx₂ : Nat)
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx₁) g gs = interpret (.unique R sIdx₂) g gs := rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -138,8 +138,8 @@ theorem interpret_unique_index_irrelevant
     Stated for `.unique` (the operator-driven case); the analogue for
     `.bare` follows by `interpret_bare_eq_unique`. -/
 theorem interpret_unique_witness_satisfies
-    (R : DenotGS F .et) (sIdx : Nat) (e : F.Entity)
-    (g : Assignment F.Entity) (gs : SitAssignment F)
+    (R : DenotGS E W .et) (sIdx : Nat) (e : E)
+    (g : Assignment E) (gs : SitAssignment W)
     (h : interpret (.unique R sIdx) g gs = some e) :
     R g gs e := by
   have : russellIota (fun x => R g gs x) = some e := by
@@ -153,8 +153,8 @@ theorem interpret_unique_witness_satisfies
     `interpret_unique` → `russellIota_isSome_iff_existsUnique` → `Option.isSome_iff_exists` →
     `russellIota_witness_satisfies` → case analysis. -/
 theorem interpret_unique_eq_some_of_existsUnique
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) (e : F.Entity)
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Assignment E) (gs : SitAssignment W) (e : E)
     (hSat : R g gs e) (hUniq : ∀ y, R g gs y → y = e) :
     interpret (.unique R sIdx) g gs = some e := by
   have hExU : existsUnique (fun x => R g gs x) :=
@@ -170,8 +170,8 @@ theorem interpret_unique_eq_some_of_existsUnique
     `existsUnique` hypothesis, with the witness extracted. The first projection
     of `existsUnique` gives the entity; the second proves uniqueness. -/
 theorem interpret_unique_eq_some_choose
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F)
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Assignment E) (gs : SitAssignment W)
     (hExU : existsUnique (fun x => R g gs x)) :
     interpret (.unique R sIdx) g gs = some hExU.1.choose :=
   interpret_unique_eq_some_of_existsUnique R sIdx g gs hExU.1.choose
@@ -181,8 +181,8 @@ theorem interpret_unique_eq_some_choose
 /-- An anaphoric definite that returns a witness must return the indexed
     entity — it never picks anything else. -/
 theorem interpret_anaphoric_witness_is_indexed
-    (R : DenotGS F .et) (d : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) (e : F.Entity)
+    (R : DenotGS E W .et) (d : Nat)
+    (g : Assignment E) (gs : SitAssignment W) (e : E)
     (h : interpret (.anaphoric R d) g gs = some e) :
     e = g d := by
   classical
@@ -194,8 +194,8 @@ theorem interpret_anaphoric_witness_is_indexed
 /-- An anaphoric definite returns a witness iff the restrictor holds of the
     indexed entity. -/
 theorem interpret_anaphoric_isSome_iff
-    (R : DenotGS F .et) (d : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (d : Nat)
+    (g : Assignment E) (gs : SitAssignment W) :
     (interpret (.anaphoric R d) g gs).isSome ↔ R g gs (g d) := by
   classical
   rw [interpret_anaphoric]
@@ -211,8 +211,8 @@ theorem interpret_anaphoric_isSome_iff
     diverge, PG&G's point that the strong article is anaphoric in a way the weak
     one is not. -/
 theorem interpret_anaphoric_eq_unique_of_existsUnique
-    (R : DenotGS F .et) (sIdx i : Nat)
-    (g : Assignment F.Entity) (gs : SitAssignment F)
+    (R : DenotGS E W .et) (sIdx i : Nat)
+    (g : Assignment E) (gs : SitAssignment W)
     (hSat : R g gs (g i)) (hUniq : ∀ y, R g gs y → y = g i) :
     interpret (.anaphoric R i) g gs = interpret (.unique R sIdx) g gs := by
   rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,

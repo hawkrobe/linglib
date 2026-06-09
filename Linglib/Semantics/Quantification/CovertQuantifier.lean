@@ -24,10 +24,10 @@ with no overt realization. This module provides:
 ```
 open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp extendLexicon)
 
-def myLex : Lexicon FyModel :=
+def myLex : Lexicon E W :=
   extendLexicon baseLex
-    [("Gen",  genThreshold myFrame atoms 2 3),
-     ("DIST", dist myFrame atomsOf)]
+    [("Gen",  genThreshold E W atoms 2 3),
+     ("DIST", dist E W atomsOf)]
 ```
 -/
 
@@ -148,16 +148,16 @@ open Semantics.Montague (LexEntry Lexicon)
     instantiate it differently (threshold, normalcy, probabilistic).
     `traditionalGEN` (in `Generics.lean`) and `thresholdQ` (above)
     are specific instantiations. -/
-def gen (F : Frame)
-    (generally : (F.Entity → Prop) → (F.Entity → Prop) → Prop)
-    : LexEntry F :=
+def gen (E W : Type)
+    (generally : (E → Prop) → (E → Prop) → Prop)
+    : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, generally⟩
 
 open Classical in
 /-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
     atoms also satisfy scope. Montague-typed counterpart of `thresholdQ`. -/
-noncomputable def genThreshold (F : Frame) (atoms : List F.Entity)
-    (num denom : Nat) : LexEntry F :=
+noncomputable def genThreshold (E W : Type) (atoms : List E)
+    (num denom : Nat) : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
     let restricted := atoms.filter (fun x => decide (restr x))
     let both := restricted.filter (fun x => decide (scope x))
@@ -168,8 +168,8 @@ noncomputable def genThreshold (F : Frame) (atoms : List F.Entity)
     `atomsOf x` returns the atomic parts of x — for atomic entities
     it returns `[x]`, for plural/kind entities their parts.
     Montague-typed counterpart of `Distributivity.distMaximal`. -/
-def dist (F : Frame) (atomsOf : F.Entity → List F.Entity)
-    : LexEntry F :=
+def dist (E W : Type) (atomsOf : E → List E)
+    : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => ∀ a ∈ atomsOf x, P a⟩
 
 /-- DPP: `(e→t) → (e→t) → t`. Derived Property Predication.
@@ -177,7 +177,7 @@ def dist (F : Frame) (atomsOf : F.Entity → List F.Entity)
     DPP(P)(Q) = ∃x[P(x) ∧ Q(x)]. An existential type-shift for
     kind-denoting NPs combining with stage-level predicates.
     [guerrini-2026] structure (105b). -/
-def dpp (F : Frame) (atoms : List F.Entity) : LexEntry F :=
+def dpp (E W : Type) (atoms : List E) : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
     ∃ x ∈ atoms, prop x ∧ pred x⟩
 
@@ -188,8 +188,8 @@ def dpp (F : Frame) (atoms : List F.Entity) : LexEntry F :=
     universal `covertQ` skeleton above; on the Boneh–Doron view it is a
     distinct existential operator (see
     `Studies/BonehDoron2013.lean`). -/
-def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
-    : LexEntry F :=
+def hab (E W : Type) (h : (E → Prop) → (E → Prop))
+    : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩
 
 /-- EXH: `(s→t) → (s→t)`. Exhaustivity operator (proposition modifier).
@@ -207,13 +207,13 @@ def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
     Montague type system handles the dispatch:
     - Gen:  `(e→t) → (e→t) → t`  — FA with entity predicates
     - EXH:  `(s→t) → (s→t)`      — FA with propositions -/
-def exh (F : Frame) (exhOp : (F.Index → Prop) → (F.Index → Prop))
-    : LexEntry F :=
+def exh (E W : Type) (exhOp : (W → Prop) → (W → Prop))
+    : LexEntry E W :=
   ⟨(.intens .t) ⇒ (.intens .t), exhOp⟩
 
 /-- Extend a lexicon with named covert operators. -/
-def extendLexicon {F : Frame} (base : Lexicon F)
-    (ops : List (String × LexEntry F)) : Lexicon F :=
+def extendLexicon {E W : Type} (base : Lexicon E W)
+    (ops : List (String × LexEntry E W)) : Lexicon E W :=
   fun s => match ops.find? (fun p => p.1 == s) with
     | some (_, entry) => some entry
     | none => base s

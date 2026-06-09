@@ -6,14 +6,14 @@ import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Quantification.Lexicon
 
 /-!
-# Generalized quantifiers: Frame bridge and toy-model examples
+# Generalized quantifiers: typed bridge and toy-model examples
 [barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
 
 The GQ substrate (concrete denotations like `every_sem`, `most_sem`, …
 plus their properties: conservativity, monotonicity, smoothness, quantity,
 proportionality, etc.) lives in `Core.Logic.Quantification.{Basic, Counting}`.
 
-This file is the **Frame layer**: the `Ty.det` semantic type, the
+This file is the **typed layer**: the `Ty.det` semantic type, the
 Type-Shifting bridge `A_eq_some_sem`, the toy-model lexicon
 (`student_sem`, `person_sem`, `thing_sem`), the worked examples, and the
 `gqtMeaning` operator for quantity-implicature studies that plug
@@ -27,7 +27,7 @@ witness type.
 namespace Semantics.Quantification.Quantifier
 
 open Core.Logic.Intensional
-open Semantics.Montague (toyFrame ToyEntity)
+open Semantics.Montague (ToyEntity)
 open Core.Quantification
 
 export Core.Quantification
@@ -79,16 +79,16 @@ export Core.Quantification
 /-- The determiner type ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. -/
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
-/-! ### Frame bridge: `A` (Partee existential closure) = `some_sem`
+/-! ### Existential-closure bridge: `A` (Partee existential closure) = `some_sem`
 
-`A` (type-shifting bridge in `Composition.TypeShifting`) is Frame-typed;
-`some_sem` is `Type*`-polymorphic. The bridge is one direction. -/
+`A` (type-shifting bridge in `Composition.TypeShifting`) and `some_sem` are
+both `Type*`-polymorphic over the entity domain. The bridge is one direction. -/
 
 /-- Partee's `A` (existential closure) equals B&C's ⟦some⟧ over a complete
     finite domain. Both compute `λR.λS. ∃x. R(x) ∧ S(x)`. -/
-theorem A_eq_some_sem (F : Frame) (domain : List F.Entity)
-    (hComplete : ∀ x : F.Entity, x ∈ domain) :
-    Semantics.Composition.TypeShifting.A domain = (some_sem : GQ F.Entity) := by
+theorem A_eq_some_sem (E : Type) (domain : List E)
+    (hComplete : ∀ x : E, x ∈ domain) :
+    Semantics.Composition.TypeShifting.A domain = (some_sem : GQ E) := by
   funext R S
   simp only [Semantics.Composition.TypeShifting.A, some_sem]
   exact propext ⟨fun ⟨x, _, hR, hS⟩ => ⟨x, hR, hS⟩,
@@ -100,28 +100,24 @@ instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
   complete := fun x => by cases x <;> simp
 
-/-- Bridge: `toyFrame.Entity = ToyEntity` is definitional but opaque to
-    instance search. -/
-instance : Fintype toyFrame.Entity :=
-  show Fintype ToyEntity by infer_instance
 
 /-! ### Toy lexicon -/
 
 section ToyLexicon
 
-def student_sem : toyFrame.Denot (.e ⇒ .t) :=
+def student_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def person_sem : toyFrame.Denot (.e ⇒ .t) :=
+def person_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def thing_sem : toyFrame.Denot (.e ⇒ .t) :=
+def thing_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ _ => True
 
 instance : DecidablePred student_sem :=

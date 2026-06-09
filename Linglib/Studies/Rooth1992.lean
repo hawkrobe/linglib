@@ -415,12 +415,10 @@ inductive E where
   | fred | mary | beans | rice
   deriving DecidableEq, Repr
 
-def focusModel : Frame := { Entity := E, Index := Unit }
-
 /-- World-indexed verb semantics for "ate".
     `ateInWorld w obj subj` follows Montague's argument order
     (object first, then subject). -/
-def ateInWorld (w : QAWorld) : focusModel.Denot (.e ⇒ .e ⇒ .t) :=
+def ateInWorld (w : QAWorld) : Denot E Unit (.e ⇒ .e ⇒ .t) :=
   fun obj subj => match w, subj, obj with
   | .fredBeans, .fred, .beans => True
   | .fredRice,  .fred, .rice  => True
@@ -430,7 +428,7 @@ def ateInWorld (w : QAWorld) : focusModel.Denot (.e ⇒ .e ⇒ .t) :=
 
 /-- Montague lexicon parameterized by world.
     Maps surface forms to typed denotations. -/
-def focusLex (w : QAWorld) : Lexicon focusModel := fun word =>
+def focusLex (w : QAWorld) : Lexicon E Unit := fun word =>
   match word with
   | "Fred"  => some ⟨.e, E.fred⟩
   | "Mary"  => some ⟨.e, E.mary⟩
@@ -456,12 +454,12 @@ def tree_fredAteRice : Tree Unit String :=
   .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "rice"))
 
 /-- Default assignment for binding-free trees. -/
-private def g₀ : Core.Assignment focusModel.Entity := λ _ => E.fred
+private def g₀ : Core.Assignment E := λ _ => E.fred
 
 /-- Extract the Prop truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/
-def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Prop :=
-  match interp focusModel lex g₀ t with
+def treeResult (lex : Lexicon E Unit) (t : Tree Unit String) : Option Prop :=
+  match interp E Unit lex g₀ t with
   | some ⟨.t, p⟩ => some p
   | _ => none
 

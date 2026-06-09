@@ -207,9 +207,9 @@ open Semantics.ArgumentStructure.VoiceSemantics
 /-- The Sinhala suppression operator can be instantiated for *kadann*
     'break' because its causer sort `.any` admits individuals. The
     obligation is discharged by `decide` over the lattice. -/
-example {F : Core.Logic.Intensional.Frame} (z : F.Entity)
-    (vp : F.Denot (.e ⇒ .t)) :
-    F.Denot .t :=
+example {E W : Type} (z : E)
+    (vp : Core.Logic.Intensional.Denot E W (.e ⇒ .t)) :
+    Core.Logic.Intensional.Denot E W .t :=
   causerSuppress kadann.causerSort (by decide) z vp
 
 /-- For *minimarann* 'murder' the obligation `causerSort.admitsIndividual`

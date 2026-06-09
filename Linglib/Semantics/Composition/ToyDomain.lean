@@ -5,7 +5,7 @@ import Linglib.Core.Logic.Intensional.Frame
 
 Minimal model for testing compositional semantics:
 - `ToyEntity` — four entities (john, mary, pizza, book)
-- `toyFrame` — frame over `ToyEntity` with trivial index
+- index type is `Unit` (extensional toy model)
 - `ToyLexicon` — basic lexical entries (sleeps, sees, eats, reads, etc.)
 -/
 
@@ -17,50 +17,48 @@ inductive ToyEntity where
   | john | mary | pizza | book
   deriving Repr, DecidableEq
 
-def toyFrame : Frame := { Entity := ToyEntity, Index := Unit }
-
 namespace ToyLexicon
 
 open ToyEntity
 
-def john_sem : toyFrame.Denot .e := ToyEntity.john
-def mary_sem : toyFrame.Denot .e := ToyEntity.mary
+def john_sem : Denot ToyEntity Unit .e := ToyEntity.john
+def mary_sem : Denot ToyEntity Unit .e := ToyEntity.mary
 
-def sleeps_sem : toyFrame.Denot (.e ⇒ .t) :=
+def sleeps_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | _ => False
 
-def laughs_sem : toyFrame.Denot (.e ⇒ .t) :=
+def laughs_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def sees_sem : toyFrame.Denot (.e ⇒ .e ⇒ .t) :=
+def sees_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
     | .john, .mary => True
     | .mary, .john => True
     | _, _ => False
 
-def eats_sem : toyFrame.Denot (.e ⇒ .e ⇒ .t) :=
+def eats_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
     | .john, .pizza => True
     | .mary, .pizza => True
     | _, _ => False
 
-def reads_sem : toyFrame.Denot (.e ⇒ .e ⇒ .t) :=
+def reads_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
     | .john, .book => True
     | .mary, .book => True
     | _, _ => False
 
-def pizza_sem : toyFrame.Denot (.e ⇒ .t) :=
+def pizza_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .pizza => True
     | _ => False
 
-def book_sem : toyFrame.Denot (.e ⇒ .t) :=
+def book_sem : Denot ToyEntity Unit (.e ⇒ .t) :=
   λ x => match x with
     | .book => True
     | _ => False

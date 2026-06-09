@@ -35,33 +35,33 @@ have the same category, and have the same meaning.
 
 This defines equivalence for "spurious ambiguity" analysis.
 -/
-structure DerivEquiv (F : Frame) where
+structure DerivEquiv (E W : Type) where
   /-- First derivation's category -/
   cat : Cat
   /-- First derivation's meaning -/
-  meaning₁ : F.Denot (catToTy cat)
+  meaning₁ : Denot E W (catToTy cat)
   /-- Second derivation's meaning -/
-  meaning₂ : F.Denot (catToTy cat)
+  meaning₂ : Denot E W (catToTy cat)
   /-- The meanings are equal -/
   meanings_eq : meaning₁ = meaning₂
 
 /--
 Semantic equivalence for category-meaning pairs.
 -/
-def semanticallyEquivalent {F : Frame} (cm₁ cm₂ : Σ c : Cat, F.Denot (catToTy c)) : Prop :=
+def semanticallyEquivalent {E W : Type} (cm₁ cm₂ : Σ c : Cat, Denot E W (catToTy c)) : Prop :=
   ∃ (h : cm₁.1 = cm₂.1), h ▸ cm₁.2 = cm₂.2
 
 /--
 Semantic equivalence is reflexive.
 -/
-theorem sem_equiv_refl {F : Frame} (cm : Σ c : Cat, F.Denot (catToTy c)) :
+theorem sem_equiv_refl {E W : Type} (cm : Σ c : Cat, Denot E W (catToTy c)) :
     semanticallyEquivalent cm cm := by
   use rfl
 
 /--
 Semantic equivalence is symmetric.
 -/
-theorem sem_equiv_symm {F : Frame} (cm₁ cm₂ : Σ c : Cat, F.Denot (catToTy c)) :
+theorem sem_equiv_symm {E W : Type} (cm₁ cm₂ : Σ c : Cat, Denot E W (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₁ := λ ⟨h, eq⟩ =>
   match cm₁, cm₂, h, eq with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, rfl, eq => ⟨rfl, eq.symm⟩
@@ -69,7 +69,7 @@ theorem sem_equiv_symm {F : Frame} (cm₁ cm₂ : Σ c : Cat, F.Denot (catToTy c
 /--
 Semantic equivalence is transitive.
 -/
-theorem sem_equiv_trans {F : Frame} (cm₁ cm₂ cm₃ : Σ c : Cat, F.Denot (catToTy c)) :
+theorem sem_equiv_trans {E W : Type} (cm₁ cm₂ cm₃ : Σ c : Cat, Denot E W (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₃ →
     semanticallyEquivalent cm₁ cm₃ := λ ⟨h₁, eq₁⟩ ⟨h₂, eq₂⟩ =>
   match cm₁, cm₂, cm₃, h₁, eq₁, h₂, eq₂ with
@@ -161,16 +161,16 @@ Checking (3) requires unification or equality testing on semantic structures.
 /--
 A chart entry: category + meaning for a span.
 -/
-structure ChartEntry (F : Frame) where
+structure ChartEntry (E W : Type) where
   leftPos : Nat
   rightPos : Nat
   cat : Cat
-  meaning : F.Denot (catToTy cat)
+  meaning : Denot E W (catToTy cat)
 
 /--
 Two chart entries match if they have the same span, category, and meaning.
 -/
-def chartEntriesMatch {F : Frame} (e₁ e₂ : ChartEntry F) : Prop :=
+def chartEntriesMatch {E W : Type} (e₁ e₂ : ChartEntry E W) : Prop :=
   e₁.leftPos = e₂.leftPos ∧
   e₁.rightPos = e₂.rightPos ∧
   ∃ (h : e₁.cat = e₂.cat), h ▸ e₁.meaning = e₂.meaning
@@ -178,7 +178,7 @@ def chartEntriesMatch {F : Frame} (e₁ e₂ : ChartEntry F) : Prop :=
 /--
 The matching relation is decidable for categories (not meanings in general).
 -/
-def chartEntriesSameCat {F : Frame} (e₁ e₂ : ChartEntry F) : Bool :=
+def chartEntriesSameCat {E W : Type} (e₁ e₂ : ChartEntry E W) : Bool :=
   e₁.leftPos == e₂.leftPos &&
   e₁.rightPos == e₂.rightPos &&
   e₁.cat == e₂.cat
@@ -207,21 +207,21 @@ it provides more paths to the same meanings.
 /--
 An equivalence class of derivations: all have the same meaning.
 -/
-structure EquivalenceClass (F : Frame) where
+structure EquivalenceClass (E W : Type) where
   cat : Cat
-  meaning : F.Denot (catToTy cat)
+  meaning : Denot E W (catToTy cat)
   -- In a full implementation, would track the set of derivations
 
 /--
 Real ambiguity: multiple equivalence classes for the same string.
 -/
-def reallyAmbiguous {F : Frame} (classes : List (EquivalenceClass F)) : Prop :=
+def reallyAmbiguous {E W : Type} (classes : List (EquivalenceClass E W)) : Prop :=
   classes.length > 1
 
 /--
 Spuriously ambiguous: multiple derivations but only one equivalence class.
 -/
-def spuriouslyAmbiguous {F : Frame} (derivCount : Nat) (classes : List (EquivalenceClass F)) : Prop :=
+def spuriouslyAmbiguous {E W : Type} (derivCount : Nat) (classes : List (EquivalenceClass E W)) : Prop :=
   derivCount > 1 ∧ classes.length = 1
 
 end CCG.Equivalence

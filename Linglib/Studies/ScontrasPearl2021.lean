@@ -61,7 +61,7 @@ def ccg_john_eats_pizza : DerivStep :=
 -- Extended Semantic Lexicon (matching the toy model)
 
 /-- Extended lexicon with all entities and predicates -/
-def extendedLexicon : SemLexicon toyFrame := λ word cat =>
+def extendedLexicon : SemLexicon ToyEntity Unit := λ word cat =>
   match word, cat with
   -- Proper names
   | "John", .atom .NP => some ⟨NP, ToyEntity.john⟩

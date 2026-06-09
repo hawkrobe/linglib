@@ -91,22 +91,22 @@ theorem presup_types_exhaustive :
 -- §2: Constructor-level split — `.unique` ≠ `.anaphoric` semantically
 -- ════════════════════════════════════════════════════════════════
 
-variable {F : Frame}
+variable {E W : Type}
 
 /-- The weak article (`.unique` in the Core sum type) projects to the
     uniqueness presupposition. -/
-theorem unique_is_uniqueness (R : DenotGS F .et) (sIdx : Nat) :
+theorem unique_is_uniqueness (R : DenotGS E W .et) (sIdx : Nat) :
     (Description.unique R sIdx).expectedPresupType = some .uniqueness := rfl
 
 /-- The strong article (`.anaphoric` in the Core sum type) projects to the
     familiarity presupposition. -/
-theorem anaphoric_is_familiarity (R : DenotGS F .et) (d : Nat) :
+theorem anaphoric_is_familiarity (R : DenotGS E W .et) (d : Nat) :
     (Description.anaphoric R d).expectedPresupType = some .familiarity := rfl
 
 /-- The two articles project to distinct presupposition types — the
     central [schwarz-2009] contrast at the type level. -/
 theorem unique_anaphoric_presup_distinct
-    (R : DenotGS F .et) (sIdx d : Nat) :
+    (R : DenotGS E W .et) (sIdx d : Nat) :
     (Description.unique R sIdx).expectedPresupType ≠
       (Description.anaphoric R d).expectedPresupType := by
   rw [unique_is_uniqueness, anaphoric_is_familiarity]
@@ -129,8 +129,8 @@ referent** in the entity assignment (`g d`). -/
     interpretation directly — the restrictor itself is what calls
     `interpSitPronoun sIdx` to fetch the resource situation. -/
 theorem weak_article_consults_situation_assignment
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Core.Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Core.Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx) g gs =
       russellIota (fun x => R g gs x) := rfl
 
@@ -139,8 +139,8 @@ theorem weak_article_consults_situation_assignment
     assignment is consulted only through the restrictor `R` — the
     constructor itself reads the entity slot. -/
 theorem strong_article_consults_entity_assignment
-    (R : DenotGS F .et) (d : Nat)
-    (g : Core.Assignment F.Entity) (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (d : Nat)
+    (g : Core.Assignment E) (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs =
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
@@ -150,7 +150,7 @@ theorem strong_article_consults_entity_assignment
     is not. This is the structural correlate of the [schwarz-2009]
     claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
 theorem situation_binding_classifies_articles
-    (R : DenotGS F .et) (sIdx d : Nat) :
+    (R : DenotGS E W .et) (sIdx d : Nat) :
     (Description.unique R sIdx).usesSituationPronoun = true ∧
     (Description.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
 
@@ -275,22 +275,20 @@ inductive Student where
   | bob
   deriving DecidableEq, Repr
 
-def F0 : Frame := { Entity := Student, Index := Unit }
-
 /-- Both students count as students. The restrictor has *two* satisfiers,
     so the weak (uniqueness) article fails — there is no unique satisfier. -/
-def studentRestr : DenotGS F0 .et := fun _g _gs _x => True
+def studentRestr : DenotGS Student Unit .et := fun _g _gs _x => True
 
 /-- Discourse referent at index 0 is Alice. The strong article
     (`.anaphoric`) reads off this slot. -/
-def gAlice : Core.Assignment F0.Entity := fun _ => Student.alice
+def gAlice : Core.Assignment Student := fun _ => Student.alice
 
-def gs0 : SitAssignment F0 := fun _ => ()
+def gs0 : SitAssignment Unit := fun _ => ()
 
 /-- The weak article fails on a multi-satisfier restrictor — uniqueness
     presupposition violation. -/
 theorem weak_article_fails_on_multi :
-    interpret (F := F0) (.unique studentRestr 0) gAlice gs0 = none := by
+    interpret (E := Student) (W := Unit) (.unique studentRestr 0) gAlice gs0 = none := by
   classical
   rw [interpret_unique]
   have hExU : ¬ existsUnique (fun x : Student => studentRestr gAlice gs0 x) := by
@@ -306,19 +304,18 @@ theorem weak_article_fails_on_multi :
     restrictor. The familiarity presupposition does its work via the
     discourse index, not via uniqueness. -/
 theorem strong_article_picks_indexed_antecedent :
-    interpret (F := F0) (.anaphoric studentRestr 0) gAlice gs0 =
+    interpret (E := Student) (W := Unit) (.anaphoric studentRestr 0) gAlice gs0 =
       some Student.alice := by
   classical
   rw [interpret_anaphoric]
   simp [studentRestr, gAlice]
-  rfl
 
 /-- The empirical payoff at the Core API: the two articles, given the
     same restrictor and bi-assignment, can disagree on what they return.
     This is the semantic counterpart of the German morphological split. -/
 theorem two_articles_can_disagree :
-    interpret (F := F0) (.unique studentRestr 0) gAlice gs0 ≠
-    interpret (F := F0) (.anaphoric studentRestr 0) gAlice gs0 := by
+    interpret (E := Student) (W := Unit) (.unique studentRestr 0) gAlice gs0 ≠
+    interpret (E := Student) (W := Unit) (.anaphoric studentRestr 0) gAlice gs0 := by
   rw [weak_article_fails_on_multi, strong_article_picks_indexed_antecedent]
   intro h
   cases h

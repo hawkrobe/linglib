@@ -53,25 +53,22 @@ structure Model (L : Language.{u, v}) where
 
 variable {L : Language.{u, v}}
 
-/-- The `Frame` a model induces: entities and worlds. The interpretation stays on the model. -/
-def Model.toFrame (m : Model L) : Frame := ⟨m.E, m.W⟩
-
 /-- A unary content predicate's denotation, *sourced from the model*: world-relativized,
 bottoming out in `Structure.RelMap`. Type `e ⇒ ⟨s,t⟩` — an intensional one-place predicate. -/
-def Model.pred₁ (m : Model L) (R : L.Relations 1) : m.toFrame.Denot (.e ⇒ .intens .t) :=
+def Model.pred₁ (m : Model L) (R : L.Relations 1) : Denot m.E m.W (.e ⇒ .intens .t) :=
   fun x w => (m.interp w).RelMap R (fun _ => x)
 
 /-- A binary content predicate's denotation, sourced from the model (`e ⇒ e ⇒ ⟨s,t⟩`,
 object-first then subject, matching `Frame`'s `eet` convention). -/
 def Model.pred₂ (m : Model L) (R : L.Relations 2) :
-    m.toFrame.Denot (.e ⇒ .e ⇒ .intens .t) :=
+    Denot m.E m.W (.e ⇒ .e ⇒ .intens .t) :=
   fun y x w => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
 
 /-! ### Engine integration: the real `Tree.interp` composes a model-sourced lexicon -/
 
 /-- A minimal model-sourced lexicon: `"subj"` denotes `subj`, and the intransitive verb `"V"`
 has the model's interpretation of a unary symbol `R` as its (intensional) denotation. -/
-def lexFromModel (m : Model L) (subj : m.E) (R : L.Relations 1) : Lexicon m.toFrame :=
+def lexFromModel (m : Model L) (subj : m.E) (R : L.Relations 1) : Lexicon m.E m.W :=
   fun s => match s with
   | "subj" => some ⟨.e, subj⟩
   | "V" => some ⟨.e ⇒ .intens .t, m.pred₁ R⟩
@@ -86,7 +83,7 @@ backward FA) to a proposition `⟨s,t⟩`, threading worlds through the `.intens
 world bottoms out in `Structure.RelMap`. The engine needs no model-specific machinery. -/
 theorem interp_model_sourced (m : Model L) (subj : m.E) (R : L.Relations 1)
     (g : Core.Assignment m.E) :
-    interp m.toFrame (lexFromModel m subj R) g predicationTree
+    interp m.E m.W (lexFromModel m subj R) g predicationTree
       = some ⟨.intens .t, fun w => (m.interp w).RelMap R (fun _ => subj)⟩ :=
   rfl
 
@@ -110,9 +107,9 @@ stored on the `Pronoun` object (which has "no denotation of its own"). -/
 
 /-- A pronoun occurrence projects to a trace term: the engine interprets `heₙ` as the assignment
 value `g n`, an entity in the model's domain. The object supplies only the index. -/
-theorem interp_pronoun_trace (m : Model L) (lex : Lexicon m.toFrame)
+theorem interp_pronoun_trace (m : Model L) (lex : Lexicon m.E m.W)
     (g : Core.Assignment m.E) (n : Nat) :
-    interp m.toFrame lex g (.trace n () : Tree Unit String) = some ⟨.e, g n⟩ :=
+    interp m.E m.W lex g (.trace n () : Tree Unit String) = some ⟨.e, g n⟩ :=
   rfl
 
 /-- A φ-feature (here masculine gender) projects to a restriction on the referent, *read off the
