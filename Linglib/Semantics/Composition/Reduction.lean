@@ -1,6 +1,7 @@
 import Linglib.Semantics.Composition.Model
 import Linglib.Core.Logic.Quantification.Basic
 import Mathlib.ModelTheory.Semantics
+import Mathlib.ModelTheory.Satisfiability
 import Mathlib.Tactic.FinCases
 
 /-!
@@ -685,5 +686,125 @@ namespace Semantics.Composition
 theorem FOWords.nodup_default : ({} : FOWords).Nodup := by
   unfold FOWords.Nodup
   decide
+
+end Semantics.Composition
+
+/-! ### Bridge to mathlib `Theory` consequence
+
+For universe-0 languages, composition models and mathlib's bundled models
+coincide: tree entailment over nonempty-domain composition models *is*
+first-order consequence over the empty theory, and compactness transfers
+to families of trees. (`ModelType` requires nonempty carriers, hence the
+nonempty-domain restriction — standard in the GQ literature.) -/
+
+namespace Semantics.Composition
+
+open FirstOrder Language
+open Semantics.Montague (Lexicon)
+open Syntax (Tree)
+
+section TheoryBridge
+
+variable {L₀ : Language.{0, 0}} (fw : FOWords) (nm : LexNaming L₀)
+
+/-- A first-order structure as a one-world composition model. -/
+def Model.ofStructure (M : Type) (S : L₀.Structure M) : Model L₀ :=
+  ⟨M, Unit, fun _ => S⟩
+
+private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.Theory) :=
+  ⟨fun _φ hφ => absurd hφ (by simp)⟩
+
+/-- **Tree entailment is first-order consequence**: mathlib's `⊨ᵇ` over the
+empty theory coincides with cross-model entailment between compiled trees,
+over nonempty-domain composition models. -/
+theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
+    (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L₀.Formula ℕ}
+    (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂) :
+    (∅ : L₀.Theory) ⊨ᵇ φ₁.imp φ₂ ↔
+      ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Core.Assignment m.E),
+        HoldsAt m (m.lexiconFO fw nm w) g t₁ →
+          HoldsAt m (m.lexiconFO fw nm w) g t₂ := by
+  constructor
+  · intro hmod m hne w g
+    rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
+      holdsAt_iff_realize m fw nm w hnd hfr hdj h₂ g]
+    letI := m.interp w
+    haveI : m.E ⊨ (∅ : L₀.Theory) := modelEmpty m.E
+    haveI : Nonempty m.E := hne
+    have h := hmod ⟨m.E⟩ g default
+    exact BoundedFormula.realize_imp.mp h
+  · intro hent M v xs
+    have hxs : xs = default := funext fun i => i.elim0
+    subst hxs
+    rw [BoundedFormula.realize_imp]
+    have := hent (Model.ofStructure M M.struc) M.nonempty' () v
+    rw [holdsAt_iff_realize (Model.ofStructure M M.struc) fw nm ()
+        hnd hfr hdj h₁ v,
+      holdsAt_iff_realize (Model.ofStructure M M.struc) fw nm ()
+        hnd hfr hdj h₂ v] at this
+    exact this
+
+/-! ### Closed trees as sentences, and compactness -/
+
+/-- A compiled formula with no occurring free variables, as a sentence. -/
+def _root_.FirstOrder.Language.Formula.toSentence (φ : L₀.Formula ℕ)
+    (h : φ.freeVarFinset = ∅) : L₀.Sentence :=
+  φ.restrictFreeVar fun x => absurd x.2 (by simp [h])
+
+theorem realize_toSentence {M : Type} [L₀.Structure M] (φ : L₀.Formula ℕ)
+    (h : φ.freeVarFinset = ∅) (v : ℕ → M) :
+    (M ⊨ φ.toSentence h) ↔ φ.Realize v :=
+  BoundedFormula.realize_restrictFreeVar v
+    (fun a => absurd a.2 (by simp [h]))
+
+/-- **Compactness at the tree level**: a family of closed fragment trees is
+jointly satisfiable in a nonempty-domain composition model iff every finite
+subfamily is. The nontrivial direction is mathlib's compactness theorem
+(`Theory.isSatisfiable_iff_isFinitelySatisfiable`, via ultraproducts). -/
+theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
+    (hdj : nm.Disjoint) {ι : Type} (trees : ι → Tree Unit String)
+    (φs : ι → L₀.Formula ℕ)
+    (hc : ∀ i, compileFO fw nm (trees i) = some (φs i))
+    (hcl : ∀ i, (φs i).freeVarFinset = ∅) :
+    (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Core.Assignment m.E),
+        ∀ i, HoldsAt m (m.lexiconFO fw nm w) g (trees i)) ↔
+      ∀ s : Finset ι,
+        ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Core.Assignment m.E),
+          ∀ i ∈ s, HoldsAt m (m.lexiconFO fw nm w) g (trees i) := by
+  constructor
+  · rintro ⟨m, hne, w, g, hall⟩ s
+    exact ⟨m, hne, w, g, fun i _ => hall i⟩
+  · intro hfin
+    have hsat : Theory.IsSatisfiable
+        (L := L₀) (Set.range fun i => (φs i).toSentence (hcl i)) := by
+      rw [Theory.isSatisfiable_iff_isFinitelySatisfiable]
+      intro T₀ hT₀
+      classical
+      choose f hf using fun (x : T₀) => hT₀ x.2
+      obtain ⟨m, hne, w, g, hs⟩ := hfin (Finset.univ.image f)
+      letI := m.interp w
+      haveI : Nonempty m.E := hne
+      haveI : m.E ⊨ (T₀ : L₀.Theory) := by
+        refine ⟨fun ψ hψ => ?_⟩
+        obtain ⟨x, rfl⟩ : ∃ x : T₀, (φs (f x)).toSentence (hcl (f x)) = ψ :=
+          ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
+        rw [realize_toSentence (v := g)]
+        have hold := hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x))
+        rw [holdsAt_iff_realize m fw nm w hnd hfr hdj (hc (f x)) g] at hold
+        exact hold
+      exact Theory.Model.isSatisfiable m.E
+    obtain ⟨N⟩ := hsat
+    letI := N.struc
+    haveI := N.nonempty'
+    refine ⟨Model.ofStructure N N.struc, N.nonempty', (),
+      fun _ => Classical.arbitrary N, fun i => ?_⟩
+    rw [holdsAt_iff_realize (Model.ofStructure N N.struc) fw nm ()
+      hnd hfr hdj (hc i) _]
+    have : (N : Type) ⊨ (φs i).toSentence (hcl i) :=
+      N.is_model.realize_of_mem _ (Set.mem_range_self i)
+    exact (realize_toSentence (M := (N : Type)) (φs i) (hcl i)
+      (fun _ => Classical.arbitrary N)).mp this
+
+end TheoryBridge
 
 end Semantics.Composition
