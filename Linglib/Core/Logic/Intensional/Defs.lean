@@ -1,19 +1,18 @@
 import Mathlib.Data.Set.Basic
 
 /-!
-# Intensional Logic: Frames and Types
+# Intensional Logic: Types and Denotations
 
 [dowty-wall-peters-1981] [gallin-1975]
 
-Foundations for intensional logic following DWP Ch. 6. A **Frame** provides
-the entity domain and index set; **Ty** is the recursive grammar of semantic
-types; **Frame.Denot** computes denotation domains from a frame and type.
+Foundations for intensional logic following DWP Ch. 6. `Ty` is the recursive
+grammar of semantic types; `Denot E W` computes denotation domains from
+explicit entity (`E`) and index (`W`) type parameters and a type.
 
 ## Key definitions
 
 - `Ty` — semantic types: `e`, `t`, `⟨a,b⟩`, `⟨s,a⟩`
-- `Frame` — entity domain + index set
-- `Frame.Denot` — denotation domains (DWP Def B.3)
+- `Denot E W` — denotation domains (DWP Def B.3), parameterized by entity and index types
 - `up`, `down` — intension formation / extension extraction (DWP Rules B.14–B.15)
 -/
 
@@ -60,37 +59,25 @@ def Ty.isConjoinable : Ty → Bool
   | .intens a => a.isConjoinable
 
 -- ════════════════════════════════════════════════════════════════
--- § Frames (DWP Ch. 6)
--- ════════════════════════════════════════════════════════════════
-
-/-- An IL frame: entity domain + index set.
-
-DWP's model is ⟨A, W, T, <, F⟩. The frame provides the domains:
-
-- `Entity` = A (the domain of individuals)
-- `Index` = W × T (world-time pairs), or just W, or Unit for extensional
-
-Temporal ordering, accessibility relations, etc. are added as structure
-on the Index type, not baked into the frame. -/
-structure Frame where
-  Entity : Type
-  Index : Type
-
--- ════════════════════════════════════════════════════════════════
 -- § Denotation Domains (DWP Ch. 6, Def B.3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Denotation domains, computed from a frame and a type.
+/-- Denotation domains, computed from an entity type `E`, an index type `W`,
+    and a semantic type.
 
-    D_e = F.Entity
+    DWP's model is ⟨A, W, T, <, F⟩; here `E` = A (the domain of individuals) and
+    `W` = W × T (world-time pairs), or just W, or `Unit` for extensional. Temporal
+    ordering, accessibility relations, etc. are structure on `W`, not baked in.
+
+    D_e = E
     D_t = Prop
     D_⟨a,b⟩ = D_a → D_b
-    D_⟨s,a⟩ = F.Index → D_a -/
-def Frame.Denot (F : Frame) : Ty → Type
-  | .e => F.Entity
+    D_⟨s,a⟩ = W → D_a -/
+def Denot (E W : Type) : Ty → Type
+  | .e => E
   | .t => Prop
-  | .fn a b => F.Denot a → F.Denot b
-  | .intens a => F.Index → F.Denot a
+  | .fn a b => Denot E W a → Denot E W b
+  | .intens a => W → Denot E W a
 
 -- ════════════════════════════════════════════════════════════════
 -- § Up and Down (DWP Rules B.14–B.15)
@@ -99,17 +86,17 @@ def Frame.Denot (F : Frame) : Ty → Type
 /-- ^α — form the rigid intension of an expression.
     Maps a denotation to the constant function over indices.
     Definitionally equal to `Core.Intension.rigid`. -/
-def up {F : Frame} {a : Ty} (x : F.Denot a) : F.Denot (.intens a) :=
+def up {E W : Type} {a : Ty} (x : Denot E W a) : Denot E W (.intens a) :=
   λ _ => x
 
 /-- ˇα — extract the extension at index i.
     Evaluates an intension at a given index.
     Definitionally equal to `Core.Intension.evalAt`. -/
-def down {F : Frame} {a : Ty} (s : F.Denot (.intens a)) (i : F.Index) : F.Denot a :=
+def down {E W : Type} {a : Ty} (s : Denot E W (.intens a)) (i : W) : Denot E W a :=
   s i
 
 /-- Down-up cancellation: ˇ(^α) = α at any index. DWP Theorem 1. -/
-theorem down_up {F : Frame} {a : Ty} (x : F.Denot a) (i : F.Index) :
+theorem down_up {E W : Type} {a : Ty} (x : Denot E W a) (i : W) :
     down (up x) i = x := rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -117,15 +104,15 @@ theorem down_up {F : Frame} {a : Ty} (x : F.Denot a) (i : F.Index) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Sentence negation. -/
-def neg {F : Frame} (p : F.Denot .t) : F.Denot .t := ¬p
+def neg {E W : Type} (p : Denot E W .t) : Denot E W .t := ¬p
 
 /-- Sentence conjunction. -/
-def conj {F : Frame} (p q : F.Denot .t) : F.Denot .t := p ∧ q
+def conj {E W : Type} (p q : Denot E W .t) : Denot E W .t := p ∧ q
 
 /-- Sentence disjunction. -/
-def disj {F : Frame} (p q : F.Denot .t) : F.Denot .t := p ∨ q
+def disj {E W : Type} (p q : Denot E W .t) : Denot E W .t := p ∨ q
 
-theorem double_negation {F : Frame} (p : F.Denot .t) : neg (neg p) = p := by
+theorem double_negation {E W : Type} (p : Denot E W .t) : neg (neg p) = p := by
   simp only [neg, not_not]
 
 -- ════════════════════════════════════════════════════════════════
@@ -133,32 +120,32 @@ theorem double_negation {F : Frame} (p : F.Denot .t) : neg (neg p) = p := by
 -- ════════════════════════════════════════════════════════════════
 
 /-- Convert a predicate `e → t` to a `Set` (the extension). -/
-def predicateToSet {F : Frame} (p : F.Denot (.e ⇒ .t)) : Set F.Entity :=
+def predicateToSet {E W : Type} (p : Denot E W (.e ⇒ .t)) : Set E :=
   { x | p x }
 
 /-- Convert a set to a predicate. -/
-def setToPredicate {F : Frame} (s : Set F.Entity) : F.Denot (.e ⇒ .t) :=
+def setToPredicate {E W : Type} (s : Set E) : Denot E W (.e ⇒ .t) :=
   λ x => x ∈ s
 
 /-- Membership in a predicate's extension. -/
-def inExtension {F : Frame} (p : F.Denot (.e ⇒ .t)) (x : F.Entity) : Prop := p x
+def inExtension {E W : Type} (p : Denot E W (.e ⇒ .t)) (x : E) : Prop := p x
 
 -- ════════════════════════════════════════════════════════════════
 -- § Currying
 -- ════════════════════════════════════════════════════════════════
 
 /-- Uncurry a binary relation (obj-first) to a pair relation (subj-first). -/
-def uncurry {F : Frame} (f : F.Denot (.e ⇒ .e ⇒ .t)) : F.Entity × F.Entity → Prop :=
+def uncurry {E W : Type} (f : Denot E W (.e ⇒ .e ⇒ .t)) : E × E → Prop :=
   λ (x, y) => f y x
 
 /-- Curry a pair relation to a binary relation. -/
-def curry {F : Frame} (r : F.Entity × F.Entity → Prop) : F.Denot (.e ⇒ .e ⇒ .t) :=
+def curry {E W : Type} (r : E × E → Prop) : Denot E W (.e ⇒ .e ⇒ .t) :=
   λ y x => r (x, y)
 
-theorem curry_uncurry {F : Frame} (f : F.Denot (.e ⇒ .e ⇒ .t)) :
+theorem curry_uncurry {E W : Type} (f : Denot E W (.e ⇒ .e ⇒ .t)) :
     curry (uncurry f) = f := rfl
 
-theorem uncurry_curry {F : Frame} (r : F.Entity × F.Entity → Prop) :
-    uncurry (curry r) = r := rfl
+theorem uncurry_curry {E : Type} (W : Type) (r : E × E → Prop) :
+    uncurry (curry (W := W) r) = r := rfl
 
 end Core.Logic.Intensional

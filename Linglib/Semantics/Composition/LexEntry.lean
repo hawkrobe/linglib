@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 
 /-!
 # Lexical Entry Types
@@ -10,9 +10,9 @@ effect functor `M` ([bumford-charlow-2024]): an entry's denotation is an
 the pure [heim-kratzer-1998] case, so every existing call site reads
 unchanged; effectful lexicons supply an explicit `M`.
 
-- `LexEntry F (M := Id)` — a typed denotation in frame `F`, carried by `M`
-- `Lexicon F (M := Id)`  — string-keyed lookup of `M`-effectful entries
-- `Lexicon.lift`         — embed a pure lexicon into any effect via `pure`
+- `LexEntry E W (M := Id)` — a typed denotation over entity/index types `E`/`W`, carried by `M`
+- `Lexicon E W (M := Id)`  — string-keyed lookup of `M`-effectful entries
+- `Lexicon.lift`           — embed a pure lexicon into any effect via `pure`
 -/
 
 namespace Semantics.Montague
@@ -21,17 +21,17 @@ open Core.Logic.Intensional
 
 /-- A typed lexical entry whose denotation carries the effect `M`
 (default `Id` = pure H&K). -/
-structure LexEntry (F : Frame) (M : Type → Type := Id) where
+structure LexEntry (E W : Type) (M : Type → Type := Id) where
   ty : Ty
-  denot : M (F.Denot ty)
+  denot : M (Denot E W ty)
 
 /-- String-keyed lexicon of `M`-effectful entries (default `Id`). -/
-def Lexicon (F : Frame) (M : Type → Type := Id) :=
-  String → Option (LexEntry F M)
+def Lexicon (E W : Type) (M : Type → Type := Id) :=
+  String → Option (LexEntry E W M)
 
 /-- Embed a pure lexicon into effect `M` by `pure`-lifting every entry. -/
-def Lexicon.lift {F : Frame} (M : Type → Type) [Pure M] (lex : Lexicon F) :
-    Lexicon F M :=
+def Lexicon.lift {E W : Type} (M : Type → Type) [Pure M] (lex : Lexicon E W) :
+    Lexicon E W M :=
   λ w => (lex w).map λ e => ⟨e.ty, pure e.denot⟩
 
 end Semantics.Montague

@@ -310,10 +310,10 @@ section Compositional
 
     We prove this for an arbitrary model `m` and transitive verb `V`. -/
 
-variable {m : Frame}
-variable (V : m.Denot (.e ⇒ .e ⇒ .t))
-variable (np : m.Denot (.e ⇒ .t))
-variable (patient z agent : m.Entity)
+variable {E W : Type}
+variable (V : Denot E W (.e ⇒ .e ⇒ .t))
+variable (np : Denot E W (.e ⇒ .t))
+variable (patient z agent : E)
 
 /-- **Dispositional middle derivation** (the paper's (54)):
     FA saturates the object → VP has type `e ⇒ t` → ber- suppresses

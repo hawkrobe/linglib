@@ -175,21 +175,26 @@ open Semantics.Presupposition.PhiFeatures (femSem)
 /-- `⟦sie⟧` made concrete: the feminine PER's weak-article restrictor **is** the `femSem`
     presupposition — true by construction (`(femSem isFemale).presup = isFemale`), so the gender
     feature *drives* the definite description's restrictor rather than re-stipulating it. -/
-theorem feminine_per_restrictor_is_femSem {F : Core.Logic.Intensional.Frame}
-    (isFemale : F.Entity → Prop) (sIdx : Nat) :
+theorem feminine_per_restrictor_is_femSem {E W : Type}
+    (isFemale : E → Prop) (sIdx : Nat) :
     Semantics.Definiteness.Description.ofPresupType .uniqueness
-        (fun _ _ x => (femSem isFemale).presup x) sIdx
-      = Semantics.Definiteness.Description.unique (fun _ _ x => isFemale x) sIdx := rfl
+        ((fun _ _ x => (femSem isFemale).presup x) :
+          Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx
+      = Semantics.Definiteness.Description.unique
+          ((fun _ _ x => isFemale x) :
+            Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx := rfl
 
 /-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
     restrictor of the weak-article definite (`ιx[isFemale x]`). -/
-theorem feminine_per_picks_unique_female {F : Core.Logic.Intensional.Frame}
-    (isFemale : F.Entity → Prop) (sIdx : Nat)
-    (g : Core.Assignment F.Entity) (gs : Core.Logic.Intensional.Variables.SitAssignment F) :
+theorem feminine_per_picks_unique_female {E W : Type}
+    (isFemale : E → Prop) (sIdx : Nat)
+    (g : Core.Assignment E) (gs : Core.Logic.Intensional.Variables.SitAssignment W) :
     Semantics.Definiteness.interpret
         (Semantics.Definiteness.Description.ofPresupType .uniqueness
-          (fun _ _ x => (femSem isFemale).presup x) sIdx) g gs
-      = Semantics.Definiteness.russellIota (fun x => isFemale x) :=
-  Semantics.Definiteness.interpret_unique (fun _ _ x => isFemale x) sIdx g gs
+          ((fun _ _ x => (femSem isFemale).presup x) :
+            Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx) g gs
+      = Semantics.Definiteness.russellIota (E := E) (W := W) (fun x => isFemale x) :=
+  Semantics.Definiteness.interpret_unique
+    ((fun _ _ x => isFemale x) : Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx g gs
 
 end PatelGroszGrosz2017

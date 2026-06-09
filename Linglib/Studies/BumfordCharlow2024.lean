@@ -5,9 +5,9 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
@@ -79,6 +79,7 @@ open Semantics.Reference.Binding
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
+open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 -- ════════════════════════════════════════════════════════════════════
 -- §1 Lean Typeclass Instances
@@ -356,9 +357,9 @@ theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
 
     This connects the adjunction (§5.1 of the paper) to the existing
     `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
-theorem adj_binding_agrees_with_hk {F : Frame} (n : Nat)
-    (body : F.Entity → F.Entity → Prop)
-    (binder : F.Entity) (g : Core.Assignment F.Entity) :
+theorem adj_binding_agrees_with_hk {E : Type} (n : Nat)
+    (body : E → E → Prop)
+    (binder : E) (g : Core.Assignment E) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
   simp only [Function.update_self]
@@ -462,12 +463,12 @@ effects, so scope and binding must come from effect sequencing instead
 `(Entity → Cont R α) → Cont R (Entity → α)` would have to run one
 continuation at every entity simultaneously. Binding under scope arises
 from `bind`-order instead (§7). -/
-instance {R : Type} (F : Frame) : Tree.PredAbs (Cont R) F := ⟨none⟩
+instance {R E W : Type} : Tree.PredAbs (Cont R) E W := ⟨none⟩
 
 /-- CI effects do not support Predicate Abstraction: the log of
 `⟦β⟧^{g[n↦x]}` may vary with `x`, so no log-respecting distributor
 exists. CI content composes around abstraction, not through it. -/
-instance {ω : Type} (F : Frame) : Tree.PredAbs (Writer ω) F := ⟨none⟩
+instance {ω E W : Type} : Tree.PredAbs (Writer ω) E W := ⟨none⟩
 
 end PredAbsInstances
 
@@ -632,29 +633,29 @@ section ScopeBridge
     Ch. 4: the continuation monad is the
     algebraic effect for scope-taking. A GQ `(e → t) → t` IS
     `Cont Prop Entity` by definition. -/
-def gqAsCont {F : Frame} (gq : (F.Entity → Prop) → Prop) : Cont Prop F.Entity :=
+def gqAsCont {E : Type} (gq : (E → Prop) → Prop) : Cont Prop E :=
   gq
 
 /-- A `Cont Prop Entity` value IS a generalized quantifier. -/
-def contAsGQ {F : Frame} (c : Cont Prop F.Entity) : (F.Entity → Prop) → Prop :=
+def contAsGQ {E : Type} (c : Cont Prop E) : (E → Prop) → Prop :=
   c
 
 /-- Round-trip: GQ → Cont → GQ is identity. -/
-theorem gq_cont_roundtrip {F : Frame} (gq : (F.Entity → Prop) → Prop) :
+theorem gq_cont_roundtrip {E : Type} (gq : (E → Prop) → Prop) :
     contAsGQ (gqAsCont gq) = gq := rfl
 
 /-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def every_as_cont (restrictor : toyFrame.Entity → Prop) :
-    Cont Prop toyFrame.Entity :=
+def every_as_cont (restrictor : ToyEntity → Prop) :
+    Cont Prop ToyEntity :=
   gqAsCont (every_sem restrictor)
 
 /-- `some_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def some_as_cont (restrictor : toyFrame.Entity → Prop) :
-    Cont Prop toyFrame.Entity :=
+def some_as_cont (restrictor : ToyEntity → Prop) :
+    Cont Prop ToyEntity :=
   gqAsCont (some_sem restrictor)
 
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
-theorem scope_lower_eq_gq_id (restrictor scope' : toyFrame.Entity → Prop) :
+theorem scope_lower_eq_gq_id (restrictor scope' : ToyEntity → Prop) :
     handleScope (gqAsCont (every_sem restrictor) |>.bind
       (λ x => Cont.pure (scope' x))) =
     every_sem restrictor scope' := rfl
@@ -800,7 +801,7 @@ theorem john_sees_himself_via_C :
 
     This connects adjunction mechanism
     to [heim-kratzer-1998]'s predicate abstraction. -/
-theorem binding_C_agrees_with_hk (g : Core.Assignment toyFrame.Entity) :
+theorem binding_C_agrees_with_hk (g : Core.Assignment ToyEntity) :
     counitApp ba' (store ToyEntity.john)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
@@ -811,7 +812,7 @@ theorem binding_C_agrees_with_hk (g : Core.Assignment toyFrame.Entity) :
   simp only [Function.update_self]
 
 /-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
-theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyFrame.Entity) :
+theorem binding_C_agrees_with_hk_mary (g : Core.Assignment ToyEntity) :
     counitApp ba' (store ToyEntity.mary)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
@@ -866,9 +867,9 @@ study consumes them. What remains here is the bridge to QR trees. -/
     predicate abstraction of its scope. QR and Cont differ only in
     how scope order is *specified* (tree structure vs bind order),
     not in what they *compute*. -/
-theorem qr_cont_structural_agreement {F : Frame}
-    (q : (F.Entity → Prop) → Prop)
-    (body : DenotG F .t) (n : Nat) (g : Core.Assignment F.Entity) :
+theorem qr_cont_structural_agreement {E W : Type}
+    (q : (E → Prop) → Prop)
+    (body : DenotG E W .t) (n : Nat) (g : Core.Assignment E) :
     q (lambdaAbsG n body g) =
     Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl
 
@@ -908,8 +909,8 @@ theorem w_three_way {E A : Type} (f : E → E → A) (e : E) :
 
 /-- Specialization for Montague assignments: `denotGJoin` = `W` = `adj_ε`
     when applied to assignment-dependent meanings. -/
-theorem binding_unification {F : Frame} {A : Type}
-    (f : Core.Assignment F.Entity → Core.Assignment F.Entity → A) (g : Core.Assignment F.Entity) :
+theorem binding_unification {E : Type} {A : Type}
+    (f : Core.Assignment E → Core.Assignment E → A) (g : Core.Assignment E) :
     denotGJoin f g = W f g ∧ W f g = adj_ε (f g, g) := ⟨rfl, rfl⟩
 
 /-- Closing the triangle directly: `denotGJoin` = `adj_ε ∘ ⟨f·, ·⟩`.
@@ -922,8 +923,8 @@ theorem binding_unification {F : Frame} {A : Type}
                  ↘                 ↓
                    adj_ε ∘ ⟨f·, ·⟩
     ``` -/
-theorem binding_triangle {F : Frame} {A : Type}
-    (f : Core.Assignment F.Entity → Core.Assignment F.Entity → A) (g : Core.Assignment F.Entity) :
+theorem binding_triangle {E : Type} {A : Type}
+    (f : Core.Assignment E → Core.Assignment E → A) (g : Core.Assignment E) :
     denotGJoin f g = adj_ε (f g, g) := rfl
 
 end BindingUnification

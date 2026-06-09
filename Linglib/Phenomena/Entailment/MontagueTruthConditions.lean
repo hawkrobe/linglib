@@ -6,7 +6,7 @@ via direct function application.
 
 -/
 
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Phenomena.Entailment.Basic
 
 namespace Semantics.Montague.TruthConditions

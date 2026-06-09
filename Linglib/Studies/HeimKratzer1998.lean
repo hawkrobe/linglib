@@ -1,7 +1,7 @@
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
 
@@ -57,13 +57,14 @@ open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
 open Semantics.Quantification.Quantifier
+open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 /-! ### Model and lexicon -/
 
-def quantLex : Lexicon toyFrame := λ word =>
+def quantLex : Lexicon ToyEntity Unit := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, (every_sem : toyFrame.Denot Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : toyFrame.Denot Ty.det)⟩
+  | "every" => some ⟨Ty.det, (every_sem : Denot ToyEntity Unit Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : Denot ToyEntity Unit Ty.det)⟩
   | "student" => some ⟨.e ⇒ .t, student_sem⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sleeps" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩
@@ -71,7 +72,7 @@ def quantLex : Lexicon toyFrame := λ word =>
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-def g₀ : Core.Assignment toyFrame.Entity := λ _ => .john
+def g₀ : Core.Assignment ToyEntity := λ _ => .john
 
 /-! ### "Every student sleeps" -/
 
@@ -175,16 +176,16 @@ re-implementation alongside it. -/
 
 /-- Surface scope: the engine computes the hand-written reading. -/
 theorem interp_computes_surface :
-    interp toyFrame quantLex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp ToyEntity Unit quantLex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 /-- Inverse scope: likewise. -/
 theorem interp_computes_inverse :
-    interp toyFrame quantLex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+    interp ToyEntity Unit quantLex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
 /-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
 genuinely different meanings. -/
 theorem scope_ambiguity_computed :
-    interp toyFrame quantLex g₀ tree_surface ≠ interp toyFrame quantLex g₀ tree_inverse := by
+    interp ToyEntity Unit quantLex g₀ tree_surface ≠ interp ToyEntity Unit quantLex g₀ tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'

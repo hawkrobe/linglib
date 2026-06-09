@@ -22,7 +22,7 @@ loses this distinction.
 ## What this file tests
 
 The factorization is operationalized in `Semantics.Definiteness.Maximality` as
-`Existence`, `Uniqueness`, and `existsUnique` over `F.Denot .et`. This
+`Existence`, `Uniqueness`, and `existsUnique` over `Denot Body Unit .et`. This
 study file builds three concrete restrictors over a tiny frame (sun /
 moon / mars; one index) and verifies:
 
@@ -57,24 +57,22 @@ inductive Body where
   | mars
   deriving DecidableEq, Repr
 
-/-- One index suffices: the diagnostics are about predicate extensions,
+/-- Singleton restrictor: `theSun` holds of exactly one entity.
+    One index suffices: the diagnostics are about predicate extensions,
     not about world-variability. -/
-def F : Frame := { Entity := Body, Index := Unit }
-
-/-- Singleton restrictor: `theSun` holds of exactly one entity. -/
-def theSun : F.Denot .et
+def theSun : Denot Body Unit .et
   | .sun => True
   | _    => False
 
 /-- Multi-witness restrictor: `planet` holds of two entities. -/
-def planet : F.Denot .et
+def planet : Denot Body Unit .et
   | .moon => True
   | .mars => True
   | _    => False
 
 /-- Empty restrictor: `kingOfFrance` has no satisfier. The
     [coppock-beaver-2015] motivating case. -/
-def kingOfFrance : F.Denot .et := fun _ => False
+def kingOfFrance : Denot Body Unit .et := fun _ => False
 
 -- ════════════════════════════════════════════════════════════════
 -- §2: Existence and Uniqueness are logically independent
@@ -85,8 +83,8 @@ def kingOfFrance : F.Denot .et := fun _ => False
     to argue that Uniqueness is a separate component, projecting
     through assertion polarity. -/
 theorem kingOfFrance_uniqueness_without_existence :
-    Uniqueness (F := F) kingOfFrance ∧
-    ¬ Existence (F := F) kingOfFrance := by
+    Uniqueness (E := Body) (W := Unit) kingOfFrance ∧
+    ¬ Existence (E := Body) (W := Unit) kingOfFrance := by
   refine ⟨?_, ?_⟩
   · intro x y hx _; exact hx.elim
   · rintro ⟨_, h⟩; exact h
@@ -94,8 +92,8 @@ theorem kingOfFrance_uniqueness_without_existence :
 /-- The multi-witness restrictor satisfies Existence but not Uniqueness.
     Witnesses: moon and mars are both planets and are distinct. -/
 theorem planet_existence_without_uniqueness :
-    Existence (F := F) planet ∧
-    ¬ Uniqueness (F := F) planet := by
+    Existence (E := Body) (W := Unit) planet ∧
+    ¬ Uniqueness (E := Body) (W := Unit) planet := by
   refine ⟨⟨.moon, trivial⟩, ?_⟩
   intro h
   have : Body.moon = Body.mars := h .moon .mars trivial trivial
@@ -103,7 +101,7 @@ theorem planet_existence_without_uniqueness :
 
 /-- The singleton restrictor satisfies both components. -/
 theorem theSun_existence_and_uniqueness :
-    Existence (F := F) theSun ∧ Uniqueness (F := F) theSun := by
+    Existence (E := Body) (W := Unit) theSun ∧ Uniqueness (E := Body) (W := Unit) theSun := by
   refine ⟨⟨.sun, trivial⟩, ?_⟩
   intro x y hx hy
   cases x <;> cases y <;> simp_all [theSun]
@@ -115,20 +113,20 @@ theorem theSun_existence_and_uniqueness :
 /-- For `theSun`, the Russellian condition holds: `existsUnique` is by
     construction the conjunction of Existence and Uniqueness. -/
 theorem theSun_existsUnique :
-    existsUnique (F := F) theSun :=
+    existsUnique (E := Body) (W := Unit) theSun :=
   theSun_existence_and_uniqueness
 
 /-- For `kingOfFrance`, `existsUnique` fails — Existence is the missing
     conjunct. The factorization explains *which* component fails. -/
 theorem kingOfFrance_not_existsUnique :
-    ¬ existsUnique (F := F) kingOfFrance := by
+    ¬ existsUnique (E := Body) (W := Unit) kingOfFrance := by
   rintro ⟨hExist, _⟩
   exact kingOfFrance_uniqueness_without_existence.2 hExist
 
 /-- For `planet`, `existsUnique` fails — Uniqueness is the missing
     conjunct. -/
 theorem planet_not_existsUnique :
-    ¬ existsUnique (F := F) planet := by
+    ¬ existsUnique (E := Body) (W := Unit) planet := by
   rintro ⟨_, hUniq⟩
   exact planet_existence_without_uniqueness.2 hUniq
 
@@ -138,13 +136,13 @@ theorem planet_not_existsUnique :
 
 /-- A trivial bi-assignment: every entity slot is `sun`, every situation
     slot is `()`. The diagnostics in this file do not bind anything. -/
-def g₀ : Core.Assignment F.Entity := fun _ => Body.sun
-def gs₀ : SitAssignment F := fun _ => ()
+def g₀ : Core.Assignment Body := fun _ => Body.sun
+def gs₀ : SitAssignment Unit := fun _ => ()
 
 /-- `the sun` (as a `.unique` description with restrictor `theSun`)
     interprets to `some sun` — the unique-witness case. -/
 theorem interpret_theSun :
-    interpret (F := F) (.unique (DenotGS.const theSun) 0) g₀ gs₀ = some Body.sun :=
+    interpret (E := Body) (W := Unit) (.unique (DenotGS.const theSun) 0) g₀ gs₀ = some Body.sun :=
   interpret_unique_eq_some_of_existsUnique _ 0 g₀ gs₀ Body.sun trivial
     (fun y hy => by cases y <;> simp_all [theSun, DenotGS.const])
 
@@ -152,7 +150,7 @@ theorem interpret_theSun :
     Russellian iota collapses the projection structure here, but the
     diagnostic in §2 already isolated *which* component failed. -/
 theorem interpret_kingOfFrance :
-    interpret (F := F)
+    interpret (E := Body) (W := Unit)
       (.unique (DenotGS.const kingOfFrance) 0) g₀ gs₀ = none := by
   rw [interpret_unique]
   have : ¬ (russellIota (fun x => (DenotGS.const kingOfFrance) g₀ gs₀ x)).isSome := by
@@ -165,7 +163,7 @@ theorem interpret_kingOfFrance :
     output as the Existence-failure case, even though the underlying
     presupposition violation is structurally different. -/
 theorem interpret_planet :
-    interpret (F := F)
+    interpret (E := Body) (W := Unit)
       (.unique (DenotGS.const planet) 0) g₀ gs₀ = none := by
   rw [interpret_unique]
   have : ¬ (russellIota (fun x => (DenotGS.const planet) g₀ gs₀ x)).isSome := by
@@ -186,9 +184,9 @@ theorem interpret_planet :
     not the *scope*, so any sentential operator wrapping the description
     leaves it unchanged. -/
 theorem uniqueness_projects_through_negation
-    (scope : F.Denot .et) :
-    Uniqueness (F := F) kingOfFrance ∧
-    Uniqueness (F := F) (fun x => ¬ scope x ∧ kingOfFrance x) := by
+    (scope : Denot Body Unit .et) :
+    Uniqueness (E := Body) (W := Unit) kingOfFrance ∧
+    Uniqueness (E := Body) (W := Unit) (fun x => ¬ scope x ∧ kingOfFrance x) := by
   refine ⟨kingOfFrance_uniqueness_without_existence.1, ?_⟩
   intro x y hx _; exact hx.2.elim
 
@@ -198,8 +196,8 @@ theorem uniqueness_projects_through_negation
     factorization — Existence enters the scope of negation, Uniqueness
     does not. -/
 theorem existence_does_not_project_through_negation
-    (scope : F.Denot .et) :
-    ¬ Existence (F := F) (fun x => scope x ∧ kingOfFrance x) := by
+    (scope : Denot Body Unit .et) :
+    ¬ Existence (E := Body) (W := Unit) (fun x => scope x ∧ kingOfFrance x) := by
   rintro ⟨_, _, h⟩; exact h
 
 end CoppockBeaver2015

@@ -12,8 +12,8 @@ state, CDRT, Charlow continuations, and trivalent partial-valuation systems.
 
 `Assignment E := ℕ → E` is **pre-intensional** — pure Tarski variable mapping —
 so it lives in `Core/Logic/` rather than inside `Core/Logic/Intensional/`.
-The intensional substrate (`Frame`, `SitAssignment F := Assignment F.Index`,
-`DenotGS`) builds on this in `Core/Logic/Intensional/`.
+The intensional substrate (`Denot E W`, situation assignments
+`Assignment W`, `DenotGS`) builds on this in `Core/Logic/Intensional/`.
 
 Pointwise update of a total assignment is mathlib's `Function.update`
 (no parallel API here): `Function.update_self`, `Function.update_of_ne`,
@@ -59,8 +59,8 @@ namespace Core
 -- ════════════════════════════════════════════════════════════════
 
 /-- Variable assignment: a function from natural-number indices to values in
-    `E`. Instantiated at `F.Entity` for entity pronouns (Heim & Kratzer
-    1998), at `F.Index` for situation pronouns (Hanink 2021 / Bondarenko 2023),
+    `E`. Instantiated at the entity type for entity pronouns (Heim & Kratzer
+    1998), at the index type for situation pronouns (Hanink 2021 / Bondarenko 2023),
     at `Time` for temporal variables, and at any other carrier whenever a
     framework needs Tarski-style variable interpretation.
 

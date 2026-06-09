@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Basic
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 
 /-!
 # Situations: Partial Indices
@@ -27,16 +27,16 @@ semantics is the special case where `≤` is the discrete order
 
 Putting the abstraction in `Core/Logic/Intensional/` lets all higher
 modules opt in by adding `[PartialOrder Index]`, without forcing a
-choice of "worlds vs. situations" anywhere in `Frame`.
+choice of "worlds vs. situations" in the index type.
 
 ## Key definitions
 
-- `SituationFrame` — a `Frame` whose `Index` carries a partial order
+- `SituationFrame` — entity/index types whose `Index` carries a partial order
 - `Persistent p` — a proposition is true at `s'` whenever it is true
   at any `s ≤ s'` (= mathlib's `Monotone`)
 - `IsWorld s` — `s` is maximal under `≤`
-- `discreteSituationFrame` — every `Frame` becomes a situation frame
-  with the discrete order, where every index is a world (PWS reduct)
+- `discreteSituationFrame E W` — a situation frame on `E`/`W` with the
+  discrete order, where every index is a world (PWS reduct)
 
 ## What lives elsewhere
 
@@ -51,14 +51,24 @@ namespace Core.Logic.Intensional
 
 /-! ## Situation frames -/
 
-/-- A **situation frame** is an IL frame whose `Index` is equipped with a
-    partial order (parthood). Worlds are the maximal elements; truly
-    possible-worlds-style frames arise from the discrete order. -/
-structure SituationFrame extends Frame where
+/-- A **situation frame** carries an entity domain and an index set whose
+    indices are equipped with a partial order (parthood). Worlds are the
+    maximal elements; truly possible-worlds-style frames arise from the
+    discrete order. -/
+structure SituationFrame where
+  /-- The domain of individuals. -/
+  Entity : Type
+  /-- The index set (situations). -/
+  Index : Type
   /-- The parthood preorder on indices. -/
   [order : PartialOrder Index]
 
 attribute [instance] SituationFrame.order
+
+/-- Denotation domains for a situation frame, computed from its entity and
+    index types. -/
+abbrev SituationFrame.Denot (F : SituationFrame) : Ty → Type :=
+  _root_.Core.Logic.Intensional.Denot F.Entity F.Index
 
 /-- `s ≤ s'` — `s` is a part of `s'` (situation parthood). -/
 infixl:50 " ≼ " => fun (s s' : _) => s ≤ s'
@@ -115,28 +125,29 @@ degenerate case of situation semantics. -/
   le_trans _ _ _ h₁ h₂ := h₁.trans h₂
   le_antisymm _ _ h _ := h
 
-/-- Lift any frame to a situation frame using the discrete order on its
-    index set. This is the formal witness that PWS is a special case of
-    situation semantics. -/
-def Frame.toDiscreteSituationFrame (F : Frame) : SituationFrame where
-  toFrame := F
-  order := discreteOrder F.Index
+/-- Build a situation frame from entity and index types using the discrete
+    order on the index set. This is the formal witness that PWS is a special
+    case of situation semantics. -/
+def discreteSituationFrame (E W : Type) : SituationFrame where
+  Entity := E
+  Index := W
+  order := discreteOrder W
 
 section DiscreteCorollaries
-variable (F : Frame)
+variable (W : Type)
 
-/-- Bring the discrete partial order on `F.Index` into scope as an instance
+/-- Bring the discrete partial order on `W` into scope as an instance
     so the corollaries below can quantify over it without explicit `@`. -/
-local instance : PartialOrder F.Index := discreteOrder F.Index
+local instance : PartialOrder W := discreteOrder W
 
 /-- Under the discrete order, every element of a discrete situation frame
     is maximal — i.e., a world. -/
-theorem discrete_isWorld_all (s : F.Index) : IsWorld s :=
+theorem discrete_isWorld_all (s : W) : IsWorld s :=
   fun _ h => h.symm.le
 
-/-- Under the discrete order on a frame, every proposition `p : Index → Prop`
+/-- Under the discrete order on a frame, every proposition `p : W → Prop`
     is automatically persistent: there's nothing to commute past. -/
-theorem discrete_persistent_all (p : F.Index → Prop) : Persistent p :=
+theorem discrete_persistent_all (p : W → Prop) : Persistent p :=
   fun _ _ h hp => h ▸ hp
 
 end DiscreteCorollaries

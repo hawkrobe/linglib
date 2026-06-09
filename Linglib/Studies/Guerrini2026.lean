@@ -1840,8 +1840,6 @@ truth value.
 
 section CompositionalTreeDemo
 
-open Core.Logic.Intensional (Frame)
--- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp)
@@ -1855,9 +1853,6 @@ inductive DemoEntity where
 
 instance : BEq DemoEntity := ⟨fun a b => decide (a = b)⟩
 
-private def demoModel : Frame :=
-  { Entity := DemoEntity, Index := Unit }
-
 private def demoAtoms : List DemoEntity := [.simba, .nala, .mufasa]
 
 /-- Mereological decomposition: lionKind → its atoms, atoms → self. -/
@@ -1870,19 +1865,19 @@ private def atomsOf : DemoEntity → List DemoEntity
     Gen, DIST, DPP are instantiated from theory-layer constructors
     (`genThreshold`, `dist`, `dpp`) rather than
     being defined ad hoc. -/
-private noncomputable def guerriniLex : Lexicon demoModel := fun s =>
+private noncomputable def guerriniLex : Lexicon DemoEntity Unit := fun s =>
   match s with
   | "lion"   => some ⟨.e ⇒ .t, fun x => match x with
       | .simba | .nala | .mufasa => True | .lionKind => False⟩
   | "hunt"   => some ⟨.e ⇒ .t, fun x => match x with
       | .simba | .nala => True | .mufasa | .lionKind => False⟩
   | "∩lions" => some ⟨.e, DemoEntity.lionKind⟩
-  | "Gen"    => some (genThreshold demoModel demoAtoms 2 3)
-  | "DIST"   => some (dist demoModel atomsOf)
-  | "DPP"    => some (dpp demoModel demoAtoms)
+  | "Gen"    => some (genThreshold DemoEntity Unit demoAtoms 2 3)
+  | "DIST"   => some (dist DemoEntity Unit atomsOf)
+  | "DPP"    => some (dpp DemoEntity Unit demoAtoms)
   | _        => none
 
-private def g₀ : Core.Assignment demoModel.Entity :=
+private def g₀ : Core.Assignment DemoEntity :=
   fun _ => DemoEntity.simba
 
 /-- BFG parse: Gen(lion, hunt) — [guerrini-2026], structure (29). -/

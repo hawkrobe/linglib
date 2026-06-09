@@ -10,13 +10,13 @@ Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, evaluation,
 and referential interpretation modes.
 
-These primitives are shared by `Core.Logic.Intensional.Frame`,
+These primitives are shared by `Core.Logic.Intensional.Defs`,
 `Semantics.Reference/`, `Semantics.Attitudes/`, and `RSA/` — any module
 that needs world-parameterized meanings.
 
-## Relationship to Frame
+## Relationship to `Denot`
 
-`Frame.Denot (.intens a) = F.Index → F.Denot a` is an `Intension F.Index (F.Denot a)`.
+`Denot E W (.intens a) = W → Denot E W a` is an `Intension W (Denot E W a)`.
 The `up`/`down` operators in `Frame.lean` are definitionally equal to
 `rigid`/`evalAt` here. This file provides the framework-agnostic
 versions; `Frame.lean` provides the IL-typed versions.

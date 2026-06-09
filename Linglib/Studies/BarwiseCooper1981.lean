@@ -1,5 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.Toy
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Semantics.Quantification.DomainRestriction
 
@@ -58,7 +59,6 @@ namespace Phenomena.Quantification.Bridge
 
 open English.Determiners (Monotonicity Strength)
 open Phenomena.Quantification.Inventory
-open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
 open Core.Quantification
 open Semantics.Quantification.DomainRestriction (DomainRestrictor
@@ -225,10 +225,35 @@ theorem weak_are_symmetric :
     QuantityWord.none_.entry.strength = .weak := ⟨rfl, rfl⟩
 
 /-- Strong English determiners are not symmetric ([peters-westerstahl-2006]).
-    Witness: `every_not_symmetric` in Quantifier.lean. -/
+    Witness: `every_not_symmetric` below. -/
 theorem strong_not_symmetric :
     QuantityWord.all.entry.strength = .strong ∧
     QuantityWord.most.entry.strength = .strong := ⟨rfl, rfl⟩
+
+/-! #### Toy-witnessed counterexamples
+
+Counterexamples to non-properties of specific determiners need a concrete
+witness type; the witness is the toy fragment's `ToyEntity`. -/
+
+section ToyWitnesses
+
+open Semantics.Montague (ToyEntity)
+open Semantics.Montague.ToyLexicon (student_sem thing_sem)
+
+/-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things; every(students,
+    things)=true but every(things,students)=false. -/
+theorem every_not_symmetric : ¬ QSymmetric (every_sem (α := ToyEntity)) := by
+  intro h
+  have := (h student_sem thing_sem).mp (fun x _ => trivial)
+  exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
+
+/-- `⟦no⟧` is NOT positive strong: no(A,A) = false when A is non-empty. -/
+theorem no_not_positive_strong : ¬ PositiveStrong (no_sem (α := ToyEntity)) := by
+  intro h
+  have := h student_sem
+  exact this ToyEntity.john (by simp [student_sem]) (by simp [student_sem])
+
+end ToyWitnesses
 
 -- ============================================================================
 -- §8. [barwise-cooper-1981] §4.11: Duality (Square of Opposition)

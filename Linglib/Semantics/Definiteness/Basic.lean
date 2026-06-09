@@ -41,8 +41,7 @@ This module retains:
 
 namespace Semantics.Definiteness
 
-open Core.Logic.Intensional (Frame Ty)
-open Semantics.Montague (toyFrame ToyEntity)
+open Core.Logic.Intensional (Ty)
 open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Semantics.Presupposition (PrProp)
@@ -72,16 +71,12 @@ structure DiscourseContext (E : Type) where
 Partee's `iota` succeeds on the same domain and restrictor. Both check
 that `domain.filter restrictor` is a singleton; one returns `Bool` (the
 presupposition flag), the other returns `Option E` (the witness). -/
-theorem definite_presup_iff_iota {m : Frame} (domain : List m.Entity)
-    (restrictor : m.Denot Ty.et) :
+theorem definite_presup_iff_iota {E : Type} (domain : List E)
+    (restrictor : E → Prop) :
     (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
      | [_] => true | _ => false) =
     (iota domain restrictor).isSome := by
   unfold iota
-  change (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
-      | [_] => true | _ => false) =
-      (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
-      | [j] => some j | _ => none).isSome
   generalize domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) = l
   match l with
   | [] => rfl

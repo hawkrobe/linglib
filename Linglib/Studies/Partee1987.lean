@@ -1,4 +1,5 @@
 import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Fragments.English.Toy
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
@@ -24,19 +25,34 @@ in this study file.
 namespace Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
-open Core.Logic.Intensional (Frame Ty)
+open Core.Logic.Intensional (Denot Ty)
 
-variable {m : Frame}
+variable {E W : Type}
 
 /-- ⟦be⟧ = BE: the copula IS the type-shifting functor, taking a
     generalized quantifier to a predicate. -/
-abbrev be_sem (m : Frame) : m.Denot Ty.ett → m.Denot Ty.et := BE
+abbrev be_sem (E W : Type) : Denot E W Ty.ett → Denot E W Ty.et := BE
 
 /-- The copula is semantically transparent for proper names.
     "John is a teacher" with `⟦John⟧ = lift(j)`:
     `BE(lift(j)) = ident(j) = λx. [j = x]`. -/
-theorem be_transparent (j : m.Denot .e) :
-    be_sem m (lift j) = ident j :=
+theorem be_transparent (j : Denot E W .e) :
+    be_sem E W (lift j) = ident j :=
   BE_lift_eq_ident j
+
+/-! ### Toy-fragment examples -/
+
+section ToyExamples
+
+open Semantics.Montague (ToyEntity)
+open Semantics.Montague.ToyLexicon (john_sem sleeps_sem)
+
+example : lift (E := ToyEntity) john_sem sleeps_sem :=
+  show sleeps_sem john_sem from trivial
+
+example : BE (E := ToyEntity) (lift john_sem) = ident john_sem :=
+  BE_lift_eq_ident john_sem
+
+end ToyExamples
 
 end Partee1987

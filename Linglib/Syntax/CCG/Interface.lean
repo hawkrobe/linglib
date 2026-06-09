@@ -1,8 +1,7 @@
 import Linglib.Syntax.CCG.Basic
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Composition.Combinator
-import Linglib.Semantics.Composition.ToyDomain
 
 /-!
 # CCG Syntax-Semantics Interface
@@ -14,18 +13,23 @@ derivation's meaning is read off compositionally from its structure.
 ## Main definitions
 
 - `catToTy` — maps CCG categories to semantic types
-- `SemLexEntry` — a lexical entry with semantics
-- `DerivStep.interp` — computes a meaning from a derivation compositionally
+- `SemLexEntry`, `SemLexicon` — lexical entries with semantics
+- `DerivStep.interp` — computes a meaning from a derivation compositionally:
+  application is function application, composition is the `B` combinator,
+  type-raising is the `T` combinator, coordination is generalized
+  conjunction ([partee-rooth-1983])
+
+Worked toy-fragment derivations and the non-constituent-coordination
+semantics theorems live in `Studies/Steedman2000.lean`.
 -/
 
 namespace CCG
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Conjunction
-open Semantics.Montague
 open Combinator
 
--- Type Correspondence
+/-! ### Type correspondence -/
 
 /-- Map CCG categories to semantic types -/
 def catToTy : Cat → Ty
@@ -36,125 +40,24 @@ def catToTy : Cat → Ty
   | .rslash x y => catToTy y ⇒ catToTy x
   | .lslash x y => catToTy y ⇒ catToTy x
 
--- Semantic Lexicon
-
 /-- A CCG lexical entry with semantics -/
-structure SemLexEntry (F : Frame) where
+structure SemLexEntry (E W : Type) where
   form : String
   cat : Cat
-  sem : F.Denot (catToTy cat)
+  sem : Denot E W (catToTy cat)
 
-/-- Semantic lexicon for the toy model -/
-def semLexicon : List (SemLexEntry toyFrame) := [
-  -- Proper names: NP (type e)
-  ⟨"John", NP, ToyEntity.john⟩,
-  ⟨"Mary", NP, ToyEntity.mary⟩,
+/-! ### Type preservation
 
-  -- Intransitive verbs: S\NP (type e → t)
-  ⟨"sleeps", IV, ToyLexicon.sleeps_sem⟩,
-  ⟨"laughs", IV, ToyLexicon.laughs_sem⟩,
-
-  -- Transitive verbs: (S\NP)/NP (type e → e → t)
-  ⟨"sees", TV, ToyLexicon.sees_sem⟩,
-  ⟨"eats", TV, ToyLexicon.eats_sem⟩,
-  ⟨"reads", TV, ToyLexicon.reads_sem⟩,
-  ⟨"likes", TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
-]
-
--- Semantic Composition
-
--- Forward application semantically is just function application
--- If f : ⟦Y⟧ → ⟦X⟧ and a : ⟦Y⟧, then f(a) : ⟦X⟧
-
--- Backward application is the same
--- If a : ⟦Y⟧ and f : ⟦Y⟧ → ⟦X⟧, then f(a) : ⟦X⟧
-
--- Example: "John sleeps"
-
--- Syntactically: John:NP  sleeps:S\NP  ⇒  S
--- Semantically: sleeps_sem(john_sem) : t
-
-def john_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.john
-def sleeps_sem' : toyFrame.Denot (catToTy IV) := ToyLexicon.sleeps_sem
-
--- The semantic derivation mirrors the syntactic one
-def john_sleeps_sem : toyFrame.Denot (catToTy S) :=
-  sleeps_sem' john_sem'
-
--- Example: "John sees Mary"
-
--- Syntactically:
---   John:NP  sees:(S\NP)/NP  Mary:NP
---   sees Mary ⇒ S\NP  (forward app)
---   John (sees Mary) ⇒ S  (backward app)
-
--- Semantically:
---   sees_sem : e → e → t
---   sees_sem(mary) : e → t
---   (sees_sem(mary))(john) : t
-
-def sees_sem' : toyFrame.Denot (catToTy TV) := ToyLexicon.sees_sem
-def mary_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.mary
-
--- Step 1: sees Mary
-def sees_mary_sem : toyFrame.Denot (catToTy IV) :=
-  sees_sem' mary_sem'  -- function application
-
--- Step 2: John (sees Mary)
-def john_sees_mary_sem : toyFrame.Denot (catToTy S) :=
-  sees_mary_sem john_sem'  -- function application
-
--- Example: "Mary sees John"
-
-def mary_sees_john_sem : toyFrame.Denot (catToTy S) :=
-  (sees_sem' john_sem') mary_sem'
-
--- Example: "John eats pizza"
-
-def eats_sem' : toyFrame.Denot (catToTy TV) := ToyLexicon.eats_sem
-def pizza_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.pizza
-
-def john_eats_pizza_sem : toyFrame.Denot (catToTy S) :=
-  (eats_sem' pizza_sem') john_sem'
-
--- Truth Conditions from CCG Derivations
-
-/-- A sentence is true if its meaning holds. -/
-def sentenceTrue (meaning : toyFrame.Denot .t) : Prop :=
-  meaning
-
--- Derivation-Driven Semantic Composition
-
-/-
-The CCG derivation structure directly mirrors semantic composition:
-
-Syntax: Semantics:
-John:NP sees:(S\NP)/NP john:e sees:e→e→t
-               |                        |
-          Mary:NP mary:e
-               ↓ ↓
-          sees Mary:S\NP sees(mary):e→t
-               ↓ ↓
-        John sees Mary:S sees(mary)(john):t
-
-Each syntactic combination corresponds to function application.
-This is the "transparency" of the syntax-semantics interface.
--/
-
--- TYPE PRESERVATION THEOREMS
-
-/-
-These theorems establish that CCG combinatory rules preserve semantic well-typedness.
-If the syntactic combination succeeds, the semantic combination is well-typed.
--/
+CCG combinatory rules preserve semantic well-typedness: if the syntactic
+combination succeeds, the semantic combination is well-typed. -/
 
 /-- Forward application preserves semantic typing:
-    If X/Y combines with Y to give X, then (σ→τ) applied to σ gives τ -/
+    if X/Y combines with Y to give X, then (σ→τ) applied to σ gives τ. -/
 theorem forward_app_type_preservation (x y : Cat) :
     catToTy (x.rslash y) = (catToTy y ⇒ catToTy x) := rfl
 
 /-- Backward application preserves semantic typing:
-    If Y combines with X\Y to give X, then (σ→τ) applied to σ gives τ -/
+    if Y combines with X\Y to give X, then (σ→τ) applied to σ gives τ. -/
 theorem backward_app_type_preservation (x y : Cat) :
     catToTy (x.lslash y) = (catToTy y ⇒ catToTy x) := rfl
 
@@ -166,153 +69,27 @@ theorem tv_type_is_relation :
 theorem iv_type_is_property :
     catToTy IV = (.e ⇒ .t) := rfl
 
--- COMPOSITIONALITY: DERIVATIONS COMPUTE MEANINGS
-
-/--
-A semantic derivation: pairs a CCG category with its meaning.
-This represents a node in the derivation tree with its semantic interpretation.
--/
-structure SemDeriv (F : Frame) where
-  cat : Cat
-  meaning : F.Denot (catToTy cat)
-
-/-
-Note: A fully general semForwardApp would require dependent types to express
-that the result category depends on the input categories. Instead, we work
-with concrete examples that show the principle.
--/
-
-/-- Apply a function meaning to an argument meaning -/
-def applyMeaning {F : Frame} {σ τ : Ty}
-    (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ) : F.Denot τ :=
-  f x
-
-/-- Composition is function application -/
-theorem composition_is_application {F : Frame} {σ τ : Ty}
-    (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ) :
-    applyMeaning f x = f x := rfl
-
--- SOUNDNESS: WELL-FORMED DERIVATIONS HAVE MEANINGS
-
-/--
-For a lexical entry, we can always extract its meaning.
--/
-theorem lexical_has_meaning (entry : SemLexEntry toyFrame) :
-    ∃ (meaning : toyFrame.Denot (catToTy entry.cat)), meaning = entry.sem :=
-  ⟨entry.sem, rfl⟩
-
-/--
-If we have meanings for functor and argument with compatible types,
-we can compute the meaning of the result.
--/
-theorem combination_has_meaning {F : Frame} {x y : Cat}
-    (functor_meaning : F.Denot (catToTy (x.rslash y)))
-    (arg_meaning : F.Denot (catToTy y)) :
-    ∃ (result : F.Denot (catToTy x)), result = functor_meaning arg_meaning :=
-  ⟨functor_meaning arg_meaning, rfl⟩
-
--- EXAMPLE: COMPLETE DERIVATION WITH TYPES
-
-/-- The complete derivation of "John sees Mary" preserving types -/
-theorem john_sees_mary_typed_derivation :
-    -- 1. sees : (S\NP)/NP has type e → e → t
-    let sees_ty : toyFrame.Denot (catToTy TV) := ToyLexicon.sees_sem
-    -- 2. Mary : NP has type e
-    let mary_ty : toyFrame.Denot (catToTy NP) := ToyEntity.mary
-    -- 3. sees Mary : S\NP has type e → t
-    let sees_mary_ty : toyFrame.Denot (catToTy IV) := sees_ty mary_ty
-    -- 4. John : NP has type e
-    let john_ty : toyFrame.Denot (catToTy NP) := ToyEntity.john
-    -- 5. John sees Mary : S has type t
-    let result : toyFrame.Denot (catToTy S) := sees_mary_ty john_ty
-    -- The result is the expected truth value
-    result := trivial
-
-/-- The derivation of "Mary sleeps" preserving types -/
-theorem mary_sleeps_typed_derivation :
-    let sleeps_ty : toyFrame.Denot (catToTy IV) := ToyLexicon.sleeps_sem
-    let mary_ty : toyFrame.Denot (catToTy NP) := ToyEntity.mary
-    let result : toyFrame.Denot (catToTy S) := sleeps_ty mary_ty
-    ¬result := id
-
--- THE HOMOMORPHISM PRINCIPLE
-
-/-
-The fundamental theorem of compositional semantics (Montague's homomorphism):
-
-For every syntactic rule R: A × B → C
-there is a semantic rule R': ⟦A⟧ × ⟦B⟧ → ⟦C⟧
-
-such that ⟦R(a, b)⟧ = R'(⟦a⟧, ⟦b⟧)
-
-In CCG, ALL syntactic rules correspond to function application or composition.
-This makes the homomorphism particularly transparent.
--/
-
-/-- Forward application satisfies the homomorphism:
-    ⟦fapp(f, a)⟧ = ⟦f⟧(⟦a⟧)
-
-    The semantic interpretation of syntactic combination is function application. -/
-theorem forward_app_homomorphism {F : Frame} {x y : Cat}
-    (f_sem : F.Denot (catToTy (x.rslash y)))
-    (a_sem : F.Denot (catToTy y)) :
-    -- The semantic result is function application of functor to argument
-    f_sem a_sem = f_sem a_sem := rfl
-
-/-- Backward application satisfies the homomorphism:
-    ⟦bapp(a, f)⟧ = ⟦f⟧(⟦a⟧)
-
-    The order of arguments in syntax doesn't affect semantic composition. -/
-theorem backward_app_homomorphism {F : Frame} {x y : Cat}
-    (a_sem : F.Denot (catToTy y))
-    (f_sem : F.Denot (catToTy (x.lslash y))) :
-    -- The semantic result is function application
-    f_sem a_sem = f_sem a_sem := rfl
-
--- DERIVATION INTERPRETATION
-
-/-
-This section connects CCG derivations (DerivStep) to their semantic interpretations.
-The key insight: every CCG combinatory rule corresponds to function application.
--/
+/-! ### Derivation interpretation -/
 
 /-- A semantic interpretation: category paired with its meaning -/
-structure Interp (F : Frame) where
+structure Interp (E W : Type) where
   cat : Cat
-  meaning : F.Denot (catToTy cat)
+  meaning : Denot E W (catToTy cat)
 
 /-- Semantic lexicon: maps words to interpretations -/
-def SemLexicon (F : Frame) := String → Cat → Option (Interp F)
-
-/-- The toy semantic lexicon -/
-def toySemLexicon : SemLexicon toyFrame := λ word cat =>
-  match word, cat with
-  -- Proper names
-  | "John", .atom .NP => some ⟨NP, ToyEntity.john⟩
-  | "Mary", .atom .NP => some ⟨NP, ToyEntity.mary⟩
-  -- Common noun phrases (using pizza entity as placeholder)
-  | "beans", .atom .NP => some ⟨NP, ToyEntity.pizza⟩
-  -- Intransitive verbs
-  | "sleeps", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.sleeps_sem⟩
-  | "laughs", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.laughs_sem⟩
-  -- Transitive verbs
-  | "sees", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
-      some ⟨TV, ToyLexicon.sees_sem⟩
-  | "eats", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
-      some ⟨TV, ToyLexicon.eats_sem⟩
-  | "likes", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
-      some ⟨TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
-  | "hates", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
-      some ⟨TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
-  | _, _ => none
+def SemLexicon (E W : Type) := String → Cat → Option (Interp E W)
 
 /--
 Interpret a CCG derivation, computing its meaning from the lexicon.
 
-Returns `none` if the derivation is ill-formed or uses unknown words.
+Every combinatory rule corresponds to a semantic operation: application is
+function application, composition is the `B` combinator, type-raising is the
+`T` combinator, and coordination is generalized conjunction (restricted to
+conjoinable types). Returns `none` if the derivation is ill-formed or uses
+unknown words.
 -/
-def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyFrame)
-    : Option (Interp toyFrame) :=
+def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
+    : Option (Interp E W) :=
   match d with
   | .lex entry => lex entry.form entry.cat
 
@@ -323,9 +100,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyFrame)
       match c1 with
       | .rslash x y =>
           if h : c2 = y then
-            -- m1 : catToTy y ⇒ catToTy x
-            -- m2 : catToTy c2 = catToTy y
-            let m2' : toyFrame.Denot (catToTy y) := h ▸ m2
+            let m2' : Denot E W (catToTy y) := h ▸ m2
             some ⟨x, m1 m2'⟩
           else none
       | _ => none
@@ -337,290 +112,71 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyFrame)
       match c2 with
       | .lslash x y =>
           if h : c1 = y then
-            -- m2 : catToTy y ⇒ catToTy x
-            -- m1 : catToTy c1 = catToTy y
-            let m1' : toyFrame.Denot (catToTy y) := h ▸ m1
+            let m1' : Denot E W (catToTy y) := h ▸ m1
             some ⟨x, m2 m1'⟩
           else none
       | _ => none
 
   | .fcomp d1 d2 => do
-      -- Forward composition: X/Y + Y/Z → X/Z
-      -- Semantic rule: B combinator (f ∘ g)
+      -- Forward composition: X/Y + Y/Z → X/Z, semantically B (f ∘ g)
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       match c1, c2 with
       | .rslash x y1, .rslash y2 z =>
           if h : y1 = y2 then
-            -- m1 : catToTy y1 → catToTy x
-            -- m2 : catToTy z → catToTy y2
-            -- B m1 m2 : catToTy z → catToTy x
-            let m2' : toyFrame.Denot (catToTy z ⇒ catToTy y1) :=
+            let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
               h ▸ m2
             some ⟨x / z, B m1 m2'⟩
           else none
       | _, _ => none
 
   | .bcomp d1 d2 => do
-      -- Backward composition: Y\Z + X\Y → X\Z
-      -- Semantic rule: B combinator (f ∘ g)
+      -- Backward composition: Y\Z + X\Y → X\Z, semantically B (f ∘ g)
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       match c1, c2 with
       | .lslash y1 z, .lslash x y2 =>
           if h : y1 = y2 then
-            -- m1 : catToTy z → catToTy y1
-            -- m2 : catToTy y2 → catToTy x
-            -- B m2 m1 : catToTy z → catToTy x
-            let m1' : toyFrame.Denot (catToTy z ⇒ catToTy y2) :=
+            let m1' : Denot E W (catToTy z ⇒ catToTy y2) :=
               h ▸ m1
             some ⟨x \ z, B m2 m1'⟩
           else none
       | _, _ => none
 
   | .ftr d t => do
-      -- Forward type-raising: X → T/(T\X)
-      -- Semantic rule: T combinator (λf. f x)
+      -- Forward type-raising: X → T/(T\X), semantically T (λf. f x)
       let ⟨x, m⟩ ← d.interp lex
-      -- T m : (catToTy x → catToTy t) → catToTy t
-      -- catToTy (t / (t \ x)) = catToTy (t \ x) ⇒ catToTy t
-      --                       = (catToTy x ⇒ catToTy t) ⇒ catToTy t
       some ⟨forwardTypeRaise x t, T m⟩
 
   | .btr d t => do
-      -- Backward type-raising: X → T\(T/X)
-      -- Semantic rule: T combinator (λf. f x)
+      -- Backward type-raising: X → T\(T/X), semantically T (λf. f x)
       let ⟨x, m⟩ ← d.interp lex
-      -- T m : (catToTy x → catToTy t) → catToTy t
-      -- catToTy (t \ (t / x)) = catToTy (t / x) ⇒ catToTy t
-      --                       = (catToTy x ⇒ catToTy t) ⇒ catToTy t
       some ⟨backwardTypeRaise x t, T m⟩
 
   | .coord d1 d2 => do
-      -- Coordination: X and X → X
-      -- Semantic rule: generalized conjunction ([partee-rooth-1983])
-      -- Uses genConj for uniform type-driven coordination ([partee-rooth-1983])
+      -- Coordination: X and X → X, semantically generalized conjunction
+      -- ([partee-rooth-1983]), restricted to conjoinable types
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then
         let ty := catToTy c1
-        -- Only conjoinable types can be coordinated
         if ty.isConjoinable then
-          let m2' : toyFrame.Denot (catToTy c1) := h ▸ m2
-          some ⟨c1, genConj ty toyFrame m1 m2'⟩
+          let m2' : Denot E W (catToTy c1) := h ▸ m2
+          some ⟨c1, genConj ty E W m1 m2'⟩
         else none
       else none
 
--- INTERPRETATION EXAMPLES
-
-/-- Helper to extract meaning from interpretation result -/
-def getMeaning (result : Option (Interp toyFrame)) : Option Prop :=
+/-- Extract a sentence meaning (category S) from an interpretation result. -/
+def getMeaning {E W : Type} (result : Option (Interp E W)) : Option Prop :=
   match result with
   | some ⟨.atom .S, m⟩ => some m
   | _ => none
 
-/-- Interpretation of "John sleeps" produces correct truth value -/
-theorem john_sleeps_interp_correct :
-    getMeaning (john_sleeps.interp toySemLexicon) = some True := rfl
-
-/-- Interpretation of "John sees Mary" produces correct truth value -/
-theorem john_sees_mary_interp_correct :
-    getMeaning (john_sees_mary.interp toySemLexicon) = some True := rfl
-
--- TYPE-RAISING AND COMPOSITION TESTS
-
-/--
-Type-raised "John":
-  John:NP → S/(S\NP) via forward type-raising
--/
-def john_typeraised : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
-
-#guard (john_typeraised.interp toySemLexicon).isSome
-
-/--
-"John sees Mary" via type-raising:
-  John sees Mary
-  NP (S\NP)/NP NP
-  ↓T(S)
-  S/(S\NP) (S\NP)/NP NP
-                └────>────────┘
-                    S\NP
-  └──────>──────────────────────┘
-                S
-Note: Type-raised subject uses FORWARD application (it's S/(S\NP), seeking S\NP to its right)
--/
-def john_sees_mary_via_tr : DerivStep :=
-  .fapp john_typeraised (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
-
-/-- Type-raised derivation produces correct truth value -/
-theorem john_sees_mary_via_tr_correct :
-    getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some True := rfl
-
--- FORWARD COMPOSITION TEST
-
-/--
-"John likes" as S/NP via type-raising + composition (for coordination):
-  John likes
-  NP (S\NP)/NP
-  ↓T(S)
-  S/(S\NP)
-  └──────>B────┘
-       S/NP
-
-This is the constituent that can coordinate with "Mary hates" in
-"John likes and Mary hates beans".
--/
-def john_likes_composed : DerivStep :=
-  .fcomp john_typeraised (.lex ⟨"likes", TV⟩)
-
-#guard (john_likes_composed.interp toySemLexicon).isSome
-
--- NON-CONSTITUENT COORDINATION SEMANTICS
-
-/-
-This is the substantive theorem that validates CCG's treatment of coordination:
-
-"John likes and Mary hates beans" means likes'(beans', john') ∧ hates'(beans', mary')
-
-The derivation:
-1. Type-raise John to S/(S\NP)
-2. Compose with likes to get S/NP
-3. Type-raise Mary to S/(S\NP)
-4. Compose with hates to get S/NP
-5. Coordinate to get S/NP with conjunctive meaning
-6. Apply to beans to get S
-
-The key insight: composition preserves functional structure, so the
-coordinated S/NP applies pointwise to the argument.
--/
-
--- Re-import the derivations from Basic (they're in the CCG namespace)
--- john_tr, john_likes, mary_tr, mary_hates, john_likes_and_mary_hates, john_likes_and_mary_hates_beans
-
-#guard (john_likes_and_mary_hates.interp toySemLexicon).isSome
-#guard (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
-
-/--
-**THE COORDINATION SEMANTICS THEOREM**
-
-The interpretation of non-constituent coordination "John likes and Mary hates beans"
-is semantically well-formed (produces a truth value).
-
-This is non-trivial because it requires:
-1. Type-raising (T combinator)
-2. Forward composition (B combinator)
-3. Generalized conjunction (pointwise ∧)
-4. Forward application
-
-All four operations must compose correctly for the derivation to succeed.
--/
-theorem coordination_semantics_well_formed :
-    (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome = true := by
-  decide
-
-/--
-Extract the meaning of a coordination derivation as a function.
-
-For an S/NP derivation (like "John likes and Mary hates"),
-the meaning is a predicate on entities.
--/
-def getPredicateMeaning (result : Option (Interp toyFrame))
-    : Option (ToyEntity → Prop) :=
+/-- Extract a predicate meaning (category S/NP) from an interpretation result. -/
+def getPredicateMeaning {E W : Type} (result : Option (Interp E W))
+    : Option (E → Prop) :=
   match result with
   | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some m
   | _ => none
-
-/--
-Helper to extract predicate from coordination result.
--/
-def coordMeaningAt (e : ToyEntity) : Option Prop :=
-  match john_likes_and_mary_hates.interp toySemLexicon with
-  | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some (m e)
-  | _ => none
-
-/--
-Helper to compute pointwise conjunction of two predicate meanings.
--/
-def pointwiseConjAt (e : ToyEntity) : Option Prop :=
-  match john_likes.interp toySemLexicon, mary_hates.interp toySemLexicon with
-  | some ⟨.rslash (.atom .S) (.atom .NP), m₁⟩, some ⟨.rslash (.atom .S) (.atom .NP), m₂⟩ =>
-      some (m₁ e ∧ m₂ e)
-  | _, _ => none
-
-/--
-**THE POINTWISE CONJUNCTION THEOREM**
-
-The meaning of "John likes and Mary hates" (category S/NP) is the pointwise
-conjunction of "John likes" and "Mary hates".
-
-That is: ⟦John likes and Mary hates⟧(x) = ⟦John likes⟧(x) ∧ ⟦Mary hates⟧(x)
-
-This is the semantic counterpart to the syntactic coordination rule.
--/
-theorem coordination_is_pointwise_conjunction :
-    ∀ e : ToyEntity, coordMeaningAt e = pointwiseConjAt e := by
-  intro e
-  cases e <;> rfl
-
-/--
-**THE TRUTH-CONDITIONAL CORRECTNESS THEOREM**
-
-The truth value of "John likes and Mary hates beans" is true iff
-both John likes beans AND Mary hates beans.
-
-In our toy model (where likes = hates = sees), this computes to the
-conjunction of the two predications.
--/
-theorem coordination_truth_conditions_correct :
-    getMeaning (john_likes_and_mary_hates_beans.interp toySemLexicon) =
-      some (ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.john ∧
-            ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := rfl
-
--- WHY THIS THEOREM MATTERS
-
-/-
-## The Significance of These Theorems
-
-Previous theorems in CCG/Semantics.lean were trivial (rfl):
-- Type preservation: rfl (by construction of catToTy)
-- Homomorphism: rfl (application = application)
-
-These coordination theorems are SUBSTANTIVE:
-1. They verify the FULL derivation pipeline works end-to-end
-2. They prove semantic content (pointwise conjunction emerges from rules)
-3. They require non-trivial computation (native_decide, not rfl)
-
-The key insight: CCG's claim is that non-constituent coordination "just works"
-because the fragments ARE constituents. The theorems prove this computationally:
-- The derivation succeeds (coordination_semantics_well_formed)
-- The meaning is correct (coordination_is_pointwise_conjunction)
-- The truth conditions are what we expect (coordination_truth_conditions_correct)
-
-## What Makes This Non-Trivial
-
-In phrase structure grammar, "John likes" is NOT a constituent.
-You'd need special mechanisms (ATB movement, ellipsis, across-the-board rules).
-
-In CCG, it IS a constituent (S/NP), built by type-raising + composition.
-No special mechanism needed - the same rules work for all sentences.
-
-The theorems verify that this unified treatment produces correct semantics.
--/
-
--- CONNECTION TO MONTAGUE SYNTAXINTERFACE
-
-/-
-With `DerivStep.interp`, we can now implement `MontagueSyntax` for CCG:
-
-```
-instance : MontagueSyntax Cat DerivStep where
-  catOf d := d.cat.getOrElse S
-  typeOf c := catToTy c
-  wellFormed d := d.cat.isSome
-  interp d m := (d.interp semLexicon).get!.meaning
-```
-
-This completes the syntax → semantics pipeline for CCG.
--/
 
 end CCG

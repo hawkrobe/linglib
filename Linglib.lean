@@ -70,7 +70,7 @@ import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Core.Logic.Modal.Defs
@@ -2891,3 +2891,4 @@ import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Finnish.Evidentiality
 import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Thomas2026
+import Linglib.Studies.KeenanStavi1986

@@ -104,23 +104,23 @@ theorem mandarin_cantonese_distinct_cells :
 -- §2: Inventory-Licensing Predictions (paper §3)
 -- ════════════════════════════════════════════════════════════════
 
-variable {F : Frame}
+variable {E W : Type}
 
 /-- Bare N is universally licensed by the article inventory; in
     Mandarin it serves unique definites (paper §3.1 examples 10–11:
     `yueliang sheng shang lai le` 'the moon has risen';
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
-theorem bare_licensed (R : DenotGS F .et) :
-    Determiner.licenses (F := F) mandarinDets (.bare R) := trivial
+theorem bare_licensed (R : DenotGS E W .et) :
+    Determiner.licenses (E := E) (W := W) mandarinDets (.bare R) := trivial
 
 /-- The anaphoric kind (`.anaphoric R d`) is licensed in Mandarin via
     the demonstrative paradigm (paper §3.2: anaphoric definites surface
     as Dem-Clf-N constructions). The licensing holds because the
     demonstrative obligatorily expones a familiarity (anaphoric) use, so
     `Determiner.MarksPresup mandarinDets .familiarity`. -/
-theorem anaphoric_licensed (R : DenotGS F .et) (d : Nat) :
-    Determiner.licenses (F := F) mandarinDets (.anaphoric R d) := by
+theorem anaphoric_licensed (R : DenotGS E W .et) (d : Nat) :
+    Determiner.licenses (E := E) (W := W) mandarinDets (.anaphoric R d) := by
   show Determiner.MarksPresup mandarinDets .familiarity
   decide
 
@@ -128,8 +128,8 @@ theorem anaphoric_licensed (R : DenotGS F .et) (d : Nat) :
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
 theorem demonstrative_licensed
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    Determiner.licenses (F := F) mandarinDets
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
+    Determiner.licenses (E := E) (W := W) mandarinDets
       (.demonstrative R deictic sIdx d) := by
   show ∃ e ∈ mandarinDets, Determiner.Entry.IsDemonstrative e
   decide
@@ -140,9 +140,9 @@ theorem demonstrative_licensed
     extensionally the `Description.unique` denotation at the API
     layer. Parallels `Moroney2021.shan_bare_unique_agreement`. -/
 theorem bare_unique_agreement
-    (R : DenotGS F .et) (sIdx : Nat)
-    (g : Core.Assignment F.Entity)
-    (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (sIdx : Nat)
+    (g : Core.Assignment E)
+    (gs : SitAssignment W) :
     interpret (.bare R) g gs = interpret (.unique R sIdx) g gs := rfl
 
 /-- A Mandarin demonstrative-marked anaphoric and the bare anaphoric
@@ -151,9 +151,9 @@ theorem bare_unique_agreement
     selector (paper §4.2 cited Hanink/Schwarz analysis). Parallels
     `Moroney2021.shan_demonstrative_anaphoric_agreement`. -/
 theorem demonstrative_anaphoric_agreement
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Core.Assignment F.Entity)
-    (gs : SitAssignment F) :
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
+    (g : Core.Assignment E)
+    (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       interpret (.anaphoric R d) g gs := rfl
 
@@ -290,7 +290,7 @@ the natural slot for any MP-instance.
 The `IndexCandidate` carrier below is a minimal 2-bit witness type
 sufficient to demonstrate the principle's qualitative behavior
 (prefer indexed when index is available; neutral otherwise). A
-fuller instantiation would parameterize over `Description F` and the
+fuller instantiation would parameterize over `Description E W` and the
 discourse-context predicate licensing the index — that refactor
 belongs in a substrate file (`Semantics/Presupposition/Index.lean`)
 when a second consumer needs it. -/
@@ -447,10 +447,10 @@ properly). -/
     `Description.anaphoric` flagged in §5 to express cleanly, and is
     deferred. -/
 theorem demonstrative_strict_under_situation_variation
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature)
+    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
     (sIdx d : Nat)
-    (g : Core.Assignment F.Entity)
-    (gs₁ gs₂ : SitAssignment F)
+    (g : Core.Assignment E)
+    (gs₁ gs₂ : SitAssignment W)
     (hR : R g gs₁ (g d) = R g gs₂ (g d)) :
     interpret (.demonstrative R deictic sIdx d) g gs₁ =
       interpret (.demonstrative R deictic sIdx d) g gs₂ := by
