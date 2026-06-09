@@ -5,8 +5,11 @@ import Mathlib.Data.Fintype.Basic
 # Toy English fragment
 
 The pedagogical fragment used by compositional-semantics studies, built the
-model-theoretic way: a first-order signature (`toyLang`), a structure carrying
-the facts (`toyStructure`), the composition model (`toyModel`), and naming maps
+model-theoretic way and in mathlib's concrete-language idiom (after
+`Mathlib/ModelTheory/Algebra/Ring/Basic.lean`): arity-indexed symbol inductives
+(`toyFunc`, `toyRel`), the signature (`toyLang`), per-symbol defeq abbreviations
+(`sleepRel`, …), a structure carrying the facts (`toyStructure`) with one
+`@[simp]` lemma per symbol, the composition model (`toyModel`), and naming maps
 (`toyNaming`) from word forms into the signature. The `ToyLexicon` denotations
 are *read off the model* via `Model.const`/`Model.pred₁ext`/`Model.pred₂ext` —
 the connection is true by construction, with no bridge theorems.
@@ -31,67 +34,155 @@ instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
   complete := fun x => by cases x <;> simp
 
-/-- Unary relation symbols of the toy signature. -/
-inductive ToyRel₁ where
-  | sleep | laugh | student | person | thing | pizza | book
-  deriving Repr, DecidableEq
+/-- Function symbols of the toy signature: constants naming entities. -/
+inductive toyFunc : ℕ → Type
+  | john : toyFunc 0
+  | mary : toyFunc 0
+  deriving DecidableEq
 
-/-- Binary relation symbols of the toy signature. -/
-inductive ToyRel₂ where
-  | see | eat | read
-  deriving Repr, DecidableEq
+/-- Relation symbols of the toy signature: content words at their arities. -/
+inductive toyRel : ℕ → Type
+  | sleep : toyRel 1
+  | laugh : toyRel 1
+  | student : toyRel 1
+  | person : toyRel 1
+  | thing : toyRel 1
+  | pizza : toyRel 1
+  | book : toyRel 1
+  | see : toyRel 2
+  | eat : toyRel 2
+  | read : toyRel 2
+  deriving DecidableEq
 
-/-- The toy lexical signature: every entity is nameable by a constant; content
-words are relation symbols. -/
-def toyLang : Language where
-  Functions := fun n => match n with | 0 => ToyEntity | _ => Empty
-  Relations := fun n => match n with | 1 => ToyRel₁ | 2 => ToyRel₂ | _ => Empty
+/-- The toy lexical signature. -/
+def toyLang : Language :=
+  { Functions := toyFunc
+    Relations := toyRel }
 
-/-- The facts: interpretation of unary symbols. -/
-def interpRel₁ : ToyRel₁ → ToyEntity → Prop := fun r x =>
-  match r, x with
-  | .sleep, .john => True
-  | .sleep, _ => False
-  | .laugh, .john => True
-  | .laugh, .mary => True
-  | .laugh, _ => False
-  | .student, .john => True
-  | .student, .mary => True
-  | .student, _ => False
-  | .person, .john => True
-  | .person, .mary => True
-  | .person, _ => False
-  | .thing, _ => True
-  | .pizza, .pizza => True
-  | .pizza, _ => False
-  | .book, .book => True
-  | .book, _ => False
+/-! Per-symbol abbreviations with the defeq types `toyLang.Constants` /
+`toyLang.Relations n` (mathlib's `addFunc` idiom), so symbols elaborate
+without unfolding `toyLang`. -/
 
-/-- The facts: interpretation of binary symbols (subject-first). -/
-def interpRel₂ : ToyRel₂ → ToyEntity → ToyEntity → Prop := fun r subj obj =>
-  match r, subj, obj with
-  | .see, .john, .mary => True
-  | .see, .mary, .john => True
-  | .see, _, _ => False
-  | .eat, .john, .pizza => True
-  | .eat, .mary, .pizza => True
-  | .eat, _, _ => False
-  | .read, .john, .book => True
-  | .read, .mary, .book => True
-  | .read, _, _ => False
+abbrev johnConst : toyLang.Constants := .john
+abbrev maryConst : toyLang.Constants := .mary
+abbrev sleepRel : toyLang.Relations 1 := .sleep
+abbrev laughRel : toyLang.Relations 1 := .laugh
+abbrev studentRel : toyLang.Relations 1 := .student
+abbrev personRel : toyLang.Relations 1 := .person
+abbrev thingRel : toyLang.Relations 1 := .thing
+abbrev pizzaRel : toyLang.Relations 1 := .pizza
+abbrev bookRel : toyLang.Relations 1 := .book
+abbrev seeRel : toyLang.Relations 2 := .see
+abbrev eatRel : toyLang.Relations 2 := .eat
+abbrev readRel : toyLang.Relations 2 := .read
 
-/-- The toy structure: constants denote themselves; relations carry the facts. -/
+/-! ### The facts -/
+
+namespace ToyFacts
+
+def sleep : ToyEntity → Prop := fun x =>
+  match x with
+  | .john => True
+  | _ => False
+
+def laugh : ToyEntity → Prop := fun x =>
+  match x with
+  | .john => True
+  | .mary => True
+  | _ => False
+
+def student : ToyEntity → Prop := fun x =>
+  match x with
+  | .john => True
+  | .mary => True
+  | _ => False
+
+def person : ToyEntity → Prop := fun x =>
+  match x with
+  | .john => True
+  | .mary => True
+  | _ => False
+
+def thing : ToyEntity → Prop := fun _ => True
+
+def pizza : ToyEntity → Prop := fun x =>
+  match x with
+  | .pizza => True
+  | _ => False
+
+def book : ToyEntity → Prop := fun x =>
+  match x with
+  | .book => True
+  | _ => False
+
+def see : ToyEntity → ToyEntity → Prop := fun subj obj =>
+  match subj, obj with
+  | .john, .mary => True
+  | .mary, .john => True
+  | _, _ => False
+
+def eat : ToyEntity → ToyEntity → Prop := fun subj obj =>
+  match subj, obj with
+  | .john, .pizza => True
+  | .mary, .pizza => True
+  | _, _ => False
+
+def read : ToyEntity → ToyEntity → Prop := fun subj obj =>
+  match subj, obj with
+  | .john, .book => True
+  | .mary, .book => True
+  | _, _ => False
+
+end ToyFacts
+
+/-- The toy structure: constants denote their entities; relations carry the
+facts (binary relations subject-first). -/
 def toyStructure : toyLang.Structure ToyEntity where
   funMap {n} f v :=
-    match n, f, v with
-    | 0, c, _ => c
-    | _ + 1, f, _ => nomatch f
+    match f, v with
+    | .john, _ => ToyEntity.john
+    | .mary, _ => ToyEntity.mary
   RelMap {n} r v :=
-    match n, r, v with
-    | 0, r, _ => nomatch r
-    | 1, r, v => interpRel₁ r (v 0)
-    | 2, r, v => interpRel₂ r (v 0) (v 1)
-    | _ + 3, r, _ => nomatch r
+    match r, v with
+    | .sleep, v => ToyFacts.sleep (v 0)
+    | .laugh, v => ToyFacts.laugh (v 0)
+    | .student, v => ToyFacts.student (v 0)
+    | .person, v => ToyFacts.person (v 0)
+    | .thing, v => ToyFacts.thing (v 0)
+    | .pizza, v => ToyFacts.pizza (v 0)
+    | .book, v => ToyFacts.book (v 0)
+    | .see, v => ToyFacts.see (v 0) (v 1)
+    | .eat, v => ToyFacts.eat (v 0) (v 1)
+    | .read, v => ToyFacts.read (v 0) (v 1)
+
+/-! One `@[simp]` lemma per symbol (mathlib's `funMap_add` discipline), so
+proofs reduce `RelMap`/`funMap` to the named facts without unfolding the
+structure. -/
+
+@[simp] theorem funMap_john (v : Fin 0 → ToyEntity) :
+    toyStructure.funMap johnConst v = ToyEntity.john := rfl
+@[simp] theorem funMap_mary (v : Fin 0 → ToyEntity) :
+    toyStructure.funMap maryConst v = ToyEntity.mary := rfl
+@[simp] theorem relMap_sleep (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap sleepRel v = ToyFacts.sleep (v 0) := rfl
+@[simp] theorem relMap_laugh (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap laughRel v = ToyFacts.laugh (v 0) := rfl
+@[simp] theorem relMap_student (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap studentRel v = ToyFacts.student (v 0) := rfl
+@[simp] theorem relMap_person (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap personRel v = ToyFacts.person (v 0) := rfl
+@[simp] theorem relMap_thing (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap thingRel v = ToyFacts.thing (v 0) := rfl
+@[simp] theorem relMap_pizza (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap pizzaRel v = ToyFacts.pizza (v 0) := rfl
+@[simp] theorem relMap_book (v : Fin 1 → ToyEntity) :
+    toyStructure.RelMap bookRel v = ToyFacts.book (v 0) := rfl
+@[simp] theorem relMap_see (v : Fin 2 → ToyEntity) :
+    toyStructure.RelMap seeRel v = ToyFacts.see (v 0) (v 1) := rfl
+@[simp] theorem relMap_eat (v : Fin 2 → ToyEntity) :
+    toyStructure.RelMap eatRel v = ToyFacts.eat (v 0) (v 1) := rfl
+@[simp] theorem relMap_read (v : Fin 2 → ToyEntity) :
+    toyStructure.RelMap readRel v = ToyFacts.read (v 0) (v 1) := rfl
 
 /-- The toy composition model: extensional (one world). -/
 def toyModel : Model toyLang where
@@ -103,24 +194,24 @@ def toyModel : Model toyLang where
 def toyNaming : LexNaming toyLang where
   names := fun s =>
     match s with
-    | "John" => some ToyEntity.john
-    | "Mary" => some ToyEntity.mary
+    | "John" => some johnConst
+    | "Mary" => some maryConst
     | _ => none
   preds₁ := fun s =>
     match s with
-    | "sleeps" => some ToyRel₁.sleep
-    | "laughs" => some ToyRel₁.laugh
-    | "student" => some ToyRel₁.student
-    | "person" => some ToyRel₁.person
-    | "thing" => some ToyRel₁.thing
-    | "pizza" => some ToyRel₁.pizza
-    | "book" => some ToyRel₁.book
+    | "sleeps" => some sleepRel
+    | "laughs" => some laughRel
+    | "student" => some studentRel
+    | "person" => some personRel
+    | "thing" => some thingRel
+    | "pizza" => some pizzaRel
+    | "book" => some bookRel
     | _ => none
   preds₂ := fun s =>
     match s with
-    | "sees" => some ToyRel₂.see
-    | "eats" => some ToyRel₂.eat
-    | "reads" => some ToyRel₂.read
+    | "sees" => some seeRel
+    | "eats" => some eatRel
+    | "reads" => some readRel
     | _ => none
 
 /-- The toy lexicon, induced by the naming maps over the model. -/
@@ -129,22 +220,22 @@ def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexiconAt toyNaming ()
 namespace ToyLexicon
 
 /-! Denotations read off the model. Each is definitionally the corresponding
-match-function over `ToyEntity`, so `rfl`/`trivial` proofs over them reduce. -/
+fact predicate over `ToyEntity`, so `rfl`/`trivial` proofs over them reduce. -/
 
-def john_sem : Denot ToyEntity Unit .e := toyModel.const ToyEntity.john ()
-def mary_sem : Denot ToyEntity Unit .e := toyModel.const ToyEntity.mary ()
+def john_sem : Denot ToyEntity Unit .e := toyModel.const johnConst ()
+def mary_sem : Denot ToyEntity Unit .e := toyModel.const maryConst ()
 
-def sleeps_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.sleep ()
-def laughs_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.laugh ()
-def student_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.student ()
-def person_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.person ()
-def thing_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.thing ()
-def pizza_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.pizza ()
-def book_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext ToyRel₁.book ()
+def sleeps_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext sleepRel ()
+def laughs_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext laughRel ()
+def student_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext studentRel ()
+def person_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext personRel ()
+def thing_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext thingRel ()
+def pizza_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext pizzaRel ()
+def book_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext bookRel ()
 
-def sees_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext ToyRel₂.see ()
-def eats_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext ToyRel₂.eat ()
-def reads_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext ToyRel₂.read ()
+def sees_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext seeRel ()
+def eats_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext eatRel ()
+def reads_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext readRel ()
 
 instance : DecidablePred student_sem := fun x =>
   match x with

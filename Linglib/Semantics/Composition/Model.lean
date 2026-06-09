@@ -27,6 +27,17 @@ terms. Nothing model-theoretic lives on the objects or in the lexicon data.
 * `barbara` — cross-model logical consequence (truth in all models), the payoff over a fixed
   entity/world frame
 * `interp_pronoun_trace`, `genderRestriction` — the projection discipline for API objects
+
+## Implementation notes
+
+`interp : W → L.Structure E` carries structures as **terms**, not instances — a world-indexed
+*family* of structures on one carrier cannot be instance-based (same rationale as
+equational_theories' term-level `Magma.FOStructure`). The cost is explicit instance threading
+(`letI := m.interp w`) when interfacing with instance-based mathlib API such as
+`Formula.Realize`. Concrete fragments should follow mathlib's concrete-language idiom
+(`Mathlib/ModelTheory/Algebra/Ring/Basic.lean`): arity-indexed symbol inductives, per-symbol
+defeq `abbrev`s, and one `@[simp]` `funMap`/`RelMap` lemma per symbol — see
+`Fragments/English/Toy.lean`.
 -/
 
 set_option autoImplicit false
