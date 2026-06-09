@@ -352,7 +352,7 @@ but propose different underlying mechanisms:
 | Basic denotation | Kind (via ∩) | Property |
 | Existential reading | DKP coercion | Direct ∃ type shift |
 | Scopelessness | DKP locality | Local number binding |
-| Bare singular out | ∩ undefined | Number param unfilled |
+| Bare singular out | ∩ undefined | Type mismatch (⟨n,⟨e,t⟩⟩ vs ⟨e,t⟩) |
 | Kind reading | Always available | Requires topic position |
 
 Below we prove they are observationally equivalent for the core phenomena.
@@ -362,16 +362,16 @@ Below we prove they are observationally equivalent for the core phenomena.
 Both theories predict bare singular restriction.
 
 - Chierchia: ∩ is undefined for singular count nouns
-- Krifka: Number parameter is unfilled
+- Krifka: a bare singular is the wrong *type* — number-indexed `⟨n,⟨e,t⟩⟩`, not an
+  argument-type `⟨e,t⟩` (the number argument is unsaturated; see
+  `Krifka2004.morphology_saturates`)
 
 Both mechanisms yield the same prediction: bare singulars ungrammatical.
 -/
 theorem both_theories_bare_singular_out :
-    -- Chierchia's mechanism
+    -- Chierchia's mechanism: ∩ undefined on singular count nouns
     (downDefinedFor .count false = false) ∧
-    -- Krifka's mechanism (default BareSingularRestriction has bareUnfilled=true)
-    ({ } : BareSingularRestriction).bareUnfilled = true ∧
-    -- Both predict ungrammaticality
+    -- Both predict ungrammaticality (Krifka's mechanism is the type mismatch)
     bareSgSubject.grammatical = false := by
   simp [downDefinedFor, bareSgSubject]
 
@@ -379,7 +379,8 @@ theorem both_theories_bare_singular_out :
 Both theories predict scopelessness via locality.
 
 - Chierchia: `dkpIsLocal = true` — DKP introduces ∃ inside predicate abstract
-- Krifka: `plural_is_local` — ∃ binds number argument inside NP
+- Krifka: the semantic plural binds the number argument *locally* inside the NP
+  (`Krifka2004.pluralize`), so the ∃ cannot scope out
 
 Both locality mechanisms predict bare plurals cannot take wide scope.
 -/
@@ -422,9 +423,8 @@ The theories differ on mechanism, not prediction.
 theorem chierchia_krifka_observationally_equivalent :
     -- Bare plural OK
     englishBarePlural.bareKindOK = true ∧
-    -- Bare singular out (both mechanisms)
+    -- Bare singular out (Chierchia: ∩ undefined; Krifka: type mismatch)
     (downDefinedFor .count false = false) ∧
-    ({ } : BareSingularRestriction).bareUnfilled = true ∧
     bareSgSubject.grammatical = false ∧
     -- Scopelessness (both mechanisms)
     dkpIsLocal = true ∧
@@ -547,8 +547,8 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
     -- Therefore: Chierchia's prediction is FALSE for scrambled BPs
     -- (We represent this as the mismatch between theory and data)
     (dkpIsLocal = true ∧ dutchScrambledBoeken.wideOK = true) := by
-  simp [dutchScrambledBoeken, dutchScrambledMensen,
-        existentialShiftPositionSensitive, dkpIsLocal]
+  refine ⟨?_, ?_, rfl, rfl, rfl, ?_⟩ <;>
+    simp [dutchScrambledBoeken, dutchScrambledMensen]
 
 -- Formal Derivations ([le-bruyn-de-swart-2022])
 
@@ -557,7 +557,7 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
 
 The derivation machinery lives in the theory files:
 - `NMP.lean`: `chierchiaDerivUnscrambled`, `chierchiaDerivScrambled`, `chierchia_position_invariant`
-- `Krifka2004.lean`: `krifkaDerivUnscrambled`, `krifkaDerivScrambled`, `krifka_position_sensitive`
+- `Krifka2004.lean`: `krifkaDerivUnscrambled`, `krifkaDerivScrambled`, `scope_follows_position`
 
 Here we instantiate them with a concrete example to demonstrate the divergence.
 
@@ -623,7 +623,7 @@ Chierchia incorrectly predicts they are the same.
 
 This theorem combines:
 1. The position-invariance of Chierchia (`chierchia_position_invariant`)
-2. The position-sensitivity of Krifka (`krifka_position_sensitive`)
+2. The position-sensitivity of Krifka (`scope_follows_position`)
 3. Concrete verification that Krifka matches the empirical data
 -/
 theorem scrambling_main_result :
@@ -668,7 +668,7 @@ theorem theories_diverge_on_scrambling :
 
 The key theorems from the theory files:
 - `chierchia_position_invariant`: Proves Chierchia's DKP gives same meaning regardless of position
-- `krifka_position_sensitive`: Shows Krifka's ∃-shift respects surface position
+- `scope_follows_position`: Shows Krifka's ∃-shift respects surface position
 
 See `Phenomena/Generics/KindReference.lean` for the full scrambling dataset.
 -/
