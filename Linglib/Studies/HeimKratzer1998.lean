@@ -205,4 +205,54 @@ def synTree_everyStudentSleeps : Tree Cat String :=
      .bind 1 .S
        (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
 
+/-! ### First-order reduction
+
+The textbook trees are in the compiled FO fragment
+(`Composition/Reduction.lean`): they compile to mathlib
+`FirstOrder.Language.Formula`s, and by the agreement theorem the engine's
+truth conditions *are* model-theoretic realization over `toyModel`. -/
+
+section Reduction
+
+open Semantics.Composition
+
+/-- The textbook trees compile. -/
+example : (compileFO {} toyNaming tree_everyStudentSleeps).isSome = true := rfl
+example : (compileFO {} toyNaming tree_someStudentSleeps).isSome = true := rfl
+
+/-- The agreement theorem instantiated at the toy model: for any tree in the
+fragment, engine truth conditions are `Realize` of the compiled formula. -/
+theorem interp_eq_realize {t : Tree Unit String} {φ : toyLang.Formula ℕ}
+    (h : compileFO {} toyNaming t = some φ) (g : Core.Assignment ToyEntity) :
+    Tree.interp ToyEntity Unit (toyModel.lexiconFO {} toyNaming ()) g t
+      = some ⟨.t, toyModel.realizeAt () φ g⟩ :=
+  interp_compileFO toyModel {} toyNaming () FOWords.nodup_default
+    toyNaming_freshFor toyNaming_disjoint t g h
+
+/-- "Some student sleeps" holds in the toy model, via the engine. -/
+theorem someStudentSleeps_holds (g : Core.Assignment ToyEntity) :
+    HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g
+      tree_someStudentSleeps :=
+  ⟨_, rfl, ⟨ToyEntity.john, trivial, trivial⟩⟩
+
+/-- "John sleeps and Mary laughs". -/
+def tree_conj : Tree Unit String :=
+  .bin (.bin (.leaf "John") (.leaf "sleeps"))
+       (.bin (.leaf "and") (.bin (.leaf "Mary") (.leaf "laughs")))
+
+/-- **Consequence transfer**: conjunction elimination is a first-order
+consequence, so the entailment holds in the toy model — and by the same
+theorem in *every* composition model interpreting the signature. -/
+theorem conj_entails_first (g : Core.Assignment ToyEntity) :
+    HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g tree_conj →
+      HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g
+        (.bin (.leaf "John") (.leaf "sleeps")) :=
+  holdsAt_of_models toyModel {} toyNaming () FOWords.nodup_default
+    toyNaming_freshFor toyNaming_disjoint rfl rfl
+    (fun _ S v h => by
+      letI := S
+      exact (FirstOrder.Language.Formula.realize_inf.mp h).1) g
+
+end Reduction
+
 end HeimKratzer1998
