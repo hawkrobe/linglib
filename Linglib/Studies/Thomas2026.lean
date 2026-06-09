@@ -1,39 +1,48 @@
 import Linglib.Semantics.Questions.Probabilistic
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# Thomas (2026): Probabilistic, question-based additivity
+# Thomas (2026): A probabilistic, question-based approach to additivity
 [thomas-2026] [ciardelli-groenendijk-roelofsen-2018] [frank-goodman-2012]
 
-Formalisation of [thomas-2026] "A probabilistic, question-based
-approach to additivity" (S&P 19:1). The paper unifies the canonical
-additive use of *too* with a previously unstudied "argument-building
-use" by formalising felicity in terms of Bayesian inquisitive
-answerhood — Def 62 of the paper. The substrate primitives
-(`Answers`, `IsResolutionEvidencedBy`, `evidencesResolutionMore`)
-live in `Semantics/Questions/Probabilistic.lean`; this file
-encodes Def 64 (TOO felicity) and the abstract consequences that
-account for the empirical contrasts in §3 and §4.
+Formalisation of [thomas-2026], which unifies the canonical additive use of
+*too* with a previously unstudied "argument-building" use by stating felicity
+in terms of Bayesian inquisitive answerhood. The substrate primitives
+(`Answers`, `IsResolutionEvidencedBy`, `evidencesResolutionMore`,
+`IsRelevantTo`) live in `Semantics/Questions/Probabilistic.lean`; this file
+encodes the felicity conditions of [thomas-2026] Def 64 and their abstract
+consequences.
 
-## Def 64: TOO(π) felicity
+## Main definitions
 
-`TOO(π)` is felicitous iff there exists a contextually relevant
-question `RQ` and an antecedent fact `ANT` such that:
+* `IsTooFelicitous` — conditions (a)-(c) of [thomas-2026] Def 64: the antecedent
+  and the conjunction each answer a relevant question, the conjunction answers
+  it more strongly, and the prejacent is neither redundant nor replaceable by a
+  weaker proposition.
+* `IsTooLicensedByDQ` — the full Def 64: `IsTooFelicitous` plus the requirement
+  that the relevant question be relevant to a discourse question.
+* `IsTooInfelicitous` — *too* is predicted infelicitous when no relevant
+  question licenses it.
 
-* **Antecedent**: `ANT` Answers `RQ`.
-* **Conjunction**: `ANT ∩ ⟦π⟧` Answers `RQ`, and the resolution
-  evidenced by `ANT ∩ ⟦π⟧` is evidenced more strongly by it than by
-  `ANT` alone.
-* **Prejacent (i)**: `⟦π⟧` does not entail the resolution evidenced
-  by `ANT ∩ ⟦π⟧`.
-* **Prejacent (ii)**: for every proper superset `S ⊋ ⟦π⟧`, the
-  resolution is evidenced more strongly by `ANT ∩ ⟦π⟧` than by
-  `ANT ∩ S`.
+## Main statements
 
-(i) prevents *too* from being felicitous when the prejacent already
-entails the answer suggested by the conjunction (the
-[beaver-clark-2008] ecstatic case (29a)). (ii) prevents *too*
-from being felicitous when a weaker prejacent would do (the
-"some-instrument vs cello" case (30)).
+* `IsTooFelicitous.antecedent_probOfSet_pos`,
+  `IsTooFelicitous.conjunction_probOfSet_pos` — felicity forces positive prior
+  mass on the antecedent and on the conjunction.
+* `IsTooFelicitous.exists_strict_improvement` — the conjunction is strictly
+  better Bayesian evidence for its resolution than the antecedent alone.
+* `Witness.answers_discriminates` — a concrete Fin-3 model in which `Answers`
+  holds of informative evidence and fails of the trivial `univ`, exercising the
+  `raises_prob` and `dominates` fields of the answerhood structure.
+
+## Implementation notes
+
+The relevant question RQ need not be a Current Question; [thomas-2026] §5.4.3
+requires only that it be relevant to some discourse question, which
+`IsTooLicensedByDQ` captures via `IsRelevantTo`. The two prejacent conditions
+rule out the [beaver-clark-2008] ecstatic case (the prejacent already entails
+the answer) and the "some-instrument vs cello" case (a weaker prejacent would
+do); see the per-field docstrings of `IsTooFelicitous`.
 -/
 
 namespace Thomas2026
@@ -41,182 +50,189 @@ namespace Thomas2026
 open Question Semantics.Questions.Probabilistic
 
 variable {W : Type*} {μ : PMF W}
-  {prejacent antecedent : Set W} {rq : Question W} {𝒜 : Set (Set W)}
+  {prejacent antecedent : Set W} {rq : Question W}
 
-/-! ### TOO felicity ([thomas-2026] Def 64) -/
+/-! ### TOO felicity -/
 
-/-- `TOO(π)` felicity in the sense of [thomas-2026] Def 64. The
-    five conditions are bundled below as a `structure` so consumers
-    can project them by name. -/
+/-- Conditions (a)-(c) of [thomas-2026] Def 64. The full Def 64 additionally
+    requires the relevant question to be relevant to a discourse question; that
+    is `IsTooLicensedByDQ`. -/
 structure IsTooFelicitous (prejacent antecedent : Set W) (rq : Question W)
     (μ : PMF W) : Prop where
   /-- Def 64a: the antecedent answers the relevant question. -/
   antecedent_answers : Answers antecedent rq μ
   /-- Def 64b (first half): the conjunction answers the relevant question. -/
   conjunction_answers : Answers (antecedent ∩ prejacent) rq μ
-  /-- Def 64b (second half): the conjunction evidences its resolution
-      more strongly than the antecedent alone does. -/
+  /-- Def 64b (second half): the conjunction evidences its resolution more
+      strongly than the antecedent alone does. -/
   conjunction_stronger : ∃ 𝒜,
     IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ ∧
     evidencesResolutionMore μ 𝒜 (antecedent ∩ prejacent) antecedent
-  /-- Def 64c.i: the prejacent does not by itself entail the resolution
-      that the conjunction evidences. -/
+  /-- Def 64c.i: the prejacent does not by itself entail the resolution the
+      conjunction evidences (rules out the [beaver-clark-2008] ecstatic case
+      "Sam is happy. #He's ecstatic, too"). -/
   prejacent_not_entails : ∀ 𝒜,
     IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ →
     ¬ prejacent ⊆ ⋂₀ 𝒜
-  /-- Def 64c.ii: no proper weakening `S ⊋ prejacent` would license the
-      same resolution as well as the prejacent does. -/
+  /-- Def 64c.ii: no proper weakening `S ⊋ prejacent` licenses the same
+      resolution as well as the prejacent does (rules out the
+      "some-instrument vs cello" case). -/
   prejacent_minimal : ∀ S : Set W, prejacent ⊆ S → S ≠ prejacent →
     ∀ 𝒜, IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ →
       evidencesResolutionMore μ 𝒜 (antecedent ∩ prejacent) (antecedent ∩ S)
 
 /-! ### Abstract consequences -/
 
-/-- TOO felicity entails that the antecedent puts positive prior mass:
-    a direct corollary of `Answers.probOfSet_pos` applied to the
-    antecedent condition. -/
+/-- TOO felicity entails that the antecedent puts positive prior mass: a direct
+    corollary of `Answers.probOfSet_pos` applied to the antecedent condition. -/
 theorem IsTooFelicitous.antecedent_probOfSet_pos
     (h : IsTooFelicitous prejacent antecedent rq μ) :
     μ.probOfSet antecedent > 0 :=
   h.antecedent_answers.probOfSet_pos
 
-/-- TOO felicity entails that the conjunction puts positive prior
-    mass — same corollary applied to the conjunction condition. -/
+/-- TOO felicity entails that the conjunction puts positive prior mass — same
+    corollary applied to the conjunction condition. -/
 theorem IsTooFelicitous.conjunction_probOfSet_pos
     (h : IsTooFelicitous prejacent antecedent rq μ) :
     μ.probOfSet (antecedent ∩ prejacent) > 0 :=
   h.conjunction_answers.probOfSet_pos
 
-/-- TOO felicity entails that the conjunction is genuinely stronger
-    evidence than the antecedent alone (the [thomas-2026] §4.4
-    intuition that *too* marks a strict improvement). The witness
-    `𝒜` from the conjunction-stronger field exhibits this. -/
+/-- TOO felicity entails that the conjunction is genuinely stronger evidence
+    than the antecedent alone (the [thomas-2026] §4.4 intuition that *too* marks
+    a strict improvement). The witness `𝒜` from `conjunction_stronger` exhibits
+    this; the inequality is `evidencesResolutionMore` unfolded. -/
 theorem IsTooFelicitous.exists_strict_improvement
     (h : IsTooFelicitous prejacent antecedent rq μ) :
     ∃ 𝒜, IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ ∧
       μ.condProbSet (antecedent ∩ prejacent) (⋂₀ 𝒜) >
-      μ.condProbSet antecedent (⋂₀ 𝒜) := by
-  obtain ⟨𝒜, hRes, hMore⟩ := h.conjunction_stronger
-  exact ⟨𝒜, hRes, hMore⟩
+      μ.condProbSet antecedent (⋂₀ 𝒜) :=
+  h.conjunction_stronger
 
-/-! ### RQ vs CQ — the contextual-relevance layer ([thomas-2026] §5.4.3, §5.5)
+/-! ### RQ relevance to a discourse question -/
 
-The RQ in `IsTooFelicitous` need not be a Current Question (CQ) in
-the discourse tree — it only needs to be *relevant* to one (the DQ
-or some other in-scope question). This generalization is what
-licenses *too* in cases like (45c) [implicit RQ] and (71) [single
-*wh*-answer to multiple-*wh* CQ]. The relevance check uses
-`Probabilistic.IsRelevantTo` (Def 61). -/
-
-/-- TOO licensed by an RQ that is in turn relevant to some discourse
-    question DQ. This is the full felicity condition ([thomas-2026]
-    Def 64) — `IsTooFelicitous` itself only constrains `rq`, but the
-    paper requires `rq` to be Relevant to *some* `dq` in the discourse
-    tree. -/
+/-- The full [thomas-2026] Def 64: `IsTooFelicitous` together with the
+    requirement that `rq` be relevant to some discourse question `dq`. The RQ
+    need not be a Current Question — §5.4.3 requires only relevance to a DQ. -/
 def IsTooLicensedByDQ (prejacent antecedent : Set W)
     (rq dq : Question W) (μ : PMF W) : Prop :=
   IsTooFelicitous prejacent antecedent rq μ ∧ IsRelevantTo rq dq μ
 
-/-! ### Predicted infelicity
+/-! ### Predicted infelicity -/
 
-If the RQ does not satisfy the felicity conditions for any candidate
-in the discourse, *too* is predicted infelicitous. Two characteristic
-infelicity patterns from §5.5: -/
-
-/-- [thomas-2026] §5.5 (ex 72): if no contextually relevant `rq`
-    has the prejacent providing additional evidence beyond the
-    antecedent, *too* is infelicitous. The infelicity is captured by
-    the absence of any felicitous RQ for the given (prejacent, ant). -/
+/-- *Too* is predicted infelicitous for a given (prejacent, antecedent) when no
+    relevant question satisfies the felicity conditions ([thomas-2026] §5.5). -/
 def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
   ∀ rq : Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
 
-/-- [thomas-2026] §5.5.1 (ex 75): if a single *wh*-answer (e.g.,
-    "Bailey ate spaghetti") is offered against a multiple-*wh* CQ
-    (e.g., "Who ate what?") whose resolutions specify what every
-    salient individual ate, no `rq` over alt(CQ) satisfies the
-    Conjunction Condition because the antecedent alone (e.g., "Avery
-    ate pizza") doesn't constrain Bailey. *Too* is infelicitous unless
-    the CQ is reinterpreted (cf. ex 77, where multiple-*wh* admits a
-    mention-some single-pair reading). -/
-def IsTooInfelicitousAgainstCQ (prejacent antecedent : Set W)
-    (cq : Question W) (μ : PMF W) : Prop :=
-  ¬ IsTooFelicitous prejacent antecedent cq μ
-
-/-! ### Empirical predictions catalog
-
-The proposal accounts for the following data from the paper. Each
-entry pairs a numbered example with the structural reason it is
-licensed (✓) or predicted infelicitous (✗). Worked numerical
-formalisations are deferred to per-example study artifacts.
-
-#### Argument-building uses (§3, §5.3)
-
-* (1a)/(14a)/(65) ✓ "*Good thing she did too*" — hotel-style RQ
-  ("How much has Ernie helped Iree?"); ANT and ANT∩π each raise the
-  probability of "Ernie helped Iree a great deal" but ANT∩π raises
-  it more.
-
-* (1b)/(14b) ✓ "*The fine is a hefty one too*" — RQ "How much should
-  I worry about traffic enforcement?".
-
-* (1c)/(14c)/(65) ✓ "*It looks kind of fancy too*" (hotel) — see
-  Thomas §5.3 worked derivation.
-
-#### Canonical additive uses (§5.4)
-
-* (10)/(21) ✓ "*I like spaghetti, too*" (after "I like pizza") —
-  the canonical case; ANT entails one alt of "What do you like?",
-  ANT∩π entails another.
-
-* (68) ✓ "*She invited Dana, too*" — single mention-some answer
-  combined with prior partial answer.
-
-* (69) ✓ "*I like spaghetti, too*" — antecedent doesn't entail an
-  alternative but provides probabilistic evidence (§5.4.1).
-
-* (70) ✓ "*She invited Ellis, too*" — mention-all RQ, Quantity
-  implicature handles the "no other invitee" inference (§5.4.2).
-
-* (71) ✓ "*She invited Cameron, too*" against multiple-*wh* "Who
-  are some people Avery invited?" — implicit single-*wh* RQ "Who is
-  someone that Avery invited?" satisfies the felicity conditions
-  (§5.4.3).
-
-#### Predicted infelicity (§5.5)
-
-* (15a-c) ✗ Argument-reversal: "*It was a bad thing she did, #too*"
-  — no RQ relevant to discourse goals such that ANT∩π evidences a
-  resolution; the prejacent argues against the antecedent.
-
-* (29a)/(73) ✗ "*Sam is happy. #He's ecstatic, too*" — Prejacent
-  Condition (i) violated: ⟦π⟧ = ecstatic entails "Sam is happy" =
-  resolution evidenced by ANT∩π.
-
-* (29b) ✗ "*Sam stole the cookies, #too*" (after fingerprints) —
-  same Prejacent (i) violation.
-
-* (30)/(74) ✗ "*Bailey plays the cello, #too*" against "Who plays
-  an instrument?" — Prejacent Condition (ii) violated: a weaker
-  prejacent ("Bailey plays an instrument") would license the same
-  resolution.
-
-* (40)/(75) ✗ "*Bailey ate spaghetti, #too*" against multiple-*wh*
-  "Who ate what?" with both individuals presupposed to have eaten —
-  Conjunction Condition fails because ANT does not constrain Bailey.
-
-* (72) ✗ "*Dogs are mammals, too*" — ANT∩π provides no information
-  about the existing CQ alternatives.
-
-#### Other distributional facts (§5.5.2)
-
-* (78)/(79) ✓ Narrow scope under negation: *too* under negation
-  scopes its prejacent to the positive proposition.
-
-* (80) ✓ Subordinate-clause use: prejacent is the subordinate clause.
-
-* (81) ✓ Polar-question scope.
-
-* (82)–(85) ✓ Wh-question domain restriction (Theiler 2019); felicity
-  requires the variable in the prejacent to be properly bound. -/
-
 end Thomas2026
+
+/-! ### Worked witness
+
+A concrete model showing the answerhood structure underlying TOO felicity is
+satisfiable and discriminating. Over `W = Fin 3` with the uniform prior, the
+evidence `R = {1}` answers the two-alternative question `Q` (alternatives
+`A = {0,1}` and `B = {2}`) via the singleton resolution `{A}`, while the trivial
+evidence `Set.univ` answers nothing. This instantiates the `raises_prob` and
+`dominates` fields that the abstract `IsTooFelicitous` structure never forces a
+caller to exhibit. -/
+
+namespace Thomas2026.Witness
+
+open Question Semantics.Questions.Probabilistic
+open scoped ENNReal
+
+abbrev W := Fin 3
+abbrev A : Set W := {0, 1}
+abbrev B : Set W := {2}
+abbrev R : Set W := {1}
+
+/-- The uniform prior on `Fin 3`. -/
+noncomputable def μ : PMF W := PMF.ofFintype (fun _ => (3 : ℝ≥0∞)⁻¹) (by
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+    Nat.cast_ofNat]
+  exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
+
+/-- The relevant question: `Avery invited Bailey?` against `Avery invited
+    Cameron?` — two incomparable alternatives `A` and `B`. -/
+def Q : Question W := Question.declarative A ⊔ Question.declarative B
+
+theorem hAnotB : ¬ A ⊆ B := by
+  intro h; have : (0 : W) ∈ B := h (by simp); simp at this
+
+theorem hBnotA : ¬ B ⊆ A := by
+  intro h; have : (2 : W) ∈ A := h (by simp); simp at this
+
+theorem hRA : R ⊆ A := by intro x hx; fin_cases x <;> simp_all
+
+theorem hRcapB : R ∩ B = ∅ := by ext x; fin_cases x <;> simp_all
+
+theorem A_mem_altQ : A ∈ alt Q := by
+  apply Question.mem_alt_sup_of_alt_left
+  · rw [Question.alt_declarative]; exact Set.mem_singleton_iff.mpr rfl
+  · intro r hr hAr; exact absurd (hAr.trans hr) hAnotB
+
+theorem B_mem_altQ : B ∈ alt Q := by
+  apply Question.mem_alt_sup_of_alt_right
+  · rw [Question.alt_declarative]; exact Set.mem_singleton_iff.mpr rfl
+  · intro r hr hBr; exact absurd (hBr.trans hr) hBnotA
+
+theorem altQ_subset : alt Q ⊆ {A, B} := by
+  intro q hq
+  have h := Question.alt_sup_subset_union (Question.declarative A)
+    (Question.declarative B) hq
+  rw [Question.alt_declarative, Question.alt_declarative, Set.singleton_union] at h
+  exact h
+
+theorem altQ_eq : alt Q = {A, B} := by
+  apply Set.Subset.antisymm altQ_subset
+  intro q hq
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
+  rcases hq with rfl | rfl
+  · exact A_mem_altQ
+  · exact B_mem_altQ
+
+theorem mu_apply (i : W) : μ i = (3 : ℝ≥0∞)⁻¹ := by simp [μ, PMF.ofFintype_apply]
+
+theorem probOfSet_R_pos : μ.probOfSet R > 0 := by
+  rw [PMF.probOfSet_apply, Fin.sum_univ_three, mu_apply, mu_apply, mu_apply]
+  have h0 : ¬ (0 : W) ∈ R := by simp [R]
+  have h1 : (1 : W) ∈ R := by simp [R]
+  have h2 : ¬ (2 : W) ∈ R := by simp [R]
+  rw [if_neg h0, if_pos h1, if_neg h2]
+  simp only [zero_add, add_zero]
+  exact ENNReal.inv_pos.mpr (by simp)
+
+theorem probOfSet_A_lt_one : μ.probOfSet A < 1 := by
+  have hsum := PMF.probOfSet_compl_add μ A
+  have hAc_pos : μ.probOfSet Aᶜ > 0 := by
+    rw [PMF.probOfSet_apply, Fin.sum_univ_three, mu_apply, mu_apply, mu_apply]
+    have h0 : ¬ (0 : W) ∈ Aᶜ := by simp [A]
+    have h1 : ¬ (1 : W) ∈ Aᶜ := by simp [A]
+    have h2 : (2 : W) ∈ Aᶜ := by simp [A]
+    rw [if_neg h0, if_neg h1, if_pos h2]
+    simp only [zero_add, add_zero]
+    exact ENNReal.inv_pos.mpr (by simp)
+  calc μ.probOfSet A < μ.probOfSet A + μ.probOfSet Aᶜ :=
+        ENNReal.lt_add_right (PMF.probOfSet_ne_top μ A) hAc_pos.ne'
+    _ = 1 := hsum
+
+theorem hsel : ∀ A' ∈ alt Q, A' ≠ A → R ∩ A' = ∅ := by
+  intro A' hA' hne
+  rw [altQ_eq] at hA'
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hA'
+  rcases hA' with rfl | rfl
+  · exact absurd rfl hne
+  · exact hRcapB
+
+/-- **Positive witness**: `R` answers `Q`, via the singleton resolution `{A}`. -/
+theorem answers_R : Answers R Q μ :=
+  ⟨{A}, isResolutionEvidencedBy_singleton A_mem_altQ hsel hRA probOfSet_R_pos
+    probOfSet_A_lt_one⟩
+
+/-- **Discriminating contrast**: `Answers` distinguishes the informative
+    evidence `R` from the uninformative `Set.univ`. -/
+theorem answers_discriminates :
+    Answers R Q μ ∧ ¬ Answers (Set.univ : Set W) Q μ :=
+  ⟨answers_R, not_answers_univ⟩
+
+end Thomas2026.Witness

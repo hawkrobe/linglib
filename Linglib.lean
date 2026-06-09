@@ -2888,3 +2888,4 @@ import Linglib.Fragments.WestGreenlandic.Evidentiality
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Finnish.Evidentiality
 import Linglib.Studies.Zimmermann2026
+import Linglib.Studies.Thomas2026
