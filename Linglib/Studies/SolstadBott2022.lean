@@ -471,11 +471,11 @@ open KehlerRohde2013
     causes, and IC bias tracks whichever argument carries the
     causation entailment — the stimulus. -/
 theorem ic_instantiates_KR_explanation_bias :
-    cr_explanation.cr.selectsCause ∧
-    cr_explanation.sourceGivenCR > 50 ∧
+    crExplanation.cr.selectsCause ∧
+    crExplanation.sourceGivenCR > 50 ∧
     predictICBias stimExpSubjectProfile = .np1 ∧
     predictICBias expStimSubjectProfile = .np2 := by
-  exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
+  refine ⟨rfl, by norm_num [crExplanation], ?_, ?_⟩ <;> native_decide
 
 /-- [kehler-rohde-2013]'s key structural claim is that coherence
     relations and referential form contribute to DIFFERENT terms in
