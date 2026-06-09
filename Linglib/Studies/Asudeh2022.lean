@@ -1,6 +1,6 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Quantification.Quantifier

@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Basic
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 
 /-!
 # Situations: Partial Indices

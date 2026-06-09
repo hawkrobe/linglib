@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Basic
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
 
 /-!

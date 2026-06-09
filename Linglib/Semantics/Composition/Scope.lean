@@ -18,7 +18,7 @@ This module provides:
 
 -/
 
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Features.ScopeTypes
 

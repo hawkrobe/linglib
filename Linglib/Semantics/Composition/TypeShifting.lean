@@ -1,6 +1,5 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
-import Linglib.Semantics.Composition.ToyDomain
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -31,7 +30,6 @@ namespace Semantics.Composition.TypeShifting
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Conjunction (typeRaise)
-open Semantics.Montague (ToyEntity)
 
 variable {E W : Type}
 
@@ -378,40 +376,21 @@ theorem BE_A_id (domain : List E) (P : (E → Prop))
   · rintro ⟨z, _, hPz, hzx⟩; cases hzx; exact hPz
   · intro hPx; exact ⟨x, hcomplete x, hPx, rfl⟩
 
-/-- For non-principal GQs, the round-trip can differ.
-    Example: `⟦every⟧(P)(Q) = ∀x[P(x) → Q(x)]`, but
-    `A(BE(⟦every⟧(P)))(Q) = ∃x[P(x) ∧ Q(x)]` — existential, not universal.
-    Verified on the toy model. -/
-private def toyDomain₁ : List ToyEntity := [.john, .mary, .pizza]
-private def toyEvery : (ToyEntity → Prop) → Prop := fun P => ∀ x ∈ toyDomain₁, P x
+private def twoDomain : List Bool := [true, false]
+private def twoEvery : (Bool → Prop) → Prop := fun P => ∀ x ∈ twoDomain, P x
 
 /-- For non-principal GQs, the round-trip changes truth conditions.
     `every(⊤) = True` but `A(BE(every))(⊤) = False` — the round-trip
     collapses universal quantification to `⊥` on multi-element domains.
     (`BE(every)` asks "which entity equals all entities?" — none do.) -/
 theorem roundtrip_changes_nonprincipal :
-    toyEvery (fun _ => True) ∧ ¬ A toyDomain₁ (BE toyEvery) (fun _ => True) := by
+    twoEvery (fun _ => True) ∧ ¬ A twoDomain (BE twoEvery) (fun _ => True) := by
   refine ⟨fun _ _ => trivial, ?_⟩
   intro ⟨x, _, hBE, _⟩
-  -- hBE : BE toyEvery x, i.e. ∀ y ∈ toyDomain₁, y = x
-  -- Impossible since toyDomain₁ has 3 distinct elements
-  simp only [BE, toyEvery, toyDomain₁] at hBE
-  have h1 : ToyEntity.john = x := hBE .john (by simp)
-  have h2 : ToyEntity.mary = x := hBE .mary (by simp)
-  rw [← h1] at h2; exact ToyEntity.noConfusion h2
-
-section ToyExamples
-
-open Semantics.Montague.ToyLexicon (john_sem)
-
-private def toyDomain₂ : List ToyEntity := [.john, .mary, .pizza, .book]
-
-example : lift (E := ToyEntity) john_sem Semantics.Montague.ToyLexicon.sleeps_sem :=
-  show Semantics.Montague.ToyLexicon.sleeps_sem john_sem from trivial
-example : BE (E := ToyEntity) (lift john_sem) = ident john_sem :=
-  BE_lift_eq_ident john_sem
-
-end ToyExamples
+  simp only [BE, twoEvery, twoDomain] at hBE
+  have h1 : true = x := hBE true (by simp)
+  have h2 : false = x := hBE false (by simp)
+  rw [← h1] at h2; exact Bool.noConfusion h2
 
 -- ============================================================================
 -- The Type-Shifting Triangle ([partee-1987] Figure 3)

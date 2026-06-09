@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Coordination

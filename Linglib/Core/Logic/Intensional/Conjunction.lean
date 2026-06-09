@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 
 /-!
 # Generalized Conjunction

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Tree.Basic
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Modification.Basic
@@ -30,7 +30,7 @@ Two effect-discipline choices, both visible rather than stipulated:
   effects fire first whichever daughter is the function. At `M = Cont R`
   this makes surface scope the default reading; inverse scope requires
   reordering the evaluation (QR, or `bind`-order permutation — see
-  `Composition/Effects.lean`).
+  `Composition/Continuation.lean` and `Studies/BumfordCharlow2024.lean`).
 * **PA is a capability, not a given** (`PredAbs`): it needs an
   entity-distributor `(E → M (Denot ty)) → M (E → Denot ty)`,
   which `Id` has and scope-type effects lack. See the `PredAbs` docstring.
@@ -58,7 +58,7 @@ structure TypedDenot (E W : Type) (M : Type → Type := Id) where
 Reader-like effect) has a distributor; scope-type effects (`Cont R`) do
 not — abstraction would have to run one continuation at every entity
 simultaneously — so binding under such effects arises from `bind`-order
-or the W ⊣ R adjunction instead (`Composition/Effects.lean` §4). Making
+or the W ⊣ R adjunction instead (`Studies/BumfordCharlow2024.lean`). Making
 the distributor optional turns the QR/PA-vs-effect-sequencing rivalry
 into a fact checked by instance resolution. -/
 class PredAbs (M : Type → Type) (E W : Type) where
@@ -218,8 +218,8 @@ def interp (E W : Type) {M : Type → Type} [Applicative M] [PredAbs M E W]
       | none => probeVal⟩
 
 /-- Extract truth value from (pure) tree interpretation. Effectful roots
-discharge through per-effect handlers instead (`Composition/Effects.lean`
-§5). -/
+discharge through per-effect handlers instead (`handleScope` and kin in
+`Studies/BumfordCharlow2024.lean`). -/
 def evalTree {E W : Type} [∀ (p : Denot E W .t), Decidable p]
     (lex : Lexicon E W) (g : Core.Assignment E) (t : Tree C String)
     : Option Bool :=

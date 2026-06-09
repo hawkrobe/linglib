@@ -1,6 +1,7 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Aristotelian.Square
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Fragments.English.Toy
 import Mathlib.Data.Fintype.Basic
 
 /-!

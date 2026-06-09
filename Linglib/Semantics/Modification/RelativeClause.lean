@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Modification.Basic
 

@@ -1,6 +1,6 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 
 /-!
 # Semantic Equivalence and Spurious Ambiguity
