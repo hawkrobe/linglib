@@ -32,6 +32,8 @@ import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
+import Linglib.Core.Logic.Entailment.Basic
+import Linglib.Core.Logic.Entailment.FirstOrder
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilateral.Classical
