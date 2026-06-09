@@ -6,7 +6,7 @@ import Linglib.Core.Logic.Intensional.Variables
 
 Predicate operators consumed by the `Description` interpretation function in
 `Semantics/Definiteness/Interpret.lean`. All operators live over
-`Core.Logic.Intensional.Frame.Denot` so they slot directly into the IL stack.
+`Core.Logic.Intensional.Denot` so they slot directly into the IL stack.
 
 ## What this module provides
 
@@ -16,7 +16,7 @@ Predicate operators consumed by the `Description` interpretation function in
   classical Russellian condition `existsUnique` is the conjunction.
 
 - **Sharvy maximality** ([sharvy-1980]): the maximal P-satisfier under a
-  partial order on `F.Entity`. For singular count nouns this collapses to
+  partial order on `E`. For singular count nouns this collapses to
   Russellian iota; for plurals (with a join-semilattice on entities) it
   returns the join of all satisfiers. We supply both:
     - `russellIota` — order-free unique-element selector
@@ -34,7 +34,7 @@ Predicate operators consumed by the `Description` interpretation function in
   `Semantics/Definiteness/Interpret.lean` wires `Description` constructors to them.
 
 - **Ord-free vs. order-relative.** `russellIota` uses only `Eq`; `sharvyMax`
-  requires `PartialOrder F.Entity`. This is the [sharvy-1980] /
+  requires `PartialOrder E`. This is the [sharvy-1980] /
   [link-1983] split: singular definites work over flat individuals,
   plural definites need the join-semilattice from mereology
   ([link-1983]).
@@ -56,32 +56,32 @@ open Core.Logic.Intensional
 
 /-- [coppock-beaver-2015]'s Existence component. Asserted, not
     presupposed, in their factorization of the Russellian iota. -/
-def Existence {F : Frame} (P : F.Denot .et) : Prop :=
-  ∃ x : F.Entity, P x
+def Existence {E W : Type} (P : Denot E W .et) : Prop :=
+  ∃ x : E, P x
 
 /-- [coppock-beaver-2015]'s Uniqueness component. Presupposed (rather
     than asserted) on their account; this is the projection contrast that
     distinguishes "the King of France isn't bald" (uniqueness presupposed)
     from a plain Russellian negation (uniqueness in scope of negation). -/
-def Uniqueness {F : Frame} (P : F.Denot .et) : Prop :=
-  ∀ x y : F.Entity, P x → P y → x = y
+def Uniqueness {E W : Type} (P : Denot E W .et) : Prop :=
+  ∀ x y : E, P x → P y → x = y
 
 /-- The classical Russellian condition: `∃!x. P x`. By construction the
     conjunction of [coppock-beaver-2015]'s two components. -/
-def existsUnique {F : Frame} (P : F.Denot .et) : Prop :=
+def existsUnique {E W : Type} (P : Denot E W .et) : Prop :=
   Existence P ∧ Uniqueness P
 
 /-- Russellian existence-and-uniqueness is exactly the conjunction of
     Coppock–Beaver Existence and Uniqueness. By definition. -/
 theorem existsUnique_iff_existence_and_uniqueness
-    {F : Frame} (P : F.Denot .et) :
+    {E W : Type} (P : Denot E W .et) :
     existsUnique P ↔ (Existence P ∧ Uniqueness P) := Iff.rfl
 
 /-- Existence and Uniqueness are logically independent. The empty predicate
     `λ _ => False` satisfies Uniqueness (vacuously) but not Existence —
     [coppock-beaver-2015]'s key motivating data. -/
-theorem uniqueness_does_not_imply_existence {F : Frame} :
-    Uniqueness (F := F) (fun _ => False) ∧ ¬ Existence (F := F) (fun _ => False) := by
+theorem uniqueness_does_not_imply_existence {E W : Type} :
+    Uniqueness (E := E) (W := W) (fun _ => False) ∧ ¬ Existence (E := E) (W := W) (fun _ => False) := by
   refine ⟨?_, ?_⟩
   · intro x y hx _; exact False.elim hx
   · rintro ⟨_, h⟩; exact h
@@ -92,15 +92,15 @@ theorem uniqueness_does_not_imply_existence {F : Frame} :
 
 /-- The order-free unique-element selector: returns the witness when there
     is exactly one P-satisfier. Order-free version usable when no preorder is
-    declared on `F.Entity`. -/
-noncomputable def russellIota {F : Frame} (P : F.Denot .et) : Option F.Entity :=
+    declared on `E`. -/
+noncomputable def russellIota {E W : Type} (P : Denot E W .et) : Option E :=
   letI := Classical.dec (existsUnique P)
   if h : existsUnique P then some h.1.choose else none
 
 /-- `russellIota` returns `some` exactly when Russellian existence-and-
     uniqueness holds. -/
 theorem russellIota_isSome_iff_existsUnique
-    {F : Frame} (P : F.Denot .et) :
+    {E W : Type} (P : Denot E W .et) :
     (russellIota P).isSome ↔ existsUnique P := by
   classical
   unfold russellIota
@@ -110,7 +110,7 @@ theorem russellIota_isSome_iff_existsUnique
 
 /-- The witness returned by `russellIota` satisfies the predicate. -/
 theorem russellIota_witness_satisfies
-    {F : Frame} (P : F.Denot .et) (e : F.Entity)
+    {E W : Type} (P : Denot E W .et) (e : E)
     (h : russellIota P = some e) : P e := by
   classical
   unfold russellIota at h
@@ -123,7 +123,7 @@ theorem russellIota_witness_satisfies
 /-- Two witnesses returned by `russellIota` (over the same predicate) must
     coincide. By Uniqueness. -/
 theorem russellIota_witness_unique
-    {F : Frame} (P : F.Denot .et) (e₁ e₂ : F.Entity)
+    {E W : Type} (P : Denot E W .et) (e₁ e₂ : E)
     (h₁ : russellIota P = some e₁) (h₂ : russellIota P = some e₂) :
     e₁ = e₂ := by
   rw [h₁] at h₂
@@ -160,14 +160,14 @@ theorem russellIotaList_eq_some_iff {E : Type*} (domain : List E) (P : E → Boo
     For singular count nouns the order is flat (only `e ≤ e`) so maximality
     coincides with Russellian uniqueness; for plurals (with [link-1983]'s
     join semilattice) maximality returns the sum of all atoms. -/
-def IsMaximal {F : Frame} [LE F.Entity] (P : F.Denot .et) (e : F.Entity) : Prop :=
-  P e ∧ ∀ x : F.Entity, P x → x ≤ e
+def IsMaximal {E W : Type} [LE E] (P : Denot E W .et) (e : E) : Prop :=
+  P e ∧ ∀ x : E, P x → x ≤ e
 
 /-- Sharvy maximality is unique: at most one entity is `IsMaximal P` under a
     partial order. Antisymmetry collapses two maxima into one. -/
 theorem isMaximal_unique
-    {F : Frame} [PartialOrder F.Entity]
-    (P : F.Denot .et) (e₁ e₂ : F.Entity)
+    {E W : Type} [PartialOrder E]
+    (P : Denot E W .et) (e₁ e₂ : E)
     (h₁ : IsMaximal P e₁) (h₂ : IsMaximal P e₂) : e₁ = e₂ := by
   exact le_antisymm (h₂.2 _ h₁.1) (h₁.2 _ h₂.1)
 
@@ -175,13 +175,13 @@ theorem isMaximal_unique
     P-satisfier when one exists; `none` otherwise (no satisfier, or no
     upper bound among the satisfiers). -/
 noncomputable def sharvyMax
-    {F : Frame} [PartialOrder F.Entity] (P : F.Denot .et) : Option F.Entity :=
+    {E W : Type} [PartialOrder E] (P : Denot E W .et) : Option E :=
   letI := Classical.dec (∃ e, IsMaximal P e)
   if h : ∃ e, IsMaximal P e then some h.choose else none
 
 /-- `sharvyMax` returns `some` exactly when a maximal P-satisfier exists. -/
 theorem sharvyMax_isSome_iff_isMaximal
-    {F : Frame} [PartialOrder F.Entity] (P : F.Denot .et) :
+    {E W : Type} [PartialOrder E] (P : Denot E W .et) :
     (sharvyMax P).isSome ↔ ∃ e, IsMaximal P e := by
   classical
   unfold sharvyMax
@@ -191,7 +191,7 @@ theorem sharvyMax_isSome_iff_isMaximal
 
 /-- The witness returned by `sharvyMax` is maximal. -/
 theorem sharvyMax_witness_isMaximal
-    {F : Frame} [PartialOrder F.Entity] (P : F.Denot .et) (e : F.Entity)
+    {E W : Type} [PartialOrder E] (P : Denot E W .et) (e : E)
     (h : sharvyMax P = some e) : IsMaximal P e := by
   classical
   unfold sharvyMax at h
@@ -203,7 +203,7 @@ theorem sharvyMax_witness_isMaximal
 
 /-- The witness returned by `sharvyMax` satisfies `P`. -/
 theorem sharvyMax_witness_satisfies
-    {F : Frame} [PartialOrder F.Entity] (P : F.Denot .et) (e : F.Entity)
+    {E W : Type} [PartialOrder E] (P : Denot E W .et) (e : E)
     (h : sharvyMax P = some e) : P e :=
   (sharvyMax_witness_isMaximal P e h).1
 
@@ -216,21 +216,21 @@ theorem sharvyMax_witness_satisfies
     This is what licenses "the boys are tall" — Križ argues uniformity is
     presupposed, so partial-truth cases (some boys tall, others not) yield
     presupposition failure rather than `False`. -/
-def Homogeneous {F : Frame} (P S : F.Denot .et) : Prop :=
+def Homogeneous {E W : Type} (P S : Denot E W .et) : Prop :=
   (∀ x, P x → S x) ∨ (∀ x, P x → ¬ S x)
 
 /-- Homogeneity is symmetric in its two failure modes (uniformly-S vs
     uniformly-¬S). Both yield well-defined truth values; only the *split*
     case is presupposition failure. By definition. -/
 theorem homogeneous_symmetric_in_truth_value
-    {F : Frame} (P S : F.Denot .et) :
+    {E W : Type} (P S : Denot E W .et) :
     Homogeneous P S ↔ ((∀ x, P x → S x) ∨ (∀ x, P x → ¬ S x)) := Iff.rfl
 
 /-- Russellian uniqueness implies Križ homogeneity (vacuously beyond the
     unique witness): if there is exactly one P-satisfier, then any S is
     trivially uniform on the (singleton) extension of P. -/
 theorem uniqueness_implies_homogeneous_classical
-    {F : Frame} (P S : F.Denot .et)
+    {E W : Type} (P S : Denot E W .et)
     (hU : Uniqueness P) :
     Homogeneous P S := by
   classical

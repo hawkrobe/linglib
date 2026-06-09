@@ -1,6 +1,6 @@
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Quantification.Quantifier
 
 /-!
@@ -37,9 +37,9 @@ namespace Katzir2007
 
 open Syntax
 open Semantics.Composition.Tree
-open Semantics.Montague (toyFrame ToyEntity)
-open Semantics.Montague.ToyLexicon (sleeps_sem)
-open Semantics.Quantification.Quantifier (some_sem every_sem student_sem)
+open Semantics.Montague (ToyEntity)
+open Semantics.Montague.ToyLexicon (sleeps_sem student_sem)
+open Semantics.Quantification.Quantifier (some_sem every_sem)
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Source Tree

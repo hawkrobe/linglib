@@ -49,23 +49,18 @@ inductive Student where
   | alice | bob | carol
   deriving DecidableEq, Repr
 
-/-- Model with three students -/
-def studentModel : Frame where
-  Entity := Student
-  Index := Unit
-
-instance : Fintype studentModel.Entity where
+instance : Fintype Student where
   elems := ({Student.alice, Student.bob, Student.carol} : Finset Student)
-  complete := fun x => by cases x <;> (unfold studentModel; simp)
+  complete := fun x => by cases x <;> simp
 
 /-- All entities are students in this model -/
-def isStudent : studentModel.Denot (.e ⇒ .t) := λ _ => True
+def isStudent : Denot Student Unit (.e ⇒ .t) := λ _ => True
 
 /--
 "Passed" predicate indexed by world.
 World w means exactly w students passed (Alice, then Bob, then Carol).
 -/
-def passedAt (w : Fin 4) : studentModel.Denot (.e ⇒ .t) := λ s =>
+def passedAt (w : Fin 4) : Denot Student Unit (.e ⇒ .t) := λ s =>
   match w.val, s with
   | 0, _ => False
   | 1, .alice => True

@@ -30,6 +30,7 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
+import Linglib.Fragments.English.Toy
 
 namespace Steedman2000
 
@@ -120,6 +121,63 @@ CCG's prediction: the compositional semantics yields this interpretation
 via type-raising + composition + generalized conjunction.
 -/
 
+-- Toy semantic lexicon over the toy English fragment
+
+/-- The toy semantic lexicon for CCG derivations. -/
+def toySemLexicon : SemLexicon ToyEntity Unit := λ word cat =>
+  match word, cat with
+  -- Proper names
+  | "John", .atom .NP => some ⟨NP, ToyEntity.john⟩
+  | "Mary", .atom .NP => some ⟨NP, ToyEntity.mary⟩
+  -- Common noun phrases (using pizza entity as placeholder)
+  | "beans", .atom .NP => some ⟨NP, ToyEntity.pizza⟩
+  -- Intransitive verbs
+  | "sleeps", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.sleeps_sem⟩
+  | "laughs", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.laughs_sem⟩
+  -- Transitive verbs
+  | "sees", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.sees_sem⟩
+  | "eats", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.eats_sem⟩
+  | "likes", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
+  | "hates", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
+  | _, _ => none
+
+/-- Interpretation of "John sleeps" produces the correct truth value. -/
+theorem john_sleeps_interp_correct :
+    getMeaning (john_sleeps.interp toySemLexicon) = some True := rfl
+
+/-- Interpretation of "John sees Mary" produces the correct truth value. -/
+theorem john_sees_mary_interp_correct :
+    getMeaning (john_sees_mary.interp toySemLexicon) = some True := rfl
+
+-- Type-raising and composition
+
+/-- Type-raised "John": NP → S/(S\NP) via forward type-raising. -/
+def john_typeraised : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
+
+#guard (john_typeraised.interp toySemLexicon).isSome
+
+/-- "John sees Mary" with a type-raised subject: the raised subject uses
+    FORWARD application (it is S/(S\NP), seeking S\NP to its right). -/
+def john_sees_mary_via_tr : DerivStep :=
+  .fapp john_typeraised (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+
+/-- The type-raised derivation produces the same truth value. -/
+theorem john_sees_mary_via_tr_correct :
+    getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some True := rfl
+
+/-- "John likes" as S/NP via type-raising + composition — the constituent
+    that coordinates with "Mary hates" in "John likes and Mary hates beans". -/
+def john_likes_composed : DerivStep :=
+  .fcomp john_typeraised (.lex ⟨"likes", TV⟩)
+
+#guard (john_likes_composed.interp toySemLexicon).isSome
+#guard (john_likes_and_mary_hates.interp toySemLexicon).isSome
+#guard (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
+
 /--
 **LINKING THEOREM: CCG derives both sides of the semantic equivalence**
 
@@ -144,6 +202,20 @@ theorem ccg_derives_nonconstituent_coordination :
   · rfl  -- CCG derives category S
   · native_decide  -- CCG's derivation succeeds
 
+/-- The predicate "John likes and Mary hates" (category S/NP) evaluated
+    at an entity. -/
+def coordMeaningAt (e : ToyEntity) : Option Prop :=
+  match john_likes_and_mary_hates.interp toySemLexicon with
+  | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some (m e)
+  | _ => none
+
+/-- The pointwise conjunction of "John likes" and "Mary hates" at an entity. -/
+def pointwiseConjAt (e : ToyEntity) : Option Prop :=
+  match john_likes.interp toySemLexicon, mary_hates.interp toySemLexicon with
+  | some ⟨.rslash (.atom .S) (.atom .NP), m₁⟩, some ⟨.rslash (.atom .S) (.atom .NP), m₂⟩ =>
+      some (m₁ e ∧ m₂ e)
+  | _, _ => none
+
 /--
 **THE SUBSTANTIVE SEMANTIC THEOREM**
 
@@ -166,6 +238,13 @@ theorem ccg_coordination_semantics_correct :
       coordMeaningAt e = pointwiseConjAt e := by
   intro e
   cases e <;> rfl
+
+/-- The truth value of "John likes and Mary hates beans" is the conjunction
+    of the two predications (in the toy model, likes = hates = sees). -/
+theorem coordination_truth_conditions_correct :
+    getMeaning (john_likes_and_mary_hates_beans.interp toySemLexicon) =
+      some (ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.john ∧
+            ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := rfl
 
 -- Summary: CCG Captures Non-Constituent Coordination
 

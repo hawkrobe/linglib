@@ -19,7 +19,7 @@ context, and that index can be bound by higher operators.
 
 The IL substrate operationalizes this in two parallel pieces:
 
-- **`SitAssignment F := Nat → F.Index`** in `Core.Logic.Intensional.Variables`
+- **`SitAssignment W := Nat → W`** in `Core.Logic.Intensional.Variables`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
 - **`Description.unique R sIdx`** in `Semantics.Definiteness.Description`
@@ -71,8 +71,6 @@ inductive Room where
   | living
   deriving DecidableEq, Repr
 
-def F : Frame := { Entity := Item, Index := Room }
-
 /-- "Table-in-room": the predicate is true at exactly one item per room.
     Encodes the [hanink-2021] resource-situation idea — what counts
     as "the table" depends on the situation we evaluate at. -/
@@ -88,7 +86,7 @@ def tableIn : Room → Item → Prop
 
     This is the [hanink-2021] situation-pronoun pattern: the
     structural index `0` selects which situation in `gs` to use. -/
-def tableAtSit0 : DenotGS F .et :=
+def tableAtSit0 : DenotGS Item Room .et :=
   fun _g gs x => tableIn (interpSitPronoun 0 gs) x
 
 -- ════════════════════════════════════════════════════════════════
@@ -96,13 +94,13 @@ def tableAtSit0 : DenotGS F .et :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- A trivial entity assignment. Entity binding is not exercised here. -/
-def g₀ : Core.Assignment F.Entity := fun _ => Item.tableKitchen
+def g₀ : Core.Assignment Item := fun _ => Item.tableKitchen
 
 /-- Situation assignment with pronoun 0 ↦ kitchen. -/
-def gsKitchen : SitAssignment F := fun _ => Room.kitchen
+def gsKitchen : SitAssignment Room := fun _ => Room.kitchen
 
 /-- Situation assignment with pronoun 0 ↦ living. -/
-def gsLiving : SitAssignment F := fun _ => Room.living
+def gsLiving : SitAssignment Room := fun _ => Room.living
 
 -- ════════════════════════════════════════════════════════════════
 -- §3: The same description picks different referents (the payoff)
@@ -111,7 +109,7 @@ def gsLiving : SitAssignment F := fun _ => Room.living
 /-- Restrictor uniqueness in the kitchen situation: only `tableKitchen`
     satisfies `tableAtSit0`. -/
 theorem tableAtSit0_existsUnique_kitchen :
-    existsUnique (F := F) (fun x => tableAtSit0 g₀ gsKitchen x) := by
+    existsUnique (E := Item) (W := Room) (fun x => tableAtSit0 g₀ gsKitchen x) := by
   refine ⟨⟨Item.tableKitchen, trivial⟩, ?_⟩
   intro x y hx hy
   cases x <;> cases y <;>
@@ -120,7 +118,7 @@ theorem tableAtSit0_existsUnique_kitchen :
 /-- Restrictor uniqueness in the living-room situation: only
     `tableLiving` satisfies `tableAtSit0`. -/
 theorem tableAtSit0_existsUnique_living :
-    existsUnique (F := F) (fun x => tableAtSit0 g₀ gsLiving x) := by
+    existsUnique (E := Item) (W := Room) (fun x => tableAtSit0 g₀ gsLiving x) := by
   refine ⟨⟨Item.tableLiving, trivial⟩, ?_⟩
   intro x y hx hy
   cases x <;> cases y <;>
@@ -129,7 +127,7 @@ theorem tableAtSit0_existsUnique_living :
 /-- Witness extraction for the kitchen case: the unique satisfier is
     `tableKitchen`. -/
 theorem theTable_kitchen :
-    interpret (F := F) (.unique tableAtSit0 0) g₀ gsKitchen
+    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
       = some Item.tableKitchen :=
   interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsKitchen Item.tableKitchen trivial
     (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen])
@@ -137,7 +135,7 @@ theorem theTable_kitchen :
 /-- Witness extraction for the living-room case: the unique satisfier
     is `tableLiving`. -/
 theorem theTable_living :
-    interpret (F := F) (.unique tableAtSit0 0) g₀ gsLiving
+    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsLiving
       = some Item.tableLiving :=
   interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsLiving Item.tableLiving trivial
     (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving])
@@ -147,8 +145,8 @@ theorem theTable_living :
     description is one syntactic object; the resource situation is a
     bound variable, not a free parameter. -/
 theorem same_description_different_referents :
-    interpret (F := F) (.unique tableAtSit0 0) g₀ gsKitchen
-      ≠ interpret (F := F) (.unique tableAtSit0 0) g₀ gsLiving := by
+    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
+      ≠ interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsLiving := by
   rw [theTable_kitchen, theTable_living]
   intro h
   cases (Option.some_inj.mp h)
@@ -164,8 +162,8 @@ theorem same_description_different_referents :
     explicit.) The Hanink claim is recovered via the restrictor calling
     `interpSitPronoun sIdx`, not via the interpreter inspecting `sIdx`. -/
 theorem unique_index_does_not_alter_referent_directly :
-    interpret (F := F) (.unique tableAtSit0 0) g₀ gsKitchen
-      = interpret (F := F) (.unique tableAtSit0 7) g₀ gsKitchen :=
+    interpret (E := Item) (W := Room) (.unique tableAtSit0 0) g₀ gsKitchen
+      = interpret (E := Item) (W := Room) (.unique tableAtSit0 7) g₀ gsKitchen :=
   interpret_unique_index_irrelevant _ _ _ _ _
 
 /-- Among `Description` constructors, exactly `unique` and
@@ -173,7 +171,7 @@ theorem unique_index_does_not_alter_referent_directly :
     pronoun. Anaphoric definites do not — they consult the entity
     assignment for an antecedent, not the situation assignment. -/
 theorem situation_binders_classified
-    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
+    (R : DenotGS Item Room .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
     (Description.unique R sIdx).usesSituationPronoun = true ∧
     (Description.demonstrative R deictic sIdx d).usesSituationPronoun = true ∧
     (Description.anaphoric R d).usesSituationPronoun = false ∧
@@ -194,18 +192,18 @@ theorem situation_binders_classified
     [hanink-2021]'s architecture: the *anaphoric* layer reads from
     `g`, the *unique* layer reads from `gs`. -/
 theorem anaphoric_independent_of_situation
-    (R : DenotGS F .et) (d : Nat)
+    (R : DenotGS Item Room .et) (d : Nat)
     (hgs : R g₀ gsKitchen = R g₀ gsLiving) :
-    interpret (F := F) (.anaphoric R d) g₀ gsKitchen =
-    interpret (F := F) (.anaphoric R d) g₀ gsLiving := by
+    interpret (E := Item) (W := Room) (.anaphoric R d) g₀ gsKitchen =
+    interpret (E := Item) (W := Room) (.anaphoric R d) g₀ gsLiving := by
   rw [interpret_anaphoric, interpret_anaphoric, hgs]
 
 /-- Concrete instance: with a constant restrictor (the antecedent is
     self-identifying, no situation needed), anaphoric definites are
     insensitive to the resource-situation assignment. -/
 theorem anaphoric_const_restrictor_situation_insensitive (d : Nat) :
-    interpret (F := F) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsKitchen =
-    interpret (F := F) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsLiving :=
+    interpret (E := Item) (W := Room) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsKitchen =
+    interpret (E := Item) (W := Room) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsLiving :=
   anaphoric_independent_of_situation _ _ rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -220,15 +218,15 @@ restrictor and indices come from context. -/
 
 /-- The denotation of a demonstrative pronoun: `Description.demonstrative` over a context restrictor,
     with the pronoun's deictic feature as the presupposition on D ([hanink-2021] (34)/(35)). -/
-def demDescription {Fr : Frame} (p : DemonstrativePronoun)
-    (R : DenotGS Fr .et) (sIdx d : Nat) : Description Fr :=
+def demDescription {E W : Type} (p : DemonstrativePronoun)
+    (R : DenotGS E W .et) (sIdx d : Nat) : Description E W :=
   .demonstrative R p.deixis sIdx d
 
 /-- A demonstrative pronoun picks the *same referent* as a plain anaphoric definite: its deixis is a
     presupposition filter, not a referent selector ([hanink-2021]). The Pronoun-API capability
     `Demonstrative.deixis` is exactly the presupposition that drops out of referent selection. -/
-theorem demDescription_eq_anaphoric {Fr : Frame} (p : DemonstrativePronoun)
-    (R : DenotGS Fr .et) (sIdx d : Nat) (g : Core.Assignment Fr.Entity) (gs : SitAssignment Fr) :
+theorem demDescription_eq_anaphoric {E W : Type} (p : DemonstrativePronoun)
+    (R : DenotGS E W .et) (sIdx d : Nat) (g : Core.Assignment E) (gs : SitAssignment W) :
     interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs :=
   interpret_demonstrative_eq_anaphoric R p.deixis sIdx d g gs
 
@@ -237,9 +235,9 @@ theorem demDescription_eq_anaphoric {Fr : Frame} (p : DemonstrativePronoun)
     definite with no deixis — and a demonstrative pronoun pick the **same referent** (both anaphoric
     over `d`), yet only the demonstrative carries a deictic feature. Article-strength ⊥
     demonstrativehood: PG&G's "*der* is not a `Demonstrative`" is a semantic fact, not just typing. -/
-theorem der_strong_vs_demonstrative {Fr : Frame} (p : DemonstrativePronoun)
+theorem der_strong_vs_demonstrative {E W : Type} (p : DemonstrativePronoun)
     (hdist : (Demonstrative.deixis p).EncodesDistance)
-    (R : DenotGS Fr .et) (sIdx d : Nat) (g : Core.Assignment Fr.Entity) (gs : SitAssignment Fr) :
+    (R : DenotGS E W .et) (sIdx d : Nat) (g : Core.Assignment E) (gs : SitAssignment W) :
     interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs
       ∧ (Demonstrative.deixis p).EncodesDistance :=
   ⟨demDescription_eq_anaphoric p R sIdx d g gs, hdist⟩

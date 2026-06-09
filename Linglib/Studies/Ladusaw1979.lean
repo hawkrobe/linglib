@@ -2,6 +2,7 @@ import Linglib.Core.Logic.Quantification
 import Linglib.Typology.PolarityItem
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Fragments.English.Toy
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
@@ -33,7 +34,7 @@ namespace Ladusaw1979
 open Core.Quantification
 open Typology.PolarityItem (LicensingContext)
 open Core.Logic.Intensional
-open Semantics.Montague (toyFrame ToyEntity)
+open Semantics.Montague (ToyEntity)
 open Semantics.Quantification.Quantifier
 
 -- ============================================================================
