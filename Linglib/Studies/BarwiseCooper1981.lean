@@ -4,6 +4,7 @@ import Mathlib.Data.Set.Card
 import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
+import Linglib.Semantics.Composition.Reduction
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Semantics.Quantification.DomainRestriction
 
@@ -717,7 +718,8 @@ sentence over two unary predicates is true in exactly the finite models
 where more than half the V's are U's. The formal core of B&C's claim that
 *most* is a determiner, not a quantifier. -/
 theorem more_than_half_not_definable :
-    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] (S : L_UV.Structure M),
+    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
+      (S : L_UV.Structure M),
       (@Sentence.Realize L_UV M S φ ↔ MoreThanHalf M S) := by
   rintro ⟨φ, hφ⟩
   set m := numQuant φ + 1 with hm
@@ -1242,12 +1244,42 @@ theorem mostUV_iff_most_sem {M : Type} [Fintype M] (U V : M → Prop) :
 /-- **C12 restated through `most_sem`**: no first-order sentence expresses
 the codebase's ⟦most⟧ over finite models. -/
 theorem most_sem_not_definable :
-    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] (S : L_UV.Structure M),
+    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
+      (S : L_UV.Structure M),
       (@Sentence.Realize L_UV M S φ ↔
         Core.Quantification.most_sem (fun x => S.RelMap vRel ![x])
           (fun x => S.RelMap uRel ![x])) := by
   rintro ⟨φ, hφ⟩
-  exact more_than_half_not_definable ⟨φ, fun M _ S =>
+  exact more_than_half_not_definable ⟨φ, fun M _ _ S =>
     (hφ M S).trans (mostUV_iff_most_sem _ _).symm⟩
+
+/-! ### The engine-level corollary: no fragment tree means *most* -/
+
+open Semantics.Composition in
+/-- **No tree of the compiled fragment means *most***: for any logical
+vocabulary and disjoint naming maps over `L_UV`, no closed tree of the FO
+fragment has, across all nonempty finite models, exactly ⟦most⟧'s truth
+conditions — C12 stated about `Tree.interp` itself, via the agreement
+theorem `holdsAt_iff_realize`. The fragment's partiality at *most* is a
+theorem, not a design choice. -/
+theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
+    (hnd : fw.Nodup) (hfr : fw.FreshFor nm) (hdj : nm.Disjoint) :
+    ¬ ∃ (t : Syntax.Tree Unit String) (φ : L_UV.Formula ℕ)
+        (_ : compileFO fw nm t = some φ) (hcl : φ.freeVarFinset = ∅),
+      ∀ (M : Type) [Fintype M] [Nonempty M] (S : L_UV.Structure M)
+        (g : Core.Assignment M),
+        HoldsAt (Model.ofStructure M S)
+          ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
+          Core.Quantification.most_sem (fun x => S.RelMap vRel ![x])
+            (fun x => S.RelMap uRel ![x]) := by
+  rintro ⟨t, φ, h, hcl, htree⟩
+  refine most_sem_not_definable ⟨φ.toSentence hcl, ?_⟩
+  intro M _ _ S
+  letI := S
+  have h1 := htree M S fun _ => Classical.arbitrary M
+  rw [holdsAt_iff_realize (Model.ofStructure M S) fw nm () hnd hfr hdj h
+    (fun _ => Classical.arbitrary M)] at h1
+  rw [Formula.realize_toSentence φ hcl (fun _ => Classical.arbitrary M)]
+  exact h1
 
 end BarwiseCooper1981
