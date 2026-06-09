@@ -15,16 +15,14 @@ view of the assignment update.
 
 -/
 
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Quantification.Quantifier
 
 namespace Semantics.Reference.Binding
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Semantics.Montague
 
 
 section Continuations

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
 
@@ -57,6 +57,7 @@ open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
 open Semantics.Quantification.Quantifier
+open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 /-! ### Model and lexicon -/
 

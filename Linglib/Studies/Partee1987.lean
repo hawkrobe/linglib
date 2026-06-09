@@ -1,4 +1,5 @@
 import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Fragments.English.Toy
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
@@ -38,5 +39,20 @@ abbrev be_sem (E W : Type) : Denot E W Ty.ett → Denot E W Ty.et := BE
 theorem be_transparent (j : Denot E W .e) :
     be_sem E W (lift j) = ident j :=
   BE_lift_eq_ident j
+
+/-! ### Toy-fragment examples -/
+
+section ToyExamples
+
+open Semantics.Montague (ToyEntity)
+open Semantics.Montague.ToyLexicon (john_sem sleeps_sem)
+
+example : lift (E := ToyEntity) john_sem sleeps_sem :=
+  show sleeps_sem john_sem from trivial
+
+example : BE (E := ToyEntity) (lift john_sem) = ident john_sem :=
+  BE_lift_eq_ident john_sem
+
+end ToyExamples
 
 end Partee1987

@@ -18,7 +18,7 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 -/
 
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Mathlib.Data.Set.Basic
 
 namespace Montague1973

@@ -5,9 +5,9 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
@@ -79,6 +79,7 @@ open Semantics.Reference.Binding
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
+open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 -- ════════════════════════════════════════════════════════════════════
 -- §1 Lean Typeclass Instances

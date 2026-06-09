@@ -87,7 +87,7 @@ type-theoretic, not data-driven. -/
 /-- The toy world type. Sudo's intensional analysis is parameterized over
     worlds; for the purposes of demonstrating type-shifts, a singleton
     world suffices. Real applications would parameterize over a richer
-    `World` type from `Core.Logic.Intensional.Frame`. -/
+    `World` type from `Core.Logic.Intensional.Defs`. -/
 abbrev World := Unit
 
 /-- A toy entity domain: a person, a flower, an animal (small), and a

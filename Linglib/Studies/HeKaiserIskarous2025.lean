@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic

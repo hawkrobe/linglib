@@ -5,11 +5,11 @@ import Mathlib.ModelTheory.Basic
 # Model-theoretic semantics for type-driven composition
 
 A **composition model** is a mathlib first-order `Structure` over an entity domain, indexed by a
-world set — the model-theoretic content `Frame` lacks (`Frame` is `{Entity, Index}` with *no*
-interpretation). Content-predicate denotations are *sourced from* the model via
-`Structure.RelMap`, exactly as DRT sources atomic-condition truth (`Semantics/Dynamic/DRS/`);
-higher-order denotations (GQs, type-shifts) and worlds ride on top in Lean and in the `.intens`
-types, so the existing `Tree.interp` engine composes a model-sourced lexicon **unchanged**.
+world set (constant-domain intensional first-order). Content-predicate denotations are *sourced
+from* the model via `Structure.RelMap`, exactly as DRT sources atomic-condition truth
+(`Semantics/Dynamic/DRS/`); higher-order denotations (GQs, type-shifts) and worlds ride on top
+in Lean and in the `.intens` types, so the existing `Tree.interp` engine composes a
+model-sourced lexicon **unchanged**.
 
 API objects (`Pronoun`, …) and `Fragments/` stay **minimal data**: the engine *projects* them
 into typed terms — a pronoun occurrence to a trace valued by the assignment over the model's
@@ -19,11 +19,11 @@ terms. Nothing model-theoretic lives on the objects or in the lexicon data.
 ## Main declarations
 
 * `Model` — entity domain `E`, worlds `W`, and a world-indexed family `interp : W → L.Structure E`
-* `Model.toFrame`, `Model.pred₁` / `Model.pred₂` — the induced `Frame` and model-sourced
-  predicate denotations
+* `Model.pred₁` / `Model.pred₂` — model-sourced predicate denotations
 * `interp_model_sourced` — the real `Tree.interp` composes a model-sourced lexicon to a
   world-threading proposition, truth bottoming out in `RelMap`
-* `barbara` — cross-model logical consequence (truth in all models), the payoff over a fixed frame
+* `barbara` — cross-model logical consequence (truth in all models), the payoff over a fixed
+  entity/world frame
 * `interp_pronoun_trace`, `genderRestriction` — the projection discipline for API objects
 -/
 
@@ -40,9 +40,8 @@ namespace Semantics.Composition
 universe u v
 
 /-- A composition model: a constant entity domain `E`, a world set `W`, and a world-indexed
-family of first-order `L`-structures (the lexicon interpretation). This is `Frame`'s
-`{Entity, Index}` plus the interpretation it lacks, with the content lexicon as a mathlib
-`Language` signature (constant-domain intensional first-order). -/
+family of first-order `L`-structures (the lexicon interpretation), with the content lexicon
+as a mathlib `Language` signature (constant-domain intensional first-order). -/
 structure Model (L : Language.{u, v}) where
   /-- Entity domain. -/
   E : Type

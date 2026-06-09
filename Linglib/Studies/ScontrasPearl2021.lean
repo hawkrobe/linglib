@@ -20,6 +20,7 @@ TruthConditions.TruthJudgment
 -/
 
 import Linglib.Syntax.CCG.Interface
+import Linglib.Fragments.English.Toy
 import Linglib.Phenomena.Entailment.Basic
 
 namespace CCG.TruthConditions
