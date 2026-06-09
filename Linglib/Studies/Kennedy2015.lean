@@ -1,6 +1,4 @@
 import Linglib.Semantics.Numerals.Basic
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
@@ -76,7 +74,7 @@ abbrev KCard : Type := Fin 6
 /-- Kennedy's alternative set members for `n = 3`. One enum unifying
     bare and all four modifications — Class A vs Class B is read off
     asymmetric-entailment, not from membership in a pre-split sublist.
-    The pattern-match `comparison` keeps `rsa_predict` reflection cheap. -/
+    The RSA analysis lives in `Kennedy2015PMF`. -/
 inductive KUtt where
   | bare3 | moreThan3 | fewerThan3 | atLeast3 | atMost3
   deriving DecidableEq, Repr, Fintype
@@ -167,76 +165,5 @@ theorem classA_fewerThan3_no_primary :
       (fun u : KUtt => asymStrongerOn Finset.univ (kMean u) (kMean .fewerThan3))).card
       = 0 := by
   decide
-
--- ============================================================================
--- §3: RSA L1 implementation of the same neo-Gricean predictions
--- ============================================================================
-
-/-! Our own integration contribution (Kennedy uses [franke-2011]'s
-IBR, not RSA). A rational L1 listener — assuming the speaker chose the
-most informative true alternative — shifts probability mass *away* from
-worlds where a stronger alternative would have been chosen. Class B's
-at-boundary world is the world a Class B speaker would compete against
-the bare alternative for, so probability mass shifts above the boundary;
-Class A's asserted form admits no asymmetrically-stronger alternative,
-so no competition arises. -/
-
-open RSA Real in
-/-- Kennedy's RSA configuration over the single alt-set. One config
-    handles both Class A and Class B utterances — the qualitative
-    predictions are read off `L1` probabilities on different `KUtt`
-    arguments, not from a separate config per direction. -/
-noncomputable def kennedyCfg : RSAConfig KUtt KCard where
-  Latent := Unit
-  meaning _ _ u w := if kMean u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α _ w u := rpow (l0 u w) α
-  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
-  α := 1
-  α_pos := one_pos
-  worldPrior_nonneg _ := by positivity
-  latentPrior_nonneg _ _ := by positivity
-
-/-- Class B competition at the boundary: "bare 3" beats "at least 3" at
-    `w = 3`. A speaker who knew exactly 3 would have used the more
-    informative "bare 3", so a listener hearing "at least 3" infers
-    `w ≥ 4` is more likely. -/
-theorem classB_competition_at_boundary :
-    kennedyCfg.L1 .bare3 ⟨3, by decide⟩ > kennedyCfg.L1 .atLeast3 ⟨3, by decide⟩ := by
-  rsa_predict
-
-/-- Class A excludes the boundary semantically: "more than 3" is false
-    at `w = 3`, so `L1(w=4 | "more than 3") > L1(w=3 | "more than 3")`. -/
-theorem classA_no_competition_at_boundary :
-    kennedyCfg.L1 .moreThan3 ⟨4, by decide⟩ > kennedyCfg.L1 .moreThan3 ⟨3, by decide⟩ := by
-  rsa_predict
-
-/-- Bare numeral is peaked under exact semantics:
-    `L1("bare 3", w = 3) > L1("bare 3", w = 4)`. -/
-theorem bare_peaked_with_kennedy_alternatives :
-    kennedyCfg.L1 .bare3 ⟨3, by decide⟩ > kennedyCfg.L1 .bare3 ⟨4, by decide⟩ := by
-  rsa_predict
-
-/-- Class B strengthened above bare: hearing "at least 3" pushes
-    probability above the boundary. -/
-theorem classB_strengthened_above_bare :
-    kennedyCfg.L1 .atLeast3 ⟨4, by decide⟩ > kennedyCfg.L1 .atLeast3 ⟨3, by decide⟩ := by
-  rsa_predict
-
-/-- Upper Class B competition at the boundary. -/
-theorem upper_classB_competition :
-    kennedyCfg.L1 .bare3 ⟨3, by decide⟩ > kennedyCfg.L1 .atMost3 ⟨3, by decide⟩ := by
-  rsa_predict
-
-/-- Upper Class A excludes the boundary: "fewer than 3" is false at `w = 3`. -/
-theorem upper_classA_no_competition :
-    kennedyCfg.L1 .fewerThan3 ⟨2, by decide⟩ > kennedyCfg.L1 .fewerThan3 ⟨3, by decide⟩ := by
-  rsa_predict
-
-/-- Upper Class B strengthened below bare: hearing "at most 3" pushes
-    probability below the boundary (mirror of `classB_strengthened_above_bare`). -/
-theorem upper_classB_strengthened_below_bare :
-    kennedyCfg.L1 .atMost3 ⟨2, by decide⟩ > kennedyCfg.L1 .atMost3 ⟨3, by decide⟩ := by
-  rsa_predict
 
 end Kennedy2015
