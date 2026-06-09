@@ -38,12 +38,12 @@ variable {F : Frame}
 section TotalShifts
 
 /-- Type-raising: `lift(j) = λP. P(j)` -/
-def lift (j : F.Entity) : F.Denot Ty.ett :=
+def lift (j : F.Entity) : ((F.Entity → Prop) → Prop) :=
   fun P => P j
 
 /-- Singleton property: `ident(j) = λx. [j = x]`.
 Uses `j = x` order for definitional equality with `BE(lift(j))`. -/
-def ident (j : F.Entity) : F.Denot Ty.et :=
+def ident (j : F.Entity) : (F.Entity → Prop) :=
   fun x => j = x
 
 /-- Propositional analogue of `ident`: `propIdent(p) = λq. [p = q]`,
@@ -54,11 +54,11 @@ proposition into a question denotation when an embedding predicate (e.g.
 a Predicate of Relevance like `care`) selects only for questions. The shape
 mirrors `ident` one type-theoretic level up: entities ↦ singleton properties
 becomes propositions ↦ singleton questions. -/
-def propIdent (p : F.Denot Ty.prop) : F.Denot (Ty.prop ⇒ Ty.t) :=
+def propIdent (p : (F.Index → Prop)) : ((F.Index → Prop) → Prop) :=
   fun q => p = q
 
 /-- Predicative content of a GQ: `BE(Q) = λx. Q(λy. y = x)` -/
-def BE (Q : F.Denot Ty.ett) : F.Denot Ty.et :=
+def BE (Q : ((F.Entity → Prop) → Prop)) : (F.Entity → Prop) :=
   fun x => Q (fun y => y = x)
 
 /-- Predicativize: extensional counterpart of Chierchia's ∪ (up) operator.
@@ -78,12 +78,8 @@ end TotalShifts
 
 section BooleanHomomorphism
 
-instance (F : Frame) : BooleanAlgebra (F.Denot Ty.t) :=
-  show BooleanAlgebra Prop from inferInstance
-instance (F : Frame) : BooleanAlgebra (F.Denot Ty.et) :=
-  show BooleanAlgebra (F.Entity → Prop) from inferInstance
-instance (F : Frame) : BooleanAlgebra (F.Denot Ty.ett) :=
-  show BooleanAlgebra ((F.Entity → Prop) → Prop) from inferInstance
+-- Boolean structure on the `Prop`/`Pi` denotation types is supplied directly by
+-- mathlib (no `Ty`/`Denot` reflection, no bridge instances).
 
 /-- Evaluate `Finset.inf` of function-valued functions at a point. -/
 private lemma finset_inf_fun_eval {ι α : Type*}
@@ -94,7 +90,7 @@ private lemma finset_inf_fun_eval {ι α : Type*}
   | cons x s hx ih => simp only [Finset.inf_cons, Pi.inf_apply, ih]
 
 /-- `BE` is a `BoundedLatticeHom` (Partee §3.3, Fact 1). -/
-def BE_hom (F : Frame) : BoundedLatticeHom (F.Denot Ty.ett) (F.Denot Ty.et) where
+def BE_hom (F : Frame) : BoundedLatticeHom (((F.Entity → Prop) → Prop)) ((F.Entity → Prop)) where
   toFun := BE
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
@@ -104,7 +100,7 @@ def BE_hom (F : Frame) : BoundedLatticeHom (F.Denot Ty.ett) (F.Denot Ty.et) wher
 /-- `BE ∘ lift = ident` (Figure 3 commutativity). -/
 theorem BE_lift_eq_ident (j : F.Entity) :
     BE (lift j) = ident j := by
-  funext x; simp only [BE, lift, ident]; rfl
+  funext x; simp only [BE, lift, ident]
 
 /-- **Fact 2** ([partee-1987] §3.3): `BE` is the **unique**
     `BoundedLatticeHom` from `⟨⟨e,t⟩,t⟩` to `⟨e,t⟩` that makes
@@ -117,16 +113,16 @@ theorem BE_lift_eq_ident (j : F.Entity) :
     `atom_x` correctly. Then monotonicity determines `f(Q)(x)` for arbitrary
     `Q` by cases on `Q(P_x)`. -/
 theorem BE_unique [Fintype F.Entity] [DecidableEq F.Entity]
-    (f : BoundedLatticeHom (F.Denot Ty.ett) (F.Denot Ty.et))
+    (f : BoundedLatticeHom (((F.Entity → Prop) → Prop)) ((F.Entity → Prop)))
     (hcomm : ∀ j : F.Entity, f (lift j) = ident j) :
-    ∀ Q : F.Denot Ty.ett, f Q = BE Q := by
+    ∀ Q : ((F.Entity → Prop) → Prop), f Q = BE Q := by
   intro Q; funext x
   show f Q x = Q (fun j => j = x)
-  let lit : F.Entity → F.Denot Ty.ett := fun j =>
-    if j = x then (lift j : F.Denot Ty.ett) else (lift j)ᶜ
-  let atom_x : F.Denot Ty.ett := Finset.inf Finset.univ lit
-  let f_lit : F.Entity → F.Denot Ty.et := fun j =>
-    if j = x then (ident j : F.Denot Ty.et) else (ident j)ᶜ
+  let lit : F.Entity → ((F.Entity → Prop) → Prop) := fun j =>
+    if j = x then (lift j : ((F.Entity → Prop) → Prop)) else (lift j)ᶜ
+  let atom_x : ((F.Entity → Prop) → Prop) := Finset.inf Finset.univ lit
+  let f_lit : F.Entity → (F.Entity → Prop) := fun j =>
+    if j = x then (ident j : (F.Entity → Prop)) else (ident j)ᶜ
   -- Step 1: f maps each literal correctly
   have hf_lit : ∀ j, f (lit j) = f_lit j := by
     intro j; simp only [lit, f_lit]; split
@@ -150,7 +146,7 @@ theorem BE_unique [Fintype F.Entity] [DecidableEq F.Entity]
     rw [h1, h2]
     exact (Finset.le_inf (fun j _ => show ⊤ ≤ f_lit j x from fun _ => hf_lit_x j)) trivial
   -- Step 4: atom_x R holds → R = (fun j => j = x)
-  have hatom_point : ∀ R : F.Denot Ty.et, atom_x R →
+  have hatom_point : ∀ R : (F.Entity → Prop), atom_x R →
       R = fun j => j = x := by
     intro R hR
     have hlit : ∀ j : F.Entity, lit j R := by
@@ -166,7 +162,7 @@ theorem BE_unique [Fintype F.Entity] [DecidableEq F.Entity]
       -- hj : (lift j)ᶜ R, i.e. ¬R j. Goal: R j = (j = x)
       exact propext ⟨fun hr => absurd hr hj, fun heq => absurd heq h⟩
   -- Step 5: conclude by cases on Q(fun j => j = x)
-  have hatom_le : ∀ S : F.Denot Ty.ett, S (fun j => j = x) → atom_x ≤ S := by
+  have hatom_le : ∀ S : ((F.Entity → Prop) → Prop), S (fun j => j = x) → atom_x ≤ S := by
     intro S hS R hR
     have : R = fun j => j = x := hatom_point R hR
     rw [this]; exact hS
@@ -185,15 +181,15 @@ theorem BE_unique [Fintype F.Entity] [DecidableEq F.Entity]
     exact propext ⟨fun h => absurd h hfQc2, fun h => absurd h hQPx⟩
 
 /-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
-theorem BE_conj (Q₁ Q₂ : F.Denot Ty.ett) :
+theorem BE_conj (Q₁ Q₂ : ((F.Entity → Prop) → Prop)) :
     BE (fun P => Q₁ P ∧ Q₂ P) = (fun x => BE Q₁ x ∧ BE Q₂ x) := rfl
 
 /-- `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)` -/
-theorem BE_disj (Q₁ Q₂ : F.Denot Ty.ett) :
+theorem BE_disj (Q₁ Q₂ : ((F.Entity → Prop) → Prop)) :
     BE (fun P => Q₁ P ∨ Q₂ P) = (fun x => BE Q₁ x ∨ BE Q₂ x) := rfl
 
 /-- `BE(¬Q) = ¬BE(Q)` -/
-theorem BE_neg (Q : F.Denot Ty.ett) :
+theorem BE_neg (Q : ((F.Entity → Prop) → Prop)) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
 end BooleanHomomorphism
@@ -201,13 +197,13 @@ end BooleanHomomorphism
 section PartialShifts
 
 /-- Partial inverse of `lift`. Defined when `Q` is a principal ultrafilter. -/
-noncomputable def lower (domain : List F.Entity) (Q : F.Denot Ty.ett) : Option (F.Entity) :=
+noncomputable def lower (domain : List F.Entity) (Q : ((F.Entity → Prop) → Prop)) : Option (F.Entity) :=
   match domain.filter (fun j => @decide (Q (fun x => x = j)) (Classical.dec _)) with
   | [j] => some j
   | _ => none
 
 /-- Partial inverse of `ident`. Returns the unique satisfier of `P`. -/
-noncomputable def iota (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.Entity) :=
+noncomputable def iota (domain : List F.Entity) (P : (F.Entity → Prop)) : Option (F.Entity) :=
   match domain.filter (fun x => @decide (P x) (Classical.dec _)) with
   | [j] => some j
   | _ => none
@@ -218,11 +214,11 @@ noncomputable def iota (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.
     In the finite extensional setting, NOM = iota (returns the unique
     satisfier of P, if singleton). The intensional generalization is
     `Semantics.Kinds.NMP.down` (Chierchia's ∩). -/
-noncomputable def NOM (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.Entity) :=
+noncomputable def NOM (domain : List F.Entity) (P : (F.Entity → Prop)) : Option (F.Entity) :=
   iota domain P
 
 /-- Existential closure: `A(P) = λQ. ∃x. P(x) ∧ Q(x)` -/
-def A (domain : List F.Entity) (P : F.Denot Ty.et) : F.Denot Ty.ett :=
+def A (domain : List F.Entity) (P : (F.Entity → Prop)) : ((F.Entity → Prop) → Prop) :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
 /-- THE: Presuppositional type-shifter for definites ([partee-1987] Figure 1).
@@ -231,7 +227,7 @@ def A (domain : List F.Entity) (P : F.Denot Ty.et) : F.Denot Ty.ett :=
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
     presupposes existence and uniqueness. Connects to the semantics of "the"
     in `Semantics.Definiteness`. -/
-noncomputable def THE (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.Denot Ty.ett) :=
+noncomputable def THE (domain : List F.Entity) (P : (F.Entity → Prop)) : Option (((F.Entity → Prop) → Prop)) :=
   (iota domain P).map lift
 
 /-- Helper: for a nodup list, filtering for equality gives a singleton or empty. -/
@@ -309,7 +305,7 @@ theorem lift_eq_typeRaise (j : F.Entity) :
 /-- Coherence of the three readings of "the king" ([partee-1987] §3.2).
     When `iota` succeeds, the `e`, `⟨e,t⟩`, and `⟨⟨e,t⟩,t⟩` readings are
     related by `BE(lift(j)) = ident(j)` (Figure 2 commutativity). -/
-theorem the_king_coherence (domain : List F.Entity) (P : F.Denot Ty.et)
+theorem the_king_coherence (domain : List F.Entity) (P : (F.Entity → Prop))
     (j : F.Entity) (_h : iota domain P = some j) :
     BE (lift j) = ident j :=
   BE_lift_eq_ident j
@@ -339,12 +335,12 @@ Applications:
 -/
 
 /-- A GQ is a principal ultrafilter iff it equals `lift(j)` for some entity. -/
-def isPrincipalUltrafilter (domain : List F.Entity) (Q : F.Denot Ty.ett) : Prop :=
+def isPrincipalUltrafilter (domain : List F.Entity) (Q : ((F.Entity → Prop) → Prop)) : Prop :=
   ∃ j ∈ domain, Q = lift j
 
 /-- Helper: `(∃ x ∈ domain, j = x ∧ P x) ↔ P j` when `j ∈ domain`. -/
 private theorem exists_eq_and_iff (domain : List F.Entity) (j : F.Entity)
-    (hj : j ∈ domain) (P : F.Denot Ty.et) :
+    (hj : j ∈ domain) (P : (F.Entity → Prop)) :
     (∃ x ∈ domain, j = x ∧ P x) ↔ P j := by
   constructor
   · rintro ⟨x, _, rfl, hPx⟩; exact hPx
@@ -357,7 +353,7 @@ private theorem exists_eq_and_iff (domain : List F.Entity) (j : F.Entity)
     a principal ultrafilter. -/
 theorem roundtrip_preserves_principal (domain : List F.Entity) (j : F.Entity)
     (hj : j ∈ domain) :
-    ∀ P : F.Denot Ty.et, A domain (BE (lift j)) P = lift j P := by
+    ∀ P : (F.Entity → Prop), A domain (BE (lift j)) P = lift j P := by
   intro P
   simp only [A, BE, lift]
   exact propext (exists_eq_and_iff domain j hj P)
@@ -374,7 +370,7 @@ theorem roundtrip_preserves_principal (domain : List F.Entity) (j : F.Entity)
 
     Proof: `BE(A(P))(x) = A(P)(λy. y=x) = ∃z∈dom. P(z) ∧ (z=x) = P(x)`.
     The `decide(z=x)` selects exactly `z = x`, collapsing the existential. -/
-theorem BE_A_id (domain : List F.Entity) (P : F.Denot Ty.et)
+theorem BE_A_id (domain : List F.Entity) (P : (F.Entity → Prop))
     (hcomplete : ∀ x : F.Entity, x ∈ domain) :
     BE (A domain P) = P := by
   funext x; show (∃ z ∈ domain, P z ∧ z = x) = P x
@@ -387,7 +383,7 @@ theorem BE_A_id (domain : List F.Entity) (P : F.Denot Ty.et)
     `A(BE(⟦every⟧(P)))(Q) = ∃x[P(x) ∧ Q(x)]` — existential, not universal.
     Verified on the toy model. -/
 private def toyDomain₁ : List ToyEntity := [.john, .mary, .pizza]
-private def toyEvery : toyFrame.Denot Ty.ett := fun P => ∀ x ∈ toyDomain₁, P x
+private def toyEvery : (toyFrame.Entity → Prop) → Prop := fun P => ∀ x ∈ toyDomain₁, P x
 
 /-- For non-principal GQs, the round-trip changes truth conditions.
     `every(⊤) = True` but `A(BE(every))(⊤) = False` — the round-trip
@@ -564,34 +560,29 @@ The `GaloisCoinsertion` gives us, via Mathlib:
 
 section GaloisStructure
 
--- Bridge instance: Ty.et is a `def` for (.e ⇒ .t), so interpTy (.e ⇒ .t)
--- doesn't match interpTy Ty.et for type class synthesis.
-private instance (F : Frame) : BooleanAlgebra (F.Denot (.e ⇒ .t)) :=
-  show BooleanAlgebra (F.Entity → Prop) from inferInstance
-
 /-- Upward-closed (monotone) generalized quantifiers — the
     [barwise-cooper-1981] constraint on natural language determiners.
 
     `Q` is upward-closed when `Q(P)` and `P ≤ P'` imply `Q(P')`.
     Equivalently, `Monotone Q` in the pointwise order on `⟨e,t⟩`. -/
-def UpwardGQ (F : Frame) := { Q : F.Denot Ty.ett // Monotone Q }
+def UpwardGQ (F : Frame) := { Q : ((F.Entity → Prop) → Prop) // Monotone Q }
 
 instance : PartialOrder (UpwardGQ F) := Subtype.partialOrder _
 
 /-- `A(P)` is always upward-closed: if ∃x∈dom with P(x) ∧ R(x),
     and R ≤ R', then ∃x∈dom with P(x) ∧ R'(x). -/
-theorem A_monotone_gq (domain : List F.Entity) (P : F.Denot Ty.et) :
+theorem A_monotone_gq (domain : List F.Entity) (P : (F.Entity → Prop)) :
     Monotone (A domain P) := by
   intro R R' hRR'
   show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P x ∧ R' x
   exact fun ⟨x, hx, hPx, hRx⟩ => ⟨x, hx, hPx, hRR' x hRx⟩
 
 /-- Lift `A` to the `UpwardGQ` subtype. -/
-def A_up (domain : List F.Entity) (P : F.Denot Ty.et) : UpwardGQ F :=
+def A_up (domain : List F.Entity) (P : (F.Entity → Prop)) : UpwardGQ F :=
   ⟨A domain P, A_monotone_gq domain P⟩
 
 /-- Project `BE` from the `UpwardGQ` subtype. -/
-def BE_up (Q : UpwardGQ F) : F.Denot Ty.et := BE Q.val
+def BE_up (Q : UpwardGQ F) : (F.Entity → Prop) := BE Q.val
 
 /-- `A` is monotone as a map from predicates to GQs. -/
 theorem A_up_mono (domain : List F.Entity) : Monotone (A_up domain (F := F)) := by
@@ -605,7 +596,7 @@ theorem BE_up_mono : Monotone (BE_up (F := F)) := by
   exact hQQ' (fun y => y = x)
 
 /-- Singleton predicate `{x}` is below any `R` with `R(x)`. -/
-private lemma singleton_le_of_mem {x : F.Entity} {R : F.Denot Ty.et}
+private lemma singleton_le_of_mem {x : F.Entity} {R : (F.Entity → Prop)}
     (hRx : R x) :
     (fun y => y = x) ≤ R := by
   intro y (h : y = x); rw [h]; exact hRx
@@ -661,12 +652,12 @@ section NumeralShifts
 /-- CARD: number → cardinality predicate ([snyder-2026], (6a)).
     CARD = λn.λx. μ(x) = n. Turns a number into a predicate
     on entities that have exactly n atomic parts. -/
-def CARD (μ : F.Entity → Nat) (n : Nat) : F.Denot Ty.et :=
+def CARD (μ : F.Entity → Nat) (n : Nat) : (F.Entity → Prop) :=
   fun x => μ x = n
 
 /-- PM: Predicate Modification ([heim-kratzer-1998], (7a)).
     PM = λP.λQ.λx. P(x) ∧ Q(x). Intersective modifier. -/
-def PM (P Q : F.Denot Ty.et) : F.Denot Ty.et :=
+def PM (P Q : (F.Entity → Prop)) : (F.Entity → Prop) :=
   fun x => P x ∧ Q x
 
 end NumeralShifts

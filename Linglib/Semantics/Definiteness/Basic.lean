@@ -77,13 +77,16 @@ theorem definite_presup_iff_iota {m : Frame} (domain : List m.Entity)
     (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
      | [_] => true | _ => false) =
     (iota domain restrictor).isSome := by
-  simp only [iota]
-  cases h : domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
-  | nil => simp
-  | cons hd tl =>
-    cases tl with
-    | nil => simp
-    | cons hd' tl' => simp
+  unfold iota
+  change (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
+      | [_] => true | _ => false) =
+      (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
+      | [j] => some j | _ => none).isSome
+  generalize domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) = l
+  match l with
+  | [] => rfl
+  | [_] => rfl
+  | _ :: _ :: _ => rfl
 
 -- ============================================================================
 -- §3: Bridge to every_sem (⟦the⟧ = ⟦every⟧ on singletons)
