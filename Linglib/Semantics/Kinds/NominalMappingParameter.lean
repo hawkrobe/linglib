@@ -465,15 +465,11 @@ theorem bare_plural_ok_bare_singular_not (bp : BlockingPrinciple)
 
 -- Scopelessness (Theoretical Basis)
 
-/--
-Bare plurals are scopeless because DKP introduces a LOCAL existential.
-
-The existential reading from DKP cannot scope out because the coercion
-applies inside the predicate abstract.
-
-See `Phenomena/Generics/KindReference.lean` for empirical scope data.
--/
-def dkpIsLocal : Bool := true
+/-! Bare plurals are scopeless because DKP introduces a *local* existential: the
+existential closure sits inside negation and cannot scope out. This locality is the
+theorem `chierchia_position_invariant` below — Chierchia's derivation is the same
+whether or not the bare plural has scrambled. See `Phenomena/Generics/KindReference.lean`
+for empirical scope data. -/
 
 /--
 When ∩ is undefined (NP doesn't denote a kind), we fall back to ∃.
@@ -486,92 +482,47 @@ For non-kind-denoting NPs like "parts of that machine":
 def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
   !isKindDenoting ∧ !bp.existsBlocked
 
--- DKP Derivation Machinery (for Scrambling Comparison)
-
-/-!
-## Computational DKP
+/-! ### DKP scope derivation (Chierchia side of the scrambling comparison)
 [krifka-2004] [chierchia-1998]
 
-Simplified, decidable formalization of Chierchia's DKP for concrete
-scrambling comparisons with [krifka-2004]. Uses `List Entity` and `Bool`
-(rather than `Set Atom` and `Prop`) so that examples reduce by `rfl`.
+Chierchia's Derived Kind Predication introduces the existential *locally* — where the
+kind meets the predicate — so negation always scopes outside it. Modelled with plain
+`Prop` existential closure (`existsClose`) over the kind's instances. Krifka's
+position-sensitive ∃-shift in `Krifka2004.lean` reuses the same `existsClose`, so the two
+accounts share one closure and differ only in where negation sits; they are compared on
+the Dutch scrambling data in `Studies/LeBruynDeSwart2022.lean`.
 
-The parallel Krifka machinery is in `Krifka2004.lean`; both are
-instantiated side-by-side in `Phenomena/Generics/Compare.lean`.
-
-See `Theories/Comparisons/KindReference.lean` for the formal comparison.
--/
+`existsClose` is Partee's `A` (existential closure) in plain extensional form. The same
+operator dressed in the DWP/Gallin deep embedding is
+`Semantics.Composition.TypeShifting.A`, needed there for type-shift metatheory but not
+for this scope contrast. -/
 
 section DKPDerivation
 
-variable {Entity World : Type}
+variable {Entity : Type*}
 
-/-- A kind's extension at each world (the instances) -/
-abbrev KindExtension (Entity World : Type) := World → List Entity
+/-- Existential closure of a property `P` against a predicate `Q` over a finite domain:
+`∃ x ∈ dom, P x ∧ Q x`. Partee's `A` type shift in plain extensional form; `reducible`
+so concrete instances are `Decidable`. -/
+@[reducible] def existsClose (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  ∃ x ∈ dom, P x ∧ Q x
 
-/-- A VP meaning (intensional) -/
-abbrev ChierchiaVP (Entity World : Type) := Entity → World → Bool
+/-- Chierchia's DKP, unscrambled `[niet [BP V]]`: `¬ ∃ x ∈ kind, P x ∧ Q x`. The
+existential is introduced locally, so negation scopes outside it (narrow scope). -/
+def chierchiaDerivUnscrambled (kind : List Entity) (P Q : Entity → Prop) : Prop :=
+  ¬ existsClose kind P Q
 
-/-- A sentence meaning (proposition) -/
-abbrev ChierchiaSent (World : Type) := World → Bool
+/-- Chierchia's DKP, scrambled `[BP [niet V]]`: identical to the unscrambled derivation.
+DKP locality means surface position cannot move the existential. -/
+def chierchiaDerivScrambled (kind : List Entity) (P Q : Entity → Prop) : Prop :=
+  ¬ existsClose kind P Q
 
-/--
-DKP (Derived Kind Predication): Coerce a kind to work with object-level predicates.
-
-Given a kind (represented by its extension at each world) and an object-level VP,
-DKP introduces existential quantification:
-
-  DKP(VP)(k) = λw. ∃x ∈ k(w). VP(x)(w)
-
-Property: The ∃ is introduced HERE, at the point of composition,
-not at a syntactic position. This makes DKP position-invariant.
--/
-def dkpApply
-    (kind : KindExtension Entity World)
-    (vp : ChierchiaVP Entity World)
-    : ChierchiaSent World :=
-  λ w => (kind w).any (λ x => vp x w)
-
-/--
-Chierchia's derivation for "[niet [BP V]]" (unscrambled).
-
-1. BP = kind k
-2. VP = λx.V(x)
-3. DKP: ∃x[k(x) ∧ V(x)]
-4. Negation: ¬∃x[k(x) ∧ V(x)]
--/
-def chierchiaDerivUnscrambled
-    (kind : KindExtension Entity World)
-    (vp : ChierchiaVP Entity World)
-    : ChierchiaSent World :=
-  λ w => !(dkpApply kind vp w)
-
-/--
-Chierchia's derivation for "[BP [niet V]]" (scrambled).
-
-In Chierchia's system, scrambling doesn't change the derivation.
-DKP still applies when the kind meets the predicate, and the ∃
-is introduced at that point (the trace position in LF).
-
-Result: Same as unscrambled — ¬∃x[k(x) ∧ V(x)]
--/
-def chierchiaDerivScrambled
-    (kind : KindExtension Entity World)
-    (vp : ChierchiaVP Entity World)
-    : ChierchiaSent World :=
-  -- Scrambling is invisible to DKP — same derivation
-  λ w => !(dkpApply kind vp w)
-
-/--
-Chierchia's DKP is position-invariant.
-
-Scrambled and unscrambled derivations yield the same meaning.
-This is the source of Chierchia's incorrect prediction for Dutch scrambling.
--/
-theorem chierchia_position_invariant
-    (kind : KindExtension Entity World)
-    (vp : ChierchiaVP Entity World)
-    : chierchiaDerivScrambled kind vp = chierchiaDerivUnscrambled kind vp := rfl
+/-- **DKP is local**: the scrambled and unscrambled derivations coincide, so Chierchia
+predicts obligatory narrow scope regardless of surface position. This is the content the
+former `dkpIsLocal : Bool := true` stipulated — now a theorem about the derivations. -/
+theorem chierchia_position_invariant (kind : List Entity) (P Q : Entity → Prop) :
+    chierchiaDerivScrambled kind P Q = chierchiaDerivUnscrambled kind P Q :=
+  rfl
 
 end DKPDerivation
 

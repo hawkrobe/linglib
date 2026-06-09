@@ -1,182 +1,166 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
+import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
-# Bare NPs as Properties
-
+# Bare NPs as properties
 [krifka-2004] [krifka-2003]
 
-Formalizes Krifka's analysis from "Bare NPs: Kind-referring, Indefinites,
-Both, or Neither?" (SALT 2003 / EISS5 2004).
+Krifka's analysis of bare NPs ("Bare NPs: Kind-referring, Indefinites, Both, or
+Neither?", SALT 13 / EISS 5). Bare NPs are basically **properties**; context-sensitive
+type shifts coerce them to kind or indefinite readings — so, in the title's terms,
+*neither* kind-referring nor indefinite, but shiftable to both.
 
-Bare NPs are fundamentally properties, type-shifted to kind or indefinite
-readings depending on context. Count nouns carry a number argument
-(`⟨s,⟨n,⟨e,t⟩⟩⟩`); pluralization existentially binds it locally.
-Kind readings require topic position.
+Count nouns carry a natural-number argument: `den w n x` reads "in `w`, the individual
+`x` consists of `n` instances", and a count noun is an *additive extensive measure
+function* in that argument (`IsExtensiveMeasure`). Number morphology saturates the
+argument: the singular fills it with `1`, the semantic plural binds it existentially
+with **no** `> 1` restriction (so the bare plural is true of a single instance —
+"Do you have dogs? — Yes, one"). A bare singular count noun is therefore the wrong
+type to be an argument — number-indexed `⟨n,⟨e,t⟩⟩`, not a predicate `⟨e,t⟩` — which is
+why `*Dog barks` is out. Kind reference reuses [chierchia-1998]'s ∩ operator
+(`Semantics.Kinds.NMP.down`), which Krifka adopts (§4.3), and requires topic position;
+the existential shift applies at the surface position, deriving the narrow scope of
+bare plurals and their wide scope under scrambling.
 
-| Aspect | [chierchia-1998] | [krifka-2004] |
-|--------|----------------|-------------|
-| Basic denotation | Kind (via ∩) | Property |
-| Existential reading | DKP coercion | Direct ∃ type shift |
-| Narrow scope | DKP locality | Local ∃ shift locality |
-| Singular exclusion | ∩ undefined for non-cumulative | Unfilled number argument |
-| Kind reading | Always available | Requires topic position |
-
+## Main declarations
+* `CountNounDen`, `MassNounDen` — count (number-indexed) vs mass denotations
+* `IsExtensiveMeasure` — the count noun's uniqueness + additivity laws
+* `singularize`, `pluralize` — number morphology (fill `1` / bind `∃ n`)
+* `availableInterpretations`, `kind_requires_topic` — topic-gating of kind reference
+* `krifkaDerivScrambled`, `krifkaDerivUnscrambled` — the surface-position ∃-shift (built
+  on the shared closure `NMP.existsClose`) used for the Dutch/German scrambling contrast
+* `scope_follows_position` — scrambled and unscrambled derivations diverge
 -/
 
 namespace Krifka2004
 
--- Type System: Properties with Number Arguments
+open Semantics.Kinds.NMP (Individual existsClose)
 
-variable (World : Type) (Atom : Type)
+/-! ### Count and mass denotations
 
-/-- An individual is either an atom or a plurality (as in Chierchia) -/
-inductive Individual (Atom : Type) where
-  | atom : Atom → Individual Atom
-  | plural : Set Atom → Individual Atom
+`Atom` is `Type` (not `Type*`) to align with `NMP.Individual`, the Link/Chierchia
+individual lattice (`Set Atom`) that this file reuses for kind reference. -/
 
-/-- Number values for count nouns -/
-inductive Number where
-  | one   -- Singular
-  | two   -- Dual (if language has it)
-  | many  -- Plural (> 1)
-  deriving DecidableEq, Repr
+section Denotations
 
-/-- Count noun denotation with number argument: `⟨s,⟨n,⟨e,t⟩⟩⟩`.
-`⟦dog⟧(w)(1)(fido) = true` iff fido is a single dog in w. -/
-abbrev CountNounDen := World → Number → Individual Atom → Bool
+variable {World Atom : Type}
 
-/-- Mass noun denotation (no number argument): `⟨s,⟨e,t⟩⟩`. -/
-abbrev MassNounDen := World → Individual Atom → Bool
+/-- Count noun denotation `⟨s,⟨n,⟨e,t⟩⟩⟩`: `den w n x` holds iff in world `w` the
+individual `x` consists of `n` instances. -/
+abbrev CountNounDen (World Atom : Type) := World → ℕ → Individual Atom → Prop
 
-/-- A general property (intensional): the basic type for bare NPs in Krifka. -/
-abbrev Property := World → Individual Atom → Bool
+/-- Mass noun denotation `⟨s,⟨e,t⟩⟩`: no number argument. -/
+abbrev MassNounDen (World Atom : Type) := World → Individual Atom → Prop
 
--- Number Morphology and Semantic Pluralization
+/-- The basic type of a bare NP: a property `⟨s,⟨e,t⟩⟩`. -/
+abbrev Property (World Atom : Type) := World → Individual Atom → Prop
 
-/-- Singular morpheme: binds number argument to 1.
-⟦-sg⟧(P) = λw.λx[P(w)(1)(x)] -/
-def singularize (P : CountNounDen World Atom) : Property World Atom :=
-  λ w x => P w .one x
+/-- Count nouns are *additive extensive measure functions* in their number argument:
+the count of an individual is unique, and the counts of disjoint individuals add. -/
+def IsExtensiveMeasure (den : CountNounDen World Atom) : Prop :=
+  (∀ w n m x, den w n x → den w m x → n = m) ∧
+  (∀ w n m x y, den w n x → den w m y → Disjoint x y → den w (n + m) (x ∪ y))
 
-/-- Plural morpheme: existentially quantifies over number > 1.
-⟦-pl⟧(P) = λw.λx[∃n > 1. P(w)(n)(x)].
-The ∃ is local (not a scope-taking operation). -/
-def pluralize (P : CountNounDen World Atom) : Property World Atom :=
-  λ w x => P w .two x || P w .many x
+/-! ### Number morphology -/
 
-/-- Scopelessness follows from local number binding. -/
-theorem plural_is_local (P : CountNounDen World Atom) :
-    pluralize World Atom P = λ w x => P w .two x || P w .many x := rfl
+/-- Singular morphology fills the number argument with `1`. -/
+def singularize (den : CountNounDen World Atom) : Property World Atom :=
+  fun w x => den w 1 x
 
--- Bare Singular Restriction
+/-- Semantic plural morphology binds the number argument existentially, with **no**
+`> 1` restriction — the analysis Krifka adopts over the rejected `∃ n > 1` variant. -/
+def pluralize (den : CountNounDen World Atom) : Property World Atom :=
+  fun w x => ∃ n, den w n x
 
-/-- Bare singulars (*"Dog barks") are blocked because the number parameter
-is unfilled — morphology must bind it (cf. Chierchia: ∩ undefined). -/
-structure BareSingularRestriction where
-  hasNumberParam : Bool := true
-  singularFills : Bool := true
-  pluralFills : Bool := true
-  bareUnfilled : Bool := true
+/-- The bare plural is true of a single instance ("Do you have dogs? — Yes, one"):
+this is why the plural cannot mean `∃ n > 1`. -/
+theorem pluralize_of_singular (den : CountNounDen World Atom) {w : World}
+    {x : Individual Atom} (h : den w 1 x) : pluralize den w x :=
+  ⟨1, h⟩
 
--- Type Shifting Operations
+/-- The bare-singular block is a *type* fact, not a stipulation. The only routes from
+a number-indexed `CountNounDen` to an argument-type `Property` are the morphological
+saturations `singularize` (fill `1`) and `pluralize` (bind `∃ n`); a bare singular
+saturates nothing, so `*Dog barks` has no argument-type parse. -/
+theorem morphology_saturates (den : CountNounDen World Atom) (w : World)
+    (x : Individual Atom) :
+    singularize den w x = den w 1 x ∧ pluralize den w x = (∃ n, den w n x) :=
+  ⟨rfl, rfl⟩
 
-/-- ∃-shift is position-sensitive: it applies at the surface position of the
-bare NP. Scrambled BPs scope wide; unscrambled BPs scope narrow.
-Evidence: Dutch/German scrambling. -/
-def existentialShiftPositionSensitive : Bool := true
+end Denotations
 
-/-- Type shifts available for properties. -/
+/-! ### Type shifts and information structure -/
+
+/-- The type shifts available to a property-denoting bare NP. -/
 inductive TypeShift where
-  | exists_  -- ∃ shift: P → λQ.∃x[P(x) ∧ Q(x)]
-  | iota     -- ι shift: P → ιx.P(x)
-  | down     -- ∩ shift: P → kind
+  /-- `∃` shift: `P ↦ λQ. ∃x[P(x) ∧ Q(x)]`. -/
+  | existsShift
+  /-- `ι` shift: `P ↦ ιx.P(x)`. -/
+  | iota
+  /-- `∩` (down) shift: `P ↦` kind. This is [chierchia-1998]'s operator
+      (`Semantics.Kinds.NMP.down`), which Krifka adopts (§4.3). -/
+  | down
   deriving DecidableEq, Repr
 
-/-- ∩ (down) shift: property → kind. ∩P = λw[ιP(w)].
-Unlike Chierchia, not restricted to cumulative properties. -/
-def downShift (P : Property World Atom) : World → Individual Atom :=
-  λ w =>
-    .plural { a : Atom | P w (.atom a) }
-
--- Information Structure: Kind Readings Require Topic
-
-/-- Information structure position of an NP. -/
+/-- Information-structure position of the bare NP. -/
 inductive InfoStructure where
-  | topic    -- Topical position → kind readings available
-  | focus    -- Focal position → existential preferred
-  | neutral  -- Neutral → context determines
+  | topic
+  | focus
+  | neutral
   deriving DecidableEq, Repr
 
-/-- Available interpretations depend on information structure.
-Topic favors ∩ (kind); focus favors ∃ (indefinite). -/
-def availableInterpretations (position : InfoStructure) : List TypeShift :=
-  match position with
-  | .topic => [.down, .exists_]   -- Kind preferred
-  | .focus => [.exists_, .down]   -- Existential preferred
-  | .neutral => [.exists_, .down] -- Both equally available
+/-- Shifts available at each position. Kind reference (`∩`) requires topic position;
+elsewhere only the existential shift applies. -/
+def availableInterpretations : InfoStructure → List TypeShift
+  | .topic => [.down, .existsShift]
+  | .focus => [.existsShift]
+  | .neutral => [.existsShift]
 
-/-- Kind readings require topic position. -/
-theorem kind_requires_topic :
-    TypeShift.down ∈ availableInterpretations .topic ∧
-    availableInterpretations .focus = [.exists_, .down] := by
-  simp [availableInterpretations]
+/-- Kind reference requires topic position: the `∩` (down) shift is available only
+when the bare NP is a topic. -/
+theorem kind_requires_topic {p : InfoStructure}
+    (h : TypeShift.down ∈ availableInterpretations p) : p = .topic := by
+  cases p <;> simp_all [availableInterpretations]
 
--- Position-Sensitive ∃-Shift
+/-! ### Surface-position ∃-shift (scrambling)
 
-/-!
-## Position-Sensitive ∃-Shift
-[carlson-1977] [le-bruyn-de-swart-2022] [partee-1987]
+Krifka's existential type shift is a *local type repair* applied "as late, or as locally,
+as possible" (§4.2) at the bare NP's surface position, so scope follows position: a bare
+plural under negation scopes narrow, one raised above negation scopes wide. Built on the
+shared closure `NMP.existsClose`, so Krifka's narrow reading is *definitionally*
+Chierchia's DKP derivation (`NMP.chierchiaDerivUnscrambled`); the accounts diverge only
+on the scrambled reading (compared in `Studies/LeBruynDeSwart2022.lean`). -/
 
-∃-shift applies at the surface position of the bare plural,
-predicting that scrambled BPs take wide scope over negation.
--/
+section Scrambling
 
-variable {Entity World : Type}
+variable {Entity : Type*}
 
-/-- A property (the basic meaning of bare NPs in Krifka) -/
-abbrev KrifkaProp (Entity World : Type) := World → Entity → Bool
+/-- Unscrambled `[niet [BP V]]`: ∃-shift below negation — `¬ ∃ x ∈ dom, P x ∧ Q x`
+(narrow scope). Definitionally `NMP.chierchiaDerivUnscrambled`. -/
+def krifkaDerivUnscrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  ¬ existsClose dom P Q
 
-/-- A VP meaning -/
-abbrev KrifkaVP (Entity World : Type) := Entity → World → Bool
+/-- Scrambled `[BP [niet V]]`: ∃-shift above negation — `∃ x ∈ dom, P x ∧ ¬ Q x`
+(wide scope over negation). -/
+def krifkaDerivScrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  existsClose dom P (fun x => ¬ Q x)
 
-/-- A sentence meaning -/
-abbrev KrifkaSent (World : Type) := World → Bool
+/-- **Scope follows position**: the scrambled (wide) and unscrambled (narrow) derivations
+diverge on some model — witnessed by a two-element domain where one element satisfies the
+predicate and the other does not. -/
+theorem scope_follows_position :
+    ∃ (Entity : Type) (dom : List Entity) (P Q : Entity → Prop),
+      krifkaDerivScrambled dom P Q ≠ krifkaDerivUnscrambled dom P Q := by
+  refine ⟨Bool, [true, false], fun _ => True, fun b => b = true, ?_⟩
+  intro h
+  have hs : krifkaDerivScrambled [true, false] (fun _ => True) (fun b => b = true) := by
+    unfold krifkaDerivScrambled; decide
+  rw [h] at hs
+  have hu : ¬ krifkaDerivUnscrambled [true, false] (fun _ => True) (fun b => b = true) := by
+    unfold krifkaDerivUnscrambled; decide
+  exact hu hs
 
-/-- Negate a VP -/
-def KrifkaVP.neg (vp : KrifkaVP Entity World) : KrifkaVP Entity World :=
-  λ x w => !vp x w
-
-/-- ∃-shift: ∃x ∈ domain. P(w)(x) ∧ VP(x)(w). Applies at surface position. -/
-def existsShiftApply
-    (domain : List Entity)
-    (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World)
-    : KrifkaSent World :=
-  λ w => domain.any (λ x => prop w x && vp x w)
-
-/-- Unscrambled: [niet [BP V]] → ¬∃x[P(x) ∧ V(x)]. -/
-def krifkaDerivUnscrambled
-    (domain : List Entity)
-    (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World)
-    : KrifkaSent World :=
-  λ w => !(existsShiftApply domain prop vp w)
-
-/-- Scrambled: [BP [niet V]] → ∃x[P(x) ∧ ¬V(x)] (wide scope). -/
-def krifkaDerivScrambled
-    (domain : List Entity)
-    (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World)
-    : KrifkaSent World :=
-  existsShiftApply domain prop (KrifkaVP.neg vp)
-
-/-- Scrambled derivation composes ∃-shift with negated VP. -/
-theorem krifka_position_sensitive
-    (domain : List Entity)
-    (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World)
-    : krifkaDerivScrambled domain prop vp =
-      existsShiftApply domain prop (KrifkaVP.neg vp) := rfl
+end Scrambling
 
 end Krifka2004

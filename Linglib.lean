@@ -1402,7 +1402,7 @@ import Linglib.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.KindReference
-import Linglib.Phenomena.Generics.Compare
+import Linglib.Studies.LeBruynDeSwart2022
 import Linglib.Studies.Cohen1999
 import Linglib.Studies.Cohen2013
 import Linglib.Studies.Guerrini2026
