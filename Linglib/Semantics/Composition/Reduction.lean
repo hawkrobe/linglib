@@ -36,8 +36,6 @@ Barwise-Cooper payoff theorem, and the principled reason `compileFO` is
 partial.
 -/
 
-set_option autoImplicit false
-
 universe u v
 
 /-! ### Computable singleton binders
@@ -91,6 +89,16 @@ theorem realize_ex₁ {n : ℕ} {φ : L.Formula ℕ} {v : ℕ → M} :
       = BoundedFormula.Realize (BoundedFormula.relabel (toBound n) φ).ex v default := rfl
   rw [h, BoundedFormula.realize_ex]
   exact exists_congr fun x => realize_relabel_update n φ v x
+
+/-- A formula with no occurring free variables, as a sentence. -/
+def toSentence {α : Type*} [DecidableEq α] (φ : L.Formula α)
+    (h : φ.freeVarFinset = ∅) : L.Sentence :=
+  φ.restrictFreeVar fun x => absurd x.2 (by simp [h])
+
+theorem realize_toSentence {α : Type*} [DecidableEq α] (φ : L.Formula α)
+    (h : φ.freeVarFinset = ∅) (v : α → M) :
+    (M ⊨ φ.toSentence h) ↔ φ.Realize v :=
+  BoundedFormula.realize_restrictFreeVar v (fun a => absurd a.2 (by simp [h]))
 
 end FirstOrder.Language.Formula
 
@@ -729,7 +737,7 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
       holdsAt_iff_realize m fw nm w hnd hfr hdj h₂ g]
     letI := m.interp w
-    haveI : m.E ⊨ (∅ : L₀.Theory) := modelEmpty m.E
+    haveI : m.E ⊨ (∅ : L₀.Theory) := inferInstance
     haveI : Nonempty m.E := hne
     have h := hmod ⟨m.E⟩ g default
     exact BoundedFormula.realize_imp.mp h
@@ -745,17 +753,6 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     exact this
 
 /-! ### Closed trees as sentences, and compactness -/
-
-/-- A compiled formula with no occurring free variables, as a sentence. -/
-def _root_.FirstOrder.Language.Formula.toSentence (φ : L₀.Formula ℕ)
-    (h : φ.freeVarFinset = ∅) : L₀.Sentence :=
-  φ.restrictFreeVar fun x => absurd x.2 (by simp [h])
-
-theorem realize_toSentence {M : Type} [L₀.Structure M] (φ : L₀.Formula ℕ)
-    (h : φ.freeVarFinset = ∅) (v : ℕ → M) :
-    (M ⊨ φ.toSentence h) ↔ φ.Realize v :=
-  BoundedFormula.realize_restrictFreeVar v
-    (fun a => absurd a.2 (by simp [h]))
 
 /-- **Compactness at the tree level**: a family of closed fragment trees is
 jointly satisfiable in a nonempty-domain composition model iff every finite
@@ -788,7 +785,7 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         refine ⟨fun ψ hψ => ?_⟩
         obtain ⟨x, rfl⟩ : ∃ x : T₀, (φs (f x)).toSentence (hcl (f x)) = ψ :=
           ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
-        rw [realize_toSentence (v := g)]
+        rw [Formula.realize_toSentence (v := g)]
         have hold := hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x))
         rw [holdsAt_iff_realize m fw nm w hnd hfr hdj (hc (f x)) g] at hold
         exact hold
@@ -802,7 +799,7 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       hnd hfr hdj (hc i) _]
     have : (N : Type) ⊨ (φs i).toSentence (hcl i) :=
       N.is_model.realize_of_mem _ (Set.mem_range_self i)
-    exact (realize_toSentence (M := (N : Type)) (φs i) (hcl i)
+    exact (Formula.realize_toSentence (M := (N : Type)) (φs i) (hcl i)
       (fun _ => Classical.arbitrary N)).mp this
 
 end TheoryBridge

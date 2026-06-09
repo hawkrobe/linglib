@@ -2,6 +2,7 @@ import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Fragments.English.Toy
+import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
 
