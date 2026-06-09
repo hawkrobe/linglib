@@ -1,146 +1,102 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Tactics.RSAPredict
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Linglib.Phenomena.FreeChoice.Basic
+import Linglib.Pragmatics.RSA.Canonical
 
 /-!
-# [champollion-alsop-grosu-2019] — Free Choice Disjunction as RSA
+# [champollion-alsop-grosu-2019] — Free choice disjunction as a rational speech act
 
-[champollion-alsop-grosu-2019] [bergen-levy-goodman-2016] [fox-2007] [franke-2011]"Free choice disjunction as a rational speech act"
-Proceedings of SALT 29: 238-257.
+RSA model of [champollion-alsop-grosu-2019] (SALT 29): free choice ("You may
+take an apple or a pear" ⤳ "You may take an apple") emerges from RSA once
+**semantic uncertainty** ([bergen-levy-goodman-2016]) is added: agents reason
+over two interpretation functions — ℐ₁ (classical modal logic) and ℐ₂
+(strengthened via [fox-2007]-style exhaustification) — so a bare disjunct
+risks the "Only A" reading; the disjunction avoids that risk and the listener
+inverts the avoidance. States and utterances extend [franke-2011]'s IBR
+model; the recursion is [frank-goodman-2012]'s, with
+`P_L0(w|u,ℐ) ∝ ℐ(u,w)·P(w)`, `P_S1(u|w,ℐ) ∝ [P_L0]^α`, and
+`P_L1(w|u) ∝ P(w)·Σ_ℐ P_S1(u|w,ℐ)`.
 
-## The Model
+Instantiated on the canonical pipeline: the speaker is `RSA.Canonical.S1` at
+the natural-exponent informativity utility (`RSA.Canonical.powUtility` with
+`α = 2`, i.e. `rsaUtility` at zero cost), the listener `RSA.Canonical.L1`
+(the joint posterior over `FCState × Interp`). Findings are posterior-mass
+comparisons closed by dominance *bounds* on softmax weights — no numeric
+reflection. Since the FCI/EI events constrain only the world coordinate and
+the interpretation prior is uniform, joint-posterior event masses coincide
+with the paper's ℐ-marginalised L1. The paper's tables use `α = 100`; at the
+`α = 2` used here the paper notes L1 assigns "only 70%" to the FCI states
+given Or (our exact masses give ≈ 70.2%).
 
-Domain: "You may take an apple or a pear" with 2 items {A, B}. 5 states
-based on permission structure. 4 utterances. 2 interpretation functions
-(I₁ literal vs I₂ exhaustified), following [bergen-levy-goodman-2016].
+## Main statements
 
-- **L0**: L0(w|u,I) ∝ I(u,w) (meaning under interpretation I)
-- **S1**: S1(u|w,I) ∝ L0(w|u,I)^α (rpow belief-based)
-- **L1**: L1(w|u) ∝ P(w) · Σ_I S1(u|w,I)
+* `fci_derived` — given Or, L1 favours the FCI states (Only One,
+  Any Number) under a uniform prior; `ei_uniform` — at α = 2 the EI states
+  also carry more mass (a low-α observation of ours: at the paper's α = 100
+  the EI split is exactly ½/½, and the paper derives EI from priors only).
+* `ei_defeated_by_prior` — with the paper's 75%-Any-Number prior the EI
+  comparison reverses: EI tracks world knowledge.
+* `speaker_or_onlyOne_exh` / `speaker_prefers_a_at_onlyA_exh` — the
+  avoidance mechanism at S1.
 
-Parameters: α = 2 (paper uses α = 100; qualitative predictions hold at α = 2,
-where "L1 assigns only 70% probability to the FCI states" — p. 249).
+## Implementation notes
 
-## Key Innovation
-
-Standard RSA cannot derive free choice because disjunction is always less
-informative than its disjuncts. Adding **semantic uncertainty** — speakers and listeners reason about which interpretation function is
-being used — creates an avoidance pattern that drives the inference.
-
-The two interpretation functions represent optional exhaustification:
-- I₁: Literal meanings (unexhaustified)
-- I₂: Strengthened meanings (exhaustified)
-
-## How Free Choice Emerges
-
-1. S1 wants to convey "Only One" (each item individually permitted)
-2. If S1 says "You may A", L0 might interpret via I₂ as "Only A"
-3. To avoid this misunderstanding, S1 uses disjunction
-4. L1 reasons: "S1 chose Or to prevent me thinking Only A or Only B"
-5. L1 infers: Only One or Any Number → Free choice
-
-## Qualitative Findings
-
-| # | Finding | Theorem |
-|---|---------|---------|
-| 1 | FCI derived (uniform prior) | `fci_derived` |
-| 2 | FCI robust to biased prior | `fci_robust_to_prior` |
-| 3 | EI holds under uniform prior | `ei_uniform` |
-| 4 | EI weakened under biased prior | `ei_prior_sensitive` |
-
+The paper's FCI-robustness claim (75% prior on Only A leaves FCI intact at
+`α = 100`) is parameter-dependent: at `α = 2` it *reverses* (the non-FCI
+score sum ≈ 0.32 dominates ≈ 0.065 — the low-α speaker does not reliably
+avoid Or at Only A, and the 12× prior swamps the avoidance; at `α = 100` the
+Only-A terms decay like (15/16)^α). The reversal qualifies the paper's
+generally-worded robustness conclusion, which is stated without an α-caveat.
+Per the library's policy on findings whose truth depends on an exact
+parameter value, it is recorded as prose, not as a theorem. The paper's Table-8 null-utterance robustness check is
+recorded as prose for space (its α = 2 values are documented in the final
+section), and the §4 negation model is not formalised.
 -/
 
 set_option autoImplicit false
 
-namespace RSA.FreeChoice
+namespace ChampollionAlsopGrosu2019
 
-open Real (rpow rpow_nonneg)
+open scoped ENNReal
+open RSA.Canonical
 
--- ============================================================================
--- §1. Domain Types
--- ============================================================================
+/-! ### States, utterances, interpretation functions (Table 2, (5), (6), (7)) -/
 
-/-!
-## State Space (Table 2)
-
-| State | ◇A | ◇B | ◇(A∧B) | FCI? | EI? |
-|-------|----|----|--------|------|-----|
-| Only A | T | F | F | no | yes |
-| Only B | F | T | F | no | yes |
-| Only One | T | T | F | yes | yes |
-| Any Number | T | T | T | yes | no |
-| Only Both | T | T | T | no | no |
-
-Note: "Only Both" means you may ONLY take both together (not either alone).
--/
-
-/-- The 5 states from Table 2, based on permission structure. -/
+/-- Permission states (Table 2): Franke's All True split into Any Number
+and Only Both. -/
 inductive FCState where
-  | onlyA     -- May take apple only (not pear)
-  | onlyB     -- May take pear only (not apple)
-  | onlyOne   -- May take either, but not both (FCI + EI)
-  | anyNumber -- May take any combination (FCI, no EI)
-  | onlyBoth  -- May only take both together (no FCI, no EI)
-  deriving DecidableEq, Repr, Inhabited
+  | onlyA | onlyB
+  | onlyOne   -- either fruit, not both (FCI + EI)
+  | anyNumber -- any combination (FCI, no EI)
+  | onlyBoth  -- only both together (no FCI, no EI)
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : Fintype FCState where
-  elems := {.onlyA, .onlyB, .onlyOne, .anyNumber, .onlyBoth}
-  complete := fun x => by cases x <;> simp
-
-/-- The 4 utterances from (5). -/
+/-- The four utterances of (5). -/
 inductive Utterance where
-  | a    -- "You may take an apple" (◇A)
-  | b    -- "You may take a pear" (◇B)
-  | or_  -- "You may take an apple or a pear" (◇(A∨B))
-  | and_ -- "You may take an apple and a pear" (◇(A∧B))
-  deriving DecidableEq, Repr, Inhabited
+  | a | b | or_ | and_
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : Fintype Utterance where
-  elems := {.a, .b, .or_, .and_}
-  complete := fun x => by cases x <;> simp
-
-/-- Two interpretation functions representing optional exhaustification. -/
+/-- ℐ₁ literal vs ℐ₂ exhaustified ([fox-2007] innocent exclusion). -/
 inductive Interp where
-  | literal     -- I₁: standard modal logic meanings
-  | exhaustified -- I₂: strengthened via covert Exh ([fox-2007])
-  deriving DecidableEq, Repr, Inhabited
+  | literal | exhaustified
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : Fintype Interp where
-  elems := {.literal, .exhaustified}
-  complete := fun x => by cases x <;> simp
-
--- ============================================================================
--- §2. Empirical Predicates
--- ============================================================================
-
-/-- Free choice inference: each item is individually permitted.
-    ◇(A∧¬B) ∧ ◇(B∧¬A). True at {onlyOne, anyNumber}. -/
+/-- Free choice: each item individually permitted, `◇(A∧¬B) ∧ ◇(B∧¬A)`. -/
 def HasFCI : FCState → Prop
   | .onlyOne | .anyNumber => True
   | _ => False
 
-instance : DecidablePred HasFCI := fun w => by
-  cases w <;> unfold HasFCI <;> infer_instance
+instance : DecidablePred HasFCI
+  | .onlyA | .onlyB | .onlyBoth => .isFalse id
+  | .onlyOne | .anyNumber => .isTrue trivial
 
-/-- Exclusivity inference: taking both is not permitted.
-    ¬◇(A∧B). True at {onlyA, onlyB, onlyOne}. -/
+/-- Exclusivity: taking both is not permitted, `¬◇(A∧B)`. -/
 def HasEI : FCState → Prop
   | .onlyA | .onlyB | .onlyOne => True
   | _ => False
 
-instance : DecidablePred HasEI := fun w => by
-  cases w <;> unfold HasEI <;> infer_instance
+instance : DecidablePred HasEI
+  | .onlyA | .onlyB | .onlyOne => .isTrue trivial
+  | .anyNumber | .onlyBoth => .isFalse id
 
--- ============================================================================
--- §3. Truth Tables (Interpretation Functions)
--- ============================================================================
-
-/-- Interpretation function I₁ (literal/unexhaustified) from (6).
-    - ⟦A⟧^I₁ = {Only A, Only One, Any Number, Only Both}
-    - ⟦B⟧^I₁ = {Only B, Only One, Any Number, Only Both}
-    - ⟦Or⟧^I₁ = all 5 states
-    - ⟦And⟧^I₁ = {Any Number, Only Both} -/
+/-- Interpretation function ℐ₁ (the paper's (6)). -/
 def I1 : Utterance → FCState → Bool
   | .a, .onlyB => false
   | .a, _ => true
@@ -150,12 +106,7 @@ def I1 : Utterance → FCState → Bool
   | .and_, .anyNumber | .and_, .onlyBoth => true
   | .and_, _ => false
 
-/-- Interpretation function I₂ (exhaustified) from (7).
-    Strengthened via innocent exclusion:
-    - ⟦A⟧^I₂ = {Only A}
-    - ⟦B⟧^I₂ = {Only B}
-    - ⟦Or⟧^I₂ = {Only A, Only B, Only One, Any Number}
-    - ⟦And⟧^I₂ = {Only Both} -/
+/-- Interpretation function ℐ₂ (the paper's (7)). -/
 def I2 : Utterance → FCState → Bool
   | .a, .onlyA => true
   | .a, _ => false
@@ -166,231 +117,382 @@ def I2 : Utterance → FCState → Bool
   | .and_, .onlyBoth => true
   | .and_, _ => false
 
-/-- Combined meaning function indexed by interpretation. -/
+/-- Meaning indexed by interpretation function. -/
 def interpMeaning : Interp → Utterance → FCState → Bool
   | .literal => I1
   | .exhaustified => I2
 
--- ============================================================================
--- §4. Structural Theorems
--- ============================================================================
+/-- ℐ₂ refines ℐ₁: exhaustification only strengthens. -/
+theorem I2_refines_I1 : ∀ u w, I2 u w = true → I1 u w = true := by decide
 
-/-- I₂ refines I₁ for all utterances: I₂(u,w) = true → I₁(u,w) = true. -/
-theorem I2_refines_I1 : ∀ u w, I2 u w = true → I1 u w = true := by
-  intro u w h; cases u <;> cases w <;> simp_all [I1, I2]
+/-- ℐ₁(Or) is literally true everywhere — maximally uninformative. -/
+theorem I1_or_everywhere : ∀ w, I1 .or_ w = true := by decide
 
-/-- I₁(Or) is true everywhere (maximally uninformative). -/
-theorem I1_or_everywhere : ∀ w, I1 .or_ w = true := by
-  intro w; rfl
+/-- ℐ₂(Or) excludes exactly Only Both. -/
+theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w = true ↔ w ≠ .onlyBoth := by decide
 
-/-- I₂(Or) excludes exactly onlyBoth. -/
-theorem I2_or_excludes_onlyBoth :
-    I2 .or_ .onlyBoth = false ∧ ∀ w, w ≠ .onlyBoth → I2 .or_ w = true := by
-  constructor
-  · rfl
-  · intro w h; cases w <;> simp_all [I2]
+/-- ℐ₂(A) singles out exactly Only A — the risk the speaker avoids. -/
+theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by decide
 
-/-- I₂(A) singles out exactly onlyA. -/
-theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by
-  intro w; cases w <;> simp [I2]
+/-! ### ENNReal budget helpers -/
 
--- ============================================================================
--- §5. RSAConfig
--- ============================================================================
+private theorem two_mul_inv_add {c : ℝ≥0∞} (hT : c ≠ ∞) :
+    (2 * c)⁻¹ + (2 * c)⁻¹ = c⁻¹ := by
+  rw [← two_mul, ENNReal.mul_inv (Or.inr hT) (Or.inl ENNReal.ofNat_ne_top),
+      ← mul_assoc, ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top, one_mul]
 
-/-- [champollion-alsop-grosu-2019] RSA model with semantic uncertainty.
-    Two interpretation functions serve as latent variables.
-    S1 score is rpow(L0, α) — standard belief-based RSA. -/
-noncomputable def cfg (worldPr : FCState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
-    RSA.RSAConfig Utterance FCState where
-  Latent := Interp
-  meaning _ i u w := if interpMeaning i u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α _i w u := rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
-  α := 2
-  α_pos := by positivity
-  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
-  worldPrior := worldPr
-  worldPrior_nonneg := hp
+private theorem quarter_add_quarter : (4 : ℝ≥0∞)⁻¹ + 4⁻¹ = 2⁻¹ := by
+  rw [show (4 : ℝ≥0∞) = 2 * 2 from by norm_num, two_mul_inv_add ENNReal.ofNat_ne_top]
 
-/-- Uniform prior: all states equally likely. -/
-noncomputable abbrev uniformCfg :=
-  cfg (fun _ => 1) (fun _ => le_of_lt one_pos)
+/-! ### The FCI / EI events -/
 
-/-- Biased prior: P(anyNumber) = 3, others = 1.
-    Models a context where taking any combination is a priori more likely,
-    testing prior sensitivity of FCI vs EI. -/
-noncomputable abbrev biasedCfg :=
-  cfg (fun w => match w with | .anyNumber => 3 | _ => 1)
-    (fun w => by cases w <;> positivity)
+/-- The free-choice event of the joint listener (any interpretation). -/
+def fciPairs : Finset (FCState × Interp) := Finset.univ.filter (fun p => HasFCI p.1)
 
--- ============================================================================
--- §6. Bridge Theorems
--- ============================================================================
+/-- The complement of `fciPairs`. -/
+def nonFciPairs : Finset (FCState × Interp) := Finset.univ.filter (fun p => ¬ HasFCI p.1)
 
-/-- FCI is derived: L1 assigns more mass to FCI states (Only One + Any Number)
-    than non-FCI states upon hearing "Or".
-    This is the central result of the paper. -/
+/-- The exclusivity event of the joint listener. -/
+def eiPairs : Finset (FCState × Interp) := Finset.univ.filter (fun p => HasEI p.1)
+
+/-- The complement of `eiPairs`. -/
+def nonEiPairs : Finset (FCState × Interp) := Finset.univ.filter (fun p => ¬ HasEI p.1)
+
+/-! ### The basic model, uniform prior
+
+At a uniform world prior the paper's `P_L0(w|u,ℐ) ∝ ℐ(u,w)·P(w)` is uniform
+on the extension, i.e. `RSA.Canonical.L0OfBool`. Exact S1(Or) values at
+α = 2, for reference: ℐ₁ row 16/41, 16/41, 8/33, 8/83, 8/83; ℐ₂ row 1/17,
+1/17, 1, 1, 0 (states in Table-2 order). -/
+
+theorem ext_nonempty (i : Interp) (u : Utterance) :
+    (RSA.extensionOf (interpMeaning i) u).Nonempty := by
+  cases i <;> cases u <;>
+    first
+      | exact ⟨.onlyA, by decide⟩
+      | exact ⟨.onlyB, by decide⟩
+      | exact ⟨.anyNumber, by decide⟩
+      | exact ⟨.onlyBoth, by decide⟩
+
+/-- Literal listener of the basic model. -/
+noncomputable abbrev l0 : Interp → Utterance → PMF FCState :=
+  L0OfBool interpMeaning ext_nonempty
+
+instance : ViableSpeaker (powUtility 2 l0) :=
+  viableSpeaker_powUtility_of_witness 2 l0 fun s => by
+    obtain ⟨w, i⟩ := s
+    cases i <;> cases w <;>
+      first
+        | exact ⟨.or_, L0OfBool_ne_zero _ _ (by decide)⟩
+        | exact ⟨.and_, L0OfBool_ne_zero _ _ (by decide)⟩
+
+/-- The pragmatic speaker of the basic model (the paper's `P_S1`, α = 2). -/
+noncomputable abbrev speaker : FCState × Interp → PMF Utterance :=
+  S1 (powUtility 2 l0)
+
+/-- Uniform joint prior over `state × interpretation`. -/
+noncomputable abbrev prior : PMF (FCState × Interp) := PMF.uniformOfFintype _
+
+/-- Under ℐ₂ at Only One, Or is the *only* applicable utterance — the heart
+of the avoidance mechanism (paper §3.3). -/
+theorem speaker_or_onlyOne_exh : speaker (.onlyOne, .exhaustified) .or_ = 1 :=
+  S1_powUtility_eq_one 2 l0 two_ne_zero .or_ fun u' hu' => by
+    cases u' <;> first | exact absurd rfl hu' | exact L0OfBool_eq_zero _ _ (by decide)
+
+/-- Under ℐ₂ at Any Number, Or is the only applicable utterance. -/
+theorem speaker_or_anyNumber_exh : speaker (.anyNumber, .exhaustified) .or_ = 1 :=
+  S1_powUtility_eq_one 2 l0 two_ne_zero .or_ fun u' hu' => by
+    cases u' <;> first | exact absurd rfl hu' | exact L0OfBool_eq_zero _ _ (by decide)
+
+/-- Under ℐ₂ at Only Both, Or is inapplicable. -/
+theorem speaker_or_onlyBoth_exh : speaker (.onlyBoth, .exhaustified) .or_ = 0 :=
+  S1_powUtility_eq_zero 2 l0 two_ne_zero (L0OfBool_eq_zero _ _ (by decide))
+
+/-- The avoidance mechanism at S1: under ℐ₂ at Only A the bare disjunct
+strictly beats the disjunction (16/17 vs 1/17). -/
+theorem speaker_prefers_a_at_onlyA_exh :
+    speaker (.onlyA, .exhaustified) .or_ < speaker (.onlyA, .exhaustified) .a := by
+  show S1 (powUtility 2 l0) (.onlyA, .exhaustified) .or_
+    < S1 (powUtility 2 l0) (.onlyA, .exhaustified) .a
+  rw [S1_powUtility_eq_normalize, PMF.normalize_lt_iff_lt,
+      powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
+      powWeight_L0OfBool_of_mem _ _ 1 (by decide) (by decide)]
+  exact ENNReal.pow_lt_pow_left two_ne_zero
+    (ENNReal.inv_lt_inv.mpr (Nat.cast_lt.mpr (by norm_num)))
+
+theorem marginal_or_ne_zero : PMF.marginal speaker prior .or_ ≠ 0 :=
+  PMF.marginal_ne_zero _ _ _
+    ((prior.mem_support_iff _).mp
+      (PMF.mem_support_uniformOfFintype (.onlyOne, .exhaustified)))
+    (by rw [speaker_or_onlyOne_exh]; exact one_ne_zero)
+
+/-- The pragmatic listener of the basic model (the paper's `P_L1`). -/
+noncomputable abbrev listener (u : Utterance)
+    (h : PMF.marginal speaker prior u ≠ 0) : PMF (FCState × Interp) :=
+  L1 speaker prior u h
+
+private theorem speaker_or_onlyA_lit_lt_half : speaker (.onlyA, .literal) .or_ < 2⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 1) (k := 5) (k' := 4)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_onlyB_lit_lt_half : speaker (.onlyB, .literal) .or_ < 2⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 1) (k := 5) (k' := 4)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_anyNumber_lit_lt_quarter : speaker (.anyNumber, .literal) .or_ < 4⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_onlyBoth_lit_lt_quarter : speaker (.onlyBoth, .literal) .or_ < 4⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_onlyA_exh_lt_quarter : speaker (.onlyA, .exhaustified) .or_ < 4⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 3) (k := 4) (k' := 1)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_onlyB_exh_lt_quarter : speaker (.onlyB, .exhaustified) .or_ < 4⁻¹ :=
+  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 3) (k := 4) (k' := 1)
+    (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
+    (by norm_num)).trans_le (by norm_num)
+
+private theorem speaker_or_onlyA_lit_gt_quarter : 4⁻¹ < speaker (.onlyA, .literal) .or_ :=
+  (inv_succ_lt_S1_powUtility 2 l0 (n := 3) <| by
+    rw [show (Finset.univ.erase Utterance.or_) = {.a, .b, .and_} from by decide,
+        Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_singleton,
+        powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
+        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
+        add_zero, add_zero]
+    exact ENNReal.inv_pow_lt_natCast_mul_inv_pow (by norm_num) (by norm_num)
+      (by norm_num)).trans_le' (by norm_num)
+
+private theorem speaker_or_onlyB_lit_gt_quarter : 4⁻¹ < speaker (.onlyB, .literal) .or_ :=
+  (inv_succ_lt_S1_powUtility 2 l0 (n := 3) <| by
+    rw [show (Finset.univ.erase Utterance.or_) = {.a, .b, .and_} from by decide,
+        Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_singleton,
+        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
+        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
+        zero_add, add_zero]
+    exact ENNReal.inv_pow_lt_natCast_mul_inv_pow (by norm_num) (by norm_num)
+      (by norm_num)).trans_le' (by norm_num)
+
+/-- **Free choice derived** (paper §3.3; uniform prior, α = 2): given Or, L1
+puts strictly more posterior mass on the FCI states than on the rest (the
+exact split is the ≈ 70% / 30% the paper reports for α = 2). -/
 theorem fci_derived :
-    uniformCfg.L1_marginal .or_ HasFCI >
-    uniformCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
-  rsa_predict
+    (listener .or_ marginal_or_ne_zero).toOuterMeasure ↑nonFciPairs
+      < (listener .or_ marginal_or_ne_zero).toOuterMeasure ↑fciPairs := by
+  rw [L1_uniform_event_lt_iff]
+  have hub : (∑ p ∈ nonFciPairs, speaker p .or_) < 2 := by
+    rw [show nonFciPairs = {(.onlyA, .literal), (.onlyA, .exhaustified),
+          (.onlyB, .literal), (.onlyB, .exhaustified),
+          (.onlyBoth, .literal), (.onlyBoth, .exhaustified)} from by decide,
+        Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_insert (by decide), Finset.sum_singleton,
+        speaker_or_onlyBoth_exh, add_zero]
+    refine (ENNReal.add_lt_add speaker_or_onlyA_lit_lt_half
+      (ENNReal.add_lt_add speaker_or_onlyA_exh_lt_quarter
+        (ENNReal.add_lt_add speaker_or_onlyB_lit_lt_half
+          (ENNReal.add_lt_add speaker_or_onlyB_exh_lt_quarter
+            speaker_or_onlyBoth_lit_lt_quarter)))).trans ?_
+    rw [show (2 : ℝ≥0∞)⁻¹ + (4⁻¹ + (2⁻¹ + (4⁻¹ + 4⁻¹)))
+          = (2⁻¹ + 2⁻¹) + ((4⁻¹ + 4⁻¹) + 4⁻¹) from by ring,
+        ENNReal.inv_two_add_inv_two, quarter_add_quarter]
+    calc (1 : ℝ≥0∞) + (2⁻¹ + 4⁻¹) < 1 + (2⁻¹ + 2⁻¹) := by
+          refine (ENNReal.add_lt_add_iff_left ENNReal.one_ne_top).mpr ?_
+          exact (ENNReal.add_lt_add_iff_left (ENNReal.inv_ne_top.mpr two_ne_zero)).mpr
+            (ENNReal.inv_lt_inv.mpr (by norm_num))
+      _ = 2 := by rw [ENNReal.inv_two_add_inv_two]; exact one_add_one_eq_two
+  have hlb : (2 : ℝ≥0∞) ≤ ∑ p ∈ fciPairs, speaker p .or_ := by
+    refine le_trans ?_ (Finset.sum_le_sum_of_subset
+      (by decide : ({(.onlyOne, .exhaustified), (.anyNumber, .exhaustified)} :
+        Finset (FCState × Interp)) ⊆ fciPairs))
+    rw [Finset.sum_insert (by decide), Finset.sum_singleton,
+        speaker_or_onlyOne_exh, speaker_or_anyNumber_exh, one_add_one_eq_two]
+  exact hub.trans_le hlb
 
-/-- FCI is robust to prior manipulation: holds even when anyNumber is
-    a priori 3× more likely. -/
-theorem fci_robust_to_prior :
-    biasedCfg.L1_marginal .or_ HasFCI >
-    biasedCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
-  rsa_predict
-
-/-- EI holds under uniform prior. -/
+/-- **Exclusivity at a uniform prior, α = 2** — a formalizer's observation,
+*not* the paper's claim: at the paper's α = 100 the split given Or is exactly
+0.5/0.5 ("fully half of it is on the non-EI state Any Number"); the paper
+derives EI from prior beliefs, claiming only that FCI is the *stronger*
+inference under uniform priors. At α = 2 the low-α speaker leaks Or-mass to
+the literal-ℐ Only A / Only B states (both EI states), so the EI event
+carries strictly more mass (≈ 64% / 36%) — strictness is an α = 2 artifact.
+Contrast `ei_defeated_by_prior`. -/
 theorem ei_uniform :
-    uniformCfg.L1_marginal .or_ HasEI >
-    uniformCfg.L1_marginal .or_ (fun w => ¬ HasEI w) := by
-  rsa_predict
+    (listener .or_ marginal_or_ne_zero).toOuterMeasure ↑nonEiPairs
+      < (listener .or_ marginal_or_ne_zero).toOuterMeasure ↑eiPairs := by
+  rw [L1_uniform_event_lt_iff]
+  have hub : (∑ p ∈ nonEiPairs, speaker p .or_) < 1 + 2⁻¹ := by
+    rw [show nonEiPairs = {(.anyNumber, .literal), (.anyNumber, .exhaustified),
+          (.onlyBoth, .literal), (.onlyBoth, .exhaustified)} from by decide,
+        Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_insert (by decide), Finset.sum_singleton,
+        speaker_or_anyNumber_exh, speaker_or_onlyBoth_exh, add_zero]
+    refine (ENNReal.add_lt_add speaker_or_anyNumber_lit_lt_quarter
+      ((ENNReal.add_lt_add_iff_left ENNReal.one_ne_top).mpr
+        speaker_or_onlyBoth_lit_lt_quarter)).trans_eq ?_
+    rw [show (4 : ℝ≥0∞)⁻¹ + (1 + 4⁻¹) = 1 + (4⁻¹ + 4⁻¹) from by ring,
+        quarter_add_quarter]
+  have hlb : (1 : ℝ≥0∞) + 2⁻¹ ≤ ∑ p ∈ eiPairs, speaker p .or_ := by
+    refine le_trans ?_ (Finset.sum_le_sum_of_subset
+      (by decide : ({(.onlyA, .literal), (.onlyB, .literal),
+        (.onlyOne, .exhaustified)} : Finset (FCState × Interp)) ⊆ eiPairs))
+    rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+        Finset.sum_singleton, speaker_or_onlyOne_exh]
+    refine le_of_lt (lt_of_eq_of_lt ?_ (ENNReal.add_lt_add speaker_or_onlyA_lit_gt_quarter
+      ((ENNReal.add_lt_add_iff_right ENNReal.one_ne_top).mpr
+        speaker_or_onlyB_lit_gt_quarter)))
+    rw [show (4 : ℝ≥0∞)⁻¹ + (4⁻¹ + 1) = (4⁻¹ + 4⁻¹) + 1 from by ring,
+        quarter_add_quarter, add_comm]
+  exact hub.trans_le hlb
 
-/-- EI is prior-sensitive: a prior biased toward anyNumber defeats EI. -/
-theorem ei_prior_sensitive :
-    ¬(biasedCfg.L1_marginal .or_ HasEI >
-      biasedCfg.L1_marginal .or_ (fun w => ¬ HasEI w)) := by
-  rsa_predict
+/-! ### Prior sensitivity: the asymmetric-prior model
 
--- ============================================================================
--- §7. Verification
--- ============================================================================
+The paper shows EI, unlike FCI, tracks world knowledge: with 75% prior on
+Any Number, L1 given Or concentrates on Any Number (92% at α = 100, Table 6).
+Following `P_L0(w|u,ℐ) ∝ ℐ(u,w)·P(w)`, the prior enters the literal
+listener. The complementary FCI-robustness claim (75% on Only A) is
+`α = 100`-dependent and reverses at α = 2 (module docstring): prose only. -/
 
-/-- The 4 qualitative findings from [champollion-alsop-grosu-2019]. -/
-inductive Finding where
-  | fci_derived
-  | fci_robust_to_prior
-  | ei_uniform
-  | ei_prior_sensitive
-  deriving DecidableEq, Repr
+/-- Asymmetric prior weights: 75% on Any Number (12 : 1 : 1 : 1 : 1). -/
+def biasedWeight : FCState → ℕ
+  | .anyNumber => 12
+  | _ => 1
 
-/-- Map each finding to its RSA formalization. -/
-noncomputable def formalize : Finding → Prop
-  | .fci_derived =>
-      uniformCfg.L1_marginal .or_ HasFCI >
-      uniformCfg.L1_marginal .or_ (fun w => ¬ HasFCI w)
-  | .fci_robust_to_prior =>
-      biasedCfg.L1_marginal .or_ HasFCI >
-      biasedCfg.L1_marginal .or_ (fun w => ¬ HasFCI w)
-  | .ei_uniform =>
-      uniformCfg.L1_marginal .or_ HasEI >
-      uniformCfg.L1_marginal .or_ (fun w => ¬ HasEI w)
-  | .ei_prior_sensitive =>
-      ¬(biasedCfg.L1_marginal .or_ HasEI >
-        biasedCfg.L1_marginal .or_ (fun w => ¬ HasEI w))
+private theorem wB_tsum_ne_zero (i : Interp) (u : Utterance) :
+    (∑' w, if interpMeaning i u w then (biasedWeight w : ℝ≥0∞) else 0) ≠ 0 := by
+  intro hz
+  have key : ∀ w : FCState, interpMeaning i u w = true → False := fun w hw => by
+    have h := ENNReal.tsum_eq_zero.mp hz w
+    rw [if_pos hw, Nat.cast_eq_zero] at h
+    exact absurd h (by cases w <;> simp [biasedWeight])
+  cases i <;> cases u <;>
+    first
+      | exact key .onlyA (by decide)
+      | exact key .onlyB (by decide)
+      | exact key .anyNumber (by decide)
+      | exact key .onlyBoth (by decide)
 
-/-- The RSA model accounts for all 4 findings from [champollion-alsop-grosu-2019]. -/
-theorem all_findings_verified : ∀ f : Finding, formalize f := by
-  intro f; cases f
-  · exact fci_derived
-  · exact fci_robust_to_prior
-  · exact ei_uniform
-  · exact ei_prior_sensitive
+private theorem wB_tsum_ne_top (i : Interp) (u : Utterance) :
+    (∑' w, if interpMeaning i u w then (biasedWeight w : ℝ≥0∞) else 0) ≠ ∞ := by
+  rw [tsum_fintype]
+  refine ENNReal.sum_ne_top.mpr fun w _ => ?_
+  split
+  · exact ENNReal.natCast_ne_top _
+  · exact ENNReal.zero_ne_top
 
--- ============================================================================
--- §8. Without Conjunction Alternative (Tables 7-8)
--- ============================================================================
+/-- Literal listener with the asymmetric prior (the paper's `P_L0`). -/
+noncomputable abbrev l0B (i : Interp) (u : Utterance) : PMF FCState :=
+  PMF.normalize _ (wB_tsum_ne_zero i u) (wB_tsum_ne_top i u)
 
-/-! The model derives FCI even without the conjunction alternative.
-    This requires either removing the Only Both state or adding a null
-    utterance. We define the null utterance version (Table 8). -/
+private theorem l0B_ne_zero {i : Interp} {u : Utterance} {w : FCState}
+    (h : interpMeaning i u w = true) : l0B i u w ≠ 0 := by
+  rw [PMF.normalize_apply, if_pos h]
+  exact mul_ne_zero (by rw [Nat.cast_ne_zero]; cases w <;> simp [biasedWeight])
+    (ENNReal.inv_ne_zero.mpr (wB_tsum_ne_top i u))
 
-/-- Utterances with null option (no conjunction). -/
-inductive UtteranceWithNull where
-  | a | b | or_ | null
-  deriving DecidableEq, Repr, Inhabited
+private theorem l0B_eq_zero {i : Interp} {u : Utterance} {w : FCState}
+    (h : interpMeaning i u w ≠ true) : l0B i u w = 0 := by
+  rw [PMF.normalize_apply, if_neg h, zero_mul]
 
-instance : Fintype UtteranceWithNull where
-  elems := {.a, .b, .or_, .null}
-  complete := fun x => by cases x <;> simp
+instance : ViableSpeaker (powUtility 2 l0B) :=
+  viableSpeaker_powUtility_of_witness 2 l0B fun s => by
+    obtain ⟨w, i⟩ := s
+    cases i <;> cases w <;>
+      first
+        | exact ⟨.or_, l0B_ne_zero (by decide)⟩
+        | exact ⟨.and_, l0B_ne_zero (by decide)⟩
 
-/-- I₁ with null (true everywhere). -/
-def I1_null : UtteranceWithNull → FCState → Bool
-  | .a, .onlyB => false
-  | .a, _ => true
-  | .b, .onlyA => false
-  | .b, _ => true
-  | .or_, _ => true
-  | .null, _ => true
+/-- The pragmatic speaker of the asymmetric-prior model. -/
+noncomputable abbrev speakerB : FCState × Interp → PMF Utterance :=
+  S1 (powUtility 2 l0B)
 
-/-- I₂ with null. -/
-def I2_null : UtteranceWithNull → FCState → Bool
-  | .a, .onlyA => true
-  | .a, _ => false
-  | .b, .onlyB => true
-  | .b, _ => false
-  | .or_, .onlyBoth => false
-  | .or_, _ => true
-  | .null, _ => true
+/-- Or is still the only applicable utterance at (Any Number, ℐ₂),
+independently of the prior weighting. -/
+theorem speakerB_or_anyNumber_exh : speakerB (.anyNumber, .exhaustified) .or_ = 1 :=
+  S1_powUtility_eq_one 2 l0B two_ne_zero .or_ fun u' hu' => by
+    cases u' <;> first | exact absurd rfl hu' | exact l0B_eq_zero (by decide)
 
-/-- Combined meaning for the null-utterance model. -/
-def interpMeaningNull : Interp → UtteranceWithNull → FCState → Bool
-  | .literal => I1_null
-  | .exhaustified => I2_null
+/-- The asymmetric joint prior `P(w) · 1/2` (weights 12 : 1 : 1 : 1 : 1,
+halved per interpretation; total 32). -/
+noncomputable def priorB : PMF (FCState × Interp) :=
+  PMF.ofFintype (fun p => (biasedWeight p.1 : ℝ≥0∞) * 32⁻¹) (by
+    rw [← Finset.sum_mul, ← Nat.cast_sum,
+        show (∑ p : FCState × Interp, biasedWeight p.1) = 32 from by decide]
+    exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
 
-/-- RSAConfig for the model without conjunction (Table 8).
-    Replaces "and" with a null utterance (true everywhere under both
-    interpretations). -/
-noncomputable def nullCfg : RSA.RSAConfig UtteranceWithNull FCState where
-  Latent := Interp
-  meaning _ i u w := if interpMeaningNull i u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
-  s1Score l0 α _i w u := rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
-  α := 2
-  α_pos := by positivity
-  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
-  worldPrior_nonneg := fun _ => le_of_lt one_pos
+theorem marginalB_or_ne_zero : PMF.marginal speakerB priorB .or_ ≠ 0 :=
+  PMF.marginal_ne_zero (a := (FCState.anyNumber, Interp.exhaustified)) speakerB priorB .or_
+    (mul_ne_zero (by norm_num [biasedWeight]) (ENNReal.inv_ne_zero.mpr (by norm_num)))
+    (by rw [speakerB_or_anyNumber_exh]; exact one_ne_zero)
 
-/-- FCI is derived even without the conjunction alternative (Tables 7-8).
-    The avoidance mechanism between A/B and Or is sufficient — the
-    conjunction alternative is not essential. -/
-theorem fci_without_conjunction :
-    nullCfg.L1_marginal .or_ HasFCI >
-    nullCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
-  rsa_predict
+/-- The pragmatic listener of the asymmetric-prior model. -/
+noncomputable abbrev listenerB (u : Utterance)
+    (h : PMF.marginal speakerB priorB u ≠ 0) : PMF (FCState × Interp) :=
+  L1 speakerB priorB u h
 
-end RSA.FreeChoice
+/-- **Exclusivity is defeated by world knowledge** (paper §3.3, Table 6
+direction, α = 2): with 75% prior on Any Number, L1 given Or favours the
+non-EI states. The prior's 12/32 share at (Any Number, ℐ₂), where Or is
+produced with certainty, outweighs the EI event's entire 6/32 prior mass. -/
+theorem ei_defeated_by_prior :
+    (listenerB .or_ marginalB_or_ne_zero).toOuterMeasure ↑eiPairs
+      < (listenerB .or_ marginalB_or_ne_zero).toOuterMeasure ↑nonEiPairs := by
+  rw [L1_event_lt_iff]
+  have hL : (∑ p ∈ eiPairs, priorB p * speakerB p .or_) ≤ 6 * 32⁻¹ := by
+    calc ∑ p ∈ eiPairs, priorB p * speakerB p .or_
+        ≤ ∑ p ∈ eiPairs, priorB p * 1 :=
+          Finset.sum_le_sum fun p _ => mul_le_mul_right (PMF.coe_le_one _ _) _
+      _ = 6 * 32⁻¹ := by
+          simp only [mul_one, show ∀ p : FCState × Interp,
+            priorB p = (biasedWeight p.1 : ℝ≥0∞) * 32⁻¹ from fun _ => rfl]
+          rw [← Finset.sum_mul, ← Nat.cast_sum,
+              show (∑ p ∈ eiPairs, biasedWeight p.1) = 6 from by decide]
+          norm_num
+  have hR : (12 : ℝ≥0∞) * 32⁻¹ ≤ ∑ p ∈ nonEiPairs, priorB p * speakerB p .or_ := by
+    have hmem : ((.anyNumber, .exhaustified) : FCState × Interp) ∈ nonEiPairs := by
+      decide
+    calc (12 : ℝ≥0∞) * 32⁻¹
+        = priorB (.anyNumber, .exhaustified)
+            * speakerB (.anyNumber, .exhaustified) .or_ := by
+          rw [speakerB_or_anyNumber_exh, mul_one,
+              show priorB (.anyNumber, .exhaustified)
+                = (biasedWeight FCState.anyNumber : ℝ≥0∞) * 32⁻¹ from rfl]
+          norm_num [biasedWeight]
+      _ ≤ ∑ p ∈ nonEiPairs, priorB p * speakerB p .or_ :=
+          Finset.single_le_sum (f := fun p => priorB p * speakerB p .or_)
+            (fun p _ => zero_le') hmem
+  refine lt_of_le_of_lt hL (lt_of_lt_of_le ?_ hR)
+  exact (ENNReal.mul_lt_mul_iff_left (ENNReal.inv_ne_zero.mpr (by norm_num))
+    (ENNReal.inv_ne_top.mpr (by norm_num))).mpr (by norm_num)
 
-/-! ## Bridge content (merged from RSA_ChampollionAlsopGrosu2019Bridge.lean) -/
+/-! ### Without the conjunctive alternative (prose)
 
-/-!
-# Bridge: RSA Free Choice Disjunction → Phenomena Data
-[champollion-alsop-grosu-2019]
+The paper's Tables 7–8 show FCI is robust to dropping the conjunctive
+alternative. Table 7 removes the Only Both state along with And; in the
+Table-8 variant described here, And is replaced by a null utterance (saying
+nothing, true at every state under both interpretations) and FCI still
+arises — the null
+utterance also restores well-definedness at Only Both under ℐ₂, where no
+other utterance is true. At α = 2 the S1(Or) values of that model are
+16/57, 16/57, 8/41, 8/41, 8/41 under ℐ₁ and 25/441, 25/441, 25/41, 25/41, 0
+under ℐ₂ (states in Table-2 order), so given Or the FCI score sum 66/41
+again dominates the non-FCI sum ≈ 0.87: the avoidance mechanism between the
+bare disjuncts and Or does not depend on And. The formalisation is omitted
+for space; it instantiates the same `RSA.Canonical.powUtility` pipeline over
+the four-utterance meaning table with `.null` mapped to `fun _ => true`. -/
 
-Connects the RSA free choice model from [champollion-alsop-grosu-2019]
-to empirical data in `Phenomena.FreeChoice`.
-
-## Bridge Theorems
-
-- `predicts_free_choice`: L1 free choice prediction matches data
-- `fc_not_semantic`: Free choice is pragmatic, not semantic
--/
-
-
-namespace ChampollionAlsopGrosu2019.Bridge
-
-/-!
-## Connection to Empirical Data
-
-The model predicts the patterns in `Phenomena.FreeChoice`:
-
-1. **Free Choice Permission** (`coffeeOrTea`):
-   - "You may have coffee or tea" → "You may have coffee AND you may have tea"
-   - Derived: L1 assigns ~100% to FCI states
-
-2. **Exclusivity Cancelability**:
-   - EI ("not both") is sensitive to world knowledge
-   - FCI is robust across priors
-
-3. **Ross's Paradox** (`postOrBurn`):
-   - "Post the letter" semantically entails "Post or burn"
-   - But pragmatically, adding "or burn" triggers free choice
-   - The asymmetry comes from the alternative structure
--/
-
-end ChampollionAlsopGrosu2019.Bridge
+end ChampollionAlsopGrosu2019

@@ -62,6 +62,55 @@ set_option autoImplicit false
 
 open scoped ENNReal
 
+namespace ENNReal
+
+private theorem mul_inv_lt_inv {a c d : ℝ≥0∞} (hc0 : c ≠ 0) (hcT : c ≠ ∞)
+    (hd0 : d ≠ 0) (hdT : d ≠ ∞) (h : a * d < c) : a * c⁻¹ < d⁻¹ := by
+  rw [← div_eq_mul_inv, ENNReal.div_lt_iff (Or.inl hc0) (Or.inl hcT),
+      ← ENNReal.div_eq_inv_mul, ENNReal.lt_div_iff_mul_lt (Or.inl hd0) (Or.inl hdT)]
+  exact h
+
+private theorem inv_lt_mul_inv {a c d : ℝ≥0∞} (hc0 : c ≠ 0) (hcT : c ≠ ∞)
+    (hd0 : d ≠ 0) (hdT : d ≠ ∞) (h : d < a * c) : c⁻¹ < a * d⁻¹ := by
+  rw [mul_comm, ← ENNReal.div_eq_inv_mul,
+      ENNReal.lt_div_iff_mul_lt (Or.inl hd0) (Or.inl hdT), mul_comm,
+      ← div_eq_mul_inv, ENNReal.div_lt_iff (Or.inl hc0) (Or.inl hcT)]
+  exact h
+
+/-- ℕ-certificate for the `ℝ≥0∞` comparison `n·(1/a)^e < (1/b)^e`: cross-multiply
+in `ℕ`. The workhorse for comparing uniform-distribution powers by their
+support sizes. -/
+theorem natCast_mul_inv_pow_lt {n a b e : ℕ} (he : e ≠ 0) (hb : b ≠ 0)
+    (h : n * b ^ e < a ^ e) :
+    (n : ℝ≥0∞) * ((a : ℝ≥0∞)⁻¹) ^ e < ((b : ℝ≥0∞)⁻¹) ^ e := by
+  have ha : a ≠ 0 := by
+    rintro rfl
+    rw [zero_pow he] at h
+    exact absurd h (by simp)
+  rw [← ENNReal.inv_pow, ← ENNReal.inv_pow]
+  refine mul_inv_lt_inv (pow_ne_zero e (Nat.cast_ne_zero.mpr ha))
+    (ENNReal.pow_ne_top (ENNReal.natCast_ne_top a))
+    (pow_ne_zero e (Nat.cast_ne_zero.mpr hb))
+    (ENNReal.pow_ne_top (ENNReal.natCast_ne_top b)) ?_
+  calc (n : ℝ≥0∞) * (b : ℝ≥0∞) ^ e = ((n * b ^ e : ℕ) : ℝ≥0∞) := by push_cast; ring
+    _ < ((a ^ e : ℕ) : ℝ≥0∞) := Nat.cast_lt.mpr h
+    _ = (a : ℝ≥0∞) ^ e := by push_cast; ring
+
+/-- ℕ-certificate for the `ℝ≥0∞` comparison `(1/a)^e < n·(1/b)^e`. -/
+theorem inv_pow_lt_natCast_mul_inv_pow {n a b e : ℕ} (ha : a ≠ 0) (hb : b ≠ 0)
+    (h : b ^ e < n * a ^ e) :
+    ((a : ℝ≥0∞)⁻¹) ^ e < (n : ℝ≥0∞) * ((b : ℝ≥0∞)⁻¹) ^ e := by
+  rw [← ENNReal.inv_pow, ← ENNReal.inv_pow]
+  refine inv_lt_mul_inv (pow_ne_zero e (Nat.cast_ne_zero.mpr ha))
+    (ENNReal.pow_ne_top (ENNReal.natCast_ne_top a))
+    (pow_ne_zero e (Nat.cast_ne_zero.mpr hb))
+    (ENNReal.pow_ne_top (ENNReal.natCast_ne_top b)) ?_
+  calc (b : ℝ≥0∞) ^ e = ((b ^ e : ℕ) : ℝ≥0∞) := by push_cast; ring
+    _ < ((n * a ^ e : ℕ) : ℝ≥0∞) := Nat.cast_lt.mpr h
+    _ = (n : ℝ≥0∞) * (a : ℝ≥0∞) ^ e := by push_cast; ring
+
+end ENNReal
+
 namespace PMF
 
 variable {α β : Type*}
@@ -248,6 +297,80 @@ theorem normalize_lt_of_apply_eq_of_sum_lt {α : Type*}
   -- Goal: g a * (tsum f)⁻¹ < g a * (tsum g)⁻¹
   exact (ENNReal.mul_lt_mul_iff_right h_pos h_pos_top).mpr
     (ENNReal.inv_lt_inv.mpr h_sum)
+
+/-- **Threshold core for `PMF.normalize`**: if `c · f a` is below the
+partition function, `a`'s normalised share is below `c⁻¹`. -/
+theorem normalize_apply_lt_inv_of_mul_lt_tsum {α : Type*}
+    (f : α → ℝ≥0∞) (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞)
+    {a : α} {c : ℝ≥0∞} (hc0 : c ≠ 0) (hcT : c ≠ ∞) (hZ : c * f a < tsum f) :
+    normalize f h0 hF a < c⁻¹ := by
+  rw [normalize_apply, mul_comm, ← ENNReal.div_eq_inv_mul,
+      ENNReal.div_lt_iff (Or.inl h0) (Or.inl hF)]
+  calc f a = c * f a * c⁻¹ := by
+        rw [mul_right_comm, ENNReal.mul_inv_cancel hc0 hcT, one_mul]
+    _ < tsum f * c⁻¹ :=
+        (ENNReal.mul_lt_mul_iff_left (ENNReal.inv_ne_zero.mpr hcT)
+          (ENNReal.inv_ne_top.mpr hc0)).mpr hZ
+    _ = c⁻¹ * tsum f := mul_comm _ _
+
+/-- Mirror of `normalize_apply_lt_inv_of_mul_lt_tsum`: if the partition
+function is below `c · f a`, `a`'s normalised share exceeds `c⁻¹`. -/
+theorem inv_lt_normalize_apply_of_tsum_lt_mul {α : Type*}
+    (f : α → ℝ≥0∞) (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞)
+    {a : α} {c : ℝ≥0∞} (hc0 : c ≠ 0) (hcT : c ≠ ∞) (hZ : tsum f < c * f a) :
+    c⁻¹ < normalize f h0 hF a := by
+  have hfa_top : f a ≠ ∞ := ne_top_of_le_ne_top hF (ENNReal.le_tsum a)
+  rw [normalize_apply, mul_comm, ← ENNReal.div_eq_inv_mul,
+      ENNReal.lt_div_iff_mul_lt (Or.inl h0) (Or.inl hF)]
+  calc c⁻¹ * tsum f = tsum f * c⁻¹ := mul_comm _ _
+    _ < c * f a * c⁻¹ :=
+        (ENNReal.mul_lt_mul_iff_left (ENNReal.inv_ne_zero.mpr hcT)
+          (ENNReal.inv_ne_top.mpr hc0)).mpr hZ
+    _ = f a := by rw [mul_right_comm, ENNReal.mul_inv_cancel hc0 hcT, one_mul]
+
+private theorem natCast_succ_ne_zero (n : ℕ) : ((n : ℝ≥0∞) + 1) ≠ 0 := by positivity
+
+private theorem natCast_succ_ne_top (n : ℕ) : ((n : ℝ≥0∞) + 1) ≠ ∞ :=
+  ENNReal.add_ne_top.mpr ⟨ENNReal.natCast_ne_top n, ENNReal.one_ne_top⟩
+
+/-- **Dominated-alternative bound**: if the competitors in `S` (not containing
+`a`) jointly outweigh `f a` by a factor of `n`, then `a`'s normalised share is
+below `(n + 1)⁻¹`. The `n = 1` singleton-`S` case is the "majority loser"
+bound: a strictly outweighed atom gets less than half the mass.
+
+Workhorse for RSA findings closed by *bounding* speaker probabilities instead
+of evaluating them — no partition-function evaluation is needed, only a
+weight comparison against the dominating competitors. -/
+theorem normalize_apply_lt_inv_succ_of_mul_lt_sum {α : Type*}
+    (f : α → ℝ≥0∞) (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞)
+    {a : α} {S : Finset α} (ha : a ∉ S) {n : ℕ}
+    (h : (n : ℝ≥0∞) * f a < ∑ b ∈ S, f b) :
+    normalize f h0 hF a < ((n : ℝ≥0∞) + 1)⁻¹ := by
+  have hfa_top : f a ≠ ∞ := ne_top_of_le_ne_top hF (ENNReal.le_tsum a)
+  refine normalize_apply_lt_inv_of_mul_lt_tsum f h0 hF
+    (natCast_succ_ne_zero n) (natCast_succ_ne_top n) ?_
+  calc ((n : ℝ≥0∞) + 1) * f a = (n : ℝ≥0∞) * f a + f a := by ring
+    _ < (∑ b ∈ S, f b) + f a := (ENNReal.add_lt_add_iff_right hfa_top).mpr h
+    _ = ∑ b ∈ Finset.cons a S ha, f b := by rw [Finset.sum_cons, add_comm]
+    _ ≤ tsum f := ENNReal.sum_le_tsum _
+
+/-- **Majority bound**, the mirror of `normalize_apply_lt_inv_succ_of_mul_lt_sum`:
+if all competitors of `a` jointly weigh less than `n · f a`, then `a`'s
+normalised share exceeds `(n + 1)⁻¹`. The `n = 1` case: an absolute-majority
+weight gets more than half the mass. -/
+theorem inv_succ_lt_normalize_apply_of_sum_lt_mul {α : Type*} [Fintype α] [DecidableEq α]
+    (f : α → ℝ≥0∞) (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞)
+    {a : α} {n : ℕ}
+    (h : ∑ b ∈ Finset.univ.erase a, f b < (n : ℝ≥0∞) * f a) :
+    ((n : ℝ≥0∞) + 1)⁻¹ < normalize f h0 hF a := by
+  have hfa_top : f a ≠ ∞ := ne_top_of_le_ne_top hF (ENNReal.le_tsum a)
+  refine inv_lt_normalize_apply_of_tsum_lt_mul f h0 hF
+    (natCast_succ_ne_zero n) (natCast_succ_ne_top n) ?_
+  calc tsum f = ∑ b, f b := tsum_fintype f
+    _ = f a + ∑ b ∈ Finset.univ.erase a, f b :=
+        (Finset.add_sum_erase _ f (Finset.mem_univ a)).symm
+    _ < f a + (n : ℝ≥0∞) * f a := (ENNReal.add_lt_add_iff_left hfa_top).mpr h
+    _ = ((n : ℝ≥0∞) + 1) * f a := by ring
 
 /-- **`bindOnSupport` collapses to a 2-element sum** when the prior PMF's
 support is contained in `{a₁, a₂}`. Each retained term `p a_i * f a_i h b`
