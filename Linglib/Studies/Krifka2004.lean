@@ -28,14 +28,14 @@ bare plurals and their wide scope under scrambling.
 * `IsExtensiveMeasure` — the count noun's uniqueness + additivity laws
 * `singularize`, `pluralize` — number morphology (fill `1` / bind `∃ n`)
 * `availableInterpretations`, `kind_requires_topic` — topic-gating of kind reference
-* `existsShiftApply`, `krifkaDerivScrambled`, `krifkaDerivUnscrambled` — the decidable
-  surface-position ∃-shift used for the Dutch/German scrambling contrast
+* `krifkaDerivScrambled`, `krifkaDerivUnscrambled` — the surface-position ∃-shift (built
+  on the shared closure `NMP.existsClose`) used for the Dutch/German scrambling contrast
 * `scope_follows_position` — scrambled and unscrambled derivations diverge
 -/
 
 namespace Krifka2004
 
-open Semantics.Kinds.NMP (Individual)
+open Semantics.Kinds.NMP (Individual existsClose)
 
 /-! ### Count and mass denotations
 
@@ -125,61 +125,41 @@ theorem kind_requires_topic {p : InfoStructure}
 
 /-! ### Surface-position ∃-shift (scrambling)
 
-A decidable mirror of the property denotation above, parallel to the Chierchia DKP
-machinery in `Semantics.Kinds.NMP` (`dkpApply`, `chierchiaDerivScrambled` /
-`chierchiaDerivUnscrambled`): `Bool`- and `List`-valued so the scrambling contrast in
-`Studies.LeBruynDeSwart2022` reduces by `decide` / `rfl`. Krifka's type shift applies
-"as late, or as locally, as possible" (§4.2), so the ∃-shift sits at the bare NP's
-surface position: a bare plural under negation scopes narrow, while one raised above
-negation scopes wide. -/
+Krifka's existential type shift is a *local type repair* applied "as late, or as locally,
+as possible" (§4.2) at the bare NP's surface position, so scope follows position: a bare
+plural under negation scopes narrow, one raised above negation scopes wide. Built on the
+shared closure `NMP.existsClose`, so Krifka's narrow reading is *definitionally*
+Chierchia's DKP derivation (`NMP.chierchiaDerivUnscrambled`); the accounts diverge only
+on the scrambled reading (compared in `Studies/LeBruynDeSwart2022.lean`). -/
 
 section Scrambling
 
-variable {Entity World : Type}
+variable {Entity : Type*}
 
-/-- A bare-NP property (decidable layer). -/
-abbrev KrifkaProp (Entity World : Type) := World → Entity → Bool
+/-- Unscrambled `[niet [BP V]]`: ∃-shift below negation — `¬ ∃ x ∈ dom, P x ∧ Q x`
+(narrow scope). Definitionally `NMP.chierchiaDerivUnscrambled`. -/
+def krifkaDerivUnscrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  ¬ existsClose dom P Q
 
-/-- A VP meaning (decidable layer). -/
-abbrev KrifkaVP (Entity World : Type) := Entity → World → Bool
+/-- Scrambled `[BP [niet V]]`: ∃-shift above negation — `∃ x ∈ dom, P x ∧ ¬ Q x`
+(wide scope over negation). -/
+def krifkaDerivScrambled (dom : List Entity) (P Q : Entity → Prop) : Prop :=
+  existsClose dom P (fun x => ¬ Q x)
 
-/-- A sentence meaning (decidable layer). -/
-abbrev KrifkaSent (World : Type) := World → Bool
-
-/-- VP negation. -/
-def KrifkaVP.neg (vp : KrifkaVP Entity World) : KrifkaVP Entity World :=
-  fun x w => !vp x w
-
-/-- `∃`-shift applied at the surface position: `∃ x ∈ domain. P(w)(x) ∧ VP(x)(w)`. -/
-def existsShiftApply (domain : List Entity) (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World) : KrifkaSent World :=
-  fun w => domain.any (fun x => prop w x && vp x w)
-
-/-- Unscrambled `[niet [BP V]]`: `¬∃x[P(x) ∧ V(x)]` (narrow scope). -/
-def krifkaDerivUnscrambled (domain : List Entity) (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World) : KrifkaSent World :=
-  fun w => !(existsShiftApply domain prop vp w)
-
-/-- Scrambled `[BP [niet V]]`: `∃x[P(x) ∧ ¬V(x)]` (wide scope over negation). -/
-def krifkaDerivScrambled (domain : List Entity) (prop : KrifkaProp Entity World)
-    (vp : KrifkaVP Entity World) : KrifkaSent World :=
-  existsShiftApply domain prop (KrifkaVP.neg vp)
-
-/-- Scope follows surface position: the scrambled (wide-scope) and unscrambled
-(narrow-scope) derivations genuinely diverge. Witnessed by a two-element domain in
-which one element satisfies the VP and the other does not. -/
+/-- **Scope follows position**: the scrambled (wide) and unscrambled (narrow) derivations
+diverge on some model — witnessed by a two-element domain where one element satisfies the
+predicate and the other does not. -/
 theorem scope_follows_position :
-    ∃ (Entity World : Type) (w : World) (domain : List Entity)
-      (prop : KrifkaProp Entity World) (vp : KrifkaVP Entity World),
-      krifkaDerivScrambled domain prop vp w ≠ krifkaDerivUnscrambled domain prop vp w :=
-  ⟨Bool, Unit, (), [true, false], fun _ _ => true, fun b _ => b, by decide⟩
-
-/-- Position-sensitivity, *derived* from the derivations rather than stipulated: on
-the `scope_follows_position` witness, the scrambled and unscrambled derivations
-disagree. Contrast `Semantics.Kinds.NMP.dkpIsLocal`, which is position-invariant. -/
-def existentialShiftPositionSensitive : Bool :=
-  krifkaDerivScrambled [true, false] (fun _ _ => true) (fun b _ => b) () !=
-    krifkaDerivUnscrambled [true, false] (fun _ _ => true) (fun b _ => b) ()
+    ∃ (Entity : Type) (dom : List Entity) (P Q : Entity → Prop),
+      krifkaDerivScrambled dom P Q ≠ krifkaDerivUnscrambled dom P Q := by
+  refine ⟨Bool, [true, false], fun _ => True, fun b => b = true, ?_⟩
+  intro h
+  have hs : krifkaDerivScrambled [true, false] (fun _ => True) (fun b => b = true) := by
+    unfold krifkaDerivScrambled; decide
+  rw [h] at hs
+  have hu : ¬ krifkaDerivUnscrambled [true, false] (fun _ => True) (fun b => b = true) := by
+    unfold krifkaDerivUnscrambled; decide
+  exact hu hs
 
 end Scrambling
 
