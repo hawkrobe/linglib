@@ -74,6 +74,17 @@ def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Prop :=
   r.causalDirection = .forward
 instance (r : CoherenceRelation) : Decidable r.selectsEffect := by
   unfold CoherenceRelation.selectsEffect; infer_instance
+/-! ### Enumeration -/
+/-- Every coherence relation, for marginalizing over the full set
+    (e.g. the next-mention mixture `Σ_CR P(CR) · f(CR)`). -/
+def CoherenceRelation.all : List CoherenceRelation :=
+  [.explanation, .result, .occasion, .elaboration, .parallel,
+   .contrast, .correction, .background, .consequence, .alternation]
+/-- `all` is exhaustive. Adding a constructor breaks this proof, forcing every
+    marginalization over `all` to be revisited rather than silently dropping a
+    relation. -/
+theorem CoherenceRelation.mem_all (r : CoherenceRelation) : r ∈ all := by
+  cases r <;> decide
 /-! ### Connective–Relation Mapping -/
 /-- German/English connective forms used as experimental stimuli
     ([solstad-bott-2022], Exps 1–4). -/
