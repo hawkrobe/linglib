@@ -1,5 +1,6 @@
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Real.Basic
 
 /-!
 # Clarification: When to Ask vs. When to Act
@@ -20,6 +21,15 @@ interaction is the core empirical finding shared by both papers.
 EVPI is the maximum possible `questionUtility` ([van-rooy-2003]):
 it equals `questionUtility` on the identity partition, where each world
 is its own cell. Any specific clarification question yields at most EVPI.
+
+## The shared decision-rule contract
+
+Both accounts decide clarification from the same net value-of-information
+signal but through different rules: [dong-etal-2026] clarifies exactly when
+value exceeds cost (`sharpRule`, a threshold), while [tsvilodub-etal-2026]
+passes the margin through a logistic gate (a soft threshold; see
+`TsvilodubEtAl2026.softGateRule`). `ClarifyRule` is the contract both
+instantiate, exposing sharp vs. soft as a formal decision-rule choice.
 -/
 
 namespace Phenomena.Clarification
@@ -82,5 +92,45 @@ theorem evpi_nonneg {W A : Type*} [Fintype W] [DecidableEq W]
   unfold bestUtilityAt
   rw [dif_pos hne]
   exact Finset.le_sup' _ ha
+
+/-! ### The clarify-or-commit decision rule -/
+
+/-- A clarify-or-commit decision rule: clarification propensity as a
+monotone `[0, 1]`-valued function of the net value-of-information signal
+(value minus cost). The shared contract of [dong-etal-2026]'s sharp
+threshold and [tsvilodub-etal-2026]'s logistic gate. -/
+structure ClarifyRule where
+  /-- Clarification propensity given the net value signal. -/
+  propensity : ℝ → ℝ
+  mono : Monotone propensity
+  nonneg : ∀ x, 0 ≤ propensity x
+  le_one : ∀ x, propensity x ≤ 1
+
+/-- The sharp-threshold rule: clarify exactly when the net value is
+positive ([dong-etal-2026]'s `worthAsking`). -/
+noncomputable def sharpRule : ClarifyRule where
+  propensity x := if 0 < x then 1 else 0
+  mono x y hxy := by
+    show (if 0 < x then (1 : ℝ) else 0) ≤ if 0 < y then 1 else 0
+    by_cases hx : 0 < x
+    · rw [if_pos hx, if_pos (hx.trans_le hxy)]
+    · rw [if_neg hx]
+      split <;> norm_num
+  nonneg x := by split <;> norm_num
+  le_one x := by split <;> norm_num
+
+theorem sharpRule_apply_of_pos {x : ℝ} (h : 0 < x) : sharpRule.propensity x = 1 :=
+  if_pos h
+
+theorem sharpRule_apply_of_nonpos {x : ℝ} (h : ¬ 0 < x) : sharpRule.propensity x = 0 :=
+  if_neg h
+
+/-- The sharp rule is binary — the formal signature of a threshold process,
+against which soft gates contrast (`TsvilodubEtAl2026.softGateRule_apply_zero`). -/
+theorem sharpRule_binary (x : ℝ) :
+    sharpRule.propensity x = 0 ∨ sharpRule.propensity x = 1 := by
+  by_cases hx : 0 < x
+  · exact Or.inr (sharpRule_apply_of_pos hx)
+  · exact Or.inl (sharpRule_apply_of_nonpos hx)
 
 end Phenomena.Clarification

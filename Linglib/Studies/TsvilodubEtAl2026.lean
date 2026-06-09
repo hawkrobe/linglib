@@ -275,6 +275,39 @@ theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ)
     cqProb τ c epsLow deltaLarge < cqProb τ c epsHigh deltaLarge :=
   ⟨noNeedToAsk τ c, tl_justAsk hτ c⟩
 
+/-! ### The hub decision-rule instance: a soft gate
+
+The logistic gate instantiates `Phenomena.Clarification.ClarifyRule` as a
+*soft* threshold, against [dong-etal-2026]'s sharp
+`Phenomena.Clarification.sharpRule`: it is never binary — at zero net value
+it clarifies with probability 1/2 (`softGateRule_apply_zero`, vs
+`sharpRule_binary`). Cf. the paper's Exp 2 contrast between binarized CQ
+rates and gradient action rates. -/
+
+/-- The logistic gate as a hub `ClarifyRule` over the net regret signal. -/
+noncomputable def softGateRule {τ : ℝ} (hτ : 0 < τ) :
+    Phenomena.Clarification.ClarifyRule where
+  propensity := cqGate τ 0
+  mono := (cqGate_strictMono hτ 0).monotone
+  nonneg x := (cqGate_pos τ 0 x).le
+  le_one x := cqGate_le_one τ 0 x
+
+/-- `cqProb` is the soft rule applied to the net signal `ExpRegret − c`. -/
+theorem cqProb_eq_softGateRule {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (ε δ : ℚ) :
+    cqProb τ c ε δ
+      = (softGateRule hτ).propensity (((evpi (dp ε δ) Finset.univ : ℚ) : ℝ) - c) := by
+  show cqGate τ c _ = cqGate τ 0 _
+  rw [cqGate, cqGate]
+  norm_num
+
+/-- Unlike the sharp rule, the soft gate is never binary: at zero net value
+it clarifies with probability 1/2. -/
+theorem softGateRule_apply_zero {τ : ℝ} (hτ : 0 < τ) :
+    (softGateRule hτ).propensity 0 = 1/2 := by
+  show cqGate τ 0 0 = 1/2
+  rw [cqGate]
+  norm_num [Real.exp_zero]
+
 /-! ### The layered reaction policy -/
 
 /-- A reaction: clarify, or commit to a direct response. -/
