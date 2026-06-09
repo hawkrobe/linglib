@@ -150,6 +150,12 @@ theorem condProbSet_compl_sum (p : PMF α) (cond target : Set α)
            = p.probOfSet cond from (probOfSet_partition p cond target).symm]
   exact ENNReal.div_self h.ne' (probOfSet_ne_top p cond)
 
+/-- Conditioning on the trivial evidence `Set.univ` leaves probabilities
+unchanged: `P(target | univ) = P(target)`. -/
+theorem condProbSet_univ (p : PMF α) (target : Set α) :
+    p.condProbSet Set.univ target = p.probOfSet target := by
+  rw [condProbSet_eq_div, Set.univ_inter, probOfSet_univ, div_one]
+
 omit [Fintype α] in
 /-- If `P(target | cond) > P(target)` then `P(cond) > 0`. -/
 theorem probOfSet_pos_of_condProbSet_gt (p : PMF α) (cond target : Set α)
