@@ -266,12 +266,13 @@ abbrev slavicRank : Case → Option (Fin 6) :=
 abbrev Paradigm := Fin 6 → Nat
 
 /-- Caha's Universal Contiguity ([caha-2009] (10), p. 10) on a
-    Slavic paradigm. Defers to the domain-independent
-    `Morphology.Containment.isContiguous` substrate (which
-    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes
-    at n=4 — same engine, n=6 specialization here). -/
+    Slavic paradigm. A `Paradigm` is definitionally an n = 6
+    `Morphology.Containment.Pattern`, so this is the domain-independent
+    contiguity predicate itself (which
+    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous`
+    specializes at n = 4). -/
 def IsContiguous (p : Paradigm) : Prop :=
-  Morphology.Containment.isContiguous [p 0, p 1, p 2, p 3, p 4, p 5] = true
+  Morphology.Containment.IsContiguous p
 
 instance (p : Paradigm) : Decidable (IsContiguous p) := by
   unfold IsContiguous; infer_instance

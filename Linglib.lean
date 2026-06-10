@@ -321,11 +321,12 @@ import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Morphology.Containment
+import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Containment.Merger
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.Case.Allomorphy
-import Linglib.Morphology.DM.ContainmentVI
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem

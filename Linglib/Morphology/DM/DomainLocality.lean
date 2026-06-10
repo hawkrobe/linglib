@@ -1,4 +1,3 @@
-import Linglib.Morphology.Containment
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Range
 
@@ -185,9 +184,9 @@ example : IsContiguousWithin
 
 /-- The same partition admits an "across-domain ABA" shape `[0, 1, 0]`:
     positions 0 and 2 (both cell value 0) are in different domains, so
-    the within-domain *ABA check does not fire. The UNIVERSAL
-    `Morphology.Containment.ViolatesABA` would flag this pattern; the
-    domain-relativized version permits it. -/
+    the within-domain *ABA check does not fire. The universal contiguity
+    predicate (`Morphology.Containment.IsContiguous`) would reject this
+    pattern; the domain-relativized version permits it. -/
 example : ¬ ViolatesABAWithin
     (λ i => if i = 2 then "b" else "a" : DomainPartition String)
     [0, 1, 0] := by decide
