@@ -1,43 +1,33 @@
+import Linglib.Core.Order.Relation
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Aspect.Boundedness
+import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Domain
+import Linglib.Semantics.Tense.Orientation
+import Linglib.Semantics.Tense.Reichenbach
+import Linglib.Semantics.Tense.System
 
 /-!
-# [declerck-1991]: Tense and the Present/Past Time-Sphere
-[declerck-1991]
+# Declerck (1991): Time-Spheres, TO-Chains, and Temporal Domains
 
-Declerck's *A Comprehensive Descriptive Grammar of English* (1991)
-organizes English tense around two **time-spheres** (past vs present)
-and the **pre-present, present, post-present** sectors of the present
-time-sphere. Relative tenses (e.g. past perfect, conditional) lie
-within an established **temporal domain** anchored by an absolute
-tense; domain **shift** introduces a fresh absolute anchor. Declerck
-also introduces the FPS/PPS distinction (Future / Present Perspective
-System) for conditionals.
+[declerck-1991] organizes English tense around two **time-spheres** — past
+and present, the latter divided into pre-present, present, and post-present
+sectors — and chains of **times of orientation** (TOs): an absolute tense
+establishes a temporal domain, relative tenses bind further TOs within it,
+and the time of the situation always coincides with a TO (TS = TO_sit).
+Example sentences in the generated block are drawn from Declerck's
+companion volume, [declerck-1991-grammar].
 
-This file covers Declerck's tense + aspect sections:
+## Main declarations
 
-- §23: Temporal domain — subordination vs shift
-- §24: Modal (false) past — politeness and tentativeness
-- §25: PPS vs FPS in conditionals
-- §26: Temporal conjunctions and the future-perfect / when-clause
-  family
-- §27: PUTI — bounded/unbounded default temporal interpretation
-- §28: Present perfect vs preterit — the time-sphere distinction
-
-## What's been verified
-
-Declerck's framework (time-spheres, PPS/FPS terminology, modal-past
-diagnostics, domain shift / subordination contrast) is taken
-directly from the book and faithfully reproduced. The Reichenbach
-frames below encode project-side analytical takes on the structural
-patterns Declerck describes; many of the literal example sentences
-in the frame docstrings are project paraphrases, not verbatim
-Declerck examples. The verified Declerck example sentences live in
-the JSON block below (extracted from the 1991 book via Zotero MCP
-fulltext).
-
+- `TOChain.DeclercianSchema`: a tense as a chain of TOs plus a time-sphere
+- `TOChain.preterit` … `TOChain.conditionalPerfect`: the eight English tenses
+- `TOChain.DeclercianSchema.toFrame`, `toDomain`, `declercianToTower`:
+  projections to the shared Reichenbach, `Domain`, and `ContextTower` substrates
+- `TOChain.DeclercianSchema.zoneOf`: project-side zone classifier
+- `putiDefault`: Declerck's principle of unmarked temporal interpretation
 -/
 
 namespace Declerck1991
@@ -55,7 +45,7 @@ open Data.Examples
 
 def domainShift1a : LinguisticExample :=
   { id := "declerck1991_domainShift1a"
-    source := ⟨"declerck-1991", "ch. 3 ex (1a)"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 3 ex (1a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I left while Bill was sleeping and Mary was having a bath."
@@ -73,7 +63,7 @@ def domainShift1a : LinguisticExample :=
 
 def domainShift1b : LinguisticExample :=
   { id := "declerck1991_domainShift1b"
-    source := ⟨"declerck-1991", "ch. 3 ex (1b)"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 3 ex (1b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Suddenly the phone rang. Jill stood up from her chair, went over to the telephone and picked up the receiver."
@@ -91,7 +81,7 @@ def domainShift1b : LinguisticExample :=
 
 def domainShift3a : LinguisticExample :=
   { id := "declerck1991_domainShift3a"
-    source := ⟨"declerck-1991", "ch. 3 ex (3a)"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 3 ex (3a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The soldier got seriously wounded. He died shortly afterwards."
@@ -109,7 +99,7 @@ def domainShift3a : LinguisticExample :=
 
 def modalPastWish : LinguisticExample :=
   { id := "declerck1991_modalPastWish"
-    source := ⟨"declerck-1991", "ch. 2 §3"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I wish I didn't know his number."
@@ -127,7 +117,7 @@ def modalPastWish : LinguisticExample :=
 
 def modalPastIfWas : LinguisticExample :=
   { id := "declerck1991_modalPastIfWas"
-    source := ⟨"declerck-1991", "ch. 2 §3"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If I was a rich man, I would travel a lot."
@@ -139,13 +129,13 @@ def modalPastIfWas : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology. Compare Iatridou 2000 fake-past analysis (Studies/Iatridou2000.lean)."
+    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
 def futurePerfect : LinguisticExample :=
   { id := "declerck1991_futurePerfect"
-    source := ⟨"declerck-1991", "ch. 2 §2"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I will have left by then."
@@ -163,7 +153,7 @@ def futurePerfect : LinguisticExample :=
 
 def whenPresent : LinguisticExample :=
   { id := "declerck1991_whenPresent"
-    source := ⟨"declerck-1991", "ch. 2 §1"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 2 §1"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "You will have to tell him (the news) when he comes home."
@@ -181,7 +171,7 @@ def whenPresent : LinguisticExample :=
 
 def perfectHaveCome : LinguisticExample :=
   { id := "declerck1991_perfectHaveCome"
-    source := ⟨"declerck-1991", "ch. 2 §2"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I have come here."
@@ -199,7 +189,7 @@ def perfectHaveCome : LinguisticExample :=
 
 def perfectOverslept : LinguisticExample :=
   { id := "declerck1991_perfectOverslept"
-    source := ⟨"declerck-1991", "ch. 3 fn 49"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 3 fn 49"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I have overslept this morning."
@@ -220,51 +210,38 @@ def all : List LinguisticExample := [domainShift1a, domainShift1b, domainShift3a
 end Examples
 -- END GENERATED EXAMPLES
 
--- ════════════════════════════════════════════════════════════════
--- § TO-chain architecture (substrate; previously Tense/TOChain.lean)
--- ════════════════════════════════════════════════════════════════
-
 namespace TOChain
 
 open Core.Order (Relation)
-open Semantics.Tense (Domain NamedTO TO Orientation)
-open Semantics.Tense.Reichenbach (ReichenbachFrame)
+open Semantics.Tense (Domain NamedTO Orientation)
 
+/-! ### Time-spheres -/
 
--- ════════════════════════════════════════════════════════════════
--- § Time-Spheres
--- ════════════════════════════════════════════════════════════════
+/-- The two time-spheres of English ([declerck-1991]): the tense system
+divides time into a **past** time-sphere lying wholly before t₀ (preterit,
+past perfect, conditional, conditional perfect) and a **present** time-sphere
+including t₀ (present, present perfect, future, future perfect).
 
-/-- The two time-spheres of English ([declerck-1991], [declerck-2006]).
-
-    The tense system partitions linguistic time into two spheres:
-    - **past**: wholly before t₀, containing the preterit, past perfect,
-      conditional, and conditional perfect
-    - **present**: includes t₀, containing the present, present perfect,
-      future, and future perfect
-
-    This is a conceptual partition, not a temporal relation: both "I visited
-    Paris" and "I have visited Paris" can refer to the same objective event,
-    but differ in time-sphere membership. -/
+This is a conceptual partition, not a temporal relation: both "I visited
+Paris" and "I have visited Paris" can refer to the same objective event,
+but differ in time-sphere membership. -/
 inductive TimeSphere where
-  | past     -- wholly before t₀
-  | present  -- includes t₀
+  /-- wholly before t₀ -/
+  | past
+  /-- includes t₀ -/
+  | present
   deriving DecidableEq, Repr
 
-
--- ════════════════════════════════════════════════════════════════
--- § TO-Chain Architecture
--- ════════════════════════════════════════════════════════════════
+/-! ### TO-chain architecture -/
 
 /-- A single link in a TO chain: a `Semantics.Tense.Orientation`-labelled
-    Time of Orientation related to the next TO inward by a temporal
-    relation.
+time of orientation related to the next TO inward by a temporal relation.
 
-    Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
-    the link for TO₂ is `⟨.sub 0, .before, t₂⟩` — meaning TO₂ (= `.sub 0`,
-    one step out from the binding TO₁ = `.perspective`) stands in the
-    `before` relation to the next TO outward. The `.situation` role
-    labels TO_sit. -/
+Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
+the link for TO₂ is `⟨.sub 0, .before, t₂⟩` — meaning TO₂ (= `.sub 0`,
+one step out from the binding TO₁ = `.perspective`) stands in the
+`before` relation to the next TO outward. The `.situation` role
+labels TO_sit. -/
 structure TOLink (Time : Type*) where
   /-- The orientation-time role of this link (`.situation` for TO_sit;
       `.sub n` for an intermediate TO). -/
@@ -277,17 +254,17 @@ structure TOLink (Time : Type*) where
   time : Time
 
 /-- Declerck's tense schema: a chain of TOs from TO₁ outward to TO_sit,
-    with a time-sphere classification.
+with a time-sphere classification.
 
-    The `chain` runs from TO₁ (innermost, adjacent to t₀) outward through
-    intermediate TOs to TO_sit. The situation time TS is always simultaneous
-    with TO_sit (Declerck's universal principle: every tense represents TS
-    as coinciding with some TO), so there is no separate `ts` field — both
-    E and R in the Reichenbach projection are derived from TO_sit.
+The `chain` runs from TO₁ (innermost, adjacent to t₀) outward through
+intermediate TOs to TO_sit. The situation time TS is always simultaneous
+with TO_sit (Declerck's universal principle: every tense represents TS
+as coinciding with some TO), so there is no separate `ts` field — both
+E and R in the Reichenbach projection are derived from TO_sit.
 
-    The chain captures only adjacent relations. Non-adjacent TOs (e.g.,
-    TO_sit and TO₁ in the conditional tense) have no asserted relation —
-    this is Declerck's account of temporal vagueness. -/
+The chain captures only adjacent relations. Non-adjacent TOs (e.g.,
+TO_sit and TO₁ in the conditional tense) have no asserted relation —
+this is Declerck's account of temporal vagueness. -/
 structure DeclercianSchema (Time : Type*) where
   /-- Temporal zero-point (usually = speech time) -/
   t0 : Time
@@ -302,7 +279,7 @@ structure DeclercianSchema (Time : Type*) where
   timeSphere : TimeSphere
 
 /-- The situation-TO (= TS): the TO with which the situation time coincides.
-    This is the last element of the chain, or TO₁ if the chain is empty. -/
+This is the last element of the chain, or TO₁ if the chain is empty. -/
 def DeclercianSchema.toSit {Time : Type*} (s : DeclercianSchema Time) : Time :=
   match s.chain.getLast? with
   | some link => link.time
@@ -312,25 +289,15 @@ def DeclercianSchema.toSit {Time : Type*} (s : DeclercianSchema Time) : Time :=
 def DeclercianSchema.depth {Time : Type*} (s : DeclercianSchema Time) : ℕ :=
   s.chain.length + 1
 
+/-! ### Projection to ReichenbachFrame -/
 
--- ════════════════════════════════════════════════════════════════
--- § Projection to ReichenbachFrame
--- ════════════════════════════════════════════════════════════════
+/-- Project a Declercian schema to a Reichenbach frame: S = t₀, P = TO₁,
+R = E = TO_sit (by Declerck's universal principle TS = TO_sit).
 
-/-- Project a Declercian schema to a Reichenbach frame.
-
-    The mapping:
-    - S = t₀
-    - P = TO₁ (basic TO = perspective time)
-    - R = TO_sit (situation-TO)
-    - E = TO_sit (= TS, by Declerck's universal principle TS = TO_sit)
-
-    Since R = E = TO_sit, every Declercian frame has `isPerfective` (E = R)
-    and can never satisfy `isPerfect` (E < R). The "perfect" in Declerck's
-    system is a chain property (TO_sit before TO₂), not an E/R relation.
-
-    This is a lossy projection: the chain structure (intermediate TOs,
-    temporal vagueness) is collapsed. -/
+Since R = E always, no Declercian frame satisfies `isPerfect` (E < R) —
+see `toFrame_not_isPerfect`. The "perfect" in Declerck's system is a chain
+property (TO_sit before TO₂), not an E/R relation. The projection is lossy:
+intermediate TOs and temporal vagueness are collapsed. -/
 def DeclercianSchema.toFrame {Time : Type*}
     (s : DeclercianSchema Time) : ReichenbachFrame Time where
   speechTime := s.t0
@@ -339,47 +306,37 @@ def DeclercianSchema.toFrame {Time : Type*}
   eventTime := s.toSit
 
 /-- Every Declercian frame has E = R (Declerck's TS = TO_sit principle). -/
-theorem DeclercianSchema.eventTime_eq_refTime {Time : Type*}
+theorem DeclercianSchema.eventTime_eq_referenceTime {Time : Type*}
     (s : DeclercianSchema Time) :
     s.toFrame.eventTime = s.toFrame.referenceTime := rfl
 
+/-! ### The eight English tense schemata
 
--- ════════════════════════════════════════════════════════════════
--- § The Eight English Tense Schemata
--- ════════════════════════════════════════════════════════════════
-
-/-! Each schema is parameterized by concrete times so that bridge
-    theorems can verify the structural relations. -/
+Each schema is parameterized by concrete times so that bridge
+theorems can verify the structural relations. -/
 
 section Schemata
 
-variable {Time : Type*} [LinearOrder Time]
+variable {Time : Type*}
 
-/-- **Preterit**: TS simul TO_sit, TO_sit before TO₁.
-    Past time-sphere. Two TOs in the chain.
+/-- **Preterit**: TS simul TO_sit, TO_sit before TO₁. Past time-sphere.
 
-    Example: "John was ill yesterday."
-    - TO₁ = t₀ (absolute use)
-    - TO_sit before TO₁ (past time-sphere)
-    - TS = TO_sit -/
+Example: "John was ill yesterday." — TO₁ = t₀ (absolute use),
+TO_sit before TO₁, TS = TO_sit. -/
 def preterit (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
   chain := [⟨.situation, .before, toSit⟩]
   timeSphere := .past
 
-/-- **Present tense**: TS simul TO_sit, TO_sit includes t₀.
-    Present time-sphere. Two TOs in the chain.
+/-- **Present tense**: TS simul TO_sit, TO_sit includes t₀. Present time-sphere.
 
-    Declerck's key insight: the present tense does NOT assert `TO_sit = t₀`
-    but rather `TO_sit includes t₀`. For point times this degenerates to
-    equality (captured by `.overlapping`), but for intervals "John is in
-    London today" has TO_sit = today, which properly includes t₀. The
-    interval-level inclusion is handled by `NonemptyInterval.le_def`.
+Declerck's key claim: the present tense does NOT assert `TO_sit = t₀`
+but rather `TO_sit includes t₀`. For point times this degenerates to
+equality (captured by `.overlapping`); interval-level inclusion is
+handled by `NonemptyInterval.le_def`.
 
-    Example: "John is in London."
-    - TO_sit includes t₀ (= overlapping for point times)
-    - TS = TO_sit -/
+Example: "John is in London." -/
 def present (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -387,18 +344,18 @@ def present (t0 toSit : Time) : DeclercianSchema Time where
   timeSphere := .present
 
 /-- **Present perfect**: TS simul TO_sit, TO_sit before TO₁.
-    Present time-sphere (the crucial difference from the preterit).
+Present time-sphere (the crucial difference from the preterit).
 
-    Declerck's distinctive claim: the present perfect and preterit differ
-    in time-sphere membership, not in definiteness or current relevance.
-    Both can refer to the same event; the perfect places it in the
-    pre-present sector of the present time-sphere.
+Declerck's distinctive claim: the present perfect and preterit differ
+in time-sphere membership, not in definiteness or current relevance
+(current relevance is "no more than an implicature"). Both can refer to
+the same event; the perfect places it in the pre-present sector.
 
-    Example: "I have visited Paris."
-    - TO₁ = t₀
-    - TO_sit before TO₁ (pre-present sector)
-    - TS = TO_sit
-    - Present time-sphere (vs. past for the preterit) -/
+Example: "I have visited Paris."
+
+Scope note: the schema represents the **predicated** situation's TO_sit;
+the continuative reading ("I have lived here for ten years"), where the
+full situation extends through t₀, is not representable here. -/
 def presentPerfect (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -406,33 +363,21 @@ def presentPerfect (t0 toSit : Time) : DeclercianSchema Time where
   timeSphere := .present
 
 /-- **Past perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ before TO₁.
-    Past time-sphere. Three TOs in the chain.
+Past time-sphere. "The past of the preterit" or "the past of the present
+perfect": TO₂ lies in the past time-sphere relative to TO₁, and TO_sit
+is anterior to TO₂.
 
-    The past perfect is either "the past of the preterit" or "the past of the
-    present perfect." In both cases TO₂ lies in the past time-sphere relative
-    to TO₁, and TO_sit is anterior to TO₂.
-
-    Example: "John had left before we arrived."
-    - TO₁ = t₀
-    - TO₂ before TO₁ (past time-sphere)
-    - TO_sit before TO₂ (anterior to the past reference)
-    - TS = TO_sit -/
+Example: "John had left before we arrived." -/
 def pastPerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
   chain := [⟨.sub 0, .before, to2⟩, ⟨.situation, .before, toSit⟩]
   timeSphere := .past
 
-/-- **Future tense**: TS simul TO_sit, TO_sit after TO₁.
-    Present time-sphere. Two TOs in the chain.
+/-- **Future tense**: TS simul TO_sit, TO_sit after TO₁. Present time-sphere.
+TO_sit lies in the post-present sector.
 
-    The future locates TO_sit either wholly after t₀ or from t₀ onwards.
-    For point times, `after` suffices.
-
-    Example: "I will do it next week."
-    - TO₁ = t₀
-    - TO_sit after TO₁ (post-present sector)
-    - TS = TO_sit -/
+Example: "I will do it next week." -/
 def future (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -440,17 +385,13 @@ def future (t0 toSit : Time) : DeclercianSchema Time where
   timeSphere := .present
 
 /-- **Future perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ after TO₁.
-    Present time-sphere. Three TOs in the chain.
+Present time-sphere.
 
-    The future perfect is vague about the relation between TO_sit and TO₁:
-    John may have already left, may be leaving now, or may leave later.
-    The chain captures this by NOT asserting a TO_sit–TO₁ relation.
+The future perfect is vague about the relation between TO_sit and TO₁:
+John may have already left, may be leaving now, or may leave later.
+The chain captures this by NOT asserting a TO_sit–TO₁ relation.
 
-    Example: "John will have left when we arrive."
-    - TO₁ = t₀
-    - TO₂ after TO₁ (future reference point)
-    - TO_sit before TO₂ (anterior to the future reference)
-    - TS = TO_sit -/
+Example: "John will have left when we arrive." -/
 def futurePerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -458,17 +399,12 @@ def futurePerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   timeSphere := .present
 
 /-- **Conditional tense**: TS simul TO_sit, TO_sit after TO₂, TO₂ before TO₁.
-    Past time-sphere (for TO₂). Three TOs in the chain.
+Past time-sphere (for TO₂). The mirror image of the future perfect:
+"future in the past". Like the future perfect, it is vague about TO_sit's
+relation to TO₁ — the situation may or may not have occurred by speech time.
 
-    The conditional is the mirror image of the future perfect: "future in
-    the past." Like the future perfect, it is vague about TO_sit's relation
-    to TO₁ — the situation may or may not have occurred by speech time.
-
-    Example: "The house would weather many more storms."
-    - TO₁ = t₀
-    - TO₂ before TO₁ (past time-sphere)
-    - TO_sit after TO₂ (posterior within the past domain)
-    - TS = TO_sit -/
+Example (from [declerck-1991]): "The faded red brick of the house had
+weathered many London storms and would weather many more." -/
 def conditional (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -476,16 +412,10 @@ def conditional (t0 to2 toSit : Time) : DeclercianSchema Time where
   timeSphere := .past
 
 /-- **Conditional perfect**: TS simul TO_sit, TO_sit before TO₃,
-    TO₃ after TO₂, TO₂ before TO₁. Past time-sphere. Four TOs in the chain.
+TO₃ after TO₂, TO₂ before TO₁. Past time-sphere. The most intricate
+English tense: "past in the future in the past".
 
-    The most intricate English tense: "past in the future in the past."
-
-    Example: "He would have left by then."
-    - TO₁ = t₀
-    - TO₂ before TO₁ (past time-sphere)
-    - TO₃ after TO₂ (future within the past domain)
-    - TO_sit before TO₃ (anterior to the future-in-past reference)
-    - TS = TO_sit -/
+Example: "He would have left by then." -/
 def conditionalPerfect (t0 to2 to3 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
@@ -494,178 +424,80 @@ def conditionalPerfect (t0 to2 to3 toSit : Time) : DeclercianSchema Time where
 
 end Schemata
 
+/-! ### Bridge theorems: Declercian schema → Reichenbach frame
 
--- ════════════════════════════════════════════════════════════════
--- § Chain Depth Theorems
--- ════════════════════════════════════════════════════════════════
-
-section Depth
-
-variable {Time : Type*}
-
-/-- Simple tenses have depth 2 (TO₁ + TO_sit). -/
-theorem preterit_depth (t0 toSit : Time) :
-    (preterit t0 toSit).depth = 2 := rfl
-
-theorem present_depth (t0 toSit : Time) :
-    (present t0 toSit).depth = 2 := rfl
-
-theorem presentPerfect_depth (t0 toSit : Time) :
-    (presentPerfect t0 toSit).depth = 2 := rfl
-
-theorem future_depth (t0 toSit : Time) :
-    (future t0 toSit).depth = 2 := rfl
-
-/-- Compound tenses have depth 3 (TO₁ + TO₂ + TO_sit). -/
-theorem pastPerfect_depth (t0 to2 toSit : Time) :
-    (pastPerfect t0 to2 toSit).depth = 3 := rfl
-
-theorem futurePerfect_depth (t0 to2 toSit : Time) :
-    (futurePerfect t0 to2 toSit).depth = 3 := rfl
-
-theorem conditional_depth (t0 to2 toSit : Time) :
-    (conditional t0 to2 toSit).depth = 3 := rfl
-
-/-- The conditional perfect has depth 4 (TO₁ + TO₂ + TO₃ + TO_sit). -/
-theorem conditionalPerfect_depth (t0 to2 to3 toSit : Time) :
-    (conditionalPerfect t0 to2 to3 toSit).depth = 4 := rfl
-
-end Depth
-
-
--- ════════════════════════════════════════════════════════════════
--- § Time-Sphere Classification
--- ════════════════════════════════════════════════════════════════
-
-section TimeSphereClassification
-
-variable {Time : Type*}
-
-/-- Present time-sphere tenses: present, present perfect, future, future perfect. -/
-theorem present_sphere (t0 toSit : Time) :
-    (present t0 toSit).timeSphere = .present := rfl
-
-theorem presentPerfect_sphere (t0 toSit : Time) :
-    (presentPerfect t0 toSit).timeSphere = .present := rfl
-
-theorem future_sphere (t0 toSit : Time) :
-    (future t0 toSit).timeSphere = .present := rfl
-
-theorem futurePerfect_sphere (t0 to2 toSit : Time) :
-    (futurePerfect t0 to2 toSit).timeSphere = .present := rfl
-
-/-- Past time-sphere tenses: preterit, past perfect, conditional, conditional perfect. -/
-theorem preterit_sphere (t0 toSit : Time) :
-    (preterit t0 toSit).timeSphere = .past := rfl
-
-theorem pastPerfect_sphere (t0 to2 toSit : Time) :
-    (pastPerfect t0 to2 toSit).timeSphere = .past := rfl
-
-theorem conditional_sphere (t0 to2 toSit : Time) :
-    (conditional t0 to2 toSit).timeSphere = .past := rfl
-
-theorem conditionalPerfect_sphere (t0 to2 to3 toSit : Time) :
-    (conditionalPerfect t0 to2 to3 toSit).timeSphere = .past := rfl
-
-end TimeSphereClassification
-
-
--- ════════════════════════════════════════════════════════════════
--- § Bridge Theorems: Declercian Schema → Reichenbach Frame
--- ════════════════════════════════════════════════════════════════
-
-/-! Each bridge theorem shows that a Declercian schema, when resolved to
-    concrete times satisfying the chain constraints, projects to a
-    `ReichenbachFrame` satisfying the expected Reichenbach tense predicate.
-
-    This connects Declerck's chain architecture to the existing Reichenbach
-    infrastructure used by all other tense theories in linglib. -/
+Each bridge theorem shows that a Declercian schema, when resolved to
+concrete times satisfying the chain constraints, projects to a
+`ReichenbachFrame` satisfying the expected Reichenbach tense predicate.
+This connects Declerck's chain architecture to the Reichenbach
+infrastructure used by the other tense theories in linglib. -/
 
 section Bridge
 
+variable {Time : Type*} [LinearOrder Time]
+
+/-- No Declercian frame is `isPerfect` (E < R): the TS = TO_sit principle
+forces E = R. The perfect lives in the chain, not in the E/R relation. -/
+theorem DeclercianSchema.toFrame_not_isPerfect (s : DeclercianSchema Time) :
+    ¬ s.toFrame.isPerfect :=
+  λ h => lt_irrefl _ h
+
 /-- Preterit projects to a frame satisfying PAST (R < P). -/
-theorem preterit_isPast (t0 toSit : ℤ) (h : toSit < t0) :
-    (preterit t0 toSit).toFrame.isPast := by
-  simp [preterit, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPast]
-  exact h
+theorem preterit_isPast (t0 toSit : Time) (h : toSit < t0) :
+    (preterit t0 toSit).toFrame.isPast := h
 
+omit [LinearOrder Time] in
 /-- Present projects to a frame satisfying PRESENT (R = P) for point times. -/
-theorem present_isPresent (t0 : ℤ) :
-    (present t0 t0).toFrame.isPresent := by
-  simp [present, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPresent]
+theorem present_isPresent (t0 : Time) :
+    (present t0 t0).toFrame.isPresent := rfl
 
-/-- Present perfect projects to a frame satisfying PAST (R < P) —
-    because TO_sit (= R) < TO₁ (= P). The present-sphere membership is
-    tracked by `timeSphere`, not by the Reichenbach R/P relation.
+/-- Present perfect projects to PAST (R < P) — because TO_sit (= R) < TO₁
+(= P). The present-sphere membership is tracked by `timeSphere`, not by
+the Reichenbach R/P relation. -/
+theorem presentPerfect_frame_isPast (t0 toSit : Time) (h : toSit < t0) :
+    (presentPerfect t0 toSit).toFrame.isPast := h
 
-    This is Declerck's key structural claim: the perfect/preterit distinction
-    is time-sphere, not R/P configuration. Both project to R < P. -/
-theorem presentPerfect_frame_isPast (t0 toSit : ℤ) (h : toSit < t0) :
-    (presentPerfect t0 toSit).toFrame.isPast := by
-  simp [presentPerfect, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPast]
-  exact h
-
+omit [LinearOrder Time] in
 /-- Preterit and present perfect produce identical Reichenbach frames for
-    the same times — they differ ONLY in time-sphere. This is Declerck's
-    central thesis about the perfect/preterit distinction: the contrast
-    is sphere membership, not R/P configuration. -/
-theorem preterit_presentPerfect_same_frame (t0 toSit : ℤ) :
-    (preterit t0 toSit).toFrame = (presentPerfect t0 toSit).toFrame := by
-  simp [preterit, presentPerfect, DeclercianSchema.toFrame, DeclercianSchema.toSit]
+the same times — they differ ONLY in time-sphere. This is Declerck's
+central thesis about the perfect/preterit distinction: the contrast
+is sphere membership, not R/P configuration. -/
+theorem preterit_presentPerfect_same_frame (t0 toSit : Time) :
+    (preterit t0 toSit).toFrame = (presentPerfect t0 toSit).toFrame := rfl
 
-/--... but they differ in time-sphere. -/
-theorem preterit_presentPerfect_differ_sphere (t0 toSit : ℤ) :
-    (preterit t0 toSit).timeSphere ≠ (presentPerfect t0 toSit).timeSphere := by
-  simp [preterit, presentPerfect]
+omit [LinearOrder Time] in
+/-- … but they differ in time-sphere. -/
+theorem preterit_presentPerfect_differ_sphere (t0 toSit : Time) :
+    (preterit t0 toSit).timeSphere ≠ (presentPerfect t0 toSit).timeSphere :=
+  nofun
 
-/-- Past perfect projects to PAST (R < P). The chain gives
-    TO_sit < TO₂ < TO₁, so R (= TO_sit) < P (= TO₁). -/
-theorem pastPerfect_isPast (t0 to2 toSit : ℤ)
+/-- Past perfect projects to PAST (R < P): the chain gives
+TO_sit < TO₂ < TO₁, so R (= TO_sit) < P (= TO₁). -/
+theorem pastPerfect_isPast (t0 to2 toSit : Time)
     (h₁ : toSit < to2) (h₂ : to2 < t0) :
-    (pastPerfect t0 to2 toSit).toFrame.isPast := by
-  simp [pastPerfect, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPast]
-  omega
+    (pastPerfect t0 to2 toSit).toFrame.isPast :=
+  lt_trans h₁ h₂
 
-/-- Future projects to FUTURE (R > P). -/
-theorem future_isFuture (t0 toSit : ℤ) (h : toSit > t0) :
-    (future t0 toSit).toFrame.isFuture := by
-  simp [future, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isFuture]
-  exact h
-
-/-- Conditional: TO₂ < TO₁ projects to PAST for the intermediate reference.
-    The full frame has R (= TO_sit) related to P (= TO₁), but the relation
-    is underspecified — TO_sit may be before, at, or after TO₁.
-
-    We can only prove that TO₂ < TO₁ (the chain constraint), which Reichenbach
-    would misrepresent as three separate tense schemata. -/
-theorem conditional_to2_before_to1 (t0 to2 toSit : ℤ) (h : to2 < t0) :
-    to2 < (conditional t0 to2 toSit).to1 := by
-  simp [conditional]; exact h
+/-- Future projects to FUTURE (P < R). -/
+theorem future_isFuture (t0 toSit : Time) (h : t0 < toSit) :
+    (future t0 toSit).toFrame.isFuture := h
 
 end Bridge
 
+/-! ### Temporal vagueness
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal Vagueness
--- ════════════════════════════════════════════════════════════════
-
-/-! Declerck's chain model captures temporal vagueness naturally:
-    when a schema's chain doesn't include a direct link between two
-    TOs, their relation is genuinely unspecified.
-
-    The future perfect and conditional tense are both vague about
-    the relation between TO_sit and TO₁. [reichenbach-1947]
-    incorrectly treats this as three-way ambiguity (S–R–E, R–S–E,
-    R–E–S as distinct schemata for the conditional). -/
+When a schema's chain has no direct link between two TOs, their relation
+is genuinely unspecified. The future perfect and conditional tense are
+both vague about TO_sit's relation to TO₁. [declerck-1991] argues this
+against the [reichenbach-1947] format, which generates three orderings
+for the posterior past (R–E–S; R–S,E; R–S–E): if one tense form realizes
+three configurations, the form would have to be three-ways ambiguous, and
+there is no evidence that the English conditional (or future perfect) is
+ambiguous rather than vague. -/
 
 /-- The future perfect is vague about TO_sit's relation to t₀:
-    the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT
-    TO_sit to TO₁. All three scenarios are consistent. -/
+the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT TO_sit to TO₁.
+All three scenarios are consistent. -/
 theorem futurePerfect_vague_sit_t0 :
     ∃ (toSit₁ toSit₂ toSit₃ to2 : ℤ),
       -- TO₂ after TO₁ (= t₀ = 0) in all cases
@@ -674,16 +506,12 @@ theorem futurePerfect_vague_sit_t0 :
       toSit₁ < to2 ∧ toSit₂ < to2 ∧ toSit₃ < to2 ∧
       -- But TO_sit can be before, at, or after t₀
       toSit₁ < 0 ∧ toSit₂ = 0 ∧ toSit₃ > 0 := by
-  exact ⟨-1, 0, 1, 5, by omega, by omega, by omega, by omega,
-         by omega, rfl, by omega⟩
+  refine ⟨-1, 0, 1, 5, ?_, ?_, ?_, ?_, ?_, rfl, ?_⟩ <;> decide
 
-/-- The conditional tense is vague about TO_sit's relation to t₀:
-    the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT
-    TO_sit to TO₁. All three scenarios are consistent.
-
-    [reichenbach-1947]'s three separate schemata for the conditional
-    (S–R–E, R–S–E, R–E–S) are NOT distinct tenses — they are instances
-    of a single vague schema. -/
+/-- The conditional tense is vague about TO_sit's relation to t₀: the
+chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT TO_sit to TO₁.
+The three Reichenbach orderings for the posterior past are instances
+of a single vague schema, not distinct tenses. -/
 theorem conditional_vague_sit_t0 :
     ∃ (toSit₁ toSit₂ toSit₃ to2 : ℤ),
       -- TO₂ before TO₁ (= t₀ = 0) in all cases
@@ -692,108 +520,14 @@ theorem conditional_vague_sit_t0 :
       toSit₁ > to2 ∧ toSit₂ > to2 ∧ toSit₃ > to2 ∧
       -- But TO_sit can be before, at, or after t₀
       toSit₁ < 0 ∧ toSit₂ = 0 ∧ toSit₃ > 0 := by
-  exact ⟨-1, 0, 1, -3, by omega, by omega, by omega, by omega,
-         by omega, rfl, by omega⟩
+  refine ⟨-1, 0, 1, -3, ?_, ?_, ?_, ?_, ?_, rfl, ?_⟩ <;> decide
 
+/-! ### Tower bridge: TO-chain as context tower
 
--- ════════════════════════════════════════════════════════════════
--- § Concrete Instantiations (ℤ)
--- ════════════════════════════════════════════════════════════════
-
-/-! Concrete examples matching the Phenomena/Tense/Data.lean frames,
-    showing the Declercian schemata produce the same data. -/
-
-/-- "John was ill yesterday" — preterit, absolute use. -/
-def exPreterit : DeclercianSchema ℤ := preterit 0 (-3)
-
-/-- "It is raining" — present, point time. -/
-def exPresent : DeclercianSchema ℤ := present 0 0
-
-/-- "I have visited Paris" — present perfect. -/
-def exPresentPerfect : DeclercianSchema ℤ := presentPerfect 0 (-3)
-
-/-- "I visited Paris" — preterit (same event, different sphere). -/
-def exPreteritParis : DeclercianSchema ℤ := preterit 0 (-3)
-
-/-- "John had left before we arrived" — past perfect. -/
-def exPastPerfect : DeclercianSchema ℤ := pastPerfect 0 (-2) (-4)
-
-/-- "I will do it next week" — future. -/
-def exFuture : DeclercianSchema ℤ := future 0 5
-
-/-- "John will have left when we arrive" — future perfect. -/
-def exFuturePerfect : DeclercianSchema ℤ := futurePerfect 0 5 3
-
-/-- "The house would weather many more storms" — conditional. -/
-def exConditional : DeclercianSchema ℤ := conditional 0 (-5) (-3)
-
-/-- "He would have left by then" — conditional perfect. -/
-def exConditionalPerfect : DeclercianSchema ℤ := conditionalPerfect 0 (-5) (-3) (-4)
-
-
--- ── Concrete bridge verification ──
-
-/-- Concrete preterit satisfies PAST. -/
-theorem exPreterit_isPast : exPreterit.toFrame.isPast := by
-  simp [exPreterit, preterit, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPast]
-
-/-- Concrete present satisfies PRESENT. -/
-theorem exPresent_isPresent : exPresent.toFrame.isPresent := by
-  simp [exPresent, present, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isPresent]
-
-/-- Present perfect and preterit project to identical Reichenbach frames. -/
-theorem exPerfect_eq_preterit_frame :
-    exPresentPerfect.toFrame = exPreteritParis.toFrame := by
-  simp [exPresentPerfect, exPreteritParis, presentPerfect, preterit,
-        DeclercianSchema.toFrame, DeclercianSchema.toSit]
-
-/-- But they have different time-spheres. -/
-theorem exPerfect_neq_preterit_sphere :
-    exPresentPerfect.timeSphere ≠ exPreteritParis.timeSphere := by
-  simp only [exPresentPerfect, exPreteritParis, presentPerfect, preterit]; decide
-
-/-- Concrete future satisfies FUTURE. -/
-theorem exFuture_isFuture : exFuture.toFrame.isFuture := by
-  simp [exFuture, future, DeclercianSchema.toFrame, DeclercianSchema.toSit,
-        ReichenbachFrame.isFuture]
-
-/-- Concrete future perfect: TO_sit (3) < TO₂ (5), and TO₂ (5) > t₀ (0). -/
-theorem exFuturePerfect_chain_valid :
-    (futurePerfect 0 5 3 : DeclercianSchema ℤ).toSit < 5 ∧ (5 : ℤ) > 0 := by
-  simp [futurePerfect, DeclercianSchema.toSit]
-
-/-- Concrete conditional: TO₂ (-5) < t₀ (0), TO_sit (-3) > TO₂ (-5). -/
-theorem exConditional_chain_valid :
-    (-5 : ℤ) < 0 ∧ exConditional.toSit > (-5 : ℤ) := by
-  simp [exConditional, conditional, DeclercianSchema.toSit]
-
-/-- Conditional perfect: 4-deep chain is valid. -/
-theorem exConditionalPerfect_chain_valid :
-    (-5 : ℤ) < 0 ∧ (-3 : ℤ) > (-5 : ℤ) ∧ exConditionalPerfect.toSit < (-3 : ℤ) := by
-  simp [exConditionalPerfect, conditionalPerfect, DeclercianSchema.toSit]
-
-
--- ════════════════════════════════════════════════════════════════
--- § Tower Bridge: TO-Chain as Context Tower
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Declerck TO-Chain ↔ Context Tower
-
-Each link in a TO-chain corresponds to a temporal shift in a context tower.
-The chain runs from TO₁ outward to TO_sit; each link introduces a new temporal
-perspective point, which is exactly what pushing a `temporalShift` does.
-
-- TO₁ corresponds to the tower origin (the basic temporal reference point)
-- Each subsequent TO in the chain maps to a tower push with `temporalShift`
-- `DeclercianSchema.depth` = `chain.length + 1` corresponds to tower depth + 1
-  (the tower counts shifts, while Declerck counts TOs including TO₁)
-
-The mapping is `tower.depth = schema.chain.length`, and
-`schema.depth = tower.depth + 1` (because Declerck counts TO₁ as depth 1).
--/
+Each link in a TO-chain corresponds to a temporal shift in a context
+tower: TO₁ is the tower origin, and each subsequent TO maps to a push
+with a `temporalShift`. `DeclercianSchema.depth` counts TOs including
+TO₁, while the tower counts shifts, so `schema.depth = tower.depth + 1`. -/
 
 section TowerBridge
 
@@ -802,9 +536,9 @@ variable {Time : Type*}
 open Semantics.Context (ContextTower ContextShift KContext)
 
 /-- Convert a Declercian TO-chain to a list of temporal shifts.
-    Each `TOLink` becomes a `temporalShift` with `.temporal` label.
-    The relation in the link is not encoded in the shift itself —
-    it is a constraint on the times, not a transformation. -/
+Each `TOLink` becomes a temporal shift with `.temporal` label.
+The relation in the link is not encoded in the shift itself —
+it is a constraint on the times, not a transformation. -/
 def declercianToShifts {E P : Type*} (chain : List (TOLink Time)) :
     List (ContextShift (KContext Time E P Time)) :=
   chain.map λ link => {
@@ -812,9 +546,8 @@ def declercianToShifts {E P : Type*} (chain : List (TOLink Time)) :
     label := .temporal
   }
 
-/-- Convert a Declercian schema to a context tower.
-    The origin context has `time := to1` (the basic TO).
-    Each chain link becomes a temporal shift. -/
+/-- Convert a Declercian schema to a context tower: the origin context has
+`time := to1` (the basic TO), and each chain link becomes a temporal shift. -/
 def declercianToTower {E P : Type*}
     (s : DeclercianSchema Time) (agent addressee : E) (world : Time) (pos : P) :
     ContextTower (KContext Time E P Time) where
@@ -833,9 +566,8 @@ theorem declercianToTower_depth {E P : Type*}
     (declercianToTower (E := E) (P := P) s agent addr world pos).depth = s.chain.length := by
   simp only [declercianToTower, ContextTower.depth, declercianToShifts, List.length_map]
 
-/-- Declerck's depth = tower depth + 1. The "+1" is because Declerck counts
-    TO₁ as part of the depth (depth = number of TOs), while the tower counts
-    only shifts (depth = number of pushes). -/
+/-- Declerck's depth = tower depth + 1: Declerck counts TO₁ as part of the
+depth (number of TOs), while the tower counts only shifts (pushes). -/
 theorem declerck_depth_is_tower_depth_plus_one {E P : Type*}
     (s : DeclercianSchema Time) (agent addr : E) (world : Time) (pos : P) :
     s.depth = (declercianToTower (E := E) (P := P) s agent addr world pos).depth + 1 := by
@@ -866,96 +598,73 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
 
 end TowerBridge
 
--- ════════════════════════════════════════════════════════════════
--- § Domain Bridge: TO-Chain as Semantics.Tense.Domain
--- ════════════════════════════════════════════════════════════════
+/-! ### Domain bridge: TO-chain as `Semantics.Tense.Domain`
 
-/-! Re-express `DeclercianSchema` via the framework-agnostic
-    `Semantics.Tense.Domain` substrate (central TO + list of sub-TOs, with
-    Allen relations computed on demand from the underlying linear
-    order). The `toDomain` builder lifts the chain structure into a
-    `Domain Time Orientation` whose central TO is the utterance
-    time (T₀) and whose sub-TOs are the perspective TO (TO₁) followed
-    by every chain link as a point interval.
-
-    This is **additive**: the `DeclercianSchema` structure and all the
-    named-tense constructors stay unchanged. Domain-level tooling can
-    now work uniformly with
-    `s.toDomain.relatedByName precedesSet .situation .perspective`,
-    while existing Reichenbach-projecting code continues to use
-    `s.toFrame`. -/
+Re-express `DeclercianSchema` via the framework-agnostic
+`Semantics.Tense.Domain` substrate (central TO + list of sub-TOs, with
+Allen relations computed on demand from the underlying linear order).
+Additive: the schema structure and named-tense constructors stay
+unchanged; domain-level tooling can work uniformly with
+`s.toDomain.relatedByName`, while Reichenbach-projecting code continues
+to use `s.toFrame`. -/
 
 section DomainBridge
 
 variable {Time : Type*} [LinearOrder Time]
 
 /-- The schema as a `Semantics.Tense.Domain` over the universal
-    `Orientation` role vocabulary: central = `.utterance` (T₀, the
-    temporal zero-point), sub-TOs = `.perspective` (TO₁) followed by
-    every chain link as a point interval.
+`Orientation` role vocabulary: central = `.utterance` (t₀), sub-TOs =
+`.perspective` (TO₁) followed by every chain link as a point interval.
 
-    The Allen relations between any pair of TOs are **computed** from
-    the underlying `LinearOrder Time` via `NonemptyInterval.allenRel`; nothing
-    is stored. The chain's `relation` field encodes the *intended*
-    Declercian temporal relation but is not consulted here — its job is
-    to constrain admissible time assignments at the call site, not to
-    reproduce information already implicit in the linear order. -/
+The Allen relations between any pair of TOs are **computed** from the
+underlying `LinearOrder Time` via `NonemptyInterval.allenRel`; nothing
+is stored. The chain's `relation` field encodes the *intended* Declercian
+temporal relation but is not consulted here — its job is to constrain
+admissible time assignments at the call site. -/
 def DeclercianSchema.toDomain (s : DeclercianSchema Time) :
     Domain Time Orientation where
   central := NamedTO.ofPoint .utterance s.t0
   subTOs := NamedTO.ofPoint .perspective s.to1 ::
-            s.chain.map (fun link => NamedTO.ofPoint link.name link.time)
+            s.chain.map (λ link => NamedTO.ofPoint link.name link.time)
 
 @[simp] theorem DeclercianSchema.toDomain_central (s : DeclercianSchema Time) :
     s.toDomain.central = NamedTO.ofPoint .utterance s.t0 := rfl
 
 @[simp] theorem DeclercianSchema.toDomain_subTOs (s : DeclercianSchema Time) :
     s.toDomain.subTOs = NamedTO.ofPoint .perspective s.to1 ::
-      s.chain.map (fun link => NamedTO.ofPoint link.name link.time) := rfl
+      s.chain.map (λ link => NamedTO.ofPoint link.name link.time) := rfl
 
 /-- The schema's domain labels: utterance first, then perspective, then
-    every chain link's role. Useful for stating role-set invariants. -/
+every chain link's role. Useful for stating role-set invariants. -/
 theorem DeclercianSchema.toDomain_labels (s : DeclercianSchema Time) :
     s.toDomain.labels =
       Orientation.utterance :: .perspective :: s.chain.map TOLink.name := by
-  simp [DeclercianSchema.toDomain, Domain.labels, Domain.all,
-        NamedTO.ofPoint, List.map_cons, List.map_map, Function.comp]
+  simp only [Domain.labels, Domain.all, DeclercianSchema.toDomain_central,
+             DeclercianSchema.toDomain_subTOs, List.map_cons, List.map_map]
+  rfl
 
 end DomainBridge
 
--- ════════════════════════════════════════════════════════════════
--- § Zone Classifier
--- ════════════════════════════════════════════════════════════════
+/-! ### Zone classifier
 
-/-! The `Zone` enum encodes Declerck's six principal temporal sectors
-    — two time-spheres (`past`, `present`) crossed with three positions
-    (anterior `pre-`, central, posterior `post-`). Each English tense
-    locates its situation time in one of these zones. The
-    `DeclercianSchema.zoneOf` classifier projects a schema to its zone
-    based on `(timeSphere, last chain-link relation)` — the relation of
-    `TO_sit` to its outer anchor, plus the sphere membership of that
-    anchor.
+`Zone` crosses the two time-spheres with three positions (anterior,
+central, posterior). **Project-side caveat**: Declerck's own inventory of
+*absolute sectors* is four — pre-present, present, and post-present
+sectors of the present time-sphere, plus a single undivided past sector.
+`prePast` and `postPast` are not Declercian sectors but domain-internal
+positions (anteriority/posteriority to a TO inside a past temporal
+domain); the symmetric 2×3 cross is this file's classifier, not the
+book's taxonomy.
 
-    For **simple tenses** (chain length 1, anchor = `TO₁` = `t₀`):
-    - `(past, before)` → `past` (preterit)
-    - `(present, before)` → `prePresent` (present perfect)
-    - `(present, overlapping)` → `present` (present)
-    - `(present, after)` → `postPresent` (future)
+`DeclercianSchema.zoneOf` classifies by `(timeSphere, chain length, last
+link's relation)`. The classifier is **not** the inverse of the chain —
+vague tenses (future perfect, conditional) under-determine TO_sit's zone,
+and the classifier returns the zone of the immediate anchor. -/
 
-    For **compound tenses** (chain length ≥ 2, anchor = `TO₂` etc.):
-    - `(past, before)` → `prePast` (past perfect, conditional perfect)
-    - `(past, after)` → `postPast` (conditional)
-    - `(present, before)` → `prePresent` (future perfect's TO_sit, anterior)
-    - `(present, after)` → `postPresent`
-
-    The classifier is **not** the inverse of the chain — vague tenses
-    (future perfect, conditional) under-determine `TO_sit`'s zone, and
-    the classifier returns the zone of the immediate anchor. The
-    `zone_of_*` `rfl`-theorems below verify each named tense classifies
-    to its expected zone. -/
-
-/-- The six principal Declercian zones: two time-spheres crossed with
-    three sphere-internal positions. -/
+/-- The two time-spheres crossed with three positions: Declerck's four
+absolute sectors (`past`, `prePresent`, `present`, `postPresent`) plus
+the domain-internal positions `prePast` and `postPast` (see the section
+docstring caveat). -/
 inductive Zone where
   | prePast
   | past
@@ -969,35 +678,29 @@ namespace DeclercianSchema
 
 variable {Time : Type*}
 
-/-- Classify a schema's TO_sit by zone, based on `(timeSphere, last
-    chain link's relation)`. See the section docstring for the mapping.
-    Defaults to the sphere's center for empty chains and odd cases. -/
+/-- Classify a schema's TO_sit by zone, based on `(timeSphere, chain
+length, last chain link's relation)`. Simple past-sphere tenses
+(chain length 1) classify as `past`; deeper past-sphere chains land in
+the domain-internal `prePast`/`postPast` positions. Defaults to the
+sphere's center for empty chains and non-strict relations. -/
 def zoneOf (s : DeclercianSchema Time) : Zone :=
-  let lastRel := (s.chain.getLast?).map TOLink.relation
-  let nLinks := s.chain.length
-  match s.timeSphere, nLinks, lastRel with
-  | .past,    1, some .before      => .past         -- preterit
-  | .past,    1, some .overlapping => .past
-  | .past,    1, some .after       => .postPast
-  | .present, 1, some .before      => .prePresent   -- present perfect
-  | .present, 1, some .overlapping => .present      -- present
-  | .present, 1, some .after       => .postPresent  -- future
-  | .past,    _, some .before      => .prePast      -- past perfect, conditional perfect
-  | .past,    _, some .overlapping => .past
-  | .past,    _, some .after       => .postPast     -- conditional
-  | .present, _, some .before      => .prePresent   -- future perfect (TO_sit before TO₂)
-  | .present, _, some .overlapping => .present
-  | .present, _, some .after       => .postPresent
-  | .past,    _, _                 => .past
-  | .present, _, _                 => .present
+  match s.timeSphere, s.chain.length, (s.chain.getLast?).map TOLink.relation with
+  | .past,    1, some .before => .past         -- preterit
+  | .past,    _, some .before => .prePast      -- past perfect, conditional perfect
+  | .past,    _, some .after  => .postPast     -- conditional
+  | .present, _, some .before => .prePresent   -- present perfect, future perfect
+  | .present, _, some .after  => .postPresent  -- future
+  | .past,    _, _            => .past
+  | .present, _, _            => .present
 
 end DeclercianSchema
-
--- ── Per-tense zone theorems (each named English tense in its expected zone) ──
 
 section ZoneClassification
 
 variable {Time : Type*}
+
+/-! Each named English tense classifies to its expected zone; these
+exercise the `zoneOf` match against all eight constructors. -/
 
 theorem preterit_zone (t0 toSit : Time) :
     (preterit t0 toSit).zoneOf = .past := rfl
@@ -1023,32 +726,22 @@ theorem futurePerfect_zone (t0 to2 toSit : Time) :
 theorem conditionalPerfect_zone (t0 to2 to3 toSit : Time) :
     (conditionalPerfect t0 to2 to3 toSit).zoneOf = .prePast := rfl
 
+/-- Preterit and present perfect classify to **different zones** (`past`
+vs `prePresent`) despite projecting to identical Reichenbach frames
+(`preterit_presentPerfect_same_frame`). The Zone classifier surfaces
+what `toFrame` flattens. -/
+theorem preterit_presentPerfect_differ_zone (t0 toSit : Time) :
+    (preterit t0 toSit).zoneOf ≠ (presentPerfect t0 toSit).zoneOf :=
+  nofun
+
 end ZoneClassification
 
-/-- Preterit and present perfect classify to **different zones** (`past`
-    vs `prePresent`) despite projecting to identical Reichenbach frames
-    (`preterit_presentPerfect_same_frame`). This is exactly Declerck's
-    central claim about the perfect/preterit distinction: the difference
-    lives in the time-sphere/zone, not in the underlying R/P
-    configuration. The Zone classifier surfaces what `toFrame` flattens. -/
-theorem preterit_presentPerfect_differ_zone {Time : Type*} (t0 toSit : Time) :
-    (preterit t0 toSit).zoneOf ≠ (presentPerfect t0 toSit).zoneOf := by
-  simp [preterit, presentPerfect, DeclercianSchema.zoneOf]
+/-! ### `TenseSystem` and `AspectSystem` instances
 
--- ════════════════════════════════════════════════════════════════
--- § TenseSystem and AspectSystem Instances
--- ════════════════════════════════════════════════════════════════
-
-/-! Declerck's `DeclercianSchema` as a `Semantics.Tense.TenseSystem`
-    (anchor = `.perspective` for TO₁, situation = `.situation` for
-    TO_sit) and `Semantics.Tense.AspectSystem` instance. The aspect instance
-    collapses event and reference roles both to `.situation` —
-    Declerck's universal `TS = TO_sit` principle means E = R always
-    holds, so any predicate of the form "event equals reference" is
-    trivially satisfied for every Declercian schema, and "event
-    precedes reference" can never hold. The "perfect" lives in the
-    chain structure (TO_sit before `.sub 0`), not in the E/R relation
-    — exactly Declerck's claim. -/
+The aspect instance collapses event and reference roles both to
+`.situation` — Declerck's universal TS = TO_sit principle means E = R
+always holds, so "event precedes reference" can never hold and the
+perfect lives in the chain structure instead. Exactly Declerck's claim. -/
 
 instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
     Semantics.Tense.TenseSystem (DeclercianSchema Time) Time Orientation where
@@ -1064,263 +757,186 @@ instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
 
 end TOChain
 
+/-! ### Temporal domain: subordination vs shift
 
+A stretch of discourse may either incorporate each new clause into an
+existing temporal domain (relative tenses expressing anteriority,
+simultaneity, posteriority — Declerck's "temporal subordination") or
+shift to a new absolute domain. Subordination keeps the perspective on
+the existing domain anchor; shift resets the perspective to S.
 
--- ════════════════════════════════════════════════════════════════
--- § §23 — Temporal Domain: Shift vs Subordination
--- ════════════════════════════════════════════════════════════════
+See `Examples.domainShift1a` (subordination) and `Examples.domainShift1b`
+(shift) for the book's examples. -/
 
-/-! Declerck (ch. 3 §C): a stretch of discourse may either incorporate
-    each new clause into an existing temporal domain (relative tenses
-    expressing anteriority, simultaneity, posteriority), or shift to
-    a new absolute domain. The frames below illustrate the structural
-    contrast: subordination keeps the perspective on the existing
-    domain anchor; shift resets the perspective to S.
-
-    See `Examples.domainShift1a` (subordination) and
-    `Examples.domainShift1b` (shift) for verified
-    Declerck examples. -/
-
-/-- "He left..." — past domain anchor (subordination pair). -/
-def domainSubordLeft : ReichenbachFrame ℤ where
+/-- "He left…" — past domain anchor. Serves both discourse continuations
+below: temporal subordination ("…and would never come back") and domain
+shift ("…and never came back"). -/
+def domainLeft : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -5
   eventTime := -5
 
-/-- "...and would never come back" — relative tense within the past
-    domain established by `left`. Constructed via `shiftedFrame` so
-    the perspective is taken from `domainSubordLeft.eventTime`. -/
+/-- "…and would never come back" — relative tense within the past domain
+established by `left`. Constructed via `shiftedFrame` so the perspective
+is taken from `domainLeft.eventTime`. -/
 def domainSubordWouldReturn : ReichenbachFrame ℤ :=
-  shiftedFrame domainSubordLeft (-3) (-3)
+  shiftedFrame domainLeft (-3) (-3)
 
-/-- "He left..." — independent past domain (shift pair). -/
-def domainShiftLeft : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -5
-  eventTime := -5
-
-/-- "...and never came back" — independent past domain. -/
+/-- "…and never came back" — independent past domain (shift): an absolute
+preterit, perspective reset to S. -/
 def domainShiftCameBack : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- Both `left` frames are past (R < P). -/
-theorem domainSubordLeftPast :
-    domainSubordLeft.referenceTime < domainSubordLeft.perspectiveTime := by decide
-
-theorem domainShiftLeftPast :
-    domainShiftLeft.referenceTime < domainShiftLeft.perspectiveTime := by decide
+/-- The domain anchor is past (R < P). -/
+theorem domainLeft_isPast : domainLeft.isPast := by
+  show (-5 : ℤ) < 0; decide
 
 /-- Subordination: `wouldReturn` is posterior within the domain. -/
-theorem domainSubordPosteriority :
-    domainSubordWouldReturn.referenceTime > domainSubordLeft.eventTime := by
-  simp only [domainSubordWouldReturn, shiftedFrame, domainSubordLeft]; omega
+theorem domainSubordWouldReturn_posterior :
+    domainSubordWouldReturn.referenceTime > domainLeft.eventTime := by decide
 
-/-- Shift: both frames have P = S (absolute perspective). -/
-theorem domainShiftBothAbsolute :
-    domainShiftLeft.perspectiveTime = domainShiftLeft.speechTime ∧
-    domainShiftCameBack.perspectiveTime = domainShiftCameBack.speechTime :=
-  ⟨rfl, rfl⟩
+/-- Shift: the shifted continuation has absolute perspective (P = S). -/
+theorem domainShiftCameBack_absolute : domainShiftCameBack.isSimpleCase := rfl
 
-/-- Subordination: `wouldReturn` has shifted perspective. -/
-theorem domainSubordShiftedPerspective :
-    domainSubordWouldReturn.perspectiveTime ≠ domainSubordWouldReturn.speechTime := by
-  simp only [domainSubordWouldReturn, shiftedFrame, domainSubordLeft]; decide
+/-- Subordination: `wouldReturn` has a shifted (non-absolute) perspective. -/
+theorem domainSubordWouldReturn_shifted : ¬ domainSubordWouldReturn.isSimpleCase := by
+  show ¬ (-5 : ℤ) = 0; decide
 
+/-! ### Modal (false) past
 
--- ════════════════════════════════════════════════════════════════
--- § §24 — Modal (False) Past: Politeness and Tentativeness
--- ════════════════════════════════════════════════════════════════
+Some uses of the past tense have non-past reference: the past morphology
+marks modal remoteness (tentativeness, politeness, hypotheticality)
+rather than past temporal location — Declerck's "modal past".
 
-/-! Declerck (ch. 2 §3): some uses of the past tense have non-past
-    reference. The past morphology marks modal distance (politeness,
-    tentativeness, hypotheticality) rather than past temporal
-    location.
+A bare `ReichenbachFrame` cannot encode this phenomenon: a single (R, E)
+pair represents either the morphology or the interpretation, not their
+divergence. The data therefore live as `Examples.modalPastWish` and
+`Examples.modalPastIfWas`; no frames are stipulated here. -/
 
-    See `Examples.modalPastWish` and `Examples.modalPastIfWas` for
-    verified examples. -/
+/-! ### Future-time subclauses: Present vs Future Perspective System
 
-/-- "I wanted to ask you something." — modal past.
-    Past morphology, present-time reference (the wanting is now). -/
-def falsePastWanted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := 0
+[declerck-1991] distinguishes two systems for tense in clauses about
+post-present time. The **FPS** (Future Perspective System) uses tenses
+that establish post-present domains directly from t₀: the future tense
+(as absolute tense) and the future perfect. The **PPS** (Present
+Perspective System) consists of relative tenses binding into an
+established post-present domain whose binding TO behaves as a
+**pseudo-t₀**: present tense for simultaneity, preterit or present
+perfect for anteriority, future for posteriority. In "If the weather is
+good, John will go to the seaside", the matrix is FPS (absolute future)
+and the protasis is PPS (relative present against the pseudo-t₀);
+*will* in a pure-future protasis is the marked FPS option.
 
-/-- "Could you help me?" — modal past in a modal verb.
-    Past form `could`, present-time request. -/
-def falsePastCould : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := 0
+Encoded via `shiftedFrame`: PPS = relative present against a shifted
+perspective, FPS = absolute frame (P = S). `Examples.whenPresent` is the
+same phenomenon in a when-clause. -/
 
-
--- ════════════════════════════════════════════════════════════════
--- § §25 — PPS vs FPS in Conditionals
--- ════════════════════════════════════════════════════════════════
-
-/-! Declerck distinguishes the **Present Perspective System** (PPS)
-    and **Future Perspective System** (FPS) for conditional
-    constructions. The two systems differ in how the if-clause and
-    matrix tense forms anchor the temporal location of the conditional
-    situations.
-
-    The frames below encode the project-side analytical structure;
-    specific Declerck example sentences for the four PPS/FPS-
-    diagnostic positions were not directly extracted from the book.
-    Consumers should treat the frames as structural illustrations
-    rather than verbatim Declerck examples. -/
-
-/-- PPS if-clause: "If he comes home..." — present tense in protasis. -/
-def ppsIfComes : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := 0
-
-/-- PPS matrix: "...he will be happy." — will-future in apodosis. -/
-def ppsWillBeHappy : ReichenbachFrame ℤ where
+/-- "John will go to the seaside" — FPS: absolute future establishing a
+post-present domain. -/
+def fpsSeaside : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := 3
   eventTime := 3
 
-/-- FPS if-clause: "If he will go..." — will-form in protasis (FPS). -/
-def fpsIfWillGo : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 3
-  eventTime := 3
+/-- "…if the weather is good" — PPS: present tense binding into the
+post-present domain, simultaneous with the pseudo-t₀. -/
+def ppsWeatherGood : ReichenbachFrame ℤ :=
+  shiftedFrame fpsSeaside 3 3
 
-/-- FPS matrix: "...he should publish." — modal-present in apodosis. -/
-def fpsShouldPublish : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := 0
+/-- The FPS matrix is an absolute future: P = S and P < R. -/
+theorem fpsSeaside_absolute_future :
+    fpsSeaside.isSimpleCase ∧ fpsSeaside.isFuture :=
+  ⟨rfl, by show (0 : ℤ) < 3; decide⟩
 
-/-- PPS pattern: present in protasis, future in apodosis. -/
-theorem ppsProtasisPresentApodosisFuture :
-    ppsIfComes.isPresent ∧ ppsWillBeHappy.isFuture := by
-  refine ⟨rfl, ?_⟩
-  simp only [ReichenbachFrame.isFuture, ppsWillBeHappy]; omega
+/-- The PPS protasis is a *relative present*: R = P at the shifted
+perspective, even though the situation is post-present. -/
+theorem ppsWeatherGood_relative_present : ppsWeatherGood.isPresent := rfl
 
-/-- FPS pattern: future in protasis, present in apodosis (reversed). -/
-theorem fpsProtasisFutureApodosisPresent :
-    fpsIfWillGo.isFuture ∧ fpsShouldPublish.isPresent := by
-  refine ⟨?_, rfl⟩
-  simp only [ReichenbachFrame.isFuture, fpsIfWillGo]; omega
+/-- The PPS perspective is the pseudo-t₀ — the post-present domain
+anchor, not speech time. -/
+theorem ppsWeatherGood_pseudo_t0 :
+    ppsWeatherGood.perspectiveTime = fpsSeaside.eventTime ∧
+    ¬ ppsWeatherGood.isSimpleCase :=
+  ⟨rfl, by show ¬ (3 : ℤ) = 0; decide⟩
 
-/-- The PPS/FPS distinction is structural: the if-clause vs apodosis
-    tense pattern reverses between systems. -/
-theorem ppsFpsReversed :
-    (ppsIfComes.referenceTime = ppsIfComes.perspectiveTime ∧
-     ppsWillBeHappy.referenceTime > ppsWillBeHappy.perspectiveTime) ∧
-    (fpsIfWillGo.referenceTime > fpsIfWillGo.perspectiveTime ∧
-     fpsShouldPublish.referenceTime = fpsShouldPublish.perspectiveTime) := by
-  refine ⟨⟨rfl, ?_⟩, ⟨?_, rfl⟩⟩ <;> decide
+/-! ### Past perfect in before-clauses
 
+The past perfect encodes an event anterior to a past reference point.
+The frames below use the orthodox Reichenbach convention (E < R for the
+perfect) — the convention `DeclercianSchema.toFrame` deliberately cannot
+express; see the perfect-vs-preterit section for the explicit divergence.
 
--- ════════════════════════════════════════════════════════════════
--- § §26 — Temporal Conjunctions with Implicit TOs
--- ════════════════════════════════════════════════════════════════
+The future-perfect counterpart (`Examples.futurePerfect`) and the
+future-referring present in when-clauses (`Examples.whenPresent`, the
+PPS phenomenon above) are kept as examples only: frame-encoding the
+latter would conflate morphology with interpretation. -/
 
-/-! Declerck (ch. 2 §1, §2): when-, before-, and after-clauses with
-    future reference often use present-tense morphology rather than
-    will-future. The future-perfect form encodes an event anterior
-    to a future reference point. The past-perfect form encodes an
-    event anterior to a past reference point.
-
-    See `Examples.futurePerfect` and `Examples.whenPresent` for
-    verified examples. -/
-
-/-- "I will have left by then" — future perfect.
-    Event before a future reference point (R > P, E < R). -/
-def futPerfLeft : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 3
-  eventTime := 2
-
-/-- "...when he comes" — present-tense in temporal clause with
-    future reference. R = present (= TO at speech time), but the
-    pragmatic interpretation locates the event in the future. -/
-def whenArrives : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 3
-  eventTime := 3
-
-/-- "I had left before he arrived" — past perfect.
-    Event anterior to a past reference point. -/
+/-- "I had left before he arrived" — past perfect, event anterior to a
+past reference point (orthodox convention: E < R). -/
 def hadLeftBefore : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -5
 
-/-- "...before he arrived" — past time-sphere reference point. -/
+/-- "…before he arrived" — past time-sphere reference point. -/
 def beforeArrived : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- Before-clause: leaving before arrival (E_had_left < E_arrived). -/
-theorem beforeLeavingBeforeArrival :
+/-- Before-clause: leaving precedes arrival. -/
+theorem hadLeftBefore_event_lt_arrival :
     hadLeftBefore.eventTime < beforeArrived.eventTime := by decide
 
-/-- Past perfect frame has E < R (perfect aspect). -/
-theorem hadLeftIsPerfect :
-    hadLeftBefore.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, hadLeftBefore]; omega
+/-- The past-perfect frame has E < R (perfect, orthodox convention). -/
+theorem hadLeftBefore_isPerfect : hadLeftBefore.isPerfect := by
+  show (-5 : ℤ) < -3; decide
 
+/-! ### Boundedness and unmarked temporal interpretation
 
--- ════════════════════════════════════════════════════════════════
--- § §27 — PUTI: Bounded / Unbounded Default Interpretation
--- ════════════════════════════════════════════════════════════════
+Declerck's **principle of unmarked temporal interpretation** (his label,
+building on earlier work on temporal anaphora in discourse): in a
+sequence of clauses each establishing its own domain,
+(a) bounded + bounded → interpreted as sequential, in report order;
+(b) unbounded + unbounded → interpreted as simultaneous;
+(c) mixed → the bounded situation is included in the unbounded one.
 
-/-! Declerck (ch. 3 §1.2) distinguishes **bounded** vs **unbounded**
-    sentences: a sentence is bounded if it represents a situation as
-    reaching a terminal point, and unbounded otherwise. The contrast
-    is sentence-level (not lexical) and distinct from the
-    telic/atelic Aktionsart distinction (compare *Bill ran five
-    miles* — bounded — with *Bill was running five miles* —
-    unbounded; same telic VP, different boundedness).
-
-    The "Principle of Unmarked Temporal Interpretation" (PUTI) is
-    the project's name for Declerck's discussion of default temporal
-    arrangements when two situations of given boundedness types are
-    juxtaposed:
-    - bounded + bounded → sequential (iconic) ordering;
-    - unbounded + unbounded → simultaneity;
-    - mixed → temporal inclusion of the bounded inside the unbounded.
-
-    These are pragmatic defaults, not logical entailments — the
-    frames below illustrate the construction; the per-pair ordering
-    theorems verify that the constructed frames satisfy the default.
-
-    Frames below use plain `ReichenbachFrame ℤ` and record
-    boundedness in prose. Boundedness characterizes the predicate-
-    over-interval, not the (S,P,R,E) frame, so the two are kept
-    orthogonal; consumers needing the boundedness label use
-    `SituationBoundedness` at use site.
-
-    Verified Declerck examples in the JSON above:
-    `declerck1991_domainShift_1a` (unbounded simultaneity) and
-    `declerck1991_domainShift_1b` (bounded sequential). For the
-    bounded/unbounded contrast itself, Declerck's textbook examples
-    include *John read the letter.* (bounded) vs *John was reading a
-    letter.* (unbounded) and *John drank whisky.* (unbounded) vs
-    *John drank five glasses of whisky.* (bounded). -/
+Boundedness is sentence-level and distinct from telicity: *Bill ran five
+miles* is bounded but *Bill was running five miles* is unbounded, with
+the same telic VP. These are pragmatic defaults, not entailments. -/
 
 open Semantics.Aspect (SituationBoundedness)
+
+/-- The three default temporal arrangements of Declerck's principle of
+unmarked temporal interpretation. -/
+inductive TemporalArrangement where
+  | sequential
+  | simultaneous
+  | inclusion
+  deriving DecidableEq, Repr
+
+/-- Declerck's unmarked-interpretation default for a pair of juxtaposed
+situations, by boundedness. -/
+def putiDefault : SituationBoundedness → SituationBoundedness → TemporalArrangement
+  | .bounded, .bounded => .sequential
+  | .unbounded, .unbounded => .simultaneous
+  | _, _ => .inclusion
+
+/-- An arrangement holding of two point-time frames. For point times,
+inclusion degenerates to coincidence of event times (genuine interval
+inclusion would need interval-valued frames). -/
+def TemporalArrangement.holdsAt :
+    TemporalArrangement → ReichenbachFrame ℤ → ReichenbachFrame ℤ → Prop
+  | .sequential, f, g => f.eventTime < g.eventTime
+  | .simultaneous, f, g => f.eventTime = g.eventTime
+  | .inclusion, f, g => f.eventTime = g.eventTime
 
 /-- "He arrived." — bounded (achievement). -/
 def arrivedFrame : ReichenbachFrame ℤ where
@@ -1329,7 +945,7 @@ def arrivedFrame : ReichenbachFrame ℤ where
   referenceTime := -5
   eventTime := -5
 
-/-- "He sat down." — bounded (achievement). After arriving, by PUTI default. -/
+/-- "He sat down." — bounded (achievement), after arriving by default. -/
 def satDownFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
@@ -1344,104 +960,102 @@ def rainingFrame : ReichenbachFrame ℤ where
   eventTime := -3
 
 /-- "The wind was blowing." — unbounded (activity), simultaneous with
-    raining by PUTI default. -/
+raining by default. -/
 def windBlowingFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- "He was reading." — unbounded (activity). Frame for the mixed-inclusion case. -/
+/-- "He was reading." — unbounded (activity). -/
 def readingFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- "The phone rang." — bounded (achievement), included in reading
-    interval by PUTI default. -/
+/-- "The phone rang." — bounded (achievement), included in the reading
+interval by default. -/
 def phoneRangFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- Bounded + bounded → sequential: arrival precedes sitting in the
-    constructed frames (illustration of Declerck's domain-shift case
-    with iconic ordering). -/
-theorem boundedSequential :
-    arrivedFrame.eventTime < satDownFrame.eventTime := by decide
+/-- Bounded + bounded → sequential: the constructed frames instantiate
+the unmarked-interpretation default. -/
+theorem arrived_satDown_puti :
+    (putiDefault .bounded .bounded).holdsAt arrivedFrame satDownFrame := by
+  show (-5 : ℤ) < -4; decide
 
-/-- Unbounded + unbounded → simultaneous: raining and wind-blowing share
-    an event time in the constructed frames. -/
-theorem unboundedSimultaneous :
-    rainingFrame.eventTime = windBlowingFrame.eventTime := rfl
+/-- Unbounded + unbounded → simultaneous. -/
+theorem raining_windBlowing_puti :
+    (putiDefault .unbounded .unbounded).holdsAt rainingFrame windBlowingFrame := rfl
 
-/-- Mixed bounded + unbounded → temporal inclusion: phone ringing
-    falls within reading in the constructed frames. -/
-theorem mixedInclusion :
-    phoneRangFrame.eventTime = readingFrame.eventTime := rfl
+/-- Mixed → inclusion (point-degenerate: coincidence). -/
+theorem phoneRang_reading_puti :
+    (putiDefault .bounded .unbounded).holdsAt phoneRangFrame readingFrame := rfl
 
+/-! ### Present perfect vs preterit: time-sphere, and two frame conventions
 
--- ════════════════════════════════════════════════════════════════
--- § §28 — Present Perfect vs Preterit: Time-Sphere
--- ════════════════════════════════════════════════════════════════
+Declerck's distinctive claim: the present perfect and preterit differ in
+time-sphere membership, not in definiteness or current relevance (an
+implicature, for Declerck). Both can refer to the same objective event.
+The companion grammar's minimal pair (`Examples.perfectOverslept`):
+"I have overslept this morning" requires that the morning not be over;
+"I overslept this morning" does not.
 
-/-! Declerck's distinctive claim: the present perfect and preterit
-    differ *not* in definiteness or current relevance but in
-    time-sphere membership. Both can refer to the same objective
-    event; what differs is the speaker's conceptualization (whether
-    the situation is anchored to the present time-sphere or detached
-    from it).
+Two Reichenbach encodings of the perfect coexist in this file:
 
-    Declerck's minimal pair (book fn 49): `I have overslept this
-    morning` requires that the morning is not yet over (present
-    time-sphere); `I overslept this morning` does not (past time-
-    sphere). See `Examples.perfectOverslept`. -/
+- `DeclercianSchema.toFrame` (TS = TO_sit, so E = R always): perfect and
+  preterit project to the *same* frame (`preterit_presentPerfect_same_frame`);
+  the contrast lives in `timeSphere`/`zoneOf`.
+- The orthodox convention below (R at the sphere anchor): the perfect has
+  E < R = P, making the contrast frame-visible.
 
-/-- "I have overslept this morning." — present perfect.
-    Pre-present sector: E < R and R = P (present time-sphere).
-    The morning must not yet be over. -/
-def perfectOverslept : ReichenbachFrame ℤ where
+`perfect_frame_conventions_diverge` states the discrepancy explicitly:
+the orthodox perfect frame is unreachable from any Declercian schema. -/
+
+/-- "I have overslept this morning." — present perfect in the orthodox
+convention: E < R and R = P (pre-present, present orientation). -/
+def perfectOversleptFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := 0
   eventTime := -3
 
-/-- "I overslept this morning." — simple preterit.
-    Past time-sphere: E = R < P. The morning may be over. -/
-def preteritOverslept : ReichenbachFrame ℤ where
+/-- "I overslept this morning." — simple preterit: E = R < P. -/
+def preteritOversleptFrame : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
-/-- Both frames locate the event before speech time. -/
-theorem perfectPreteritBothEventBeforeSpeech :
-    perfectOverslept.eventTime < perfectOverslept.speechTime ∧
-    preteritOverslept.eventTime < preteritOverslept.speechTime := by
-  refine ⟨?_, ?_⟩ <;> decide
-
 /-- Same event time — the difference is structural, not temporal. -/
-theorem perfectPreteritSameEventTime :
-    perfectOverslept.eventTime = preteritOverslept.eventTime := rfl
+theorem oversleptFrames_eventTime_eq :
+    perfectOversleptFrame.eventTime = preteritOversleptFrame.eventTime := rfl
 
-/-- Present perfect: E < R (perfect aspect, pre-present). -/
-theorem perfectIsPerfect :
-    perfectOverslept.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, perfectOverslept]; omega
+/-- The perfect frame is perfect (E < R) with present orientation (R = P). -/
+theorem perfectOversleptFrame_isPerfect_isPresent :
+    perfectOversleptFrame.isPerfect ∧ perfectOversleptFrame.isPresent :=
+  ⟨by show (-3 : ℤ) < 0; decide, rfl⟩
 
-/-- Present perfect: R = P (present orientation). -/
-theorem perfectIsPresent :
-    perfectOverslept.isPresent := rfl
+/-- The preterit frame is past (R < P) and perfective (E = R). -/
+theorem preteritOversleptFrame_isPast_isPerfective :
+    preteritOversleptFrame.isPast ∧ preteritOversleptFrame.isPerfective :=
+  ⟨by show (-3 : ℤ) < 0; decide, rfl⟩
 
-/-- Preterit: R < P (past orientation). -/
-theorem preteritIsPast :
-    preteritOverslept.isPast := by
-  simp only [ReichenbachFrame.isPast, preteritOverslept]; omega
-
-/-- Preterit is perfective (E = R). -/
-theorem preteritIsPerfective :
-    preteritOverslept.isPerfective := rfl
+/-- The two perfect conventions diverge: Declerck's `toFrame` projection
+of the present perfect is not the orthodox perfect frame, and no
+Declercian projection can be `isPerfect` — while the orthodox frame is.
+This is the visible fault line between R-as-TO_sit (Declerck) and
+R-as-extended-now (the orthodox reading of the perfect). -/
+theorem perfect_frame_conventions_diverge :
+    (TOChain.presentPerfect (0 : ℤ) (-3)).toFrame ≠ perfectOversleptFrame ∧
+    ¬ (TOChain.presentPerfect (0 : ℤ) (-3)).toFrame.isPerfect ∧
+    perfectOversleptFrame.isPerfect :=
+  ⟨λ h => absurd (congrArg ReichenbachFrame.referenceTime h) (by decide),
+   TOChain.DeclercianSchema.toFrame_not_isPerfect _,
+   by show (-3 : ℤ) < 0; decide⟩
 
 end Declerck1991
