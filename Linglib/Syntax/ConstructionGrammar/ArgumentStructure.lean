@@ -1,20 +1,19 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
 /-!
 # Argument Structure Constructions
-[goldberg-1995] [goldberg-shirtz-2025]
+[goldberg-1995]
 
 CxG's argument structure constructions: explicit slot structure, full
 compositionality, polysemy families, and verb–construction fusion.
 
 Fully abstract constructions without pragmatic functions are fully
-compositional (`isFullyCompositional`); partially open constructions
-(PAL, let alone, WXDY) are irreducible phrasal patterns that only CxG
-can capture. The decomposition of fully abstract constructions into
+compositional (`isFullyCompositional`); constructions with idiosyncratic
+form–meaning pairings (*let alone*, WXDY, PAL) are irreducible phrasal
+patterns that only CxG can capture. The decomposition of fully abstract constructions into
 [mueller-2013]'s three universal combination schemata lives in
 `Studies/Mueller2013.lean` (`Mueller2013.decompose`).
 
@@ -172,15 +171,6 @@ theorem fullyAbstract_isFullyCompositional (c : Construction)
     isFullyCompositional c = true := by
   unfold isFullyCompositional
   rw [h₁, h₂]
-  native_decide
-
-/-- PAL construction is NOT fully compositional.
-
-PAL is a phrasal construction where a phrase fills a word-level slot.
-This form-function pairing cannot be captured by the three schemata alone —
-it requires construction-specific knowledge. -/
-theorem pal_irreducible :
-    isFullyCompositional Studies.GoldbergShirtz2025.palConstruction = false := by
   native_decide
 
 /-- *Let alone* construction is NOT fully compositional.

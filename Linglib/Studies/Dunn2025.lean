@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Slot
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Studies.GoldbergShirtz2025
 
 /-!
 # Slot/Filler Verification
@@ -105,7 +105,7 @@ theorem letAlone_specificity_consistent :
 /-- must-VERB: derived `.partiallyOpen` matches stipulated. -/
 theorem mustVerb_specificity_consistent :
     derivedSpecificity mustVerbForm =
-      ConstructionGrammar.Studies.GoldbergShirtz2025.mustVerbConstruction.specificity := by
+      _root_.GoldbergShirtz2025.mustVerbConstruction.specificity := by
   native_decide
 
 /-- Veggie-wrap: derived `.lexicallySpecified` (all fixed). -/
