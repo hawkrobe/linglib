@@ -10,7 +10,7 @@ and auxiliaries — one of the clearest cases of verb agreement for gender.
 
 namespace Hindi.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Hindi-Urdu gender typology: 2-gender canonical sex-based with verb agr. -/
 def genderTypology : GenderProfile :=

@@ -14,7 +14,7 @@ agreement targets. The Corbett 1991 view is a per-Study override at
 
 namespace Georgian.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Georgian gender typology per WALS [corbett-2013]: no gender on the
     noun-side-marking criterion. -/

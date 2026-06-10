@@ -9,7 +9,7 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 
 namespace Finnish.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Finnish gender typology: no gender. -/
 def genderTypology : GenderProfile :=

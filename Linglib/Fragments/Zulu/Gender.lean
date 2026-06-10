@@ -17,7 +17,7 @@ facts.
 
 namespace Zulu.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Zulu gender typology: 8 controller genders (Bantu), semantic + formal. -/
 def genderTypology : GenderProfile :=

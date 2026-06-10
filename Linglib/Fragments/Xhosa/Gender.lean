@@ -11,7 +11,7 @@ agreement-side analysis; the morphological class inventory is larger.
 
 namespace Xhosa.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Xhosa gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=

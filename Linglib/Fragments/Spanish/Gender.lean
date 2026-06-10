@@ -162,7 +162,7 @@ def sameRootNouns : List SameRootEntry :=
 -- § 7: Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Gender
+open _root_.Gender
 
 /-- Spanish gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

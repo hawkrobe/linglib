@@ -17,7 +17,7 @@ stays `[]`: noun-class agreement doesn't map onto the Indo-European
 
 namespace Swahili.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Swahili gender typology: 7 controller genders (Bantu), semantic + formal. -/
 def genderTypology : GenderProfile :=

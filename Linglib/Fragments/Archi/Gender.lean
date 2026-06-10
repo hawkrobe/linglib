@@ -17,7 +17,7 @@ rather than semantic-only — a per-Study override at `Studies/Corbett1991.lean`
 
 namespace Archi.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Archi gender typology per WALS [corbett-2013]: 4-gender, sex-based,
     semantic assignment (Nakh-Daghestanian). Agreement targets per

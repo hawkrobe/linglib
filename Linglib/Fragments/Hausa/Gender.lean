@@ -152,7 +152,7 @@ def allNouns : List Noun :=
 -- Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Gender
+open _root_.Gender
 
 /-- Hausa gender typology: 2-gender (Chadic, Afroasiatic), sex-based,
     semantic + formal. Agreement on attributive, personal pronoun, and

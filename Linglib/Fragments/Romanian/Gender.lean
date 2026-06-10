@@ -10,7 +10,7 @@ fem in the plural; "ambigeneric"). Sex-based, semantic + formal.
 
 namespace Romanian.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Romanian gender typology: 3-gender sex-based with ambigeneric neuter. -/
 def genderTypology : GenderProfile :=

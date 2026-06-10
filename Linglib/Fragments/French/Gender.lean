@@ -10,7 +10,7 @@ attributive + predicate adjectives, past participles, and personal pronouns.
 
 namespace French.Gender
 
-open Gender
+open _root_.Gender
 
 /-- French gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

@@ -11,7 +11,7 @@ Sample maximum in Corbett's 22-language exemplar.
 
 namespace Fula.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Fula gender typology: ~20 genders (Atlantic), semantic + formal. -/
 def genderTypology : GenderProfile :=

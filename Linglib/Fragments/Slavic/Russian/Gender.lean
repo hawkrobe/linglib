@@ -186,7 +186,7 @@ theorem declClass_ne_gender :
 -- § 9: Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Gender
+open _root_.Gender
 
 /-- Russian gender typology: 3-gender canonical sex-based with verb
     agreement (past tense). The declension classes above (I/II/III/IV)

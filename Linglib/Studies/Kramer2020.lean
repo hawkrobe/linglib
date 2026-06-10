@@ -106,7 +106,7 @@ end Gender
 
 namespace Morphology.DM
 
-open Gender
+open _root_.Gender
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
     ([kramer-2020] §3) -/
@@ -123,7 +123,7 @@ end Morphology.DM
 
 namespace Kramer2020
 
-open Gender
+open _root_.Gender
 open Morphology.DM
 open Corbett1991 (allProfiles)
 

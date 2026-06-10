@@ -10,7 +10,7 @@ attributive + predicate adjectives, relative + personal pronouns.
 
 namespace Latin.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Latin gender typology: 3-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

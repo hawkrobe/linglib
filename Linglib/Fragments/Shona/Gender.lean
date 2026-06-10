@@ -10,7 +10,7 @@ Bantu noun-class system. [carstens-2026] cites 8 active genders
 
 namespace Shona.Gender
 
-open Gender
+open _root_.Gender
 
 /-- Shona gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
