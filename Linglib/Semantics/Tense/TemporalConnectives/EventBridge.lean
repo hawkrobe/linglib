@@ -35,9 +35,7 @@ open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
--- ============================================================================
--- § 1: The Projection
--- ============================================================================
+/-! ### The Projection -/
 
 /-- The τ-image projection: the set of runtime intervals of events satisfying P.
 
@@ -48,9 +46,7 @@ variable {Time : Type*} [LinearOrder Time]
 def eventDenotation (P : Event Time → Prop) : SentDenotation Time :=
   { i | ∃ e, P e ∧ e.τ = i }
 
--- ============================================================================
--- § 2: Basic Properties
--- ============================================================================
+/-! ### Basic Properties -/
 
 /-- Empty predicate gives empty denotation. -/
 theorem eventDenotation_empty :
@@ -62,9 +58,7 @@ theorem eventDenotation_nonempty (P : Event Time → Prop) (e : Event Time) (he 
     e.τ ∈ eventDenotation P :=
   ⟨e, he, rfl⟩
 
--- ============================================================================
--- § 3: Time Trace Factoring
--- ============================================================================
+/-! ### Time Trace Factoring -/
 
 /-- The time trace of an event denotation factors through τ:
     a time is in the trace iff some event satisfying P has a runtime
@@ -82,9 +76,7 @@ theorem timeTrace_eventDenotation (P : Event Time → Prop) :
   · rintro ⟨e, he, hi⟩
     exact ⟨e.τ, ⟨e, he, rfl⟩, hi⟩
 
--- ============================================================================
--- § 4: Relationship to Canonical Denotation Patterns
--- ============================================================================
+/-! ### Relationship to Canonical Denotation Patterns -/
 
 /-- A singleton event predicate (exactly one event with runtime i) gives an
     accomplishment denotation. -/

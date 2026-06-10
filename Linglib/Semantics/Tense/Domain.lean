@@ -35,9 +35,7 @@ domain-shaped theories build on top.
 namespace Semantics.Tense
 
 
--- ════════════════════════════════════════════════════
--- § Times of Orientation
--- ════════════════════════════════════════════════════
+/-! ### Times of Orientation -/
 
 /-- A **time of orientation** (TO, [declerck-2006]): a temporal
     anchor used by tense/aspect frameworks. Realized as
@@ -84,9 +82,7 @@ def ofPoint (name : Role) (t : Time) : NamedTO Time Role where
 
 end NamedTO
 
--- ════════════════════════════════════════════════════
--- § Domain
--- ════════════════════════════════════════════════════
+/-! ### Domain -/
 
 /-- A **temporal domain** ([declerck-2006]): a central time of
     orientation (the *binding TO* of the domain) together with a list
@@ -165,9 +161,7 @@ def relatedByName [DecidableEq Role] (d : Domain Time Role)
 
 end Domain
 
--- ════════════════════════════════════════════════════
--- § Builders for the Common Reichenbach Role-Set
--- ════════════════════════════════════════════════════
+/-! ### Builders for the Common Reichenbach Role-Set -/
 
 /-! Convenience constructors for the canonical Reichenbach role-set,
     using `Orientation` as the universal `Role` type:

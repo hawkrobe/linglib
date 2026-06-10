@@ -44,9 +44,7 @@ open Semantics.Context (KContext)
 open Semantics.Tense
 
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Tense Presuppositions
--- ════════════════════════════════════════════════════════════════
+/-! ### Tense Presuppositions -/
 
 /-- PRES presupposes g(n) ○ π: the temporal reference overlaps the perspective.
     Point approximation: R = P. -/
@@ -68,9 +66,7 @@ theorem pastPresup_iff_isPast {Time : Type*} [LinearOrder Time]
     pastPresup f ↔ f.isPast := Iff.rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § 2. OP_π: Perspective-Shifting Operator
--- ════════════════════════════════════════════════════════════════
+/-! ### OP_π: Perspective-Shifting Operator -/
 
 /-- OP_π shifts the perspective time to a new value.
     ⟦OP_π φ⟧^{c,π,g} = λi_κ. ⟦φ⟧^{c,i_t,g}(i) -/
@@ -90,9 +86,7 @@ theorem opPi_eq_embeddedFrame {Time : Type*}
   simp only [opPi, embeddedFrame]
 
 
--- ════════════════════════════════════════════════════════════════
--- § 3. ⌈then⌉ Presupposition
--- ════════════════════════════════════════════════════════════════
+/-! ### ⌈then⌉ Presupposition -/
 
 /-- ⌈then⌉ presupposes ¬(g(n) ○ π): its temporal reference is disjoint
     from the perspective. Point approximation: thenRef ≠ π.
@@ -105,9 +99,7 @@ def thenPresup {Time : Type*} (thenRef perspective : Time) : Prop :=
   thenRef ≠ perspective
 
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Core Clash Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Core Clash Theorems -/
 
 /-- The ⌈then⌉-present clash. Three ingredients produce the contradiction:
     1. PRES presupposes presRef = π (overlap with perspective)
@@ -132,15 +124,16 @@ theorem then_perspective_clash {Time : Type*}
     : False := hThen hOP
 
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Deleted vs. Shifted Tense
--- ════════════════════════════════════════════════════════════════
+/-! ### Deleted vs. Shifted Tense -/
 
 /-- Status of an embedded tense morpheme. -/
 inductive EmbeddedTenseStatus where
   /-- Tense interpreted with presupposition anchored to shifted π -/
   | shifted
-  /-- Tense deleted by SOT; no temporal presupposition -/
+  /-- Tense deleted by SOT; imposes no temporal presupposition at all
+      (there is no definedness condition to state, which is why
+      `then_deleted_tense_compatible` below needs no presupposition
+      hypothesis). -/
   | deleted
   deriving DecidableEq, Repr
 
@@ -148,9 +141,6 @@ inductive EmbeddedTenseStatus where
 def shiftedTensePresup {Time : Type*} [LT Time]
     (f : ReichenbachFrame Time) (isPres : Bool) : Prop :=
   if isPres then presPresup f else pastPresup f
-
-/-- A deleted tense has no temporal presupposition — trivially satisfied. -/
-theorem deletedTensePresup : True := trivial
 
 /-- ⌈then⌉ + deleted tense → compatible.
     Deleted tense has no presupposition anchoring it to π, so there is no
@@ -173,9 +163,7 @@ theorem then_shifted_present_clash {Time : Type*}
   then_present_clash presRef thenRef shiftedPi hPres hDuring hThen
 
 
--- ════════════════════════════════════════════════════════════════
--- § 6. Bridge to PrProp
--- ════════════════════════════════════════════════════════════════
+/-! ### Bridge to PrProp -/
 
 /-- Wrap PRES presupposition as a `PrProp`, showing how tense presuppositions
     compose with the existing presupposition projection system. -/
@@ -191,9 +179,7 @@ theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
   simp [presAsPrProp]
 
 
--- ════════════════════════════════════════════════════════════════
--- § 7. Interpretation Parameters: c and π
--- ════════════════════════════════════════════════════════════════
+/-! ### Interpretation Parameters: c and π -/
 
 /-- The interpretation parameter tuple ⟨c, π⟩ from ⟦·⟧^{c,π,g}.
 
@@ -272,9 +258,7 @@ theorem InterpParams.shiftPerspective_matches_opPi {W E P T : Type*}
   simp only [opPi, InterpParams.shiftPerspective]
 
 
--- ════════════════════════════════════════════════════════════════
--- § 9. Cross-Linguistic Tense Shift Typology
--- ════════════════════════════════════════════════════════════════
+/-! ### Cross-Linguistic Tense Shift Typology -/
 
 /-- Cross-linguistic tense shift profile, encoding Tables 1 & 2.
 
@@ -362,9 +346,7 @@ theorem relative_shift_implies_attitude_shift :
     simp_all [greekProfile, hebrewProfile, russianProfile, japaneseProfile, englishProfile]
 
 
--- ════════════════════════════════════════════════════════════════
--- § 10. WOLL Decomposition
--- ════════════════════════════════════════════════════════════════
+/-! ### WOLL Decomposition -/
 
 /-- will = WOLL + PRES. WOLL is an intensional modal operator that:
     1. Quantifies over accessible future indices (∀i' ∈ ACC(i)(t). i'_t > t)

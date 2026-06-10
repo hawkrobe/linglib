@@ -30,7 +30,7 @@ Sibling formalizations of competitor lexical-aspect frameworks:
 [bach-1986]; the event-token sort is this `Dynamicity` feature (`Event.sort`);
 [krifka-1989]/[krifka-1998] CUM/QUA/DIV in
 `Semantics/Events/CEM.lean`; [dowty-1979] SIP in
-`Semantics/Tense/Aspect/SubintervalProperty.lean`;
+`Semantics/Aspect/SubintervalProperty.lean`;
 [filip-2012] three-way refutation of binary telicity in
 `Studies/Filip2012.lean`.
 -/

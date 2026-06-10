@@ -1,32 +1,18 @@
-/-
-# Tense Semantics
-
-Semantic operators for grammatical tense (PAST, PRES, FUT).
-
-## Core Idea
-
-Tense operators impose temporal constraints on propositions:
-- **PAST**: Event time precedes reference time (τ(s) < τ(s'))
-- **PRES**: Event time equals reference time (τ(s) = τ(s'))
-- **FUT**: Event time follows reference time (τ(s) > τ(s'))
-
-Following [heim-kratzer-1998], tenses are like pronouns for times:
-they introduce or retrieve temporal reference points.
-
-## Two Frameworks
-
-1. **Reichenbach-style**: Tense relates R to S
-   - PAST: R < S
-   - PRESENT: R = S (or R ◦ S)
-   - FUTURE: S < R
-
-2. **Situation-semantic** (Kratzer/Mendes):
-   - Tense operators take a situation argument and constrain its time
-   - τ(s) is the temporal trace of situation s
-
--/
-
 import Linglib.Semantics.Tense.GramTense
+
+/-!
+# Compositional Tense Operators
+[mendes-2025] [partee-1973]
+
+Semantic operators for grammatical tense (PAST, PRES, FUT), in two styles:
+Reichenbach-style (tense relates R to P on a frame, `applyTense`) and
+situation-semantic ([mendes-2025]: operators constrain the temporal
+coordinate of a situation argument). Both are driven by the shared
+temporal-relation kernel (`precedes`/`coincides`/`follows`), which is also
+the source of truth for the dynamic counterparts in `Tense/Dynamic.lean`.
+Following [partee-1973], tenses are pronoun-like: they retrieve temporal
+reference points rather than quantify over all times.
+-/
 
 namespace Semantics.Tense
 
@@ -45,9 +31,7 @@ A tense operator takes:
 -/
 abbrev TenseOp (W Time : Type*) := SitProp W Time → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal-relation kernel
--- ════════════════════════════════════════════════════════════════
+/-! ### Temporal-relation kernel -/
 
 /-!
 The temporal constraint of each tense, factored out as a pure relation
@@ -200,44 +184,16 @@ def applyTense {Time : Type*} [LinearOrder Time] (t : GramTense) (f : Reichenbac
   | .future => f.referenceTime > f.perspectiveTime
   | .nonpast => f.referenceTime ≥ f.perspectiveTime
 
-/--
-Check if a Reichenbach frame satisfies a given tense.
-Tense locates R relative to P (perspective time).
--/
-def satisfiesTense {Time : Type*} [LinearOrder Time] [DecidableEq Time]
-    [DecidableRel (α := Time) (· < ·)]
-    (t : GramTense) (f : ReichenbachFrame Time) : Bool :=
+instance {Time : Type*} [LinearOrder Time] (t : GramTense) (f : ReichenbachFrame Time) :
+    Decidable (applyTense t f) :=
   match t with
-  | .past => f.referenceTime < f.perspectiveTime
-  | .present => f.referenceTime == f.perspectiveTime
-  | .future => f.referenceTime > f.perspectiveTime
-  | .nonpast => f.referenceTime >= f.perspectiveTime
+  | .past => inferInstanceAs (Decidable (_ < _))
+  | .present => inferInstanceAs (Decidable (_ = _))
+  | .future => inferInstanceAs (Decidable (_ > _))
+  | .nonpast => inferInstanceAs (Decidable (_ ≥ _))
 
 
-/--
-Sequence of tenses (for embedded tense in reported speech, etc.)
-
-"John said that Mary left" - past under past
--/
-def composeTense : GramTense → GramTense → GramTense
-  | .past, .past => .past      -- Past of past is past (in English)
-  | .past, .present => .past   -- Present of past is past
-  | .past, .future => .past    -- Future of past... complex (would)
-  | .past, .nonpast => .past   -- Nonpast of past is past
-  | .present, t => t           -- Present is transparent
-  | .nonpast, .past => .past    -- Past of nonpast is past
-  | .nonpast, .present => .nonpast -- Present is transparent (right)
-  | .nonpast, .future => .future -- Future of nonpast is future
-  | .nonpast, .nonpast => .nonpast -- Nonpast is idempotent
-  | .future, .past => .future  -- Past of future... complex
-  | .future, .present => .future
-  | .future, .future => .future
-  | .future, .nonpast => .future
-
-
--- ════════════════════════════════════════════════════════════════
--- § applyTense ↔ GramTense.constrains Bridge
--- ════════════════════════════════════════════════════════════════
+/-! ### applyTense ↔ GramTense.constrains Bridge -/
 
 /-- `applyTense` is the Reichenbach-frame projection of `GramTense.constrains`:
     applying a tense to a frame is equivalent to the tense's temporal constraint
@@ -320,45 +276,5 @@ example : FUT (raining Unit) ⟨(), 1⟩ ⟨(), 0⟩ := by
   · trivial
 
 end Examples
-
--- ════════════════════════════════════════════════════════════════
--- § composeTense Properties
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### composeTense Properties
-[kiparsky-2002]
-
-`composeTense` is a stipulative function defining how surface tenses compose
-under embedding. The following theorems establish its algebraic properties.
-
-For the DERIVED version — showing that composeTense matches the Reichenbach
-analysis with perspective shifting — see
-`Semantics.Tense` (in `IS/Tense/Basic.lean`) and the TC↔IS bridge
-in `Semantics.Tense.SequenceOfTense`.
--/
-
-/-- Present is transparent under composition (left):
-    composing with matrix present always yields the embedded tense.
-    This reflects present's semantics: R = P, so tense relative to
-    a present perspective is unchanged. -/
-theorem composeTense_present_left (t : GramTense) :
-    composeTense .present t = t := by cases t <;> rfl
-
-/-- Present is transparent under composition (right):
-    embedding present under any tense yields the matrix tense.
-    Embedded present = "at the matrix event time" = same tense
-    relative to speech time. -/
-theorem composeTense_present_right (t : GramTense) :
-    composeTense t .present = t := by cases t <;> rfl
-
-/-- Tense composition is idempotent for past: embedding past
-    arbitrarily deep under past still yields past. -/
-theorem composeTense_past_idempotent :
-    composeTense .past .past = .past := rfl
-
-/-- Tense composition is idempotent for future. -/
-theorem composeTense_future_idempotent :
-    composeTense .future .future = .future := rfl
 
 end Semantics.Tense

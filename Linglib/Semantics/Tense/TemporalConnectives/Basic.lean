@@ -30,9 +30,7 @@ open NonemptyInterval
 
 variable {Time : Type*} [LinearOrder Time]
 
--- ============================================================================
--- § 1: Sentence Denotations as NonemptyInterval Sets
--- ============================================================================
+/-! ### Sentence Denotations as NonemptyInterval Sets -/
 
 /-- A sentence denotes a set of temporal intervals (its "run-times").
     Statives denote homogeneous interval sets; accomplishments denote singletons. -/
@@ -54,9 +52,7 @@ def stativeDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
 def accomplishmentDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
   { j | j = i }
 
--- ============================================================================
--- § 2: Basic Properties
--- ============================================================================
+/-! ### Basic Properties -/
 
 /-- Stative denotations are closed under subintervals (the subinterval property).
     This connects to Krifka's CUM (cumulative reference): if an interval is in
