@@ -22,7 +22,7 @@ Tense relates R to P; Aspect relates E to R.
 linglib's tense modules. The `toDomain` builder lifts it to a generic
 `Semantics.Tense.Domain` (central = S, sub-TOs = [P, R, E], all as point
 intervals via `TO.pure`). The `*_iff_relatedByName` bridge theorems
-re-express each Boolean predicate (`isPast`, `isPerfect`, …) as a
+re-express each predicate (`isPast`, `isPerfect`, …) as a
 `Domain.relatedByName` query against named atom-sets from the Allen
 algebra. This grounds the Reichenbach predicates in the Allen
 projection function (`NonemptyInterval.allenRel`) without changing the
@@ -95,7 +95,7 @@ theorem isPast_simpleCase (f : ReichenbachFrame Time) (h : f.isSimpleCase) :
 /-- Perfective: E ⊆ R (event contained in reference).
     Simplified to E = R for point-based times.
     TODO: proper interval-based perfective/imperfective distinction
-    lives in `Semantics/Lexical/Verb/ViewpointAspect.lean`. -/
+    lives in `Semantics/Aspect/Basic.lean` (`ViewpointAspectB`). -/
 def isPerfective (f : ReichenbachFrame Time) : Prop :=
   f.eventTime = f.referenceTime
 
@@ -107,9 +107,67 @@ def isPerfect (f : ReichenbachFrame Time) : Prop :=
 def isProspective (f : ReichenbachFrame Time) : Prop :=
   f.referenceTime < f.eventTime
 
--- ════════════════════════════════════════════════════
--- § Domain Bridge
--- ════════════════════════════════════════════════════
+/-! ### Unfolding lemmas and decidability
+
+One `_def` simp lemma and one `Decidable` instance per predicate, so
+consumers can close concrete goals with `decide` and rewrite with
+`simp only [isPast_def]` instead of unfolding definitions by hand. -/
+
+@[simp] theorem isPast_def (f : ReichenbachFrame Time) :
+    f.isPast ↔ f.referenceTime < f.perspectiveTime := Iff.rfl
+
+@[simp] theorem isPresent_def (f : ReichenbachFrame Time) :
+    f.isPresent ↔ f.referenceTime = f.perspectiveTime := Iff.rfl
+
+@[simp] theorem isFuture_def (f : ReichenbachFrame Time) :
+    f.isFuture ↔ f.perspectiveTime < f.referenceTime := Iff.rfl
+
+@[simp] theorem isSimpleCase_def (f : ReichenbachFrame Time) :
+    f.isSimpleCase ↔ f.perspectiveTime = f.speechTime := Iff.rfl
+
+@[simp] theorem defaultPR_def (f : ReichenbachFrame Time) :
+    f.defaultPR ↔ f.perspectiveTime ≤ f.referenceTime := Iff.rfl
+
+@[simp] theorem defaultER_def (f : ReichenbachFrame Time) :
+    f.defaultER ↔ f.eventTime ≤ f.referenceTime := Iff.rfl
+
+@[simp] theorem isPerfective_def (f : ReichenbachFrame Time) :
+    f.isPerfective ↔ f.eventTime = f.referenceTime := Iff.rfl
+
+@[simp] theorem isPerfect_def (f : ReichenbachFrame Time) :
+    f.isPerfect ↔ f.eventTime < f.referenceTime := Iff.rfl
+
+@[simp] theorem isProspective_def (f : ReichenbachFrame Time) :
+    f.isProspective ↔ f.referenceTime < f.eventTime := Iff.rfl
+
+instance (f : ReichenbachFrame Time) : Decidable f.isPast :=
+  inferInstanceAs (Decidable (f.referenceTime < f.perspectiveTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isPresent :=
+  inferInstanceAs (Decidable (f.referenceTime = f.perspectiveTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isFuture :=
+  inferInstanceAs (Decidable (f.perspectiveTime < f.referenceTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isSimpleCase :=
+  inferInstanceAs (Decidable (f.perspectiveTime = f.speechTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.defaultPR :=
+  inferInstanceAs (Decidable (f.perspectiveTime ≤ f.referenceTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.defaultER :=
+  inferInstanceAs (Decidable (f.eventTime ≤ f.referenceTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isPerfective :=
+  inferInstanceAs (Decidable (f.eventTime = f.referenceTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isPerfect :=
+  inferInstanceAs (Decidable (f.eventTime < f.referenceTime))
+
+instance (f : ReichenbachFrame Time) : Decidable f.isProspective :=
+  inferInstanceAs (Decidable (f.referenceTime < f.eventTime))
+
+/-! ### Domain Bridge -/
 
 /-- The Reichenbach frame as a generic temporal `Domain` over the
     universal `Orientation` role vocabulary: central = utterance
@@ -251,9 +309,7 @@ theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
 
 end ReichenbachFrame
 
--- ════════════════════════════════════════════════════
--- § TenseSystem and AspectSystem Instances
--- ════════════════════════════════════════════════════
+/-! ### TenseSystem and AspectSystem Instances -/
 
 /-! Reichenbach as a `TenseSystem` (anchor = P, situation = R)
     and `AspectSystem` (event = E, reference = R) instance.

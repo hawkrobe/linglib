@@ -96,9 +96,7 @@ def dynFUT {W Time : Type*} [LT Time]
   dynRelation (follows (W := W) (Time := Time)) eventVar refVar
 
 
--- ════════════════════════════════════════════════════════════════
--- § Definitional bridges: dynamic operators ARE dynRelation
--- ════════════════════════════════════════════════════════════════
+/-! ### Definitional bridges: dynamic operators ARE dynRelation -/
 
 theorem dynPAST_eq_dynRelation_precedes {W Time : Type*} [LT Time]
     (e r : SVar) (c : SitContext W Time) :
@@ -113,9 +111,7 @@ theorem dynFUT_eq_dynRelation_follows {W Time : Type*} [LT Time]
     dynFUT e r c = dynRelation follows e r c := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Static realization: dynamic IS the eliminative update of static
--- ════════════════════════════════════════════════════════════════
+/-! ### Static realization: dynamic IS the eliminative update of static -/
 
 /-!
 For each tense, the static operator (with the trivial propositional
@@ -146,9 +142,7 @@ theorem dynFUT_iff_FUT_with_true {W Time : Type*} [LT Time]
   ⟨fun h => ⟨h.1, h.2, trivial⟩, fun ⟨hc, hp, _⟩ => ⟨hc, hp⟩⟩
 
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal algebra (derived from kernel + dynRelation)
--- ════════════════════════════════════════════════════════════════
+/-! ### Temporal algebra (derived from kernel + dynRelation) -/
 
 /-- PAST ∪ PRES ∪ FUT = identity. Derived from `lt_trichotomy` via the
 shared `precedes`/`coincides`/`follows` kernel. -/

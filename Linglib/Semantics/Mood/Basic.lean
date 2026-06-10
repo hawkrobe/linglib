@@ -346,7 +346,7 @@ of the embedded clause from the default (speech time or matrix time) to a
 newly introduced temporal anchor.
 
 See `Semantics.Attitudes.SituationDependent` for the attitude side
-and `Semantics.Tense.SequenceOfTense` for the formal connection.
+and `Semantics.Tense.SOT.Decomposition` for the formal connection.
 -/
 
 section AttitudeTemporalAnchor

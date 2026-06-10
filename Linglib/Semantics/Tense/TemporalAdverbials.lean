@@ -37,9 +37,7 @@ open Semantics.Tense.TenseAspectComposition
 
 variable {W Time : Type*} [LinearOrder Time]
 
--- ════════════════════════════════════════════════════
--- § PTS Constraints
--- ════════════════════════════════════════════════════
+/-! ### PTS Constraints -/
 
 /-- A constraint on the Perfect Time Span.
     Adverbials restrict which PTS intervals are admissible. -/
@@ -53,9 +51,7 @@ inductive AdverbialType where
   | inclusive   -- does not specify LB
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § Concrete Adverbials
--- ════════════════════════════════════════════════════
+/-! ### Concrete Adverbials -/
 
 /-- "ever since t₀": PTS must start at t₀.
     E.g., "has been running since Monday" → PTS.fst = Monday. -/
@@ -77,9 +73,7 @@ def always : PTSConstraint Time :=
 def before : PTSConstraint Time :=
   λ _ => True
 
--- ════════════════════════════════════════════════════
--- § LB Domain Extraction
--- ════════════════════════════════════════════════════
+/-! ### LB Domain Extraction -/
 
 /-- Convert a PTS constraint to a domain of compatible LB values,
     given that the right boundary is fixed at tc.
@@ -89,9 +83,7 @@ def before : PTSConstraint Time :=
 def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :=
   { tLB | tLB ≤ tc ∧ ∀ (h : tLB ≤ tc), adv ⟨⟨tLB, tc⟩, h⟩ }
 
--- ════════════════════════════════════════════════════
--- § PERF with Adverbial
--- ════════════════════════════════════════════════════
+/-! ### PERF with Adverbial -/
 
 /-- Perfect with adverbial constraint: PERF_ADV(p, adv).
     Combines PERF with an adverbial constraint on the PTS.
@@ -99,9 +91,7 @@ def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :
 def PERF_ADV (p : IntervalPred W Time) (adv : PTSConstraint Time) : PointPred W Time :=
   λ s => ∃ pts : NonemptyInterval Time, RB pts s.time ∧ adv pts ∧ p s.world pts
 
--- ════════════════════════════════════════════════════
--- § Adverbial Type Properties
--- ════════════════════════════════════════════════════
+/-! ### Adverbial Type Properties -/
 
 /-- Does this adverbial type specify the left boundary?
     Durative adverbials pin the LB; inclusive adverbials leave it free. -/
@@ -109,9 +99,7 @@ def AdverbialType.specifiesLB : AdverbialType → Bool
   | .durative => true
   | .inclusive => false
 
--- ════════════════════════════════════════════════════
--- § Bridge Theorems
--- ════════════════════════════════════════════════════
+/-! ### Bridge Theorems -/
 
 /-- PERF_ADV is equivalent to PERF_XN with the adverbial's derived LB domain.
 

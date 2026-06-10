@@ -33,9 +33,7 @@ namespace Semantics.Tense
 
 universe u v w
 
--- ════════════════════════════════════════════════════
--- § Tense System
--- ════════════════════════════════════════════════════
+/-! ### Tense System -/
 
 /-- A **tense system**: a framework for locating situations in time
     relative to a discourse anchor.
@@ -63,9 +61,7 @@ class TenseSystem (α : Type u)
   /-- The role of the situation TO. -/
   situation : Role
 
--- ════════════════════════════════════════════════════
--- § Aspect System
--- ════════════════════════════════════════════════════
+/-! ### Aspect System -/
 
 /-- An **aspect system**: a framework for relating event time to
     reference (situation) time.

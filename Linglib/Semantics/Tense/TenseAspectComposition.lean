@@ -45,9 +45,7 @@ open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
 
--- ════════════════════════════════════════════════════
--- § Tense Evaluation Operators
--- ════════════════════════════════════════════════════
+/-! ### Tense Evaluation Operators -/
 
 /-- Evaluate a point predicate at speech time (PRESENT).
     PRES: p holds at tc in world w. -/
@@ -64,9 +62,7 @@ def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
 def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
   ∃ t : Time, t > tc ∧ p ⟨w, t⟩
 
--- ════════════════════════════════════════════════════
--- § Composed Tense–Aspect Forms
--- ════════════════════════════════════════════════════
+/-! ### Composed Tense–Aspect Forms -/
 
 /-- **Simple present**: PRES(IMPF(V).atPoint).
     "John runs" = at speech time, ∃e with tc ⊂ τ(e) and V(e).
@@ -101,9 +97,7 @@ def presPerfProgXN (V : W → Event Time → Prop) (tᵣ : Set Time) (tc : Time)
 def pastPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPast (PERF (IMPF V)) tc w
 
--- ════════════════════════════════════════════════════
--- § Unfold Theorems
--- ════════════════════════════════════════════════════
+/-! ### Unfold Theorems -/
 
 /-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
 theorem simplePresent_unfold (V : W → Event Time → Prop) (tc : Time) (w : W) :
@@ -120,9 +114,7 @@ theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
       LB tLB pts ∧ RB pts tc ∧ IMPF V w pts := by
   rfl
 
--- ════════════════════════════════════════════════════
--- § [knick-sharf-2026] Core Results
--- ════════════════════════════════════════════════════
+/-! ### [knick-sharf-2026] Core Results -/
 
 /-- **Theorem 3** ([knick-sharf-2026]): U-perf(tᵣ) entails simple present.
 
