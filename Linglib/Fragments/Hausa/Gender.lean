@@ -1,5 +1,4 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
 
 /-!
 # Hausa Gender Fragment
@@ -147,34 +146,5 @@ def uba      : Noun := ⟨"ùbā",     "father",   .masculine, true⟩
 def allNouns : List Noun :=
   [yarinya, mace, kaza, riga, yaro, mutum, littafi, gida,
    kasaLand, rana, kada, uba]
-
--- ============================================================================
--- Typology profile (Corbett 1991, WALS Ch 30/31/32)
--- ============================================================================
-
-open Morphology.Gender
-
-/-- Hausa gender typology: 2-gender (Chadic, Afroasiatic), sex-based,
-    semantic + formal. Agreement on attributive, personal pronoun, and
-    verb (TAM clitics). The lexical inventory above (yārinyā, mācè, etc.)
-    is the per-noun assignment evidence. -/
-def genderTypology : GenderProfile :=
-  .fromWALS "Hausa" "hau"
-    (rawGenderCount := 2)
-    (agreementTargets := [.attributive, .personalPronoun, .verb])
-    (semanticBases := [.sex])
-    (attestedGenders := [.masculine, .feminine])
-
-theorem genderTypology_iso639 : genderTypology.iso639 = "hau" := rfl
-
-theorem genderTypology_name : genderTypology.name = "Hausa" := rfl
-
-theorem isRawCountConsistent_genderTypology :
-    genderTypology.IsRawCountConsistent := by decide
-
-/-- Hausa is in [corbett-1991]'s "canonical" cell (2-gender,
-    sex-based, semantic + formal). -/
-theorem isCanonicalGender_genderTypology :
-    genderTypology.IsCanonicalGender := by decide
 
 end Hausa.Gender

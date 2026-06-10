@@ -1,5 +1,4 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
 import Linglib.Studies.Corbett1991
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
@@ -67,7 +66,7 @@ The mapping is partial in two ways:
    nonhuman, which is orthogonal to animate vs inanimate).
 -/
 
-namespace Morphology.Gender
+namespace Corbett1991
 
 open Morphology.DM
 
@@ -86,8 +85,11 @@ def SemanticBasis.isCore : SemanticBasis → Bool
 /-- The Semantic Core Generalization: a gender profile satisfies it iff
     it either has no gender system, or at least one of its semantic bases
     falls within the core {animacy, humanness, social gender/sex}. -/
-def GenderProfile.satisfiesSemanticCore (p : GenderProfile) : Bool :=
-  p.genderCount == .none || p.semanticBases.any SemanticBasis.isCore
+def Profile.SatisfiesSemanticCore (p : Profile) : Prop :=
+  p.rawCount = 0 ∨ ∃ b ∈ p.semanticBases, SemanticBasis.isCore b = true
+
+instance : DecidablePred Profile.SatisfiesSemanticCore := fun p =>
+  show Decidable (_ ∨ _) from inferInstance
 
 /-- Map a typological semantic basis to its corresponding DM gender dimension,
     when one exists. ([kramer-2020] §3)
@@ -102,15 +104,15 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
   | .shape       => none
   | .rationality => none
 
-end Morphology.Gender
+end Corbett1991
 
 namespace Morphology.DM
 
-open Morphology.Gender
+open Corbett1991
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
     ([kramer-2020] §3) -/
-def GenderDimension.toSemanticBasis : GenderDimension → SemanticBasis
+def GenderDimension.toSemanticBasis : GenderDimension → Corbett1991.SemanticBasis
   | .fem  => .sex
   | .masc => .sex
   | .anim => .animacy
@@ -123,15 +125,14 @@ end Morphology.DM
 
 namespace Kramer2020
 
-open Morphology.Gender
+open Corbett1991 hiding russian spanish hausa
 open Morphology.DM
-open Corbett1991 (allProfiles)
 
-/-- Aliases for Kramer's three case-study languages, drawn from Fragment
-    typology files (i.e. WALS-derived per Corbett 2013). -/
-private abbrev russian := Russian.Gender.genderTypology
-private abbrev spanish := Spanish.Gender.genderTypology
-private abbrev hausa   := Hausa.Gender.genderTypology
+/-- Aliases for Kramer's three case-study languages, drawn from the
+    [corbett-1991] study sample (WALS-grounded there). -/
+private abbrev russian := Corbett1991.russian
+private abbrev spanish := Corbett1991.spanish
+private abbrev hausa   := Corbett1991.hausa
 
 -- ============================================================================
 -- § 1: The Semantic Core Generalization ([kramer-2020] ex. 2/28)
@@ -140,14 +141,12 @@ private abbrev hausa   := Hausa.Gender.genderTypology
 /-- **Semantic Core Generalization** ([kramer-2020] ex. 2/28):
     every language in the sample satisfies the semantic core. -/
 theorem semantic_core_holds :
-    allProfiles.all (·.satisfiesSemanticCore) = true := by native_decide
+    ∀ p ∈ allProfiles, p.SatisfiesSemanticCore := by decide
 
 /-- No language has gender without at least one core semantic basis. -/
 theorem no_gender_without_core :
-    allProfiles.all (λ p =>
-      if p.genderCount != .none
-      then p.semanticBases.any SemanticBasis.isCore
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles, p.rawCount ≠ 0 →
+      ∃ b ∈ p.semanticBases, SemanticBasis.isCore b = true := by decide
 
 /-- Core semantic properties correspond to DM feature dimensions:
     every core basis has a `toGenderDimension` target. -/
@@ -909,17 +908,19 @@ theorem persona_exception :
 /-! The `NInventory` (from the DM analysis of n heads, [kramer-2015]) and
 the `GenderProfile` (from WALS typology, [corbett-2013]) describe the
 same languages from different theoretical perspectives. The key bridge:
-the `NInventory.surfaceGenders` count should match `GenderProfile.rawGenderCount`
-for the same language. -/
+the `NInventory.surfaceGenders` count should match the [corbett-1991]
+profile's controller-gender count for the same language (the WALS Ch 30
+bin then agrees by construction, since `Profile.genderCount` is derived
+from `rawCount`). -/
 
 /-- Spanish: the DM n-inventory predicts the same number of surface genders
     as the WALS typological profile. -/
 theorem spanish_ninventory_matches_profile :
-    spanishNs.surfaceGenders = spanish.rawGenderCount := rfl
+    spanishNs.surfaceGenders = spanish.rawCount := rfl
 
-/-- Spanish surface genders are consistent with the WALS gender count bin. -/
+/-- Spanish surface genders land in the WALS two-gender bin. -/
 theorem spanish_surface_genders_consistent :
-    Morphology.Gender.GenderCount.two.Contains spanishNs.surfaceGenders := rfl
+    spanish.genderCount = .two := rfl
 
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
     genders — a many-to-one mapping mediated by VI ([kramer-2015] Ch 6).
@@ -1046,11 +1047,11 @@ theorem russian_structural_vs_surface :
 /-- Russian: the DM n-inventory predicts the same number of surface genders
     as the WALS typological profile. -/
 theorem russian_ninventory_matches_profile :
-    russianNs.surfaceGenders = russian.rawGenderCount := rfl
+    russianNs.surfaceGenders = russian.rawCount := rfl
 
-/-- Russian n-inventory matches the WALS gender count bin. -/
+/-- Russian surface genders land in the WALS three-gender bin. -/
 theorem russian_surface_genders_consistent :
-    Morphology.Gender.GenderCount.three.Contains russianNs.surfaceGenders := rfl
+    russian.genderCount = .three := rfl
 
 /-- Russian has u-features → `semanticAndFormal` assignment, consistent
     with the WALS profile. -/
@@ -1418,11 +1419,11 @@ theorem hausa_radical_interpretability :
 /-- Bridge: the Hausa DM n-inventory predicts the same surface gender
     count as the WALS-style typological profile from Corbett1991. -/
 theorem hausa_ninventory_matches_profile :
-    hausaNs.surfaceGenders = hausa.rawGenderCount := rfl
+    hausaNs.surfaceGenders = hausa.rawCount := rfl
 
 /-- Hausa surface genders fall in the WALS 2-gender bin. -/
 theorem hausa_surface_genders_consistent :
-    Morphology.Gender.GenderCount.two.Contains hausaNs.surfaceGenders := rfl
+    hausa.genderCount = .two := rfl
 
 /-- Hausa has u-features → `semanticAndFormal` assignment, consistent
     with the Corbett1991/WALS profile. -/

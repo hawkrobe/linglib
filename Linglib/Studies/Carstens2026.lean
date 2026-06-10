@@ -1,8 +1,6 @@
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
-import Linglib.Fragments.Xhosa.Gender
 import Linglib.Fragments.Shona.Basic
-import Linglib.Fragments.Shona.Gender
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Studies.Kramer2020
@@ -357,7 +355,7 @@ theorem dm_bridge_faithful (s : GenderStatus) :
     The [non-human] core (Shona 7/8) maps to `.humanness` because
     Shona's system is organized around the human/non-human distinction.
     Xhosa's finer [animal] and [inanimate] cores map to `.animacy`. -/
-def toSemanticBasis : SemanticCore → Morphology.Gender.SemanticBasis
+def toSemanticBasis : SemanticCore → Corbett1991.SemanticBasis
   | .human     => .humanness
   | .animal    => .animacy
   | .inanimate => .animacy
@@ -372,21 +370,39 @@ theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
 -- § 9: Bridge to Gender Typology (WALS)
 -- ============================================================================
 
-/-- Xhosa gender profile drawn from `Fragments/Xhosa/Gender.lean`.
-    [carstens-2026] §2.2: semantic cores for some genders, formal
-    (class prefix) assignment for others. -/
-abbrev xhosaGenderProfile := Xhosa.Gender.genderTypology
+/-- Xhosa gender profile ([carstens-2026] §2.2: semantic cores for some
+    genders, formal (class prefix) assignment for others). Stated in the
+    [corbett-1991] study's `Profile` schema; Xhosa is WALS-silent for
+    Chs 30/31/32, so the codings are this file's commitments. -/
+def xhosaGenderProfile : Corbett1991.Profile :=
+  { name := "Xhosa", iso639 := "xho", rawCount := 5
+  , basis := .nonSexBased, assignment := .semanticAndFormal
+  , agreementTargets := [.attributive, .predicate, .relativePronoun,
+                         .personalPronoun, .verb]
+  , semanticBases := [.humanness, .animacy] }
 
-/-- Shona gender profile drawn from `Fragments/Shona/Gender.lean`. -/
-abbrev shonaGenderProfile := Shona.Gender.genderTypology
+/-- Shona gender profile (WALS-grounded; cf. `Corbett1991.basis_wals_grounded`
+    for the sample-side analogues). -/
+def shonaGenderProfile : Corbett1991.Profile :=
+  { name := "Shona", iso639 := "sna", rawCount := 8
+  , basis := .nonSexBased, assignment := .semanticAndFormal
+  , agreementTargets := [.attributive, .predicate, .relativePronoun,
+                         .personalPronoun, .verb]
+  , semanticBases := [.humanness] }
+
+/-- Both profiles' codings agree with WALS where covered. -/
+theorem profiles_wals_grounded :
+    xhosaGenderProfile.BasisGrounded ∧ xhosaGenderProfile.AssignmentGrounded ∧
+    shonaGenderProfile.BasisGrounded ∧ shonaGenderProfile.AssignmentGrounded := by
+  decide
 
 /-- Both profiles satisfy the Semantic Core Generalization
     ([kramer-2020] ex. 2/28). -/
 theorem xhosa_satisfies_semantic_core :
-    xhosaGenderProfile.satisfiesSemanticCore = true := rfl
+    xhosaGenderProfile.SatisfiesSemanticCore := by decide
 
 theorem shona_satisfies_semantic_core :
-    shonaGenderProfile.satisfiesSemanticCore = true := rfl
+    shonaGenderProfile.SatisfiesSemanticCore := by decide
 
 -- ============================================================================
 -- § 10: Resolution of Mismatched Conjuncts via nP Stack Cores

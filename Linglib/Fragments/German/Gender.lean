@@ -1,5 +1,4 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
 
 /-!
 # German Derivational Gender: *-schaft* and related suffixes
@@ -119,32 +118,5 @@ theorem diminutive_suffixes_assign_neuter :
     `Studies/Kramer2020.lean`. -/
 theorem maedchen_neuter_override :
     maedchen.gender = .neuter ∧ maedchen.gloss = "girl" := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 4: Typology profile (Corbett 1991, WALS Ch 30/31/32)
--- ============================================================================
-
-open Morphology.Gender
-
-/-- German gender typology: 3-gender canonical sex-based. The derivational
-    facts above (-schaft, -chen, etc.) are the formal-assignment evidence
-    that justifies the WALS Ch 32 `semanticAndFormal` value. -/
-def genderTypology : GenderProfile :=
-  .fromWALS "German" "deu"
-    (rawGenderCount := 3)
-    (agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun])
-    (semanticBases := [.sex])
-    (attestedGenders := [.masculine, .feminine, .neuter])
-
-theorem genderTypology_iso639 : genderTypology.iso639 = "deu" := rfl
-
-theorem genderTypology_name : genderTypology.name = "German" := rfl
-
-theorem isRawCountConsistent_genderTypology :
-    genderTypology.IsRawCountConsistent := by decide
-
-/-- German is in [corbett-1991]'s "canonical" cell. -/
-theorem isCanonicalGender_genderTypology :
-    genderTypology.IsCanonicalGender := by decide
 
 end German.Gender

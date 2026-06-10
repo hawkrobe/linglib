@@ -1,5 +1,4 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
 
 /-!
 # Russian Noun Gender
@@ -181,34 +180,5 @@ def allNouns : List RussianNoun :=
 theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧
     znamja.attestedGender ≠ kost'.attestedGender := ⟨rfl, by decide⟩
-
--- ============================================================================
--- § 9: Typology profile (Corbett 1991, WALS Ch 30/31/32)
--- ============================================================================
-
-open Morphology.Gender
-
-/-- Russian gender typology: 3-gender canonical sex-based with verb
-    agreement (past tense). The declension classes above (I/II/III/IV)
-    plus the §8 `declClass_ne_gender` theorem are the Class-vs-Gender
-    independence evidence behind the WALS Ch 32 `semanticAndFormal` value. -/
-def genderTypology : GenderProfile :=
-  .fromWALS "Russian" "rus"
-    (rawGenderCount := 3)
-    (agreementTargets := [.attributive, .predicate, .relativePronoun,
-                          .personalPronoun, .verb])
-    (semanticBases := [.sex])
-    (attestedGenders := [.masculine, .feminine, .neuter])
-
-theorem genderTypology_iso639 : genderTypology.iso639 = "rus" := rfl
-
-theorem genderTypology_name : genderTypology.name = "Russian" := rfl
-
-theorem isRawCountConsistent_genderTypology :
-    genderTypology.IsRawCountConsistent := by decide
-
-/-- Russian is in [corbett-1991]'s "canonical" cell. -/
-theorem isCanonicalGender_genderTypology :
-    genderTypology.IsCanonicalGender := by decide
 
 end Russian.Gender
