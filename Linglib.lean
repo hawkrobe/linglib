@@ -2468,6 +2468,7 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.Lexical.Roots.Signature
+import Linglib.Semantics.Lexical.Roots.Arity
 import Linglib.Semantics.Lexical.Roots.Basic
 import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Typology
