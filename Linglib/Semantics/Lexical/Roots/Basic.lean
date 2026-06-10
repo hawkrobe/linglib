@@ -69,27 +69,28 @@ end LexEntailment
 
 /-! ### Roots -/
 
-/-- A verbal root: a name and a list of atomic entailments it imposes.
+/-- A verbal root: a name and a finite set of atomic entailments it
+    imposes.
 
-    The list is the root's *base* entailment set — the atoms asserted
+    The set is the root's *base* entailment set — the atoms asserted
     directly. A closure operation (B&K-G's networks of entailments
     where one atom may entail another) is layered on top in
     `Roots/Closure.lean`. -/
 structure Root where
   name : String
-  entailments : List LexEntailment
-  deriving DecidableEq, Repr
+  entailments : Finset LexEntailment
+  deriving DecidableEq
 
 namespace Root
 
 /-- The derived feature signature of a root: the set of kinds its
     atoms realize. -/
 def featureSignature (r : Root) : Root.FeatureSignature :=
-  (r.entailments.filterMap (·.kind)).toFinset
+  Finset.univ.filter (fun k => ∃ a ∈ r.entailments, a.kind = some k)
 
 theorem mem_featureSignature {r : Root} {k : LexKind} :
     k ∈ r.featureSignature ↔ ∃ a ∈ r.entailments, a.kind = some k := by
-  simp [featureSignature, List.mem_filterMap]
+  simp [featureSignature]
 
 /-- The root entails attribution of some state. -/
 def HasState (r : Root) : Prop := .state ∈ r.featureSignature

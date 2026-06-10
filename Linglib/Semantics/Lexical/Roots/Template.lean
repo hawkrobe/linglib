@@ -72,7 +72,6 @@ structure EventStructure where
   heads : List TemplaticHead
   root : Root
   position : Root.Position
-  deriving Repr
 
 namespace EventStructure
 
