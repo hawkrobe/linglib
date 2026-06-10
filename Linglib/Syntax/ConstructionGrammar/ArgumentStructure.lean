@@ -1,5 +1,4 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
@@ -171,15 +170,6 @@ theorem fullyAbstract_isFullyCompositional (c : Construction)
     isFullyCompositional c = true := by
   unfold isFullyCompositional
   rw [h₁, h₂]
-  native_decide
-
-/-- *Let alone* construction is NOT fully compositional.
-
-*Let alone* is a formal idiom with paired focus, scalar entailment, and
-NPI licensing requirements. These semantic/pragmatic properties cannot
-be derived from Head-Complement + Head-Specifier + Head-Filler. -/
-theorem let_alone_irreducible :
-    isFullyCompositional Studies.FillmoreKayOConnor1988.letAloneConstruction = false := by
   native_decide
 
 /-! ## Polysemy families ([goldberg-1995] §3.3.2, I_P links)
