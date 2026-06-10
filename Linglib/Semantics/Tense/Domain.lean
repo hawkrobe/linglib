@@ -159,7 +159,69 @@ def relatedByName [DecidableEq Role] (d : Domain Time Role)
   ∃ (i j : TO Time), d.find? rI = some i ∧ d.find? rJ = some j ∧
     relatedBy S i j
 
+@[simp] theorem all_def (d : Domain Time Role) :
+    d.all = d.central :: d.subTOs := rfl
+
+/-- Characterize `relatedByName` once the two role lookups are known:
+    it reduces to `relatedBy` on the found TOs. Collapses the
+    existential bookkeeping that every per-predicate bridge proof would
+    otherwise repeat. -/
+theorem relatedByName_iff [DecidableEq Role] {d : Domain Time Role}
+    {rI rJ : Role} {i j : TO Time} (S : List AllenRelation)
+    (hi : d.find? rI = some i) (hj : d.find? rJ = some j) :
+    d.relatedByName S rI rJ ↔ relatedBy S i j := by
+  refine ⟨fun ⟨i', j', hi', hj', h⟩ => ?_, fun h => ⟨i, j, hi, hj, h⟩⟩
+  rw [hi] at hi'
+  rw [hj] at hj'
+  obtain rfl := Option.some.inj hi'
+  obtain rfl := Option.some.inj hj'
+  exact h
+
 end Domain
+
+/-! ### Allen relations on point TOs
+
+For degenerate (point) intervals the Allen algebra collapses: only
+`precedes`, `equal`, and `precededBy` are satisfiable. The positive
+lemmas characterize the two used by the tense predicates; the negative
+lemma is the formal content of "Klein's imperfective (TT ⊂ TSit) is
+unrepresentable on point times". -/
+
+namespace TO
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- Point TOs: `precedesSet` holds iff the underlying times are `<`-related. -/
+theorem pure_precedes_iff (s t : Time) :
+    AllenRelation.holdsIn AllenRelation.precedesSet (TO.pure s) (TO.pure t) ↔
+    s < t := by
+  unfold AllenRelation.precedesSet
+  rw [AllenRelation.holdsIn_singleton]
+  rfl
+
+/-- Point TOs: `equalSet` holds iff the underlying times are equal. -/
+theorem pure_equal_iff (s t : Time) :
+    AllenRelation.holdsIn AllenRelation.equalSet (TO.pure s) (TO.pure t) ↔
+    s = t := by
+  unfold AllenRelation.equalSet
+  rw [AllenRelation.holdsIn_singleton]
+  exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
+
+/-- No point TO is properly contained in another: each of `starts`,
+    `finishes`, `during` needs a strict endpoint inequality that a
+    degenerate interval cannot supply. -/
+theorem not_pure_properContainment (s t : Time) :
+    ¬ AllenRelation.holdsIn AllenRelation.properContainmentSet
+      (TO.pure s) (TO.pure t) := by
+  rintro ⟨r, hr, h⟩
+  simp only [AllenRelation.properContainmentSet, List.mem_cons,
+             List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl | rfl
+  · exact ne_of_lt h.2 h.1
+  · exact ne_of_lt h.1 h.2.symm
+  · exact lt_asymm h.1 h.2
+
+end TO
 
 /-! ### Builders for the Common Reichenbach Role-Set -/
 

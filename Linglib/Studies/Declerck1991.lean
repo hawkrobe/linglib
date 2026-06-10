@@ -746,7 +746,10 @@ instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
     TenseSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   anchor := .perspective
-  situation := .situation
+  located := .situation
+  anchor_mem := fun s => by
+    rw [DeclercianSchema.toDomain_labels]
+    exact List.mem_cons_of_mem _ List.mem_cons_self
 
 instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
     AspectSystem (DeclercianSchema Time) Time Orientation where

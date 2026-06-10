@@ -115,12 +115,14 @@ consumers can close concrete goals with `decide` and rewrite with
 @[simp] theorem isPast_def (f : ReichenbachFrame Time) :
     f.isPast ↔ f.referenceTime < f.perspectiveTime := Iff.rfl
 
+omit [LinearOrder Time] in
 @[simp] theorem isPresent_def (f : ReichenbachFrame Time) :
     f.isPresent ↔ f.referenceTime = f.perspectiveTime := Iff.rfl
 
 @[simp] theorem isFuture_def (f : ReichenbachFrame Time) :
     f.isFuture ↔ f.perspectiveTime < f.referenceTime := Iff.rfl
 
+omit [LinearOrder Time] in
 @[simp] theorem isSimpleCase_def (f : ReichenbachFrame Time) :
     f.isSimpleCase ↔ f.perspectiveTime = f.speechTime := Iff.rfl
 
@@ -130,6 +132,7 @@ consumers can close concrete goals with `decide` and rewrite with
 @[simp] theorem defaultER_def (f : ReichenbachFrame Time) :
     f.defaultER ↔ f.eventTime ≤ f.referenceTime := Iff.rfl
 
+omit [LinearOrder Time] in
 @[simp] theorem isPerfective_def (f : ReichenbachFrame Time) :
     f.isPerfective ↔ f.eventTime = f.referenceTime := Iff.rfl
 
@@ -201,94 +204,43 @@ def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
 @[simp] theorem toDomain_findSituation (f : ReichenbachFrame Time) :
     f.toDomain.find? .situation = some (TO.pure f.eventTime) := rfl
 
--- ──── Predicate bridges: each Boolean predicate as a `relatedByName` query ────
-
-/-- Helper: for point intervals at times `s` and `t`, `precedesSet`
-    holds iff `s < t`. -/
-private theorem point_precedes_iff (s t : Time) :
-    AllenRelation.holdsIn precedesSet (TO.pure s) (TO.pure t) ↔ s < t := by
-  unfold precedesSet
-  rw [AllenRelation.holdsIn_singleton]
-  rfl
-
-/-- Helper: for point intervals at times `s` and `t`, `equalSet`
-    holds iff `s = t`. -/
-private theorem point_equal_iff (s t : Time) :
-    AllenRelation.holdsIn equalSet (TO.pure s) (TO.pure t) ↔ s = t := by
-  unfold equalSet
-  rw [AllenRelation.holdsIn_singleton]
-  refine ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
+-- ──── Predicate bridges: each predicate as a `relatedByName` query ────
 
 /-- `isPast` is exactly `topic precedes perspective` in the Allen
     algebra against the domain — the Reichenbach predicate grounded by
     construction in the Allen projection function on point intervals. -/
 theorem isPast_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPast ↔ f.toDomain.relatedByName precedesSet .topic .perspective := by
-  unfold isPast Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.referenceTime, TO.pure f.perspectiveTime,
-            toDomain_findTopic f, toDomain_findPerspective f, ?_⟩
-    exact (point_precedes_iff _ _).mpr h
-  · rw [toDomain_findTopic] at hi; rw [toDomain_findPerspective] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_precedes_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findPerspective f)]
+  exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isFuture` is exactly `perspective precedes topic` in the Allen
     algebra against the domain. -/
 theorem isFuture_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isFuture ↔ f.toDomain.relatedByName precedesSet .perspective .topic := by
-  unfold isFuture Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.perspectiveTime, TO.pure f.referenceTime,
-            toDomain_findPerspective f, toDomain_findTopic f, ?_⟩
-    exact (point_precedes_iff _ _).mpr h
-  · rw [toDomain_findPerspective] at hi; rw [toDomain_findTopic] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_precedes_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff precedesSet (toDomain_findPerspective f) (toDomain_findTopic f)]
+  exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isPresent` is exactly `topic equal perspective` in the Allen
     algebra against the domain. -/
 theorem isPresent_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPresent ↔ f.toDomain.relatedByName equalSet .topic .perspective := by
-  unfold isPresent Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.referenceTime, TO.pure f.perspectiveTime,
-            toDomain_findTopic f, toDomain_findPerspective f, ?_⟩
-    exact (point_equal_iff _ _).mpr h
-  · rw [toDomain_findTopic] at hi; rw [toDomain_findPerspective] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_equal_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff equalSet (toDomain_findTopic f) (toDomain_findPerspective f)]
+  exact (TO.pure_equal_iff _ _).symm
 
 /-- `isPerfect` is exactly `situation precedes topic` in the Allen
     algebra against the domain. -/
 theorem isPerfect_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfect ↔ f.toDomain.relatedByName precedesSet .situation .topic := by
-  unfold isPerfect Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.eventTime, TO.pure f.referenceTime,
-            toDomain_findSituation f, toDomain_findTopic f, ?_⟩
-    exact (point_precedes_iff _ _).mpr h
-  · rw [toDomain_findSituation] at hi; rw [toDomain_findTopic] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_precedes_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff precedesSet (toDomain_findSituation f) (toDomain_findTopic f)]
+  exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isProspective` is exactly `topic precedes situation` in the Allen
     algebra against the domain. -/
 theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isProspective ↔ f.toDomain.relatedByName precedesSet .topic .situation := by
-  unfold isProspective Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.referenceTime, TO.pure f.eventTime,
-            toDomain_findTopic f, toDomain_findSituation f, ?_⟩
-    exact (point_precedes_iff _ _).mpr h
-  · rw [toDomain_findTopic] at hi; rw [toDomain_findSituation] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_precedes_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findSituation f)]
+  exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isPerfective` is exactly `situation equal topic` in the Allen
     algebra against the domain. (For the point-time approximation; the
@@ -296,15 +248,8 @@ theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
     `Semantics/Lexical/Verb/ViewpointAspect.lean`.) -/
 theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfective ↔ f.toDomain.relatedByName equalSet .situation .topic := by
-  unfold isPerfective Domain.relatedByName Domain.relatedBy
-  refine ⟨fun h => ?_, fun ⟨i, j, hi, hj, hrel⟩ => ?_⟩
-  · refine ⟨TO.pure f.eventTime, TO.pure f.referenceTime,
-            toDomain_findSituation f, toDomain_findTopic f, ?_⟩
-    exact (point_equal_iff _ _).mpr h
-  · rw [toDomain_findSituation] at hi; rw [toDomain_findTopic] at hj
-    obtain ⟨rfl⟩ := Option.some.inj hi
-    obtain ⟨rfl⟩ := Option.some.inj hj
-    exact (point_equal_iff _ _).mp hrel
+  rw [Domain.relatedByName_iff equalSet (toDomain_findSituation f) (toDomain_findTopic f)]
+  exact (TO.pure_equal_iff _ _).symm
 
 end ReichenbachFrame
 
@@ -323,10 +268,65 @@ instance reichenbachFrame_tenseSystem {Time : Type*} [LinearOrder Time] :
     TenseSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   anchor := .perspective
-  situation := .topic
+  located := .topic
+  anchor_mem := fun f => by
+    rw [ReichenbachFrame.toDomain_labels]
+    decide
 
 instance reichenbachFrame_aspectSystem {Time : Type*} [LinearOrder Time] :
     AspectSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   event := .situation
   reference := .topic
+
+/-! ### Generic-predicate specializations
+
+The generic `TenseSystem`/`AspectSystem` predicates agree with the
+concrete `ReichenbachFrame` predicates — the frame is the point-time
+specialization of the interval-native generic layer. -/
+
+section GenericSpecialization
+
+variable {Time : Type*} [LinearOrder Time]
+
+@[simp] theorem tenseSystem_isPast_iff (f : ReichenbachFrame Time) :
+    TenseSystem.isPast f ↔ f.isPast :=
+  (ReichenbachFrame.isPast_iff_relatedByName f).symm
+
+@[simp] theorem tenseSystem_isPresent_iff (f : ReichenbachFrame Time) :
+    TenseSystem.isPresent f ↔ f.isPresent :=
+  (ReichenbachFrame.isPresent_iff_relatedByName f).symm
+
+@[simp] theorem tenseSystem_isFuture_iff (f : ReichenbachFrame Time) :
+    TenseSystem.isFuture f ↔ f.isFuture :=
+  (ReichenbachFrame.isFuture_iff_relatedByName f).symm
+
+@[simp] theorem aspectSystem_isPerfect_iff (f : ReichenbachFrame Time) :
+    AspectSystem.isPerfect f ↔ f.isPerfect :=
+  (ReichenbachFrame.isPerfect_iff_relatedByName f).symm
+
+@[simp] theorem aspectSystem_isPerfective_iff (f : ReichenbachFrame Time) :
+    AspectSystem.isPerfective f ↔ f.isPerfective :=
+  (ReichenbachFrame.isPerfective_iff_relatedByName f).symm
+
+@[simp] theorem aspectSystem_isProspective_iff (f : ReichenbachFrame Time) :
+    AspectSystem.isProspective f ↔ f.isProspective :=
+  (ReichenbachFrame.isProspective_iff_relatedByName f).symm
+
+/-- **Point frames cannot be imperfective.** [klein-1994]'s imperfective
+    (TT properly inside TSit) requires a non-degenerate interval, and
+    every `ReichenbachFrame` TO is a point. The audit-level claim that
+    "the imperfective is unrepresentable in the point-frame core" is
+    here a theorem, not a docstring. -/
+theorem ReichenbachFrame.not_aspectSystem_isImperfective
+    (f : ReichenbachFrame Time) : ¬ AspectSystem.isImperfective f := by
+  rintro ⟨i, j, hi, hj, hrel⟩
+  have hi' : f.toDomain.find? .topic = some i := hi
+  have hj' : f.toDomain.find? .situation = some j := hj
+  rw [ReichenbachFrame.toDomain_findTopic] at hi'
+  rw [ReichenbachFrame.toDomain_findSituation] at hj'
+  obtain rfl := Option.some.inj hi'
+  obtain rfl := Option.some.inj hj'
+  exact TO.not_pure_properContainment _ _ hrel
+
+end GenericSpecialization
