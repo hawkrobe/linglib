@@ -19,10 +19,8 @@ ch. 3 are not modeled.
 
 * `TemplaticHead` — the three primitive heads
 * `Root.Position` — complement vs adjoined attachment
-* `EventStructure` — heads composed with a positioned root
+* `Root.EventStructure` — heads composed with a positioned root
 -/
-
-namespace Semantics.Lexical.Roots
 
 /-! ### Templatic heads -/
 
@@ -58,6 +56,8 @@ inductive Root.Position where
   deriving DecidableEq, Repr
 
 /-! ### Composed event structures -/
+
+namespace Root
 
 /-- An event structure: a list of templatic heads (outermost first)
     composed with a root in a specific structural position.
@@ -108,4 +108,4 @@ def achievementOf (r : Root) : EventStructure :=
 def accomplishmentOf (r : Root) : EventStructure :=
   ⟨[.v_cause, .v_become], r, .complement⟩
 
-end Semantics.Lexical.Roots
+end Root

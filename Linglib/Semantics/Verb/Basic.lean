@@ -11,7 +11,6 @@ is computed here, not stipulated as enum fields on `Verb`.
 open Semantics.Presupposition
 open Features
 open Semantics.Lexical
-open Semantics.Lexical.Roots
 open Features.ChangeOfState
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)

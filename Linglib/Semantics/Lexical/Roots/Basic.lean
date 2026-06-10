@@ -1,38 +1,32 @@
+import Linglib.Semantics.Lexical.Roots.Signature
+
 /-!
 # Atomic Lexical Entailments and Roots
-
-[beavers-koontz-garboden-2020]
 
 Lexical entailments are the atomic claims a verbal root makes about
 the events it describes and the participants in those events.
 Following [beavers-koontz-garboden-2020], we treat these as
-*structured atoms* rather than as a fixed feature vector.
+*structured atoms* rather than as a fixed feature vector: a **root**
+is a finite collection of such atoms, and its feature signature
+(`FeatureSignature`) is the *derived* set of kinds its atoms realize —
+exposing the Bifurcation Thesis of Roots and Manner/Result
+Complementarity as testable conjectures rather than architectural
+commitments.
 
-A **root** is a finite collection of such atoms. The root's
-B&K-G feature signature (±state, ±manner, ±result, ±cause) is then a
-*derived* predicate over the entailment set, not a separately stipulated
-classification — exposing both the Bifurcation Thesis of Roots and
-Manner/Result Complementarity ([rappaport-hovav-levin-2010]) as
-testable conjectures rather than architectural commitments.
+## Main declarations
 
-## Relation to existing infrastructure
-
-- `EntailmentProfile` (Dowty's 10-tuple) collapses argument-level
-  entailments into a flat record. Useful for Argument Selection but too
-  coarse to express B&K-G's networks of root entailments.
-- `EventStructure.Template` (state/activity/achievement/accomplishment/
-  motionContact) is the *output* of root × template composition. The
-  templatic *heads* (`v_act`, `v_become`, `v_cause`) that compose into
-  these full templates live in `Roots/Template.lean`.
+* `LexEntailment` — labeled atoms; `LexEntailment.kind` projects the
+  B&K-G kind, if any
+* `Root` — a named list of atoms
+* `Root.featureSignature` — the derived signature
+* `Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
 -/
-
-namespace Semantics.Lexical.Roots
 
 /-! ### Atomic entailments -/
 
-/-- An atomic claim a root can make. The four B&K-G features
-    (±state, ±manner, ±result, ±cause) correspond to the *kinds* of
-    atoms present in a root's entailment set.
+/-- An atomic claim a root can make. The four B&K-G kinds
+    (state, manner, result, cause) correspond to the kinds of atoms
+    present in a root's entailment set (`LexEntailment.kind`).
 
     The remaining atoms (volitional, sentient, motion, contact)
     cover Dowty's proto-role components that are independent of the
@@ -62,33 +56,14 @@ inductive LexEntailment where
 
 namespace LexEntailment
 
-/-- Is the atom a state-attribution? -/
-def isState : LexEntailment → Prop
-  | hasState _ => True
-  | _ => False
-
-instance : DecidablePred isState := fun a => by unfold isState; cases a <;> infer_instance
-
-/-- Is the atom a manner specification? -/
-def isManner : LexEntailment → Prop
-  | hasManner _ => True
-  | _ => False
-
-instance : DecidablePred isManner := fun a => by unfold isManner; cases a <;> infer_instance
-
-/-- Is the atom a change-of-state entailment? -/
-def isBecome : LexEntailment → Prop
-  | becomesState _ => True
-  | _ => False
-
-instance : DecidablePred isBecome := fun a => by unfold isBecome; cases a <;> infer_instance
-
-/-- Is the atom a causation entailment? -/
-def isCause : LexEntailment → Prop
-  | hasCause => True
-  | _ => False
-
-instance : DecidablePred isCause := fun a => by unfold isCause; cases a <;> infer_instance
+/-- The B&K-G kind an atom realizes, if any. The proto-role atoms
+    (volitional, sentient, motion, contact) carry no kind. -/
+def kind : LexEntailment → Option LexKind
+  | hasState _     => some .state
+  | hasManner _    => some .manner
+  | becomesState _ => some .result
+  | hasCause       => some .cause
+  | _              => none
 
 end LexEntailment
 
@@ -107,18 +82,34 @@ structure Root where
 
 namespace Root
 
+/-- The derived feature signature of a root: the set of kinds its
+    atoms realize. -/
+def featureSignature (r : Root) : FeatureSignature :=
+  (r.entailments.filterMap (·.kind)).toFinset
+
+theorem mem_featureSignature {r : Root} {k : LexKind} :
+    k ∈ r.featureSignature ↔ ∃ a ∈ r.entailments, a.kind = some k := by
+  simp [featureSignature, List.mem_filterMap]
+
 /-- The root entails attribution of some state. -/
-def hasState  (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isState ·)
+def HasState (r : Root) : Prop := .state ∈ r.featureSignature
 
 /-- The root specifies some manner. -/
-def hasManner (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isManner ·)
+def HasManner (r : Root) : Prop := .manner ∈ r.featureSignature
 
 /-- The root entails some change of state (B&K-G "result"). -/
-def hasResult (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isBecome ·)
+def HasResult (r : Root) : Prop := .result ∈ r.featureSignature
 
 /-- The root entails causation. -/
-def hasCause  (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isCause ·)
+def HasCause (r : Root) : Prop := .cause ∈ r.featureSignature
+
+instance (r : Root) : Decidable r.HasState :=
+  inferInstanceAs (Decidable (_ ∈ _))
+instance (r : Root) : Decidable r.HasManner :=
+  inferInstanceAs (Decidable (_ ∈ _))
+instance (r : Root) : Decidable r.HasResult :=
+  inferInstanceAs (Decidable (_ ∈ _))
+instance (r : Root) : Decidable r.HasCause :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 end Root
-
-end Semantics.Lexical.Roots
