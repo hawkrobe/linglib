@@ -2,28 +2,39 @@ import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Agreement Target Hierarchy [corbett-1991]
+# Agreement Target Hierarchy [corbett-1979]
 
-[corbett-1991]'s Agreement Hierarchy has four positions —
-attributive > predicate > relative pronoun > personal pronoun — along which
-the likelihood of *semantic* (rather than syntactic) agreement increases
-monotonically from left to right.
+The Agreement Hierarchy ([corbett-1979]; [corbett-1991] ch. 8) has four
+positions — attributive > predicate > relative pronoun > personal pronoun —
+along which the likelihood of *semantic* (rather than syntactic) agreement
+increases monotonically from left to right.
 
-The `AgreementTarget` enum below additionally carries a `verb` target, ranked
-below personal pronoun, for languages with verbal gender/number agreement.
-Corbett subsumes verbal agreement under the predicate position, so `verb` is
-a linglib refinement, not a fifth position of Corbett's hierarchy.
+The `AgreementTarget` enum below additionally carries a `verb` target for
+languages with verbal gender/number agreement. `verb` is a linglib
+refinement, not a fifth position of Corbett's hierarchy, and its placement
+is theory-laden: it is ranked below personal pronoun (the semantic end),
+following [wechsler-zlatic-2000]'s classification of verbal agreement as
+INDEX-reading (see `WechslerZlatic2000.indexReaders_lowerSet`, which
+depends on this placement). Corbett instead subsumes verbal agreement
+under the *predicate* position, where his Predicate Hierarchy
+([comrie-1975]) makes the finite verb the most-syntactic sub-position —
+the opposite end. That view is formalized separately as
+`PredicateTarget` below; the two codings are a genuine cross-framework
+disagreement, kept visible rather than merged. Theorems about the
+four-position hierarchy proper should quantify over the four canonical
+positions only (as `Corbett2000.hierarchyPositions` does).
 
-This type is shared by gender typology (`Linglib/Morphology/Gender.lean` and
-`Studies/Corbett1991.lean`) and number agreement
-(`Studies/Corbett2000.lean`).
+This type is shared by gender typology (`Studies/Corbett1991.lean`) and
+number agreement (`Studies/Corbett2000.lean`).
 -/
 
 namespace Agreement
 
-/-- Morphosyntactic targets where agreement can surface, ranked by
-    [corbett-1991]'s Agreement Hierarchy (with `verb` as a linglib
-    refinement below personal pronoun — see the module docstring).
+/-- Morphosyntactic targets where agreement can surface, ranked by the
+    Agreement Hierarchy ([corbett-1979]). `verb` is a linglib refinement
+    placed at the semantic end per [wechsler-zlatic-2000] — NOT a
+    position of Corbett's hierarchy; see the module docstring for the
+    competing Corbett/Comrie placement (`PredicateTarget`).
 
     Higher rank = closer to the controller, agreement more syntactic.
     Lower rank = further from the controller, agreement more semantic. -/

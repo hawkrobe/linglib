@@ -9,7 +9,8 @@ import Linglib.Data.UD.Basic
 [sudo-spathas-2020]
 
 Gender has no universal value inventory. A gender is a language-particular
-equivalence class of agreement behavior ([corbett-1991], crediting Hockett;
+equivalence class of agreement behavior ([corbett-1991], crediting
+[hockett-1958];
 [kramer-2015] def (1) p. 65; [sudo-spathas-2020] fn. 1) — so, unlike `Number`
 and `Person`, whose values a universal feature calculus labels
 language-independently ([harbour-2014], [harbour-2016]), the root `Gender`
@@ -38,7 +39,7 @@ carrier in all but name. This file encodes the carrier directly, the way
   `Gender.Faithful.card_le_pow`: a language whose agreement shows `f` forms
   on each of `t` targets supports at most `f ^ t` controller genders.
 * `Gender.System.Assigned` — a system with noun-level assignment.
-  `SemanticCore` is [kramer-2015]'s (7ii) (Dahl's generalization: assignment
+  `SemanticCore` is [kramer-2015]'s (7ii) ([dahl-2000]'s generalization: assignment
   is semantically determined on a nonempty core of animate nouns; "no
   language assigns genders completely randomly or completely formally",
   p. 70). `assign_factorsThrough` derives the Hockett–Corbett definition as a
@@ -51,8 +52,8 @@ carrier in all but name. This file encodes the carrier directly, the way
   and plural of one noun are one gender (Bantu "Class 1/2" convention,
   [kramer-2015] p. 252). Classifiers and declension class are out of scope —
   they do not trigger agreement ([kramer-2015] §4.1.1); nominal form classes
-  (deriflection) are a distinct dimension and must not be conflated with the
-  carrier.
+  (deriflection, [gueldemann-fiedler-2019]) are a distinct dimension and must
+  not be conflated with the carrier.
 * **Locus-neutral.** `System` makes no claim about where gender sits in the
   nominal spine (n vs Num vs D); locus claims are study content.
 * Languages lacking gender — the majority ([kramer-2015] §11.2.4) — declare
@@ -201,7 +202,7 @@ variable (S : System.Assigned N G)
 
 /-- The assignment has a *semantic core*: a nonempty set of nouns on which a
     semantic classification `sem` determines gender ([kramer-2015], after
-    Dahl). Arbitrary assignment is permitted off the core. -/
+    [dahl-2000]). Arbitrary assignment is permitted off the core. -/
 def SemanticCore (core : Set N) (sem : N → σ) : Prop :=
   core.Nonempty ∧ Function.FactorsThroughOn S.assign sem core
 

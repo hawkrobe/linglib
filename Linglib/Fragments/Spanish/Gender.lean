@@ -157,4 +157,74 @@ def allNouns : List SpanishNoun :=
 def sameRootNouns : List SameRootEntry :=
   [soldado, estudiante, artista]
 
+-- ============================================================================
+-- § 7: Gender System (`Gender.System` instantiation)
+-- ============================================================================
+
+/-- Spanish's two controller genders — the carrier of its `Gender.System`
+    ([corbett-1991]; [kramer-2015]). -/
+inductive SpanishGender where
+  | masc
+  | fem
+  deriving DecidableEq, Repr, Fintype
+
+/-- Adjectival concord exponents: the *-o* vs *-a* desinence contrast
+    ([butt-benjamin-2019]). Evidence type for `Gender.Faithful`. -/
+inductive Concord where
+  | o
+  | a
+  deriving DecidableEq, Repr
+
+/-- Per-gender adjectival concord. -/
+def SpanishGender.concord : SpanishGender → Concord
+  | .masc => .o
+  | .fem  => .a
+
+/-- The Spanish gender system over its own carrier: full comparative
+    labelling; masculine is the morphosyntactic default (plain-*n* roots
+    surface masculine — [kramer-2015]'s Set-1 derivation, exercised at
+    `Kramer2020.set1_plain_n_masculine`). -/
+def system : Gender.System SpanishGender where
+  label := fun g => match g with
+    | .masc => some .masculine
+    | .fem  => some .feminine
+  default := .masc
+
+/-- Comparative label → controller gender (ingestion). -/
+def SpanishGender.ofLabel : Gender → SpanishGender
+  | .feminine => .fem
+  | _         => .masc
+
+/-- Controller gender of a noun, from the attested agreement fact. -/
+def SpanishNoun.controllerGender (n : SpanishNoun) : SpanishGender :=
+  SpanishGender.ofLabel n.attestedGender
+
+/-- The assigned system: every noun gets its controller gender. -/
+def assigned : Gender.System.Assigned SpanishNoun SpanishGender :=
+  { system with assign := SpanishNoun.controllerGender }
+
+/-- The carrier is faithful to the adjectival concord evidence: *-o* vs
+    *-a* distinguishes the two genders. [corbett-1991]'s
+    genders-are-agreement-classes criterion, discharged via
+    `Gender.Faithful`. -/
+theorem faithful_concord :
+    Gender.Faithful (fun (g : SpanishGender) (_ : Unit) => g.concord) := by decide
+
+/-- Label ∘ assign recovers the attested gender across the inventory:
+    the system view and the per-noun data agree. -/
+theorem system_label_assign :
+    ∀ n ∈ allNouns,
+      system.label n.controllerGender = some n.attestedGender := by decide
+
+/-- [kramer-2015]'s (7ii) / [dahl-2000]'s generalization instantiated:
+    on the natural-gender core (Group A), assignment factors through the
+    attested gender — which on that core is the referent-sex
+    classification (that is what `isNaturalGender` asserts). *persona*
+    and *ángel* are outside the core (`isNaturalGender = false`), so the
+    fixed-gender exceptions do not disturb the factoring. -/
+theorem assigned_semanticCore :
+    assigned.SemanticCore {n | n.isNaturalGender = true}
+      (·.attestedGender) := by
+  exact ⟨⟨mujer, rfl⟩, fun a b _ _ h => congrArg SpanishGender.ofLabel h⟩
+
 end Spanish.Gender
