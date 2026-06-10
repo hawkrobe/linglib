@@ -47,9 +47,7 @@ open Semantics.Tense.Reichenbach
 open Semantics.Tense
 
 
--- ════════════════════════════════════════════════════════════════
--- § SOT Deletion
--- ════════════════════════════════════════════════════════════════
+/-! ### SOT Deletion -/
 
 /-- Kratzer's SOT deletion: when embedded tense morphology is identical
     to matrix tense morphology, the embedded tense can be optionally
@@ -82,9 +80,7 @@ def applyDeletion {Time : Type*}
   eventTime := matrixFrame.eventTime
 
 
--- ════════════════════════════════════════════════════════════════
--- § Derivation Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Derivation Theorems -/
 
 /-- Kratzer derives the simultaneous reading via SOT deletion.
     When deletion applies, R' = E_matrix, giving the PRESENT relation. -/
@@ -110,9 +106,7 @@ theorem kratzer_deletion_yields_simultaneous {Time : Type*}
     (applyDeletion matrixFrame).referenceTime = matrixFrame.eventTime :=
   rfl
 
--- ════════════════════════════════════════════════════════════════
--- § Tense Decomposition Structure
--- ════════════════════════════════════════════════════════════════
+/-! ### Tense Decomposition Structure -/
 
 /-- Kratzer's decomposition of surface tense morphology into
     underlying tense head + optional aspect head ([heim-kratzer-1998] §4).
@@ -145,9 +139,7 @@ def KratzerDecomposition.tenseOvertness (d : KratzerDecomposition)
   Overtness.fromBinding d.tensePronoun.mode localDomain
 
 
--- ════════════════════════════════════════════════════════════════
--- § Aspect Decomposition: English Simple Past = PRES + PERF
--- ════════════════════════════════════════════════════════════════
+/-! ### Aspect Decomposition: English Simple Past = PRES + PERF -/
 
 /-! Kratzer (1998 §4): English "simple past" is morphologically fused but
 semantically decomposes into PRESENT tense + PERFECT aspect. The tense head
@@ -221,9 +213,7 @@ theorem german_preterit_eq_simplePast {W Time : Type*} [LinearOrder Time]
     ∃ t : Time, t < tc ∧ PRFV V w (NonemptyInterval.pure t) := Iff.rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Zero Tense and Locality
--- ════════════════════════════════════════════════════════════════
+/-! ### Zero Tense and Locality -/
 
 /-! Kratzer (1998 §3): zero (phonologically empty) referential expressions
 arise when a bound variable is in a local agreement domain. This applies
@@ -265,9 +255,7 @@ theorem past_never_zero :
     (kratzerZeroTense 1).constraint = .present := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Reflexive ↔ Simultaneous Parallel
--- ════════════════════════════════════════════════════════════════
+/-! ### Reflexive ↔ Simultaneous Parallel -/
 
 /-! Kratzer (1998 §3) draws an explicit structural parallel between
 reflexive binding and simultaneous tense:

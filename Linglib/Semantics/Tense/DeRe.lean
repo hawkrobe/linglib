@@ -105,9 +105,7 @@ open HistoricalAlternatives (actualHistoryBase)
 open Semantics.Tense (TensePronoun GramTense TemporalAssignment)
 
 
--- ════════════════════════════════════════════════════════════════
--- § Time-concepts and entity-concepts
--- ════════════════════════════════════════════════════════════════
+/-! ### Time-concepts and entity-concepts -/
 
 /-- A **time-concept**: an intension from a centered Kaplanian context
     to a time. The temporal specialization of [abusch-1997]'s
@@ -125,9 +123,7 @@ abbrev TimeConcept (W E P T : Type*) := Intension (KContext W E P T) T
 abbrev EntityConcept (W E P T : Type*) := Intension (KContext W E P T) E
 
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal de re reading
--- ════════════════════════════════════════════════════════════════
+/-! ### Temporal de re reading -/
 
 /-- A **temporal de re reading** ([abusch-1997] §3): a time-concept
     paired with the **attitude holder's centered context**. The actual
@@ -168,9 +164,7 @@ theorem baseCoherent (dr : TemporalDeReReading W E P T) :
     dr.concept dr.holderContext = dr.actualRes := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Felicity and the value-level shadow
--- ════════════════════════════════════════════════════════════════
+/-! ### Felicity and the value-level shadow -/
 
 /-- Felicity of a temporal de re reading under a tense constraint:
     the actual res-time stands in the constraint's relation to the
@@ -201,9 +195,7 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
   simp only [isFelicitousWith, TensePronoun.fullPresupposition, hRes, hEval]
 
 
--- ════════════════════════════════════════════════════════════════
--- § Modal-alternative quantification (Abusch §3)
--- ════════════════════════════════════════════════════════════════
+/-! ### Modal-alternative quantification (Abusch §3) -/
 
 /-- **Modal rigidity**: the time-concept evaluates to the same time at
     every world-time pair in a supplied alternative set, when that
@@ -275,9 +267,7 @@ theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
     dr.isFelicitousWith constraint := h.1
 
 
--- ════════════════════════════════════════════════════════════════
--- § Alternative-set constructors (modal-base instantiations)
--- ════════════════════════════════════════════════════════════════
+/-! ### Alternative-set constructors (modal-base instantiations) -/
 
 /-- **Metaphysical** alternative-set instantiation ([klecha-2016]
     DOX): the worlds sharing the holder's actual world's history up to
@@ -301,9 +291,7 @@ def doxasticAlternatives
   { s' | dox dr.holderContext.agent dr.holderContext.world s' }
 
 
--- ════════════════════════════════════════════════════════════════
--- § Acquaintance: instantiating the polymorphic substrate
--- ════════════════════════════════════════════════════════════════
+/-! ### Acquaintance: instantiating the polymorphic substrate -/
 
 /-- The Aloni cover for time-concepts: a set of `TimeConcept`s
     representing the believer's available "ways of identifying" a time.

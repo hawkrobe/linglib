@@ -40,9 +40,7 @@ open Semantics.Context (RichContext KContext ContextTower ContextShift
 open HistoricalAlternatives
 open Semantics.Mood
 
--- ════════════════════════════════════════════════════════════════
--- § Anderson Conditional
--- ════════════════════════════════════════════════════════════════
+/-! ### Anderson Conditional -/
 
 section AndersonConditional
 
@@ -78,9 +76,7 @@ theorem anderson_shifted_time {W E P T : Type*}
     (rc : RichContext W E P T) :
     ((hpShift (E := E) (P := P) hpTime expandedDomain).apply rc).time = hpTime := rfl
 
--- ════════════════════════════════════════════════════════════════
--- § HP Achieves Expansion (Mizuno's Argument)
--- ════════════════════════════════════════════════════════════════
+/-! ### HP Achieves Expansion (Mizuno's Argument) -/
 
 section Expansion
 
@@ -132,9 +128,7 @@ theorem historicalBase_monotone
 
 end Expansion
 
--- ════════════════════════════════════════════════════════════════
--- § Conditional Triviality and Domain Expansion
--- ════════════════════════════════════════════════════════════════
+/-! ### Conditional Triviality and Domain Expansion -/
 
 section Triviality
 
@@ -237,9 +231,7 @@ theorem trivial_monotone
 
 end Triviality
 
--- ════════════════════════════════════════════════════════════════
--- § Bridge: SUBJ as Domain-Expanding Shift
--- ════════════════════════════════════════════════════════════════
+/-! ### Bridge: SUBJ as Domain-Expanding Shift -/
 
 section SubjBridge
 

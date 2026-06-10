@@ -404,7 +404,7 @@ theorem abusch_derives_embeddedSickSimultaneous :
 theorem abusch_derives_embeddedSickShifted :
     embeddedSickShifted.isPast := by
   simp only [ReichenbachFrame.isPast, embeddedSickShifted, shiftedFrame,
-    matrixSaid]; omega
+    Semantics.Tense.embeddedFrame, matrixSaid]; omega
 
 /-- The matrix "said" frame is perfective (E = R). -/
 theorem matrixSaid_is_perfective : matrixSaid.isPerfective := rfl

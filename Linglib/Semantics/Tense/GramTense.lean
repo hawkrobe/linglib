@@ -8,10 +8,13 @@ import Linglib.Semantics.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
-[abusch-1997] [heim-kratzer-1998] [kratzer-1998] [partee-1973] [von-stechow-2009] [ogihara-1989]
+[abusch-1997] [heim-1994-comments] [kratzer-1998] [partee-1973] [von-stechow-2009] [ogihara-1989]
 
-[abusch-1997]'s insight: a tense morpheme is a **temporal pronoun** — a variable with a presupposed temporal constraint (Prior, reinterpreted) and
-a binding mode (indexical/anaphoric/bound). This single concept projects onto
+[partee-1973]'s insight: a tense morpheme is a **temporal pronoun** — a
+variable with a temporal constraint and a binding mode
+(indexical/anaphoric/bound). The constraint-as-presupposition formulation
+follows [heim-1994-comments] (commenting on [abusch-1997]) and
+[kratzer-1998]. This single concept projects onto
 five representations of temporal reference in the codebase:
 
 1. **Priorean operators** (PAST/PRES/FUT): `constraint.constrains`
@@ -41,9 +44,7 @@ open Core.ReferentialMode (ReferentialMode)
 open Core (Assignment WorldTimeIndex)
 
 
--- ════════════════════════════════════════════════════════════════
--- § GramTense
--- ════════════════════════════════════════════════════════════════
+/-! ### GramTense -/
 
 /--
 Grammatical tense: a temporal relation imposed by tense morphology.
@@ -66,20 +67,6 @@ inductive GramTense where
 
 namespace GramTense
 
-/-- Convert tense to its corresponding temporal relation -/
-def toRelation : GramTense → Core.Order.Relation
-  | .past => .before
-  | .present => .overlapping
-  | .future => .after
-  | .nonpast => .notBefore
-
-/-- The inverse relation (for "backwards" reference) -/
-def inverseRelation : GramTense → Core.Order.Relation
-  | .past => .after
-  | .present => .overlapping
-  | .future => .before
-  | .nonpast => .notAfter
-
 /-- The temporal constraint imposed by a grammatical tense.
     Past: ref < perspective. Present: ref = perspective. Future: ref > perspective.
     Nonpast: ref ≥ perspective ([klecha-2016]).
@@ -93,12 +80,18 @@ def constrains {Time : Type*} [LinearOrder Time]
   | .future => refTime > perspTime
   | .nonpast => refTime ≥ perspTime
 
+instance {Time : Type*} [LinearOrder Time] (t : GramTense) (r p : Time) :
+    Decidable (t.constrains r p) :=
+  match t with
+  | .past => inferInstanceAs (Decidable (r < p))
+  | .present => inferInstanceAs (Decidable (r = p))
+  | .future => inferInstanceAs (Decidable (r > p))
+  | .nonpast => inferInstanceAs (Decidable (r ≥ p))
+
 end GramTense
 
 
--- ════════════════════════════════════════════════════════════════
--- § SOTParameter
--- ════════════════════════════════════════════════════════════════
+/-! ### SOTParameter -/
 
 /--
 Sequence of Tenses (SOT) parameter.
@@ -138,9 +131,7 @@ def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
   | .relative => .fullSOT
 
 
--- ════════════════════════════════════════════════════════════════
--- § TenseInterpretation
--- ════════════════════════════════════════════════════════════════
+/-! ### TenseInterpretation -/
 
 /-- Tense interpretation modes.
     Tenses parallel pronouns: indexical (deictic), anaphoric
@@ -151,9 +142,7 @@ def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
     applies to both pronouns and tenses. -/
 abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal Variable Infrastructure ([partee-1973])
--- ════════════════════════════════════════════════════════════════
+/-! ### Temporal Variable Infrastructure ([partee-1973]) -/
 
 /-! Temporal assignment functions are the temporal instantiation of
 `Core.Assignment` (`Assignment Time = ℕ → Time`). All update laws are mathlib's `Function.update` lemmas. -/
@@ -204,9 +193,7 @@ theorem zeroTense_receives_binder_time {Time : Type*}
   Function.update_self n binderTime g
 
 
--- ════════════════════════════════════════════════════════════════
--- § SitProp (Prop-valued)
--- ════════════════════════════════════════════════════════════════
+/-! ### SitProp (Prop-valued) -/
 
 /--
 Type of situation-level propositions (Prop-valued, for proof-level
@@ -220,9 +207,7 @@ This is what tense operators modify. Re-exported by
 abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 
--- ════════════════════════════════════════════════════════════════
--- § TensePronoun ([abusch-1997])
--- ════════════════════════════════════════════════════════════════
+/-! ### TensePronoun ([abusch-1997]) -/
 
 /-- [abusch-1997]'s unified tense denotation.
 
@@ -281,9 +266,7 @@ instance (tp : TensePronoun) : Decidable tp.isBound :=
 end TensePronoun
 
 
--- ════════════════════════════════════════════════════════════════
--- § TensePronoun Bridge Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### TensePronoun Bridge Theorems -/
 
 /-- Resolve the evaluation time from the assignment.
     In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
@@ -353,11 +336,9 @@ theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Tim
   exact hPresup
 
 
--- ════════════════════════════════════════════════════════════════
--- § Overtness ([heim-kratzer-1998])
--- ════════════════════════════════════════════════════════════════
+/-! ### Overtness ([kratzer-1998]) -/
 
-/-- Phonological overtness of a referential expression ([heim-kratzer-1998] §3).
+/-- Phonological overtness of a referential expression ([kratzer-1998] §3).
 
     Applies uniformly to pronouns and tenses: English has zero tense
     under SOT (bound present surfaces as ∅); Japanese has zero pronouns
@@ -403,9 +384,7 @@ theorem Overtness.bound_nonlocal_is_overt :
     Overtness.fromBinding .bound false = .overt := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Temporal Tower Bridge ([abusch-1997] ↔ ContextTower)
--- ════════════════════════════════════════════════════════════════
+/-! ### Temporal Tower Bridge ([abusch-1997] ↔ ContextTower) -/
 
 /-! The key bridge showing that [abusch-1997]'s De Bruijn temporal indexing is already
 tower-style depth access. `TensePronoun.evalTimeIndex` is a depth-relative index

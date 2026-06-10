@@ -283,7 +283,8 @@ For example, an attitude verb might impose:
 These constraints are what make sequence-of-tense work: they tie the
 embedded clause's temporal interpretation to the matrix event time.
 
-See `Semantics.Tense.SequenceOfTense` for the formal
+See `Semantics.Tense.Basic` (embedded frames) and
+`Semantics.Tense.SOT.Decomposition` for the formal
 connection between these temporal constraints and SOT readings.
 -/
 

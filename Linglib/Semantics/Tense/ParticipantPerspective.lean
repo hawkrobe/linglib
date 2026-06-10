@@ -40,9 +40,7 @@ namespace Semantics.Tense.ParticipantPerspective
 open Semantics.Tense.Evidential
 open Semantics.Tense
 
--- ════════════════════════════════════════════════════
--- § 1. Tense Perspective Frame
--- ════════════════════════════════════════════════════
+/-! ### Tense Perspective Frame -/
 
 /-- Lakoff's participant-sensitive tense frame. Extends `EvidentialFrame`
     (which already extends `ReichenbachFrame`) with two psychological dimensions:
@@ -56,9 +54,7 @@ structure TensePerspective (Time : Type*) extends EvidentialFrame Time where
   /-- Is the propositional content new to the hearer? -/
   hearerNovelty : Bool
 
--- ════════════════════════════════════════════════════
--- § 2. Lakoff Predicates
--- ════════════════════════════════════════════════════
+/-! ### Lakoff Predicates -/
 
 /-- **False past** (Lakoff §1): past tense applied to a present-time event
     because the speaker no longer finds it salient.
@@ -102,9 +98,7 @@ def perfectRequiresSalience (f : TensePerspective ℤ) : Prop :=
 def willDeletion (f : TensePerspective ℤ) : Prop :=
   f.speechTime < f.eventTime ∧ f.speakerSalience = true
 
--- ════════════════════════════════════════════════════
--- § 3. True vs False Tense Classification
--- ════════════════════════════════════════════════════
+/-! ### True vs False Tense Classification -/
 
 open Morphology.Tense in
 
@@ -138,9 +132,7 @@ def falseTenseRequiresSynthetic (use : TenseUse) (form : TenseFormType) : Bool :
   | .trueTense  => true   -- true tense is fine with any form
   | .falseTense => form == .synthetic  -- false tense needs synthetic
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge Theorems
--- ════════════════════════════════════════════════════
+/-! ### Bridge Theorems -/
 
 /-- When `falsePast` holds, the UP present-tense constraint (T = S) is satisfied.
     The event IS at speech time, despite the past surface tense — the mismatch

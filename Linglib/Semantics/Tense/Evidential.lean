@@ -39,8 +39,8 @@ design where paradigm entries stored opaque lambdas.
 ## Connection to Modal Evidentiality
 
 The tense evidential constraint parallels [von-fintel-gillies-2010]
-`kernelMust` presupposition: both require non-direct evidence. The bridge
-between these two phenomena is formalized in `Comparisons/TenseModalEvidentiality.lean`.
+`kernelMust` presupposition: both require non-direct evidence. (A formal
+bridge between the two phenomena has not been built.)
 
 ## Connection to Features.Evidentiality
 
@@ -61,9 +61,7 @@ open Features.Evidentiality
 open Features.Mirativity
 open Semantics.Presupposition
 
--- ════════════════════════════════════════════════════
--- § 1. Evidential Frame
--- ════════════════════════════════════════════════════
+/-! ### Evidential Frame -/
 
 /-- Cumming's (S, A, T) frame. Extends Reichenbach with an evidence-acquisition
     time A. S = speechTime, T = eventTime, A = acquisitionTime. The existing
@@ -73,9 +71,7 @@ structure EvidentialFrame (Time : Type*) extends ReichenbachFrame Time where
       grounding the assertion. -/
   acquisitionTime : Time
 
--- ════════════════════════════════════════════════════
--- § 2. EP Constraint Enum
--- ════════════════════════════════════════════════════
+/-! ### EP Constraint Enum -/
 
 /-- Evidential perspective constraint shapes attested across English, Korean,
     and Bulgarian ([cumming-2026], Tables 17–22). Each value corresponds to a
@@ -146,9 +142,7 @@ instance : DecidablePred EPCondition.IsNonfuture :=
 @[simp] theorem EPCondition.toEvidentialPerspective_unconstrained :
     EPCondition.toEvidentialPerspective .unconstrained = none := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. UP Constraint Enum
--- ════════════════════════════════════════════════════
+/-! ### UP Constraint Enum -/
 
 /-- Utterance perspective constraint shapes attested across the three
     languages. Each value corresponds to a distinct ordering
@@ -174,9 +168,7 @@ def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
   | .nonfuture => λ f => f.eventTime ≤ f.speechTime
   | .unconstrained => λ _ => True
 
--- ════════════════════════════════════════════════════
--- § 4. Tense-Evidential Paradigm
--- ════════════════════════════════════════════════════
+/-! ### Tense-Evidential Paradigm -/
 
 /-- A row in a tense-aspect-mood-evidentiality paradigm table.
     Generalizes [cumming-2026]'s tense-evidential paradigm (Tables 17–22)
@@ -216,18 +208,14 @@ def TAMEEntry.upConstraint (p : TAMEEntry) :
     EvidentialFrame ℤ → Prop :=
   p.up.toConstraint
 
--- ════════════════════════════════════════════════════
--- § 5. Core Predicates
--- ════════════════════════════════════════════════════
+/-! ### Core Predicates -/
 
 /-- Cumming's constraint (10): evidence is downstream of the event.
     T ≤ A — the event precedes (or coincides with) evidence acquisition. -/
 def downstreamEvidence (f : EvidentialFrame ℤ) : Prop :=
   f.eventTime ≤ f.acquisitionTime
 
--- ════════════════════════════════════════════════════
--- § 6. Generic Downstream Lemma
--- ════════════════════════════════════════════════════
+/-! ### Generic Downstream Lemma -/
 
 /-- Any nonfuture EP constraint entails downstream evidence (T ≤ A).
     One proof, six cases — the three nonfuture cases follow from ≤, <, =
@@ -244,9 +232,7 @@ theorem EPCondition.nonfuture_implies_downstream
   | prospective => exact absurd h_nf (by decide)
   | unconstrained => exact absurd h_nf (by decide)
 
--- ════════════════════════════════════════════════════
--- § 7. Presuppositional Nonfuture Meaning
--- ════════════════════════════════════════════════════
+/-! ### Presuppositional Nonfuture Meaning -/
 
 /-- Nonfuture meaning as a presuppositional proposition:
     the presupposition is that evidence is downstream (T ≤ A); the assertion
@@ -263,9 +249,7 @@ def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PrProp W
 theorem nonfutureMeaning_presup {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) (w : W) :
     (nonfutureMeaning f p).presup w = decide (f.eventTime ≤ f.acquisitionTime) := rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 8. Tower Integration: Evidential Shift
--- ════════════════════════════════════════════════════════════════
+/-! ### Tower Integration: Evidential Shift -/
 
 /-!
 ### Evidential Shift as Tower Push

@@ -3,119 +3,28 @@ import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Tense Theory Infrastructure: Shared Types
-[abusch-1997] [deal-2020] [heim-kratzer-1998] [klecha-2016] [kratzer-1998] [ogihara-1996] [sharvit-2003] [von-stechow-2009] [wurmbrand-2014] [zeijlstra-2012] [banfield-1982] [comrie-1985] [egressy-2026] [ogihara-sharvit-2012] [schlenker-2003]
+[abusch-1997] [heim-1994-comments] [ogihara-1989] [partee-1973]
 
-Shared types and infrastructure for the tense theories formalized in
-`Semantics.Intensional/Tense/` and
-`Minimalism/Tense/`.
+Shared embedding infrastructure for the tense theories: embedded
+Reichenbach frames, the shifted/simultaneous reading split, the upper
+limit constraint, and the projections connecting `TensePronoun` to the
+SOT frame constructors.
 
-## Design Principle
+## Main declarations
 
-Verdicts are **derived from compositional semantics**, not stipulated.
-Each theory file proves derivation theorems for the phenomena it handles;
-the comparison matrix (`Comparisons/TenseTheories.lean`) is assembled
-from what's been proven. There is no `TheoryVerdict` enum — whether a
-theory "handles" a phenomenon is witnessed by the existence (or absence)
-of a derivation theorem in that theory's file.
-
-## Key Types
-
-- `TensePhenomenon`: the 23 temporal phenomena that distinguish theories
+- `embeddedFrame`: the frame of a clause embedded under an attitude verb
+  (P' = matrix E); `simultaneousFrame` and `shiftedFrame` specialize it
+- `EmbeddedTenseReading`, `availableReadings`: the SOT-parameterized
+  shifted/simultaneous split
+- `upperLimitConstraint`: [abusch-1997]'s ULC, presuppositional construal
 - `AttitudeTemporalSemantics`: how an attitude verb shifts eval time
-
 -/
 
 namespace Semantics.Tense
 
-open Semantics.Tense
 open Semantics.Tense.Reichenbach
 
-
--- ════════════════════════════════════════════════════════════════
--- § TensePhenomenon
--- ════════════════════════════════════════════════════════════════
-
-/-- The 24 temporal phenomena that distinguish tense theories.
-
-    Each phenomenon represents an empirical domain where theories
-    make different predictions or use different mechanisms. The
-    comparison matrix is built from which derivation theorems each
-    theory proves for each phenomenon.
-
-    The first 11 are the core comparison set. The next 7 are eventual
-    targets documented with data frames. The final 6 are added for
-    [zeijlstra-2012], [wurmbrand-2014], [sharvit-2003], and
-    [tsilia-zhao-2026] coverage. -/
-inductive TensePhenomenon where
-  -- Core comparison set (11)
-  /-- "John said Mary was sick" — shifted reading (sick before saying) -/
-  | pastUnderPast_shifted
-  /-- "John said Mary was sick" — simultaneous reading (sick at saying) -/
-  | pastUnderPast_simultaneous
-  /-- "John said Mary is sick" — double-access reading -/
-  | presentUnderPast_doubleAccess
-  /-- "John said Mary would leave" — embedded future -/
-  | futureUnderPast
-  /-- English (SOT) vs Japanese (non-SOT) parametric variation -/
-  | sotVsNonSOT
-  /-- Abusch's upper limit constraint: no forward-shifted readings -/
-  | upperLimitConstraint
-  /-- "the man who was tall" — relative clause tense interpretation -/
-  | relativeClauseTense
-  /-- "John might have left" — modal scoping over past -/
-  | modalTenseInteraction
-  /-- "If John were here..." — past morphology, non-temporal -/
-  | counterfactualTense
-  /-- "John believed it was raining" — de re temporal reference -/
-  | temporalDeRe
-  /-- Kratzer (deletion) vs Ogihara (zero tense ambiguity) debate -/
-  | deletionVsAmbiguity
-  -- Eventual targets (7)
-  /-- "John asked who was sick" — SOT in indirect questions -/
-  | sotInIndirectQuestions
-  /-- "She walked to the window. The garden was beautiful." — FID
-      perspective shift without attitude verb -/
-  | freeIndirectDiscourse
-  /-- "Napoleon enters the room. He sees..." — present tense, past reference -/
-  | historicalPresent
-  /-- "John said Mary had been sick" — pluperfect disambiguates to shifted only -/
-  | perfectTenseInteraction
-  /-- "John wanted/planned to leave" — future-oriented complements
-      without standard SOT -/
-  | futureOrientedComplements
-  /-- "Before John left, Mary was happy" — tense in temporal adjuncts -/
-  | adjunctClauseTense
-  /-- Amharic/Zazaki: tense shifts under attitudes paralleling pronoun shift -/
-  | indexicalTenseShift
-  -- Additional phenomena (5) — Sharvit, Zeijlstra, Wurmbrand coverage
-  /-- "John will say Mary is sick" — present under future, simultaneous
-      with future saying time -/
-  | embeddedPresentPuzzle
-  /-- "Aristotle was a philosopher" — past tense ↔ subject no longer
-      exists implication ([musan-1995]/1997) -/
-  | lifetimeEffects
-  /-- "If John were taller..." — past morphology, non-past semantics
-      ([iatridou-2000], beyond Deal's counterfactual tense) -/
-  | fakePast
-  /-- Hebrew-type optional SOT: "John said Mary {was/is} sick" —
-      both possible with different readings -/
-  | optionalSOT
-  /-- [wurmbrand-2014]: three-way classification of infinitival tense
-      (future irrealis / propositional / restructuring) -/
-  | dependentVsIndependentTense
-  /-- Temporal "then" is incompatible with shifted present but compatible
-      with deleted tense — derived from tense presuppositions anchored to π -/
-  | thenPresentIncompatibility
-  /-- Hungarian-type size-sensitive SOT: simultaneous reading available in
-      TP complements but blocked in CP complements. Clause size determines
-      whether [uPAST] can Agree upward across the complement boundary -/
-  | sizeSensitiveSOT
-  deriving DecidableEq, Repr, Inhabited
-
-
--- ════════════════════════════════════════════════════════════════
--- § AttitudeTemporalSemantics
--- ════════════════════════════════════════════════════════════════
+/-! ### AttitudeTemporalSemantics -/
 
 /-- How an attitude verb shifts the evaluation time for its complement.
 
@@ -137,79 +46,8 @@ def standardShift {Time : Type*} : AttitudeTemporalSemantics Time where
   shiftEvalTime := λ f => f.eventTime
   embeddedConstraint := λ _embR _evalT => True
 
-/-- Standard shift gives matrix event time. -/
-theorem standardShift_is_eventTime {Time : Type*} (f : ReichenbachFrame Time) :
-    (standardShift (Time := Time)).shiftEvalTime f = f.eventTime := rfl
 
-
--- ════════════════════════════════════════════════════════════════
--- § Phenomenon Classification
--- ════════════════════════════════════════════════════════════════
-
-/-- A phenomenon is a core SOT phenomenon if all theories handle it. -/
-def TensePhenomenon.IsCoreSOT : TensePhenomenon → Prop
-  | .pastUnderPast_shifted => True
-  | .pastUnderPast_simultaneous => True
-  | .presentUnderPast_doubleAccess => True
-  | .sotVsNonSOT => True
-  | _ => False
-
-instance : DecidablePred TensePhenomenon.IsCoreSOT := fun p => by
-  cases p <;> unfold TensePhenomenon.IsCoreSOT <;> infer_instance
-
-/-- A phenomenon is a distinguishing phenomenon if theories diverge on it. -/
-def TensePhenomenon.IsDistinguishing : TensePhenomenon → Prop
-  | .relativeClauseTense => True
-  | .modalTenseInteraction => True
-  | .counterfactualTense => True
-  | .temporalDeRe => True
-  | .deletionVsAmbiguity => True
-  | _ => False
-
-instance : DecidablePred TensePhenomenon.IsDistinguishing := fun p => by
-  cases p <;> unfold TensePhenomenon.IsDistinguishing <;> infer_instance
-
-/-- A phenomenon is an eventual target — documented with data but not yet
-    connected to derivation theorems in the theory files. -/
-def TensePhenomenon.IsEventualTarget : TensePhenomenon → Prop
-  | .sotInIndirectQuestions => True
-  | .freeIndirectDiscourse => True
-  | .historicalPresent => True
-  | .perfectTenseInteraction => True
-  | .futureOrientedComplements => True
-  | .adjunctClauseTense => True
-  | .indexicalTenseShift => True
-  | _ => False
-
-instance : DecidablePred TensePhenomenon.IsEventualTarget := fun p => by
-  cases p <;> unfold TensePhenomenon.IsEventualTarget <;> infer_instance
-
-/-- A phenomenon is in the extended set added for Zeijlstra/Wurmbrand/Sharvit. -/
-def TensePhenomenon.IsExtended : TensePhenomenon → Prop
-  | .embeddedPresentPuzzle => True
-  | .lifetimeEffects => True
-  | .fakePast => True
-  | .optionalSOT => True
-  | .dependentVsIndependentTense => True
-  | .thenPresentIncompatibility => True
-  | .sizeSensitiveSOT => True
-  | _ => False
-
-instance : DecidablePred TensePhenomenon.IsExtended := fun p => by
-  cases p <;> unfold TensePhenomenon.IsExtended <;> infer_instance
-
-/-- Every phenomenon falls into exactly one of the five categories. -/
-theorem phenomenon_coverage (p : TensePhenomenon) :
-    p.IsCoreSOT ∨ p.IsDistinguishing ∨
-    p.IsEventualTarget ∨ p.IsExtended ∨
-    p = .futureUnderPast ∨ p = .upperLimitConstraint := by
-  cases p <;> simp [TensePhenomenon.IsCoreSOT, TensePhenomenon.IsDistinguishing,
-    TensePhenomenon.IsEventualTarget, TensePhenomenon.IsExtended]
-
-
--- ════════════════════════════════════════════════════════════════
--- § Embedded Frames
--- ════════════════════════════════════════════════════════════════
+/-! ### Embedded Frames -/
 
 /-- Construct the Reichenbach frame for an embedded clause under an attitude verb.
 
@@ -227,9 +65,7 @@ def embeddedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
   eventTime := embeddedE
 
 
--- ════════════════════════════════════════════════════════════════
--- § Embedded Tense Readings
--- ════════════════════════════════════════════════════════════════
+/-! ### Embedded Tense Readings -/
 
 /-- The two available readings for embedded past under past.
 
@@ -254,38 +90,31 @@ def availableReadings (param : SOTParameter) : List EmbeddedTenseReading :=
   | .absolute => [.shifted]
 
 
--- ════════════════════════════════════════════════════════════════
--- § Reading-Specific Frames
--- ════════════════════════════════════════════════════════════════
+/-! ### Reading-Specific Frames -/
 
 /-- The simultaneous reading: embedded R = matrix E.
 
     "John said Mary was sick" (she was sick AT THE TIME of saying).
     The embedded reference time equals the matrix event time,
-    so embedded tense = PRESENT relative to embedded P. -/
+    so embedded tense = PRESENT relative to embedded P.
+    `embeddedFrame` with R' = E_matrix. -/
 def simultaneousFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
-    (embeddedE : Time) : ReichenbachFrame Time where
-  speechTime := matrixFrame.speechTime
-  perspectiveTime := matrixFrame.eventTime
-  referenceTime := matrixFrame.eventTime  -- R' = P' = E_matrix
-  eventTime := embeddedE
+    (embeddedE : Time) : ReichenbachFrame Time :=
+  embeddedFrame matrixFrame matrixFrame.eventTime embeddedE
 
 /-- The shifted reading: embedded R < matrix E.
 
     "John said Mary had been sick" (she was sick BEFORE the saying).
     The embedded reference time precedes the matrix event time,
-    so embedded tense = PAST relative to embedded P. -/
+    so embedded tense = PAST relative to embedded P.
+    Definitionally `embeddedFrame`; the inequality R' < E_matrix is a
+    hypothesis at use sites, not enforced by the constructor. -/
 def shiftedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
-    (embeddedR embeddedE : Time) : ReichenbachFrame Time where
-  speechTime := matrixFrame.speechTime
-  perspectiveTime := matrixFrame.eventTime
-  referenceTime := embeddedR  -- R' < P' = E_matrix for shifted
-  eventTime := embeddedE
+    (embeddedR embeddedE : Time) : ReichenbachFrame Time :=
+  embeddedFrame matrixFrame embeddedR embeddedE
 
 
--- ════════════════════════════════════════════════════════════════
--- § Perspective Shift Derivations
--- ════════════════════════════════════════════════════════════════
+/-! ### Perspective Shift Derivations -/
 
 /-- In a past-under-past configuration with the shifted reading,
     the embedded reference time is past relative to speech time.
@@ -323,30 +152,13 @@ theorem past_under_past_simultaneous_is_past {Time : Type*} [LinearOrder Time]
     _ < P := h_matrix_past
     _ = S := h_root
 
-/-- Present-under-past with the simultaneous reading: embedded R = matrix E. -/
-theorem present_under_past_simultaneous {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) :
-    (simultaneousFrame matrixFrame matrixFrame.eventTime).referenceTime =
-    (simultaneousFrame matrixFrame matrixFrame.eventTime).perspectiveTime := by
-  rfl
-
 /-- The simultaneous frame satisfies PRESENT (R = P) relative to embedded P. -/
-theorem simultaneousFrame_is_present {Time : Type*}
+theorem simultaneousFrame_isPresent {Time : Type*}
     (matrixFrame : ReichenbachFrame Time) (embeddedE : Time) :
-    (simultaneousFrame matrixFrame embeddedE).isPresent := by
-  unfold ReichenbachFrame.isPresent simultaneousFrame
-  rfl
-
-/-- The simultaneousFrame satisfies the time-equality R = P. -/
-theorem simultaneousFrame_satisfies_time_eq {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) (embeddedE : Time) :
-    (simultaneousFrame matrixFrame embeddedE).referenceTime =
-    (simultaneousFrame matrixFrame embeddedE).perspectiveTime := by rfl
+    (simultaneousFrame matrixFrame embeddedE).isPresent := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Available Readings Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Available Readings Theorems -/
 
 /-- In SOT languages, the simultaneous reading is available. -/
 theorem sot_simultaneous_available :
@@ -369,12 +181,8 @@ theorem nonSOT_no_simultaneous :
   simp [availableReadings]
 
 
--- ════════════════════════════════════════════════════════════════
--- § Upper Limit Constraint ([abusch-1997])
--- ════════════════════════════════════════════════════════════════
-
 /-!
-### [abusch-1997]'s Upper Limit Constraint
+### Upper Limit Constraint ([abusch-1997])
 
 The Upper Limit Constraint is stated by [abusch-1997] §7
 (p. 25): "the now of an epistemic alternative is an upper limit for
@@ -429,10 +237,6 @@ theorem simultaneous_satisfies_ulc {Time : Type*} [Preorder Time]
   le_of_eq h
 
 
--- ════════════════════════════════════════════════════════════════
--- § TensePronoun ↔ SOT Frames
--- ════════════════════════════════════════════════════════════════
-
 /-!
 ### TensePronoun Projections onto SOT Frames
 
@@ -454,7 +258,8 @@ theorem simultaneousFrame_from_tense_pronoun {Time : Type*}
     (hResolve : interpTense n g = matrixFrame.eventTime) :
     tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
     simultaneousFrame matrixFrame embeddedE := by
-  simp [TensePronoun.toFrame, TensePronoun.resolve, simultaneousFrame, hIdx, hResolve]
+  simp [TensePronoun.toFrame, TensePronoun.resolve, simultaneousFrame, embeddedFrame,
+        hIdx, hResolve]
 
 /-- The shifted reading = free past tense pronoun.
     A past-constraint tense pronoun whose variable resolves to some R' < P
@@ -469,7 +274,8 @@ theorem shiftedFrame_from_tense_pronoun {Time : Type*}
     (hResolve : interpTense n g = embeddedR) :
     tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
     shiftedFrame matrixFrame embeddedR embeddedE := by
-  simp [TensePronoun.toFrame, TensePronoun.resolve, shiftedFrame, hIdx, hResolve]
+  simp [TensePronoun.toFrame, TensePronoun.resolve, shiftedFrame, embeddedFrame,
+        hIdx, hResolve]
 
 /-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time AND matrix event time.
@@ -496,9 +302,7 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
   ⟨zeroTense_receives_binder_time g n matrixFrame.eventTime, rfl⟩
 
 
--- ════════════════════════════════════════════════════════════════
--- § ThenAdverb
--- ════════════════════════════════════════════════════════════════
+/-! ### ThenAdverb -/
 
 /-- A "then"-type temporal adverb.
     Cross-linguistically, "then" shifts the perspective time P away
