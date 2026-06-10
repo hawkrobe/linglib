@@ -7,7 +7,7 @@ import Linglib.Semantics.Tense.Domain
 Type classes that abstract over specific tense and aspect frameworks.
 `TenseSystem α Time Role` says "the type `α` is a way of describing
 tense over a `Time` line, using `Role` as its TO vocabulary"; it
-commits to (i) how to lift `α` into a `Semantics.Tense.Domain` and (ii)
+commits to (i) how to lift `α` into a `Tense.Domain` and (ii)
 which two roles its tense operators target (the *anchor* and
 *situation* TOs). `AspectSystem α Time Role` is the analogous
 abstraction for the event/reference relation.
@@ -29,7 +29,7 @@ is the main parameter; `Time` and `Role` are `outParam`s, so writing
 TenseSystem interpretation per schema type.
 -/
 
-namespace Semantics.Tense
+open Tense (Domain)
 
 universe u v w
 
@@ -39,7 +39,7 @@ universe u v w
     relative to a discourse anchor.
 
     Each instance commits to:
-    - `toDomain`: how to lift the schema into a `Semantics.Tense.Domain`
+    - `toDomain`: how to lift the schema into a `Tense.Domain`
     - `anchor`: the role of the *anchor* TO (the TO that tense locates
       the situation against). For [reichenbach-1947] (extended with
       Kiparsky's P) this is `.perspective`; for [declerck-1991] the
@@ -67,7 +67,7 @@ class TenseSystem (α : Type u)
     reference (situation) time.
 
     Each instance commits to:
-    - `toDomain`: how to lift the schema into a `Semantics.Tense.Domain`
+    - `toDomain`: how to lift the schema into a `Tense.Domain`
     - `event`: the role of the event TO (Reichenbach: `.situation` (E);
       Declerck: `.situation` (TS))
     - `reference`: the role of the reference TO (Reichenbach: `.topic`
@@ -84,5 +84,3 @@ class AspectSystem (α : Type u)
   event : Role
   /-- The role of the reference TO. -/
   reference : Role
-
-end Semantics.Tense

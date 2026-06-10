@@ -12,7 +12,7 @@ interpretive ambiguity as pronouns — indexical, anaphoric, and bound-variable
 — and share the same formal mechanisms (assignment functions, variable
 lookup, lambda abstraction).
 
-The unifying type for all five views of tense is `Semantics.Tense.TensePronoun`: a variable index + a presupposed temporal constraint + a
+The unifying type for all five views of tense is `TensePronoun`: a variable index + a presupposed temporal constraint + a
 binding mode + an eval time index. The bridges in this file —
 `referential_past_decomposition`, `indexical_tense_matches_opNow`,
 `toSitVarStatus` — are projections of `TensePronoun` onto specific
@@ -57,8 +57,7 @@ referential mechanism operates over different domains.
 
 namespace Partee1973
 
-open Semantics.Tense (TenseInterpretation TemporalAssignment
-  interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
+open Tense (interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST)
 open Semantics.Reference.KaplanLD (opNow)
 open Core.SitVarStatus (SitVarStatus)
 open Core (WorldTimeIndex)
@@ -224,8 +223,7 @@ This explains why Persian has zero PRONOUNS but NOT zero TENSE
 `Overtness.fromBinding` (Core/Tense.lean) formalizes this as a function
 from `(ReferentialMode × localDomain)` to `Overtness`. -/
 
-open Semantics.Tense.SOT.Decomposition
-open Semantics.Tense (Overtness)
+open Tense.SOT.Decomposition
 
 /-- The four-way classification: all three referential modes produce
     overt forms except bound+local, which produces zero.
@@ -249,7 +247,7 @@ theorem overtness_classification :
 
 /-- The zero tense under SOT is bound + local → zero, just as
     a reflexive pronoun is bound + local → reduced/zero.
-    This connects Kratzer's zero tense analysis to `Semantics.Tense.Overtness`. -/
+    This connects Kratzer's zero tense analysis to `Overtness`. -/
 theorem zero_tense_parallels_reflexive (n : ℕ) :
     -- Zero tense: bound + local = zero
     (kratzerZeroTense n).isBound ∧

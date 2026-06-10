@@ -40,7 +40,7 @@ namespace Mendes2025
 open Core (Assignment WorldTimeIndex)
 open HistoricalAlternatives
 open Semantics.Dynamic.Core
-open Semantics.Tense
+open Tense
 open Semantics.Mood
 
 

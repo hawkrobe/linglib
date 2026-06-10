@@ -26,8 +26,8 @@ has a PRESENT tense head (indexical-compatible).
 
 namespace German.Tense
 
-open Semantics.Tense
-open Semantics.Tense.SOT.Decomposition
+open _root_.Tense
+open _root_.Tense.SOT.Decomposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Kratzer Decomposition Entries

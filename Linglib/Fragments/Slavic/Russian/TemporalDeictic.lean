@@ -11,7 +11,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 namespace Russian.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Russian тогда "togda" -/
 def togda : ThenAdverb where

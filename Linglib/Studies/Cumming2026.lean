@@ -27,7 +27,7 @@ predictions.
 
 namespace Cumming2026
 
-open Semantics.Tense.Evidential
+open Tense.Evidential
 open English.Tense
 open Korean.Evidentials
 open Bulgarian.Evidentials

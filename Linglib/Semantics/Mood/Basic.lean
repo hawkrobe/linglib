@@ -60,7 +60,7 @@ abbrev SitPred (W Time : Type*) := WorldTimeIndex W Time → WorldTimeIndex W Ti
 The `sameWorld` kernel: two situations share their world coordinate.
 
 This is the modal counterpart of the temporal kernels
-(`Semantics.Tense.precedes`/`coincides`/`follows`). The static `IND`
+(`Tense.precedes`/`coincides`/`follows`). The static `IND`
 operator and its dynamic lift `Semantics.Mood.dynIND` both call this
 kernel; they share *the same modal constraint*, lifted from a static
 situation predicate to a context filter via
@@ -346,7 +346,7 @@ of the embedded clause from the default (speech time or matrix time) to a
 newly introduced temporal anchor.
 
 See `Semantics.Attitudes.SituationDependent` for the attitude side
-and `Semantics.Tense.SOT.Decomposition` for the formal connection.
+and `Tense.SOT.Decomposition` for the formal connection.
 -/
 
 section AttitudeTemporalAnchor

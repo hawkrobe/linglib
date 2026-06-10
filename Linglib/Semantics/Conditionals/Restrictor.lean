@@ -164,7 +164,7 @@ theorem conditional_K (f : ModalBase W) (g : OrderingSource W)
 
 /-! ## Prop-level bridge -/
 
-open Semantics.Tense.ConditionalShift (domainRestrictedConditional)
+open Tense.ConditionalShift (domainRestrictedConditional)
 
 /-- `conditionalNecessity` (with empty ordering source) corresponds to
     `domainRestrictedConditional` at the Prop level. -/

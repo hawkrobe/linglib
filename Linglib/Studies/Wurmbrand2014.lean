@@ -42,9 +42,8 @@ study-local below; the empirical examples are generated from
 
 namespace Wurmbrand2014
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
+open Tense
 open Data.Examples (LinguisticExample)
 open Minimalist (InfinitivalTenseClass ComplementSize)
 

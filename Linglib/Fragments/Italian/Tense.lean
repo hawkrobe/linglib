@@ -33,10 +33,10 @@ PERF head morphologically transparent.
 
 namespace Italian.Tense
 
-open Semantics.Tense.Evidential
-open Semantics.Tense.SOT.Decomposition
-open Semantics.Tense
-open Semantics.Tense
+open _root_.Tense.Evidential
+open _root_.Tense.SOT.Decomposition
+open _root_.Tense
+open _root_.Tense
 open Morphology.Tense
 
 -- ════════════════════════════════════════════════════════════════

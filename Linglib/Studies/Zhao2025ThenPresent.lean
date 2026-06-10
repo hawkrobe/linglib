@@ -39,9 +39,8 @@ reference ("during then"), the presuppositions clash.
 
 namespace Zhao2025ThenPresent
 
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
-open Semantics.Tense.Perspective
+open Tense
+open Tense.Perspective
 
 
 -- ════════════════════════════════════════════════════

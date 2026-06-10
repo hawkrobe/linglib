@@ -21,7 +21,7 @@ This EP/UP factorization is verified in `Studies/Cumming2026.lean`.
 
 namespace Korean.Evidentials
 
-open Semantics.Tense.Evidential
+open Tense.Evidential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Korean -te (Table 18)

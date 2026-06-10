@@ -21,7 +21,7 @@ of the veridicality contrast.
 
 -/
 
-namespace Semantics.Tense.TemporalConnectives
+namespace Tense.TemporalConnectives
 
 
 variable {Time : Type*} [LinearOrder Time]
@@ -232,7 +232,7 @@ theorem npi_licensing_from_monotonicity (A B B' : SentDenotation Time) :
     (timeTrace B ⊆ timeTrace B' → Anscombe.after A B → Anscombe.after A B') :=
   ⟨Anscombe.before_complement_DE A B B', Anscombe.after_complement_UE A B B'⟩
 
-end Semantics.Tense.TemporalConnectives
+end Tense.TemporalConnectives
 
 /-!
 # Event-Level Temporal Connectives
@@ -270,7 +270,7 @@ while the event-level version requires entire-runtime precedence (`-precedence).
 
 -/
 
-namespace Semantics.Tense.TemporalConnectives
+namespace Tense.TemporalConnectives
 
 open NonemptyInterval
 
@@ -431,4 +431,4 @@ theorem anscombe_after_not_implies_event :
   obtain ⟨e₁, e₂, rfl, rfl, hprec⟩ := host
   simp [precedes, Event.τ, eP, eQ] at hprec
 
-end Semantics.Tense.TemporalConnectives
+end Tense.TemporalConnectives

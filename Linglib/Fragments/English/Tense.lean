@@ -31,7 +31,7 @@ evidential constraints to Lakoff's false-tense diagnostic.
 
 namespace English.Tense
 
-open Semantics.Tense.Evidential
+open _root_.Tense.Evidential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Table 20: Simple Past, Present Progressive, Future
@@ -93,7 +93,7 @@ def nonfutureEntries : List TAMEEntry :=
 -- § 4. Tense Perspective Entries ([lakoff-1970])
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense
+open _root_.Tense
 open Morphology.Tense
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
@@ -159,8 +159,8 @@ theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 -- § 6. Kratzer Decomposition ([kratzer-1998])
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense.SOT.Decomposition
-open Semantics.Tense
+open _root_.Tense.SOT.Decomposition
+open _root_.Tense
 
 /-- English simple past: Kratzer decomposition.
     Surface "V-ed" = PRESENT tense + PERFECT aspect.

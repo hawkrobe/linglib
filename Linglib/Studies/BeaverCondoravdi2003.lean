@@ -43,7 +43,7 @@ across historical alternatives.
 
 -/
 
-namespace Semantics.Tense.TemporalConnectives.BeaverCondoravdi
+namespace Tense.TemporalConnectives.BeaverCondoravdi
 
 open Semantics.Degree (maxOnScale)
 variable {W T : Type*} [LinearOrder T]
@@ -384,4 +384,4 @@ theorem histAlt_subset_altIE_trivial
   rw [altIE, Set.mem_setOf_eq, equivIE_trivial_iff_agree]
   exact hIBP w t w' hw'
 
-end Semantics.Tense.TemporalConnectives.BeaverCondoravdi
+end Tense.TemporalConnectives.BeaverCondoravdi

@@ -23,13 +23,13 @@ Two derivation styles coexist in this file:
 
 2. **Centered-world substrate** (`abusch_derives_*_via_acquaintance` /
    `_full` / `_full_metaphysical` against
-   `Semantics.Tense.DeRe.TemporalDeReReading`): `Intension (KContext)
+   `Tense.DeRe.TemporalDeReReading`): `Intension (KContext)
    Time` time-concept + holder-context base anchor + modal-alternative
    quantification over a `Set (WorldTimeIndex W Time)`. The Abusch §3 +
    def. 13 architecture, faithful to the [lewis-1979-attitudes] /
    [cresswell-vonstechow-1982] centered-world reduction of de re.
    The two styles are bridged by
-   `Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
+   `Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
 
 The substrate is modal-base-agnostic and holder-now-honest:
 `holderContext.time` is the holder's now (per §7 ULC), and
@@ -40,7 +40,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 ## Core Mechanisms
 
-1. **Tense as pronoun**: `TensePronoun` (in `Semantics.Tense`) with
+1. **Tense as pronoun**: `TensePronoun` (in `Tense`) with
    variable index, constraint, and binding mode.
 2. **Upper Limit Constraint (ULC)**: stated by [abusch-1997] §7
    ("the now of an epistemic alternative is an upper limit for the
@@ -58,7 +58,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
    acquaintance-relation machinery (Lewis 1979 / Cresswell-von Stechow
    1982) is not formalized here.
 4. **Eval-time shift via attitude embedding**: the substrate primitives
-   are `Semantics.Tense.evalTime_shifts_under_embedding` and
+   are `Tense.evalTime_shifts_under_embedding` and
    `updateTemporal`. Abusch's "relation transmission" (feature passing
    of relation variables PAST/PRES across embedding) is *not* what this
    file currently captures — we only model the value-level eval-time
@@ -91,9 +91,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 namespace Abusch1997
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -266,7 +264,7 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
     not required for the value-level shadow. -/
 theorem abusch_derives_temporal_de_re_via_acquaintance
     {W E P Time : Type*} [LinearOrder Time]
-    (dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time)
+    (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isFelicitousWith .past := hBefore
 
@@ -284,13 +282,13 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     free" when the res is identified by a name-like rigid concept. -/
 theorem abusch_derives_temporal_de_re_full
     {W E P Time : Type*} [LinearOrder Time]
-    (dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time)
+    (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hRigid : Core.Intension.IsRigid dr.concept)
     (alternatives : Set (Core.WorldTimeIndex W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isAbuschFelicitous alternatives .past := by
   refine ⟨hBefore, ?_⟩
-  exact Semantics.Tense.DeRe.TemporalDeReReading.IsRigidAcrossAlternatives_of_concept_isRigid
+  exact Tense.DeRe.TemporalDeReReading.IsRigidAcrossAlternatives_of_concept_isRigid
     dr hRigid alternatives
 
 /-- **Metaphysical-instantiation specialization** of
@@ -300,7 +298,7 @@ theorem abusch_derives_temporal_de_re_full
     compatibility with Klecha 2016 DOX-shaped reasoning. -/
 theorem abusch_derives_temporal_de_re_full_metaphysical
     {W E P Time : Type*} [LinearOrder Time]
-    (dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time)
+    (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hRigid : Core.Intension.IsRigid dr.concept)
     (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
@@ -404,7 +402,7 @@ theorem abusch_derives_embeddedSickSimultaneous :
 theorem abusch_derives_embeddedSickShifted :
     embeddedSickShifted.isPast := by
   simp only [ReichenbachFrame.isPast, embeddedSickShifted, shiftedFrame,
-    Semantics.Tense.embeddedFrame, matrixSaid]; omega
+    Tense.embeddedFrame, matrixSaid]; omega
 
 /-- The matrix "said" frame is perfective (E = R). -/
 theorem matrixSaid_is_perfective : matrixSaid.isPerfective := rfl

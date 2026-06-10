@@ -62,8 +62,8 @@ open Semantics.Context (KContext ContextTower ContextShift RichContext
 open HistoricalAlternatives (historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
-open Semantics.Tense (upperLimitConstraint)
-open Semantics.Tense.ConditionalShift (domainRestrictedConditional
+open Tense (upperLimitConstraint)
+open Tense.ConditionalShift (domainRestrictedConditional
   trivialConsequent nonTrivialConsequent
   trivial_domainRestricted expansion_resolves_triviality
   nontrivial_conditional_excludes)
@@ -404,7 +404,7 @@ theorem oMarking_hpShift_expanding
     (D : Set W) (h_domain : D ⊆ history ⟨w₀, t₀⟩) :
     D ⊆ history ⟨w₀, t'⟩ :=
   Set.Subset.trans h_domain
-    (Semantics.Tense.ConditionalShift.history_monotone_set
+    (Tense.ConditionalShift.history_monotone_set
       history h_bc ⟨w₀, t₀⟩ t' h_earlier)
 
 /-- The O-marking triviality problem: without domain expansion, the

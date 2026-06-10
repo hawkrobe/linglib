@@ -175,12 +175,12 @@ theorem sitVar_other_unaffected {W Time : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 def toTemporalAssignment {W Time : Type*}
-    (g : SituationAssignment W Time) : Semantics.Tense.TemporalAssignment Time :=
+    (g : SituationAssignment W Time) : TemporalAssignment Time :=
   λ n => (g n).time
 
 theorem temporal_projection_commutes {W Time : Type*}
     (g : SituationAssignment W Time) (n : ℕ) :
-    Semantics.Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
+    Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
   rfl
 
 

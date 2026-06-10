@@ -11,7 +11,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 namespace Greek.StandardModern.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Greek τότε "tóte" -/
 def tote : ThenAdverb where

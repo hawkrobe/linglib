@@ -10,7 +10,7 @@ Lexical entry for English temporal "then", typed by `ThenAdverb`.
 
 namespace English.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- English "then" -/
 def then_ : ThenAdverb where

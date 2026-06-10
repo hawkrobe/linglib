@@ -865,7 +865,7 @@ at t but not at any complement time t'.
 The paper identifies BEFORE as the single most widespread EN trigger
 (50 languages), consistent with its transparent dual-inference structure. -/
 
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
   (SentDenotation timeTrace Anscombe.before Karttunen.notUntil)
 
 /-- BEFORE entails a temporal witness for p (the main clause event

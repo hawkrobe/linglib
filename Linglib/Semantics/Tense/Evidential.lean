@@ -52,11 +52,10 @@ classification in `Features.Evidentiality`. `EPCondition.IsNonfuture` and
 
 -/
 
-namespace Semantics.Tense.Evidential
+namespace Tense.Evidential
 
 open Core.Order
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
 open Features.Evidentiality
 open Features.Mirativity
 open Semantics.Presupposition
@@ -321,4 +320,4 @@ theorem downstream_preserved_by_nondecreasing_shift [Preorder T]
 
 end TowerEvidential
 
-end Semantics.Tense.Evidential
+end Tense.Evidential

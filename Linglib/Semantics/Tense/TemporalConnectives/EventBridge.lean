@@ -29,7 +29,7 @@ and point-level theories (Anscombe).
 
 -/
 
-namespace Semantics.Tense.TemporalConnectives
+namespace Tense.TemporalConnectives
 
 open NonemptyInterval
 
@@ -100,4 +100,4 @@ theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time 
   rw [← hj]
   exact hP e he
 
-end Semantics.Tense.TemporalConnectives
+end Tense.TemporalConnectives

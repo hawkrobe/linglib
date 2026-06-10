@@ -47,9 +47,8 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 -- § Core Types
 -- ════════════════════════════════════════════════════════════════
 
--- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
--- Re-exported from `Semantics.Tense` (the canonical definition).
-export Semantics.Tense (SitProp)
+-- Situation-dependent proposition type (von Stechow's s(it), Prop-valued):
+-- `SitProp` (root-level, defined in `Semantics/Tense/GramTense.lean`).
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
@@ -283,8 +282,8 @@ For example, an attitude verb might impose:
 These constraints are what make sequence-of-tense work: they tie the
 embedded clause's temporal interpretation to the matrix event time.
 
-See `Semantics.Tense.Basic` (embedded frames) and
-`Semantics.Tense.SOT.Decomposition` for the formal
+See `Tense.Basic` (embedded frames) and
+`Tense.SOT.Decomposition` for the formal
 connection between these temporal constraints and SOT readings.
 -/
 

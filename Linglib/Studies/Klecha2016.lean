@@ -67,8 +67,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   attitudeTemporalConstraint_derived_doxastic
   attitudeTemporalConstraint_derived_circumstantial)
 open English.Predicates.Verbal (think believe hope pray)
-open Semantics.Tense (upperLimitConstraint)
-open Semantics.Tense (GramTense)
+open Tense (upperLimitConstraint)
 open Semantics.Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
@@ -867,9 +866,9 @@ theorem klecha_covers_hope_future_oriented_reading
     kernel-checked (provable by `rfl`). -/
 theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (concept : Semantics.Tense.DeRe.TimeConcept W Unit Unit ℤ)
+    (concept : Tense.DeRe.TimeConcept W Unit Unit ℤ)
     (matrix : Semantics.Context.KContext W Unit Unit ℤ) :
-    let dr : Semantics.Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
+    let dr : Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
       ⟨concept, matrix⟩
     dr.metaphysicalAlternatives history =
     actualHistoryBase history matrix.toSituation := rfl

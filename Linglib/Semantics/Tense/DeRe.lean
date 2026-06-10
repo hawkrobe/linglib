@@ -46,7 +46,7 @@ live in `Studies/Abusch1997.lean`.
   `isAcquaintedWith`. The temporal-de-re reading is the
   `Idx := KContext, Res := T` instance of the same acquaintance machinery
   PLA uses for individual de re (`Semantics/Dynamic/PLA/Belief.lean`).
-- `Semantics.Tense.TensePronoun.fullPresupposition` — the value-level
+- `TensePronoun.fullPresupposition` — the value-level
   shadow this file connects to (the deleted `TemporalDeRe` triple was a
   shadow of *this* shadow; see the `isFelicitousWith_iff_…` theorem
   below for the bridge).
@@ -97,12 +97,11 @@ live in `Studies/Abusch1997.lean`.
   `Studies/Abusch1997.lean`.
 -/
 
-namespace Semantics.Tense.DeRe
+namespace Tense.DeRe
 
 open Core (Intension WorldTimeIndex)
 open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
-open Semantics.Tense (TensePronoun GramTense TemporalAssignment)
 
 
 /-! ### Time-concepts and entity-concepts -/
@@ -319,4 +318,4 @@ theorem actualRes_isTemporallyAcquaintedWith
 
 end TemporalDeReReading
 
-end Semantics.Tense.DeRe
+end Tense.DeRe

@@ -43,7 +43,7 @@ scenario/connective combinations (Table 1 of [rett-2020]). They diverge on:
 
 namespace Phenomena.TemporalConnectives.Compare
 
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
 open English.TemporalExpressions
 
 -- ============================================================================

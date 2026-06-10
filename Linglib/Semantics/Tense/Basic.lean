@@ -20,10 +20,6 @@ SOT frame constructors.
 - `AttitudeTemporalSemantics`: how an attitude verb shifts eval time
 -/
 
-namespace Semantics.Tense
-
-open Semantics.Tense.Reichenbach
-
 /-! ### AttitudeTemporalSemantics -/
 
 /-- How an attitude verb shifts the evaluation time for its complement.
@@ -39,6 +35,22 @@ structure AttitudeTemporalSemantics (Time : Type*) where
   /-- The temporal constraint imposed on the embedded clause:
       embeddedRefTime must stand in this relation to the shifted eval time. -/
   embeddedConstraint : Time → Time → Prop
+
+/-- The two available readings for embedded past under past.
+
+    When past tense appears in the complement of a past-tense attitude verb,
+    the embedded past can be interpreted as:
+    - **shifted**: the embedded event occurred BEFORE the matrix event
+      (R' < P' = E_matrix)
+    - **simultaneous**: the embedded event occurred AT the matrix event time
+      (R' = P' = E_matrix), via SOT deletion ([ogihara-1989], §11.2 (83)) -/
+inductive EmbeddedTenseReading where
+  | shifted       -- embedded event BEFORE matrix event (back-shifted)
+  | simultaneous  -- embedded event AT matrix event time (SOT deletion)
+  deriving DecidableEq, Repr, Inhabited
+
+namespace Tense
+
 
 /-- Standard eval time shift: embedded eval time = matrix event time.
     This is the default across all six theories. -/
@@ -66,19 +78,6 @@ def embeddedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
 
 
 /-! ### Embedded Tense Readings -/
-
-/-- The two available readings for embedded past under past.
-
-    When past tense appears in the complement of a past-tense attitude verb,
-    the embedded past can be interpreted as:
-    - **shifted**: the embedded event occurred BEFORE the matrix event
-      (R' < P' = E_matrix)
-    - **simultaneous**: the embedded event occurred AT the matrix event time
-      (R' = P' = E_matrix), via SOT deletion ([ogihara-1989], §11.2 (83)) -/
-inductive EmbeddedTenseReading where
-  | shifted       -- embedded event BEFORE matrix event (back-shifted)
-  | simultaneous  -- embedded event AT matrix event time (SOT deletion)
-  deriving DecidableEq, Repr, Inhabited
 
 /-- Available readings depend on the SOT parameter of the language.
 
@@ -240,7 +239,7 @@ theorem simultaneous_satisfies_ulc {Time : Type*} [Preorder Time]
 /-!
 ### TensePronoun Projections onto SOT Frames
 
-The `TensePronoun` type in `Semantics.Tense` unifies the five views of tense.
+The `TensePronoun` type in `Tense` unifies the five views of tense.
 The following theorems show that `simultaneousFrame` and `shiftedFrame`
 are projections of specific tense pronouns — a bound present pronoun gives
 the simultaneous reading; a free past pronoun gives the shifted reading.
@@ -280,7 +279,7 @@ theorem shiftedFrame_from_tense_pronoun {Time : Type*}
 /-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time AND matrix event time.
 
-    This bridges the `doubleAccess` definition from `Semantics.Tense` to the
+    This bridges the `doubleAccess` definition from `Tense` to the
     SOT analysis: the present-under-past frame's R = P (simultaneous),
     and the speech time is independently accessible via indexical rigidity. -/
 theorem doubleAccess_present_under_past {Time : Type*} [LinearOrder Time]
@@ -319,4 +318,4 @@ structure ThenAdverb where
   deriving Repr, DecidableEq
 
 
-end Semantics.Tense
+end Tense
