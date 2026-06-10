@@ -1,7 +1,7 @@
 [
   {
     "id": "declerck1991_domainShift1a",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (1a)"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 ex (1a)"},
     "language": "stan1293",
     "primaryText": "I left while Bill was sleeping and Mary was having a bath.",
     "discourseSegments": [],
@@ -17,7 +17,7 @@
   },
   {
     "id": "declerck1991_domainShift1b",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (1b)"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 ex (1b)"},
     "language": "stan1293",
     "primaryText": "Suddenly the phone rang. Jill stood up from her chair, went over to the telephone and picked up the receiver.",
     "discourseSegments": ["Suddenly the phone rang.", "Jill stood up from her chair, went over to the telephone and picked up the receiver."],
@@ -33,7 +33,7 @@
   },
   {
     "id": "declerck1991_domainShift3a",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (3a)"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 ex (3a)"},
     "language": "stan1293",
     "primaryText": "The soldier got seriously wounded. He died shortly afterwards.",
     "discourseSegments": ["The soldier got seriously wounded.", "He died shortly afterwards."],
@@ -49,7 +49,7 @@
   },
   {
     "id": "declerck1991_modalPastWish",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §3"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §3"},
     "language": "stan1293",
     "primaryText": "I wish I didn't know his number.",
     "discourseSegments": [],
@@ -65,7 +65,7 @@
   },
   {
     "id": "declerck1991_modalPastIfWas",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §3"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §3"},
     "language": "stan1293",
     "primaryText": "If I was a rich man, I would travel a lot.",
     "discourseSegments": [],
@@ -75,13 +75,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology. Compare Iatridou 2000 fake-past analysis (Phenomena/Conditionals/Studies/Iatridou2000.lean).",
+    "comment": "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "declerck1991_futurePerfect",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §2"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §2"},
     "language": "stan1293",
     "primaryText": "I will have left by then.",
     "discourseSegments": [],
@@ -97,7 +97,7 @@
   },
   {
     "id": "declerck1991_whenPresent",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §1"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §1"},
     "language": "stan1293",
     "primaryText": "You will have to tell him (the news) when he comes home.",
     "discourseSegments": [],
@@ -113,7 +113,7 @@
   },
   {
     "id": "declerck1991_perfectHaveCome",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §2"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 2 §2"},
     "language": "stan1293",
     "primaryText": "I have come here.",
     "discourseSegments": [],
@@ -129,7 +129,7 @@
   },
   {
     "id": "declerck1991_perfectOverslept",
-    "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 fn 49"},
+    "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 fn 49"},
     "language": "stan1293",
     "primaryText": "I have overslept this morning.",
     "discourseSegments": [],
