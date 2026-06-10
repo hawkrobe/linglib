@@ -20,9 +20,9 @@ In English, the verb must agree with its subject in number (and person for some 
   (4b) *The cats sleeps. ✗ pl subject, sg verb
 -/
 
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 namespace Phenomena.Agreement
 

@@ -3,7 +3,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
 /-!
 # Chomsky (1981) — Binding Principles A/B/C [chomsky-1981]
@@ -31,7 +31,7 @@ Principle C under Principle B).
 
 namespace Chomsky1981
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 open Minimalist.Coreference
 open Phenomena.Anaphora.Coreference
 

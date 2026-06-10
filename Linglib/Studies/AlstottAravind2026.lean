@@ -4,10 +4,10 @@ import Linglib.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare
-import Linglib.Paradigms.SelfPacedReading
+import Linglib.Processing.SelfPacedReading
 
 open Features (Acceptability)
-open Paradigms.SelfPacedReading (Region)
+open SelfPacedReading (Region)
 
 /-!
 # [alstott-aravind-2026]: On aspectual coercion in *before*- and *after*-clauses
@@ -65,7 +65,7 @@ inductive CoercionType where
 
 /-- Result from a self-paced reading experiment.
 
-    Region uses `Paradigms.SelfPacedReading.Region` (offset from the
+    Region uses `SelfPacedReading.Region` (offset from the
     designated critical region): `Region.critical` is the verb,
     `Region.spillover 1` is verb+1, `Region.spillover 2` is verb+2. -/
 structure ExperimentResult where

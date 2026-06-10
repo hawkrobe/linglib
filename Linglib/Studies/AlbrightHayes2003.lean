@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Real.Basic
-import Linglib.Paradigms.WugTest
+import Linglib.Morphology.WugTest
 
 /-!
 # Albright & Hayes (2003): Rules vs. analogy in English past tenses
@@ -51,7 +51,7 @@ sensitive to IOR membership.
 
 ## What this file formalises
 
-This is the second consumer of `Paradigms/WugTest.lean` (the first is
+This is the second consumer of `Morphology/WugTest.lean` (the first is
 [breiss-katsuda-kawahara-2026]). It supplies:
 
 - The 4-way IOR Core wug stem set (example 14 in the paper);
@@ -90,7 +90,7 @@ MGL implementation) is deferred.
 
 namespace AlbrightHayes2003
 
-open Paradigms.WugTest (Attestation HasFactor HasAttestation Rate
+open Morphology.WugTest (Attestation HasFactor HasAttestation Rate
   NovelShowsFactorGradient NovelInvariantInFactor
   novelGradient_inconsistent_with_invariance)
 
@@ -233,7 +233,7 @@ theorem StochasticRule.rawConfidence_le_one (r : StochasticRule) :
 noncomputable def adjustedConfidence (r : StochasticRule) : ℚ := r.rawConfidence
 
 -- ============================================================================
--- § 3: Wug cell — wiring to `Paradigms/WugTest.lean`
+-- § 3: Wug cell — wiring to `Morphology/WugTest.lean`
 -- ============================================================================
 
 /-- A cell in the A&H wug-rating paradigm. Carries:
@@ -254,7 +254,7 @@ structure AHWugCell where
 
 namespace AHWugCell
 
-/-- The `Paradigms/WugTest.lean` `HasAttestation` instance: BKK and
+/-- The `Morphology/WugTest.lean` `HasAttestation` instance: BKK and
     A&H both use the same wug paradigm contract. Lens laws by `rfl`
     on the structure projections. -/
 instance : HasAttestation AHWugCell where
@@ -387,7 +387,7 @@ def cell_bredge : AHWugCell where
 
 /-- **A&H rules out the single-default-rule dual-mechanism
     prediction** (the [pinker-prince-1988] family). Wired through
-    `Paradigms/WugTest.lean`'s `novelGradient_inconsistent_with_invariance`
+    `Morphology/WugTest.lean`'s `novelGradient_inconsistent_with_invariance`
     at `F := Bool`: the empirical fact that novel regulars show an
     IOR gradient is structurally incompatible with the single-rule
     prediction that novel regulars are invariant in phonological

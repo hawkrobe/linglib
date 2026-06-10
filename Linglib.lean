@@ -623,11 +623,12 @@ import Linglib.Data.WALS.Features.F144Y
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.ENNRealArith
--- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
-import Linglib.Paradigms.VisualWorld
-import Linglib.Paradigms.WugTest
-import Linglib.Paradigms.AcceptabilityJudgment
-import Linglib.Paradigms.SelfPacedReading
+-- Experimental-paradigm contracts (former Paradigms/, dissolved 2026-06-10)
+import Linglib.Processing.VisualWorld
+import Linglib.Processing.SelfPacedReading
+import Linglib.Morphology.WugTest
+import Linglib.Phenomena.MinimalPairs
+import Linglib.Studies.SprouseEtAl2012
 -- Fragments
 import Linglib.Fragments.Arabic.ModernStandard.Negation
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
