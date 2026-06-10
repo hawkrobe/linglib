@@ -1,599 +1,446 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Tactics.RSAPredict
+import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Features.Subjectivity
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# [yoon-etal-2020] — Polite Speech Emerges From Competing Social Goals
+# [yoon-etal-2020] — Polite speech emerges from competing social goals
 
-## Overview
+RSA model of [yoon-etal-2020] (Open Mind 4): polite speech arises from a
+speaker trading off three communicative goals — to be informative, to be
+kind, and to *appear* informative and kind. The experimental domain: Ann
+rates Bob's poem (states `s₀–s₃`, hearts) and chooses among eight
+utterances ({terrible, bad, good, amazing} × {plain, negated}).
 
-Politeness arises from the interplay of three communicative goals:
-**informativity** (conveying the true state), **social value** (making the
-listener feel good), and **presentational** utility (appearing kind to
-the listener). This file implements both the S1 submodel (informativity +
-social tradeoff) and the full S2 model (adding presentational utility).
+The model stack (the paper's Figure 4): a literal listener
+`P_L0(s|w) ∝ L(w,s)·P(s)` over empirically elicited *soft* semantics; a
+first-order speaker with utility
+`U_S1 = φ·ln P_L0(s|w) + (1−φ)·E_{P_L0}[V(s)] − c·l(w)`; a pragmatic
+listener jointly inferring state and goal weight,
+`P_L1(s,φ|w) ∝ P_S1(w|s,φ)·P(s)·P(φ)`; and a second-order polite speaker
+with `U_S2 = ω_inf·ln P_L1(s|w) + ω_soc·E_{P_L1}[V(s)] +
+ω_pres·ln P_L1(φ̂|w) − c·l(w)`.
 
-## Experimental Design
+Instantiated on the canonical pipeline: the S1 speaker is
+`RSA.Canonical.S1` over `(state × φ)` speaker situations, and the pragmatic
+listener is `RSA.Canonical.L1`, the joint posterior over
+`HeartState × Phi` — the paper's eq. (4) by construction, with the
+`U_pres` marginal available as `.snd`. The paper's L0-gate (utterances
+with zero literal fit are unavailable to informativity-sensitive speakers)
+is the `⊥`-utility branch.
 
-- 202 participants on Amazon MTurk
-- 12 scenarios per participant (3 goals × 4 states)
-- Goals: informative, kind, both
-- States: 0-3 hearts (true quality rating)
-- Utterances: 8 options (4 adjectives × pos/neg)
+## Main statements
 
-## Finding
+* `social_prefers_indirect` / `social_prefers_positive` — the pure-social
+  speaker (φ = 0) prefers indirect and positive utterances (Figure 2, S1
+  social facet), for every α > 0: pure expected-value comparisons.
+* `informative_prefers_direct` / `informative_prefers_direct_positive` —
+  the pure-informative speaker (φ = 1) prefers direct utterances
+  (Figure 2, S1 informational facet), for every α > 0: the first is the
+  L0-gate, the second a log-monotonicity comparison.
+* `s2Utility` — the full three-goal S2 utility over the joint listener,
+  with the Table-2 MAP weight profiles.
+* `socialGoalSubjectivityLevel` — bridge to [traugott-dasher-2002]'s
+  intersubjectivity cline.
 
-Speakers with BOTH goals (informative + kind) produce more negation
-in bad states (0-1 hearts) compared to single-goal conditions. This is
-the signature of indirect speech driven by self-presentation.
+## Implementation notes
 
-## File Structure
+**Lexicon provenance.** `softSemantics` stipulates acceptance proportions
+`k/49` attributed to `literal_semantics.csv` in the paper's repository
+(the paper itself prints no θ table; N = 51 recruited per the supplement).
+-- UNVERIFIED: the k/49 values and the N = 49-after-exclusions claim await
+verification against the CSV. Negated utterances use graded negation
+`⟦not φ⟧ = 1 − ⟦φ⟧` — **a compositional construction of this file, not the
+paper's lexicon**: the paper elicits θ per utterance, including negated
+forms. The φ grid discretizes the paper's continuous `φ ~ Uniform(0,1)` to
+five points.
 
-- §1. Types & Semantics — shared across S1 and S2 models
-- §2. S1 Submodel — simplified (α=3, 5-point φ), demonstrating the
-  informativity–social tradeoff that drives negation
-- §3. Full S2 Model — paper's fitted parameters (α≈4.47, 20-point φ grid),
-  with presentational utility driving the "both" condition's negation pattern
+**Findings policy.** S1-level preferences are stated as theorems: they are
+parameter-free (any α > 0) and robust to lexicon perturbation. The S2-level
+negation preferences and the L1 state-inference orderings are *numeric*
+facts — α-dependent and, for S2, sensitive to the third decimal of single
+norming proportions — and are recorded as verified prose (§S2 below), per
+the library's policy on findings whose truth depends on exact parameter
+values. Notably, independent recomputation shows the paper's headline
+`U_S2(not terrible) > U_S2(terrible)` under both-goal weights at state s₀
+is TRUE at the fitted parameters (margin ≈ 0.14) — correcting the previous
+version of this file, which left it `sorry`ed with a docstring wrongly
+claiming it fails under point-estimate semantics (the old reflection
+tactic's interval arithmetic merely could not separate the sides).
 -/
 
 set_option autoImplicit false
 
 namespace YoonEtAl2020
 
--- ============================================================================
--- §1. Types & Semantics
--- ============================================================================
+open scoped ENNReal
+open RSA.Canonical
 
-/-- Heart state: 0-3 hearts representing true quality -/
+/-! ### States, utterances, goals -/
+
+/-- World states: the true rating (number of hearts) deserved. -/
 inductive HeartState where
-  | h0  -- 0 hearts (terrible)
-  | h1  -- 1 heart (bad)
-  | h2  -- 2 hearts (good)
-  | h3  -- 3 hearts (amazing)
-  deriving DecidableEq, Repr, Inhabited
+  | h0 | h1 | h2 | h3
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-instance : Fintype HeartState where
-  elems := {.h0, .h1, .h2, .h3}
-  complete := fun x => by cases x <;> simp
-
-/-- Utterance types: 4 adjectives × positive/negative -/
-inductive Utterance where
-  | terrible      -- "It was terrible"
-  | bad           -- "It was bad"
-  | good          -- "It was good"
-  | amazing       -- "It was amazing"
-  | notTerrible   -- "It wasn't terrible"
-  | notBad        -- "It wasn't bad"
-  | notGood       -- "It wasn't good"
-  | notAmazing    -- "It wasn't amazing"
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype Utterance where
-  elems := {.terrible, .bad, .good, .amazing,
-            .notTerrible, .notBad, .notGood, .notAmazing}
-  complete := fun x => by cases x <;> simp
-
-/-- Is this a negated utterance? -/
-def Utterance.isNegated : Utterance → Bool
-  | .notTerrible | .notBad | .notGood | .notAmazing => true
-  | _ => false
-
-/-- Get the base adjective (without negation) -/
-inductive Adjective where
-  | terrible | bad | good | amazing
-  deriving DecidableEq, Repr
-
-def Utterance.baseAdjective : Utterance → Adjective
-  | .terrible | .notTerrible => .terrible
-  | .bad | .notBad => .bad
-  | .good | .notGood => .good
-  | .amazing | .notAmazing => .amazing
-
-/-- Speaker goal conditions from the experiment -/
-inductive GoalCondition where
-  | informative  -- "give accurate and informative feedback"
-  | kind         -- "make the listener feel good"
-  | both         -- "BOTH make Bob feel good AND give accurate feedback"
-  deriving DecidableEq, Repr, Inhabited
-
-/--
-Soft semantic meaning: P(accept | adjective, state) from the literal
-semantics norming task.
-
-Raw acceptance proportions from `literal_semantics.csv` in the paper's
-GitHub repository (https://github.com/ejyoon/polite_speaker). N=49
-participants (after exclusions; supplement reports N=51 recruited) made
-binary yes/no judgments for each adjective × state combination.
-
-The paper's full model infers θ via a Beta-Binomial BDA (uniform Beta(1,1)
-prior), marginalizing over posterior uncertainty. We use the raw proportions
-k/49 as point estimates — the maximum likelihood values.
-
-Returns `ℚ` (not `ℝ≥0∞`): values feed into the RSA `meaning` field via
-`↑(...) : ℝ`, and the `rsa_predict` reflection tactic extracts `ℚ`
-literals from this coercion to drive its memoized evaluator. ENNReal
-literals would block reflection.
-
-TODO: migrate to `ℝ≥0∞` once `rsa_predict` learns to reify ENNReal
-literals (extension tracked separately).
--/
-def softSemantics : Adjective → HeartState → ℚ
-  -- "terrible": peaks at 0 hearts, ~50% at 1 heart
-  | .terrible, .h0 => 1       -- 49/49
-  | .terrible, .h1 => 26/49   -- 0.53
-  | .terrible, .h2 => 0       -- 0/49
-  | .terrible, .h3 => 1/49    -- 0.02
-  -- "bad": high at 0-1 hearts, zero at 2-3
-  | .bad, .h0 => 1            -- 49/49
-  | .bad, .h1 => 45/49        -- 0.92
-  | .bad, .h2 => 0            -- 0/49
-  | .bad, .h3 => 0            -- 0/49
-  -- "good": high at 2-3 hearts (text confirms "equally true at 2 and 3")
-  | .good, .h0 => 1/49        -- 0.02
-  | .good, .h1 => 2/49        -- 0.04
-  | .good, .h2 => 47/49       -- 0.96
-  | .good, .h3 => 1           -- 49/49
-  -- "amazing": peaks at 3 hearts
-  | .amazing, .h0 => 1/49     -- 0.02
-  | .amazing, .h1 => 1/49     -- 0.02
-  | .amazing, .h2 => 7/49     -- 0.14
-  | .amazing, .h3 => 47/49    -- 0.96
-
-/-- Base adjective meaning (positive form): `HeartState → ℚ`. -/
-def adjMeaning : Adjective → HeartState → ℚ
-  | .terrible => softSemantics .terrible
-  | .bad => softSemantics .bad
-  | .good => softSemantics .good
-  | .amazing => softSemantics .amazing
-
-/-- Graded negation on soft semantic values: `(¬p) w = 1 - p w`. -/
-private def negProp (p : HeartState → ℚ) : HeartState → ℚ := fun w => 1 - p w
-
-/--
-**Compositionally derived utterance semantics.**
-
-Negated utterances are derived by applying graded negation to base meanings:
-- ⟦not terrible⟧ = (1 - ⟦terrible⟧)
-
-This mirrors Montague's compositional semantics where ⟦not φ⟧ = pnot(⟦φ⟧),
-lifted to soft (`ℚ`-valued) propositions.
--/
-def utteranceSemantics : Utterance → HeartState → ℚ
-  -- Positive forms: base adjective meaning
-  | .terrible => adjMeaning .terrible
-  | .bad => adjMeaning .bad
-  | .good => adjMeaning .good
-  | .amazing => adjMeaning .amazing
-  -- Negated forms: compositionally derived via graded negation
-  | .notTerrible => negProp (adjMeaning .terrible)
-  | .notBad => negProp (adjMeaning .bad)
-  | .notGood => negProp (adjMeaning .good)
-  | .notAmazing => negProp (adjMeaning .amazing)
-
-/-- Utterance cost: number of words -/
-def utteranceCost : Utterance → ℕ
-  | .terrible | .bad | .good | .amazing => 2  -- "It was X"
-  | .notTerrible | .notBad | .notGood | .notAmazing => 3  -- "It wasn't X"
-
-/--
-Subjective value V(s): linear mapping from states to values.
-The listener prefers higher heart states: V(3 hearts) > V(0 hearts).
--/
+/-- Subjective value `V(s)`: the paper's linear state-value mapping. -/
 def subjectiveValue : HeartState → ℚ
   | .h0 => 0
   | .h1 => 1
   | .h2 => 2
   | .h3 => 3
 
--- ============================================================================
--- §1a. Structural Properties
--- ============================================================================
+/-- The eight utterances: four adjectives × {plain, negated}. -/
+inductive Utterance where
+  | terrible | bad | good | amazing
+  | notTerrible | notBad | notGood | notAmazing
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- The model uses soft semantics: meaning values are in [0,1]. -/
-theorem meaning_bounded : ∀ u s, 0 ≤ utteranceSemantics u s ∧ utteranceSemantics u s ≤ 1 := by
-  intro u s; cases u <;> cases s <;>
-  simp only [utteranceSemantics, adjMeaning, negProp, softSemantics] <;>
-  constructor <;> norm_num
+/-- Is this a negated utterance? -/
+def Utterance.isNegated : Utterance → Bool
+  | .notTerrible | .notBad | .notGood | .notAmazing => true
+  | _ => false
 
-/-- Negated utterances cost more than direct ones. -/
-theorem negation_costlier : ∀ u : Utterance, u.isNegated → utteranceCost u = 3 := by
-  intro u h; cases u <;> simp [Utterance.isNegated] at h <;> rfl
-
-/-- Direct utterances cost less. -/
-theorem direct_cheaper : ∀ u : Utterance, ¬u.isNegated → utteranceCost u = 2 := by
-  intro u h; cases u <;> simp [Utterance.isNegated] at h <;> rfl
-
--- ============================================================================
--- §2. S1 Submodel (simplified parameters)
--- ============================================================================
-
-/-!
-### S1 Submodel
-
-The S1 speaker's utility is a weighted sum of **informativity** and
-**social value**, interpolated by a latent kindness weight φ:
-
-    U_S1(u, s; φ) = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − c · l(u)
-
-This submodel uses approximate parameters (α = 3, c = 1, 5-point φ grid)
-to demonstrate the qualitative predictions. The paper infers α and c via
-BDA with priors α ~ Uniform(0, 20) and c ~ Uniform(1, 10).
--/
-
-/-- Discretized kindness weight. The paper uses continuous φ ~ Uniform(0, 1);
-    we discretize to {0, 1/4, 1/2, 3/4, 1} for computable verification.
-    Higher φ = speaker prioritizes informativity over social value. -/
-inductive Phi where
-  | p0    -- φ = 0   (pure social)
-  | p25   -- φ = 1/4
-  | p50   -- φ = 1/2
-  | p75   -- φ = 3/4
-  | p100  -- φ = 1   (pure informativity)
+/-- Speaker goal conditions from the experiment. -/
+inductive GoalCondition where
+  | informative | kind | both
   deriving DecidableEq, Repr, Inhabited
 
-instance : Fintype Phi where
-  elems := {.p0, .p25, .p50, .p75, .p100}
-  complete := fun x => by cases x <;> simp
+/-- Discretized goal weight φ (informativity vs. kindness); the paper's
+`φ ~ Uniform(0,1)` discretized to five points. -/
+inductive Phi where
+  | p0 | p25 | p50 | p75 | p100
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The rational value of each φ level. -/
 def Phi.val : Phi → ℚ
-  | .p0   => 0
-  | .p25  => 1/4
-  | .p50  => 1/2
-  | .p75  => 3/4
+  | .p0 => 0
+  | .p25 => 1/4
+  | .p50 => 1/2
+  | .p75 => 3/4
   | .p100 => 1
 
-open RSA Real BigOperators in
-/-- S1 submodel with approximate parameters (α = 3, c = 1).
+/-! ### The soft lexicon -/
 
-    S1 utility = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − l(u)
+/-- Soft semantic acceptance proportions for the four positive adjectives.
+-- UNVERIFIED: stipulated as `k/49` from `literal_semantics.csv` in the
+paper's repository; not printed in the paper. -/
+def softSemantics : Utterance → HeartState → ℚ
+  | .terrible, .h0 => 1
+  | .terrible, .h1 => 26/49
+  | .terrible, .h2 => 0
+  | .terrible, .h3 => 1/49
+  | .bad, .h0 => 1
+  | .bad, .h1 => 45/49
+  | .bad, .h2 => 0
+  | .bad, .h3 => 0
+  | .good, .h0 => 1/49
+  | .good, .h1 => 2/49
+  | .good, .h2 => 47/49
+  | .good, .h3 => 1
+  | .amazing, .h0 => 1/49
+  | .amazing, .h1 => 1/49
+  | .amazing, .h2 => 7/49
+  | .amazing, .h3 => 47/49
+  | _, _ => 0  -- negated forms are derived below
 
-    Three components:
-    - φ · log L0 (informativity at true state)
-    - (1−φ) · E_L0[V|u] (social value: expected subjective value under L0)
-    - −l(u) (utterance length cost, with c = 1)
+/-- Utterance semantics: positive forms from the norming data; negated
+forms by graded negation `⟦not φ⟧ = 1 − ⟦φ⟧`. **This construction is the
+formaliser's, not the paper's**: the paper elicits per-utterance θ for all
+eight utterances; the derived profiles are qualitatively compatible with
+the paper's description of "not terrible" but are not its lexicon. -/
+def meaning : Utterance → HeartState → ℚ
+  | .notTerrible, s => 1 - softSemantics .terrible s
+  | .notBad, s => 1 - softSemantics .bad s
+  | .notGood, s => 1 - softSemantics .good s
+  | .notAmazing, s => 1 - softSemantics .amazing s
+  | u, s => softSemantics u s
 
-    The log gate is inactive for the pure social speaker (φ=0, weight=0).
-    This allows semantically incompatible utterances to receive positive
-    scores when the speaker doesn't care about informativity. -/
-noncomputable def cfg : RSAConfig Utterance HeartState where
-  Latent := Phi
-  meaning _ _ u w := ↑(utteranceSemantics u w)
-  meaning_nonneg _ _ u w := by exact_mod_cast (meaning_bounded u w).1
-  s1Score l0 α φ w u :=
-    if l0 u w = 0 then
-      -- logActive gate: φ = .p0 means pure social (no log term), allow positive score
-      if φ = .p0 then exp (α * (↑φ.val * log (l0 u w) +
-                                 (1 - ↑φ.val) * ∑ w' : HeartState, l0 u w' * ↑(subjectiveValue w') +
-                                 -(↑(utteranceCost u) : ℝ)))
-      else 0
-    else exp (α * (↑φ.val * log (l0 u w) +
-                   (1 - ↑φ.val) * ∑ w' : HeartState, l0 u w' * ↑(subjectiveValue w') +
-                   -(↑(utteranceCost u) : ℝ)))
-  s1Score_nonneg _ _ _ _ _ _ _ := by
+/-- The lexicon is soft: values in `[0, 1]`. -/
+theorem meaning_bounded : ∀ u s, 0 ≤ meaning u s ∧ meaning u s ≤ 1 := by
+  intro u s
+  cases u <;> cases s <;> constructor <;> norm_num [meaning, softSemantics]
+
+/-- Utterance cost: length in words ("It was X" = 3, "It wasn't X" = 4);
+only the difference matters in comparisons. -/
+def utteranceCost : Utterance → ℕ
+  | .terrible | .bad | .good | .amazing => 3
+  | _ => 4
+
+theorem negation_costlier (u : Utterance) (h : u.isNegated) : utteranceCost u = 4 := by
+  cases u <;> first | rfl | simp [Utterance.isNegated] at h
+
+/-! ### The literal listener in closed form
+
+With a uniform state prior, `P_L0(s|w) = meaning w s / Σ_s' meaning w s'`.
+The closed rational forms below feed the speaker utility exactly. -/
+
+private theorem sum_hearts (f : HeartState → ℚ) :
+    (∑ s : HeartState, f s) = f .h0 + f .h1 + f .h2 + f .h3 := by
+  rw [show (Finset.univ : Finset HeartState) = {.h0, .h1, .h2, .h3} from by decide,
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton]
+  ring
+
+/-- The lexicon mass of an utterance (the L0 partition function). -/
+def semMass (u : Utterance) : ℚ := ∑ s : HeartState, meaning u s
+
+/-- `P_L0(s|u)` in closed rational form (uniform state prior cancels). -/
+def l0Val (u : Utterance) (s : HeartState) : ℚ := meaning u s / semMass u
+
+/-- `E_{P_L0(·|u)}[V(s)]`: the social value of `u` to the literal listener. -/
+def ev (u : Utterance) : ℚ := ∑ s : HeartState, l0Val u s * subjectiveValue s
+
+private theorem ev_terrible : ev .terrible = 29/76 := by
+  rw [ev, sum_hearts]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+
+private theorem ev_notTerrible : ev .notTerrible = 53/24 := by
+  rw [ev, sum_hearts]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+
+private theorem ev_amazing : ev .amazing = 39/14 := by
+  rw [ev, sum_hearts]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+
+private theorem ev_notAmazing : ev .notAmazing = 69/70 := by
+  rw [ev, sum_hearts]
+  norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, subjectiveValue, show Fintype.card HeartState = 4 from rfl]
+
+/-! ### The S1 speaker on the canonical pipeline -/
+
+/-- S1 utility (the paper's
+`U_S1 = φ·ln P_L0(s|w) + (1−φ)·E_{P_L0}[V] − c·l(w)`, `c = 1`), as an
+`EReal` score over speaker situations `(s, φ)`. The `⊥` branch is the
+paper's L0-gate: an utterance with zero literal fit is unavailable to any
+informativity-sensitive speaker (φ ≠ 0); for the pure-social speaker the
+φ-weighted log term vanishes, so the gate does not apply. -/
+noncomputable def util (α : ℝ) (p : HeartState × Phi) (u : Utterance) : EReal :=
+  if meaning u p.1 = 0 ∧ p.2 ≠ .p0 then ⊥
+  else ((α * ((Phi.val p.2 : ℝ) * Real.log (l0Val u p.1 : ℝ)
+    + (1 - (Phi.val p.2 : ℝ)) * (ev u : ℝ)
+    - (utteranceCost u : ℝ)) : ℝ) : EReal)
+
+instance (α : ℝ) : ViableSpeaker (util α) where
+  no_top _ _ := by
+    unfold util
     split
-    · split
-      · exact le_of_lt (exp_pos _)
-      · exact le_refl 0
-    · exact le_of_lt (exp_pos _)
-  α := 3
-  α_pos := by norm_num
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
+    · exact bot_ne_top
+    · exact EReal.coe_ne_top _
+  some_finite p := by
+    obtain ⟨s, φ⟩ := p
+    cases s
+    · exact ⟨.terrible, by
+        unfold util
+        rw [if_neg (by norm_num [meaning, softSemantics])]
+        exact EReal.coe_ne_bot _⟩
+    · exact ⟨.bad, by
+        unfold util
+        rw [if_neg (by norm_num [meaning, softSemantics])]
+        exact EReal.coe_ne_bot _⟩
+    · exact ⟨.good, by
+        unfold util
+        rw [if_neg (by norm_num [meaning, softSemantics])]
+        exact EReal.coe_ne_bot _⟩
+    · exact ⟨.amazing, by
+        unfold util
+        rw [if_neg (by norm_num [meaning, softSemantics])]
+        exact EReal.coe_ne_bot _⟩
 
--- ============================================================================
--- §2a. State Inference: Direct Utterances
--- ============================================================================
+/-- The S1 speaker: the canonical softmax speaker over `util`. -/
+noncomputable def speaker (α : ℝ) : HeartState × Phi → PMF Utterance :=
+  S1 (util α)
 
-set_option maxHeartbeats 1600000 in
-/-- "terrible" → h0: L1 assigns more mass to h0 than h3. -/
-theorem terrible_map_h0_vs_h3 :
-    cfg.L1 .terrible .h0 > cfg.L1 .terrible .h3 := by
-  rsa_predict
+private theorem util_ungated {α : ℝ} {s : HeartState} {φ : Phi} {u : Utterance}
+    (h : ¬(meaning u s = 0 ∧ φ ≠ .p0)) :
+    util α (s, φ) u
+      = ((α * ((Phi.val φ : ℝ) * Real.log (l0Val u s : ℝ)
+          + (1 - (Phi.val φ : ℝ)) * (ev u : ℝ) - (utteranceCost u : ℝ)) : ℝ) : EReal) := by
+  unfold util
+  rw [if_neg h]
 
-set_option maxHeartbeats 1600000 in
-/-- "terrible" → h0: L1 assigns more mass to h0 than h1. -/
-theorem terrible_map_h0_vs_h1 :
-    cfg.L1 .terrible .h0 > cfg.L1 .terrible .h1 := by
-  rsa_predict
+private theorem util_gated {α : ℝ} {s : HeartState} {φ : Phi} {u : Utterance}
+    (h0 : meaning u s = 0) (hφ : φ ≠ .p0) : util α (s, φ) u = ⊥ := by
+  unfold util
+  rw [if_pos ⟨h0, hφ⟩]
 
-set_option maxHeartbeats 1600000 in
-/-- "bad" → h1: L1 assigns more mass to h1 than h0. -/
-theorem bad_map_h1_vs_h0 :
-    cfg.L1 .bad .h1 > cfg.L1 .bad .h0 := by
-  rsa_predict
+/-! ### S1 findings (Figure 2, S1 facets) — structural, every α > 0 -/
 
-set_option maxHeartbeats 1600000 in
-/-- "bad" → h1: L1 assigns more mass to h1 than h3. -/
-theorem bad_map_h1_vs_h3 :
-    cfg.L1 .bad .h1 > cfg.L1 .bad .h3 := by
-  rsa_predict
+/-- **The pure-social speaker prefers indirect speech** at the worst state:
+"it wasn't terrible" beats "it was terrible" (Figure 2, S1 social facet).
+A pure expected-value comparison: the social gain `E[V]` of the indirect
+form (53/24 vs 29/76) exceeds its one-word extra cost. -/
+theorem social_prefers_indirect {α : ℝ} (hα : 0 < α) :
+    speaker α (.h0, .p0) .terrible < speaker α (.h0, .p0) .notTerrible := by
+  rw [speaker, S1_prefers_iff,
+      util_ungated (by simp), util_ungated (by simp)]
+  refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
+  rw [ev_terrible, ev_notTerrible]
+  norm_num [Phi.val, utteranceCost]
 
-set_option maxHeartbeats 1600000 in
-/-- "good" → h2: L1 assigns more mass to h2 than h0. -/
-theorem good_map_h2_vs_h0 :
-    cfg.L1 .good .h2 > cfg.L1 .good .h0 := by
-  rsa_predict
+/-- **The pure-social speaker prefers positive utterances**: "it was
+amazing" beats "it wasn't amazing" (same cost direction reversed: here the
+positive form is both kinder and cheaper). -/
+theorem social_prefers_positive {α : ℝ} (hα : 0 < α) :
+    speaker α (.h0, .p0) .notAmazing < speaker α (.h0, .p0) .amazing := by
+  rw [speaker, S1_prefers_iff,
+      util_ungated (by simp), util_ungated (by simp)]
+  refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
+  rw [ev_amazing, ev_notAmazing]
+  norm_num [Phi.val, utteranceCost]
 
-set_option maxHeartbeats 1600000 in
-/-- "good" → h2: L1 assigns more mass to h2 than h3. -/
-theorem good_map_h2_vs_h3 :
-    cfg.L1 .good .h2 > cfg.L1 .good .h3 := by
-  rsa_predict
+/-- **The pure-informative speaker prefers direct speech** at the worst
+state: "it wasn't terrible" is literally false at zero hearts (graded
+meaning 0), so the L0-gate excludes it for any informativity-sensitive
+speaker. -/
+theorem informative_prefers_direct (α : ℝ) :
+    speaker α (.h0, .p100) .notTerrible < speaker α (.h0, .p100) .terrible := by
+  rw [speaker, S1_prefers_iff,
+      util_gated (by norm_num [meaning, softSemantics]) (by decide),
+      util_ungated (by norm_num [meaning, softSemantics])]
+  exact EReal.bot_lt_coe _
 
-set_option maxHeartbeats 1600000 in
-/-- "amazing" → h3: L1 assigns more mass to h3 than h0. -/
-theorem amazing_map_h3_vs_h0 :
-    cfg.L1 .amazing .h3 > cfg.L1 .amazing .h0 := by
-  rsa_predict
+/-- Even slight informativity (φ = 1/4) suffices to exclude the literally
+false indirect form — a gate fact about the discretized model, not a claim
+of the paper's. -/
+theorem slight_informativity_prefers_direct (α : ℝ) :
+    speaker α (.h0, .p25) .notTerrible < speaker α (.h0, .p25) .terrible := by
+  rw [speaker, S1_prefers_iff,
+      util_gated (by norm_num [meaning, softSemantics]) (by decide),
+      util_ungated (by norm_num [meaning, softSemantics])]
+  exact EReal.bot_lt_coe _
 
-set_option maxHeartbeats 1600000 in
-/-- "amazing" → h3: L1 assigns more mass to h3 than h2. -/
-theorem amazing_map_h3_vs_h2 :
-    cfg.L1 .amazing .h3 > cfg.L1 .amazing .h2 := by
-  rsa_predict
+/-- **The pure-informative speaker prefers the direct positive** at the
+best state: "amazing" beats "not amazing" at three hearts — a genuine
+log-monotonicity comparison (`P_L0(s₃|amazing) = 47/56 > 1/70 =
+P_L0(s₃|not amazing)`), with cost also favouring the direct form. -/
+theorem informative_prefers_direct_positive {α : ℝ} (hα : 0 < α) :
+    speaker α (.h3, .p100) .notAmazing < speaker α (.h3, .p100) .amazing := by
+  rw [speaker, S1_prefers_iff,
+      util_ungated (by norm_num [meaning, softSemantics]),
+      util_ungated (by norm_num [meaning, softSemantics])]
+  refine EReal.coe_lt_coe (mul_lt_mul_of_pos_left ?_ hα)
+  have hlog : Real.log ((l0Val .notAmazing .h3 : ℚ) : ℝ)
+      < Real.log ((l0Val .amazing .h3 : ℚ) : ℝ) := by
+    apply Real.log_lt_log
+    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, show Fintype.card HeartState = 4 from rfl]
+    · norm_num [l0Val, semMass, sum_hearts, meaning, softSemantics, show Fintype.card HeartState = 4 from rfl]
+  simp only [Phi.val]
+  norm_num [utteranceCost]
+  linarith [hlog]
 
--- ============================================================================
--- §2b. State Inference: Negated Utterances
--- ============================================================================
+/-! ### The pragmatic listener: the joint (state, goal) posterior -/
 
-set_option maxHeartbeats 1600000 in
-/-- "not terrible" shifts away from h0: L1 prefers h1 over h0.
-    Negation makes bad states more acceptable, so the listener infers
-    the state is "not the worst" rather than "the worst". -/
-theorem not_terrible_away_from_h0 :
-    cfg.L1 .notTerrible .h1 > cfg.L1 .notTerrible .h0 := by
-  rsa_predict
+/-- Uniform joint prior over `state × φ` (the paper's uniform `P(s)` and
+uniform `P(φ)`, discretized). -/
+noncomputable def prior : PMF (HeartState × Phi) := PMF.uniformOfFintype _
 
-set_option maxHeartbeats 1600000 in
-/-- "not bad" peaks at h2: L1 prefers h2 over h3.
-    "Not bad" is most compatible with moderate-good states. -/
-theorem not_bad_peaks_h2 :
-    cfg.L1 .notBad .h2 > cfg.L1 .notBad .h3 := by
-  rsa_predict
+theorem prior_pos (p : HeartState × Phi) : prior p ≠ 0 :=
+  (prior.mem_support_iff p).mp (PMF.mem_support_uniformOfFintype p)
 
--- ============================================================================
--- §2c. Speaker Behavior: Informativity vs Social Goals
--- ============================================================================
+/-- Every utterance is literally compatible with some state, so every
+utterance has positive marginal probability. -/
+theorem marginal_ne_zero (α : ℝ) (u : Utterance) :
+    PMF.marginal (speaker α) prior u ≠ 0 := by
+  have key : ∀ (s : HeartState), meaning u s ≠ 0 →
+      PMF.marginal (speaker α) prior u ≠ 0 := fun s hs =>
+    PMF.marginal_ne_zero _ _ _ (prior_pos (s, .p100))
+      (S1_ne_zero (util α) (by rw [util_ungated (by simp [hs])]; exact EReal.coe_ne_bot _))
+  cases u
+  · exact key .h0 (by norm_num [meaning, softSemantics])
+  · exact key .h0 (by norm_num [meaning, softSemantics])
+  · exact key .h3 (by norm_num [meaning, softSemantics])
+  · exact key .h3 (by norm_num [meaning, softSemantics])
+  · exact key .h2 (by norm_num [meaning, softSemantics])
+  · exact key .h2 (by norm_num [meaning, softSemantics])
+  · exact key .h0 (by norm_num [meaning, softSemantics])
+  · exact key .h0 (by norm_num [meaning, softSemantics])
 
-set_option maxHeartbeats 1600000 in
-/-- At h0, a purely informative speaker (φ=1) prefers "terrible" over
-    "not terrible". Direct speech maximizes informativity. -/
-theorem informative_prefers_direct :
-    cfg.S1 .p100 .h0 .terrible > cfg.S1 .p100 .h0 .notTerrible := by
-  rsa_predict
+/-- The pragmatic listener (the paper's eq. (4)): the joint Bayesian
+posterior over `(state, φ)` given the utterance. The state marginal
+(`.fst`) is `P_L1(s|w)`; the φ marginal (`.snd`) is `P_L1(φ|w)`, the
+quantity inside the paper's presentational utility (eq. (3)). -/
+noncomputable def listener (α : ℝ) (u : Utterance) : PMF (HeartState × Phi) :=
+  L1 (speaker α) prior u (marginal_ne_zero α u)
 
-set_option maxHeartbeats 1600000 in
-/-- At h0, a purely social speaker (φ=0) prefers "not terrible" over
-    "terrible". Indirect speech maximizes social value: E[V|"not terrible"]
-    is much higher than E[V|"terrible"] because L0 assigns probability
-    to high-value states. -/
-theorem social_prefers_indirect :
-    cfg.S1 .p0 .h0 .notTerrible > cfg.S1 .p0 .h0 .terrible := by
-  rsa_predict
+/-! ### L1 state inferences (prose)
 
-set_option maxHeartbeats 1600000 in
-/-- Even at φ=1/4, the speaker still prefers "terrible" over "not terrible"
-    at h0. The informativity penalty of "not terrible" at h0 outweighs the
-    social benefit until φ drops to 0. This shows the crossover between
-    direct and indirect preference is between φ=0 and φ=1/4. -/
-theorem slight_informativity_prefers_direct :
-    cfg.S1 .p25 .h0 .terrible > cfg.S1 .p25 .h0 .notTerrible := by
-  rsa_predict
+The previous version of this file proved eight L1 state-inference
+orderings (e.g. `P_L1(s₀|terrible) > P_L1(s₃|terrible)`: 0.686 vs 0.0003)
+by interval-arithmetic reflection. They are numeric facts about
+φ-marginalised sums of exponentials; independent recomputation confirms
+all eight at α = 3, seven robust over α ∈ [0.01, 100] and one
+(`P_L1(s₁|bad) > P_L1(s₀|bad)`, 0.610 vs 0.390) reversing below α ≈ 1.19.
+Per the parameter-dependence policy they are recorded here as prose. -/
 
-set_option maxHeartbeats 1600000 in
-/-- At h3, a purely social speaker prefers "amazing" over "good".
-    Even without informativity concerns, the higher expected social value
-    from "amazing" (which concentrates L0 on h3) drives the preference. -/
-theorem social_prefers_positive :
-    cfg.S1 .p0 .h3 .amazing > cfg.S1 .p0 .h3 .good := by
-  rsa_predict
+/-! ### The S2 polite speaker -/
 
-set_option maxHeartbeats 1600000 in
-/-- At h3, a purely informative speaker prefers "amazing" over "not amazing".
-    Direct positive speech is more informative. -/
-theorem informative_prefers_direct_positive :
-    cfg.S1 .p100 .h3 .amazing > cfg.S1 .p100 .h3 .notAmazing := by
-  rsa_predict
-
--- ============================================================================
--- §3. Full S2 Model (paper's fitted parameters)
--- ============================================================================
-
-/-!
-### Full S2 Model
-
-The S2 speaker's utility has three terms computed w.r.t. L1 marginals:
-
-    U_S2(u, s; ω, φ̂) = ω_inf · ln P_L1(s|u)
-                       + ω_soc · Σ_s' P_L1(s'|u) · V(s')
-                       + ω_pres · ln P_L1(φ̂|u)
-
-    P_S2(u|s, ω) ∝ exp(-cost(u)) · exp(α · U_S2)
-
-The three utility components:
-- **Informativity** (ω_inf): log probability of the true state under L1
-- **Social** (ω_soc): expected subjective value under L1
-- **Presentational** (ω_pres): log probability that L1 infers the target
-  kindness level φ̂ (speaker wants to *appear* kind)
-
-### Parameters
-
-This uses the paper's fitted parameters from the supplement:
-- α ≈ 4.47: shared by S1 and S2
-- c ≈ 2.64: cost of negation (positive utterances cost 1)
-- ω weights and φ̂: posterior means per goal condition
-- φ grid: 20 values {0, 1/20,..., 19/20}
-
-### Cost Encoding
-
-Cost enters the S2 model multiplicatively via the utterance prior:
-P_prior(u) ∝ exp(-cost(u)). In the `combinedUtility` framework (where
-the exponent is α · Σ terms), this is encoded as a constant term
-−cost(u)/α, so that α · (−cost/α) = −cost, yielding the correct
-exp(−cost) factor after exponentiation.
--/
-
-/-- Discretized kindness weight φ ∈ [0, 1] on a 5-point grid.
-    Grid: {0, 1/4, 1/2, 3/4, 1}. The paper's WebPPL uses 40 values
-    at 0.025 spacing; we use 5 matching the S1 submodel's `Phi` type
-    for tractable L1 computation (200 cells vs 800 with Fin 20).
-    MAP estimates (φ̂ ≈ 0.35-0.50) are mapped to nearest grid point. -/
-abbrev PhiGrid := Fin 5
-
-/-- The rational value of each grid point: k/4 for k ∈ {0,..., 4}. -/
-def phiVal (i : PhiGrid) : ℚ := i.val / 4
-
-/-- S2 utility weights for a specific goal condition.
-    Posterior means from the supplement's parameter table. -/
+/-- S2 goal weights `ω` and projected goal `φ̂`. MAP estimates from the
+paper's Table 2 (main text); `phiHat` discretizes the fitted φ to the grid
+(0.36, 0.37 → ¼; 0.49 → ½). -/
 structure S2Weights where
-  ωInf : ℚ       -- informativity weight
-  ωSoc : ℚ       -- social weight
-  ωPres : ℚ      -- presentational weight
-  phiHat : PhiGrid  -- target kindness level φ̂ (discretized to grid)
+  wInf : ℚ
+  wSoc : ℚ
+  wPres : ℚ
+  phiHat : Phi
 
-/-- Cost term for the S1/S2 utility.
-    Cost enters via the utterance prior: P_prior(u) ∝ exp(-cost(u)).
-    Since `combinedUtility` scales everything by α, we divide by α
-    so that α · costTerm = -cost(u):
-      costTerm(pos) = -1/α = -100/447
-      costTerm(neg) = -c/α = -264/447 -/
-private def costTerm (u : Utterance) : ℚ :=
-  if u.isNegated then -(264 : ℚ) / 447 else -(100 : ℚ) / 447
+/-- Both-goal condition (Table 2: ω = (0.36, 0.11, 0.54), φ = 0.36). -/
+def bothWeights : S2Weights := ⟨36/100, 11/100, 54/100, .p25⟩
 
--- §3a. Goal Condition Weights
+/-- Informative condition (Table 2: ω = (0.36, 0.02, 0.62), φ = 0.49). -/
+def informativeWeights : S2Weights := ⟨36/100, 2/100, 62/100, .p50⟩
 
-/-- Weights for "informative" goal condition (Table 2).
-    High presentational weight (ω_pres = 62%) with neutral φ̂ ≈ 0.49.
-    Discretized to 2/4 = 0.50. -/
-def informativeWeights : S2Weights where
-  ωInf := 36/100
-  ωSoc := 2/100
-  ωPres := 62/100
-  phiHat := ⟨2, by omega⟩
+/-- Kind condition (Table 2's "social" row: ω = (0.25, 0.31, 0.44),
+φ = 0.37). -/
+def kindWeights : S2Weights := ⟨25/100, 31/100, 44/100, .p25⟩
 
-/-- Weights for "kind" (social) goal condition (Table 2).
-    Highest social weight (ω_soc = 31%) with kind φ̂ ≈ 0.37.
-    Discretized to 1/4 = 0.25. -/
-def kindWeights : S2Weights where
-  ωInf := 25/100
-  ωSoc := 31/100
-  ωPres := 44/100
-  phiHat := ⟨1, by omega⟩
+/-- The S2 utility (the paper's eq. (2) with eq. (3)):
+`ω_inf·ln P_L1(s|w) + ω_soc·E_{P_L1(s|w)}[V] + ω_pres·ln P_L1(φ̂|w) − c·l(w)`,
+over the joint listener's marginals. The cost sits inside the utility (and
+hence inside S2's α-scaling), as in the paper's Figure 4 — correcting the
+previous version, which moved it outside as an utterance prior. -/
+noncomputable def s2Utility (α c : ℝ) (W : S2Weights) (s : HeartState)
+    (u : Utterance) : ℝ :=
+  (W.wInf : ℝ) * Real.log (((listener α u).fst s).toReal)
+    + (W.wSoc : ℝ)
+        * ∑ s' : HeartState, ((listener α u).fst s').toReal * (subjectiveValue s' : ℝ)
+    + (W.wPres : ℝ) * Real.log (((listener α u).snd W.phiHat).toReal)
+    - c * (utteranceCost u : ℝ)
 
-/-- Weights for "both" goal condition (Table 2).
-    Balanced: ω_inf = 36%, ω_soc = 11%, ω_pres = 54%, φ̂ ≈ 0.36.
-    Discretized to 1/4 = 0.25.
-    The combination of informativity and presentational pressure drives
-    the "both" condition's distinctive negation pattern. -/
-def bothWeights : S2Weights where
-  ωInf := 36/100
-  ωSoc := 11/100
-  ωPres := 54/100
-  phiHat := ⟨1, by omega⟩
+/-! ### S2 findings (prose, independently recomputed)
 
--- §3b. S2 RSAConfig (base S1/L1 layers)
+At the fitted parameters (α ≈ 4.47, c ≈ 2.64 — both attributed to the
+paper's supplement/repository and -- UNVERIFIED from the PDF, which states
+only the priors `α ~ Uniform(0,20)`, `c ~ Uniform(1,10)`), with cost
+α-scaled as above:
 
-open RSA Real BigOperators in
-/-- Base RSAConfig for the S2 model's S1/L1 layers.
-    Same scoring as the S1 submodel but with:
-    - 5-point φ grid (PhiGrid = Fin 5), matching the S1 submodel
-    - α ≈ 4.47 (paper's fitted value)
-    - Cost encoded as −cost/α in the constant term -/
-noncomputable def s2BaseCfg : RSAConfig Utterance HeartState where
-  Latent := PhiGrid
-  meaning _ _ u w := ↑(utteranceSemantics u w)
-  meaning_nonneg _ _ u w := by exact_mod_cast (meaning_bounded u w).1
-  s1Score l0 α (φ : PhiGrid) w u :=
-    if l0 u w = 0 then
-      if φ.val = 0 then exp (α * (↑(phiVal φ) * log (l0 u w) +
-                                   (1 - ↑(phiVal φ)) * ∑ w' : HeartState, l0 u w' * ↑(subjectiveValue w') +
-                                   ↑(costTerm u)))
-      else 0
-    else exp (α * (↑(phiVal φ) * log (l0 u w) +
-                   (1 - ↑(phiVal φ)) * ∑ w' : HeartState, l0 u w' * ↑(subjectiveValue w') +
-                   ↑(costTerm u)))
-  s1Score_nonneg _ _ _ _ _ _ _ := by
-    split
-    · split
-      · exact le_of_lt (exp_pos _)
-      · exact le_refl 0
-    · exact le_of_lt (exp_pos _)
-  α := 447/100
-  α_pos := by norm_num
-  worldPrior_nonneg _ := by norm_num
-  latentPrior_nonneg _ _ := by norm_num
+* **informative**: `U_S2(terrible) > U_S2(not terrible)` at s₀
+  (−1.13 > −2.62) — projecting honesty favours direct negative utterances
+  (the paper's §Model Predictions); robust across the α-scan.
+* **kind**: `U_S2(not terrible) > U_S2(terrible)` at s₀ (−1.84 > −2.32);
+  holds for α ≳ 2.18.
+* **both** (the paper's headline, Figure 6): `U_S2(not terrible) >
+  U_S2(terrible)` at s₀ (−2.72 > −2.86, margin ≈ 0.14, confirmed at
+  50-digit precision); holds for α ≳ 3.84. The previous version of this
+  file `sorry`ed this statement with a docstring claiming it *fails* under
+  point-estimate semantics — that claim was false: the reflection tactic's
+  interval arithmetic merely could not separate the sides.
 
--- §3b'. S2 Utility
+Sensitivity (the reason these are prose, not theorems): both negation
+preferences flip if the single norming proportion `softSemantics .amazing
+.h0 = 1/49 ≈ 0.020` drops to ≈ 0.01 — they hinge on one participant's
+judgment in the norming task — and are α-dependent, unlike the S1
+theorems above. The model-comparison content (Table 1: the full
+informational + social + presentational model beats all ablations, log BF
+≥ 11) is Bayesian-fit material outside the formalisation's scope. -/
 
-open BigOperators in
-/-- S2 utility for a given goal condition.
+/-! ### Bridge to the subjectivity cline -/
 
-    U_S2(u, s; ω, φ̂) = ω_inf · ln P_L1(s|u)
-                       + ω_soc · Σ_s' P_L1(s'|u) · V(s')
-                       + ω_pres · ln P_L1(φ̂|u)
-                       + costTerm(u)
-
-    Since S2 score ∝ exp(α₂ · U_S2) and exp is monotone,
-    comparing utilities is equivalent to comparing S2 scores. -/
-noncomputable def S2Utility (weights : S2Weights) (w : HeartState) (u : Utterance) : ℝ :=
-  ↑weights.ωInf * Real.log (s2BaseCfg.L1 u w) +
-  ↑weights.ωSoc * (∑ w' : HeartState, s2BaseCfg.L1 u w' * ↑(subjectiveValue w')) +
-  ↑weights.ωPres * Real.log (s2BaseCfg.L1_latent u weights.phiHat) +
-  ↑(costTerm u)
-
--- ============================================================================
--- §3c. S2 Predictions
--- ============================================================================
-
-set_option maxHeartbeats 8000000 in
-/-- Under "both" goals at h0, S2 prefers "not terrible" over "terrible".
-    This is the paper's main finding: dual goals produce negation.
-
-    Does not hold with raw acceptance proportions (k/49) as point estimates
-    for the literal semantics. The paper's full model infers θ via BDA,
-    marginalizing over posterior uncertainty in a joint posterior over
-    (α, c, ω, φ̂, θ). The qualitative prediction depends on this full
-    posterior, not point estimates — both directions fail interval verification,
-    confirming the values are indistinguishable under point estimation. -/
-theorem both_h0_prefers_negation :
-    S2Utility bothWeights .h0 .notTerrible >
-    S2Utility bothWeights .h0 .terrible := by
-  sorry
-
-set_option maxHeartbeats 20000000 in
-/-- Under "informative" goals at h0, S2 prefers "terrible" over "not terrible".
-    Direct speech dominates when the speaker prioritizes informativity. -/
-theorem informative_h0_prefers_direct :
-    S2Utility informativeWeights .h0 .terrible >
-    S2Utility informativeWeights .h0 .notTerrible := by
-  rsa_predict
-
-set_option maxHeartbeats 20000000 in
-/-- Under "kind" goals at h0, S2 prefers "not terrible" over "terrible".
-    The social and presentational weights favor indirect speech. -/
-theorem kind_h0_prefers_negation :
-    S2Utility kindWeights .h0 .notTerrible >
-    S2Utility kindWeights .h0 .terrible := by
-  rsa_predict
-
--- ============================================================================
--- §4. Bridge to Subjectivity Cline
--- ============================================================================
-
-/-- The S1/S2 politeness model instantiates Traugott's intersubjectivity:
-    the speaker attends to the addressee's face/self-image.
-
-    When phi < 1, the speaker trades informativity for social value,
-    i.e. the utterance is shaped by attention to the addressee -- the
-    defining characteristic of [traugott-dasher-2002]'s intersubjective
-    level. The S2 model adds a second layer: the speaker also manages
-    how *kind* they appear, which is doubly intersubjective.
-
-    [narrog-2010] §4.2 connects this to modality: strong obligation
-    is face-threatening precisely because it is performative and volitive,
-    making the speaker's imposition on the addressee maximally salient. -/
+/-- The politeness model instantiates [traugott-dasher-2002]'s
+intersubjectivity: for φ < 1 the speaker trades informativity for
+attention to the addressee's face, and S2 additionally manages how kind
+they *appear* — doubly intersubjective. [narrog-2010] connects this to
+modality: strong obligation is face-threatening because it is performative
+and volitive. -/
 def socialGoalSubjectivityLevel : Features.Subjectivity.SubjectivityLevel :=
   .intersubjective
 

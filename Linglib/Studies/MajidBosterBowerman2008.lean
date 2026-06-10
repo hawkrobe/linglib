@@ -36,7 +36,7 @@ they carve and where they place boundaries.
 
 ## Integration with linglib
 
-The 4 dimensions project onto existing `RootProfile` features:
+The 4 dimensions project onto existing `Root.Profile` features:
 
 | Dimension | Projects onto |
 |-----------|--------------|
@@ -54,7 +54,7 @@ Bridge theorems connect to `LevinClass` and `MeaningComponents`:
 ## Design
 
 `SeparationEvent` is a **point** in the same feature space that
-`RootProfile` defines **regions** over. A verb is compatible with an
+`Root.Profile` defines **regions** over. A verb is compatible with an
 event iff the event's feature values fall within the verb root's ranges.
 This captures the many-to-many mapping between events and verbs that
 varies across languages.
@@ -63,7 +63,6 @@ varies across languages.
 namespace MajidBosterBowerman2008
 
 open Semantics.Lexical
-open Semantics.Lexical.Roots
 open Features
 open InstrumentType ObjectDimensionality Robustness ResultType
      ForceLevel ForceDirection
@@ -78,7 +77,7 @@ open InstrumentType ObjectDimensionality Robustness ResultType
     This is the **stimulus level**: each value is a specific point,
     not a range. Corresponds to a single video clip in the experiment.
     Verb roots select *ranges* over these same dimensions
-    (via `RootProfile`). -/
+    (via `Root.Profile`). -/
 structure SeparationEvent where
   /-- Instrument used to effect separation. -/
   instrument : InstrumentType
@@ -260,7 +259,7 @@ def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
   e.result == .surfaceBreach && e.objectDim == .twoD && e.objectRob == .flimsy
 
 -- ════════════════════════════════════════════════════
--- § 4. Compatibility with RootProfile
+-- § 4. Compatibility with Root.Profile
 -- ════════════════════════════════════════════════════
 
 /-- Is a separation event compatible with a verb root's profile?
@@ -268,7 +267,7 @@ def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
     An event is compatible iff each of its feature values falls within
     the root's range for that dimension. Unconstrained dimensions
     (range = none) accept any value. -/
-def SeparationEvent.compatibleWith (e : SeparationEvent) (r : RootProfile) : Bool :=
+def SeparationEvent.compatibleWith (e : SeparationEvent) (r : Root.Profile) : Bool :=
   r.forceMag.isCompatible e.force &&
   r.forceDir.isCompatible e.forceDir &&
   r.patientRob.isCompatible e.objectRob &&
@@ -507,7 +506,7 @@ theorem cut_break_same_template :
 
 open English.Predicates.Verbal in
 /-- Extract the root profile from a Fragment verb entry. -/
-private def fragmentProfile (v : VerbEntry) : RootProfile :=
+private def fragmentProfile (v : VerbEntry) : Root.Profile :=
   v.rootProfile.getD {}
 
 open English.Predicates.Verbal

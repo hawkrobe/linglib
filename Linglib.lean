@@ -171,7 +171,7 @@ import Linglib.Semantics.Causation.SEM.Defs
 import Linglib.Semantics.Causation.SEM.Basic
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.Profile
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
@@ -393,7 +393,7 @@ import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.MorphWord
-import Linglib.Semantics.Lexical.Roots.Operators
+import Linglib.Morphology.Derivation
 import Linglib.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Discourse.SpeechAct.Basic
@@ -1670,7 +1670,6 @@ import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Studies.FrancikClark1985
 import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.YoonEtAl2020
-import Linglib.Studies.YoonEtAl2020PMF
 import Linglib.Studies.GiulianelliEtAl2026
 import Linglib.Studies.ChatzikyriakidisLuo2020
 import Linglib.Studies.Gotham2017
@@ -2468,6 +2467,7 @@ import Linglib.Semantics.Lexical.LevinTheory
 import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
+import Linglib.Semantics.Lexical.Roots.Signature
 import Linglib.Semantics.Lexical.Roots.Basic
 import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Typology

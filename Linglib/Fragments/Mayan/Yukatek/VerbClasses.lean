@@ -229,8 +229,6 @@ theorem eventType_consistent (c : VerbStemClass) :
 -- § 5.5. Bridge to [lucy-1994] Salience Classes
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.Roots (SalienceClass)
-
 /-- Map [bohnemeyer-2004]'s 5-way Yukatek stem classification to
     [lucy-1994]'s 4-way salience cut. The 5-way is a refinement:
     `inchoative` and `positional` both pattern as Lucy's `positional`

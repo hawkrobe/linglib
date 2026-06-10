@@ -18,10 +18,10 @@ separate matter, parameterized at the study level.
 
 `Morphology.Root` (this file): a *consonantal* melody, a morphological
 primitive (the underlying form of a morpheme).
-`Semantics.Lexical.Roots.Root` (`Semantics/Lexical/Roots/Basic.lean`):
+The root-level `Root` (`Semantics/Lexical/Roots/Basic.lean`):
 a bundle of `LexEntailment` atoms in the [beavers-koontz-garboden-2020]
 sense — same English word, different concept.
-`Core.Lexical.RootFeatures` (`Core/Lexical/RootFeatures.lean`): semantic
+`Root.Profile` (`Semantics/Lexical/Roots/Profile.lean`): semantic
 quality dimensions on a verb root — orthogonal to both.
 -/
 

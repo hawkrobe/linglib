@@ -94,8 +94,8 @@ theorem agent_control_differs :
     where both verbs are applicable. This overlap zone is where they
     function as translation equivalents (§4.2, Table 1). -/
 theorem roots_overlap :
-    (tear_.rootProfile.get!).overlaps (rasgar.rootProfile.get!) = true := by
-  native_decide
+    (tear_.rootProfile.get!).overlaps (rasgar.rootProfile.get!) := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Translation Data (§4.2, Tables 1–2)

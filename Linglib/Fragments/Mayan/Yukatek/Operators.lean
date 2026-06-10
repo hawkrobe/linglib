@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.Operators
+import Linglib.Morphology.Derivation
 import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
@@ -31,7 +31,6 @@ manner. Spelt out structurally below.
 
 namespace Yukatek.Operators
 
-open Semantics.Lexical.Roots
 open Morphology.Derivation
 open Yukatek.Roots
 
