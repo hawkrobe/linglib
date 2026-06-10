@@ -272,7 +272,7 @@ theorem kul_signature :
 
 /-! ### Per-root closed feature signatures -/
 
-/-! The collocational closure (`FeatureSignature.close`) adds `.state`
+/-! The collocational closure (`Root.FeatureSignature.close`) adds `.state`
     to any signature containing `.result`, and `.result` + `.state` to
     any containing `.cause`. No Yukatek root here carries a `.cause`
     atom, so only the result→state edge fires. Closure does *not*

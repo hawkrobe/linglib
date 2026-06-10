@@ -23,7 +23,7 @@ The +state cells of √blossom, √crack, √hand, √drown are *derived*:
 the book's typology values are the collocational closures
 (`Root.closedFeatureSignature`) of the base atom kinds, and each
 closed signature is one of the canonical typology rows
-(`FeatureSignature.pureResult`, `causativeResult`, `fullSpec`).
+(`Root.FeatureSignature.pureResult`, `causativeResult`, `fullSpec`).
 √blossom falsifies Bifurcation on its own, since change of state is
 templatic (`v_become`) content. √hand and √drown additionally falsify
 Manner/Result Complementarity; they differ only in root position
@@ -94,25 +94,25 @@ theorem drown_featureSignature :
     drown.featureSignature = {.manner, .result, .cause} := by decide
 
 theorem flat_closedFeatureSignature :
-    flat.closedFeatureSignature = FeatureSignature.propertyConcept := by
+    flat.closedFeatureSignature = Root.FeatureSignature.propertyConcept := by
   decide
 
 theorem jog_closedFeatureSignature :
-    jog.closedFeatureSignature = FeatureSignature.pureManner := by decide
+    jog.closedFeatureSignature = Root.FeatureSignature.pureManner := by decide
 
 theorem blossom_closedFeatureSignature :
-    blossom.closedFeatureSignature = FeatureSignature.pureResult := by
+    blossom.closedFeatureSignature = Root.FeatureSignature.pureResult := by
   decide
 
 theorem crack_closedFeatureSignature :
-    crack.closedFeatureSignature = FeatureSignature.causativeResult := by
+    crack.closedFeatureSignature = Root.FeatureSignature.causativeResult := by
   decide
 
 theorem hand_closedFeatureSignature :
-    hand.closedFeatureSignature = FeatureSignature.fullSpec := by decide
+    hand.closedFeatureSignature = Root.FeatureSignature.fullSpec := by decide
 
 theorem drown_closedFeatureSignature :
-    drown.closedFeatureSignature = FeatureSignature.fullSpec := by decide
+    drown.closedFeatureSignature = Root.FeatureSignature.fullSpec := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 

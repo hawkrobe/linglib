@@ -362,7 +362,7 @@ theorem result_roots_witness_against_bifurcation :
 theorem pc_roots_consistent_with_bifurcation :
     RootType.entailsChange .propertyConcept = false := rfl
 
-/-- **B&[beavers-koontz-garboden-2020] strengthened bifurcation failure via `FeatureSignature`.**
+/-- **B&[beavers-koontz-garboden-2020] strengthened bifurcation failure via `Root.FeatureSignature`.**
 
     [beavers-etal-2021] show roots can entail CHANGE (one templatic notion).
     B&[beavers-koontz-garboden-2020] show roots can entail CHANGE, CAUSATION, and MANNER —
@@ -371,16 +371,16 @@ theorem pc_roots_consistent_with_bifurcation :
     roots encoding manner+cause (√GUILLOTINE, √HAND) violate bifurcation
     on three separate dimensions simultaneously.
 
-    Witness: `FeatureSignature.fullSpec` carries all four kinds. -/
+    Witness: `Root.FeatureSignature.fullSpec` carries all four kinds. -/
 theorem bkg_bifurcation_fails_all_dimensions :
     -- Roots can entail change (result kind)
-    LexKind.result ∈ FeatureSignature.fullSpec ∧
+    LexKind.result ∈ Root.FeatureSignature.fullSpec ∧
     -- Roots can entail causation (cause kind)
-    LexKind.cause ∈ FeatureSignature.fullSpec ∧
+    LexKind.cause ∈ Root.FeatureSignature.fullSpec ∧
     -- Roots can entail manner (manner kind)
-    LexKind.manner ∈ FeatureSignature.fullSpec ∧
+    LexKind.manner ∈ Root.FeatureSignature.fullSpec ∧
     -- All at once — not just one dimension
-    LexKind.state ∈ FeatureSignature.fullSpec := by decide
+    LexKind.state ∈ Root.FeatureSignature.fullSpec := by decide
 
 /-- Multiple Levin classes witness the stronger bifurcation failure. -/
 theorem bkg_bifurcation_multiple_witnesses :
@@ -597,7 +597,7 @@ theorem RootDen.pc_respects {Entity State Event : Type}
     (RootDen.pc sp : RootDen Entity State Event).denotationViolatesMRC = false := rfl
 
 /-- **Bridge: denotation-level MRC → signature-level MRC
-    (`FeatureSignature.HasMannerAndResult`).**
+    (`Root.FeatureSignature.HasMannerAndResult`).**
     MRC violation requires BOTH conditions — having manner alone
     (if such a constructor existed) would not be a violation. -/
 theorem RootDen.mrc_requires_both {Entity State Event : Type}
@@ -1431,7 +1431,7 @@ theorem same_change_same_morphosyntax (r₁ r₂ : RootClassification)
     positions give 32 theoretical cells, of which 7 are attested and
     the rest are principled gaps. -/
 structure FullRootSpec where
-  entailments : FeatureSignature
+  entailments : Root.FeatureSignature
   position : Root.Position
   deriving DecidableEq
 
@@ -1467,29 +1467,29 @@ instance (s : FullRootSpec) : Decidable s.WellFormed :=
 
 /-- √FLAT: +S −M −R −C, complement. Property concept root. -/
 def FullRootSpec.flat : FullRootSpec :=
-  ⟨FeatureSignature.propertyConcept, .complement⟩
+  ⟨Root.FeatureSignature.propertyConcept, .complement⟩
 
 /-- √BLOSSOM: +S −M +R −C, complement. Pure result root. -/
 def FullRootSpec.blossom : FullRootSpec :=
-  ⟨FeatureSignature.pureResult, .complement⟩
+  ⟨Root.FeatureSignature.pureResult, .complement⟩
 
 /-- √CRACK: +S −M +R +C, complement. Causative result root. -/
 def FullRootSpec.crack : FullRootSpec :=
-  ⟨FeatureSignature.causativeResult, .complement⟩
+  ⟨Root.FeatureSignature.causativeResult, .complement⟩
 
 /-- √JOG: −S +M −R −C, adjoined. Pure manner root. -/
 def FullRootSpec.jog : FullRootSpec :=
-  ⟨FeatureSignature.pureManner, .adjoined⟩
+  ⟨Root.FeatureSignature.pureManner, .adjoined⟩
 
 /-- √DROWN: +S +M +R +C, complement. Manner+result in complement position —
     the manner restricts HOW the state is caused. -/
 def FullRootSpec.drown : FullRootSpec :=
-  ⟨FeatureSignature.fullSpec, .complement⟩
+  ⟨Root.FeatureSignature.fullSpec, .complement⟩
 
 /-- √TOSS: +S +M +R +C, adjoined. Manner+result in adjunct position —
     the manner is the primary event that happens to cause a state change. -/
 def FullRootSpec.toss : FullRootSpec :=
-  ⟨FeatureSignature.fullSpec, .adjoined⟩
+  ⟨Root.FeatureSignature.fullSpec, .adjoined⟩
 
 /-- √HAND: same entailments + position as √TOSS. The difference is in
     the ditransitive layer (DitransitiveRootClass.causedPossession vs
@@ -1498,7 +1498,7 @@ abbrev FullRootSpec.hand : FullRootSpec := FullRootSpec.toss
 
 /-- √EXIST: −S −M −R −C, complement. Minimal stative root. -/
 def FullRootSpec.exist : FullRootSpec :=
-  ⟨FeatureSignature.minimal, .complement⟩
+  ⟨Root.FeatureSignature.minimal, .complement⟩
 
 -- All attested types are well-formed
 theorem flat_wf : FullRootSpec.flat.WellFormed := by decide
@@ -1548,7 +1548,7 @@ inductive TemplateHead where
     - +manner alone → no v_act (manner without causation doesn't entail
       activity — √JOG specifies jogging manner but v_act still provides
       the activity frame) -/
-def FeatureSignature.entailedHeads (s : FeatureSignature) : List TemplateHead :=
+def Root.FeatureSignature.entailedHeads (s : Root.FeatureSignature) : List TemplateHead :=
   (if LexKind.result ∈ s then [.vBecome] else []) ++
   (if LexKind.cause ∈ s then [.vCause] else []) ++
   (if LexKind.manner ∈ s ∧ LexKind.cause ∈ s then [.vAct] else [])
@@ -1569,51 +1569,51 @@ def DitransitiveRootClass.additionalHeads : DitransitiveRootClass → List Templ
     The root specifies jogging manner, but v_act still provides
     the activity frame — the root doesn't make it redundant. -/
 theorem jog_no_heads :
-    FeatureSignature.pureManner.entailedHeads = [] := by decide
+    Root.FeatureSignature.pureManner.entailedHeads = [] := by decide
 
 /-- √FLAT (propertyConcept): no template heads entailed.
     The root names a state, but doesn't entail change or cause. -/
 theorem flat_no_heads :
-    FeatureSignature.propertyConcept.entailedHeads = [] := by decide
+    Root.FeatureSignature.propertyConcept.entailedHeads = [] := by decide
 
 /-- √BLOSSOM (pureResult): v_become entailed.
     The root entails change — v_become's contribution is redundant. -/
 theorem blossom_heads :
-    FeatureSignature.pureResult.entailedHeads = [.vBecome] := by decide
+    Root.FeatureSignature.pureResult.entailedHeads = [.vBecome] := by decide
 
 /-- √CRACK (causativeResult): v_become + v_cause entailed.
     The root entails change AND causation. -/
 theorem crack_heads :
-    FeatureSignature.causativeResult.entailedHeads = [.vBecome, .vCause] := by
+    Root.FeatureSignature.causativeResult.entailedHeads = [.vBecome, .vCause] := by
   decide
 
 /-- √DROWN (fullSpec): v_become + v_cause + v_act entailed.
     The root entails change, causation, AND activity (manner that causes). -/
 theorem drown_heads :
-    FeatureSignature.fullSpec.entailedHeads = [.vBecome, .vCause, .vAct] := by
+    Root.FeatureSignature.fullSpec.entailedHeads = [.vBecome, .vCause, .vAct] := by
   decide
 
 /-- √TOSS (fullSpec + ballistic): v_become + v_cause + v_act + P_loc.
     Verbal heads from entailments + P_loc from ditransitive class. -/
 theorem toss_heads :
-    FeatureSignature.fullSpec.entailedHeads ++
+    Root.FeatureSignature.fullSpec.entailedHeads ++
     DitransitiveRootClass.additionalHeads .ballisticMotion =
     [.vBecome, .vCause, .vAct, .pLoc] := by decide
 
 /-- √HAND (fullSpec + causedPossession): all 5 heads.
     Verbal heads from entailments + P_loc + P_have from ditransitive class. -/
 theorem hand_heads :
-    FeatureSignature.fullSpec.entailedHeads ++
+    Root.FeatureSignature.fullSpec.entailedHeads ++
     DitransitiveRootClass.additionalHeads .causedPossession =
     [.vBecome, .vCause, .vAct, .pLoc, .pHave] := by decide
 
 /-- Monotonicity: more root entailments → weakly more heads entailed.
     Pure result ⊂ causative result ⊂ full spec (by inclusion). -/
 theorem heads_monotone :
-    FeatureSignature.pureResult.entailedHeads.length ≤
-    FeatureSignature.causativeResult.entailedHeads.length ∧
-    FeatureSignature.causativeResult.entailedHeads.length ≤
-    FeatureSignature.fullSpec.entailedHeads.length := ⟨by decide, by decide⟩
+    Root.FeatureSignature.pureResult.entailedHeads.length ≤
+    Root.FeatureSignature.causativeResult.entailedHeads.length ∧
+    Root.FeatureSignature.causativeResult.entailedHeads.length ≤
+    Root.FeatureSignature.fullSpec.entailedHeads.length := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 19. Gap Predictions (B&[beavers-koontz-garboden-2020] §5.4.1, Table 12)
@@ -1649,19 +1649,19 @@ B&KG (§5.4.1) identify three principled gap types:
 
 /-- Gap type 1: adjoined position requires manner. -/
 theorem gap_adjoined_no_manner :
-    ¬ (FullRootSpec.mk FeatureSignature.propertyConcept .adjoined).PositionLicensed := by
+    ¬ (FullRootSpec.mk Root.FeatureSignature.propertyConcept .adjoined).PositionLicensed := by
   decide
 
 theorem gap_adjoined_result :
-    ¬ (FullRootSpec.mk FeatureSignature.pureResult .adjoined).PositionLicensed := by
+    ¬ (FullRootSpec.mk Root.FeatureSignature.pureResult .adjoined).PositionLicensed := by
   decide
 
 theorem gap_adjoined_causativeResult :
-    ¬ (FullRootSpec.mk FeatureSignature.causativeResult .adjoined).PositionLicensed := by
+    ¬ (FullRootSpec.mk Root.FeatureSignature.causativeResult .adjoined).PositionLicensed := by
   decide
 
 theorem gap_adjoined_minimal :
-    ¬ (FullRootSpec.mk FeatureSignature.minimal .adjoined).PositionLicensed := by
+    ¬ (FullRootSpec.mk Root.FeatureSignature.minimal .adjoined).PositionLicensed := by
   decide
 
 /-- Gap type 2: +manner +state −result −cause is incoherent. -/
@@ -1675,10 +1675,10 @@ theorem gap_manner_state_no_result_adj :
 
 /-- Gap type 3: well-formedness violations. -/
 theorem gap_result_no_state :
-    ¬ ({.result} : FeatureSignature).WellFormed := by decide
+    ¬ ({.result} : Root.FeatureSignature).WellFormed := by decide
 
 theorem gap_cause_no_result :
-    ¬ ({.state, .cause} : FeatureSignature).WellFormed := by decide
+    ¬ ({.state, .cause} : Root.FeatureSignature).WellFormed := by decide
 
 /-! ### Attested cells are well-formed and recognized -/
 
@@ -1696,7 +1696,7 @@ theorem exist_attested : FullRootSpec.exist.IsAttestedCell := by decide
     without external causation. Left as NOT attested per Table 12,
     pending further research. -/
 theorem mannerResult_complement_unattested :
-    ¬ (FullRootSpec.mk FeatureSignature.mannerResult .complement).IsAttestedCell := by
+    ¬ (FullRootSpec.mk Root.FeatureSignature.mannerResult .complement).IsAttestedCell := by
   decide
 
 /-- The complement/adjoined split for fullSpec roots is the only

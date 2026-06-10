@@ -56,7 +56,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
   inside the verbal categorizer's denotation.
 - Against [menon-pancheva-2014]'s universalist claim: not all PC
   roots have the same meaning.
-- All Wá·šiw PC roots are `FeatureSignature.propertyConcept` (+S −M −R −C)
+- All Wá·šiw PC roots are `Root.FeatureSignature.propertyConcept` (+S −M −R −C)
   per [beavers-koontz-garboden-2020] — the variation is in *semantic
   type*, not in structural entailments.
 -/

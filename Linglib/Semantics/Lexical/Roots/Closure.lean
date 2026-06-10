@@ -11,7 +11,7 @@ and +cause entails +result.
 Two levels of closure:
 
 * **Kind level** (canonical): `Root.closedFeatureSignature` is the
-  collocational closure `FeatureSignature.close` of the root's derived
+  collocational closure `Root.FeatureSignature.close` of the root's derived
   signature. Both book restrictions hold of closed signatures by
   construction (`closedFeatureSignature_wellFormed`).
 * **Atom level** (label-tracking): `Root.closedEntailments` closes the
@@ -34,7 +34,7 @@ Two levels of closure:
     the resulting state attribution `s`, label preserved). The
     cause→result restriction is not expressible at atom level
     (`hasCause` carries no label) and is handled by
-    `FeatureSignature.close`. -/
+    `Root.FeatureSignature.close`. -/
 def bkgRules : LexEntailment → List LexEntailment
   | .becomesState s => [.hasState s]
   | _ => []
@@ -63,7 +63,7 @@ def closedEntailments (r : Root) : List LexEntailment :=
 /-- The closed feature signature: the collocational closure of the
     derived signature. Captures both book restrictions (result→state
     and cause→result). -/
-def closedFeatureSignature (r : Root) : FeatureSignature :=
+def closedFeatureSignature (r : Root) : Root.FeatureSignature :=
   r.featureSignature.close
 
 /-- The closed signature satisfies the collocational constraints by
@@ -71,17 +71,17 @@ def closedFeatureSignature (r : Root) : FeatureSignature :=
     is a theorem of closure. -/
 theorem closedFeatureSignature_wellFormed (r : Root) :
     r.closedFeatureSignature.WellFormed :=
-  FeatureSignature.close_wellFormed _
+  Root.FeatureSignature.close_wellFormed _
 
 theorem featureSignature_le_closed (r : Root) :
     r.featureSignature ≤ r.closedFeatureSignature :=
-  FeatureSignature.le_close _
+  Root.FeatureSignature.le_close _
 
 /-- Both theses are insensitive to the closure edges: a root violates
     Bifurcation iff its closed signature does. -/
 theorem closed_violatesBifurcation_iff (r : Root) :
     r.closedFeatureSignature.ViolatesBifurcation ↔ r.ViolatesBifurcation :=
-  FeatureSignature.violatesBifurcation_close_iff _
+  Root.FeatureSignature.violatesBifurcation_close_iff _
 
 /-! ### The atom/kind bridge -/
 
@@ -111,11 +111,11 @@ theorem mem_kind_closedEntailments {r : Root} {k : LexKind} :
     without a result atom — the cause→result edge is kind-level
     only). -/
 theorem kind_closedEntailments_le (r : Root) :
-    ((r.closedEntailments.filterMap (·.kind)).toFinset : FeatureSignature)
+    ((r.closedEntailments.filterMap (·.kind)).toFinset : Root.FeatureSignature)
       ≤ r.closedFeatureSignature := by
   intro k hk
   rcases mem_kind_closedEntailments.mp hk with h | ⟨rfl, hres⟩
   · exact featureSignature_le_closed r h
-  · exact (FeatureSignature.mem_close_iff _ _).mpr ⟨.result, hres, by decide⟩
+  · exact (Root.FeatureSignature.mem_close_iff _ _).mpr ⟨.result, hres, by decide⟩
 
 end Root

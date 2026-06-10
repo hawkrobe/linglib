@@ -8,7 +8,7 @@ the events it describes and the participants in those events.
 Following [beavers-koontz-garboden-2020], we treat these as
 *structured atoms* rather than as a fixed feature vector: a **root**
 is a finite collection of such atoms, and its feature signature
-(`FeatureSignature`) is the *derived* set of kinds its atoms realize —
+(`Root.FeatureSignature`) is the *derived* set of kinds its atoms realize —
 exposing the Bifurcation Thesis of Roots and Manner/Result
 Complementarity as testable conjectures rather than architectural
 commitments.
@@ -84,7 +84,7 @@ namespace Root
 
 /-- The derived feature signature of a root: the set of kinds its
     atoms realize. -/
-def featureSignature (r : Root) : FeatureSignature :=
+def featureSignature (r : Root) : Root.FeatureSignature :=
   (r.entailments.filterMap (·.kind)).toFinset
 
 theorem mem_featureSignature {r : Root} {k : LexKind} :
