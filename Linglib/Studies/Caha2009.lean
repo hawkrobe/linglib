@@ -288,11 +288,7 @@ abbrev IsContiguous (p : Paradigm) : Prop :=
     the cross-linguistic invariance of the sequence is fixed here
     per-instance by the `Fin 6` order. -/
 theorem universalContiguity_iff_spellable (p : Paradigm) :
-    IsContiguous p ↔
-      ∃ v : List (Morphology.Containment.ExponenceRule 6 ℕ),
-        Morphology.Containment.ContextFree v ∧
-        Morphology.Containment.Antihomophonous v ∧
-        ∀ c, Morphology.Containment.spellout v c = some (p c) :=
+    IsContiguous p ↔ Morphology.Containment.SupersetSpellable p :=
   Morphology.Containment.isContiguous_iff_spelloutGenerable p
 
 namespace SyncretismPatterns

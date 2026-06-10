@@ -344,6 +344,12 @@ theorem spellout_spelloutOfPattern {p : Pattern n F} (hp : IsContiguous p)
 
 end Completeness
 
+/-- A pattern is **Superset-spellable**: some context-free
+antihomophonous lexicon spells it out in full. -/
+def SupersetSpellable (p : Pattern n F) : Prop :=
+  ∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
+    ∀ g, spellout v g = some (p g)
+
 /-- **Spellable = contiguous**: a fully realized pattern arises from
 Superset spellout over a context-free antihomophonous lexicon iff it
 is contiguous — [caha-2009]'s Universal Contiguity as a theorem of the
@@ -351,9 +357,7 @@ engine, mirroring Caha's own derivation of UC from the Superset
 Principle; the converse direction sharpens it to exact generative
 capacity. -/
 theorem isContiguous_iff_spelloutGenerable (p : Pattern n F) :
-    IsContiguous p ↔
-      ∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
-        ∀ g, spellout v g = some (p g) := by
+    IsContiguous p ↔ SupersetSpellable p := by
   classical
   constructor
   · intro hp
@@ -374,10 +378,7 @@ contiguous ones. The frameworks differ intensionally (rule format and
 selection direction; see the divergence examples below) but not in
 generative capacity on this fragment. -/
 theorem spelloutGenerable_iff_generable (p : Pattern n F) :
-    (∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
-        ∀ g, spellout v g = some (p g)) ↔
-      ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
-        ∀ g, realize v g = some (p g) :=
+    SupersetSpellable p ↔ ElsewhereGenerable p :=
   (isContiguous_iff_spelloutGenerable p).symm.trans (isContiguous_iff_generable p)
 
 /-! ### Where the frameworks diverge

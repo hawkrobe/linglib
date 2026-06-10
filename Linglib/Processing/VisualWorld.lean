@@ -14,11 +14,11 @@ the speech signal.
 
 ## Architectural role
 
-`Paradigms/` is the contract layer between `Theories/` and
-`Phenomena/Studies/`. Theories produce predictions in their native
-types; bridge theorems in `Studies/` translate those predictions into
-paradigm-typed predictions and prove they satisfy the empirical patterns
-documented in the study file. The paradigm itself is theory-agnostic:
+This file is an experimental-paradigm *contract*. Theories produce
+predictions in their native types; bridge theorems in `Studies/`
+translate those predictions into paradigm-typed predictions and prove
+they satisfy the empirical patterns documented in the study file.
+Theories themselves do not import it. The paradigm is theory-agnostic:
 it specifies *what kind of input the experiment provides* and *what
 shape of output a theory must produce*.
 
@@ -59,7 +59,7 @@ manipulation, so a lens would have no consumer.
   measurement modality
 -/
 
-namespace Paradigms.VisualWorld
+namespace VisualWorld
 
 -- ============================================================================
 -- §1. Display
@@ -407,4 +407,4 @@ def RoleSumLowerInBaselineWhen [HasContrastCondition Cell] [Add R] [Zero R]
     roleSum roles looks (HasContrastCondition.setContrast baseline cP) <
     roleSum roles looks (HasContrastCondition.setContrast baseline cQ)
 
-end Paradigms.VisualWorld
+end VisualWorld

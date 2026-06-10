@@ -2,9 +2,7 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Studies.Hyman2006
-import Linglib.Paradigms.AcceptabilityJudgment
 
-open Paradigms.AcceptabilityJudgment
 
 /-!
 # Lionnet (2025): Tonal Languages Without Tone

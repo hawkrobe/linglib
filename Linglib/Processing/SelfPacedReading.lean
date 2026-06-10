@@ -10,11 +10,11 @@ are taken as indices of processing cost.
 
 ## Architectural role
 
-`Paradigms/` is the contract layer between `Theories/` and
-`Phenomena/Studies/`. Theories produce predictions in their native
-types; bridge theorems in `Studies/` translate those predictions into
-paradigm-typed predictions and prove they satisfy the empirical patterns
-documented in the study file. The paradigm itself is theory-agnostic:
+This file is an experimental-paradigm *contract*. Theories produce
+predictions in their native types; bridge theorems in `Studies/`
+translate those predictions into paradigm-typed predictions and prove
+they satisfy the empirical patterns documented in the study file.
+Theories themselves do not import it. The paradigm is theory-agnostic:
 it specifies *what kind of input the experiment provides* and *what
 shape of output a theory must produce*.
 
@@ -46,7 +46,7 @@ flagged as post-Jegerski.
   metadata, not paradigm contract
 -/
 
-namespace Paradigms.SelfPacedReading
+namespace SelfPacedReading
 
 -- ============================================================================
 -- §1. Region — offset from a designated critical region
@@ -222,7 +222,7 @@ quantifying over arbitrary cell pairs. SPR studies vary in what
 manipulations they cross (garden-path vs unambiguous, coercion vs
 control, congruous vs incongruous, agreement-violating vs grammatical),
 so the paradigm cannot provide a single canonical lens-based class for
-"the manipulated factor" the way `Paradigms/VisualWorld.lean` does for
+"the manipulated factor" the way `Processing/VisualWorld.lean` does for
 the contrast manipulation. Studies provide cell pairs explicitly; the
 paradigm provides the qualitative shapes that empirical patterns and
 theoretical predictions may inhabit. -/
@@ -277,4 +277,4 @@ def SpilloverWhen [LT R] (rt : ReadingTime Cell R)
   ∃ r : Region, r.IsSpillover ∧
     ∀ slow fast : Cell, P slow → P fast → rt fast r < rt slow r
 
-end Paradigms.SelfPacedReading
+end SelfPacedReading

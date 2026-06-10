@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Paradigms.VisualWorld
+import Linglib.Processing.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
 
 /-!
@@ -502,7 +502,7 @@ open SedivyScene in
     within the incremental RSA framework (and indirectly captures the
     [sedivy-etal-1999] empirical pattern Sedivy 2007 reviews).
     The paradigm-level statement (Sedivy Pattern 2,
-    `Paradigms.VisualWorld.ContrastReducesCompetitorLooks`) requires a
+    `VisualWorld.ContrastReducesCompetitorLooks`) requires a
     contrast vs no-contrast comparison; this theorem captures the
     contrast-condition direction only. -/
 theorem sedivy_contrast_inference :
@@ -510,7 +510,7 @@ theorem sedivy_contrast_inference :
     SedivyScene.incRSA_sedivy.L1 .tall .tallPitcher := by
   rsa_predict
 
-open Paradigms.VisualWorld SedivyEtAl1999 in
+open VisualWorld SedivyEtAl1999 in
 /-- **Cell-typed look projection** for the Sedivy paradigm under the
     incremental-RSA model.
 
@@ -566,7 +566,7 @@ noncomputable def cgSedivyLooks : LookProportion SedivyEtAl1999.Cell ℝ :=
         SedivyScene_NoContrast.incRSA_sedivy_noContrast.L1 .tall .key
     | _,           _                        => 0
 
-open Paradigms.VisualWorld SedivyEtAl1999 in
+open VisualWorld SedivyEtAl1999 in
 /-- **Paradigm Pattern 2 verified** for Cohn-Gordon's incremental RSA:
     swapping the contrast factor from `contrast` to `noContrast`
     strictly increases looks to the cross-category competitor (the tall

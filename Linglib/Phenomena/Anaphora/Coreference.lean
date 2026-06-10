@@ -13,9 +13,9 @@ Empirical data on coreference constraints for reflexives, pronouns, and full nom
 
 -/
 
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 namespace Phenomena.Anaphora.Coreference
 

@@ -1,7 +1,7 @@
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 import Linglib.Phenomena.Islands.Basic
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 set_option autoImplicit false
 

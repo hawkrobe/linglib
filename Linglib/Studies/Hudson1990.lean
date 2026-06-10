@@ -1,9 +1,9 @@
 import Linglib.Syntax.DependencyGrammar.Coreference
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 /-!
 # Dependency Grammar d-command binding → Coreference Phenomena

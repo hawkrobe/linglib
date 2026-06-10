@@ -16,8 +16,10 @@ productive generalisation.
 
 ## Architectural role
 
-`Paradigms/` is the contract layer between `Theories/` and
-`Phenomena/Studies/`. A wug study provides a typed cell whose
+This file is an experimental-paradigm *contract*: theory-agnostic typed
+shapes bridging theories and study files. Theories do not import it;
+bridge theorems in `Studies/` translate theory-native predictions into
+paradigm-typed ones. A wug study provides a typed cell whose
 `Attestation` factor can be swapped between `attested` (a real lexeme)
 and `novel` (a wug). The paradigm-level predicates in §4 quantify over
 the lens, so any theory whose predictions ride along the cell's other
@@ -95,7 +97,7 @@ by an automatic instance.
 - Per-paper item lists — these belong in the relevant `Studies/` file.
 -/
 
-namespace Paradigms.WugTest
+namespace Morphology.WugTest
 
 -- ============================================================================
 -- §1. Attestation factor
@@ -249,4 +251,4 @@ theorem novelGradient_inconsistent_with_invariance
     (c : Cell) (f₁ f₂ : F) (h_lt : f₁ < f₂) : False := by
   exact absurd (h_inv c f₁ f₂) (ne_of_lt (h_grad c f₁ f₂ h_lt))
 
-end Paradigms.WugTest
+end Morphology.WugTest
