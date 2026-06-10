@@ -429,7 +429,7 @@ three schemata. "Both research directions are right to a certain extent"
 `decompose` maps a fully abstract argument-structure construction to its
 sequence of schema steps; the irreducibility witness is the *let alone*
 construction ([fillmore-kay-oconnor-1988] — era-appropriate for a 2013
-paper; see `ConstructionGrammar.pal_irreducible` for a later-discovered
+paper; see `GoldbergShirtz2025.pal_irreducible` for a later-discovered
 witness making the same point). -/
 
 /-- Decompose a fully abstract construction into a sequence of combination steps.

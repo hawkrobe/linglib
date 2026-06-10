@@ -1,183 +1,199 @@
-import Mathlib.Data.Rat.Defs
-import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# [goldberg-shirtz-2025]: PAL Constructions — Empirical Data
-[goldberg-shirtz-2025]
+# [goldberg-shirtz-2025]: the English Phrase-as-Lemma (PAL) construction
 
-Experimental results from five studies on Phrasal Adjective-Like (PAL)
-constructions, plus cross-linguistic attestation data.
+PALs are phrases used in slots typically reserved for single words ("a
+trickle-down policy", "the 'both sides do it' argument"). Treating a phrase
+as if it were a word invites a lemma-like construal: the PAL names a
+situation type presumed familiar to speaker and addressee, with wit and
+sarcasm as derived rhetorical effects of discussing the presumed-familiar.
+The paper's Figure 5 network relates the prenominal PAL construction by
+normal-mode inheritance to both the NN compound construction (tight
+phonological/semantic unit, PAL-internal stress) and adjectival modification
+(prenominal slot, no recursive embedding), with four experimentally
+confirmed conventional subtypes.
 
-PALs are phrases that fill word-level syntactic slots:
-- "a must-see movie" (must-see is a phrase in modifier position)
-- "a real wink-wink situation" (wink-wink is a phrase acting as adjective)
-- "a simple meet-and-greet"
+## Main declarations
 
-## Key findings
+- `GoldbergShirtz2025.palConstruction`, `palConstructicon`: the Figure 5 network
+- `GoldbergShirtz2025.palMeaning`: familiarity presupposition + head-noun assertion
+- `GoldbergShirtz2025.pal_irreducible`: PAL is not fully compositional
+- `GoldbergShirtz2025.palExamples`, `crossLinguisticPALs`: attested examples
 
-1. PALs are preferred when the situation type is **common knowledge** (Study 1a)
-2. PALs are preferred when interlocutors have **shared background** (Study 1b)
-3. PALs are judged as **wittier** than paraphrases (Study 2)
-4. PALs are judged as **more sarcastic** than paraphrases (Study 3)
-5. **Conventional subtypes** (must-VERB, a simple ⟨PAL⟩, etc.) behave similarly (Study 5)
-6. PALs are attested in **unrelated language families** (German, Dutch, Turkish, Hebrew,...)
+## Experimental results
 
+Five preregistered 2AFC surveys (statistics quoted from the paper's results;
+700 recruited, 685 retained across the four surveys of studies 1–3). PAL
+sentences vs. close paraphrases were judged to imply more common knowledge
+(1a: M = 77.3%, β = 1.69, z = 4.80, p < 0.0001) and more shared background
+(1b: M = 74.3%, β = 1.78, z = 4.62, p < 0.001), and to be wittier
+(2: M = 82.2%, β = 2.58, z = 8.48, p < 0.001) and more sarcastic
+(3: M = 84.5%, β = 2.71, z = 8.54, p < 0.001). Study 4 (high-frequency PALs
+only, n = 70) replicated all three effects (common knowledge M = 72.88%;
+wit M = 79.81; sarcasm M = 84.46). Study 5 (n = 74) confirmed four
+conventional subtypes: instances were judged more natural than minimally
+different foils (M = 86.09%, β = 2.28, z = 6.09, p < 0.0001).
 -/
 
 namespace GoldbergShirtz2025
 
-/-! ## Study result structure -/
+open ConstructionGrammar
+open Semantics.Presupposition
 
-/-- A single experimental result from one of Studies 1–5. -/
-structure PALStudyResult where
-  /-- Study identifier (e.g. "1a", "2") -/
-  study : String
-  /-- Research question tested -/
-  question : String
-  /-- Number of participants -/
-  nParticipants : Nat
-  /-- Mean % choosing PAL over paraphrase -/
-  meanPALChosen : ℚ
-  /-- Regression coefficient (β) -/
-  beta : ℚ
-  /-- z-statistic -/
-  zStat : ℚ
-  /-- p-value description -/
-  pValue : String
-  deriving Repr
+/-! ### The Figure 5 constructicon -/
 
-/-! ## Studies 1–5: Experimental results -/
+/-- The prenominal PAL construction: a zero-level PAL whose internal syntax
+is phrasal modifies a head N, forming an N′ (the paper's structure (7),
+`[N′ PAL⁰ N]`, vs. the NN compound's `[N⁰ N⁰ N⁰]`). The head N's bar level
+is left underspecified since PALs may modify nouns with complements
+("a 'don't mess with me' type of driver"). -/
+def palConstruction : Construction :=
+  { name := "PAL"
+  , form := "[N′ PAL⁰ N]"
+  , meaning := "the PAL names a situation type; the head N is an instance of it"
+  , specificity := .fullyAbstract
+  , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
 
-/-- Study 1a: Common knowledge increases PAL use.
-Participants preferred PALs when the situation type (e.g., "grab-and-go")
-was common knowledge vs. not. -/
-def study1a : PALStudyResult :=
-  { study := "1a"
-  , question := "Does common knowledge of the situation type increase PAL use?"
-  , nParticipants := 80
-  , meanPALChosen := 773 / 10   -- 77.3%
-  , beta := 169 / 100           -- 1.69
-  , zStat := 480 / 100          -- 4.80
-  , pValue := "< 0.0001" }
+/-- The semiproductive must-V subtype, frequently instantiated by
+*must-read*, *must-see*, *must-have*. Study 5 tested only rare tokens
+(≤ 10 COCA hits) against *should-V* foils. -/
+def mustVerbConstruction : Construction :=
+  { name := "must-V"
+  , form := "[N′ [PAL⁰ must V] N]"
+  , meaning := "N is something one must V"
+  , specificity := .partiallyOpen
+  , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
 
-/-- Study 1b: Shared background increases PAL use.
-Same design as 1a but manipulates shared background knowledge
-between speaker and addressee. -/
-def study1b : PALStudyResult :=
-  { study := "1b"
-  , question := "Does shared background increase PAL use?"
-  , nParticipants := 80
-  , meanPALChosen := 743 / 10   -- 74.3%
-  , beta := 178 / 100           -- 1.78
-  , zStat := 462 / 100          -- 4.62
-  , pValue := "< 0.001" }
+/-- The *a simple ⟨PAL⟩* subtype: the PAL is itself the head noun
+("Could've tried a simple 'I'm sorry.'"). Study 5's foils used *a short*. -/
+def aSimplePALConstruction : Construction :=
+  { name := "a simple [PAL⁰]"
+  , form := "[NP a simple PAL⁰]"
+  , meaning := "a routine instance of the situation type named by the PAL"
+  , specificity := .partiallyOpen
+  , pragmaticFunction := "presumes familiarity; 'simple' marks the situation type as routine" }
 
-/-- Study 2: PALs are judged wittier than paraphrases. -/
-def study2 : PALStudyResult :=
-  { study := "2"
-  , question := "Are PALs judged as wittier than paraphrases?"
-  , nParticipants := 100
-  , meanPALChosen := 822 / 10   -- 82.2%
-  , beta := 258 / 100           -- 2.58
-  , zStat := 848 / 100          -- 8.48
-  , pValue := "< 0.001" }
+/-- The *Don't ⟨PAL⟩ me* subtype: the PAL fills a V slot, must quote the
+immediately preceding discourse, and occurs in an interdiction context
+("A: you're welcome. B: No, don't 'you're welcome' me."). Study 5's foils
+broke exactly the quote-from-context or interdiction condition. -/
+def dontPALmeConstruction : Construction :=
+  { name := "Don't [PAL⁰ x y z] me"
+  , form := "[VP Don't [V⁰ PAL⁰] me]"
+  , meaning := "don't direct the just-quoted utterance at me"
+  , specificity := .partiallyOpen
+  , pragmaticFunction := "interdicts the quoted conversational move; presumes the quote from the immediately preceding context" }
 
-/-- Study 3: PALs are judged more sarcastic than paraphrases. -/
-def study3 : PALStudyResult :=
-  { study := "3"
-  , question := "Are PALs judged as more sarcastic than paraphrases?"
-  , nParticipants := 100
-  , meanPALChosen := 845 / 10   -- 84.5%
-  , beta := 271 / 100           -- 2.71
-  , zStat := 854 / 100          -- 8.54
-  , pValue := "< 0.001" }
+/-- The *the old ⟨PAL⟩ (N)* subtype, with optional head N ("my dad pulled
+the old 'I'm going to the store for smokes, be back in five'"). Study 5's
+foils used *the tired*. -/
+def theOldPALConstruction : Construction :=
+  { name := "the old [PAL⁰] (N)"
+  , form := "[NP the old PAL⁰ (N)]"
+  , meaning := "a well-worn instance of the situation type named by the PAL"
+  , specificity := .partiallyOpen
+  , pragmaticFunction := "presumes familiarity; 'old' marks the situation type as conventional" }
 
-/-- Study 5: Conventional PAL subtypes behave like novel PALs.
-Tests must-VERB, a simple ⟨PAL⟩, Don't PAL me, the old ⟨PAL⟩ N. -/
-def study5 : PALStudyResult :=
-  { study := "5"
-  , question := "Do conventional PAL subtypes show the same familiarity sensitivity?"
-  , nParticipants := 100
-  , meanPALChosen := 8609 / 100  -- 86.09%
-  , beta := 228 / 100            -- 2.28
-  , zStat := 610 / 100           -- 6.10
-  , pValue := "< 0.0001" }
+/-- NN compound construction (parent: PAL-internal stress, tight unit). -/
+def nnCompound : Construction :=
+  { name := "NN compound"
+  , form := "[N⁰ N⁰ N⁰]"
+  , meaning := "compound nominal: modifier noun narrows head noun denotation"
+  , specificity := .fullyAbstract }
 
-/-- All study results. -/
-def allStudies : List PALStudyResult :=
-  [study1a, study1b, study2, study3, study5]
+/-- Adjectival modification construction (parent: prenominal slot). -/
+def adjNModification : Construction :=
+  { name := "Adj+N modification"
+  , form := "[N′ Adj N′]"
+  , meaning := "adjective restricts noun denotation"
+  , specificity := .fullyAbstract }
 
-/-! ## Cross-linguistic data -/
+/-- The PAL constructicon (the paper's Figure 5): the prenominal PAL
+construction partially inherits, in normal mode, from both the NN compound
+and adjectival modification constructions; the four conventional subtypes
+confirmed by study 5 inherit from it. The figure's caption labels all
+arrows "motivation and (normal mode) inheritance links", so no
+Goldberg-1995 link type is assigned. -/
+def palConstructicon : Constructicon :=
+  { constructions :=
+      [ palConstruction
+      , mustVerbConstruction
+      , aSimplePALConstruction
+      , dontPALmeConstruction
+      , theOldPALConstruction
+      , nnCompound
+      , adjNModification ]
+  , links :=
+      [ { parent := "NN compound"
+        , child := "PAL"
+        , mode := .normal
+        , sharedProperties := ["prenominal slot for the modifier"
+                              , "tight semantic and phonological unit: stress falls within the PAL"]
+        , overriddenProperties := ["modifier is internally phrasal; PAL N is an N′, not an N⁰"] }
+      , { parent := "Adj+N modification"
+        , child := "PAL"
+        , mode := .normal
+        , sharedProperties := ["prenominal slot for the modifier"
+                              , "no recursive embedding within another PAL N construction"]
+        , overriddenProperties := ["modifier is a zero-level PAL, not an Adj"] }
+      , { parent := "PAL"
+        , child := "must-V"
+        , mode := .normal
+        , sharedProperties := ["lemma-like construal: presumed familiarity"]
+        , overriddenProperties := ["'must' lexically fixed; V slot open"] }
+      , { parent := "PAL"
+        , child := "a simple [PAL⁰]"
+        , mode := .normal
+        , sharedProperties := ["lemma-like construal: presumed familiarity"]
+        , overriddenProperties := ["PAL is the head noun, not a prenominal modifier"] }
+      , { parent := "PAL"
+        , child := "Don't [PAL⁰ x y z] me"
+        , mode := .normal
+        , sharedProperties := ["lemma-like construal: presumed familiarity"]
+        , overriddenProperties := ["PAL fills a V slot; quote-from-context and interdiction required"] }
+      , { parent := "PAL"
+        , child := "the old [PAL⁰] (N)"
+        , mode := .normal
+        , sharedProperties := ["lemma-like construal: presumed familiarity"]
+        , overriddenProperties := ["head N optional; PAL may serve as head"] } ] }
 
-/-- Attestation of PAL-like constructions across languages. -/
-structure CrossLinguisticPAL where
-  language : String
-  family : String
-  exemplar : String
-  gloss : String
-  resemblesCompound : Bool
-  deriving Repr
+/-! ### Lemma-like meaning -/
 
-/-- German PAL attestation. -/
-def german : CrossLinguisticPAL :=
-  { language := "German"
-  , family := "Indo-European (Germanic)"
-  , exemplar :="ein Hau-drauf Typ"
-  , gloss := "a hit-on-it type (= a reckless type)"
-  , resemblesCompound := true }
+/-- A PAL utterance's two-part meaning: the head noun's denotation is
+at-issue (an instance of the situation type); the lemma-like construal
+contributes that the situation type itself is presumed familiar.
 
-/-- Dutch PAL attestation. -/
-def dutch : CrossLinguisticPAL :=
-  { language := "Dutch"
-  , family := "Indo-European (Germanic)"
-  , exemplar :="een trek-je-niks-aan houding"
-  , gloss := "a pull-you-nothing-on attitude (= a couldn't-care-less attitude)"
-  , resemblesCompound := true }
+The paper treats the familiarity as an invited *as-if* construal rather
+than a hard definedness condition: speakers exploit the construction
+precisely for situation types that are not antecedently familiar
+(observational humor, sniglets), so common-ground satisfaction is typically
+reached by accommodation or pretense, not antecedent entailment. -/
+def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PrProp W :=
+  { presup := situationType, assertion := headNoun }
 
-/-- Afrikaans PAL attestation. -/
-def afrikaans : CrossLinguisticPAL :=
-  { language := "Afrikaans"
-  , family := "Indo-European (Germanic)"
-  , exemplar :="'n sommer-net-so ding"
-  , gloss := "a just-like-that thing"
-  , resemblesCompound := true }
+/-! ### Irreducibility -/
 
-/-- Turkish PAL attestation. -/
-def turkish : CrossLinguisticPAL :=
-  { language := "Turkish"
-  , family := "Turkic"
-  , exemplar :="gel-git politikası"
-  , gloss := "come-go policy (= wishy-washy policy)"
-  , resemblesCompound := true }
+/-- The PAL construction is not fully compositional: pairing
+phrase-in-a-word-slot form with a presumed-familiarity function is a
+construction-specific pragmatic function, so PAL cannot be decomposed into
+the three universal combination schemata (see `isFullyCompositional`). -/
+theorem pal_irreducible :
+    isFullyCompositional palConstruction = false := rfl
 
-/-- Hebrew PAL attestation. -/
-def hebrew : CrossLinguisticPAL :=
-  { language := "Hebrew"
-  , family := "Afro-Asiatic (Semitic)"
-  , exemplar :="yaldá al-tidrexí-alái"
-  , gloss := "girl don't-step-on-me (= a don't-mess-with-me girl)"
-  , resemblesCompound := false }
+/-! ### Attested distribution
 
-/-- Brazilian Portuguese PAL attestation. -/
-def brazilianPortuguese : CrossLinguisticPAL :=
-  { language := "Brazilian Portuguese"
-  , family := "Indo-European (Romance)"
-  , exemplar :="um papo cabeça"
-  , gloss := "a talk head (= an intellectual conversation)"
-  , resemblesCompound := true }
+PALs prototypically modify nouns but are attested as head Nouns,
+predicative Adjectives, and Verbs (the paper's Table 2), and take word-level
+inflection in those slots — plural *-s*, progressive *-ing* (Table 3). -/
 
-/-- All cross-linguistic attestations. -/
-def crossLinguisticData : List CrossLinguisticPAL :=
-  [german, dutch, afrikaans, turkish, hebrew, brazilianPortuguese]
-
-/-! ## Distributional properties -/
-
-/-- Syntactic positions where PALs are attested. -/
+/-- Syntactic positions where PALs are attested (the paper's Table 2). -/
 inductive PALPosition where
-  | prenominalModifier  -- "a grab-and-go lunch"
-  | headNoun            -- "a real wink-wink"
-  | predicateAdj        -- "The vibe was very wink-wink"
-  | verb                -- "Don't wink-wink me"
+  | prenominalModifier
+  | headNoun
+  | predicativeAdj
+  | verb
   deriving Repr, DecidableEq
 
 /-- An attested PAL example with its syntactic position. -/
@@ -187,80 +203,112 @@ structure PALExample where
   sentence : String
   deriving Repr
 
-/-- Key examples showing PAL distributional flexibility. -/
+/-- Attested examples (the paper's ex. (1), Table 2, and Table 3;
+COCA unless noted). -/
 def palExamples : List PALExample :=
-  [ { pal := "grab-and-go"
+  [ { pal := "trickle-down"
     , position := .prenominalModifier
-    , sentence := "a grab-and-go lunch" }
-  , { pal := "wink-wink"
+    , sentence := "a trickle-down policy" }
+  , { pal := "both sides do it"
+    , position := .prenominalModifier
+    , sentence := "the 'both sides do it' argument" }
+  , { pal := "must see"
     , position := .headNoun
-    , sentence := "a real wink-wink" }
-  , { pal := "wink-wink"
-    , position := .predicateAdj
-    , sentence := "The vibe was very wink-wink" }
-  , { pal := "wink-wink"
+    , sentence := "This show is a must see." }
+  , { pal := "I'm sorry"
+    , position := .headNoun
+    , sentence := "Could've tried a simple 'I'm sorry.'" }
+  , -- Jespersen 1924:96; plural -s on a PAL in a Noun slot (Table 3)
+    { pal := "I told you so"
+    , position := .headNoun
+    , sentence := "his speech abounded in I told you so's" }
+  , { pal := "I'm nothing like you"
+    , position := .predicativeAdj
+    , sentence := "Romney's slogan should be more 'I'm nothing like you.'" }
+  , -- Brit Bennett, *The vanishing half*; progressive -ing on a PAL in a V slot
+    { pal := "honey-I'm-home"
     , position := .verb
-    , sentence := "Don't wink-wink me" }
-  , { pal := "meet-and-greet"
-    , position := .prenominalModifier
-    , sentence := "a simple meet-and-greet event" }
-  , { pal := "must-see"
-    , position := .prenominalModifier
-    , sentence := "a must-see movie" } ]
+    , sentence := "carrying on like a television husband, honey-I'm-home-ing her from the doorway" }
+  , { pal := "you're welcome"
+    , position := .verb
+    , sentence := "A: you're welcome. B: No, don't 'you're welcome' me." } ]
 
-/-! ## Stress pattern -/
+/-! ### Comparable constructions in other languages (§7) -/
 
-/-- PALs receive compound-like stress: primary stress falls on the PAL
-(modifier), not on the head noun. This mirrors NN compound stress
-(e.g., BLACKbird vs. black BIRD). -/
-def palStressIsCompoundLike : Bool := true
+/-- Host frame of a comparable PAL construction. West Germanic and Turkish
+PALs occur in compound(-like) frames (Turkish marks the host with the
+compound marker on the head noun); Hebrew and Brazilian Portuguese PALs
+occur as complements of a preposition (*ʃel* / *de*) — showing the PAL
+construction need not resemble a compound, only occupy a slot typical of
+single words. -/
+inductive PALHostFrame where
+  | compound
+  | prepositionComplement
+  deriving Repr, DecidableEq
+
+/-- A reported PAL-comparable construction in another language. -/
+structure CrossLinguisticPAL where
+  language : String
+  family : String
+  exemplar : String
+  gloss : String
+  hostFrame : PALHostFrame
+  deriving Repr
+
+/-- German (the paper's ex. (8a), from [meibauer-2007]:250). [meibauer-2007]
+also found German PALs judged wittier than relative-clause paraphrases —
+the effect study 2 replicates for English. -/
+def german : CrossLinguisticPAL :=
+  { language := "German"
+  , family := "Indo-European (Germanic)"
+  , exemplar := "Kaufe-Ihr-Auto-Kärtchen"
+  , gloss := "'I-buy-your-car card'"
+  , hostFrame := .compound }
+
+/-- Dutch (ex. (15a), from [meibauer-2007]:235). -/
+def dutch : CrossLinguisticPAL :=
+  { language := "Dutch"
+  , family := "Indo-European (Germanic)"
+  , exemplar := "lach of ik schiet humor"
+  , gloss := "'laugh-or-I-shoot humor'"
+  , hostFrame := .compound }
+
+/-- Afrikaans (ex. (15b), from [meibauer-2007]:235, as printed there). -/
+def afrikaans : CrossLinguisticPAL :=
+  { language := "Afrikaans"
+  , family := "Indo-European (Germanic)"
+  , exemplar := "God is dod theologie"
+  , gloss := "'god-is-dead theology'"
+  , hostFrame := .compound }
+
+/-- Turkish (ex. (15c), from [trips-kornfilt-2015]:307); the compound
+marker on the head noun signals the compound-like frame. -/
+def turkish : CrossLinguisticPAL :=
+  { language := "Turkish"
+  , family := "Turkic"
+  , exemplar := "'iç çamaşır-ın-ı göster' oyun-u"
+  , gloss := "'\"show your underwear\" game'"
+  , hostFrame := .compound }
+
+/-- Modern Hebrew (ex. (16b), the paper's own observation, from Twitter). -/
+def hebrew : CrossLinguisticPAL :=
+  { language := "Hebrew"
+  , family := "Afro-Asiatic (Semitic)"
+  , exemplar := "keta ʃel mi=ʃe yodea yodea"
+  , gloss := "'an if-you-know-you-know thing'"
+  , hostFrame := .prepositionComplement }
+
+/-- Brazilian Portuguese (ex. (18b), the paper's own observation, from the
+NOW corpus). -/
+def brazilianPortuguese : CrossLinguisticPAL :=
+  { language := "Brazilian Portuguese"
+  , family := "Indo-European (Romance)"
+  , exemplar := "o clima ameno de 'eu te ajudo, você me ajuda e está tudo bem'"
+  , gloss := "'the pleasant climate of \"I help you, you help me, and everything is good\"'"
+  , hostFrame := .prepositionComplement }
+
+/-- All cross-linguistic attestations reported in §7. -/
+def crossLinguisticPALs : List CrossLinguisticPAL :=
+  [german, dutch, afrikaans, turkish, hebrew, brazilianPortuguese]
 
 end GoldbergShirtz2025
-
-/-! ## Bridge content (merged from CxG_GoldbergShirtz2025Bridge.lean) -/
-
-/-!
-# Bridge: PAL Construction Theory → GoldbergShirtz2025 Phenomena
-
-Connects the PAL construction theoretical analysis in
-`ConstructionGrammar.Studies.GoldbergShirtz2025` to the empirical data in
-`GoldbergShirtz2025`.
-
-Claims 3 and 4 reference empirical study results (effect sizes from
-Studies 2/3, cross-linguistic attestation data) and so belong here
-rather than in the pure theory file.
-
--/
-
-namespace ConstructionGrammar.Studies.GoldbergShirtz2025.Bridge
-
-/-- **Claim 3**: PALs produce rhetorical effects (wit, sarcasm).
-
-Supported by Studies 2 (wittiness) and 3 (sarcasm):
-PALs are judged wittier and more sarcastic than paraphrases.
-
-We record this as the empirical observation that effect sizes are positive
-and significant across both studies. -/
-def claim_rhetorical_effects : Prop :=
-  _root_.GoldbergShirtz2025.study2.beta > 0 ∧
-  _root_.GoldbergShirtz2025.study3.beta > 0
-
-/-- Claim 3 holds: β > 0 in both Studies 2 and 3. -/
-theorem claim_rhetorical_effects_holds : claim_rhetorical_effects := by
-  unfold claim_rhetorical_effects
-  constructor <;> native_decide
-
-/-- **Claim 4**: PAL-like constructions exist in unrelated language families.
-
-Attested in Germanic (German, Dutch, Afrikaans), Turkic (Turkish),
-Semitic (Hebrew), and Romance (Brazilian Portuguese). -/
-def claim_crosslinguistic : Prop :=
-  (_root_.GoldbergShirtz2025.crossLinguisticData.map
-    (·.family)).eraseDups.length ≥ 3
-
-/-- Claim 4 holds: 4 distinct families attested. -/
-theorem claim_crosslinguistic_holds : claim_crosslinguistic := by
-  unfold claim_crosslinguistic
-  native_decide
-
-end ConstructionGrammar.Studies.GoldbergShirtz2025.Bridge
