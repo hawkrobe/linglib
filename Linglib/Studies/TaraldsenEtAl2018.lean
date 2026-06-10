@@ -71,7 +71,7 @@ which is how Shona double plurals like *ma-mi-sha* arise (§4.3). -/
 
 /-- Xhosa singular class-prefix entries: each lexicalizes a bare classifier
     [Nₓ]. See the table in the section docstring for per-entry sources. -/
-def xhosaSg : Xhosa.Gender → TreeLexEntry NCFeature
+def xhosaSg : Xhosa.Gender → TreeLexEntry NCFeature String
   | .genderA => ⟨.leaf (.cls 1), "m", .prefix⟩
   | .genderB => ⟨.leaf (.cls 3), "m", .prefix⟩
   | .genderC => ⟨.leaf (.cls 5), "li", .prefix⟩
@@ -81,7 +81,7 @@ def xhosaSg : Xhosa.Gender → TreeLexEntry NCFeature
 /-- Xhosa plural class-prefix entries: each lexicalizes [# Nₓ]. Genders A, D,
     E share their N with the singular; B and C contain distinct Ns (N₄ ≠ N₃,
     N₆ ≠ N₅) — the §2 conjoined-agreement finding. -/
-def xhosaPl : Xhosa.Gender → TreeLexEntry NCFeature
+def xhosaPl : Xhosa.Gender → TreeLexEntry NCFeature String
   | .genderA => ⟨.node .num [.leaf (.cls 1)], "ba", .prefix⟩
   | .genderB => ⟨.node .num [.leaf (.cls 4)], "mi", .prefix⟩
   | .genderC => ⟨.node .num [.leaf (.cls 6)], "ma", .prefix⟩
@@ -93,7 +93,7 @@ def xhosaGenders : List Xhosa.Gender :=
   [.genderA, .genderB, .genderC, .genderD, .genderE]
 
 /-- The full Xhosa class-prefix lexicon. -/
-def xhosaPrefixes : List (TreeLexEntry NCFeature) :=
+def xhosaPrefixes : List (TreeLexEntry NCFeature String) :=
   xhosaGenders.map xhosaSg ++ xhosaGenders.map xhosaPl
 
 /-! ### The Changana/Rhonga lexicon
@@ -118,7 +118,7 @@ inductive RhongaGender where
   deriving DecidableEq, Repr
 
 /-- Changana/Rhonga singular class-prefix entries ((76), (79a), (80a)). -/
-def rhongaSg : RhongaGender → TreeLexEntry NCFeature
+def rhongaSg : RhongaGender → TreeLexEntry NCFeature String
   | .gA => ⟨.leaf (.cls 1), "mu", .prefix⟩
   | .gB => ⟨.leaf (.cls 3), "mu", .prefix⟩
   | .gC => ⟨.leaf (.cls 5), "rhi", .prefix⟩
@@ -126,7 +126,7 @@ def rhongaSg : RhongaGender → TreeLexEntry NCFeature
   | .gE => ⟨.leaf (.cls 9), "yi", .prefix⟩
 
 /-- Changana/Rhonga plural class-prefix entries ((77), (79b), (80b)). -/
-def rhongaPl : RhongaGender → TreeLexEntry NCFeature
+def rhongaPl : RhongaGender → TreeLexEntry NCFeature String
   | .gA => ⟨.node .num [.leaf (.cls 1)], "va", .prefix⟩
   | .gB => ⟨.node .num [.leaf (.cls 4)], "mi", .prefix⟩
   | .gC => ⟨.node .num [.leaf (.cls 6)], "ma", .prefix⟩
@@ -146,7 +146,7 @@ def rhongaPlN : RhongaGender → Nat
 def rhongaGenders : List RhongaGender := [.gA, .gB, .gC, .gD, .gE]
 
 /-- The full Changana/Rhonga class-prefix lexicon. -/
-def rhongaPrefixes : List (TreeLexEntry NCFeature) :=
+def rhongaPrefixes : List (TreeLexEntry NCFeature String) :=
   rhongaGenders.map rhongaSg ++ rhongaGenders.map rhongaPl
 
 /-! ### Spellout sanity checks -/
@@ -178,7 +178,7 @@ the same N as X's prefix. -/
 
 /-- Whether a singular and a plural prefix entry contain the same classifier
     N — the N at the foot of each stored tree. -/
-def SharesClassifierN (sg pl : TreeLexEntry NCFeature) : Prop :=
+def SharesClassifierN (sg pl : TreeLexEntry NCFeature String) : Prop :=
   sg.tree.foot = pl.tree.foot
 
 instance : DecidableRel SharesClassifierN :=
@@ -213,12 +213,12 @@ theorem xhosa_genderC_not_sharesClassifierN :
 /-- Rhonga *mi* ↔ [# N₄] cannot spell out [# N₃]: its foot N₄ is absent from
     the target (the Foot Condition). -/
 theorem rhonga_mi_foot_not_met :
-    footConditionMet (rhongaPl .gB) (.node .num [.leaf (.cls 3)]) = false := by
+    ¬ FootConditionMet (rhongaPl .gB) (.node .num [.leaf (.cls 3)]) := by
   decide
 
 /-- Rhonga *va* ↔ [# N₁] can spell out [# N₁]: its foot N₁ is present. -/
 theorem rhonga_va_foot_met :
-    footConditionMet (rhongaPl .gA) (.node .num [.leaf (.cls 1)]) = true := by
+    FootConditionMet (rhongaPl .gA) (.node .num [.leaf (.cls 1)]) := by
   decide
 
 /-- No Rhonga entry spells out [# N₃] — the lexicalization failure that
@@ -265,7 +265,7 @@ instance : DecidablePred PluralizationResult.IsStacked
     spellout calculus: the paper attributes prefix–noun pairing to semantic
     compatibility with the silent N or to idiom listing (§5.3, §5.5), so
     `plN` is a parameter here. -/
-def derivePlural (entries : List (TreeLexEntry NCFeature)) (baseN plN : Nat) :
+def derivePlural (entries : List (TreeLexEntry NCFeature String)) (baseN plN : Nat) :
     Option PluralizationResult :=
   match treeSpellout entries (.node .num [.leaf (.cls baseN)]) with
   | some pfx => some (.direct pfx)
@@ -279,7 +279,7 @@ def derivePlural (entries : List (TreeLexEntry NCFeature)) (baseN plN : Nat) :
     with the root directly, so the built structure and the backtrack target
     coincide. Xhosa takes this option in preference to stacking; the Tsonga
     languages cannot. -/
-def derivePluralFirstMerge (entries : List (TreeLexEntry NCFeature))
+def derivePluralFirstMerge (entries : List (TreeLexEntry NCFeature String))
     (plN : Nat) : Option PluralizationResult :=
   derivePlural entries plN plN
 
@@ -329,7 +329,7 @@ theorem xhosa_rhonga_contrast :
 /-! ### Stacking iff distinct Ns -/
 
 private theorem isStacked_iff_spellout_eq_none
-    {entries : List (TreeLexEntry NCFeature)} {baseN plN : Nat}
+    {entries : List (TreeLexEntry NCFeature String)} {baseN plN : Nat}
     {r : PluralizationResult}
     (hr : derivePlural entries baseN plN = some r) :
     r.IsStacked ↔
@@ -353,7 +353,7 @@ private theorem isStacked_iff_spellout_eq_none
     stacks iff the Ns are distinct. Instantiated per gender below with
     `hDirect` discharged by `decide`. -/
 theorem isStacked_iff_not_sharesClassifierN
-    {entries : List (TreeLexEntry NCFeature)} {sg pl : TreeLexEntry NCFeature}
+    {entries : List (TreeLexEntry NCFeature String)} {sg pl : TreeLexEntry NCFeature String}
     {baseN plN : Nat} {r : PluralizationResult}
     (hDirect : treeSpellout entries (.node .num [.leaf (.cls baseN)]) = none ↔
       ¬ SharesClassifierN sg pl)
@@ -366,7 +366,7 @@ theorem isStacked_iff_not_sharesClassifierN
     lexicalize either: stacking is underivable. This is the paper's account
     of why Xhosa never stacks. -/
 theorem not_isStacked_of_firstMerge
-    {entries : List (TreeLexEntry NCFeature)} {plN : Nat}
+    {entries : List (TreeLexEntry NCFeature String)} {plN : Nat}
     {r : PluralizationResult}
     (hr : derivePluralFirstMerge entries plN = some r) : ¬ r.IsStacked := by
   unfold derivePluralFirstMerge derivePlural at hr
