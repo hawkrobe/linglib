@@ -1,6 +1,6 @@
 import Mathlib.Order.Fin.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Containment
+import Linglib.Morphology.Containment.Basic
 
 /-!
 # Case Allomorphy and Syncretism — Substrate
@@ -42,29 +42,28 @@ structure AllomorphyPattern where
   dat : Nat
   deriving DecidableEq, Repr
 
-/-- A pattern violates *ABA when its 4-position projection violates the
-    generic contiguity predicate. By construction this reduces by `rfl`
-    to the generic substrate's `ViolatesABA` on the list. -/
-def AllomorphyPattern.ViolatesABA (p : AllomorphyPattern) : Prop :=
-  Morphology.Containment.ViolatesABA [p.nom, p.acc, p.gen, p.dat]
-
-instance (p : AllomorphyPattern) : Decidable p.ViolatesABA :=
-  inferInstanceAs (Decidable (Morphology.Containment.ViolatesABA _))
+/-- The general-substrate form of an allomorphy pattern: the n = 4
+    instance of `Morphology.Containment.Pattern`. -/
+def AllomorphyPattern.toPattern (p : AllomorphyPattern) :
+    Morphology.Containment.Pattern 4 ℕ :=
+  ![p.nom, p.acc, p.gen, p.dat]
 
 /-- Is a pattern contiguous? Each form class occupies a contiguous span
-    on the hierarchy. Equivalent to ¬ViolatesABA. -/
+    on the hierarchy — the generic
+    `Morphology.Containment.IsContiguous`, by construction. -/
 def AllomorphyPattern.IsContiguous (p : AllomorphyPattern) : Prop :=
-  ¬ p.ViolatesABA
+  Morphology.Containment.IsContiguous p.toPattern
 
 instance (p : AllomorphyPattern) : Decidable p.IsContiguous :=
-  inferInstanceAs (Decidable (¬ _))
+  inferInstanceAs (Decidable (Morphology.Containment.IsContiguous _))
 
-/-! `case_violatesABA_iff_generic` was previously a named `Iff.rfl`
-    bridge here. Dropped: by construction `AllomorphyPattern.ViolatesABA`
-    *is* the generic predicate applied to the 4-cell projection
-    (definitionally), so the bridge unfolds for free at every use site
-    via `Iff.rfl` or `rfl`-shaped `simp` rewrites. Naming a `rfl`
-    bridge polluted the API surface for no benefit. -/
+/-- A pattern violates *ABA: some form class recurs across a distinct
+    intervening one. Equivalent to ¬IsContiguous. -/
+def AllomorphyPattern.ViolatesABA (p : AllomorphyPattern) : Prop :=
+  ¬ p.IsContiguous
+
+instance (p : AllomorphyPattern) : Decidable p.ViolatesABA :=
+  inferInstanceAs (Decidable (¬ _))
 
 -- ============================================================================
 -- § 2: *ABA Verification on Concrete Patterns

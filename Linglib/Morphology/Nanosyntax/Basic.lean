@@ -20,6 +20,12 @@ two mechanism-level differences:
    ([caha-2009] §2.2). Among competing entries, the
    Elsewhere Condition selects the most specific (smallest) match.
 
+The proved linear-hierarchy core of this selection rule (Superset
+matching + Minimize Junk over `ExponenceRule` vocabularies, with *ABA
+and completeness theorems) lives in
+`Morphology/Containment/Superset.lean`; this file's tree-based
+machinery predates it and is not yet grounded in it.
+
 ## The functional sequence (fseq)
 
 The key structural assumption is that case features are ordered

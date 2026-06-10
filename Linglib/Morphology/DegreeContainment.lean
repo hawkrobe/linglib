@@ -1,104 +1,103 @@
-import Linglib.Morphology.Containment
+import Linglib.Morphology.Containment.Basic
 
 /-!
 # Degree Containment — Substrate
 [bobaljik-2012]
 
 Framework-neutral substrate for the three-grade degree hierarchy
-(positive, comparative, superlative) and the *ABA generalization that
-applies to it. Mirrors the structure of `Morphology.Case.Allomorphy` for
-case morphology: an `AllomorphyPattern`-style record + decidable
-contiguity predicates derived from the generic
-`Morphology.Containment` substrate.
+(positive, comparative, superlative) and the *ABA generalization over
+it: the n = 3 specialization of `Morphology.Containment.Pattern`,
+mirroring `Morphology.Case.Allomorphy` for case. `DegreePattern` is the
+ergonomic record form; `DegreePattern.toPattern` connects it to the
+general substrate, and all predicates are defined through that
+projection, so the generic theory applies by construction.
 
-The empirical generalization [bobaljik-2012] surveys: across
-languages, suppletion in adjectival comparison patterns as `tall–
-taller–tallest` (AAA), `good–better–best` (ABB), or `bonus–melior–
-optimus` (ABC); the configuration `*good–better–goodest` (ABA) is
-unattested. This file supplies the pattern type and the *ABA
-detector. What *explains* the generalization (Containment Hypothesis +
-late insertion + Elsewhere ordering) is theory-laden and lives
-elsewhere — see `Morphology/DM/ContainmentVI.lean` for the
-DM-flavored VI account and `Studies/Bobaljik2012.lean`
-for the bundle of CSG predictions and attested-pattern theorems.
+The empirical generalization [bobaljik-2012] surveys: across languages,
+suppletion in adjectival comparison patterns as `tall – taller –
+tallest` (AAA), `good – better – best` (ABB), or `bonus – melior –
+optimus` (ABC); both `*good – better – goodest` (ABA) and `*good –
+gooder – best` (AAB) are unattested. Contiguity excludes only ABA; the
+AAB exclusion and the derivations live in the realizational engine
+(`Morphology/Containment/Vocabulary.lean`) and are instantiated in
+`Studies/Bobaljik2012.lean`.
 
-Scope restriction (cf. [bobaljik-2012] on relative vs. absolute
-superlatives): the contiguity claim concerns *relative* superlatives.
-Absolute / elatival superlatives (e.g., Italian *bellissimo*) are a
-distinct morphological category whose internal structure need not
-contain CMPR.
+Scope restriction (cf. [bobaljik-2012] pp. 2, 28): the contiguity claim
+concerns *relative* superlatives. Absolute / elatival superlatives
+(e.g., Italian *bellissimo*) lack the comparative meaning component and
+hence the containment structure.
 -/
 
 namespace Morphology.DegreeContainment
 
--- ============================================================================
--- § 1: Degree Grade
--- ============================================================================
+open Morphology.Containment (Pattern IsContiguous)
+
+/-! ### Degree grades -/
 
 /-- The three morphological grades of adjectival degree. Structural
-    layers: each higher grade's morphosyntactic representation contains
-    the lower ones. -/
+layers: each higher grade's morphosyntactic representation contains the
+lower ones. -/
 inductive DegreeGrade where
   | pos   -- positive: the bare adjective
   | cmpr  -- comparative: ADJ + CMPR
   | sprl  -- superlative: ADJ + CMPR + SPRL
   deriving DecidableEq, Repr
 
-/-- Containment rank: POS < CMPR < SPRL. The "containment" relation
-    reduces to `rank ≤ rank` on `DegreeGrade`; we don't introduce a
-    named `containedIn` wrapper, since `Nat.le_refl` and `Nat.le_trans`
-    already provide the algebraic content. -/
-def DegreeGrade.rank : DegreeGrade → Nat
-  | .pos  => 0
-  | .cmpr => 1
-  | .sprl => 2
-
-/-- The degree grade as a position index in the 3-cell hierarchy.
-    Sibling of `rank` for callers that need a `Fin 3` directly (e.g.
-    indexing into `Morphology.DM.ContainmentVI`'s n-parametric
-    machinery at `n = 3`). -/
+/-- The degree grade as a position in the 3-grade hierarchy, for
+indexing `Morphology.Containment` machinery. -/
 def DegreeGrade.toFin : DegreeGrade → Fin 3
   | .pos  => 0
   | .cmpr => 1
   | .sprl => 2
 
--- ============================================================================
--- § 2: DegreePattern + *ABA
--- ============================================================================
+/-- Containment rank: POS < CMPR < SPRL. Derived from `toFin`. -/
+def DegreeGrade.rank (g : DegreeGrade) : Nat := g.toFin
+
+/-! ### DegreePattern -/
 
 /-- A suppletive pattern over the three grades, indexed by form-class.
-    Two grades share a root iff they have the same index.
+Two grades share a root iff they have the same index.
 
-    Examples:
-    - AAA (0,0,0): `tall – taller – tallest`
-    - ABB (0,1,1): `good – better – best`
-    - ABC (0,1,2): `bonus – melior – optimus`
-    - *ABA (0,1,0): unattested. -/
+Examples:
+- AAA (0,0,0): `tall – taller – tallest`
+- ABB (0,1,1): `good – better – best`
+- ABC (0,1,2): `bonus – melior – optimus`
+- *ABA (0,1,0): unattested. -/
 structure DegreePattern where
   pos  : Nat
   cmpr : Nat
   sprl : Nat
   deriving DecidableEq, Repr
 
-/-- A pattern violates the *ABA constraint. By construction the
-    case-projection of the generic predicate `Morphology.Containment.ViolatesABA`. -/
-def DegreePattern.ViolatesABA (p : DegreePattern) : Prop :=
-  Morphology.Containment.ViolatesABA [p.pos, p.cmpr, p.sprl]
+/-- The general-substrate form of a degree pattern. -/
+def DegreePattern.toPattern (p : DegreePattern) : Pattern 3 ℕ :=
+  ![p.pos, p.cmpr, p.sprl]
 
-instance (p : DegreePattern) : Decidable p.ViolatesABA :=
-  inferInstanceAs (Decidable (Morphology.Containment.ViolatesABA _))
+@[simp] theorem DegreePattern.toPattern_zero (p : DegreePattern) :
+    p.toPattern 0 = p.pos := rfl
 
-/-- A pattern is contiguous: each form class occupies a contiguous span
-    on the hierarchy. Equivalent to `¬ ViolatesABA`. -/
+@[simp] theorem DegreePattern.toPattern_one (p : DegreePattern) :
+    p.toPattern 1 = p.cmpr := rfl
+
+@[simp] theorem DegreePattern.toPattern_two (p : DegreePattern) :
+    p.toPattern 2 = p.sprl := rfl
+
+/-- A pattern is contiguous: each form class occupies an interval of
+grades. The generic `Morphology.Containment.IsContiguous`, by
+construction. -/
 def DegreePattern.IsContiguous (p : DegreePattern) : Prop :=
-  ¬ p.ViolatesABA
+  Morphology.Containment.IsContiguous p.toPattern
 
 instance (p : DegreePattern) : Decidable p.IsContiguous :=
+  inferInstanceAs (Decidable (Morphology.Containment.IsContiguous _))
+
+/-- A pattern violates the *ABA constraint. -/
+def DegreePattern.ViolatesABA (p : DegreePattern) : Prop :=
+  ¬ p.IsContiguous
+
+instance (p : DegreePattern) : Decidable p.ViolatesABA :=
   inferInstanceAs (Decidable (¬ _))
 
--- ============================================================================
--- § 3: Pattern Classification
--- ============================================================================
+/-! ### Pattern classification -/
 
 /-- All three grades share the same root (regular paradigm). -/
 def DegreePattern.IsRegular (p : DegreePattern) : Prop :=
@@ -121,15 +120,13 @@ def DegreePattern.SprlSuppletive (p : DegreePattern) : Prop :=
 instance (p : DegreePattern) : Decidable p.SprlSuppletive :=
   inferInstanceAs (Decidable (_ ≠ _))
 
--- ============================================================================
--- § 4: Concrete Pattern Constants + Verification
--- ============================================================================
+/-! ### Pattern constants -/
 
 /-- AAA: regular throughout. -/
 def aaa : DegreePattern := ⟨0, 0, 0⟩
 
 /-- ABB: suppletive comparative; superlative shares comparative root.
-    English `good – better – best`. -/
+English `good – better – best`. -/
 def abb : DegreePattern := ⟨0, 1, 1⟩
 
 /-- ABC: three distinct roots. Latin `bonus – melior – optimus`. -/
@@ -138,13 +135,12 @@ def abc : DegreePattern := ⟨0, 1, 2⟩
 /-- *ABA: the unattested pattern (`*good – better – goodest`). -/
 def aba : DegreePattern := ⟨0, 1, 0⟩
 
-/-- *AAB: contiguous by the generic ABA checker, but excluded by VI
-    locality in the DM analysis (see `Morphology/DM/ContainmentVI.lean`). -/
+/-- *AAB: contiguous, but unattested — excluded by the vocabulary-level
+conditions of `Morphology/Containment/Vocabulary.lean` (`csg2`), not by
+contiguity. -/
 def aab : DegreePattern := ⟨0, 0, 1⟩
 
-/-! Smoke tests confirming each named pattern resolves correctly.
-    Demoted from `theorem` to `example` because nothing in the
-    codebase references them by name. -/
+/-! Smoke tests confirming each named pattern resolves correctly. -/
 
 example : aaa.IsContiguous := by decide
 example : aaa.IsRegular := by decide
@@ -156,47 +152,44 @@ example : aba.ViolatesABA := by decide
 example : ¬ aba.IsContiguous := by decide
 example : aab.IsContiguous := by decide
 
--- ============================================================================
--- § 5: CSG Part I (from Contiguity Alone)
--- ============================================================================
+/-! ### CSG Part I from contiguity alone -/
 
 /-- **Comparative-Superlative Generalization, Part I** ([bobaljik-2012]):
-    if the comparative is suppletive, then the superlative is also
-    suppletive (with respect to the positive). Follows from contiguity
-    alone — if POS ≠ CMPR, then a contiguous pattern cannot have
-    POS = SPRL (that would be ABA). -/
+if the comparative is suppletive, the superlative is also suppletive
+(with respect to the positive). Follows from contiguity alone — if
+POS ≠ CMPR, a contiguous pattern cannot have POS = SPRL (that would be
+ABA). -/
 theorem csg_part1 (p : DegreePattern)
     (h_contig : p.IsContiguous) (h_cmpr_suppl : p.CmprSuppletive) :
-    p.SprlSuppletive := by
-  intro h_pos_eq_sprl
-  apply h_contig
-  show Morphology.Containment.ViolatesABA [p.pos, p.cmpr, p.sprl]
-  unfold Morphology.Containment.ViolatesABA
-  rw [Morphology.Containment.violatesABA_three]
-  simp only [Bool.and_eq_true, beq_iff_eq, bne_iff_ne]
-  exact ⟨h_pos_eq_sprl, h_cmpr_suppl⟩
+    p.SprlSuppletive := λ heq =>
+  h_cmpr_suppl (h_contig (i := 0) (j := 1) (k := 2) (by decide) (by decide) heq)
 
--- ============================================================================
--- § 6: Deriving a Pattern from Surface Forms
--- ============================================================================
+/-! ### Reading a pattern off realized cells -/
 
-/-- Derive a `DegreePattern` from three surface forms by grouping
-    identical strings. Convention: positive root gets index 0; new
-    roots get fresh indices. -/
+/-- Classify a 3-grade realization into a `DegreePattern` by grouping
+identical cells: positive root is index 0, fresh roots get fresh
+indices. Connects the realizational engine's output
+(`Morphology.Containment.realize`) to the fragment-level pattern
+vocabulary; see `Studies/Bobaljik2012.lean` for the worked instances. -/
+def degreeShape {F : Type*} [DecidableEq F] (p : Pattern 3 F) : DegreePattern :=
+  let c : Nat := if p 1 = p 0 then 0 else 1
+  ⟨0, c, if p 2 = p 0 then 0 else if p 2 = p 1 then c else c + 1⟩
+
+/-- Derive a `DegreePattern` from three surface forms — `degreeShape`
+on the form triple. Caveat ([bobaljik-2012] ch. 5 fn. 4): surface-form
+identity cannot distinguish suppletion from readjustment (German
+*hoch – höher – höchst* would misread as ABA), so fragment entries
+record curated patterns rather than applying this to orthography. -/
 def patternFromForms (pos cmpr sprl : String) : DegreePattern :=
-  let posIdx := 0
-  let cmprIdx := if cmpr == pos then 0 else 1
-  let sprlIdx :=
-    if sprl == pos then 0
-    else if sprl == cmpr then cmprIdx
-    else if cmprIdx == 1 then 2 else 1
-  ⟨posIdx, cmprIdx, sprlIdx⟩
+  degreeShape ![pos, cmpr, sprl]
 
-/-! Smoke tests for `patternFromForms` covering the three attested
-    pattern types. -/
+/-! Smoke tests for `degreeShape` and `patternFromForms` covering the
+attested pattern types. -/
 
 example : patternFromForms "tall" "tall" "tall" = aaa := by decide
 example : patternFromForms "A" "B" "B" = abb := by decide
 example : patternFromForms "A" "B" "C" = abc := by decide
+example : degreeShape ![0, 1, 0] = aba := by decide
+example : degreeShape ![0, 0, 1] = aab := by decide
 
 end Morphology.DegreeContainment
