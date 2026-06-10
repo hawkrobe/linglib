@@ -30,11 +30,11 @@ Consequences for the nature of roots."
 
 ## Modeling Notes
 
-**RootArity captures complement projection, not semantic type.**
+**Root.Arity captures complement projection, not semantic type.**
 Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
 compose with an entity argument per [davis-1997]. But syntactically, only
 √TV projects a complement DP that persists across voice alternations; √ITV's
-entity argument becomes the subject. Our `RootArity.selectsTheme` captures
+entity argument becomes the subject. Our `Root.Arity.selectsTheme` captures
 the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
 This matches the -aj diagnostic: -aj marks implicit arguments, and only √TV
 stems show -aj (the theme can be implicit), not √ITV.

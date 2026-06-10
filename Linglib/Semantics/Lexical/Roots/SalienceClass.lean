@@ -1,23 +1,39 @@
 import Linglib.Semantics.Lexical.Roots.Typology
+import Linglib.Semantics.Lexical.Roots.Arity
 
 /-!
 # Lexical Salience Classes
 
 [lucy-1994]'s classification of verbal roots by which argument(s) the
 underived root form makes "salient" (default case-role assignment at
-the propositional level): a 3-way salience cut (agent, agent-patient,
-patient, by required transitiviser) plus the separately-derived
-positional class, systematized here as one enum. The characterization
-of each class by B&K-G feature signature is a cross-framework
-reconstruction ([lucy-1994] predates the feature vocabulary of
+the propositional level): a 3-way salience cut by required
+transitiviser — agent (`=t`), agent-patient (`=∅`), patient (`=s`) —
+plus the separately-derived positional class (`-tal`), systematized
+here as one enum.
+
+The structural characterization of each class needs **two**
+dimensions. Agent-patient salience is *root transitivity*: these roots
+"require two arguments and refer to events involving the action of one
+entity on another" ([lucy-1994]) — `Root.Arity.selectsTheme`, the
+Mayan root-transitive class of [coon-2019]. It is NOT a B&K-G feature
+configuration: *p'is* 'measure' and *lo'š* 'punch' are manner roots
+with no entailed change of state. The two intransitive classes are
+then separated by the signature (manner vs result), matching the
+Sapir/Perlmutter unaccusativity split [lucy-1994] cites. This
+two-dimensional characterization is a cross-framework reconstruction
+([lucy-1994] predates both [coon-2019] and
 [beavers-koontz-garboden-2020]), not Lucy's own formulation.
 
-This file lifts the classification out of any specific empirical
-study so that other Fragment / Theory modules can refer to it
-(e.g., the Yukatek 5-way verb stem classification, which refines
-this cut). The full [lucy-1994] analysis — operator applicability,
+The full [lucy-1994] analysis — operator applicability,
 motion-roots-non-class theorem, per-root verifications — lives in
 `Studies/Lucy1994.lean`.
+
+## Main declarations
+
+* `SalienceClass`
+* `IsAgentSalient`, `IsAgentPatientSalient`, `IsPatientSalient`,
+  `IsPositional` — conditions over (signature × arity)
+* `classOf` — the salience classifier
 -/
 
 /-- Salience classification of verbal roots ([lucy-1994]): the 3-way
@@ -35,139 +51,94 @@ inductive SalienceClass where
   | positional
   deriving DecidableEq, Repr
 
-/-! ### Named class predicates
+/-! ### Named class conditions
 
-Named structural conditions characterising membership in each
-[lucy-1994] salience class. These predicates are language-independent:
-the same conditions characterise the class in any inventory whose
-transitivisers respect the diagnostic. They appear directly as the
-`applies` field of each Yukatek operator in
-`Fragments/Mayan/Yukatek/Operators.lean`, making the
-operator-applicability ↔ salience-class connection true *by
+Structural conditions characterising membership in each [lucy-1994]
+salience class, over the pair (B&K-G feature signature × Coon arity).
+These conditions are language-independent: the same conditions
+characterise the class in any inventory whose transitivisers respect
+the diagnostic. They appear directly as the `applies` field of each
+Yukatek operator in `Fragments/Mayan/Yukatek/Operators.lean`, making
+the operator-applicability ↔ salience-class connection true *by
 construction* rather than only provable per-case. -/
 
-namespace Root.FeatureSignature
+/-- Agent-salient: intransitive manner-of-action root (requires `=t`
+    to transitivise; [lucy-1994]: "actions or activities that some
+    entity undertakes"). -/
+def IsAgentSalient (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+  ar = .noTheme ∧ .manner ∈ s ∧ .result ∉ s
 
-/-- Agent-salient: manner without result (intransitive activity that
-    requires =t to transitivise; [lucy-1994]). -/
-def IsAgentSalient (s : Root.FeatureSignature) : Prop :=
-  .manner ∈ s ∧ .result ∉ s
-
-instance (s : Root.FeatureSignature) : Decidable s.IsAgentSalient :=
+instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+    Decidable (IsAgentSalient s ar) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Agent-patient salient: manner *and* result (already lexically
-    transitive; [lucy-1994]). -/
-def IsAgentPatientSalient (s : Root.FeatureSignature) : Prop :=
-  .manner ∈ s ∧ .result ∈ s
+/-- Agent-patient salient: the root is lexically transitive — it
+    "require[s] two arguments" ([lucy-1994]), i.e. selects a theme
+    ([coon-2019]'s √TV). Signature-independent: root transitives need
+    not entail any change of state (*p'is* 'measure'). -/
+def IsAgentPatientSalient (ar : Root.Arity) : Prop :=
+  ar = .selectsTheme
 
-instance (s : Root.FeatureSignature) : Decidable s.IsAgentPatientSalient :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Patient-salient: result without manner (intransitive change-of-state
-    that requires =s to transitivise; [lucy-1994]). -/
-def IsPatientSalient (s : Root.FeatureSignature) : Prop :=
-  .manner ∉ s ∧ .result ∈ s
-
-instance (s : Root.FeatureSignature) : Decidable s.IsPatientSalient :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Positional: pure stative root — state without manner, result, or
-    cause (requires `-tal` for the inchoative; [lucy-1994]). -/
-def IsPositional (s : Root.FeatureSignature) : Prop :=
-  s = {.state}
-
-instance (s : Root.FeatureSignature) : Decidable s.IsPositional :=
+instance (ar : Root.Arity) : Decidable (IsAgentPatientSalient ar) :=
   inferInstanceAs (Decidable (_ = _))
 
-end Root.FeatureSignature
+/-- Patient-salient: intransitive change-of-state root (requires `=s`
+    to transitivise; [lucy-1994]: "state changes that some entity
+    undergoes more or less spontaneously"). -/
+def IsPatientSalient (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+  ar = .noTheme ∧ .manner ∉ s ∧ .result ∈ s
 
-/-! Per-root convenience versions, lifted via `featureSignature`. -/
+instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+    Decidable (IsPatientSalient s ar) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-namespace Root
+/-- Positional: pure stative configurational root (requires `-tal`
+    for the inchoative; [lucy-1994]). -/
+def IsPositional (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+  ar = .noTheme ∧ s = {.state}
 
-/-- Agent-salient root (cf. `Root.FeatureSignature.IsAgentSalient`). -/
-def IsAgentSalient (r : Root) : Prop :=
-  r.featureSignature.IsAgentSalient
-
-instance (r : Root) : Decidable r.IsAgentSalient :=
-  inferInstanceAs (Decidable (Root.FeatureSignature.IsAgentSalient _))
-
-/-- Agent-patient salient root. -/
-def IsAgentPatientSalient (r : Root) : Prop :=
-  r.featureSignature.IsAgentPatientSalient
-
-instance (r : Root) : Decidable r.IsAgentPatientSalient :=
-  inferInstanceAs (Decidable (Root.FeatureSignature.IsAgentPatientSalient _))
-
-/-- Patient-salient root. -/
-def IsPatientSalient (r : Root) : Prop :=
-  r.featureSignature.IsPatientSalient
-
-instance (r : Root) : Decidable r.IsPatientSalient :=
-  inferInstanceAs (Decidable (Root.FeatureSignature.IsPatientSalient _))
-
-/-- Positional root. -/
-def IsPositional (r : Root) : Prop :=
-  r.featureSignature.IsPositional
-
-instance (r : Root) : Decidable r.IsPositional :=
-  inferInstanceAs (Decidable (Root.FeatureSignature.IsPositional _))
-
-end Root
+instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+    Decidable (IsPositional s ar) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Salience classifier -/
 
-/-- Map a B&K-G feature signature to its salience class
-    ([lucy-1994]) by dispatching on the four named predicates, which
-    align with operator applicability conditions in
-    `Fragments/Mayan/Yukatek/Operators.lean`. The positional arm
-    requires the pure-state signature: positional roots are stative
-    configurations (orientation, posture, location) with no causing
-    event. -/
-def classOfSignature (s : Root.FeatureSignature) : Option SalienceClass :=
-  if s.IsAgentSalient then some .agent
-  else if s.IsAgentPatientSalient then some .agentPatient
-  else if s.IsPatientSalient then some .patient
-  else if s.IsPositional then some .positional
+/-- Map a (B&K-G feature signature × Coon arity) pair to its salience
+    class ([lucy-1994]) by dispatching on the four named conditions,
+    which align with operator applicability conditions in
+    `Fragments/Mayan/Yukatek/Operators.lean`. -/
+def classOf (s : Root.FeatureSignature) (ar : Root.Arity) :
+    Option SalienceClass :=
+  if IsAgentPatientSalient ar then some .agentPatient
+  else if IsAgentSalient s ar then some .agent
+  else if IsPatientSalient s ar then some .patient
+  else if IsPositional s ar then some .positional
   else none
 
-/-- A root's predicted salience class is `classOfSignature` of its
-    feature signature. -/
-def Root.predictedSalience (r : Root) : Option SalienceClass :=
-  classOfSignature r.featureSignature
+/-! ### Pairwise disjointness of class conditions -/
 
-/-- Two roots with the same B&K-G feature signature get the same
-    salience class. -/
-theorem predictedSalience_depends_only_on_signature
-    (r₁ r₂ : Root) (h : r₁.featureSignature = r₂.featureSignature) :
-    r₁.predictedSalience = r₂.predictedSalience := by
-  unfold Root.predictedSalience
-  rw [h]
-
-/-! ### Pairwise disjointness of class predicates -/
-
-/-- The four named predicates are pairwise disjoint: at most one fires
-    on any given signature. (They are *jointly* not exhaustive — the
-    no-manner-no-result signatures other than `{state}` fall outside
-    all four; see `classOfSignature_eq_none_iff`.) -/
+/-- The four named conditions are pairwise disjoint: at most one fires
+    on any (signature, arity) pair. (They are *jointly* not exhaustive
+    — intransitive signatures with neither manner nor result that are
+    not pure `{state}` fall outside all four; see
+    `classOf_eq_none_iff`.) -/
 theorem classes_pairwise_disjoint :
-    ∀ s : Root.FeatureSignature,
-      ¬ (s.IsAgentSalient ∧ s.IsAgentPatientSalient) ∧
-      ¬ (s.IsAgentSalient ∧ s.IsPatientSalient) ∧
-      ¬ (s.IsAgentSalient ∧ s.IsPositional) ∧
-      ¬ (s.IsAgentPatientSalient ∧ s.IsPatientSalient) ∧
-      ¬ (s.IsAgentPatientSalient ∧ s.IsPositional) ∧
-      ¬ (s.IsPatientSalient ∧ s.IsPositional) := by
+    ∀ (s : Root.FeatureSignature) (ar : Root.Arity),
+      ¬ (IsAgentSalient s ar ∧ IsAgentPatientSalient ar) ∧
+      ¬ (IsAgentSalient s ar ∧ IsPatientSalient s ar) ∧
+      ¬ (IsAgentSalient s ar ∧ IsPositional s ar) ∧
+      ¬ (IsAgentPatientSalient ar ∧ IsPatientSalient s ar) ∧
+      ¬ (IsAgentPatientSalient ar ∧ IsPositional s ar) ∧
+      ¬ (IsPatientSalient s ar ∧ IsPositional s ar) := by
   decide
 
-/-- `classOfSignature s = none` iff `s` falls outside all four named
-    predicates. Characterises the gap in the diagnostic: the
-    no-manner-no-result signatures other than pure `{state}` are
-    unclassified by Lucy's Yukatek diagnostic. -/
-theorem classOfSignature_eq_none_iff :
-    ∀ s : Root.FeatureSignature,
-      classOfSignature s = none ↔
-        ¬ s.IsAgentSalient ∧ ¬ s.IsAgentPatientSalient ∧
-        ¬ s.IsPatientSalient ∧ ¬ s.IsPositional := by
+/-- `classOf s ar = none` iff the pair falls outside all four named
+    conditions. Characterises the gap in the diagnostic: intransitive
+    roots with neither a manner nor a result kind, other than pure
+    `{state}`, are unclassified by Lucy's Yukatek diagnostic. -/
+theorem classOf_eq_none_iff :
+    ∀ (s : Root.FeatureSignature) (ar : Root.Arity),
+      classOf s ar = none ↔
+        ¬ IsAgentSalient s ar ∧ ¬ IsAgentPatientSalient ar ∧
+        ¬ IsPatientSalient s ar ∧ ¬ IsPositional s ar := by
   decide

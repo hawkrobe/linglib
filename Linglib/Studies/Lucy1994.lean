@@ -30,13 +30,17 @@ via `-tal` (allomorph `-lah`) for the positional inchoative.
 Here we recast the salience cut as a derived equivalence on roots
 under the operator inventory in `Fragments/Mayan/Yukatek/Operators.lean`:
 two roots have the same salience class iff the same operator(s) apply
-to them. The 3-way classification then *falls out* of (B&K-G feature
-signature) × (operator applicability conditions) — it is not stipulated.
+to them. The classification then *falls out* of (B&K-G feature
+signature × Coon root arity) × (operator applicability conditions) —
+it is not stipulated. Arity carries the agent-patient class (Lucy's
+`=∅` roots "require two arguments"; *p'is* 'measure' and *lo'š*
+'punch' entail no change of state, so no feature configuration could
+carry it); the signature separates the two intransitive classes.
 
-The structural theorem `class_depends_only_on_signature` makes this
-precise: salience class depends only on the feature signature, not on
+The structural theorem `class_depends_only_on_signature_and_arity`
+makes this precise: salience class depends only on the pair, not on
 the specific root identity. The per-root checks then degenerate to
-finite signature lookups.
+finite lookups.
 -/
 
 namespace Lucy1994
@@ -47,56 +51,58 @@ open Yukatek.Operators
 
 /-! ### Salience classes (re-exported from theory) -/
 
-/-! `SalienceClass` and `classOfSignature` live in
+/-! `SalienceClass` and `classOf` live in
     `Semantics/Lexical/Roots/SalienceClass.lean`. This file
     provides the full [lucy-1994] analysis on top of them:
-    operator-applicability characterizations and per-root sanity checks.
+    operator-applicability characterizations and per-root sanity checks. -/
 
-    Local short alias `predictedClass = Root.predictedSalience`. -/
-
-/-- A root's predicted salience class. Alias for
-    `Root.predictedSalience` (`SalienceClass.lean`). -/
+/-- A root's predicted salience class: the substrate classifier
+    applied to its signature and the fragment's arity assignment. -/
 abbrev predictedClass (r : Root) : Option SalienceClass :=
-  r.predictedSalience
+  classOf r.featureSignature (arity r)
 
-theorem class_depends_only_on_signature
-    (r₁ r₂ : Root) (h : r₁.featureSignature = r₂.featureSignature) :
-    predictedClass r₁ = predictedClass r₂ :=
-  predictedSalience_depends_only_on_signature r₁ r₂ h
+theorem class_depends_only_on_signature_and_arity
+    (r₁ r₂ : Root) (h : r₁.featureSignature = r₂.featureSignature)
+    (h' : arity r₁ = arity r₂) :
+    predictedClass r₁ = predictedClass r₂ := by
+  unfold predictedClass
+  rw [h, h']
 
 /-! ### Predicted class agrees with operator applicability -/
 
 /-! Both `predictedClass` and the inventory's applicability profile
-    factor through the root's feature signature, a `Finset LexKind`
-    drawn from a 16-element fintype. Each characterisation therefore
-    reduces — after rewriting the profile to signature level
-    (`applicableNames_eq_profile`) and generalising the signature — to
-    a statement over all signatures that `decide` checks. The local
-    macro `lucy_applicable` packages the reduction. -/
+    factor through the pair (feature signature × arity), drawn from a
+    32-element fintype. Each characterisation therefore reduces —
+    after rewriting the profile to pair level
+    (`applicableNames_eq_profile`) and generalising the pair — to a
+    statement over all pairs that `decide` checks. The local macro
+    `lucy_applicable` packages the reduction. -/
 
-/-- The inventory's applicability profile as a function of the feature
-    signature. The four operator conditions are pairwise disjoint
-    (`classes_pairwise_disjoint`), so at most one name appears. -/
+/-- The inventory's applicability profile as a function of the
+    (signature × arity) pair. The four operator conditions are
+    pairwise disjoint (`classes_pairwise_disjoint`), so at most one
+    name appears. -/
 private theorem applicableNames_eq_profile (r : Root) :
     inventory.applicableNames r =
-      (if r.featureSignature.IsAgentSalient then ["=t"] else []) ++
-      (if r.featureSignature.IsAgentPatientSalient then ["=∅"] else []) ++
-      (if r.featureSignature.IsPatientSalient then ["=s"] else []) ++
-      (if r.featureSignature.IsPositional then ["-tal"] else []) := by
+      (if IsAgentSalient r.featureSignature (arity r) then ["=t"] else []) ++
+      (if IsAgentPatientSalient (arity r) then ["=∅"] else []) ++
+      (if IsPatientSalient r.featureSignature (arity r) then ["=s"] else []) ++
+      (if IsPositional r.featureSignature (arity r) then ["-tal"] else []) := by
   simp only [inventory, Inventory.applicableNames, affectiveT, zeroDeriv,
     causativeS, positionalTal, List.filter_cons, List.filter_nil,
-    decide_eq_true_eq, Root.IsAgentSalient, Root.IsAgentPatientSalient,
-    Root.IsPatientSalient, Root.IsPositional]
+    decide_eq_true_eq]
   generalize r.featureSignature = s
-  revert s
+  generalize arity r = a
+  revert s a
   decide
 
 local macro "lucy_applicable " r:term : tactic =>
   `(tactic|
     (rw [applicableNames_eq_profile]
-     unfold predictedClass Root.predictedSalience
+     unfold predictedClass
      generalize ($r).featureSignature = s
-     revert s
+     generalize arity $r = a
+     revert s a
      decide))
 
 /-- The `=t`-only applicability profile characterises agent-salient roots. -/
@@ -134,10 +140,12 @@ theorem applicableNames_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
     inventory.applicableNames r₁ = inventory.applicableNames r₂ ↔
       predictedClass r₁ = predictedClass r₂ := by
   rw [applicableNames_eq_profile, applicableNames_eq_profile]
-  unfold predictedClass Root.predictedSalience
+  unfold predictedClass
   generalize r₁.featureSignature = s₁
+  generalize arity r₁ = a₁
   generalize r₂.featureSignature = s₂
-  revert s₁ s₂
+  generalize arity r₂ = a₂
+  revert s₁ a₁ s₂ a₂
   decide
 
 /-! ### Per-root sanity checks -/
@@ -198,31 +206,45 @@ theorem motion_roots_not_separate_class :
 theorem positional_distinct_from_motion :
     predictedClass cin ≠ predictedClass luub := by decide
 
+/-! ### Root transitivity is not MRC violation -/
+
+/-- Lucy's root transitives are manner-only roots in B&K-G terms —
+    lexical transitivity does not entail a result. Under the previous
+    schema (agent-patient salience as `manner + result`) every Yukatek
+    root transitive came out violating Manner/Result Complementarity,
+    contradicting [beavers-koontz-garboden-2020]'s finding that
+    manner+result roots are a restricted, special class; *hit*-type
+    surface-contact roots like *lo'š* 'punch' are their parade
+    manner-without-result examples. -/
+theorem rootTransitives_respect_mrc :
+    ∀ r ∈ rootTransitives, r.RespectsMannerResultComplementarity := by
+  decide
+
 /-! ### Closure robustness -/
 
 /-- The class predicted from a root's *closed* feature signature
     (the collocational closure `Root.FeatureSignature.close` of the derived
-    signature). -/
+    signature). Arity is closure-invariant. -/
 def closedPredictedClass (r : Root) : Option SalienceClass :=
-  classOfSignature r.closedFeatureSignature
+  classOf r.closedFeatureSignature (arity r)
 
 /-- For cause-free roots, collocational closure does not change the
-    Lucy 1994 salience classification: the only closure edge that can
-    fire is result→state, the agent / agentPatient / patient arms
-    ignore `.state` membership, and a base that gains `.state` from
-    closure carries `.result` and so is already excluded from the
-    positional arm. The hypothesis is necessary: a root carrying
-    `.cause` but not `.result` is unclassified at base yet
+    Lucy 1994 salience classification: arity is untouched, the only
+    closure edge that can fire is result→state, the agent / patient
+    arms ignore `.state` membership, and a base that gains `.state`
+    from closure carries `.result` and so is already excluded from the
+    positional arm. The hypothesis is necessary: an intransitive root
+    carrying `.cause` but not `.result` is unclassified at base yet
     patient-salient after closure, since the cause→result closure edge
     introduces `.result`. -/
 theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
     closedPredictedClass r = predictedClass r := by
   unfold Root.HasCause at h
-  unfold closedPredictedClass predictedClass Root.predictedSalience
-    Root.closedFeatureSignature
+  unfold closedPredictedClass predictedClass Root.closedFeatureSignature
   revert h
   generalize r.featureSignature = s
-  revert s
+  generalize arity r = a
+  revert s a
   decide
 
 /-! ### Bridge to Bohnemeyer's 5-way verb stem classes -/
