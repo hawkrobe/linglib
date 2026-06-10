@@ -2175,10 +2175,10 @@ import Linglib.Semantics.TypeTheoretic.Discourse
 import Linglib.Semantics.TypeTheoretic.WitnessQuantification
 -- Theories: Construction Grammar
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Slot
 import Linglib.Syntax.ConstructionGrammar.GrammarDist
+import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Studies.Dunn2025
 import Linglib.Syntax.ConstructionGrammar.Resultatives

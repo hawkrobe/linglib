@@ -6,7 +6,7 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
@@ -331,7 +331,7 @@ def wxdyConstruction : Construction :=
 /-- WXDY is a formal idiom in FKO1988's typology: encoding (must learn the
 incredulity convention), grammatical (fills proper grammatical slots),
 formal (productive open pattern). -/
-def wxdyIdiomType : FillmoreKayOConnor1988.IdiomType :=
+def wxdyIdiomType : ConstructionGrammar.IdiomType :=
   { interpretability := .encoding
   , grammaticality := .grammatical
   , formality := .formal }
@@ -339,7 +339,7 @@ def wxdyIdiomType : FillmoreKayOConnor1988.IdiomType :=
 /-- WXDY uses familiar pieces in a familiar arrangement: "what", "doing", etc.
 are all standard English items in standard syntactic positions. The
 non-compositional meaning (incredulity) is what must be learned. -/
-def wxdyFamiliarity : FillmoreKayOConnor1988.FamiliarityPattern :=
+def wxdyFamiliarity : ConstructionGrammar.FamiliarityPattern :=
   .familiarPiecesFamiliarlyArranged
 
 /-- WXDY is a formal idiom: partially open, with pragmatic function. -/
