@@ -144,8 +144,8 @@ def possPxOrQx : QBSMLFormula QVar QPred := .poss PxOrQx
 -- §4 Substrate facts: Px, Qx are NE-free
 -- ============================================================================
 
-theorem Px_isNEFree : Px.isNEFree = true := rfl
-theorem Qx_isNEFree : Qx.isNEFree = true := rfl
+theorem Px_isNEFree : Px.IsNEFree := .pred _ _
+theorem Qx_isNEFree : Qx.IsNEFree := .pred _ _
 
 -- ============================================================================
 -- §5 Fact 10 (Negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb`
@@ -198,7 +198,7 @@ theorem fact8_narrowScopeFC
     they hold on every model. -/
 theorem avoModel_indisputable
     (s : Finset (Index PowerSet2World QVar FCAtom)) :
-    avoModel.isIndisputable s := by
+    avoModel.IsIndisputable s := by
   intro _ _ _ _; rfl
 
 end AloniVanOrmondt2023

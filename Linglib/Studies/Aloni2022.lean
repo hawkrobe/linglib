@@ -138,16 +138,16 @@ def plainDisj : BSMLFormula FCAtom :=
 -- ============================================================================
 
 theorem deonticModel_indisputable_on_team :
-    deonticModel.isIndisputable freeChoiceTeam := by decide
+    deonticModel.IsIndisputable freeChoiceTeam := by decide
 
 theorem stateBasedModel_state_based_on_team :
-    stateBasedModel.isStateBased freeChoiceTeam := by decide
+    stateBasedModel.IsStateBased freeChoiceTeam := by decide
 
 theorem deonticModel_not_state_based_on_team :
-    ¬ deonticModel.isStateBased freeChoiceTeam := by decide
+    ¬ deonticModel.IsStateBased freeChoiceTeam := by decide
 
 theorem looseDeonticModel_not_indisputable_on_team :
-    ¬ looseDeonticModel.isIndisputable freeChoiceTeam := by decide
+    ¬ looseDeonticModel.IsIndisputable freeChoiceTeam := by decide
 
 -- ============================================================================
 -- §5 Fact 4 (Narrow Scope FC) at `deonticModel`
