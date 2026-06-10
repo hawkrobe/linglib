@@ -7,6 +7,7 @@ import Linglib.Studies.Kramer2020
 import Linglib.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Studies.AdamsonAnagnostopoulou2025
+import Linglib.Studies.TaraldsenEtAl2018
 
 /-!
 # Carstens 2026: The Grammar of Gender
@@ -865,5 +866,22 @@ theorem nary_subsumes_binary_bantu (s₁ s₂ : GenderStatus) :
     resolveN [statusToBundle s₁, statusToBundle s₂]
     = resolve (statusToBundle s₁) (statusToBundle s₂) := by
   exact resolveN_binary (statusToBundle s₁) (statusToBundle s₂)
+
+/-! ### Bridge to [taraldsen-et-al-2018]: shared classifier N ↔ matching agreement
+
+[taraldsen-et-al-2018] §2 reads the same conjoined-singular agreement data
+structurally: matching plural agreement succeeds iff the gender's singular and
+plural prefixes contain the same classifier N. [carstens-2026]'s diagnostic is
+semantic: matching succeeds iff the gender has an interpretable core. On the
+Xhosa lexicon the two classifications coincide — the shared-N pairs (1/2, 7/8,
+9/10) are exactly the interpretable genders (A, D, E). -/
+
+/-- Per Xhosa gender, [carstens-2026]'s matching-agreement diagnostic agrees
+    with [taraldsen-et-al-2018]'s shared-classifier-N diagnostic. -/
+theorem xhosa_matching_iff_sharesClassifierN (g : Xhosa.Gender) :
+    (resolve (statusToBundle g.status) (statusToBundle g.status)).isSome = true ↔
+    TaraldsenEtAl2018.SharesClassifierN (TaraldsenEtAl2018.xhosaSg g)
+      (TaraldsenEtAl2018.xhosaPl g) := by
+  cases g <;> decide
 
 end Carstens2026
