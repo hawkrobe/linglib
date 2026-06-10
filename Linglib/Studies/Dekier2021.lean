@@ -1,3 +1,4 @@
+import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Typology.Indefinite
 import Linglib.Fragments.Slavic.Russian.Indefinites
@@ -56,6 +57,7 @@ set_option autoImplicit false
 
 namespace Dekier2021
 
+open Morphology.Containment
 open Morphology.Nanosyntax
 open Indefinite
 open Russian.Indefinites
@@ -80,12 +82,13 @@ open Kannada.Indefinites
 
     Features are ordered on a universal fseq. Each layer is characterized
     by its rank (depth). A lexical entry at rank r stores F₁...Fᵣ and
-    matches any target of rank ≤ r via the Superset Principle. -/
+    matches any target of rank ≤ r via the Superset Principle —
+    `ExponenceRule.Matches` over the three-grade hierarchy `Fin 3`. -/
 
-/-- Fseq ranks for indefinite features. -/
-def nsRank : Nat := 0   -- F₁P: non-specific
-def suRank : Nat := 1   -- F₂P: specific unknown
-def skRank : Nat := 2   -- F₃P: specific known
+/-- Fseq grades for indefinite features. -/
+def nsRank : Fin 3 := 0   -- F₁P: non-specific
+def suRank : Fin 3 := 1   -- F₂P: specific unknown
+def skRank : Fin 3 := 2   -- F₃P: specific known
 
 -- ============================================================================
 -- §2. Cross-linguistic Data (Tables 7 & 8)
@@ -156,12 +159,14 @@ def gapParadigms : List ParadigmEntry :=
 -- ============================================================================
 
 /-! Each syncretism pattern corresponds to a particular lexicon
-    configuration. The spellout algorithm (Superset + Elsewhere
-    Principles) derives the surface pattern from the lexicon. -/
+    configuration. The spellout algorithm (Superset + Minimize Junk,
+    `Morphology.Containment.spellout`) derives the surface pattern from
+    the lexicon. Entries are context-free `ExponenceRule`s: an exponent
+    paired with the largest grade its stored constituent spans. -/
 
 /-- English AAA: a single entry at rank 2 covers all three layers.
     *some-* ⇔ F₃P. -/
-def englishLex : List LexEntry := [⟨2, "some-"⟩]
+def englishLex : List (ExponenceRule 3 String) := [⟨"some-", 2, none⟩]
 
 theorem english_spellout :
     spellout englishLex nsRank = some "some-" ∧
@@ -170,7 +175,7 @@ theorem english_spellout :
 
 /-- Yakut ABB: *-emeEntry* at rank 0 (F₁P), *-ereEntry* at rank 2 (F₃P).
     Elsewhere gives *-emeEntry* for NS, *-ereEntry* covers SU and SK. -/
-def yakutLex : List LexEntry := [⟨0, "-eme"⟩, ⟨2, "-ere"⟩]
+def yakutLex : List (ExponenceRule 3 String) := [⟨"-eme", 0, none⟩, ⟨"-ere", 2, none⟩]
 
 theorem yakut_spellout :
     spellout yakutLex nsRank = some "-eme" ∧
@@ -184,7 +189,7 @@ theorem yakut_spellout :
     Note: the nanosyntactic derivation is complex — *aliEntry-* is
     a prefix (subderivation), *-damEntry* is a suffix (constituent
     extraction). -/
-def latinLex : List LexEntry := [⟨1, "ali-"⟩, ⟨2, "-dam"⟩]
+def latinLex : List (ExponenceRule 3 String) := [⟨"ali-", 1, none⟩, ⟨"-dam", 2, none⟩]
 
 theorem latin_spellout :
     spellout latinLex nsRank = some "ali-" ∧
@@ -195,8 +200,8 @@ theorem latin_spellout :
     own exponent.
     *-nibudEntry'* ⇔ F₁P (suffix), *-to* ⇔ F₂P (suffix),
     *koeEntry-* ⇔ F₃P (prefix). -/
-def russianLex : List LexEntry :=
-  [⟨0, "-nibud'"⟩, ⟨1, "-to"⟩, ⟨2, "koe-"⟩]
+def russianLex : List (ExponenceRule 3 String) :=
+  [⟨"-nibud'", 0, none⟩, ⟨"-to", 1, none⟩, ⟨"koe-", 2, none⟩]
 
 theorem russian_spellout :
     spellout russianLex nsRank = some "-nibud'" ∧
@@ -205,8 +210,8 @@ theorem russian_spellout :
 
 /-- Lithuanian ABC: three entries at ranks 0, 1, 2.
     [dekier-2021] Table 7. -/
-def lithuanianLex : List LexEntry :=
-  [⟨0, "-nors"⟩, ⟨1, "kaž-"⟩, ⟨2, "kai-"⟩]
+def lithuanianLex : List (ExponenceRule 3 String) :=
+  [⟨"-nors", 0, none⟩, ⟨"kaž-", 1, none⟩, ⟨"kai-", 2, none⟩]
 
 theorem lithuanian_spellout :
     spellout lithuanianLex nsRank = some "-nors" ∧
@@ -249,20 +254,31 @@ theorem lithuanian_is_abc :
     lexical items match a syntactic node, insert the entry with the
     fewest features unspecified for that node."
 
-    Combined with the Superset Principle: if entry β (rank rβ) beats
-    entry α (rank rα > rβ) for case Y, then β also beats α for ALL
-    cases X < Y. So α cannot resurface below β on the fseq.
+    Combined with the Superset Principle this derives *ABA in general:
+    any antihomophonous context-free lexicon yields a contiguous
+    pattern (`Morphology.Containment.isContiguous_spellout`). Each
+    sample lexicon instantiates the theorem — *ABA is derived, not
+    inspected case by case. -/
 
-    This is `smaller_entry_dominates_below` from `Nanosyntax.Core`. -/
+/-- English: contiguous spellout (no ABA configuration possible). -/
+theorem english_contiguous : IsContiguous (spellout englishLex) :=
+  isContiguous_spellout (by decide)
 
-/-- No lexicon analyzed by Dekier produces *ABA. -/
-theorem no_aba_in_sample :
-    abaViolation englishLex nsRank suRank skRank = false ∧
-    abaViolation yakutLex nsRank suRank skRank = false ∧
-    abaViolation latinLex nsRank suRank skRank = false ∧
-    abaViolation russianLex nsRank suRank skRank = false ∧
-    abaViolation lithuanianLex nsRank suRank skRank = false := by
-  decide
+/-- Yakut: contiguous spellout. -/
+theorem yakut_contiguous : IsContiguous (spellout yakutLex) :=
+  isContiguous_spellout (by decide)
+
+/-- Latin: contiguous spellout. -/
+theorem latin_contiguous : IsContiguous (spellout latinLex) :=
+  isContiguous_spellout (by decide)
+
+/-- Russian: contiguous spellout. -/
+theorem russian_contiguous : IsContiguous (spellout russianLex) :=
+  isContiguous_spellout (by decide)
+
+/-- Lithuanian: contiguous spellout. -/
+theorem lithuanian_contiguous : IsContiguous (spellout lithuanianLex) :=
+  isContiguous_spellout (by decide)
 
 /-- The ABA pattern itself is unattested cross-linguistically.
     This aligns with the *ABA generalization of [bobaljik-2012]. -/
@@ -286,7 +302,8 @@ theorem aba_unattested_pattern :
     ABSENCE of high-rank entries. -/
 
 -- Kannada (AB-): entries at ranks 0 and 1, no rank-2 entry
-def kannadaLex : List LexEntry := [⟨0, "-aadaruu"⟩, ⟨1, "-oo"⟩]
+def kannadaLex : List (ExponenceRule 3 String) :=
+  [⟨"-aadaruu", 0, none⟩, ⟨"-oo", 1, none⟩]
 
 theorem kannada_gap :
     spellout kannadaLex nsRank = some "-aadaruu" ∧
@@ -294,7 +311,7 @@ theorem kannada_gap :
     spellout kannadaLex skRank = none := by decide
 
 -- Chinese (A--): single entry at rank 0
-def chineseLex : List LexEntry := [⟨0, "wh-pron"⟩]
+def chineseLex : List (ExponenceRule 3 String) := [⟨"wh-pron", 0, none⟩]
 
 theorem chinese_gap :
     spellout chineseLex nsRank = some "wh-pron" ∧
@@ -302,7 +319,7 @@ theorem chinese_gap :
     spellout chineseLex skRank = none := by decide
 
 -- Empty lexicon (---): Swahili, Irish, Filipino
-def emptyLex : List LexEntry := []
+def emptyLex : List (ExponenceRule 3 String) := []
 
 theorem empty_gap :
     spellout emptyLex nsRank = none ∧
@@ -310,17 +327,17 @@ theorem empty_gap :
     spellout emptyLex skRank = none := by decide
 
 /-- Consequence: if NS (rank 0) has no form, nothing does. -/
-theorem no_ns_implies_no_su_sk (lex : List LexEntry)
+theorem no_ns_implies_no_su_sk (lex : List (ExponenceRule 3 String))
     (h : spellout lex nsRank = none) :
-    spellout lex suRank = none ∧ spellout lex skRank = none := by
-  exact ⟨gap_propagates_upward lex 0 1 h (by omega),
-         gap_propagates_upward lex 0 2 h (by omega)⟩
+    spellout lex suRank = none ∧ spellout lex skRank = none :=
+  ⟨spellout_eq_none_of_le h (by decide),
+   spellout_eq_none_of_le h (by decide)⟩
 
 /-- Consequence: if SU (rank 1) has no form, SK doesn't either. -/
-theorem no_su_implies_no_sk (lex : List LexEntry)
+theorem no_su_implies_no_sk (lex : List (ExponenceRule 3 String))
     (h : spellout lex suRank = none) :
     spellout lex skRank = none :=
-  gap_propagates_upward lex 1 2 h (by omega)
+  spellout_eq_none_of_le h (by decide)
 
 -- Verify against the actual data:
 -- Kannada (AB-): SK absent, SU present ✓
@@ -357,7 +374,7 @@ theorem no_su_implies_no_sk (lex : List LexEntry)
     [dekier-2021]. -/
 structure MarkerMorphology where
   form : String
-  rank : Nat
+  rank : Fin 3
   morphType : MorphType
   deriving Repr
 
@@ -368,10 +385,9 @@ def russianMarkers : List MarkerMorphology :=
     the highest rank. This matches the spellout-movement (low) vs
     subderivation (high) prediction. -/
 theorem russian_suffix_prefix_split :
-    russianMarkers.all (fun m =>
-      match m.morphType with
-      | .suffix => m.rank < 2
-      | .prefix => m.rank ≥ 2) = true := by decide
+    ∀ m ∈ russianMarkers,
+      (m.morphType = .suffix → m.rank < 2) ∧
+      (m.morphType = .prefix → 2 ≤ m.rank) := by decide
 
 -- ============================================================================
 -- §8. The Hierarchy Direction
