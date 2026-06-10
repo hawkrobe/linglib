@@ -523,6 +523,22 @@ theorem zero_tense_chain :
 
 end KratzerChain
 
+/-! ### Agreement with Ogihara on the simultaneous cell -/
+
+/-- Kratzer's SOT deletion and [ogihara-1996]'s zero-tense binding build
+    the **same embedded frame**: deletion yields exactly the
+    `simultaneousFrame` whose embedded event time is the matrix event time,
+    and that frame is PRESENT relative to the shifted perspective. The two
+    accounts provably agree on the core past-under-past simultaneous cell;
+    they differ in mechanism (deletion of a genuine PAST vs a bound zero
+    PRESENT — see `Tense.SOT.Ambiguity.PastReading` for the typed
+    mechanism-level divergence). -/
+theorem deletion_agrees_with_zero_tense_binding {Time : Type*}
+    (m : ReichenbachFrame Time) :
+    applyDeletion m = Tense.simultaneousFrame m m.eventTime ∧
+    (applyDeletion m).isPresent :=
+  ⟨applyDeletion_eq_simultaneousFrame m, kratzer_derives_simultaneous m⟩
+
 /-! ### Cross-paper bridge theorems (Phase F)
 
 The contrast theorems with Ogihara, Sharvit, von Stechow, Klecha are

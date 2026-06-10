@@ -1,4 +1,5 @@
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
+import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Degree.Bounds
 
@@ -169,6 +170,34 @@ def instTimes (worlds : Set W) (B : Set (W × T)) : Set T :=
     [rett-2020] uses for her MAX₍<₎. -/
 def earliestAlt (alt : HistAlt W T) (B : Set (W × T)) (w : W) (t : T) : Set T :=
   maxOnScale (· < ·) (instTimes (alt w t) B)
+
+/-- Membership in `earliestAlt` is exactly mathlib's `IsLeast` on the
+    instantiation-times set: B&C's `earliest` operator is the least element
+    of `instTimes`, computed via `maxOnScale (· < ·)`. -/
+theorem mem_earliestAlt_iff_isLeast (alt : HistAlt W T) (B : Set (W × T))
+    (w : W) (t te : T) :
+    te ∈ earliestAlt alt B w t ↔ IsLeast (instTimes (alt w t) B) te := by
+  constructor
+  · rintro ⟨hmem, hmin⟩
+    refine ⟨hmem, λ y hy => ?_⟩
+    by_cases hy_eq : y = te
+    · exact le_of_eq hy_eq.symm
+    · exact le_of_lt (hmin y hy hy_eq)
+  · rintro ⟨hmem, hlb⟩
+    exact ⟨hmem, λ y hy hne => lt_of_le_of_ne (hlb hy) (Ne.symm hne)⟩
+
+/-- B&C's `earliest` is defined (nonempty) exactly when [sharvit-2014]'s
+    `EARLIEST` presupposition (`Before.hasEarliest`, with trivial restrictor)
+    holds of the instantiation times. This is the definedness condition that
+    `Before.ipf_quantificationalPast` shows to fail for quantificational
+    pasts on a dense time axis. -/
+theorem earliestAlt_nonempty_iff_hasEarliest (alt : HistAlt W T) (B : Set (W × T))
+    (w : W) (t : T) :
+    (earliestAlt alt B w t).Nonempty ↔
+    Before.hasEarliest Set.univ (· ∈ instTimes (alt w t) B) := by
+  unfold Before.hasEarliest
+  simp only [Set.Nonempty, mem_earliestAlt_iff_isLeast, Set.mem_univ, true_and,
+             Set.setOf_mem_eq]
 
 -- ============================================================================
 -- § 3: B&C's Truth Conditions
