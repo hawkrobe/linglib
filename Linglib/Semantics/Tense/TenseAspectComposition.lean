@@ -36,7 +36,7 @@ The eval* operators instantiate the situation (fixing world and time).
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Tense.Compositional
 
-namespace Semantics.Tense.TenseAspectComposition
+namespace Tense.TenseAspectComposition
 
 open Core (WorldTimeIndex)
 
@@ -260,4 +260,4 @@ theorem earlier_lb_not_weaker_impf :
   simp only [LB, Event.τ] at hLB hS1
   omega
 
-end Semantics.Tense.TenseAspectComposition
+end Tense.TenseAspectComposition

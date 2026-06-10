@@ -42,7 +42,7 @@ reversing its c-command direction.
   fn. 9 `[uPAST]`-as-non-future route.
 * Zeijlstra's parameter — whether embedded `T` may carry `[uPAST]` — is the
   substrate `SOTParameter`; that SOT languages (`relative`) license the
-  simultaneous reading is `Semantics.Tense.sot_simultaneous_available`.
+  simultaneous reading is `Tense.sot_simultaneous_available`.
 
 ## Todo
 
@@ -51,9 +51,8 @@ reversing its c-command direction.
 
 namespace Zeijlstra2012
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
+open Tense
 open Minimalist (FeatureVal GramFeature Interpretability)
 
 /-! ### Tense feature interpretability -/

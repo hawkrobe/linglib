@@ -165,7 +165,7 @@ theorem all_evidentialSurvives :
 open Semantics.Modality.Kratzer
 open Semantics.Presupposition
 open Features.Evidentiality
-open Semantics.Tense.Evidential
+open Tense.Evidential
 open Bulgarian.Evidentials
 
 abbrev World := Fin 4

@@ -335,19 +335,19 @@ def ENConstruction.isAmbidirectional : ENConstruction → Bool
 
 /-- Cross-references the entry `isAmbidirectional .before = true` to
     its witness. The structural anchor is
-    `Semantics.Tense.TemporalConnectives.before_preEvent_ambidirectional`,
+    `Tense.TemporalConnectives.before_preEvent_ambidirectional`,
     which proves the iff for any closed event interval. -/
 theorem before_isAmbidirectional_witness :
     ENConstruction.before.isAmbidirectional = true := rfl
 
 /-- Cross-references `isAmbidirectional .after = false` to
-    `Semantics.Tense.TemporalConnectives.after_not_ambidirectional`,
+    `Tense.TemporalConnectives.after_not_ambidirectional`,
     which exhibits a counter-witness. -/
 theorem after_isAmbidirectional_witness :
     ENConstruction.after.isAmbidirectional = false := rfl
 
 /-- Cross-references `isAmbidirectional .while_ = false` to
-    `Semantics.Tense.TemporalConnectives.while_not_ambidirectional`. -/
+    `Tense.TemporalConnectives.while_not_ambidirectional`. -/
 theorem while_isAmbidirectional_witness :
     ENConstruction.while_.isAmbidirectional = false := rfl
 

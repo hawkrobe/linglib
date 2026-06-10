@@ -44,8 +44,7 @@ contrast as separate Lean defs would be vacuous.
 
 namespace Sharvit2003
 
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES

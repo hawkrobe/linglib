@@ -2435,7 +2435,6 @@ import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.ParticipantPerspective
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Semantics.Tense.ConditionalShift
@@ -2585,7 +2584,6 @@ import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Studies.Kratzer1998
 import Linglib.Semantics.Tense.SOT.Ambiguity
 import Linglib.Studies.Ogihara1996
-import Linglib.Semantics.Tense.Modal.Matrix
 import Linglib.Studies.Sharvit2014
 import Linglib.Studies.Giannakidou2002
 import Linglib.Typology.TemporalConnectives

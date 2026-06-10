@@ -87,8 +87,8 @@ and corrects locator hallucinations ("table 98" → "(98)", "eq 105" →
 
 namespace Sharvit2014
 
-open Semantics.Tense (LexicalType)
-open Semantics.Tense.TemporalConnectives.Before
+open Tense (LexicalType)
+open Tense.TemporalConnectives.Before
 
 /-! ### §1. The parameter space (Sharvit's numbered example (98)) -/
 
@@ -321,7 +321,7 @@ theorem english_predicts_simultaneous :
     both produce a tense-stripped embedded clause. -/
 theorem english_sot_matches_kratzer :
     english.hasSOT = true ∧
-    Semantics.Tense.SOT.Decomposition.sotDeletionApplicable .past .past = true :=
+    Tense.SOT.Decomposition.sotDeletionApplicable .past .past = true :=
   ⟨rfl, rfl⟩
 
 end Sharvit2014

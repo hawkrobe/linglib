@@ -10,7 +10,7 @@ Lexical entry for Mandarin 那时 "nà-shí" (that time), typed by `ThenAdverb`.
 
 namespace Mandarin.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Mandarin 那时 "nà-shí" -/
 def nashi : ThenAdverb where

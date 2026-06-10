@@ -10,7 +10,7 @@ Lexical entry for Japanese その時 "sono-toki" (that time), typed by `ThenAdve
 
 namespace Japanese.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Japanese その時 "sono-toki" -/
 def sonotoki : ThenAdverb where

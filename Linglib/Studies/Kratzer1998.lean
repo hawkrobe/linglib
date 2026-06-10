@@ -52,8 +52,8 @@ judgment.
 
 namespace Kratzer1998
 
-open Semantics.Tense.SOT.Decomposition
-open Semantics.Tense
+open Tense.SOT.Decomposition
+open Tense
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -518,7 +518,7 @@ theorem german_perfekt_chain :
     theorem just binds them locally for cross-reference. -/
 theorem zero_tense_chain :
     (kratzerZeroTense 1).constraint = GramTense.present ∧
-    Semantics.Tense.Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
+    Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
   ⟨zero_tense_is_present 1, zero_tense_overtness 1⟩
 
 end KratzerChain

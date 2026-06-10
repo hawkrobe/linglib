@@ -1,10 +1,10 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.ParticipantPerspective
+import Linglib.Morphology.Exponence
 import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!
 # English Tense Fragment ([cumming-2026] + [lakoff-1970])
-[cumming-2026] [lakoff-1970] [heim-kratzer-1998]
+[cumming-2026] [lakoff-1970] [kratzer-1998]
 
 Paradigm entries for English tense forms from [cumming-2026], Tables 20 and 22.
 Each entry specifies evidential perspective (EP) and utterance perspective (UP)
@@ -31,7 +31,7 @@ evidential constraints to Lakoff's false-tense diagnostic.
 
 namespace English.Tense
 
-open Semantics.Tense.Evidential
+open _root_.Tense.Evidential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Table 20: Simple Past, Present Progressive, Future
@@ -93,8 +93,7 @@ def nonfutureEntries : List TAMEEntry :=
 -- § 4. Tense Perspective Entries ([lakoff-1970])
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense
-open Semantics.Tense.ParticipantPerspective
+open _root_.Tense
 open Morphology.Tense
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
@@ -157,19 +156,17 @@ theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
 theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Kratzer Decomposition ([heim-kratzer-1998])
+-- § 6. Kratzer Decomposition ([kratzer-1998])
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense.SOT.Decomposition
-open Semantics.Tense
+open _root_.Tense.SOT.Decomposition
+open _root_.Tense
 
 /-- English simple past: Kratzer decomposition.
     Surface "V-ed" = PRESENT tense + PERFECT aspect.
     The tense head is present (indexical), so the form can be
     used deictically ("out of the blue"). -/
 def kratzerSimplePast : KratzerDecomposition where
-  language := "English"
-  surfaceForm := "V-ed"
   tensePronoun := kratzerEnglishPast
   hasPerfect := true
 
@@ -178,8 +175,6 @@ def kratzerSimplePast : KratzerDecomposition where
     Identical underlying structure to simple past — the difference
     is that the present perfect is morphologically transparent. -/
 def kratzerPresentPerfect : KratzerDecomposition where
-  language := "English"
-  surfaceForm := "have V-ed"
   tensePronoun := kratzerEnglishPast
   hasPerfect := true
 

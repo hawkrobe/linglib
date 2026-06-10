@@ -27,7 +27,7 @@ reading in bare TP complements.
 
 namespace Hungarian.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Hungarian *akkor* 'then' — perspective-shifting temporal deictic.
     Part of the cross-linguistic "then"-present incompatibility

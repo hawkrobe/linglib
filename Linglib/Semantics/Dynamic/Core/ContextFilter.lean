@@ -19,7 +19,7 @@ filter — see `sep_isContextFilter` below, a thin restatement of
 This file also hosts `SitContext` — the carrier of situation-variable
 dynamic semantics — and `dynRelation`, the workhorse filter behind
 temporal trichotomy (`<`/`=`/`>` on `.time`, used to define
-`Semantics.Tense.dynPAST`/`dynPRES`/`dynFUT`).
+`Tense.dynPAST`/`dynPRES`/`dynFUT`).
 -/
 
 namespace Semantics.Dynamic.Core
@@ -86,7 +86,7 @@ holds between the two projected `WorldTimeIndex` values. The two
 common specializations are:
 
 - `dynRelation` (both projections look up bound variables `gs.1 v₁`,
-  `gs.1 v₂`) — used by `Semantics.Tense.dynPAST`/`dynPRES`/`dynFUT`.
+  `gs.1 v₂`) — used by `Tense.dynPAST`/`dynPRES`/`dynFUT`.
 - `Semantics.Mood.dynIND` (one projection is the entry's current
   situation `gs.2`, the other is a bound variable `gs.1 v`).
 
@@ -139,7 +139,7 @@ theorem dynRelationOn_contradictory {W Time : Type*}
 Filter a context by a binary relation on two situation-variable lookups.
 
 The "two bound variables" specialization of `dynRelationOn`. All temporal
-constraints (`Semantics.Tense.dynPAST`, `dynPRES`, `dynFUT`) are instances
+constraints (`Tense.dynPAST`, `dynPRES`, `dynFUT`) are instances
 of `dynRelation` with the appropriate ordering on `.time`.
 -/
 def dynRelation {W Time : Type*}

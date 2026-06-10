@@ -1,6 +1,5 @@
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Basic
-import Linglib.Semantics.Tense.Modal.Matrix
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Gitksan.Modals
@@ -68,10 +67,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   attitudeTemporalConstraint_derived_doxastic
   attitudeTemporalConstraint_derived_circumstantial)
 open English.Predicates.Verbal (think believe hope pray)
-open Semantics.Tense.Modal.Matrix
-  (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
-open Semantics.Tense (upperLimitConstraint)
-open Semantics.Tense (GramTense)
+open Tense (upperLimitConstraint)
 open Semantics.Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
@@ -176,6 +172,72 @@ def all : List LinguisticExample := [ex1, ex2a, ex2b, ex3a, ex3b]
 
 end Examples
 -- END GENERATED EXAMPLES
+
+
+/-! ### The tense × modal-base four-cell matrix
+
+The matrix that arises when Klecha's modal-base pronoun temporal
+constraints (DOX gives RT ≤ EvalT, CIR gives RT > EvalT) intersect with
+grammatical tense (PAST gives RT < EvalT, NPST gives RT ≥ EvalT):
+
+| | DOX (RT ≤ t) | CIR (RT > t) |
+|------|-------------|-------------|
+| PAST (RT < t) | RT < t (past) | False (impossible) |
+| NPST (RT ≥ t) | RT = t (simultaneous) | RT > t (future) |
+
+The DOX/PAST cell gives the genuine past reading of "Martina thought
+Carissa got pregnant"; DOX/NPST forces simultaneity; CIR/NPST gives the
+future-oriented reading of "Martina hoped Carissa got pregnant" (surface
+PAST morphology analyzed as SOT agreement over semantic NPST per
+[klecha-2016] §3.3); CIR/PAST is empty. The
+`attitudeTemporalConstraint` dispatch lives in
+`Semantics/Modality/TemporalConstraint.lean`; the cells below are its
+tense-side projection. -/
+
+/-- DOX ∧ PAST = past: under a doxastic modal base with semantic past
+    tense, the embedded reference time is strictly before the evaluation
+    time. Both constraints are satisfiable, and their conjunction is just
+    PAST (since RT < t implies RT ≤ t). -/
+theorem dox_past_iff {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) :
+    attitudeTemporalConstraint .doxastic evalTime refTime ∧
+    GramTense.constrains .past refTime evalTime ↔
+    refTime < evalTime :=
+  ⟨λ ⟨_, hPast⟩ => hPast, λ h => ⟨le_of_lt h, h⟩⟩
+
+/-- CIR ∧ PAST = ⊥: a circumstantial modal base requires RT > t, but
+    semantic past tense requires RT < t. The conjunction is empty. The
+    surface "past" morphology in "Martina hoped Carissa got pregnant"
+    under the future-oriented (CIR) reading is SOT agreement over
+    semantic NPST per [klecha-2016] §3.3, not semantic PAST. -/
+theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) :
+    attitudeTemporalConstraint .circumstantial evalTime refTime ∧
+    GramTense.constrains .past refTime evalTime ↔ False :=
+  ⟨λ ⟨hGt, hLt⟩ => absurd hLt (not_lt.mpr (le_of_lt hGt)), False.elim⟩
+
+/-- DOX ∧ NPST = simultaneous: a doxastic modal base requires RT ≤ t,
+    and non-past tense requires RT ≥ t. The conjunction forces RT = t.
+    This is why "Martina thought Carissa was pregnant" with non-past
+    (SOT-agreed) gives a simultaneous reading. -/
+theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) :
+    attitudeTemporalConstraint .doxastic evalTime refTime ∧
+    GramTense.constrains .nonpast refTime evalTime ↔
+    refTime = evalTime :=
+  ⟨λ ⟨hLe, hGe⟩ => le_antisymm hLe hGe,
+   λ h => ⟨le_of_eq h, ge_of_eq h⟩⟩
+
+/-- CIR ∧ NPST = future: a circumstantial modal base requires RT > t,
+    and non-past tense requires RT ≥ t. The conjunction is RT > t.
+    This is why "Martina hoped Carissa got pregnant" with non-past
+    (SOT-agreed) gives a future-oriented reading under CIR. -/
+theorem cir_npst_iff {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) :
+    attitudeTemporalConstraint .circumstantial evalTime refTime ∧
+    GramTense.constrains .nonpast refTime evalTime ↔
+    refTime > evalTime :=
+  ⟨λ ⟨hGt, _⟩ => hGt, λ h => ⟨h, le_of_lt h⟩⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -804,9 +866,9 @@ theorem klecha_covers_hope_future_oriented_reading
     kernel-checked (provable by `rfl`). -/
 theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (concept : Semantics.Tense.DeRe.TimeConcept W Unit Unit ℤ)
+    (concept : Tense.DeRe.TimeConcept W Unit Unit ℤ)
     (matrix : Semantics.Context.KContext W Unit Unit ℤ) :
-    let dr : Semantics.Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
+    let dr : Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
       ⟨concept, matrix⟩
     dr.metaphysicalAlternatives history =
     actualHistoryBase history matrix.toSituation := rfl

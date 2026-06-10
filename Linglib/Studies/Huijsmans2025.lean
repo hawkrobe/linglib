@@ -43,7 +43,7 @@ combine `Modal.flavor` with `Semantics.Modality.Kratzer.necessity`.
 
 namespace Huijsmans2025
 
-open Semantics.Tense.Evidential (EPCondition EvidentialFrame)
+open Tense.Evidential (EPCondition EvidentialFrame)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Stimulus: temporal anchors testable by both analyses

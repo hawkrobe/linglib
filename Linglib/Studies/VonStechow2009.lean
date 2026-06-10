@@ -31,7 +31,7 @@ file has no concept-file companion in `Semantics/Tense/`.
 [von-stechow-2009]'s contribution is *terminological* — the
 "feature checking" name for what is structurally `GramTense.constrains`
 applied at a `embeddedFrame`-shifted eval time. The substrate lives
-entirely in `Semantics.Tense` and `Semantics.Tense.Basic`; this file
+entirely in `Tense` and `Tense.Basic`; this file
 collects the paper-attributed theorems.
 
 ## Advantages Over Abusch
@@ -45,9 +45,8 @@ collects the paper-attributed theorems.
 
 namespace VonStechow2009
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
+open Tense
+open Tense
 
 
 -- ════════════════════════════════════════════════════════════════

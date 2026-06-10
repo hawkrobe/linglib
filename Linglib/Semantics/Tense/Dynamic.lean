@@ -67,7 +67,7 @@ realization pattern for SUBJ/IND). Used by
 Subordinate Future.
 -/
 
-namespace Semantics.Tense
+namespace Tense
 
 open _root_.Core (Assignment WorldTimeIndex)
 open Semantics.Dynamic.Core
@@ -184,4 +184,4 @@ theorem dynPAST_transitive {W Time : Type*} [Preorder Time]
     (R₃ := fun s₁ s₂ => s₁.time < s₂.time)
     (fun _ _ _ h1 h2 => lt_trans h1 h2) e r s c gs h
 
-end Semantics.Tense
+end Tense

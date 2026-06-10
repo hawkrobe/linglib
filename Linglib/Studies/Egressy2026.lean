@@ -40,8 +40,7 @@ and temporal adverb diagnostics.
 
 namespace Egressy2026
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
+open Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -221,7 +220,7 @@ theorem all_tp_simultaneous :
 -- ════════════════════════════════════════════════════════════════
 
 open Minimalist (ComplementSize fValue Cat)
-open Semantics.Tense (EmbeddedTenseReading availableReadings)
+open Tense (availableReadings)
 open Hungarian.Predicates
 open Hungarian.FunctionWords
 open Hungarian.TemporalDeictic

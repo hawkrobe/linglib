@@ -208,7 +208,7 @@ def IsMaxDetermined {α : Type*} (R : α → α → Prop) (f : Set α → Prop) 
     Each per-construction ambidirectionality theorem in the library is an
     instance of this template — they prove the shared-bound side condition
     for a specific `f` and a class of `B`'s, then this lemma packages the
-    result. See `Semantics.Tense.TemporalConnectives.before_preEvent_ambidirectional`
+    result. See `Tense.TemporalConnectives.before_preEvent_ambidirectional`
     for the canonical instance. -/
 theorem ambidirectional_of_shared_max {α : Type*} {R : α → α → Prop}
     (f : Set α → Prop) (hf : IsMaxDetermined R f) (B : Set α)
