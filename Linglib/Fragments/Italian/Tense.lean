@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.ParticipantPerspective
+import Linglib.Morphology.Exponence
 import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-! # Italian Tense Fragment
@@ -166,8 +166,6 @@ theorem prossimo_remoto_distinction :
     Parallel to English present perfect — the auxiliary *avere*/*essere*
     makes the PERF head morphologically transparent. -/
 def kratzerPassatoProssimo : KratzerDecomposition where
-  language := "Italian"
-  surfaceForm := "avere/essere + V-to"
   tensePronoun := kratzerEnglishPast  -- Same underlying structure as English
   hasPerfect := true
 
