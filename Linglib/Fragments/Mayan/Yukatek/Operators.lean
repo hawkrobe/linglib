@@ -20,13 +20,16 @@ or `=s` is required to form a transitive stem from an underived root:
 | Required suffix | Lucy's class           | Lexical content of root                                    |
 |-----------------|------------------------|------------------------------------------------------------|
 | `=t` (AFCT)     | agent-salient          | activity / manner-of-action; one (agent) argument salient  |
-| `=∅` (root)     | agent-patient salient  | both arguments already salient → transitive without deriv. |
+| `=∅` (root)     | agent-patient salient  | lexically transitive ("require two arguments")            |
 | `=s` (CAUS)     | patient-salient        | spontaneous state change; one (patient) argument salient   |
 
-This translates directly into B&K-G feature conditions: agent-salient
-roots have manner without result; agent-patient salient roots have
-both manner and result; patient-salient roots have result without
-manner. Spelt out structurally below.
+The structural conditions are over (B&K-G feature signature × Coon
+arity): zero derivation tracks root transitivity
+(`Root.Arity.selectsTheme`); the two intransitive transitivisers split
+by signature (manner vs result). Each condition is the corresponding
+named predicate of `Roots/SalienceClass.lean` applied to the root's
+signature and the fragment's `arity` assignment, so operator
+applicability matches predicted salience by construction.
 -/
 
 namespace Yukatek.Operators
@@ -34,9 +37,7 @@ namespace Yukatek.Operators
 open Morphology.Derivation
 open Yukatek.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. The Four Operators
--- ════════════════════════════════════════════════════
+/-! ### The four operators -/
 
 /-- Affective `=t`: forms a transitive stem from an *agent-salient*
     root by adding a patient argument. Per [lucy-1994], applies
@@ -45,17 +46,18 @@ open Yukatek.Roots
     without inherent result. -/
 def affectiveT : DerivOp :=
   { name := "=t"
-  , applies := Root.IsAgentSalient
+  , applies := fun r => IsAgentSalient r.featureSignature (arity r)
   , decApplies := inferInstance }
 
 /-- Zero derivation `=∅`: signals that the root is already lexically
-    transitive — both an agent and a patient are salient in the
-    underived form. Per [lucy-1994], these roots "refer to events
-    involving the action of one entity on another", so the root must
-    encode both manner (the action) and result (its effect). -/
+    transitive — it "require[s] two arguments and refer[s] to events
+    involving the action of one entity on another" ([lucy-1994]).
+    The condition is root transitivity (`Root.Arity.selectsTheme`),
+    not any feature configuration: root transitives like *p'is*
+    'measure' entail no change of state. -/
 def zeroDeriv : DerivOp :=
   { name := "=∅"
-  , applies := Root.IsAgentPatientSalient
+  , applies := fun r => IsAgentPatientSalient (arity r)
   , decApplies := inferInstance }
 
 /-- Causative `=s`: forms a transitive stem from a *patient-salient*
@@ -65,7 +67,7 @@ def zeroDeriv : DerivOp :=
     result without specified manner. -/
 def causativeS : DerivOp :=
   { name := "=s"
-  , applies := Root.IsPatientSalient
+  , applies := fun r => IsPatientSalient r.featureSignature (arity r)
   , decApplies := inferInstance }
 
 /-- Positional inchoative `-tal` (allomorph `-lah`): forms a positional stem from a
@@ -76,12 +78,10 @@ def causativeS : DerivOp :=
     result, or cause atoms. -/
 def positionalTal : DerivOp :=
   { name := "-tal"
-  , applies := Root.IsPositional
+  , applies := fun r => IsPositional r.featureSignature (arity r)
   , decApplies := inferInstance }
 
--- ════════════════════════════════════════════════════
--- § 2. The Inventory
--- ════════════════════════════════════════════════════
+/-! ### The inventory -/
 
 /-- [lucy-1994]'s diagnostic transitiviser inventory. Order is
     chosen to match the presentation in [lucy-1994] ex. (1):

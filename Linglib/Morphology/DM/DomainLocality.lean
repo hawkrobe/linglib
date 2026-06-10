@@ -1,198 +1,140 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Range
+import Linglib.Morphology.Containment.Basic
 
 /-!
 # Domain-Relativized Contiguity
 [moskal-2015a-dissertation] [moskal-2015]
 [smith-moskal-xu-kang-bobaljik-2019]
 
-A domain partition assigns each cell position in a paradigm to a
-*domain tag* — abstractly representing the cell's locality unit
-(spellout domain / phase / accessibility domain etc.). Within a
-domain, the *ABA contiguity constraint applies; across domain
-boundaries, AAB patterns are admitted.
+A domain partition assigns each grade of a containment hierarchy a
+*domain tag* — abstractly representing the grade's locality unit
+(spellout domain / phase / accessibility domain). Within a domain, the
+*ABA contiguity constraint applies; across domain boundaries,
+ABA-shaped recurrences are admitted.
 
 ## Motivation
 
 `Morphology.Containment.realize_const_of_terminal_adjacent` (the
 structural-adjacency derivation, [bobaljik-2012]) predicts CMPR-cell =
-SPRL-cell for any generable root pattern. Lifted to case (Wardaman 3SG: ABS=
-narnaj, ERG=narnaj-(j)i, DAT=gunga; [smith-moskal-xu-kang-bobaljik-2019]
-§3.6) and number (Yagua 2: SG=jiy, PL=jiry-éy, DL=sáada;
-[smith-moskal-xu-kang-bobaljik-2019] §4.2 Table 46), the
-prediction is empirically falsified — AAB patterns are attested in
-both case and number suppletion.
+SPRL-cell for any generable root pattern. Lifted to case (Wardaman
+3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*;
+[smith-moskal-xu-kang-bobaljik-2019] §3.6) and number (Yagua 2:
+SG=*jiy*, PL=*jiryéy*, DL=*sááda*;
+[smith-moskal-xu-kang-bobaljik-2019] §4.2 Table 46), the prediction is
+empirically falsified — AAB patterns are attested in both case and
+number suppletion.
 
 [smith-moskal-xu-kang-bobaljik-2019] §3.7 attribute the gap to
-*locality*: structural-adjacency ([bobaljik-2012]) and linear-
-adjacency ([embick-2010]) are too restrictive once AAB is
-admitted. They endorse the [moskal-2015a-dissertation] theory of
-**accessibility domains (AD)**: a category-defining node has a
-delimiting effect that puts more-distant material outside the AD of
-the root, blocking it from conditioning suppletion. Lexical material
-has such a node (so case can't reach the root); pronouns lack it
-(so case and number can both condition pronominal suppletion).
+*locality*: structural adjacency ([bobaljik-2012]) and linear
+adjacency ([embick-2010]) are too strict once AAB is admitted (Tamil
+dative suppletion across the plural morpheme is "neither linearly nor
+structurally adjacent to the root"). They adopt the
+[moskal-2015a-dissertation] theory of **accessibility domains (AD)**:
+a category-defining node has a delimiting effect that puts
+more-distant material outside the AD of the root, blocking it from
+conditioning suppletion. Lexical material has such a node (so case
+cannot reach the root); pronouns lack it (so case and number can both
+condition pronominal suppletion).
 
 ## What this substrate models, and what it doesn't
 
 This file represents the **output** of an AD computation projected
-onto cell positions: a function `Nat → Tag` that says, for each cell,
-which locality unit it belongs to. The trigger-relative AD theory
-([moskal-2015a-dissertation]: "the first category-defining node
-above the root, and one node above that") is more nuanced — it's a
-relation between a *trigger node* and a *root node* in a tree, not a
-labeling of paradigm cells.
+onto the grades of a hierarchy: a `DomainPartition` saying, for each
+grade, which locality unit it belongs to. The AD theory itself is
+*trigger-relative* — a bound on which heads may condition root
+suppletion, formalized at rule level as
+`SmithMoskalEtAl2019.DomainLocal` on
+`Morphology.Containment.ExponenceRule` vocabularies. The substrate is
+theory-neutral about how the partition is computed:
+[moskal-2015a-dissertation]'s AD is one source, [embick-2010]'s linear
+adjacency another (every grade its own one-cell domain),
+[bobaljik-2012]'s structural adjacency a third. Consumers state which
+projection they want; the substrate doesn't pick.
 
-The substrate is theory-neutral about how the partition is computed.
-[moskal-2015a-dissertation]'s AD is one source. [embick-2010]'s
-linear adjacency is another (every position in its own one-cell
-domain). [bobaljik-2012]'s structural adjacency is a third.
-[caha-2009]'s Nanosyntax doesn't fit a domain-partition shape at
-all — it derives AAB exclusion (or non-exclusion) from phrasal
-spellout + the Superset Principle, not from locality. Consumers
-state which projection they want; the substrate doesn't pick.
+## Main declarations
 
-## Design
-
-`ViolatesABAWithin π cells` is the Prop predicate "there exist
-positions i < j < k in `cells.length`, all in the same domain under
-`π`, such that `cells[i] = cells[k] ≠ cells[j]`." Decidability comes
-free via `Fintype (Fin n)` — no Bool-first decision procedure needed.
-
-## Why not import `Syntax/Minimalist/Phase.lean`?
-
-`Phase.lean` operates on `SyntacticObject` trees with `isPhaseHeadOf`.
-The morphological "domain" is more abstract — it lives at the level
-of cell-position projections of paradigm tables, with no syntactic-
-tree commitment. A future cross-layer connection (showing that
-syntactic phases project to morphological domains under a
-DM-with-phase analysis) can be added in `Morphology/` once
-a consumer requests it.
+* `DomainPartition n Tag` — domain tag per grade
+* `ViolatesABAWithin`, `IsContiguousWithin` — *ABA relativized to
+  same-domain triples, over `Morphology.Containment.Pattern`
+* `isContiguousWithin_trivial_iff` — under the trivial partition this
+  is exactly `Morphology.Containment.IsContiguous`
 -/
 
 namespace Morphology.DomainLocality
 
-variable {Tag : Type*} [DecidableEq Tag]
+open Morphology.Containment (Pattern IsContiguous)
 
--- ============================================================================
--- § 1: Domain Partition
--- ============================================================================
+variable {n : ℕ} {Tag F : Type*}
 
-/-- A domain partition assigns each cell position to a domain tag.
-    Polymorphic over the tag type so callers (Bobaljik2012, SmithMoskal,
-    Caha …) can use whatever tag type their analysis demands.
+/-- A domain partition assigns each grade of an `n`-grade hierarchy a
+domain tag. Polymorphic over the tag type so consumers can use
+whatever tag type their analysis demands. -/
+abbrev DomainPartition (n : ℕ) (Tag : Type*) : Type _ := Fin n → Tag
 
-    `abbrev` so `π i` reduces through the type alias — needed by
-    `decide` on concrete partitions. -/
-abbrev DomainPartition (Tag : Type*) : Type _ := Nat → Tag
+/-- Two grades lie in the same domain. -/
+abbrev SameDomain (π : DomainPartition n Tag) (i j : Fin n) : Prop :=
+  π i = π j
 
-/-- Two cell positions lie in the same domain. `abbrev` for the same
-    `decide`-reduction reason. -/
-abbrev SameDomain (π : DomainPartition Tag) (i j : Nat) : Prop := π i = π j
-
-instance (π : DomainPartition Tag) (i j : Nat) : Decidable (SameDomain π i j) :=
+instance [DecidableEq Tag] (π : DomainPartition n Tag) (i j : Fin n) :
+    Decidable (SameDomain π i j) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- The trivial partition: every position in one domain (`Unit` tag). -/
-abbrev DomainPartition.trivial : DomainPartition Unit := λ _ => ()
+/-- The trivial partition: every grade in one domain. -/
+abbrev DomainPartition.trivial (n : ℕ) : DomainPartition n Unit := λ _ => ()
 
--- ============================================================================
--- § 2: Within-Domain *ABA Predicate
--- ============================================================================
+/-- A pattern violates the domain-relativized *ABA constraint: some
+form recurs across a distinct intervening form, with all three grades
+in the same domain. -/
+def ViolatesABAWithin (π : DomainPartition n Tag) (p : Pattern n F) : Prop :=
+  ∃ i j k : Fin n, i < j ∧ j < k ∧
+    SameDomain π i j ∧ SameDomain π i k ∧ p i = p k ∧ p i ≠ p j
 
-/-- A list violates the domain-relativized *ABA constraint when there
-    exist three positions i < j < k (within the list's length), all
-    in the same domain under π, such that the cells at i and k share
-    a value distinct from the cell at j.
-
-    Bounded by `Finset.range cells.length` so decidability composes
-    cleanly via `Finset.decidableBExists`. `cells[·]?` (returning
-    `Option Nat`) is the cell accessor; `Option Nat` has
-    `DecidableEq`. Direct propositional content, no Bool wrapper. -/
-def ViolatesABAWithin (π : DomainPartition Tag) (cells : List Nat) : Prop :=
-  ∃ i ∈ Finset.range cells.length,
-  ∃ j ∈ Finset.range cells.length,
-  ∃ k ∈ Finset.range cells.length,
-    i < j ∧ j < k ∧
-    SameDomain π i j ∧ SameDomain π i k ∧
-    cells[i]? = cells[k]? ∧ cells[i]? ≠ cells[j]?
-
-instance (π : DomainPartition Tag) (cells : List Nat) :
-    Decidable (ViolatesABAWithin π cells) :=
-  inferInstanceAs (Decidable
-    (∃ i ∈ Finset.range cells.length,
-     ∃ j ∈ Finset.range cells.length,
-     ∃ k ∈ Finset.range cells.length,
-       i < j ∧ j < k ∧
-       SameDomain π i j ∧ SameDomain π i k ∧
-       cells[i]? = cells[k]? ∧ cells[i]? ≠ cells[j]?))
+instance [DecidableEq Tag] [DecidableEq F] (π : DomainPartition n Tag)
+    (p : Pattern n F) : Decidable (ViolatesABAWithin π p) := by
+  unfold ViolatesABAWithin; infer_instance
 
 /-- Domain-relativized contiguity: no within-domain *ABA violation. -/
-def IsContiguousWithin (π : DomainPartition Tag) (cells : List Nat) : Prop :=
-  ¬ ViolatesABAWithin π cells
+def IsContiguousWithin (π : DomainPartition n Tag) (p : Pattern n F) : Prop :=
+  ¬ ViolatesABAWithin π p
 
-instance (π : DomainPartition Tag) (cells : List Nat) :
-    Decidable (IsContiguousWithin π cells) :=
+instance [DecidableEq Tag] [DecidableEq F] (π : DomainPartition n Tag)
+    (p : Pattern n F) : Decidable (IsContiguousWithin π p) :=
   inferInstanceAs (Decidable (¬ _))
 
--- ============================================================================
--- § 3: Trivial-Partition Specialization
--- ============================================================================
+/-- Under the trivial partition, domain-relativized contiguity is
+exactly the universal contiguity predicate. -/
+theorem isContiguousWithin_trivial_iff (p : Pattern n F) :
+    IsContiguousWithin (DomainPartition.trivial n) p ↔ IsContiguous p := by
+  constructor
+  · intro h i j k hij hjk heq
+    by_contra hne
+    have hij' : i < j := hij.lt_of_ne (λ he => hne (he ▸ rfl))
+    have hjk' : j < k := by
+      rcases hjk.lt_or_eq with h' | rfl
+      · exact h'
+      · exact absurd heq hne
+    exact h ⟨i, j, k, hij', hjk', rfl, rfl, heq, hne⟩
+  · rintro hp ⟨i, j, k, hij, hjk, -, -, heq, hne⟩
+    exact hne (hp hij.le hjk.le heq)
 
-/-- Under the trivial partition, every same-domain check trivially
-    holds, so `ViolatesABAWithin` reduces to the unconstrained
-    *ABA-pattern existential. -/
-theorem ViolatesABAWithin_trivial_iff_unconstrained (cells : List Nat) :
-    ViolatesABAWithin DomainPartition.trivial cells ↔
-      ∃ i ∈ Finset.range cells.length,
-      ∃ j ∈ Finset.range cells.length,
-      ∃ k ∈ Finset.range cells.length,
-        i < j ∧ j < k ∧
-        cells[i]? = cells[k]? ∧ cells[i]? ≠ cells[j]? := by
-  unfold ViolatesABAWithin
-  refine ⟨?_, ?_⟩
-  · rintro ⟨i, hi, j, hj, k, hk, hij, hjk, _, _, h1, h2⟩
-    exact ⟨i, hi, j, hj, k, hk, hij, hjk, h1, h2⟩
-  · rintro ⟨i, hi, j, hj, k, hk, hij, hjk, h1, h2⟩
-    exact ⟨i, hi, j, hj, k, hk, hij, hjk, rfl, rfl, h1, h2⟩
+/-! ### Smoke tests
 
--- ============================================================================
--- § 4: Smoke Tests
--- ============================================================================
+Trivial-partition behavior matches the universal predicate;
+across-domain examples show ABA-shapes are admitted when the outer
+grades fall in different domains. -/
 
-/-! Trivial-partition behavior: same shape as the universal predicate.
-    Across-domain examples illustrate that AAB *ABA-shapes are
-    admitted when the inner cell is in a different domain than the
-    outer cells. -/
+example : IsContiguousWithin (DomainPartition.trivial 3)
+    (![0, 1, 1] : Pattern 3 ℕ) := by decide
 
-/-- ABB under trivial partition: contiguous (no *ABA). -/
-example : IsContiguousWithin DomainPartition.trivial [0, 1, 1] := by decide
+example : ViolatesABAWithin (DomainPartition.trivial 3)
+    (![0, 1, 0] : Pattern 3 ℕ) := by decide
 
-/-- ABA under trivial partition: violates *ABA. -/
-example : ViolatesABAWithin DomainPartition.trivial [0, 1, 0] := by decide
+example : IsContiguousWithin (DomainPartition.trivial 3)
+    (![0, 0, 1] : Pattern 3 ℕ) := by decide
 
-/-- AAB under trivial partition: contiguous (the AAB shape is *ABA-
-    contiguous; it's excluded by VI locality, not by ABA). -/
-example : IsContiguousWithin DomainPartition.trivial [0, 0, 1] := by decide
-
-/-- An AAB pattern with positions 0,1 in domain `"a"` and position 2
-    in domain `"b"`. Trivially contiguous regardless of partition
-    (AAB is *ABA-contiguous). -/
-example : IsContiguousWithin
-    (λ i => if i = 2 then "b" else "a" : DomainPartition String)
-    [0, 0, 1] := by decide
-
-/-- The same partition admits an "across-domain ABA" shape `[0, 1, 0]`:
-    positions 0 and 2 (both cell value 0) are in different domains, so
-    the within-domain *ABA check does not fire. The universal contiguity
-    predicate (`Morphology.Containment.IsContiguous`) would reject this
-    pattern; the domain-relativized version permits it. -/
-example : ¬ ViolatesABAWithin
-    (λ i => if i = 2 then "b" else "a" : DomainPartition String)
-    [0, 1, 0] := by decide
-
-/-- Same `[0, 1, 0]` ABA pattern under the trivial partition: violates,
-    as expected. -/
-example : ViolatesABAWithin DomainPartition.trivial [0, 1, 0] := by decide
+/-- An ABA shape with the final grade in its own domain: the
+within-domain check does not fire — the universal predicate would
+reject this pattern; the domain-relativized one permits it. -/
+example : IsContiguousWithin (![false, false, true] : DomainPartition 3 Bool)
+    (![0, 1, 0] : Pattern 3 ℕ) := by decide
 
 end Morphology.DomainLocality
