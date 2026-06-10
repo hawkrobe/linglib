@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Mandarin Chinese Gender
@@ -9,7 +9,7 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 
 namespace Mandarin.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Mandarin Chinese gender typology: no gender. -/
 def genderTypology : GenderProfile :=

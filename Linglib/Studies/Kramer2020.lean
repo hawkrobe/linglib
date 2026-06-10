@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 import Linglib.Studies.Corbett1991
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
@@ -67,7 +67,7 @@ The mapping is partial in two ways:
    nonhuman, which is orthogonal to animate vs inanimate).
 -/
 
-namespace Morphology.Gender
+namespace Gender
 
 open Morphology.DM
 
@@ -102,11 +102,11 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
   | .shape       => none
   | .rationality => none
 
-end Morphology.Gender
+end Gender
 
 namespace Morphology.DM
 
-open Morphology.Gender
+open Gender
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
     ([kramer-2020] §3) -/
@@ -123,7 +123,7 @@ end Morphology.DM
 
 namespace Kramer2020
 
-open Morphology.Gender
+open Gender
 open Morphology.DM
 open Corbett1991 (allProfiles)
 
@@ -919,7 +919,7 @@ theorem spanish_ninventory_matches_profile :
 
 /-- Spanish surface genders are consistent with the WALS gender count bin. -/
 theorem spanish_surface_genders_consistent :
-    Morphology.Gender.GenderCount.two.Contains spanishNs.surfaceGenders := rfl
+    Gender.GenderCount.two.Contains spanishNs.surfaceGenders := rfl
 
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
     genders — a many-to-one mapping mediated by VI ([kramer-2015] Ch 6).
@@ -1050,7 +1050,7 @@ theorem russian_ninventory_matches_profile :
 
 /-- Russian n-inventory matches the WALS gender count bin. -/
 theorem russian_surface_genders_consistent :
-    Morphology.Gender.GenderCount.three.Contains russianNs.surfaceGenders := rfl
+    Gender.GenderCount.three.Contains russianNs.surfaceGenders := rfl
 
 /-- Russian has u-features → `semanticAndFormal` assignment, consistent
     with the WALS profile. -/
@@ -1422,7 +1422,7 @@ theorem hausa_ninventory_matches_profile :
 
 /-- Hausa surface genders fall in the WALS 2-gender bin. -/
 theorem hausa_surface_genders_consistent :
-    Morphology.Gender.GenderCount.two.Contains hausaNs.surfaceGenders := rfl
+    Gender.GenderCount.two.Contains hausaNs.surfaceGenders := rfl
 
 /-- Hausa has u-features → `semanticAndFormal` assignment, consistent
     with the Corbett1991/WALS profile. -/

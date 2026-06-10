@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Quechua Gender
@@ -11,7 +11,7 @@ Quechua (`quz`) specifically; the Imbabura variety (`qvi`) used by
 
 namespace Quechua.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Cusco Quechua gender typology: no gender. -/
 def genderTypology : GenderProfile :=

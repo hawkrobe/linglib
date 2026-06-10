@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Irish Gender
@@ -11,7 +11,7 @@ Romance).
 
 namespace Irish.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Irish gender typology: 2-gender sex-based, restricted agreement targets. -/
 def genderTypology : GenderProfile :=

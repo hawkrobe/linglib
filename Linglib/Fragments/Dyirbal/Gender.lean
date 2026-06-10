@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Dyirbal Gender
@@ -15,7 +15,7 @@ biological sex. The Corbett 1991 view is a per-Study override at
 
 namespace Dyirbal.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Dyirbal gender typology per WALS [corbett-2013]: 4-class sex-based
     semantic. The 4 classes are I (male humans + dangerous things),

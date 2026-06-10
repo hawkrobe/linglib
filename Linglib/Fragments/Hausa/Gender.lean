@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Hausa Gender Fragment
@@ -152,7 +152,7 @@ def allNouns : List Noun :=
 -- Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Morphology.Gender
+open Gender
 
 /-- Hausa gender typology: 2-gender (Chadic, Afroasiatic), sex-based,
     semantic + formal. Agreement on attributive, personal pronoun, and

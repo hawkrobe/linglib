@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # French Gender
@@ -10,7 +10,7 @@ attributive + predicate adjectives, past participles, and personal pronouns.
 
 namespace French.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- French gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

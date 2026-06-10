@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Korean Gender
@@ -9,7 +9,7 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 
 namespace Korean.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Korean gender typology: no gender. -/
 def genderTypology : GenderProfile :=

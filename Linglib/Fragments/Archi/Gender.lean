@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Archi Gender
@@ -17,7 +17,7 @@ rather than semantic-only — a per-Study override at `Studies/Corbett1991.lean`
 
 namespace Archi.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Archi gender typology per WALS [corbett-2013]: 4-gender, sex-based,
     semantic assignment (Nakh-Daghestanian). Agreement targets per

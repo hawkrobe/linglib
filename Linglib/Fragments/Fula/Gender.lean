@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Fula Gender
@@ -11,7 +11,7 @@ Sample maximum in Corbett's 22-language exemplar.
 
 namespace Fula.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Fula gender typology: ~20 genders (Atlantic), semantic + formal. -/
 def genderTypology : GenderProfile :=

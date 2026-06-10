@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # German Derivational Gender: *-schaft* and related suffixes
@@ -124,7 +124,7 @@ theorem maedchen_neuter_override :
 -- § 4: Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Morphology.Gender
+open Gender
 
 /-- German gender typology: 3-gender canonical sex-based. The derivational
     facts above (-schaft, -chen, etc.) are the formal-assignment evidence

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Zulu Gender
@@ -17,7 +17,7 @@ facts.
 
 namespace Zulu.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Zulu gender typology: 8 controller genders (Bantu), semantic + formal. -/
 def genderTypology : GenderProfile :=

@@ -14,7 +14,7 @@ below personal pronoun, for languages with verbal gender/number agreement.
 Corbett subsumes verbal agreement under the predicate position, so `verb` is
 a linglib refinement, not a fifth position of Corbett's hierarchy.
 
-This type is shared by gender typology (`Linglib/Morphology/Gender.lean` and
+This type is shared by gender typology (`Linglib/Features/Gender/Profile.lean` and
 `Studies/Corbett1991.lean`) and number agreement
 (`Studies/Corbett2000.lean`).
 -/

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Fragments.English.Gender
 import Linglib.Fragments.Mandarin.Gender
@@ -70,7 +70,7 @@ set_option autoImplicit false
 
 namespace Corbett1991
 
-open Morphology.Gender
+open Gender
 open Agreement (AgreementTarget)
 
 /-! ### The 22-language exemplar sample -/

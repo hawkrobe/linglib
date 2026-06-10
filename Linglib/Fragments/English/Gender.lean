@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # English Gender
@@ -14,7 +14,7 @@ only in personal, possessive, and reflexive pronouns.
 
 namespace English.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- English gender typology per WALS [corbett-2013]: 3-gender
     sex-based, semantic-only (he/she/it pronominal distinction). -/

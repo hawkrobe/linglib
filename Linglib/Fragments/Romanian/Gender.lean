@@ -1,4 +1,4 @@
-import Linglib.Morphology.Gender
+import Linglib.Features.Gender.Profile
 
 /-!
 # Romanian Gender
@@ -10,7 +10,7 @@ fem in the plural; "ambigeneric"). Sex-based, semantic + formal.
 
 namespace Romanian.Gender
 
-open Morphology.Gender
+open Gender
 
 /-- Romanian gender typology: 3-gender sex-based with ambigeneric neuter. -/
 def genderTypology : GenderProfile :=
