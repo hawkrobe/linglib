@@ -1,6 +1,6 @@
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Containment.Superset
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
@@ -277,6 +277,21 @@ def IsContiguous (p : Paradigm) : Prop :=
 
 instance (p : Paradigm) : Decidable (IsContiguous p) := by
   unfold IsContiguous; infer_instance
+
+/-- **Universal Contiguity derived** ([caha-2009] (10)): a paradigm is
+    realizable by nanosyntactic spellout — context-free lexical entries
+    competing under the Superset Principle — iff it is contiguous. The
+    constraint Caha states as (10) is the generative capacity of the
+    spellout engine, not an independent axiom
+    (`Morphology.Containment.isContiguous_iff_spelloutGenerable` at
+    n = 6). -/
+theorem universalContiguity_iff_spellable (p : Paradigm) :
+    IsContiguous p ↔
+      ∃ v : List (Morphology.Containment.ExponenceRule 6 ℕ),
+        Morphology.Containment.ContextFree v ∧
+        Morphology.Containment.Antihomophonous v ∧
+        ∀ c, Morphology.Containment.spellout v c = some (p c) :=
+  Morphology.Containment.isContiguous_iff_spelloutGenerable p
 
 namespace SyncretismPatterns
 

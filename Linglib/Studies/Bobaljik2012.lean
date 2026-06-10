@@ -1,5 +1,6 @@
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Containment.Merger
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Alternatives.Lexical
@@ -348,6 +349,26 @@ theorem latin_superlative_portmanteau :
 theorem latin_sprl_needs_portmanteau :
     ∃ it ∈ latinBonus, winner latinBonus 2 = some it ∧ 0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
+
+/-- The nanosyntax lexicon for Latin GOOD ([caha-2009]-style):
+    context-free entries storing successively larger constituents,
+    competing under the Superset Principle. -/
+def latinBonusNS : List (ExponenceRule 3 String) :=
+  [⟨"bon", 0, none⟩, ⟨"mel", 1, none⟩, ⟨"opt", 2, none⟩]
+
+theorem latin_ns_contextFree : ContextFree latinBonusNS := by decide
+
+/-- Superset spellout derives the same ABC paradigm with no portmanteau
+    or contextual apparatus — constituent size alone does the work
+    DM's ch. 5 machinery does. -/
+theorem latin_ns_spellout :
+    spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by decide
+
+/-- Cross-framework agreement on the data: the nanosyntax lexicon and
+    the DM vocabulary (204) realize the same paradigm cell for cell
+    (the concrete face of
+    `Morphology.Containment.spelloutGenerable_iff_generable`). -/
+theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus := by decide
 
 /-- The hypothetical AAB vocabulary ([bobaljik-2012] (201)): `gor-`
     restricted to the superlative with no comparative-level

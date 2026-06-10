@@ -323,6 +323,7 @@ import Linglib.Syntax.Agreement.Basic
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Containment.Basic
 import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Containment.Merger
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality
