@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.Posterior
+import Linglib.Phenomena.Clarification.Basic
 
 /-!
 # [dong-etal-2026]: the Value-of-Information clarify-or-commit model
@@ -69,10 +70,6 @@ clarify-or-commit data lives in `Phenomena/Clarification/Basic.lean`.
   `eig_nonneg_of_convex` (bridging the `ℝ≥0∞`-on-`PMF` and `ℝ`-on-`Fintype`
   carriers) so the two statements of "information has nonnegative value" become
   one fact.
-* Lift a shared "clarify when value exceeds cost" `Predict` predicate into the
-  `Phenomena/Clarification` hub that this account and a rival soft-gate
-  (logistic) account both instantiate, exposing sharp-threshold vs. soft-gate
-  as a formal decision-rule choice.
 -/
 
 set_option autoImplicit false
@@ -318,5 +315,27 @@ theorem revealing_worth_asking :
 theorem revealing_worth_asking_medical :
     worthAsking 0 ((10 : ℝ≥0∞) • correctnessUtility) uniformBelief revealingQuestion :=
   medical_worth_asking_of_animal 0 _ _ _ revealing_worth_asking
+
+/-! ### The hub decision-rule instance: a sharp threshold -/
+
+/-- The account instantiates `Phenomena.Clarification.sharpRule`: asking is
+worth its cost exactly when the sharp-threshold rule fires on the net
+(real-valued) value signal. The soft-gate rival is
+`TsvilodubEtAl2026.softGateRule`. -/
+theorem worthAsking_iff_sharpRule {c : ℝ≥0∞} (hc : c ≠ ∞) (U : Θ → A → ℝ≥0∞)
+    (b : PMF Θ) (κ : Θ → PMF Y) (hV : VoI U b κ ≠ ∞) :
+    worthAsking c U b κ ↔
+      Phenomena.Clarification.sharpRule.propensity
+        ((VoI U b κ).toReal - c.toReal) = 1 := by
+  rw [worthAsking]
+  constructor
+  · intro h
+    exact Phenomena.Clarification.sharpRule_apply_of_pos
+      (sub_pos.mpr ((ENNReal.toReal_lt_toReal hc hV).mpr h))
+  · intro h
+    by_contra hlt
+    rw [Phenomena.Clarification.sharpRule_apply_of_nonpos (not_lt.mpr
+      (sub_nonpos.mpr ((ENNReal.toReal_le_toReal hV hc).mpr (not_lt.mp hlt))))] at h
+    norm_num at h
 
 end DongEtAl2026
