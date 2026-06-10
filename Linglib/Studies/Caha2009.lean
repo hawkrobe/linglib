@@ -1,5 +1,6 @@
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Features.Case.Basic
+import Linglib.Morphology.Containment.Superset
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
@@ -38,7 +39,9 @@ representation of each case literally *contains* the representations
 of all cases below it on the universal hierarchy:
 `[[[[[ NOM ] ACC ] GEN ] DAT ] P ]`. This study file defines the
 Caha-specific containment predicate `RespectsCahaContainment` and
-applies it to each Fragment case inventory.
+applies it to each Fragment case inventory; Universal Contiguity
+itself is derived from the shared spellout engine
+(`universalContiguity_iff_spellable`).
 
 Caha's **Universal Case sequence** is NOM – ACC – GEN – DAT – INST –
 COM ([caha-2009] (10b), p. 10); the Russian-specific sequence
@@ -266,15 +269,31 @@ abbrev slavicRank : Case → Option (Fin 6) :=
 abbrev Paradigm := Fin 6 → Nat
 
 /-- Caha's Universal Contiguity ([caha-2009] (10), p. 10) on a
-    Slavic paradigm. Defers to the domain-independent
-    `Morphology.Containment.isContiguous` substrate (which
-    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes
-    at n=4 — same engine, n=6 specialization here). -/
-def IsContiguous (p : Paradigm) : Prop :=
-  Morphology.Containment.isContiguous [p 0, p 1, p 2, p 3, p 4, p 5] = true
+    Slavic paradigm. A `Paradigm` is definitionally an n = 6
+    `Morphology.Containment.Pattern`, so this is the domain-independent
+    contiguity predicate itself (which
+    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous`
+    specializes at n = 4). -/
+abbrev IsContiguous (p : Paradigm) : Prop :=
+  Morphology.Containment.IsContiguous p
 
-instance (p : Paradigm) : Decidable (IsContiguous p) := by
-  unfold IsContiguous; infer_instance
+/-- **Universal Contiguity derived** ([caha-2009] (10)): a paradigm is
+    realizable by nanosyntactic spellout — context-free lexical entries
+    competing under the Superset Principle — iff it is contiguous. The
+    constraint Caha states as (10) is the generative capacity of the
+    spellout engine, not an independent axiom
+    (`Morphology.Containment.isContiguous_iff_spelloutGenerable` at
+    n = 6, mirroring Caha's own ch. 2 derivation from the Superset
+    Principle). Captures the within-sequence contiguity half of (10);
+    the cross-linguistic invariance of the sequence is fixed here
+    per-instance by the `Fin 6` order. -/
+theorem universalContiguity_iff_spellable (p : Paradigm) :
+    IsContiguous p ↔
+      ∃ v : List (Morphology.Containment.ExponenceRule 6 ℕ),
+        Morphology.Containment.ContextFree v ∧
+        Morphology.Containment.Antihomophonous v ∧
+        ∀ c, Morphology.Containment.spellout v c = some (p c) :=
+  Morphology.Containment.isContiguous_iff_spelloutGenerable p
 
 namespace SyncretismPatterns
 

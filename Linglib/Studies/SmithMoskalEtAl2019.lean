@@ -1,7 +1,8 @@
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Syntax.Case.Order
-import Linglib.Morphology.DM.ContainmentVI
+import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.DM.DomainLocality
 
 /-!
 # Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
@@ -38,66 +39,67 @@ refinement of the Bobaljik 2012 framework:
    recursion of [harbour-2014] (already substrate in this
    codebase, see `Syntax/Minimalist/Phi/Recursion.lean`).
 
-This file formalizes (1) directly: the DM-derivation in
-`Morphology/DM/ContainmentVI.lean` predicts AAB exclusion in
-*every* domain it applies to (because `vi_cmpr_eq_sprl` forces the two
-inner cells to share a root); the empirical data the paper reports
-falsifies that prediction in case and number. (2) and (3) are stubbed
-as substrate-addition TODOs.
+This file formalizes (1) directly: the terminal-adjacent fragment of
+the realizational engine (`Morphology/Containment/Vocabulary.lean`,
+[bobaljik-2012]'s structural-adjacency locality) predicts AAB exclusion
+in *every* domain it applies to — `realize_const_of_terminal_adjacent`
+forces the two inner cells to share a root; the empirical data the
+paper reports falsifies that prediction in case and number. (2) and (3)
+are stubbed as substrate-addition TODOs.
 
 ## Scope of the formalization
 
 - Degree-side prediction: proven directly from substrate (`§ 1`).
-- Case AAB attestation: stubbed with `sorry` and a TODO citing the
-  paper's specific empirical witnesses (`§ 2`); requires reading
-  §3.6's data tables to encode a representative pattern.
-- Number AAB attestation: stubbed (`§ 3`); same TODO shape.
-- Domain-based locality predicate: stubbed substrate addition (`§ 4`);
-  this is the substrate refactor (3.7) the paper motivates and that
-  would naturally land as a sibling of `Morphology/Containment.lean`.
+- Case AAB attestation: two genuine witnesses from §3.6 encoded and
+  shown not generable under structural adjacency (`§ 2`).
+- Number AAB attestation: the Yagua 2 witness from §4 Table 46, same
+  non-generability shape (`§ 3`).
+- Domain-based locality predicate: deferred substrate addition (`§ 4`);
+  the paper's §3.7 refactor would land as an additional condition
+  beside `Adjacent` in `Morphology/Containment/Vocabulary.lean`.
 -/
 
 namespace SmithMoskalEtAl2019
 
 open Morphology.DegreeContainment
 open Morphology.Case.Allomorphy
-open Morphology.DM.ContainmentVI.Degree
+open Morphology.Containment
 
 -- ============================================================================
 -- § 1: Degree side — DM derivation excludes AAB unconditionally
 -- ============================================================================
 
-/-! The DM-flavored derivation of *ABA in `Morphology/DM/ContainmentVI.lean`
-forces CMPR-cell = SPRL-cell for any VI-generated root pattern (the
-core theorem `vi_cmpr_eq_sprl`). This is strictly stronger than
-contiguity: it excludes both *ABA *and* *AAB.
+/-! The structural-adjacency fragment of the realizational engine —
+terminal items (no portmanteaux) with adjacent conditioning, the
+locality [bobaljik-2012] assumes for degree — forces CMPR-cell =
+SPRL-cell for any generable root pattern
+(`Morphology.Containment.realize_const_of_terminal_adjacent`). This is
+strictly stronger than contiguity: it excludes both *ABA *and* *AAB.
 
-The two theorems below state the same content at two granularities:
-the general "no VI-generable pattern has CMPR ≠ SPRL", and the
-specific corollary "the AAB pattern is not VI-generable." Both are
-direct consequences of `vi_cmpr_eq_sprl` from the migration's Phase 4
-substrate. -/
+The two theorems below state that content at two granularities: the
+general "no generable pattern has CMPR ≠ SPRL", and the specific
+corollary "the AAB shape is not generable." The paper's §3.7 move is
+precisely to *drop* these hypotheses for case and number — replacing
+structural adjacency with domain-based locality — which is why the
+axioms are à la carte Props rather than baked into the rule type. -/
 
-/-- DM Vocabulary Insertion under root-out locality cannot generate
-    any pattern whose CMPR cell differs from its SPRL cell. -/
-theorem dm_excludes_cmpr_sprl_distinct
-    (rules : List LocalVIRule) (defaultForm : Nat)
-    (h : (viPattern rules defaultForm).cmpr ≠ (viPattern rules defaultForm).sprl) :
-    False :=
-  h (vi_cmpr_eq_sprl rules defaultForm)
+/-- Elsewhere insertion under [bobaljik-2012]'s structural adjacency
+    (terminal items, adjacent contexts) cannot generate a pattern whose
+    CMPR cell differs from its SPRL cell. -/
+theorem dm_excludes_cmpr_sprl_distinct {v : List (ExponenceRule 3 ℕ)}
+    (hT : Terminal v) (hAdj : Adjacent v) :
+    realize v 1 = realize v 2 :=
+  realize_const_of_terminal_adjacent hT hAdj
 
-/-- Specific corollary: the AAB pattern (POS = CMPR ≠ SPRL) cannot
-    be VI-generated under DM root-out locality.
-
-    `aab : DegreePattern := ⟨0, 0, 1⟩` lives in
-    `Morphology/DegreeContainment.lean`. -/
-theorem dm_excludes_aab
-    (rules : List LocalVIRule) (defaultForm : Nat) :
-    viPattern rules defaultForm ≠ aab := by
+/-- Specific corollary: the AAB shape (POS = CMPR ≠ SPRL) cannot be
+    generated under structural adjacency. -/
+theorem dm_excludes_aab {v : List (ExponenceRule 3 ℕ)}
+    (hT : Terminal v) (hAdj : Adjacent v) {a b : ℕ} (hab : a ≠ b) :
+    realize v ≠ ![some a, some a, some b] := by
   intro h
-  apply dm_excludes_cmpr_sprl_distinct rules defaultForm
-  rw [h]
-  decide
+  have h12 := dm_excludes_cmpr_sprl_distinct hT hAdj
+  rw [h] at h12
+  exact hab (by simpa using h12)
 
 -- ============================================================================
 -- § 2: Case side — §3.6 attested AAB witnesses
@@ -131,11 +133,11 @@ suppletive third cell takes root-class 1). -/
 /-- Wardaman 3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*.
     [smith-moskal-xu-kang-bobaljik-2019] Table 25 (data from
     [merlan-1994]). -/
-def wardamanThirdSg : List Nat := [0, 0, 1]
+def wardamanThirdSg : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
 
 /-- Khinalugh 2SG: ABS=*vi*, ERG=*va*, DAT=*oX(ir)*.
     [smith-moskal-xu-kang-bobaljik-2019] Table 24. -/
-def khinalughSecondSg : List Nat := [0, 0, 1]
+def khinalughSecondSg : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
 
 /-- Both genuine-AAB witnesses are contiguous in the substrate sense
     (no *ABA violation): cells at positions 0 and 2 do not share a
@@ -148,18 +150,18 @@ theorem khinalugh_2sg_contiguous :
 
 /-- The defining AAB shape: cells 1 and 2 differ (suppletion in the
     third position but not the second). This is the structural feature
-    that the DM derivation in `Morphology/DM/ContainmentVI`
-    excludes — `vi_cmpr_eq_sprl` forces the second and third cells to
-    coincide for any VI-generated root pattern. -/
+    that the terminal-adjacent engine excludes —
+    `realize_const_of_terminal_adjacent` forces the second and third
+    cells to coincide for any generable root pattern. -/
 theorem wardaman_3sg_is_aab :
-    wardamanThirdSg[1]? ≠ wardamanThirdSg[2]? := by decide
+    wardamanThirdSg 1 ≠ wardamanThirdSg 2 := by decide
 
 theorem khinalugh_2sg_is_aab :
-    khinalughSecondSg[1]? ≠ khinalughSecondSg[2]? := by decide
+    khinalughSecondSg 1 ≠ khinalughSecondSg 2 := by decide
 
-/-- **§3.6 cross-domain divergence theorem.** The DM derivation in
-    `Degree.vi_cmpr_eq_sprl` (PART II of `Morphology/DM/ContainmentVI.lean`) predicts,
-    for any VI-generable root pattern, that the second and third
+/-- **§3.6 cross-domain divergence theorem.** The structural-adjacency
+    engine (`realize_const_of_terminal_adjacent`) predicts, for any
+    generable root pattern, that the second and third
     cells coincide. Lifted to case (where the 3-cell projection is
     UNMARKED–DEPENDENT–OBLIQUE, e.g. ABS–ERG–DAT in ergative
     languages), this prediction would exclude AAB cells `[A, A, B]`
@@ -171,17 +173,26 @@ theorem khinalugh_2sg_is_aab :
     10 instances, including Wardaman 3SG and the Nakh-Daghestanian
     2SG patterns). The existence of a contiguous AAB-shaped case
     pattern witnesses the falsification of the lifted DM derivation:
-    no `vi_cmpr_eq_sprl`-style theorem can hold for case morphology.
+    no `realize_const_of_terminal_adjacent`-style plateau theorem can
+    hold for case morphology.
 
     The paper's positive proposal (§3.7) is to weaken the locality
     predicate from structural adjacency (Bobaljik 2012) /
     linear adjacency (Embick 2010) to domain-based locality
     ([moskal-2015]); see § 4 below. -/
 theorem case_aab_attested_falsifies_dm :
-    ∃ (cells : List Nat),
-      Morphology.Containment.IsContiguous cells ∧
-      cells[1]? ≠ cells[2]? :=
+    ∃ p : Morphology.Containment.Pattern 3 ℕ,
+      Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
+
+/-- The falsification run through the engine: no terminal vocabulary
+    under structural adjacency generates the Wardaman-shaped AAB
+    realization. Since Wardaman attests it, structural adjacency is the
+    hypothesis that must go — the paper's §3.7 conclusion. -/
+theorem wardaman_not_generable_under_adjacency :
+    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+      realize v ≠ ![some 0, some 0, some 1] :=
+  λ _ hT hA => dm_excludes_aab hT hA (by decide)
 
 -- ============================================================================
 -- § 3: Number side — §4 attested AAB witnesses (Table 46)
@@ -223,13 +234,13 @@ SG–PL–DL ordering matches the table caption directly. -/
     (data from [payne-payne-1990]). The PL is transparently
     *jiy* + *-éy*; the DL is suppletive. Projects to `[0, 0, 1]`
     over SG/PL/DL. -/
-def yaguaSecond : List Nat := [0, 0, 1]
+def yaguaSecond : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
 
 theorem yagua_2_contiguous :
     Morphology.Containment.IsContiguous yaguaSecond := by decide
 
 theorem yagua_2_is_aab :
-    yaguaSecond[1]? ≠ yaguaSecond[2]? := by decide
+    yaguaSecond 1 ≠ yaguaSecond 2 := by decide
 
 /-- §4 number-side analog of `case_aab_attested_falsifies_dm`. Same
     structural divergence: AAB is attested in pronominal number
@@ -237,12 +248,18 @@ theorem yagua_2_is_aab :
     listed in Table 46), falsifying the DM derivation lifted to number.
     The Yagua 2 witness is morphologically transparent — PL = SG +
     suffix; DL is suppletive — exactly the AAB shape that
-    `vi_cmpr_eq_sprl` would predict cannot arise. -/
+    `realize_const_of_terminal_adjacent` would predict cannot arise. -/
 theorem number_aab_attested_falsifies_dm :
-    ∃ (cells : List Nat),
-      Morphology.Containment.IsContiguous cells ∧
-      cells[1]? ≠ cells[2]? :=
+    ∃ p : Morphology.Containment.Pattern 3 ℕ,
+      Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
+
+/-- Number-side analog: the Yagua-shaped AAB realization is not
+    generable under structural adjacency either. -/
+theorem yagua_not_generable_under_adjacency :
+    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+      realize v ≠ ![some 0, some 0, some 1] :=
+  λ _ hT hA => dm_excludes_aab hT hA (by decide)
 
 -- ============================================================================
 -- § 4: §3.7 — Domain-based locality (case + number partitions)
@@ -281,12 +298,12 @@ case-hierarchy split, not threshold-on-cell-index"):
 ## Scope of the formalization
 
 The substrate's converse-direction theorem — "domain-aware DM
-generates AAB patterns when positions are split" — requires
-extending `LocalVIRule` (`Morphology.DM.ContainmentVI.Degree`)
-with a domain field so that a rule's locality bound becomes
-partition-aware rather than the unconditional Bobaljik bound
-`condGrade.rank ≤ DegreeGrade.cmpr.rank`. That's a separate substrate
-addition deferred to a follow-up.
+generates AAB patterns when positions are split" — requires a
+domain-relativized condition beside `Adjacent` on
+`Morphology.Containment.ExponenceRule` vocabularies, so that a rule's
+locality bound becomes partition-aware rather than the unconditional
+structural-adjacency bound. That's a separate substrate addition
+deferred to a follow-up.
 
 What this section ships:
 - The two partition definitions above, with citations
@@ -319,7 +336,10 @@ def caseDomainPartition : DomainPartition Bool := λ i =>
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).
     The boundary corresponds to [harbour-2014]'s feature-recursion
-    split where dual is the marked extension over SG/PL. -/
+    split where dual is the marked extension over SG/PL. Unlike
+    `caseDomainPartition` (derived from `Case.IsOblique`), this
+    boundary is stated directly on cell indices; deriving it from a
+    number-feature substrate is deferred. -/
 def numberDomainPartition : DomainPartition Bool := λ i => i ≥ 2
 
 /-- Under the case partition, ERG and DAT (positions 1 and 2) lie in
@@ -337,43 +357,30 @@ theorem number_partition_splits_pl_dl :
     partition. (Trivially so — `[0, 0, 1]` is *ABA-contiguous in the
     universal sense, and `IsContiguousWithin` is strictly weaker.
     The substantive claim — that domain-aware DM generates this
-    pattern — requires the deferred `LocalVIRule` extension.) -/
+    pattern — requires the deferred domain-relativized condition; see the closing
+    section.) -/
 theorem wardaman_3sg_within_case_domain :
-    IsContiguousWithin caseDomainPartition wardamanThirdSg := by decide
+    IsContiguousWithin caseDomainPartition [0, 0, 1] := by decide
 
 /-- The number AAB witness (Yagua 2) is contiguous under the number
     partition. Same caveat as the case-side. -/
 theorem yagua_2_within_number_domain :
-    IsContiguousWithin numberDomainPartition yaguaSecond := by decide
+    IsContiguousWithin numberDomainPartition [0, 0, 1] := by decide
 
 /-! ## What's deferred
 
 The substrate above sets up the partition + the structural facts
 that the partitions split the relevant cells. The substantive
 converse-direction theorem — "under the case partition, there exist
-domain-aware VI rule lists generating Wardaman 3SG-shape patterns"
-— requires `Morphology.DM.ContainmentVI.Degree.LocalVIRule` to
-be extended with a domain field so its locality bound becomes
-partition-relativized. The current `LocalVIRule.locality` field is structurally Bobaljik-style
-(`condGrade.rank ≤ cmpr.rank`, unconditional) and forces `vi_cmpr_eq_sprl`
-regardless of partition. A domain-aware variant requires a
-partition-aware cap-refinement on the rule type itself, sketched below.
-
-A concrete `DomainLocalVIRule` shape for that follow-up:
-
-```
-structure DomainLocalVIRule {Tag : Type*} [DecidableEq Tag]
-    (π : DomainPartition Tag) where
-  formClass : Nat
-  condGrade : DegreeGrade
-  specificity : Nat
-  domainLocality : ∃ targetGrade : DegreeGrade,
-    SameDomain π condGrade.rank targetGrade.rank
-```
-
-with `viWinner_eq_within_domain` proving the conditional analog of
-`vi_cmpr_eq_sprl` and a constructive `domain_locality_admits_aab`
-showing AAB rule lists exist when positions are split.
+domain-aware vocabularies generating Wardaman 3SG-shape patterns" —
+requires a domain-relativized analogue of the `Adjacent` condition on
+`Morphology.Containment.ExponenceRule` vocabularies: a conditioning head may be
+non-adjacent provided it lies in the same accessibility domain as the
+exponed span. Since the engine's axioms are à la carte Props, this is
+an additional Prop (say `DomainLocal π`) sitting beside `Adjacent`,
+with the conditional analogue of `realize_const_of_terminal_adjacent`
+holding within domains and a constructive witness showing AAB
+vocabularies exist when the partition splits the relevant cells.
 -/
 
 end SmithMoskalEtAl2019
