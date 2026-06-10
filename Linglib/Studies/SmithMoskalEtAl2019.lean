@@ -50,13 +50,13 @@ are stubbed as substrate-addition TODOs.
 ## Scope of the formalization
 
 - Degree-side prediction: proven directly from substrate (`§ 1`).
-- Case AAB attestation: stubbed with `sorry` and a TODO citing the
-  paper's specific empirical witnesses (`§ 2`); requires reading
-  §3.6's data tables to encode a representative pattern.
-- Number AAB attestation: stubbed (`§ 3`); same TODO shape.
-- Domain-based locality predicate: stubbed substrate addition (`§ 4`);
-  this is the substrate refactor (3.7) the paper motivates and that
-  would naturally land as a sibling of `Morphology/Containment.lean`.
+- Case AAB attestation: two genuine witnesses from §3.6 encoded and
+  shown not generable under structural adjacency (`§ 2`).
+- Number AAB attestation: the Yagua 2 witness from §4 Table 46, same
+  non-generability shape (`§ 3`).
+- Domain-based locality predicate: deferred substrate addition (`§ 4`);
+  the paper's §3.7 refactor would land as an additional condition
+  beside `Adjacent` in `Morphology/Containment/Vocabulary.lean`.
 -/
 
 namespace SmithMoskalEtAl2019
@@ -173,7 +173,8 @@ theorem khinalugh_2sg_is_aab :
     10 instances, including Wardaman 3SG and the Nakh-Daghestanian
     2SG patterns). The existence of a contiguous AAB-shaped case
     pattern witnesses the falsification of the lifted DM derivation:
-    no `vi_cmpr_eq_sprl`-style theorem can hold for case morphology.
+    no `realize_const_of_terminal_adjacent`-style plateau theorem can
+    hold for case morphology.
 
     The paper's positive proposal (§3.7) is to weaken the locality
     predicate from structural adjacency (Bobaljik 2012) /
@@ -183,6 +184,15 @@ theorem case_aab_attested_falsifies_dm :
     ∃ p : Morphology.Containment.Pattern 3 ℕ,
       Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
+
+/-- The falsification run through the engine: no terminal vocabulary
+    under structural adjacency generates the Wardaman-shaped AAB
+    realization. Since Wardaman attests it, structural adjacency is the
+    hypothesis that must go — the paper's §3.7 conclusion. -/
+theorem wardaman_not_generable_under_adjacency :
+    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+      realize v ≠ ![some 0, some 0, some 1] :=
+  λ _ hT hA => dm_excludes_aab hT hA (by decide)
 
 -- ============================================================================
 -- § 3: Number side — §4 attested AAB witnesses (Table 46)
@@ -244,6 +254,13 @@ theorem number_aab_attested_falsifies_dm :
       Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
 
+/-- Number-side analog: the Yagua-shaped AAB realization is not
+    generable under structural adjacency either. -/
+theorem yagua_not_generable_under_adjacency :
+    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+      realize v ≠ ![some 0, some 0, some 1] :=
+  λ _ hT hA => dm_excludes_aab hT hA (by decide)
+
 -- ============================================================================
 -- § 4: §3.7 — Domain-based locality (case + number partitions)
 -- ============================================================================
@@ -281,12 +298,12 @@ case-hierarchy split, not threshold-on-cell-index"):
 ## Scope of the formalization
 
 The substrate's converse-direction theorem — "domain-aware DM
-generates AAB patterns when positions are split" — requires
-extending `LocalVIRule` (`Morphology.DM.ContainmentVI.Degree`)
-with a domain field so that a rule's locality bound becomes
-partition-aware rather than the unconditional Bobaljik bound
-`condGrade.rank ≤ DegreeGrade.cmpr.rank`. That's a separate substrate
-addition deferred to a follow-up.
+generates AAB patterns when positions are split" — requires a
+domain-relativized condition beside `Adjacent` on
+`Morphology.Containment.ExponenceRule` vocabularies, so that a rule's
+locality bound becomes partition-aware rather than the unconditional
+structural-adjacency bound. That's a separate substrate addition
+deferred to a follow-up.
 
 What this section ships:
 - The two partition definitions above, with citations
@@ -319,7 +336,10 @@ def caseDomainPartition : DomainPartition Bool := λ i =>
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).
     The boundary corresponds to [harbour-2014]'s feature-recursion
-    split where dual is the marked extension over SG/PL. -/
+    split where dual is the marked extension over SG/PL. Unlike
+    `caseDomainPartition` (derived from `Case.IsOblique`), this
+    boundary is stated directly on cell indices; deriving it from a
+    number-feature substrate is deferred. -/
 def numberDomainPartition : DomainPartition Bool := λ i => i ≥ 2
 
 /-- Under the case partition, ERG and DAT (positions 1 and 2) lie in

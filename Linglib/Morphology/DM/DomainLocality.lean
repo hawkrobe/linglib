@@ -14,9 +14,9 @@ boundaries, AAB patterns are admitted.
 
 ## Motivation
 
-`Morphology.DM.ContainmentVI.Degree.vi_cmpr_eq_sprl` (the DM
-derivation, [bobaljik-2012]) predicts CMPR-cell = SPRL-cell for
-any VI-generable root pattern. Lifted to case (Wardaman 3SG: ABS=
+`Morphology.Containment.realize_const_of_terminal_adjacent` (the
+structural-adjacency derivation, [bobaljik-2012]) predicts CMPR-cell =
+SPRL-cell for any generable root pattern. Lifted to case (Wardaman 3SG: ABS=
 narnaj, ERG=narnaj-(j)i, DAT=gunga; [smith-moskal-xu-kang-bobaljik-2019]
 §3.6) and number (Yagua 2: SG=jiy, PL=jiry-éy, DL=sáada;
 [smith-moskal-xu-kang-bobaljik-2019] §4.2 Table 46), the

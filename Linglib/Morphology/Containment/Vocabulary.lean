@@ -40,9 +40,11 @@ hypothesis set, mirroring the book's cost accounting:
   intervening head (190a), condition (202) for context-sensitive
   portmanteaux (201); under the threshold encoding both reduce to
   downward closure of the threshold set, so one hypothesis suffices.
-* Prediction (199) (`exists_portmanteau_of_ne`): under adjacency,
-  superlative-grade root allomorphy distinct from the comparative
-  grade is possible only via a portmanteau item.
+* ABC requires a portmanteau (`exists_portmanteau_of_ne`;
+  [bobaljik-2012] §5.3.1, the degree-domain consequence generalized
+  there as (199)): under adjacency, superlative-grade root allomorphy
+  distinct from the comparative grade arises only via a portmanteau
+  rule.
 
 ## Main declarations
 
@@ -66,14 +68,16 @@ variable {n : ℕ} {F : Type*}
 
 /-! ### Rules of exponence and derived specificity -/
 
-/-- A **rule of exponence** ([bobaljik-2012]'s term, from the
-Matthews–Anderson realizational tradition) over an `n`-grade
-containment hierarchy. The rule realizes the initial span
+/-- A **rule of exponence** ([bobaljik-2012]'s term — Matthews's
+*exponence*, used in the realizational sense of [stump-2001]) over an
+`n`-grade containment hierarchy. The rule realizes the initial span
 `[0, spans]` — the root when `spans = 0`, a root+heads portmanteau
 when `spans > 0` — and applies only when the (optional) conditioning
-head `context` is present in the structure. DM vocabulary items and
-nanosyntax lexical entries are the `Terminal`-restricted and
-context-free special cases, respectively.
+head `context` is present in the structure. DM vocabulary items are
+the `Terminal`-restricted special case; nanosyntax lexical entries
+share the context-free span format but pair it with Superset-based
+selection rather than this file's containment-directed `AppliesAt`,
+so the insertion semantics differs.
 Latin ([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
 `⟨mel, 0, some 1⟩`, the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
 structure ExponenceRule (n : ℕ) (F : Type*) where
@@ -146,9 +150,12 @@ def Adjacent (v : List (ExponenceRule n F)) : Prop :=
 instance (v : List (ExponenceRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
-/-- Distinct items carry distinct exponents — [bobaljik-2012]'s
+/-- Distinct rules carry distinct exponents — [bobaljik-2012]'s
 Antihomophony assumption (44), closing the loophole of a surface-ABA
-pattern that is really an ABC with accidental A ≡ C homophony. -/
+pattern that is really an ABC with accidental A ≡ C homophony. Stated
+as pairwise antihomophony, a mild strengthening of the book's
+default-vs-contextual formulation; all worked vocabularies satisfy
+it. -/
 def Antihomophonous (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, ∀ jt ∈ v, it.exponent = jt.exponent → it = jt
 
@@ -268,6 +275,16 @@ theorem exists_winner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
     rw [List.find?_eq_none] at hf
     exact absurd (by simp [hτ] : (it.threshold == m) = true) (by simpa using hf it hitv)
 
+theorem winner_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+    winner v g = none ↔ maxThreshold v g = ⊥ := by
+  refine ⟨λ h => ?_, winner_eq_none_of_bot⟩
+  cases hmt : maxThreshold v g with
+  | bot => rfl
+  | coe m =>
+    obtain ⟨it, hit⟩ := exists_winner_of_coe hmt
+    rw [hit] at h
+    exact absurd h (by simp)
+
 theorem winner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
     (h : maxThreshold v g = maxThreshold v g') : winner v g = winner v g' := by
   rw [winner, winner, h]
@@ -282,12 +299,18 @@ theorem realize_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
   show (winner v g).map _ = (winner v g').map _
   rw [winner_congr h]
 
+theorem realize_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+    realize v g = none ↔ maxThreshold v g = ⊥ := by
+  rw [← winner_eq_none_iff]
+  unfold realize
+  cases winner v g <;> simp
+
 /-! ### CSG1: realization is contiguous
 
 [bobaljik-2012] ch. 2: with antihomophonous items, the Elsewhere
-competition over a containment hierarchy cannot generate ABA — "if
-there are only two distinct listed root forms, no ordering of the
-rules will lead to an ABA pattern". Formally: `maxThreshold` is the
+competition over a containment hierarchy cannot generate ABA — with
+only two distinct listed root forms, no ordering of the rules yields
+an ABA pattern (p. 35). Formally: `maxThreshold` is the
 monotone score, the winner is a function of it, and antihomophony
 makes exponents injective in the winner — so realization factors as
 monotone-then-injective and `Basic.lean`'s composition principle
@@ -299,23 +322,9 @@ theorem isContiguous_realize {v : List (ExponenceRule n F)} (hAH : Antihomophono
   cases hwi : winner v i with
   | none =>
     have hri : realize v i = none := by simp [realize, hwi]
-    have hmti : maxThreshold v i = ⊥ := by
-      cases hmt : maxThreshold v i with
-      | bot => rfl
-      | coe m =>
-        obtain ⟨it, hit⟩ := exists_winner_of_coe hmt
-        rw [hit] at hwi; exact absurd hwi (by simp)
-    have hrk : realize v k = none := heq ▸ hri
-    have hmtk : maxThreshold v k = ⊥ := by
-      cases hmt : maxThreshold v k with
-      | bot => rfl
-      | coe m =>
-        obtain ⟨it, hit⟩ := exists_winner_of_coe hmt
-        rw [show realize v k = some it.exponent from by simp [realize, hit]] at hrk
-        exact absurd hrk (by simp)
+    have hmtk : maxThreshold v k = ⊥ := realize_eq_none_iff.mp (heq ▸ hri)
     have hmtj : maxThreshold v j = ⊥ := maxThreshold_eq_bot_of_le hmtk hjk
-    have hrj : realize v j = none := by simp [realize, winner_eq_none_of_bot hmtj]
-    rw [hri, hrj]
+    rw [hri, realize_eq_none_iff.mpr hmtj]
   | some iti =>
     obtain ⟨hiv, hmti⟩ := winner_spec hwi
     have hri : realize v i = some iti.exponent := by simp [realize, hwi]
@@ -356,21 +365,25 @@ theorem realize_const_of_cap {v : List (ExponenceRule n F)} {m g g' : Fin n}
     realize v g = realize v g' :=
   realize_congr (by unfold maxThreshold; rw [applicable_eq_of_cap hcap hg hg'])
 
-/-- Terminal items with adjacent contexts have thresholds at most the
+private theorem threshold_le_one {it : ExponenceRule 3 F}
+    (h0 : (it.spans : ℕ) = 0)
+    (hc : ∀ c : Fin 3, it.context = some c → (c : ℕ) = (it.spans : ℕ) + 1) :
+    it.threshold ≤ (1 : Fin 3) := by
+  have h1 : it.spans ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [h0]
+  unfold ExponenceRule.threshold
+  cases hcx : it.context with
+  | none => simpa using h1
+  | some c =>
+    have h2 : c ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [hc c hcx, h0]
+    simpa using max_le h1 h2
+
+/-- Terminal rules with adjacent contexts have thresholds at most the
 first head, so the comparative and superlative cells coincide: only
 AAA and ABB root patterns are generable. -/
 theorem realize_const_of_terminal_adjacent {v : List (ExponenceRule 3 F)}
-    (hT : Terminal v) (hA : Adjacent v) : realize v 1 = realize v 2 := by
-  refine realize_const_of_cap (m := (1 : Fin 3)) (λ it hit => ?_) le_rfl (by decide)
-  have htop := hT it hit
-  have h1 : it.spans ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [htop]
-  unfold ExponenceRule.threshold
-  cases hc : it.context with
-  | none => simpa using h1
-  | some c =>
-    have hcv := hA it hit c hc
-    have h2 : c ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [hcv, htop]
-    simpa using max_le h1 h2
+    (hT : Terminal v) (hA : Adjacent v) : realize v 1 = realize v 2 :=
+  realize_const_of_cap (m := (1 : Fin 3))
+    (λ it hit => threshold_le_one (hT it hit) (hA it hit)) le_rfl (by decide)
 
 /-! ### Completeness: generable = contiguous -/
 
@@ -473,6 +486,8 @@ theorem realize_ofPattern {p : Pattern n F} (hp : IsContiguous p) (g : Fin n) :
   rw [hw, Option.map_some]
   exact congrArg some (apply_firstOcc p g)
 
+end Completeness
+
 /-- **Generable = contiguous.** A fully realized pattern arises from
 Elsewhere insertion over a terminal antihomophonous vocabulary iff it
 is contiguous: the forward direction is the canonical-vocabulary
@@ -481,6 +496,7 @@ theorem isContiguous_iff_generable (p : Pattern n F) :
     IsContiguous p ↔
       ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
         ∀ g, realize v g = some (p g) := by
+  classical
   constructor
   · intro hp
     exact ⟨ofPattern p, terminal_ofPattern p, antihomophonous_ofPattern p,
@@ -491,8 +507,6 @@ theorem isContiguous_iff_generable (p : Pattern n F) :
     have h2 := isContiguous_realize hAH hij hjk h1
     rw [hreal i, hreal j] at h2
     exact Option.some.inj h2
-
-end Completeness
 
 /-! ### Three-grade hierarchies: *AAB and the portmanteau prediction -/
 
@@ -540,10 +554,11 @@ theorem csg2 {v : List (ExponenceRule 3 F)} (hAH : Antihomophonous v) (hG : Grou
     rw [heq01, hw1τ] at hle0
     exact absurd hle0 (by decide)
 
-/-- **Prediction (199)** ([bobaljik-2012] ch. 5): under adjacency,
-root allomorphy at the superlative grade distinct from the comparative
-grade is possible only via a portmanteau — the winning item must
-expone more than the bare root (Latin `opt-`, Welsh `gor-`). -/
+/-- **ABC requires a portmanteau** ([bobaljik-2012] §5.3.1, the
+degree-domain consequence generalized there as (199)): under
+adjacency, root allomorphy at the superlative grade distinct from the
+comparative grade arises only via a portmanteau — the winning rule
+must expone more than the bare root (Latin `opt-`, Welsh `gor-`). -/
 theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v)
     (h12 : realize v 1 ≠ realize v 2) :
     ∃ it ∈ v, winner v 2 = some it ∧ 0 < (it.spans : ℕ) := by
@@ -551,28 +566,15 @@ theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v
     cases hw : winner v 2 with
     | some w => exact ⟨w, rfl⟩
     | none =>
-      have hmt2 : maxThreshold v 2 = ⊥ := by
-        cases hmt : maxThreshold v 2 with
-        | bot => rfl
-        | coe m =>
-          obtain ⟨it, hit⟩ := exists_winner_of_coe hmt
-          rw [hit] at hw; exact absurd hw (by simp)
+      have hmt2 : maxThreshold v 2 = ⊥ := winner_eq_none_iff.mp hw
       have hmt1 : maxThreshold v 1 = ⊥ := maxThreshold_eq_bot_of_le hmt2 (by decide)
       exact absurd (realize_congr (hmt1.trans hmt2.symm)) h12
   obtain ⟨hw2v, hmt2⟩ := winner_spec hw2
   refine ⟨w2, hw2v, hw2, ?_⟩
   by_contra htop
   push Not at htop
-  have htop0 : (w2.spans : ℕ) = 0 := Nat.le_zero.mp htop
-  have hτle : w2.threshold ≤ (1 : Fin 3) := by
-    have h1 : w2.spans ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [htop0]
-    unfold ExponenceRule.threshold
-    cases hc : w2.context with
-    | none => simpa using h1
-    | some c =>
-      have hcv := hA w2 hw2v c hc
-      have h2 : c ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [hcv, htop0]
-      simpa using max_le h1 h2
+  have hτle : w2.threshold ≤ (1 : Fin 3) :=
+    threshold_le_one (Nat.le_zero.mp htop) (hA w2 hw2v)
   exact h12 (realize_congr
     ((maxThreshold_eq_coe_of_le hmt2 hτle (by decide)).trans hmt2.symm))
 

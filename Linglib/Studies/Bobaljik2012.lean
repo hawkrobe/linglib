@@ -1,8 +1,8 @@
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Containment.Merger
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Alternatives.Lexical
-import Linglib.Semantics.Degree.Superlative
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives
 
@@ -24,10 +24,11 @@ contains the comparative (`[[[ADJ] CMPR] SPRL]`).
    (*ABA excluded); CSG2: a suppletive superlative forces a suppletive
    comparative (*AAB excluded). Attested: AAA, ABB, ABC. Unattested:
    *ABA, *AAB. The derivations are asymmetric — CSG1 needs containment
-   + Elsewhere + Antihomophony, CSG2 additionally portmanteau exponence
-   and the markedness condition (202); both live in
-   `Morphology/Containment/Vocabulary.lean` and are instantiated on the
-   book's worked vocabularies below.
+   + Elsewhere + Antihomophony, CSG2 additionally portmanteau exponence,
+   adjacency, and the markedness condition (202) — in the formalization
+   adjacency's AAB-blocking role is absorbed into `Grounded`; see
+   `Morphology/Containment/Vocabulary.lean`. Both are instantiated on
+   the book's worked vocabularies below.
    **Scope**: relative superlatives only, not absolute superlatives /
    elatives (p. 2, p. 28). The CSG ranges over synthetic grades; among
    periphrastic superlatives it holds exactly of those embedding the
@@ -62,7 +63,7 @@ enabling automatic generation of the alternatives needed for scalar
 implicature computation. Lives in this study file because it is the
 sole consumer. [horn-1972] [kennedy-2007] -/
 
-namespace Morphology.ScaleFromParadigm
+namespace Bobaljik2012.ScaleFromParadigm
 
 open Morphology
 open Alternatives (HornScale)
@@ -98,7 +99,7 @@ def morphologicalAlternatives {σ : Type} (stem : Stem σ) (form : String) :
     let scale := ms.toHornScale
     scale.members.filter (· != form)
 
-end Morphology.ScaleFromParadigm
+end Bobaljik2012.ScaleFromParadigm
 
 namespace Bobaljik2012
 
@@ -136,8 +137,9 @@ theorem bad_csg : bad.suppletion.SprlSuppletive :=
   csg_part1 bad.suppletion (by decide) (by decide)
 
 /-- CSG Part II on the English data: if the superlative is suppletive,
-    the comparative is too. Engine derivation:
-    `Morphology.Containment.csg2`. -/
+    the comparative is too. Data-level check; the engine derivation
+    (`Morphology.Containment.csg2`) is instantiated at
+    `welshAAB_blocked` below. -/
 theorem good_csg_part2 : good.suppletion.CmprSuppletive := by decide
 theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
 
@@ -165,13 +167,16 @@ theorem english_ssg :
 
 /-! ### RSG (Root Suppletion Generalization) -/
 
-/-- Is the comparative form synthetic (a single morphological word,
-    not periphrastic "more X")? Detected by the absence of a space
-    in the comparative form string. -/
-def isSyntheticComp (e : AdjModifierEntry) : Bool :=
-  match e.formComp with
-  | some f => !(f.toList.any (· == ' '))
-  | none => false
+/-- The comparative form is synthetic (a single morphological word,
+    not periphrastic "more X"), detected as the absence of a space in
+    the form string. Structural counterpart:
+    `Morphology.Containment.Synthesis` (see the worked vocabularies
+    below). -/
+def IsSyntheticComp (e : AdjModifierEntry) : Prop :=
+  ∃ f ∈ e.formComp, ' ' ∉ f.toList
+
+instance (e : AdjModifierEntry) : Decidable (IsSyntheticComp e) := by
+  unfold IsSyntheticComp; infer_instance
 
 /-- **RSG** ([bobaljik-2012]): Root suppletion is limited to
     synthetic comparatives. If an entry has a suppletive root (CMPR
@@ -185,7 +190,7 @@ def isSyntheticComp (e : AdjModifierEntry) : Bool :=
     Contrast: "expensive" → "more expensive" (periphrastic, but
     non-suppletive root — AAA, not ABB). -/
 theorem english_rsg :
-    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → isSyntheticComp e = true := by
+    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → IsSyntheticComp e := by
   decide
 
 /-! ### Lesslessness -/
@@ -251,10 +256,10 @@ open Latin.Adjectives in
     confirming the cross-linguistic pattern inventory against a
     language with richer suppletion than English. -/
 theorem latin_all_three_patterns :
-    Latin.Adjectives.allEntries.any (λ e => e.suppletion == aaa) = true ∧
-    Latin.Adjectives.allEntries.any (λ e => e.suppletion == abb) = true ∧
-    Latin.Adjectives.allEntries.any (λ e => e.suppletion == abc) = true := by
-  exact ⟨by decide, by decide, by decide⟩
+    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = aaa) ∧
+    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abb) ∧
+    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abc) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! ### The Realizational Derivation: the Book's Worked Vocabularies -/
 
@@ -331,10 +336,18 @@ theorem latin_wellformed :
     escapes it. -/
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
-/-- Prediction (199) instantiated: Latin's superlative winner is the
-    portmanteau `opt-` (exponed span strictly larger than the root). -/
+/-- Latin's superlative winner computed concretely: the portmanteau
+    `opt-` — the ABC-requires-portmanteau consequence
+    ([bobaljik-2012] §5.3.1, generalized there as (199)). -/
 theorem latin_superlative_portmanteau :
     winner latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by decide
+
+/-- The engine theorem applied: since Latin's comparative and
+    superlative cells diverge, `exists_portmanteau_of_ne` forces a
+    portmanteau winner at the superlative. -/
+theorem latin_sprl_needs_portmanteau :
+    ∃ it ∈ latinBonus, winner latinBonus 2 = some it ∧ 0 < (it.spans : ℕ) :=
+  exists_portmanteau_of_ne (by decide) (by decide)
 
 /-- The hypothetical AAB vocabulary ([bobaljik-2012] (201)): `gor-`
     restricted to the superlative with no comparative-level
@@ -349,6 +362,12 @@ theorem welshAAB_realizes_aab : degreeShape (realize welshAAB) = aab := by decid
     skips the comparative grade, violating `Grounded` ((202)). -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
+/-- The engine theorem `csg2` applied: no vocabulary realizing the AAB
+    cells can satisfy both Antihomophony and `Grounded` — the AAB
+    realization itself refutes the conjunction. -/
+theorem welshAAB_blocked : ¬ (Antihomophonous welshAAB ∧ Grounded welshAAB) :=
+  λ ⟨hAH, hG⟩ => absurd (csg2 hAH hG (by decide) (by decide)) (by decide)
+
 /-- The homophonous-ABC loophole ([bobaljik-2012] (44) discussion):
     without Antihomophony, surface ABA is generable — a superlative
     root allomorph accidentally homophonous with the positive. -/
@@ -359,6 +378,27 @@ theorem fakeAba_realizes_aba : degreeShape (realize fakeAba) = aba := by decide
 
 theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
 
+/-! ### Synthesis: the Merger layer on the worked vocabularies -/
+
+/-- The structural synthetic/analytic notion
+    (`Morphology.Containment.Synthesis`) on English `good`: the word
+    merges through the superlative (`wordTop = 2`), and since the
+    word-internal realization shows distinct root forms at the positive
+    and comparative grades, `rsg` certifies the comparative as
+    synthetic — the structural counterpart of `english_rsg`'s
+    string-level check. -/
+theorem english_good_synthetic_comparative :
+    (Synthesis.mk 2 : Synthesis 3).SyntheticAt 1 :=
+  rsg (s := ⟨2⟩) (v := englishGood) (g := 1) (g' := 0) (by decide)
+
+/-- A lexeme with no Merger (`wordTop = 0`, fully periphrastic
+    paradigm) cannot exhibit root suppletion even with a suppletive
+    vocabulary — the RSG direction made constructive: *more bett* is
+    underivable because `bett-`'s conditioning CMPR head sits outside
+    the word. -/
+example : realizeIn ⟨0⟩ englishGood 1 = realizeIn ⟨0⟩ englishGood 0 :=
+  realizeIn_const_of_wordTop_eq_zero rfl 1 0
+
 /-! ### Scale Generation from Degree Paradigms -/
 
 /-! `Morphology.ScaleFromParadigm` (§ 0 above) derives Horn scales
@@ -366,7 +406,7 @@ from degree paradigms: a stem with comparative + superlative rules
 yields a 3-point scale `[positive, comparative, superlative]`. The tests
 below verify the extractor on the English adjective fragment. -/
 
-open Morphology.ScaleFromParadigm
+open Bobaljik2012.ScaleFromParadigm
 
 private def tallStem := tall.toStem Unit
 private def goodStem := good.toStem Unit

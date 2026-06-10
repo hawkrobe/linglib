@@ -65,13 +65,6 @@ def AllomorphyPattern.ViolatesABA (p : AllomorphyPattern) : Prop :=
 instance (p : AllomorphyPattern) : Decidable p.ViolatesABA :=
   inferInstanceAs (Decidable (¬ _))
 
-/-! `case_violatesABA_iff_generic` was previously a named `Iff.rfl`
-    bridge here. Dropped: by construction `AllomorphyPattern.ViolatesABA`
-    *is* the generic predicate applied to the 4-cell projection
-    (definitionally), so the bridge unfolds for free at every use site
-    via `Iff.rfl` or `rfl`-shaped `simp` rewrites. Naming a `rfl`
-    bridge polluted the API surface for no benefit. -/
-
 -- ============================================================================
 -- § 2: *ABA Verification on Concrete Patterns
 -- ============================================================================

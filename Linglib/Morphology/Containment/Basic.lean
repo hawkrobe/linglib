@@ -118,6 +118,8 @@ private theorem eq_of_score_eq {p : Pattern n F} (hp : IsContiguous p)
   rw [Finset.mem_Iic] at hl
   exact (hp hl hij hpl).symm.trans hpl
 
+end Graf
+
 /-- **[graf-2019]'s monotonicity reconstruction of *ABA**: a pattern is
 contiguous iff it is the kernel of a monotone score — some monotone
 `g : Fin n → ℕ` identifies exactly the cells the pattern identifies.
@@ -125,6 +127,7 @@ Forward direction via the prefix-image score; backward direction is the
 sandwich argument that makes monotone kernels convex. -/
 theorem isContiguous_iff_exists_monotone (p : Pattern n F) :
     IsContiguous p ↔ ∃ g : Fin n → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j := by
+  classical
   constructor
   · intro hp
     refine ⟨score p, score_mono, λ i j => ⟨λ hpij => ?_, λ hs => ?_⟩⟩
@@ -137,7 +140,5 @@ theorem isContiguous_iff_exists_monotone (p : Pattern n F) :
   · rintro ⟨g, hmono, hker⟩ i j k hij hjk heq
     have hik : g i = g k := (hker i k).mp heq
     exact (hker i j).mpr (le_antisymm (hmono hij) (hik.symm ▸ hmono hjk))
-
-end Graf
 
 end Morphology.Containment

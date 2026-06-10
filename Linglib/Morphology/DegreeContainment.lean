@@ -42,18 +42,15 @@ inductive DegreeGrade where
   | sprl  -- superlative: ADJ + CMPR + SPRL
   deriving DecidableEq, Repr
 
-/-- Containment rank: POS < CMPR < SPRL. -/
-def DegreeGrade.rank : DegreeGrade → Nat
-  | .pos  => 0
-  | .cmpr => 1
-  | .sprl => 2
-
 /-- The degree grade as a position in the 3-grade hierarchy, for
 indexing `Morphology.Containment` machinery. -/
 def DegreeGrade.toFin : DegreeGrade → Fin 3
   | .pos  => 0
   | .cmpr => 1
   | .sprl => 2
+
+/-- Containment rank: POS < CMPR < SPRL. Derived from `toFin`. -/
+def DegreeGrade.rank (g : DegreeGrade) : Nat := g.toFin
 
 /-! ### DegreePattern -/
 

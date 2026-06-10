@@ -60,9 +60,12 @@ theorem Synthesis.syntheticAt_of_le {s : Synthesis n} {g g' : Fin n}
   le_trans h' h
 
 /-- Realization restricted to word-internal structure: at grade `g`,
-items see only the merged region — suppletion cannot be conditioned by
+rules see only the merged region — suppletion cannot be conditioned by
 periphrastic material outside the word ([bobaljik-2012]'s locality
-condition (90) applied through Merger). -/
+condition (90) applied through Merger). Models the
+comparative-embedding periphrasis type (Greek, the book's (107a–b));
+the positive-embedding type (Russian, (107c–d)) needs a per-grade
+embedding choice rather than a single `wordTop`. -/
 def realizeIn (s : Synthesis n) (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
   λ g => realize v (min g s.wordTop)
 
