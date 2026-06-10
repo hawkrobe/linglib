@@ -186,39 +186,59 @@ open ConstructionGrammar
     ([ten-wolde-2023]). -/
 def nPPConstruction : Construction where
   name := "N+PP"
-  form := "[Det][N][of][Det][N]"
+  form :=
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "head", isHead := true }
+    , { filler := .fixed "of" }
+    , { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "property" } ]
   meaning := "N₁ denotes a referent, PP ascribes a property onto the head"
-  specificity := .partiallyOpen
 
 def headClassifierConstruction : Construction where
   name := "Head-Classifier"
-  form := "[Det][N][of][N]"
+  form :=
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "head", isHead := true }
+    , { filler := .fixed "of" }
+    , { filler := .open_ .NOUN, role := some "classifier" } ]
   meaning := "Construction denotes a referent, PP classifies head"
-  specificity := .partiallyOpen
 
 def pseudoPartitiveConstruction : Construction where
   name := "Pseudo-partitive"
-  form := "[Det][N][of][N]"
+  form :=
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "quantizer", isHead := true }
+    , { filler := .fixed "of" }
+    , { filler := .open_ .NOUN, role := some "substance" } ]
   meaning := "N₁ quantizes, N₂ denotes measured substance"
-  specificity := .partiallyOpen
 
 def ebnpConstruction : Construction where
   name := "Evaluative BNP"
-  form := "[Det₁][N₁][of][a][N₂]"
+  form :=
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "evaluation" }
+    , { filler := .fixed "of" }
+    , { filler := .fixed "a" }
+    , { filler := .open_ .NOUN, role := some "referent", isHead := true } ]
   meaning := "N₁ ascribes evaluative property to N₂ referent"
-  specificity := .partiallyOpen
 
 def emConstruction : Construction where
   name := "Evaluative Modifier"
-  form := "[Det₁][N₁ of (a)][N₂]"
+  form :=  -- optional "a" elided
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "evaluation" }
+    , { filler := .fixed "of" }
+    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
   meaning := "[N₁ of a] is complex modifier, speaker evaluation of N₂"
-  specificity := .partiallyOpen
 
 def biConstruction : Construction where
   name := "Binominal Intensifier"
-  form := "[N₁ of (a)][Adj/Quant][N₂]"
+  form :=  -- optional "a" elided
+    [ { filler := .open_ .NOUN, role := some "intensifier" }
+    , { filler := .fixed "of" }
+    , { filler := .open_ .ADJ, role := some "intensified" }
+    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
   meaning := "[N₁ of a] intensifies following adjective or quantifier"
-  specificity := .partiallyOpen
 
 /-- The simple NP construction ([ten-wolde-2023] §8.4).
 
@@ -228,16 +248,18 @@ premodifier in the NP, and the evaluative constructions share polysemy
 links with evaluative/intensifier premodifiers in the NP. -/
 def simpleNPConstruction : Construction where
   name := "Simple NP"
-  form := "[[Det](Mod)[N]]"
+  form :=  -- optional premodifier elided
+    [ { filler := .open_ .DET }
+    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
   meaning := "denotes a referent, premodifier ascribes property to head"
-  specificity := .fullyAbstract
 
 /-- The adjective phrase construction, linked to BI ([ten-wolde-2023] Fig 8.13). -/
 def adjPhraseConstruction : Construction where
   name := "AP"
-  form := "[[Intens][Adj]]"
+  form :=
+    [ { filler := .open_ .ADV, role := some "intensifier" }
+    , { filler := .open_ .ADJ, role := some "head", isHead := true } ]
   meaning := "intensifier emphasizes the following adjective"
-  specificity := .fullyAbstract
 
 /-- The *of*-binominal constructional network ([ten-wolde-2023]).
 

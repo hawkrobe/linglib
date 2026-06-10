@@ -469,9 +469,11 @@ theorem claim2_interleaving_preserves_catenae :
 def idiomCx : CatenalCx :=
   { construction :=
       { name := "spill the beans"
-        form := "V det N (idiomatic)"
-        meaning := "divulge secret information"
-        specificity := .lexicallySpecified }
+        form :=
+          [ { filler := .fixed "spill", isHead := true }
+          , { filler := .fixed "the" }
+          , { filler := .fixed "beans" } ]
+        meaning := "divulge secret information" }
     tree := spillTheBeans
     nodes := [0, 2]
     catena := by native_decide }
@@ -479,9 +481,11 @@ def idiomCx : CatenalCx :=
 def lvcCx : CatenalCx :=
   { construction :=
       { name := "take a bath"
-        form := "V_light det N"
-        meaning := "perform the action denoted by N"
-        specificity := .partiallyOpen }
+        form :=
+          [ { filler := .fixed "take", isHead := true }
+          , { filler := .open_ .DET }
+          , { filler := .open_ .NOUN, role := some "event" } ]
+        meaning := "perform the action denoted by N" }
     tree := takeABath
     nodes := [0, 2]
     catena := by native_decide }
@@ -489,9 +493,10 @@ def lvcCx : CatenalCx :=
 def verbChainCx : CatenalCx :=
   { construction :=
       { name := "auxiliary verb chain"
-        form := "Aux (Aux)* V"
-        meaning := "tense–aspect–mood composition"
-        specificity := .fullyAbstract }
+        form :=  -- iterated Aux elided
+          [ { filler := .open_ .AUX }
+          , { filler := .open_ .VERB, isHead := true } ]
+        meaning := "tense–aspect–mood composition" }
     tree := heWillHaveHelped
     nodes := [1, 2, 3]
     catena := by native_decide }
@@ -499,9 +504,10 @@ def verbChainCx : CatenalCx :=
 def displacementCx : CatenalCx :=
   { construction :=
       { name := "topicalization"
-        form := "XP_topic ... V ... _gap"
+        form :=
+          [ { filler := .phrasal, role := some "topic", level := some .phrase }
+          , { filler := .open_ .VERB, isHead := true } ]
         meaning := "foreground XP as discourse topic"
-        specificity := .fullyAbstract
         pragmaticFunction := "topic–comment articulation" }
     tree := beansSheSpilled
     nodes := [0, 2]

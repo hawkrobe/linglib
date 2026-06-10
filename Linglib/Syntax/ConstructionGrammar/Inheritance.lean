@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Dedup
+import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
 # Construction Grammar: Inheritance Modes
@@ -129,13 +130,6 @@ end FieldAlgebra
 Typed values for the inheritable form-side properties at issue in
 nominal-modification networks ([goldberg-1995] §3.3;
 [goldberg-shirtz-2025] §6). -/
-
-/-- X-bar level of a construction's output category. -/
-inductive BarLevel where
-  | zero    -- X⁰
-  | bar     -- X′
-  | phrase  -- XP
-  deriving DecidableEq, Repr
 
 /-- Locus of primary stress in a modification construction: compound
 stress falls within the modifier (*BLACKbird*), phrasal modification

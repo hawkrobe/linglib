@@ -1,14 +1,30 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Discourse.CommonGround
+import Linglib.Data.UD.Basic
+import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Construction Grammar: Core Types
-[goldberg-1995] [goldberg-2003] [goldberg-2006]
+[goldberg-1995] [goldberg-2003] [goldberg-2006] [kay-fillmore-1999] [dunn-2025]
 
-Minimal infrastructure for Construction Grammar (CxG), the framework in which
-constructions — learned pairings of form and function — are the basic units
-of grammatical knowledge.
+Constructions — learned pairings of form and function — are the basic
+units of grammatical knowledge in CxG. The form side is typed: a
+`TypedForm` is a sequence of `Slot`s, each fixing a lexeme, opening a
+category, or admitting any phrase ([dunn-2025]'s LEX/SYN/SEM+
+representation levels, plus [kay-fillmore-1999]'s grammatical functions,
+coreference indices, and slot constraints). Abstraction measures and
+`Specificity` are *derived* from the slot structure
+(`Construction.specificity`), not stipulated.
 
+A slot also records the bar level of its position; a `phrasal` filler in
+a `zero`-level position (`Slot.IsPhraseInWordSlot`) is the
+phrase-in-word-slot configuration of phrasal compounds and the PAL
+construction.
+
+## Main declarations
+
+- `SlotFiller`, `Slot`, `TypedForm`: the typed form side
+- `abstractionLevel`, `derivedSpecificity`: abstraction measures on forms
+- `Construction`, `Construction.specificity`: form–function pairings
+- `InheritanceLink`, `Constructicon`: the network
 -/
 
 namespace ConstructionGrammar
@@ -19,7 +35,7 @@ namespace ConstructionGrammar
 |---|---|
 | lexicallySpecified | "veggie-wrap", "must-read" |
 | partiallyOpen | "N-wrap", "a simple ⟨PAL⟩" |
-| fullyAbstract | [N⁰ N⁰ N⁰], [N' PAL⁰ N] |
+| fullyAbstract | [N⁰ N⁰ N⁰], [N′ PAL⁰ N] |
 -/
 inductive Specificity where
   | lexicallySpecified
@@ -36,7 +52,9 @@ inductive Specificity where
   [goldberg-1995]'s system.
 - **Complete**: all information from dominating nodes is inherited strictly;
   no conflicts allowed. Used in unification-based grammars (HPSG, GPSG)
-  but not exploited in [goldberg-1995]'s constructional analysis. -/
+  but not exploited in [goldberg-1995]'s constructional analysis.
+
+Computational semantics for both modes: `ConstructionGrammar.Inheritance`. -/
 inductive InheritanceMode where
   | normal     -- child inherits defaults, may override
   | complete   -- all properties inherited strictly (not used in Goldberg 1995)
@@ -63,17 +81,172 @@ inductive LinkType where
   | instance       -- I_I: child is special case of parent
   deriving Repr, DecidableEq
 
-/-- A construction: a learned pairing of form and function.
+/-- X-bar level of a syntactic position or constructional output. -/
+inductive BarLevel where
+  | zero    -- X⁰
+  | bar     -- X′
+  | phrase  -- XP
+  deriving DecidableEq, Repr
 
-Constructions range from fully lexically specified (idioms, words)
-to fully abstract (argument-structure constructions). -/
+/-! ### Typed slots
+
+[dunn-2025] distinguishes three representation levels for slot content —
+LEX (a fixed lexeme), SYN (any word of a category), SEM+ (any expression
+meeting a semantic constraint) — and [kay-fillmore-1999] add headed
+phrases, grammatical functions, coreference indices, and syntactic
+constraints. The `phrasal` filler (any phrase, no fixed head) is the
+filler type of phrasal compounds and PAL constructions. -/
+
+/-- A slot's filler: the representation level of slot content.
+
+Parameterized over `Lex` (the lexeme type) so the same representation
+works for strings, morphemes, or phonological forms. -/
+inductive SlotFiller (Lex : Type) where
+  /-- A specific word form (LEX level): `fixed "must"` -/
+  | fixed : Lex → SlotFiller Lex
+  /-- Any word of a given POS category (SYN level): `open_ .VERB` -/
+  | open_ : UD.UPOS → SlotFiller Lex
+  /-- A phrase headed by a specific lexeme ([kay-fillmore-1999]):
+      `headed "doing" .VERB` is a VP headed by *doing*. LEX-level —
+      the head lexeme is fixed even though the phrase is open. -/
+  | headed : Lex → UD.UPOS → SlotFiller Lex
+  /-- A semantically constrained slot ([dunn-2025], SEM+ level):
+      `semantic "animate"` is any expression denoting an animate. -/
+  | semantic : String → SlotFiller Lex
+  /-- Any phrase, with no fixed head and no category restriction on its
+      internal structure — the filler of a phrasal-compound or PAL slot
+      (the ⟨phrase⟩ node of [goldberg-shirtz-2025]'s Figure 5). -/
+  | phrasal : SlotFiller Lex
+  deriving DecidableEq, Repr
+
+/-- Is this slot open (not lexically anchored)?
+
+`open_` (SYN), `semantic` (SEM+), and `phrasal` slots count as open for
+abstraction-level computation. `headed` slots do not: they fix the head
+lexeme even though the phrase is open. -/
+def SlotFiller.isOpen {Lex : Type} : SlotFiller Lex → Bool
+  | .fixed _ => false
+  | .open_ _ => true
+  | .headed _ _ => false
+  | .semantic _ => true
+  | .phrasal => true
+
+/-- Grammatical function of a valence member ([kay-fillmore-1999], Figure 12).
+    Distinct from semantic role: a subject (gf) can be an agent, theme,
+    or experiencer (role). -/
+inductive GramFunction where
+  | subj   -- subject
+  | comp   -- complement (clausal/verbal)
+  | obj    -- direct object
+  | pred   -- predicative complement / secondary predicate
+  deriving DecidableEq, Repr
+
+/-- Referential index for cross-slot coreference constraints. Slots
+    sharing a `RefIndex` have unified semantic values
+    ([kay-fillmore-1999]'s #1, #2). -/
+abbrev RefIndex := Nat
+
+/-- Syntactic constraint on a slot ([kay-fillmore-1999], Figure 12). -/
+inductive SlotConstraint where
+  | locMinus   -- [loc -]: must occur left-isolated, not VP-internal
+  | negMinus   -- [neg -]: cannot be negated
+  | refEmpty   -- [ref ∅]: nonreferential (no variable-binding function)
+  deriving DecidableEq, Repr
+
+/-- A slot in a construction's form: filler content, semantic role,
+headedness, and the bar level of the position itself. Fixed slots (like
+"let" in *let alone*) have `role := none` since they carry no independent
+semantic role. `level := none` leaves the position's bar level
+unspecified. -/
+structure Slot (Lex : Type) where
+  /-- What fills this slot -/
+  filler : SlotFiller Lex
+  /-- Semantic role label (agent, theme, etc.), if any -/
+  role : Option String := none
+  /-- Whether this slot is the head of the construction -/
+  isHead : Bool := false
+  /-- Bar level of the position (`some .zero` = a word-level slot) -/
+  level : Option BarLevel := none
+  /-- Grammatical function (subj, comp, obj, pred) — [kay-fillmore-1999] -/
+  gf : Option GramFunction := none
+  /-- Coreference index: slots sharing an index have unified semantics -/
+  refIdx : Option RefIndex := none
+  /-- Syntactic constraints on this slot ([loc -], [neg -], [ref ∅]) -/
+  constraints : List SlotConstraint := []
+  deriving DecidableEq, Repr
+
+/-- A typed form: the form side of a construction as a sequence of slots. -/
+abbrev TypedForm (Lex : Type) := List (Slot Lex)
+
+/-- A phrase in a word-level slot: phrasal filler, zero-level position.
+The defining configuration of phrasal compounds and the PAL construction
+([goldberg-shirtz-2025]) — and the cell lexical-integrity hypotheses rule
+out. -/
+def Slot.IsPhraseInWordSlot {Lex : Type} (s : Slot Lex) : Prop :=
+  s.filler = .phrasal ∧ s.level = some .zero
+
+instance {Lex : Type} [DecidableEq Lex] (s : Slot Lex) :
+    Decidable s.IsPhraseInWordSlot :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-! ### Abstraction level and derived specificity -/
+
+section AbstractionLevel
+variable {Lex : Type}
+
+/-- Proportion of open slots: a continuous [0,1] measure of abstraction.
+
+[dunn-2025] defines four discrete abstraction *orders* based on which
+representation levels appear; this computes the continuous proportion
+underlying those orders, and `derivedSpecificity` maps to the three-way
+`Specificity` enum. -/
+def abstractionLevel (form : TypedForm Lex) : ℚ :=
+  if form.isEmpty then 0
+  else
+    let openCount := (form.filter (·.filler.isOpen)).length
+    (openCount : ℚ) / (form.length : ℚ)
+
+/-- Derive `Specificity` from the slot structure.
+
+| Condition | Result |
+|-----------|--------|
+| All slots open | `.fullyAbstract` |
+| No slots open | `.lexicallySpecified` |
+| Mix of fixed and open | `.partiallyOpen` |
+
+Changing a slot from open to fixed automatically changes the
+specificity. -/
+def derivedSpecificity (form : TypedForm Lex) : Specificity :=
+  let openCount := (form.filter (·.filler.isOpen)).length
+  if openCount = form.length then .fullyAbstract
+  else if openCount = 0 then .lexicallySpecified
+  else .partiallyOpen
+
+/-- Does any slot in the form bear a given constraint? -/
+def hasConstraint (form : TypedForm Lex) (c : SlotConstraint) : Bool :=
+  form.any (·.constraints.any (· == c))
+
+/-- Count of distinct coreference groups in a form. -/
+def refGroupCount (form : TypedForm Lex) : Nat :=
+  (form.filterMap (·.refIdx)).eraseDups.length
+
+end AbstractionLevel
+
+/-! ### Constructions and the network -/
+
+/-- A construction: a learned pairing of form and function. The form is a
+`TypedForm`; `name` is a display label; specificity is derived from the
+form (`Construction.specificity`), not stipulated. -/
 structure Construction where
   name : String
-  form : String              -- syntactic schema description
+  form : TypedForm String
   meaning : String           -- semantic/pragmatic function description
-  specificity : Specificity
   pragmaticFunction : Option String := none  -- e.g. "presupposes familiarity"
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
+
+/-- A construction's specificity, derived from its slot structure. -/
+def Construction.specificity (c : Construction) : Specificity :=
+  derivedSpecificity c.form
 
 /-- An inheritance link between two constructions in the network.
 

@@ -54,9 +54,10 @@ is left underspecified since PALs may modify nouns with complements
 ("a 'don't mess with me' type of driver"). -/
 def palConstruction : Construction :=
   { name := "PAL"
-  , form := "[N′ PAL⁰ N]"
+  , form :=
+      [ { filler := .phrasal, role := some "situation type", level := some .zero }
+      , { filler := .open_ .NOUN, role := some "instance", isHead := true } ]
   , meaning := "the PAL names a situation type; the head N is an instance of it"
-  , specificity := .fullyAbstract
   , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
 
 /-- The semiproductive must-V subtype, frequently instantiated by
@@ -64,18 +65,23 @@ def palConstruction : Construction :=
 (≤ 10 COCA hits) against *should-V* foils. -/
 def mustVerbConstruction : Construction :=
   { name := "must-V"
-  , form := "[N′ [PAL⁰ must V] N]"
+  , form :=
+      [ { filler := .fixed "must" }
+      , { filler := .open_ .VERB, role := some "predicate" }
+      , { filler := .open_ .NOUN, role := some "theme", isHead := true } ]
   , meaning := "N is something one must V"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
 
 /-- The *a simple ⟨PAL⟩* subtype: the PAL is itself the head noun
 ("Could've tried a simple 'I'm sorry.'"). Study 5's foils used *a short*. -/
 def aSimplePALConstruction : Construction :=
   { name := "a simple [PAL⁰]"
-  , form := "[NP a simple PAL⁰]"
+  , form :=
+      [ { filler := .fixed "a" }
+      , { filler := .fixed "simple" }
+      , { filler := .phrasal, role := some "situation type", level := some .zero
+        , isHead := true } ]
   , meaning := "a routine instance of the situation type named by the PAL"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "presumes familiarity; 'simple' marks the situation type as routine" }
 
 /-- The *Don't ⟨PAL⟩ me* subtype: the PAL fills a V slot, must quote the
@@ -84,9 +90,12 @@ immediately preceding discourse, and occurs in an interdiction context
 broke exactly the quote-from-context or interdiction condition. -/
 def dontPALmeConstruction : Construction :=
   { name := "Don't [PAL⁰ x y z] me"
-  , form := "[VP Don't [V⁰ PAL⁰] me]"
+  , form :=
+      [ { filler := .fixed "Don't" }
+      , { filler := .phrasal, role := some "quoted move", level := some .zero
+        , isHead := true }
+      , { filler := .fixed "me" } ]
   , meaning := "don't direct the just-quoted utterance at me"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "interdicts the quoted conversational move; presumes the quote from the immediately preceding context" }
 
 /-- The *the old ⟨PAL⟩ (N)* subtype, with optional head N ("my dad pulled
@@ -94,24 +103,32 @@ the old 'I'm going to the store for smokes, be back in five'"). Study 5's
 foils used *the tired*. -/
 def theOldPALConstruction : Construction :=
   { name := "the old [PAL⁰] (N)"
-  , form := "[NP the old PAL⁰ (N)]"
+  , form :=
+      [ { filler := .fixed "the" }
+      , { filler := .fixed "old" }
+      , { filler := .phrasal, role := some "situation type", level := some .zero
+        , isHead := true }
+      , { filler := .open_ .NOUN, role := some "instance" } ]
   , meaning := "a well-worn instance of the situation type named by the PAL"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "presumes familiarity; 'old' marks the situation type as conventional" }
 
 /-- NN compound construction (parent: PAL-internal stress, tight unit). -/
 def nnCompound : Construction :=
   { name := "NN compound"
-  , form := "[N⁰ N⁰ N⁰]"
-  , meaning := "compound nominal: modifier noun narrows head noun denotation"
-  , specificity := .fullyAbstract }
+  , form :=
+      [ { filler := .open_ .NOUN, role := some "modifier", level := some .zero }
+      , { filler := .open_ .NOUN, role := some "head", isHead := true
+        , level := some .zero } ]
+  , meaning := "compound nominal: modifier noun narrows head noun denotation" }
 
 /-- Adjectival modification construction (parent: prenominal slot). -/
 def adjNModification : Construction :=
   { name := "Adj+N modification"
-  , form := "[N′ Adj N′]"
-  , meaning := "adjective restricts noun denotation"
-  , specificity := .fullyAbstract }
+  , form :=
+      [ { filler := .open_ .ADJ, role := some "modifier", level := some .zero }
+      , { filler := .open_ .NOUN, role := some "head", isHead := true
+        , level := some .bar } ]
+  , meaning := "adjective restricts noun denotation" }
 
 /-- The PAL constructicon (the paper's Figure 5): the prenominal PAL
 construction partially inherits, in normal mode, from both the NN compound
@@ -252,6 +269,12 @@ construction-specific pragmatic function, so PAL cannot be decomposed into
 the three universal combination schemata (see `isFullyCompositional`). -/
 theorem pal_irreducible :
     isFullyCompositional palConstruction = false := rfl
+
+/-- The PAL modifier slot is a phrase in a word-level position — the typed
+content of "phrase-as-lemma". The NN compound's modifier slot is the
+minimal contrast: same zero-level position, word filler. -/
+theorem pal_form_phrase_in_word_slot :
+    ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
 
 /-! ### Attested distribution
 

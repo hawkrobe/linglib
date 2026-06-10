@@ -568,23 +568,21 @@ def ResultativeSubconstruction.toConstruction (sc : ResultativeSubconstruction) 
   { construction :=
       { name := s!"Resultative-{sc.nameSuffix}"
       , form := if sc.isCausative then
-          s!"[Subj V Obj {if sc.rpType == .property then "AdjP" else "PP"}]"
+          [ { filler := .open_ .NOUN, role := some subjRole }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .NOUN
+            , role := some (if sc.rpType == .property then "patient" else "theme") }
+          , { filler := .open_ rpCat, role := some rpRole } ]
         else
-          s!"[Subj V {if sc.rpType == .property then "AdjP" else "PP"}]"
+          [ { filler := .open_ .NOUN, role := some subjRole }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ rpCat, role := some rpRole } ]
       , meaning := match sc with
           | .causativeProperty    => "X CAUSES Y to BECOME Z-state (via V-ing)"
           | .causativePath        => "X CAUSES Y to GO to Z-location (via V-ing)"
           | .noncausativeProperty => "X BECOMES Z-state (via V-ing)"
-          | .noncausativePath     => "X GOES to Z-location (via V-ing)"
-      , specificity := .fullyAbstract }
-  , slots := if sc.isCausative then
-      [ ⟨.NOUN, subjRole, false⟩, ⟨.VERB, "predicate", true⟩
-      , ⟨.NOUN, (if sc.rpType == .property then "patient" else "theme"), false⟩
-      , ⟨rpCat, rpRole, false⟩ ]
-    else
-      [ ⟨.NOUN, subjRole, false⟩, ⟨.VERB, "predicate", true⟩
-      , ⟨rpCat, rpRole, false⟩ ]
-  , hasHead := by cases sc <;> native_decide
+          | .noncausativePath     => "X GOES to Z-location (via V-ing)" }
+  , hasHead := by cases sc <;> decide
   , semanticContribution := sc.semanticContribution }
 
 /-- The composed meaning: verb MC fused with the subconstruction's contribution. -/

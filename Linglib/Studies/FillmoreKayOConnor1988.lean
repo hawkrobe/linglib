@@ -148,12 +148,16 @@ def ScalarModel.satisfiesA3 {S α : Type*} [DecidableEq α]
 /-- The *let alone* construction: form F ⟨X A Y let alone B⟩ (ex. 20a,
 p. 512), where F is a negative polarity operator, X and Y are shared
 non-focused material, and the paired foci A and B are points in a
-presupposed scalar model. -/
+presupposed scalar model. The typed form is the paired-foci core
+([dunn-2025]'s slot projection), eliding the shared X/Y material. -/
 def letAloneConstruction : Construction :=
   { name := "let alone"
-  , form := "F ⟨X A Y let alone B⟩"
+  , form :=
+      [ { filler := .open_ .NOUN, role := some "focusA" }
+      , { filler := .fixed "let" }
+      , { filler := .fixed "alone" }
+      , { filler := .open_ .NOUN, role := some "focusB" } ]
   , meaning := "F'⟨X A Y⟩; a fortiori F'⟨X B Y⟩ (scalar entailment)"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "presupposes scalar model; A clause = informative (Quantity), B clause = relevant (Relevance)" }
 
 /-- *Let alone* is not fully compositional: a formal idiom with paired
@@ -274,9 +278,14 @@ fn. 4 notes relatives like "all the more reason" and the Old English
 instrumental demonstrative source). -/
 def comparativeCorrelative : Construction :=
   { name := "the X-er the Y-er"
-  , form := "[S [AdvP the+Compar] [S ...], [AP the+Compar] [S ...]]"
+  , form :=
+      [ { filler := .fixed "the" }
+      , { filler := .open_ .ADJ, role := some "comparative₁" }
+      , { filler := .phrasal, role := some "clause₁", level := some .phrase }
+      , { filler := .fixed "the" }
+      , { filler := .open_ .ADJ, role := some "comparative₂" }
+      , { filler := .phrasal, role := some "clause₂", level := some .phrase } ]
   , meaning := "The degree to which X correlates with the degree to which Y"
-  , specificity := .partiallyOpen
   , pragmaticFunction := none }
 
 /-- The Incredulity Response construction ("Him be a doctor?", ex. 14h in
@@ -285,9 +294,11 @@ non-nominative subject with a bare-stem predicate, "used to challenge or
 question a proposition just posed by an interlocutor" (p. 511). -/
 def incredulityResponse : Construction :=
   { name := "Incredulity Response"
-  , form := "[S NP[acc] VP[bare]]"
+  , form :=
+      [ { filler := .open_ .PRON, role := some "subject", gf := some .subj }
+      , { filler := .phrasal, role := some "predicate", level := some .phrase
+        , gf := some .pred } ]
   , meaning := "Speaker challenges the just-posed proposition as incredible"
-  , specificity := .fullyAbstract
   , pragmaticFunction := "challenges or questions a proposition just posed by an interlocutor" }
 
 /-! ### A one-dimensional rank model (ex. 21)

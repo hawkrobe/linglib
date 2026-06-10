@@ -316,12 +316,25 @@ open ConstructionGrammar
 Form: [CP What's [TP NP doing [VP/PP...]]]
 - Interrogative form: wh-fronting, subject-aux inversion, +WH
 - *doing* is frozen progressive: licenses the construction
-- Complement: locative PP, participial VP, or instrumental PP -/
+- Complement: locative PP, participial VP, or instrumental PP
+
+The typed form is the flat projection of Figure 12's hierarchical AVM:
+X and Y share refIdx 2 (coinstantiation/subject control); WXDY-*what* is
+left-isolated ([loc -]) and nonreferential ([ref ∅]); *doing* cannot be
+negated ([neg -]). -/
 def wxdyConstruction : Construction :=
   { name := "What's X doing Y?"
-  , form := "[CP What's [TP NP doing [VP/PP ...]]]"
+  , form :=
+      [ { filler := .open_ .NOUN, role := some "subject", gf := some .subj
+        , refIdx := some 2 }
+      , { filler := .headed "be" .AUX, isHead := true }
+      , { filler := .headed "doing" .VERB, gf := some .comp
+        , constraints := [.negMinus] }
+      , { filler := .fixed "what", gf := some .obj
+        , constraints := [.locMinus, .refEmpty] }
+      , { filler := .open_ .X, role := some "predicate", gf := some .pred
+        , refIdx := some 2 } ]
   , meaning := "Incredulity: speaker presupposes embedded prop, expresses surprise; Literal: genuine activity question"
-  , specificity := .partiallyOpen
   , pragmaticFunction := "presupposes situation; CI: speaker finds it unexpected/inappropriate" }
 
 -- ============================================================================

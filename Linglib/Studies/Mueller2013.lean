@@ -486,7 +486,8 @@ theorem polysemyFamily_all_same_decomposition
     (ext : String × String × List String) :
     decompose (f.extensionConstruction ext) =
     decompose f.centralConstruction := by
-  simp [decompose, ConstructionGrammar.PolysemyFamily.extensionConstruction,
+  simp [decompose, ConstructionGrammar.ArgStructureConstruction.slots,
+    ConstructionGrammar.PolysemyFamily.extensionConstruction,
     ConstructionGrammar.PolysemyFamily.centralConstruction]
 
 /-- Both directions right: the three schemata AND phrasal constructions are needed.
