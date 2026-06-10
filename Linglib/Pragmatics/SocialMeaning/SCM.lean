@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Sociolinguistics.PropertySpace
+import Linglib.Pragmatics.SocialMeaning.PropertySpace
 
 /-!
 # Stereotype Content Model
@@ -25,9 +25,9 @@ theoretical framework.
 
 -/
 
-namespace Sociolinguistics.SCM
+namespace SocialMeaning.SCM
 
-open Sociolinguistics
+open SocialMeaning
 
 -- ============================================================================
 -- §1. SCM Properties (pole endpoints)
@@ -143,4 +143,4 @@ theorem incomp_opposite_polarity (p q : SCMProperty)
     p.isPositive ≠ q.isPositive := by
   cases p <;> cases q <;> simp_all [scmIncompatible, SCMProperty.isPositive]
 
-end Sociolinguistics.SCM
+end SocialMeaning.SCM

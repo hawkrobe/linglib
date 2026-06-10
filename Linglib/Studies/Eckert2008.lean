@@ -1,6 +1,6 @@
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
-import Linglib.Sociolinguistics.EckertMontague
+import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -62,7 +62,7 @@ exercises this parallel with concrete data from Figures 3 and 4.
 * `Ochs1992`: predecessor —
   `composeIndex` was introduced to formalize Ochs's indirect
   indexicality; Eckert generalizes it to stance accretion
-* `Sociolinguistics.EckertMontague`: the Eckert-Montague
+* `SocialMeaning.EckertMontague`: the Eckert-Montague
   lift operationalizes the mapping from indexical field to compatible
   personae, connecting to [burnett-2019]'s social meaning games
 -/
@@ -73,8 +73,8 @@ namespace Eckert2008
 
 open Phenomena.SocialMeaning.IndexicalField
 open Phenomena.SocialMeaning.ING
-open Sociolinguistics.EckertMontague
-open Sociolinguistics.SCM
+open SocialMeaning.EckertMontague
+open SocialMeaning.SCM
 
 -- ============================================================================
 -- §1. Trait ontology — stances vs. qualities

@@ -1,4 +1,4 @@
-import Linglib.Sociolinguistics.SCM
+import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Tactic.Linarith
 
@@ -33,10 +33,10 @@ formalism:
 
 -/
 
-namespace Sociolinguistics.EckertMontague
+namespace SocialMeaning.EckertMontague
 
-open Sociolinguistics
-open Sociolinguistics.SCM
+open SocialMeaning
+open SocialMeaning.SCM
 
 -- ============================================================================
 -- §1. Grounded indexical field (Burnett Definition 3.4)
@@ -178,4 +178,4 @@ theorem emFieldMI_monotone {Variant : Type} {ps : PropertySpace}
   obtain ⟨p, hp1, hp2⟩ := hp.2
   exact ⟨p, h hp1, hp2⟩
 
-end Sociolinguistics.EckertMontague
+end SocialMeaning.EckertMontague

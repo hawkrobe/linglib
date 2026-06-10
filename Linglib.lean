@@ -2823,11 +2823,10 @@ import Linglib.Phonology.ItemSpecificity.RepresentationStrength
 import Linglib.Phonology.ItemSpecificity.ScaledWeights
 import Linglib.Phonology.ItemSpecificity.Separation
 import Linglib.Phonology.ItemSpecificity.UseListed
--- Theories: Sociolinguistics
-import Linglib.Sociolinguistics.PropertySpace
-import Linglib.Sociolinguistics.SCM
-import Linglib.Sociolinguistics.EckertMontague
-import Linglib.Sociolinguistics.SocialMeaningGame
+-- Theories: social meaning (former Sociolinguistics/, dissolved 2026-06-10)
+import Linglib.Pragmatics.SocialMeaning.PropertySpace
+import Linglib.Pragmatics.SocialMeaning.SCM
+import Linglib.Pragmatics.SocialMeaning.EckertMontague
 -- Theories: SDS
 import Linglib.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Semantics.Probabilistic.SDS.Basic
