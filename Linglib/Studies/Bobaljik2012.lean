@@ -259,7 +259,7 @@ theorem latin_all_three_patterns :
 /-! ### The Realizational Derivation: the Book's Worked Vocabularies -/
 
 /-! The engine of `Morphology/Containment/Vocabulary.lean` run on the
-vocabularies [bobaljik-2012] actually writes down. `Item`s record
+vocabularies [bobaljik-2012] actually writes down. `ExponenceRule`s record
 exponent, exponed span, and conditioning context; `realize` runs
 Elsewhere insertion; `degreeShape` reads the root-suppletion class off
 the realized cells. The hypotheses of the engine's theorems (`csg2`,
@@ -272,7 +272,7 @@ open Morphology.Containment
 
 /-- Czech BAD ([bobaljik-2012] (39)): root allomorph `hor-` conditioned
     by CMPR, elsewhere `špatn-`. -/
-def czechBad : List (Item 3 String) :=
+def czechBad : List (ExponenceRule 3 String) :=
   [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
 
 /-- Elsewhere insertion realizes *špatn-ý, hor-ší, nej-hor-ší*: ABB. -/
@@ -283,7 +283,7 @@ theorem czech_bad_abb : degreeShape (realize czechBad) = abb := by decide
 
 /-- English GOOD ([bobaljik-2012] (203)): `bett- / __]CMPR]`, elsewhere
     `good`. Terminal and adjacent, so the plateau applies. -/
-def englishGood : List (Item 3 String) :=
+def englishGood : List (ExponenceRule 3 String) :=
   [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
 
 theorem english_good_abb : degreeShape (realize englishGood) = abb := by decide
@@ -291,14 +291,14 @@ theorem english_good_abb : degreeShape (realize englishGood) = abb := by decide
 /-- English BAD ([bobaljik-2012] (194)): `worse` as a √ROOT+CMPR
     portmanteau, elsewhere `bad`. ABB arises on the portmanteau route
     too — `worse` simply realizes the whole comparative node. -/
-def englishBad : List (Item 3 String) :=
+def englishBad : List (ExponenceRule 3 String) :=
   [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
 theorem english_bad_abb : degreeShape (realize englishBad) = abb := by decide
 
 /-- Welsh GOOD ([bobaljik-2012] (198)): `gor- / __]SPRL]` and `gwell`,
     both √ROOT+CMPR portmanteaux, elsewhere `da`. -/
-def welshGood : List (Item 3 String) :=
+def welshGood : List (ExponenceRule 3 String) :=
   [⟨"da", 0, none⟩, ⟨"gwell", 1, none⟩, ⟨"gor", 1, some 2⟩]
 
 /-- *da, gwell, gor-au*: ABC, generable because the C-exponent is a
@@ -310,7 +310,7 @@ theorem welsh_good_abc : degreeShape (realize welshGood) = abc := by decide
     elsewhere `bon`. The span structure also explains *\*opt-ior-imus*:
     `opt-` swallows the CMPR cell, so regular `-ior` has nothing to
     realize. -/
-def latinBonus : List (Item 3 String) :=
+def latinBonus : List (ExponenceRule 3 String) :=
   [⟨"bon", 0, none⟩, ⟨"mel", 0, some 1⟩, ⟨"opt", 1, some 2⟩]
 
 /-- *bon-us, mel-ior, opt-imus*: the engine derives the book's star
@@ -340,7 +340,7 @@ theorem latin_superlative_portmanteau :
     restricted to the superlative with no comparative-level
     counterpart. It generates the unattested AAB shape
     (*\*da – da-ch – gor-au*)... -/
-def welshAAB : List (Item 3 String) :=
+def welshAAB : List (ExponenceRule 3 String) :=
   [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
 
 theorem welshAAB_realizes_aab : degreeShape (realize welshAAB) = aab := by decide
@@ -352,7 +352,7 @@ theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 /-- The homophonous-ABC loophole ([bobaljik-2012] (44) discussion):
     without Antihomophony, surface ABA is generable — a superlative
     root allomorph accidentally homophonous with the positive. -/
-def fakeAba : List (Item 3 String) :=
+def fakeAba : List (ExponenceRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"A", 0, some 2⟩]
 
 theorem fakeAba_realizes_aba : degreeShape (realize fakeAba) = aba := by decide

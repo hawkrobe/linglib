@@ -86,14 +86,14 @@ axioms are à la carte Props rather than baked into the rule type. -/
 /-- Elsewhere insertion under [bobaljik-2012]'s structural adjacency
     (terminal items, adjacent contexts) cannot generate a pattern whose
     CMPR cell differs from its SPRL cell. -/
-theorem dm_excludes_cmpr_sprl_distinct {v : List (Item 3 ℕ)}
+theorem dm_excludes_cmpr_sprl_distinct {v : List (ExponenceRule 3 ℕ)}
     (hT : Terminal v) (hAdj : Adjacent v) :
     realize v 1 = realize v 2 :=
   realize_const_of_terminal_adjacent hT hAdj
 
 /-- Specific corollary: the AAB shape (POS = CMPR ≠ SPRL) cannot be
     generated under structural adjacency. -/
-theorem dm_excludes_aab {v : List (Item 3 ℕ)}
+theorem dm_excludes_aab {v : List (ExponenceRule 3 ℕ)}
     (hT : Terminal v) (hAdj : Adjacent v) {a b : ℕ} (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
@@ -353,7 +353,7 @@ that the partitions split the relevant cells. The substantive
 converse-direction theorem — "under the case partition, there exist
 domain-aware vocabularies generating Wardaman 3SG-shape patterns" —
 requires a domain-relativized analogue of the `Adjacent` condition on
-`Morphology.Containment.Item` vocabularies: a conditioning head may be
+`Morphology.Containment.ExponenceRule` vocabularies: a conditioning head may be
 non-adjacent provided it lies in the same accessibility domain as the
 exponed span. Since the engine's axioms are à la carte Props, this is
 an additional Prop (say `DomainLocal π`) sitting beside `Adjacent`,

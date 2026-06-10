@@ -63,19 +63,19 @@ theorem Synthesis.syntheticAt_of_le {s : Synthesis n} {g g' : Fin n}
 items see only the merged region — suppletion cannot be conditioned by
 periphrastic material outside the word ([bobaljik-2012]'s locality
 condition (90) applied through Merger). -/
-def realizeIn (s : Synthesis n) (v : List (Item n F)) : Pattern n (Option F) :=
+def realizeIn (s : Synthesis n) (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
   λ g => realize v (min g s.wordTop)
 
 /-- Word-internal realization is still contiguous: `realizeIn` is
 `realize` precomposed with the monotone regrading `min · wordTop`. -/
-theorem isContiguous_realizeIn {s : Synthesis n} {v : List (Item n F)}
+theorem isContiguous_realizeIn {s : Synthesis n} {v : List (ExponenceRule n F)}
     (hAH : Antihomophonous v) : IsContiguous (realizeIn s v) :=
   (isContiguous_realize hAH).comp_monotone (λ _ _ h => min_le_min_right _ h)
 
 /-- A lexeme with no Merger at all (`wordTop = 0`, fully periphrastic
 paradigm) realizes the same root form at every grade. -/
 theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
-    {v : List (Item n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
+    {v : List (ExponenceRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
     realizeIn s v g = realizeIn s v g' := by
   have hbot : ∀ x : Fin n, min x s.wordTop = s.wordTop := λ x =>
     min_eq_right (by rw [Fin.le_def, h]; exact Nat.zero_le _)
@@ -86,7 +86,7 @@ theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
 synthetic comparatives. Contrapositively: a lexeme showing distinct
 root forms at two grades must have undergone Merger at least once —
 its comparative is synthetic. Excludes `*good – more bett`. -/
-theorem rsg {s : Synthesis 3} {v : List (Item 3 F)} {g g' : Fin 3}
+theorem rsg {s : Synthesis 3} {v : List (ExponenceRule 3 F)} {g g' : Fin 3}
     (h : realizeIn s v g ≠ realizeIn s v g') : s.SyntheticAt 1 := by
   by_contra hsyn
   refine h (realizeIn_const_of_wordTop_eq_zero ?_ g g')
