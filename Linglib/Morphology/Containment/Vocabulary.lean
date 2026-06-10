@@ -491,14 +491,18 @@ theorem realize_ofPattern {p : Pattern n F} (hp : IsContiguous p) (g : Fin n) :
 
 end Completeness
 
+/-- A pattern is **Elsewhere-generable**: some terminal antihomophonous
+vocabulary realizes it in full. -/
+def ElsewhereGenerable (p : Pattern n F) : Prop :=
+  ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
+    ∀ g, realize v g = some (p g)
+
 /-- **Generable = contiguous.** A fully realized pattern arises from
 Elsewhere insertion over a terminal antihomophonous vocabulary iff it
 is contiguous: the forward direction is the canonical-vocabulary
 construction, the backward direction CSG1. -/
 theorem isContiguous_iff_generable (p : Pattern n F) :
-    IsContiguous p ↔
-      ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
-        ∀ g, realize v g = some (p g) := by
+    IsContiguous p ↔ ElsewhereGenerable p := by
   classical
   constructor
   · intro hp

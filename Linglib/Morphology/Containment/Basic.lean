@@ -13,17 +13,21 @@ DAT, [caha-2009]), path roles ([pantcheva-2011]). A `Pattern n F`
 records which form occupies each grade's cell, and the cross-linguistic
 *ABA generalization says a form never recurs across a distinct
 intervening form: each form's fiber is order-convex (`IsContiguous`).
-[graf-2019] reconstructs *ABA across these domains as monotonicity;
-`isContiguous_iff_exists_monotone` is that reconstruction — a pattern
-is contiguous iff it is the kernel of a monotone score — stated
-independently of any insertion mechanism.
+[graf-2019] reconstructs *ABA across these domains as *feasible
+monotonicity*: the form assignment is monotone with respect to *some*
+linear order on the output forms (his def. (6); the base hierarchy is
+what is fixed). Over a linear hierarchy, that is equivalent to the
+assignment being the kernel of a monotone score (`FeasiblyMonotone`) —
+`isContiguous_iff_feasiblyMonotone`, stated here as the general theorem
+behind Graf's instance-by-instance verification, independently of any
+insertion mechanism.
 
 ## Main declarations
 
 * `Pattern n F` — assignment of forms to the `n` grades of a hierarchy
 * `IsContiguous` — no ABA configuration: fibers are convex
-* `isContiguous_iff_exists_monotone` — [graf-2019]'s monotonicity
-  reconstruction of *ABA
+* `FeasiblyMonotone`, `isContiguous_iff_feasiblyMonotone` —
+  [graf-2019]'s monotonicity reconstruction of *ABA
 * `IsContiguous.comp_monotone`, `isContiguous_comp_left` — composition API
 
 Theory-laden derivations of contiguity (vocabulary insertion under the
@@ -70,16 +74,21 @@ theorem isContiguous_comp_left {β : Type*} [PartialOrder β] {g : Fin n → β}
 
 /-! ### Graf's monotonicity reconstruction
 
-[graf-2019] recasts the *ABA generalization, across adjectival
-gradation, case syncretism, and pronominal suppletion, as the demand
-that the form assignment be the kernel of a monotone map into a fixed
-order ([bobaljik-sauerland-2018] is the feature-combinatoric
-counterpart, deriving which cell arrangements exclude ABA without
-stipulating containment). Over a linear hierarchy the two
-presentations coincide: the
-prefix-image score `i ↦ #{forms among cells 0..i}` is monotone and has
-the same kernel as a contiguous pattern, and conversely any pattern
-sharing its kernel with a monotone score has convex fibers. -/
+[graf-2019] recasts the *ABA generalization — across adjectival
+gradation, person-pronoun syncretism, case syncretism, and noun stem
+allomorphy — as feasible monotonicity of the form assignment from a
+fixed base hierarchy ([bobaljik-sauerland-2018] is the
+feature-combinatoric counterpart, deriving which cell arrangements
+exclude ABA without stipulating containment). The kernel formulation
+below is this file's gloss: forms are bins, so feasible monotonicity
+over a linear hierarchy is the existence of a monotone score with the
+pattern's kernel. The prefix-image score `i ↦ #{forms among cells
+0..i}` is monotone and has the same kernel as a contiguous pattern,
+and conversely any pattern sharing its kernel with a monotone score
+has convex fibers. (Graf's case hierarchies are partial orders going
+beyond this linear setting, and his PCC/GCC treatment is a different
+object — monotone maps into the fixed two-element truth-value algebra,
+i.e. upper sets; see `Studies/Graf2019.lean`.) -/
 
 section Graf
 
@@ -120,13 +129,20 @@ private theorem eq_of_score_eq {p : Pattern n F} (hp : IsContiguous p)
 
 end Graf
 
+/-- **Feasible monotonicity** ([graf-2019] def. (6)), in monotone-score
+form: some monotone score identifies exactly the cells the pattern
+identifies. Equivalent to Graf's literal statement — monotone with
+respect to *some* linear order on the output forms — over a finite
+hierarchy, since forms are bins and only the kernel matters. -/
+def FeasiblyMonotone (p : Pattern n F) : Prop :=
+  ∃ g : Fin n → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
+
 /-- **[graf-2019]'s monotonicity reconstruction of *ABA**: a pattern is
-contiguous iff it is the kernel of a monotone score — some monotone
-`g : Fin n → ℕ` identifies exactly the cells the pattern identifies.
-Forward direction via the prefix-image score; backward direction is the
-sandwich argument that makes monotone kernels convex. -/
-theorem isContiguous_iff_exists_monotone (p : Pattern n F) :
-    IsContiguous p ↔ ∃ g : Fin n → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j := by
+contiguous iff it is feasibly monotonic. Forward direction via the
+prefix-image score; backward direction is the sandwich argument that
+makes monotone kernels convex. -/
+theorem isContiguous_iff_feasiblyMonotone (p : Pattern n F) :
+    IsContiguous p ↔ FeasiblyMonotone p := by
   classical
   constructor
   · intro hp
