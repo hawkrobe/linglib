@@ -24,24 +24,9 @@ open Semantics.Lexical
 
 /-! ## Construction slots and argument frames -/
 
-/-- A slot in an argument structure construction.
-
-Each slot specifies a syntactic category and a semantic role
-for one participant in the construction's event structure. -/
-structure ConstructionSlot where
-  /-- Syntactic category of this slot (NP, V, PP, etc.) -/
-  cat : UD.UPOS
-  /-- Semantic role label -/
-  role : String
-  /-- Whether this slot is the head of the construction -/
-  isHead : Bool := false
-  deriving Repr, BEq
-
-/-- An argument structure construction with explicit slot structure.
-
-This extends the basic `Construction` with a decomposed argument frame,
-enabling formal analysis of how the construction relates to the three
-universal combination schemata.
+/-- An argument structure construction: a `Construction` whose typed form
+serves as the argument frame, enabling formal analysis of how the
+construction relates to the three universal combination schemata.
 
 The `semanticContribution` field captures which meaning components
 ([levin-1993]) the construction adds independently of the verb
@@ -53,14 +38,17 @@ the causative alternation for manner verbs ([levin-2026]). -/
 structure ArgStructureConstruction where
   /-- The underlying construction -/
   construction : Construction
-  /-- The argument frame: ordered list of slots -/
-  slots : List ConstructionSlot
-  /-- At least one slot should be the head -/
-  hasHead : slots.any (·.isHead) = true
+  /-- At least one slot of the form should be the head -/
+  hasHead : construction.form.any (·.isHead) = true
   /-- What meaning components this construction contributes independently
       of the verb. Defaults to `.none` (no augmentation). -/
   semanticContribution : MeaningComponents := .none
   deriving Repr
+
+/-- The argument frame: the underlying construction's typed form. -/
+def ArgStructureConstruction.slots (asc : ArgStructureConstruction) :
+    TypedForm String :=
+  asc.construction.form
 
 /-! ## Concrete argument structure constructions -/
 
@@ -69,15 +57,13 @@ structure ArgStructureConstruction where
 def ditransitive : ArgStructureConstruction :=
   { construction :=
       { name := "Ditransitive"
-      , form := "[Subj V Obj1 Obj2]"
-      , meaning := "X CAUSES Y to RECEIVE Z"
-      , specificity := .fullyAbstract }
-  , slots :=
-      [ ⟨.NOUN, "agent", false⟩       -- Subj
-      , ⟨.VERB, "predicate", true⟩    -- V (head)
-      , ⟨.NOUN, "recipient", false⟩   -- Obj1
-      , ⟨.NOUN, "theme", false⟩ ]     -- Obj2
-  , hasHead := by native_decide }
+      , form :=
+          [ { filler := .open_ .NOUN, role := some "agent" }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .NOUN, role := some "recipient" }
+          , { filler := .open_ .NOUN, role := some "theme" } ]
+      , meaning := "X CAUSES Y to RECEIVE Z" }
+  , hasHead := by decide }
 
 /-- Caused-motion construction: [Subj V Obj Obl].
 "X CAUSES Y to MOVE to Z" (e.g., "She sneezed the napkin off the table").
@@ -86,15 +72,13 @@ acquire both from the construction ([goldberg-1995] p. 152–179). -/
 def causedMotion : ArgStructureConstruction :=
   { construction :=
       { name := "Caused-motion"
-      , form := "[Subj V Obj Obl]"
-      , meaning := "X CAUSES Y to MOVE to Z"
-      , specificity := .fullyAbstract }
-  , slots :=
-      [ ⟨.NOUN, "agent", false⟩       -- Subj
-      , ⟨.VERB, "predicate", true⟩    -- V (head)
-      , ⟨.NOUN, "theme", false⟩       -- Obj
-      , ⟨.ADP, "goal", false⟩ ]       -- Obl
-  , hasHead := by native_decide
+      , form :=
+          [ { filler := .open_ .NOUN, role := some "agent" }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .NOUN, role := some "theme" }
+          , { filler := .open_ .ADP, role := some "goal" } ]
+      , meaning := "X CAUSES Y to MOVE to Z" }
+  , hasHead := by decide
   , semanticContribution := ⟨false, false, true, true, false, false⟩ }
 
 /-- Resultative construction: [Subj V Obj Pred].
@@ -106,15 +90,13 @@ for verbs like *push* that lack it in isolation. -/
 def resultative : ArgStructureConstruction :=
   { construction :=
       { name := "Resultative"
-      , form := "[Subj V Obj Pred]"
-      , meaning := "X CAUSES Y to BECOME Z"
-      , specificity := .fullyAbstract }
-  , slots :=
-      [ ⟨.NOUN, "agent", false⟩       -- Subj
-      , ⟨.VERB, "predicate", true⟩    -- V (head)
-      , ⟨.NOUN, "patient", false⟩     -- Obj
-      , ⟨.ADJ, "result", false⟩ ]     -- Pred
-  , hasHead := by native_decide
+      , form :=
+          [ { filler := .open_ .NOUN, role := some "agent" }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .NOUN, role := some "patient" }
+          , { filler := .open_ .ADJ, role := some "result" } ]
+      , meaning := "X CAUSES Y to BECOME Z" }
+  , hasHead := by decide
   , semanticContribution := ⟨true, false, false, true, false, false⟩ }
 
 /-- Intransitive motion construction: [Subj V Obl].
@@ -122,14 +104,12 @@ def resultative : ArgStructureConstruction :=
 def intransitiveMotion : ArgStructureConstruction :=
   { construction :=
       { name := "Intransitive-motion"
-      , form := "[Subj V Obl]"
-      , meaning := "X MOVES to Y"
-      , specificity := .fullyAbstract }
-  , slots :=
-      [ ⟨.NOUN, "theme", false⟩       -- Subj
-      , ⟨.VERB, "predicate", true⟩    -- V (head)
-      , ⟨.ADP, "path", false⟩ ]       -- Obl
-  , hasHead := by native_decide }
+      , form :=
+          [ { filler := .open_ .NOUN, role := some "theme" }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .ADP, role := some "path" } ]
+      , meaning := "X MOVES to Y" }
+  , hasHead := by decide }
 
 /-- Conative construction: [Subj V Obl_at].
 "X DIRECTS ACTION at Y" (e.g., "Sam kicked at Bill").
@@ -139,14 +119,12 @@ the at-PP marks the target without entailing contact
 def conative : ArgStructureConstruction :=
   { construction :=
       { name := "Conative"
-      , form := "[Subj V Obl_at]"
-      , meaning := "X DIRECTS ACTION at Y"
-      , specificity := .fullyAbstract }
-  , slots :=
-      [ ⟨.NOUN, "agent", false⟩       -- Subj
-      , ⟨.VERB, "predicate", true⟩    -- V (head)
-      , ⟨.ADP, "target", false⟩ ]     -- Obl_at
-  , hasHead := by native_decide }
+      , form :=
+          [ { filler := .open_ .NOUN, role := some "agent" }
+          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+          , { filler := .open_ .ADP, role := some "target" } ]
+      , meaning := "X DIRECTS ACTION at Y" }
+  , hasHead := by decide }
 
 /-! ## Full compositionality -/
 
@@ -170,7 +148,7 @@ theorem fullyAbstract_isFullyCompositional (c : Construction)
     isFullyCompositional c = true := by
   unfold isFullyCompositional
   rw [h₁, h₂]
-  native_decide
+  rfl
 
 /-! ## Polysemy families ([goldberg-1995] §3.3.2, I_P links)
 
@@ -187,10 +165,8 @@ polysemy links (I_P) are derived, not manually assembled. -/
 structure PolysemyFamily where
   /-- Name of the construction family -/
   name : String
-  /-- Human-readable form description -/
-  form : String
   /-- The shared argument frame -/
-  slots : List ConstructionSlot
+  slots : TypedForm String
   /-- At least one slot is the head -/
   hasHead : slots.any (·.isHead) = true
   /-- Central sense meaning -/
@@ -203,10 +179,8 @@ def PolysemyFamily.centralConstruction (f : PolysemyFamily) :
     ArgStructureConstruction :=
   { construction :=
       { name := f.name
-      , form := f.form
-      , meaning := f.centralMeaning
-      , specificity := .fullyAbstract }
-  , slots := f.slots
+      , form := f.slots
+      , meaning := f.centralMeaning }
   , hasHead := f.hasHead }
 
 /-- Build an extension construction. Uses the family's `slots` — shared
@@ -215,10 +189,8 @@ def PolysemyFamily.extensionConstruction (f : PolysemyFamily)
     (ext : String × String × List String) : ArgStructureConstruction :=
   { construction :=
       { name := f.name ++ "-" ++ ext.1
-      , form := f.form
-      , meaning := ext.2.1
-      , specificity := .fullyAbstract }
-  , slots := f.slots
+      , form := f.slots
+      , meaning := ext.2.1 }
   , hasHead := f.hasHead }
 
 /-- All extension constructions. -/
@@ -238,7 +210,7 @@ def PolysemyFamily.polysemyLinks (f : PolysemyFamily) : List InheritanceLink :=
     , child := f.name ++ "-" ++ extName
     , mode := .normal
     , linkType := some .polysemy
-    , sharedProperties := [f.form, "argument frame"]
+    , sharedProperties := ["shared argument frame"]
     , overriddenProperties := overrides }
 
 /-- Central construction uses the family's slots (definitionally true). -/
@@ -263,13 +235,12 @@ semantic relation between the event participants. -/
 frame ([goldberg-1995] pp. 75–77). -/
 def ditransitiveFamily : PolysemyFamily :=
   { name := "Ditransitive"
-  , form := "[Subj V Obj Obj₂]"
   , slots :=
-      [ ⟨.NOUN, "agent", false⟩
-      , ⟨.VERB, "predicate", true⟩
-      , ⟨.NOUN, "recipient", false⟩
-      , ⟨.NOUN, "theme", false⟩ ]
-  , hasHead := by native_decide
+      [ { filler := .open_ .NOUN, role := some "agent" }
+      , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+      , { filler := .open_ .NOUN, role := some "recipient" }
+      , { filler := .open_ .NOUN, role := some "theme" } ]
+  , hasHead := by decide
   , centralMeaning := "X CAUSES Y TO RECEIVE Z"
   , extensions :=
       [ ("Satisfaction",
@@ -322,7 +293,7 @@ def causedMotionToResultative : InheritanceLink :=
 /-- All polysemy links have link type I_P. -/
 theorem polysemy_links_typed :
     ditransitivePolysemy.all (·.linkType == some .polysemy) = true := by
-  native_decide
+  decide
 
 /-- Subpart link has link type I_S. -/
 theorem subpart_link_typed :
@@ -342,7 +313,7 @@ theorem all_link_types_instantiated :
     (causedMotionSubpart.linkType = some .subpart) ∧
     -- I_I: instance (resultative subconstructions, in GoldbergJackendoff2004)
     True := by
-  exact ⟨by native_decide, rfl, rfl, trivial⟩
+  exact ⟨by decide, rfl, rfl, trivial⟩
 
 -- ════════════════════════════════════════════════════
 -- Constructional fusion ([goldberg-1995])

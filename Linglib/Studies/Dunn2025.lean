@@ -1,171 +1,87 @@
-import Linglib.Syntax.ConstructionGrammar.Slot
+import Linglib.Syntax.ConstructionGrammar.Basic
+import Mathlib.Tactic.NormNum
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
+import Linglib.Studies.KayFillmore1999
 
 /-!
 # Slot/Filler Verification
 
 [dunn-2025] [kay-fillmore-1999] [goldberg-shirtz-2025]
 
-Per-datum verification that `derivedSpecificity` (computed from the typed
-slot structure) matches the `Specificity` values stipulated in existing
-construction definitions.
-
-Concrete `TypedForm` instantiations for six constructions verify:
-1. `abstractionLevel` computes the correct open-slot proportion
-2. `derivedSpecificity` agrees with stipulated `Specificity`
-3. `ConstructionSlot.toSlot` round-trips through embedding
-4. `refGroupCount` and `hasConstraint` detect WXDY's structural properties
-5. WXDY coinstantiation: X and Y share refIdx 2 (subject control)
+[dunn-2025]'s variationist CxG treats abstraction as continuous — the
+proportion of open slots in a construction's typed form
+(`abstractionLevel`). This file computes the measure for constructions
+across the constructicon (ditransitive, must-V, *let alone*, WXDY) and
+verifies the structural properties of WXDY's flat slot projection:
+coreference grouping (X–Y coinstantiation via shared `refIdx`) and
+per-slot syntactic constraints ([loc -], [neg -], [ref ∅]).
 -/
 
 namespace Dunn2025
 
 open ConstructionGrammar
 
--- ============================================================================
--- § 1. Basic Constructions
--- ============================================================================
+/-! ### Abstraction levels
 
-/-- Ditransitive typed form: [Subj_NP V Obj1_NP Obj2_NP].
+The continuous measure on the typed forms of constructions defined in
+their owning study files. -/
 
-All four slots are open — the construction constrains categories
-and roles but not specific lexemes. -/
-def ditransitiveForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, role := some "agent" }
-  , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-  , { filler := .open_ .NOUN, role := some "recipient" }
-  , { filler := .open_ .NOUN, role := some "theme" } ]
+/-- Ditransitive: 4/4 open slots → abstraction level 1. -/
+theorem ditransitive_abstraction :
+    abstractionLevel ditransitive.slots = 1 := by
+  norm_num [abstractionLevel, ArgStructureConstruction.slots, ditransitive,
+    List.filter, SlotFiller.isOpen]
 
-/-- must-VERB typed form: [fixed("must") V N].
+/-- must-V: 2/3 open slots → abstraction level 2/3. -/
+theorem mustVerb_abstraction :
+    abstractionLevel (_root_.GoldbergShirtz2025.mustVerbConstruction).form
+      = 2 / 3 := by
+  norm_num [abstractionLevel, GoldbergShirtz2025.mustVerbConstruction,
+    List.filter, SlotFiller.isOpen]
 
-"must" is a fixed lexeme; the verb and noun slots are open.
-"a must-see movie", "a must-read book". -/
-def mustVerbForm : TypedForm String :=
-  [ { filler := .fixed "must" }
-  , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-  , { filler := .open_ .NOUN, role := some "theme" } ]
-
-/-- *Let alone* typed form: [A_NP fixed("let") fixed("alone") B_NP].
-
-Simplified from the full form F⟨X A Y let alone B⟩ to highlight the
-fixed/open distinction. "let" and "alone" are fixed; the focus positions
-are open. -/
-def letAloneForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, role := some "focusA" }
-  , { filler := .fixed "let" }
-  , { filler := .fixed "alone" }
-  , { filler := .open_ .NOUN, role := some "focusB" } ]
+/-- *Let alone*: 2/4 open slots → abstraction level 1/2. -/
+theorem letAlone_abstraction :
+    abstractionLevel (_root_.FillmoreKayOConnor1988.letAloneConstruction).form
+      = 1 / 2 := by
+  norm_num [abstractionLevel, FillmoreKayOConnor1988.letAloneConstruction,
+    List.filter, SlotFiller.isOpen]
 
 /-- Veggie-wrap: a fully lexically specified compound ([goldberg-2003]:220). -/
 def veggieWrapForm : TypedForm String :=
   [ { filler := .fixed "veggie" }
   , { filler := .fixed "wrap", isHead := true } ]
 
--- ============================================================================
--- § 2. Abstraction Levels
--- ============================================================================
-
-/-- Ditransitive: 4/4 open slots → abstraction level 1. -/
-theorem ditransitive_abstraction :
-    abstractionLevel ditransitiveForm = 1 := by native_decide
-
-/-- must-VERB: 2/3 open slots → abstraction level 2/3. -/
-theorem mustVerb_abstraction :
-    abstractionLevel mustVerbForm = 2 / 3 := by native_decide
-
-/-- *Let alone*: 2/4 open slots → abstraction level 1/2. -/
-theorem letAlone_abstraction :
-    abstractionLevel letAloneForm = 1 / 2 := by native_decide
-
 /-- Veggie-wrap: 0/2 open slots → abstraction level 0. -/
 theorem veggieWrap_abstraction :
-    abstractionLevel veggieWrapForm = 0 := by native_decide
-
--- ============================================================================
--- § 3. Specificity Consistency
--- ============================================================================
-
-/-! These theorems verify that `derivedSpecificity` (computed from slot
-structure) matches the `Specificity` values stipulated in the existing
-construction definitions. This makes the connection true by verification
-rather than by construction. -/
-
-/-- Ditransitive: derived `.fullyAbstract` matches stipulated. -/
-theorem ditransitive_specificity_consistent :
-    derivedSpecificity ditransitiveForm =
-      ditransitive.construction.specificity := by native_decide
-
-/-- *Let alone*: derived `.partiallyOpen` matches stipulated. -/
-theorem letAlone_specificity_consistent :
-    derivedSpecificity letAloneForm =
-      _root_.FillmoreKayOConnor1988.letAloneConstruction.specificity := by
-  native_decide
-
-/-- must-VERB: derived `.partiallyOpen` matches stipulated. -/
-theorem mustVerb_specificity_consistent :
-    derivedSpecificity mustVerbForm =
-      _root_.GoldbergShirtz2025.mustVerbConstruction.specificity := by
-  native_decide
+    abstractionLevel veggieWrapForm = 0 := by
+  norm_num [abstractionLevel, veggieWrapForm, List.filter, SlotFiller.isOpen]
 
 /-- Veggie-wrap: derived `.lexicallySpecified` (all fixed). -/
 theorem veggieWrap_is_lexicallySpecified :
-    derivedSpecificity veggieWrapForm = .lexicallySpecified := by native_decide
+    derivedSpecificity veggieWrapForm = .lexicallySpecified := by decide
 
--- ============================================================================
--- § 4. Embedding Consistency
--- ============================================================================
+/-! ### WXDY ([kay-fillmore-1999], Figure 12)
 
-/-- The ditransitive `TypedForm` matches the existing `ArgStructureConstruction`'s
-slots projected through `toTypedForm`. -/
-theorem ditransitive_embedding_consistent :
-    ditransitive.toTypedForm = ditransitiveForm := by native_decide
+`wxdyConstruction.form` (in `Studies/KayFillmore1999.lean`) is the flat
+projection of the paper's hierarchical AVM: valence sets, grammatical
+functions, coreference indices (#1, #2), and feature constraints
+([loc -], [neg -], [ref ∅]), with the nesting lost.
 
--- ============================================================================
--- § 5. WXDY ([kay-fillmore-1999], Figure 12)
--- ============================================================================
+**Coinstantiation** (Figure 13, §4.2) is a general construction
+expressing subject control: the matrix subject and the complement's
+subject share a coreference index. WXDY's X–Y coindexation is an
+instance of this pattern. -/
 
-/-! [kay-fillmore-1999] formalize the WXDY construction
-    as a hierarchical AVM with valence sets, grammatical functions,
-    coreference indices (#1, #2), and feature constraints ([loc -],
-    [neg -], [ref ∅]). This flat projection captures the key structural
-    properties while losing the nesting.
-
-    **Coinstantiation** (Figure 13, §4.2) is a general construction
-    expressing subject control: the matrix subject and the complement's
-    subject share a coreference index. WXDY's X–Y coindexation is an
-    instance of this pattern. -/
-
-/-- WXDY construction typed form ([kay-fillmore-1999], Figure 12).
-
-    Flat projection of the hierarchical AVM. The five positions:
-    - X (subject of BE): open NP, coindexed with Y via refIdx 2
-    - BE (head): auxiliary headed by *be*
-    - doing (complement): VP headed by *doing*, cannot be negated
-    - what (object of doing): fixed, left-isolated, nonreferential
-    - Y (secondary predicate): open, coindexed with X via refIdx 2
-
-    The coindexation (refIdx 2) captures the paper's #2: X is the
-    understood subject of Y (coinstantiation / subject control). -/
-def wxdyForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, role := some "subject", gf := some .subj
-    , refIdx := some 2 }
-  , { filler := .headed "be" .AUX, isHead := true }
-  , { filler := .headed "doing" .VERB, gf := some .comp
-    , constraints := [.negMinus] }
-  , { filler := .fixed "what", gf := some .obj
-    , constraints := [.locMinus, .refEmpty] }
-  , { filler := .open_ .X, role := some "predicate", gf := some .pred
-    , refIdx := some 2 } ]
+/-- WXDY's typed form, from its owning study file. -/
+private def wxdyForm : TypedForm String :=
+  ConstructionGrammar.Studies.KayFillmore1999.wxdyConstruction.form
 
 /-- Coinstantiation construction ([kay-fillmore-1999], Figure 13, §4.2).
 
-    A general pattern for subject control: the matrix subject and
-    the complement's subject share a coreference index.
-
-    "She tried to leave": the subject of *try* (#1) = the understood
-    subject of *leave* (#1). This is the mechanism underlying
-    WXDY's X–Y coindexation. -/
+"She tried to leave": the subject of *try* (#1) = the understood
+subject of *leave* (#1). This is the mechanism underlying WXDY's X–Y
+coindexation. -/
 def coinstantiationForm : TypedForm String :=
   [ { filler := .open_ .NOUN, role := some "subject", gf := some .subj
     , refIdx := some 1 }
@@ -173,56 +89,59 @@ def coinstantiationForm : TypedForm String :=
   , { filler := .open_ .VERB, role := some "complement", gf := some .comp
     , refIdx := some 1 } ]
 
-/-! ### Abstraction and specificity -/
-
 /-- WXDY: 2/5 open slots → abstraction level 2/5. -/
 theorem wxdy_abstraction :
-    abstractionLevel wxdyForm = 2 / 5 := by native_decide
+    abstractionLevel wxdyForm = 2 / 5 := by
+  norm_num [abstractionLevel, wxdyForm,
+    ConstructionGrammar.Studies.KayFillmore1999.wxdyConstruction,
+    List.filter, SlotFiller.isOpen]
 
 /-- WXDY is partiallyOpen: mix of open, headed, and fixed slots. -/
 theorem wxdy_specificity :
-    derivedSpecificity wxdyForm = .partiallyOpen := by native_decide
+    derivedSpecificity wxdyForm = .partiallyOpen := by decide
 
 /-- Coinstantiation is fully abstract (all slots open). -/
 theorem coinstantiation_specificity :
-    derivedSpecificity coinstantiationForm = .fullyAbstract := by native_decide
+    derivedSpecificity coinstantiationForm = .fullyAbstract := by decide
 
 /-! ### Coreference constraints -/
 
 /-- WXDY has exactly one coreference group (the X–Y coinstantiation). -/
 theorem wxdy_coreference_count :
-    refGroupCount wxdyForm = 1 := by native_decide
+    refGroupCount wxdyForm = 1 := by decide
 
 /-- X (first slot) and Y (last slot) share coreference index 2:
-    X is the understood subject of Y. -/
+X is the understood subject of Y. -/
 theorem wxdy_coinstantiation :
     wxdyForm.head?.bind (·.refIdx) = some 2 ∧
-    wxdyForm.getLast?.bind (·.refIdx) = some 2 := ⟨rfl, rfl⟩
+    wxdyForm.getLast?.bind (·.refIdx) = some 2 := by decide
 
 /-- Coinstantiation has exactly one coreference group. -/
 theorem coinstantiation_coreference :
-    refGroupCount coinstantiationForm = 1 := by native_decide
+    refGroupCount coinstantiationForm = 1 := by decide
 
 /-! ### Syntactic constraints -/
 
 /-- WXDY-what is left-isolated ([loc -]) and nonreferential ([ref ∅]).
-    These two constraints together explain why WXDY-what cannot take
-    *else* modification and is not a true interrogative pronoun. -/
+These two constraints together explain why WXDY-what cannot take
+*else* modification and is not a true interrogative pronoun. -/
 theorem wxdy_what_constraints :
     hasConstraint wxdyForm .locMinus = true ∧
-    hasConstraint wxdyForm .refEmpty = true := ⟨rfl, rfl⟩
+    hasConstraint wxdyForm .refEmpty = true := by decide
 
 /-- WXDY-doing cannot be negated ([neg -]): "*What's X not doing Y?"
-    is ungrammatical on the incredulity reading. -/
+is ungrammatical on the incredulity reading. -/
 theorem wxdy_doing_negMinus :
-    hasConstraint wxdyForm .negMinus = true := rfl
+    hasConstraint wxdyForm .negMinus = true := by decide
 
 /-- Neither the ditransitive nor *let alone* bear any slot constraints —
-    the enriched constraint machinery is specific to constructions like
-    WXDY that have fine-grained syntactic restrictions. -/
+the enriched constraint machinery is specific to constructions like
+WXDY that have fine-grained syntactic restrictions. -/
 theorem basic_forms_no_constraints :
-    hasConstraint ditransitiveForm .locMinus = false ∧
-    hasConstraint ditransitiveForm .negMinus = false ∧
-    hasConstraint letAloneForm .locMinus = false := ⟨rfl, rfl, rfl⟩
+    hasConstraint ditransitive.slots .locMinus = false ∧
+    hasConstraint ditransitive.slots .negMinus = false ∧
+    hasConstraint (_root_.FillmoreKayOConnor1988.letAloneConstruction).form
+      .locMinus = false := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Dunn2025
