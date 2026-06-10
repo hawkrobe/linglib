@@ -891,10 +891,9 @@ theorem largeVase_score_le_one :
     bundles of lexical entailments
     (`Semantics/Lexical/Roots/Basic.lean`). Their classification
     of √crack is `[.becomesState "fissured", .hasCause]` — the
-    "result + cause, no manner, no state" four-feature signature
+    "result + cause, no manner" base four-feature signature
     `⟨hasState=false, hasManner=false, hasResult=true, hasCause=true⟩`
-    (`Studies/BeaversKoontzGarboden2020.lean
-    line 52`).
+    (`BeaversKoontzGarboden2020.crack`).
 
     Tham §5.1 (the (45) examples — cracked pumpkin, dented helmet
     model, scratched decal) is in tension with strict result-state

@@ -217,7 +217,7 @@ theorem closedFeatureSignature_state_eq (r : Root) :
     exact ⟨_, hb, by rfl⟩
   · intro hbase
     rcases List.any_eq_true.mp hbase with ⟨a, ha, hp⟩
-    cases a <;> simp [LexEntailment.isBecome, decide_eq_true_eq] at hp
+    cases a <;> simp [LexEntailment.isBecome] at hp
     rename_i s
     apply List.any_eq_true.mpr
     refine ⟨LexEntailment.hasState s, ?_, by rfl⟩
