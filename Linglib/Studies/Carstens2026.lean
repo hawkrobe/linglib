@@ -356,7 +356,7 @@ theorem dm_bridge_faithful (s : GenderStatus) :
     The [non-human] core (Shona 7/8) maps to `.humanness` because
     Shona's system is organized around the human/non-human distinction.
     Xhosa's finer [animal] and [inanimate] cores map to `.animacy`. -/
-def toSemanticBasis : SemanticCore → Typology.Gender.SemanticBasis
+def toSemanticBasis : SemanticCore → Morphology.Gender.SemanticBasis
   | .human     => .humanness
   | .animal    => .animacy
   | .inanimate => .animacy

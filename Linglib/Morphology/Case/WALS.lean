@@ -52,7 +52,7 @@ ontology and does NOT consume this WALS substrate.
 
 set_option autoImplicit false
 
-namespace Typology.Case
+namespace Morphology.Case
 
 private abbrev ch49 := Data.WALS.F49A.allData
 private abbrev ch50 := Data.WALS.F50A.allData
@@ -257,4 +257,4 @@ theorem ch52_differentiation_majority :
     (ch52.filter (·.value == .mixed)).length := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Typology.Case
+end Morphology.Case

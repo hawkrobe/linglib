@@ -17,7 +17,7 @@ import Linglib.Data.WALS.Features.F79B
 import Linglib.Data.WALS.Features.F80A
 
 /-!
-# Typology.Morphology
+# Morphology.Typology — WALS morphological-typology aggregates
 [bickel-nichols-2013a] [bickel-nichols-2013b] [bickel-nichols-2013c]
 [nichols-bickel-2013] [nichols-bickel-2013a]
 [nichols-bickel-2013b] [nichols-bickel-2013c] [nichols-bickel-2013d]
@@ -67,7 +67,7 @@ sample) and the LCEC apparatus live in
 
 set_option autoImplicit false
 
-namespace Typology.Morphology
+namespace Morphology.Typology
 
 private abbrev ch20  := Data.WALS.F20A.allData
 private abbrev ch21  := Data.WALS.F21A.allData
@@ -116,4 +116,4 @@ theorem ch22_moderate_dominant :
       d.value == .categoriesPerWord6_7)).length
     mid * 2 > ch22.length := by native_decide
 
-end Typology.Morphology
+end Morphology.Typology

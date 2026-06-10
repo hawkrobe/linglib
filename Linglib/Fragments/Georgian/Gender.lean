@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Georgian Gender
@@ -14,7 +14,7 @@ agreement targets. The Corbett 1991 view is a per-Study override at
 
 namespace Georgian.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Georgian gender typology per WALS [corbett-2013]: no gender on the
     noun-side-marking criterion. -/

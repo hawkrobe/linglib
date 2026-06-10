@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
-import Linglib.Typology.CaseGrammaticalization
+import Linglib.Features.Case.Grammaticalization
 /-!
 # Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
 

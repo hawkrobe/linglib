@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Japanese Gender
@@ -9,7 +9,7 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 
 namespace Japanese.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Japanese gender typology: no gender. -/
 def genderTypology : GenderProfile :=

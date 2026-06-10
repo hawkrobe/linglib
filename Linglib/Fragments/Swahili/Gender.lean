@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Swahili Gender
@@ -17,7 +17,7 @@ stays `[]`: noun-class agreement doesn't map onto the Indo-European
 
 namespace Swahili.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Swahili gender typology: 7 controller genders (Bantu), semantic + formal. -/
 def genderTypology : GenderProfile :=

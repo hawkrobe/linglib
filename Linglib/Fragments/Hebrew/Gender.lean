@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Hebrew Gender
@@ -10,7 +10,7 @@ import Linglib.Typology.Gender
 
 namespace Hebrew.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Hebrew gender typology: 2-gender canonical sex-based with verb agreement. -/
 def genderTypology : GenderProfile :=

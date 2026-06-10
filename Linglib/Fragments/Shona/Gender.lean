@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Shona Gender
@@ -10,7 +10,7 @@ Bantu noun-class system. [carstens-2026] cites 8 active genders
 
 namespace Shona.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Shona gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
