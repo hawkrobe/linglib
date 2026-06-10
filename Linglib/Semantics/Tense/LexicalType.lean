@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Linglib.Semantics.Tense.GramTense
 
 /-!
 # Tense as a typed lexical object [sharvit-2014]
@@ -66,6 +67,19 @@ theorem pronominalLookup_eq_some_iff {Time : Type*} [LT Time]
     pronominalLookup g j k = some t ↔ g k < g j ∧ g k = t := by
   unfold pronominalLookup
   by_cases h : g k < g j <;> simp [h, eq_comm]
+
+/-- Sharvit's pronominal past ((30a)) and the `TensePronoun` architecture
+    are the same object: `pronominalLookup g j k` is defined with value `t`
+    iff the past-constraint tense pronoun with referential index `k` and
+    evaluation index `j` satisfies its full presupposition and resolves to
+    `t`. The codebase's two formalizations of [partee-1973]-style
+    pronominal tense provably coincide (in any binding `mode`). -/
+theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
+    (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : TenseInterpretation) :
+    pronominalLookup g j k = some t ↔
+      (TensePronoun.mk k .past mode j).fullPresupposition g ∧
+      (TensePronoun.mk k .past mode j).resolve g = t :=
+  pronominalLookup_eq_some_iff g j k t
 
 /-- [sharvit-2014] (30b), p. 274: quantificational past. The
     contextual restrictor `K` constrains the domain of quantification. -/
