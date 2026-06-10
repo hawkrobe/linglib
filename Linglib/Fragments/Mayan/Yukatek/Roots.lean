@@ -1,4 +1,5 @@
 import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Lexical.Roots.Arity
 
 /-!
 # Yukatek Maya Roots as B&K-G Entailment Sets
@@ -19,9 +20,9 @@ inventory in `Operators.lean` and the orbit-derivation in
 |-----------------|-----------|--------------------|----------------------|------------------------|
 | ex. (1a)        | `siit'`     | "jump"             | manner               | agent-salient          |
 | (text p. 628)   | `tziib`     | "write"            | manner               | agent-salient          |
-| ex. (1b)        | `kuc`       | "carry"            | manner + result      | agent-patient salient  |
-| (text p. 629)   | `pis`       | "measure"          | manner + result      | agent-patient salient  |
-| (text p. 629)   | `los`       | "punch"            | manner + result      | agent-patient salient  |
+| ex. (1b)        | `kuc`       | "carry"            | manner, root transitive | agent-patient salient |
+| (text p. 629)   | `pis`       | "measure"          | manner, root transitive | agent-patient salient |
+| (text p. 629)   | `los`       | "punch"            | manner, root transitive | agent-patient salient |
 | ex. (1c) / (2)  | `kiim`      | "die"              | result               | patient-salient        |
 | ex. (2)         | `haanCease` | "stop, cease, heal" | result              | patient-salient        |
 | ex. (4)         | `luub`      | "fall"             | result               | patient-salient        |
@@ -81,24 +82,32 @@ def cheh : Root := ⟨"ć'eh", {.hasManner "shouting"}⟩
     ([lucy-1994] agent-salient list). -/
 def paak : Root := ⟨"paak", {.hasManner "weeding"}⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Agent-Patient Salient Roots (manner + result, take `=∅`)
--- ════════════════════════════════════════════════════
+/-! ### Agent-patient salient roots (root transitives, take `=∅`)
 
-/-- kuč "carry" — action with patient affected ([lucy-1994] ex. 1b).
-    Underived transitive; no derivation needed. -/
-def kuc : Root := ⟨"kuc",
-  {.hasManner "carrying", .becomesState "transported"}⟩
+These roots "require two arguments and refer to events involving the
+action of one entity on another" ([lucy-1994]) — their distinguishing
+property is *root transitivity* (`Root.Arity.selectsTheme`, recorded
+in `arity` below), not any B&K-G feature configuration. They carry no
+`becomesState` atom: 'measure' and 'punch' entail no change of state
+(B&K-G class *hit*-type surface-contact verbs as manner-only), so
+classing them by `manner + result` would wrongly make every Yukatek
+root transitive a Manner/Result-Complementarity violator. -/
 
-/-- p'is "measure" — action with patient affected ([lucy-1994] p. 629). -/
-def pis : Root := ⟨"pis",
-  {.hasManner "measuring", .becomesState "measured"}⟩
+/-- kuč "carry" — manner-of-action, lexically transitive
+    ([lucy-1994] ex. 1b). Underived transitive; no derivation
+    needed. -/
+def kuc : Root := ⟨"kuc", {.hasManner "carrying"}⟩
 
-/-- lo'š "punch" — action with patient affected ([lucy-1994] p. 629).
-    No `.contact` atom: contact is implicit in the manner of striking
-    rather than a B&K-G feature in Lucy's typology. -/
-def los : Root := ⟨"los",
-  {.hasManner "striking", .becomesState "punched"}⟩
+/-- p'is "measure" — manner-of-action, lexically transitive
+    ([lucy-1994] p. 629). No entailed change of state. -/
+def pis : Root := ⟨"pis", {.hasManner "measuring"}⟩
+
+/-- lo'š "punch" — manner-of-action, lexically transitive
+    ([lucy-1994] p. 629). Surface-contact manner without entailed
+    result, like B&K-G's *hit*-type. No `.contact` atom: contact is
+    implicit in the manner of striking rather than a B&K-G feature in
+    Lucy's typology. -/
+def los : Root := ⟨"los", {.hasManner "striking"}⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Patient-Salient Roots (result only, take `=s`)
@@ -195,6 +204,18 @@ def cin : Root := ⟨"cin", {.hasState "bent"}⟩
     relational positional semantics: "x is-seated [on y]"). -/
 def kul : Root := ⟨"kul", {.hasState "seated"}⟩
 
+/-! ### Root arity -/
+
+/-- The root transitives of this sample — [lucy-1994]'s `=∅` class
+    ("some 500 roots form a transitive in this way"; here the three
+    sampled members). -/
+def rootTransitives : List Root := [kuc, pis, los]
+
+/-- Coon arity for the sampled roots: the `=∅` class selects a theme
+    ([coon-2019]'s √TV); every other sampled root is intransitive. -/
+def arity (r : Root) : Root.Arity :=
+  if r ∈ rootTransitives then .selectsTheme else .noTheme
+
 /-! ### Per-root feature signatures -/
 
 /-! Agent-salient roots → `{.manner}`. -/
@@ -210,14 +231,14 @@ theorem cheh_signature :
 theorem paak_signature :
     paak.featureSignature = {.manner} := by decide
 
-/-! Agent-patient salient roots → `{.manner, .result}`. -/
+/-! Agent-patient salient (root-transitive) roots → `{.manner}`. -/
 
 theorem kuc_signature :
-    kuc.featureSignature = {.manner, .result} := by decide
+    kuc.featureSignature = {.manner} := by decide
 theorem pis_signature :
-    pis.featureSignature = {.manner, .result} := by decide
+    pis.featureSignature = {.manner} := by decide
 theorem los_signature :
-    los.featureSignature = {.manner, .result} := by decide
+    los.featureSignature = {.manner} := by decide
 
 /-! Patient-salient roots → `{.result}`. -/
 
@@ -276,10 +297,10 @@ theorem kul_signature :
     to any signature containing `.result`, and `.result` + `.state` to
     any containing `.cause`. No Yukatek root here carries a `.cause`
     atom, so only the result→state edge fires. Closure does *not*
-    change the Lucy 1994 salience class predicted by
-    `classOfSignature` for these roots: the agent / agentPatient /
-    patient arms ignore `.state` membership, and the positional arm
-    (signature exactly `{.state}`) is never produced by closure from a
+    change the Lucy 1994 salience class predicted by `classOf` for
+    these roots: arity is closure-invariant, the agent / patient arms
+    ignore `.state` membership, and the positional arm (signature
+    exactly `{.state}`) is never produced by closure from a
     non-positional base without `.cause`
     (cf. `Lucy1994.predictedClass_closure_invariant`). -/
 
@@ -290,13 +311,13 @@ theorem tziib_closed_signature :
     tziib.closedFeatureSignature = {.manner} := by decide
 
 theorem kuc_closed_signature :
-    kuc.closedFeatureSignature = {.state, .manner, .result} := by decide
+    kuc.closedFeatureSignature = {.manner} := by decide
 
 theorem pis_closed_signature :
-    pis.closedFeatureSignature = {.state, .manner, .result} := by decide
+    pis.closedFeatureSignature = {.manner} := by decide
 
 theorem los_closed_signature :
-    los.closedFeatureSignature = {.state, .manner, .result} := by decide
+    los.closedFeatureSignature = {.manner} := by decide
 
 theorem kiim_closed_signature :
     kiim.closedFeatureSignature = {.state, .result} := by decide

@@ -2,6 +2,7 @@ import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Lexical.LevinTheory
 import Linglib.Semantics.Lexical.Roots.Template
+import Linglib.Semantics.Lexical.Roots.Arity
 import Linglib.Semantics.Lexical.Roots.Profile
 
 open Semantics.Lexical
@@ -95,21 +96,6 @@ def RootType.entailsChange : RootType → Bool
   | .propertyConcept => false
   | .result => true
 
-/-- Whether a root selects an internal (theme) argument.
-
-    [coon-2019]: the central division of labor is that **roots determine
-    internal arguments** while **functional heads (v/Voice⁰) determine
-    external arguments**. This is orthogonal to change entailment. -/
-inductive RootArity where
-  | selectsTheme  -- root obligatorily takes internal argument (Coon's √TV)
-  | noTheme       -- no internal argument selection (Coon's √ITV, √NOM, √POS)
-  deriving DecidableEq, Repr
-
-/-- Does this root arity entail an obligatory internal argument? -/
-def RootArity.hasInternalArg : RootArity → Bool
-  | .selectsTheme => true
-  | .noTheme => false
-
 /-- The semantic denotation domain of a root ([coon-2019], (3);
     extended by [hanink-koontz-garboden-2025]).
 
@@ -157,7 +143,7 @@ def RootDenotationType.hasIndivArg : RootDenotationType → Bool
     √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
 structure RootClassification where
   /-- Does this root select an internal argument? -/
-  arity : RootArity
+  arity : Root.Arity
   /-- Does this root lexically entail prior change? -/
   changeType : RootType
   /-- Semantic denotation domain ([coon-2019], (3)). Optional — not all
@@ -1402,7 +1388,7 @@ theorem change_does_not_determine_arity :
     the derived verb. No functional head modifies it. -/
 theorem theme_persistence (r : RootClassification) (h : r.arity = .selectsTheme) :
     r.arity.hasInternalArg = true := by
-  simp [h, RootArity.hasInternalArg]
+  simp [h, Root.Arity.hasInternalArg]
 
 /-- Change entailment determines markedness in the unified Root. -/
 theorem root_markedness_from_change (r : RootClassification) :
