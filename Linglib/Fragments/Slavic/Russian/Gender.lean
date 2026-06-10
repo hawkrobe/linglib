@@ -187,7 +187,7 @@ theorem declClass_ne_gender :
 
 /-- Russian's three controller genders — the carrier of its
     `Gender.System` ([corbett-1991]; [kramer-2015] ch. 7). -/
-inductive RussianGender where
+inductive Value where
   | masc
   | fem
   | neut
@@ -202,7 +202,7 @@ inductive PastConcord where
   deriving DecidableEq, Repr
 
 /-- Per-gender past-tense concord. -/
-def RussianGender.pastConcord : RussianGender → PastConcord
+def Value.pastConcord : Value → PastConcord
   | .masc => .zero
   | .fem  => .a
   | .neut => .o
@@ -211,7 +211,7 @@ def RussianGender.pastConcord : RussianGender → PastConcord
     labelling; neuter is the morphosyntactic default (plain-*n* roots
     like *vino* surface neuter — [kramer-2015]'s ch. 7 derivation,
     exercised at `Kramer2020.russian_licensing_vino`). -/
-def system : Gender.System RussianGender where
+def system : Gender.System Value where
   label := fun g => match g with
     | .masc => some .masculine
     | .fem  => some .feminine
@@ -219,7 +219,7 @@ def system : Gender.System RussianGender where
   default := .neut
 
 /-- Comparative label → controller gender (ingestion). -/
-def RussianGender.ofLabel : Gender → RussianGender
+def Value.ofLabel : Gender → Value
   | .feminine => .fem
   | .neuter   => .neut
   | _         => .masc
@@ -228,11 +228,11 @@ def RussianGender.ofLabel : Gender → RussianGender
     the hybrid *vrač* this is the morphological masculine; the
     female-referent agreement alternation lives in
     `Studies/Kramer2020.lean` §7. -/
-def RussianNoun.controllerGender (n : RussianNoun) : RussianGender :=
-  RussianGender.ofLabel n.attestedGender
+def RussianNoun.controllerGender (n : RussianNoun) : Value :=
+  Value.ofLabel n.attestedGender
 
 /-- The assigned system: every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned RussianNoun RussianGender :=
+def assigned : Gender.System.Assigned RussianNoun Value :=
   { system with assign := RussianNoun.controllerGender }
 
 /-- The carrier is faithful to the past-tense concord evidence:
@@ -240,7 +240,7 @@ def assigned : Gender.System.Assigned RussianNoun RussianGender :=
     target. [corbett-1991]'s genders-are-agreement-classes criterion,
     discharged via `Gender.Faithful`. -/
 theorem faithful_pastConcord :
-    Gender.Faithful (fun (g : RussianGender) (_ : Unit) => g.pastConcord) := by decide
+    Gender.Faithful (fun (g : Value) (_ : Unit) => g.pastConcord) := by decide
 
 /-- Label ∘ assign recovers the attested gender across the inventory. -/
 theorem system_label_assign :
@@ -254,6 +254,6 @@ theorem system_label_assign :
 theorem assigned_semanticCore :
     assigned.SemanticCore {n | n.isNaturalGender = true}
       (·.attestedGender) := by
-  exact ⟨⟨mat', rfl⟩, fun a b _ _ h => congrArg RussianGender.ofLabel h⟩
+  exact ⟨⟨mat', rfl⟩, fun a b _ _ h => congrArg Value.ofLabel h⟩
 
 end Russian.Gender
