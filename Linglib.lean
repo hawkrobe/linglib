@@ -2851,27 +2851,6 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 -- under the cross-theory meta-bridges convention.
 import Linglib.Syntax.Minimalist.VoiceProjection
 -- Per-language Gender Fragments (Corbett 1991 sample)
-import Linglib.Fragments.English.Gender
-import Linglib.Fragments.Mandarin.Gender
-import Linglib.Fragments.Japanese.Gender
-import Linglib.Fragments.Turkish.Gender
-import Linglib.Fragments.Finnish.Gender
-import Linglib.Fragments.Korean.Gender
-import Linglib.Fragments.Quechua.Gender
-import Linglib.Fragments.French.Gender
-import Linglib.Fragments.Hindi.Gender
-import Linglib.Fragments.Irish.Gender
-import Linglib.Fragments.Hebrew.Gender
-import Linglib.Fragments.Latin.Gender
-import Linglib.Fragments.Romanian.Gender
-import Linglib.Fragments.Dyirbal.Gender
-import Linglib.Fragments.Archi.Gender
-import Linglib.Fragments.Georgian.Gender
-import Linglib.Fragments.Swahili.Gender
-import Linglib.Fragments.Zulu.Gender
-import Linglib.Fragments.Fula.Gender
-import Linglib.Fragments.Xhosa.Gender
-import Linglib.Fragments.Shona.Gender
 -- Per-language Evidentiality Fragments (Aikhenvald 2004 sample)
 import Linglib.Fragments.English.Evidentiality
 import Linglib.Fragments.French.Evidentiality
