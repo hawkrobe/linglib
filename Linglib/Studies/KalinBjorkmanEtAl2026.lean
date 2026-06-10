@@ -2,7 +2,7 @@ import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Phonology.Prosodic.Word
-import Linglib.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Containment.Superset
 
 -- ============================================================================
 -- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,
@@ -530,14 +530,24 @@ theorem mappingTypes_distinct :
 
 [caha-2009]: the fseq-based Superset Principle derives the *ABA
 constraint. If entry β beats entry α for case Y, β also beats α
-for all cases below Y on the fseq. -/
+for all cases below Y on the fseq —
+`Morphology.Containment.isContiguous_spellout` in general. -/
 
-/-- The *ABA derivation is verified by example:
-    attempting an ABA lexicon produces ABB instead. -/
+open Morphology.Containment in
+/-- An attempted ABA lexicon — "A" sized for the bottom grade, "B" for
+    the top — produces ABB instead: the larger entry also wins the
+    middle grade, and its pattern is contiguous by
+    `isContiguous_spellout`. -/
 theorem starABA_verified :
-    Morphology.Nanosyntax.abaViolation
-      Morphology.Nanosyntax.attemptedABA 0 1 2 = false := by
-  native_decide
+    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 0
+      = some "A" ∧
+    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 1
+      = some "B" ∧
+    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 2
+      = some "B" ∧
+    IsContiguous (spellout
+      [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩]) :=
+  ⟨by decide, by decide, by decide, isContiguous_spellout (by decide)⟩
 
 /-! ### 4b. PFM's Paradigm Function architecture
 
