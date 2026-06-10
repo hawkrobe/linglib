@@ -259,7 +259,7 @@ theorem strong_weak_differ_only_in_performativity :
 /-! ## §6. Cross-Linguistic Modal Changes
 
 Diachronic modal change data and directionality theorems are now in
-`Diachronic.ModalChange`, which imports this file and uses
+`Studies/Narrog2010.lean`, which imports this file and uses
 `NarrogRegion` and `SpeakerOrientationLevel` to formalize the claim
 that modal meanings always shift upward in the semantic map. -/
 

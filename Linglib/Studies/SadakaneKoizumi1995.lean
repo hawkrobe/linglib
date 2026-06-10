@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
-import Linglib.Diachronic.CaseGrammaticalization
+import Linglib.Typology.CaseGrammaticalization
 /-!
 # Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
 
@@ -75,7 +75,7 @@ acquired only after 3;0.
 ## Heine 2009 grammaticalization
 
 The four S&K classifications align partially with Heine's case
-grammaticalization cline (`Diachronic.CaseGramStage`: lexical → adposition →
+grammaticalization cline (`CaseGramStage`: lexical → adposition →
 caseAffix → lost). Both case-marker *ni* and postposition *ni* are at
 `.adposition` stage in modern Japanese (morphologically free), but
 case-marker *ni* is more grammaticalized within that stage (no inherent
@@ -499,7 +499,7 @@ theorem case_marker_acquired_before_postposition :
 
 /-! ## §9 Heine grammaticalization stage projection
 
-Connects S&K's classification to `Diachronic.CaseGramStage` (Heine 2009's
+Connects S&K's classification to `CaseGramStage` (Heine 2009's
 case grammaticalization cline: lexical → adposition → caseAffix → lost).
 Both case-marker *ni* and postposition *ni* are at `.adposition` stage
 in modern Japanese (morphologically free); the cline doesn't capture
@@ -514,7 +514,7 @@ namespace Classification
 /-- Heine grammaticalization stage projection. Both case-marker and
     postposition *ni* are at `.adposition` in modern Japanese; copula *ni*
     is outside the case cline (`none`). -/
-def gramStage : Classification → Option Diachronic.CaseGramStage
+def gramStage : Classification → Option CaseGramStage
   | .dativeCaseMarker => some .adposition
   | .postposition     => some .adposition
   | .niInsertion      => some .adposition

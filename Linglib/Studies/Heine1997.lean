@@ -1,5 +1,5 @@
 import Linglib.Typology.Possession
-import Linglib.Diachronic.Grammaticalization
+import Linglib.Typology.Grammaticalization
 import Linglib.Semantics.ArgumentStructure.Relational
 import Linglib.Data.WALS.Features.F117A
 import Linglib.Fragments.Slavic.Russian.Possession
@@ -41,14 +41,14 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 
 - `Typology.Possession.PossessionSource`: the eight schemas (substrate)
 - `Typology.Possession.PossessiveNotion`: the seven target notions (substrate)
-- `Diachronic.Grammaticalization.GramStage`: the verbal cline
+- `Grammaticalization.GramStage`: the verbal cline
 - `Semantics.ArgumentStructure.Relational`: π operator and
   arity tracking — connects to which schemas have possessor-as-subject
   (Action, Companion = transitive/Pred2) vs possessee-as-subject (rest)
 -/
 
 open Typology.Possession
-open Diachronic.Grammaticalization
+open Grammaticalization
 open Semantics.ArgumentStructure.Relational (Pred1 Pred2 SemType)
 
 namespace Heine1997

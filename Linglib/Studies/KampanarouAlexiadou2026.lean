@@ -490,7 +490,7 @@ def diachronicPath : List String :=
     "*from*-possessor" predicative constructions, not for the inflection→PP
     reanalysis K&A document. This is a substrate gap; the honest move is
     to negate Heine fit rather than misuse `.source`.
-    TODO: extend Diachronic substrate when 2nd consumer materializes
+    TODO: add diachronic-trajectory substrate (Typology/) when 2nd consumer materializes
     (Mertyris 2023 + K&A 2026 = current candidates). -/
 theorem ka2026_smg_to_gg_not_in_heine_typology :
     -- K&A's diachronic claim (paraphrased): the SMG → GG trajectory is

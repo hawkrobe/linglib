@@ -12,7 +12,7 @@ input/output types. Used as substrate by:
 - `Pragmatics.AsymmetricCommunication` — speaker-listener
   asymmetric setups (variation, iterated learning)
 - `ZaslavskyEtAl2019` — color naming
-- `Diachronic.Lexicalization` — listener model conditioned on `L`
+- `Studies/XuEtAl2024.lean` — listener model conditioned on `L`
 - RSA literal speaker S₀ (the channel) and L₀ (the posterior)
 
 The derived quantities (`marginalWord`, `posterior`, `commPrecision`,

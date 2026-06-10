@@ -1,6 +1,7 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Fragments.English.Binominals
+import Linglib.Studies.Traugott2010
 
 /-!
 # ten Wolde (2023): The English Binominal Noun Phrase
@@ -242,5 +243,55 @@ theorem entailment_summary :
   constructor
   · exact bi_entails_em _ _ _ _ _ _
   · constructor <;> native_decide
+
+-- ═══════════════════════════════════════════════════════════════
+-- § 5: Binominal Subjectification
+-- ═══════════════════════════════════════════════════════════════
+
+/-! ### The EBNP → EM → BI cline as subjectification
+
+[ten-wolde-2023] §4.5: the EBNP → EM → BI transitions are driven by
+subjectification ([traugott-2010]) — N₁ shifts from ascribing
+objective/physical properties to expressing the speaker's subjective
+evaluation. Steps use `Traugott2010.SubjectificationStep`. -/
+
+open Traugott2010 (SubjectificationStep)
+
+/-- Subjectification steps in the binominal (N₁-of-N₂) domain. -/
+def binominalSubjectificationSteps : List SubjectificationStep :=
+  [ -- N+PP/HC → EBNP: the key subjectification step in the binominal domain.
+    -- N₁ shifts from denoting objective referential properties to expressing
+    -- the speaker's evaluative attitude.
+    { expression := "N₁ in of-binominals"
+      sourceMeaning := "N₁ denotes referential property (N+PP: the beast of the field)"
+      targetMeaning := "N₁ ascribes evaluative property (EBNP: that idiot of a doctor)"
+      sourceLevel := .nonSubjective
+      targetLevel := .subjective
+      directed := by decide }
+  , -- EBNP → EM: N₁ bleaches from full gradable predicate to pure
+    -- speaker evaluation. Subjectivity level maintained but semantics bleached.
+    { expression := "[N₁ of a] in of-binominals"
+      sourceMeaning := "N₁ ascribes evaluative property (EBNP: a beast of a man)"
+      targetMeaning := "N₁ expresses speaker's subjective evaluation (EM: a hell of a game)"
+      sourceLevel := .subjective
+      targetLevel := .subjective
+      directed := by decide }
+  , -- EM → BI: N₁ further bleaches to degree intensifier.
+    -- Subjectivity level maintained; the change is syntactic (shifts into AdjP).
+    { expression := "[N₁ of a] in of-binominals"
+      sourceMeaning := "N₁ as evaluative modifier (EM: a hell of a time)"
+      targetMeaning := "N₁ as degree intensifier (BI: a hell of a good time)"
+      sourceLevel := .subjective
+      targetLevel := .subjective
+      directed := by decide }
+  ]
+
+/-- The N+PP → EBNP step is a genuine subjectification (nonSubjective → subjective);
+    the later steps maintain subjectivity while bleaching semantics further. -/
+theorem binominal_steps_directed :
+    ∀ s ∈ binominalSubjectificationSteps, s.sourceLevel ≤ s.targetLevel :=
+  fun s hs => by
+    simp [binominalSubjectificationSteps] at hs
+    rcases hs with rfl | rfl | rfl <;> decide
 
 end TenWolde2023

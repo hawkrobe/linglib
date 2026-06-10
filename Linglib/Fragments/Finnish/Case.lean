@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Diachronic.CaseGrammaticalization
+import Linglib.Typology.CaseGrammaticalization
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Syntax.Case.Order
 open Morphology.Case.Allomorphy

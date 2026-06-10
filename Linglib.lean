@@ -316,7 +316,7 @@ import Linglib.Syntax.Adposition.Basic
 import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
-import Linglib.Diachronic.CaseGrammaticalization
+import Linglib.Typology.CaseGrammaticalization
 import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
@@ -2694,11 +2694,8 @@ import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Studies.Haspelmath2001
-import Linglib.Diachronic.Areal
-import Linglib.Diachronic.Grammaticalization
-import Linglib.Diachronic.Lexicalization
-import Linglib.Diachronic.ModalChange
-import Linglib.Diachronic.Subjectification
+import Linglib.Typology.Grammaticalization
+import Linglib.Studies.Traugott2010
 import Linglib.Studies.BellerGerstenberg2025
 import Linglib.Studies.KonukEtAl2026
 import Linglib.Studies.KoontzGarboden2009

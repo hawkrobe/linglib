@@ -19,9 +19,6 @@ Table 29.6 row pattern). Multi-step extension is just
 two-step or n-step predicate to maintain.
 -/
 
-namespace Diachronic
-
-
 /-! ## Case-marker cline -/
 
 /-- Source category of a case marker on the grammaticalization cline
@@ -29,7 +26,7 @@ namespace Diachronic
 
     noun, verb (> adverb) > adposition > case affix > loss
 
-    Parallel to `Diachronic.Grammaticalization.GramStage` (for verbal
+    Parallel to `Grammaticalization.GramStage` (for verbal
     elements), but specific to case-marker development. -/
 inductive CaseGramStage where
   /-- Lexical noun or verb source (§29.2.1–29.2.2). -/
@@ -59,7 +56,7 @@ theorem caseGramCline_ordered :
     CaseGramStage.caseAffix < CaseGramStage.lost :=
   ⟨by decide, by decide, by decide⟩
 
-end Diachronic
+
 
 /-! ## Case-extension dot-methods
 
