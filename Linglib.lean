@@ -1669,7 +1669,6 @@ import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Studies.FrancikClark1985
 import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.YoonEtAl2020
-import Linglib.Studies.YoonEtAl2020PMF
 import Linglib.Studies.GiulianelliEtAl2026
 import Linglib.Studies.ChatzikyriakidisLuo2020
 import Linglib.Studies.Gotham2017
