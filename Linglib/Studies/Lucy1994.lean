@@ -201,7 +201,7 @@ theorem positional_distinct_from_motion :
 /-! ### Closure robustness -/
 
 /-- The class predicted from a root's *closed* feature signature
-    (the collocational closure `FeatureSignature.close` of the derived
+    (the collocational closure `Root.FeatureSignature.close` of the derived
     signature). -/
 def closedPredictedClass (r : Root) : Option SalienceClass :=
   classOfSignature r.closedFeatureSignature

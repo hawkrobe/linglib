@@ -46,73 +46,73 @@ transitivisers respect the diagnostic. They appear directly as the
 operator-applicability ↔ salience-class connection true *by
 construction* rather than only provable per-case. -/
 
-namespace FeatureSignature
+namespace Root.FeatureSignature
 
 /-- Agent-salient: manner without result (intransitive activity that
     requires =t to transitivise; [lucy-1994]). -/
-def IsAgentSalient (s : FeatureSignature) : Prop :=
+def IsAgentSalient (s : Root.FeatureSignature) : Prop :=
   .manner ∈ s ∧ .result ∉ s
 
-instance (s : FeatureSignature) : Decidable s.IsAgentSalient :=
+instance (s : Root.FeatureSignature) : Decidable s.IsAgentSalient :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Agent-patient salient: manner *and* result (already lexically
     transitive; [lucy-1994]). -/
-def IsAgentPatientSalient (s : FeatureSignature) : Prop :=
+def IsAgentPatientSalient (s : Root.FeatureSignature) : Prop :=
   .manner ∈ s ∧ .result ∈ s
 
-instance (s : FeatureSignature) : Decidable s.IsAgentPatientSalient :=
+instance (s : Root.FeatureSignature) : Decidable s.IsAgentPatientSalient :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Patient-salient: result without manner (intransitive change-of-state
     that requires =s to transitivise; [lucy-1994]). -/
-def IsPatientSalient (s : FeatureSignature) : Prop :=
+def IsPatientSalient (s : Root.FeatureSignature) : Prop :=
   .manner ∉ s ∧ .result ∈ s
 
-instance (s : FeatureSignature) : Decidable s.IsPatientSalient :=
+instance (s : Root.FeatureSignature) : Decidable s.IsPatientSalient :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Positional: pure stative root — state without manner, result, or
     cause (requires `-tal` for the inchoative; [lucy-1994]). -/
-def IsPositional (s : FeatureSignature) : Prop :=
+def IsPositional (s : Root.FeatureSignature) : Prop :=
   s = {.state}
 
-instance (s : FeatureSignature) : Decidable s.IsPositional :=
+instance (s : Root.FeatureSignature) : Decidable s.IsPositional :=
   inferInstanceAs (Decidable (_ = _))
 
-end FeatureSignature
+end Root.FeatureSignature
 
 /-! Per-root convenience versions, lifted via `featureSignature`. -/
 
 namespace Root
 
-/-- Agent-salient root (cf. `FeatureSignature.IsAgentSalient`). -/
+/-- Agent-salient root (cf. `Root.FeatureSignature.IsAgentSalient`). -/
 def IsAgentSalient (r : Root) : Prop :=
   r.featureSignature.IsAgentSalient
 
 instance (r : Root) : Decidable r.IsAgentSalient :=
-  inferInstanceAs (Decidable (FeatureSignature.IsAgentSalient _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.IsAgentSalient _))
 
 /-- Agent-patient salient root. -/
 def IsAgentPatientSalient (r : Root) : Prop :=
   r.featureSignature.IsAgentPatientSalient
 
 instance (r : Root) : Decidable r.IsAgentPatientSalient :=
-  inferInstanceAs (Decidable (FeatureSignature.IsAgentPatientSalient _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.IsAgentPatientSalient _))
 
 /-- Patient-salient root. -/
 def IsPatientSalient (r : Root) : Prop :=
   r.featureSignature.IsPatientSalient
 
 instance (r : Root) : Decidable r.IsPatientSalient :=
-  inferInstanceAs (Decidable (FeatureSignature.IsPatientSalient _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.IsPatientSalient _))
 
 /-- Positional root. -/
 def IsPositional (r : Root) : Prop :=
   r.featureSignature.IsPositional
 
 instance (r : Root) : Decidable r.IsPositional :=
-  inferInstanceAs (Decidable (FeatureSignature.IsPositional _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.IsPositional _))
 
 end Root
 
@@ -125,7 +125,7 @@ end Root
     requires the pure-state signature: positional roots are stative
     configurations (orientation, posture, location) with no causing
     event. -/
-def classOfSignature (s : FeatureSignature) : Option SalienceClass :=
+def classOfSignature (s : Root.FeatureSignature) : Option SalienceClass :=
   if s.IsAgentSalient then some .agent
   else if s.IsAgentPatientSalient then some .agentPatient
   else if s.IsPatientSalient then some .patient
@@ -152,7 +152,7 @@ theorem predictedSalience_depends_only_on_signature
     no-manner-no-result signatures other than `{state}` fall outside
     all four; see `classOfSignature_eq_none_iff`.) -/
 theorem classes_pairwise_disjoint :
-    ∀ s : FeatureSignature,
+    ∀ s : Root.FeatureSignature,
       ¬ (s.IsAgentSalient ∧ s.IsAgentPatientSalient) ∧
       ¬ (s.IsAgentSalient ∧ s.IsPatientSalient) ∧
       ¬ (s.IsAgentSalient ∧ s.IsPositional) ∧
@@ -166,7 +166,7 @@ theorem classes_pairwise_disjoint :
     no-manner-no-result signatures other than pure `{state}` are
     unclassified by Lucy's Yukatek diagnostic. -/
 theorem classOfSignature_eq_none_iff :
-    ∀ s : FeatureSignature,
+    ∀ s : Root.FeatureSignature,
       classOfSignature s = none ↔
         ¬ s.IsAgentSalient ∧ ¬ s.IsAgentPatientSalient ∧
         ¬ s.IsPatientSalient ∧ ¬ s.IsPositional := by

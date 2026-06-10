@@ -14,7 +14,7 @@ The `LevinClass` enum and its classification data (`MeaningComponents`,
 `meaningComponents`, `predictsUnaccusative`, `isVerbOfCreation`) are
 defined in `Core/Lexical/VerbClass.lean`.
 
-This file provides the theoretical content that depends on `FeatureSignature`:
+This file provides the theoretical content that depends on `Root.FeatureSignature`:
 root signature mapping, root–MC bridge enums, and universal consistency
 theorems.
 
@@ -36,7 +36,7 @@ components, plus universal consistency theorems.
 
 section LevinClassMethods
 open Semantics.Lexical
-open FeatureSignature
+open Root.FeatureSignature
 namespace Semantics.Lexical
 
 /-- Root feature signature for each Levin class.
@@ -51,7 +51,7 @@ namespace Semantics.Lexical
 
     Classes marked (default) use `minimal` as a conservative placeholder
     pending detailed study under B&KG's framework. -/
-def LevinClass.rootEntailments : LevinClass → FeatureSignature
+def LevinClass.rootEntailments : LevinClass → Root.FeatureSignature
   -- §9 Putting: template provides CAUSE+BECOME; root content varies
   | .put => minimal                -- (default)
   | .funnel => pureManner          -- manner of channeling
@@ -368,7 +368,7 @@ theorem break_manner_none :
 
 /-- Root structural contribution to meaning components.
     Maps result → changeOfState and manner → mannerSpec. -/
-def _root_.FeatureSignature.structuralMC (re : FeatureSignature) : MeaningComponents :=
+def _root_.Root.FeatureSignature.structuralMC (re : Root.FeatureSignature) : MeaningComponents :=
   { changeOfState := decide (.result ∈ re)
   , contact := false
   , motion := false

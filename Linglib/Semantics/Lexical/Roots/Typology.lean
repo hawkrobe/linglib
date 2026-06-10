@@ -11,7 +11,7 @@ stated for roots by delegation to the signature level
   [arad-2005]): meaning introduced by a functional head — change,
   cause — can never be part of a root's meaning. As an order
   statement: every root's signature lies below
-  `FeatureSignature.ontological`.
+  `Root.FeatureSignature.ontological`.
 - **Manner/Result Complementarity** ([rappaport-hovav-levin-2010]): a
   single root entails a manner *or* a result, never both. As an order
   statement: no root's signature lies above `{manner, result}`.
@@ -29,7 +29,7 @@ namespace Root
 
 /-- A root *violates* Bifurcation iff it itself carries templatic
     (eventive) meaning — change of state or cause
-    (`FeatureSignature.violatesBifurcation_iff`). The Bifurcation
+    (`Root.FeatureSignature.violatesBifurcation_iff`). The Bifurcation
     Thesis ([embick-2009]; [arad-2005]) is the universal claim that no
     root does. (The ditransitive prepositional heads P_loc and P_have,
     which [beavers-koontz-garboden-2020] also treat as templatic, are
@@ -38,7 +38,7 @@ def ViolatesBifurcation (r : Root) : Prop :=
   r.featureSignature.ViolatesBifurcation
 
 instance (r : Root) : Decidable r.ViolatesBifurcation :=
-  inferInstanceAs (Decidable (FeatureSignature.ViolatesBifurcation _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.ViolatesBifurcation _))
 
 /-- Negation of `ViolatesBifurcation`: the root carries only
     ontological entailments (state, manner). -/
@@ -52,7 +52,7 @@ instance (r : Root) : Decidable r.RespectsBifurcation :=
     its signature is bounded by the ontological kinds. -/
 theorem respectsBifurcation_iff_le {r : Root} :
     r.RespectsBifurcation ↔
-      r.featureSignature ≤ FeatureSignature.ontological :=
+      r.featureSignature ≤ Root.FeatureSignature.ontological :=
   not_not
 
 /-- A root has both manner and result entailments — Manner/Result
@@ -62,7 +62,7 @@ def HasMannerAndResult (r : Root) : Prop :=
   r.featureSignature.HasMannerAndResult
 
 instance (r : Root) : Decidable r.HasMannerAndResult :=
-  inferInstanceAs (Decidable (FeatureSignature.HasMannerAndResult _))
+  inferInstanceAs (Decidable (Root.FeatureSignature.HasMannerAndResult _))
 
 /-- Negation of `HasMannerAndResult`. -/
 def RespectsMannerResultComplementarity (r : Root) : Prop :=
