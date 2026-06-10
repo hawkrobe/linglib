@@ -56,7 +56,7 @@ Adjectives.lean`), using the `suppletion` field on each entry to
 encode empirically observed root-class patterns.
 -/
 
-/-! ### Scale-Generation Substrate (was Morphology/Core/ScaleFromParadigm.lean) -/
+/-! ### Scale-Generation Substrate -/
 
 /-! Connects morphological infrastructure (`Morphology`) to scalar-
 alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
@@ -333,7 +333,7 @@ theorem latin_wellformed :
 
 /-- Latin is *not* terminal — and must not be: the terminal-adjacent
     plateau (`realize_const_of_terminal_adjacent`) would force
-    CMPR = SPRL, wrongly excluding ABC. The portmanteau item is what
+    CMPR = SPRL, wrongly excluding ABC. The portmanteau rule is what
     escapes it. -/
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
@@ -350,17 +350,19 @@ theorem latin_sprl_needs_portmanteau :
     ∃ it ∈ latinBonus, winner latinBonus 2 = some it ∧ 0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
-/-- The nanosyntax lexicon for Latin GOOD ([caha-2009]-style):
-    context-free entries storing successively larger constituents,
-    competing under the Superset Principle. -/
+/-- The nanosyntax lexicon for Latin GOOD, in the [caha-2009] method
+    (the degree application is later literature; see
+    `Morphology/Containment/Superset.lean`): context-free entries
+    storing successively larger constituents, competing under the
+    Superset Principle. -/
 def latinBonusNS : List (ExponenceRule 3 String) :=
   [⟨"bon", 0, none⟩, ⟨"mel", 1, none⟩, ⟨"opt", 2, none⟩]
 
 theorem latin_ns_contextFree : ContextFree latinBonusNS := by decide
 
-/-- Superset spellout derives the same ABC paradigm with no portmanteau
-    or contextual apparatus — constituent size alone does the work
-    DM's ch. 5 machinery does. -/
+/-- Superset spellout derives the same ABC paradigm with no contextual
+    apparatus — the entries are portmanteaus by constituent size alone,
+    doing the work of DM's context-restricted ch. 5 machinery. -/
 theorem latin_ns_spellout :
     spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by decide
 
@@ -368,7 +370,8 @@ theorem latin_ns_spellout :
     the DM vocabulary (204) realize the same paradigm cell for cell
     (the concrete face of
     `Morphology.Containment.spelloutGenerable_iff_generable`). -/
-theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus := by decide
+theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
+  latin_ns_spellout.trans latin_bonus_realize.symm
 
 /-- The hypothetical AAB vocabulary ([bobaljik-2012] (201)): `gor-`
     restricted to the superlative with no comparative-level
@@ -422,8 +425,8 @@ example : realizeIn ⟨0⟩ englishGood 1 = realizeIn ⟨0⟩ englishGood 0 :=
 
 /-! ### Scale Generation from Degree Paradigms -/
 
-/-! `Morphology.ScaleFromParadigm` (§ 0 above) derives Horn scales
-from degree paradigms: a stem with comparative + superlative rules
+/-! `ScaleFromParadigm` (the Scale-Generation Substrate section above)
+derives Horn scales from degree paradigms: a stem with comparative + superlative rules
 yields a 3-point scale `[positive, comparative, superlative]`. The tests
 below verify the extractor on the English adjective fragment. -/
 

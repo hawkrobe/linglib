@@ -357,7 +357,8 @@ theorem number_partition_splits_pl_dl :
     partition. (Trivially so — `[0, 0, 1]` is *ABA-contiguous in the
     universal sense, and `IsContiguousWithin` is strictly weaker.
     The substantive claim — that domain-aware DM generates this
-    pattern — requires the deferred `LocalVIRule` extension.) -/
+    pattern — requires the deferred domain-relativized condition; see the closing
+    section.) -/
 theorem wardaman_3sg_within_case_domain :
     IsContiguousWithin caseDomainPartition [0, 0, 1] := by decide
 

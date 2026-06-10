@@ -30,10 +30,10 @@ hypothesis set, mirroring the book's cost accounting:
   `Studies/Bobaljik2012.lean`.
 * Completeness (`isContiguous_iff_generable`): generable = contiguous
   over terminal antihomophonous vocabularies.
-* The plateau (`realize_const_of_terminal_adjacent`): terminal items +
+* The plateau (`realize_const_of_terminal_adjacent`): terminal rules +
   adjacent contexts generate only `{AAA, ABB}` — the
   Bobaljik-minus-portmanteaux fragment, which over-excludes the
-  attested ABC (Latin *bon- ~ mel- ~ opt-*); portmanteau items repair it.
+  attested ABC (Latin *bon- ~ mel- ~ opt-*); portmanteau rules repair it.
 * CSG2 / *AAB (`csg2`): Antihomophony + `Grounded` (the book's
   markedness condition (202)). The book blocks the two AAB routes by
   two mechanisms — adjacency for root-rules conditioned across an
@@ -57,9 +57,11 @@ hypothesis set, mirroring the book's cost accounting:
   `realize_const_of_terminal_adjacent`, `csg2`,
   `exists_portmanteau_of_ne`
 
-Synthetic/analytic structure (Merger) lives in
-`Morphology/Containment/Merger.lean`; the n = 3 degree instantiations
-with the book's worked vocabularies in `Studies/Bobaljik2012.lean`.
+The dual Superset engine lives in
+`Morphology/Containment/Superset.lean`; synthetic/analytic structure
+(Merger) in `Morphology/Containment/Merger.lean`; the n = 3 degree
+instantiations with the book's worked vocabularies in
+`Studies/Bobaljik2012.lean`.
 -/
 
 namespace Morphology.Containment
@@ -76,8 +78,9 @@ when `spans > 0` — and applies only when the (optional) conditioning
 head `context` is present in the structure. DM vocabulary items are
 the `Terminal`-restricted special case; nanosyntax lexical entries
 share the context-free span format but pair it with Superset-based
-selection rather than this file's containment-directed `AppliesAt`,
-so the insertion semantics differs.
+selection (`Morphology/Containment/Superset.lean`) rather than this
+file's containment-directed `AppliesAt`, so the insertion semantics
+differs.
 Latin ([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
 `⟨mel, 0, some 1⟩`, the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
 structure ExponenceRule (n : ℕ) (F : Type*) where
@@ -85,20 +88,20 @@ structure ExponenceRule (n : ℕ) (F : Type*) where
   exponent : F
   /-- Upper end of the exponed initial span `[0, spans]`. -/
   spans : Fin n
-  /-- Head whose presence conditions the item, if any. -/
+  /-- Head whose presence conditions the rule, if any. -/
   context : Option (Fin n)
   deriving DecidableEq, Repr
 
 namespace ExponenceRule
 
-/-- The least grade at which the item is applicable: everything the
-item mentions — exponed span and conditioning context — must be
+/-- The least grade at which the rule is applicable: everything the
+rule mentions — exponed span and conditioning context — must be
 contained in the structure. -/
 def threshold (it : ExponenceRule n F) : Fin n :=
   max it.spans (it.context.getD it.spans)
 
-/-- An item applies at grade `g` when grade `g`'s structure contains
-everything the item mentions. -/
+/-- A rule applies at grade `g` when grade `g`'s structure contains
+everything the rule mentions. -/
 def AppliesAt (it : ExponenceRule n F) (g : Fin n) : Prop :=
   it.threshold ≤ g
 
@@ -134,7 +137,7 @@ needs; vocabularies violating a condition witness the corresponding
 unattested pattern (see the worked examples in
 `Studies/Bobaljik2012.lean`). -/
 
-/-- No portmanteaux: every item expones the bare root. -/
+/-- No portmanteaux: every rule expones the bare root. -/
 def Terminal (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, (it.spans : ℕ) = 0
 
@@ -180,7 +183,7 @@ instance (v : List (ExponenceRule n F)) : Decidable (Grounded v) := by
 
 /-! ### Elsewhere selection -/
 
-/-- The items applicable at grade `g`, in vocabulary order. -/
+/-- The rules applicable at grade `g`, in vocabulary order. -/
 def applicable (v : List (ExponenceRule n F)) (g : Fin n) : List (ExponenceRule n F) :=
   v.filter (λ it => it.threshold ≤ g)
 
@@ -223,7 +226,7 @@ theorem maxThreshold_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
 /-- The key transfer lemma: a winning threshold persists downward as
 long as it stays applicable. With monotone applicability this is what
 makes Elsewhere selection plateau between grades. -/
-theorem maxThreshold_eq_coe_of_le {v : List (ExponenceRule n F)} {g g' m : Fin n}
+theorem maxThreshold_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
     (h : maxThreshold v g' = ↑m) (hm : m ≤ g) (hg : g ≤ g') :
     maxThreshold v g = ↑m := by
   obtain ⟨it, hitv, hτ, -⟩ := exists_of_maxThreshold_eq_coe h
@@ -239,10 +242,10 @@ theorem maxThreshold_eq_bot_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
   obtain ⟨hv, hle⟩ := mem_applicable.mp hit
   exact h it (mem_applicable.mpr ⟨hv, le_trans hle hg⟩)
 
-/-- The Elsewhere winner at grade `g`: the first item attaining the
+/-- The Elsewhere winner at grade `g`: the first rule attaining the
 greatest applicable threshold. By
 `ExponenceRule.moreSpecific_iff_threshold_le`, this is the most specific
-applicable item. -/
+applicable rule. -/
 def winner (v : List (ExponenceRule n F)) (g : Fin n) : Option (ExponenceRule n F) :=
   (maxThreshold v g).recBotCoe none (λ m => v.find? (λ it => it.threshold == m))
 
@@ -290,7 +293,7 @@ theorem winner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
   rw [winner, winner, h]
 
 /-- The realized pattern: at each grade, the Elsewhere winner's
-exponent (`none` when no item applies — a paradigm gap). -/
+exponent (`none` when no rule applies — a paradigm gap). -/
 def realize (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
   λ g => (winner v g).map ExponenceRule.exponent
 
@@ -307,7 +310,7 @@ theorem realize_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
 
 /-! ### CSG1: realization is contiguous
 
-[bobaljik-2012] ch. 2: with antihomophonous items, the Elsewhere
+[bobaljik-2012] ch. 2: with antihomophonous rules, the Elsewhere
 competition over a containment hierarchy cannot generate ABA — with
 only two distinct listed root forms, no ordering of the rules yields
 an ABA pattern (p. 35). Formally: `maxThreshold` is the
@@ -340,13 +343,13 @@ theorem isContiguous_realize {v : List (ExponenceRule n F)} (hAH : Antihomophono
         hAH _ hiv _ hkv (Option.some.inj (hri.symm.trans (heq.trans hrk)))
       obtain ⟨-, -, -, hτi⟩ := exists_of_maxThreshold_eq_coe hmti
       have hmtj : maxThreshold v j = ↑iti.threshold :=
-        maxThreshold_eq_coe_of_le (hit ▸ hmtk) (le_trans hτi hij) hjk
+        maxThreshold_eq_coe_of_between (hit ▸ hmtk) (le_trans hτi hij) hjk
       exact realize_congr (hmti.trans hmtj.symm)
 
 /-! ### The plateau: terminal adjacency generates only `{AAA, ABB}`
 
 Capping all thresholds makes realization constant above the cap. With
-terminal items and adjacent contexts the cap is the first head — this
+terminal rules and adjacent contexts the cap is the first head — this
 is the "Bobaljik-minus-portmanteaux" engine, which forces the
 comparative and superlative cells to coincide and so *over-excludes*
 the attested ABC patterns (Latin *bon- ~ mel- ~ opt-*). Portmanteau items
@@ -411,7 +414,7 @@ theorem firstOcc_congr {p : Pattern n F} {g g' : Fin n} (h : p g = p g') :
     (Finset.min'_le _ _ (hset ▸ Finset.min'_mem _ ⟨g', by simp⟩))
     (Finset.min'_le _ _ (hset.symm ▸ Finset.min'_mem _ ⟨g, by simp⟩))
 
-/-- The canonical vocabulary of a pattern: one item per form,
+/-- The canonical vocabulary of a pattern: one rule per form,
 introduced at the form's first grade and conditioned on it. -/
 def ofPattern (p : Pattern n F) : List (ExponenceRule n F) :=
   (List.finRange n).filterMap (λ s =>
@@ -528,7 +531,7 @@ theorem csg2 {v : List (ExponenceRule 3 F)} (hAH : Antihomophonous v) (hG : Grou
     | none => rw [show realize v 2 = none from by simp [realize, hw]] at h2; simp at h2
   obtain ⟨hw2v, hmt2⟩ := winner_spec hw2
   by_cases hτ : w2.threshold ≤ (1 : Fin 3)
-  · exact realize_congr ((maxThreshold_eq_coe_of_le hmt2 hτ (by decide)).trans hmt2.symm)
+  · exact realize_congr ((maxThreshold_eq_coe_of_between hmt2 hτ (by decide)).trans hmt2.symm)
   · exfalso
     push Not at hτ
     obtain ⟨jt1, hjt1v, hjt1τ⟩ := hG w2 hw2v 1 hτ
@@ -576,6 +579,6 @@ theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v
   have hτle : w2.threshold ≤ (1 : Fin 3) :=
     threshold_le_one (Nat.le_zero.mp htop) (hA w2 hw2v)
   exact h12 (realize_congr
-    ((maxThreshold_eq_coe_of_le hmt2 hτle (by decide)).trans hmt2.symm))
+    ((maxThreshold_eq_coe_of_between hmt2 hτle (by decide)).trans hmt2.symm))
 
 end Morphology.Containment

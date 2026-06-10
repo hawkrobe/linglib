@@ -4,16 +4,19 @@ import Linglib.Morphology.Containment.Vocabulary
 # Superset spellout over containment hierarchies
 [starke-2009] [caha-2009] [bobaljik-2012]
 
-The nanosyntax selection rule, stated over the same `ExponenceRule`
+The static core of the nanosyntax selection rule (no cyclic override
+or spellout-driven movement), stated over the same `ExponenceRule`
 vocabularies as the Elsewhere engine of
 `Morphology/Containment/Vocabulary.lean`. A nanosyntax lexical entry
 stores a constituent and carries no contextual restriction
 (`ContextFree`); it can spell out any structure it *contains* — the
 Superset Principle ([starke-2009]) — and competition selects the
-smallest matching entry (Minimize Junk). The two engines are dual:
-Elsewhere insertion maximizes the threshold over rules the *structure
-contains*; Superset spellout minimizes the span over entries that
-*contain the structure*.
+smallest matching entry (Minimize Junk, which [starke-2009] himself
+identifies with the Elsewhere Condition: the directional asymmetry
+lives in the matching relation, not in the competition). The two
+engines are dual: Elsewhere insertion maximizes the threshold over
+rules the *structure contains*; Superset spellout minimizes the span
+over entries that *contain the structure*.
 
 The headline is the cross-framework theorem
 `spelloutGenerable_iff_generable`: over a linear containment hierarchy,
@@ -24,9 +27,11 @@ frameworks are extensionally equivalent on this fragment while
 differing intensionally: an overspecified entry realizes *smaller*
 structures under Superset but yields a gap under Elsewhere insertion
 (see the divergence examples at the end), which is how nanosyntax
-derives ABC with no portmanteau or context apparatus
-([caha-2009]'s selling point) where DM needs ch. 5 of
-[bobaljik-2012].
+derives ABC with no contextual apparatus — suppletion as pure phrasal
+spellout, portmanteau by constituent size with no environment
+restriction ([declercq-vandenwyngaerd-2017] for exactly this Latin
+degree case) — where DM needs the context-restricted portmanteau of
+[bobaljik-2012] ch. 5.
 
 ## Main declarations
 
@@ -38,6 +43,10 @@ derives ABC with no portmanteau or context apparatus
 * `isContiguous_spellout` — *ABA for Superset spellout
 * `isContiguous_iff_spelloutGenerable` — spellable = contiguous
 * `spelloutGenerable_iff_generable` — DM/nanosyntax equigenerativity
+
+The older tree-based nanosyntax fragment
+(`Morphology/Nanosyntax/Basic.lean`) predates this engine and is not
+yet grounded in it.
 -/
 
 namespace Morphology.Containment
@@ -55,8 +64,22 @@ def ExponenceRule.Matches (it : ExponenceRule n F) (g : Fin n) : Prop :=
 instance (it : ExponenceRule n F) (g : Fin n) : Decidable (it.Matches g) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- Nanosyntax entries carry no contextual restrictions — lexical
-entries are constituents, not rules with environments. -/
+theorem ExponenceRule.Matches.anti {it : ExponenceRule n F} {g g' : Fin n}
+    (h : it.Matches g') (hg : g ≤ g') : it.Matches g :=
+  le_trans hg h
+
+/-- Minimize Junk derived, dually to
+`ExponenceRule.moreSpecific_iff_threshold_le`: an entry matches in a
+subset of the structures another matches in iff it stores the smaller
+constituent — smallest-match selection is Pāṇinian specificity under
+superset matching. -/
+theorem ExponenceRule.matches_imp_iff_spans_le {it jt : ExponenceRule n F} :
+    (∀ ⦃g : Fin n⦄, it.Matches g → jt.Matches g) ↔ it.spans ≤ jt.spans :=
+  ⟨λ h => h (le_refl it.spans), λ h _ hg => le_trans hg h⟩
+
+/-- The nanosyntax restriction, in the pointer-free idealization of
+[caha-2009]: entries store bare constituents, with no DM-style
+contextual environment. -/
 def ContextFree (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, it.context = none
 
@@ -67,12 +90,12 @@ instance (v : List (ExponenceRule n F)) : Decidable (ContextFree v) := by
 
 /-- The entries matching at grade `g`, in vocabulary order. -/
 def matching (v : List (ExponenceRule n F)) (g : Fin n) : List (ExponenceRule n F) :=
-  v.filter (λ it => g ≤ it.spans)
+  v.filter (λ it => it.Matches g)
 
 @[simp] theorem mem_matching {v : List (ExponenceRule n F)} {g : Fin n}
     {it : ExponenceRule n F} :
     it ∈ matching v g ↔ it ∈ v ∧ g ≤ it.spans := by
-  simp [matching]
+  simp [matching, ExponenceRule.Matches]
 
 /-- The least matching span at grade `g` — Minimize Junk: the winning
 entry stores as little unrealized structure as possible. `⊤` when no
@@ -174,7 +197,9 @@ theorem spelloutWinner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
   rw [spelloutWinner, spelloutWinner, h]
 
 /-- The spelled-out pattern: at each grade, the Minimize-Junk winner's
-exponent (`none` when no entry contains the structure — ineffability). -/
+exponent (`none` when no entry contains the structure — a spellout
+gap; full nanosyntax would attempt rescue operations before declaring
+ineffability). -/
 def spellout (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
   λ g => (spelloutWinner v g).map ExponenceRule.exponent
 
@@ -191,9 +216,9 @@ theorem spellout_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
 
 /-! ### *ABA for Superset spellout
 
-The mirror image of `isContiguous_realize`: `minSpan` is antitone-free
-monotone in the grade (matching sets shrink upward, so the least span
-weakly grows), the winner is a function of it, and antihomophony makes
+The mirror image of `isContiguous_realize`: `minSpan` is monotone in
+the grade (matching sets shrink upward, so the least span weakly
+grows), the winner is a function of it, and antihomophony makes
 the winner's exponent injective — so spellout fibers are convex. This
 is the nanosyntax derivation of *ABA ([caha-2009]), run on the same
 vocabulary type as the DM derivation. -/
@@ -320,9 +345,11 @@ theorem spellout_spelloutOfPattern {p : Pattern n F} (hp : IsContiguous p)
 end Completeness
 
 /-- **Spellable = contiguous**: a fully realized pattern arises from
-Superset spellout over a context-free antihomophonous lexicon iff it is
-contiguous — [caha-2009]'s Universal Contiguity, derived rather than
-stipulated. -/
+Superset spellout over a context-free antihomophonous lexicon iff it
+is contiguous — [caha-2009]'s Universal Contiguity as a theorem of the
+engine, mirroring Caha's own derivation of UC from the Superset
+Principle; the converse direction sharpens it to exact generative
+capacity. -/
 theorem isContiguous_iff_spelloutGenerable (p : Pattern n F) :
     IsContiguous p ↔
       ∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
@@ -358,9 +385,9 @@ theorem spelloutGenerable_iff_generable (p : Pattern n F) :
 The equivalence is extensional, over total realizations. On partial
 lexicons the selection directions come apart: an overspecified entry
 realizes smaller structures under the Superset Principle but leaves a
-gap under Elsewhere insertion. This is the mechanism behind
-nanosyntax's characteristic predictions (overspecified default entries,
-pointers) and DM's characteristic gaps. -/
+gap under Elsewhere insertion. This is nanosyntax's characteristic
+prediction — overspecified entries double as defaults for smaller
+structures — against DM's characteristic gaps. -/
 
 example : spellout [(⟨"gwell", 1, none⟩ : ExponenceRule 3 String)] 0
     = some "gwell" := by decide
