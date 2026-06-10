@@ -28,9 +28,7 @@ testable conjectures rather than architectural commitments.
 
 namespace Semantics.Lexical.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. Atomic Entailments
--- ════════════════════════════════════════════════════
+/-! ### Atomic entailments -/
 
 /-- An atomic claim a root can make. The four B&K-G features
     (±state, ±manner, ±result, ±cause) correspond to the *kinds* of
@@ -94,9 +92,7 @@ instance : DecidablePred isCause := fun a => by unfold isCause; cases a <;> infe
 
 end LexEntailment
 
--- ════════════════════════════════════════════════════
--- § 2. Roots
--- ════════════════════════════════════════════════════
+/-! ### Roots -/
 
 /-- A verbal root: a name and a list of atomic entailments it imposes.
 

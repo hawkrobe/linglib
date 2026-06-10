@@ -1,29 +1,29 @@
 import Linglib.Semantics.Lexical.Roots.Basic
 
 /-!
-# Derivational Operators
+# Morphological Operators and Root Classification
 
-[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
+[lucy-1994] [bohnemeyer-2004]
 
-A **derivational operator** is a language-specific morphological process
-that applies to a root subject to a structural condition on the root's
-entailments. The collection of operators that successfully apply to a
-root is the root's **orbit** under the inventory.
+A **morphological operator** is a language-specific process
+(derivational or diagnostic-inflectional) that applies to a root
+subject to a structural condition on the root's entailments. The
+collection of operators that successfully apply to a root is the
+root's **applicability profile** under the inventory.
 
-For Yukatek and other languages, partitioning roots by orbit recovers
-language-specific verb-stem classifications (Bohnemeyer's 5-way; Lucy's
-3-way salience cut) as *derived* equivalence classes rather than
-stipulated enums. This means typological classes become *predictions*
-of (root features × operator inventory), not architectural primitives.
+Partitioning roots by applicability profile recovers language-specific
+verb-stem classifications ([bohnemeyer-2004]'s 5-way Yukatek cut;
+[lucy-1994]'s 3-way salience cut) as *derived* equivalence classes
+rather than stipulated enums. Typological classes thereby become
+*predictions* of (root features × operator inventory), not
+architectural primitives.
 -/
 
 namespace Morphology.Derivation
 
 open Semantics.Lexical.Roots (Root)
 
--- ════════════════════════════════════════════════════
--- § 1. Derivational Operators
--- ════════════════════════════════════════════════════
+/-! ### Operators and inventories -/
 
 /-- A morphological operator: a name and a structural condition on
     roots specifying when the operator can apply.
@@ -41,14 +41,14 @@ structure DerivOp where
 
 attribute [instance] DerivOp.decApplies
 
-/-- An inventory: a finite list of derivational operators. -/
+/-- An inventory: a finite list of morphological operators. -/
 abbrev Inventory := List DerivOp
 
 namespace Inventory
 
-/-- The orbit of a root under an inventory: the names of operators
-    that apply to it. -/
-def orbit (inv : Inventory) (r : Root) : List String :=
+/-- The names of the operators in the inventory that apply to a root —
+    the root's applicability profile. -/
+def applicableNames (inv : Inventory) (r : Root) : List String :=
   (inv.filter (fun op => decide (op.applies r))).map (·.name)
 
 /-- Two roots are inventory-equivalent iff every operator in the

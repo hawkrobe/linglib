@@ -53,7 +53,7 @@ open Yukatek.Operators
 /-! `SalienceClass` and `classOfSignature` live in
     `Semantics/Lexical/Roots/SalienceClass.lean`. This file
     provides the full [lucy-1994] analysis on top of them:
-    operator-orbit characterizations and per-root sanity checks.
+    operator-applicability characterizations and per-root sanity checks.
 
     Local short alias `predictedClass = Root.predictedSalience`. -/
 
@@ -68,20 +68,20 @@ theorem class_depends_only_on_signature
   predictedSalience_depends_only_on_signature r₁ r₂ h
 
 -- ════════════════════════════════════════════════════
--- § 4. Predicted Class Agrees with Operator Orbit
+-- § 4. Predicted Class Agrees with Operator Applicability
 -- ════════════════════════════════════════════════════
 
-/-! Each of the four orbit characterisations follows the same
-    pattern: unfold the orbit and the named class predicates, then
+/-! Each of the four applicability characterisations follows the same
+    pattern: unfold the applicability profile and the named class predicates, then
     case-split on the four B&K-G feature bits and let `simp_all`
     discharge each cell of the 16-row truth table. The local macro
-    `lucy_orbit` packages this so the four theorems differ only in
+    `lucy_applicable` packages this so the four theorems differ only in
     which class label appears on the LHS. -/
 
-local macro "lucy_orbit " r:term : tactic =>
+local macro "lucy_applicable " r:term : tactic =>
   `(tactic|
     (unfold predictedClass Root.predictedSalience classOfSignature
-       inventory Inventory.orbit
+       inventory Inventory.applicableNames
        affectiveT zeroDeriv causativeS positionalTal
        Root.IsAgentSalient Root.IsAgentPatientSalient
        Root.IsPatientSalient Root.IsPositional
@@ -92,42 +92,42 @@ local macro "lucy_orbit " r:term : tactic =>
      cases hm : ($r).hasManner <;> cases hr : ($r).hasResult <;>
        cases hs : ($r).hasState <;> cases hc : ($r).hasCause <;> simp_all))
 
-/-- The `=t`-only orbit characterises agent-salient roots. -/
-theorem agent_iff_orbit_t (r : Root) :
-    predictedClass r = some .agent ↔ inventory.orbit r = ["=t"] := by
-  lucy_orbit r
+/-- The `=t`-only applicability profile characterises agent-salient roots. -/
+theorem agent_iff_applicable_t (r : Root) :
+    predictedClass r = some .agent ↔ inventory.applicableNames r = ["=t"] := by
+  lucy_applicable r
 
-/-- The `=∅`-only orbit characterises agent-patient salient roots. -/
-theorem agentPatient_iff_orbit_zero (r : Root) :
-    predictedClass r = some .agentPatient ↔ inventory.orbit r = ["=∅"] := by
-  lucy_orbit r
+/-- The `=∅`-only applicability profile characterises agent-patient salient roots. -/
+theorem agentPatient_iff_applicable_zero (r : Root) :
+    predictedClass r = some .agentPatient ↔ inventory.applicableNames r = ["=∅"] := by
+  lucy_applicable r
 
-/-- The `=s`-only orbit characterises patient-salient roots. -/
-theorem patient_iff_orbit_s (r : Root) :
-    predictedClass r = some .patient ↔ inventory.orbit r = ["=s"] := by
-  lucy_orbit r
+/-- The `=s`-only applicability profile characterises patient-salient roots. -/
+theorem patient_iff_applicable_s (r : Root) :
+    predictedClass r = some .patient ↔ inventory.applicableNames r = ["=s"] := by
+  lucy_applicable r
 
-/-- The `-tal`-only orbit characterises positional roots. -/
-theorem positional_iff_orbit_tal (r : Root) :
-    predictedClass r = some .positional ↔ inventory.orbit r = ["-tal"] := by
-  lucy_orbit r
+/-- The `-tal`-only applicability profile characterises positional roots. -/
+theorem positional_iff_applicable_tal (r : Root) :
+    predictedClass r = some .positional ↔ inventory.applicableNames r = ["-tal"] := by
+  lucy_applicable r
 
-/-- An empty orbit characterises roots outside [lucy-1994]'s
+/-- An empty applicability profile characterises roots outside [lucy-1994]'s
     diagnostic gap (`(¬manner, ¬result)` rows that lack the positional
     configuration `state ∧ ¬cause`). -/
-theorem none_iff_orbit_empty (r : Root) :
-    predictedClass r = none ↔ inventory.orbit r = [] := by
-  lucy_orbit r
+theorem none_iff_applicable_empty (r : Root) :
+    predictedClass r = none ↔ inventory.applicableNames r = [] := by
+  lucy_applicable r
 
-/-- **Orbit-as-classifier.** Two roots have the same operator orbit
+/-- **Applicability-as-classifier.** Two roots have the same applicability profile
     under [lucy-1994]'s diagnostic inventory iff they have the
     same predicted salience class. The 4 named-class iff-theorems are
     special cases. -/
-theorem orbit_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
-    inventory.orbit r₁ = inventory.orbit r₂ ↔
+theorem applicableNames_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
+    inventory.applicableNames r₁ = inventory.applicableNames r₂ ↔
       predictedClass r₁ = predictedClass r₂ := by
   unfold predictedClass Root.predictedSalience classOfSignature
-    inventory Inventory.orbit
+    inventory Inventory.applicableNames
     affectiveT zeroDeriv causativeS positionalTal
     Root.IsAgentSalient Root.IsAgentPatientSalient
     Root.IsPatientSalient Root.IsPositional

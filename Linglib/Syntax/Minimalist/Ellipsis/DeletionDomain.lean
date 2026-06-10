@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Voice
-import Linglib.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.Template
 
 /-!
 # Ellipsis: [E] Features and Deletion Domains
@@ -344,11 +344,11 @@ theorem mismatch_monotone (d : MismatchDimension) (e₁ e₂ : EllipsisType)
 -- ════════════════════════════════════════════════════
 
 /-- Is a root inside the vVPE deletion domain (= VP)?
-    Uses `RootPosition` from `Core.Lexical.RootFeatures` (Marantz 2013,
+    Uses `Root.Position` (`Semantics/Lexical/Roots/Template.lean`; Marantz,
     [beavers-koontz-garboden-2020]):
     - `.complement` roots (change-of-state) are inside VP → deleted
     - `.adjoined` roots (manner/activity) are outside VP → survive -/
-def rootInVVPEDomain : RootPosition → Bool
+def rootInVVPEDomain : Root.Position → Bool
   | .complement => true
   | .adjoined => false
 

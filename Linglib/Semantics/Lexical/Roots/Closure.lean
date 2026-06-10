@@ -34,9 +34,7 @@ extension to `bkgRules`.
 
 namespace Semantics.Lexical.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. Closure Rules
--- ════════════════════════════════════════════════════
+/-! ### Closure Rules -/
 
 /-- A rule set: each atom maps to the atoms it directly entails. -/
 abbrev EntailmentRules := LexEntailment → List LexEntailment
@@ -55,9 +53,7 @@ def closeOnce (rules : EntailmentRules) (atoms : List LexEntailment) :
 abbrev closure : EntailmentRules → List LexEntailment → List LexEntailment :=
   closeOnce
 
--- ════════════════════════════════════════════════════
--- § 2. B&K-G Rules
--- ════════════════════════════════════════════════════
+/-! ### B&K-G Rules -/
 
 /-- The documented B&K-G entailment rules. Currently:
     - `becomesState s ⇒ hasState s`: a change of state to `s` entails
@@ -79,9 +75,7 @@ theorem bkgRules_only_state (a b : LexEntailment) (h : a ∈ bkgRules b) :
     rcases List.mem_singleton.mp h with rfl
     exact True.intro
 
--- ════════════════════════════════════════════════════
--- § 3. Closed Entailments and Signature
--- ════════════════════════════════════════════════════
+/-! ### Closed Entailments and Signature -/
 
 namespace Root
 
@@ -101,9 +95,7 @@ def closedFeatureSignature (r : Root) : FeatureSignature :=
 
 end Root
 
--- ════════════════════════════════════════════════════
--- § 4. Structural Properties of Closure
--- ════════════════════════════════════════════════════
+/-! ### Structural Properties of Closure -/
 
 /-- Closure preserves all base atoms: the base list is a prefix of the
     closure. -/
@@ -122,9 +114,7 @@ theorem closure_any_of_any (rules : EntailmentRules)
   unfold closure closeOnce
   rw [List.any_append, h, Bool.true_or]
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Base Signature
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Base Signature -/
 
 /-- Helper: bkgRules-derived atoms can never satisfy a predicate `p`
     that is false on every state-attribution atom. -/
@@ -217,16 +207,14 @@ theorem closedFeatureSignature_state_eq (r : Root) :
     exact ⟨_, hb, by rfl⟩
   · intro hbase
     rcases List.any_eq_true.mp hbase with ⟨a, ha, hp⟩
-    cases a <;> simp [LexEntailment.isBecome, decide_eq_true_eq] at hp
+    cases a <;> simp [LexEntailment.isBecome] at hp
     rename_i s
     apply List.any_eq_true.mpr
     refine ⟨LexEntailment.hasState s, ?_, by rfl⟩
     apply List.mem_flatMap.mpr
     exact ⟨LexEntailment.becomesState s, ha, by simp [bkgRules]⟩
 
--- ════════════════════════════════════════════════════
--- § 6. Idempotence of bkgRules
--- ════════════════════════════════════════════════════
+/-! ### Idempotence of bkgRules -/
 
 /-- `bkgRules` produces nothing from a `hasState` atom (and similarly
     nothing from any non-`becomesState` atom). -/

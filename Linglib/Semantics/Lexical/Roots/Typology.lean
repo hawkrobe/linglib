@@ -1,40 +1,37 @@
-import Linglib.Semantics.Lexical.Roots.Template
+import Linglib.Semantics.Lexical.Roots.Basic
 
 /-!
 # B&K-G Typology, Bifurcation, and Manner/Result Complementarity
 
-[beavers-koontz-garboden-2020] [rappaport-hovav-levin-2010]
+The four-feature classification of roots (±state, ±manner, ±result,
+±cause) of [beavers-koontz-garboden-2020], *derived* from
+`Root.entailments` rather than stipulated as a separate enum, together
+with the two conjectures the book argues against:
 
-The four-feature typology of [beavers-koontz-garboden-2020]
-(±state, ±manner, ±result, ±cause) classifies roots by which kinds of
-atomic entailments they carry. Crucially, this classification is
-*derived* from `Root.entailments` — not stipulated as a separate enum.
+- **Bifurcation Thesis of Roots** ([embick-2009]; the assumption of
+  [arad-2005]): meaning introduced by a functional head — change,
+  cause — can never be part of a root's meaning.
+- **Manner/Result Complementarity** ([rappaport-hovav-levin-2010]): a
+  single root entails a manner *or* a result, never both.
 
-Two long-standing conjectures restrict which feature combinations are
-allowed:
+Falsifying witnesses live in `Studies/BeaversKoontzGarboden2020.lean`.
 
-- **Bifurcation Thesis of Roots**: roots only carry "ontological"
-  entailments (state, manner). Eventive structure (result, cause) is
-  contributed by templatic heads, never by roots.
-- **Manner/Result Complementarity**
-  ([rappaport-hovav-levin-2010]): a single root entails manner
-  *or* result, never both.
+## Main declarations
 
-[beavers-koontz-garboden-2020] argue both fail. Here we encode them
-as Boolean predicates on roots and provide witnesses (in
-`BeaversKoontzGarboden2020.lean`) that falsify the universal closures.
+* `FeatureSignature`, `Root.featureSignature`
+* `Root.ViolatesBifurcation`, `Root.HasMannerAndResult`, and their
+  negations `Root.RespectsBifurcation`,
+  `Root.RespectsMannerResultComplementarity`
 -/
 
 namespace Semantics.Lexical.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. Feature Signature
--- ════════════════════════════════════════════════════
+/-! ### Feature signature -/
 
-/-- The four-feature classification of a root
-    ([beavers-koontz-garboden-2020] table 13). All four features
-    are *derived* from `Root.entailments`, so the 16-cell typology
-    falls out of which kinds of atoms a root carries. -/
+/-- The four-feature classification of a root (the root typology of
+    [beavers-koontz-garboden-2020] ch. 5). All four features are
+    *derived* from `Root.entailments`, so the 16-cell typology falls
+    out of which kinds of atoms a root carries. -/
 structure FeatureSignature where
   state  : Bool
   manner : Bool
@@ -54,43 +51,40 @@ def featureSignature (r : Root) : FeatureSignature :=
 
 end Root
 
--- ════════════════════════════════════════════════════
--- § 2. Bifurcation Thesis of Roots
--- ════════════════════════════════════════════════════
+/-! ### Bifurcation Thesis of Roots -/
 
-/-- A root *violates* Bifurcation iff it carries both an ontological
-    entailment (state or manner) and an eventive one (result or cause).
-    The Bifurcation Thesis ([beavers-koontz-garboden-2020]) is the
-    universal claim that no root violates this. -/
+/-- A root *violates* Bifurcation iff it itself carries templatic
+    (eventive) meaning — change of state or cause. The Bifurcation
+    Thesis ([embick-2009]; [arad-2005]) is the universal claim that no
+    root does. (The ditransitive prepositional heads P_loc and P_have,
+    which [beavers-koontz-garboden-2020] also treat as templatic, are
+    not modeled here.) -/
 def Root.ViolatesBifurcation (r : Root) : Prop :=
-  (r.hasState = true ∨ r.hasManner = true) ∧
-  (r.hasResult = true ∨ r.hasCause = true)
+  r.hasResult = true ∨ r.hasCause = true
 
 instance (r : Root) : Decidable r.ViolatesBifurcation := by
   unfold Root.ViolatesBifurcation; infer_instance
 
-/-- Dual of `ViolatesBifurcation`. A root respects the thesis iff it
-    has only ontological *or* only eventive entailments. -/
+/-- Negation of `ViolatesBifurcation`: the root carries only
+    ontological entailments (state, manner). -/
 def Root.RespectsBifurcation (r : Root) : Prop :=
   ¬ r.ViolatesBifurcation
 
 instance (r : Root) : Decidable r.RespectsBifurcation := by
   unfold Root.RespectsBifurcation; infer_instance
 
--- ════════════════════════════════════════════════════
--- § 3. Manner/Result Complementarity
--- ════════════════════════════════════════════════════
+/-! ### Manner/Result Complementarity -/
 
-/-- A root has both manner and result entailments — the Manner/Result
-    Complementarity thesis ([rappaport-hovav-levin-2010]) is the
-    universal claim that no root does. -/
+/-- A root has both manner and result entailments — Manner/Result
+    Complementarity ([rappaport-hovav-levin-2010]) is the universal
+    claim that no root does. -/
 def Root.HasMannerAndResult (r : Root) : Prop :=
   r.hasManner = true ∧ r.hasResult = true
 
 instance (r : Root) : Decidable r.HasMannerAndResult := by
   unfold Root.HasMannerAndResult; infer_instance
 
-/-- Dual of `HasMannerAndResult`. -/
+/-- Negation of `HasMannerAndResult`. -/
 def Root.RespectsMannerResultComplementarity (r : Root) : Prop :=
   ¬ r.HasMannerAndResult
 

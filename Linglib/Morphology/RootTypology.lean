@@ -1,6 +1,7 @@
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Lexical.LevinTheory
+import Linglib.Semantics.Lexical.Roots.Template
 
 open Semantics.Lexical
 
@@ -1424,12 +1425,13 @@ theorem same_change_same_morphosyntax (r₁ r₂ : RootClassification)
 -- ════════════════════════════════════════════════════
 
 /-- Full root specification: entailment features + structural position.
-    This is B&[beavers-koontz-garboden-2020]'s Table 12 in full — the 4 binary entailment
-    features × 2 positions give 32 theoretical cells, of which 7 are
-    attested and the rest are principled gaps. -/
+    This is [beavers-koontz-garboden-2020]'s ch. 5 root typology
+    (display (12)) in full — the 4 binary entailment features × 2
+    positions give 32 theoretical cells, of which 7 are attested and
+    the rest are principled gaps. -/
 structure FullRootSpec where
   entailments : RootEntailments
-  position : RootPosition
+  position : Root.Position
   deriving DecidableEq, Repr
 
 /-- Adjoined position requires +manner: a root in adjunct position

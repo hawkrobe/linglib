@@ -393,7 +393,7 @@ import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.MorphWord
-import Linglib.Semantics.Lexical.Roots.Operators
+import Linglib.Morphology.Derivation
 import Linglib.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Discourse.SpeechAct.Basic

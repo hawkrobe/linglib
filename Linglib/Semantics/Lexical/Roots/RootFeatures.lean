@@ -1,61 +1,29 @@
 /-!
 # Root Quality Dimensions and Structural Entailments
-[talmy-1988] [talmy-2000] [dowty-1991] [beavers-koontz-garboden-2020] [majid-boster-bowerman-2008]
 
-Per-root content typology: ranges over root quality dimensions, the
-[beavers-koontz-garboden-2020] (B&KG) binary entailment tetrad,
-and Marantz-style root structural position.
+Per-root content typology: ranges over root quality dimensions
+([talmy-1988], [dowty-1991], [majid-boster-bowerman-2008],
+[spalek-mcnally-2026]) and the binary entailment tetrad of
+[beavers-koontz-garboden-2020].
 
-## Provenance
+The tetrad is framework-committed: [rappaport-hovav-levin-2010] reject
+the entailment-feature framing (for them manner/result are
+event-structural template properties, not root features); a
+formalization of their account would be a sibling file with divergence
+theorems.
 
-Moved from `Core/Lexical/RootFeatures.lean` in the cleanup that
-dissolved `Core/Lexical/`. The file's original docstring claimed
-"framework-agnostic infrastructure" but its load-bearing content
-(B&KG's binary [state, manner, result, cause] tetrad in §3, Marantz's
-complement-vs-adjunct merge position in §4) is framework-specific:
-B&KG's tetrad is the thesis of [beavers-koontz-garboden-2020],
-explicitly opposed to Rappaport Hovav & Levin's template-based
-account ([rappaport-hovav-levin-2010]) and to Embick's
-contextual-allosemy framework. Promoting these features to a named
-Theories file (sibling of `Roots/Basic.lean`, `Roots/Typology.lean`,
-`Roots/Template.lean`) makes the framework commitment legible.
+## Main declarations
 
-**Sibling slots intentionally unfilled.** `Semantics/Lexical/Roots/RappaportHovavLevin.lean`
-is the natural home for the template-based competitor account
-([rappaport-hovav-levin-2010], [rappaport-hovav-levin-2024]).
-[rappaport-hovav-levin-2010] reject the very feature setup
-encoded here; their position is that manner/result are
-*event-structural templates*, not root features. The slot is empty
-in this restructure; future work formalizing RH&L's framework
-should land there as a sibling, with refutation theorems showing
-where B&KG and RH&L disagree on attested verbs.
-
-## Sections
-
-- §1 Range mechanism — `Range α := Option (List α)` for within-class variation
-- §2 Quality dimensions — force, robustness, instrument, dimensionality, agent properties
-- §3 B&KG root structural entailments — state/manner/result/cause + collocational constraints
-- §4 Marantz root structural position — complement vs adjunct of v
-- §5 Derived properties on `RootProfile`
-
-## Citation hygiene notes
-
-- B&KG page references (e.g., "Table 12, p. 228", "p. 229") are flagged
-  `UNVERIFIED:` per CLAUDE.md ("Never cite specific page ranges from
-  memory"). Verify against the published [beavers-koontz-garboden-2020]
-  monograph before treating as authoritative.
-- Inline `Marantz (2009a;b, 2013)` references in the original file
-  lacked bib entries. The substantive claim — that roots merge as
-  complement or adjunct of v — is uncontroversially attributed to
-  Marantz across the DM literature, but the specific publication
-  citations need verification before adding to `references.bib`.
+* `Range` — within-class variation along a quality dimension
+* `RootProfile` — bundled quality dimensions (force, robustness,
+  instrument, dimensionality, agent properties)
+* `RootEntailments` — the B&K-G tetrad, with `WellFormed` collocational
+  constraints and the canonical root types of their ch. 5 typology
 -/
 
 namespace Semantics.Lexical.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. Range Mechanism
--- ════════════════════════════════════════════════════
+/-! ### Range mechanism -/
 
 /-- Acceptable values along a quality dimension.
 
@@ -90,9 +58,7 @@ def overlaps [BEq α] : Range α → Range α → Bool
 
 end Range
 
--- ════════════════════════════════════════════════════
--- § 2. Quality Dimensions (Root-Specific Features)
--- ════════════════════════════════════════════════════
+/-! ### Quality dimensions -/
 
 /-- Magnitude of force involved in the event.
 
@@ -207,20 +173,11 @@ inductive AgentControl where
 /-- Within-class root content profile.
 
     Captures **quality** dimensions of root content — force, robustness,
-    agent properties — as opposed to `RootEntailments` (§ 3), which
-    captures **structural** entailments (state, manner, result, cause).
+    agent properties — as opposed to `RootEntailments`, which captures
+    **structural** entailments (state, manner, result, cause).
 
     Each dimension is a `Range` of acceptable values; `none` means the
-    root says nothing about that dimension (unconstrained).
-
-    Together with `MeaningComponents` (which defines the class),
-    `LevinClass` (which identifies the class), and `RootEntailments`
-    (which captures structural entailments), this gives a four-level
-    characterization of a verb's semantic content:
-    1. Class-defining meaning components (binary, from alternations)
-    2. Class membership (Levin taxonomy)
-    3. Root structural entailments ([beavers-koontz-garboden-2020])
-    4. Root-specific quality features (ranges, from detailed lexical analysis) -/
+    root says nothing about that dimension (unconstrained). -/
 structure RootProfile where
   /-- Force magnitude: [talmy-1988]. -/
   forceMag : Range ForceLevel := none
@@ -242,31 +199,25 @@ structure RootProfile where
   patientDim : Range ObjectDimensionality := none
   deriving BEq, Repr, Inhabited
 
--- ════════════════════════════════════════════════════
--- § 3. Root Structural Entailments ([beavers-koontz-garboden-2020])
--- ════════════════════════════════════════════════════
+/-! ### Root structural entailments -/
 
 /-- Root-level structural entailments from [beavers-koontz-garboden-2020].
 
-    B&KG argue against Bifurcation (roots only contribute idiosyncratic
-    content) and Manner/Result Complementarity (no root encodes both).
-    Roots CAN entail states, change, and causation — notions traditionally
-    reserved for templates (CAUSE, BECOME).
+    B&KG argue against Bifurcation (roots never carry templatic
+    meaning) and Manner/Result Complementarity (no root encodes both).
+    Roots CAN entail states, change, and causation — notions
+    traditionally reserved for templates (CAUSE, BECOME).
 
-    The four features define a root typology:
+    The four features define a root typology (the book's ch. 5):
     - `state`: root describes a state (√FLAT, √CRACK, √DRY)
     - `manner`: root describes an action/manner (√JOG, √RUN, √HIT)
-    - `result`: root entails change — passes restitutive *again* test
+    - `result`: root entails change — low-scope *again* still
+      presupposes a prior change
     - `cause`: root entails causation
 
-    Constraints: `result → state` and `cause → result` (see `WellFormed`).
-
-    [rappaport-hovav-levin-2010] reject this entailment-feature
-    framing; for them manner/result are event-structural template
-    properties, not root features. The competitor analysis would live
-    in `Semantics/Lexical/Roots/RappaportHovavLevin.lean` (planned).
-
-    UNVERIFIED: B&KG Table 12 reference cited from memory. -/
+    Constraints: `result → state` and `cause → result` (see
+    `WellFormed`); the book presents both as definitional ("not
+    root-specific stipulations"), mirroring conditions on templates. -/
 structure RootEntailments where
   state  : Bool
   manner : Bool
@@ -277,7 +228,8 @@ structure RootEntailments where
 namespace RootEntailments
 
 /-- If a root entails change (result), it entails a state that changes.
-    [beavers-koontz-garboden-2020]: result entailments presuppose state entailments. -/
+    [beavers-koontz-garboden-2020]: "+result entails being +state,
+    since become′ entails something that has come about." -/
 def ResultImpliesState (r : RootEntailments) : Prop :=
   r.result = true → r.state = true
 
@@ -285,7 +237,8 @@ instance (r : RootEntailments) : Decidable r.ResultImpliesState := by
   unfold ResultImpliesState; infer_instance
 
 /-- If a root entails causation, it entails what is caused (a result).
-    [beavers-koontz-garboden-2020]: cause entailments presuppose result entailments. -/
+    [beavers-koontz-garboden-2020]: "+cause entails being +result,
+    since cause′ entails that there is a caused event." -/
 def CauseImpliesResult (r : RootEntailments) : Prop :=
   r.cause = true → r.result = true
 
@@ -301,10 +254,8 @@ instance (r : RootEntailments) : Decidable r.WellFormed := by
 
 /-! ### Canonical root types
 
-UNVERIFIED: Specific row references to [beavers-koontz-garboden-2020]
-Table 12 are cited from memory. The 7 canonical types below cover
-B&KG's typology; verify row numbers against the published monograph
-before treating as definitive. -/
+The attested rows of the root typology in [beavers-koontz-garboden-2020]
+ch. 5 (their example display (12), §5.4). -/
 
 /-- +S −M −R −C: property concept roots (√FLAT, √DRY).
     Deadjectival COS verbs — the root names the result state.
@@ -317,10 +268,11 @@ def propertyConcept : RootEntailments := ⟨true, false, false, false⟩
 def pureResult : RootEntailments := ⟨true, false, true, false⟩
 
 /-- +S −M +R +C: externally caused result roots (√CRACK, √BREAK).
-    Root entails a state, change, AND causation — the root inherently
-    implies an external cause. Complement position.
-    [beavers-koontz-garboden-2020]: these "lexicalize crosslinguistically as basic
-    causatives" unlike √BLOSSOM-type roots. -/
+    Root entails a state, change, AND causation. If roots subdivide by
+    entailed causation, this may underlie Levin & Rappaport Hovav's
+    (1995) externally vs internally caused change-of-state distinction
+    ([beavers-koontz-garboden-2020], hedged as a possibility).
+    Complement position. -/
 def causativeResult : RootEntailments := ⟨true, false, true, true⟩
 
 /-- −S +M −R −C: pure manner roots (√JOG, √RUN, √SWIM).
@@ -328,16 +280,18 @@ def causativeResult : RootEntailments := ⟨true, false, true, true⟩
     Adjoined position. -/
 def pureManner : RootEntailments := ⟨false, true, false, false⟩
 
-/-- +S +M +R −C: manner + result without cause.
-    Well-formed per the constraints but UNATTESTED in B&KG's typology.
-    Such roots "would essentially derive syntactically unergative verbs
-    with pure change-of-state meanings." Defined for completeness. -/
+/-- +S +M +R −C: manner + result without cause. Well-formed per the
+    constraints; [beavers-koontz-garboden-2020] leave its attestation
+    an open question ("whether a change and a manner can exist together
+    in a single meaning without causation"), with candidate witnesses
+    *slide* and motion-in-sound-emission *buzz*. -/
 def mannerResult : RootEntailments := ⟨true, true, true, false⟩
 
-/-- +S +M +R +C: fully specified roots (√HAND, √DROWN, √CUT).
-    [beavers-koontz-garboden-2020] Ch. 3–4: manner + caused change. These are the attested MRC
-    violators. √HAND sits in adjoined position, √DROWN in complement
-    position; this structural difference is not captured here. -/
+/-- +S +M +R +C: fully specified roots (√HAND adjoined, √DROWN and the
+    other manner-of-killing roots in complement position;
+    [beavers-koontz-garboden-2020] chs. 3–4). These are the attested
+    MRC violators. The adjoined/complement contrast is carried by
+    `Root.Position`, not by this struct. -/
 def fullSpec : RootEntailments := ⟨true, true, true, true⟩
 
 /-- −S −M −R −C: minimal roots — no structural entailments.
@@ -359,8 +313,8 @@ theorem minimal_wf : minimal.WellFormed := by decide
 /-! ### MRC violation detection -/
 
 /-- Does this root violate Manner/Result Complementarity?
-    [beavers-koontz-garboden-2020] Ch. 4: some roots encode both manner and result.
-    [rappaport-hovav-levin-2010] dispute this; the framing
+    [beavers-koontz-garboden-2020] ch. 4: some roots encode both manner
+    and result. [rappaport-hovav-levin-2010] dispute this; the framing
     "violates MRC" presupposes MRC as a baseline norm — itself a
     framework commitment. -/
 def ViolatesMRC (r : RootEntailments) : Prop :=
@@ -377,44 +331,7 @@ theorem causativeResult_respects_MRC : ¬ causativeResult.ViolatesMRC := by deci
 
 end RootEntailments
 
--- ════════════════════════════════════════════════════
--- § 4. Root Structural Position (Marantz / B&KG)
--- ════════════════════════════════════════════════════
-
-/-- Structural attachment position of a verb root. Following the
-    Distributed-Morphology tradition (Marantz; systematized by
-    [beavers-koontz-garboden-2020]):
-
-    - **Complement**: root merges as complement of v (inside VP).
-      Fills the result-state slot. Change-of-state roots: √FLAT,
-      √CRACK, √BLOSSOM, √DROWN.
-    - **Adjoined**: root merges as adjunct to v (outside VP).
-      Modifies the causing event. Manner/activity roots: √JOG,
-      √TOSS, √HAND.
-
-    This distinction is structurally significant beyond root typology:
-    it determines vVPE eligibility ([kalyakin-2026]), scope of
-    result-state modifiers, and the restitutive/repetitive *again*
-    ambiguity ([beavers-koontz-garboden-2020], [merchant-2013]).
-
-    UNVERIFIED: The Marantz publications usually cited in this
-    context (DM "Phases and words" handout, "No Escape from Syntax",
-    "Verbal argument structure" chapter) have not been added to
-    `references.bib`. The substantive claim is uncontroversially
-    attributed to Marantz across DM, but specific publication
-    references should be verified before citing.
-
-    Note: this is the canonical `RootPosition` for the `Roots/`
-    subdirectory; `Template.lean` will be updated in the same restructure
-    commit to drop its local duplicate def and import from here. -/
-inductive RootPosition where
-  | complement  -- under v: fills result/state slot (inside VP)
-  | adjoined    -- to v: modifies causing event (outside VP)
-  deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 5. Derived Properties
--- ════════════════════════════════════════════════════
+/-! ### Derived properties -/
 
 /-- Does a root profile constrain patient properties? -/
 def RootProfile.constrainsPatient (rp : RootProfile) : Prop :=
