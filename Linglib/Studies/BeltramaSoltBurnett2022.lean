@@ -1,8 +1,8 @@
 import Linglib.Semantics.Numerals.Roundness
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
-import Linglib.Sociolinguistics.SCM
-import Linglib.Sociolinguistics.EckertMontague
+import Linglib.Pragmatics.SocialMeaning.SCM
+import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
@@ -50,7 +50,7 @@ tolerance modifier:
 namespace BeltramaSoltBurnett2022
 
 open Phenomena.SocialMeaning.IndexicalField
-open Sociolinguistics.SCM
+open SocialMeaning.SCM
 
 -- ============================================================================
 -- §1. Three-way precision variant
@@ -430,7 +430,7 @@ field over the SCM property space via `fromIndexicalField`, connecting
 the empirical sign-valued associations to the persona-theoretic
 infrastructure used by [burnett-2019]'s Social Meaning Games. -/
 
-open Sociolinguistics.EckertMontague
+open SocialMeaning.EckertMontague
 
 /-- The BSB2022 indexical field converted to a grounded field over the
     SCM property space. -/

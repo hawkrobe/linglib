@@ -26,7 +26,7 @@ bipolar pair has exactly one pole selected).
 
 -/
 
-namespace Sociolinguistics
+namespace SocialMeaning
 
 -- ============================================================================
 -- §1. Property Space (Burnett Definition 3.1)
@@ -98,4 +98,4 @@ def PropertySpace.allPersonaeSets (ps : PropertySpace) : Finset (Finset ps.Prope
     ps.isConsistent S &&
     decide (∀ (p : ps.Property), p ∈ S ∨ ∃ q ∈ S, ps.incompatible p q = true)
 
-end Sociolinguistics
+end SocialMeaning

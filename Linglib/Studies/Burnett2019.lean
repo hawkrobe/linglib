@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Sociolinguistics.EckertMontague
-import Linglib.Sociolinguistics.SocialMeaningGame
+import Linglib.Pragmatics.SocialMeaning.EckertMontague
+import Linglib.Pragmatics.IBR.Basic
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Studies.Labov2012
@@ -48,8 +48,8 @@ set_option autoImplicit false
 
 namespace Burnett2019
 
-open Sociolinguistics
-open Sociolinguistics.EckertMontague
+open SocialMeaning
+open SocialMeaning.EckertMontague
 open Phenomena.SocialMeaning.ING
 open RSA
 
@@ -366,24 +366,164 @@ theorem smg_matches_labov_direction :
    by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §8. Social Meaning Game: theory-layer bridge
+-- §8. Social Meaning Games (Definitions 4.1–4.4)
 -- ============================================================================
 
-/-! The theory-layer `SocialMeaningGame` (Burnett Def. 4.1) captures the
-signalling game structure: types, meaning, prior, and social evaluation.
-We construct an SMG from the study's types and prove structural properties.
+/-! Burnett's Social Meaning Game (SMG): a signalling game in which a
+speaker's variant choice conveys social information about their persona.
+The SMG reuses [franke-2011]'s IBR machinery — the naive listener,
+strategic speaker, and uncovering listener are all instances of IBR
+reasoning applied to a social-meaning interpretation game.
 
-The SMG's `naiveListener` is Franke's literal L₀ — *uniform* over
+The key design choice: `toInterpGame` converts any SMG into Franke's
+`InterpGame`, so SMG agents reuse the existing IBR iteration machinery.
+The grounding theorem `naiveListener_eq_L0` verifies that this reuse
+is semantically correct: the SMG L₀ definition produces the same
+results as running Franke's L₀ on the converted game. -/
+
+section smgDefs
+
+open RSA.IBR
+
+/-- A Social Meaning Game (Burnett Def. 4.1): a signalling game where
+    variant choice conveys social information.
+
+    - `P`: persona types (social categories the listener is trying to infer)
+    - `V`: variant types (linguistic forms the speaker chooses)
+    - `prior`: probability distribution over personae
+    - `meaning`: whether a variant is compatible with a persona
+      (derived from the EM field: `v` means `t` iff the EM lift of `v`
+      includes persona `t`)
+    - `socialEval`: the speaker's utility μ(t, v) — how much persona `t`
+      values being associated with variant `v` -/
+structure SocialMeaningGame (P V : Type)
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V] where
+  /-- Prior probability over personae. -/
+  prior : P → ℚ
+  /-- Prior is non-negative. -/
+  prior_nonneg : ∀ (t : P), 0 ≤ prior t
+  /-- Semantic meaning: is variant `v` compatible with persona `t`? -/
+  meaning : V → P → Bool
+  /-- Social evaluation: how much persona `t` values variant `v`. -/
+  socialEval : P → V → ℚ
+
+/-- Convert a Social Meaning Game to Franke's interpretation game.
+
+    This is the key architectural bridge: SMG analysis reuses the
+    existing IBR machinery from [franke-2011] rather than reimplementing
+    iterated best response.
+
+    The mapping:
+    - States = Personae (what the listener tries to infer)
+    - Messages = Variants (what the speaker chooses)
+    - meaning = SMG meaning (EM field compatibility)
+    - prior = SMG prior over personae -/
+def SocialMeaningGame.toInterpGame {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V) : InterpGame :=
+  { State := P
+    Message := V
+    meaning := smg.meaning
+    prior := smg.prior }
+
+/-- The naive listener (Burnett Def. 4.2): L₀(t | v) = 1/|⟦v⟧| if
+    ⟦v⟧(t), 0 otherwise.
+
+    This is Franke's literal L₀ — uniform over compatible types, NOT
+    Bayesian conditioning on the prior. The prior is passed through to
+    `toInterpGame` but Franke's `HearerStrategy.literal` ignores it,
+    distributing probability uniformly over `trueStates`.
+
+    The Bayesian L₀ (L₀(t | v) ∝ Pr(t) · ⟦v⟧(t)) is what Burnett's
+    RSA model uses (eq. 11). That prior-weighted version lives in the
+    `RSAConfig` meaning function of §3, not here. -/
+def naiveListener {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (v : V) (t : P) : ℚ :=
+  (L0 smg.toInterpGame).respond v t
+
+/-- **Grounding theorem**: The SMG naive listener IS Franke's L₀
+    applied to the converted game. True by construction. -/
+theorem naiveListener_eq_L0 {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V) :
+    naiveListener smg = fun v t => (L0 smg.toInterpGame).respond v t := rfl
+
+/-- The strategic speaker (simplified): S₁(v | t) ∝ μ(t, v) · ⟦v⟧(t).
+
+    This normalizes raw social evaluation scores over compatible variants,
+    producing a closed-form rational speaker. This is a simplification of
+    Burnett's Def. 4.3 / eq. (13), which uses soft-max over log-L₀:
+    P_S(v | π) ∝ exp(α · ln(L₀(π | v))). The full RSA formulation with
+    belief-based S₁ scoring lives in the `RSAConfig` of §3, not here.
+
+    Unlike Franke's best-response speaker (which maximizes hearer success),
+    the SMG speaker maximizes *social* utility: a persona chooses variants
+    that make the listener more likely to infer a desirable persona. -/
+def strategicSpeaker {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (t : P) (v : V) : ℚ :=
+  if smg.meaning v t then
+    let numerator := smg.socialEval t v
+    let denominator := Finset.univ.sum fun v' =>
+      if smg.meaning v' t then smg.socialEval t v' else 0
+    if denominator == 0 then 0 else numerator / denominator
+  else 0
+
+/-- The uncovering listener (Burnett Def. 4.4): L₁(t | v) ∝ Pr(t) · S₁(v | t).
+
+    The listener uses Bayes' rule to infer the speaker's persona from
+    the observed variant choice, using the strategic speaker's production
+    probabilities as the likelihood. -/
+def uncoveringListener {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (v : V) (t : P) : ℚ :=
+  let numerator := strategicSpeaker smg t v * smg.prior t
+  let denominator := Finset.univ.sum fun t' => strategicSpeaker smg t' v * smg.prior t'
+  if denominator == 0 then 0 else numerator / denominator
+
+/-- Construct a Social Meaning Game from a grounded field, prior, and
+    social evaluation function.
+
+    The meaning function is derived from the EM field: variant `v`
+    is compatible with a persona set `p` iff `v`'s indexed properties
+    are a subset of `p`'s properties. -/
+def fromGroundedField {V : Type} [Fintype V] [DecidableEq V]
+    (ps : PropertySpace)
+    (gf : GroundedField V ps)
+    (personaeSets : Finset (Finset ps.Property))
+    [Fintype personaeSets] [DecidableEq personaeSets]
+    (prior : personaeSets → ℚ)
+    (prior_nonneg : ∀ (t : personaeSets), 0 ≤ prior t)
+    (socialEval : personaeSets → V → ℚ) :
+    SocialMeaningGame personaeSets V :=
+  { prior := prior
+    prior_nonneg := prior_nonneg
+    meaning := fun v t => gf.indexedProperties v ⊆ t.val
+    socialEval := socialEval }
+
+end smgDefs
+
+/-! The SMG's `naiveListener` is Franke's literal L₀ — *uniform* over
 compatible personae. This captures the exclusion structure (which
 personae are ruled out by each variant) but not the prior-weighted
 refinement. The *quantitative* predictions (69% -in' for cool guy,
 style shifting) use the RSAConfig's belief-based S₁ (Burnett eq. 13:
 P_S(m|π) ∝ L₀(π|m)^α), which incorporates the context-specific prior
-into the meaning function to recover Bayesian conditioning. -/
+into the meaning function to recover Bayesian conditioning. We
+construct an SMG from the study's types and prove structural
+properties. -/
 
 section smgBridge
-
-open Sociolinguistics.SocialMeaningGame
 
 /-- Obama's social value function μ at the barbecue
     ([burnett-2019], Table 6, p. 438).
@@ -401,9 +541,9 @@ def obamaValues : Persona → ℚ
 /-- The (ING) Social Meaning Game for the casual context
     ([burnett-2019], Def. 4.1 + Table 2 + Table 6).
 
-    This connects the study's types to the theory-layer game
-    structure from `SMG.lean`, exercising `SocialMeaningGame`,
-    `naiveListener`, and `toInterpGame`. -/
+    This connects the study's types to the §8 game structure,
+    exercising `SocialMeaningGame`, `naiveListener`, and
+    `toInterpGame`. -/
 def casualSMG : SocialMeaningGame Persona INGVariant where
   prior := casualPrior
   prior_nonneg := by intro p; cases p <;> norm_num [casualPrior]
