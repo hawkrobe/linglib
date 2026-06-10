@@ -7,7 +7,7 @@ import Linglib.Phenomena.Modality.ComparePosition
 
 Study file formalizing the core contributions of [narrog-2012] beyond
 what is already captured in `Semantics.Modality.Narrog` (the 2D/3D semantic
-map) and `Diachronic.ModalChange` (Bybee et al. data + directionality).
+map) and `Narrog2010` (Bybee et al. data + directionality).
 
 ## New contributions formalized here
 
@@ -270,7 +270,7 @@ theorem hacquard_narrog_agree_on_epistemic :
 
 /-! The category-climbing hypothesis — that cross-linguistic modal change
     always proceeds from narrow-scope (event-oriented) to wide-scope
-    (speech-act-oriented) — is proved as `Diachronic.ModalChange.directionality`
+    (speech-act-oriented) — is proved as `Narrog2010.directionality`
     over the Bybee et al. (1994) dataset. The `source_below_target` theorem
     above establishes the structural precondition for this in our hierarchy:
     every source category is strictly below every target category. -/

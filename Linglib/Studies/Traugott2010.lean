@@ -1,8 +1,8 @@
 import Linglib.Features.Subjectivity
 
 /-!
-# Subjectification and Intersubjectification
-[traugott-dasher-2002] [traugott-2010]
+# Traugott (2010): Subjectification and Intersubjectification
+[traugott-2010] [traugott-dasher-2002]
 
 The diachronic hypothesis that lexical items acquire subjective and
 intersubjective meanings over time, in a fixed order:
@@ -11,33 +11,33 @@ intersubjective meanings over time, in a fixed order:
 
 This is one of the best-supported unidirectional tendencies in semantic
 change, attested across modality, connectives, discourse markers, and
-spatial expressions.
+spatial expressions. [traugott-2010] is the consolidating statement of
+the program developed in [traugott-dasher-2002].
 
 The synchronic infrastructure (the `SubjectivityLevel` type and ordering)
-lives in `Features.Subjectivity`. This module formalizes the **diachronic claims**:
-that the ordering reflects a historical trajectory, that each transition is
-unidirectional, and that specific semantic domains exhibit this pattern.
+lives in `Features.Subjectivity`. This file formalizes the **diachronic
+claims**: that the ordering reflects a historical trajectory, that each
+transition is unidirectional, and that specific semantic domains exhibit
+this pattern.
 
 ## Connections
 
 - `Semantics.Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
-  `Diachronic.ModalChange`) is an instance of subjectification.
+  `Studies/Narrog2010.lean`) is an instance of subjectification.
 - `Semantics.Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
-  parallels the subjectification trajectory in the nominal domain: N₁ shifts
-  from denoting objective properties to expressing speaker attitude.
-- `Diachronic.Grammaticalization`: subjectification is a semantic dimension of
-  grammaticalization — as forms grammaticalize, they tend to acquire
-  more subjective meanings.
+  parallels the subjectification trajectory in the nominal domain
+  (binominal steps formalized in `Studies/TenWolde2023.lean`).
+- `Typology/Grammaticalization.lean`: subjectification is a semantic
+  dimension of grammaticalization — as forms grammaticalize, they tend
+  to acquire more subjective meanings.
 -/
 
-namespace Diachronic.Subjectification
+namespace Traugott2010
 
 open Features.Subjectivity
 
--- ============================================================================
--- §1. The Diachronic Cline
--- ============================================================================
+/-! ### The diachronic cline -/
 
 /-- A diachronic subjectification step: a word or construction acquires a
     meaning at a higher subjectivity level. -/
@@ -96,54 +96,7 @@ theorem all_directed :
     simp [canonicalExamples] at hs
     rcases hs with rfl | rfl | rfl | rfl <;> decide
 
--- ============================================================================
--- §2. Binominal Subjectification
--- ============================================================================
-
-/-- Subjectification steps in the binominal (N₁-of-N₂) domain.
-
-[ten-wolde-2023] §4.5: the EBNP → EM → BI transitions are driven by
-subjectification — N₁ shifts from ascribing objective/physical properties
-to expressing the speaker's subjective evaluation. -/
-def binominalSubjectificationSteps : List SubjectificationStep :=
-  [ -- N+PP/HC → EBNP: the key subjectification step in the binominal domain.
-    -- N₁ shifts from denoting objective referential properties to expressing
-    -- the speaker's evaluative attitude.
-    { expression := "N₁ in of-binominals"
-      sourceMeaning := "N₁ denotes referential property (N+PP: the beast of the field)"
-      targetMeaning := "N₁ ascribes evaluative property (EBNP: that idiot of a doctor)"
-      sourceLevel := .nonSubjective
-      targetLevel := .subjective
-      directed := by decide }
-  , -- EBNP → EM: N₁ bleaches from full gradable predicate to pure
-    -- speaker evaluation. Subjectivity level maintained but semantics bleached.
-    { expression := "[N₁ of a] in of-binominals"
-      sourceMeaning := "N₁ ascribes evaluative property (EBNP: a beast of a man)"
-      targetMeaning := "N₁ expresses speaker's subjective evaluation (EM: a hell of a game)"
-      sourceLevel := .subjective
-      targetLevel := .subjective
-      directed := by decide }
-  , -- EM → BI: N₁ further bleaches to degree intensifier.
-    -- Subjectivity level maintained; the change is syntactic (shifts into AdjP).
-    { expression := "[N₁ of a] in of-binominals"
-      sourceMeaning := "N₁ as evaluative modifier (EM: a hell of a time)"
-      targetMeaning := "N₁ as degree intensifier (BI: a hell of a good time)"
-      sourceLevel := .subjective
-      targetLevel := .subjective
-      directed := by decide }
-  ]
-
-/-- The N+PP → EBNP step is a genuine subjectification (nonSubjective → subjective);
-    the later steps maintain subjectivity while bleaching semantics further. -/
-theorem binominal_steps_directed :
-    ∀ s ∈ binominalSubjectificationSteps, s.sourceLevel ≤ s.targetLevel :=
-  fun s hs => by
-    simp [binominalSubjectificationSteps] at hs
-    rcases hs with rfl | rfl | rfl <;> decide
-
--- ============================================================================
--- §3. Intersubjectification
--- ============================================================================
+/-! ### Intersubjectification -/
 
 /-- Intersubjectification: the final stage of the cline, where meanings
     come to encode attention to the addressee's face/self-image.
@@ -158,4 +111,4 @@ theorem intersubjectification_presupposes_subjectification :
 theorem cline_total_order (a b : SubjectivityLevel) : a ≤ b ∨ b ≤ a :=
   le_total a b
 
-end Diachronic.Subjectification
+end Traugott2010
