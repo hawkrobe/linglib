@@ -2351,6 +2351,7 @@ import Linglib.Studies.KadmonLandman1993Apparatus
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Syllogistic.Defs
 import Linglib.Semantics.Quantification.Syllogistic.Forms
+import Linglib.Semantics.Quantification.Syllogistic.Trees
 import Linglib.Semantics.Quantification.Syllogistic.Square
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Exceptive
