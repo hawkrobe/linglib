@@ -167,7 +167,7 @@ while the assertion commits the speaker to p via DECL (72).
 
 open Core.Order
 open Semantics.Presupposition
-open Semantics.Tense.Evidential
+open Tense.Evidential
 open Bulgarian.Evidentials
 
 /-! ### Spatiotemporal distance △ substrate (inlined) -/

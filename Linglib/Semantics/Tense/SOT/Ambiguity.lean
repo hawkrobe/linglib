@@ -21,7 +21,7 @@ it; theories that don't share Ogihara's ambiguity thesis simply don't
 import this file.
 -/
 
-namespace Semantics.Tense.SOT.Ambiguity
+namespace Tense.SOT.Ambiguity
 
 
 /-- Two readings of past morphology in embedded contexts (Ogihara). -/
@@ -43,4 +43,4 @@ theorem genuinePast_ne_zeroTense :
     PastReading.genuinePast ≠ PastReading.zeroTense := nofun
 
 
-end Semantics.Tense.SOT.Ambiguity
+end Tense.SOT.Ambiguity

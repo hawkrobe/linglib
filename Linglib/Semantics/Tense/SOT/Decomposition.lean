@@ -40,10 +40,9 @@ and simultaneous readings) but differ on what "past" means:
 
 -/
 
-namespace Semantics.Tense.SOT.Decomposition
+namespace Tense.SOT.Decomposition
 
-open Semantics.Tense
-open Semantics.Tense.Reichenbach
+open Tense
 
 
 /-! ### SOT Deletion -/
@@ -160,7 +159,7 @@ discourse-salient temporal antecedent. This explains the striking contrast:
   German: #"Ich schaltete den Herd nicht aus." ✗ (needs narrative context)
   German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
 
-open Semantics.Tense.TenseAspectComposition
+open Tense.TenseAspectComposition
 open Semantics.Aspect
 
 /-- Kratzer's English simple past = PRESENT tense + PERFECT aspect.
@@ -230,7 +229,7 @@ uniformly to pronouns and tenses:
   - Persian: zero PRONOUNS (locally bound by Agr) but NOT zero TENSE
     (tense is in C, outside the local domain of Agr in Infl)
 
-The distribution of overt vs. zero follows from `Semantics.Tense.Overtness`. -/
+The distribution of overt vs. zero follows from `Overtness`. -/
 
 /-- Zero tense: a bound present tense in a local agreement domain.
 
@@ -249,7 +248,7 @@ def kratzerZeroTense (n : ℕ) : TensePronoun where
 theorem zero_tense_is_present (n : ℕ) :
     (kratzerZeroTense n).constraint = .present := rfl
 
-/-- Zero tense surfaces as zero (from Semantics.Tense.Overtness). -/
+/-- Zero tense surfaces as zero (from Overtness). -/
 theorem zero_tense_overtness (n : ℕ) :
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero := rfl
 
@@ -291,4 +290,4 @@ theorem english_indexical_always_overt (localDomain : Bool) :
   cases localDomain <;> rfl
 
 
-end Semantics.Tense.SOT.Decomposition
+end Tense.SOT.Decomposition

@@ -36,12 +36,11 @@ Tenses are presupposition triggers anchored to π:
 
 -/
 
-namespace Semantics.Tense.Perspective
+namespace Tense.Perspective
 
-open Semantics.Tense.Reichenbach
 open Semantics.Presupposition
 open Semantics.Context (KContext)
-open Semantics.Tense
+open Tense
 
 
 /-! ### Tense Presuppositions -/
@@ -258,4 +257,4 @@ theorem InterpParams.shiftPerspective_matches_opPi {W E P T : Type*}
   simp only [opPi, InterpParams.shiftPerspective]
 
 
-end Semantics.Tense.Perspective
+end Tense.Perspective

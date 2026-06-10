@@ -83,7 +83,7 @@ namespace HeimComments1994
 
 open Core (Intension WorldTimeIndex)
 open Semantics.Context (KContext)
-open Semantics.Tense.DeRe (TemporalDeReReading)
+open Tense.DeRe (TemporalDeReReading)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -93,7 +93,7 @@ open Semantics.Tense.DeRe (TemporalDeReReading)
 /-- [heim-1994-comments] (p. 155): "By a 'time-concept' I mean
     a function from world-time pairs to times." This is the Lewis-style
     centered-world intension at one coordinate less than the substrate's
-    `Semantics.Tense.DeRe.TimeConcept` (which adds a Speas-Tenny agent
+    `Tense.DeRe.TimeConcept` (which adds a Speas-Tenny agent
     slot). Definitionally `Intension (WorldTimeIndex W T) T`. -/
 abbrev TimeConcept (W T : Type*) := Intension (WorldTimeIndex W T) T
 
@@ -110,7 +110,7 @@ abbrev TimeConcept (W T : Type*) := Intension (WorldTimeIndex W T) T
     from the substrate's `precomp`/`IsRigid.precomp`/`IsRigidOn.precomp`
     closure lemmas (`Core/Logic/Intensional/Rigidity.lean`). -/
 def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
-    Semantics.Tense.DeRe.TimeConcept W E P T :=
+    Tense.DeRe.TimeConcept W E P T :=
   Intension.precomp KContext.toSituation c
 
 /-- **Pullback preserves rigidity**: a rigid Heim time-concept lifts to
@@ -158,7 +158,7 @@ theorem toSubstrate_isRigidOn {W E P T : Type*}
     degenerate). -/
 theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     [Nonempty E] [Nonempty P]
-    (k : Semantics.Tense.DeRe.TimeConcept W E P T) :
+    (k : Tense.DeRe.TimeConcept W E P T) :
     (∃ c : TimeConcept W T, k = toSubstrate c) ↔
     (∀ c₁ c₂ : KContext W E P T,
       c₁.toSituation = c₂.toSituation → k c₁ = k c₂) := by
@@ -182,7 +182,7 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
     Heim's presuppositional construal of [abusch-1997]'s Upper
     Limit Constraint is already encoded in the substrate as
-    `Semantics.Tense.upperLimitConstraint` (typed `[LE Time]`,
+    `Tense.upperLimitConstraint` (typed `[LE Time]`,
     anchored to [heim-1994-comments] in its docstring). This
     bridge theorem projects the substrate's `TemporalDeReReading`
     `isFelicitousWith .past` (strict `<`) onto the substrate's ULC
@@ -197,7 +197,7 @@ theorem isFelicitousWith_past_imp_upperLimitConstraint
     {W E P T : Type*} [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
     (h : dr.isFelicitousWith .past) :
-    Semantics.Tense.upperLimitConstraint
+    Tense.upperLimitConstraint
       dr.actualRes dr.holderContext.time :=
   le_of_lt h
 

@@ -24,7 +24,7 @@ Level 1: Set Time (point sets)
 
 -/
 
-namespace Semantics.Tense.TemporalConnectives
+namespace Tense.TemporalConnectives
 
 open NonemptyInterval
 
@@ -102,4 +102,4 @@ theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
   · rintro ⟨hs, hf⟩
     exact ⟨i, rfl, hs, hf⟩
 
-end Semantics.Tense.TemporalConnectives
+end Tense.TemporalConnectives

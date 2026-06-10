@@ -33,7 +33,7 @@ The cross-linguistic typology ((98), (99)) lives in
 `Studies/Sharvit2014.lean`.
 -/
 
-namespace Semantics.Tense
+namespace Tense
 
 /-- [sharvit-2014]'s two semantic types for tense lexical items
     ((30), p. 274). -/
@@ -80,4 +80,4 @@ theorem quantificationalPast_mono {Time : Type*} [LT Time]
   rintro ⟨t', htK, hlt, hp⟩
   exact ⟨t', htK, hlt, h _ hp⟩
 
-end Semantics.Tense
+end Tense

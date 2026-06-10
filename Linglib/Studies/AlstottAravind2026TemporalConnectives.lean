@@ -53,7 +53,7 @@ INCHOAT / COMPLET Fragment.triggeredCoercion
 namespace AlstottAravind2026TemporalConnectives
 
 open Features
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
 open English.TemporalExpressions
 open Phenomena.TemporalConnectives.AspectInteractionData
 open Core.Order

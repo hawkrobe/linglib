@@ -27,7 +27,7 @@ framework applied to Turkish.
 
 namespace GokselKerslake2005
 
-open Semantics.Tense.Evidential
+open Tense.Evidential
 open Turkish.TAM
 
 -- ============================================================================

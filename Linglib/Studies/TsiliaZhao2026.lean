@@ -58,9 +58,8 @@ which is why English ⌈then⌉ is compatible with it.
 
 namespace TsiliaZhao2026
 
-open Semantics.Tense.Reichenbach
-open Semantics.Tense
-open Semantics.Tense.Perspective
+open Tense
+open Tense.Perspective
 
 
 -- ════════════════════════════════════════════════════════════════

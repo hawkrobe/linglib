@@ -34,9 +34,9 @@ existential), so its body in `before^{B&C}` is constant in `t` and IPF
 does not arise.
 -/
 
-namespace Semantics.Tense.TemporalConnectives.Before
+namespace Tense.TemporalConnectives.Before
 
-open Semantics.Tense (LexicalType quantificationalPast)
+open Tense (LexicalType quantificationalPast)
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -84,4 +84,4 @@ def triggersIPFInBefore : LexicalType → Bool
     triggersIPFInBefore τ = false ↔ τ = .pronominal := by
   cases τ <;> simp [triggersIPFInBefore]
 
-end Semantics.Tense.TemporalConnectives.Before
+end Tense.TemporalConnectives.Before

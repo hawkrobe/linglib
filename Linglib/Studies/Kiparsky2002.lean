@@ -61,7 +61,6 @@ files consume it). Verified against the Kiparsky 2002 PDF: the
 namespace Kiparsky2002
 
 open Core.Order
-open Semantics.Tense.Reichenbach
 open Features
 open Semantics.Aspect
 open Semantics.Aspect.SubeventStructure

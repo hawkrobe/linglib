@@ -11,7 +11,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 namespace Hebrew.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- Hebrew אז "az" -/
 def az : ThenAdverb where

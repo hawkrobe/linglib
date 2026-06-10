@@ -222,7 +222,7 @@ theorem fid_time_eq_direct :
 -- ============================================================================
 
 /-! Bridge from [anand-nevins-2004]'s shifty-operator framework to
-    `Semantics.Tense.DeRe.EntityConcept` — the substrate's
+    `Tense.DeRe.EntityConcept` — the substrate's
     individual-side de re intension. The existing FIDProfile-based
     formalization above and the substrate's `EntityConcept`-based
     formalization are two perspectives on the same phenomenon; the
@@ -239,7 +239,7 @@ theorem fid_time_eq_direct :
     `entityConcept_and_timeConcept_share_isRigid_substrate` theorem
     below makes that claim kernel-checked. -/
 
-open Semantics.Tense.DeRe (EntityConcept TimeConcept)
+open Tense.DeRe (EntityConcept TimeConcept)
 
 /-- **Kaplan-compliant "I"** as a rigid `EntityConcept`.
 

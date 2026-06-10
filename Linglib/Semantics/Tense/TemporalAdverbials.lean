@@ -29,11 +29,11 @@ restriction on LB values, which feeds directly into `PERF_XN`.
 
 import Linglib.Semantics.Tense.TenseAspectComposition
 
-namespace Semantics.Tense.TemporalAdverbials
+namespace Tense.TemporalAdverbials
 
-open Core.Order Semantics.Tense
+open Core.Order Tense
 open Semantics.Aspect
-open Semantics.Tense.TenseAspectComposition
+open Tense.TenseAspectComposition
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -170,4 +170,4 @@ theorem inclusive_no_u_license (V : W → Event Time → Prop) (tc : Time) (w : 
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
   broad_focus_equiv V tc w
 
-end Semantics.Tense.TemporalAdverbials
+end Tense.TemporalAdverbials

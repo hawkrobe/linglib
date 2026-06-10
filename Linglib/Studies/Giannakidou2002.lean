@@ -69,7 +69,7 @@ namespace Giannakidou2002
 open Core.Order
 open NonemptyInterval
 open Semantics.Aspect
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
 
 variable {Time : Type*} [LinearOrder Time]
 

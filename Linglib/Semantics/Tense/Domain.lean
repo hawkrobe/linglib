@@ -32,7 +32,7 @@ or sector classification. `Domain` is the substrate; the
 domain-shaped theories build on top.
 -/
 
-namespace Semantics.Tense
+namespace Tense
 
 
 /-! ### Times of Orientation -/
@@ -202,4 +202,4 @@ def ofReichenbachPoints (S P R E : Time) : Domain Time Orientation where
 
 end Domain
 
-end Semantics.Tense
+end Tense

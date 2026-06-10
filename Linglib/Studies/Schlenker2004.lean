@@ -287,7 +287,7 @@ open Abusch1997 in
 theorem schlenker_origin_supports_abusch_double_access
     (p : ℤ → Prop) (h_speech : p (presentAccess.resolve sotTower))
     (h_matrix : p matrixSaid.eventTime) :
-    Semantics.Tense.doubleAccess p
+    Tense.doubleAccess p
       (presentAccess.resolve sotTower) matrixSaid.eventTime :=
   ⟨h_speech, h_matrix⟩
 
@@ -333,7 +333,7 @@ theorem schlenker_origin_supports_abusch_double_access
     contexts (Schlenker eqs. 38, 40) generalizing Abusch's ULC to
     mood; that's also out of scope for the current substrate bridge. -/
 
-open Semantics.Tense.DeRe (TimeConcept TemporalDeReReading)
+open Tense.DeRe (TimeConcept TemporalDeReReading)
 
 /-- [schlenker-2004-sot]'s **`presentAccess` (origin reading)
     as a rigid `TimeConcept`**: the Kaplan-stable origin reading IS
@@ -412,10 +412,10 @@ open Abusch1997 in
     agreement apparatus and Abusch's res-movement make different
     predictions — not yet substrate-formalized. -/
 theorem schlenker_abusch_agree_on_simultaneous_value
-    (tp : Semantics.Tense.TensePronoun)
-    (g : Semantics.Tense.TemporalAssignment ℤ) :
+    (tp : TensePronoun)
+    (g : TemporalAssignment ℤ) :
     shiftedAccess.resolve sotTower =
-    tp.resolve (Semantics.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
+    tp.resolve (Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
   show matrixSaid.eventTime = _
   exact (Abusch1997.abusch_derives_simultaneous_via_binding
     tp g matrixSaid).symm

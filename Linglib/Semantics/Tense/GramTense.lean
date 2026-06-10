@@ -36,10 +36,7 @@ and `Attitudes/` theories build on. The temporal primitives it imports
 
 -/
 
-namespace Semantics.Tense
-
 open Core.Order
-open Semantics.Tense.Reichenbach
 open Core.ReferentialMode (ReferentialMode)
 open Core (Assignment WorldTimeIndex)
 
@@ -151,6 +148,8 @@ abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
 abbrev TemporalAssignment (Time : Type*) := Assignment Time
 
+namespace Tense
+
 /-- Modified temporal assignment `g[n ↦ t]`. Specializes `Function.update`. -/
 abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
     (n : ℕ) (t : Time) : TemporalAssignment Time :=
@@ -192,6 +191,10 @@ theorem zeroTense_receives_binder_time {Time : Type*}
     interpTense n (updateTemporal g n binderTime) = binderTime :=
   Function.update_self n binderTime g
 
+
+end Tense
+
+open Tense
 
 /-! ### SitProp (Prop-valued) -/
 
@@ -283,6 +286,8 @@ def TensePronoun.fullPresupposition {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
   tp.constraint.constrains (tp.resolve g) (tp.evalTime g)
 
+namespace Tense
+
 /-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
     This is the root-clause default: tense is checked against speech time. -/
 theorem evalTime_root_is_speech {Time : Type*}
@@ -300,6 +305,8 @@ theorem evalTime_shifts_under_embedding {Time : Type*}
   show interpTense tp.evalTimeIndex
     (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime
   exact zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
+
+end Tense
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}
@@ -319,12 +326,16 @@ theorem TensePronoun.bound_present_simultaneous {Time : Type*}
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind
 
+namespace Tense
+
 /-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time (indexical rigidity) AND matrix event time
     (attitude accessibility). -/
 def doubleAccess {Time : Type*} (p : Time → Prop)
     (speechTime matrixEventTime : Time) : Prop :=
   p speechTime ∧ p matrixEventTime
+
+end Tense
 
 /-- An indexical present tense presupposes resolution to speech time. -/
 theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Time]
@@ -397,6 +408,8 @@ into the tower: when the temporal assignment encodes tower time coordinates
   agrees with `AccessPattern.resolve`
 - `tense_root_bridge` — root clause: `evalTimeIndex = 0` means origin time
 - `von_stechow_tower` — pushing a temporal shift = Von Stechow's perspective shift -/
+
+namespace Tense
 
 section TemporalBridge
 
@@ -498,4 +511,4 @@ theorem von_stechow_tower_innermost
 
 end TemporalBridge
 
-end Semantics.Tense
+end Tense

@@ -206,8 +206,8 @@ theorem false_periphrastic_ungrammatical :
 -- § 7. Participant-Perspective Frame
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense.Evidential
-open Semantics.Tense
+open Tense.Evidential
+open Tense
 
 /-- Lakoff's participant-sensitive tense frame. Extends [cumming-2026]'s
     `EvidentialFrame` (which extends `ReichenbachFrame` with acquisition

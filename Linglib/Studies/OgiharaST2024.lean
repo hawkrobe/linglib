@@ -192,7 +192,7 @@ def after_oddity_enter : VeridicalityDatum where
   complementEntailed := true
   gloss := "after(enter, win) — pragmatically odd: entering presupposes not yet having won"
 
-open Semantics.Tense.TemporalConnectives.BeaverCondoravdi
+open Tense.TemporalConnectives.BeaverCondoravdi
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Counterexamples to B&C (O&[ogihara-steinert-threlkeld-2024], §5)
@@ -397,7 +397,7 @@ theorem logical_property_asymmetry :
 -- Bridge content (merged from Bridge.lean)
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
 open English.TemporalExpressions
 
 -- ════════════════════════════════════════════════════════════════
@@ -968,7 +968,7 @@ namespace OgiharaST2024.VeridicalityBridge
 
 open Core.Order
 open NonemptyInterval
-open Semantics.Tense.TemporalConnectives
+open Tense.TemporalConnectives
 open English.TemporalExpressions
 open OgiharaST2024
 
@@ -1098,7 +1098,7 @@ theorem negation_preserves_presup :
 -- § 23: B&C's Three Readings of *Before* and Presupposition
 -- ============================================================================
 
-open Semantics.Tense.TemporalConnectives.BeaverCondoravdi (BeforeReading)
+open Tense.TemporalConnectives.BeaverCondoravdi (BeforeReading)
 
 /-- All three readings are compatible with `complementVeridical = false`. -/
 theorem all_before_readings_nonveridical :

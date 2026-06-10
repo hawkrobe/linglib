@@ -30,11 +30,11 @@ while preserving the Context of Thought θ (= `tower.origin`).
 
 -/
 
-namespace Semantics.Tense.ConditionalShift
+namespace Tense.ConditionalShift
 
 open Core (WorldTimeIndex)
 
-open Semantics.Tense
+open Tense
 open Semantics.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
 open HistoricalAlternatives
@@ -255,4 +255,4 @@ theorem subj_subsumes_hp_expansion
 
 end SubjBridge
 
-end Semantics.Tense.ConditionalShift
+end Tense.ConditionalShift

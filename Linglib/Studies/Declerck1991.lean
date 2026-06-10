@@ -32,8 +32,7 @@ companion volume, [declerck-1991-grammar].
 
 namespace Declerck1991
 
-open Semantics.Tense.Reichenbach
-open Semantics.Tense (shiftedFrame)
+open Tense (shiftedFrame)
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -213,7 +212,7 @@ end Examples
 namespace TOChain
 
 open Core.Order (Relation)
-open Semantics.Tense (Domain NamedTO Orientation)
+open Tense (Domain NamedTO Orientation)
 
 /-! ### Time-spheres -/
 
@@ -234,7 +233,7 @@ inductive TimeSphere where
 
 /-! ### TO-chain architecture -/
 
-/-- A single link in a TO chain: a `Semantics.Tense.Orientation`-labelled
+/-- A single link in a TO chain: a `Tense.Orientation`-labelled
 time of orientation related to the next TO inward by a temporal relation.
 
 Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
@@ -598,10 +597,10 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
 
 end TowerBridge
 
-/-! ### Domain bridge: TO-chain as `Semantics.Tense.Domain`
+/-! ### Domain bridge: TO-chain as `Tense.Domain`
 
 Re-express `DeclercianSchema` via the framework-agnostic
-`Semantics.Tense.Domain` substrate (central TO + list of sub-TOs, with
+`Tense.Domain` substrate (central TO + list of sub-TOs, with
 Allen relations computed on demand from the underlying linear order).
 Additive: the schema structure and named-tense constructors stay
 unchanged; domain-level tooling can work uniformly with
@@ -612,7 +611,7 @@ section DomainBridge
 
 variable {Time : Type*} [LinearOrder Time]
 
-/-- The schema as a `Semantics.Tense.Domain` over the universal
+/-- The schema as a `Tense.Domain` over the universal
 `Orientation` role vocabulary: central = `.utterance` (t₀), sub-TOs =
 `.perspective` (TO₁) followed by every chain link as a point interval.
 
@@ -744,13 +743,13 @@ always holds, so "event precedes reference" can never hold and the
 perfect lives in the chain structure instead. Exactly Declerck's claim. -/
 
 instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
-    Semantics.Tense.TenseSystem (DeclercianSchema Time) Time Orientation where
+    TenseSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   anchor := .perspective
   situation := .situation
 
 instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
-    Semantics.Tense.AspectSystem (DeclercianSchema Time) Time Orientation where
+    AspectSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   event := .situation
   reference := .situation

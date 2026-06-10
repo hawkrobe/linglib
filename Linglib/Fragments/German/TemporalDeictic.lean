@@ -10,7 +10,7 @@ Lexical entry for German "damals" (back then), typed by `ThenAdverb`.
 
 namespace German.TemporalDeictic
 
-open Semantics.Tense
+open Tense
 
 /-- German "damals" (back-then) -/
 def damals : ThenAdverb where

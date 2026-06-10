@@ -20,7 +20,7 @@ Tense relates R to P; Aspect relates E to R.
 
 `ReichenbachFrame` is the four-slot point-time record used throughout
 linglib's tense modules. The `toDomain` builder lifts it to a generic
-`Semantics.Tense.Domain` (central = S, sub-TOs = [P, R, E], all as point
+`Tense.Domain` (central = S, sub-TOs = [P, R, E], all as point
 intervals via `TO.pure`). The `*_iff_relatedByName` bridge theorems
 re-express each predicate (`isPast`, `isPerfect`, …) as a
 `Domain.relatedByName` query against named atom-sets from the Allen
@@ -31,8 +31,7 @@ existing four-field record — downstream call sites continue to use
 work with `f.toDomain` and `relatedByName`.
 -/
 
-namespace Semantics.Tense.Reichenbach
-
+open Tense (Domain Orientation TO)
 open AllenRelation (precedesSet equalSet)
 
 /--
@@ -331,5 +330,3 @@ instance reichenbachFrame_aspectSystem {Time : Type*} [LinearOrder Time] :
   toDomain := ReichenbachFrame.toDomain
   event := .situation
   reference := .topic
-
-end Semantics.Tense.Reichenbach

@@ -58,7 +58,6 @@ example.
 
 namespace ArreguiKusumoto1998
 
-open Semantics.Tense.Reichenbach
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES

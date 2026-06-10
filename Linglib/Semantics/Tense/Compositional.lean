@@ -14,11 +14,10 @@ Following [partee-1973], tenses are pronoun-like: they retrieve temporal
 reference points rather than quantify over all times.
 -/
 
-namespace Semantics.Tense
+namespace Tense
 
 open Core (WorldTimeIndex)
 
-open Semantics.Tense.Reichenbach
 
 
 /--
@@ -277,4 +276,4 @@ example : FUT (raining Unit) ⟨(), 1⟩ ⟨(), 0⟩ := by
 
 end Examples
 
-end Semantics.Tense
+end Tense

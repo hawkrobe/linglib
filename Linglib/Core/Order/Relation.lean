@@ -7,7 +7,7 @@ The point analogue of `AllenRelation` (which operates on intervals).
 A `Relation` is a domain-flavored selector over the standard partition
 of pairs of times: before, after, overlapping, ≤, ≥, unrestricted.
 
-Used by tense (`Semantics.Tense.GramTense.constrains` realizes the
+Used by tense (`GramTense.constrains` realizes the
 before/overlapping/after/notBefore cells), evidential semantics
 (`EPCondition.toRelation`), and modal-base time
 analyses (`MBTProfile.toRelation` in Huijsmans 2025) — each domain
