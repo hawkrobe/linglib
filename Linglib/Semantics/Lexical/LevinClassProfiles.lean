@@ -32,7 +32,6 @@ namespace Features.LevinClassProfiles
 
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
-open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -178,7 +177,7 @@ end Semantics.Lexical
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
-open Semantics.Lexical.Roots
+open FeatureSignature
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles
@@ -244,16 +243,16 @@ theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = none := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 7. RootEntailments → ArgTemplate (the missing derivation)
+-- § 7. FeatureSignature → ArgTemplate (the missing derivation)
 -- ════════════════════════════════════════════════════
 
-/-! Root entailments determine argument templates — this is the field
-consensus ([beavers-koontz-garboden-2020], [rappaport-hovav-levin-2024]).
+/-! Root feature signatures determine argument templates — this is the
+field consensus ([beavers-koontz-garboden-2020], [rappaport-hovav-levin-2024]).
 The derivational direction runs:
 
-    RootEntailments → Template → ArgTemplate → ThetaRole labels
+    FeatureSignature → Template → ArgTemplate → ThetaRole labels
 
-`RootEntailments.toArgTemplate` formalizes the default derivation. It
+`toArgTemplate` formalizes the default derivation. It
 captures the majority pattern: causative roots produce agent subjects
 and affected objects; manner-only roots produce agent subjects without
 causation; result-only roots produce unaccusative subjects; state-only
@@ -269,7 +268,7 @@ Two classes of systematic overrides exist:
 
 These overrides are documented and verified below. -/
 
-/-- Derive a default ArgTemplate from root structural entailments.
+/-- Derive a default ArgTemplate from a root feature signature.
 
     The derivation follows B&KG's event structure decomposition:
 
@@ -286,14 +285,14 @@ These overrides are documented and verified below. -/
     (causativeResult): both produce the same default ArgTemplate.
     The manner flag restricts HOW the cause proceeds (cutting vs.
     breaking), not WHETHER there's an agent. -/
-def toArgTemplate (re : RootEntailments) : Option ArgTemplate :=
-  if re.cause then
+def toArgTemplate (re : FeatureSignature) : Option ArgTemplate :=
+  if .cause ∈ re then
     some resultChange
-  else if re.result then
+  else if .result ∈ re then
     some unaccusativeCoS
-  else if re.manner then
+  else if .manner ∈ re then
     some selfMotion
-  else if re.state then
+  else if .state ∈ re then
     some perception
   else
     none
@@ -378,19 +377,19 @@ theorem build_subject_agrees :
 
 -- § 8d. The derivation produces well-formed ArgTemplates
 
-/-- All canonical root entailments derive well-formed internal constraints
+/-- All canonical root signatures derive well-formed internal constraints
     (volition → sentience holds for derived subject profiles). The
     `Option.elim False` form simultaneously checks that `toArgTemplate`
     succeeds on each input and that the resulting template's subject
     profile is well-formed. -/
 theorem derived_subjects_wellformed :
-    (toArgTemplate .causativeResult).elim False
+    (toArgTemplate causativeResult).elim False
       (·.subjectProfile.WellFormedInternal) ∧
-    (toArgTemplate .pureManner).elim False
+    (toArgTemplate pureManner).elim False
       (·.subjectProfile.WellFormedInternal) ∧
-    (toArgTemplate .pureResult).elim False
+    (toArgTemplate pureResult).elim False
       (·.subjectProfile.WellFormedInternal) ∧
-    (toArgTemplate .propertyConcept).elim False
+    (toArgTemplate propertyConcept).elim False
       (·.subjectProfile.WellFormedInternal) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · show resultChange.subjectProfile.WellFormedInternal; decide

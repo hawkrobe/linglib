@@ -2,7 +2,7 @@ import Mathlib.Order.Nat
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
-import Linglib.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.Profile
 
 /-!
 # Morphological Causation: Causative Construction Typology
@@ -75,7 +75,6 @@ namespace Semantics.Causation.Morphological
 
 open Semantics.Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.AgentivityLattice (AgentivityNode)
-open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causer Type ([hafeez-2025], [comrie-1989])

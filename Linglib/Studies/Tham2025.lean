@@ -891,9 +891,8 @@ theorem largeVase_score_le_one :
     bundles of lexical entailments
     (`Semantics/Lexical/Roots/Basic.lean`). Their classification
     of √crack is `[.becomesState "fissured", .hasCause]` — the
-    "result + cause, no manner" base four-feature signature
-    `⟨hasState=false, hasManner=false, hasResult=true, hasCause=true⟩`
-    (`BeaversKoontzGarboden2020.crack`).
+    "result + cause, no manner" base feature signature
+    `{.result, .cause}` (`BeaversKoontzGarboden2020.crack`).
 
     Tham §5.1 (the (45) examples — cracked pumpkin, dented helmet
     model, scratched decal) is in tension with strict result-state
@@ -905,17 +904,15 @@ theorem largeVase_score_le_one :
     yet the adjectival side `Tham2025.crack.adjEntailsPrecedingChange`
     is false. -/
 
-/-- B&KG's `crack` root has `hasResult = true` (the `becomesState
-    "fissured"` entailment provides it), but Tham's deverbal adjective
+/-- B&KG's `crack` root has a result entailment (the `becomesState
+    "fissured"` atom provides it), but Tham's deverbal adjective
     *cracked* does NOT entail a preceding CoS event. Strict result-
     state inheritance from root to deverbal adjective is refuted at
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
-    Semantics.Lexical.Roots.Root.hasResult
-      BeaversKoontzGarboden2020.crack
-      = true ∧
-    crack.adjEntailsPrecedingChange = false := by
-  refine ⟨rfl, rfl⟩
+    BeaversKoontzGarboden2020.crack.HasResult ∧
+    crack.adjEntailsPrecedingChange = false :=
+  ⟨by decide, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 15. Cross-paper engagement: Waldon et al. 2023 contrast
