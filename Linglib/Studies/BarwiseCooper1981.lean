@@ -55,10 +55,15 @@ to the GQ property predicates in `Core.Quantification` and
 - **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
   `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
 - **Counting formula**: `Core.Quantification.conservativeQuantifierCount`
+- **Appendix C** (this file, below): C12 — *more than half* is not
+  first-order definable over finite models (`more_than_half_not_definable`,
+  restated through the codebase's ⟦most⟧ as `most_sem_not_definable`);
+  C13 — not definable even from the unrelativized majority quantifier
+  (`more_than_half_not_Q_definable`): *most* is a determiner.
 
 -/
 
-namespace Phenomena.Quantification.Bridge
+namespace BarwiseCooper1981
 
 open English.Determiners (Monotonicity Strength)
 open Phenomena.Quantification.Inventory
@@ -411,7 +416,7 @@ theorem domain_restriction_preserves_conservativity :
   intro q α inst inst2 C
   exact conservative_domain_restricted (conservativity_universal q)
 
-end Phenomena.Quantification.Bridge
+end BarwiseCooper1981
 
 /-! ### Appendix C: *more than half* is not first-order definable
 
@@ -689,11 +694,14 @@ theorem realize_iff_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
 
 /-! ### The theorem -/
 
-/-- The *more than half* truth condition over a structure: more than half
-the V's are U's (`Card(U ∩ V) > ½ Card(V)`, B&C p. 213). -/
+/-- "More than half the V's are U's" over bare predicates
+(`Card(U ∩ V) > ½ Card(V)`, B&C p. 213). -/
+def MostUV {M : Type} (U V : M → Prop) : Prop :=
+  2 * Set.ncard {x | U x ∧ V x} > Set.ncard {x | V x}
+
+/-- The *more than half* truth condition over a structure. -/
 def MoreThanHalf (M : Type) (S : L_UV.Structure M) : Prop :=
-  2 * Set.ncard {x : M | S.RelMap uRel ![x] ∧ S.RelMap vRel ![x]} >
-    Set.ncard {x : M | S.RelMap vRel ![x]}
+  MostUV (fun x => S.RelMap uRel ![x]) (fun x => S.RelMap vRel ![x])
 
 private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
     Set.ncard {x : Fin n | x.val < c} = c := by
@@ -724,7 +732,7 @@ theorem more_than_half_not_definable :
       omega
     have hV : {x : Fin (3 * m + 1) | (struc₁ m (3 * m + 1)).RelMap vRel ![x]}
         = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
-    unfold MoreThanHalf
+    unfold MoreThanHalf MostUV
     rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
     omega
   -- M₂ satisfies more-than-half: |U₂ ∩ V| = m + 1, |V| = 2m
@@ -737,7 +745,7 @@ theorem more_than_half_not_definable :
       omega
     have hV : {x : Fin (3 * m + 1) | (struc₂ m (3 * m + 1)).RelMap vRel ![x]}
         = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
-    unfold MoreThanHalf
+    unfold MoreThanHalf MostUV
     rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
     omega
   -- but they agree on φ, by condition (6) at the empty correspondence
@@ -773,6 +781,8 @@ models where the domain swamps `V` (property (P), via "a trivial
 automorphism argument"), reducing to C12's models. -/
 
 namespace BarwiseCooper1981
+
+open FirstOrder Language
 
 /-- Formulas of B&C's `L(Q)`: the monadic language of C12 (atoms `U`, `V`,
 equality) plus the unrelativized majority quantifier `Qx[·]`. De Bruijn
@@ -943,9 +953,7 @@ theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E
       imp_congr (realize_equivMap σ hU hV f₁ xs) (realize_equivMap σ hU hV f₂ xs)
   | _, .all f, xs => by
       have key : ∀ x, Fin.snoc (σ ∘ xs) (σ x) = σ ∘ Fin.snoc xs x := fun x =>
-        funext fun p => by
-          induction p using Fin.lastCases <;>
-            simp [Fin.snoc_last, Fin.snoc_castSucc]
+        (Fin.comp_snoc σ xs x).symm
       constructor
       · intro h x
         have := h (σ x)
@@ -962,9 +970,7 @@ theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E
       show 2 * Set.ncard {a | f.Realize U V (Fin.snoc (σ ∘ xs) a)} > _ ↔
         2 * Set.ncard {a | f.Realize U V (Fin.snoc xs a)} > _
       have key : ∀ x, Fin.snoc (σ ∘ xs) (σ x) = σ ∘ Fin.snoc xs x := fun x =>
-        funext fun p => by
-          induction p using Fin.lastCases <;>
-            simp [Fin.snoc_last, Fin.snoc_castSucc]
+        (Fin.comp_snoc σ xs x).symm
       have hset : {a | f.Realize U V (Fin.snoc (σ ∘ xs) a)}
           = σ '' {a | f.Realize U V (Fin.snoc xs a)} := by
         ext a
@@ -981,7 +987,7 @@ theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E
 
 /-- The `Q`-free condition (6): the C12 argument for the `L(Q)` fragment
 over the C12 model pair. -/
-theorem qfree_realize_iff (m k : ℕ) (hk : 3 * m ≤ k) :
+theorem realize_iff_of_qFree (m k : ℕ) (hk : 3 * m ≤ k) :
     ∀ {ℓ : ℕ} (ψ : QFormula ℓ), QFree ψ → numQ ψ + ℓ < m →
       ∀ {a b : Fin ℓ → Fin k}, RegionMatch m k a b →
         (ψ.Realize (fun x => x.val < m) (fun x => x.val < 2 * m) a ↔
@@ -1150,8 +1156,7 @@ from the unrelativized one: *most* must be treated as a determiner, not a
 quantifier. (B&C credit a related unpublished 1965 theorem to David Kaplan.) -/
 theorem more_than_half_not_Q_definable :
     ¬ ∃ φ : QFormula 0, ∀ (E : Type) [Fintype E] (U V : E → Prop),
-      (φ.Realize U V default ↔
-        2 * Set.ncard {x | U x ∧ V x} > Set.ncard {x | V x}) := by
+      (φ.Realize U V default ↔ MostUV U V) := by
   rintro ⟨φ, hφ⟩
   set m := QFormula.numQ φ + 1 with hm
   set k := 2 * (2 * m + QFormula.numQ φ) with hk2
@@ -1173,6 +1178,7 @@ theorem more_than_half_not_Q_definable :
   have hfalse₁ : ¬ QFormula.Realize (fun x : Fin k => x.val < m)
       (fun x => x.val < 2 * m) φ default := fun hr => by
     have hcount := h₁.mp (hcast _ _ hr)
+    unfold MostUV at hcount
     rw [hUV₁, ncard_val_lt k m (by omega), hcardV] at hcount
     omega
   have h₂ := hφ (Fin k) (fun x => x.val < m + 1) (fun x => x.val < 2 * m)
@@ -1183,6 +1189,7 @@ theorem more_than_half_not_Q_definable :
     omega
   have htrue₂ : QFormula.Realize (fun x : Fin k => x.val < m + 1)
       (fun x => x.val < 2 * m) φ default := hcast _ _ (h₂.mpr (by
+    unfold MostUV
     rw [hUV₂, ncard_val_lt k (m + 1) (by omega), hcardV]
     omega))
   have hP₁ := QFormula.realize_star_iff (E := Fin k)
@@ -1195,10 +1202,52 @@ theorem more_than_half_not_Q_definable :
     (fun x hx => by omega) φ
     (by rw [show {x : Fin k | x.val < 2 * m}.ncard = 2 * m from hcardV,
       Fintype.card_fin]; omega) default
-  have htrans := QFormula.qfree_realize_iff m k hk (QFormula.star φ)
+  have htrans := QFormula.realize_iff_of_qFree m k hk (QFormula.star φ)
     (QFormula.qFree_star φ) (by rw [QFormula.numQ_star]; omega)
     (a := default) (b := default)
     ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
   exact hfalse₁ (hP₁.mp (htrans.mpr (hP₂.mpr htrue₂)))
+
+/-! ### The truth condition is the codebase's ⟦most⟧ -/
+
+private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
+    [DecidablePred P] :
+    Core.Quantification.count P = Set.ncard {x | P x} := by
+  rw [Core.Quantification.count, Set.ncard_eq_toFinset_card']
+  congr 1
+  ext x
+  simp
+
+/-- The C12/C13 truth condition is `most_sem` with `V` as restrictor — the
+theorems are about the denotation the rest of the codebase attributes to
+*most*, not a local re-implementation. -/
+theorem mostUV_iff_most_sem {M : Type} [Fintype M] (U V : M → Prop) :
+    MostUV U V ↔ Core.Quantification.most_sem V U := by
+  classical
+  unfold MostUV Core.Quantification.most_sem
+  rw [count_eq_ncard, count_eq_ncard]
+  have hcomm : {x | U x ∧ V x} = {x | V x ∧ U x} := by
+    ext x
+    simp [and_comm]
+  have hpart : Set.ncard {x | V x ∧ U x} + Set.ncard {x | V x ∧ ¬ U x}
+      = Set.ncard {x | V x} := by
+    rw [← Set.ncard_union_eq (Set.disjoint_left.mpr fun x hx hx' => hx'.2 hx.2)
+      (Set.toFinite _) (Set.toFinite _)]
+    congr 1
+    ext x
+    by_cases hU : U x <;> simp [hU]
+  rw [hcomm]
+  omega
+
+/-- **C12 restated through `most_sem`**: no first-order sentence expresses
+the codebase's ⟦most⟧ over finite models. -/
+theorem most_sem_not_definable :
+    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] (S : L_UV.Structure M),
+      (@Sentence.Realize L_UV M S φ ↔
+        Core.Quantification.most_sem (fun x => S.RelMap vRel ![x])
+          (fun x => S.RelMap uRel ![x])) := by
+  rintro ⟨φ, hφ⟩
+  exact more_than_half_not_definable ⟨φ, fun M _ S =>
+    (hφ M S).trans (mostUV_iff_most_sem _ _).symm⟩
 
 end BarwiseCooper1981
