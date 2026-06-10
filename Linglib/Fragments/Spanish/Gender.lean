@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Spanish Noun Gender
@@ -162,7 +162,7 @@ def sameRootNouns : List SameRootEntry :=
 -- § 7: Typology profile (Corbett 1991, WALS Ch 30/31/32)
 -- ============================================================================
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Spanish gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

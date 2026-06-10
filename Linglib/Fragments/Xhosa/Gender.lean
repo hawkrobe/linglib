@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Xhosa Gender
@@ -11,7 +11,7 @@ agreement-side analysis; the morphological class inventory is larger.
 
 namespace Xhosa.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Xhosa gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=

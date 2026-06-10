@@ -1,6 +1,6 @@
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.Negation
-import Linglib.Typology.Grammaticalization
+import Linglib.Morphology.Grammaticalization
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 

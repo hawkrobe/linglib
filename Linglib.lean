@@ -252,7 +252,7 @@ import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ArgumentStructure
 import Linglib.Typology.Copulas
-import Linglib.Typology.Morphology
+import Linglib.Morphology.Typology
 import Linglib.Typology.Complementation
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.Directives
@@ -316,7 +316,7 @@ import Linglib.Syntax.Adposition.Basic
 import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
-import Linglib.Typology.CaseGrammaticalization
+import Linglib.Features.Case.Grammaticalization
 import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
@@ -1186,7 +1186,7 @@ import Linglib.Studies.Gunlogson2001
 import Linglib.Studies.Krifka2015
 import Linglib.Studies.Krifka2020
 import Linglib.Studies.Rudin2025
-import Linglib.Typology.Case
+import Linglib.Morphology.Case.WALS
 import Linglib.Studies.Caha2009
 import Linglib.Studies.Scott2023
 import Linglib.Studies.Ozaki2026
@@ -2694,7 +2694,7 @@ import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Studies.Haspelmath2001
-import Linglib.Typology.Grammaticalization
+import Linglib.Morphology.Grammaticalization
 import Linglib.Studies.Traugott2010
 import Linglib.Studies.BellerGerstenberg2025
 import Linglib.Studies.KonukEtAl2026

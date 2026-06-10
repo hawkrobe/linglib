@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F31A
 import Linglib.Data.WALS.Features.F32A
 
 /-!
-# Typology.Gender
+# Morphology.Gender — Gender-System Typology
 [corbett-1991] [corbett-2013] [dryer-haspelmath-2013]
 [dixon-1972] [wals-2013]
 
@@ -51,7 +51,7 @@ The 21-language sample and Corbett's typological generalisations live in
 
 set_option autoImplicit false
 
-namespace Typology.Gender
+namespace Morphology.Gender
 
 open Agreement (AgreementTarget)
 
@@ -309,4 +309,4 @@ def GenderProfile.fromWALS
     the GenderProfile mathlib polish. The corpus distributions remain
     documentary in [corbett-2013]'s WALS chapters. -/
 
-end Typology.Gender
+end Morphology.Gender

@@ -28,7 +28,7 @@ this pattern.
 - `Semantics.Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
   parallels the subjectification trajectory in the nominal domain
   (binominal steps formalized in `Studies/TenWolde2023.lean`).
-- `Typology/Grammaticalization.lean`: subjectification is a semantic
+- `Morphology/Grammaticalization.lean`: subjectification is a semantic
   dimension of grammaticalization — as forms grammaticalize, they tend
   to acquire more subjective meanings.
 -/

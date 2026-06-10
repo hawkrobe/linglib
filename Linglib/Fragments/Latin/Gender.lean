@@ -1,4 +1,4 @@
-import Linglib.Typology.Gender
+import Linglib.Morphology.Gender
 
 /-!
 # Latin Gender
@@ -10,7 +10,7 @@ attributive + predicate adjectives, relative + personal pronouns.
 
 namespace Latin.Gender
 
-open Typology.Gender
+open Morphology.Gender
 
 /-- Latin gender typology: 3-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=

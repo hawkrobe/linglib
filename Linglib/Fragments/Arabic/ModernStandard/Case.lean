@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Case
+import Linglib.Morphology.Case.WALS
 
 /-!
 # Modern Standard Arabic Case Inventory
@@ -43,24 +43,24 @@ of the surface system; no theoretical commitment to abstract case
 or feature-checking. -/
 
 /-- WALS Ch 49 (number of cases): 3 cases falls into the `threeFour` bin. -/
-def caseCount : Typology.Case.CaseCount := .threeFour
+def caseCount : Morphology.Case.CaseCount := .threeFour
 
 /-- WALS Ch 50 (asymmetrical case marking): the sound-feminine plural
     (`kalimaat-in` for both gen and acc), the dual (`-ayni` for both gen
     and acc), the sound-masculine plural (`-iina` for both gen and acc),
     and the diptote declension all collapse case distinctions on selected
     NP types. Per Ryding §4.2.1 pp. 162–163 + §5.4. -/
-def asymmetricalMarking : Typology.Case.AsymmetricalCaseMarking :=
+def asymmetricalMarking : Morphology.Case.AsymmetricalCaseMarking :=
   .syncretismInRelevantNpTypes
 
 /-- WALS Ch 51 (position of case affixes): word-final short-vowel
     suffixes (Ryding §5 p. 166). -/
-def caseAffixPosition : Typology.Case.CaseAffixPosition := .suffixesOnly
+def caseAffixPosition : Morphology.Case.CaseAffixPosition := .suffixesOnly
 
 /-- WALS Ch 52 (comitative–instrumental): MSA distinguishes them —
     *maʿa* '(together) with' (comitative) vs `bi-` 'by means of'
     (instrumental). Different markers, hence `differentiation`. -/
-def comitativeInstrumental : Typology.Case.ComitativeInstrumental :=
+def comitativeInstrumental : Morphology.Case.ComitativeInstrumental :=
   .differentiation
 
 end Arabic.ModernStandard.Case

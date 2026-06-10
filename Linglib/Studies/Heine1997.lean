@@ -1,5 +1,5 @@
 import Linglib.Typology.Possession
-import Linglib.Typology.Grammaticalization
+import Linglib.Morphology.Grammaticalization
 import Linglib.Semantics.ArgumentStructure.Relational
 import Linglib.Data.WALS.Features.F117A
 import Linglib.Fragments.Slavic.Russian.Possession
