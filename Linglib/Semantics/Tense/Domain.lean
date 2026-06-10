@@ -195,16 +195,14 @@ variable {Time : Type*} [LinearOrder Time]
 theorem pure_precedes_iff (s t : Time) :
     AllenRelation.holdsIn AllenRelation.precedesSet (TO.pure s) (TO.pure t) ↔
     s < t := by
-  unfold AllenRelation.precedesSet
-  rw [AllenRelation.holdsIn_singleton]
+  simp only [AllenRelation.precedesSet, AllenRelation.holdsIn_singleton]
   rfl
 
 /-- Point TOs: `equalSet` holds iff the underlying times are equal. -/
 theorem pure_equal_iff (s t : Time) :
     AllenRelation.holdsIn AllenRelation.equalSet (TO.pure s) (TO.pure t) ↔
     s = t := by
-  unfold AllenRelation.equalSet
-  rw [AllenRelation.holdsIn_singleton]
+  simp only [AllenRelation.equalSet, AllenRelation.holdsIn_singleton]
   exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
 
 /-- No point TO is properly contained in another: each of `starts`,

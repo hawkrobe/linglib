@@ -12,14 +12,12 @@ which two roles its tense operators target (the *anchor* and
 *situation* TOs). `AspectSystem α Time Role` is the analogous
 abstraction for the event/reference relation.
 
-These typeclasses do not derive generic `isPast`/`isPerfect`/etc.
-predicates — those live concretely on each schema (e.g.
-`ReichenbachFrame.isPast`), where the relevant per-paper bridge
-theorems (`isPast_iff_relatedByName`) connect them to the Allen
-algebra via `Domain.relatedByName`. The typeclass exists to give
-schema-generic `toDomain` dispatch and to commit each framework to a
-consistent role vocabulary; predicate-level abstraction is left to
-the concrete schemas.
+Generic tense and aspect predicates (`TenseSystem.isPast`,
+`AspectSystem.isImperfective`, …) are defined once over the classes
+via `Domain.relatedByName` with Allen atom-sets; concrete schemas
+prove specialization lemmas (e.g. `tenseSystem_isPast_iff` for
+`ReichenbachFrame`), so rival frameworks share a single predicate
+vocabulary to agree or disagree in.
 
 The class is parameterized in the mathlib style — the carrier type
 is the main parameter; `Time` and `Role` are `outParam`s, so writing
@@ -44,9 +42,9 @@ universe u v w
       the situation against). For [reichenbach-1947] (extended with
       Kiparsky's P) this is `.perspective`; for [declerck-1991] the
       binding-TO TO₁ also plays this role and is again `.perspective`.
-    - `situation`: the role of the *situation* TO. For Reichenbach this
-      is `.topic` (= R); for Declerck the situation time TS coincides
-      with `.situation` under the universal `TS = TO_sit` principle.
+    - `located`: the role of the TO that tense locates against the
+      anchor. For Reichenbach this is `.topic` (= R); for Declerck the
+      situation time TS coincides with `.situation` (TO_sit).
 
     `Time` and `Role` are `outParam`s: the carrier type `α` (e.g.,
     `ReichenbachFrame ℤ`) determines the time line and the role

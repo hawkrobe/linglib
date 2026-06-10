@@ -204,7 +204,7 @@ def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
 @[simp] theorem toDomain_findSituation (f : ReichenbachFrame Time) :
     f.toDomain.find? .situation = some (TO.pure f.eventTime) := rfl
 
--- ──── Predicate bridges: each predicate as a `relatedByName` query ────
+/-! ### Predicate bridges: each predicate as a `relatedByName` query -/
 
 /-- `isPast` is exactly `topic precedes perspective` in the Allen
     algebra against the domain — the Reichenbach predicate grounded by
@@ -245,7 +245,7 @@ theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
 /-- `isPerfective` is exactly `situation equal topic` in the Allen
     algebra against the domain. (For the point-time approximation; the
     proper interval-based perfective/imperfective distinction lives in
-    `Semantics/Lexical/Verb/ViewpointAspect.lean`.) -/
+    `Semantics/Aspect/Basic.lean`, `ViewpointAspectB`.) -/
 theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfective ↔ f.toDomain.relatedByName equalSet .situation .topic := by
   rw [Domain.relatedByName_iff equalSet (toDomain_findSituation f) (toDomain_findTopic f)]
@@ -285,48 +285,52 @@ The generic `TenseSystem`/`AspectSystem` predicates agree with the
 concrete `ReichenbachFrame` predicates — the frame is the point-time
 specialization of the interval-native generic layer. -/
 
+namespace ReichenbachFrame
+
 section GenericSpecialization
 
 variable {Time : Type*} [LinearOrder Time]
 
 @[simp] theorem tenseSystem_isPast_iff (f : ReichenbachFrame Time) :
     TenseSystem.isPast f ↔ f.isPast :=
-  (ReichenbachFrame.isPast_iff_relatedByName f).symm
+  (isPast_iff_relatedByName f).symm
 
 @[simp] theorem tenseSystem_isPresent_iff (f : ReichenbachFrame Time) :
     TenseSystem.isPresent f ↔ f.isPresent :=
-  (ReichenbachFrame.isPresent_iff_relatedByName f).symm
+  (isPresent_iff_relatedByName f).symm
 
 @[simp] theorem tenseSystem_isFuture_iff (f : ReichenbachFrame Time) :
     TenseSystem.isFuture f ↔ f.isFuture :=
-  (ReichenbachFrame.isFuture_iff_relatedByName f).symm
+  (isFuture_iff_relatedByName f).symm
 
 @[simp] theorem aspectSystem_isPerfect_iff (f : ReichenbachFrame Time) :
     AspectSystem.isPerfect f ↔ f.isPerfect :=
-  (ReichenbachFrame.isPerfect_iff_relatedByName f).symm
+  (isPerfect_iff_relatedByName f).symm
 
 @[simp] theorem aspectSystem_isPerfective_iff (f : ReichenbachFrame Time) :
     AspectSystem.isPerfective f ↔ f.isPerfective :=
-  (ReichenbachFrame.isPerfective_iff_relatedByName f).symm
+  (isPerfective_iff_relatedByName f).symm
 
 @[simp] theorem aspectSystem_isProspective_iff (f : ReichenbachFrame Time) :
     AspectSystem.isProspective f ↔ f.isProspective :=
-  (ReichenbachFrame.isProspective_iff_relatedByName f).symm
+  (isProspective_iff_relatedByName f).symm
 
 /-- **Point frames cannot be imperfective.** [klein-1994]'s imperfective
     (TT properly inside TSit) requires a non-degenerate interval, and
     every `ReichenbachFrame` TO is a point. The audit-level claim that
     "the imperfective is unrepresentable in the point-frame core" is
     here a theorem, not a docstring. -/
-theorem ReichenbachFrame.not_aspectSystem_isImperfective
+theorem not_aspectSystem_isImperfective
     (f : ReichenbachFrame Time) : ¬ AspectSystem.isImperfective f := by
   rintro ⟨i, j, hi, hj, hrel⟩
   have hi' : f.toDomain.find? .topic = some i := hi
   have hj' : f.toDomain.find? .situation = some j := hj
-  rw [ReichenbachFrame.toDomain_findTopic] at hi'
-  rw [ReichenbachFrame.toDomain_findSituation] at hj'
+  rw [toDomain_findTopic] at hi'
+  rw [toDomain_findSituation] at hj'
   obtain rfl := Option.some.inj hi'
   obtain rfl := Option.some.inj hj'
   exact TO.not_pure_properContainment _ _ hrel
 
 end GenericSpecialization
+
+end ReichenbachFrame

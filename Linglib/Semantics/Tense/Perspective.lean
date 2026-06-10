@@ -40,7 +40,6 @@ namespace Tense.Perspective
 
 open Semantics.Presupposition
 open Semantics.Context (KContext)
-open Tense
 
 
 /-! ### Tense Presuppositions -/

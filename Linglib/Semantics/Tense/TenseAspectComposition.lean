@@ -1,4 +1,8 @@
-/-
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Tense.Compositional
+import Linglib.Semantics.Tense.LexicalType
+
+/-!
 # Tense–Aspect Composition
 
 End-to-end composition chain bridging viewpoint aspect operators to tense
@@ -33,10 +37,6 @@ The eval* operators instantiate the situation (fixing world and time).
 
 -/
 
-import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.Compositional
-import Linglib.Semantics.Tense.LexicalType
-
 namespace Tense.TenseAspectComposition
 
 open Core (WorldTimeIndex)
@@ -70,7 +70,7 @@ def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
     types over the operators the rest of the codebase already uses. -/
 theorem evalPast_iff_quantificationalPast (p : PointPred W Time) (tc : Time) (w : W) :
     evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
-  simp [evalPast, quantificationalPast]
+  simp only [evalPast, quantificationalPast, Set.mem_univ, true_and]
 
 /-! ### Composed Tense–Aspect Forms -/
 

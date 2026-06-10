@@ -55,7 +55,6 @@ classification in `Features.Evidentiality`. `EPCondition.IsNonfuture` and
 namespace Tense.Evidential
 
 open Core.Order
-open Tense
 open Features.Evidentiality
 open Features.Mirativity
 open Semantics.Presupposition

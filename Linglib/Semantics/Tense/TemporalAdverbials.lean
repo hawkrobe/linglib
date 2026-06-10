@@ -1,4 +1,6 @@
-/-
+import Linglib.Semantics.Tense.TenseAspectComposition
+
+/-!
 # Temporal Adverbials and the Perfect
 
 Temporal adverbials constrain the Perfect Time Span (PTS), connecting to the
@@ -26,8 +28,6 @@ Adverbials are modeled as `PTSConstraint`s on the PTS interval. The
 restriction on LB values, which feeds directly into `PERF_XN`.
 
 -/
-
-import Linglib.Semantics.Tense.TenseAspectComposition
 
 namespace Tense.TemporalAdverbials
 

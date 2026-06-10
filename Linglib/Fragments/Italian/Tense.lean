@@ -36,7 +36,6 @@ namespace Italian.Tense
 open _root_.Tense.Evidential
 open _root_.Tense.SOT.Decomposition
 open _root_.Tense
-open _root_.Tense
 open Morphology.Tense
 
 -- ════════════════════════════════════════════════════════════════

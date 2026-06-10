@@ -34,7 +34,6 @@ namespace Tense.ConditionalShift
 
 open Core (WorldTimeIndex)
 
-open Tense
 open Semantics.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
 open HistoricalAlternatives

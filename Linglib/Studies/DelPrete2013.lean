@@ -45,7 +45,7 @@ the SOE conflicting with common knowledge (§8.7).
 
 ## Connection to Existing Infrastructure
 
-1. **`ViewpointAspectB`** (`Tense/Aspect/Core.lean`): imperfective/perfective
+1. **`ViewpointAspectB`** (`Semantics/Aspect/Basic.lean`): imperfective/perfective
    distinction. The `IMPF` operator formalizes the same TT⊂TSit relation
    that Del Prete uses as the starting point for his f-exp analysis.
 

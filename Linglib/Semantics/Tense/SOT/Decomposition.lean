@@ -42,7 +42,6 @@ and simultaneous readings) but differ on what "past" means:
 
 namespace Tense.SOT.Decomposition
 
-open Tense
 
 
 /-! ### SOT Deletion -/
@@ -71,11 +70,8 @@ theorem present_past_no_deletion :
     the matrix event time (the embedded clause inherits matrix temporal
     coordinates). -/
 def applyDeletion {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time) : ReichenbachFrame Time where
-  speechTime := matrixFrame.speechTime
-  perspectiveTime := matrixFrame.eventTime
-  referenceTime := matrixFrame.eventTime  -- R' = E_matrix after deletion
-  eventTime := matrixFrame.eventTime
+    (matrixFrame : ReichenbachFrame Time) : ReichenbachFrame Time :=
+  Tense.simultaneousFrame matrixFrame matrixFrame.eventTime
 
 /-- Kratzer's deletion and the SOT `simultaneousFrame` agree definitionally:
     deleting the embedded tense yields exactly the simultaneous-reading frame

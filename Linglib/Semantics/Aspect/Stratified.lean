@@ -54,7 +54,7 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
 
 * The stativity opposition along τ (Champollion's fourth opposition) is
   realized in linglib by `HasSubintervalProp` in
-  `Tense/Aspect/SubintervalProperty.lean` rather than as an
+  `Semantics/Aspect/SubintervalProperty.lean` rather than as an
   SR-decomposition form. The SR form at `(τ, point-granularity)` has
   no current consumer.
 * `Studies/Champollion2017.lean` covers distributivity
