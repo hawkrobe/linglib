@@ -455,7 +455,7 @@ abbrev vRel : L_UV.Relations 1 := .V
 
 /-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
 B&C's notation). -/
-def numQuant : ∀ {α : Type} {n : ℕ}, L_UV.BoundedFormula α n → ℕ
+def numQuant : ∀ {α : Type*} {n : ℕ}, L_UV.BoundedFormula α n → ℕ
   | _, _, .falsum => 0
   | _, _, .equal _ _ => 0
   | _, _, .rel _ _ => 0
@@ -504,20 +504,24 @@ private theorem term_eq_var {γ : Type} (t : L_UV.Term γ) : ∃ i, t = Term.var
   | var i => exact ⟨i, rfl⟩
   | func f _ => exact f.elim
 
-/-- Fresh element in a value-interval of `Fin (3m+1)`: if fewer elements are
-used than the interval holds, something in it is unused. -/
-private theorem exists_fresh (k lo hi : ℕ) (hhi : hi ≤ k)
-    (used : Finset (Fin k)) (hcard : used.card < hi - lo) :
-    ∃ y : Fin k, lo ≤ y.val ∧ y.val < hi ∧ y ∉ used := by
+/-- Fresh element in a value-interval of `Fin (3m+1)`: if the interval holds
+more elements than the tuple uses, something in it avoids the tuple. -/
+private theorem exists_fresh {k ℓ : ℕ} (f : Fin ℓ → Fin k) (lo hi : ℕ)
+    (hhi : hi ≤ k) (hroom : ℓ < hi - lo) :
+    ∃ y : Fin k, lo ≤ y.val ∧ y.val < hi ∧ ∀ i, f i ≠ y := by
   by_contra h
   push_neg at h
   have hsub : (Finset.Ico lo hi).attachFin
-      (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hhi) ⊆ used := by
+      (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hhi)
+      ⊆ Finset.image f Finset.univ := by
     intro y hy
-    have := (Finset.mem_attachFin _).mp hy
-    exact h y (Finset.mem_Ico.mp this).1 (Finset.mem_Ico.mp this).2
-  have := Finset.card_le_card hsub
-  rw [Finset.card_attachFin, Nat.card_Ico] at this
+    have hy' := (Finset.mem_attachFin _).mp hy
+    obtain ⟨i, hi'⟩ := h y (Finset.mem_Ico.mp hy').1 (Finset.mem_Ico.mp hy').2
+    exact hi' ▸ Finset.mem_image_of_mem f (Finset.mem_univ i)
+  have hcard := Finset.card_le_card hsub
+  have himg : (Finset.image f Finset.univ).card ≤ ℓ :=
+    le_trans Finset.card_image_le (by simp)
+  rw [Finset.card_attachFin, Nat.card_Ico] at hcard
   omega
 
 /-- Extending a correspondence with an already-matched pair. -/
@@ -584,25 +588,14 @@ private theorem extend₁₂ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : 
   · obtain ⟨i, rfl⟩ := hx
     exact ⟨b i, regionMatch_snoc_matched m k h i⟩
   · push_neg at hx
-    have hused : (Finset.image b Finset.univ).card ≤ ℓ :=
-      le_trans Finset.card_image_le (by simp)
-    have hbne : ∀ {y : Fin k}, y ∉ Finset.image b Finset.univ →
-        ∀ i, b i ≠ y := fun hy i hbi =>
-      hy (hbi ▸ Finset.mem_image_of_mem b (Finset.mem_univ i))
     by_cases h1 : x.val < m
-    · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh k 0 (m + 1) (by omega)
-        (Finset.image b Finset.univ) (by omega)
-      exact ⟨y, regionMatch_snoc_fresh m k h hx (hbne hy3)
-        (by omega) (by omega)⟩
+    · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b 0 (m + 1) (by omega) (by omega)
+      exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
     · by_cases h2 : x.val < 2 * m
-      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh k (m + 1) (2 * m) (by omega)
-          (Finset.image b Finset.univ) (by omega)
-        exact ⟨y, regionMatch_snoc_fresh m k h hx (hbne hy3)
-          (by omega) (by omega)⟩
-      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh k (2 * m) k (by omega)
-          (Finset.image b Finset.univ) (by omega)
-        exact ⟨y, regionMatch_snoc_fresh m k h hx (hbne hy3)
-          (by omega) (by omega)⟩
+      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b (m + 1) (2 * m) (by omega) (by omega)
+        exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
+      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b (2 * m) k (by omega) (by omega)
+        exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
 
 /-- Extend a correspondence by an `M₂`-side element. -/
 private theorem extend₂₁ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : ℓ + 1 < m)
@@ -613,25 +606,14 @@ private theorem extend₂₁ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : 
   · obtain ⟨i, rfl⟩ := hy
     exact ⟨a i, regionMatch_snoc_matched m k h i⟩
   · push_neg at hy
-    have hused : (Finset.image a Finset.univ).card ≤ ℓ :=
-      le_trans Finset.card_image_le (by simp)
-    have hane : ∀ {x : Fin k}, x ∉ Finset.image a Finset.univ →
-        ∀ i, a i ≠ x := fun hx i hai =>
-      hx (hai ▸ Finset.mem_image_of_mem a (Finset.mem_univ i))
     by_cases h1 : y.val < m + 1
-    · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh k 0 m (by omega)
-        (Finset.image a Finset.univ) (by omega)
-      exact ⟨x, regionMatch_snoc_fresh m k h (hane hx3) hy
-        (by omega) (by omega)⟩
+    · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a 0 m (by omega) (by omega)
+      exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
     · by_cases h2 : y.val < 2 * m
-      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh k m (2 * m) (by omega)
-          (Finset.image a Finset.univ) (by omega)
-        exact ⟨x, regionMatch_snoc_fresh m k h (hane hx3) hy
-          (by omega) (by omega)⟩
-      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh k (2 * m) k (by omega)
-          (Finset.image a Finset.univ) (by omega)
-        exact ⟨x, regionMatch_snoc_fresh m k h (hane hx3) hy
-          (by omega) (by omega)⟩
+      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a m (2 * m) (by omega) (by omega)
+        exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
+      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a (2 * m) k (by omega) (by omega)
+        exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
 
 /-- B&C's condition (6) (p. 214): a formula whose quantifier count plus
 free-variable count is below `m` cannot distinguish region-matched tuples
@@ -713,6 +695,25 @@ private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
   rw [hset, Set.ncard_coe_finset, Finset.card_attachFin, Nat.card_Ico]
   omega
 
+/-- `MoreThanHalf` over a structure whose `U` is `[0, c)` and `V` is
+`[0, 2m)` reduces to the count comparison `2 * c > 2 * m`. -/
+private theorem moreThanHalf_iff {k m c : ℕ} (S : L_UV.Structure (Fin k))
+    (hU : ∀ x : Fin k, S.RelMap uRel ![x] ↔ x.val < c)
+    (hV : ∀ x : Fin k, S.RelMap vRel ![x] ↔ x.val < 2 * m)
+    (hc : c ≤ 2 * m) (hm : 2 * m ≤ k) :
+    MoreThanHalf (Fin k) S ↔ 2 * c > 2 * m := by
+  have hUV : {x : Fin k | S.RelMap uRel ![x] ∧ S.RelMap vRel ![x]}
+      = {x : Fin k | x.val < c} := by
+    ext x
+    rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hU, hV]
+    omega
+  have hVs : {x : Fin k | S.RelMap vRel ![x]}
+      = {x : Fin k | x.val < 2 * m} := by
+    ext x
+    rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hV]
+  unfold MoreThanHalf MostUV
+  rw [hUV, hVs, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ hm]
+
 /-- **C12** ([barwise-cooper-1981], Appendix C p. 213): no first-order
 sentence over two unary predicates is true in exactly the finite models
 where more than half the V's are U's. The formal core of B&C's claim that
@@ -726,29 +727,13 @@ theorem more_than_half_not_definable :
   have hm1 : 1 ≤ m := by omega
   -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
   have hmth₁ : ¬ MoreThanHalf (Fin (3 * m + 1)) (struc₁ m (3 * m + 1)) := by
-    have hUV : {x : Fin (3 * m + 1) |
-        (struc₁ m (3 * m + 1)).RelMap uRel ![x] ∧ (struc₁ m (3 * m + 1)).RelMap vRel ![x]}
-        = {x : Fin (3 * m + 1) | x.val < m} := by
-      ext x
-      show (x.val < m ∧ x.val < 2 * m) ↔ x.val < m
-      omega
-    have hV : {x : Fin (3 * m + 1) | (struc₁ m (3 * m + 1)).RelMap vRel ![x]}
-        = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
-    unfold MoreThanHalf MostUV
-    rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
+    rw [moreThanHalf_iff (m := m) (c := m) _ (fun x => Iff.rfl) (fun x => Iff.rfl)
+      (by omega) (by omega)]
     omega
   -- M₂ satisfies more-than-half: |U₂ ∩ V| = m + 1, |V| = 2m
   have hmth₂ : MoreThanHalf (Fin (3 * m + 1)) (struc₂ m (3 * m + 1)) := by
-    have hUV : {x : Fin (3 * m + 1) |
-        (struc₂ m (3 * m + 1)).RelMap uRel ![x] ∧ (struc₂ m (3 * m + 1)).RelMap vRel ![x]}
-        = {x : Fin (3 * m + 1) | x.val < m + 1} := by
-      ext x
-      show (x.val < m + 1 ∧ x.val < 2 * m) ↔ x.val < m + 1
-      omega
-    have hV : {x : Fin (3 * m + 1) | (struc₂ m (3 * m + 1)).RelMap vRel ![x]}
-        = {x : Fin (3 * m + 1) | x.val < 2 * m} := rfl
-    unfold MoreThanHalf MostUV
-    rw [hUV, hV, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ (by omega)]
+    rw [moreThanHalf_iff (m := m) (c := m + 1) _ (fun x => Iff.rfl) (fun x => Iff.rfl)
+      (by omega) (by omega)]
     omega
   -- but they agree on φ, by condition (6) at the empty correspondence
   have hagree : Realize₁ m (3 * m + 1) φ default ↔ Realize₂ m (3 * m + 1) φ default :=
@@ -844,9 +829,7 @@ theorem realize_or {E : Type} [Fintype E] {U V : E → Prop} {n : ℕ}
     {f g : QFormula n} {xs : Fin n → E} :
     (f.or g).Realize U V xs ↔ f.Realize U V xs ∨ g.Realize U V xs := by
   show ((f.Realize U V xs → False) → g.Realize U V xs) ↔ _
-  by_cases hf : f.Realize U V xs
-  · simp [hf]
-  · simp [hf]
+  exact or_iff_not_imp_left.symm
 
 /-- Finite disjunction. -/
 def orList {n : ℕ} : List (QFormula n) → QFormula n
@@ -1031,6 +1014,19 @@ theorem realize_iff_of_qFree (m k : ℕ) (hk : 3 * m ≤ k) :
     intro hq
     exact hq.elim
 
+/-- Swapping two elements outside `V` fixes any predicate below `V`. -/
+private theorem swap_pred_iff {E : Type} [DecidableEq E] {P V : E → Prop}
+    (hPV : ∀ x, P x → V x) {b₀ b : E} (h₀ : ¬ V b₀) (h₁ : ¬ V b) :
+    ∀ x, P (Equiv.swap b₀ b x) ↔ P x := by
+  intro x
+  rcases eq_or_ne x b₀ with rfl | hx1
+  · rw [Equiv.swap_apply_left]
+    exact iff_of_false (fun h => h₁ (hPV _ h)) (fun h => h₀ (hPV _ h))
+  rcases eq_or_ne x b with rfl | hx2
+  · rw [Equiv.swap_apply_right]
+    exact iff_of_false (fun h => h₀ (hPV _ h)) (fun h => h₁ (hPV _ h))
+  · rw [Equiv.swap_apply_of_ne_of_ne hx1 hx2]
+
 /-- B&C's property (P) (p. 215): on models with `U ⊆ V` whose domain is at
 least twice `|V|` plus the complexity of `ψ`, the `Q`-elimination `star` is
 correct — the domain "swamps out" `U` and `V`. -/
@@ -1117,24 +1113,10 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
           have h3 := Set.ncard_le_ncard hsub (Set.toFinite _)
           omega
         obtain ⟨b₀, hf₀, hnv₀, hne₀⟩ := hwit
-        have hUσ : ∀ x, U (Equiv.swap b₀ b x) ↔ U x := by
-          intro x
-          rcases eq_or_ne x b₀ with rfl | h1
-          · rw [Equiv.swap_apply_left]
-            exact iff_of_false (fun h => hnv (hUV _ h)) (fun h => hnv₀ (hUV _ h))
-          rcases eq_or_ne x b with rfl | h2
-          · rw [Equiv.swap_apply_right]
-            exact iff_of_false (fun h => hnv₀ (hUV _ h)) (fun h => hnv (hUV _ h))
-          · rw [Equiv.swap_apply_of_ne_of_ne h1 h2]
-        have hVσ : ∀ x, V (Equiv.swap b₀ b x) ↔ V x := by
-          intro x
-          rcases eq_or_ne x b₀ with rfl | h1
-          · rw [Equiv.swap_apply_left]
-            exact iff_of_false hnv hnv₀
-          rcases eq_or_ne x b with rfl | h2
-          · rw [Equiv.swap_apply_right]
-            exact iff_of_false hnv₀ hnv
-          · rw [Equiv.swap_apply_of_ne_of_ne h1 h2]
+        have hUσ : ∀ x, U (Equiv.swap b₀ b x) ↔ U x :=
+          swap_pred_iff hUV hnv₀ hnv
+        have hVσ : ∀ x, V (Equiv.swap b₀ b x) ↔ V x :=
+          swap_pred_iff (fun _ h => h) hnv₀ hnv
         have hsnoc : Fin.snoc xs b = Equiv.swap b₀ b ∘ Fin.snoc xs b₀ := by
           funext p
           induction p using Fin.lastCases with
