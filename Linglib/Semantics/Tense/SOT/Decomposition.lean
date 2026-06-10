@@ -44,7 +44,6 @@ namespace Semantics.Tense.SOT.Decomposition
 
 open Semantics.Tense
 open Semantics.Tense.Reichenbach
-open Semantics.Tense
 
 
 /-! ### SOT Deletion -/
@@ -79,16 +78,24 @@ def applyDeletion {Time : Type*}
   referenceTime := matrixFrame.eventTime  -- R' = E_matrix after deletion
   eventTime := matrixFrame.eventTime
 
+/-- Kratzer's deletion and the SOT `simultaneousFrame` agree definitionally:
+    deleting the embedded tense yields exactly the simultaneous-reading frame
+    whose embedded event time is the matrix event time. This is the formal
+    core of the Kratzer/Ogihara "same predictions" agreement — the two
+    accounts build the same embedded frame by different mechanisms. -/
+theorem applyDeletion_eq_simultaneousFrame {Time : Type*}
+    (matrixFrame : ReichenbachFrame Time) :
+    applyDeletion matrixFrame = simultaneousFrame matrixFrame matrixFrame.eventTime :=
+  rfl
+
 
 /-! ### Derivation Theorems -/
 
 /-- Kratzer derives the simultaneous reading via SOT deletion.
     When deletion applies, R' = E_matrix, giving the PRESENT relation. -/
 theorem kratzer_derives_simultaneous {Time : Type*}
-    (matrixFrame : ReichenbachFrame Time)
-    (hDeletion : sotDeletionApplicable .past .past = true) :
-    (applyDeletion matrixFrame).isPresent := by
-  simp only [applyDeletion, ReichenbachFrame.isPresent]
+    (matrixFrame : ReichenbachFrame Time) :
+    (applyDeletion matrixFrame).isPresent := rfl
 
 /-- Kratzer derives the shifted reading: genuine past (no deletion).
     When deletion does not apply (or is not chosen), the embedded
@@ -109,16 +116,14 @@ theorem kratzer_deletion_yields_simultaneous {Time : Type*}
 /-! ### Tense Decomposition Structure -/
 
 /-- Kratzer's decomposition of surface tense morphology into
-    underlying tense head + optional aspect head ([heim-kratzer-1998] §4).
+    underlying tense head + optional aspect head ([kratzer-1998] §4).
 
     The key insight: surface morphology can fuse tense and aspect,
     hiding the underlying tense head. English "simple past" fuses
-    PRESENT + PERFECT; German Preterit is a bare PAST. -/
+    PRESENT + PERFECT; German Preterit is a bare PAST. Surface-form
+    metadata (language, orthographic shape) lives with the Fragment
+    entries that instantiate this structure, not here. -/
 structure KratzerDecomposition where
-  /-- Language -/
-  language : String
-  /-- Surface morphological form -/
-  surfaceForm : String
   /-- The underlying tense pronoun (tense head proper) -/
   tensePronoun : TensePronoun
   /-- Whether a PERFECT aspect head intervenes between VP and Tense -/
@@ -247,12 +252,6 @@ theorem zero_tense_is_present (n : ℕ) :
 /-- Zero tense surfaces as zero (from Semantics.Tense.Overtness). -/
 theorem zero_tense_overtness (n : ℕ) :
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero := rfl
-
-/-- Kratzer's key claim: past is NEVER zero tense.
-    The zero morpheme under SOT is a bound PRESENT, not an ambiguous PAST.
-    Contrast with `kratzerZeroTense` which IS zero but is PRESENT. -/
-theorem past_never_zero :
-    (kratzerZeroTense 1).constraint = .present := rfl
 
 
 /-! ### Reflexive ↔ Simultaneous Parallel -/
