@@ -31,6 +31,8 @@ formalized here.
 - `CxnSpec`: a partial constructional specification (bar level, modifier position, stress locus, self-embedding)
 - `CxnSpec.inherit`, `CxnSpec.IsCompatible`, `CxnSpec.Resolves`: componentwise lifts
 - `inheritField_of_isCompatible`: the two modes agree absent conflict
+- `Constructicon.parentsOf`, `derivedSpec`, `ResolvesAll`, `WellFormed`:
+  inheritance computed through a constructicon's links
 -/
 
 namespace ConstructionGrammar
@@ -214,5 +216,47 @@ theorem resolves_of_isCompatible (own : CxnSpec) {p q : CxnSpec}
    resolvesField_of_isCompatible _ h.2.2.1, resolvesField_of_isCompatible _ h.2.2.2⟩
 
 end CxnSpec
+
+/-! ### Inheritance through a constructicon
+
+A specification assignment maps each construction to its *own*
+(conflict-resolving) specification; the network then computes each
+construction's full specification by normal-mode inheritance from the
+parents its links name. -/
+
+/-- The constructions a network's links name as parents of `name`. -/
+def Constructicon.parentsOf (cx : Constructicon) (name : String) :
+    List Construction :=
+  (cx.links.filter (·.child == name)).filterMap
+    (λ l => cx.constructions.find? (·.name == l.parent))
+
+/-- Every link endpoint resolves to a construction in the network — no
+dangling name-keyed links. -/
+def Constructicon.WellFormed (cx : Constructicon) : Prop :=
+  ∀ l ∈ cx.links,
+    (∃ c ∈ cx.constructions, c.name = l.parent) ∧
+    (∃ c ∈ cx.constructions, c.name = l.child)
+
+instance (cx : Constructicon) : Decidable cx.WellFormed :=
+  inferInstanceAs (Decidable (∀ l ∈ _, _ ∧ _))
+
+/-- Normal-mode derived specification of `c` in the network: `c`'s own
+specification wins; fields it leaves open are filled by the unique value
+its parents agree on ([diessel-2023] Table 2's default mode, computed
+over the links rather than stipulated per node). -/
+def Constructicon.derivedSpec (cx : Constructicon)
+    (own : Construction → CxnSpec) (c : Construction) : CxnSpec :=
+  (own c).inherit ((cx.parentsOf c.name).map own)
+
+/-- Normal-mode well-formedness of the whole network: every construction
+legislates every field its parents conflict on
+(`CxnSpec.Resolves`, at each node). -/
+def Constructicon.ResolvesAll (cx : Constructicon)
+    (own : Construction → CxnSpec) : Prop :=
+  ∀ c ∈ cx.constructions, (own c).Resolves ((cx.parentsOf c.name).map own)
+
+instance (cx : Constructicon) (own : Construction → CxnSpec) :
+    Decidable (cx.ResolvesAll own) :=
+  inferInstanceAs (Decidable (∀ c ∈ _, _))
 
 end ConstructionGrammar

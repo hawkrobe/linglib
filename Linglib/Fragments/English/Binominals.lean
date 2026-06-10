@@ -1,6 +1,7 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Syntax.ConstructionGrammar.Basic
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 
 /-!
 # English Binominal Noun Phrases [ten-wolde-2023]
@@ -340,6 +341,12 @@ def ofBinominalNetwork : Constructicon where
         sharedProperties := ["intensifier function"]
         overriddenProperties := ["[N of a] → degree intensifier in AdjP"] }
     ]
+
+
+/-- Every link in the *of*-binominal network resolves to a member
+construction — no dangling name-keyed links. -/
+theorem ofBinominalNetwork_wellFormed : ofBinominalNetwork.WellFormed := by
+  decide
 
 /-- The network has 8 constructions (6 of-binominal + simple NP + AP). -/
 theorem network_size : ofBinominalNetwork.constructions.length = 8 := rfl

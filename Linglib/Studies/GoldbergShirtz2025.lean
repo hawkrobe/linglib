@@ -1,5 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Inheritance
+import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -19,10 +20,13 @@ confirmed conventional subtypes.
 ## Main declarations
 
 - `GoldbergShirtz2025.palConstruction`, `palConstructicon`: the Figure 5 network
-- `GoldbergShirtz2025.nn_adjN_incompatible`, `pal_resolves`, `palSpec_eq`:
-  the paper's two-mothers argument for normal-mode inheritance, derived
+- `GoldbergShirtz2025.nn_adjN_incompatible`, `pal_resolves`, `palSpec_eq`,
+  `palConstructicon_resolvesAll`: the paper's two-mothers argument for
+  normal-mode inheritance, computed through the network's links
 - `GoldbergShirtz2025.palMeaning`: familiarity presupposition + head-noun assertion
 - `GoldbergShirtz2025.pal_irreducible`: PAL is not fully compositional
+- `GoldbergShirtz2025.pal_load_bearing`: the network licenses
+  phrase-in-word-slot tokens only through PAL
 - `GoldbergShirtz2025.palExamples`, `crossLinguisticPALs`: attested examples
 
 ## Experimental results
@@ -218,9 +222,35 @@ def palOwnSpec : CxnSpec :=
   { level := some .bar
   , stress := some .modifier }
 
-/-- PAL's full specification, by normal-mode inheritance from its two
-mothers. -/
-def palSpec : CxnSpec := palOwnSpec.inherit [nnCompoundSpec, adjNSpec]
+/-- Own-specification assignment for the Figure 5 network: the two
+mothers carry their specifications, PAL legislates exactly its mothers'
+conflicts, and the conventional subtypes add no form-side constraints of
+their own. -/
+def figure5Spec (c : Construction) : CxnSpec :=
+  if c.name == "NN compound" then nnCompoundSpec
+  else if c.name == "Adj+N modification" then adjNSpec
+  else if c.name == "PAL" then palOwnSpec
+  else {}
+
+/-- PAL's full specification, computed through the network's links by
+normal-mode inheritance. -/
+def palSpec : CxnSpec :=
+  palConstructicon.derivedSpec figure5Spec palConstruction
+
+/-- No dangling links: every Figure 5 link endpoint names a construction
+of the network. -/
+theorem palConstructicon_wellFormed : palConstructicon.WellFormed := by
+  decide
+
+/-- The links, not a hand-written list, determine PAL's mothers. -/
+theorem pal_parents :
+    palConstructicon.parentsOf "PAL" = [nnCompound, adjNModification] := by
+  decide
+
+/-- The whole network is normal-mode well-formed: every construction
+legislates every field its parents conflict on. -/
+theorem palConstructicon_resolvesAll :
+    palConstructicon.ResolvesAll figure5Spec := by decide
 
 /-- The two mothers conflict (bar level and stress), so complete-mode
 inheritance cannot relate PAL to both parents — the formal content of §6's
@@ -246,6 +276,52 @@ theorem palSpec_eq :
       , modPosition := some .prenominal
       , stress := some .modifier
       , selfEmbedding := some .banned } := by decide
+
+/-! ### Licensing: PAL is load-bearing
+
+A minimal demonstration with the network's licensing relation
+(`Constructicon.Licenses`): the attested "a must-do task" (the paper's
+ex. (1b), determiner elided) parses as a phrase-daughter in the modifier
+slot plus a head noun. The network licenses it through the PAL
+construction, and rejects it when PAL is removed — the
+phrase-in-word-slot configuration has no other license. -/
+
+/-- Toy POS lexicon for the licensing demonstration. -/
+def demoLexicon : String → Option UD.UPOS
+  | "do" => some .VERB
+  | "task" => some .NOUN
+  | _ => none
+
+/-- The internal syntax of the *must-do* PAL: must-V
+(cf. `mustVerbConstruction`, which is the full prenominal construction). -/
+def mustVCore : Construction :=
+  { name := "must-V core"
+  , form :=
+      [ { filler := .fixed "must" }
+      , { filler := .open_ .VERB, role := some "predicate", isHead := true } ]
+  , meaning := "obligatory V-ing" }
+
+/-- The Figure 5 network plus the must-V-internal construction. -/
+def demoNetwork : Constructicon :=
+  { constructions := mustVCore :: palConstructicon.constructions
+  , links := palConstructicon.links }
+
+/-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a
+constituent daughter in the word-level modifier slot. -/
+def mustDoTask : Token :=
+  .node [.node [.word "must", .word "do"], .word "task"]
+
+/-- The network licenses the PAL token. -/
+theorem demo_licenses_mustDoTask :
+    demoNetwork.Licenses demoLexicon mustDoTask := by decide
+
+/-- Remove the PAL construction and the token is rejected: nothing else
+licenses a phrase in a word-level modifier slot. PAL is load-bearing. -/
+theorem pal_load_bearing :
+    ¬ ({ demoNetwork with
+         constructions :=
+           demoNetwork.constructions.filter (·.name != "PAL") }
+        : Constructicon).Licenses demoLexicon mustDoTask := by decide
 
 /-! ### Lemma-like meaning -/
 
@@ -275,6 +351,13 @@ content of "phrase-as-lemma". The NN compound's modifier slot is the
 minimal contrast: same zero-level position, word filler. -/
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
+
+-- Cross-framework note: this configuration is exactly the cell
+-- lexicalist incorporation accounts ban (`Benz2025.incorporationAllowed`
+-- rejects a phrasal inner element at a head-level site, following Baker's
+-- Lexical Integrity); CxG licenses it via the lemma-like construal. A
+-- formal contrast theorem awaits settling the chronological order of the
+-- two 2025 sources.
 
 /-! ### Attested distribution
 
