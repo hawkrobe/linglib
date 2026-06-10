@@ -1,48 +1,63 @@
 import Linglib.Semantics.Lexical.Roots.Basic
-import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Templatic Heads and Event Structure Composition
 
-[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
+The event-structural architecture of [beavers-koontz-garboden-2020]
+(ch. 1): **templatic heads** combine with **roots**, and a root
+attaches in one of two structural positions (adjoined to a head, or as
+its complement). The familiar [rappaport-hovav-levin-1998] templates
+(state, activity, achievement, accomplishment) are *compositions* of
+these primitives.
 
-The B&K-G architecture decomposes event structure into **templatic
-heads** that combine with **roots**. The three primitive heads are:
+Scope: the three verbal heads `v_act`/`v_become`/`v_cause` of the
+change-of-state and manner fragment (chs. 1–2, 4–5). The ditransitive
+prepositional heads P_loc and P_have and the modalized causative of
+ch. 3 are not modeled.
 
-- `v_act`    — activity (Davidsonian event predicate)
-- `v_become` — change of state ([BECOME [x ⟨STATE⟩]])
-- `v_cause`  — causation ([e₁ CAUSE e₂])
+## Main declarations
 
-A root attaches to a head in one of two structural positions:
-
-- **adjoined** — modifier of a head (typical of manner roots)
-- **complement** — argument of a head (typical of state roots)
-
-The familiar [rappaport-hovav-levin-1998] templates (state,
-activity, achievement, accomplishment) are *compositions* of these
-primitives — see `EventStructure.toTemplate`.
+* `TemplaticHead` — the three primitive heads
+* `Root.Position` — complement vs adjoined attachment
+* `EventStructure` — heads composed with a positioned root
 -/
 
 namespace Semantics.Lexical.Roots
 
--- ════════════════════════════════════════════════════
--- § 1. Templatic Heads
--- ════════════════════════════════════════════════════
+/-! ### Templatic heads -/
 
-/-- The three primitive event-structural heads
-    ([beavers-koontz-garboden-2020] ch. 1, ch. 5). -/
+/-- The three primitive event-structural heads of
+    [beavers-koontz-garboden-2020] ch. 1. The book glosses
+    `v_become` as `λPλxλe. ∃s. become′(s, e) ∧ P(x, s)` and `v_cause`
+    as `λQλyλv. ∃e. effector′(y, v) ∧ cause′(v, e) ∧ Q(e)` — one
+    event-predicate argument, introducing the effector. -/
 inductive TemplaticHead where
-  | v_act     -- activity: λxλe. P(x, e)
-  | v_become  -- BECOME:   λPλxλe. ∃s. become(s, e) ∧ P(x, s)
-  | v_cause   -- CAUSE:    λPλQλxλe. ∃e'. P(x, e) ∧ Q(e') ∧ cause(e, e')
+  | v_act     -- activity (Davidsonian event predicate)
+  | v_become  -- change of state into the root's state
+  | v_cause   -- causation by an effector
   deriving DecidableEq, Repr
 
--- `RootPosition` (`adjoined` / `complement`) is now defined canonically
--- in `Roots/RootFeatures.lean` and re-used here via the import above.
+/-! ### Root position -/
 
--- ════════════════════════════════════════════════════
--- § 2. Composed Event Structures
--- ════════════════════════════════════════════════════
+/-- Structural attachment position of a verb root, following the
+    Distributed-Morphology tradition (Marantz; systematized by
+    [beavers-koontz-garboden-2020]):
+
+    - **complement**: root merges as complement of v (inside VP),
+      filling the result/state slot (√flat, √crack, √blossom, √drown);
+    - **adjoined**: root merges as adjunct to v (outside VP), modifying
+      the event (√jog, √toss, √hand).
+
+    The distinction matters beyond root typology: it conditions vVPE
+    eligibility ([kalyakin-2026]), result-state modifier scope, and the
+    restitutive/repetitive *again* ambiguity
+    ([beavers-koontz-garboden-2020], [merchant-2013]). -/
+inductive Root.Position where
+  | complement
+  | adjoined
+  deriving DecidableEq, Repr
+
+/-! ### Composed event structures -/
 
 /-- An event structure: a list of templatic heads (outermost first)
     composed with a root in a specific structural position.
@@ -56,7 +71,7 @@ inductive TemplaticHead where
 structure EventStructure where
   heads : List TemplaticHead
   root : Root
-  position : RootPosition
+  position : Root.Position
   deriving Repr
 
 namespace EventStructure
@@ -76,9 +91,7 @@ def hasCause (es : EventStructure) : Bool := es.hasHead .v_cause
 
 end EventStructure
 
--- ════════════════════════════════════════════════════
--- § 3. Canonical Compositions
--- ════════════════════════════════════════════════════
+/-! ### Canonical compositions -/
 
 /-- A pure activity: `[v_act]` with manner root adjoined.
     [x ACT⟨manner⟩] -/

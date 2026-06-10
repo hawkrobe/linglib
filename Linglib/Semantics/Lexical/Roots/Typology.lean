@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.Template
+import Linglib.Semantics.Lexical.Roots.Basic
 
 /-!
 # B&K-G Typology, Bifurcation, and Manner/Result Complementarity

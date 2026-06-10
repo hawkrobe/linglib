@@ -1,15 +1,18 @@
-import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Lexical.Roots.Typology
 
 /-!
 # Lexical Salience Classes
 
 [lucy-1994]
 
-A 4-way classification of verbal roots by which argument(s) the
-underived root form makes "salient" (in [lucy-1994]'s sense:
-default case-role assignment at the propositional level). The four
-classes — agent, agent-patient, patient, positional — are derivable
-from the B&K-G feature signature alone.
+[lucy-1994]'s classification of verbal roots by which argument(s) the
+underived root form makes "salient" (default case-role assignment at
+the propositional level): a 3-way salience cut (agent, agent-patient,
+patient, by required transitiviser) plus the separately-derived
+positional class, systematized here as one enum. The characterization
+of each class by B&K-G feature signature is a cross-framework
+reconstruction ([lucy-1994] predates the feature vocabulary of
+[beavers-koontz-garboden-2020]), not Lucy's own formulation.
 
 This file lifts the classification out of any specific empirical
 study so that other Fragment / Theory modules can refer to it
@@ -21,10 +24,10 @@ lives in `Studies/Lucy1994.lean`.
 
 namespace Semantics.Lexical.Roots
 
-/-- The 4-way salience classification of verbal roots
-    ([lucy-1994]). "Salience" is shorthand for "default case-role
-    assignment at the propositional level" — *not* a substantive feature
-    `[±agent]` written into the root. -/
+/-- Salience classification of verbal roots ([lucy-1994]): the 3-way
+    transitiviser cut plus the positional class. "Salience" is shorthand
+    for "default case-role assignment at the propositional level" — *not*
+    a substantive feature `[±agent]` written into the root. -/
 inductive SalienceClass where
   /-- Underived intransitive whose argument is the agent. -/
   | agent
@@ -36,9 +39,7 @@ inductive SalienceClass where
   | positional
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 1. Named Class Predicates
--- ════════════════════════════════════════════════════
+/-! ### Named class predicates -/
 
 /-! Named structural conditions characterising membership in each
     [lucy-1994] salience class. These predicates are language-
@@ -111,9 +112,7 @@ def Root.IsPositional (r : Root) : Prop :=
 instance (r : Root) : Decidable r.IsPositional := by
   unfold Root.IsPositional; infer_instance
 
--- ════════════════════════════════════════════════════
--- § 2. Salience Classifier
--- ════════════════════════════════════════════════════
+/-! ### Salience classifier -/
 
 /-- Map a B&K-G feature signature to its salience class
     ([lucy-1994]). The arms align with operator applicability
@@ -153,9 +152,7 @@ theorem predictedSalience_depends_only_on_signature
   unfold Root.predictedSalience
   rw [h]
 
--- ════════════════════════════════════════════════════
--- § 3. Equivalence with Predicate Dispatch
--- ════════════════════════════════════════════════════
+/-! ### Equivalence with predicate dispatch -/
 
 /-- The `classOfSignature` table is equivalent to dispatching on the
     four named predicates. Establishes that the classifier really *is*
@@ -173,9 +170,7 @@ theorem classOfSignature_eq_dispatch (s : FeatureSignature) :
     FeatureSignature.IsPositional
   cases m <;> cases r <;> cases st <;> cases c <;> simp_all
 
--- ════════════════════════════════════════════════════
--- § 4. Pairwise Disjointness of Class Predicates
--- ════════════════════════════════════════════════════
+/-! ### Pairwise disjointness of class predicates -/
 
 /-- The four named predicates are pairwise disjoint: at most one fires
     on any given signature. (They are *jointly* not exhaustive — the
