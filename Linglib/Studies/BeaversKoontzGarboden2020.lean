@@ -20,11 +20,12 @@ the falsification of the Bifurcation Thesis of Roots ([embick-2009];
 | √drown   |   ✓    |   ✓   |   ✓    |   ✓   | complement |
 
 The +state cells of √blossom, √crack, √hand, √drown are *derived*:
-a `becomesState` atom yields the corresponding `hasState` atom under
-entailment closure (`Root.closedFeatureSignature`); the base
-`featureSignature` records only the atoms. √blossom falsifies
-Bifurcation on its own, since change of state is templatic
-(`v_become`) content. √hand and √drown additionally falsify
+the book's typology values are the collocational closures
+(`Root.closedFeatureSignature`) of the base atom kinds, and each
+closed signature is one of the canonical typology rows
+(`FeatureSignature.pureResult`, `causativeResult`, `fullSpec`).
+√blossom falsifies Bifurcation on its own, since change of state is
+templatic (`v_become`) content. √hand and √drown additionally falsify
 Manner/Result Complementarity; they differ only in root position
 (adjoined vs complement), the contrast carrying the book's account of
 which root types are attested.
@@ -37,8 +38,6 @@ which root types are attested.
 -/
 
 namespace BeaversKoontzGarboden2020
-
-open Semantics.Lexical.Roots
 
 /-! ### The six representative roots -/
 
@@ -72,76 +71,64 @@ def drown : Root := ⟨"drown",
 
 /-! ### Feature signatures
 
-Base signatures record the atoms; closed signatures additionally
-derive `state` from `becomesState` atoms. The book's typology values
-are the closed ones. -/
+Base signatures record the atom kinds; closed signatures are their
+collocational closures, and coincide with the canonical rows of the
+book's typology. -/
 
-theorem flat_featureSignature :
-    flat.featureSignature =
-      { state := true, manner := false, result := false, cause := false } :=
-  rfl
+theorem flat_featureSignature : flat.featureSignature = {.state} := by
+  decide
 
-theorem jog_featureSignature :
-    jog.featureSignature =
-      { state := false, manner := true, result := false, cause := false } :=
-  rfl
+theorem jog_featureSignature : jog.featureSignature = {.manner} := by
+  decide
 
 theorem blossom_featureSignature :
-    blossom.featureSignature =
-      { state := false, manner := false, result := true, cause := false } :=
-  rfl
+    blossom.featureSignature = {.result} := by decide
 
 theorem crack_featureSignature :
-    crack.featureSignature =
-      { state := false, manner := false, result := true, cause := true } :=
-  rfl
+    crack.featureSignature = {.result, .cause} := by decide
 
 theorem hand_featureSignature :
-    hand.featureSignature =
-      { state := false, manner := true, result := true, cause := true } :=
-  rfl
+    hand.featureSignature = {.manner, .result, .cause} := by decide
 
 theorem drown_featureSignature :
-    drown.featureSignature =
-      { state := false, manner := true, result := true, cause := true } :=
-  rfl
+    drown.featureSignature = {.manner, .result, .cause} := by decide
+
+theorem flat_closedFeatureSignature :
+    flat.closedFeatureSignature = FeatureSignature.propertyConcept := by
+  decide
+
+theorem jog_closedFeatureSignature :
+    jog.closedFeatureSignature = FeatureSignature.pureManner := by decide
 
 theorem blossom_closedFeatureSignature :
-    blossom.closedFeatureSignature =
-      { state := true, manner := false, result := true, cause := false } :=
-  rfl
+    blossom.closedFeatureSignature = FeatureSignature.pureResult := by
+  decide
 
 theorem crack_closedFeatureSignature :
-    crack.closedFeatureSignature =
-      { state := true, manner := false, result := true, cause := true } :=
-  rfl
+    crack.closedFeatureSignature = FeatureSignature.causativeResult := by
+  decide
 
 theorem hand_closedFeatureSignature :
-    hand.closedFeatureSignature =
-      { state := true, manner := true, result := true, cause := true } :=
-  rfl
+    hand.closedFeatureSignature = FeatureSignature.fullSpec := by decide
 
 theorem drown_closedFeatureSignature :
-    drown.closedFeatureSignature =
-      { state := true, manner := true, result := true, cause := true } :=
-  rfl
+    drown.closedFeatureSignature = FeatureSignature.fullSpec := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 
 /-- √blossom entails change of state — templatic (`v_become`) content
     in the root — falsifying Bifurcation without any manner or cause
     entailment. -/
-theorem blossom_violatesBifurcation : blossom.ViolatesBifurcation :=
-  .inl rfl
+theorem blossom_violatesBifurcation : blossom.ViolatesBifurcation := by
+  decide
 
-theorem crack_violatesBifurcation : crack.ViolatesBifurcation :=
-  .inl rfl
+theorem crack_violatesBifurcation : crack.ViolatesBifurcation := by
+  decide
 
-theorem hand_violatesBifurcation : hand.ViolatesBifurcation :=
-  .inl rfl
+theorem hand_violatesBifurcation : hand.ViolatesBifurcation := by decide
 
-theorem drown_violatesBifurcation : drown.ViolatesBifurcation :=
-  .inl rfl
+theorem drown_violatesBifurcation : drown.ViolatesBifurcation := by
+  decide
 
 /-- Some root carries templatic content. -/
 theorem exists_violatesBifurcation : ∃ r : Root, r.ViolatesBifurcation :=
@@ -156,11 +143,11 @@ theorem bifurcation_thesis_false :
 
 /-- √hand entails both a manner (by-hand transfer) and a result
     (recipient possession). -/
-theorem hand_hasMannerAndResult : hand.HasMannerAndResult := ⟨rfl, rfl⟩
+theorem hand_hasMannerAndResult : hand.HasMannerAndResult := by decide
 
 /-- √drown entails both a manner (submersion) and a result (death);
     it differs from √hand in root position. -/
-theorem drown_hasMannerAndResult : drown.HasMannerAndResult := ⟨rfl, rfl⟩
+theorem drown_hasMannerAndResult : drown.HasMannerAndResult := by decide
 
 /-- Some root entails both a manner and a result. -/
 theorem exists_hasMannerAndResult : ∃ r : Root, r.HasMannerAndResult :=
@@ -173,7 +160,8 @@ theorem manner_result_complementarity_false :
 
 /-! ### Roots respecting each constraint -/
 
-/-- √flat (pure state) respects Bifurcation. -/
+/-- √flat (pure state) respects Bifurcation: its signature is bounded
+    by the ontological kinds. -/
 theorem flat_respectsBifurcation : flat.RespectsBifurcation := by decide
 
 /-- √jog (pure manner) respects Bifurcation. -/

@@ -21,8 +21,6 @@ architectural primitives.
 
 namespace Morphology.Derivation
 
-open Semantics.Lexical.Roots (Root)
-
 /-! ### Operators and inventories -/
 
 /-- A morphological operator: a name and a structural condition on

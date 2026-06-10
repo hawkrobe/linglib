@@ -54,8 +54,6 @@ identifier use; original orthography is preserved in docstrings.
 
 namespace Yukatek.Roots
 
-open Semantics.Lexical.Roots
-
 -- ════════════════════════════════════════════════════
 -- § 1. Agent-Salient Roots (manner only, take `=t`)
 -- ════════════════════════════════════════════════════
@@ -197,125 +195,126 @@ def cin : Root := ⟨"cin", [.hasState "bent"]⟩
     relational positional semantics: "x is-seated [on y]"). -/
 def kul : Root := ⟨"kul", [.hasState "seated"]⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Per-Root Feature Signatures
--- ════════════════════════════════════════════════════
+/-! ### Per-root feature signatures -/
 
-/-! Agent-salient roots → `⟨false, true, false, false⟩`. -/
+/-! Agent-salient roots → `{.manner}`. -/
 
 theorem siit_signature :
-    siit.featureSignature = ⟨false, true, false, false⟩ := rfl
+    siit.featureSignature = {.manner} := by decide
 theorem tziib_signature :
-    tziib.featureSignature = ⟨false, true, false, false⟩ := rfl
+    tziib.featureSignature = {.manner} := by decide
 theorem miis_signature :
-    miis.featureSignature = ⟨false, true, false, false⟩ := rfl
+    miis.featureSignature = {.manner} := by decide
 theorem cheh_signature :
-    cheh.featureSignature = ⟨false, true, false, false⟩ := rfl
+    cheh.featureSignature = {.manner} := by decide
 theorem paak_signature :
-    paak.featureSignature = ⟨false, true, false, false⟩ := rfl
+    paak.featureSignature = {.manner} := by decide
 
-/-! Agent-patient salient roots → `⟨false, true, true, false⟩`. -/
+/-! Agent-patient salient roots → `{.manner, .result}`. -/
 
 theorem kuc_signature :
-    kuc.featureSignature = ⟨false, true, true, false⟩ := rfl
+    kuc.featureSignature = {.manner, .result} := by decide
 theorem pis_signature :
-    pis.featureSignature = ⟨false, true, true, false⟩ := rfl
+    pis.featureSignature = {.manner, .result} := by decide
 theorem los_signature :
-    los.featureSignature = ⟨false, true, true, false⟩ := rfl
+    los.featureSignature = {.manner, .result} := by decide
 
-/-! Patient-salient roots → `⟨false, false, true, false⟩`. -/
+/-! Patient-salient roots → `{.result}`. -/
 
 theorem kiim_signature :
-    kiim.featureSignature = ⟨false, false, true, false⟩ := rfl
+    kiim.featureSignature = {.result} := by decide
 theorem haanCease_signature :
-    haanCease.featureSignature = ⟨false, false, true, false⟩ := rfl
+    haanCease.featureSignature = {.result} := by decide
 theorem luub_signature :
-    luub.featureSignature = ⟨false, false, true, false⟩ := rfl
+    luub.featureSignature = {.result} := by decide
 theorem ok_signature :
-    ok.featureSignature = ⟨false, false, true, false⟩ := rfl
+    ok.featureSignature = {.result} := by decide
 theorem ah_signature :
-    ah.featureSignature = ⟨false, false, true, false⟩ := rfl
+    ah.featureSignature = {.result} := by decide
 theorem wen_signature :
-    wen.featureSignature = ⟨false, false, true, false⟩ := rfl
+    wen.featureSignature = {.result} := by decide
 theorem siih_signature :
-    siih.featureSignature = ⟨false, false, true, false⟩ := rfl
+    siih.featureSignature = {.result} := by decide
 theorem tuub_signature :
-    tuub.featureSignature = ⟨false, false, true, false⟩ := rfl
+    tuub.featureSignature = {.result} := by decide
 theorem kaah_signature :
-    kaah.featureSignature = ⟨false, false, true, false⟩ := rfl
+    kaah.featureSignature = {.result} := by decide
 theorem chuun_signature :
-    chuun.featureSignature = ⟨false, false, true, false⟩ := rfl
+    chuun.featureSignature = {.result} := by decide
 theorem chenCease_signature :
-    chenCease.featureSignature = ⟨false, false, true, false⟩ := rfl
+    chenCease.featureSignature = {.result} := by decide
 theorem hoop_signature :
-    hoop.featureSignature = ⟨false, false, true, false⟩ := rfl
+    hoop.featureSignature = {.result} := by decide
 theorem heel_signature :
-    heel.featureSignature = ⟨false, false, true, false⟩ := rfl
+    heel.featureSignature = {.result} := by decide
 theorem paat_signature :
-    paat.featureSignature = ⟨false, false, true, false⟩ := rfl
+    paat.featureSignature = {.result} := by decide
 
-/-! Motion roots (also patient-salient) → `⟨false, false, true, false⟩`. -/
+/-! Motion roots (also patient-salient) → `{.result}`. -/
 
 theorem maan_signature :
-    maan.featureSignature = ⟨false, false, true, false⟩ := rfl
+    maan.featureSignature = {.result} := by decide
 theorem taal_signature :
-    taal.featureSignature = ⟨false, false, true, false⟩ := rfl
+    taal.featureSignature = {.result} := by decide
 theorem bin_signature :
-    bin.featureSignature = ⟨false, false, true, false⟩ := rfl
+    bin.featureSignature = {.result} := by decide
 theorem naak_signature :
-    naak.featureSignature = ⟨false, false, true, false⟩ := rfl
+    naak.featureSignature = {.result} := by decide
 theorem liik_signature :
-    liik.featureSignature = ⟨false, false, true, false⟩ := rfl
+    liik.featureSignature = {.result} := by decide
 
-/-! Positional roots → `⟨true, false, false, false⟩`. -/
+/-! Positional roots → `{.state}`. -/
 
 theorem cin_signature :
-    cin.featureSignature = ⟨true, false, false, false⟩ := rfl
+    cin.featureSignature = {.state} := by decide
 theorem kul_signature :
-    kul.featureSignature = ⟨true, false, false, false⟩ := rfl
+    kul.featureSignature = {.state} := by decide
 
--- ════════════════════════════════════════════════════
--- § 6. Per-Root Closed Feature Signatures
--- ════════════════════════════════════════════════════
+/-! ### Per-root closed feature signatures -/
 
-/-! Closure under `bkgRules` (currently `becomesState s ⇒ hasState s`)
-    promotes change-of-state roots to `state = true`. This does *not*
-    change the Lucy 1994 salience class predicted by `classOfSignature`,
-    because the agent / agentPatient / patient arms ignore the `state`
-    field, and the positional arm requires `result = false`. -/
+/-! The collocational closure (`FeatureSignature.close`) adds `.state`
+    to any signature containing `.result`, and `.result` + `.state` to
+    any containing `.cause`. No Yukatek root here carries a `.cause`
+    atom, so only the result→state edge fires. Closure does *not*
+    change the Lucy 1994 salience class predicted by
+    `classOfSignature` for these roots: the agent / agentPatient /
+    patient arms ignore `.state` membership, and the positional arm
+    (signature exactly `{.state}`) is never produced by closure from a
+    non-positional base without `.cause`
+    (cf. `Lucy1994.predictedClass_closure_invariant`). -/
 
 theorem siit_closed_signature :
-    siit.closedFeatureSignature = ⟨false, true, false, false⟩ := rfl
+    siit.closedFeatureSignature = {.manner} := by decide
 
 theorem tziib_closed_signature :
-    tziib.closedFeatureSignature = ⟨false, true, false, false⟩ := rfl
+    tziib.closedFeatureSignature = {.manner} := by decide
 
 theorem kuc_closed_signature :
-    kuc.closedFeatureSignature = ⟨true, true, true, false⟩ := rfl
+    kuc.closedFeatureSignature = {.state, .manner, .result} := by decide
 
 theorem pis_closed_signature :
-    pis.closedFeatureSignature = ⟨true, true, true, false⟩ := rfl
+    pis.closedFeatureSignature = {.state, .manner, .result} := by decide
 
 theorem los_closed_signature :
-    los.closedFeatureSignature = ⟨true, true, true, false⟩ := rfl
+    los.closedFeatureSignature = {.state, .manner, .result} := by decide
 
 theorem kiim_closed_signature :
-    kiim.closedFeatureSignature = ⟨true, false, true, false⟩ := rfl
+    kiim.closedFeatureSignature = {.state, .result} := by decide
 
 theorem haanCease_closed_signature :
-    haanCease.closedFeatureSignature = ⟨true, false, true, false⟩ := rfl
+    haanCease.closedFeatureSignature = {.state, .result} := by decide
 
 theorem luub_closed_signature :
-    luub.closedFeatureSignature = ⟨true, false, true, false⟩ := rfl
+    luub.closedFeatureSignature = {.state, .result} := by decide
 
 theorem ok_closed_signature :
-    ok.closedFeatureSignature = ⟨true, false, true, false⟩ := rfl
+    ok.closedFeatureSignature = {.state, .result} := by decide
 
 theorem cin_closed_signature :
-    cin.closedFeatureSignature = ⟨true, false, false, false⟩ := rfl
+    cin.closedFeatureSignature = {.state} := by decide
 
 theorem kul_closed_signature :
-    kul.closedFeatureSignature = ⟨true, false, false, false⟩ := rfl
+    kul.closedFeatureSignature = {.state} := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Class Lists

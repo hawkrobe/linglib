@@ -171,7 +171,7 @@ import Linglib.Semantics.Causation.SEM.Defs
 import Linglib.Semantics.Causation.SEM.Basic
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.Profile
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
@@ -2466,6 +2466,7 @@ import Linglib.Semantics.Lexical.LevinTheory
 import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
+import Linglib.Semantics.Lexical.Roots.Signature
 import Linglib.Semantics.Lexical.Roots.Basic
 import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Typology

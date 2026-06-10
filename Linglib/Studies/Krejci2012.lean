@@ -48,7 +48,7 @@ Texas at Austin.
 namespace Krejci2012
 
 open Semantics.Lexical
-open Semantics.Lexical.Roots
+open FeatureSignature
 open Semantics.Causation.Morphological
 open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.ArgDerivation
@@ -227,23 +227,23 @@ theorem dress_same_form : dress.lexicalCausative = none := rfl
 -- ════════════════════════════════════════════════════
 
 /-! [krejci-2012]'s claim that eat and dress have causative event
-    structure aligns with their `RootEntailments` classification:
-    both are `causativeResult` (state + result + cause), meaning the
+    structure aligns with their `FeatureSignature` classification:
+    both are `causativeResult` ({state, result, cause}), meaning the
     root itself entails external causation. -/
 
 /-- eat roots are causativeResult: the root entails caused consumption. -/
 theorem eat_is_causativeResult :
-    LevinClass.rootEntailments .eat = .causativeResult := rfl
+    LevinClass.rootEntailments .eat = causativeResult := rfl
 
 /-- dress roots are causativeResult: the root entails caused dressed state. -/
 theorem dress_is_causativeResult :
-    LevinClass.rootEntailments .dress = .causativeResult := rfl
+    LevinClass.rootEntailments .dress = causativeResult := rfl
 
-/-- causativeResult roots entail cause — consistent with
+/-- causativeResult roots carry the `cause` kind — consistent with
     [krejci-2012]'s analysis that these verbs have CAUSE in their
     simple forms. -/
 theorem causativeResult_entails_cause :
-    RootEntailments.causativeResult.cause = true := rfl
+    LexKind.cause ∈ causativeResult := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Bridge to ArgDerivation
