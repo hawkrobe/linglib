@@ -36,7 +36,7 @@ and is generated into the `Examples` section below by
 namespace VonFintelIatridou2005
 
 open Data.Examples (LinguisticExample SourceRef)
-open Paradigms.AcceptabilityJudgment (Judgment)
+open Features (Judgment)
 
 /-! ### Analytical predicates
 

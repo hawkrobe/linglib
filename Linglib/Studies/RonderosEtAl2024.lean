@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
-import Linglib.Paradigms.VisualWorld
+import Linglib.Processing.VisualWorld
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
 
@@ -46,7 +46,7 @@ The paper's contribution is teasing these apart.
 
 ## Paradigm
 
-Built on `Paradigms.VisualWorld` ([huettig-rommers-meyer-2011]).
+Built on `VisualWorld` ([huettig-rommers-meyer-2011]).
 The display contains four objects (`ObjectRole`):
 
 - `target`: the intended referent.
@@ -99,15 +99,15 @@ The novel architectural feature relative to [sedivy-etal-1999] is
 **stratification**: where Sedivy's contrast effect is universal over
 cells, Ronderos's is conditional on the stratum (color or scalar, not
 material). The stratified predicate
-`Paradigms.VisualWorld.ContrastReducesCompetitorLooksWhen` was added
+`VisualWorld.ContrastReducesCompetitorLooksWhen` was added
 to support exactly this kind of multi-factor design without inflating
 the paradigm with a study-specific factor. The interaction (color and
 scalar effects strictly larger than material effects) is expressed via
-`Paradigms.VisualWorld.ContrastEffectLargerFor` — the paradigm-level
+`VisualWorld.ContrastEffectLargerFor` — the paradigm-level
 shape of an "X × condition" interaction.
 
 The scalar baseline disadvantage is expressed via
-`Paradigms.VisualWorld.RoleSumLowerInBaselineWhen` — also added to the
+`VisualWorld.RoleSumLowerInBaselineWhen` — also added to the
 paradigm because it is a recurring analysis pattern
 ([aparicio-xiang-kennedy-2015] report it on color vs. scalar;
 [ronderos-etal-2024] replicate and extend to material vs. scalar).
@@ -163,7 +163,7 @@ is observable independent of any contrast manipulation.
 
 namespace RonderosEtAl2024
 
-open Paradigms.VisualWorld
+open VisualWorld
 
 -- ============================================================================
 -- §1. Study-Specific Factor: Adjective Type

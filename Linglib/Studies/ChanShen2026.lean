@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.Questions
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Studies.SprouseEtAl2012
 import Linglib.Studies.Ross1967
 
 /-!
@@ -79,7 +79,7 @@ Theory-neutral lexical entries (`theHell`, `daodi`) live in the
 respective Fragment files. The Minimalist analysis (POV features,
 Agree, the licensing predicate) lives in `Syntax/Minimalism/
 Core/ANDL.lean`. The empirical 2×2 design uses
-`Paradigms/AcceptabilityJudgment.lean`. This study file only carries
+`Studies/SprouseEtAl2012.lean`. This study file only carries
 the paper's specific data (six conditions, two DD scores) and the
 bridge theorems connecting theory to data.
 -/
@@ -159,7 +159,7 @@ open Typology.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
-open Paradigms.AcceptabilityJudgment
+open SprouseEtAl2012
   (FactorialCondition DDResult AccountPredictions)
 open Syntax.Minimalist.LeftPeriphery (SelectionClass)
 

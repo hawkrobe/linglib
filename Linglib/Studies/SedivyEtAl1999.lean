@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
-import Linglib.Paradigms.VisualWorld
+import Linglib.Processing.VisualWorld
 
 /-!
 # [sedivy-etal-1999]
@@ -28,7 +28,7 @@ indefinite-NP verification task.
 
 ## Paradigm
 
-Built on `Paradigms.VisualWorld` ([huettig-rommers-meyer-2011]). The
+Built on `VisualWorld` ([huettig-rommers-meyer-2011]). The
 display contains four objects (`ObjectRole`):
 
 - `target`: the intended referent (e.g. tall glass).
@@ -80,7 +80,7 @@ theory satisfying the patterns is committed to a task-invariant mechanism.
 
 namespace SedivyEtAl1999
 
-open Paradigms.VisualWorld
+open VisualWorld
 
 -- ============================================================================
 -- §1. Study-Specific Manipulations
@@ -187,7 +187,7 @@ theorem contrasting_object_evokes_opposite :
 -- ============================================================================
 
 /-! Patterns 1 and 2 are stated at the paradigm level
-(`Paradigms.VisualWorld.ContrastSpeedsResponse`,
+(`VisualWorld.ContrastSpeedsResponse`,
 `ContrastReducesCompetitorLooks`); they consume Sedivy's
 `HasContrastCondition Cell` instance to swap the contrast factor while
 holding typicality and task fixed. Pattern 3 (typicality interaction)

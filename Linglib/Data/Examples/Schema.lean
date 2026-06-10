@@ -1,4 +1,4 @@
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Features.Acceptability
 
 /-!
 # `LinguisticExample` schema
@@ -53,7 +53,7 @@ grow optional fields without breaking existing rows.
 
 namespace Data.Examples
 
-open Paradigms.AcceptabilityJudgment (Judgment)
+open Features (Judgment)
 
 /-- Glottolog 5.0 language identifier (e.g. "stan1293" for Standard English).
     Type alias only; values are not validated against Glottolog at the type

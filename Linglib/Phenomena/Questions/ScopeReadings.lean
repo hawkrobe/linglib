@@ -23,9 +23,9 @@ different disjuncts can give different complete answers.
 -/
 
 import Linglib.Phenomena.Questions.Basic
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 namespace Phenomena.Questions.ScopeReadings
 
