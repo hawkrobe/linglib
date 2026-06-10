@@ -1,4 +1,5 @@
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
+import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
 
 /-!
@@ -16,6 +17,7 @@ analyses live in `Studies/`:
 ## Submodules
 
 - `Basic.lean`: Shared types (SentDenotation, timeTrace, denotation patterns)
+- `Before.lean`: B&C `before` presuppositions (`hasEarliest`, IPF)
 - `EventBridge.lean`: The eventDenotation projection (Level 3 → Level 2)
 
 -/
