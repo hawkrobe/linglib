@@ -1,5 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.Slot
-import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 
 /-!
@@ -99,7 +99,7 @@ theorem ditransitive_specificity_consistent :
 /-- *Let alone*: derived `.partiallyOpen` matches stipulated. -/
 theorem letAlone_specificity_consistent :
     derivedSpecificity letAloneForm =
-      ConstructionGrammar.Studies.FillmoreKayOConnor1988.letAloneConstruction.specificity := by
+      _root_.FillmoreKayOConnor1988.letAloneConstruction.specificity := by
   native_decide
 
 /-- must-VERB: derived `.partiallyOpen` matches stipulated. -/

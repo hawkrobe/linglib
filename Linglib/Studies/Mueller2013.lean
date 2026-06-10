@@ -5,6 +5,7 @@ import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
 # [mueller-2013]: Unifying Everything
@@ -505,7 +506,7 @@ theorem both_directions_right :
     (∃ c : ConstructionGrammar.Construction,
       ConstructionGrammar.isFullyCompositional c = false) :=
   ⟨ConstructionGrammar.fullyAbstract_isFullyCompositional,
-   ⟨_, ConstructionGrammar.let_alone_irreducible⟩⟩
+   ⟨_, FillmoreKayOConnor1988.let_alone_irreducible⟩⟩
 
 /-! ### Resultative family decomposition
 

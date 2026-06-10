@@ -1,6 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.CatenalConstruction
-import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Syntax.ConstructionGrammar.IdiomTypology
+import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
 # Osborne & Groß (2012): Constructions Are Catenae — Data
@@ -522,7 +523,7 @@ theorem catenal_specificity_coverage :
 formality) is bridged to catena verification. Both ends of the formality
 spectrum — substantive idioms and formal idioms — are catenae. -/
 
-open ConstructionGrammar.Studies.FillmoreKayOConnor1988
+open ConstructionGrammar _root_.FillmoreKayOConnor1988
 
 /-- "kick the bucket" is a substantive decoding idiom in FKO1988's typology. -/
 def kickTheBucketIdiomType : IdiomType :=
