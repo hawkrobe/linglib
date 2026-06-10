@@ -163,7 +163,7 @@ def sameRootNouns : List SameRootEntry :=
 
 /-- Spanish's two controller genders — the carrier of its `Gender.System`
     ([corbett-1991]; [kramer-2015]). -/
-inductive SpanishGender where
+inductive Value where
   | masc
   | fem
   deriving DecidableEq, Repr, Fintype
@@ -176,7 +176,7 @@ inductive Concord where
   deriving DecidableEq, Repr
 
 /-- Per-gender adjectival concord. -/
-def SpanishGender.concord : SpanishGender → Concord
+def Value.concord : Value → Concord
   | .masc => .o
   | .fem  => .a
 
@@ -184,23 +184,23 @@ def SpanishGender.concord : SpanishGender → Concord
     labelling; masculine is the morphosyntactic default (plain-*n* roots
     surface masculine — [kramer-2015]'s Set-1 derivation, exercised at
     `Kramer2020.set1_plain_n_masculine`). -/
-def system : Gender.System SpanishGender where
+def system : Gender.System Value where
   label := fun g => match g with
     | .masc => some .masculine
     | .fem  => some .feminine
   default := .masc
 
 /-- Comparative label → controller gender (ingestion). -/
-def SpanishGender.ofLabel : Gender → SpanishGender
+def Value.ofLabel : Gender → Value
   | .feminine => .fem
   | _         => .masc
 
 /-- Controller gender of a noun, from the attested agreement fact. -/
-def SpanishNoun.controllerGender (n : SpanishNoun) : SpanishGender :=
-  SpanishGender.ofLabel n.attestedGender
+def SpanishNoun.controllerGender (n : SpanishNoun) : Value :=
+  Value.ofLabel n.attestedGender
 
 /-- The assigned system: every noun gets its controller gender. -/
-def assigned : Gender.System.Assigned SpanishNoun SpanishGender :=
+def assigned : Gender.System.Assigned SpanishNoun Value :=
   { system with assign := SpanishNoun.controllerGender }
 
 /-- The carrier is faithful to the adjectival concord evidence: *-o* vs
@@ -208,7 +208,7 @@ def assigned : Gender.System.Assigned SpanishNoun SpanishGender :=
     genders-are-agreement-classes criterion, discharged via
     `Gender.Faithful`. -/
 theorem faithful_concord :
-    Gender.Faithful (fun (g : SpanishGender) (_ : Unit) => g.concord) := by decide
+    Gender.Faithful (fun (g : Value) (_ : Unit) => g.concord) := by decide
 
 /-- Label ∘ assign recovers the attested gender across the inventory:
     the system view and the per-noun data agree. -/
@@ -225,6 +225,6 @@ theorem system_label_assign :
 theorem assigned_semanticCore :
     assigned.SemanticCore {n | n.isNaturalGender = true}
       (·.attestedGender) := by
-  exact ⟨⟨mujer, rfl⟩, fun a b _ _ h => congrArg SpanishGender.ofLabel h⟩
+  exact ⟨⟨mujer, rfl⟩, fun a b _ _ h => congrArg Value.ofLabel h⟩
 
 end Spanish.Gender

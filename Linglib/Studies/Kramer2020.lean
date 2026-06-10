@@ -926,7 +926,7 @@ theorem spanish_surface_genders_consistent :
     controller-gender count the [corbett-1991] study records: the count
     is `Fintype.card` of the carrier, not a stipulation. -/
 theorem spanish_carrier_card :
-    Fintype.card Spanish.Gender.SpanishGender =
+    Fintype.card Spanish.Gender.Value =
       Corbett1991.spanish.rawCount := by decide
 
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
@@ -1063,7 +1063,7 @@ theorem russian_surface_genders_consistent :
 /-- The fragment's `Gender.System` carrier has exactly the
     controller-gender count the [corbett-1991] study records. -/
 theorem russian_carrier_card :
-    Fintype.card Russian.Gender.RussianGender =
+    Fintype.card Russian.Gender.Value =
       Corbett1991.russian.rawCount := by decide
 
 /-- Russian has u-features → `semanticAndFormal` assignment, consistent
