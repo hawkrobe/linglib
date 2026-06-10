@@ -1,4 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -18,6 +19,8 @@ confirmed conventional subtypes.
 ## Main declarations
 
 - `GoldbergShirtz2025.palConstruction`, `palConstructicon`: the Figure 5 network
+- `GoldbergShirtz2025.nn_adjN_incompatible`, `pal_resolves`, `palSpec_eq`:
+  the paper's two-mothers argument for normal-mode inheritance, derived
 - `GoldbergShirtz2025.palMeaning`: familiarity presupposition + head-noun assertion
 - `GoldbergShirtz2025.pal_irreducible`: PAL is not fully compositional
 - `GoldbergShirtz2025.palExamples`, `crossLinguisticPALs`: attested examples
@@ -158,6 +161,74 @@ def palConstructicon : Constructicon :=
         , mode := .normal
         , sharedProperties := ["lemma-like construal: presumed familiarity"]
         , overriddenProperties := ["head N optional; PAL may serve as head"] } ] }
+
+/-! ### Two mothers force normal-mode inheritance (§6)
+
+The paper's argument for normal-mode over complete inheritance, derived
+with the `CxnSpec` algebra from `ConstructionGrammar.Inheritance`: PAL's
+two mothers conflict — the NN compound construction yields an N⁰ with
+modifier-internal stress, adjectival modification an N′ with head stress —
+so strict unification of the parents is impossible
+(`nn_adjN_incompatible`), and the network is well-formed only because the
+PAL construction's own specification legislates exactly the conflicting
+fields (`pal_resolves`). The rest is genuinely inherited: the prenominal
+modifier slot from both mothers, non-self-embedding from Adj+N
+(`palSpec_eq`). -/
+
+/-- NN compound specification: zero-level output, prenominal modifier,
+compound stress within the modifier. -/
+def nnCompoundSpec : CxnSpec :=
+  { level := some .zero
+  , modPosition := some .prenominal
+  , stress := some .modifier }
+
+/-- Adj+N modification specification: N′ output, prenominal modifier,
+phrasal (head) stress; per §6, "like Adj + N combinations, the PAL N
+construction cannot be recursively embedded within another PAL N
+construction", so Adj+N carries the non-self-embedding value PAL
+inherits. -/
+def adjNSpec : CxnSpec :=
+  { level := some .bar
+  , modPosition := some .prenominal
+  , stress := some .head
+  , selfEmbedding := some .banned }
+
+/-- The PAL construction's own specification: exactly the two fields its
+mothers conflict on, resolved as the paper describes — N′ output (with
+Adj+N, against the compound) and PAL-internal stress (with the compound,
+against Adj+N). -/
+def palOwnSpec : CxnSpec :=
+  { level := some .bar
+  , stress := some .modifier }
+
+/-- PAL's full specification, by normal-mode inheritance from its two
+mothers. -/
+def palSpec : CxnSpec := palOwnSpec.inherit [nnCompoundSpec, adjNSpec]
+
+/-- The two mothers conflict (bar level and stress), so complete-mode
+inheritance cannot relate PAL to both parents — the formal content of §6's
+observation that complete inheritance "is unsuitable whenever a node is
+allowed more than a single mother, since specifications in two mother
+nodes may conflict with one another". -/
+theorem nn_adjN_incompatible :
+    ¬ CxnSpec.IsCompatible nnCompoundSpec adjNSpec := by decide
+
+/-- The Figure 5 network is normal-mode well-formed: PAL's own
+specification legislates every field its mothers conflict on. Delete
+either field of `palOwnSpec` and this fails. -/
+theorem pal_resolves :
+    CxnSpec.Resolves palOwnSpec [nnCompoundSpec, adjNSpec] := by decide
+
+/-- The derived PAL specification, computed rather than stipulated: the
+prenominal slot is inherited from both mothers (they agree),
+non-self-embedding is inherited from Adj+N alone, and N′-hood and
+PAL-internal stress come from PAL's own conflict resolutions. -/
+theorem palSpec_eq :
+    palSpec =
+      { level := some .bar
+      , modPosition := some .prenominal
+      , stress := some .modifier
+      , selfEmbedding := some .banned } := by decide
 
 /-! ### Lemma-like meaning -/
 
