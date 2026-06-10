@@ -413,9 +413,12 @@ subsumed under the predicate position in Corbett's scheme.
 
 The theorems below are *inventory* observations on the sample — which
 targets mark gender at all. The hierarchy's actual content (monotone
-availability of semantic agreement for hybrid nouns along the positions)
-is not yet formalized; it needs per-target assignment for hybrid nouns
-(see the audit notes in `Features/Gender/Basic.lean`). -/
+availability of semantic agreement along the positions) is formalized
+for number agreement in `Studies/Corbett2000.lean`
+(`AgreementProfile.RespectsHierarchy`, with British English *committee*
+as witness); the gender-side analogue for hybrid nouns like *vrač*
+needs per-target assignment on `Gender.System.Assigned` and is still
+open. -/
 
 /-- Verb agreement implies higher-target agreement in the sample (none of
     the languages agree only on verbs). -/

@@ -181,4 +181,79 @@ theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧
     znamja.attestedGender ≠ kost'.attestedGender := ⟨rfl, by decide⟩
 
+-- ============================================================================
+-- § 9: Gender System (`Gender.System` instantiation)
+-- ============================================================================
+
+/-- Russian's three controller genders — the carrier of its
+    `Gender.System` ([corbett-1991]; [kramer-2015] ch. 7). -/
+inductive RussianGender where
+  | masc
+  | fem
+  | neut
+  deriving DecidableEq, Repr, Fintype
+
+/-- Past-tense verbal concord exponents: *-∅* / *-a* / *-o*
+    ([wade-2020]). Evidence type for `Gender.Faithful`. -/
+inductive PastConcord where
+  | zero
+  | a
+  | o
+  deriving DecidableEq, Repr
+
+/-- Per-gender past-tense concord. -/
+def RussianGender.pastConcord : RussianGender → PastConcord
+  | .masc => .zero
+  | .fem  => .a
+  | .neut => .o
+
+/-- The Russian gender system over its own carrier: full comparative
+    labelling; neuter is the morphosyntactic default (plain-*n* roots
+    like *vino* surface neuter — [kramer-2015]'s ch. 7 derivation,
+    exercised at `Kramer2020.russian_licensing_vino`). -/
+def system : Gender.System RussianGender where
+  label := fun g => match g with
+    | .masc => some .masculine
+    | .fem  => some .feminine
+    | .neut => some .neuter
+  default := .neut
+
+/-- Comparative label → controller gender (ingestion). -/
+def RussianGender.ofLabel : Gender → RussianGender
+  | .feminine => .fem
+  | .neuter   => .neut
+  | _         => .masc
+
+/-- Controller gender of a noun, from the attested agreement fact. For
+    the hybrid *vrač* this is the morphological masculine; the
+    female-referent agreement alternation lives in
+    `Studies/Kramer2020.lean` §7. -/
+def RussianNoun.controllerGender (n : RussianNoun) : RussianGender :=
+  RussianGender.ofLabel n.attestedGender
+
+/-- The assigned system: every noun gets its controller gender. -/
+def assigned : Gender.System.Assigned RussianNoun RussianGender :=
+  { system with assign := RussianNoun.controllerGender }
+
+/-- The carrier is faithful to the past-tense concord evidence:
+    *-∅* / *-a* / *-o* distinguishes all three genders on a single
+    target. [corbett-1991]'s genders-are-agreement-classes criterion,
+    discharged via `Gender.Faithful`. -/
+theorem faithful_pastConcord :
+    Gender.Faithful (fun (g : RussianGender) (_ : Unit) => g.pastConcord) := by decide
+
+/-- Label ∘ assign recovers the attested gender across the inventory. -/
+theorem system_label_assign :
+    ∀ n ∈ allNouns,
+      system.label n.controllerGender = some n.attestedGender := by decide
+
+/-- [kramer-2015]'s (7ii) / [dahl-2000]'s generalization instantiated:
+    on the natural-gender core, assignment factors through the attested
+    gender (= referent sex on that core). The hybrid *vrač* and the
+    declension-class remainder are outside the core. -/
+theorem assigned_semanticCore :
+    assigned.SemanticCore {n | n.isNaturalGender = true}
+      (·.attestedGender) := by
+  exact ⟨⟨mat', rfl⟩, fun a b _ _ h => congrArg RussianGender.ofLabel h⟩
+
 end Russian.Gender

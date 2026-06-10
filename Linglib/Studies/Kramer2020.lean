@@ -922,6 +922,13 @@ theorem spanish_ninventory_matches_profile :
 theorem spanish_surface_genders_consistent :
     spanish.genderCount = .two := rfl
 
+/-- The fragment's `Gender.System` carrier has exactly the
+    controller-gender count the [corbett-1991] study records: the count
+    is `Fintype.card` of the carrier, not a stipulation. -/
+theorem spanish_carrier_card :
+    Fintype.card Spanish.Gender.SpanishGender =
+      Corbett1991.spanish.rawCount := by decide
+
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
     genders — a many-to-one mapping mediated by VI ([kramer-2015] Ch 6).
     This is the central insight: structural richness (4 n types) does not
@@ -1052,6 +1059,12 @@ theorem russian_ninventory_matches_profile :
 /-- Russian surface genders land in the WALS three-gender bin. -/
 theorem russian_surface_genders_consistent :
     russian.genderCount = .three := rfl
+
+/-- The fragment's `Gender.System` carrier has exactly the
+    controller-gender count the [corbett-1991] study records. -/
+theorem russian_carrier_card :
+    Fintype.card Russian.Gender.RussianGender =
+      Corbett1991.russian.rawCount := by decide
 
 /-- Russian has u-features → `semanticAndFormal` assignment, consistent
     with the WALS profile. -/
