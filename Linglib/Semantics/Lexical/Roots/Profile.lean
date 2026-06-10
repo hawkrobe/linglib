@@ -1,27 +1,23 @@
+import Mathlib.Data.Fintype.Basic
+
 /-!
-# Root Quality Dimensions and Structural Entailments
+# Root Quality Dimensions
 
-Per-root content typology: ranges over root quality dimensions
-([talmy-1988], [dowty-1991], [majid-boster-bowerman-2008],
-[spalek-mcnally-2026]) and the binary entailment tetrad of
-[beavers-koontz-garboden-2020].
-
-The tetrad is framework-committed: [rappaport-hovav-levin-2010] reject
-the entailment-feature framing (for them manner/result are
-event-structural template properties, not root features); a
-formalization of their account would be a sibling file with divergence
-theorems.
+Within-class root content profiles: ranges over quality dimensions —
+force, robustness, instrument, dimensionality, agent properties. A
+multi-paper synthesis ([talmy-1988], [talmy-2000], [dowty-1991],
+[majid-boster-bowerman-2008], [spalek-mcnally-2026]); no single paper
+carries this profile. Structural entailments (state, manner, result,
+cause) are the separate `FeatureSignature` (`Roots/Signature.lean`).
 
 ## Main declarations
 
-* `Range` — within-class variation along a quality dimension
-* `RootProfile` — bundled quality dimensions (force, robustness,
-  instrument, dimensionality, agent properties)
-* `RootEntailments` — the B&K-G tetrad, with `WellFormed` collocational
-  constraints and the canonical root types of their ch. 5 typology
+* `Root.Profile.Range` — within-class variation along a dimension
+* the dimension enums (`ForceLevel`, `Robustness`, `InstrumentType`, …)
+* `Root.Profile` — the bundled profile
 -/
 
-namespace Semantics.Lexical.Roots
+namespace Root.Profile
 
 /-! ### Range mechanism -/
 
@@ -57,6 +53,8 @@ def overlaps [BEq α] : Range α → Range α → Bool
   | some vs₁, some vs₂ => vs₁.any (vs₂.contains ·)
 
 end Range
+
+end Root.Profile
 
 /-! ### Quality dimensions -/
 
@@ -170,15 +168,19 @@ inductive AgentControl where
   | compatible    -- compatible with careful/controlled action
   deriving DecidableEq, Repr
 
+namespace Root
+
+open Profile (Range)
+
 /-- Within-class root content profile.
 
     Captures **quality** dimensions of root content — force, robustness,
-    agent properties — as opposed to `RootEntailments`, which captures
+    agent properties — as opposed to `FeatureSignature`, which captures
     **structural** entailments (state, manner, result, cause).
 
     Each dimension is a `Range` of acceptable values; `none` means the
     root says nothing about that dimension (unconstrained). -/
-structure RootProfile where
+structure Profile where
   /-- Force magnitude: [talmy-1988]. -/
   forceMag : Range ForceLevel := none
   /-- Force directionality: [talmy-2000], [spalek-mcnally-2026]. -/
@@ -199,149 +201,17 @@ structure RootProfile where
   patientDim : Range ObjectDimensionality := none
   deriving BEq, Repr, Inhabited
 
-/-! ### Root structural entailments -/
-
-/-- Root-level structural entailments from [beavers-koontz-garboden-2020].
-
-    B&KG argue against Bifurcation (roots never carry templatic
-    meaning) and Manner/Result Complementarity (no root encodes both).
-    Roots CAN entail states, change, and causation — notions
-    traditionally reserved for templates (CAUSE, BECOME).
-
-    The four features define a root typology (the book's ch. 5):
-    - `state`: root describes a state (√FLAT, √CRACK, √DRY)
-    - `manner`: root describes an action/manner (√JOG, √RUN, √HIT)
-    - `result`: root entails change — low-scope *again* still
-      presupposes a prior change
-    - `cause`: root entails causation
-
-    Constraints: `result → state` and `cause → result` (see
-    `WellFormed`); the book presents both as definitional ("not
-    root-specific stipulations"), mirroring conditions on templates. -/
-structure RootEntailments where
-  state  : Bool
-  manner : Bool
-  result : Bool
-  cause  : Bool
-  deriving DecidableEq, Repr
-
-namespace RootEntailments
-
-/-- If a root entails change (result), it entails a state that changes.
-    [beavers-koontz-garboden-2020]: "+result entails being +state,
-    since become′ entails something that has come about." -/
-def ResultImpliesState (r : RootEntailments) : Prop :=
-  r.result = true → r.state = true
-
-instance (r : RootEntailments) : Decidable r.ResultImpliesState := by
-  unfold ResultImpliesState; infer_instance
-
-/-- If a root entails causation, it entails what is caused (a result).
-    [beavers-koontz-garboden-2020]: "+cause entails being +result,
-    since cause′ entails that there is a caused event." -/
-def CauseImpliesResult (r : RootEntailments) : Prop :=
-  r.cause = true → r.result = true
-
-instance (r : RootEntailments) : Decidable r.CauseImpliesResult := by
-  unfold CauseImpliesResult; infer_instance
-
-/-- Well-formedness: both collocational constraints hold. -/
-def WellFormed (r : RootEntailments) : Prop :=
-  r.ResultImpliesState ∧ r.CauseImpliesResult
-
-instance (r : RootEntailments) : Decidable r.WellFormed := by
-  unfold WellFormed; infer_instance
-
-/-! ### Canonical root types
-
-The attested rows of the root typology in [beavers-koontz-garboden-2020]
-ch. 5 (their example display (12), §5.4). -/
-
-/-- +S −M −R −C: property concept roots (√FLAT, √DRY).
-    Deadjectival COS verbs — the root names the result state.
-    Complement position. -/
-def propertyConcept : RootEntailments := ⟨true, false, false, false⟩
-
-/-- +S −M +R −C: internally caused result roots (√BLOSSOM, √RUST).
-    Root entails both a state and a change to that state, but not
-    external causation. Complement position. -/
-def pureResult : RootEntailments := ⟨true, false, true, false⟩
-
-/-- +S −M +R +C: externally caused result roots (√CRACK, √BREAK).
-    Root entails a state, change, AND causation. If roots subdivide by
-    entailed causation, this may underlie Levin & Rappaport Hovav's
-    (1995) externally vs internally caused change-of-state distinction
-    ([beavers-koontz-garboden-2020], hedged as a possibility).
-    Complement position. -/
-def causativeResult : RootEntailments := ⟨true, false, true, true⟩
-
-/-- −S +M −R −C: pure manner roots (√JOG, √RUN, √SWIM).
-    Root specifies action manner without entailing any state.
-    Adjoined position. -/
-def pureManner : RootEntailments := ⟨false, true, false, false⟩
-
-/-- +S +M +R −C: manner + result without cause. Well-formed per the
-    constraints; [beavers-koontz-garboden-2020] leave its attestation
-    an open question ("whether a change and a manner can exist together
-    in a single meaning without causation"), with candidate witnesses
-    *slide* and motion-in-sound-emission *buzz*. -/
-def mannerResult : RootEntailments := ⟨true, true, true, false⟩
-
-/-- +S +M +R +C: fully specified roots (√HAND adjoined, √DROWN and the
-    other manner-of-killing roots in complement position;
-    [beavers-koontz-garboden-2020] chs. 3–4). These are the attested
-    MRC violators. The adjoined/complement contrast is carried by
-    `Root.Position`, not by this struct. -/
-def fullSpec : RootEntailments := ⟨true, true, true, true⟩
-
-/-- −S −M −R −C: minimal roots — no structural entailments.
-    Conservative default for classes not yet studied under B&KG's
-    framework. Not a row in B&KG's typology (which only lists roots
-    with at least one positive feature). -/
-def minimal : RootEntailments := ⟨false, false, false, false⟩
-
-/-! ### Canonical type well-formedness -/
-
-theorem propertyConcept_wf : propertyConcept.WellFormed := by decide
-theorem pureResult_wf : pureResult.WellFormed := by decide
-theorem causativeResult_wf : causativeResult.WellFormed := by decide
-theorem pureManner_wf : pureManner.WellFormed := by decide
-theorem mannerResult_wf : mannerResult.WellFormed := by decide
-theorem fullSpec_wf : fullSpec.WellFormed := by decide
-theorem minimal_wf : minimal.WellFormed := by decide
-
-/-! ### MRC violation detection -/
-
-/-- Does this root violate Manner/Result Complementarity?
-    [beavers-koontz-garboden-2020] ch. 4: some roots encode both manner
-    and result. [rappaport-hovav-levin-2010] dispute this; the framing
-    "violates MRC" presupposes MRC as a baseline norm — itself a
-    framework commitment. -/
-def ViolatesMRC (r : RootEntailments) : Prop :=
-  r.manner = true ∧ r.result = true
-
-instance (r : RootEntailments) : Decidable r.ViolatesMRC := by
-  unfold ViolatesMRC; infer_instance
-
-theorem fullSpec_violates_MRC : fullSpec.ViolatesMRC := by decide
-theorem mannerResult_violates_MRC : mannerResult.ViolatesMRC := by decide
-theorem pureResult_respects_MRC : ¬ pureResult.ViolatesMRC := by decide
-theorem pureManner_respects_MRC : ¬ pureManner.ViolatesMRC := by decide
-theorem causativeResult_respects_MRC : ¬ causativeResult.ViolatesMRC := by decide
-
-end RootEntailments
-
-/-! ### Derived properties -/
+namespace Profile
 
 /-- Does a root profile constrain patient properties? -/
-def RootProfile.constrainsPatient (rp : RootProfile) : Prop :=
+def constrainsPatient (rp : Profile) : Prop :=
   rp.patientRob.isConstrained = true
 
-instance (rp : RootProfile) : Decidable rp.constrainsPatient :=
+instance (rp : Profile) : Decidable rp.constrainsPatient :=
   inferInstanceAs (Decidable (_ = true))
 
 /-- Do two root profiles overlap (share at least one compatible event)? -/
-def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Prop :=
+def overlaps (rp₁ rp₂ : Profile) : Prop :=
   rp₁.forceMag.overlaps rp₂.forceMag = true ∧
   rp₁.forceDir.overlaps rp₂.forceDir = true ∧
   rp₁.patientRob.overlaps rp₂.patientRob = true ∧
@@ -349,7 +219,9 @@ def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Prop :=
   rp₁.agentVolition.overlaps rp₂.agentVolition = true ∧
   rp₁.agentControl.overlaps rp₂.agentControl = true
 
-instance (rp₁ rp₂ : RootProfile) : Decidable (rp₁.overlaps rp₂) :=
+instance (rp₁ rp₂ : Profile) : Decidable (rp₁.overlaps rp₂) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _))
 
-end Semantics.Lexical.Roots
+end Profile
+
+end Root

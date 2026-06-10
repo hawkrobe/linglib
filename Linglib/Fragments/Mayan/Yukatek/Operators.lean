@@ -31,7 +31,6 @@ manner. Spelt out structurally below.
 
 namespace Yukatek.Operators
 
-open Semantics.Lexical.Roots
 open Morphology.Derivation
 open Yukatek.Roots
 

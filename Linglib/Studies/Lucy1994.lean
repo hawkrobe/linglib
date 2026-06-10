@@ -33,7 +33,7 @@ two roots have the same salience class iff the same operator(s) apply
 to them. The 3-way classification then *falls out* of (B&K-G feature
 signature) × (operator applicability conditions) — it is not stipulated.
 
-The structural theorem `salienceClass_from_signature` makes this
+The structural theorem `class_depends_only_on_signature` makes this
 precise: salience class depends only on the feature signature, not on
 the specific root identity. The per-root checks then degenerate to
 finite signature lookups.
@@ -41,14 +41,11 @@ finite signature lookups.
 
 namespace Lucy1994
 
-open Semantics.Lexical.Roots
 open Morphology.Derivation
 open Yukatek.Roots
 open Yukatek.Operators
 
--- ════════════════════════════════════════════════════
--- § 1. Salience Classes (re-exported from Theory)
--- ════════════════════════════════════════════════════
+/-! ### Salience classes (re-exported from theory) -/
 
 /-! `SalienceClass` and `classOfSignature` live in
     `Semantics/Lexical/Roots/SalienceClass.lean`. This file
@@ -67,30 +64,40 @@ theorem class_depends_only_on_signature
     predictedClass r₁ = predictedClass r₂ :=
   predictedSalience_depends_only_on_signature r₁ r₂ h
 
--- ════════════════════════════════════════════════════
--- § 4. Predicted Class Agrees with Operator Applicability
--- ════════════════════════════════════════════════════
+/-! ### Predicted class agrees with operator applicability -/
 
-/-! Each of the four applicability characterisations follows the same
-    pattern: unfold the applicability profile and the named class predicates, then
-    case-split on the four B&K-G feature bits and let `simp_all`
-    discharge each cell of the 16-row truth table. The local macro
-    `lucy_applicable` packages this so the four theorems differ only in
-    which class label appears on the LHS. -/
+/-! Both `predictedClass` and the inventory's applicability profile
+    factor through the root's feature signature, a `Finset LexKind`
+    drawn from a 16-element fintype. Each characterisation therefore
+    reduces — after rewriting the profile to signature level
+    (`applicableNames_eq_profile`) and generalising the signature — to
+    a statement over all signatures that `decide` checks. The local
+    macro `lucy_applicable` packages the reduction. -/
+
+/-- The inventory's applicability profile as a function of the feature
+    signature. The four operator conditions are pairwise disjoint
+    (`classes_pairwise_disjoint`), so at most one name appears. -/
+private theorem applicableNames_eq_profile (r : Root) :
+    inventory.applicableNames r =
+      (if r.featureSignature.IsAgentSalient then ["=t"] else []) ++
+      (if r.featureSignature.IsAgentPatientSalient then ["=∅"] else []) ++
+      (if r.featureSignature.IsPatientSalient then ["=s"] else []) ++
+      (if r.featureSignature.IsPositional then ["-tal"] else []) := by
+  simp only [inventory, Inventory.applicableNames, affectiveT, zeroDeriv,
+    causativeS, positionalTal, List.filter_cons, List.filter_nil,
+    decide_eq_true_eq, Root.IsAgentSalient, Root.IsAgentPatientSalient,
+    Root.IsPatientSalient, Root.IsPositional]
+  generalize r.featureSignature = s
+  revert s
+  decide
 
 local macro "lucy_applicable " r:term : tactic =>
   `(tactic|
-    (unfold predictedClass Root.predictedSalience classOfSignature
-       inventory Inventory.applicableNames
-       affectiveT zeroDeriv causativeS positionalTal
-       Root.IsAgentSalient Root.IsAgentPatientSalient
-       Root.IsPatientSalient Root.IsPositional
-       FeatureSignature.IsAgentSalient FeatureSignature.IsAgentPatientSalient
-       FeatureSignature.IsPatientSalient FeatureSignature.IsPositional
-       Root.featureSignature
-     simp only [List.filter_cons, List.filter_nil, decide_eq_true_eq]
-     cases hm : ($r).hasManner <;> cases hr : ($r).hasResult <;>
-       cases hs : ($r).hasState <;> cases hc : ($r).hasCause <;> simp_all))
+    (rw [applicableNames_eq_profile]
+     unfold predictedClass Root.predictedSalience
+     generalize ($r).featureSignature = s
+     revert s
+     decide))
 
 /-- The `=t`-only applicability profile characterises agent-salient roots. -/
 theorem agent_iff_applicable_t (r : Root) :
@@ -112,9 +119,9 @@ theorem positional_iff_applicable_tal (r : Root) :
     predictedClass r = some .positional ↔ inventory.applicableNames r = ["-tal"] := by
   lucy_applicable r
 
-/-- An empty applicability profile characterises roots outside [lucy-1994]'s
-    diagnostic gap (`(¬manner, ¬result)` rows that lack the positional
-    configuration `state ∧ ¬cause`). -/
+/-- An empty applicability profile characterises roots in [lucy-1994]'s
+    diagnostic gap (the no-manner, no-result signatures other than the
+    pure positional configuration `{.state}`). -/
 theorem none_iff_applicable_empty (r : Root) :
     predictedClass r = none ↔ inventory.applicableNames r = [] := by
   lucy_applicable r
@@ -126,23 +133,14 @@ theorem none_iff_applicable_empty (r : Root) :
 theorem applicableNames_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
     inventory.applicableNames r₁ = inventory.applicableNames r₂ ↔
       predictedClass r₁ = predictedClass r₂ := by
-  unfold predictedClass Root.predictedSalience classOfSignature
-    inventory Inventory.applicableNames
-    affectiveT zeroDeriv causativeS positionalTal
-    Root.IsAgentSalient Root.IsAgentPatientSalient
-    Root.IsPatientSalient Root.IsPositional
-    FeatureSignature.IsAgentSalient FeatureSignature.IsAgentPatientSalient
-    FeatureSignature.IsPatientSalient FeatureSignature.IsPositional
-    Root.featureSignature
-  simp only [List.filter_cons, List.filter_nil, decide_eq_true_eq]
-  cases r₁.hasManner <;> cases r₁.hasResult <;>
-    cases r₁.hasState <;> cases r₁.hasCause <;>
-    cases r₂.hasManner <;> cases r₂.hasResult <;>
-      cases r₂.hasState <;> cases r₂.hasCause <;> simp_all
+  rw [applicableNames_eq_profile, applicableNames_eq_profile]
+  unfold predictedClass Root.predictedSalience
+  generalize r₁.featureSignature = s₁
+  generalize r₂.featureSignature = s₂
+  revert s₁ s₂
+  decide
 
--- ════════════════════════════════════════════════════
--- § 5. Per-Root Sanity Checks
--- ════════════════════════════════════════════════════
+/-! ### Per-root sanity checks -/
 
 /-! Agent-salient. -/
 theorem siit_agent  : predictedClass siit  = some .agent := rfl
@@ -183,9 +181,7 @@ theorem liik_patient : predictedClass liik = some .patient := rfl
 theorem cin_positional : predictedClass cin = some .positional := rfl
 theorem kul_positional : predictedClass kul = some .positional := rfl
 
--- ════════════════════════════════════════════════════
--- § 6. The "Motion Verbs" Non-Class
--- ════════════════════════════════════════════════════
+/-! ### The "motion verbs" non-class -/
 
 /-- [lucy-1994]'s central typological point: "motion" verbs
     (`luub` "fall", `ok` "enter") are not in their own salience class
@@ -202,37 +198,34 @@ theorem motion_roots_not_separate_class :
 theorem positional_distinct_from_motion :
     predictedClass cin ≠ predictedClass luub := by decide
 
--- ════════════════════════════════════════════════════
--- § 7. Closure Robustness
--- ════════════════════════════════════════════════════
+/-! ### Closure robustness -/
 
 /-- The class predicted from a root's *closed* feature signature
-    (`bkgRules` applied to the base entailments). -/
+    (the collocational closure `FeatureSignature.close` of the derived
+    signature). -/
 def closedPredictedClass (r : Root) : Option SalienceClass :=
   classOfSignature r.closedFeatureSignature
 
-/-- Closure under `bkgRules` does not change the Lucy 1994 salience
-    classification: agent / agentPatient / patient classes ignore the
-    `state` field, and the positional class requires `result = false`,
-    which closure does not affect (`closedFeatureSignature_result`).
-    The only way closure can flip `state` from `false` to `true` is if
-    the base set has a `becomesState` atom (so `result = true`) — in
-    which case the positional arm is already excluded by `result`. -/
-theorem predictedClass_closure_invariant (r : Root) :
+/-- For cause-free roots, collocational closure does not change the
+    Lucy 1994 salience classification: the only closure edge that can
+    fire is result→state, the agent / agentPatient / patient arms
+    ignore `.state` membership, and a base that gains `.state` from
+    closure carries `.result` and so is already excluded from the
+    positional arm. The hypothesis is necessary: a root carrying
+    `.cause` but not `.result` is unclassified at base yet
+    patient-salient after closure, since the cause→result closure edge
+    introduces `.result`. -/
+theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
     closedPredictedClass r = predictedClass r := by
+  unfold Root.HasCause at h
   unfold closedPredictedClass predictedClass Root.predictedSalience
-    classOfSignature
-  rw [closedFeatureSignature_manner, closedFeatureSignature_result,
-      closedFeatureSignature_cause, closedFeatureSignature_state_eq]
-  rcases hm : r.featureSignature.manner with _ | _ <;>
-    rcases hr : r.featureSignature.result with _ | _ <;>
-    rcases hc : r.featureSignature.cause with _ | _ <;>
-    rcases hs : r.featureSignature.state with _ | _ <;>
-    simp_all
+    Root.closedFeatureSignature
+  revert h
+  generalize r.featureSignature = s
+  revert s
+  decide
 
--- ════════════════════════════════════════════════════
--- § 8. Bridge to Bohnemeyer's 5-Way Verb Stem Classes
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Bohnemeyer's 5-way verb stem classes -/
 
 /-! [bohnemeyer-2004] refines [lucy-1994]'s 4-way salience
     cut into a 5-way stem classification (`active`, `inactive`,
