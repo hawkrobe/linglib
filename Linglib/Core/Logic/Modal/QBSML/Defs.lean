@@ -1,110 +1,84 @@
-import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Lattice.Union
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
-# Quantified Bilateral State-based Modal Logic (QBSML) — Core Definitions
+# Quantified bilateral state-based modal logic (QBSML)
 
-[aloni-vanormondt-2023] [aloni-2022] [anttila-2021]
+Core definitions for QBSML, the first-order extension of BSML ([aloni-2022],
+[anttila-2021]) presented in [aloni-vanormondt-2023]: indices pair a world
+with a partial assignment, states are finite sets of indices, and the formula
+language adds predicates and quantifiers, the latter evaluated via state
+extensions. Bilateral evaluation, split disjunction (via
+`Core.Logic.Team.splitsAs`), and the `NE` atom carry over from BSML; frame
+conditions are inherited through the world projection `s↓`, so `support` fits
+the `Core.Logic.Team.isFlat_iff` template at the point type
+`Index W Var Domain` exactly as BSML's does at `W` (see
+`Core/Logic/Modal/QBSML/Properties.lean`).
 
-QBSML is the first-order extension of Aloni's BSML, presented in Aloni & van
-Ormondt 2023 (J Logic Lang Inf 32:539-567) "Modified Numerals and Split
-Disjunction: The First-Order Case".
+## Main declarations
 
-## What changes from BSML
+* `Assignment`, `Index`: partial variable assignments and world–assignment
+  pairs ([aloni-vanormondt-2023] Definition 4.2).
+* `State.extendIndividual`, `State.extendUniversal`, `State.extendFunctional`:
+  the state extensions `s[x/d]`, `s[x]`, `s[x/h]` interpreting quantifiers
+  ([aloni-vanormondt-2023] Definitions 4.5–4.7).
+* `State.modalLift`, `State.worldProj`: pairing accessible worlds with an
+  assignment, and the world projection `s↓`.
+* `QBSMLFormula`: the formula language ([aloni-vanormondt-2023]
+  Definition 4.1), with `□` derived as `QBSMLFormula.nec`.
+* `QBSMLFormula.IsNEFree`: the NE-free fragment.
+* `QBSMLModel`, `eval`, `support`, `antiSupport`: bilateral evaluation
+  ([aloni-vanormondt-2023] Definition 4.9).
+* `isBilateral`: `support`/`antiSupport` form a
+  `Core.Logic.Bilateral.IsBilateral` under `QBSMLFormula.neg`.
+* `QBSMLModel.IsStateBased`, `QBSMLModel.IsIndisputable`: frame conditions
+  via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
 
-The propositional BSML (Aloni 2022) is recovered when assignments are empty.
-QBSML extends along three axes:
+## Implementation notes
 
-1. **Indices replace worlds**: `Index = W × Assignment` (Aloni & van Ormondt
-   §3, Definition 4.2). A state is `Finset Index` rather than `Finset W`.
-2. **Predicates with variables** (no constants for now; monadic predicates
-   sufficient for free-choice scenarios).
-3. **Quantifiers**: `∀x` and `∃x` evaluated via state extensions.
-
-## What stays the same
-
-Everything else carries over from BSML:
-- Bilateral evaluation (support + anti-support, polarity flip via negation)
-- Split disjunction via `Core.Logic.Team.splitsAs`
-- NE atom (`s ≠ ∅`)
-- Pragmatic enrichment recursion (NE conjuncts in each clause; deferred to a
-  follow-up file)
-- Frame conditions on accessibility (state-based, indisputable) via the `s↓`
-  projection — Aloni & van Ormondt Definition 4.10
-
-The point of this file is **substrate validation**: QBSML's `support` should
-fit into `Core.Logic.Team.flat_iff_downwardClosed_unionClosed_emptyTeam`'s
-shape exactly as BSML's does — same template, different `Point` type.
-
-## Scope
-
-This file: types, state operations, support relation. No Anttila 2.2.8 proofs
-(those go in `Properties.lean` to validate the substrate). No pragmatic
-enrichment (separate `Enrichment.lean`). No free-choice theorems (separate
-study files under `Studies/`).
-
-## Simplifications vs the paper
-
-- **Monadic predicates only**: `pred : Pred → Var → Formula`. The paper's
-  general `Pⁿ(t₁, ..., tₙ)` with arbitrary arity and term language (constants +
-  variables) is more general. Monadic suffices for Universal FC, Distribution,
-  Obviation. Higher arities and constants can be added later; the substrate
-  abstraction doesn't change.
-- **Single fixed domain `D`**: the paper's `M = ⟨W, D, R, I⟩` has D as part of
-  the model. We use `Domain : Type*` as a parameter on the model and require
-  `[Fintype Domain]` for the universal extension. Polymorphic + finite.
-- **Predicate interpretation is per-world**: `pInterp : Pred → W → Finset Domain`
-  — at world w, predicate p picks out a Finset of Domain elements. This is the
-  world-dependent (non-rigid) interpretation of [aloni-vanormondt-2023]
-  Definition 4.2 (`I(w)(Pⁿ) ⊆ Dⁿ`), specialised to monadic `P` and with the
-  constant-interpretation half of the paper's `I` dropped (no constants here).
+* Predicates are monadic (`pred : Pred → Var → QBSMLFormula Var Pred`) and
+  there is no term language: [aloni-vanormondt-2023] interprets `Pⁿ(t₁ … tₙ)`
+  for arbitrary arity over constants and variables. Monadic predicates over
+  variables suffice for the free-choice facts; higher arities and constants
+  can be added without changing the substrate abstraction.
+* The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
+  parameter, with `[Fintype Domain]` where the universal extension must range
+  over all of it. `QBSMLModel.pInterp` is the world-dependent (non-rigid)
+  predicate half of the paper's interpretation `I`.
+* The paper requires all indices in a state to share an assignment domain
+  (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
+  operations preserve it.
+* `□` is not primitive: the paper takes `□` primitive and derives `◇`; we
+  invert this, so `eval`'s `poss` clauses match the paper's derived
+  `◇`-clauses and `QBSMLFormula.nec` matches its primitive `□`.
 -/
 
 namespace Core.Logic.Modal.QBSML
 
--- ============================================================================
--- §1 Assignments and indices
--- ============================================================================
+variable {W Var Domain : Type*}
 
-/-- An assignment is a partial function from variables to domain values.
-    Aloni & van Ormondt §4 Definition 4.2: `gᵢ : V → D`. We use `Option D`
-    to represent the partiality.
+/-! ### Assignments and indices -/
 
-    The paper enforces that all indices in a state share the same domain
-    (`dom(gᵢ) = dom(gⱼ)`). We don't enforce this at the type level; instead,
-    state operations preserve the invariant. -/
+/-- A partial assignment of domain values to variables
+    ([aloni-vanormondt-2023] Definition 4.2: `gᵢ : V → D`); `Option D`
+    represents the partiality. -/
 abbrev Assignment (Var Domain : Type*) := Var → Option Domain
 
-/-- An index is a (world, assignment) pair. Aloni & van Ormondt §4 Definition
-    4.2: `i = ⟨wᵢ, gᵢ⟩`. -/
+/-- An index is a (world, assignment) pair ([aloni-vanormondt-2023]
+    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`). -/
 abbrev Index (W Var Domain : Type*) := W × Assignment Var Domain
 
 /-- The world component of an index. -/
-abbrev Index.world {W Var Domain : Type*} (i : Index W Var Domain) : W := i.1
+abbrev Index.world (i : Index W Var Domain) : W := i.1
 
 /-- The assignment component of an index. -/
-abbrev Index.assign {W Var Domain : Type*} (i : Index W Var Domain) :
-    Assignment Var Domain := i.2
+abbrev Index.assign (i : Index W Var Domain) : Assignment Var Domain := i.2
 
-/-- The "world projection" `s↓` of a state of indices: the set of worlds
-    appearing in some index. Aloni & van Ormondt §4 Definition 4.10:
-    `s↓ := {w | ∃g, (w, g) ∈ s}`.
+section Update
 
-    Frame conditions on `R` (state-based, indisputable) are defined relative
-    to `s↓` rather than `s`, so QBSML reuses BSML's notions via this
-    projection. -/
-def State.worldProj {W Var Domain : Type*} [DecidableEq W]
-    (s : Finset (Index W Var Domain)) : Finset W :=
-  s.image Prod.fst
-
--- ============================================================================
--- §2 Assignment update + state extension operations
--- ============================================================================
-
-variable {Var Domain : Type*} [DecidableEq Var] [Fintype Var]
+variable [DecidableEq Var]
 
 /-- Update an assignment at a single variable: `g[x/d](y) = d` if `y = x`,
     else `g(y)`. -/
@@ -112,133 +86,217 @@ def Assignment.update (g : Assignment Var Domain) (x : Var) (d : Domain) :
     Assignment Var Domain :=
   Function.update g x (some d)
 
-/-- Update an index's assignment. Aloni & van Ormondt §4 Definition 4.4:
-    `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`. -/
-def Index.update {W : Type*} (i : Index W Var Domain) (x : Var) (d : Domain) :
+/-- Update an index's assignment ([aloni-vanormondt-2023] Definition 4.4:
+    `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`). -/
+def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) :
     Index W Var Domain :=
   (i.world, i.assign.update x d)
 
-variable {W : Type*} [DecidableEq W] [DecidableEq Domain]
+end Update
 
-/-- DecidableEq on assignments follows from Fintype on the variable space
-    plus DecidableEq on the codomain (Option Domain via Domain). -/
-instance : DecidableEq (Assignment Var Domain) :=
-  fun _ _ => decEq _ _
+/-! ### The world projection -/
 
-/-- DecidableEq on indices: pair of decidable types. -/
-instance : DecidableEq (Index W Var Domain) :=
-  inferInstance
+section WorldProj
 
-/-- **Individual extension** `s[x/d]`: assign x to d in every index.
-    Aloni & van Ormondt §4 Definition 4.5: `s[x/d] := {i[x/d] | i ∈ s}`. -/
+variable [DecidableEq W]
+
+/-- The world projection `s↓` of a state of indices: the set of worlds
+    appearing in some index ([aloni-vanormondt-2023] Definition 4.10:
+    `s↓ := {w | ∃g, (w, g) ∈ s}`). Frame conditions on accessibility are
+    stated relative to `s↓`, so QBSML reuses BSML's notions via this
+    projection. -/
+def State.worldProj (s : Finset (Index W Var Domain)) : Finset W :=
+  s.image Index.world
+
+@[simp] theorem State.mem_worldProj {s : Finset (Index W Var Domain)} {w : W} :
+    w ∈ State.worldProj s ↔ ∃ i ∈ s, i.world = w :=
+  Finset.mem_image
+
+theorem State.worldProj_mono {s t : Finset (Index W Var Domain)} (h : s ⊆ t) :
+    State.worldProj s ⊆ State.worldProj t :=
+  Finset.image_subset_image h
+
+theorem State.worldProj_nonempty {s : Finset (Index W Var Domain)}
+    (h : s.Nonempty) : (State.worldProj s).Nonempty :=
+  h.image _
+
+end WorldProj
+
+/-! ### State extensions -/
+
+section State
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
+
+/-- **Individual extension** `s[x/d]`: assign `x` to `d` in every index
+    ([aloni-vanormondt-2023] Definition 4.5: `s[x/d] := {i[x/d] | i ∈ s}`). -/
 def State.extendIndividual (s : Finset (Index W Var Domain))
     (x : Var) (d : Domain) : Finset (Index W Var Domain) :=
   s.image (fun i => i.update x d)
 
-/-- **Universal extension** `s[x]`: extend with every domain value at x.
-    Aloni & van Ormondt §4 Definition 4.6: `s[x] := {i[x/d] | i ∈ s, d ∈ D}`.
-
+/-- **Universal extension** `s[x]`: extend with every domain value at `x`
+    ([aloni-vanormondt-2023] Definition 4.6: `s[x] := {i[x/d] | i ∈ s, d ∈ D}`).
     Requires `[Fintype Domain]` to range over the entire domain. -/
 def State.extendUniversal [Fintype Domain] (s : Finset (Index W Var Domain))
     (x : Var) : Finset (Index W Var Domain) :=
   Finset.univ.biUnion (fun d : Domain => State.extendIndividual s x d)
 
-/-- **Functional extension** `s[x/h]`: for each i in s, extend with d's drawn
-    from `h(i)` (a non-empty subset of D).
-    Aloni & van Ormondt §4 Definition 4.7: `s[x/h] := {i[x/d] | i ∈ s,
-    d ∈ h(i)}`.
-
-    Used to interpret existential quantification: `∃x φ` iff `M, s[x/h] ⊨ φ`
-    for some functional `h`. -/
+/-- **Functional extension** `s[x/h]`: for each `i ∈ s`, extend with values
+    drawn from `h i` ([aloni-vanormondt-2023] Definition 4.7:
+    `s[x/h] := {i[x/d] | i ∈ s, d ∈ h(i)}`). Interprets existential
+    quantification: `∃x φ` iff `M, s[x/h] ⊨ φ` for some functional `h`. -/
 def State.extendFunctional (s : Finset (Index W Var Domain))
     (x : Var) (h : Index W Var Domain → Finset Domain) :
     Finset (Index W Var Domain) :=
   s.biUnion (fun i => (h i).image (fun d => i.update x d))
 
+/-! ### Membership characterisations -/
+
+@[simp] theorem State.mem_extendIndividual {s : Finset (Index W Var Domain)}
+    {x : Var} {d : Domain} {j : Index W Var Domain} :
+    j ∈ State.extendIndividual s x d ↔ ∃ i ∈ s, i.update x d = j :=
+  Finset.mem_image
+
+@[simp] theorem State.mem_extendUniversal [Fintype Domain]
+    {s : Finset (Index W Var Domain)} {x : Var} {j : Index W Var Domain} :
+    j ∈ State.extendUniversal s x ↔ ∃ d, ∃ i ∈ s, i.update x d = j := by
+  simp only [State.extendUniversal, Finset.mem_biUnion, Finset.mem_univ,
+    true_and, State.mem_extendIndividual]
+
+@[simp] theorem State.mem_extendFunctional {s : Finset (Index W Var Domain)}
+    {x : Var} {h : Index W Var Domain → Finset Domain} {j : Index W Var Domain} :
+    j ∈ State.extendFunctional s x h ↔ ∃ i ∈ s, ∃ d ∈ h i, i.update x d = j := by
+  simp only [State.extendFunctional, Finset.mem_biUnion, Finset.mem_image]
+
+/-! ### Extension algebra -/
+
+theorem State.extendIndividual_empty (x : Var) (d : Domain) :
+    State.extendIndividual (∅ : Finset (Index W Var Domain)) x d = ∅ :=
+  Finset.image_empty _
+
+theorem State.extendIndividual_union (s t : Finset (Index W Var Domain))
+    (x : Var) (d : Domain) :
+    State.extendIndividual (s ∪ t) x d =
+      State.extendIndividual s x d ∪ State.extendIndividual t x d :=
+  Finset.image_union ..
+
+theorem State.extendIndividual_mono {s t : Finset (Index W Var Domain)}
+    (x : Var) (d : Domain) (hsub : s ⊆ t) :
+    State.extendIndividual s x d ⊆ State.extendIndividual t x d :=
+  Finset.image_subset_image hsub
+
+theorem State.extendUniversal_empty [Fintype Domain] (x : Var) :
+    State.extendUniversal (∅ : Finset (Index W Var Domain)) x = ∅ := by
+  ext j
+  simp
+
+theorem State.extendUniversal_union [Fintype Domain]
+    (s t : Finset (Index W Var Domain)) (x : Var) :
+    State.extendUniversal (s ∪ t) x =
+      State.extendUniversal s x ∪ State.extendUniversal t x := by
+  simp only [State.extendUniversal, State.extendIndividual_union,
+    Finset.biUnion_union]
+
+theorem State.extendUniversal_mono [Fintype Domain]
+    {s t : Finset (Index W Var Domain)} (x : Var) (hsub : s ⊆ t) :
+    State.extendUniversal s x ⊆ State.extendUniversal t x :=
+  Finset.biUnion_mono fun d _ => State.extendIndividual_mono x d hsub
+
+theorem State.extendFunctional_empty (x : Var)
+    (h : Index W Var Domain → Finset Domain) :
+    State.extendFunctional (∅ : Finset (Index W Var Domain)) x h = ∅ :=
+  Finset.biUnion_empty
+
+theorem State.extendFunctional_union (s t : Finset (Index W Var Domain))
+    (x : Var) (h : Index W Var Domain → Finset Domain) :
+    State.extendFunctional (s ∪ t) x h =
+      State.extendFunctional s x h ∪ State.extendFunctional t x h :=
+  Finset.union_biUnion
+
+theorem State.extendFunctional_mono {s t : Finset (Index W Var Domain)}
+    (x : Var) (h : Index W Var Domain → Finset Domain) (hsub : s ⊆ t) :
+    State.extendFunctional s x h ⊆ State.extendFunctional t x h :=
+  Finset.biUnion_subset_biUnion_of_subset_left _ hsub
+
+/-- The universal extension is the functional extension with the constant
+    full-domain functional. -/
+theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
+    (s : Finset (Index W Var Domain)) (x : Var) :
+    State.extendUniversal s x =
+      State.extendFunctional s x (fun _ => Finset.univ) := by
+  ext j
+  simp only [State.mem_extendUniversal, State.mem_extendFunctional,
+    Finset.mem_univ, true_and]
+  tauto
+
+end State
+
+/-! ### Modal pairing -/
+
+section ModalLift
+
+variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
+
 /-- **Modal pairing** `R(wᵢ)[gᵢ]`: pair each accessible world with the
     assignment of the original index. Used in modal evaluation
-    (Aloni & van Ormondt §4 Definition 4.9). -/
+    ([aloni-vanormondt-2023] Definition 4.9). -/
 def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     Finset (Index W Var Domain) :=
   X.image (fun v => (v, g))
 
--- ============================================================================
--- §2b State-extension distributive lemmas
--- ============================================================================
-
-/-- Universal extension of empty team is empty. -/
-theorem State.extendUniversal_empty [Fintype Domain] (x : Var) :
-    State.extendUniversal (∅ : Finset (Index W Var Domain)) x = ∅ := by
-  unfold State.extendUniversal State.extendIndividual
-  ext; simp
-
-/-- Functional extension of empty team is empty. -/
-theorem State.extendFunctional_empty (x : Var)
-    (h : Index W Var Domain → Finset Domain) :
-    State.extendFunctional (∅ : Finset (Index W Var Domain)) x h = ∅ := by
-  unfold State.extendFunctional
-  simp
-
-/-- Universal extension is monotone in the team. -/
-theorem State.extendUniversal_subset_mono [Fintype Domain]
-    {s t : Finset (Index W Var Domain)} (x : Var) (hsub : s ⊆ t) :
-    State.extendUniversal s x ⊆ State.extendUniversal t x := by
-  unfold State.extendUniversal State.extendIndividual
-  intro i hi
-  simp only [Finset.mem_biUnion, Finset.mem_image, Finset.mem_univ, true_and] at hi ⊢
-  obtain ⟨d, j, hj, hupd⟩ := hi
-  exact ⟨d, j, hsub hj, hupd⟩
-
-/-- Universal extension distributes over union. -/
-theorem State.extendUniversal_union_distrib [Fintype Domain]
-    (s t : Finset (Index W Var Domain)) (x : Var) :
-    State.extendUniversal (s ∪ t) x =
-      State.extendUniversal s x ∪ State.extendUniversal t x := by
-  unfold State.extendUniversal State.extendIndividual
-  ext i
-  simp only [Finset.mem_biUnion, Finset.mem_union, Finset.mem_image,
-             Finset.mem_univ, true_and]
+@[simp] theorem State.mem_modalLift {X : Finset W} {g : Assignment Var Domain}
+    {i : Index W Var Domain} :
+    i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g := by
   constructor
-  · rintro ⟨d, j, hj, hupd⟩
-    cases hj with
-    | inl hjs => exact Or.inl ⟨d, j, hjs, hupd⟩
-    | inr hjt => exact Or.inr ⟨d, j, hjt, hupd⟩
-  · rintro (⟨d, j, hjs, hupd⟩ | ⟨d, j, hjt, hupd⟩)
-    · exact ⟨d, j, Or.inl hjs, hupd⟩
-    · exact ⟨d, j, Or.inr hjt, hupd⟩
+  · intro h
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp h
+    exact ⟨hv, rfl⟩
+  · rintro ⟨h, rfl⟩
+    exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
-/-- Functional extension distributes over union of teams. -/
-theorem State.extendFunctional_union_distrib (s t : Finset (Index W Var Domain))
-    (x : Var) (h : Index W Var Domain → Finset Domain) :
-    State.extendFunctional (s ∪ t) x h =
-      State.extendFunctional s x h ∪ State.extendFunctional t x h := by
-  unfold State.extendFunctional
-  exact Finset.union_biUnion
+@[simp] theorem State.worldProj_modalLift (X : Finset W)
+    (g : Assignment Var Domain) :
+    State.worldProj (State.modalLift X g) = X := by
+  ext w
+  simp only [State.mem_worldProj, State.mem_modalLift]
+  constructor
+  · rintro ⟨i, ⟨hX, -⟩, rfl⟩
+    exact hX
+  · exact fun hw => ⟨(w, g), ⟨hw, rfl⟩, rfl⟩
 
-/-- Functional extension is monotone in the team (for fixed `h`). -/
-theorem State.extendFunctional_subset_mono {s t : Finset (Index W Var Domain)}
-    (x : Var) (h : Index W Var Domain → Finset Domain) (hsub : s ⊆ t) :
-    State.extendFunctional s x h ⊆ State.extendFunctional t x h := by
-  unfold State.extendFunctional
-  exact Finset.biUnion_subset_biUnion_of_subset_left _ hsub
+/-- A state contained in a modal pairing is recovered by projecting its
+    worlds and pairing them back with the same assignment: every index of
+    `s ⊆ State.modalLift X g` carries the assignment `g`. -/
+theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
+    {X : Finset W} {g : Assignment Var Domain}
+    (h : s ⊆ State.modalLift X g) :
+    State.modalLift (State.worldProj s) g = s := by
+  ext i
+  simp only [State.mem_modalLift, State.mem_worldProj]
+  constructor
+  · rintro ⟨⟨j, hjs, hjw⟩, hig⟩
+    have : i = j :=
+      Prod.ext hjw.symm (hig.trans (State.mem_modalLift.mp (h hjs)).2.symm)
+    exact this ▸ hjs
+  · intro his
+    exact ⟨⟨i, his, rfl⟩, (State.mem_modalLift.mp (h his)).2⟩
 
-end Core.Logic.Modal.QBSML
+theorem State.worldProj_subset_of_subset_modalLift
+    {s : Finset (Index W Var Domain)} {X : Finset W}
+    {g : Assignment Var Domain} (h : s ⊆ State.modalLift X g) :
+    State.worldProj s ⊆ X := by
+  rw [← State.worldProj_modalLift X g]
+  exact State.worldProj_mono h
 
--- ============================================================================
--- §3 Formula language
--- ============================================================================
+end ModalLift
 
-namespace Core.Logic.Modal.QBSML
+/-! ### The formula language -/
 
-/-- QBSML formula language (Aloni & van Ormondt §4 Definition 4.1).
+variable {Pred : Type*}
 
-    Parameterized over variable type `Var` and predicate type `Pred`. We use
-    monadic predicates (`Pred → Var → Formula`) — sufficient for free-choice
-    scenarios. Higher arities (`Pred → List Var → Formula`) and a term
-    language (constants + variables) can be added without changing the
-    substrate abstraction.
-
-    □ is NOT primitive — defined as `□φ := ¬◇¬φ` (`QBSMLFormula.nec`). -/
+/-- QBSML formula language ([aloni-vanormondt-2023] Definition 4.1),
+    parameterized over variable type `Var` and (monadic) predicate type
+    `Pred`. `□` is not primitive — see `QBSMLFormula.nec`. -/
 inductive QBSMLFormula (Var : Type*) (Pred : Type*) where
   /-- Monadic predicate application. -/
   | pred : Pred → Var → QBSMLFormula Var Pred
@@ -258,74 +316,51 @@ inductive QBSMLFormula (Var : Type*) (Pred : Type*) where
   | univ : Var → QBSMLFormula Var Pred → QBSMLFormula Var Pred
   deriving Repr
 
-variable {Var Pred : Type*}
-
-/-- □φ := ¬◇¬φ — necessity as an abbreviation, mirroring BSML.
-    [aloni-vanormondt-2023] takes `□` primitive and `◇ := ¬□¬` derived; we
-    invert this (`poss` primitive), so our `poss` clauses match the paper's
-    *derived* `◇`-clauses (Definition 4.9) and `nec` here matches its primitive `□`. -/
+/-- Necessity, derived: `□φ := ¬◇¬φ`. [aloni-vanormondt-2023] takes `□`
+    primitive and `◇ := ¬□¬` derived; we invert this, so `eval`'s `poss`
+    clauses match the paper's derived `◇`-clauses and `nec` matches its
+    primitive `□`. -/
 def QBSMLFormula.nec (φ : QBSMLFormula Var Pred) : QBSMLFormula Var Pred :=
   .neg (.poss (.neg φ))
 
-/-- A formula is NE-free if it does not contain the NE atom.
-    For NE-free formulas, QBSML reduces to classical first-order modal logic
-    on singleton states (Aloni & van Ormondt analogue of Anttila Proposition
-    2.2.16). -/
-def QBSMLFormula.isNEFree : QBSMLFormula Var Pred → Bool
-  | .pred _ _ => true
-  | .ne => false
-  | .neg φ => φ.isNEFree
-  | .conj φ ψ => φ.isNEFree && ψ.isNEFree
-  | .disj φ ψ => φ.isNEFree && ψ.isNEFree
-  | .poss φ => φ.isNEFree
-  | .exi _ φ => φ.isNEFree
-  | .univ _ φ => φ.isNEFree
+/-- The NE-free fragment: formulas not containing the `NE` atom. On this
+    fragment QBSML reduces to classical first-order modal logic
+    ([aloni-vanormondt-2023] analogue of [anttila-2021]
+    Proposition 2.2.16); see `Core/Logic/Modal/QBSML/Properties.lean`. -/
+inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Pred → Prop
+  | pred (P : Pred) (x : Var) : IsNEFree (.pred P x)
+  | neg {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.neg φ)
+  | conj {φ ψ : QBSMLFormula Var Pred} :
+      IsNEFree φ → IsNEFree ψ → IsNEFree (.conj φ ψ)
+  | disj {φ ψ : QBSMLFormula Var Pred} :
+      IsNEFree φ → IsNEFree ψ → IsNEFree (.disj φ ψ)
+  | poss {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.poss φ)
+  | exi (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.exi x φ)
+  | univ (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.univ x φ)
 
-end Core.Logic.Modal.QBSML
+/-! ### Models -/
 
--- ============================================================================
--- §4 Models
--- ============================================================================
-
-namespace Core.Logic.Modal.QBSML
-
-/-- A QBSML model. Aloni & van Ormondt §4 Definition 4.2: `M = ⟨W, D, R, I⟩`.
-
-    We use `Domain : Type*` as a parameter and `[Fintype Domain]` for the
-    universal extension. The interpretation function is split: accessibility
-    `R : W → Finset W` and predicate interpretation
-    `pInterp : Pred → W → Finset Domain`. -/
-structure QBSMLModel (W : Type*) (Domain : Type*) (Pred : Type*)
-    [DecidableEq W] [Fintype W] where
+/-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
+    `M = ⟨W, D, R, I⟩`), with the domain as a type parameter and the
+    interpretation split into accessibility and predicate interpretation. -/
+structure QBSMLModel (W : Type*) (Domain : Type*) (Pred : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
   /-- Predicate interpretation: at world `w`, predicate `p` picks out the
-      Finset of domain elements satisfying it. -/
+      `Finset` of domain elements satisfying it. -/
   pInterp : Pred → W → Finset Domain
 
-end Core.Logic.Modal.QBSML
+/-! ### Bilateral evaluation -/
 
--- ============================================================================
--- §5 Bilateral evaluation
--- ============================================================================
+section Evaluation
 
-namespace Core.Logic.Modal.QBSML
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
+variable [Fintype Domain]
 
-variable {W Var Domain Pred : Type*}
-variable [DecidableEq W] [Fintype W]
-variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
-
-/-- Bilateral evaluation of QBSML formulas. Aloni & van Ormondt §4 Definition 4.9.
-
-    `eval M true φ s` is support (`M, s ⊨ φ`); `eval M false φ s` is
-    anti-support (`M, s ⊧ φ`). Negation flips polarity, making DNE
-    definitional.
-
-    Key shape: `Bool → Form → Finset Index → Prop` — exactly the template
-    `Core.Logic.Team.flat_iff_downwardClosed_unionClosed_emptyTeam` is
-    parameterized over (with `Point := Index W Var Domain`). The substrate
-    test is whether the property + flatness theorems compose identically
-    to BSML's. -/
+/-- Bilateral evaluation of QBSML formulas ([aloni-vanormondt-2023]
+    Definition 4.9): `eval M true φ s` is support (`M, s ⊨ φ`),
+    `eval M false φ s` anti-support (`M, s ⊧ φ`). Negation flips the
+    polarity, making double-negation elimination definitional. -/
 def eval (M : QBSMLModel W Domain Pred) :
     Bool → QBSMLFormula Var Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
@@ -366,18 +401,6 @@ abbrev antiSupport (M : QBSMLModel W Domain Pred) (φ : QBSMLFormula Var Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M false φ s
 
--- ============================================================================
--- §6 DNE and basic unfolding lemmas
--- ============================================================================
-
-theorem dne_support (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
-    support M (.neg (.neg φ)) s ↔ support M φ s := Iff.rfl
-
-theorem dne_antiSupport (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
-    antiSupport M (.neg (.neg φ)) s ↔ antiSupport M φ s := Iff.rfl
-
 @[simp] lemma support_neg (M : QBSMLModel W Domain Pred)
     (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
     support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl
@@ -386,38 +409,44 @@ theorem dne_antiSupport (M : QBSMLModel W Domain Pred)
     (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
 
-/-- QBSML's `support` and `antiSupport` form a paraconsistent bilateral
-    logic (`Core.Logic.Bilateral.IsBilateral`) under `QBSMLFormula.neg`.
-    Same shape as BSML's `isBilateral`, lifted to `Index W Var Domain` —
-    point-polymorphism at work. The `of_iff` helper resolves the
-    metavariables that previously required explicit `Form/Result`
-    annotations. -/
+/-- `support` and `antiSupport` form a paraconsistent bilateral logic
+    (`Core.Logic.Bilateral.IsBilateral`) under `QBSMLFormula.neg`, like
+    BSML's `isBilateral` at the point type `Index W Var Domain`. -/
 theorem isBilateral (M : QBSMLModel W Domain Pred) :
-    Core.Logic.Bilateral.IsBilateral
-      (Form := QBSMLFormula Var Pred)
-      (Result := Finset (Index W Var Domain) → Prop)
+    Core.Logic.Bilateral.IsBilateral (Form := QBSMLFormula Var Pred)
       (support M) (antiSupport M) QBSMLFormula.neg :=
   Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
--- ============================================================================
--- §7 Frame conditions via s↓ projection
--- ============================================================================
+end Evaluation
 
-/-- QBSML's `isStateBased`: defined via the `s↓` projection composed with
-    `Core.Logic.Team.IsStateBased`. The same Core function as BSML uses,
-    just applied to the world-set of the team rather than the team itself.
+/-! ### Frame conditions via the world projection -/
 
-    Aloni & van Ormondt §4 Definition 4.10: `R is state-based on (M, s)` iff
-    `R(w) = s↓` for all `w ∈ s↓`. Specialization-via-composition exemplifies
-    the foundational mathlib pattern: same Core definition, different
-    instantiation via projection. -/
-def QBSMLModel.isStateBased (M : QBSMLModel W Domain Pred)
+section FrameConditions
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
+
+/-- `R` is state-based on `(M, s)`: every world in `s↓` sees exactly `s↓`
+    ([aloni-vanormondt-2023] Definition 4.10). Defined via
+    `Core.Logic.Team.IsStateBased` applied to `State.worldProj s`, sharing
+    BSML's frame-condition substrate. -/
+def QBSMLModel.IsStateBased (M : QBSMLModel W Domain Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsStateBased M.access (State.worldProj s)
 
-/-- QBSML's `isIndisputable`: same Core function, applied to `s↓`. -/
-def QBSMLModel.isIndisputable (M : QBSMLModel W Domain Pred)
+/-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
+    accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
+def QBSMLModel.IsIndisputable (M : QBSMLModel W Domain Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsIndisputable M.access (State.worldProj s)
+
+instance [Fintype W] (M : QBSMLModel W Domain Pred)
+    (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
+  unfold QBSMLModel.IsStateBased; infer_instance
+
+instance [Fintype W] (M : QBSMLModel W Domain Pred)
+    (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
+  unfold QBSMLModel.IsIndisputable; infer_instance
+
+end FrameConditions
 
 end Core.Logic.Modal.QBSML

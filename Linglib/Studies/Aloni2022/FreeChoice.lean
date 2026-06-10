@@ -108,7 +108,7 @@ so s_a ⊆ R[w], yielding ◇α at every world. Symmetrically for β.
 theorem wideScopeFC (M : BSMLModel W Atom)
     (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
-    (hInd : M.isIndisputable t)
+    (hInd : M.IsIndisputable t)
     (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
   obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h.1
@@ -148,7 +148,7 @@ a non-empty subset of R[w], yielding ◇α and ◇β.
 theorem modalDisjunction (M : BSMLModel W Atom)
     (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
-    (hSB : M.isStateBased t)
+    (hSB : M.IsStateBased t)
     (h : support M (enrich (.disj α β)) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
   -- Unpack enriched disjunction: t = t₁ ∪ t₂ with enriched support

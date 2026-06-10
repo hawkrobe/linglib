@@ -244,21 +244,21 @@ lemma empty_supports_atom (M : BSMLModel W Atom) (p : Atom) :
 
     Defined via `Core.Logic.Team.IsIndisputable` to share substrate
     with QBSML and any other state-based logic. -/
-def BSMLModel.isIndisputable (M : BSMLModel W Atom) (t : Finset W) : Prop :=
+def BSMLModel.IsIndisputable (M : BSMLModel W Atom) (t : Finset W) : Prop :=
   Core.Logic.Team.IsIndisputable M.access t
 
 /-- State-based accessibility: every world in team has the team itself as
     accessible worlds. Strictly stronger than indisputability.
 
     Defined via `Core.Logic.Team.IsStateBased`. -/
-def BSMLModel.isStateBased (M : BSMLModel W Atom) (t : Finset W) : Prop :=
+def BSMLModel.IsStateBased (M : BSMLModel W Atom) (t : Finset W) : Prop :=
   Core.Logic.Team.IsStateBased M.access t
 
-instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.isIndisputable t) := by
-  unfold BSMLModel.isIndisputable; infer_instance
+instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.IsIndisputable t) := by
+  unfold BSMLModel.IsIndisputable; infer_instance
 
-instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.isStateBased t) := by
-  unfold BSMLModel.isStateBased; infer_instance
+instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.IsStateBased t) := by
+  unfold BSMLModel.IsStateBased; infer_instance
 
 -- ============================================================================
 -- §7: Semantic Relations
