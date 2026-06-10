@@ -37,8 +37,6 @@ open Semantics.Tense.SOT.Decomposition
     Anaphoric — requires a discourse-established temporal antecedent.
     No PERF aspect head intervenes; the pastness is in the tense itself. -/
 def kratzerPreterit : KratzerDecomposition where
-  language := "German"
-  surfaceForm := "V-te"
   tensePronoun := kratzerGermanPreterit 1
   hasPerfect := false
 
@@ -46,8 +44,6 @@ def kratzerPreterit : KratzerDecomposition where
     Parallel structure to English simple past. Can be used deictically
     because the tense head is present (indexical). -/
 def kratzerPerfekt : KratzerDecomposition where
-  language := "German"
-  surfaceForm := "hat/ist V-t"
   tensePronoun := { varIndex := 0, constraint := .present, mode := .indexical }
   hasPerfect := true
 

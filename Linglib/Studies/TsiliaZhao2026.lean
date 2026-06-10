@@ -130,6 +130,107 @@ theorem sharvit_simultaneous_satisfies_presPresup {Time : Type*} [LinearOrder Ti
 -- § 4. Typology Verification
 -- ════════════════════════════════════════════════════════════════
 
+/-- Cross-linguistic tense shift profile, encoding the paper's Tables 1 & 2.
+
+    Each Bool records whether a simultaneous reading of the embedded present
+    is available in that configuration. The mechanism (OP_π shift vs SOT
+    deletion) is recorded separately in `sotDeletesPresent`. -/
+structure TenseShiftProfile where
+  language : String
+  /-- Present-under-past, attitude report complement -/
+  pastAttitude : Bool
+  /-- Present-under-past, relative clause -/
+  pastRelative : Bool
+  /-- Present-under-future, attitude report complement -/
+  futAttitude : Bool
+  /-- Present-under-future, relative clause -/
+  futRelative : Bool
+  /-- Does the language have SOT deletion that can apply to the present?
+      English: yes (present under future is deleted, not shifted).
+      Modern Greek: no (the "Interpret the Present" constraint blocks deletion). -/
+  sotDeletesPresent : Bool
+  /-- Is ⌈then⌉ restricted to past-oriented contexts?
+      Japanese tooji cannot co-occur with future matrix tense. -/
+  thenPastOnly : Bool := false
+  deriving Repr, DecidableEq
+
+/-- Modern Greek: shifts in attitude reports (past & future) and relative
+    clauses under future, but NOT in relative clauses under past. -/
+def greekProfile : TenseShiftProfile where
+  language := "Modern Greek"
+  pastAttitude := true
+  pastRelative := false
+  futAttitude := true
+  futRelative := true
+  sotDeletesPresent := false
+
+/-- Modern Hebrew: same pattern as Greek for shift; no SOT deletion of present. -/
+def hebrewProfile : TenseShiftProfile where
+  language := "Modern Hebrew"
+  pastAttitude := true
+  pastRelative := false
+  futAttitude := true
+  futRelative := true
+  sotDeletesPresent := false
+
+/-- Russian: same pattern as Greek/Hebrew for shift. -/
+def russianProfile : TenseShiftProfile where
+  language := "Russian"
+  pastAttitude := true
+  pastRelative := false
+  futAttitude := true
+  futRelative := true
+  sotDeletesPresent := false
+
+/-- Japanese: uniquely shifts in relative clauses under past too (tenses are
+    intensional). tooji is restricted to past-oriented contexts. -/
+def japaneseProfile : TenseShiftProfile where
+  language := "Japanese"
+  pastAttitude := true
+  pastRelative := true
+  futAttitude := true
+  futRelative := true
+  sotDeletesPresent := false
+  thenPastOnly := true
+
+/-- English: no shift under past; simultaneous reading under future comes
+    from SOT deletion (will = WOLL + PRES, embedded PRES deleted by SOT). -/
+def englishProfile : TenseShiftProfile where
+  language := "English"
+  pastAttitude := false
+  pastRelative := false
+  futAttitude := true
+  futRelative := true
+  sotDeletesPresent := true
+
+def allProfiles : List TenseShiftProfile :=
+  [greekProfile, hebrewProfile, russianProfile, japaneseProfile, englishProfile]
+
+/-- No language allows shift in relative clauses under past unless it also
+    allows shift in attitude reports under past. -/
+theorem relative_shift_implies_attitude_shift :
+    ∀ p ∈ allProfiles, p.pastRelative = true → p.pastAttitude = true := by
+  intro p hp hRel
+  simp only [allProfiles, List.mem_cons, List.mem_nil_iff, or_false] at hp
+  rcases hp with rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [greekProfile, hebrewProfile, russianProfile, japaneseProfile, englishProfile]
+
+/-- will = WOLL + PRES. WOLL is an intensional modal operator that:
+    1. Quantifies over accessible future indices (∀i' ∈ ACC(i)(t). i'_t > t)
+    2. Provides an intensional environment that can bind the perspective
+
+    This decomposition explains:
+    - Why ALL surveyed languages allow present-under-future shift: WOLL is
+      intensional, providing the OP_π binding site even in relative clauses
+    - Why English ⌈then⌉ is compatible with present-under-future: the
+      embedded PRES can be deleted by SOT (c-commanded by WOLL's PRES) -/
+structure WOLLDecomposition where
+  /-- WOLL is an intensional operator (quantifies over future indices) -/
+  isIntensional : Bool := true
+  /-- WOLL decomposes into a modal component + PRES -/
+  containsPres : Bool := true
+  deriving Repr, DecidableEq
+
 /-- All surveyed languages allow the present to shift under future in
     attitude reports — because WOLL provides an intensional environment. -/
 theorem all_shift_under_future_attitude :
