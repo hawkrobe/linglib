@@ -13,10 +13,14 @@ DAT, [caha-2009]), path roles ([pantcheva-2011]). A `Pattern n F`
 records which form occupies each grade's cell, and the cross-linguistic
 *ABA generalization says a form never recurs across a distinct
 intervening form: each form's fiber is order-convex (`IsContiguous`).
-[graf-2019] reconstructs *ABA across these domains as monotonicity;
-`isContiguous_iff_exists_monotone` is that reconstruction — a pattern
-is contiguous iff it is the kernel of a monotone score — stated
-independently of any insertion mechanism.
+[graf-2019] reconstructs *ABA across these domains as *feasible
+monotonicity*: the form assignment is monotone with respect to *some*
+linear order on the output forms (his def. (6); the base hierarchy is
+what is fixed). Over a linear hierarchy that is equivalent to the
+assignment being the kernel of a monotone score —
+`isContiguous_iff_exists_monotone`, stated here as the general theorem
+behind Graf's instance-by-instance verification, independently of any
+insertion mechanism.
 
 ## Main declarations
 
@@ -70,16 +74,21 @@ theorem isContiguous_comp_left {β : Type*} [PartialOrder β] {g : Fin n → β}
 
 /-! ### Graf's monotonicity reconstruction
 
-[graf-2019] recasts the *ABA generalization, across adjectival
-gradation, case syncretism, and pronominal suppletion, as the demand
-that the form assignment be the kernel of a monotone map into a fixed
-order ([bobaljik-sauerland-2018] is the feature-combinatoric
-counterpart, deriving which cell arrangements exclude ABA without
-stipulating containment). Over a linear hierarchy the two
-presentations coincide: the
-prefix-image score `i ↦ #{forms among cells 0..i}` is monotone and has
-the same kernel as a contiguous pattern, and conversely any pattern
-sharing its kernel with a monotone score has convex fibers. -/
+[graf-2019] recasts the *ABA generalization — across adjectival
+gradation, person-pronoun syncretism, case syncretism, and noun stem
+allomorphy — as feasible monotonicity of the form assignment from a
+fixed base hierarchy ([bobaljik-sauerland-2018] is the
+feature-combinatoric counterpart, deriving which cell arrangements
+exclude ABA without stipulating containment). The kernel formulation
+below is this file's gloss: forms are bins, so feasible monotonicity
+over a linear hierarchy is the existence of a monotone score with the
+pattern's kernel. The prefix-image score `i ↦ #{forms among cells
+0..i}` is monotone and has the same kernel as a contiguous pattern,
+and conversely any pattern sharing its kernel with a monotone score
+has convex fibers. (Graf's case hierarchies are partial orders going
+beyond this linear setting, and his PCC/GCC treatment is a different
+object — monotone maps into the fixed two-element truth-value algebra,
+i.e. upper sets; see `Studies/Graf2019.lean`.) -/
 
 section Graf
 
