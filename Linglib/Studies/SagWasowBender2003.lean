@@ -3,7 +3,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
 /-!
 # Sag, Wasow & Bender (2003) — HPSG Binding Theory [sag-wasow-bender-2003]
@@ -21,12 +21,12 @@ Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes
 Principle C. See `Syntax/HPSG/Coreference.lean` for the
 implementation; this file verifies it against the empirical minimal-pair
 data in `Phenomena/Anaphora/Coreference.lean` via the
-`Paradigms.AcceptabilityJudgment` contract.
+`Phenomena.MinimalPairs` vocabulary.
 -/
 
 namespace SagWasowBender2003
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 open HPSG.Coreference
 open Phenomena.Anaphora.Coreference
 

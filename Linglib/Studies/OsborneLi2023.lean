@@ -102,7 +102,7 @@ namespace OsborneLi2023
 open DepGrammar
 open DepGrammar.Coordination
 open Data.Examples (LinguisticExample)
-open Paradigms.AcceptabilityJudgment (Judgment)
+open Features (Judgment)
 
 /-! ### Predicate-valent type -/
 

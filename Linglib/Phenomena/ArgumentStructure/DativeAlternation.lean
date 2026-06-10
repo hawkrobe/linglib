@@ -41,9 +41,9 @@ In this formalization, we use separate lexical entries for the two frames:
 A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
-import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.MinimalPairs
 
-open Paradigms.AcceptabilityJudgment
+open Phenomena.MinimalPairs
 
 namespace Phenomena.ArgumentStructure.DativeAlternation
 
