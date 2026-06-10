@@ -214,6 +214,14 @@ theorem spellout_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
   unfold spellout
   cases spelloutWinner v g <;> simp
 
+/-- Spellout gaps propagate upward: an entry matching a higher grade
+would match the lower one too, so a gap at `g` forces gaps at every
+`g' ≥ g` — [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/
+theorem spellout_eq_none_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
+    (h : spellout v g = none) (hg : g ≤ g') : spellout v g' = none :=
+  spellout_eq_none_iff.mpr
+    (minSpan_eq_top_of_le (spellout_eq_none_iff.mp h) hg)
+
 /-! ### *ABA for Superset spellout
 
 The mirror image of `isContiguous_realize`: `minSpan` is monotone in
@@ -395,5 +403,25 @@ example : spellout [(⟨"gwell", 1, none⟩ : ExponenceRule 3 String)] 0
 
 example : realize [(⟨"gwell", 1, none⟩ : ExponenceRule 3 String)] 0
     = none := by decide
+
+/-! ### Antihomophony is necessary for *ABA
+
+Two distinct entries sharing an exponent — accidental homophony, an
+`Antihomophonous` violation — generate ABA: with "A" stored at grades 0
+and 2 and "B" at grade 1, Minimize Junk yields A–B–A. [caha-2009]
+distinguishes accidental homophony (phonological) from systematic
+syncretism (one item over a contiguous span); the `Antihomophonous`
+hypothesis of `isContiguous_spellout` is exactly that distinction. -/
+
+/-- Accidental homophony: "A" stored at two non-adjacent grades. -/
+private def homophonous : List (ExponenceRule 3 String) :=
+  [⟨"A", 0, none⟩, ⟨"B", 1, none⟩, ⟨"A", 2, none⟩]
+
+example : ¬ Antihomophonous homophonous := by decide
+
+example :
+    spellout homophonous 0 = some "A" ∧
+    spellout homophonous 1 = some "B" ∧
+    spellout homophonous 2 = some "A" := by decide
 
 end Morphology.Containment

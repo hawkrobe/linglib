@@ -1,6 +1,7 @@
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Studies.Haspelmath1997Polarity
-import Linglib.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Containment.Superset
+import Linglib.Syntax.Case.Order
 import Linglib.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
@@ -43,8 +44,8 @@ test case. Key claims:
 
 - `DependenceLogic`: `variation` and `constancy` predicates formalize D&A's
   `var(y,x)` and `dep(y,x)`. `type_vi_contradictory` derives the gap.
-- `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the negative
-  result — nanosyntax predicts containment that indefinites lack.
+- `Morphology/Containment/Superset.lean`: `spellout` demonstrates the
+  negative result — nanosyntax predicts containment that indefinites lack.
 - `Indefinite`: `IndefinitePronoun` (consensus function-coverage
   + morphological-basis data) and `classifyTriple` for syncretism patterns.
 - `DeganoAloni2025`: `DAType` and
@@ -62,7 +63,7 @@ namespace Bubnov2026
 open DeganoAloni2025
 open scoped Case.Caha
 open DeganoAloni2025.DependenceLogic
-open Morphology.Nanosyntax
+open Morphology.Containment
 open Dekier2021
 open Indefinite
 open Russian.Indefinites
@@ -211,11 +212,11 @@ theorem diachronic_weakening_grounded
 /-- Nanosyntax + Dekier: losing entry A (rank 0, NS-only) makes entry B
     (rank 1, SU) cover NS too via Superset Principle.
     Predicts SU → epistemic (AB → BB), but NOT NS → epistemic. -/
-def dekierInitial : List LexEntry :=
-  [⟨0, "A"⟩, ⟨1, "B"⟩]
+def dekierInitial : List (ExponenceRule 3 String) :=
+  [⟨"A", 0, none⟩, ⟨"B", 1, none⟩]
 
-def dekierAfterLoss : List LexEntry :=
-  [⟨1, "B"⟩]
+def dekierAfterLoss : List (ExponenceRule 3 String) :=
+  [⟨"B", 1, none⟩]
 
 theorem dekier_initial_ab :
     spellout dekierInitial nsRank = some "A" ∧

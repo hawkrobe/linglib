@@ -5,8 +5,8 @@ import Linglib.Core.Order.Branching
 # Nanosyntax: Tree-Based Spellout
 [taraldsen-et-al-2018] [caha-2009] [starke-2009]
 
-Extension of rank-based nanosyntax (`Basic.lean`) to tree-structured
-spellout. Implements the Superset Principle (SP) for trees: a lexical
+Extension of rank-based Superset spellout
+(`Morphology/Containment/Superset.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
 entry M ↔ S' can spell out syntactic target S if S' structurally
 contains S (`NanoTree.Contains`). Among matching entries, the Elsewhere
 Condition selects the smallest (by tree size).
@@ -108,7 +108,7 @@ where
     relation ([taraldsen-et-al-2018] (35)).
 
     For 1D chains: a chain of depth n contains all chains of depth
-    k ≤ n, matching `LexEntry.matches` (`chain_contains_iff_le`). -/
+    k ≤ n, matching `ExponenceRule.Matches` (`chain_contains_iff_le`). -/
 inductive Contains : NanoTree F → NanoTree F → Prop
   | refl (t : NanoTree F) : Contains t t
   | child {f : F} {cs : List (NanoTree F)} {c target : NanoTree F} :
@@ -185,8 +185,8 @@ end NanoTree
     fragments). The tree encodes the full feature geometry that the
     morpheme lexicalizes.
 
-    Contrast with `LexEntry` (`Basic.lean`) which stores only a rank
-    (depth on a 1D functional sequence). -/
+    Contrast with `ExponenceRule` (`Morphology/Containment/Vocabulary.lean`)
+    which stores only a span (depth on a 1D functional sequence). -/
 structure TreeLexEntry (F : Type*) (α : Type*) where
   /-- The stored feature tree. -/
   tree : NanoTree F
@@ -214,8 +214,8 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
     among entries whose tree contains the target, select the one
     with the smallest tree (most specific match).
 
-    Parallels `spellout` from `Basic.lean`, but the matching relation
-    is tree containment instead of rank comparison, and the
+    Parallels `Morphology.Containment.spellout`, but the matching
+    relation is tree containment instead of rank comparison, and the
     specificity metric is tree size instead of rank. -/
 def treeSpellout [DecidableEq F] (entries : List (TreeLexEntry F α))
     (target : NanoTree F) : Option α :=
@@ -254,8 +254,8 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (tree : NanoTree F) :
     `chainTree feat 1 = node (feat 1) [leaf (feat 0)]`
     `chainTree feat n = node (feat n) [chainTree feat (n-1)]`
 
-    A chain of depth n is isomorphic to a rank-n `LexEntry` in
-    the 1D nanosyntax. -/
+    A chain of depth n is isomorphic to an `ExponenceRule` spanning
+    grade n in the 1D nanosyntax. -/
 def chainTree (feat : Nat → F) : Nat → NanoTree F
   | 0 => .leaf (feat 0)
   | n + 1 => .node (feat (n + 1)) [chainTree feat n]
@@ -292,7 +292,7 @@ theorem chainTree_injective (feat : Nat → F) :
 /-- For right-branching chains, tree containment reduces to rank
     comparison: a chain of depth re contains a chain of depth r iff
     r ≤ re. This is exactly the matching condition of the rank-based
-    `LexEntry.matches`, establishing that tree-based spellout
+    `ExponenceRule.Matches`, establishing that tree-based spellout
     generalizes (not replaces) rank-based spellout.
 
     Unlike the previous Bool formulation, no injectivity of `feat` is
