@@ -60,8 +60,8 @@ for the empirical verification.
 representation in the codebase:
 
 - `EntailmentProfile.changeOfState` — the proto-patient entailment (this file's input)
-- `MeaningComponents.changeOfState` — the surface diagnostic (in `Core/RootDimensions`)
-- `RootEntailments.result` — whether the root itself entails change (in `Core/RootDimensions`)
+- `MeaningComponents.changeOfState` — the surface diagnostic (`Semantics/Lexical/MeaningComponents.lean`)
+- `LexKind.result` membership in a root's `Root.FeatureSignature` — whether the root itself entails change (`Semantics/Lexical/Roots/Signature.lean`)
 
 These are NOT the same concept. [beavers-koontz-garboden-2020] show
 that surface CoS can come from either the root or the template. The

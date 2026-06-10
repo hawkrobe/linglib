@@ -13,6 +13,7 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.Lexical.Roots.Profile
 
 /-! # Verb entry — core type
 
@@ -43,7 +44,6 @@ primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
 open Semantics.Presupposition
 open Features
 open Semantics.Lexical
-open Semantics.Lexical.Roots
 open Features.ChangeOfState
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
@@ -260,7 +260,7 @@ structure Root where
   /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- Root-specific quality dimensions (within-class variation). -/
-  rootProfile : Option RootProfile := none
+  rootProfile : Option _root_.Root.Profile := none
   deriving Repr, BEq
 
 end Verb

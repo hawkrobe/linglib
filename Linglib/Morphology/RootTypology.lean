@@ -1,6 +1,8 @@
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Lexical.LevinTheory
+import Linglib.Semantics.Lexical.Roots.Template
+import Linglib.Semantics.Lexical.Roots.Profile
 
 open Semantics.Lexical
 
@@ -61,7 +63,6 @@ you nothing about whether it entails change, and vice versa.
 open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.EntailmentProfile
 open Features.ChangeOfState
-open Semantics.Lexical.Roots
 open Features
 
 -- ════════════════════════════════════════════════════
@@ -163,7 +164,7 @@ structure RootClassification where
       roots have been annotated. -/
   denotationType : Option RootDenotationType := none
   /-- Within-class quality dimensions ([spalek-mcnally-2026]) -/
-  profile : RootProfile := {}
+  profile : Root.Profile := {}
   /-- Verb class membership -/
   levinClass : Option LevinClass := none
   deriving BEq, Repr
@@ -361,7 +362,7 @@ theorem result_roots_witness_against_bifurcation :
 theorem pc_roots_consistent_with_bifurcation :
     RootType.entailsChange .propertyConcept = false := rfl
 
-/-- **B&[beavers-koontz-garboden-2020] strengthened bifurcation failure via RootEntailments.**
+/-- **B&[beavers-koontz-garboden-2020] strengthened bifurcation failure via `Root.FeatureSignature`.**
 
     [beavers-etal-2021] show roots can entail CHANGE (one templatic notion).
     B&[beavers-koontz-garboden-2020] show roots can entail CHANGE, CAUSATION, and MANNER —
@@ -370,23 +371,23 @@ theorem pc_roots_consistent_with_bifurcation :
     roots encoding manner+cause (√GUILLOTINE, √HAND) violate bifurcation
     on three separate dimensions simultaneously.
 
-    Witness: `RootEntailments.fullSpec` has all four features true. -/
+    Witness: `Root.FeatureSignature.fullSpec` carries all four kinds. -/
 theorem bkg_bifurcation_fails_all_dimensions :
-    -- Roots can entail change (result = true)
-    RootEntailments.fullSpec.result = true ∧
-    -- Roots can entail causation (cause = true)
-    RootEntailments.fullSpec.cause = true ∧
-    -- Roots can entail manner (manner = true)
-    RootEntailments.fullSpec.manner = true ∧
+    -- Roots can entail change (result kind)
+    LexKind.result ∈ Root.FeatureSignature.fullSpec ∧
+    -- Roots can entail causation (cause kind)
+    LexKind.cause ∈ Root.FeatureSignature.fullSpec ∧
+    -- Roots can entail manner (manner kind)
+    LexKind.manner ∈ Root.FeatureSignature.fullSpec ∧
     -- All at once — not just one dimension
-    RootEntailments.fullSpec.state = true := ⟨rfl, rfl, rfl, rfl⟩
+    LexKind.state ∈ Root.FeatureSignature.fullSpec := by decide
 
 /-- Multiple Levin classes witness the stronger bifurcation failure. -/
 theorem bkg_bifurcation_multiple_witnesses :
-    (LevinClass.rootEntailments .cut).result = true ∧
-    (LevinClass.rootEntailments .cut).manner = true ∧
-    (LevinClass.rootEntailments .give).cause = true ∧
-    (LevinClass.rootEntailments .give).manner = true := ⟨rfl, rfl, rfl, rfl⟩
+    LexKind.result ∈ LevinClass.rootEntailments .cut ∧
+    LexKind.manner ∈ LevinClass.rootEntailments .cut ∧
+    LexKind.cause ∈ LevinClass.rootEntailments .give ∧
+    LexKind.manner ∈ LevinClass.rootEntailments .give := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. The Markedness Generalization (§8, eq. 44)
@@ -595,7 +596,8 @@ theorem RootDen.pc_respects {Entity State Event : Type}
     (sp : Entity → State → Prop) :
     (RootDen.pc sp : RootDen Entity State Event).denotationViolatesMRC = false := rfl
 
-/-- **Bridge: denotation-level MRC → Boolean RootEntailments MRC.**
+/-- **Bridge: denotation-level MRC → signature-level MRC
+    (`Root.FeatureSignature.HasMannerAndResult`).**
     MRC violation requires BOTH conditions — having manner alone
     (if such a constructor existed) would not be a violation. -/
 theorem RootDen.mrc_requires_both {Entity State Event : Type}
@@ -851,20 +853,20 @@ theorem break_no_MRC_violation : breakDiagnostics.showsMRCViolation = false := r
 theorem hit_no_MRC_violation : hitDiagnostics.showsMRCViolation = false := rfl
 theorem drown_MRC_violation : drownDiagnostics.showsMRCViolation = true := rfl
 
-/-- Cut is MRC-violating by BOTH diagnostics AND RootEntailments. -/
+/-- Cut is MRC-violating by BOTH diagnostics AND feature signature. -/
 theorem cut_diagnostics_match_entailments :
     cutDiagnostics.showsMRCViolation = true ↔
-    (LevinClass.rootEntailments .cut).ViolatesMRC := by decide
+    (LevinClass.rootEntailments .cut).HasMannerAndResult := by decide
 
-/-- Break is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
+/-- Break is MRC-respecting by BOTH diagnostics AND feature signature. -/
 theorem break_diagnostics_match_entailments :
     breakDiagnostics.showsMRCViolation = true ↔
-    (LevinClass.rootEntailments .break_).ViolatesMRC := by decide
+    (LevinClass.rootEntailments .break_).HasMannerAndResult := by decide
 
-/-- Hit is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
+/-- Hit is MRC-respecting by BOTH diagnostics AND feature signature. -/
 theorem hit_diagnostics_match_entailments :
     hitDiagnostics.showsMRCViolation = true ↔
-    (LevinClass.rootEntailments .hit).ViolatesMRC := by decide
+    (LevinClass.rootEntailments .hit).HasMannerAndResult := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to EntailmentProfile.changeOfState (ProtoRoles §8)
@@ -1424,56 +1426,70 @@ theorem same_change_same_morphosyntax (r₁ r₂ : RootClassification)
 -- ════════════════════════════════════════════════════
 
 /-- Full root specification: entailment features + structural position.
-    This is B&[beavers-koontz-garboden-2020]'s Table 12 in full — the 4 binary entailment
-    features × 2 positions give 32 theoretical cells, of which 7 are
-    attested and the rest are principled gaps. -/
+    This is [beavers-koontz-garboden-2020]'s ch. 5 root typology
+    (display (12)) in full — the 4 binary entailment features × 2
+    positions give 32 theoretical cells, of which 7 are attested and
+    the rest are principled gaps. -/
 structure FullRootSpec where
-  entailments : RootEntailments
-  position : RootPosition
-  deriving DecidableEq, Repr
+  entailments : Root.FeatureSignature
+  position : Root.Position
+  deriving DecidableEq
 
 /-- Adjoined position requires +manner: a root in adjunct position
     must specify a manner of action. Without manner, there is nothing
     to adjoin — the adjunct slot expects an action modifier. -/
-def FullRootSpec.positionLicensed (s : FullRootSpec) : Bool :=
-  match s.position with
-  | .adjoined => s.entailments.manner
-  | .complement => true
+def FullRootSpec.PositionLicensed (s : FullRootSpec) : Prop :=
+  s.position = .adjoined → LexKind.manner ∈ s.entailments
+
+instance (s : FullRootSpec) : Decidable s.PositionLicensed :=
+  inferInstanceAs (Decidable (_ → _))
 
 /-- +manner +state −result −cause is semantically incoherent (B&KG §5.4.1):
     the root would specify both a manner of action and a state, but with
     no result or cause linking them. What would such a verb mean?
     "Perform manner M while in state S" — with no causal connection. -/
-def FullRootSpec.semanticallyCoherent (s : FullRootSpec) : Bool :=
-  !(s.entailments.manner && s.entailments.state &&
-    !s.entailments.result && !s.entailments.cause)
+def FullRootSpec.SemanticallyCoherent (s : FullRootSpec) : Prop :=
+  ¬ (LexKind.manner ∈ s.entailments ∧ LexKind.state ∈ s.entailments ∧
+     LexKind.result ∉ s.entailments ∧ LexKind.cause ∉ s.entailments)
+
+instance (s : FullRootSpec) : Decidable s.SemanticallyCoherent :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-- Full well-formedness: entailment constraints + position licensing +
     semantic coherence. -/
-def FullRootSpec.wellFormed (s : FullRootSpec) : Bool :=
-  decide s.entailments.WellFormed && s.positionLicensed && s.semanticallyCoherent
+def FullRootSpec.WellFormed (s : FullRootSpec) : Prop :=
+  s.entailments.WellFormed ∧ s.PositionLicensed ∧ s.SemanticallyCoherent
+
+instance (s : FullRootSpec) : Decidable s.WellFormed :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-! ### Attested cells of Table 12 -/
 
 /-- √FLAT: +S −M −R −C, complement. Property concept root. -/
-def FullRootSpec.flat : FullRootSpec := ⟨.propertyConcept, .complement⟩
+def FullRootSpec.flat : FullRootSpec :=
+  ⟨Root.FeatureSignature.propertyConcept, .complement⟩
 
 /-- √BLOSSOM: +S −M +R −C, complement. Pure result root. -/
-def FullRootSpec.blossom : FullRootSpec := ⟨.pureResult, .complement⟩
+def FullRootSpec.blossom : FullRootSpec :=
+  ⟨Root.FeatureSignature.pureResult, .complement⟩
 
 /-- √CRACK: +S −M +R +C, complement. Causative result root. -/
-def FullRootSpec.crack : FullRootSpec := ⟨.causativeResult, .complement⟩
+def FullRootSpec.crack : FullRootSpec :=
+  ⟨Root.FeatureSignature.causativeResult, .complement⟩
 
 /-- √JOG: −S +M −R −C, adjoined. Pure manner root. -/
-def FullRootSpec.jog : FullRootSpec := ⟨.pureManner, .adjoined⟩
+def FullRootSpec.jog : FullRootSpec :=
+  ⟨Root.FeatureSignature.pureManner, .adjoined⟩
 
 /-- √DROWN: +S +M +R +C, complement. Manner+result in complement position —
     the manner restricts HOW the state is caused. -/
-def FullRootSpec.drown : FullRootSpec := ⟨.fullSpec, .complement⟩
+def FullRootSpec.drown : FullRootSpec :=
+  ⟨Root.FeatureSignature.fullSpec, .complement⟩
 
 /-- √TOSS: +S +M +R +C, adjoined. Manner+result in adjunct position —
     the manner is the primary event that happens to cause a state change. -/
-def FullRootSpec.toss : FullRootSpec := ⟨.fullSpec, .adjoined⟩
+def FullRootSpec.toss : FullRootSpec :=
+  ⟨Root.FeatureSignature.fullSpec, .adjoined⟩
 
 /-- √HAND: same entailments + position as √TOSS. The difference is in
     the ditransitive layer (DitransitiveRootClass.causedPossession vs
@@ -1481,25 +1497,25 @@ def FullRootSpec.toss : FullRootSpec := ⟨.fullSpec, .adjoined⟩
 abbrev FullRootSpec.hand : FullRootSpec := FullRootSpec.toss
 
 /-- √EXIST: −S −M −R −C, complement. Minimal stative root. -/
-def FullRootSpec.exist : FullRootSpec := ⟨.minimal, .complement⟩
+def FullRootSpec.exist : FullRootSpec :=
+  ⟨Root.FeatureSignature.minimal, .complement⟩
 
 -- All attested types are well-formed
-theorem flat_wf : FullRootSpec.flat.wellFormed = true := rfl
-theorem blossom_wf : FullRootSpec.blossom.wellFormed = true := rfl
-theorem crack_wf : FullRootSpec.crack.wellFormed = true := rfl
-theorem jog_wf : FullRootSpec.jog.wellFormed = true := rfl
-theorem drown_wf : FullRootSpec.drown.wellFormed = true := rfl
-theorem toss_wf : FullRootSpec.toss.wellFormed = true := rfl
-theorem hand_wf : FullRootSpec.hand.wellFormed = true := rfl
-theorem exist_wf : FullRootSpec.exist.wellFormed = true := rfl
+theorem flat_wf : FullRootSpec.flat.WellFormed := by decide
+theorem blossom_wf : FullRootSpec.blossom.WellFormed := by decide
+theorem crack_wf : FullRootSpec.crack.WellFormed := by decide
+theorem jog_wf : FullRootSpec.jog.WellFormed := by decide
+theorem drown_wf : FullRootSpec.drown.WellFormed := by decide
+theorem toss_wf : FullRootSpec.toss.WellFormed := by decide
+theorem hand_wf : FullRootSpec.hand.WellFormed := by decide
+theorem exist_wf : FullRootSpec.exist.WellFormed := by decide
 
 /-- √DROWN and √TOSS have identical entailments but different positions. -/
 theorem drown_toss_same_entailments :
     FullRootSpec.drown.entailments = FullRootSpec.toss.entailments := rfl
 
 theorem drown_toss_diff_position :
-    FullRootSpec.drown.position ≠ FullRootSpec.toss.position := by
-  simp [FullRootSpec.drown, FullRootSpec.toss]
+    FullRootSpec.drown.position ≠ FullRootSpec.toss.position := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 18. Root → Templatic Head Prediction (B&[beavers-koontz-garboden-2020] Table 13)
@@ -1522,8 +1538,6 @@ inductive TemplateHead where
   | pHave    -- P_have: possession preposition (ditransitive transfer)
   deriving DecidableEq, Repr
 
-namespace Semantics.Lexical.Roots
-
 /-- Which template heads a root's entailments make redundant (Table 13).
 
     The mapping is monotone: more root entailments → more heads entailed.
@@ -1534,12 +1548,10 @@ namespace Semantics.Lexical.Roots
     - +manner alone → no v_act (manner without causation doesn't entail
       activity — √JOG specifies jogging manner but v_act still provides
       the activity frame) -/
-def RootEntailments.entailedHeads (r : RootEntailments) : List TemplateHead :=
-  (if r.result then [.vBecome] else []) ++
-  (if r.cause then [.vCause] else []) ++
-  (if r.manner && r.cause then [.vAct] else [])
-
-end Semantics.Lexical.Roots
+def Root.FeatureSignature.entailedHeads (s : Root.FeatureSignature) : List TemplateHead :=
+  (if LexKind.result ∈ s then [.vBecome] else []) ++
+  (if LexKind.cause ∈ s then [.vCause] else []) ++
+  (if LexKind.manner ∈ s ∧ LexKind.cause ∈ s then [.vAct] else [])
 
 /-- For ditransitive roots, additional prepositional heads beyond
     the verbal heads predicted by `entailedHeads`. -/
@@ -1557,69 +1569,68 @@ def DitransitiveRootClass.additionalHeads : DitransitiveRootClass → List Templ
     The root specifies jogging manner, but v_act still provides
     the activity frame — the root doesn't make it redundant. -/
 theorem jog_no_heads :
-    RootEntailments.pureManner.entailedHeads = [] := rfl
+    Root.FeatureSignature.pureManner.entailedHeads = [] := by decide
 
 /-- √FLAT (propertyConcept): no template heads entailed.
     The root names a state, but doesn't entail change or cause. -/
 theorem flat_no_heads :
-    RootEntailments.propertyConcept.entailedHeads = [] := rfl
+    Root.FeatureSignature.propertyConcept.entailedHeads = [] := by decide
 
 /-- √BLOSSOM (pureResult): v_become entailed.
     The root entails change — v_become's contribution is redundant. -/
 theorem blossom_heads :
-    RootEntailments.pureResult.entailedHeads = [.vBecome] := rfl
+    Root.FeatureSignature.pureResult.entailedHeads = [.vBecome] := by decide
 
 /-- √CRACK (causativeResult): v_become + v_cause entailed.
     The root entails change AND causation. -/
 theorem crack_heads :
-    RootEntailments.causativeResult.entailedHeads = [.vBecome, .vCause] := rfl
+    Root.FeatureSignature.causativeResult.entailedHeads = [.vBecome, .vCause] := by
+  decide
 
 /-- √DROWN (fullSpec): v_become + v_cause + v_act entailed.
     The root entails change, causation, AND activity (manner that causes). -/
 theorem drown_heads :
-    RootEntailments.fullSpec.entailedHeads = [.vBecome, .vCause, .vAct] := rfl
+    Root.FeatureSignature.fullSpec.entailedHeads = [.vBecome, .vCause, .vAct] := by
+  decide
 
 /-- √TOSS (fullSpec + ballistic): v_become + v_cause + v_act + P_loc.
     Verbal heads from entailments + P_loc from ditransitive class. -/
 theorem toss_heads :
-    RootEntailments.fullSpec.entailedHeads ++
+    Root.FeatureSignature.fullSpec.entailedHeads ++
     DitransitiveRootClass.additionalHeads .ballisticMotion =
-    [.vBecome, .vCause, .vAct, .pLoc] := rfl
+    [.vBecome, .vCause, .vAct, .pLoc] := by decide
 
 /-- √HAND (fullSpec + causedPossession): all 5 heads.
     Verbal heads from entailments + P_loc + P_have from ditransitive class. -/
 theorem hand_heads :
-    RootEntailments.fullSpec.entailedHeads ++
+    Root.FeatureSignature.fullSpec.entailedHeads ++
     DitransitiveRootClass.additionalHeads .causedPossession =
-    [.vBecome, .vCause, .vAct, .pLoc, .pHave] := rfl
+    [.vBecome, .vCause, .vAct, .pLoc, .pHave] := by decide
 
 /-- Monotonicity: more root entailments → weakly more heads entailed.
     Pure result ⊂ causative result ⊂ full spec (by inclusion). -/
 theorem heads_monotone :
-    RootEntailments.pureResult.entailedHeads.length ≤
-    RootEntailments.causativeResult.entailedHeads.length ∧
-    RootEntailments.causativeResult.entailedHeads.length ≤
-    RootEntailments.fullSpec.entailedHeads.length := ⟨by decide, by decide⟩
+    Root.FeatureSignature.pureResult.entailedHeads.length ≤
+    Root.FeatureSignature.causativeResult.entailedHeads.length ∧
+    Root.FeatureSignature.causativeResult.entailedHeads.length ≤
+    Root.FeatureSignature.fullSpec.entailedHeads.length := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 19. Gap Predictions (B&[beavers-koontz-garboden-2020] §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
+/-- The attested cells of B&KG's Table 12: five complement types
+    (√FLAT, √BLOSSOM, √CRACK, √DROWN, √EXIST) and two adjoined types
+    (√JOG, √TOSS/√HAND). -/
+def FullRootSpec.attestedCells : List FullRootSpec :=
+  [.flat, .blossom, .crack, .drown, .exist, .jog, .toss]
+
 /-- Whether a FullRootSpec cell is attested in B&KG's Table 12. -/
-def FullRootSpec.isAttestedCell (s : FullRootSpec) : Bool :=
-  s.wellFormed &&
-  match s.entailments, s.position with
-  -- Attested complement types
-  | ⟨true, false, false, false⟩, .complement => true   -- √FLAT
-  | ⟨true, false, true, false⟩,  .complement => true   -- √BLOSSOM
-  | ⟨true, false, true, true⟩,   .complement => true   -- √CRACK
-  | ⟨true, true, true, true⟩,    .complement => true   -- √DROWN
-  | ⟨false, false, false, false⟩, .complement => true   -- √EXIST
-  -- Attested adjoined types
-  | ⟨false, true, false, false⟩, .adjoined => true      -- √JOG
-  | ⟨true, true, true, true⟩,    .adjoined => true      -- √TOSS/√HAND
-  -- Everything else is a gap
-  | _, _ => false
+def FullRootSpec.IsAttestedCell (s : FullRootSpec) : Prop :=
+  s.WellFormed ∧ s ∈ FullRootSpec.attestedCells
+
+instance (s : FullRootSpec) : Decidable s.IsAttestedCell :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Gap explanations
 
@@ -1638,40 +1649,46 @@ B&KG (§5.4.1) identify three principled gap types:
 
 /-- Gap type 1: adjoined position requires manner. -/
 theorem gap_adjoined_no_manner :
-    (FullRootSpec.mk .propertyConcept .adjoined).positionLicensed = false := rfl
+    ¬ (FullRootSpec.mk Root.FeatureSignature.propertyConcept .adjoined).PositionLicensed := by
+  decide
 
 theorem gap_adjoined_result :
-    (FullRootSpec.mk .pureResult .adjoined).positionLicensed = false := rfl
+    ¬ (FullRootSpec.mk Root.FeatureSignature.pureResult .adjoined).PositionLicensed := by
+  decide
 
 theorem gap_adjoined_causativeResult :
-    (FullRootSpec.mk .causativeResult .adjoined).positionLicensed = false := rfl
+    ¬ (FullRootSpec.mk Root.FeatureSignature.causativeResult .adjoined).PositionLicensed := by
+  decide
 
 theorem gap_adjoined_minimal :
-    (FullRootSpec.mk .minimal .adjoined).positionLicensed = false := rfl
+    ¬ (FullRootSpec.mk Root.FeatureSignature.minimal .adjoined).PositionLicensed := by
+  decide
 
 /-- Gap type 2: +manner +state −result −cause is incoherent. -/
 theorem gap_manner_state_no_result :
-    (FullRootSpec.mk ⟨true, true, false, false⟩ .complement).semanticallyCoherent = false := rfl
+    ¬ (FullRootSpec.mk {.state, .manner} .complement).SemanticallyCoherent := by
+  decide
 
 theorem gap_manner_state_no_result_adj :
-    (FullRootSpec.mk ⟨true, true, false, false⟩ .adjoined).semanticallyCoherent = false := rfl
+    ¬ (FullRootSpec.mk {.state, .manner} .adjoined).SemanticallyCoherent := by
+  decide
 
 /-- Gap type 3: well-formedness violations. -/
 theorem gap_result_no_state :
-    ¬ (RootEntailments.mk false false true false).WellFormed := by decide
+    ¬ ({.result} : Root.FeatureSignature).WellFormed := by decide
 
 theorem gap_cause_no_result :
-    ¬ (RootEntailments.mk true false false true).WellFormed := by decide
+    ¬ ({.state, .cause} : Root.FeatureSignature).WellFormed := by decide
 
 /-! ### Attested cells are well-formed and recognized -/
 
-theorem flat_attested : FullRootSpec.flat.isAttestedCell = true := rfl
-theorem blossom_attested : FullRootSpec.blossom.isAttestedCell = true := rfl
-theorem crack_attested : FullRootSpec.crack.isAttestedCell = true := rfl
-theorem jog_attested : FullRootSpec.jog.isAttestedCell = true := rfl
-theorem drown_attested : FullRootSpec.drown.isAttestedCell = true := rfl
-theorem toss_attested : FullRootSpec.toss.isAttestedCell = true := rfl
-theorem exist_attested : FullRootSpec.exist.isAttestedCell = true := rfl
+theorem flat_attested : FullRootSpec.flat.IsAttestedCell := by decide
+theorem blossom_attested : FullRootSpec.blossom.IsAttestedCell := by decide
+theorem crack_attested : FullRootSpec.crack.IsAttestedCell := by decide
+theorem jog_attested : FullRootSpec.jog.IsAttestedCell := by decide
+theorem drown_attested : FullRootSpec.drown.IsAttestedCell := by decide
+theorem toss_attested : FullRootSpec.toss.IsAttestedCell := by decide
+theorem exist_attested : FullRootSpec.exist.IsAttestedCell := by decide
 
 /-- The open question: +S +M +R −C (mannerResult without cause) in
     complement position. B&KG note this cell may be inhabited by
@@ -1679,12 +1696,14 @@ theorem exist_attested : FullRootSpec.exist.isAttestedCell = true := rfl
     without external causation. Left as NOT attested per Table 12,
     pending further research. -/
 theorem mannerResult_complement_unattested :
-    (FullRootSpec.mk .mannerResult .complement).isAttestedCell = false := rfl
+    ¬ (FullRootSpec.mk Root.FeatureSignature.mannerResult .complement).IsAttestedCell := by
+  decide
 
 /-- The complement/adjoined split for fullSpec roots is the only
     case where position differentiates otherwise identical entailments. -/
 theorem fullSpec_both_positions :
-    FullRootSpec.drown.isAttestedCell = true ∧
-    FullRootSpec.toss.isAttestedCell = true ∧
-    FullRootSpec.drown.entailments = FullRootSpec.toss.entailments := ⟨rfl, rfl, rfl⟩
+    FullRootSpec.drown.IsAttestedCell ∧
+    FullRootSpec.toss.IsAttestedCell ∧
+    FullRootSpec.drown.entailments = FullRootSpec.toss.entailments :=
+  ⟨by decide, by decide, rfl⟩
 

@@ -10,7 +10,7 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 The derivational chain from root content to argument structure, made
 explicit as composed functions:
 
-    RootEntailments → Template → ArgTemplate → ThetaRole
+    Root.FeatureSignature → Template → ArgTemplate → ThetaRole
 
 Each step exists in the literature: [beavers-koontz-garboden-2020]
 define root entailments; [rappaport-hovav-levin-1998] define event
@@ -51,7 +51,7 @@ open Semantics.Lexical
 open Semantics.Lexical.EventStructure (Template)
 open Features.LevinClassProfiles
 open Semantics.ArgumentStructure.EntailmentProfile
-open Semantics.Lexical.Roots
+open Root.FeatureSignature
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root-Template Compatibility
@@ -75,18 +75,18 @@ open Semantics.Lexical.Roots
       BECOME to apply to (template adds the change)
     - **accomplishment** `[[x ACT] CAUSE [BECOME [y STATE]]]`: root
       provides state for the caused result -/
-def RootLicensesTemplate (re : RootEntailments) : Template → Prop
-  | .state         => re.state = true
-  | .activity      => re.manner = true
-  | .achievement   => re.state = true
-  | .accomplishment => re.state = true
+def RootLicensesTemplate (re : Root.FeatureSignature) : Template → Prop
+  | .state         => .state ∈ re
+  | .activity      => .manner ∈ re
+  | .achievement   => .state ∈ re
+  | .accomplishment => .state ∈ re
 
-instance (re : RootEntailments) (t : Template) :
+instance (re : Root.FeatureSignature) (t : Template) :
     Decidable (RootLicensesTemplate re t) := by
   cases t <;> unfold RootLicensesTemplate <;> infer_instance
 
 /-- All templates licensed by a root (captures alternation). -/
-def licensedTemplates (re : RootEntailments) : List Template :=
+def licensedTemplates (re : Root.FeatureSignature) : List Template :=
   [.state, .activity, .achievement, .accomplishment].filter
     (λ t => decide (RootLicensesTemplate re t))
 
@@ -95,41 +95,41 @@ def licensedTemplates (re : RootEntailments) : List Template :=
 /-- PC roots (FLAT) license state, achievement, accomplishment —
     the three state-based templates. Not activity (no manner). -/
 theorem pc_licenses :
-    RootLicensesTemplate .propertyConcept .state ∧
-    RootLicensesTemplate .propertyConcept .achievement ∧
-    RootLicensesTemplate .propertyConcept .accomplishment ∧
-    ¬ RootLicensesTemplate .propertyConcept .activity := by decide
+    RootLicensesTemplate propertyConcept .state ∧
+    RootLicensesTemplate propertyConcept .achievement ∧
+    RootLicensesTemplate propertyConcept .accomplishment ∧
+    ¬ RootLicensesTemplate propertyConcept .activity := by decide
 
 /-- Pure manner roots (JOG) license activity only.
     Not state-based templates (no state entailment). -/
 theorem pureManner_licenses :
-    RootLicensesTemplate .pureManner .activity ∧
-    ¬ RootLicensesTemplate .pureManner .state ∧
-    ¬ RootLicensesTemplate .pureManner .achievement ∧
-    ¬ RootLicensesTemplate .pureManner .accomplishment := by decide
+    RootLicensesTemplate pureManner .activity ∧
+    ¬ RootLicensesTemplate pureManner .state ∧
+    ¬ RootLicensesTemplate pureManner .achievement ∧
+    ¬ RootLicensesTemplate pureManner .accomplishment := by decide
 
 /-- Pure result roots (BLOSSOM) license state, achievement,
     accomplishment — same as PC roots, since both have state. -/
 theorem pureResult_licenses :
-    RootLicensesTemplate .pureResult .state ∧
-    RootLicensesTemplate .pureResult .achievement ∧
-    RootLicensesTemplate .pureResult .accomplishment ∧
-    ¬ RootLicensesTemplate .pureResult .activity := by decide
+    RootLicensesTemplate pureResult .state ∧
+    RootLicensesTemplate pureResult .achievement ∧
+    RootLicensesTemplate pureResult .accomplishment ∧
+    ¬ RootLicensesTemplate pureResult .activity := by decide
 
 /-- Causative result roots (BREAK) license state-based templates. -/
 theorem causativeResult_licenses :
-    RootLicensesTemplate .causativeResult .state ∧
-    RootLicensesTemplate .causativeResult .achievement ∧
-    RootLicensesTemplate .causativeResult .accomplishment ∧
-    ¬ RootLicensesTemplate .causativeResult .activity := by decide
+    RootLicensesTemplate causativeResult .state ∧
+    RootLicensesTemplate causativeResult .achievement ∧
+    RootLicensesTemplate causativeResult .accomplishment ∧
+    ¬ RootLicensesTemplate causativeResult .activity := by decide
 
 /-- Full-spec roots (CUT) license all four templates — they have
     both state and manner, so they can fill any structural position. -/
 theorem fullSpec_licenses :
-    RootLicensesTemplate .fullSpec .state ∧
-    RootLicensesTemplate .fullSpec .activity ∧
-    RootLicensesTemplate .fullSpec .achievement ∧
-    RootLicensesTemplate .fullSpec .accomplishment := by decide
+    RootLicensesTemplate fullSpec .state ∧
+    RootLicensesTemplate fullSpec .activity ∧
+    RootLicensesTemplate fullSpec .achievement ∧
+    RootLicensesTemplate fullSpec .accomplishment := by decide
 
 -- § 1b. Alternation predictions
 
@@ -137,17 +137,17 @@ theorem fullSpec_licenses :
     "The rug is flat" (state) / "The rug flattened" (achievement) /
     "Kim flattened the rug" (accomplishment). -/
 theorem pc_alternation_count :
-    (licensedTemplates .propertyConcept).length = 3 := by native_decide
+    (licensedTemplates propertyConcept).length = 3 := by native_decide
 
 /-- Pure manner roots license 1 template — no alternation into
     state-based frames (*"Kim jogged the ball broken"). -/
 theorem pureManner_alternation_count :
-    (licensedTemplates .pureManner).length = 1 := by native_decide
+    (licensedTemplates pureManner).length = 1 := by native_decide
 
 /-- Full-spec roots license all 4 templates — maximal flexibility
     (conative, causative/inchoative, locative, etc.). -/
 theorem fullSpec_alternation_count :
-    (licensedTemplates .fullSpec).length = 4 := by native_decide
+    (licensedTemplates fullSpec).length = 4 := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Template → ArgTemplate
@@ -194,39 +194,39 @@ def templateArgTemplate (t : Template) : ArgTemplate where
     | causativeResult (BREAK) | accomplishment |
     | pureManner (JOG) | activity |
     | fullSpec (CUT) | accomplishment | -/
-def primaryTemplate (re : RootEntailments) : Option Template :=
-  if re.cause then some .accomplishment
-  else if re.result then some .achievement
-  else if re.manner then some .activity
-  else if re.state then some .state
+def primaryTemplate (re : Root.FeatureSignature) : Option Template :=
+  if .cause ∈ re then some .accomplishment
+  else if .result ∈ re then some .achievement
+  else if .manner ∈ re then some .activity
+  else if .state ∈ re then some .state
   else none
 
 -- § 3a. Root typology → primary template
 
 theorem pc_primary :
-    primaryTemplate .propertyConcept = some .state := rfl
+    primaryTemplate propertyConcept = some .state := rfl
 
 theorem pureResult_primary :
-    primaryTemplate .pureResult = some .achievement := rfl
+    primaryTemplate pureResult = some .achievement := rfl
 
 theorem causativeResult_primary :
-    primaryTemplate .causativeResult = some .accomplishment := rfl
+    primaryTemplate causativeResult = some .accomplishment := rfl
 
 theorem pureManner_primary :
-    primaryTemplate .pureManner = some .activity := rfl
+    primaryTemplate pureManner = some .activity := rfl
 
 theorem fullSpec_primary :
-    primaryTemplate .fullSpec = some .accomplishment := rfl
+    primaryTemplate fullSpec = some .accomplishment := rfl
 
 -- § 3b. Primary template is always licensed
 
 /-- For canonical root types, the primary template is licensed. -/
 theorem primary_licensed_canonical :
-    RootLicensesTemplate .propertyConcept .state ∧
-    RootLicensesTemplate .pureResult .achievement ∧
-    RootLicensesTemplate .causativeResult .accomplishment ∧
-    RootLicensesTemplate .pureManner .activity ∧
-    RootLicensesTemplate .fullSpec .accomplishment := by decide
+    RootLicensesTemplate propertyConcept .state ∧
+    RootLicensesTemplate pureResult .achievement ∧
+    RootLicensesTemplate causativeResult .accomplishment ∧
+    RootLicensesTemplate pureManner .activity ∧
+    RootLicensesTemplate fullSpec .accomplishment := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Full Pipeline
@@ -234,14 +234,14 @@ theorem primary_licensed_canonical :
 
 /-- The full derivational pipeline: root entailments → primary
     template → template-level ArgTemplate. -/
-def derivePrimary (re : RootEntailments) : Option ArgTemplate :=
+def derivePrimary (re : Root.FeatureSignature) : Option ArgTemplate :=
   (primaryTemplate re).map templateArgTemplate
 
 /-- All ArgTemplates derivable from a root (one per licensed template).
     Multiple entries represent alternation possibilities:
     e.g., a causativeResult root derives both an accomplishment
     ArgTemplate (transitive) and a state ArgTemplate (bare stative). -/
-def deriveAll (re : RootEntailments) : List ArgTemplate :=
+def deriveAll (re : Root.FeatureSignature) : List ArgTemplate :=
   (licensedTemplates re).map templateArgTemplate
 
 -- § 4a. Pipeline produces non-trivial results
@@ -249,11 +249,11 @@ def deriveAll (re : RootEntailments) : List ArgTemplate :=
 /-- causativeResult roots derive 3 ArgTemplates (state, achievement,
     accomplishment variants). -/
 theorem causativeResult_derives_three :
-    (deriveAll .causativeResult).length = 3 := by native_decide
+    (deriveAll causativeResult).length = 3 := by native_decide
 
 /-- fullSpec roots derive 4 ArgTemplates (all templates). -/
 theorem fullSpec_derives_four :
-    (deriveAll .fullSpec).length = 4 := by native_decide
+    (deriveAll fullSpec).length = 4 := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Root-Enriched Derivation
@@ -290,7 +290,7 @@ def activityObjectProfile (mc : MeaningComponents) : Option EntailmentProfile :=
     For other templates, the template's own profiles are used directly.
 
     Returns `none` for roots with no structural entailments (minimal). -/
-def deriveEnriched (re : RootEntailments) (mc : MeaningComponents) : Option ArgTemplate :=
+def deriveEnriched (re : Root.FeatureSignature) (mc : MeaningComponents) : Option ArgTemplate :=
   match primaryTemplate re with
   | none => none
   | some t =>
@@ -311,23 +311,23 @@ def deriveEnriched (re : RootEntailments) (mc : MeaningComponents) : Option ArgT
     contacted object). The root's contact meaning component contributes
     the object and adds C to the subject. -/
 theorem hit_enriched_matches :
-    deriveEnriched .pureManner .hit = some mannerContact := rfl
+    deriveEnriched pureManner .hit = some mannerContact := rfl
 
 /-- MannerOfMotion: enriched derivation gives selfMotion (no contact,
     no object). The root contributes no object. -/
 theorem run_enriched_matches :
-    deriveEnriched .pureManner ⟨false, false, true, false, false, false⟩ = some selfMotion := rfl
+    deriveEnriched pureManner ⟨false, false, true, false, false, false⟩ = some selfMotion := rfl
 
 /-- Break: enriched derivation gives resultChange (full agent +
     CoS+CA object). Accomplishment template used directly — the
     root doesn't modify it for non-activity templates. -/
 theorem break_enriched_matches :
-    deriveEnriched .causativeResult .break_ = some resultChange := rfl
+    deriveEnriched causativeResult .break_ = some resultChange := rfl
 
 /-- Cut: enriched derivation gives resultChange (same as break).
     The manner component doesn't affect the accomplishment template. -/
 theorem cut_enriched_matches :
-    deriveEnriched .fullSpec .cut = some resultChange := rfl
+    deriveEnriched fullSpec .cut = some resultChange := rfl
 
 -- § 5b. Enriched derivation vs hand-specified LevinClass.argTemplate
 
@@ -388,43 +388,43 @@ affected (CoS+CA). -/
 /-- causativeResult: pipeline and shortcut AGREE on subject profile.
     Both give the accomplishment subject = full agent (V+S+C+M+IE). -/
 theorem causativeResult_subject_agrees :
-    (derivePrimary .causativeResult).map (·.subjectProfile) =
-    (toArgTemplate .causativeResult).map (·.subjectProfile) := rfl
+    (derivePrimary causativeResult).map (·.subjectProfile) =
+    (toArgTemplate causativeResult).map (·.subjectProfile) := rfl
 
 /-- fullSpec: pipeline and shortcut AGREE on subject profile. -/
 theorem fullSpec_subject_agrees :
-    (derivePrimary .fullSpec).map (·.subjectProfile) =
-    (toArgTemplate .fullSpec).map (·.subjectProfile) := rfl
+    (derivePrimary fullSpec).map (·.subjectProfile) =
+    (toArgTemplate fullSpec).map (·.subjectProfile) := rfl
 
 /-- propertyConcept: pipeline and shortcut AGREE on subject profile
     (both S+IE). -/
 theorem propertyConcept_subject_agrees :
-    (derivePrimary .propertyConcept).map (·.subjectProfile) =
-    (toArgTemplate .propertyConcept).map (·.subjectProfile) := rfl
+    (derivePrimary propertyConcept).map (·.subjectProfile) =
+    (toArgTemplate propertyConcept).map (·.subjectProfile) := rfl
 
 /-- pureManner: pipeline and shortcut AGREE on subject profile.
     Both give V+S+M+IE (no causation): the activity template does not
     entail causal interaction with another participant, matching
     selfMotion verbs like run and jog. -/
 theorem pureManner_subject_agrees :
-    (derivePrimary .pureManner).map (·.subjectProfile) =
-    (toArgTemplate .pureManner).map (·.subjectProfile) := rfl
+    (derivePrimary pureManner).map (·.subjectProfile) =
+    (toArgTemplate pureManner).map (·.subjectProfile) := rfl
 
 /-- pureResult: pipeline and shortcut DISAGREE on subject.
     Pipeline: achievement subject = M+IE+CoS (moves, changes).
     Shortcut: unaccusativeCoS subject = CoS+CA (changed, affected).
     Different theoretical emphases on what characterizes unaccusatives. -/
 theorem pureResult_subject_diverges :
-    (derivePrimary .pureResult).map (·.subjectProfile) ≠
-    (toArgTemplate .pureResult).map (·.subjectProfile) := by decide
+    (derivePrimary pureResult).map (·.subjectProfile) ≠
+    (toArgTemplate pureResult).map (·.subjectProfile) := by decide
 
 /-- causativeResult: pipeline and shortcut AGREE on object profile.
     Both give CoS+CA (change of state, causally affected). The
     template default correctly excludes IT (incremental theme) —
     not all caused-change objects measure the event. -/
 theorem causativeResult_object_agrees :
-    (derivePrimary .causativeResult).bind (·.objectProfile) =
-    (toArgTemplate .causativeResult).bind (·.objectProfile) := rfl
+    (derivePrimary causativeResult).bind (·.objectProfile) =
+    (toArgTemplate causativeResult).bind (·.objectProfile) := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. Consistency: Pipeline vs LevinClass.argTemplate
@@ -502,38 +502,32 @@ cross-linguistically (validated across 88 languages).
 /-- PC roots entail state but NOT result — they name properties
     without inherent change. "Flat" is a simple state. -/
 theorem pc_no_result :
-    RootEntailments.propertyConcept.state = true ∧
-    RootEntailments.propertyConcept.result = false := ⟨rfl, rfl⟩
+    LexKind.state ∈ propertyConcept ∧
+    LexKind.result ∉ propertyConcept := by decide
 
 /-- Result roots entail both state AND result — the state is
     inseparable from prior change. "Cracked" entails having
     been cracked. -/
 theorem result_has_change :
-    RootEntailments.pureResult.state = true ∧
-    RootEntailments.pureResult.result = true ∧
-    RootEntailments.pureResult.cause = false := ⟨rfl, rfl, rfl⟩
+    LexKind.state ∈ pureResult ∧
+    LexKind.result ∈ pureResult ∧
+    LexKind.cause ∉ pureResult := by decide
 
 /-- Caused-result roots entail state + result + cause — the
     change must have been externally caused. "Break" entails
     external causation. -/
 theorem caused_result_full :
-    RootEntailments.causativeResult.state = true ∧
-    RootEntailments.causativeResult.result = true ∧
-    RootEntailments.causativeResult.cause = true := ⟨rfl, rfl, rfl⟩
+    LexKind.state ∈ causativeResult ∧
+    LexKind.result ∈ causativeResult ∧
+    LexKind.cause ∈ causativeResult := by decide
 
 /-- The root typology forms an implicational hierarchy:
-    cause → result → state.
-    Each type INCLUDES the entailments of simpler types. -/
+    cause → result → state. For well-formed signatures this is a
+    consequence of downward closure under the collocational order —
+    not a per-signature stipulation. -/
 theorem root_typology_hierarchy :
-    -- cause implies result
-    RootEntailments.causativeResult.result = true ∧
-    -- result implies state
-    RootEntailments.pureResult.state = true ∧
-    -- well-formedness enforces the hierarchy
-    RootEntailments.causativeResult.WellFormed ∧
-    RootEntailments.pureResult.WellFormed ∧
-    RootEntailments.propertyConcept.WellFormed := by
-  refine ⟨rfl, rfl, ?_, ?_, ?_⟩ <;> decide
+    ∀ s : Root.FeatureSignature, s.WellFormed →
+      (.cause ∈ s → .result ∈ s) ∧ (.result ∈ s → .state ∈ s) := by decide
 
 /-- PC and result roots differ in licensing predictions:
     PC roots can fill stative templates (simple statives exist);
@@ -541,11 +535,11 @@ theorem root_typology_hierarchy :
     change, so the "stative" use still presupposes prior change. -/
 theorem pc_result_stative_difference :
     -- Both license the state template
-    RootLicensesTemplate .propertyConcept .state ∧
-    RootLicensesTemplate .pureResult .state ∧
+    RootLicensesTemplate propertyConcept .state ∧
+    RootLicensesTemplate pureResult .state ∧
     -- But result roots entail change (root-level, not template-level)
-    RootEntailments.propertyConcept.result = false ∧
-    RootEntailments.pureResult.result = true := by decide
+    LexKind.result ∉ propertyConcept ∧
+    LexKind.result ∈ pureResult := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Summary: Where the Pipeline is Informative
@@ -574,7 +568,7 @@ directedMotion, and minimal-rootEntailments classes need overrides.
 The full derivational chain:
 
     Root entailments → Template → Template profiles → Root enrichment → Class override
-    (RootEntailments)   (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
+    (Root.FeatureSignature)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
 -/
 
 end Semantics.ArgumentStructure.ArgDerivation
