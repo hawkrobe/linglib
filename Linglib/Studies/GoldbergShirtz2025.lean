@@ -353,11 +353,11 @@ theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
 
 -- Cross-framework note: this configuration is exactly the cell
--- lexicalist incorporation accounts ban (`Benz2025.incorporationAllowed`
--- rejects a phrasal inner element at a head-level site, following Baker's
--- Lexical Integrity); CxG licenses it via the lemma-like construal. A
--- formal contrast theorem awaits settling the chronological order of the
--- two 2025 sources.
+-- lexicalist incorporation accounts ban — see
+-- `Benz2025.phraseInWordSlot_incorporation_banned` (hosted there because
+-- the ban is that file's apparatus; the two 2025 sources are
+-- contemporaneous and neither cites the other). CxG licenses the cell via
+-- the lemma-like construal (`pal_load_bearing` below).
 
 /-! ### Attested distribution
 

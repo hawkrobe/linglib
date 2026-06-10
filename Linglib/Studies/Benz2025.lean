@@ -1,4 +1,5 @@
 import Linglib.Morphology.DM.Allosemy
+import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.German.Predicates
 
@@ -731,6 +732,48 @@ def incorporationAllowed (outer inner : SynLevel) : Bool :=
   | .phrase, .head   => true   -- normal complementation
   | .head,   .phrase => false  -- *phrasal incorporation
   | .phrase, .phrase => false  -- *phrase stacking inside a word
+
+/-! #### Cross-framework contrast: the phrase-in-word-slot cell
+
+`ConstructionGrammar.Slot.IsPhraseInWordSlot` — a phrasal filler in a
+zero-level position — is the configuration of phrasal compounds and the
+PAL construction ([goldberg-shirtz-2025]; contemporaneous with this
+dissertation, neither cites the other). In this file's terms that
+configuration is exactly the banned phrasal-incorporation cell: lexical
+integrity rejects what the constructionist analysis licenses (cf.
+`GoldbergShirtz2025.pal_load_bearing`). -/
+
+/-- A CxG bar level in `SynLevel` terms: zero-level positions are head
+sites; bar- and phrase-level positions are phrasal. -/
+def SynLevel.ofBarLevel : ConstructionGrammar.BarLevel → SynLevel
+  | .zero => .head
+  | .bar => .phrase
+  | .phrase => .phrase
+
+/-- The `SynLevel` of a CxG slot filler: word fillers are heads, phrasal
+fillers (with or without a fixed head) are phrases; SEM+ fillers are
+level-unspecified. -/
+def _root_.ConstructionGrammar.SlotFiller.synLevel :
+    ConstructionGrammar.SlotFiller String → Option SynLevel
+  | .fixed _ => some .head
+  | .open_ _ => some .head
+  | .headed _ _ => some .phrase
+  | .phrasal => some .phrase
+  | .semantic _ => none
+
+/-- A phrase in a word-level slot occupies the banned cell: its site is a
+head, its filler a phrase, and `incorporationAllowed` rejects the pair.
+The standing counterexample class is the PAL construction, which licenses
+exactly this configuration. -/
+theorem phraseInWordSlot_incorporation_banned
+    (s : ConstructionGrammar.Slot String) (h : s.IsPhraseInWordSlot) :
+    ∃ site filler,
+      s.level.map SynLevel.ofBarLevel = some site ∧
+      s.filler.synLevel = some filler ∧
+      incorporationAllowed site filler = false := by
+  obtain ⟨hf, hl⟩ := h
+  refine ⟨.head, .phrase, ?_, ?_, rfl⟩ <;>
+    simp [hl, hf, SynLevel.ofBarLevel, ConstructionGrammar.SlotFiller.synLevel]
 
 -- ────────────────────────────────────────────────────
 -- § 19. Abstract Interpretive Dimension: Result State Specification
