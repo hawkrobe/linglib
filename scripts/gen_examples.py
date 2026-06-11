@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
-"""Generate Lean 4 LinguisticExample defs from per-paper JSON files.
+"""Generate Lean 4 LinguisticExample modules from per-paper JSON files.
 
 Usage:
     python3 scripts/gen_examples.py <AuthorYear>
 
 Example:
     python3 scripts/gen_examples.py Charlow2014
-        Reads:    Linglib/Data/Examples/Charlow2014.json
-        Locates:  Linglib/Studies/Charlow2014.lean (or
-                  Linglib/Studies/Charlow2014/Basic.lean for multi-file papers)
-        Inserts:  generated `namespace Examples ... end` block between markers
-                  -- BEGIN GENERATED EXAMPLES
-                  -- END GENERATED EXAMPLES
+        Reads:   Linglib/Data/Examples/Charlow2014.json
+        Writes:  Linglib/Data/Examples/Charlow2014.lean — a standalone
+                 auto-generated module declaring `namespace
+                 Charlow2014.Examples`. Consumers (the paper's study file,
+                 test-suite hubs) `import Linglib.Data.Examples.Charlow2014`.
+
+Legacy migration: earlier versions spliced a generated block between
+`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES` markers inside
+the study file (routed by an optional `<AuthorYear>.target` sidecar). When a
+host file still carries such a block, this script removes it, inserts the
+module import into that file, and deletes any retired `.target` sidecar.
+The `Linglib.lean` root import is kept in sync automatically (appended,
+per the repo's append-ordered convention).
 
 JSON file format: a single top-level JSON array of example objects. Each
 object's fields mirror the `LinguisticExample` Lean struct:
@@ -37,11 +44,8 @@ object's fields mirror the `LinguisticExample` Lean struct:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
-- Errors out if zero or multiple study files match the AuthorYear.
-- Errors out if either marker is missing in the target file.
 - Errors out on schema violations (unknown judgment value, gloss/word
   length mismatch, missing required field, missing source.bibkey).
-- Replaces *only* the content between markers; everything else is preserved.
 - Idempotent: re-running on unchanged JSON produces no diff.
 
 Defer to follow-on:
@@ -53,6 +57,7 @@ Dependencies: pure stdlib (json module).
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -242,7 +247,7 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     lgrConformance := {lean_string(lgr)} }}"""
 
 
-def emit_block(author_year: str, examples: list) -> str:
+def emit_module(author_year: str, examples: list) -> str:
     ay_lower = author_year.lower()
     if not examples:
         body = "-- (no examples in JSON)"
@@ -255,148 +260,99 @@ def emit_block(author_year: str, examples: list) -> str:
         ]
         all_def = f"def all : List LinguisticExample := [{', '.join(local_ids)}]"
 
-    return f"""{BEGIN_MARKER}
--- (Generated from Linglib/Data/Examples/{author_year}.json by scripts/gen_examples.py.
--- Do not edit between markers; re-run the generator after editing the JSON.)
+    return f"""import Linglib.Data.Examples.Schema
 
-namespace Examples
+/-!
+# `{author_year}` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/{author_year}.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace {author_year}.Examples`.
+-/
+
+namespace {author_year}.Examples
+
 open Data.Examples
 
 {body}
 
 {all_def}
 
-end Examples
-{END_MARKER}"""
+end {author_year}.Examples
+"""
 
 
-def find_target_file(author_year: str) -> Path:
-    """Locate the file containing the marker block.
-
-    Search order:
-      0. `Linglib/Data/Examples/{author_year}.target` sidecar — first
-         non-empty, non-comment line is the target path (relative to repo
-         root). Lets a paper route its generated block outside `Studies/`
-         (e.g., into a `Phenomena/X/Y.lean` test-suite hub when several
-         papers' examples are pooled there).
-      1. `Linglib/Studies/{author_year}.lean` (flat single-file paper)
-      2. Any `.lean` file under `Linglib/Studies/{author_year}/` that
-         contains the BEGIN/END marker block (multi-file paper subdir;
-         the markers can live in whichever file conceptually owns the
-         examples, not necessarily `Basic.lean`).
-
-    Errors out if zero or multiple files match.
-    """
+def find_legacy_hosts(author_year: str) -> list[Path]:
+    """Files that may still carry a legacy marker block for this paper:
+    the `.target` sidecar's host (if any), the flat study file, and any
+    file in a multi-file paper subdir. Only files actually containing
+    both markers are returned (empty list for already-migrated papers)."""
+    candidates: list[Path] = []
     sidecar = JSON_DIR / f"{author_year}.target"
     if sidecar.exists():
-        target_path = None
         for raw in sidecar.read_text(encoding="utf-8").splitlines():
             line = raw.strip()
-            if not line or line.startswith("#"):
-                continue
-            target_path = line
-            break
-        if not target_path:
-            sys.stderr.write(
-                f"FATAL: sidecar {sidecar.relative_to(ROOT)} contained no "
-                f"target path (expected a relative path on first non-empty "
-                f"non-comment line)\n"
-            )
-            sys.exit(1)
-        resolved = (ROOT / target_path).resolve()
-        if not resolved.exists():
-            sys.stderr.write(
-                f"FATAL: sidecar {sidecar.relative_to(ROOT)} pointed at "
-                f"{target_path}, which does not exist.\n"
-            )
-            sys.exit(1)
-        text = resolved.read_text(encoding="utf-8")
-        if BEGIN_MARKER not in text or END_MARKER not in text:
-            sys.stderr.write(
-                f"FATAL: target {target_path} (from sidecar "
-                f"{sidecar.relative_to(ROOT)}) is missing the marker block "
-                f"`{BEGIN_MARKER}` / `{END_MARKER}`.\n"
-            )
-            sys.exit(1)
-        return resolved
-
-    flat_match = STUDIES / f"{author_year}.lean"
-    subdir     = STUDIES / author_year
-
-    candidates: list[Path] = []
-    if flat_match.exists():
-        candidates.append(flat_match)
+            if line and not line.startswith("#"):
+                resolved = (ROOT / line).resolve()
+                if resolved.exists():
+                    candidates.append(resolved)
+                break
+    flat = STUDIES / f"{author_year}.lean"
+    if flat.exists():
+        candidates.append(flat)
+    subdir = STUDIES / author_year
     if subdir.is_dir():
-        for path in sorted(subdir.glob("*.lean")):
-            text = path.read_text(encoding="utf-8")
-            if BEGIN_MARKER in text and END_MARKER in text:
-                candidates.append(path)
-
-    if len(candidates) == 0:
-        sys.stderr.write(
-            f"FATAL: no study file with marker block found for {author_year}; checked:\n"
-            f"  Linglib/Studies/{author_year}.lean\n"
-            f"  Linglib/Studies/{author_year}/*.lean\n"
-            f"Add `-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES`\n"
-            f"markers to the file that should host the generated block, or\n"
-            f"create `Linglib/Data/Examples/{author_year}.target` containing\n"
-            f"a path to the host file.\n"
-        )
-        sys.exit(1)
-    if len(candidates) > 1:
-        paths = "\n  ".join(str(p.relative_to(ROOT)) for p in candidates)
-        sys.stderr.write(
-            f"FATAL: ambiguous match for {author_year}; multiple files carry the marker block:\n"
-            f"  {paths}\n"
-        )
-        sys.exit(1)
-    return candidates[0]
+        candidates.extend(sorted(subdir.glob("*.lean")))
+    hosts = []
+    for path in candidates:
+        body = path.read_text(encoding="utf-8")
+        if BEGIN_MARKER in body and END_MARKER in body and path not in hosts:
+            hosts.append(path)
+    return hosts
 
 
-def replace_between_markers(file_path: Path, new_block: str) -> bool:
-    text = file_path.read_text(encoding="utf-8")
-    lines = text.splitlines(keepends=True)
-
-    begin_idx = None
-    end_idx   = None
+def remove_marker_block(file_path: Path) -> None:
+    """Delete the legacy generated block, markers included, collapsing
+    the surrounding blank lines to a single separator."""
+    body = file_path.read_text(encoding="utf-8")
+    lines = body.splitlines(keepends=True)
+    begin_idx = end_idx = None
     for i, line in enumerate(lines):
-        if line.rstrip("\n") == BEGIN_MARKER:
-            if begin_idx is not None:
-                sys.stderr.write(
-                    f"FATAL: multiple BEGIN markers in {file_path.relative_to(ROOT)}\n"
-                )
-                sys.exit(1)
+        if line.rstrip("\n") == BEGIN_MARKER and begin_idx is None:
             begin_idx = i
-        elif line.rstrip("\n") == END_MARKER:
-            if end_idx is not None:
-                sys.stderr.write(
-                    f"FATAL: multiple END markers in {file_path.relative_to(ROOT)}\n"
-                )
-                sys.exit(1)
+        elif line.rstrip("\n") == END_MARKER and end_idx is None:
             end_idx = i
+    if begin_idx is None or end_idx is None or end_idx <= begin_idx:
+        return
+    before = "".join(lines[:begin_idx]).rstrip("\n")
+    after = "".join(lines[end_idx + 1:]).lstrip("\n")
+    if before and after:
+        new_body = before + "\n\n" + after
+    else:
+        new_body = before + after
+    if not new_body.endswith("\n"):
+        new_body += "\n"
+    file_path.write_text(new_body, encoding="utf-8")
 
-    if begin_idx is None:
-        sys.stderr.write(
-            f"FATAL: missing marker {BEGIN_MARKER!r} in {file_path.relative_to(ROOT)}\n"
-            f"       Add the marker block (BEGIN + END on consecutive lines) where\n"
-            f"       generated examples should be inserted.\n"
-        )
-        sys.exit(1)
-    if end_idx is None:
-        sys.stderr.write(
-            f"FATAL: missing marker {END_MARKER!r} in {file_path.relative_to(ROOT)}\n"
-        )
-        sys.exit(1)
-    if end_idx <= begin_idx:
-        sys.stderr.write(
-            f"FATAL: END marker precedes BEGIN marker in {file_path.relative_to(ROOT)}\n"
-        )
-        sys.exit(1)
 
-    new_text = "".join(lines[:begin_idx]) + new_block + "\n" + "".join(lines[end_idx + 1:])
-    if new_text == text:
+def ensure_import(file_path: Path, module: str) -> bool:
+    """Insert `import <module>` after the file's last import line if
+    absent. Returns True if the file changed."""
+    body = file_path.read_text(encoding="utf-8")
+    stmt = f"import {module}"
+    if re.search(rf"^{re.escape(stmt)}\s*$", body, flags=re.M):
         return False
-    file_path.write_text(new_text, encoding="utf-8")
+    lines = body.splitlines(keepends=True)
+    last_import = None
+    for i, line in enumerate(lines):
+        if line.startswith("import "):
+            last_import = i
+    if last_import is None:
+        lines.insert(0, stmt + "\n")
+    else:
+        lines.insert(last_import + 1, stmt + "\n")
+    file_path.write_text("".join(lines), encoding="utf-8")
     return True
 
 
@@ -425,23 +381,42 @@ def main():
         )
         sys.exit(1)
 
-    target = find_target_file(author_year)
     try:
-        block = emit_block(author_year, examples)
+        module_text = emit_module(author_year, examples)
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
 
-    changed = replace_between_markers(target, block)
-    rel_target = target.relative_to(ROOT)
-    rel_json   = json_path.relative_to(ROOT)
+    module_path = JSON_DIR / f"{author_year}.lean"
+    module_name = f"Linglib.Data.Examples.{author_year}"
+    rel_module = module_path.relative_to(ROOT)
+    rel_json = json_path.relative_to(ROOT)
     n = len(examples)
-    if changed:
-        sys.stdout.write(
-            f"[gen] {rel_target} ← {rel_json} ({n} example{'s' if n != 1 else ''})\n"
-        )
+
+    if module_path.exists() and module_path.read_text(encoding="utf-8") == module_text:
+        sys.stdout.write(f"[gen] {rel_module} unchanged\n")
     else:
-        sys.stdout.write(f"[gen] {rel_target} unchanged\n")
+        module_path.write_text(module_text, encoding="utf-8")
+        sys.stdout.write(
+            f"[gen] {rel_module} \u2190 {rel_json} ({n} example{'s' if n != 1 else ''})\n"
+        )
+
+    # Legacy migration: strip old marker blocks, wire the module import.
+    for host in find_legacy_hosts(author_year):
+        remove_marker_block(host)
+        ensure_import(host, module_name)
+        sys.stdout.write(
+            f"[gen] migrated legacy block out of {host.relative_to(ROOT)}\n"
+        )
+    sidecar = JSON_DIR / f"{author_year}.target"
+    if sidecar.exists():
+        sidecar.unlink()
+        sys.stdout.write(
+            f"[gen] removed retired sidecar {sidecar.relative_to(ROOT)}\n"
+        )
+
+    if ensure_import(ROOT / "Linglib.lean", module_name):
+        sys.stdout.write(f"[gen] added {module_name} import to Linglib.lean\n")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,0 @@
-# Generator-routing sidecar for KrizChemla2015.json.
-# Read by scripts/gen_examples.py; first non-empty non-comment line is the
-# target file (relative to repo root) into whose marker block the examples
-# are generated. Routes K&C's homogeneity-projection examples to the
-# Plurals/Projection phenomenon hub, where they pool with other papers'
-# projection data for cross-account testing.
-Linglib/Phenomena/Plurals/Projection.lean

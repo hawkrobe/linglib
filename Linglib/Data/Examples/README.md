@@ -11,18 +11,22 @@ file is a top-level JSON array of example objects mirroring the
 python3 scripts/gen_examples.py <AuthorYear>
 ```
 
-Reads `Linglib/Data/Examples/<AuthorYear>.json`, locates the unique study file
-at `Linglib/Studies/*/<AuthorYear>.lean` (or
-`Linglib/Phenomena/*/Studies/<AuthorYear>.lean` during the in-progress
-top-level Studies migration), and replaces the marker-delimited block:
+Reads `Linglib/Data/Examples/<AuthorYear>.json` and writes a standalone
+auto-generated module at `Linglib/Data/Examples/<AuthorYear>.lean`
+declaring `namespace <AuthorYear>.Examples` (so consumer call sites read
+`Examples.all`, `Examples.ex29a`, ... inside `namespace <AuthorYear>`).
+Consumers — the paper's study file, and any `Phenomena/` test-suite hub
+pooling several papers' stimuli — simply
+`import Linglib.Data.Examples.<AuthorYear>`; the generator keeps the
+`Linglib.lean` root import in sync. The generated module is never edited
+by hand; the JSON is the source of truth.
 
-```lean
--- BEGIN GENERATED EXAMPLES
--- END GENERATED EXAMPLES
-```
-
-with a generated `namespace Examples ... end` section. Hand-edits between
-the markers are silently overwritten on the next regeneration.
+**Legacy migration**: earlier versions spliced the generated code between
+`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES` markers inside
+the study file (with an optional `<AuthorYear>.target` sidecar routing the
+block to a hub). Re-running the generator on such a paper removes the
+block, inserts the module import into the host file, and deletes the
+retired sidecar.
 
 ## Schema
 

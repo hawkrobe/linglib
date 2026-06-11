@@ -11,7 +11,7 @@
     ],
     "translation": "(Lit.) Only if John is home, it suffices. ≈ 'John must be home.'",
     "context": "Korean conditional evaluative construction: -(e)ya 'only-if' + toy- 'EVAL/suffice'.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "comment": "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `mustCM_iff_korean_composition`.",
@@ -32,10 +32,10 @@
     "glossedTokens": [],
     "translation": "Classic conjunction-fallacy task: ~85% of participants pick (b), violating the probability calculus.",
     "context": "",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [
-      {"form": "Linda is a bank teller.", "judgment": "ok"},
-      {"form": "Linda is a bank teller and she is active in the feminist movement.", "judgment": "ok"}
+      {"form": "Linda is a bank teller.", "judgment": "acceptable"},
+      {"form": "Linda is a bank teller and she is active in the feminist movement.", "judgment": "acceptable"}
     ],
     "readings": [],
     "comment": "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (mc2024_29_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods).",
@@ -51,7 +51,7 @@
     "glossedTokens": [],
     "translation": "We ought to block neither shaft.",
     "context": "Ten miners trapped in shaft A or shaft B (unknown which). Blocking A: 10 saved if in A, 0 if in B. Blocking B: 0/10. Blocking neither: 9 saved either way.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis (formalized in `ought_blockNeither_at_threshold`) makes this true at any θ ∈ (5, 9).",
@@ -67,7 +67,7 @@
     "glossedTokens": [],
     "translation": "If the miners are in shaft A, we ought to block shaft A.",
     "context": "Same miners scenario as (15a). Conditional on miners-in-A info.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive. C&M's analysis formalized in `ought_under_minersInA_at_threshold` (eq. 24).",
@@ -82,11 +82,11 @@
     "glossedTokens": [],
     "translation": "We must / have to block neither path.",
     "context": "Same miners scenario as (15a).",
-    "judgment": "degraded",
+    "judgment": "questionable",
     "alternatives": [
-      {"form": "We mustn't block either path.", "judgment": "ok"},
-      {"form": "We must / have to refrain from blocking either path.", "judgment": "ok"},
-      {"form": "We cannot block either path.", "judgment": "ok"}
+      {"form": "We mustn't block either path.", "judgment": "acceptable"},
+      {"form": "We must / have to refrain from blocking either path.", "judgment": "acceptable"},
+      {"form": "We cannot block either path.", "judgment": "acceptable"}
     ],
     "readings": [],
     "comment": "Must-variant of (15a). Paper judgment: (a) is questionable on intended reading because 'neither' triggers alternative-quantifier interference; the rephrasings in alternatives unambiguously target the intended reading.",
@@ -101,7 +101,7 @@
     "glossedTokens": [],
     "translation": "If the miners are in shaft A, we must / have to block shaft A.",
     "context": "Same miners scenario as (15a).",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "comment": "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (5 < θ < 9) and conditional-on-A (9 < θ < 10) must-claims. Formalized in `must_miners_requires_threshold_shift`.",
@@ -116,9 +116,9 @@
     "glossedTokens": [],
     "translation": "Linda must be a bank teller and be active in the feminist movement.",
     "context": "Following the Linda description (cm2024_4_linda_original).",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [
-      {"form": "Linda must be a bank teller.", "judgment": "degraded"}
+      {"form": "Linda must be a bank teller.", "judgment": "questionable"}
     ],
     "readings": [],
     "comment": "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33). Formalized at the operator level in `mustCM_predicts_fallacy_under_CM_conditionals`.",
@@ -134,7 +134,7 @@
     "glossedTokens": [],
     "translation": "Engineer-prototypical thumbnail description.",
     "context": "Panel of psychologists interviewed 30 engineers and 70 lawyers (or 70/30 in reversed condition); descriptions written about each. Jack's description shown to subjects.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "comment": "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level.",
@@ -149,9 +149,9 @@
     "glossedTokens": [],
     "translation": "Jack must be an engineer.",
     "context": "Following the Jack description (cm2024_35_jack_description).",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [
-      {"form": "Jack must be a lawyer.", "judgment": "degraded"}
+      {"form": "Jack must be a lawyer.", "judgment": "questionable"}
     ],
     "readings": [],
     "comment": "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent. Formalized in `mustCM_predicts_base_rate_neglect_under_CM_conditionals`.",
@@ -169,7 +169,7 @@
     "glossedTokens": [],
     "translation": "John did not come to work today. He must have caught a cold.",
     "context": "John absent; speaker reasoning about why.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [
       {"form": "#He must be dead.", "judgment": "unacceptable"}
     ],
@@ -217,7 +217,7 @@
     "glossedTokens": [],
     "translation": "Kim must marry Pat in order to inherit.",
     "context": "Kim will only inherit a fortune from her parents if she gets married. She can marry anyone she likes. Suppose Kim is planning on marrying Pat.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [
       {"form": "Kim must marry PAT in order to inherit. (with PAT focused)", "judgment": "unacceptable"}
     ],
@@ -240,7 +240,7 @@
     "context": "Billy has direct perceptual evidence (looking at rain).",
     "judgment": "unacceptable",
     "alternatives": [
-      {"form": "It is raining. (without 'must')", "judgment": "ok"}
+      {"form": "It is raining. (without 'must')", "judgment": "acceptable"}
     ],
     "readings": [],
     "comment": "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate.",

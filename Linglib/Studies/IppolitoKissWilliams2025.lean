@@ -1,13 +1,14 @@
 import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Semantics.Questions.Relevance
 import Linglib.Studies.IppolitoKissWilliams2022
-import Linglib.Studies.IppolitoKissWilliams2025.Data
+import Linglib.Data.Examples.Schema
 import Linglib.Core.Probability.Finite
 import Mathlib.Algebra.BigOperators.Fin
+import Linglib.Data.Examples.IppolitoKissWilliams2025
 
 /-!
 # [ippolito-kiss-williams-2025]: Discourse *only*
-[ippolito-kiss-williams-2022] [potts-2005] [roberts-2012] [thomas-2026]
+[ippolito-kiss-williams-2022] [potts-2005] [roberts-2012]
 
 Formalisation of [ippolito-kiss-williams-2025] "Discourse only"
 (WCCFL 41 proceedings, pp. 222–231). Discourse *only* is a clausal
@@ -43,7 +44,7 @@ use a single house-buying frame:
 
 - Italian   *solo che*  ("La casa è bella, solo che è costosissima")
 - Russian   *tol'ko*    ("Dom krasivyj, tol'ko ochen' dorogoj")
-- Hungarian *csak*      ("Szép a ház, csak nagyon drága")
+- Hungarian *csak*      ("Szép ez a ház, csak nagyon drága")
 - Mandarin  *zhǐshì*    ("Zhège fángzi hěn piàoliang, zhǐshì yǒudiǎr guì")
 
 ## Paper ex. (16) — the proposal
@@ -51,8 +52,10 @@ use a single house-buying frame:
 `⟦S [only S']⟧^c` is defined only if `S` and `S'` are relevant to the
 QUD in `c` and `∃ α ∈ QUD, S` supports `α`. If defined:
 
-* **At-issue**: highlighted content of `S` intersected with that of `S'`
-  — every world where both are informatively true.
+* **At-issue**: the *pair* `⟨⟦S⟧^c, ⟦S'⟧^c⟩` — the pair structure is
+  what lets interrogative arguments in at all. `atIssueContent` here is
+  the derived declarative-case notion (intersection of informative
+  content), not the pair itself.
 * **CI**: `∃ α ∈ QUD` such that
   (i)  every true partial answer `p ∉ QUD` is positive evidence for `α`;
   (ii) `S'` does not support `α`.
@@ -62,7 +65,9 @@ to match the paper's `p ∉ QUD` exclusion; the "p supports α" gloss is
 implemented as `IsPositiveEvidence p α` rather than fully-doxastic
 `Supports`, since established partial answers are presumed already
 common-ground. A doxastic-gated variant is straightforward but
-deferred.
+deferred. `ciContent` also conjoins "`S` supports `α`" — a strengthening
+of the paper's two-clause CI that identifies the CI's `α` with the
+answer whose existence the definedness condition requires.
 
 ## Architectural derivations
 
@@ -71,9 +76,11 @@ deferred.
   believe any answer, so `dox ⊆ q` fails for all `q ∈ alt S`, so
   `Supports` fails. This falls out from `Supports.of_no_belief_fails`
   in `IppolitoKissWilliams2022.lean` — no clause-type filter required.
-* **Biased / rhetorical questions can be left-args** (§5.2 ex. (20)–(21)).
-  These have a believed answer (`dox ⊆ q` for some `q`), so the doxastic
-  condition is satisfied.
+* **Rhetorically-interpreted questions can be left-args** (§5.2
+  ex. (20)–(21)). These commit the speaker to an answer (`dox ⊆ q` for
+  some `q`), so the doxastic condition is satisfied. Bias alone is not
+  enough: the genuinely biased but still info-seeking high-negation
+  question in ex. (22) is infelicitous as `S`.
 
 ## Layout
 
@@ -81,10 +88,19 @@ deferred.
   `agree`, `disagree`) and architectural theorems
   (`interrogative_blocks_support`, `weak_non_agreement`,
   `disagree_imp_ciContent_of_empty_partials`).
+* **Account** (`ClauseType`, `Interp`, `Particle`, `predictLeft`,
+  `Particle.predictPrejacent`): the §7 typology as a derived prediction
+  function — doxastic derivation in left position, per-particle
+  morphosyntactic parameters over the prejacent.
+* **Examples**: the paper's stimuli as `LinguisticExample`s, imported
+  from the generated `Data.Examples.IppolitoKissWilliams2025` module
+  (source of truth: `Data/Examples/IppolitoKissWilliams2025.json`).
 * **Part I**: end-to-end derivation chains for the house-buying
   scenario (§7), instantiating the substrate on a concrete 8-world
-  model and connecting the predictions to the cross-linguistic data
-  in the sibling `Data.lean`.
+  model; these discharge the account's clauses.
+* **Matrix** (`Row`, `matrixRows`, `misses`): the fit theorem
+  `misses_eq` — the account's only miss across all 40 rows is the
+  `%`-marked Mandarin (32a).
 -/
 
 namespace IppolitoKissWilliams2025
@@ -133,9 +149,12 @@ namespace Sentence
 
 variable {W : Type*}
 
-/-- At-issue content of `S only S'`: every world where both
-    `S` and `S'` are informatively true.
-    [ippolito-kiss-williams-2025] ex. (16). -/
+/-- Informational at-issue content of `S only S'`: every world where
+    both `S` and `S'` are informatively true.
+
+    [ippolito-kiss-williams-2025] ex. (16) defines the at-issue
+    denotation as the *pair* `⟨⟦S⟧^c, ⟦S'⟧^c⟩`; the intersection here is
+    the derived declarative-case notion, not the paper's pair. -/
 def atIssueContent (d : Sentence W) : Set W :=
   d.sDen.info ∩ d.s'Den.info
 
@@ -154,8 +173,13 @@ def isDefined (d : Sentence W) (ctx : Context W) : Prop :=
     ex. (16): `∃ α ∈ QUD` such that
     (i)  every true partial answer `p` **with `p ∉ QUD`** is positive
          evidence for `α`;
-    (ii) `S` itself supports `α`;
-    (iii) `S'` does **not** support `α`.
+    (ii) `S'` does **not** support `α`.
+
+    The middle conjunct below — `S` itself supports `α` — is *not* in
+    the paper's (16); it is the formaliser's strengthening identifying
+    the CI's `α` with the answer whose existence the definedness
+    condition already requires. The verbatim version is `ciContentPaper`;
+    `ciContent_imp_ciContentPaper` records the entailment.
 
     The `p ∉ alt ctx.qud` exclusion in (i) matches the paper's
     `p ∉ QUD` restriction. The "p supports α" gloss is read here as
@@ -171,6 +195,23 @@ def ciContent (d : Sentence W) (ctx : Context W) : Prop :=
       IsPositiveEvidence p α ctx.prior) ∧
     Supports ctx.dox d.sDen α ctx.prior ∧
     ¬ Supports ctx.dox d.s'Den α ctx.prior
+
+/-- The paper's ex. (16) CI verbatim: two clauses — (i) every established
+    true partial answer outside the QUD is positive evidence for `α`;
+    (ii) `S'` does not support `α`. `ciContent` strengthens this with
+    "`S` supports `α`"; `ciContent_imp_ciContentPaper` records the
+    entailment. -/
+def ciContentPaper (d : Sentence W) (ctx : Context W) : Prop :=
+  ∃ α ∈ alt ctx.qud,
+    (∀ p ∈ ctx.partialAnswers, p ∉ alt ctx.qud →
+      IsPositiveEvidence p α ctx.prior) ∧
+    ¬ Supports ctx.dox d.s'Den α ctx.prior
+
+/-- The formaliser's strengthened CI entails the paper's (16) CI. -/
+theorem ciContent_imp_ciContentPaper {d : Sentence W} {ctx : Context W}
+    (h : d.ciContent ctx) : d.ciContentPaper ctx :=
+  let ⟨α, hα, hi, _, hii⟩ := h
+  ⟨α, hα, hi, hii⟩
 
 /-- `S` and `S'` **agree** on the QUD: there is some `α ∈ QUD`
     that both `Supports`. Lifted from `IKW2022.Agree`.
@@ -202,6 +243,17 @@ theorem interrogative_blocks_support {W : Type*} {dox : Set W}
     (h : ∀ q ∈ alt S, ¬ (dox ⊆ q)) :
     ¬ Supports dox S α μ :=
   Supports.of_no_belief_fails h
+
+/-- [ippolito-kiss-williams-2025] §5.2, definedness half: when the
+    speaker believes no alternative of `S` (an info-seeking
+    interpretation), the third definedness clause — `S` supports some
+    QUD answer — fails, so the discourse-*only* sentence is undefined.
+    Discharges `predictLeft .infoSeeking`. -/
+theorem infoSeeking_S_undefined {W : Type*} (sent : Sentence W)
+    (ctx : Context W) (h : ∀ q ∈ alt sent.sDen, ¬ (ctx.dox ⊆ q)) :
+    ¬ sent.isDefined ctx := by
+  rintro ⟨-, -, α, -, hSupp⟩
+  exact Supports.of_no_belief_fails h hSupp
 
 /-- [ippolito-kiss-williams-2025] §5.2: an info-seeking
     interrogative `S'` trivially satisfies the CI's condition (ii) —
@@ -248,14 +300,152 @@ theorem disagree_imp_ciContent_of_empty_partials {W : Type*}
   · intro hS'
     exact hNotAgree ⟨α, hMem, hS, hS'⟩
 
+/-! ### The account: clause types, particles, predictions
+
+The §7 typology as a *derived prediction function* rather than a table.
+`predictLeft` is the doxastic derivation, uniform across languages;
+`Particle.predictPrejacent` is the per-particle morphosyntactic overlay.
+Each clause carries a discharge theorem or a flagged stipulation:
+
+* `predictLeft .infoSeeking` ← `infoSeeking_S_undefined`
+* `predictLeft .committed` ← `core_isDefined`/`core_ciContent`
+* prejacent default `.acceptable` ← `interrogative_s'_ci_satisfied`
+  (info-seeking S'), `rhetorical_s'_negative_route` (rhetorical S'),
+  `core_ciContent` (declarative; imperatives via [kaufmann-2012]'s
+  modalized proposition and exclamatives via their propositional
+  component, per §5.3)
+* the wired-in-complementizer clause ← `wiredIn_blocks_iff`
+  (1 bit → 10 cells: *solo che* (33b–e), *csakhogy* (31)-alternatives)
+* the Mandarin exclamative clause ← stipulated; §7 records the
+  generalization and leaves its mechanism to future research -/
+
+/-- Clause types of the paper's example paradigms — verbatim the
+    parenthetical labels of (5) and (30)–(33). -/
+inductive ClauseType where
+  | declarative
+  | canonicalPolarQ
+  | highNegPolarQ
+  | canonicalWhQ
+  | negRhetoricalWhQ
+  | posRhetoricalWhQ
+  | imperative
+  | exclamative
+  deriving DecidableEq, Repr
+
+/-- §5.2's analytical cut: left-argument felicity tracks *interpretation*
+    (speaker-committed vs info-seeking), not clause type — (21) and (22)
+    are the same clause type with opposite judgments. -/
+inductive Interp where
+  | committed
+  | infoSeeking
+  deriving DecidableEq, Repr
+
+/-- Default interpretation by clause type. High-negation polar questions
+    are genuinely ambiguous (rhetorical (21) vs biased-info-seeking (22)),
+    so rows of that type carry an explicit `interpretation` feature;
+    rhetorical wh-questions commit the speaker to an answer, and
+    imperatives/exclamatives carry speaker-committed propositional
+    content (§5.3). -/
+def ClauseType.defaultInterp : ClauseType → Interp
+  | .canonicalPolarQ | .highNegPolarQ | .canonicalWhQ => .infoSeeking
+  | _ => .committed
+
+/-- A discourse-*only* particle with the two morphosyntactic parameters
+    the §7 typology turns on. -/
+structure Particle where
+  /-- Surface form. -/
+  form : String
+  /-- Glottocode of the particle's language. -/
+  language : Data.Examples.Glottocode
+  /-- §7: obligatorily cooccurs with a wired-in declarative
+      complementizer, blocking all non-declarative prejacents. -/
+  wiredInComplementizer : Bool
+  /-- Residual stipulation: blocks exclamative prejacents (§7, mechanism
+      left to future research). -/
+  blocksExclamativePrejacent : Bool
+  deriving DecidableEq, Repr
+
+/-- Italian *solo che*: wired-in declarative complementizer *che* (§7). -/
+def soloChe : Particle :=
+  { form := "solo che", language := "ital1282"
+    wiredInComplementizer := true, blocksExclamativePrejacent := false }
+
+/-- Russian *tol'ko*: all clause types as prejacent (30). -/
+def tolko : Particle :=
+  { form := "tol'ko", language := "russ1263"
+    wiredInComplementizer := false, blocksExclamativePrejacent := false }
+
+/-- Hungarian *csak*: all clause types as prejacent (31). -/
+def csak : Particle :=
+  { form := "csak", language := "hung1274"
+    wiredInComplementizer := false, blocksExclamativePrejacent := false }
+
+/-- Hungarian *csakhogy*: wired-in complementizer *hogy* (§7;
+    "unacceptable in any of the example sentences in (31)"). -/
+def csakhogy : Particle :=
+  { form := "csakhogy", language := "hung1274"
+    wiredInComplementizer := true, blocksExclamativePrejacent := false }
+
+/-- Mandarin *zhǐshì*: blocks exclamative prejacents (32f). -/
+def zhishi : Particle :=
+  { form := "zhǐshì", language := "mand1415"
+    wiredInComplementizer := false, blocksExclamativePrejacent := true }
+
+/-- English discourse *only* (§1–§2). -/
+def englishOnly : Particle :=
+  { form := "only", language := "stan1293"
+    wiredInComplementizer := false, blocksExclamativePrejacent := false }
+
+/-- Predicted judgment for a clause in left (S) position: info-seeking
+    interpretations fail the doxastic condition of `Supports`
+    (`infoSeeking_S_undefined`) — a `#`-type pragmatic failure;
+    committed interpretations satisfy it (`core_isDefined`). Uniform
+    across languages and clause types. -/
+def predictLeft : Interp → Features.Judgment
+  | .committed => .acceptable
+  | .infoSeeking => .unacceptable
+
+/-- Predicted judgment for a clause type in prejacent (S′) position:
+    semantically every clause type is fine (`interrogative_s'_ci_satisfied`,
+    `rhetorical_s'_negative_route`, `core_ciContent`); the particle's
+    morphosyntax overlays a `*`-type block when a wired-in declarative
+    complementizer is present, and the stipulated `#`-type Mandarin
+    exclamative block. -/
+def Particle.predictPrejacent (p : Particle) (ct : ClauseType) :
+    Features.Judgment :=
+  if p.wiredInComplementizer ∧ ct ≠ .declarative then .ungrammatical
+  else if p.blocksExclamativePrejacent ∧ ct = .exclamative then .unacceptable
+  else .acceptable
+
+/-- The wired-in-complementizer parameter blocks exactly the
+    non-declarative prejacents: one bit predicts the *solo che* (33b–e)
+    and *csakhogy* ((31)-alternatives) star cells. -/
+theorem wiredIn_blocks_iff {p : Particle} (hp : p.wiredInComplementizer = true)
+    (ct : ClauseType) :
+    p.predictPrejacent ct = .ungrammatical ↔ ct ≠ .declarative := by
+  rcases eq_or_ne ct .declarative with h | h
+  · subst h
+    simp [Particle.predictPrejacent]
+  · simp [Particle.predictPrejacent, hp, h]
+
+/-! ## Empirical data
+
+The paper's stimuli — English distribution (§1–§2, §5.2) and the §7
+cross-linguistic clause-type paradigms (Italian *solo che*, Russian
+*tol'ko*, Hungarian *csak*, Mandarin *zhǐshì*) — live as typed
+`LinguisticExample`s in `Data.Examples.IppolitoKissWilliams2025`
+(imported above; generated from the paper's JSON). `paperFeatures`
+carries the paper's own clause-type labels, the tested argument
+position, the particle, and (for the ambiguous high-negation rows) the
+interpretation. The *csakhogy* variants of (31) live in the
+`alternatives` slots. -/
+
 /-! ## Part I: End-to-End Derivation Chains
 
 Concrete instantiations on a 8-world model of the house-buying
 scenario ([ippolito-kiss-williams-2025] §7). Connects the
-substrate predictions to the empirical data in the sibling `Data.lean`
-under this study's subdirectory. -/
-
-open IppolitoKissWilliams2025.Data
+substrate predictions to the empirical data in the `Examples`
+block above. -/
 
 /-! ### § 1: World Type and Propositions
 
@@ -437,7 +627,6 @@ private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2
 private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
   simp only [buy, Set.mem_setOf_eq,
-             show ((⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
@@ -451,7 +640,6 @@ private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
 private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
   simp only [buy, Set.mem_compl_iff, Set.mem_setOf_eq,
-             show ((⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
@@ -482,15 +670,13 @@ private lemma prior_beautiful_inter_buy :
                      (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
                      (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
-             if_true, if_false]
+             if_false]
   ennreal_arith
 
 private lemma prior_beautiful_inter_buy_compl :
     prior.probOfSet (beautiful ∩ buyᶜ) = (3 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
   simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
-             show ¬ ((⟨0, by decide⟩ : Fin 8).val < 4 ∧
-                     ¬ (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ((⟨1, by decide⟩ : Fin 8).val < 4 ∧
                    ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ((⟨2, by decide⟩ : Fin 8).val < 4 ∧
@@ -505,29 +691,19 @@ private lemma prior_beautiful_inter_buy_compl :
                      ¬ (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
                      ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
-             if_true, if_false]
+             if_false]
   ennreal_arith
 
 private lemma prior_expensive_inter_buy :
     prior.probOfSet (expensive ∩ buy) = 0 := by
   rw [prior_probOfSet_expand]
   simp only [expensive, buy, Set.mem_inter_iff, Set.mem_setOf_eq,
-             show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
-             show ¬ (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     (⟨2, by decide⟩ : Fin 8).val = 0) by decide,
-             show ¬ (((⟨3, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     (⟨3, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ (((⟨4, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      (⟨4, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ (((⟨5, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
-             show ¬ (((⟨6, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
-             show ¬ (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
              if_false]
   ennreal_arith
 
@@ -535,8 +711,6 @@ private lemma prior_expensive_inter_buy_compl :
     prior.probOfSet (expensive ∩ buyᶜ) = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
   simp only [expensive, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
-             show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
-                     ¬ (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
@@ -551,7 +725,7 @@ private lemma prior_expensive_inter_buy_compl :
                    ¬ (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
              show (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                    ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
-             if_true, if_false]
+             if_false]
   ennreal_arith
 
 /-! #### Bayesian-evidence facts and `Supports` witnesses -/
@@ -758,33 +932,18 @@ theorem core_disagree : declSentence.disagree coreCtx := by
     · rw [Set.mem_singleton_iff] at hα; subst hα
       exact sBeautiful_not_supports_buy_compl_doxBE hSα
 
-/-- Per-datum: predicts felicitous for the core declarative-declarative
-    examples (Italian 29a, Russian 29b, Hungarian 29c, Mandarin 29d,
-    English 2). -/
-theorem core_predicted :
-    declSentence.isDefined coreCtx ∧
-    declSentence.ciContent coreCtx ∧
-    italian_house.felicitous = true := ⟨core_isDefined, core_ciContent, rfl⟩
-
-theorem russian_house_predicted :
-    declSentence.isDefined coreCtx ∧
-    declSentence.ciContent coreCtx ∧
-    russian_house.felicitous = true := ⟨core_isDefined, core_ciContent, rfl⟩
-
-theorem hungarian_house_predicted :
-    declSentence.isDefined coreCtx ∧
-    declSentence.ciContent coreCtx ∧
-    hungarian_house.felicitous = true := ⟨core_isDefined, core_ciContent, rfl⟩
-
-theorem mandarin_house_predicted :
-    declSentence.isDefined coreCtx ∧
-    declSentence.ciContent coreCtx ∧
-    mandarin_house.felicitous = true := ⟨core_isDefined, core_ciContent, rfl⟩
-
-theorem english_house_predicted :
-    declSentence.isDefined coreCtx ∧
-    declSentence.ciContent coreCtx ∧
-    english_house.felicitous = true := ⟨core_isDefined, core_ciContent, rfl⟩
+/-- The rhetorical-S′ route to CI clause (ii) ((30d)/(31d)/(32d)): under
+    the committed state `doxBE` the speaker *believes* an answer of `S'`
+    (`doxBE ⊆ expensive`), so `Supports.of_no_belief_fails` is
+    unavailable; instead `S'` supports the negative answer `buyᶜ` while
+    failing to support `buy` — disagreement, not silence. Same 8-world
+    model as the declarative core, since denotations are uniform. -/
+theorem rhetorical_s'_negative_route :
+    Supports doxBE s'Expensive buyᶜ prior ∧
+    ¬ Supports doxBE s'Expensive buy prior ∧
+    declSentence.ciContent coreCtx :=
+  ⟨sExpensive_supports_buy_compl_doxBE, sExpensive_not_supports_buy_doxBE,
+   core_ciContent⟩
 
 end CoreDerivation
 
@@ -872,23 +1031,6 @@ theorem polarQ_ciContent : polarQSentence.ciContent clauseTypeCtx := by
     · rw [Set.mem_singleton_iff] at hq; subst hq
       exact doxB_not_subset_renovated_compl
 
-/-- Per-datum: predicts felicitous for the polar-Q-as-S' examples
-    (Russian 30a, Hungarian 31a, Mandarin 32a). -/
-theorem russian_polarQ_predicted :
-    polarQSentence.isDefined clauseTypeCtx ∧
-    polarQSentence.ciContent clauseTypeCtx ∧
-    russian_s'_polarQ.felicitous = true := ⟨polarQ_isDefined, polarQ_ciContent, rfl⟩
-
-theorem hungarian_polarQ_predicted :
-    polarQSentence.isDefined clauseTypeCtx ∧
-    polarQSentence.ciContent clauseTypeCtx ∧
-    hungarian_s'_polarQ.felicitous = true := ⟨polarQ_isDefined, polarQ_ciContent, rfl⟩
-
-theorem mandarin_polarQ_predicted :
-    polarQSentence.isDefined clauseTypeCtx ∧
-    polarQSentence.ciContent clauseTypeCtx ∧
-    mandarin_s'_polarQ.felicitous = true := ⟨polarQ_isDefined, polarQ_ciContent, rfl⟩
-
 end PolarQDerivation
 
 /-! ### § 8: Abstract theorem — interrogative S' trivially satisfies CI
@@ -899,10 +1041,13 @@ condition (ii) is satisfied: S' trivially fails to support any answer
 because `Supports` requires the doxastic condition (`dox ⊆ q`),
 which fails when the speaker doesn't believe any alternative of S'.
 
-This generalises the polar-Q derivation to all interrogative S'
-examples (30a-d, 31a-d, 32a-d): the specific question content
-doesn't matter for the CI — only that the speaker doesn't know the
-answer. -/
+This generalises the polar-Q derivation to the info-seeking
+interrogative S' examples (30a–c, 31a–c, 32a–c): the specific question
+content doesn't matter for the CI — only that the speaker doesn't know
+the answer. It does *not* cover the rhetorical (d) examples: there the
+speaker believes an answer (`dox ⊆ q`), so `hNoBelief` fails; their CI
+route is via S' supporting the *negative* answer rather than nothing,
+which is not formalised here. -/
 theorem interrogative_s'_ci_satisfied {W' : Type*}
     (sent : Sentence W') (ctx : Context W')
     (hSsupports : ∃ α ∈ alt ctx.qud,
@@ -916,5 +1061,140 @@ theorem interrogative_s'_ci_satisfied {W' : Type*}
     rw [hPartial] at hp
     simp at hp
   · exact Supports.of_no_belief_fails hNoBelief
+
+/-! ### The clause-type matrix
+
+The account/fit statement: `Row.predicted` (the derived account) compared
+to `Row.observed` (the paper's judgment) over every example row; the miss
+locus `misses` is the primitive, and `misses_eq` is the fit theorem. -/
+
+/-- Tested argument position. -/
+inductive Position where
+  | left
+  | right
+  deriving DecidableEq, Repr
+
+/-- A typed matrix row lifted from a `LinguisticExample`. -/
+structure Row where
+  /-- The originating example's id (csakhogy alternatives get a suffix). -/
+  id : String
+  particle : Particle
+  clauseType : ClauseType
+  interp : Interp
+  position : Position
+  /-- The paper's judgment. -/
+  observed : Features.Judgment
+  deriving DecidableEq, Repr
+
+private def parseClauseType : String → Option ClauseType
+  | "declarative" => some .declarative
+  | "canonicalPolarQ" => some .canonicalPolarQ
+  | "highNegPolarQ" => some .highNegPolarQ
+  | "canonicalWhQ" => some .canonicalWhQ
+  | "negRhetoricalWhQ" => some .negRhetoricalWhQ
+  | "posRhetoricalWhQ" => some .posRhetoricalWhQ
+  | "imperative" => some .imperative
+  | "exclamative" => some .exclamative
+  | _ => none
+
+private def parsePosition : String → Option Position
+  | "left" => some .left
+  | "right" => some .right
+  | _ => none
+
+private def parseParticle : String → Option Particle
+  | "solo che" => some soloChe
+  | "tol'ko" => some tolko
+  | "csak" => some csak
+  | "csakhogy" => some csakhogy
+  | "zhǐshì" => some zhishi
+  | "only" => some englishOnly
+  | _ => none
+
+private def parseInterp : String → Option Interp
+  | "committed" => some .committed
+  | "infoSeeking" => some .infoSeeking
+  | _ => none
+
+/-- Lift a `LinguisticExample` to a matrix `Row`, reading the
+    `clauseType`/`position`/`particle` (and, where present,
+    `interpretation`) `paperFeatures` keys. -/
+def ofExample (e : Data.Examples.LinguisticExample) : Option Row := do
+  let ct ← e.paperFeatures.lookup "clauseType" >>= parseClauseType
+  let pos ← e.paperFeatures.lookup "position" >>= parsePosition
+  let p ← e.paperFeatures.lookup "particle" >>= parseParticle
+  let interp := ((e.paperFeatures.lookup "interpretation") >>= parseInterp).getD
+    ct.defaultInterp
+  return { id := e.id, particle := p, clauseType := ct, interp := interp,
+           position := pos, observed := e.judgment }
+
+/-- The *csakhogy* rows: the (31) `alternatives` are the csak → csakhogy
+    substitutions (§7: "unacceptable in any of the example sentences in
+    (31)"), inheriting the host row's clause type and position. The only
+    `alternatives` in this paper's JSON are these, so the particle is
+    fixed to `csakhogy`. -/
+def ofAlternatives (e : Data.Examples.LinguisticExample) : List Row :=
+  match ofExample e with
+  | some host =>
+      e.alternatives.map (λ alt =>
+        { host with id := host.id ++ "_csakhogy", particle := csakhogy,
+                    observed := alt.2 })
+  | none => []
+
+/-- All matrix rows: one per example, plus the csakhogy alternatives. -/
+def matrixRows : List Row :=
+  Examples.all.filterMap ofExample ++ (Examples.all.map ofAlternatives).flatten
+
+/-- Adapter totality: every example yields a matrix row. -/
+theorem ofExample_total : ∀ e ∈ Examples.all, (ofExample e).isSome := by decide
+
+/-- Predicted judgment for a row: the doxastic derivation in left
+    position, the particle's morphosyntactic overlay over the prejacent. -/
+def Row.predicted (r : Row) : Features.Judgment :=
+  match r.position with
+  | .left => predictLeft r.interp
+  | .right => r.particle.predictPrejacent r.clauseType
+
+/-- The `%`-marked Mandarin (32a) row — the account's one miss. -/
+def mandarinPolarQRow : Row :=
+  { id := "ippolitokisswilliams2025_ex32a", particle := zhishi,
+    clauseType := .canonicalPolarQ, interp := .infoSeeking,
+    position := .right, observed := .marginal }
+
+/-- Rows where the account's prediction differs from the paper's
+    judgment. -/
+def misses : List Row := matrixRows.filter (λ r => r.predicted ≠ r.observed)
+
+/-- THE matrix theorem: across all 40 rows (34 examples + 6 csakhogy
+    alternatives) the account's only miss is the `%`-marked Mandarin
+    (32a). A drift sentry: any judgment flip or new mis-predicted row
+    falsifies it. -/
+theorem misses_eq : misses = [mandarinPolarQRow] := by decide
+
+/-- Direction of the one miss: the account *over*-predicts (32a) — full
+    felicity where the paper reports speaker variation, for which the
+    account has no mechanism. -/
+theorem mandarinPolarQ_overpredicted :
+    mandarinPolarQRow.predicted = .acceptable ∧
+    mandarinPolarQRow.observed = .marginal := ⟨rfl, rfl⟩
+
+/-- Pointwise corollary of `misses_eq`. -/
+theorem predicted_eq_observed_iff :
+    ∀ r ∈ matrixRows, (r.predicted = r.observed ↔ r ≠ mandarinPolarQRow) := by
+  intro r hr
+  constructor
+  · rintro h rfl
+    exact absurd h (by decide)
+  · intro hne
+    by_contra h
+    have hmem : r ∈ misses := List.mem_filter.mpr ⟨hr, by simpa using h⟩
+    rw [misses_eq] at hmem
+    exact hne (List.mem_singleton.mp hmem)
+
+/-- `Set.EqOn` form, for mathlib-vocabulary interconnection. -/
+theorem predicted_eqOn :
+    Set.EqOn Row.predicted Row.observed
+      {r | r ∈ matrixRows ∧ r ≠ mandarinPolarQRow} :=
+  λ _ hr => (predicted_eq_observed_iff _ hr.1).mpr hr.2
 
 end IppolitoKissWilliams2025
