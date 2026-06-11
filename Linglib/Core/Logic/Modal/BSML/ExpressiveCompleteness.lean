@@ -6,10 +6,10 @@ import Linglib.Core.Logic.Modal.BSML.Bisimulation
 
 [anttila-2025] [aloni-anttila-yang-2024] [aloni-2022]
 
-[anttila-2025] Chapter 3 proves that BSML is **expressively complete** for
-the class of convex, union-closed, bounded-bisimulation-invariant modal team
-properties — solving the BSML expressive-power problem left open in
-[aloni-anttila-yang-2024]. In the `Team/Definability.lean` vocabulary this
+[anttila-2025] Chapter 3 (= [anttila-knudstorp-2025]) proves that BSML is
+**expressively complete** for the class of convex, union-closed,
+bounded-bisimulation-invariant modal team properties — solving the BSML
+expressive-power problem left open in [aloni-anttila-yang-2024]. In the `Team/Definability.lean` vocabulary this
 is `ExpressivelyCompleteFor (support M)` for the cell
 `convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M`.
 
