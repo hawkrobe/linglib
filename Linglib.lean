@@ -2178,6 +2178,7 @@ import Linglib.Syntax.ConstructionGrammar.GrammarDist
 import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
+import Linglib.Studies.KayMichaelis2019
 import Linglib.Studies.Dunn2025
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Studies.GoldbergJackendoff2004
