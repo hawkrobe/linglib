@@ -13,6 +13,10 @@ This is mathlib's `Preorder.lift` packaged with the witnessing
 projection and decidability of `≤`. It is the common pattern behind
 several constructions in linglib:
 
+- `Preorder.ofCriteria` (`Core/Order/OfCriteria.lean`) — the general
+  criteria-derived preorder; its `≤` is the pullback of `⊇` along the
+  satisfied-set map (`Preorder.ofCriteria_le_iff_subset`), without the
+  bundled decidability.
 - `Core.Order.SatisfactionOrdering α Criterion` — the projection is the
   satisfied criterion set, the target is `(Finset Criterion)ᵒᵈ` (or
   equivalently, the violated set with standard ⊆).

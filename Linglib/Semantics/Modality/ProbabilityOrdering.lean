@@ -61,6 +61,7 @@ lemma higher_prob_dominates {W : Type*} [Fintype W]
     {prob : ProbAssignment W} {w1 w2 wEval : W}
     (hOrd : prob w1 ≥ prob w2) :
     atLeastAsGoodAs ((probToOrdering prob) wEval) w1 w2 := by
+  rw [atLeastAsGoodAs_iff]
   intro p hp
   rw [probToOrdering, List.mem_map] at hp
   obtain ⟨v, _, rfl⟩ := hp

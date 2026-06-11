@@ -14,6 +14,7 @@ All types are polymorphic over the world type `W`. Propositions are
 
 import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Core.Order.Normality
+import Linglib.Core.Order.OfCriteria
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 
@@ -42,7 +43,17 @@ noncomputable def satisfiedPropositions (A : List (W → Prop)) (w : W) : List (
   A.filter (fun p => p w)
 
 /--
-Kratzer's ordering relation: w ≤_A z
+Kratzer's world ordering as a `Preorder` on worlds — the criteria-derived
+preorder (`Preorder.ofCriteria`) with the ordering source `A` as criteria
+set and truth-at-a-world as satisfaction. The induced order is `≤[A]`.
+Used by Phillips-Brown desire semantics and other consumers via
+`letI := kratzerPreorder A`.
+-/
+@[reducible] def kratzerPreorder (A : List (W → Prop)) : Preorder W :=
+  Preorder.ofCriteria (fun w p => p w) {p | p ∈ A}
+
+/--
+Kratzer's ordering relation: w ≤_A z — the `le` of `kratzerPreorder`.
 
 [kratzer-1981]: `w ≤_A z` iff every ideal proposition `p ∈ A` that
 holds at `z` also holds at `w`. Intuitively: `w` is at least as good as
@@ -53,10 +64,15 @@ UNVERIFIED page reference (p. 39 quoted in earlier version, not checked
 against the original).
 -/
 def atLeastAsGoodAs (A : List (W → Prop)) (w z : W) : Prop :=
-  ∀ p ∈ A, p z → p w
+  (kratzerPreorder A).le w z
 
 @[inherit_doc]
 notation:50 w " ≤[" A "] " z => atLeastAsGoodAs A w z
+
+/-- Unfolding lemma: the ordering in its pointwise form. Definitional. -/
+theorem atLeastAsGoodAs_iff (A : List (W → Prop)) (w z : W) :
+    (w ≤[A] z) ↔ ∀ p ∈ A, p z → p w :=
+  Iff.rfl
 
 /--
 Strict ordering: w <_A z iff w ≤_A z but not z ≤_A w.
@@ -72,32 +88,21 @@ notation:50 w " <[" A "] " z => strictlyBetter A w z
 /-- Reflexivity. -/
 theorem ordering_reflexive (A : List (W → Prop)) (w : W) :
     atLeastAsGoodAs A w w :=
-  fun _ _ hp => hp
+  (kratzerPreorder A).le_refl w
 
 /-- Transitivity. -/
 theorem ordering_transitive (A : List (W → Prop)) (u v w : W)
     (huv : atLeastAsGoodAs A u v)
     (hvw : atLeastAsGoodAs A v w) :
     atLeastAsGoodAs A u w :=
-  fun p hp hpw => huv p hp (hvw p hp hpw)
+  (kratzerPreorder A).le_trans u v w huv hvw
 
-/--
-Kratzer's world ordering as a `Preorder` on worlds.
-
-The induced order is `≤[A]`. Used by Phillips-Brown desire semantics
-and other consumers via `letI := kratzerPreorder A`.
--/
-@[reducible] def kratzerPreorder (A : List (W → Prop)) : Preorder W where
-  le := atLeastAsGoodAs A
-  le_refl := ordering_reflexive A
-  le_trans u v w := ordering_transitive A u v w
-
-/-- Kratzer's ordering as a `NormalityOrder`: connects to default reasoning
-    infrastructure (`optimal`, `refine`, `respects`, CR1–CR4). -/
-def kratzerNormality (A : List (W → Prop)) : Core.Order.NormalityOrder W where
-  le := atLeastAsGoodAs A
-  le_refl := ordering_reflexive A
-  le_trans u v w := ordering_transitive A u v w
+/-- Kratzer's ordering as a `NormalityOrder` — definitionally
+    `NormalityOrder.fromProps` (the same `Preorder.ofCriteria` order
+    repackaged); connects to default reasoning infrastructure
+    (`optimal`, `refine`, `respects`, CR1–CR4). -/
+def kratzerNormality (A : List (W → Prop)) : Core.Order.NormalityOrder W :=
+  Core.Order.NormalityOrder.fromProps A
 
 /-- Equivalence under the ordering. -/
 def orderingEquiv (A : List (W → Prop)) (w z : W) : Prop :=

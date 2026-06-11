@@ -8,18 +8,16 @@ import Mathlib.Algebra.Order.Monoid.Defs
 import Mathlib.Algebra.Tropical.Basic
 
 /-!
-# Lexicographic and subset-inclusion orders on `Nat`-valued profiles
+# Lexicographic order on `Nat`-valued profiles
 
-Two comparison relations on lists / functions to `ℕ`:
-
-1. **Lexicographic** (`LexLE`): yields a total preorder on `List Nat`
-   and a `LinearOrder` on the fixed-length `Lex (Fin n → Nat)`.
-2. **Subset inclusion** (`SatLE`): yields a preorder where
-   incomparable elements are possible.
+Lexicographic comparison on lists / functions to `ℕ` (`LexLE`): a total
+preorder on `List Nat` and a `LinearOrder` on the fixed-length
+`Lex (Fin n → Nat)`. (The subset-inclusion order on satisfied criteria
+lives at `Preorder.ofCriteria` in `Core/Order/OfCriteria.lean`.)
 
 ## Architecture
 
-`LexLE`, `SatLE`, `LexLT` are decidable `Prop` relations defined by
+`LexLE`, `LexLT` are decidable `Prop` relations defined by
 structural recursion, delegating to standard combinators
 (`And.decidable`, `Or.decidable`). `LexMinProblem C n` packages a finite
 candidate set with a `Fin n → Nat`-valued score, exposing the
@@ -73,20 +71,6 @@ def LexLE : List Nat → List Nat → Prop
   | a :: as, [] => a = 0 ∧ LexLE as []
   | a :: as, b :: bs => a < b ∨ (a = b ∧ LexLE as bs)
 
-/-- Subset-inclusion ≤ on `List Nat`.
-
-    `SatLE a b` holds iff every coordinate at which `b` is `0`, `a` is also `0`. A
-    **preorder** (reflexive, transitive) but not a partial order on
-    `List Nat` — non-zero values are interchangeable (e.g., `SatLE [1] [2]`
-    and `SatLE [2] [1]` both hold). On binary `{0,1}` profiles it becomes
-    a partial order. Unlike `LexLE`, `SatLE` is not total. See
-    [kratzer-1991] for the linguistic application (ordering of worlds
-    relative to a premise set). -/
-def SatLE : List Nat → List Nat → Prop
-  | [], _ => True
-  | a :: as, [] => a = 0 ∧ SatLE as []
-  | a :: as, b :: bs => (b ≠ 0 ∨ a = 0) ∧ SatLE as bs
-
 /-- Strict lexicographic <. -/
 def LexLT (a b : List Nat) : Prop := LexLE a b ∧ ¬ LexLE b a
 
@@ -103,15 +87,6 @@ instance instDecidableLexLE : (a b : List Nat) → Decidable (LexLE a b)
     have : Decidable (LexLE as bs) := instDecidableLexLE as bs
     inferInstanceAs (Decidable (a < b ∨ (a = b ∧ LexLE as bs)))
 
-instance instDecidableSatLE : (a b : List Nat) → Decidable (SatLE a b)
-  | [], b => isTrue (by cases b <;> trivial)
-  | a :: as, [] =>
-    have : Decidable (SatLE as []) := instDecidableSatLE as []
-    inferInstanceAs (Decidable (a = 0 ∧ SatLE as []))
-  | a :: as, b :: bs =>
-    have : Decidable (SatLE as bs) := instDecidableSatLE as bs
-    inferInstanceAs (Decidable ((b ≠ 0 ∨ a = 0) ∧ SatLE as bs))
-
 instance instDecidableLexLT (a b : List Nat) : Decidable (LexLT a b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -124,13 +99,7 @@ theorem lexLE_refl : (a : List Nat) → LexLE a a
   | [] => trivial
   | _ :: xs => .inr ⟨rfl, lexLE_refl xs⟩
 
-/-- Satisfaction ≤ is reflexive. -/
-theorem satLE_refl : (a : List Nat) → SatLE a a
-  | [] => trivial
-  | x :: xs => ⟨if h : x = 0 then .inr h else .inl h, satLE_refl xs⟩
-
-/-- Lexicographic ≤ is total for equal-length profiles. Key difference
-    from `SatLE`. -/
+/-- Lexicographic ≤ is total for equal-length profiles. -/
 theorem lexLE_total (a b : List Nat) (h : a.length = b.length) :
     LexLE a b ∨ LexLE b a := by
   induction a generalizing b with
@@ -150,15 +119,6 @@ theorem lexLE_total (a b : List Nat) (h : a.length = b.length) :
           exact (ih ys hlen).elim
             (fun h => Or.inl (.inr ⟨rfl, h⟩))
             (fun h => Or.inr (.inr ⟨rfl, h⟩))
-
-/-- `SatLE` is NOT total: profiles can be incomparable when each is
-    nonzero where the other is zero, and vice versa. -/
-theorem satLE_not_total : ¬∀ (a b : List Nat), SatLE a b ∨ SatLE b a := by
-  intro h
-  have := h [0, 1] [1, 0]
-  cases this with
-  | inl h => exact absurd h (by decide)
-  | inr h => exact absurd h (by decide)
 
 -- ============================================================================
 -- § 3b: LexLE Structural Lemmas
@@ -292,70 +252,6 @@ theorem exists_lexLE_minimum {α : Type} (xs : List α) (hne : xs ≠ [])
           cases hy with
           | head => exact hma
           | tail _ h => exact hm_min y h⟩
-
--- ============================================================================
--- § 4e: SatLE Structural Lemmas
--- ============================================================================
-
-/-- `SatLE [] b` holds for any `b`: the empty profile vacuously
-    satisfies the inclusion condition. -/
-theorem satLE_nil (b : List Nat) : SatLE [] b := by
-  cases b <;> trivial
-
-/-- Characterization of `SatLE (x :: xs) []`: all entries must be zero. -/
-theorem satLE_cons_nil_iff (x : Nat) (xs : List Nat) :
-    SatLE (x :: xs) [] ↔ x = 0 ∧ SatLE xs [] :=
-  Iff.rfl
-
-/-- Characterization of `SatLE (x :: xs) (y :: ys)`: if `y` is satisfied
-    (zero) then `x` must also be satisfied, and the tails must be ordered. -/
-theorem satLE_cons_cons_iff (x y : Nat) (xs ys : List Nat) :
-    SatLE (x :: xs) (y :: ys) ↔ (y ≠ 0 ∨ x = 0) ∧ SatLE xs ys :=
-  Iff.rfl
-
--- ============================================================================
--- § 4f: SatLE Transitivity — Preorder
--- ============================================================================
-
-/-- If `SatLE a []` (all entries are zero), then `SatLE a c`
-    for any `c`. The all-zeros profile is the minimum under `SatLE`. -/
-theorem satLE_of_nil_right : ∀ (a : List Nat),
-    SatLE a [] → ∀ (c : List Nat), SatLE a c
-  | [], _, c => satLE_nil c
-  | _ :: xs, ⟨rfl, hxs⟩, c => by
-    cases c with
-    | nil => exact ⟨rfl, hxs⟩
-    | cons _ zs => exact ⟨.inr rfl, satLE_of_nil_right xs hxs zs⟩
-
-/-- Satisfaction ≤ is transitive. Together with `satLE_refl`, this
-    makes `SatLE` a **preorder**. Unlike `LexLE`,
-    `SatLE` is NOT antisymmetric on `List Nat` (see `satLE_not_antisymm`)
-    — it IS antisymmetric on binary {0,1} profiles, where it becomes a
-    partial order. -/
-theorem satLE_trans : ∀ (a b c : List Nat),
-    SatLE a b → SatLE b c → SatLE a c
-  | [], _, c, _, _ => satLE_nil c
-  | _ :: _, [], c, hab, _ => satLE_of_nil_right _ hab c
-  | _ :: xs, _ :: ys, [], ⟨hab1, hab2⟩, ⟨rfl, hbc2⟩ => by
-    refine ⟨?_, satLE_trans xs ys [] hab2 hbc2⟩
-    rcases hab1 with h | h
-    · exact absurd rfl h
-    · exact h
-  | _ :: xs, _ :: ys, _ :: zs, ⟨hab1, hab2⟩, ⟨hbc1, hbc2⟩ => by
-    refine ⟨?_, satLE_trans xs ys zs hab2 hbc2⟩
-    rcases hbc1 with hz | rfl
-    · exact .inl hz
-    · rcases hab1 with h | h
-      · exact absurd rfl h
-      · exact .inr h
-
-/-- `SatLE` is **not antisymmetric** on `List Nat`: non-zero values
-    are interchangeable since `SatLE` only distinguishes 0 from ≥1. -/
-theorem satLE_not_antisymm :
-    ¬∀ (a b : List Nat), SatLE a b → SatLE b a → a = b := by
-  intro h
-  exact absurd (h [1] [2] (by decide) (by decide)) (by decide)
-
 
 -- ============================================================================
 -- § 10: LexNatList — Variable-Length Lexicographic Preorder
