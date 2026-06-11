@@ -619,6 +619,24 @@ def resultativeInheritance : List InheritanceLink :=
   [ResultativeSubconstruction.causativeProperty,
    .causativePath, .noncausativeProperty, .noncausativePath].map (·.inheritanceLink)
 
+/-- The [goldberg-jackendoff-2004] resultative family as a constructicon:
+the parent construction plus its four derived subconstructions and
+inheritance links. -/
+def resultativeNetwork : Constructicon :=
+  { constructions :=
+      resultative.construction :: resultativeFamily.map (·.construction)
+  , links := resultativeInheritance }
+
+/-- Every derived link resolves to a member construction. -/
+theorem resultativeNetwork_wellFormed : resultativeNetwork.WellFormed := by
+  decide
+
+/-- The links determine each subconstruction's mother: the resultative. -/
+theorem subconstruction_parent (sc : ResultativeSubconstruction) :
+    resultativeNetwork.parentsOf sc.toConstruction.construction.name =
+      [resultative.construction] := by
+  cases sc <;> decide
+
 /-- All inheritance links point to the same parent. -/
 theorem all_inherit_from_resultative :
     resultativeInheritance.all (·.parent == "Resultative") = true := by

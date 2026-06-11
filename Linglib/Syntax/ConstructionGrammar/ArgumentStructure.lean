@@ -1,4 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
@@ -66,9 +67,10 @@ def ditransitive : ArgStructureConstruction :=
   , hasHead := by decide }
 
 /-- Caused-motion construction: [Subj V Obj Obl].
-"X CAUSES Y to MOVE to Z" (e.g., "She sneezed the napkin off the table").
-Contributes motion + causation: verbs that lexicalize neither (like *sneeze*)
-acquire both from the construction ([goldberg-1995] p. 152–179). -/
+"X CAUSES Y to MOVE Z", Z a directional ("Pat sneezed the napkin off the
+table", p. 3). Contributes motion + causation: verbs that lexicalize
+neither (like *sneeze*) acquire both from the construction
+([goldberg-1995] p. 152–179). -/
 def causedMotion : ArgStructureConstruction :=
   { construction :=
       { name := "Caused-motion"
@@ -77,7 +79,7 @@ def causedMotion : ArgStructureConstruction :=
           , { filler := .open_ .VERB, role := some "predicate", isHead := true }
           , { filler := .open_ .NOUN, role := some "theme" }
           , { filler := .open_ .ADP, role := some "goal" } ]
-      , meaning := "X CAUSES Y to MOVE to Z" }
+      , meaning := "X CAUSES Y to MOVE Z" }
   , hasHead := by decide
   , semanticContribution :=
       { changeOfState := false, contact := false, motion := true, causation := true } }
@@ -236,7 +238,12 @@ ditransitive's syntactic form [Subj V Obj Obj₂] but differs in the
 semantic relation between the event participants. -/
 
 /-- The ditransitive polysemy family: six senses sharing one argument
-frame ([goldberg-1995] pp. 75–77). -/
+frame ([goldberg-1995] pp. 75–77; verb classes per Figure 2.2, p. 38).
+The extension labels are the formalizer's — Goldberg numbers the senses
+and calls the Intended extension "the benefactive construction" (Figure
+3.2). Her warrant for the shared frame is exactly what `PolysemyFamily`
+enforces definitionally: "The syntactic specifications of the central
+sense are inherited by the extensions" (p. 75). -/
 def ditransitiveFamily : PolysemyFamily :=
   { name := "Ditransitive"
   , slots := ditransitive.slots
@@ -264,15 +271,16 @@ def ditransitivePolysemy : List InheritanceLink :=
   ditransitiveFamily.polysemyLinks
 
 /-- Subpart link (I_S) from caused-motion to intransitive motion
-([goldberg-1995] p. 78): the intransitive motion construction is a
-proper subpart of the caused-motion construction. -/
+([goldberg-1995] p. 78, link annotated "I_S: cause"): the intransitive
+motion construction is a proper subpart of the caused-motion construction.
+The cause role is *absent* in the subpart, not overridden — I_S relates a
+proper subpart, so the override slot stays empty. -/
 def causedMotionSubpart : InheritanceLink :=
   { parent := "Caused-motion"
   , child := "Intransitive-motion"
   , mode := .normal
   , linkType := some .subpart
-  , sharedProperties := ["MOVE predicate", "theme role", "path/goal role"]
-  , overriddenProperties := ["no external causer"] }
+  , sharedProperties := ["MOVE predicate", "theme role", "path/goal role"] }
 
 /-- Metaphorical extension link (I_M) from caused-motion to resultative
 ([goldberg-1995] pp. 81–84): the resultative is a metaphorical
@@ -284,7 +292,40 @@ def causedMotionToResultative : InheritanceLink :=
   , mode := .normal
   , linkType := some .metaphorical
   , sharedProperties := ["X CAUSES Y to undergo change", "causal structure"]
-  , overriddenProperties := ["motion → change of state", "location → property"] }
+  , overriddenProperties := ["motion → change of state", "location → state"] }
+
+/-! ## The book's network as a constructicon
+
+[goldberg-1995] draws no single master figure; the network below assembles
+the per-link analyses under the book's own framing of "the entire
+collection of constructions as forming a lattice, with individual
+constructions related by specific types of asymmetric normal mode
+inheritance links" (pp. 99–100): the ditransitive polysemy family
+(pp. 75–77), the caused-motion → intransitive-motion subpart link (p. 78),
+and the caused-motion → resultative metaphorical link (§3.4.1, the
+"Change of State as Change of Location" metaphor). The conative appears in
+the book's construction inventory (p. 4) but participates in no
+inheritance link — it is a node without edges, and linking it would be
+invention. -/
+
+/-- The ch. 2–3 constructional network. -/
+def goldberg1995Network : Constructicon :=
+  { constructions :=
+      ditransitiveFamily.allConstructions.map (·.construction) ++
+        [ causedMotion.construction, intransitiveMotion.construction
+        , resultative.construction, conative.construction ]
+  , links :=
+      ditransitivePolysemy ++ [causedMotionSubpart, causedMotionToResultative] }
+
+/-- Every link of the network resolves to a member construction. -/
+theorem goldberg1995Network_wellFormed : goldberg1995Network.WellFormed := by
+  decide
+
+/-- The links, not hand-listed parents, determine the resultative's mother:
+the caused-motion construction, via the metaphorical link. -/
+theorem resultative_parent :
+    goldberg1995Network.parentsOf "Resultative" = [causedMotion.construction] := by
+  decide
 
 /-- Every link a polysemy family derives is an I_P link — a fact about the
 construction, not about one table. -/

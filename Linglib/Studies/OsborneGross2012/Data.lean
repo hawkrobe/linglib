@@ -212,45 +212,18 @@ def theMoreTheFatter : DepTree :=
              ⟨7, 6, .nsubj⟩, ⟨7, 5, .xcomp⟩, ⟨5, 4, .det⟩]
     rootIdx := 7 }
 
-end OsborneGross2012
+/-! ## The paper's claims
 
-/-! ## Bridge content (merged from DG_OsborneGross2012Bridge.lean) -/
-
-/-!
-# Bridge: Osborne & Groß (2012) DG Catenae → CxG Constructions
-[fillmore-kay-oconnor-1988] [osborne-gross-2012]
-
-Connects the dependency trees from `Studies/OsborneGross2012/Data.lean`
-to the catena theory from `Catena.lean` and the CxG types from
-`ConstructionGrammar.Basic` and `FillmoreKayOConnor1988`.
-
-## Verified Claims
-
-**Claim 1** (p. 176): Every construction type — idioms, LVCs, verb chains,
-displacement, comparative correlatives — corresponds to a catena. All 10
-example trees are verified. All non-trivial constructions are non-constituent
-catenae, demonstrating that the catena concept is needed.
-
-**Claim 2** (p. 176): When a more fixed construct (idiom, LVC) is broken up
-by a less fixed one (NP), **both** form catenae. Verified for all 7
-V-det-N examples and the CC's two clauses.
-
-## CxG ↔ DG Bridge
-
-Four `CatenalCx` instances covering the full specificity spectrum
-(lexicallySpecified → partiallyOpen → fullyAbstract), connecting CxG
-`Construction` descriptions to DG catena witnesses.
-
-FKO1988 `IdiomType` classification is bridged to catena verification:
-substantive decoding idioms ("kick the bucket") and formal idioms
-(the comparative correlative) are both catenae.
-
--/
-
-namespace OsborneGross2012.Bridge
+**Claim 1** (p. 176): every construction type — idioms, LVCs, verb chains,
+displacement, comparative correlatives — corresponds to a catena; the
+non-trivial ones are non-constituent catenae, demonstrating that the
+catena concept is needed. **Claim 2** (p. 176): when a more fixed
+construct (idiom, LVC) is broken up by a less fixed one (NP), *both* form
+catenae. `CatenalCx` instances span the specificity spectrum, and
+[fillmore-kay-oconnor-1988]'s idiom typology classifies the catena-verified
+constructions. -/
 
 open DepGrammar DepGrammar.Catena ConstructionGrammar
-open OsborneGross2012
 open DepGrammar.CatenalConstruction
 
 -- ============================================================================
@@ -566,4 +539,4 @@ theorem cc_matches_fko1988 :
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
-end OsborneGross2012.Bridge
+end OsborneGross2012

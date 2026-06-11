@@ -75,7 +75,7 @@ instance of this pattern. -/
 
 /-- WXDY's typed form, from its owning study file. -/
 private def wxdyForm : TypedForm String :=
-  ConstructionGrammar.Studies.KayFillmore1999.wxdyConstruction.form
+  KayFillmore1999.wxdyConstruction.form
 
 /-- Coinstantiation construction ([kay-fillmore-1999], Figure 13, §4.2).
 
@@ -93,7 +93,7 @@ def coinstantiationForm : TypedForm String :=
 theorem wxdy_abstraction :
     abstractionLevel wxdyForm = 2 / 5 := by
   norm_num [abstractionLevel, wxdyForm,
-    ConstructionGrammar.Studies.KayFillmore1999.wxdyConstruction,
+    KayFillmore1999.wxdyConstruction,
     List.filter, SlotFiller.isOpen]
 
 /-- WXDY is partiallyOpen: mix of open, headed, and fixed slots. -/
