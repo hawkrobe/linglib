@@ -2400,6 +2400,7 @@ import Linglib.Semantics.Entailment.Intolerance
 import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.PositionProfile
 import Linglib.Semantics.Entailment.StrawsonSoundness
+import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Studies.Montague1973
 import Linglib.Semantics.Entailment.PresuppositionLicensing
