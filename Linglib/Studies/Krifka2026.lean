@@ -44,6 +44,7 @@ open Semantics.Kinds.NMP (Property Kind IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
 open Semantics.Dynamic.Core (ConceptDRef DRefVal)
 open Semantics.Dynamic.Core.DynProp (Update Condition test dneg eq_of_test)
+open scoped Semantics.Dynamic.Core.DynProp
 
 /-! ### Kind pronoun and kind-operator selection -/
 

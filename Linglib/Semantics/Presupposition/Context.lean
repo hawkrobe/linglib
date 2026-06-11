@@ -84,10 +84,6 @@ abbrev accommodationConsistent (c : ContextSet W) (presup : Set W) : Prop :=
 -- § 2. Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-- Projection and filtering are complementary. -/
-theorem projects_iff_not_satisfied (c : ContextSet W) (p : PartialProp W) :
-    presupProjects c p ↔ ¬ presupSatisfied c p := Iff.rfl
-
 /-- Satisfaction implies satisfiability (when the context is non-empty). -/
 theorem satisfied_implies_satisfiable (c : ContextSet W) (p : PartialProp W)
     (hne : c.Nonempty) (hsat : presupSatisfied c p) : presupSatisfiable c p := by

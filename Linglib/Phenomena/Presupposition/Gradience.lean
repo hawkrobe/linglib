@@ -3,7 +3,7 @@ import Linglib.Semantics.Presupposition.Basic
 /-!
 # Gradient Projection in Inference Judgments
 [degen-tonhauser-2021] [degen-tonhauser-2022]
-[tonhauser-beaver-roberts-simons-2018]
+[tonhauser-beaver-degen-2018]
 
 Theory-neutral empirical observations about gradient patterns in
 presupposition projection and inference judgments.

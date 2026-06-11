@@ -1,39 +1,23 @@
-/-
-# Core Dynamic Semantics Infrastructure
-
-Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics theories.
-
-## Key Abstractions
-
-1. InfoState: set of possibilities (what we know)
-2. CCP: Context Change Potential (how meaning changes state)
-3. Galois connection: support ↔ content duality
-
-## Mathematical Structures
-
-- `InfoState` forms a `CompleteLattice` (from Set)
-- `CCP` forms a `Monoid` (composition + identity)
-- Support and Content form a Galois connection
-
-## Relationship to `DynProp`
-
-The relational type `Update S = S → S → Prop` ([groenendijk-stokhof-1991],
-[muskens-1996]) is the primary dynamic semantic type. `CCP S` is the
-derived set-transformer view, connected via `lift`/`lower`:
-
-- `lift R σ = { j | ∃ i ∈ σ, R i j }` (relational image)
-- `lower φ i j = j ∈ φ {i}` (singleton test)
-
-The `IsDistributive` CCPs — those that process elements independently —
-are exactly the image of `lift`. Non-distributive operations like
-`CCP.negTest` and `CCP.might` are genuinely new: they test the *whole*
-input state rather than filtering per-element.
--/
-
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Core.Logic.Assignment
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
+
+/-!
+# Core Dynamic Semantics Infrastructure
+
+`InfoStateOf P` (sets of possibilities) and `CCP P` (context change
+potentials, the set-transformer view of dynamic meaning), shared by the
+PLA, DRT, DPL, and CDRT formalizations.
+
+The relational `Update S` ([groenendijk-stokhof-1991], [muskens-1996]) of
+`Connectives/Defs.lean` is the primary dynamic type; `CCP` connects to it
+via `lift R σ = { j | ∃ i ∈ σ, R i j }` and `lower φ i j = j ∈ φ {i}`,
+which form a Galois connection. The `IsDistributive` CCPs — those that
+process elements independently — are exactly the image of `lift`;
+non-distributive operations (`CCP.negTest`, `CCP.might`, `CCP.must`) test
+the *whole* input state rather than filtering per-element.
+-/
 
 namespace Semantics.Dynamic.Core
 
@@ -81,8 +65,11 @@ theorem seq_assoc (u v w : CCP P) : (u ;; v) ;; w = u ;; (v ;; w) := rfl
 theorem id_seq (u : CCP P) : id ;; u = u := rfl
 theorem seq_id (u : CCP P) : u ;; id = u := rfl
 
-/-- CCPs form a monoid under sequential composition -/
-instance : Monoid (CCP P) where
+/-- CCPs form a monoid under sequential composition. Scoped because
+`CCP P` is an abbreviation for `Set P → Set P`: a global instance would
+attach `*`/`1` to a bare function type for every importer. Activate with
+`open scoped Semantics.Dynamic.Core.CCP`. -/
+scoped instance : Monoid (CCP P) where
   mul := seq
   one := id
   mul_assoc _ _ _ := rfl
@@ -91,9 +78,6 @@ instance : Monoid (CCP P) where
 
 /-- seq_absurd: anything followed by absurd is absurd -/
 theorem seq_absurd (u : CCP P) : u ;; absurd = absurd := rfl
-
-/-- Dynamic conjunction: alias for sequential composition -/
-def conj (u v : CCP P) : CCP P := seq u v
 
 /--
 Dynamic negation: complement within the input state.
@@ -525,14 +509,6 @@ theorem novelAt_iff_disagree (s : InfoState W E) (x : Nat) (hs : s.consistent) :
 def worlds (s : InfoState W E) : Set W :=
   { w | ∃ p ∈ s, p.world = w }
 
-/-- Filter state by a world predicate. -/
-def filterWorlds (s : InfoState W E) (pred : W → Bool) : InfoState W E :=
-  { p ∈ s | pred p.world }
-
-/-- Filter state by an assignment predicate. -/
-def filterAssign (s : InfoState W E) (pred : (Nat → E) → Bool) : InfoState W E :=
-  { p ∈ s | pred p.assignment }
-
 end InfoState
 
 
@@ -570,7 +546,7 @@ def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
   ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
     ∀ x, s.definedAt x → p.assignment x = p'.assignment x
 
-notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
+scoped notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
 
 namespace InfoState
 
@@ -590,7 +566,7 @@ theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
 def supports (s : InfoState W E) (φ : W → Bool) : Prop :=
   ∀ p ∈ s, φ p.world
 
-notation:50 s " ⊫ " φ => InfoState.supports s φ
+scoped notation:50 s " ⊫ " φ => InfoState.supports s φ
 
 /-- Support is preserved by subset. -/
 theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')

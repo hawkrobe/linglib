@@ -28,7 +28,7 @@ abbrev State (W : Type*) := Set W
 /--
 Update function: how a sentence modifies a state.
 -/
-def Update (W : Type*) := State W → State W
+abbrev Update (W : Type*) := State W → State W
 
 /--
 Propositional update: eliminate worlds where φ fails.

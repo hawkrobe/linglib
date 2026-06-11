@@ -432,14 +432,14 @@ theorem flex_truth_table :
     flexDisj.eval W.presidentConducts = .true ∧
     flexDisj.eval W.presidentDoesnt = .false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [flexDisj, PartialProp.orFlex, PartialProp.eval, kingOpensParl, presConductsCeremony,
+    simp [flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval, kingOpensParl, presConductsCeremony,
       hasKing, hasPresident]
 
 /-- Flexible accommodation is undefined at the discriminating world
 `noHeadOfState`. -/
 theorem flex_undefined_at_no_head :
     flexDisj.eval W.noHeadOfState = .indet := by
-  simp [flexDisj, PartialProp.orFlex, PartialProp.eval, kingOpensParl, presConductsCeremony,
+  simp [flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval, kingOpensParl, presConductsCeremony,
     hasKing, hasPresident]
 
 /-- (2b): `flexDisj` is false at `kingDoesnt` (king present but not opening). -/
@@ -451,7 +451,7 @@ theorem flex_can_be_false : flexDisj.eval W.kingDoesnt = .false := flex_truth_ta
 [yagi-2025] Definition 8 (after [zimmermann-2000]): each
 disjunct must contribute a "live possibility" — there is `w ∈ s` with
 `{w}[φ] = {w}` AND `w ∈ s[φ ∨ ψ]`. The substrate
-`PartialProp.genuineness p q s disj` parameterises on the disjunction
+`PartialProp.genuineness disj p q s` parameterises on the disjunction
 connective `disj` whose update we test against; the simpler
 singleton-survival check is now `PartialProp.liveness`. Under `orFlex`,
 `liveness ⇒ genuineness` (`liveness_implies_genuineness_orFlex`), so
@@ -461,8 +461,8 @@ discharging genuineness reduces to discharging liveness. -/
 two-element witness state `{kingOpens, presConducts}`: each disjunct's
 witness world survives both its own update and the joint orFlex update. -/
 theorem flex_genuineness :
-    PartialProp.genuineness kingOpensParl presConductsCeremony
-      ⟨[W.kingOpens, W.presidentConducts], by simp⟩ flexDisj := by
+    PartialProp.genuineness PartialProp.orFlex kingOpensParl presConductsCeremony
+      ⟨[W.kingOpens, W.presidentConducts], by simp⟩ := by
   apply PartialProp.liveness_implies_genuineness_orFlex
   exact ⟨⟨W.kingOpens, by simp, trivial, rfl⟩,
          ⟨W.presidentConducts, by simp, trivial, rfl⟩⟩
@@ -471,16 +471,16 @@ theorem flex_genuineness :
 /-! ### Substrate observation: orFlex = orBelnap
 
 NOT a Yagi claim — [belnap-1970] is not in his references.
-This is an observation `Semantics/Presupposition/Basic.lean` already
-makes (`orFlex_eq_orBelnap`) and that
-`Studies/Geurts2005.lean` extends to a three-way
-identity with [geurts-2005]'s modal-disjunction view. We instantiate
-the substrate identity at the Buganda case for clarity. -/
+In the substrate, `orFlex` is *definitionally* `orBelnap` (an abbrev in
+`Semantics/Presupposition/Basic.lean`), and
+`Studies/Geurts2005.lean` extends the identity three ways with
+[geurts-2005]'s modal-disjunction view. We instantiate it at the
+Buganda case for clarity. -/
 
 /-- Substrate identity at the Buganda case: `flexDisj = orBelnap`. -/
 theorem flexDisj_eq_orBelnap :
     flexDisj = PartialProp.orBelnap kingOpensParl presConductsCeremony :=
-  PartialProp.orFlex_eq_orBelnap _ _
+  rfl
 
 
 /-! ### Negation interaction ([yagi-2025] §3.2 final paragraphs)
@@ -516,7 +516,7 @@ theorem neg_flex_truth_table :
     negFlexDisj.eval W.presidentConducts = .false ∧
     negFlexDisj.eval W.presidentDoesnt = .true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [negFlexDisj, PartialProp.neg, flexDisj, PartialProp.orFlex, PartialProp.eval,
+    simp [negFlexDisj, PartialProp.neg, flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval,
       kingOpensParl, presConductsCeremony, hasKing, hasPresident]
 
 
@@ -699,10 +699,10 @@ theorem orFlex_satisfies_both :
 
 /-- The substrate-canonical orFlex / orBelnap / Geurts three-way
 identity, instantiated at the Buganda case. The substrate-side identity
-is `Semantics.Presupposition.PartialProp.orFlex_eq_orBelnap` and
-`Geurts2005.fromPartialProp_cell_iff_orBelnap`. -/
+is definitional (`orFlex` is an abbrev for `orBelnap`); the Geurts side
+is `Geurts2005.fromPartialProp_cell_iff_orBelnap`. -/
 theorem orFlex_eq_orBelnap_at_buganda :
     PartialProp.orFlex (W := W) = PartialProp.orBelnap :=
-  funext₂ PartialProp.orFlex_eq_orBelnap
+  rfl
 
 end Yagi2025

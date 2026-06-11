@@ -441,7 +441,6 @@ theorem heim_antecedent_projects {W : Type*}
 def symmetricLocalCtxAntecedent {W : Type*}
     (c : LocalCtx W) (consequent : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds consequent.assertion
-  , position := c.position
   , depth := c.depth }
 
 /-- When the consequent entails the occasion presupposition,

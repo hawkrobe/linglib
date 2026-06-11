@@ -20,9 +20,10 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
 * Connective families on `PartialProp W`: classical (`and`, `or`, `imp`, `xor`),
   filtering / Karttunen (`andFilter`, `impFilter`, `orFilter`), K&P
   symmetric disjunction (`orKPSymmetric`), positive-antecedent
-  disjunction (`orPositive`, a documented rival), Weak Kleene (`andWeak`,
-  `orWeak`), Belnap conditional assertion (`andBelnap`, `orBelnap`) and
-  flexible accommodation (`andFlex`, `orFlex`).
+  disjunction (`orPositive`, a documented rival), and Belnap conditional
+  assertion (`andBelnap`, `orBelnap`; the flexible-accommodation
+  `andFlex`/`orFlex` are definitionally the same operators). Classical
+  `and`/`or` are simultaneously Weak Kleene.
 * `belnapLift` — unifier showing Belnap = flexible accommodation for any
   binary `Prop` operator with an identity.
 * `strawsonEntails`, `strongEntails` — entailment relations: the
@@ -51,12 +52,12 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
 ## Todo
 
 * Add a genuine Strong Kleene `orStrong`/`andStrong` (where `T ∨ #` is
-  defined as `T`). The current `orWeak`/`andWeak` are Weak Kleene only.
+  defined as `T`). The classical `or`/`and` are Weak Kleene only.
 * `PartialProp W = PartialValue W Prop` unification: `PartialValue` already generalizes
   `PartialProp` at the type level; unifying would let the connective zoo lift
   to arbitrary at-issue carriers.
 * `evalLift : (Truth3 → Truth3 → Truth3) → (PartialProp W → PartialProp W → PartialProp W)`
-  would collapse `andWeak`, `orWeak`, `xor`, `andBelnap`, `orBelnap` into
+  would collapse `xor`, `andBelnap`, `orBelnap` into
   one definition each, with one bridge theorem instead of eight.
 -/
 
@@ -87,11 +88,6 @@ variable {W : Type*} {α : Type*}
 
 /-- A presupposed value is defined at w iff its presupposition holds. -/
 def defined (w : W) (pv : PartialValue W α) : Prop := pv.presup w
-
-/-- Create a presuppositionless value (always defined). -/
-def pure (a : W → α) : PartialValue W α where
-  presup := fun _ => True
-  value := a
 
 end PartialValue
 
@@ -128,18 +124,6 @@ def ofProp (p : W → Prop) : PartialProp W where
 def ofProp3 (p : Prop3 W) : PartialProp W where
   presup := fun w => p w ≠ .indet
   assertion := fun w => p w = .true
-
-/-- Convert a presupposed Bool value (`PartialValue W Bool`) to `PartialProp W`. -/
-def ofPartialValue (pv : PartialValue W Bool) : PartialProp W where
-  presup := pv.presup
-  assertion := fun w => pv.value w = true
-
-/-- Convert a `PartialProp` to a `PartialValue W Prop`. Computable — both the
-    source and target store presuppositions and content as `Prop`-valued
-    functions, so no `decide` plumbing is required. -/
-def toPartialValue (p : PartialProp W) : PartialValue W Prop where
-  presup := p.presup
-  value := p.assertion
 
 /-- Belnap's conditional assertion (A/B): assert B on condition A.
 
@@ -215,12 +199,15 @@ def truthOp (p : PartialProp W) : PartialProp W where
     fn 18: `⌜¬A⌝ ≡ ⌜~t(A)⌝`. -/
 def negExt (p : PartialProp W) : PartialProp W := neg (truthOp p)
 
-/-- Classical conjunction: both presuppositions must hold. -/
+/-- Classical conjunction: both presuppositions must hold. This is also
+    Weak Kleene conjunction ([kleene-1952]: indet is absorbing). -/
 def and (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w ∧ q.assertion w
 
-/-- Classical disjunction: both presuppositions must hold. -/
+/-- Classical disjunction: both presuppositions must hold. This is also
+    Weak Kleene disjunction ([kleene-1952]: indet is absorbing) — see
+    `eval_or`. -/
 def or (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w ∨ q.assertion w
@@ -308,47 +295,6 @@ def orKPSymmetric (p q : PartialProp W) : PartialProp W where
   presup := fun w => (q.assertion w ∨ p.presup w) ∧ (p.assertion w ∨ q.presup w)
   assertion := fun w => p.assertion w ∨ q.assertion w
 
-/-! ### Weak Kleene -/
-
-/-- Weak Kleene disjunction: undefined iff either operand undefined.
-    Both disjuncts must be defined for the disjunction to be defined.
-
-    [kleene-1952]: indet is absorbing for both ∧ and ∨. -/
-def orWeak (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∧ q.presup w
-  assertion := fun w => p.assertion w ∨ q.assertion w
-
-/-- Weak Kleene conjunction. -/
-def andWeak (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∧ q.presup w
-  assertion := fun w => p.assertion w ∧ q.assertion w
-
-/-! ### Flexible accommodation -/
-
-/-- Flexible accommodation disjunction.
-
-Each disjunct is evaluated only against worlds where its own presupposition
-holds. The overall presupposition is the disjunction of the individual
-presuppositions. This handles conflicting presuppositions (p ∧ q = ⊥):
-standard disjunction and filtering disjunction both fail for this case,
-but flexible accommodation correctly predicts presupposition p ∨ q and
-allows the disjunction to be false.
-
-Formally, this is the static counterpart of [yagi-2025]'s dynamic update.
--/
-def orFlex (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∨ q.presup w
-  assertion := fun w => (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
-
-/-- Flexible accommodation conjunction.
-
-Each conjunct is evaluated only against worlds where its own presupposition
-holds. Undefined conjuncts are vacuously true (the identity element for ∧),
-so they don't constrain the result. Dual of `orFlex`. -/
-def andFlex (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∨ q.presup w
-  assertion := fun w => (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
-
 /-! ### Belnap conditional assertion ([belnap-1970])
 
 Under the Belnap reading, `presup` is the **assertive** field — whether the
@@ -372,6 +318,23 @@ def orBelnap (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∨ q.presup w
   assertion := fun w =>
     (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
+
+/-! ### Flexible accommodation
+
+The flexible-accommodation connectives of the pragmatic tradition
+([geurts-2005], [aloni-2022], the static counterpart of [yagi-2025]'s
+dynamic update) are *definitionally* the Belnap connectives: each operand
+is evaluated only against worlds where its own presupposition holds, which
+handles conflicting presuppositions (where classical and filtering
+disjunction both fail). The two traditions differ in the *accommodation
+theory* surrounding the operator (default ⊤ vs unconditional assertive),
+not in the operator itself — see [yagi-2025] §3.2 for the distinction. -/
+
+/-- Flexible accommodation disjunction = `orBelnap`. -/
+abbrev orFlex : PartialProp W → PartialProp W → PartialProp W := orBelnap
+
+/-- Flexible accommodation conjunction = `andBelnap`. -/
+abbrev andFlex : PartialProp W → PartialProp W → PartialProp W := andBelnap
 
 /-- **Belnap lift**: uniform construction for conditional assertion connectives.
 
@@ -448,39 +411,28 @@ def liveness (p q : PartialProp W) (s : Finset W) : Prop :=
     "we end up negating both disjuncts".
 
     The `disj` argument is parametric so the substrate stays
-    framework-neutral; consumers supply the disjunction connective whose
-    update they wish to test against (orFlex / orBelnap / classical or /
-    Geurts modal split). -/
-def genuineness (p q : PartialProp W) (s : Finset W) (disj : PartialProp W) : Prop :=
-  (∃ w ∈ s, p.holds w ∧ disj.holds w) ∧
-  (∃ w ∈ s, q.holds w ∧ disj.holds w)
+    framework-neutral; consumers supply the disjunction *connective* whose
+    update they wish to test against (orFlex / classical or / Geurts
+    modal split). -/
+def genuineness (disj : PartialProp W → PartialProp W → PartialProp W)
+    (p q : PartialProp W) (s : Finset W) : Prop :=
+  (∃ w ∈ s, p.holds w ∧ (disj p q).holds w) ∧
+  (∃ w ∈ s, q.holds w ∧ (disj p q).holds w)
 
 /-- Under `orFlex`, `liveness` implies `genuineness`: each witness for
     `p.holds`/`q.holds` automatically survives the disjunction's update,
     because `(orFlex p q).holds w` reduces to `p.holds w ∨ q.holds w`. -/
 theorem liveness_implies_genuineness_orFlex (p q : PartialProp W) (s : Finset W)
-    (h : liveness p q s) : genuineness p q s (orFlex p q) := by
+    (h : liveness p q s) : genuineness orFlex p q s := by
   obtain ⟨⟨w, hw, hp⟩, ⟨w', hw', hq⟩⟩ := h
   refine ⟨⟨w, hw, hp, ?_⟩, ⟨w', hw', hq, ?_⟩⟩
   · exact ⟨Or.inl hp.1, Or.inl hp⟩
   · exact ⟨Or.inr hq.1, Or.inr hq⟩
 
-/-! ### Projections -/
-
-/-- Presupposition projection: get the presupposition as a `W → Prop`. -/
-def projectPresup (p : PartialProp W) : W → Prop := p.presup
-
-/-- Assertion extraction: get the assertion as a `W → Prop`. -/
-def projectAssertion (p : PartialProp W) : W → Prop := p.assertion
-
 /-! ### Negation theorems -/
 
 /-- Negation preserves presupposition. -/
 @[simp] theorem neg_presup (p : PartialProp W) : (neg p).presup = p.presup := rfl
-
-/-- Presupposition projects through negation (by construction). -/
-theorem neg_presup_eq (p : PartialProp W) (w : W) :
-    (neg p).presup w ↔ p.presup w := Iff.rfl
 
 /-- Double negation restores assertion (classical). -/
 theorem neg_neg_assertion (p : PartialProp W) (w : W) :
@@ -627,32 +579,7 @@ theorem orKPSymmetric_presup_entails_when_conflicting (p q : PartialProp W) (w :
     exact Or.inl (h2.resolve_right hq)
   · exact Or.inr (h1.resolve_right hp)
 
-/-! ### Flex / Belnap equality theorems -/
-
-/-- Flexible accommodation disjunction and Belnap disjunction agree
-    pointwise on truth conditions. They are developed in different
-    traditions ([belnap-1970] on conditional-assertion for restricted
-    quantification, [geurts-2005]/[aloni-2022] on pragmatic
-    accommodation with default tautology) and differ in the *accommodation
-    theory* that surrounds them (default ⊤ vs unconditional assertive),
-    but the binary operator's truth table is identical — see [yagi-2025]
-    §3.2 for the distinction between truth-conditional collapse and
-    accommodation-theoretic divergence. -/
-theorem orFlex_eq_orBelnap (p q : PartialProp W) : orFlex p q = orBelnap p q := rfl
-
-/-- Flexible accommodation conjunction and Belnap conjunction agree
-    pointwise (extends `orFlex_eq_orBelnap`). The same caveat applies:
-    truth-conditional collapse does not unify the two traditions'
-    accommodation theories. -/
-theorem andFlex_eq_andBelnap (p q : PartialProp W) : andFlex p q = andBelnap p q := rfl
-
-/-- `orWeak` agrees with `or` — they have the same definition for inclusive
-    disjunction, since both require both presuppositions. -/
-theorem orWeak_eq_or (p q : PartialProp W) : orWeak p q = or p q := rfl
-
-/-- `andWeak` agrees with `and` — they have the same definition for
-    conjunction, since both require both presuppositions. -/
-theorem andWeak_eq_and (p q : PartialProp W) : andWeak p q = and p q := rfl
+/-! ### Flex collapse theorems -/
 
 /-- orFlex reduces to standard disjunction when both presuppositions hold. -/
 theorem orFlex_eq_or_when_both_defined (p q : PartialProp W) (w : W)
@@ -684,12 +611,13 @@ theorem andFlex_presup_weaker (p q : PartialProp W) (w : W)
     (andFlex p q).presup w := by
   exact Or.inl h.1
 
-/-! ### Eval: Weak Kleene / Belnap / Flex -/
+/-! ### Eval: Weak Kleene / Belnap -/
 
-/-- `orWeak` evaluates to `Truth3.joinWeak` pointwise. -/
-theorem eval_orWeak (p q : PartialProp W) (w : W) :
-    (orWeak p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
-  simp only [eval, orWeak, Truth3.joinWeak]
+/-- `or` evaluates to `Truth3.joinWeak` pointwise (classical disjunction
+    is Weak Kleene). -/
+theorem eval_or (p q : PartialProp W) (w : W) :
+    (or p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
+  simp only [eval, or, Truth3.joinWeak]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb, Truth3.ofBool]
@@ -710,17 +638,6 @@ theorem eval_orBelnap (p q : PartialProp W) (w : W) :
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb, Truth3.ofBool]
 
-/-- `orFlex` evaluates to `Truth3.joinBelnap` pointwise.
-    Corollary of `orFlex_eq_orBelnap` + `eval_orBelnap`. -/
-theorem eval_orFlex (p q : PartialProp W) (w : W) :
-    (orFlex p q).eval w = Truth3.joinBelnap (p.eval w) (q.eval w) := by
-  rw [orFlex_eq_orBelnap]; exact eval_orBelnap p q w
-
-/-- `andFlex` evaluates to `Truth3.meetBelnap` pointwise. -/
-theorem eval_andFlex (p q : PartialProp W) (w : W) :
-    (andFlex p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
-  rw [andFlex_eq_andBelnap]; exact eval_andBelnap p q w
-
 /-! ### Belnap lift: unification -/
 
 /-- `orBelnap` is the Belnap lift of `(· ∨ ·)` with identity `False`. -/
@@ -736,18 +653,6 @@ theorem andBelnap_eq_belnapLift (p q : PartialProp W) :
   PartialProp.ext rfl (funext fun w => by
     simp only [andBelnap, belnapLift]
     by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq])
-
-/-- `orFlex` is the Belnap lift of `(· ∨ ·)` with identity `False`.
-    Corollary: flexible accommodation = conditional assertion = Belnap lift,
-    all three for any binary connective. -/
-theorem orFlex_eq_belnapLift (p q : PartialProp W) :
-    orFlex p q = belnapLift (· ∨ ·) False p q :=
-  orFlex_eq_orBelnap p q ▸ orBelnap_eq_belnapLift p q
-
-/-- `andFlex` is the Belnap lift of `(· ∧ ·)` with identity `True`. -/
-theorem andFlex_eq_belnapLift (p q : PartialProp W) :
-    andFlex p q = belnapLift (· ∧ ·) True p q :=
-  andFlex_eq_andBelnap p q ▸ andBelnap_eq_belnapLift p q
 
 /-- Belnap lift reduces to the classical operation when both presuppositions hold.
     The identity element is never used — both operands contribute directly. -/
@@ -792,12 +697,9 @@ theorem all_or_agree_when_both_defined (p q : PartialProp W) (w : W)
     ((or p q).assertion w ↔ (orFilter p q).assertion w) ∧
     ((or p q).assertion w ↔ (orPositive p q).assertion w) ∧
     ((or p q).assertion w ↔ (orKPSymmetric p q).assertion w) ∧
-    ((or p q).assertion w ↔ (orFlex p q).assertion w) ∧
-    ((or p q).assertion w ↔ (orBelnap p q).assertion w) ∧
-    ((or p q).assertion w ↔ (orWeak p q).assertion w) := by
-  refine ⟨Iff.rfl, Iff.rfl, Iff.rfl, ?_, ?_, Iff.rfl⟩
-  · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
-  · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
+    ((or p q).assertion w ↔ (orFlex p q).assertion w) := by
+  refine ⟨Iff.rfl, Iff.rfl, Iff.rfl, ?_⟩
+  exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
 
 /-- When both presuppositions hold at w, ALL conjunction connectives
     agree on assertion: classical = filtering = flex = Belnap.
@@ -805,13 +707,9 @@ theorem all_or_agree_when_both_defined (p q : PartialProp W) (w : W)
 theorem all_and_agree_when_both_defined (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
     ((and p q).assertion w ↔ (andFilter p q).assertion w) ∧
-    ((and p q).assertion w ↔ (andFlex p q).assertion w) ∧
-    ((and p q).assertion w ↔ (andBelnap p q).assertion w) ∧
-    ((and p q).assertion w ↔ (andWeak p q).assertion w) := by
-  refine ⟨?_, ?_, ?_, Iff.rfl⟩
-  · exact Iff.rfl
-  · exact (andFlex_eq_and_when_both_defined p q w hp hq).symm
-  · exact (andFlex_eq_and_when_both_defined p q w hp hq).symm
+    ((and p q).assertion w ↔ (andFlex p q).assertion w) := by
+  refine ⟨Iff.rfl, ?_⟩
+  exact (andFlex_eq_and_when_both_defined p q w hp hq).symm
 
 /-! ### Round-trip: `Prop3` ↔ `PartialProp` -/
 
@@ -835,9 +733,11 @@ theorem liveness_comm (p q : PartialProp W) (s : Finset W) :
 
 /-- Genuineness is symmetric whenever the supplied disjunction connective is
     symmetric in its operands. -/
-theorem genuineness_comm (p q : PartialProp W) (s : Finset W) (disj : PartialProp W) :
-    genuineness p q s disj ↔ genuineness q p s disj := by
-  simp only [genuineness, and_comm]
+theorem genuineness_comm (disj : PartialProp W → PartialProp W → PartialProp W)
+    (p q : PartialProp W) (s : Finset W) (hcomm : disj p q = disj q p) :
+    genuineness disj p q s ↔ genuineness disj q p s := by
+  unfold genuineness
+  rw [hcomm, and_comm]
 
 /-! ### Embedding combinators ([heim-1992], [karttunen-1973], [delpinal-bassi-sauerland-2024]) -/
 
