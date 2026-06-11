@@ -92,6 +92,16 @@ def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) :
     Index W Var Domain :=
   (i.world, i.assign.update x d)
 
+@[simp] theorem Assignment.update_self (g : Assignment Var Domain) (x : Var)
+    (d : Domain) : g.update x d x = some d :=
+  Function.update_self ..
+
+@[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var)
+    (d : Domain) : (i.update x d).world = i.world := rfl
+
+@[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var)
+    (d : Domain) : (i.update x d).assign = i.assign.update x d := rfl
+
 end Update
 
 /-! ### The world projection -/
@@ -359,7 +369,7 @@ variable [Fintype Domain]
 
 /-- Bilateral evaluation of QBSML formulas ([aloni-vanormondt-2023]
     Definition 4.9): `eval M true φ s` is support (`M, s ⊨ φ`),
-    `eval M false φ s` anti-support (`M, s ⊧ φ`). Negation flips the
+    `eval M false φ s` anti-support (`M, s ⫤ φ`). Negation flips the
     polarity, making double-negation elimination definitional. -/
 def eval (M : QBSMLModel W Domain Pred) :
     Bool → QBSMLFormula Var Pred → Finset (Index W Var Domain) → Prop

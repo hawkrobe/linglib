@@ -18,7 +18,7 @@ The framework's central facts (paper §5):
 | Fact | Statement |
 |------|-----------|
 | 3   | `[Pa ∨ Pb]⁺ ⊨_epi ◇Pa ∧ ◇Pb` (ignorance, R state-based) |
-| 4   | `[∀xPx ∨ Qx]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` (obviation; counterexample on paper Fig. 16) |
+| 4   | `[∀xPx ∨ Qx]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` (obviation; counterexample on paper Fig. 14) |
 | 5   | `card(s)=1 ⇒ M, s ⊨ [∀x(Px ∨ Qx)]⁺ ⇒ M, s ⊨ ∃xPx ∧ ∃xQx` (distribution under full information) |
 | 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution° on epistemic models) |
 | 7   | `[□(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (□-free choice) |
@@ -28,15 +28,22 @@ The framework's central facts (paper §5):
 
 ## What this file proves
 
-The QBSML substrate now carries the universal forms of Facts 8 and 10
+The QBSML substrate carries the universal forms of Facts 5, 6, 8, 9, 10
 (in `Studies/AloniVanOrmondt2023/FreeChoice.lean`). This file instantiates
-both at a concrete model — paralleling `Aloni2022.lean`'s pattern of
-substrate-theorem invocation:
+the unconditional ones at a concrete model — paralleling `Aloni2022.lean`'s
+pattern of substrate-theorem invocation:
 
-- **Fact 10 (negation)** at `avoModel` for `Pa, Pb`: one-line invocation
-  of `negationStrip_Q`.
-- **Fact 8 (narrow-scope ◇-FC)** at `avoModel` for `Pa, Pb`: one-line
-  invocation of `narrowScopeFC_Q`.
+- **Fact 10 (negation)** at `avoModel`: one-line invocation of
+  `negationStrip_Q`.
+- **Fact 8 (narrow-scope ◇-FC)** at `avoModel`: one-line invocation of
+  `narrowScopeFC_Q`.
+- **Fact 9 (universal FC)** at `avoModel`: one-line invocation of
+  `universalFC_Q`.
+- **Fact 5 (distribution at maximal information)** at `avoModel` on any
+  singleton state: one-line invocation of `distribution_Q`.
+
+Fact 6 (`distributionEpi_Q`) requires a state-based `R`, which `avoModel`'s
+universal access deliberately is not — it stays substrate-level here.
 
 ## Concrete model
 
@@ -50,13 +57,14 @@ substrate-theorem invocation:
 
 ## What is deferred
 
-- **Universal FC (Fact 9)**: needs `extendUniversal` lemmas tying the
-  `∀x◇(Px ∨ Qx)` premise to `narrowScopeFC_Q` per index. Substrate
-  add-on, not difficult, but a separate session.
-- **Distribution / Obviation (Facts 4, 5, 6)**: need first-order
-  quantifier interaction with frame conditions; the obviation
-  counter-example (paper Fig. 16) is empirically constructive but
-  requires a non-trivial state.
+- **Ignorance (Fact 3)**: needs individual constants in the term language
+  (see `Studies/AloniVanOrmondt2023/FreeChoice.lean`).
+- **Obviation (Fact 4)**: a non-entailment; the counter-example (paper
+  Fig. 14, a single-index state whose universal extension splits
+  horizontally) needs hand-proved non-support or a `Decidable` instance
+  for `eval`.
+- **□-FC (Fact 7)**: needs a primitive `□` or a bridge between the
+  derived-`□` enrichment and the paper's.
 - **`Decidable` instance for `QBSML.eval`**: would let `decide` close
   premise-supported checks on concrete teams (BSML has this; QBSML
   doesn't yet).
@@ -140,6 +148,12 @@ def negPxOrQx : QBSMLFormula QVar QPred := .neg PxOrQx
     `◇(Pa ∨ Pb)` schema. -/
 def possPxOrQx : QBSMLFormula QVar QPred := .poss PxOrQx
 
+/-- The universal-FC premise `∀x◇(Px ∨ Qx)` (paper's Fact 9 schema). -/
+def univPossPxOrQx : QBSMLFormula QVar QPred := .univ .x possPxOrQx
+
+/-- The distribution premise `∀x(Px ∨ Qx)` (paper's Facts 5–6 schema). -/
+def univPxOrQx : QBSMLFormula QVar QPred := .univ .x PxOrQx
+
 -- ============================================================================
 -- §4 Substrate facts: Px, Qx are NE-free
 -- ============================================================================
@@ -179,6 +193,30 @@ theorem fact8_narrowScopeFC
     (h : support avoModel possPxOrQx.enrich s) :
     support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
   narrowScopeFC_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
+
+-- ============================================================================
+-- §6b Fact 9 (Universal FC) and Fact 5 (Distribution)
+-- ============================================================================
+
+/-- **Fact 9 (Universal free choice)** at `avoModel`:
+
+    `[∀x◇(Px ∨ Qx)]⁺` entails `∀x◇Px ∧ ∀x◇Qx`. One-line invocation of
+    `universalFC_Q` — the [chemla-2009]-attested pattern. -/
+theorem fact9_universalFC
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (h : support avoModel univPossPxOrQx.enrich s) :
+    support avoModel (.univ .x (.poss Px)) s ∧
+    support avoModel (.univ .x (.poss Qx)) s :=
+  universalFC_Q avoModel Px Qx .x s Px_isNEFree Qx_isNEFree h
+
+/-- **Fact 5 (Distribution at maximal information)** at `avoModel`: on any
+    singleton state, `[∀x(Px ∨ Qx)]⁺` entails `∃xPx ∧ ∃xQx`. One-line
+    invocation of `distribution_Q`. -/
+theorem fact5_distribution
+    (i : Index PowerSet2World QVar FCAtom)
+    (h : support avoModel univPxOrQx.enrich {i}) :
+    support avoModel (.exi .x Px) {i} ∧ support avoModel (.exi .x Qx) {i} :=
+  distribution_Q avoModel Px Qx .x i Px_isNEFree Qx_isNEFree h
 
 -- ============================================================================
 -- §7 Frame condition: avoModel is indisputable on every state
