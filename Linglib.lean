@@ -2873,3 +2873,4 @@ import Linglib.Core.Logic.Modal.QBSML.FreeChoice
 import Linglib.Studies.Yan2023
 import Linglib.Studies.TonhauserEtAl2013
 import Linglib.Core.Order.OfCriteria
+import Linglib.Semantics.Dynamic.Connectives.PartialCCP
