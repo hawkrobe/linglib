@@ -40,7 +40,7 @@ namespace Semantics.Entailment.PresuppositionLicensing
 /-- A **Karttunen-Peters operator**: a function from an argument set to
     a presuppositional proposition (truth + presup). The presupposition
     may depend on the argument (per K&P 1979's heritage function). -/
-abbrev KPOperator (W : Type*) : Type _ := Set W → Semantics.Presupposition.PrProp W
+abbrev KPOperator (W : Type*) : Type _ := Set W → Semantics.Presupposition.PartialProp W
 
 /-- The truth-conditional projection of a K&P operator. -/
 def KPOperator.truth {W : Type*} (op : KPOperator W) : Set W → Set W :=

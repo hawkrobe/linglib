@@ -167,10 +167,10 @@ theorem expressive_rigid (t : TwoDimProp Unit) :
     (Outlook.ofTwoDimProp (O := Bool) t).IsRigid :=
   Outlook.ofTwoDimProp_isRigid t
 
-/-- The counterstance projects through negation (via `PrProp.neg`), and the CI tier projects
+/-- The counterstance projects through negation (via `PartialProp.neg`), and the CI tier projects
 at each outlook (via `TwoDimProp.neg`) — the dual presupposition/CI projection. -/
 theorem saltDenotation_projects (o : Bool) :
-    (Semantics.Presupposition.PrProp.neg saltDenotation.toPrProp).presup = saltDenotation.counterstance ∧
+    (Semantics.Presupposition.PartialProp.neg saltDenotation.toPartialProp).presup = saltDenotation.counterstance ∧
     (TwoDimProp.neg (saltDenotation.toTwoDimProp o)).ci = saltDenotation.evaluation o :=
   ⟨Outlook.counterstance_projects_through_neg _, Outlook.ci_projects_through_neg _ _⟩
 

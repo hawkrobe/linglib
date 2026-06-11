@@ -70,7 +70,7 @@ set_option autoImplicit false
 
 namespace Enguehard2024
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PhiFeatures
 
 -- ============================================================================
@@ -312,9 +312,9 @@ theorem mix_both_conceivable
 theorem conceivability_same_assertion {W : Type*}
     (witnessCard : W → Nat) (conceivable : W → Prop) (w : W) :
     (⟨fun _ => sgCardConceivable witnessCard conceivable,
-      fun _ => True⟩ : PrProp W).assertion w ↔
+      fun _ => True⟩ : PartialProp W).assertion w ↔
     (⟨fun _ => plCardConceivable witnessCard conceivable,
-      fun _ => True⟩ : PrProp W).assertion w :=
+      fun _ => True⟩ : PartialProp W).assertion w :=
   Iff.rfl
 
 -- ============================================================================
@@ -446,15 +446,15 @@ abstracts away from the actual entity.
 -/
 
 /-- The conceivability presupposition of a sg indefinite, packaged as
-    a `PrProp` that is constant across evaluation worlds. -/
+    a `PartialProp` that is constant across evaluation worlds. -/
 def sgIndefPresup {W : Type*} (witnessCard : W → Nat)
-    (conceivable : W → Prop) : PrProp W where
+    (conceivable : W → Prop) : PartialProp W where
   presup := fun _ => sgCardConceivable witnessCard conceivable
   assertion := fun _ => True
 
 /-- The conceivability presupposition of a pl indefinite. -/
 def plIndefPresup {W : Type*} (witnessCard : W → Nat)
-    (conceivable : W → Prop) : PrProp W where
+    (conceivable : W → Prop) : PartialProp W where
   presup := fun _ => plCardConceivable witnessCard conceivable
   assertion := fun _ => True
 
@@ -508,7 +508,7 @@ This explains the empirical asymmetry:
 ### Connection to pex infrastructure
 
 `pexIEII` (from `Presuppositional.lean`) produces a
-`PrProp` with:
+`PartialProp` with:
 - **assertion** = φ (the prejacent)
 - **presupposition** = ¬IE ∧ homog(II)
 

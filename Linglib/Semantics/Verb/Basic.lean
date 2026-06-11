@@ -80,7 +80,7 @@ Returns `some (cosSemantics t P)` if the verb has a CoS type,
 where `P` is the activity predicate (complement denotation).
 -/
 def Verb.getCoSSemantics {W : Type*} (v : Verb) (P : W → Prop) :
-    Option (PrProp W) :=
+    Option (PartialProp W) :=
   v.cosType.map λ t => cosSemantics t P
 
 /-- Does this verb presuppose its complement via factivity?

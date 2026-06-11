@@ -513,8 +513,8 @@ The argument chain:
 section UniquenessBridge
 
 open Semantics.Definiteness (modifierNecessary)
-open Semantics.Presupposition (PrProp)
-open Semantics.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+open Semantics.Presupposition (PartialProp)
+open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
 
@@ -542,11 +542,11 @@ def rcModifier : DiscEntity → Bool
 /-- Trivial scope for the worked example. -/
 def toldScope : DiscEntity → Bool := fun _ => true
 
-/-- File-local convenience: the uniqueness-based definite as a `PrProp Unit`,
+/-- File-local convenience: the uniqueness-based definite as a `PartialProp Unit`,
     built from the canonical `presupOfReferent` combinator with
     `russellIotaList` as the per-context referent selector. -/
 private def thePresup (domain : List DiscEntity) (restrictor scope : DiscEntity → Bool) :
-    PrProp Unit :=
+    PartialProp Unit :=
   presupOfReferent (fun _ : Unit => russellIotaList domain restrictor)
                    (fun e _ => scope e = true)
 

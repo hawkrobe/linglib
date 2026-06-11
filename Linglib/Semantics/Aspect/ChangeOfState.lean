@@ -15,7 +15,7 @@ Each CoS predicate has:
 1. A **presupposition** about the prior state
 2. An **assertion** about the result state
 
-This maps directly to `PrProp` from `Semantics.Presupposition`:
+This maps directly to `PartialProp` from `Semantics.Presupposition`:
 - `presup`: the prior state condition
 - `assertion`: the result state condition
 
@@ -148,21 +148,21 @@ def resultStateAssertion (t : CoSType) (P : W → Prop) : W → Prop :=
 /--
 Combined semantics of a CoS predicate as a presuppositional proposition.
 
-Given an activity predicate P, returns a `PrProp` with:
+Given an activity predicate P, returns a `PartialProp` with:
 - presupposition: the expected prior state
 - assertion: the expected result state
 
 This is the core semantic contribution: CoS predicates are presupposition
 triggers that constrain both the prior and current states.
 -/
-def cosSemantics (t : CoSType) (P : W → Prop) : PrProp W :=
+def cosSemantics (t : CoSType) (P : W → Prop) : PartialProp W :=
   { presup := priorStatePresup t P
   , assertion := resultStateAssertion t P }
 
 /--
 Semantics for a lexical entry applied to an activity predicate.
 -/
-def entrySemantics (e : CoSEntry) (P : W → Prop) : PrProp W :=
+def entrySemantics (e : CoSEntry) (P : W → Prop) : PartialProp W :=
   cosSemantics e.cosType P
 
 -- Key Theorems
@@ -179,8 +179,8 @@ presupposition, not an entailment.
 -/
 theorem negation_preserves_presup (t : CoSType) (P : W → Prop) :
     (cosSemantics t P).presup =
-    (PrProp.neg (cosSemantics t P)).presup := by
-  simp only [PrProp.neg]
+    (PartialProp.neg (cosSemantics t P)).presup := by
+  simp only [PartialProp.neg]
 
 /--
 Cessation and inception have complementary presuppositions.
@@ -284,7 +284,7 @@ def hasSCF (_e : CoSEntry) : Bool := false
 ### Core Semantic Functions
 - `priorStatePresup t P`: What prior state is presupposed?
 - `resultStateAssertion t P`: What result state is asserted?
-- `cosSemantics t P`: Combined PrProp with both components
+- `cosSemantics t P`: Combined PartialProp with both components
 
 ### Results
 - `negation_preserves_presup`: Presupposition projects through negation

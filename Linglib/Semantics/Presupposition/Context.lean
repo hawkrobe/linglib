@@ -5,7 +5,7 @@ import Linglib.Discourse.CommonGround
 # Presupposition–Context Bridge
 [stalnaker-1974] [heim-1983] [lewis-1979]
 
-Canonical operations connecting presuppositions (`PrProp W`) to contexts
+Canonical operations connecting presuppositions (`PartialProp W`) to contexts
 (`ContextSet W`). Before this module, every downstream file that needed
 both reimplemented the same bridge with different names:
 
@@ -48,7 +48,7 @@ variable {W : Type*}
     entails it: every world in the context satisfies the presupposition.
 
     This is Karttunen's filtering condition and Schlenker's local satisfaction. -/
-abbrev presupSatisfied (c : ContextSet W) (p : PrProp W) : Prop := c ⊆ p.presup
+abbrev presupSatisfied (c : ContextSet W) (p : PartialProp W) : Prop := c ⊆ p.presup
 
 /-- A presupposition is **satisfiable** (conceivable) in context `c` iff some
     world in the context satisfies it.
@@ -56,12 +56,12 @@ abbrev presupSatisfied (c : ContextSet W) (p : PrProp W) : Prop := c ⊆ p.presu
     This is Enguehard's conceivability condition: a singular indefinite's number
     presupposition is conceivable iff the common ground contains a world where
     the witness set has the right cardinality. -/
-abbrev presupSatisfiable (c : ContextSet W) (p : PrProp W) : Prop :=
+abbrev presupSatisfiable (c : ContextSet W) (p : PartialProp W) : Prop :=
   (c ∩ p.presup).Nonempty
 
 /-- A presupposition **projects** from context `c` iff it is NOT satisfied
     (not filtered). Projection is the complement of filtering. -/
-abbrev presupProjects (c : ContextSet W) (p : PrProp W) : Prop :=
+abbrev presupProjects (c : ContextSet W) (p : PartialProp W) : Prop :=
   ¬ presupSatisfied c p
 
 /-- **Accommodate** a presupposition: restrict the context to worlds where
@@ -85,17 +85,17 @@ abbrev accommodationConsistent (c : ContextSet W) (presup : Set W) : Prop :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Projection and filtering are complementary. -/
-theorem projects_iff_not_satisfied (c : ContextSet W) (p : PrProp W) :
+theorem projects_iff_not_satisfied (c : ContextSet W) (p : PartialProp W) :
     presupProjects c p ↔ ¬ presupSatisfied c p := Iff.rfl
 
 /-- Satisfaction implies satisfiability (when the context is non-empty). -/
-theorem satisfied_implies_satisfiable (c : ContextSet W) (p : PrProp W)
+theorem satisfied_implies_satisfiable (c : ContextSet W) (p : PartialProp W)
     (hne : c.Nonempty) (hsat : presupSatisfied c p) : presupSatisfiable c p := by
   obtain ⟨w, hw⟩ := hne
   exact ⟨w, hw, hsat hw⟩
 
 /-- If the presupposition is not even satisfiable, it projects. -/
-theorem not_satisfiable_implies_projects (c : ContextSet W) (p : PrProp W)
+theorem not_satisfiable_implies_projects (c : ContextSet W) (p : PartialProp W)
     (hne : c.Nonempty) (h : ¬ presupSatisfiable c p) : presupProjects c p :=
   fun hsat => h (satisfied_implies_satisfiable c p hne hsat)
 
@@ -116,13 +116,13 @@ theorem accommodate_strengthens (c : ContextSet W) (presup : Set W) :
   Set.inter_subset_left
 
 /-- Accommodation consistency = presupposition satisfiable in context. -/
-theorem accommodationConsistent_iff_satisfiable (c : ContextSet W) (p : PrProp W) :
+theorem accommodationConsistent_iff_satisfiable (c : ContextSet W) (p : PartialProp W) :
     accommodationConsistent c p.presup ↔ presupSatisfiable c p := Iff.rfl
 
-/-- Accommodation via `PrProp.defined`: accommodating `p.presup` restricts
+/-- Accommodation via `PartialProp.defined`: accommodating `p.presup` restricts
     to worlds where `p.defined` holds. -/
-theorem accommodate_eq_defined (c : ContextSet W) (p : PrProp W) (w : W) :
-    w ∈ accommodate c p.presup ↔ w ∈ c ∧ PrProp.defined w p :=
+theorem accommodate_eq_defined (c : ContextSet W) (p : PartialProp W) (w : W) :
+    w ∈ accommodate c p.presup ↔ w ∈ c ∧ PartialProp.defined w p :=
   Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -132,15 +132,15 @@ theorem accommodate_eq_defined (c : ContextSet W) (p : PrProp W) (w : W) :
 /-- Presupposition satisfied relative to any discourse state with a
     context set. Works with `CommonGround W`, `Commitment.CommitmentSlate W`,
     `LocalCtx W`, and any other state implementing `HasContextSet`. -/
-abbrev presupSatisfiedIn {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W) : Prop :=
+abbrev presupSatisfiedIn {S : Type*} [HasContextSet S W] (s : S) (p : PartialProp W) : Prop :=
   presupSatisfied (HasContextSet.toContextSet s) p
 
 /-- Presupposition satisfiable (conceivable) relative to any discourse state. -/
-abbrev presupSatisfiableIn {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W) : Prop :=
+abbrev presupSatisfiableIn {S : Type*} [HasContextSet S W] (s : S) (p : PartialProp W) : Prop :=
   presupSatisfiable (HasContextSet.toContextSet s) p
 
 /-- Presupposition projects from any discourse state. -/
-abbrev presupProjectsFrom {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W) : Prop :=
+abbrev presupProjectsFrom {S : Type*} [HasContextSet S W] (s : S) (p : PartialProp W) : Prop :=
   presupProjects (HasContextSet.toContextSet s) p
 
 end Semantics.Presupposition.Context

@@ -419,7 +419,7 @@ theorem occasion_presup_projects {W : Type*}
     At "punishes" (antecedent): local context = global context.
     Presupposition "Peter did something wrong" is NOT entailed → projects. -/
 theorem heim_antecedent_projects {W : Type*}
-    (c : ContextSet W) (trigger _consequence : PrProp W)
+    (c : ContextSet W) (trigger _consequence : PartialProp W)
     (h : ∃ w, c w ∧ ¬trigger.presup w) :
     presupProjects (initialLocalCtx c) trigger := by
   obtain ⟨w, hw_in, hpresup_false⟩ := h
@@ -439,7 +439,7 @@ theorem heim_antecedent_projects {W : Type*}
     Symmetric local context at "punishes": c + [Peter was convicted].
     Presupposition "Peter did something wrong" IS entailed → filtered. -/
 def symmetricLocalCtxAntecedent {W : Type*}
-    (c : LocalCtx W) (consequent : PrProp W) : LocalCtx W :=
+    (c : LocalCtx W) (consequent : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds consequent.assertion
   , position := c.position
   , depth := c.depth }
@@ -447,7 +447,7 @@ def symmetricLocalCtxAntecedent {W : Type*}
 /-- When the consequent entails the occasion presupposition,
     symmetric filtering predicts the presupposition is filtered. -/
 theorem symmetric_filters_when_consequent_entails {W : Type*}
-    (c : LocalCtx W) (trigger consequent : PrProp W)
+    (c : LocalCtx W) (trigger consequent : PartialProp W)
     (h : ∀ w, c.worlds w → consequent.assertion w → trigger.presup w) :
     presupFiltered (symmetricLocalCtxAntecedent c consequent) trigger := by
   intro w hw

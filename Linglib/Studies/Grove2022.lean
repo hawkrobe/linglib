@@ -37,7 +37,7 @@ plus attitude-verb examples (Part II).
 * `evalI` — evaluation `(·)^ž` (eq. 20)
 * `forallP` / `existsP` — presuppositional quantifiers (eq. 27)
 * `believe` — doxastic attitude verb (eq. 28)
-* Bridges to `Truth3`, `Prop3`, `PrProp`
+* Bridges to `Truth3`, `Prop3`, `PartialProp`
 
 ## Part II — Empirical predictions (Grove §3, §4.2)
 
@@ -77,7 +77,7 @@ set_option autoImplicit false
 namespace Grove2022
 
 open Core.Duality (Truth3 Prop3)
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 /-! ## Part I — Apparatus -/
 
@@ -255,7 +255,7 @@ end AttitudeVerbs
 
 /-! ### §6 Bridges to existing linglib types
 
-`Option Bool`, `Truth3`, and `PrProp W` are three representations of
+`Option Bool`, `Truth3`, and `PartialProp W` are three representations of
 possibly-undefined truth values. These conversions connect Grove's
 formalisation to the rest of the presupposition infrastructure. -/
 
@@ -319,20 +319,20 @@ proposition). -/
 def toProp3 {W : Type} (φ : Iₚ W Bool) : Prop3 W :=
   λ w => toTruth3 (φ w)
 
-/-- Convert `Iₚ W Bool` to `PrProp W`. The presupposition field is
+/-- Convert `Iₚ W Bool` to `PartialProp W`. The presupposition field is
 `isSome` (defined?), and the assertion is the Bool value (defaulting
 to `false` when undefined). -/
-def toPrProp {W : Type} (φ : Iₚ W Bool) : PrProp W :=
+def toPartialProp {W : Type} (φ : Iₚ W Bool) : PartialProp W :=
   { presup := λ w => (φ w).isSome
   , assertion := λ w => (φ w).getD false }
 
-theorem toPrProp_presup {W : Type} (φ : Iₚ W Bool) (w : W) :
-    (toPrProp φ).presup w = (φ w).isSome := rfl
+theorem toPartialProp_presup {W : Type} (φ : Iₚ W Bool) (w : W) :
+    (toPartialProp φ).presup w = (φ w).isSome := rfl
 
-theorem toPrProp_assertion {W : Type} (φ : Iₚ W Bool) (w : W) (v : Bool)
+theorem toPartialProp_assertion {W : Type} (φ : Iₚ W Bool) (w : W) (v : Bool)
     (h : φ w = some v) :
-    (toPrProp φ).assertion w = v := by
-  simp [toPrProp, h]
+    (toPartialProp φ).assertion w = v := by
+  simp [toPartialProp, h]
 
 end Bridges
 

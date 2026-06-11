@@ -252,22 +252,22 @@ theorem spatiotemporallyDistant_of_temporallyDisjoint
     The `learn` predicate is subscripted with **cs(k)** (the context set at
     discourse move k), not with the scope proposition p. This is the formal
     mechanism for not-at-issue status: the evidential contribution restricts
-    the *context set* directly (≈ presupposition in `PrProp.presup`), while
+    the *context set* directly (≈ presupposition in `PartialProp.presup`), while
     the assertion commits the speaker to p via DECL (72), which maps to
-    `PrProp.assertion`.
+    `PartialProp.assertion`.
 
     The mapping is:
-    - `learn_{cs(k)}(e_l, sp(k), p)` → `PrProp.presup` (restricts cs)
-    - `DECL(72): dc^sp(c) ⊆ p` → `PrProp.assertion` (commits to p)
+    - `learn_{cs(k)}(e_l, sp(k), p)` → `PartialProp.presup` (restricts cs)
+    - `DECL(72): dc^sp(c) ⊆ p` → `PartialProp.assertion` (commits to p)
 
     This explains why the evidential projects past negation (property 6iv):
-    `PrProp.neg` preserves `presup` while negating `assertion`.
+    `PartialProp.neg` preserves `presup` while negating `assertion`.
 
     ## What's Captured
 
     - The **event pair** (e, e_l) — the described event and the learning event
     - **△(e, e_l)** — spatiotemporal distance, via `isTemporallyDisjoint` /
-      `isSpatiotemporallyDistant` and bridge to `PrProp` via `toEvidentialProp`
+      `isSpatiotemporallyDistant` and bridge to `PartialProp` via `toEvidentialProp`
     - **The presup/assertion split** — cs(k) subscript → presup, DECL → assertion
 
     ## What's Not Captured (Future Work)
@@ -329,7 +329,7 @@ theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     push_neg at hc
     exact h ⟨hc.1, hc.2⟩
 
-/-- Construct a PrProp from a learning scenario, making the
+/-- Construct a PartialProp from a learning scenario, making the
     cs(k) → presup mapping constructive.
 
     The presupposition is derived from the event structure (△ holds or not),
@@ -338,7 +338,7 @@ theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     - `presup` := △(described, learning) — the evidential's cs(k) contribution
     - `assertion` := p — the scope proposition -/
 def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
-    {W : Type*} (p : W → Prop) : PrProp W where
+    {W : Type*} (p : W → Prop) : PartialProp W where
   presup := fun _ => s.triangleTemporalB
   assertion := p
 
@@ -442,9 +442,9 @@ theorem smoke_no_tense_ordering :
       derived from event structure via `triangleTemporalB`
     - **(ii) Speaker commitment**: assertion = p (non-modal, full commitment)
     - **(iii) Not at issue**: △ is in presup (cs restriction), not assertion
-    - **(iv) Projection**: PrProp.neg preserves presup → △ projects past ¬ -/
+    - **(iv) Projection**: PartialProp.neg preserves presup → △ projects past ¬ -/
 
-/-- Property (6i): the presupposition of the constructed PrProp IS the
+/-- Property (6i): the presupposition of the constructed PartialProp IS the
     △ condition, derived from the event structure. When △ holds (indirect
     evidence), the presupposition is satisfied at every world. -/
 theorem indirect_presup_satisfied {W : Type*} (p : W → Prop) (w : W) :
@@ -467,9 +467,9 @@ theorem direct_presup_fails {W : Type*} (p : W → Prop) (w : W) :
   simp only [Event.τ]
   decide
 
-/-- Property (6ii): the assertion of a scenario's PrProp IS the scope
+/-- Property (6ii): the assertion of a scenario's PartialProp IS the scope
     proposition. The speaker commits to p, not to a modalized version.
-    This holds by construction: DECL (72) maps to `PrProp.assertion`. -/
+    This holds by construction: DECL (72) maps to `PartialProp.assertion`. -/
 theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
     (s.toEvidentialProp p).assertion = p := rfl
 
@@ -479,7 +479,7 @@ theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Pro
     This is a simplified stub; the full Kratzer-grounded version is
     `Izvorski1997.Bridge.izvorskiEv`, which uses `necessity f g p` as
     the assertion and `!(accessibleWorlds f w).isEmpty` as the presup. -/
-def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Prop) : PrProp W where
+def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Prop) : PartialProp W where
   presup := fun _ => evidence
   assertion := must_p
 
@@ -497,11 +497,11 @@ theorem modal_can_weaken :
 
 /-- Property (6iv): the evidential presupposition projects past negation.
     Negating the evidential negates the assertion (p → ¬p) but preserves
-    the presupposition (△). This follows from PrProp's general negation
+    the presupposition (△). This follows from PartialProp's general negation
     rule and captures the paper's formalization (78). -/
 theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
-    (PrProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
-  PrProp.neg_presup _
+    (PartialProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
+  PartialProp.neg_presup _
 
 /-! ### Bridge to [cumming-2026]: △ → T ≤ A -/
 

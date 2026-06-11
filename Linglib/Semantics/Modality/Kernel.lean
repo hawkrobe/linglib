@@ -408,26 +408,26 @@ theorem partition_implies_entailment [Fintype W] (k : Kernel W) (φ : (W → Pro
 /-! ## Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/
 
 /-- ⟦must φ⟧: presupposes K doesn't settle φ; asserts B_K ⊆ ⟦φ⟧. -/
-def kernelMust (k : Kernel W) (φ : (W → Prop)) : PrProp W where
+def kernelMust (k : Kernel W) (φ : (W → Prop)) : PartialProp W where
   presup := λ _ => ¬ directlySettlesExplicit k φ
   assertion := λ _ => k.followsFrom φ
 
 /-- ⟦might φ⟧: presupposes K doesn't settle φ; asserts B_K ∩ ⟦φ⟧ ≠ ∅. -/
-def kernelMight (k : Kernel W) (φ : (W → Prop)) : PrProp W where
+def kernelMight (k : Kernel W) (φ : (W → Prop)) : PartialProp W where
   presup := λ _ => ¬ directlySettlesExplicit k φ
   assertion := λ _ => k.compatibleWith φ
 
 /-- ⟦can't φ⟧ = must(¬φ). -/
-def kernelCant (k : Kernel W) (φ : (W → Prop)) : PrProp W :=
+def kernelCant (k : Kernel W) (φ : (W → Prop)) : PartialProp W :=
   kernelMust k (λ w => ¬ φ w)
 
 /-- W-dependent ⟦must φ⟧. -/
-def kernelMustW (kb : KernelBackground W) (φ : (W → Prop)) : PrProp W where
+def kernelMustW (kb : KernelBackground W) (φ : (W → Prop)) : PartialProp W where
   presup := λ w => ¬ directlySettlesExplicit (kb w) φ
   assertion := λ w => (kb w).followsFrom φ
 
 /-- W-dependent ⟦might φ⟧. -/
-def kernelMightW (kb : KernelBackground W) (φ : (W → Prop)) : PrProp W where
+def kernelMightW (kb : KernelBackground W) (φ : (W → Prop)) : PartialProp W where
   presup := λ w => ¬ directlySettlesExplicit (kb w) φ
   assertion := λ w => (kb w).compatibleWith φ
 

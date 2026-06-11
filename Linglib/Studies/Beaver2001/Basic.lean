@@ -22,7 +22,7 @@ then develops his own dynamic theory (PUL) in Part II:
 3. **Ch. 3 Cancellation and filtering**: Karttunen's heritage functions,
    Heim's CCP, the convergence of heritage/filtering/CCP (§3)
 4. **Ch. 4 Common ground**: Stalnaker's context sets, File Change Semantics,
-   DPL — all compute from `PrProp.presup` and `PrProp.assertion` (§4)
+   DPL — all compute from `PartialProp.presup` and `PartialProp.assertion` (§4)
 5. **Ch. 5 Accommodation**: Lewis 1979, van der Sandt 1992, Heim's
    global-preference synthesis, conditional presuppositions (§5-6)
 
@@ -33,21 +33,21 @@ then develops his own dynamic theory (PUL) in Part II:
 9. **Ch. 9 Accommodation in ABLE**: Accommodation within PUL
 10. **Ch. 10 Conclusion**: Summary and open problems
 
-## Structural Connection to PrProp
+## Structural Connection to PartialProp
 
 The central insight formalized here: Karttunen's heritage functions, Heim's
 filtering connectives, and CCP-based local contexts all compute projection
-from the same source — **PrProp.presup**.
+from the same source — **PartialProp.presup**.
 
 - Heritage function for `p → q` = `(impFilter p q).presup` (by construction)
-- Local context for q in `p → q` = `{ w ∈ c | p.assertion w }` (from PrProp)
+- Local context for q in `p → q` = `{ w ∈ c | p.assertion w }` (from PartialProp)
 - Accommodation operates on `p.presup` directly
 
-`PrProp` IS the two-dimensional representation of [karttunen-peters-1979]:
+`PartialProp` IS the two-dimensional representation of [karttunen-peters-1979]:
 `.presup` = their P-function, `.assertion` = their A-function. The filtering
 connectives resolve the "binding problem" (variables not linked between
 dimensions) by computing compound presuppositions from BOTH `.presup` and
-`.assertion` fields of the same `PrProp W` — the shared type parameter `W`
+`.assertion` fields of the same `PartialProp W` — the shared type parameter `W`
 ensures variables range over the same domain.
 
 No separate heritage type is needed. Filtering connectives ARE heritage
@@ -93,7 +93,7 @@ and **symmetry**: swapping φ and ψ does not change the projection.
 
 This uniformity is empirically too strong: "if p then q" presupposes
 π(p) ∧ (A(p) → π(q)), not π(p) ∧ π(q). The filtering connectives
-(`PrProp.impFilter`, etc.) capture this asymmetry. -/
+(`PartialProp.impFilter`, etc.) capture this asymmetry. -/
 
 /-- SK disjunction is symmetric for presupposition projection.
     [beaver-2001] Ch. 2: the correct empirical prediction. -/
@@ -110,40 +110,40 @@ theorem mk_disjunction_asymmetric :
 
 /-- Fact 2.1, negation: SK negation preserves presupposition.
     The presupposition of ¬φ is exactly π(φ). Re-export of
-    `PrProp.neg_presup`. -/
-theorem sk_neg_presup (p : PrProp W) :
-    (PrProp.neg p).presup = p.presup := PrProp.neg_presup p
+    `PartialProp.neg_presup`. -/
+theorem sk_neg_presup (p : PartialProp W) :
+    (PartialProp.neg p).presup = p.presup := PartialProp.neg_presup p
 
 /-- Fact 2.1, uniformity: all SK binary connectives produce the
     SAME presupposition — π(φ) ∧ π(ψ) — regardless of the connective.
     This is the hallmark of the SK approach: conjunction, disjunction,
     and implication are indistinguishable from the presupposition's
     perspective. -/
-theorem sk_binary_presup_uniform (p q : PrProp W) :
-    (PrProp.and p q).presup = (PrProp.or p q).presup ∧
-    (PrProp.or p q).presup = (PrProp.imp p q).presup := ⟨rfl, rfl⟩
+theorem sk_binary_presup_uniform (p q : PartialProp W) :
+    (PartialProp.and p q).presup = (PartialProp.or p q).presup ∧
+    (PartialProp.or p q).presup = (PartialProp.imp p q).presup := ⟨rfl, rfl⟩
 
 /-- Fact 2.1, symmetry: SK binary presuppositions are symmetric.
     Swapping φ and ψ does not change the presupposition. -/
-theorem sk_presup_symmetric (p q : PrProp W) :
-    (PrProp.and p q).presup = (PrProp.and q p).presup := by
-  funext w; simp only [PrProp.and]; exact propext And.comm
+theorem sk_presup_symmetric (p q : PartialProp W) :
+    (PartialProp.and p q).presup = (PartialProp.and q p).presup := by
+  funext w; simp only [PartialProp.and]; exact propext And.comm
 
 /-- Filtering presuppositions are NOT symmetric: there exist p, q where
     swapping the operands changes the presupposition. This is the empirically
     correct prediction — "if p then q" and "if q then p" have different
     presuppositions. -/
 theorem filtering_presup_not_symmetric :
-    ∃ (p q : PrProp Bool),
-      (PrProp.andFilter p q).presup ≠ (PrProp.andFilter q p).presup := by
+    ∃ (p q : PartialProp Bool),
+      (PartialProp.andFilter p q).presup ≠ (PartialProp.andFilter q p).presup := by
   refine ⟨⟨λ _ => True, λ _ => False⟩, ⟨λ _ => False, λ _ => True⟩, ?_⟩
   intro h
   have := congr_fun h false
-  simp only [PrProp.andFilter] at this
+  simp only [PartialProp.andFilter] at this
   exact (this.mp ⟨trivial, fun h => h.elim⟩).1
 
 -- ══════════════════════════════════════════════════════════
--- § 2. PrProp as Two-Dimensional Representation
+-- § 2. PartialProp as Two-Dimensional Representation
 -- ([beaver-2001] Ch. 2, §2.2; [karttunen-peters-1979])
 -- ══════════════════════════════════════════════════════════
 
@@ -151,10 +151,10 @@ theorem filtering_presup_not_symmetric :
 
 [karttunen-peters-1979] proposed parallel translation functions A(·)
 and P(·) that compute assertion and presupposition separately. This is
-structurally identical to `PrProp`:
+structurally identical to `PartialProp`:
 
-- `PrProp.assertion` = A(·) (assertion translation)
-- `PrProp.presup` = P(·) (presupposition translation)
+- `PartialProp.assertion` = A(·) (assertion translation)
+- `PartialProp.presup` = P(·) (presupposition translation)
 
 The **binding problem** ([beaver-2001] Ch. 2): in Karttunen & Peters'
 system, quantifier variables in the assertion dimension are not linked to
@@ -163,24 +163,24 @@ stopped smoking", the student bound by "every" in the assertion should be
 the same student bound in the presupposition — but the two translation
 functions compute independently.
 
-**PrProp resolves this by construction**: both `.presup` and `.assertion`
+**PartialProp resolves this by construction**: both `.presup` and `.assertion`
 are functions from the SAME type `W`. When `W` includes variable
 assignments (as in `W = World × Assignment`), the binding is shared. The
-filtering connectives explicitly reference both fields of a single PrProp,
+filtering connectives explicitly reference both fields of a single PartialProp,
 ensuring the variables agree across dimensions. -/
 
 /-- Filtering connectives reference BOTH `.presup` and `.assertion`,
     resolving the binding problem. The presupposition of `impFilter p q`
     depends on `p.assertion` (assertion of the antecedent) — linking
     the two dimensions. -/
-theorem filtering_links_dimensions (p q : PrProp W) (w : W) :
-    (PrProp.impFilter p q).presup w ↔
+theorem filtering_links_dimensions (p q : PartialProp W) (w : W) :
+    (PartialProp.impFilter p q).presup w ↔
     (p.presup w ∧ (p.assertion w → q.presup w)) := Iff.rfl
 
 /-- SK connectives do NOT link dimensions: they reference only `.presup`,
     ignoring `.assertion`. This means they cannot capture filtering. -/
-theorem sk_ignores_assertion (p q : PrProp W) (w : W) :
-    (PrProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
+theorem sk_ignores_assertion (p q : PartialProp W) (w : W) :
+    (PartialProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
 
 -- ══════════════════════════════════════════════════════════
 -- § 3. Heritage = Filtering (by construction)
@@ -193,34 +193,34 @@ this IS the `.presup` field — no separate heritage type needed.
 
 The convergence of heritage, filtering, and CCP is [beaver-2001]'s
 central result for Chs. 2-4. We show it holds by construction: all three
-read from the same `PrProp.presup` and `PrProp.assertion` fields. -/
+read from the same `PartialProp.presup` and `PartialProp.assertion` fields. -/
 
 /-- Heritage function for conditionals IS `.presup` of `impFilter`.
     [beaver-2001] Ch. 3: heritage, filtering, and CCP agree. -/
-example (p q : PrProp W) : (PrProp.impFilter p q).presup =
+example (p q : PartialProp W) : (PartialProp.impFilter p q).presup =
     (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
 /-- Heritage function for conjunction IS `.presup` of `andFilter`. -/
-example (p q : PrProp W) : (PrProp.andFilter p q).presup =
+example (p q : PartialProp W) : (PartialProp.andFilter p q).presup =
     (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
 /-- Heritage function for disjunction IS `.presup` of `orFilter`
     (asymmetric: the second disjunct's local context is the input
     updated with the negation of the first). -/
-example (p q : PrProp W) : (PrProp.orFilter p q).presup =
+example (p q : PartialProp W) : (PartialProp.orFilter p q).presup =
     (λ w => p.presup w ∧ (¬p.assertion w → q.presup w)) := rfl
 
 /-- Filtering vs SK: filtering conjunction is strictly weaker than SK
     conjunction in its presupposition requirements. When p's assertion
     entails q's presupposition, filtering drops q's presupposition
     entirely — SK never does. Re-uses
-    `PrProp.impFilter_presup_eq_andFilter_presup` to share the proof
+    `PartialProp.impFilter_presup_eq_andFilter_presup` to share the proof
     obligation with the conditional case. -/
-theorem filtering_weaker_than_sk (p q : PrProp W)
+theorem filtering_weaker_than_sk (p q : PartialProp W)
     (h : ∀ w, p.assertion w → q.presup w) :
-    (PrProp.andFilter p q).presup = p.presup := by
-  rw [← PrProp.impFilter_presup_eq_andFilter_presup]
-  exact PrProp.impFilter_eliminates_presup p q h
+    (PartialProp.andFilter p q).presup = p.presup := by
+  rw [← PartialProp.impFilter_presup_eq_andFilter_presup]
+  exact PartialProp.impFilter_eliminates_presup p q h
 
 -- ══════════════════════════════════════════════════════════
 -- § 4. Static ↔ Dynamic Agreement
@@ -228,8 +228,8 @@ theorem filtering_weaker_than_sk (p q : PrProp W)
 -- ══════════════════════════════════════════════════════════
 
 /-! The static filtering connectives and the dynamic CCP approach
-agree for conditionals. Both compute projection from PrProp.presup
-and PrProp.assertion — when the context entails p's presupposition,
+agree for conditionals. Both compute projection from PartialProp.presup
+and PartialProp.assertion — when the context entails p's presupposition,
 filtering holds iff the local context (from p.assertion) entails
 q's presupposition (from q.presup).
 
@@ -252,14 +252,14 @@ example (c : ContextSet W) (p : Set W) :
     ContextSet.update c p = λ w => c w ∧ p w := rfl
 
 /-- Static filtering = dynamic local context for conditionals.
-    Both derive from PrProp fields: `.presup` and `.assertion`.
+    Both derive from PartialProp fields: `.presup` and `.assertion`.
     This is the cornerstone theorem connecting three approaches:
     1. Static filtering ([karttunen-1973])
     2. Heim's CCP / File Change Semantics ([heim-1983])
     3. Local contexts ([schlenker-2009]) -/
 theorem static_dynamic_agreement (c : ContextSet W)
-    (p q : PrProp W) :
-    (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
+    (p q : PartialProp W) :
+    (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧
                 (p.assertion w → q.presup w)) :=
   Semantics.Presupposition.LocalContext.local_context_matches_impFilter c p q
@@ -271,14 +271,14 @@ theorem static_dynamic_agreement (c : ContextSet W)
 
 /-! Heim's observation: global accommodation preference ≈ Gazdar cancellation.
 Accommodation operates on `p.presup` directly — the structural connection
-to PrProp is by construction. -/
+to PartialProp is by construction. -/
 
 open Semantics.Presupposition.Accommodation
 
 /-- Heim's synthesis: global preference selects global when consistent.
-    Accommodation input is `p.presup` — structurally connected to PrProp. -/
+    Accommodation input is `p.presup` — structurally connected to PartialProp. -/
 theorem heim_synthesis_projection (c : ContextSet W)
-    (p : PrProp W)
+    (p : PartialProp W)
     (h : ContextSet.nonEmpty
            (globalAccommodate c p.presup)) :
     heimSelect c p.presup = .global :=
@@ -287,7 +287,7 @@ theorem heim_synthesis_projection (c : ContextSet W)
 /-- Heim's synthesis: global preference selects local when inconsistent.
     This matches Gazdar's cancellation prediction. -/
 theorem heim_synthesis_cancellation (c : ContextSet W)
-    (p : PrProp W)
+    (p : PartialProp W)
     (h : ¬ContextSet.nonEmpty
            (globalAccommodate c p.presup)) :
     heimSelect c p.presup = .local :=
@@ -313,7 +313,7 @@ inductive SpiffWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- "Spiff lands on Planet X" — no presupposition. -/
-def spiffLands : PrProp SpiffWorld where
+def spiffLands : PartialProp SpiffWorld where
   presup := λ _ => True
   assertion := λ w => match w with
     | .onPlanetX_heavy | .onPlanetX_light => True
@@ -321,7 +321,7 @@ def spiffLands : PrProp SpiffWorld where
 
 /-- "Spiff's weight is greater than on Earth" — presupposes being
     somewhere with weight (not in space). -/
-def weightGreater : PrProp SpiffWorld where
+def weightGreater : PartialProp SpiffWorld where
   presup := λ w => match w with
     | .inSpace => False
     | _ => True
@@ -350,9 +350,9 @@ def conditionalPresup : (SpiffWorld → Bool) :=
     prediction. Filtering predicts weight-is-defined; the conditional
     presupposition additionally requires weight > Earth. -/
 theorem conditional_presup_stronger_than_filtering :
-    ∃ w, (PrProp.impFilter spiffLands weightGreater).presup w ∧
+    ∃ w, (PartialProp.impFilter spiffLands weightGreater).presup w ∧
          conditionalPresup w = false := by
-  exact ⟨.onPlanetX_light, by simp [PrProp.impFilter, spiffLands, weightGreater],
+  exact ⟨.onPlanetX_light, by simp [PartialProp.impFilter, spiffLands, weightGreater],
          by simp [conditionalPresup]⟩
 
 -- ══════════════════════════════════════════════════════════
@@ -382,7 +382,7 @@ negation passes or fails the entire state.
 In Beaver's book, PUL updates are PARTIAL — presupposition failure
 causes the update to be undefined. Here we define the total operations
 (the defined cases). The presupposition check is modeled separately
-through `PrProp.presup`: a PUL update from a PrProp sentence p is
+through `PartialProp.presup`: a PUL update from a PartialProp sentence p is
 defined at context σ iff `∀ w, σ w → p.presup w = true`. -/
 
 /-- PUL atomic update: intersect context with proposition.

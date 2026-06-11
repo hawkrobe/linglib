@@ -26,7 +26,7 @@ and deictic uses (his §2.1.1); binding is the external β-operator
 ## Main definitions
 
 * `PersonalPronoun.phiPresup` — the conjoined φ-feature presupposition of an
-  entry (absent or featurally-uncovered values contribute `PrProp.top`).
+  entry (absent or featurally-uncovered values contribute `PartialProp.top`).
 * `PersonalPronoun.denote` — the pronoun's `NominalDenot` (static case).
 
 ## Implementation notes
@@ -39,7 +39,7 @@ bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 
 set_option autoImplicit false
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)
 open Core (Assignment)
@@ -49,25 +49,25 @@ open Core.Logic.Intensional.Variables (interpPronoun DenotGS SitAssignment)
 domain `E`. The model supplies the entity-level predicates the cells need
 (`speaker`/`addressee` for person, `isFemale`/`isInanimate` for gender;
 number atomicity comes from the `PartialOrder`). A feature that is absent —
-or present but outside the cells' coverage — contributes `PrProp.top`. -/
+or present but outside the cells' coverage — contributes `PartialProp.top`. -/
 def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
-    (speaker addressee : E) (isFemale isInanimate : E → Prop) : PrProp E :=
-  PrProp.and
+    (speaker addressee : E) (isFemale isInanimate : E → Prop) : PartialProp E :=
+  PartialProp.and
     (match e.person with
       | some .first  => firstSem speaker
       | some .second => secondSem speaker addressee
       | some .third  => thirdSem
-      | _            => PrProp.top)
-    (PrProp.and
+      | _            => PartialProp.top)
+    (PartialProp.and
       (match e.number with
         | some .singular => sgSem E
         | some .plural => plSem E
-        | _          => PrProp.top)
+        | _          => PartialProp.top)
       (match e.gender with
         | some .feminine  => femSem isFemale
         | some .neuter    => neutSem isInanimate
         | some .masculine => mascSem
-        | _               => PrProp.top))
+        | _               => PartialProp.top))
 
 /-- A pronoun's denotation as a `NominalDenot`: the selector is the canonical
 variable denotation `interpPronoun i` (always defined under a total
@@ -116,7 +116,7 @@ example {E : Type} [PartialOrder E] (g : Assignment E) (i : ℕ)
     (speaker addressee : E) (isFemale isInanimate : E → Prop)
     (scope : E → PUnit → Prop)
     (hFem : isFemale (g i)) :
-    ((ellas.denote i speaker addressee isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
+    ((ellas.denote i speaker addressee isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
   rfl
 

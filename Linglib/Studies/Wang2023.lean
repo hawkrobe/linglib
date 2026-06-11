@@ -412,7 +412,7 @@ theorem ihon_redundant_for_recruitment :
 ### Per-domain bridges
 
 Each recruitment strategy targets a specific phi-feature domain.
-The recruited cell (`.minimal`) corresponds to a specific `PrProp`
+The recruited cell (`.minimal`) corresponds to a specific `PartialProp`
 denotation from `PhiFeatures`: `plSem` (number), `thirdSem` (person),
 or `indefSem` (definiteness). All three are `phiPresup` at the minimal
 cell, which has a vacuous presupposition — this is WHY ToD selects them.
@@ -428,14 +428,14 @@ respective phi-feature domains.
 section DomainBridges
 
 /-- The plural recruitment strategy targets the minimal NUMBER cell,
-    which is `plSem` — the PrProp with vacuous presupposition.
+    which is `plSem` — the PartialProp with vacuous presupposition.
     `pl_is_minimal_cell` (PhiFeatures) proves `pluralF` maps to `.minimal`. -/
 theorem plural_strategy_is_plSem :
     honStrategyCell .plural = ContainmentPairLike.toPair Number.pluralF :=
   rfl
 
 /-- The 3rd-person strategy targets the minimal PERSON cell,
-    which is `thirdSem` — the PrProp with vacuous presupposition. -/
+    which is `thirdSem` — the PartialProp with vacuous presupposition. -/
 theorem thirdPerson_strategy_is_third :
     honStrategyCell .thirdPerson = ContainmentPairLike.toPair Person.thirdF :=
   rfl

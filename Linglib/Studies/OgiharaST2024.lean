@@ -958,7 +958,7 @@ Connects three layers of the temporal connective formalization:
 1. **Fragment field**: `TemporalExprEntry.complementVeridical : Bool`
 2. **Theory proof**: e.g., `Anscombe.after A B → ∃ t, t ∈ timeTrace B`
 3. **Presupposition theory**: veridical connectives presuppose their complement
-   (modeled as `PrProp` with complement occurrence as presupposition)
+   (modeled as `PartialProp` with complement occurrence as presupposition)
 
 For each temporal connective, the Fragment's `complementVeridical` field is
 **grounded** in a theory-level proof, and matches the empirical data.
@@ -1080,19 +1080,19 @@ open Semantics.Presupposition
 /-- A temporal connective modeled as a presuppositional proposition.
     Veridical connectives presuppose their complement (like factives);
     non-veridical connectives carry no complement presupposition. -/
-def connPrProp (complementInstantiated : Bool) (connHolds : Bool) : PrProp Unit :=
+def connPartialProp (complementInstantiated : Bool) (connHolds : Bool) : PartialProp Unit :=
   { presup := fun _ => complementInstantiated
   , assertion := fun _ => connHolds }
 
 theorem veridical_presupposes_complement :
-    (connPrProp true true).presup () = true := rfl
+    (connPartialProp true true).presup () = true := rfl
 
 theorem nonveridical_no_presupposition :
-    (connPrProp false true).presup () = false := rfl
+    (connPartialProp false true).presup () = false := rfl
 
 /-- Negation preserves complement presupposition (projection through negation). -/
 theorem negation_preserves_presup :
-    (PrProp.neg (connPrProp true true)).presup () = true := rfl
+    (PartialProp.neg (connPartialProp true true)).presup () = true := rfl
 
 -- ============================================================================
 -- § 23: B&C's Three Readings of *Before* and Presupposition

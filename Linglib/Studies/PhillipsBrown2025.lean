@@ -360,7 +360,7 @@ theorem finest_simulates_vf_not_lobster :
   wantQuestionBased_finestPartition_iff_wantVF belLobDie desNotDie
     allWorldsW allWorldsW_complete (fun w => ¬ nap w)
 
-/-! ## §9. Definedness via PrProp (paper §3.6) -/
+/-! ## §9. Definedness via PartialProp (paper §3.6) -/
 
 theorem nap_defined_in_qNapRest :
     wantDefined belNapRest naturalProps qNapRest nap := by decide
@@ -369,13 +369,13 @@ theorem fail_not_defined_in_qNapRest :
     ¬ wantDefined belNapRest naturalProps qNapRest fail := by decide
 
 theorem nap_prprop_holds :
-    (wantPrProp belNapRest desRest naturalProps qNapRest nap).presup .w0 ∧
-    (wantPrProp belNapRest desRest naturalProps qNapRest nap).assertion .w0 := by
-  refine ⟨?_, ?_⟩ <;> simp only [wantPrProp] <;> decide
+    (wantPartialProp belNapRest desRest naturalProps qNapRest nap).presup .w0 ∧
+    (wantPartialProp belNapRest desRest naturalProps qNapRest nap).assertion .w0 := by
+  refine ⟨?_, ?_⟩ <;> simp only [wantPartialProp] <;> decide
 
 theorem fail_prprop_undefined :
-    ¬(wantPrProp belNapRest desRest naturalProps qNapRest fail).presup .w0 := by
-  simp only [wantPrProp]; decide
+    ¬(wantPartialProp belNapRest desRest naturalProps qNapRest fail).presup .w0 := by
+  simp only [wantPartialProp]; decide
 
 /-! ## §10. Belief-sensitivity: William III / nuclear war (paper §4.2)
 

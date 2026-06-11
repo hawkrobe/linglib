@@ -225,7 +225,7 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
 /--
 A projective content item, combining a trigger with its content.
 
-This extends the basic PrProp to track what kind of projective
+This extends the basic PartialProp to track what kind of projective
 content is involved.
 -/
 structure ProjectiveItem (W : Type*) where
@@ -241,12 +241,12 @@ structure ProjectiveItem (W : Type*) where
   atIssuenessDegree : Option ℚ := none
 
 /--
-Convert a ProjectiveItem to a PrProp.
+Convert a ProjectiveItem to a PartialProp.
 
 The projective content becomes the presupposition, and the
 at-issue content becomes the assertion.
 -/
-def ProjectiveItem.toPrProp {W : Type*} (pc : ProjectiveItem W) : PrProp W :=
+def ProjectiveItem.toPartialProp {W : Type*} (pc : ProjectiveItem W) : PartialProp W :=
   { presup := pc.content
   , assertion := pc.atIssue }
 

@@ -52,7 +52,7 @@ namespace Phenomena.Quantification.BaleSchwarz2022
 open Semantics.Measurement
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
 open English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
-open Semantics.Presupposition (PrProp PrValue)
+open Semantics.Presupposition (PartialProp PartialValue)
 open Features (Acceptability)
 
 -- ============================================================================
@@ -414,17 +414,17 @@ theorem text_unit_sensitivity :
 -- § 10. Unit Sensitivity Presupposition (§7, eq. 43)
 -- ============================================================================
 
-/-- The revised lexical entry for *per* (eq. 43) as a `PrValue`:
+/-- The revised lexical entry for *per* (eq. 43) as a `PartialValue`:
 ⟦per⟧ = λq. λx: μ_{dim(q)}(x) ≥ q. μ_{dim(q)}(x) / q
 
 - **presup**: μ_{dim(q)}(x) ≥ q (unit sensitivity)
 - **value**: μ_{dim(q)}(x) / q (pure number)
 
-This is the canonical use case for `PrValue`: the at-issue content is
-a pure number (ℚ), not a truth value (Bool). `PrProp` cannot represent
+This is the canonical use case for `PartialValue`: the at-issue content is
+a pure number (ℚ), not a truth value (Bool). `PartialProp` cannot represent
 this directly — it only handles presupposed propositions. -/
 def perAnaphoricWithPresup {E : Type*} (μ : MeasureFn E) (q : ℚ)
-    (x : E) : PrValue Unit ℚ where
+    (x : E) : PartialValue Unit ℚ where
   presup := fun _ => μ.apply x ≥ q
   value := fun _ => perAnaphoric μ q x
 
@@ -440,10 +440,10 @@ theorem presup_satisfied_iff {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
 theorem perValue_eq {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
     (perAnaphoricWithPresup μ q x).value () = perAnaphoric μ q x := rfl
 
-/-- At the sentence level, `PrValue ℚ` composes with a measurement verb
-to produce a `PrProp` — presupposition projects, assertion is boolean. -/
+/-- At the sentence level, `PartialValue ℚ` composes with a measurement verb
+to produce a `PartialProp` — presupposition projects, assertion is boolean. -/
 def perSentenceWithPresup {E : Type*} (μ_wt μ_vol : MeasureFn E)
-    (perUnit : ℚ) (numeral : ℚ) (x : E) : PrProp Unit where
+    (perUnit : ℚ) (numeral : ℚ) (x : E) : PartialProp Unit where
   presup := fun _ => perPresup μ_vol perUnit x
   assertion := fun _ => measureVerbSem μ_wt (numeral * perAnaphoric μ_vol perUnit x) x
 

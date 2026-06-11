@@ -1117,7 +1117,7 @@ end DPLComparison
 /-!
 Presupposition projection bridges are in `PIP.Bridges`:
 - `pip_felicity_agrees_with_andFilter` — F(φ ∧ ψ) ↔ andFilter
-- `pip_felicity_agrees_with_neg` — F(¬φ) ↔ PrProp.neg
+- `pip_felicity_agrees_with_neg` — F(¬φ) ↔ PartialProp.neg
 - `pip_felicity_agrees_with_impFilter` — F(φ → ψ) ↔ impFilter
 - `pip_felicity_agrees_with_orFilter` — F(φ ∨ ψ) decomposition
 -/

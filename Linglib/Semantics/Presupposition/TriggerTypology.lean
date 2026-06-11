@@ -91,7 +91,7 @@ Tracks presuppositions through the derivation, enabling:
 -/
 structure PresupDerivation (W : Type*) where
   /-- The underlying presuppositional proposition -/
-  meaning : PrProp W
+  meaning : PartialProp W
   /-- Presupposition triggers in the sentence -/
   triggers : List TriggerOccurrence
   /-- Current polarity context -/
@@ -111,11 +111,11 @@ integrating with the Exhaustivity module.
 -/
 structure ExhWithPresup (W : Type*) where
   /-- The base sentence -/
-  base : PrProp W
+  base : PartialProp W
   /-- Alternatives with their presuppositions -/
-  alternatives : List (PrProp W)
+  alternatives : List (PartialProp W)
   /-- The exhaustified meaning -/
-  exhaustified : PrProp W
+  exhaustified : PartialProp W
 
 
 -- ============================================================================

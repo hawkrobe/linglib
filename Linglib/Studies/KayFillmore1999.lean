@@ -19,7 +19,7 @@ form–function mismatch is derived rather than stipulated: the literal
 reading is a genuine question (speaker-ignorance satisfies the PerspP
 presupposition), the incredulity reading a blocked one (speaker knowledge
 contradicts it), with the presupposed proposition and the
-unexpectedness CI typed via `PrProp`/`TwoDimProp`.
+unexpectedness CI typed via `PartialProp`/`TwoDimProp`.
 
 The paper's own inheritance hierarchy — WXDY inheriting from the
 left-isolation, subject–aux-inversion, and wh-interrogative constructions
@@ -316,14 +316,14 @@ open Semantics.Presupposition
 
 "What's this fly doing in my soup?" presupposes: there is a fly in the soup.
 The at-issue assertion is trivial — the point is to express the CI. -/
-def wxdyPresup {W : Type*} (embeddedProp : W → Prop) : PrProp W where
+def wxdyPresup {W : Type*} (embeddedProp : W → Prop) : PartialProp W where
   presup := embeddedProp
   assertion _ := True
 
 /-- Presupposition projects through negation: "It's not the case that
 [what's this fly doing in my soup]" still presupposes the fly is there. -/
 theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Prop) :
-    ∀ w, (PrProp.neg (wxdyPresup embeddedProp)).presup w ↔
+    ∀ w, (PartialProp.neg (wxdyPresup embeddedProp)).presup w ↔
          embeddedProp w := fun _ => Iff.rfl
 
 /-! ### Two-dimensional semantics bridge (Expressives/Basic.lean) -/

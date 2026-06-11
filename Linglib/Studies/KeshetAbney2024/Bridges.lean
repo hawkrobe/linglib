@@ -17,7 +17,7 @@ import Mathlib.Data.Fintype.Basic
 This file connects PIP to the rest of linglib, establishing correspondences
 between PIP's formulation and the standard treatments in:
 
-1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
+1. **Presupposition projection** — PIP's F operator ↔ `PartialProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `GQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
 4. **Modal logic** — PIP's must/might ↔ `Core.Logic.Intensional.box/diamond`
@@ -51,21 +51,21 @@ open Core.Logic.Modal.Logic (frameConditions)
 -- ============================================================
 
 /-!
-### Presupposition Projection: F ↔ PrProp connectives
+### Presupposition Projection: F ↔ PartialProp connectives
 
-PIP's F operator and `Semantics.Presupposition.PrProp` filtering connectives
+PIP's F operator and `Semantics.Presupposition.PartialProp` filtering connectives
 implement the same Karttunen conjunction clause ([karttunen-1973]).
 These theorems were previously in the study file; they belong in the
 theory layer because they establish a general correspondence.
 -/
 
 /--
-PIP's conjunction felicity agrees with `PrProp.andFilter`.
+PIP's conjunction felicity agrees with `PartialProp.andFilter`.
 
 **PIP Felicity** (`PIPExpr.felicitous` for `.conj φ ψ`):
   `φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)`
 
-**PrProp.andFilter** (`Semantics.Presupposition`):
+**PartialProp.andFilter** (`Semantics.Presupposition`):
   `p.presup w && (!p.assertion w || q.presup w)`
 
 These are structurally identical when interpreting `truth` as `assertion`
@@ -74,24 +74,24 @@ and `felicitous` as `presup`.
 theorem pip_felicity_agrees_with_andFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     (Felicity.PIPExpr.conj φ ψ).felicitous w ↔
-    (Semantics.Presupposition.PrProp.andFilter
-      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+    (Semantics.Presupposition.PartialProp.andFilter
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PartialProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PartialProp _))).presup w :=
   Iff.rfl
 
 /--
-PIP's negation felicity agrees with `PrProp.neg`: both preserve the
+PIP's negation felicity agrees with `PartialProp.neg`: both preserve the
 presupposition/felicity of the negated expression unchanged.
 -/
 theorem pip_felicity_agrees_with_neg {W : Type*}
     (φ : Felicity.PIPExpr W) (w : W) :
     (Felicity.PIPExpr.neg φ).felicitous w ↔
-    (Semantics.Presupposition.PrProp.neg
-      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+    (Semantics.Presupposition.PartialProp.neg
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PartialProp _))).presup w :=
   Iff.rfl
 
 /--
-PIP's implication felicity agrees with `PrProp.impFilter`.
+PIP's implication felicity agrees with `PartialProp.impFilter`.
 
   F(φ → ψ) = Fφ ∧ (φ → Fψ)
 
@@ -101,9 +101,9 @@ the antecedent can satisfy the consequent's presupposition.
 theorem pip_felicity_agrees_with_impFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     (Felicity.PIPExpr.impl φ ψ).felicitous w ↔
-    (Semantics.Presupposition.PrProp.impFilter
-      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+    (Semantics.Presupposition.PartialProp.impFilter
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PartialProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PartialProp _))).presup w :=
   Iff.rfl
 
 /--
@@ -113,9 +113,9 @@ PIP's disjunction felicity agrees with the filtering disjunction:
 theorem pip_felicity_agrees_with_orFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     (Felicity.PIPExpr.disj φ ψ).felicitous w ↔
-    (Semantics.Presupposition.PrProp.orFilter
-      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+    (Semantics.Presupposition.PartialProp.orFilter
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PartialProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PartialProp _))).presup w :=
   Iff.rfl
 
 

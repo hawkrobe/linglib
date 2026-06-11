@@ -11,10 +11,10 @@ Doxastic attitudes use Hintikka-style accessibility relations:
 - R(x, w, w') means w' is compatible with what x believes/knows in w
 - ⟦x believes p⟧(w) = ∀w'. R(x,w,w') → p(w')
 
-## PrProp Decomposition
+## PartialProp Decomposition
 
-`DoxasticPredicate.toPrProp` decomposes a doxastic predicate into a
-`PrProp` (partial proposition):
+`DoxasticPredicate.toPartialProp` decomposes a doxastic predicate into a
+`PartialProp` (partial proposition):
 - `presup` = veridicality check (for veridical verbs: p(w); otherwise: true)
 - `assertion` = universal modal (∀w'. R(x,w,w') → p(w'))
 
@@ -110,9 +110,9 @@ presuppositional profile — what they require of the Common Ground:
 - **Contrafactive** (hypothetical *contra*): would presuppose ¬p — UNATTESTED
 - **Weak contrafactive** (Mandarin yǐwéi): postsupposition ◇¬p — CommonGround compatible with ¬p
 
-The key insight: this classification is DERIVED from the `PrProp` produced by
-`DoxasticPredicate.toPrProp`, not stipulated as a separate type. The presup
-field of the PrProp determines the classification.
+The key insight: this classification is DERIVED from the `PartialProp` produced by
+`DoxasticPredicate.toPartialProp`, not stipulated as a separate type. The presup
+field of the PartialProp determines the classification.
 
 Postsuppositions (yǐwéi's ◇¬p) are output-context constraints, formalized
 separately in `Semantics.Dynamic.Postsupposition`.
@@ -121,8 +121,8 @@ separately in `Semantics.Dynamic.Postsupposition`.
 /--
 Classification of a doxastic verb's presuppositional profile.
 
-This emerges from the presup field of the `PrProp` produced by
-`DoxasticPredicate.toPrProp`. Not a primitive — a derived label.
+This emerges from the presup field of the `PartialProp` produced by
+`DoxasticPredicate.toPartialProp`. Not a primitive — a derived label.
 -/
 inductive PresupClass where
   | factive         -- presup = p (know: CommonGround must entail p)
@@ -490,44 +490,44 @@ instance DoxasticPredicate.holdsAt_decidable {W E : Type*}
   inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
--- PrProp Construction: Doxastic Predicates as Partial Propositions
+-- PartialProp Construction: Doxastic Predicates as Partial Propositions
 -- ============================================================================
 
 open Semantics.Presupposition
 
 /--
-Convert a doxastic predicate application to a `PrProp`.
+Convert a doxastic predicate application to a `PartialProp`.
 
 The decomposition makes the presuppositional structure explicit:
 - `presup` = veridicality check (for veridical: p(w); for non-veridical: true)
 - `assertion` = universal modal (∀w'. R(x,w,w') → p(w'))
 
-`holdsAt` computes `presup(w) && assertion(w)` — the same as `PrProp.holds`.
+`holdsAt` computes `presup(w) && assertion(w)` — the same as `PartialProp.holds`.
 -/
-def DoxasticPredicate.toPrProp {W E : Type*}
+def DoxasticPredicate.toPartialProp {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
-    (worlds : List W) : PrProp W :=
+    (worlds : List W) : PartialProp W :=
   { presup := λ w => veridicalityHolds V.veridicality p w
   , assertion := λ w => boxAt V.access agent w worlds p }
 
-/-- `toPrProp` decomposes `holdsAt`: the presup field is the veridicality
+/-- `toPartialProp` decomposes `holdsAt`: the presup field is the veridicality
     check and the assertion field is the modal. -/
-theorem DoxasticPredicate.toPrProp_presup {W E : Type*}
+theorem DoxasticPredicate.toPartialProp_presup {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) :
-    (V.toPrProp agent p worlds).presup w =
+    (V.toPartialProp agent p worlds).presup w =
     veridicalityHolds V.veridicality p w := rfl
 
-theorem DoxasticPredicate.toPrProp_assertion {W E : Type*}
+theorem DoxasticPredicate.toPartialProp_assertion {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) :
-    (V.toPrProp agent p worlds).assertion w =
+    (V.toPartialProp agent p worlds).assertion w =
     boxAt V.access agent w worlds p := rfl
 
-/-- PrProp for a hypothetical contrafactive verb: presupposes ¬p,
+/-- PartialProp for a hypothetical contrafactive verb: presupposes ¬p,
     asserts agent believes p. UNATTESTED — see [glass-2025]. -/
-def contrafactivePrProp {W E : Type*} (R : AccessRel W E) (agent : E)
-    (p : W → Prop) (worlds : List W) : PrProp W :=
+def contrafactivePartialProp {W E : Type*} (R : AccessRel W E) (agent : E)
+    (p : W → Prop) (worlds : List W) : PartialProp W :=
   { presup := λ w => ¬ p w
   , assertion := λ w => boxAt R agent w worlds p }
 

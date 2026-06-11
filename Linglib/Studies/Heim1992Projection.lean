@@ -36,7 +36,7 @@ formalized; the substrate splits along the natural Phenomena boundary
 
 namespace Heim1992
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
 open Core.Logic.Modal (IsSerial IsEuclidean IsS5Frame IsKD45Frame
   IsBeliefRefinementOf)
@@ -133,7 +133,7 @@ instance : IsBeliefRefinementOf (agentKnowsR .john) (agentBelievesR .john) :=
 
 /-- "Mary used to smoke" — the presupposition of "stop smoking".
     True at `believed`, false at `actual`. -/
-def presup : PrProp AttWorld :=
+def presup : PartialProp AttWorld :=
   { presup := fun w => match w with
       | .believed => True
       | .actual => False

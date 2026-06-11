@@ -19,7 +19,7 @@ namespace Semantics.Dynamic.Postsupposition
 /-- A postsupposition: a constraint on the output context after a
     discourse update.
 
-    Unlike presuppositions (input-context constraints on `PrProp.presup`),
+    Unlike presuppositions (input-context constraints on `PartialProp.presup`),
     postsuppositions constrain what must hold of the context *after* the
     at-issue content updates it.
 

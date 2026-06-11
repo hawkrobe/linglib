@@ -304,14 +304,14 @@ end Filtering
 
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §6. Bridge: EventPhase Precondition = PrProp Presupposition
+-- §6. Bridge: EventPhase Precondition = PartialProp Presupposition
 -- ═══════════════════════════════════════════════════════════════════════
 
 section Bridges
 
 variable {W : Type*}
 
-/-- For CoS verbs, EventPhase.precondition agrees with PrProp.presup.
+/-- For CoS verbs, EventPhase.precondition agrees with PartialProp.presup.
     This shows the two representations — the aboutness-based (R&S) and the
     trivalent (Heim) — agree on *what* projects, even though they disagree
     on *why* it projects. -/
@@ -413,7 +413,7 @@ theorem stop_end_to_end (P : W → Prop) (w : W) :
 
 /-- End-to-end for factives: know's complement truth is an ontological
     precondition, shares the same structural projection mechanism as
-    CoS verbs, and agrees with the PrProp representation. -/
+    CoS verbs, and agrees with the PartialProp representation. -/
 theorem know_end_to_end (BEL C : W → Prop) (w : W) :
     -- (1) Precondition = complement truth
     (knowAsEventPhase BEL C).precondition w = C w ∧

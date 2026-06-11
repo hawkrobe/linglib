@@ -59,7 +59,7 @@ it, so the whole denotation lacks a defined value when the referent is not
 female. -/
 theorem she_undefined_of_non_female (scope : E → PUnit → Prop)
     (h : ¬ isFemale (g i)) :
-    ¬ ((she.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ :=
+    ¬ ((she.denote i spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ :=
   fun hp => h hp.1.2.2
 
 /-- A bound pronoun has the same denotation as a free one: binding is the
@@ -76,7 +76,7 @@ denotation is defined of a referent regardless of gender — the structural
 correlate of *they*'s gender-neutrality, and the direct contrast with
 `she_undefined_of_non_female`. -/
 theorem they_defined_regardless_of_gender (scope : E → PUnit → Prop) :
-    ((they.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
+    ((they.denote i spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, trivial⟩, ?_⟩
   rfl
 

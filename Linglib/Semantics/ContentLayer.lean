@@ -14,7 +14,7 @@ condition carries a label — `pr` (presupposition), `fr` (at-issue), or
 module extracts the layer system as a standalone type that unifies several
 existing linglib distinctions:
 
-- `PrProp` (presup + assertion) is the 2-layer special case (`pr` + `fr`)
+- `PartialProp` (presup + assertion) is the 2-layer special case (`pr` + `fr`)
 - `Challengeability` (directDenial vs hwamChallenge) identifies which layer
   is targeted by a discourse challenge
 - `AtIssueness` (atIssue vs notAtIssue) classifies content by whether it
@@ -32,7 +32,7 @@ existing linglib distinctions:
 
 ## Design Note
 
-`ContentLayer` lives in `Semantics/` because it generalizes `PrProp`.
+`ContentLayer` lives in `Semantics/` because it generalizes `PartialProp`.
 Bridges to `Discourse/AtIssueness` and `Phenomena/Presupposition/
 ProjectiveContent.Challengeability` live downstream in bridge files,
 preserving the independence of `Semantics/` and `Discourse/`.
@@ -90,8 +90,8 @@ inductive ContentLayer where
 
 /-- A full layered proposition: content at each layer.
 
-    Generalizes `PrProp` from 2 layers to 3. When `implicature` is trivially
-    true, a `LayeredProp` degenerates to a `PrProp`. -/
+    Generalizes `PartialProp` from 2 layers to 3. When `implicature` is trivially
+    true, a `LayeredProp` degenerates to a `PartialProp`. -/
 structure LayeredProp (W : Type*) where
   /-- Presuppositional content (must hold for definedness). -/
   presupposition : W → Bool
@@ -99,7 +99,7 @@ structure LayeredProp (W : Type*) where
   atIssue : W → Bool
   /-- Implicature content (enrichment beyond truth conditions). Trivially
       true by default: most utterances carry no relevant implicature, just
-      as `PrProp.ofProp` sets presupposition to `λ _ => True`. -/
+      as `PartialProp.ofProp` sets presupposition to `λ _ => True`. -/
   implicature : W → Bool := λ _ => true
 
 /-- Access a layer's content by its tag. -/
@@ -109,40 +109,40 @@ def LayeredProp.get {W : Type*} (lp : LayeredProp W) : ContentLayer → (W → B
   | .implicature => lp.implicature
 
 -- ════════════════════════════════════════════════════
--- § Bridge to PrProp
+-- § Bridge to PartialProp
 -- ════════════════════════════════════════════════════
 
 open Semantics.Presupposition in
-/-- Project a `LayeredProp` to a `PrProp` by discarding the implicature layer.
+/-- Project a `LayeredProp` to a `PartialProp` by discarding the implicature layer.
 
-    This is the canonical projection: `PrProp` is the 2-layer special case
+    This is the canonical projection: `PartialProp` is the 2-layer special case
     where implicature is invisible. -/
-def LayeredProp.toPrProp {W : Type*} (lp : LayeredProp W) : PrProp W :=
+def LayeredProp.toPartialProp {W : Type*} (lp : LayeredProp W) : PartialProp W :=
   { presup := fun w => lp.presupposition w = true
   , assertion := fun w => lp.atIssue w = true }
 
 open Semantics.Presupposition Classical in
-/-- Lift a `PrProp` to a `LayeredProp` with trivially true implicature.
+/-- Lift a `PartialProp` to a `LayeredProp` with trivially true implicature.
 
-    This is the canonical embedding: every `PrProp` is a `LayeredProp` with
+    This is the canonical embedding: every `PartialProp` is a `LayeredProp` with
     no implicature content. Noncomputable because Prop → Bool requires
     classical decidability. -/
-noncomputable def LayeredProp.ofPrProp {W : Type*} (p : PrProp W) : LayeredProp W :=
+noncomputable def LayeredProp.ofPartialProp {W : Type*} (p : PartialProp W) : LayeredProp W :=
   { presupposition := fun w => if p.presup w then true else false
   , atIssue := fun w => if p.assertion w then true else false
   , implicature := λ _ => true }
 
 open Semantics.Presupposition Classical in
-/-- The round-trip `PrProp → LayeredProp → PrProp` is the identity.
+/-- The round-trip `PartialProp → LayeredProp → PartialProp` is the identity.
 
-    This confirms that `PrProp` embeds faithfully into `LayeredProp`:
+    This confirms that `PartialProp` embeds faithfully into `LayeredProp`:
     no information is lost or added in the embedding. -/
-theorem LayeredProp.roundtrip_prprop {W : Type*} (p : PrProp W) :
-    (LayeredProp.ofPrProp p).toPrProp = p := by
+theorem LayeredProp.roundtrip_prprop {W : Type*} (p : PartialProp W) :
+    (LayeredProp.ofPartialProp p).toPartialProp = p := by
   ext w
-  · simp only [ofPrProp, toPrProp]
+  · simp only [ofPartialProp, toPartialProp]
     by_cases h : p.presup w <;> simp [h]
-  · simp only [ofPrProp, toPrProp]
+  · simp only [ofPartialProp, toPartialProp]
     by_cases h : p.assertion w <;> simp [h]
 
 -- ════════════════════════════════════════════════════

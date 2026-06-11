@@ -34,7 +34,7 @@ co-developer, but it is formalised separately at
 Yagi's example (8) — "Either baldness is not hereditary, or all of Bill's
 children are bald" ([karttunen-1974]) — appears in §2.2 as a
 counterexample to the K&P modification `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. 7).
-This formula is exactly what `PrProp.orFlex.presup` computes. The
+This formula is exactly what `PartialProp.orFlex.presup` computes. The
 flexible-accommodation framework Yagi defends in §3.2 evades the eq. (7)
 problem via the `χ = ω = ⊤` accommodation default, which we have not
 formalised here (we have only the static `orFlex` connective, not the
@@ -42,18 +42,18 @@ parametric dynamic update `s[χ][φ] ∪ s[ω][ψ]` of Yagi's eq. 13).
 
 The §3.2 discussion of how dynamic negation requires genuineness to hold
 within negation scope ("peculiar, given that we end up negating both
-disjuncts") motivated the strengthening of `PrProp.genuineness` from a
-singleton-survival check (now `PrProp.liveness`) to the two-conjunct
+disjuncts") motivated the strengthening of `PartialProp.genuineness` from a
+singleton-survival check (now `PartialProp.liveness`) to the two-conjunct
 definition with disjunction-update survival.
 
 ## Connective inventory used
 
 - `Truth3.join` (Strong Kleene): never false (`strong_kleene_never_false`)
-- `PrProp.or` (classical): never defined (`classical_never_defined`)
-- `PrProp.orPositive` (symmetric, positive-antecedent filtering of
+- `PartialProp.or` (classical): never defined (`classical_never_defined`)
+- `PartialProp.orPositive` (symmetric, positive-antecedent filtering of
   [kalomoiros-schwarz-2021]): wrong presupposition
   (`filter_wrong_at_kingOpens`)
-- `PrProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
+- `PartialProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
   presupposition entails assertion (`kp_presup_entails_assertion`)
 - `Geurts2005.exhaustivity_implies_uninformative`:
   the *consequence* (not the derivation) of [schlenker-2009] §2.4
@@ -61,17 +61,17 @@ definition with disjunction-update survival.
   (`truthset_uninformative_geurts_route`)
 - `Prop3.metaAssert`: allows falsity, no presupposition
   (`metaAssert_allows_falsity`, `metaAssert_no_gap`)
-- `PrProp.orFlex` = `PrProp.orBelnap` (substrate identity from
+- `PartialProp.orFlex` = `PartialProp.orBelnap` (substrate identity from
   `Semantics/Presupposition/Basic.lean`): correct (2a) and (2b), with a
   discriminating world `noHeadOfState` to prove the presupposition is
   non-trivial
-- `PrProp.orFlex.presup` overgenerates trivial-truth in eq. (7) shape:
+- `PartialProp.orFlex.presup` overgenerates trivial-truth in eq. (7) shape:
   `eq7_too_weak_for_ex8` exhibits the empirical mismatch at world `noChild`
 - For example (18), `orFlex` predicts non-projection only because the left
   disjunct is presuppositionless (`ex18_orFlex_no_projection_via_vacuous_left`,
   `ex18_unprincipled_in_right_presup_failure`); the principled K1973
   asymmetric route (`ex18_asymmetric_K1973_principled`) goes via
-  `PrProp.disjFilterLeft_eliminates_presup_when_neg_entails`
+  `PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`
 -/
 
 namespace Yagi2025
@@ -120,12 +120,12 @@ theorem presups_conflict : ∀ w, ¬(hasKing w ∧ hasPresident w) := by
   decide
 
 /-- φ_p: "The King is opening parliament" — presupposes `hasKing`. -/
-def kingOpensParl : PrProp W where
+def kingOpensParl : PartialProp W where
   presup := hasKing
   assertion w := w = .kingOpens
 
 /-- ψ_q: "The President is conducting the ceremony" — presupposes `hasPresident`. -/
-def presConductsCeremony : PrProp W where
+def presConductsCeremony : PartialProp W where
   presup := hasPresident
   assertion w := w = .presidentConducts
 
@@ -172,7 +172,7 @@ the table never reaches the 0 ∨ 0 = 0 row. -/
 theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
   intro w
   cases w <;>
-    (simp [skDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+    (simp [skDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
       hasKing, hasPresident] <;> try decide)
 
 
@@ -180,31 +180,31 @@ theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
 
 [karttunen-peters-1979], with [yagi-2025]'s symmetric Definition 2
 (per fn 2, citing [kalomoiros-schwarz-2021] for empirical support of
-symmetry). The substrate `PrProp.orKPSymmetric` matches Yagi's Def 2 directly:
+symmetry). The substrate `PartialProp.orKPSymmetric` matches Yagi's Def 2 directly:
 
   Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
 
-`PrProp.orPositive` is a *different* symmetric variant with positive-antecedent
+`PartialProp.orPositive` is a *different* symmetric variant with positive-antecedent
 conditionals plus an extra `Π(φ) ∨ Π(ψ)` disjunct, which is **strictly
 stronger** than `orKPSymmetric` (worked counterexample: at a world with `A(φ)=⊤`,
 `A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orPositive` is not).
 The two are not predictionally equivalent, and neither is the asymmetric
-[karttunen-1973] rule (24b) used as `PrProp.disjFilterLeft` —
+[karttunen-1973] rule (24b) used as `PartialProp.disjFilterLeft` —
 see `Studies/Karttunen1973.lean`. -/
 
 /-- Classical disjunction requires both presuppositions: presup = `p ∧ q`. -/
-def classicalDisj : PrProp W := PrProp.or kingOpensParl presConductsCeremony
+def classicalDisj : PartialProp W := PartialProp.or kingOpensParl presConductsCeremony
 
-/-- `PrProp.or` is never defined when presuppositions conflict. -/
+/-- `PartialProp.or` is never defined when presuppositions conflict. -/
 theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := fun w h =>
   presups_conflict w h
 
 /-- The symmetric positive-antecedent filtering disjunction
-(`PrProp.orPositive`). Encodes
+(`PartialProp.orPositive`). Encodes
 `(A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ))` — strictly stronger
 than `orKPSymmetric`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
 discussed by [yagi-2025] §2.2 (after Def 3) as a candidate fix. -/
-def filterDisj : PrProp W := PrProp.orPositive kingOpensParl presConductsCeremony
+def filterDisj : PartialProp W := PartialProp.orPositive kingOpensParl presConductsCeremony
 
 /-- `orPositive` predicts presupposition failure at `kingOpens`, where the
 disjunction should clearly be true: the filtering condition demands the
@@ -220,15 +220,15 @@ theorem filter_wrong_at_kingOpens : ¬filterDisj.presup W.kingOpens := by
 theorem expected_satisfied_at_kingOpens : expectedPresup W.kingOpens := Or.inl trivial
 
 /-- K&P two-dimensional disjunction applied to the Buganda scenario. -/
-def kpDisj : PrProp W := PrProp.orKPSymmetric kingOpensParl presConductsCeremony
+def kpDisj : PartialProp W := PartialProp.orKPSymmetric kingOpensParl presConductsCeremony
 
 /-- K&P's presupposition entails the assertion when presuppositions conflict:
 whenever Π = 1, A = 1. Derived from the substrate
-`PrProp.orKPSymmetric_presup_entails_when_conflicting`. [yagi-2025] §2.2 (5)–(6). -/
+`PartialProp.orKPSymmetric_presup_entails_when_conflicting`. [yagi-2025] §2.2 (5)–(6). -/
 theorem kp_presup_entails_assertion :
     ∀ w, kpDisj.presup w → kpDisj.assertion w := by
   intro w h
-  exact PrProp.orKPSymmetric_presup_entails_when_conflicting _ _ w (presups_conflict w) h
+  exact PartialProp.orKPSymmetric_presup_entails_when_conflicting _ _ w (presups_conflict w) h
 
 
 /-! ## Failure 3: Update semantics ([yagi-2025] §2.3)
@@ -320,20 +320,20 @@ def truthSet : Set W := { W.kingOpens, W.presidentConducts }
 some disjunct's modal cell (`domain ∩ content` = `presup ∧ assertion`). -/
 theorem truthSet_exhausted :
     Geurts2005.exhaustivity truthSet
-      (Geurts2005.fromPrProp kingOpensParl presConductsCeremony) := by
+      (Geurts2005.fromPartialProp kingOpensParl presConductsCeremony) := by
   intro w hw
   rcases hw with rfl | rfl
   · -- Witness: the king-disjunct, with cell membership at `kingOpens`.
     refine ⟨{ domain := kingOpensParl.presup,
               force := .possibility,
               content := kingOpensParl.assertion },
-            by simp [Geurts2005.fromPrProp], ?_⟩
+            by simp [Geurts2005.fromPartialProp], ?_⟩
     exact ⟨trivial, rfl⟩
   · -- Witness: the president-disjunct, with cell membership at `presidentConducts`.
     refine ⟨{ domain := presConductsCeremony.presup,
               force := .possibility,
               content := presConductsCeremony.assertion },
-            by simp [Geurts2005.fromPrProp], ?_⟩
+            by simp [Geurts2005.fromPartialProp], ?_⟩
     exact ⟨trivial, rfl⟩
 
 /-- Truth-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
@@ -344,7 +344,7 @@ would derive `s_0 ⊆ truthSet` from a `localContext` PUpdate operator we
 have not built. -/
 theorem truthset_uninformative_geurts_route :
     ∀ w ∈ truthSet,
-      (PrProp.orFlex kingOpensParl presConductsCeremony).assertion w := by
+      (PartialProp.orFlex kingOpensParl presConductsCeremony).assertion w := by
   intro w hw
   exact Geurts2005.exhaustivity_implies_uninformative
     kingOpensParl presConductsCeremony truthSet
@@ -378,7 +378,7 @@ noncomputable def metaAssertDisj : Prop3 W :=
 /-- Meta-assertion allows falsity (unlike Strong Kleene). Satisfies (2b). -/
 theorem metaAssert_allows_falsity :
     metaAssertDisj W.kingDoesnt = .false := by
-  simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+  simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
     hasKing, hasPresident]
 
 /-- Meta-assertion loses the presupposition: `𝒜φ_p` has no presupposition
@@ -386,25 +386,25 @@ theorem metaAssert_allows_falsity :
 only presupposes `¬𝒜ψ_q → p` per Yagi (11), not `p ∨ q`. -/
 theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined := by
   intro w; cases w <;>
-    simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+    simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
       hasKing, hasPresident, Truth3.isDefined]
 
 /-- The meta-assertion disjunction is bivalent — no gap, no presupposition
 via the standard gap mechanism. -/
 theorem metaAssert_no_gap : ∀ w, metaAssertDisj w ≠ .indet := by
   intro w; cases w <;>
-    simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+    simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
       hasKing, hasPresident]
 
 
 /-! ## Reaction 2: Flexible accommodation ([yagi-2025] §3.2,
 [geurts-2005], [aloni-2022])
 
-Uses the substrate `PrProp.orFlex`, with the discriminating world
+Uses the substrate `PartialProp.orFlex`, with the discriminating world
 `noHeadOfState` ensuring the (2a) test is non-trivial. -/
 
 /-- The flexible accommodation disjunction. -/
-def flexDisj : PrProp W := PrProp.orFlex kingOpensParl presConductsCeremony
+def flexDisj : PartialProp W := PartialProp.orFlex kingOpensParl presConductsCeremony
 
 /-- (2a) at the discriminating world: `flexDisj.presup` *fails* at
 `noHeadOfState`. Without this world, `expectedPresup` would be a
@@ -432,14 +432,14 @@ theorem flex_truth_table :
     flexDisj.eval W.presidentConducts = .true ∧
     flexDisj.eval W.presidentDoesnt = .false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
+    simp [flexDisj, PartialProp.orFlex, PartialProp.eval, kingOpensParl, presConductsCeremony,
       hasKing, hasPresident]
 
 /-- Flexible accommodation is undefined at the discriminating world
 `noHeadOfState`. -/
 theorem flex_undefined_at_no_head :
     flexDisj.eval W.noHeadOfState = .indet := by
-  simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
+  simp [flexDisj, PartialProp.orFlex, PartialProp.eval, kingOpensParl, presConductsCeremony,
     hasKing, hasPresident]
 
 /-- (2b): `flexDisj` is false at `kingDoesnt` (king present but not opening). -/
@@ -451,9 +451,9 @@ theorem flex_can_be_false : flexDisj.eval W.kingDoesnt = .false := flex_truth_ta
 [yagi-2025] Definition 8 (after [zimmermann-2000]): each
 disjunct must contribute a "live possibility" — there is `w ∈ s` with
 `{w}[φ] = {w}` AND `w ∈ s[φ ∨ ψ]`. The substrate
-`PrProp.genuineness p q s disj` parameterises on the disjunction
+`PartialProp.genuineness p q s disj` parameterises on the disjunction
 connective `disj` whose update we test against; the simpler
-singleton-survival check is now `PrProp.liveness`. Under `orFlex`,
+singleton-survival check is now `PartialProp.liveness`. Under `orFlex`,
 `liveness ⇒ genuineness` (`liveness_implies_genuineness_orFlex`), so
 discharging genuineness reduces to discharging liveness. -/
 
@@ -461,9 +461,9 @@ discharging genuineness reduces to discharging liveness. -/
 two-element witness state `{kingOpens, presConducts}`: each disjunct's
 witness world survives both its own update and the joint orFlex update. -/
 theorem flex_genuineness :
-    PrProp.genuineness kingOpensParl presConductsCeremony
+    PartialProp.genuineness kingOpensParl presConductsCeremony
       ⟨[W.kingOpens, W.presidentConducts], by simp⟩ flexDisj := by
-  apply PrProp.liveness_implies_genuineness_orFlex
+  apply PartialProp.liveness_implies_genuineness_orFlex
   exact ⟨⟨W.kingOpens, by simp, trivial, rfl⟩,
          ⟨W.presidentConducts, by simp, trivial, rfl⟩⟩
 
@@ -479,8 +479,8 @@ the substrate identity at the Buganda case for clarity. -/
 
 /-- Substrate identity at the Buganda case: `flexDisj = orBelnap`. -/
 theorem flexDisj_eq_orBelnap :
-    flexDisj = PrProp.orBelnap kingOpensParl presConductsCeremony :=
-  PrProp.orFlex_eq_orBelnap _ _
+    flexDisj = PartialProp.orBelnap kingOpensParl presConductsCeremony :=
+  PartialProp.orFlex_eq_orBelnap _ _
 
 
 /-! ### Negation interaction ([yagi-2025] §3.2 final paragraphs)
@@ -490,7 +490,7 @@ assertion. His *dynamic* negation `s[¬(φ_p ∨ ψ_q)] = s/(s[χ][φ_p] ∪ s[�
 requires genuineness to hold within the scope of negation, which Yagi
 calls "peculiar, given that we end up negating both disjuncts". The
 peculiarity surfaces only at the dynamic level — at the static
-`PrProp.neg` connective, the assertion just flips and presupposition is
+`PartialProp.neg` connective, the assertion just flips and presupposition is
 preserved (`neg_presup`); there is no genuineness check to violate.
 
 We do not formalise the dynamic version here because it would require
@@ -502,11 +502,11 @@ president-doesn't, where both disjuncts fail); Yagi's "peculiarity"
 diagnosis lives at the dynamic level above this static reduction. -/
 
 /-- Negation of the flexible accommodation disjunction. -/
-def negFlexDisj : PrProp W := PrProp.neg flexDisj
+def negFlexDisj : PartialProp W := PartialProp.neg flexDisj
 
 /-- Static negation preserves the presupposition (substrate `neg_presup`). -/
 theorem neg_flex_presup_preserved :
-    negFlexDisj.presup = flexDisj.presup := PrProp.neg_presup flexDisj
+    negFlexDisj.presup = flexDisj.presup := PartialProp.neg_presup flexDisj
 
 /-- Static negation gives the right truth values at the head-of-state worlds:
 true at king-doesn't and president-doesn't (both disjuncts false). -/
@@ -516,7 +516,7 @@ theorem neg_flex_truth_table :
     negFlexDisj.eval W.presidentConducts = .false ∧
     negFlexDisj.eval W.presidentDoesnt = .true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [negFlexDisj, PrProp.neg, flexDisj, PrProp.orFlex, PrProp.eval,
+    simp [negFlexDisj, PartialProp.neg, flexDisj, PartialProp.orFlex, PartialProp.eval,
       kingOpensParl, presConductsCeremony, hasKing, hasPresident]
 
 
@@ -524,7 +524,7 @@ theorem neg_flex_truth_table :
 
 [yagi-2025] §2.2 (between Def 3 and §2.3) considers a modification
 to K&P, `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. (7)). This formula IS what
-`PrProp.orFlex.presup` computes. Yagi shows it correctly predicts (1c)
+`PartialProp.orFlex.presup` computes. Yagi shows it correctly predicts (1c)
 Buganda but is "too weak" for (8) [karttunen-1974]: "Either baldness
 is not hereditary, or all of Bill's children are bald." Eq. (7) predicts
 the tautological presupposition `⊤ ∨ Π(ψ) = ⊤`, but the empirical
@@ -555,18 +555,18 @@ instance : DecidablePred billHasChild
   | .noChild => isFalse id
 
 /-- "Baldness is not hereditary" — no presupposition. -/
-def baldnessNotHereditary : PrProp W8 where
+def baldnessNotHereditary : PartialProp W8 where
   presup _ := True
   assertion _ := True
 
 /-- "All of Bill's children are bald" — factive on `billHasChild`. -/
-def allBillsChildrenBald : PrProp W8 where
+def allBillsChildrenBald : PartialProp W8 where
   presup := billHasChild
   assertion w := w = .hasChildAllBald
 
 /-- The static flex disjunction for (8) — assertion ignored, only the
 presup formula matters here. -/
-def ex8FlexDisj : PrProp W8 := PrProp.orFlex baldnessNotHereditary allBillsChildrenBald
+def ex8FlexDisj : PartialProp W8 := PartialProp.orFlex baldnessNotHereditary allBillsChildrenBald
 
 /-- The empirical presupposition Karttunen attributes to (8): "Bill has
 children". This is the predicate that any adequate theory of disjunctive
@@ -624,12 +624,12 @@ instance : DecidablePred solved
   | .notSolved => isFalse id
 
 /-- "Mary realized the problem is solved" — factive: presupposes problem is solved. -/
-def maryRealized : PrProp W18 where
+def maryRealized : PartialProp W18 where
   presup := solved
   assertion w := w = .solvedRealized
 
 /-- "John didn't solve the problem" — no presupposition. -/
-def johnDidntSolve : PrProp W18 where
+def johnDidntSolve : PartialProp W18 where
   presup _ := True
   assertion w := ¬solved w
 
@@ -637,7 +637,7 @@ def johnDidntSolve : PrProp W18 where
 predicts presupposition failure at `notSolved`, where the disjunction
 should be defined-and-true. -/
 theorem ex18_symmetric_orPositive_overgenerates :
-    ¬(PrProp.orPositive johnDidntSolve maryRealized).presup W18.notSolved := by
+    ¬(PartialProp.orPositive johnDidntSolve maryRealized).presup W18.notSolved := by
   rintro ⟨h, _, _⟩
   exact (h (fun (h' : solved W18.notSolved) => h') : solved W18.notSolved)
 
@@ -645,7 +645,7 @@ theorem ex18_symmetric_orPositive_overgenerates :
 through the LEFT disjunct of `Π(φ) ∨ Π(ψ)`: `johnDidntSolve.presup` is
 universally `True` (no presupposition). -/
 theorem ex18_orFlex_no_projection_via_vacuous_left :
-    (PrProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved :=
+    (PartialProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved :=
   Or.inl trivial
 
 /-- The structural reason for `ex18_orFlex_no_projection_via_vacuous_left`:
@@ -665,18 +665,18 @@ in (18), only the right disjunct does, so the left disjunct's vacuous
 `True` carries the prediction unilaterally. -/
 theorem ex18_unprincipled_in_right_presup_failure :
     ¬maryRealized.presup W18.notSolved ∧
-    (PrProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved ∧
+    (PartialProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved ∧
     (∀ w, johnDidntSolve.presup w) :=
   ⟨id, ex18_orFlex_no_projection_via_vacuous_left, ex18_left_presup_vacuous⟩
 
 /-- [karttunen-1973]'s asymmetric rule (24b) — formalised in
 `Studies/Karttunen1973.lean` as
-`PrProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
+`PartialProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
 solved` entails the factive presupposition, so it is filtered. We invoke
 the K1973 sibling theorem
 `Karttunen1973.disjFilterLeft_eliminates_presup_when_neg_entails`. -/
 theorem ex18_asymmetric_K1973_principled :
-    (PrProp.disjFilterLeft (fun w => ¬solved w) maryRealized).presup
+    (PartialProp.disjFilterLeft (fun w => ¬solved w) maryRealized).presup
       = fun _ => True := by
   apply Karttunen1973.disjFilterLeft_eliminates_presup_when_neg_entails
   intro w hw
@@ -699,10 +699,10 @@ theorem orFlex_satisfies_both :
 
 /-- The substrate-canonical orFlex / orBelnap / Geurts three-way
 identity, instantiated at the Buganda case. The substrate-side identity
-is `Semantics.Presupposition.PrProp.orFlex_eq_orBelnap` and
-`Geurts2005.fromPrProp_cell_iff_orBelnap`. -/
+is `Semantics.Presupposition.PartialProp.orFlex_eq_orBelnap` and
+`Geurts2005.fromPartialProp_cell_iff_orBelnap`. -/
 theorem orFlex_eq_orBelnap_at_buganda :
-    PrProp.orFlex (W := W) = PrProp.orBelnap :=
-  funext₂ PrProp.orFlex_eq_orBelnap
+    PartialProp.orFlex (W := W) = PartialProp.orBelnap :=
+  funext₂ PartialProp.orFlex_eq_orBelnap
 
 end Yagi2025

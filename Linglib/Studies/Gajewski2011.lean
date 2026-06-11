@@ -66,7 +66,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   `condition2_with_no_alts_iff_de`). `only`'s satisfaction of Cond 1, 2
   in the trivial limit cited below.
 - Conditions 3, 4 (eqs. 93, 94): formalized in PresuppositionLicensing.lean
-  via `KPOperator` over `PrProp`. `only` satisfies Cond 3 ✓, fails
+  via `KPOperator` over `PartialProp`. `only` satisfies Cond 3 ✓, fails
   Cond 4 ✗ (`gaj2011_only_condition3_yes_condition4_no`).
 
 ## What's still genuinely deferred
@@ -281,13 +281,13 @@ them to `only` and verify the empirical match: weak NPIs licensed
 -/
 
 open Semantics.Entailment.PresuppositionLicensing
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",
     presupposition = "some y has x and scope" (Horn 1996). Built directly
-    from `onlyPrProp` in StrawsonEntailment. -/
+    from `onlyPartialProp` in StrawsonEntailment. -/
 def onlyKP (x : World → Prop) : KPOperator World :=
-  fun scope => onlyPrProp x scope
+  fun scope => onlyPartialProp x scope
 
 /-- Ex. 19a (p. 115) confirmed: `only` satisfies Condition 3 — its
     truth-conditional assertion is *classically DE* in the scope.

@@ -20,7 +20,7 @@ true backchannels live in `Pragmatics/Dialogue/KOS/`).
   bridge to CommonGround (§2.6).
 
 **Parametric Content**: Parametric bg/fg, PPpty, PQuant, PQuantDet, PRel2 (§4.2–4.3).
-  Bridge to Semantics.Presupposition.PrProp.
+  Bridge to Semantics.Presupposition.PartialProp.
 
 **Reference & Mental States**: HasNamed, NameContext, semPropNameP,
   TotalInfoState, AccommodationKind, Paderewski puzzle,
@@ -276,36 +276,36 @@ def Parametric.trivial {Content : Type*} (c : Content) : Parametric Content :=
 theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
     (Parametric.trivial c).fg u = c := rfl
 
-/-! ## Bridge: Parametric ↔ PrProp (presupposition/assertion) -/
+/-! ## Bridge: Parametric ↔ PartialProp (presupposition/assertion) -/
 
-/-- Convert a Parametric `(W → Prop)` to a PrProp. -/
-noncomputable def Parametric.toPrProp {W : Type*} (p : Parametric (W → Prop))
+/-- Convert a Parametric `(W → Prop)` to a PartialProp. -/
+noncomputable def Parametric.toPartialProp {W : Type*} (p : Parametric (W → Prop))
     (presupTest : W → Prop) [DecidablePred presupTest]
     (bgWitness : (w : W) → presupTest w → p.Bg) :
-    Semantics.Presupposition.PrProp W where
+    Semantics.Presupposition.PartialProp W where
   presup := presupTest
   assertion := λ w =>
     if h : presupTest w then p.fg (bgWitness w h) w else False
 
-/-- Convert a PrProp back to a Parametric. -/
-def _root_.Semantics.Presupposition.PrProp.toParametric {W : Type*}
-    (p : Semantics.Presupposition.PrProp W) :
+/-- Convert a PartialProp back to a Parametric. -/
+def _root_.Semantics.Presupposition.PartialProp.toParametric {W : Type*}
+    (p : Semantics.Presupposition.PartialProp W) :
     Parametric (Set W) where
   Bg := { w : W // p.presup w }
   fg := λ _ => p.assertion
 
-/-- Parametric ↔ PrProp roundtrip: the assertion component survives
+/-- Parametric ↔ PartialProp roundtrip: the assertion component survives
 when the presupposition holds. -/
-theorem toParametric_toPrProp_assertion {W : Type*} (p : Semantics.Presupposition.PrProp W) (w : W)
+theorem toParametric_toPartialProp_assertion {W : Type*} (p : Semantics.Presupposition.PartialProp W) (w : W)
     (hp : p.presup w) :
     p.toParametric.fg ⟨w, hp⟩ w ↔ p.assertion w := by
-  simp only [Semantics.Presupposition.PrProp.toParametric]
+  simp only [Semantics.Presupposition.PartialProp.toParametric]
 
-/-- When a Parametric has a Prop-valued background, it directly maps to PrProp. -/
-noncomputable def Parametric.toPrPropSimple {W : Type*}
+/-- When a Parametric has a Prop-valued background, it directly maps to PartialProp. -/
+noncomputable def Parametric.toPartialPropSimple {W : Type*}
     (presup : W → Prop) [DecidablePred presup]
     (assertion : (w : W) → presup w → Prop) :
-    Semantics.Presupposition.PrProp W where
+    Semantics.Presupposition.PartialProp W where
   presup := presup
   assertion := λ w => if h : presup w then assertion w h else False
 

@@ -189,7 +189,7 @@ theorem belief_local_context_is_holder_beliefs
 "not pp'" has local context = global context at pp'.
 Therefore pp' projects (unless globally entailed).
 -/
-theorem negation_projects (c : ContextSet W) (p : PrProp W) :
+theorem negation_projects (c : ContextSet W) (p : PartialProp W) :
     presupProjects (localCtxNegation (initialLocalCtx c)) p ↔
     presupProjects (initialLocalCtx c) p := by
   exact negation_preserves_projection (initialLocalCtx c) p
@@ -199,7 +199,7 @@ theorem negation_projects (c : ContextSet W) (p : PrProp W) :
 
 "if p then qq'" — if p.assertion entails q.presup, it's filtered.
 -/
-theorem conditional_filters (c : LocalCtx W) (p q : PrProp W)
+theorem conditional_filters (c : LocalCtx W) (p q : PartialProp W)
     (h : ∀ w, c.worlds w → p.assertion w → q.presup w) :
     presupFiltered (localCtxConsequent c p) q :=
   conditional_filters_when_entailed c p q h
@@ -210,7 +210,7 @@ theorem conditional_filters (c : LocalCtx W) (p q : PrProp W)
 Under "x believes φ", the local context at φ is x's belief state.
 This derives OLE=yes behavior.
 -/
-theorem belief_derives_ole (blc : BeliefLocalCtx W Agent) (p : PrProp W)
+theorem belief_derives_ole (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
     (h : presupAttributedToHolder blc p) (w_star : W) (hw : blc.globalCtx w_star) :
     presupFiltered (beliefToLocalCtx blc w_star hw) p :=
   h w_star hw

@@ -41,7 +41,7 @@ assertive from presuppositional content.
 ## Architecture
 
 `pexIEII` takes the same IE/II computation from `Operators.lean` and
-produces a `PrProp World` — a Prop-based partial proposition with separate
+produces a `PartialProp World` — a Prop-based partial proposition with separate
 assertive and presuppositional components. This directly integrates with
 the presupposition projection infrastructure in `Semantics.Presupposition`.
 
@@ -57,7 +57,7 @@ puzzles from §3–§5 — live in the study file
 namespace Exhaustification.Presuppositional
 
 open Exhaustification
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 variable {World : Type*}
 
@@ -120,13 +120,13 @@ all alternatives are relevant.
 /-- **pex^{IE+II}**: Presuppositional exhaustification with IE and II.
 
     Unlike `exhIEII` which returns `Set World` (flat, fully assertive),
-    `pexIEII` returns `PrProp World` (assertive + presuppositional).
+    `pexIEII` returns `PartialProp World` (assertive + presuppositional).
 
     - **assertion** = φ (the prejacent)
     - **presupposition** = (negation of relevant IE alternatives) ∧
                            (homogeneity of relevant II alternatives) -/
 def pexIEII (ALT : Set (Set World)) (φ : Set World)
-    (Rc : Set (Set World)) : PrProp World where
+    (Rc : Set (Set World)) : PartialProp World where
   assertion := φ
   presup := fun w =>
     -- (i) all relevant IE alternatives are false
@@ -135,7 +135,7 @@ def pexIEII (ALT : Set (Set World)) (φ : Set World)
     homogeneous {α ∈ II ALT φ | α ∈ Rc} w
 
 /-- pex with all alternatives relevant (the default case). -/
-def pexIEII_full (ALT : Set (Set World)) (φ : Set World) : PrProp World :=
+def pexIEII_full (ALT : Set (Set World)) (φ : Set World) : PartialProp World :=
   pexIEII ALT φ ALT
 
 -- ============================================================================
@@ -259,7 +259,7 @@ puzzles, see `Studies/DelPinalBassiSauerland2024.lean`.
 /-!
 ## Bridge: pex outputs as `Implicature W Prop`
 
-Wraps a `PrProp W` (the pex output type) as an `Implicature W Prop` whose
+Wraps a `PartialProp W` (the pex output type) as an `Implicature W Prop` whose
 `content` is the presupposed component, with mechanism
 `.bpsPresuppositional`.
 
@@ -276,11 +276,11 @@ formal content.
 **Substantive (`bps_neg_not_cancellable`).** With assertion =
 `p.neg.holds` (i.e., the *negation* of the pex output), non-cancellability
 still holds — because `(p.neg).presup = p.presup` by the projecting
-construction of `PrProp.neg`. This is the formal counterpart to BPS's
+construction of `PartialProp.neg`. This is the formal counterpart to BPS's
 *family-of-sentences* test for projection: the inferred content survives
-embedding under negation. Replacing `PrProp.neg` with a non-projecting
+embedding under negation. Replacing `PartialProp.neg` with a non-projecting
 alternative (e.g. `negExt`) breaks this theorem; it depends on the
-structural projection identity `PrProp.neg_presup`, not just on `And`.
+structural projection identity `PartialProp.neg_presup`, not just on `And`.
 
 Together these track the difference [bassi-delpinal-sauerland-2021]
 draws between "assertion entails inference" (cheap: also true of any
@@ -290,7 +290,7 @@ flat-EXH assertion paired with its consequence) and "inference projects"
 
 open Semantics.Presupposition
 
-/-- Wrap a `PrProp W` (e.g. a pex output) as an `Implicature W Prop` whose
+/-- Wrap a `PartialProp W` (e.g. a pex output) as an `Implicature W Prop` whose
 content is the presupposed component. Callers supply `kind` via record
 update (`{ bpsToImplicature alts p with kind := .freeChoice }`) — the
 default `.scalar` is rarely the right choice and forcing the update
@@ -298,7 +298,7 @@ prevents the incoherent `kind := .manner` case (manner implicatures are
 form-relative, never pex outputs). The `mechanism` is fixed to
 `.bpsPresuppositional`. -/
 def bpsToImplicature {W : Type*} (alts : Set (W → Prop))
-    (p : PrProp W) : Implicature W Prop where
+    (p : PartialProp W) : Implicature W Prop where
   kind      := .scalar
   content   := p.presup
   altsUsed  := alts
@@ -309,28 +309,28 @@ content = `p.presup`. The proof unfolds to the trivial direction of
 `holds := presup ∧ assertion`; the substantive content lives in the
 wrapper's choice to use `holds` (not `assertion`) as the assertion. -/
 theorem bps_not_cancellable {W : Type*}
-    (alts : Set (W → Prop)) (p : PrProp W) :
-    ¬ Implicature.IsCancellable (fun w => PrProp.holds w p)
+    (alts : Set (W → Prop)) (p : PartialProp W) :
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w p)
                                 (bpsToImplicature alts p) :=
   Implicature.IsCancellable.false_of_assertion_implies_content (fun _ h => h.1)
 
 /-- **BPS non-cancellability — substantive form (projection through
 negation).** Even when the speaker asserts the negation of the pex
 output (`p.neg.holds`), the inferred content (`p.presup`) survives. The
-load-bearing step is `PrProp.neg_presup : (neg p).presup = p.presup` —
-a structural property of how `PrProp.neg` is constructed, not a logical
+load-bearing step is `PartialProp.neg_presup : (neg p).presup = p.presup` —
+a structural property of how `PartialProp.neg` is constructed, not a logical
 tautology. This formalizes the family-of-sentences projection test that
 BPS contrasts with flat-EXH grammaticalism: pex content projects through
-negation; flat-EXH content does not. Swapping `PrProp.neg` for the
-external Bochvar negation `PrProp.negExt` (which is also defined in the
+negation; flat-EXH content does not. Swapping `PartialProp.neg` for the
+external Bochvar negation `PartialProp.negExt` (which is also defined in the
 substrate) would falsify this theorem. -/
 theorem bps_neg_not_cancellable {W : Type*}
-    (alts : Set (W → Prop)) (p : PrProp W) :
-    ¬ Implicature.IsCancellable (fun w => PrProp.holds w p.neg)
+    (alts : Set (W → Prop)) (p : PartialProp W) :
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w p.neg)
                                 (bpsToImplicature alts p) :=
   -- `h.1 : (p.neg).presup w` is definitionally `p.presup w` because
-  -- `PrProp.neg.presup := p.presup` (Semantics.Presupposition:185-186).
-  -- This is the projection identity `PrProp.neg_presup` in concrete form.
+  -- `PartialProp.neg.presup := p.presup` (Semantics.Presupposition:185-186).
+  -- This is the projection identity `PartialProp.neg_presup` in concrete form.
   Implicature.IsCancellable.false_of_assertion_implies_content (fun _ h => h.1)
 
 end Exhaustification.Presuppositional

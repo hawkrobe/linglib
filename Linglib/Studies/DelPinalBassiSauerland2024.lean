@@ -39,7 +39,7 @@ set_option autoImplicit false
 
 namespace DelPinalBassiSauerland2024
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
 open Exhaustification.Presuppositional
 open BarLevFox2020
@@ -83,7 +83,7 @@ Since ◇(p ∨ q) ∧ (◇p ↔ ◇q) entails ◇p ∧ ◇q, pex derives FC.
 -/
 
 /-- The pex output for free choice: pex^{IE+II}[◇(p ∨ q)]. -/
-def pexFC : PrProp FCWorld := pexIEII_full fcALT fcPrejacent
+def pexFC : PartialProp FCWorld := pexIEII_full fcALT fcPrejacent
 
 /-- FC via pex: when presupposition and assertion hold, we get ◇p ∧ ◇q.
 
@@ -119,7 +119,7 @@ theorem pex_fc :
   · exact ⟨hiff.mpr hB, hB⟩
 
 /-- Negation of pex FC: ¬pex^{IE+II}[◇(p ∨ q)]. -/
-def negPexFC : PrProp FCWorld := pexFC.neg
+def negPexFC : PartialProp FCWorld := pexFC.neg
 
 /-- Double prohibition: the negated pex output entails ¬◇p ∧ ¬◇q.
 
@@ -128,7 +128,7 @@ def negPexFC : PrProp FCWorld := pexFC.neg
 theorem pex_double_prohibition :
     ∀ w, negPexFC.holds w → ¬permA w ∧ ¬permB w := by
   intro w ⟨hpresup, hassert⟩
-  simp only [negPexFC, PrProp.neg,
+  simp only [negPexFC, PartialProp.neg,
              pexFC, pexIEII_full, pexIEII] at hpresup hassert
   -- hassert : ¬fcPrejacent w, i.e., ¬permAorB w
   -- ¬permAorB w → ¬permA w ∧ ¬permB w
@@ -247,16 +247,16 @@ so it projects independently.
     When pex(◇(p∨q)) is embedded under "unaware", the overall sentence
     *presupposes* ◇p ∧ ◇q (free choice as presupposition).
 
-    Uses `PrProp.negFactive` from `Semantics.Presupposition`. -/
+    Uses `PartialProp.negFactive` from `Semantics.Presupposition`. -/
 theorem fc_presupposed_under_neg_factive
     (believes : (FCWorld → Prop) → FCWorld → Prop) :
-    ∀ w, (PrProp.negFactive pexFC believes).presup w → permA w ∧ permB w :=
+    ∀ w, (PartialProp.negFactive pexFC believes).presup w → permA w ∧ permB w :=
   fun w hpresup => pex_fc w hpresup
 
 /-- The assertion of the negative factive embedding is about belief, not FC. -/
 theorem neg_factive_asserts_nonbelief
     (believes : (FCWorld → Prop) → FCWorld → Prop) :
-    ∀ w, (PrProp.negFactive pexFC believes).assertion w ↔
+    ∀ w, (PartialProp.negFactive pexFC believes).assertion w ↔
          ¬(believes fcPrejacent w) :=
   fun _ => Iff.rfl
 
@@ -298,19 +298,19 @@ meaning.
 
 /-- When the first disjunct is false, Karttunen filtering recovers full
     satisfaction of the second disjunct.
-    Uses `PrProp.disjFilterLeft` from `Semantics.Presupposition`. -/
+    Uses `PartialProp.disjFilterLeft` from `Semantics.Presupposition`. -/
 theorem filtering_recovers_pex {World : Type*}
-    (firstDisjunct : World → Prop) (sp : PrProp World)
+    (firstDisjunct : World → Prop) (sp : PartialProp World)
     (w : World) (hFirst : ¬firstDisjunct w)
-    (hFiltered : (PrProp.disjFilterLeft firstDisjunct sp).holds w) :
+    (hFiltered : (PartialProp.disjFilterLeft firstDisjunct sp).holds w) :
     sp.holds w :=
-  PrProp.disjFilterLeft_recovers firstDisjunct sp w hFirst hFiltered
+  PartialProp.disjFilterLeft_recovers firstDisjunct sp w hFirst hFiltered
 
 /-- Corollary: filtering FC for the concrete FCWorld case.
     When filtered pex holds and the first disjunct is false, FC follows. -/
 theorem filtering_fc (firstDisjunct : FCWorld → Prop) (w : FCWorld)
     (hFirst : ¬firstDisjunct w)
-    (hFiltered : (PrProp.disjFilterLeft firstDisjunct pexFC).holds w) :
+    (hFiltered : (PartialProp.disjFilterLeft firstDisjunct pexFC).holds w) :
     permA w ∧ permB w :=
   pex_fc w (filtering_recovers_pex firstDisjunct pexFC w hFirst hFiltered)
 
@@ -378,14 +378,14 @@ and the homogeneity ¬□L ↔ ¬□A combined with ¬□(L∧A) entails ¬□L 
     ¬□L ∧ ¬□A (negative free choice). -/
 theorem negative_fc_presupposed_under_neg_factive
     (believes : (FCWorld → Prop) → FCWorld → Prop) :
-    ∀ w, (PrProp.negFactive pexFC believes).presup w → notReqA w ∧ notReqB w :=
+    ∀ w, (PartialProp.negFactive pexFC believes).presup w → notReqA w ∧ notReqB w :=
   fun w hpresup => pex_negative_fc w hpresup
 
 /-- Filtering negative FC: when the first disjunct is false, the filtered
     presupposition of the second disjunct recovers negative FC. -/
 theorem filtering_negative_fc (firstDisjunct : FCWorld → Prop) (w : FCWorld)
     (hFirst : ¬firstDisjunct w)
-    (hFiltered : (PrProp.disjFilterLeft firstDisjunct pexFC).holds w) :
+    (hFiltered : (PartialProp.disjFilterLeft firstDisjunct pexFC).holds w) :
     notReqA w ∧ notReqB w :=
   pex_negative_fc w (filtering_recovers_pex firstDisjunct pexFC w hFirst hFiltered)
 
@@ -461,62 +461,62 @@ theorem existential_fc {Student : Type*}
     · exact ⟨hC, (hhomog x hx).mp hC⟩
     · exact ⟨(hhomog x hx).mpr hIC, hIC⟩⟩
 
-/-- Universal FC via `PrProp.forallPr`: when each student's pex output
+/-- Universal FC via `PartialProp.forallPartial`: when each student's pex output
     holds (presupposition projected universally + assertion holds),
     universal FC follows.
 
     This connects the abstract entailment theorems above to the concrete
-    `forallPr` combinator from `Semantics.Presupposition`. -/
-theorem forallPr_fc {Student W : Type*}
-    (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
+    `forallPartial` combinator from `Semantics.Presupposition`. -/
+theorem forallPartial_fc {Student W : Type*}
+    (S : Student → Prop) (pexPerStudent : Student → PartialProp W) (w : W)
     (projA projB : Student → Set W)
     (hFC : ∀ x, S x → (pexPerStudent x).holds w →
       projA x w ∧ projB x w)
-    (hHolds : (PrProp.forallPr S pexPerStudent).holds w) :
+    (hHolds : (PartialProp.forallPartial S pexPerStudent).holds w) :
     (∀ x, S x → projA x w) ∧ (∀ x, S x → projB x w) := by
   obtain ⟨hPresup, hAssert⟩ := hHolds
   constructor
   · intro x hx; exact (hFC x hx ⟨hPresup x hx, hAssert x hx⟩).1
   · intro x hx; exact (hFC x hx ⟨hPresup x hx, hAssert x hx⟩).2
 
-/-- Existential FC via `PrProp.existsPrUniv`: with universal presupposition
+/-- Existential FC via `PartialProp.existsPartialUniv`: with universal presupposition
     projection from an existential quantifier, we get existential FC.
 
     This connects the existential entailment theorem to the concrete
-    `existsPrUniv` combinator from `Semantics.Presupposition`. -/
-theorem existsPrUniv_fc {Student W : Type*}
-    (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
+    `existsPartialUniv` combinator from `Semantics.Presupposition`. -/
+theorem existsPartialUniv_fc {Student W : Type*}
+    (S : Student → Prop) (pexPerStudent : Student → PartialProp W) (w : W)
     (projA projB : Student → Set W)
     (hFC : ∀ x, S x → (pexPerStudent x).holds w →
       projA x w ∧ projB x w)
-    (hHolds : (PrProp.existsPrUniv S pexPerStudent).holds w) :
+    (hHolds : (PartialProp.existsPartialUniv S pexPerStudent).holds w) :
     ∃ x, S x ∧ projA x w ∧ projB x w := by
   obtain ⟨hPresup, ⟨x, hx, hAssert⟩⟩ := hHolds
   exact ⟨x, hx, hFC x hx ⟨hPresup x hx, hAssert⟩⟩
 
-/-- Universal negative FC via `PrProp.negExistsPr`: with universal
+/-- Universal negative FC via `PartialProp.negExistsPartial`: with universal
     presupposition projection and negated existential assertion,
     universal negative FC follows.
 
     This connects `universal_negative_fc` to the concrete
-    `negExistsPr` combinator from `Semantics.Presupposition`,
+    `negExistsPartial` combinator from `Semantics.Presupposition`,
     completing the set of quantifier bridges alongside
-    `forallPr_fc` and `existsPrUniv_fc`.
+    `forallPartial_fc` and `existsPartialUniv_fc`.
 
-    The shape differs from the positive bridges: `forallPr_fc` and
-    `existsPrUniv_fc` use `hFC : holds → projA ∧ projB` (assertion
+    The shape differs from the positive bridges: `forallPartial_fc` and
+    `existsPartialUniv_fc` use `hFC : holds → projA ∧ projB` (assertion
     decomposes to FC). Here, the assertion is *negated*, so we need:
     - `hAssertEq`: assertion ↔ reqA ∧ reqB (decomposition)
     - `hHomog`: presup → reqA ↔ reqB (homogeneity)
     These are exactly the inputs to `universal_negative_fc`. -/
-theorem negExistsPr_negative_fc {Student W : Type*}
-    (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
+theorem negExistsPartial_negative_fc {Student W : Type*}
+    (S : Student → Prop) (pexPerStudent : Student → PartialProp W) (w : W)
     (reqA reqB : Student → Set W)
     (hAssertEq : ∀ x, S x → ((pexPerStudent x).assertion w ↔
       (reqA x w ∧ reqB x w)))
     (hHomog : ∀ x, S x → (pexPerStudent x).presup w →
       (reqA x w ↔ reqB x w))
-    (hHolds : (PrProp.negExistsPr S pexPerStudent).holds w) :
+    (hHolds : (PartialProp.negExistsPartial S pexPerStudent).holds w) :
     (¬∃ x, S x ∧ reqA x w) ∧ (¬∃ x, S x ∧ reqB x w) := by
   obtain ⟨hPresup, hNegAssert⟩ := hHolds
   exact universal_negative_fc S (fun x => reqA x w) (fun x => reqB x w)
@@ -647,7 +647,7 @@ def flatExhFC : Set FCWorld := exhIEII fcALT fcPrejacent
     - presupposes: the flat conjunction holds
     - asserts: S doesn't believe the flat conjunction -/
 def negFactiveOfFlatExh
-    (believes : (FCWorld → Prop) → FCWorld → Prop) : PrProp FCWorld where
+    (believes : (FCWorld → Prop) → FCWorld → Prop) : PartialProp FCWorld where
   presup := flatExhFC
   assertion := fun w => ¬(believes flatExhFC w)
 
@@ -663,7 +663,7 @@ theorem exh_factive_asserts_flat_conjunction
     prejacent — the correct content for S's doxastic state. -/
 theorem pex_factive_asserts_prejacent
     (believes : (FCWorld → Prop) → FCWorld → Prop) :
-    (PrProp.negFactive pexFC believes).assertion =
+    (PartialProp.negFactive pexFC believes).assertion =
       (fun w => ¬(believes fcPrejacent w)) := rfl
 
 /-- **Failure 2**: When flat exh is placed in a filtering disjunction,
@@ -672,14 +672,14 @@ theorem pex_factive_asserts_prejacent
 
     For "A ∨ exh(◇(p∨q))": the presupposition is trivial (True). -/
 theorem exh_filtering_no_presupposition (firstDisjunct : FCWorld → Prop) :
-    (PrProp.disjFilterLeft firstDisjunct (PrProp.ofProp flatExhFC)).presup =
+    (PartialProp.disjFilterLeft firstDisjunct (PartialProp.ofProp flatExhFC)).presup =
       (fun _ => True) := by
-  funext; simp [PrProp.disjFilterLeft, PrProp.ofProp]
+  funext; simp [PartialProp.disjFilterLeft, PartialProp.ofProp]
 
 /-- pex's filtering disjunction has a non-trivial presupposition (homogeneity
     conditioned on ¬firstDisjunct). -/
 theorem pex_filtering_has_presupposition (firstDisjunct : FCWorld → Prop) :
-    (PrProp.disjFilterLeft firstDisjunct pexFC).presup =
+    (PartialProp.disjFilterLeft firstDisjunct pexFC).presup =
       (fun w => ¬firstDisjunct w → pexFC.presup w) := rfl
 
 -- ============================================================================
@@ -727,8 +727,8 @@ formalized projection infrastructure:
 |---|---|---|
 | Filtering FC (§4) | `localCtxSecondDisjunct` | `local_context_matches_disjFilterLeft` |
 | Presupposed FC (§3) | `transparentProjection` | `negFactive_entails_transparent` |
-| Double prohibition (§2) | `negation_preserves_projection` | definitional (`PrProp.neg`) |
-| Quantificational FC (§5.1) | `forallPr`/`existsPrUniv`/`negExistsPr` | universal projection |
+| Double prohibition (§2) | `negation_preserves_projection` | definitional (`PartialProp.neg`) |
+| Quantificational FC (§5.1) | `forallPartial`/`existsPartialUniv`/`negExistsPartial` | universal projection |
 | Non-monotonic FC (§5.2) | universal homogeneity + cardinality | `exactly_one_fc` |
 | Accommodation (§4.4) | `heimSelect` | `accommodation_grounded_in_heim` |
 -/
@@ -737,13 +737,13 @@ variable {Agent : Type*}
 
 /-- Filtering FC is grounded in Schlenker's local context algorithm.
 
-    `filtering_fc` uses `PrProp.disjFilterLeft` as a combinator.
+    `filtering_fc` uses `PartialProp.disjFilterLeft` as a combinator.
     `local_context_matches_disjFilterLeft` proves this is equivalent to
     filtering at Schlenker's local context for the second disjunct:
     the presupposition ψ of the second disjunct is satisfied in
     the local context c ∧ ¬A iff ∀w∈c, ¬A(w) → ψ(w). -/
 theorem filtering_grounded_in_schlenker (c : ContextSet FCWorld)
-    (firstDisjunct : PrProp FCWorld) (w : FCWorld) (hc : c w)
+    (firstDisjunct : PartialProp FCWorld) (w : FCWorld) (hc : c w)
     (hFirst : ¬firstDisjunct.assertion w)
     (hSchlenkerFiltered : presupFiltered
       (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) pexFC)
@@ -753,7 +753,7 @@ theorem filtering_grounded_in_schlenker (c : ContextSet FCWorld)
 
 /-- Presupposed FC is grounded in transparent projection.
 
-    `fc_presupposed_under_neg_factive` uses `PrProp.negFactive` as a
+    `fc_presupposed_under_neg_factive` uses `PartialProp.negFactive` as a
     combinator. Here we decompose this into two steps:
     1. `negFactive_entails_transparent`: negFactive's presupposition
        (complement holds) entails transparent projection of the presup.
@@ -766,7 +766,7 @@ theorem presupposed_fc_grounded_in_transparent
     (believes : (FCWorld → Prop) → FCWorld → Prop) (w : FCWorld)
     (hGlobal : globalCtx w)
     (hNegFactive : ∀ v, globalCtx v →
-      (PrProp.negFactive pexFC believes).presup v) :
+      (PartialProp.negFactive pexFC believes).presup v) :
     permA w ∧ permB w := by
   -- Step 1: negFactive → transparent projection (presup holds globally)
   have hTransparent : transparentProjection globalCtx pexFC :=
@@ -795,7 +795,7 @@ theorem opaque_fc_under_belief
 
 /-- Double prohibition is grounded in negation transparency.
 
-    `PrProp.neg` preserves presuppositions by construction (assertion negated,
+    `PartialProp.neg` preserves presuppositions by construction (assertion negated,
     presupposition unchanged). This matches `negation_preserves_projection`:
     Schlenker's local context under negation has the same world set as the
     parent context, so presuppositions project through negation unchanged. -/
@@ -817,7 +817,7 @@ theorem negation_grounding :
     this corresponds to the case where `heimSelect` falls back to local
     because global accommodation would be inconsistent. -/
 theorem accommodation_grounded_in_heim {W : Type*}
-    (c : ContextSet W) (pex_output : PrProp W)
+    (c : ContextSet W) (pex_output : PartialProp W)
     (h_consistent : ContextSet.nonEmpty
       (globalAccommodate c pex_output.presup)) :
     heimSelect c pex_output.presup = .global :=
@@ -828,7 +828,7 @@ theorem accommodation_grounded_in_heim {W : Type*}
     This models the ACC operator from §4.4 that prevents homogeneity
     from projecting in hostile environments. -/
 theorem enemy_territory_blocks_projection {W : Type*}
-    (c : ContextSet W) (pex_output : PrProp W)
+    (c : ContextSet W) (pex_output : PartialProp W)
     (h_inconsistent : ¬ContextSet.nonEmpty
       (globalAccommodate c pex_output.presup)) :
     heimSelect c pex_output.presup = .local :=
@@ -848,7 +848,7 @@ of `pexFC`. Two non-cancellability theorems are stated, tracking the
 structural-vs-substantive distinction documented at the
 `Presuppositional.lean` BPS bridge: `pexFC_not_cancellable` follows from
 the wrapper's choice to set assertion to `holds`; `pexFC_neg_not_cancellable`
-follows from projection of `pexFC.presup` through `PrProp.neg`, the
+follows from projection of `pexFC.presup` through `PartialProp.neg`, the
 formal counterpart to BPS's family-of-sentences test. -/
 
 open Exhaustification.Presuppositional
@@ -866,7 +866,7 @@ assertion is the full pex output (`pexFC.holds`), no continuation cancels
 the inferred content. This follows from `holds := presup ∧ assertion`
 trivially. -/
 theorem pexFC_not_cancellable :
-    ¬ Implicature.IsCancellable (fun w => PrProp.holds w pexFC)
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC)
                                 fcImplicature := by
   -- the proof of bps_not_cancellable applies; fcImplicature differs from
   -- (bpsToImplicature fcALT pexFC) only in the `kind` field, which the
@@ -881,10 +881,10 @@ free-choice inference (`pexFC.presup`, which yields `permA w ∧ permB w`
 by `pex_fc`) survives. This is the formal counterpart to BPS's
 projection argument: the inference is not at-issue, so embedding under
 negation does not cancel it. The proof traces through
-`PrProp.neg_presup` — the structural projection identity — not just
+`PartialProp.neg_presup` — the structural projection identity — not just
 the trivial `holds → presup`. -/
 theorem pexFC_neg_not_cancellable :
-    ¬ Implicature.IsCancellable (fun w => PrProp.holds w pexFC.neg)
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC.neg)
                                 fcImplicature := by
   apply Implicature.IsCancellable.false_of_assertion_implies_content
   intro _ h
