@@ -2397,6 +2397,7 @@ import Linglib.Studies.Montague1973Quantification
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Intolerance
+import Linglib.Semantics.Entailment.Soundness
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Studies.Montague1973
 import Linglib.Semantics.Entailment.PresuppositionLicensing
