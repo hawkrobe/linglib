@@ -1,3 +1,4 @@
+import Mathlib.ModelTheory.Satisfiability
 import Linglib.Core.Logic.Modal.QBSML.Properties
 
 /-!
@@ -29,6 +30,11 @@ QBSML bottoms out in single-structure mathlib first-order satisfaction
   pinning `Sum.inr k` to `w`.
 * `support_singleton_iff_st` — NE-free QBSML support is first-order
   realization of the standard translation, via Proposition 4.1.
+* `stClose` — sort-guarded existential closure of the current-world
+  variable, turning translations into sentence candidates.
+* `support_compactness` — compactness transfer: finite team
+  satisfiability of an NE-free family yields one first-order structure
+  satisfying all closed translations.
 
 ## Implementation notes
 
@@ -40,9 +46,11 @@ QBSML bottoms out in single-structure mathlib first-order satisfaction
 * Freshness of world variables is by increment: each `box` shifts the
   current index from `k` to `k + 1`, and the constraint set of the theorem
   pins only index `k`, so no freshness side conditions arise.
-* Compactness and Löwenheim–Skolem transfer along this translation
-  (sentence-level closure bookkeeping as in
-  `Semantics/Composition/Reduction.lean`) are the natural next step.
+* The compactness transfer is one-way: recovering a team model from an
+  arbitrary first-order structure would need `Finset`-branching
+  accessibility and a `Fintype` domain. `freeVarFinset = ∅` side
+  conditions are hypotheses, dischargeable by `decide` per instance —
+  no generic free-variable bookkeeping for `st?`.
 -/
 
 universe u v
@@ -477,6 +485,51 @@ theorem realize_st? (K : KripkeStructure (monadicLang Const Pred) W M) :
         · rw [Function.update_of_ne (by simp)]
           exact hw
 
+/-! ### Sort-guarded sentence closure -/
+
+/-- Sort-guarded existential closure of the current-world variable
+    `Sum.inr k`: `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is load-bearing on the
+    mixed carrier — a bare `ex₁` could be witnessed by a junk
+    individual-as-world, which satisfies `□⊥` vacuously. -/
+def stClose (k : ℕ) (ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)) :
+    (stLang Const Pred).Formula (Var ⊕ ℕ) :=
+  Formula.ex₁ (Sum.inr k)
+    ((stIndiv.formula₁ (Term.var (Sum.inr k))).not ⊓ ψ)
+
+/-- Over `stStructure`, the guarded witness of `stClose` is exactly a
+    world. -/
+theorem realize_stClose (K : KripkeStructure (monadicLang Const Pred) W M)
+    (k : ℕ) (ψ : (stLang Const Pred).Formula (Var ⊕ ℕ))
+    (val : Var ⊕ ℕ → W ⊕ M) :
+    (letI := K.stStructure; (stClose k ψ).Realize val) ↔
+      ∃ w : W,
+        (letI := K.stStructure
+         ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w))) := by
+  letI := K.stStructure
+  unfold stClose
+  rw [Formula.realize_ex₁]
+  constructor
+  · rintro ⟨z, hz⟩
+    rw [Formula.realize_inf, Formula.realize_not, Formula.realize_rel₁,
+      stStructure_relMap_indiv] at hz
+    obtain ⟨hguard, hzψ⟩ := hz
+    cases z with
+    | inl w => exact ⟨w, hzψ⟩
+    | inr d =>
+      refine absurd ⟨d, ?_⟩ hguard
+      show Function.update val (Sum.inr k) (Sum.inr d) (Sum.inr k) = _
+      rw [Function.update_self]
+  · rintro ⟨w, hw⟩
+    refine ⟨Sum.inl w, ?_⟩
+    rw [Formula.realize_inf, Formula.realize_not, Formula.realize_rel₁,
+      stStructure_relMap_indiv]
+    refine ⟨?_, hw⟩
+    rintro ⟨d, hd⟩
+    have hd' : Function.update val (Sum.inr k) (Sum.inl w) (Sum.inr k)
+        = Sum.inr d := hd
+    rw [Function.update_self] at hd'
+    exact Sum.inl_ne_inr hd'
+
 /-! ### Proposition 4.1, composed: QBSML support is first-order realization -/
 
 variable {Domain : Type*}
@@ -500,5 +553,111 @@ theorem support_singleton_iff_st (M : QBSMLModel W Domain Const Pred)
        ψ.Realize (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u))) :=
   (support_singleton_iff_realize M hτ hv).trans
     (realize_st? M hψ (fun _ => rfl) (by rw [Sum.elim_inr, Function.comp_apply, hu]))
+
+/-- Support at a singleton state forces the closed standard translation,
+    as a sentence of `stStructure`. -/
+theorem models_toSentence_of_support (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred}
+    {τ : ModalFormula (monadicLang Const Pred) Var}
+    {ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)}
+    (hτ : φ.toModal? = some τ) (hψ : τ.st? 0 = some ψ)
+    (hcl : (stClose 0 ψ).freeVarFinset = ∅)
+    {i : Index W Var Domain} {v : Var → Domain}
+    (hv : ∀ y, i.assign y = some (v y)) (hsupp : support M φ {i}) :
+    (letI := M.stStructure
+     (W ⊕ Domain) ⊨ (stClose 0 ψ).toSentence hcl) := by
+  letI := M.stStructure
+  have h1 : ψ.Realize
+      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world))) :=
+    (support_singleton_iff_st M hτ hψ (fun _ => i.world) hv rfl).mp hsupp
+  refine (Formula.realize_toSentence _ hcl
+    (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))).mpr ?_
+  refine (realize_stClose M 0 ψ _).mpr ⟨i.world, ?_⟩
+  rw [show Function.update
+      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))
+      (Sum.inr 0) (Sum.inl i.world)
+      = Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)) from
+    Function.update_eq_self _ _]
+  exact h1
+
+/-- Conversely, the closed standard translation as a sentence of
+    `stStructure` yields support at some singleton state. -/
+theorem exists_support_of_models_toSentence [Nonempty Domain]
+    (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred}
+    {τ : ModalFormula (monadicLang Const Pred) Var}
+    {ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)}
+    (hτ : φ.toModal? = some τ) (hψ : τ.st? 0 = some ψ)
+    (hcl : (stClose 0 ψ).freeVarFinset = ∅)
+    (h : letI := M.stStructure
+         (W ⊕ Domain) ⊨ (stClose 0 ψ).toSentence hcl) :
+    ∃ (i : Index W Var Domain) (v : Var → Domain),
+      (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
+  letI := M.stStructure
+  obtain ⟨d₀⟩ := ‹Nonempty Domain›
+  have h0 : (stClose 0 ψ).Realize
+      (fun _ => (Sum.inr d₀ : W ⊕ Domain)) :=
+    (Formula.realize_toSentence _ hcl _).mp h
+  obtain ⟨w, hw⟩ := (realize_stClose M 0 ψ _).mp h0
+  have hsorted : ∀ x : Var, Function.update
+      (fun _ : Var ⊕ ℕ => (Sum.inr d₀ : W ⊕ Domain)) (Sum.inr 0)
+      (Sum.inl w) (Sum.inl x) = Sum.inr d₀ := fun x => by
+    rw [Function.update_of_ne (by simp)]
+  have hmodal : τ.Realize M w (fun _ => d₀) :=
+    (realize_st? M hψ hsorted (Function.update_self _ _ _)).mpr hw
+  refine ⟨⟨w, fun _ => some d₀⟩, fun _ => d₀, fun y => rfl, ?_⟩
+  refine (support_singleton_iff_st M hτ hψ (fun _ => w)
+    (fun y => rfl) rfl).mpr ?_
+  exact (realize_st? M hψ (fun _ => rfl) rfl).mp hmodal
+
+end Core.Logic.Modal.QBSML
+
+/-! ### Compactness for the NE-free fragment -/
+
+namespace Core.Logic.Modal.QBSML
+
+open FirstOrder Language
+
+/-- **Compactness transfer for NE-free QBSML** ([aloni-vanormondt-2023]
+    Proposition 4.1, the standard translation, and mathlib's
+    `Theory.isSatisfiable_iff_isFinitelySatisfiable`): if every finite
+    subfamily of a family of NE-free formulas is supported at a singleton
+    state of some model, the family's closed standard translations are
+    jointly satisfiable in a single first-order structure.
+
+    The converse recovery of a *team* model from that structure would need
+    `Finset`-branching accessibility and a `Fintype` domain, which an
+    arbitrary first-order structure does not supply, so the transfer is
+    stated one-way. -/
+theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
+    {Const : Type u} {Pred : Type v} {ι : Type*}
+    {φs : ι → QBSMLFormula Var Const Pred}
+    {τs : ι → ModalFormula (monadicLang Const Pred) Var}
+    {ψs : ι → (stLang Const Pred).Formula (Var ⊕ ℕ)}
+    (hτ : ∀ i, (φs i).toModal? = some (τs i))
+    (hψ : ∀ i, (τs i).st? 0 = some (ψs i))
+    (hcl : ∀ i, (stClose 0 (ψs i)).freeVarFinset = ∅)
+    (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
+      (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain)
+      (M : QBSMLModel W Domain Const Pred) (i : Index W Var Domain)
+      (v : Var → Domain), (∀ y, i.assign y = some (v y)) ∧
+        ∀ j ∈ s, support M (φs j) {i}) :
+    Theory.IsSatisfiable
+      (Set.range fun i => (stClose 0 (ψs i)).toSentence (hcl i)) := by
+  rw [Theory.isSatisfiable_iff_isFinitelySatisfiable]
+  intro T₀ hT₀
+  classical
+  choose f hf using fun x : T₀ => hT₀ x.2
+  obtain ⟨W, Domain, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
+  letI := M.stStructure
+  haveI : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
+  haveI : (W ⊕ Domain) ⊨ (T₀ : (stLang Const Pred).Theory) := by
+    refine ⟨fun σ hσ => ?_⟩
+    obtain ⟨x, rfl⟩ : ∃ x : T₀,
+        (stClose 0 (ψs (f x))).toSentence (hcl (f x)) = σ :=
+      ⟨⟨σ, hσ⟩, hf ⟨σ, hσ⟩⟩
+    exact models_toSentence_of_support M (hτ (f x)) (hψ (f x)) (hcl (f x))
+      hv (hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x)))
+  exact Theory.Model.isSatisfiable (W ⊕ Domain)
 
 end Core.Logic.Modal.QBSML
