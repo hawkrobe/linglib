@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
-import Mathlib.ModelTheory.Basic
+import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Bilateral.Defs
 
@@ -31,28 +31,31 @@ the `Core.Logic.Team.isFlat_iff` template at the point type
   Definition 4.1), with `□` derived as `QBSMLFormula.nec`.
 * `QBSMLFormula.IsNEFree`: the NE-free fragment.
 * `monadicLang`, `monadicStructure`: the monadic first-order signature on
-  `Pred` and its structures, as a mathlib `FirstOrder.Language`.
-* `QBSMLModel`, `eval`, `support`, `antiSupport`: bilateral evaluation
+  `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
+* `QBSMLModel` (an abbreviation for `FirstOrder.Language.KripkeStructure`
+  over `monadicLang`), `eval`, `support`, `antiSupport`: bilateral evaluation
   ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
   as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
   `Core.Logic.Bilateral.IsBilateral` under `QBSMLFormula.neg`.
-* `QBSMLModel.IsStateBased`, `QBSMLModel.IsIndisputable`: frame conditions
+* `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
+  conditions
   via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
 
 ## Implementation notes
 
-* Predicates are monadic (`pred : Pred → Var → QBSMLFormula Var Pred`) and
-  there is no term language: [aloni-vanormondt-2023] interprets `Pⁿ(t₁ … tₙ)`
-  for arbitrary arity over constants and variables. Monadic predicates over
-  variables suffice for the free-choice facts; higher arities and constants
-  can be added without changing the substrate abstraction.
+* Predicates are monadic and the paper's terms `t := c | x` appear as the
+  two atom constructors `pred` (variable) and `predc` (constant), so there is
+  no separate term type: [aloni-vanormondt-2023] interprets `Pⁿ(t₁ … tₙ)` for
+  arbitrary arity; higher arities can be added without changing the substrate
+  abstraction.
 * The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
   parameter, with `[Fintype Domain]` where the universal extension must range
   over all of it. The interpretation `I` is a world-indexed family of mathlib
-  first-order structures (`QBSMLModel.interp`, the
-  `Semantics.Composition.Model` pattern); `QBSMLModel.pInterp` reads the
-  world-dependent (non-rigid) predicate denotations off `Structure.RelMap`.
+  first-order structures: `QBSMLModel` is `FirstOrder.Language.KripkeStructure`
+  over the monadic signature, and `KripkeStructure.pInterp` /
+  `KripkeStructure.cInterp` read the world-dependent (non-rigid) predicate
+  and constant denotations off `Structure.RelMap` / `Structure.funMap`.
 * The paper requires all indices in a state to share an assignment domain
   (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
   operations preserve it.
@@ -268,6 +271,11 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
   · rintro ⟨h, rfl⟩
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
+@[simp] theorem State.modalLift_singleton (w : W)
+    (g : Assignment Var Domain) :
+    State.modalLift {w} g = {(w, g)} :=
+  Finset.image_singleton ..
+
 @[simp] theorem State.worldProj_modalLift (X : Finset W)
     (g : Assignment Var Domain) :
     State.worldProj (State.modalLift X g) = X := by
@@ -306,110 +314,151 @@ end ModalLift
 
 /-! ### The formula language -/
 
-variable {Pred : Type*}
+variable {Const Pred : Type*}
 
 /-- QBSML formula language ([aloni-vanormondt-2023] Definition 4.1),
-    parameterized over variable type `Var` and (monadic) predicate type
-    `Pred`. `□` is not primitive — see `QBSMLFormula.nec`. -/
-inductive QBSMLFormula (Var : Type*) (Pred : Type*) where
-  /-- Monadic predicate application. -/
-  | pred : Pred → Var → QBSMLFormula Var Pred
+    parameterized over variable type `Var`, constant type `Const`, and
+    (monadic) predicate type `Pred`. The paper's terms `t := c | x` appear
+    as the two atom constructors. `□` is not primitive — see
+    `QBSMLFormula.nec`. -/
+inductive QBSMLFormula (Var : Type*) (Const : Type*) (Pred : Type*) where
+  /-- Monadic predicate applied to a variable. -/
+  | pred : Pred → Var → QBSMLFormula Var Const Pred
+  /-- Monadic predicate applied to an individual constant. -/
+  | predc : Pred → Const → QBSMLFormula Var Const Pred
   /-- Non-emptiness atom: state is non-empty. -/
-  | ne : QBSMLFormula Var Pred
+  | ne : QBSMLFormula Var Const Pred
   /-- Bilateral negation: swap support/anti-support. -/
-  | neg : QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | neg : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
   /-- Conjunction. -/
-  | conj : QBSMLFormula Var Pred → QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | conj : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred →
+      QBSMLFormula Var Const Pred
   /-- Split (tensor) disjunction. -/
-  | disj : QBSMLFormula Var Pred → QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | disj : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred →
+      QBSMLFormula Var Const Pred
   /-- Possibility modal. -/
-  | poss : QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | poss : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
   /-- Existential quantifier. -/
-  | exi : Var → QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | exi : Var → QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
   /-- Universal quantifier. -/
-  | univ : Var → QBSMLFormula Var Pred → QBSMLFormula Var Pred
+  | univ : Var → QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
   deriving Repr
 
 /-- Necessity, derived: `□φ := ¬◇¬φ`. [aloni-vanormondt-2023] takes `□`
     primitive and `◇ := ¬□¬` derived; we invert this, so `eval`'s `poss`
     clauses match the paper's derived `◇`-clauses and `nec` matches its
     primitive `□`. -/
-def QBSMLFormula.nec (φ : QBSMLFormula Var Pred) : QBSMLFormula Var Pred :=
+def QBSMLFormula.nec (φ : QBSMLFormula Var Const Pred) : QBSMLFormula Var Const Pred :=
   .neg (.poss (.neg φ))
 
 /-- The NE-free fragment: formulas not containing the `NE` atom. On this
     fragment QBSML reduces to classical first-order modal logic
     ([aloni-vanormondt-2023] analogue of [anttila-2021]
     Proposition 2.2.16); see `Core/Logic/Modal/QBSML/Properties.lean`. -/
-inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Pred → Prop
+inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Const Pred → Prop
   | pred (P : Pred) (x : Var) : IsNEFree (.pred P x)
-  | neg {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.neg φ)
-  | conj {φ ψ : QBSMLFormula Var Pred} :
+  | predc (P : Pred) (c : Const) : IsNEFree (.predc P c)
+  | neg {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.neg φ)
+  | conj {φ ψ : QBSMLFormula Var Const Pred} :
       IsNEFree φ → IsNEFree ψ → IsNEFree (.conj φ ψ)
-  | disj {φ ψ : QBSMLFormula Var Pred} :
+  | disj {φ ψ : QBSMLFormula Var Const Pred} :
       IsNEFree φ → IsNEFree ψ → IsNEFree (.disj φ ψ)
-  | poss {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.poss φ)
-  | exi (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.exi x φ)
-  | univ (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.univ x φ)
+  | poss {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.poss φ)
+  | exi (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.exi x φ)
+  | univ (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.univ x φ)
 
 /-! ### The monadic signature and models -/
 
-/-- The monadic relational signature on `Pred`: one unary relation symbol per
-    predicate, no constants or function symbols ([aloni-vanormondt-2023]
-    Definition 4.1's signature, minus individual constants). -/
-def monadicLang.{u} (Pred : Type u) : FirstOrder.Language where
-  Functions := fun _ => PEmpty.{u + 1}
+/-- The monadic signature on `Const` and `Pred`: one individual constant per
+    `Const`, one unary relation symbol per `Pred` — [aloni-vanormondt-2023]
+    Definition 4.1's signature (terms `t := c | x`, monadic relations). -/
+def monadicLang.{u, v} (Const : Type u) (Pred : Type v) :
+    FirstOrder.Language where
+  Functions := fun n => match n with
+    | 0 => Const
+    | _ => PEmpty
   Relations := fun n => match n with
     | 1 => Pred
     | _ => PEmpty
 
-/-- A predicate as a relation symbol of the monadic signature (defeq; the
-    parametric analogue of mathlib's per-symbol abbreviations, cf.
+/-- A constant as a symbol of the monadic signature (defeq; the parametric
+    analogue of mathlib's per-symbol abbreviations, cf.
     `Fragments/English/Toy.lean`). -/
-abbrev monadicRel {Pred : Type*} (P : Pred) : (monadicLang Pred).Relations 1 := P
+abbrev monadicConst {Const Pred : Type*} (c : Const) :
+    (monadicLang Const Pred).Constants := c
 
-/-- The `monadicLang Pred` structure a predicate valuation induces. -/
-@[reducible] def monadicStructure {Pred Domain : Type*}
-    (V : Pred → Domain → Prop) : (monadicLang Pred).Structure Domain where
-  funMap := fun f _ => f.elim
+/-- A predicate as a relation symbol of the monadic signature (defeq). -/
+abbrev monadicRel {Const Pred : Type*} (P : Pred) :
+    (monadicLang Const Pred).Relations 1 := P
+
+/-- The `monadicLang Const Pred` structure a constant interpretation and a
+    predicate valuation induce. -/
+@[reducible] def monadicStructure {Const Pred Domain : Type*}
+    (κ : Const → Domain) (V : Pred → Domain → Prop) :
+    (monadicLang Const Pred).Structure Domain where
+  funMap := fun {n} f => match n, f with
+    | 0, c => fun _ => κ c
+    | _ + 1, f => f.elim
   RelMap := fun {n} r => match n, r with
     | 1, P => fun v => V P (v 0)
     | 0, r => r.elim
     | _ + 2, r => r.elim
 
-@[simp] theorem monadicStructure_relMap {Pred Domain : Type*}
-    (V : Pred → Domain → Prop) (P : Pred) (v : Fin 1 → Domain) :
-    (monadicStructure V).RelMap (monadicRel P) v ↔ V P (v 0) :=
+@[simp] theorem monadicStructure_relMap {Const Pred Domain : Type*}
+    (κ : Const → Domain) (V : Pred → Domain → Prop) (P : Pred)
+    (v : Fin 1 → Domain) :
+    (monadicStructure κ V).RelMap (monadicRel P) v ↔ V P (v 0) :=
   Iff.rfl
 
+@[simp] theorem monadicStructure_funMap {Const Pred Domain : Type*}
+    (κ : Const → Domain) (V : Pred → Domain → Prop) (c : Const)
+    (v : Fin 0 → Domain) :
+    (monadicStructure κ V).funMap (monadicConst (Pred := Pred) c) v = κ c :=
+  rfl
+
 /-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
-    `M = ⟨W, D, R, I⟩`), with the domain as a type parameter, accessibility
-    as a per-world `Finset`, and the interpretation `I` as a world-indexed
-    family of mathlib first-order structures on the domain — the pattern of
-    `Semantics.Composition.Model`. Structures are carried as terms, not
-    instances: a world-indexed family cannot be instance-based, so interfacing
-    with instance-based mathlib API (`Formula.Realize`) threads
-    `letI := M.interp w`. -/
-structure QBSMLModel (W : Type*) (Domain : Type*) (Pred : Type*) where
-  /-- Accessibility relation (per-world set of accessible worlds). -/
-  access : W → Finset W
-  /-- World-indexed interpretation of the monadic signature. -/
-  interp : W → (monadicLang Pred).Structure Domain
+    `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
+    structure over the monadic signature: accessibility `R` plus the
+    world-indexed interpretation `I`, carried as a family of mathlib
+    structures (`FirstOrder.Language.KripkeStructure`) — true by
+    construction, not by bridge. -/
+abbrev QBSMLModel (W : Type*) (Domain : Type*) (Const : Type*)
+    (Pred : Type*) :=
+  FirstOrder.Language.KripkeStructure (monadicLang Const Pred) W Domain
 
 /-- The predicate denotation at a world, read off the model's structure
     family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
     [aloni-vanormondt-2023] Definition 4.2, specialised to monadic `P`
     (cf. `Semantics.Composition.Model.pred₁ext`). -/
-def QBSMLModel.pInterp {W Domain Pred : Type*} (M : QBSMLModel W Domain Pred)
-    (P : Pred) (w : W) (d : Domain) : Prop :=
+def _root_.FirstOrder.Language.KripkeStructure.pInterp
+    {W Domain Const Pred : Type*}
+    (M : QBSMLModel W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
+    Prop :=
   (M.interp w).RelMap (monadicRel P) (fun _ => d)
 
-@[simp] theorem QBSMLModel.pInterp_monadicStructure {W Domain Pred : Type*}
-    (access : W → Finset W) (V : W → Pred → Domain → Prop) (P : Pred) (w : W)
-    (d : Domain) :
-    QBSMLModel.pInterp ⟨access, fun w => monadicStructure (V w)⟩ P w d ↔
-      V w P d :=
+/-- The constant denotation at a world — the world-relative `I(w)(c)` of
+    [aloni-vanormondt-2023] Definitions 4.2 and 4.8, read off
+    `Structure.funMap` (cf. `Semantics.Composition.Model.const`). -/
+def _root_.FirstOrder.Language.KripkeStructure.cInterp
+    {W Domain Const Pred : Type*}
+    (M : QBSMLModel W Domain Const Pred) (c : Const) (w : W) : Domain :=
+  (M.interp w).funMap (monadicConst c) default
+
+@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.pInterp_monadicStructure
+    {W Domain Const Pred : Type*} (access : W → Finset W)
+    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (P : Pred)
+    (w : W) (d : Domain) :
+    FirstOrder.Language.KripkeStructure.pInterp
+      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ P w d ↔ V w P d :=
   Iff.rfl
+
+@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.cInterp_monadicStructure
+    {W Domain Const Pred : Type*} (access : W → Finset W)
+    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (c : Const)
+    (w : W) :
+    FirstOrder.Language.KripkeStructure.cInterp
+      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ c w = κ w c :=
+  rfl
 
 /-! ### Bilateral evaluation -/
 
@@ -422,12 +471,16 @@ variable [Fintype Domain]
     Definition 4.9): `eval M true φ s` is support (`M, s ⊨ φ`),
     `eval M false φ s` anti-support (`M, s ⫤ φ`). Negation flips the
     polarity, making double-negation elimination definitional. -/
-def eval (M : QBSMLModel W Domain Pred) :
-    Bool → QBSMLFormula Var Pred → Finset (Index W Var Domain) → Prop
+def eval (M : QBSMLModel W Domain Const Pred) :
+    Bool → QBSMLFormula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
       ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.pInterp P i.world d
   | false, .pred P x, s =>
       ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.pInterp P i.world d
+  | true,  .predc P c, s =>
+      ∀ i ∈ s, M.pInterp P i.world (M.cInterp c i.world)
+  | false, .predc P c, s =>
+      ∀ i ∈ s, ¬ M.pInterp P i.world (M.cInterp c i.world)
   | true,  .ne, s => s.Nonempty
   | false, .ne, s => s = ∅
   | true,  .neg ψ, s => eval M false ψ s
@@ -453,28 +506,28 @@ def eval (M : QBSMLModel W Domain Pred) :
   | false, .exi x ψ, s => eval M false ψ (State.extendUniversal s x)
 
 /-- Support: positive evaluation. -/
-abbrev support (M : QBSMLModel W Domain Pred) (φ : QBSMLFormula Var Pred)
+abbrev support (M : QBSMLModel W Domain Const Pred) (φ : QBSMLFormula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M true φ s
 
 /-- Anti-support: negative evaluation. -/
-abbrev antiSupport (M : QBSMLModel W Domain Pred) (φ : QBSMLFormula Var Pred)
+abbrev antiSupport (M : QBSMLModel W Domain Const Pred) (φ : QBSMLFormula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M false φ s
 
-@[simp] lemma support_neg (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
+@[simp] lemma support_neg (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
     support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
+@[simp] lemma antiSupport_neg (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
 
 /-- `support` and `antiSupport` form a paraconsistent bilateral logic
     (`Core.Logic.Bilateral.IsBilateral`) under `QBSMLFormula.neg`, like
     BSML's `isBilateral` at the point type `Index W Var Domain`. -/
-theorem isBilateral (M : QBSMLModel W Domain Pred) :
-    Core.Logic.Bilateral.IsBilateral (Form := QBSMLFormula Var Pred)
+theorem isBilateral (M : QBSMLModel W Domain Const Pred) :
+    Core.Logic.Bilateral.IsBilateral (Form := QBSMLFormula Var Const Pred)
       (support M) (antiSupport M) QBSMLFormula.neg :=
   Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
@@ -490,23 +543,25 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
     ([aloni-vanormondt-2023] Definition 4.10). Defined via
     `Core.Logic.Team.IsStateBased` applied to `State.worldProj s`, sharing
     BSML's frame-condition substrate. -/
-def QBSMLModel.IsStateBased (M : QBSMLModel W Domain Pred)
+def _root_.FirstOrder.Language.KripkeStructure.IsStateBased
+    (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsStateBased M.access (State.worldProj s)
 
 /-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
     accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
-def QBSMLModel.IsIndisputable (M : QBSMLModel W Domain Pred)
+def _root_.FirstOrder.Language.KripkeStructure.IsIndisputable
+    (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsIndisputable M.access (State.worldProj s)
 
-instance [Fintype W] (M : QBSMLModel W Domain Pred)
+instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
-  unfold QBSMLModel.IsStateBased; infer_instance
+  unfold FirstOrder.Language.KripkeStructure.IsStateBased; infer_instance
 
-instance [Fintype W] (M : QBSMLModel W Domain Pred)
+instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
-  unfold QBSMLModel.IsIndisputable; infer_instance
+  unfold FirstOrder.Language.KripkeStructure.IsIndisputable; infer_instance
 
 end FrameConditions
 

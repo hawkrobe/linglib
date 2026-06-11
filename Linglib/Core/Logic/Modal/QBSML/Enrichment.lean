@@ -42,7 +42,7 @@ behaviour-under-negation pattern — the QBSML free-choice facts proved in
 `enrich` is total on `QBSMLFormula` for definitional convenience, but `[·]⁺`
 is defined only on the NE-free fragment in both papers, so the `.ne` case is
 a filler convention. The construction is structurally identical to BSML's
-`Core/Logic/Modal/BSML/Enrichment.lean` but operates on `QBSMLFormula Var Pred`
+`Core/Logic/Modal/BSML/Enrichment.lean` but operates on `QBSMLFormula Var Const Pred`
 (quantifiers, predicate atoms) rather than `BSMLFormula Atom`. The two are
 kept parallel rather than unified: a shared "team-semantic formula language
 with an `NE` constructor" abstraction awaits a third instance, per the family
@@ -51,14 +51,15 @@ roadmap in `Core/Logic/Team/Algebra.lean`.
 
 namespace Core.Logic.Modal.QBSML
 
-variable {Var Pred : Type*}
+variable {Var Const Pred : Type*}
 
 /-! ### The enrichment function -/
 
 /-- Pragmatic enrichment `[·]⁺` for QBSML formulas ([aloni-vanormondt-2023]
     Definition 4.13). Recursively conjoins `NE` to every clause. -/
-def QBSMLFormula.enrich : QBSMLFormula Var Pred → QBSMLFormula Var Pred
+def QBSMLFormula.enrich : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
   | .pred P x   => .conj (.pred P x) .ne
+  | .predc P c  => .conj (.predc P c) .ne
   | .ne         => .ne  -- totality filler; enrichment is defined only on the NE-free fragment
   | .neg φ      => .conj (.neg φ.enrich) .ne
   | .conj φ ψ   => .conj (.conj φ.enrich ψ.enrich) .ne
@@ -76,8 +77,8 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 /-- A QBSML state supporting an enriched formula must be non-empty. The NE
     conjunct guards every clause of `enrich φ`, forcing the witnessing state
     to satisfy `Nonempty`. -/
-theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : support M φ.enrich s) : s.Nonempty := by
   cases φ with
   | ne => exact h
@@ -90,8 +91,8 @@ theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Pred)
     `t₁ = s`. The QBSML analogue of `BSML/Enrichment`'s `antiSupport_strip_ne`;
     the workhorse of the free-choice derivations in
     `Studies/AloniVanOrmondt2023.lean`. -/
-theorem antiSupport_strip_ne (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem antiSupport_strip_ne (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : antiSupport M (.conj φ .ne) s) :
     antiSupport M φ s := by
   obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
@@ -102,15 +103,15 @@ theorem antiSupport_strip_ne (M : QBSMLModel W Domain Pred)
 
 /-- Anti-support of `φ` implies anti-support of `φ ∧ NE` via the trivial
     split `(s, ∅)`. The reverse direction of `antiSupport_strip_ne`. -/
-theorem antiSupport_conj_ne_of_antiSupport (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem antiSupport_conj_ne_of_antiSupport (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : antiSupport M φ s) :
     antiSupport M (.conj φ .ne) s :=
   ⟨s, ∅, Core.Logic.Team.splitsAs_self_empty s, h, rfl⟩
 
 /-- Anti-support of `φ ∧ NE` ↔ anti-support of `φ`. -/
-theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
+theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s :=
   ⟨antiSupport_strip_ne M φ s, antiSupport_conj_ne_of_antiSupport M φ s⟩
 
