@@ -1213,7 +1213,6 @@ import Linglib.Studies.Partee1987
 import Linglib.Studies.Elbourne2026
 import Linglib.Phenomena.Attitudes.ConjunctionDistribution
 import Linglib.Studies.Montague1973Attitudes
-import Linglib.Phenomena.Attitudes.IntentionalIdentity
 import Linglib.Studies.BondarenkoElliott2026
 import Linglib.Studies.Pasternak2019
 import Linglib.Studies.ChatzikyriakidisEtAl2025
