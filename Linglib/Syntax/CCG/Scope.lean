@@ -4,7 +4,13 @@ import Linglib.Features.ScopeTypes
 /-!
 # CCG Scope Theory
 
-CCG derivational structure determines available scope readings ([steedman-2000] Ch. 6).
+Derivation-type analysis of quantifier scope: derivations built by
+composition or type-raising license scope flexibility that pure
+application does not. [steedman-2000] §6.8 uses this contrast for
+West Germanic verb-cluster word orders (consumed by
+`Linglib.Studies.Steedman2000`); the book's fuller
+account (§4.4) refines the bare derivation–scope link, which Steedman
+notes overgenerates as stated.
 -/
 
 namespace CCG.Scope
