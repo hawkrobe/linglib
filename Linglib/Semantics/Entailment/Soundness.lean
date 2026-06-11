@@ -31,19 +31,15 @@ the enum become corollaries of facts about actual context functions.
 - `SoundFor.comp`: soundness composes along `EntailmentSig.compose`;
 - `soundFor_contextProjectivity`: soundness folds along a signature path.
 
-## Two flagged divergences (enum-level, not touched here)
+## Order soundness
 
-- `project` gives `.all` and `.addMult` identical rows, so
-  `soundFor_all_iff_addMult` holds by `Iff.rfl`; in [icard-2012] the
-  identity class is additive-and-multiplicative (his ⊕⊞) while • ("all
-  functions") projects everything to `#` and is absorbing. linglib's
-  `.all` plays ⊕⊞'s role under `project`/`compose` but sits at the bottom
-  of `Refines` — semantically the bottom reading is wrong (morphisms are
-  not antitone), which is why no `SoundFor`-monotonicity along `Refines`
-  is stated.
-- `NLRelation.Refines` puts `.equiv` below all seven relations; under the
-  implication reading ([icard-2012] §1) `≡` does not refine `^`, `|`, or
-  `⌣`. `Holds` follows the paper, not the enum order.
+With the `Refines` orders carrying their [icard-2012] readings (`.all` =
+•, the no-property top; `≡` not below the exclusion relations), both
+orders are certified here: `NLRelation.Holds.of_refines` (relation-level
+implication) and `EntailmentSig.SoundFor.of_refines` (a more specific
+signature's soundness implies a less specific one's), via the projection
+monotonicity `EntailmentSig.project_refines`. `soundFor_all` holds
+unconditionally — every function realizes the no-property row.
 -/
 
 namespace Core.NaturalLogic
@@ -200,17 +196,39 @@ theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
   | cover => show f x ⊓ f y = ⊥; rw [← haa.1 x y, hR]; exact haa.2
   | independent => trivial
 
-/-- `.all` and `.addMult` have definitionally identical projection rows —
-the flagged enum-level duplicate. -/
-theorem soundFor_all_iff_addMult {f : α → β} :
-    EntailmentSig.SoundFor .all f ↔ EntailmentSig.SoundFor .addMult f :=
-  Iff.rfl
+/-- Every function realizes the • row: `.all` is the no-property
+signature, projecting every relation to `#`. -/
+theorem soundFor_all (f : α → β) : EntailmentSig.SoundFor .all f :=
+  fun _ _ _ _ => trivial
 
-/-- The `.all` row is sound for morphisms (via the `.addMult` duplicate). -/
-theorem soundFor_all {f : α → β} (hadd : IsCompletelyAdditive f)
-    (hmult : IsCompletelyMultiplicative f) :
-    EntailmentSig.SoundFor .all f :=
-  soundFor_all_iff_addMult.mpr (soundFor_addMult hadd hmult)
+/-- Relation-level order soundness: `Refines` is the implication order on
+the lattice content ([icard-2012] §1). -/
+theorem _root_.Core.NaturalLogic.NLRelation.Holds.of_refines
+    {R R' : NLRelation} {u v : β} (h : R.Holds u v) (href : R.Refines R') :
+    R'.Holds u v := by
+  cases R <;> cases R' <;>
+    first
+    | exact h
+    | trivial
+    | exact h.1
+    | exact h.2
+    | exact le_of_eq h
+    | exact le_of_eq (Eq.symm h)
+    | exact absurd href (by decide)
+
+/-- Projection is monotone in the signature order: a more specific
+signature projects every relation at least as informatively. -/
+theorem EntailmentSig.project_refines {σ τ : EntailmentSig}
+    (h : σ.Refines τ) (R : NLRelation) :
+    (EntailmentSig.project R σ).Refines (EntailmentSig.project R τ) := by
+  revert h; cases σ <;> cases τ <;> cases R <;> decide
+
+/-- Signature-order soundness: if σ refines τ (every σ-function is a
+τ-function), σ-soundness implies τ-soundness. This is the theorem that
+makes the `Refines` order mean class inclusion. -/
+theorem EntailmentSig.SoundFor.of_refines {σ τ : EntailmentSig} {f : α → β}
+    (h : σ.SoundFor f) (hστ : σ.Refines τ) : τ.SoundFor f :=
+  fun R x y hR => (h R x y hR).of_refines (EntailmentSig.project_refines hστ R)
 
 /-! ### Composition and paths -/
 
@@ -226,10 +244,9 @@ theorem EntailmentSig.SoundFor.comp {ψ φ : EntailmentSig} {f : β → γ}
   have h := hf (EntailmentSig.project R φ) (g x) (g y) (hg R x y hR)
   rwa [projection_composition] at h
 
-/-- The identity context is sound for `.all` (vacuously: `.all` preserves
-every relation, and so does `id`). -/
-theorem soundFor_all_id : EntailmentSig.SoundFor .all (id : α → α) :=
-  fun _ _ _ hR => hR
+/-- The identity context is sound for the identity signature `.addMult`. -/
+theorem soundFor_addMult_id : EntailmentSig.SoundFor .addMult (id : α → α) :=
+  soundFor_addMult ⟨fun _ _ => rfl, rfl⟩ ⟨fun _ _ => rfl, rfl⟩
 
 /-- **Path soundness**: a path of (signature, context) pairs, each sound,
 yields a context sound for `contextProjectivity` of the signature path —
@@ -241,7 +258,7 @@ theorem soundFor_contextProjectivity :
       (∀ p ∈ l, p.1.SoundFor p.2) →
       (EntailmentSig.contextProjectivity (l.map Prod.fst)).SoundFor
         ((l.map Prod.snd).foldr (· ∘ ·) id)
-  | [], _ => soundFor_all_id
+  | [], _ => soundFor_addMult_id
   | p :: l, h => by
       have hhead : p.1.SoundFor p.2 := h p (List.mem_cons_self ..)
       have htail := soundFor_contextProjectivity l
