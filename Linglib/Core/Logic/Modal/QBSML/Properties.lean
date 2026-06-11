@@ -44,7 +44,7 @@ namespace Core.Logic.Modal.QBSML
 
 open Core.Logic.Team
 
-variable {W Var Domain Pred : Type*}
+variable {W Var Domain Const Pred : Type*}
 variable [DecidableEq W]
 variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
@@ -56,12 +56,14 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
     cases use `State.extendUniversal_empty` and
     `State.extendFunctional_empty`. -/
 private theorem support_and_antiSupport_empty_of_isNEFree
-    {φ : QBSMLFormula Var Pred} (hNE : φ.IsNEFree)
-    (M : QBSMLModel W Domain Pred) :
+    {φ : QBSMLFormula Var Const Pred} (hNE : φ.IsNEFree)
+    (M : QBSMLModel W Domain Const Pred) :
     support M φ (∅ : Finset (Index W Var Domain)) ∧
     antiSupport M φ (∅ : Finset (Index W Var Domain)) := by
   induction hNE with
   | pred P x =>
+    exact ⟨fun i hi => absurd hi (by simp), fun i hi => absurd hi (by simp)⟩
+  | predc P c =>
     exact ⟨fun i hi => absurd hi (by simp), fun i hi => absurd hi (by simp)⟩
   | neg _ ih =>
     -- support (¬ψ) = antiSupport ψ; antiSupport (¬ψ) = support ψ
@@ -100,8 +102,8 @@ private theorem support_and_antiSupport_empty_of_isNEFree
       exact ih.2
 
 /-- NE-free QBSML formulas are supported on the empty team. -/
-theorem support_empty_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred) :
+theorem support_empty_of_isNEFree {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred) :
     support M φ ∅ :=
   (support_and_antiSupport_empty_of_isNEFree hNE M).1
 
@@ -115,8 +117,8 @@ theorem support_empty_of_isNEFree {φ : QBSMLFormula Var Pred}
     `t.extendFunctional x h_t` to `(t \ s).extendFunctional x h_t`, so all
     four properties have to live inside one induction. -/
 private theorem support_and_antiSupport_dc_uc_of_isNEFree
-    {φ : QBSMLFormula Var Pred} (hNE : φ.IsNEFree)
-    (M : QBSMLModel W Domain Pred) :
+    {φ : QBSMLFormula Var Const Pred} (hNE : φ.IsNEFree)
+    (M : QBSMLModel W Domain Const Pred) :
     -- (1) DC support
     (∀ s t : Finset (Index W Var Domain), t ⊆ s → support M φ s → support M φ t) ∧
     -- (2) UC support
@@ -130,6 +132,18 @@ private theorem support_and_antiSupport_dc_uc_of_isNEFree
       antiSupport M φ s → antiSupport M φ t → antiSupport M φ (s ∪ t)) := by
   induction hNE with
   | pred P x =>
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro s t hsub hsupp i hi; exact hsupp i (hsub hi)
+    · intro s t hs ht i hi; simp [Finset.mem_union] at hi
+      cases hi with
+      | inl h => exact hs i h
+      | inr h => exact ht i h
+    · intro s t hsub hsupp i hi; exact hsupp i (hsub hi)
+    · intro s t hs ht i hi; simp [Finset.mem_union] at hi
+      cases hi with
+      | inl h => exact hs i h
+      | inr h => exact ht i h
+  | predc P c =>
     refine ⟨?_, ?_, ?_, ?_⟩
     · intro s t hsub hsupp i hi; exact hsupp i (hsub hi)
     · intro s t hs ht i hi; simp [Finset.mem_union] at hi
@@ -322,8 +336,8 @@ private theorem support_and_antiSupport_dc_uc_of_isNEFree
 
 /-- NE-free QBSML formulas are downward-closed ([anttila-2021]
     Proposition 2.2.8 part 1, extended to first-order). -/
-theorem isLowerSet_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred) :
+theorem isLowerSet_support_of_isNEFree {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
   fun _ _ hab hb =>
     (support_and_antiSupport_dc_uc_of_isNEFree hNE M).1 _ _ hab hb
@@ -334,8 +348,8 @@ theorem isLowerSet_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     QBSML's `exi` UC case needs downward closure of the subformula as IH
     (see the module docstring), so the QBSML version narrows to NE-free.
     The downstream flat corollary consumes NE-free anyway. -/
-theorem supClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred) :
+theorem supClosed_support_of_isNEFree {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred) :
     SupClosed { t : Finset (Index W Var Domain) | support M φ t } :=
   fun _ ha _ hb =>
     (support_and_antiSupport_dc_uc_of_isNEFree hNE M).2.1 _ _ ha hb
@@ -346,8 +360,8 @@ theorem supClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     QBSML formulas are flat. Derived from [anttila-2021] Proposition 2.2.2
     (`Core.Logic.Team.isFlat_iff`) applied to the three closure properties
     above. -/
-theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred) :
+theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred) :
     IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=
   isFlat_of_isLowerSet_supClosed_empty
     (isLowerSet_support_of_isNEFree hNE M)
@@ -368,9 +382,9 @@ theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     docstring), which NE breaks. So QBSML has no unconditional all-formula
     cell — unlike BSML, whose NE-bearing formulas still land in the convex,
     union-closed cell. -/
-theorem soundFor_flat_neFree (M : QBSMLModel W Domain Pred) :
+theorem soundFor_flat_neFree (M : QBSMLModel W Domain Const Pred) :
     definableClassWhere (support M)
-      (fun φ : QBSMLFormula Var Pred => φ.IsNEFree) ⊆ flatProperties := by
+      (fun φ : QBSMLFormula Var Const Pred => φ.IsNEFree) ⊆ flatProperties := by
   unfold flatProperties
   exact definableClassWhere_subset (C := IsFlat)
     fun _φ hφ => isFlat_support_of_isNEFree hφ M
@@ -385,7 +399,7 @@ arranged in De Morgan pairs — so each is `Iff.rfl`. -/
 
 section Fact1
 
-variable (M : QBSMLModel W Domain Pred) (φ ψ : QBSMLFormula Var Pred)
+variable (M : QBSMLModel W Domain Const Pred) (φ ψ : QBSMLFormula Var Const Pred)
   (x : Var) (s : Finset (Index W Var Domain))
 
 /-- Double negation elimination ([aloni-vanormondt-2023] Fact 1). -/
@@ -428,16 +442,16 @@ end Fact1
 
 /-- Flat (NE-free) support is pointwise: a team supports `φ` iff each of its
     singletons does (`Core.Logic.Team.IsFlat` unfolded at the support set). -/
-theorem support_iff_forall_singleton {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred)
+theorem support_iff_forall_singleton {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M φ s ↔ ∀ i ∈ s, support M φ {i} :=
   isFlat_support_of_isNEFree hNE M s
 
 /-- Anti-support of an NE-free formula is likewise pointwise: flatness of the
     bilateral negation. -/
-theorem antiSupport_iff_forall_singleton {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred)
+theorem antiSupport_iff_forall_singleton {φ : QBSMLFormula Var Const Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M φ s ↔ ∀ i ∈ s, antiSupport M φ {i} :=
   support_iff_forall_singleton (.neg hNE) M s
@@ -447,7 +461,7 @@ theorem antiSupport_iff_forall_singleton {φ : QBSMLFormula Var Pred}
 [aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
 classical quantified modal logic. The modal-free part of that reduction is
 stated against mathlib first-order satisfaction: `QBSMLFormula.toFormula?`
-translates the fragment into `(monadicLang Pred).Formula Var` — quantifiers
+translates the fragment into `(monadicLang Const Pred).Formula Var` — quantifiers
 via the computable named binders `Formula.all₁` / `Formula.ex₁` of
 `Core/Logic/FirstOrder/Binders.lean` — support at a singleton state is
 `Formula.Realize` in the structure the model carries at that world
@@ -461,12 +475,12 @@ open FirstOrder Language
 /-- Classical first-order satisfaction at a world — `M, w ⊨_v ψ`, mathlib's
     `Formula.Realize` in the structure the model carries at `w`. The
     right-hand side of [aloni-vanormondt-2023] Proposition 4.1. -/
-def QBSMLModel.RealizeAt (M : QBSMLModel W Domain Pred) (w : W)
-    (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) : Prop :=
+def QBSMLModel.RealizeAt (M : QBSMLModel W Domain Const Pred) (w : W)
+    (ψ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) : Prop :=
   @Formula.Realize _ _ (M.interp w) _ ψ v
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_rel₁ (M : QBSMLModel W Domain Pred)
+@[simp] theorem QBSMLModel.realizeAt_rel₁ (M : QBSMLModel W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
     M.RealizeAt w ((monadicRel P).formula₁ (Term.var x)) v ↔
       M.pInterp P w (v x) := by
@@ -479,37 +493,55 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
   exact Iff.rfl
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_not (M : QBSMLModel W Domain Pred)
-    (w : W) (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+@[simp] theorem QBSMLModel.realizeAt_rel₁_const
+    (M : QBSMLModel W Domain Const Pred) (P : Pred) (c : Const) (w : W)
+    (v : Var → Domain) :
+    M.RealizeAt w
+      ((monadicRel P).formula₁ (Constants.term (monadicConst c))) v ↔
+      M.pInterp P w (M.cInterp c w) := by
+  letI := M.interp w
+  show ((monadicRel P).formula₁ (Constants.term (monadicConst c))).Realize v
+    ↔ _
+  have hfun : (![(Constants.term (monadicConst (Pred := Pred) c)).realize v] :
+      Fin 1 → Domain) = fun _ => M.cInterp c w := by
+    funext j
+    rw [Matrix.cons_val_fin_one]
+    exact Term.realize_constants
+  rw [Formula.realize_rel₁, hfun]
+  exact Iff.rfl
+
+omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
+@[simp] theorem QBSMLModel.realizeAt_not (M : QBSMLModel W Domain Const Pred)
+    (w : W) (ψ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) :
     M.RealizeAt w ψ.not v ↔ ¬ M.RealizeAt w ψ v := by
   letI := M.interp w
   exact Formula.realize_not
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_inf (M : QBSMLModel W Domain Pred)
-    (w : W) (ψ₁ ψ₂ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+@[simp] theorem QBSMLModel.realizeAt_inf (M : QBSMLModel W Domain Const Pred)
+    (w : W) (ψ₁ ψ₂ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) :
     M.RealizeAt w (ψ₁ ⊓ ψ₂) v ↔ M.RealizeAt w ψ₁ v ∧ M.RealizeAt w ψ₂ v := by
   letI := M.interp w
   exact Formula.realize_inf
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_sup (M : QBSMLModel W Domain Pred)
-    (w : W) (ψ₁ ψ₂ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+@[simp] theorem QBSMLModel.realizeAt_sup (M : QBSMLModel W Domain Const Pred)
+    (w : W) (ψ₁ ψ₂ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) :
     M.RealizeAt w (ψ₁ ⊔ ψ₂) v ↔ M.RealizeAt w ψ₁ v ∨ M.RealizeAt w ψ₂ v := by
   letI := M.interp w
   exact Formula.realize_sup
 
 omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_all₁ (M : QBSMLModel W Domain Pred)
-    (w : W) (x : Var) (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+@[simp] theorem QBSMLModel.realizeAt_all₁ (M : QBSMLModel W Domain Const Pred)
+    (w : W) (x : Var) (ψ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) :
     M.RealizeAt w (Formula.all₁ x ψ) v ↔
       ∀ d : Domain, M.RealizeAt w ψ (Function.update v x d) := by
   letI := M.interp w
   exact Formula.realize_all₁
 
 omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem QBSMLModel.realizeAt_ex₁ (M : QBSMLModel W Domain Pred)
-    (w : W) (x : Var) (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+@[simp] theorem QBSMLModel.realizeAt_ex₁ (M : QBSMLModel W Domain Const Pred)
+    (w : W) (x : Var) (ψ : (monadicLang Const Pred).Formula Var) (v : Var → Domain) :
     M.RealizeAt w (Formula.ex₁ x ψ) v ↔
       ∃ d : Domain, M.RealizeAt w ψ (Function.update v x d) := by
   letI := M.interp w
@@ -520,8 +552,9 @@ omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
     binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
     formulas). -/
 def QBSMLFormula.toFormula? :
-    QBSMLFormula Var Pred → Option ((monadicLang Pred).Formula Var)
+    QBSMLFormula Var Const Pred → Option ((monadicLang Const Pred).Formula Var)
   | .pred P x => some ((monadicRel P).formula₁ (Term.var x))
+  | .predc P c => some ((monadicRel P).formula₁ (Constants.term (monadicConst c)))
   | .neg φ => φ.toFormula?.map (·.not)
   | .conj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊓ ·)
   | .disj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊔ ·)
@@ -532,11 +565,12 @@ def QBSMLFormula.toFormula? :
 omit [DecidableEq W] [Fintype Var] in
 /-- Translatable formulas are NE-free. -/
 theorem isNEFree_of_toFormula? :
-    ∀ {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var},
+    ∀ {φ : QBSMLFormula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var},
       φ.toFormula? = some ψ → φ.IsNEFree := by
   intro φ
   induction φ with
   | pred P x => exact fun _ => .pred P x
+  | predc P c => exact fun _ => .predc P c
   | neg φ ih =>
     intro ψ hψ
     cases hφ : φ.toFormula? with
@@ -592,8 +626,8 @@ private lemma update_refines {i : Index W Var Domain} {v : Var → Domain}
     pointwise via flatness and apply the IH at the updated index and
     valuation. -/
 private theorem support_and_antiSupport_singleton_realizeAt
-    (M : QBSMLModel W Domain Pred) :
-    ∀ {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var},
+    (M : QBSMLModel W Domain Const Pred) :
+    ∀ {φ : QBSMLFormula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var},
       φ.toFormula? = some ψ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
         (∀ y, i.assign y = some (v y)) →
@@ -628,6 +662,29 @@ private theorem support_and_antiSupport_singleton_realizeAt
         rw [Finset.mem_singleton] at hj
         subst hj
         exact ⟨v x, hv x, h⟩
+  | predc P c =>
+    intro ψ hψ i v hv
+    rw [show (QBSMLFormula.predc P c).toFormula? =
+        some ((monadicRel P).formula₁ (Constants.term (monadicConst c)))
+        from rfl,
+      Option.some.injEq] at hψ
+    subst hψ
+    rw [QBSMLModel.realizeAt_rel₁_const]
+    constructor
+    · constructor
+      · intro h
+        exact h i (Finset.mem_singleton_self i)
+      · intro h j hj
+        rw [Finset.mem_singleton] at hj
+        subst hj
+        exact h
+    · constructor
+      · intro h
+        exact h i (Finset.mem_singleton_self i)
+      · intro h j hj
+        rw [Finset.mem_singleton] at hj
+        subst hj
+        exact h
   | neg φ ih =>
     intro ψ hψ i v hv
     cases hφ : φ.toFormula? with
@@ -807,8 +864,8 @@ private theorem support_and_antiSupport_singleton_realizeAt
     fragment): support of a translatable formula at a singleton state is
     classical first-order satisfaction at that index's world, for any total
     valuation the index's partial assignment refines. -/
-theorem support_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
-    {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var}
+theorem support_singleton_iff_realizeAt (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     support M φ {i} ↔ M.RealizeAt i.world ψ v :=
@@ -816,8 +873,8 @@ theorem support_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
 
 /-- Anti-support of a translatable formula at a singleton state is the
     classical falsity of its translation. -/
-theorem antiSupport_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
-    {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var}
+theorem antiSupport_singleton_iff_realizeAt (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v :=
@@ -827,8 +884,8 @@ theorem antiSupport_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
     translatable formula is supported by a state iff it is classically
     satisfied at every index — `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all
     `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
-theorem support_iff_forall_realizeAt (M : QBSMLModel W Domain Pred)
-    {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var}
+theorem support_iff_forall_realizeAt (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :

@@ -26,12 +26,15 @@ The framework's central facts (paper §5):
 | 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; [chemla-2009]) |
 | 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation behaviour; ignorance disappears) |
 
-Facts 5–10 are proved here as universal substrate theorems over arbitrary
-QBSML models and instantiated at a concrete model (`avoModel`); Fact 4 is
-the paper's Fig. 14 countermodel; Facts 1–2 and Proposition 4.1 live with
-the framework substrate in `Core/Logic/Modal/QBSML/Properties.lean` (the
-modal-free Proposition 4.1 against mathlib `Formula.Realize` is
-instantiated here at `avoModel`, the translation discharged by `rfl`).
+Facts 3 and 5–10 are proved here as universal substrate theorems over
+arbitrary QBSML models, the unconditional ones instantiated at a concrete
+model (`avoModel`); Fact 4 is the paper's Fig. 14 countermodel; Facts 1–2
+and Proposition 4.1 live with the framework substrate in
+`Core/Logic/Modal/QBSML/Properties.lean` (the modal-free Proposition 4.1
+against mathlib `Formula.Realize` is instantiated here at `avoModel`, the
+translation discharged by `rfl`). Fact 3 needs the individual constants of
+[aloni-vanormondt-2023] Definition 4.1 — `QBSMLFormula.predc` atoms,
+interpreted world-relatively via `QBSMLModel.cInterp`.
 
 ## Proof architecture (mirrors `BSML/FreeChoice.lean`)
 
@@ -54,10 +57,6 @@ the paper's primitive `[□φ]⁺ = □[φ]⁺ ∧ NE`.
 
 ## What is deferred
 
-- **Ignorance (Fact 3)**: its proof evaluates the closed atoms `Pa`, `Pb`
-  across indices carrying *different* assignments, which the constant-free
-  monadic language cannot express (with a free variable in place of `a`
-  the statement is false); needs individual constants in the term language.
 - **`Decidable` instance for `QBSML.eval`**: well-defined, but of limited
   use — the split-disjunction clauses quantify over pairs of subteams of
   the index space (`2^12 × 2^12` already at this file's model sizes), so
@@ -77,7 +76,7 @@ open Core.Logic.Modal.QBSML
 open FirstOrder Language
 open Phenomena.FreeChoice (FCAtom PowerSet2World)
 
-variable {W Var Domain Pred : Type*}
+variable {W Var Domain Const Pred : Type*}
 variable [DecidableEq W]
 variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
@@ -93,8 +92,8 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
     All quantifier cases use `antiSupport_strip_ne` to peel the `NE`
     conjunct, then `extendUniversal` / `extendFunctional` to apply the IH
     on the extended state. -/
-private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Pred)
-    {φ : QBSMLFormula Var Pred} (hNE : φ.IsNEFree) :
+private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred} (hNE : φ.IsNEFree) :
     (∀ s : Finset (Index W Var Domain), support M φ.enrich s → support M φ s) ∧
     (∀ s : Finset (Index W Var Domain),
         antiSupport M φ.enrich s → antiSupport M φ s) := by
@@ -103,6 +102,10 @@ private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Pred)
     refine ⟨?_, ?_⟩
     · intro s h; exact h.1
     · intro s h; exact antiSupport_strip_ne M (.pred P x) s h
+  | predc P c =>
+    refine ⟨?_, ?_⟩
+    · intro s h; exact h.1
+    · intro s h; exact antiSupport_strip_ne M (.predc P c) s h
   | @neg ψ _ ih =>
     obtain ⟨ih_s, ih_a⟩ := ih
     refine ⟨?_, ?_⟩
@@ -171,20 +174,61 @@ private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Pred)
 /-- **Enrichment strengthens (support direction)** — [aloni-2022] Fact 1
     extended to QBSML. For NE-free `φ`, supporting the enriched form implies
     supporting the original. -/
-theorem enrichment_strengthens_support (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem enrichment_strengthens_support (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (hNE : φ.IsNEFree)
     (h : support M φ.enrich s) :
     support M φ s :=
   (enrichment_strengthens_both M hNE).1 s h
 
 /-- **Enrichment strengthens (anti-support direction)**. -/
-theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Pred)
-    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (hNE : φ.IsNEFree)
     (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
   (enrichment_strengthens_both M hNE).2 s h
+
+/-- **Fact 3 (ignorance)** of [aloni-vanormondt-2023]: on epistemic models
+    (state-based `R`),
+
+    `[Pc₁ ∨ Qc₂]⁺ ⊨_epi ◇Pc₁ ∧ ◇Qc₂`.
+
+    Stated for constant atoms, as in the paper's `Pa ∨ Pb`: the proof
+    transplants each split-half's worlds to every index via state-basedness,
+    which is sound only because constant atoms are *assignment-invariant* —
+    with a free variable in place of the constant the statement is false
+    (the transplanted indices carry the wrong assignments). -/
+theorem ignorance_Q (M : QBSMLModel W Domain Const Pred)
+    (P Q : Pred) (c₁ c₂ : Const) (s : Finset (Index W Var Domain))
+    (hSB : M.IsStateBased s)
+    (h : support M
+      (QBSMLFormula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
+    support M (.poss (.predc P c₁)) s ∧
+    support M (.poss (.predc Q c₂)) s := by
+  have hSB' : ∀ w ∈ State.worldProj s, M.access w = State.worldProj s := hSB
+  obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h.1
+  have ht₁s : t₁ ⊆ s := hunion ▸ Finset.subset_union_left
+  have ht₂s : t₂ ⊆ s := hunion ▸ Finset.subset_union_right
+  constructor
+  · intro i hi
+    refine ⟨State.worldProj t₁, ?_, State.worldProj_nonempty h₁.2, ?_⟩
+    · rw [hSB' i.world (State.mem_worldProj.mpr ⟨i, hi, rfl⟩)]
+      exact State.worldProj_mono ht₁s
+    · intro k hk
+      obtain ⟨hkw, -⟩ := State.mem_modalLift.mp hk
+      obtain ⟨j, hj, hjw⟩ := State.mem_worldProj.mp hkw
+      rw [← hjw]
+      exact h₁.1 j hj
+  · intro i hi
+    refine ⟨State.worldProj t₂, ?_, State.worldProj_nonempty h₂.2, ?_⟩
+    · rw [hSB' i.world (State.mem_worldProj.mpr ⟨i, hi, rfl⟩)]
+      exact State.worldProj_mono ht₂s
+    · intro k hk
+      obtain ⟨hkw, -⟩ := State.mem_modalLift.mp hk
+      obtain ⟨j, hj, hjw⟩ := State.mem_worldProj.mp hkw
+      rw [← hjw]
+      exact h₂.1 j hj
 
 /-! ### Negation behaviour (Fact 10) -/
 
@@ -200,8 +244,8 @@ theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Pred)
     Negation cancels ignorance (paper §5.5): the `Nonempty` hypothesis is
     discharged by the three NE-strips, leaving classical anti-support on
     each disjunct. -/
-theorem negationStrip_Q (M : QBSMLModel W Domain Pred)
-    (α β : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem negationStrip_Q (M : QBSMLModel W Domain Const Pred)
+    (α β : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M (QBSMLFormula.enrich (.neg (.disj α β))) s) :
     support M (.neg α) s ∧ support M (.neg β) s := by
@@ -225,8 +269,8 @@ theorem negationStrip_Q (M : QBSMLModel W Domain Pred)
     each piece from its world projection, which serves as the `Finset W`
     witness, and `enrichment_strengthens_support` discharges the enrichment
     to plain support of α, β. -/
-private theorem diamond_split (M : QBSMLModel W Domain Pred)
-    {α β : QBSMLFormula Var Pred} (hα : α.IsNEFree) (hβ : β.IsNEFree)
+private theorem diamond_split (M : QBSMLModel W Domain Const Pred)
+    {α β : QBSMLFormula Var Const Pred} (hα : α.IsNEFree) (hβ : β.IsNEFree)
     {X : Finset W} {g : Assignment Var Domain}
     (hsupp : support M (QBSMLFormula.disj α β).enrich (State.modalLift X g)) :
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g)) ∧
@@ -252,8 +296,8 @@ private theorem diamond_split (M : QBSMLModel W Domain Pred)
 
 /-- Per-index form of the core: a state whose every index sees an enriched
     split disjunction supports both diamonds (shared by Facts 8 and 9). -/
-private theorem possFC_on (M : QBSMLModel W Domain Pred)
-    {α β : QBSMLFormula Var Pred} (hα : α.IsNEFree) (hβ : β.IsNEFree)
+private theorem possFC_on (M : QBSMLModel W Domain Const Pred)
+    {α β : QBSMLFormula Var Const Pred} (hα : α.IsNEFree) (hβ : β.IsNEFree)
     {t : Finset (Index W Var Domain)}
     (h : support M (.poss (QBSMLFormula.disj α β).enrich) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
@@ -272,8 +316,8 @@ private theorem possFC_on (M : QBSMLModel W Domain Pred)
 
     Projects the diamond clause of the enrichment and applies the per-index
     core `possFC_on` at `s`. -/
-theorem narrowScopeFC_Q (M : QBSMLModel W Domain Pred)
-    (α β : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem narrowScopeFC_Q (M : QBSMLModel W Domain Const Pred)
+    (α β : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M (QBSMLFormula.enrich (.poss (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s :=
@@ -287,8 +331,8 @@ theorem narrowScopeFC_Q (M : QBSMLModel W Domain Pred)
     The enriched premise evaluates the enriched diamond at the universal
     extension `s[x]`, so the conclusion is `possFC_on` at `s[x]` — the same
     per-index argument as Fact 8, one extension up. -/
-theorem universalFC_Q (M : QBSMLModel W Domain Pred)
-    (α β : QBSMLFormula Var Pred) (x : Var) (s : Finset (Index W Var Domain))
+theorem universalFC_Q (M : QBSMLModel W Domain Const Pred)
+    (α β : QBSMLFormula Var Const Pred) (x : Var) (s : Finset (Index W Var Domain))
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M (QBSMLFormula.enrich (.univ x (.poss (.disj α β)))) s) :
     support M (.univ x (.poss α)) s ∧ support M (.univ x (.poss β)) s :=
@@ -304,8 +348,8 @@ theorem universalFC_Q (M : QBSMLModel W Domain Pred)
     NE-strips flip the doubly-negated diamond into support of the enriched
     disjunction on each index's full accessible lift `R(wᵢ)[gᵢ]`, and
     `diamond_split` produces the witnesses. -/
-theorem boxFC_Q (M : QBSMLModel W Domain Pred)
-    (α β : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+theorem boxFC_Q (M : QBSMLModel W Domain Const Pred)
+    (α β : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M (QBSMLFormula.enrich (QBSMLFormula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
@@ -332,7 +376,7 @@ theorem boxFC_Q (M : QBSMLModel W Domain Pred)
     functional `h` sending the (unique) index to the domain values whose
     extensions land in `t` reconstructs `t` exactly. The engine of Fact 5. -/
 private lemma exi_of_subset_extendUniversal_singleton
-    (M : QBSMLModel W Domain Pred) {γ : QBSMLFormula Var Pred}
+    (M : QBSMLModel W Domain Const Pred) {γ : QBSMLFormula Var Const Pred}
     {i : Index W Var Domain} {x : Var} {t : Finset (Index W Var Domain)}
     (htsub : t ⊆ State.extendUniversal {i} x) (htne : t.Nonempty)
     (hsupp : support M γ t) :
@@ -375,8 +419,8 @@ private lemma exi_of_subset_extendUniversal_singleton
     non-empty parts supporting the enriched disjuncts; because the state is
     a singleton, every part extends the *same* index, so each part is the
     image of a functional extension witnessing the existential. -/
-theorem distribution_Q (M : QBSMLModel W Domain Pred)
-    (α β : QBSMLFormula Var Pred) (x : Var) (i : Index W Var Domain)
+theorem distribution_Q (M : QBSMLModel W Domain Const Pred)
+    (α β : QBSMLFormula Var Const Pred) (x : Var) (i : Index W Var Domain)
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M (QBSMLFormula.enrich (.univ x (.disj α β))) {i}) :
     support M (.exi x α) {i} ∧ support M (.exi x β) {i} := by
@@ -397,7 +441,7 @@ theorem distribution_Q (M : QBSMLModel W Domain Pred)
     `i₀.world` in every index's accessible set, so the singleton
     `{i₀.world}` witnesses each diamond. The engine of Fact 6. -/
 private lemma exi_poss_atom_of_subset_extendUniversal
-    (M : QBSMLModel W Domain Pred) {P : Pred} {x : Var}
+    (M : QBSMLModel W Domain Const Pred) {P : Pred} {x : Var}
     {s t : Finset (Index W Var Domain)}
     (hSB : M.IsStateBased s)
     (htsub : t ⊆ State.extendUniversal s x) (htne : t.Nonempty)
@@ -445,7 +489,7 @@ private lemma exi_poss_atom_of_subset_extendUniversal
     pointwise at a single transplanted world; the paper notes the result
     "can easily be generalised", which for arbitrary NE-free formulas would
     route through flatness). -/
-theorem distributionEpi_Q (M : QBSMLModel W Domain Pred)
+theorem distributionEpi_Q (M : QBSMLModel W Domain Const Pred)
     (P Q : Pred) (x : Var) (s : Finset (Index W Var Domain))
     (hSB : M.IsStateBased s)
     (h : support M
@@ -496,41 +540,41 @@ instance : Fintype QVar where
 
     Universal access (`access _ = univ`) means R is indisputable on every
     state but **not** state-based — same shape as `Aloni2022.deonticModel`. -/
-def avoModel : QBSMLModel PowerSet2World FCAtom QPred where
+def avoModel : QBSMLModel PowerSet2World FCAtom FCAtom QPred where
   access := λ _ => Finset.univ
-  interp := λ w => monadicStructure (λ _ d => w.holds d)
+  interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
 /-! ### Formulas -/
 
 /-- The atomic formula `Px`. -/
-def Px : QBSMLFormula QVar QPred := .pred .P .x
+def Px {Const : Type*} : QBSMLFormula QVar Const QPred := .pred .P .x
 
 /-- The atomic formula `Qx`. -/
-def Qx : QBSMLFormula QVar QPred := .pred .Q .x
+def Qx {Const : Type*} : QBSMLFormula QVar Const QPred := .pred .Q .x
 
 /-- Disjunction `Px ∨ Qx` — paper's `Pa ∨ Pb`-shape with two distinct
     predicate-instances. -/
-def PxOrQx : QBSMLFormula QVar QPred := .disj Px Qx
+def PxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .disj Px Qx
 
 /-- The negation premise `¬(Px ∨ Qx)` corresponding to the paper's
     `¬(Pa ∨ Pb)` schema. -/
-def negPxOrQx : QBSMLFormula QVar QPred := .neg PxOrQx
+def negPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .neg PxOrQx
 
 /-- The narrow-scope FC premise `◇(Px ∨ Qx)` corresponding to the paper's
     `◇(Pa ∨ Pb)` schema. -/
-def possPxOrQx : QBSMLFormula QVar QPred := .poss PxOrQx
+def possPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .poss PxOrQx
 
 /-- The □-FC premise `□(Px ∨ Qx)` (paper's Fact 7 schema; `□` derived). -/
-def necPxOrQx : QBSMLFormula QVar QPred := PxOrQx.nec
+def necPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := PxOrQx.nec
 
 /-- The universal-FC premise `∀x◇(Px ∨ Qx)` (paper's Fact 9 schema). -/
-def univPossPxOrQx : QBSMLFormula QVar QPred := .univ .x possPxOrQx
+def univPossPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .univ .x possPxOrQx
 
 /-- The distribution premise `∀x(Px ∨ Qx)` (paper's Facts 4–6 schema). -/
-def univPxOrQx : QBSMLFormula QVar QPred := .univ .x PxOrQx
+def univPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .univ .x PxOrQx
 
-theorem Px_isNEFree : Px.IsNEFree := .pred _ _
-theorem Qx_isNEFree : Qx.IsNEFree := .pred _ _
+theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
+theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
 
 /-! ### Fact 10 (negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` -/
 
@@ -620,9 +664,10 @@ theorem univPxOrQx_classical
     - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓).
 
     State-basedness is strictly stronger and is the precondition for the
-    epistemic facts: Fact 3 (ignorance), Fact 6 (epistemic distribution).
-    Facts 7, 8 and 10 (formalised above) need no frame condition at all —
-    they hold on every model. -/
+    epistemic facts: Fact 3 (`ignorance_Q`) and Fact 6 (`distributionEpi_Q`),
+    which therefore stay substrate-level (universal access is not
+    state-based). Facts 7, 8 and 10 need no frame condition at all — they
+    hold on every model. -/
 theorem avoModel_indisputable
     (s : Finset (Index PowerSet2World QVar FCAtom)) :
     avoModel.IsIndisputable s := by
@@ -656,9 +701,9 @@ def fig14V (w : PowerSet2World) : QPred → Fig14Atom → Prop
   | .Q, d => d = .b ∧ w.holds .b
 
 /-- The Fig. 14 model: reflexive-only access at the `both` world. -/
-def fig14Model : QBSMLModel PowerSet2World Fig14Atom QPred where
+def fig14Model : QBSMLModel PowerSet2World Fig14Atom Fig14Atom QPred where
   access := λ _ => {PowerSet2World.both}
-  interp := λ w => monadicStructure (fig14V w)
+  interp := λ w => monadicStructure id (fig14V w)
 
 /-- The Fig. 14 index: the `both` world with the empty assignment. -/
 def fig14Index : Index PowerSet2World QVar Fig14Atom :=
@@ -719,7 +764,7 @@ theorem fig14_conclusion_fails :
     `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
     countermodel. -/
 theorem fact4_obviation :
-    ∃ (M : QBSMLModel PowerSet2World Fig14Atom QPred)
+    ∃ (M : QBSMLModel PowerSet2World Fig14Atom Fig14Atom QPred)
       (s : Finset (Index PowerSet2World QVar Fig14Atom)),
       support M univPxOrQx.enrich s ∧
       ¬ support M (.univ .x (.conj (.poss Px) (.poss Qx))) s :=
