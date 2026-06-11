@@ -1,4 +1,5 @@
 import Linglib.Semantics.Presupposition.TriggerTypology
+import Linglib.Semantics.Dynamic.Connectives.PartialCCP
 import Linglib.Phenomena.Presupposition.Basic
 
 /-!
@@ -61,9 +62,43 @@ Filtering affects which triggers are relevant for SI.
 
 When a presupposition is filtered (locally satisfied), the corresponding
 trigger no longer contributes to global presupposition, and alternatives
-involving that trigger may behave differently.
+involving that trigger may behave differently. (The `triggers := []` entry
+is *derived* below: `conditional_admitted_everywhere` proves the filtering
+from the partial-CCP semantics rather than stipulating it.)
 -/
 theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
+
+/-! ### Filtering derived from partial CCPs
+
+[heim-1983]'s actual machinery: sentences denote *partial* context change
+potentials (`Semantics.Dynamic.Core.PartialCCP`), and admittance does the
+projection work. The conditional's CCP is admitted by every context — the
+antecedent's update satisfies the consequent's king-presupposition — while
+the bare consequent's CCP is not admitted by the full context. The
+filtering recorded in the trigger tables above is a theorem, not a table
+entry. -/
+
+open Semantics.Dynamic.Core in
+/-- Every context admits ⟦if the king exists, the king is bald⟧: the
+    antecedent's update filters the consequent's presupposition
+    ([heim-1983]'s conditional CCP). -/
+theorem conditional_admitted_everywhere (c : Set KingWorld) :
+    (PartialCCP.pcond (PartialCCP.ofPartialProp kingExists)
+      (PartialCCP.ofPartialProp kingBald)).admits c := by
+  refine ⟨fun w _ => trivial, ?_⟩
+  rintro w ⟨_, ha⟩
+  cases w
+  · trivial
+  · exact ha
+
+open Semantics.Dynamic.Core in
+/-- The bare consequent ⟦the king is bald⟧ is NOT admitted by the full
+    context: the `noKing` world fails the presupposition, which therefore
+    projects. -/
+theorem bare_consequent_not_admitted :
+    ¬ (PartialCCP.ofPartialProp kingBald).admits Set.univ := by
+  intro h
+  exact h .noKing trivial
 
 end Heim1983

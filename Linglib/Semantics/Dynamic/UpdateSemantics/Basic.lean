@@ -1,4 +1,5 @@
 import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.Connectives.PartialCCP
 
 /-!
 # Update Semantics
@@ -200,6 +201,24 @@ noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → 
       some (Update.prop φ s)
     else
       none
+
+/-- `PUpdate.presup` is the `Option`-valued shadow of
+    `Core.PartialCCP.ofPartialProp`: defined (≠ `none`) at `some s` exactly
+    when `s` admits the corresponding partial update. `PartialCCP` is the
+    canonical `Part`-based form; this clause survives for the
+    [yagi-2025] disjunction machinery below. -/
+theorem PUpdate.presup_ne_none_iff_admits {W : Type*} (p φ : W → Prop)
+    (s : State W) :
+    PUpdate.presup p φ (some s) ≠ none ↔
+      (Core.PartialCCP.ofPartialProp ⟨p, φ⟩).admits s := by
+  simp only [PUpdate.presup]
+  split_ifs with h
+  · refine ⟨fun _ w hw => ?_, fun _ => Option.some_ne_none _⟩
+    have hm : w ∈ Update.prop p s := h.symm ▸ hw
+    exact hm.2
+  · refine ⟨fun hne => absurd rfl hne, fun hadm => absurd ?_ h⟩
+    have hadm' : ∀ w ∈ s, p w := hadm
+    exact Set.ext fun w => ⟨fun hw => hw.1, fun hw => ⟨hw, hadm' w hw⟩⟩
 
 /-- Negation extended to PState: s[¬φ] = s/s[φ].
 
