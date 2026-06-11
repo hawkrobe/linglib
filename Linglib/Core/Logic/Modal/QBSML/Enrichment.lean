@@ -24,9 +24,8 @@ The intuition ([aloni-2022]'s "neglect-zero" hypothesis): conversational
 participants systematically ignore empty configurations when interpreting,
 so each clause must witness a non-empty state. Combined with split
 disjunction, this derives ignorance, distribution, free choice, and the
-behaviour-under-negation pattern — the QBSML free-choice facts proved in
-`Studies/AloniVanOrmondt2023.lean` (`narrowScopeFC_Q`,
-`negationStrip_Q`).
+behaviour-under-negation pattern — the QBSML free-choice facts of
+`Core/Logic/Modal/QBSML/FreeChoice.lean`.
 
 ## Main declarations
 
@@ -35,7 +34,12 @@ behaviour-under-negation pattern — the QBSML free-choice facts proved in
   formula is non-empty (the `NE` conjunct guards every clause).
 * `antiSupport_strip_ne`, `antiSupport_conj_ne_iff` — anti-support of
   `φ ∧ NE` reduces to anti-support of `φ`; the workhorse of the free-choice
-  derivations in `Studies/AloniVanOrmondt2023.lean`.
+  derivations.
+* `enrichment_strengthens_support`, `enrichment_strengthens_antiSupport` —
+  [aloni-2022] Fact 1 extended to QBSML: on the NE-free fragment, the
+  enriched form entails the original, bilaterally.
+* `support_enrich_nec_iff` — support of the enriched derived `□` unfolds to
+  pointwise enriched support at the accessible lifts, plus non-emptiness.
 
 ## Implementation notes
 
@@ -114,5 +118,135 @@ theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Const Pred)
     (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s :=
   ⟨antiSupport_strip_ne M φ s, antiSupport_conj_ne_of_antiSupport M φ s⟩
+
+/-! ### Enrichment strengthens (joint bilateral induction) -/
+
+/-- Both directions of "enrichment strengthens" ([aloni-2022] Fact 1
+    extended to QBSML). For NE-free `φ`:
+    - `support M (enrich φ) s → support M φ s`
+    - `antiSupport M (enrich φ) s → antiSupport M φ s`
+
+    Joint bilateral induction over the NE-free derivation. The negation case
+    interleaves the two directions (support of `¬ψ` is anti-support of `ψ`).
+    All quantifier cases use `antiSupport_strip_ne` to peel the `NE`
+    conjunct, then `extendUniversal` / `extendFunctional` to apply the IH
+    on the extended state. -/
+private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Const Pred)
+    {φ : QBSMLFormula Var Const Pred} (hNE : φ.IsNEFree) :
+    (∀ s : Finset (Index W Var Domain), support M φ.enrich s → support M φ s) ∧
+    (∀ s : Finset (Index W Var Domain),
+        antiSupport M φ.enrich s → antiSupport M φ s) := by
+  induction hNE with
+  | pred P x =>
+    refine ⟨?_, ?_⟩
+    · intro s h; exact h.1
+    · intro s h; exact antiSupport_strip_ne M (.pred P x) s h
+  | predc P c =>
+    refine ⟨?_, ?_⟩
+    · intro s h; exact h.1
+    · intro s h; exact antiSupport_strip_ne M (.predc P c) s h
+  | @neg ψ _ ih =>
+    obtain ⟨ih_s, ih_a⟩ := ih
+    refine ⟨?_, ?_⟩
+    · -- support (¬ψ).enrich s = support ((¬ψ.enrich) ∧ NE) s = antiSupport ψ.enrich s ∧ NE
+      intro s h
+      show antiSupport M ψ s
+      exact ih_a s h.1
+    · -- antiSupport (¬ψ).enrich s; strip the outer NE; reduces to support ψ.enrich s
+      intro s h
+      have h' := antiSupport_strip_ne M (.neg ψ.enrich) s h
+      show support M ψ s
+      exact ih_s s h'
+  | @conj ψ₁ ψ₂ _ _ ih₁ ih₂ =>
+    obtain ⟨ih₁_s, ih₁_a⟩ := ih₁
+    obtain ⟨ih₂_s, ih₂_a⟩ := ih₂
+    refine ⟨?_, ?_⟩
+    · intro s h; exact ⟨ih₁_s s h.1.1, ih₂_s s h.1.2⟩
+    · intro s h
+      have h' := antiSupport_strip_ne M (.conj ψ₁.enrich ψ₂.enrich) s h
+      obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h'
+      exact ⟨t₁, t₂, hunion, ih₁_a t₁ h₁, ih₂_a t₂ h₂⟩
+  | @disj ψ₁ ψ₂ _ _ ih₁ ih₂ =>
+    obtain ⟨ih₁_s, ih₁_a⟩ := ih₁
+    obtain ⟨ih₂_s, ih₂_a⟩ := ih₂
+    refine ⟨?_, ?_⟩
+    · intro s h
+      obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h.1
+      exact ⟨t₁, t₂, hunion, ih₁_s t₁ h₁, ih₂_s t₂ h₂⟩
+    · intro s h
+      have h' := antiSupport_strip_ne M (.disj ψ₁.enrich ψ₂.enrich) s h
+      exact ⟨ih₁_a s h'.1, ih₂_a s h'.2⟩
+  | @poss ψ _ ih =>
+    obtain ⟨ih_s, ih_a⟩ := ih
+    refine ⟨?_, ?_⟩
+    · intro s h i hi
+      obtain ⟨X, hX, hne, hsupp⟩ := h.1 i hi
+      exact ⟨X, hX, hne, ih_s _ hsupp⟩
+    · intro s h
+      have h' := antiSupport_strip_ne M (.poss ψ.enrich) s h
+      exact fun i hi => ih_a _ (h' i hi)
+  | @exi x ψ _ ih =>
+    obtain ⟨ih_s, ih_a⟩ := ih
+    refine ⟨?_, ?_⟩
+    · -- support (.exi x ψ).enrich s = (∃ h, ... support ψ.enrich (s.extendFunctional x h)) ∧ NE
+      intro s h
+      obtain ⟨h_fn, hne, hsupp⟩ := h.1
+      exact ⟨h_fn, hne, ih_s _ hsupp⟩
+    · -- antiSupport (.exi x ψ).enrich s; strip NE; reduces to antiSupport ψ.enrich (s.extendUniversal x)
+      intro s h
+      have h' := antiSupport_strip_ne M (.exi x ψ.enrich) s h
+      show antiSupport M ψ (State.extendUniversal s x)
+      exact ih_a _ h'
+  | @univ x ψ _ ih =>
+    obtain ⟨ih_s, ih_a⟩ := ih
+    refine ⟨?_, ?_⟩
+    · -- support (.univ x ψ).enrich s = support ψ.enrich (s.extendUniversal x) ∧ NE
+      intro s h
+      show support M ψ (State.extendUniversal s x)
+      exact ih_s _ h.1
+    · -- antiSupport (.univ x ψ).enrich s; strip NE; reduces to functional
+      intro s h
+      have h' := antiSupport_strip_ne M (.univ x ψ.enrich) s h
+      obtain ⟨h_fn, hne, hsupp⟩ := h'
+      exact ⟨h_fn, hne, ih_a _ hsupp⟩
+
+/-- **Enrichment strengthens (support direction)** — [aloni-2022] Fact 1
+    extended to QBSML. For NE-free `φ`, supporting the enriched form implies
+    supporting the original. -/
+theorem enrichment_strengthens_support (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+    (hNE : φ.IsNEFree)
+    (h : support M φ.enrich s) :
+    support M φ s :=
+  (enrichment_strengthens_both M hNE).1 s h
+
+/-- **Enrichment strengthens (anti-support direction)**. -/
+theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+    (hNE : φ.IsNEFree)
+    (h : antiSupport M φ.enrich s) :
+    antiSupport M φ s :=
+  (enrichment_strengthens_both M hNE).2 s h
+
+/-! ### The enriched derived `□` -/
+
+/-- Support of the enriched derived `□` is pointwise enriched support at
+    the full accessible lifts, plus non-emptiness: the two NE-strips that
+    peel `[□φ]⁺ = [¬◇¬φ]⁺` down to `[φ]⁺` at each `R(wᵢ)[gᵢ]`, packaged
+    once for the `□`-free-choice derivations
+    (`Core/Logic/Modal/QBSML/FreeChoice.lean`). -/
+theorem support_enrich_nec_iff (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+    support M φ.nec.enrich s ↔
+      (∀ i ∈ s, support M φ.enrich
+        (State.modalLift (M.access i.world) i.assign)) ∧ s.Nonempty := by
+  constructor
+  · intro h
+    have h' : antiSupport M (.poss (QBSMLFormula.neg φ).enrich) s :=
+      antiSupport_strip_ne M _ s h.1
+    exact ⟨fun i hi => antiSupport_strip_ne M _ _ (h' i hi), h.2⟩
+  · intro h
+    exact ⟨antiSupport_conj_ne_of_antiSupport M _ s fun i hi =>
+      antiSupport_conj_ne_of_antiSupport M _ _ (h.1 i hi), h.2⟩
 
 end Core.Logic.Modal.QBSML
