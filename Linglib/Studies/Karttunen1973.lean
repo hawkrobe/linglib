@@ -164,20 +164,20 @@ inductive AttWorld where
 
 /-- "Mary used to smoke" — the presupposition of "stop smoking". True in
     `believed`, false in `actual`. -/
-def maryUsedToSmoke : PrProp AttWorld where
+def maryUsedToSmoke : PartialProp AttWorld where
   presup := fun _ => True
   assertion := fun w => w = .believed
 
 /-- The speaker-projection of a *plug*-treatment of *believe*: nothing of
     the complement projects. -/
-def plugSpeakerCommitment : PrProp AttWorld where
+def plugSpeakerCommitment : PartialProp AttWorld where
   presup := fun _ => True
   assertion := fun _ => True
 
 /-- The speaker-projection of K1973's flat *hole*-treatment of *believe*
     (pre-Heim 1992): the complement's presupposition projects unchanged
     to the speaker. -/
-def holeSpeakerCommitment : PrProp AttWorld := maryUsedToSmoke
+def holeSpeakerCommitment : PartialProp AttWorld := maryUsedToSmoke
 
 /-- The plug analysis predicts no speaker commitment to "Mary used to
     smoke" at the actual world; the hole analysis predicts the speaker
@@ -214,34 +214,34 @@ variable {W : Type*}
 
 /-- K1973 rule (13a), p. 178: the antecedent's presupposition always
     projects to "If A then B". -/
-theorem impFilter_presup_of_antecedent_undefined (p q : PrProp W) (w : W)
+theorem impFilter_presup_of_antecedent_undefined (p q : PartialProp W) (w : W)
     (hp : ¬p.presup w) :
-    ¬(PrProp.impFilter p q).presup w := by
-  simp only [PrProp.impFilter, hp, false_and, not_false_eq_true]
+    ¬(PartialProp.impFilter p q).presup w := by
+  simp only [PartialProp.impFilter, hp, false_and, not_false_eq_true]
 
 /-- K1973 rule (13b), p. 178: B's presupposition is filtered when A's
     assertion entails it. -/
-theorem impFilter_eliminates_presup_when_entailed (p q : PrProp W)
+theorem impFilter_eliminates_presup_when_entailed (p q : PartialProp W)
     (h : ∀ w, p.assertion w → q.presup w) :
-    (PrProp.impFilter p q).presup = p.presup :=
-  PrProp.impFilter_eliminates_presup p q h
+    (PartialProp.impFilter p q).presup = p.presup :=
+  PartialProp.impFilter_eliminates_presup p q h
 
 /-- K1973 rule (17), p. 179: filtering for *and* matches that for
     *if...then*. -/
-theorem andFilter_presup_eq_impFilter_presup (p q : PrProp W) :
-    (PrProp.andFilter p q).presup = (PrProp.impFilter p q).presup :=
-  (PrProp.impFilter_presup_eq_andFilter_presup p q).symm
+theorem andFilter_presup_eq_impFilter_presup (p q : PartialProp W) :
+    (PartialProp.andFilter p q).presup = (PartialProp.impFilter p q).presup :=
+  (PartialProp.impFilter_presup_eq_andFilter_presup p q).symm
 
 /-- K1973 rule (24b), p. 181 — paper-anchored alias for the substrate
-    `PrProp.disjFilterLeft_eliminates_presup_when_neg_entails`. Karttunen's
+    `PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`. Karttunen's
     asymmetric form: "A or B" carries no residual presupposition from B
     when ¬A entails it. The substrate carries the proof; Karttunen 1973
     is the paper that motivated it. -/
 theorem disjFilterLeft_eliminates_presup_when_neg_entails
-    (A : W → Prop) (q : PrProp W)
+    (A : W → Prop) (q : PartialProp W)
     (h : ∀ w, ¬A w → q.presup w) :
-    (PrProp.disjFilterLeft A q).presup = fun _ => True :=
-  PrProp.disjFilterLeft_eliminates_presup_when_neg_entails A q h
+    (PartialProp.disjFilterLeft A q).presup = fun _ => True :=
+  PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails A q h
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Cumulativity (K1973 §§5–7, Langendoen & Savin 1971)
@@ -249,10 +249,10 @@ theorem disjFilterLeft_eliminates_presup_when_neg_entails
 
 /-- K's "cumulative principle" (Langendoen & Savin 1971; named by Morgan
     1969 per K1973 §1): the presuppositions of a compound include those
-    of its constituents. For `PrProp.and` this is just the conjunction of
+    of its constituents. For `PartialProp.and` this is just the conjunction of
     presuppositions. -/
-theorem cumulativity_principle (p q : PrProp W) (w : W) :
-    (PrProp.and p q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
+theorem cumulativity_principle (p q : PartialProp W) (w : W) :
+    (PartialProp.and p q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Classical-Logic Equivalence (K1973 §8)
@@ -270,19 +270,19 @@ theorem cumulativity_principle (p q : PrProp W) (w : W) :
     K's §8 argument relies on. -/
 
 /-- The presupposition functions of `if A then B` and `A and B` coincide. -/
-theorem if_and_share_presup_function (p q : PrProp W) :
-    (PrProp.impFilter p q).presup = (PrProp.andFilter p q).presup :=
-  PrProp.impFilter_presup_eq_andFilter_presup p q
+theorem if_and_share_presup_function (p q : PartialProp W) :
+    (PartialProp.impFilter p q).presup = (PartialProp.andFilter p q).presup :=
+  PartialProp.impFilter_presup_eq_andFilter_presup p q
 
-/-- Harman's principles, as facts about Core `PrProp` connectives:
+/-- Harman's principles, as facts about Core `PartialProp` connectives:
     (i) internal negation preserves presupposition; (ii) impFilter and
     andFilter share presupposition (the structural witness of
     "logical equivalents share presupposition" specialized to the De
     Morgan equivalence ⌜A ⊃ B⌝ ≡ ⌜~(A ∧ ~B)⌝). -/
 theorem harman_derivation_principles_hold :
-    (∀ p : PrProp W, (PrProp.neg p).presup = p.presup) ∧
-    (∀ p q : PrProp W, (PrProp.impFilter p q).presup = (PrProp.andFilter p q).presup) :=
-  ⟨PrProp.neg_presup, PrProp.impFilter_presup_eq_andFilter_presup⟩
+    (∀ p : PartialProp W, (PartialProp.neg p).presup = p.presup) ∧
+    (∀ p q : PartialProp W, (PartialProp.impFilter p q).presup = (PartialProp.andFilter p q).presup) :=
+  ⟨PartialProp.neg_presup, PartialProp.impFilter_presup_eq_andFilter_presup⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. Local-Context Bridge (K1973 §9 → CCP)
@@ -305,8 +305,8 @@ theorem harman_derivation_principles_hold :
     The forward direction is K's rule (13b) relativized; the backward
     direction is Schlenker's local-context derivation. -/
 theorem k1973_section9_local_context_correspondence
-    (c : ContextSet W) (p q : PrProp W) :
-    (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
+    (c : ContextSet W) (p q : PartialProp W) :
+    (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) :=
   Semantics.Presupposition.LocalContext.local_context_matches_impFilter c p q
 
@@ -314,10 +314,10 @@ theorem k1973_section9_local_context_correspondence
     instance. K p. 185 frames (13b) as a degenerate case of the X-set
     machinery, which is what `LocalContext.lean` makes load-bearing for
     the general case. -/
-theorem rule13b_is_empty_X_instance (p q : PrProp W)
+theorem rule13b_is_empty_X_instance (p q : PartialProp W)
     (h : ∀ w, p.assertion w → q.presup w) :
-    (PrProp.impFilter p q).presup = p.presup :=
-  PrProp.impFilter_eliminates_presup p q h
+    (PartialProp.impFilter p q).presup = p.presup :=
+  PartialProp.impFilter_eliminates_presup p q h
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Three-Valued Logic Comparison (K1973 §10)
@@ -338,18 +338,18 @@ theorem rule13b_is_empty_X_instance (p q : PrProp W)
     This motivates the §9 X-set / context-relative formulation that
     becomes CCP. -/
 
-/-- Bochvar internal conjunction = `PrProp.and` = cumulative principle.
+/-- Bochvar internal conjunction = `PartialProp.and` = cumulative principle.
     K1973 p. 187: "the internal Bochvar connectives are holes." -/
-theorem bochvar_internal_is_cumulative (p q : PrProp W) (w : W) :
-    (PrProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
+theorem bochvar_internal_is_cumulative (p q : PartialProp W) (w : W) :
+    (PartialProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
 
 /-- The filtering conjunction is strictly weaker than cumulative:
     `andFilter` can be defined when `q`'s presupposition fails (provided
     `p`'s assertion is false). -/
-theorem andFilter_presup_weaker_than_cumulative (p q : PrProp W) (w : W)
-    (h : (PrProp.and p q).presup w) :
-    (PrProp.andFilter p q).presup w := by
-  simp only [PrProp.and, PrProp.andFilter] at *
+theorem andFilter_presup_weaker_than_cumulative (p q : PartialProp W) (w : W)
+    (h : (PartialProp.and p q).presup w) :
+    (PartialProp.andFilter p q).presup w := by
+  simp only [PartialProp.and, PartialProp.andFilter] at *
   exact ⟨h.1, fun _ => h.2⟩
 
 -- ════════════════════════════════════════════════════════════════
@@ -364,24 +364,24 @@ theorem andFilter_presup_weaker_than_cumulative (p q : PrProp W) (w : W)
     > all of them." (p. 187)
 
     K defines `⌜¬A⌝ ≡ ⌜~t(A)⌝`. Both operators are now in
-    `Semantics.Presupposition`: `PrProp.neg` (internal/choice) and
-    `PrProp.negExt` (external/exclusion = `neg ∘ truthOp`). -/
+    `Semantics.Presupposition`: `PartialProp.neg` (internal/choice) and
+    `PartialProp.negExt` (external/exclusion = `neg ∘ truthOp`). -/
 
 /-- Internal negation preserves presupposition (it's a hole). -/
-theorem neg_preserves_presup (p : PrProp W) :
-    (PrProp.neg p).presup = p.presup := PrProp.neg_presup p
+theorem neg_preserves_presup (p : PartialProp W) :
+    (PartialProp.neg p).presup = p.presup := PartialProp.neg_presup p
 
 /-- External negation is always defined (it's a plug). -/
-theorem negExt_always_defined (p : PrProp W) (w : W) :
-    (PrProp.negExt p).presup w := PrProp.negExt_presup p w
+theorem negExt_always_defined (p : PartialProp W) (w : W) :
+    (PartialProp.negExt p).presup w := PartialProp.negExt_presup p w
 
 /-- Internal and external negation agree on assertion at worlds where
     the presupposition holds; they diverge only at presupposition failure
     (where `neg` is undefined and `negExt` is asserted true). -/
-theorem neg_agrees_with_negExt_when_defined (p : PrProp W) (w : W)
+theorem neg_agrees_with_negExt_when_defined (p : PartialProp W) (w : W)
     (h : p.presup w) :
-    (PrProp.neg p).assertion w ↔ (PrProp.negExt p).assertion w :=
-  PrProp.neg_assertion_iff_negExt_assertion_when_defined p w h
+    (PartialProp.neg p).assertion w ↔ (PartialProp.negExt p).assertion w :=
+  PartialProp.neg_assertion_iff_negExt_assertion_when_defined p w h
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Geraldine X-Set Example (K1973 §9, ex 25–28)
@@ -412,7 +412,7 @@ inductive Geraldine where
   deriving DecidableEq, Repr
 
 /-- "Geraldine is a Mormon" — no presupposition. -/
-def isMormon : PrProp Geraldine where
+def isMormon : PartialProp Geraldine where
   presup := fun _ => True
   assertion := fun w => w = .mormon_worn ∨ w = .mormon_notWorn
 

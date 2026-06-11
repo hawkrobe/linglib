@@ -240,7 +240,7 @@ theorem EPCondition.nonfuture_implies_downstream
     This captures the non-truth-conditional status of the evidential
     constraint: it is a felicity condition (presupposition), not part
     of what is asserted. Parameterized over an arbitrary world type `W`. -/
-def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PrProp W where
+def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PartialProp W where
   presup := λ _ => decide (f.eventTime ≤ f.acquisitionTime)
   assertion := λ _ => p
 

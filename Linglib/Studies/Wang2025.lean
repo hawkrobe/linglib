@@ -184,7 +184,7 @@ theorem additive_deRe_available : ye_deRe.accepted = true := rfl
 -- Constraint-based Formalization (was: Implicature/Constraints/Wang2025.lean)
 -- ============================================================================
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
@@ -239,8 +239,8 @@ assertion — the sentence is semantically defective.
 
 [wang-2025]: IC is NON-VIOLABLE.
 -/
-def satisfiesIC (p : PrProp W) : Prop :=
-  ∃ w, PrProp.holds w p
+def satisfiesIC (p : PartialProp W) : Prop :=
+  ∃ w, PartialProp.holds w p
 
 /--
 FP (Felicity Presupposition): the common ground entails the presupposition.
@@ -248,8 +248,8 @@ FP (Felicity Presupposition): the common ground entails the presupposition.
 Standard Stalnakerian presupposition satisfaction. When the CommonGround only partially
 entails the presupposition, FP is violated but may be tolerated.
 -/
-def satisfiesFP (cg : ContextSet W) (p : PrProp W) : Prop :=
-  ∀ w, cg w → PrProp.defined w p
+def satisfiesFP (cg : ContextSet W) (p : PartialProp W) : Prop :=
+  ∀ w, cg w → PartialProp.defined w p
 
 /--
 Partial FP satisfaction: the presupposition is compatible with the CommonGround
@@ -258,8 +258,8 @@ but not fully entailed.
 [wang-2025] Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
 while others don't (jiu, zhidao).
 -/
-def partialFP (cg : ContextSet W) (p : PrProp W) : Prop :=
-  (∃ w, cg w ∧ PrProp.defined w p) ∧ ¬satisfiesFP cg p
+def partialFP (cg : ContextSet W) (p : PartialProp W) : Prop :=
+  (∃ w, cg w ∧ PartialProp.defined w p) ∧ ¬satisfiesFP cg p
 
 /--
 MP (Maximize Presupposition): prefer S_p over S when the presuppositional
@@ -268,7 +268,7 @@ form is more informative and the CommonGround supports its presupposition.
 MP is violated when the non-presuppositional alternative S is used despite
 the CommonGround supporting S_p's presupposition.
 -/
-def mpPrefers (cg : ContextSet W) (sp : PrProp W) : Prop :=
+def mpPrefers (cg : ContextSet W) (sp : PartialProp W) : Prop :=
   satisfiesFP cg sp ∧ satisfiesIC sp
 
 
@@ -339,8 +339,8 @@ theorem no_cg_blocks (alt : AltStructure) :
 /--
 IC satisfaction is necessary for felicity.
 -/
-def icNecessary (p : PrProp W) (h : satisfiesIC p) :
-    ∃ w, PrProp.holds w p := h
+def icNecessary (p : PartialProp W) (h : satisfiesIC p) :
+    ∃ w, PartialProp.holds w p := h
 
 
 -- ============================================================================
@@ -371,7 +371,7 @@ Input for Wang's felicity prediction: a trigger entry in a context.
 -/
 structure WangInput (W : Type*) where
   /-- The presuppositional sentence -/
-  sentence : PrProp W
+  sentence : PartialProp W
   /-- The trigger's alternative structure -/
   altStructure : AltStructure
   /-- Whether CommonGround fully entails the presupposition -/

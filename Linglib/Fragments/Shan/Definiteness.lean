@@ -37,7 +37,7 @@ situation) and add spatial content to the presupposition filter.
 namespace Shan.Definiteness
 
 open Features.Definiteness
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Semantics.Kinds
 
 -- ============================================================================
@@ -180,11 +180,11 @@ theorem dem_refines_bare {E : Type} (domain : List E)
     congr 1; funext e'; exact Bool.and_comm _ _
   rw [this, hBare]; simp [hSpatial]
 
-/-- Lift a referent selector to a `PrProp Unit` via the canonical
+/-- Lift a referent selector to a `PartialProp Unit` via the canonical
     `presupOfReferent` combinator. The presupposition is referent
     definedness; the assertion is the scope applied to the referent. -/
-def liftToPrProp {E : Type} (selector : Option E) (scope : E → Bool) :
-    PrProp Unit :=
-  PrProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e = true)
+def liftToPartialProp {E : Type} (selector : Option E) (scope : E → Bool) :
+    PartialProp Unit :=
+  PartialProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e = true)
 
 end Shan.Definiteness

@@ -108,19 +108,19 @@ def gcQUDProject (q : GCQUD) (w1 w2 : GCWorld) : Bool :=
 /-- Uniform world prior. -/
 def gcWorldPrior (_w : GCWorld) : ℚ := 1 / 3
 
-/-- PrProp decomposition of "green card": presupposes non-US, asserts has GC.
+/-- PartialProp decomposition of "green card": presupposes non-US, asserts has GC.
 
 This captures the traditional presupposition analysis. The paper's key
 contribution is showing that this presupposition structure EMERGES from
 RSA reasoning over Boolean truth conditions, without being stipulated. -/
-def greenCardPrProp : PrProp GCWorld where
+def greenCardPartialProp : PartialProp GCWorld where
   presup := λ w => match w with | .usCitizen => False | _ => True
   assertion := λ w => match w with | .gcHolder => True | _ => False
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem gcMeaning_greenCard_eq_prprop (w : GCWorld) :
-    (gcMeaning .greenCard w = true) ↔ (greenCardPrProp.presup w ∧ greenCardPrProp.assertion w) := by
-  cases w <;> simp [gcMeaning, greenCardPrProp]
+    (gcMeaning .greenCard w = true) ↔ (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) := by
+  cases w <;> simp [gcMeaning, greenCardPartialProp]
 
 /-- "not green card" is Boolean negation of "green card". -/
 theorem gcMeaning_notGreenCard_eq_neg (w : GCWorld) :
@@ -259,7 +259,7 @@ theorem fgsWorldPrior_sum :
   native_decide
 
 -- ============================================================================
--- Part II: RSA Context Types and PrProp Connection
+-- Part II: RSA Context Types and PartialProp Connection
 -- ============================================================================
 
 
@@ -328,12 +328,12 @@ def allFGSQUDs : List FGSQUD := [.identity]
 def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Bool
   | .identity, w1, w2 => fgsQUDProject w1 w2
 
-/-! ## PrProp Connection -/
+/-! ## PartialProp Connection -/
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem greenCard_meaning_from_prprop (w : GCWorld) :
     (gcMeaning .greenCard w = true) ↔
-    (greenCardPrProp.presup w ∧ greenCardPrProp.assertion w) :=
+    (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) :=
   gcMeaning_greenCard_eq_prprop w
 
 /-- "not green card" is Boolean negation — no presupposition in the semantics. -/

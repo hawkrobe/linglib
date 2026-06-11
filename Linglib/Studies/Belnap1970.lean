@@ -23,7 +23,7 @@ semantic concepts per sentence A at world w (p. 3):
 3. A is **assertive_w** — whether A asserts anything at w
 4. **A_w** — what A asserts at w (a proposition = set of worlds)
 
-We formalize this via `PrProp` (presup = assertive, assertion = content),
+We formalize this via `PartialProp` (presup = assertive, assertion = content),
 showing that Belnap's system is isomorphic to linglib's existing partial
 proposition infrastructure.
 
@@ -71,25 +71,25 @@ set_option autoImplicit false
 
 namespace Belnap1970
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Core.Duality (Truth3)
 open Aristotelian (Square SquareRelations)
 open Semantics.Quantification.Quantifier
 open Semantics.Montague (ToyEntity)
 
 -- ════════════════════════════════════════════════════════════════
--- §2–3. Conditional Assertion as PrProp
+-- §2–3. Conditional Assertion as PartialProp
 -- ════════════════════════════════════════════════════════════════
 
 /-- Belnap's (3): conditional assertion (A/B).
 
     "(A/B) is assertive_w just in case A is true_w.
      Provided (A/B) is assertive_w: (A/B)_w = B_w." -/
-abbrev condAssert {W : Type*} := @PrProp.condAssert W
+abbrev condAssert {W : Type*} := @PartialProp.condAssert W
 
 /-- Belnap's (6): atomic sentences are categorical — always assertive
     and always asserting the same proposition. -/
-abbrev atomic {W : Type*} := @PrProp.ofProp W
+abbrev atomic {W : Type*} := @PartialProp.ofProp W
 
 /-- Atomic sentences are assertive at every world (Belnap's (6)). -/
 theorem atomic_always_assertive {W : Type*} (p : W → Prop) (w : W) :
@@ -102,19 +102,19 @@ theorem atomic_always_assertive {W : Type*} (p : W → Prop) (w : W) :
 /-- Belnap's (7): negation preserves assertiveness and negates content.
 
     "~A is assertive_w just in case A is assertive_w. (~A)_w = ~(A_w)."
-    This is exactly `PrProp.neg`. -/
-theorem neg_preserves_assertiveness {W : Type*} (p : PrProp W) :
-    (PrProp.neg p).presup = p.presup := PrProp.neg_presup p
+    This is exactly `PartialProp.neg`. -/
+theorem neg_preserves_assertiveness {W : Type*} (p : PartialProp W) :
+    (PartialProp.neg p).presup = p.presup := PartialProp.neg_presup p
 
 /-- Belnap's (8): conjunction under conditional assertion is
-    `PrProp.andBelnap`, not classical `PrProp.and`.
+    `PartialProp.andBelnap`, not classical `PartialProp.and`.
 
     Classical conjunction requires BOTH operands to be defined.
     Belnap's requires only ONE — undefined conjuncts are skipped. -/
-abbrev belnapAnd {W : Type*} := @PrProp.andBelnap W
+abbrev belnapAnd {W : Type*} := @PartialProp.andBelnap W
 
 /-- Belnap's (9): disjunction under conditional assertion. -/
-abbrev belnapOr {W : Type*} := @PrProp.orBelnap W
+abbrev belnapOr {W : Type*} := @PartialProp.orBelnap W
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Restricted Quantification
@@ -128,7 +128,7 @@ abbrev belnapOr {W : Type*} := @PrProp.orBelnap W
     This derives restricted quantification from two independent mechanisms:
     conditional assertion (§2) and standard universal quantification (§4). -/
 def restrictedForall {E : Type} [Fintype E]
-    (C B : E → Bool) : PrProp Unit where
+    (C B : E → Bool) : PartialProp Unit where
   presup := λ _ => ∃ x : E, C x = true
   assertion := λ _ => ∀ x : E, C x = true → B x = true
 
@@ -137,7 +137,7 @@ def restrictedForall {E : Type} [Fintype E]
     ∃x(Cx/Bx) is assertive iff ∃xCx is true.
     What it asserts = disjunction of Bt for all t such that Ct is true. -/
 def restrictedExists {E : Type} [Fintype E]
-    (C B : E → Bool) : PrProp Unit where
+    (C B : E → Bool) : PartialProp Unit where
   presup := λ _ => ∃ x : E, C x = true
   assertion := λ _ => ∃ x : E, C x = true ∧ B x = true
 
@@ -183,7 +183,7 @@ theorem assertive_iff_restrictor_nonempty {E : Type} [Fintype E]
 
 /-- The **Belnap square**: the four Aristotelian forms as Belnap
     restricted quantification, packaged as a `Aristotelian.Square`
-    of partial propositions (`PrProp Unit`).
+    of partial propositions (`PartialProp Unit`).
 
     A: ∀x(Cx/Bx)   "All C are B"
     E: ∀x(Cx/¬Bx)  "No C are B"
@@ -193,7 +193,7 @@ theorem assertive_iff_restrictor_nonempty {E : Type} [Fintype E]
     Belnap: "semantic relations between these forms turn out to be
     pretty much a good old fashioned square of opposition!" -/
 def belnapSquare {E : Type} [Fintype E]
-    (C B : E → Bool) : Square (PrProp Unit) where
+    (C B : E → Bool) : Square (PartialProp Unit) where
   A := restrictedForall C B
   E := restrictedForall C (λ x => !B x)
   I := restrictedExists C B
@@ -210,7 +210,7 @@ theorem square_equiassertive {E : Type} [Fintype E]
 /-- The **content square**: extract the assertion-level content into a
     `Square (Unit → Bool)`, suitable for constructing `SquareRelations`.
 
-    Since `PrProp` assertions are now `Prop`-valued, we use `decide` to
+    Since `PartialProp` assertions are now `Prop`-valued, we use `decide` to
     convert back to `Bool` for compatibility with `SquareRelations`. -/
 def contentSquare {E : Type} [Fintype E] [DecidableEq E]
     (C B : E → Bool) : Square (Unit → Bool) where

@@ -184,10 +184,10 @@ Von Fintel's key observation: `only` is NOT classically DE
 -/
 
 /--
-"Only x VP" as a `PrProp`: Horn's asymmetric decomposition.
+"Only x VP" as a `PartialProp`: Horn's asymmetric decomposition.
 -/
-def onlyPrProp {W : Type*} (x : W → Prop) (scope : Set W) :
-    Semantics.Presupposition.PrProp W where
+def onlyPartialProp {W : Type*} (x : W → Prop) (scope : Set W) :
+    Semantics.Presupposition.PartialProp W where
   presup := fun _ => ∃ y, x y ∧ scope y
   assertion := fun _ => ∀ y, x y ∨ ¬ scope y
 
@@ -195,15 +195,15 @@ def onlyPrProp {W : Type*} (x : W → Prop) (scope : Set W) :
 The full "only" meaning: presupposition + assertion combined.
 
 "Only x VP" is true at w iff x satisfies VP AND no one else does.
-By construction, `onlyFull x scope w ↔ (onlyPrProp x scope).presup w ∧
-(onlyPrProp x scope).assertion w` (`Iff.rfl`).
+By construction, `onlyFull x scope w ↔ (onlyPartialProp x scope).presup w ∧
+(onlyPartialProp x scope).assertion w` (`Iff.rfl`).
 -/
 def onlyFull {W : Type*} (x : W → Prop) (scope : Set W) : Set W :=
   fun _w => (∃ y, x y ∧ scope y) ∧ (∀ y, x y ∨ ¬ scope y)
 
 theorem onlyFull_eq_prprop {W : Type*} (x : W → Prop) (scope : Set W) (w : W) :
     onlyFull x scope w ↔
-    (onlyPrProp x scope).presup w ∧ (onlyPrProp x scope).assertion w :=
+    (onlyPartialProp x scope).presup w ∧ (onlyPartialProp x scope).assertion w :=
   Iff.rfl
 
 /--

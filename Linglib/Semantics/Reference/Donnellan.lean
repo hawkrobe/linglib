@@ -33,7 +33,7 @@ content (singularProp = false), but is used referentially.
 - `donnellanDivergence`: The two uses come apart when the description
   fails to apply to the intended referent
 - `definiteNominal`: Attributive semantics as a `NominalDenot` (selector =
-  the Russellian iota; `resolve` it for a `PrProp`)
+  the Russellian iota; `resolve` it for a `PartialProp`)
 
 -/
 
@@ -46,8 +46,8 @@ namespace Semantics.Reference.Donnellan
 
 open Core (Intension)
 open Core.Intension (rigid IsRigid rigid_isRigid)
-open Semantics.Presupposition (PrProp)
-open Semantics.Presupposition.PrProp (presupOfReferent)
+open Semantics.Presupposition (PartialProp)
+open Semantics.Presupposition.PartialProp (presupOfReferent)
 open Semantics.Reference.Basic
 open Semantics.Definiteness (russellIotaList)
 

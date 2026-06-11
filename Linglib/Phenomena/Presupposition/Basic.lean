@@ -61,7 +61,7 @@ This sentence has:
 - No presupposition (trivially true)
 - Assertion: the king exists
 -/
-def kingExists : PrProp KingWorld :=
+def kingExists : PartialProp KingWorld :=
   { presup := λ _ => True
   , assertion := λ w => match w with
       | .kingExists => True
@@ -75,7 +75,7 @@ This sentence has:
 - Presupposition: the king exists
 - Assertion: the king is bald (true when king exists)
 -/
-def kingBald : PrProp KingWorld :=
+def kingBald : PartialProp KingWorld :=
   { presup := λ w => match w with
       | .kingExists => True
       | .noKing => False
@@ -88,8 +88,8 @@ def kingBald : PrProp KingWorld :=
 Demonstrates presupposition filtering: the antecedent's assertion
 satisfies the consequent's presupposition.
 -/
-def ifKingThenBald : PrProp KingWorld :=
-  PrProp.impFilter kingExists kingBald
+def ifKingThenBald : PartialProp KingWorld :=
+  PartialProp.impFilter kingExists kingBald
 
 /--
 "If the king exists, the king is bald" has no presupposition.
@@ -98,16 +98,16 @@ This demonstrates presupposition filtering.
 -/
 theorem ifKingThenBald_no_presup : ifKingThenBald.presup = λ _ => True := by
   funext w
-  simp only [ifKingThenBald, PrProp.impFilter, kingExists, kingBald]
+  simp only [ifKingThenBald, PartialProp.impFilter, kingExists, kingBald]
   cases w <;> simp
 
 /--
 "The king isn't bald" — negation preserves presupposition.
 -/
-def kingNotBald : PrProp KingWorld := PrProp.neg kingBald
+def kingNotBald : PartialProp KingWorld := PartialProp.neg kingBald
 
 theorem kingNotBald_presupposes_existence :
-    kingNotBald.presup = kingBald.presup := PrProp.neg_presup kingBald
+    kingNotBald.presup = kingBald.presup := PartialProp.neg_presup kingBald
 
 
 /--
@@ -128,7 +128,7 @@ instance : Fintype RainWorld where
 /--
 "It's raining" — no presupposition.
 -/
-def raining : PrProp RainWorld :=
+def raining : PartialProp RainWorld :=
   { presup := λ _ => True
   , assertion := λ w => match w with
       | .rainingBelieved => True
@@ -142,7 +142,7 @@ def raining : PrProp RainWorld :=
 Presupposes: it's raining
 Asserts: John believes it's raining
 -/
-def johnKnowsRaining : PrProp RainWorld :=
+def johnKnowsRaining : PartialProp RainWorld :=
   { presup := λ w => match w with
       | .rainingBelieved => True
       | .rainingNotBelieved => True
@@ -156,11 +156,11 @@ def johnKnowsRaining : PrProp RainWorld :=
 /--
 "John doesn't know that it's raining" — negation preserves factive presupposition.
 -/
-def johnDoesntKnowRaining : PrProp RainWorld := PrProp.neg johnKnowsRaining
+def johnDoesntKnowRaining : PartialProp RainWorld := PartialProp.neg johnKnowsRaining
 
 theorem negation_preserves_factive :
     johnDoesntKnowRaining.presup = johnKnowsRaining.presup :=
-  PrProp.neg_presup johnKnowsRaining
+  PartialProp.neg_presup johnKnowsRaining
 
 
 /--
@@ -184,7 +184,7 @@ instance : Fintype SmokingWorld where
 Presupposes: John used to smoke
 Asserts: John no longer smokes
 -/
-def johnStoppedSmoking : PrProp SmokingWorld :=
+def johnStoppedSmoking : PartialProp SmokingWorld :=
   { presup := λ w => match w with
       | .usedToNowQuit => True
       | .usedToStillDoes => True
@@ -198,11 +198,11 @@ def johnStoppedSmoking : PrProp SmokingWorld :=
 /--
 "John didn't stop smoking" — preserves change-of-state presupposition.
 -/
-def johnDidntStopSmoking : PrProp SmokingWorld := PrProp.neg johnStoppedSmoking
+def johnDidntStopSmoking : PartialProp SmokingWorld := PartialProp.neg johnStoppedSmoking
 
 theorem negation_preserves_change_of_state :
     johnDidntStopSmoking.presup = johnStoppedSmoking.presup :=
-  PrProp.neg_presup johnStoppedSmoking
+  PartialProp.neg_presup johnStoppedSmoking
 
 
 /--
@@ -214,15 +214,15 @@ Right conjunct: John stopped smoking (presupposes he used to smoke)
 With filtering: left conjunct asserts smoking, right presupposes it was prior.
 This creates a pragmatically odd sentence (you can't currently smoke AND have stopped).
 -/
-def johnSmokesAndStopped : PrProp SmokingWorld :=
-  let johnSmokes : PrProp SmokingWorld :=
+def johnSmokesAndStopped : PartialProp SmokingWorld :=
+  let johnSmokes : PartialProp SmokingWorld :=
     { presup := λ _ => True
     , assertion := λ w => match w with
         | .usedToNowQuit => False
         | .usedToStillDoes => True
         | .neverSmoked => False
     }
-  PrProp.andFilter johnSmokes johnStoppedSmoking
+  PartialProp.andFilter johnSmokes johnStoppedSmoking
 
 
 /--

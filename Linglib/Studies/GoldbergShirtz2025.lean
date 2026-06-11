@@ -336,7 +336,7 @@ than a hard definedness condition: speakers exploit the construction
 precisely for situation types that are not antecedently familiar
 (observational humor, sniglets), so common-ground satisfaction is typically
 reached by accommodation or pretense, not antecedent entailment. -/
-def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PrProp W :=
+def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PartialProp W :=
   { presup := situationType, assertion := headNoun }
 
 /-! ### Typed pragmatics: familiarity inherits through the network
@@ -358,7 +358,7 @@ theorem pal_children :
 /-- Own pragmatic contributions for the Figure 5 network: only PAL itself
 carries one — the familiarity-presupposing meaning. -/
 def figure5Pragmatics (W : Type*) (situationType headNoun : W → Prop) :
-    Construction → Option (PrProp W) :=
+    Construction → Option (PartialProp W) :=
   λ c => if c.name == "PAL" then some (palMeaning W situationType headNoun)
          else none
 

@@ -19,7 +19,7 @@ is then a theorem about the structure rather than a stipulated flag.
 ## Main definitions
 
 * `Outlook` — prejacent + counterstance + outlook-relative `evaluation`.
-* `Outlook.toPrProp`, `Outlook.toTwoDimProp` — the presuppositional and (perspective-fixed)
+* `Outlook.toPartialProp`, `Outlook.toTwoDimProp` — the presuppositional and (perspective-fixed)
   two-dimensional projections.
 * `Outlook.IsRigid` — the evaluation ignores the outlook (the pure-expressive corner).
 * `Outlook.ofTwoDimProp` — a `TwoDimProp` as the constant (speaker-rigid) outlook family.
@@ -37,7 +37,7 @@ is then a theorem about the structure rather than a stipulated flag.
 
 namespace Pragmatics.Expressives
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 variable {W O : Type*}
 
@@ -56,7 +56,7 @@ namespace Outlook
 
 /-- Presuppositional projection: the counterstance is the presupposition, the prejacent the
 assertion. Outlook-independent. -/
-def toPrProp (m : Outlook W O) : PrProp W := ⟨m.counterstance, m.prejacent⟩
+def toPartialProp (m : Outlook W O) : PartialProp W := ⟨m.counterstance, m.prejacent⟩
 
 /-- Two-dimensional projection at an outlook `o`: an ordinary `TwoDimProp` recovered by
 fixing the perspective. -/
@@ -65,17 +65,17 @@ def toTwoDimProp (m : Outlook W O) (o : O) : TwoDimProp W := ⟨m.prejacent, m.e
 /-- The CI content attributed when the judge has outlook `o`. -/
 def ciFrom (m : Outlook W O) (o : O) : W → Prop := m.evaluation o
 
-@[simp] theorem toPrProp_presup (m : Outlook W O) : m.toPrProp.presup = m.counterstance := rfl
-@[simp] theorem toPrProp_assertion (m : Outlook W O) : m.toPrProp.assertion = m.prejacent := rfl
+@[simp] theorem toPartialProp_presup (m : Outlook W O) : m.toPartialProp.presup = m.counterstance := rfl
+@[simp] theorem toPartialProp_assertion (m : Outlook W O) : m.toPartialProp.assertion = m.prejacent := rfl
 @[simp] theorem toTwoDimProp_atIssue (m : Outlook W O) (o : O) :
     (m.toTwoDimProp o).atIssue = m.prejacent := rfl
 @[simp] theorem toTwoDimProp_ci (m : Outlook W O) (o : O) :
     (m.toTwoDimProp o).ci = m.evaluation o := rfl
 @[simp] theorem ciFrom_eq (m : Outlook W O) (o : O) : m.ciFrom o = m.evaluation o := rfl
 
-/-- The counterstance (presupposition) projects through negation — via `PrProp.neg`. -/
+/-- The counterstance (presupposition) projects through negation — via `PartialProp.neg`. -/
 theorem counterstance_projects_through_neg (m : Outlook W O) :
-    (PrProp.neg m.toPrProp).presup = m.counterstance := rfl
+    (PartialProp.neg m.toPartialProp).presup = m.counterstance := rfl
 
 /-- The CI tier projects through negation at a fixed outlook — via `TwoDimProp.neg`. -/
 theorem ci_projects_through_neg (m : Outlook W O) (o : O) :

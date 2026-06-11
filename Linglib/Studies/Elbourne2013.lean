@@ -64,8 +64,8 @@ namespace Elbourne2013
 
 open Core (WorldTimeIndex)
 
-open Semantics.Presupposition (PrProp)
-open Semantics.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+open Semantics.Presupposition (PartialProp)
+open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
 open Features.Definiteness (DefPresupType)
@@ -137,7 +137,7 @@ The situation parameter `s` may be:
 def the_sit (F : SituationFrame) (domain : List F.Ent)
     (restrictor : F.Ent → F.Sit → Bool)
     (scope : F.Ent → F.Sit → Bool)
-    : PrProp F.Sit :=
+    : PartialProp F.Sit :=
   presupOfReferent (fun s => russellIotaList domain (fun e => restrictor e s))
                    (fun e s => scope e s = true)
 
@@ -145,7 +145,7 @@ def the_sit (F : SituationFrame) (domain : List F.Ent)
     Coincides with the canonical definite (`Donnellan.definiteNominal`
     resolved) — the same Russellian iota factored through `presupOfReferent`. -/
 def the_sit' {W E : Type} (domain : List E)
-    (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+    (restrictor : E → W → Bool) (scope : E → W → Bool) : PartialProp W :=
   presupOfReferent (fun w => russellIotaList domain (fun e => restrictor e w))
                    (fun e w => scope e w = true)
 
@@ -155,7 +155,7 @@ def the_sit' {W E : Type} (domain : List E)
 -- ════════════════════════════════════════════════════════════════
 
 /-- `the_sit'` and the canonical definite (`definiteNominal` resolved) denote
-    the same `PrProp`: both factor through `presupOfReferent` applied to a
+    the same `PartialProp`: both factor through `presupOfReferent` applied to a
     Russellian iota over the domain. The two names reflect different lineages
     (Elbourne's situation semantics vs. Donnellan's attributive use); the
     denotation is one and the same. -/
@@ -303,7 +303,7 @@ structure PronounAsDefinite where
 
 /-- Pronoun denotation: ⟦it⟧ = ⟦the⟧ + NP-deletion. -/
 abbrev pronounDenot {W E : Type} (domain : List E)
-    (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+    (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PartialProp W :=
   the_sit' domain recoveredNP scope
 
 /-- Pronouns = definite articles. -/
@@ -490,7 +490,7 @@ def isInsane : Ent → Sit → Bool
   | .jones, _ => true
   | _, _ => false
 
-def theMurderer : PrProp Sit := the_sit' allEnts isMurderer isInsane
+def theMurderer : PartialProp Sit := the_sit' allEnts isMurderer isInsane
 
 theorem referential_presup :
     theMurderer.presup .sCourtroom := rfl
@@ -534,7 +534,7 @@ def isCoveredWithBooks : Ent → Sit → Bool
   | .table1, _ => true
   | _, _ => false
 
-def theTable : PrProp Sit := the_sit' allEnts isTable isCoveredWithBooks
+def theTable : PartialProp Sit := the_sit' allEnts isTable isCoveredWithBooks
 
 theorem incomplete_presup_office :
     theTable.presup .sOffice := rfl
@@ -606,7 +606,7 @@ def isBeaten : DkEnt → DkSit → Bool
   | .donkey_b, _ => true
   | _, _ => false
 
-def donkeyPronoun : PrProp DkSit := the_sit' dkEnts isDonkey isBeaten
+def donkeyPronoun : PartialProp DkSit := the_sit' dkEnts isDonkey isBeaten
 
 theorem donkey_presup_min1 :
     donkeyPronoun.presup .sMin1 := rfl
@@ -679,7 +679,7 @@ def isSpy : BEnt → BSit → Bool
   | .smith, _ => true
   | _, _ => false
 
-def thePresident : PrProp BSit := the_sit' bEnts isPresident isSpy
+def thePresident : PartialProp BSit := the_sit' bEnts isPresident isSpy
 
 theorem deRe_presup : thePresident.presup .actual := rfl
 theorem deRe_assertion : ¬ thePresident.assertion .actual := by
@@ -742,7 +742,7 @@ def isQuiet : GhostEnt → GhostSit → Bool
   | .ghost, _ => true
   | _, _ => false
 
-def theGhost : PrProp GhostSit := the_sit' ghostEnts isGhost isQuiet
+def theGhost : PartialProp GhostSit := the_sit' ghostEnts isGhost isQuiet
 
 theorem ghost_presup_belief :
     theGhost.presup .belief := rfl
@@ -770,7 +770,7 @@ end ExistenceEntailment
 
 section PronounAsDefiniteExample
 
-def itAsDonkey : PrProp DkSit :=
+def itAsDonkey : PartialProp DkSit :=
   pronounDenot dkEnts isDonkey isBeaten
 
 theorem pronoun_matches_definite_min1 :

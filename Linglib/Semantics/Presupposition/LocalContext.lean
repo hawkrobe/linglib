@@ -83,7 +83,7 @@ Local context for the consequent of a conditional.
 This is why "If the king exists, the king is bald" doesn't presuppose
 king exists: the local context at "the king is bald" already entails it.
 -/
-def localCtxConsequent (c : LocalCtx W) (antecedent : PrProp W) : LocalCtx W :=
+def localCtxConsequent (c : LocalCtx W) (antecedent : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds antecedent.assertion
   , position := c.position + 1
   , depth := c.depth }
@@ -93,7 +93,7 @@ Local context for the second conjunct.
 
 "P and Q" — the local context at Q is c + P.assertion
 -/
-def localCtxSecondConjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
+def localCtxSecondConjunct (c : LocalCtx W) (first : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds first.assertion
   , position := c.position + 1
   , depth := c.depth }
@@ -114,7 +114,7 @@ Local context for each disjunct.
 "P or Q" — Schlenker: local context at Q is c + ¬P.assertion
 (and symmetrically for P)
 -/
-def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
+def localCtxSecondDisjunct (c : LocalCtx W) (first : PartialProp W) : LocalCtx W :=
   { worlds := λ w => c.worlds w ∧ ¬first.assertion w
   , position := c.position + 1
   , depth := c.depth }
@@ -122,16 +122,16 @@ def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
 
 /-- A presupposition projects at a local context if it's not entailed.
     Delegates to `Semantics.Presupposition.Context.presupProjects`. -/
-abbrev presupProjects (lc : LocalCtx W) (p : PrProp W) : Prop :=
+abbrev presupProjects (lc : LocalCtx W) (p : PartialProp W) : Prop :=
   Semantics.Presupposition.Context.presupProjects lc.worlds p
 
 /-- A presupposition is filtered (satisfied) at a local context if it IS entailed.
     Delegates to `Semantics.Presupposition.Context.presupSatisfied`. -/
-abbrev presupFiltered (lc : LocalCtx W) (p : PrProp W) : Prop :=
+abbrev presupFiltered (lc : LocalCtx W) (p : PartialProp W) : Prop :=
   Semantics.Presupposition.Context.presupSatisfied lc.worlds p
 
 /-- Projection and filtering are complementary. -/
-theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PrProp W) :
+theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PartialProp W) :
     presupProjects lc p ↔ ¬ presupFiltered lc p := Iff.rfl
 
 
@@ -141,7 +141,7 @@ entails the presupposition.
 
 This formalizes the core insight of filtering semantics.
 -/
-theorem conditional_filters_when_entailed (c : LocalCtx W) (p q : PrProp W)
+theorem conditional_filters_when_entailed (c : LocalCtx W) (p q : PartialProp W)
     (h : ∀ w, c.worlds w → p.assertion w → q.presup w) :
     presupFiltered (localCtxConsequent c p) q := by
   intro w hw
@@ -152,7 +152,7 @@ theorem conditional_filters_when_entailed (c : LocalCtx W) (p q : PrProp W)
 If antecedent assertion doesn't entail consequent presupposition,
 it projects.
 -/
-theorem conditional_projects_when_not_entailed (c : LocalCtx W) (p q : PrProp W)
+theorem conditional_projects_when_not_entailed (c : LocalCtx W) (p q : PartialProp W)
     (h : ∃ w, c.worlds w ∧ p.assertion w ∧ ¬q.presup w) :
     presupProjects (localCtxConsequent c p) q := by
   obtain ⟨w, hw_in, hp_true, hq_false⟩ := h
@@ -162,7 +162,7 @@ theorem conditional_projects_when_not_entailed (c : LocalCtx W) (p q : PrProp W)
 /--
 Negation doesn't filter presuppositions.
 -/
-theorem negation_preserves_projection (c : LocalCtx W) (p : PrProp W) :
+theorem negation_preserves_projection (c : LocalCtx W) (p : PartialProp W) :
     presupProjects c p ↔ presupProjects (localCtxNegation c) p := by
   simp [presupProjects, localCtxNegation]
 
@@ -180,7 +180,7 @@ inductive KingWorld' where
 /--
 "The king exists" — no presupposition.
 -/
-def kingExists' : PrProp KingWorld' :=
+def kingExists' : PartialProp KingWorld' :=
   { presup := λ _ => True
   , assertion := λ w => match w with
       | .kingExists => True
@@ -189,7 +189,7 @@ def kingExists' : PrProp KingWorld' :=
 /--
 "The king is bald" — presupposes king exists.
 -/
-def kingBald' : PrProp KingWorld' :=
+def kingBald' : PartialProp KingWorld' :=
   { presup := λ w => match w with
       | .kingExists => True
       | .noKing => False
@@ -221,21 +221,21 @@ This theorem shows the correspondence between:
 - the stipulated local context computation
 - the Karttunen filtering implication formula ([karttunen-1973], [peters-1979])
 -/
-theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
-    (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
+theorem local_context_matches_impFilter (c : ContextSet W) (p q : PartialProp W) :
+    (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) := by
   constructor
   · intro h w hw
     have h' := h w hw
-    simp only [PrProp.impFilter] at h'
+    simp only [PartialProp.impFilter] at h'
     exact h'
   · intro h w hw
     obtain ⟨hp, himp⟩ := h w hw
-    simp only [PrProp.impFilter]
+    simp only [PartialProp.impFilter]
     exact ⟨hp, himp⟩
 
 /-- Schlenker's local context at the second disjunct derives Karttunen's
-    asymmetric disjunction filter (`PrProp.disjFilterLeft`).
+    asymmetric disjunction filter (`PartialProp.disjFilterLeft`).
 
     For "A ∨ B_ψ" in context c:
     - Schlenker: local context at B is c ∧ ¬A; ψ filtered iff c ∧ ¬A ⊧ ψ
@@ -245,9 +245,9 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     Analogous to `local_context_matches_impFilter` for conditionals.
     [schlenker-2009], [karttunen-1973] -/
 theorem local_context_matches_disjFilterLeft (c : ContextSet W)
-    (firstDisjunct : PrProp W) (second : PrProp W) :
+    (firstDisjunct : PartialProp W) (second : PartialProp W) :
     presupFiltered (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) second ↔
-    (∀ w, c w → (PrProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by
+    (∀ w, c w → (PartialProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by
   constructor
   · intro h w hc hn; exact h ⟨hc, hn⟩
   · intro h w ⟨hc, hn⟩; exact h w hc hn

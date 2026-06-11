@@ -13,10 +13,10 @@ application is the BPS bridge in
 delivers two non-cancellability theorems for pex outputs: `bps_not_cancellable`
 (structural — assertion = `p.holds` makes content survive trivially)
 and `bps_neg_not_cancellable` (substantive — assertion = `p.neg.holds`
-makes content survive *because `PrProp.neg` projects*; the
+makes content survive *because `PartialProp.neg` projects*; the
 family-of-sentences test in [bassi-delpinal-sauerland-2021]'s
-sense). The substrate's projecting `PrProp.neg` is what makes the
-projection theorem work; swapping in non-projecting `PrProp.negExt`
+sense). The substrate's projecting `PartialProp.neg` is what makes the
+projection theorem work; swapping in non-projecting `PartialProp.negExt`
 would falsify it.
 
 ## The four classical tests
@@ -79,9 +79,9 @@ not in pex itself.
 
 **Delivered substantively** (`bps_neg_not_cancellable`): when assertion =
 `p.neg.holds` (i.e., the speaker negates the pex output), the inferred
-presup *still* survives — because `PrProp.neg` is constructed to project
+presup *still* survives — because `PartialProp.neg` is constructed to project
 the presupposition (`(neg p).presup := p.presup`). This is the family-of-
-sentences projection test in formal form. Falsifies for `PrProp.negExt`.
+sentences projection test in formal form. Falsifies for `PartialProp.negExt`.
 
 **Not delivered as cancellability failure:** Magri-style obligatory SI
 ([magri-2009]) is not non-cancellable in the Sadock sense, even
@@ -160,11 +160,11 @@ the assertion and contradicts "not all."
 Negation of `IsCancellable` is the load-bearing diagnostic for the
 [bassi-delpinal-sauerland-2021] *Presuppositional EXH* account:
 when pex outputs are wrapped as `Implicature W Prop` with
-`assertion := PrProp.holds · p` and `content := p.presup`, the
+`assertion := PartialProp.holds · p` and `content := p.presup`, the
 non-cancellability follows from `holds → presup` via
 `IsCancellable.false_of_assertion_implies_content`. The substantive
 content of "presuppositions fail cancellability" comes from the
-structural assertion-vs-presupposition split in `PrProp`, not from
+structural assertion-vs-presupposition split in `PartialProp`, not from
 stipulation. The bridge theorem `bps_not_cancellable` is in
 `Semantics/Exhaustification/Presuppositional.lean`.
 -/

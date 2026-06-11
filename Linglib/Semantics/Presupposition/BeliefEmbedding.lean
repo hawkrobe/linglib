@@ -115,7 +115,7 @@ def BeliefLocalCtx.atWorld (blc : BeliefLocalCtx W Agent) (w_star : W) : Context
 A presupposition projects globally (to speaker) from under belief
 iff it's not entailed by the belief local context at any global world.
 -/
-def presupProjectsFromBelief (blc : BeliefLocalCtx W Agent) (p : PrProp W) : Prop :=
+def presupProjectsFromBelief (blc : BeliefLocalCtx W Agent) (p : PartialProp W) : Prop :=
   ∃ w_star, blc.globalCtx w_star ∧ ¬ ContextSet.entails (blc.atWorld w_star) p.presup
 
 /--
@@ -125,7 +125,7 @@ by the local context at all global worlds.
 This is the OLE=yes case: the presupposition becomes part of the
 attitude holder's beliefs.
 -/
-def presupAttributedToHolder (blc : BeliefLocalCtx W Agent) (p : PrProp W) : Prop :=
+def presupAttributedToHolder (blc : BeliefLocalCtx W Agent) (p : PartialProp W) : Prop :=
   ∀ w_star, blc.globalCtx w_star → ContextSet.entails (blc.atWorld w_star) p.presup
 
 
@@ -181,7 +181,7 @@ def smokingDox : DoxasticAccessibility SmokingWorld SmokingAgent
 /--
 "Mary stopped smoking" — presupposes Mary used to smoke.
 -/
-def maryStoppedSmoking : PrProp SmokingWorld :=
+def maryStoppedSmoking : PartialProp SmokingWorld :=
   { presup := λ w => match w with
       | .maryUsedToSmoke_johnBelieves_maryQuit => true
       | .maryUsedToSmoke_johnBelieves_marySmokes => true
@@ -272,7 +272,7 @@ def beliefToLocalCtx (blc : BeliefLocalCtx W Agent) (w_star : W)
 The presupposition filtering condition is the same: a presupposition is
 filtered iff it's entailed by the local context.
 -/
-theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
+theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
     (w_star : W) (_h : blc.globalCtx w_star) :
     presupFiltered (beliefToLocalCtx blc w_star _h) p ↔
     ContextSet.entails (blc.atWorld w_star) p.presup := by
@@ -327,7 +327,7 @@ theorem localCtx_sub_of_refinement (Rk Rb : AgentAccessRel W E)
     filtered under any belief embedding that refines knowledge. -/
 theorem knowledge_filtered_implies_belief_filtered
     (Rk Rb : AgentAccessRel W E) (ctx : ContextSet W) (i : E)
-    [IsBeliefRefinementOf (Rk i) (Rb i)] (p : PrProp W) (w_star : W) :
+    [IsBeliefRefinementOf (Rk i) (Rb i)] (p : PartialProp W) (w_star : W) :
     ContextSet.entails ((localCtxOf Rk ctx i).atWorld w_star) p.presup →
     ContextSet.entails ((localCtxOf Rb ctx i).atWorld w_star) p.presup := by
   intro h_know w h_bel
@@ -347,7 +347,7 @@ end BoolPropBridge
 presuppositions under attitude predicates:
 
 - **Transparent**: presupposition evaluated in the global context (speaker's
-  knowledge state). Implemented by `PrProp.negFactive`: the factive
+  knowledge state). Implemented by `PartialProp.negFactive`: the factive
   presupposes the complement holds in reality.
 
 - **Opaque**: presupposition attributed to the attitude holder's belief state.
@@ -368,18 +368,18 @@ variable {W : Type*} {Agent : Type*}
     the complement *holds* in the actual world.
 
     [delpinal-bassi-sauerland-2024] §3.2 -/
-def transparentProjection (globalCtx : ContextSet W) (p : PrProp W) : Prop :=
+def transparentProjection (globalCtx : ContextSet W) (p : PartialProp W) : Prop :=
   ContextSet.entails globalCtx p.presup
 
-/-- `PrProp.negFactive` subsumes transparent projection: its presupposition
+/-- `PartialProp.negFactive` subsumes transparent projection: its presupposition
     (complement holds = presup ∧ assertion) entails transparent projection of
     the complement's presupposition.
 
     This grounds the `negFactive` combinator in the projection theory.
     [heim-1992], [delpinal-bassi-sauerland-2024] §3.2 -/
-theorem negFactive_entails_transparent (complement : PrProp W)
+theorem negFactive_entails_transparent (complement : PartialProp W)
     (believes : Set W → Set W) (globalCtx : ContextSet W)
-    (h : ContextSet.entails globalCtx (PrProp.negFactive complement believes).presup) :
+    (h : ContextSet.entails globalCtx (PartialProp.negFactive complement believes).presup) :
     transparentProjection globalCtx complement := by
   intro w hw
   exact (h hw).1
@@ -391,7 +391,7 @@ theorem negFactive_entails_transparent (complement : PrProp W)
     worlds. What holds at all accessible worlds holds at the evaluation world.
     [hintikka-1962]: S5 knowledge is reflexive. -/
 theorem opaque_implies_transparent_when_reflexive
-    (blc : BeliefLocalCtx W Agent) (p : PrProp W)
+    (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
     (hReflexive : ∀ w, blc.globalCtx w → blc.dox blc.agent w w)
     (hOpaque : presupAttributedToHolder blc p) :
     transparentProjection blc.globalCtx p := by

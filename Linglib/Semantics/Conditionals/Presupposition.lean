@@ -79,11 +79,11 @@ def trivialCloser : W → W → W → Bool := fun _ _ _ => true
   p-worlds (contrast with K/P's LOCAL check)
 - **Assertion**: q holds at all CLOS-closest p-worlds
 
-When the antecedent p has no presupposition, use `PrProp.ofProp`.
+When the antecedent p has no presupposition, use `PartialProp.ofProp`.
 Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def ifPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p : PrProp W) (q : PrProp W)
-    [DecidablePred p.assertion] : PrProp W where
+    (restriction : List W) (p : PartialProp W) (q : PartialProp W)
+    [DecidablePred p.assertion] : PartialProp W where
   presup := fun w =>
     p.presup w ∧
     let closest := closB closer restriction
@@ -110,8 +110,8 @@ The difference from K/P* is entirely in the inner presupposition:
 K/P checks locally at w, K/P* checks globally via CLOS.
 Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def ifKP [DecidableEq W] (restriction : List W)
-    (p : PrProp W) (q : PrProp W)
-    [DecidablePred p.assertion] : PrProp W where
+    (p : PartialProp W) (q : PartialProp W)
+    [DecidablePred p.assertion] : PartialProp W where
   presup := fun w =>
     p.presup w ∧ (p.assertion w → q.presup w)
   assertion := fun _w =>
@@ -146,7 +146,7 @@ def orProperties {E : Type*} [DecidableEq (E → Bool)]
 
 Used in `orPresup`: the CLOS-based disjunction checks presuppositions at
 closest worlds where the OTHER disjunct is defined-and-false. -/
-def definedFalse (p : PrProp W) : Set W :=
+def definedFalse (p : PartialProp W) : Set W :=
   fun w => p.presup w ∧ ¬p.assertion w
 
 /-- K/P* presuppositional conjunction ([sharvit-2025], (127)).
@@ -160,8 +160,8 @@ The asymmetry mirrors K/P's `andFilter`, but uses CLOS-based rather than
 local presupposition checking.
 Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def andPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p q : PrProp W)
-    [DecidablePred p.assertion] : PrProp W where
+    (restriction : List W) (p q : PartialProp W)
+    [DecidablePred p.assertion] : PartialProp W where
   presup := fun w =>
     p.presup w ∧ q.presup w ∧
     let closest := closB closer restriction
@@ -190,10 +190,10 @@ connectives, (142)) which operates at the property level.
 Requires `[DecidablePred p.assertion] [DecidablePred q.assertion]` and
 decidability of `definedFalse` for `List.filter`. -/
 def orPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p q : PrProp W)
+    (restriction : List W) (p q : PartialProp W)
     [DecidablePred p.assertion] [DecidablePred q.assertion]
     [DecidablePred (definedFalse p)] [DecidablePred (definedFalse q)]
-    : PrProp W where
+    : PartialProp W where
   presup := fun w =>
     let closP := closB closer restriction
       (restriction.filter (fun w => decide (p.assertion w))) w
@@ -236,9 +236,9 @@ def clos (closer : W → W → W → Prop)
 
 This is Sharvit's observation that K/P's `or` does not distinguish
 left from right. -/
-theorem orPositive_symmetric (p q : PrProp W) (w : W) :
-    (PrProp.orPositive p q).presup w ↔ (PrProp.orPositive q p).presup w := by
-  simp only [PrProp.orPositive]
+theorem orPositive_symmetric (p q : PartialProp W) (w : W) :
+    (PartialProp.orPositive p q).presup w ↔ (PartialProp.orPositive q p).presup w := by
+  simp only [PartialProp.orPositive]
   tauto
 
 /-- K/P*'s inner presupposition (CLOS) entails K/P's inner presupposition
@@ -253,7 +253,7 @@ dominates any world. Without it, the theorem is false: a non-trivial
 ordering can exclude w from CLOS even when p(w). -/
 theorem kpstar_presup_implies_kp_presup [DecidableEq W]
     (closer : W → W → W → Bool) (restriction : List W)
-    (p : PrProp W) (q : PrProp W) (w : W)
+    (p : PartialProp W) (q : PartialProp W) (w : W)
     [DecidablePred p.assertion]
     (hp : p.assertion w)
     (hw : w ∈ closB closer restriction
@@ -270,7 +270,7 @@ Witness: w₀ where p is false and q.presup holds (K/P vacuously satisfied),
 but some p-world w₁ has q.presup = false (K/P* fails globally). -/
 theorem kp_presup_does_not_imply_kpstar :
     ∃ (W : Type) (_ : DecidableEq W) (restriction : List W)
-      (p : PrProp W) (q : PrProp W)
+      (p : PartialProp W) (q : PartialProp W)
       (_ : DecidablePred p.assertion)
       (w : W),
       (ifKP restriction p q).presup w ∧

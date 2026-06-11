@@ -14,7 +14,7 @@ identity functions** on the entity domain, ordered by presuppositional
 strength via `Features.ContainmentPair.specLevel`.
 
 The core mathematical object is `phiPresup`: a single function that maps
-each `ContainmentPair` cell to a `PrProp`, using two predicates (innerP,
+each `ContainmentPair` cell to a `PartialProp`, using two predicates (innerP,
 outerP) corresponding to the inner and outer privative features. Since
 the three well-formed cells have 2, 1, and 0 marked features respectively,
 their presuppositions are automatically nested — more marked features =
@@ -51,7 +51,7 @@ namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)
 open Features (ContainmentPair ContainmentPairLike)
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 -- ============================================================================
 -- §1  Generic Presuppositional Denotations
@@ -59,7 +59,7 @@ open Semantics.Presupposition (PrProp)
 
 /-- Generic presuppositional denotation from a privative feature pair.
 
-    Maps each `ContainmentPair` cell to a `PrProp` using two predicates:
+    Maps each `ContainmentPair` cell to a `PartialProp` using two predicates:
     `innerP` for [±inner] and `outerP` for [±outer].
 
     | Cell         | outer | inner | Presupposition |
@@ -72,7 +72,7 @@ open Semantics.Presupposition (PrProp)
     implies `outerP`. So maximal's presupposition (innerP) is the
     strongest — no need to separately conjoin outerP. -/
 def phiPresup {E : Type*} (innerP outerP : E → Prop) :
-    ContainmentPair → PrProp E
+    ContainmentPair → PartialProp E
   | ⟨true, true⟩ => { presup := innerP, assertion := fun _ => True }
   | ⟨true, false⟩ => { presup := outerP, assertion := fun _ => True }
   | ⟨false, _⟩ => { presup := fun _ => True, assertion := fun _ => True }
@@ -94,7 +94,7 @@ theorem phiPresup_nesting {E : Type*}
     rcases ContainmentPair.classification c₂ hw₂ with rfl | rfl | rfl <;>
       simp_all [ContainmentPair.maximal, ContainmentPair.intermediate,
         ContainmentPair.minimal, ContainmentPair.specLevel, Bool.toNat,
-        phiPresup, PrProp.defined]
+        phiPresup, PartialProp.defined]
 
 /-- All `phiPresup` cells have the same (trivial) assertive content.
     This is the privative-geometric reason why φ-feature competition
@@ -113,20 +113,20 @@ theorem phiPresup_same_assertion {E : Type*}
 
 /-- ⟦Sg⟧: presupposes atomicity. The identity function restricted to
     atoms — defined only when the referent is an atom. -/
-def sgSem (E : Type*) [PartialOrder E] : PrProp E where
+def sgSem (E : Type*) [PartialOrder E] : PartialProp E where
   presup := Atom
   assertion := fun _ => True
 
 /-- ⟦Pl⟧: no inherent presupposition. The unrestricted identity function.
     Its distribution is constrained pragmatically by Maximize Presupposition,
     not by any semantic content. -/
-def plSem (E : Type*) : PrProp E where
+def plSem (E : Type*) : PartialProp E where
   presup := fun _ => True
   assertion := fun _ => True
 
 /-- ⟦Du⟧: presupposes minimality (no proper non-atomic subpart).
     The intermediate cell (specLevel 1). -/
-def dualSem {E : Type*} (minimalP : E → Prop) : PrProp E where
+def dualSem {E : Type*} (minimalP : E → Prop) : PartialProp E where
   presup := minimalP
   assertion := fun _ => True
 
@@ -172,19 +172,19 @@ variable {E : Type*} [PartialOrder E]
 
 /-- ⟦1st⟧: presupposes the referent includes the speaker.
     Maximal cell [+author, +participant] (specLevel 2). -/
-def firstSem (speaker : E) : PrProp E where
+def firstSem (speaker : E) : PartialProp E where
   presup := fun x => speaker ≤ x
   assertion := fun _ => True
 
 /-- ⟦2nd⟧: presupposes the referent includes a speech-act participant.
     Intermediate cell [−author, +participant] (specLevel 1). -/
-def secondSem (speaker addressee : E) : PrProp E where
+def secondSem (speaker addressee : E) : PartialProp E where
   presup := fun x => speaker ≤ x ∨ addressee ≤ x
   assertion := fun _ => True
 
 /-- ⟦3rd⟧: vacuous presupposition.
     Minimal cell [−author, −participant] (specLevel 0). -/
-def thirdSem : PrProp E where
+def thirdSem : PartialProp E where
   presup := fun _ => True
   assertion := fun _ => True
 
@@ -211,7 +211,7 @@ theorem secondSem_eq_phiPresup (speaker addressee : E) :
 theorem thirdSem_eq_phiPresup (speaker addressee : E) :
     phiPresup (fun x => speaker ≤ x)
               (fun x => speaker ≤ x ∨ addressee ≤ x)
-              .minimal = (thirdSem : PrProp E) := rfl
+              .minimal = (thirdSem : PartialProp E) := rfl
 
 /-- Person nesting is a corollary of `phiPresup_nesting` — the same
     theorem that derives number nesting also derives person nesting,
@@ -275,19 +275,19 @@ variable {E : Type*}
 
 /-- ⟦Neut⟧: presupposes the referent is inanimate.
     Maximal cell [+feminine, +neuter] (specLevel 2). -/
-def neutSem (isInanimate : E → Prop) : PrProp E where
+def neutSem (isInanimate : E → Prop) : PartialProp E where
   presup := isInanimate
   assertion := fun _ => True
 
 /-- ⟦Fem⟧: presupposes the referent is female.
     Intermediate cell [+feminine, −neuter] (specLevel 1). -/
-def femSem (isFemale : E → Prop) : PrProp E where
+def femSem (isFemale : E → Prop) : PartialProp E where
   presup := isFemale
   assertion := fun _ => True
 
 /-- ⟦Masc⟧: vacuous presupposition.
     Minimal cell [−feminine, −neuter] (specLevel 0). -/
-def mascSem : PrProp E where
+def mascSem : PartialProp E where
   presup := fun _ => True
   assertion := fun _ => True
 
@@ -303,7 +303,7 @@ def mascSem : PrProp E where
 
 /-- `mascSem` is `phiPresup` at the minimal cell. -/
 @[simp] theorem mascSem_eq_phiPresup (innerP outerP : E → Prop) :
-    phiPresup innerP outerP .minimal = (mascSem : PrProp E) := rfl
+    phiPresup innerP outerP .minimal = (mascSem : PartialProp E) := rfl
 
 -- ── Bridge to Features.Gender ─────
 
@@ -382,7 +382,7 @@ variable {E : Type*}
     or uniqueness condition. The predicate `familiar` is abstract —
     concretely it may be Heim's familiarity or Russell's uniqueness
     (cf. `Features.Definiteness.DefPresupType`). -/
-def defSem (familiar : E → Prop) : PrProp E where
+def defSem (familiar : E → Prop) : PartialProp E where
   presup := familiar
   assertion := fun _ => True
 
@@ -390,7 +390,7 @@ def defSem (familiar : E → Prop) : PrProp E where
     distribution is constrained pragmatically by Maximize Presupposition.
     Using an indefinite when a definite's presupposition is satisfied
     would violate MP!. -/
-def indefSem : PrProp E where
+def indefSem : PartialProp E where
   presup := fun _ => True
   assertion := fun _ => True
 
@@ -400,7 +400,7 @@ def indefSem : PrProp E where
 
 /-- `indefSem` is `phiPresup` at the minimal cell. -/
 @[simp] theorem indefSem_eq_phiPresup (innerP outerP : E → Prop) :
-    phiPresup innerP outerP .minimal = (indefSem : PrProp E) := rfl
+    phiPresup innerP outerP .minimal = (indefSem : PartialProp E) := rfl
 
 /-- Definiteness domain nesting: dom(DEF) ⊆ dom(INDEF). -/
 theorem def_domain_subset_indef (familiar : E → Prop) (x : E) :

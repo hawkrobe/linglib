@@ -69,7 +69,7 @@ Type B (EXH¹).
 namespace WangDavidson2026
 
 open Core.Duality (Truth3 Prop3)
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent
 
@@ -110,34 +110,34 @@ theorem sk_filtering_symmetric :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 1b. PrProp bridge: filtering vs non-filtering disjunction
+-- § 1b. PartialProp bridge: filtering vs non-filtering disjunction
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### PrProp exclusive disjunction
+### PartialProp exclusive disjunction
 
-`PrProp.xor` requires both presuppositions to hold — it never
+`PartialProp.xor` requires both presuppositions to hold — it never
 filters presupposition failure from either disjunct. This mirrors
 the SK XOR truth table (Figure 2 in the paper).
 
 Note: SK *inclusive* filtering (`Truth3.join .true .indet = .true`)
-is an emergent property of the SK truth table, not a `PrProp`
+is an emergent property of the SK truth table, not a `PartialProp`
 connective. The contrast is between `Truth3.join` (filters) and
 `Truth3.xor` (does not filter), verified in §1 above.
 -/
 
-section PrPropBridge
+section PartialPropBridge
 
 variable {W : Type*}
 
-/-- `PrProp.xor` does not filter: when q's presupposition fails,
+/-- `PartialProp.xor` does not filter: when q's presupposition fails,
     the result is always undefined regardless of p. -/
-theorem prprop_exclusive_no_filter (p q : PrProp W) (w : W)
+theorem prprop_exclusive_no_filter (p q : PartialProp W) (w : W)
     (hq : ¬q.presup w) :
-    (PrProp.xor p q).eval w = .indet :=
-  PrProp.eval_xor_no_filter p q w hq
+    (PartialProp.xor p q).eval w = .indet :=
+  PartialProp.eval_xor_no_filter p q w hq
 
-end PrPropBridge
+end PartialPropBridge
 
 
 -- ════════════════════════════════════════════════════════════════

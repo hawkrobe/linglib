@@ -44,10 +44,10 @@ as Modals* (Natural Language Semantics 13:383–410). Following
   `List.Pairwise`, and a binary specialisation used by the bridge theorems
   and Case #3).
 * `defaultBinding` — by default A = C (paper p.394).
-* `fromPrProp`, `fromPrProp_*_iff_orFlex`, `fromPrProp_*_iff_orBelnap` —
+* `fromPartialProp`, `fromPartialProp_*_iff_orFlex`, `fromPartialProp_*_iff_orBelnap` —
   specialisation to presuppositional propositions: when domain = presup and
   content = assertion, the Geurts disjunction coincides pointwise with
-  `PrProp.orFlex` = `PrProp.orBelnap` ([belnap-1970]).
+  `PartialProp.orFlex` = `PartialProp.orBelnap` ([belnap-1970]).
 * `exhaustivity_implies_uninformative` — used by
   `Studies/Yagi2025.lean` as the formal residue of
   [schlenker-2009]'s local-context-failure observation.
@@ -59,7 +59,7 @@ as Modals* (Natural Language Semantics 13:383–410). Following
   treats only ∃/∀; we route `weakNecessity` to the universal branch (every
   weak-necessity claim still quantifies universally over its refined
   best-worlds set).
-* The `fromPrProp_*_iff_*` lemmas are structural: `PrProp.orFlex.presup` is
+* The `fromPartialProp_*_iff_*` lemmas are structural: `PartialProp.orFlex.presup` is
   defined as the union of disjunct presuppositions, so the iff is
   unfolding, not stipulation. The architecture intentionally avoids the
   "stipulate then prove equivalence" anti-pattern.
@@ -213,44 +213,44 @@ theorem default_existential_holds_iff (C : Set W) (bs : List (Set W)) :
   · intro h b hb; exact h _ b hb rfl
   · rintro h _ b hb rfl; exact h b hb
 
-/-! ### Specialisation to PrProp
+/-! ### Specialisation to PartialProp
 
 When presuppositions conflict, modal domains coincide with presuppositional
-domains and Geurts's disjunction specialises to `PrProp.orFlex`. These
+domains and Geurts's disjunction specialises to `PartialProp.orFlex`. These
 lemmas are structural (the orFlex domain is defined as the union of
 disjunct presuppositions in `Semantics/Presupposition/Basic.lean`), not
 stipulated bridges. -/
 
 /-- Construct a Geurts possibility disjunction from two presuppositional
 propositions: domains = presuppositions, contents = assertions. -/
-def fromPrProp (p q : PrProp W) : MDisjunction W :=
+def fromPartialProp (p q : PartialProp W) : MDisjunction W :=
   [ { domain := p.presup, force := .possibility, content := p.assertion }
   , { domain := q.presup, force := .possibility, content := q.assertion } ]
 
-/-- The overall presupposition of a Geurts disjunction from PrProps coincides
-with `PrProp.orFlex.presup`: p.presup ∨ q.presup. -/
-theorem fromPrProp_presup_iff_orFlex (p q : PrProp W) (w : W) :
-    (∃ d ∈ fromPrProp p q, d.domain w) ↔ (PrProp.orFlex p q).presup w := by
-  simp [fromPrProp, PrProp.orFlex]
+/-- The overall presupposition of a Geurts disjunction from PartialProps coincides
+with `PartialProp.orFlex.presup`: p.presup ∨ q.presup. -/
+theorem fromPartialProp_presup_iff_orFlex (p q : PartialProp W) (w : W) :
+    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orFlex p q).presup w := by
+  simp [fromPartialProp, PartialProp.orFlex]
 
-/-- The assertion side: Geurts cells = `PrProp.orFlex.assertion`. -/
-theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W) :
-    (∃ d ∈ fromPrProp p q, d.cell w) ↔ (PrProp.orFlex p q).assertion w := by
-  simp only [fromPrProp, Disjunct.cell, PrProp.orFlex,
+/-- The assertion side: Geurts cells = `PartialProp.orFlex.assertion`. -/
+theorem fromPartialProp_cell_iff_orFlex (p q : PartialProp W) (w : W) :
+    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orFlex p q).assertion w := by
+  simp only [fromPartialProp, Disjunct.cell, PartialProp.orFlex,
              List.mem_cons, List.not_mem_nil, or_false,
              exists_eq_or_imp, exists_eq_left]
   rfl
 
 /-- Transitivity via `orFlex_eq_orBelnap`: Geurts presupposition = orBelnap
 presupposition ([belnap-1970] conditional assertion). -/
-theorem fromPrProp_presup_iff_orBelnap (p q : PrProp W) (w : W) :
-    (∃ d ∈ fromPrProp p q, d.domain w) ↔ (PrProp.orBelnap p q).presup w := by
-  rw [fromPrProp_presup_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
+theorem fromPartialProp_presup_iff_orBelnap (p q : PartialProp W) (w : W) :
+    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orBelnap p q).presup w := by
+  rw [fromPartialProp_presup_iff_orFlex, ← PartialProp.orFlex_eq_orBelnap]
 
 /-- Transitivity via `orFlex_eq_orBelnap`: Geurts cell = orBelnap assertion. -/
-theorem fromPrProp_cell_iff_orBelnap (p q : PrProp W) (w : W) :
-    (∃ d ∈ fromPrProp p q, d.cell w) ↔ (PrProp.orBelnap p q).assertion w := by
-  rw [fromPrProp_cell_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
+theorem fromPartialProp_cell_iff_orBelnap (p q : PartialProp W) (w : W) :
+    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orBelnap p q).assertion w := by
+  rw [fromPartialProp_cell_iff_orFlex, ← PartialProp.orFlex_eq_orBelnap]
 
 /-- If Geurts's exhaustivity holds for C, the disjunction (orFlex/orBelnap)
 is already true throughout C — the disjunction is uninformative.
@@ -260,15 +260,15 @@ discussion: pragmatic conditions on local contexts force s₀ to contain only
 worlds where some disjunct is true, making the disjunction trivially
 satisfied. Geurts's Exhaustivity is the explicit form of that constraint.
 Consumed by `Studies/Yagi2025.lean`. -/
-theorem exhaustivity_implies_uninformative (p q : PrProp W)
-    (C : Set W) (h_exh : exhaustivity C (fromPrProp p q))
+theorem exhaustivity_implies_uninformative (p q : PartialProp W)
+    (C : Set W) (h_exh : exhaustivity C (fromPartialProp p q))
     (w : W) (hw : C w) :
-    (PrProp.orFlex p q).assertion w :=
-  (fromPrProp_cell_iff_orFlex p q w).mp (h_exh w hw)
+    (PartialProp.orFlex p q).assertion w :=
+  (fromPartialProp_cell_iff_orFlex p q w).mp (h_exh w hw)
 
 /-- When presuppositions conflict (p ∧ q = ⊥), the Geurts domains are
 automatically disjoint — Disjointness is satisfied for free. -/
-theorem conflicting_presups_disjoint (p q : PrProp W)
+theorem conflicting_presups_disjoint (p q : PartialProp W)
     (h_conflict : ∀ w, ¬(p.presup w ∧ q.presup w)) :
     disjointness₂
       { domain := p.presup, force := .possibility, content := p.assertion }

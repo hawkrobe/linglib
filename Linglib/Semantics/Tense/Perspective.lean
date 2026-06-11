@@ -162,20 +162,20 @@ theorem then_shifted_present_clash {Time : Type*}
   then_present_clash presRef thenRef shiftedPi hPres hDuring hThen
 
 
-/-! ### Bridge to PrProp -/
+/-! ### Bridge to PartialProp -/
 
-/-- Wrap PRES presupposition as a `PrProp`, showing how tense presuppositions
+/-- Wrap PRES presupposition as a `PartialProp`, showing how tense presuppositions
     compose with the existing presupposition projection system. -/
-def presAsPrProp {Time : Type*} [DecidableEq Time]
-    (f : ReichenbachFrame Time) : PrProp Unit where
+def presAsPartialProp {Time : Type*} [DecidableEq Time]
+    (f : ReichenbachFrame Time) : PartialProp Unit where
   presup := λ () => decide (f.referenceTime = f.perspectiveTime)
   assertion := λ () => true
 
-/-- The `PrProp` encoding is defined iff the PRES presupposition holds. -/
-theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
+/-- The `PartialProp` encoding is defined iff the PRES presupposition holds. -/
+theorem presAsPartialProp_defined_iff {Time : Type*} [DecidableEq Time]
     (f : ReichenbachFrame Time) :
-    (presAsPrProp f).presup () = true ↔ f.referenceTime = f.perspectiveTime := by
-  simp [presAsPrProp]
+    (presAsPartialProp f).presup () = true ↔ f.referenceTime = f.perspectiveTime := by
+  simp [presAsPartialProp]
 
 
 /-! ### Interpretation Parameters: c and π -/

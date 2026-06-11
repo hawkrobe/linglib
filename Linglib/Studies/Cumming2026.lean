@@ -193,7 +193,7 @@ abbrev World := Fin 4
 def allWorlds : List World := [0, 1, 2, 3]
 
 open Semantics.Modality
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 -- ── § Raincoat scenario (parallel to Kernel.lean) ──
 

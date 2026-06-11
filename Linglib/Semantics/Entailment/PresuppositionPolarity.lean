@@ -47,7 +47,7 @@ This function captures that basic behavior.
 More complex interactions (e.g., presupposition strengthening under
 negation) would require extending this.
 -/
-def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : Set W :=
+def presupProjectsAt (_ctx : ContextPolarity) (p : PartialProp W) : Set W :=
   p.presup
 
 /--
@@ -60,16 +60,16 @@ doesn't depend on whether we're in a UE or DE context.
 The polarity-dependence enters only in which *alternatives* we consider
 for exhaustification, not in the projection algorithm itself.
 -/
-theorem impFilter_presup_polarity_independent (p q : PrProp W) :
-    presupProjectsAt .upward (PrProp.impFilter p q) =
-    presupProjectsAt .downward (PrProp.impFilter p q) := rfl
+theorem impFilter_presup_polarity_independent (p q : PartialProp W) :
+    presupProjectsAt .upward (PartialProp.impFilter p q) =
+    presupProjectsAt .downward (PartialProp.impFilter p q) := rfl
 
 /--
 Negation preserves presupposition regardless of polarity.
 -/
-theorem neg_presup_polarity_independent (p : PrProp W) :
-    presupProjectsAt .upward (PrProp.neg p) =
-    presupProjectsAt .downward (PrProp.neg p) := rfl
+theorem neg_presup_polarity_independent (p : PartialProp W) :
+    presupProjectsAt .upward (PartialProp.neg p) =
+    presupProjectsAt .downward (PartialProp.neg p) := rfl
 
 
 /--

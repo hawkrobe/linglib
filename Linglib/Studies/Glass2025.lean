@@ -32,8 +32,8 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 
 ## Formalization Strategy
 
-Belief verb denotations are `PrProp W` values produced by
-`DoxasticPredicate.toPrProp`. The presup field captures the factive
+Belief verb denotations are `PartialProp W` values produced by
+`DoxasticPredicate.toPartialProp`. The presup field captures the factive
 presupposition (or lack thereof). yǐwéi's postsupposition is a separate
 `Semantics.Dynamic.Postsupposition` value. The `PresupClass` classification and PLC
 validation from `Doxastic.lean` derive the contrafactive gap.
@@ -76,7 +76,7 @@ private def neutralCtx : List MiniWorld := [.w0, .w1]
 private def contrafactiveCtx : List MiniWorld := [.w1]
 
 -- ============================================================================
--- §2. Belief Verb PrProps
+-- §2. Belief Verb PartialProps
 -- ============================================================================
 
 /-!
@@ -85,27 +85,27 @@ from veridicality, matching [glass-2025] Table 1.
 
 We define the presup fields directly (rather than instantiating full
 `DoxasticPredicate`s) to keep the model minimal. The connection to
-`DoxasticPredicate.toPrProp` is established by the classification
+`DoxasticPredicate.toPartialProp` is established by the classification
 theorems in §4.
 -/
 
 /-- *know*: presupposes p (factive). -/
-private def knowPresup : PrProp MiniWorld where
+private def knowPresup : PartialProp MiniWorld where
   presup := λ w => prop w = true
   assertion := λ _ => True
 
 /-- *think*: no presupposition (nonfactive). -/
-private def thinkPresup : PrProp MiniWorld where
+private def thinkPresup : PartialProp MiniWorld where
   presup := λ _ => True
   assertion := λ _ => True
 
 /-- Hypothetical *contra*: presupposes ¬p (strong contrafactive). -/
-private def contraPresup : PrProp MiniWorld where
+private def contraPresup : PartialProp MiniWorld where
   presup := λ w => prop w = false
   assertion := λ _ => True
 
-/-- yǐwéi: nonfactive PrProp + postsupposition ◇¬p. -/
-private def yiweiPresup : PrProp MiniWorld where
+/-- yǐwéi: nonfactive PartialProp + postsupposition ◇¬p. -/
+private def yiweiPresup : PartialProp MiniWorld where
   presup := λ _ => True
   assertion := λ _ => True
 

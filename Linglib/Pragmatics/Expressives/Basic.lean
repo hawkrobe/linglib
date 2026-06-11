@@ -429,10 +429,10 @@ This derives de re readings: when a presuppositional expression appears under
 an attitude verb, the presupposition can be evaluated against the common ground
 (CommonGround) rather than the attitude holder's beliefs, because it projects as CI content.
 
-### Bridge: PrProp ↔ TwoDimProp
+### Bridge: PartialProp ↔ TwoDimProp
 
 This provides a new cross-module connection between:
-- `Semantics.Presupposition.PrProp` (presupposition + assertion)
+- `Semantics.Presupposition.PartialProp` (presupposition + assertion)
 - `Pragmatics.Expressives.TwoDimProp` (at-issue + CI)
 
 -/

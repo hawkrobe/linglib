@@ -496,7 +496,7 @@ theorem dynamic_follow_high :
 
 The paper's key semantic contribution: par and de share at-issue content
 (Initiator(x,e)) but carry complementary presuppositions about
-proto-agentivity. Formalized using `PrProp W` from
+proto-agentivity. Formalized using `PartialProp W` from
 `Semantics.Presupposition`. -/
 
 /-- Parameters for agentive preposition denotations (35a/35b).
@@ -512,14 +512,14 @@ variable {Entity Event W : Type}
 /-- ⟦par⟧_agentive (35a): λx.λe. Initiator(x,e);
     presup: HIGH proto-agentivity(x). -/
 def parAgentiveDenot (params : AgentivePrepParams Entity Event W)
-    (x : Entity) (e : Event) : PrProp W where
+    (x : Entity) (e : Event) : PartialProp W where
   presup := params.highProtoAgentivity x
   assertion := params.initiator x e
 
 /-- ⟦de⟧_agentive (35b): λx.λe. Initiator(x,e);
     presup: LOW proto-agentivity(x). -/
 def deAgentiveDenot (params : AgentivePrepParams Entity Event W)
-    (x : Entity) (e : Event) : PrProp W where
+    (x : Entity) (e : Event) : PartialProp W where
   presup w := ¬params.highProtoAgentivity x w
   assertion := params.initiator x e
 
@@ -593,7 +593,7 @@ def deCausalDenot (Situation Event W : Type)
     into a single function matching on `FrenchAgentPrep`. -/
 def FrenchAgentPrep.agentiveDenot (prep : FrenchAgentPrep)
     (params : AgentivePrepParams Entity Event W)
-    (x : Entity) (e : Event) : PrProp W :=
+    (x : Entity) (e : Event) : PartialProp W :=
   match prep with
   | .par => parAgentiveDenot params x e
   | .de  => deAgentiveDenot params x e

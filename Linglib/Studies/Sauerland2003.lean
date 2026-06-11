@@ -55,7 +55,7 @@ open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (ContainmentPair ContainmentPairLike)
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Phonology.Constraint.OT (NamedConstraint mkTableau)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
@@ -310,7 +310,7 @@ open Semantics.Quantification.UnifiedUniversal (QForall dng_atoms)
     `Atom a ∧ a ≤ X`. -/
 def JE {E : Type*} [PartialOrder E]
     (X : E) (P : E → Prop) (domP : E → Prop := fun _ => True) :
-    PrProp E where
+    PartialProp E where
   presup := fun _ => ∀ a, Atom a → a ≤ X → domP a
   assertion := fun _ => ∀ a, Atom a → a ≤ X → P a
 
@@ -349,7 +349,7 @@ theorem je_total_trivial {E : Type*} [PartialOrder E]
     `⟦every⟧(R)(P)` = `⟦JE⟧(max(*R))(P)` -/
 def everySem {E : Type*} [PartialOrder E]
     (maxStarR : E) (P : E → Prop) (domP : E → Prop := fun _ => True) :
-    PrProp E :=
+    PartialProp E :=
   JE maxStarR P domP
 
 -- ── Mereological grounding of DER ──
@@ -432,7 +432,7 @@ with a sister, not that every boy has one.
     the domain of S. The assertion is that some R-individual satisfies S. -/
 def aSem {E : Type*}
     (R : E → Prop) (S : E → Prop) (domS : E → Prop := fun _ => True) :
-    PrProp E where
+    PartialProp E where
   presup := fun _ => ∃ x, R x ∧ domS x
   assertion := fun _ => ∃ x, R x ∧ S x
 

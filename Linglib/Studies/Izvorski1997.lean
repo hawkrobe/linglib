@@ -174,7 +174,7 @@ def allWorlds : List World := [0, 1, 2, 3]
 
 /-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
 def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
-    (p : World → Prop) : PrProp World where
+    (p : World → Prop) : PartialProp World where
   presup := λ w => (accessibleWorlds f w).Nonempty
   assertion := λ w => necessity f g p w
 
@@ -275,8 +275,8 @@ theorem izvorski_collapses_to_koev_when_realistic
     exact h
 
 theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) :
-    (PrProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
-  PrProp.neg_presup _
+    (PartialProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
+  PartialProp.neg_presup _
 
 theorem nfutL_compatible_with_izvorski : nfutL.ep = .downstream := rfl
 

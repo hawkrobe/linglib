@@ -54,13 +54,13 @@ variable {W : Type*}
 /-- The filtering prediction for "if A then know-C":
     the presupposition of the consequent (= C) is filtered by the antecedent.
     Result: conditional presupposes "A → C". -/
-def filteringPrediction_know (a c : W → Prop) : PrProp W :=
-  PrProp.impFilter (PrProp.ofProp a) (PrProp.condAssert c (fun _ => True))
+def filteringPrediction_know (a c : W → Prop) : PartialProp W :=
+  PartialProp.impFilter (PartialProp.ofProp a) (PartialProp.condAssert c (fun _ => True))
 
 /-- The filtering prediction for "if A then think-C":
     "think" has no presupposition, so filtering produces a trivial result. -/
-def filteringPrediction_think (a : W → Prop) : PrProp W :=
-  PrProp.impFilter (PrProp.ofProp a) PrProp.top
+def filteringPrediction_think (a : W → Prop) : PartialProp W :=
+  PartialProp.impFilter (PartialProp.ofProp a) PartialProp.top
 
 /-- **Filtering predicts non-trivial presupposition for "know"**:
     The presupposition of "if A then know-C" is ¬A ∨ C (= A → C),
@@ -70,7 +70,7 @@ theorem filtering_know_nontrivial (a c : W → Prop)
     ∃ w, ¬(filteringPrediction_know a c).presup w := by
   obtain ⟨w, ha, hc⟩ := h
   refine ⟨w, ?_⟩
-  simp only [filteringPrediction_know, PrProp.impFilter, PrProp.ofProp, PrProp.condAssert,
+  simp only [filteringPrediction_know, PartialProp.impFilter, PartialProp.ofProp, PartialProp.condAssert,
     not_and]
   intro _
   exact fun h_imp => hc (h_imp ha)
@@ -81,7 +81,7 @@ theorem filtering_know_nontrivial (a c : W → Prop)
 theorem filtering_think_trivial (a : W → Prop) :
     ∀ w, (filteringPrediction_think a).presup w := by
   intro w
-  simp only [filteringPrediction_think, PrProp.impFilter, PrProp.ofProp, PrProp.top]
+  simp only [filteringPrediction_think, PartialProp.impFilter, PartialProp.ofProp, PartialProp.top]
   exact ⟨trivial, fun _ => trivial⟩
 
 end Filtering

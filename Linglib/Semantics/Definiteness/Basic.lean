@@ -15,8 +15,8 @@ the library. The denotational layer itself lives in two canonical pieces:
 
 - `Semantics.Definiteness.russellIotaList` (the per-context referent selector,
   Russellian iota over a `List E` filtered by a `Bool` predicate), and
-- `Semantics.Presupposition.PrProp.presupOfReferent` (the combinator lifting a
-  referent selector and a scope predicate into a `PrProp W`).
+- `Semantics.Presupposition.PartialProp.presupOfReferent` (the combinator lifting a
+  referent selector and a scope predicate into a `PartialProp W`).
 
 All variants — uniqueness-based, familiarity-based, anaphoric (ι^x),
 discourse-restricted, situation-relative — are obtained by composing these
@@ -44,7 +44,7 @@ namespace Semantics.Definiteness
 open Core.Logic.Intensional (Ty)
 open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Features.Definiteness (DefPresupType Definiteness)
 
 -- ============================================================================

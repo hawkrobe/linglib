@@ -41,7 +41,7 @@ set_option autoImplicit false
 
 namespace ASL.Height
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Vertical Height Scale
@@ -129,7 +129,7 @@ def heightToDDRP {E : Type*} (zone : E → VerticalHeight) : HeightDDRP E where
     This uses `Mereology.Atom` from `Core/Order/Mereology.lean`. The at-issue
     content is the identity — arc contributes only a presupposition, not
     assertoric content. -/
-def arcPresup (E : Type*) [PartialOrder E] : PrProp E where
+def arcPresup (E : Type*) [PartialOrder E] : PartialProp E where
   presup := λ x => ¬ Mereology.Atom x
   assertion := λ _ => True
 
@@ -149,7 +149,7 @@ def arcPresup (E : Type*) [PartialOrder E] : PrProp E where
       extreme domain restriction. The presupposition is maximally
       restrictive: the domain collapses to a single individual. -/
 def domainPresup {E : Type*} [PartialOrder E] (C : E → Prop) :
-    VerticalHeight → PrProp E
+    VerticalHeight → PartialProp E
   | .high => { presup := λ x => (∀ y, C y → y ≤ x) ∧ ∃ y, y ≤ x ∧ ¬ C y
                assertion := λ _ => True }
   | .neutral => { presup := λ x => ∀ y, y ≤ x → C y
@@ -162,7 +162,7 @@ def domainPresup {E : Type*} [PartialOrder E] (C : E → Prop) :
 
     ⟦[IX_i]-arc-height⟧ = ιz: ¬Atom(z) ∧ domainPresup(height). (z = g(i)) -/
 def ixArcHeightPresup {E : Type*} [PartialOrder E] (C : E → Prop)
-    (h : VerticalHeight) : PrProp E where
+    (h : VerticalHeight) : PartialProp E where
   presup := λ x => (arcPresup E).presup x ∧ (domainPresup C h).presup x
   assertion := λ _ => True
 

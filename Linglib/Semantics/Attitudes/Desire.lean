@@ -76,7 +76,7 @@ for the bridge.
 
 namespace Semantics.Attitudes.Desire
 
-open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition (PartialProp)
 open Core.Order (SatisfactionOrdering)
 
 section Generic
@@ -309,15 +309,15 @@ instance (belS : Set W) [DecidablePred belS]
 The presupposition is the four-constraint definedness predicate; the
 assertion is the question-based truth condition. Both are
 world-independent because Q_c is contextually fixed prior to
-evaluation; we expose them as a `PrProp W` for uniformity with
+evaluation; we expose them as a `PartialProp W` for uniformity with
 linglib's presupposition infrastructure, with the world argument
 suppressed. -/
 
-/-- Question-based `want` as a partial proposition (`Core.PrProp`):
+/-- Question-based `want` as a partial proposition (`Core.PartialProp`):
     presupposition = full definedness; assertion = question-based truth. -/
-def wantPrProp (belS : Set W) [DecidablePred belS]
+def wantPartialProp (belS : Set W) [DecidablePred belS]
     (GS naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
-    PrProp W where
+    PartialProp W where
   presup _ := wantDefined belS naturalProps answers p
   assertion _ := wantQuestionBased belS GS answers p
 

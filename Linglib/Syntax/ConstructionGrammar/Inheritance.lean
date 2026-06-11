@@ -269,7 +269,7 @@ instance (cx : Constructicon) (own : Construction → CxnSpec) :
 
 /-! ### Inheritance of denotation-valued fields
 
-Denotations (e.g. `PrProp`-valued pragmatic contributions) have no
+Denotations (e.g. `PartialProp`-valued pragmatic contributions) have no
 decidable equality, so agreeing parents cannot be deduplicated as in
 `inheritField`. `inheritFieldUnique` inherits when exactly one parent
 supplies a value — sufficient for single-mother inheritance, the
