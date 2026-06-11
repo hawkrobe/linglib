@@ -169,8 +169,8 @@ def demoLex : String → Option (Den E)
 /-- Rule assignment for the demo network. -/
 def demoRules : Construction → Option (CompositionRule (Den E)) :=
   λ c =>
-    if c.name == "Intersective modification" then some (intersectiveRule E)
-    else if c.name == "Operator modification" then some (operatorRule E)
+    if c = intersectiveModification then some (intersectiveRule E)
+    else if c = operatorModification then some (operatorRule E)
     else none
 
 /-- *Purple plum* has exactly one reading: the intersection. The operator

@@ -123,7 +123,7 @@ theorem drinkSick_means : drinkSick.subeventRelation = .means := rfl
     RESULT is reserved for sound-emission and disappearance subconstructions. -/
 theorem all_core_entries_use_means :
     allEntries.all (·.subeventRelation == .means) = true := by
-  native_decide
+  decide
 
 -- Derived subevent structure: CAUSE follows from subconstruction
 
@@ -131,18 +131,18 @@ theorem all_core_entries_use_means :
 theorem causative_entries_have_cause :
     (allEntries.filter (·.subconstruction.isCausative)).all
       (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
+  decide
 
 /-- Noncausative entries lack CAUSE in their derived constructional subevent. -/
 theorem noncausative_entries_no_cause :
     (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
       (λ e => !e.dualSubevent.constructional.hasCause) = true := by
-  native_decide
+  decide
 
 /-- All derived constructional subevents have BECOME. -/
 theorem all_constructional_have_become :
     allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
-  native_decide
+  decide
 
 -- Object selection: intransitive entries have no object selection
 
@@ -150,13 +150,13 @@ theorem all_constructional_have_become :
 theorem noncausative_no_object_selection :
     (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
       (λ e => e.objectSelection == none) = true := by
-  native_decide
+  decide
 
 /-- All causative entries specify an object selection mode. -/
 theorem causative_have_object_selection :
     (allEntries.filter (·.subconstruction.isCausative)).all
       (λ e => e.objectSelection.isSome) = true := by
-  native_decide
+  decide
 
 -- Aspectual predictions
 
@@ -164,7 +164,7 @@ theorem causative_have_object_selection :
 theorem bounded_entries_telic :
     (allEntries.filter (·.rpBoundedness == .bounded)).all
       (λ e => (resultativeAspect e.rpBoundedness).telicity == .telic) = true := by
-  native_decide
+  decide
 
 /-! ### Theorems migrated from `Semantics.Causation.Resultatives`
 
@@ -175,14 +175,14 @@ therefore belong with the paper, not in the Theory layer. -/
 theorem causative_resultative_has_cause :
     (allEntries.filter (·.subconstruction.isCausative)).all
       (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
+  decide
 
 /-- MEANS-relation causative entries all have CAUSE. -/
 theorem causative_means_have_cause :
     (allEntries.filter (λ e =>
       e.subconstruction.isCausative && e.subeventRelation == .means
     )).all (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
+  decide
 
 /-- Activity verbs in the data with bounded RPs become accomplishments. -/
 theorem activity_entries_become_accomplishments :
@@ -191,12 +191,12 @@ theorem activity_entries_become_accomplishments :
     )).all (λ e =>
       resultativeVendlerClass e.rpBoundedness == .accomplishment
     ) = true := by
-  native_decide
+  decide
 
 /-- All resultative entries have BECOME. -/
 theorem all_have_become :
     allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
-  native_decide
+  decide
 
 /-! ## Per-entry verb class participation
 
@@ -208,21 +208,21 @@ roll/swing), and removing verbs (wipe). -/
 /-- All entries acquire CoS from the construction, regardless of verb class. -/
 theorem all_entries_fused_cos :
     allEntries.all (λ e => e.fusedMC.changeOfState) = true := by
-  native_decide
+  decide
 
 /-- All entries participate in the resultative alternation (none are instrument-spec). -/
 theorem all_entries_resultative_alternation :
     allEntries.all (λ e =>
       predictedAlternationInConstruction e.verbMC
         e.subconstruction.toConstruction .resultative) = true := by
-  native_decide
+  decide
 
 /-- Causative entries all acquire the causative alternation. -/
 theorem causative_entries_causative_alternation :
     (allEntries.filter (·.subconstruction.isCausative)).all (λ e =>
       predictedAlternationInConstruction e.verbMC
         e.subconstruction.toConstruction .causativeInchoative) = true := by
-  native_decide
+  decide
 
 /-- Noncausative entries do NOT acquire the causative alternation
     (unless the verb already has causation — freeze/otherCoS does). -/
@@ -231,7 +231,7 @@ theorem noncausative_entries_no_new_causation :
       predictedAlternationInConstruction e.verbMC
         e.subconstruction.toConstruction .causativeInchoative
       = e.verbMC.predictedAlternation .causativeInchoative) = true := by
-  native_decide
+  decide
 
 /-- Hammer (hit-class): no CoS or causation alone → both added by causative construction. -/
 theorem hammer_gains_cos_causation :
@@ -239,25 +239,25 @@ theorem hammer_gains_cos_causation :
     hammerFlat.verbMC.causation = false ∧
     hammerFlat.fusedMC.changeOfState = true ∧
     hammerFlat.fusedMC.causation = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor <;> native_decide
+  constructor; decide
+  constructor; decide
+  constructor <;> decide
 
 /-- Freeze (otherCoS): already has CoS + causation → construction doesn't change profile. -/
 theorem freeze_already_has_cos :
     freezeSolid.verbMC.changeOfState = true ∧
     freezeSolid.verbMC.causation = true ∧
     freezeSolid.fusedMC = freezeSolid.verbMC := by
-  constructor; native_decide
-  constructor <;> native_decide
+  constructor; decide
+  constructor <;> decide
 
 /-- Roll (manner-of-motion): gains CoS from construction; no causation (noncausative). -/
 theorem roll_gains_cos_only :
     rollIntoField.verbMC.changeOfState = false ∧
     rollIntoField.fusedMC.changeOfState = true ∧
     rollIntoField.fusedMC.causation = false := by
-  constructor; native_decide
-  constructor <;> native_decide
+  constructor; decide
+  constructor <;> decide
 
 /-- Laugh (performance): pure manner verb — construction adds CoS + causation. -/
 theorem laugh_gains_cos_causation :
@@ -265,17 +265,17 @@ theorem laugh_gains_cos_causation :
     laughSilly.verbMC.causation = false ∧
     laughSilly.fusedMC.changeOfState = true ∧
     laughSilly.fusedMC.causation = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor <;> native_decide
+  constructor; decide
+  constructor; decide
+  constructor <;> decide
 
 /-- Wipe (wipe-class): already has full profile — construction is redundant. -/
 theorem wipe_already_has_everything :
     wipeClean.verbMC.changeOfState = true ∧
     wipeClean.verbMC.causation = true ∧
     wipeClean.fusedMC = wipeClean.verbMC := by
-  constructor; native_decide
-  constructor <;> native_decide
+  constructor; decide
+  constructor <;> decide
 
 /-! ## Empirical data: grammaticality judgments
 
@@ -485,35 +485,35 @@ theorem has_all_resultative_types :
     (allExamples.any (·.resType == .noncausativeProperty)) = true ∧
     (allExamples.any (·.resType == .noncausativePath)) = true ∧
     (allExamples.any (·.resType == .fakeReflexive)) = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor; native_decide
-  constructor; native_decide
-  native_decide
+  constructor; decide
+  constructor; decide
+  constructor; decide
+  constructor; decide
+  decide
 
 /-- Both grammatical and ungrammatical examples are represented. -/
 theorem has_both_judgments :
     (allExamples.any (·.judgment == .ok)) = true ∧
     (allExamples.any (·.judgment == .unacceptable)) = true := by
-  constructor; native_decide
-  native_decide
+  constructor; decide
+  decide
 
 /-- The aspectual contrast data includes both in- and for-adverbials. -/
 theorem aspectual_both_adverbials :
     (aspectualContrasts.any (·.adverbialType == "in-adverbial")) = true ∧
     (aspectualContrasts.any (·.adverbialType == "for-adverbial")) = true := by
-  constructor; native_decide
-  native_decide
+  constructor; decide
+  decide
 
 /-- Telic resultatives accept in-adverbials and reject for-adverbials. -/
 theorem telic_adverbial_pattern :
     hammer_flat_in.judgment == .ok ∧
     hammer_flat_for.judgment == .unacceptable := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Atelic bare activities accept for-adverbials. -/
 theorem atelic_adverbial_pattern :
     hammer_bare_for.judgment == .ok := by
-  native_decide
+  decide
 
 end GoldbergJackendoff2004

@@ -105,7 +105,7 @@ def intrPushOpenClasses : List LevinClass := [.pushPull, .hit]
 theorem all_classes_no_causative_alternation :
     intrPushOpenClasses.all
       (! ·.participatesIn .causativeInchoative) = true := by
-  native_decide
+  decide
 
 /-- Cross-reference: the existing alternation data in
     `DiathesisAlternations.Data` already records that *hit* (§18.1) is
@@ -113,7 +113,7 @@ theorem all_classes_no_causative_alternation :
 theorem agrees_with_diathesis_data :
     Phenomena.ArgumentStructure.DiathesisAlternations.Data.ci_hit.result
       == .blocked := by
-  native_decide
+  decide
 
 /-- All core classes are pure manner roots
     ([beavers-koontz-garboden-2020]): they encode no state, no result,
@@ -121,7 +121,7 @@ theorem agrees_with_diathesis_data :
 theorem all_classes_pure_manner :
     intrPushOpenClasses.all
       (·.rootEntailments == Root.FeatureSignature.pureManner) = true := by
-  native_decide
+  decide
 
 /-- All core classes encode contact and motion but NOT change of state
     and NOT causation. This is why they don't show the causative alternation
@@ -131,7 +131,7 @@ theorem all_classes_no_cos_no_causation :
       let mc := c.meaningComponents
       mc.contact && mc.motion && !mc.changeOfState && !mc.causation
     ) = true := by
-  native_decide
+  decide
 
 /-- Fragment verb entries confirm the classification. -/
 theorem push_is_pushPull : push.levinClass = some .pushPull := rfl
@@ -156,7 +156,7 @@ intr-*push open* resultatives." -/
 /-- PushPull alone: no causative alternation. -/
 theorem pushPull_alone_no_alternation :
     LevinClass.pushPull.meaningComponents.predictedAlternation
-      .causativeInchoative = false := by native_decide
+      .causativeInchoative = false := by decide
 
 /-- PushPull in the resultative: causative alternation predicted.
     The construction adds CoS + causation → the composed meaning
@@ -164,25 +164,25 @@ theorem pushPull_alone_no_alternation :
 theorem pushPull_alternates_in_resultative :
     predictedAlternationInConstruction
       LevinClass.pushPull.meaningComponents
-      resultative .causativeInchoative = true := by native_decide
+      resultative .causativeInchoative = true := by decide
 
 /-- Hit alone: no causative alternation. -/
 theorem hit_alone_no_alternation :
     LevinClass.hit.meaningComponents.predictedAlternation
-      .causativeInchoative = false := by native_decide
+      .causativeInchoative = false := by decide
 
 /-- Hit in the resultative: causative alternation predicted. -/
 theorem hit_alternates_in_resultative :
     predictedAlternationInConstruction
       LevinClass.hit.meaningComponents
-      resultative .causativeInchoative = true := by native_decide
+      resultative .causativeInchoative = true := by decide
 
 /-- All core intr-push-open classes alternate in the resultative. -/
 theorem all_classes_alternate_in_resultative :
     intrPushOpenClasses.all (λ c =>
       predictedAlternationInConstruction
         c.meaningComponents resultative .causativeInchoative
-    ) = true := by native_decide
+    ) = true := by decide
 
 /-! ### Event structure shift (bridge to `EventStructure`)
 
@@ -247,14 +247,14 @@ which comes from the resultative construction, not the verb. -/
 /-- Hit-class verbs (including *pound*) cannot enter the middle alone. -/
 theorem hit_no_middle_alone :
     LevinClass.hit.meaningComponents.predictedAlternation .middle = false := by
-  native_decide
+  decide
 
 /-- Hit-class verbs CAN enter the middle inside the resultative.
     This derives the paper's observation (18b) from the same mechanism. -/
 theorem hit_middle_in_resultative :
     predictedAlternationInConstruction
       LevinClass.hit.meaningComponents resultative .middle = true := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Adjective set: spatially instantiated states
@@ -283,7 +283,7 @@ abbrev SpatialAdjType := Semantics.Gradability.SpatialConfigType
 theorem all_attested_adjs_spatial :
     [open_, closed_, shut, free_, loose, flat].all
       (·.spatialConfigType |>.isSome) = true := by
-  native_decide
+  decide
 
 /-- All attested adjectives are closed-scale (absolute) in
     [kennedy-2007]'s terms. Spatially instantiated states have
@@ -291,7 +291,7 @@ theorem all_attested_adjs_spatial :
 theorem all_attested_adjs_closed_scale :
     [open_, closed_, shut, free_, loose, flat].all
       (·.scaleType == .closed) = true := by
-  native_decide
+  decide
 
 /-! Adjectives in senses that are NOT spatially instantiated do not
 appear in intr-*push open* resultatives, even when they occur in
@@ -406,7 +406,7 @@ theorem all_verbs_from_predicted_classes :
     alternationPairs.all (λ d =>
       intrPushOpenClasses.contains d.verbClass ||
       d.verbClass == .wipe) = true := by
-  native_decide
+  decide
 
 /-- Each core-class pair (pushPull, hit) is blocked alone but gains the
     causative alternation inside the resultative construction.
@@ -418,7 +418,7 @@ theorem per_pair_alternation_core :
       !p.verbClass.participatesIn .causativeInchoative &&
       predictedAlternationInConstruction
         p.verbClass.meaningComponents resultative .causativeInchoative
-    ) = true := by native_decide
+    ) = true := by decide
 
 /-- Each pair's `adjType` agrees with the Fragment entry's `spatialConfigType`. -/
 theorem push_open_adj_agrees : open_.spatialConfigType = some push_open.adjType := rfl
@@ -687,7 +687,7 @@ def directedMotionData : List DirectedMotionDatum :=
     paralleling intr-*push open*. -/
 theorem directed_motion_themes_autonomous :
     directedMotionData.all (canBeIntrPushOpenSubject ·.themeType) = true := by
-  native_decide
+  decide
 
 /-! Natural forces (*storm*, *wind*) are attested as directed motion
 subjects — (85b) "The storm swept through the valley" — but NOT in
@@ -720,28 +720,28 @@ def isLicensed (verbClass : LevinClass) (adj : AdjectivalPredicateEntry)
 /-- "The door pushed open" in a recoverable-cause context is licensed. -/
 theorem door_pushed_open_licensed :
     isLicensed .pushPull open_ .recoverableInContext .projectile = true := by
-  native_decide
+  decide
 
 /-- "The door pushed open" in a cause-unknown context is licensed. -/
 theorem door_pushed_open_licensed_unknown :
     isLicensed .pushPull open_ .identityUnknown .projectile = true := by
-  native_decide
+  decide
 
 /-- Blocked: cause not recoverable. -/
 theorem blocked_no_context :
     isLicensed .pushPull open_ .notRecoverable .projectile = false := by
-  native_decide
+  decide
 
 /-- Blocked: theme requires continuous force (PCC). -/
 theorem blocked_continuous_force :
     isLicensed .pushPull open_ .recoverableInContext
       .requiresContinuousForce = false := by
-  native_decide
+  decide
 
 /-- Blocked: verb class wrong (break is a CoS verb, not force). -/
 theorem blocked_wrong_verb_class :
     isLicensed .break_ open_ .recoverableInContext .projectile = false := by
-  native_decide
+  decide
 
 /-- Blocked: adjective not spatially instantiated (*red* has no spatial config). -/
 private def red_ : AdjectivalPredicateEntry where
@@ -749,7 +749,7 @@ private def red_ : AdjectivalPredicateEntry where
 
 theorem blocked_wrong_adjective :
     isLicensed .pushPull red_ .recoverableInContext .projectile = false := by
-  native_decide
+  decide
 
 /-! ### End-to-end: the full argument chain
 
@@ -834,22 +834,22 @@ def pushOpen_filled : FilledResultative :=
   { verbClass := .pushPull
   , adjective := open_
   , construction := resultative
-  , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide }
+  , alternationPredicted := by decide
+  , adjSpatial := by decide }
 
 def pullFree_filled : FilledResultative :=
   { verbClass := .pushPull
   , adjective := free_
   , construction := resultative
-  , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide }
+  , alternationPredicted := by decide
+  , adjSpatial := by decide }
 
 def slamShut_filled : FilledResultative :=
   { verbClass := .hit
   , adjective := shut
   , construction := resultative
-  , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide }
+  , alternationPredicted := by decide
+  , adjSpatial := by decide }
 
 /-! ### FilledResultative → licensing
 
@@ -876,24 +876,24 @@ theorem filled_implies_licensed (fr : FilledResultative)
 theorem pushOpen_filled_licensed :
     isLicensed pushOpen_filled.verbClass pushOpen_filled.adjective
       .recoverableInContext .projectile = true := by
-  native_decide
+  decide
 
 /-- The anticausative of `pushOpen_filled` is licensed in the right
     discourse context. -/
 theorem pushOpen_anticausative_licensed :
     pushOpen_filled.canAnticausativize .recoverableInContext .projectile = true := by
-  native_decide
+  decide
 
 /-- The anticausative is blocked when the cause is not recoverable. -/
 theorem pushOpen_anticausative_blocked_no_context :
     pushOpen_filled.canAnticausativize .notRecoverable .projectile = false := by
-  native_decide
+  decide
 
 /-- The anticausative is blocked when the theme requires continuous force. -/
 theorem pushOpen_anticausative_blocked_continuous :
     pushOpen_filled.canAnticausativize .recoverableInContext
       .requiresContinuousForce = false := by
-  native_decide
+  decide
 
 /-! ### FilledResultative ↔ end-to-end chain
 
@@ -988,7 +988,7 @@ completion are stated via the canonical `BoolSEM.causallySufficientOn` /
 structural theorems via `unfold + rfl`.
 
 Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
-so `developDetOn` reduces structurally without `native_decide`. -/
+so `developDetOn` reduces structurally without `decide`. -/
 
 section Scenarios
 open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM

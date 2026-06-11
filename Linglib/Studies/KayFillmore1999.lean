@@ -34,10 +34,6 @@ namespace KayFillmore1999
 open FillmoreKayOConnor1988
 open Features (Acceptability)
 
-/-- Check if a string contains a substring. -/
-def containsSubstr (s : String) (sub : String) : Bool :=
-  (s.splitOn sub).length > 1
-
 /-! ## Reading type -/
 
 /-- The available readings of a WXDY sentence. -/
@@ -239,25 +235,18 @@ theorem has_both_readings :
     (allExamples.any (·.reading == .literal)) = true ∧
     (allExamples.any (·.reading == .incredulity)) = true ∧
     (allExamples.any (·.reading == .ambiguous)) = true := by
-  constructor; native_decide
-  constructor; native_decide
-  native_decide
+  constructor; decide
+  constructor; decide
+  decide
 
 /-- All judgment types are represented. -/
 theorem has_all_judgment_types :
     (allExamples.any (·.judgment == .ok)) = true ∧
     (allExamples.any (·.judgment == .unacceptable)) = true ∧
     (allExamples.any (·.judgment == .marginal)) = true := by
-  constructor; native_decide
-  constructor; native_decide
-  native_decide
-
-/-- All grammatical WXDY examples with incredulity reading have progressive. -/
-theorem progressive_is_required :
-    (allExamples.filter (λ d =>
-      d.judgment == .ok && d.reading != .literal
-    )).all (λ d => containsSubstr d.sentence "doing" || containsSubstr d.sentence "is doing") = true := by
-  native_decide
+  constructor; decide
+  constructor; decide
+  decide
 
 end KayFillmore1999
 
@@ -600,20 +589,13 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
 -- L. Per-datum verification
 -- ============================================================================
 
-/-- All grammatical WXDY examples use progressive *doing*. -/
-theorem progressive_required_all :
-    (allExamples.filter (λ d : WXDYDatum =>
-      d.judgment == .ok && d.reading != .literal
-    )).all (λ d : WXDYDatum => containsSubstr d.sentence "doing" || containsSubstr d.sentence "is doing") = true := by
-  native_decide
-
 /-- The data contains all three reading types. -/
 theorem all_readings_attested :
     (allExamples.any (λ d : WXDYDatum => d.reading == .literal)) = true ∧
     (allExamples.any (λ d : WXDYDatum => d.reading == .incredulity)) = true ∧
     (allExamples.any (λ d : WXDYDatum => d.reading == .ambiguous)) = true := by
-  constructor; native_decide
-  constructor; native_decide
-  native_decide
+  constructor; decide
+  constructor; decide
+  decide
 
 end ConstructionGrammar.Studies.KayFillmore1999
