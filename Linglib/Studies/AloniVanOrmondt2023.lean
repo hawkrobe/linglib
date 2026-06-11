@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Modal.QBSML.Enrichment
+import Linglib.Core.Logic.Modal.QBSML.StandardTranslation
 import Linglib.Core.Logic.Modal.QBSML.Properties
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
@@ -669,6 +670,47 @@ theorem possPxOrQx_classical
               ((monadicRel QPred.Q).formula₁ (Term.var QVar.x))))).Realize
           avoModel i.world (v i) :=
   support_iff_forall_realize avoModel rfl s v hv
+
+/-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
+    relativized to the individual sort, predicates world-relativized to the
+    current-world variable `Sum.inr 0`. -/
+def stUnivPxOrQx : (stLang FCAtom QPred).Formula (QVar ⊕ ℕ) :=
+  Formula.all₁ (Sum.inl QVar.x)
+    ((stIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
+      ((stRel QPred.P).formula₂ (Term.var (Sum.inr 0))
+          (Term.var (Sum.inl QVar.x)) ⊔
+        (stRel QPred.Q).formula₂ (Term.var (Sum.inr 0))
+          (Term.var (Sum.inl QVar.x))))
+
+/-- The closure is a genuine sentence: the compiler computes the
+    free-variable finset. -/
+theorem stUnivPxOrQx_closed :
+    (stClose 0 stUnivPxOrQx).freeVarFinset = ∅ := by decide
+
+/-- Support of `∀x(Px ∨ Qx)` at a singleton forces its sort-guarded closed
+    standard translation as a **sentence** of `avoModel.stStructure` — the
+    compactness-ready form, with every translation step (`toModal?`, `st?`,
+    the free-variable check) computed by the compiler. -/
+theorem univPxOrQx_sentence
+    (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom)
+    (hv : ∀ y, i.assign y = some (v y))
+    (h : support avoModel univPxOrQx {i}) :
+    letI := avoModel.stStructure
+    (PowerSet2World ⊕ FCAtom) ⊨
+      (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed :=
+  models_toSentence_of_support avoModel rfl rfl stUnivPxOrQx_closed hv h
+
+/-- Conversely, the sentence yields support at some singleton — sentencehood
+    of the translation makes `∀x(Px ∨ Qx)`'s support assignment- and
+    state-independent. -/
+theorem support_of_stUnivPxOrQx_sentence
+    (h : letI := avoModel.stStructure
+         (PowerSet2World ⊕ FCAtom) ⊨
+           (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed) :
+    ∃ (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom),
+      (∀ y, i.assign y = some (v y)) ∧ support avoModel univPxOrQx {i} :=
+  haveI : Nonempty FCAtom := ⟨.a⟩
+  exists_support_of_models_toSentence avoModel rfl rfl stUnivPxOrQx_closed h
 
 /-! ### Frame condition: avoModel is indisputable on every state -/
 
