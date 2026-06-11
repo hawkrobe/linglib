@@ -27,6 +27,8 @@ confirmed conventional subtypes.
 - `GoldbergShirtz2025.pal_irreducible`: PAL is not fully compositional
 - `GoldbergShirtz2025.pal_load_bearing`: the network licenses
   phrase-in-word-slot tokens only through PAL
+- `GoldbergShirtz2025.subtypes_inherit_familiarity`: every conventional
+  subtype's familiarity presupposition is derived through the links
 - `GoldbergShirtz2025.palExamples`, `crossLinguisticPALs`: attested examples
 
 ## Experimental results
@@ -336,6 +338,43 @@ precisely for situation types that are not antecedently familiar
 reached by accommodation or pretense, not antecedent entailment. -/
 def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PrProp W :=
   { presup := situationType, assertion := headNoun }
+
+/-! ### Typed pragmatics: familiarity inherits through the network
+
+The four subtype links' shared property — "lemma-like construal: presumed
+familiarity" — as a computed fact rather than a string: only PAL itself
+carries a pragmatic contribution (`palMeaning`); the conventional subtypes
+carry none of their own, and the network derives theirs by normal-mode
+inheritance through the links. Their at-issue increments ('simple' marks
+routine-ness, the interdiction of *Don't ⟨PAL⟩ me*, etc.) are not modeled;
+the presupposition component is the inherited content. -/
+
+/-- The links determine PAL's conventional subtypes. -/
+theorem pal_children :
+    palConstructicon.childrenOf "PAL" =
+      [ mustVerbConstruction, aSimplePALConstruction
+      , dontPALmeConstruction, theOldPALConstruction ] := by decide
+
+/-- Own pragmatic contributions for the Figure 5 network: only PAL itself
+carries one — the familiarity-presupposing meaning. -/
+def figure5Pragmatics (W : Type*) (situationType headNoun : W → Prop) :
+    Construction → Option (PrProp W) :=
+  λ c => if c.name == "PAL" then some (palMeaning W situationType headNoun)
+         else none
+
+/-- Every conventional subtype inherits the familiarity presupposition
+through the network: each child of PAL has a derived pragmatic
+contribution whose presupposition is the situation type. -/
+theorem subtypes_inherit_familiarity (W : Type*)
+    (situationType headNoun : W → Prop) :
+    ∀ c ∈ palConstructicon.childrenOf "PAL",
+      (palConstructicon.derivedField
+          (figure5Pragmatics W situationType headNoun) c).map (·.presup)
+        = some situationType := by
+  intro c hc
+  rw [pal_children] at hc
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+  rcases hc with rfl | rfl | rfl | rfl <;> rfl
 
 /-! ### Irreducibility -/
 
