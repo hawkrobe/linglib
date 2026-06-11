@@ -232,13 +232,13 @@ def clos (closer : W → W → W → Prop)
 -- § Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-- `orFilter` is inherently symmetric for presupposition projection.
+/-- `orPositive` is inherently symmetric for presupposition projection.
 
 This is Sharvit's observation that K/P's `or` does not distinguish
 left from right. -/
-theorem orFilter_symmetric (p q : PrProp W) (w : W) :
-    (PrProp.orFilter p q).presup w ↔ (PrProp.orFilter q p).presup w := by
-  simp only [PrProp.orFilter]
+theorem orPositive_symmetric (p q : PrProp W) (w : W) :
+    (PrProp.orPositive p q).presup w ↔ (PrProp.orPositive q p).presup w := by
+  simp only [PrProp.orPositive]
   tauto
 
 /-- K/P*'s inner presupposition (CLOS) entails K/P's inner presupposition

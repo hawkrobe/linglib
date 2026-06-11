@@ -28,14 +28,14 @@ and the presupposition operator is D59 (Ch. 7 §7.6).
 | ABLE          | Formal               | CCP equivalent      |
 |---------------|----------------------|----------------------|
 | `pred sat`    | `{p ∈ σ \| sat p}`  | `updateFromSat`      |
-| `NOT φ`       | `σ \ σ[φ]`          | *(PUL-specific)*     |
+| `NOT φ`       | `σ \ σ[φ]`          | `CCP.neg`            |
 | `AND φ ψ`     | `σ[φ][ψ]`           | `CCP.seq`            |
 | `MIGHT φ`     | `σ if σ[φ]≠∅, ∅ o/w`| `CCP.might`          |
 | `∂ φ`         | `σ if σ[φ]=σ, ∅ o/w`| `CCP.must`           |
 
 **Important**: ABLE NOT uses set complement within the input (`σ \ σ[φ]`),
-which differs from `CCP.neg` (test-based pass/fail). This is how PUL
-handles negation — it is eliminative but not a test.
+i.e. `CCP.neg`, which differs from the whole-state test `CCP.negTest`
+(pass/fail). PUL negation is eliminative but not a test.
 
 **Simplification**: Full ABLE (D52) takes anaphoric closure (↓) before
 negation to strip discourse markers; our set-based version omits this
@@ -239,18 +239,22 @@ theorem eval_pred_eq_updateFromSat (sat : P → Prop) :
     (Formula.pred sat).eval = updateFromSat (λ p (_ : Unit) => sat p) () := by
   ext σ p; simp only [eval, updateFromSat, Set.mem_setOf_eq]
 
-/-- ABLE NOT ≠ CCP.neg in general.
+/-- ABLE NOT *is* dynamic negation (`σ \ σ[φ]`), by construction. -/
+theorem eval_not_eq_ccpNeg {P : Type*} (φ : Formula P) :
+    (Formula.not φ).eval = CCP.neg φ.eval := rfl
 
-PUL negation is set complement within the input (`σ \ σ[φ]`),
-while CCP.neg is a test (pass/fail on the whole context).
+/-- ABLE NOT ≠ CCP.negTest in general.
+
+PUL negation is set complement within the input (`σ \ σ[φ]` = `CCP.neg`),
+while CCP.negTest is a test (pass/fail on the whole context).
 They coincide only when φ is eliminative AND σ[φ] = ∅ or σ[φ] = σ.
 -/
-theorem not_neq_ccpNeg :
+theorem not_neq_ccpNegTest :
     ∃ (P : Type) (φ : Formula P) (σ : InfoStateOf P),
-      (Formula.not φ).eval σ ≠ CCP.neg φ.eval σ := by
+      (Formula.not φ).eval σ ≠ CCP.negTest φ.eval σ := by
   -- Witness: P = Bool, φ = pred (· = true), σ = {true, false}
   -- NOT φ gives σ \ {true} = {false} (nonempty)
-  -- CCP.neg gives ∅ (since φ.eval σ = {true} is nonempty)
+  -- CCP.negTest gives ∅ (since φ.eval σ = {true} is nonempty)
   use Bool, Formula.pred (· = true), {true, false}
   intro h
   have : false ∈ (Formula.not (Formula.pred (· = true))).eval ({true, false} : Set Bool) := by
@@ -258,7 +262,7 @@ theorem not_neq_ccpNeg :
     refine Set.mem_diff_of_mem (Or.inr rfl) ?_
     intro ⟨_, hf⟩; exact Bool.noConfusion hf
   rw [h] at this
-  simp only [eval, CCP.neg] at this
+  simp only [eval, CCP.negTest] at this
   have hne : ({ p : Bool | p ∈ ({true, false} : Set Bool) ∧ p = true}).Nonempty :=
     ⟨true, Or.inl rfl, rfl⟩
   simp only [hne, ↓reduceIte] at this

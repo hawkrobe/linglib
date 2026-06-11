@@ -125,6 +125,13 @@ def test (C : Condition S) : Update S :=
 
 notation "[" C "]" => test C
 
+/-- A test relates a state only to itself. Operators that return a
+`Condition` (`dneg`, `dimpl`, `ddisj`) re-enter the update algebra via
+`test`, so updates factoring through `test` cannot modify the state —
+the algebraic core of anaphoric-island facts. -/
+theorem eq_of_test {C : Condition S} {i j : S} (h : test C i j) : i = j :=
+  h.1
+
 /-- Dynamic conjunction (sequencing): `D₁ ; D₂`.
 
 Relational composition: there exists an intermediate state `h`

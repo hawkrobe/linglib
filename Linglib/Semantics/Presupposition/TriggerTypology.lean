@@ -49,16 +49,18 @@ inductive PresupTrigger where
   | factive
   /-- Change-of-state predicates: "stop/start V-ing" presupposes prior state -/
   | changeOfState
-  /-- Repetitive iteratives: "again" presuppose prior occurrence
-      followed by an interruption (P-then-¬P-then-P-again).
+  /-- Repetitive iteratives: "again" presupposes a prior occurrence.
+      An intervening ¬P interval (P-then-¬P-then-P-again) is presupposed
+      only for stative hosts in competition with the continuative;
+      eventive *again* (*John won again*) requires precedence only.
       English *again*, German *wieder*, Mandarin *you* 又, Cantonese *jau*. -/
   | iterative
   /-- Continuatives: "still" presuppose **uninterrupted** continuation
       of P throughout an interval up to and including the reference time.
-      Distinct from `.iterative` (which presupposes P-¬P-P) and from
-      `.changeOfState` (which involves a polarity flip).
-      English *still*, Mandarin *reng* 仍 / *hai* 还, Cantonese *zung* 仲.
-      Cf. Ippolito 2007 on *still* vs *again*. -/
+      Distinct from `.iterative` (interruption presupposed only for
+      statives) and from `.changeOfState` (which involves a polarity
+      flip). English *still*, Mandarin *reng* 仍 / *hai* 还,
+      Cantonese *zung* 仲. Cf. [ippolito-2007] on *still* vs *again*. -/
   | continuative
   /-- Cleft constructions: "It was X that..." presupposes existence -/
   | cleft

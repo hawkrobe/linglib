@@ -101,12 +101,12 @@ instance pennilessPr_decAssertion : DecidablePred pennilessPr.assertion := by
 theorem penniless_entails_no_money : ∀ w, penniless w → ¬hasMoney w := by
   intro w; cases w <;> simp [penniless, hasMoney]
 
-/-- The disjunction "penniless or proud" under `orFilter` is UNDEFINED
-at penniless-worlds. This is the root cause of K/P's failure: `orFilter`'s
+/-- The disjunction "penniless or proud" under `orPositive` is UNDEFINED
+at penniless-worlds. This is the root cause of K/P's failure: `orPositive`'s
 filtering condition requires "proud of money" to be defined when
 "penniless" is true, but penniless entails ¬hasMoney. -/
-theorem orFilter_undefined_at_penny :
-    ¬(PrProp.orFilter pennilessPr proudOfMoney).presup W.pennyNotLend := by
+theorem orPositive_undefined_at_penny :
+    ¬(PrProp.orPositive pennilessPr proudOfMoney).presup W.pennyNotLend := by
   rintro ⟨h1, _, _⟩
   -- h1 : pennilessPr.assertion → proudOfMoney.presup
   -- pennilessPr.assertion W.pennyNotLend = penniless W.pennyNotLend = True
@@ -114,8 +114,8 @@ theorem orFilter_undefined_at_penny :
   exact (h1 trivial : hasMoney W.pennyNotLend)
 
 /-- The disjunction IS defined at proud-worlds. -/
-theorem orFilter_defined_at_proud :
-    (PrProp.orFilter pennilessPr proudOfMoney).presup W.proudNotLend :=
+theorem orPositive_defined_at_proud :
+    (PrProp.orPositive pennilessPr proudOfMoney).presup W.proudNotLend :=
   ⟨fun h => absurd h (by simp [pennilessPr, PrProp.ofProp, penniless]),
    fun _ => trivial,
    Or.inr trivial⟩
@@ -128,15 +128,15 @@ open Semantics.Conditionals.Presupposition
 
 -- Decidable instances for compound PrProp assertions
 
-instance orFilter_decAssertion : DecidablePred (PrProp.orFilter pennilessPr proudOfMoney).assertion := by
-  intro w; unfold PrProp.orFilter pennilessPr PrProp.ofProp proudOfMoney
+instance orPositive_decAssertion : DecidablePred (PrProp.orPositive pennilessPr proudOfMoney).assertion := by
+  intro w; unfold PrProp.orPositive pennilessPr PrProp.ofProp proudOfMoney
   infer_instance
 
 -- § K/P fails: ∃-reading drops penniless-worlds
 
-/-- Under K/P, the ∃-reading uses `orFilter` for the antecedent disjunction. -/
+/-- Under K/P, the ∃-reading uses `orPositive` for the antecedent disjunction. -/
 def existReading_KP : PrProp W :=
-  ifKP allWorlds (PrProp.orFilter pennilessPr proudOfMoney) shouldntLend
+  ifKP allWorlds (PrProp.orPositive pennilessPr proudOfMoney) shouldntLend
 
 /-- Under K/P, the ∀-reading is the conjunction of two K/P conditionals. -/
 def forallReading_KP : PrProp W :=
@@ -148,7 +148,7 @@ theorem kp_exist_undefined_at_penny :
     ¬existReading_KP.presup W.pennyNotLend ∧
     ¬existReading_KP.presup W.pennyLend := by
   refine ⟨?_, ?_⟩ <;>
-    (intro h; simp [existReading_KP, ifKP, PrProp.orFilter,
+    (intro h; simp [existReading_KP, ifKP, PrProp.orPositive,
       pennilessPr, PrProp.ofProp, penniless, proudOfMoney, hasMoney] at h)
 
 /-- K/P ∃-reading IS defined at proud-worlds. -/
@@ -156,7 +156,7 @@ theorem kp_exist_defined_at_proud :
     existReading_KP.presup W.proudNotLend ∧
     existReading_KP.presup W.proudLend := by
   refine ⟨?_, ?_⟩ <;>
-    (simp [existReading_KP, ifKP, PrProp.orFilter, pennilessPr, PrProp.ofProp,
+    (simp [existReading_KP, ifKP, PrProp.orPositive, pennilessPr, PrProp.ofProp,
       penniless, proudOfMoney, hasMoney, shouldntLend, allWorlds])
 
 /-- K/P ∀-reading: the first conditional (if penniless, shouldntLend) is always defined. -/
@@ -270,11 +270,11 @@ theorem kpstar_strawson_equiv :
 theorem kp_exist_presup_eq :
     ∀ w, existReading_KP.presup w ↔ hasMoney w := by
   intro w; cases w <;>
-    simp [existReading_KP, ifKP, PrProp.orFilter, pennilessPr, PrProp.ofProp,
+    simp [existReading_KP, ifKP, PrProp.orPositive, pennilessPr, PrProp.ofProp,
           penniless, proudOfMoney, hasMoney, shouldntLend, allWorlds]
 
-theorem kp_orFilter_undefined_at_penny :
-    ¬(PrProp.orFilter pennilessPr proudOfMoney).presup W.pennyNotLend :=
-  orFilter_undefined_at_penny
+theorem kp_orPositive_undefined_at_penny :
+    ¬(PrProp.orPositive pennilessPr proudOfMoney).presup W.pennyNotLend :=
+  orPositive_undefined_at_penny
 
 end Sharvit2025

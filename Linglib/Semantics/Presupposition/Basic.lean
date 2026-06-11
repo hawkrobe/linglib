@@ -19,7 +19,8 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
   also `W → Prop`.
 * Connective families on `PrProp W`: classical (`and`, `or`, `imp`, `xor`),
   filtering / Karttunen (`andFilter`, `impFilter`, `orFilter`), K&P
-  symmetric disjunction (`orKPSymmetric`), Weak Kleene (`andWeak`,
+  symmetric disjunction (`orKPSymmetric`), positive-antecedent
+  disjunction (`orPositive`, a documented rival), Weak Kleene (`andWeak`,
   `orWeak`), Belnap conditional assertion (`andBelnap`, `orBelnap`) and
   flexible accommodation (`andFlex`, `orFlex`).
 * `belnapLift` — unifier showing Belnap = flexible accommodation for any
@@ -28,7 +29,7 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
   canonical [von-fintel-1999] form (presup-as-premise) and the
   stronger variant that additionally requires `q`'s presupposition to
   project from `p`'s satisfaction.
-* `liveness`, `genuineness` — Yagi 2025 disjunction-update conditions.
+* `liveness`, `genuineness` — [yagi-2025] disjunction-update conditions.
 * `presupOfReferent` — definite-description combinator (single source of
   truth for singular definite denotations).
 
@@ -241,28 +242,53 @@ def xor (p q : PrProp W) : PrProp W where
 
 /-! ### Filtering connectives (Karttunen) -/
 
-/-- Filtering conjunction: antecedent can satisfy consequent's presupposition. -/
+/-- Filtering conjunction ([karttunen-1973], [peters-1979]): the first
+    conjunct can satisfy the second's presupposition. -/
 def andFilter (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∧ q.assertion w
 
-/-- Filtering implication: antecedent can satisfy consequent's presupposition. -/
+/-- Filtering implication ([karttunen-1973], [peters-1979]): the
+    antecedent can satisfy the consequent's presupposition. -/
 def impFilter (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
   assertion := fun w => p.assertion w → q.assertion w
 
-/-- Filtering disjunction: disjuncts can satisfy each other's presuppositions. -/
+/-- Filtering disjunction (asymmetric, [karttunen-1973]): the *negation*
+    of the first disjunct can satisfy the second's presupposition —
+    *Either there is no bathroom or the bathroom is upstairs* is defined
+    because the second disjunct's bathroom presupposition is required
+    only at worlds where the first disjunct is false.
+
+    Generalizes `disjFilterLeft` to a presuppositional first disjunct
+    (`orFilter_ofProp`). The symmetric K&P variant is `orKPSymmetric`;
+    the positive-antecedent variant is `orPositive`. -/
 def orFilter (p q : PrProp W) : PrProp W where
-  presup := fun w =>
-    (p.assertion w → q.presup w) ∧
-    (q.assertion w → p.presup w) ∧
-    (p.presup w ∨ q.presup w)
+  presup := fun w => p.presup w ∧ (¬p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∨ q.assertion w
 
 -- Notation for filtering connectives
 scoped infixl:65 " /\\' " => andFilter
 scoped infixr:55 " ->' " => impFilter
 scoped infixl:60 " \\/' " => orFilter
+
+/-! ### Positive-antecedent symmetric disjunction -/
+
+/-- Positive-antecedent symmetric disjunction: each disjunct's
+    presupposition is required where the *other disjunct's assertion
+    holds*, plus at least one disjunct defined. This is NOT Karttunen
+    filtering (`orFilter`): it demands the second disjunct's
+    presupposition exactly where the first is *true*, un-filtering
+    bathroom-sentence data. Retained as a documented rival:
+    [sharvit-2025] identifies it as the root cause of K/P-style failure
+    (`Studies/Sharvit2025.lean`), and [yagi-2025] §2.2 discusses the
+    `Π(φ) ∨ Π(ψ)` conjunct as a candidate fix (`Studies/Yagi2025.lean`). -/
+def orPositive (p q : PrProp W) : PrProp W where
+  presup := fun w =>
+    (p.assertion w → q.presup w) ∧
+    (q.assertion w → p.presup w) ∧
+    (p.presup w ∨ q.presup w)
+  assertion := fun w => p.assertion w ∨ q.assertion w
 
 /-! ### K&P two-dimensional disjunction -/
 
@@ -764,11 +790,12 @@ theorem belnapLift_comm (f : Prop → Prop → Prop)
 theorem all_or_agree_when_both_defined (p q : PrProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
     ((or p q).assertion w ↔ (orFilter p q).assertion w) ∧
+    ((or p q).assertion w ↔ (orPositive p q).assertion w) ∧
     ((or p q).assertion w ↔ (orKPSymmetric p q).assertion w) ∧
     ((or p q).assertion w ↔ (orFlex p q).assertion w) ∧
     ((or p q).assertion w ↔ (orBelnap p q).assertion w) ∧
     ((or p q).assertion w ↔ (orWeak p q).assertion w) := by
-  refine ⟨Iff.rfl, Iff.rfl, ?_, ?_, Iff.rfl⟩
+  refine ⟨Iff.rfl, Iff.rfl, Iff.rfl, ?_, ?_, Iff.rfl⟩
   · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
   · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
 
@@ -827,6 +854,11 @@ def disjFilterLeft (firstDisjunct : W → Prop) (second : PrProp W) :
   assertion := fun w => firstDisjunct w ∨ second.assertion w
   presup := fun w => ¬firstDisjunct w → second.presup w
 
+/-- `orFilter` with a presuppositionless first disjunct is `disjFilterLeft`. -/
+theorem orFilter_ofProp (A : W → Prop) (q : PrProp W) :
+    orFilter (ofProp A) q = disjFilterLeft A q :=
+  PrProp.ext (funext fun _ => propext (and_iff_right trivial)) rfl
+
 /-- Embedding under a negative factive (e.g., "is unaware that").
 
     "x is unaware that p" presupposes p and asserts ¬Bel_x(p).
@@ -879,9 +911,10 @@ theorem negFactive_presup_eq (complement : PrProp W)
     - asserts: ∀x ∈ S, assertion(φ(x))
     - presupposes: ∀x ∈ S, presup(φ(x))
 
-    [chemla-2009a], [fox-2013], [mayr-sauerland-2015]:
-    presuppositions triggered in the scope of a universal quantifier
-    tend to project universally. -/
+    [chemla-2009-quantified], [fox-2013]: presuppositions triggered in
+    the scope of a universal quantifier tend to project universally.
+    ([mayr-sauerland-2015] dissent: semantic projection is existential,
+    pragmatically strengthened — cf. [spector-sudo-2017].) -/
 def forallPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
   presup := fun w => ∀ x, S x → (φ x).presup w
   assertion := fun w => ∀ x, S x → (φ x).assertion w
@@ -891,7 +924,7 @@ def forallPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W wh
 
     For ∃x ∈ S, φ(x): presuppositions project *universally*, but the
     assertion is existential. This is the projection choice supported
-    experimentally by [chemla-2009a]; whether it is the right
+    experimentally by [chemla-2009-quantified]; whether it is the right
     default is empirically contested — see [spector-sudo-2017] for
     conditions under which a non-universal (existential) reading is
     preferred. Consumers committing to a projection theory should pick

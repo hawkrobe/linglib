@@ -1,50 +1,51 @@
-import Linglib.Semantics.Kinds.Anaphora
+import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Core.Logic.Assignment
 import Linglib.Features.MassCount
 
 /-!
 # Anaphora for Concepts, Kinds, and Parts
 [krifka-2026]
 
-Empirical data and verification theorems for [krifka-2026]'s theory
-of concept discourse referents. Three types of anaphora are distinguished:
+Head nouns introduce presupposed **concept discourse referents** — properties
+tagged [MASS]/[COUNT] — which project past anaphoric islands (in Krifka's
+extended sense: negation, modals, conditionals), while entity drefs introduced
+by indefinites under negation are trapped. Kind anaphors pick up concept drefs
+and derive kind individuals via [chierchia-1998]'s ∩ from
+`Semantics/Kinds/NominalMappingParameter`: ⟦it⟧ = λP[MASS] λi.∩P(i),
+⟦they⟧ = λP[COUNT] λi.∩⊔P(i) (17a,b). The dynamic layer instantiates the
+substrate `Update`/`test`/`dneg` algebra of `Semantics/Dynamic/Connectives`
+at heterogeneous assignments over `DRefVal`.
 
-| Type | Pronoun | Picks up | Example |
-|------|---------|----------|---------|
-| Entity | *he/she/it* | individual dref | *A dog₃ came in. It₃ barked.* |
-| Concept | *one*, empty NP | concept dref | *John has a big dog₂. Mary has a small one₂.* |
-| Kind | *it*[MASS], *they*[COUNT] | concept dref → kind | *John owns a dog₂. They₂ are loyal.* |
+Negation here is the paper's VP negation ⟦doesn't⟧ (44b), `test (∼φ)`; the
+sentential ⟦NEG⟧ (34) additionally restricts the negated existential to
+extensions g≤k, and both carry a world-time index — differences orthogonal to
+projection, which needs only that negation is a test. The paper derives the
+concept dref's input-presupposition compositionally from the head noun's
+partial (strong-Kleene) lexical entry (40d); that pipeline is not formalized,
+so the projection theorems take the input conditions as hypotheses. Cf.
+[hofmann-2025] (`Studies/Hofmann2025.lean`) for the neighboring account of
+entity-dref accessibility under negation via nonveridical continuations.
 
-## Key empirical claims
+## Main declarations
 
-1. **Concept drefs project past anaphoric islands** — negation, modals,
-   conditionals cannot trap concept drefs (unlike entity drefs)
-2. **Mass/count feature determines kind pronoun** — *it* for [MASS],
-   *they* for [COUNT], independent of ontology
-3. **Kind anaphora ≠ concept anaphora** — kind anaphors derive kind
-   individuals via ∩ (and ⊔ for count), concept anaphors reuse the property
-
-## End-to-End Example
-
-Section 3 constructs a concrete model of examples (44)–(45):
-
-```
-John₁ doesn't own [DP a₃ [NP dog]₂].
-  → concept dref x₂ ('dog'[COUNT]) persists in output
-  → entity dref x₃ (the dog) is trapped under ¬∃
-He₁ is afraid of them₂,₄.
-  → kind anaphor picks up concept x₂ (accessible!)
-  → derives kind individual via ∩(⊔⟦dog⟧)
-```
+- `selectPronoun`, `selectKindAnaphor`, `selectKindAnaphor_count_eq_mass`:
+  [MASS]/[COUNT]-driven pronoun and kind-operator selection, with absorption
+- `HAssign`, `entityIntro`: heterogeneous assignments and indefinite update
+- `concept_survives_test`, `entity_trapped_by_test`,
+  `concept_entity_asymmetry`: projection past island operators
+- an end-to-end model of *John₁ doesn't own [DP a₃ [NP dog]₂]* (44–45)
 -/
 
 namespace Krifka2026
 
+open Semantics.Kinds.NMP (Property Kind IsMass
+  kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
 open Semantics.Dynamic.Core (ConceptDRef DRefVal)
-open Semantics.Kinds.Anaphora
+open Semantics.Dynamic.Core.DynProp (Update Condition test dneg eq_of_test)
 
--- ════════════════════════════════════════════════════
--- § 1. Kind Pronoun Selection
--- ════════════════════════════════════════════════════
+/-! ### Kind pronoun and kind-operator selection -/
 
 /-- Kind-anaphoric pronouns, selected by the [MASS]/[COUNT] feature. -/
 inductive KindPronoun where
@@ -61,6 +62,23 @@ def selectPronoun : MassCount → KindPronoun
   | .mass => .it
   | .count => .they
 
+/-- The semantic side of (17a,b): *it* applies ∩ directly, *they* applies
+    plural closure ⊔ before ∩. -/
+def selectKindAnaphor {World Atom : Type} (feature : MassCount)
+    (P : Property World Atom) : Kind World Atom :=
+  match feature with
+  | .mass => kindAnaphorMass World Atom P
+  | .count => kindAnaphorCount World Atom P
+
+/-- For mass properties both anaphor paths yield the same kind, by
+    [krifka-2026]'s absorption rule ⊔⊔S = ⊔S: plural closure is a no-op on
+    cumulative properties, so for mass concepts the [MASS]/[COUNT] feature's
+    only role is selecting pronoun morphology. -/
+theorem selectKindAnaphor_count_eq_mass {World Atom : Type}
+    (P : Property World Atom) (hMass : IsMass World Atom P) :
+    selectKindAnaphor .count P = selectKindAnaphor .mass P :=
+  kindAnaphorCount_mass World Atom P hMass
+
 /-- Example (7a): count noun antecedent → plural kind anaphor *them*.
     *John noticed a spider in the bathroom. He has a phobia against them / \*it.* -/
 theorem ex7a_count_them : selectPronoun .count = .they := rfl
@@ -76,16 +94,64 @@ theorem ex7b_mass_it : selectPronoun .mass = .it := rfl
 theorem ex8_feature_determines_pronoun :
     selectPronoun .mass ≠ selectPronoun .count := by decide
 
-
--- ════════════════════════════════════════════════════
--- § 2. Concept DRef Projection: Island Escaping
--- ════════════════════════════════════════════════════
+/-! ### Concept dref projection past anaphoric islands -/
 
 section IslandEscaping
 
 variable {W E : Type*}
 
-/-- Examples (5a,c), (25), (44–45): Concept drefs project past negation.
+/-- Heterogeneous assignment: drefs valued in entities, concepts, or indices
+    ([krifka-2026] §4). Partiality is modeled by `DRefVal.undef`, so this is
+    `Core.Assignment (DRefVal W E)` rather than `Core.PartialAssign`. -/
+abbrev HAssign (W E : Type*) := Core.Assignment (DRefVal W E)
+
+/-- Existential introduction of an entity dref at index `n`, as by the indexed
+    determiner *a₃* in (40c) — minus the falls-under-the-concept condition,
+    which is delegated to `body`, and with novelty (`g n = .undef`) as an
+    external hypothesis rather than built into the extension relation g<₃k. -/
+def entityIntro (n : Nat) (body : Update (HAssign W E)) : Update (HAssign W E) :=
+  λ g h => ∃ e : E, body (Function.update g n (.entity e)) h
+
+/-- Island operators are tests, and tests preserve every dref of the input
+    assignment. Negation, implication, and disjunction all return a
+    `Condition` re-entering the update algebra via `test`, so this single
+    fact covers [krifka-2026]'s whole island list at once. -/
+theorem test_apply_eq {C : Condition (HAssign W E)} {g h : HAssign W E}
+    (hTest : test C g h) (n : Nat) : h n = g n :=
+  congrFun (eq_of_test hTest).symm n
+
+/-- **Concept drefs survive islands** ((5a), (25), (44–45)): a concept dref
+    presupposed in the input is still anchored in the output of any test.
+    The presupposition is a hypothesis here; the paper derives it from the
+    head noun's partial lexical entry (40d). -/
+theorem concept_survives_test {n : Nat} {c : ConceptDRef W E}
+    {C : Condition (HAssign W E)} {g h : HAssign W E}
+    (hPresup : g n = .concept c) (hTest : test C g h) :
+    h n = .concept c :=
+  (test_apply_eq hTest n).trans hPresup
+
+/-- **Entity drefs are trapped by islands** ((5c)): a dref novel in the input
+    (introduced only inside the island's ¬∃k) is still undefined in the
+    output. -/
+theorem entity_trapped_by_test {n : Nat}
+    {C : Condition (HAssign W E)} {g h : HAssign W E}
+    (hNovel : g n = .undef) (hTest : test C g h) :
+    h n = .undef :=
+  (test_apply_eq hTest n).trans hNovel
+
+/-- The concept/entity asymmetry under negation `test (∼φ)` ((44e)): the
+    concept dref persists, the entity dref does not. Both conjuncts are
+    instances of `test_apply_eq` — the asymmetry is carried entirely by where
+    the hypotheses place the two conditions (input presupposition vs input
+    novelty), which is [krifka-2026]'s point. -/
+theorem concept_entity_asymmetry {nC nE : Nat} {c : ConceptDRef W E}
+    {φ : Update (HAssign W E)} {g h : HAssign W E}
+    (hPresup : g nC = .concept c) (hNovel : g nE = .undef)
+    (hNeg : test (∼φ) g h) :
+    h nC = .concept c ∧ h nE = .undef :=
+  ⟨concept_survives_test hPresup hNeg, entity_trapped_by_test hNovel hNeg⟩
+
+/-- Examples (5a,c), (25), (44–45): concept drefs project past negation.
 
     (5a) *John doesn't own a dog. He is afraid of them. But Mary owns one.*
     (5c) *John doesn't own a dog. \*It is friendly.*
@@ -96,20 +162,17 @@ variable {W E : Type*}
     x₃ is trapped under ¬∃ (blocking *\*it₃*). -/
 theorem dog_concept_survives_negation
     {dogConcept : ConceptDRef W E}
-    {φ : DSent W E}
+    {φ : Update (HAssign W E)}
     {g h : HAssign W E}
     (hDog : g 2 = .concept dogConcept)
     (hNovel : g 3 = .undef)
-    (hNeg : dNeg φ g h) :
+    (hNeg : test (∼φ) g h) :
     h 2 = .concept dogConcept ∧ h 3 = .undef :=
   concept_entity_asymmetry hDog hNovel hNeg
 
 end IslandEscaping
 
-
--- ════════════════════════════════════════════════════
--- § 3. End-to-End: "John doesn't own a dog" (44–45)
--- ════════════════════════════════════════════════════
+/-! ### End-to-end: *John doesn't own a dog* (44–45) -/
 
 section EndToEnd
 
@@ -139,24 +202,22 @@ def g₀ : HAssign Wld Ent := λ n =>
 
 /-- Sentence meaning for "own [DP a₃ [NP dog]₂]": introduces entity dref
     at index 3, constrained to satisfy the concept property at index 2. -/
-def ownADog : DSent Wld Ent := entityIntro 3 (λ g h =>
+def ownADog : Update (HAssign Wld Ent) := entityIntro 3 (λ g h =>
   g = h ∧ (g 2).liftConceptPred (λ c => c.property .w₀ (match g 3 with
     | .entity e => e | _ => .john)) = true)
 
-/-- "John₁ doesn't own [DP a₃ [NP dog]₂]" as the negation of ownADog. -/
-def doesntOwnADog : DSent Wld Ent := dNeg ownADog
+/-- "John₁ doesn't own [DP a₃ [NP dog]₂]": the paper's VP negation
+    ⟦doesn't⟧ (44b) is the substrate test of dynamic negation. -/
+def doesntOwnADog : Update (HAssign Wld Ent) := test (∼ownADog)
 
 /-- The negation is satisfiable in this model (no dogs exist).
     Output: g₀ = h (test), confirming no entity dref was introduced. -/
-theorem negation_satisfiable :
-    doesntOwnADog g₀ g₀ := by
+theorem negation_satisfiable : doesntOwnADog g₀ g₀ := by
   refine ⟨rfl, ?_⟩
-  intro ⟨k, e, hBody⟩
-  simp only [g₀, dogConcept, DRefVal.liftConceptPred] at hBody
-  obtain ⟨hEq, hProp⟩ := hBody
-  -- After update, g(2) = g₀(2) = .concept dogConcept, g(3) = .entity e
-  -- The concept property returns false for all entities
-  simp at hProp
+  rintro ⟨k, e, -, hProp⟩
+  rw [Function.update_of_ne (by decide : (2 : Nat) ≠ 3),
+      show g₀ 2 = .concept dogConcept from rfl] at hProp
+  exact Bool.noConfusion hProp
 
 /-- **Main result**: after "John doesn't own a dog", the concept dref
     for 'dog' at index 2 is accessible while the entity dref at index 3
@@ -173,10 +234,7 @@ theorem dog_kind_pronoun : selectPronoun dogConcept.feature = .they := rfl
 
 end EndToEnd
 
-
--- ════════════════════════════════════════════════════
--- § 4. Concept vs Kind Anaphora (19a,b)
--- ════════════════════════════════════════════════════
+/-! ### Concept vs kind anaphora (19a,b) -/
 
 /-- Anaphoric constructions that pick up concept drefs.
 
