@@ -1,39 +1,19 @@
-/-
-# Grounded Context Polarity
-
-Semantic grounding for `ContextPolarity` (defined in `Core.NaturalLogic`)
-via Mathlib's `Monotone`/`Antitone` infrastructure.
-
-## Contents
-
-1. Re-export of `ContextPolarity` from `Core.NaturalLogic`
-2. IsUpwardEntailing/IsDownwardEntailing - Mathlib-based formal definitions
-3. Decidable test functions - For verification on finite models
-4. GroundedPolarity - Context + polarity + proof
-5. Monotonicity theorems - Negation, conditionals, quantifiers
-
-## Integration with Mathlib
-
-We use Mathlib's order-theoretic infrastructure:
-- `Monotone f` (from `Mathlib.Order.Monotone.Basic`): `∀ a b, a ≤ b → f a ≤ f b`
-- `Antitone f`: `∀ a b, a ≤ b → f b ≤ f a`
-
-For `Set World = World → Prop`, the ordering is pointwise: `p ≤ q ↔ ∀ w, p w → q w`.
-
-Mathlib provides composition lemmas for free:
-- `Monotone.comp`: UE ∘ UE = UE
-- `Antitone.comp_antitone`: DE ∘ DE = UE (the "double negation" rule!)
-- `Monotone.comp_antitone`: UE ∘ DE = DE
-- `Antitone.comp`: DE ∘ UE = DE
-
-The polarity composition rules are a homomorphic image of the
-`EntailmentSig` monoid — see `EntailmentSig.toContextPolarity_compose`.
-
--/
-
 import Mathlib.Order.Monotone.Defs
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
+
+/-!
+# Grounded context polarity
+
+Semantic grounding for `ContextPolarity` (defined in `Core.NaturalLogic`) via
+mathlib's `Monotone`/`Antitone` infrastructure: `IsUpwardEntailing`/
+`IsDownwardEntailing` abbreviate `Monotone`/`Antitone` on `Set α → Set β`,
+so the composition rules (UE ∘ UE = UE, DE ∘ DE = UE, mixed = DE) are
+`Monotone.comp`/`Antitone.comp` and friends. The polarity composition rules
+are a homomorphic image of the `EntailmentSig` monoid — see
+`EntailmentSig.toContextPolarity_compose`. `GroundedPolarity` bundles a
+context function with its monotonicity proof on the toy `World` model.
+-/
 
 namespace Semantics.Entailment.Polarity
 
@@ -41,24 +21,16 @@ export Core.NaturalLogic (ContextPolarity)
 
 open Semantics.Entailment
 
-/--
-IsUpwardEntailing is an abbreviation for `Monotone`.
+/-- A context function is upward entailing if it preserves entailment:
+`Monotone` on sets of worlds. -/
+abbrev IsUpwardEntailing {α β : Type*} (f : Set α → Set β) := Monotone f
 
-A context function `f : Set World → Set World` is upward entailing if
-it preserves the ordering: If p ≤ q, then f(p) ≤ f(q).
--/
-abbrev IsUpwardEntailing (f : Set World → Set World) := Monotone f
+/-- A context function is downward entailing if it reverses entailment:
+`Antitone` on sets of worlds. -/
+abbrev IsDownwardEntailing {α β : Type*} (f : Set α → Set β) := Antitone f
 
-/--
-IsDownwardEntailing is an abbreviation for `Antitone`.
-
-A context function `f : Set World → Set World` is downward entailing if
-it reverses the ordering: If p ≤ q, then f(q) ≤ f(p).
--/
-abbrev IsDownwardEntailing (f : Set World → Set World) := Antitone f
-
-abbrev IsUE := IsUpwardEntailing
-abbrev IsDE := IsDownwardEntailing
+abbrev IsUE {α β : Type*} (f : Set α → Set β) := IsUpwardEntailing f
+abbrev IsDE {α β : Type*} (f : Set α → Set β) := IsDownwardEntailing f
 
 
 /-- Identity is UE. -/
@@ -76,25 +48,25 @@ theorem pnot_pnot_isUpwardEntailing : IsUpwardEntailing (pnot ∘ pnot) :=
 
 
 /-- UE ∘ UE = UE -/
-theorem ue_comp_ue {f g : Set World → Set World}
+theorem ue_comp_ue {α β γ : Type*} {f : Set β → Set γ} {g : Set α → Set β}
     (hf : IsUpwardEntailing f) (hg : IsUpwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- DE ∘ DE = UE (double negation). -/
-theorem de_comp_de {f g : Set World → Set World}
+theorem de_comp_de {α β γ : Type*} {f : Set β → Set γ} {g : Set α → Set β}
     (hf : IsDownwardEntailing f) (hg : IsDownwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- UE ∘ DE = DE -/
-theorem ue_comp_de {f g : Set World → Set World}
+theorem ue_comp_de {α β γ : Type*} {f : Set β → Set γ} {g : Set α → Set β}
     (hf : IsUpwardEntailing f) (hg : IsDownwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_antitone hg
 
 /-- DE ∘ UE = DE -/
-theorem de_comp_ue {f g : Set World → Set World}
+theorem de_comp_ue {α β γ : Type*} {f : Set β → Set γ} {g : Set α → Set β}
     (hf : IsDownwardEntailing f) (hg : IsUpwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_monotone hg
