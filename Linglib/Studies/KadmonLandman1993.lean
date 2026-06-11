@@ -4,6 +4,7 @@ import Linglib.Typology.PolarityItem
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Exhaustification.FreeChoice
+import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
 
@@ -37,7 +38,9 @@ not sufficient: *each* and comparative *more often than* are DE yet resist
 - `VagueRestriction`, `widenAlong`, `dimensionallyUniversal`: the
   domain-vagueness apparatus behind FC *any* and the *almost* test (K&L §4);
 - `domain_vague_allows_exceptions`: exception tolerance of generics from
-  domain vagueness.
+  domain vagueness;
+- `VagueRestriction.toSpecSpace`: the finite-case bridge to [fine-1975]'s
+  supervaluation — K&L's exception-tolerance zone is Fine's borderline zone.
 -/
 
 namespace KadmonLandman1993
@@ -53,6 +56,9 @@ open Semantics.Entailment.StrawsonEntailment
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 open Ladusaw1979 (licensingStrength)
+open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
+  superTrue_indet_iff)
+open Core.Duality (Truth3)
 
 /-! ### The strengthening condition
 
@@ -360,9 +366,10 @@ K&L §4.1: *every owl* is **domain precise** — context determines a unique
 domain — while generic *an owl* is **domain vague**: the normalcy restriction
 is inherently underspecified, and different precisifications yield different
 domains. This is what lets generics tolerate exceptions ("a poodle gives live
-birth" survives male poodles). Cf. the supervaluation substrate
-(`Semantics/Supervaluation`, [fine-1975]); `SpecSpace` there is
-`Finset`-based, so the `Set`-based notions are stated locally. -/
+birth" survives male poodles). The `Set`-based notions are stated locally
+because the supervaluation substrate (`Semantics/Supervaluation`,
+[fine-1975]) is `Finset`-based for computability; the finite-case bridge is
+`VagueRestriction.toSpecSpace` below. -/
 
 /-- A vague restriction ⟨v₀, V⟩ (K&L §4.1): a precise part (properties known
 to hold) together with its consistent completions, each extending the precise
@@ -540,6 +547,68 @@ theorem domain_vagueness_explains_gen_exceptions {Property Entity : Type*}
   by_cases h : domainOf vg apply = domainOf v₁ apply
   · exact ⟨vg, hvgm, v₂, hv₂m, by rw [h]; exact hne, hvgt⟩
   · exact ⟨vg, hvgm, v₁, hv₁m, h, hvgt⟩
+
+/-! ### Grounding in Fine 1975 supervaluation
+
+When the precisification set is finite, K&L's truth notions are
+[fine-1975]'s: `genericSuperTrue` is super-truth on the induced
+specification space, and the exception-tolerance zone — sub-true but not
+super-true — is exactly Fine's borderline (`indet`) status. "A poodle gives
+live birth" is Fine-indefinite and K&L-assertable. -/
+
+/-- The specification space induced by a vague restriction whose
+precisifications are enumerated by a finset. Nonemptiness is K&L's axiom
+that the precise part is itself a precisification. -/
+def VagueRestriction.toSpecSpace {Property : Type*} (X : VagueRestriction Property)
+    (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
+    SpecSpace (Set Property) where
+  admissible := V
+  nonempty := ⟨X.precise, by rw [← Finset.mem_coe, hV]; exact X.precise_mem⟩
+
+theorem VagueRestriction.mem_toSpecSpace {Property : Type*}
+    {X : VagueRestriction Property} {V : Finset (Set Property)}
+    {hV : ↑V = X.precisifications} {v : Set Property} :
+    v ∈ (X.toSpecSpace V hV).admissible ↔ v ∈ X.precisifications := by
+  constructor
+  · intro h; rw [← hV]; exact Finset.mem_coe.mpr h
+  · intro h
+    show v ∈ V
+    rw [← Finset.mem_coe, hV]
+    exact h
+
+/-- On a finite precisification space, K&L's supervaluationist truth is
+[fine-1975]'s super-truth. -/
+theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
+    (X : VagueRestriction Property) (apply : Property → Set Entity)
+    (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
+    (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
+    genericSuperTrue X apply scope ↔
+      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Truth3.true := by
+  rw [superTrue_true_iff]
+  exact ⟨λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mp hv),
+         λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
+
+/-- **K&L's exception-tolerance zone is Fine's borderline zone.** A generic
+that is subvaluationistically but not supervaluationistically true is
+exactly one whose supervaluation status is indefinite: assertable for K&L,
+borderline for [fine-1975]. -/
+theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
+    (X : VagueRestriction Property) (apply : Property → Set Entity)
+    (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
+    (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
+    genericSubTrue X apply scope ∧ ¬genericSuperTrue X apply scope ↔
+      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Truth3.indet := by
+  rw [superTrue_indet_iff]
+  constructor
+  · rintro ⟨⟨v, hv, hvt⟩, hns⟩
+    refine ⟨⟨v, VagueRestriction.mem_toSpecSpace.mpr hv, hvt⟩, ?_⟩
+    by_contra hno
+    exact hns (λ w hw => by
+      by_contra hwf
+      exact hno ⟨w, VagueRestriction.mem_toSpecSpace.mpr hw, hwf⟩)
+  · rintro ⟨⟨v, hv, hvt⟩, ⟨w, hw, hwf⟩⟩
+    exact ⟨⟨v, VagueRestriction.mem_toSpecSpace.mp hv, hvt⟩,
+           λ hall => hwf (hall w (VagueRestriction.mem_toSpecSpace.mp hw))⟩
 
 /-! ### The *almost* test
 
