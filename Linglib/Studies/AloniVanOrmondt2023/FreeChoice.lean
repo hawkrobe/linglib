@@ -349,7 +349,7 @@ private lemma exi_poss_atom_of_subset_extendUniversal
   obtain ⟨d, i₀, hi₀s, hupd⟩ := State.mem_extendUniversal.mp (htsub hj₀)
   obtain ⟨d', hassign, hmem⟩ := hsupp j₀ hj₀
   rw [← hupd] at hassign hmem
-  simp only [Index.assign_update, Assignment.update_self,
+  simp only [Index.assign_update, Function.update_self,
     Option.some.injEq] at hassign
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
@@ -372,7 +372,7 @@ private lemma exi_poss_atom_of_subset_extendUniversal
     rw [Finset.mem_singleton] at hkw
     refine ⟨d'', ?_, ?_⟩
     · rw [hka, ← hupd']
-      simp only [Index.assign_update, Assignment.update_self]
+      simp only [Index.assign_update, Function.update_self]
     · rw [hkw]
       exact hmem
 

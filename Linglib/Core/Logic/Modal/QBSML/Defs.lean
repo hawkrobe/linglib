@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
+import Mathlib.ModelTheory.Basic
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Bilateral.Defs
 
@@ -29,8 +30,11 @@ the `Core.Logic.Team.isFlat_iff` template at the point type
 * `QBSMLFormula`: the formula language ([aloni-vanormondt-2023]
   Definition 4.1), with `□` derived as `QBSMLFormula.nec`.
 * `QBSMLFormula.IsNEFree`: the NE-free fragment.
+* `monadicLang`, `monadicStructure`: the monadic first-order signature on
+  `Pred` and its structures, as a mathlib `FirstOrder.Language`.
 * `QBSMLModel`, `eval`, `support`, `antiSupport`: bilateral evaluation
-  ([aloni-vanormondt-2023] Definition 4.9).
+  ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
+  as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
   `Core.Logic.Bilateral.IsBilateral` under `QBSMLFormula.neg`.
 * `QBSMLModel.IsStateBased`, `QBSMLModel.IsIndisputable`: frame conditions
@@ -45,8 +49,10 @@ the `Core.Logic.Team.isFlat_iff` template at the point type
   can be added without changing the substrate abstraction.
 * The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
   parameter, with `[Fintype Domain]` where the universal extension must range
-  over all of it. `QBSMLModel.pInterp` is the world-dependent (non-rigid)
-  predicate half of the paper's interpretation `I`.
+  over all of it. The interpretation `I` is a world-indexed family of mathlib
+  first-order structures (`QBSMLModel.interp`, the
+  `Semantics.Composition.Model` pattern); `QBSMLModel.pInterp` reads the
+  world-dependent (non-rigid) predicate denotations off `Structure.RelMap`.
 * The paper requires all indices in a state to share an assignment domain
   (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
   operations preserve it.
@@ -86,21 +92,19 @@ def Assignment.update (g : Assignment Var Domain) (x : Var) (d : Domain) :
     Assignment Var Domain :=
   Function.update g x (some d)
 
-/-- Update an index's assignment ([aloni-vanormondt-2023] Definition 4.4:
-    `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`). -/
+/-- Update an index's assignment ([aloni-vanormondt-2023] Definitions 4.3–4.4:
+    `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`, with the assignment update `gᵢ[x/d]` as
+    mathlib's `Function.update`). -/
 def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) :
     Index W Var Domain :=
-  (i.world, i.assign.update x d)
-
-@[simp] theorem Assignment.update_self (g : Assignment Var Domain) (x : Var)
-    (d : Domain) : g.update x d x = some d :=
-  Function.update_self ..
+  (i.world, Function.update i.assign x (some d))
 
 @[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var)
     (d : Domain) : (i.update x d).world = i.world := rfl
 
 @[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var)
-    (d : Domain) : (i.update x d).assign = i.assign.update x d := rfl
+    (d : Domain) : (i.update x d).assign = Function.update i.assign x (some d) :=
+  rfl
 
 end Update
 
@@ -348,17 +352,64 @@ inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Pred → Prop
   | exi (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.exi x φ)
   | univ (x : Var) {φ : QBSMLFormula Var Pred} : IsNEFree φ → IsNEFree (.univ x φ)
 
-/-! ### Models -/
+/-! ### The monadic signature and models -/
+
+/-- The monadic relational signature on `Pred`: one unary relation symbol per
+    predicate, no constants or function symbols ([aloni-vanormondt-2023]
+    Definition 4.1's signature, minus individual constants). -/
+def monadicLang.{u} (Pred : Type u) : FirstOrder.Language where
+  Functions := fun _ => PEmpty.{u + 1}
+  Relations := fun n => match n with
+    | 1 => Pred
+    | _ => PEmpty
+
+/-- A predicate as a relation symbol of the monadic signature (defeq; the
+    parametric analogue of mathlib's per-symbol abbreviations, cf.
+    `Fragments/English/Toy.lean`). -/
+abbrev monadicRel {Pred : Type*} (P : Pred) : (monadicLang Pred).Relations 1 := P
+
+/-- The `monadicLang Pred` structure a predicate valuation induces. -/
+@[reducible] def monadicStructure {Pred Domain : Type*}
+    (V : Pred → Domain → Prop) : (monadicLang Pred).Structure Domain where
+  funMap := fun f _ => f.elim
+  RelMap := fun {n} r => match n, r with
+    | 1, P => fun v => V P (v 0)
+    | 0, r => r.elim
+    | _ + 2, r => r.elim
+
+@[simp] theorem monadicStructure_relMap {Pred Domain : Type*}
+    (V : Pred → Domain → Prop) (P : Pred) (v : Fin 1 → Domain) :
+    (monadicStructure V).RelMap (monadicRel P) v ↔ V P (v 0) :=
+  Iff.rfl
 
 /-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
-    `M = ⟨W, D, R, I⟩`), with the domain as a type parameter and the
-    interpretation split into accessibility and predicate interpretation. -/
+    `M = ⟨W, D, R, I⟩`), with the domain as a type parameter, accessibility
+    as a per-world `Finset`, and the interpretation `I` as a world-indexed
+    family of mathlib first-order structures on the domain — the pattern of
+    `Semantics.Composition.Model`. Structures are carried as terms, not
+    instances: a world-indexed family cannot be instance-based, so interfacing
+    with instance-based mathlib API (`Formula.Realize`) threads
+    `letI := M.interp w`. -/
 structure QBSMLModel (W : Type*) (Domain : Type*) (Pred : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
-  /-- Predicate interpretation: at world `w`, predicate `p` picks out the
-      `Finset` of domain elements satisfying it. -/
-  pInterp : Pred → W → Finset Domain
+  /-- World-indexed interpretation of the monadic signature. -/
+  interp : W → (monadicLang Pred).Structure Domain
+
+/-- The predicate denotation at a world, read off the model's structure
+    family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
+    [aloni-vanormondt-2023] Definition 4.2, specialised to monadic `P`
+    (cf. `Semantics.Composition.Model.pred₁ext`). -/
+def QBSMLModel.pInterp {W Domain Pred : Type*} (M : QBSMLModel W Domain Pred)
+    (P : Pred) (w : W) (d : Domain) : Prop :=
+  (M.interp w).RelMap (monadicRel P) (fun _ => d)
+
+@[simp] theorem QBSMLModel.pInterp_monadicStructure {W Domain Pred : Type*}
+    (access : W → Finset W) (V : W → Pred → Domain → Prop) (P : Pred) (w : W)
+    (d : Domain) :
+    QBSMLModel.pInterp ⟨access, fun w => monadicStructure (V w)⟩ P w d ↔
+      V w P d :=
+  Iff.rfl
 
 /-! ### Bilateral evaluation -/
 
@@ -374,9 +425,9 @@ variable [Fintype Domain]
 def eval (M : QBSMLModel W Domain Pred) :
     Bool → QBSMLFormula Var Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ d ∈ M.pInterp P i.world
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.pInterp P i.world d
   | false, .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ d ∉ M.pInterp P i.world
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.pInterp P i.world d
   | true,  .ne, s => s.Nonempty
   | false, .ne, s => s = ∅
   | true,  .neg ψ, s => eval M false ψ s

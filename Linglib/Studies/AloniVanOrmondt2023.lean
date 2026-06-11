@@ -111,20 +111,19 @@ instance : Fintype QVar where
 
 /-- Universal-access deontic-style model on `PowerSet2World`.
 
-    - `pInterp .P w = {d ∈ {a, b} | w.holds d}` (P holds at w iff w models the atom)
-    - `pInterp .Q w = {d ∈ {a, b} | w.holds d}` (Q same shape — picks out same set)
-
-    Both predicates have the same per-world extension. The disjunction
-    `Px ∨ Qx` is non-degenerate at the *formula* level even though at this
-    model the two interpretations coincide. A model with divergent P and Q
-    extensions would discriminate further; this minimal model suffices for
-    the substrate-instantiation tests below.
+    The interpretation is the `monadicStructure` of the valuation
+    `V w P d := w.holds d`: both predicates hold of `d` at `w` iff `w`
+    models the atom `d`. The disjunction `Px ∨ Qx` is non-degenerate at the
+    *formula* level even though at this model the two interpretations
+    coincide. A model with divergent P and Q extensions would discriminate
+    further; this minimal model suffices for the substrate-instantiation
+    tests below.
 
     Universal access (`access _ = univ`) means R is indisputable on every
     state but **not** state-based — same shape as `Aloni2022.deonticModel`. -/
 def avoModel : QBSMLModel PowerSet2World FCAtom QPred where
   access := λ _ => Finset.univ
-  pInterp := λ _ w => (Finset.univ : Finset FCAtom).filter (λ d => w.holds d)
+  interp := λ w => monadicStructure (λ _ d => w.holds d)
 
 -- ============================================================================
 -- §3 Formulas

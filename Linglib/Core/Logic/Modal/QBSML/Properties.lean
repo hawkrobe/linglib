@@ -1,3 +1,4 @@
+import Mathlib.ModelTheory.Semantics
 import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
@@ -21,6 +22,10 @@ empty-team support, hence flat support, via the same
   ([anttila-2021] Proposition 2.2.16, QBSML specialisation).
 * `soundFor_flat_neFree` — the NE-free fragment is sound for the flat cell
   of `Team/Definability.lean`.
+* `QBSMLModel.RealizeAt`, `support_pred_singleton_iff_realizeAt` — classical
+  satisfaction at a world is mathlib's `Formula.Realize`, and atomic support
+  at a singleton state coincides with it (the atomic case of
+  [aloni-vanormondt-2023] Proposition 4.1).
 
 ## Implementation notes
 
@@ -366,5 +371,55 @@ theorem soundFor_flat_neFree (M : QBSMLModel W Domain Pred) :
   unfold flatProperties
   exact definableClassWhere_subset (C := IsFlat)
     fun _φ hφ => isFlat_support_of_isNEFree hφ M
+
+/-! ### Classicality: the atomic Realize bridge
+
+[aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
+classical quantified modal logic. The modal-free core of that reduction is
+stated against mathlib first-order satisfaction: at a single index, support
+of an atom is `Formula.Realize` in the structure the model carries at that
+world. Extending the bridge to the full quantifier-free fragment, and to
+quantifiers via de Bruijn relabeling, is future work. -/
+
+open FirstOrder Language
+
+/-- Classical first-order satisfaction at a world — `M, w ⊨_v ψ`, mathlib's
+    `Formula.Realize` in the structure the model carries at `w`. The
+    right-hand side of [aloni-vanormondt-2023] Proposition 4.1. -/
+def QBSMLModel.RealizeAt (M : QBSMLModel W Domain Pred) (w : W)
+    (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) : Prop :=
+  @Formula.Realize _ _ (M.interp w) _ ψ v
+
+/-- **The atomic case of [aloni-vanormondt-2023] Proposition 4.1**: support
+    of an atom at a singleton state is classical first-order satisfaction at
+    that index's world, for any total valuation `v` the index's partial
+    assignment refines. -/
+theorem support_pred_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
+    (P : Pred) (x : Var) {i : Index W Var Domain} {v : Var → Domain}
+    (hv : ∀ y, i.assign y = some (v y)) :
+    support M (.pred P x) {i} ↔
+      M.RealizeAt i.world ((monadicRel P).formula₁ (Term.var x)) v := by
+  have hreal : M.RealizeAt i.world ((monadicRel P).formula₁ (Term.var x)) v ↔
+      M.pInterp P i.world (v x) := by
+    letI := M.interp i.world
+    show ((monadicRel P).formula₁ (Term.var x)).Realize v ↔ _
+    have hfun : (![v x] : Fin 1 → Domain) = fun _ => v x := by
+      funext j
+      simp only [Matrix.cons_val_fin_one]
+    rw [Formula.realize_rel₁, Term.realize_var, hfun]
+    exact Iff.rfl
+  rw [hreal]
+  constructor
+  · intro h
+    obtain ⟨d, hd, hP⟩ := h i (Finset.mem_singleton_self i)
+    have hvx : v x = d := by
+      have h' := hv x
+      rw [hd] at h'
+      exact (Option.some.inj h').symm
+    rwa [hvx]
+  · intro h j hj
+    rw [Finset.mem_singleton] at hj
+    subst hj
+    exact ⟨v x, hv x, h⟩
 
 end Core.Logic.Modal.QBSML
