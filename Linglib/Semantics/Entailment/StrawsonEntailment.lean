@@ -127,7 +127,7 @@ theorem antiAdditive_implies_strawsonAA {α β : Type*} (f : Set α → Set β)
     (hAA : IsAntiAdditive f) (defined : Set α → β → Prop) :
     IsStrawsonAntiAdditive f defined := by
   intro p q w _ _
-  exact hAA p q w
+  exact isAntiAdditive_iff_mem.mp hAA p q w
 
 /-- Strawson-AA ⇒ Strawson-DE.
 
@@ -566,7 +566,7 @@ theorem conditional_antecedent_strawsonDE {W : Type*} (domain : W → Set W)
     distributes appropriately. -/
 theorem condNecessity_isAntiAdditive {W : Type*} (domain : W → Set W) (β : Set W) :
     IsAntiAdditive (fun α => condNecessity domain α β) := by
-  intro p q w
+  refine isAntiAdditive_iff_mem.mpr (fun p q w => ?_)
   constructor
   · intro h
     exact ⟨fun w' hw' hp => h w' hw' (Or.inl hp),

@@ -15,6 +15,11 @@ to make Appendix 2's hierarchy `AA ⊆ DE + Intolerant ⊆ DE` work cleanly:
 the trivial case is included by stipulation so that the AA inclusion is
 not blocked by trivially-true functions.
 
+Anti-additivity and DE-ness of GQ-typed functions are the
+`Set α → Prop` instances of the lattice-general
+`Semantics.Entailment.AntiAdditivity.IsAntiAdditive` and mathlib's
+`Antitone` (`Prop` is a complete lattice).
+
 ## Examples
 
 - `no` is Intolerant: `#Few of my friends are linguists and few of them
@@ -33,6 +38,8 @@ function that is DE + Intolerant but not AA.
 
 namespace Semantics.Entailment.Intolerance
 
+open Semantics.Entailment.AntiAdditivity (IsAntiAdditive isAntiAdditive_iff_gq)
+
 /-- A GQ-typed function is **trivial** if it is constantly true or
     constantly false. -/
 def IsTrivial {α : Type*} (f : Set α → Prop) : Prop :=
@@ -48,46 +55,21 @@ def IsTrivial {α : Type*} (f : Set α → Prop) : Prop :=
 def IsIntolerant {α : Type*} (f : Set α → Prop) : Prop :=
   IsTrivial f ∨ ∀ x : Set α, ¬ f x ∨ ¬ f xᶜ
 
-/-- A GQ-typed AA function (`f : Set α → Prop` with `f (p ∪ q) ↔ f p ∧ f q`). -/
-def IsAntiAdditiveGQ {α : Type*} (f : Set α → Prop) : Prop :=
-  ∀ p q : Set α, f (p ∪ q) ↔ f p ∧ f q
-
-/-- A GQ-typed DE function. -/
-def IsDownwardEntailingGQ {α : Type*} (f : Set α → Prop) : Prop :=
-  ∀ p q : Set α, p ⊆ q → f q → f p
-
-/-- AA-GQ implies DE-GQ. Standard. -/
-theorem isAntiAdditiveGQ_implies_isDEGQ {α : Type*} (f : Set α → Prop)
-    (hAA : IsAntiAdditiveGQ f) : IsDownwardEntailingGQ f := by
-  intro p q hpq hfq
-  -- Show f p from f q via p ⊆ q ⇒ q = p ∪ q ⇒ f q ↔ f p ∧ f q ⇒ f p
-  have hUnion : p ∪ q = q := by
-    ext x; constructor
-    · rintro (h | h)
-      · exact hpq h
-      · exact h
-    · intro h; exact Or.inr h
-  have : f (p ∪ q) := by rw [hUnion]; exact hfq
-  exact ((hAA p q).mp this).1
-
-/-- [gajewski-2011] Appendix 2 (p. 143): AA implies Intolerant.
+/-- [gajewski-2011] Appendix 2 (p. 143): an anti-additive GQ is Intolerant.
 
     Proof sketch (Gajewski's): suppose `f` is AA and not trivial. For
     arbitrary `a`, suppose `f a = True` and `f aᶜ = True`. Then
     `f (a ∪ aᶜ) ↔ f a ∧ f aᶜ` gives `f Set.univ = True`. Since AA
     implies DE, every `y ⊆ Set.univ` has `f y = True` — contradicting
     non-triviality. So either `¬f a` or `¬f aᶜ`. -/
-theorem antiAdditiveGQ_implies_intolerant {α : Type*} (f : Set α → Prop)
-    (hAA : IsAntiAdditiveGQ f) : IsIntolerant f := by
-  -- Use classical reasoning on whether f is trivial
+theorem antiAdditive_implies_intolerant {α : Type*} (f : Set α → Prop)
+    (hAA : IsAntiAdditive f) : IsIntolerant f := by
   by_cases hTriv : IsTrivial f
-  · -- Trivial case: trivially Intolerant by Or.inl
-    exact Or.inl hTriv
-  · -- Non-trivial case: prove ∀ x, ¬f x ∨ ¬f xᶜ
-    refine Or.inr ?_
+  · exact Or.inl hTriv
+  · refine Or.inr ?_
     intro x
     by_contra hNeither
-    push_neg at hNeither
+    push Not at hNeither
     obtain ⟨hfx, hfxc⟩ := hNeither
     -- Now f x = True and f xᶜ = True. Show f Set.univ = True via AA.
     have hUnion : x ∪ xᶜ = Set.univ := by
@@ -96,14 +78,12 @@ theorem antiAdditiveGQ_implies_intolerant {α : Type*} (f : Set α → Prop)
       exact Classical.em (y ∈ x)
     have hfUniv : f Set.univ := by
       rw [← hUnion]
-      exact (hAA x xᶜ).mpr ⟨hfx, hfxc⟩
-    -- By DE (which AA implies), every y has f y
-    have hDE := isAntiAdditiveGQ_implies_isDEGQ f hAA
-    -- Contradicts non-triviality: ∃ y, ¬ f y (since f isn't constantly false:
-    -- f Set.univ holds; and not constantly true since not trivial)
+      exact (isAntiAdditive_iff_gq.mp hAA x xᶜ).mpr ⟨hfx, hfxc⟩
+    -- By DE (which AA implies), every y has f y — contradicting
+    -- non-triviality.
     apply hTriv
     left
     intro y
-    exact hDE y Set.univ (fun _ _ => trivial) hfUniv
+    exact hAA.antitone (Set.subset_univ y) hfUniv
 
 end Semantics.Entailment.Intolerance
