@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Construction Grammar: Core Types
@@ -101,7 +102,7 @@ filler type of phrasal compounds and PAL constructions. -/
 
 Parameterized over `Lex` (the lexeme type) so the same representation
 works for strings, morphemes, or phonological forms. -/
-inductive SlotFiller (Lex : Type) where
+inductive SlotFiller (Lex : Type*) where
   /-- A specific word form (LEX level): `fixed "must"` -/
   | fixed : Lex → SlotFiller Lex
   /-- Any word of a given POS category (SYN level): `open_ .VERB` -/
@@ -124,7 +125,7 @@ inductive SlotFiller (Lex : Type) where
 `open_` (SYN), `semantic` (SEM+), and `phrasal` slots count as open for
 abstraction-level computation. `headed` slots do not: they fix the head
 lexeme even though the phrase is open. -/
-def SlotFiller.isOpen {Lex : Type} : SlotFiller Lex → Bool
+def SlotFiller.isOpen {Lex : Type*} : SlotFiller Lex → Bool
   | .fixed _ => false
   | .open_ _ => true
   | .headed _ _ => false
@@ -158,7 +159,7 @@ headedness, and the bar level of the position itself. Fixed slots (like
 "let" in *let alone*) have `role := none` since they carry no independent
 semantic role. `level := none` leaves the position's bar level
 unspecified. -/
-structure Slot (Lex : Type) where
+structure Slot (Lex : Type*) where
   /-- What fills this slot -/
   filler : SlotFiller Lex
   /-- Semantic role label (agent, theme, etc.), if any -/
@@ -176,23 +177,23 @@ structure Slot (Lex : Type) where
   deriving DecidableEq, Repr
 
 /-- A typed form: the form side of a construction as a sequence of slots. -/
-abbrev TypedForm (Lex : Type) := List (Slot Lex)
+abbrev TypedForm (Lex : Type*) := List (Slot Lex)
 
 /-- A phrase in a word-level slot: phrasal filler, zero-level position.
 The defining configuration of phrasal compounds and the PAL construction
 ([goldberg-shirtz-2025]) — and the cell lexical-integrity hypotheses rule
 out. -/
-def Slot.IsPhraseInWordSlot {Lex : Type} (s : Slot Lex) : Prop :=
+def Slot.IsPhraseInWordSlot {Lex : Type*} (s : Slot Lex) : Prop :=
   s.filler = .phrasal ∧ s.level = some .zero
 
-instance {Lex : Type} [DecidableEq Lex] (s : Slot Lex) :
+instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
     Decidable s.IsPhraseInWordSlot :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Abstraction level and derived specificity -/
 
 section AbstractionLevel
-variable {Lex : Type}
+variable {Lex : Type*}
 
 /-- Proportion of open slots: a continuous [0,1] measure of abstraction.
 
@@ -228,7 +229,67 @@ def hasConstraint (form : TypedForm Lex) (c : SlotConstraint) : Bool :=
 
 /-- Count of distinct coreference groups in a form. -/
 def refGroupCount (form : TypedForm Lex) : Nat :=
-  (form.filterMap (·.refIdx)).eraseDups.length
+  (form.filterMap (·.refIdx)).dedup.length
+
+/-! ### Characterization lemmas -/
+
+@[simp]
+theorem abstractionLevel_nil : abstractionLevel ([] : TypedForm Lex) = 0 := rfl
+
+theorem abstractionLevel_nonneg (form : TypedForm Lex) :
+    0 ≤ abstractionLevel form := by
+  simp only [abstractionLevel]
+  split
+  · exact le_refl 0
+  · exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+
+theorem abstractionLevel_le_one (form : TypedForm Lex) :
+    abstractionLevel form ≤ 1 := by
+  simp only [abstractionLevel]
+  split
+  · exact zero_le_one
+  · exact div_le_one_of_le₀ (by exact_mod_cast List.length_filter_le _ _)
+      (Nat.cast_nonneg _)
+
+/-- A form is fully abstract exactly when every slot is open (vacuously so
+for the empty form). -/
+theorem derivedSpecificity_eq_fullyAbstract_iff (form : TypedForm Lex) :
+    derivedSpecificity form = .fullyAbstract ↔
+      ∀ s ∈ form, s.filler.isOpen = true := by
+  refine Iff.trans ?_
+    (List.length_filter_eq_length_iff (p := fun s : Slot Lex => s.filler.isOpen)
+      (l := form))
+  simp only [derivedSpecificity]
+  split_ifs with h1 h2 <;> simp [h1]
+
+/-- A form is lexically specified exactly when it is nonempty and no slot
+is open. -/
+theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
+    derivedSpecificity form = .lexicallySpecified ↔
+      form ≠ [] ∧ ∀ s ∈ form, s.filler.isOpen = false := by
+  have hzero : (form.filter (·.filler.isOpen)) = [] ↔
+      ∀ s ∈ form, s.filler.isOpen = false := by
+    rw [List.filter_eq_nil_iff]; simp
+  simp only [derivedSpecificity]
+  split_ifs with h1 h2
+  · constructor
+    · intro h; cases h
+    · rintro ⟨hnil, hall⟩
+      rcases List.exists_mem_of_ne_nil form hnil with ⟨s, hs⟩
+      have hopen := List.length_filter_eq_length_iff.mp h1 s hs
+      have := hall s hs
+      simp_all
+  · constructor
+    · intro _
+      constructor
+      · rintro rfl; exact h1 (by simp)
+      · rw [List.length_eq_zero_iff] at h2
+        exact hzero.mp h2
+    · intro _; rfl
+  · constructor
+    · intro h; cases h
+    · rintro ⟨hnil, hall⟩
+      exact absurd (by rw [List.length_eq_zero_iff]; exact hzero.mpr hall) h2
 
 end AbstractionLevel
 
@@ -261,7 +322,7 @@ structure InheritanceLink where
   linkType : Option LinkType := none
   sharedProperties : List String
   overriddenProperties : List String := []
-  deriving Repr, BEq
+  deriving Repr, DecidableEq
 
 /-- A constructicon: a network of constructions connected by inheritance links. -/
 structure Constructicon where

@@ -5,7 +5,7 @@ Framework-agnostic typological parameter: whether a language permits
 null thematic subjects (*pro*-drop) and whether the subject of an
 obligatory-control clause must be overt.
 
-This file is in `Core/` because the *parameter* is theory-neutral —
+This file is theory-neutral data because the *parameter* is theory-neutral —
 any syntactic framework (Minimalism, HPSG, LFG, Construction Grammar)
 must engage with it. Theory-laden *explanations* of the parameter
 (rich-agreement licensing, the EPP, topic drop, etc.) belong in

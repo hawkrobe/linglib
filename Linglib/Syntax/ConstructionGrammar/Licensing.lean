@@ -48,15 +48,42 @@ end
 
 instance : BEq Token := ⟨Token.beq⟩
 
+mutual
+
+theorem Token.beq_iff_eq : ∀ a b : Token, (Token.beq a b = true) ↔ a = b
+  | .word a, .word b => by simp [Token.beq]
+  | .word _, .node _ => by simp [Token.beq]
+  | .node _, .word _ => by simp [Token.beq]
+  | .node as, .node bs => by
+      simp only [Token.beq, Token.node.injEq]
+      exact Token.beqList_iff_eq as bs
+
+theorem Token.beqList_iff_eq : ∀ as bs : List Token,
+    (Token.beqList as bs = true) ↔ as = bs
+  | [], [] => by simp [Token.beqList]
+  | [], _ :: _ => by simp [Token.beqList]
+  | _ :: _, [] => by simp [Token.beqList]
+  | a :: as, b :: bs => by
+      simp [Token.beqList, Token.beq_iff_eq a b, Token.beqList_iff_eq as bs]
+
+end
+
+instance : LawfulBEq Token where
+  eq_of_beq h := (Token.beq_iff_eq _ _).mp h
+  rfl := (Token.beq_iff_eq _ _).mpr rfl
+
+instance : DecidableEq Token := fun a b => decidable_of_iff _ (Token.beq_iff_eq a b)
+
 /-- Does a token satisfy a slot filler, relative to a POS lexicon?
 `semantic` constraints are not checkable at this level and match any
-token; `headed` requires the head word as an immediate daughter. -/
+token; `headed` requires the head word as an immediate daughter, of the
+required category. -/
 def SlotFiller.matches (pos : String → Option UD.UPOS) :
     SlotFiller String → Token → Bool
   | .fixed w, .word w' => w == w'
   | .open_ cat, .word w => pos w == some cat
   | .phrasal, .node _ => true
-  | .headed h _, .node ts => ts.contains (.word h)
+  | .headed h cat, .node ts => ts.contains (.word h) && pos h == some cat
   | .semantic _, _ => true
   | _, _ => false
 

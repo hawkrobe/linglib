@@ -183,7 +183,7 @@ theorem dependence_asserts_necessity :
 
 Thick causative manner verbs (break-class) are compatible with strong
 adjectival resultatives (*break open*, *burn clean*). This connects to
-the resultative infrastructure in ArgumentStructure/Studies/TheoryComparison.lean,
+the resultative infrastructure in Phenomena/ArgumentStructure/TheoryComparison.lean,
 where the constructional CAUSE uses `Causative.make`. -/
 
 /-- Causative manner verbs (thickManner) are compatible with strong ASR.

@@ -11,8 +11,8 @@ Construction Grammar meets Dependency Grammar" (*Cognitive Linguistics*
 23(1):165–216).
 
 Each tree is a concrete linguistic example analyzed with dependency
-structure. The catena proofs connecting these trees to the paper's
-theoretical claims are in `DG_OsborneGross2012Bridge.lean`.
+structure; the catena proofs connecting the trees to the paper's
+theoretical claims follow below.
 
 ## Construction Types
 
@@ -258,50 +258,50 @@ open DepGrammar.CatenalConstruction
 -- ============================================================================
 
 theorem spillTheBeans_catena :
-    isCatena spillTheBeans.deps [0, 2] = true := by native_decide
+    isCatena spillTheBeans.deps [0, 2] = true := by decide
 
 theorem spillTheBeans_not_constituent :
-    isConstituent spillTheBeans.deps 3 [0, 2] = false := by native_decide
+    isConstituent spillTheBeans.deps 3 [0, 2] = false := by decide
 
 theorem giveTheSack_catena :
-    isCatena giveTheSack.deps [0, 2] = true := by native_decide
+    isCatena giveTheSack.deps [0, 2] = true := by decide
 
 theorem giveTheSack_not_constituent :
-    isConstituent giveTheSack.deps 3 [0, 2] = false := by native_decide
+    isConstituent giveTheSack.deps 3 [0, 2] = false := by decide
 
 theorem kickTheBucket_catena :
-    isCatena kickTheBucket.deps [0, 2] = true := by native_decide
+    isCatena kickTheBucket.deps [0, 2] = true := by decide
 
 theorem kickTheBucket_not_constituent :
-    isConstituent kickTheBucket.deps 3 [0, 2] = false := by native_decide
+    isConstituent kickTheBucket.deps 3 [0, 2] = false := by decide
 
 theorem pullSomeStrings_catena :
-    isCatena pullSomeStrings.deps [0, 2] = true := by native_decide
+    isCatena pullSomeStrings.deps [0, 2] = true := by decide
 
 theorem pullSomeStrings_not_constituent :
-    isConstituent pullSomeStrings.deps 3 [0, 2] = false := by native_decide
+    isConstituent pullSomeStrings.deps 3 [0, 2] = false := by decide
 
 -- ============================================================================
 -- §2: Per-Datum Catena Verification — LVCs
 -- ============================================================================
 
 theorem takeABath_catena :
-    isCatena takeABath.deps [0, 2] = true := by native_decide
+    isCatena takeABath.deps [0, 2] = true := by decide
 
 theorem takeABath_not_constituent :
-    isConstituent takeABath.deps 3 [0, 2] = false := by native_decide
+    isConstituent takeABath.deps 3 [0, 2] = false := by decide
 
 theorem haveALook_catena :
-    isCatena haveALook.deps [0, 2] = true := by native_decide
+    isCatena haveALook.deps [0, 2] = true := by decide
 
 theorem haveALook_not_constituent :
-    isConstituent haveALook.deps 3 [0, 2] = false := by native_decide
+    isConstituent haveALook.deps 3 [0, 2] = false := by decide
 
 theorem giveAYell_catena :
-    isCatena giveAYell.deps [0, 2] = true := by native_decide
+    isCatena giveAYell.deps [0, 2] = true := by decide
 
 theorem giveAYell_not_constituent :
-    isConstituent giveAYell.deps 3 [0, 2] = false := by native_decide
+    isConstituent giveAYell.deps 3 [0, 2] = false := by decide
 
 -- ============================================================================
 -- §3: Per-Datum Catena Verification — Verb Chains
@@ -309,35 +309,35 @@ theorem giveAYell_not_constituent :
 
 /-- 3-element chain {will, have, helped} = {1,2,3}. -/
 theorem verbChain3_catena :
-    isCatena heWillHaveHelped.deps [1, 2, 3] = true := by native_decide
+    isCatena heWillHaveHelped.deps [1, 2, 3] = true := by decide
 
 theorem verbChain3_not_constituent :
-    isConstituent heWillHaveHelped.deps 4 [1, 2, 3] = false := by native_decide
+    isConstituent heWillHaveHelped.deps 4 [1, 2, 3] = false := by decide
 
 /-- 4-element chain {will, have, been, doing} = {1,2,3,4}. -/
 theorem verbChain4_catena :
-    isCatena sheWillHaveBeenDoingIt.deps [1, 2, 3, 4] = true := by native_decide
+    isCatena sheWillHaveBeenDoingIt.deps [1, 2, 3, 4] = true := by decide
 
 theorem verbChain4_not_constituent :
-    isConstituent sheWillHaveBeenDoingIt.deps 6 [1, 2, 3, 4] = false := by native_decide
+    isConstituent sheWillHaveBeenDoingIt.deps 6 [1, 2, 3, 4] = false := by decide
 
 /-- The full VP {will, have, been, doing, it} = {1,2,3,4,5} is a catena but
     not a constituent — the subject "she" prevents it. -/
 theorem fullVP_catena :
-    isCatena sheWillHaveBeenDoingIt.deps [1, 2, 3, 4, 5] = true := by native_decide
+    isCatena sheWillHaveBeenDoingIt.deps [1, 2, 3, 4, 5] = true := by decide
 
 theorem fullVP_not_constituent :
-    isConstituent sheWillHaveBeenDoingIt.deps 6 [1, 2, 3, 4, 5] = false := by native_decide
+    isConstituent sheWillHaveBeenDoingIt.deps 6 [1, 2, 3, 4, 5] = false := by decide
 
 -- ============================================================================
 -- §4: Per-Datum Catena Verification — Displacement
 -- ============================================================================
 
 theorem displacement_catena :
-    isCatena beansSheSpilled.deps [0, 2] = true := by native_decide
+    isCatena beansSheSpilled.deps [0, 2] = true := by decide
 
 theorem displacement_not_constituent :
-    isConstituent beansSheSpilled.deps 3 [0, 2] = false := by native_decide
+    isConstituent beansSheSpilled.deps 3 [0, 2] = false := by decide
 
 -- ============================================================================
 -- §5: Per-Datum Catena Verification — Comparative Correlative
@@ -345,24 +345,24 @@ theorem displacement_not_constituent :
 
 /-- Protasis = {the, more, you, eat} = {0,1,2,3}. -/
 theorem cc_protasis_catena :
-    isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true := by native_decide
+    isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true := by decide
 
 /-- Apodosis = {the, fatter, you, get} = {4,5,6,7}. -/
 theorem cc_apodosis_catena :
-    isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by native_decide
+    isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by decide
 
 theorem cc_apodosis_not_constituent :
-    isConstituent theMoreTheFatter.deps 8 [4, 5, 6, 7] = false := by native_decide
+    isConstituent theMoreTheFatter.deps 8 [4, 5, 6, 7] = false := by decide
 
 /-- Protasis IS a constituent (subtree of eat = {eat, you, more, the}). -/
 theorem cc_protasis_is_constituent :
-    isConstituent theMoreTheFatter.deps 8 [0, 1, 2, 3] = true := by native_decide
+    isConstituent theMoreTheFatter.deps 8 [0, 1, 2, 3] = true := by decide
 
 /-- Degree markers {the, more} and {the, fatter} each form catenae. -/
 theorem cc_degree_markers_catenae :
     isCatena theMoreTheFatter.deps [0, 1] = true ∧
     isCatena theMoreTheFatter.deps [4, 5] = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- §6: Claim 1 — Constructions Are Catenae (p. 176)
@@ -389,7 +389,7 @@ theorem claim1_constructions_are_catenae :
     -- Comparative correlative (2 clauses)
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true ∧
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- All non-constituent constructions: these require the catena concept —
     a constituent-based framework cannot represent any of them. -/
@@ -410,7 +410,7 @@ theorem all_constructions_not_constituent :
     isConstituent beansSheSpilled.deps 3 [0, 2] = false ∧
     -- CC apodosis
     isConstituent theMoreTheFatter.deps 8 [4, 5, 6, 7] = false := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- §7: Claim 2 — Interleaving Preserves Catena-hood (p. 176)
@@ -457,7 +457,7 @@ theorem claim2_interleaving_preserves_catenae :
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true ∧
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    <;> native_decide
+    <;> decide
 
 -- ============================================================================
 -- §8: CxG ↔ DG Bridge — CatenalCx Instances
@@ -476,7 +476,7 @@ def idiomCx : CatenalCx :=
         meaning := "divulge secret information" }
     tree := spillTheBeans
     nodes := [0, 2]
-    catena := by native_decide }
+    catena := by decide }
 
 def lvcCx : CatenalCx :=
   { construction :=
@@ -488,7 +488,7 @@ def lvcCx : CatenalCx :=
         meaning := "perform the action denoted by N" }
     tree := takeABath
     nodes := [0, 2]
-    catena := by native_decide }
+    catena := by decide }
 
 def verbChainCx : CatenalCx :=
   { construction :=
@@ -499,7 +499,7 @@ def verbChainCx : CatenalCx :=
         meaning := "tense–aspect–mood composition" }
     tree := heWillHaveHelped
     nodes := [1, 2, 3]
-    catena := by native_decide }
+    catena := by decide }
 
 def displacementCx : CatenalCx :=
   { construction :=
@@ -511,7 +511,7 @@ def displacementCx : CatenalCx :=
         pragmaticFunction := "topic–comment articulation" }
     tree := beansSheSpilled
     nodes := [0, 2]
-    catena := by native_decide }
+    catena := by decide }
 
 /-- CatenalCx instances cover the full specificity spectrum. -/
 theorem catenal_specificity_coverage :
@@ -553,7 +553,7 @@ theorem fko1988_idiom_types_are_catenae :
     -- Formal idiom: CC protasis
     ccIdiomType.formality = .formal ∧
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true := by
-  refine ⟨rfl, ?_, rfl, ?_⟩ <;> native_decide
+  refine ⟨rfl, ?_, rfl, ?_⟩ <;> decide
 
 /-- Bridge to FKO1988 CC: the `comparativeCorrelative` construction from
     FKO1988 matches the CC tree verified here. Both describe the same
@@ -564,6 +564,6 @@ theorem cc_matches_fko1988 :
     comparativeCorrelative.specificity = .partiallyOpen ∧
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true ∧
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
-  refine ⟨rfl, rfl, ?_, ?_⟩ <;> native_decide
+  refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 end OsborneGross2012.Bridge
