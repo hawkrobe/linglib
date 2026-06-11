@@ -248,9 +248,11 @@ structure Attitude where
   takesQuestionBase : Bool := false
   /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
-      `.mono` = upward monotone (believe, know); `.mult` = multiplicative only
-      (be surprised). Used to derive conjunction distribution and neg-raising.
-      See [bondarenko-elliott-2026]. -/
+      `.mono` = upward monotone: the report is closed under entailment of
+      the complement, as in Hintikka-style doxastic semantics
+      ([hintikka-1962]). Set only where the classification is textbook
+      consensus (believe, think, know); preferential attitudes (want, hope)
+      are contested ([heim-1992]) and stay `none`. -/
   complementSig : Option EntailmentSig := none
   deriving Repr, BEq
 

@@ -1,124 +1,137 @@
-import Linglib.Phenomena.Attitudes.IntentionalIdentity
-import Linglib.Studies.Cooper2023.Ch6
-import Mathlib.Data.Set.Basic
+import Linglib.Data.Examples.Schema
+import Linglib.Semantics.TypeTheoretic.Basic
 
 /-!
-# Intentional Identity Bridge [chatzikyriakidis-etal-2025]
-[cooper-2023] [geach-1967]
+# Chatzikyriakidis–Cooper–Gregoromichelaki–Sutton 2025: TTR intentional identity
 
-TTR solution to Geach's intentional identity puzzle.
+[chatzikyriakidis-etal-2025] §2.3.2 treats [geach-1967]'s Hob–Nob puzzle —
+"Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the
+same witch) killed Cob's sow" — following [ranta-1994]'s belief-context
+analysis, recast by [cooper-2023] with record types in place of contexts: Hob's
+and Nob's belief contexts overlap with respect to a shared witch component,
+which need not be witnessed. Types, unlike sets of worlds, are individuated
+intensionally (`Semantics.TypeTheoretic.ext_equiv_not_implies_int_eq`), so two
+agents' attitudes can concern the same possibly-empty type.
 
-## The problem
+This file formalizes the shared-component core of the account: Hob's and Nob's
+contents both have `witchType` as a meet component while that type is empty.
+The full analysis additionally aligns *labels* across the agents' belief
+contexts ("indexed by the same variable in their respective belief contexts"),
+giving sameness of discourse referent rather than merely of type; that
+refinement awaits dependent record substrate, and without it component-sharing
+alone cannot distinguish "the same witch" from "a witch of the same kind" —
+the distinction [edelberg-1986]'s asymmetry data make empirically load-bearing.
 
-"Hob thinks a witch has blighted Bob's mare,
- and Nob wonders whether she killed Cob's sow."
+## Main declarations
 
-In possible-worlds semantics, the pronoun "she" needs a referent,
-but the witch need not exist, and Hob and Nob may not share a
-doxastic alternative. There is no entity in the model to serve
-as the antecedent.
-
-## The TTR solution
-
-In TTR ([cooper-2023], [chatzikyriakidis-etal-2025] §2), the solution
-uses *types* rather than *entities* as the locus of identity:
-
-1. Hob's belief state contains a type `T_witch` (a predicate type
-   "witch who blighted Bob's mare") — this type can be inhabited or empty
-2. Nob's wonder state references *the same type* `T_witch`
-3. Intentional identity = both agents' attitudes involve the same
-   `IType` (intensional type), not the same individual entity
-4. The type can be empty (no witch exists) — `IsFalse T_witch` is fine
-
-The key: TTR types are intensional objects that can be shared across
-attitude contexts without requiring witnesses. Two agents can think
-"about the same witch-type" without any witch existing.
-
+- `Examples.hobNob`: Geach's sentence as a `LinguisticExample`
+- `witchType`, `hobContent`, `nobContent`: the Hob–Nob model
+- `SharesComponent`: a content has `T` as its left meet component
+- `intentional_identity`: the contents share the empty witch type yet
+  are intensionally distinct
+- `validates_hobNob`: the model validates the empirical datum
 -/
 
-namespace Phenomena.Attitudes.IntentionalIdentity.Bridge
+namespace ChatzikyriakidisEtAl2025
 
 open Semantics.TypeTheoretic
 
-/-! ## TTR model of the Hob-Nob puzzle -/
+-- BEGIN GENERATED EXAMPLES
+-- (Generated from Linglib/Data/Examples/ChatzikyriakidisEtAl2025.json by scripts/gen_examples.py.
+-- Do not edit between markers; re-run the generator after editing the JSON.)
 
-/-- Agents in the Hob-Nob scenario. -/
-inductive Agent where | hob | nob
-  deriving Repr, DecidableEq
+namespace Examples
+open Data.Examples
 
-/-- Entities in the scenario (Bob's mare, Cob's sow). -/
-inductive Entity where | bobsMare | cobsSow
-  deriving Repr, DecidableEq
+def hobNob : LinguisticExample :=
+  { id := "chatzikyriakidisetal2025_hobNob"
+    source := ⟨"geach-1967", "the Hob-Nob sentence"⟩
+    reportedIn := some ⟨"chatzikyriakidis-etal-2025", "§2.3.2"⟩
+    language := "stan1293"
+    primaryText := "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow."
+    context := "No witch need exist, and Hob and Nob need not be aware of each other's attitudes."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Geach's intentional identity puzzle: anaphoric relatedness across the belief states of different agents without a requirement that the kind of individual the agents believe in actually exist (Chatzikyriakidis et al. 2025, §2.3.2). The parenthetical '(the same witch)' is part of the sentence as the Element quotes it and forces the same-witch reading that constitutes the puzzle. Edelberg 1986's detective variants, whose conjuncts resist reversal, are the key additional data in this literature; not yet recorded here."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
 
-/-- The shared witch type: an intentional type that both agents'
-attitudes reference. This is the key to the TTR solution —
-the type exists as an intensional object even when empty. -/
-def witchType : IType := ⟨Empty, "witch_who_blights"⟩
+def all : List LinguisticExample := [hobNob]
 
-/-- Hob's belief content: the witch type applied to Bob's mare.
-"A witch has blighted Bob's mare" ≈ [x : Witch, e : blight(x, bobsMare)].
-We model this as a dependent record type. -/
-structure HobBelief where
-  /-- The witch (of the shared witch type) -/
-  witch : witchType.carrier
-  /-- The blighting event -/
-  blight : Entity  -- target = bobsMare
+end Examples
+-- END GENERATED EXAMPLES
 
-/-- Nob's wondering content: the witch type applied to Cob's sow.
-"She killed Cob's sow" ≈ [x : Witch, e : kill(x, cobsSow)].
-Crucially, "she" refers to the SAME witch type. -/
-structure NobWonder where
-  /-- The witch — SAME type as in HobBelief -/
-  witch : witchType.carrier
-  /-- The killing event -/
-  kill : Entity  -- target = cobsSow
+/-! ### TTR model of the Hob–Nob puzzle -/
 
-/-- The witch type is shared: both attitudes reference the same IType.
-This is intentional identity — agreement at the type level,
-not at the entity level. -/
-theorem shared_witch_type :
-    ({ carrier := HobBelief, name := "hob_belief" : IType}).name ≠
-    ({ carrier := NobWonder, name := "nob_wonder" : IType}).name ∧
-    -- But the witch field in both has the same type
-    (witchType = witchType) :=
-  ⟨by simp, rfl⟩
+/-- The shared witch type: empty carrier (no witch exists), individuated
+intensionally by its name. -/
+def witchType : IType := ⟨Empty, "witch"⟩
 
-/-- The witch need not exist — the type can be empty.
-This is what possible-worlds semantics cannot express:
-both agents have attitudes "about" an empty type. -/
-theorem witch_need_not_exist : IsEmpty witchType.carrier :=
+/-- "blighted Bob's mare" as a predicate type. -/
+def blightBobsMare : IType := ⟨Unit, "blighted_bobs_mare"⟩
+
+/-- "killed Cob's sow" as a predicate type. -/
+def killCobsSow : IType := ⟨Unit, "killed_cobs_sow"⟩
+
+/-- Hob's belief content: a witch who blighted Bob's mare. -/
+def hobContent : IType := witchType.meet blightBobsMare
+
+/-- Nob's wonder content: the *same* witch type, met with killing Cob's sow. -/
+def nobContent : IType := witchType.meet killCobsSow
+
+/-- `C` has `T` as its left meet component: witnesses of `C` are pairs whose
+first coordinate inhabits `T`. Two contents stand in intentional identity
+when they share a component in this sense. -/
+def SharesComponent (T C : IType) : Prop := ∃ X, C = T.meet X
+
+theorem sharesComponent_hobContent : SharesComponent witchType hobContent :=
+  ⟨blightBobsMare, rfl⟩
+
+theorem sharesComponent_nobContent : SharesComponent witchType nobContent :=
+  ⟨killCobsSow, rfl⟩
+
+/-- The witch type is empty: no witch exists. -/
+theorem isFalse_witchType : IsFalse witchType.carrier :=
   show IsEmpty Empty from inferInstance
 
-/-- Despite non-existence, both belief structures are well-defined types.
-They are *empty* types (no witnesses), but they are valid TTR types. -/
-theorem hob_belief_is_empty : IsEmpty HobBelief :=
-  ⟨λ h => Empty.elim h.witch⟩
+/-- The two contents are intensionally distinct (their event components
+differ), even though both are empty. -/
+theorem hobContent_ne_nobContent : ¬ hobContent.intEq nobContent :=
+  λ h => absurd (congrArg IType.name (h : hobContent = nobContent)) (by decide)
 
-theorem nob_wonder_is_empty : IsEmpty NobWonder :=
-  ⟨λ h => Empty.elim h.witch⟩
+/-- The contents are extensionally equivalent (both carriers are empty) yet
+intensionally distinct — the model-level instance of
+`ext_equiv_not_implies_int_eq`. An extensional semantics (`Set W`-style
+contents) identifies the two attitudes; TTR keeps them apart. -/
+theorem extEquiv_not_intEq :
+    hobContent.extEquiv nobContent ∧ ¬ hobContent.intEq nobContent :=
+  ⟨⟨Equiv.refl _⟩, hobContent_ne_nobContent⟩
 
-/-- The intentional identity is *structural*: both record types
-depend on the same `witchType.carrier` field. Changing the witch
-type in one attitude changes it in both — they are linked by
-type sharing, not by coreference to an entity. -/
-theorem intentional_identity_is_type_sharing :
-    -- The witch field type is the same in both structures
-    (∀ (h : HobBelief), (h.witch : witchType.carrier) = h.witch) ∧
-    (∀ (n : NobWonder), (n.witch : witchType.carrier) = n.witch) :=
-  ⟨λ _ => rfl, λ _ => rfl⟩
+/-- Intentional identity, TTR-style: Hob's and Nob's contents share the witch
+type as a common intensional component, are intensionally distinct contents,
+and the shared type is empty — both attitudes are "about the same witch-type"
+although no witch exists. -/
+theorem intentional_identity :
+    SharesComponent witchType hobContent ∧
+    SharesComponent witchType nobContent ∧
+    ¬ hobContent.intEq nobContent ∧
+    IsFalse witchType.carrier :=
+  ⟨sharesComponent_hobContent, sharesComponent_nobContent,
+   hobContent_ne_nobContent, isFalse_witchType⟩
 
-/-! ## Contrast with possible-worlds approach
+/-- The model validates `Examples.hobNob`'s key judgment: the discourse is
+acceptable although no witch need exist, and the model supplies shared
+cross-attitude content built on an empty type. -/
+theorem validates_hobNob :
+    Examples.hobNob.judgment = .acceptable ∧
+    SharesComponent witchType hobContent ∧
+    SharesComponent witchType nobContent ∧
+    IsFalse witchType.carrier :=
+  ⟨rfl, sharesComponent_hobContent, sharesComponent_nobContent, isFalse_witchType⟩
 
-In `Set W`, there's no way to distinguish "Hob thinks p"
-from "Hob thinks q" when p and q are the same set of worlds.
-The intensional identity of the witch type is lost. -/
-
-/-- Two ITypes can share the same (empty) carrier but differ intensionally.
-This is why TTR can handle intentional identity but `Set W` cannot:
-it distinguishes types by identity, not just extension. -/
-theorem intensional_distinction_enables_ii :
-    witchType.extEquiv ⟨Empty, "ghost_who_haunts"⟩ ∧
-    ¬ witchType.intEq ⟨Empty, "ghost_who_haunts"⟩ :=
-  ⟨⟨Equiv.refl Empty⟩, by simp [IType.intEq, witchType]⟩
-
-end Phenomena.Attitudes.IntentionalIdentity.Bridge
+end ChatzikyriakidisEtAl2025
