@@ -26,7 +26,7 @@ derived set-transformer view, connected via `lift`/`lower`:
 
 The `IsDistributive` CCPs — those that process elements independently —
 are exactly the image of `lift`. Non-distributive operations like
-`CCP.neg` and `CCP.might` are genuinely new: they test the *whole*
+`CCP.negTest` and `CCP.might` are genuinely new: they test the *whole*
 input state rather than filtering per-element.
 -/
 
@@ -95,14 +95,27 @@ theorem seq_absurd (u : CCP P) : u ;; absurd = absurd := rfl
 /-- Dynamic conjunction: alias for sequential composition -/
 def conj (u v : CCP P) : CCP P := seq u v
 
+/--
+Dynamic negation: complement within the input state.
+
+This is the standard dynamic negation of [heim-1982], [veltman-1996]:
+¬φ(s) = s \ φ(s). Worlds survive iff they do not survive φ.
+Does not validate DNE on non-eliminative updates. For the whole-state
+consistency test (must-not), see `negTest`.
+-/
+def neg (φ : CCP P) : CCP P :=
+  λ s => s \ φ s
+
 open Classical in
 /--
 Test-based negation: passes (returns input) iff φ yields ∅.
 
-This is the standard dynamic negation of [heim-1982], [veltman-1996]:
-¬φ(s) = s if φ(s) = ∅, else ∅. Does not validate DNE.
+A whole-state consistency test ("must-not"), NOT [heim-1982]'s or
+[veltman-1996]'s negation (that is `neg`, set difference). The two
+coincide only when `φ s = ∅` or `φ s = s` — see
+`Studies/Beaver2001/ABLE.lean` for the proven divergence.
 -/
-noncomputable def neg (φ : CCP P) : CCP P :=
+noncomputable def negTest (φ : CCP P) : CCP P :=
   λ s => if (φ s).Nonempty then ∅ else s
 
 open Classical in
@@ -135,11 +148,12 @@ noncomputable def impl (φ ψ : CCP P) : CCP P :=
 /--
 Dynamic disjunction via De Morgan: φ ∨ ψ = ¬(¬φ ; ¬ψ).
 
-[heim-1983]: the local context for the second disjunct is the
-global context updated with ¬φ. This yields the standard Karttunen
-projection pattern for inclusive disjunction.
+For eliminative updates this unfolds to φ(s) ∪ ψ(s \ φ(s)): the second
+disjunct is evaluated in the input updated with the negation of the
+first — the local-context clause of the satisfaction literature
+([beaver-2001]; [heim-1983] itself gives CCPs only for *not/and/if*).
 -/
-noncomputable def disj (φ ψ : CCP P) : CCP P := neg (seq (neg φ) (neg ψ))
+def disj (φ ψ : CCP P) : CCP P := neg (seq (neg φ) (neg ψ))
 
 /-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
 def entails (φ ψ : CCP P) : Prop :=
@@ -233,8 +247,8 @@ theorem test_eliminative {P : Type*} (u : CCP P) (h : IsTest u) :
   | inr hemp => rw [hemp] at hp; exact False.elim hp
 
 open Classical in
-theorem CCP.neg_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.neg φ) := by
-  intro s; simp only [CCP.neg]; split <;> simp
+theorem CCP.negTest_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.negTest φ) := by
+  intro s; simp only [CCP.negTest]; split <;> simp
 
 open Classical in
 theorem CCP.might_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.might φ) := by
@@ -249,11 +263,13 @@ theorem CCP.impl_isTest {P : Type*} (φ ψ : CCP P) : IsTest (CCP.impl φ ψ) :=
   intro s; unfold CCP.impl; split <;> simp
 
 open Classical in
-/-- Duality: might φ = ¬(¬φ) -/
-theorem CCP.might_eq_neg_neg {P : Type*} (φ : CCP P) :
-    CCP.might φ = CCP.neg (CCP.neg φ) := by
+/-- Duality for the test pair: might φ = must-not (must-not φ). The
+analogous identity fails for set-difference `neg` (DNE holds instead
+on eliminative updates). -/
+theorem CCP.might_eq_negTest_negTest {P : Type*} (φ : CCP P) :
+    CCP.might φ = CCP.negTest (CCP.negTest φ) := by
   funext s
-  simp only [CCP.might, CCP.neg]
+  simp only [CCP.might, CCP.negTest]
   split
   · rw [if_neg Set.not_nonempty_empty]
   · rename_i h
@@ -593,7 +609,7 @@ abbrev State (W E : Type*) := Set (W × Assignment E)
 
 /-- State-level CCP: context change potential over world-assignment states.
     Definitionally equal to `CCP (W × Assignment E)`, so all CCP infrastructure
-    (monoid, neg, might, tests, entailment, Galois connection) applies. -/
+    (monoid, negation, might, tests, entailment, Galois connection) applies. -/
 abbrev StateCCP (W E : Type*) := CCP (W × Assignment E)
 
 -- ═══ Distributivity ═══
@@ -660,7 +676,7 @@ primary dynamic semantic type. Every `Update` gives rise to a distributive
 arises this way (`lower`). The round-trip is the identity in both
 directions (for distributive CCPs).
 
-Non-distributive CCP operations (`neg`, `might`, `must`) test the
+Non-distributive CCP operations (`negTest`, `might`, `must`) test the
 *whole* input state and have no direct `Update` counterpart — they are
 genuine additions of the set-transformer perspective. -/
 

@@ -107,17 +107,16 @@ theorem pip_felicity_agrees_with_impFilter {W : Type*}
   Iff.rfl
 
 /--
-PIP's disjunction felicity agrees with a one-sided filtering disjunction:
+PIP's disjunction felicity agrees with the filtering disjunction:
   F(φ ∨ ψ) = Fφ ∧ (¬φ → Fψ)
 -/
 theorem pip_felicity_agrees_with_orFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     (Felicity.PIPExpr.disj φ ψ).felicitous w ↔
-    (φ.felicitous w ∧ (φ.truth w ∨ ψ.felicitous w)) := by
-  simp only [Felicity.PIPExpr.felicitous]
-  constructor
-  · rintro ⟨h1, h2⟩; exact ⟨h1, (Classical.em (φ.truth w)).imp id h2⟩
-  · rintro ⟨h1, h2⟩; exact ⟨h1, fun hn => h2.resolve_left hn⟩
+    (Semantics.Presupposition.PrProp.orFilter
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 
 -- ============================================================

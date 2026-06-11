@@ -204,11 +204,11 @@ example (p q : PrProp W) : (PrProp.impFilter p q).presup =
 example (p q : PrProp W) : (PrProp.andFilter p q).presup =
     (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
-/-- Heritage function for disjunction IS `.presup` of `orFilter` (symmetric). -/
+/-- Heritage function for disjunction IS `.presup` of `orFilter`
+    (asymmetric: the second disjunct's local context is the input
+    updated with the negation of the first). -/
 example (p q : PrProp W) : (PrProp.orFilter p q).presup =
-    (λ w => (p.assertion w → q.presup w) ∧
-            (q.assertion w → p.presup w) ∧
-            (p.presup w ∨ q.presup w)) := rfl
+    (λ w => p.presup w ∧ (¬p.assertion w → q.presup w)) := rfl
 
 /-- Filtering vs SK: filtering conjunction is strictly weaker than SK
     conjunction in its presupposition requirements. When p's assertion
@@ -391,9 +391,9 @@ def pulUpdate (p : Set W) (σ : ContextSet W) : ContextSet W :=
   ContextSet.update σ p
 
 /-- PUL negation: complement within the input state.
-    σ[-φ] = σ \ σ[φ]. Note: this differs from CCP.neg, which is
-    test-based (pass/fail). PUL negation selects worlds where φ
-    does NOT hold. -/
+    σ[-φ] = σ \ σ[φ] — this is `CCP.neg` (set difference); it differs
+    from the whole-state test `CCP.negTest`. PUL negation selects
+    worlds where φ does NOT hold. -/
 def pulNeg (φ : ContextSet W → ContextSet W) (σ : ContextSet W) : ContextSet W :=
   λ w => σ w ∧ ¬ (φ σ) w
 
@@ -457,7 +457,7 @@ Key correspondences to PUL:
 - `Formula.presup` (∂) = `CCP.must` — full support test (D59)
 - `Formula.and` = `CCP.seq` — sequential composition
 - `Formula.might` = `CCP.might` — compatibility test
-- `Formula.not` ≠ `CCP.neg` — PUL negation is set complement, not pass/fail
+- `Formula.not` = `CCP.neg` (set complement); it differs from the whole-state test `CCP.negTest`
 
 ### Structural Admittance (D54)
 

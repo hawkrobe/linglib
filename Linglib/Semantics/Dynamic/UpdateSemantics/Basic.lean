@@ -49,13 +49,14 @@ def Update.conj {W : Type*} (φ ψ : Update W) : Update W :=
   Core.CCP.seq φ ψ
 
 /--
-Negation: test and possibly fail.
+Negation: complement within the input state.
 
-⟦¬φ⟧(s) = s if ⟦φ⟧(s) = ∅, else ∅
+⟦¬φ⟧(s) = s \ ⟦φ⟧(s)   ([veltman-1996])
 
-Delegates to `Core.CCP.neg`.
+Delegates to `Core.CCP.neg`. The whole-state consistency test is
+`Core.CCP.negTest`.
 -/
-noncomputable def Update.neg {W : Type*} (φ : Update W) : Update W :=
+def Update.neg {W : Type*} (φ : Update W) : Update W :=
   Core.CCP.neg φ
 
 /--
