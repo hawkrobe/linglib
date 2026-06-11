@@ -1,5 +1,4 @@
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Context.Tower
 
 /-!
 # Local Context Computation
@@ -54,14 +53,11 @@ A local context at a position in a sentence.
 
 Tracks:
 - The context set (worlds compatible with prior material)
-- The position in the sentence
-- Whether we're under an operator that affects projection
+- The embedding depth (for intermediate accommodation)
 -/
 structure LocalCtx (W : Type*) where
   /-- The set of worlds at this position -/
   worlds : ContextSet W
-  /-- Position in the sentence (for tracking) -/
-  position : Nat
   /-- Embedding depth (for intermediate accommodation) -/
   depth : Nat := 0
 
@@ -69,10 +65,10 @@ instance : HasContextSet (LocalCtx W) W where
   toContextSet := LocalCtx.worlds
 
 /--
-Initial local context: the global context at position 0.
+Initial local context: the global context, unembedded.
 -/
 def initialLocalCtx (c : ContextSet W) : LocalCtx W :=
-  { worlds := c, position := 0, depth := 0 }
+  { worlds := c, depth := 0 }
 
 
 /--
@@ -85,7 +81,6 @@ king exists: the local context at "the king is bald" already entails it.
 -/
 def localCtxConsequent (c : LocalCtx W) (antecedent : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds antecedent.assertion
-  , position := c.position + 1
   , depth := c.depth }
 
 /--
@@ -95,7 +90,6 @@ Local context for the second conjunct.
 -/
 def localCtxSecondConjunct (c : LocalCtx W) (first : PartialProp W) : LocalCtx W :=
   { worlds := ContextSet.update c.worlds first.assertion
-  , position := c.position + 1
   , depth := c.depth }
 
 /--
@@ -105,7 +99,6 @@ Local context under negation.
 -/
 def localCtxNegation (c : LocalCtx W) : LocalCtx W :=
   { worlds := c.worlds
-  , position := c.position + 1
   , depth := c.depth + 1 }
 
 /--
@@ -116,7 +109,6 @@ Local context for each disjunct.
 -/
 def localCtxSecondDisjunct (c : LocalCtx W) (first : PartialProp W) : LocalCtx W :=
   { worlds := λ w => c.worlds w ∧ ¬first.assertion w
-  , position := c.position + 1
   , depth := c.depth }
 
 
@@ -129,11 +121,6 @@ abbrev presupProjects (lc : LocalCtx W) (p : PartialProp W) : Prop :=
     Delegates to `Semantics.Presupposition.Context.presupSatisfied`. -/
 abbrev presupFiltered (lc : LocalCtx W) (p : PartialProp W) : Prop :=
   Semantics.Presupposition.Context.presupSatisfied lc.worlds p
-
-/-- Projection and filtering are complementary. -/
-theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PartialProp W) :
-    presupProjects lc p ↔ ¬ presupFiltered lc p := Iff.rfl
-
 
 /--
 Presupposition of consequent is filtered when antecedent assertion
@@ -165,52 +152,6 @@ Negation doesn't filter presuppositions.
 theorem negation_preserves_projection (c : LocalCtx W) (p : PartialProp W) :
     presupProjects c p ↔ presupProjects (localCtxNegation c) p := by
   simp [presupProjects, localCtxNegation]
-
-
-/--
-Formalization of "If the king exists, the king is bald".
-
-World type: whether a king exists.
--/
-inductive KingWorld' where
-  | kingExists
-  | noKing
-  deriving DecidableEq
-
-/--
-"The king exists" — no presupposition.
--/
-def kingExists' : PartialProp KingWorld' :=
-  { presup := λ _ => True
-  , assertion := λ w => match w with
-      | .kingExists => True
-      | .noKing => False }
-
-/--
-"The king is bald" — presupposes king exists.
--/
-def kingBald' : PartialProp KingWorld' :=
-  { presup := λ w => match w with
-      | .kingExists => True
-      | .noKing => False
-  , assertion := λ _ => True }
-
-/--
-In the conditional, the presupposition is filtered.
-
-The local context at "the king is bald" is c + [king exists],
-which entails the presupposition [king exists].
--/
-theorem king_conditional_filters (c : ContextSet KingWorld')
-    (h : c KingWorld'.noKing ∨ c KingWorld'.kingExists) :
-    presupFiltered (localCtxConsequent (initialLocalCtx c) kingExists') kingBald' := by
-  intro w hw
-  -- w is in {v ∈ c | kingExists'.assertion v}
-  -- So kingExists'.assertion w holds, meaning w = kingExists
-  obtain ⟨_, hw_assert⟩ := hw
-  cases w with
-  | kingExists => exact trivial
-  | noKing => exact hw_assert.elim
 
 
 /--
@@ -251,48 +192,5 @@ theorem local_context_matches_disjFilterLeft (c : ContextSet W)
   constructor
   · intro h w hc hn; exact h ⟨hc, hn⟩
   · intro h w ⟨hc, hn⟩; exact h w hc hn
-
--- ════════════════════════════════════════════════════════════════
--- § Tower Depth Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Tower Depth = Local Context Depth
-
-`LocalCtx.depth` tracks embedding depth for intermediate accommodation.
-`ContextTower.depth` tracks the number of context shifts. These two
-quantities coincide when each embedding operator (negation, attitude verb,
-conditional) pushes exactly one shift onto the tower.
-
-The bridge is stated as a definitional correspondence rather than a
-universally quantified theorem, because the alignment depends on the
-particular sentence structure (each operator must push one shift).
--/
-
-/-- When each embedding operator pushes exactly one shift onto the tower,
-    the local context depth at the corresponding position equals the
-    tower depth. This connects [schlenker-2009]'s incremental depth
-    tracking to the tower's structural depth.
-
-    Concretely: `localCtxNegation` increments depth by 1, and pushing
-    a shift onto a tower increments depth by 1. The bridge holds by
-    construction when the sentence structure is faithfully mirrored. -/
-theorem negation_depth_matches_tower_push (lc : LocalCtx W) :
-    (localCtxNegation lc).depth = lc.depth + 1 := rfl
-
-/-- A belief embedding tower: root context (speech-act context) plus
-    one attitude shift (the belief operator). The tower has depth 1,
-    matching the local context depth after one embedding. -/
-def beliefTower {C : Type*} (rootCtx : C)
-    (attShift : Semantics.Context.ContextShift C) :
-    Semantics.Context.ContextTower C :=
-  (Semantics.Context.ContextTower.root rootCtx).push attShift
-
-/-- The belief tower has depth 1. -/
-theorem beliefTower_depth {C : Type*} (rootCtx : C)
-    (attShift : Semantics.Context.ContextShift C) :
-    (beliefTower rootCtx attShift).depth = 1 := by
-  simp only [beliefTower, Semantics.Context.ContextTower.push_depth,
-             Semantics.Context.ContextTower.root_depth]
 
 end Semantics.Presupposition.LocalContext

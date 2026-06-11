@@ -1711,7 +1711,6 @@ import Linglib.Studies.Schlenker2009
 import Linglib.Studies.Heim1983
 import Linglib.Studies.RobertsSimons2024
 import Linglib.Studies.QingGoodmanLassiter2016
-import Linglib.Phenomena.Presupposition.TowerDerivation
 import Linglib.Studies.WangDavidson2026
 import Linglib.Studies.Heim1992Projection
 import Linglib.Studies.JereticEtAl2025
@@ -2022,7 +2021,6 @@ import Linglib.Phenomena.Assertion.Compare
 import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Studies.Ferreira2023
-import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
 import Linglib.Studies.Partee1973
@@ -2425,7 +2423,6 @@ import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.OntologicalPreconditions
-import Linglib.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Presupposition.PhiFeatures
@@ -2874,3 +2871,4 @@ import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.Modal.QBSML.StandardTranslation
 import Linglib.Core.Logic.Modal.QBSML.FreeChoice
 import Linglib.Studies.Yan2023
+import Linglib.Studies.TonhauserEtAl2013

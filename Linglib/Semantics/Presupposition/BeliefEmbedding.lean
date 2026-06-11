@@ -54,34 +54,26 @@ open Semantics.Presupposition
 open CommonGround
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
+open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W : Type*} {Agent : Type*}
 
 
 /--
-Doxastic accessibility relation: the worlds compatible with what an agent
-believes at a given world.
-
-`Dox agent w` = the set of worlds compatible with what `agent` believes at `w`
-
-This is the standard modal semantics for belief.
+An agent's belief state at a world: the doxastically accessible worlds,
+viewed as a context set. Doxastic accessibility is the agent-indexed
+accessibility relation `Core.Logic.Modal.AgentAccessRel` ([hintikka-1962]):
+`Dox agent w w'` means `w'` is compatible with what `agent` believes at `w`.
 -/
-def DoxasticAccessibility (W : Type*) (Agent : Type*) :=
-  Agent → W → ContextSet W
-
-/--
-An agent's belief state at a world: the characteristic function of the
-doxastically accessible worlds.
--/
-def beliefState (Dox : DoxasticAccessibility W Agent) (agent : Agent) (w : W) : ContextSet W :=
+def beliefState (Dox : AgentAccessRel W Agent) (agent : Agent) (w : W) : ContextSet W :=
   Dox agent w
 
 /--
 An agent believes a proposition at a world iff the proposition holds at all
 doxastically accessible worlds.
 -/
-def believes (Dox : DoxasticAccessibility W Agent) (agent : Agent) (p : (W → Bool)) (w : W) : Prop :=
-  ∀ w', Dox agent w w' → p w' = true
+def believes (Dox : AgentAccessRel W Agent) (agent : Agent) (p : W → Prop) (w : W) : Prop :=
+  ∀ w', Dox agent w w' → p w'
 
 
 /--
@@ -99,7 +91,7 @@ structure BeliefLocalCtx (W : Type*) (Agent : Type*) where
   /-- The global context set -/
   globalCtx : ContextSet W
   /-- The doxastic accessibility relation -/
-  dox : DoxasticAccessibility W Agent
+  dox : AgentAccessRel W Agent
   /-- The attitude holder -/
   agent : Agent
 
@@ -152,7 +144,7 @@ inductive SmokingAgent where
 /--
 John's belief state at each world.
 -/
-def smokingDox : DoxasticAccessibility SmokingWorld SmokingAgent
+def smokingDox : AgentAccessRel SmokingWorld SmokingAgent
   -- At world where Mary used to smoke and John believes it:
   -- John's beliefs are consistent with Mary having smoked
   | .john, .maryUsedToSmoke_johnBelieves_maryQuit =>
@@ -211,11 +203,9 @@ theorem stop_ole_attribution :
       , dox := smokingDox
       , agent := .john }
     presupAttributedToHolder blc maryStoppedSmoking := by
-  intro blc
-  intro w_star hw_star
-  intro w hw
+  intro blc w_star hw_star w hw
   -- w is in John's belief state at w_star
-  simp only [blc, BeliefLocalCtx.atWorld] at hw
+  simp only [blc] at hw
   obtain ⟨hw_eq, hw_dox⟩ := hw
   subst hw_eq
   -- In John's belief state, Mary used to smoke
@@ -238,7 +228,6 @@ the belief-restricted context.
 -/
 def speakerLocalCtx (c : ContextSet W) : LocalCtx W :=
   { worlds := c
-  , position := 0
   , depth := 0 }
 
 /--
@@ -265,7 +254,6 @@ framework from LocalContext.lean.
 def beliefToLocalCtx (blc : BeliefLocalCtx W Agent) (w_star : W)
     (_h : blc.globalCtx w_star) : LocalCtx W :=
   { worlds := blc.atWorld w_star
-  , position := 1  -- We're inside the belief operator
   , depth := 1 }   -- Embedding depth = 1
 
 /--
@@ -275,42 +263,32 @@ filtered iff it's entailed by the local context.
 theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
     (w_star : W) (_h : blc.globalCtx w_star) :
     presupFiltered (beliefToLocalCtx blc w_star _h) p ↔
-    ContextSet.entails (blc.atWorld w_star) p.presup := by
-  simp [presupSatisfied, beliefToLocalCtx]
+    ContextSet.entails (blc.atWorld w_star) p.presup :=
+  Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § Bool/Prop Bridge: CommonGround ↔ BeliefEmbedding
+-- § Knowledge vs Belief Embedding
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Bridging Agent-Indexed Accessibility into `DoxasticAccessibility`
+### Refinement Between Knowledge and Belief Embeddings
 [hintikka-1962]
 
-`EpistemicLogic` uses Prop-valued `AgentAccessRel W E = E → W → W → Prop`.
-`BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
-where `ContextSet W = W → Prop`.
-
-Both represent the same concept (agent-indexed world accessibility). The
-"bridge" is now a definitional reshuffle (currying `i w v ↦ Prop` either as
-`E → W → W → Prop` or `E → W → (W → Prop)`).
+Doxastic accessibility is `Core.Logic.Modal.AgentAccessRel` directly, so
+belief local contexts compose with the epistemic-logic frame conditions:
+when belief pointwise refines knowledge (`IsBeliefRefinementOf`), filtering
+under knowledge embedding implies filtering under belief embedding.
 -/
 
-section BoolPropBridge
-
-open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
+section Refinement
 
 variable {W E : Type*}
-
-/-- Reinterpret an `AgentAccessRel` as a `DoxasticAccessibility`. Since both are
-    `E → W → W → Prop` up to currying, this is essentially the identity. -/
-@[reducible] def doxOfAccessRel (Rs : AgentAccessRel W E) : DoxasticAccessibility W E :=
-  fun i w v => Rs i w v
 
 /-- Build a `BeliefLocalCtx` from an agent-indexed accessibility relation. -/
 def localCtxOf (Rs : AgentAccessRel W E) (ctx : ContextSet W) (i : E) :
     BeliefLocalCtx W E :=
   { globalCtx := ctx
-  , dox := doxOfAccessRel Rs
+  , dox := Rs
   , agent := i }
 
 /-- Belief-accessible worlds are a subset of knowledge-accessible worlds
@@ -333,7 +311,7 @@ theorem knowledge_filtered_implies_belief_filtered
   intro h_know w h_bel
   exact h_know (localCtx_sub_of_refinement Rk Rb ctx i w_star w h_bel)
 
-end BoolPropBridge
+end Refinement
 
 -- ════════════════════════════════════════════════════════════════
 -- § Opaque vs Transparent Projection

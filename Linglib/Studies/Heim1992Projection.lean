@@ -23,7 +23,7 @@ the modal frame conditions:
 
 This file constructs a concrete 2-world model demonstrating the asymmetry,
 connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
-`doxOfAccessRel` (from `BeliefEmbedding.lean`) to `presupFiltered`
+`localCtxOf` (from `BeliefEmbedding.lean`) to `presupFiltered`
 (from `LocalContext.lean`).
 
 The *other* half of [heim-1992] — comparative-belief desire

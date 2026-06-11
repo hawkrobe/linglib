@@ -100,24 +100,6 @@ structure PresupDerivation (W : Type*) where
   surface : List String := []
 
 
-/--
-Exhaustification may strengthen presuppositions.
-
-When alternatives to a sentence have presuppositions, exhaustification
-(negating those alternatives) can introduce additional presuppositions.
-
-This is a structural observation; detailed computation would require
-integrating with the Exhaustivity module.
--/
-structure ExhWithPresup (W : Type*) where
-  /-- The base sentence -/
-  base : PartialProp W
-  /-- Alternatives with their presuppositions -/
-  alternatives : List (PartialProp W)
-  /-- The exhaustified meaning -/
-  exhaustified : PartialProp W
-
-
 -- ============================================================================
 -- [wang-2025] Table 4.1: Alternative-structure typology
 -- ============================================================================

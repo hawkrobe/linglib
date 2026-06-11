@@ -231,7 +231,7 @@ def fromPartialProp (p q : PartialProp W) : MDisjunction W :=
 with `PartialProp.orFlex.presup`: p.presup ∨ q.presup. -/
 theorem fromPartialProp_presup_iff_orFlex (p q : PartialProp W) (w : W) :
     (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orFlex p q).presup w := by
-  simp [fromPartialProp, PartialProp.orFlex]
+  simp [fromPartialProp, PartialProp.orFlex, PartialProp.orBelnap]
 
 /-- The assertion side: Geurts cells = `PartialProp.orFlex.assertion`. -/
 theorem fromPartialProp_cell_iff_orFlex (p q : PartialProp W) (w : W) :
@@ -241,16 +241,18 @@ theorem fromPartialProp_cell_iff_orFlex (p q : PartialProp W) (w : W) :
              exists_eq_or_imp, exists_eq_left]
   rfl
 
-/-- Transitivity via `orFlex_eq_orBelnap`: Geurts presupposition = orBelnap
-presupposition ([belnap-1970] conditional assertion). -/
+/-- Via the definitional identity `orFlex` = `orBelnap`: Geurts
+presupposition = orBelnap presupposition ([belnap-1970] conditional
+assertion). -/
 theorem fromPartialProp_presup_iff_orBelnap (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orBelnap p q).presup w := by
-  rw [fromPartialProp_presup_iff_orFlex, ← PartialProp.orFlex_eq_orBelnap]
+    (∃ d ∈ fromPartialProp p q, d.domain w) ↔ (PartialProp.orBelnap p q).presup w :=
+  fromPartialProp_presup_iff_orFlex p q w
 
-/-- Transitivity via `orFlex_eq_orBelnap`: Geurts cell = orBelnap assertion. -/
+/-- Via the definitional identity `orFlex` = `orBelnap`: Geurts cell =
+orBelnap assertion. -/
 theorem fromPartialProp_cell_iff_orBelnap (p q : PartialProp W) (w : W) :
-    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orBelnap p q).assertion w := by
-  rw [fromPartialProp_cell_iff_orFlex, ← PartialProp.orFlex_eq_orBelnap]
+    (∃ d ∈ fromPartialProp p q, d.cell w) ↔ (PartialProp.orBelnap p q).assertion w :=
+  fromPartialProp_cell_iff_orFlex p q w
 
 /-- If Geurts's exhaustivity holds for C, the disjunction (orFlex/orBelnap)
 is already true throughout C — the disjunction is uninformative.

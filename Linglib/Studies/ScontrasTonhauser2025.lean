@@ -3,6 +3,7 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.BToM
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Studies.DegenTonhauser2021
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -67,6 +68,14 @@ leads to stronger projection. D&T 2021 demonstrate this across 20 predicates
 with β = 0.14 (categorical) / β = 0.28 (individual-level). S&T 2025's RSA
 model provides the theoretical explanation: L1's Bayesian inference naturally
 incorporates prior beliefs, so higher priors yield higher posteriors.
+
+## Comparison with Compositional Filtering
+
+§13 compares the BToM model against compositional filtering
+([heim-1983]): both predict conditional presupposition for factive
+"know", but only BToM predicts projection effects for non-factive
+"think" and relatedness modulation — the paper's key empirical argument
+against lexical presupposition encoding.
 -/
 
 set_option autoImplicit false
@@ -708,5 +717,134 @@ theorem prior_effect_consistent_with_dt2021 :
     (DegenTonhauser2021.exp1_priorEffect .categorical).β > 0 ∧
     (DegenTonhauser2021.exp1_priorEffect .individualLevel).β > 0 :=
   ⟨by native_decide, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §13. Comparison: Compositional Filtering vs. BToM
+-- ============================================================================
+
+/-! Compares the BToM model against compositional filtering ([heim-1983]):
+presuppositions project through connectives via local context computation;
+the filtering presupposition of "if A then B_p" is "A → p".
+
+The key empirical argument: the BToM model predicts that even non-factive
+"think" — which has NO presupposition to filter — exhibits projection
+effects, because L1 can still infer what the speaker takes for granted.
+Compositional filtering predicts a trivial presupposition for
+non-presuppositional items. -/
+
+section FilteringComparison
+
+open Semantics.Presupposition
+
+variable {W : Type*}
+
+/-- The filtering prediction for "if A then know-C":
+    the presupposition of the consequent (= C) is filtered by the antecedent.
+    Result: conditional presupposes "A → C". -/
+def filteringPrediction_know (a c : W → Prop) : PartialProp W :=
+  PartialProp.impFilter (PartialProp.ofProp a) (PartialProp.condAssert c (fun _ => True))
+
+/-- The filtering prediction for "if A then think-C":
+    "think" has no presupposition, so filtering produces a trivial result. -/
+def filteringPrediction_think (a : W → Prop) : PartialProp W :=
+  PartialProp.impFilter (PartialProp.ofProp a) PartialProp.top
+
+/-- **Filtering predicts non-trivial presupposition for "know"**:
+    The presupposition of "if A then know-C" is ¬A ∨ C (= A → C),
+    which is NOT tautological. -/
+theorem filtering_know_nontrivial (a c : W → Prop)
+    (h : ∃ w, a w ∧ ¬c w) :
+    ∃ w, ¬(filteringPrediction_know a c).presup w := by
+  obtain ⟨w, ha, hc⟩ := h
+  refine ⟨w, ?_⟩
+  simp only [filteringPrediction_know, PartialProp.impFilter, PartialProp.ofProp, PartialProp.condAssert,
+    not_and]
+  intro _
+  exact fun h_imp => hc (h_imp ha)
+
+/-- **Filtering predicts TRIVIAL presupposition for "think"**:
+    The presupposition of "if A then think-C" is always true,
+    regardless of A, because "think" contributes no presupposition. -/
+theorem filtering_think_trivial (a : W → Prop) :
+    ∀ w, (filteringPrediction_think a).presup w := by
+  intro w
+  simp only [filteringPrediction_think, PartialProp.impFilter, PartialProp.ofProp, PartialProp.top]
+  exact ⟨trivial, fun _ => trivial⟩
+
+/--
+BToM predicts projection effects for ANY verb in conditional environments,
+because projection arises from pragmatic reasoning about the speaker's
+private assumptions, not from lexical presupposition.
+
+The key mechanism: when A and C are related (correlated in the prior),
+the listener infers that a speaker who utters "if A, X Vs C" likely takes
+C for granted — regardless of whether V is factive.
+-/
+structure ProjectionPrediction where
+  /-- Whether projection is predicted for factive verbs in conditionals. -/
+  factive_projects : Bool
+  /-- Whether projection is predicted for non-factive verbs in conditionals. -/
+  nonFactive_projects : Bool
+  /-- Whether relatedness modulates projection strength. -/
+  relatedness_modulates : Bool
+
+/-- BToM predictions: both factive and non-factive show conditional
+    presupposition, modulated by relatedness. -/
+def btomPrediction : ProjectionPrediction where
+  factive_projects := true
+  nonFactive_projects := true
+  relatedness_modulates := true
+
+/-- Filtering predictions: only factive shows conditional presupposition,
+    with no role for relatedness (it's purely structural). -/
+def filteringPrediction : ProjectionPrediction where
+  factive_projects := true
+  nonFactive_projects := false    -- Think has no presupposition
+  relatedness_modulates := false  -- Filtering is structural, not probabilistic
+
+/--
+**Strict subsumption**: BToM predicts everything filtering predicts
+(factive conditional presupposition) plus more (non-factive conditional
+presupposition, relatedness modulation).
+-/
+theorem btom_subsumes_filtering :
+    -- BToM agrees with filtering on factive projection
+    btomPrediction.factive_projects = filteringPrediction.factive_projects ∧
+    -- BToM predicts non-factive projection where filtering doesn't
+    btomPrediction.nonFactive_projects = true ∧
+    filteringPrediction.nonFactive_projects = false ∧
+    -- BToM predicts relatedness modulation where filtering doesn't
+    btomPrediction.relatedness_modulates = true ∧
+    filteringPrediction.relatedness_modulates = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/--
+**The critical divergence**: For non-factive "think" in conditionals,
+filtering predicts trivial presupposition (no projection), while BToM
+predicts non-trivial projection modulated by relatedness.
+
+This is the [scontras-tonhauser-2025] argument: if projection were
+due to compositional filtering alone, non-presuppositional items like
+"think" should show no effect. But BToM predicts projection effects
+even for "think", because L1 infers the speaker's private assumptions
+regardless of the verb's factivity status.
+-/
+theorem critical_divergence_at_nonfactive :
+    filteringPrediction.nonFactive_projects ≠ btomPrediction.nonFactive_projects := by
+  decide
+
+/--
+**Filtering is a special case**: When relatedness is maximal (A entails C),
+BToM's projection prediction converges to the filtering prediction.
+Filtering captures the structural component; BToM adds the probabilistic
+modulation.
+-/
+theorem filtering_is_limiting_case (a c : W → Prop)
+    (h_entails : ∀ w, a w → c w) :
+    ∀ w, (filteringPrediction_know a c).presup w := by
+  intro w
+  exact ⟨trivial, fun ha => h_entails w ha⟩
+
+end FilteringComparison
 
 end ScontrasTonhauser2025

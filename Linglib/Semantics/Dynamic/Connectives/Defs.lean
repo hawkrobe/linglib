@@ -114,7 +114,7 @@ and [groenendijk-stokhof-1991] DPL negation. -/
 def dneg (D : Update S) : Condition S :=
   λ i => ¬∃ k, D i k
 
-notation "∼" D => dneg D
+scoped notation "∼" D => dneg D
 
 /-- Test: lift a condition to an Update that checks `C` without changing state.
 
@@ -123,7 +123,7 @@ set: `SAT(F') = SAT(F) ∩ {a : C(a)}`. -/
 def test (C : Condition S) : Update S :=
   λ i j => i = j ∧ C j
 
-notation "[" C "]" => test C
+scoped notation "[" C "]" => test C
 
 /-- A test relates a state only to itself. Operators that return a
 `Condition` (`dneg`, `dimpl`, `ddisj`) re-enter the update algebra via
@@ -189,7 +189,7 @@ extended by `D₂`. -/
 def entails (D₁ D₂ : Update S) : Prop :=
   ∀ i, (∃ j, D₁ i j) → ∀ j, D₁ i j → ∃ k, D₂ j k
 
-notation D₁ " ⊨ " D₂ => entails D₁ D₂
+scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
 
 end Truth
 
