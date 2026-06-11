@@ -79,7 +79,8 @@ def causedMotion : ArgStructureConstruction :=
           , { filler := .open_ .ADP, role := some "goal" } ]
       , meaning := "X CAUSES Y to MOVE to Z" }
   , hasHead := by decide
-  , semanticContribution := ⟨false, false, true, true, false, false⟩ }
+  , semanticContribution :=
+      { changeOfState := false, contact := false, motion := true, causation := true } }
 
 /-- Resultative construction: [Subj V Obj Pred].
 "X CAUSES Y to BECOME Z" (e.g., "She hammered the metal flat").
@@ -97,7 +98,8 @@ def resultative : ArgStructureConstruction :=
           , { filler := .open_ .ADJ, role := some "result" } ]
       , meaning := "X CAUSES Y to BECOME Z" }
   , hasHead := by decide
-  , semanticContribution := ⟨true, false, false, true, false, false⟩ }
+  , semanticContribution :=
+      { changeOfState := true, contact := false, motion := false, causation := true } }
 
 /-- Intransitive motion construction: [Subj V Obl].
 "X MOVES to Y" (e.g., "The ball rolled down the hill"). -/
@@ -237,11 +239,7 @@ semantic relation between the event participants. -/
 frame ([goldberg-1995] pp. 75–77). -/
 def ditransitiveFamily : PolysemyFamily :=
   { name := "Ditransitive"
-  , slots :=
-      [ { filler := .open_ .NOUN, role := some "agent" }
-      , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-      , { filler := .open_ .NOUN, role := some "recipient" }
-      , { filler := .open_ .NOUN, role := some "theme" } ]
+  , slots := ditransitive.slots
   , hasHead := by decide
   , centralMeaning := "X CAUSES Y TO RECEIVE Z"
   , extensions :=
@@ -260,10 +258,6 @@ def ditransitiveFamily : PolysemyFamily :=
       , ("Future",
          "X ACTS TO CAUSE Y TO RECEIVE Z at some future point in time",
          ["transfer deferred to future"]) ] }
-
-/-- The family's slots match the standalone `ditransitive` definition. -/
-theorem ditransitiveFamily_matches :
-    ditransitiveFamily.centralConstruction.slots = ditransitive.slots := rfl
 
 /-- Derived polysemy links. -/
 def ditransitivePolysemy : List InheritanceLink :=
@@ -292,34 +286,14 @@ def causedMotionToResultative : InheritanceLink :=
   , sharedProperties := ["X CAUSES Y to undergo change", "causal structure"]
   , overriddenProperties := ["motion → change of state", "location → property"] }
 
-/-- All polysemy links have link type I_P. -/
-theorem polysemy_links_typed :
-    ditransitivePolysemy.all (·.linkType == some .polysemy) = true := by
-  decide
-
-/-- Subpart link has link type I_S. -/
-theorem subpart_link_typed :
-    causedMotionSubpart.linkType = some .subpart := rfl
-
-/-- Metaphorical link has link type I_M. -/
-theorem metaphorical_link_typed :
-    causedMotionToResultative.linkType = some .metaphorical := rfl
-
-/-- All four link types are instantiated across the network. -/
-theorem all_link_types_instantiated :
-    -- I_P: polysemy (ditransitive senses)
-    (ditransitivePolysemy.any (·.linkType == some .polysemy) = true) ∧
-    -- I_M: metaphorical (caused-motion → resultative)
-    (causedMotionToResultative.linkType = some .metaphorical) ∧
-    -- I_S: subpart (caused-motion → intransitive motion)
-    (causedMotionSubpart.linkType = some .subpart) ∧
-    -- I_I: instance (resultative subconstructions, in GoldbergJackendoff2004)
-    True := by
-  exact ⟨by decide, rfl, rfl, trivial⟩
-
--- ════════════════════════════════════════════════════
--- Constructional fusion ([goldberg-1995])
--- ════════════════════════════════════════════════════
+/-- Every link a polysemy family derives is an I_P link — a fact about the
+construction, not about one table. -/
+theorem PolysemyFamily.polysemyLinks_typed (f : PolysemyFamily) :
+    ∀ l ∈ f.polysemyLinks, l.linkType = some .polysemy := by
+  intro l hl
+  simp only [PolysemyFamily.polysemyLinks, List.mem_map] at hl
+  obtain ⟨ext, _, rfl⟩ := hl
+  rfl
 
 /-! ## Verb–construction fusion
 
@@ -384,7 +358,7 @@ fires on the fused result. -/
 
 /-- A pure manner verb (no CoS, no causation) cannot alternate alone. -/
 theorem manner_verb_no_alternation (mc : MeaningComponents)
-    (hCoS : mc.changeOfState = false) (hCaus : mc.causation = false) :
+    (hCoS : mc.changeOfState = false) (_hCaus : mc.causation = false) :
     mc.predictedAlternation .causativeInchoative = false := by
   simp [MeaningComponents.predictedAlternation, hCoS]
 
@@ -398,13 +372,11 @@ theorem manner_verb_alternates_in_resultative (mc : MeaningComponents)
 
 /-- Concrete instance: hit-class components + resultative → causative alternation. -/
 theorem hit_alternates_in_resultative :
-    predictedAlternationInConstruction .hit resultative .causativeInchoative = true := by
-  native_decide
+    predictedAlternationInConstruction .hit resultative .causativeInchoative = true := rfl
 
 /-- Concrete instance: hit-class components alone → no causative alternation. -/
 theorem hit_no_alternation_alone :
-    MeaningComponents.hit.predictedAlternation .causativeInchoative = false := by
-  native_decide
+    MeaningComponents.hit.predictedAlternation .causativeInchoative = false := rfl
 
 /-! ### Multiple alternation flips from a single construction
 

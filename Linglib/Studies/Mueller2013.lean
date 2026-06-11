@@ -365,7 +365,7 @@ analogue of Internal Merge and the Head-Filler Schema. -/
 theorem dg_nonproj_is_filler_gap :
     -- A tree with crossing arcs has filler-gap dependencies
     DepGrammar.hasFillerGap DepGrammar.nonProjectiveTree = true := by
-  native_decide
+  decide
 
 /-! ## §5. Coordination Diagnostic (§1, §2.2)
 
