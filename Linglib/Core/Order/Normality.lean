@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Linglib.Core.Order.OfCriteria
 
 /-!
 # Normality Orderings
@@ -275,18 +276,23 @@ theorem respects_no_domination (no : NormalityOrder W) (φ : W → Prop)
 
 -- ═══ Construction from Propositions ═══
 
+/-- Repackage a `Preorder` as a `NormalityOrder`. -/
+def ofPreorder (p : Preorder W) : NormalityOrder W where
+  le := p.le
+  le_refl := p.le_refl
+  le_trans u v w := p.le_trans u v w
+
 /-- Construct a normality ordering from a list of propositions.
-    w ≤ v iff every proposition satisfied by v is also satisfied by w.
+    w ≤ v iff every proposition satisfied by v is also satisfied by w —
+    the criteria-derived preorder `Preorder.ofCriteria` with the ordering
+    source as criteria, repackaged.
 
     This is [kratzer-1981]'s ordering source construction:
     {p ∈ A : v ∈ p} ⊆ {p ∈ A : w ∈ p}.
-
-    Equivalent to `atLeastAsGoodAs` in `Modality/Kratzer.lean` (computable)
-    and `kratzerPlausibility` in `BeliefRevision.lean` (with smoothness). -/
-def fromProps (props : List (W → Prop)) : NormalityOrder W where
-  le w v := ∀ p ∈ props, p v → p w
-  le_refl _ _ _ h := h
-  le_trans _ _ _ huv hvw p hp hpw := huv p hp (hvw p hp hpw)
+    `Semantics.Modality.Kratzer.kratzerNormality` is definitionally this;
+    `kratzerPlausibility` in `BeliefRevision.lean` adds smoothness. -/
+def fromProps (props : List (W → Prop)) : NormalityOrder W :=
+  ofPreorder (Preorder.ofCriteria (fun w p => p w) {p | p ∈ props})
 
 /-- The empty ordering source gives the total ordering. -/
 theorem fromProps_nil {w v : W} : (fromProps ([] : List (W → Prop))).le w v :=

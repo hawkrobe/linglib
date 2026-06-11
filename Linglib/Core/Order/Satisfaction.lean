@@ -71,6 +71,24 @@ def ofCriteria (satisfies : α → Criterion → Bool) (criteria : List Criterio
       show Decidable (∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true) by
         infer_instance }
 
+/-- The bundled construction agrees with the general criteria-derived
+    preorder `Preorder.ofCriteria` (Prop-valued satisfaction, `Set`
+    criteria): same order, with the `List.filter` membership unfolded.
+    `SatisfactionOrdering` is the decidable/bundled specialization. -/
+theorem le_iff_ofCriteria (satisfies : α → Criterion → Bool)
+    (criteria : List Criterion) (a a' : α) :
+    (SatisfactionOrdering.ofCriteria satisfies criteria).le a a' ↔
+      (Preorder.ofCriteria (fun x c => satisfies x c = true)
+        {c | c ∈ criteria}).le a a' := by
+  show (∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true) ↔
+    ∀ c ∈ criteria, satisfies a' c = true → satisfies a c = true
+  constructor
+  · intro h c hc hsat
+    exact h c (List.mem_filter.mpr ⟨hc, hsat⟩)
+  · intro h c hc
+    obtain ⟨hc', hsat⟩ := List.mem_filter.mp hc
+    exact h c hc' hsat
+
 /-! ## Domain-friendly aliases
 
 These let study files use names that match the source literature
@@ -116,10 +134,8 @@ theorem equivalent_trans (o : SatisfactionOrdering α Criterion) {a b c : α}
 /-- The induced `NormalityOrder`: connects satisfaction-based orderings
     (Kratzer modal semantics, Phillips-Brown desire) to the default reasoning
     infrastructure (`optimal`, `refine`, `respects`, CR1–CR4). -/
-def toNormalityOrder (o : SatisfactionOrdering α Criterion) : NormalityOrder α where
-  le := o.le
-  le_refl := o.le_refl
-  le_trans := o.le_trans
+def toNormalityOrder (o : SatisfactionOrdering α Criterion) : NormalityOrder α :=
+  .ofPreorder o.toPreorder
 
 /-! ## Maxima and undominated elements -/
 

@@ -68,10 +68,10 @@ reduces to von Fintel's standard semantics — see
 (comparative-belief) is *not* formalized here; the no-go theorem
 `wantVF_no_simultaneous_pq_and_negpq` covers von Fintel only.
 
-The world ordering used by `wantVF` is structurally identical to
-[kratzer-1981]'s ordering (every desire satisfied at z is also
-satisfied at w); see `worldAtLeastAsGood_iff_kratzer_atLeastAsGoodAs`
-for the bridge.
+The world ordering used by `wantVF` is [kratzer-1981]'s ordering over
+the projected desire propositions (every desire satisfied at z is also
+satisfied at w) — definitionally, not by bridge: `worldAtLeastAsGood`
+calls `Kratzer.atLeastAsGoodAs` directly.
 -/
 
 namespace Semantics.Attitudes.Desire
@@ -170,30 +170,40 @@ instance (belS : Set W) [DecidablePred belS]
 
 `wantVF` evaluates to "every undominated belief-world is a p-world",
 where the world ordering is induced by which desires each world
-satisfies. Structurally identical to [kratzer-1981]'s
-`atLeastAsGoodAs`; see the bridge theorem
-`worldAtLeastAsGood_iff_kratzer`. -/
+satisfies — [kratzer-1981]'s `atLeastAsGoodAs` over the projected
+desires, by definition. -/
 
 /-- World ordering induced by a desire list: `w ≤ z` iff every desire
-    in `GS` satisfied at `z` is also satisfied at `w`. Decidable
-    version (each `p.prop` carries its own `DecidablePred` witness). -/
+    in `GS` satisfied at `z` is also satisfied at `w` — [kratzer-1981]'s
+    `atLeastAsGoodAs` over the projected proposition list, by definition.
+    Decidability is transported from the per-`DecProp` witnesses via
+    `worldAtLeastAsGood_iff_decProp`. -/
 def worldAtLeastAsGood (GS : List (DecProp W)) (w z : W) : Prop :=
-  ∀ p ∈ GS, p.prop z → p.prop w
+  Semantics.Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z
+
+omit [Fintype W] [DecidableEq W] in
+/-- The ordering in its `DecProp`-quantified form, where each desire
+    carries its decidability witness. -/
+theorem worldAtLeastAsGood_iff_decProp (GS : List (DecProp W)) (w z : W) :
+    worldAtLeastAsGood GS w z ↔ ∀ p ∈ GS, p.prop z → p.prop w := by
+  show (∀ p ∈ GS.map (·.prop), p z → p w) ↔ _
+  simp only [List.mem_map]
+  refine ⟨fun h a ha hpz => h a.prop ⟨a, ha, rfl⟩ hpz,
+          fun h _ ⟨a, ha, hap⟩ hpz => hap ▸ h a ha (hap ▸ hpz)⟩
 
 instance (GS : List (DecProp W)) (w z : W) :
     Decidable (worldAtLeastAsGood GS w z) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+  decidable_of_iff _ (worldAtLeastAsGood_iff_decProp GS w z).symm
 
 omit [Fintype W] [DecidableEq W] in
 /-- The desire-induced world ordering coincides with Kratzer's ordering
-    over the projected proposition list. -/
+    over the projected proposition list — definitional since
+    `worldAtLeastAsGood` calls `atLeastAsGoodAs` directly; kept for
+    discoverability. -/
 theorem worldAtLeastAsGood_iff_kratzer (GS : List (DecProp W)) (w z : W) :
     worldAtLeastAsGood GS w z ↔
-      Semantics.Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z := by
-  unfold worldAtLeastAsGood Semantics.Modality.Kratzer.atLeastAsGoodAs
-  simp only [List.mem_map]
-  refine ⟨fun h _ ⟨a, ha, hap⟩ hpz => hap ▸ h a ha (hap ▸ hpz),
-          fun h a ha hpz => h a.prop ⟨a, ha, rfl⟩ hpz⟩
+      Semantics.Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z :=
+  Iff.rfl
 
 /-- Standard von Fintel [von-fintel-1999] semantics: every undominated
     belS-world is a p-world. The `[DecidablePred]` hypotheses are not
@@ -349,7 +359,8 @@ belS-worlds), then a direct two-direction `iff` proof. -/
 private theorem singleton_le_iff_world (GS : List (DecProp W)) (w z : W) :
     (propositionOrdering GS).le (mkDec (· = w)) (mkDec (· = z)) ↔
       worldAtLeastAsGood GS w z := by
-  unfold propositionOrdering worldAtLeastAsGood SatisfactionOrdering.ofCriteria
+  rw [worldAtLeastAsGood_iff_decProp]
+  unfold propositionOrdering SatisfactionOrdering.ofCriteria
   show (∀ q ∈ GS.filter (fun q => decide (propEntails (mkDec (· = z)).prop q.prop)),
           decide (propEntails (mkDec (· = w)).prop q.prop) = true) ↔
        (∀ q ∈ GS, q.prop z → q.prop w)
