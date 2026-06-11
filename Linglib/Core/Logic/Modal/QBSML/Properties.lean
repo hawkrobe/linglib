@@ -108,7 +108,9 @@ theorem support_empty_of_isNEFree {φ : QBSMLFormula Var Pred}
 /-! ### Joint downward + sup closure for NE-free formulas -/
 
 /-- Joint statement of all four closure properties for both polarities of an
-    NE-free QBSML formula. The union case of `exi` (and antiSupport `univ`)
+    NE-free QBSML formula — the quantifier cases are [aloni-vanormondt-2023]
+    Fact 2, the rest the first-order re-run of [anttila-2021]
+    Proposition 2.2.8. The union case of `exi` (and antiSupport `univ`)
     needs the IH's downward closure for the subformula to weaken
     `t.extendFunctional x h_t` to `(t \ s).extendFunctional x h_t`, so all
     four properties have to live inside one induction. -/
@@ -372,6 +374,55 @@ theorem soundFor_flat_neFree (M : QBSMLModel W Domain Pred) :
   unfold flatProperties
   exact definableClassWhere_subset (C := IsFlat)
     fun _φ hφ => isFlat_support_of_isNEFree hφ M
+
+/-! ### Fact 1: classical validities
+
+[aloni-vanormondt-2023] Fact 1 lists the classical equivalences QBSML
+validates: double negation elimination, the De Morgan laws, and the `□`/`◇`
+and `∀`/`∃` dualities. In the bilateral setup every one is definitional —
+negation literally swaps `support` and `antiSupport`, whose clauses are
+arranged in De Morgan pairs — so each is `Iff.rfl`. -/
+
+section Fact1
+
+variable (M : QBSMLModel W Domain Pred) (φ ψ : QBSMLFormula Var Pred)
+  (x : Var) (s : Finset (Index W Var Domain))
+
+/-- Double negation elimination ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_neg : support M (.neg (.neg φ)) s ↔ support M φ s :=
+  Iff.rfl
+
+/-- De Morgan: `¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_disj :
+    support M (.neg (.disj φ ψ)) s ↔ support M (.conj (.neg φ) (.neg ψ)) s :=
+  Iff.rfl
+
+/-- De Morgan: `¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_conj :
+    support M (.neg (.conj φ ψ)) s ↔ support M (.disj (.neg φ) (.neg ψ)) s :=
+  Iff.rfl
+
+/-- Modal duality: `¬□φ ≡ ◇¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_nec :
+    support M (.neg φ.nec) s ↔ support M (.poss (.neg φ)) s :=
+  Iff.rfl
+
+/-- Modal duality: `¬◇φ ≡ □¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_poss :
+    support M (.neg (.poss φ)) s ↔ support M (QBSMLFormula.neg φ).nec s :=
+  Iff.rfl
+
+/-- Quantifier duality: `¬∀xφ ≡ ∃x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_univ :
+    support M (.neg (.univ x φ)) s ↔ support M (.exi x (.neg φ)) s :=
+  Iff.rfl
+
+/-- Quantifier duality: `¬∃xφ ≡ ∀x¬φ` ([aloni-vanormondt-2023] Fact 1). -/
+theorem support_neg_exi :
+    support M (.neg (.exi x φ)) s ↔ support M (.univ x (.neg φ)) s :=
+  Iff.rfl
+
+end Fact1
 
 /-! ### Flatness as pointwise evaluation -/
 

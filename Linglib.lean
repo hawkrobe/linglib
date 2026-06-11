@@ -1562,7 +1562,6 @@ import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Modal.QBSML.Enrichment
 import Linglib.Core.Logic.Modal.QBSML.Properties
 import Linglib.Studies.Aloni2022.FreeChoice
-import Linglib.Studies.AloniVanOrmondt2023.FreeChoice
 import Linglib.Studies.Aloni2022
 import Linglib.Studies.AloniAnttilaYang2024
 import Linglib.Studies.AloniVanOrmondt2023
