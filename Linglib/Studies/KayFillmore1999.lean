@@ -10,23 +10,30 @@ import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# [kay-fillmore-1999]: *What's X Doing Y?* — Empirical Data
-[kay-fillmore-1999]
+# [kay-fillmore-1999]: *What's X Doing Y?*
 
-Theory-neutral judgment data from "Grammatical Constructions and Linguistic
-Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
+"Grammatical Constructions and Linguistic Generalizations: The *What's X
+doing Y?* Construction" (Language 75(1):1–33). WXDY has interrogative
+*form* but expressive *function* on the incredulity reading; the
+form–function mismatch is derived rather than stipulated: the literal
+reading is a genuine question (speaker-ignorance satisfies the PerspP
+presupposition), the incredulity reading a blocked one (speaker knowledge
+contradicts it), with the presupposed proposition and the
+unexpectedness CI typed via `PrProp`/`TwoDimProp`.
 
-## Phenomena covered
+The paper's own inheritance hierarchy — WXDY inheriting from the
+left-isolation, subject–aux-inversion, and wh-interrogative constructions
+of its unification-based grammar — is recorded here only as prose;
+assembling it as a checked network awaits verification of the paper's
+figures.
 
-1. **Incredulity reading**: "What's this fly doing in my soup?" (speaker knows the answer)
-2. **Literal question reading**: "What's John doing in the kitchen?" (genuine information-seeking)
-3. **Progressive requirement**: WXDY requires progressive *doing*; bare infinitive is out
-4. **Subject referentiality**: referential subjects OK; non-referential degraded
-5. **Complement types**: locative PP, participial VP, instrumental PP
-6. **Ambiguity**: sentences admitting both readings
-7. **Embedding / CI projection**: WXDY meaning under embedding predicates
-8. **FKO1988 comparison**: relation to Incredulity Response construction
+## Main declarations
 
+- `KayFillmore1999.wxdyConstruction`: the construction, typed form per
+  Figure 12
+- `KayFillmore1999.allExamples`: judgment data
+- `KayFillmore1999.perspP_disambiguates_wxdy`: the two readings derived
+- `KayFillmore1999.wxdyPresup`, `wxdyTwoDim`: typed pragmatics
 -/
 
 namespace KayFillmore1999
@@ -248,57 +255,9 @@ theorem has_all_judgment_types :
   constructor; decide
   decide
 
-end KayFillmore1999
-
-/-! ## Bridge content (merged from CxG_KayFillmore1999Bridge.lean) -/
-
-/-!
-# [kay-fillmore-1999]: *What's X Doing Y?* Construction
-[kay-fillmore-1999] [dayal-2025] [potts-2005]
-
-Formalization of "Grammatical Constructions and Linguistic Generalizations:
-The *What's X doing Y?* Construction" (Language 75(1):1–33).
-
-## Key insight
-
-WXDY has interrogative *form* but expressive *function* on the incredulity
-reading. This form–function mismatch is precisely what the existing
-LeftPeriphery + Expressives + Presupposition infrastructure can derive:
-
-- **Interrogative form**: +WH feature, wh-fronting, subject-aux inversion
-- **Expressive function**: CI content (unexpectedness), presupposed proposition
-
-The two readings are distinguished by the PerspectiveP layer:
-- **Literal**: speaker is ignorant → PerspP satisfied → genuine question
-- **Incredulity**: speaker knows the answer → PerspP blocked → not a real question
-
-## Bridge targets (10 modules)
-
-| # | Module | Bridge |
-|---|--------|--------|
-| 1 | `Core/Presupposition` | WXDY presupposes the embedded proposition |
-| 2 | `Expressives/Basic` | Incredulity is CI content (projects through negation) |
-| 3 | `Semantics.Questions/Hamblin` | Literal = standard `which`; incredulity = degenerate Q |
-| 4 | `Semantics.ArgumentStructure.Linking/LeftPeriphery` | PerspP disambiguates the two readings |
-| 5 | `Core/CommonGround` | Presupposition requires CommonGround entailment |
-| 6 | `Verb/Aspect` | Progressive requirement (durative ∧ dynamic) |
-| 7 | `Focus/DomainWidening` | Incongruity = normative expectation violation |
-| 8 | `Semantics.Questions/Polarity` | Incredulity = rhetorical question |
-| 9 | `FKO1988` | WXDY is a formal idiom; sibling to Incredulity Response |
-| 10 | `Phenomena/KayFillmore1999` | Per-datum verification |
-
--/
-
-open KayFillmore1999
-open FillmoreKayOConnor1988
-
-namespace ConstructionGrammar.Studies.KayFillmore1999
+/-! ### The construction -/
 
 open ConstructionGrammar
-
--- ============================================================================
--- A. Construction definition
--- ============================================================================
 
 /-- The WXDY construction as a `Construction`.
 
@@ -326,9 +285,7 @@ def wxdyConstruction : Construction :=
   , meaning := "Incredulity: speaker presupposes embedded prop, expresses surprise; Literal: genuine activity question"
   , pragmaticFunction := "presupposes situation; CI: speaker finds it unexpected/inappropriate" }
 
--- ============================================================================
--- B. FKO1988 idiom classification bridge
--- ============================================================================
+/-! ### FKO1988 idiom classification bridge -/
 
 /-- WXDY is a formal idiom in FKO1988's typology: encoding (must learn the
 incredulity convention), grammatical (fills proper grammatical slots),
@@ -350,58 +307,7 @@ theorem wxdy_is_formal_idiom :
     wxdyConstruction.specificity = .partiallyOpen ∧
     wxdyConstruction.pragmaticFunction.isSome := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- C. CxG inheritance network
--- ============================================================================
-
-/-- WXDY inherits from wh-questions: wh-fronting, +WH feature,
-subject-aux inversion. Overrides: question semantics (on the incredulity
-reading, it's not a genuine information-seeking question). -/
-def wxdyInheritanceFromWhQ : InheritanceLink :=
-  { parent := "Wh-question"
-  , child := "What's X doing Y?"
-  , mode := .normal
-  , sharedProperties :=
-      [ "wh-fronting"
-      , "+WH feature on C"
-      , "subject-aux inversion" ]
-  , overriddenProperties :=
-      [ "question semantics (incredulity reading is not info-seeking)" ] }
-
-/-- WXDY inherits progressive morphology from the progressive construction:
-*doing* carries -ing morphology. -/
-def wxdyInheritanceFromProgressive : InheritanceLink :=
-  { parent := "Progressive"
-  , child := "What's X doing Y?"
-  , mode := .normal
-  , sharedProperties :=
-      [ "-ing morphology on main verb"
-      , "selects durative dynamic predicates" ]
-  , overriddenProperties :=
-      [ "progressive semantics (doing is frozen, not compositional progressive)" ] }
-
-/-- WXDY and FKO1988's Incredulity Response ("Him be a doctor?") are
-siblings in the "rhetorical question family" — both express incredulity
-via non-standard question forms. -/
-def wxdyInheritanceFromIncredulity : InheritanceLink :=
-  { parent := "Rhetorical question family"
-  , child := "What's X doing Y?"
-  , mode := .normal
-  , sharedProperties :=
-      [ "interrogative form"
-      , "expressive function (speaker incredulity)"
-      , "speaker knows/presupposes the answer" ]
-  , overriddenProperties :=
-      [ "WXDY uses standard syntax; IR uses accusative subject + bare stem" ] }
-
-/-- WXDY and the Incredulity Response share the same expressive family. -/
-theorem wxdy_same_class_as_incredulity_response :
-    wxdyInheritanceFromIncredulity.parent =
-    "Rhetorical question family" := rfl
-
--- ============================================================================
--- D. Presupposition bridge (Core/Presupposition.lean)
--- ============================================================================
+/-! ### Presupposition bridge (Core/Presupposition.lean) -/
 
 open Semantics.Presupposition
 
@@ -420,9 +326,7 @@ theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Prop) :
     ∀ w, (PrProp.neg (wxdyPresup embeddedProp)).presup w ↔
          embeddedProp w := fun _ => Iff.rfl
 
--- ============================================================================
--- E. Two-dimensional semantics bridge (Expressives/Basic.lean)
--- ============================================================================
+/-! ### Two-dimensional semantics bridge (Expressives/Basic.lean) -/
 
 open Pragmatics.Expressives
 
@@ -467,9 +371,7 @@ theorem wxdy_ci_independent {W : Type*}
       (wxdyTwoDim embeddedProp unexpectedness).ci w) := by
   exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
--- ============================================================================
--- F. Hamblin question semantics bridge (Semantics/Questions/Hamblin.lean substrate)
--- ============================================================================
+/-! ### Hamblin question semantics bridge (Semantics/Questions/Hamblin.lean substrate) -/
 
 open Question
 
@@ -502,9 +404,7 @@ theorem literal_is_genuine_question {W E : Type*}
     (activities : Set E) (pred : E → Set W) :
     wxdyLiteralQ activities pred = which activities pred := rfl
 
--- ============================================================================
--- G. Left Periphery bridge (Semantics.ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE
--- ============================================================================
+/-! ### Left Periphery bridge (Semantics.ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE -/
 
 open Syntax.Minimalist.LeftPeriphery
 
@@ -551,9 +451,7 @@ theorem perspP_disambiguates_wxdy {W : Type*}
     perspPPresupComp ignorantModel q w = true :=
   ⟨wxdy_incredulity_blocks_perspP q w, wxdy_literal_allows_perspP q w⟩
 
--- ============================================================================
--- H. Common ground bridge (Core/CommonGround.lean)
--- ============================================================================
+/-! ### Common ground bridge (Core/CommonGround.lean) -/
 
 open CommonGround
 
@@ -566,9 +464,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
     (wxdyPresup embeddedProp).presup w :=
   h hw
 
--- ============================================================================
--- I. Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics)
--- ============================================================================
+/-! ### Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics) -/
 
 open Features
 open Semantics.Lexical
@@ -585,17 +481,4 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
     (c.duration = .durative ∧ c.dynamicity = .dynamic) :=
   progressive_accepts_durative_dynamic c
 
--- ============================================================================
--- L. Per-datum verification
--- ============================================================================
-
-/-- The data contains all three reading types. -/
-theorem all_readings_attested :
-    (allExamples.any (λ d : WXDYDatum => d.reading == .literal)) = true ∧
-    (allExamples.any (λ d : WXDYDatum => d.reading == .incredulity)) = true ∧
-    (allExamples.any (λ d : WXDYDatum => d.reading == .ambiguous)) = true := by
-  constructor; decide
-  constructor; decide
-  decide
-
-end ConstructionGrammar.Studies.KayFillmore1999
+end KayFillmore1999
