@@ -1555,6 +1555,7 @@ import Linglib.Core.Logic.Modal.BSML.ClassicalValidities
 import Linglib.Core.Logic.Modal.BSML.Defs
 import Linglib.Core.Logic.Modal.BSML.Enrichment
 import Linglib.Core.Logic.Modal.BSML.ExpressiveCompleteness
+import Linglib.Core.Logic.Modal.BSML.NaturalDeduction
 import Linglib.Core.Logic.Modal.BSML.Properties
 import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Modal.QBSML.Enrichment

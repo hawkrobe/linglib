@@ -628,7 +628,10 @@ open FirstOrder Language
     The converse recovery of a *team* model from that structure would need
     `Finset`-branching accessibility and a `Fintype` domain, which an
     arbitrary first-order structure does not supply, so the transfer is
-    stated one-way. -/
+    stated one-way. Compactness for team-semantic consequence is proved
+    directly (ultraproducts and saturation, without translation) by
+    [puljujarvi-quadrellaro-2024], who also separate satisfiability- from
+    entailment-compactness in team logics. -/
 theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
     {Const : Type u} {Pred : Type v} {ι : Type*}
     {φs : ι → QBSMLFormula Var Const Pred}
