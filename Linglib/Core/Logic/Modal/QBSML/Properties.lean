@@ -32,6 +32,11 @@ empty-team support, hence flat support, via the same
   `ModalFormula` over `Core/Logic/FirstOrder/Kripke.lean`, and support is
   Kripke satisfaction at every index; the translation is total on exactly
   the NE-free fragment (`exists_toModal?_of_isNEFree`).
+* `eval_mapAtoms_iff` — atom-substitution congruence: an atom map with
+  bilaterally equivalent images is *salva veritate*.
+* `support_disj_inl`, `support_nec_iff`, `support_nec_mono`,
+  `support_exi_of_update_closure` — upward monotonicity of the NE-free
+  fragment and existential introduction via witness reconstruction.
 
 ## Implementation notes
 
@@ -460,6 +465,147 @@ theorem antiSupport_iff_forall_singleton {φ : QBSMLFormula Var Const Pred}
     (s : Finset (Index W Var Domain)) :
     antiSupport M φ s ↔ ∀ i ∈ s, antiSupport M φ {i} :=
   support_iff_forall_singleton (.neg hNE) M s
+
+/-! ### Atom substitution salva veritate -/
+
+/-- **Atom-substitution congruence**: an atom map whose images are
+    bilaterally equivalent to the atoms they replace is *salva veritate* —
+    `φ.mapAtoms fp fc` and `φ` are supported and anti-supported by exactly
+    the same states. Atom-rewriting operations (e.g. [yan-2023]'s
+    reinterpretation function, `Studies/Yan2023.lean`) get truth-conditional
+    harmlessness for the price of their two atom lemmas. -/
+theorem eval_mapAtoms_iff (M : QBSMLModel W Domain Const Pred)
+    {fp : Pred → Var → QBSMLFormula Var Const Pred}
+    {fc : Pred → Const → QBSMLFormula Var Const Pred}
+    (hfp : ∀ (P : Pred) (x : Var) (b : Bool)
+      (s : Finset (Index W Var Domain)),
+      eval M b (fp P x) s ↔ eval M b (.pred P x) s)
+    (hfc : ∀ (P : Pred) (c : Const) (b : Bool)
+      (s : Finset (Index W Var Domain)),
+      eval M b (fc P c) s ↔ eval M b (.predc P c) s)
+    (φ : QBSMLFormula Var Const Pred) :
+    ∀ (b : Bool) (s : Finset (Index W Var Domain)),
+      eval M b (φ.mapAtoms fp fc) s ↔ eval M b φ s := by
+  induction φ with
+  | pred P x => exact hfp P x
+  | predc P c => exact hfc P c
+  | ne => exact fun _ _ => Iff.rfl
+  | neg ψ ih =>
+    intro b s
+    cases b with
+    | true => exact ih false s
+    | false => exact ih true s
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro b s
+    cases b with
+    | true => exact and_congr (ih₁ true s) (ih₂ true s)
+    | false =>
+      constructor
+      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+        exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
+      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+        exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro b s
+    cases b with
+    | true =>
+      constructor
+      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+        exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
+      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+        exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
+    | false => exact and_congr (ih₁ false s) (ih₂ false s)
+  | poss ψ ih =>
+    intro b s
+    cases b with
+    | true =>
+      constructor
+      · intro h i hi
+        obtain ⟨X, hX, hne, hsupp⟩ := h i hi
+        exact ⟨X, hX, hne, (ih true _).mp hsupp⟩
+      · intro h i hi
+        obtain ⟨X, hX, hne, hsupp⟩ := h i hi
+        exact ⟨X, hX, hne, (ih true _).mpr hsupp⟩
+    | false =>
+      constructor
+      · exact fun h i hi => (ih false _).mp (h i hi)
+      · exact fun h i hi => (ih false _).mpr (h i hi)
+  | exi x ψ ih =>
+    intro b s
+    cases b with
+    | true =>
+      constructor
+      · rintro ⟨hf, hne, hsupp⟩
+        exact ⟨hf, hne, (ih true _).mp hsupp⟩
+      · rintro ⟨hf, hne, hsupp⟩
+        exact ⟨hf, hne, (ih true _).mpr hsupp⟩
+    | false =>
+      constructor
+      · exact fun h => (ih false _).mp h
+      · exact fun h => (ih false _).mpr h
+  | univ x ψ ih =>
+    intro b s
+    cases b with
+    | true =>
+      constructor
+      · exact fun h => (ih true _).mp h
+      · exact fun h => (ih true _).mpr h
+    | false =>
+      constructor
+      · rintro ⟨hf, hne, hsupp⟩
+        exact ⟨hf, hne, (ih false _).mp hsupp⟩
+      · rintro ⟨hf, hne, hsupp⟩
+        exact ⟨hf, hne, (ih false _).mpr hsupp⟩
+
+/-! ### Upward monotonicity of the NE-free fragment -/
+
+/-- Disjunction introduction: `α ⊨ α ∨ β` for NE-free `β` (the right
+    disjunct is supported by the empty half of the split). -/
+theorem support_disj_inl (M : QBSMLModel W Domain Const Pred)
+    {α β : QBSMLFormula Var Const Pred} (hβ : β.IsNEFree)
+    {s : Finset (Index W Var Domain)} (h : support M α s) :
+    support M (.disj α β) s :=
+  ⟨s, ∅, splitsAs_self_empty s, h, support_empty_of_isNEFree hβ M⟩
+
+/-- Support of the derived `□` is pointwise support at the full accessible
+    lift — definitional, by the `neg`/`poss` clauses of `eval`. -/
+@[simp] theorem support_nec_iff (M : QBSMLModel W Domain Const Pred)
+    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+    support M φ.nec s ↔
+      ∀ i ∈ s, support M φ
+        (State.modalLift (M.access i.world) i.assign) :=
+  Iff.rfl
+
+/-- `□` is monotone: a state-wise entailment between prejacents lifts to
+    their necessitations. -/
+theorem support_nec_mono (M : QBSMLModel W Domain Const Pred)
+    {α β : QBSMLFormula Var Const Pred}
+    (h : ∀ t : Finset (Index W Var Domain), support M α t → support M β t)
+    {s : Finset (Index W Var Domain)} (hα : support M α.nec s) :
+    support M β.nec s :=
+  fun i hi => h _ (hα i hi)
+
+/-! ### Existential introduction via witness reconstruction -/
+
+/-- A state `t` of `x`-updates of `s` (covering all of `s`) that supports
+    `γ` witnesses `∃x γ` on `s`: the functional collecting, at each index,
+    the values whose updates land in `t` reconstructs `t` exactly
+    (`State.extendFunctional_filter_of_update_mem`). The shared
+    existential-witness step of the free-choice facts
+    (`Core/Logic/Modal/QBSML/FreeChoice.lean`). -/
+theorem support_exi_of_update_closure (M : QBSMLModel W Domain Const Pred)
+    {γ : QBSMLFormula Var Const Pred} {x : Var}
+    {s t : Finset (Index W Var Domain)}
+    (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j)
+    (hcov : ∀ i ∈ s, ∃ d, i.update x d ∈ t)
+    (hsupp : support M γ t) :
+    support M (.exi x γ) s := by
+  refine ⟨fun i => Finset.univ.filter (fun d => i.update x d ∈ t), ?_, ?_⟩
+  · intro i hi
+    obtain ⟨d, hd⟩ := hcov i hi
+    exact ⟨d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩⟩
+  · rw [State.extendFunctional_filter_of_update_mem hpar]
+    exact hsupp
 
 /-! ### Classicality: the modal-free Realize bridge
 

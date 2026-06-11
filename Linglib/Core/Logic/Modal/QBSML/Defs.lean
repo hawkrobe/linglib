@@ -246,6 +246,26 @@ theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
     Finset.mem_univ, true_and]
   tauto
 
+/-- **Witness reconstruction**: a state `t` consisting of `x`-updates of
+    indices of `s` is recovered exactly as the functional extension of `s`
+    by the functional collecting, at each index, the values whose updates
+    land in `t`. The shared Finset surgery behind the existential-witness
+    steps of the free-choice facts
+    (`Core/Logic/Modal/QBSML/FreeChoice.lean`). -/
+theorem State.extendFunctional_filter_of_update_mem [Fintype Domain]
+    {s t : Finset (Index W Var Domain)} {x : Var}
+    (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j) :
+    State.extendFunctional s x
+      (fun i => Finset.univ.filter (fun d => i.update x d ∈ t)) = t := by
+  ext j
+  rw [State.mem_extendFunctional]
+  constructor
+  · rintro ⟨i, -, d, hd, rfl⟩
+    exact (Finset.mem_filter.mp hd).2
+  · intro hj
+    obtain ⟨i, hi, d, rfl⟩ := hpar j hj
+    exact ⟨i, hi, d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hj⟩, rfl⟩
+
 end State
 
 /-! ### Modal pairing -/
@@ -366,6 +386,51 @@ inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Const Pred → Prop
   | poss {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.poss φ)
   | exi (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.exi x φ)
   | univ (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.univ x φ)
+
+/-- The derived `□φ := ¬◇¬φ` preserves NE-freeness. -/
+theorem QBSMLFormula.IsNEFree.nec {φ : QBSMLFormula Var Const Pred}
+    (h : φ.IsNEFree) : φ.nec.IsNEFree :=
+  .neg (.poss (.neg h))
+
+/-! ### Atom substitution -/
+
+/-- Substitute a formula for each atom, commuting with every connective and
+    quantifier (and fixing `NE`). The generic congruence machinery for
+    atom-rewriting operations: an atom map whose images are bilaterally
+    equivalent to the atoms is *salva veritate* (`eval_mapAtoms_iff` in
+    `Core/Logic/Modal/QBSML/Properties.lean`), so each such operation — e.g.
+    [yan-2023]'s reinterpretation function in `Studies/Yan2023.lean` — needs
+    only its two atom lemmas. -/
+def QBSMLFormula.mapAtoms
+    (fp : Pred → Var → QBSMLFormula Var Const Pred)
+    (fc : Pred → Const → QBSMLFormula Var Const Pred) :
+    QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+  | .pred P x => fp P x
+  | .predc P c => fc P c
+  | .ne => .ne
+  | .neg φ => .neg (φ.mapAtoms fp fc)
+  | .conj φ ψ => .conj (φ.mapAtoms fp fc) (ψ.mapAtoms fp fc)
+  | .disj φ ψ => .disj (φ.mapAtoms fp fc) (ψ.mapAtoms fp fc)
+  | .poss φ => .poss (φ.mapAtoms fp fc)
+  | .exi x φ => .exi x (φ.mapAtoms fp fc)
+  | .univ x φ => .univ x (φ.mapAtoms fp fc)
+
+/-- An atom substitution with NE-free images preserves NE-freeness. -/
+theorem QBSMLFormula.IsNEFree.mapAtoms
+    {fp : Pred → Var → QBSMLFormula Var Const Pred}
+    {fc : Pred → Const → QBSMLFormula Var Const Pred}
+    (hfp : ∀ P x, (fp P x).IsNEFree) (hfc : ∀ P c, (fc P c).IsNEFree)
+    {φ : QBSMLFormula Var Const Pred} (h : φ.IsNEFree) :
+    (φ.mapAtoms fp fc).IsNEFree := by
+  induction h with
+  | pred P x => exact hfp P x
+  | predc P c => exact hfc P c
+  | neg _ ih => exact .neg ih
+  | conj _ _ ih₁ ih₂ => exact .conj ih₁ ih₂
+  | disj _ _ ih₁ ih₂ => exact .disj ih₁ ih₂
+  | poss _ ih => exact .poss ih
+  | exi x _ ih => exact .exi x ih
+  | univ x _ ih => exact .univ x ih
 
 /-! ### The monadic signature and models -/
 

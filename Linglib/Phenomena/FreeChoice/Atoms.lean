@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Free Choice atoms — typed substrate for FC scenarios
@@ -44,5 +45,10 @@ def FCAtom.toName : FCAtom → String
   | .a => "a"
   | .b => "b"
   | .c => "c"
+
+/-- Single variable `x` — the shared toy variable type for quantified FC
+    scenarios (QBSML studies); the first-order counterpart of `FCAtom`. -/
+inductive QVar | x
+  deriving DecidableEq, Repr, Fintype
 
 end Phenomena.FreeChoice
