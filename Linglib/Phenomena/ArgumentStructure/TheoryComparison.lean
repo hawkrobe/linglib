@@ -168,18 +168,18 @@ theorem convergence_hammer_flat_arg_count :
     cxg_hammer_flat.surfaceFrame.length = 3 ∧
     dg_hammer_flat.allArgs.length = 3 := by
   constructor; rfl
-  constructor; native_decide
+  constructor; decide
   rfl
 
 /-- The theta criterion is satisfied for the canonical resultative. -/
 theorem theta_criterion_canonical :
     thetaCriterionSatisfied minimalist_hammer_flat = true := by
-  native_decide
+  decide
 
 /-- FAR is satisfied for the canonical CxG resultative. -/
 theorem far_canonical :
     cxg_hammer_flat.farSatisfied = true := by
-  native_decide
+  decide
 
 /-! ## §3. Divergence on fake reflexives
 
@@ -227,14 +227,14 @@ def dg_laugh_silly : DGFrame :=
     The construction licenses the extra argument ("herself"). -/
 theorem cxg_construction_adds_patient :
     cxg_laugh_silly.verbRoles.length < cxg_laugh_silly.surfaceFrame.length := by
-  native_decide
+  decide
 
 /-- CxG handles fake reflexives without stipulation: the construction
     adds the patient role, and the verb's agent fuses with the
     construction's agent. FAR is satisfied. -/
 theorem cxg_fake_reflexive_far :
     cxg_laugh_silly.farSatisfied = true := by
-  native_decide
+  decide
 
 /-- The Minimalist verb alone cannot license the reflexive:
     the verb has only 1 theta role but the surface has 3 arguments.
@@ -244,7 +244,7 @@ theorem cxg_fake_reflexive_far :
 theorem minimalist_verb_deficit :
     minimalist_laugh_silly_verb_roles.length <
     minimalist_laugh_silly_full.length := by
-  native_decide
+  decide
 
 /-- DG: the construction adds 2 arguments to the verb's base valency of 1. -/
 theorem dg_construction_adds_args :
@@ -259,7 +259,7 @@ theorem convergence_fake_reflexive_count :
     cxg_laugh_silly.surfaceFrame.length = 3 ∧
     dg_laugh_silly.allArgs.length = 3 := by
   constructor; rfl
-  constructor; native_decide
+  constructor; decide
   rfl
 
 /-! ## §4. Semantic Coherence generalizes the Theta Criterion
@@ -294,8 +294,8 @@ theorem semanticCoherenceGeneralizesTheta :
     cxg_laugh_silly.farSatisfied = true ∧
     cxg_laugh_silly.verbRoles.length < cxg_laugh_silly.surfaceFrame.length := by
   constructor
-  · native_decide
-  · native_decide
+  · decide
+  · decide
 
 /-! ## Summary
 
