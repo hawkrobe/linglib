@@ -1,4 +1,5 @@
 import Mathlib.ModelTheory.Semantics
+import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
@@ -372,17 +373,37 @@ theorem soundFor_flat_neFree (M : QBSMLModel W Domain Pred) :
   exact definableClassWhere_subset (C := IsFlat)
     fun _φ hφ => isFlat_support_of_isNEFree hφ M
 
-/-! ### Classicality: the quantifier-free Realize bridge
+/-! ### Flatness as pointwise evaluation -/
+
+/-- Flat (NE-free) support is pointwise: a team supports `φ` iff each of its
+    singletons does (`Core.Logic.Team.IsFlat` unfolded at the support set). -/
+theorem support_iff_forall_singleton {φ : QBSMLFormula Var Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred)
+    (s : Finset (Index W Var Domain)) :
+    support M φ s ↔ ∀ i ∈ s, support M φ {i} :=
+  isFlat_support_of_isNEFree hNE M s
+
+/-- Anti-support of an NE-free formula is likewise pointwise: flatness of the
+    bilateral negation. -/
+theorem antiSupport_iff_forall_singleton {φ : QBSMLFormula Var Pred}
+    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred)
+    (s : Finset (Index W Var Domain)) :
+    antiSupport M φ s ↔ ∀ i ∈ s, antiSupport M φ {i} :=
+  support_iff_forall_singleton (.neg hNE) M s
+
+/-! ### Classicality: the modal-free Realize bridge
 
 [aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
-classical quantified modal logic. The quantifier- and modal-free core of that
-reduction is stated against mathlib first-order satisfaction:
-`QBSMLFormula.toFormula?` translates the fragment into
-`(monadicLang Pred).Formula Var`, support at a singleton state is
+classical quantified modal logic. The modal-free part of that reduction is
+stated against mathlib first-order satisfaction: `QBSMLFormula.toFormula?`
+translates the fragment into `(monadicLang Pred).Formula Var` — quantifiers
+via the computable named binders `Formula.all₁` / `Formula.ex₁` of
+`Core/Logic/FirstOrder/Binders.lean` — support at a singleton state is
 `Formula.Realize` in the structure the model carries at that world
 (`support_singleton_iff_realizeAt`), and flatness extends the bridge to
-arbitrary states (`support_iff_forall_realizeAt`). Extending the translation
-to quantifiers (de Bruijn relabeling) and modals is future work. -/
+arbitrary states (`support_iff_forall_realizeAt`). Modals remain outside the
+bridge: their right-hand side is classical *modal* logic, which mathlib's
+`ModelTheory` does not carry. -/
 
 open FirstOrder Language
 
@@ -427,18 +448,37 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
   letI := M.interp w
   exact Formula.realize_sup
 
-/-- Translate the quantifier- and modal-free fragment of QBSML into mathlib
-    first-order formulas over the monadic signature (`none` on `NE`, modal,
-    and quantified formulas). -/
+omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
+@[simp] theorem QBSMLModel.realizeAt_all₁ (M : QBSMLModel W Domain Pred)
+    (w : W) (x : Var) (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+    M.RealizeAt w (Formula.all₁ x ψ) v ↔
+      ∀ d : Domain, M.RealizeAt w ψ (Function.update v x d) := by
+  letI := M.interp w
+  exact Formula.realize_all₁
+
+omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
+@[simp] theorem QBSMLModel.realizeAt_ex₁ (M : QBSMLModel W Domain Pred)
+    (w : W) (x : Var) (ψ : (monadicLang Pred).Formula Var) (v : Var → Domain) :
+    M.RealizeAt w (Formula.ex₁ x ψ) v ↔
+      ∃ d : Domain, M.RealizeAt w ψ (Function.update v x d) := by
+  letI := M.interp w
+  exact Formula.realize_ex₁
+
+/-- Translate the modal-free fragment of QBSML into mathlib first-order
+    formulas over the monadic signature: quantifiers via the computable named
+    binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
+    formulas). -/
 def QBSMLFormula.toFormula? :
     QBSMLFormula Var Pred → Option ((monadicLang Pred).Formula Var)
   | .pred P x => some ((monadicRel P).formula₁ (Term.var x))
   | .neg φ => φ.toFormula?.map (·.not)
   | .conj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊓ ·)
   | .disj φ ψ => φ.toFormula?.bind fun α => ψ.toFormula?.map (α ⊔ ·)
+  | .exi x φ => φ.toFormula?.map (Formula.ex₁ x ·)
+  | .univ x φ => φ.toFormula?.map (Formula.all₁ x ·)
   | _ => none
 
-omit [DecidableEq Var] [Fintype Var] in
+omit [DecidableEq W] [Fintype Var] in
 /-- Translatable formulas are NE-free. -/
 theorem isNEFree_of_toFormula? :
     ∀ {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var},
@@ -467,27 +507,51 @@ theorem isNEFree_of_toFormula? :
       cases hφ₂ : φ₂.toFormula? with
       | none => simp [QBSMLFormula.toFormula?, hφ₁, hφ₂] at hψ
       | some β => exact .disj (ih₁ hφ₁) (ih₂ hφ₂)
+  | exi x φ ih =>
+    intro ψ hψ
+    cases hφ : φ.toFormula? with
+    | none => simp [QBSMLFormula.toFormula?, hφ] at hψ
+    | some α => exact .exi x (ih hφ)
+  | univ x φ ih =>
+    intro ψ hψ
+    cases hφ : φ.toFormula? with
+    | none => simp [QBSMLFormula.toFormula?, hφ] at hψ
+    | some α => exact .univ x (ih hφ)
   | ne => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
   | poss _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
-  | exi _ _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
-  | univ _ _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
+
+omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
+/-- Updating an index's assignment refines the matching valuation update. -/
+private lemma update_refines {i : Index W Var Domain} {v : Var → Domain}
+    (hv : ∀ y, i.assign y = some (v y)) (x : Var) (d : Domain) :
+    ∀ y, (i.update x d).assign y = some (Function.update v x d y) := by
+  intro y
+  rw [Index.assign_update]
+  by_cases hy : y = x
+  · subst hy
+    rw [Function.update_self, Function.update_self]
+  · rw [Function.update_of_ne hy, Function.update_of_ne hy]
+    exact hv y
 
 /-- Joint singleton bridge: support of a translatable formula at `{i}` is
     classical satisfaction at `i.world`, and anti-support its negation. The
     bilateral induction interleaves the two through negation; the split cases
     use that every subset of a singleton is `∅` or the singleton, plus the
-    empty-team property of NE-free formulas. -/
+    empty-team property; the quantifier cases decompose the extended states
+    pointwise via flatness and apply the IH at the updated index and
+    valuation. -/
 private theorem support_and_antiSupport_singleton_realizeAt
-    (M : QBSMLModel W Domain Pred) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
+    (M : QBSMLModel W Domain Pred) :
     ∀ {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var},
       φ.toFormula? = some ψ →
-      (support M φ {i} ↔ M.RealizeAt i.world ψ v) ∧
-      (antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v) := by
+      ∀ {i : Index W Var Domain} {v : Var → Domain},
+        (∀ y, i.assign y = some (v y)) →
+        (support M φ {i} ↔ M.RealizeAt i.world ψ v) ∧
+        (antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v) := by
   intro φ
   induction φ with
   | pred P x =>
-    intro ψ hψ
+    intro ψ hψ i v hv
     rw [show (QBSMLFormula.pred P x).toFormula? =
         some ((monadicRel P).formula₁ (Term.var x)) from rfl,
       Option.some.injEq] at hψ
@@ -514,21 +578,21 @@ private theorem support_and_antiSupport_singleton_realizeAt
         subst hj
         exact ⟨v x, hv x, h⟩
   | neg φ ih =>
-    intro ψ hψ
+    intro ψ hψ i v hv
     cases hφ : φ.toFormula? with
     | none => simp [QBSMLFormula.toFormula?, hφ] at hψ
     | some α =>
       simp only [QBSMLFormula.toFormula?, hφ] at hψ
       rw [Option.map_some, Option.some.injEq] at hψ
       subst hψ
-      obtain ⟨ihs, iha⟩ := ih hφ
+      obtain ⟨ihs, iha⟩ := ih hφ hv
       constructor
       · rw [QBSMLModel.realizeAt_not]
         exact iha
       · rw [QBSMLModel.realizeAt_not, not_not]
         exact ihs
   | conj φ₁ φ₂ ih₁ ih₂ =>
-    intro ψ hψ
+    intro ψ hψ i v hv
     cases hφ₁ : φ₁.toFormula? with
     | none => simp [QBSMLFormula.toFormula?, hφ₁] at hψ
     | some α =>
@@ -538,8 +602,8 @@ private theorem support_and_antiSupport_singleton_realizeAt
         simp only [QBSMLFormula.toFormula?, hφ₁, hφ₂] at hψ
         rw [Option.bind_some, Option.map_some, Option.some.injEq] at hψ
         subst hψ
-        obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁
-        obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂
+        obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁ hv
+        obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂ hv
         constructor
         · rw [QBSMLModel.realizeAt_inf]
           exact and_congr ih₁s ih₂s
@@ -565,7 +629,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
                   (isNEFree_of_toFormula? hφ₁) M).2,
                 ih₂a.mpr h⟩
   | disj φ₁ φ₂ ih₁ ih₂ =>
-    intro ψ hψ
+    intro ψ hψ i v hv
     cases hφ₁ : φ₁.toFormula? with
     | none => simp [QBSMLFormula.toFormula?, hφ₁] at hψ
     | some α =>
@@ -575,8 +639,8 @@ private theorem support_and_antiSupport_singleton_realizeAt
         simp only [QBSMLFormula.toFormula?, hφ₁, hφ₂] at hψ
         rw [Option.bind_some, Option.map_some, Option.some.injEq] at hψ
         subst hψ
-        obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁
-        obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂
+        obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁ hv
+        obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂ hv
         constructor
         · rw [QBSMLModel.realizeAt_sup]
           constructor
@@ -601,21 +665,103 @@ private theorem support_and_antiSupport_singleton_realizeAt
                 ih₂s.mpr h⟩
         · rw [QBSMLModel.realizeAt_sup, not_or]
           exact and_congr ih₁a ih₂a
+  | exi x φ ih =>
+    intro ψ hψ i v hv
+    cases hφ : φ.toFormula? with
+    | none => simp [QBSMLFormula.toFormula?, hφ] at hψ
+    | some α =>
+      simp only [QBSMLFormula.toFormula?, hφ] at hψ
+      rw [Option.map_some, Option.some.injEq] at hψ
+      subst hψ
+      have hNE : φ.IsNEFree := isNEFree_of_toFormula? hφ
+      constructor
+      · rw [QBSMLModel.realizeAt_ex₁]
+        constructor
+        · rintro ⟨h, hne, hsupp⟩
+          have hsupp' := (support_iff_forall_singleton hNE M _).mp hsupp
+          obtain ⟨d, hd⟩ := hne i (Finset.mem_singleton_self i)
+          exact ⟨d, ((ih hφ (update_refines hv x d)).1).mp
+            (hsupp' (i.update x d) (State.mem_extendFunctional.mpr
+              ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
+        · rintro ⟨d, hd⟩
+          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+            (support_iff_forall_singleton hNE M _).mpr ?_⟩
+          intro j hj
+          obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
+          rw [Finset.mem_singleton] at hi' hd'
+          subst hi'
+          subst hd'
+          subst hupd
+          exact ((ih hφ (update_refines hv x d')).1).mpr hd
+      · rw [QBSMLModel.realizeAt_ex₁, not_exists]
+        show antiSupport M φ (State.extendUniversal {i} x) ↔ _
+        rw [antiSupport_iff_forall_singleton hNE]
+        constructor
+        · intro h d
+          exact ((ih hφ (update_refines hv x d)).2).mp
+            (h (i.update x d) (State.mem_extendUniversal.mpr
+              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+        · intro h j hj
+          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          rw [Finset.mem_singleton] at hi'
+          subst hi'
+          subst hupd
+          exact ((ih hφ (update_refines hv x d)).2).mpr (h d)
+  | univ x φ ih =>
+    intro ψ hψ i v hv
+    cases hφ : φ.toFormula? with
+    | none => simp [QBSMLFormula.toFormula?, hφ] at hψ
+    | some α =>
+      simp only [QBSMLFormula.toFormula?, hφ] at hψ
+      rw [Option.map_some, Option.some.injEq] at hψ
+      subst hψ
+      have hNE : φ.IsNEFree := isNEFree_of_toFormula? hφ
+      constructor
+      · rw [QBSMLModel.realizeAt_all₁]
+        show support M φ (State.extendUniversal {i} x) ↔ _
+        rw [support_iff_forall_singleton hNE]
+        constructor
+        · intro h d
+          exact ((ih hφ (update_refines hv x d)).1).mp
+            (h (i.update x d) (State.mem_extendUniversal.mpr
+              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+        · intro h j hj
+          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          rw [Finset.mem_singleton] at hi'
+          subst hi'
+          subst hupd
+          exact ((ih hφ (update_refines hv x d)).1).mpr (h d)
+      · rw [QBSMLModel.realizeAt_all₁, not_forall]
+        constructor
+        · rintro ⟨h, hne, hanti⟩
+          have hanti' := (antiSupport_iff_forall_singleton hNE M _).mp hanti
+          obtain ⟨d, hd⟩ := hne i (Finset.mem_singleton_self i)
+          exact ⟨d, ((ih hφ (update_refines hv x d)).2).mp
+            (hanti' (i.update x d) (State.mem_extendFunctional.mpr
+              ⟨i, Finset.mem_singleton_self i, d, hd, rfl⟩))⟩
+        · rintro ⟨d, hd⟩
+          refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d,
+            (antiSupport_iff_forall_singleton hNE M _).mpr ?_⟩
+          intro j hj
+          obtain ⟨i', hi', d', hd', hupd⟩ := State.mem_extendFunctional.mp hj
+          rw [Finset.mem_singleton] at hi' hd'
+          subst hi'
+          subst hd'
+          subst hupd
+          exact ((ih hφ (update_refines hv x d')).2).mpr hd
   | ne => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
   | poss _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
-  | exi _ _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
-  | univ _ _ _ => intro ψ hψ; simp [QBSMLFormula.toFormula?] at hψ
 
-/-- **[aloni-vanormondt-2023] Proposition 4.1, singleton case** (quantifier-
-    and modal-free fragment): support of a translatable formula at a
-    singleton state is classical first-order satisfaction at that index's
-    world, for any total valuation the index's partial assignment refines. -/
+/-- **[aloni-vanormondt-2023] Proposition 4.1, singleton case** (modal-free
+    fragment): support of a translatable formula at a singleton state is
+    classical first-order satisfaction at that index's world, for any total
+    valuation the index's partial assignment refines. -/
 theorem support_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
     {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     support M φ {i} ↔ M.RealizeAt i.world ψ v :=
-  (support_and_antiSupport_singleton_realizeAt M hv hψ).1
+  (support_and_antiSupport_singleton_realizeAt M hψ hv).1
 
 /-- Anti-support of a translatable formula at a singleton state is the
     classical falsity of its translation. -/
@@ -624,21 +770,12 @@ theorem antiSupport_singleton_iff_realizeAt (M : QBSMLModel W Domain Pred)
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v :=
-  (support_and_antiSupport_singleton_realizeAt M hv hψ).2
+  (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
-/-- Flat (NE-free) support is pointwise: a team supports `φ` iff each of its
-    singletons does (`Core.Logic.Team.IsFlat` unfolded at the support set). -/
-theorem support_iff_forall_singleton {φ : QBSMLFormula Var Pred}
-    (hNE : φ.IsNEFree) (M : QBSMLModel W Domain Pred)
-    (s : Finset (Index W Var Domain)) :
-    support M φ s ↔ ∀ i ∈ s, support M φ {i} :=
-  isFlat_support_of_isNEFree hNE M s
-
-/-- **[aloni-vanormondt-2023] Proposition 4.1** (quantifier- and modal-free
-    fragment): a translatable formula is supported by a state iff it is
-    classically satisfied at every index — `M, s ⊨ φ(x̄)` iff
-    `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's
-    `Formula.Realize`. -/
+/-- **[aloni-vanormondt-2023] Proposition 4.1** (modal-free fragment): a
+    translatable formula is supported by a state iff it is classically
+    satisfied at every index — `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all
+    `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
 theorem support_iff_forall_realizeAt (M : QBSMLModel W Domain Pred)
     {φ : QBSMLFormula Var Pred} {ψ : (monadicLang Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))

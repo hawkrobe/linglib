@@ -79,6 +79,7 @@ target the same world space.
 namespace AloniVanOrmondt2023
 
 open Core.Logic.Modal.QBSML
+open FirstOrder Language
 open Phenomena.FreeChoice (FCAtom PowerSet2World)
 
 -- ============================================================================
@@ -216,6 +217,26 @@ theorem fact5_distribution
     (h : support avoModel univPxOrQx.enrich {i}) :
     support avoModel (.exi .x Px) {i} ∧ support avoModel (.exi .x Qx) {i} :=
   distribution_Q avoModel Px Qx .x i Px_isNEFree Qx_isNEFree h
+
+-- ============================================================================
+-- §6c Proposition 4.1 at the concrete model
+-- ============================================================================
+
+/-- The (unenriched) universal premise `∀x(Px ∨ Qx)` translates into mathlib
+    first-order syntax, and its support is classical `Formula.Realize` at
+    every index — [aloni-vanormondt-2023] Proposition 4.1 instantiated at
+    `avoModel`. The translation hypothesis is discharged by `rfl`: the
+    compiler computes. -/
+theorem univPxOrQx_classical
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
+    support avoModel univPxOrQx s ↔
+      ∀ i ∈ s, avoModel.RealizeAt i.world
+        (Formula.all₁ QVar.x
+          ((monadicRel QPred.P).formula₁ (Term.var QVar.x) ⊔
+            (monadicRel QPred.Q).formula₁ (Term.var QVar.x))) (v i) :=
+  support_iff_forall_realizeAt avoModel rfl s v hv
 
 -- ============================================================================
 -- §7 Frame condition: avoModel is indisputable on every state
