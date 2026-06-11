@@ -273,11 +273,10 @@ In a DE context, widening the domain of an indefinite *strengthens*
 the overall claim: C(∃x∈D', Px) ⊆ C(∃x∈D, Px) when D ⊆ D'.
 
 This is why NPIs are licensed in DE contexts: widening is informative. -/
-theorem widening_strengthens_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Set World), (p ⊆ q) → (C q ⊆ C p))
+theorem widening_strengthens_in_de (C : Ctx World) (hDE : Antitone C)
     (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
     C (existsInDomain D' P) ⊆ C (existsInDomain D P) :=
-  hDE _ _ (wider_domain_weaker_existential D D' P h)
+  hDE (wider_domain_weaker_existential D D' P h)
 
 /-- **Theorem 3b (Widening weakens in UE).**
 
@@ -286,11 +285,10 @@ C(∃x∈D, Px) ⊆ C(∃x∈D', Px) when D ⊆ D'.
 
 This is why NPIs are *not* licensed in UE contexts: widening is
 uninformative (violates Maximize Strength). -/
-theorem widening_weakens_in_ue (C : Ctx World)
-    (hUE : ∀ (p q : Set World), (p ⊆ q) → (C p ⊆ C q))
+theorem widening_weakens_in_ue (C : Ctx World) (hUE : Monotone C)
     (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
     C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
-  hUE _ _ (wider_domain_weaker_existential D D' P h)
+  hUE (wider_domain_weaker_existential D D' P h)
 
 end DomainWidening
 

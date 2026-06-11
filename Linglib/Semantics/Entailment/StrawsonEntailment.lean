@@ -554,12 +554,6 @@ theorem conditional_antecedent_antitone {W : Type*} (domain : W → Set W)
   intro α₁ α₂ hle w h w' hw'_mem hw'_α₁
   exact h w' hw'_mem (hle hw'_α₁)
 
-/-- Specialization of `conditional_antecedent_antitone` to the toy
-    `World` for use with the `IsDownwardEntailing` abbrev. -/
-theorem conditional_antecedent_DE (domain : World → Set World) (β : Set World) :
-    IsDownwardEntailing (fun α => condNecessity domain α β) :=
-  conditional_antecedent_antitone domain β
-
 /-- Conditional antecedents are *a fortiori* Strawson-DE. -/
 theorem conditional_antecedent_strawsonDE {W : Type*} (domain : W → Set W)
     (β : Set W) (defined : Set W → W → Prop) :
@@ -624,7 +618,8 @@ theorem atMost2_isStrawsonDE (defined : Set World → World → Prop) :
 /-- Strawson-DE is *strictly* weaker than DE: `onlyFull` is the canonical
     witness — Strawson-DE without classical DE. -/
 theorem strawsonDE_strictly_weaker_than_DE :
-    ∃ f defined, IsStrawsonDE f defined ∧ ¬ IsDownwardEntailing f :=
+    ∃ (f : Set World → Set World) (defined : Set World → World → Prop),
+      IsStrawsonDE f defined ∧ ¬ IsDownwardEntailing f :=
   ⟨onlyFull (· = World.w0),
    fun scope _w => ∃ w', (w' = World.w0) ∧ scope w',
    onlyFull_isStrawsonDE _,

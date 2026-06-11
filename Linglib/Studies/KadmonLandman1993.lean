@@ -49,7 +49,7 @@ open Semantics.Entailment.Polarity
 open Semantics.Entailment (World)
 open Semantics.Entailment.StrawsonEntailment
   (IsStrawsonDE sorryFull gladFull sorryFull_isStrawsonDE sorryFull_not_de
-   gladFull_isUE condNecessity conditional_antecedent_DE)
+   gladFull_isUE condNecessity conditional_antecedent_antitone)
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 open Ladusaw1979 (licensingStrength)
@@ -76,7 +76,7 @@ reverses entailment. -/
 theorem de_satisfies_strengthening {World Entity : Type*} {C : Ctx World}
     (hDE : Antitone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening C D D' P :=
-  widening_strengthens_in_de C (λ _ _ h => hDE h) D D' P hD
+  widening_strengthens_in_de C hDE D D' P hD
 
 /-- In a UE (monotone) context, widening *weakens* — the opposite of
 strengthening. This is K&L's explanation for why *any* is out in plain
@@ -84,7 +84,7 @@ positive contexts. -/
 theorem ue_widening_weakens {World Entity : Type*} {C : Ctx World}
     (hUE : Monotone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
-  widening_weakens_in_ue C (λ _ _ h => hUE h) D D' P hD
+  widening_weakens_in_ue C hUE D D' P hD
 
 /-! ### Licensing contexts and entailment signatures
 
@@ -219,10 +219,10 @@ widening the antecedent domain strengthens the conditional. -/
 DE in its antecedent with the modal base held constant. K&L (143): "If John
 subscribes to any newspaper, he gets well informed" — widening *newspaper* to
 include unimportant newspapers strengthens the conditional. -/
-theorem conditional_satisfies_strengthening
-    (domain : World → Set World) (β : Set World) :
+theorem conditional_satisfies_strengthening {W : Type*}
+    (domain : W → Set W) (β : Set W) :
     IsDownwardEntailing (λ α => condNecessity domain α β) :=
-  conditional_antecedent_DE domain β
+  conditional_antecedent_antitone domain β
 
 /-- A conditional with an implicit restriction (K&L's (147)): true iff every
 relevant case satisfying the restriction and the antecedent satisfies the

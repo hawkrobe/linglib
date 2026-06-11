@@ -354,7 +354,7 @@ in the substrate.
 theorem ex72_conditional_antecedent_DE
     (domain : World → Set World) (β : Set World) :
     IsDownwardEntailing (fun α => condNecessity domain α β) :=
-  conditional_antecedent_DE domain β
+  conditional_antecedent_antitone domain β
 
 /-- Restrictor-style conditional antecedents are *a fortiori* Strawson-DE
     (since classical DE implies Strawson-DE via `de_implies_strawsonDE`). -/
