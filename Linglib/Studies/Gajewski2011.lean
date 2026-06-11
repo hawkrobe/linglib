@@ -416,16 +416,16 @@ Fragment registry encodes this through:
   `budgeAnInch`, `inYears`, `until_`, `either_npi`) all list
   `licensingContexts := [.negation, .nobody]` — i.e., classical-AA
   contexts only.
-- `Core/Lexical/PolarityItem.lean::ContextProperties.isStrawsonOnly`:
-  the four Strawson-only contexts (`.onlyFocus`, `.adversative`,
-  `.sinceTemporal`, `.superlative`) carry `isStrawsonOnly := true`.
+- `Semantics/Polarity/Licensing.lean::IsStrawsonOnly`: the four
+  Strawson-only contexts (`.onlyFocus`, `.adversative`,
+  `.sinceTemporal`, `.superlative`) carry `classicalSignature := none`.
 
-Gajewski's prediction: no strong NPI lists any `isStrawsonOnly`
+Gajewski's prediction: no strong NPI lists any Strawson-only
 context. The substrate makes this `decide`-checkable.
 -/
 
 open Typology.PolarityItem (PolarityType LicensingContext)
-open Semantics.Polarity.Licensing (contextProperties)
+open Semantics.Polarity.Licensing (contextProperties IsStrawsonOnly)
 open English.PolarityItems
   (liftAFinger budgeAnInch inYears until_ either_npi)
 
@@ -436,14 +436,14 @@ open English.PolarityItems
     `.withoutClause`), excluding `.onlyFocus`, `.adversative`,
     `.sinceTemporal`, `.superlative`. -/
 theorem gaj2011_strongNPIs_excluded_from_strawson_only_contexts :
-    ∀ ctx : LicensingContext, (contextProperties ctx).isStrawsonOnly = true →
+    ∀ ctx : LicensingContext, IsStrawsonOnly ctx →
       ctx ∉ liftAFinger.licensingContexts ∧
       ctx ∉ budgeAnInch.licensingContexts ∧
       ctx ∉ inYears.licensingContexts ∧
       ctx ∉ until_.licensingContexts ∧
       ctx ∉ either_npi.licensingContexts := by
   intro ctx hStrawson
-  cases ctx <;> simp_all [liftAFinger, budgeAnInch, inYears, until_, either_npi,
-    contextProperties]
+  cases ctx <;> simp_all [IsStrawsonOnly, liftAFinger, budgeAnInch, inYears,
+    until_, either_npi, contextProperties]
 
 end Gajewski2011

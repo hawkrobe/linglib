@@ -98,9 +98,11 @@ Each context's entailment signature and licensing mechanism are projected
 from the canonical `Semantics.Polarity.Licensing.contextProperties` table, so
 this file's classification cannot drift from the substrate's. -/
 
-/-- A licensing context's entailment signature in [icard-2012]'s lattice. -/
+/-- A licensing context's entailment signature in [icard-2012]'s lattice —
+the Strawson-operative row, matching K&L's own convention of checking the
+DE pattern modulo factive presuppositions. -/
 abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
-  (Semantics.Polarity.Licensing.contextProperties c).signature
+  (Semantics.Polarity.Licensing.contextProperties c).strawsonSignature
 
 /-- A context guarantees K&L strengthening iff its entailment signature is on
 the DE side. Contexts with `.mono` or higher signatures are licensed by other
@@ -116,8 +118,8 @@ example : ∀ c ∈ [LicensingContext.negation, .nobody, .withoutClause, .few,
     GuaranteesStrengthening c := by decide
 
 -- Non-DE contexts do not guarantee strengthening via DE.
-example : ∀ c ∈ [LicensingContext.question, .superlative, .modalPossibility,
-    .generic], ¬ GuaranteesStrengthening c := by decide
+example : ∀ c ∈ [LicensingContext.question, .modalPossibility, .generic],
+    ¬ GuaranteesStrengthening c := by decide
 
 /-- A licensing context's K&L mechanism, projected from `contextProperties`:
 *why* the context licenses, not merely *that* it does. -/
@@ -137,12 +139,16 @@ K&L's classification refines [ladusaw-1979]'s: every Ladusaw-DE context is a
 strengthening context, but K&L additionally explain adversative predicates
 (DE on a constant perspective) and conditionals with implicit restrictions. -/
 
-/-- Ladusaw-DE contexts are always K&L strengthening contexts: Ladusaw
-describes *where* NPIs occur, K&L explain *why*. -/
+/-- Ladusaw-DE contexts are K&L strengthening contexts — or, where the DE
+status is itself only Strawson (superlatives, per the later
+[von-fintel-1999]), the Strawson refinement of strengthening. Ladusaw
+describes *where* NPIs occur; K&L and the Strawson tradition explain
+*why*. -/
 theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
     (hDE : licensingStrength ctx = .antiAdditive ∨
            licensingStrength ctx = .downwardEntailing) :
-    klExplanation ctx = .byStrengthening := by
+    klExplanation ctx = .byStrengthening ∨
+    klExplanation ctx = .byStrawsonDE := by
   revert hDE; cases ctx <;> decide
 
 /-! ### Adversative predicates: *sorry* vs *glad*
