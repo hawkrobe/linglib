@@ -1,4 +1,5 @@
 import Linglib.Semantics.Quantification.DomainRestriction
+import Linglib.Studies.KadmonLandman1993
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.BToM
 import Linglib.Discourse.CommonGround
@@ -228,6 +229,40 @@ theorem some_nesting_prop {s₁ s₂ : SpatialScale} (h : s₁ ≤ s₂)
     some_restricted (sceneDDRP.region s₁) R S →
     some_restricted (sceneDDRP.region s₂) R S :=
   DDRP.some_nesting sceneDDRP R S h
+
+-- ============================================================================
+-- §7b. Bridge: DomainRestrictor as a degenerate VagueRestriction
+-- ============================================================================
+
+/-! [kadmon-landman-1993] distinguish domain-precise from domain-vague
+    quantificational restrictions. A `DomainRestrictor` is the degenerate
+    domain-precise case: a single predicate, hence a single precisification —
+    which is why DDRP-restricted *every*/*no* tolerate no exceptions via
+    re-precisification. -/
+
+open KadmonLandman1993 (VagueRestriction isDomainPrecise)
+
+/-- Lift a `DomainRestrictor` into a trivially precise `VagueRestriction`:
+    the singleton restriction with itself as the only precisification. -/
+def vagueOfRestrictor {E : Type*} (C : DomainRestrictor E) :
+    VagueRestriction (Set E) where
+  precise := {C}
+  precisifications := {{C}}
+  extends_precise := by
+    intro v hv
+    simp only [Set.mem_singleton_iff] at hv
+    rw [hv]
+  precise_mem := Set.mem_singleton_iff.mpr rfl
+
+/-- A restrictor-based vague restriction is domain precise in
+    [kadmon-landman-1993]'s sense: one precisification, one domain. -/
+theorem restrictor_is_domain_precise {E : Type*}
+    (C : DomainRestrictor E) (apply : Set E → Set E) :
+    isDomainPrecise (vagueOfRestrictor C) apply := by
+  intro v hv
+  simp only [vagueOfRestrictor, Set.mem_singleton_iff] at hv
+  subst hv
+  rfl
 
 -- ============================================================================
 -- §8. RSA Connection: DDRPs as Latent Interpretation Variables

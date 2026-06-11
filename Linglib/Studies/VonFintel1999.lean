@@ -468,8 +468,8 @@ theorem bridge_kl_vf_glad_UE_agreement
     Hindi data.** [lahiri-1998] §4.5 (datum
     `npi_glad_settle`) records that Hindi *khuS* + NPI *koii bhii* IS
     grammatical on a "settle for less" reading. K&L flag the same in
-    English (file `KadmonLandman1993.settle_glad_anybody`,
-    `settle_glad_tickets`). The substrate's `gladFull_isUE` predicts
+    English (file `KadmonLandman1993.settleGladAnybody`,
+    `settleGladTickets`). The substrate's `gladFull_isUE` predicts
     uniformly NO licensing — so the substrate undergenerates here, and
     the "settle for less" reading would require either (a) a different
     `gladFull` semantics with a perspective shift, or (b) a Strawson-DE
@@ -481,8 +481,8 @@ theorem bridge_lahiri_glad_settle_overgeneration :
     -- Lahiri 1998: Hindi 'glad'-NPI is grammatical on settle-for-less reading
     Lahiri1998.npi_glad_settle.grammatical = true ∧
     -- K&L 1993: same in English
-    KadmonLandman1993.settle_glad_anybody.grammatical = true ∧
-    KadmonLandman1993.settle_glad_tickets.grammatical = true ∧
+    KadmonLandman1993.settleGladAnybody.grammatical = true ∧
+    KadmonLandman1993.settleGladTickets.grammatical = true ∧
     -- Substrate's gladFull predicts uniformly UE → NPI not licensed.
     -- The substrate cannot capture the settle-for-less reading without
     -- additional machinery (e.g., a perspective-shifted bestOf).
