@@ -206,9 +206,10 @@ Intolerance comes from [horn-1989]: a function is intolerant if it
 does not map both `x` and `xᶜ` to truth — i.e., it "locates" itself on
 one side of the midpoint of its scale.
 
-The substrate-level definitions (`IsTrivial`, `IsIntolerant`,
-`IsAntiAdditiveGQ`, `IsDownwardEntailingGQ`) and the Appendix 2 proof
-(`antiAdditiveGQ_implies_intolerant`) live in
+The substrate-level definitions (`IsTrivial`, `IsIntolerant`; GQ-typed
+anti-additivity and DE-ness are the `Set α → Prop` instances of
+`IsAntiAdditive` and `Antitone`) and the Appendix 2 proof
+(`antiAdditive_implies_intolerant`) live in
 `Semantics/Entailment/Intolerance.lean`.
 
 The reverse strict inclusion (`AA ⊊ DE + Intolerant`, ex. 84) — i.e.
@@ -219,9 +220,9 @@ Gajewski but not proved; would need a witness function. Open.
 /-- Re-export the substrate Appendix 2 result for paper-citation indexing. -/
 theorem gaj2011_appendix2_AA_implies_intolerant {α : Type*}
     (f : Set α → Prop)
-    (hAA : Semantics.Entailment.Intolerance.IsAntiAdditiveGQ f) :
+    (hAA : Semantics.Entailment.AntiAdditivity.IsAntiAdditive f) :
     Semantics.Entailment.Intolerance.IsIntolerant f :=
-  Semantics.Entailment.Intolerance.antiAdditiveGQ_implies_intolerant f hAA
+  Semantics.Entailment.Intolerance.antiAdditive_implies_intolerant f hAA
 
 /-! ## §4.1 Conjecture (eq. 48): DE scalar item is AA iff endpoint of scale
 
