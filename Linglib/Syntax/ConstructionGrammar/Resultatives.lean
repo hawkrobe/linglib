@@ -619,27 +619,45 @@ def resultativeInheritance : List InheritanceLink :=
   [ResultativeSubconstruction.causativeProperty,
    .causativePath, .noncausativeProperty, .noncausativePath].map (·.inheritanceLink)
 
+/-- The [goldberg-jackendoff-2004] resultative family as a constructicon:
+the parent construction plus its four derived subconstructions and
+inheritance links. -/
+def resultativeNetwork : Constructicon :=
+  { constructions :=
+      resultative.construction :: resultativeFamily.map (·.construction)
+  , links := resultativeInheritance }
+
+/-- Every derived link resolves to a member construction. -/
+theorem resultativeNetwork_wellFormed : resultativeNetwork.WellFormed := by
+  decide
+
+/-- The links determine each subconstruction's mother: the resultative. -/
+theorem subconstruction_parent (sc : ResultativeSubconstruction) :
+    resultativeNetwork.parentsOf sc.toConstruction.construction.name =
+      [resultative.construction] := by
+  cases sc <;> decide
+
 /-- All inheritance links point to the same parent. -/
 theorem all_inherit_from_resultative :
     resultativeInheritance.all (·.parent == "Resultative") = true := by
-  native_decide
+  decide
 
 /-- All four subconstructions are fully abstract (decomposable). -/
 theorem all_subconstructions_abstract :
     resultativeFamily.all (λ c => c.construction.specificity == .fullyAbstract) = true := by
-  native_decide
+  decide
 
 /-- Causative subconstructions are transitive (4 slots);
     noncausative are intransitive (3 slots). -/
 theorem causative_are_transitive :
     causativePropertyConstruction.slots.length = 4 ∧
     causativePathConstruction.slots.length = 4 := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 theorem noncausative_are_intransitive :
     noncausativePropertyConstruction.slots.length = 3 ∧
     noncausativePathConstruction.slots.length = 3 := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-! Schema-decomposition theorems for the subconstruction family
 (`causative_decompose_like_parent`, `noncausative_fewer_steps`) live with
@@ -678,13 +696,13 @@ theorem manner_verb_no_alternation_in_noncausative (mc : MeaningComponents)
 theorem hit_alternates_in_causativeProperty :
     predictedAlternationInConstruction .hit
       causativePropertyConstruction .causativeInchoative = true := by
-  native_decide
+  decide
 
 /-- Concrete: hit-class verb in noncausativeProperty → no alternation. -/
 theorem hit_no_alternation_in_noncausativeProperty :
     predictedAlternationInConstruction .hit
       noncausativePropertyConstruction .causativeInchoative = false := by
-  native_decide
+  decide
 
 /-- The composed meaning in a causative subconstruction matches the
     composed meaning in the parent `resultative` construction. -/

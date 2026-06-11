@@ -1,4 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Features.Acceptability
 import Linglib.Features.Polarity
 import Linglib.Typology.PolarityItem
@@ -248,6 +249,17 @@ def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .failureVerb            => .negation              -- "fail" ≈ implicit negation
   | .anyoneWhod             => .universalRestrictor
 
+/-- The garden-variety coordination construction *let alone* is measured
+against (§2.2.1): two like-category conjuncts joined by a coordinating
+conjunction. Present as the parent node of the inheritance link below. -/
+def coordinationConstruction : Construction :=
+  { name := "Coordinating conjunction"
+  , form :=
+      [ { filler := .phrasal, role := some "conjunct₁" }
+      , { filler := .open_ .CCONJ }
+      , { filler := .phrasal, role := some "conjunct₂" } ]
+  , meaning := "joins two like-category constituents" }
+
 /-- *Let alone* against the coordination diagnostics of §2.2.1 (p. 514–517).
 Shared with coordinating conjunctions: joins like categories, right node
 raising, gapping. Overridden: no VP ellipsis (exx. 39–41), no IT-clefting
@@ -268,6 +280,14 @@ def letAloneInheritance : InheritanceLink :=
       , "second conjunct is a sentence fragment, not full clause"
       , "requires scalar relationship between conjuncts"
       , "is a negative polarity item" ] }
+
+/-- The §2.2.1 comparison as a two-node network. -/
+def letAloneNetwork : Constructicon :=
+  { constructions := [coordinationConstruction, letAloneConstruction]
+  , links := [letAloneInheritance] }
+
+/-- The link resolves: no dangling parent. -/
+theorem letAloneNetwork_wellFormed : letAloneNetwork.WellFormed := by decide
 
 /-! ### Other constructions of §1 -/
 

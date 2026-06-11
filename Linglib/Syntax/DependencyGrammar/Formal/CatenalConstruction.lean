@@ -2,7 +2,7 @@ import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 
 /-!
-# Catenal Construction: CxG ↔ DG Bridge Type
+# Catenal Construction
 
 The fundamental bridge type connecting Construction Grammar and Dependency
 Grammar ([osborne-gross-2012]): a `CatenalCx` pairs a CxG `Construction`

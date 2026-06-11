@@ -6,23 +6,15 @@ import Linglib.Syntax.DependencyGrammar.Basic
 # Cross-Theory Comparison: Resultative Argument Licensing
 
 Three syntactic theories predict the same argument frames for resultatives
-but differ on *how* arguments are licensed. This module formalizes the
-convergence and divergence.
+but differ on *how* arguments are licensed: Minimalism via the Theta
+Criterion, CxG via Full Argument Realization plus Semantic Coherence
+(the substrate predicates `ConstructionGrammar.Resultatives.farSatisfied`
+and `rolesCoherent`), and DG via valency saturation.
 
-## Theories compared
-
-1. **Minimalism**: Theta Criterion — each theta role assigned to exactly one argument
-2. **CxG**: FAR + Semantic Coherence — verb and construction args fuse when coherent
-3. **DG**: Valency satisfaction — verb's argument structure must be fully saturated
-
-## Key result
-
-All three theories predict the same surface argument frame for canonical
-resultatives like "She hammered the metal flat". They diverge on fake
-reflexives ("She laughed herself silly") where CxG handles the extra
-argument via construction-licensed roles while Minimalism requires
-special mechanisms.
-
+All three converge on canonical resultatives ("She hammered the metal
+flat") and diverge on fake reflexives ("She laughed herself silly"),
+where CxG licenses the extra argument constructionally while the verb's
+theta grid cannot.
 -/
 
 namespace TheoryComparison
@@ -34,17 +26,9 @@ open DepGrammar
 
 /-! ## §1. Three theories of argument licensing -/
 
-/-- Semantic role label (theory-neutral). -/
-inductive ArgRole where
-  | agent
-  | patient
-  | theme
-  | resultState
-  | path
-  deriving Repr, DecidableEq
-
-/-- A predicted argument frame: ordered list of roles. -/
-abbrev ArgFrame := List ArgRole
+/-- A predicted argument frame: ordered list of theta roles (the canonical
+`ThetaRole` vocabulary from the linking interface). -/
+abbrev ArgFrame := List ThetaRole
 
 /-! ### Minimalist argument licensing
 
@@ -69,49 +53,19 @@ def minimalistFrame (roles : ArgFrame) : List MergeTrigger :=
 /-- The theta criterion requires 1-to-1 mapping between roles and arguments.
     This is satisfied iff no duplicate roles appear. -/
 def thetaCriterionSatisfied (frame : ArgFrame) : Bool :=
-  frame.eraseDups.length == frame.length
+  frame.dedup.length == frame.length
 
 /-! ### CxG argument licensing
 
-In CxG, both the verb and the construction contribute argument roles.
-Shared roles fuse (FAR); fusion requires semantic coherence. -/
+In CxG, both the verb and the construction contribute argument roles;
+shared roles fuse. The substrate types this directly:
+`Resultatives.ArgSource` records each surface argument's source(s), FAR
+(`farSatisfied`) demands every argument have one, and Semantic Coherence
+(`rolesCoherent`/`semanticCoherenceSatisfied`) constrains fusion. -/
 
-/-- CxG frame: verb roles + construction roles, with fusion information. -/
-structure CxGFrame where
-  /-- Roles contributed by the verb -/
-  verbRoles : List ArgRole
-  /-- Roles contributed by the construction -/
-  constructionRoles : List ArgRole
-  /-- Which role pairs are fused -/
-  fusedPairs : List (ArgRole × ArgRole)
-  deriving Repr, BEq
-
-/-- The surface frame after fusion: construction roles with fused roles counted once. -/
-def CxGFrame.surfaceFrame (f : CxGFrame) : ArgFrame :=
-  let fusedConstructionRoles := f.fusedPairs.map (·.2)
-  let unfusedConstruction := f.constructionRoles.filter
-    (λ r => !fusedConstructionRoles.contains r)
-  f.verbRoles ++ unfusedConstruction
-
-/-- Check FAR: all verb roles and all construction roles are realized. -/
-def CxGFrame.farSatisfied (f : CxGFrame) : Bool :=
-  -- Every verb role must appear (either standalone or fused)
-  let fusedVerbRoles := f.fusedPairs.map (·.1)
-  f.verbRoles.all (λ r => fusedVerbRoles.contains r || f.verbRoles.contains r) &&
-  -- Every construction role must appear (either standalone or fused)
-  let fusedConRoles := f.fusedPairs.map (·.2)
-  f.constructionRoles.all (λ r => fusedConRoles.contains r || f.constructionRoles.contains r)
-
-/-- Map local ArgRole to ThetaRole for coherence checking.
-    `.resultState` and `.path` map to `.goal` — the closest
-    available role in the shared ThetaRole vocabulary. -/
-private def ArgRole.toTheta : ArgRole → ThetaRole
-  | .agent => .agent | .patient => .patient
-  | .theme => .theme | .resultState => .goal
-  | .path => .goal
-
-def CxGFrame.coherent (f : CxGFrame) : Bool :=
-  f.fusedPairs.all (λ ⟨rV, rC⟩ => rolesCoherent rV.toTheta rC.toTheta)
+/-- The roles a frame's verb contributes. -/
+def verbRoles (args : List ArgSource) : List ThetaRole :=
+  (args.filter (·.fromVerb)).map (·.role)
 
 /-! ### DG argument licensing
 
@@ -132,22 +86,21 @@ def DGFrame.allArgs (f : DGFrame) : List ArgSlot :=
 
 /-! ## §2. Convergence on canonical resultatives
 
-All three theories predict the same argument frame for "She hammered the metal flat":
-[Agent, Patient, ResultState]. -/
+All three theories predict the same argument frame for "She hammered the
+metal flat": agent, patient, and the result (mapped to `goal`, the
+substrate's resultGoal). -/
 
 /-- Minimalist prediction for "hammer the metal flat". -/
 def minimalist_hammer_flat : ArgFrame :=
-  [.agent, .patient, .resultState]
+  [.agent, .patient, .goal]
 
-/-- CxG prediction for "hammer the metal flat".
-
-    Verb "hammer" contributes {agent, patient}.
-    Construction contributes {agent, patient, resultState}.
-    Agent fuses with agent; patient fuses with patient. -/
-def cxg_hammer_flat : CxGFrame :=
-  { verbRoles := [.agent, .patient]
-  , constructionRoles := [.agent, .patient, .resultState]
-  , fusedPairs := [(.agent, .agent), (.patient, .patient)] }
+/-- CxG prediction for "hammer the metal flat": *hammer* contributes agent
+and patient (both fused with the construction's); the construction alone
+contributes the result. -/
+def cxg_hammer_flat : List ArgSource :=
+  [ ⟨.agent, true, true⟩
+  , ⟨.patient, true, true⟩
+  , ⟨.goal, false, true⟩ ]
 
 /-- DG prediction for "hammer the metal flat".
 
@@ -165,51 +118,50 @@ def dg_hammer_flat : DGFrame :=
     for "hammer flat": 3 (agent + patient + result). -/
 theorem convergence_hammer_flat_arg_count :
     minimalist_hammer_flat.length = 3 ∧
-    cxg_hammer_flat.surfaceFrame.length = 3 ∧
-    dg_hammer_flat.allArgs.length = 3 := by
-  constructor; rfl
-  constructor; native_decide
-  rfl
+    cxg_hammer_flat.length = 3 ∧
+    dg_hammer_flat.allArgs.length = 3 := ⟨rfl, rfl, rfl⟩
 
 /-- The theta criterion is satisfied for the canonical resultative. -/
 theorem theta_criterion_canonical :
-    thetaCriterionSatisfied minimalist_hammer_flat = true := by
-  native_decide
+    thetaCriterionSatisfied minimalist_hammer_flat = true := by decide
 
-/-- FAR is satisfied for the canonical CxG resultative. -/
-theorem far_canonical :
-    cxg_hammer_flat.farSatisfied = true := by
-  native_decide
+/-- FAR is satisfied for the canonical CxG resultative: every surface
+argument has a source. -/
+theorem far_canonical : farSatisfied cxg_hammer_flat = true := by decide
+
+/-- The canonical fusions are coherent: agent with agent, patient with
+patient (Semantic Coherence, Principle 44). -/
+theorem coherence_canonical :
+    semanticCoherenceSatisfied [(.agent, .agent), (.patient, .patient)] = true := by
+  decide
+
+/-- FAR is a real filter: an argument licensed by neither the verb nor
+the construction fails it. -/
+theorem far_rejects_unsourced :
+    farSatisfied [⟨.agent, true, true⟩, ⟨.patient, false, false⟩] = false := rfl
 
 /-! ## §3. Divergence on fake reflexives
 
 "She laughed herself silly" reveals the key difference between the theories.
 
-- **CxG**: "laugh" contributes {agent}; construction contributes {agent, patient, resultState};
-  agent fuses; "herself" fills the CONSTRUCTION's patient (not the verb's).
-- **Minimalism**: "laugh" is intransitive (assigns only one theta role);
-  "herself" needs a theta role but the verb can't provide one.
-- **DG**: "laugh" has valency {subj}; "herself" is an argument added by the
-  construction, not by the verb's subcategorization frame. -/
+- **CxG**: *laugh* contributes only the agent; the construction contributes
+  the patient ("herself") and the result.
+- **Minimalism**: *laugh* is intransitive (assigns only one theta role);
+  "herself" needs a theta role the verb cannot provide.
+- **DG**: *laugh* has valency {subj}; the construction adds the rest. -/
 
-/-- CxG analysis of "She laughed herself silly".
+/-- CxG analysis of "She laughed herself silly": only the agent is fused;
+the patient and result come from the construction alone. -/
+def cxg_laugh_silly : List ArgSource :=
+  [ ⟨.agent, true, true⟩
+  , ⟨.patient, false, true⟩
+  , ⟨.goal, false, true⟩ ]
 
-    The verb "laugh" is intransitive: only {agent}.
-    The construction adds {patient, resultState}.
-    Only agent fuses. "Herself" is the construction's patient. -/
-def cxg_laugh_silly : CxGFrame :=
-  { verbRoles := [.agent]
-  , constructionRoles := [.agent, .patient, .resultState]
-  , fusedPairs := [(.agent, .agent)] }
-
-/-- Minimalist analysis of "She laughed herself silly".
-
-    "laugh" assigns only one theta role (agent to subject).
-    "herself" needs a theta role, but the verb doesn't provide one.
-    The extra role must come from somewhere — requiring special mechanisms
-    (e.g., the small clause assigns a role). -/
+/-- Minimalist analysis: *laugh* assigns only one theta role. -/
 def minimalist_laugh_silly_verb_roles : ArgFrame := [.agent]
-def minimalist_laugh_silly_full : ArgFrame := [.agent, .patient, .resultState]
+
+/-- The surface frame the Minimalist analysis must somehow license. -/
+def minimalist_laugh_silly_full : ArgFrame := [.agent, .patient, .goal]
 
 /-- DG analysis of "She laughed herself silly".
 
@@ -223,18 +175,15 @@ def dg_laugh_silly : DGFrame :=
       , { depType := .amod, dir := .right, required := true
         , cat := some UD.UPOS.ADJ } ] }
 
-/-- CxG: the verb contributes fewer roles than the surface frame.
-    The construction licenses the extra argument ("herself"). -/
+/-- CxG: the verb contributes fewer roles than the surface frame; the
+construction licenses the extra arguments. -/
 theorem cxg_construction_adds_patient :
-    cxg_laugh_silly.verbRoles.length < cxg_laugh_silly.surfaceFrame.length := by
-  native_decide
+    (verbRoles cxg_laugh_silly).length < cxg_laugh_silly.length := by decide
 
-/-- CxG handles fake reflexives without stipulation: the construction
-    adds the patient role, and the verb's agent fuses with the
-    construction's agent. FAR is satisfied. -/
+/-- The fake reflexive satisfies FAR: every argument is sourced — the
+agent by fusion, the patient and result by the construction alone. -/
 theorem cxg_fake_reflexive_far :
-    cxg_laugh_silly.farSatisfied = true := by
-  native_decide
+    farSatisfied cxg_laugh_silly = true := by decide
 
 /-- The Minimalist verb alone cannot license the reflexive:
     the verb has only 1 theta role but the surface has 3 arguments.
@@ -243,70 +192,32 @@ theorem cxg_fake_reflexive_far :
     add roles, while the theta criterion requires the verb to provide them. -/
 theorem minimalist_verb_deficit :
     minimalist_laugh_silly_verb_roles.length <
-    minimalist_laugh_silly_full.length := by
-  native_decide
+    minimalist_laugh_silly_full.length := by decide
 
 /-- DG: the construction adds 2 arguments to the verb's base valency of 1. -/
 theorem dg_construction_adds_args :
     dg_laugh_silly.verbArgs.length = 1 ∧
-    dg_laugh_silly.constructionArgs.length = 2 := by
-  constructor <;> rfl
+    dg_laugh_silly.constructionArgs.length = 2 := ⟨rfl, rfl⟩
 
 /-- Despite the different licensing mechanisms, all three theories predict
     the same surface argument count for the fake reflexive: 3. -/
 theorem convergence_fake_reflexive_count :
     minimalist_laugh_silly_full.length = 3 ∧
-    cxg_laugh_silly.surfaceFrame.length = 3 ∧
-    dg_laugh_silly.allArgs.length = 3 := by
-  constructor; rfl
-  constructor; native_decide
-  rfl
+    cxg_laugh_silly.length = 3 ∧
+    dg_laugh_silly.allArgs.length = 3 := ⟨rfl, rfl, rfl⟩
 
-/-! ## §4. Semantic Coherence generalizes the Theta Criterion
+/-! ## §4. Construction licensing generalizes the theta grid
 
-The Theta Criterion is the special case of FAR + Semantic Coherence where
-the verb and construction have identical role sets (i.e., every role fuses).
+CxG's system is strictly more permissive than verb-driven theta
+assignment: there are frames that satisfy FAR in which the verb's own
+roles undergenerate the surface arguments — exactly the fake reflexives.
+The theta criterion alone cannot license these without extra machinery. -/
 
-When the sets differ (as in fake reflexives), CxG's system is more general:
-it allows the construction to ADD roles the verb lacks. -/
-
-/-- The theta criterion requires a 1-to-1 mapping between roles and arguments.
-    This is equivalent to FAR when verb roles = construction roles
-    (all roles fuse, no construction-only roles). -/
-theorem theta_criterion_is_full_fusion :
-    ∀ (roles : ArgFrame),
-    thetaCriterionSatisfied roles = true →
-    roles.eraseDups.length = roles.length := by
-  intro roles h
-  simp [thetaCriterionSatisfied] at h
-  exact h
-
-/-- CxG's system is strictly more general: it handles cases where
-    verb roles ⊂ construction roles (fake reflexives). The theta
-    criterion alone cannot handle this without extra machinery.
-
-    Formally: there exists a CxG frame where FAR is satisfied but the
-    verb alone does not provide enough theta roles. -/
-theorem semanticCoherenceGeneralizesTheta :
-    -- There exists a CxG frame where:
-    -- 1. FAR is satisfied (all roles are realized)
-    -- 2. But the verb contributes fewer roles than the surface needs
-    cxg_laugh_silly.farSatisfied = true ∧
-    cxg_laugh_silly.verbRoles.length < cxg_laugh_silly.surfaceFrame.length := by
-  constructor
-  · native_decide
-  · native_decide
-
-/-! ## Summary
-
-| Theory | Canonical ("hammer flat") | Fake reflexive ("laugh silly") |
-|--------|---------------------------|-------------------------------|
-| Minimalism | Theta assigns 3 roles | Verb has only 1 role → deficit |
-| CxG | Verb + construction fuse | Construction adds patient |
-| DG | Verb + construction deps | Construction adds obj + compl |
-
-All three predict the same surface frame [Agent, V, Patient, Result],
-but CxG handles argument augmentation via construction-licensed roles
-while Minimalism requires special mechanisms for fake reflexives. -/
+/-- The fake reflexive is FAR-licensed while the verb undergenerates:
+construction-licensed roles are doing real work. -/
+theorem construction_licensing_generalizes_theta :
+    farSatisfied cxg_laugh_silly = true ∧
+    (verbRoles cxg_laugh_silly).length < cxg_laugh_silly.length := by
+  exact ⟨by decide, by decide⟩
 
 end TheoryComparison

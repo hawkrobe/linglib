@@ -1,6 +1,7 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Syntax.ConstructionGrammar.Basic
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 
 /-!
 # English Binominal Noun Phrases [ten-wolde-2023]
@@ -341,11 +342,11 @@ def ofBinominalNetwork : Constructicon where
         overriddenProperties := ["[N of a] → degree intensifier in AdjP"] }
     ]
 
-/-- The network has 8 constructions (6 of-binominal + simple NP + AP). -/
-theorem network_size : ofBinominalNetwork.constructions.length = 8 := rfl
 
-/-- The network has 9 links (4 grammaticalization + 1 N+PP polysemy + 4 polysemy to NP/AP). -/
-theorem network_links : ofBinominalNetwork.links.length = 9 := rfl
+/-- Every link in the *of*-binominal network resolves to a member
+construction — no dangling name-keyed links. -/
+theorem ofBinominalNetwork_wellFormed : ofBinominalNetwork.WellFormed := by
+  decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 4: Per-Entry Verification
@@ -362,16 +363,16 @@ theorem idiot_evaluative_only : idiot.constructions = [.evaluative] := rfl
 
 /-- *beast* has no pseudo-partitive (typical for animate N₁ nouns). -/
 theorem beast_no_pseudopartitive :
-    beast.constructions.elem .pseudoPartitive = false := by native_decide
+    beast.constructions.elem .pseudoPartitive = false := by decide
 
 /-- *snake* is an exceptional animate noun with pseudo-partitive attestations. -/
-theorem snake_pseudopartitive : snake.constructions.elem .pseudoPartitive = true := by native_decide
+theorem snake_pseudopartitive : snake.constructions.elem .pseudoPartitive = true := by decide
 
 /-- All inanimate N₁ nouns develop pseudo-partitive readings. -/
-theorem cake_pseudopartitive : cake.constructions.elem .pseudoPartitive = true := by native_decide
-theorem nub_pseudopartitive : nub.constructions.elem .pseudoPartitive = true := by native_decide
-theorem breeze_pseudopartitive : breeze.constructions.elem .pseudoPartitive = true := by native_decide
-theorem husk_pseudopartitive : husk.constructions.elem .pseudoPartitive = true := by native_decide
+theorem cake_pseudopartitive : cake.constructions.elem .pseudoPartitive = true := by decide
+theorem nub_pseudopartitive : nub.constructions.elem .pseudoPartitive = true := by decide
+theorem breeze_pseudopartitive : breeze.constructions.elem .pseudoPartitive = true := by decide
+theorem husk_pseudopartitive : husk.constructions.elem .pseudoPartitive = true := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Cross-Linguistic Bridge (English ↔ Spanish)

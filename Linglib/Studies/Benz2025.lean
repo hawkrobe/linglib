@@ -1,4 +1,5 @@
 import Linglib.Morphology.DM.Allosemy
+import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.German.Predicates
 
@@ -110,7 +111,7 @@ theorem beobachtung_three_readings :
     (allBeobachtungReadings.any (·.reading == .complexEvent)) = true ∧
     (allBeobachtungReadings.any (·.reading == .simpleEntity)) = true ∧
     (allBeobachtungReadings.any (·.reading == .content)) = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ────────────────────────────────────────────────────
 -- § 2. Diagnostic Properties
@@ -339,7 +340,7 @@ def structurallyCompatible (outer inner : PreverbalElement) : Bool :=
 /-- The structural prediction matches Table 3's "Structure Predicts" column. -/
 theorem structural_prediction_matches :
     cooccurrenceTable.map (λ d => structurallyCompatible d.outer d.inner) =
-    cooccurrenceTable.map (λ d => d.structurePredicts) := by native_decide
+    cooccurrenceTable.map (λ d => d.structurePredicts) := by decide
 
 -- ────────────────────────────────────────────────────
 -- § 8. Interpretive Prediction: Result State Conflict
@@ -357,7 +358,7 @@ def interpretivelyCompatible (outer inner : PreverbalElement) : Bool :=
 /-- The interpretive prediction matches Table 3's "Interpretation Predicts" column. -/
 theorem interpretive_prediction_matches :
     cooccurrenceTable.map (λ d => interpretivelyCompatible d.outer d.inner) =
-    cooccurrenceTable.map (λ d => d.interpretationPredicts) := by native_decide
+    cooccurrenceTable.map (λ d => d.interpretationPredicts) := by decide
 
 -- ────────────────────────────────────────────────────
 -- § 9. Combined Prediction
@@ -374,11 +375,11 @@ def predictedAllowed (outer inner : PreverbalElement) : Bool :=
 /-- The combined prediction matches Table 3's "Allowed" column. -/
 theorem combined_prediction_matches :
     cooccurrenceTable.map (λ d => predictedAllowed d.outer d.inner) =
-    cooccurrenceTable.map (λ d => d.allowed) := by native_decide
+    cooccurrenceTable.map (λ d => d.allowed) := by decide
 
 /-- PRT-pfx is the unique allowed combination. -/
 theorem prt_pfx_uniquely_allowed :
-    (cooccurrenceTable.filter (·.allowed)).length = 1 := by native_decide
+    (cooccurrenceTable.filter (·.allowed)).length = 1 := by decide
 
 -- ────────────────────────────────────────────────────
 -- § 10. German Resultative Data (§4.2)
@@ -430,7 +431,7 @@ theorem german_allows_non_unergative_M :
     (germanRSPData.any (·.verbClass == "obligatorily transitive")) = true ∧
     (germanRSPData.any (·.verbClass == "unaccusative")) = true ∧
     (germanRSPData.any (·.verbClass == "inherently reflexive")) = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ────────────────────────────────────────────────────
 -- § 11. RSP Co-occurrence Restriction Data (§4.1)
@@ -476,7 +477,7 @@ def rsp_pfx_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) 
 theorem rsp_pfx_contrast_pattern :
     rsp_pfx_contrasts.all (fun (bad, good) =>
       bad.judgment == .unacceptable && good.judgment == .ok) = true := by
-  native_decide
+  decide
 
 /-- RSPs are also incompatible with particles.
     Ch. 4: adding an RSP to a particle verb is ungrammatical,
@@ -508,7 +509,7 @@ def rsp_prt_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) 
 theorem rsp_prt_contrast_pattern :
     rsp_prt_contrasts.all (fun (bad, good) =>
       bad.judgment == .unacceptable && good.judgment == .ok) = true := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════════════════════
 -- Part III: Allosemy and Locality (Ch. 2, Ch. 4)
@@ -572,7 +573,7 @@ theorem claim1_two_factors :
     -- Interpretation alone is insufficient
     (cooccurrenceTable.any (λ d =>
       d.interpretationPredicts && !d.structurePredicts && !d.allowed)) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ════════════════════════════════════════════════════════════════════
 -- Part IV: Prefixes in Nominalizations (Ch. 5)
@@ -731,6 +732,48 @@ def incorporationAllowed (outer inner : SynLevel) : Bool :=
   | .phrase, .head   => true   -- normal complementation
   | .head,   .phrase => false  -- *phrasal incorporation
   | .phrase, .phrase => false  -- *phrase stacking inside a word
+
+/-! #### Cross-framework contrast: the phrase-in-word-slot cell
+
+`ConstructionGrammar.Slot.IsPhraseInWordSlot` — a phrasal filler in a
+zero-level position — is the configuration of phrasal compounds and the
+PAL construction ([goldberg-shirtz-2025]; contemporaneous with this
+dissertation, neither cites the other). In this file's terms that
+configuration is exactly the banned phrasal-incorporation cell: lexical
+integrity rejects what the constructionist analysis licenses (cf.
+`GoldbergShirtz2025.pal_load_bearing`). -/
+
+/-- A CxG bar level in `SynLevel` terms: zero-level positions are head
+sites; bar- and phrase-level positions are phrasal. -/
+def SynLevel.ofBarLevel : ConstructionGrammar.BarLevel → SynLevel
+  | .zero => .head
+  | .bar => .phrase
+  | .phrase => .phrase
+
+/-- The `SynLevel` of a CxG slot filler: word fillers are heads, phrasal
+fillers (with or without a fixed head) are phrases; SEM+ fillers are
+level-unspecified. -/
+def _root_.ConstructionGrammar.SlotFiller.synLevel :
+    ConstructionGrammar.SlotFiller String → Option SynLevel
+  | .fixed _ => some .head
+  | .open_ _ => some .head
+  | .headed _ _ => some .phrase
+  | .phrasal => some .phrase
+  | .semantic _ => none
+
+/-- A phrase in a word-level slot occupies the banned cell: its site is a
+head, its filler a phrase, and `incorporationAllowed` rejects the pair.
+The standing counterexample class is the PAL construction, which licenses
+exactly this configuration. -/
+theorem phraseInWordSlot_incorporation_banned
+    (s : ConstructionGrammar.Slot String) (h : s.IsPhraseInWordSlot) :
+    ∃ site filler,
+      s.level.map SynLevel.ofBarLevel = some site ∧
+      s.filler.synLevel = some filler ∧
+      incorporationAllowed site filler = false := by
+  obtain ⟨hf, hl⟩ := h
+  refine ⟨.head, .phrase, ?_, ?_, rfl⟩ <;>
+    simp [hl, hf, SynLevel.ofBarLevel, ConstructionGrammar.SlotFiller.synLevel]
 
 -- ────────────────────────────────────────────────────
 -- § 19. Abstract Interpretive Dimension: Result State Specification
