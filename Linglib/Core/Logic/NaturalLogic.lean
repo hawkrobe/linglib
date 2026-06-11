@@ -22,8 +22,10 @@ Natural Language."
 
 ## Algebraic structure
 
-- `NLRelation` carries a `PartialOrder` + `BoundedOrder` (≡ = ⊥, # = ⊤)
-- `EntailmentSig` carries a `PartialOrder` + `OrderBot` (all = ⊥) + `Monoid` (compose)
+- `NLRelation` carries a `PartialOrder` + `OrderTop` (# = ⊤); the
+  implication order has no bottom (≡ does not entail the exclusion relations)
+- `EntailmentSig` carries a `PartialOrder` + `OrderTop` (all = ⊤, the
+  no-property signature •) + `Monoid` (compose; identity `addMult`, • absorbing)
 
 -/
 
@@ -62,18 +64,20 @@ namespace NLRelation
 Informativity ordering on NL relations.
 
 R ≤ R' means R is at least as informative as R'. The lattice has ≡ at
-the bottom (most informative) and # at the top (least informative).
+# at the top (least informative); there is no bottom — the two diamonds
+(≡ over ⊑/⊒, ^ over |/⌣) meet only at #.
 
-Key: ^ (negation) refines both | (alternation) and ⌣ (cover), because
-knowing sets are complementary tells you both that they're disjoint (|)
-and exhaustive (⌣).
+`Refines R R'` is the implication ordering ([icard-2012] §1): `xRy`
+entails `xR'y` (certified semantically by `NLRelation.Holds.of_refines`
+in `Semantics/Entailment/Soundness.lean`). ≡ refines the inclusion
+relations but not the exclusion relations (`x = y` does not make `x`,`y`
+disjoint or exhaustive); ^ refines both | and ⌣.
 -/
 def Refines : NLRelation → NLRelation → Prop
-  | .equiv, _ => True
-  | .forward, .forward | .forward, .alternation
-  | .forward, .cover | .forward, .independent => True
-  | .reverse, .reverse | .reverse, .alternation
-  | .reverse, .cover | .reverse, .independent => True
+  | .equiv, .equiv | .equiv, .forward
+  | .equiv, .reverse | .equiv, .independent => True
+  | .forward, .forward | .forward, .independent => True
+  | .reverse, .reverse | .reverse, .independent => True
   | .negation, .negation | .negation, .alternation
   | .negation, .cover | .negation, .independent => True
   | .alternation, .alternation | .alternation, .independent => True
@@ -84,19 +88,19 @@ def Refines : NLRelation → NLRelation → Prop
 instance : DecidableRel (α := NLRelation) Refines := fun a b =>
   match a, b with
   | .equiv, .equiv | .equiv, .forward | .equiv, .reverse
-  | .equiv, .negation | .equiv, .alternation | .equiv, .cover
   | .equiv, .independent => isTrue trivial
-  | .forward, .forward | .forward, .alternation
-  | .forward, .cover | .forward, .independent => isTrue trivial
-  | .reverse, .reverse | .reverse, .alternation
-  | .reverse, .cover | .reverse, .independent => isTrue trivial
+  | .forward, .forward | .forward, .independent => isTrue trivial
+  | .reverse, .reverse | .reverse, .independent => isTrue trivial
   | .negation, .negation | .negation, .alternation
   | .negation, .cover | .negation, .independent => isTrue trivial
   | .alternation, .alternation | .alternation, .independent => isTrue trivial
   | .cover, .cover | .cover, .independent => isTrue trivial
   | .independent, .independent => isTrue trivial
+  | .equiv, .negation | .equiv, .alternation | .equiv, .cover
   | .forward, .equiv | .forward, .reverse | .forward, .negation
+  | .forward, .alternation | .forward, .cover
   | .reverse, .equiv | .reverse, .forward | .reverse, .negation
+  | .reverse, .alternation | .reverse, .cover
   | .negation, .equiv | .negation, .forward | .negation, .reverse
   | .alternation, .equiv | .alternation, .forward | .alternation, .reverse
   | .alternation, .negation | .alternation, .cover
@@ -128,15 +132,9 @@ instance : Preorder NLRelation where
   le_trans := Refines_trans
 instance : PartialOrder NLRelation where
   le_antisymm := Refines_antisymm
-instance : Bot NLRelation := ⟨.equiv⟩
 instance : Top NLRelation := ⟨.independent⟩
-instance : OrderBot NLRelation where
-  bot_le a := show Refines .equiv a by cases a <;> trivial
 instance : OrderTop NLRelation where
   le_top a := show Refines a .independent by cases a <;> trivial
-instance : BoundedOrder NLRelation :=
-  { (inferInstance : OrderBot NLRelation),
-    (inferInstance : OrderTop NLRelation) with }
 
 /--
 Join operation ⋈ ([icard-2012], Lemma 1.5).
@@ -219,7 +217,7 @@ additivity hierarchies into one 9-element lattice.
 
 | Symbol | Name              | Properties                    |
 |--------|-------------------|-------------------------------|
-| •      | all               | Preserves all 7 relations     |
+| •      | all               | Any function (no property)    |
 | +      | mono              | Monotone (= UE)               |
 | −      | anti              | Antitone (= DE)               |
 | ⊕      | additive          | f(A∨B)=f(A)∨f(B), f(⊤)=⊤    |
@@ -230,7 +228,7 @@ additivity hierarchies into one 9-element lattice.
 | ◇⊟     | antiAddMult       | Anti-additive + Anti-mult     |
 -/
 inductive EntailmentSig where
-  | all           -- • : preserves all relations
+  | all           -- • : any function (no property; projects everything to #)
   | mono          -- + : monotone (UE)
   | anti          -- − : antitone (DE)
   | additive      -- ⊕ : additive
@@ -244,13 +242,14 @@ inductive EntailmentSig where
 namespace EntailmentSig
 
 /--
-Refinement ordering on entailment signatures.
-
-The lattice has `all` at the bottom (most specific) and `mono`/`anti`
-at the top of their respective halves.
+Refinement ordering on entailment signatures: `σ.Refines τ` iff every
+σ-function is a τ-function ([icard-2012]'s ≼, §2.2). `addMult`/`antiAddMult`
+are the most specific elements of their halves; `all` (•, any function) is
+the top — every class is contained in it. Certified semantically by
+`EntailmentSig.SoundFor.of_refines` in `Semantics/Entailment/Soundness.lean`.
 -/
 def Refines : EntailmentSig → EntailmentSig → Prop
-  | .all, _ => True
+  | _, .all => True
   | .addMult, .addMult | .addMult, .additive
   | .addMult, .mult | .addMult, .mono => True
   | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
@@ -265,9 +264,9 @@ def Refines : EntailmentSig → EntailmentSig → Prop
 
 instance : DecidableRel (α := EntailmentSig) Refines := fun a b =>
   match a, b with
-  | .all, .all | .all, .mono | .all, .anti | .all, .additive
-  | .all, .antiAdd | .all, .mult | .all, .antiMult
-  | .all, .addMult | .all, .antiAddMult => isTrue trivial
+  | .all, .all | .mono, .all | .anti, .all | .additive, .all
+  | .antiAdd, .all | .mult, .all | .antiMult, .all
+  | .addMult, .all | .antiAddMult, .all => isTrue trivial
   | .addMult, .addMult | .addMult, .additive
   | .addMult, .mult | .addMult, .mono => isTrue trivial
   | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
@@ -278,27 +277,30 @@ instance : DecidableRel (α := EntailmentSig) Refines := fun a b =>
   | .antiMult, .antiMult | .antiMult, .anti => isTrue trivial
   | .mono, .mono => isTrue trivial
   | .anti, .anti => isTrue trivial
-  | .mono, .all | .mono, .anti | .mono, .additive
+  | .all, .mono | .all, .anti | .all, .additive
+  | .all, .antiAdd | .all, .mult | .all, .antiMult
+  | .all, .addMult | .all, .antiAddMult => isFalse not_false
+  | .mono, .anti | .mono, .additive
   | .mono, .antiAdd | .mono, .mult | .mono, .antiMult
   | .mono, .addMult | .mono, .antiAddMult => isFalse not_false
-  | .anti, .all | .anti, .mono | .anti, .additive
+  | .anti, .mono | .anti, .additive
   | .anti, .antiAdd | .anti, .mult | .anti, .antiMult
   | .anti, .addMult | .anti, .antiAddMult => isFalse not_false
-  | .additive, .all | .additive, .anti | .additive, .antiAdd
+  | .additive, .anti | .additive, .antiAdd
   | .additive, .mult | .additive, .antiMult
   | .additive, .addMult | .additive, .antiAddMult => isFalse not_false
-  | .antiAdd, .all | .antiAdd, .mono | .antiAdd, .additive
+  | .antiAdd, .mono | .antiAdd, .additive
   | .antiAdd, .mult | .antiAdd, .antiMult
   | .antiAdd, .addMult | .antiAdd, .antiAddMult => isFalse not_false
-  | .mult, .all | .mult, .anti | .mult, .additive
+  | .mult, .anti | .mult, .additive
   | .mult, .antiAdd | .mult, .antiMult
   | .mult, .addMult | .mult, .antiAddMult => isFalse not_false
-  | .antiMult, .all | .antiMult, .mono | .antiMult, .additive
+  | .antiMult, .mono | .antiMult, .additive
   | .antiMult, .antiAdd | .antiMult, .mult
   | .antiMult, .addMult | .antiMult, .antiAddMult => isFalse not_false
-  | .addMult, .all | .addMult, .anti | .addMult, .antiAdd
+  | .addMult, .anti | .addMult, .antiAdd
   | .addMult, .antiMult | .addMult, .antiAddMult => isFalse not_false
-  | .antiAddMult, .all | .antiAddMult, .mono | .antiAddMult, .additive
+  | .antiAddMult, .mono | .antiAddMult, .additive
   | .antiAddMult, .mult | .antiAddMult, .addMult => isFalse not_false
 
 instance : LE EntailmentSig := ⟨Refines⟩
@@ -307,8 +309,9 @@ instance decidableLE (a b : EntailmentSig) : Decidable (a ≤ b) :=
   inferInstanceAs (Decidable (Refines a b))
 
 -- Spot-checks for the refinement lattice
-example : (EntailmentSig.all : EntailmentSig) ≤ .mono := by decide
-example : (EntailmentSig.all : EntailmentSig) ≤ .anti := by decide
+example : ¬ ((EntailmentSig.all : EntailmentSig) ≤ .mono) := by decide
+example : (EntailmentSig.mono : EntailmentSig) ≤ .all := by decide
+example : (EntailmentSig.anti : EntailmentSig) ≤ .all := by decide
 example : (EntailmentSig.addMult : EntailmentSig) ≤ .additive := by decide
 example : (EntailmentSig.antiAddMult : EntailmentSig) ≤ .anti := by decide
 example : ¬ ((EntailmentSig.mono : EntailmentSig) ≤ .additive) := by decide
@@ -331,9 +334,9 @@ instance : Preorder EntailmentSig where
   le_trans := Refines_trans
 instance : PartialOrder EntailmentSig where
   le_antisymm := Refines_antisymm
-instance : Bot EntailmentSig := ⟨.all⟩
-instance : OrderBot EntailmentSig where
-  bot_le a := show Refines .all a by cases a <;> trivial
+instance : Top EntailmentSig := ⟨.all⟩
+instance : OrderTop EntailmentSig where
+  le_top a := show Refines a .all by cases a <;> trivial
 
 /--
 Projection of a NL relation through a function of given signature
@@ -350,8 +353,8 @@ The table follows from the algebraic definitions:
 - Mono/anti alone: only preserves ⊑/⊒; ^, |, ∼ all weaken to #
 -/
 def project : NLRelation → EntailmentSig → NLRelation
-  -- all (•): preserves everything
-  | r, .all => r
+  -- all (•): any function — projects everything to # ([icard-2012] Lemma 2.4)
+  | _, .all => .independent
   -- addMult (⊕⊞): full morphism, preserves all 7 relations
   | r, .addMult => r
   -- antiAddMult (◇⊟): full anti-morphism — swaps | ↔ ∼, preserves ^
@@ -428,9 +431,11 @@ def project : NLRelation → EntailmentSig → NLRelation
 #guard project .alternation .antiAddMult == .cover   -- [|]^◇⊟ = ∼
 #guard project .cover .antiAddMult == .alternation   -- [∼]^◇⊟ = |
 
-/-- Projection preserves equiv for all signatures. -/
-theorem project_equiv (φ : EntailmentSig) : project .equiv φ = .equiv := by
-  cases φ <;> rfl
+/-- Every signature except • preserves equiv (• is the class of arbitrary
+functions, which need not respect equivalence). -/
+theorem project_equiv (φ : EntailmentSig) (h : φ ≠ .all) :
+    project .equiv φ = .equiv := by
+  cases φ <;> simp_all <;> rfl
 
 /-- Projection preserves independent for all signatures. -/
 theorem project_independent (φ : EntailmentSig) : project .independent φ = .independent := by
@@ -439,9 +444,10 @@ theorem project_independent (φ : EntailmentSig) : project .independent φ = .in
 /--
 Recover an entailment signature from its projection of `forward` and
 `negation`. These two probes uniquely identify each signature (up to
-the observational equivalence of `all` ≅ `addMult`).
+•'s probe pair being `(#, #)`).
 -/
 private def fromProjectionPair : NLRelation → NLRelation → EntailmentSig
+  | .independent, .independent => .all
   | .forward, .independent => .mono
   | .forward, .cover       => .additive
   | .forward, .alternation => .mult
@@ -461,16 +467,13 @@ projection table matches projecting through φ then ψ. This makes
 requiring two independently maintained tables to agree.
 
 The signature is identified by probing with `forward` and `negation`,
-which suffice to distinguish all 9 signatures (with `all` handled
-separately as the identity element).
+which suffice to distinguish all 9 signatures (• included: its probe
+pair is `(#, #)`, which makes it absorbing, [icard-2012] p. 716).
 -/
 def compose (ψ φ : EntailmentSig) : EntailmentSig :=
-  match φ, ψ with
-  | .all, s => s
-  | s, .all => s
-  | _, _ => fromProjectionPair
-      (project (project .forward φ) ψ)
-      (project (project .negation φ) ψ)
+  fromProjectionPair
+    (project (project .forward φ) ψ)
+    (project (project .negation φ) ψ)
 
 -- Spot-checks (Lemma 2.7 table, p.716)
 #guard compose .anti .anti == .mono                   -- − ∘ − = +
@@ -483,12 +486,23 @@ def compose (ψ φ : EntailmentSig) : EntailmentSig :=
 #guard compose .antiMult .antiAdd == .additive        -- ⊟ ∘ ◇ = ⊕
 #guard compose .mult .mult == .mult                   -- ⊞ ∘ ⊞ = ⊞
 #guard compose .additive .antiAdd == .anti            -- ⊕ ∘ ◇ = −
+#guard compose .all .mono == .all                     -- • ∘ + = • (absorbing)
+#guard compose .anti .all == .all                     -- − ∘ • = • (absorbing)
 
-/-- `all` is the identity for composition. -/
-theorem compose_identity_left (s : EntailmentSig) : compose .all s = s := by
+/-- `addMult` (⊕⊞, the morphism class) is the identity for composition
+([icard-2012] Lemma 2.7). -/
+theorem compose_identity_left (s : EntailmentSig) : compose .addMult s = s := by
   cases s <;> rfl
 
-theorem compose_identity_right (s : EntailmentSig) : compose s .all = s := by
+theorem compose_identity_right (s : EntailmentSig) : compose s .addMult = s := by
+  cases s <;> rfl
+
+/-- • is absorbing: composing with the no-property class yields the
+no-property class ([icard-2012] p. 716: φ ∘ • = • = • ∘ φ). -/
+theorem compose_all_left (s : EntailmentSig) : compose .all s = .all := by
+  cases s <;> rfl
+
+theorem compose_all_right (s : EntailmentSig) : compose s .all = .all := by
   cases s <;> rfl
 
 /-- Composition is associative. -/
@@ -496,9 +510,9 @@ theorem compose_assoc (a b c : EntailmentSig) :
     compose (compose a b) c = compose a (compose b c) := by
   cases a <;> cases b <;> cases c <;> rfl
 
--- Monoid instance (compose with identity `all`)
+-- Monoid instance (compose with identity `addMult`)
 instance : Mul EntailmentSig where mul := compose
-instance : One EntailmentSig where one := .all
+instance : One EntailmentSig where one := .addMult
 instance : Monoid EntailmentSig where
   mul_assoc a b c := compose_assoc a b c
   one_mul := compose_identity_left
@@ -611,7 +625,7 @@ def toUEStrength (φ : EntailmentSig) : Option UEStrength :=
 #guard toDEStrength .antiAddMult == some .antiMorphic
 
 -- UE strength — exhaustive verification against all 9 signatures
-#guard toUEStrength .all == some .additive
+#guard toUEStrength .all == none
 #guard toUEStrength .mono == some .weak
 #guard toUEStrength .additive == some .additive
 #guard toUEStrength .mult == some .multiplicative
@@ -683,7 +697,7 @@ def toContextPolarity (φ : EntailmentSig) : ContextPolarity :=
   else .nonMonotonic
 
 -- Exhaustive verification
-#guard toContextPolarity .all == .upward
+#guard toContextPolarity .all == .nonMonotonic
 #guard toContextPolarity .mono == .upward
 #guard toContextPolarity .additive == .upward
 #guard toContextPolarity .mult == .upward
