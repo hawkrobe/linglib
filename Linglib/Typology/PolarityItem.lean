@@ -1,5 +1,6 @@
 import Linglib.Features.LicensingContext
 import Linglib.Typology.NegativeConcord
+import Linglib.Core.Logic.NaturalLogic
 
 /-!
 # Typology.PolarityItem
@@ -291,6 +292,21 @@ structure PolarityItemEntry where
 -- ════════════════════════════════════════════════════
 -- § 8. Predicates
 -- ════════════════════════════════════════════════════
+
+/-- The [zwarts-1998] strength class an item requires of its licensor,
+    derived from `polarityType`: weak NPIs (and the NPI face of dual
+    NPI/FCIs) need weak DE, strong NPIs need anti-additivity; FCIs and
+    PPIs are not strength-keyed. The superstrong class (*a tad bit*,
+    anti-morphic) has no registry items yet — extend `PolarityType`
+    when one lands. -/
+def PolarityItemEntry.strength (e : PolarityItemEntry) :
+    Option Core.NaturalLogic.DEStrength :=
+  match e.polarityType with
+  | .npiWeak => some .weak
+  | .npiFci => some .weak
+  | .npiStrong => some .antiAdditive
+  | .fci => none
+  | .ppi => none
 
 /-- Check if a context licenses a polarity item.
 

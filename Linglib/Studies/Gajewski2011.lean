@@ -425,9 +425,11 @@ context. The substrate makes this `decide`-checkable.
 -/
 
 open Typology.PolarityItem (PolarityType LicensingContext)
-open Semantics.Polarity.Licensing (contextProperties IsStrawsonOnly)
+open Semantics.Polarity.Licensing
+  (contextProperties IsStrawsonOnly LicensedBySignature)
 open English.PolarityItems
-  (liftAFinger budgeAnInch inYears until_ either_npi)
+  (any ever yet anymore atAll inTheLeast aSingle whatsoever
+   liftAFinger budgeAnInch inYears until_ either_npi)
 
 /-- [gajewski-2011] headline made registry-checkable: no strong
     NPI in the English Fragment is licensed in any Strawson-only
@@ -445,5 +447,30 @@ theorem gaj2011_strongNPIs_excluded_from_strawson_only_contexts :
   intro ctx hStrawson
   cases ctx <;> simp_all [IsStrawsonOnly, liftAFinger, budgeAnInch, inYears,
     until_, either_npi, contextProperties]
+
+/-- The registry agrees with signature-derived licensing on the strong
+NPIs: every context a strong NPI lists supplies anti-additive strength
+(`strengthSufficient` of the row's Strawson DE strength against the
+item's derived [zwarts-1998] class). -/
+theorem gaj2011_strong_npis_licensedBySignature :
+    ∀ e ∈ [liftAFinger, budgeAnInch, inYears, until_, either_npi],
+      ∀ c ∈ e.licensingContexts, LicensedBySignature e c := by decide
+
+/-- Same agreement for the weak NPIs, gated to the strength-keyed
+mechanisms: the FC and entropy rows in *any*'s list are licensed by their
+mechanism, not by DE strength. -/
+theorem gaj2011_weak_npis_licensedBySignature :
+    ∀ e ∈ [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever],
+      ∀ c ∈ e.licensingContexts,
+        ((contextProperties c).mechanism = .byStrengthening ∨
+         (contextProperties c).mechanism = .byStrawsonDE) →
+        LicensedBySignature e c := by decide
+
+-- The strength cut as a derived prediction (Gajewski's few-contrast):
+-- *few* (weak DE) licenses *any* but not *in years*; *nobody*
+-- (anti-additive) licenses both.
+example : LicensedBySignature any .few := by decide
+example : ¬ LicensedBySignature inYears .few := by decide
+example : LicensedBySignature inYears .nobody := by decide
 
 end Gajewski2011

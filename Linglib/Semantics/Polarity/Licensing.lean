@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Features.LicensingContext
+import Linglib.Typology.PolarityItem
 
 /-!
 # Semantics.Polarity.Licensing
@@ -248,6 +249,24 @@ def contextProperties : LicensingContext → ContextProperties
       , prototype := "The tallest student who saw anyone..."
       , citations := ["UNVERIFIED-bib-missing:herdan-sharvit", "von-fintel-1999"]
       , classicalSignature := none }
+
+/-- Zwarts-strength licensing, derived ([zwarts-1998], [gajewski-2011]):
+the context's Strawson-operative row supplies at least the item's required
+strength (`PolarityItemEntry.strength`, itself derived from
+`polarityType`). `false` when either side is not strength-keyed — those
+items/contexts license via mechanism (`LicensingMechanism`), not
+signature. -/
+def strengthLicenses (e : Typology.PolarityItem.PolarityItemEntry)
+    (c : LicensingContext) : Bool :=
+  match (contextProperties c).strawsonSignature.toDEStrength, e.strength with
+  | some supplied, some required =>
+      Core.NaturalLogic.strengthSufficient supplied required
+  | _, _ => false
+
+/-- `strengthLicenses` as a proposition. -/
+abbrev LicensedBySignature (e : Typology.PolarityItem.PolarityItemEntry)
+    (c : LicensingContext) : Prop :=
+  strengthLicenses e c = true
 
 /-- A context is **Strawson-only** when no classical signature row holds
 ([von-fintel-1999]): only-focus, adversatives, temporal *since*,
