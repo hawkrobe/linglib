@@ -52,8 +52,10 @@ inductive Specificity where
   Allows subregularities and exceptions. The only mode used in
   [goldberg-1995]'s system.
 - **Complete**: all information from dominating nodes is inherited strictly;
-  no conflicts allowed. Used in unification-based grammars (HPSG, GPSG)
-  but not exploited in [goldberg-1995]'s constructional analysis.
+  no conflicts allowed. The mode "normally assumed in unification-based
+  grammars" (p. 74, citing Kay 1984 and Fillmore & Kay 1993); the
+  normal/complete distinction follows Flickinger, Pollard & Wasow (1985).
+  Not exploited in [goldberg-1995]'s constructional analysis.
 
 Computational semantics for both modes: `ConstructionGrammar.Inheritance`. -/
 inductive InheritanceMode where
