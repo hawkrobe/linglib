@@ -28,7 +28,22 @@ open DepGrammar Catena ConstructionGrammar
 
 /-! ### Core bridge type -/
 
-/-- A construction paired with a DG catena witness in some dependency tree. -/
+/-- A tree word satisfies a slot filler — the lexicalized analogue of the
+licensing layer's `SlotFiller.matches`, with POS read off the word itself.
+A single word may realize a `phrasal` slot (it projects the phrase);
+`semantic` constraints are not checkable at this level. -/
+def _root_.ConstructionGrammar.SlotFiller.matchesWord :
+    ConstructionGrammar.SlotFiller String → Word → Bool
+  | .fixed lex, w => lex == w.form
+  | .open_ cat, w => w.cat == cat
+  | .headed lex _, w => lex == w.form
+  | .semantic _, _ => true
+  | .phrasal, _ => true
+
+/-- A construction paired with a DG catena witness in some dependency tree.
+The `realizes` field keeps the pairing honest: each catena node's word must
+instantiate some slot of the construction's typed form, so a `CatenalCx`
+cannot pair a construction with an unrelated tree. -/
 structure CatenalCx where
   /-- CxG description of the construction. -/
   construction : Construction
@@ -38,6 +53,9 @@ structure CatenalCx where
   nodes : List Nat
   /-- The construction nodes form a catena. -/
   catena : isCatena tree.deps nodes = true
+  /-- Every catena node's word instantiates some slot of the form. -/
+  realizes : nodes.all (λ n => (tree.words[n]?).any
+      (λ w => construction.form.any (·.filler.matchesWord w))) = true
 
 /-! ### Constituent–catena containment -/
 
