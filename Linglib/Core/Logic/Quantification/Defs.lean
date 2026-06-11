@@ -387,4 +387,20 @@ theorem scopeDownMono_iff_antitone (q : GQ α) :
   exact ⟨fun h R _ _ hle hqRS' => h R _ _ hle hqRS',
          fun h R _ _ hle hqRS' => h R hle hqRS'⟩
 
+/-- `RestrictorUpwardMono q` is `∀ S, Monotone (q · S)` under the Pi-of-Prop
+    ordering. -/
+theorem restrictorUpMono_iff_monotone (q : GQ α) :
+    RestrictorUpwardMono q ↔ ∀ S, Monotone (fun R => q R S) := by
+  unfold RestrictorUpwardMono Monotone
+  exact ⟨fun h S _ _ hle hq => h _ _ S hle hq,
+         fun h _ _ S hle hq => h S hle hq⟩
+
+/-- `RestrictorDownwardMono q` is `∀ S, Antitone (q · S)` under the
+    Pi-of-Prop ordering. -/
+theorem restrictorDownMono_iff_antitone (q : GQ α) :
+    RestrictorDownwardMono q ↔ ∀ S, Antitone (fun R => q R S) := by
+  unfold RestrictorDownwardMono Antitone
+  exact ⟨fun h S _ _ hle hq => h _ _ S hle hq,
+         fun h _ _ S hle hq => h S hle hq⟩
+
 end Core.Quantification
