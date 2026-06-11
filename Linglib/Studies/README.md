@@ -55,12 +55,14 @@ Studies/ is paper-anchored content only.
 ## Examples and generated content
 
 Per-paper example data is generated from `Linglib/Data/Examples/{AuthorYear}.json`
-into a `namespace Examples ... end` block delimited by marker comments
-(`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES`) inside the
-study file.
+into a standalone auto-generated module `Linglib/Data/Examples/{AuthorYear}.lean`
+declaring `namespace {AuthorYear}.Examples`; the study file imports it
+(`import Linglib.Data.Examples.{AuthorYear}`) and refers to `Examples.all`,
+`Examples.ex29a`, ... inside its own namespace.
 
-Generator: `python3 scripts/gen_examples.py <AuthorYear>` — searches
-`Studies/AuthorYear.lean` and `Studies/AuthorYear/Basic.lean`.
+Generator: `python3 scripts/gen_examples.py <AuthorYear>`. (The former
+in-study marker-block splice is retired; re-running the generator on a
+legacy paper migrates it automatically.)
 
 Schema reference and format conventions:
 [`Linglib/Data/Examples/README.md`](../Data/Examples/README.md). Leipzig

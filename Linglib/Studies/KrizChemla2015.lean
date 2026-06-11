@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Plurals.Projection
+import Linglib.Data.Examples.KrizChemla2015
 
 /-!
 # [kriz-chemla-2015]: Trivalent truth-value judgments for embedded plurals
@@ -15,23 +16,20 @@ boys/presents stimuli).
 ## Main declarations
 
 * `examples` — per-paper accessor (option B): K&C's contribution to the
-  cross-paper projection pool, retrieved by filtering
-  `Phenomena.Plurals.Projection.Examples.all` by source bibkey.
+  cross-paper projection pool, i.e. `KrizChemla2015.Examples.all`.
 
-The encoded stimulus rows themselves live in the pool at
-[[Phenomena.Plurals.Projection]] (generated from
-`Linglib/Data/Examples/KrizChemla2015.json` via `scripts/gen_examples.py`,
-routed by `Linglib/Data/Examples/KrizChemla2015.target`). The pool is
-where cross-account testing of rival theories ([magri-2014],
+The encoded stimulus rows themselves live in the generated module
+`Data.Examples.KrizChemla2015` (from
+`Linglib/Data/Examples/KrizChemla2015.json` via `scripts/gen_examples.py`);
+the pool at [[Phenomena.Plurals.Projection]] imports them, and is where
+cross-account testing of rival theories ([magri-2014],
 [kriz-2016], [kriz-spector-2021], [bar-lev-2021]) lands.
 
 ## Implementation notes
 
-This file used to host the K&C examples directly, but they were moved to
-the projection hub at 2026-05-23 once a cross-paper test substrate landed
-there. The hub is the right home for examples that multiple accounts
-need to predict against; this file remains the paper-anchored entry
-point and narrative hub.
+The K&C examples live in the generated `Data.Examples.KrizChemla2015`
+module; the projection hub imports them into its cross-paper test pool.
+This file remains the paper-anchored entry point and narrative hub.
 
 Three projector-synthesized fields are gone from the prior incarnation,
 verified against the paper PDF:
@@ -64,10 +62,10 @@ namespace KrizChemla2015
 open Data.Examples (LinguisticExample)
 
 /--
-Per-paper accessor: K&C 2015's rows in the projection pool, retrieved by
-filtering on `source.bibkey`.
+Per-paper accessor: K&C 2015's stimulus rows (the generated
+`Examples.all`), which the projection hub pools for cross-account
+testing.
 -/
-def examples : List LinguisticExample :=
-  Phenomena.Plurals.Projection.Examples.all.filter (·.source.bibkey == "kriz-chemla-2015")
+def examples : List LinguisticExample := Examples.all
 
 end KrizChemla2015

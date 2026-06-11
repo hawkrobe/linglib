@@ -1,0 +1,324 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `VonFintelIatridou2005` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/VonFintelIatridou2005.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace VonFintelIatridou2005.Examples`.
+-/
+
+namespace VonFintelIatridou2005.Examples
+
+open Data.Examples
+
+def vFI2005_1_harlem : LinguisticExample :=
+  { id := "vFI2005_1_harlem"
+    source := ⟨"vonfintel-iatridou-2005", "(1)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If you want to go to Harlem, you have to take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to go to Harlem, you have to take the A train."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "harlemBase")]
+    comment := "The canonical Harlem Sentence; the paper's central example."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_2_sugarWaiter : LinguisticExample :=
+  { id := "vFI2005_2_sugarWaiter"
+    source := ⟨"hare-1971", "p. 45"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(2)"⟩
+    language := "stan1293"
+    primaryText := "If you want sugar in your soup, you should ask the waiter."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want sugar in your soup, you should ask the waiter."
+    context := "Waiter has the only access to sugar."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "anankastic")]
+    comment := "Anankastic reading: asking the waiter is a means to having sugar. Same surface form as (3) but different reading — surface form does not determine anankasticity."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_3_sugarDiabetes : LinguisticExample :=
+  { id := "vFI2005_3_sugarDiabetes"
+    source := ⟨"hare-1971", "p. 45"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(3)"⟩
+    language := "stan1293"
+    primaryText := "If you want sugar in your soup, you should get tested for diabetes."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want sugar in your soup, you should get tested for diabetes."
+    context := "Excessive desire for sugar may indicate diabetes."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "non-anankastic")]
+    comment := "NON-anankastic reading: getting tested is not a means to having sugar. Pair with (2) to show that surface form does not determine anankasticity."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_4_harlemPurpose : LinguisticExample :=
+  { id := "vFI2005_4_harlemPurpose"
+    source := ⟨"vonfintel-iatridou-2005", "(4)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "To go to Harlem, you have to take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "To go to Harlem, you have to take the A train."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "harlemBase"), ("clauseType", "purpose")]
+    comment := "Purpose-clause near-equivalent of (1); vF&I treat the purpose variant as the primary form for their designated-goal analysis."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_11_hoboken : LinguisticExample :=
+  { id := "vFI2005_11_hoboken"
+    source := ⟨"vonfintel-iatridou-2005", "(11) / p. 5"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If you want to go to Harlem, you have to take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to go to Harlem, you have to take the A train."
+    context := "You actually want to go to Hoboken; I do not know that. Best way to Hoboken is the PATH train; best way to Harlem is the A train."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "hoboken")]
+    comment := "The Hoboken Problem. Defeats the obvious analysis: if the if-clause merely added 'you want Harlem' to the modal base, the best goal-achievement at the actual world would be PATH (since the actual goal is Hoboken)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_13_hobokenSaebo : LinguisticExample :=
+  { id := "vFI2005_13_hobokenSaebo"
+    source := ⟨"vonfintel-iatridou-2005", "(13)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If you want to go to Harlem, you should take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to go to Harlem, you should take the A train."
+    context := "You want Hoboken (PATH); I am uncertain whether you want Hoboken or Harlem. Sæbø's analysis adds 'go to Harlem' to your existing goals, making the new best worlds include both Hoboken and Harlem destinations."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "conflictingGoals")]
+    comment := "Sæbø 2001's analysis predicts this false (best worlds equally split between PATH and A train); intuition says true. Defeats the if-clause-modifies-ordering-source analysis."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_22_mayorPub : LinguisticExample :=
+  { id := "vFI2005_22_mayorPub"
+    source := ⟨"kratzer-1991", "mayor scenario"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(21)/(22)"⟩
+    language := "stan1293"
+    primaryText := "If you want to become mayor, you have to go to the pub regularly."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to become mayor, you have to go to the pub regularly."
+    context := "You want to become mayor. You also want to not go to the pub regularly. You will become mayor only if you go to the pub regularly."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "conflictingGoals")]
+    comment := "Conflicting jointly-satisfiable goals. The if-clause's goal must override the actual conflicting goal, not merely augment the ordering source."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_p12_vanNistelrooy : LinguisticExample :=
+  { id := "vFI2005_p12_vanNistelrooy"
+    source := ⟨"huitink-2008", "van Nistelrooy scenario"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "p. 12"⟩
+    language := "stan1293"
+    primaryText := "If you want to go to Harlem, you have to take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to go to Harlem, you have to take the A train."
+    context := "Either A train or C train goes to Harlem. You are an incorrigible fan of Ruud van Nistelrooy and most want to meet him. Van Nistelrooy regularly rides the A train."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "correlatedIrrelevant")]
+    comment := "Both routes achieve Harlem; van Nistelrooy preference makes A optimal under naive lifting, but speakers report reluctance to judge the have-to sentence true on this scenario."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_36_pedroMartinez : LinguisticExample :=
+  { id := "vFI2005_36_pedroMartinez"
+    source := ⟨"nissenbaum-2005", "Pedro Martinez"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(36)"⟩
+    language := "stan1293"
+    primaryText := "To go to Harlem, you ought to kiss Pedro Martinez."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "To go to Harlem, you ought to kiss Pedro Martinez."
+    context := "Both A train and C train go to Harlem. Pedro Martinez is on both. You want to kiss Pedro Martinez."
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "nonCausalCoincidence")]
+    comment := "Kissing Pedro is not an essential part of any way of achieving Harlem; sentence is absurd despite the correlation. Motivates vF&I's 'essential part of a way of achieving' refinement (their (42))."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_34c_harlemBreathe : LinguisticExample :=
+  { id := "vFI2005_34c_harlemBreathe"
+    source := ⟨"vonstechow-krasikova-penka-2005", "breathe example"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(34c)"⟩
+    language := "stan1293"
+    primaryText := "In order to go to Harlem, you have to breathe."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "In order to go to Harlem, you have to breathe."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "have-to")]
+    comment := "vF&I accept as true though unhelpful. Chung & Mascarenhas 2024 §5 needs a plausibility-requirement patch to rule out analogous epistemic cases (#He must be dead)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_35_harlemBreatheOught : LinguisticExample :=
+  { id := "vFI2005_35_harlemBreatheOught"
+    source := ⟨"vonfintel-iatridou-2005", "(35)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "To go to Harlem, you ought to breathe."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "To go to Harlem, you ought to breathe."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "ought-to")]
+    comment := "Less acceptable than the have-to variant. vF&I derive this from have-to entailing ought-to, so ought-to signals there are alternatives — false for breathing."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_23_slomanOughtNot : LinguisticExample :=
+  { id := "vFI2005_23_slomanOughtNot"
+    source := ⟨"sloman-1970", "ought vs better"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(23)"⟩
+    language := "stan1293"
+    primaryText := "You ought to take the train, but you don't have to."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "You ought to take the train, but you don't have to."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "oughtVsHaveTo")]
+    comment := "Felicitous because ought says what is best while have-to picks out the only candidate."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_p13_londonByNoon : LinguisticExample :=
+  { id := "vFI2005_p13_londonByNoon"
+    source := ⟨"sloman-1970", "p. 391"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "p. 13"⟩
+    language := "stan1293"
+    primaryText := "If you want to get to London by noon, then you ought to go by train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If you want to get to London by noon, then you ought to go by train."
+    context := "Train is the best option but not the only one."
+    judgment := .acceptable
+    alternatives := [("If you want to get to London by noon, then you have to go by train.", .unacceptable)]
+    readings := []
+    paperFeatures := [("puzzle", "oughtVsHaveTo")]
+    comment := "Sloman: 'picks out the best means without excluding the possibility of others.' Contrast with the have-to variant implying no other means exists."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_29_vladivostokHave : LinguisticExample :=
+  { id := "vFI2005_29_vladivostokHave"
+    source := ⟨"vonstechow-krasikova-penka-2005", "Vladivostok"⟩
+    reportedIn := some ⟨"vonfintel-iatridou-2005", "(29)"⟩
+    language := "stan1293"
+    primaryText := "To go to Vladivostok, you have to take the Chinese train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "To go to Vladivostok, you have to take the Chinese train."
+    context := "Two trains cross Siberia to Vladivostok: Russian and Chinese. The Chinese train is significantly more comfortable."
+    judgment := .marginal
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "have-to"), ("speakerVariation", "Klein-vs-Percus")]
+    comment := "Klein-type speakers accept (comfort is implicitly part of the designated goal); Percus-type speakers reject. Documents real speaker variation."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_30_vladivostokOught : LinguisticExample :=
+  { id := "vFI2005_30_vladivostokOught"
+    source := ⟨"vonfintel-iatridou-2005", "(30)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "To go to Vladivostok, you ought to take the Chinese train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "To go to Vladivostok, you ought to take the Chinese train."
+    context := "Same Vladivostok scenario."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "ought-to")]
+    comment := "Ought-to accepts without controversy because comfort considerations rank the Chinese train above the Russian."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_28_burdicks : LinguisticExample :=
+  { id := "vFI2005_28_burdicks"
+    source := ⟨"vonfintel-iatridou-2005", "(28)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A: I'm going to Harvard Square tomorrow. B: You have to have some hot chocolate at Burdick's."
+    discourseSegments := ["I'm going to Harvard Square tomorrow.", "You have to have some hot chocolate at Burdick's."]
+    glossedTokens := []
+    translation := "Same."
+    context := "A announces an itinerary; no to-clause or if-clause overtly supplies a goal."
+    judgment := .acceptable
+    alternatives := [("You ought to have some hot chocolate at Burdick's.", .acceptable)]
+    readings := []
+    paperFeatures := [("puzzle", "contextualDesignation")]
+    comment := "Designated goal supplied by context (something like 'have a good Harvard Square experience'), not by overt syntax. Motivates vF&I §6.4."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def vFI2005_20_weinerJoe : LinguisticExample :=
+  { id := "vFI2005_20_weinerJoe"
+    source := ⟨"vonfintel-iatridou-2005", "(20) (scenario by Weiner)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If Joe wants to go to Harlem, he must take the A train."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If Joe wants to go to Harlem, he must take the A train."
+    context := "Joe has been considering buying a used car in Harlem. If he hasn't bought it yet, the A train is his only way to Harlem; if he has bought it, he can drive or take the A train. The only reason Joe would want Harlem is to buy the car (so if he wants Harlem, he hasn't bought it)."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("epistemic", .marginal), ("anankastic", .acceptable)]
+    paperFeatures := [("puzzle", "weinerJoe")]
+    comment := "On the anankastic reading: true in all cases. On Weiner's intended epistemic reading: true only if Joe hasn't bought the car. vF&I admit the epistemic reading is sometimes available; tests the must-can-be-epistemic-in-anankastic-shell hypothesis."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [vFI2005_1_harlem, vFI2005_2_sugarWaiter, vFI2005_3_sugarDiabetes, vFI2005_4_harlemPurpose, vFI2005_11_hoboken, vFI2005_13_hobokenSaebo, vFI2005_22_mayorPub, vFI2005_p12_vanNistelrooy, vFI2005_36_pedroMartinez, vFI2005_34c_harlemBreathe, vFI2005_35_harlemBreatheOught, vFI2005_23_slomanOughtNot, vFI2005_p13_londonByNoon, vFI2005_29_vladivostokHave, vFI2005_30_vladivostokOught, vFI2005_28_burdicks, vFI2005_20_weinerJoe]
+
+end VonFintelIatridou2005.Examples

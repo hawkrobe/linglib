@@ -11,7 +11,7 @@
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish anticausative with SE + affected-dative.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -33,7 +33,7 @@
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish stylistic-LE applicative without overt SE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -55,7 +55,7 @@
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -77,7 +77,7 @@
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish anticausative with SE + affected-dative; `hundir` parallel to `romper`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -99,7 +99,7 @@
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish stylistic-LE applicative for `hundir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -121,7 +121,7 @@
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `hundir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -143,7 +143,7 @@
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish anticausative; `caer` is a textbook unaccusative. 3PL agreement reflects plural theme.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -165,7 +165,7 @@
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish stylistic-LE applicative for `caer`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -187,7 +187,7 @@
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `caer`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -209,7 +209,7 @@
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish anticausative; canonical affected-causer example with `morir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -231,7 +231,7 @@
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish stylistic-LE applicative for `morir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -253,7 +253,7 @@
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `morir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -275,7 +275,7 @@
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish psych-verb; the three-way synonymy extends to non-physical change-of-state predicates.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -297,7 +297,7 @@
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish stylistic-LE applicative for psych verb `olvidar`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -319,7 +319,7 @@
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `olvidar`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -341,7 +341,7 @@
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish psych-verb; second psych entry showing the three-way synonymy extends to mental-event predicates.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -363,7 +363,7 @@
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish stylistic-LE applicative for psych verb `ocurrir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -385,7 +385,7 @@
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `ocurrir`.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -407,7 +407,7 @@
     ],
     "translation": "Cosmo complained to me.",
     "context": "Positive control: `quejarse` is inherently reflexive and surfaces with SE plus an argumental dative without stylistic LE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -473,7 +473,7 @@
     ],
     "translation": "I wasn't given a single peso.",
     "context": "Positive control: impersonal SE + argumental dative is acceptable without stylistic LE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -539,7 +539,7 @@
     ],
     "translation": "The window closed on me.",
     "context": "Person-paradigm cornerstone: stylistic LE is licit with a 1SG dative clitic.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -561,7 +561,7 @@
     ],
     "translation": "The window closed on you.",
     "context": "Person paradigm: stylistic LE is licit with a 2SG dative clitic.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -649,7 +649,7 @@
     ],
     "translation": "The vase broke on me.",
     "context": "Marking restriction: `quebrar` is marked-anticausative (obligatory SE in its non-LE form) and licenses stylistic LE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -693,7 +693,7 @@
     ],
     "translation": "The water boiled on me.",
     "context": "Marking restriction: `hervir` is optionally SE-marked and still licenses stylistic LE.",
-    "judgment": "ok",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
