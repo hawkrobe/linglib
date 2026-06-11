@@ -1,4 +1,3 @@
-import Linglib.Studies.Gotham2017
 import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.AsymmetricCommunication
 
@@ -34,8 +33,8 @@ Word reuse is a polysemy-generating process: when *mouse* acquires the
 sense "computer peripheral", the word becomes polysemous. This study
 provides an information-theoretic account of why productive polysemy
 exists — it is communicatively efficient under a tradeoff between
-length and listener confusion. Bridges `Gotham2017`
-(synchronic copredication judgments) to a diachronic functional account.
+length and listener confusion. Bridges synchronic copredication judgments
+([asher-2011], [gotham-2017]) to a diachronic functional account.
 -/
 
 namespace Phenomena.Polysemy
@@ -271,19 +270,18 @@ theorem unifiedObjective_eq_weightedCost
     alongside its existing one. Connects the diachronic process of
     lexicalization to the synchronic phenomenon of polysemy.
 
-    The copredication data in `Gotham2017`
-    captures the synchronic *consequence* of reuse (multiple aspects
-    coexist); this paper's account explains the diachronic *cause*
-    (efficiency pressure).
+    Copredication ([asher-2011], [gotham-2017]) is the synchronic
+    *consequence* of reuse (multiple aspects coexist); this paper's
+    account explains the diachronic *cause* (efficiency pressure).
 
-    **Caveat on the Gotham bridge.** Xu's reuse polysemy and Gotham's
-    *logical* polysemy are not the same phenomenon. Gotham's `DotType`
-    requires sortally-compatible aspects with a shared individuation
+    **Caveat on the copredication bridge.** Xu's reuse polysemy and
+    *logical* polysemy are not the same phenomenon. Logical polysemy
+    involves sortally-compatible aspects with a shared individuation
     ground (book = phys × info, both individuating one volume); Xu's
     *mouse* → peripheral generates two unrelated sortal categories
     with no shared ground. The honest bridge: Xu's *literal* reuse
-    (hyponymic, e.g. *car* narrowed from *wheeled cart*) is
-    Gotham-compatible (shared ground); Xu's *non-literal* reuse
+    (hyponymic, e.g. *car* narrowed from *wheeled cart*) is compatible
+    with logical polysemy (shared ground); Xu's *non-literal* reuse
     (metaphorical, e.g. *mouse*) is not. The `Literality` enum
     in the Theory file is the partition this distinction lives on. -/
 def reuseIsPolysemyGeneration : List FormConceptPair → List String :=

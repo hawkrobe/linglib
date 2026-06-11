@@ -576,7 +576,6 @@ def want : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  complementSig := some .mono
   levinClass := some .want }
 
 /-- "intend" — intention-reporting attitude verb ([grano-2024]).
@@ -621,8 +620,7 @@ def hope : VerbEntry := .mkRegular {
   altControlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
-  complementSig := some .mono }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- "pray" — preferential attitude verb, permits future temporal orientation.
     [klecha-2016]: like *hope*, *pray* can take a circumstantial modal base,
@@ -637,8 +635,7 @@ def pray : VerbEntry := .mkRegular {
   altControlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
-  complementSig := some .mono }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
 def expect : VerbEntry := .mkRegular {
@@ -647,8 +644,7 @@ def expect : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
-  complementSig := some .mono }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- "wish" — preferential attitude verb (Class 3: anti-rogative) -/
 def wish : VerbEntry where
@@ -662,7 +658,6 @@ def wish : VerbEntry where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  complementSig := some .mono
   levinClass := some .want
 
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
@@ -673,7 +668,6 @@ def fear : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
-  complementSig := some .mono
   levinClass := some .admire }
 
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
@@ -684,7 +678,6 @@ def dread : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
-  complementSig := some .mono
   levinClass := some .admire }
 
 /-- "worry" — preferential attitude verb (Class 1: takes questions, non-C-distributive) -/
@@ -699,7 +692,6 @@ def worry : VerbEntry where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
-  complementSig := some .mono
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Raising

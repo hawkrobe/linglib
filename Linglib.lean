@@ -1671,7 +1671,6 @@ import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.YoonEtAl2020
 import Linglib.Studies.GiulianelliEtAl2026
 import Linglib.Studies.ChatzikyriakidisLuo2020
-import Linglib.Studies.Gotham2017
 import Linglib.Studies.Pustejovsky1995
 import Linglib.Studies.XuEtAl2024
 import Linglib.Studies.ErkHerbelot2024
@@ -2489,7 +2488,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.SituationDependent
 import Linglib.Semantics.Attitudes.NegRaising
-import Linglib.Semantics.Attitudes.Monotonicity
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.PreExistence
 import Linglib.Semantics.Attitudes.EpistemicThreshold

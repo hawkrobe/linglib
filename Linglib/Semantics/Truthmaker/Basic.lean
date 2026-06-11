@@ -221,8 +221,10 @@ theorem attHolds_tmAnd_of (hp : attHolds σ p x) (hq : attHolds σ q x) :
   obtain ⟨s₂, hqs₂, hle₂⟩ := hq
   exact ⟨s₁ ⊔ s₂, ⟨s₁, s₂, hps₁, hqs₂, rfl⟩, sup_le hle₁ hle₂⟩
 
-/-- Full conjunction-distribution biconditional for upward-monotone attitudes
-    ([bondarenko-elliott-2026], monotonicity-via-mereology theorem). -/
+/-- Conjunction-distribution biconditional for `attHolds`. The `←` direction
+    fuses verifying parts (`s₁ ⊔ s₂`), the analogue of summation closure on
+    believings in [bondarenko-elliott-2026] §6.1 — there, closure under
+    conjunction is derived from summation, separately from monotonicity. -/
 theorem attHolds_tmAnd_iff :
     attHolds σ (tmAnd p q) x ↔ attHolds σ p x ∧ attHolds σ q x :=
   ⟨attHolds_tmAnd_imp σ p q x,
