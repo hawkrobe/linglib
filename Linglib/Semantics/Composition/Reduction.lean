@@ -1,4 +1,5 @@
 import Linglib.Semantics.Composition.Model
+import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Core.Logic.Quantification.Basic
 import Mathlib.ModelTheory.Semantics
 import Mathlib.ModelTheory.Satisfiability
@@ -21,8 +22,6 @@ bind exactly one trace, so closure is by the *computable* singleton binders
 
 ## Main declarations
 
-* `Formula.all₁` / `Formula.ex₁` — computable singleton closures, with
-  `realize_all₁` / `realize_ex₁` phrased via `Function.update`
 * `FOWords`, `Model.lexiconFO` — the logical vocabulary over a naming-map
   lexicon; `FOWords.FreshFor`, `LexNaming.Disjoint` — well-formedness
 * `compileFO` — the partial compiler over QR'd Heim-Kratzer tree shapes
@@ -37,70 +36,6 @@ partial.
 -/
 
 universe u v
-
-/-! ### Computable singleton binders
-
-In mathlib's `FirstOrder.Language.Formula` namespace: generic FO utilities
-(upstream candidates), not composition-specific. -/
-
-namespace FirstOrder.Language.Formula
-
-open FirstOrder Language
-
-variable {L : Language.{u, v}}
-
-/-- The relabeling sending the named free variable `n` to the bound side. -/
-private def toBound (n : ℕ) : ℕ → ℕ ⊕ Fin 1 := fun k =>
-  if k = n then Sum.inr 0 else Sum.inl k
-
-/-- Universally close the named free variable `n`. Computable, unlike
-mathlib's `Formula.iAlls`. -/
-def all₁ (n : ℕ) (φ : L.Formula ℕ) : L.Formula ℕ :=
-  (BoundedFormula.relabel (toBound n) φ).all
-
-/-- Existentially close the named free variable `n`. Computable, unlike
-mathlib's `Formula.iExs`. -/
-def ex₁ (n : ℕ) (φ : L.Formula ℕ) : L.Formula ℕ :=
-  (BoundedFormula.relabel (toBound n) φ).ex
-
-variable {M : Type*} [L.Structure M]
-
-private theorem realize_relabel_update (n : ℕ) (φ : L.Formula ℕ) (v : ℕ → M) (x : M) :
-    (BoundedFormula.relabel (toBound n) φ).Realize v
-      (Fin.snoc (default : Fin 0 → M) x) ↔
-      φ.Realize (Function.update v n x) := by
-  rw [BoundedFormula.realize_relabel]
-  refine iff_of_eq (congrArg₂ (BoundedFormula.Realize φ) ?_ ?_)
-  · funext k
-    by_cases hk : k = n <;> simp [hk, toBound, Function.update_apply, Fin.snoc]
-  · funext i
-    exact i.elim0
-
-theorem realize_all₁ {n : ℕ} {φ : L.Formula ℕ} {v : ℕ → M} :
-    (all₁ n φ).Realize v ↔ ∀ x : M, φ.Realize (Function.update v n x) := by
-  have h : (all₁ n φ).Realize v
-      = BoundedFormula.Realize (BoundedFormula.relabel (toBound n) φ).all v default := rfl
-  rw [h, BoundedFormula.realize_all]
-  exact forall_congr' fun x => realize_relabel_update n φ v x
-
-theorem realize_ex₁ {n : ℕ} {φ : L.Formula ℕ} {v : ℕ → M} :
-    (ex₁ n φ).Realize v ↔ ∃ x : M, φ.Realize (Function.update v n x) := by
-  have h : (ex₁ n φ).Realize v
-      = BoundedFormula.Realize (BoundedFormula.relabel (toBound n) φ).ex v default := rfl
-  rw [h, BoundedFormula.realize_ex]
-  exact exists_congr fun x => realize_relabel_update n φ v x
-
-/-- A formula with no occurring free variables, as a sentence. -/
-def toSentence {α : Type*} [DecidableEq α] (φ : L.Formula α)
-    (h : φ.freeVarFinset = ∅) : L.Sentence :=
-  φ.restrictFreeVar fun x => absurd x.2 (by simp [h])
-
-theorem realize_toSentence {α : Type*} [DecidableEq α] (φ : L.Formula α)
-    (h : φ.freeVarFinset = ∅) (v : α → M) :
-    (M ⊨ φ.toSentence h) ↔ φ.Realize v :=
-  BoundedFormula.realize_restrictFreeVar v (fun a => absurd a.2 (by simp [h]))
-
-end FirstOrder.Language.Formula
 
 namespace Semantics.Composition
 

@@ -25,7 +25,7 @@ participants systematically ignore empty configurations when interpreting,
 so each clause must witness a non-empty state. Combined with split
 disjunction, this derives ignorance, distribution, free choice, and the
 behaviour-under-negation pattern — the QBSML free-choice facts proved in
-`Studies/AloniVanOrmondt2023/FreeChoice.lean` (`narrowScopeFC_Q`,
+`Studies/AloniVanOrmondt2023.lean` (`narrowScopeFC_Q`,
 `negationStrip_Q`).
 
 ## Main declarations
@@ -35,7 +35,7 @@ behaviour-under-negation pattern — the QBSML free-choice facts proved in
   formula is non-empty (the `NE` conjunct guards every clause).
 * `antiSupport_strip_ne`, `antiSupport_conj_ne_iff` — anti-support of
   `φ ∧ NE` reduces to anti-support of `φ`; the workhorse of the free-choice
-  derivations in `Studies/AloniVanOrmondt2023/FreeChoice.lean`.
+  derivations in `Studies/AloniVanOrmondt2023.lean`.
 
 ## Implementation notes
 
@@ -89,7 +89,7 @@ theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Pred)
     the state as `t₁ ∪ t₂` with `antiSupport NE t₂` forcing `t₂ = ∅`, hence
     `t₁ = s`. The QBSML analogue of `BSML/Enrichment`'s `antiSupport_strip_ne`;
     the workhorse of the free-choice derivations in
-    `Studies/AloniVanOrmondt2023/FreeChoice.lean`. -/
+    `Studies/AloniVanOrmondt2023.lean`. -/
 theorem antiSupport_strip_ne (M : QBSMLModel W Domain Pred)
     (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
     (h : antiSupport M (.conj φ .ne) s) :
