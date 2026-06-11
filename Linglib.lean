@@ -2341,7 +2341,6 @@ import Linglib.Semantics.Numerals.Degree
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Quantification.DomainRestriction
-import Linglib.Studies.KadmonLandman1993Apparatus
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Syllogistic.Defs
 import Linglib.Semantics.Quantification.Syllogistic.Forms
