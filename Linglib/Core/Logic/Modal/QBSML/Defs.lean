@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
-import Mathlib.ModelTheory.Basic
+import Linglib.Core.Logic.FirstOrder.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Bilateral.Defs
 
@@ -32,12 +32,14 @@ the `Core.Logic.Team.isFlat_iff` template at the point type
 * `QBSMLFormula.IsNEFree`: the NE-free fragment.
 * `monadicLang`, `monadicStructure`: the monadic first-order signature on
   `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
-* `QBSMLModel`, `eval`, `support`, `antiSupport`: bilateral evaluation
+* `QBSMLModel` (an abbreviation for `FirstOrder.Language.KripkeStructure`
+  over `monadicLang`), `eval`, `support`, `antiSupport`: bilateral evaluation
   ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
   as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
   `Core.Logic.Bilateral.IsBilateral` under `QBSMLFormula.neg`.
-* `QBSMLModel.IsStateBased`, `QBSMLModel.IsIndisputable`: frame conditions
+* `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
+  conditions
   via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
 
 ## Implementation notes
@@ -50,10 +52,10 @@ the `Core.Logic.Team.isFlat_iff` template at the point type
 * The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
   parameter, with `[Fintype Domain]` where the universal extension must range
   over all of it. The interpretation `I` is a world-indexed family of mathlib
-  first-order structures (`QBSMLModel.interp`, the
-  `Semantics.Composition.Model` pattern); `QBSMLModel.pInterp` and
-  `QBSMLModel.cInterp` read the world-dependent (non-rigid) predicate and
-  constant denotations off `Structure.RelMap` / `Structure.funMap`.
+  first-order structures: `QBSMLModel` is `FirstOrder.Language.KripkeStructure`
+  over the monadic signature, and `KripkeStructure.pInterp` /
+  `KripkeStructure.cInterp` read the world-dependent (non-rigid) predicate
+  and constant denotations off `Structure.RelMap` / `Structure.funMap`.
 * The paper requires all indices in a state to share an assignment domain
   (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
   operations preserve it.
@@ -269,6 +271,11 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
   · rintro ⟨h, rfl⟩
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
+@[simp] theorem State.modalLift_singleton (w : W)
+    (g : Assignment Var Domain) :
+    State.modalLift {w} g = {(w, g)} :=
+  Finset.image_singleton ..
+
 @[simp] theorem State.worldProj_modalLift (X : Finset W)
     (g : Assignment Var Domain) :
     State.worldProj (State.modalLift X g) = X := by
@@ -410,25 +417,21 @@ abbrev monadicRel {Const Pred : Type*} (P : Pred) :
   rfl
 
 /-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
-    `M = ⟨W, D, R, I⟩`), with the domain as a type parameter, accessibility
-    as a per-world `Finset`, and the interpretation `I` as a world-indexed
-    family of mathlib first-order structures on the domain — the pattern of
-    `Semantics.Composition.Model`. Structures are carried as terms, not
-    instances: a world-indexed family cannot be instance-based, so interfacing
-    with instance-based mathlib API (`Formula.Realize`) threads
-    `letI := M.interp w`. -/
-structure QBSMLModel (W : Type*) (Domain : Type*) (Const : Type*)
-    (Pred : Type*) where
-  /-- Accessibility relation (per-world set of accessible worlds). -/
-  access : W → Finset W
-  /-- World-indexed interpretation of the monadic signature. -/
-  interp : W → (monadicLang Const Pred).Structure Domain
+    `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
+    structure over the monadic signature: accessibility `R` plus the
+    world-indexed interpretation `I`, carried as a family of mathlib
+    structures (`FirstOrder.Language.KripkeStructure`) — true by
+    construction, not by bridge. -/
+abbrev QBSMLModel (W : Type*) (Domain : Type*) (Const : Type*)
+    (Pred : Type*) :=
+  FirstOrder.Language.KripkeStructure (monadicLang Const Pred) W Domain
 
 /-- The predicate denotation at a world, read off the model's structure
     family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
     [aloni-vanormondt-2023] Definition 4.2, specialised to monadic `P`
     (cf. `Semantics.Composition.Model.pred₁ext`). -/
-def QBSMLModel.pInterp {W Domain Const Pred : Type*}
+def _root_.FirstOrder.Language.KripkeStructure.pInterp
+    {W Domain Const Pred : Type*}
     (M : QBSMLModel W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
     Prop :=
   (M.interp w).RelMap (monadicRel P) (fun _ => d)
@@ -436,24 +439,25 @@ def QBSMLModel.pInterp {W Domain Const Pred : Type*}
 /-- The constant denotation at a world — the world-relative `I(w)(c)` of
     [aloni-vanormondt-2023] Definitions 4.2 and 4.8, read off
     `Structure.funMap` (cf. `Semantics.Composition.Model.const`). -/
-def QBSMLModel.cInterp {W Domain Const Pred : Type*}
+def _root_.FirstOrder.Language.KripkeStructure.cInterp
+    {W Domain Const Pred : Type*}
     (M : QBSMLModel W Domain Const Pred) (c : Const) (w : W) : Domain :=
   (M.interp w).funMap (monadicConst c) default
 
-@[simp] theorem QBSMLModel.pInterp_monadicStructure
+@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.pInterp_monadicStructure
     {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (P : Pred)
     (w : W) (d : Domain) :
-    QBSMLModel.pInterp ⟨access, fun w => monadicStructure (κ w) (V w)⟩ P w d ↔
-      V w P d :=
+    FirstOrder.Language.KripkeStructure.pInterp
+      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ P w d ↔ V w P d :=
   Iff.rfl
 
-@[simp] theorem QBSMLModel.cInterp_monadicStructure
+@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.cInterp_monadicStructure
     {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (c : Const)
     (w : W) :
-    QBSMLModel.cInterp ⟨access, fun w => monadicStructure (κ w) (V w)⟩ c w =
-      κ w c :=
+    FirstOrder.Language.KripkeStructure.cInterp
+      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ c w = κ w c :=
   rfl
 
 /-! ### Bilateral evaluation -/
@@ -539,23 +543,25 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
     ([aloni-vanormondt-2023] Definition 4.10). Defined via
     `Core.Logic.Team.IsStateBased` applied to `State.worldProj s`, sharing
     BSML's frame-condition substrate. -/
-def QBSMLModel.IsStateBased (M : QBSMLModel W Domain Const Pred)
+def _root_.FirstOrder.Language.KripkeStructure.IsStateBased
+    (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsStateBased M.access (State.worldProj s)
 
 /-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
     accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
-def QBSMLModel.IsIndisputable (M : QBSMLModel W Domain Const Pred)
+def _root_.FirstOrder.Language.KripkeStructure.IsIndisputable
+    (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Core.Logic.Team.IsIndisputable M.access (State.worldProj s)
 
 instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
-  unfold QBSMLModel.IsStateBased; infer_instance
+  unfold FirstOrder.Language.KripkeStructure.IsStateBased; infer_instance
 
 instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
-  unfold QBSMLModel.IsIndisputable; infer_instance
+  unfold FirstOrder.Language.KripkeStructure.IsIndisputable; infer_instance
 
 end FrameConditions
 

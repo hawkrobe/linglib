@@ -653,6 +653,23 @@ theorem univPxOrQx_classical
             (monadicRel QPred.Q).formula₁ (Term.var QVar.x))) (v i) :=
   support_iff_forall_realizeAt avoModel rfl s v hv
 
+/-- The narrow-scope FC premise `◇(Px ∨ Qx)` translates into the modal layer
+    over the monadic signature, and its support is Kripke satisfaction at
+    every index — the **full** [aloni-vanormondt-2023] Proposition 4.1
+    (modals included) at `avoModel`, the translation discharged by `rfl`. -/
+theorem possPxOrQx_classical
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
+    support avoModel possPxOrQx s ↔
+      ∀ i ∈ s,
+        (ModalFormula.dia
+          (.sup (.ofFormula ((monadicRel QPred.P).formula₁ (Term.var QVar.x)))
+            (.ofFormula
+              ((monadicRel QPred.Q).formula₁ (Term.var QVar.x))))).Realize
+          avoModel i.world (v i) :=
+  support_iff_forall_realize avoModel rfl s v hv
+
 /-! ### Frame condition: avoModel is indisputable on every state -/
 
 /-- `avoModel`'s universal accessibility makes R indisputable on every state
