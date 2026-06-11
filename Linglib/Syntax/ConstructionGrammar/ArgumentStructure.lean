@@ -135,7 +135,9 @@ This is a proxy for [mueller-2013]'s structural criterion (whether the
 construction can be analyzed as a sequence of headed binary combinations).
 The proxy works because fully abstract constructions without pragmatic
 functions have no idiosyncratic form–meaning pairings that would resist
-decomposition into the three universal schemata. -/
+decomposition into the three universal schemata. The Boolean approximates
+what [kay-michaelis-2019] survey as a continuum of constructional meaning
+contributions. -/
 def isFullyCompositional (c : Construction) : Bool :=
   c.specificity == .fullyAbstract && c.pragmaticFunction.isNone
 
