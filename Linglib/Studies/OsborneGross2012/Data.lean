@@ -1,6 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.CatenalConstruction
 import Linglib.Syntax.ConstructionGrammar.IdiomTypology
+import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
@@ -449,7 +450,8 @@ def idiomCx : CatenalCx :=
         meaning := "divulge secret information" }
     tree := spillTheBeans
     nodes := [0, 2]
-    catena := by decide }
+    catena := by decide
+    realizes := by decide }
 
 def lvcCx : CatenalCx :=
   { construction :=
@@ -461,7 +463,8 @@ def lvcCx : CatenalCx :=
         meaning := "perform the action denoted by N" }
     tree := takeABath
     nodes := [0, 2]
-    catena := by decide }
+    catena := by decide
+    realizes := by decide }
 
 def verbChainCx : CatenalCx :=
   { construction :=
@@ -472,7 +475,8 @@ def verbChainCx : CatenalCx :=
         meaning := "tense–aspect–mood composition" }
     tree := heWillHaveHelped
     nodes := [1, 2, 3]
-    catena := by decide }
+    catena := by decide
+    realizes := by decide }
 
 def displacementCx : CatenalCx :=
   { construction :=
@@ -484,7 +488,8 @@ def displacementCx : CatenalCx :=
         pragmaticFunction := "topic–comment articulation" }
     tree := beansSheSpilled
     nodes := [0, 2]
-    catena := by decide }
+    catena := by decide
+    realizes := by decide }
 
 /-- CatenalCx instances cover the full specificity spectrum. -/
 theorem catenal_specificity_coverage :
@@ -527,6 +532,43 @@ theorem fko1988_idiom_types_are_catenae :
     ccIdiomType.formality = .formal ∧
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true := by
   refine ⟨rfl, ?_, rfl, ?_⟩ <;> decide
+
+/-! ### §10: the catena unit is no licensing unit
+
+The paper's argument against constituent-based conceptions of
+constructions, stated against the licensing model
+(`Constructicon.Licenses`): licensing consumes whole local trees, so the
+smallest licensed unit containing the idiomatic words also contains the
+determiner — but the idiomatic unit {spill, beans} excludes it. That unit
+is a (non-constituent) catena; the local-tree model has no constituent
+that is exactly the idiom. -/
+
+/-- "spill the beans" as a licensing token. -/
+def spillTheBeansToken : Token :=
+  .node [.word "spill", .word "the", .word "beans"]
+
+/-- POS lexicon for the V-det-N examples. -/
+def vdnPos : String → Option UD.UPOS
+  | "spill" => some .VERB
+  | "the" => some .DET
+  | "beans" => some .NOUN
+  | _ => none
+
+/-- The whole V-det-N local tree is licensable, determiner included:
+the licensing model's granularity is the full daughter list. -/
+theorem spill_the_beans_licensed_whole :
+    (Constructicon.mk [idiomCx.construction] []).Licenses vdnPos
+      spillTheBeansToken := by decide
+
+/-- The idiomatic unit {spill, beans} is a catena but not a contiguous
+daughter subsequence of the local tree: no licensed constituent is exactly
+the idiom. The catena captures a constructional unit the local-tree
+licensing model cannot delimit. -/
+theorem idiom_unit_catena_not_contiguous :
+    isCatena spillTheBeans.deps [0, 2] = true ∧
+    ¬ [Token.word "spill", Token.word "beans"] <:+:
+        [Token.word "spill", Token.word "the", Token.word "beans"] :=
+  ⟨by decide, by decide⟩
 
 /-- Bridge to FKO1988 CC: the `comparativeCorrelative` construction from
     FKO1988 matches the CC tree verified here. Both describe the same
