@@ -1211,9 +1211,7 @@ import Linglib.Typology.ClauseChaining
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Studies.Partee1987
 import Linglib.Studies.Elbourne2026
-import Linglib.Phenomena.Attitudes.ConjunctionDistribution
 import Linglib.Studies.Montague1973Attitudes
-import Linglib.Phenomena.Attitudes.IntentionalIdentity
 import Linglib.Studies.BondarenkoElliott2026
 import Linglib.Studies.Pasternak2019
 import Linglib.Studies.ChatzikyriakidisEtAl2025
@@ -1673,7 +1671,6 @@ import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.YoonEtAl2020
 import Linglib.Studies.GiulianelliEtAl2026
 import Linglib.Studies.ChatzikyriakidisLuo2020
-import Linglib.Studies.Gotham2017
 import Linglib.Studies.Pustejovsky1995
 import Linglib.Studies.XuEtAl2024
 import Linglib.Studies.ErkHerbelot2024
@@ -2491,7 +2488,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.SituationDependent
 import Linglib.Semantics.Attitudes.NegRaising
-import Linglib.Semantics.Attitudes.Monotonicity
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.PreExistence
 import Linglib.Semantics.Attitudes.EpistemicThreshold
@@ -2873,3 +2869,4 @@ import Linglib.Fragments.Finnish.Evidentiality
 import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Thomas2026
 import Linglib.Studies.KeenanStavi1986
+import Linglib.Studies.ChatzikyriakidisLuo2017

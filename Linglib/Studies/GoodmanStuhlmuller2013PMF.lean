@@ -1235,8 +1235,11 @@ cover hypothesis is automatically satisfied via `cover_silent`.
 ## Status: illustrations, not corollaries of a single structural theorem
 
 The 11 cells below are computational evaluations of the model at specific
-(meaning, access, world-pair, utterance) tuples. They demonstrate that the
-model produces the predictions plotted in Fig. 2 (A, B).
+(meaning, access, world-pair, utterance) tuples, in the paper's expository
+regime (α = 1, uniform prior — the eq. 5 walkthrough), not the Fig. 2 (A, B)
+fit (α = 3.4, binomial prior with base rate 0.62). Where the fitted model
+predicts only a marginal implicature (access 2), directions can differ from
+the plotted predictions.
 
 **They are NOT corollaries of a single information-theoretic cancellation
 theorem.** The structural theorem that IS provable
@@ -1247,8 +1250,8 @@ orderings these cells encode are utterance-level claims that depend on the
 specific lex shape, not just on kernel informativity — see Cancellation.lean
 §3 for why utterance-level MI cancellation isn't a clean DPI corollary.
 
-Demoted to `example`s rather than named theorems: they're computational
-illustrations of model behavior, not load-bearing claims. Anyone wanting to
+These are computational illustrations of model behavior, not load-bearing
+claims. Anyone wanting to
 prove a structural property about the model should use the obs-level
 cancellation theorem in Cancellation.lean. -/
 
