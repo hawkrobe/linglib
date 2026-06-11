@@ -1481,7 +1481,6 @@ import Linglib.Studies.ElkinsTorrenceBrown2026
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.KeenanComrie1977
 import Linglib.Studies.PickeringBarry1991
-import Linglib.Studies.Steedman2000CrossSerial
 import Linglib.Studies.Adger2025
 import Linglib.Studies.CartnerEtAl2026
 import Linglib.Studies.HofmeisterSag2010
@@ -1950,7 +1949,6 @@ import Linglib.Studies.Pietraszko2026
 import Linglib.Studies.Steedman2000
 import Linglib.Syntax.CCG.Classical
 import Linglib.Syntax.CCG.CrossSerial
--- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Syntax.CCG.Gapping
 import Linglib.Studies.ScontrasPearl2021
 import Linglib.Syntax.CCG.Equivalence
@@ -2061,7 +2059,6 @@ import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.Gibson2025
 import Linglib.Studies.KuhlmannNivre2006
 import Linglib.Studies.HarizanovGribanova2019
-import Linglib.Studies.Steedman2000WordOrder
 import Linglib.Studies.Chomsky1995
 import Linglib.Studies.Pollock1989
 import Linglib.Studies.ColeHermon2008
@@ -2695,7 +2692,6 @@ import Linglib.Studies.Glass2023
 import Linglib.Studies.BergenGoodman2015
 import Linglib.Studies.Osborne2019Ellipsis
 import Linglib.Studies.Osborne2019Parallelism
-import Linglib.Studies.Steedman2000Gapping
 import Linglib.Studies.MacuchSilvaEtAl2024
 import Linglib.Studies.Franke2011
 import Linglib.Studies.HardingGerstenbergIcard2025
@@ -2703,7 +2699,6 @@ import Linglib.Studies.FarkasRoelofsen2017
 import Linglib.Studies.Ginzburg2012
 import Linglib.Studies.PurverGinzburg2004
 -- Nouwen2024RSA merged into Nouwen2024
-import Linglib.Studies.Steedman2000Quantification
 import Linglib.Studies.TesslerFranke2020PMF
 import Linglib.Studies.TesslerGoodman2019
 import Linglib.Studies.TesslerGoodman2022
@@ -2899,3 +2894,4 @@ import Linglib.Data.Examples.CondoravdiLauer2016
 import Linglib.Data.Examples.ChungMascarenhas2024
 import Linglib.Data.Examples.MunozPerez2026
 import Linglib.Data.Examples.Marsan2026
+import Linglib.Data.Examples.Steedman2000
