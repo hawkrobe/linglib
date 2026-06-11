@@ -2381,7 +2381,6 @@ import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
 import Linglib.Semantics.Gradability.GradableNouns
-import Linglib.Semantics.Kinds.Anaphora
 import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.MeaningPreservation

@@ -1,14 +1,21 @@
-/-
+import Linglib.Semantics.Presupposition.Context
+import Linglib.Semantics.Context.Tower
+
+/-!
 # Local Context Computation
 
-Formalizes [schlenker-2009]'s local contexts algorithm for computing
-presupposition projection compositionally.
+Local contexts for presupposition projection, stipulated per connective
+in the satisfaction tradition ([karttunen-1974], [heim-1983]).
+[schlenker-2009]'s contribution — *deriving* these local contexts from
+bivalent meanings plus incremental transparency — is not implemented
+here: the per-connective clauses below are the Karttunen/Heim
+stipulations that Schlenker's algorithm reconstructs.
 
 ## Insight
 
 The "local context" at a position in a sentence determines what
-presuppositions are filtered vs. projected. Schlenker shows this
-can be computed incrementally from left to right.
+presuppositions are filtered vs. projected, computed incrementally
+from left to right.
 
 ## The Algorithm
 
@@ -32,9 +39,6 @@ For a sentence S with embedded clause φ at position i:
 - Presupposition "John used to smoke" projects globally
 
 -/
-
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Context.Tower
 
 namespace Semantics.Presupposition.LocalContext
 
@@ -214,8 +218,8 @@ The local context theory derives the same result as the filtering
 connectives in Semantics.Presupposition.
 
 This theorem shows the correspondence between:
-- Schlenker's local context computation
-- Kracht's filtering implication formula
+- the stipulated local context computation
+- the Karttunen filtering implication formula ([karttunen-1973], [peters-1979])
 -/
 theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     (∀ w, c w → (PrProp.impFilter p q).presup w) ↔

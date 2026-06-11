@@ -396,7 +396,7 @@ theorem filtering_negative_fc (firstDisjunct : FCWorld → Prop) (w : FCWorld)
 /-!
 ## §5.1: Universal, Existential, and Negative-Existential FC
 
-[chemla-2009b] shows that ∀◇∨-sentences have universal FC readings
+[chemla-2009] shows that ∀◇∨-sentences have universal FC readings
 and ¬∃□∧-sentences have universal negative FC readings.
 
 ### Analysis with embedded pex
@@ -408,7 +408,7 @@ The LFs with embedded pex^{IE+II}:
 
 pex triggers the homogeneity presupposition in the scope of the quantifier.
 Presuppositions project universally from the scope of universal quantifiers
-([chemla-2009a], [fox-2013], [mayr-sauerland-2015]).
+([chemla-2009-quantified], [fox-2013], [mayr-sauerland-2015]).
 Combined with the assertive content, (universal/existential) FC follows.
 -/
 

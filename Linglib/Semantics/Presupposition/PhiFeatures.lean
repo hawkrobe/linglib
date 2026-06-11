@@ -7,7 +7,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Presuppositional Semantics of Phi-Features
-[sauerland-2003] [sauerland-2008b] [harbour-2016] [heim-1991] [wang-r-2023]
+[sauerland-2003] [sauerland-2008] [harbour-2016] [heim-1991] [wang-r-2023]
 
 Phi-features (number, person, definiteness) are **presuppositional partial
 identity functions** on the entity domain, ordered by presuppositional
@@ -247,7 +247,7 @@ end PersonPresuppositions
 -- ============================================================================
 
 /-!
-## §3b: Gender Presuppositions ([sauerland-2003] §6)
+## §3b: Gender Presuppositions ([sauerland-2008])
 
 Gender features [±feminine, ±neuter] form a third `ContainmentPair` instance,
 with containment [+neuter] → [+feminine] (see `Gender.Features`).
@@ -256,6 +256,12 @@ The presuppositional semantics mirrors number and person:
 - **neuter** (maximal, specLevel 2): presupposes inanimate
 - **feminine** (intermediate, specLevel 1): presupposes female
 - **masculine** (minimal, specLevel 0): vacuous (default/unmarked)
+
+**Idealization.** The neuter↦inanimate cell and the gender containment
+geometry are far less established than the person/number columns —
+German *das Mädchen* 'the girl' (neuter, animate, female) is the
+standard counterexample. The established core is feminine presupposing
+female with masculine unmarked ([sauerland-2008]).
 
 [wang-r-2023]: masculine, as the semantically unmarked gender,
 is available for honorific use cross-linguistically — paralleling the

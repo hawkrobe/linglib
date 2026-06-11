@@ -196,7 +196,7 @@ inductive TriggerClass where
  deriving DecidableEq, Repr
 
 /-- Select accommodation strategy based on trigger class.
- [beaver-2001] Ch. 5.8, following Zeevat (1992). -/
+ [beaver-2001] Ch. 5.8, following [zeevat-1992]. -/
 def strategyForTrigger : TriggerClass → AccommodationStrategy
  | .anaphoric => .vanDerSandt
  | .lexical => .fauconnierFlotation

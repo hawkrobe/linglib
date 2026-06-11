@@ -51,14 +51,14 @@ namespace Semantics.Kinds.NMP
     pluralities are larger sets. The part-of relation (⊆) and join (∪)
     are inherited from Mathlib's `Set` instances, giving us Link's
     complete atomic join semilattice. -/
-abbrev Individual (Atom : Type) := Set Atom
+abbrev Individual (Atom : Type*) := Set Atom
 
 /-- Construct a singular individual from an atom. -/
-def Individual.atom {Atom : Type} (a : Atom) : Individual Atom := {a}
+def Individual.atom {Atom : Type*} (a : Atom) : Individual Atom := {a}
 
 -- Kinds as Individual Concepts
 
-variable (World Atom : Type)
+variable (World Atom : Type*)
 
 /-- A property (intension): function from worlds to sets of individuals.
     This is `Core.Intension World (Set (Individual Atom))`. -/
@@ -131,7 +131,7 @@ def IsMass (P : Property World Atom) : Prop :=
 
 section MereologyBridge
 
-variable {World Atom : Type}
+variable {World Atom : Type*}
 
 /-- Mass properties have divisive reference: if `x ∈ P w` and `y ⊆ x`,
     then `y ∈ P w`. Every part of a mass-noun instance is also an instance. -/
@@ -166,10 +166,10 @@ def pluralClosure (P : Property World Atom) : Property World Atom :=
 
 section PluralClosure
 
-variable {World Atom : Type}
+variable {World Atom : Type*}
 
 /-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative.
-    This is Krifka's absorption rule ⊔⊔S = ⊔S from [krifka-2026] (16). -/
+    This is [krifka-2026]'s absorption rule ⊔⊔S = ⊔S for the join closure. -/
 theorem pluralClosure_mass (P : Property World Atom)
     (hMass : IsMass World Atom P) :
     pluralClosure World Atom P = P := by
@@ -383,7 +383,7 @@ Mass nouns come out of the lexicon "already pluralized": a mass noun like
 "furniture" is true of individual pieces AND pluralities of pieces, without
 distinction. Its extension has the same form: `{ s | s.Nonempty ∧ s ⊆ atoms }`.
 -/
-def pluralize {Atom : Type} (F : Set Atom) : Set (Individual Atom) :=
+def pluralize {Atom : Type*} (F : Set Atom) : Set (Individual Atom) :=
   { s | s.Nonempty ∧ s ⊆ F }
 
 -- Type Shifting as Last Resort (Blocking Principle)

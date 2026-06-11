@@ -50,7 +50,7 @@ definition with disjunction-update survival.
 
 - `Truth3.join` (Strong Kleene): never false (`strong_kleene_never_false`)
 - `PrProp.or` (classical): never defined (`classical_never_defined`)
-- `PrProp.orFilter` (symmetric, positive-antecedent filtering of
+- `PrProp.orPositive` (symmetric, positive-antecedent filtering of
   [kalomoiros-schwarz-2021]): wrong presupposition
   (`filter_wrong_at_kingOpens`)
 - `PrProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
@@ -184,10 +184,10 @@ symmetry). The substrate `PrProp.orKPSymmetric` matches Yagi's Def 2 directly:
 
   Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
 
-`PrProp.orFilter` is a *different* symmetric variant with positive-antecedent
+`PrProp.orPositive` is a *different* symmetric variant with positive-antecedent
 conditionals plus an extra `Π(φ) ∨ Π(ψ)` disjunct, which is **strictly
 stronger** than `orKPSymmetric` (worked counterexample: at a world with `A(φ)=⊤`,
-`A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orFilter` is not).
+`A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orPositive` is not).
 The two are not predictionally equivalent, and neither is the asymmetric
 [karttunen-1973] rule (24b) used as `PrProp.disjFilterLeft` —
 see `Studies/Karttunen1973.lean`. -/
@@ -200,13 +200,13 @@ theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := fun w h =>
   presups_conflict w h
 
 /-- The symmetric positive-antecedent filtering disjunction
-(`PrProp.orFilter`). Encodes
+(`PrProp.orPositive`). Encodes
 `(A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ))` — strictly stronger
 than `orKPSymmetric`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
 discussed by [yagi-2025] §2.2 (after Def 3) as a candidate fix. -/
-def filterDisj : PrProp W := PrProp.orFilter kingOpensParl presConductsCeremony
+def filterDisj : PrProp W := PrProp.orPositive kingOpensParl presConductsCeremony
 
-/-- `orFilter` predicts presupposition failure at `kingOpens`, where the
+/-- `orPositive` predicts presupposition failure at `kingOpens`, where the
 disjunction should clearly be true: the filtering condition demands the
 president-presupposition hold when the king-assertion is true. -/
 theorem filter_wrong_at_kingOpens : ¬filterDisj.presup W.kingOpens := by
@@ -605,7 +605,7 @@ Linglib's [karttunen-1973] formalisation
 (`Studies/Karttunen1973.lean`) handles (18) via
 the **asymmetric** `disjFilterLeft` rule (24b): when `¬A` entails `Π(B)`,
 the presupposition is filtered. This is the principled alternative
-that the symmetric variants (`orKPSymmetric`, `orFilter`) cannot offer. -/
+that the symmetric variants (`orKPSymmetric`, `orPositive`) cannot offer. -/
 
 /-- Worlds for example (18). -/
 inductive W18 where
@@ -633,11 +633,11 @@ def johnDidntSolve : PrProp W18 where
   presup _ := True
   assertion w := ¬solved w
 
-/-- The symmetric positive-antecedent `orFilter` overgenerates here:
+/-- The symmetric positive-antecedent `orPositive` overgenerates here:
 predicts presupposition failure at `notSolved`, where the disjunction
 should be defined-and-true. -/
-theorem ex18_symmetric_orFilter_overgenerates :
-    ¬(PrProp.orFilter johnDidntSolve maryRealized).presup W18.notSolved := by
+theorem ex18_symmetric_orPositive_overgenerates :
+    ¬(PrProp.orPositive johnDidntSolve maryRealized).presup W18.notSolved := by
   rintro ⟨h, _, _⟩
   exact (h (fun (h' : solved W18.notSolved) => h') : solved W18.notSolved)
 
