@@ -115,27 +115,25 @@ inductive LicensingMechanism where
     `KadmonLandman1993.klExplanation`) are derivations from `contextProperties`,
     not parallel stipulations. -/
 structure ContextProperties where
-  /-- Icard signature: locates the context in the natural-logic lattice. -/
-  signature : Core.NaturalLogic.EntailmentSig
+  /-- Icard signature modulo presuppositions ([von-fintel-1999]'s
+      Strawson reading): the row a Strawson-relativized soundness
+      statement (`EntailmentSig.StrawsonSoundFor`) realizes. Coincides
+      with the classical row for presupposition-free contexts. -/
+  strawsonSignature : Core.NaturalLogic.EntailmentSig
   /-- K&L mechanism: how this context licenses NPIs. -/
   mechanism : LicensingMechanism
   /-- A canonical English example. -/
   prototype : String
   /-- BibTeX keys for the works that established this classification. -/
   citations : List String
-  /-- Strawson-DE flag ([von-fintel-1999]): when `true`, the
-      `signature` field over-promises classical DE — the context is in
-      fact only DE under presupposition (Strawson-DE), not classically.
-      Default `false` (the signature stands as a classical claim).
-
-      Examples requiring this flag: `.onlyFocus`, `.adversative`,
-      `.sinceTemporal` — classical-DE-on-paper but shown by
-      [von-fintel-1999] to be only Strawson-DE. The
-      `byStrawsonDE` mechanism case is for items whose licensing
-      *primarily* comes from Strawson-DE (e.g., superlative);
-      `isStrawsonOnly` is for cases where the signature *also* needs
-      qualification. -/
-  isStrawsonOnly : Bool := false
+  /-- Classical (presupposition-free) signature row, when one holds.
+      `none` for the contexts [von-fintel-1999] showed to be only
+      Strawson-DE — only-focus, adversatives, temporal *since*,
+      superlatives: no `EntailmentSig` row is classically sound for
+      them. Defaults to the Strawson row (the presupposition-free
+      case). -/
+  classicalSignature : Option Core.NaturalLogic.EntailmentSig :=
+    some strawsonSignature
   deriving Repr
 
 /-- Canonical map from licensing contexts to their theoretical properties.
@@ -147,48 +145,48 @@ structure ContextProperties where
     to a specific source. -/
 def contextProperties : LicensingContext → ContextProperties
   | .negation =>
-      { signature := .antiAddMult, mechanism := .byStrengthening
+      { strawsonSignature := .antiAddMult, mechanism := .byStrengthening
       , prototype := "Mary didn't see anyone."
       , citations := ["ladusaw-1979", "kadmon-landman-1993", "zwarts-1998"] }
   | .nobody =>
-      { signature := .antiAdd, mechanism := .byStrengthening
+      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Nobody saw anyone."
       , citations := ["ladusaw-1979", "zwarts-1998"] }
   | .withoutClause =>
-      { signature := .antiAdd, mechanism := .byStrengthening
+      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "She left without saying anything."
       , citations := ["ladusaw-1979", "zwarts-1998"] }
   | .denyVerb =>
-      { signature := .antiAdd, mechanism := .byStrengthening
+      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "She denied seeing anyone."
       , citations := ["zwarts-1998"] }
   | .universalRestrictor =>
-      { signature := .antiAdd, mechanism := .byStrengthening
+      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Everyone who saw anyone was questioned."
       , citations := ["ladusaw-1979", "UNVERIFIED-bib-missing:partee-westerstaahl"] }
   | .few =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "Few students saw anyone."
       , citations := ["ladusaw-1979"] }
   | .atMost =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "At most three students saw anyone."
       , citations := ["ladusaw-1979"] }
   | .conditionalAntecedent =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "If anyone calls, take a message."
       , citations := ["ladusaw-1979", "kadmon-landman-1993"] }
   | .beforeClause =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "She left before anyone arrived."
       , citations := ["ladusaw-1979"] }
   | .onlyFocus =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "Only Mary saw anyone."
       , citations := ["horn-1996", "von-fintel-1999"]
-      , isStrawsonOnly := true }
+      , classicalSignature := none }
   | .tooTo =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "He was too tired to say anything."
       , citations := ["ladusaw-1979"] }
   | .comparativeNP =>
@@ -198,55 +196,71 @@ def contextProperties : LicensingContext → ContextProperties
       -- ([bhatt-pancheva-2004], [heim-2006]) reduce surface
       -- "than NP" with NPI to a covert clausal source — those NPIs are
       -- licensed by `.comparativeS`, not by this slot.
-      { signature := .mono, mechanism := .strengtheningFails
+      { strawsonSignature := .mono, mechanism := .strengtheningFails
       , prototype := "Surface NP-comparative; no NPI licensing under genuine NP reading."
       , citations := ["hoeksema-1983", "bhatt-pancheva-2004", "heim-2006"] }
   | .comparativeS =>
-      { signature := .antiAdd, mechanism := .byStrengthening
+      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Mary is taller than anyone is."
       , citations := ["ladusaw-1979", "hoeksema-1983", "bhatt-pancheva-2004"] }
   | .adversative =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "I'm sorry I said anything."
       , citations := ["kadmon-landman-1993", "von-fintel-1999"]
-      , isStrawsonOnly := true }
+      , classicalSignature := none }
   | .sinceTemporal =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "It's been five years since anyone visited."
       , citations := ["iatridou-2000", "von-fintel-1999"]
-      , isStrawsonOnly := true }
+      , classicalSignature := none }
   | .doubtVerb =>
-      { signature := .anti, mechanism := .byStrengthening
+      { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "I doubt anyone came."
       , citations := ["zwarts-1998"] }
   | .modalPossibility =>
-      { signature := .mono, mechanism := .byGenericIndefinite
+      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
       , prototype := "You may take any cookie."
       , citations := ["kadmon-landman-1993", "dayal-1996"] }
   | .modalNecessity =>
-      { signature := .mono, mechanism := .byGenericIndefinite
+      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
       , prototype := "Anyone can solve this."
       , citations := ["dayal-1996"] }
   | .imperative =>
-      { signature := .mono, mechanism := .byGenericIndefinite
+      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
       , prototype := "Pick any card."
       , citations := ["kadmon-landman-1993"] }
   | .generic =>
-      { signature := .mono, mechanism := .byGenericIndefinite
+      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
       , prototype := "Any owl hunts mice."
       , citations := ["kadmon-landman-1993", "dayal-1996"] }
   | .freeRelative =>
-      { signature := .mono, mechanism := .byGenericIndefinite
+      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
       , prototype := "Pick whichever you like."
       , citations := ["dayal-1996"] }
   | .question =>
-      { signature := .mono, mechanism := .byEntropy
+      { strawsonSignature := .mono, mechanism := .byEntropy
       , prototype := "Did anyone call?"
       , citations := ["van-rooy-2003"] }
   | .superlative =>
-      { signature := .mono, mechanism := .byStrawsonDE
+      -- Strawson row `.anti` per [von-fintel-1999]
+      -- (`superlative_isStrawsonDE`); previously a `.mono` placeholder.
+      { strawsonSignature := .anti, mechanism := .byStrawsonDE
       , prototype := "The tallest student who saw anyone..."
       , citations := ["UNVERIFIED-bib-missing:herdan-sharvit", "von-fintel-1999"]
-      , isStrawsonOnly := true }
+      , classicalSignature := none }
+
+/-- A context is **Strawson-only** when no classical signature row holds
+([von-fintel-1999]): only-focus, adversatives, temporal *since*,
+superlatives. -/
+def IsStrawsonOnly (c : LicensingContext) : Prop :=
+  (contextProperties c).classicalSignature = none
+
+/-- When a classical row exists it coincides with the Strawson row:
+presupposition-free contexts carry a single signature. -/
+theorem classicalSignature_eq_strawson (c : LicensingContext) :
+    (contextProperties c).classicalSignature = none ∨
+    (contextProperties c).classicalSignature =
+      some (contextProperties c).strawsonSignature := by
+  cases c <;> decide
 
 end Semantics.Polarity.Licensing

@@ -65,7 +65,7 @@ def LicensingStrength.ofDEStrength : Option Core.NaturalLogic.DEStrength → Lic
     classification is a coarsening of the Icard signature lattice. -/
 def licensingStrength (c : LicensingContext) : LicensingStrength :=
   LicensingStrength.ofDEStrength
-    (Semantics.Polarity.Licensing.contextProperties c).signature.toDEStrength
+    (Semantics.Polarity.Licensing.contextProperties c).strawsonSignature.toDEStrength
 
 -- ============================================================================
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)

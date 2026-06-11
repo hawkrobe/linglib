@@ -333,12 +333,12 @@ theorem npComparativeGQ_principal_eq_sComparative_singleton
     Hoeksema's central asymmetry: the NP-comparative is monotone
     *increasing* and therefore not an NPI environment. -/
 theorem comparativeNP_signature_monotone :
-    (contextProperties .comparativeNP).signature = .mono := rfl
+    (contextProperties .comparativeNP).strawsonSignature = .mono := rfl
 
 /-- The `.comparativeS` registry slot is anti-additive, matching
     `sComparative_isAntiAdditive`. -/
 theorem comparativeS_signature_anti_additive :
-    (contextProperties .comparativeS).signature = .antiAdd := rfl
+    (contextProperties .comparativeS).strawsonSignature = .antiAdd := rfl
 
 /-- Both registry slots cite Hoeksema 1983, anchoring the registry's
     classification to this study file. -/

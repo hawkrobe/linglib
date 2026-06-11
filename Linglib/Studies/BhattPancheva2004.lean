@@ -190,8 +190,8 @@ theorem npGQ_principal_eq_sComp_thanClause
     Hoeksema's two registry theorems so that any future change to
     either signature surfaces here as a recompile failure. -/
 theorem reduction_preserves_polarity_signatures :
-    (contextProperties .comparativeNP).signature = .mono ∧
-    (contextProperties .comparativeS).signature = .antiAdd :=
+    (contextProperties .comparativeNP).strawsonSignature = .mono ∧
+    (contextProperties .comparativeS).strawsonSignature = .antiAdd :=
   ⟨comparativeNP_signature_monotone, comparativeS_signature_anti_additive⟩
 
 /- ## Note on the Bresnan 1973 contrast (B&P §1.1.1 fn. 4)
