@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Multidominance
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Typology.Question
 /-!
 # Economy in PF Reduction
@@ -51,9 +50,8 @@ multidominance as the PF reduction mechanism.
 - MWF parameter substrate (`MWFParameter`, `PhaseEdge`, `EdgeAsterisk`,
   `MWFViolation`, `EllipsisRepairsMWF`) lives in
   `Typology/Question.lean`. Cross-linguistic data (Bulgarian, German,
-  Greek) lives in `Phenomena/Questions/MultipleWh.lean`. The
-  intra-English variety A/B split — paper-specific to
-  [citko-gracanin-yuksek-2025] — stays here.
+  Greek) and the intra-English variety A/B split — paper-specific to
+  [citko-gracanin-yuksek-2025] — live in §2 over that substrate.
 - Pronunciation Economy is the **per-operation** primitive
   `pronunciationEconomy : List PFOperation → Prop` from
   `Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
@@ -69,7 +67,7 @@ multidominance as the PF reduction mechanism.
 
 - CSs are coordinated sluices — each conjunct of a CS is a sluice.
   Bridge theorems connect CS data to `Sluicing.lean` data structures.
-- The MWF parameter connects to `Questions/MultipleWh.lean`:
+- The MWF parameter (`Typology/Question.lean`) classifies languages:
   non-MWF languages (English) ban multiple wh-fronting in questions.
 - RNR (§9) demonstrates that economy can force BOTH ellipsis and MD
   in a single derivation ([belk-neeleman-philip-2023],
@@ -79,7 +77,6 @@ multidominance as the PF reduction mechanism.
 namespace CitkoGracaninYuksek2025
 
 open Minimalist
-open Phenomena.Questions.MultipleWh
 open Typology.Question
 
 -- ============================================================================
@@ -290,19 +287,84 @@ theorem cs_obligatory_decomposes :
       [cs_oblig_sluice_what.whPhrase, cs_oblig_sluice_toWhom.whPhrase] := rfl
 
 -- ============================================================================
--- § 2: English MWF — intra-English variety A/B split
+-- § 2: Cross-linguistic MWF data and the English variety A/B split
 -- ============================================================================
 
-/-! Bulgarian, German, Greek MWF data live in
-`Phenomena/Questions/MultipleWh.lean` (textbook-consensus typology). The
-intra-English variety A/B split is paper-specific to
+/-! Languages vary in whether multiple wh-specifiers at a phase edge are
+tolerable at PF ([rudin-1988], [citko-gracanin-yuksek-2025]). The
+substrate primitives (`MWFParameter`, `PhaseEdge`, `EdgeAsterisk`,
+`MWFViolation`, `EllipsisRepairsMWF`) are in `Typology/Question.lean`;
+this section holds the per-language data and theorems consuming them.
+
+The intra-English variety A/B split is paper-specific to
 [citko-gracanin-yuksek-2025] (p. 19): both varieties are non-MWF in
 matrix questions, but they diverge on multiple sluicing — variety A bans
 it, variety B allows it. The paper *derives* this asymmetry from where
 the PF asterisk lands (vP only vs both vP and CP edges), not as a free
-parameter. The tri-valued `MWFParameter` in `MultipleWh.lean` captures
-this derivation: variety B is `.nonFrontsVPOnly`, variety A is
+parameter: variety B is `.nonFrontsVPOnly`, variety A is
 `.nonFrontsBothEdges`. -/
+
+/-- Cross-linguistic MWF datum. Records the parameter setting and an
+    example question. `AllowsMultipleSluicing` is **derived** from the
+    parameter via `EllipsisRepairsMWF`. -/
+structure MWFLanguageDatum where
+  language : String
+  mwfParam : MWFParameter
+  /-- Example multiple wh-question. -/
+  exampleQuestion : String
+  /-- Is the bare multiple-wh question grammatical? -/
+  grammatical : Bool
+  notes : String := ""
+  deriving Repr, DecidableEq
+
+/-- Multiple sluicing is licensed iff vP-edge ellipsis repairs the MWF
+    violation for `n = 2` wh-specifiers. **Derived, not stipulated.** -/
+def MWFLanguageDatum.AllowsMultipleSluicing (d : MWFLanguageDatum) : Prop :=
+  EllipsisRepairsMWF d.mwfParam 2 (vpEdgeDeleted := true)
+
+instance (d : MWFLanguageDatum) : Decidable d.AllowsMultipleSluicing := by
+  unfold MWFLanguageDatum.AllowsMultipleSluicing; infer_instance
+
+/-- Bulgarian: MWF language ([rudin-1988] canonical case). -/
+def bulgarian : MWFLanguageDatum :=
+  { language := "Bulgarian"
+  , mwfParam := .fronts
+  , exampleQuestion := "Koj kakvo e kupil?"
+  , grammatical := true
+  , notes := "All wh-phrases front; [rudin-1988] canonical MWF language" }
+
+/-- German: non-MWF; vP-only asterisk; multiple sluicing repairs.
+    [citko-gracanin-yuksek-2025] ex 31a. -/
+def german : MWFLanguageDatum :=
+  { language := "German"
+  , mwfParam := .nonFrontsVPOnly
+  , exampleQuestion := "*Wer was hat gesehen?"
+  , grammatical := false
+  , notes := "Non-MWF; bans multiple wh-fronting in questions; "
+           ++ "allows multiple sluicing ([citko-gracanin-yuksek-2025] ex 31a)" }
+
+/-- Greek: non-MWF; vP-only asterisk; multiple sluicing repairs.
+    [citko-gracanin-yuksek-2025] ex 31b. -/
+def greek : MWFLanguageDatum :=
+  { language := "Greek"
+  , mwfParam := .nonFrontsVPOnly
+  , exampleQuestion := "*Pços ti efere?"
+  , grammatical := false
+  , notes := "Non-MWF; bans multiple wh-fronting in questions; "
+           ++ "allows multiple sluicing ([citko-gracanin-yuksek-2025] ex 31b)" }
+
+/-- Cross-linguistic MWF table (textbook-consensus subset). -/
+def mwfLanguageTable : List MWFLanguageDatum := [bulgarian, german, greek]
+
+/-- Bulgarian: MWF language → no violations on bare multiple wh. -/
+theorem bulgarian_no_violation : ¬ MWFViolation bulgarian.mwfParam 2 := by decide
+
+/-- German question with two wh-phrases is starred. -/
+theorem german_violates_in_questions : MWFViolation german.mwfParam 2 := by decide
+
+/-- Sluicing repairs in German and Greek (vP-only asterisk eliminated). -/
+theorem german_greek_sluicing_repairs :
+    german.AllowsMultipleSluicing ∧ greek.AllowsMultipleSluicing := by decide
 
 /-- English (default): variety A — both vP and CP asterisks; no sluicing
     repair. -/

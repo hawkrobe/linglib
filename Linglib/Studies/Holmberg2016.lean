@@ -2,7 +2,8 @@ import Linglib.Features.AnsweringSystem
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Features.Polarity
-import Linglib.Phenomena.Questions.PolarAnswerStructure
+import Linglib.Fragments.Swedish.AnswerParticles
+import Linglib.Data.Examples.Holmberg2016
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
@@ -12,6 +13,16 @@ import Linglib.Phenomena.Questions.PolarAnswerStructure
 
 A cross-linguistic typology of polar question answering. The central
 parameter is the **answering system**: truth-based vs polarity-based.
+
+## Answers as Elliptical Clauses
+
+Yes/no answers are elliptical full clauses, not general fragments:
+
+    [FocP yes/no Foc⁰ [PolP ... [±Pol] ... ]]
+
+The PolP is elided under identity with the question's PolP; the particle
+sits in Spec-FocP and values the [±Pol] feature. This is distinct from
+wh-fragment answers (`Phenomena/Ellipsis/FragmentAnswers.lean`).
 
 ## Key Claims Formalized
 
@@ -94,7 +105,26 @@ theorem diagnostic_prediction :
 -- § 3. Cross-linguistic profiles
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.Questions.PolarAnswerStructure
+/-- English polar answer profile (polarity-based, particle). -/
+def englishProfile : PolarAnswerProfile :=
+  { system := .polarityBased, strategy := .particle, hasPolarityReversal := false }
+
+/-- Japanese polar answer profile (truth-based, particle). -/
+def japaneseProfile : PolarAnswerProfile :=
+  { system := .truthBased, strategy := .particle, hasPolarityReversal := false }
+
+/-- Swedish polar answer profile (three-way: *ja*/*nej*/*jo*).
+    Derived from `Swedish.AnswerParticles.profile`. -/
+def swedishProfile : PolarAnswerProfile :=
+  Swedish.AnswerParticles.profile
+
+/-- Finnish polar answer profile (mixed: verb echo + *kyllä*, polarity-based). -/
+def finnishProfile : PolarAnswerProfile :=
+  { system := .polarityBased, strategy := .mixed, hasPolarityReversal := false }
+
+/-- Mandarin polar answer profile (mixed: V-not-V + *shì/bú shì*, truth-based). -/
+def mandarinProfile : PolarAnswerProfile :=
+  { system := .truthBased, strategy := .mixed, hasPolarityReversal := false }
 
 /-- English and Swedish are both polarity-based. -/
 theorem english_swedish_same_system :
@@ -152,17 +182,25 @@ theorem finnish_negation_height_predicts :
 -- § 5. End-to-end chains: negation height → specific answer data
 -- ════════════════════════════════════════════════════════════════
 
+/-- The `paperFeatures` encoding of a `Features.Polarity` value, matching
+    the `answer_polarity` key in `Holmberg2016.Examples`. -/
+def polarityFeature : Features.Polarity → String
+  | .positive => "positive"
+  | .negative => "negative"
+
 /-- End-to-end: Japanese low negation → truth-based → "yes" to negative question
-    has negative polarity → matches the Japanese *hai* datum. -/
+    has negative polarity → matches the Japanese *hai* datum's
+    `answer_polarity` annotation. -/
 theorem japanese_endtoend :
-    NegationHeight.low.predictedSystem.yesToNegativeQuestion =
-    japanese_hai_to_neg.answerPolarity := rfl
+    Examples.japanese_hai_to_neg.paperFeatures.lookup "answer_polarity" =
+      some (polarityFeature NegationHeight.low.predictedSystem.yesToNegativeQuestion) := rfl
 
 /-- End-to-end: English middle negation → polarity-based → "yes" to negative
-    question has positive polarity → matches the English "yes" datum. -/
+    question has positive polarity → matches the English "yes" datum's
+    `answer_polarity` annotation. -/
 theorem english_endtoend :
-    NegationHeight.middle.predictedSystem.yesToNegativeQuestion =
-    english_yes_to_neg.answerPolarity := rfl
+    Examples.english_yes_to_neg.paperFeatures.lookup "answer_polarity" =
+      some (polarityFeature NegationHeight.middle.predictedSystem.yesToNegativeQuestion) := rfl
 
 /-- The end-to-end chains for Japanese and English yield opposite polarities,
     as predicted by their different negation heights. -/

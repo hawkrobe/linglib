@@ -52,11 +52,11 @@ Given a state `σ : Set W` and a question `Q : Question W`:
 A previous draft (deleted `Core/Question/Answerhood.lean`, audited
 0.230.378) shipped `isMentionSomeAnswer` with the bad second conjunct
 and `isMentionAllAnswer` in the over-strong intersection form. Both
-have been corrected here. This file is the canonical home;
-`Semantics/Questions/MentionSome.lean` (G&S-specific) and the
-forthcoming `Exhaustivity.lean` (Karttunen / Dayal / Xiang / Fox)
-should be specializations of these substrate predicates rather than
-parallel definitions.
+have been corrected here. This file is the canonical home; the G&S
+mention-some data lives in `Data.Examples.GroenendijkStokhof1984`
+(consumed by `Studies/GroenendijkStokhof1984.lean`), and
+`Exhaustivity.lean` (Karttunen / Dayal / Xiang / Fox) specializes
+these substrate predicates rather than defining parallel ones.
 -/
 
 namespace Semantics.Questions.Resolution

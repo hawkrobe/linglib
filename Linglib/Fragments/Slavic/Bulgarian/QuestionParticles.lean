@@ -16,7 +16,7 @@ layer assignment lives in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.bulgarian`: PQ strategy profile (verb-attached li)
+- `Simik2024.bulgarian` (`Studies/Simik2024`): PQ strategy profile (verb-attached li)
 - Cross-Slavic RAZVE family: nima is the Bulgarian member
 - Dukova-Zheleva: nima expresses incredulity/surprise
 

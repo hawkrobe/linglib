@@ -53,8 +53,9 @@ maps to the substrate as:
 * The *underspecified meaning* proposal (§5) requires a typed
   ambiguity-resolution layer beyond `Question W`; deferred.
 * The Italian-newspaper mention-some example (§3.2 (12)) is the
-  natural target for the next refinement, when the
-  `Phenomena.Questions.MentionSome` data file is wired up.
+  natural target for the next refinement; it is
+  `gs1984_mentionsome_italian_newspaper` in
+  `Data.Examples.GroenendijkStokhof1984`.
 -/
 
 namespace VanRooy2003

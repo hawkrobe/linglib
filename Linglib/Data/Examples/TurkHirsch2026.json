@@ -1,0 +1,65 @@
+[
+  {
+    "id": "turkhirsch2026_polar_yes",
+    "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "mI polar question with particle answer evet"},
+    "language": "nucl1301",
+    "primaryText": "Ali uyuyor mu? — Evet.",
+    "discourseSegments": [
+      "Ali uyuyor mu?",
+      "Evet."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Ali sleep? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["question_type", "polar"],
+      ["answer_type", "particle"]
+    ],
+    "comment": "Migrated from Phenomena/Questions/PolarAnswers.lean turkishPolar_yes. The particle answer 'Evet' (yes) is a felicitous exhaustive answer to the Turkish polar question formed with the particle mI."
+  },
+  {
+    "id": "turkhirsch2026_polar_no",
+    "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "mI polar question with particle answer hayır"},
+    "language": "nucl1301",
+    "primaryText": "Ali uyuyor mu? — Hayır.",
+    "discourseSegments": [
+      "Ali uyuyor mu?",
+      "Hayır."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Ali sleep? — No.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["question_type", "polar"],
+      ["answer_type", "particle"]
+    ],
+    "comment": "Migrated from Phenomena/Questions/PolarAnswers.lean turkishPolar_no. The particle answer 'Hayır' (no) is a felicitous exhaustive answer to the Turkish polar question formed with the particle mI."
+  },
+  {
+    "id": "turkhirsch2026_polar_must",
+    "source": {"bibkey": "turk-hirsch-2026", "paperLabel": "deontic modal answer to a mI polar question"},
+    "language": "nucl1301",
+    "primaryText": "Ali uyuyor mu? — Ali uyumalı.",
+    "discourseSegments": [
+      "Ali uyuyor mu?",
+      "Ali uyumalı."
+    ],
+    "glossedTokens": [],
+    "translation": "Does Ali sleep? — Ali must sleep.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["question_type", "polar"],
+      ["answer_type", "modal"]
+    ],
+    "comment": "Migrated from Phenomena/Questions/PolarAnswers.lean turkishPolar_must. The deontic modal answer 'Ali uyumalı' (Ali must sleep) does not address the polar question and is infelicitous. Per the prior Lean file's commentary: this is unexpected under Rooth-style type-theoretic alternative computation, where the modalized proposition has the same type as the prejacent and should be an alternative; [fox-katzir-2011]-style category match explains the gap — mI is a particle (PART) while modals are auxiliaries (AUX), so category match excludes the modal answer from the alternative set."
+  }
+]

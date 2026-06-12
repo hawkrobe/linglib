@@ -16,7 +16,7 @@ layer assignment lives in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.polish`: PQ strategy profile (clause-initial czy obligatory)
+- `Simik2024.polish` (`Studies/Simik2024`): PQ strategy profile (clause-initial czy obligatory)
 - Cross-Slavic RAZVE family: czyżby is the Polish member
 
 -/
