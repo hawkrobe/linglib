@@ -127,7 +127,6 @@ import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Negativity
 import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
-import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -1171,8 +1170,6 @@ import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Studies.Rett2020
-import Linglib.Phenomena.Agreement.Basic
-import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Studies.BringGunlogson2000
 import Linglib.Studies.CohenKrifka2014
@@ -1244,7 +1241,6 @@ import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.Bohnemeyer2004
-import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
@@ -1254,7 +1250,6 @@ import Linglib.Studies.Adger2003
 import Linglib.Studies.Landman2020
 import Linglib.Studies.Levin1993
 import Linglib.Studies.Osborne2019
-import Linglib.Phenomena.ArgumentStructure.TheoryComparison
 import Linglib.Studies.HaddicanEtAl2026
 import Linglib.Studies.Dendikken1995
 import Linglib.Studies.Collins2005
@@ -1277,7 +1272,6 @@ import Linglib.Studies.Hacquard2010
 import Linglib.Studies.Zhao2025
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Studies.Smith1997
-import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Studies.Amato2025Auxiliary
@@ -1318,7 +1312,6 @@ import Linglib.Studies.Jenks2018
 import Linglib.Phenomena.Clarification.Basic
 import Linglib.Studies.DongEtAl2026PMF
 import Linglib.Studies.TsvilodubEtAl2026
-import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Studies.Anderson2021
 import Linglib.Studies.Noonan2007
 import Linglib.Studies.Cacchioli2025
@@ -1366,7 +1359,6 @@ import Linglib.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Phenomena.Ellipsis.VPEllipsis
 import Linglib.Phenomena.Ellipsis.NPEllipsis
 import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 import Linglib.Studies.BenzSalzmann2025
@@ -1381,7 +1373,6 @@ import Linglib.Studies.Funakoshi2016
 import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
-import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Studies.KratzerSelkirk2020
@@ -1519,7 +1510,6 @@ import Linglib.Studies.LiuRotter2025
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
 import Linglib.Studies.Mendes2025
-import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
@@ -1556,7 +1546,6 @@ import Linglib.Studies.Aloni2022.FreeChoice
 import Linglib.Studies.Aloni2022
 import Linglib.Studies.AloniAnttilaYang2024
 import Linglib.Studies.AloniVanOrmondt2023
-import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Studies.Cariani2013
 import Linglib.Studies.Heim1992Desire
 import Linglib.Studies.Lassiter2017
@@ -1590,7 +1579,6 @@ import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Studies.NapoliNespor1976
 import Linglib.Phenomena.WordOrder.NonProjectivity
-import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Studies.Stakov2026
 import Linglib.Studies.Stakov2026Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
@@ -1628,7 +1616,6 @@ import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Horn1989
 import Linglib.Studies.PlunkettSundell2013
 import Linglib.Phenomena.Negation.Denial
-import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Projection
@@ -1672,7 +1659,6 @@ import Linglib.Studies.HaninkKoontzGarboden2025
 import Linglib.Studies.Myler2016
 import Linglib.Studies.AissenPolian2025
 import Linglib.Studies.KampanarouAlexiadou2026
-import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Studies.Arnold2026
 import Linglib.Studies.KonnellyCowper2020
 import Linglib.Studies.Olivier2026Auxiliary
@@ -1722,7 +1708,6 @@ import Linglib.Studies.WangSun2026
 import Linglib.Studies.TaraldsenEtAl2018
 import Linglib.Studies.LittleMoroneyRoyer2022
 import Linglib.Studies.Sudo2016
-import Linglib.Phenomena.Quantification.Basic
 import Linglib.Studies.Bruening2001
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Studies.BarwiseCooper1981
@@ -1743,9 +1728,6 @@ import Linglib.Fragments.HindiUrdu.Questions
 import Linglib.Fragments.Japanese.Questions
 import Linglib.Fragments.Italian.Questions
 import Linglib.Phenomena.Questions.Embedding
-import Linglib.Phenomena.Questions.Coordination
-import Linglib.Phenomena.Questions.Exhaustivity
-import Linglib.Phenomena.Questions.FocusAnswer
 import Linglib.Phenomena.Questions.MentionSome
 import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Studies.Zheng2025
@@ -1762,7 +1744,6 @@ import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Studies.GartnerGyuris2017
-import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Studies.Dayal2025
 import Linglib.Studies.ChanShen2026
 import Linglib.Studies.AlonsoOvalleMoghiseh2025b
@@ -1799,11 +1780,8 @@ import Linglib.Studies.WesterbeekKoolenMaes2015
 import Linglib.Studies.Krifka2026
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
-import Linglib.Phenomena.ScalarImplicatures.Hurford
 import Linglib.Phenomena.ScalarImplicatures.Embedded.Basic
 import Linglib.Phenomena.ScalarImplicatures.Embedded.Attitudes
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Conditionals
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Questions
 import Linglib.Studies.FrankeBergen2020
 import Linglib.Studies.BaleEtAl2025
 import Linglib.Studies.ChemlaSpector2011
@@ -1827,7 +1805,6 @@ import Linglib.Studies.Krifka1998
 import Linglib.Studies.Klecha2016
 import Linglib.Studies.Filip2012
 import Linglib.Studies.Krifka1989
-import Linglib.Phenomena.TenseAspect.AspectualConsistency
 import Linglib.Studies.KennedyLevin2008
 import Linglib.Studies.HayKennedyLevin1999
 import Linglib.Studies.IatridouEtAl2001
@@ -1851,9 +1828,7 @@ import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.Rouillard2026
 import Linglib.Studies.Horn1972
 import Linglib.Studies.ReesReksnesRohde2026
-import Linglib.Phenomena.ScalarImplicatures.RelevanceTheory
 import Linglib.Studies.Geurts2010
-import Linglib.Phenomena.ScalarImplicatures.RSAHurford
 import Linglib.Studies.PottsEtAl2016
 import Linglib.Studies.PottsLevy2015
 import Linglib.Studies.GoodmanStuhlmuller2013PMF
@@ -1902,7 +1877,6 @@ import Linglib.Studies.Sagey1986
 import Linglib.Studies.Saito2025
 import Linglib.Studies.SandeClemDabkowski2026
 import Linglib.Studies.Sen2015
-import Linglib.Phenomena.Phonology.SPEDerivations
 import Linglib.Studies.Storme2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
@@ -2008,12 +1982,8 @@ import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
-import Linglib.Phenomena.Assertion.Compare
-import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Studies.Ferreira2023
-import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
-import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
 import Linglib.Studies.Partee1973
 -- Theories: Dependency Grammar
 import Linglib.Syntax.DependencyGrammar.Basic
@@ -2397,7 +2367,6 @@ import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.PositionProfile
 import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Polarity.Witnesses
-import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Studies.Montague1973
 import Linglib.Semantics.Entailment.PresuppositionLicensing
 import Linglib.Semantics.Entailment.PresuppositionPolarity
@@ -2637,7 +2606,6 @@ import Linglib.Studies.Enguehard2024
 import Linglib.Studies.Magri2014
 import Linglib.Studies.Sauerland2003
 import Linglib.Studies.SuttonFilip2021
-import Linglib.Phenomena.Plurals.VerbalNumber
 import Linglib.Studies.Gajewski2002
 import Linglib.Studies.Gajewski2011
 import Linglib.Studies.Israel2001
@@ -2645,7 +2613,6 @@ import Linglib.Studies.KadmonLandman1993
 import Linglib.Studies.Wang2025
 import Linglib.Studies.Chierchia2004
 import Linglib.Studies.FoxSpector2018
-import Linglib.Phenomena.ScalarImplicatures.MontagueExhaustivity
 import Linglib.Studies.Spector2007
 import Linglib.Studies.Spector2016
 -- Theories: IBR
@@ -2827,9 +2794,6 @@ import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Probing.DefectiveGoal
 import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
-import Linglib.Phenomena.ArgumentStructure.Unaccusativity.ProtoRoles
-import Linglib.Phenomena.ArgumentStructure.Unaccusativity.VerbClasses
-import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.
 import Linglib.Syntax.Minimalist.VoiceProjection
