@@ -284,8 +284,8 @@ def equivalent (φ ψ : BSMLFormula Atom) : Prop :=
 
     NOTE: the negation case `| .neg _, _ => True` is a placeholder. Aloni's
     actual BSML* uses bilateral polarity mirror BSML's; completing this
-    requires a proper polarity-flipped supportStar definition. Tracked as
-    out-of-scope per `Phenomena/FreeChoice/Divergences.lean` §3. -/
+    requires a proper polarity-flipped supportStar definition. Completing
+    bilateral negation for BSML* is tracked as out-of-scope. -/
 def supportStar (M : BSMLModel W Atom) : BSMLFormula Atom → Finset W → Prop
   | .atom p, t => ∀ w ∈ t, M.val p w = true
   | .ne, t => t.Nonempty

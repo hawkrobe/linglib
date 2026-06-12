@@ -56,8 +56,8 @@ open Semantics.Presupposition.Accommodation
 ## Bridge to Phenomena
 
 pex predicts that free choice is a pragmatic inference (derived by the
-covert operator pex), not a semantic entailment. This matches the empirical
-data in `Phenomena.FreeChoice`.
+covert operator pex), not a semantic entailment — consistent with the observed
+cancellability of FC ("... but I don't know which").
 -/
 
 -- ============================================================================

@@ -1,5 +1,4 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
 # [meyer-feiman-2021] — Composing Alternatives
@@ -266,9 +265,9 @@ def hurfordNumeralProfile : ProcessProfile := classProfile .numeral
 
 /-- FC phenomena use a fundamentally different mechanism from standard SI.
 
-This connects to `Phenomena.FreeChoice`, where the FC inference
-◇(A ∨ B) → ◇A ∧ ◇B is derived via Innocent Inclusion rather than
-Innocent Exclusion. -/
+The FC inference ◇(A ∨ B) → ◇A ∧ ◇B is derived via Innocent
+Inclusion rather than Innocent Exclusion, and is cancellable
+("... but I don't know which") unlike a semantic entailment. -/
 def freeChoiceProfile : ProcessProfile := classProfile .freeChoiceDisjunction
 
 /-- The asymmetry between SI and FC is a processing architecture difference,
@@ -375,7 +374,7 @@ theorem exp6_matches_prediction :
 /-- All experiments match the profile-based prediction. -/
 theorem all_experiments_match :
     allExperiments.all (λ e => e.primingObserved == predictsPriming e.primeClass e.targetClass)
-    = true := by native_decide
+    = true := by decide
 
 -- § Falsification Theorems
 
@@ -394,7 +393,7 @@ theorem fully_independent_falsified : compatibleWithData .fullyIndependent = fal
 /-- Exactly one of the four positions survives the data. -/
 theorem exactly_one_survives :
     [TheoreticalPosition.uniformOnline, .uniformOffline, .decomposed, .fullyIndependent].filter
-      compatibleWithData = [.decomposed] := by native_decide
+      compatibleWithData = [.decomposed] := by decide
 
 -- § Connections to Basic SI Data
 
@@ -442,18 +441,13 @@ theorem fc_data_distinct_from_si :
     (classProfile .freeChoiceDisjunction).altNeg ≠
     (classProfile .quantifier).altNeg := by decide
 
-/-- FC cancellability (from FreeChoice.lean) is consistent with the FC
-    profile using innocentInclusion. -/
-theorem fc_cancellable_consistent :
-    Phenomena.FreeChoice.explicitCancellation.felicitous = true := rfl
-
 -- § The Spectrum as a Whole
 
 /-- All three classes share the property of being scalar (involving
     alternatives), but differ in processing architecture. -/
 theorem all_involve_alternatives :
     [ScalarItemClass.quantifier, .numeral, .freeChoiceDisjunction].all
-      (fun c => (classProfile c).altNeg != .none) = true := by native_decide
+      (fun c => (classProfile c).altNeg != .none) = true := by decide
 
 /-- No two of the three classes have identical process profiles. -/
 theorem all_profiles_distinct :

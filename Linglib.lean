@@ -1513,7 +1513,6 @@ import Linglib.Studies.Mendes2025
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
-import Linglib.Phenomena.FreeChoice.Basic
 import Linglib.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
