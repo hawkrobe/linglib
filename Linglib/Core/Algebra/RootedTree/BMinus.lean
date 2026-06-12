@@ -601,8 +601,8 @@ private theorem nim_singleton_node_a_decomp
     the GL sum, a-rooted via `bPlusLin a`, yields a corresponding tree
     in the NIM enumeration.
 
-    This is the singleton-a-rooted-host case of A3.3 keystone reasoning.
-    Sorry-fenced; needed for Phase C / Sub-case B1. -/
+    This is the singleton-a-rooted-host case of A3.3 keystone reasoning,
+    proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
 private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (Nonplanar α)) :
     GrossmanLarson.insertion (R := R)
@@ -1315,8 +1315,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
     `B-_a (x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`.
 
     Reduces by `Finsupp.induction_linear` (twice) to the basis case
-    `bMinusLin_gl_mul_basis`. Deferred — mechanical bilinearity wiring
-    once the basis case is closed. -/
+    `bMinusLin_gl_mul_basis`. -/
 theorem bMinusLin_gl_mul (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
     bMinusLin (R := R) a

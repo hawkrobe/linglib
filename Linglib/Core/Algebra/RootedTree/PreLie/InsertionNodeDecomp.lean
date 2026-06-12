@@ -228,18 +228,6 @@ private theorem length_filterMap_zip_false {X : Type*}
     | false =>
       simp [List.count_cons, ih gs (by simpa using hg)]
 
-/-- A replicate-`[]` bucket zipped against its guests root-prepends
-    exactly those guests. -/
-private theorem filterMap_zip_replicate_root {X : Type*} (gs : List X) :
-    ((List.replicate gs.length ([] : Path)).zip gs).filterMap
-        (fun p => some p.2) = gs := by
-  induction gs with
-  | nil => rfl
-  | cons g gs ih =>
-    rw [List.length_cons, List.replicate_succ, List.zip_cons_cons,
-        List.filterMap_cons]
-    exact congrArg (g :: ·) ih
-
 /-- `multiGraftChildren` depends on its pair list only through the two
     child filters. -/
 private theorem multiGraftChildren_congr {cs : List (Planar α)}
@@ -437,68 +425,6 @@ private theorem filterMap_zip_replicate_rootPrepend (gs : List (Planar α)) :
     rw [List.length_cons, List.replicate_succ, List.zip_cons_cons,
         List.filterMap_cons, rootPrependFilter_of_nil]
     exact congrArg (g :: ·) ih
-
-/-- `bumpHead`-shifted nonempty paths zipped with guests are killed by
-    `rootPrependFilter` (every path is nonempty after bumping). -/
-private theorem filterMap_zip_bumpHead_rootPrepend
-    (ws : List Path) (gs : List (Planar α))
-    (hne : ∀ p ∈ ws, p ≠ []) :
-    ((ws.map bumpHead).zip gs).filterMap rootPrependFilter = [] := by
-  induction ws generalizing gs with
-  | nil => rfl
-  | cons w ws ih =>
-    cases gs with
-    | nil => rfl
-    | cons g gs =>
-      have hw : w ≠ [] := hne w List.mem_cons_self
-      obtain ⟨h, q, rfl⟩ : ∃ h q, w = h :: q := by
-        cases w with
-        | nil => exact absurd rfl hw
-        | cons h q => exact ⟨h, q, rfl⟩
-      show (((bumpHead (h :: q)) :: ws.map bumpHead).zip (g :: gs)).filterMap
-            rootPrependFilter = []
-      rw [show bumpHead (h :: q) = (h + 1) :: q from rfl,
-          List.zip_cons_cons, List.filterMap_cons, rootPrependFilter_of_cons]
-      exact ih gs (fun p hp => hne p (List.mem_cons_of_mem _ hp))
-
-/-- `0`-prefixed paths zipped with guests are killed by `tailChildFilter`
-    (every path has leading index `0`, not `k+1`). -/
-private theorem filterMap_zip_zeroCons_tailChild
-    (us : List Path) (gs : List (Planar α)) :
-    ((us.map (List.cons 0)).zip gs).filterMap tailChildFilter = [] := by
-  induction us generalizing gs with
-  | nil => rfl
-  | cons u us ih =>
-    cases gs with
-    | nil => rfl
-    | cons g gs =>
-      show (((0 :: u) :: us.map (List.cons 0)).zip (g :: gs)).filterMap
-            tailChildFilter = []
-      rw [List.zip_cons_cons, List.filterMap_cons, tailChildFilter_of_zero_cons]
-      exact ih gs
-
-/-- `[]`-paths zipped with guests are killed by `headChildFilter` (the empty
-    path has no leading index to strip). -/
-private theorem filterMap_zip_replicate_headChild (gs : List (Planar α)) :
-    ((List.replicate gs.length ([] : Path)).zip gs).filterMap
-        headChildFilter = [] := by
-  induction gs with
-  | nil => rfl
-  | cons g gs ih =>
-    rw [List.length_cons, List.replicate_succ, List.zip_cons_cons,
-        List.filterMap_cons, headChildFilter_of_nil]
-    exact ih
-
-/-- `[]`-paths zipped with guests are killed by `tailChildFilter`. -/
-private theorem filterMap_zip_replicate_tailChild (gs : List (Planar α)) :
-    ((List.replicate gs.length ([] : Path)).zip gs).filterMap
-        tailChildFilter = [] := by
-  induction gs with
-  | nil => rfl
-  | cons g gs ih =>
-    rw [List.length_cons, List.replicate_succ, List.zip_cons_cons,
-        List.filterMap_cons, tailChildFilter_of_nil]
-    exact ih
 
 /-- Grafting a guest list into a host forest, in vertex-choice form:
     `insertionForest cs gs` is the sum over assignments of each guest to

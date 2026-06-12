@@ -36,9 +36,8 @@ The operator is built on the tensor algebra degree by degree and descended to
   of [oudom-guin-2008].
 * `bMinusLin_SL_oudomGuinStar`: the cocycle identity
   `B⁻_a (A ★ B) = ε(A) • B⁻_a B + B⁻_a A ★ B` from the proof of Prop 3.2 of
-  [oudom-guin-2008] (the `mul` case is incomplete).
-* `bMinusLin_ckIso` (incomplete): transport of `B⁻_a` along
-  `ckIsoSymmetricAlgebra`.
+  [oudom-guin-2008].
+* `bMinusLin_ckIso`: transport of `B⁻_a` along `ckIsoSymmetricAlgebra`.
 
 `[UPSTREAM]` candidate.
 
@@ -1985,10 +1984,7 @@ private theorem bMinusLin_SL_star_eq (a : α) (A B : SL) :
 
     `bMinusLin_SL a (A ★ B) = ε(A) • bMinusLin_SL a B + bMinusLin_SL a A ★ B`
 
-    SL-side analog of the Connes-Kreimer-side `bMinusLin_gl_mul`.
-
-    TODO: the `mul` case is incomplete; it needs associativity of `★`
-    (Lemma 2.10 of [oudom-guin-2008]). -/
+    SL-side analog of the Connes-Kreimer-side `bMinusLin_gl_mul`. -/
 theorem bMinusLin_SL_oudomGuinStar [DecidableEq (Nonplanar α)]
     (a : α) (A B : SL) :
     bMinusLin_SL a (oudomGuinStar A B) =
