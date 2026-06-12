@@ -1,7 +1,7 @@
 [
   {
     "id": "sharvit2003_ex1",
-    "source":     {"bibkey": "abusch-1997",  "paperLabel": "inspiration"},
+    "source": {"bibkey": "abusch-1997", "paperLabel": "inspiration"},
     "reportedIn": {"bibkey": "sharvit-2003", "paperLabel": "(1)"},
     "language": "stan1293",
     "primaryText": "A week ago, John decided that in ten days, at breakfast, he would tell his mother that he missed her.",
@@ -12,7 +12,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "nonpast (missing overlaps telling)",     "judgment": "acceptable"},
+      {"name": "nonpast (missing overlaps telling)", "judgment": "acceptable"},
       {"name": "anteriority (missing precedes telling)", "judgment": "acceptable"}
     ],
     "comment": "Sharvit 2003 ex (1), LI 34(4) p. 669. Inspired by Abusch 1997. Cornerstone SOT phenomenon — nonpast/anteriority ambiguity of multiply-embedded past.",
@@ -31,7 +31,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "nonpast (pregnancy at believing)",         "judgment": "acceptable"},
+      {"name": "nonpast (pregnancy at believing)", "judgment": "acceptable"},
       {"name": "anteriority (pregnancy before believing)", "judgment": "acceptable"}
     ],
     "comment": "Sharvit 2003 ex (2), p. 669. Sharvit cites Enç 1987 as a prior user of this example shape. (No enc-1987 bib entry yet; sourced to Sharvit directly.) Standard past-under-past with both readings — diagnostic for SOT.",
@@ -51,7 +51,7 @@
     "alternatives": [],
     "readings": [
       {"name": "double access (pregnancy spans believing + utterance)", "judgment": "acceptable"},
-      {"name": "nonpast (pregnancy at believing only)",                 "judgment": "ungrammatical"}
+      {"name": "nonpast (pregnancy at believing only)", "judgment": "ungrammatical"}
     ],
     "comment": "Sharvit 2003 ex (3), p. 670. Cornerstone present-under-past example. Motivates the Embeddability Principle: every well-formed matrix LF must be embeddable; the syntactic means differ by language.",
     "metaLanguage": "stan1293",
@@ -100,15 +100,11 @@
     "primaryText": "Lifney shavua, Dan hexlit she be'od asara yamim, bizman aruxat ha-boker, hu yomar le-imo she hu mitga'agea ele-ha.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Lifney",       "before"],          ["shavua",   "week"],
-      ["Dan",          "Dan"],             ["hexlit",   "decide-PAST"],
-      ["she",          "that"],            ["be'od",    "in"],
-      ["asara",        "ten"],             ["yamim",    "days"],
-      ["bizman",       "at-time"],         ["aruxat",   "meal-CST"],
-      ["ha-boker",     "the-morning"],     ["hu",       "he"],
-      ["yomar",        "will.tell-FUT"],   ["le-imo",   "to-his.mother"],
-      ["she",          "that"],            ["hu",       "he"],
-      ["mitga'agea",   "miss-PRES"],       ["ele-ha",   "to-her"]
+      ["Lifney", "before"], ["shavua", "week"], ["Dan", "Dan"], ["hexlit", "decide-PAST"],
+      ["she", "that"], ["be'od", "in"], ["asara", "ten"], ["yamim", "days"], ["bizman", "at-time"],
+      ["aruxat", "meal-CST"], ["ha-boker", "the-morning"], ["hu", "he"],
+      ["yomar", "will.tell-FUT"], ["le-imo", "to-his.mother"], ["she", "that"], ["hu", "he"],
+      ["mitga'agea", "miss-PRES"], ["ele-ha", "to-her"]
     ],
     "translation": "A week ago, Dan decided that in ten days, at breakfast, he would tell his mother that he misses her.",
     "context": "Hebrew non-SOT: embedded PRESENT (`mitga'agea`) delivers the nonpast reading. Hebrew lacks the SOT rule but its present-tense morpheme is not matrix-indexical, so it can be bound as a zero tense.",
@@ -128,23 +124,19 @@
     "primaryText": "Lifney shavua, Dan hexlit she be'od asara yamim, bizman aruxat ha-boker, hu yomar le-imo she hu hitga'agea ele-ha.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Lifney",       "before"],          ["shavua",   "week"],
-      ["Dan",          "Dan"],             ["hexlit",   "decide-PAST"],
-      ["she",          "that"],            ["be'od",    "in"],
-      ["asara",        "ten"],             ["yamim",    "days"],
-      ["bizman",       "at-time"],         ["aruxat",   "meal-CST"],
-      ["ha-boker",     "the-morning"],     ["hu",       "he"],
-      ["yomar",        "will.tell-FUT"],   ["le-imo",   "to-his.mother"],
-      ["she",          "that"],            ["hu",       "he"],
-      ["hitga'agea",   "miss-PAST"],       ["ele-ha",   "to-her"]
+      ["Lifney", "before"], ["shavua", "week"], ["Dan", "Dan"], ["hexlit", "decide-PAST"],
+      ["she", "that"], ["be'od", "in"], ["asara", "ten"], ["yamim", "days"], ["bizman", "at-time"],
+      ["aruxat", "meal-CST"], ["ha-boker", "the-morning"], ["hu", "he"],
+      ["yomar", "will.tell-FUT"], ["le-imo", "to-his.mother"], ["she", "that"], ["hu", "he"],
+      ["hitga'agea", "miss-PAST"], ["ele-ha", "to-her"]
     ],
     "translation": "A week ago, Dan decided that in ten days, at breakfast, he would tell his mother that he missed her.",
     "context": "Hebrew non-SOT: embedded PAST (`hitga'agea`) delivers ONLY the anteriority reading. In Hebrew (vs English), embedded past cannot be SOT-deleted to give the nonpast reading.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "anteriority (missing before telling)",     "judgment": "acceptable"},
-      {"name": "nonpast (missing at telling)",             "judgment": "ungrammatical"}
+      {"name": "anteriority (missing before telling)", "judgment": "acceptable"},
+      {"name": "nonpast (missing at telling)", "judgment": "ungrammatical"}
     ],
     "comment": "Sharvit 2003 ex (6), p. 670. Minimal pair partner of (5) — same surface meaning, embedded PAST vs PRES. The asymmetry diagnostics Hebrew as non-SOT.",
     "metaLanguage": "stan1293",

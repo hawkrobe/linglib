@@ -11,8 +11,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Intend-variant of (1); supports the paper's argument that the antecedent need not be want — any intention-related predicate works.",
-    "paperFeatures": [["puzzle", "harlemBase"], ["desirePredicate", "intend"]]
+    "paperFeatures": [
+      ["puzzle", "harlemBase"],
+      ["desirePredicate", "intend"]
+    ],
+    "comment": "Intend-variant of (1); supports the paper's argument that the antecedent need not be want — any intention-related predicate works."
   },
   {
     "id": "cl2016_3_plan",
@@ -26,8 +29,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Plan-variant of (1).",
-    "paperFeatures": [["puzzle", "harlemBase"], ["desirePredicate", "plan"]]
+    "paperFeatures": [
+      ["puzzle", "harlemBase"],
+      ["desirePredicate", "plan"]
+    ],
+    "comment": "Plan-variant of (1)."
   },
   {
     "id": "cl2016_4_goal",
@@ -41,8 +47,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Goal-variant of (1). Together with (2)-(3), shows the antecedent desire-predicate is not lexically privileged.",
-    "paperFeatures": [["puzzle", "harlemBase"], ["desirePredicate", "goal"]]
+    "paperFeatures": [
+      ["puzzle", "harlemBase"],
+      ["desirePredicate", "goal"]
+    ],
+    "comment": "Goal-variant of (1). Together with (2)-(3), shows the antecedent desire-predicate is not lexically privileged."
   },
   {
     "id": "cl2016_5_chocolate",
@@ -56,8 +65,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Non-anankastic if-want conditional. Same surface form as (1) but conveys NOT 'thinking-about-something-else is necessary for chocolate' — it's advice to avoid. Shows surface form does not determine anankasticity; want gets a mere-desire construal here (paper § 7.2.1, formalized as cl2016_5_chocolate in the chocolate-LF contrast).",
-    "paperFeatures": [["puzzle", "nonAnankasticAntecedent"], ["reading", "mere-desire"]]
+    "paperFeatures": [
+      ["puzzle", "nonAnankasticAntecedent"],
+      ["reading", "mere-desire"]
+    ],
+    "comment": "Non-anankastic if-want conditional. Same surface form as (1) but conveys NOT 'thinking-about-something-else is necessary for chocolate' — it's advice to avoid. Shows surface form does not determine anankasticity; want gets a mere-desire construal here (paper § 7.2.1, formalized as cl2016_5_chocolate in the chocolate-LF contrast)."
   },
   {
     "id": "cl2016_19_chess",
@@ -74,8 +86,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Interacting-preferences scenario: unconditional necessity statements (a)/(b) are jointly inconsistent, but the corresponding conditionals (20) can be jointly true. Shows preferences must be resolved differently in conditional vs unconditional cases.",
-    "paperFeatures": [["puzzle", "interactingPreferences"], ["modalForce", "unconditionalNec"]]
+    "paperFeatures": [
+      ["puzzle", "interactingPreferences"],
+      ["modalForce", "unconditionalNec"]
+    ],
+    "comment": "Interacting-preferences scenario: unconditional necessity statements (a)/(b) are jointly inconsistent, but the corresponding conditionals (20) can be jointly true. Shows preferences must be resolved differently in conditional vs unconditional cases."
   },
   {
     "id": "cl2016_20_chess_conditional",
@@ -92,8 +107,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Conditionalized version of (19); both conditionals can be true even though their unconditional counterparts cannot. Tests interacting-preferences resolution.",
-    "paperFeatures": [["puzzle", "interactingPreferences"], ["modalForce", "conditionalNec"]]
+    "paperFeatures": [
+      ["puzzle", "interactingPreferences"],
+      ["modalForce", "conditionalNec"]
+    ],
+    "comment": "Conditionalized version of (19); both conditionals can be true even though their unconditional counterparts cannot. Tests interacting-preferences resolution."
   },
   {
     "id": "cl2016_28_invite",
@@ -107,8 +125,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Near-anankastic: conveys precondition (seating 20+ is necessary FOR being able to seat everyone) rather than means-of. Used to argue the analysis must generalize beyond means-of.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "precondition"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "precondition"]
+    ],
+    "comment": "Near-anankastic: conveys precondition (seating 20+ is necessary FOR being able to seat everyone) rather than means-of. Used to argue the analysis must generalize beyond means-of."
   },
   {
     "id": "cl2016_29a_vaccine_safe",
@@ -122,8 +143,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Near-anankastic with overt purpose clause 'to be safe'.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "strengthened-goal"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "strengthened-goal"]
+    ],
+    "comment": "Near-anankastic with overt purpose clause 'to be safe'."
   },
   {
     "id": "cl2016_29b_vaccine",
@@ -137,8 +161,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Near-anankastic without overt purpose clause; the strengthened goal (safe travel) must be supplied by context. Paper argues Huitink's strong-antecedent analysis predicts this false on its strongest reading.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "implicit-strengthened-goal"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "implicit-strengthened-goal"]
+    ],
+    "comment": "Near-anankastic without overt purpose clause; the strengthened goal (safe travel) must be supplied by context. Paper argues Huitink's strong-antecedent analysis predicts this false on its strongest reading."
   },
   {
     "id": "cl2016_31_disneyworld",
@@ -152,8 +179,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Near-anankastic about teleological CONSEQUENCES: spending five days is a consequence of (optimally) going to Disneyworld, not a precondition. Raises the same compositionality problem as canonical anankastics.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "teleological-consequence"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "teleological-consequence"]
+    ],
+    "comment": "Near-anankastic about teleological CONSEQUENCES: spending five days is a consequence of (optimally) going to Disneyworld, not a precondition. Raises the same compositionality problem as canonical anankastics."
   },
   {
     "id": "cl2016_38_exemption",
@@ -167,8 +197,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Near-anankastic with DEONTIC inner modal (rather than teleological). Conveys: actually taking the exemption forces higher taxes — not that wanting it does. The vacuity-of-want is contingent on the actualization assumption (paper § 7.2.2).",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["modalType", "deontic"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["modalType", "deontic"]
+    ],
+    "comment": "Near-anankastic with DEONTIC inner modal (rather than teleological). Conveys: actually taking the exemption forces higher taxes — not that wanting it does. The vacuity-of-want is contingent on the actualization assumption (paper § 7.2.2)."
   },
   {
     "id": "cl2016_39a_disaster",
@@ -182,8 +215,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "'What-kind-of' near-anankastic: the prejacent ENTAILS the antecedent goal (going-quickly entails going). Tests against purpose-clause analyses that can't paraphrase such conditionals.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "what-kind-of"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "what-kind-of"]
+    ],
+    "comment": "'What-kind-of' near-anankastic: the prejacent ENTAILS the antecedent goal (going-quickly entails going). Tests against purpose-clause analyses that can't paraphrase such conditionals."
   },
   {
     "id": "cl2016_40a_dress",
@@ -197,8 +233,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "'What-kind-of' near-anankastic.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["relationType", "what-kind-of"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["relationType", "what-kind-of"]
+    ],
+    "comment": "'What-kind-of' near-anankastic."
   },
   {
     "id": "cl2016_46_neg_letter_grade",
@@ -212,8 +251,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Negation in the antecedent: scopes over want (= 'absence of preference'), not over the complement. Tests that want interacts with embedding operators normally. Defeats 'vacuous want' analyses.",
-    "paperFeatures": [["puzzle", "nearAnankastic"], ["scope", "negation-over-want"]]
+    "paperFeatures": [
+      ["puzzle", "nearAnankastic"],
+      ["scope", "negation-over-want"]
+    ],
+    "comment": "Negation in the antecedent: scopes over want (= 'absence of preference'), not over the complement. Tests that want interacts with embedding operators normally. Defeats 'vacuous want' analyses."
   },
   {
     "id": "cl2016_52_picnic_hiking",
@@ -227,8 +269,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Levinson-style example: two incompatible wants coherently asserted. Argues mere-desire reading of want (not effective-preference) does not validate Conjunction Introduction.",
-    "paperFeatures": [["puzzle", "conjunctionIntroduction"], ["reading", "mere-desire"]]
+    "paperFeatures": [
+      ["puzzle", "conjunctionIntroduction"],
+      ["reading", "mere-desire"]
+    ],
+    "comment": "Levinson-style example: two incompatible wants coherently asserted. Argues mere-desire reading of want (not effective-preference) does not validate Conjunction Introduction."
   },
   {
     "id": "cl2016_55_chess_incompat",
@@ -244,8 +289,11 @@
       {"form": "John would like to move in with his girlfriend, but he would also like to keep living alone. He can't make up his mind.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Intend-variant of (53). The intend-version sounds contradictory / attributes irrationality; the would-like-to variant (alternative) is coherent. Argues intend = effective preference is subject to a consistency constraint that mere desires lack.",
-    "paperFeatures": [["puzzle", "conjunctionIntroduction"], ["reading", "effective-preference"]]
+    "paperFeatures": [
+      ["puzzle", "conjunctionIntroduction"],
+      ["reading", "effective-preference"]
+    ],
+    "comment": "Intend-variant of (53). The intend-version sounds contradictory / attributes irrationality; the would-like-to variant (alternative) is coherent. Argues intend = effective preference is subject to a consistency constraint that mere desires lack."
   },
   {
     "id": "cl2016_61_concorde",
@@ -265,8 +313,11 @@
     "readings": [
       {"name": "upward-entailment-fails", "judgment": "acceptable"}
     ],
-    "comment": "Tests Upward Entailment for want. Asher/Levinson claim (a) true but (b) false despite the entailment; C&L argue (b) can be true on a sub-property reading (Condoravdi et al. 2001, Zimmermann 2006 — quantification over sub-concepts).",
-    "paperFeatures": [["puzzle", "upwardEntailment"], ["reading", "effective-preference"]]
+    "paperFeatures": [
+      ["puzzle", "upwardEntailment"],
+      ["reading", "effective-preference"]
+    ],
+    "comment": "Tests Upward Entailment for want. Asher/Levinson claim (a) true but (b) false despite the entailment; C&L argue (b) can be true on a sub-property reading (Condoravdi et al. 2001, Zimmermann 2006 — quantification over sub-concepts)."
   },
   {
     "id": "cl2016_63_poodle_dog",
@@ -282,8 +333,10 @@
       {"form": "John wants to get a dog. So he would be happy to get a poodle.", "judgment": "questionable"}
     ],
     "readings": [],
-    "comment": "Upward Entailment for want: poodle-getting entails dog-getting; the inference goes through. Pair with the alternative (which goes the wrong direction) to show want is UE not DE.",
-    "paperFeatures": [["puzzle", "upwardEntailment"]]
+    "paperFeatures": [
+      ["puzzle", "upwardEntailment"]
+    ],
+    "comment": "Upward Entailment for want: poodle-getting entails dog-getting; the inference goes through. Pair with the alternative (which goes the wrong direction) to show want is UE not DE."
   },
   {
     "id": "cl2016_82a_dog_tax",
@@ -299,8 +352,11 @@
       {"form": "But if John loses his eyesight and gets a dog, he will not have to pay more taxes.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Defeasible obligation pair. Both true on the double-modal analysis (outer NEC restricts to typical worlds where John keeps his eyesight; inner MUST quantifies over best worlds in those). Argues for stereotypical outer ordering source on overt deontic modals.",
-    "paperFeatures": [["puzzle", "defeasibleObligation"], ["modalType", "deontic"]]
+    "paperFeatures": [
+      ["puzzle", "defeasibleObligation"],
+      ["modalType", "deontic"]
+    ],
+    "comment": "Defeasible obligation pair. Both true on the double-modal analysis (outer NEC restricts to typical worlds where John keeps his eyesight; inner MUST quantifies over best worlds in those). Argues for stereotypical outer ordering source on overt deontic modals."
   },
   {
     "id": "cl2016_92_vladivostok",
@@ -315,8 +371,10 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Conditional anankastic with a COMPATIBLE secondary preference (comfort) that influences the prediction. Truth depends on whether comfort is taken to be an effective preference; vF&I 2005 report judgment variability — C&L attribute to contextual variability of effective-preference set, not grammatical variability.",
-    "paperFeatures": [["puzzle", "compatibleSecondaryPreference"]]
+    "paperFeatures": [
+      ["puzzle", "compatibleSecondaryPreference"]
+    ],
+    "comment": "Conditional anankastic with a COMPATIBLE secondary preference (comfort) that influences the prediction. Truth depends on whether comfort is taken to be an effective preference; vF&I 2005 report judgment variability — C&L attribute to contextual variability of effective-preference set, not grammatical variability."
   },
   {
     "id": "cl2016_91a_virus_no",
@@ -335,8 +393,11 @@
       {"form": "But if he wanted to go to Harlem today, he would have to take the A train.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Indicative anankastic infelicitous when speaker knows the hypothetical EP is incompatible with actual; subjunctive variant is fine. The paper's evidence that the indicative imposes 'antecedent is epistemically possible' — same constraint as ordinary indicative conditionals.",
-    "paperFeatures": [["puzzle", "informationalAsymmetry"], ["mood", "indicative-vs-subjunctive"]]
+    "paperFeatures": [
+      ["puzzle", "informationalAsymmetry"],
+      ["mood", "indicative-vs-subjunctive"]
+    ],
+    "comment": "Indicative anankastic infelicitous when speaker knows the hypothetical EP is incompatible with actual; subjunctive variant is fine. The paper's evidence that the indicative imposes 'antecedent is epistemically possible' — same constraint as ordinary indicative conditionals."
   },
   {
     "id": "cl2016_112a_inclined_harlem",
@@ -351,7 +412,9 @@
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
-    "comment": "Weak antecedent (inclined, would-like-to, etc.). Generally not ananakastic — predicates that can only express mere desires can't target effective preferences. Becomes anankastic only in contexts where the mere desire would be acted on. Originally due to Weatherson (p.c.) via vF&I 2006 slides; here cited from the vF&I 2005 ms-companion.",
-    "paperFeatures": [["puzzle", "weakAntecedent"]]
+    "paperFeatures": [
+      ["puzzle", "weakAntecedent"]
+    ],
+    "comment": "Weak antecedent (inclined, would-like-to, etc.). Generally not ananakastic — predicates that can only express mere desires can't target effective preferences. Becomes anankastic only in contexts where the mere desire would be acted on. Originally due to Weatherson (p.c.) via vF&I 2006 slides; here cited from the vF&I 2005 ms-companion."
   }
 ]

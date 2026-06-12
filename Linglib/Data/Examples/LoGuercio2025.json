@@ -1,7 +1,7 @@
 [
   {
     "id": "loguercio2025_outOfBlue_epithet",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(epithet OOTB)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(epithet OOTB)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "John arrived late.",
@@ -21,7 +21,7 @@
   },
   {
     "id": "loguercio2025_priorMention_epithet",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(20a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(20a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "John arrived first, then that bastard Pedro arrived.",
@@ -45,7 +45,7 @@
   },
   {
     "id": "loguercio2025_subconstituent_epithet",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(epithet subconstituent)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(epithet subconstituent)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Yesterday, John met with that bastard Pedro.",
@@ -66,14 +66,13 @@
   },
   {
     "id": "loguercio2025_outOfBlue_honorific",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(Spanish honorific OOTB)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(Spanish honorific OOTB)"},
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Diego entró.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Diego", "Diego"],
-      ["entró", "enter.PST.3SG"]
+      ["Diego", "Diego"], ["entró", "enter.PST.3SG"]
     ],
     "translation": "Diego entered.",
     "context": "Out-of-the-blue Spanish utterance; no prior contextual relevance of *don/doña*.",
@@ -90,7 +89,7 @@
   },
   {
     "id": "loguercio2025_contrastive_honorific",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(22a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(22a)"},
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Primero entró Donato. Después entró Don Pedro.",
@@ -99,13 +98,8 @@
       "Después entró Don Pedro."
     ],
     "glossedTokens": [
-      ["Primero", "first"],
-      ["entró", "enter.PST.3SG"],
-      ["Donato", "Donato"],
-      ["Después", "afterwards"],
-      ["entró", "enter.PST.3SG"],
-      ["Don", "HON.M"],
-      ["Pedro", "Pedro"]
+      ["Primero", "first"], ["entró", "enter.PST.3SG"], ["Donato", "Donato"],
+      ["Después", "afterwards"], ["entró", "enter.PST.3SG"], ["Don", "HON.M"], ["Pedro", "Pedro"]
     ],
     "translation": "First Donato entered. Afterwards Don Pedro entered.",
     "context": "Two-segment discourse; the second segment uses honorific *Don* while the first uses bare name *Donato*.",
@@ -123,7 +117,7 @@
   },
   {
     "id": "loguercio2025_outOfBlue_appositive",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(31a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(31a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Diego recommended an aspirin.",
@@ -143,7 +137,7 @@
   },
   {
     "id": "loguercio2025_priorMention_appositive",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(31b)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(31b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Diego recommended an aspirin. Laura, a doctor, recommended an antibiotic.",
@@ -167,7 +161,7 @@
   },
   {
     "id": "loguercio2025_outOfBlue_suppAdverb",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(33a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(33a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan signed up for the tournament.",
@@ -187,7 +181,7 @@
   },
   {
     "id": "loguercio2025_priorMention_suppAdverb",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(supp-adv prior mention)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(supp-adv prior mention)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan signed up for the tournament and luckily, Pedro signed up for the tournament.",
@@ -211,7 +205,7 @@
   },
   {
     "id": "loguercio2025_priorMention_emotiveMarker",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(38a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(38a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan signed up for the tournament, and Alas, Pedro signed up too.",
@@ -235,7 +229,7 @@
   },
   {
     "id": "loguercio2025_registerBlocking",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(28a)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(28a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "That bastard John is late.",
@@ -256,7 +250,7 @@
   },
   {
     "id": "loguercio2025_disjunction_independent_of_assertion",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(50)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(50)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan called María or that bastard Pedro.",
@@ -277,7 +271,7 @@
   },
   {
     "id": "loguercio2025_DE_aci_survives",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(DE-embedding)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(DE-embedding)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "I doubt that Juan or that bastard Pedro passed the exam.",
@@ -298,7 +292,7 @@
   },
   {
     "id": "loguercio2025_cancellation",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(ACI cancellation)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(ACI cancellation)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan arrived first. Then that bastard Pedro arrived. By the way, Juan is also a bastard.",
@@ -321,7 +315,7 @@
   },
   {
     "id": "loguercio2025_reinforcement",
-    "source":     {"bibkey": "lo-guercio-2025", "paperLabel": "(ACI reinforcement)"},
+    "source": {"bibkey": "lo-guercio-2025", "paperLabel": "(ACI reinforcement)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Juan arrived first. That bastard Pedro arrived second. By the way, Juan is not a bastard.",

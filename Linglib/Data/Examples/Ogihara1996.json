@@ -6,8 +6,8 @@
     "primaryText": "Taroo-wa Hanako-ga byooki-da to it-ta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Taroo-wa", "Taro-TOP"],     ["Hanako-ga", "Hanako-NOM"],
-      ["byooki-da", "be.sick-PRES"], ["to", "COMP"],          ["it-ta", "say-PAST"]
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["byooki-da", "be.sick-PRES"],
+      ["to", "COMP"], ["it-ta", "say-PAST"]
     ],
     "translation": "Taro said that Hanako was sick [at that time].",
     "context": "Past matrix + PRESENT embedded → simultaneous reading. In non-SOT Japanese, the embedded clause uses present (`-da`) to express simultaneity with the saying time; the embedded clause's tense is interpreted relative to speech time, so PRESENT here is anchored to the saying time via attitude-context shift, not to speech time.",
@@ -15,7 +15,7 @@
     "alternatives": [],
     "readings": [
       {"name": "simultaneous (Hanako sick at saying time)", "judgment": "acceptable"},
-      {"name": "shifted (Hanako sick before saying)",       "judgment": "ungrammatical"}
+      {"name": "shifted (Hanako sick before saying)", "judgment": "ungrammatical"}
     ],
     "comment": "Ogihara 1996 ex (2a), Chapter 1 §1.2 p. 11. Half of the minimal pair (2a)/(2b) — the embedded PRESENT form. Together with (2b) below, motivates Ogihara's analysis: embedded tense in Japanese is absolute, so PRESENT delivers simultaneity (via attitude shift) and PAST delivers strict backward shift.",
     "metaLanguage": "stan1293",
@@ -28,15 +28,15 @@
     "primaryText": "Taroo-wa Hanako-ga byookidat-ta to it-ta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Taroo-wa", "Taro-TOP"],         ["Hanako-ga", "Hanako-NOM"],
-      ["byookidat-ta", "be.sick-PAST"], ["to", "COMP"],         ["it-ta", "say-PAST"]
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["byookidat-ta", "be.sick-PAST"],
+      ["to", "COMP"], ["it-ta", "say-PAST"]
     ],
     "translation": "Taro said that Hanako had been sick.",
     "context": "Past matrix + PAST embedded → ONLY shifted reading. Hanako's sickness strictly precedes the saying. No simultaneous reading is available — sharply diagnostic of non-SOT Japanese vs SOT English.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "shifted (Hanako sick before saying)",       "judgment": "acceptable"},
+      {"name": "shifted (Hanako sick before saying)", "judgment": "acceptable"},
       {"name": "simultaneous (Hanako sick at saying time)", "judgment": "ungrammatical"}
     ],
     "comment": "Ogihara 1996 ex (2b), Chapter 1 §1.2 p. 11. The other half of the minimal pair. With English-style SOT, the embedded past should admit a simultaneous reading; its unavailability here is Ogihara's main empirical hook.",

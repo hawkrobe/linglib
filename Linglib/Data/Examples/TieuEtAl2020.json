@@ -1,7 +1,7 @@
 [
   {
     "id": "tieuetal2020_fed_giraffes_pos",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": ""},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": ""},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Emily fed giraffes",
@@ -15,7 +15,7 @@
       {"name": "multiplicity (>1)", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["polarity",               "positive"],
+      ["polarity", "positive"],
       ["multiplicity_inference", "present"]
     ],
     "comment": "Core multiplicity datum, positive (upward-entailing) form: interpreted as 'Emily fed more than one giraffe'. Migrated from Phenomena/Plurals/Multiplicity.lean `fedGiraffes` (multiplicityInPositive = true); no example number asserted by the Lean source, so paperLabel is left empty.",
@@ -24,7 +24,7 @@
   },
   {
     "id": "tieuetal2020_fed_giraffes_neg",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": ""},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": ""},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Emily didn't feed giraffes",
@@ -38,7 +38,7 @@
       {"name": "multiplicity (>1)", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["polarity",               "negative"],
+      ["polarity", "negative"],
       ["multiplicity_inference", "absent"]
     ],
     "comment": "Core multiplicity datum, negative (downward-entailing) form: interpreted as 'Emily didn't feed any giraffes', NOT 'Emily didn't feed more than one giraffe' — the multiplicity reading is unavailable under negation. Migrated from Phenomena/Plurals/Multiplicity.lean `fedGiraffes` (multiplicityInNegative = false); no example number asserted by the Lean source, so paperLabel is left empty.",
@@ -47,7 +47,7 @@
   },
   {
     "id": "tieuetal2020_exp1_positive",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 1"},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 1"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Emily fed pigs",
@@ -58,14 +58,14 @@
     "judgment": "questionable",
     "alternatives": [],
     "readings": [
-      {"name": "multiplicity (>1)",        "judgment": "acceptable"},
-      {"name": "inclusive (one or more)",  "judgment": "marginal"}
+      {"name": "multiplicity (>1)", "judgment": "acceptable"},
+      {"name": "inclusive (one or more)", "judgment": "marginal"}
     ],
     "paperFeatures": [
-      ["experiment",                          "1"],
-      ["polarity",                            "positive"],
-      ["n_acted_on",                          "one"],
-      ["acceptance_indicates_multiplicity",   "false"]
+      ["experiment", "1"],
+      ["polarity", "positive"],
+      ["n_acted_on", "one"],
+      ["acceptance_indicates_multiplicity", "false"]
     ],
     "comment": "TVJ trial, upward-entailing condition. Rejecting = computing multiplicity (one pig is not 'more than one'). Sentence-level judgment 'questionable' encodes the group-split TVJ outcome recorded qualitatively in the Lean source (exp1Results): adults' multiplicity rate high (predominantly reject in this one-pig context), children's low (largely accept on the inclusive reading). Reading judgments encode availability for adults: multiplicity dominant, inclusive residual. Migrated from Studies/TieuEtAl2020.lean `exp1_positive`. UNVERIFIED paperLabel: 'Exp. 1' is asserted by the Lean docstring, not checked against the paper.",
     "metaLanguage": "stan1293",
@@ -73,7 +73,7 @@
   },
   {
     "id": "tieuetal2020_exp1_negative",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 1"},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 1"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Emily didn't feed giraffes",
@@ -87,10 +87,10 @@
       {"name": "multiplicity (>1) local under negation", "judgment": "marginal"}
     ],
     "paperFeatures": [
-      ["experiment",                          "1"],
-      ["polarity",                            "negative"],
-      ["n_acted_on",                          "one"],
-      ["acceptance_indicates_multiplicity",   "true"]
+      ["experiment", "1"],
+      ["polarity", "negative"],
+      ["n_acted_on", "one"],
+      ["acceptance_indicates_multiplicity", "true"]
     ],
     "comment": "TVJ trial, downward-entailing condition. Accepting = computing multiplicity locally under negation (interpreting as 'Emily didn't feed more than one giraffe'); on the inclusive reading the sentence is literally false (she fed one). Sentence-level judgment 'questionable' encodes the mixed TVJ outcome recorded qualitatively in the Lean source (exp1Results): adults' negative-condition multiplicity rate moderate, children's low. Reading judgment 'marginal' encodes that moderate adult availability. Migrated from Studies/TieuEtAl2020.lean `exp1_negative`. UNVERIFIED paperLabel: 'Exp. 1' is asserted by the Lean docstring, not checked against the paper.",
     "metaLanguage": "stan1293",
@@ -98,7 +98,7 @@
   },
   {
     "id": "tieuetal2020_exp3_positive_plural",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 3"},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 3"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Koala bought pears",
@@ -110,11 +110,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["experiment",        "3"],
-      ["polarity",          "positive"],
-      ["n_acted_on",        "one"],
-      ["task",              "ternary_reward"],
-      ["preferred_reward",  "intermediate"]
+      ["experiment", "3"],
+      ["polarity", "positive"],
+      ["n_acted_on", "one"],
+      ["task", "ternary_reward"],
+      ["preferred_reward", "intermediate"]
     ],
     "comment": "Experiment 3 ternary judgment task (small/medium/large strawberry for false/neither/true), adults on Amazon Mechanical Turk, singular context. Literally true (bought one or more) but with a false multiplicity implicature — misleading. Adults' preferred reward: intermediate; judgment 'marginal' maps that intermediate ternary outcome onto the 5-level scale. Migrated from Studies/TieuEtAl2020.lean `exp3_positive_plural`. UNVERIFIED paperLabel: 'Exp. 3' is asserted by the Lean docstring, not checked against the paper.",
     "metaLanguage": "stan1293",
@@ -122,7 +122,7 @@
   },
   {
     "id": "tieuetal2020_exp3_negative_plural",
-    "source":     {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 3"},
+    "source": {"bibkey": "tieu-etal-2020", "paperLabel": "Exp. 3"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Koala didn't buy pears",
@@ -134,11 +134,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["experiment",        "3"],
-      ["polarity",          "negative"],
-      ["n_acted_on",        "one"],
-      ["task",              "ternary_reward"],
-      ["preferred_reward",  "minimal"]
+      ["experiment", "3"],
+      ["polarity", "negative"],
+      ["n_acted_on", "one"],
+      ["task", "ternary_reward"],
+      ["preferred_reward", "minimal"]
     ],
     "comment": "Experiment 3 ternary judgment task, singular context, negative sentence. Literally false (Koala did buy one or more pears); adults' preferred reward: minimal; judgment 'unacceptable' maps that minimal ternary outcome onto the 5-level scale. The positive/negative asymmetry with exp3_positive_plural confirms the implicature approach's singular-context prediction. Migrated from Studies/TieuEtAl2020.lean `exp3_negative_plural`. UNVERIFIED paperLabel: 'Exp. 3' is asserted by the Lean docstring, not checked against the paper.",
     "metaLanguage": "stan1293",

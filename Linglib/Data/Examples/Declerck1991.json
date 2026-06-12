@@ -20,7 +20,10 @@
     "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 ex (1b)"},
     "language": "stan1293",
     "primaryText": "Suddenly the phone rang. Jill stood up from her chair, went over to the telephone and picked up the receiver.",
-    "discourseSegments": ["Suddenly the phone rang.", "Jill stood up from her chair, went over to the telephone and picked up the receiver."],
+    "discourseSegments": [
+      "Suddenly the phone rang.",
+      "Jill stood up from her chair, went over to the telephone and picked up the receiver."
+    ],
     "glossedTokens": [],
     "translation": "Suddenly the phone rang. Jill stood up from her chair, went over to the telephone and picked up the receiver.",
     "context": "Declerck's example of domain shift via absolute preterites. Each clause uses an absolute past tense — no relative tense forms like past perfect (anteriority) or conditional (posteriority). Temporal ordering recovered from clause order alone, not from tense composition.",
@@ -36,7 +39,10 @@
     "source": {"bibkey": "declerck-1991-grammar", "paperLabel": "ch. 3 ex (3a)"},
     "language": "stan1293",
     "primaryText": "The soldier got seriously wounded. He died shortly afterwards.",
-    "discourseSegments": ["The soldier got seriously wounded.", "He died shortly afterwards."],
+    "discourseSegments": [
+      "The soldier got seriously wounded.",
+      "He died shortly afterwards."
+    ],
     "glossedTokens": [],
     "translation": "The soldier got seriously wounded. He died shortly afterwards.",
     "context": "Declerck's example (3a): domain shift with `died` as absolute preterite. Temporal posteriority of dying relative to wounding comes from the adverbial `shortly afterwards`, not from any relative tense form.",

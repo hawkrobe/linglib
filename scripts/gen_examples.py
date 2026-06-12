@@ -437,12 +437,116 @@ def process(author_year: str, check: bool) -> bool:
     return True
 
 
+# Canonical JSON formatting: 2-space indent, schema key order, and compact
+# leaf collections (gloss pairs packed onto wrapped lines; one feature pair /
+# alternative / reading per line) so a python round-trip never explodes them.
+
+KEY_ORDER = [
+    "id", "source", "reportedIn", "language", "primaryText",
+    "discourseSegments", "glossedTokens", "translation", "context",
+    "judgment", "alternatives", "readings", "paperFeatures", "comment",
+    "metaLanguage", "lgrConformance",
+]
+
+MAX_WIDTH = 98
+
+
+def _j(v) -> str:
+    return json.dumps(v, ensure_ascii=False)
+
+
+def _fmt_inline_list(items: list[str], indent: str) -> str:
+    """Render pre-serialized items inside [...], packing them onto lines of
+    at most MAX_WIDTH characters."""
+    if not items:
+        return "[]"
+    lines, cur = [], ""
+    for it in items:
+        cand = it if not cur else f"{cur}, {it}"
+        if cur and len(indent) + 2 + len(cand) > MAX_WIDTH:
+            lines.append(cur + ",")
+            cur = it
+        else:
+            cur = cand
+    lines.append(cur)
+    body = "\n".join(f"{indent}  {l}" for l in lines)
+    return f"[\n{body}\n{indent}]"
+
+
+def _fmt_per_line_list(items: list[str], indent: str) -> str:
+    """Render pre-serialized items inside [...], one per line."""
+    if not items:
+        return "[]"
+    body = ",\n".join(f"{indent}  {it}" for it in items)
+    return f"[\n{body}\n{indent}]"
+
+
+def _fmt_obj_inline(o: dict) -> str:
+    return "{" + ", ".join(f"{_j(k)}: {_j(v)}" for k, v in o.items()) + "}"
+
+
+def _fmt_value(key: str, v, indent: str) -> str:
+    if v is None or isinstance(v, (str, int, float, bool)):
+        return _j(v)
+    if isinstance(v, dict):
+        return _fmt_obj_inline(v)
+    if isinstance(v, list):
+        if key == "glossedTokens":
+            return _fmt_inline_list([_j(x) for x in v], indent)
+        if key in ("paperFeatures", "alternatives", "readings"):
+            items = [
+                _fmt_obj_inline(x) if isinstance(x, dict) else _j(x) for x in v
+            ]
+            return _fmt_per_line_list(items, indent)
+        if key == "discourseSegments":
+            return _fmt_per_line_list([_j(x) for x in v], indent)
+        return _j(v)
+    return _j(v)
+
+
+def format_examples(examples: list) -> str:
+    """Canonical text for a per-paper JSON file."""
+    out = ["["]
+    for i, ex in enumerate(examples):
+        out.append("  {")
+        keys = [k for k in KEY_ORDER if k in ex]
+        keys += [k for k in ex if k not in KEY_ORDER]  # never drop unknown keys
+        for j, k in enumerate(keys):
+            comma = "," if j < len(keys) - 1 else ""
+            out.append(f"    {_j(k)}: {_fmt_value(k, ex[k], '    ')}{comma}")
+        out.append("  }," if i < len(examples) - 1 else "  }")
+    out.append("]")
+    return "\n".join(out) + "\n"
+
+
+def fmt(author_year: str) -> bool:
+    """Rewrite a JSON file in canonical format. Refuses to write (and
+    returns False) if the formatted text does not parse back to the
+    identical data."""
+    json_path = JSON_DIR / f"{author_year}.json"
+    with open(json_path, encoding="utf-8") as f:
+        examples = json.load(f)
+    text = format_examples(examples)
+    if json.loads(text) != examples:
+        sys.stderr.write(
+            f"[fmt] REFUSING {json_path.relative_to(ROOT)}: round-trip mismatch\n"
+        )
+        return False
+    if json_path.read_text(encoding="utf-8") == text:
+        sys.stdout.write(f"[fmt] {json_path.relative_to(ROOT)} unchanged\n")
+    else:
+        json_path.write_text(text, encoding="utf-8")
+        sys.stdout.write(f"[fmt] {json_path.relative_to(ROOT)} reformatted\n")
+    return True
+
+
 def main():
     args = sys.argv[1:]
     check = "--check" in args
-    args = [a for a in args if a != "--check"]
+    do_fmt = "--fmt" in args
+    args = [a for a in args if a not in ("--check", "--fmt")]
 
-    if args == ["--all"] or (not args and check):
+    if args == ["--all"] or (not args and (check or do_fmt)):
         papers = sorted(p.stem for p in JSON_DIR.glob("*.json"))
     elif len(args) == 1 and not args[0].startswith("-"):
         papers = [args[0]]
@@ -450,11 +554,18 @@ def main():
         sys.stderr.write(
             "Usage: python3 scripts/gen_examples.py <AuthorYear> | --all\n"
             "       python3 scripts/gen_examples.py --check [<AuthorYear>]\n"
+            "       python3 scripts/gen_examples.py --fmt [<AuthorYear>]\n"
             "  --all    regenerate every Linglib/Data/Examples/*.json\n"
             "  --check  verify generated modules match JSON (no writes); "
             "exit 1 on drift\n"
+            "  --fmt    rewrite JSON in canonical format (data-preserving)\n"
         )
         sys.exit(1)
+
+    if do_fmt:
+        if not all([fmt(p) for p in papers]):
+            sys.exit(1)
+        return
 
     ok = all([process(p, check) for p in papers])
     if not ok:

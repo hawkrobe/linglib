@@ -1,14 +1,14 @@
 [
   {
     "id": "charlow2014_donkey1",
-    "source":     {"bibkey": "geach-1962",   "paperLabel": "ch. III, the donkey sentence"},
+    "source": {"bibkey": "geach-1962", "paperLabel": "ch. III, the donkey sentence"},
     "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "Ch. 2 donkey case"},
     "language": "stan1293",
     "primaryText": "Every farmer who owns a donkey beats it.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Every", "every"], ["farmer", "farmer"], ["who",    "REL.ANIM"],   ["owns",  "own.PRS.3SG"],
-      ["a",     "INDEF"], ["donkey", "donkey"], ["beats",  "beat.PRS.3SG"], ["it",  "3SG.N"]
+      ["Every", "every"], ["farmer", "farmer"], ["who", "REL.ANIM"], ["owns", "own.PRS.3SG"],
+      ["a", "INDEF"], ["donkey", "donkey"], ["beats", "beat.PRS.3SG"], ["it", "3SG.N"]
     ],
     "translation": "Every farmer who owns a donkey beats it.",
     "context": "",
