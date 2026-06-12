@@ -103,6 +103,114 @@ def exactlyTwo_C4_gap_qq : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def all : List LinguisticExample := [every_C2_gap, no_C2_gap, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq]
+def books_pos_all : LinguisticExample :=
+  { id := "krizchemla2015_books_pos_all"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann liked the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann liked the books."
+    context := "Six shortlisted books; Ann liked all 6 shortlisted books."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("embedding", "unembedded")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInAll = clearlyTrue): sentence judged clearly true in the ALL scenario."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def books_pos_none : LinguisticExample :=
+  { id := "krizchemla2015_books_pos_none"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann liked the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann liked the books."
+    context := "Six shortlisted books; Ann liked none of the 6 shortlisted books."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("embedding", "unembedded")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInNone = clearlyFalse): sentence is grammatical and felicitous but judged clearly FALSE in the NONE scenario; the 5-level scale has no truth-value slot, so falsity is recorded here."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def books_pos_gap : LinguisticExample :=
+  { id := "krizchemla2015_books_pos_gap"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann liked the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann liked the books."
+    context := "Six shortlisted books; Ann liked 3 of the 6 shortlisted books."
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInGap = neitherTrueNorFalse): homogeneity gap — neither clearly true nor clearly false in the some-but-not-all scenario."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def books_neg_all : LinguisticExample :=
+  { id := "krizchemla2015_books_neg_all"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann didn't like the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann didn't like the books."
+    context := "Six shortlisted books; Ann liked all 6 shortlisted books."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("embedding", "unembedded")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInAll = clearlyFalse): sentence is grammatical and felicitous but judged clearly FALSE in the ALL scenario."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def books_neg_none : LinguisticExample :=
+  { id := "krizchemla2015_books_neg_none"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann didn't like the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann didn't like the books."
+    context := "Six shortlisted books; Ann liked none of the 6 shortlisted books."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("embedding", "unembedded")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInNone = clearlyTrue): sentence judged clearly true in the NONE scenario — negation requires existential denial (none liked)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def books_neg_gap : LinguisticExample :=
+  { id := "krizchemla2015_books_neg_gap"
+    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Ann didn't like the books."
+    discourseSegments := []
+    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
+    translation := "Ann didn't like the books."
+    context := "Six shortlisted books; Ann liked 3 of the 6 shortlisted books."
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
+    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInGap = neitherTrueNorFalse): homogeneity gap — neither clearly true nor clearly false in the some-but-not-all scenario."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def all : List LinguisticExample := [every_C2_gap, no_C2_gap, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, books_pos_all, books_pos_none, books_pos_gap, books_neg_all, books_neg_none, books_neg_gap]
 
 end KrizChemla2015.Examples

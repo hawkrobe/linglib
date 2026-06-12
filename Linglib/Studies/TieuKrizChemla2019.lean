@@ -1,5 +1,4 @@
 import Linglib.Features.Polarity
-import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Studies.Magri2014
 
 /-!
@@ -44,7 +43,6 @@ implicatures are independent, with homogeneity acquired earlier.
 
 ## Connection to Linglib
 
-- Imports `Homogeneity.lean` for the empirical gap pattern
 - Imports `Magri2014.lean` to test the double-strengthening prediction
   (end-to-end: inner EXH → double-EXH → ALL → falsified by HOM/−SI data)
 -/
@@ -52,8 +50,6 @@ implicatures are independent, with homogeneity acquired earlier.
 namespace TieuKrizChemla2019
 
 open Features (Polarity)
-open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
-  switchesExample)
 
 
 -- ============================================================
@@ -89,7 +85,10 @@ structure GapPrediction where
 def existentialGap : GapPrediction :=
   ⟨.existential, true, false⟩
 
-/-- Homogeneous: reject both positive and negative (the gap). -/
+/-- Homogeneous: reject both positive and negative (the gap). This is the
+    adult pattern documented for plural definites in GAP scenarios, where
+    both the positive and the negative sentence are judged neither true
+    nor false ([kriz-2015], [kriz-chemla-2015]). -/
 def homogeneousGap : GapPrediction :=
   ⟨.homogeneous, false, false⟩
 
@@ -105,15 +104,6 @@ theorem patterns_distinct_responses :
     existentialGap.acceptPositiveGap ≠ homogeneousGap.acceptPositiveGap ∧
     homogeneousGap.acceptNegativeGap ≠ universalGap.acceptNegativeGap := by
   exact ⟨by decide, by decide⟩
-
-/-- The homogeneous pattern matches the empirical gap data in Homogeneity.lean:
-    both positive and negative are judged "neither true nor false." -/
-theorem homogeneous_matches_gap_data :
-    homogeneousGap.acceptPositiveGap = false ∧
-    homogeneousGap.acceptNegativeGap = false ∧
-    switchesExample.positiveInGap = .neitherTrueNorFalse ∧
-    switchesExample.negativeInGap = .neitherTrueNorFalse := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
 
 
 -- ============================================================

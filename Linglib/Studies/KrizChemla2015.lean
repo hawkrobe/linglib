@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Plurals.Projection
+import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Data.Examples.KrizChemla2015
 
 /-!
@@ -21,7 +21,7 @@ boys/presents stimuli).
 The encoded stimulus rows themselves live in the generated module
 `Data.Examples.KrizChemla2015` (from
 `Linglib/Data/Examples/KrizChemla2015.json` via `scripts/gen_examples.py`);
-the pool at [[Phenomena.Plurals.Projection]] imports them, and is where
+the pool at [[Generalizations.HomogeneityProjection]] imports them, and is where
 cross-account testing of rival theories ([magri-2014],
 [kriz-2016], [kriz-spector-2021], [bar-lev-2021]) lands.
 

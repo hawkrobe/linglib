@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.NonMaximality
+import Linglib.Data.Examples.Kriz2015
+import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Studies.Magri2014
 import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Plurality.Distributivity
@@ -82,7 +82,8 @@ patterns differently. We do not address this puzzle here.
 - Theorems linking gap-removal to `all` semantics
 - A 5-world finite model demonstrating end-to-end predictions
   (including §4.2 angry-Smith vs. neutral-Smith distinction)
-- §5/§6 bridges to data records in `Plurals.NonMaximality` and `Plurals.Homogeneity`
+- §5/§6 bridges to the typed switches data in `Data.Examples.Kriz2015`
+  and the pooled `Generalizations.HomogeneityGap` observations
 - §7 connection back to the supervaluation framework
 
 ## Finite Model
@@ -528,78 +529,64 @@ theorem kriz_4_2_distinctive_prediction :
 end FiniteModel
 
 -- ============================================================================
--- Section 5: Connection to Empirical Data (NonMaximality.lean)
+-- Section 5: Connection to Empirical Data (Data.Examples.Kriz2015)
 -- ============================================================================
 
-/-! The finite model captures the same pattern as the theory-neutral data
-in `NonMaximality.lean`. The switches scenario records that "the switches
-are on" is acceptable in a non-maximal context (fire risk from any switch)
-but not in a maximal one (fire risk only if all on). This corresponds to
-`smithNeutral_usable_coarse` vs `smithNeutral_not_usable_fine`.
-
-Similarly, `switchesAllBlocks` records that "all the switches are on" is
+/-! The finite model captures the same pattern as the typed switches data in
+`Data.Examples.Kriz2015`. "Oh no, the switches are on!" is acceptable under
+the existential issue (fire risk from any switch — the all/some distinction
+is irrelevant) and unacceptable under the universal issue (fire risk only
+if all are on), corresponding to `smithNeutral_usable_coarse` vs
+`smithNeutral_not_usable_fine`. The "all the switches" variant is
 unacceptable even in the permissive context, corresponding to
 `all_not_usable_smithNeutral`. -/
 
-open Phenomena.Plurals.NonMaximality in
-/-- The switches datum records non-maximal use is acceptable. -/
-theorem switches_nonmax_acceptable :
-    switchesNonMaximality.acceptableInNonMaximalContext = true := rfl
+open Kriz2015.Examples in
+/-- Non-maximality context contrast: the same gap-scenario sentence is
+acceptable under the existential issue, unacceptable under the universal. -/
+theorem switches_nonmax_contrast :
+    switches_nonmax_existential.judgment = .acceptable ∧
+    switches_nonmax_universal.judgment = .unacceptable :=
+  ⟨rfl, rfl⟩
 
-open Phenomena.Plurals.NonMaximality in
-/-- The switches datum records maximal use is not acceptable (in gap scenario). -/
-theorem switches_max_not_acceptable :
-    switchesNonMaximality.acceptableInMaximalContext = false := rfl
-
-open Phenomena.Plurals.NonMaximality in
-/-- "All" blocks non-maximality even in permissive contexts. -/
+open Kriz2015.Examples in
+/-- `all` blocks non-maximality even in the permissive existential-issue
+context: the "all the switches" variant of the acceptable row is
+unacceptable. -/
 theorem switches_all_blocks :
-    switchesAllBlocks.allAcceptable = false := rfl
-
-open Phenomena.Plurals.NonMaximality in
-/-- The coarse issue makes the all/some distinction irrelevant,
-which is the precondition for non-maximal readings. -/
-theorem coarse_issue_irrelevant :
-    switchesNonMaximality.nonMaximalContext.allSomeDistinctionRelevant = false := rfl
+    switches_nonmax_existential.alternatives =
+      [("Oh no, all the switches are on!", .unacceptable)] :=
+  rfl
 
 -- ============================================================================
--- Section 6: Connection to Homogeneity Data (Homogeneity.lean)
+-- Section 6: Connection to Homogeneity-Gap Data (Generalizations.HomogeneityGap)
 -- ============================================================================
 
-/-! Bridge to the theory-neutral homogeneity data in `Homogeneity.lean`.
-The data records `all` as a homogeneity remover and specifies that gap
-scenarios yield `.neitherTrueNorFalse` for homogeneous sentences but
-`.clearlyFalse` for `all`-sentences. The structural theorems `all_no_gap`
-and `all_not_homogeneous` prove this mechanism, and the finite model
-demonstrates it concretely via `bare_profs_homogeneous`. -/
+/-! The switches gap rows of `Data.Examples.Kriz2015` lift to `.indet`
+observations in the cross-paper `Generalizations.HomogeneityGap` pool —
+the value `barePluralTV` assigns at the model's gap-world
+(`bare_smithNeutral`). The gap-removal effect of `all` (gap absorbed into
+the negative extension, so the gap scenario comes out clearly false) is
+proved structurally by `all_no_gap`, `all_negExt_eq`, and
+`all_not_homogeneous`. -/
 
-open Phenomena.Plurals.Homogeneity in
-/-- The homogeneity data lists `all` as a remover. -/
-theorem all_is_homogeneity_remover :
-    allRemovesHomogeneity.remover = .all := rfl
+open Generalizations.HomogeneityGap in
+/-- Both switches gap rows (positive and negated) observe the trivalent gap
+value `.indet`: the gap is symmetric under negation. -/
+theorem switches_gap_observed_indet :
+    (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
+      some .indet ∧
+    (fromExample Kriz2015.Examples.switches_neg_gap).map (·.observed) =
+      some .indet := by
+  decide
 
-open Phenomena.Plurals.Homogeneity in
-/-- Gap scenarios yield `.neitherTrueNorFalse` for homogeneous sentences:
-the signature of the extension gap that enables non-maximal readings. -/
-theorem homogeneous_gap_yields_neither :
-    allRemovesHomogeneity.homogeneousJudgment = .neitherTrueNorFalse := rfl
-
-open Phenomena.Plurals.Homogeneity in
-/-- Adding `all` makes the gap-scenario sentence clearly false — the gap
-is absorbed into the negative extension. -/
-theorem all_gap_yields_false :
-    allRemovesHomogeneity.preciseJudgment = .clearlyFalse := rfl
-
-open Phenomena.Plurals.Homogeneity in
-/-- The switches datum records homogeneity in the gap: positive sentence
-is neither true nor false when some-but-not-all switches are on. -/
-theorem switches_gap_is_neither :
-    switchesExample.positiveInGap = .neitherTrueNorFalse := rfl
-
-open Phenomena.Plurals.Homogeneity in
-/-- Outside the gap, judgments are clear: all switches on → clearly true. -/
-theorem switches_all_on_clearly_true :
-    switchesExample.positiveInAll = .clearlyTrue := rfl
+open Generalizations.HomogeneityGap in
+/-- The finite model matches the data: the bare plural's truth value at the
+gap-world `smithNeutral` is exactly the value the positive gap row observes. -/
+theorem model_matches_gap_row :
+    (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
+      some (barePluralTV smiled profs .smithNeutral) := by
+  decide
 
 -- ============================================================================
 -- Section 7: Connection to Supervaluation Framework
@@ -672,16 +659,12 @@ the puzzle that conjunctions of proper names exhibit homogeneity but resist
 non-maximal readings. If we model "Bert, Claire and Dora went there" as a
 plural-style supervaluation over atoms {Bert, Claire, Dora}, Križ's
 `gap_enables_nonmax` predicts non-maximal use at a gap-world that's
-QUD-equivalent to a true-world. Empirically (cf.
-`Phenomena.Plurals.Homogeneity.coworkersExample.conjunctionPermitsNonMax`),
-this prediction fails — the conjunction sentence does NOT permit non-maximality
-in the same gap context where the corresponding plural definite does.
-
-Križ acknowledges this in §6.2 and speculates about "team credit" but offers
-no formalization. The theorem `kriz_overgenerates_conjunction_nonmax` below
-makes the divergence kernel-visible: a Lean prediction (the plural-style
-model says non-maximal IS usable) and the empirical record (it isn't)
-co-existing in a single statement. -/
+QUD-equivalent to a true-world. Empirically this prediction fails — the
+conjunction sentence does NOT permit non-maximality in the same gap context
+where the corresponding plural definite does. Križ acknowledges this in §6.2
+and speculates about "team credit" but offers no formalization;
+`conj_modeled_as_plural_predicts_nonmax` makes the overgenerated prediction
+kernel-visible. -/
 
 section ConjunctionOvergeneration
 
@@ -750,18 +733,6 @@ theorem conj_modeled_as_plural_predicts_nonmax :
              | exact absurd hFalse (by decide)
              | exact absurd hEq (by decide))
 
-/-- **Križ overgenerates non-maximality for conjunctions** (kernel-checked
-divergence theorem). The Lean prediction (`conj_modeled_as_plural_predicts_nonmax`)
-asserts non-maximal usability at the gap-world; the empirical record
-(`coworkersExample.conjunctionPermitsNonMax = false`) asserts it is unacceptable.
-Both clauses hold simultaneously in this conjunction; the theorem's existence
-is the formal disagreement. [kriz-2016] §6.2 acknowledges the puzzle and
-speculates about "team credit" but provides no formalization. -/
-theorem kriz_overgenerates_conjunction_nonmax :
-    usable coarseConjQ (barePluralTV wentThere threeCoworkers) .dorasMissing ∧
-    Phenomena.Plurals.Homogeneity.coworkersExample.conjunctionPermitsNonMax = false :=
-  ⟨conj_modeled_as_plural_predicts_nonmax, rfl⟩
-
 end ConjunctionOvergeneration
 
 -- ============================================================================
@@ -790,7 +761,7 @@ additional downstream pragmatic machinery beyond what the alternative-
 geometry account itself provides.
 
 This is the cross-framework reconciler's core point: the SAME empirical
-gap data (`Phenomena.Plurals.Homogeneity.switchesExample`) gets two
+gap data (the `Data.Examples.Kriz2015` switches gap rows) gets two
 incompatible derivations, and the formalization makes the incompatibility
 kernel-checked. -/
 

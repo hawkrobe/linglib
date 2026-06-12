@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Plurals.Projection
+import Linglib.Data.Generalizations.HomogeneityProjection
 
 /-!
 # [augurzky-etal-2023]: QUD manipulation of homogeneity projection
@@ -40,7 +40,7 @@ with the rival explanations cited as future-work targets.
 
 namespace AugurzkyEtAl2023
 
-open Phenomena.Plurals.Projection (EmbeddingOperator)
+open Generalizations.HomogeneityProjection (EmbeddingOperator)
 
 /--
 QUD-manipulation datum for plural-definite acceptance in gap scenarios.

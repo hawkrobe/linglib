@@ -1,7 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.Polarity
-import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Plurality.Implicature
@@ -73,6 +72,9 @@ Magri extends Spector's exhaustivity-based account of plural morphology
 just plain meanings) determine outer-level excludability. Spector's
 single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
 `ScalarImplicatures/Studies/Spector2007.lean`.
+
+TODO: derive a `Generalizations.HomogeneityGap.GapPredict` implementation
+from the double-strengthening account and prove divergence theorems vs rivals.
 -/
 
 namespace Magri2014
@@ -636,10 +638,8 @@ theorem sloppy_prediction_holds :
 
 
 -- ============================================================
--- BRIDGE 1: Connection to Homogeneity.lean Empirical Data
+-- BRIDGE 1: Connection to Empirical Data
 -- ============================================================
-
-open Phenomena.Plurals.Homogeneity (HomogeneityDatum switchesExample conjunctionExample)
 
 /-- Concrete scenario instances for the switches example (10 switches). -/
 def switchesAll : Scenario := ⟨10, 10, by omega⟩
@@ -661,57 +661,41 @@ theorem switches_gap_homogeneity :
     notMeaning someMeaning switchesGap = false := by
   exact ⟨by native_decide, by native_decide⟩
 
-/-- The gap derivation matches the empirical judgments in `Homogeneity.lean`:
-    in the gap scenario, both positive and negative sentences are judged
-    "neither true nor false." -/
-theorem gap_matches_switches_data :
-    switchesExample.positiveInGap = .neitherTrueNorFalse ∧
-    switchesExample.negativeInGap = .neitherTrueNorFalse := ⟨rfl, rfl⟩
-
-/-- The conjunction domain also displays the same gap pattern. -/
-theorem gap_matches_conjunction_data :
-    conjunctionExample.positiveInGap = .neitherTrueNorFalse ∧
-    conjunctionExample.negativeInGap = .neitherTrueNorFalse := ⟨rfl, rfl⟩
-
-/-- Magri's theory accounts for the full truth-value pattern in the
-    switches example: universal in ALL, denial in NONE, gap in between. -/
-theorem full_pattern_matches_switches :
-    -- ALL scenario: positive clearly true, negative clearly false
-    switchesExample.positiveInAll = .clearlyTrue ∧
-    switchesExample.negativeInAll = .clearlyFalse ∧
-    -- NONE scenario: positive clearly false, negative clearly true
-    switchesExample.positiveInNone = .clearlyFalse ∧
-    switchesExample.negativeInNone = .clearlyTrue ∧
-    -- GAP scenario: neither true nor false for both
-    switchesExample.positiveInGap = .neitherTrueNorFalse ∧
-    switchesExample.negativeInGap = .neitherTrueNorFalse := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+open Generalizations.HomogeneityGap (allData) in
+/-- The double-strengthening derivation against the pooled unembedded
+    homogeneity-gap data ([kriz-chemla-2015], [kriz-2015],
+    [agha-jeretic-2022]): `.indet` is observed in gap cells of both
+    polarities — the non-complementarity derived in
+    `homogeneity_from_double_strengthening` — and only there (baseline
+    cells are bivalent, as `double_strengthening_yields_universal` and
+    `de_no_strengthening` require). -/
+theorem matches_pooled_gap_data :
+    ((allData.any fun d =>
+        d.polarity == .positive && d.scenario == .gap && d.observed == .indet) = true) ∧
+    ((allData.any fun d =>
+        d.polarity == .negative && d.scenario == .gap && d.observed == .indet) = true) ∧
+    ((allData.filter (fun d => d.scenario != .gap)).all
+        (fun d => d.observed != .indet) = true) :=
+  ⟨by decide, by decide, by decide⟩
 
 
 -- ============================================================
--- BRIDGE 2: Connection to Multiplicity.lean Parallels
+-- BRIDGE 2: Monotonicity of the Effective Interpretation
 -- ============================================================
 
-open Phenomena.Plurals.Multiplicity (MonotonicityParallel pluralSingularParallel orAndParallel)
-
-/-- Magri's primal theory predicts strengthening in UE but not DE,
-    matching the monotonicity pattern documented in `Multiplicity.lean`:
-    the inference arises in UE (positive) contexts but not DE (negative). -/
-theorem primal_matches_monotonicity_pattern :
+/-- The primal theory strengthens in UE but not DE — the same
+    monotonicity pattern as the plural/singular multiplicity inference,
+    which arises in UE contexts and vanishes in DE ([magri-2014]). -/
+theorem primal_monotonicity_pattern :
     effectiveInterpretation .primal .positive = .strong ∧
-    effectiveInterpretation .primal .negative = .weak ∧
-    pluralSingularParallel.arisesInUE = true ∧
-    pluralSingularParallel.arisesInDE = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    effectiveInterpretation .primal .negative = .weak := ⟨rfl, rfl⟩
 
-/-- Magri's conjunction (dual) domain corresponds to the or/and
-    monotonicity parallel in `Multiplicity.lean`. -/
-theorem dual_matches_conjunction_parallel :
+/-- The dual (conjunction) domain shows the mirror-image derivation but
+    the same net pattern — strong in UE, weak in DE — paralleling the
+    or/and monotonicity observation ([magri-2014]). -/
+theorem dual_monotonicity_pattern :
     effectiveInterpretation .dual .positive = .strong ∧
-    effectiveInterpretation .dual .negative = .weak ∧
-    orAndParallel.arisesInUE = true ∧
-    orAndParallel.arisesInDE = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    effectiveInterpretation .dual .negative = .weak := ⟨rfl, rfl⟩
 
 
 -- ============================================================
@@ -1238,14 +1222,15 @@ end QuestionPrediction
 -- ============================================================
 
 /-!
-## Connecting Enriched Conjunction to Empirical Data
+## Connecting Enriched Conjunction to the Gap Pattern
 
 The `de_double_exh_conjunction` theorem (Section 11) shows that
-unfocused conjunction under negation behaves as disjunction on
-the `ConjW` domain. Here we verify that this result matches the
-gap pattern documented in `Homogeneity.lean`'s `conjunctionExample`:
-in the gap scenario (Ann has red hair, Bert doesn't), both the
-positive conjunction and its negation are "neither true nor false."
+unfocused conjunction under negation behaves as disjunction on the
+`ConjW` domain. In the gap scenario (one conjunct true, one false),
+both the positive conjunction and its strengthened negation come out
+false — the non-complementarity behind the "neither true nor false"
+judgments unfocused conjunction shares with plural definites
+([magri-2014]).
 -/
 
 section ConjunctionBridge
@@ -1265,14 +1250,10 @@ theorem conj_gap_dual_negative_false :
     conjGapWorlds.all (λ w => nOr w = false) = true := by
   decide
 
-/-- This matches the empirical data: conjunction gap is
-    neither-true-nor-false for both polarities. -/
-theorem conj_gap_matches_empirical_data :
-    conjunctionExample.positiveInGap = .neitherTrueNorFalse ∧
-    conjunctionExample.negativeInGap = .neitherTrueNorFalse := ⟨rfl, rfl⟩
-
-/-- Full end-to-end: the enriched conjunction computation produces
-    truth values that correspond to the homogeneity gap pattern. -/
+/-- End-to-end: the enriched conjunction computation produces the
+    homogeneity gap — double EXH of not·AND_unF yields not·OR, and in
+    the gap world both the positive (AND) and the strengthened negative
+    (not·OR) are false. -/
 theorem enriched_conjunction_end_to_end :
     -- (1) Double EXH of not·AND_unF yields not·OR (Section 11)
     (Exhaustification.innocent.exh
@@ -1282,11 +1263,8 @@ theorem enriched_conjunction_end_to_end :
     -- (2) In gap world, AND (positive) is false
     cAnd .onlyA = false ∧
     -- (3) In gap world, not·OR (dual negative) is false
-    nOr .onlyA = false ∧
-    -- (4) Empirical data confirms the gap
-    conjunctionExample.positiveInGap = .neitherTrueNorFalse ∧
-    conjunctionExample.negativeInGap = .neitherTrueNorFalse := by
-  exact ⟨de_double_exh_conjunction, rfl, rfl, rfl, rfl⟩
+    nOr .onlyA = false :=
+  ⟨de_double_exh_conjunction, rfl, rfl⟩
 
 end ConjunctionBridge
 

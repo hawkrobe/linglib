@@ -1,9 +1,7 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Plurality.Implicature
-import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.NonMaximality
-import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Studies.Kriz2016
 import Linglib.Studies.Magri2014
 import Mathlib.Data.Set.Basic
@@ -65,6 +63,9 @@ A key prediction: the positive and negative cases are *not symmetric*.
   alone — no strengthening needed.
 
 This asymmetry is derived in `negative_universal` below.
+
+TODO: derive a `Generalizations.HomogeneityGap.GapPredict` implementation
+from the exhaustification account and prove divergence theorems vs rivals.
 -/
 
 namespace BarLev2021
@@ -532,7 +533,7 @@ as "the kids laughed") requires ≥3 atoms, where pruning some but not
 all individual alternatives weakens the II result to something between
 existential and universal.
 
-In the fire hazard context (`NonMaximality.lean`), the distinction
+In a fire-hazard-style context ([kriz-2015]), the distinction
 between "all kids laughed" and "some kids laughed" is irrelevant,
 so ALL individual alternatives are pruned. Exh is then vacuous and
 the existential basic meaning surfaces directly.
@@ -706,29 +707,33 @@ theorem partial_pruning_not_universal :
 -- SECTION 8: Bridges to Empirical Data
 -- ============================================================
 
-open Phenomena.Plurals.Homogeneity (switchesExample conjunctionExample)
-open Phenomena.Plurals.Multiplicity (MonotonicityParallel pluralSingularParallel
-  PluralTheory)
+open Generalizations.HomogeneityGap (allData)
 
-/-- Bar-Lev's theory predicts the full truth-value pattern for the
-    switches example: universal in ALL, denial in NONE, gap in between.
-    This matches the empirical judgments in `Homogeneity.lean`. -/
-theorem matches_switches_data :
-    switchesExample.positiveInAll = .clearlyTrue ∧
-    switchesExample.negativeInAll = .clearlyFalse ∧
-    switchesExample.positiveInNone = .clearlyFalse ∧
-    switchesExample.negativeInNone = .clearlyTrue ∧
-    switchesExample.positiveInGap = .neitherTrueNorFalse ∧
-    switchesExample.negativeInGap = .neitherTrueNorFalse :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- The account against the pooled unembedded homogeneity-gap data
+    ([kriz-chemla-2015], [kriz-2015], [agha-jeretic-2022]): `.indet` is
+    observed in gap cells of both polarities — the non-complementarity
+    derived in `gap_both_false` — and only there (baseline cells are
+    bivalent, as `universality` and `negative_universal` require). -/
+theorem matches_pooled_gap_data :
+    ((allData.any fun d =>
+        d.polarity == .positive && d.scenario == .gap && d.observed == .indet) = true) ∧
+    ((allData.any fun d =>
+        d.polarity == .negative && d.scenario == .gap && d.observed == .indet) = true) ∧
+    ((allData.filter (fun d => d.scenario != .gap)).all
+        (fun d => d.observed != .indet) = true) :=
+  ⟨by decide, by decide, by decide⟩
 
-/-- Bar-Lev's theory is an implicature account: any theory using the SI
-    mechanism for multiplicity is uniquely identified as the implicature
-    theory. Bar-Lev's exhaustification-based approach is precisely this. -/
-theorem is_implicature_account (t : PluralTheory)
-    (h : t.usesSIMechanism = true) :
-    t = .implicature :=
-  Phenomena.Plurals.Multiplicity.implicature_uniquely_predicts t h
+/-- For plural-definite rows ([kriz-2015], [kriz-chemla-2015]), no gap
+    cell observes clear falsity: those cells resolve to `.indet` (the
+    gap, `gap_both_false`) or `.true` (a non-maximal reading, derived
+    by pruning — `pruned_existential`), never `.false`. The restriction
+    matters: [agha-jeretic-2022]'s strong-necessity rows (*have to*)
+    observe `.false` in the positive gap cell — strong modals are
+    gap-free, outside this account's plural-definite scope. -/
+theorem plural_definite_gap_cells_never_false :
+    (allData.filter (fun d =>
+        d.scenario == .gap && d.source.bibkey != "agha-jeretic-2022")).all
+      (fun d => d.observed != .false) = true := by decide
 
 
 -- ============================================================
@@ -783,26 +788,12 @@ the *basic* meaning, not an implicature. Since it's not an implicature,
 it can't be weakened by pruning, which is why "all" blocks
 non-maximality.
 
-This connects to `Homogeneity.lean`'s `HomogeneityRemover.all` and to
-[kriz-2016]'s `removeGap` (which collapses the truth-value gap
-into the negative extension — a different mechanism but the same
-empirical prediction).
+Empirically, an `all`-quantified sentence is judged clearly false in
+the gap scenario where its bare-definite counterpart is neither true
+nor false ([kriz-2015]). [kriz-2016]'s `removeGap` derives the same
+prediction by collapsing the truth-value gap into the negative
+extension — a different mechanism, same empirical effect.
 -/
-
-open Phenomena.Plurals.Homogeneity (HomogeneityRemover allRemovesHomogeneity
-  HomogeneityRemovalDatum)
-
-/-- Bar-Lev's theory predicts that "all" removes homogeneity: the
-    `allRemovesHomogeneity` datum records that the gap scenario yields
-    `.clearlyFalse` for "all the doors are open" (vs `.neitherTrueNorFalse`
-    for the bare plural). This aligns with Bar-Lev's mechanism: "all"
-    eliminates subdomain alternatives, making the universal reading
-    semantic (not an implicature) and therefore non-cancelable. -/
-theorem all_removes_homogeneity_prediction :
-    allRemovesHomogeneity.remover = .all ∧
-    allRemovesHomogeneity.homogeneousJudgment = .neitherTrueNorFalse ∧
-    allRemovesHomogeneity.preciseJudgment = .clearlyFalse :=
-  ⟨rfl, rfl, rfl⟩
 
 /-- Without subdomain alternatives, exhaustification is vacuous:
     the prejacent passes through unchanged. This models the effect

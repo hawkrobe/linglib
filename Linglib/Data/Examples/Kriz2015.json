@@ -1,0 +1,102 @@
+[
+  {
+    "id": "kriz2015_switches_pos_gap",
+    "source":     {"bibkey": "kriz-2015", "paperLabel": "canonical switches homogeneity item"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The switches are on.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["The", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["on", "on"]
+    ],
+    "translation": "The switches are on.",
+    "context": "Ten switches; 5 of the 10 switches are on.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["polarity",     "positive"],
+      ["condition",    "GAP"],
+      ["gap_detected", "true"]
+    ],
+    "comment": "Migrated from Phenomena/Plurals/Homogeneity.lean switchesExample (positiveInGap = neitherTrueNorFalse): homogeneity gap — neither clearly true nor clearly false when some but not all switches are on. The Lean source also cites kriz-chemla-2015 for this item. The ALL cell (all 10 on: positive clearly true, negative clearly false) and NONE cell (none on: positive clearly false, negative clearly true) are recorded in the same Lean datum.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "kriz2015_switches_neg_gap",
+    "source":     {"bibkey": "kriz-2015", "paperLabel": "canonical switches homogeneity item, negated"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The switches are not on.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["The", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["not", "NEG"], ["on", "on"]
+    ],
+    "translation": "The switches are not on.",
+    "context": "Ten switches; 5 of the 10 switches are on.",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "It's not the case that the switches are on.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["polarity",     "negative"],
+      ["condition",    "GAP"],
+      ["gap_detected", "true"]
+    ],
+    "comment": "Migrated from Phenomena/Plurals/Homogeneity.lean switchesExample (negativeInGap = neitherTrueNorFalse): the gap is symmetric under negation. The sentential-negation variant in alternatives is carried from the Lean source's inline comment on negativeSentence.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "kriz2015_switches_nonmax_existential",
+    "source":     {"bibkey": "kriz-2015", "paperLabel": "(11) switches non-maximality"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Oh no, the switches are on!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oh", "oh"], ["no", "no"], ["the", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["on", "on"]
+    ],
+    "translation": "Oh no, the switches are on!",
+    "context": "Fire risk if any switch is on; 2 of the 10 switches are on. Implicit question: Are any of the switches on?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Oh no, all the switches are on!", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["polarity",  "positive"],
+      ["condition", "GAP"],
+      ["issue",     "existential"]
+    ],
+    "comment": "UNVERIFIED paperLabel: dissertation example number carried from prior Lean file (Phenomena/Plurals/NonMaximality.lean switchesNonMaximality, 'dissertation (11)'), not checked against PDF. Non-maximal reading acceptable when the all/some distinction is irrelevant to the issue (acceptableInNonMaximalContext = true). The 'all the switches' alternative is migrated from switchesAllBlocks ('dissertation (17)' per the prior Lean file, equally unverified): 'all' blocks non-maximality even in this permissive context (allAcceptable = false).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "kriz2015_switches_nonmax_universal",
+    "source":     {"bibkey": "kriz-2015", "paperLabel": "(11) switches non-maximality"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Oh no, the switches are on!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oh", "oh"], ["no", "no"], ["the", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["on", "on"]
+    ],
+    "translation": "Oh no, the switches are on!",
+    "context": "Fire risk only if all 10 switches are on; 2 of the 10 switches are on. Implicit question: Are all the switches on?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["polarity",  "positive"],
+      ["condition", "GAP"],
+      ["issue",     "universal"]
+    ],
+    "comment": "UNVERIFIED paperLabel: dissertation example number carried from prior Lean file (Phenomena/Plurals/NonMaximality.lean switchesNonMaximality), not checked against PDF. Same sentence and scenario as the existential-issue row, but with the all/some distinction relevant the non-maximal use is misleading (acceptableInMaximalContext = false, Lean inline comment 'misleading').",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]

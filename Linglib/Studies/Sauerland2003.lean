@@ -6,7 +6,6 @@ import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Quantification.UnifiedUniversal
@@ -38,8 +37,7 @@ Sauerland's specific arguments about number semantics.
   with JE presupposing scope predicate definedness (§5)
 - Existential ⟦a⟧ projects presuppositions existentially, contrasting
   with JE's universal projection (§5b)
-- Multiplicity as presuppositional competition, not at-issue Horn scale (§6);
-  bridge to `Multiplicity.PluralTheory.implicature`
+- Multiplicity as presuppositional competition, not at-issue Horn scale (§6)
 - Negated Pl entails negated Sg: "didn't harvest tomatoes" → "didn't
   harvest a tomato" (§6b)
 - Czech gender coordination data: masculine=vacuous, feminine=non-masc,
@@ -482,13 +480,11 @@ this is derived via presuppositional exhaustification (pex): pex over
 {⟦Sg⟧, ⟦Pl⟧} presupposes the negation of [Sg]'s presupposition (= ¬Atom).
 See `Semantics/Exhaustification/Presuppositional.lean`.
 
-## Bridge to `Phenomena.Plurals.Multiplicity`
-
-This is the **implicature** theory of multiplicity
-(`Multiplicity.PluralTheory.implicature`): plural literally means "one or
-more," and "more than one" arises as a pragmatic inference — specifically,
-an inference from presuppositional competition (Maximize Presupposition),
-not from at-issue scalar competition (Horn scales).
+This is the **implicature** theory of multiplicity in [tieu-etal-2020]'s
+taxonomy (`TieuEtAl2020.PluralTheory.implicature`): plural literally means
+"one or more," and "more than one" arises as a pragmatic inference — here
+from presuppositional competition (Maximize Presupposition), not from
+at-issue scalar competition (Horn scales).
 
 ### Presuppositional vs at-issue competition
 

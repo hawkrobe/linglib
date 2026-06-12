@@ -32,7 +32,7 @@ competition) and is deliberately not encoded here.
 
 Because the domain is any `SemilatticeSup`, the same operator interprets
 *verbal* number: pluractionality is `interp` at the event lattice
-(`Phenomena/Plurals/VerbalNumber.lean`), and `[+additive]`'s identity
+([corbett-2000] ch. 8), and `[+additive]`'s identity
 with cumulativity (`additive_subregion_is_cum`, `Mereology.CUM`) is the
 number–aspect–telicity nexus of [harbour-2014] §4.4.
 

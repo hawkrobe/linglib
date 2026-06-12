@@ -1,4 +1,5 @@
-import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Data.Examples.TieuEtAl2020
+import Linglib.Features.Polarity
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Semantics.Alternatives.Lexical
 
@@ -19,73 +20,130 @@ are correlated within children.
 The paper adjudicates between three theories of why "Emily fed giraffes"
 means "more than one":
 
-1. **Ambiguity**: plural is polysemous (inclusive/exclusive), Strongest
-   Meaning Hypothesis selects the stronger reading.
-2. **Implicature**: plural literally means "one or more," the "more than
-   one" inference is a scalar implicature with the singular as alternative.
-3. **Homogeneity**: multiplicity arises from homogeneity presupposition.
+1. **Ambiguity** ([farkas-de-swart-2010]): plural is polysemous
+   (inclusive/exclusive), Strongest Meaning Hypothesis selects the
+   stronger reading.
+2. **Implicature** ([sauerland-2003], [spector-2007], [zweig-2009]):
+   plural literally means "one or more," the "more than one" inference
+   is a scalar implicature with the singular as alternative.
+3. **Homogeneity** ([kriz-2015]): multiplicity arises from homogeneity
+   presupposition.
 
 Key discriminating prediction (Uniformity Prediction): if multiplicity
 inferences are scalar implicatures, children should compute fewer of both,
 and rates should be correlated.
 
-## Connection to Linglib
+## Main declarations
 
-- Imports `Multiplicity` data for the monotonicity pattern
-- Imports `HornScale` for the singular/plural scale
-- Links multiplicity inferences to `ScalarImplicatures/Basic` DE blocking
+* `PluralTheory` — the paper's three-way theory taxonomy, with
+  `usesSIMechanism` as the discriminating mechanistic property.
+* `stimulus?` — row lookup over the generated `Examples.all` pool
+  (`Data/Examples/TieuEtAl2020.json`).
+* `implicature_uniquely_supported` — only the implicature theory derives
+  multiplicity via the SI mechanism.
+* `multiplicity_parallels_si_de_blocking` — the multiplicity pattern
+  matches the DE blocking of classical scalar implicatures.
 -/
 
 namespace TieuEtAl2020
 
-open Alternatives (Monotonicity)
 open Alternatives.Number (NumberExpr numberScale)
-open Phenomena.Plurals.Multiplicity (PluralTheory MonotonicityParallel
-  implicature_uniquely_predicts)
+open Data.Examples (LinguisticExample)
 
 
--- Experimental Design
+-- ### Competing theories
 
-/--
-A truth-value judgment trial: participant sees a story where the character
-acts on one object from a set, then judges a bare plural test sentence.
--/
-structure TVJTrial where
-  /-- Story context -/
-  story : String
-  /-- Test sentence -/
-  sentence : String
-  /-- Polarity of test sentence -/
-  polarity : Features.Polarity
-  /-- Does accepting the sentence indicate computing multiplicity? -/
-  acceptanceIndicatesMultiplicity : Bool
-  deriving Repr
+/-- The paper's three-way taxonomy of theories of the multiplicity
+    inference: ambiguity ([farkas-de-swart-2010]), implicature
+    ([sauerland-2003], [spector-2007], [zweig-2009]), homogeneity
+    ([kriz-2015]). -/
+inductive PluralTheory where
+  /-- Plural is ambiguous; Strongest Meaning Hypothesis resolves. -/
+  | ambiguity
+  /-- Plural literally means "one or more"; multiplicity is implicature. -/
+  | implicature
+  /-- Plural interpretation via homogeneity presupposition. -/
+  | homogeneity
+  deriving DecidableEq, Repr, Inhabited
 
-/-- Experiment 1: upward-entailing (positive) trial. -/
-def exp1_positive : TVJTrial :=
-  { story := "Emily has an apple. She feeds one pig. Only that pig was fed."
-  , sentence := "Emily fed pigs"
-  , polarity := .positive
-  , acceptanceIndicatesMultiplicity := false
-  -- Rejecting = computing multiplicity (one pig ≠ "more than one")
-  }
+/-- Does the theory analyze multiplicity as arising via the same mechanism
+    as scalar implicatures? The paper's discriminating predictions —
+    acquisition delay, within-child SI correlation, polarity asymmetry,
+    singular-context truth-value asymmetry — all transfer from known SI
+    properties via this property. -/
+def PluralTheory.usesSIMechanism : PluralTheory → Bool
+  | .implicature => true
+  | _ => false
 
-/-- Experiment 1: downward-entailing (negative) trial. -/
-def exp1_negative : TVJTrial :=
-  { story := "Emily has food for one giraffe. She feeds that giraffe. The others go unfed."
-  , sentence := "Emily didn't feed giraffes"
-  , polarity := .negative
-  , acceptanceIndicatesMultiplicity := true
-  -- Accepting = computing multiplicity locally under negation
-  -- (interpreting as: "Emily didn't feed more than one giraffe")
-  }
+/-- The implicature theory is uniquely identified by the SI mechanism,
+    hence by any of the predictions that transfer through it. -/
+theorem implicature_uniquely_supported :
+    ∀ t : PluralTheory, t.usesSIMechanism = true → t = .implicature := by
+  intro t h
+  cases t <;> simp_all [PluralTheory.usesSIMechanism]
 
 
--- Experimental Results
+-- ### Stimuli
 
-/--
-Inference rate for a group in a condition.
--/
+/-- Look up a stimulus row in the paper's example pool by `id`. -/
+def stimulus? (id : String) : Option LinguisticExample :=
+  Examples.all.find? (·.id == id)
+
+/-- Core multiplicity datum, positive form: "Emily fed giraffes". -/
+abbrev fedGiraffesPos : Option LinguisticExample :=
+  stimulus? "tieuetal2020_fed_giraffes_pos"
+
+/-- Core multiplicity datum, negative form: "Emily didn't feed giraffes". -/
+abbrev fedGiraffesNeg : Option LinguisticExample :=
+  stimulus? "tieuetal2020_fed_giraffes_neg"
+
+/-- Experiment 1, upward-entailing TVJ trial: "Emily fed pigs" after a
+    story in which she fed exactly one pig (rejection indicates
+    computing multiplicity). -/
+abbrev exp1_positive : Option LinguisticExample :=
+  stimulus? "tieuetal2020_exp1_positive"
+
+/-- Experiment 1, downward-entailing TVJ trial: "Emily didn't feed
+    giraffes" after she fed exactly one (acceptance indicates a local
+    multiplicity reading under negation). -/
+abbrev exp1_negative : Option LinguisticExample :=
+  stimulus? "tieuetal2020_exp1_negative"
+
+/-- Experiment 3, positive plural in a singular context: "Koala bought
+    pears" when Koala bought exactly one pear. -/
+abbrev exp3_positive_plural : Option LinguisticExample :=
+  stimulus? "tieuetal2020_exp3_positive_plural"
+
+/-- Experiment 3, negative plural in a singular context: "Koala didn't
+    buy pears" when Koala bought exactly one pear. -/
+abbrev exp3_negative_plural : Option LinguisticExample :=
+  stimulus? "tieuetal2020_exp3_negative_plural"
+
+/-- The core monotonicity pattern: the multiplicity reading is available
+    in the positive datum but unavailable under negation. -/
+theorem consistent_with_monotonicity_data :
+    fedGiraffesPos.bind (·.readings.lookup "multiplicity (>1)") =
+      some .acceptable ∧
+    fedGiraffesNeg.bind (·.readings.lookup "multiplicity (>1)") =
+      some .unacceptable := by
+  decide
+
+/-- Experiment 1 reading availability: the multiplicity reading is fully
+    available in the UE trial; the local multiplicity reading under
+    negation is only marginal (adults' negative-condition rate was
+    moderate). -/
+theorem exp1_multiplicity_reading_contrast :
+    exp1_positive.bind (·.readings.lookup "multiplicity (>1)") =
+      some .acceptable ∧
+    exp1_negative.bind
+      (·.readings.lookup "multiplicity (>1) local under negation") =
+      some .marginal := by
+  decide
+
+
+-- ### Experimental results
+
+/-- Inference rate for a group in a condition. -/
 structure InferenceRate where
   /-- Which group -/
   group : String
@@ -122,7 +180,7 @@ def exp2Results : List InferenceRate :=
   ]
 
 
--- Theoretical Analysis
+-- ### Uniformity Prediction
 
 /--
 The Uniformity Prediction: if multiplicity inferences are scalar
@@ -155,7 +213,7 @@ theorem uniformity_all_confirmed :
   ⟨rfl, rfl, rfl⟩
 
 
--- Connection to Horn Scale Infrastructure
+-- ### Connection to Horn scale infrastructure
 
 /-- The singular/plural scale predicts multiplicity as a scalar implicature:
     using the plural (weaker) implicates the negation of the singular (stronger). -/
@@ -176,88 +234,48 @@ theorem ue_context_multiplicity :
   decide
 
 
--- Cross-reference to Multiplicity data
+-- ### Experiment 3: singular contexts (adults-only, ternary judgment)
 
-/-- The paper's findings match the monotonicity pattern in the data file:
-    multiplicity arises in UE (positive) but not DE (negative). -/
-theorem consistent_with_monotonicity_data :
-    Phenomena.Plurals.Multiplicity.fedGiraffes.multiplicityInPositive = true ∧
-    Phenomena.Plurals.Multiplicity.fedGiraffes.multiplicityInNegative = false := by
-  exact ⟨rfl, rfl⟩
-
-/-- The implicature approach is uniquely identified by any of the three
-    findings. Here we use `predictsChildrenComputeFewer`: any theory
-    predicting children compute fewer must use the SI mechanism. -/
-theorem implicature_uniquely_supported (t : PluralTheory)
-    (h : t.usesSIMechanism = true) :
-    t = .implicature :=
-  Phenomena.Plurals.Multiplicity.implicature_uniquely_predicts t h
-
-
--- Experiment 3: Singular contexts (adults-only, ternary judgment)
-
-/--
+/-!
 Experiment 3 uses a ternary judgment task (small/medium/large strawberry
 for false/neither/true) with adults on Amazon Mechanical Turk.
 
-In singular contexts (one object acted upon), the three theories
-predict different status for positive vs negative plural sentences:
-- "Koala bought pears" (only bought one) — literally true but misleading
-- "Koala didn't buy pears" (only bought one) — literally false
-
-Result: adults gave intermediate reward for positive, minimal for negative,
-confirming the implicature approach's prediction that they differ in status.
+In singular contexts (exactly one object acted upon), only the SI
+mechanism predicts a positive/negative truth-value asymmetry: "Koala
+bought pears" is literally true with a false implicature (misleading),
+while "Koala didn't buy pears" is literally false. On lexical or
+presuppositional accounts both have the same status. Together with
+`implicature_uniquely_supported`, the observed asymmetry singles out
+`PluralTheory.implicature`.
 -/
-structure TernaryJudgment where
-  /-- Test sentence -/
-  sentence : String
-  /-- Polarity -/
-  polarity : Features.Polarity
-  /-- Preferred reward level (qualitative) -/
-  preferredReward : String
-  deriving Repr
 
-def exp3_positive_plural : TernaryJudgment :=
-  { sentence := "Koala bought pears"
-  , polarity := .positive
-  , preferredReward := "intermediate"
-  -- Literally true (bought one or more), but false implicature
-  }
-
-def exp3_negative_plural : TernaryJudgment :=
-  { sentence := "Koala didn't buy pears"
-  , polarity := .negative
-  , preferredReward := "minimal"
-  -- Literally false (Koala did buy one or more pears)
-  }
-
-/-- Adults assign different status to positive vs negative in singular contexts.
-    This confirms the implicature approach's singular context prediction. -/
+/-- Adults assign different reward status to positive vs negative plurals
+    in singular contexts: intermediate reward for the (literally true but
+    misleading) positive, minimal for the (literally false) negative. -/
 theorem exp3_confirms_asymmetry :
-    exp3_positive_plural.preferredReward ≠ exp3_negative_plural.preferredReward := by
+    exp3_positive_plural.bind (·.paperFeatures.lookup "preferred_reward") =
+      some "intermediate" ∧
+    exp3_negative_plural.bind (·.paperFeatures.lookup "preferred_reward") =
+      some "minimal" := by
   decide
 
-/-- The singular context finding matches the implicature theory's prediction:
-    the implicature account uniquely predicts positive/negative asymmetry. -/
-theorem exp3_matches_implicature_prediction (t : PluralTheory)
-    (h : t.positiveNegativeDiffer = true) :
-    t = .implicature :=
-  Phenomena.Plurals.Multiplicity.implicature_uniquely_discriminates_singular t h
 
-
--- Cross-directory bridge: Multiplicity parallels scalar implicatures
+-- ### Cross-directory bridge: multiplicity parallels scalar implicatures
 
 /-- The multiplicity inference exhibits DE blocking — the same pattern as
     classical scalar implicatures documented in ScalarImplicatures/Basic.lean.
 
     Specifically: the some/all DE blocking datum shows implicatures arise in UE
-    but not DE, exactly paralleling the multiplicity pattern. -/
+    but not DE, exactly paralleling the multiplicity pattern in the
+    fed-giraffes rows. -/
 theorem multiplicity_parallels_si_de_blocking :
     Phenomena.ScalarImplicatures.someAllBlocking.implicatureInUE = true ∧
     Phenomena.ScalarImplicatures.someAllBlocking.implicatureInDE = false ∧
-    Phenomena.Plurals.Multiplicity.fedGiraffes.multiplicityInPositive = true ∧
-    Phenomena.Plurals.Multiplicity.fedGiraffes.multiplicityInNegative = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    fedGiraffesPos.bind (·.readings.lookup "multiplicity (>1)") =
+      some .acceptable ∧
+    fedGiraffesNeg.bind (·.readings.lookup "multiplicity (>1)") =
+      some .unacceptable :=
+  ⟨rfl, rfl, by decide, by decide⟩
 
 /-- Both the number scale and the quantifier scale predict the same
     pattern: stronger alternatives in UE, none/weaker in DE. -/
