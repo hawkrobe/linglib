@@ -2,7 +2,7 @@ import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.LF
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.Causation.Interpretation
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 
 /-!
 # [cruse-1973] Agentivity Decomposition
@@ -48,7 +48,7 @@ open Semantics.Causation.CoerciveImplication
 open Features (Causative)
 open Features
 open Semantics.Lexical
-open Phenomena.TenseAspect.Diagnostics
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Agentivity Features ([cruse-1973] pp.17–21)

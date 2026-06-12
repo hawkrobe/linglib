@@ -8,7 +8,7 @@ import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 import Linglib.Studies.Krifka1989
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
@@ -106,7 +106,7 @@ open Semantics.Spatial (Trace)
 open Semantics.Spatial.Trace (pathShapeToTelicity)
 open Semantics.Spatial.Path (PathShape)
 open Core.Order (LicensingPipeline)
-open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
+open Features (forXPrediction inXPrediction DiagnosticResult)
 
 /-! ### Per-Verb Incrementality Verification -/
 

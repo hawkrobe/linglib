@@ -1,7 +1,7 @@
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.French.TenseAspect
 import Linglib.Fragments.Mandarin.TenseAspect
@@ -48,7 +48,7 @@ re-packages those into the row-wise groupings Smith uses prose-side.
 open Features
 open Semantics.Aspect (ViewpointType)
 open Semantics.Aspect.Composition
-open Phenomena.TenseAspect.Diagnostics (DiagnosticResult)
+open Features (DiagnosticResult)
 
 namespace Smith1997
 
@@ -295,7 +295,7 @@ theorem completion_iff_telic (c : VendlerClass) :
     those with internal stages ([smith-1997] Ch. 4). Smith's claim factored
     through the substrate's `VendlerClass.HasInternalStages`. -/
 theorem progressive_requires_HasInternalStages (c : VendlerClass) :
-    Phenomena.TenseAspect.Diagnostics.progressivePrediction c = .accept ↔
+    Features.progressivePrediction c = .accept ↔
     c.HasInternalStages := by
   cases c <;> decide
 
@@ -320,7 +320,7 @@ theorem krifka_smith_agreement :
 theorem semelfactive_coercion_three_ways :
     semelfactiveProfile.duratize.toVendlerClass = .activity ∧
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity ∧
-    Phenomena.TenseAspect.Diagnostics.forXPrediction .semelfactive = .coerced :=
+    Features.forXPrediction .semelfactive = .coerced :=
   ⟨rfl, rfl, rfl⟩
 
 /-! ### Bridge to [krifka-1989] -/
