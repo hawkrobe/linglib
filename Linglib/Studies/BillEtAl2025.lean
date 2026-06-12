@@ -439,9 +439,9 @@ that morphological complexity can outweigh transparency benefits.
 -- Connection to Additive Particles
 
 /-!
-## Link to Phenomena/AdditiveParticles/Data.lean
+## Link to additive particles
 
-Japanese "mo" (listed as an additive particle in AdditiveParticles/Data.lean)
+Japanese "mo", the additive particle ("also, too", attached to NP),
 is the canonical MU particle in Mitrović & Sauerland's framework.
 In conjunction, "mo...mo" = MU-only strategy:
 
