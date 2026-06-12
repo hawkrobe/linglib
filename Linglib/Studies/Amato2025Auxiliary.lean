@@ -321,7 +321,7 @@ private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩
 private def aDPsubj : LIToken := ⟨LexicalItem.simple .D [], 2⟩
 private def aDPobj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-private def perfProbe : ProbeProfile := ⟨.T, some .C⟩
+private def perfProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-- Translate an Amato clause to an abstract `NestedAgreeConfig` over
     a Minimalist `SyntacticObject`, using `NestedAgree.standardConfig`.
@@ -375,7 +375,7 @@ theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
   · intro h
     refine ⟨?_, ?_⟩
     · -- length = stack.length = 2 > 1: structural after unfold.
-      show 1 < ([⟨.T, some .C⟩, ⟨.T, some .C⟩] : List ProbeProfile).length
+      show 1 < ([⟨.T, some .C⟩, ⟨.T, some .C⟩] : List Probe.Profile).length
       decide
     · -- goalHead ∈ searchDomain 1 = daughters; reflexively in its
       -- own daughters when phi-active.

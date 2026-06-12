@@ -112,7 +112,7 @@ gives five arguments against hierarchy accounts:
   `PLC`: the search-and-licensing layer the derivations below
   consume.
 - `Syntax/Minimalist/ObligatoryOperations.lean` — the Ch. 5 model
-  (`AgreementModel`, `ProbeOutcome`, `PFRealization`), consumed
+  (`AgreementModel`, `Probe.Outcome`, `PFRealization`), consumed
   below for the failed-Agree theorems.
 - `Morphology/DM/VocabSimple.lean` — `Vocabulary`,
   `Agreement.Cell.toPhiFeatures`, `makePersonVocab`, `spellout`.
@@ -247,11 +247,11 @@ theorem ch4_relativization_contrast :
   decide
 
 /-- π⁰: the person probe — the denotation of the substrate's
-    `ProbeTarget.participant` specification. -/
-def piProbe : Probe Agreement.Cell := ProbeTarget.participant.toProbe
+    `Probe.Target.participant` specification. -/
+def piProbe : Probe Agreement.Cell := Probe.Target.participant.toProbe
 
-/-- #⁰: the number probe — the denotation of `ProbeTarget.plural`. -/
-def numProbe : Probe Agreement.Cell := ProbeTarget.plural.toProbe
+/-- #⁰: the number probe — the denotation of `Probe.Target.plural`. -/
+def numProbe : Probe Agreement.Cell := Probe.Target.plural.toProbe
 
 /-- The two AF probes in slot order: π⁰'s clitic output beats #⁰'s
     direct exponence in the single morphological slot
@@ -354,16 +354,16 @@ theorem personRestrictionOk_comm (s o : Agreement.Cell) :
 
 /-- π⁰'s outcome on the AF clause's goal pair: each probe is
     independently obligatory ([preminger-2014] Ch. 5). -/
-def piOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+def piOutcome (subj obj : Agreement.Cell) : Probe.Outcome :=
   piProbe.outcome [subj, obj]
 
 /-- #⁰'s outcome on the AF clause's goal pair. -/
-def numOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+def numOutcome (subj obj : Agreement.Cell) : Probe.Outcome :=
   numProbe.outcome [subj, obj]
 
 /-- Joint outcome of the AF probes: `unvalued` only when both probes
     fail (i.e., both arguments are 3SG). -/
-def afProbeOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+def afProbe.Outcome (subj obj : Agreement.Cell) : Probe.Outcome :=
   match piOutcome subj obj, numOutcome subj obj with
   | .unvalued, .unvalued => .unvalued
   | _, _ => .valued
@@ -372,10 +372,10 @@ def afProbeOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
     is `unvalued` — Agree-level failure and outcome-level failure are
     the same fact, for arbitrary φ-cells. -/
 theorem afAgreementTarget_eq_none_iff (subj obj : Agreement.Cell) :
-    afAgreementTarget subj obj = none ↔ afProbeOutcome subj obj = .unvalued := by
-  have hmatch : afProbeOutcome subj obj = .unvalued ↔
+    afAgreementTarget subj obj = none ↔ afProbe.Outcome subj obj = .unvalued := by
+  have hmatch : afProbe.Outcome subj obj = .unvalued ↔
       piOutcome subj obj = .unvalued ∧ numOutcome subj obj = .unvalued := by
-    unfold afProbeOutcome
+    unfold afProbe.Outcome
     cases piOutcome subj obj <;> cases numOutcome subj obj <;> decide
   rw [hmatch]
   unfold afAgreementTarget piOutcome numOutcome
@@ -395,10 +395,10 @@ theorem failed_agree_tolerated :
     afAgreementTarget (.pn .third .Sing) (.pn .third .Sing) = none ∧
     piOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     numOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
-    afProbeOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
+    afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     derivationConverges .obligatoryNocrash
-      (afProbeOutcome (.pn .third .Sing) (.pn .third .Sing)) = true ∧
-    (afProbeOutcome (.pn .third .Sing) (.pn .third .Sing)).pfRealization
+      (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)) = true ∧
+    (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)).pfRealization
       = .elsewhere ∧
     spellout setBVocab [] (some .T) = some "∅" ∧
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" := by
