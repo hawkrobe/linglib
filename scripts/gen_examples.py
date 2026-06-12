@@ -356,12 +356,11 @@ def ensure_import(file_path: Path, module: str) -> bool:
     return True
 
 
-def main():
-    if len(sys.argv) != 2:
-        sys.stderr.write("Usage: python3 scripts/gen_examples.py <AuthorYear>\n")
-        sys.exit(1)
+def process(author_year: str, check: bool) -> bool:
+    """Generate (or, with `check`, verify) one paper's module.
 
-    author_year = sys.argv[1]
+    Returns True on success / in-sync; False on drift in check mode.
+    Exits on malformed input (both modes)."""
     json_path = JSON_DIR / f"{author_year}.json"
     if not json_path.exists():
         sys.stderr.write(f"FATAL: JSON not found at {json_path.relative_to(ROOT)}\n")
@@ -393,7 +392,22 @@ def main():
     rel_json = json_path.relative_to(ROOT)
     n = len(examples)
 
-    if module_path.exists() and module_path.read_text(encoding="utf-8") == module_text:
+    in_sync = (
+        module_path.exists()
+        and module_path.read_text(encoding="utf-8") == module_text
+    )
+
+    if check:
+        if in_sync:
+            sys.stdout.write(f"[check] {rel_module} in sync\n")
+        else:
+            sys.stderr.write(
+                f"[check] DRIFT: {rel_module} does not match {rel_json}; "
+                f"run scripts/gen_examples.py {author_year}\n"
+            )
+        return in_sync
+
+    if in_sync:
         sys.stdout.write(f"[gen] {rel_module} unchanged\n")
     else:
         module_path.write_text(module_text, encoding="utf-8")
@@ -417,6 +431,31 @@ def main():
 
     if ensure_import(ROOT / "Linglib.lean", module_name):
         sys.stdout.write(f"[gen] added {module_name} import to Linglib.lean\n")
+    return True
+
+
+def main():
+    args = sys.argv[1:]
+    check = "--check" in args
+    args = [a for a in args if a != "--check"]
+
+    if args == ["--all"] or (not args and check):
+        papers = sorted(p.stem for p in JSON_DIR.glob("*.json"))
+    elif len(args) == 1 and not args[0].startswith("-"):
+        papers = [args[0]]
+    else:
+        sys.stderr.write(
+            "Usage: python3 scripts/gen_examples.py <AuthorYear> | --all\n"
+            "       python3 scripts/gen_examples.py --check [<AuthorYear>]\n"
+            "  --all    regenerate every Linglib/Data/Examples/*.json\n"
+            "  --check  verify generated modules match JSON (no writes); "
+            "exit 1 on drift\n"
+        )
+        sys.exit(1)
+
+    ok = all([process(p, check) for p in papers])
+    if not ok:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
