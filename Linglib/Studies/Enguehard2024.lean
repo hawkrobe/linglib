@@ -1,6 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.Sauerland2003
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
@@ -46,8 +45,9 @@ conceivability presuppositions and sensitivity to probabilities.
 - `PhiFeatures.sgCardConceivable` / `plCardConceivable` — the
   conceivability presuppositions defined in §7 of `PhiFeatures.lean`
 - `Sauerland2003` — challenges MP-derived complementary distribution
-- `Multiplicity` — challenges the implicature theory's categorical
-  predictions with gradient production data
+- the implicature theory of multiplicity (`TieuEtAl2020.PluralTheory.implicature`,
+  [tieu-etal-2020]) — challenged on its categorical predictions by
+  gradient production data
 - `MaximizePresupposition.phiMP` — MP is underdetermined when both
   conceivability presuppositions are satisfied
 - `PresuppositionContext.presupSatisfiable` — conceivability =
@@ -324,9 +324,9 @@ theorem conceivability_same_assertion {W : Type*}
 /-!
 ## §5: Gradient Data vs Categorical Predictions
 
-`Multiplicity.implicature_uniquely_predicts` asserts the implicature
-theory uniquely predicts three patterns (children compute fewer,
-correlation with SI rates, polarity asymmetry). Enguehard's experiment
+On [tieu-etal-2020]'s argument (`TieuEtAl2020.implicature_uniquely_supported`),
+the implicature theory uniquely predicts three patterns (children compute
+fewer, correlation with SI rates, polarity asymmetry). Enguehard's experiment
 reveals a fourth dimension where the implicature theory makes the wrong
 prediction: it predicts categorical (complementary) distribution, but
 production is gradient.
@@ -584,7 +584,7 @@ theorem pex_neg_preserves_presup {World : Type*}
 /-!
 ## §9: Refining the Implicature Theory
 
-[sauerland-2003]'s implicature theory (= `Multiplicity.PluralTheory.implicature`)
+[sauerland-2003]'s implicature theory (= `TieuEtAl2020.PluralTheory.implicature`)
 correctly predicts the multiplicity inference in positive UE contexts.
 But it does not predict gradient production in negative contexts.
 

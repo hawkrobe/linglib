@@ -3,7 +3,7 @@ import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015
 
 /-!
-# Phenomena.Plurals.Projection — Test-suite hub for homogeneity projection
+# Generalizations.HomogeneityProjection — cross-paper prediction target
 
 Cross-paper test substrate for how the homogeneity gap of plural definites
 projects under embedding quantifiers and operators. The pattern's empirical
@@ -72,7 +72,7 @@ mapping would be wrong for at least one consumer.
   label (per [peters-westerstahl-2006] discipline).
 -/
 
-namespace Phenomena.Plurals.Projection
+namespace Generalizations.HomogeneityProjection
 
 open Core.Duality (Truth3)
 open Data.Examples (LinguisticExample SourceRef)
@@ -196,4 +196,4 @@ should pass their `ProjectionPredict` implementations against this pool.
 def allData : List ProjectionDatum :=
   KrizChemla2015.Examples.all.filterMap fromExample
 
-end Phenomena.Plurals.Projection
+end Generalizations.HomogeneityProjection

@@ -1783,9 +1783,8 @@ definite plurals. This follows directly from DKP being compositionally
 DIST applied to the kind extension — the trivalent truth conditions are
 inherited, not stipulated.
 
-This connects to the theory-neutral homogeneity data in
-`Phenomena/Plurals/Homogeneity.lean` ([kriz-2015] [kriz-spector-2021])
-and non-maximality data in `Phenomena/Plurals/NonMaximality.lean`.
+This connects to the theory-neutral homogeneity-gap data of [kriz-2015]
+and [kriz-spector-2021], and to the non-maximality data of [kriz-2016].
 
 The paper's examples (88)–(90) make this explicit:
 - "Birds are migrating" — possibly non-maximal, ∼ ∀ (DKP + homogeneity)

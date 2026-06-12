@@ -1617,14 +1617,12 @@ import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Horn1989
 import Linglib.Studies.PlunkettSundell2013
 import Linglib.Phenomena.Negation.Denial
-import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.NonMaximality
-import Linglib.Phenomena.Plurals.Projection
+import Linglib.Data.Generalizations.HomogeneityGap
+import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.QingEtAl2025
 import Linglib.Studies.Champollion2017
-import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.TieuEtAl2020
 import Linglib.Studies.TieuKrizChemla2019
 import Linglib.Studies.Kriz2016
@@ -2859,3 +2857,7 @@ import Linglib.Data.Examples.ChungMascarenhas2024
 import Linglib.Data.Examples.MunozPerez2026
 import Linglib.Data.Examples.Marsan2026
 import Linglib.Data.Examples.Steedman2000
+import Linglib.Data.Examples.AghaJeretic2022
+import Linglib.Data.Examples.Kriz2015
+import Linglib.Data.Examples.TieuEtAl2020
+import Linglib.Data.Examples.ChatzikyriakidisEtAl2025

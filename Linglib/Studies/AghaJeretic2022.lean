@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Truth3
-import Linglib.Phenomena.Plurals.Homogeneity
+import Linglib.Data.Examples.AghaJeretic2022
+import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
@@ -68,8 +69,7 @@ semantics), and extends it to explain the neg-raising asymmetry between
 namespace AghaJeretic2022
 
 open Core.Duality (Truth3)
-open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
-  HomogeneityRemover HomogeneityRemovalDatum conditionalExample)
+open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
 
 -- ============================================================================
 -- §1. Trivalent Semantics for Modals (§4.2)
@@ -237,53 +237,62 @@ theorem shouldEval_unk_symmetric (domain : List World) (p : World → Bool)
 /-! ## Modal homogeneity parallels plural definite homogeneity
 
 The paper demonstrates that weak necessity modals pattern exactly like
-plural definites with respect to negation. We encode the key data points
-using the `HomogeneityDatum` type from `Plurals.Homogeneity`. -/
+plural definites with respect to negation. The judgment grid lives as
+`LinguisticExample` rows in the generated `Data.Examples.AghaJeretic2022`
+module; `Generalizations.HomogeneityGap.fromExample` lifts them into the
+cross-paper unembedded-homogeneity pool. -/
 
-/-- *Should* displays homogeneity: under negation, "shouldn't go" is
-    incompatible with an existential followup "but you can" — just like
-    "The guests aren't here" is incompatible with "but some of them are."
+/-- A&J's contribution to the cross-paper unembedded homogeneity pool. -/
+def gapData : List GapDatum :=
+  Examples.all.filterMap fromExample
 
-    Paper examples (8)–(9). -/
-def shouldHomogeneity : HomogeneityDatum :=
-  { positiveSentence := "According to the rules, you should go."
-  , negativeSentence := "According to the rules, you shouldn't go."
-  , allScenario := "All best deontic worlds are go-worlds"
-  , noneScenario := "No best deontic worlds are go-worlds"
-  , gapScenario := "Some but not all best deontic worlds are go-worlds"
-  , positiveInAll := .clearlyTrue
-  , negativeInAll := .clearlyFalse
-  , positiveInNone := .clearlyFalse
-  , negativeInNone := .clearlyTrue
-  , positiveInGap := .neitherTrueNorFalse
-  , negativeInGap := .neitherTrueNorFalse
-  }
+/-- The *should* polarity × scenario grid (paper examples (8)–(9)). -/
+def shouldGrid : List GapDatum :=
+  gapData.filter (·.source.paperLabel == "(8)-(9) modal homogeneity")
 
-/-- *Have to* does NOT display homogeneity: "don't have to go" is compatible
-    with "but you are allowed to go" — narrow scope reading (¬□ = ◇¬)
-    available, unlike *should* which only allows wide scope (□¬).
+/-- Every datum this paper contributes feeds the pooled cross-paper data. -/
+theorem gapData_subset_allData :
+    ∀ d ∈ gapData, d ∈ Generalizations.HomogeneityGap.allData := by decide
 
-    Paper example (9b). -/
-def haveToNoHomogeneity : HomogeneityDatum :=
-  { positiveSentence := "According to the rules, you have to go."
-  , negativeSentence := "According to the rules, you don't have to go."
-  , allScenario := "All best deontic worlds are go-worlds"
-  , noneScenario := "No best deontic worlds are go-worlds"
-  , gapScenario := "Some but not all best deontic worlds are go-worlds"
-  , positiveInAll := .clearlyTrue
-  , negativeInAll := .clearlyFalse
-  , positiveInNone := .clearlyFalse
-  , negativeInNone := .clearlyTrue
-  -- have-to is bivalent: dominant reading under negation is ¬□ (narrow scope)
-  , positiveInGap := .clearlyFalse
-  , negativeInGap := .clearlyTrue
-  }
+/-- The *should* grid: classical values in the uniform scenarios, ★ in both
+    gap cells — under negation, "shouldn't go" is incompatible with an
+    existential followup "but you can", just like "The guests aren't here"
+    is incompatible with "but some of them are." -/
+theorem shouldGrid_observed :
+    shouldGrid.map (fun d => (d.polarity, d.scenario, d.observed)) =
+      [(.positive, .all, .true), (.positive, .none, .false),
+       (.positive, .gap, .indet),
+       (.negative, .all, .false), (.negative, .none, .true),
+       (.negative, .gap, .indet)] := by decide
 
-theorem should_has_gap :
-    shouldHomogeneity.positiveInGap = .neitherTrueNorFalse := rfl
-
+/-- *Have to* does NOT display homogeneity (paper example (9b)): both gap
+    cells are determinate, and "don't have to go" is clearly true in the
+    mixed scenario — the narrow-scope reading (¬□ = ◇¬) is available,
+    unlike *should* which only allows wide scope (□¬). -/
 theorem haveTo_no_gap :
-    haveToNoHomogeneity.negativeInGap = .clearlyTrue := rfl
+    (fromExample Examples.haveTo_neg_gap).map (·.observed) = some .true ∧
+    (fromExample Examples.haveTo_pos_gap).map (·.observed) ≠ some .indet :=
+  ⟨by decide, by decide⟩
+
+/-- Representative two-world domain for each scenario; a world is identified
+    with the prejacent's truth value at it. -/
+def scenarioDomain : GapScenario → List Bool
+  | .all  => [true, true]
+  | .none => [false, false]
+  | .gap  => [true, false]
+
+/-- The trivalent semantics as a `GapPredict`: negative polarity predicates
+    the negated prejacent of the same plurality (homogeneity = symmetric
+    negation, §3.1). -/
+def gapPredict : GapPredict := fun pol s =>
+  match pol with
+  | .positive => shouldEval (scenarioDomain s) id
+  | .negative => shouldEval (scenarioDomain s) (fun w => !w)
+
+/-- The trivalent semantics reproduces every cell of the *should* grid. -/
+theorem gapPredict_matches_shouldGrid :
+    ∀ d ∈ shouldGrid, gapPredict d.polarity d.scenario = d.observed := by
+  decide
 
 -- ============================================================================
 -- §5. Homogeneity Removal (§3.2)
@@ -302,16 +311,16 @@ This parallels:
 - "The guests aren't here" → #but some are
 - "The guests aren't all here" → ✓but some are -/
 
-/-- *Necessarily* removes homogeneity from *should*, paralleling how
-    *all* removes homogeneity from plural definites. -/
-def necessarilyRemovesModalHomogeneity : HomogeneityRemovalDatum :=
-  { homogeneousSentence := "According to the rules, you shouldn't go."
-  , precisesentence := "According to the rules, you shouldn't necessarily go."
-  , remover := .necessarily  -- modal-domain counterpart of nominal .all
-  , gapScenario := "Some but not all best worlds are go-worlds"
-  , homogeneousJudgment := .neitherTrueNorFalse
-  , preciseJudgment := .clearlyFalse
-  }
+/-- *Necessarily* removes homogeneity from *should*, paralleling how *all*
+    removes homogeneity from plural definites: the bare negated *should*
+    observes ★ in the mixed scenario, the *necessarily*-variant is
+    determinate, and the bare variant recorded as its alternative is
+    degraded. -/
+theorem necessarily_removes_homogeneity :
+    (fromExample Examples.should_neg_gap).map (·.observed) = some .indet ∧
+    (fromExample Examples.necessarily_removes_gap).map (·.observed) ≠ some .indet ∧
+    Examples.necessarily_removes_gap.alternatives.map Prod.snd = [.questionable] :=
+  ⟨by decide, by decide, rfl⟩
 
 /-- `shouldEval` with homogeneity removal (= explicit quantifier insertion)
     reduces to `mustEval` — the gap disappears. -/
@@ -339,37 +348,16 @@ QUD2: What are the minimal requirements?
 (a) "You should do every exercise." → QUD1: ✓; QUD2: #
 (b) "You have to do every exercise." → QUD1: #; QUD2: # -/
 
-structure ModalExceptionDatum where
-  modal : String
-  sentence : String
-  context : String
-  qud1 : String
-  qud2 : String
-  acceptableUnderQUD1 : Bool
-  acceptableUnderQUD2 : Bool
-  deriving Repr
-
-def shouldExceptionTolerance : ModalExceptionDatum where
-  modal := "should"
-  sentence := "To get a perfect grade, you should do every exercise."
-  context := "One can get a perfect grade by doing most exercises; doing all gives extra credit."
-  qud1 := "What is a way to get a perfect grade?"
-  qud2 := "What are the minimal requirements to get a perfect grade?"
-  acceptableUnderQUD1 := true
-  acceptableUnderQUD2 := false
-
-def haveToExceptionTolerance : ModalExceptionDatum where
-  modal := "have to"
-  sentence := "To get a perfect grade, you have to do every exercise."
-  context := "One can get a perfect grade by doing most exercises; doing all gives extra credit."
-  qud1 := "What is a way to get a perfect grade?"
-  qud2 := "What are the minimal requirements to get a perfect grade?"
-  acceptableUnderQUD1 := false
-  acceptableUnderQUD2 := false
-
+/-- Weak necessity tolerates QUD-irrelevant exceptions; strong necessity
+    does not: *should* is acceptable under the way-to-a-perfect-grade QUD
+    and degraded under the minimal-requirements QUD, while *have to* is
+    degraded under both. -/
 theorem should_tolerates_exceptions :
-    shouldExceptionTolerance.acceptableUnderQUD1 = true ∧
-    haveToExceptionTolerance.acceptableUnderQUD1 = false := ⟨rfl, rfl⟩
+    Examples.should_exception_qud1.judgment = .acceptable ∧
+    Examples.should_exception_qud2.judgment = .unacceptable ∧
+    Examples.haveTo_exception_qud1.judgment = .unacceptable ∧
+    Examples.haveTo_exception_qud2.judgment = .unacceptable :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §7. Responses to Indeterminate Sentences (§3.4)
@@ -382,32 +370,13 @@ are preferred. This parallels plural definites ([kriz-2016]).
 
 Paper example (19). -/
 
-structure IndeterminateResponseDatum where
-  sentence : String
-  context : String
-  noResponseFelicitous : Bool
-  wellResponseFelicitous : Bool
-  deriving Repr
-
-def shouldIndeterminateResponse : IndeterminateResponseDatum where
-  sentence := "You should take the right door to go to the living room."
-  context := "Two doors lead to the living room; both are equally good options."
-  noResponseFelicitous := false
-  wellResponseFelicitous := true
-
-def mustIndeterminateResponse : IndeterminateResponseDatum where
-  sentence := "You must take the right door to go to the living room."
-  context := "Two doors lead to the living room; both are equally good options."
-  noResponseFelicitous := true
-  wellResponseFelicitous := false
-
-theorem should_well_not_no :
-    shouldIndeterminateResponse.noResponseFelicitous = false ∧
-    shouldIndeterminateResponse.wellResponseFelicitous = true := ⟨rfl, rfl⟩
-
-theorem must_no_not_well :
-    mustIndeterminateResponse.noResponseFelicitous = true ∧
-    mustIndeterminateResponse.wellResponseFelicitous = false := ⟨rfl, rfl⟩
+/-- In the two-equally-good-doors scenario, the borderline (★)
+    weak-necessity sentence is degraded — outright "No" denial is
+    infelicitous and a "Well, ..." response is preferred — while bivalent
+    *must* is simply false and felicitously deniable. -/
+theorem indeterminate_response_contrast :
+    Examples.should_indet_response.judgment = .questionable ∧
+    Examples.must_indet_response.judgment = .acceptable := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- §8. The X Operator and Witness Sets (§5.1)
@@ -604,24 +573,22 @@ theorem shouldEval_can_gap :
     ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = Truth3.indet :=
   ⟨[true, false], id, by native_decide⟩
 
-/-- The mismatch: domain restriction predicts existential followups are
-    felicitous after negated *should*, but empirically they are not. -/
-structure DomainRestrictionPrediction where
-  sentence : String
-  existentialFollowup : String
-  domainRestrictionPredicts : Bool
-  empiricallyObserved : Bool
-  deriving Repr
+/-- Domain restriction as a `GapPredict`: *should* = ∀ over the refined
+    domain, with negation as Strong Kleene `Truth3.neg`. Bivalent on every
+    cell. -/
+def domainRestrictionPredict : GapPredict := fun pol s =>
+  match pol with
+  | .positive => mustEval (scenarioDomain s) id
+  | .negative => (mustEval (scenarioDomain s) id).neg
 
-def domainRestrictionFails : DomainRestrictionPrediction where
-  sentence := "According to the rules, you shouldn't go."
-  existentialFollowup := "but you are allowed to go"
-  domainRestrictionPredicts := true   -- ¬∀ compatible with ∃
-  empiricallyObserved := false        -- actually infelicitous (#)
-
-theorem domain_restriction_wrong :
-    domainRestrictionFails.domainRestrictionPredicts ≠
-    domainRestrictionFails.empiricallyObserved := by decide
+/-- Domain restriction matches the classical cells of the *should* grid but
+    fails exactly the gap cells: it predicts that negated *should* is true
+    there (¬∀, licensing the existential followup "but you are allowed to
+    go"), where ★ is observed. -/
+theorem domainRestriction_fails_exactly_gap_cells :
+    ∀ d ∈ shouldGrid,
+      (domainRestrictionPredict d.polarity d.scenario = d.observed ↔
+        d.scenario ≠ .gap) := by decide
 
 -- ============================================================================
 -- §11. FunctionWords Bridge
@@ -696,23 +663,15 @@ theorem scopelessness_contrast :
 The paper argues (§6.4) that the homogeneity pattern observed with weak
 necessity modals is part of a general phenomenon shared with bare
 conditionals, generics, and habituals — all analyzable as involving
-plural predication over different semantic domains.
-
-`Plurals.Homogeneity.conditionalExample` already captures the conditional
-case: "They play soccer if the sun shines" displays the same gap as
-"The switches are on" and "You should go."
+plural predication over different semantic domains. Bare conditionals
+("They play soccer if the sun shines", the von Fintel/Gajewski
+observation) show the same ★ pattern in mixed scenarios as the *should*
+grid, under both polarities — the structural parallel that supports the
+unified plural-predication analysis.
 
 Examples (38)–(42): future conditionals, bare past conditionals, generics,
 and habituals all show homogeneity effects and homogeneity removal by
 explicit quantifiers (*necessarily*, *always*, *all*). -/
-
-/-- The existing `conditionalExample` from `Homogeneity.lean` shows the
-    same gap pattern as `shouldHomogeneity` — both have ★ in the gap
-    scenario. This structural parallel supports the unified plural
-    predication analysis. -/
-theorem conditional_parallel :
-    conditionalExample.positiveInGap = shouldHomogeneity.positiveInGap ∧
-    conditionalExample.negativeInGap = shouldHomogeneity.negativeInGap := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- §14. Summary: The Parallel
