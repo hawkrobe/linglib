@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.CyclicAgree
+import Linglib.Studies.CoonKeine2021
 
 /-!
 # Interaction, Satisfaction, and the PCC [deal-2024]
@@ -39,6 +40,16 @@ This study file connects [deal-2024]'s framework to both:
 2. **[bejar-rezac-2009]** (`CyclicAgree.lean`): probe satisfaction
    in Deal's sense corresponds to residue depletion in cyclic Agree —
    a DP satisfies SAT:[PART] iff it depletes the partial probe's residue.
+3. **[coon-keine-2021]** (`Studies/CoonKeine2021.lean`): strong and
+   weak coincide with gluttony cell-for-cell; Me-First diverges
+   exactly at 1>1 (`mefirst_diverges_from_gluttony`).
+
+The licitness function is *run*, not tabulated: `runProbe` walks the
+goal sequence with interaction, satisfaction, and dynamic narrowing
+as state transitions (`step`), with `step_int_mono` ("dynamic
+interaction only narrows") and `step_of_satisfied` (a satisfied
+probe is inert) as the probe-state laws; `isLicit` and the (1)-table
+theorems are derived from runs.
 
 -/
 
@@ -131,34 +142,115 @@ structure DealGrammar where
 -- § 5: Licitness
 -- ============================================================================
 
+/-- Downward closure of a person feature in the (7) geometry (same
+    convention as `Segment.below`, `Phi/Articulation.lean`): the
+    features that bearing this one entails. -/
+def PersonFeature.below : PersonFeature → List PersonFeature
+  | .phi => [.phi]
+  | .part => [.phi, .part]
+  | .spkr => [.phi, .part, .spkr]
+  | .addr => [.phi, .part, .addr]
+
+/-- The entailment order: `s ≤ t` iff bearing `t` entails bearing
+    `s`; [φ] is bottom, [SPKR]/[ADDR] maximal. "More specific" =
+    larger. -/
+instance : PartialOrder PersonFeature where
+  le s t := s ∈ t.below
+  le_refl s := by cases s <;> decide
+  le_trans s t u hst htu := by
+    revert hst htu; cases s <;> cases t <;> cases u <;> decide
+  le_antisymm s t hst hts := by
+    revert hst hts; cases s <;> cases t <;> decide
+
+instance : DecidableRel (α := PersonFeature) (· ≤ ·) := fun s t =>
+  inferInstanceAs (Decidable (s ∈ t.below))
+
+/-- The probe's state during its walk over the goal sequence
+    (her (8), (44)–(47)): the current interaction condition, the
+    satisfaction flag, and the positions of the goals interacted
+    with. -/
+structure ProbeState where
+  int : PersonFeature
+  satisfied : Bool
+  agreed : List Nat
+  deriving DecidableEq, Repr
+
+/-- Initial state: [INT:φ], unsatisfied, nothing agreed. -/
+def ProbeState.initial : ProbeState := ⟨.phi, false, []⟩
+
+/-- The dynamic-interaction target a goal contributes (her §5):
+    `[F]↑` narrows INT to [F] when the interacted goal bears [F];
+    in the combined setting `[SPKR]↑` takes priority. -/
+def narrowTarget (d : DynInteraction) (p : Person) : Option PersonFeature :=
+  match d with
+  | .none_ => none
+  | .part => if dpBears p .part then some .part else none
+  | .spkr => if dpBears p .spkr then some .spkr else none
+  | .partAndSpkr =>
+      if dpBears p .spkr then some .spkr
+      else if dpBears p .part then some .part
+      else none
+
+/-- One step of the probe's walk: a satisfied probe is inert
+    (her (8b)); otherwise a goal bearing the current INT is
+    interacted with (its position recorded), satisfaction is checked
+    against the goal, and dynamic interaction narrows INT (her
+    (44)–(47)). The narrowing is guarded to be specificity-increasing
+    — vacuously for every grammar of the paper, where a run has at
+    most one narrowing target; the guard makes `step_int_mono` true
+    by construction. -/
+def step (g : DealGrammar) (st : ProbeState) (t : Person × Nat) : ProbeState :=
+  if st.satisfied then st
+  else if dpBears t.1 st.int then
+    { int :=
+        match narrowTarget g.dynInteraction t.1 with
+        | some f => if st.int ≤ f then f else st.int
+        | none => st.int
+      satisfied :=
+        match g.satisfaction with
+        | some f => dpBears t.1 f
+        | none => false
+      agreed := st.agreed ++ [t.2] }
+  else st
+
+/-- Run the probe over a goal sequence, in interaction order. -/
+def runProbe (g : DealGrammar) (goals : List Person) : ProbeState :=
+  goals.zipIdx.foldl (step g) .initial
+
+/-- "Dynamic interaction only narrows": along any run, the
+    interaction condition only becomes more specific — the
+    probe-state law that makes [deal-2024]'s INT a well-behaved
+    object. -/
+theorem step_int_mono (g : DealGrammar) (st : ProbeState)
+    (t : Person × Nat) : st.int ≤ (step g st t).int := by
+  unfold step
+  split
+  · exact le_refl _
+  · split
+    · simp only
+      split
+      · split
+        · assumption
+        · exact le_refl _
+      · exact le_refl _
+    · exact le_refl _
+
+/-- A satisfied probe is inert: satisfaction halts all further
+    interaction (her (8b)). -/
+theorem step_of_satisfied (g : DealGrammar) (st : ProbeState)
+    (t : Person × Nat) (h : st.satisfied = true) : step g st t = st := by
+  unfold step
+  rw [if_pos h]
+
 /-- Is a clitic combination ⟨IO, DO⟩ licit under a Deal grammar?
-
-    The probe encounters DO first ("DO preference"):
-
-    1. If DO bears the SAT feature → probe satisfied → halts before IO →
-       IO not licensed → **illicit**.
-    2. Otherwise, the probe copies features from DO. Dynamic interaction
-       may narrow the probe's subsequent INT condition.
-    3. If narrowing occurred, IO must bear the narrowed feature to be
-       visible to the probe. If IO is invisible → **illicit**.
-    4. If no narrowing, IO is always visible → **licit**. -/
+    Cliticization of both objects requires Agree with both (her §4),
+    and the probe interacts with the DO first (DO preference, her
+    (17), on either the high- or the low-probe structure): licit iff
+    the run over ⟨DO, IO⟩ interacts with both goals. The PCC
+    varieties are now *derived* by running the probe, not read off a
+    table. -/
 def isLicit (g : DealGrammar) (io do_ : Person) : Bool :=
-  let doSatisfies := match g.satisfaction with
-    | none => false
-    | some f => dpBears do_ f
-  if doSatisfies then false
-  else
-    let narrowedTo : Option PersonFeature := match g.dynInteraction with
-      | .none_ => none
-      | .part => if dpBears do_ .part then some .part else none
-      | .spkr => if dpBears do_ .spkr then some .spkr else none
-      | .partAndSpkr =>
-          if dpBears do_ .spkr then some .spkr
-          else if dpBears do_ .part then some .part
-          else none
-    match narrowedTo with
-    | none => true
-    | some f => dpBears io f
+  (runProbe g [do_, io]).agreed.length == 2
 
 -- ============================================================================
 -- § 6: Grammar Instances
@@ -265,11 +357,11 @@ def licitCount (g : DealGrammar) : Nat :=
   let ps : List Person := [.first, .second, .third]
   (ps.flatMap (λ io => ps.filter (λ do_ => isLicit g io do_))).length
 
-theorem strong_licit_count : licitCount strong = 3 := by native_decide
-theorem mefirst_licit_count : licitCount meFirst = 6 := by native_decide
-theorem weak_licit_count : licitCount weak = 7 := by native_decide
-theorem sd_licit_count : licitCount strictlyDescending = 5 := by native_decide
-theorem nopcc_licit_count : licitCount noPCC = 9 := by native_decide
+theorem strong_licit_count : licitCount strong = 3 := by decide
+theorem mefirst_licit_count : licitCount meFirst = 6 := by decide
+theorem weak_licit_count : licitCount weak = 7 := by decide
+theorem sd_licit_count : licitCount strictlyDescending = 5 := by decide
+theorem nopcc_licit_count : licitCount noPCC = 9 := by decide
 
 -- ============================================================================
 -- § 13: Entailment Relations
@@ -409,8 +501,8 @@ theorem ad_3_1 : isLicit aDescending .third .first = false := rfl
 theorem ad_3_2 : isLicit aDescending .third .second = false := rfl
 theorem ad_2_2 : isLicit aDescending .second .second = false := rfl
 
-theorem yf_licit_count : licitCount youFirst = 6 := by native_decide
-theorem ad_licit_count : licitCount aDescending = 5 := by native_decide
+theorem yf_licit_count : licitCount youFirst = 6 := by decide
+theorem ad_licit_count : licitCount aDescending = 5 := by decide
 
 -- ============================================================================
 -- § 18: Reverse PCC (§6.2)
@@ -448,21 +540,19 @@ theorem rsd_1_2_bad : reverseLicit reverseSD .first .second = false := rfl
     non-SAP DO; any SAP DO is illicit regardless of IO. -/
 theorem strong_iff_3p_do (io do_ : Person) :
     isLicit strong io do_ = true ↔ ¬do_.IsSAP := by
-  cases io <;> cases do_ <;> simp [isLicit, strong, dpBears, decomposePerson,
-    Person.IsSAP]
+  cases io <;> cases do_ <;> decide
 
 /-- Weak PCC (2b): if IO is 3P (`[−participant]`), DO must be 3P.
     Equivalently: the only illicit cells are ⟨non-SAP IO, SAP DO⟩. -/
 theorem weak_illicit_iff (io do_ : Person) :
     isLicit weak io do_ = false ↔ ¬io.IsSAP ∧ do_.IsSAP := by
-  cases io <;> cases do_ <;> simp [isLicit, weak, dpBears, decomposePerson,
-    Person.IsSAP]
+  cases io <;> cases do_ <;> decide
 
 /-- Me-first PCC (2c): if 1P is present, it must be IO. Equivalently:
     DO cannot be 1P. -/
 theorem mefirst_iff_not_1p_do (io do_ : Person) :
     isLicit meFirst io do_ = true ↔ dpBears do_ .spkr = false := by
-  cases io <;> cases do_ <;> simp [isLicit, meFirst, dpBears, decomposePerson]
+  cases io <;> cases do_ <;> decide
 
 /-- Strictly descending PCC (2d): IO must outrank DO on 1 > 2 > 3
     (prominence). For featurally distinct cells, this is exactly the
@@ -473,8 +563,9 @@ theorem sd_off_diagonal_iff_outranks (io do_ : Person)
     (h : decomposePerson io ≠ decomposePerson do_) :
     isLicit strictlyDescending io do_ = true ↔
       io.prominence > do_.prominence := by
-  cases io <;> cases do_ <;> simp_all [isLicit, strictlyDescending, dpBears,
-    decomposePerson, Person.prominence]
+  cases io <;> cases do_ <;> first
+    | exact absurd rfl h
+    | decide
 
 -- ============================================================================
 -- § 20: Additional Entailment
@@ -500,5 +591,45 @@ theorem dpBears_grounded_in_decomposePerson (p : Person) :
     dpBears p .part = (decomposePerson p).hasParticipant ∧
     dpBears p .spkr = (decomposePerson p).hasAuthor := by
   cases p <;> exact ⟨rfl, rfl⟩
+
+/-! ### Bridge: feature gluttony ([coon-keine-2021])
+
+The paper engages [coon-keine-2021] directly (PF ramifications of
+Agree "per Coon and Keine (2021)"; both are responses to the same
+PCC typology). The two mechanisms — a probe that *stops too early*
+(satisfaction) vs. a probe that *agrees too much* (gluttony) —
+coincide on the strong and weak varieties cell-for-cell, and part
+ways exactly on Me-First's 1>1 cell: Deal's [SAT:SPKR] probe is
+satisfied by a first-person DO regardless of the IO (illicit), while
+a gluttony probe fully matched by a first-person IO cannot glutton
+(licit). [pancheva-zubizarreta-2018]'s me-first grammar sides with
+Deal on that cell. -/
+
+/-- The 1/2/3 grid both accounts state their typologies over. -/
+private def grid3 : List Person := [.first, .second, .third]
+
+open CoonKeine2021 in
+/-- Strong and weak coincide with gluttony cell-for-cell: Deal's
+    strong = K-opaque-dative gluttony; Deal's weak = transparent
+    weak-probe gluttony. -/
+theorem strong_weak_match_gluttony :
+    (∀ io ∈ grid3, ∀ do_ ∈ grid3,
+      (isLicit strong io do_ = true ↔
+        ¬ pccViolation weakProbe true io do_)) ∧
+    (∀ io ∈ grid3, ∀ do_ ∈ grid3,
+      (isLicit weak io do_ = true ↔
+        ¬ pccViolation weakProbe false io do_)) := by
+  decide
+
+open CoonKeine2021 in
+/-- Me-First diverges from gluttony exactly at 1>1: satisfaction
+    bans it, gluttony permits it. All other cells agree. -/
+theorem mefirst_diverges_from_gluttony :
+    (∀ io ∈ grid3, ∀ do_ ∈ grid3, (io, do_) ≠ (.first, .first) →
+      (isLicit meFirst io do_ = true ↔
+        ¬ pccViolation meFirstProbe false io do_)) ∧
+    isLicit meFirst .first .first = false ∧
+    ¬ pccViolation meFirstProbe false .first .first := by
+  decide
 
 end Deal2024
