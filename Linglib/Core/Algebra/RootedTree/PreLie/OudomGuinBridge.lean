@@ -932,8 +932,8 @@ private theorem ckIso_circ_intertwine_insertion
     The OG-faithful route is now the active plan; see
     `[[feedback-substrate2-not-og]]` and `[[project-q5c-architecture]]`.
     Substrate infrastructure required for the new route:
-    - `GrossmanLarsonPairing.lean` (currently sorry-fenced).
-    - `Nonplanar.autCard` (Aut.lean, sorry).
+    - `GrossmanLarsonPairing.lean` (sorry-free, incl. nondegeneracy).
+    - `Nonplanar.autCard` (Aut.lean, sorry-free).
     - `Δ^ρ` cocycle (PruningNonplanar.lean, sorry-free) — REUSED.
     - `B+_a` operator (PruningNonplanar.lean, sorry-free) — REUSED.
 
@@ -1048,15 +1048,14 @@ theorem gl_product_eq_oudomGuinStar
 
 /-! ## §3: Q6 — `mul_assoc_basis` for `R = ℤ` via Q3 + Q5
 
-Combining `oudomGuinStar_assoc` (Q3, currently sorry-fenced at line 1895
-of `OudomGuinCirc.lean`) with `gl_product_eq_oudomGuinStar` (Q5c, also
+Combining `oudomGuinStar_assoc` (Q3, proved sorry-free in
+`OudomGuinCirc.lean`) with `gl_product_eq_oudomGuinStar` (Q5c,
 sorry-fenced above) closes `mul_assoc_basis` for `R = ℤ`. -/
 
 /-- **Q6 (for R = ℤ)**: associativity of the Grossman-Larson product on basis.
 
-    Doubly sorry-fenced: depends on Q3 (`oudomGuinStar_assoc`'s mul case)
-    + Q5c (`gl_product_eq_oudomGuinStar`). Verifies the structural path
-    works once both are closed. -/
+    Q3 (`oudomGuinStar_assoc`) is proved; the remaining gate is Q5c
+    (`gl_product_eq_oudomGuinStar`). -/
 theorem GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((GrossmanLarson.of' F₁ : GrossmanLarson ℤ α) *
@@ -1071,10 +1070,10 @@ theorem GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw
     ((GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α)))
   set X₃ := ckIsoSymmetricAlgebra.symm
     ((GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α)))
-  have h := oudomGuinStar_assoc X₁ X₂ X₃   -- Q3 (sorry-fenced)
+  have h := oudomGuinStar_assoc X₁ X₂ X₃   -- Q3 (proved)
   -- Apply ckIsoSymmetricAlgebra to both sides and use Q5c to transport.
   have := congrArg (ckIsoSymmetricAlgebra (α := α)) h
   -- The (★ ↔ GL.product) intertwining (Q5c, sorry-fenced) gives the result.
-  sorry  -- Q5c + Q3 + simp closure; ~5-20 LOC once both are sorry-free
+  sorry  -- TODO: Q5c + simp closure; ~5-20 LOC once Q5c is sorry-free
 
 end RootedTree

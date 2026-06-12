@@ -123,11 +123,126 @@ theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
   rw [← List.map_append]
   exact (Multiset.toList_add_perm M N).map _
 
+/-- Planar substrate for `insertionMultiset_card_eq`: every output list in
+    `insertionForest host guests` has length equal to the host length.
+    `insertionForest` produces `T' :: F'` lists by recursion on the host;
+    each step prepends one tree and recurses on the tail. -/
+private theorem _root_.RootedTree.Planar.Pathed.insertionForest_length
+    {α : Type*} :
+    ∀ (host guests : List (Planar α)) {L : List (Planar α)},
+      L ∈ Planar.Pathed.insertionForest host guests → L.length = host.length
+  | [],     [],         L, hL => by
+    rw [Planar.Pathed.insertionForest_nil_nil] at hL
+    rw [Multiset.mem_singleton.mp hL]
+  | [],     _ :: _,     L, hL => by
+    rw [Planar.Pathed.insertionForest_empty_host_nonempty_guests] at hL
+    exact absurd hL (Multiset.notMem_zero L)
+  | T :: F, [],         L, hL => by
+    rw [Planar.Pathed.insertionForest_cons_host_nil_guests] at hL
+    rw [Multiset.mem_singleton.mp hL]
+  | T :: F, T_g :: Ts,  L, hL => by
+    rw [Planar.Pathed.insertionForest_cons_cons] at hL
+    -- L ∈ bind of bind of map; unfold mem step by step.
+    rw [Multiset.mem_bind] at hL
+    obtain ⟨assignment, _hass, hL⟩ := hL
+    rw [Multiset.mem_bind] at hL
+    obtain ⟨T', _hT', hL⟩ := hL
+    rw [Multiset.mem_map] at hL
+    obtain ⟨F', hF'mem, hL_eq⟩ := hL
+    -- L = T' :: F', with F' from the inner insertionForest F (sub-guests).
+    have hF'len : F'.length = F.length :=
+      Planar.Pathed.insertionForest_length F _ hF'mem
+    rw [← hL_eq, List.length_cons, hF'len, List.length_cons]
+  termination_by host _ => host.length
+
 /-- The insertion multiset preserves cardinality: every forest in
-    `insertionMultiset A B` has the same cardinality as `A`. Stub. -/
+    `insertionMultiset A B` has the same cardinality as `A`.
+
+    Proof: `insertionMultiset A B` is built from
+    `insertionForest (A.toList.map Q.out) (B.toList.map Q.out)`; every
+    output list `L` has `L.length = (A.toList.map Q.out).length = A.card`
+    (via `Planar.Pathed.insertionForest_length`); and the cardinality of
+    the lifted `Multiset.ofList (L.map mk)` equals `L.length`. -/
 theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
     {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset A B) :
-    F'.card = A.card := sorry
+    F'.card = A.card := by
+  unfold insertionMultiset at hF'
+  rw [Multiset.mem_map] at hF'
+  obtain ⟨L, hL_mem, hL_eq⟩ := hF'
+  have hLlen : L.length = (A.toList.map Quotient.out).length :=
+    Planar.Pathed.insertionForest_length _ _ hL_mem
+  rw [← hL_eq]
+  -- F'.card = (Multiset.ofList (L.map mk)).card = (L.map mk).length = L.length.
+  show (Multiset.ofList (L.map Nonplanar.mk)).card = A.card
+  rw [Multiset.coe_card, List.length_map, hLlen, List.length_map]
+  exact Multiset.length_toList A
+
+/-! ## §3: Root-label preservation for singleton hosts
+
+When the host forest is a single tree `{T}`, every output forest of
+`insertionMultiset {T} B` is a singleton `{T'}` and `T'.rootLabel =
+T.rootLabel`: grafting guests into a tree only modifies its subtrees,
+never its root label.
+
+The proof descends through the planar substrate using
+`Planar.Pathed.insertionForest_singleton` and `multiGraft_node` (which
+preserves the head label by structure). -/
+
+/-- **Planar root preservation**: `Planar.label (multiGraft T pairs) =
+    Planar.label T`. Follows directly from `multiGraft_node`, which
+    rebuilds the root with the same label `a`. -/
+private theorem _root_.RootedTree.Planar.label_multiGraft
+    (T : Planar α) (pairs : List (Planar.Pathed.Path × Planar α)) :
+    (Planar.Pathed.multiGraft T pairs).label = T.label := by
+  cases T with
+  | node a cs => rw [Planar.Pathed.multiGraft_node, Planar.label_node, Planar.label_node]
+
+/-- **Singleton-host root preservation**: every forest in
+    `insertionMultiset {T} B` is a singleton `{T'}` and `T'.rootLabel =
+    T.rootLabel`. Descends through `insertionForest_singleton` +
+    `Planar.label_multiGraft`. -/
+theorem insertionMultiset_singleton_rootLabel
+    (T : Nonplanar α) (B : Multiset (Nonplanar α))
+    {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset {T} B) :
+    ∃ T' : Nonplanar α, F' = ({T'} : Multiset (Nonplanar α)) ∧
+      T'.rootLabel = T.rootLabel := by
+  unfold insertionMultiset at hF'
+  rw [Multiset.mem_map] at hF'
+  obtain ⟨L, hL_mem, hL_eq⟩ := hF'
+  -- ({T} : Multiset _).toList = [T] via `Multiset.toList_singleton`.
+  have h_toList : ({T} : Multiset (Nonplanar α)).toList.map Quotient.out =
+      [Quotient.out T] := by
+    rw [Multiset.toList_singleton]; rfl
+  rw [h_toList] at hL_mem
+  -- Use `insertionForest_singleton`.
+  rw [Planar.Pathed.insertionForest_singleton] at hL_mem
+  rw [Multiset.mem_map] at hL_mem
+  obtain ⟨T'_pl, hT'_pl_mem, hT'_pl_eq⟩ := hL_mem
+  -- T'_pl ∈ insertion (Q.out T) gs, so T'_pl = multiGraft (Q.out T) (choice.zip gs)
+  -- for some choice. Hence label T'_pl = label (Q.out T) = T.rootLabel.
+  refine ⟨Nonplanar.mk T'_pl, ?_, ?_⟩
+  · -- F' = {Nonplanar.mk T'_pl}: L = [T'_pl], so F' = ofList [mk T'_pl] = {mk T'_pl}.
+    rw [← hL_eq, ← hT'_pl_eq]
+    show (Multiset.ofList (([T'_pl] : List (Planar α)).map Nonplanar.mk) :
+            Multiset (Nonplanar α)) = {Nonplanar.mk T'_pl}
+    rfl
+  · -- Root label preservation through the planar substrate.
+    -- T'_pl ∈ insertion T.out (...): T'_pl = multiGraft T.out pairs for some pairs.
+    rw [Nonplanar.rootLabel_mk]
+    -- Unfold `insertion` to extract the choice and reduce label-equality.
+    rw [Planar.Pathed.insertion_def, Multiset.mem_coe, List.mem_map] at hT'_pl_mem
+    obtain ⟨choice, _hchoice_mem, hchoice_eq⟩ := hT'_pl_mem
+    rw [← hchoice_eq]
+    -- Now: label (multiGraft T.out (choice.zip ...)) = T.rootLabel
+    rw [Planar.label_multiGraft]
+    -- label T.out = rootLabel T via `rootLabel_mk T.out_eq`.
+    -- (Quotient.out T).label = (mk (Quotient.out T)).rootLabel by `rootLabel_mk`;
+    -- mk (Quotient.out T) = T by `T.out_eq`.
+    show (Quotient.out T).label = T.rootLabel
+    have h_eq : Nonplanar.mk (Quotient.out T) = T := T.out_eq
+    calc (Quotient.out T).label
+        = (Nonplanar.mk (Quotient.out T)).rootLabel := (Nonplanar.rootLabel_mk _).symm
+      _ = T.rootLabel := by rw [h_eq]
 
 end Nonplanar
 

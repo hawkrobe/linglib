@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
+import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Mathlib.Tactic.Ring
 
 set_option autoImplicit false
@@ -368,21 +370,63 @@ The hard case reduces to the substrate lemma:
 product). This is `singleton_node_a_insertion_eq_bPlus_gl_mul` below.
 -/
 
+/-- `Multiset.bind` as a mapped sum (`join` is definitionally `sum`). -/
+private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
+    (f : γ → Multiset δ) : s.bind f = (s.map f).sum := rfl
+
+/-- The `true`-bucket of a zip over `Quotient.out` representatives has
+    the nonplanar `true`-bucket as its `mk`-image. -/
+private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bool) :
+    (((l.map Quotient.out).zip assn).filterMap
+        (fun p => if p.2 then some p.1 else none)).map Nonplanar.mk =
+      (l.zip assn).filterMap (fun p => if p.2 then some p.1 else none) := by
+  induction l generalizing assn with
+  | nil => rfl
+  | cons x l ih =>
+    cases assn with
+    | nil => rfl
+    | cons b assn =>
+      cases b with
+      | true =>
+        show Nonplanar.mk (Quotient.out x) ::
+            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
+        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
+        rw [hx, ih]
+        rfl
+      | false => exact ih assn
+
+/-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
+private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bool) :
+    (((l.map Quotient.out).zip assn).filterMap
+        (fun p => if p.2 then none else some p.1)).map Nonplanar.mk =
+      (l.zip assn).filterMap (fun p => if p.2 then none else some p.1) := by
+  induction l generalizing assn with
+  | nil => rfl
+  | cons x l ih =>
+    cases assn with
+    | nil => rfl
+    | cons b assn =>
+      cases b with
+      | true => exact ih assn
+      | false =>
+        show Nonplanar.mk (Quotient.out x) ::
+            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
+        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
+        rw [hx, ih]
+        rfl
+
 /-- **NIM-level keystone**: at the Nonplanar multi-insertion level, grafting
     `B` into the singleton host `{node a A'}` decomposes by partitioning
     B's grafting positions into "at the root vertex" (becomes new
     children) vs "in A's subtrees" (recursive NIM).
 
-    `(letI : DecidableEq (Nonplanar α) := Classical.decEq _`
-    ` Nonplanar.insertionMultiset {Nonplanar.node a A'} B) =`
-    `(B.powerset.bind (fun B₁ =>`
-    `  (Nonplanar.insertionMultiset A' B₁).map`
-    `    (fun F' => ({Nonplanar.node a (F' + (B - B₁))} : Forest _))))`
-
-    Sorry-fenced — the planar-level partition (via
-    `vertices_multiGraft_decomp` + assignment-bucketing) underlies
-    this. Singleton-host-with-fixed-root-label case of A3.3-style
-    reasoning. -/
+    Descent through the quotient: the singleton host's canonical planar
+    representative is `PlanarEquiv`-swapped for a visible planar node,
+    `Planar.Pathed.insertion_node_split` provides the root-vs-subtree
+    mask decomposition, and the mask enumeration is converted to the
+    powerset bind via `listChoices_bridge_powerset_paired` plus the
+    powerset partition involution (the mask convention has `true` =
+    root guests, while the powerset bind runs over the subtree bucket). -/
 private theorem nim_singleton_node_a_decomp
     (a : α) (A' B : Forest (Nonplanar α)) :
     Nonplanar.insertionMultiset
@@ -391,7 +435,158 @@ private theorem nim_singleton_node_a_decomp
        B.powerset.bind fun B₁ =>
          (Nonplanar.insertionMultiset A' B₁).map fun F' =>
            ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) := by
-  sorry
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- §1: the canonical planar representative of the host is equivalent to
+  -- the visible node on A''s canonical children list.
+  have h_mk2 : Nonplanar.mk (Planar.node a (A'.toList.map Quotient.out)) =
+      Nonplanar.node a A' := by
+    rw [← Nonplanar.node_mk_planar_list]
+    congr 1
+    rw [List.map_map,
+        show A'.toList.map (Nonplanar.mk ∘ Quotient.out) = A'.toList from
+          (List.map_congr_left fun x _ => Quotient.out_eq x).trans
+            (List.map_id _)]
+    exact A'.coe_toList
+  have h_equiv : Planar.PlanarEquiv
+      (Quotient.out (Nonplanar.node a A'))
+      (Planar.node a (A'.toList.map Quotient.out)) :=
+    Nonplanar.mk_eq_mk_iff.mp
+      (((Nonplanar.node a A').out_eq).trans h_mk2.symm)
+  -- §2: unfold NIM; the host list is the singleton of the canonical rep.
+  unfold Nonplanar.insertionMultiset
+  rw [show (({Nonplanar.node a A'} : Forest (Nonplanar α)).toList.map
+        Quotient.out : List (Planar α))
+      = [Quotient.out (Nonplanar.node a A')] from by
+    rw [Multiset.toList_singleton]
+    rfl]
+  -- §3: swap the host representative under the msform map.
+  have h_host := Planar.Pathed.insertionForest_planarEquiv_host
+    (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
+  have h_host' :
+      (Planar.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]
+          (B.toList.map Quotient.out)).map
+        (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
+          Multiset (Nonplanar α))) =
+      (Planar.Pathed.insertionForest
+          [Planar.node a (A'.toList.map Quotient.out)]
+          (B.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+    have h2 := congrArg
+      (Multiset.map (fun l : List (Nonplanar α) =>
+        (Multiset.ofList l : Multiset (Nonplanar α)))) h_host
+    rw [Multiset.map_map, Multiset.map_map] at h2
+    exact h2
+  rw [h_host']
+  -- §4: singleton-forest reduction + the node-split engine.
+  rw [Planar.Pathed.insertionForest_singleton, Multiset.map_map,
+      Planar.Pathed.insertion_node_split, Multiset.map_bind]
+  -- §5: convert the RHS powerset bind to the mask enumeration. The mask
+  -- convention has `true` = root guests, so the powerset bind (over the
+  -- subtree bucket B₁) is first flipped by the partition involution.
+  have h_rhs : (B.powerset.bind fun B₁ =>
+        (Nonplanar.insertionMultiset A' B₁).map fun F' =>
+          ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) =
+      (Multiset.ofList
+          (Planar.Pathed.listChoices [true, false] B.toList.length)).bind
+        (fun assn =>
+          (Nonplanar.insertionMultiset A'
+              (((B.toList.zip assn).filterMap
+                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
+                Multiset (Nonplanar α))).map
+            fun F' => ({Nonplanar.node a (F' +
+              (((B.toList.zip assn).filterMap
+                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
+                Multiset (Nonplanar α)))} : Forest (Nonplanar α))) := by
+    -- Step A: flip the partition so the bind variable is the root bucket.
+    rw [bind_eq_map_sum]
+    rw [Multiset.powerset_partition_swap B
+      (fun B₁ rest => (Nonplanar.insertionMultiset A' B₁).map fun F' =>
+        ({Nonplanar.node a (F' + rest)} : Forest (Nonplanar α)))]
+    -- Step B: pair form + the powerset↔mask bridge.
+    rw [show (B.powerset.map fun s =>
+          (Nonplanar.insertionMultiset A' (B - s)).map fun F' =>
+            ({Nonplanar.node a (F' + s)} : Forest (Nonplanar α))) =
+        ((B.powerset.map fun s => (s, B - s)).map
+          fun pr => (Nonplanar.insertionMultiset A' pr.2).map fun F' =>
+            ({Nonplanar.node a (F' + pr.1)} : Forest (Nonplanar α))) from by
+      rw [Multiset.map_map]
+      rfl]
+    rw [show (B.powerset.map fun s => (s, B - s)) =
+        (Multiset.ofList
+            (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+          (fun assn =>
+            ((((B.toList.zip assn).filterMap
+                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
+                Multiset (Nonplanar α)),
+             (((B.toList.zip assn).filterMap
+                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
+                Multiset (Nonplanar α)))) from by
+      conv_lhs => rw [show B = (↑(B.toList) : Multiset (Nonplanar α)) from
+        B.coe_toList.symm]
+      rw [← Planar.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
+    rw [Multiset.map_map, ← bind_eq_map_sum]
+    rfl
+  refine Eq.trans ?_ h_rhs.symm
+  -- §6: per-mask congruence. Align mask lengths, then reduce each mask.
+  rw [List.length_map]
+  refine Multiset.bind_congr fun assn h_assn => ?_
+  -- Named buckets: planar (out-rep) and nonplanar (canonical) per side.
+  set gs_t : List (Planar α) := ((B.toList.map Quotient.out).zip assn).filterMap
+    (fun p => if p.2 then some p.1 else none) with hgs_t
+  set gs_f : List (Planar α) := ((B.toList.map Quotient.out).zip assn).filterMap
+    (fun p => if p.2 then none else some p.1) with hgs_f
+  set s_t : Multiset (Nonplanar α) := Multiset.ofList
+    ((B.toList.zip assn).filterMap
+      (fun p => if p.2 then some p.1 else none)) with hs_t
+  set s_f : Multiset (Nonplanar α) := Multiset.ofList
+    ((B.toList.zip assn).filterMap
+      (fun p => if p.2 then none else some p.1)) with hs_f
+  -- mk-image facts for the two planar buckets.
+  have h_t_mk : Multiset.ofList (gs_t.map Nonplanar.mk) = s_t := by
+    rw [hgs_t, filterMap_zip_out_mk_t, hs_t]
+  have h_f_perm : (gs_f.map Nonplanar.mk).Perm
+      ((s_f.toList.map Quotient.out).map Nonplanar.mk) := by
+    apply Multiset.coe_eq_coe.mp
+    rw [hgs_f, filterMap_zip_out_mk_f, List.map_map,
+        show s_f.toList.map (Nonplanar.mk ∘ Quotient.out) = s_f.toList from
+          (List.map_congr_left fun x _ => Quotient.out_eq x).trans
+            (List.map_id _),
+        Multiset.coe_toList, hs_f]
+  have h_guests := Planar.Pathed.insertionForest_msform_invariance_guests
+    (A'.toList.map Quotient.out) h_f_perm
+  -- Assemble: fuse post-maps, factor through msform, swap guests, recombine.
+  rw [Multiset.map_map]
+  calc (Planar.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+        ((((fun L => (Multiset.ofList (L.map Nonplanar.mk) :
+            Multiset (Nonplanar α))) ∘ fun T' => [T']))
+          ∘ (fun cs' => Planar.node a (gs_t ++ cs')))
+      = ((Planar.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
+            Multiset (Nonplanar α)))).map
+        (fun M => ({Nonplanar.node a (s_t + M)} : Forest (Nonplanar α))) := by
+        rw [Multiset.map_map]
+        refine Multiset.map_congr rfl fun cs' _ => ?_
+        show ({Nonplanar.mk (Planar.node a (gs_t ++ cs'))} :
+          Forest (Nonplanar α)) = _
+        congr 1
+        rw [← Nonplanar.node_mk_planar_list]
+        congr 1
+        rw [List.map_append, ← Multiset.coe_add, h_t_mk]
+    _ = ((Planar.Pathed.insertionForest (A'.toList.map Quotient.out)
+            (s_f.toList.map Quotient.out)).map
+          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
+            Multiset (Nonplanar α)))).map
+        (fun M => ({Nonplanar.node a (s_t + M)} : Forest (Nonplanar α))) := by
+        rw [h_guests]
+    _ = (Nonplanar.insertionMultiset A' s_f).map
+        (fun F' => ({Nonplanar.node a (F' + s_t)} : Forest (Nonplanar α))) := by
+        unfold Nonplanar.insertionMultiset
+        rw [Multiset.map_map, Multiset.map_map]
+        refine Multiset.map_congr rfl fun L _ => ?_
+        show ({Nonplanar.node a (s_t + Multiset.ofList (L.map Nonplanar.mk))} :
+          Forest (Nonplanar α)) = _
+        rw [add_comm]
+        rfl
 
 /-- **Key combinatorial substrate**: grafting `of' B` into the
     singleton-a-rooted host `{node a A'}` equals the a-rooting (via
@@ -406,8 +601,8 @@ private theorem nim_singleton_node_a_decomp
     the GL sum, a-rooted via `bPlusLin a`, yields a corresponding tree
     in the NIM enumeration.
 
-    This is the singleton-a-rooted-host case of A3.3 keystone reasoning.
-    Sorry-fenced; needed for Phase C / Sub-case B1. -/
+    This is the singleton-a-rooted-host case of A3.3 keystone reasoning,
+    proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
 private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (Nonplanar α)) :
     GrossmanLarson.insertion (R := R)
@@ -754,6 +949,75 @@ private lemma sum_powerset_diff_zero_indicator
     rw [h_cond_eq]
     exact ih (fun B₁' => f (T ::ₘ B₁'))
 
+/-- **Helper for the non-singleton-a sub-case**: when `A` is not of the
+    form `{node a A'}` and `A ≠ 0`, every forest of the form
+    `F' + (B - B₁)` (for `F' ∈ NIM A B₁`, `B₁ ⊆ B`) is also not of the
+    form `{node a G}`, so `bMinusBasis a (F' + (B - B₁)) = 0`.
+
+    Cardinality of `F' + (B - B₁)` is `|A| + |B - B₁|` (since
+    `F'.card = A.card` via `insertionMultiset_card_eq`).
+    * If `|A| ≥ 2`: total ≥ 2, not a singleton.
+    * If `|A| + |B - B₁| ≥ 2`: not a singleton.
+    * If `|A| = 1, |B - B₁| = 0`: `F'` is a singleton, but its root label
+      equals `A`'s root label (which is ≠ a since `A` is not singleton-a-rooted),
+      so still not of form `{node a G}`. Uses
+      `Nonplanar.insertionMultiset_singleton_rootLabel`. -/
+private theorem bMinusBasis_nim_add_eq_zero (a : α)
+    (A B₁ B' F' : Forest (Nonplanar α))
+    (hA_ne : A ≠ 0)
+    (hA : ¬ ∃ G' : Forest (Nonplanar α), A = ({Nonplanar.node a G'} : Forest _))
+    (hF' : F' ∈ Nonplanar.insertionMultiset A B₁) :
+    bMinusBasis (R := R) a (F' + B') = 0 := by
+  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  apply bMinusBasis_eq_zero_of_not_singleton_a
+  rintro ⟨G, hG⟩
+  -- (F' + B').card = |A| + |B'|; must equal 1.
+  have hcard_F' : F'.card = A.card :=
+    Nonplanar.insertionMultiset_card_eq A B₁ hF'
+  have h_total_card : (F' + B').card = 1 := by
+    rw [hG]; exact Multiset.card_singleton _
+  rw [Multiset.card_add, hcard_F'] at h_total_card
+  -- A.card ≥ 1 since A ≠ 0.
+  have hA_card_pos : 1 ≤ A.card := by
+    have : A.card ≠ 0 := fun h => hA_ne (Multiset.card_eq_zero.mp h)
+    omega
+  -- So A.card = 1 and B'.card = 0.
+  have hA_card : A.card = 1 := by omega
+  have hB'_card : B'.card = 0 := by omega
+  have hB' : B' = 0 := Multiset.card_eq_zero.mp hB'_card
+  subst hB'
+  -- F' + 0 = F', and F' has card 1, F' = {T'} with T' = node a G.
+  rw [add_zero] at hG
+  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.rootLabel ≠ a.
+  -- Goal: derive contradiction from F' = {node a G} via root preservation.
+  have hF'_card : F'.card = 1 := by rw [hcard_F', hA_card]
+  -- A is a singleton (card 1): A = {T_A} for some T_A.
+  obtain ⟨T_A, hT_A⟩ : ∃ T_A : Nonplanar α, A = {T_A} := by
+    rcases Multiset.card_eq_one.mp hA_card with ⟨T_A, hT_A⟩
+    exact ⟨T_A, hT_A⟩
+  -- T_A.rootLabel ≠ a (otherwise A = {node a (rootChildren T_A)} via node_eta).
+  have hT_A_lab : T_A.rootLabel ≠ a := by
+    intro h_lab
+    apply hA
+    refine ⟨Nonplanar.rootChildren T_A, ?_⟩
+    rw [hT_A]
+    congr 1
+    rw [← h_lab, Nonplanar.node_eta]
+  -- Apply NIM singleton root preservation.
+  subst hT_A
+  obtain ⟨T', hF'_eq, hT'_lab⟩ :=
+    Nonplanar.insertionMultiset_singleton_rootLabel T_A B₁ hF'
+  -- F' = {T'} with T'.rootLabel = T_A.rootLabel ≠ a.
+  -- But hG says F' = {node a G}, so T' = node a G.
+  rw [hF'_eq] at hG
+  have hT'_eq_node : T' = Nonplanar.node a G := Multiset.singleton_inj.mp hG
+  -- Then T'.rootLabel = a, contradicting hT'_lab + hT_A_lab.
+  have hT'_lab_a : T'.rootLabel = a := by
+    rw [hT'_eq_node, Nonplanar.rootLabel_node]
+  rw [hT'_lab_a] at hT'_lab
+  exact hT_A_lab hT'_lab.symm
+
 /-- **Phase C basis case**: for basis `x = of' A, y = of' B`, the OG
     identity holds. Case-analyzes on `A`:
     * `A = 0`: counit = 1, both sides equal `bMinusLin a (of' B)`.
@@ -943,23 +1207,115 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
       exact GrossmanLarson.one_mul _
     · rw [counit_of'_eq, if_neg hA0, zero_smul]
       -- LHS = 0; A ≠ 0 and A is not singleton-a-rooted.
-      -- Approach: expand of' A *_GL of' B via mul_of'_sum_form; each
-      -- summand has form `op (unop X * unop Y)` with X = insertion-output
-      -- (whose support is forests of cardinality |A|), Y = of'(B - B₁).
-      -- Applied to bMinusLin a, summands are 0 because output forests
-      -- aren't singleton-a-rooted (cardinality = |A| + |B-B₁|).
-      -- Wiring is non-trivial (unop push through Multiset.sum, bMinusLin
-      -- push through Multiset.sum, then the per-summand analysis).
-      -- Deferred — depends on substrate moves; sorry-fenced.
-      sorry
+      -- Expand of' A *_GL of' B via productForest = powerset-sum.
+      change bMinusLin (R := R) a
+          (GrossmanLarson.product
+            (GrossmanLarson.of' (R := R) A)
+            (GrossmanLarson.of' B)) = 0
+      rw [show GrossmanLarson.product
+              (GrossmanLarson.of' (R := R) A) (GrossmanLarson.of' B) =
+            GrossmanLarson.productForest (GrossmanLarson.of' (R := R) A) B from
+          GrossmanLarson.of'_mul_of' _ _]
+      unfold GrossmanLarson.productForest
+      -- Push bMinusLin a through Multiset.sum.
+      have h_push_sum : ∀ s : Multiset (ConnesKreimer R (Nonplanar α)),
+          bMinusLin (R := R) a s.sum = (s.map (bMinusLin (R := R) a)).sum := by
+        intro s
+        induction s using Multiset.induction with
+        | empty => simp
+        | cons head rest ih => simp [ih]
+      -- Treat the GrossmanLarson-typed sum as a CK-typed sum (defeq).
+      have h_push : bMinusLin (R := R) a
+          (B.powerset.map fun B₁ =>
+            GrossmanLarson.op
+              (GrossmanLarson.unop
+                  (GrossmanLarson.insertion (R := R)
+                    (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
+                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))).sum =
+          (B.powerset.map fun B₁ =>
+            bMinusLin (R := R) a
+              (GrossmanLarson.op
+                (GrossmanLarson.unop
+                    (GrossmanLarson.insertion (R := R)
+                      (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
+                  GrossmanLarson.unop
+                    (GrossmanLarson.of' (B - B₁))) :
+                ConnesKreimer R (Nonplanar α))).sum := by
+        have h := h_push_sum (B.powerset.map fun B₁ =>
+            (GrossmanLarson.op
+              (GrossmanLarson.unop
+                  (GrossmanLarson.insertion (R := R)
+                    (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
+                GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))) :
+              ConnesKreimer R (Nonplanar α)))
+        rw [Multiset.map_map] at h
+        exact h
+      rw [h_push]
+      -- Now: (B.powerset.map (bMinusLin a ∘ (B₁ => op (unop (insertion ...) * of'(B-B₁))))).sum
+      -- Each summand: bMinusLin a (op (unop X * unop Y)) = bMinusLin a (X * Y) (op/unop are id).
+      -- where X = insertion (of' A) (of' B₁) = Σ_{F' ∈ NIM A B₁} of' F'
+      --       Y = of' (B - B₁)
+      -- So X * Y = Σ of' F' * of' (B-B₁) = Σ of' (F' + (B-B₁))
+      -- and bMinusLin a of that sum = Σ bMinusBasis a (F' + (B-B₁)) = 0 by helper.
+      -- Reduce each summand to 0.
+      apply Multiset.sum_eq_zero
+      intro x hx
+      rw [Multiset.mem_map] at hx
+      obtain ⟨B₁, _hB₁_mem, hx_eq⟩ := hx
+      subst hx_eq
+      -- Per-B₁ closure: bMinusLin a (op (unop (insertion (of' A) (of' B₁)) * unop (of' (B-B₁)))) = 0
+      -- op/unop are identity; reduce to CK level. The `op` outer is a
+      -- no-op on the underlying carrier; the goal already has CK as the
+      -- ambient bMinusLin argument.
+      have h_step : bMinusLin (R := R) a
+          (((GrossmanLarson.unop
+              (GrossmanLarson.insertion (R := R)
+                (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
+              ConnesKreimer R (Nonplanar α)) *
+            GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))) = 0 := by
+        -- Unfold insertion (of' A) (of' B₁) = insertionBasis A B₁.
+        rw [show (GrossmanLarson.unop
+              (GrossmanLarson.insertion (R := R)
+                (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
+              ConnesKreimer R (Nonplanar α)) =
+            GrossmanLarson.insertionBasis A B₁ from by
+          rw [GrossmanLarson.insertion_of'_of']; rfl]
+        unfold GrossmanLarson.insertionBasis
+        -- Now: bMinusLin a (((NIM A B₁).map of').sum * unop (of' (B-B₁))) = 0.
+        show bMinusLin (R := R) a
+            ((((Nonplanar.insertionMultiset A B₁).map fun F' =>
+                ConnesKreimer.of' (R := R) F').sum :
+              ConnesKreimer R (Nonplanar α)) *
+              ConnesKreimer.of' (R := R) (B - B₁)) = 0
+        -- Distribute * over the sum (right distributivity).
+        rw [← Multiset.sum_map_mul_right]
+        -- Push bMinusLin a through Multiset.sum.
+        rw [h_push_sum, Multiset.map_map]
+        -- Show every summand is 0.
+        apply Multiset.sum_eq_zero
+        intro y hy
+        rw [Multiset.mem_map] at hy
+        obtain ⟨F', hF'_mem, hy_eq⟩ := hy
+        subst hy_eq
+        -- of' F' * of' (B - B₁) = of' (F' + (B - B₁)), then bMinusLin a (of' ...) = bMinusBasis a ...
+        show bMinusLin (R := R) a
+            ((ConnesKreimer.of' (R := R) F' : ConnesKreimer R (Nonplanar α)) *
+              ConnesKreimer.of' (R := R) (B - B₁)) = 0
+        rw [← ConnesKreimer.of'_add]
+        rw [show bMinusLin (R := R) a
+              (ConnesKreimer.of' (R := R) (F' + (B - B₁)) :
+                ConnesKreimer R (Nonplanar α)) =
+            bMinusBasis (R := R) a (F' + (B - B₁)) from
+          bMinusLin_of' a _]
+        exact bMinusBasis_nim_add_eq_zero a A B₁ (B - B₁) F' hA0 hA hF'_mem
+      exact h_step
 
 /-- **Phase C main theorem (OG-style)**: `bMinusLin a` is a 1-cocycle
     with respect to the GL product:
     `B-_a (x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`.
 
     Reduces by `Finsupp.induction_linear` (twice) to the basis case
-    `bMinusLin_gl_mul_basis`. Deferred — mechanical bilinearity wiring
-    once the basis case is closed. -/
+    `bMinusLin_gl_mul_basis`. -/
 theorem bMinusLin_gl_mul (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
     bMinusLin (R := R) a

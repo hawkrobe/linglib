@@ -57,14 +57,11 @@ torsion subtleties when |Aut(F)| = 0 or non-invertible).
 
 ## Status
 
-`[UPSTREAM]` candidate. Open `sorry`s: `pairing` definition,
-`pairing_of'_of'` evaluation, `pairing_symm`, `pairing_nondegenerate`.
+`[UPSTREAM]` candidate. Sorry-free, including `pairing_nondegenerate`.
 The aut-cardinality substrate `Nonplanar.autCard` /
 `Nonplanar.forestAutCard` lives in
 `Linglib/Core/Combinatorics/RootedTree/Aut.lean` (re-exported here as
-`treeAutCard` / `forestAutCard`) — it has its own `sorry` for the
-implementation, which doesn't block proving the pairing's API
-properties.
+`treeAutCard` / `forestAutCard`), also sorry-free.
 -/
 
 namespace RootedTree
