@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Studies.BejarRezac2003
@@ -42,8 +43,15 @@ prose; `pccViolation` states its upshot, gluttony itself.
 
 Universal predictions (§3.4.2): no probe bans [PART]>3 or 3>3
 (`direct_never_banned` — the geometry makes such gluttony
-impossible), and for well-articulated probes a [PART]>[PART] ban
-entails a 3>[PART] ban (`ban_part_part_implies_ban_three_part`).
+impossible); for [uPERS]-rooted probes a [PART]>[PART] ban entails a
+3>[PART] ban (`ban_part_part_implies_ban_three_part`, bundled as
+`ArticulatedProbe.ban_part_part`); a single-segment probe never
+gluttons (`not_gluttonous_single_segment`, their fn. 21). The
+articulation laws themselves — downward closure along the geometry,
+the (40) probe-specification hierarchy — live in
+`Phi/Articulation.lean` (`IsArticulated`, `ArticulatedProbe`,
+`ProbeStage`); `meFirstProbe_not_articulated` is their fn. 22 made
+formal.
 
 ## Rival accounts (their §2, comparisons drawn by the paper)
 
@@ -335,22 +343,41 @@ theorem direct_never_banned (P : Probe) (io : Person) :
   subst this
   cases io <;> decide
 
-/-- Probes articulated along the geometry (their (13)/(39a,b)/(i)):
-    rooted in [uPERS], downward-closed. `meFirstProbe` violates this
-    (their fn. 22: missing intermediates are "not innocuous"). -/
-def WellArticulated (P : Probe) : Prop :=
-  Segment.pi ∈ P ∧
-  (Segment.speaker ∈ P → Segment.participant ∈ P) ∧
-  (Segment.addressee ∈ P → Segment.participant ∈ P)
+/-- Their fn. 22, formal: the Me-First probe (39c) is not articulated
+    — [uSPKR] without [uPART] is not downward-closed along the
+    geometry (`IsArticulated`, `Phi/Articulation.lean`). The
+    branching Strong probe of fn. 22 (i) is. -/
+theorem meFirstProbe_not_articulated :
+    ¬ IsArticulated meFirstProbe ∧ IsArticulated branchingStrongProbe := by
+  decide
 
-/-- For well-articulated probes, banning [PART]>[PART] entails
-    banning 3>[PART] (their §3.4.2 implicational universal,
-    instantiated at 2>1 ⇒ 3>1): the only segment a 1st-person DO
-    can win against a 2nd-person IO is [uSPKR], and it wins against
-    a 3rd-person IO a fortiori, while [uPERS] still lands on the
-    IO. -/
+/-- Their fn. 21: a single-segment (unarticulated) probe never
+    gluttons — a language whose object probe is bare [uφ] is
+    predicted to lack PCC effects altogether. -/
+theorem not_gluttonous_single_segment {σ : Type*} (bears : σ → Goal → Bool)
+    (s : σ) (goals : List Goal) :
+    ¬ GluttonousOn bears [s] goals := by
+  rintro ⟨s₁, hs₁, s₂, hs₂, t₁, _, t₂, _, h₁, h₂, hne⟩
+  have e1 : s₁ = s := by
+    cases hs₁ with
+    | head => rfl
+    | tail _ h => exact nomatch h
+  have e2 : s₂ = s := by
+    cases hs₂ with
+    | head => rfl
+    | tail _ h => exact nomatch h
+  subst e1; subst e2
+  exact hne (congrArg Prod.snd (Option.some.inj (h₁.symm.trans h₂)))
+
+/-- For [uPERS]-rooted probes, banning [PART]>[PART] entails banning
+    3>[PART] (their §3.4.2 implicational universal, instantiated at
+    2>1 ⇒ 3>1): the only segment a 1st-person DO can win against a
+    2nd-person IO is [uSPKR], and it wins against a 3rd-person IO a
+    fortiori, while [uPERS] still lands on the IO. (Rootedness — the
+    one property every probe of their (13)/(39) has — suffices; full
+    downward closure is not needed.) -/
 theorem ban_part_part_implies_ban_three_part (P : Probe)
-    (hwf : WellArticulated P)
+    (hpi : Segment.pi ∈ P)
     (h : pccViolation P false .second .first) :
     pccViolation P false .third .first := by
   obtain ⟨s₁, hs₁, s₂, hs₂, t₁, ht₁m, t₂, ht₂m, h₁, h₂, hne⟩ := h
@@ -373,9 +400,17 @@ theorem ban_part_part_implies_ban_three_part (P : Probe)
     · exact spk_of s₁ h₁ ▸ hs₁
     · exact absurd rfl hne
   -- with [uPERS] and [uSPKR] both on the probe, 3>1 is gluttonous
-  exact ⟨.pi, hwf.1, .speaker, hspk,
+  exact ⟨.pi, hpi, .speaker, hspk,
     (dp .third, 0), by decide, (dp .first, 1), by decide,
     by decide, by decide, by decide⟩
+
+/-- The bundled form: an `ArticulatedProbe` (`Phi/Articulation.lean`)
+    carries [uPERS]-rootedness as a law, so the implicational
+    universal needs no side condition. -/
+theorem ArticulatedProbe.ban_part_part (P : ArticulatedProbe)
+    (h : pccViolation P.segments false .second .first) :
+    pccViolation P.segments false .third .first :=
+  ban_part_part_implies_ban_three_part P.segments P.rooted h
 
 /-! ### Rival accounts (their §2) -/
 
