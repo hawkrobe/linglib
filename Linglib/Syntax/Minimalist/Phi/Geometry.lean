@@ -153,7 +153,7 @@ def decomposePerson : Person → DecomposedPerson
 
     π⁰ is merged below #⁰ and probes first — person-before-number
     probing, inherited from [bejar-rezac-2003]. -/
-inductive ProbeTarget where
+inductive Probe.Target where
   /-- π⁰: person probe, seeks [participant]. -/
   | participant
   /-- #⁰: number probe, seeks [plural]. -/
@@ -165,7 +165,7 @@ inductive ProbeTarget where
 
     A DP with person value `person` and number `isPlural` is visible
     to the probe iff it bears the probe's target feature. -/
-def probeVisible (target : ProbeTarget) (person : Person) (isPlural : Bool) : Bool :=
+def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : Bool :=
   match target with
   | .participant => (decomposePerson person).hasParticipant
   | .plural => isPlural

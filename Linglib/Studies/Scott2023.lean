@@ -475,7 +475,7 @@ theorem different_probe_heads :
 /-- The transitive Set B default is an instance of Preminger's probe failure:
     Infl's probe searches an empty domain (blocked by Voice_TR) and finds no
     DP with matching φ-features. `attemptAgree` maps the `none` result from
-    `applyAgree` to `ProbeOutcome.unvalued`. -/
+    `applyAgree` to `Probe.Outcome.unvalued`. -/
 theorem transitive_is_probe_failure :
     attemptAgree inflProbe [] (.phi (.person .third)) = .unvalued := by
   native_decide
@@ -491,11 +491,11 @@ theorem intransitive_is_real_agreement :
 /-- Under Preminger's obligatory-no-crash model, probe failure converges
     and produces Elsewhere morphology — exactly the Set B "tz'=" we observe
     in Mam transitives. This connects the abstract failure model to the
-    concrete spellout: `ProbeOutcome.unvalued` → `PFRealization.elsewhere`
+    concrete spellout: `Probe.Outcome.unvalued` → `PFRealization.elsewhere`
     → the Elsewhere Vocabulary entry → "tz'=". -/
 theorem probe_failure_converges_with_elsewhere :
     derivationConverges .obligatoryNocrash .unvalued = true ∧
-    ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
+    Probe.Outcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
@@ -686,7 +686,7 @@ theorem agreeProbe_eq_derived_3sg :
     head-encounter halt satisfies the search but leaves the probe
     φ-unvalued. -/
 def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
-    ProbeOutcome :=
+    Probe.Outcome :=
   if (agreesWith cond goals).isSome then .valued else .unvalued
 
 /-- Transitive Infl: search halts at Voice_TR, probe stays unvalued,

@@ -79,7 +79,7 @@ namespace Minimalist.NestedAgree
 
 /-- An ordered list of probes on a single head. The list order encodes
     the feature-checking order: head of list = first probe. -/
-abbrev OrderedProbeStack : Type := List ProbeProfile
+abbrev OrderedProbeStack : Type := List Probe.Profile
 
 -- ============================================================================
 -- § 2: Configuration
@@ -244,7 +244,7 @@ Consumers vary in:
   `terminal` in Icelandic/Bulgarian)
 - The `validGoal` predicate
 
-The common shape — a single ProbeProfile used twice, a 4-leaf linear
+The common shape — a single Probe.Profile used twice, a 4-leaf linear
 tree, the 2-probe stack — is captured by `standardConfig`. -/
 
 /-- Standard 4-leaf linear-Spec tree:
@@ -259,7 +259,7 @@ def standardLinearTree (probeHd intervener midNode terminal : LIToken) :
 /-- A `NestedAgreeConfig` over the standard linear tree, with a
     2-probe stack on `probeHd`. The `goalHd` selects which leaf
     serves as the shared goal under maximized matching. -/
-def standardConfig (probeProfile : ProbeProfile)
+def standardConfig (probeProfile : Probe.Profile)
     (probeHd intervener midNode terminal : LIToken)
     (goalHd : LIToken) (vg : SyntacticObject → Bool) :
     NestedAgreeConfig where
@@ -291,7 +291,7 @@ private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩
 private def aDPsubj : LIToken := ⟨LexicalItem.simple .D [], 2⟩
 private def aDPobj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-private def perfProbe : ProbeProfile := ⟨.T, some .C⟩
+private def perfProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-- Italian-style 2-probe configuration constructed via `standardConfig`. -/
 def italianAuxExample : NestedAgreeConfig :=

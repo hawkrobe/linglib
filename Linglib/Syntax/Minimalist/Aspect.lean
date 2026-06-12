@@ -125,7 +125,7 @@ def AspFlavor.defaultFLevel : AspFlavor → Nat
 /-- An aspect head, parallel to `VoiceHead`.
 
     Carries: (a) which flavor (outer/inner), (b) optional selectional
-    requirement on the complement's dynamicity, (c) optional `ProbeProfile`
+    requirement on the complement's dynamicity, (c) optional `Probe.Profile`
     when the head is itself an Agree probe ([liu-yip-2026] analyzes
     Mandarin *you* and Cantonese -faan as probe-bearing AspO heads),
     (d) any Agree-relevant features (e.g., `[+EXP]` on the experiential
@@ -147,7 +147,7 @@ structure AspHead where
   /-- Optional probe profile: populated when the head triggers Agree.
       The probe's `probeHead` is conventionally `.Asp`; the flavor field on
       `AspHead` disambiguates outer-vs-inner at the analytical level. -/
-  probe : Option ProbeProfile := none
+  probe : Option Probe.Profile := none
   /-- Agree-relevant features on the head (e.g., `[+EXP]` for experiential AspO,
       `[uD]` for the AspO that triggers *you*-movement). -/
   features : FeatureBundle := []

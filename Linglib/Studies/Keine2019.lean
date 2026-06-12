@@ -55,7 +55,7 @@ Key refinements in [keine-2020]:
 
 ## Architecture
 
-The theory-layer infrastructure (`ProbeProfile`, `transparentTo`,
+The theory-layer infrastructure (`Probe.Profile`, `transparentTo`,
 `transparentToLabel`, `upward_entailment`, `height_locality_connection`)
 lives in `Syntax/Minimalism/Probe.lean`. This file
 imports those definitions and verifies the paper's empirical predictions
@@ -64,7 +64,7 @@ as concrete theorems using the simplified fValue model.
 
 namespace Keine2019
 
-open Minimalist (ProbeProfile keinePhiProbe keineAProbe keineWhLicensing
+open Minimalist (Probe.Profile keinePhiProbe keineAProbe keineWhLicensing
   keineĀProbe fValue ClauseSpine Cat)
 
 -- ============================================================================
