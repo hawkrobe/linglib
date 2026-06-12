@@ -624,7 +624,7 @@ import Linglib.Tactics.ENNRealArith
 import Linglib.Processing.VisualWorld
 import Linglib.Processing.SelfPacedReading
 import Linglib.Morphology.WugTest
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 import Linglib.Studies.SprouseEtAl2012
 -- Fragments
 import Linglib.Fragments.Arabic.ModernStandard.Negation

@@ -20,7 +20,7 @@ this is why the type is a labeled enum rather than a Likert-style ordinal.
 acceptability scale, ordered worst-to-last so that "rated worse than"
 comparisons come from the derived `Ord`. It is the judgment type carried
 by `Linglib/Data/Examples/Schema.lean`'s `LinguisticExample` and by the
-minimal-pair vocabulary in `Linglib/Phenomena/MinimalPairs.lean`. For
+minimal-pair vocabulary in `Linglib/Features/MinimalPairs.lean`. For
 factorial-design machinery over experimental ratings (difference-in-
 differences scores etc.), see `Linglib/Studies/SprouseEtAl2012.lean`.
 -/
