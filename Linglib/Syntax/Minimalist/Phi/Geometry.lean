@@ -66,13 +66,13 @@ by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
 
 The `probeResolutionRank` function below assigns rank 2 to
 [+participant] DPs, rank 1 to [+plural, −participant] DPs, and
-rank 0 elsewhere. This is a CONVENIENCE encoding of the
-*surface effect* of the two-probe (π⁰ ≫ #⁰) system on a single DP
-— useful for downstream computations that need a totally ordered
-target — but it should not be read as endorsing the salience-scale
-analysis [preminger-2014] Ch. 7 argues against. The actual
-derivation goes via two independently relativized probes; the rank
-is a derived quantity, not a primitive.
+rank 0 elsewhere — the *surface effect* of the two-probe (π⁰
+before #⁰) system on a single DP. Its derived status is a theorem:
+target resolution is `cascadeSearch` over the two probes
+(`Phi/Probing.lean`), and the rank comparison agrees with the
+cascade on the φ-cell inventory
+(`Preminger2014.afAgreementTarget_eq_rank`). It is not a salience
+scale ([preminger-2014] Ch. 7).
 
 -/
 
@@ -181,10 +181,10 @@ def probeVisible (target : ProbeTarget) (person : Person) (isPlural : Bool) : Bo
     probes earlier in the derivation, its clitic output beats other
     exponence in the single morphological slot, and each probe
     targets any DP bearing the sought feature. The rank captures
-    the combined effect on a single DP.
-    See module docstring for why this is a convenience encoding,
-    not an endorsement of the salience-scale analyses
-    [preminger-2014] Ch. 7 argues against. -/
+    the combined effect on a single DP; its derived status is
+    `Preminger2014.afAgreementTarget_eq_rank` (cascade resolution,
+    `Phi/Probing.lean`). It is not a salience scale
+    ([preminger-2014] Ch. 7). -/
 def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
   else if isPlural then 1

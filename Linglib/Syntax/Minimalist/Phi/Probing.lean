@@ -32,6 +32,8 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 - `searchOutcome` — the `ProbeOutcome` of an obligatory probing operation.
 - `Licensed`, `AllLicensed` — licensing as being found by the search.
 - `allLicensed_iff` — all visible goals licensed ↔ visible goals subsingleton.
+- `cascadeSearch` — ordered probe sequence: first probe with output wins
+  (the single-slot morphological competition).
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
 -/
 
@@ -169,6 +171,51 @@ theorem allLicensed_iff_subsingleton :
          fun h a ha b hb hva hvb => h ⟨ha, hva⟩ ⟨hb, hvb⟩⟩
 
 end Licensing
+
+/-! ### Probe cascades -/
+
+section Cascade
+
+variable {α : Type*}
+
+/-- The goal an ordered sequence of probes delivers: the first probe's
+    finding, else the next's, and so on — `probeSearch` at the goal
+    level composed with `List.findSome?` at the probe level. This is
+    also the single-slot morphological competition: the first probe
+    with output wins the slot ([preminger-2014] §4.4: π⁰'s clitic
+    beats #⁰'s exponent beats nothing). -/
+def cascadeSearch (probes : List (α → Bool)) (goals : List α) : Option α :=
+  probes.findSome? (probeSearch · goals)
+
+variable {probes : List (α → Bool)} {goals : List α}
+
+/-- A cascade delivers nothing iff no goal is visible to any probe. -/
+@[simp]
+theorem cascadeSearch_eq_none_iff :
+    cascadeSearch probes goals = none ↔
+      ∀ p ∈ probes, ∀ a ∈ goals, p a = false := by
+  simp [cascadeSearch, List.findSome?_eq_none_iff]
+
+/-- Unfold one probe of the cascade. -/
+theorem cascadeSearch_cons {p : α → Bool} :
+    cascadeSearch (p :: probes) goals =
+      (probeSearch p goals <|> cascadeSearch probes goals) := by
+  rw [cascadeSearch, List.findSome?_cons]
+  cases probeSearch p goals <;> rfl
+
+/-- The cascade's goal is licensed by one of its probes. -/
+theorem exists_licensed_of_cascadeSearch_eq_some {a : α}
+    (h : cascadeSearch probes goals = some a) :
+    ∃ p ∈ probes, Licensed p goals a :=
+  List.exists_of_findSome?_eq_some h
+
+/-- The cascade's goal is a member of the sequence. -/
+theorem mem_of_cascadeSearch_eq_some {a : α}
+    (h : cascadeSearch probes goals = some a) : a ∈ goals :=
+  let ⟨_, _, hp⟩ := exists_licensed_of_cascadeSearch_eq_some h
+  mem_of_probeSearch_eq_some hp
+
+end Cascade
 
 /-! ### φ-probes -/
 
