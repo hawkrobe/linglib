@@ -40,11 +40,11 @@ backgrounds (any event type), so they CAN be below AspP.
 The actuality entailment asymmetry follows from content licensing +
 aspect scope, without stipulation.
 
-The earlier `CausalFrame`-bridge §4 (showing `actualityWithAspect .perfective`
-matches `sufficientAt ∧ actualizedAt`) was deleted in Phase D-H along with
-the `CausalFrame`/`ComplementEntailing` substrate; the qualitative bridge to
-[nadathur-2023]'s causal account now lives at the V2 SEM level in
-study files and `Semantics/Causation/`.
+TODO: no bridge currently connects this module to [nadathur-2023]'s causal
+account of actuality inferences. Its prerequisite machinery lives at
+`Semantics/Causation/Implicative.lean` (where `ImplicativeClass.ability`
+carries a stipulated `aspectGoverned := true`); a theorem deriving that bit
+from the aspect-scope licensing here would tie the two accounts together.
 -/
 
 namespace Semantics.Modality.ActualityEntailments

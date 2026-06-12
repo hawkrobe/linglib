@@ -1,6 +1,6 @@
 /-!
 # Features.Causation
-[talmy-1988] [wolff-2003] [karttunen-1971] [nadathur-2024]
+[talmy-1988] [wolff-2003] [karttunen-1971] [nadathur-2023-implicatives]
 
 Per-verb-entry feature taxonomies for causal verb classifications:
 the `Causative` enum (force-dynamic mechanism) and the `Implicative`
@@ -143,7 +143,7 @@ end Causative
     on success.
 
     Note: `Implicative` and `Causative` are structurally different
-    ([nadathur-2024]): causatives directly predicate causation (make/cause →
+    ([nadathur-2023-implicatives]): causatives directly predicate causation (make/cause →
     sufficiency/necessity), while implicatives predicate a prerequisite whose
     causal relationship to the complement is only presupposed. -/
 inductive Implicative where

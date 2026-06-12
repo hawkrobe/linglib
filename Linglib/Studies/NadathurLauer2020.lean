@@ -25,7 +25,7 @@ plus the volitional-action constraint (§4.1, Def 43) that distinguishes
 ## Project-canonical definitions
 
 The substrate's `Necessity.causeSem` (in `Semantics/Causation/`)
-implements [nadathur-2024] **Definition 10b** rather than this paper's
+implements [nadathur-2023-implicatives] **Definition 10b** rather than this paper's
 literal Def 24. The paper itself anticipates this in fn 18: "the semantics
 of necessity causatives may well be better explicated in terms of one of
 the definitions of *actual cause*, rather than the version of causal
