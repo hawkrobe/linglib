@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 The derivational middle layer between DP-level probe visibility
 (`probeVisible`, `Phi/Geometry.lean`) and PF-level outcomes
-(`ProbeOutcome`, `ObligatoryOperations.lean`). A `Probe` bundles what
+(`Probe.Outcome`, `ObligatoryOperations.lean`). A `Probe` bundles what
 it *sees* (`vis` — interaction/halting: the search stops at the first
 visible goal) and what it can *value* there (`act` — activity: a
 visible but inactive goal absorbs the probe without valuing it,
@@ -40,7 +40,7 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
   `Probe.indiscriminate` constructors.
 - `Probe.search` — first visible goal, in structural order.
 - `Probe.agree` — search then Agree: the found goal, if active.
-- `Probe.outcome` — the `ProbeOutcome` of an obligatory probing
+- `Probe.outcome` — the `Probe.Outcome` of an obligatory probing
   operation.
 - `Probe.Licensed`, `Probe.AllLicensed needs` — every licensing-needy
   goal is found by the search; diagonal characterization
@@ -50,6 +50,18 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 - `Probe.cascade` — ordered probe sequence: first probe with output
   wins (the single-slot morphological competition).
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
+
+## Probe specifications
+
+Theory-side probe descriptions relate to `Probe` by *denotation*
+(canonical `toProbe`-maps), not extension — the relationship is
+one-to-many for articulated probes and state-indexed for dynamic
+ones: `Probe.Target.toProbe` (here), `SatisfactionCond.toProbe`
+(`Studies/Scott2023.lean`), `Probe.Articulated.toProbes`
+(`Phi/Articulation.lean`, the per-segment family),
+`CyclicAgree.segProbe` (per segment and geometry), and
+`Deal2024.ProbeState.probe` (the state-indexed family whose
+narrowing law is `probe_vis_antitone`).
 -/
 
 namespace Minimalist
@@ -153,7 +165,7 @@ theorem agree_eq_none_of_inactive {a : α}
 
 /-- The outcome of an obligatory probing operation over a goal
     sequence: `valued` iff the search finds a goal. -/
-def outcome (p : Probe α) (goals : List α) : ProbeOutcome :=
+def outcome (p : Probe α) (goals : List α) : Probe.Outcome :=
   if (p.search goals).isSome then .valued else .unvalued
 
 /-- The probe is valued iff the search finds a goal. -/
@@ -305,8 +317,16 @@ end Probe
 
 /-- Visibility of a φ-cell to a relativized probe: the cell bears the
     feature the probe seeks (`probeVisible`, `Phi/Geometry.lean`). -/
-def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : ProbeTarget) : Bool :=
+def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : Probe.Target) : Bool :=
   probeVisible t c.toPerson c.isPlural
+
+/-- The probe a `Probe.Target` specification denotes: relativized to
+    the sought feature, over φ-cells. The canonical
+    specification-to-`Probe` map for the substrate's probe enum —
+    [preminger-2014]'s π⁰ is `Probe.Target.participant.toProbe`, his
+    #⁰ is `Probe.Target.plural.toProbe`. -/
+def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Cell :=
+  .ofVis (·.visibleTo t)
 
 /-- The Person Licensing Condition ([bejar-rezac-2003];
     [preminger-2014] (40)/(75)): every [participant]-bearing goal

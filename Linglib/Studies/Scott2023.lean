@@ -475,7 +475,7 @@ theorem different_probe_heads :
 /-- The transitive Set B default is an instance of Preminger's probe failure:
     Infl's probe searches an empty domain (blocked by Voice_TR) and finds no
     DP with matching φ-features. `attemptAgree` maps the `none` result from
-    `applyAgree` to `ProbeOutcome.unvalued`. -/
+    `applyAgree` to `Probe.Outcome.unvalued`. -/
 theorem transitive_is_probe_failure :
     attemptAgree inflProbe [] (.phi (.person .third)) = .unvalued := by
   native_decide
@@ -491,11 +491,11 @@ theorem intransitive_is_real_agreement :
 /-- Under Preminger's obligatory-no-crash model, probe failure converges
     and produces Elsewhere morphology — exactly the Set B "tz'=" we observe
     in Mam transitives. This connects the abstract failure model to the
-    concrete spellout: `ProbeOutcome.unvalued` → `PFRealization.elsewhere`
+    concrete spellout: `Probe.Outcome.unvalued` → `PFRealization.elsewhere`
     → the Elsewhere Vocabulary entry → "tz'=". -/
 theorem probe_failure_converges_with_elsewhere :
     derivationConverges .obligatoryNocrash .unvalued = true ∧
-    ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
+    Probe.Outcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
@@ -573,18 +573,20 @@ structure Encounter where
 def halts (cond : SatisfactionCond) (e : Encounter) : Bool :=
   cond.isSatisfied e.feats e.cat
 
-/-- A satisfaction-conditioned probe as a `Probe` over encounters:
-    visibility = halting ([deal-2024] interaction), activity =
-    feature copying. -/
-def satProbe (cond : SatisfactionCond) : Probe Encounter :=
+/-- The probe a `SatisfactionCond` specification denotes, over
+    encounters: visibility = halting ([deal-2024] interaction),
+    activity = feature copying. The canonical
+    specification-to-`Probe` map for satisfaction conditions. -/
+def _root_.Minimalist.SatisfactionCond.toProbe (cond : SatisfactionCond) :
+    Probe Encounter :=
   { vis := halts cond, act := fun e => cond.copiedFeatures e.feats e.cat }
 
-/-- The argument position a probe φ-agrees with: `(satProbe cond).agree`
+/-- The argument position a probe φ-agrees with: `cond.toProbe.agree`
     — the probe agrees with the found element only if satisfaction
     copied features (feature match, not head encounter). -/
 def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
     Option ArgPosition :=
-  ((satProbe cond).agree goals).bind (·.pos)
+  (cond.toProbe.agree goals).bind (·.pos)
 
 /-- Transitive Voice as an encounter: a head of category `.v`, no
     φ-features visible to the probe. -/
@@ -631,7 +633,7 @@ theorem infl_finds_S (φS : FeatureBundle)
     agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
   have h1 : halts mamInflSatisfaction ⟨some .S, φS, none⟩ = true := by
     simp [halts, mamInflSatisfaction_isSatisfied, hS]
-  simp [agreesWith, satProbe, Probe.agree, Probe.search, Option.filter_some,
+  simp [agreesWith, SatisfactionCond.toProbe, Probe.agree, Probe.search, Option.filter_some,
     dpGoal, h1, mamInflSatisfaction_copiedFeatures, hS]
 
 /-- Voice's search finds the agent (closest goal), provided A bears
@@ -642,7 +644,7 @@ theorem voice_finds_A (φA φP : FeatureBundle)
   have h1 : halts (.featureMatch (.phi (.person .third)))
       ⟨some .A, φA, none⟩ = true := by
     simp [halts, SatisfactionCond.isSatisfied, hA]
-  simp [agreesWith, satProbe, Probe.agree, Probe.search, Option.filter_some,
+  simp [agreesWith, SatisfactionCond.toProbe, Probe.agree, Probe.search, Option.filter_some,
     dpGoal, voiceSat, h1, SatisfactionCond.copiedFeatures, hA]
 
 /-- DERIVED probe table: which head φ-agrees with position `p`,
@@ -680,11 +682,11 @@ theorem agreeProbe_eq_derived_3sg :
 
 /-- φ-valuation outcome of a probe with a satisfaction condition:
     valued iff the search found a goal AND satisfaction copied
-    features. NOTE: this is NOT `(satProbe cond).outcome` — a
+    features. NOTE: this is NOT `cond.toProbe.outcome` — a
     head-encounter halt satisfies the search but leaves the probe
     φ-unvalued. -/
 def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
-    ProbeOutcome :=
+    Probe.Outcome :=
   if (agreesWith cond goals).isSome then .valued else .unvalued
 
 /-- Transitive Infl: search halts at Voice_TR, probe stays unvalued,
@@ -701,7 +703,7 @@ theorem transitive_unvalued_elsewhere (rest : List Encounter) :
     element. The valuation/satisfaction distinction is exactly
     [deal-2024]'s interaction-vs-satisfaction split. -/
 theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
-    (satProbe mamInflSatisfaction).outcome (voiceTR :: rest) = .valued ∧
+    (mamInflSatisfaction.toProbe).outcome (voiceTR :: rest) = .valued ∧
     valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued :=
   ⟨rfl, rfl⟩
 

@@ -698,7 +698,7 @@ theorem voice_hasD_ne_assignsTheta :
 def cmhFeatureModel : AgreementModel := .obligatoryNocrash
 
 /-- Under Feature Failure, unchecked Merge features do not crash. -/
-theorem feature_failure_converges (outcome : ProbeOutcome) :
+theorem feature_failure_converges (outcome : Probe.Outcome) :
     derivationConverges cmhFeatureModel outcome = true :=
   obligatory_always_converges outcome
 

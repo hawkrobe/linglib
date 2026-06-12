@@ -57,7 +57,7 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
   bilateral label* ([keine-2020] horizon opacity). The two coincide on
   the Type II / Type III contrast but make distinct predictions on featural
   mismatch. The `defectiveIntervention` predicate below uses
-  head-as-intervener; it does *not* call `ProbeProfile.transparentToLabel`.
+  head-as-intervener; it does *not* call `Probe.Profile.transparentToLabel`.
 
 - **Aspect-lowering and *-faan*-lowering are parallel, not the same.** Both
   involve matrix-AspP_outer Agree across a vP boundary, but the empirical
@@ -85,7 +85,7 @@ explicit in §10 as a refutation theorem candidate.
 
 namespace LiuYip2026
 
-open Minimalist (AspFlavor AspHead ProbeProfile ClauseSpine ComplementSize Cat fValue)
+open Minimalist (AspFlavor AspHead Probe.Profile ClauseSpine ComplementSize Cat fValue)
 open Typology.Complementation (CTPClass ComplementClauseStructure)
 
 -- ============================================================================
@@ -218,7 +218,7 @@ theorem restructure_decreases (s : ClauseSpine) :
     same-or-compatible selectional spec.
 
     This predicate deliberately does NOT call
-    `ProbeProfile.transparentToLabel` — head-as-intervener and label-as-locus
+    `Probe.Profile.transparentToLabel` — head-as-intervener and label-as-locus
     diverge on featurally-mismatched probes. -/
 def intervenes (matrixProbe : AspHead) (embeddedHead : AspHead) : Bool :=
   -- Same flavor + featurally compatible (or both indifferent)

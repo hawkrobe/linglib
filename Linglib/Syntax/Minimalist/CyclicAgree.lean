@@ -141,20 +141,20 @@ def mostSpecified : Geometry → Person
     - Flat [u-3]: no PH sensitivity (e.g., Swahili, Abkhaz)
     - Partial [u-3-2]: distinguishes SAP from 3P (e.g., Basque, Georgian)
     - Full [u-3-2-1]: distinguishes all persons (e.g., Nishnaabemwin, Mohawk) -/
-abbrev ProbeArticulation := List Segment
+abbrev _root_.Minimalist.Probe.Articulation := List Segment
 
 /-- Flat probe: [uπ]. Any DP fully matches. -/
-def flatProbe : ProbeArticulation := [.pi]
+def flatProbe : Probe.Articulation := [.pi]
 
 /-- Partial probe: [uπ, uParticipant]. Distinguishes SAP from 3P.
     Geometry-independent: [participant] is the same in both geometries. -/
-def partialProbe : ProbeArticulation := [.pi, .participant]
+def partialProbe : Probe.Articulation := [.pi, .participant]
 
 /-- Full probe in standard geometry: [uπ, uParticipant, uSpeaker]. -/
-def fullProbeStd : ProbeArticulation := [.pi, .participant, .speaker]
+def fullProbeStd : Probe.Articulation := [.pi, .participant, .speaker]
 
 /-- Full probe in addressee geometry: [uπ, uParticipant, uAddressee]. -/
-def fullProbeAddr : ProbeArticulation := [.pi, .participant, .addressee]
+def fullProbeAddr : Probe.Articulation := [.pi, .participant, .addressee]
 
 -- ============================================================================
 -- § 4: Agreement System (Language Parameterization)
@@ -168,7 +168,7 @@ def fullProbeAddr : ProbeArticulation := [.pi, .participant, .addressee]
     geometry (standard uses [speaker], addressee uses [addressee]). -/
 structure AgreementSystem where
   geometry : Geometry
-  probe : ProbeArticulation
+  probe : Probe.Articulation
   deriving DecidableEq, Repr
 
 /-- Swahili/Abkhaz: flat probe, no PH sensitivity. -/
@@ -193,7 +193,7 @@ def nishnaabemwin : AgreementSystem := ⟨.addressee, fullProbeAddr⟩
 
     This is the core operation of [bejar-rezac-2009]: partial
     matching of articulated probes drives agreement displacement. -/
-def activeResidue (probe : ProbeArticulation) (goal : List Segment) : ProbeArticulation :=
+def activeResidue (probe : Probe.Articulation) (goal : List Segment) : Probe.Articulation :=
   probe.filter (fun s => !goal.contains s)
 
 -- ============================================================================
@@ -210,7 +210,7 @@ inductive Controller where
 
     Returns `true` iff the EA matches at least one segment that the
     IA left unmatched. -/
-def eaAgrees (geom : Geometry) (probe : ProbeArticulation)
+def eaAgrees (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Bool :=
   let residue := activeResidue probe (personSpec geom ia)
   let residueAfterEA := activeResidue residue (personSpec geom ea)
@@ -222,12 +222,12 @@ def eaAgrees (geom : Geometry) (probe : ProbeArticulation)
     probe Agrees with EA. EA controls iff it matches any residue
     segment; otherwise IA controls (either it fully checked the
     probe, or it left residue the EA couldn't match). -/
-def agreementController (geom : Geometry) (probe : ProbeArticulation)
+def agreementController (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Controller :=
   if eaAgrees geom probe ea ia then .ea else .ia
 
 /-- The person value that the core agreement slot realizes. -/
-def agreementValue (geom : Geometry) (probe : ProbeArticulation)
+def agreementValue (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Person :=
   match agreementController geom probe ea ia with
   | .ea => ea
@@ -256,8 +256,8 @@ def AgreementSystem.value (sys : AgreementSystem)
     vs *-aa* (default/cycle I only).
 
     Returns `(cycleI, cycleII)` — the segments deactivated on each cycle. -/
-def cycleSegments (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : Person) : ProbeArticulation × ProbeArticulation :=
+def cycleSegments (geom : Geometry) (probe : Probe.Articulation)
+    (ea ia : Person) : Probe.Articulation × Probe.Articulation :=
   let iaSpec := personSpec geom ia
   let cycleI := probe.filter (fun s => iaSpec.contains s)
   let residue := activeResidue probe iaSpec
@@ -270,7 +270,7 @@ def cycleSegments (geom : Geometry) (probe : ProbeArticulation)
     True when both the IA (cycle I) and EA (cycle II) matched at least
     one segment. This is the configuration that creates second-cycle
     morphological effects in languages like Georgian and Nishnaabemwin. -/
-def hasSecondCycleEffect (geom : Geometry) (probe : ProbeArticulation)
+def hasSecondCycleEffect (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Bool :=
   let (c1, c2) := cycleSegments geom probe ea ia
   !c1.isEmpty && !c2.isEmpty
@@ -285,12 +285,12 @@ def hasSecondCycleEffect (geom : Geometry) (probe : ProbeArticulation)
     no residue, or (b) residue exists but the EA cannot match any of it.
     Inverse contexts trigger PLC violations on the EA's π-features,
     requiring repair strategies (added probe or R-Case). -/
-def isInverseContext (geom : Geometry) (probe : ProbeArticulation)
+def isInverseContext (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Bool :=
   !eaAgrees geom probe ea ia
 
 /-- Direct context: the EA Agrees with at least one residue segment. -/
-def isDirectContext (geom : Geometry) (probe : ProbeArticulation)
+def isDirectContext (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Bool :=
   eaAgrees geom probe ea ia
 
@@ -315,14 +315,14 @@ def AgreementSystem.isInverse (sys : AgreementSystem)
 
     Returns `true` if the EA is person-licensed (its π-features were
     checked by the core probe on cycle II). -/
-def eaIsLicensed (geom : Geometry) (probe : ProbeArticulation)
+def eaIsLicensed (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) : Bool :=
   eaAgrees geom probe ea ia
 
 /-- PLC violation: EA is NOT person-licensed. Exactly characterizes
     inverse contexts — this is the paper's key insight connecting
     syntactic derivation to morphological repair. -/
-theorem plc_violation_iff_inverse (geom : Geometry) (probe : ProbeArticulation)
+theorem plc_violation_iff_inverse (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) :
     eaIsLicensed geom probe ea ia = false ↔
     isInverseContext geom probe ea ia = true := by
@@ -383,7 +383,7 @@ theorem segmentGoal_eq_ia_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
     cases h2 : (personSpec geom ea).contains s <;> simp
 
 /-- Existential characterization of the residue-based `eaAgrees`. -/
-theorem eaAgrees_iff_exists (geom : Geometry) (probe : ProbeArticulation)
+theorem eaAgrees_iff_exists (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) :
     eaAgrees geom probe ea ia = true ↔
       ∃ s ∈ probe, (personSpec geom ia).contains s = false ∧
@@ -400,7 +400,7 @@ theorem eaAgrees_iff_exists (geom : Geometry) (probe : ProbeArticulation)
     probe segment's flat relativized search (`Probe.Licensed`) over
     the cyclically ordered token list finds the EA token. -/
 theorem eaIsLicensed_iff_segment_licensed (geom : Geometry)
-    (probe : ProbeArticulation) (ea ia : Person) :
+    (probe : Probe.Articulation) (ea ia : Person) :
     eaIsLicensed geom probe ea ia = true ↔
       ∃ s ∈ probe, (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
   rw [eaIsLicensed, eaAgrees_iff_exists]
@@ -411,7 +411,7 @@ theorem eaIsLicensed_iff_segment_licensed (geom : Geometry)
     inverse-context characterization restated through the search
     substrate. -/
 theorem plc_violation_iff_no_segment_licensed (geom : Geometry)
-    (probe : ProbeArticulation) (ea ia : Person) :
+    (probe : Probe.Articulation) (ea ia : Person) :
     isInverseContext geom probe ea ia = true ↔
       ∀ s ∈ probe, ¬ (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
   rw [← plc_violation_iff_inverse, Bool.eq_false_iff, Ne,
@@ -423,7 +423,7 @@ theorem plc_violation_iff_no_segment_licensed (geom : Geometry)
     search finds the EA token. Second-cycle effects also factor through
     `Probe.search`. -/
 theorem cycleSegments_eq_segmentGoal_filters (geom : Geometry)
-    (probe : ProbeArticulation) (ea ia : Person) :
+    (probe : Probe.Articulation) (ea ia : Person) :
     cycleSegments geom probe ea ia =
       (probe.filter (fun s => segmentGoal geom ea ia s == some (.ia, ia)),
        probe.filter (fun s => segmentGoal geom ea ia s == some (.ea, ea))) := by
@@ -639,7 +639,7 @@ theorem nish_2_1_cycle_segments :
     when applied with the same goal: if some segments survive matching
     against personSpec(p), applying the same filter again removes nothing,
     so `eaAgrees` returns false. -/
-theorem same_person_ia_controls (geom : Geometry) (probe : ProbeArticulation)
+theorem same_person_ia_controls (geom : Geometry) (probe : Probe.Articulation)
     (p : Person) :
     agreementController geom probe p p = .ia := by
   simp only [agreementController]
@@ -677,7 +677,7 @@ theorem most_specified_controls_vs_third_addr :
 
 /-- The direct/inverse split exhaustively partitions the paradigm:
     every EA→IA combination is either direct or inverse, never both. -/
-theorem direct_inverse_exhaustive (geom : Geometry) (probe : ProbeArticulation)
+theorem direct_inverse_exhaustive (geom : Geometry) (probe : Probe.Articulation)
     (ea ia : Person) :
     (isDirectContext geom probe ea ia = true) ≠
     (isInverseContext geom probe ea ia = true) := by

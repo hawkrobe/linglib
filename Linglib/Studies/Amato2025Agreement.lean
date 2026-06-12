@@ -92,7 +92,7 @@ private def aDPnom : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 /-- T's probe with C horizon. The two orderings use the same probe
     profile twice; the ordering distinction is captured by `goalHead`
     and `validGoal` in the two configs below. -/
-private def tProbe : ProbeProfile := ⟨.T, some .C⟩
+private def tProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-! ### Configuration A — agreement with the nominative -/
 
@@ -240,7 +240,7 @@ private def aAbs : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 /-- Asp's probe with C horizon. Both `[*Infl:perf*]` and `[*π:_*]`
     use the same profile; the Nested Agree ordering is captured by
     list position, the shared goal by `goalHead`. -/
-private def aspProbe : ProbeProfile := ⟨.T, some .C⟩
+private def aspProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-- The Lak perfective configuration. Tree: `Asp [Erg [v Abs]]`,
     goal = v. v is reachable (c-commanded by Asp) and phi-active

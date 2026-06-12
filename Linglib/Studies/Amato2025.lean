@@ -104,7 +104,7 @@ private def aWhObj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 /-- C's probe with C-area horizon. Both `[*wh*]` and `[•wh•]` use
     this profile; the Agree-vs-Merge distinction is at the consumer
     interpretive layer, not at the abstract `NestedAgreeConfig` level. -/
-private def cProbe : ProbeProfile := ⟨.C, none⟩
+private def cProbe : Probe.Profile := ⟨.C, none⟩
 
 /-- Bulgarian multi-wh configuration at the relevant derivational
     step (post-Multiple-Agree, pre-movement). Pre-movement tree:

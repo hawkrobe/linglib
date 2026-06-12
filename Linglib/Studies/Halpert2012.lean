@@ -72,7 +72,7 @@ instance (vp : List Nominal) : Decidable (LicensingOk vp) :=
   inferInstanceAs (Decidable (L.AllLicensed needsL vp))
 
 /-- L⁰'s probing outcome: valued iff the vP has any overt content. -/
-def lOutcome (vp : List Nominal) : ProbeOutcome :=
+def lOutcome (vp : List Nominal) : Probe.Outcome :=
   L.outcome vp
 
 /-- The conjoint/disjoint marker (present tense) as the spellout of

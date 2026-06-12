@@ -47,9 +47,11 @@ This study file connects [deal-2024]'s framework to both:
 The licitness function is *run*, not tabulated: `runProbe` walks the
 goal sequence with interaction, satisfaction, and dynamic narrowing
 as state transitions (`step`), with `step_int_mono` ("dynamic
-interaction only narrows") and `step_of_satisfied` (a satisfied
-probe is inert) as the probe-state laws; `isLicit` and the (1)-table
-theorems are derived from runs.
+interaction only narrows"), `probe_vis_antitone` (its `Probe`-level
+form: the state-indexed probe family `ProbeState.probe` only sees
+less over time), and `step_of_satisfied` (a satisfied probe is
+inert) as the probe-state laws; `isLicit` and the (1)-table theorems
+are derived from runs.
 
 -/
 
@@ -178,6 +180,13 @@ structure ProbeState where
 /-- Initial state: [INT:φ], unsatisfied, nothing agreed. -/
 def ProbeState.initial : ProbeState := ⟨.phi, false, []⟩
 
+/-- The static `Probe` a state denotes: visibility = bearing the
+    current INT condition. Deal's dynamic probe is a *state-indexed
+    family* of static probes — `step`'s interaction check is
+    literally `st.probe.vis`. -/
+def ProbeState.probe (st : ProbeState) : Minimalist.Probe Person :=
+  .ofVis (fun p => dpBears p st.int)
+
 /-- The dynamic-interaction target a goal contributes (her §5):
     `[F]↑` narrows INT to [F] when the interacted goal bears [F];
     in the combined setting `[SPKR]↑` takes priority. -/
@@ -201,7 +210,7 @@ def narrowTarget (d : DynInteraction) (p : Person) : Option PersonFeature :=
     by construction. -/
 def step (g : DealGrammar) (st : ProbeState) (t : Person × Nat) : ProbeState :=
   if st.satisfied then st
-  else if dpBears t.1 st.int then
+  else if st.probe.vis t.1 then
     { int :=
         match narrowTarget g.dynInteraction t.1 with
         | some f => if st.int ≤ f then f else st.int
@@ -234,6 +243,21 @@ theorem step_int_mono (g : DealGrammar) (st : ProbeState)
         · exact le_refl _
       · exact le_refl _
     · exact le_refl _
+
+/-- Bearing a more specific feature entails bearing a less specific
+    one — the (7) geometry, as monotonicity of `dpBears`. -/
+theorem dpBears_antitone {f g : PersonFeature} (hfg : f ≤ g) (p : Person)
+    (h : dpBears p g = true) : dpBears p f = true := by
+  revert hfg h
+  cases f <;> cases g <;> cases p <;> decide
+
+/-- The state-indexed probe family only narrows: anything visible to
+    a later state's probe was visible to an earlier state's —
+    `step_int_mono` at the `Probe` level. -/
+theorem probe_vis_antitone (g : DealGrammar) (st : ProbeState)
+    (t : Person × Nat) (a : Person)
+    (h : ((step g st t).probe).vis a = true) : st.probe.vis a = true :=
+  dpBears_antitone (step_int_mono g st t) a h
 
 /-- A satisfied probe is inert: satisfaction halts all further
     interaction (her (8b)). -/

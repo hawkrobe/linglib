@@ -72,14 +72,14 @@ on probe-specific *horizons* and *bilateral labeling*.
 
 ## Architecture
 
-This file imports `Probe.lean` (for `ProbeProfile`, `LanguageProbeConfig`,
+This file imports `Probe.lean` (for `Probe.Profile`, `LanguageProbeConfig`,
 `transparentToLabel`) and `ClauseSpine.lean` (for clause spines with
 bilateral labels). It verifies the book's predictions as theorems.
 -/
 
 namespace Keine2020
 
-open Minimalist (ProbeProfile LanguageProbeConfig ClauseSpine Cat fValue english_extr
+open Minimalist (Probe.Profile LanguageProbeConfig ClauseSpine Cat fValue english_extr
   lubukusuAProbe)
 
 -- ============================================================================
@@ -227,7 +227,7 @@ theorem german_rel_transparent_vP :
 
 -- Note: German rel uses the wh field with horizon Force (same structural
 -- position C⁰). For relativization specifically (horizon C), we test directly:
-private def germanRelProbe : ProbeProfile := ⟨.C, some .C⟩
+private def germanRelProbe : Probe.Profile := ⟨.C, some .C⟩
 
 theorem german_rel_transparent_tP :
     germanRelProbe.transparentToLabel tPLabel = true := by decide
@@ -300,12 +300,12 @@ theorem hindi_finite_selective_opacity :
 /-- Hindi φ and A probes use the default horizon: probe on T⁰ with
     horizon T (= its own head). -/
 theorem hindi_phi_uses_default :
-    hindiCfg.phi = ProbeProfile.defaultHorizon .T := rfl
+    hindiCfg.phi = Probe.Profile.defaultHorizon .T := rfl
 
 /-- German scrambling probe uses the default horizon: probe on T⁰
     with horizon T. -/
 theorem german_scr_uses_default :
-    germanCfg.phi = ProbeProfile.defaultHorizon .T := rfl
+    germanCfg.phi = Probe.Profile.defaultHorizon .T := rfl
 
 -- ============================================================================
 -- § 7: Four Distinct Locality Types (Hindi)
@@ -314,7 +314,7 @@ theorem german_scr_uses_default :
 /-- Hindi exhibits four distinct locality types — one per operation.
     Using bilateral labeling, each probe produces a unique 4-tuple
     of transparency values across (vP, TP, NmlzP, CP). -/
-def hindiProfile (p : ProbeProfile) : Bool × Bool × Bool × Bool :=
+def hindiProfile (p : Probe.Profile) : Bool × Bool × Bool × Bool :=
   ( p.transparentToLabel vPLabel,
     p.transparentToLabel tPLabel,
     p.transparentToLabel nmlzPLabel,
@@ -370,11 +370,11 @@ of C⁰ is TP, whose label `[V, Appl, v, Voice, T]` contains T. -/
 
 /-- Standard vacuous examples: C⁰ ⊣ T, C⁰ ⊣ v, C⁰ ⊣ V are all vacuous. -/
 theorem vacuous_C_with_T :
-    (ProbeProfile.mk .C (some .T)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .T)).isVacuous = true := by decide
 theorem vacuous_C_with_v :
-    (ProbeProfile.mk .C (some .v)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .v)).isVacuous = true := by decide
 theorem vacuous_C_with_V :
-    (ProbeProfile.mk .C (some .V)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .V)).isVacuous = true := by decide
 
 /-- Hindi Ā (C⁰ ⊣ Nmlz) is NOT vacuous: Nmlz is not in TP's label. -/
 theorem hindi_ābar_not_vacuous :
@@ -416,15 +416,15 @@ theorem hindi_hlt_C_probes :
     hindiCfg.wh.isVacuous = false ∧
     hindiCfg.ābar.isVacuous = false ∧
     -- Unattested alternatives would be vacuous
-    (ProbeProfile.mk .C (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .C (some .v)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .v)).isVacuous = true := by decide
 
 /-- HLT (279b) for Hindi: φ and A probes use T⁰ ⊣ T (nonvacuous),
     but ⊣ T on C⁰ or Force⁰ would be vacuous. -/
 theorem hindi_hlt_T_horizon :
     hindiCfg.phi.isVacuous = false ∧
-    (ProbeProfile.mk .C (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .Force (some .T)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .Force (some .T)).isVacuous = true := by decide
 
 -- ============================================================================
 -- § 12: Ban on Improper Movement ([keine-2020] §3.4.1–3.4.2)
@@ -492,7 +492,7 @@ theorem english_extr_more_local :
 
 /-- Extraposition uses the default horizon for T⁰. -/
 theorem english_extr_is_default :
-    english_extr = ProbeProfile.defaultHorizon .T := rfl
+    english_extr = Probe.Profile.defaultHorizon .T := rfl
 
 -- ============================================================================
 -- § 15: Movement–Agreement Mismatches ([keine-2020] §3.4.5)

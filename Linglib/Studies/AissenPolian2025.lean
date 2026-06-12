@@ -89,7 +89,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 - `JudgmentType` from `Discourse/InformationStructure.lean`
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
-- `ProbeProfile`, `closestGoalB`, `behindHorizonB`, `liftFM` from
+- `Probe.Profile`, `closestGoalB`, `behindHorizonB`, `liftFM` from
   `Syntax/Minimalist/{Agree, Basic}.lean`
 -/
 
@@ -220,16 +220,16 @@ instance : Decidable CanĀSubextract := by unfold CanĀSubextract; infer_instanc
 theorem subextraction_impossible : ¬ CanĀSubextract := fun h => h trivial
 
 -- ────────────────────────────────────────────────────────────────
--- ProbeType ↔ ProbeProfile bridge
+-- ProbeType ↔ Probe.Profile bridge
 -- ────────────────────────────────────────────────────────────────
 
-/-- Convert a `ProbeType` to a `ProbeProfile` from [keine-2019].
+/-- Convert a `ProbeType` to a `Probe.Profile` from [keine-2019].
 
     - `dProbe` (A-movement, on T°/Appl°) maps to an A-probe on T°
       with horizon C — the same profile as `keineAProbe`.
     - `whProbe` (Ā-movement, on D°/C°) maps to an Ā-probe on C°
       with no horizon — the same profile as `keineĀProbe`. -/
-def ProbeType.toProfile : ProbeType → Minimalist.ProbeProfile
+def ProbeType.toProfile : ProbeType → Minimalist.Probe.Profile
   | .dProbe  => Minimalist.keineAProbe
   | .whProbe => Minimalist.keineĀProbe
 

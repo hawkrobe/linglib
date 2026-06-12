@@ -56,7 +56,7 @@ namespace Minimalist
     The A/Ā distinction is correlated with probe height but not
     strictly derived from it: probes on the same head can have
     different horizons ([keine-2020] §3.6). -/
-structure ProbeProfile where
+structure Probe.Profile where
   /-- The head that hosts this probe (T⁰, C⁰, etc.) -/
   probeHead : Cat
   /-- The category that terminates this probe's search.
@@ -66,12 +66,12 @@ structure ProbeProfile where
 
 /-- Is this an A-probe? A-probes sit at or below T (fValue ≤ 2).
     [keine-2020] §3: A-movement lands in Spec,TP (fValue 2). -/
-def ProbeProfile.isAProbe (p : ProbeProfile) : Bool :=
+def Probe.Profile.isAProbe (p : Probe.Profile) : Bool :=
   fValue p.probeHead ≤ 2
 
 /-- Is this an Ā-probe? Ā-probes sit at or above C (fValue ≥ 6).
     [keine-2020] §3: Ā-movement lands in Spec,CP (fValue 6). -/
-def ProbeProfile.isĀProbe (p : ProbeProfile) : Bool :=
+def Probe.Profile.isĀProbe (p : Probe.Profile) : Bool :=
   fValue p.probeHead ≥ 6
 
 -- ============================================================================
@@ -93,7 +93,7 @@ def ProbeProfile.isĀProbe (p : ProbeProfile) : Bool :=
     NmlzP's label `[V, v, T, Nmlz]` does not contain C (transparent to
     wh with horizon C), while CP's label `[V, v, T, C]` does not contain
     Nmlz (transparent to Ā with horizon Nmlz in Hindi). -/
-def ProbeProfile.transparentToLabel (p : ProbeProfile) (label : List Cat) : Bool :=
+def Probe.Profile.transparentToLabel (p : Probe.Profile) (label : List Cat) : Bool :=
   match p.horizon with
   | none => true
   | some h => !(label.any (· == h))
@@ -117,7 +117,7 @@ def ProbeProfile.transparentToLabel (p : ProbeProfile) (label : List Cat) : Bool
     - The probe has a horizon: the clause's highest head is strictly
       below the probe head in the functional sequence
       (`fValue clauseHead < fValue probeHead`). -/
-def ProbeProfile.transparentTo (p : ProbeProfile) (clauseHead : Cat) : Bool :=
+def Probe.Profile.transparentTo (p : Probe.Profile) (clauseHead : Cat) : Bool :=
   if p.horizon.isSome then fValue clauseHead < fValue p.probeHead else true
 
 -- ============================================================================
@@ -133,21 +133,21 @@ def ProbeProfile.transparentTo (p : ProbeProfile) (clauseHead : Cat) : Bool :=
     Can search into vP but not TP or CP clauses.
     Note: this is the [keine-2019] article setting; the book
     refines Hindi φ to have horizon T ([keine-2020] (219)). -/
-def keinePhiProbe : ProbeProfile := ⟨.T, some .C⟩
+def keinePhiProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-- A-movement probe (EPP on T⁰): sits on T⁰, horizon is C.
     Same locality as φ-agreement — both are on T⁰. -/
-def keineAProbe : ProbeProfile := ⟨.T, some .C⟩
+def keineAProbe : Probe.Profile := ⟨.T, some .C⟩
 
 /-- Wh-licensing probe: sits on C⁰, horizon is C.
     Can search into vP and TP but not CP clauses. -/
-def keineWhLicensing : ProbeProfile := ⟨.C, some .C⟩
+def keineWhLicensing : Probe.Profile := ⟨.C, some .C⟩
 
 /-- Ā-movement probe from [keine-2019]: sits on C⁰, no horizon.
     The 2019 article treated Ā as having no horizon.
     [keine-2020] (219) refines this: Hindi Ā has horizon Nmlz,
     English Ā has horizon C, German topicalization has no horizon. -/
-def keineĀProbe : ProbeProfile := ⟨.C, none⟩
+def keineĀProbe : Probe.Profile := ⟨.C, none⟩
 
 -- ────────────────────────────────────────────────────────────────
 -- Derived properties of the article probes
@@ -167,25 +167,25 @@ theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by decide
 [deal-2026] argues that Nez Perce relative-embedding (RE) clauses contain
 an internal Ā-dependency *from a high functional projection above TP*. The
 unification target — Deal's "Ā-dependency" — is realised here as a subtype
-of `ProbeProfile` rather than as a parallel new structure: any Probe with
+of `Probe.Profile` rather than as a parallel new structure: any Probe with
 `isĀProbe = true` IS an Ā-dependency primitive in Deal's sense.
 
-This avoids cascade: existing consumers of `ProbeProfile` (wh-licensing in
+This avoids cascade: existing consumers of `Probe.Profile` (wh-licensing in
 `Questions.lean`, the keine probes here, language-specific configurations)
 remain unchanged, and `AbarDep` is a thin wrapper providing only the predicate
 `isĀProbe = true` as a proof-relevant invariant. -/
 
-/-- An Ā-probe: a `ProbeProfile` carrying a proof that it is Ā-positioned
+/-- An Ā-probe: a `Probe.Profile` carrying a proof that it is Ā-positioned
     (probeHead at or above C, fValue ≥ 6).
 
     [deal-2026] consumes this to express the Nez Perce RE structure:
     each RE-taker selects a CP whose internal probe is an `AbarDep`. By
     contrast, simplex-embedding verbs (Nez Perce *neki* 'think', *hi* 'say',
     *cuukwe* 'know') select bare CPs with no internal `AbarDep`. -/
-def AbarDep := { p : ProbeProfile // p.isĀProbe = true }
+def AbarDep := { p : Probe.Profile // p.isĀProbe = true }
 
 /-- An `AbarDep` projects back to its underlying probe. -/
-def AbarDep.toProbe (a : AbarDep) : ProbeProfile := a.val
+def AbarDep.toProbe (a : AbarDep) : Probe.Profile := a.val
 
 /-- The keine Ā-probe is an `AbarDep` (lifted from `ābar_is_Ā`). -/
 def keineĀDep : AbarDep := ⟨keineĀProbe, ābar_is_Ā⟩
@@ -219,13 +219,13 @@ theorem keineWhDep_isHigh : keineWhDep.isHigh = true := by decide
     tables: φ-agreement, A-movement, wh-licensing, and Ā-movement. -/
 structure LanguageProbeConfig where
   /-- φ-agreement probe -/
-  phi : ProbeProfile
+  phi : Probe.Profile
   /-- A-movement probe -/
-  aMove : ProbeProfile
+  aMove : Probe.Profile
   /-- wh-licensing probe -/
-  wh : ProbeProfile
+  wh : Probe.Profile
   /-- Ā-movement / topicalization probe -/
-  ābar : ProbeProfile
+  ābar : Probe.Profile
   deriving Repr
 
 /-- Hindi probe settings ([keine-2020] (219)).
@@ -267,7 +267,7 @@ def LanguageProbeConfig.english : LanguageProbeConfig :=
 
     Extraposition is more local than A-movement: it cannot cross
     even TP boundaries. This is the default horizon for T⁰. -/
-def english_extr : ProbeProfile := ⟨.T, some .T⟩
+def english_extr : Probe.Profile := ⟨.T, some .T⟩
 
 /-- German probe settings ([keine-2020] (367)).
 
@@ -372,7 +372,7 @@ chain (305). -/
 
 /-- Lubukusu A-probe: no horizon — hyperraising out of finite clauses.
     [keine-2020] (300a). -/
-def lubukusuAProbe : ProbeProfile := ⟨.T, none⟩
+def lubukusuAProbe : Probe.Profile := ⟨.T, none⟩
 
 /-- The three A-movement settings form an entailment chain:
     Lubukusu (⊣ ∅) is strictly more permissive than English (⊣ C),
@@ -405,15 +405,15 @@ theorem a_movement_typology :
     horizon is X itself. This is the maximally restrictive setting that
     is not vacuous — the probe can search into domains smaller than its
     own projection but not into domains of the same size or larger. -/
-def ProbeProfile.defaultHorizon (probeHead : Cat) : ProbeProfile :=
+def Probe.Profile.defaultHorizon (probeHead : Cat) : Probe.Profile :=
   ⟨probeHead, some probeHead⟩
 
 /-- A probe with the default horizon can search into domains strictly
     below its own F-level but not at or above it (in the fValue model). -/
 theorem default_horizon_restrictive (head c : Cat)
     (h : fValue c ≥ fValue head) :
-    (ProbeProfile.defaultHorizon head).transparentTo c = false := by
-  simp [ProbeProfile.defaultHorizon, ProbeProfile.transparentTo, Option.isSome]
+    (Probe.Profile.defaultHorizon head).transparentTo c = false := by
+  simp [Probe.Profile.defaultHorizon, Probe.Profile.transparentTo, Option.isSome]
   omega
 
 -- ============================================================================
@@ -438,7 +438,7 @@ Each row is a strict superset of the one above it. -/
 /-- Horizon entailment: ⊣ v ⊂ ⊣ T ⊂ ⊣ C ⊂ ⊣ ∅ (for a probe on C⁰).
     Each step adds exactly one more transparent clause type. -/
 theorem locality_profile_entailment :
-    let onC (hz : Option Cat) := ProbeProfile.mk .C hz
+    let onC (hz : Option Cat) := Probe.Profile.mk .C hz
     -- ⊣ v: only VP transparent (but v is vacuous on C⁰, so untestable)
     -- ⊣ T: also vacuous on C⁰
     -- ⊣ C: TP, vP transparent; CP opaque
@@ -450,7 +450,7 @@ theorem locality_profile_entailment :
 /-- Horizon entailment for probes on T⁰: ⊣ T ⊂ ⊣ C ⊂ ⊣ ∅.
     This is the empirically relevant case (A-movement, φ-agreement). -/
 theorem locality_profile_entailment_T :
-    let onT (hz : Option Cat) := ProbeProfile.mk .T hz
+    let onT (hz : Option Cat) := Probe.Profile.mk .T hz
     -- ⊣ T (default): only vP transparent
     (onT (some .T)).transparentToLabel ClauseSpine.vP.projectedHeads = true ∧
     (onT (some .T)).transparentToLabel ClauseSpine.tP.projectedHeads = false ∧
@@ -473,23 +473,23 @@ theorem locality_profile_entailment_T :
     horizon appears in the smaller label, it appears in the larger one too.
 
     This theorem proves it for the simplified fValue model. -/
-theorem upward_entailment (p : ProbeProfile) (c₁ c₂ : Cat)
+theorem upward_entailment (p : Probe.Profile) (c₁ c₂ : Cat)
     (h_opaque : p.transparentTo c₁ = false)
     (h_larger : fValue c₁ ≤ fValue c₂) :
     p.transparentTo c₂ = false := by
-  simp only [ProbeProfile.transparentTo] at *
+  simp only [Probe.Profile.transparentTo] at *
   cases h_eq : p.horizon <;> simp_all [Option.isSome]
   omega
 
 /-- Upward Entailment for bilateral labeling: if a label L₁ ⊆ L₂
     (every head in L₁ also appears in L₂), then opacity to L₁ implies
     opacity to L₂. -/
-theorem upward_entailment_label (p : ProbeProfile)
+theorem upward_entailment_label (p : Probe.Profile)
     (L₁ L₂ : List Cat)
     (h_sub : ∀ c, c ∈ L₁ → c ∈ L₂)
     (h_opaque : p.transparentToLabel L₁ = false) :
     p.transparentToLabel L₂ = false := by
-  simp only [ProbeProfile.transparentToLabel] at *
+  simp only [Probe.Profile.transparentToLabel] at *
   cases h_hz : p.horizon with
   | none => simp_all
   | some h =>
@@ -516,12 +516,12 @@ theorem upward_entailment_label (p : ProbeProfile)
 
     Note: the HLC is a "connection" not an isomorphism — probes on the
     same head can differ in locality ([keine-2020] §3.6). -/
-theorem height_locality_connection (p₁ p₂ : ProbeProfile) (c : Cat)
+theorem height_locality_connection (p₁ p₂ : Probe.Profile) (c : Cat)
     (h_higher : fValue p₁.probeHead ≤ fValue p₂.probeHead)
     (h_horizon : p₁.horizon = none → p₂.horizon = none)
     (h_transparent : p₁.transparentTo c = true) :
     p₂.transparentTo c = true := by
-  simp only [ProbeProfile.transparentTo] at *
+  simp only [Probe.Profile.transparentTo] at *
   cases h₁ : p₁.horizon <;> cases h₂ : p₂.horizon <;>
     simp_all [Option.isSome]
   omega
@@ -538,16 +538,16 @@ theorem height_locality_connection (p₁ p₂ : ProbeProfile) (c : Cat)
     determines which labels trigger search termination. This theorem
     is an artifact of the fValue approximation. -/
 theorem horizon_category_irrelevant_fvalue (head : Cat) (h₁ h₂ : Cat) (c : Cat) :
-    (ProbeProfile.mk head (some h₁)).transparentTo c =
-    (ProbeProfile.mk head (some h₂)).transparentTo c := by
-  simp [ProbeProfile.transparentTo]
+    (Probe.Profile.mk head (some h₁)).transparentTo c =
+    (Probe.Profile.mk head (some h₂)).transparentTo c := by
+  simp [Probe.Profile.transparentTo]
 
 /-- Under bilateral labeling, horizon category DOES matter.
     Example: wh (horizon C) finds NmlzP transparent, but Ā (horizon Nmlz)
     finds NmlzP opaque. Both probes are on C⁰ — only the horizon differs. -/
 theorem horizon_category_relevant_label :
-    let whProbe := (⟨.C, some .C⟩ : ProbeProfile)
-    let āProbe := (⟨.C, some .Nmlz⟩ : ProbeProfile)
+    let whProbe := (⟨.C, some .C⟩ : Probe.Profile)
+    let āProbe := (⟨.C, some .Nmlz⟩ : Probe.Profile)
     let nmlzLabel := [Cat.V, .v, .T, .Nmlz]
     whProbe.transparentToLabel nmlzLabel = true ∧
     āProbe.transparentToLabel nmlzLabel = false := by decide
@@ -568,7 +568,7 @@ theorem horizon_category_relevant_label :
 
     This is the general check; `isVacuous` below specializes it
     to the standard verbal spine. -/
-def ProbeProfile.isVacuousFor (p : ProbeProfile) (sisterLabel : List Cat) : Bool :=
+def Probe.Profile.isVacuousFor (p : Probe.Profile) (sisterLabel : List Cat) : Bool :=
   match p.horizon with
   | none => false
   | some _ => p.transparentToLabel sisterLabel = false
@@ -587,7 +587,7 @@ def ProbeProfile.isVacuousFor (p : ProbeProfile) (sisterLabel : List Cat) : Bool
     therefore undetectable. The Height-Locality Theorem (279)
     emerges because only nonvacuous probes produce observable
     dependencies. -/
-def ProbeProfile.isVacuous (p : ProbeProfile) : Bool :=
+def Probe.Profile.isVacuous (p : Probe.Profile) : Bool :=
   match p.horizon with
   | none => false
   | some _ =>
@@ -601,8 +601,8 @@ def ProbeProfile.isVacuous (p : ProbeProfile) : Bool :=
 /-- A probe with no horizon is never vacuous — it can always
     search into any domain. -/
 theorem no_horizon_not_vacuous (head : Cat) :
-    (ProbeProfile.mk head none).isVacuous = false := by
-  simp [ProbeProfile.isVacuous]
+    (Probe.Profile.mk head none).isVacuous = false := by
+  simp [Probe.Profile.isVacuous]
 
 /-- The four article probes are all nonvacuous. -/
 theorem keine_probes_nonvacuous :
@@ -636,29 +636,29 @@ theorem english_probes_nonvacuous :
     vacuous for T⁰ and C⁰: the sister label does not contain the
     probe's own head. -/
 theorem default_horizon_not_vacuous_T :
-    (ProbeProfile.defaultHorizon .T).isVacuous = false := by decide
+    (Probe.Profile.defaultHorizon .T).isVacuous = false := by decide
 theorem default_horizon_not_vacuous_C :
-    (ProbeProfile.defaultHorizon .C).isVacuous = false := by decide
+    (Probe.Profile.defaultHorizon .C).isVacuous = false := by decide
 
 /-- Example vacuous probes from [keine-2020] (278):
     a probe on C⁰ with horizon T, v, or V is vacuous — the sister
     TP's bilateral label contains all three. -/
 theorem vacuous_examples :
-    (ProbeProfile.mk .C (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .C (some .v)).isVacuous = true ∧
-    (ProbeProfile.mk .C (some .V)).isVacuous = true := by decide
+    (Probe.Profile.mk .C (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .v)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .V)).isVacuous = true := by decide
 
 /-- Hindi Ā (C⁰ ⊣ Nmlz) is NOT vacuous: TP's bilateral label
     does not contain Nmlz. -/
 theorem hindi_ābar_not_vacuous :
-    (ProbeProfile.mk .C (some .Nmlz)).isVacuous = false := by decide
+    (Probe.Profile.mk .C (some .Nmlz)).isVacuous = false := by decide
 
 /-- A probe vacuous for a given sister label cannot search past
     that sister — the sister itself is opaque. -/
-theorem vacuousFor_means_opaque (p : ProbeProfile) (label : List Cat)
+theorem vacuousFor_means_opaque (p : Probe.Profile) (label : List Cat)
     (hv : p.isVacuousFor label = true) :
     p.transparentToLabel label = false := by
-  simp only [ProbeProfile.isVacuousFor] at hv
+  simp only [Probe.Profile.isVacuousFor] at hv
   cases hHz : p.horizon <;> simp_all
 
 -- ============================================================================
@@ -667,7 +667,7 @@ theorem vacuousFor_means_opaque (p : ProbeProfile) (label : List Cat)
 
 /-- The transparency profile of a probe: which of the three standard
     clause sizes (vP, TP, CP) are transparent to it. -/
-def ProbeProfile.profile (p : ProbeProfile) : Bool × Bool × Bool :=
+def Probe.Profile.profile (p : Probe.Profile) : Bool × Bool × Bool :=
   (p.transparentTo .v, p.transparentTo .T, p.transparentTo .C)
 
 /-- The four article probes produce exactly three distinct transparency
@@ -696,12 +696,12 @@ theorem three_locality_types :
 -- ============================================================================
 
 /-- A complement's transparency to a given probe: delegates to
-    `ProbeProfile.transparentTo` on the complement's highest head.
+    `Probe.Profile.transparentTo` on the complement's highest head.
 
     This unifies the phase-based (`transparentToTenseAgree`) and
     horizon-based ([keine-2019]) transparency models into a
     single parameterized function. -/
-def ComplementSize.transparentTo (cs : ComplementSize) (p : ProbeProfile) : Bool :=
+def ComplementSize.transparentTo (cs : ComplementSize) (p : Probe.Profile) : Bool :=
   p.transparentTo cs.highestHead
 
 /-- Tense-Agree probe: sits on C⁰ with horizon C.
@@ -711,14 +711,14 @@ def ComplementSize.transparentTo (cs : ComplementSize) (p : ProbeProfile) : Bool
     This is the probe implicit in [egressy-2026]'s phase-based
     `transparentToTenseAgree`: any complement smaller than CP is
     transparent. -/
-def tenseAgreeProbe : ProbeProfile := ⟨.C, some .C⟩
+def tenseAgreeProbe : Probe.Profile := ⟨.C, some .C⟩
 
 /-- `transparentToTenseAgree` is the special case of `transparentTo`
     parameterized by `tenseAgreeProbe`. -/
 theorem transparentToTenseAgree_eq_transparentTo (cs : ComplementSize) :
     cs.transparentToTenseAgree = cs.transparentTo tenseAgreeProbe := by
   simp [ComplementSize.transparentToTenseAgree, ComplementSize.transparentTo,
-        ProbeProfile.transparentTo, tenseAgreeProbe, ComplementSize.fLevel]
+        Probe.Profile.transparentTo, tenseAgreeProbe, ComplementSize.fLevel]
 
 /-- `tenseAgreeProbe` has the same profile as `keineWhLicensing`. -/
 theorem tenseAgreeProbe_eq_whLicensing :
@@ -737,7 +737,7 @@ theorem tenseAgreeProbe_eq_whLicensing :
 theorem complementSize_matches_wh_not_phi (cs : ComplementSize) :
     cs.transparentToTenseAgree = keineWhLicensing.transparentTo cs.highestHead := by
   simp [ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
-        ProbeProfile.transparentTo, keineWhLicensing]
+        Probe.Profile.transparentTo, keineWhLicensing]
 
 /-- The divergence: TP complements are transparent under the
     phase-based model but opaque under Keine's φ-probe. -/
@@ -785,32 +785,32 @@ C⁰ or Force⁰ (vacuous). It can be on T⁰ (default horizon). -/
     are NOT vacuous (TP's label lacks these). -/
 theorem hlt_279a_C :
     -- Vacuous horizons for C⁰
-    (ProbeProfile.mk .C (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .C (some .v)).isVacuous = true ∧
-    (ProbeProfile.mk .C (some .V)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .v)).isVacuous = true ∧
+    (Probe.Profile.mk .C (some .V)).isVacuous = true ∧
     -- Nonvacuous horizons for C⁰
-    (ProbeProfile.mk .C (some .C)).isVacuous = false ∧
-    (ProbeProfile.mk .C (some .Nmlz)).isVacuous = false ∧
-    (ProbeProfile.mk .C (some .Force)).isVacuous = false := by decide
+    (Probe.Profile.mk .C (some .C)).isVacuous = false ∧
+    (Probe.Profile.mk .C (some .Nmlz)).isVacuous = false ∧
+    (Probe.Profile.mk .C (some .Force)).isVacuous = false := by decide
 
 /-- HLT (279a): Probes on T⁰ with horizons v, V are vacuous
     (vP's bilateral label contains both). Horizon T is NOT vacuous. -/
 theorem hlt_279a_T :
-    (ProbeProfile.mk .T (some .v)).isVacuous = true ∧
-    (ProbeProfile.mk .T (some .V)).isVacuous = true ∧
-    (ProbeProfile.mk .T (some .T)).isVacuous = false := by decide
+    (Probe.Profile.mk .T (some .v)).isVacuous = true ∧
+    (Probe.Profile.mk .T (some .V)).isVacuous = true ∧
+    (Probe.Profile.mk .T (some .T)).isVacuous = false := by decide
 
 /-- HLT (279b): A probe ⊣ T cannot be nonvacuously located on
     C⁰ or Force⁰ — both have T in their sister label. But ⊣ T
     on T⁰ is the default horizon (nonvacuous). -/
 theorem hlt_279b_T :
-    (ProbeProfile.mk .C (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .Force (some .T)).isVacuous = true ∧
-    (ProbeProfile.mk .T (some .T)).isVacuous = false := by decide
+    (Probe.Profile.mk .C (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .Force (some .T)).isVacuous = true ∧
+    (Probe.Profile.mk .T (some .T)).isVacuous = false := by decide
 
 /-- The HLT derives the HLC: for nonvacuous probes, higher probes
     can search into at least as many clause types (fValue model). -/
-theorem hlt_derives_hlc (p₁ p₂ : ProbeProfile) (c : Cat)
+theorem hlt_derives_hlc (p₁ p₂ : Probe.Profile) (c : Cat)
     (h_higher : fValue p₁.probeHead ≤ fValue p₂.probeHead)
     (h_horizon : p₁.horizon = none → p₂.horizon = none)
     (h_transparent : p₁.transparentTo c = true) :

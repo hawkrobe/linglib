@@ -89,7 +89,7 @@ inductive AgreementModel where
     - **unvalued**: the probe attempted but found no suitable goal.
       In the crash model, this crashes. In the obligatory-no-crash
       model, the derivation continues with default morphology. -/
-inductive ProbeOutcome where
+inductive Probe.Outcome where
   /-- Probe successfully agreed with a goal. -/
   | valued
   /-- Probe attempted but found no suitable goal. -/
@@ -103,14 +103,14 @@ inductive ProbeOutcome where
 /-- Does the derivation converge given a probe outcome?
     In the crash model: only if the probe was valued.
     In the obligatory-no-crash model: always. -/
-def derivationConverges (model : AgreementModel) (outcome : ProbeOutcome) : Bool :=
+def derivationConverges (model : AgreementModel) (outcome : Probe.Outcome) : Bool :=
   match model, outcome with
   | .crashOnFailure, .unvalued => false
   | _, _ => true
 
 /-- Does this outcome yield default morphology?
     Only unvalued probes produce the default (Elsewhere entry). -/
-def ProbeOutcome.yieldsDefault : ProbeOutcome → Bool
+def Probe.Outcome.yieldsDefault : Probe.Outcome → Bool
   | .valued => false
   | .unvalued => true
 
@@ -133,7 +133,7 @@ inductive PFRealization where
   deriving DecidableEq, Repr
 
 /-- Map a probe outcome to its PF realization. -/
-def ProbeOutcome.pfRealization : ProbeOutcome → PFRealization
+def Probe.Outcome.pfRealization : Probe.Outcome → PFRealization
   | .valued => .agreement
   | .unvalued => .elsewhere
 
@@ -153,30 +153,30 @@ theorem models_diverge_on_failure :
     derivationConverges .obligatoryNocrash .unvalued = true := ⟨rfl, rfl⟩
 
 /-- The crash model requires success for convergence. -/
-theorem crash_requires_success (outcome : ProbeOutcome) :
+theorem crash_requires_success (outcome : Probe.Outcome) :
     derivationConverges .crashOnFailure outcome = true ↔
     outcome = .valued := by
   cases outcome <;> simp [derivationConverges]
 
 /-- The obligatory-no-crash model always converges. -/
-theorem obligatory_always_converges (outcome : ProbeOutcome) :
+theorem obligatory_always_converges (outcome : Probe.Outcome) :
     derivationConverges .obligatoryNocrash outcome = true := by
   cases outcome <;> rfl
 
 /-- Failed probes yield default morphology (the Elsewhere entry). -/
 theorem failed_yields_default :
-    ProbeOutcome.unvalued.yieldsDefault = true := rfl
+    Probe.Outcome.unvalued.yieldsDefault = true := rfl
 
 /-- Successful probes do NOT yield default morphology. -/
 theorem success_no_default :
-    ProbeOutcome.valued.yieldsDefault = false := rfl
+    Probe.Outcome.valued.yieldsDefault = false := rfl
 
 /-- In the obligatory-no-crash model, failed agreement produces the
     Elsewhere PF realization — not a crash. This is Preminger's
     central empirical prediction (Ch. 5). -/
 theorem failure_produces_elsewhere :
     derivationConverges .obligatoryNocrash .unvalued = true ∧
-    ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
+    Probe.Outcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 6: Obligatoriness vs. Optionality
@@ -188,7 +188,7 @@ theorem failure_produces_elsewhere :
     probe fails — not whether it can be absent. -/
 inductive ProbePresence where
   /-- Probe is present (functional head projected). -/
-  | present : ProbeOutcome → ProbePresence
+  | present : Probe.Outcome → ProbePresence
   /-- No probe (functional head not projected). -/
   | absent
   deriving DecidableEq, Repr
@@ -218,7 +218,7 @@ theorem present_unvalued_vs_absent :
 /-- Run an Agree attempt and return the outcome.
 
     This bridges the Agree mechanism (`applyAgree`) with the failure model
-    (`ProbeOutcome`): if valuation succeeds, the probe was valued; otherwise
+    (`Probe.Outcome`): if valuation succeeds, the probe was valued; otherwise
     it attempted but failed. This is the missing link between the Agree
     operation (which returns `Option FeatureBundle`) and Preminger's
     obligatory-but-failable model (which distinguishes valued from unvalued).
@@ -227,7 +227,7 @@ theorem present_unvalued_vs_absent :
     doesn't decide what happens on failure — that's the job of the
     `AgreementModel`. This function extracts the binary outcome so the
     model can decide convergence. -/
-def attemptAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) : ProbeOutcome :=
+def attemptAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) : Probe.Outcome :=
   match applyAgree probeFeats goalFeats ftype with
   | some _ => .valued
   | none => .unvalued
