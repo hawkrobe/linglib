@@ -12,9 +12,9 @@ only on the auxiliary and indicative mood appears only on the lexical verb.
 ## Example
 
 *tw-a-li tu-tib-a muti*
-1PL-PST-AUX 1PL-cut-FV/IND tree
+1PL-TNS-AUX 1PL-cut-FV/IND tree
 'we were cutting the tree'
-(Aksenova 1997: 27)
+([anderson-2006] ex. 105, p. 215; Aksenova 1997: 27)
 
 ## Distribution
 
@@ -35,8 +35,8 @@ open Morphology (MorphCategory InflDistribution)
 /-- Hemba progressive/past AVC form. -/
 def form : String := "tw-a-li tu-tib-a muti"
 
-/-- Interlinear gloss. -/
-def gloss : String := "1PL-PST-AUX 1PL-cut-FV/IND tree"
+/-- Interlinear gloss (Anderson's: `1pl-tns-aux 1pl-cut-fv/ind tree`). -/
+def gloss : String := "1PL-TNS-AUX 1PL-cut-FV/IND tree"
 
 /-- Inflectional distribution: agreement doubled, tense on AUX, mood on LV. -/
 def inflDistribution : InflDistribution :=
