@@ -80,8 +80,8 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
 * [ciardelli-guerrini-2026] argue "You may A or may B" gets free
   choice from the narrow-scope LF ◇(A ∨ B) via modal concord
   ([zeijlstra-2007]), not from wide-scope ◇A ∧ ◇B. Truth-conditionally
-  the two analyses agree; cross-framework comparison is left to
-  `Phenomena/FreeChoice/Divergences.lean`.
+  the two analyses agree; the cross-framework comparison belongs to the
+  later paper's study file ([ciardelli-guerrini-2026]).
 * Geurts §5 (pp.402–404) ultimately suggests Disjointness is itself a
   conversational effect grounded in exhaustivity; formalised here only as
   the stipulated constraint, not the deeper pragmatic derivation.
