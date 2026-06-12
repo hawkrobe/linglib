@@ -322,4 +322,101 @@ theorem telicize_idempotent (p : AspectualProfile) :
 theorem atelicize_idempotent (p : AspectualProfile) :
     p.atelicize.atelicize = p.atelicize := rfl
 
+/-! ## Aspectual diagnostics
+[vendler-1957] [dowty-1979]
+
+The textbook test battery: *for*-X and *in*-X adverbials, the
+progressive, *stop V-ing*, and the imperative. Each prediction is a
+function of `VendlerClass`, and the derivation theorems show the
+predictions are consequences of the three-feature decomposition
+(telicity, duration, dynamicity), not independent stipulations. -/
+
+/-- Result of applying an aspectual diagnostic: felicitous, infelicitous,
+    degraded, or acceptable only under a meaning shift. -/
+inductive DiagnosticResult where
+  | accept    -- ✓ grammatical, acceptable
+  | reject    -- ✗ ungrammatical, unacceptable
+  | marginal  -- ? degraded, speaker variation
+  | coerced   -- ~ acceptable with meaning shift
+  deriving DecidableEq, Repr
+
+/-- *for*-X adverbial: measures the duration of an atelic eventuality
+    ("ran for an hour" ✓, \*"arrived for an hour"; "built houses for a
+    year" coerces to repetition, "coughed for an hour" to iteration). -/
+def forXPrediction : VendlerClass → DiagnosticResult
+  | .state => .accept
+  | .activity => .accept
+  | .achievement => .reject
+  | .accomplishment => .coerced
+  | .semelfactive => .coerced
+
+/-- *in*-X adverbial: measures time to a culmination point
+    ("built the house in a year" ✓, \*"ran in an hour"). -/
+def inXPrediction : VendlerClass → DiagnosticResult
+  | .state => .reject
+  | .activity => .reject
+  | .achievement => .accept
+  | .accomplishment => .accept
+  | .semelfactive => .reject
+
+/-- Progressive: requires ongoing, dynamic eventualities
+    ("is running" ✓, \*"is knowing French"; "is arriving" marginal
+    via preliminary stages, "is coughing" coerces to iteration). -/
+def progressivePrediction : VendlerClass → DiagnosticResult
+  | .state => .reject
+  | .activity => .accept
+  | .achievement => .marginal
+  | .accomplishment => .accept
+  | .semelfactive => .coerced
+
+/-- *stop V-ing*: presupposes an ongoing eventuality that ceases
+    ("stopped running" ✓; "stopped loving her" needs an inchoative
+    reading, "stopped recognizing" an iterative one). -/
+def stopVingPrediction : VendlerClass → DiagnosticResult
+  | .state => .marginal
+  | .activity => .accept
+  | .achievement => .coerced
+  | .accomplishment => .accept
+  | .semelfactive => .coerced
+
+/-- Imperative: requires agentive control
+    ("Run!" ✓, \*"Know French!"; "Cough!" ✓). -/
+def imperativePrediction : VendlerClass → DiagnosticResult
+  | .state => .reject
+  | .activity => .accept
+  | .achievement => .marginal
+  | .accomplishment => .accept
+  | .semelfactive => .accept
+
+/-- *in*-X acceptance is exactly telicity: the diagnostic follows from
+    the telicity feature. -/
+theorem inX_identifies_telic (c : VendlerClass) :
+    inXPrediction c = .accept ↔ c.telicity = .telic := by
+  cases c <;> simp [inXPrediction, VendlerClass.telicity]
+
+/-- *for*-X acceptance is exactly atelicity plus duration: semelfactives
+    are atelic but punctual, so they only accept *for*-X with iterative
+    coercion. -/
+theorem forX_from_features (c : VendlerClass) :
+    forXPrediction c = .accept ↔
+    (c.telicity = .atelic ∧ c.duration = .durative) := by
+  cases c <;> simp [forXPrediction, VendlerClass.telicity, VendlerClass.duration]
+
+/-- Semelfactive coercion under *for*-X derives from being atelic but
+    punctual: atelicity licenses temporal modification, punctuality
+    forces iterative reinterpretation. -/
+theorem forX_semelfactive_coercion :
+    forXPrediction .semelfactive = .coerced ∧
+    VendlerClass.semelfactive.telicity = .atelic ∧
+    VendlerClass.semelfactive.duration = .punctual := ⟨rfl, rfl, rfl⟩
+
+/-- Progressive acceptance is exactly duration plus dynamicity: states
+    fail (not dynamic), achievements and semelfactives fail (not
+    durative). -/
+theorem progressive_accepts_durative_dynamic (c : VendlerClass) :
+    progressivePrediction c = .accept ↔
+    (c.duration = .durative ∧ c.dynamicity = .dynamic) := by
+  cases c <;> simp [progressivePrediction, VendlerClass.duration,
+    VendlerClass.dynamicity]
+
 end Features

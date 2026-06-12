@@ -5,7 +5,7 @@ import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Core.Order.Boundedness
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 
 /-!
 # [krifka-1989] "Nominal Reference, Temporal Constitution and Quantification"
@@ -56,7 +56,7 @@ on abstract domains.
   `VerbIncClass`; the K89 → K98 refinement bridge in § 4 makes the
   connection explicit).
 * Not a *for*-X / *in*-X diagnostic study (that's
-  `Phenomena/TenseAspect/Diagnostics.lean`).
+  `Features/Aktionsart.lean`).
 * Not a critique of K89's binary CUM/QUA (that's `Studies/Filip2012.lean`,
   which proves the three-way classification's middle ground stable).
 
@@ -78,7 +78,7 @@ open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Order (MereoTag)
-open Phenomena.TenseAspect.Diagnostics
+open Features
   (forXPrediction inXPrediction DiagnosticResult)
 
 /-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/

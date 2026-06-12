@@ -2,7 +2,7 @@ import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 
 /-!
 # [champollion-2017]: Distributivity as a bridge between aspect and measurement
@@ -135,7 +135,7 @@ namespace Champollion2017
 open English.Predicates.Verbal
 open Semantics.Lexical
 open Features
-open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
+open Features (forXPrediction inXPrediction)
 open _root_.Mereology
 open Semantics.Plurality.Algebra (Materialization)
 
