@@ -1,7 +1,7 @@
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 import Linglib.Phenomena.Islands.Basic
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 set_option autoImplicit false
 

@@ -3,7 +3,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
 /-!
 # Chomsky (1981) — Binding Principles A/B/C [chomsky-1981]
@@ -36,7 +36,7 @@ tables.
 
 namespace Chomsky1981
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 open Minimalist.Coreference
 
 private abbrev john := English.Nouns.john.toWordSg

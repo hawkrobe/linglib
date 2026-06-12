@@ -1,7 +1,7 @@
 import Linglib.Features.Evidentiality
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 /-!
 # Epistemic Evidentiality — Empirical Data

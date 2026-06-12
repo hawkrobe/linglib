@@ -21,9 +21,9 @@ Verbs select for a specific number and type of arguments.
   (3c) *John gives the book. ✗ ditransitive with one object
 -/
 
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 namespace Phenomena.ArgumentStructure.Subcategorization
 

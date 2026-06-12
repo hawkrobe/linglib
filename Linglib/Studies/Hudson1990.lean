@@ -1,9 +1,9 @@
 import Linglib.Syntax.DependencyGrammar.Coreference
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Studies.Chomsky1981
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 /-!
 # Dependency Grammar d-command binding → Coreference Phenomena

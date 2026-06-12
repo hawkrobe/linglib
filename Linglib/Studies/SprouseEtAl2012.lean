@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.NormNum
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
 /-!
 # Sprouse, Wagers & Phillips (2012) — Factorial Acceptability Designs
@@ -27,7 +27,7 @@ shape of output a theory must produce*; bridge theorems in downstream
 * `AccountPredictions`: an n-cell prediction tuple from a theoretical
   account, with a decidable `Matches` comparator.
 * `SentencePair.toFactorial`: the pre-experimental minimal-pair datum
-  (`Linglib/Phenomena/MinimalPairs.lean`) as the degenerate 1×2 case of
+  (`Linglib/Features/MinimalPairs.lean`) as the degenerate 1×2 case of
   a factorial design.
 
 ## Out of scope
@@ -43,7 +43,7 @@ shape of output a theory must produce*; bridge theorems in downstream
 namespace SprouseEtAl2012
 
 open Features
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 /-! ### Factorial conditions -/
 

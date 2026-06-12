@@ -18,14 +18,14 @@ Two parallel families:
   `List Word`, requiring feature specifications. Used by analyses
   that operate on parsed/featural representations (HPSG, DG, Minimalism).
 * **String-based** (`SentencePair`, `StringPhenomenonData`): sentences
-  are raw strings, parseable by any theory. Used by phenomenon data
-  files that should remain free of theoretical commitments.
+  are raw strings, parseable by any theory. Used by data files that
+  should remain free of theoretical commitments.
 
 Judgments use the five-level `Features.Judgment` scale
 (`Linglib/Features/Acceptability.lean`).
 -/
 
-namespace Phenomena.MinimalPairs
+namespace Features.MinimalPairs
 
 open Features
 
@@ -101,7 +101,7 @@ structure SentencePair where
 
 /-- String-based phenomenon data for theory-neutral representation.
 
-    This is the string-based analogue of `PhenomenonData`. Phenomena files
+    This is the string-based analogue of `PhenomenonData`. Data files
     should use this type so that empirical data is decoupled from any
     particular grammatical theory's representation. -/
 structure StringPhenomenonData where
@@ -113,4 +113,4 @@ structure StringPhenomenonData where
   generalization : String
   deriving Repr
 
-end Phenomena.MinimalPairs
+end Features.MinimalPairs

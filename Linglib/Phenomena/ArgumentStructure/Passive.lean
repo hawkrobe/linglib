@@ -1,6 +1,6 @@
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 
 /-!
 # The Passive Construction

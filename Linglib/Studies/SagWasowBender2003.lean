@@ -3,7 +3,7 @@ import Linglib.Studies.Chomsky1981
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.MinimalPairs
+import Linglib.Features.MinimalPairs
 
 /-!
 # Sag, Wasow & Bender (2003) — HPSG Binding Theory [sag-wasow-bender-2003]
@@ -21,12 +21,12 @@ Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes
 Principle C. See `Syntax/HPSG/Coreference.lean` for the
 implementation; this file verifies it against the [chomsky-1981]
 minimal-pair paradigm in `Studies/Chomsky1981.lean` via the
-`Phenomena.MinimalPairs` vocabulary.
+`Features.MinimalPairs` vocabulary.
 -/
 
 namespace SagWasowBender2003
 
-open Phenomena.MinimalPairs
+open Features.MinimalPairs
 open HPSG.Coreference
 open Chomsky1981 (reflexiveCoreferenceData pronominalDisjointReferenceData
   complementaryDistributionData reciprocalCoreferenceData)
