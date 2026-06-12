@@ -1,0 +1,30 @@
+[
+  {
+    "id": "merchant2001_german_case_match",
+    "source": {"bibkey": "merchant-2001", "paperLabel": "case-matching under sluicing"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er will jemandem schmeicheln, aber sie wissen nicht, wem.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["will", "want.PRS.3SG"], ["jemandem", "someone.DAT"],
+      ["schmeicheln", "flatter.INF"], ["aber", "but"], ["sie", "they"], ["wissen", "know.PRS.3PL"],
+      ["nicht", "NEG"], ["wem", "who.DAT"]
+    ],
+    "translation": "He wants to flatter someone, but they don't know who.",
+    "context": "Sluicing: the wh-remnant must bear the case its correlate bears in the antecedent. The verb schmeicheln 'flatter' assigns dative.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Er will jemandem schmeicheln, aber sie wissen nicht, wen.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "sluicing"],
+      ["whPhraseCase", "dative"],
+      ["innerAntecedentCase", "dative"]
+    ],
+    "comment": "Migrated from Phenomena/Ellipsis/Sluicing.lean germanCaseMatch/germanCaseMismatch: dative 'wem' matches dative 'jemandem' (grammatical); the accusative variant 'wen' in alternatives mismatches and is ungrammatical. UNVERIFIED provenance: this German case-matching paradigm is standardly attributed to Ross 1969 (no bib entry; not cited here), reported in Merchant 2001; the prior Lean file sourced it only as 'Merchant (2001)'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]

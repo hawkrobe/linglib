@@ -1,0 +1,247 @@
+[
+  {
+    "id": "ginzburgcooper2004_4a_bo",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Did Bo finagle a raise? B: Bo?",
+    "discourseSegments": [
+      "A: Did Bo finagle a raise?",
+      "B: Bo?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did Bo finagle a raise? B: Bo?",
+    "context": "Clarification ellipsis of a proper name: the paradigm case. Clausal reading: 'Are you asking if BO finagled a raise?'; constituent reading: 'Who is Bo?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "NP"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (4a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceProperName, not checked against the published paper. RECONCILE: Studies/GinzburgCooper2004.lean uses 'Did Bo leave?' as its running example (paper ex. 28/32 per that file); whether (4a)'s antecedent is 'Did Bo finagle a raise?' or 'Did Bo leave?' needs checking against the paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_4a_finagle",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Did Bo finagle a raise? B: Finagle?",
+    "discourseSegments": [
+      "A: Did Bo finagle a raise?",
+      "B: Finagle?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did Bo finagle a raise? B: Finagle?",
+    "context": "Clarification ellipsis of a rare word: the constituent reading requests lexical clarification ('What does finagle mean?'), not referent identification.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "V"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (4a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceRareWord, not checked against the published paper (the Lean file labels both the Bo and finagle fragments as 4a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_8a",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Did Bo leave? B: My cousin?",
+    "discourseSegments": [
+      "A: Did Bo leave?",
+      "B: My cousin?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did Bo leave? B: My cousin?",
+    "context": "Non-identical clarification ellipsis: the fragment 'My cousin?' is not phonologically identical to the antecedent sub-utterance 'Bo'. Neither reading requires phonological identity.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "false"],
+      ["category", "NP"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (8a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceNonIdentical, not checked against the published paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_8c",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(8c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Did you bike to work yesterday? B: Cycle?",
+    "discourseSegments": [
+      "A: Did you bike to work yesterday?",
+      "B: Cycle?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Did you bike to work yesterday? B: Cycle?",
+    "context": "Non-identical clarification ellipsis of a verb. Clausal reading: 'Are you asking if I cycled to work yesterday?'; constituent reading: 'When you say bike, are you referring to cycling?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "false"],
+      ["category", "V"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (8c) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceNonIdenticalVerb, not checked against the published paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_10a",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: I phoned him. B: Him?",
+    "discourseSegments": [
+      "A: I phoned him.",
+      "B: Him?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: I phoned him. B: Him?",
+    "context": "Syntactic parallelism: the CE fragment must categorially match the antecedent sub-utterance. Accusative 'Him?' matches accusative 'him'; nominative 'he?' does not.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "He?", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "NP"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (10a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean accMatchOK/nomMismatchBad, not checked against the published paper. The nominative variant in alternatives is the Lean file's '#he?' (infelicitous), merged here as a within-example contrast.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_11",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Let's hold the conference here. B: Here?",
+    "discourseSegments": [
+      "A: Let's hold the conference here.",
+      "B: Here?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Let's hold the conference here. B: Here?",
+    "context": "A is in Gothenburg, B is in Hyderabad (no shared belief about the content of 'here'). The content of 'here' differs across participants, so the clausal reading, which presupposes shared belief about content, is unavailable; only the constituent reading survives.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "unacceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "AdvP"],
+      ["sharedBelief", "false"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (11) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceDistinctLocations and differentLocations (the same example encoded twice in the Lean file, merged here), not checked against the published paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_12",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Let's hold the conference here. B: Here?",
+    "discourseSegments": [
+      "A: Let's hold the conference here.",
+      "B: Here?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Let's hold the conference here. B: Here?",
+    "context": "Both A and B are in Gothenburg (shared belief about the content of 'here'). Both readings available; clausal: 'Are you asking if we should hold the conference in Gothenburg of all places?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "AdvP"],
+      ["sharedBelief", "true"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (12) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean sameLocation, not checked against the published paper. Minimal pair with ex. (11): the shared-belief condition distinguishes the clausal from the constituent reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_13a",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(13a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Can I come in? B: I?",
+    "discourseSegments": [
+      "A: Can I come in?",
+      "B: I?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: Can I come in? B: I?",
+    "context": "Clarification ellipsis of an indexical pronoun across speakers: 'I' refers to A when A says it, but would refer to B if B said it. Since the reference changes across speakers, the clausal reading (which requires shared belief about content) is blocked.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "unacceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "NP"],
+      ["sharedBelief", "false"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (13a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceIndexicalI, not checked against the published paper.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ginzburgcooper2004_6a",
+    "source": {"bibkey": "ginzburg-cooper-2004", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: you always had er er say every foot he had with a piece of spunyarn in the wire B: Spunyarn?",
+    "discourseSegments": [
+      "A: you always had er er say every foot he had with a piece of spunyarn in the wire",
+      "B: Spunyarn?"
+    ],
+    "glossedTokens": [],
+    "translation": "A: you always had er er say every foot he had with a piece of spunyarn in the wire B: Spunyarn?",
+    "context": "British National Corpus attestation (file H5G): clarification ellipsis of an unknown word. Constituent reading dominant: 'What's spunyarn?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "clausal", "judgment": "acceptable"},
+      {"name": "constituent", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phonIdentical", "true"],
+      ["category", "N"]
+    ],
+    "comment": "UNVERIFIED paperLabel: ex. (6a) carried from Phenomena/Ellipsis/ClarificationEllipsis.lean ceSpunyarn, not checked against the published paper. Originating source is the BNC (file H5G per the Lean notes), reported in Ginzburg & Cooper 2004; no separate BNC bib entry, so source carries the paper's bibkey.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

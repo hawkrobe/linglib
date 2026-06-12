@@ -1,5 +1,5 @@
 import Linglib.Discourse.KOS.Defs
-import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
+import Linglib.Data.Examples.GinzburgCooper2004
 
 /-!
 # Ginzburg & Cooper (2004): Clarification, Ellipsis, and Contextual Updates
@@ -31,7 +31,18 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 namespace GinzburgCooper2004
 
 open Discourse.KOS
-open Phenomena.Ellipsis.ClarificationEllipsis
+
+/-- The two readings of a clarification ellipsis.
+[ginzburg-cooper-2004] ex. 4b–c. -/
+inductive CEReading where
+  /-- "Are you asking whether p?" — polar question about propositional content.
+      Paraphrasable as a polar interrogative. Presupposes shared belief about
+      the sub-utterance's content. -/
+  | clausal
+  /-- "Who/what do you mean by X?" — wh-question about the referent/predicate.
+      Paraphrasable as a wh-interrogative. No shared-belief presupposition. -/
+  | constituent
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 0. Apparatus (demoted from former KOS substrate)
@@ -569,8 +580,22 @@ theorem hybrid_content_evidence :
 
 -- Integration with CE data
 
-/-- The CE proper name example matches our running example. -/
+/-- The proper-name CE (ex. 4a) carries both readings, in the order the
+coercion bridge predicts: clausal, then constituent. -/
 theorem running_example_matches_ce_data :
-    ceProperName.readings = [CEReading.clausal, CEReading.constituent] := rfl
+    Examples.ex_4a_bo.readings.map (·.1) = ["clausal", "constituent"] := rfl
+
+/-- Shared-belief minimal pair (ex. 11 vs 12): when A and B are in different
+locations, "Here?" lacks the clausal reading (no shared belief about the
+content of "here"); when co-located, both readings survive. -/
+theorem shared_belief_gates_clausal :
+    Examples.ex_11.readings = [("clausal", .unacceptable), ("constituent", .acceptable)] ∧
+    Examples.ex_12.readings = [("clausal", .acceptable), ("constituent", .acceptable)] := by
+  decide
+
+/-- Indexical CE (ex. 13a): "I?" across speakers shifts reference, so shared
+belief about content fails and the clausal reading is blocked. -/
+theorem indexical_blocks_clausal :
+    Examples.ex_13a.readings.lookup "clausal" = some .unacceptable := by decide
 
 end GinzburgCooper2004

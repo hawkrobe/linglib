@@ -1,7 +1,6 @@
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Multidominance
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
-import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Typology.Question
 /-!
 # Economy in PF Reduction
@@ -66,7 +65,7 @@ multidominance as the PF reduction mechanism.
 ## Integration
 
 - CSs are coordinated sluices — each conjunct of a CS is a sluice.
-  Bridge theorems connect CS data to `Sluicing.lean` data structures.
+  §1b decomposes CS examples into standalone component sluices.
 - The MWF parameter (`Typology/Question.lean`) classifies languages:
   non-MWF languages (English) ban multiple wh-fronting in questions.
 - RNR (§9) demonstrates that economy can force BOTH ellipsis and MD
@@ -233,27 +232,26 @@ theorem readingTable_consistent :
 -- § 1b: Sluicing Decomposition (CSs ≈ coordinated sluices)
 -- ============================================================================
 
-open Phenomena.Ellipsis.Sluicing
+/-- One conjunct of a coordinated sluice, recast as a standalone sluice. -/
+structure ComponentSluice where
+  sentence : String
+  whPhrase : String
+  grammatical : Bool := true
+  deriving Repr, DecidableEq
 
-/-- The "what" conjunct of `cs_basic` as a standalone sluice:
-    "John taught something, but I forgot what." -/
-def cs_basic_sluice_what : SluicingDatum :=
+/-- The "what" conjunct of `cs_basic` as a standalone sluice
+    (antecedent "John taught something", correlate "something",
+    elided "John taught"). -/
+def cs_basic_sluice_what : ComponentSluice :=
   { sentence := "John taught something, but I forgot what."
-  , antecedent := "John taught something"
-  , innerAntecedent := "something"
-  , whPhrase := "what"
-  , elided := "John taught"
-  , source := "CitkoGracaninYuksek2025 cs_basic decomposition" }
+  , whPhrase := "what" }
 
-/-- The "when" conjunct of `cs_basic` as a standalone sluice:
-    "John taught (then), but I forgot when." -/
-def cs_basic_sluice_when : SluicingDatum :=
+/-- The "when" conjunct of `cs_basic` as a standalone sluice
+    (antecedent "John taught (then)", correlate "(then)",
+    elided "John taught"). -/
+def cs_basic_sluice_when : ComponentSluice :=
   { sentence := "John taught (then), but I forgot when."
-  , antecedent := "John taught (then)"
-  , innerAntecedent := "(then)"
-  , whPhrase := "when"
-  , elided := "John taught"
-  , source := "CitkoGracaninYuksek2025 cs_basic decomposition" }
+  , whPhrase := "when" }
 
 /-- Each CS decomposes into sluices: the wh-phrases in a CS are
     each sluice remnants. -/
@@ -266,20 +264,17 @@ theorem cs_components_grammatical :
     cs_basic_sluice_what.grammatical = true ∧
     cs_basic_sluice_when.grammatical = true := ⟨rfl, rfl⟩
 
-/-- The "what" and "to whom" conjuncts of `cs_obligatory_args_allowed`. -/
-def cs_oblig_sluice_what : SluicingDatum :=
+/-- The "what" conjunct of `cs_obligatory_args_allowed` (correlate
+    "something", elided "John gave (to someone)"). -/
+def cs_oblig_sluice_what : ComponentSluice :=
   { sentence := "John gave something to someone, but I forgot what."
-  , antecedent := "John gave something to someone"
-  , innerAntecedent := "something"
-  , whPhrase := "what"
-  , elided := "John gave (to someone)" }
+  , whPhrase := "what" }
 
-def cs_oblig_sluice_toWhom : SluicingDatum :=
+/-- The "to whom" conjunct of `cs_obligatory_args_allowed` (correlate
+    "to someone", elided "John gave (something)"). -/
+def cs_oblig_sluice_toWhom : ComponentSluice :=
   { sentence := "John gave something to someone, but I forgot to whom."
-  , antecedent := "John gave something to someone"
-  , innerAntecedent := "to someone"
-  , whPhrase := "to whom"
-  , elided := "John gave (something)" }
+  , whPhrase := "to whom" }
 
 /-- Obligatory-argument CS also decomposes into sluices. -/
 theorem cs_obligatory_decomposes :

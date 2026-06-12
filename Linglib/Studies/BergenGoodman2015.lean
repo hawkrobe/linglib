@@ -1,7 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 
 /-!
@@ -56,7 +55,7 @@ literal meaning, so S1's exp(α·utility) term is zero for them (matching
 exp(-∞) = 0 from log(0) in the utility).
 -/
 
-open BigOperators RSA Phenomena.Ellipsis
+open BigOperators RSA
 
 namespace BergenGoodman2015
 
@@ -465,30 +464,21 @@ end ProsodyModel
 
 
 -- ============================================================================
--- § 7. Bridge: Ellipsis Data
+-- § 7. Fragment Interpretation Summary
 -- ============================================================================
 
 /-!
-## Bridge: FragmentAnswers
+## Fragment Interpretation
 
-The noisy channel model explains the data in `Phenomena.Ellipsis.FragmentAnswers`:
+The wh-fragment-answer prediction — "Bob" as answer to "Who went to the
+movies?" is correctly interpreted despite having no literal meaning — is
+carried by `EllipsisModel.l0_fragment_correct` and
+`EllipsisModel.l1_fragment_correct` in §1.
 
-- `fragmentSubject` (question: "Who went to the movies?", fragment: "Bob")
-  is correctly interpreted by both L0 and L1 (see `EllipsisModel.l0_fragment_correct`,
-  `EllipsisModel.l1_fragment_correct`)
-
-- `fragmentNobody` follows the same mechanism (different subject)
-
-The model also accounts for non-question fragments (`fragmentAssertion`,
-`fragmentTopic`): noise-based inference is not restricted to question-answer
-pairs — any context where deletion is plausible licenses fragment use.
+The same mechanism extends to non-question fragments: noise-based inference
+is not restricted to question-answer pairs — any context where deletion is
+plausible licenses fragment use.
 -/
-
-/-- The model's prediction aligns with the fragment answer data. -/
-theorem ellipsis_matches_data :
-    FragmentAnswers.fragmentSubject.fragment = "Bob" ∧
-    FragmentAnswers.fragmentSubject.available = true :=
-  ⟨rfl, rfl⟩
 
 
 -- ============================================================================

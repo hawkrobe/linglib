@@ -11,7 +11,6 @@ import Linglib.Discourse.KOS.RepriseContent
 import Linglib.Discourse.KOS.Austinian
 import Linglib.Discourse.KOS.CooperInfoState
 import Linglib.Discourse.Commitment.Table
-import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
 /-!
 # Ginzburg (2012): The Interactive Stance
@@ -278,24 +277,8 @@ end GenreRelevance
 [ginzburg-2012] Ch. 5: bare fragments ("Paris.") are resolved via
 the QUD. The InfoStruc shape of QUD entries (a question + its
 focus-establishing constituents) gives the resolution mechanism: a
-fragment fills the FEC slot of MaxQUD.
-
-We use `Phenomena.Ellipsis.FragmentAnswers.FragmentDatum` directly
-(theory-neutral data) rather than re-stipulating a parallel `NSUDatum`
-type — they encode the same information. -/
-
-open Phenomena.Ellipsis.FragmentAnswers in
-/-- Fragment answers from `Ellipsis/FragmentAnswers.lean` are NSU
-data — the same phenomenon, theory-neutral encoding. -/
-example (fd : FragmentDatum) : String × String × String :=
-  (fd.question, fd.fragment, fd.interpretation)
-
-open Phenomena.Ellipsis.FragmentAnswers in
-/-- All basic fragment answers have non-empty interpretations
-(structural well-formedness). -/
-theorem all_fragments_resolved :
-    basicFragments.all (fun fd => !fd.interpretation.isEmpty) = true := by
-  decide
+fragment fills the FEC slot of MaxQUD. Wh-fragment answers are one
+NSU subclass — short answers in the Ch. 7 taxonomy below. -/
 
 -- ════════════════════════════════════════════════════════════
 -- § 7. NSU Taxonomy (Ch. 7, Tables 7.3 + 7.4)
