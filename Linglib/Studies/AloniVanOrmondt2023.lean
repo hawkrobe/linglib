@@ -1,7 +1,6 @@
 import Linglib.Core.Logic.Modal.QBSML.FreeChoice
 import Linglib.Core.Logic.Modal.QBSML.StandardTranslation
-import Linglib.Phenomena.FreeChoice.Atoms
-import Linglib.Phenomena.FreeChoice.Worlds
+import Linglib.Core.Logic.Modal.BSML.Scenarios
 
 /-!
 # [aloni-vanormondt-2023]: QBSML applied to modified numerals + split disjunction
@@ -48,7 +47,7 @@ via `QBSMLModel.cInterp`.
 
 ## Atoms and worlds
 
-The concrete model reuses `Phenomena.FreeChoice.{FCAtom, PowerSet2World}`
+The concrete model reuses `Core.Logic.Modal.BSML.{FCAtom, PowerSet2World}`
 from the existing FreeChoice substrate, ensuring AvO 2023 + Aloni 2022 both
 target the same world space.
 -/
@@ -57,7 +56,7 @@ namespace AloniVanOrmondt2023
 
 open Core.Logic.Modal.QBSML
 open FirstOrder Language
-open Phenomena.FreeChoice (FCAtom PowerSet2World QVar)
+open Core.Logic.Modal.BSML (FCAtom PowerSet2World QVar)
 
 /-! ### Predicates and variables -/
 

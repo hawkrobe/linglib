@@ -1,5 +1,4 @@
-import Linglib.Phenomena.FreeChoice.Atoms
-import Linglib.Phenomena.FreeChoice.Worlds
+import Linglib.Core.Logic.Modal.BSML.Scenarios
 import Linglib.Studies.Aloni2022.FreeChoice
 
 /-!
@@ -27,7 +26,7 @@ The universal results live in `Studies/Aloni2022/FreeChoice.lean`:
 
 ## Atoms and worlds
 
-This file uses **typed atoms** `FCAtom.{a, b}` (from `Phenomena.FreeChoice.Atoms`)
+This file uses **typed atoms** `FCAtom.{a, b}` (from `Core.Logic.Modal.BSML.Atoms`)
 rather than String identifiers. The valuation routes directly through
 `PowerSet2World.holds`, eliminating the silent typo trap of the earlier
 String-based pattern (`match p with | "coffee" => ... | _ => false`).
@@ -41,7 +40,7 @@ the typed atoms throughout.
 namespace Aloni2022
 
 open Core.Logic.Modal.BSML
-open Phenomena.FreeChoice (FCAtom PowerSet2World)
+open Core.Logic.Modal.BSML (FCAtom PowerSet2World)
 
 -- ============================================================================
 -- §1 Teams
