@@ -28,8 +28,8 @@ d-causes without producing anything.
 | P-CAUSE (deterministic) | `causallySufficient` + directness | Sufficiency.lean |
 | D-CAUSE (deterministic) | `causallyNecessary` | Necessity.lean |
 | Thick → P-CAUSE preference | production constraint | (this file) |
-| Thick → strong ASR | resultative compatibility | Causation/Studies/Semantics.Causation.ProductionDependence.lean |
-| Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Builder.lean |
+| Thick → strong ASR | resultative compatibility | (this file) |
+| Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Interpretation.lean |
 
 -/
 

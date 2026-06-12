@@ -33,12 +33,12 @@ Lewis's causal dependence corresponds to the simple but-for test in our
 V2 SEM framework. For exogenous causes, `lewisButFor` is structurally
 identical to `¬ BoolSEM.causallySufficient` with the alternative cause-value.
 
-The key difference from [nadathur-2024] Def 10b (`causallyNecessary`):
+The key difference from [nadathur-2023-implicatives] Def 10b (`causallyNecessary`):
 Lewis's but-for operates on the actual world via minimal intervention,
 while Def 10b quantifies over consistent supersituations. For simple models
 they agree; for complex models with alternative pathways, Def 10b is
-strictly stronger. Bridge theorems comparing Lewis to Nadathur 2024 await
-the Necessity hub migration to V2.
+strictly stronger. Bridge theorems comparing the two belong in
+`Studies/Nadathur2023.lean` (the later paper) and are not yet written.
 
 ## Limitations
 

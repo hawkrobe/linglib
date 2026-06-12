@@ -755,7 +755,7 @@ theorem blocked_wrong_adjective :
 2. No causative alternation for pushPull alone (meaning-component prediction)
 3. **Fusion**: resultative construction adds CoS + causation → composed
    meaning now predicts the causative alternation
-4. Resultative construction adds CAUSE (non-empty CausalDynamics)
+4. Resultative construction adds CAUSE (a non-trivial `BoolSEM` law)
 5. Constructional BECOME = inception (CoSType.inception)
 6. Constructional CAUSE = `.make` (sufficiency, completion event)
 7. Anticausative: cause suppressed under discourse licensing

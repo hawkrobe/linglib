@@ -158,14 +158,11 @@ import Linglib.Typology.Extraction
 import Linglib.Typology.VoiceSystem
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.BayesNet
-import Linglib.Semantics.Causation.Variable
 import Linglib.Semantics.Causation.Graph.Defs
 import Linglib.Semantics.Causation.Graph.Basic
 import Linglib.Semantics.Causation.Valuation
 import Linglib.Semantics.Causation.Mechanism.Defs
 import Linglib.Semantics.Causation.Mechanism.Deterministic
-import Linglib.Semantics.Causation.Mechanism.PMF
-import Linglib.Semantics.Causation.Mechanism.NoisyOr
 import Linglib.Semantics.Causation.SEM.Defs
 import Linglib.Semantics.Causation.SEM.Basic
 import Linglib.Semantics.Causation.SEM.Bool
@@ -1307,7 +1304,7 @@ import Linglib.Studies.Cacchioli2025
 import Linglib.Studies.Grano2024
 import Linglib.Studies.Karttunen1971
 import Linglib.Studies.LiuYip2026
-import Linglib.Studies.Nadathur2024
+import Linglib.Studies.Nadathur2023
 import Linglib.Studies.Osborne2019Control
 import Linglib.Studies.TheilerRoelofsenAloni2018
 import Linglib.Studies.Bondarenko2022

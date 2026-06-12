@@ -192,7 +192,7 @@ theorem prevent_karttunen_class :
     This is the central insight of [nadathur-lauer-2020]: same
     entailment pattern ≠ same truth conditions. The difference emerges
     in overdetermination scenarios where `causallySufficient` is true but `causeSem`
-    is false (see `truth_conditionally_distinct` in Interpretation.lean). -/
+    is false (kernel-checked at `NadathurLauer2020.necessity_cancellable`). -/
 theorem cause_make_same_cell_different_mechanism :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
     Causative.cause.assertsNecessity ≠ Causative.make.assertsNecessity := by

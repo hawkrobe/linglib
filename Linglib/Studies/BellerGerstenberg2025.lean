@@ -587,11 +587,6 @@ noncomputable instance : SEM.IsDeterministic chainModel where
       inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 -- ── DAG instances ──
--- TODO (Phase D structural proofs): close these sorries with explicit
--- depth-based WellFounded proofs (Subrelation.wf + InvImage on Nat.lt)
--- after working out the TransGen.single/tail case-analysis tactics for
--- the simp-resistant `match` in `IsStrictAncestor`. Acyclicity is
--- semantically obvious for these 4-vertex toy graphs.
 
 /-- Depth function for `BGVar`: roots at 0, intermediate at 1, effect at 2.
     Strictly increases along every parent edge in all three BG2025 graphs
@@ -684,7 +679,7 @@ end HornScaleBridge
 
 Each theorem below chains across three levels of analysis:
 
-1. **Structural**: A `CausalDynamics` (structural equation model) yields
+1. **Structural**: A `BoolSEM` (structural equation model) yields
    directness and necessity via `hasDirectLaw` / `causallyNecessary`
 2. **Causation type**: These determine production vs dependence
    causation via `causationType` (from `ProductionDependence.lean`)
@@ -701,12 +696,9 @@ open Semantics.Causation
 open Semantics.Causation.ProductionDependence (causationType)
 
 /-! End-to-end pipeline theorems linking V2 BoolSEM models to RSA S1
-    predictions, after the bridge migration. The `causationType` from
-    `ProductionDependence.lean` is on legacy API but takes plain Bools,
-    so we compute its inputs using V2 predicates and pass the resulting
-    Bools through. Drops the legacy `Necessity.causeSem` divergence
-    theorem (replaceable when the Necessity hub legacy API is removed
-    in Phase D). -/
+    predictions. `causationType` (from `ProductionDependence.lean`)
+    takes plain Bools, so its inputs are computed with the SEM
+    predicates and passed through. -/
 
 /-- **Solo cause → S1 prefers "caused".**
     From a V2 model with one direct law (cause → effect), the pipeline

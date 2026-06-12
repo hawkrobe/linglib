@@ -25,16 +25,17 @@ plus the volitional-action constraint (§4.1, Def 43) that distinguishes
 ## Project-canonical definitions
 
 The substrate's `Necessity.causeSem` (in `Semantics/Causation/`)
-implements [nadathur-2024] **Definition 10b** rather than this paper's
+implements [nadathur-2023-implicatives] **Definition 10b** rather than this paper's
 literal Def 24. The paper itself anticipates this in fn 18: "the semantics
 of necessity causatives may well be better explicated in terms of one of
 the definitions of *actual cause*, rather than the version of causal
 necessity defined here." Def 10b IS an actual-cause formulation. The
 deviation is principled.
 
-`Sufficiency.makeSem` is N&L's Def 23 essentially verbatim (modulo the
-actuality conjunct, which the deterministic substrate makes redundant
-with the development-equals-effect clause).
+`Sufficiency.makeSem` is the sufficiency clause (b) of N&L's Def 23;
+the non-inevitability precondition (clause a) is not yet represented
+in the substrate (it would be falsified by the eager-default
+development — see the substrate TODO in `SEM/Counterfactual.lean`).
 
 ## Scenarios
 
@@ -54,12 +55,12 @@ with the development-equals-effect clause).
 
 ## Excluded
 
-The Suzy/Billy preemption scenario (the centerpiece of Lewis 1973,
-[lewis-1973-causation]) is **not formalized here** — N&L footnote 8
+Preemption (Suzy/Billy) is **not formalized here** — N&L footnote 8
 explicitly says "we will not discuss the specifics of pre-emption in this
-paper." The scenario lives at `Lewis1973.Overdetermination` (the
-chronologically-canonical owner). See `ProductionDependence.lean`'s
-discussion for the cross-paper consequence.
+paper" — and is not formalized in `Studies/Lewis1973.lean` either:
+that file's `Overdetermination` namespace is *symmetric* overdetermination
+(which Lewis's fn. 12 sets aside), not late preemption. See
+`ProductionDependence.lean`'s discussion for the cross-paper consequence.
 -/
 
 namespace NadathurLauer2020
