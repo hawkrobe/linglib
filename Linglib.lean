@@ -1663,10 +1663,7 @@ import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Studies.Kim2024_UPH
 import Linglib.Studies.Kim2024
 import Linglib.Studies.Pesetsky1995
-import Linglib.Phenomena.Presupposition.Basic
-import Linglib.Phenomena.Presupposition.Diagnostics
-import Linglib.Phenomena.Presupposition.ProjectiveContent
-import Linglib.Phenomena.Presupposition.Gradience
+import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Studies.DegenTonhauser2021
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.GroveWhite2025

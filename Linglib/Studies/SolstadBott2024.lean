@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.OntologicalPreconditions
-import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Studies.SolstadBott2022
 import Linglib.Fragments.German.Predicates
 import Linglib.Discourse.AtIssueness
@@ -58,7 +58,7 @@ namespace SolstadBott2024
 
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.OntologicalPreconditions
-open Phenomena.Presupposition.ProjectiveContent
+open Semantics.Presupposition.ProjectiveContent
 open SolstadBott2022
 open German.Predicates
 open Semantics.Presupposition

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-!
 # Giorgolo & Asudeh 2012: Monads for Conventional Implicatures
@@ -305,7 +305,7 @@ theorem flow_restriction : sentence.val = sentence_alt_nrrc.val := rfl
     captures this: content projects past all operators without
     requiring prior establishment in context. -/
 
-open Phenomena.Presupposition.ProjectiveContent (ProjectiveClass ProjectiveTrigger)
+open Semantics.Presupposition.ProjectiveContent (ProjectiveClass ProjectiveTrigger)
 
 theorem nrrc_is_classB : ProjectiveTrigger.nrrc.toClass = .classB := rfl
 theorem appositive_is_classB : ProjectiveTrigger.appositive.toClass = .classB := rfl

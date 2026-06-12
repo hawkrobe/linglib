@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Studies.Schlenker2009
 
 /-!
@@ -46,6 +46,8 @@ needs QUD/information-structure machinery).
   into exactly the four classes.
 - `schlenker_derives_tonhauser`: the local-context theory reproduces the
   taxonomy's structural predictions.
+- `traditional_crosscuts_classes`: the traditional presupposition/CI
+  labels cross-cut the SCF × OLE classes.
 -/
 
 namespace TonhauserEtAl2013
@@ -56,7 +58,7 @@ open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
-open Phenomena.Presupposition.ProjectiveContent
+open Semantics.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 
@@ -284,5 +286,50 @@ theorem pronoun_requires_antecedent :
 
 theorem pronoun_shifts_under_belief :
     ProjectiveTrigger.pronoun_existence.toClass.ole = .obligatory := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Traditional Categories Don't Carve at the Joints
+-- ════════════════════════════════════════════════════════════════
+
+/-- Traditional labels for projective content, predating the SCF/OLE
+taxonomy. -/
+inductive TraditionalCategory where
+  /-- Traditional "presupposition". -/
+  | presupposition
+  /-- Potts-style "conventional implicature". -/
+  | conventionalImplicature
+  /-- Supplementary/parenthetical content. -/
+  | supplementary
+  deriving DecidableEq, Repr
+
+/-- The traditional category conventionally assigned to each trigger.
+[tonhauser-beaver-roberts-simons-2013] argue this classification is
+inadequate: the SCF × OLE taxonomy cross-cuts it
+(`traditional_crosscuts_classes`). -/
+def traditionalCategory : ProjectiveTrigger → TraditionalCategory
+  | .pronoun_existence => .presupposition
+  | .definite_description => .presupposition
+  | .stop_prestate => .presupposition
+  | .know_complement => .presupposition
+  | .only_prejacent => .presupposition
+  | .almost_polar => .presupposition
+  | .too_existence => .presupposition
+  | .too_salience => .presupposition
+  | .occasion_verb => .presupposition
+  | .demonstrative_indication => .presupposition
+  | .focus_salience => .presupposition
+  | .expressive => .conventionalImplicature
+  | .appositive => .supplementary
+  | .nrrc => .supplementary
+  | .possessive_np => .supplementary
+
+/-- Traditional categories don't carve at the joints: pronouns and *stop*
+are both traditional "presuppositions" yet land in different projective
+classes (A vs C). -/
+theorem traditional_crosscuts_classes :
+    traditionalCategory .pronoun_existence = traditionalCategory .stop_prestate ∧
+    ProjectiveTrigger.toClass .pronoun_existence ≠
+      ProjectiveTrigger.toClass .stop_prestate :=
+  ⟨rfl, by decide⟩
 
 end TonhauserEtAl2013

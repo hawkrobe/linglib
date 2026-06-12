@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 
@@ -52,8 +51,6 @@ is modulated by listeners' prior beliefs.
 -/
 
 namespace DegenTonhauser2021
-
-open Phenomena.Presupposition.Gradience
 
 -- ============================================================================
 -- §1. The 20 Clause-Embedding Predicates
@@ -200,8 +197,21 @@ theorem replication_robust :
   ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §5. Projection Profiles (Gradience Integration)
+-- §5. Projection Profiles
 -- ============================================================================
+
+/-- A projection profile records how strongly a predicate's complement
+    projects, separated by prior probability condition. -/
+structure ProjectionProfile where
+  /-- Mean certainty rating with higher-probability background fact. -/
+  highPrior : ℚ
+  /-- Mean certainty rating with lower-probability background fact. -/
+  lowPrior : ℚ
+  deriving DecidableEq, Repr
+
+/-- Prior beliefs modulate projection: higher prior → stronger projection. -/
+def priorBeliefModulatesProjection (profile : ProjectionProfile) : Prop :=
+  profile.highPrior > profile.lowPrior
 
 /-- Mean certainty ratings by predicate and fact condition from Experiment 1.
     Values computed from the data at
@@ -235,7 +245,7 @@ def projectionProfile : Predicate → ProjectionProfile
     all 20 predicates. -/
 theorem prior_modulates_all (p : Predicate) :
     priorBeliefModulatesProjection (projectionProfile p) := by
-  cases p <;> simp [projectionProfile, priorBeliefModulatesProjection] <;> native_decide
+  cases p <;> norm_num [projectionProfile, priorBeliefModulatesProjection]
 
 -- ============================================================================
 -- §6. Fragment Bridge

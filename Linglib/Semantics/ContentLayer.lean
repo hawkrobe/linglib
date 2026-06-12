@@ -15,12 +15,8 @@ module extracts the layer system as a standalone type that unifies several
 existing linglib distinctions:
 
 - `PartialProp` (presup + assertion) is the 2-layer special case (`pr` + `fr`)
-- `Challengeability` (directDenial vs hwamChallenge) identifies which layer
-  is targeted by a discourse challenge
 - `AtIssueness` (atIssue vs notAtIssue) classifies content by whether it
   addresses the QUD — correlating with `fr` vs `pr`/`imp`
-- `TraditionalCategory` (presupposition vs conventionalImplicature vs
-  supplementary) is a coarser, partially overlapping taxonomy
 
 ## The Three Layers
 
@@ -33,9 +29,9 @@ existing linglib distinctions:
 ## Design Note
 
 `ContentLayer` lives in `Semantics/` because it generalizes `PartialProp`.
-Bridges to `Discourse/AtIssueness` and `Phenomena/Presupposition/
-ProjectiveContent.Challengeability` live downstream in bridge files,
-preserving the independence of `Semantics/` and `Discourse/`.
+The diagnostic SCF/OLE taxonomy of projective content
+([tonhauser-beaver-roberts-simons-2013]) lives in
+`Semantics/Presupposition/ProjectiveContent.lean`.
 
 ## Scope
 

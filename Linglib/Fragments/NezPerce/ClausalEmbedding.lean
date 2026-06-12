@@ -38,8 +38,7 @@ Relative-pronoun paradigm is from [deal-2016a] (Table 22 reproduced in
 - The RE-vs-simplex strategy field per verb (Deal-specific apparatus).
 - The `[uĀ]` selectional feature per RE-taker (Deal-specific analytical claim).
 - The Tonhauser `ProjectiveClass` projection (consumes
-  `Phenomena/Presupposition/ProjectiveContent.lean` — Phenomena-layer dependency
-  not appropriate for a Fragment).
+  `Semantics/Presupposition/ProjectiveContent.lean`).
 - Cross-classification theorems (factivity ⊥ RE-structure).
 - The *ke*-as-φ-probe-on-C analysis (consumes `Minimalist.SatisfactionCond`).
 -/
