@@ -1,7 +1,7 @@
 [
   {
     "id": "aom2025_rootUniqueness",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "root uniqueness, §2.4.2"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "root uniqueness, §2.4.2"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "yek-i az dānešju-hā umæd.",
@@ -29,7 +29,7 @@
   },
   {
     "id": "aom2025_deonticFreeChoice",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "deontic FC, §2.3.1"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "deontic FC, §2.3.1"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "mituni yek-i az in sib-ā-ro bardāri.",
@@ -59,7 +59,7 @@
   },
   {
     "id": "aom2025_deonticBooks",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "deontic FC, books variant"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "deontic FC, books variant"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "mituni yek-i az in ketāb-hā-ro bekhuni.",
@@ -88,14 +88,14 @@
   },
   {
     "id": "aom2025_epistemicModalVariation",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "epistemic modal variation, §2.3.2"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "epistemic modal variation, §2.3.2"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "yek-i az dānešju-hā ketāb-o dozid-e.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["yek-i", "one-INDF"], ["az", "of"], ["dānešju-hā", "student-PL"],
-      ["ketāb-o", "book-RA"], ["dozid-e", "stole-3SG"]
+      ["yek-i", "one-INDF"], ["az", "of"], ["dānešju-hā", "student-PL"], ["ketāb-o", "book-RA"],
+      ["dozid-e", "stole-3SG"]
     ],
     "translation": "One of the students (might have) stolen the book.",
     "context": "epistemic possibility (covert or pragmatic) over yek-i",
@@ -118,7 +118,7 @@
   },
   {
     "id": "aom2025_epistemicExplicit",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "explicit epistemic modal"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "explicit epistemic modal"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "momken-e yek-i az dānešju-hā biyād.",
@@ -146,7 +146,7 @@
   },
   {
     "id": "aom2025_deNegation",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "negation context"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "negation context"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "yek-i az dānešju-hā-ro nadid-æm.",
@@ -173,7 +173,7 @@
   },
   {
     "id": "aom2025_deConditional",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "conditional antecedent"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "conditional antecedent"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "ægær yek-i az dānešju-hā biyād, xošhāl mišæm.",
@@ -200,15 +200,15 @@
   },
   {
     "id": "aom2025_embeddedUniqueness",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "embedded uniqueness contrast"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "embedded uniqueness contrast"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "mituni yek-i az in sib-ā-ro bardāri, #væli do-tā nemituni.",
     "discourseSegments": [],
     "glossedTokens": [
       ["mituni", "can.2SG"], ["yek-i", "one-INDF"], ["az", "of"], ["in", "this"],
-      ["sib-ā-ro", "apple-PL-RA"], ["bardāri", "pick.2SG"],
-      ["væli", "but"], ["do-tā", "two-CL"], ["nemituni", "NEG.can.2SG"]
+      ["sib-ā-ro", "apple-PL-RA"], ["bardāri", "pick.2SG"], ["væli", "but"], ["do-tā", "two-CL"],
+      ["nemituni", "NEG.can.2SG"]
     ],
     "translation": "You can pick one of these apples, #but not two.",
     "context": "deontic possibility, with continuation testing uniqueness",
@@ -231,7 +231,7 @@
   },
   {
     "id": "aom2025_contrast_irgendein",
-    "source":     {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "irgendein root"},
+    "source": {"bibkey": "kratzer-shimoyama-2002", "paperLabel": "irgendein root"},
     "reportedIn": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "(1), Table 1"},
     "language": "stan1295",
     "primaryText": "Irgendjemand hat angerufen.",
@@ -259,7 +259,7 @@
   },
   {
     "id": "aom2025_contrast_yeki",
-    "source":     {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "yek-i root contrast, §2.4"},
+    "source": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "yek-i root contrast, §2.4"},
     "reportedIn": null,
     "language": "west2369",
     "primaryText": "Yek-i zæng zæd.",
@@ -287,7 +287,7 @@
   },
   {
     "id": "aom2025_contrast_vreun",
-    "source":     {"bibkey": "falaus-2014", "paperLabel": "p. 122 (cited at AOM 2025 ex. 4)"},
+    "source": {"bibkey": "falaus-2014", "paperLabel": "p. 122 (cited at AOM 2025 ex. 4)"},
     "reportedIn": {"bibkey": "alonso-ovalle-moghiseh-2025", "paperLabel": "(4), Table 1"},
     "language": "roma1327",
     "primaryText": "*Monica s-a întâlnit cu vreun prieten.",

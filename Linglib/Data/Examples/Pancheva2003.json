@@ -66,7 +66,7 @@
     "alternatives": [],
     "readings": [
       {"name": "experiential (running at some past time)", "judgment": "acceptable"},
-      {"name": "resultative",                               "judgment": "ungrammatical"}
+      {"name": "resultative", "judgment": "ungrammatical"}
     ],
     "comment": "Pancheva 2003 §2 ex (5a). Diagnostic for the telic-only restriction on Resultative reading.",
     "metaLanguage": "stan1293",
@@ -84,7 +84,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "experiential (lost at some past time)",  "judgment": "acceptable"},
+      {"name": "experiential (lost at some past time)", "judgment": "acceptable"},
       {"name": "resultative (lost + still missing now)", "judgment": "acceptable"}
     ],
     "comment": "Pancheva 2003 §2 ex (6a). The telic contrast partner to (5a). Demonstrates that telic predicates license both readings; atelic predicates only EXP.",

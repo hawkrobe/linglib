@@ -11,7 +11,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "only"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "only"]
+    ],
     "comment": "The paper's basic English discourse-only example; repeated as (4) and (17)."
   },
   {
@@ -19,14 +23,21 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6a)"},
     "language": "stan1293",
     "primaryText": "Is this house beautiful? #Only it's expensive.",
-    "discourseSegments": ["Is this house beautiful?", "#Only it's expensive."],
+    "discourseSegments": [
+      "Is this house beautiful?",
+      "#Only it's expensive."
+    ],
     "glossedTokens": [],
     "translation": "Is this house beautiful? Only it's expensive.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalPolarQ"], ["position", "left"], ["particle", "only"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalPolarQ"],
+      ["position", "left"],
+      ["particle", "only"]
+    ],
     "comment": "Canonical info-seeking polar question as left argument: # in the paper. The speaker believes no answer, so S cannot support any QUD answer."
   },
   {
@@ -34,14 +45,22 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6b)"},
     "language": "stan1293",
     "primaryText": "Isn't this house beautiful? Only it's expensive.",
-    "discourseSegments": ["Isn't this house beautiful?", "Only it's expensive."],
+    "discourseSegments": [
+      "Isn't this house beautiful?",
+      "Only it's expensive."
+    ],
     "glossedTokens": [],
     "translation": "Isn't this house beautiful? Only it's expensive.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "highNegPolarQ"], ["position", "left"], ["particle", "only"], ["interpretation", "committed"]],
+    "paperFeatures": [
+      ["clauseType", "highNegPolarQ"],
+      ["position", "left"],
+      ["particle", "only"],
+      ["interpretation", "committed"]
+    ],
     "comment": "Repeated as (21). Felicitous because this high-negation polar question is interpreted rhetorically: the speaker is fully committed to the house being beautiful. Contrast (22)."
   },
   {
@@ -49,14 +68,21 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6c)"},
     "language": "stan1293",
     "primaryText": "When was this house renovated? #Only it's expensive.",
-    "discourseSegments": ["When was this house renovated?", "#Only it's expensive."],
+    "discourseSegments": [
+      "When was this house renovated?",
+      "#Only it's expensive."
+    ],
     "glossedTokens": [],
     "translation": "When was this house renovated? Only it's expensive.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalWhQ"], ["position", "left"], ["particle", "only"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalWhQ"],
+      ["position", "left"],
+      ["particle", "only"]
+    ],
     "comment": "Canonical info-seeking wh-question as left argument: # in the paper."
   },
   {
@@ -64,14 +90,22 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6d)"},
     "language": "stan1293",
     "primaryText": "Who wouldn't want this beautiful house? Only it's expensive.",
-    "discourseSegments": ["Who wouldn't want this beautiful house?", "Only it's expensive."],
+    "discourseSegments": [
+      "Who wouldn't want this beautiful house?",
+      "Only it's expensive."
+    ],
     "glossedTokens": [],
     "translation": "Who wouldn't want this beautiful house? Only it's expensive.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "negRhetoricalWhQ"], ["position", "left"], ["particle", "only"], ["interpretation", "committed"]],
+    "paperFeatures": [
+      ["clauseType", "negRhetoricalWhQ"],
+      ["position", "left"],
+      ["particle", "only"],
+      ["interpretation", "committed"]
+    ],
     "comment": "Repeated as (20). The speaker takes it to be true that everyone would want the house, so S supports an answer to the QUD."
   },
   {
@@ -79,14 +113,23 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(6e)"},
     "language": "stan1293",
     "primaryText": "Stop saying that I have financial difficulties. After all, who bought this house? Only I don't advertize it.",
-    "discourseSegments": ["Stop saying that I have financial difficulties.", "After all, who bought this house?", "Only I don't advertize it."],
+    "discourseSegments": [
+      "Stop saying that I have financial difficulties.",
+      "After all, who bought this house?",
+      "Only I don't advertize it."
+    ],
     "glossedTokens": [],
     "translation": "Stop saying that I have financial difficulties. After all, who bought this house? Only I don't advertize it.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "posRhetoricalWhQ"], ["position", "left"], ["particle", "only"], ["interpretation", "committed"]],
+    "paperFeatures": [
+      ["clauseType", "posRhetoricalWhQ"],
+      ["position", "left"],
+      ["particle", "only"],
+      ["interpretation", "committed"]
+    ],
     "comment": "Rhetorical question suggesting a positive answer ('I did'); the speaker is committed to that answer."
   },
   {
@@ -94,14 +137,22 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(22)"},
     "language": "stan1293",
     "primaryText": "Isn't the door open? #Only it's stifling inside.",
-    "discourseSegments": ["Isn't the door open?", "#Only it's stifling inside."],
+    "discourseSegments": [
+      "Isn't the door open?",
+      "#Only it's stifling inside."
+    ],
     "glossedTokens": [],
     "translation": "Isn't the door open? Only it's stifling inside.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "highNegPolarQ"], ["position", "left"], ["particle", "only"], ["interpretation", "infoSeeking"]],
+    "paperFeatures": [
+      ["clauseType", "highNegPolarQ"],
+      ["position", "left"],
+      ["particle", "only"],
+      ["interpretation", "infoSeeking"]
+    ],
     "comment": "A genuinely biased but still information-seeking high-negation polar question (Romero & Han 2002 type). Bias short of full speaker commitment does not license the left-argument position; minimal pair with (21) = (6b)."
   },
   {
@@ -116,7 +167,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": ""
   },
   {
@@ -131,7 +186,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -146,7 +205,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": ""
   },
   {
@@ -161,7 +224,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": ""
   },
   {
@@ -176,7 +243,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalPolarQ"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalPolarQ"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -191,7 +262,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "highNegPolarQ"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "highNegPolarQ"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -206,7 +281,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalWhQ"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalWhQ"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -221,7 +300,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "negRhetoricalWhQ"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "negRhetoricalWhQ"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": "Rhetorical: the speaker is committed to the answer 'nobody', so the prejacent supports the negative QUD answer rather than failing to support anything."
   },
   {
@@ -236,7 +319,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "imperative"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "imperative"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -244,14 +331,21 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(30f)"},
     "language": "russ1263",
     "primaryText": "Kakoj krasivyj dom! Tol'ko vot rajon uzhasnyj!",
-    "discourseSegments": ["Kakoj krasivyj dom!", "Tol'ko vot rajon uzhasnyj!"],
+    "discourseSegments": [
+      "Kakoj krasivyj dom!",
+      "Tol'ko vot rajon uzhasnyj!"
+    ],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only, what a terrible neighborhood!",
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "exclamative"], ["position", "right"], ["particle", "tol'ko"]],
+    "paperFeatures": [
+      ["clauseType", "exclamative"],
+      ["position", "right"],
+      ["particle", "tol'ko"]
+    ],
     "comment": ""
   },
   {
@@ -268,7 +362,11 @@
       {"form": "Szép ez a ház, csakhogy fel van újítva?", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalPolarQ"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalPolarQ"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -285,7 +383,11 @@
       {"form": "Szép ez a ház, csakhogy nem ezt adták el az előbb?", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "highNegPolarQ"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "highNegPolarQ"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -302,7 +404,11 @@
       {"form": "Szép ez a ház, csakhogy mikor lett felújítva?", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalWhQ"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalWhQ"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -319,7 +425,11 @@
       {"form": "Szép ez a ház, csakhogy ki fizetne érte 2 milliót?", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "negRhetoricalWhQ"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "negRhetoricalWhQ"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Rhetorical: the speaker is committed to the answer 'nobody'. Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -336,7 +446,11 @@
       {"form": "Vidd el a bérletem, csakhogy ne hagyd el!", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "imperative"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "imperative"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -344,7 +458,10 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(31f)"},
     "language": "hung1274",
     "primaryText": "Milyen szép ház! Csak micsoda környék!",
-    "discourseSegments": ["Milyen szép ház!", "Csak micsoda környék!"],
+    "discourseSegments": [
+      "Milyen szép ház!",
+      "Csak micsoda környék!"
+    ],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only what a terrible neighborhood!",
     "context": "Plausible QUD: Should we buy the house?",
@@ -353,7 +470,11 @@
       {"form": "Milyen szép ház! Csakhogy micsoda környék!", "judgment": "ungrammatical"}
     ],
     "readings": [],
-    "paperFeatures": [["clauseType", "exclamative"], ["position", "right"], ["particle", "csak"]],
+    "paperFeatures": [
+      ["clauseType", "exclamative"],
+      ["position", "right"],
+      ["particle", "csak"]
+    ],
     "comment": "Csakhogy alternative constructed per the paper's section 7 prose ('unacceptable in any of the example sentences in (31)'); the substituted form is not printed in the paper."
   },
   {
@@ -368,7 +489,11 @@
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalPolarQ"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalPolarQ"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": "The paper marks the prejacent with % (speaker-variable acceptability); the five-level Judgment scale has no dialect-variation case, so % is encoded as marginal."
   },
   {
@@ -383,7 +508,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "highNegPolarQ"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "highNegPolarQ"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": ""
   },
   {
@@ -398,7 +527,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalWhQ"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalWhQ"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": "Parenthesized shì and ne are the paper's own optionality marks."
   },
   {
@@ -413,7 +546,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "negRhetoricalWhQ"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "negRhetoricalWhQ"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": "Rhetorical: the speaker is committed to the answer 'nobody'. Parenthesized yǒu is the paper's optionality mark."
   },
   {
@@ -428,7 +565,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "imperative"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "imperative"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": ""
   },
   {
@@ -436,14 +577,21 @@
     "source": {"bibkey": "ippolito-kiss-williams-2025", "paperLabel": "(32f)"},
     "language": "mand1415",
     "primaryText": "Duōme piàoliang de fángzi a! #Zhǐshì nàme chà de shèqū huánjìng!",
-    "discourseSegments": ["Duōme piàoliang de fángzi a!", "#Zhǐshì nàme chà de shèqū huánjìng!"],
+    "discourseSegments": [
+      "Duōme piàoliang de fángzi a!",
+      "#Zhǐshì nàme chà de shèqū huánjìng!"
+    ],
     "glossedTokens": [],
     "translation": "What a beautiful house! Only, what a terrible neighborhood!",
     "context": "Plausible QUD: Should we buy the house?",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "exclamative"], ["position", "right"], ["particle", "zhǐshì"]],
+    "paperFeatures": [
+      ["clauseType", "exclamative"],
+      ["position", "right"],
+      ["particle", "zhǐshì"]
+    ],
     "comment": "# in the paper: pragmatic anomaly. Mandarin zhǐshì uniquely blocks exclamative prejacents in the four-language sample."
   },
   {
@@ -458,7 +606,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "declarative"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "declarative"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": ""
   },
   {
@@ -473,7 +625,11 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalPolarQ"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalPolarQ"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": "* in the paper. Italian solo che obligatorily cooccurs with the wired-in declarative complementizer che, which blocks all non-declarative prejacents (section 7)."
   },
   {
@@ -488,7 +644,11 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "canonicalWhQ"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "canonicalWhQ"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": "* in the paper; see (33b)."
   },
   {
@@ -503,7 +663,11 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "imperative"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "imperative"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": "* in the paper; see (33b)."
   },
   {
@@ -518,7 +682,11 @@
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["clauseType", "exclamative"], ["position", "right"], ["particle", "solo che"]],
+    "paperFeatures": [
+      ["clauseType", "exclamative"],
+      ["position", "right"],
+      ["particle", "solo che"]
+    ],
     "comment": "* in the paper; see (33b)."
   }
 ]

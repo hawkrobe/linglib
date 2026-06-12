@@ -5,8 +5,8 @@
     "language": "stan1293",
     "primaryText": "A fake gun is not a gun.",
     "glossedTokens": [
-      ["A", "INDEF"], ["fake", "fake"], ["gun", "gun"], ["is", "be.PRS.3SG"],
-      ["not", "NEG"], ["a", "INDEF"], ["gun", "gun"]
+      ["A", "INDEF"], ["fake", "fake"], ["gun", "gun"], ["is", "be.PRS.3SG"], ["not", "NEG"],
+      ["a", "INDEF"], ["gun", "gun"]
     ],
     "translation": "A fake gun is not a gun.",
     "context": "Cited as an apparently-true privative entailment (the prima facie evidence for the privative class).",
@@ -22,8 +22,8 @@
     "language": "stan1293",
     "primaryText": "Is that gun real or fake?",
     "glossedTokens": [
-      ["Is", "be.PRS.3SG"], ["that", "DEM"], ["gun", "gun"],
-      ["real", "real"], ["or", "or"], ["fake", "fake"]
+      ["Is", "be.PRS.3SG"], ["that", "DEM"], ["gun", "gun"], ["real", "real"], ["or", "or"],
+      ["fake", "fake"]
     ],
     "translation": "Is that gun real or fake?",
     "context": "The 'gun puzzle': for this question to be well-formed, 'gun' must include both real and fake guns. Direct evidence that the noun's denotation coerces to include the adjective's extension.",
@@ -40,9 +40,8 @@
     "language": "poli1260",
     "primaryText": "Kelnerki rozmawiały o przystojnym chłopcu.",
     "glossedTokens": [
-      ["Kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"],
-      ["o", "about"], ["przystojnym", "handsome.LOC.SG.M"],
-      ["chłopcu", "boy.LOC.SG"]
+      ["Kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"], ["o", "about"],
+      ["przystojnym", "handsome.LOC.SG.M"], ["chłopcu", "boy.LOC.SG"]
     ],
     "translation": "The waitresses talked about a handsome boy.",
     "context": "Unmarked NP-internal word order; Adj+N adjacent within the PP.",
@@ -59,9 +58,8 @@
     "language": "poli1260",
     "primaryText": "O przystojnym kelnerki rozmawiały chłopcu.",
     "glossedTokens": [
-      ["O", "about"], ["przystojnym", "handsome.LOC.SG.M"],
-      ["kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"],
-      ["chłopcu", "boy.LOC.SG"]
+      ["O", "about"], ["przystojnym", "handsome.LOC.SG.M"], ["kelnerki", "waitress.NOM.PL"],
+      ["rozmawiały", "talk.PST.3PL.F"], ["chłopcu", "boy.LOC.SG"]
     ],
     "translation": "The waitresses talked about a handsome BOY.",
     "context": "NP-split: preposition + adjective in sentence-initial position, head noun sentence-final. Topic-focus structure highlights the noun.",
@@ -78,8 +76,8 @@
     "language": "poli1260",
     "primaryText": "Do doliny weszliśmy rozległej.",
     "glossedTokens": [
-      ["Do", "to"], ["doliny", "valley.GEN.SG"],
-      ["weszliśmy", "enter.PST.1PL"], ["rozległej", "large.GEN.SG.F"]
+      ["Do", "to"], ["doliny", "valley.GEN.SG"], ["weszliśmy", "enter.PST.1PL"],
+      ["rozległej", "large.GEN.SG.F"]
     ],
     "translation": "We entered a LARGE valley.",
     "context": "NP-split with intersective adjective 'rozległy' (large). The split succeeds, as expected for intersective Adj+N.",
@@ -96,8 +94,8 @@
     "language": "poli1260",
     "primaryText": "Z prezydentem rozmawiała byłym.",
     "glossedTokens": [
-      ["Z", "with"], ["prezydentem", "president.INS.SG"],
-      ["rozmawiała", "talk.PST.3SG.F"], ["byłym", "former.INS.SG.M"]
+      ["Z", "with"], ["prezydentem", "president.INS.SG"], ["rozmawiała", "talk.PST.3SG.F"],
+      ["byłym", "former.INS.SG.M"]
     ],
     "translation": "She talked with the FORMER president.",
     "context": "Attempted NP-split with non-subsective modal adjective 'były' (former). The split is ungrammatical.",
@@ -113,7 +111,9 @@
     "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(15b),(16a)"},
     "language": "poli1260",
     "primaryText": "biedny",
-    "glossedTokens": [["biedny", "poor.NOM.SG.M"]],
+    "glossedTokens": [
+      ["biedny", "poor.NOM.SG.M"]
+    ],
     "translation": "poor / pitiful (lexically ambiguous)",
     "context": "Polish 'biedny' is lexically ambiguous between an intersective reading 'not rich' (15b: can split in NP-split construction) and a non-subsective reading 'pitiful' (16a: cannot split). The splitting diagnostic tracks the READING, not the lexical form.",
     "judgment": "acceptable",
@@ -132,8 +132,8 @@
     "primaryText": "I don't care whether that fur is fake or real.",
     "glossedTokens": [
       ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
-      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"],
-      ["fake", "fake"], ["or", "or"], ["real", "real"]
+      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["or", "or"],
+      ["real", "real"]
     ],
     "translation": "I don't care whether that fur is fake or real.",
     "context": "Generalization of the (10b) gun-puzzle to 'fur'. The polar disjunction 'fake or real' presupposes that 'fur' covers both fake and real fur; otherwise 'real' would be redundant. Direct evidence of NVP-licensed coercion of the noun extension.",
@@ -183,9 +183,8 @@
     "language": "stan1293",
     "primaryText": "How many poets are buried in Amherst?",
     "glossedTokens": [
-      ["How", "how"], ["many", "many"], ["poets", "poet.PL"],
-      ["are", "be.PRS.3PL"], ["buried", "bury.PASS.PTCP"],
-      ["in", "in"], ["Amherst", "Amherst"]
+      ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
+      ["buried", "bury.PASS.PTCP"], ["in", "in"], ["Amherst", "Amherst"]
     ],
     "translation": "How many poets are buried in Amherst?",
     "context": "Demonstrates context-shift of the noun 'poet' independent of any adjective. With predicate 'buried', 'poets' presupposes dead poets; with 'live in' or similar present-tense, 'poets' presupposes living poets. Shows N's extension is itself adjustable, supporting the coercion mechanism Partee invokes for privatives.",
@@ -202,8 +201,8 @@
     "language": "poli1260",
     "primaryText": "Włamano się do nowego sklepu.",
     "glossedTokens": [
-      ["Włamano", "break.in-NEUT.SG"], ["się", "REFL"],
-      ["do", "to"], ["nowego", "new.GEN.SG.M"], ["sklepu", "store.GEN.SG"]
+      ["Włamano", "break.in-NEUT.SG"], ["się", "REFL"], ["do", "to"], ["nowego", "new.GEN.SG.M"],
+      ["sklepu", "store.GEN.SG"]
     ],
     "translation": "Someone broke into the new store.",
     "context": "Unmarked NP-internal order; baseline for the split in (12b).",
@@ -220,8 +219,7 @@
     "language": "poli1260",
     "primaryText": "Do sklepu włamano się nowego.",
     "glossedTokens": [
-      ["Do", "to"], ["sklepu", "store.GEN.SG"],
-      ["włamano", "break.in-NEUT.SG"], ["się", "REFL"],
+      ["Do", "to"], ["sklepu", "store.GEN.SG"], ["włamano", "break.in-NEUT.SG"], ["się", "REFL"],
       ["nowego", "new.GEN.SG.M"]
     ],
     "translation": "Someone broke into the NEW store.",
@@ -239,8 +237,8 @@
     "language": "poli1260",
     "primaryText": "Do rozległej weszliśmy doliny.",
     "glossedTokens": [
-      ["Do", "to"], ["rozległej", "large.GEN.SG.F"],
-      ["weszliśmy", "enter.PST.1PL"], ["doliny", "valley.GEN.SG"]
+      ["Do", "to"], ["rozległej", "large.GEN.SG.F"], ["weszliśmy", "enter.PST.1PL"],
+      ["doliny", "valley.GEN.SG"]
     ],
     "translation": "We entered a large VALLEY.",
     "context": "Alternate split order: preposition + adjective initial, noun final. Pair-mate of (13b).",
@@ -257,8 +255,8 @@
     "language": "poli1260",
     "primaryText": "Z byłym rozmawiała prezydentem.",
     "glossedTokens": [
-      ["Z", "with"], ["byłym", "former.INS.SG.M"],
-      ["rozmawiała", "talk.PST.3SG.F"], ["prezydentem", "president.INS.SG"]
+      ["Z", "with"], ["byłym", "former.INS.SG.M"], ["rozmawiała", "talk.PST.3SG.F"],
+      ["prezydentem", "president.INS.SG"]
     ],
     "translation": "She talked with the former PRESIDENT.",
     "context": "Attempted NP-split with non-subsective 'były' (former). Ungrammatical regardless of split order; pair-mate of (14b).",
@@ -275,8 +273,8 @@
     "primaryText": "I don't care whether that fur is fake fur or real fur.",
     "glossedTokens": [
       ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
-      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"],
-      ["fake", "fake"], ["fur", "fur"], ["or", "or"], ["real", "real"], ["fur", "fur"]
+      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["fur", "fur"],
+      ["or", "or"], ["real", "real"], ["fur", "fur"]
     ],
     "translation": "I don't care whether that fur is fake fur or real fur.",
     "context": "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions.",
@@ -310,8 +308,8 @@
     "language": "stan1293",
     "primaryText": "This is a sharp knife.",
     "glossedTokens": [
-      ["This", "DEM"], ["is", "be.PRS.3SG"], ["a", "INDEF"],
-      ["sharp", "sharp"], ["knife", "knife"]
+      ["This", "DEM"], ["is", "be.PRS.3SG"], ["a", "INDEF"], ["sharp", "sharp"],
+      ["knife", "knife"]
     ],
     "translation": "This is a sharp knife.",
     "context": "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances.",
@@ -327,9 +325,8 @@
     "language": "stan1293",
     "primaryText": "How many poets are there in Amherst?",
     "glossedTokens": [
-      ["How", "how"], ["many", "many"], ["poets", "poet.PL"],
-      ["are", "be.PRS.3PL"], ["there", "EXIST"],
-      ["in", "in"], ["Amherst", "Amherst"]
+      ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
+      ["there", "EXIST"], ["in", "in"], ["Amherst", "Amherst"]
     ],
     "translation": "How many poets are there in Amherst?",
     "context": "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension.",

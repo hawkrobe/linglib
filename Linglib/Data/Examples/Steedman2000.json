@@ -1,34 +1,21 @@
 [
   {
     "id": "steedman2000_96",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(96)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(96)"},
     "language": "stan1295",
     "primaryText": "(Weil) irgendjemand auf jeden gespannt ist.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(Weil)", "(since)"],
-      ["irgendjemand", "someone"],
-      ["auf", "on"],
-      ["jeden", "everybody"],
-      ["gespannt", "curious"],
-      ["ist", "is"]
+      ["(Weil)", "(since)"], ["irgendjemand", "someone"], ["auf", "on"], ["jeden", "everybody"],
+      ["gespannt", "curious"], ["ist", "is"]
     ],
     "translation": "Since someone is curious about everybody.",
     "context": "German verb-final subordinate clause; the quantified PP precedes the predicate-tense cluster.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "acceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
@@ -38,34 +25,21 @@
   },
   {
     "id": "steedman2000_97",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(97)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(97)"},
     "language": "stan1295",
     "primaryText": "(Weil) jemand versucht hat jeden reinzulegen.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(Weil)", "(since)"],
-      ["jemand", "someone"],
-      ["versucht", "tried"],
-      ["hat", "has"],
-      ["jeden", "everyone"],
-      ["reinzulegen", "cheat"]
+      ["(Weil)", "(since)"], ["jemand", "someone"], ["versucht", "tried"], ["hat", "has"],
+      ["jeden", "everyone"], ["reinzulegen", "cheat"]
     ],
     "translation": "Since someone has tried to cheat everyone.",
     "context": "German verb-final subordinate clause; the quantified object follows the matrix verb cluster.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "unacceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
@@ -75,35 +49,21 @@
   },
   {
     "id": "steedman2000_98a",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(98a)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(98a)"},
     "language": "vlaa1240",
     "primaryText": "(da) Jan vee boeken hee willen lezen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(da)", "(that)"],
-      ["Jan", "Jan"],
-      ["vee", "many"],
-      ["boeken", "books"],
-      ["hee", "has"],
-      ["willen", "wanted"],
-      ["lezen", "read"]
+      ["(da)", "(that)"], ["Jan", "Jan"], ["vee", "many"], ["boeken", "books"], ["hee", "has"],
+      ["willen", "wanted"], ["lezen", "read"]
     ],
     "translation": "that Jan wanted to read many books",
     "context": "West Flemish subordinate clause in the verb-raising word order.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "acceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
@@ -113,35 +73,21 @@
   },
   {
     "id": "steedman2000_98b",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(98b)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(98b)"},
     "language": "vlaa1240",
     "primaryText": "(da) Jan hee willen vee boeken lezen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(da)", "(that)"],
-      ["Jan", "Jan"],
-      ["hee", "has"],
-      ["willen", "wanted"],
-      ["vee", "many"],
-      ["boeken", "books"],
-      ["lezen", "read"]
+      ["(da)", "(that)"], ["Jan", "Jan"], ["hee", "has"], ["willen", "wanted"], ["vee", "many"],
+      ["boeken", "books"], ["lezen", "read"]
     ],
     "translation": "that Jan wanted to read many books",
     "context": "West Flemish subordinate clause in the verb-projection-raising word order.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "unacceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
@@ -151,35 +97,21 @@
   },
   {
     "id": "steedman2000_99a",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(99a)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(99a)"},
     "language": "dutc1256",
     "primaryText": "(omdat) Jan veel liederen probeert te zingen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(omdat)", "(because)"],
-      ["Jan", "Jan"],
-      ["veel", "many"],
-      ["liederen", "songs"],
-      ["probeert", "tries"],
-      ["te", "to"],
-      ["zingen", "sing"]
+      ["(omdat)", "(because)"], ["Jan", "Jan"], ["veel", "many"], ["liederen", "songs"],
+      ["probeert", "tries"], ["te", "to"], ["zingen", "sing"]
     ],
     "translation": "because Jan tries to sing many songs",
     "context": "Dutch subordinate clause with an equi verb, verb-raising word order.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "acceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
@@ -189,35 +121,21 @@
   },
   {
     "id": "steedman2000_99b",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(99b)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(99b)"},
     "language": "dutc1256",
     "primaryText": "(omdat) Jan probeert veel liederen te zingen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(omdat)", "(because)"],
-      ["Jan", "Jan"],
-      ["probeert", "tries"],
-      ["veel", "many"],
-      ["liederen", "songs"],
-      ["te", "to"],
-      ["zingen", "sing"]
+      ["(omdat)", "(because)"], ["Jan", "Jan"], ["probeert", "tries"], ["veel", "many"],
+      ["liederen", "songs"], ["te", "to"], ["zingen", "sing"]
     ],
     "translation": "because Jan tries to sing many songs",
     "context": "Dutch subordinate clause with an equi verb, verb-projection-raising word order.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "unacceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]
@@ -227,35 +145,21 @@
   },
   {
     "id": "steedman2000_100a",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(100a)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(100a)"},
     "language": "dutc1256",
     "primaryText": "(omdat) iemand alle liederen probeert te zingen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(omdat)", "(because)"],
-      ["iemand", "someone"],
-      ["alle", "every"],
-      ["liederen", "song"],
-      ["probeert", "tries"],
-      ["te", "to"],
-      ["zingen", "sing"]
+      ["(omdat)", "(because)"], ["iemand", "someone"], ["alle", "every"], ["liederen", "song"],
+      ["probeert", "tries"], ["te", "to"], ["zingen", "sing"]
     ],
     "translation": "because someone tries to sing every song",
     "context": "Dutch subordinate clause, verb-raising word order, two quantified arguments.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "acceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "acceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbRaising"]
@@ -265,35 +169,21 @@
   },
   {
     "id": "steedman2000_100b",
-    "source": {
-      "bibkey": "steedman-2000",
-      "paperLabel": "(100b)"
-    },
+    "source": {"bibkey": "steedman-2000", "paperLabel": "(100b)"},
     "language": "dutc1256",
     "primaryText": "(omdat) iemand probeert alle liederen te zingen",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(omdat)", "(because)"],
-      ["iemand", "someone"],
-      ["probeert", "tries"],
-      ["alle", "every"],
-      ["liederen", "song"],
-      ["te", "to"],
-      ["zingen", "sing"]
+      ["(omdat)", "(because)"], ["iemand", "someone"], ["probeert", "tries"], ["alle", "every"],
+      ["liederen", "song"], ["te", "to"], ["zingen", "sing"]
     ],
     "translation": "because someone tries to sing every song",
     "context": "Dutch subordinate clause, verb-projection-raising word order, two quantified arguments.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {
-        "name": "surface",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "inverse",
-        "judgment": "unacceptable"
-      }
+      {"name": "surface", "judgment": "acceptable"},
+      {"name": "inverse", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
       ["wordOrder", "verbProjectionRaising"]

@@ -6,8 +6,8 @@
     "primaryText": "Se me rompió la radio.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"], ["radio", "radio"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"],
+      ["radio", "radio"]
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish anticausative with SE + affected-dative.",
@@ -15,7 +15,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "romper"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "romper"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (7a). First member of the three-way synonymy for `romper`: SE + affected-dative pattern.",
     "metaLanguage": "stan1293",
@@ -28,8 +31,8 @@
     "primaryText": "Me le rompió la radio.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"], ["radio", "radio"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"],
+      ["radio", "radio"]
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish stylistic-LE applicative without overt SE.",
@@ -37,7 +40,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "romper"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "romper"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (7b). Second member of the three-way synonymy for `romper`: stylistic-LE pattern; SE is non-overt because Fission outputs DAT/REFL-syncretic 1SG `me` that satisfies the anticausative PF check.",
     "metaLanguage": "stan1293",
@@ -50,8 +56,8 @@
     "primaryText": "Se me le rompió la radio.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"], ["radio", "radio"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["rompió", "break.PST.3SG"],
+      ["la", "DEF.F.SG"], ["radio", "radio"]
     ],
     "translation": "The radio broke on me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE.",
@@ -59,7 +65,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "romper"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "romper"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (7c). Third member of the three-way synonymy for `romper`: SE + stylistic-LE pattern. Synonymy across (7a)/(7b)/(7c) is the central evidence against a reflexive-of-causative analysis of SE.",
     "metaLanguage": "stan1293",
@@ -72,8 +81,8 @@
     "primaryText": "Se me hundió el bote.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"], ["bote", "boat"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"],
+      ["bote", "boat"]
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish anticausative with SE + affected-dative; `hundir` parallel to `romper`.",
@@ -81,7 +90,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "hundir"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "hundir"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (8a). Extends the three-way synonymy to a second verb; the SE-bearing variant.",
     "metaLanguage": "stan1293",
@@ -94,8 +106,8 @@
     "primaryText": "Me le hundió el bote.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"], ["bote", "boat"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"],
+      ["bote", "boat"]
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish stylistic-LE applicative for `hundir`.",
@@ -103,7 +115,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "hundir"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "hundir"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (8b). Stylistic-LE variant for `hundir`.",
     "metaLanguage": "stan1293",
@@ -116,8 +131,8 @@
     "primaryText": "Se me le hundió el bote.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"], ["bote", "boat"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["hundió", "sink.PST.3SG"],
+      ["el", "DEF.M.SG"], ["bote", "boat"]
     ],
     "translation": "The boat sank on me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `hundir`.",
@@ -125,7 +140,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "hundir"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "hundir"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (8c). Completes the three-way synonymy for `hundir`.",
     "metaLanguage": "stan1293",
@@ -138,8 +156,8 @@
     "primaryText": "Se me cayeron las llaves.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"], ["llaves", "keys"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"],
+      ["llaves", "keys"]
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish anticausative; `caer` is a textbook unaccusative. 3PL agreement reflects plural theme.",
@@ -147,7 +165,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "caer"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "caer"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (9a). Unaccusative motion verb in the SE-pattern.",
     "metaLanguage": "stan1293",
@@ -160,8 +181,8 @@
     "primaryText": "Me le cayeron las llaves.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"], ["llaves", "keys"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"],
+      ["llaves", "keys"]
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish stylistic-LE applicative for `caer`.",
@@ -169,7 +190,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "caer"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "caer"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (9b). Stylistic-LE variant for `caer`.",
     "metaLanguage": "stan1293",
@@ -182,8 +206,8 @@
     "primaryText": "Se me le cayeron las llaves.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"], ["llaves", "keys"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["cayeron", "fall.PST.3PL"],
+      ["las", "DEF.F.PL"], ["llaves", "keys"]
     ],
     "translation": "The keys fell on me / I dropped the keys.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `caer`.",
@@ -191,7 +215,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "caer"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "caer"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (9c). Completes the three-way synonymy for `caer`.",
     "metaLanguage": "stan1293",
@@ -204,8 +231,8 @@
     "primaryText": "Se me murió la planta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"], ["planta", "plant"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"],
+      ["planta", "plant"]
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish anticausative; canonical affected-causer example with `morir`.",
@@ -213,7 +240,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "morir"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "morir"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (10a). Unaccusative `morir` in the SE-pattern with affected-causer interpretation.",
     "metaLanguage": "stan1293",
@@ -226,8 +256,8 @@
     "primaryText": "Me le murió la planta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"], ["planta", "plant"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"],
+      ["planta", "plant"]
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish stylistic-LE applicative for `morir`.",
@@ -235,7 +265,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "morir"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "morir"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (10b). Stylistic-LE variant for `morir`.",
     "metaLanguage": "stan1293",
@@ -248,8 +281,8 @@
     "primaryText": "Se me le murió la planta.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"], ["planta", "plant"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["murió", "die.PST.3SG"],
+      ["la", "DEF.F.SG"], ["planta", "plant"]
     ],
     "translation": "The plant died on me / I unintentionally killed the plant.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `morir`.",
@@ -257,7 +290,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "morir"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "morir"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (10c). Completes the three-way synonymy for `morir`.",
     "metaLanguage": "stan1293",
@@ -270,8 +306,7 @@
     "primaryText": "Se me olvidó eso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish psych-verb; the three-way synonymy extends to non-physical change-of-state predicates.",
@@ -279,7 +314,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "olvidar"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "olvidar"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (11a). Psych verb in the SE-pattern; shows the three-way synonymy is not restricted to physical CoS.",
     "metaLanguage": "stan1293",
@@ -292,8 +330,7 @@
     "primaryText": "Me le olvidó eso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish stylistic-LE applicative for psych verb `olvidar`.",
@@ -301,7 +338,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "olvidar"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "olvidar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (11b). Stylistic-LE variant for `olvidar`.",
     "metaLanguage": "stan1293",
@@ -314,8 +354,8 @@
     "primaryText": "Se me le olvidó eso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["olvidó", "forget.PST.3SG"],
+      ["eso", "that.N"]
     ],
     "translation": "I forgot that.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `olvidar`.",
@@ -323,7 +363,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "olvidar"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "olvidar"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (11c). Completes the three-way synonymy for `olvidar`.",
     "metaLanguage": "stan1293",
@@ -336,8 +379,8 @@
     "primaryText": "Se me ocurrió una idea.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"],
-      ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"], ["idea", "idea"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"],
+      ["idea", "idea"]
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish psych-verb; second psych entry showing the three-way synonymy extends to mental-event predicates.",
@@ -345,7 +388,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "ocurrir"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "ocurrir"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (12a). Psych verb `ocurrir` in the SE-pattern.",
     "metaLanguage": "stan1293",
@@ -358,8 +404,8 @@
     "primaryText": "Me le ocurrió una idea.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"], ["idea", "idea"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"],
+      ["idea", "idea"]
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish stylistic-LE applicative for psych verb `ocurrir`.",
@@ -367,7 +413,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "ocurrir"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "ocurrir"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (12b). Stylistic-LE variant for `ocurrir`.",
     "metaLanguage": "stan1293",
@@ -380,8 +429,8 @@
     "primaryText": "Se me le ocurrió una idea.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Se",  "SE"],    ["me",     "1SG.DAT"], ["le",     "STYL"],
-      ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"], ["idea", "idea"]
+      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["ocurrió", "occur.PST.3SG"],
+      ["una", "INDF.F.SG"], ["idea", "idea"]
     ],
     "translation": "An idea occurred to me.",
     "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `ocurrir`.",
@@ -389,7 +438,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "ocurrir"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "three-way-synonymy"]
+      ["verb", "ocurrir"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "three-way-synonymy"]
     ],
     "comment": "Muñoz Pérez 2026 (12c). Completes the three-way synonymy for `ocurrir`.",
     "metaLanguage": "stan1293",
@@ -402,8 +454,7 @@
     "primaryText": "Cosmo se me quejó.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["se",   "REFL.3"], ["me",   "1SG.DAT"],
-      ["quejó", "complain.PST.3SG"]
+      ["Cosmo", "Cosmo"], ["se", "REFL.3"], ["me", "1SG.DAT"], ["quejó", "complain.PST.3SG"]
     ],
     "translation": "Cosmo complained to me.",
     "context": "Positive control: `quejarse` is inherently reflexive and surfaces with SE plus an argumental dative without stylistic LE.",
@@ -411,7 +462,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "quejarse"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "se-positive-control"]
+      ["verb", "quejarse"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "se-positive-control"]
     ],
     "comment": "Muñoz Pérez 2026 (13a). Positive baseline for the (13b) negative control: shows the SE+dative pattern is acceptable as long as no stylistic LE is added.",
     "metaLanguage": "stan1293",
@@ -424,8 +478,8 @@
     "primaryText": "*Cosmo me le quejó (a mí).",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["me",   "1SG.DAT"], ["le",   "STYL"],
-      ["quejó", "complain.PST.3SG"], ["a", "DAT"], ["mí", "1SG.STRONG"]
+      ["Cosmo", "Cosmo"], ["me", "1SG.DAT"], ["le", "STYL"], ["quejó", "complain.PST.3SG"],
+      ["a", "DAT"], ["mí", "1SG.STRONG"]
     ],
     "translation": "*Cosmo complained on me.",
     "context": "Negative control: `quejarse` is inherently reflexive (no non-thematic Voice projection) and rejects the stylistic-LE pattern even with the doubled strong pronoun.",
@@ -433,7 +487,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "quejarse"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "negative-controls"]
+      ["verb", "quejarse"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "negative-controls"]
     ],
     "comment": "Muñoz Pérez 2026 (13b). Demonstrates that stylistic LE depends on marked-anticausative structure, not phonological adjacency: an inherently reflexive verb (vP without non-thematic Voice) cannot host stylistic LE.",
     "metaLanguage": "stan1293",
@@ -446,7 +503,7 @@
     "primaryText": "*Cosmo se me le quejó (a mí).",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["se",   "REFL.3"], ["me",   "1SG.DAT"], ["le",   "STYL"],
+      ["Cosmo", "Cosmo"], ["se", "REFL.3"], ["me", "1SG.DAT"], ["le", "STYL"],
       ["quejó", "complain.PST.3SG"], ["a", "DAT"], ["mí", "1SG.STRONG"]
     ],
     "translation": "*Cosmo complained on me.",
@@ -455,7 +512,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "quejarse"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "negative-controls"]
+      ["verb", "quejarse"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "negative-controls"]
     ],
     "comment": "Muñoz Pérez 2026 (13c). Adding overt SE does not rescue the stylistic-LE form: confirms LE is parasitic on anticausative non-thematic Voice, not on the surface presence of SE.",
     "metaLanguage": "stan1293",
@@ -468,8 +528,8 @@
     "primaryText": "No se me dio ni un peso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["No", "NEG"], ["se",   "IMPRS"], ["me",   "1SG.DAT"],
-      ["dio", "give.PST.3SG"], ["ni", "NPI"], ["un", "INDF.M.SG"], ["peso", "peso"]
+      ["No", "NEG"], ["se", "IMPRS"], ["me", "1SG.DAT"], ["dio", "give.PST.3SG"], ["ni", "NPI"],
+      ["un", "INDF.M.SG"], ["peso", "peso"]
     ],
     "translation": "I wasn't given a single peso.",
     "context": "Positive control: impersonal SE + argumental dative is acceptable without stylistic LE.",
@@ -477,7 +537,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "dar"], ["pattern", "se-cl"], ["dativePerson", "1SG"], ["block", "se-positive-control"]
+      ["verb", "dar"],
+      ["pattern", "se-cl"],
+      ["dativePerson", "1SG"],
+      ["block", "se-positive-control"]
     ],
     "comment": "Muñoz Pérez 2026 (14a). Positive baseline for the (14b) negative control: shows the impersonal-SE form is grammatical when no stylistic LE is added.",
     "metaLanguage": "stan1293",
@@ -490,8 +553,8 @@
     "primaryText": "*No me le dio ni un peso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["No",  "NEG"], ["me",   "1SG.DAT"], ["le",   "STYL"],
-      ["dio", "give.PST.3SG"], ["ni", "NPI"], ["un", "INDF.M.SG"], ["peso", "peso"]
+      ["No", "NEG"], ["me", "1SG.DAT"], ["le", "STYL"], ["dio", "give.PST.3SG"], ["ni", "NPI"],
+      ["un", "INDF.M.SG"], ["peso", "peso"]
     ],
     "translation": "*I wasn't given a single peso.",
     "context": "Negative control: impersonal SE + argumental dative also rejects stylistic LE.",
@@ -499,7 +562,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "dar"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "negative-controls"]
+      ["verb", "dar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "negative-controls"]
     ],
     "comment": "Muñoz Pérez 2026 (14b). Second negative control: impersonal SE (a different SE-flavor) does not license stylistic LE either, sharpening the claim that LE is parasitic on anticausative non-thematic Voice specifically.",
     "metaLanguage": "stan1293",
@@ -512,8 +578,8 @@
     "primaryText": "*No se me le dio ni un peso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["No", "NEG"], ["se",   "IMPRS"], ["me",   "1SG.DAT"], ["le",   "STYL"],
-      ["dio", "give.PST.3SG"], ["ni", "NPI"], ["un", "INDF.M.SG"], ["peso", "peso"]
+      ["No", "NEG"], ["se", "IMPRS"], ["me", "1SG.DAT"], ["le", "STYL"], ["dio", "give.PST.3SG"],
+      ["ni", "NPI"], ["un", "INDF.M.SG"], ["peso", "peso"]
     ],
     "translation": "*I wasn't given a single peso.",
     "context": "Negative control: overt impersonal-SE + STYL cluster is still ungrammatical.",
@@ -521,7 +587,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "dar"], ["pattern", "se-cl-le"], ["dativePerson", "1SG"], ["block", "negative-controls"]
+      ["verb", "dar"],
+      ["pattern", "se-cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "negative-controls"]
     ],
     "comment": "Muñoz Pérez 2026 (14c). Confirms LE is not rescued by any SE-flavor in the absence of non-thematic anticausative Voice.",
     "metaLanguage": "stan1293",
@@ -534,8 +603,8 @@
     "primaryText": "Me le cerró la ventana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"], ["ventana", "window"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
+      ["ventana", "window"]
     ],
     "translation": "The window closed on me.",
     "context": "Person-paradigm cornerstone: stylistic LE is licit with a 1SG dative clitic.",
@@ -543,7 +612,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "cerrar"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "person-restriction"]
+      ["verb", "cerrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "person-restriction"]
     ],
     "comment": "Muñoz Pérez 2026 (15b). First of five person-paradigm examples (15–19) anchoring the [+PART, +SING] restriction.",
     "metaLanguage": "stan1293",
@@ -556,8 +628,8 @@
     "primaryText": "Te le cerró la ventana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Te",  "2SG.DAT"], ["le",     "STYL"],
-      ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"], ["ventana", "window"]
+      ["Te", "2SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
+      ["ventana", "window"]
     ],
     "translation": "The window closed on you.",
     "context": "Person paradigm: stylistic LE is licit with a 2SG dative clitic.",
@@ -565,7 +637,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "cerrar"], ["pattern", "cl-le"], ["dativePerson", "2SG"], ["block", "person-restriction"]
+      ["verb", "cerrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "2SG"],
+      ["block", "person-restriction"]
     ],
     "comment": "Muñoz Pérez 2026 (16b). 2SG: the second [+PART, +SING] case.",
     "metaLanguage": "stan1293",
@@ -578,8 +653,8 @@
     "primaryText": "*Le le cerró la ventana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Le",  "3SG.DAT"], ["le",     "STYL"],
-      ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"], ["ventana", "window"]
+      ["Le", "3SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
+      ["ventana", "window"]
     ],
     "translation": "*The window closed on her/him.",
     "context": "Person paradigm: stylistic LE is BLOCKED with a 3SG dative clitic (third-person fails [+PART]).",
@@ -587,7 +662,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "cerrar"], ["pattern", "cl-le"], ["dativePerson", "3SG"], ["block", "person-restriction"]
+      ["verb", "cerrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "3SG"],
+      ["block", "person-restriction"]
     ],
     "comment": "Muñoz Pérez 2026 (17b). 3SG blocks Fission: third person lacks [+PART].",
     "metaLanguage": "stan1293",
@@ -600,8 +678,8 @@
     "primaryText": "*Nos le cerró la ventana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Nos", "1PL.DAT"], ["le",     "STYL"],
-      ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"], ["ventana", "window"]
+      ["Nos", "1PL.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
+      ["ventana", "window"]
     ],
     "translation": "*The window closed on us.",
     "context": "Person paradigm: stylistic LE is BLOCKED with a 1PL dative clitic (plural fails [+SING]).",
@@ -609,7 +687,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "cerrar"], ["pattern", "cl-le"], ["dativePerson", "1PL"], ["block", "person-restriction"]
+      ["verb", "cerrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1PL"],
+      ["block", "person-restriction"]
     ],
     "comment": "Muñoz Pérez 2026 (18b). 1PL blocks Fission: plural lacks [+SING].",
     "metaLanguage": "stan1293",
@@ -622,8 +703,8 @@
     "primaryText": "*Les le cerró la ventana.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Les", "3PL.DAT"], ["le",     "STYL"],
-      ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"], ["ventana", "window"]
+      ["Les", "3PL.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
+      ["ventana", "window"]
     ],
     "translation": "*The window closed on them.",
     "context": "Person paradigm: stylistic LE is BLOCKED with a 3PL dative clitic.",
@@ -631,7 +712,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "cerrar"], ["pattern", "cl-le"], ["dativePerson", "3PL"], ["block", "person-restriction"]
+      ["verb", "cerrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "3PL"],
+      ["block", "person-restriction"]
     ],
     "comment": "Muñoz Pérez 2026 (19b). 3PL blocks Fission on both [+PART] AND [+SING].",
     "metaLanguage": "stan1293",
@@ -644,8 +728,8 @@
     "primaryText": "Me le quebró el florero.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["quebró", "break.PST.3SG"], ["el", "DEF.M.SG"], ["florero", "vase"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["quebró", "break.PST.3SG"], ["el", "DEF.M.SG"],
+      ["florero", "vase"]
     ],
     "translation": "The vase broke on me.",
     "context": "Marking restriction: `quebrar` is marked-anticausative (obligatory SE in its non-LE form) and licenses stylistic LE.",
@@ -653,7 +737,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "quebrar"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "marking-restriction"], ["marking", "marked"]
+      ["verb", "quebrar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "marking-restriction"],
+      ["marking", "marked"]
     ],
     "comment": "Muñoz Pérez 2026 (39b). Marked-anticausative verb licenses stylistic LE.",
     "metaLanguage": "stan1293",
@@ -666,8 +754,8 @@
     "primaryText": "*Me le mejoró el sueldo.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["mejoró", "improve.PST.3SG"], ["el", "DEF.M.SG"], ["sueldo", "salary"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["mejoró", "improve.PST.3SG"], ["el", "DEF.M.SG"],
+      ["sueldo", "salary"]
     ],
     "translation": "*My salary went up (on me).",
     "context": "Marking restriction: `mejorar` is an unmarked anticausative (alternates without SE) and BLOCKS stylistic LE.",
@@ -675,7 +763,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "mejorar"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "marking-restriction"], ["marking", "unmarked"]
+      ["verb", "mejorar"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "marking-restriction"],
+      ["marking", "unmarked"]
     ],
     "comment": "Muñoz Pérez 2026 (40b). Unmarked-anticausative verb BLOCKS stylistic LE; key counterexample against Koontz-Garboden (2009)'s prediction that every alternating verb has SE.",
     "metaLanguage": "stan1293",
@@ -688,8 +780,8 @@
     "primaryText": "Me le hirvió el agua.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Me",  "1SG.DAT"], ["le",     "STYL"],
-      ["hirvió", "boil.PST.3SG"], ["el", "DEF.M.SG"], ["agua", "water"]
+      ["Me", "1SG.DAT"], ["le", "STYL"], ["hirvió", "boil.PST.3SG"], ["el", "DEF.M.SG"],
+      ["agua", "water"]
     ],
     "translation": "The water boiled on me.",
     "context": "Marking restriction: `hervir` is optionally SE-marked and still licenses stylistic LE.",
@@ -697,7 +789,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["verb", "hervir"], ["pattern", "cl-le"], ["dativePerson", "1SG"], ["block", "marking-restriction"], ["marking", "optional"]
+      ["verb", "hervir"],
+      ["pattern", "cl-le"],
+      ["dativePerson", "1SG"],
+      ["block", "marking-restriction"],
+      ["marking", "optional"]
     ],
     "comment": "Muñoz Pérez 2026 (44a). Optionally-marked anticausative still licenses stylistic LE, confirming that the relevant condition is non-thematic Voice availability, not obligatoriness of overt SE.",
     "metaLanguage": "stan1293",

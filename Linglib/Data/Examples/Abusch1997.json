@@ -4,7 +4,10 @@
     "source": {"bibkey": "abusch-1997", "paperLabel": "(1)"},
     "language": "stan1293",
     "primaryText": "The defendant was actually watching the Simpsons at the time of the crime. According to the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building.",
-    "discourseSegments": ["The defendant was actually watching the Simpsons at the time of the crime.", "According to the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building."],
+    "discourseSegments": [
+      "The defendant was actually watching the Simpsons at the time of the crime.",
+      "According to the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building."
+    ],
     "glossedTokens": [],
     "translation": "The defendant was actually watching the Simpsons at the time of the crime. According to the testimony of the first eye-witness, the jurors clearly believed that he was in the laboratory building.",
     "context": "Past-shifted (backward-shifted) reading: the embedded `was` (in 'he was in the laboratory') is anaphoric to the time of the crime introduced in the first sentence. Time of the defendant being in the laboratory precedes the jurors' believing time. Abusch's diagnostic for the Independent Theory's anaphoric account of embedded past tense.",
@@ -30,7 +33,7 @@
     "alternatives": [],
     "readings": [
       {"name": "simultaneous (raining at believing time)", "judgment": "acceptable"},
-      {"name": "past-shifted (raining before believing)",  "judgment": "acceptable"}
+      {"name": "past-shifted (raining before believing)", "judgment": "acceptable"}
     ],
     "comment": "Abusch 1997 ex (2), p. 3. Footnote 2 attributes the simultaneous-reading shape to Enç 1987 (cited as 'Eng 1987'). Standard past-under-past minimal example.",
     "metaLanguage": "stan1293",
@@ -41,15 +44,18 @@
     "source": {"bibkey": "abusch-1997", "paperLabel": "(3)"},
     "language": "stan1293",
     "primaryText": "John found an ostrich in his apartment yesterday. Just before he opened the door, he thought that a burglar attacked him.",
-    "discourseSegments": ["John found an ostrich in his apartment yesterday.", "Just before he opened the door, he thought that a burglar attacked him."],
+    "discourseSegments": [
+      "John found an ostrich in his apartment yesterday.",
+      "Just before he opened the door, he thought that a burglar attacked him."
+    ],
     "glossedTokens": [],
     "translation": "John found an ostrich in his apartment yesterday. Just before he opened the door, he thought that a burglar attacked him.",
     "context": "Upper Limit Constraint (ULC) foil. The Independent Theory would predict a forward-shifted reading (the attack co-temporal with the later opening, hence after the thinking) via anaphora to the previous sentence's time of opening, paraphrasable as 'When I open the door, a burglar will attack me'. This reading is UNAVAILABLE: embedded past cannot denote a time later than the matrix event. Motivates the §7 ULC.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "past-shifted (attack before thinking)",                                       "judgment": "acceptable"},
-      {"name": "forward-shifted (attack co-temporal with later opening, after thinking)",   "judgment": "ungrammatical"}
+      {"name": "past-shifted (attack before thinking)", "judgment": "acceptable"},
+      {"name": "forward-shifted (attack co-temporal with later opening, after thinking)", "judgment": "ungrammatical"}
     ],
     "comment": "Abusch 1997 ex (3), p. 4. The decisive counterexample to the pure Independent Theory: the predicted forward-shifted reading (paraphrased by ex (4) 'When I open the door, a burglar will attack me') is unavailable. Motivates the Upper Limit Constraint: embedded R cannot exceed matrix E.",
     "metaLanguage": "stan1293",

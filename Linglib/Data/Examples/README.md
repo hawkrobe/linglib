@@ -8,8 +8,17 @@ file is a top-level JSON array of example objects mirroring the
 ## Generator
 
 ```bash
-python3 scripts/gen_examples.py <AuthorYear>
+python3 scripts/gen_examples.py <AuthorYear>   # generate one paper's module
+python3 scripts/gen_examples.py --all          # regenerate every paper
+python3 scripts/gen_examples.py --check        # verify modules match JSON (CI)
+python3 scripts/gen_examples.py --fmt          # rewrite JSON in canonical format
 ```
+
+JSON files use the canonical format emitted by `--fmt` (2-space indent,
+schema key order, gloss pairs packed onto wrapped lines, one
+feature/alternative/reading per line). Run `--fmt` after hand-editing or
+script-editing a JSON file; it refuses to write if reformatting would
+change the parsed data.
 
 Reads `Linglib/Data/Examples/<AuthorYear>.json` and writes a standalone
 auto-generated module at `Linglib/Data/Examples/<AuthorYear>.lean`

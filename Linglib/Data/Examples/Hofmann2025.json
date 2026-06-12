@@ -1,7 +1,7 @@
 [
   {
     "id": "hofmann2025_veridical_basic",
-    "source":     {"bibkey": "hofmann-2025", "paperLabel": "(1a)"},
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(1a)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary owns a car. It is red.",
@@ -21,7 +21,7 @@
   },
   {
     "id": "hofmann2025_negated_basic",
-    "source":     {"bibkey": "hofmann-2025", "paperLabel": "(1b)"},
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(1b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car. It is red.",
@@ -41,7 +41,7 @@
   },
   {
     "id": "hofmann2025_double_negation",
-    "source":     {"bibkey": "krahmer-muskens-1995", "paperLabel": "(5)"},
+    "source": {"bibkey": "krahmer-muskens-1995", "paperLabel": "(5)"},
     "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(2a)/(42a)"},
     "language": "stan1293",
     "primaryText": "It's not true that there isn't a bathroom. It is upstairs.",
@@ -61,7 +61,7 @@
   },
   {
     "id": "hofmann2025_modal_subordination",
-    "source":     {"bibkey": "frank-1996", "paperLabel": "(8a)"},
+    "source": {"bibkey": "frank-1996", "paperLabel": "(8a)"},
     "reportedIn": {"bibkey": "hofmann-2025", "paperLabel": "(2d)/(42d)"},
     "language": "stan1293",
     "primaryText": "Fred didn't buy a microwave oven. He wouldn't know what to do with it.",
@@ -81,7 +81,7 @@
   },
   {
     "id": "hofmann2025_counterfactual_modal",
-    "source":     {"bibkey": "hofmann-2025", "paperLabel": "(6b)"},
+    "source": {"bibkey": "hofmann-2025", "paperLabel": "(6b)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Mary doesn't own a car. It would be parked outside.",

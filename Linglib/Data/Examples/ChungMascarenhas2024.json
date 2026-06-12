@@ -14,8 +14,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `mustCM_iff_korean_composition`.",
-    "paperFeatures": [["puzzle", "koreanComposition"], ["construction", "conditional-evaluative"]]
+    "paperFeatures": [
+      ["puzzle", "koreanComposition"],
+      ["construction", "conditional-evaluative"]
+    ],
+    "comment": "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `mustCM_iff_korean_composition`."
   },
   {
     "id": "cm2024_4_linda_original",
@@ -38,8 +41,11 @@
       {"form": "Linda is a bank teller and she is active in the feminist movement.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (mc2024_29_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods).",
-    "paperFeatures": [["puzzle", "conjunctionFallacy"], ["empiricalDomain", "epistemic"]]
+    "paperFeatures": [
+      ["puzzle", "conjunctionFallacy"],
+      ["empiricalDomain", "epistemic"]
+    ],
+    "comment": "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (mc2024_29_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods)."
   },
   {
     "id": "cm2024_15a_minersBlockNeither",
@@ -54,8 +60,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis (formalized in `ought_blockNeither_at_threshold`) makes this true at any θ ∈ (5, 9).",
-    "paperFeatures": [["puzzle", "miners"], ["modalForce", "ought"]]
+    "paperFeatures": [
+      ["puzzle", "miners"],
+      ["modalForce", "ought"]
+    ],
+    "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis (formalized in `ought_blockNeither_at_threshold`) makes this true at any θ ∈ (5, 9)."
   },
   {
     "id": "cm2024_15b_minersBlockA",
@@ -70,8 +79,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive. C&M's analysis formalized in `ought_under_minersInA_at_threshold` (eq. 24).",
-    "paperFeatures": [["puzzle", "miners"], ["modalForce", "ought"], ["conditional", "info-sensitive"]]
+    "paperFeatures": [
+      ["puzzle", "miners"],
+      ["modalForce", "ought"],
+      ["conditional", "info-sensitive"]
+    ],
+    "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive. C&M's analysis formalized in `ought_under_minersInA_at_threshold` (eq. 24)."
   },
   {
     "id": "cm2024_25a_minersMust",
@@ -89,8 +102,11 @@
       {"form": "We cannot block either path.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Must-variant of (15a). Paper judgment: (a) is questionable on intended reading because 'neither' triggers alternative-quantifier interference; the rephrasings in alternatives unambiguously target the intended reading.",
-    "paperFeatures": [["puzzle", "miners"], ["modalForce", "must"]]
+    "paperFeatures": [
+      ["puzzle", "miners"],
+      ["modalForce", "must"]
+    ],
+    "comment": "Must-variant of (15a). Paper judgment: (a) is questionable on intended reading because 'neither' triggers alternative-quantifier interference; the rephrasings in alternatives unambiguously target the intended reading."
   },
   {
     "id": "cm2024_25b_minersMustA",
@@ -104,8 +120,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (5 < θ < 9) and conditional-on-A (9 < θ < 10) must-claims. Formalized in `must_miners_requires_threshold_shift`.",
-    "paperFeatures": [["puzzle", "miners"], ["modalForce", "must"], ["prediction", "thresholdShift"]]
+    "paperFeatures": [
+      ["puzzle", "miners"],
+      ["modalForce", "must"],
+      ["prediction", "thresholdShift"]
+    ],
+    "comment": "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (5 < θ < 9) and conditional-on-A (9 < θ < 10) must-claims. Formalized in `must_miners_requires_threshold_shift`."
   },
   {
     "id": "cm2024_29b_modal_linda",
@@ -121,8 +141,11 @@
       {"form": "Linda must be a bank teller.", "judgment": "questionable"}
     ],
     "readings": [],
-    "comment": "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33). Formalized at the operator level in `mustCM_predicts_fallacy_under_CM_conditionals`.",
-    "paperFeatures": [["puzzle", "modalConjunctionFallacy"], ["empiricalDomain", "epistemic"]]
+    "paperFeatures": [
+      ["puzzle", "modalConjunctionFallacy"],
+      ["empiricalDomain", "epistemic"]
+    ],
+    "comment": "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33). Formalized at the operator level in `mustCM_predicts_fallacy_under_CM_conditionals`."
   },
   {
     "id": "cm2024_35_jack_description",
@@ -137,8 +160,11 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level.",
-    "paperFeatures": [["puzzle", "baseRateNeglect"], ["empiricalDomain", "epistemic"]]
+    "paperFeatures": [
+      ["puzzle", "baseRateNeglect"],
+      ["empiricalDomain", "epistemic"]
+    ],
+    "comment": "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level."
   },
   {
     "id": "cm2024_36_jack_must_engineer",
@@ -154,8 +180,11 @@
       {"form": "Jack must be a lawyer.", "judgment": "questionable"}
     ],
     "readings": [],
-    "comment": "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent. Formalized in `mustCM_predicts_base_rate_neglect_under_CM_conditionals`.",
-    "paperFeatures": [["puzzle", "baseRateNeglect"], ["modalForce", "must"]]
+    "paperFeatures": [
+      ["puzzle", "baseRateNeglect"],
+      ["modalForce", "must"]
+    ],
+    "comment": "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent. Formalized in `mustCM_predicts_base_rate_neglect_under_CM_conditionals`."
   },
   {
     "id": "cm2024_49a_cold",
@@ -174,8 +203,11 @@
       {"form": "#He must be dead.", "judgment": "unacceptable"}
     ],
     "readings": [],
-    "comment": "Dead-vs-cold contrast (paper §5, eq. 49a/b). The pure likelihood-based analysis incorrectly predicts must-dead acceptable (P(absent|dead)=1 ≫ P(absent|cold)). Motivates the §5 plausibility-floor patch (formalized as `mustCMWithPlausibility`).",
-    "paperFeatures": [["puzzle", "plausibilityFloor"], ["modalForce", "must"]]
+    "paperFeatures": [
+      ["puzzle", "plausibilityFloor"],
+      ["modalForce", "must"]
+    ],
+    "comment": "Dead-vs-cold contrast (paper §5, eq. 49a/b). The pure likelihood-based analysis incorrectly predicts must-dead acceptable (P(absent|dead)=1 ≫ P(absent|cold)). Motivates the §5 plausibility-floor patch (formalized as `mustCMWithPlausibility`)."
   },
   {
     "id": "cm2024_54a_grammatical_mistake",
@@ -189,8 +221,12 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Deontic-domain instance of the §5 plausibility-floor requirement: the prejacent (never making any mistake) is implausible, infelicity follows. Extends the dead/cold contrast (cm2024_49a) from epistemic to deontic.",
-    "paperFeatures": [["puzzle", "plausibilityFloor"], ["modalForce", "must"], ["modalType", "deontic"]]
+    "paperFeatures": [
+      ["puzzle", "plausibilityFloor"],
+      ["modalForce", "must"],
+      ["modalType", "deontic"]
+    ],
+    "comment": "Deontic-domain instance of the §5 plausibility-floor requirement: the prejacent (never making any mistake) is implausible, infelicity follows. Extends the dead/cold contrast (cm2024_49a) from epistemic to deontic."
   },
   {
     "id": "cm2024_55a_bushwick_helicopter",
@@ -204,8 +240,12 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Teleological-domain instance of the §5 plausibility-floor requirement: the prejacent (helicopter-taking) is implausible / impractical. Extends the dead/cold contrast (cm2024_49a) from epistemic to teleological.",
-    "paperFeatures": [["puzzle", "plausibilityFloor"], ["modalForce", "have-to"], ["modalType", "teleological"]]
+    "paperFeatures": [
+      ["puzzle", "plausibilityFloor"],
+      ["modalForce", "have-to"],
+      ["modalType", "teleological"]
+    ],
+    "comment": "Teleological-domain instance of the §5 plausibility-floor requirement: the prejacent (helicopter-taking) is implausible / impractical. Extends the dead/cold contrast (cm2024_49a) from epistemic to teleological."
   },
   {
     "id": "cm2024_60a_kim_marry_pat",
@@ -222,8 +262,11 @@
       {"form": "Kim must marry PAT in order to inherit. (with PAT focused)", "judgment": "unacceptable"}
     ],
     "readings": [],
-    "comment": "Focus contrast (§6 eq. 60). With neutral focus, the alternative-set is the polar negation of the prejacent (true / true-enough). With contrastive PAT-focus, the alternative-set is other people Kim might marry — making it false (any marriage works). C&M's evidence for alternative-sensitivity of must but not might.",
-    "paperFeatures": [["puzzle", "focusContrast"], ["modalForce", "must"]]
+    "paperFeatures": [
+      ["puzzle", "focusContrast"],
+      ["modalForce", "must"]
+    ],
+    "comment": "Focus contrast (§6 eq. 60). With neutral focus, the alternative-set is the polar negation of the prejacent (true / true-enough). With contrastive PAT-focus, the alternative-set is other people Kim might marry — making it false (any marriage works). C&M's evidence for alternative-sensitivity of must but not might."
   },
   {
     "id": "cm2024_63_billy_rain",
@@ -243,7 +286,11 @@
       {"form": "It is raining. (without 'must')", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate.",
-    "paperFeatures": [["puzzle", "vfgFelicity"], ["modalForce", "must"], ["modalType", "epistemic"]]
+    "paperFeatures": [
+      ["puzzle", "vfgFelicity"],
+      ["modalForce", "must"],
+      ["modalType", "epistemic"]
+    ],
+    "comment": "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate."
   }
 ]

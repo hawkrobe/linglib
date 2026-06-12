@@ -11,8 +11,8 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "simultaneous (Junko sick at saying time)",   "judgment": "acceptable"},
-      {"name": "past-shifted (Junko sick before saying)",    "judgment": "acceptable"}
+      {"name": "simultaneous (Junko sick at saying time)", "judgment": "acceptable"},
+      {"name": "past-shifted (Junko sick before saying)", "judgment": "acceptable"}
     ],
     "comment": "Arregui & Kusumoto 1998 ex (1), SALT VIII p. 1. Originating discussion of this example shape is Enç 1987 (cited by A&K as [Eng 1987]; no enc-1987 bib entry yet).",
     "metaLanguage": "stan1293",
@@ -180,7 +180,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "upstairs (when = saying time)",            "judgment": "acceptable"},
+      {"name": "upstairs (when = saying time)", "judgment": "acceptable"},
       {"name": "downstairs (when = his leaving, per you)", "judgment": "acceptable"}
     ],
     "comment": "Arregui & Kusumoto 1998 ex (14), p. 7. Originally Geis 1970. (No geis-1970 bib entry; sourced via reportedIn = A&K.) Cornerstone Geis-ambiguity example — extraction from main clause vs embedded clause yields two readings.",
@@ -199,7 +199,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "veridical (plant died)",         "judgment": "acceptable"},
+      {"name": "veridical (plant died)", "judgment": "acceptable"},
       {"name": "non-veridical (plant didn't die)", "judgment": "acceptable"}
     ],
     "comment": "Arregui & Kusumoto 1998 ex (18a), p. 10. Diagnostic for the before/after veridicality asymmetry — citing Anscombe 1964, Landman 1991, Ogihara 1995.",
