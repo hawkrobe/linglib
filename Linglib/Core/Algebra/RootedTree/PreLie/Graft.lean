@@ -1630,9 +1630,9 @@ step, checking at each level that the input path's head matches the
 expected `rootPrependCount`-offsetted descent index. Recursion is
 structural on `e`.
 
-Consumer (§11.5, `composePairs_planarEquiv_partition`): the partition
-of inner paths into "lifted at outer[k]" buckets vs "root vertices of
-the extended tree" uses `stripLiftMulti` as the filter discriminator. -/
+Original consumer was the deprecated `composePairs` partition theorem
+(deleted 2026-06-12 with the A3.3 route); kept as generic vertex
+bookkeeping substrate. -/
 
 /-- Auxiliary walker: structural recursion on the prefix path. -/
 def stripLiftMultiAux : Path → ℕ → List (Path × Planar α) → Path → Option Path
@@ -4132,9 +4132,9 @@ classifies each inner path into one of:
 `(q, c)` (stripped paths). `rootInner outer inner` collects the
 preserved/sourceSelf inner pairs as `(v, c)` (untransported paths).
 
-The partition theorem `composePairs_planarEquiv_partition` lives in
-`Insertion.lean` §5.6 (uses `Nonplanar.mk` from
-`Linglib.Core.Combinatorics.RootedTree.Nonplanar`).
+The deprecated `composePairs` partition theorem that consumed these was
+deleted on 2026-06-12 with the A3.3 route; the collectors remain as
+generic substrate.
 
 **Consumer status (2026-05-16)**: deprecated. The original consumer
 (`InsertionAssoc.lean` §1.11.11 T-bucket bridges) has been deleted as

@@ -34,12 +34,11 @@ the key fact making this descend to `Sym[R]^n L → L`.
 ## Main definitions
 
 * `circTMultilinear T n` — `T ○_(n) (·)` as a `MultilinearMap R (Fin n → L) L`.
-* `circT T n` — the lift to `Sym[R]^n L →ₗ[R] L` via `SymmetricPower.lift`,
   using `circTMultilinear_symm` (Lemma 2.5).
 
 ## Status
 
-**Q1b: `circT T n` sorry-free (2026-05-16).** Symmetry
+**Q1b sorry-free (2026-05-16).** Symmetry
 (`circTMultilinear_symm`) closed via three helpers:
 
 * `circTMultilinear_symm_interior` — swap of two `Fin.castSucc` indices;
@@ -70,7 +69,7 @@ namespace OudomGuinCircConstruct
 open Equiv Finset
 open scoped TensorProduct
 
-variable {R : Type} {L : Type}
+variable {R : Type*} {L : Type*}
 variable [CommRing R] [RightPreLieRing L] [RightPreLieAlgebra R L]
 
 /-! ## §1: The recursive multilinear `T ○_(n) (·)`
@@ -84,8 +83,8 @@ the formula above. -/
 
     Note: `R` is made explicit (rather than implicit) so that recursive
     calls within the definition can resolve typeclasses. -/
-noncomputable def circTMultilinear (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L] (T : L) :
+noncomputable def circTMultilinear (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L] (T : L) :
     ∀ n : ℕ, MultilinearMap R (fun _ : Fin n ↦ L) L
   | 0 =>
     -- `Fin 0` is empty: the multilinear map is a constant `T`.
@@ -271,8 +270,8 @@ decomposition + algebraic symmetry); other pieces are structural. -/
     `circTMultilinear R T n` is symmetric under `Perm (Fin n)`, so the
     leading term `prev (Fin.init f) * f_last` and the residual sum
     (after reindexing by `k' = Equiv.swap i j k`) are both invariant. -/
-private theorem circTMultilinear_symm_interior (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private theorem circTMultilinear_symm_interior (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (i j : Fin n)
     (ih : ∀ τ : Perm (Fin n),
       (circTMultilinear R T n).domDomCongr τ = circTMultilinear R T n) :
@@ -386,8 +385,8 @@ Proved as a substrate lemma here for use in the exterior swap invariance
 /-- Helper: split the inner sum `∑_j prev (update (update a i (a_i * W)) j (… * Z))`
     into a diagonal term `j = i` (uses `update_idem`) and an off-diagonal sum
     `j ≠ i` (uses `update_of_ne` + `update_comm` to put the W-update outside). -/
-private lemma split_inner_sum_at_diag (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private lemma split_inner_sum_at_diag (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
     (a : Fin n → L) (W Z : L) (i : Fin n) :
     (∑ j : Fin n, prev (Function.update (Function.update a i (a i * W)) j
@@ -416,8 +415,8 @@ private lemma split_inner_sum_at_diag (R : Type) [CommRing R]
     `split_inner_sum_at_diag`; the diagonal differences cancel via pre-Lie
     on L (applied with `MultilinearMap.map_update_sub`), the off-diagonal
     sums are equal by relabeling `(i, j) ↔ (j, i)`. -/
-private theorem prev_action_pre_lie_identity (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private theorem prev_action_pre_lie_identity (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
     (a : Fin n → L) (X Y : L) :
     (∑ i : Fin n, prev (Function.update a i (a i * (X * Y)))) -
@@ -508,8 +507,8 @@ for the inner-sum terms. -/
     as an explicit polynomial in `(prev, A, X, Y)`.
 
     Per OG 2008 Lemma 2.5 proof on page 5. -/
-private noncomputable def sixTerm {R : Type} [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private noncomputable def sixTerm {R : Type*} [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
     (A : Fin n → L) (X Y : L) : L :=
   prev A * X * Y
@@ -531,8 +530,8 @@ private noncomputable def sixTerm {R : Type} [CommRing R]
       to `B + C = A + D`).
     - **Pair 3** `(Σ p(…·X))·Y + (Σ p(…·Y))·X` ↔ same with X ↔ Y:
       `add_comm` (the two summands literally swap roles). -/
-private lemma sixTerm_symm {R : Type} [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private lemma sixTerm_symm {R : Type*} [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
     (A : Fin n → L) (X Y : L) :
     sixTerm prev A X Y = sixTerm prev A Y X := by
@@ -643,8 +642,8 @@ private lemma sixTerm_symm {R : Type} [CommRing R]
     `circT (m+2)` and the inner summands all unfold via Def 2.4). The
     `Fin.snoc` form makes the `Fin.init` / `Fin.last` simplifications
     clean (`Fin.init_snoc`, `Fin.snoc_last`, `Fin.snoc_castSucc`). -/
-private lemma circT_succ_succ_snoc_eval (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private lemma circT_succ_succ_snoc_eval (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (m : ℕ) (A : Fin (m + 1) → L) (X Y : L) :
     circTMultilinear R T (m + 3) (Fin.snoc (Fin.snoc A X) Y) =
       sixTerm (circTMultilinear R T (m + 1)) A X Y := by
@@ -739,8 +738,8 @@ plain hypothesis rather than mutually-recursing inside the dispatcher. -/
     terms three ways: (1)-(5) via L's pre-Lie identity, (4)+(6) via
     `prev_action_pre_lie_identity` (the per-degree OG identity 2.3),
     (2)+(3) trivially by `X ↔ Y` symmetry. -/
-private theorem circTMultilinear_symm_exterior_adj (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private theorem circTMultilinear_symm_exterior_adj (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (m : ℕ)
     (_ih : ∀ τ : Perm (Fin (m + 2)),
       (circTMultilinear R T (m + 2)).domDomCongr τ =
@@ -859,8 +858,8 @@ private theorem circTMultilinear_symm_exterior_adj (R : Type) [CommRing R]
     `sixTerm_symm` (algebraic symmetry).
 
     Reference: [oudom-guin-2008] Lemma 2.5 proof, p. 5. -/
-private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private theorem circTMultilinear_symm_exterior (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (i : Fin n)
     (ih : ∀ τ : Perm (Fin n),
       (circTMultilinear R T n).domDomCongr τ = circTMultilinear R T n) :
@@ -957,8 +956,8 @@ private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
 /-- **Lemma 2.5 — Any-swap invariance**: combines interior and exterior
     cases via a case-split on whether either of `x, y : Fin (n+1)` is
     `Fin.last n`. -/
-private theorem circTMultilinear_symm_swap (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+private theorem circTMultilinear_symm_swap (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (x y : Fin (n + 1)) (hxy : x ≠ y)
     (ih : ∀ τ : Perm (Fin n),
       (circTMultilinear R T n).domDomCongr τ = circTMultilinear R T n) :
@@ -981,8 +980,8 @@ private theorem circTMultilinear_symm_swap (R : Type) [CommRing R]
       exact circTMultilinear_symm_interior R T n i' j' ih
 
 /-- **OG Lemma 2.5**: `T ○_(n) (·)` is symmetric in its `n` arguments. -/
-theorem circTMultilinear_symm (R : Type) [CommRing R]
-    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+theorem circTMultilinear_symm (R : Type*) [CommRing R]
+    {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (σ : Perm (Fin n)) :
     (circTMultilinear R T n).domDomCongr σ =
       circTMultilinear R T n := by
@@ -1002,28 +1001,6 @@ theorem circTMultilinear_symm (R : Type) [CommRing R]
       rw [MultilinearMap.domDomCongr_mul, ih_τ]
       exact circTMultilinear_symm_swap R T n x y hxy ih
 
-/-! ## §3: Lift to `Sym[R]^n L → L`
-
-Using `SymmetricPower.lift` (Q1b.0a) and `circTMultilinear_symm` (Lemma 2.5),
-we obtain the OG operation on each symmetric power. -/
-
-/-- **OG `T ○_(n) (·)`** lifted to `Sym[R]^n L →ₗ[R] L` via the universal
-    property of the symmetric power. -/
-noncomputable def circT (T : L) (n : ℕ) :
-    Sym[R] (Fin n) L →ₗ[R] L :=
-  SymmetricPower.lift (circTMultilinear R T n) (circTMultilinear_symm R T n)
-
-@[simp]
-theorem circT_tprod (T : L) (n : ℕ) (f : Fin n → L) :
-    circT (R := R) T n (SymmetricPower.tprod R f) =
-      circTMultilinear R T n f := by
-  rw [circT, SymmetricPower.lift_tprod]
-
-/-- For `n = 0`: `circT T 0` sends the unit `tprod R Fin.elim0` to `T`. -/
-@[simp]
-theorem circT_zero_tprod (T : L) (f : Fin 0 → L) :
-    circT (R := R) T 0 (SymmetricPower.tprod R f) = T := by
-  rw [circT_tprod, circTMultilinear_zero]
 
 end OudomGuinCircConstruct
 

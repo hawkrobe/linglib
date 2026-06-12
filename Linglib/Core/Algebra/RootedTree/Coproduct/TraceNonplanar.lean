@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
+import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Basis
@@ -57,7 +58,7 @@ work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
 GL/Δ^c duality identity `pairing_gl_eq_pairing_coproduct_C` and the
 grading half of `mcb_lemma_1_2_10`. The R.6 pairing substrate
 (`GrossmanLarsonPairing.lean`, `Aut.lean`) is sorry-free; the R.5 GL
-substrate still has `mul_assoc_basis` open.
+substrate is closed (`GrossmanLarson.mul_assoc`, `GrossmanLarsonMonoid.lean`).
 -/
 
 namespace RootedTree
@@ -1299,14 +1300,16 @@ per-tree sorries that capture the `cutSummandsCN` substrate work
     `cutSummandsCN_filter_empty` to show the filter yields exactly `{(0, T)}`. -/
 private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
-    (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
       (comulCTreeN τ T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T := by
   -- Expand comulCTreeN τ T.
   unfold comulCTreeN
   rw [map_add]
   -- First summand: (counit ⊗ id)(ofTree T ⊗ 1) = counit(ofTree T) ⊗ 1 = 0 ⊗ 1 = 0.
-  rw [show (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+  rw [show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
               (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
             (ConnesKreimer.ofTree T ⊗ₜ[R']
               (1 : ConnesKreimer R' (Nonplanar (α' ⊕ β')))) = 0 from by
@@ -1315,19 +1318,22 @@ private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
   rw [zero_add]
   -- Distribute (counit ⊗ id) through the multiset sum.
   rw [map_multiset_sum
-        (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+        (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
           (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))]
   simp only [Multiset.map_map]
   -- Each summand: (counit ⊗ id)(of' p.1 ⊗ ofTree p.2) =
   --   (if p.1.card = 0 then 1 else 0) ⊗ ofTree p.2.
-  rw [show ((Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+  rw [show ((Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
               (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))) ∘
             (fun p : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
               ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
             (fun p => (if p.1.card = 0 then (1 : R') else 0) ⊗ₜ[R']
                        ConnesKreimer.ofTree p.2) from by
     funext p
-    show (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+    show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
             (AlgHom.id R' _))
           (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_of']]
@@ -1355,14 +1361,16 @@ private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
 private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
     (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-        (ConnesKreimer.counit (R := R')))
+        ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
       (comulCTreeN τ T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R') := by
   unfold comulCTreeN
   rw [map_add]
   -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
   rw [show (Algebra.TensorProduct.map
               (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-              (ConnesKreimer.counit (R := R')))
+              ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
             (ConnesKreimer.ofTree T ⊗ₜ[R']
               (1 : ConnesKreimer R' (Nonplanar (α' ⊕ β')))) =
           ConnesKreimer.ofTree T ⊗ₜ[R'] (1 : R') from by
@@ -1370,19 +1378,22 @@ private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
   -- Second summand: distribute via map_multiset_sum, then show the entire sum is 0.
   rw [map_multiset_sum
         (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-          (ConnesKreimer.counit (R := R')))]
+          ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))]
   simp only [Multiset.map_map]
   -- Each summand: (id ⊗ counit)(of' p.1 ⊗ ofTree p.2) = of' p.1 ⊗ counit(ofTree p.2)
   --              = of' p.1 ⊗ 0 = 0.
   rw [show ((Algebra.TensorProduct.map
               (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-              (ConnesKreimer.counit (R := R'))) ∘
+              ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')) ∘
             (fun p : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
               ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
             (fun _ => (0 : ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R'] R')) from by
     funext p
     show (Algebra.TensorProduct.map
-            (AlgHom.id R' _) (ConnesKreimer.counit (R := R')))
+            (AlgHom.id R' _) ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
           (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
         TensorProduct.tmul_zero]]
@@ -1399,10 +1410,12 @@ private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
     Mirrors `PruningNonplanar.comulForestN_counit_rTensor`. -/
 private theorem counit_rTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → β')
     (F : Forest (Nonplanar (α' ⊕ β')))
-    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+    (hF : ∀ T ∈ F, (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
         (comulCTreeN τ T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T) :
-    (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
       (comulCForestN (R := R') τ F) = (1 : R') ⊗ₜ ConnesKreimer.of' F := by
   induction F using Multiset.induction with
@@ -1430,10 +1443,12 @@ private theorem counit_lTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
     (F : Forest (Nonplanar (α' ⊕ β')))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-        (ConnesKreimer.counit (R := R')))
+        ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
         (comulCTreeN τ T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R')) :
     (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-        (ConnesKreimer.counit (R := R')))
+        ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
       (comulCForestN (R := R') τ F) = ConnesKreimer.of' F ⊗ₜ (1 : R') := by
   induction F using Multiset.induction with
   | empty =>
@@ -1456,13 +1471,15 @@ private theorem counit_lTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
 
 /-- **Right counit law** (CLOSED via per-tree + forest helpers): `(counit ⊗ id) ∘ Δ^c = lid⁻¹`. -/
 theorem counit_rTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
-    (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+    (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
         (AlgHom.id R' _)).comp (comulCAlgHomN (R := R') τ) =
       (Algebra.TensorProduct.lid R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))).symm.toAlgHom := by
   apply AddMonoidAlgebra.algHom_ext
   intro F
-  show (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+  show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
           (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
         (comulCAlgHomN (R := R') τ (ConnesKreimer.of' F)) =
        (Algebra.TensorProduct.lid R'
@@ -1473,13 +1490,15 @@ theorem counit_rTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
 /-- **Left counit law** (CLOSED via per-tree + forest helpers): `(id ⊗ counit) ∘ Δ^c = rid⁻¹`. -/
 theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     (Algebra.TensorProduct.map (AlgHom.id R' _)
-        (ConnesKreimer.counit (R := R'))).comp (comulCAlgHomN (R := R') τ) =
+        ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')).comp (comulCAlgHomN (R := R') τ) =
       (Algebra.TensorProduct.rid R' R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))).symm.toAlgHom := by
   apply AddMonoidAlgebra.algHom_ext
   intro F
   show (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
-          (ConnesKreimer.counit (R := R')))
+          ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
         (comulCAlgHomN (R := R') τ (ConnesKreimer.of' F)) =
        (Algebra.TensorProduct.rid R' R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))).symm (ConnesKreimer.of' F)
@@ -1498,7 +1517,8 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
 noncomputable instance instBialgebraC
     [CharZero R'] [NoZeroDivisors R'] (τ : Nonplanar (α' ⊕ β') → β') :
     Bialgebra R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
-  Bialgebra.ofAlgHom (comulCAlgHomN (R := R') τ) (ConnesKreimer.counit (R := R'))
+  Bialgebra.ofAlgHom (comulCAlgHomN (R := R') τ) ((ConnesKreimer.counit (R := R')) :
+          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
     (comulCAlgHomN_coassoc_algHom τ)
     (counit_rTensor_comulCAlgHomN τ)
     (counit_lTensor_comulCAlgHomN τ)

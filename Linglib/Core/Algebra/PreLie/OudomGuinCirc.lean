@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
+import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
@@ -84,8 +84,8 @@ namespace OudomGuinCirc
 open WithConv
 open scoped TensorProduct
 
-variable {R : Type} [CommRing R]
-variable {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+variable {R : Type*} [CommRing R]
+variable {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
 
 /-! ## §1: The `○` operation on `S(L) × S(L) → S(L)`
 
@@ -2254,7 +2254,7 @@ theorem oudomGuinStar_ι_split (X : SymmetricAlgebra R L) (T : L) :
     sum of tprods at the same `m` (via `oudomGuinCirc_algHomL_tprod_ι`),
     so Q3's m+1 case reduces to Q3 at m by linearity in C — no Sweedler
     cocomm bash needed at all. -/
-private theorem oudomGuinStar_mul_ι_split
+theorem oudomGuinStar_mul_ι_split
     (Z X : SymmetricAlgebra R L) (T : L) :
     oudomGuinStar Z (X * SymmetricAlgebra.ι R L T) =
       oudomGuinCirc (oudomGuinStar Z X) (SymmetricAlgebra.ι R L T) +
