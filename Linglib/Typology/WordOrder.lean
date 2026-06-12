@@ -7,8 +7,8 @@ import Linglib.Data.WALS.Features.F83A
 [dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
 Framework-agnostic substrate for storing per-language word-order data
-(WALS Chs 81–83). Lives in `Typology/` so that both `Fragments/`
-(per-language profiles) and `Phenomena/WordOrder/` (cross-linguistic
+(WALS Chs 81–83). Lives in `Typology/` so that `Fragments/`
+(per-language profiles) and the study layer (cross-linguistic
 generalisations) can import it without violating the layered
 dependency hierarchy.
 

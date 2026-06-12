@@ -3,35 +3,26 @@ import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.FutrellEtAl2020
 
 /-!
-# Gradient Word-Order Measures
+# Levshina et al. 2023: Gradient Word Order
 [levshina-stoynova-2023]
 
-Levshina, Namboodiripad, Allassonnière-Tang, Kramer, Talamo, Verkerk, Wilmoth,
-Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, [levshina-stoynova-2023] "Why we need a gradient approach to word order" (*Linguistics*
+Levshina et al., "Why we need a gradient approach to word order" (*Linguistics*
 61(4):825–883) argues that word-order typology should use continuous measures
-(proportions, Shannon entropy, mutual information) rather than categorical labels
-(SVO, SOV, "rigid", "flexible").
+(proportions, Shannon entropy, mutual information) rather than categorical
+labels (SVO, SOV, "rigid", "flexible").
 
-## Key Claims
-
-1. SO proportion is continuous across languages (Figure 1)
-2. Head-finality is continuous (Figure 2: 123 SUD corpora)
-3. Case marking MI correlates with SO entropy (Figure 3: ~30 languages)
-4. Register affects word-order proportions (Figure 7: Russian VO varies by register)
-5. Flexibility scores form a continuum (Figure 8: Avar–English)
-
-## Data Sources
-
-- OSF Dataset1.txt: per-language SO proportion (31 languages)
-- OSF Dataset3.txt: per-language SO entropy, case MI (30 languages)
-- OSF Dataset6.txt: Russian register variation (conversation/fiction/news)
-- https://osf.io/w9u6v/
-
+Key claims: SO proportion is continuous across languages (Fig. 1); case-marking
+MI correlates with SO entropy (Fig. 3); register affects word-order proportions
+(Fig. 7: Russian VO varies by register). Data from the paper's OSF repository
+(https://osf.io/w9u6v/): Dataset1.txt (per-language SO proportion), Dataset3.txt
+(SO entropy, case MI), Dataset6.txt (Russian register variation). All values
+are ×1000 integer encodings.
 -/
 
-namespace Phenomena.WordOrder.Gradience
+namespace LevshinaEtAl2023
 
 open Gibson2025
+
 -- ============================================================================
 -- §1: Gradient Measures on Existing CrossTab Data
 -- ============================================================================
@@ -50,15 +41,15 @@ def hiProportion1000 (t : CrossTab) : Nat :=
 
 /-- Table 1: 94.3% harmonic (VO × Adposition). -/
 theorem voAdposition_harmonic_proportion :
-    harmonicProportion1000 voAdposition = 943 := by native_decide
+    harmonicProportion1000 voAdposition = 943 := by decide
 
 /-- Table 2: 86.1% harmonic (VO × Subordinator). -/
 theorem voSubordinator_harmonic_proportion :
-    harmonicProportion1000 voSubordinator = 861 := by native_decide
+    harmonicProportion1000 voSubordinator = 861 := by decide
 
 /-- Table 3: 82.2% harmonic (VO × Relative clause). -/
 theorem voRelativeClause_harmonic_proportion :
-    harmonicProportion1000 voRelativeClause = 822 := by native_decide
+    harmonicProportion1000 voRelativeClause = 822 := by decide
 
 /-- Harmonic proportion decreases with construction complexity:
     adposition > subordinator > relative clause.
@@ -68,7 +59,7 @@ theorem voRelativeClause_harmonic_proportion :
 theorem harmony_decreases_with_complexity :
     harmonicProportion1000 voAdposition > harmonicProportion1000 voSubordinator ∧
     harmonicProportion1000 voSubordinator > harmonicProportion1000 voRelativeClause := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Gradient and categorical measures agree: harmonicProportion1000 > 500 ↔ IsHarmonicDominant.
     The gradient measure refines, not contradicts, the binary one. -/
@@ -80,8 +71,9 @@ theorem categorical_consistent_with_gradient :
 -- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
 -- ============================================================================
 
-/-- Per-language gradient word-order data from Levshina, [levshina-stoynova-2023] OSF datasets. SO proportion from Dataset1.txt, entropy and case MI
-    from Dataset3.txt. All values × 1000, rounded to nearest integer. -/
+/-- Per-language gradient word-order data from the [levshina-stoynova-2023] OSF
+    datasets. SO proportion from Dataset1.txt, entropy and case MI from
+    Dataset3.txt. All values × 1000, rounded to nearest integer. -/
 structure GradientWOProfile where
   name : String
   isoCode : String
@@ -222,8 +214,6 @@ def allProfiles : List GradientWOProfile :=
   , japanese, korean, latvian, lithuanian, persian, portuguese, romanian
   , russian, slovene, spanish, swedish, tamil, turkish, vietnamese ]
 
-theorem allProfiles_count : allProfiles.length = 30 := by native_decide
-
 -- ============================================================================
 -- §3: Levshina et al. Core Theorems
 -- ============================================================================
@@ -233,14 +223,14 @@ theorem allProfiles_count : allProfiles.length = 30 := by native_decide
     Korean, Portuguese, Romanian, Spanish, Swedish, Vietnamese. -/
 theorem rigid_languages_low_entropy :
     (allProfiles.filter (·.soProportion1000 > 960)).all
-      (·.soEntropy1000 < 300) = true := by native_decide
+      (·.soEntropy1000 < 300) = true := by decide
 
 /-- Among Indo-European languages with case morphology, high SO entropy (> 700) implies
     high case MI (> 400). Czech, Hungarian, Latvian, Lithuanian all use case marking
     to compensate for word-order freedom. -/
 theorem case_rich_flexible_languages_high_mi :
     (allProfiles.filter (λ p => p.soEntropy1000 > 700 ∧ p.caseMI1000 > 0)).all
-      (λ p => p.caseMI1000 > 400 ∨ p.name == "Tamil") = true := by native_decide
+      (λ p => p.caseMI1000 > 400 ∨ p.name == "Tamil") = true := by decide
 
 /-- Tamil is a counterexample to the simple "flexibility requires case marking" story:
     high SO entropy (824) but low case MI (59). Tamil uses verb agreement and
@@ -250,7 +240,7 @@ theorem case_rich_flexible_languages_high_mi :
     case–flexibility correlation is a tendency with principled exceptions, not a law. -/
 theorem tamil_counterexample :
     tamil.soEntropy1000 > 800 ∧ tamil.caseMI1000 < 100 := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Case MI correlates with SO entropy: languages with caseMI > 300 have
     higher mean SO entropy than languages with caseMI ≤ 300. -/
@@ -260,12 +250,12 @@ def meanSOEntropy (ps : List GradientWOProfile) : Nat :=
 
 theorem case_mi_correlates_with_so_entropy :
     meanSOEntropy (allProfiles.filter (·.caseMI1000 > 300)) >
-    meanSOEntropy (allProfiles.filter (·.caseMI1000 ≤ 300)) := by native_decide
+    meanSOEntropy (allProfiles.filter (·.caseMI1000 ≤ 300)) := by decide
 
 /-- SO proportion spans a wide range: from Lithuanian (608) to Indonesian (999).
     This 391-point spread refutes any simple binary classification. -/
 theorem so_proportion_is_continuous :
-    indonesian.soProportion1000 - lithuanian.soProportion1000 > 350 := by native_decide
+    indonesian.soProportion1000 - lithuanian.soProportion1000 > 350 := by decide
 
 -- ============================================================================
 -- §4: Bridges to Existing Data
@@ -283,18 +273,9 @@ theorem gradient_implies_categorical :
 theorem harmony_is_gradient_not_binary :
     harmonicProportion1000 voAdposition ≠ harmonicProportion1000 voSubordinator ∧
     harmonicProportion1000 voSubordinator ≠ harmonicProportion1000 voRelativeClause := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- Bridge 2: SO entropy ↔ branching direction entropy (HahnDegenFutrell2021.lean)
-
-/-- Shared languages between our gradient profiles and the 54-language Hahn et al. dataset. -/
-def shared_gradient_hahn_isoCodes : List String :=
-  allProfiles.filterMap (λ p =>
-    if HahnDegenFutrell2021.allLanguages.any (·.isoCode == p.isoCode) then some p.isoCode
-    else none)
-
-theorem shared_gradient_hahn_count :
-    shared_gradient_hahn_isoCodes.length = 28 := by native_decide
 
 /-- Languages with high SO entropy (> 600) in Levshina that also appear in Hahn et al.
     all have high branching direction entropy (> 250) in Hahn et al.
@@ -308,20 +289,11 @@ theorem high_so_entropy_implies_high_branch_entropy :
     sharedHighSO.all (λ p =>
       match HahnDegenFutrell2021.allLanguages.find? (·.isoCode == p.isoCode) with
       | some h => match h.branchDirEntropy1000 with | some e => e > 250 | none => false
-      | none => false) = true := by native_decide
+      | none => false) = true := by decide
 
 -- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)
 
-private def futrellLanguages := Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages
-
-/-- Shared languages between gradient profiles and Futrell et al.'s DLM dataset. -/
-def shared_gradient_futrell_isoCodes : List String :=
-  allProfiles.filterMap (λ p =>
-    if futrellLanguages.any (·.isoCode == p.isoCode) then some p.isoCode
-    else none)
-
-theorem shared_gradient_futrell_count :
-    shared_gradient_futrell_isoCodes.length = 26 := by native_decide
+private def futrellLanguages := FutrellEtAl2020.languages
 
 /-- Languages with high propHeadFinal (> 700) in Futrell have high
     soProportion (> 700) in Levshina: head-final ≈ SOV ≈ high SO proportion. -/
@@ -332,7 +304,7 @@ theorem head_final_correlates_with_so :
       match futrellLanguages.find? (·.isoCode == p.isoCode) with
       | some f => f.propHeadFinal > 700
       | none => false)
-    highHF.all (·.soProportion1000 > 700) = true := by native_decide
+    highHF.all (·.soProportion1000 > 700) = true := by decide
 
 -- Bridge 4: Flexibility ↔ optimization exceptions (HahnDegenFutrell2021.lean)
 
@@ -344,7 +316,7 @@ theorem high_entropy_languages_include_exceptions :
     let highEntropy := allProfiles.filter (·.soEntropy1000 > 600)
     let hahnExceptions := HahnDegenFutrell2021.exceptionLanguages
     highEntropy.any (λ p => hahnExceptions.any (·.isoCode == p.isoCode)) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §5: Register Variation (Russian Case Study, OSF Dataset6.txt)
@@ -372,13 +344,13 @@ def russianRegisters : List RegisterProfile :=
 /-- Russian conversation has lower VO probability than fiction:
     spoken language permits more OV orders. -/
 theorem russian_vo_varies_by_register :
-    russianConversation.voProbability1000 < russianFiction.voProbability1000 := by native_decide
+    russianConversation.voProbability1000 < russianFiction.voProbability1000 := by decide
 
 /-- The register variation is large: fiction - conversation > 400
     (a 44 percentage-point spread). A single categorical label
     cannot capture this within-language variation. -/
 theorem register_variation_is_large :
     russianFiction.voProbability1000 - russianConversation.voProbability1000 > 400 := by
-  native_decide
+  decide
 
-end Phenomena.WordOrder.Gradience
+end LevshinaEtAl2023

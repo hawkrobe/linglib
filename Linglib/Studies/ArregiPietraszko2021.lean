@@ -1,11 +1,12 @@
 import Linglib.Syntax.Minimalist.GenHM
-import Linglib.Phenomena.WordOrder.SubjectAuxInversion
+import Linglib.Data.Examples.ArregiPietraszko2021
 
 /-!
 # GenHM and Do-Support
 [arregi-pietraszko-2021]
 
-Connects the GenHM formalization to empirical data from `SubjectAuxInversion.lean`.
+Connects the GenHM formalization to A&P's do-support paradigm
+(`Data/Examples/ArregiPietraszko2021.json`).
 
 ## Structure
 
@@ -44,7 +45,7 @@ Boolean proxy.
 
 namespace ArregiPietraszko2021
 
-open Phenomena.WordOrder.SubjectAuxInversion
+open Data.Examples
 open Minimalist
 
 -- ============================================================================
@@ -119,35 +120,50 @@ def declarativeChain : GenHMChain where
 -- § 2  Bridge Table: Empirical Data Meets GenHM Predictions
 -- ============================================================================
 
-/-- A&P's do-support paradigm as a bridge table.
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-    Each row pairs an empirical datum from `SubjectAuxInversion.lean`
-    with the GenHM chain configuration assigned in §1, the probe-content
-    Boolean (lexical V = false, auxiliary = true), and the do-support
-    prediction.
+/-- Does the sentence use do-support? (`do_support` feature). -/
+def usesDoSupport (row : LinguisticExample) : Option Bool :=
+  (featureOf row "do_support").map (· == "true")
 
-    Coverage: A&P's three core contexts (negation, SAI, verum focus) each
-    tested with both lexical V and auxiliary; VPE tested with lexical V
-    only (the auxiliary case is not a do-support trigger and not in A&P's
-    discussion of VPE). -/
-def doSupportTable : List (SAIDatum × GenHMChain × Bool × Bool) :=
-  [ (ex32, negationChain,    false, true)   -- "Sue does not eat fish"
-  , (ex34, negationChain,    true,  false)  -- "Sue is not eating fish"
-  , (ex27, questionChain,    false, true)   -- "Where does Sue eat fish?"
-  , (ex30, questionChain,    true,  false)  -- "Where is Sue eating fish?"
-  , (ex39, verumChain,       false, true)   -- "Sue DOES eat fish"
-  , (ex40, verumChain,       true,  false)  -- "She IS eating fish"
-  , (ex38, vpEllipsisChain,  false, true)   -- "She runs faster than he does"
+/-- Does the probe carry lexical content? (auxiliary = true, lexical
+    V = false; `verb_type` feature). -/
+def probeHasContent (row : LinguisticExample) : Option Bool :=
+  (featureOf row "verb_type").map (· == "auxiliary")
+
+/-- A&P's do-support paradigm as a bridge table: each generated row
+    paired with the GenHM chain configuration assigned in §1.
+
+    Coverage: A&P's three core contexts (negation, SAI, verum focus)
+    each tested with lexical V, auxiliary, and the starred do-support
+    misuse; VPE tested with lexical V only (the auxiliary case is not a
+    do-support trigger and not in A&P's discussion of VPE). -/
+def doSupportTable : List (LinguisticExample × GenHMChain) :=
+  [ (Examples.ex32, negationChain)    -- "Sue does not eat fish"
+  , (Examples.ex33, negationChain)    -- *"Sue not eats fish"
+  , (Examples.ex34, negationChain)    -- "Sue is not eating fish"
+  , (Examples.ex35, negationChain)    -- *"Sue does not be eating fish"
+  , (Examples.ex27, questionChain)    -- "Where does Sue eat fish?"
+  , (Examples.ex30, questionChain)    -- "Where is Sue eating fish?"
+  , (Examples.ex31, questionChain)    -- *"Where does Sue be eating fish?"
+  , (Examples.ex39, verumChain)       -- "Sue DOES eat fish"
+  , (Examples.ex40, verumChain)       -- "She IS eating fish"
+  , (Examples.ex41, verumChain)       -- *"She DOES be eating fish"
+  , (Examples.ex38, vpEllipsisChain)  -- "She runs faster than he does"
   ]
 
-/-- Every row in the bridge table holds: the example is grammatical AND
-    GenHM predicts the right do-support outcome. This single theorem
-    replaces the per-example bridge theorems of earlier drafts — A&P's
-    parallelism claim is precisely that the table is uniform. -/
+/-- **Transfer equation**: a row in the bridge table is acceptable iff
+    its use (or omission) of do-support matches the GenHM prediction for
+    its chain and probe content. The starred rows (`ex31`, `ex33`,
+    `ex35`, `ex41`) are exactly those whose do-support usage contradicts
+    the prediction — A&P's parallelism claim is precisely that this
+    holds uniformly across all four contexts. -/
 theorem all_bridges_hold :
-    ∀ row ∈ doSupportTable,
-      row.1.acceptability = .grammatical ∧
-      needsDoSupportGenHM row.2.1 row.2.2.1 = row.2.2.2 := by
+    ∀ p ∈ doSupportTable,
+      p.1.judgment = .acceptable ↔
+        usesDoSupport p.1 = (probeHasContent p.1).map (needsDoSupportGenHM p.2) := by
   decide
 
 -- ============================================================================

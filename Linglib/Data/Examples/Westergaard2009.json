@@ -1,0 +1,66 @@
+[
+  {
+    "id": "westergaard2009_ex20",
+    "source": {"bibkey": "westergaard-2009", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "What will you bring to the party?",
+    "glossedTokens": [],
+    "translation": "What will you bring to the party?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["clause_type", "whQuestion"],
+      ["inverted", "true"]
+    ],
+    "comment": "Verified against the PDF (Ch. 2 §3.1). English residual V2: subject-auxiliary inversion in wh-questions."
+  },
+  {
+    "id": "westergaard2009_ex21",
+    "source": {"bibkey": "westergaard-2009", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "Have you seen her today?",
+    "glossedTokens": [],
+    "translation": "Have you seen her today?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["clause_type", "yesNoQuestion"],
+      ["inverted", "true"]
+    ],
+    "comment": "Verified against the PDF (Ch. 2 §3.1). English residual V2: subject-auxiliary inversion in yes/no-questions."
+  },
+  {
+    "id": "westergaard2009_ex23",
+    "source": {"bibkey": "henry-1997", "paperLabel": "p. 275"},
+    "reportedIn": {"bibkey": "westergaard-2009", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "They asked me was I going to the party.",
+    "glossedTokens": [],
+    "translation": "They asked me was I going to the party.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["variety", "Belfast English"],
+      ["clause_type", "embeddedQuestion"],
+      ["inverted", "true"]
+    ],
+    "comment": "Verified against the Westergaard PDF (Ch. 2 §3.1). Belfast English V2 in embedded yes/no-questions."
+  },
+  {
+    "id": "westergaard2009_ex24",
+    "source": {"bibkey": "henry-1997", "paperLabel": "p. 274"},
+    "reportedIn": {"bibkey": "westergaard-2009", "paperLabel": "(24)"},
+    "language": "stan1293",
+    "primaryText": "Bring you that with you!",
+    "glossedTokens": [],
+    "translation": "Bring you that with you!",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["variety", "Belfast English"],
+      ["clause_type", "imperative"],
+      ["inverted", "true"]
+    ],
+    "comment": "Verified against the Westergaard PDF (Ch. 2 §3.1). Belfast English V2 in imperatives."
+  }
+]

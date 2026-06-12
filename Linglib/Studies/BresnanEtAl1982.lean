@@ -1,61 +1,51 @@
 import Linglib.Features.VerbCluster
 
 /-!
-# Cross-Serial Dependencies
+# Bresnan, Kaplan, Peters & Zaenen (1982)
 [bresnan-etal-1982]
 
-Empirical data on cross-serial dependencies in Dutch verb clusters,
-first described in [bresnan-etal-1982].
+Cross-Serial Dependencies in Dutch. In *The Formal Complexity of Natural
+Language*, 286–319.
 
-## The Phenomenon
+In Dutch subordinate clauses, multiple NPs precede multiple verbs with
+cross-serial (not nested) dependencies:
 
-In Dutch subordinate clauses, multiple NPs can precede multiple verbs,
-with each NP interpreted as the argument of a corresponding verb:
-
-  "... dat Jan Piet Marie zag helpen zwemmen"
-  "... that Jan Piet Marie saw help swim"
-  = "that Jan saw Piet help Marie swim"
-
-The dependencies are cross-serial (not nested):
   NP₁ NP₂ NP₃ V₁ V₂ V₃
   └────────────┘
       └────────────┘
           └────────────┘
 
-Cross-serial word order alone is context-free — [gazdar-pullum-1982]
-exhibit a CF-PSG (grammar 29) generating the correct Dutch strings with
-proper verb subcategorization (formalized in `PullumGazdar1982`).
-What takes this beyond CF power is cross-serial order PLUS case agreement:
-requiring dative NPs to match dative verbs and accusative NPs to match
-accusative verbs across unbounded depth. This was proven for Swiss German
-by [shieber-1985] (formalized in `Shieber1985`).
-CCG handles the full pattern via generalized composition.
+German verb clusters show the nested (context-free) pattern instead:
 
-## Contrast with German
-
-German has nested dependencies (can be handled by CFG):
   NP₁ NP₂ NP₃ V₃ V₂ V₁
   └────────────────────┘
       └────────────┘
           └────┘
 
-## Note on attribution
+## Main declarations
 
-The Dutch cross-serial data is from [bresnan-etal-1982]. The formal
-proof that cross-serial dependencies with case-marking are beyond CFG power
-is [shieber-1985], formalized in `Shieber1985`.
-The distinction matters: [bresnan-etal-1982]'s argument relied on
-constituency assumptions (refuted by [gazdar-pullum-1982]), whereas
-[shieber-1985]'s string-set argument via Swiss German case-marking
-is purely formal and irrefutable.
+- `VerbClusterExample`: an example sentence with its NP-verb binding
+  permutation (`Features.VerbClusterBinding`)
+- `dutch_2np_2v`, `dutch_3np_3v`, `dutch_4np_4v`, `german_3np_3v`:
+  the standard paradigm
+- `dutch_3_is_crossSerial`, `german_3_is_nested`: the binding patterns
+  derived from the permutations
 
+## Attribution
+
+[bresnan-etal-1982] described the Dutch data; their non-context-freeness
+argument relied on constituency assumptions. [gazdar-pullum-1982] showed
+bare cross-serial word order is context-free (formalized in
+`PullumGazdar1982`); [shieber-1985] proved Swiss-German case-marked
+cross-serial dependencies non-context-free as a string set (formalized in
+`Shieber1985`). The example sentences here are the standard paradigm as
+cited in the literature; the exact wording has not been verified against
+the 1982 paper.
 -/
 
-namespace Phenomena.WordOrder.CrossSerial
+namespace BresnanEtAl1982
 
 open Features (VerbClusterBinding BindingPattern)
-
--- Dutch Examples ([bresnan-etal-1982], [steedman-2000])
 
 /-- A verb cluster example with NP-verb dependency data.
 
@@ -115,8 +105,7 @@ def dutch_4np_4v : VerbClusterExample :=
   , binding := VerbClusterBinding.identity 4
   }
 
--- German Contrast (Nested)
-
+/-- German contrast: nested dependencies. -/
 def german_3np_3v : VerbClusterExample :=
   { n := 3
   , language := "German"
@@ -128,12 +117,8 @@ def german_3np_3v : VerbClusterExample :=
   , binding := VerbClusterBinding.reverse 3
   }
 
--- Collected Data
-
 def allExamples : List VerbClusterExample :=
   [dutch_2np_2v, dutch_3np_3v, dutch_4np_4v, german_3np_3v]
-
--- Verification
 
 /-- Dutch 3-NP example has cross-serial pattern -/
 theorem dutch_3_is_crossSerial :
@@ -143,4 +128,4 @@ theorem dutch_3_is_crossSerial :
 theorem german_3_is_nested :
     german_3np_3v.binding.pattern = .nested := by decide
 
-end Phenomena.WordOrder.CrossSerial
+end BresnanEtAl1982

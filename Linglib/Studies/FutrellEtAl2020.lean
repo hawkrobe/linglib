@@ -21,7 +21,7 @@ head-final order with right-branching structures creates longer dependencies.
 
 -/
 
-namespace Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
+namespace FutrellEtAl2020
 
 -- ============================================================================
 -- Data Structure
@@ -331,4 +331,4 @@ theorem headFinality_gap_increases :
     meanDepLengthHF20 - meanDepLengthHI20 > meanDepLengthHF10 - meanDepLengthHI10 := by
   native_decide
 
-end Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
+end FutrellEtAl2020
