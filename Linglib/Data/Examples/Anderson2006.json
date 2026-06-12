@@ -1,0 +1,125 @@
+[
+ {
+  "id": "anderson2006_komi_neg_pres",
+  "source": {
+   "bibkey": "anderson-2006",
+   "paperLabel": "(47a)"
+  },
+  "language": "komi1268",
+  "primaryText": "o-g mun",
+  "discourseSegments": [],
+  "glossedTokens": [
+   ["o-g", "NEG:PRES-1"],
+   ["mun", "go"]
+  ],
+  "translation": "I don't go",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["strategy", "negVerb"],
+   ["tense", "present"]
+  ],
+  "comment": "Komi negative auxiliary o- inflects for tense and person while the lexical verb is uninflected (the Uralic connegative construction, Anderson sect. 1.7.2). Anderson cites Hausenberg 1998: 315."
+ },
+ {
+  "id": "anderson2006_komi_neg_past",
+  "source": {
+   "bibkey": "anderson-2006",
+   "paperLabel": "(47b)"
+  },
+  "language": "komi1268",
+  "primaryText": "e-g mun",
+  "discourseSegments": [],
+  "glossedTokens": [
+   ["e-g", "NEG:PST-1"],
+   ["mun", "go"]
+  ],
+  "translation": "I didn't go",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["strategy", "negVerb"],
+   ["tense", "past"]
+  ],
+  "comment": "Past-tense counterpart of (47a): the tense alternation o-/e- is carried entirely by the negative auxiliary. Anderson cites Hausenberg 1998: 315."
+ },
+ {
+  "id": "anderson2006_udihe_neg",
+  "source": {
+   "bibkey": "anderson-2006",
+   "paperLabel": "(49)"
+  },
+  "language": "udih1248",
+  "primaryText": "bi ei-mi sa:",
+  "discourseSegments": [],
+  "glossedTokens": [
+   ["bi", "I"],
+   ["ei-mi", "NEG-1"],
+   ["sa:", "know"]
+  ],
+  "translation": "I don't know",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["strategy", "negVerb"],
+   ["infl_pattern", "auxHeaded"]
+  ],
+  "comment": "Anderson sect. 1.7.2 classifies the Udihe negative-auxiliary construction as aux-headed. Anderson cites Nikolaeva and Tolskaja 2001: 214."
+ },
+ {
+  "id": "anderson2006_kwerba_neg_fut",
+  "source": {
+   "bibkey": "anderson-2006",
+   "paperLabel": "(52a)"
+  },
+  "language": "kwer1242",
+  "primaryText": "co kwai kot-ri-m",
+  "discourseSegments": [],
+  "glossedTokens": [
+   ["co", "I"],
+   ["kwai", "NEG:FUT"],
+   ["kot-ri-m", "cut-AUG-IRR"]
+  ],
+  "translation": "I will not cut it",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["strategy", "negVerb"],
+   ["infl_pattern", "lexHeaded"]
+  ],
+  "comment": "Anderson sect. 1.7.2 lists Kwerba as the lex-headed exemplar among negative-auxiliary constructions: the lexical verb hosts the inflection. Anderson cites de Vries and de Vries 1997: 12-13."
+ },
+ {
+  "id": "anderson2006_kwerba_neg_past",
+  "source": {
+   "bibkey": "anderson-2006",
+   "paperLabel": "(52b)"
+  },
+  "language": "kwer1242",
+  "primaryText": "co kot-ri-m-o baye",
+  "discourseSegments": [],
+  "glossedTokens": [
+   ["co", "I"],
+   ["kot-ri-m-o", "cut-AUG-IRR-NEG"],
+   ["baye", "NEG:PST"]
+  ],
+  "translation": "I did not cut it",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   ["strategy", "negVerb"],
+   ["infl_pattern", "lexHeaded"]
+  ],
+  "comment": "Past-tense Kwerba negation: negative suffix -o on the inflected lexical verb plus postverbal baye. Anderson cites de Vries and de Vries 1997: 12-13."
+ }
+]

@@ -11,6 +11,7 @@ import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
 import Linglib.Morphology.Grammaticalization
 import Linglib.Features.Aktionsart
+import Linglib.Data.Examples.Anderson2006
 
 /-!
 # Anderson (2006): Auxiliary Verb Constructions
@@ -437,45 +438,43 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
 
 [anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
 across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
-Kokota; lex-headed in Kwerba; doubled in 'Iipay. The
-NegStrategy → InflPattern mapping lives in `Typology/Negation.lean`
-(`NegStrategy.expectedInflPattern` encodes the most common
-verbal-negator → aux-headed mapping; the other patterns Anderson
-documents are not yet a Lean-checkable `NegStrategy → InflPattern`
-typology because they require finer sub-typing of
-`NegStrategy.negVerb`). -/
+Kokota; lex-headed in Kwerba; doubled in 'Iipay. The example rows
+live in `Data/Examples/Anderson2006.json` (Komi (47a,b), Udihe (49),
+Kwerba (52a,b), all verified against the book); each row's
+`infl_pattern` feature records the book's classification where it
+states one. The NegStrategy → InflPattern mapping lives in
+`Typology/Negation.lean`: `NegStrategy.expectedInflPattern` encodes
+the most common verbal-negator → aux-headed mapping, and the Kwerba
+rows witness below that it is a tendency, not a law. -/
 
-/-- A negative-auxiliary datum ([anderson-2006] §1.7.2). -/
-structure NegAuxDatum where
-  language : String
-  strategy : NegStrategy
-  form : String
-  gloss : String := ""
-  deriving Repr, BEq
+/-- Value of a row's `paperFeatures` key, if present. -/
+private def featureOf (row : Data.Examples.LinguisticExample)
+    (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-/-- Komi *o-* — negative auxiliary verb inflecting for tense and person:
-    [anderson-2006] (47a,b) *o-g mun* 'NEG:PRES-1 go' (I don't go) /
-    *e-g mun* 'NEG:PST-1 go' (I didn't go), citing Hausenberg 1998: 315. -/
-def komi : NegAuxDatum :=
-  { language := "Komi"
-  , strategy := .negVerb
-  , form := "o-g"
-  , gloss := "o-g mun 'NEG:PRES-1 go' (I don't go)" }
-
-/-- Udihe *e-* ~ *ei-* — negative auxiliary verb: [anderson-2006] (49)
-    *bi ei-mi sa:* 'I NEG-1 know' (I don't know), citing Nikolaeva &
-    Tolskaja 2001: 214. §1.7.2 classifies the Udihe negative
-    auxiliary construction as aux-headed. -/
-def udihe : NegAuxDatum :=
-  { language := "Udihe"
-  , strategy := .negVerb
-  , form := "ei-mi"
-  , gloss := "bi ei-mi sa: 'I NEG-1 know' (I don't know)" }
-
-/-- Anderson §1.7.2 classifies the Udihe negative-auxiliary construction
-    as aux-headed; the strategy-level projection agrees. -/
+/-- Udihe (49) *bi ei-mi sa:* is classified aux-headed by Anderson,
+    and the strategy-level projection expects exactly that. -/
 theorem udihe_negVerb_expects_auxHeaded :
-    udihe.strategy.expectedInflPattern = some .auxHeaded := rfl
+    featureOf Examples.udihe_neg "infl_pattern" = some "auxHeaded" ∧
+    NegStrategy.negVerb.expectedInflPattern = some .auxHeaded :=
+  ⟨rfl, rfl⟩
+
+/-- Kwerba (52a,b) shows a negative auxiliary in a *lex-headed* AVC
+    (the lexical verb hosts the inflection), so the aux-headed
+    expectation of `NegStrategy.expectedInflPattern` is defeasible —
+    Anderson's own four-pattern list is the counterexample source. -/
+theorem kwerba_negVerb_lexHeaded_counterexample :
+    featureOf Examples.kwerba_neg_fut "infl_pattern" = some "lexHeaded" ∧
+    NegStrategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
+  ⟨rfl, by decide⟩
+
+/-- The Komi tense alternation (47a,b) sits entirely on the negative
+    auxiliary: same lexical verb token, different auxiliary form. -/
+theorem komi_tense_on_aux :
+    Examples.komi_neg_pres.glossedTokens.getLast? =
+      Examples.komi_neg_past.glossedTokens.getLast? ∧
+    Examples.komi_neg_pres.primaryText ≠ Examples.komi_neg_past.primaryText :=
+  ⟨rfl, by decide⟩
 
 /-! ## LV form predictions across patterns
 
