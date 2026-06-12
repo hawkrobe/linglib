@@ -117,6 +117,16 @@ structure ArticulatedProbe where
   rooted : Segment.pi ∈ segments
   lower : IsArticulated segments
 
+/-- The family of search-level `Probe`s an articulated probe denotes,
+    given a bearing relation for the goal type: one probe per
+    segment ([bejar-rezac-2009]; [coon-keine-2021] (14)). An
+    articulated probe is a *specification*; this is its canonical
+    map into the `Probe` carrier — one-to-many, which is why the
+    relationship is denotation, not extension. -/
+def ArticulatedProbe.toProbes {α : Type*} (P : ArticulatedProbe)
+    (bears : Segment → α → Bool) : List (Probe α) :=
+  P.segments.map (fun s => .ofVis (bears s))
+
 /-! ### The probe-specification hierarchy ([coon-keine-2021] (40)) -/
 
 /-- The (40) hierarchy as a type:

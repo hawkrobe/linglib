@@ -50,6 +50,18 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 - `Probe.cascade` — ordered probe sequence: first probe with output
   wins (the single-slot morphological competition).
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
+
+## Probe specifications
+
+Theory-side probe descriptions relate to `Probe` by *denotation*
+(canonical `toProbe`-maps), not extension — the relationship is
+one-to-many for articulated probes and state-indexed for dynamic
+ones: `ProbeTarget.toProbe` (here), `SatisfactionCond.toProbe`
+(`Studies/Scott2023.lean`), `ArticulatedProbe.toProbes`
+(`Phi/Articulation.lean`, the per-segment family),
+`CyclicAgree.segProbe` (per segment and geometry), and
+`Deal2024.ProbeState.probe` (the state-indexed family whose
+narrowing law is `probe_vis_antitone`).
 -/
 
 namespace Minimalist
@@ -307,6 +319,14 @@ end Probe
     feature the probe seeks (`probeVisible`, `Phi/Geometry.lean`). -/
 def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : ProbeTarget) : Bool :=
   probeVisible t c.toPerson c.isPlural
+
+/-- The probe a `ProbeTarget` specification denotes: relativized to
+    the sought feature, over φ-cells. The canonical
+    specification-to-`Probe` map for the substrate's probe enum —
+    [preminger-2014]'s π⁰ is `ProbeTarget.participant.toProbe`, his
+    #⁰ is `ProbeTarget.plural.toProbe`. -/
+def ProbeTarget.toProbe (t : ProbeTarget) : Probe Agreement.Cell :=
+  .ofVis (·.visibleTo t)
 
 /-- The Person Licensing Condition ([bejar-rezac-2003];
     [preminger-2014] (40)/(75)): every [participant]-bearing goal

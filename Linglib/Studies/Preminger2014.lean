@@ -246,11 +246,12 @@ theorem ch4_relativization_contrast :
         List (ArgPosition × Agreement.Cell)) := by
   decide
 
-/-- π⁰: the person probe, relativized to [participant]. -/
-def piProbe : Probe Agreement.Cell := .ofVis (·.visibleTo .participant)
+/-- π⁰: the person probe — the denotation of the substrate's
+    `ProbeTarget.participant` specification. -/
+def piProbe : Probe Agreement.Cell := ProbeTarget.participant.toProbe
 
-/-- #⁰: the number probe, relativized to [plural]. -/
-def numProbe : Probe Agreement.Cell := .ofVis (·.visibleTo .plural)
+/-- #⁰: the number probe — the denotation of `ProbeTarget.plural`. -/
+def numProbe : Probe Agreement.Cell := ProbeTarget.plural.toProbe
 
 /-- The two AF probes in slot order: π⁰'s clitic output beats #⁰'s
     direct exponence in the single morphological slot
