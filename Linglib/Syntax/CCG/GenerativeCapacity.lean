@@ -34,9 +34,9 @@ A fully-proven construction of a rule-restricted (classical) CCG that generates 
 is therefore *not* expressible over `DerivStep`; it lives in
 `Studies/KuhlmannKollerSatta2015` (`ccg_generates_anbnc`), which models the target
 restriction explicitly. The concrete Dutch derivations in `CCG.CrossSerial` are 2- and
-3-verb instances and are *not* surface-order-faithful (their categories encode the
-cross-serial binding but not the linear order; see
-`CCG.CrossSerial.jan_zag_zwemmen_piet_yield`), so they do not establish a capacity claim.
+3-verb instances — surface-faithful via crossed composition (see
+`CCG.CrossSerial.three_np_sub_yield`) — but finitely many instances do not establish a
+capacity claim.
 -/
 
 namespace CCG.GenerativeCapacity

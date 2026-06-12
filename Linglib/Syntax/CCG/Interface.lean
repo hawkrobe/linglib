@@ -143,6 +143,19 @@ def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
           else none
       | _, _ => none
 
+  | .fcompx d1 d2 => do
+      -- Forward crossed composition: X/Y + Y\Z → X\Z, semantically B (f ∘ g)
+      let ⟨c1, m1⟩ ← d1.interp lex
+      let ⟨c2, m2⟩ ← d2.interp lex
+      match c1, c2 with
+      | .rslash x y1, .lslash y2 z =>
+          if h : y1 = y2 then
+            let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
+              h ▸ m2
+            some ⟨x \ z, B m1 m2'⟩
+          else none
+      | _, _ => none
+
   | .ftr d t => do
       -- Forward type-raising: X → T/(T\X), semantically T (λf. f x)
       let ⟨x, m⟩ ← d.interp lex

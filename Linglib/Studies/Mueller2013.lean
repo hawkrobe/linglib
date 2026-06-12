@@ -140,6 +140,7 @@ def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
   | .bapp _ _ => some .headComplement
   | .fcomp _ _ => some .headFiller
   | .bcomp _ _ => some .headFiller
+  | .fcompx _ _ => some .headFiller
   | .lex _ => none
   | .ftr _ _ => none
   | .btr _ _ => none

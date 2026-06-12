@@ -16,8 +16,9 @@ grammar (here, via the target restriction modelled in `Syntax/CCG/Classical`: ev
 fires only when the *target* of its primary input category is `S`). For lexicalized CCG
 *without* target restrictions they prove the power is strictly below TAG: such a CCG that
 covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate the language
-*exactly*. `Syntax/CCG/Basic`'s `CCG.DerivStep` models exactly that unrestricted variant,
-so this construction genuinely needs the restricted model `CCG.Classical`.
+*exactly*. `Syntax/CCG/Basic`'s `CCG.DerivStep` models a (rule-inventory) fragment of that
+unrestricted variant, so this construction genuinely needs the restricted model
+`CCG.Classical`.
 
 Atoms follow the paper (`A, B, C, S`); we realise them with the project's `CCG.Cat` atoms
 as `A = NP`, `B = N`, `C = PP`, `S = S` — abstract placeholders, the content is generative

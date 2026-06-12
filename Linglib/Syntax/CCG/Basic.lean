@@ -79,13 +79,26 @@ def backwardComp : Cat → Cat → Option Cat
     if y == y' then some (.lslash x z) else none
   | _, _ => none
 
+/-- Forward crossed composition (>B×): X/Y Y\Z => X\Z.
+
+In [steedman-2000] this rule is language-specific and restricted (for Dutch,
+to `Y = VP₋SUB`; ch. 6 appendix) — unrestricted crossed composition licenses
+scrambling. The toy `Cat` carries no features, so the rule is stated
+unrestricted here; the rule-restricted variant lives in
+`CCG.Classical.fcompX1`. -/
+def forwardCompX : Cat → Cat → Option Cat
+  | .rslash x y, .lslash y' z =>
+    if y == y' then some (.lslash x z) else none
+  | _, _ => none
+
 /-- Try to combine two categories using all available rules. -/
 def combine : Cat → Cat → Option Cat
   | c1, c2 =>
     forwardApp c1 c2 <|>
     backwardApp c1 c2 <|>
     forwardComp c1 c2 <|>
-    backwardComp c1 c2
+    backwardComp c1 c2 <|>
+    forwardCompX c1 c2
 
 end CombinatoryRules
 
@@ -137,6 +150,7 @@ inductive DerivStep where
   | bapp : DerivStep → DerivStep → DerivStep   -- backward app
   | fcomp : DerivStep → DerivStep → DerivStep  -- forward comp
   | bcomp : DerivStep → DerivStep → DerivStep  -- backward comp
+  | fcompx : DerivStep → DerivStep → DerivStep -- forward crossed comp
   | ftr : DerivStep → Cat → DerivStep          -- forward type-raise to target
   | btr : DerivStep → Cat → DerivStep          -- backward type-raise to target
   | coord : DerivStep → DerivStep → DerivStep  -- coordination (X and X ⇒ X)
@@ -161,6 +175,10 @@ def DerivStep.cat : DerivStep → Option Cat
     let c1 ← d1.cat
     let c2 ← d2.cat
     backwardComp c1 c2
+  | .fcompx d1 d2 => do
+    let c1 ← d1.cat
+    let c2 ← d2.cat
+    forwardCompX c1 c2
   | .ftr d t => do
     let x ← d.cat
     some (forwardTypeRaise x t)
@@ -184,6 +202,7 @@ def DerivStep.yield : DerivStep → List String
   | .bapp d1 d2 => d1.yield ++ d2.yield
   | .fcomp d1 d2 => d1.yield ++ d2.yield
   | .bcomp d1 d2 => d1.yield ++ d2.yield
+  | .fcompx d1 d2 => d1.yield ++ d2.yield
   | .ftr d _ => d.yield
   | .btr d _ => d.yield
   | .coord d1 d2 => d1.yield ++ d2.yield
@@ -227,6 +246,7 @@ def DerivStep.opCount : DerivStep → Nat
   | .bapp d1 d2 => 1 + d1.opCount + d2.opCount
   | .fcomp d1 d2 => 2 + d1.opCount + d2.opCount   -- composition is "harder"
   | .bcomp d1 d2 => 2 + d1.opCount + d2.opCount
+  | .fcompx d1 d2 => 2 + d1.opCount + d2.opCount
   | .ftr d _ => 1 + d.opCount                     -- type-raising has cost
   | .btr d _ => 1 + d.opCount
   | .coord d1 d2 => 1 + d1.opCount + d2.opCount
@@ -238,6 +258,7 @@ def DerivStep.depth : DerivStep → Nat
   | .bapp d1 d2 => 1 + max d1.depth d2.depth
   | .fcomp d1 d2 => 1 + max d1.depth d2.depth
   | .bcomp d1 d2 => 1 + max d1.depth d2.depth
+  | .fcompx d1 d2 => 1 + max d1.depth d2.depth
   | .ftr d _ => 1 + d.depth
   | .btr d _ => 1 + d.depth
   | .coord d1 d2 => 1 + max d1.depth d2.depth
