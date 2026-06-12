@@ -3,7 +3,7 @@ import Linglib.Semantics.Aspect.ScalarTelicity
 import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 
 /-!
 # Degree achievements: the adjectival core of telicity
@@ -46,7 +46,7 @@ namespace KennedyLevin2008
 open English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Order (LicensingPipeline)
-open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
+open Features (forXPrediction inXPrediction)
 
 -- Fully qualified aliases for names shared between Verbal and Adjectival
 private def vClean := English.Predicates.Verbal.clean

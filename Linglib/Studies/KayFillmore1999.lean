@@ -7,7 +7,7 @@ import Linglib.Features.Aktionsart
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Syntax.ConstructionGrammar.IdiomTypology
-import Linglib.Phenomena.TenseAspect.Diagnostics
+import Linglib.Features.Aktionsart
 
 /-!
 # [kay-fillmore-1999]: *What's X Doing Y?*
@@ -468,7 +468,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
 
 open Features
 open Semantics.Lexical
-open Phenomena.TenseAspect.Diagnostics
+open Features
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates
 that are durative ∧ dynamic. This connects to the progressive diagnostic:

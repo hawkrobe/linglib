@@ -1259,7 +1259,6 @@ import Linglib.Studies.Booth2022
 import Linglib.Studies.Hacquard2006
 import Linglib.Studies.Hacquard2010
 import Linglib.Studies.Zhao2025
-import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Studies.Smith1997
 import Linglib.Studies.Amato2025Auxiliary
 import Linglib.Studies.Anderson2006
