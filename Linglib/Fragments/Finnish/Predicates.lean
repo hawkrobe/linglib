@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Voice
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 import Linglib.Semantics.Causation.Implicative
 
 /-!
@@ -147,7 +147,7 @@ theorem verb_types_distinct :
     passive is an impersonal construction where the agent is demoted
     to an implicit generic human referent, not promoted to a by-phrase
     ([karlsson-2017] Ch. 11). Active is the basic form. -/
-def finnishVoiceSystem : Interfaces.VoiceSystemProfile :=
+def finnishVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "Finnish"
     voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
     symmetry := .asymmetrical

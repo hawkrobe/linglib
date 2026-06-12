@@ -1,5 +1,5 @@
 import Linglib.Semantics.Numerals.Roundness
-import Linglib.Phenomena.SocialMeaning.IndexicalField
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
@@ -49,7 +49,7 @@ tolerance modifier:
 
 namespace BeltramaSoltBurnett2022
 
-open Phenomena.SocialMeaning.IndexicalField
+open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
 
 -- ============================================================================

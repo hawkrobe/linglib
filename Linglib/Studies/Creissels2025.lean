@@ -1,6 +1,6 @@
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 import Linglib.Syntax.Minimalist.Applicative
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Algebra.Group.TypeTags.Basic
@@ -36,7 +36,7 @@ open Syntax.ArgumentStructure.Alternation
 open Semantics.Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)
-open Interfaces (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
+open Typology (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
 
 /-! ### Bridge: Decausativization ↔ IntransitivizationType -/
 

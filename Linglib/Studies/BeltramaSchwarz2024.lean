@@ -1,5 +1,5 @@
 import Linglib.Semantics.Numerals.Roundness
-import Linglib.Phenomena.SocialMeaning.IndexicalField
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
@@ -36,7 +36,7 @@ exactness demands in the inference task.
 
 namespace BeltramaSchwarz2024
 
-open Phenomena.SocialMeaning.IndexicalField
+open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
 open Semantics.Numerals.Precision
 open SocialMeaning.EckertMontague
