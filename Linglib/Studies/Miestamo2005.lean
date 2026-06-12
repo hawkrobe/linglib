@@ -17,7 +17,6 @@ import Linglib.Fragments.Slavic.Czech.Negation
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Quechua.Negation
-import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 
 /-!
 # Miestamo (2005): Standard Negation
@@ -1010,18 +1009,12 @@ end Universals
 
 section NegAuxBridge
 
-open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
-
-/-- Finnish is classified as negVerb in the auxiliary literature and as
-    auxVerb in the negation typology. These refer to the same phenomenon:
-    the negative element is an inflecting auxiliary verb. -/
-theorem finnish_neg_aux_cross_module :
-    Phenomena.AuxiliaryVerbs.NegativeAuxiliaries.finnish.strategy == .negVerb ∧
-    finnish.morphemeType == .auxVerb := by
-  exact ⟨rfl, rfl⟩
+open Typology.Negation (NegStrategy)
 
 /-- The NegStrategy→NegMorphemeType mapping is consistent with Finnish's
-    classification in both modules. -/
+    classification: the auxiliary literature's negVerb strategy and this
+    study's auxVerb morpheme type refer to the same phenomenon — the
+    negative element is an inflecting auxiliary verb. -/
 theorem finnish_strategy_morpheme_consistent :
     NegStrategy.negVerb.toNegMorphemeType = finnish.morphemeType := rfl
 

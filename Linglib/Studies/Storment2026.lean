@@ -6,7 +6,7 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.AuxiliaryVerbs
 
 /-!
 # Quotative Inversion as Smuggling
@@ -42,7 +42,7 @@ namespace Storment2026
 open Semantics.Lexical
 open English.Predicates.Verbal
 open Data.Examples
-open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
+open Typology.AuxiliaryVerbs (TransitivityClass canonicalSelection)
 open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data
@@ -73,10 +73,8 @@ theorem arrive_unaccusative : arrive.unaccusative = true := rfl
 
 /-! ## §3. TransitivityClass derivation
 
-Maps a `Verb` to its three-way transitivity classification used by
-the auxiliary-selection system (`Phenomena/AuxiliaryVerbs/Selection.lean`).
-Stays in this study file because `TransitivityClass` lives in `Phenomena/`
-and cannot be imported by substrate (`Semantics/`, `Syntax/`, etc.). -/
+Maps a `Verb` to the three-way transitivity classification used by
+the auxiliary-selection substrate (`Typology/AuxiliaryVerbs.lean`). -/
 
 /-- Derive `TransitivityClass` from `Verb` fields. -/
 def deriveTransitivityClass (v : Verb) : TransitivityClass :=

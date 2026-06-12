@@ -25,6 +25,8 @@ varies across 5 macro-patterns.
 - `InflPattern`: the 5-way macro-classification of inflectional distribution
 - `AVCElement`: which element(s) of an AVC bear a given property
 - `AVCDatum`: a per-language AVC datum (form, pattern, distribution, gloss)
+- Be/have auxiliary selection ([burzio-1986], [sorace-2000]): `PerfectAux`,
+  `TransitivityClass`, `SelectionRule`, `selection`
 
 ## What lives here vs. `Studies/Anderson2006.lean`
 
@@ -149,5 +151,78 @@ theorem auxHeaded_lv_nonfinite :
 /-- In lex-headed AVCs, the lexical verb is finite. -/
 theorem lexHeaded_lv_finite :
     InflPattern.lexHeaded.lvVerbForm = UD.VerbForm.Fin := rfl
+
+/-! ## Be/have auxiliary selection
+[burzio-1986] [sorace-2000]
+
+Many European languages select between *be* and *have* as the perfect
+auxiliary based on the transitivity/unaccusativity of the lexical verb
+(the "Auxiliary Selection Hierarchy"): unaccusatives → *be* (Italian
+*è arrivato*, French *est arrivé*), unergatives/transitives → *have*
+(Italian *ha mangiato*). English has collapsed the split: all verbs take
+*have*. Selection operates within aux-headed AVCs — the selecting
+auxiliary is the inflectional host. -/
+
+/-- Perfect auxiliary choice. -/
+inductive PerfectAux where
+  | be   -- Italian *essere*, French *être*, German *sein*
+  | have -- Italian *avere*, French *avoir*, German *haben*
+  deriving DecidableEq, Repr
+
+/-- Transitivity class relevant to auxiliary selection. -/
+inductive TransitivityClass where
+  | unaccusative  -- subject = theme (arrive, fall, die)
+  | unergative    -- subject = agent, no object (run, laugh)
+  | transitive    -- subject = agent, object = theme (eat, build)
+  | reflexive     -- reflexive clitic triggers *be* in Romance (Italian/French), *have* in German
+  deriving DecidableEq, Repr
+
+/-- Language-level auxiliary selection rule. -/
+inductive SelectionRule where
+  | split    -- unaccusatives → be, rest → have (Italian, French, German, Dutch)
+  | haveOnly -- all verbs → have (English, Spanish)
+  | beOnly   -- all verbs → be (rare; some Sardinian dialects)
+  | mixed    -- gradient/variable selection (some German dialects)
+  deriving DecidableEq, Repr
+
+/-- Auxiliary selection driven by a single binary parameter: does the
+    language treat reflexives as BE-selecting (Romance pattern) or
+    HAVE-selecting (German pattern)? Unaccusatives always select BE,
+    unergatives and transitives always select HAVE; the only point of
+    cross-linguistic variation in this small typology is the reflexive
+    row ([burzio-1986], [sorace-2000]). -/
+def selection (reflexIsBe : Bool) : TransitivityClass → PerfectAux
+  | .unaccusative => .be
+  | .reflexive    => if reflexIsBe then .be else .have
+  | .unergative   => .have
+  | .transitive   => .have
+
+/-- Canonical (Romance) auxiliary selection: reflexives → *be*. -/
+def canonicalSelection : TransitivityClass → PerfectAux := selection true
+
+/-- German auxiliary selection: reflexives → *haben*, not *sein*
+    ([burzio-1986]). -/
+def germanSelection : TransitivityClass → PerfectAux := selection false
+
+/-- The auxiliary a selection rule assigns to each transitivity class:
+    `split` follows `selection`, `haveOnly`/`beOnly` are constant
+    (English *has arrived*), and `mixed` systems make no categorical
+    assignment. -/
+def SelectionRule.selects (reflexIsBe : Bool) :
+    SelectionRule → TransitivityClass → Option PerfectAux
+  | .split, c    => some (selection reflexIsBe c)
+  | .haveOnly, _ => some .have
+  | .beOnly, _   => some .be
+  | .mixed, _    => none
+
+/-- Does this transitivity class canonically select *be*?
+    Defined off `canonicalSelection` so the equivalence is true by
+    construction. -/
+def SelectsBe (c : TransitivityClass) : Prop :=
+  canonicalSelection c = .be
+
+instance : DecidablePred SelectsBe := fun c => by
+  unfold SelectsBe
+  infer_instance
 
 end Typology.AuxiliaryVerbs
