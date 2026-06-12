@@ -1,20 +1,20 @@
 import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
-import Linglib.Phenomena.Ellipsis.Gapping
+import Linglib.Studies.Steedman2000
 
 /-!
-# Bridge: DG Ellipsis → Phenomena Ellipsis
+# Bridge: DG Ellipsis → Steedman's Ellipsis Taxonomy
 [osborne-2019]
 
-Maps the DG catena-based ellipsis taxonomy to the
-Phenomena ellipsis types from `Phenomena.Ellipsis.Gapping`.
+Maps the DG catena-based ellipsis taxonomy to [steedman-2000]'s ellipsis
+types (`Steedman2000.EllipsisType`).
 
-Key result: gapping (from the Phenomena taxonomy) is a special case of
+Key result: gapping (from Steedman's taxonomy) is a special case of
 catena-ellipsis — the elided verb is always a singleton catena that is
 not a constituent.
 
 ## Bridges
 
-- `DepGrammar.Ellipsis.EllipsisType` → `Phenomena.Ellipsis.Gapping.EllipsisType`
+- `DepGrammar.Ellipsis.EllipsisType` → `Steedman2000.EllipsisType`
 - `DepGrammar.Ellipsis.gappingTree` / `gappingElided` → catena-not-constituent proof
 -/
 
@@ -22,10 +22,10 @@ namespace DepGrammar.Ellipsis
 
 open DepGrammar Catena
 
-/-- Map DG ellipsis types to Phenomena's Gapping.EllipsisType.
-    Not all DG types have Phenomena equivalents (pseudogapping/fragmentAnswer don't). -/
+/-- Map DG ellipsis types to `Steedman2000.EllipsisType`.
+    Not all DG types have Steedman equivalents (pseudogapping/fragmentAnswer don't). -/
 def toGappingEllipsisType :
-    EllipsisType → Option Phenomena.Ellipsis.Gapping.EllipsisType
+    EllipsisType → Option Steedman2000.EllipsisType
   | .vpEllipsis => some .vpEllipsis
   | .gapping => some .gapping
   | .stripping => some .stripping
@@ -33,7 +33,7 @@ def toGappingEllipsisType :
   | .pseudogapping => none  -- No Phenomena equivalent
   | .fragmentAnswer => none  -- No Phenomena equivalent
 
-/-- Gapping (from Phenomena) is a special case of catena-ellipsis.
+/-- Gapping (from Steedman's taxonomy) is a special case of catena-ellipsis.
     The verb alone is elided — always a singleton catena. -/
 theorem catena_ellipsis_subsumes_gapping :
     toGappingEllipsisType .gapping = some .gapping := rfl

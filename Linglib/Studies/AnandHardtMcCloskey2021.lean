@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Data.Examples.Merchant2001
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 
@@ -196,15 +196,13 @@ theorem attested_iff_nonzero (d : MismatchDimension) :
 -- § 7: Sluicing — Minimalist Bridge Theorems
 -- ============================================================================
 -- [anand-hardt-mccloskey-2021] [anand-hardt-mccloskey-2025]
--- Connects empirical sluicing data — both the individual examples in
--- `Phenomena.Ellipsis.Sluicing` and the corpus findings from
+-- Connects empirical sluicing data — the [merchant-2001] case-matching
+-- examples (`Merchant2001.Examples`) and the corpus findings from
 -- [anand-hardt-mccloskey-2021] — to the Syntactic Isomorphism Condition
--- (SIC) formalized in
--- `Minimalist.Ellipsis.FormalMatching`.
+-- (SIC) formalized in `Minimalist.Ellipsis.FormalMatching`.
 
 open Minimalist
 open Minimalist.Ellipsis.FormalMatching
-open Phenomena.Ellipsis.Sluicing
 
 -- ============================================================================
 -- § 7.1: Concrete SIC Licensing
@@ -243,18 +241,6 @@ theorem same_verb_license_is_licensed :
     (SluicingLicense.mk transitiveVP transitiveVP).isLicensed := by
   decide
 
-/-- SIC correctly predicts `basicSluice` is grammatical. -/
-theorem sic_predicts_basicSluice :
-    basicSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed :=
-  ⟨rfl, by decide⟩
-
-/-- SIC correctly predicts `objectSluice` is grammatical. -/
-theorem sic_predicts_objectSluice :
-    objectSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed :=
-  ⟨rfl, by decide⟩
-
 -- Case matching: case is assigned within the argument domain, so the SIC
 -- requires case to match between antecedent and ellipsis site.
 
@@ -278,21 +264,24 @@ theorem case_mismatch_blocked :
     ¬ structurallyIdentical dativeVP accusativeVP := by
   decide
 
-/-- SIC correctly predicts `germanCaseMatch` is grammatical:
-    dative wh-phrase matches dative correlate. The SIC is licensed
-    because the argument domains have structurally identical head pairs
-    (both assign dative). -/
+/-- SIC correctly predicts `Merchant2001.Examples.german_case_match`
+    ("Er will jemandem schmeicheln, aber sie wissen nicht, wem") is
+    acceptable: the dative wh-phrase *wem* matches the dative correlate
+    *jemandem*, and the argument domains have structurally identical
+    head pairs (both assign dative). -/
 theorem sic_predicts_germanCaseMatch :
-    germanCaseMatch.grammatical = true ∧
+    Merchant2001.Examples.german_case_match.judgment = .acceptable ∧
     structurallyIdentical dativeVP dativeVP :=
   ⟨rfl, by decide⟩
 
-/-- SIC correctly predicts `germanCaseMismatch` is ungrammatical:
-    accusative wh-phrase does not match dative correlate. The SIC
-    blocks sluicing because dative ≠ accusative within the argument
-    domain ([merchant-2001]: German *wem*/*wen* data). -/
+/-- SIC correctly predicts the *wen*-variant — the sole `alternatives`
+    entry of `Merchant2001.Examples.german_case_match` — is
+    ungrammatical: accusative *wen* does not match the dative correlate,
+    and the SIC blocks sluicing because dative ≠ accusative within the
+    argument domain ([merchant-2001]: German *wem*/*wen* data). -/
 theorem sic_predicts_germanCaseMismatch :
-    germanCaseMismatch.grammatical = false ∧
+    Merchant2001.Examples.german_case_match.alternatives.map Prod.snd
+      = [.ungrammatical] ∧
     ¬ structurallyIdentical dativeVP accusativeVP :=
   ⟨rfl, by decide⟩
 

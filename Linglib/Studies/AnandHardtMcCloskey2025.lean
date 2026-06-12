@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Syntax.Minimalist.Copula
 import Linglib.Studies.AnandHardtMcCloskey2021
-import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Data.Examples.AnandHardtMcCloskey2025
 
 /-!
 # [anand-hardt-mccloskey-2025] — The Domain of Formal Matching in Sluicing
@@ -41,7 +41,6 @@ namespace AnandHardtMcCloskey2025
 
 open Minimalist
 open Minimalist.Ellipsis.FormalMatching
-open Phenomena.Ellipsis.Sluicing
 
 -- ============================================================================
 -- § 1: Small Clause Antecedents (paper §2)
@@ -197,39 +196,14 @@ theorem voice_mismatch_blocked :
 -- § 4: Stranded Prepositions — Chung's Generalization (paper §4)
 -- ============================================================================
 
-/-- Paper ex. (13a): stranded nonargument preposition with no antecedent source.
-
-    "The board believes that a 'one-size-fits-all' approach to financial
-    market regulation is inappropriate. ... what form [government regulation
-    is necessary IN]."
-
-    The stranded *in* marks a nonargument PP — merged above vP, outside
-    the argument domain. The SIC does not require it to match. -/
-def strandedPrepEx13a : SluicingDatum where
-  sentence := "The board believes a one-size-fits-all approach to financial market regulation is inappropriate ... what form [government regulation is necessary IN]."
-  antecedent := "government regulation is necessary"
-  innerAntecedent := "a one-size-fits-all approach"
-  whPhrase := "what form"
-  elided := "government regulation is necessary in"
-  grammatical := true
-  source := "SCSS [138195]"
-
-/-- Paper ex. (13b): stranded nonargument PP *on* with no antecedent source.
-
-    "When the officer asked me about her, I remembered meeting her but
-    I couldn't say what date [I MET her ON]."  -/
-def strandedPrepEx13b : SluicingDatum where
-  sentence := "When the officer asked me about her, I remembered meeting her but I couldn't say what date [I MET her ON]."
-  antecedent := "I remembered meeting her"
-  innerAntecedent := "her"
-  whPhrase := "what date"
-  elided := "I met her on"
-  grammatical := true
-  source := "SCSS [F38]"
-
 /-- The SIC correctly licenses sluicing with stranded nonargument PPs:
     filtering removes the nonargument PP from the SIC check, and the
-    remaining argument-domain head pairs match. -/
+    remaining argument-domain head pairs match.
+
+    Paper ex. (13a) (`Examples.ex_13a`): "... what form [government
+    regulation is necessary IN]" — the stranded *in* marks a nonargument
+    PP, merged above vP, outside the argument domain. Ex. (13b)
+    (`Examples.ex_13b`): "... I couldn't say what date [I MET her ON]". -/
 theorem stranded_nonadjunct_pp_licensed :
     let antecedentPairs : List HeadPair :=
       [⟨.v, .V, none, some .agentive, none⟩, ⟨.V, .D, none, none, none⟩]
@@ -241,31 +215,24 @@ theorem stranded_nonadjunct_pp_licensed :
       (filterArgumentPairs ellipsisPairs) := by
   decide
 
-/-- Paper ex. (12): The argument/nonargument PP contrast.
+/-- Paper ex. (12): the argument/nonargument PP contrast.
 
     (12a) "They're furious but it's unclear who(m)" — OK (sprouted PP
     *at who(m)* not fully contained in ellipsis site after movement)
     (12b) "They're furious but it's unclear who at" — OK (pied-piped)
-    (12c) "*They're furious but it's unclear who" — blocked: *at* is
-    within the argument domain (selected by *furious*), has no
-    antecedent source, and fails the SIC.
+    (12c) "*They're furious but it's unclear who" (`Examples.ex_12c`) —
+    blocked: *at* is within the argument domain (selected by *furious*),
+    has no antecedent source, and fails the SIC.
 
-    This is the key contrast: (12a-b) work because the PP *at whom*
-    is either not fully within the ellipsis site (12a) or is matched
-    by pied-piping (12b). (12c) fails because the argument-marking
-    preposition *at* is inside the argument domain and must match. -/
-def argumentPPEx12c : SluicingDatum where
-  sentence := "*They're furious but it's unclear who."
-  antecedent := "they're furious"
-  innerAntecedent := ""
-  whPhrase := "who"
-  elided := "they are furious at"
-  grammatical := false
-  source := "Anand, Hardt & McCloskey 2025 ex. 12c"
-
-/-- Argument PP *at* (selected by *furious*) is within the argument
-    domain and must match. Since it has no counterpart in the
-    antecedent's argument domain, the SIC blocks (12c). -/
+    (12a-b) work because the PP *at whom* is either not fully within the
+    ellipsis site (12a) or is matched by pied-piping (12b). (12c) fails
+    because the argument-marking preposition *at* is inside the argument
+    domain and must match — it has no counterpart in the antecedent's
+    argument domain, so the SIC blocks it. Sluicing fails completely
+    when the argument domain itself has no match: paper ex. (15a)
+    (`Examples.ex_15a`), "*He is very loyal, but I don't know who" —
+    no vP in the antecedent whose argument domain matches
+    "who [he is loyal to]". -/
 theorem argument_pp_blocks_sluicing :
     let antecedentPairs : List HeadPair :=
       [⟨.A, .D, none, none, none⟩]  -- A-headed SC: [furious]
@@ -279,20 +246,6 @@ theorem argument_pp_blocks_sluicing :
       (filterArgumentPairs antecedentPairs)
       (filterArgumentPairs ellipsisPairs) := by
   refine ⟨rfl, ?_⟩; decide
-
-/-- Contrast: paper ex. (15a-b) — sluicing fails completely when the
-    argument domain itself has no match.
-
-    "*He is very loyal, but I don't know who." — no vP in antecedent
-    whose argument domain matches "who [he is loyal to]". -/
-def failedSluiceEx15a : SluicingDatum where
-  sentence := "*He is very loyal, but I don't know who."
-  antecedent := "he is very loyal"
-  innerAntecedent := ""
-  whPhrase := "who"
-  elided := "he is loyal to"
-  grammatical := false
-  source := "Anand, Hardt & McCloskey 2025 ex. 15a"
 
 -- ============================================================================
 -- § 5: Copular Pseudosluices (paper §5)

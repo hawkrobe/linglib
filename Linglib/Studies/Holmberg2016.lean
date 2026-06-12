@@ -22,7 +22,8 @@ Yes/no answers are elliptical full clauses, not general fragments:
 
 The PolP is elided under identity with the question's PolP; the particle
 sits in Spec-FocP and values the [±Pol] feature. This is distinct from
-wh-fragment answers (`Phenomena/Ellipsis/FragmentAnswers.lean`).
+wh-fragment answers, which fill an argument slot of a wh-question
+(cf. `Studies/BergenGoodman2015.lean`).
 
 ## Key Claims Formalized
 

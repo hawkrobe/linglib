@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Fragments.English.Toy
-import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.CrossSerial
@@ -172,14 +171,76 @@ end Coordination
 [ross-1970]'s generalization — gapping direction tracks word order —
 which [steedman-2000] derives from the Principles of Adjacency,
 Consistency, and Inheritance together with the order-preserving constraint
-on type-raising. The predicted pattern below is stated over the
-word-order predicates of `Phenomena.Ellipsis.Gapping`; deriving it from
-the slash directions of `CCG.Gapping`'s gapped categories is TODO.
-(Dutch licensing both directions is `Phenomena.Ellipsis.Gapping.mixed_allows_both`.) -/
+on type-raising. Deriving `predictedGappingPattern` from the slash
+directions of `CCG.Gapping`'s gapped categories is TODO.
+(Dutch licensing both directions is `mixed_allows_both`.) -/
 
 section Gapping
 
-open Phenomena.Ellipsis.Gapping
+/-- Basic word order of a transitive clause (S = subject, V = verb,
+O = object). -/
+inductive WordOrder where
+  | SOV
+  | SVO
+  | VSO
+  | VOS
+  | OVS
+  | OSV
+  deriving DecidableEq, Repr
+
+/-- Direction of gapping in a coordinate structure: forward gapping leaves
+the gap in the non-initial conjunct ("Dexter ate bread, and Warren,
+potatoes"); backward gapping leaves it in the non-final conjunct
+(Japanese "Ken-ga Naomi-o, Erika-ga Sara-o tazuneta"). -/
+inductive GappingDirection where
+  | forward
+  | backward
+  deriving DecidableEq, Repr
+
+/-- The gapping directions a language allows. -/
+structure GappingPattern where
+  allowsForward : Prop
+  allowsBackward : Prop
+  [decAllowsForward : Decidable allowsForward]
+  [decAllowsBackward : Decidable allowsBackward]
+
+attribute [instance] GappingPattern.decAllowsForward GappingPattern.decAllowsBackward
+
+def GappingPattern.forwardOnly : GappingPattern := ⟨True, False⟩
+def GappingPattern.backwardOnly : GappingPattern := ⟨False, True⟩
+def GappingPattern.both : GappingPattern := ⟨True, True⟩
+def GappingPattern.neither : GappingPattern := ⟨False, False⟩
+
+/-- [ross-1970]'s generalization: verb-final orders gap backward, the
+rest gap forward. -/
+def rossOriginal : WordOrder → GappingPattern
+  | .SOV => .backwardOnly
+  | .VSO => .forwardOnly
+  | .SVO => .forwardOnly
+  | .VOS => .forwardOnly
+  | .OVS => .backwardOnly
+  | .OSV => .backwardOnly
+
+/-- The order's transitive verbs seek (at least one of) their arguments
+rightward. -/
+def HasRightwardVerbs : WordOrder → Prop
+  | .VSO => True
+  | .SVO => True
+  | .VOS => True
+  | _ => False
+
+instance : DecidablePred HasRightwardVerbs := fun w => by
+  cases w <;> unfold HasRightwardVerbs <;> infer_instance
+
+/-- The order's transitive verbs seek their arguments leftward. -/
+def HasLeftwardVerbs : WordOrder → Prop
+  | .SOV => True
+  | .OVS => True
+  | .OSV => True
+  | _ => False
+
+instance : DecidablePred HasLeftwardVerbs := fun w => by
+  cases w <;> unfold HasLeftwardVerbs <;> infer_instance
 
 /-- The gapping directions CCG predicts for a word order: forward gapping
 needs a leftward-looking gapped conjunct, available through backward
@@ -213,6 +274,66 @@ rightward-looking gapped conjunct a backward gap needs cannot be built:
 ate bread and Warren, potatoes"). -/
 theorem no_backward_gapping_in_english :
     ¬ HasLeftwardVerbs .SVO := id
+
+/-- Main- vs subordinate-clause word order, for languages whose two clause
+types diverge. -/
+structure ClauseOrderProfile where
+  mainClause : WordOrder
+  subClause : WordOrder
+  deriving Repr
+
+/-- Steedman's revision of [ross-1970]: gapping availability tracks the
+lexical availability of verb categories, not a single "underlying" word
+order — forward gapping needs rightward-combining verbs, backward gapping
+leftward-combining verbs in either clause type. -/
+def rossRevised (profile : ClauseOrderProfile) : GappingPattern :=
+  ⟨HasRightwardVerbs profile.mainClause,
+   HasLeftwardVerbs profile.mainClause ∨ HasLeftwardVerbs profile.subClause⟩
+
+/-- Dutch: SVO main clauses, SOV subordinate clauses. The mixed profile
+licenses both gapping directions — forward in main clauses ("Wil jij een
+ijsje en Marietje limonade?"), backward in subordinate clauses ("...dat
+Jan Syntactic Structures en Piet Aspects gelezen heeft"). -/
+def dutch : ClauseOrderProfile := ⟨.SVO, .SOV⟩
+
+/-- A mixed-order language like Dutch licenses both gapping directions. -/
+theorem mixed_allows_both :
+    (rossRevised dutch).allowsForward ∧ (rossRevised dutch).allowsBackward :=
+  ⟨trivial, Or.inr trivial⟩
+
+/-- Steedman's taxonomy of elliptical constructions. -/
+inductive EllipsisType where
+  /-- "Dexter ate bread, and Warren, potatoes" -/
+  | gapping
+  /-- "Dexter ran away, and Warren (too)" -/
+  | stripping
+  /-- "Dexter ate bread, and Warren did too" -/
+  | vpEllipsis
+  /-- "Dexter did something, but I don't know what" -/
+  | sluicing
+  deriving DecidableEq, Repr
+
+/-- Gapping and stripping are syntactically mediated via CCG; VP ellipsis
+and sluicing are purely anaphoric. -/
+def isSyntacticallyMediated : EllipsisType → Prop
+  | .gapping => True
+  | .stripping => True
+  | .vpEllipsis => False
+  | .sluicing => False
+
+instance : DecidablePred isSyntacticallyMediated := fun x => by
+  cases x <;> unfold isSyntacticallyMediated <;> infer_instance
+
+/-- Only the syntactically mediated ellipsis types exhibit word-order
+constraints; VP ellipsis and sluicing pattern alike across languages. -/
+def HasWordOrderConstraints : EllipsisType → Prop
+  | .gapping => True
+  | .stripping => True
+  | .vpEllipsis => False
+  | .sluicing => False
+
+instance : DecidablePred HasWordOrderConstraints := fun x => by
+  cases x <;> unfold HasWordOrderConstraints <;> infer_instance
 
 end Gapping
 
@@ -361,9 +482,12 @@ def scopeData : List (VerbOrder × BinaryScopeAvailability) :=
   Examples.all.filterMap λ ex =>
     (wordOrderOf ex).bind λ vo => (observedAvailability ex).map λ av => (vo, av)
 
--- Drift sentry: today every example in the JSON is a §6.8 scope example
--- carrying both annotations; this fires if one without them is added.
-#guard scopeData.length == Examples.all.length
+-- Drift sentry: every example in the JSON is either a ch. 7 gapping
+-- stimulus or a §6.8 scope example carrying both annotations; this
+-- fires if a row that is neither is added.
+#guard Examples.all.all λ ex =>
+  (ex.paperFeatures.lookup "phenomenon" == some "gapping") ||
+  ((wordOrderOf ex).isSome && (observedAvailability ex).isSome)
 
 /-- The CCG prediction matches every §6.8 judgment. -/
 theorem predictedAvailability_eq_observed :

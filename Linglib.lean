@@ -1357,11 +1357,6 @@ import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
 import Linglib.Studies.OsborneLi2023
 import Linglib.Studies.FutrellEtAl2020
-import Linglib.Phenomena.Ellipsis.FragmentAnswers
-import Linglib.Phenomena.Ellipsis.Gapping
-import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Phenomena.Ellipsis.NPEllipsis
-import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 import Linglib.Studies.BenzSalzmann2025
 import Linglib.Studies.Saab2026
 import Linglib.Studies.AnandHardtMcCloskey2021
@@ -2644,7 +2639,6 @@ import Linglib.Studies.Lewis1973
 import Linglib.Studies.Glass2023
 import Linglib.Studies.BergenGoodman2015
 import Linglib.Studies.Osborne2019Ellipsis
-import Linglib.Studies.Osborne2019Parallelism
 import Linglib.Studies.MacuchSilvaEtAl2024
 import Linglib.Studies.Franke2011
 import Linglib.Studies.HardingGerstenbergIcard2025
@@ -2852,3 +2846,7 @@ import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
 import Linglib.Data.Examples.GroenendijkStokhof1984
 import Linglib.Data.Examples.TurkHirsch2026
 import Linglib.Data.Examples.Holmberg2016
+import Linglib.Data.Examples.Merchant2001
+import Linglib.Data.Examples.AnandHardtMcCloskey2025
+import Linglib.Data.Examples.GinzburgCooper2004
+import Linglib.Data.Examples.Saab2026
