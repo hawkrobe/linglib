@@ -67,12 +67,6 @@ def le [DecidableValuation α] (s₁ s₂ : Valuation α) : Prop :=
 theorem le_refl [DecidableValuation α] (s : Valuation α) : s.le s :=
   fun _ _ h => h
 
-/-- Count of undetermined vertices over a finite list. Termination
-    measure for the forward-development fixpoint (mirrors the old
-    `Monotonicity.lean` measure but generalized over `α`). -/
-def undeterminedCount (s : Valuation α) (l : List V) : ℕ :=
-  l.countP (fun v => (s.get v).isNone)
-
 @[simp] theorem extend_get_same [DecidableEq V]
     (s : Valuation α) (v : V) (x : α v) :
     (s.extend v x).get v = some x := by

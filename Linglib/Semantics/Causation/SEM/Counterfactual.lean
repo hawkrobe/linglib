@@ -74,7 +74,10 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 
 /-- **Causal sufficiency**: forcing `cause` to `xC` makes `effect` developDet to `xE`.
 
-    Polymorphic generalization of [nadathur-lauer-2020] Definition 23.
+    Polymorphic generalization of [nadathur-lauer-2020] Definition 23's
+    sufficiency clause (the development of `s + (cause = xC)` fixes the
+    effect); Def 23's non-inevitability precondition (clause a) is not
+    yet represented — see the module TODO.
     The Bool case (`BoolSEM.causallySufficient`) recovers the legacy semantics
     "`cause = true` produces `effect = true`". -/
 def causallySufficient (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
@@ -91,12 +94,14 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 -- § Basic API lemmas (polymorphic)
 -- ════════════════════════════════════════════════════
 
+omit [Fintype V] [DecidableEq V] [DecidableValuation α] in
 /-- `developsToValue` unfolds to `(developDet M s).hasValue v x`. -/
 @[simp] theorem developsToValue_iff (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (v : V) (x : α v) :
     developsToValue M s v x ↔ (M.developDet s).hasValue v x := Iff.rfl
 
+omit [Fintype V] [DecidableValuation α] in
 /-- `causallySufficient` unfolds to `developsToValue` of the extended valuation. -/
 @[simp] theorem causallySufficient_iff (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
@@ -124,7 +129,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 -- ════════════════════════════════════════════════════
 
 /-! Pearl-style counterfactual simulation via Lassiter's RRR heuristic
-    ([lassiter-2017-probabilistic-language] §3): "Rewind to the
+    ([lassiter-2017-probabilistic-language]): "Rewind to the
     antecedent's causal layer, Revise the antecedent, selectively
     Regenerate descendants while preserving causally-independent
     observations." Subsumes:
@@ -134,13 +139,14 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     - [lassiter-2017-probabilistic-language] probabilistic counterfactuals
       with overt probability operators
 
-    Key insight: under the high-stability assumption (Lucas & Kemp 2015
-    ESM), Pearl 3-step abduction reduces to "preserve causally-independent
+    Key insight: under the high-stability assumption ([lucas-kemp-2015]),
+    Pearl 3-step abduction reduces to "preserve causally-independent
     observations, regenerate descendants" — no explicit exogenous noise
     types needed. The existing `develop` PMF naturally produces the right
     distribution when fed the counterfactual seed valuation.
 
-    Morgenbesser's coin example (Barker 1998, Lassiter §1): bet → win ←
+    Morgenbesser's coin example (discussed in
+    [lassiter-2017-probabilistic-language]): bet → win ←
     heads. Observed `{bet:=false, win:=false, heads:=true}`. Counterfactual
     `bet := true`. Then `cfSeed = {bet:=true, heads:=true, win:=none}`
     (heads is causally independent so preserved; win is descendant of bet
@@ -149,7 +155,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     prediction (and contradicting "Rewind, Revise, Re-run" without
     selective regeneration). -/
 
-/-- **Counterfactual seed** (Lassiter §3 RRR): the partial valuation that
+/-- **Counterfactual seed** ([lassiter-2017-probabilistic-language] RRR): the partial valuation that
     `counterfactualSimulate` feeds to `develop`. Sets `antecedent := xAnt`,
     leaves descendants of antecedent undetermined (to be regenerated),
     preserves `observed` values for causally-independent vertices. -/
@@ -171,7 +177,6 @@ noncomputable def cfSeed [DecidableEq V]
     (see `counterfactualSimulate_eq_pure_of_deterministic` below).
 
     Subsumes (with appropriate derived predicates):
-    - `causallyNecessary` ([nadathur-2023-implicatives] Def 10b, discrete)
     - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
     - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
     - Lassiter probabilistic counterfactuals with overt probability operators
@@ -228,7 +233,6 @@ noncomputable def sufficientCause [Fintype V] [DecidableEq V] [DecidableValuatio
     of the per-vertex counterfactual valuation `developDet M (cfSeed ...)`.
     Follows immediately from `develop_eq_pure_of_deterministic` (Basic.lean). -/
 theorem counterfactualSimulate_eq_pure_of_deterministic
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
     counterfactualSimulate M observed antecedent xAnt =
@@ -239,10 +243,9 @@ theorem counterfactualSimulate_eq_pure_of_deterministic
 /-- Bridge: under `IsDeterministic`, `whetherCause` is the {0,1} indicator
     of whether the counterfactual outcome differs from `xEff_actual`. The
     graded B&G W collapses to the discrete Lewis-style "would the effect
-    have been different?" — exactly the collapse Lassiter §3 / Lucas-Kemp
+    have been different?" — exactly the collapse [lassiter-2017-probabilistic-language] and [lucas-kemp-2015]
     predict for high-stability deterministic systems. -/
 theorem whetherCause_eq_indicator_of_deterministic
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
     (effect : V) (xEff_actual : α effect) :
@@ -256,16 +259,7 @@ theorem whetherCause_eq_indicator_of_deterministic
         rw [PMF.pure_apply_of_ne _ _ hv]; simp)]
   by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual
   · simp [h]
-  · simp [h, PMF.pure_apply_self]
-
--- ════════════════════════════════════════════════════
--- § Nadathur 2023 Def 10b: causallyNecessary (BoolSEM only)
--- ════════════════════════════════════════════════════
-
-/-! Port of [nadathur-2023-implicatives] Definition 10b to V2. Specialized to
-    `BoolSEM` (the binary substrate the original definition was given on);
-    polymorphic generalization to multi-valued α can come if a consumer
-    needs it. -/
+  · simp [h]
 
 end Semantics.Causation.SEM
 
@@ -279,11 +273,6 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 open Semantics.Causation (SEM Valuation BoolSEM)
 open Semantics.Causation.SEM (developsToValue causallySufficient)
-
-/-- `BoolSEM`-flavored `developsToValue`: vertex `v` develops to `true`. -/
-abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (v : V) : Prop :=
-  developsToValue M s v true
 
 /-- `BoolSEM`-flavored `causallySufficient`: setting `cause = true` develops
     `effect = true`. Matches old `Semantics.Causation.causallySufficient` semantics. -/

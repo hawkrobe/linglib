@@ -27,10 +27,9 @@ coherent — type-level process in progress, token-level result never obtained.
 ## V2 substrate
 
 `CausalProcess V` is polymorphic over the vertex type. `progressiveTrue`
-checks type-level sufficiency (the cause develops to the result via
-`developDetOn`). `perfectiveTrue` adds token-level completion via a local
-`completesForEffect` (defined inline to avoid the CCSelection cascade
-during the V2 migration period).
+checks type-level sufficiency (`BoolSEM.causallySufficientOn`);
+`perfectiveTrue` adds token-level but-for completion
+(`BoolSEM.completesForEffectOn`).
 -/
 
 namespace Semantics.Causation.Progressive
@@ -72,8 +71,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
     result actually obtaining in the actual world. -/
 noncomputable def typeLevelHolds (proc : CausalProcess V)
     [SEM.IsDeterministic proc.M] : Prop :=
-  (developDetOn proc.M proc.vertexList 1
-    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true
+  BoolSEM.causallySufficientOn proc.M proc.vertexList proc.enablingConditions 1
+    proc.initiator proc.result
 
 noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     Decidable proc.typeLevelHolds := Classical.dec _
@@ -86,14 +85,12 @@ noncomputable def progressiveTrue (proc : CausalProcess V)
 noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     Decidable proc.progressiveTrue := Classical.dec _
 
-/-- Local but-for completion test (avoids CCSelection import during migration):
-    cause being true → effect; cause being false → ¬ effect. -/
+/-- But-for completion test (`BoolSEM.completesForEffectOn`): cause being
+    true → effect; cause being false → ¬ effect. -/
 noncomputable def completesForEffect (proc : CausalProcess V)
     [SEM.IsDeterministic proc.M] : Prop :=
-  (developDetOn proc.M proc.vertexList 1
-    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true ∧
-  ¬ (developDetOn proc.M proc.vertexList 1
-      (proc.enablingConditions.extend proc.initiator false)).hasValue proc.result true
+  BoolSEM.completesForEffectOn proc.M proc.vertexList proc.enablingConditions 1
+    proc.initiator proc.result
 
 noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     Decidable proc.completesForEffect := Classical.dec _
