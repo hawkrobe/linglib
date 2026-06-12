@@ -26,7 +26,7 @@ This study file bridges [creissels-2025]'s framework (formalized in
 `Syntax/ArgumentStructure/Alternation.lean`) to existing linglib infrastructure:
 
 - `Semantics/Causation/Morphological.lean`: causativization and decausativization
-- `Phenomena/ArgumentStructure/VoiceSystem.lean`: pivot-based voice system typology
+- `Typology/VoiceSystem.lean`: pivot-based voice system typology
 - `Syntax/Minimalist/Applicative.lean`: Pylkkänen's high/low applicatives
 -/
 

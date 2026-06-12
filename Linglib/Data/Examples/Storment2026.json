@@ -1,0 +1,512 @@
+[
+  {
+    "id": "storment2026_qi_whisper",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"I'm tired,\" whispered Mary.",
+    "glossedTokens": [],
+    "translation": "\"I'm tired,\" whispered Mary.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "whisper"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper. Manner-of-speaking verb licenses quotative inversion."
+  },
+  {
+    "id": "storment2026_qi_murmur",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"It's cold,\" murmured the child.",
+    "glossedTokens": [],
+    "translation": "\"It's cold,\" murmured the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "murmur"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_murmur."
+  },
+  {
+    "id": "storment2026_qi_shout",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Watch out!\" shouted the guard.",
+    "glossedTokens": [],
+    "translation": "\"Watch out!\" shouted the guard.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "shout"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_shout."
+  },
+  {
+    "id": "storment2026_qi_cry",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Help!\" cried the sailor.",
+    "glossedTokens": [],
+    "translation": "\"Help!\" cried the sailor.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "cry"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_cry."
+  },
+  {
+    "id": "storment2026_qi_scream",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"No!\" screamed the witness.",
+    "glossedTokens": [],
+    "translation": "\"No!\" screamed the witness.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "scream"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_scream."
+  },
+  {
+    "id": "storment2026_qi_mumble",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"I don't know,\" mumbled the boy.",
+    "glossedTokens": [],
+    "translation": "\"I don't know,\" mumbled the boy.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "mumble"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_mumble."
+  },
+  {
+    "id": "storment2026_qi_mutter",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"This is ridiculous,\" muttered the clerk.",
+    "glossedTokens": [],
+    "translation": "\"This is ridiculous,\" muttered the clerk.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "mutter"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_mutter."
+  },
+  {
+    "id": "storment2026_qi_shriek",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"A spider!\" shrieked the child.",
+    "glossedTokens": [],
+    "translation": "\"A spider!\" shrieked the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "shriek"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_shriek."
+  },
+  {
+    "id": "storment2026_qi_yell",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Get down!\" yelled the sergeant.",
+    "glossedTokens": [],
+    "translation": "\"Get down!\" yelled the sergeant.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "yell"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_yell."
+  },
+  {
+    "id": "storment2026_qi_groan",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Not again,\" groaned the student.",
+    "glossedTokens": [],
+    "translation": "\"Not again,\" groaned the student.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "groan"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_groan."
+  },
+  {
+    "id": "storment2026_qi_grumble",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"It's too early,\" grumbled the worker.",
+    "glossedTokens": [],
+    "translation": "\"It's too early,\" grumbled the worker.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "grumble"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_grumble."
+  },
+  {
+    "id": "storment2026_qi_hiss",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Be quiet,\" hissed the librarian.",
+    "glossedTokens": [],
+    "translation": "\"Be quiet,\" hissed the librarian.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "hiss"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_hiss."
+  },
+  {
+    "id": "storment2026_qi_sigh",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"If only,\" sighed the old woman.",
+    "glossedTokens": [],
+    "translation": "\"If only,\" sighed the old woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "sigh"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_sigh."
+  },
+  {
+    "id": "storment2026_qi_whimper",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"It hurts,\" whimpered the child.",
+    "glossedTokens": [],
+    "translation": "\"It hurts,\" whimpered the child.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "whimper"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whimper."
+  },
+  {
+    "id": "storment2026_qi_snap",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Enough!\" snapped the teacher.",
+    "glossedTokens": [],
+    "translation": "\"Enough!\" snapped the teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "snap"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_snap."
+  },
+  {
+    "id": "storment2026_qi_speak",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED unergative communication verb blocks QI (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Hello,\" spoke Mary.",
+    "glossedTokens": [],
+    "translation": "\"Hello,\" spoke Mary.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "speak"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_speak. Canonical communication verb fails quotative inversion."
+  },
+  {
+    "id": "storment2026_qi_talk",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED unergative communication verb blocks QI (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "\"Hello,\" talked Mary.",
+    "glossedTokens": [],
+    "translation": "\"Hello,\" talked Mary.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "talk"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_talk. Canonical communication verb fails quotative inversion."
+  },
+  {
+    "id": "storment2026_qi_whisper_transitive",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED §5"},
+    "language": "stan1293",
+    "primaryText": "\"I know the answer,\" whispered the student to the teacher.",
+    "glossedTokens": [],
+    "translation": "\"I know the answer,\" whispered the student to the teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "whisper"],
+      ["argument_frame", "quote_pp_goal"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper_transitive. Quote + PP goal: the PP does not compete for Case licensing, so QI remains grammatical (Storment 2026, section 5)."
+  },
+  {
+    "id": "storment2026_qi_whisper_pronoun",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED §3"},
+    "language": "stan1293",
+    "primaryText": "\"I'm tired,\" whispered she.",
+    "glossedTokens": [],
+    "translation": "\"I'm tired,\" whispered she.",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "whisper"],
+      ["subject_type", "pronoun"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper_pronoun. Pronominal subjects degrade QI — full DPs are preferred postverbally (Storment 2026, section 3)."
+  },
+  {
+    "id": "storment2026_qi_warn_double_obj",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED §5 eq. (125)"},
+    "language": "stan1293",
+    "primaryText": "\"There is danger ahead,\" warned Mary John.",
+    "glossedTokens": [],
+    "translation": "\"There is danger ahead,\" warned Mary John.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "quotative_inversion"],
+      ["verb", "warn"],
+      ["argument_frame", "quote_dp_dp"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_warn_double_obj. QI blocked with two DP arguments — the transitivity constraint from Case licensing: T0 can license only one DP. 'Warn' is naturally ditransitive, so the failure isolates the transitivity constraint rather than confounding it with verb subcategorization."
+  },
+  {
+    "id": "storment2026_li_kick",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED §5"},
+    "language": "stan1293",
+    "primaryText": "Into the room kicked the ball the player.",
+    "glossedTokens": [],
+    "translation": "Into the room kicked the ball the player.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "locative_inversion"],
+      ["verb", "kick"],
+      ["argument_frame", "transitive"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean li_kick. LI blocked with a transitive verb — both QI and LI show the transitivity constraint (Storment 2026, section 5)."
+  },
+  {
+    "id": "storment2026_li_arrive_pronoun",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED §3"},
+    "language": "stan1293",
+    "primaryText": "Into the room arrived she.",
+    "glossedTokens": [],
+    "translation": "Into the room arrived she.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "locative_inversion"],
+      ["verb", "arrive"],
+      ["subject_type", "pronoun"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean li_arrive_pronoun. LI categorically blocks pronominal subjects (cf. QI, which merely degrades them, section 3)."
+  },
+  {
+    "id": "storment2026_qi_agreement_english",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (40)"},
+    "language": "stan1293",
+    "primaryText": "\"Avoid beef,\" advise all the New Age dieticians.",
+    "glossedTokens": [],
+    "translation": "\"Avoid beef,\" advise all the New Age dieticians.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "agreement"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_agreement_english. The verb 'advise' (plural) agrees with the postverbal agent 'dieticians' (plural), not with the quote (Storment 2026, section 3.1)."
+  },
+  {
+    "id": "storment2026_qi_agreement_setswana",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (77)-(80)"},
+    "language": "tswa1253",
+    "primaryText": "'Dumela,' go bua nna.",
+    "glossedTokens": [],
+    "translation": "'Hello,' say I.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "agreement"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_agreement_setswana. The subject marker surfaces as default class-17 'go' instead of first-singular 'ke' — default agreement; the agent is not in Spec,TP (Storment 2026, section 3.1)."
+  },
+  {
+    "id": "storment2026_qi_parasitic_gap_blocked",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (62a)"},
+    "language": "stan1293",
+    "primaryText": "\"We should leave,\" thought Max without actually saying __.",
+    "glossedTokens": [],
+    "translation": "\"We should leave,\" thought Max without actually saying __.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["structural_test", "parasitic_gap"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_parasitic_gap_blocked. Parasitic gap blocked in QI: the theme undergoes A-movement (smuggling), which cannot license parasitic gaps (Storment 2026, section 3.2)."
+  },
+  {
+    "id": "storment2026_qi_parasitic_gap_baseline",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (62b)"},
+    "language": "stan1293",
+    "primaryText": "\"We should leave,\" Max thought without actually saying __.",
+    "glossedTokens": [],
+    "translation": "\"We should leave,\" Max thought without actually saying __.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "parasitic_gap"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_parasitic_gap_baseline. Non-QI preposed quote licenses the parasitic gap: the quote undergoes A-bar movement (topicalization)."
+  },
+  {
+    "id": "storment2026_qi_raising",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (67a)"},
+    "language": "stan1293",
+    "primaryText": "\"Where did the wheat go?\" seemed to say the heron.",
+    "glossedTokens": [],
+    "translation": "\"Where did the wheat go?\" seemed to say the heron.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "subject_raising"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_raising. The quotative theme raises from embedded to matrix Spec,TP — an A-movement chain (Storment 2026, section 3.3)."
+  },
+  {
+    "id": "storment2026_qi_conjoint_disjoint",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (87)"},
+    "language": "tswa1253",
+    "primaryText": "'Dumela,' go a bua Seabelo.",
+    "glossedTokens": [],
+    "translation": "'Hello,' says Seabelo (with disjoint marker).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "'Dumela,' go bua Seabelo.", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["structural_test", "conjoint_disjoint"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_conjoint_disjoint. The disjoint morpheme 'a' is blocked in QI: the agent remains vP-internal, in the conjoint domain (Storment 2026, section 3.4)."
+  },
+  {
+    "id": "storment2026_qi_quote_split",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (90)"},
+    "language": "stan1293",
+    "primaryText": "\"But,\" said Frodo, \"that is a long way off.\"",
+    "glossedTokens": [],
+    "translation": "\"But,\" said Frodo, \"that is a long way off.\"",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "quote_category"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_quote_split. The quote can split around verb + agent: it sits in DiscourseP, not as a single constituent in Spec,TP (Storment 2026, section 3.5)."
+  },
+  {
+    "id": "storment2026_qi_quote_nongrammatical",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (96a)"},
+    "language": "stan1293",
+    "primaryText": "\"Pop!\" goes the weasel.",
+    "glossedTokens": [],
+    "translation": "\"Pop!\" goes the weasel.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "quote_category"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_quote_nongrammatical. 'Pop!' is not a grammatical sentence — the quote is clause-external (Storment 2026, section 3.5)."
+  },
+  {
+    "id": "storment2026_qi_ordering_depictive",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (11)"},
+    "language": "tswa1253",
+    "primaryText": "'Dumela!' go bua Seabelo a tagilwe.",
+    "glossedTokens": [],
+    "translation": "'Hello!' says Seabelo drunk.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "constituent_ordering"],
+      ["constituent", "depictive"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_depictive. The depictive 'a tagilwe' (drunk) follows the agent — depictives are vP-external adjuncts and stay in situ when the VP smuggles."
+  },
+  {
+    "id": "storment2026_qi_ordering_manner",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (21)"},
+    "language": "tswa1253",
+    "primaryText": "'Titi o molato,' go bua kgosi kapela.",
+    "glossedTokens": [],
+    "translation": "'Titi is guilty,' says the chief quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "constituent_ordering"],
+      ["constituent", "manner_adverb"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_manner. The manner adverb 'kapela' (quickly) follows the agent — manner adverbs are vP-external and stay in situ."
+  },
+  {
+    "id": "storment2026_qi_ordering_purpose",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (17)"},
+    "language": "tswa1253",
+    "primaryText": "'Molelo!' go go-ile Seabelo go kopa thuso.",
+    "glossedTokens": [],
+    "translation": "'Fire!' went Seabelo to call for help.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "constituent_ordering"],
+      ["constituent", "purpose_clause"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_purpose. The purpose clause 'go kopa thuso' (to call for help) follows the agent — purpose clauses are vP-external adjuncts."
+  },
+  {
+    "id": "storment2026_qi_ordering_complement",
+    "source": {"bibkey": "storment-2026", "paperLabel": "UNVERIFIED (27)"},
+    "language": "tswa1253",
+    "primaryText": "'Ke a go rata,' go batla go bua Seabelo.",
+    "glossedTokens": [],
+    "translation": "'I love you,' wants to say Seabelo.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["structural_test", "constituent_ordering"],
+      ["constituent", "restructuring_complement"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_complement. The control complement 'batla go bua' (want to say) precedes the agent — VP-internal material moves with the VP via smuggling."
+  }
+]

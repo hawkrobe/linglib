@@ -1,331 +1,228 @@
-import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
+import Linglib.Data.Examples.Levin1993
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Studies.Dowty1991
 
 /-!
 # Diathesis Alternation Bridge [levin-1993]
 
-Connects empirical alternation data to the
-`LevinClass.participatesIn` prediction function and Fragment verb entries.
+Connects the alternation judgment rows in `Data/Examples/Levin1993.json` to
+the `LevinClass.participatesIn` prediction function, the Fragment verb
+entries, and [dowty-1991]'s proto-role account of the three verb classes.
 
-## Agreement
+The verbs *break*, *cut*, *hit*, *touch* form Levin's §0.4 diagnostic
+quadruple (pp. 5–10): each participates in a distinct subset of the
+causative/inchoative, middle, conative, and body-part possessor ascension
+alternations.
 
-All 40 data points agree with the `LevinClass.participatesIn` prediction
-function. The CI rule correctly blocks *cut* via `!instrumentSpec`
-(Levin p. 9–10: instrument specification requires an agent, blocking
-the agentless inchoative).
+| Verb | Class | CI | Mid | Con | BPPA |
+|------|-------|----|-----|-----|------|
+| break | 45.1 | ✓ | ✓ | ✗ | ✗ |
+| cut | 21.1 | ✗ | ✓ | ✓ | ✓ |
+| hit | 18.1 | ✗ | ✗ | ✓ | ✓ |
+| touch | 20 | ✗ | ✗ | ✗ | ✓ |
+
+## Main declarations
+
+- `classOf`, `alternationOf`, `observed` — project a row's `paperFeatures`
+  into the curated `LevinClass` / `DiathesisAlternation` enums and a
+  categorical participation value
+- `participation_matches_prediction` — every categorical row with a
+  representable class and alternation agrees with `participatesIn`
+- `quadruple_patterns_distinct` — the four §0.4 verbs show pairwise
+  distinct participation patterns
+- `dowty_*` — [dowty-1991] §9.3's CoS-symmetry predictions checked against
+  the rows (the comparison lives here, in the later paper's file)
 -/
 
 namespace Levin1993
 
+open Data.Examples
 open Semantics.Lexical
 open English.Predicates.Verbal
-open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 -- ════════════════════════════════════════════════════
--- § 1. Fragment Connection — verbClass matches Fragment levinClass
+-- § 1. Row adapters
 -- ════════════════════════════════════════════════════
 
-theorem break_class_matches :
-    break_.levinClass = some ci_break.verbClass := rfl
+/-- Map a row's `levin_class` section string to the curated `LevinClass`
+    enum. Subclasses collapse to their enum representative (51.3.2 run
+    verbs → `mannerOfMotion`; 47.5.1 swarm verbs → the §47 existence
+    family's `exist`; 48.1.1 → `appear`; 41.1.1 dress verbs → `dress`;
+    36.3 → `socialInteraction`; 54.1 register verbs → `measure`).
+    Classes outside the enum's grain (40.2 nonverbal expression, 40.3.2
+    wink, 40.4 snooze, 37.5 talk) map to `none`. -/
+def classOfString : String → Option LevinClass
+  | "45.1" => some .break_
+  | "21.1" => some .cut
+  | "18.1" => some .hit
+  | "20" => some .touch
+  | "12" => some .pushPull
+  | "9.7" => some .sprayLoad
+  | "13.1" => some .give
+  | "11.1" => some .send
+  | "26.1" => some .build
+  | "26.6" => some .turn
+  | "43.4" => some .substanceEmission
+  | "39.1" => some .eat
+  | "39.4" => some .devour
+  | "36.3" => some .socialInteraction
+  | "48.1.1" => some .appear
+  | "47.1" => some .exist
+  | "47.5.1" => some .exist
+  | "51.3" => some .mannerOfMotion
+  | "51.3.2" => some .mannerOfMotion
+  | "41.1.1" => some .dress
+  | "37.3" => some .mannerOfSpeaking
+  | "30.1" => some .see
+  | "54.1" => some .measure
+  | _ => none
 
-theorem cut_class_matches :
-    cut.levinClass = some ci_cut.verbClass := rfl
+/-- Map a row's `alternation` tag to the curated enum. -/
+def alternationOfString : String → Option DiathesisAlternation
+  | "causativeInchoative" => some .causativeInchoative
+  | "inducedAction" => some .inducedAction
+  | "middle" => some .middle
+  | "conative" => some .conative
+  | "substanceSource" => some .substanceSource
+  | "unspecifiedObject" => some .unspecifiedObject
+  | "understoodBodyPartObject" => some .understoodBodyPartObject
+  | "understoodReflexiveObject" => some .understoodReflexiveObject
+  | "understoodReciprocalObject" => some .understoodReciprocalObject
+  | "dative" => some .dative
+  | "benefactive" => some .benefactive
+  | "locative" => some .locative
+  | "bodyPartPossessorAscension" => some .bodyPartPossessorAscension
+  | "swarm" => some .swarm
+  | "materialProduct" => some .materialProduct
+  | "totalTransformation" => some .totalTransformation
+  | "instrumentSubject" => some .instrumentSubject
+  | "verbalPassive" => some .verbalPassive
+  | "prepositionalPassive" => some .prepositionalPassive
+  | "thereInsertion" => some .thereInsertion
+  | "locativeInversion" => some .locativeInversion
+  | "cognateObject" => some .cognateObject
+  | "wayConstruction" => some .wayConstruction
+  | "resultative" => some .resultative
+  | "directionalPhrase" => some .directionalPhrase
+  | _ => none
 
-theorem hit_class_matches :
-    hit.levinClass = some ci_hit.verbClass := rfl
+/-- Levin class recorded on a row. -/
+def classOf (e : LinguisticExample) : Option LevinClass :=
+  (e.paperFeatures.lookup "levin_class").bind classOfString
 
-theorem touch_class_matches :
-    touch.levinClass = some ci_touch.verbClass := rfl
+/-- Alternation recorded on a row. -/
+def alternationOf (e : LinguisticExample) : Option DiathesisAlternation :=
+  (e.paperFeatures.lookup "alternation").bind alternationOfString
 
-theorem push_class_matches :
-    push.levinClass = some con_push.verbClass := rfl
-
-theorem spray_class_matches :
-    spray.levinClass = some loc_spray.verbClass := rfl
-
-theorem load_class_matches :
-    load.levinClass = some loc_load.verbClass := rfl
-
-theorem give_class_matches :
-    give.levinClass = some dat_give.verbClass := rfl
-
-theorem send_class_matches :
-    send.levinClass = some dat_send.verbClass := rfl
-
--- ════════════════════════════════════════════════════
--- § 2. Per-Datum Agreement — prediction matches empirical result
--- ════════════════════════════════════════════════════
-
-/-! Each theorem connects a datum's `result` to the output of
-    `LevinClass.participatesIn`. Changing either the data or
-    the prediction breaks exactly one theorem. -/
-
--- Break (45.1): CI ✓, Mid ✓, Con ✗, BPPA ✗
-
-theorem ci_break_agrees :
-    ci_break.result = .participates ∧
-    LevinClass.break_.participatesIn .causativeInchoative = true := ⟨rfl, rfl⟩
-
-theorem mid_break_agrees :
-    mid_break.result = .participates ∧
-    LevinClass.break_.participatesIn .middle = true := ⟨rfl, rfl⟩
-
-theorem con_break_agrees :
-    con_break.result = .blocked ∧
-    LevinClass.break_.participatesIn .conative = false := ⟨rfl, rfl⟩
-
-theorem bppa_break_agrees :
-    bppa_break.result = .blocked ∧
-    LevinClass.break_.participatesIn .bodyPartPossessorAscension = false := ⟨rfl, rfl⟩
-
--- Hit (18.1): CI ✗, Mid ✗, Con ✓, BPPA ✓
-
-theorem ci_hit_agrees :
-    ci_hit.result = .blocked ∧
-    LevinClass.hit.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
-
-theorem mid_hit_agrees :
-    mid_hit.result = .blocked ∧
-    LevinClass.hit.participatesIn .middle = false := ⟨rfl, rfl⟩
-
-theorem con_hit_agrees :
-    con_hit.result = .participates ∧
-    LevinClass.hit.participatesIn .conative = true := ⟨rfl, rfl⟩
-
-theorem bppa_hit_agrees :
-    bppa_hit.result = .participates ∧
-    LevinClass.hit.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl⟩
-
--- Touch (20): CI ✗, Mid ✗, Con ✗, BPPA ✓
-
-theorem ci_touch_agrees :
-    ci_touch.result = .blocked ∧
-    LevinClass.touch.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
-
-theorem mid_touch_agrees :
-    mid_touch.result = .blocked ∧
-    LevinClass.touch.participatesIn .middle = false := ⟨rfl, rfl⟩
-
-theorem con_touch_agrees :
-    con_touch.result = .blocked ∧
-    LevinClass.touch.participatesIn .conative = false := ⟨rfl, rfl⟩
-
-theorem bppa_touch_agrees :
-    bppa_touch.result = .participates ∧
-    LevinClass.touch.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl⟩
-
--- Push (12): Con ✓
-
-theorem con_push_agrees :
-    con_push.result = .participates ∧
-    LevinClass.pushPull.participatesIn .conative = true := ⟨rfl, rfl⟩
-
--- Spray/Load (9.7): Locative ✓
-
-theorem loc_spray_agrees :
-    loc_spray.result = .participates ∧
-    LevinClass.sprayLoad.participatesIn .locative = true := ⟨rfl, rfl⟩
-
-theorem loc_load_agrees :
-    loc_load.result = .participates ∧
-    LevinClass.sprayLoad.participatesIn .locative = true := ⟨rfl, rfl⟩
-
--- Give/Send (13.1/11.1): Dative ✓
-
-theorem dat_give_agrees :
-    dat_give.result = .participates ∧
-    LevinClass.give.participatesIn .dative = true := ⟨rfl, rfl⟩
-
-theorem dat_send_agrees :
-    dat_send.result = .participates ∧
-    LevinClass.send.participatesIn .dative = true := ⟨rfl, rfl⟩
-
--- Cut (21.1): CI ✗, Mid ✓, Con ✓, BPPA ✓
-
-theorem ci_cut_agrees :
-    ci_cut.result = .blocked ∧
-    LevinClass.cut.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
-
-theorem mid_cut_agrees :
-    mid_cut.result = .participates ∧
-    LevinClass.cut.participatesIn .middle = true := ⟨rfl, rfl⟩
-
-theorem con_cut_agrees :
-    con_cut.result = .participates ∧
-    LevinClass.cut.participatesIn .conative = true := ⟨rfl, rfl⟩
-
-theorem bppa_cut_agrees :
-    bppa_cut.result = .participates ∧
-    LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl⟩
+/-- Categorical participation recorded on a row; `none` for marginal
+    judgments (the `participatesIn` profile is Boolean). -/
+def observed (e : LinguisticExample) : Option Bool :=
+  match e.paperFeatures.lookup "participates" with
+  | some "true" => some true
+  | some "false" => some false
+  | _ => none
 
 -- ════════════════════════════════════════════════════
--- § 3. New Alternation Agreement
+-- § 2. Transfer: judgments match the participation profile
 -- ════════════════════════════════════════════════════
 
--- Benefactive (§2.2)
+/-- A row agrees with `LevinClass.participatesIn` (vacuously, if its class
+    or alternation is unrepresentable or its judgment is marginal). -/
+def agreesWithPrediction (e : LinguisticExample) : Bool :=
+  match classOf e, alternationOf e, observed e with
+  | some c, some a, some b => c.participatesIn a == b
+  | _, _, _ => true
 
-theorem ben_carve_agrees :
-    ben_carve.result = .participates ∧
-    LevinClass.build.participatesIn .benefactive = true := ⟨rfl, rfl⟩
+set_option maxRecDepth 4096 in
+/-- Every categorical row with a representable class and alternation matches
+    the `participatesIn` prediction. In particular the CI rule blocks *cut*
+    via instrument specification (Levin pp. 9–10: an inherently specified
+    instrument requires an agent, blocking the agentless inchoative). -/
+theorem participation_matches_prediction :
+    Examples.all.all agreesWithPrediction = true := by decide
 
--- Substance/Source (§1.1.3)
+/-- Every row's `alternation` tag is one of the curated alternations. -/
+theorem alternations_all_representable :
+    Examples.all.all (fun e => (alternationOf e).isSome) = true := by decide
 
-theorem ss_radiate_agrees :
-    ss_radiate.result = .participates ∧
-    LevinClass.substanceEmission.participatesIn .substanceSource = true := ⟨rfl, rfl⟩
-
--- Material/Product (§2.4.1)
-
-theorem mp_carve_agrees :
-    mp_carve.result = .participates ∧
-    LevinClass.build.participatesIn .materialProduct = true := ⟨rfl, rfl⟩
-
--- Unspecified Object (§1.2.1)
-
-theorem uo_eat_agrees :
-    uo_eat.result = .participates ∧
-    LevinClass.eat.participatesIn .unspecifiedObject = true := ⟨rfl, rfl⟩
-
-theorem uo_devour_agrees :
-    uo_devour.result = .blocked ∧
-    LevinClass.devour.participatesIn .unspecifiedObject = false := ⟨rfl, rfl⟩
-
--- Understood Reciprocal Object (§1.2.4)
-
-theorem uro_meet_agrees :
-    uro_meet.result = .participates ∧
-    LevinClass.socialInteraction.participatesIn .understoodReciprocalObject = true := ⟨rfl, rfl⟩
-
--- There-Insertion (§6.1)
-
-theorem ti_develop_agrees :
-    ti_develop.result = .participates ∧
-    LevinClass.appear.participatesIn .thereInsertion = true := ⟨rfl, rfl⟩
-
-theorem ti_appear_agrees :
-    ti_appear.result = .participates ∧
-    LevinClass.appear.participatesIn .thereInsertion = true := ⟨rfl, rfl⟩
-
--- Locative Inversion (§6.2)
-
-theorem li_live_agrees :
-    li_live.result = .participates ∧
-    LevinClass.exist.participatesIn .locativeInversion = true := ⟨rfl, rfl⟩
-
--- Instrument Subject (§3.3)
-
-theorem is_break_agrees :
-    is_break.result = .participates ∧
-    LevinClass.break_.participatesIn .instrumentSubject = true := ⟨rfl, rfl⟩
-
-theorem is_eat_agrees :
-    is_eat.result = .blocked ∧
-    LevinClass.eat.participatesIn .instrumentSubject = false := ⟨rfl, rfl⟩
+set_option maxRecDepth 4096 in
+/-- Exactly four rows carry Levin classes outside the curated enum's grain:
+    *wave* (40.3.2 wink), *laugh* (40.2 nonverbal expression), *sleep*
+    (40.4 snooze), *talk* (37.5). These are excluded from
+    `participation_matches_prediction` by `classOf`. -/
+theorem unrepresentable_classes :
+    (Examples.all.filter (fun e => (classOf e).isNone)).map (·.id) =
+      ["levin1993_ubpo_wave", "levin1993_co_laugh", "levin1993_pp_sleep",
+       "levin1993_pp_talk"] := by decide
 
 -- ════════════════════════════════════════════════════
--- § 4. New Alternation Type Agreement
+-- § 3. The §0.4 diagnostic quadruple
 -- ════════════════════════════════════════════════════
 
--- Induced Action (§1.1.2.2)
+/-- Participation pattern of a verb across the four §0.4 alternations
+    (CI, middle, conative, BPPA). -/
+def quadruplePattern (rows : List LinguisticExample) : List (Option Bool) :=
+  rows.map observed
 
-theorem ia_run_agrees :
-    ia_run.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .inducedAction = true := ⟨rfl, rfl⟩
-
--- Understood Body-Part Object (§1.2.2)
-
-theorem ubpo_wave_agrees :
-    ubpo_wave.result = .participates ∧
-    LevinClass.bodyProcess.participatesIn .understoodBodyPartObject = true := ⟨rfl, rfl⟩
-
--- Understood Reflexive Object (§1.2.3)
-
-theorem uro_wash_agrees :
-    uro_wash.result = .participates ∧
-    LevinClass.dress.participatesIn .understoodReflexiveObject = true := ⟨rfl, rfl⟩
-
--- Total Transformation (§2.4.3)
-
-theorem tt_turn_agrees :
-    tt_turn.result = .participates ∧
-    LevinClass.turn.participatesIn .totalTransformation = true := ⟨rfl, rfl⟩
-
--- Way Construction (§7.4)
-
-theorem way_elbow_agrees :
-    way_elbow.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .wayConstruction = true := ⟨rfl, rfl⟩
-
--- Cognate Object (§7.1)
-
-theorem co_laugh_agrees :
-    co_laugh.result = .participates ∧
-    LevinClass.mannerOfSpeaking.participatesIn .cognateObject = true := ⟨rfl, rfl⟩
-
-theorem co_run_agrees :
-    co_run.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .cognateObject = true := ⟨rfl, rfl⟩
-
--- Directional Phrase (§7.8)
-
-theorem dp_run_agrees :
-    dp_run.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true := ⟨rfl, rfl⟩
+/-- Each verb of the quadruple shows a pairwise distinct pattern across the
+    four alternations — Levin's §0.4 table has no repeated rows, so the four
+    verbs instantiate four distinct verb classes. -/
+theorem quadruple_patterns_distinct :
+    [quadruplePattern [Examples.ci_break, Examples.mid_break,
+       Examples.con_break, Examples.bppa_break],
+     quadruplePattern [Examples.ci_cut, Examples.mid_cut,
+       Examples.con_cut, Examples.bppa_cut],
+     quadruplePattern [Examples.ci_hit, Examples.mid_hit,
+       Examples.con_hit, Examples.bppa_hit],
+     quadruplePattern [Examples.ci_touch, Examples.mid_touch,
+       Examples.con_touch, Examples.bppa_touch]].Pairwise (· ≠ ·) := by decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Verbal Passive, Prepositional Passive, Swarm Agreement
+-- § 4. Fragment connection
 -- ════════════════════════════════════════════════════
 
--- Verbal Passive (§5.1)
+/-! Each Fragment verb entry's `levinClass` matches the class recorded on
+    its alternation rows. -/
 
-theorem vp_break_agrees :
-    vp_break.result = .participates ∧
-    LevinClass.break_.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+theorem break_class_matches : break_.levinClass = classOf Examples.ci_break := by decide
+theorem cut_class_matches : cut.levinClass = classOf Examples.ci_cut := by decide
+theorem hit_class_matches : hit.levinClass = classOf Examples.ci_hit := by decide
+theorem touch_class_matches : touch.levinClass = classOf Examples.ci_touch := by decide
+theorem push_class_matches : push.levinClass = classOf Examples.con_push := by decide
+theorem spray_class_matches : spray.levinClass = classOf Examples.loc_spray := by decide
+theorem load_class_matches : load.levinClass = classOf Examples.loc_load := by decide
+theorem give_class_matches : give.levinClass = classOf Examples.dat_give := by decide
+theorem send_class_matches : send.levinClass = classOf Examples.dat_send := by decide
 
-theorem vp_give_agrees :
-    vp_give.result = .participates ∧
-    LevinClass.give.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+-- ════════════════════════════════════════════════════
+-- § 5. Bridge to [dowty-1991] §9.3: three verb classes
+-- ════════════════════════════════════════════════════
 
-theorem vp_eat_agrees :
-    vp_eat.result = .participates ∧
-    LevinClass.eat.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+/-! [dowty-1991] §9.3 derives the alternation behavior of the spray/load,
+    *break*, and *hit* classes from the distribution of the change-of-state
+    entailment across non-subject arguments: symmetric CoS permits
+    alternation, asymmetric CoS fixes the CoS argument as direct object.
+    Levin's judgment rows confirm each prediction. -/
 
-theorem vp_see_agrees :
-    vp_see.result = .participates ∧
-    LevinClass.see.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+/-- Spray/load: CoS is symmetric across theme and location, predicting the
+    locative alternation — attested for both *spray* and *load*. -/
+theorem dowty_sprayLoad_symmetry_matches_data :
+    Dowty1991.cosSymmetric Dowty1991.sprayLoadTheme Dowty1991.sprayLoadLocation = true
+    ∧ observed Examples.loc_spray = some true
+    ∧ observed Examples.loc_load = some true := by decide
 
-theorem vp_measure_agrees :
-    vp_measure.result = .blocked ∧
-    LevinClass.measure.participatesIn .verbalPassive = false := ⟨rfl, rfl⟩
+/-- *Break*: CoS is asymmetric (direct object vs. instrument), fixing the
+    CoS argument as direct object — *break* lacks the locative alternation. -/
+theorem dowty_break_asymmetry_matches_prediction :
+    Dowty1991.cosSymmetric Dowty1991.breakDirectObject Dowty1991.breakInstrument = false
+    ∧ LevinClass.break_.participatesIn .locative = false := by decide
 
--- Prepositional Passive (§5.2)
-
-theorem pp_sleep_agrees :
-    pp_sleep.result = .participates ∧
-    LevinClass.assumePosition.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
-
-theorem pp_talk_agrees :
-    pp_talk.result = .participates ∧
-    LevinClass.mannerOfSpeaking.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
-
--- Swarm (§2.3.4)
-
-theorem sw_swarm_agrees :
-    sw_swarm.result = .participates ∧
-    LevinClass.exist.participatesIn .swarm = true := ⟨rfl, rfl⟩
-
-theorem sw_crawl_agrees :
-    sw_crawl.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .swarm = true := ⟨rfl, rfl⟩
-
--- Induced Action (§1.1.2.2) — additional
-
-theorem ia_walk_agrees :
-    ia_walk.result = .participates ∧
-    LevinClass.mannerOfMotion.participatesIn .inducedAction = true := ⟨rfl, rfl⟩
-
-theorem ia_appear_agrees :
-    ia_appear.result = .blocked ∧
-    LevinClass.appear.participatesIn .inducedAction = false := ⟨rfl, rfl⟩
+/-- *Hit*: both arguments symmetrically lack CoS — the conative is attested
+    while the CoS-sensitive causative/inchoative and middle are blocked. -/
+theorem dowty_hit_class_matches_data :
+    Dowty1991.cosSymmetric Dowty1991.hitArg1 Dowty1991.hitArg2 = true
+    ∧ observed Examples.con_hit = some true
+    ∧ observed Examples.ci_hit = some false
+    ∧ observed Examples.mid_hit = some false := by decide
 
 end Levin1993

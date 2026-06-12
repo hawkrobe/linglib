@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ArgumentStructure.Passive
+import Linglib.Data.Examples.Collins2005
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.Movement.InverseVoice
 # A Smuggling Approach to the Passive in English
 [collins-2005] [chomsky-2001] [legate-2003] [rizzi-1990]
 
-Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
+Connects Collins's §3 diagnostic rows (`Data/Examples/Collins2005.json`)
 to the smuggling theory in `Syntax.Minimalist.Movement.Smuggling`
 and the Voice/phase infrastructure in `Syntax.Minimalist.Voice`.
 
@@ -103,8 +103,9 @@ theorem case_dissociation_explains_phase :
 Collins argues against the head-movement analysis of the passive on the
 basis of (a) particle stranding and (b) pseudo-passives. Both diagnostics
 fall out from the assumption that the constituent moved is PartP, not
-just the verb. The data live in `Passive.particleData` and are derived
-here from the smuggling configuration. -/
+just the verb. The data are the `test = particle` rows of
+`Data/Examples/Collins2005.json`, derived here from the smuggling
+configuration. -/
 
 /-- [collins-2005] §3 (15–16): in passive with a particle verb,
     the only grammatical order is `V Prt EA` (`summed up by the coach`),
@@ -199,5 +200,47 @@ theorem passive_is_inverse_voice :
     Minimalist.passiveCanonical.licensed = true ∧
     Minimalist.passiveCanonical.voice = voicePassive :=
   ⟨rfl, rfl, rfl⟩
+
+/-! ## §8. Transfer equations over the §3 diagnostic rows
+
+Each diagnostic section of Collins §3 has a uniform predictor over the
+rows of `Data/Examples/Collins2005.json`, read off the smuggling
+configuration: the derived subject sits in Spec,IP and c-commands the
+by-phrase in Spec,vP; PartP moves as a constituent leaving no DP object;
+and both *have* and passive *be* select PartP. -/
+
+open Data.Examples
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- **C-command rows (10a–d)**: a binding/NPI dependency succeeds iff the
+    licensee sits in the by-phrase — the derived subject c-commands the
+    by-phrase and not conversely, exactly the asymmetry the smuggled-object
+    configuration predicts. -/
+theorem c_command_rows_acceptable_iff_licensee_in_by_phrase :
+    ∀ row ∈ Examples.all, featureOf row "test" = some "c_command" →
+      (row.judgment = .acceptable ↔
+        featureOf row "licensee_position" = some "by_phrase") := by
+  decide
+
+/-- **Particle rows (15–16)**: a passive particle clause is grammatical iff
+    no DP object remains — PartP moved as a constituent, taking the
+    particle and leaving no Case position for a second DP. -/
+theorem particle_rows_acceptable_iff_no_dp_object :
+    ∀ row ∈ Examples.all, featureOf row "test" = some "particle" →
+      (row.judgment = .acceptable ↔
+        featureOf row "has_dp_object" = some "false") := by
+  decide
+
+/-- **Auxiliary rows (23a–d)**: both *have* and passive *be* are grammatical
+    iff their complement is a past participle — the shared PartP selection
+    of conditions (24–25). -/
+theorem aux_rows_acceptable_iff_participial_complement :
+    ∀ row ∈ Examples.all, featureOf row "test" = some "aux_selection" →
+      (row.judgment = .acceptable ↔
+        featureOf row "complement_form" = some "past_participle") := by
+  decide
 
 end Collins2005
