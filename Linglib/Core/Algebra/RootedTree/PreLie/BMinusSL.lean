@@ -56,7 +56,7 @@ open PreLie.OudomGuinCirc
 
 /-! ### Per-tree basis assignment -/
 
-variable {α : Type}
+variable {α : Type*}
 
 /-- `LL` (not `L`) avoids clashing with the named argument `(LL := ...)` in
     `algHomL`. -/
@@ -729,7 +729,7 @@ private theorem bMinusLin_mul_eps [DecidableEq (Nonplanar α)] (a : α)
   -- For concreteness we prove the difference is zero via Finsupp double
   -- induction; each step uses only ℤ-linearity laws.
   -- Reduce to a LinearMap-on-(X⊗Y) equality, then apply `mk₂` ext.
-  let CK : Type := ConnesKreimer ℤ (Nonplanar α)
+  let CK : Type _ := ConnesKreimer ℤ (Nonplanar α)
   -- Build the two sides as ℤ-bilinear maps `CK →ₗ[ℤ] CK →ₗ[ℤ] CK`.
   -- LHS(X,Y) = bMinusLin a (X*Y); RHS(X,Y) = counit X • bMinusLin a Y +
   --                                          counit Y • bMinusLin a X.

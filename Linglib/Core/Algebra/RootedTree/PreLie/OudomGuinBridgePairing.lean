@@ -57,7 +57,7 @@ open PreLie.OudomGuinCirc
 
 namespace GrossmanLarson
 
-variable {α : Type} [DecidableEq (Nonplanar α)]
+variable {α : Type*} [DecidableEq (Nonplanar α)]
 
 /-! ### ε is multiplicative for the GL product
 

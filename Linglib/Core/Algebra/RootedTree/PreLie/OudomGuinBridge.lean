@@ -36,30 +36,28 @@ construction to the concrete Grossman-Larson product on
 ## Main theorems
 
 * `gl_product_eq_oudomGuinStar` (Q5c) : `★` transported via `ckIsoSymmetricAlgebra`
-  equals the Grossman-Larson product. Currently `sorry`-fenced.
+  equals the Grossman-Larson product. **Proved sorry-free** 2026-06-12.
 
 * `GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw` (Q6) : closure of
   `mul_assoc_basis` for `R = ℤ` using `oudomGuinStar_assoc` + Q5c.
-  Currently `sorry`-fenced (depends on Q3's mul case + Q5c).
+  **Proved sorry-free** 2026-06-12 (Q3 + Q5c both closed).
 
 ## Status
 
-This file is the **Option 2 exploration** for the
-`[[project-prelie-pbw-pivot]]`: verify the bridge structure works
-BEFORE committing to the ~600-950 LOC Sweedler bash for Q3's mul case.
-
-If Q5c proves tractable (~50-150 LOC), Q3's bash is worth the investment.
-If Q5c has its own obstacles, the project pivots elsewhere.
+Q3 + Q5c + Q6 chain fully proved. Grossman-Larson associativity over ℤ
+is now established via the OG `★` bridge.
+`#print axioms RootedTree.GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw`
+yields `[propext, Classical.choice, Quot.sound]` (no sorryAx).
 -/
 
 open PreLie.OudomGuinCirc
 
 namespace RootedTree
 
--- OG `oudomGuinStar` is declared with `variable {L : Type}` (universe 0).
--- Restrict `α : Type` so `Nonplanar α : Type`, `InsertionAlgebra α : Type`.
--- Universe-polymorphizing OG is deferred to mathlib-quality polish.
-variable {α : Type} [DecidableEq (Nonplanar α)]
+-- `α : Type*` since OG `oudomGuinStar` is now universe-polymorphic
+-- (Phase 1 of the GL-associativity arc; `circT` is the only Type-0-pinned
+-- exception, not used here).
+variable {α : Type*} [DecidableEq (Nonplanar α)]
 
 /-! ## §1: The carrier iso
 
@@ -918,33 +916,651 @@ private theorem ckIso_circ_intertwine_insertion
           ConnesKreimer.of' ({t} : Multiset _) from
         ckIsoSymmetricAlgebra_ι_single t]
 
-/-- **Substrate 2 for Q5c** — DEPRECATED (2026-05-17). This identity was
-    invented for the per-tprod induction strategy of `gl_product_eq_oudomGuinStar`.
-    Audit revealed:
+/-! ### Substrate 2: GL guest-splitting identity (OG Prop 2.7(ii) GL side)
 
-    1. The identity is the GL/CK transport of OG `oudomGuinStar_mul_ι_split`.
-    2. Reducing the basis case proves to require the singleton-{v} case of
-       `Nonplanar.insertionMultiset_assoc` (the A3.3 keystone sorry).
-    3. **OG paper §3.2 (Prop 3.2) does NOT use this identity.** OG proves
-       Q5c-equivalent via B+/B- duality with Δ^ρ: show `B-(A ∗ B) =
-       ε(A) B-(B) + B-(A) ∗ B` and conclude via pairing nondegeneracy.
+The four-term identity below is the GL-side analog of Oudom-Guin's
+splitting lemma (Prop 2.7(ii)). Originally flagged as "abandoned"
+during the 2026-05-17 audit because its singleton-`{v}` reduction
+needed `Nonplanar.insertionMultiset_assoc` (the A3.3 keystone), at
+that point unproved. With the singleton case
+`Nonplanar.insertionMultiset_singleton_assoc` since closed
+sorry-free, this is now the live route for the per-tprod `m+1`
+induction of `gl_product_eq_oudomGuinStar`. -/
 
-    The OG-faithful route is now the active plan; see
-    `[[feedback-substrate2-not-og]]` and `[[project-q5c-architecture]]`.
-    Substrate infrastructure required for the new route:
-    - `GrossmanLarsonPairing.lean` (sorry-free, incl. nondegeneracy).
-    - `Nonplanar.autCard` (Aut.lean, sorry-free).
-    - `Δ^ρ` cocycle (PruningNonplanar.lean, sorry-free) — REUSED.
-    - `B+_a` operator (PruningNonplanar.lean, sorry-free) — REUSED.
+/-- **Helper for substrate 2**: iterated single-guest insertion
+    `ins (ins F (of' C)) (op of'{v})` splits into a "single-shot"
+    `ins F (of' (C + {v}))` term plus a sum over `Y ∈ NIM C {v}`
+    of `ins F (of' Y)`. The basis case `F = of' A` follows directly
+    from `insertion_of'_of'` (twice) plus
+    `Nonplanar.insertionMultiset_singleton_assoc`. -/
+private theorem GL_iterated_insertion_singleton_v
+    (F : GrossmanLarson ℤ α) (C : Forest (Nonplanar α)) (v : Nonplanar α) :
+    GrossmanLarson.insertion
+        (GrossmanLarson.insertion F (ConnesKreimer.of' C))
+        (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+      GrossmanLarson.insertion F (ConnesKreimer.of' (C + {v})) +
+      ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+        (fun Y => GrossmanLarson.insertion F (ConnesKreimer.of' Y))).sum := by
+  -- Define helper LinearMaps for cleaner manipulation.
+  set ins : GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α :=
+    GrossmanLarson.insertion with hins
+  -- Linearize F. Both sides are F-linear by bilinearity of `insertion`.
+  refine Finsupp.induction_linear F ?_ ?_ ?_
+  · -- F = 0: both sides reduce to 0.
+    show ins (ins 0 (ConnesKreimer.of' C))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        ins 0 (ConnesKreimer.of' (C + {v})) +
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins 0 (ConnesKreimer.of' Y))).sum
+    have h_ins_zero : ∀ Y : GrossmanLarson ℤ α, ins 0 Y = 0 := fun Y =>
+      (ins.flip Y).map_zero
+    rw [h_ins_zero, h_ins_zero, h_ins_zero, zero_add]
+    symm
+    apply Multiset.sum_eq_zero
+    intro x hx
+    rw [Multiset.mem_map] at hx
+    obtain ⟨Y, _, hY_eq⟩ := hx
+    rw [← hY_eq]
+    exact h_ins_zero _
+  · -- F = F₁ + F₂: by linearity in F on both sides.
+    intro F₁ F₂ ih₁ ih₂
+    let F₁' : GrossmanLarson ℤ α := F₁
+    let F₂' : GrossmanLarson ℤ α := F₂
+    show ins (ins (F₁' + F₂') (ConnesKreimer.of' C))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        ins (F₁' + F₂') (ConnesKreimer.of' (C + {v})) +
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins (F₁' + F₂') (ConnesKreimer.of' Y))).sum
+    -- Use a uniform "insertion respects + in first arg" helper:
+    have hins_add_left : ∀ (X Y : GrossmanLarson ℤ α) (Z : GrossmanLarson ℤ α),
+        ins (X + Y) Z = ins X Z + ins Y Z := fun X Y Z => by
+      rw [show ins (X + Y) = ins X + ins Y from ins.map_add X Y]
+      rfl
+    have hinner : ins (F₁' + F₂') (ConnesKreimer.of' C : GrossmanLarson ℤ α) =
+        ins F₁' (ConnesKreimer.of' C : GrossmanLarson ℤ α) +
+        ins F₂' (ConnesKreimer.of' C : GrossmanLarson ℤ α) :=
+      hins_add_left F₁' F₂' _
+    rw [show ins (F₁' + F₂') (ConnesKreimer.of' C) =
+            ins F₁' (ConnesKreimer.of' C : GrossmanLarson ℤ α) +
+            ins F₂' (ConnesKreimer.of' C : GrossmanLarson ℤ α) from hinner]
+    rw [hins_add_left]
+    rw [ih₁, ih₂]
+    rw [show ins (F₁' + F₂') (ConnesKreimer.of' (C + {v})) =
+            ins F₁' (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) +
+            ins F₂' (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) from
+        hins_add_left F₁' F₂' _]
+    have h_split_sum :
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins (F₁' + F₂') (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum =
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins F₁' (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum +
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins F₂' (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum := by
+      rw [← Multiset.sum_map_add]
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro Y _
+      exact hins_add_left F₁' F₂' _
+    rw [h_split_sum]
+    abel
+  · -- F = single A r — basis case.
+    intro A r
+    let F_single : GrossmanLarson ℤ α := Finsupp.single A r
+    show ins (ins F_single (ConnesKreimer.of' C))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        ins F_single (ConnesKreimer.of' (C + {v})) +
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins F_single (ConnesKreimer.of' Y))).sum
+    -- ins is bilinear; reduce F_single = r • of' A.
+    have hF : F_single = r • (GrossmanLarson.of' A : GrossmanLarson ℤ α) := by
+      show (Finsupp.single A r : GrossmanLarson ℤ α) =
+            r • (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+      show (Finsupp.single A r : ConnesKreimer ℤ (Nonplanar α)) =
+            r • (ConnesKreimer.of' A : ConnesKreimer ℤ _)
+      rw [ConnesKreimer.of'_apply]
+      exact (Finsupp.smul_single_one A r).symm
+    rw [hF]
+    -- Helper: insertion respects smul in first arg.
+    have hins_smul_left : ∀ (X Z : GrossmanLarson ℤ α),
+        ins (r • X) Z = r • ins X Z := fun X Z => by
+      rw [show ins (r • X) = r • ins X from ins.map_smul r X]
+      rfl
+    rw [hins_smul_left]
+    -- Now LHS has `ins (r • ins (of'A) (of'C)) (op of'{v}) = r • ins (ins (of'A) (of'C)) (op of'{v})`
+    rw [show ins (r • ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+                  (ConnesKreimer.of' C : GrossmanLarson ℤ α))
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+            r • ins (ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+                  (ConnesKreimer.of' C : GrossmanLarson ℤ α))
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) from
+        hins_smul_left _ _]
+    rw [hins_smul_left]
+    -- Sum side: pull r out.
+    have h_smul_sum :
+        ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins (r • (GrossmanLarson.of' A : GrossmanLarson ℤ α))
+            (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum =
+        r • ((Nonplanar.insertionMultiset C ({v} : Multiset _)).map
+          (fun Y => ins (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+            (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum := by
+      rw [Multiset.smul_sum, Multiset.map_map]
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro Y _
+      exact hins_smul_left _ _
+    rw [h_smul_sum, ← smul_add]
+    -- Reduce to basis identity at F = of' A.
+    congr 1
+    -- Basis identity: ins(ins(of'A)(of'C))(op of'{v}) = ins(of'A)(of'(C+{v})) +
+    --                                                  Σ_{Y ∈ NIM C {v}} ins(of'A)(of'Y)
+    rw [hins]
+    show GrossmanLarson.insertion
+        (GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+          (GrossmanLarson.of' C : GrossmanLarson ℤ α))
+        (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) = _
+    rw [GrossmanLarson.insertion_of'_of']
+    -- Inner: insertionBasis A C = (NIM A C).map of'.sum.
+    show GrossmanLarson.insertion
+        (((Nonplanar.insertionMultiset A C).map
+          fun F' => GrossmanLarson.of' (R := ℤ) F').sum)
+        (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) = _
+    -- Push insertion through the sum via insertion_sum_left.
+    rw [GrossmanLarson.insertion_sum_left, Multiset.map_map]
+    -- Per X ∈ NIM A C, insertion (of' X) (of' {v}) = insertionBasis X {v}.
+    have h_per_X : ∀ X : Forest (Nonplanar α),
+        GrossmanLarson.insertion (GrossmanLarson.of' X)
+            (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) =
+          ((Nonplanar.insertionMultiset X ({v} : Multiset _)).map
+            fun F' => GrossmanLarson.of' (R := ℤ) F').sum := by
+      intro X
+      rw [GrossmanLarson.insertion_of'_of']
+      rfl
+    -- Rewrite the inner expression. After Multiset.map_map, the goal's map function
+    -- has shape (fun X => insertion (of' X) (of'{v}) : GrossmanLarson ℤ α).
+    rw [show ((fun (Y : GrossmanLarson ℤ α) =>
+              GrossmanLarson.insertion Y
+                (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α)) ∘
+              fun (F' : Forest (Nonplanar α)) => GrossmanLarson.of' (R := ℤ) F') =
+          (fun X : Forest (Nonplanar α) =>
+            ((Nonplanar.insertionMultiset X ({v} : Multiset _)).map
+              fun F' => GrossmanLarson.of' (R := ℤ) F').sum) from by
+        funext X
+        exact h_per_X X]
+    -- Push the outer sum: ((bind).map of').sum form.
+    rw [show ((Nonplanar.insertionMultiset A C).map
+              (fun X => ((Nonplanar.insertionMultiset X ({v} : Multiset _)).map
+                fun F' => GrossmanLarson.of' (R := ℤ) F').sum)).sum =
+            (((Nonplanar.insertionMultiset A C).bind
+                fun X => Nonplanar.insertionMultiset X ({v} : Multiset _)).map
+              fun F' => GrossmanLarson.of' (R := ℤ) F').sum from by
+          rw [Multiset.map_bind, Multiset.sum_bind]]
+    -- Apply insertionMultiset_singleton_assoc.
+    rw [Nonplanar.insertionMultiset_singleton_assoc]
+    rw [Multiset.map_add, Multiset.sum_add]
+    congr 1
+    · -- Left: NIM A (C + {v}) → ins (of' A) (of' (C+{v})) = insertionBasis A (C+{v}).
+      rw [show GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+                  (ConnesKreimer.of' (C + {v}) : GrossmanLarson ℤ α) =
+              GrossmanLarson.insertion (GrossmanLarson.of' A : GrossmanLarson ℤ α)
+                (GrossmanLarson.of' (C + {v}) : GrossmanLarson ℤ α) from rfl,
+          GrossmanLarson.insertion_of'_of']
+      rfl
+    · -- Right: (NIM C {v}).bind (NIM A ·) → Σ_{Y ∈ NIM C {v}} ins (of'A) (of'Y).
+      rw [Multiset.map_bind, Multiset.sum_bind]
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro Y _
+      rw [show (ConnesKreimer.of' Y : GrossmanLarson ℤ α) =
+              (GrossmanLarson.of' Y : GrossmanLarson ℤ α) from rfl,
+          GrossmanLarson.insertion_of'_of']
+      rfl
 
-    Substrate 2 is preserved as a sorry below to mark the abandoned path
-    and to let the per-tprod m+1 case (which references it) typecheck.
-    Closure via the deprecated combinatorial route is NOT recommended.
+/-- Generic "swap two outer sums" lemma. Used in `GL_T2_reindexing_key`. -/
+private theorem swap_sum_map_sum {β γ δ : Type*} [AddCommMonoid δ]
+    (s : Multiset β) (t : Multiset γ) (f : γ → β → δ) :
+    (s.map (fun b => (t.map (fun c => f c b)).sum)).sum =
+    (t.map (fun c => (s.map (fun b => f c b)).sum)).sum := by
+  induction s using Multiset.induction with
+  | empty =>
+    rw [Multiset.map_zero, Multiset.sum_zero]
+    -- RHS: (t.map (fun c => (0.map _).sum)).sum = (t.map (fun _ => 0)).sum = 0.
+    symm
+    apply Multiset.sum_eq_zero
+    intro x hx
+    rw [Multiset.mem_map] at hx
+    obtain ⟨c, _, hc_eq⟩ := hx
+    rw [← hc_eq, Multiset.map_zero, Multiset.sum_zero]
+  | cons a s ih =>
+    rw [Multiset.map_cons, Multiset.sum_cons, ih, ← Multiset.sum_map_add]
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro c _
+    rw [Multiset.map_cons, Multiset.sum_cons]
 
-    Original statement (additive, avoiding GL subtraction):
-    `F * op (G * of'({v})) + F * insertion (op G) (op (of'({v})))
-       = insertion (F * op G) (op (of'({v}))) + op (unop (F * op G) * of'({v}))`
--/
+/-- Sum of a bind of singletons equals the sum of the map. -/
+private theorem sum_bind_singleton {γ δ : Type*} [AddCommMonoid δ]
+    (s : Multiset γ) (f : γ → δ) :
+    (s.bind fun x => ({f x} : Multiset δ)).sum = (s.map f).sum := by
+  induction s using Multiset.induction with
+  | empty => rfl
+  | cons a s ih =>
+    rw [Multiset.cons_bind, Multiset.singleton_add, Multiset.sum_cons,
+        Multiset.map_cons, Multiset.sum_cons, ← ih]
+
+/-- Helper: `mk`-image of the t-bucket of a List (Planar α). -/
+private theorem zip_filter_t_map_mk (L : List (Planar α)) (m : List Bool) :
+    ((L.map Nonplanar.mk).zip m).filterMap
+        (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) =
+      ((L.zip m).filterMap
+        (fun p : Planar α × Bool => if p.snd then some p.fst else none)).map
+          Nonplanar.mk := by
+  induction L generalizing m with
+  | nil => rfl
+  | cons x L ih =>
+    cases m with
+    | nil => rfl
+    | cons b m =>
+      cases b with
+      | true =>
+        show Nonplanar.mk x :: (((L.map Nonplanar.mk).zip m).filterMap _) =
+          (x :: ((L.zip m).filterMap _)).map Nonplanar.mk
+        rw [ih m]; rfl
+      | false => exact ih m
+
+/-- Helper: `mk`-image of the f-bucket of a List (Planar α). -/
+private theorem zip_filter_f_map_mk (L : List (Planar α)) (m : List Bool) :
+    ((L.map Nonplanar.mk).zip m).filterMap
+        (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst) =
+      ((L.zip m).filterMap
+        (fun p : Planar α × Bool => if p.snd then none else some p.fst)).map
+          Nonplanar.mk := by
+  induction L generalizing m with
+  | nil => rfl
+  | cons x L ih =>
+    cases m with
+    | nil => rfl
+    | cons b m =>
+      cases b with
+      | true => exact ih m
+      | false =>
+        show Nonplanar.mk x :: (((L.map Nonplanar.mk).zip m).filterMap _) =
+          (x :: ((L.zip m).filterMap _)).map Nonplanar.mk
+        rw [ih m]; rfl
+
+/-- **T2 reindexing key step**: the multiset-level reindexing that
+    expresses `F * insertion (op (of' B)) (op of'{v})` (expanded via
+    `mul_of'_sum_form` over `NIM B {v}`) as a sum over `B.powerset`.
+    This is the planar bucket-split lemma after descent through
+    `listChoices_bridge_powerset_paired`.
+
+    Stated abstractly to be reusable: for any consumer `g`, the LHS sum
+    (over `X' ∈ NIM B {v}`, then `D ⊆ X'`) equals the RHS sum (over
+    `C₁ ⊆ B`, splitting whether `v` lands in the powerset side or its
+    complement). -/
+private theorem GL_T2_reindexing_key
+    (B : Forest (Nonplanar α)) (v : Nonplanar α)
+    (g : Multiset (Nonplanar α) → Multiset (Nonplanar α) → GrossmanLarson ℤ α) :
+    letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    ((Nonplanar.insertionMultiset B ({v} : Multiset _)).map (fun X' =>
+        (X'.powerset.map fun D => g D (X' - D)).sum)).sum =
+      (B.powerset.map fun C₁ =>
+        ((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+            (fun Y => g Y (B - C₁))).sum +
+        ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+            (fun Y' => g C₁ Y')).sum).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Canonical planar reps.
+  set B_pl : List (Planar α) := B.toList.map Quotient.out with hB_pl_def
+  set ov : Planar α := Quotient.out v with hov_def
+  -- Mask filterMaps (Planar α).
+  set tp : Planar α × Bool → Option (Planar α) :=
+    fun p => if p.snd then some p.fst else none with htp_def
+  set fp : Planar α × Bool → Option (Planar α) :=
+    fun p => if p.snd then none else some p.fst with hfp_def
+  -- msform : List (Planar α) → Multiset (Nonplanar α).
+  set msform : List (Planar α) → Multiset (Nonplanar α) :=
+    fun L => (↑(L.map Nonplanar.mk) : Multiset (Nonplanar α)) with hmsform_def
+  -- §0: every B' ∈ iF B_pl [ov] has length B_pl.length.
+  have hB'_len : ∀ B' ∈ Planar.Pathed.insertionForest B_pl [ov],
+      B'.length = B_pl.length := by
+    intro B' hB'
+    rw [Planar.Pathed.insertionForest_singleton_guest_set] at hB'
+    rw [Multiset.mem_bind] at hB'
+    obtain ⟨k, _, hk⟩ := hB'
+    rw [Multiset.mem_map] at hk
+    obtain ⟨_, _, hk'⟩ := hk
+    rw [← hk', List.length_set]
+  -- §0b: B_pl.map mk recovers B.toList; ↑B_pl.toList recovers B.
+  have h_B_pl_map_mk : B_pl.map Nonplanar.mk = B.toList := by
+    rw [hB_pl_def, List.map_map]
+    exact (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+  have hB_eq_msform_Bpl : B = msform B_pl := by
+    show B = (↑(B_pl.map Nonplanar.mk) : Multiset (Nonplanar α))
+    rw [h_B_pl_map_mk]; exact B.coe_toList.symm
+  -- §1: rewrite NIM B {v} as the canonical planar bind.
+  have hNIM_B : Nonplanar.insertionMultiset B ({v} : Multiset _) =
+      (Planar.Pathed.insertionForest B_pl [ov]).map msform := by
+    apply Nonplanar.insertionMultiset_eq_of_reps
+    · show (Multiset.ofList ((B.toList.map Quotient.out).map Nonplanar.mk) :
+            Multiset (Nonplanar α)) = B
+      rw [← hB_pl_def, h_B_pl_map_mk]
+      exact B.coe_toList
+    · show (Multiset.ofList ([Nonplanar.mk (Quotient.out v)]) :
+            Multiset (Nonplanar α)) = ({v} : Multiset _)
+      rw [show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]; rfl
+  -- §2: per-B' powerset bridge: rewrite the inner powerset.map sum via masks.
+  have h_powerset_per_B' : ∀ B' ∈ Planar.Pathed.insertionForest B_pl [ov],
+      ((msform B').powerset.map (fun D => g D (msform B' - D))).sum =
+      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+        (fun assn => g (msform ((B'.zip assn).filterMap tp))
+                       (msform ((B'.zip assn).filterMap fp)))).sum := by
+    intro B' hB'
+    have hlen := hB'_len B' hB'
+    have h_len_mk : (B'.map Nonplanar.mk).length = B_pl.length := by
+      rw [List.length_map]; exact hlen
+    have h_bridge := Planar.Pathed.listChoices_bridge_powerset_paired
+      (l := B'.map Nonplanar.mk)
+    rw [h_len_mk] at h_bridge
+    have h_post := congr_arg
+      (Multiset.map (fun pr : Multiset (Nonplanar α) × Multiset (Nonplanar α) =>
+        g pr.1 pr.2)) h_bridge
+    rw [Multiset.map_map, Multiset.map_map] at h_post
+    -- h_post:
+    --   (lc).map (assn ↦ g (filter_t over mk-list) (filter_f over mk-list)) =
+    --   (↑(B'.map mk)).powerset.map (s ↦ g s (↑(B'.map mk) - s))
+    -- Take sums of both sides; the RHS unfolds to our (msform B').powerset.map sum.
+    have h_sum_eq := congr_arg Multiset.sum h_post
+    -- Goal LHS = h_sum_eq RHS (modulo defeq on msform B' = ↑(B'.map mk)).
+    -- So flip h_sum_eq.
+    show (((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α))).powerset.map
+            (fun D => g D ((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α)) - D))).sum =
+          ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+            (fun assn => g (msform ((B'.zip assn).filterMap tp))
+                           (msform ((B'.zip assn).filterMap fp)))).sum
+    -- Reshape h_sum_eq RHS to use D : Multiset (Nonplanar α).
+    have h_sum_rhs :
+        (((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α))).powerset.map
+            (fun D => g D ((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α)) - D))).sum =
+        (((↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α))).powerset.map
+          ((fun pr : Multiset (Nonplanar α) × Multiset (Nonplanar α) => g pr.1 pr.2) ∘
+            fun s => (s, (↑(B'.map Nonplanar.mk) : Multiset (Nonplanar α)) - s))).sum := by
+      rfl
+    rw [h_sum_rhs, ← h_sum_eq]
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro assn _
+    show g ((↑(((B'.map Nonplanar.mk).zip assn).filterMap
+              (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none)) :
+              Multiset (Nonplanar α)))
+         ((↑(((B'.map Nonplanar.mk).zip assn).filterMap
+              (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst)) :
+              Multiset (Nonplanar α))) =
+       g (msform ((B'.zip assn).filterMap tp)) (msform ((B'.zip assn).filterMap fp))
+    congr 1
+    · show (↑(((B'.map Nonplanar.mk).zip assn).filterMap
+            (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none)) :
+            Multiset (Nonplanar α)) = msform ((B'.zip assn).filterMap tp)
+      rw [zip_filter_t_map_mk B' assn]
+    · show (↑(((B'.map Nonplanar.mk).zip assn).filterMap
+            (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst)) :
+            Multiset (Nonplanar α)) = msform ((B'.zip assn).filterMap fp)
+      rw [zip_filter_f_map_mk B' assn]
+  -- §3: LHS = (iF B_pl [ov]).map (B' ↦ inner sum) |>.sum.
+  rw [hNIM_B, Multiset.map_map]
+  -- Now: ((iF B_pl [ov]).map ((fun X' => ...) ∘ msform)).sum
+  -- Equivalent (by composition unfolding): ((iF B_pl [ov]).map (fun B' => (msform B').powerset.map ...).sum)).sum
+  -- Use Multiset.map_congr with the composition-form lhs.
+  rw [show ((Planar.Pathed.insertionForest B_pl [ov]).map
+            ((fun X' => (X'.powerset.map fun D => g D (X' - D)).sum) ∘ msform)).sum =
+        ((Planar.Pathed.insertionForest B_pl [ov]).map
+          (fun B' => ((msform B').powerset.map (fun D => g D (msform B' - D))).sum)).sum
+      from rfl]
+  -- Per-B' rewrite via h_powerset_per_B'.
+  rw [show ((Planar.Pathed.insertionForest B_pl [ov]).map
+              (fun B' => ((msform B').powerset.map (fun D => g D (msform B' - D))).sum)).sum =
+            ((Planar.Pathed.insertionForest B_pl [ov]).map
+              (fun B' =>
+                ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+                  (fun assn => g (msform ((B'.zip assn).filterMap tp))
+                                 (msform ((B'.zip assn).filterMap fp)))).sum)).sum
+        from by
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro B' hB'
+      exact h_powerset_per_B' B' hB']
+  -- §4: swap outer/inner sums.
+  rw [swap_sum_map_sum (Planar.Pathed.insertionForest B_pl [ov])
+    (Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length))
+    (fun assn B' => g (msform ((B'.zip assn).filterMap tp))
+                      (msform ((B'.zip assn).filterMap fp)))]
+  -- §5: per-mask, apply the bucket-split.
+  have h_per_mask : ∀ assn ∈
+      (Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length) :
+        Multiset (List Bool)),
+      ((Planar.Pathed.insertionForest B_pl [ov]).map
+          (fun B' => g (msform ((B'.zip assn).filterMap tp))
+                       (msform ((B'.zip assn).filterMap fp)))).sum =
+        ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+            (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum +
+        ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+            (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum := by
+    intro assn h_mem
+    have h_mem' : assn ∈ Planar.Pathed.listChoices [true, false] B_pl.length := by
+      rwa [Multiset.mem_coe] at h_mem
+    have hlen : assn.length = B_pl.length :=
+      Planar.Pathed.mem_listChoices_length [true, false] B_pl.length assn h_mem'
+    have hbucket := Planar.Pathed.insertionForest_singleton_bucket_split
+      B_pl assn ov
+      (fun L R => ({g (msform L) (msform R)} : Multiset (GrossmanLarson ℤ α))) hlen
+    have h_apply := congr_arg Multiset.sum hbucket
+    rw [Multiset.sum_add] at h_apply
+    rw [sum_bind_singleton, sum_bind_singleton, sum_bind_singleton] at h_apply
+    exact h_apply
+  rw [Multiset.map_congr rfl h_per_mask]
+  -- §6 SKIPPED: keep single mask sum (sum of A + B). We bridge both sides at once.
+  -- §7: now bridge each mask-sum to a powerset sum via `listChoices_bridge_powerset_paired`.
+  -- For both summands, we go from a function of `assn → ...` to a function of `(s_t, s_f) → ...`
+  -- via the bridge.
+  -- §7a: define the per-pair consumer FUN1 for the first mask sum.
+  set FUN1 : Multiset (Nonplanar α) × Multiset (Nonplanar α) → GrossmanLarson ℤ α :=
+    fun pr =>
+      letI : DecidableEq (Nonplanar α) := Classical.decEq _
+      ((Nonplanar.insertionMultiset pr.1 ({v} : Multiset _)).map
+        (fun Y => g Y pr.2)).sum with hFUN1_def
+  set FUN2 : Multiset (Nonplanar α) × Multiset (Nonplanar α) → GrossmanLarson ℤ α :=
+    fun pr =>
+      letI : DecidableEq (Nonplanar α) := Classical.decEq _
+      ((Nonplanar.insertionMultiset pr.2 ({v} : Multiset _)).map
+        (fun Y' => g pr.1 Y')).sum with hFUN2_def
+  -- §7b: rewrite each per-mask term as FUN1(pair) and FUN2(pair).
+  -- For mask assn:
+  --   First per-mask term = FUN1 (msform B_pl_t, msform B_pl_f) by rep lemma + msform expansion.
+  --   Second per-mask term = FUN2 (msform B_pl_t, msform B_pl_f) by rep lemma + msform expansion.
+  -- Then sum over masks = sum over (mskform * mskform) pairs = (via bridge) sum over (s, B-s) pairs.
+  -- We use `insertionMultiset_eq_of_reps` to recover NIM (msform L) {v} from (iF L [ov]).map msform.
+  have h_assn_to_FUN1 : ∀ assn,
+      ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+          (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum =
+        FUN1 (msform ((B_pl.zip assn).filterMap tp),
+              msform ((B_pl.zip assn).filterMap fp)) := by
+    intro assn
+    show ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+            (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum =
+        ((Nonplanar.insertionMultiset
+          (msform ((B_pl.zip assn).filterMap tp)) ({v} : Multiset _)).map
+            (fun Y => g Y (msform ((B_pl.zip assn).filterMap fp)))).sum
+    -- Use `insertionMultiset_eq_of_reps` to compute NIM(msform L_t) {v}.
+    rw [show Nonplanar.insertionMultiset
+          (msform ((B_pl.zip assn).filterMap tp)) ({v} : Multiset _) =
+          (Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map msform from by
+        apply Nonplanar.insertionMultiset_eq_of_reps
+        · rfl
+        · show (Multiset.ofList ([Nonplanar.mk ov]) : Multiset (Nonplanar α)) = ({v} : Multiset _)
+          rw [hov_def, show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]; rfl]
+    rw [Multiset.map_map]
+    rfl
+  have h_assn_to_FUN2 : ∀ assn,
+      ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+          (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum =
+        FUN2 (msform ((B_pl.zip assn).filterMap tp),
+              msform ((B_pl.zip assn).filterMap fp)) := by
+    intro assn
+    show ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+            (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum =
+        ((Nonplanar.insertionMultiset
+          (msform ((B_pl.zip assn).filterMap fp)) ({v} : Multiset _)).map
+            (fun Y' => g (msform ((B_pl.zip assn).filterMap tp)) Y')).sum
+    rw [show Nonplanar.insertionMultiset
+          (msform ((B_pl.zip assn).filterMap fp)) ({v} : Multiset _) =
+          (Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map msform from by
+        apply Nonplanar.insertionMultiset_eq_of_reps
+        · rfl
+        · show (Multiset.ofList ([Nonplanar.mk ov]) : Multiset (Nonplanar α)) = ({v} : Multiset _)
+          rw [hov_def, show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]; rfl]
+    rw [Multiset.map_map]
+    rfl
+  -- §7c: rewrite the mask-sums in this FUN1/FUN2 form.
+  rw [show
+      (((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+        (fun assn =>
+          ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap tp) [ov]).map
+              (fun W => g (msform W) (msform ((B_pl.zip assn).filterMap fp)))).sum +
+          ((Planar.Pathed.insertionForest ((B_pl.zip assn).filterMap fp) [ov]).map
+              (fun W' => g (msform ((B_pl.zip assn).filterMap tp)) (msform W'))).sum))).sum =
+      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+        (fun assn =>
+          FUN1 (msform ((B_pl.zip assn).filterMap tp),
+                msform ((B_pl.zip assn).filterMap fp)) +
+          FUN2 (msform ((B_pl.zip assn).filterMap tp),
+                msform ((B_pl.zip assn).filterMap fp)))).sum
+        from by
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro assn _
+      rw [h_assn_to_FUN1 assn, h_assn_to_FUN2 assn]]
+  -- §8: bridge the mask sum to a powerset sum.
+  -- The mask `assn` maps to the pair `(msform ((B_pl.zip assn).filterMap tp), msform ((B_pl.zip assn).filterMap fp))`.
+  -- The bridge `listChoices_bridge_powerset_paired` applied to `l := B.toList` gives:
+  --   (lc).map (assn ↦ ((filter_t over B.toList), (filter_f over B.toList))) =
+  --   (↑B.toList).powerset.map (s ↦ (s, ↑B.toList - s)) = B.powerset.map (s ↦ (s, B - s))
+  -- since ↑B.toList = B.
+  -- BUT our per-mask function uses `(B_pl.zip assn).filterMap tp` (planar) — not `(B.toList.zip assn).filterMap tpN`.
+  -- We need to bridge between these.
+  -- `msform ((B_pl.zip assn).filterMap tp) = ↑(((B_pl.zip assn).filterMap tp).map mk)`
+  --                                      = ↑((B_pl.map mk).zip assn).filter_tN  [by zip_filter_t_map_mk reverse]
+  --                                      = ↑((B.toList.zip assn).filter_tN)      [by h_B_pl_map_mk]
+  -- So `msform ((B_pl.zip assn).filterMap tp) = ((B.toList.zip assn).filterMap (fun p => if p.snd then some p.fst else none) : Multiset (Nonplanar α))`.
+  -- This is exactly the first component of the bridge pair when applied to `l := B.toList`.
+  have h_to_BtoList_t : ∀ assn,
+      msform ((B_pl.zip assn).filterMap tp) =
+        (((B.toList.zip assn).filterMap
+          (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) :
+          List (Nonplanar α)) : Multiset (Nonplanar α)) := by
+    intro assn
+    show (↑(((B_pl.zip assn).filterMap tp).map Nonplanar.mk) : Multiset (Nonplanar α)) = _
+    rw [← zip_filter_t_map_mk B_pl assn, h_B_pl_map_mk]
+  have h_to_BtoList_f : ∀ assn,
+      msform ((B_pl.zip assn).filterMap fp) =
+        (((B.toList.zip assn).filterMap
+          (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst) :
+          List (Nonplanar α)) : Multiset (Nonplanar α)) := by
+    intro assn
+    show (↑(((B_pl.zip assn).filterMap fp).map Nonplanar.mk) : Multiset (Nonplanar α)) = _
+    rw [← zip_filter_f_map_mk B_pl assn, h_B_pl_map_mk]
+  -- Rewrite the goal-LHS using h_to_BtoList_t, h_to_BtoList_f, and h_B_pl_map_mk to substitute B_pl.length = B.toList.length.
+  have hB_pl_len : B_pl.length = B.toList.length := by
+    show (B.toList.map Quotient.out).length = B.toList.length
+    rw [List.length_map]
+    rfl
+  rw [show
+      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B_pl.length)).map
+        (fun assn =>
+          FUN1 (msform ((B_pl.zip assn).filterMap tp),
+                msform ((B_pl.zip assn).filterMap fp)) +
+          FUN2 (msform ((B_pl.zip assn).filterMap tp),
+                msform ((B_pl.zip assn).filterMap fp)))).sum =
+      ((Multiset.ofList (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+        (fun assn =>
+          FUN1 (((B.toList.zip assn).filterMap
+                  (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) :
+                  Multiset (Nonplanar α)),
+                ((B.toList.zip assn).filterMap
+                  (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst) :
+                  Multiset (Nonplanar α))) +
+          FUN2 (((B.toList.zip assn).filterMap
+                  (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none) :
+                  Multiset (Nonplanar α)),
+                ((B.toList.zip assn).filterMap
+                  (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst) :
+                  Multiset (Nonplanar α))))).sum from by
+    rw [hB_pl_len]
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro assn _
+    rw [h_to_BtoList_t, h_to_BtoList_f]]
+  -- §9: now apply the bridge on `l := B.toList`. The bridge pair function is:
+  --   F(s_t, s_f) := FUN1(s_t, s_f) + FUN2(s_t, s_f).
+  have h_bridge := Planar.Pathed.listChoices_bridge_powerset_paired
+    (β := Nonplanar α) (l := B.toList)
+  -- Apply Multiset.map (uncurry of FUN1 + FUN2) to both sides.
+  have h_compose := congr_arg
+    (Multiset.map (fun pr : Multiset (Nonplanar α) × Multiset (Nonplanar α) =>
+      FUN1 pr + FUN2 pr)) h_bridge
+  rw [Multiset.map_map, Multiset.map_map] at h_compose
+  -- The composition `(fun pr => FUN1 pr + FUN2 pr) ∘ (fun assn => let ...; (s_t, s_f))`
+  -- is defeq to `fun assn => let ...; FUN1 (s_t, s_f) + FUN2 (s_t, s_f)`, but `rw` doesn't
+  -- auto-eta. Substitute via show.
+  have h_compose_sum := congr_arg Multiset.sum h_compose
+  show (((Multiset.ofList (Planar.Pathed.listChoices [true, false] B.toList.length)).map
+        ((fun pr : Multiset (Nonplanar α) × Multiset (Nonplanar α) =>
+            FUN1 pr + FUN2 pr) ∘
+          (fun assn : List Bool =>
+            let s_t : Multiset (Nonplanar α) :=
+              (B.toList.zip assn).filterMap
+                (fun p : Nonplanar α × Bool => if p.snd then some p.fst else none)
+            let s_f : Multiset (Nonplanar α) :=
+              (B.toList.zip assn).filterMap
+                (fun p : Nonplanar α × Bool => if p.snd then none else some p.fst)
+            (s_t, s_f)))).sum) = _
+  rw [h_compose_sum]
+  -- RHS goal form: (B.powerset.map (C₁ ↦ ...)).sum. Note ↑B.toList = B.
+  have hB_coe : (↑B.toList : Multiset (Nonplanar α)) = B := B.coe_toList
+  rw [hB_coe]
+  -- Now: (B.powerset.map (s ↦ FUN1(s, B - s) + FUN2(s, B - s))).sum = goal RHS.
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro C₁ _
+  show FUN1 (C₁, B - C₁) + FUN2 (C₁, B - C₁) =
+        ((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+            (fun Y => g Y (B - C₁))).sum +
+        ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+            (fun Y' => g C₁ Y')).sum
+  rfl
+
+/-- **Substrate 2 for Q5c** — REACTIVATED (2026-06-12). The GL-side
+    analog of OG Prop 2.7(ii)'s guest-splitting identity. Originally
+    flagged DEPRECATED on 2026-05-17 because its proof required the
+    singleton-`{v}` case of `Nonplanar.insertionMultiset_assoc` (then
+    the A3.3 keystone sorry). With the singleton case
+    `Nonplanar.insertionMultiset_singleton_assoc` since closed
+    sorry-free, this is now the live route for the per-tprod `m+1`
+    induction step of `gl_product_eq_oudomGuinStar`.
+
+    The four terms (T1 + T2 = T3 + T4):
+    * T1 = `F * op (G * of'{v})` — single-shot CK multiplication.
+    * T2 = `F * insertion (op G) (op of'{v})` — insert v into G first.
+    * T3 = `insertion (F * op G) (op of'{v})` — insert v into the
+      GL-product.
+    * T4 = `op (unop (F * op G) * of'{v})` — append v to the CK image
+      of the GL-product.
+
+    Strategy: linearize G to basis `of' B`, expand T1, T3, T4 via
+    `mul_of'_sum_form` over `Multiset.powerset_cons (v ::ₘ B)`. Apply
+    `GL_insertion_leibniz_left_singleton_guest` summand-wise to T3,
+    then `GL_iterated_insertion_singleton_v` to split each iterated
+    insertion. The match against T2 then uses `GL_T2_reindexing_key`
+    (a multiset reindexing identity proved by descent from the
+    planar bucket-split lemma `insertionForest_singleton_bucket_split`). -/
 private theorem GL_product_split_mul_ι
     (F : GrossmanLarson ℤ α)
     (G : ConnesKreimer ℤ (Nonplanar α))
@@ -956,7 +1572,546 @@ private theorem GL_product_split_mul_ι
         (GrossmanLarson.op (ConnesKreimer.of' {v})) +
       GrossmanLarson.op
         (GrossmanLarson.unop (F * GrossmanLarson.op G) * ConnesKreimer.of' {v}) := by
-  sorry
+  -- Step 0: classical Decidable for Multiset ops.
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Step 1: linearize G to basis. Use the underlying ℤ-linearity of
+  -- both sides in G (each of T1, T2, T3, T4 is a ℤ-linear function of G).
+  -- This standard Finsupp.induction_linear pattern follows
+  -- `insertion_mul_distrib_gen`/`GL_insertion_leibniz_basis_right`.
+  refine Finsupp.induction_linear G ?_ ?_ ?_
+  · -- G = 0 case: T1=T2=T3=T4=0.
+    show F * GrossmanLarson.op
+        ((0 : ConnesKreimer ℤ (Nonplanar α)) * ConnesKreimer.of' {v}) +
+        F * GrossmanLarson.insertion
+              (GrossmanLarson.op (0 : ConnesKreimer ℤ (Nonplanar α)))
+              (GrossmanLarson.op (ConnesKreimer.of' {v})) =
+        GrossmanLarson.insertion (F * GrossmanLarson.op
+            (0 : ConnesKreimer ℤ (Nonplanar α)))
+          (GrossmanLarson.op (ConnesKreimer.of' {v})) +
+        GrossmanLarson.op
+          (GrossmanLarson.unop (F * GrossmanLarson.op
+            (0 : ConnesKreimer ℤ (Nonplanar α))) * ConnesKreimer.of' {v})
+    -- Rewrite step-by-step to avoid pattern-mismatch from compound rewrites.
+    rw [show GrossmanLarson.op (0 : ConnesKreimer ℤ (Nonplanar α)) =
+          (0 : GrossmanLarson ℤ α) from rfl]
+    rw [GrossmanLarson.mul_zero_gl]
+    rw [zero_mul, op_zero, GrossmanLarson.mul_zero_gl]
+    -- LHS: 0 + F * insertion 0 (op of'{v}); push insertion 0 = 0.
+    have h_ins_zero : GrossmanLarson.insertion (0 : GrossmanLarson ℤ α)
+        (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) = 0 :=
+      ((GrossmanLarson.insertion :
+          GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α).flip
+        (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))).map_zero
+    rw [h_ins_zero]
+    rw [GrossmanLarson.mul_zero_gl,
+        show GrossmanLarson.unop (0 : GrossmanLarson ℤ α) =
+          (0 : ConnesKreimer ℤ (Nonplanar α)) from rfl,
+        zero_mul, op_zero]
+  · -- G = G₁ + G₂ additive case.
+    intro G₁ G₂ ih₁ ih₂
+    -- Use let-bindings to cast Finsupp into ConnesKreimer.
+    let G₁' : ConnesKreimer ℤ (Nonplanar α) := G₁
+    let G₂' : ConnesKreimer ℤ (Nonplanar α) := G₂
+    show F * GrossmanLarson.op ((G₁' + G₂') * ConnesKreimer.of' {v}) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op (G₁' + G₂'))
+            (GrossmanLarson.op (ConnesKreimer.of' {v})) =
+      GrossmanLarson.insertion (F * GrossmanLarson.op (G₁' + G₂'))
+        (GrossmanLarson.op (ConnesKreimer.of' {v})) +
+      GrossmanLarson.op
+        (GrossmanLarson.unop (F * GrossmanLarson.op (G₁' + G₂')) *
+          ConnesKreimer.of' {v})
+    -- Distribute (G₁' + G₂') through each operation. We rewrite each subterm
+    -- to a (G₁'-part + G₂'-part) form, then apply ih₁, ih₂.
+    -- T1: F * op((G₁'+G₂') * of'{v}) = F * op(G₁'*of'{v}) + F * op(G₂'*of'{v}).
+    have hT1 : F * GrossmanLarson.op
+          ((G₁' + G₂') * ConnesKreimer.of' ({v} : Multiset _)) =
+        F * GrossmanLarson.op (G₁' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.op (G₂' * ConnesKreimer.of' ({v} : Multiset _)) := by
+      rw [add_mul,
+          show GrossmanLarson.op
+            (G₁' * ConnesKreimer.of' ({v} : Multiset _) +
+             G₂' * ConnesKreimer.of' ({v} : Multiset _)) =
+          GrossmanLarson.op (G₁' * ConnesKreimer.of' ({v} : Multiset _)) +
+          GrossmanLarson.op (G₂' * ConnesKreimer.of' ({v} : Multiset _)) from rfl]
+      exact (GrossmanLarson.product F).map_add _ _
+    rw [hT1]
+    -- T2: F * ins(op(G₁'+G₂'))(op of'{v}) = F * ins(opG₁')... + F * ins(opG₂')...
+    have hT2 : F * GrossmanLarson.insertion (GrossmanLarson.op (G₁' + G₂'))
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₁')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₂')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) := by
+      rw [show GrossmanLarson.op (G₁' + G₂') =
+              GrossmanLarson.op G₁' + GrossmanLarson.op G₂' from rfl]
+      rw [show GrossmanLarson.insertion (GrossmanLarson.op G₁' + GrossmanLarson.op G₂')
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+            GrossmanLarson.insertion (GrossmanLarson.op G₁')
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+            GrossmanLarson.insertion (GrossmanLarson.op G₂')
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) from by
+        show ((GrossmanLarson.insertion :
+                GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α).flip
+              (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))))
+              (GrossmanLarson.op G₁' + GrossmanLarson.op G₂') = _
+        rw [LinearMap.map_add]; rfl]
+      exact (GrossmanLarson.product F).map_add _ _
+    rw [hT2]
+    -- T3: ins(F * op(G₁'+G₂'))(op of'{v}) = ins(F * opG₁')(...) + ins(F * opG₂')(...)
+    have hT3 : GrossmanLarson.insertion (F * GrossmanLarson.op (G₁' + G₂'))
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        GrossmanLarson.insertion (F * GrossmanLarson.op G₁')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+        GrossmanLarson.insertion (F * GrossmanLarson.op G₂')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) := by
+      rw [show GrossmanLarson.op (G₁' + G₂') =
+              GrossmanLarson.op G₁' + GrossmanLarson.op G₂' from rfl]
+      rw [show F * (GrossmanLarson.op G₁' + GrossmanLarson.op G₂') =
+              F * GrossmanLarson.op G₁' + F * GrossmanLarson.op G₂' from
+          (GrossmanLarson.product F).map_add _ _]
+      show ((GrossmanLarson.insertion :
+              GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α).flip
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))))
+            (F * GrossmanLarson.op G₁' + F * GrossmanLarson.op G₂') = _
+      rw [LinearMap.map_add]; rfl
+    rw [hT3]
+    -- T4: op (unop (F * op (G₁'+G₂')) * of'{v}) similarly.
+    have hT4 : GrossmanLarson.op
+            (GrossmanLarson.unop (F * GrossmanLarson.op (G₁' + G₂')) *
+              ConnesKreimer.of' ({v} : Multiset _)) =
+        GrossmanLarson.op
+            (GrossmanLarson.unop (F * GrossmanLarson.op G₁') *
+              ConnesKreimer.of' ({v} : Multiset _)) +
+        GrossmanLarson.op
+            (GrossmanLarson.unop (F * GrossmanLarson.op G₂') *
+              ConnesKreimer.of' ({v} : Multiset _)) := by
+      rw [show GrossmanLarson.op (G₁' + G₂') =
+              GrossmanLarson.op G₁' + GrossmanLarson.op G₂' from rfl]
+      rw [show F * (GrossmanLarson.op G₁' + GrossmanLarson.op G₂') =
+              F * GrossmanLarson.op G₁' + F * GrossmanLarson.op G₂' from
+          (GrossmanLarson.product F).map_add _ _]
+      rw [show GrossmanLarson.unop (F * GrossmanLarson.op G₁' + F * GrossmanLarson.op G₂') =
+              GrossmanLarson.unop (F * GrossmanLarson.op G₁') +
+              GrossmanLarson.unop (F * GrossmanLarson.op G₂') from rfl,
+          add_mul]
+      rfl
+    rw [hT4]
+    -- Use ih₁, ih₂ via specialized casts (G₁', G₂' are CK by let-binding).
+    have ih₁' :
+        F * GrossmanLarson.op (G₁' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₁')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+      GrossmanLarson.insertion (F * GrossmanLarson.op G₁')
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+      GrossmanLarson.op
+        (GrossmanLarson.unop (F * GrossmanLarson.op G₁') *
+          ConnesKreimer.of' ({v} : Multiset _)) := ih₁
+    have ih₂' :
+        F * GrossmanLarson.op (G₂' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₂')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+      GrossmanLarson.insertion (F * GrossmanLarson.op G₂')
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+      GrossmanLarson.op
+        (GrossmanLarson.unop (F * GrossmanLarson.op G₂') *
+          ConnesKreimer.of' ({v} : Multiset _)) := ih₂
+    -- Combine: the goal has the shape (A₁ + A₂) + (B₁ + B₂) = (C₁ + C₂) + (D₁ + D₂)
+    -- where Aᵢ + Bᵢ = Cᵢ + Dᵢ. Add ih₁' + ih₂' and re-permute.
+    -- Abel-rearrange LHS to (A₁ + B₁) + (A₂ + B₂); apply ih₁', ih₂'; abel back.
+    have hLHS_perm :
+        F * GrossmanLarson.op (G₁' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.op (G₂' * ConnesKreimer.of' ({v} : Multiset _)) +
+        (F * GrossmanLarson.insertion (GrossmanLarson.op G₁')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) +
+         F * GrossmanLarson.insertion (GrossmanLarson.op G₂')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))) =
+      (F * GrossmanLarson.op (G₁' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₁')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))) +
+      (F * GrossmanLarson.op (G₂' * ConnesKreimer.of' ({v} : Multiset _)) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G₂')
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)))) := by abel
+    rw [hLHS_perm, ih₁', ih₂']
+    abel
+  · -- G = single B r: scale out r, reduce to basis G = of' B.
+    intro B r
+    let G_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single B r
+    show F * GrossmanLarson.op (G_single * ConnesKreimer.of' {v}) +
+        F * GrossmanLarson.insertion (GrossmanLarson.op G_single)
+            (GrossmanLarson.op (ConnesKreimer.of' {v})) =
+      GrossmanLarson.insertion (F * GrossmanLarson.op G_single)
+        (GrossmanLarson.op (ConnesKreimer.of' {v})) +
+      GrossmanLarson.op
+        (GrossmanLarson.unop (F * GrossmanLarson.op G_single) * ConnesKreimer.of' {v})
+    have hG : G_single = r • (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α)) := by
+      show (Finsupp.single B r : ConnesKreimer ℤ (Nonplanar α)) =
+            r • (ConnesKreimer.of' B : ConnesKreimer ℤ _)
+      rw [ConnesKreimer.of'_apply]
+      exact (Finsupp.smul_single_one B r).symm
+    rw [hG]
+    -- Push r through each term using smul_mul_assoc, op_smul, etc.
+    have h_ins_smul_first :
+        GrossmanLarson.insertion (r • GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        r • GrossmanLarson.insertion (GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) := by
+      show ((GrossmanLarson.insertion :
+              GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α).flip
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))))
+            (r • GrossmanLarson.op (ConnesKreimer.of' B : ConnesKreimer ℤ _)) = _
+      rw [LinearMap.map_smul]
+      rfl
+    have h_T3_smul :
+        GrossmanLarson.insertion (r • (F * GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _)))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        r • GrossmanLarson.insertion (F * GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) := by
+      show ((GrossmanLarson.insertion :
+              GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α →ₗ[ℤ] GrossmanLarson ℤ α).flip
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))))
+            (r • (F * GrossmanLarson.op (ConnesKreimer.of' B : ConnesKreimer ℤ _))) = _
+      rw [LinearMap.map_smul]
+      rfl
+    -- T1: (r•of'B) * of'{v} = r • (of'B * of'{v}); op_smul; F * r•x = r•(F*x).
+    rw [smul_mul_assoc, op_smul, GrossmanLarson.mul_smul_gl]
+    -- T2: op(r•of'B) = r•opof'B; insertion(r•_)_ = r•insertion__; F * r•x = r•(F*x).
+    rw [op_smul, h_ins_smul_first, GrossmanLarson.mul_smul_gl]
+    -- T3: F * r•opof'B = r•(F*opof'B); insertion(r•_)_ = r•insertion__.
+    rw [GrossmanLarson.mul_smul_gl, h_T3_smul]
+    -- T4: unop(r•x) = r•unop x; (r•_)*of'{v} = r•(_*of'{v}); op(r•_) = r•op _.
+    rw [show GrossmanLarson.unop (r • (F * GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _))) =
+          r • GrossmanLarson.unop (F * GrossmanLarson.op
+            (ConnesKreimer.of' B : ConnesKreimer ℤ _)) from rfl,
+        smul_mul_assoc, op_smul]
+    rw [← smul_add, ← smul_add]
+    congr 1
+    -- ===== BASIS CASE G = of' B =====
+    -- T1 = F * op(of' B * of'{v}) = F * of'(B + {v}).
+    have hT1 : F * GrossmanLarson.op
+          ((ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α)) *
+            ConnesKreimer.of' ({v} : Multiset _)) =
+        F * (GrossmanLarson.of' (B + ({v} : Multiset _)) : GrossmanLarson ℤ α) := by
+      rw [← ConnesKreimer.of'_add]
+      rfl
+    rw [hT1]
+    -- op (of' B) = of' B, op (of' {v}) = of' {v} (definitionally).
+    have hopofB : GrossmanLarson.op
+        (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α)) =
+        (GrossmanLarson.of' B : GrossmanLarson ℤ α) := rfl
+    rw [hopofB]
+    -- The basis case G = of' B has four terms aligned via:
+    -- T1 split via mul_of'_sum_form + powerset_cons (two halves: T1a, T1b)
+    -- T3 split via mul_of'_sum_form + insertion_sum_left + Leibniz + iterated split
+    --   (three pieces: T3-first, T3-residue, T3-second).
+    -- T4 expanded via mul_of'_sum_form + multiplicative bookkeeping.
+    -- T2 = T3-residue + T3-second's NIM expansion, matched via GL_T2_reindexing_key.
+    --
+    -- Cancellations:
+    --   T1a = T4 (both = Σ_C₁ g_F C₁ ((B-C₁) + {v}))
+    --   T1b = T3-first (both = Σ_C₁ g_F (C₁+{v}) (B-C₁))
+    --   T2 = T3-residue + T3-second (via GL_T2_reindexing_key).
+    --
+    -- Goal: F * of'(B+{v}) + F * insertion (of' B) (op of'{v}) =
+    --       insertion (F * of' B) (op of'{v}) + op(unop(F * of' B) * of'{v}).
+    -- Define the per-(D : Multiset _) summand of mul_of'_sum_form, shared
+    -- across T1, T3, T4 (the second slot varies, captured in T4 and T1a
+    -- by passing in the "appended {v}" version).
+    set g : Multiset (Nonplanar α) → Multiset (Nonplanar α) → GrossmanLarson ℤ α :=
+      fun s t => GrossmanLarson.op
+        (GrossmanLarson.unop (GrossmanLarson.insertion F (ConnesKreimer.of' s)) *
+          GrossmanLarson.unop (ConnesKreimer.of' (R := ℤ) t :
+            GrossmanLarson ℤ α)) with hg_def
+    -- Bridge `B + {v} = v ::ₘ B` (via singleton_add + add_comm).
+    have hB_add_v : B + ({v} : Multiset (Nonplanar α)) = v ::ₘ B := by
+      rw [add_comm, Multiset.singleton_add]
+    -- §A: T1 split via mul_of'_sum_form over (v ::ₘ B) and powerset_cons.
+    --     T1 = T1a + T1b where:
+    --     T1a = Σ_{C₁ ⊆ B} g C₁ (v ::ₘ (B - C₁))
+    --     T1b = Σ_{C₁ ⊆ B} g (v ::ₘ C₁) (B - C₁)
+    have hT1_split :
+        F * (GrossmanLarson.of' (B + ({v} : Multiset _)) : GrossmanLarson ℤ α) =
+        (B.powerset.map (fun C₁ => g C₁ (v ::ₘ (B - C₁)))).sum +
+        (B.powerset.map (fun C₁ => g (v ::ₘ C₁) (B - C₁))).sum := by
+      rw [show (GrossmanLarson.of' (B + ({v} : Multiset _)) : GrossmanLarson ℤ α) =
+              (GrossmanLarson.of' (v ::ₘ B) : GrossmanLarson ℤ α) by rw [hB_add_v],
+          GrossmanLarson.mul_of'_sum_form, Multiset.powerset_cons,
+          Multiset.map_add, Multiset.sum_add, Multiset.map_map]
+      congr 1
+      · -- "no v in C₁" half: C₁ ⊆ B, second slot = (v ::ₘ B) - C₁ = v ::ₘ (B - C₁).
+        apply congr_arg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro C₁ hC₁
+        have hC₁_le : C₁ ≤ B := Multiset.mem_powerset.mp hC₁
+        show GrossmanLarson.op (GrossmanLarson.unop
+              (GrossmanLarson.insertion F (ConnesKreimer.of' C₁ : GrossmanLarson ℤ α)) *
+            GrossmanLarson.unop
+              (ConnesKreimer.of' ((v ::ₘ B) - C₁) : GrossmanLarson ℤ α)) =
+            g C₁ (v ::ₘ (B - C₁))
+        rw [show ((v ::ₘ B) - C₁) = v ::ₘ (B - C₁) from
+          Multiset.cons_sub_of_le v hC₁_le]
+      · -- "v in C₁" half: image is C₁ ↦ (v ::ₘ C₁), then second slot =
+        --   (v ::ₘ B) - (v ::ₘ C₁) = (v ::ₘ B).erase v - C₁ = B - C₁.
+        apply congr_arg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro C₁ _hC₁
+        show GrossmanLarson.op (GrossmanLarson.unop
+              (GrossmanLarson.insertion F (ConnesKreimer.of' (v ::ₘ C₁) : GrossmanLarson ℤ α)) *
+            GrossmanLarson.unop
+              (ConnesKreimer.of' ((v ::ₘ B) - (v ::ₘ C₁)) : GrossmanLarson ℤ α)) =
+            g (v ::ₘ C₁) (B - C₁)
+        rw [show ((v ::ₘ B) - (v ::ₘ C₁)) = B - C₁ by
+          rw [Multiset.sub_cons, Multiset.erase_cons_head]]
+    rw [hT1_split]
+    -- Helpers: op/unop push through Multiset.sum on the powerset of B
+    -- (and on any multiset, by induction).
+    have h_unop_sum_gen :
+        ∀ (s : Multiset (GrossmanLarson ℤ α)),
+          GrossmanLarson.unop s.sum = (s.map GrossmanLarson.unop).sum := by
+      intro s
+      induction s using Multiset.induction with
+      | empty => rfl
+      | cons a s ih =>
+        rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons, unop_add, ih]
+    have h_op_sum_gen :
+        ∀ (s : Multiset (ConnesKreimer ℤ (Nonplanar α))),
+          GrossmanLarson.op s.sum = (s.map GrossmanLarson.op).sum := by
+      intro s
+      induction s using Multiset.induction with
+      | empty => rfl
+      | cons a s ih =>
+        rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons, op_add, ih]
+    -- Define the F-keyed CK-product family used as an intermediate.
+    let f_F : Multiset (Nonplanar α) → ConnesKreimer ℤ (Nonplanar α) := fun C₁ =>
+      GrossmanLarson.unop
+        (GrossmanLarson.insertion F (ConnesKreimer.of' C₁ : GrossmanLarson ℤ α))
+    -- §B: T4 = T1a, i.e. op(unop(F * of'B) * of'{v}) = Σ_{C₁ ⊆ B} g C₁ (v ::ₘ (B - C₁)).
+    have hT4_eq_T1a :
+        GrossmanLarson.op
+          (GrossmanLarson.unop (F * (GrossmanLarson.of' B : GrossmanLarson ℤ α)) *
+            ConnesKreimer.of' ({v} : Multiset _)) =
+        (B.powerset.map (fun C₁ => g C₁ (v ::ₘ (B - C₁)))).sum := by
+      rw [GrossmanLarson.mul_of'_sum_form]
+      -- LHS = op (unop ((Σ_C₁ op(...)).sum) * of'{v}).
+      -- Step 1: unop pushes through the sum (general op-sum lemma).
+      rw [h_unop_sum_gen, Multiset.map_map]
+      -- Now the sum is over (unop ∘ op (... CK product ...)), which definitionally
+      -- reduces to the CK product.
+      rw [show (GrossmanLarson.unop ∘ fun G₁ =>
+            GrossmanLarson.op
+              ((GrossmanLarson.insertion F (GrossmanLarson.of' G₁ : GrossmanLarson ℤ α)).unop *
+                (GrossmanLarson.of' (B - G₁) : GrossmanLarson ℤ α).unop)) =
+              fun G₁ => f_F G₁ * ConnesKreimer.of' (B - G₁) from rfl]
+      -- Step 2: push (* of'{v}) into the sum (CK comm-semiring distributivity).
+      rw [← Multiset.sum_map_mul_right]
+      -- Step 3: per-summand, B - C₁ + {v} = v ::ₘ (B - C₁); fold up via of'_add.
+      rw [show (B.powerset.map (fun C₁ : Multiset (Nonplanar α) =>
+                f_F C₁ * ConnesKreimer.of' (B - C₁) *
+                  ConnesKreimer.of' ({v} : Multiset _))) =
+              B.powerset.map (fun C₁ : Multiset (Nonplanar α) =>
+                f_F C₁ * ConnesKreimer.of' (v ::ₘ (B - C₁))) from by
+        apply Multiset.map_congr rfl
+        intro C₁ _
+        rw [mul_assoc, ← ConnesKreimer.of'_add]
+        rw [show B - C₁ + ({v} : Multiset (Nonplanar α)) = v ::ₘ (B - C₁) by
+          rw [add_comm, Multiset.singleton_add]]]
+      -- Step 4: push op into the sum.
+      rw [h_op_sum_gen, Multiset.map_map]
+      -- Step 5: per C₁, fold up to g.
+      apply congr_arg Multiset.sum
+      apply Multiset.map_congr rfl
+      intro C₁ _hC₁
+      rfl
+    rw [hT4_eq_T1a]
+    -- §C: T3 = Σ_{C₁ ⊆ B} [g(v ::ₘ C₁)(B - C₁) +
+    --                       Σ_{Y ∈ NIM C₁ {v}} g Y (B - C₁) +
+    --                       Σ_{Y' ∈ NIM (B - C₁) {v}} g C₁ Y']
+    --       = T1b + Σ_{C₁ ⊆ B} (T3-residue(C₁) + T3-second(C₁))
+    have hT3 :
+        GrossmanLarson.insertion (F * (GrossmanLarson.of' B : GrossmanLarson ℤ α))
+          (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        (B.powerset.map (fun C₁ => g (v ::ₘ C₁) (B - C₁))).sum +
+        (B.powerset.map (fun C₁ =>
+          ((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+            (fun Y => g Y (B - C₁))).sum +
+          ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+            (fun Y' => g C₁ Y')).sum)).sum := by
+      rw [GrossmanLarson.mul_of'_sum_form]
+      -- LHS = insertion ((sum over C₁) g_F(C₁)(B-C₁)) (op of'{v}).
+      rw [GrossmanLarson.insertion_sum_left, Multiset.map_map]
+      -- Per C₁: apply Leibniz. The composed map function is
+      --   (fun X => insertion X (op of'{v})) ∘ (fun G₁ => op (unop(...) * unop(...))),
+      -- which beta-reduces to (fun G₁ => insertion (op (...)) (op of'{v})). We
+      -- match the post-beta form (h_per_C₁) and step through it summand-wise.
+      have h_per_C₁ : ∀ C₁ : Multiset (Nonplanar α),
+          GrossmanLarson.insertion
+            (GrossmanLarson.op
+              ((GrossmanLarson.insertion F (GrossmanLarson.of' C₁ :
+                  GrossmanLarson ℤ α)).unop *
+                (GrossmanLarson.of' (B - C₁) : GrossmanLarson ℤ α).unop))
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+          g (v ::ₘ C₁) (B - C₁) +
+          (((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+            (fun Y => g Y (B - C₁))).sum +
+          ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+            (fun Y' => g C₁ Y')).sum) := by
+        intro C₁
+        -- Apply GL_insertion_leibniz_left_singleton_guest with
+        --   A := unop(ins F (of' C₁)), B := of'(B - C₁) (as CK).
+        set A_arg : ConnesKreimer ℤ (Nonplanar α) :=
+          (GrossmanLarson.insertion F (GrossmanLarson.of' C₁ :
+            GrossmanLarson ℤ α)).unop with hA_arg
+        set B_arg : ConnesKreimer ℤ (Nonplanar α) :=
+          (GrossmanLarson.of' (B - C₁) : GrossmanLarson ℤ α).unop with hB_arg
+        have h_leibniz := GL_insertion_leibniz_left_singleton_guest A_arg B_arg v
+        rw [h_leibniz]
+        -- First Leibniz piece: op(unop(ins (op A_arg)(op of'{v})) * B_arg).
+        --   op A_arg = op (unop (ins F (of' C₁))) = ins F (of' C₁).
+        rw [show GrossmanLarson.op A_arg = GrossmanLarson.insertion F
+              (ConnesKreimer.of' C₁ : GrossmanLarson ℤ α) from
+          GrossmanLarson.op_unop _]
+        -- Apply GL_iterated_insertion_singleton_v.
+        rw [GL_iterated_insertion_singleton_v F C₁ v]
+        -- Second Leibniz piece: op(A_arg * unop(ins (op B_arg)(op of'{v}))).
+        --   op B_arg = of'(B - C₁).
+        rw [show GrossmanLarson.op B_arg =
+              (GrossmanLarson.of' (B - C₁) : GrossmanLarson ℤ α) from rfl]
+        rw [show GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)) =
+              (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) from rfl]
+        rw [GrossmanLarson.insertion_of'_of']
+        -- After Leibniz + iterated split + insertion_of'_of':
+        --   LHS = op(unop((ins F (of'(C₁+{v})) + Σ_Y ins F (of' Y))) * B_arg) +
+        --         op(A_arg * unop((Σ_Y' of' Y').sum))
+        rw [unop_add, add_mul, op_add]
+        -- The first piece becomes T1b summand: g(v ::ₘ C₁)(B-C₁).
+        rw [show C₁ + ({v} : Multiset (Nonplanar α)) = v ::ₘ C₁ by
+          rw [add_comm, Multiset.singleton_add]]
+        rw [add_assoc]
+        -- The first summand op(unop(ins F (of'(v::C₁))) * B_arg) reduces to
+        -- g (v::C₁) (B-C₁) definitionally; the congr 1 then leaves T3R+T3S = sum.
+        congr 1
+        -- Remaining goal: op(unop(Σ_Y ins F (of' Y)) * B_arg) +
+        --                 op(A_arg * unop((Σ_Y' of' Y').sum)) =
+        --                 Σ_Y g Y (B-C₁) + Σ_Y' g C₁ Y'
+        congr 1
+        · -- T3-residue: distribute * B_arg through the sum.
+          rw [h_unop_sum_gen, Multiset.map_map]
+          rw [show
+              (((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+                (GrossmanLarson.unop ∘ fun Y : Multiset (Nonplanar α) =>
+                  GrossmanLarson.insertion F
+                    (ConnesKreimer.of' Y : GrossmanLarson ℤ α))).sum *
+                B_arg : ConnesKreimer ℤ (Nonplanar α)) =
+              ((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+                (fun Y : Multiset (Nonplanar α) =>
+                  (GrossmanLarson.unop ∘ fun Y' : Multiset (Nonplanar α) =>
+                    GrossmanLarson.insertion F
+                      (ConnesKreimer.of' Y' : GrossmanLarson ℤ α)) Y *
+                  B_arg)).sum from Multiset.sum_map_mul_right.symm]
+          rw [h_op_sum_gen, Multiset.map_map]
+          apply congr_arg Multiset.sum
+          apply Multiset.map_congr rfl
+          intro Y _hY
+          rfl
+        · -- T3-second: unfold insertionBasis to a sum, then distribute A_arg *.
+          show GrossmanLarson.op (A_arg *
+              (GrossmanLarson.insertionBasis (B - C₁) ({v} : Multiset _)).unop) =
+              ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+                (fun Y' => g C₁ Y')).sum
+          show GrossmanLarson.op (A_arg *
+              (((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+                (fun F' => (GrossmanLarson.of' (R := ℤ) F' :
+                  GrossmanLarson ℤ α))).sum).unop) =
+              ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+                (fun Y' => g C₁ Y')).sum
+          rw [h_unop_sum_gen, Multiset.map_map]
+          rw [show (A_arg *
+              ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+                (GrossmanLarson.unop ∘ fun F' : Multiset (Nonplanar α) =>
+                  (GrossmanLarson.of' (R := ℤ) F' : GrossmanLarson ℤ α))).sum :
+              ConnesKreimer ℤ (Nonplanar α)) =
+              ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+                (fun F' : Multiset (Nonplanar α) => A_arg *
+                  (GrossmanLarson.unop ∘ fun F'' : Multiset (Nonplanar α) =>
+                    (GrossmanLarson.of' (R := ℤ) F'' :
+                      GrossmanLarson ℤ α)) F')).sum from
+            Multiset.sum_map_mul_left.symm]
+          rw [h_op_sum_gen, Multiset.map_map]
+          apply congr_arg Multiset.sum
+          apply Multiset.map_congr rfl
+          intro Y' _hY'
+          rfl
+      -- Apply h_per_C₁ summand-wise, then split the resulting Σ(_ + _) sum.
+      apply Eq.trans
+      · apply congr_arg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro C₁ _hC₁
+        -- The map function is (fun X => insertion X (op of'{v})) ∘ (fun G₁ => op (...))
+        -- which beta-reduces to insertion (op (...)) (op of'{v}) per C₁.
+        exact h_per_C₁ C₁
+      -- Split the Σ(_ + _) into two sums via Multiset.sum_map_add.
+      rw [← Multiset.sum_map_add]
+    rw [hT3]
+    -- §D: T2 = Σ_{C₁ ⊆ B} (T3-residue(C₁) + T3-second(C₁))
+    --    via GL_T2_reindexing_key with g_consumer = g.
+    have hT2 :
+        F * GrossmanLarson.insertion
+            (GrossmanLarson.of' B : GrossmanLarson ℤ α)
+            (GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _))) =
+        (B.powerset.map (fun C₁ =>
+          ((Nonplanar.insertionMultiset C₁ ({v} : Multiset _)).map
+            (fun Y => g Y (B - C₁))).sum +
+          ((Nonplanar.insertionMultiset (B - C₁) ({v} : Multiset _)).map
+            (fun Y' => g C₁ Y')).sum)).sum := by
+      -- Rewrite insertion (of' B)(op of'{v}) = insertion (of' B)(of' {v})
+      -- (definitional: op = id on of'{v}), then = insertionBasis B {v}.
+      rw [show GrossmanLarson.op (ConnesKreimer.of' ({v} : Multiset _)) =
+              (GrossmanLarson.of' ({v} : Multiset _) : GrossmanLarson ℤ α) from rfl,
+          GrossmanLarson.insertion_of'_of']
+      show F * ((Nonplanar.insertionMultiset B ({v} : Multiset _)).map
+              (fun F' : Multiset (Nonplanar α) =>
+                (GrossmanLarson.of' (R := ℤ) F' : GrossmanLarson ℤ α))).sum = _
+      -- Push F * through the sum (general bilinear distribution).
+      have h_F_mul_sum : ∀ s : Multiset (GrossmanLarson ℤ α),
+          F * s.sum = (s.map (fun X => F * X)).sum := by
+        intro s
+        induction s using Multiset.induction with
+        | empty =>
+          rw [Multiset.sum_zero, Multiset.map_zero, Multiset.sum_zero]
+          show GrossmanLarson.product F 0 = 0
+          exact (GrossmanLarson.product F).map_zero
+        | cons a s ih =>
+          rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons]
+          show GrossmanLarson.product F (a + s.sum) = F * a + _
+          rw [(GrossmanLarson.product F).map_add]
+          show GrossmanLarson.product F a +
+              (F * s.sum) = F * a + _
+          rw [ih]
+          rfl
+      rw [h_F_mul_sum, Multiset.map_map]
+      -- Per Y' ∈ NIM B {v}: F * of' Y' = mul_of'_sum_form over Y'.
+      have h_per_Y : ∀ Y : Multiset (Nonplanar α),
+          F * (GrossmanLarson.of' Y : GrossmanLarson ℤ α) =
+            (Y.powerset.map (fun D => g D (Y - D))).sum := by
+        intro Y
+        rw [GrossmanLarson.mul_of'_sum_form]
+        apply congr_arg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro D _hD
+        rfl
+      rw [show ((fun X : GrossmanLarson ℤ α => F * X) ∘
+                (fun F' : Multiset (Nonplanar α) =>
+                  (GrossmanLarson.of' (R := ℤ) F' : GrossmanLarson ℤ α))) =
+              (fun Y => (Y.powerset.map (fun D => g D (Y - D))).sum) from by
+        funext Y; exact h_per_Y Y]
+      exact GL_T2_reindexing_key B v g
+    rw [hT2]
+    -- §E: Combine. LHS = T1a + T1b + T2. RHS = T3 + T4 = T1b + Σ + T1a.
+    abel
 
 /-- **Per-tprod form** of Q5c (lifts to full Q5c via `algHomL_surjective`).
 
@@ -964,9 +2119,12 @@ private theorem GL_product_split_mul_ι
       `ckIso(X ★ algHomL(tprod m a)) = (op (ckIso X)) * (op (ckIso (algHomL (tprod m a))))`
 
     Proof by induction on m, using `oudomGuinStar_mul_ι_split` + IH +
-    `oudomGuinCirc_algHomL_tprod_ι` + the two substrate lemmas above.
-
-    Pending closure: depends on substrates above. -/
+    `oudomGuinCirc_algHomL_tprod_ι` + `ckIso_circ_intertwine_insertion` +
+    `GL_product_split_mul_ι`. The `m+1` case v-linearizes via
+    `Finsupp.induction_linear`; the basis case `v = ofTree t` chains all
+    substrate. Coercion discipline: work in CK (with the local
+    `AddCommGroup`) for additive rearrangements; transport to GL via
+    `op`/`unop` (which are the identity coercion). -/
 private theorem gl_product_eq_oudomGuinStar_tprod
     (X : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ∀ (m : ℕ) (a : Fin m → InsertionAlgebra α),
@@ -998,21 +2156,482 @@ private theorem gl_product_eq_oudomGuinStar_tprod
     rfl
   | succ m ih =>
     intro a
-    -- Y = D · ι v, D = algHomL(tprod m init), v = a(last).
-    -- Uses oudomGuinStar_mul_ι_split + IH(D) + IH-summand-wise(D○ιv) +
-    -- ckIso_circ_intertwine_insertion + GL_product_split_mul_ι.
-    -- Detailed wiring deferred — substrate sorries above must close first.
-    sorry
+    -- Local AddCommGroup instance for CK to enable map_sub/map_neg.
+    letI : AddCommGroup (ConnesKreimer ℤ (Nonplanar α)) := ConnesKreimer.addCommGroupOf
+    -- ===== STAGE-BOUNDARY (target 2 partial closure) =====
+    -- Set up tprod (m+1) split + algHomL split.
+    have h_a_eq : a = Fin.snoc (Fin.init a) (a (Fin.last m)) :=
+      (Fin.snoc_init_self a).symm
+    have h_tprod_succ :
+        TensorAlgebra.tprod ℤ (InsertionAlgebra α) (m + 1) a =
+        TensorAlgebra.tprod ℤ (InsertionAlgebra α) m (Fin.init a) *
+          TensorAlgebra.ι ℤ (a (Fin.last m)) := by
+      conv_lhs => rw [h_a_eq]
+      rw [Fin.snoc_eq_append,
+          PreLie.OudomGuinCircConstruct.ι_eq_tprod_one,
+          ← PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
+      congr 1
+    have h_algHomL_split :
+        PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := InsertionAlgebra α)
+            (TensorAlgebra.tprod ℤ (InsertionAlgebra α) (m + 1) a) =
+          PreLie.OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m (Fin.init a)) *
+            SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (a (Fin.last m)) := by
+      rw [h_tprod_succ]
+      show (SymmetricAlgebra.algHom ℤ (InsertionAlgebra α)) _ = _
+      rw [map_mul]
+      show (SymmetricAlgebra.algHom ℤ (InsertionAlgebra α))
+            (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m (Fin.init a)) *
+            (SymmetricAlgebra.algHom ℤ (InsertionAlgebra α))
+              (TensorAlgebra.ι ℤ (a (Fin.last m))) =
+          PreLie.OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m (Fin.init a)) *
+            SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (a (Fin.last m))
+      rfl
+    rw [h_algHomL_split]
+    -- Set up D = algHomL(tprod m init) and v-linearize.
+    set D : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
+      PreLie.OudomGuinCircConstruct.algHomL
+        (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m (Fin.init a)) with hD
+    -- The claim parameterized over v : InsertionAlgebra α; we apply at
+    -- v = a (Fin.last m). Both sides are linear in v through ι.
+    suffices h_v_claim :
+        ∀ v : InsertionAlgebra α,
+          ((ckIsoSymmetricAlgebra
+              (oudomGuinStar X (D * SymmetricAlgebra.ι ℤ _ v)) :
+            ConnesKreimer ℤ (Nonplanar α)) : GrossmanLarson ℤ α) =
+          (GrossmanLarson.op (ckIsoSymmetricAlgebra X)) *
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra
+              (D * SymmetricAlgebra.ι ℤ _ v))) by
+      exact h_v_claim (a (Fin.last m))
+    -- v-induction via Finsupp.induction_linear.
+    intro v
+    refine Finsupp.induction_linear v ?_ ?_ ?_
+    · -- v = 0: ι 0 = 0; D · 0 = 0; X ★ 0 = 0 (via star-linearity).
+      -- Goal: ckIso(X ★ (D * ι 0)) = op(ckIso X) * op(ckIso(D * ι 0))
+      -- Both sides reduce to 0 via map_zero cascades.
+      have h_LHS_zero : (ckIsoSymmetricAlgebra
+            (oudomGuinStar X (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) 0)) :
+          ConnesKreimer ℤ (Nonplanar α)) = 0 := by
+        have h1 : SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (0 : InsertionAlgebra α) =
+            (0 : SymmetricAlgebra ℤ (InsertionAlgebra α)) :=
+          (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_zero
+        rw [h1, mul_zero]
+        rw [show oudomGuinStar (R := ℤ) X 0 = 0 from by
+          rw [← oudomGuinStarL_apply X 0]; exact (oudomGuinStarL X).map_zero]
+        exact map_zero _
+      have h_RHS_zero : GrossmanLarson.op (ckIsoSymmetricAlgebra X) *
+            GrossmanLarson.op (ckIsoSymmetricAlgebra
+              (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) 0)) =
+          (0 : GrossmanLarson ℤ α) := by
+        have h1 : SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (0 : InsertionAlgebra α) =
+            (0 : SymmetricAlgebra ℤ (InsertionAlgebra α)) :=
+          (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_zero
+        rw [h1, mul_zero]
+        rw [show ckIsoSymmetricAlgebra (0 : SymmetricAlgebra ℤ (InsertionAlgebra α)) =
+              (0 : ConnesKreimer ℤ (Nonplanar α)) from map_zero _]
+        rw [op_zero, GrossmanLarson.mul_zero_gl]
+      exact h_LHS_zero.trans h_RHS_zero.symm
+    · -- v = v₁ + v₂: linearity in v through ι, mul, ★, ckIso, op, mul (GL).
+      intro v₁ v₂ ih₁ ih₂
+      have h_ι_add : SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (v₁ + v₂) =
+            SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₁ +
+            SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₂ :=
+        (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_add _ _
+      have h_D_mul_add :
+          D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (v₁ + v₂) =
+            D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₁ +
+            D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₂ := by
+        rw [h_ι_add, mul_add]
+      have h_star_add :
+          oudomGuinStar (R := ℤ) X
+              (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (v₁ + v₂)) =
+            oudomGuinStar (R := ℤ) X
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₁) +
+            oudomGuinStar (R := ℤ) X
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₂) := by
+        rw [h_D_mul_add, oudomGuinStar_add_right]
+      rw [h_star_add, map_add, h_D_mul_add, map_add, op_add, mul_add, ih₁, ih₂]
+      rfl
+    · -- v = single t r: factor scalar out, reduce to v = ofTree t basis case.
+      intro t r
+      -- Reduce single t r = r • ofTree t.
+      have hv_eq : (Finsupp.single t r : InsertionAlgebra α) =
+            r • InsertionAlgebra.ofTree t := by
+        show (Finsupp.single t r : InsertionAlgebra α) =
+              r • (Finsupp.single t 1 : InsertionAlgebra α)
+        exact (Finsupp.smul_single_one t r).symm
+      rw [hv_eq]
+      -- ι (r • ofTree t) = r • ι (ofTree t)
+      rw [(SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_smul r _]
+      -- D * (r • ι ofTree t) = r • (D * ι ofTree t)
+      rw [mul_smul_comm]
+      -- X ★ (r • Y) = r • (X ★ Y)
+      rw [oudomGuinStar_smul_right X _ r]
+      -- ckIso (r • Y) = r • ckIso Y (twice) — via simp on map_smul.
+      simp only [_root_.map_smul]
+      -- op (r • Y) = r • op Y (only the inner one — RHS has op applied to (r • ...))
+      rw [show GrossmanLarson.op
+              (r • ckIsoSymmetricAlgebra
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                  (InsertionAlgebra.ofTree t))) =
+            r • GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                  (InsertionAlgebra.ofTree t))) from op_smul r _]
+      -- F * (r • Y) = r • (F * Y) — use linearity of GrossmanLarson.product.
+      have h_smul_right : GrossmanLarson.op (ckIsoSymmetricAlgebra X) *
+              (r • GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                  (InsertionAlgebra.ofTree t)))) =
+            r • (GrossmanLarson.op (ckIsoSymmetricAlgebra X) *
+              GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                  (InsertionAlgebra.ofTree t)))) :=
+          (GrossmanLarson.product
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra X))).map_smul r _
+      rw [h_smul_right]
+      congr 1
+      -- Basis case: v = ofTree t.
+      -- This is the heart of the proof.
+      -- Notation: F := op(ckIso X), G := ckIso D, T := of'{t}.
+      -- Goal: ckIso(X ★ (D · ι(ofTree t))) = F * op(ckIso D · ι(ofTree t)).
+      -- Step 1: Apply SL split (oudomGuinStar_mul_ι_split) on LHS:
+      --   X ★ (D · ι(ofTree t)) =
+      --     (X★D) ○ ι(ofTree t) + (X★D) · ι(ofTree t) - X ★ (D ○ ι(ofTree t))
+      have h_SL_split :
+          oudomGuinStar X (D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            oudomGuinCirc (oudomGuinStar X D)
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) +
+            oudomGuinStar X D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t) -
+            oudomGuinStar X (oudomGuinCirc D
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) :=
+        oudomGuinStar_mul_ι_split X D (InsertionAlgebra.ofTree t)
+      -- Step 2: Decompose D ○ ι(ofTree t) using oudomGuinCirc_algHomL_tprod_ι.
+      have h_DcircTV :
+          oudomGuinCirc D (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            ∑ i : Fin m,
+              PreLie.OudomGuinCircConstruct.algHomL
+                (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                  (Function.update (Fin.init a) i
+                    (Fin.init a i * InsertionAlgebra.ofTree t))) := by
+        rw [hD]
+        exact oudomGuinCirc_algHomL_tprod_ι
+          (InsertionAlgebra.ofTree t) m (Fin.init a)
+      -- Step 3: IH at each summand (`update (init a) i (init a i * ofTree t)`).
+      -- This gives ckIso(X ★ algHomL(tprod m _)) = op(ckIso X) * op(ckIso(algHomL(...))).
+      -- Combined into a sum.
+      have h_star_sum : ∀ (Z : SymmetricAlgebra ℤ (InsertionAlgebra α))
+          (f : Fin m → SymmetricAlgebra ℤ (InsertionAlgebra α)),
+          oudomGuinStar Z (∑ i, f i) = ∑ i, oudomGuinStar Z (f i) := by
+        intro Z f
+        rw [← oudomGuinStarL_apply Z _, map_sum]
+        simp only [oudomGuinStarL_apply]
+      -- Apply IH summand-wise to X ★ (D ○ ι(ofTree t)).
+      have h_ih_sum :
+          ((ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (oudomGuinCirc D
+                  (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)))) :
+            ConnesKreimer ℤ (Nonplanar α)) : GrossmanLarson ℤ α) =
+            ∑ i : Fin m,
+              (GrossmanLarson.op (ckIsoSymmetricAlgebra X)) *
+              (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (PreLie.OudomGuinCircConstruct.algHomL
+                  (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                    (Function.update (Fin.init a) i
+                      (Fin.init a i * InsertionAlgebra.ofTree t)))))) := by
+        rw [h_DcircTV, h_star_sum]
+        rw [show ckIsoSymmetricAlgebra (∑ i : Fin m,
+                  oudomGuinStar X
+                    (PreLie.OudomGuinCircConstruct.algHomL
+                      (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                        (Function.update (Fin.init a) i
+                          (Fin.init a i * InsertionAlgebra.ofTree t))))) =
+                ∑ i : Fin m,
+                  ckIsoSymmetricAlgebra
+                    (oudomGuinStar X
+                      (PreLie.OudomGuinCircConstruct.algHomL
+                        (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                          (Function.update (Fin.init a) i
+                            (Fin.init a i * InsertionAlgebra.ofTree t))))) from
+            map_sum ckIsoSymmetricAlgebra.toLinearEquiv.toLinearMap _ _]
+        -- Push (· : GL) through the sum: a CK sum coerces to GL by the same
+        -- definitional equality.
+        show (∑ i : Fin m, _ : ConnesKreimer ℤ (Nonplanar α)) =
+            ∑ i : Fin m, _
+        apply Finset.sum_congr rfl
+        intro i _
+        exact ih (Function.update (Fin.init a) i
+          (Fin.init a i * InsertionAlgebra.ofTree t))
+      -- Step 4: Apply ckIso to h_SL_split, split into +/- in CK, then transport
+      -- to GL. The LHS (X★D) ○ ι v term goes via ckIso_circ_intertwine_insertion.
+      -- Define F := op(ckIso X), G := ckIso D, T := of'{t} as a CK Multiset.
+      set F : GrossmanLarson ℤ α := GrossmanLarson.op (ckIsoSymmetricAlgebra X)
+        with hF
+      set G : ConnesKreimer ℤ (Nonplanar α) := ckIsoSymmetricAlgebra D with hG
+      -- ckIso(ι(ofTree t)) = of'{t}.
+      have h_ckIso_ι_ofTree :
+          ckIsoSymmetricAlgebra
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                (InsertionAlgebra.ofTree t)) =
+            ConnesKreimer.of' ({t} : Multiset _) := by
+        show ckIsoSymmetricAlgebra
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                (Finsupp.single t 1)) = _
+        exact ckIsoSymmetricAlgebra_ι_single t
+      -- Apply IH at init to get ckIso(X★D) = F * op(G).
+      have h_ih_init :
+          ((ckIsoSymmetricAlgebra (oudomGuinStar X D) :
+            ConnesKreimer ℤ (Nonplanar α)) : GrossmanLarson ℤ α) =
+            F * GrossmanLarson.op G := by
+        rw [hF, hG, hD]
+        exact ih (Fin.init a)
+      -- Rearrange SL split additively (CK has the local AddCommGroup).
+      -- h_SL_split (CK): X★(D·ιv) = (X★D)○ιv + (X★D)·ιv - X★(D○ιv).
+      -- Apply ckIso, rearrange to: ckIso(X★(D·ιv)) + ckIso(X★(D○ιv))
+      --                          = ckIso((X★D)○ιv) + ckIso((X★D)·ιv).
+      have h_SL_split_additive :
+          ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) +
+            ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (oudomGuinCirc D
+                  (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)))) =
+            ckIsoSymmetricAlgebra
+              (oudomGuinCirc (oudomGuinStar X D)
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) +
+            ckIsoSymmetricAlgebra
+              (oudomGuinStar X D *
+                SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) := by
+        -- Apply ckIso to h_SL_split, then rearrange via AddCommGroup (CK side).
+        have h := congrArg ckIsoSymmetricAlgebra h_SL_split
+        -- h : ckIso (X★(D·ιv)) = ckIso ((X★D)○ιv + (X★D)·ιv - X★(D○ιv))
+        rw [map_sub, map_add] at h
+        -- h : ckIso(X★(D·ιv)) = (ckIso((X★D)○ιv) + ckIso((X★D)·ιv)) - ckIso(X★(D○ιv))
+        -- Rearrange a = b - c ↔ a + c = b via AddCommGroup tactics.
+        rw [h]
+        abel
+      -- GL split (additive form).
+      have h_GL_split := GL_product_split_mul_ι F G t
+      -- h_GL_split : F * op(G * of'{t}) + F * insertion(op G)(op of'{t})
+      --              = insertion(F * op G)(op of'{t}) + op(unop(F * op G) * of'{t})
+      -- Goal: ckIso(X★(D·ι(ofTree t))) = F * op(ckIso(D·ι(ofTree t)))
+      -- Rewrite ckIso(D · ι(ofTree t)) = G * of'{t}.
+      have h_ckIso_DιV :
+          ckIsoSymmetricAlgebra
+              (D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            G * ConnesKreimer.of' ({t} : Multiset _) := by
+        rw [map_mul, h_ckIso_ι_ofTree]
+      rw [h_ckIso_DιV]
+      -- Now goal: ckIso(X★(D·ι(ofTree t))) = F * op(G * of'{t}).
+      -- The plan:
+      -- (A) Express the (X★D)○ιv term in GL: ckIso((X★D)○ιv) = insertion(op(ckIso(X★D)))(op of'{t}) [substrate 1]
+      --     and op(ckIso(X★D)) = F * op G [IH], so
+      --     ckIso((X★D)○ιv) = unop(insertion(F * op G)(op of'{t})).
+      -- (B) ckIso((X★D)·ιv) = ckIso(X★D) * of'{t} [ring hom + ι_single]
+      --                    = unop(F * op G) * of'{t} [IH] (in CK product).
+      -- (C) ckIso(X★(D○ιv)) = F * insertion(op G)(op of'{t}) [substrate via h_ih_sum + intertwine]
+      -- Combining (A)+(B) on RHS of h_SL_split_additive, and (C) for the third term:
+      -- LHS = ckIso(X★(D·ιv)) and RHS = ckIso((X★D)○ιv) + ckIso((X★D)·ιv) - ckIso(X★(D○ιv))
+      -- so:
+      --   ckIso(X★(D·ιv)) = unop(ins(F*opG)(op of'{t})) + (unop(F*opG)*of'{t}) - F*ins(opG)(op of'{t})
+      -- Using h_GL_split: F * op(G * of'{t}) = ins(F*opG)(...) + op(unop(F*opG) * of'{t}) - F * ins(op G)(...)
+      -- These should match modulo unop/op being identity.
+      --
+      -- Step (A): rewrite term (X★D)○ιv via substrate.
+      have h_term_A :
+          ckIsoSymmetricAlgebra
+              (oudomGuinCirc (oudomGuinStar X D)
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            GrossmanLarson.unop (GrossmanLarson.insertion
+              (F * GrossmanLarson.op G)
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) := by
+        rw [ckIso_circ_intertwine_insertion (oudomGuinStar X D)
+              (InsertionAlgebra.ofTree t)]
+        rw [h_ckIso_ι_ofTree]
+        -- Substitute op(ckIso(X★D)) = F * op G via h_ih_init.
+        rw [show GrossmanLarson.op (ckIsoSymmetricAlgebra (oudomGuinStar X D)) =
+              F * GrossmanLarson.op G from h_ih_init]
+      -- Step (B): rewrite term (X★D)·ιv via map_mul + ι_single + IH.
+      have h_term_B :
+          ckIsoSymmetricAlgebra
+              (oudomGuinStar X D *
+                SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            GrossmanLarson.unop (F * GrossmanLarson.op G) *
+              ConnesKreimer.of' ({t} : Multiset _) := by
+        rw [map_mul, h_ckIso_ι_ofTree]
+        -- Need: ckIso(X★D) * of'{t} = unop(F * op G) * of'{t}.
+        -- h_ih_init says ckIso(X★D) = F * op G (as GL, but GL=CK by def).
+        -- unop(F * op G) = F * op G as CK element (unop is identity).
+        rw [show ckIsoSymmetricAlgebra (oudomGuinStar X D) =
+              GrossmanLarson.unop (F * GrossmanLarson.op G) from h_ih_init]
+      -- Step (C): rewrite term X★(D○ιv) via h_ih_sum.
+      have h_term_C :
+          ((ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (oudomGuinCirc D
+                  (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)))) :
+            ConnesKreimer ℤ (Nonplanar α)) : GrossmanLarson ℤ α) =
+            F * GrossmanLarson.insertion (GrossmanLarson.op G)
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))) := by
+        -- Rewrite LHS via direct chain: use the substrate intertwine on D ○ ι(ofTree t)
+        -- and IH-summand sum.
+        -- ckIso(D ○ ι(ofTree t)) = unop(insertion(op(ckIso D))(op of'{t}))
+        --                       = unop(insertion(op G)(op of'{t}))
+        -- so as a CK element, equals the GL `insertion(op G)(op of'{t})`.
+        -- Now we need ckIso(X ★ Z) where Z = ckIso(D ○ ι(ofTree t)) (as CK element).
+        -- We use h_ih_sum which expresses this as a sum, and the sum-form via
+        -- h_DcircTV (D ○ ι v = ∑ algHomL(...)) gives us the sum.
+        -- Final identification: F * insertion(op G)(op of'{t}) is in GL; the sum
+        -- of F * op(ckIso(algHomL ...)) equals F * op(ckIso(∑ algHomL ...))
+        -- (by map_sum + multiplication distributivity).
+        rw [h_ih_sum]
+        -- Goal: ∑ i, F * op(ckIso(algHomL(tprod _ ...))) = F * insertion(op G)(op of'{t})
+        -- Convert F * (...) to (GrossmanLarson.product F) (...) (definitionally).
+        show ∑ i : Fin m, (GrossmanLarson.product F)
+          (GrossmanLarson.op (ckIsoSymmetricAlgebra
+            (PreLie.OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                (Function.update (Fin.init a) i
+                  (Fin.init a i * InsertionAlgebra.ofTree t)))))) =
+          F * GrossmanLarson.insertion (GrossmanLarson.op G)
+            (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))
+        -- Push F * out of the sum.
+        rw [← _root_.map_sum (GrossmanLarson.product F) _ Finset.univ]
+        -- Goal: GL.product F (∑ ...) = F * insertion(op G)(op of'{t})
+        show F * _ = _
+        congr 1
+        -- ∑ i, op(ckIso(algHomL(...))) = op(ckIso(∑ i, algHomL(...))) [op,ckIso linear].
+        -- op : CK → GL is additive. So ∑ op(f i) = op (∑ f i).
+        -- Use Finset.sum_congr + the fact that op is the identity coercion.
+        rw [show (∑ i : Fin m, GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (PreLie.OudomGuinCircConstruct.algHomL
+                  (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                    (Function.update (Fin.init a) i
+                      (Fin.init a i * InsertionAlgebra.ofTree t)))))) =
+              GrossmanLarson.op (∑ i : Fin m, ckIsoSymmetricAlgebra
+                (PreLie.OudomGuinCircConstruct.algHomL
+                  (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                    (Function.update (Fin.init a) i
+                      (Fin.init a i * InsertionAlgebra.ofTree t))))) from
+          -- op is the identity on data, so both sides are equal as CK elements.
+          rfl]
+        rw [show ∑ i : Fin m,
+              ckIsoSymmetricAlgebra
+                (PreLie.OudomGuinCircConstruct.algHomL
+                  (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                    (Function.update (Fin.init a) i
+                      (Fin.init a i * InsertionAlgebra.ofTree t)))) =
+            ckIsoSymmetricAlgebra (∑ i : Fin m,
+              PreLie.OudomGuinCircConstruct.algHomL
+                (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m
+                  (Function.update (Fin.init a) i
+                    (Fin.init a i * InsertionAlgebra.ofTree t)))) from
+          (map_sum ckIsoSymmetricAlgebra.toLinearEquiv.toLinearMap _ _).symm]
+        rw [← h_DcircTV]
+        rw [ckIso_circ_intertwine_insertion D (InsertionAlgebra.ofTree t)]
+        rw [h_ckIso_ι_ofTree]
+        -- Goal: op(unop(insertion(op G)(op of'{t}))) = insertion(op G)(op of'{t})
+        rfl
+      -- Apply h_GL_split + the three step rewrites to close the goal.
+      -- h_SL_split_additive (in CK):
+      --   LHS_target + ckIso(X★(D○ιv)) = ckIso((X★D)○ιv) + ckIso((X★D)·ιv)
+      -- Substitute h_term_A, h_term_B, h_term_C (the latter two as
+      -- equations in GL, but since CK = GL by def, all live additively).
+      -- After substitution:
+      --   LHS_target + F*ins(op G)(op of'{t})
+      --     = unop(ins(F*opG)(op of'{t})) + (unop(F*opG) * of'{t})
+      -- Apply h_GL_split rearranged:
+      --   ins(F*opG)(op of'{t}) + op(unop(F*opG) * of'{t})
+      --     = F * op(G * of'{t}) + F * ins(op G)(op of'{t})
+      -- The unop/op identity pair turns this CK equality (via CK=GL=def) into:
+      --   unop(ins(F*opG)(op of'{t})) + unop(F*opG) * of'{t}
+      --     = F * op(G * of'{t}) + F * ins(op G)(op of'{t})
+      -- which combined with h_SL_split_additive gives the goal.
+      -- Concretely: derive goal by add_right_cancel on F*ins(op G)(op of'{t}).
+      -- Goal: LHS_target = F * op(G * of'{t}).
+      -- Approach: prove
+      --   LHS_target + F*ins(op G)(op of'{t}) = F*op(G*of'{t}) + F*ins(op G)(op of'{t})
+      -- and cancel.
+      -- Work in CK throughout for the `+` form (avoids GL HAdd mismatch).
+      -- Form ALL CK equations from substrates:
+      -- (C-as-CK): ckIso(X ★ (D○ι(ofTree t))) = unop(F * insertion(op G)(op of'{t}))
+      have h_term_C_CK :
+          ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (oudomGuinCirc D
+                  (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)))) =
+          GrossmanLarson.unop
+            (F * GrossmanLarson.insertion (GrossmanLarson.op G)
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) :=
+        h_term_C
+      -- Apply unop to h_GL_split to get a CK equation.
+      -- h_GL_split: F*op(G*of'{t}) + F*insertion(op G)(op of'{t})
+      --           = insertion(F*op G)(op of'{t}) + op(unop(F*op G) * of'{t})
+      -- Take unop of both sides (op_unop = id):
+      -- unop(F*op(G*of'{t})) + unop(F*insertion(op G)(op of'{t}))
+      --   = unop(insertion(F*op G)(op of'{t})) + (unop(F*op G) * of'{t})
+      have h_GL_split_CK :
+          GrossmanLarson.unop (F * GrossmanLarson.op
+              (G * ConnesKreimer.of' ({t} : Multiset _))) +
+            GrossmanLarson.unop (F * GrossmanLarson.insertion (GrossmanLarson.op G)
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) =
+            GrossmanLarson.unop (GrossmanLarson.insertion (F * GrossmanLarson.op G)
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) +
+            GrossmanLarson.unop (F * GrossmanLarson.op G) *
+              ConnesKreimer.of' ({t} : Multiset _) := by
+        have h := congrArg GrossmanLarson.unop h_GL_split
+        rw [unop_add, unop_add] at h
+        -- The last term has unop ∘ op = id (definitional).
+        convert h using 2
+      -- Now use h_SL_split_additive to combine.
+      -- h_SL_split_additive (CK):
+      --   ckIso(X★(D·ι(ofTree t))) + ckIso(X★(D○ι(ofTree t)))
+      --     = ckIso((X★D)○ι(ofTree t)) + ckIso((X★D)·ι(ofTree t))
+      -- Substitute the term_A/B/C-CK forms:
+      --   ckIso(X★(D·ι(ofTree t))) + unop(F * ins(op G)(op of'{t}))
+      --     = unop(ins(F*op G)(op of'{t})) + (unop(F*op G) * of'{t})
+      -- By h_GL_split_CK this equals:
+      --   unop(F*op(G*of'{t})) + unop(F*ins(op G)(op of'{t}))
+      -- Cancel the common unop(F*ins(op G)(op of'{t})) term.
+      have h_goal_CK :
+          ckIsoSymmetricAlgebra
+              (oudomGuinStar X
+                (D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            GrossmanLarson.unop (F * GrossmanLarson.op
+              (G * ConnesKreimer.of' ({t} : Multiset _))) := by
+        have h_LHS_plus_CK :
+            ckIsoSymmetricAlgebra
+                (oudomGuinStar X
+                  (D * SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) +
+              GrossmanLarson.unop
+                (F * GrossmanLarson.insertion (GrossmanLarson.op G)
+                  (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) =
+              GrossmanLarson.unop (F * GrossmanLarson.op
+                (G * ConnesKreimer.of' ({t} : Multiset _))) +
+              GrossmanLarson.unop
+                (F * GrossmanLarson.insertion (GrossmanLarson.op G)
+                  (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) := by
+          -- Apply ← h_term_C_CK ONLY on LHS, then chain rewrites on LHS.
+          conv_lhs => rw [← h_term_C_CK]
+          rw [h_SL_split_additive, h_term_A, h_term_B]
+          -- Now LHS is `unop(ins(F*op G)(...)) + (unop(F*op G) * of'{t})`
+          -- and RHS is `unop(F*op(G*of'{t})) + unop(F*ins(op G)(...))`.
+          -- These match h_GL_split_CK (with sides swapped).
+          exact h_GL_split_CK.symm
+        exact add_right_cancel h_LHS_plus_CK
+      -- The original goal is the GL form: ckIso(X★(D·ι(ofTree t))) = F * op(G*of'{t}).
+      -- h_goal_CK gives the same equation with unop on the GL RHS.
+      -- Since CK = GL definitionally and op/unop are identity, this is the goal.
+      exact h_goal_CK
 
 /-- **Q5c**: the OG `★` product, transported via `ckIsoSymmetricAlgebra`,
     equals the Grossman-Larson product on `ConnesKreimer ℤ (Nonplanar α)`.
 
     Lifted from `gl_product_eq_oudomGuinStar_tprod` via `algHomL_surjective`
     + `TA_linearMap_ext_tprod` for Y. Mirrors Q3's lifting pattern
-    (`oudomGuinStar_assoc`).
-
-    Pending: per-tprod m+1 case depends on `ckIso_circ_intertwine_insertion`
-    + `GL_product_split_mul_ι` substrate lemmas (sorry-fenced above). -/
+    (`oudomGuinStar_assoc`). Proved sorry-free 2026-06-12. -/
 theorem gl_product_eq_oudomGuinStar
     (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ((ckIsoSymmetricAlgebra (oudomGuinStar X Y) : ConnesKreimer ℤ (Nonplanar α)) :
@@ -1065,15 +2684,40 @@ theorem GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw
   -- Lift `of' Fᵢ` back through `ckIsoSymmetricAlgebra⁻¹` to SymmetricAlgebra,
   -- apply oudomGuinStar_assoc there, transport back via Q5c.
   set X₁ := ckIsoSymmetricAlgebra.symm
-    ((GrossmanLarson.unop (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α)))
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α))) with hX₁
   set X₂ := ckIsoSymmetricAlgebra.symm
-    ((GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α)))
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α))) with hX₂
   set X₃ := ckIsoSymmetricAlgebra.symm
-    ((GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α)))
-  have h := oudomGuinStar_assoc X₁ X₂ X₃   -- Q3 (proved)
-  -- Apply ckIsoSymmetricAlgebra to both sides and use Q5c to transport.
-  have := congrArg (ckIsoSymmetricAlgebra (α := α)) h
-  -- The (★ ↔ GL.product) intertwining (Q5c, sorry-fenced) gives the result.
-  sorry  -- TODO: Q5c + simp closure; ~5-20 LOC once Q5c is sorry-free
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α))) with hX₃
+  -- ckIso X_i = unop(of' F_i) = of' F_i (since ckIso ∘ ckIso.symm = id).
+  have hckIsoX₁ : (ckIsoSymmetricAlgebra X₁ : ConnesKreimer ℤ (Nonplanar α)) =
+      GrossmanLarson.unop (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α) := by
+    rw [hX₁]; exact ckIsoSymmetricAlgebra.apply_symm_apply _
+  have hckIsoX₂ : (ckIsoSymmetricAlgebra X₂ : ConnesKreimer ℤ (Nonplanar α)) =
+      GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α) := by
+    rw [hX₂]; exact ckIsoSymmetricAlgebra.apply_symm_apply _
+  have hckIsoX₃ : (ckIsoSymmetricAlgebra X₃ : ConnesKreimer ℤ (Nonplanar α)) =
+      GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α) := by
+    rw [hX₃]; exact ckIsoSymmetricAlgebra.apply_symm_apply _
+  -- Apply Q5c to peel ckIso ∘ ★ into op(ckIso) * op(ckIso) at each fold.
+  have h_LHS_step1 := gl_product_eq_oudomGuinStar (oudomGuinStar X₁ X₂) X₃
+  have h_LHS_step2 := gl_product_eq_oudomGuinStar X₁ X₂
+  have h_RHS_step1 := gl_product_eq_oudomGuinStar X₁ (oudomGuinStar X₂ X₃)
+  have h_RHS_step2 := gl_product_eq_oudomGuinStar X₂ X₃
+  -- Use Q3: (X₁ ★ X₂) ★ X₃ = X₁ ★ (X₂ ★ X₃).
+  have h_assoc : oudomGuinStar (oudomGuinStar X₁ X₂) X₃ =
+      oudomGuinStar X₁ (oudomGuinStar X₂ X₃) :=
+    oudomGuinStar_assoc X₁ X₂ X₃
+  -- Apply ckIso to h_assoc.
+  have h_iso_assoc : (ckIsoSymmetricAlgebra
+        (oudomGuinStar (oudomGuinStar X₁ X₂) X₃) : ConnesKreimer ℤ (Nonplanar α)) =
+      ckIsoSymmetricAlgebra (oudomGuinStar X₁ (oudomGuinStar X₂ X₃)) :=
+    congrArg _ h_assoc
+  -- Rewrite both sides via Q5c, then via hckIsoX₁/X₂/X₃ + op_unop.
+  rw [h_LHS_step1, h_LHS_step2, hckIsoX₁, hckIsoX₂, hckIsoX₃,
+      GrossmanLarson.op_unop, GrossmanLarson.op_unop, GrossmanLarson.op_unop] at h_iso_assoc
+  rw [h_RHS_step1, h_RHS_step2, hckIsoX₁, hckIsoX₂, hckIsoX₃,
+      GrossmanLarson.op_unop, GrossmanLarson.op_unop, GrossmanLarson.op_unop] at h_iso_assoc
+  exact h_iso_assoc
 
 end RootedTree

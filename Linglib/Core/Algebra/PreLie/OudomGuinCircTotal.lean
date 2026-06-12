@@ -72,8 +72,8 @@ namespace OudomGuinCircConstruct
 open TensorProduct
 open scoped DirectSum
 
-variable {R : Type} [CommRing R]
-variable {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+variable {R : Type*} [CommRing R]
+variable {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
 
 /-! ## §1: Per-degree lift via `PiTensorProduct.lift` -/
 
@@ -333,7 +333,7 @@ then uses `DirectSum.linearMap_ext` (per-summand check) and
 `PiTensorProduct.ext` (per-tprod check) — both `@[ext]` lemmas in mathlib.
 -/
 
-lemma TA_linearMap_ext_tprod {N : Type} [AddCommMonoid N] [Module R N]
+lemma TA_linearMap_ext_tprod {N : Type*} [AddCommMonoid N] [Module R N]
     {f g : TensorAlgebra R L →ₗ[R] N}
     (h : ∀ n (a : Fin n → L),
       f (TensorAlgebra.tprod R L n a) = g (TensorAlgebra.tprod R L n a)) :
