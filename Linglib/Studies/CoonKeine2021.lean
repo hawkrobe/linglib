@@ -68,15 +68,23 @@ their (11), where SPKR and ADDR are sister leaves in one geometry
 (`ckSpec_filter_eq_personSpec`), and is grounded in
 `decomposePerson` (`ckSpec_grounded`).
 
-Phase 2 (planned): §4's agreement-side resolution — gluttony
-survives iff the conflicting bundles are realized syncretically
-(Icelandic DAT-NOM, German copulas) — via `VocabSimple.spellout`.
+## Gluttony and agreement (§4)
+
+For agreement (vs. clitics) the crash is at PF: each acquired value
+demands a Vocabulary item; only one can be inserted; syncretic
+demands rescue gluttony. `icelandic_dat_nom` derives the DAT-NOM
+person restriction (their (75)) with the (84) syncretism fix and the
+fully-syncretic singular; `german_copula` derives the
+assumed-identity restriction (their (51)) with the past-tense *war*
+fix (their fn. 32). `not_gluttonous_singleton` is their (86):
+many probes on one DP is never gluttony. Number hierarchy effects
+(German *SG>PL) await number segments — see the §4 section note.
 -/
 
 namespace CoonKeine2021
 
 open Minimalist
-open Minimalist.CyclicAgree (Segment)
+open Minimalist.CyclicAgree (Segment ProbeArticulation)
 
 /-! ### Feature geometry and goals (their (11), §3.4.1) -/
 
@@ -119,14 +127,20 @@ def Goal.visibleSegs (g : Goal) : List Segment :=
 
 /-! ### Probes and segment-based Agree (their (13), (14), (39)) -/
 
-/-- A probe: its unvalued segments (their (13)). -/
-abbrev Probe := List Segment
+/-- A probe: its unvalued segments (their (13)) — the same object as
+    `CyclicAgree.ProbeArticulation`, since both descend from
+    [bejar-rezac-2009]. -/
+abbrev Probe := ProbeArticulation
 
-/-- Their (39a): [uPERS [uPART]] — Weak PCC (Catalan). -/
-def weakProbe : Probe := [.pi, .participant]
+/-- Their (39a): [uPERS [uPART]] — Weak PCC (Catalan). Identical to
+    [bejar-rezac-2009]'s partial probe (`CyclicAgree.partialProbe`),
+    by construction. -/
+def weakProbe : Probe := CyclicAgree.partialProbe
 
-/-- Their (39b): [uPERS [uPART [uSPKR]]] — Ultrastrong PCC. -/
-def ultrastrongProbe : Probe := [.pi, .participant, .speaker]
+/-- Their (39b): [uPERS [uPART [uSPKR]]] — Ultrastrong PCC.
+    Identical to [bejar-rezac-2009]'s full probe under the standard
+    geometry (`CyclicAgree.fullProbeStd`). -/
+def ultrastrongProbe : Probe := CyclicAgree.fullProbeStd
 
 /-- Their (39c): [uPERS [uSPKR]] — Me-First PCC (missing
     intermediate segment; see their fn. 22). -/
@@ -178,11 +192,15 @@ theorem gluttonous_only_inverse (P : Probe) {hi lo : Goal}
   rintro ⟨s₁, _, s₂, _, t₁, _, t₂, _, h₁, h₂, hne⟩
   have hkey : ∀ s, ∀ t : Goal × Nat, segGoal s [hi, lo] = some t → t.2 = 0 := by
     intro s t ht
-    rw [segGoal_pair] at ht
-    by_cases hhi : s ∈ hi.visibleSegs
+    rw [show segGoal s [hi, lo] =
+          probeSearch (fun t => decide (s ∈ t.1.visibleSegs)) [(hi, 0), (lo, 1)]
+        from rfl,
+      probeSearch_pair_of_imp (a := (hi, 0)) (b := (lo, 1))
+        (by simpa using hsub s)] at ht
+    by_cases hhi : decide (s ∈ hi.visibleSegs) = true
     · rw [if_pos hhi] at ht
       exact Option.some.inj ht ▸ rfl
-    · rw [if_neg hhi, if_neg (fun hl => hhi (hsub s hl))] at ht
+    · rw [if_neg hhi] at ht
       exact nomatch ht
   exact hne ((hkey s₁ t₁ h₁).trans (hkey s₂ t₂ h₂).symm)
 
@@ -366,6 +384,163 @@ theorem mefirst_diverges_from_pConstraint :
         ¬ IsLicit meFirstGrammar io do_)) ∧
     ¬ pccViolation meFirstProbe false .first .first ∧
     ¬ IsLicit meFirstGrammar .first .first := by
+  decide
+
+/-! ### Gluttony and agreement: values, Vocabulary, syncretism (§4)
+
+For morphological agreement (vs. clitics), gluttony is fatal only at
+PF: the probe carries one value per agreed goal (their (16)/(58)),
+each value *demands* a Vocabulary item (the most specific compatible
+one — the Elsewhere Condition, as in `VocabSimple.bestMatch`), and
+only one VI can be inserted. Conflicting demands → ineffability
+(their (83)); syncretic demands → grammatical despite gluttony
+(their (85)) — the signature prediction separating this account from
+licensing: "gluttony and gluttonous probes do not by themselves give
+rise to ungrammaticality". The VI type is study-local because its
+context slot is the number value, not a syntactic category
+(`VocabSimple.VocabEntry`'s `context : Option Cat` does not fit).
+
+Scope: person effects only. The German number hierarchy (*SG>PL,
+their (52)/(64)) and Icelandic number effects (their fn. 35) need
+number segments, which the person-only `Segment` inventory lacks —
+deferred with the paper's own caveat that the Icelandic number facts
+are interspeaker-variable. -/
+
+/-- The values a probe acquires: the visible geometry of each
+    distinct goal token some segment agreed with (their (16)). -/
+def acquiredValues (P : Probe) (goals : List Goal) : List (List Segment) :=
+  (goals.zipIdx.filter
+    (fun t => P.any (fun s => segGoal s goals == some t))).map
+    (fun t => t.1.visibleSegs)
+
+/-- One DP agreeing with many probes is not gluttony (their (86):
+    Icelandic multiple participle agreement): a single goal can never
+    yield two distinct tokens. -/
+theorem not_gluttonous_singleton (P : Probe) (g : Goal) :
+    ¬ Gluttonous P [g] := by
+  rintro ⟨s₁, _, s₂, _, t₁, ht₁m, t₂, ht₂m, _, _, hne⟩
+  cases ht₁m with
+  | head =>
+    cases ht₂m with
+    | head => exact hne rfl
+    | tail _ h => exact nomatch h
+  | tail _ h => exact nomatch h
+
+/-- A Vocabulary item for a verbal agreement slot (their (82)): a
+    person specification (`[]` = underspecified, compatible with any
+    value), a contextual number specification, and the exponent. -/
+structure VI where
+  personSpec : List Segment
+  pluralCtx : Bool
+  exponent : String
+  deriving DecidableEq, Repr
+
+/-- The VI a single person value demands in a number context: the
+    most specific compatible item (Elsewhere Condition; ties by list
+    order, as in `VocabSimple.bestMatch`). -/
+def demand (vocab : List VI) (plural : Bool) (value : List Segment) :
+    Option VI :=
+  (vocab.filter (fun vi =>
+    vi.pluralCtx == plural && vi.personSpec.all (value.contains ·))).foldl
+    (fun best vi =>
+      match best with
+      | none => some vi
+      | some b =>
+          if vi.personSpec.length > b.personSpec.length then some vi
+          else some b)
+    none
+
+/-- Morphological resolvability: all carried values demand the same
+    VI — "it is possible to simultaneously satisfy both by inserting
+    a single VI" (their (85)). A non-gluttonous probe (one value) is
+    trivially resolvable; a gluttonous one is resolvable exactly
+    under syncretism. -/
+def MorphOk (vocab : List VI) (plural : Bool)
+    (values : List (List Segment)) : Prop :=
+  ∀ v₁ ∈ values, ∀ v₂ ∈ values,
+    demand vocab plural v₁ = demand vocab plural v₂
+
+instance (vocab : List VI) (plural : Bool) (values : List (List Segment)) :
+    Decidable (MorphOk vocab plural values) :=
+  inferInstanceAs
+    (Decidable (∀ v₁ ∈ values, ∀ v₂ ∈ values,
+      demand vocab plural v₁ = demand vocab plural v₂))
+
+/-! #### Icelandic dative-nominative constructions (§4.2) -/
+
+/-- The Icelandic past-tense mediopassive suffixes (their (81)/(82)):
+    *-ist* (any person, singular), *-ust* (any person, plural),
+    *-umst* (1st person, plural — more specific, so it wins for
+    1PL). -/
+def icelandicMediopassive : List VI :=
+  [⟨[], false, "-ist"⟩,
+   ⟨[], true, "-ust"⟩,
+   ⟨[.pi, .participant, .speaker], true, "-umst"⟩]
+
+/-- Icelandic DAT-NOM (their (75)–(85)): the dative is externally 3rd
+    person (K-opaque), so π = [uPERS [uPART]] (their (79), = the weak
+    probe) gluttons whenever the nominative is 1st/2nd. The fate of
+    the structure is then decided by morphology:
+
+    - *3DAT > 1PL.NOM (their (76a)): the 3rd value demands *-ust*,
+      the 1st value *-umst* — conflict (their (83)).
+    - 3DAT > 2PL.NOM (their (84a)): gluttonous, but both values
+      demand *-ust* — syncretism rescues (their (85)). Gluttony is
+      not by itself ungrammaticality.
+    - Singular nominatives: every cell of (81) is *-ist*, so the
+      person restriction is "completely lifted in the singular". -/
+theorem icelandic_dat_nom :
+    -- *3 > 1PL: gluttonous and morphologically unresolvable
+    (Gluttonous weakProbe [⟨.third, true⟩, ⟨.first, false⟩] ∧
+      ¬ MorphOk icelandicMediopassive true
+        (acquiredValues weakProbe [⟨.third, true⟩, ⟨.first, false⟩])) ∧
+    -- 3 > 2PL: gluttonous BUT resolvable (-ust syncretism)
+    (Gluttonous weakProbe [⟨.third, true⟩, ⟨.second, false⟩] ∧
+      MorphOk icelandicMediopassive true
+        (acquiredValues weakProbe [⟨.third, true⟩, ⟨.second, false⟩])) ∧
+    -- singular: resolvable for every person of the nominative
+    (∀ p ∈ persons, MorphOk icelandicMediopassive false
+      (acquiredValues weakProbe [⟨.third, true⟩, ⟨p, false⟩])) := by
+  decide
+
+/-! #### German copula constructions (§4.1) -/
+
+/-- German singular present-tense copula agreement: *bin* (1SG),
+    *bist* (2SG), *ist* (elsewhere). -/
+def germanPresentSg : List VI :=
+  [⟨[], false, "ist"⟩,
+   ⟨[.pi, .participant, .speaker], false, "bin"⟩,
+   ⟨[.pi, .participant, .addressee], false, "bist"⟩]
+
+/-- German singular past-tense copula agreement: *war* is syncretic
+    between 1SG and 3SG (their fn. 32); *warst* (2SG). -/
+def germanPastSg : List VI :=
+  [⟨[], false, "war"⟩,
+   ⟨[.pi, .participant, .addressee], false, "warst"⟩]
+
+/-- German assumed-identity copulas (their (51)–(62)): both DPs are
+    nominative, hence both visible to T's probe — gluttony in
+    3>[PART] (their (57)–(58)); in English the second DP is
+    accusative and invisible, so no effect. The morphology then
+    decides:
+
+    - *3 > 2 present (their (51b) *Martin ist du*): *ist* vs. *bist*
+      — conflict.
+    - ?3 > 1 past (their fn. 32 (i) *Martin war ich*): *war* is
+      1SG/3SG-syncretic — resolvable, and the sentence improves.
+    - Nonfinite clauses (their (54)): no probe, no gluttony — same
+      logic as the PCC's probeless environments. -/
+theorem german_copula :
+    -- *3 > 2 present: gluttonous and unresolvable
+    (Gluttonous weakProbe [⟨.third, false⟩, ⟨.second, false⟩] ∧
+      ¬ MorphOk germanPresentSg false
+        (acquiredValues weakProbe [⟨.third, false⟩, ⟨.second, false⟩])) ∧
+    -- ?3 > 1 past: gluttonous but war-syncretism resolves
+    (Gluttonous weakProbe [⟨.third, false⟩, ⟨.first, false⟩] ∧
+      MorphOk germanPastSg false
+        (acquiredValues weakProbe [⟨.third, false⟩, ⟨.first, false⟩])) ∧
+    -- nonfinite: no probe, no gluttony
+    ¬ Gluttonous ([] : Probe) [⟨.third, false⟩, ⟨.second, false⟩] := by
   decide
 
 end CoonKeine2021
