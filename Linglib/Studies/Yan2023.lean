@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Modal.QBSML.FreeChoice
-import Linglib.Phenomena.FreeChoice.Atoms
+import Linglib.Core.Logic.Modal.BSML.Scenarios
 
 /-!
 # [yan-2023]: Monotonicity under desire as a neglect-zero effect
@@ -57,7 +57,7 @@ namespace Yan2023
 
 open Core.Logic.Modal.QBSML
 open Core.Logic.Team (splitsAs_empty_self)
-open Phenomena.FreeChoice (QVar)
+open Core.Logic.Modal.BSML (QVar)
 
 /-! ### The reinterpretation function -/
 

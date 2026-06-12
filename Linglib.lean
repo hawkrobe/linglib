@@ -1511,8 +1511,7 @@ import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
 import Linglib.Studies.Mendes2025
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
-import Linglib.Phenomena.FreeChoice.Atoms
-import Linglib.Phenomena.FreeChoice.Worlds
+import Linglib.Core.Logic.Modal.BSML.Scenarios
 import Linglib.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
