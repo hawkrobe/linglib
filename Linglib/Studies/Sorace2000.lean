@@ -1,12 +1,12 @@
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Features.Aktionsart
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
 [sorace-2000]
 
-Connects the auxiliary selection data in
-`Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
+Connects the auxiliary selection substrate in
+`Typology.AuxiliaryVerbs` to Vendler's aspectual
 classification from `Features.Aktionsart`.
 
 ## Known gaps
@@ -24,7 +24,7 @@ classification from `Features.Aktionsart`.
 namespace Sorace2000
 
 open Features
-open Phenomena.AuxiliaryVerbs.Selection
+open Typology.AuxiliaryVerbs
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to
     unaccusativity: canonical achievements are change-of-state verbs whose
@@ -41,5 +41,14 @@ def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
   | .activity       => .unergative
   | .state          => .unergative
   | .semelfactive   => .unergative
+
+/-- A have-only perfect system agrees with the canonical split exactly on
+    the classes that do not select *be* ([sorace-2000]): English, with its
+    have-only perfect, diverges from Italian precisely on the BE-selecting
+    classes (*has arrived* vs *è arrivato*). -/
+theorem haveOnly_agrees_with_canonical_iff (c : TransitivityClass) :
+    SelectionRule.haveOnly.selects true c = some (canonicalSelection c) ↔
+      ¬ SelectsBe c := by
+  cases c <;> decide
 
 end Sorace2000

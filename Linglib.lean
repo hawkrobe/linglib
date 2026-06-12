@@ -1264,8 +1264,6 @@ import Linglib.Studies.Hacquard2010
 import Linglib.Studies.Zhao2025
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Studies.Smith1997
-import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Studies.Amato2025Auxiliary
 import Linglib.Studies.Anderson2006
 import Linglib.Studies.Olivier2026

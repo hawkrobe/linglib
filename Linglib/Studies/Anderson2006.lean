@@ -6,8 +6,7 @@ import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Pipil.AuxiliaryVerbs
-import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.Negation
 import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
 import Linglib.Morphology.Grammaticalization
@@ -68,8 +67,8 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
   explicitly cites Heine 1993:48ff.). Substrate
   `GramStage.toMorphStatus` projection moved to
   `Morphology/Grammaticalization.lean`.
-- **`negStrategyStage` moved to `NegativeAuxiliaries.lean`** as
-  `NegStrategy.toGramStage : NegStrategy → Option GramStage`, with
+- **`negStrategyStage`** is now `NegStrategy.toGramStage :
+  NegStrategy → Option GramStage` (in `Typology/Negation.lean`), with
   `.negParticle => none` (not on the verbal cline) — fixes the
   earlier formaliser-introduced collapse of [miestamo-2005]'s
   particle-vs-verb distinction.
@@ -99,8 +98,7 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
 namespace Anderson2006
 
 open Typology.AuxiliaryVerbs
-open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
-open Phenomena.AuxiliaryVerbs.Selection
+open Typology.Negation (NegStrategy)
 
 /-! ## Per-language AVC data
 
@@ -433,13 +431,42 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
 
 [anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
 across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
-Kokota; lex-headed in Kwerba; doubled in 'Iipay. The substantive
-theorems about NegStrategy → InflPattern live in
-`Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean` (`negVerb_implies_auxHeaded`
-encodes the most common verbal-negator → aux-headed mapping; the
-other patterns Anderson documents are not yet a Lean-checkable
-`NegStrategy → InflPattern` typology because they require finer
-sub-typing of `NegStrategy.negVerb`). This file does not re-export. -/
+Kokota; lex-headed in Kwerba; doubled in 'Iipay. The
+NegStrategy → InflPattern mapping lives in `Typology/Negation.lean`
+(`NegStrategy.expectedInflPattern` encodes the most common
+verbal-negator → aux-headed mapping; the other patterns Anderson
+documents are not yet a Lean-checkable `NegStrategy → InflPattern`
+typology because they require finer sub-typing of
+`NegStrategy.negVerb`). -/
+
+/-- A negative-auxiliary datum ([anderson-2006] §1.7.2). -/
+structure NegAuxDatum where
+  language : String
+  strategy : NegStrategy
+  form : String
+  gloss : String := ""
+  deriving Repr, BEq
+
+/-- Komi *oz* — negative auxiliary verb ([anderson-2006]). -/
+def komi : NegAuxDatum :=
+  { language := "Komi"
+  , strategy := .negVerb
+  , form := "oz"
+  , gloss := "oz mun 'NEG go'" }
+
+/-- Udihe *e-si* — negative auxiliary verb (past tense on the neg aux)
+    ([anderson-2006] §1.7.2, which classifies the Udihe negative
+    auxiliary construction as aux-headed). -/
+def udihe : NegAuxDatum :=
+  { language := "Udihe"
+  , strategy := .negVerb
+  , form := "e-si"
+  , gloss := "e-si ŋene 'NEG-PST go' (didn't go)" }
+
+/-- Anderson §1.7.2 classifies the Udihe negative-auxiliary construction
+    as aux-headed; the strategy-level projection agrees. -/
+theorem udihe_negVerb_expects_auxHeaded :
+    udihe.strategy.expectedInflPattern = some .auxHeaded := rfl
 
 /-! ## LV form predictions across patterns
 
@@ -470,8 +497,8 @@ theorem splitDoubled_predicts_finite_lv :
 
 /-! ## Bridge to Sorace 2000 (auxiliary selection)
 
-Be/have auxiliary selection (`Selection.lean`) operates within
-aux-headed AVCs: the question of *which* auxiliary appears
+Be/have auxiliary selection (`Typology/AuxiliaryVerbs.lean`) operates
+within aux-headed AVCs: the question of *which* auxiliary appears
 presupposes the auxiliary hosts inflection. [sorace-2000]'s
 sister study `Studies/Sorace2000.lean` provides
 `vendlerClassToTypicalTransitivity`; the quantified composition
@@ -491,9 +518,9 @@ theorem selection_presupposes_auxHeaded :
 
 /-- Quantified Sorace bridge: composing `vendlerClassToTypicalTransitivity`
     with `canonicalSelection` yields `.be` exactly for achievements,
-    `.have` elsewhere. This generalizes the per-datum Italian
-    *arrivare* claim to all Vendler classes, exposing the
-    composition `canonicalSelection ∘ vendlerClassToTypicalTransitivity`
+    `.have` elsewhere (Italian *è arrivato* instantiates the
+    achievement case). Exposes the composition
+    `canonicalSelection ∘ vendlerClassToTypicalTransitivity`
     as a single theorem rather than a hand-picked tuple. Falsifiable
     by changing either lookup. -/
 theorem sorace_canonical_chain (v : Features.VendlerClass) :
@@ -503,14 +530,6 @@ theorem sorace_canonical_chain (v : Features.VendlerClass) :
         | .achievement => .be
         | _ => .have := by
   cases v <;> rfl
-
-/-- Italian *arrivare* grounds the achievement → unaccusative → BE
-    chain: the Selection datum independently classifies *arrivare*
-    as unaccusative, and `canonicalSelection .unaccusative = .be`.
-    Composes with `sorace_canonical_chain .achievement`. -/
-theorem italian_arrivare_grounds_chain :
-    italianArrivare.transitivityClass = .unaccusative ∧
-    italianArrivare.selectedAux = .be := ⟨rfl, rfl⟩
 
 /-! ## Cross-framework: Miestamo 2005 (negation morpheme classification)
 

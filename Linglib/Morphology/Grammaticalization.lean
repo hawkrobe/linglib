@@ -123,8 +123,8 @@ def GramStage.toMorphStatus : GramStage → Option Morphology.MorphStatus
 
 /-- The `.affix` stage is strictly more grammaticalized (more
     morphologically bound) than the `.auxiliary` stage. Used by
-    `Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean` to compare
-    the cline placement of negative affixes vs negative verbs. -/
+    `Typology/Negation.lean` to compare the cline placement of
+    negative affixes vs negative verbs. -/
 theorem affix_more_bound_than_auxiliary :
     GramStage.affix.boundedness > GramStage.auxiliary.boundedness := by
   decide

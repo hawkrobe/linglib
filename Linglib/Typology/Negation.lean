@@ -5,7 +5,9 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.NegativeConcord
+import Linglib.Morphology.Grammaticalization
 
 /-!
 # Typology.Negation
@@ -39,6 +41,10 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
 - `NegSymmetry`, `AsymmetrySubtype`, `NegIndefiniteStrategy`,
   `NegVerbPosition`, `NegMorphemePosition` — WALS Ch 113-115/143A
   feature enums.
+- `NegStrategy` — AVC-oriented classification of the negation strategy
+  ([anderson-2006], [heine-1993]), with bridges to Anderson's AVC
+  patterns (`expectedInflPattern`), Heine's grammaticalization cline
+  (`toGramStage`), and WALS Ch 112 (`toNegMorphemeType`).
 - `NegationProfile` — sibling per-language schema bundling Ch 112-115 +
   Greco's `negIsHead` + JinKoenig's `enAttested`. Each Fragment exposes
   `def negationProfile : NegationProfile` alongside `def negationSystem`.
@@ -414,5 +420,68 @@ theorem nWord_vs_negQuantifier :
     (NegIndefiniteStrategy.cooccur).admits .nWord = true ∧
     (NegIndefiniteStrategy.preclude).admits .nWord = false ∧
     (NegIndefiniteStrategy.preclude).admits .negQuantifier = true := by decide
+
+/-! ### Negation strategy and the AVC bridge
+[anderson-2006] [heine-1993] [miestamo-2005]
+
+Some languages express sentential negation through a **negative auxiliary
+verb** that hosts inflection (tense, agreement) while the lexical verb
+appears in a nonfinite form (Finnish *ei mene* 'NEG.3SG go') — a special
+case of the aux-headed AVC pattern of `Typology.AuxiliaryVerbs`.
+`NegStrategy` classifies negation strategies at this AVC-relevant grain
+and bridges them to Anderson's inflectional patterns, Heine's
+grammaticalization cline, and the WALS Ch 112 morpheme typology. -/
+
+open Typology.AuxiliaryVerbs (InflPattern)
+open Grammaticalization (GramStage)
+
+/-- Strategy for expressing sentential negation. -/
+inductive NegStrategy where
+  /-- Negative auxiliary verb that inflects (Finnish *ei*, Komi *oz*). -/
+  | negVerb
+  /-- Bound negative morpheme (e.g., Turkish *-mE-*). -/
+  | negAffix
+  /-- Free negative particle (English *not*, Italian *non*). -/
+  | negParticle
+  deriving DecidableEq, Repr
+
+/-- A negative verb creates an AVC and therefore has an expected inflectional
+    pattern: aux-headed (the neg verb hosts inflection). Affixes and particles
+    do not create AVCs. -/
+def NegStrategy.expectedInflPattern : NegStrategy → Option InflPattern
+  | .negVerb     => some .auxHeaded
+  | .negAffix    => none
+  | .negParticle => none
+
+/-- Is this strategy verbal (i.e., does it create an AVC)? -/
+def NegStrategy.isVerbal : NegStrategy → Bool
+  | .negVerb => true
+  | _        => false
+
+/-- Project a negation strategy onto its grammaticalization-cline
+    stage ([heine-1993], [anderson-2006] ch. 7). A negative
+    *verb* (Finnish *ei*, Komi *oz*) sits at the auxiliary stage; a
+    negative *affix* (bound morpheme) is one stage further along the
+    cline. A free negative *particle* (English *not*, Italian *non*)
+    is not on the verbal cline at all — particles are not bleached
+    verbs and don't have a "stage" of grammaticalization in
+    Heine's/Anderson's verbal sense. Returning `none` for `.negParticle`
+    rather than collapsing it onto `.auxiliary` (an earlier
+    formaliser shorthand) preserves [miestamo-2005]'s
+    particle-vs-verb morphological distinction; the cross-framework
+    equivalence theorem `auxiliary_stage_iff_aux_verb_morpheme` in
+    `Studies/Anderson2006.lean` makes the
+    Anderson-cline / Miestamo-morpheme-type agreement Lean-checkable. -/
+def NegStrategy.toGramStage : NegStrategy → Option GramStage
+  | .negVerb     => some .auxiliary
+  | .negAffix    => some .affix
+  | .negParticle => none
+
+/-- Map from AVC-oriented `NegStrategy` to WALS-oriented `NegMorphemeType`:
+    both classify the morphological status of the negative marker. -/
+def NegStrategy.toNegMorphemeType : NegStrategy → NegMorphemeType
+  | .negVerb     => .auxVerb
+  | .negAffix    => .affix
+  | .negParticle => .particle
 
 end Typology.Negation
