@@ -88,6 +88,30 @@ theorem visible_of_probeSearch_eq_some {a : α}
     (h : probeSearch vis goals = some a) : vis a = true :=
   List.find?_some h
 
+/-- Over a two-goal sequence whose lower goal's visibility entails the
+    higher's, the search lands on the higher goal if anywhere — the
+    kernel of "gluttony/competition only in inverse configurations"
+    ([coon-keine-2021]) and of highest-only licensing
+    ([halpert-2012]). -/
+theorem probeSearch_pair_of_imp {a b : α}
+    (h : vis b = true → vis a = true) :
+    probeSearch vis [a, b] = if vis a = true then some a else none := by
+  by_cases ha : vis a = true
+  · rw [if_pos ha]
+    show List.find? vis [a, b] = some a
+    simp [List.find?, ha]
+  · rw [if_neg ha]
+    have hb : vis b = false := by
+      cases hvb : vis b
+      · rfl
+      · exact absurd (h hvb) ha
+    have ha' : vis a = false := by
+      cases hva : vis a
+      · rfl
+      · exact absurd hva ha
+    show List.find? vis [a, b] = none
+    simp [List.find?, ha', hb]
+
 /-- The probe Agrees with `a` iff the search finds `a` and `a` is
     active. -/
 theorem probeAgree_eq_some_iff {act : α → Bool} {a : α} :
