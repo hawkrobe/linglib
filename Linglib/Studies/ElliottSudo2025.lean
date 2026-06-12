@@ -1,4 +1,6 @@
 import Linglib.Semantics.Dynamic.Bilateral.BUS
+import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Data.Examples.ElliottSudo2025
 
 /-!
 # Elliott & Sudo (2025): Free Choice with Anaphora
@@ -220,6 +222,17 @@ theorem dne_preserves_binding (x : Nat) (dom : Set E)
         (BilateralDen.exists_ x dom φ))) ψ).positive s =
     (BilateralDen.conj (BilateralDen.exists_ x dom φ) ψ).positive s := by
   simp only [BilateralDen.neg_neg]
+
+/-- Divergence from DPL on doubly negated indefinites. The discourse
+`Examples.double_negation` ("It's not the case that John didn't see a
+bird. It was singing.") is judged acceptable; BUS derives the binding
+because `¬¬φ = φ` (`dne_preserves_binding`), whereas in DPL negation is
+a test, so `¬¬∃xφ ≠ ∃xφ` and the discourse referent never escapes. -/
+theorem dpl_diverges_on_double_negation [Nontrivial E] :
+    Examples.double_negation.judgment = .acceptable ∧
+    ∃ (x : Nat) (φ : Semantics.Dynamic.DPL.DPLRel E),
+      Semantics.Dynamic.DPL.DPLRel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
+  ⟨rfl, Semantics.Dynamic.DPL.dpl_dne_fails_anaphora⟩
 
 /-- Egli's theorem (positive): `(∃x.φ) ∧ ψ ⊆ ∃x(φ ∧ ψ)` for positive
 updates. The positive direction holds because conjunction sequences

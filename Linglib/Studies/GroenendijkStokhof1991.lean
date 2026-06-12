@@ -1,6 +1,4 @@
 import Linglib.Semantics.Dynamic.DPL.Basic
-import Linglib.Phenomena.Anaphora.CrossSentential
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 /-!
 # Groenendijk & Stokhof (1991): Dynamic Predicate Logic
@@ -41,7 +39,7 @@ DPL translation: ∃x[man(x) ∧ walk_in_park(x)] ∧ whistle(x)
 The scope extension theorem shows this equals ∃x[man(x) ∧ walk_in_park(x) ∧ whistle(x)]:
 the existential quantifier's binding power extends across conjunction.
 
-This accounts for `CrossSententialAnaphora.indefinitePersists`. -/
+This accounts for `Heim1982.Examples.indefinite_persists`. -/
 
 /-- DPL correctly predicts indefinite persistence: scope extension
 ensures ∃x in the first sentence binds x in the second. -/
@@ -68,11 +66,13 @@ By `donkey_equivalence`, this is equivalent to:
 And applying it again for y:
   ∀x∀y[farmer(x) ∧ donkey(y) ∧ own(x,y) → beat(x,y)]
 
-This gives the universal "strong" reading predicted by
-`DonkeyAnaphora.geachDonkey` and `DonkeyAnaphora.conditionalDonkey`. -/
+This gives the universal "strong" reading recorded for
+`Geach1962.Examples.donkey_classic` and
+`Heim1982.Examples.conditional_donkey`. -/
 
-/-- The donkey equivalence gives universal force to indefinites
-in conditional antecedents, matching `conditionalDonkey.strongReading`. -/
+/-- The donkey equivalence gives universal force to indefinites in
+conditional antecedents, matching the strong/universal reading of
+`Heim1982.Examples.conditional_donkey`. -/
 theorem donkey_universal_force :
     ∀ {E : Type*} (x : Nat) (φ ψ : DPLRel E),
     DPLRel.impl (DPLRel.exists_ x φ) ψ =
@@ -89,7 +89,7 @@ The universal quantifier is a test: ⟦∀xφ⟧(g,h) forces g = h.
 This means no new bindings are created — the pronoun "he" has
 no accessible antecedent.
 
-This accounts for `CrossSententialAnaphora.universalBlocks`. -/
+This accounts for `Heim1982.Examples.universal_blocks`. -/
 
 /-- Universal quantification is externally static: it cannot
 introduce discourse referents. Any formula following ∀xφ sees
@@ -99,13 +99,13 @@ theorem universal_blocks_anaphora {E : Type*} (x : Nat) (φ : DPLRel E)
   forall_isTest x φ g h hfa
 
 /-- Negation is externally static: it blocks anaphora.
-Accounts for `CrossSententialAnaphora.standardNegationBlocks`. -/
+Accounts for `Heim1982.Examples.standard_negation_blocks`. -/
 theorem negation_blocks_anaphora {E : Type*} (φ : DPLRel E)
     (g h : Nat → E) (hn : DPLRel.neg φ g h) : g = h := hn.1
 
 /-- Implication is externally static: bindings in the antecedent
 or consequent don't escape. Accounts for
-`CrossSententialAnaphora.conditionalAntecedent`. -/
+`Heim1982.Examples.conditional_antecedent`. -/
 theorem implication_blocks_anaphora {E : Type*} (φ ψ : DPLRel E)
     (g h : Nat → E) (hi : DPLRel.impl φ ψ g h) : g = h := hi.1
 
@@ -119,14 +119,17 @@ Double negation ¬¬∃xφ is a test (g = h), so it cannot export the
 witness introduced by ∃x. This contrasts with ∃xφ itself, which
 does export. Hence ¬¬∃xφ ≠ ∃xφ.
 
-This predicts `CrossSententialAnaphora.doubleNegation` should be
-**infelicitous** under standard DPL. (The file marks it as felicitous,
-following [elliott-sudo-2025]'s bilateral analysis — this is a
-known empirical challenge for DPL that motivated BUS/ICDRT.) -/
+A known limitation of DPL: doubly negated indefinites do in fact
+license anaphora (`ElliottSudo2025.Examples.double_negation` is judged
+acceptable), so DPL underpredicts here. The divergence is stated as a
+theorem in `Studies/ElliottSudo2025.lean`
+(`dpl_diverges_on_double_negation`), where the later, comparing paper
+lives. -/
 
 /-- DPL predicts double negation blocks anaphora, contra the empirical
-judgment in `doubleNegation`. This is the well-known DPL limitation
-that [elliott-sudo-2025] and bilateral update semantics address. -/
+judgment in `ElliottSudo2025.Examples.double_negation`. This is the
+well-known DPL limitation that [elliott-sudo-2025] and bilateral
+update semantics address. -/
 theorem dne_blocks_anaphora_dpl_prediction {E : Type*} [Nontrivial E] :
     ∃ (x : Nat) (φ : DPLRel E),
       DPLRel.neg (DPLRel.neg (DPLRel.exists_ x φ)) ≠

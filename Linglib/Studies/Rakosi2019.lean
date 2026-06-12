@@ -45,7 +45,7 @@ a morphosyntactic mechanism.
 - `Studies/DalrympleHaug2024.lean` §2 — the
   bound-variable case (§6 here) is also discussed there as evidence
   for the relational analysis of reciprocal scope.
-- `Phenomena/Anaphora/Coreference.lean` — the `reciprocalPattern`
+- `Studies/Chomsky1981.lean` — the `reciprocalPattern`
   notes that syntactically singular antecedents are possible.
 -/
 

@@ -1,5 +1,5 @@
 import Linglib.Syntax.HPSG.Coreference
-import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Studies.Chomsky1981
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -19,8 +19,8 @@ Principles A/B/C) to two principles based on the `MODE` feature:
 
 Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes
 Principle C. See `Syntax/HPSG/Coreference.lean` for the
-implementation; this file verifies it against the empirical minimal-pair
-data in `Phenomena/Anaphora/Coreference.lean` via the
+implementation; this file verifies it against the [chomsky-1981]
+minimal-pair paradigm in `Studies/Chomsky1981.lean` via the
 `Phenomena.MinimalPairs` vocabulary.
 -/
 
@@ -28,7 +28,8 @@ namespace SagWasowBender2003
 
 open Phenomena.MinimalPairs
 open HPSG.Coreference
-open Phenomena.Anaphora.Coreference
+open Chomsky1981 (reflexiveCoreferenceData pronominalDisjointReferenceData
+  complementaryDistributionData reciprocalCoreferenceData)
 
 /-- English binding under HPSG (ARG-ST outranking): the framework-neutral engine
     (`Binding.grammaticalForCoreference`) applied with HPSG's `CommandRelation`

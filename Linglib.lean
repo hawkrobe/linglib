@@ -1208,7 +1208,6 @@ import Linglib.Studies.Pasternak2019
 import Linglib.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Studies.AsherLascarides2003
 import Linglib.Studies.Hofmann2025
-import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Studies.Reinhart1976
 import Linglib.Studies.Hudson1990
 import Linglib.Studies.SagWasowBender2003
@@ -1222,9 +1221,6 @@ import Linglib.Studies.KampReyle1993
 import Linglib.Studies.KeshetAbney2024
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.Dekker2012
-import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Phenomena.Anaphora.CrossSentential
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Studies.PatelGroszGrosz2017
 import Linglib.Studies.Spector2025
 import Linglib.Studies.Charlow2018
@@ -2851,3 +2847,8 @@ import Linglib.Data.Examples.Westergaard2009
 import Linglib.Studies.Kuhlmann2013
 import Linglib.Studies.BresnanEtAl1982
 import Linglib.Studies.LevshinaEtAl2023
+import Linglib.Data.Examples.Heim1982
+import Linglib.Data.Examples.Geach1962
+import Linglib.Data.Examples.Kanazawa1994
+import Linglib.Data.Examples.ElliottSudo2025
+import Linglib.Data.Examples.AhnZhu2025

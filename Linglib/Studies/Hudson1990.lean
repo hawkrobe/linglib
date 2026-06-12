@@ -1,6 +1,6 @@
 import Linglib.Syntax.DependencyGrammar.Coreference
 import Linglib.Syntax.DependencyGrammar.Nominal
-import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Studies.Chomsky1981
 import Linglib.Phenomena.MinimalPairs
 
 open Phenomena.MinimalPairs
@@ -9,8 +9,8 @@ open Phenomena.MinimalPairs
 # Dependency Grammar d-command binding → Coreference Phenomena
 
 Connects the Dependency Grammar coreference analysis (d-command based binding,
-from [hudson-1990]) to the empirical coreference data in
-`Phenomena.Anaphora.Coreference`.
+from [hudson-1990]) to the [chomsky-1981] binding paradigm in
+`Studies/Chomsky1981.lean`.
 
 Proves that the DG analysis captures all reflexive coreference patterns,
 complementary distribution, and pronominal disjoint reference.
@@ -20,7 +20,8 @@ namespace Hudson1990
 
 open DepGrammar.Coreference
 open DepGrammar.Nominal
-open Phenomena.Anaphora.Coreference
+open Chomsky1981 (reflexiveCoreferenceData pronominalDisjointReferenceData
+  complementaryDistributionData reciprocalCoreferenceData)
 
 /-- English binding under dependency grammar (d-command): the framework-neutral
     engine (`Binding.grammaticalForCoreference`) applied with DG's

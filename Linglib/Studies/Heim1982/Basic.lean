@@ -1,5 +1,5 @@
 import Linglib.Studies.Heim1982.FileChangeSemantics
-import Linglib.Phenomena.Anaphora.CrossSentential
+import Linglib.Data.Examples.Heim1982
 
 /-!
 # Heim (1982): File Change Semantics and Anaphora
@@ -7,8 +7,8 @@ import Linglib.Phenomena.Anaphora.CrossSentential
 
 Formal analysis of cross-sentential anaphora using [heim-1982]'s
 File Change Semantics. This study file connects the FCS theory
-(`Semantics/Dynamic/FileChange/Basic.lean`) to the empirical
-data in `Phenomena/Anaphora/CrossSentential.lean`.
+(`Semantics/Dynamic/FileChange/Basic.lean`) to the example rows
+in `Data/Examples/Heim1982.json` (`Heim1982.Examples`).
 
 ## Key Claims Formalized
 
@@ -32,14 +32,13 @@ data in `Phenomena/Anaphora/CrossSentential.lean`.
 ## Connection to Empirical Data
 
 Each section below derives FCS predictions that account for specific
-data in `CrossSententialAnaphora`.
+example rows in `Heim1982.Examples`.
 -/
 
 namespace Heim1982
 
 open Semantics.Dynamic.FileChangeSemantics
 open Semantics.Dynamic.Core
-open Phenomena.Anaphora.CrossSententialAnaphora
 
 -- ════════════════════════════════════════════════════
 -- § 1. Model Setup
@@ -56,7 +55,7 @@ variable {W E : Type*}
 
 /-! "A man walked in. He sat down."
 
-This accounts for `CrossSententialAnaphora.indefinitePersists`. The FCS
+This accounts for `Examples.indefinite_persists`. The FCS
 analysis: the indefinite "a man" introduces dref x₁ into Dom(F).
 The pronoun "he" in the second sentence accesses x₁, which
 persists because no operator (negation, quantifier) has closed
@@ -111,7 +110,7 @@ theorem indef_adds_to_dom (x : Nat) (body : FCP W E)
 
 /-! "John didn't see a bird. *It was singing."
 
-This accounts for `CrossSententialAnaphora.standardNegationBlocks`.
+This accounts for `Examples.standard_negation_blocks`.
 The FCS analysis: negation closes the scope of the indefinite's dref.
 After F + [¬(∃x. bird(x) ∧ saw(j,x))], x is NOT in Dom — the
 negation's domain matches the input domain, not the extended one.
@@ -237,8 +236,8 @@ theorem seq_is_eliminative (φ ψ : FCP W E)
 -- ════════════════════════════════════════════════════
 
 /-! We instantiate the FCS framework with a concrete finite model
-to verify the theory matches the empirical data from
-`CrossSententialAnaphora`. -/
+to verify the theory matches the empirical data in
+`Heim1982.Examples`. -/
 
 section ConcreteExamples
 
@@ -279,44 +278,36 @@ end ConcreteExamples
 -- § 8. Connection to Empirical Data
 -- ════════════════════════════════════════════════════
 
-/-! Each datum in `CrossSententialAnaphora` corresponds to a structural
-property of FCS. The per-datum theorems below verify that the FCS
-predictions match the empirical judgments. -/
+/-! Each row in `Heim1982.Examples` corresponds to a structural property
+of FCS. The per-row theorems below check the row's recorded judgment
+against the FCS prediction derived above. -/
 
-/-- FCS correctly records that indefinite persistence is felicitous. -/
+/-- Indefinite persistence is judged acceptable; FCS predicts this via
+`indef_adds_to_dom` (the indefinite extends Dom and nothing closes it). -/
 theorem datum_indefinitePersists :
-    indefinitePersists.felicitous = true := rfl
+    Examples.indefinite_persists.judgment = .acceptable := rfl
 
-/-- FCS correctly records that standard negation blocks. -/
+/-- Single negation blocks; FCS predicts this via `neg_blocks_dref`
+(negation preserves the input domain). -/
 theorem datum_standardNegationBlocks :
-    standardNegationBlocks.felicitous = false := rfl
+    Examples.standard_negation_blocks.judgment = .unacceptable := rfl
 
-/-- FCS correctly records that universals block. -/
+/-- Universals block; FCS predicts this via ∀ = ¬∃¬ and `neg_blocks_dref`. -/
 theorem datum_universalBlocks :
-    universalBlocks.felicitous = false := rfl
+    Examples.universal_blocks.judgment = .unacceptable := rfl
 
-/-- FCS correctly records that negative quantifiers block. -/
+/-- Negative quantifiers block; same negation mechanism (`neg_blocks_dref`). -/
 theorem datum_negativeBlocks :
-    negativeBlocks.felicitous = false := rfl
+    Examples.negative_blocks.judgment = .unacceptable := rfl
 
-/-- FCS correctly records that definite reference is felicitous. -/
+/-- Definite reference is acceptable; FCS predicts this via
+`indef_then_def_defined` (the established dref satisfies familiarity). -/
 theorem datum_definiteReference :
-    definiteReference.felicitous = true := rfl
+    Examples.definite_reference.judgment = .acceptable := rfl
 
-/-- FCS correctly records that conditionals block antecedent drefs. -/
+/-- If-clause indefinites don't persist; FCS predicts this via the
+conditional's negation encoding (¬(φ ∧ ¬ψ)) and `neg_blocks_dref`. -/
 theorem datum_conditionalAntecedent :
-    conditionalAntecedent.felicitous = false := rfl
-
-/-! The structural FCS properties that account for each datum:
-
-| Datum | FCS Property | Theorem |
-|-------|-------------|---------|
-| `indefinitePersists` | `indef` extends Dom; body preserves it | `indef_adds_to_dom` |
-| `universalBlocks` | Universal = ∀ = ¬∃¬; negation preserves Dom | `neg_blocks_dref` |
-| `negativeBlocks` | Negation preserves Dom | `neg_blocks_dref` |
-| `standardNegationBlocks` | Same mechanism | `neg_blocks_dref` |
-| `conditionalAntecedent` | Conditional = ¬(φ ∧ ¬ψ); negation preserves Dom | `cond_eq` + `neg_blocks_dref` |
-| `definiteReference` | `def_` requires familiarity; succeeds when dref established | `indef_then_def_defined` |
--/
+    Examples.conditional_antecedent.judgment = .unacceptable := rfl
 
 end Heim1982

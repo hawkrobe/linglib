@@ -4,7 +4,6 @@ import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Reference.Binding
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 /-!
 # [charlow-2018]: A Modular Theory of Pronouns and Binding
@@ -348,11 +347,6 @@ theorem paycheck_reading
            (constDenot bill) g =
     likes (mom bill) bill := by
   simp only [paycheck_truth_conditions, h]
-
-/-- Bridge to `DonkeyAnaphora.paycheckSentence`: the paycheck datum
-records a bound reading — exactly what intension retrieval predicts. -/
-theorem paycheck_datum_has_bound_reading :
-    Phenomena.Anaphora.DonkeyAnaphora.paycheckSentence.boundReading = true := rfl
 
 end Paycheck
 

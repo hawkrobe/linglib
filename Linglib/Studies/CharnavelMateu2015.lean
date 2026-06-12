@@ -45,9 +45,7 @@ hierarchy). PCC and CLR are both instances:
 C&M unify CLR and PCC under one mechanism. P&Z (page 1308) explicitly
 disagree: "We do not think the CLR and the PCC should be unified along
 the lines suggested by Charnavel and Mateu (2015). The two phenomena are
-related but nevertheless distinct." The cross-paper bridge file
-`Phenomena/Anaphora/Antilogophoricity.lean` documents this disagreement
-explicitly.
+related but nevertheless distinct."
 -/
 
 namespace CharnavelMateu2015

@@ -3,8 +3,8 @@ import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Semantics.Dynamic.Connectives.Assignment
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Phenomena.Anaphora.CrossSentential
+import Linglib.Data.Examples.Heim1982
+import Linglib.Data.Examples.ElliottSudo2025
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -16,7 +16,7 @@ import Mathlib.Data.Fintype.Basic
 
 Formalizes the core contributions of [keshet-abney-2024]'s PIP
 (Plural Intensional Presuppositional predicate calculus) and connects
-them to the theory-neutral anaphora data in `Phenomena/Anaphora/`.
+them to the anaphora example rows in `Data/Examples/`.
 
 ## Paper's Core Claim
 
@@ -37,7 +37,8 @@ conditions, uniformly explains:
 
 This study file imports:
 - **Framework**: the PIP mechanism in `Studies/KeshetAbney2024/`
-- **Data**: `Phenomena/Anaphora/` (theory-neutral judgments)
+- **Data**: `Heim1982.Examples` / `ElliottSudo2025.Examples` (typed
+  example rows from `Data/Examples/`)
 
 and proves that PIP's predictions match the empirical data on worked
 finite models.
@@ -49,7 +50,6 @@ namespace KeshetAbney2024
 open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
 open Core.Logic.Modal (AccessRel)
-open Phenomena.Anaphora
 
 
 -- ============================================================
@@ -515,20 +515,6 @@ theorem bathroom_full_sentence_label_available :
 
 
 -- ============================================================
--- Bridge 3: Donkey Anaphora
--- ============================================================
-
-theorem pip_geach_donkey :
-    DonkeyAnaphora.geachDonkey.boundReading = true := rfl
-
-theorem pip_conditional_donkey :
-    DonkeyAnaphora.conditionalDonkey.boundReading = true := rfl
-
-theorem pip_paycheck :
-    DonkeyAnaphora.paycheckSentence.boundReading = true := rfl
-
-
--- ============================================================
 -- Intensional Anaphora: Might Blocks (paper §3.1)
 -- ============================================================
 
@@ -962,7 +948,6 @@ theorem intensional_anaphora_is_T_axiom :
 -- Bridge 6: Cross-Sentential Anaphora
 -- ============================================================
 
-open CrossSententialAnaphora in
 /--
 PIP predicts the standard cross-sentential anaphora pattern:
 
@@ -982,24 +967,23 @@ negation in sequential discourse.
 -/
 theorem pip_cross_sentential_predictions :
     -- Indefinites persist: label + conjunction → felicitous
-    indefinitePersists.felicitous = true ∧
+    Heim1982.Examples.indefinite_persists.judgment = .acceptable ∧
     -- Standard negation blocks (in sequential discourse)
-    standardNegationBlocks.felicitous = false ∧
+    Heim1982.Examples.standard_negation_blocks.judgment = .unacceptable ∧
     -- Double negation enables (labels survive both negations)
-    doubleNegation.felicitous = true := by
-  exact ⟨rfl, rfl, rfl⟩
+    ElliottSudo2025.Examples.double_negation.judgment = .acceptable :=
+  ⟨rfl, rfl, rfl⟩
 
-open CrossSententialAnaphora in
 /--
 PIP predicts that universals and negative quantifiers block
 cross-sentential anaphora: ∀x.φ = ¬∃x.¬φ does not introduce a
 labeled existential, so no DEF_α is available.
 -/
 theorem pip_quantifier_blocking :
-    universalBlocks.felicitous = false ∧
-    negativeBlocks.felicitous = false ∧
-    mostBlocks.felicitous = false := by
-  exact ⟨rfl, rfl, rfl⟩
+    Heim1982.Examples.universal_blocks.judgment = .unacceptable ∧
+    Heim1982.Examples.negative_blocks.judgment = .unacceptable ∧
+    Heim1982.Examples.most_blocks.judgment = .unacceptable :=
+  ⟨rfl, rfl, rfl⟩
 
 
 -- ============================================================

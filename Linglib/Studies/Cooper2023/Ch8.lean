@@ -17,7 +17,7 @@ negation), and provides bridge theorems linking Cooper's TTR machinery to
 linglib's `ScopeConfig` and `BindingConfig` interfaces.
 
 The companion `Studies/Cooper2023/Basic.lean` wires this Ch. 8 substrate
-to the empirical data in `Phenomena/Anaphora/`.
+to the donkey rows in `Data/Examples/` and the `Chomsky1981` binding paradigm.
 
 ## Main definitions
 

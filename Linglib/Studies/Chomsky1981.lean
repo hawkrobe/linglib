@@ -1,8 +1,8 @@
 import Linglib.Syntax.Minimalist.Coreference
-import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Phenomena.MinimalPairs
 
 /-!
@@ -19,21 +19,210 @@ distribution by c-command + a local binding domain:
 - **Principle B**: a pronoun must be free (not bound) in its local domain
 - **Principle C**: an R-expression must be free everywhere
 
-This file verifies the implementation in
-`Syntax/Minimalism/Coreference.lean` against the empirical
-minimal-pair data in `Phenomena/Anaphora/Coreference.lean`.
+This file holds the textbook minimal-pair paradigm
+(`reflexiveCoreferenceData`, `pronominalDisjointReferenceData`,
+`referentialExpressionFreedomData`, `complementaryDistributionData`,
+`reciprocalCoreferenceData`) and the per-class binding requirements as
+data (`CoreferencePattern`), and verifies the implementation in
+`Syntax/Minimalism/Coreference.lean` against the pairs.
 
 Companion to `Reinhart1976.lean` (which formalizes the c-command
 relation that Principles A/B/C presuppose) and to
 `SagWasowBender2003.lean` (the HPSG re-axiomatization that subsumes
-Principle C under Principle B).
+Principle C under Principle B); `Hudson1990.lean` (DG) and
+`Cooper2023/Basic.lean` (TTR) verify their analyses against the same
+tables.
 -/
 
 namespace Chomsky1981
 
 open Phenomena.MinimalPairs
 open Minimalist.Coreference
-open Phenomena.Anaphora.Coreference
+
+private abbrev john := English.Nouns.john.toWordSg
+private abbrev mary := English.Nouns.mary.toWordSg
+private abbrev sam := English.Nouns.sam.toWordSg
+private abbrev pat := English.Nouns.pat.toWordSg
+private abbrev he := English.Pronouns.he.toWord
+private abbrev him := English.Pronouns.him.toWord
+private abbrev her := English.Pronouns.her.toWord
+private abbrev they := English.Pronouns.they.toWord
+private abbrev them := English.Pronouns.them.toWord
+private abbrev himself := English.Pronouns.himself.toWord
+private abbrev herself := English.Pronouns.herself.toWord
+private abbrev themselves := English.Pronouns.themselves.toWord
+private abbrev eachOther := English.Pronouns.eachOther.toWord
+private abbrev sees := English.Predicates.Verbal.see.toWord3sg
+private abbrev see := English.Predicates.Verbal.see.toWordPl
+private abbrev saw := English.Predicates.Verbal.see.toWordPast
+private abbrev and_ := English.FunctionWords.and_.toWord
+
+/-- Reflexives require local c-commanding antecedent. -/
+def reflexiveCoreferenceData : PhenomenonData := {
+  name := "Reflexive Coreference"
+  generalization := "Reflexives require a c-commanding antecedent in the local domain"
+  pairs := [
+    -- Local antecedent required
+    { lhs := [john, sees, himself]
+      rhs := [himself, sees, john]
+      clauseType := .declarative
+      description := "Reflexive needs c-commanding antecedent"
+      citation := "Chomsky (1981); Pollard & Sag (1994)" },
+
+    { lhs := [mary, sees, herself]
+      rhs := [herself, sees, mary]
+      clauseType := .declarative
+      description := "Reflexive needs c-commanding antecedent" },
+
+    { lhs := [they, see, themselves]
+      rhs := [themselves, see, them]
+      clauseType := .declarative
+      description := "Plural reflexive needs plural antecedent" },
+
+    -- Agreement required
+    { lhs := [john, sees, himself]
+      rhs := [john, sees, herself]
+      clauseType := .declarative
+      description := "Reflexive must agree with antecedent (gender)" },
+
+    { lhs := [they, see, themselves]
+      rhs := [they, see, himself]
+      clauseType := .declarative
+      description := "Reflexive must agree with antecedent (number)" }
+  ]
+}
+
+/-- Pronouns cannot corefer with local c-commanding antecedent. -/
+def pronominalDisjointReferenceData : PhenomenonData := {
+  name := "Pronominal Disjoint Reference"
+  generalization := "Pronouns cannot corefer with a c-commanding nominal in the local domain"
+  pairs := [
+    -- Coreference blocked locally (the ungrammatical reading is with coreference)
+    { lhs := [john, sees, mary]
+      rhs := [john, sees, him]  -- intended: John₁ sees him₁
+      clauseType := .declarative
+      description := "Pronoun resists coreference with local subject"
+      citation := "Chomsky (1981)" },
+
+    { lhs := [mary, sees, john]
+      rhs := [mary, sees, her]  -- intended: Mary₁ sees her₁
+      clauseType := .declarative
+      description := "Pronoun resists coreference with local subject" }
+  ]
+}
+
+/-- Full nominals cannot corefer with c-commanding pronoun. -/
+def referentialExpressionFreedomData : PhenomenonData := {
+  name := "Referential Expression Freedom"
+  generalization := "Names and descriptions cannot corefer with a c-commanding pronoun"
+  pairs := [
+    { lhs := [john, sees, mary]
+      rhs := [he, sees, john]  -- intended: He₁ sees John₁
+      clauseType := .declarative
+      description := "Name resists coreference with c-commanding pronoun"
+      citation := "Chomsky (1981)" }
+  ]
+}
+
+/-- Reflexives and pronouns in complementary distribution. -/
+def complementaryDistributionData : PhenomenonData := {
+  name := "Complementary Distribution"
+  generalization := "In the local domain, coreference requires reflexive; pronouns are blocked"
+  pairs := [
+    { lhs := [john, sees, himself]
+      rhs := [john, sees, him]  -- intended coreference
+      clauseType := .declarative
+      description := "Local coreference: reflexive required, pronoun blocked"
+      citation := "Chomsky (1981)" },
+
+    { lhs := [mary, sees, herself]
+      rhs := [mary, sees, her]  -- intended coreference
+      clauseType := .declarative
+      description := "Local coreference: reflexive required, pronoun blocked" }
+  ]
+}
+
+/-- Reciprocals require a plural/coordinated antecedent and local binding. -/
+def reciprocalCoreferenceData : PhenomenonData := {
+  name := "Reciprocal Coreference"
+  generalization := "Reciprocals require a c-commanding semantically plural antecedent in the local domain"
+  pairs := [
+    -- Coordinated antecedent required
+    { lhs := [sam, and_, pat, saw, eachOther]
+      rhs := [eachOther, saw, sam, and_, pat]
+      clauseType := .declarative
+      description := "Reciprocal needs c-commanding antecedent"
+      citation := "Dalrymple et al. (1998)" },
+
+    -- Reciprocal vs reflexive complementary distribution
+    { lhs := [sam, and_, pat, saw, eachOther]
+      rhs := [sam, and_, pat, saw, themselves]  -- awkward as reciprocal reading
+      clauseType := .declarative
+      description := "Reciprocal preferred for symmetric reading with coordinated subject" },
+
+    -- Plural antecedent requirement
+    { lhs := [they, see, eachOther]
+      rhs := [john, sees, eachOther]  -- singular antecedent fails
+      clauseType := .declarative
+      description := "Reciprocal requires semantically plural antecedent" }
+  ]
+}
+
+/-- Types of anaphoric expressions. -/
+inductive AnaphorType where
+  | reflexive
+  | reciprocal
+  | pronoun
+  | name
+  | description
+  deriving Repr, DecidableEq
+
+/-- Domain types for coreference constraints. -/
+inductive Domain where
+  | local_
+  | nonlocal
+  | any
+  deriving Repr, DecidableEq
+
+/-- Coreference requirements for an anaphor type. -/
+structure CoreferencePattern where
+  anaphorType : AnaphorType
+  requiresAntecedent : Bool
+  antecedentDomain : Option Domain
+  deriving Repr
+
+/-- Principle A as data: anaphors are bound in the local domain. -/
+def reflexivePattern : CoreferencePattern := {
+  anaphorType := .reflexive
+  requiresAntecedent := true
+  antecedentDomain := some .local_
+}
+
+/-- Principle B as data: pronouns are free in the local domain. -/
+def pronounPattern : CoreferencePattern := {
+  anaphorType := .pronoun
+  requiresAntecedent := false
+  antecedentDomain := some .nonlocal
+}
+
+/-- Principle C as data: R-expressions are free everywhere. -/
+def namePattern : CoreferencePattern := {
+  anaphorType := .name
+  requiresAntecedent := false
+  antecedentDomain := none
+}
+
+/-- Reciprocal coreference pattern: requires a c-commanding antecedent
+    that denotes a plurality. The antecedent can be syntactically singular
+    in some languages (e.g., Hungarian null pronouns bound by a plural
+    matrix subject; [rakosi-2019], [dalrymple-haug-2024] §2).
+    The domain is local for the pronoun antecedent, but the reciprocal's
+    semantic contribution can scope wider (I-reading). -/
+def reciprocalPattern : CoreferencePattern := {
+  anaphorType := .reciprocal
+  requiresAntecedent := true
+  antecedentDomain := some .local_
+}
 
 /-- English binding under Minimalist (c-command): the framework-neutral engine
     (`Binding.grammaticalForCoreference`) applied with Minimalism's
@@ -67,17 +256,6 @@ theorem captures_complementary_distribution :
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData := by
   decide
-
-private abbrev john := English.Nouns.john.toWordSg
-private abbrev mary := English.Nouns.mary.toWordSg
-private abbrev they := English.Pronouns.they.toWord
-private abbrev sees := English.Predicates.Verbal.see.toWord3sg
-private abbrev see := English.Predicates.Verbal.see.toWordPl
-private abbrev himself := English.Pronouns.himself.toWord
-private abbrev herself := English.Pronouns.herself.toWord
-private abbrev themselves := English.Pronouns.themselves.toWord
-private abbrev them := English.Pronouns.them.toWord
-private abbrev eachOther := English.Pronouns.eachOther.toWord
 
 /-- Per-pair verification of reflexive binding judgments. -/
 theorem reflexive_pairs_captured :
