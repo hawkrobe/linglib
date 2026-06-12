@@ -1611,7 +1611,7 @@ def manage_occasion : VerbEntry := .mkRegular {
 /-- "dare" — positive implicative with prerequisite presupposition: courage.
     "Ana dared to enter the cave" → "Ana entered the cave."
     Presupposes that daring/courageous action was required for complement
-    realization ([nadathur-2024] §5.2, ex. 3–4, 26). -/
+    realization ([nadathur-2023-implicatives] §5.2, ex. 3–4, 26). -/
 def dare : VerbEntry := .mkRegular {
   form := "dare"
   complementType := .infinitival
@@ -1624,7 +1624,7 @@ def dare : VerbEntry := .mkRegular {
 /-- "bother" — positive implicative with prerequisite presupposition: engagement.
     "He bothered to answer" → "He answered."
     Presupposes that overcoming apathy/effort was required
-    ([nadathur-2024] §2, ex. 10, 28). -/
+    ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : VerbEntry := .mkRegular {
   form := "bother"
   complementType := .infinitival
@@ -1639,7 +1639,7 @@ def bother : VerbEntry := .mkRegular {
     "Amira did not hesitate to drink a beer" → "Amira drank a beer."
     The paper does not explicitly name the prerequisite for *hesitate*;
     it is treated as a polarity-reversing analog of *dare*
-    ([nadathur-2024] §6.4, ex. 45–47). -/
+    ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : VerbEntry := .mkRegular {
   form := "hesitate"
   complementType := .infinitival

@@ -6,7 +6,7 @@ import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
-# Implicative Verbs ([nadathur-2024])
+# Implicative Verbs ([nadathur-2023-implicatives])
 
 Causal-prerequisite semantics for implicative verbs. Implicatives
 (*manage*, *fail*, *dare*, *bother*, *jaksaa*, *hesitate*, ...) all
@@ -46,7 +46,7 @@ open Features
 open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
 
 -- ════════════════════════════════════════════════════
--- § Prerequisite Types ([nadathur-2024])
+-- § Prerequisite Types ([nadathur-2023-implicatives])
 -- ════════════════════════════════════════════════════
 
 /-- Lexically-specified prerequisite types for implicative verbs.
@@ -95,7 +95,7 @@ abbrev failSem {V : Type*} {α : V → Type*}
   ¬ manageSem M background prerequisite xP complement xC
 
 /-- V2 necessity presupposition: prerequisite-as-`xP` is causally
-    necessary (Nadathur 2024 Def 10b) for complement-as-`xC`. -/
+    necessary (Nadathur 2023 Def 10b) for complement-as-`xC`. -/
 abbrev necessityPresup {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
@@ -108,7 +108,7 @@ abbrev necessityPresup {V : Type*} {α : V → Type*}
 -- § Directionality
 -- ════════════════════════════════════════════════════
 
-/-- Directionality of complement entailment ([nadathur-2024]).
+/-- Directionality of complement entailment ([nadathur-2023-implicatives]).
 
     - **oneWay**: complement entailment under only one matrix polarity.
     - **twoWay**: complement entailment under both polarities. -/
@@ -121,7 +121,7 @@ inductive Directionality where
 -- § ImplicativeClass
 -- ════════════════════════════════════════════════════
 
-/-- The full lexical signature of an implicative verb ([nadathur-2024]). -/
+/-- The full lexical signature of an implicative verb ([nadathur-2023-implicatives]). -/
 structure ImplicativeClass where
   /-- Positive (manage, force) or negative (fail, prevent) polarity -/
   polarity : Implicative

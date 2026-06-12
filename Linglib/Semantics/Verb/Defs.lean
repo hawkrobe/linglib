@@ -87,7 +87,7 @@ Presupposition trigger type ([tonhauser-beaver-roberts-simons-2013] classificati
 inductive PresupTriggerType where
   | hardTrigger        -- Projective in all contexts
   | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
-  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2024])
+  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2023-implicatives])
   deriving DecidableEq, Repr
 
 /-- Is this trigger locally accommodatable (soft)?
