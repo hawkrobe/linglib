@@ -1589,6 +1589,7 @@ import Linglib.Studies.ZwickyPullum1983
 import Linglib.Studies.KalinBjorkmanEtAl2026
 import Linglib.Studies.Baker1985
 import Linglib.Studies.HalleMarantz1993
+import Linglib.Studies.Halpert2012
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Studies.BickelNichols2013
 import Linglib.Studies.AckermanMalouf2013

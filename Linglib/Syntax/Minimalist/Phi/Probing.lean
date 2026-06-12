@@ -16,10 +16,11 @@ licenses at most one goal (`allLicensed_iff`).
 
 The search is stated for any goal type `α` with a `Bool` visibility
 predicate; the φ-instantiation (`Agreement.Cell.visibleTo`, `PLC`)
-specializes it to [bejar-rezac-2003]'s person probe. The same
-search relativized to other features yields [halpert-2012]'s Zulu
-augment probing — the cross-linguistic point of [preminger-2014]
-Ch. 7. [bejar-rezac-2009]'s articulated probe is a *family* of
+specializes it to [bejar-rezac-2003]'s person probe. The
+*unrelativized* instance (`vis = ⊤`, bare minimality: the goal is
+`List.head?`) is [halpert-2012]'s Zulu L⁰ — see
+`Studies/Halpert2012.lean` and the cross-linguistic point of
+[preminger-2014] Ch. 7. [bejar-rezac-2009]'s articulated probe is a *family* of
 these searches, one per probe segment over the cyclically ordered
 token list — see `CyclicAgree.eaIsLicensed_iff_segment_licensed`.
 For probe *horizons* (what terminates search across domains, Keine)
@@ -136,21 +137,35 @@ theorem Licensed.unique {a b : α}
     (ha : Licensed vis goals a) (hb : Licensed vis goals b) : a = b :=
   Option.some.inj (ha.symm.trans hb)
 
-/-- Every goal visible to the probe is licensed by it — the shape of
-    a licensing condition over one probe's search. -/
-def AllLicensed (vis : α → Bool) (goals : List α) : Prop :=
-  ∀ a ∈ goals, vis a = true → Licensed vis goals a
+/-- Licensing by an unrelativized probe (`vis = ⊤`) is being the
+    structurally closest goal — bare minimality, [halpert-2012]'s
+    indiscriminate L⁰. -/
+theorem licensed_const_true_iff {a : α} :
+    Licensed (fun _ => true) goals a ↔ goals.head? = some a := by
+  unfold Licensed probeSearch
+  cases goals <;> simp
 
-instance [DecidableEq α] (vis : α → Bool) (goals : List α) :
-    Decidable (AllLicensed vis goals) :=
-  inferInstanceAs (Decidable (∀ a ∈ goals, vis a = true → Licensed vis goals a))
+/-- Every goal that needs licensing is licensed by the probe's
+    search. Which goals *need* licensing (`needs`) and which the
+    probe *sees* (`vis`) come apart in general: [halpert-2012]'s Zulu
+    L⁰ sees every goal (augmented nominals intervene) while only
+    augmentless nominals need it. Feature-relativized probes are the
+    diagonal `AllLicensed vis vis` — the probe sees exactly the needy
+    ([bejar-rezac-2003]'s π⁰). -/
+def AllLicensed (needs vis : α → Bool) (goals : List α) : Prop :=
+  ∀ a ∈ goals, needs a = true → Licensed vis goals a
 
-/-- All visible goals are licensed iff the visible goals are
-    subsingleton: one search, one Agree relation, at most one
-    licensee. The general fact behind person-restriction effects
-    ([bejar-rezac-2003]'s PCC, [preminger-2014]'s AF restriction). -/
+instance [DecidableEq α] (needs vis : α → Bool) (goals : List α) :
+    Decidable (AllLicensed needs vis goals) :=
+  inferInstanceAs (Decidable (∀ a ∈ goals, needs a = true → Licensed vis goals a))
+
+/-- On the diagonal (probe relativized to exactly the needy), all
+    needy goals are licensed iff the visible goals are subsingleton:
+    one search, one Agree relation, at most one licensee. The general
+    fact behind person-restriction effects ([bejar-rezac-2003]'s PCC,
+    [preminger-2014]'s AF restriction). -/
 theorem allLicensed_iff :
-    AllLicensed vis goals ↔
+    AllLicensed vis vis goals ↔
       ∀ a ∈ goals, ∀ b ∈ goals, vis a = true → vis b = true → a = b := by
   constructor
   · intro h a ha b hb hva hvb
@@ -165,10 +180,20 @@ theorem allLicensed_iff :
 /-- `allLicensed_iff` in `Set.Subsingleton` form, for mathlib-API
     discoverability. -/
 theorem allLicensed_iff_subsingleton :
-    AllLicensed vis goals ↔ {a | a ∈ goals ∧ vis a = true}.Subsingleton := by
+    AllLicensed vis vis goals ↔ {a | a ∈ goals ∧ vis a = true}.Subsingleton := by
   rw [allLicensed_iff]
   exact ⟨fun h a ha b hb => h a ha.1 b hb.1 ha.2 hb.2,
          fun h a ha b hb hva hvb => h ⟨ha, hva⟩ ⟨hb, hvb⟩⟩
+
+/-- Off the diagonal, licensing by an unrelativized probe pins every
+    needy goal to the head of the sequence — the highest-element
+    condition ([halpert-2012]: an augmentless nominal must be the
+    highest nominal in its vP). -/
+theorem allLicensed_const_true_iff {needs : α → Bool} :
+    AllLicensed needs (fun _ => true) goals ↔
+      ∀ a ∈ goals, needs a = true → goals.head? = some a :=
+  forall_congr' fun _ => imp_congr_right fun _ => imp_congr_right fun _ =>
+    licensed_const_true_iff
 
 end Licensing
 
@@ -230,10 +255,11 @@ def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : ProbeTarget) : Boo
     have type `α` with a φ-cell projection, so two arguments with
     identical φ remain distinct licensees. -/
 def PLC {α : Type*} (cellOf : α → Agreement.Cell) (goals : List α) : Prop :=
-  AllLicensed (λ a => (cellOf a).visibleTo .participant) goals
+  AllLicensed (λ a => (cellOf a).visibleTo .participant)
+    (λ a => (cellOf a).visibleTo .participant) goals
 
 instance {α : Type*} [DecidableEq α] (cellOf : α → Agreement.Cell) (goals : List α) :
     Decidable (PLC cellOf goals) :=
-  inferInstanceAs (Decidable (AllLicensed _ goals))
+  inferInstanceAs (Decidable (AllLicensed _ _ goals))
 
 end Minimalist
