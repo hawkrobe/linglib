@@ -35,9 +35,8 @@ different consumer profiles. The `GivennessStatus.toAccessibility`
 projection (in `Studies/Ariel2001.lean`) bridges
 them.
 
-This module connects `Phenomena/Reference/` (form choice) to
-`Phenomena/WordOrder/` (position choice) via the shared dimension of
-NP weight/reduction.
+This module connects referential form choice to word-order position
+choice via the shared dimension of NP weight/reduction.
 -/
 
 set_option autoImplicit false

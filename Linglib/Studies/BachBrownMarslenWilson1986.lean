@@ -1,4 +1,4 @@
-import Linglib.Phenomena.WordOrder.CrossSerial
+import Linglib.Features.VerbCluster
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!

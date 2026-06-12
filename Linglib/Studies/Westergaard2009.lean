@@ -1,5 +1,5 @@
 import Linglib.Typology.WordOrder
-import Linglib.Phenomena.WordOrder.SubjectAuxInversion
+import Linglib.Data.Examples.Westergaard2009
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.Givenness
 import Linglib.Fragments.Norwegian.V2
@@ -466,38 +466,49 @@ theorem wh_blocking :
 -- § 6  Bridge to SAI Data
 -- ============================================================================
 
-/-! English SAI (from `SubjectAuxInversion.lean`) is the surface reflex
-    of +Int° and +Pol° in the English V2 profile. -/
+/-! English SAI (rows from `Data/Examples/Westergaard2009.json`) is the
+    surface reflex of +Int° and +Pol° in the English V2 profile;
+    Belfast English embedded inversion and imperative V2 (Henry 1997,
+    reported as Westergaard's (23)–(24)) reflect +Wh° and +Imp°. -/
 
-open Phenomena.WordOrder.SubjectAuxInversion in
-/-- English matrix wh-questions require inversion (ex01) and the profile
-    contains Int°. -/
+/-- The row's `inverted` feature records V/Aux-before-subject order. -/
+def rowInverted (row : Data.Examples.LinguisticExample) : Bool :=
+  row.paperFeatures.contains ("inverted", "true")
+
+/-- English matrix wh-questions invert (Westergaard (20)) and the
+    profile contains Int°. -/
 theorem english_wh_sai_consistent :
-    ex01.inverted = true ∧
-    ex01.acceptability = .grammatical ∧
+    rowInverted Examples.ex20 = true ∧
+    Examples.ex20.judgment = .acceptable ∧
     ForceHead.Int ∈ stdEnglish := by
   refine ⟨rfl, rfl, ?_⟩; decide
 
-open Phenomena.WordOrder.SubjectAuxInversion in
-/-- English matrix yes/no-questions require inversion (ex04) and the
+/-- English matrix yes/no-questions invert (Westergaard (21)) and the
     profile contains Pol°. -/
 theorem english_yn_sai_consistent :
-    ex04.inverted = true ∧
-    ex04.acceptability = .grammatical ∧
+    rowInverted Examples.ex21 = true ∧
+    Examples.ex21.judgment = .acceptable ∧
     ForceHead.Pol ∈ stdEnglish := by
   refine ⟨rfl, rfl, ?_⟩; decide
 
-open Phenomena.WordOrder.SubjectAuxInversion in
 /-- English declaratives lack V2: Decl° is not in the profile. -/
 theorem english_decl_no_v2_consistent :
     ForceHead.Decl ∉ stdEnglish := by decide
 
-open Phenomena.WordOrder.SubjectAuxInversion in
-/-- Belfast English embedded inversion is consistent with +Wh°. -/
+/-- Belfast English embedded inversion (Henry 1997: 275, Westergaard's
+    (23)) is consistent with +Wh°. -/
 theorem belfast_embedded_inv_consistent :
-    ex23.acceptability = .dialectal ∧
-    ex24.acceptability = .dialectal ∧
+    rowInverted Examples.ex23 = true ∧
+    Examples.ex23.judgment = .acceptable ∧
     ForceHead.Wh ∈ belfastEnglish := by
+  refine ⟨rfl, rfl, ?_⟩; decide
+
+/-- Belfast English imperative V2 (Henry 1997: 274, Westergaard's (24))
+    is consistent with +Imp°. -/
+theorem belfast_imperative_v2_consistent :
+    rowInverted Examples.ex24 = true ∧
+    Examples.ex24.judgment = .acceptable ∧
+    ForceHead.Imp ∈ belfastEnglish := by
   refine ⟨rfl, rfl, ?_⟩; decide
 
 -- ============================================================================

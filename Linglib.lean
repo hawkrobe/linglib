@@ -1369,7 +1369,6 @@ import Linglib.Studies.Funakoshi2016
 import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
-import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.Roberts2012
@@ -1572,7 +1571,6 @@ import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Studies.NapoliNespor1976
-import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Studies.Stakov2026
 import Linglib.Studies.Stakov2026Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
@@ -1798,10 +1796,7 @@ import Linglib.Studies.Koev2017
 import Linglib.Studies.Egressy2026
 import Linglib.Studies.GokselKerslake2005
 import Linglib.Studies.Izvorski1997
-import Linglib.Phenomena.WordOrder.Basic
-import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Studies.Greenberg1963
-import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.Rouillard2026
 import Linglib.Studies.Horn1972
@@ -2850,3 +2845,9 @@ import Linglib.Data.Examples.Merchant2001
 import Linglib.Data.Examples.AnandHardtMcCloskey2025
 import Linglib.Data.Examples.GinzburgCooper2004
 import Linglib.Data.Examples.Saab2026
+import Linglib.Data.Examples.Pollock1989
+import Linglib.Data.Examples.ArregiPietraszko2021
+import Linglib.Data.Examples.Westergaard2009
+import Linglib.Studies.Kuhlmann2013
+import Linglib.Studies.BresnanEtAl1982
+import Linglib.Studies.LevshinaEtAl2023

@@ -1,0 +1,178 @@
+[
+  {
+    "id": "arregipietraszko2021_ex27",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36c)"},
+    "language": "stan1293",
+    "primaryText": "Where does Sue eat fish?",
+    "glossedTokens": [],
+    "translation": "Where does Sue eat fish?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "question"],
+      ["verb_type", "lexical"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex27. Do-support in a wh-question with a lexical verb."
+  },
+  {
+    "id": "arregipietraszko2021_ex30",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37c)"},
+    "language": "stan1293",
+    "primaryText": "Where is Sue eating fish?",
+    "glossedTokens": [],
+    "translation": "Where is Sue eating fish?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "question"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex30. Auxiliary inverts directly — no do-support."
+  },
+  {
+    "id": "arregipietraszko2021_ex31",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37c), starred variant"},
+    "language": "stan1293",
+    "primaryText": "Where does Sue be eating fish?",
+    "glossedTokens": [],
+    "translation": "Where does Sue be eating fish?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["context", "question"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex31. Do-support with an auxiliary is ungrammatical."
+  },
+  {
+    "id": "arregipietraszko2021_ex32",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36a)"},
+    "language": "stan1293",
+    "primaryText": "Sue does not eat fish",
+    "glossedTokens": [],
+    "translation": "Sue does not eat fish",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verb_type", "lexical"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex32. Do-support in sentential negation with a lexical verb."
+  },
+  {
+    "id": "arregipietraszko2021_ex33",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36a), starred variant"},
+    "language": "stan1293",
+    "primaryText": "Sue not eats fish",
+    "glossedTokens": [],
+    "translation": "Sue not eats fish",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verb_type", "lexical"],
+      ["do_support", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex33. Lexical verb cannot raise past negation; omitting do-support is ungrammatical."
+  },
+  {
+    "id": "arregipietraszko2021_ex34",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37a)"},
+    "language": "stan1293",
+    "primaryText": "Sue is not eating fish",
+    "glossedTokens": [],
+    "translation": "Sue is not eating fish",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex34. Auxiliary raises past negation — no do-support."
+  },
+  {
+    "id": "arregipietraszko2021_ex35",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37a), starred variant"},
+    "language": "stan1293",
+    "primaryText": "Sue does not be eating fish",
+    "glossedTokens": [],
+    "translation": "Sue does not be eating fish",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["context", "negation"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex35. Do-support with an auxiliary is ungrammatical even under negation."
+  },
+  {
+    "id": "arregipietraszko2021_ex38",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED VP-ellipsis discussion (no example number)"},
+    "language": "stan1293",
+    "primaryText": "She runs faster than he does",
+    "glossedTokens": [],
+    "translation": "She runs faster than he does",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "vpEllipsis"],
+      ["verb_type", "lexical"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex38. VP ellipsis strands tense; do-support with a lexical verb."
+  },
+  {
+    "id": "arregipietraszko2021_ex39",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (36b)"},
+    "language": "stan1293",
+    "primaryText": "Sue DOES eat fish",
+    "glossedTokens": [],
+    "translation": "Sue DOES eat fish",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "verum"],
+      ["verb_type", "lexical"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex39. Verum focus with do-support on a lexical verb."
+  },
+  {
+    "id": "arregipietraszko2021_ex40",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37b)"},
+    "language": "stan1293",
+    "primaryText": "She IS eating fish",
+    "glossedTokens": [],
+    "translation": "She IS eating fish",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["context", "verum"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex40. Verum focus with an auxiliary — no do-support."
+  },
+  {
+    "id": "arregipietraszko2021_ex41",
+    "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "UNVERIFIED (37b), starred variant"},
+    "language": "stan1293",
+    "primaryText": "She DOES be eating fish",
+    "glossedTokens": [],
+    "translation": "She DOES be eating fish",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["context", "verum"],
+      ["verb_type", "auxiliary"],
+      ["do_support", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex41. Do-support with an auxiliary is ungrammatical even for verum focus."
+  }
+]

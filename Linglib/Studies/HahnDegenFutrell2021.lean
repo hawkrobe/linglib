@@ -356,11 +356,11 @@ theorem most_efficient_fully_optimized :
 -- Crosslinguistic Bridge to [futrell-gibson-2020]
 -- ============================================================================
 
-open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
+open FutrellEtAl2020
 
 /-- ISO codes appearing in [futrell-gibson-2020]'s 32-language dataset. -/
 def futrellIsoCodes : List String :=
-  Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
+  FutrellEtAl2020.languages.map (·.isoCode)
 
 /-- ISO codes appearing in this study's 54-language dataset. -/
 def hahnIsoCodes : List String :=

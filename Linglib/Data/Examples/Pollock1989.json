@@ -1,0 +1,194 @@
+[
+  {
+    "id": "pollock1989_ex_p01",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (3b)"},
+    "language": "stan1290",
+    "primaryText": "Aime-t-il Marie?",
+    "glossedTokens": [],
+    "translation": "Does he love Marie?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "inversion"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p01. French lexical verb inverts with the subject (V-to-I-to-C)."
+  },
+  {
+    "id": "pollock1989_ex_p02",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (3a)"},
+    "language": "stan1293",
+    "primaryText": "Likes he Mary?",
+    "glossedTokens": [],
+    "translation": "Likes he Mary?",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "inversion"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p02. English lexical verb cannot invert with the subject (*V-to-C)."
+  },
+  {
+    "id": "pollock1989_ex_p03",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4b)"},
+    "language": "stan1290",
+    "primaryText": "Jean embrasse souvent Marie",
+    "glossedTokens": [],
+    "translation": "Jean often kisses Marie",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p03. French lexical verb raises past the adverb (V > Adv)."
+  },
+  {
+    "id": "pollock1989_ex_p04",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4a)"},
+    "language": "stan1293",
+    "primaryText": "John kisses often Mary",
+    "glossedTokens": [],
+    "translation": "John kisses often Mary",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p04. English lexical verb cannot raise past the adverb (*V > Adv)."
+  },
+  {
+    "id": "pollock1989_ex_p05",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4c)"},
+    "language": "stan1293",
+    "primaryText": "John often kisses Mary",
+    "glossedTokens": [],
+    "translation": "John often kisses Mary",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p05. English adverb precedes the in-situ lexical verb (Adv > V)."
+  },
+  {
+    "id": "pollock1989_ex_p06",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (4d)"},
+    "language": "stan1290",
+    "primaryText": "Jean souvent embrasse Marie",
+    "glossedTokens": [],
+    "translation": "Jean often kisses Marie",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p06. French adverb cannot precede the lexical verb (*Adv > V; V must raise)."
+  },
+  {
+    "id": "pollock1989_ex_p07",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (2b)"},
+    "language": "stan1290",
+    "primaryText": "Jean n'aime pas Marie",
+    "glossedTokens": [],
+    "translation": "Jean does not love Marie",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "negation"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p07. French lexical verb raises past negation (V > Neg)."
+  },
+  {
+    "id": "pollock1989_ex_p08",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (2a)"},
+    "language": "stan1293",
+    "primaryText": "John likes not Mary",
+    "glossedTokens": [],
+    "translation": "John likes not Mary",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "negation"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p08. English lexical verb cannot raise past negation (*V > Neg)."
+  },
+  {
+    "id": "pollock1989_ex_p09",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (5b)"},
+    "language": "stan1290",
+    "primaryText": "Mes amis aiment tous Marie",
+    "glossedTokens": [],
+    "translation": "My friends all love Marie",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "floatingQ"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p09. French lexical verb raises past the floating quantifier (V > FQ)."
+  },
+  {
+    "id": "pollock1989_ex_p10",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED (5a)"},
+    "language": "stan1293",
+    "primaryText": "My friends love all Mary",
+    "glossedTokens": [],
+    "translation": "My friends love all Mary",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["diagnostic", "floatingQ"],
+      ["verb_type", "lexical"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p10. English lexical verb cannot raise past the floating quantifier (*V > FQ)."
+  },
+  {
+    "id": "pollock1989_ex_p11",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED auxiliary raising (no quoted example number)"},
+    "language": "stan1293",
+    "primaryText": "John has often eaten pizza",
+    "glossedTokens": [],
+    "translation": "John has often eaten pizza",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "auxiliary"],
+      ["v_precedes_diagnostic", "true"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p11. English auxiliary raises past the adverb (Aux > Adv), patterning with French lexical verbs."
+  },
+  {
+    "id": "pollock1989_ex_p12",
+    "source": {"bibkey": "pollock-1989", "paperLabel": "UNVERIFIED auxiliary raising (no quoted example number)"},
+    "language": "stan1293",
+    "primaryText": "John often has eaten pizza",
+    "glossedTokens": [],
+    "translation": "John often has eaten pizza",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["diagnostic", "adverb"],
+      ["verb_type", "auxiliary"],
+      ["v_precedes_diagnostic", "false"]
+    ],
+    "comment": "Migrated from Phenomena/WordOrder/SubjectAuxInversion.lean ex_p12. English adverb before the auxiliary is marginal (Aux should raise)."
+  }
+]

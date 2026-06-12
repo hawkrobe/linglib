@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Fragments.English.Toy
-import Linglib.Phenomena.WordOrder.CrossSerial
+import Linglib.Studies.BresnanEtAl1982
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.CrossSerial
 import Linglib.Syntax.CCG.Interface
@@ -348,7 +348,7 @@ matches the attested word order. -/
 section CrossSerial
 
 open CCG.CrossSerial
-open Phenomena.WordOrder.CrossSerial
+open BresnanEtAl1982
 open Features (VerbClusterBinding)
 
 /-- A CCG derivation annotated with which NP binds to which verb.
