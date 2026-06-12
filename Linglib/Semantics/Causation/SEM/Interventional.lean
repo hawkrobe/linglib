@@ -68,7 +68,7 @@ theorem probabilisticSuf_of_deterministic
       (fun v hv => by
         rw [PMF.pure_apply_of_ne _ _ hv]; simp)]
   by_cases h : ((M.intervene cause xC).developDet s).hasValue effect xE
-  · simp [h, PMF.pure_apply_self]
+  · simp [h]
   · simp [h]
 
 end Semantics.Causation.SEM

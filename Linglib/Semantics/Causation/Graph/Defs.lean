@@ -52,10 +52,6 @@ def children (G : CausalGraph V) [DecidableEq V] [Fintype V] (v : V) : Finset V 
 @[simp] theorem isRoot_iff_parents_empty (G : CausalGraph V) (v : V) :
     G.isRoot v ↔ G.parents v = ∅ := Iff.rfl
 
-theorem isRoot_iff_card_zero (G : CausalGraph V) (v : V) :
-    G.isRoot v ↔ (G.parents v).card = 0 := by
-  simp [isRoot, Finset.card_eq_zero]
-
 end CausalGraph
 
 end Semantics.Causation

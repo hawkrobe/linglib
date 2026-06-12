@@ -37,8 +37,8 @@ The key difference from [nadathur-2023-implicatives] Def 10b (`causallyNecessary
 Lewis's but-for operates on the actual world via minimal intervention,
 while Def 10b quantifies over consistent supersituations. For simple models
 they agree; for complex models with alternative pathways, Def 10b is
-strictly stronger. Bridge theorems comparing Lewis to Nadathur 2023 await
-the Necessity hub migration to V2.
+strictly stronger. Bridge theorems comparing the two belong in
+`Studies/Nadathur2023.lean` (the later paper) and are not yet written.
 
 ## Limitations
 

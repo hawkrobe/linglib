@@ -23,7 +23,7 @@ The legacy `CausalDynamics`-based `makeSem` (with `disjunctive_each_sufficient`,
 `conjunctive_neither_sufficient_alone`, `conjunctive_sufficient_with_other`
 helper theorems over `applyLawsOnce`) was deleted in Phase D-H. The
 qualitative claims are recoverable via concrete `BoolSEM` models in
-study files (e.g., `Resultatives.HammerFlat`).
+study files (e.g., `Levin2026.HammerFlat`).
 -/
 
 namespace Semantics.Causation.Sufficiency
