@@ -169,9 +169,9 @@ scoped infix:75 " ○ " => fun A B => oudomGuinCirc A B
 /-! ## §2: Defining equations (Prop 2.7)
 
 Oudom-Guin's Proposition 2.7 states that the three equations below
-uniquely characterize `○`. We state each as a theorem. With the
-construction sorry-fenced, these are also sorry-fenced (they witness
-that the construction satisfies the defining equations). -/
+uniquely characterize `○`. We state each as a theorem witnessing that
+the construction satisfies the defining equations. (The uniqueness
+clause of Prop 2.7 is not yet formalized.) -/
 
 /-- **Prop 2.7 (i)**: right unit. `A ○ 1 = A` for all `A ∈ S(L)`.
 
@@ -1346,13 +1346,13 @@ private theorem algebraMapInv_circ_mul'_comul_aux
   rw [TensorProduct.map_smul_left, LinearMap.smul_apply, map_smul,
       mul'_map_algebraMapInv_comul, smul_eq_mul]
 
-/-- **Prop 3.9 (iv)** of Oudom-Guin (2008) — generalization of `circ_T_mul`
+/-- **Prop 2.8 (iv)** of Oudom-Guin (2008) — generalization of `circ_T_mul`
     (Prop 2.7.ii) from `A = ι T` to arbitrary `A ∈ S(L)`:
 
     `A ○ (B · ι X) = (A ○ B) ○ ι X - A ○ (B ○ ι X)` for all `A, B ∈ S(L)`, `X ∈ L`.
 
     This is the key ingredient for closing Q2 (`circ_assoc_via_comul`,
-    Prop 3.9.v) by induction on `C`.
+    Prop 2.8.v) by induction on `C`.
 
     Proof by `SymmetricAlgebra.induction` on `A`:
 
@@ -1579,7 +1579,7 @@ private theorem compat_mul_circ_mul_ι
                LinearMap.add_apply, ihy₁, ihy₂]
     ring
 
-/-- **Per-tprod form** of Prop 3.9 (v). Proves
+/-- **Per-tprod form** of Prop 2.8 (v). Proves
     `(A ○ B) ○ algHomL (tprod_m a) = A ○ ((mul' ∘ TP.map (○B) id)(comul (algHomL (tprod_m a))))`
     by induction on `m`.
 
@@ -1646,7 +1646,7 @@ private theorem circ_assoc_via_comul_tprod
       show (SymmetricAlgebra.algHom R L) _ = _
       rw [map_mul]; rfl
     rw [h_algHomL_split]
-    -- Apply Prop 3.9.iv at `(A ○ B, D, X)` to LHS.
+    -- Apply Prop 2.8.iv at `(A ○ B, D, X)` to LHS.
     rw [circ_general_mul_ι (oudomGuinCirc (R := R) A B)
           (OudomGuinCircConstruct.algHomL
             (TensorAlgebra.tprod R L m (Fin.init a)))
@@ -1657,7 +1657,7 @@ private theorem circ_assoc_via_comul_tprod
     -- where `D = algHomL (tprod_m (Fin.init a))`, `X = a (Fin.last m)`,
     --       `Y_D = (mul' ∘ TP.map (○B) id)(comul D)`.
     --
-    -- Apply Prop 3.9.iv rearranged at `(A, Y_D, X)` to convert
+    -- Apply Prop 2.8.iv rearranged at `(A, Y_D, X)` to convert
     -- `(A ○ Y_D) ○ ι X = A ○ (Y_D * ι X) + A ○ (Y_D ○ ι X)`.
     have h_AYD_ιX :
         oudomGuinCirc (R := R)
@@ -1723,7 +1723,7 @@ private theorem circ_assoc_via_comul_tprod
     simp only [map_add, map_sub] at h_compat_A
     exact h_compat_A.symm
 
-/-- **Prop 3.9 (v)** of Oudom-Guin (2008). The inductive key for Lemma
+/-- **Prop 2.8 (v)** of Oudom-Guin (2008). The inductive key for Lemma
     2.10's proof of `★` associativity.
 
     `(A ○ B) ○ C = A ○ ((B ○ C₍₁₎) · C₍₂₎)`, Sweedler-summed over the

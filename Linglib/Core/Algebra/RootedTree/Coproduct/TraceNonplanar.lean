@@ -53,9 +53,11 @@ work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
 
 ## Status
 
-`[UPSTREAM]` candidate. Skeleton API only. All proofs `sorry`. Builds
-on R.5 GL substrate (sorry'd `mul_assoc`) and R.6 pairing substrate
-(sorry'd everywhere). Proper proofs land once R.5 + R.6 are sorry-free.
+`[UPSTREAM]` candidate. Most proofs landed; two `sorry`s remain: the
+GL/Δ^c duality identity `pairing_gl_eq_pairing_coproduct_C` and the
+grading half of `mcb_lemma_1_2_10`. The R.6 pairing substrate
+(`GrossmanLarsonPairing.lean`, `Aut.lean`) is sorry-free; the R.5 GL
+substrate still has `mul_assoc_basis` open.
 -/
 
 namespace RootedTree
@@ -1491,8 +1493,8 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     `Bialgebra.ofAlgHom` with `comulCAlgHomN τ` as the coproduct and the
     inherited `counit` from CK. Depends on:
     * `comulCAlgHomN_coassoc_algHom` (closed structurally).
-    * `counit_rTensor_comulCAlgHomN` (sorry).
-    * `counit_lTensor_comulCAlgHomN` (sorry). -/
+    * `counit_rTensor_comulCAlgHomN` (proved).
+    * `counit_lTensor_comulCAlgHomN` (proved). -/
 noncomputable instance instBialgebraC
     [CharZero R'] [NoZeroDivisors R'] (τ : Nonplanar (α' ⊕ β') → β') :
     Bialgebra R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
