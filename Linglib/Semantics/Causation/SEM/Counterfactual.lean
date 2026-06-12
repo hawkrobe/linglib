@@ -422,6 +422,13 @@ theorem causallySufficient_of_causallyEntails [Fintype V] [DecidableEq V]
   (developDet_hasValue_iff M (s.extend cause xC) effect xE).mpr
     (developDetVtx_eq_of_developDetVtx?_eq_some M h)
 
+/-- Causal entailment is functional: a vertex entails at most one value. -/
+theorem causallyEntails_unique [DecidableEq V] {M : SEM V α}
+    [CausalGraph.IsDAG M.graph] [IsDeterministic M] {s : Valuation α}
+    {v : V} {x y : α v}
+    (hx : causallyEntails M s v x) (hy : causallyEntails M s v y) : x = y :=
+  Option.some.inj ((hx.symm.trans hy))
+
 /-- **Consistent supersituation** ([nadathur-2023-implicatives] Def 9b),
     faithful "not the opposite" form: `s'` extends `base`, and for every
     vertex `s'` newly fixes, `base` does not causally entail a *different*
@@ -444,6 +451,59 @@ theorem isConsistentSuper_self [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) : isConsistentSuper M s s :=
   ⟨fun _ _ h => h, fun _ _ hn hs => by simp [hn] at hs⟩
+
+/-- **Determinations cannot be undone** ([nadathur-2023-implicatives]
+    Def 2 prose): causal entailment is monotone under consistent
+    supersituations — whatever `s` causally entails, any Def-9b-consistent
+    extension of `s` still causally entails. -/
+theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s s' : Valuation α} (hcons : isConsistentSuper M s s')
+    {v : V} {x : α v} (h : causallyEntails M s v x) :
+    causallyEntails M s' v x := by
+  induction v using (CausalGraph.IsDAG.wf (G := M.graph)).induction with
+  | _ v ih =>
+    cases hs'v : s'.get v with
+    | some z =>
+        -- s' fixes v at z; show z = x, then v is determined.
+        have hzx : z = x := by
+          cases hsv : s.get v with
+          | some w =>
+              -- determined in s: w = x (from h) and s'.get v = some w (le).
+              have hw : developDetVtx? M s v = some w :=
+                developDetVtx?_determined M hsv
+              have hxw : w = x := Option.some.inj (hw.symm.trans h)
+              have := hcons.1 v w hsv
+              rw [Valuation.hasValue, hs'v] at this
+              exact (Option.some.inj this).trans hxw
+          | none =>
+              -- newly fixed: consistency forbids s entailing any value ≠ z.
+              by_contra hne
+              exact hcons.2 v z hsv hs'v x (fun hxz => hne hxz.symm) h
+        rw [causallyEntails, developDetVtx?_determined M hs'v, hzx]
+    | none =>
+        -- v undetermined in s' hence in s; h forces the inner case.
+        have hsv : s.get v = none := by
+          cases hsv : s.get v with
+          | none => rfl
+          | some w =>
+              have := hcons.1 v w hsv
+              rw [Valuation.hasValue, hs'v] at this
+              exact absurd this (by simp)
+        rw [causallyEntails, developDetVtx?_unfold] at h
+        simp only [hsv] at h
+        by_cases hPar : M.graph.parents v = ∅
+        · simp [hPar] at h
+        · simp only [hPar, if_false] at h
+          by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
+          · rw [dif_pos hAll] at h
+            refine developDetVtx?_inner M hs'v hPar
+              (fun u => (developDetVtx? M s u.val).get (hAll u)) (fun u => ?_) |>.trans ?_
+            · exact ih u.val (Relation.TransGen.single u.property)
+                (Option.some_get (hAll u)).symm
+            · exact h
+          · rw [dif_neg hAll] at h
+            exact absurd h (by simp)
 
 /-- **Exogenous settlement**: `s'` extends `base` by fixing only
     exogenous (parentless) vertices.
@@ -480,6 +540,18 @@ instance [DecidableEq V] [Fintype V] [DecidableValuation α] (s₁ s₂ : Valuat
 instance [DecidableEq V] [Fintype V] [DecidableValuation α] (M : SEM V α)
     (base s' : Valuation α) : Decidable (IsExogenousSettlement M base s') :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+/-- An exogenous settlement of an extension at a fresh exogenous vertex
+    is an exogenous settlement of the base. -/
+theorem IsExogenousSettlement.of_extend [DecidableEq V] [DecidableValuation α]
+    {M : SEM V α} {s s' : Valuation α} {p : V} {xP : α p}
+    (hexo : M.graph.parents p = ∅) (hp : s.get p = none)
+    (h : IsExogenousSettlement M (s.extend p xP) s') :
+    IsExogenousSettlement M s s' := by
+  refine ⟨Valuation.le_trans (Valuation.le_extend xP hp) h.1, fun v hv hsv => ?_⟩
+  by_cases hvp : v = p
+  · subst hvp; exact hexo
+  · exact h.2 v (by rw [Valuation.extend_get_ne hvp]; exact hv) hsv
 
 /-- Exogenous settlements are automatically Def-9b-consistent: a newly
     fixed vertex is parentless and undetermined in `base`, so `base`

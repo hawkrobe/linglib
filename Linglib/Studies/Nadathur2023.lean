@@ -184,4 +184,38 @@ theorem nrv_necessary_for_spy :
     Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true :=
   necessary_iff.mpr (by decide)
 
+/-- (34c)/(34d) complete profiles: NRV is causally **necessary but not
+    sufficient** for COM and for SPY — the paper's exact §6.1.1 verdicts,
+    as single statements. -/
+theorem nrv_necessary_not_sufficient_for_com_and_spy :
+    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true ∧
+     failSem dreyfusSEM dreyfusBg .NRV true .COM true) ∧
+    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true ∧
+     failSem dreyfusSEM dreyfusBg .NRV true .SPY true) :=
+  ⟨⟨nrv_necessary_for_com, dare_infelicitous_for_com⟩,
+   ⟨nrv_necessary_for_spy, dare_infelicitous_for_spy⟩⟩
+
+/-- Fact B, negative half, at (34b): *Dreyfus did not dare to send a
+    message* — no consistent completion of the negative-assertion context
+    realizes MSG. Instantiates
+    `Implicative.no_complement_of_negative_assertion` at the Dreyfus
+    model. -/
+theorem no_msg_without_nerve :
+    ∀ s', SEM.IsExogenousSettlement dreyfusSEM (dreyfusBg.extend .NRV false) s' →
+      s'.get .MSG = none → ¬ SEM.causallyEntails dreyfusSEM s' .MSG true :=
+  Implicative.no_complement_of_negative_assertion dreyfusSEM
+    (by decide) (by decide) (by decide) nrv_necessary_for_msg
+
+/-- Fact C at (34a): in the Dreyfus context, a consistent completion
+    realizes MSG exactly when Dreyfus has the nerve — the prerequisite is
+    sufficient and necessary, so the *dare* claim's truth value tracks
+    NRV across all consistent resolutions. -/
+theorem msg_iff_nerve :
+    ∀ s', SEM.IsExogenousSettlement dreyfusSEM dreyfusBg s' →
+      s'.get .MSG = none →
+      (SEM.causallyEntails dreyfusSEM s' .MSG true ↔
+       SEM.causallyEntails dreyfusSEM s' .NRV true) :=
+  Implicative.complement_iff_prerequisite dreyfusSEM
+    (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
+
 end Nadathur2023

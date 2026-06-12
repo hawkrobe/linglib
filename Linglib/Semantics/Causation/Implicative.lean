@@ -125,6 +125,118 @@ abbrev necessityPresup {V : Type*} {α : V → Type*}
   SEM.causallyNecessary M background prerequisite xP complement xC
 
 -- ════════════════════════════════════════════════════
+-- § Characteristic entailments (Facts B–C)
+-- ════════════════════════════════════════════════════
+
+/-! [nadathur-2023-implicatives] (pp. 316–317) takes Facts A–C as the
+class-level data any account of implicatives must derive. On the
+prerequisite account they fall out of the presupposition + assertion
+split of Proposal 32, for an arbitrary deterministic SEM:
+
+- **Fact B, positive half** (`complement_of_positive_assertion`):
+  asserting the prerequisite realizes the complement — the sufficiency
+  presupposition's entailment clause.
+- **Fact B, negative half** (`no_complement_of_negative_assertion`):
+  given the necessity presupposition, the negative assertion leaves no
+  consistent completion realizing the complement.
+- **Fact C** (`complement_iff_prerequisite`): in a felicitous two-way
+  context the prerequisite is sufficient *and* necessary — a consistent
+  completion realizes the complement exactly when it realizes the
+  prerequisite.
+
+Fact A (the existence of a potential obstacle, blocking the entailment
+from complement to implicative claim) is carried by the presuppositional
+preamble itself (`SEM.causallyNecessary.precondition`). -/
+
+section CharacteristicEntailments
+
+variable {V : Type*} {α : V → Type*}
+  [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+
+omit [∀ v, Fintype (α v)] in
+/-- **Fact B, positive half**: a positive two-way implicative claim
+    entails its complement — the background updated with the asserted
+    prerequisite causally entails the complement. -/
+theorem complement_of_positive_assertion
+    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
+    (h : manageSem M background p xP c xC) :
+    SEM.causallyEntails M (background.extend p xP) c xC := h.2
+
+/-- **Fact B, negative half**: given the necessity presupposition, a
+    negative implicative claim (asserting the prerequisite took a value
+    other than `xP`) leaves no consistent completion realizing the
+    complement: by no-alternative, every consistent path to the
+    complement runs through the prerequisite value the assertion denies. -/
+theorem no_complement_of_negative_assertion
+    {background : Valuation α} {p : V} {xP xP' : α p} {c : V} {xC : α c}
+    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
+    (hne : xP' ≠ xP)
+    (hnec : necessityPresup M background p xP c xC) :
+    ∀ s', SEM.IsExogenousSettlement M (background.extend p xP') s' →
+      s'.get c = none → ¬ SEM.causallyEntails M s' c xC := by
+  intro s' hset hc hent
+  have hEntP : SEM.causallyEntails M s' p xP :=
+    hnec.2.2 s' (hset.of_extend hexo hp) hc hent
+  have hp' : s'.get p = some xP' :=
+    hset.1 p xP' (Valuation.extend_get_same _ _ _)
+  have hEntP' : SEM.causallyEntails M s' p xP' :=
+    SEM.developDetVtx?_determined M hp'
+  exact hne (SEM.causallyEntails_unique hEntP' hEntP)
+
+/-- **Fact C**: in a felicitous two-way context (both presuppositions in
+    force), a consistent completion of the background realizes the
+    complement exactly when it realizes the prerequisite. The forward
+    direction is no-alternative; the converse composes the sufficiency
+    clause with `causallyEntails_mono` (determinations cannot be undone). -/
+theorem complement_iff_prerequisite
+    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
+    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
+    (hsuf : manageSem M background p xP c xC)
+    (hnec : necessityPresup M background p xP c xC) :
+    ∀ s', SEM.IsExogenousSettlement M background s' → s'.get c = none →
+      (SEM.causallyEntails M s' c xC ↔ SEM.causallyEntails M s' p xP) := by
+  intro s' hset hc
+  constructor
+  · exact hnec.2.2 s' hset hc
+  · intro hEntP
+    -- the prerequisite is exogenous, so its entailment is a syntactic fix
+    have hp' : s'.get p = some xP := by
+      cases hgp : s'.get p with
+      | some y =>
+          have := SEM.causallyEntails_unique
+            (SEM.developDetVtx?_determined M hgp (x := y)) hEntP
+          exact congrArg some this
+      | none =>
+          rw [SEM.causallyEntails, SEM.developDetVtx?_exogenous M hgp hexo] at hEntP
+          simp at hEntP
+    -- s' consistently extends background + prerequisite
+    have hle : (background.extend p xP).le s' := by
+      intro v x hv
+      by_cases hvp : v = p
+      · subst hvp
+        rw [Valuation.hasValue, Valuation.extend_get_same] at hv
+        rw [Valuation.hasValue, hp']
+        exact hv
+      · rw [Valuation.hasValue, Valuation.extend_get_ne hvp] at hv
+        exact hset.1 v x hv
+    have hcons : SEM.isConsistentSuper M (background.extend p xP) s' := by
+      refine ⟨hle, fun x xv hn hs yv _ hent => ?_⟩
+      have hxp : x ≠ p := by
+        intro hxp; subst hxp
+        rw [Valuation.extend_get_same] at hn
+        simp at hn
+      have hbgx : background.get x = none := by
+        rw [Valuation.extend_get_ne hxp] at hn; exact hn
+      have hExoX : M.graph.parents x = ∅ :=
+        hset.2 x hbgx (by rw [hs]; rfl)
+      rw [SEM.causallyEntails, SEM.developDetVtx?_exogenous M hn hExoX] at hent
+      simp at hent
+    exact SEM.causallyEntails_mono hcons hsuf.2
+
+end CharacteristicEntailments
+
+-- ════════════════════════════════════════════════════
 -- § Directionality
 -- ════════════════════════════════════════════════════
 
