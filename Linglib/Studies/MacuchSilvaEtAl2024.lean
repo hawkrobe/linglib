@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
-import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Data.Rat.Defs
 
@@ -49,7 +48,6 @@ from speaker-oriented argStr to a situation-oriented difficulty measure.
 namespace MacuchSilvaEtAl2024
 
 open RSA.ArgumentativeStrength
-open Phenomena.ScalarImplicatures.QuantityDomain
 
 
 -- ============================================================
@@ -138,8 +136,8 @@ theorem difficulty_monotone_lowSuccess
 
 /-- Which quantifiers from {all, most, some, none} are truthful
 for a given exam result? -/
-def truthfulQuantifiers (s : ExamStimulus) : List ExtUtterance :=
-  let result : List ExtUtterance := []
+def truthfulQuantifiers (s : ExamStimulus) : List Alternatives.Quantifiers.QuantExpr :=
+  let result : List Alternatives.Quantifiers.QuantExpr := []
   let result := if s.nCorrect = 0 then result ++ [.none_] else result
   let result := if s.nCorrect > 0 then result ++ [.some_] else result
   let result := if s.nCorrect * 2 > s.nTotal then result ++ [.most] else result
@@ -150,7 +148,7 @@ def truthfulQuantifiers (s : ExamStimulus) : List ExtUtterance :=
 
 As proportion decreases (difficulty increases in high-success):
 all (perfect) → most (majority) → some (any nonzero) → none (zero) -/
-def strongestTruthfulPositive (s : ExamStimulus) : ExtUtterance :=
+def strongestTruthfulPositive (s : ExamStimulus) : Alternatives.Quantifiers.QuantExpr :=
   if s.nCorrect = s.nTotal then .all
   else if s.nCorrect * 2 > s.nTotal then .most
   else if s.nCorrect > 0 then .some_
@@ -339,8 +337,8 @@ weaker quantifiers when the situation is hard to frame in the
 desired direction (p. 519). -/
 structure DifficultyQuantifierPrediction where
   difficultyThreshold : ℚ
-  dominantBefore : ExtUtterance
-  dominantAfter : ExtUtterance
+  dominantBefore : Alternatives.Quantifiers.QuantExpr
+  dominantAfter : Alternatives.Quantifiers.QuantExpr
   deriving Repr
 
 /-- Approximate crossover thresholds from Figures 5–6 and 10–11.

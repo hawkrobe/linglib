@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Studies.GeurtsPouscoulous2009
 import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
@@ -78,12 +78,11 @@ are verified at the rate level.
 ## Linglib integration
 
 - Per-letter cell states use the canonical `SomeAllWorld` from
-  `Phenomena.ScalarImplicatures.Basic`. A picture is a `Fin n →
+  `Pragmatics.Implicature.SomeAll`. A picture is a `Fin n →
   SomeAllWorld` map indicating, for each letter, whether the letter is
   connected with no / some-but-not-all / all of its circles.
 - Reading extensions (literal, global, local) are `Picture → Bool`
   functions matching the established pattern in
-  `Phenomena.ScalarImplicatures.Embedded.Attitudes` and
   `Pragmatics.RSA.EmbeddedSI`.
 - The §3.2 monotonicity conjecture is captured locally as
   `RatingsMonotone`; promotion to shared substrate is deferred until a
@@ -104,8 +103,6 @@ are verified at the rate level.
 -/
 
 namespace ChemlaSpector2011
-
-open Phenomena.ScalarImplicatures (SomeAllWorld)
 
 -- ============================================================================
 -- Shared types

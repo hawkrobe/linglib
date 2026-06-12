@@ -1,35 +1,18 @@
-import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # Horn Scales
 [horn-1972]
 
-Connects the string-based `HornScaleDatumPair` records in
-`Phenomena/ScalarImplicatures/Basic.lean` to the typed Horn scale algebra
-in `Semantics/Alternatives/HornScale.lean` (`Quantifiers.entails`, `Connectives.entails`,
-`Modals.entails`, `strongerAlternatives`).
-
-## Structure
-
-For each string-level scale datum (someAllDatum, orAndDatum,
-possibleNecessaryDatum), we prove:
-
-1. **Entailment agreement**: the typed `entails` function matches the
-   string-level stronger/weaker ordering.
-
-2. **Alternative agreement**: `strongerAlternatives` on the typed scale
-   produces the expected set.
-
-3. **Scale membership**: the datum's `strongerTerm` is indeed stronger
-   in the typed scale.
-
+Entailment orderings on the three classic Horn scales — ⟨some, most, all⟩,
+⟨or, and⟩, ⟨possible, necessary⟩ — verified in the typed Horn scale algebra
+of `Semantics/Alternatives/HornScale.lean` (`Quantifiers.entails`,
+`Connectives.entails`, `Modals.entails`, `strongerAlternatives`).
 -/
 
 namespace Horn1972
 
 open Alternatives
-open Phenomena.ScalarImplicatures
 
 -- ════════════════════════════════════════════════════
 -- § 1. Quantifier Scale: some/all
@@ -42,12 +25,6 @@ theorem all_entails_some :
 /-- "most" entails "some" in the typed algebra. -/
 theorem most_entails_some :
     Quantifiers.entails .most .some_ = true := by native_decide
-
-/-- someAllDatum's strongerTerm is "all", and all entails some. -/
-theorem someAll_ordering_match :
-    someAllDatum.strongerTerm = "all" ∧
-    Quantifiers.entails .all .some_ = true :=
-  ⟨rfl, by native_decide⟩
 
 /-- "some" has stronger alternatives [most, all] in the typed scale. -/
 theorem some_stronger_alts :
@@ -62,12 +39,6 @@ theorem some_stronger_alts :
 theorem and_entails_or :
     Connectives.entails .and_ .or_ = true := by native_decide
 
-/-- orAndDatum's strongerTerm is "and", and and entails or. -/
-theorem orAnd_ordering_match :
-    orAndDatum.strongerTerm = "and" ∧
-    Connectives.entails .and_ .or_ = true :=
-  ⟨rfl, by native_decide⟩
-
 /-- "or" has stronger alternatives [and] in the typed scale. -/
 theorem or_stronger_alts :
     strongerAlternatives Connectives.connScale .or_ = [.and_] := by
@@ -81,32 +52,14 @@ theorem or_stronger_alts :
 theorem necessary_entails_possible :
     Modals.entails .necessary .possible = true := by native_decide
 
-/-- possibleNecessaryDatum's strongerTerm is "necessary", and
-    necessary entails possible. -/
-theorem possibleNecessary_ordering_match :
-    possibleNecessaryDatum.strongerTerm = "necessary" ∧
-    Modals.entails .necessary .possible = true :=
-  ⟨rfl, by native_decide⟩
-
 /-- "possible" has stronger alternatives [necessary] in the typed scale. -/
 theorem possible_stronger_alts :
     strongerAlternatives Modals.modalScale .possible = [.necessary] := by
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § 4. Cross-Scale Agreement
+-- § 4. Cross-Scale Properties
 -- ════════════════════════════════════════════════════
-
-/-- All three string-level datum pairs agree with the typed algebra:
-    each datum's strongerTerm is the stronger element in its typed scale. -/
-theorem all_scales_agree :
-    (someAllDatum.strongerTerm = "all" ∧
-     Quantifiers.entails .all .some_ = true) ∧
-    (orAndDatum.strongerTerm = "and" ∧
-     Connectives.entails .and_ .or_ = true) ∧
-    (possibleNecessaryDatum.strongerTerm = "necessary" ∧
-     Modals.entails .necessary .possible = true) :=
-  ⟨⟨rfl, by native_decide⟩, ⟨rfl, by native_decide⟩, ⟨rfl, by native_decide⟩⟩
 
 /-- Entailment is reflexive on all three scales. -/
 theorem entailment_reflexive :

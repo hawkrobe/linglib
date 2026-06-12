@@ -2,7 +2,6 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
-import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.Magri2009
 import Linglib.Semantics.Questions.Partition.Constructors
 
@@ -736,38 +735,28 @@ theorem ks_spector_diverge_wife :
 end ExplicitQuestionRescue
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §14  Bridge to Empirical Hurford Data
+-- §14  Hurford Oddness Prediction
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! K&S's Hurford scenario (§5, K&S (22)) models entailing disjunctions
-as needlessly complex answers. This bridges to the empirical Hurford
-data in `ScalarImplicatures.Basic`, showing the theory accounts for
-the observed infelicity judgments.
+as needlessly complex answers, deriving the infelicity judgments of
+Hurford's constraint.
 
 The rescue cases (K&S (24): "some or all", "possible or necessary") require
 embedded exhaustification + a grammatical knowledge operator (K&S §3.3.2,
 citing Meyer 2013). This additional machinery is beyond the scope of the
 current formalization. -/
 
-open Phenomena.ScalarImplicatures in
-/-- K&S's theoretical prediction matches the empirical Hurford data:
-- Theory: entailing disjunctions are needlessly complex → odd
-- Data: `hurfordViolations` are all infelicitous
+/-- K&S's prediction for Hurford's constraint: the entailing disjunction
+"France or Paris" is needlessly complex (Answer Condition:
+`betterThan .france .franceOrParis`), hence odd. -/
+theorem ks_hurford_odd :
+    hurfordScenario.isOdd .franceOrParis = true := by native_decide
 
-The theoretical mechanism (Answer Condition: `betterThan .france .franceOrParis`)
-produces the same verdict as the empirical observation. -/
-theorem ks_hurford_matches_empirical :
-    -- Theory: "France or Paris" is odd (needlessly complex)
-    hurfordScenario.isOdd .franceOrParis = true ∧
-    -- Data: all empirical Hurford violations are infelicitous
-    hurfordViolations.all (·.felicitous == false) = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
-open Phenomena.ScalarImplicatures in
 /-- The theoretical mechanism: "France" ≺ "France or Paris" because
 "France" is simpler (complexity 1 < 2) and semantically equivalent
-(Paris ⊆ France). This is the same entailment pattern observed in
-the empirical Hurford data: each violation has B ⊆ A or A ⊆ B. -/
+(Paris ⊆ France) — the entailment pattern characteristic of Hurford
+violations. -/
 theorem ks_hurford_mechanism :
     -- Semantic equivalence
     hurfordScenario.semEntails .france .franceOrParis = true ∧
@@ -777,14 +766,6 @@ theorem ks_hurford_mechanism :
     -- The simpler form is fine
     hurfordScenario.isOdd .france = false := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
-
-open Phenomena.ScalarImplicatures in
-/-- Empirical prediction: rescued Hurford cases are felicitous.
-K&S argues rescue requires embedded exhaustification (K&S §3.3.2, (24)):
-exh(some) breaks the entailment, so "some or all" ≠ "all" semantically.
-The data confirms this: all rescued cases are felicitous. -/
-theorem hurford_rescued_match_data :
-    hurfordRescuedCases.all (·.felicitous == true) = true := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §15  Three-Way Comparison: K&S ↔ Magri ↔ Spector

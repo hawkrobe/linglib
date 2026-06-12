@@ -1,5 +1,3 @@
-import Linglib.Phenomena.ScalarImplicatures.Basic
-
 /-!
 # [meyer-feiman-2021] — Composing Alternatives
 [bar-lev-fox-2017] [chierchia-2004] [fox-2007]
@@ -248,16 +246,6 @@ def mainFindings : MainFindings :=
 The process profile classification connects to several existing
 phenomena in linglib. -/
 
-/-- For each scale in the library's basic data, which process profile applies.
-
-This connects Meyer & Feiman's classification to the Horn scale data
-in `Phenomena.ScalarImplicatures.Basic`. -/
-def scaleProfile (scale : Phenomena.ScalarImplicatures.HornScaleDatum) : ProcessProfile :=
-  if scale.name == "Numerals" then
-    classProfile .numeral
-  else
-    classProfile .quantifier
-
 /-- Numeral Hurford rescue (e.g., "three or all") involves the offline/online
     profile — alternatives are stored, so exhaustification ("exactly three")
     is immediately available for Hurford rescue. -/
@@ -395,24 +383,15 @@ theorem exactly_one_survives :
     [TheoreticalPosition.uniformOnline, .uniformOffline, .decomposed, .fullyIndependent].filter
       compatibleWithData = [.decomposed] := by decide
 
--- § Connections to Basic SI Data
+-- § ALT-GEN Source Contrast
 
-/-- The quantifier scale ⟨some, all⟩ has an online ALT-GEN profile. -/
-theorem quantifier_scale_online :
-    (scaleProfile Phenomena.ScalarImplicatures.quantifierScale).altGen = .online := rfl
+/-- The quantifier class ⟨some, all⟩ computes its alternatives online. -/
+theorem quantifier_class_online :
+    (classProfile .quantifier).altGen = .online := rfl
 
-/-- The numeral scale ⟨1, 2, 3,...⟩ has an offline ALT-GEN profile. -/
-theorem numeral_scale_offline :
-    (scaleProfile Phenomena.ScalarImplicatures.numeralScale).altGen = .offline := rfl
-
-/-- Both quantifier and numeral scales share ALT-NEG = exhaustification. -/
-theorem both_scales_exhaust :
-    (scaleProfile Phenomena.ScalarImplicatures.quantifierScale).altNeg =
-    (scaleProfile Phenomena.ScalarImplicatures.numeralScale).altNeg := rfl
-
-/-- The connective scale ⟨or, and⟩ (standard, non-FC) also uses exhaustification. -/
-theorem connective_scale_exhaust :
-    (scaleProfile Phenomena.ScalarImplicatures.connectiveScale).altNeg = .exhaustification := rfl
+/-- The numeral class ⟨1, 2, 3,...⟩ draws on stored (offline) alternatives. -/
+theorem numeral_class_offline :
+    (classProfile .numeral).altGen = .offline := rfl
 
 -- § Connections to Hurford Rescue
 
@@ -424,8 +403,7 @@ theorem hurford_numeral_rescue_available :
 /-- Both rescued-numeral and rescued-quantifier Hurford cases use
     the same strengthening mechanism (exhaustification). -/
 theorem hurford_same_neg_mechanism :
-    hurfordNumeralProfile.altNeg =
-    (scaleProfile Phenomena.ScalarImplicatures.quantifierScale).altNeg := rfl
+    hurfordNumeralProfile.altNeg = (classProfile .quantifier).altNeg := rfl
 
 -- § Connections to Free Choice Phenomena
 

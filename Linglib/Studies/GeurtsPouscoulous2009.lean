@@ -1,8 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Attitudes
 import Linglib.Pragmatics.Implicature.Competence
+import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Entailment.Polarity
@@ -70,11 +69,12 @@ The paper uses different statistical tests at different points:
 ## Linglib integration
 
 The canonical *some*/*all* world model `SomeAllWorld` lives in
-`Phenomena.ScalarImplicatures.Basic`; this file uses it for the
+`Pragmatics.Implicature.SomeAll`; this file uses it for the
 implicature-spine bridge. The §8 derivation routes through
 `Implicature.Competence.processAlternative` (Sauerland-style competence
-machinery). The `think` empirical condition is bridged to
-`Embedded.Attitudes.AttitudeInterpretation.local_`.
+machinery). The `think` empirical condition is bridged to the
+global/local distinction for attitude-embedded scalars
+(`AttitudeInterpretation`, defined in the bridge section below).
 
 ## Subsequent literature (forward pointers)
 
@@ -100,7 +100,6 @@ chronological-dependency rule.
 namespace GeurtsPouscoulous2009
 
 open Semantics.Entailment.Polarity (ContextPolarity)
-open Phenomena.ScalarImplicatures (SomeAllWorld)
 
 -- ============================================================================
 -- Shared types (paper-internal vocabulary)
@@ -881,11 +880,11 @@ section ImplicatureSpineBridge
 /-! ## Bridge: ∅-condition SI as `Implicature SomeAllWorld`
 
 Wraps the canonical *some*-derived SI as an `Implicature` value over
-the canonical `SomeAllWorld` model from `Phenomena.ScalarImplicatures.Basic`,
+the canonical `SomeAllWorld` model from `Pragmatics.Implicature.SomeAll`,
 exercising the spine in `Defs.lean` and the diagnostics in
 `Diagnostics.lean`. -/
 
-open Phenomena.ScalarImplicatures.SomeAllWorld
+open SomeAllWorld
 
 /-- The neo-Gricean SI derived from *some students passed* in a UE
 context (paper §1's ∅-condition). Mechanism is the Sauerland Standard
@@ -921,7 +920,7 @@ theorem somePassedSI_corresponds_to_unembedded_data :
 end ImplicatureSpineBridge
 
 -- ============================================================================
--- Bridge to Embedded.Attitudes
+-- Bridge: *think* condition ↔ the global/local attitude distinction
 -- ============================================================================
 
 section AttitudesBridge
@@ -931,31 +930,44 @@ section AttitudesBridge
 The §1 *think* condition tests whether participants endorse the
 attitude-embedded SI ("Betty thinks Fred didn't hear all the Verdi
 operas" inferred from "Betty thinks Fred heard some of the Verdi
-operas"). This is exactly the `AttitudeInterpretation.local_` reading
-formalized in `Embedded/Attitudes.lean`: the strengthened *some* sits
-inside Betty's belief-content. The cross-experiment 57.5% endorsement
-rate measures how often participants compute `local_` rather than
-`global`. -/
+operas"). On the **local** reading the strengthened *some* sits inside
+Betty's belief-content; on the **global** reading the embedded *some*
+stays literal and the "not all" is the speaker's implicature. The
+cross-experiment 57.5% endorsement rate measures how often participants
+compute `local_` rather than `global`. -/
 
-open Phenomena.ScalarImplicatures.Embedded.Attitudes
+open SomeAllWorld
+
+/-- The two readings of an attitude-embedded scalar ("John believes
+some students passed"): `global` computes the SI at the matrix level
+(embedded *some* stays literal); `local_` strengthens *some* to
+some-but-not-all inside the belief content. -/
+inductive AttitudeInterpretation where
+  | global
+  | local_
+  deriving DecidableEq, Repr
+
+/-- Truth conditions of "John believes some passed" under each reading,
+as a function of John's belief state: `global` reads the embedded
+*some* literally (`atLeastOne`); `local_` strengthens it to
+some-but-not-all (`atLeastOne ∧ notUniversal`). -/
+def believesSomeMeaning : AttitudeInterpretation → SomeAllWorld → Prop
+  | .global, b => atLeastOne b
+  | .local_, b => atLeastOne b ∧ notUniversal b
 
 /-- The paper's *think* condition tests endorsement of the *local*
-attitude reading, which `Embedded/Attitudes.lean` formalizes as
-`AttitudeInterpretation.local_`. The empirical rate (57.5%) measures
-the local-vs-global preference; the paper's §8 Gricean derivation
-explains it via Bob-style competence on a single opinion-holder. -/
+attitude reading. The empirical rate (57.5%) measures the
+local-vs-global preference; the paper's §8 Gricean derivation explains
+it via Bob-style competence on a single opinion-holder. The local
+reading strictly distinguishes "thinks-some" from "thinks-all": it is
+false when John believes all passed. -/
 theorem think_condition_corresponds_to_local_attitude :
-    -- empirical anchor
     thinkAvgRate = 575 / 10 ∧
-    -- the local-attitude interpretation excludes the all-belief world
-    -- (i.e., the Local interpretation strictly distinguishes
-    -- "thinks-some" from "thinks-all")
-    believesSomeMeaning .local_ ⟨.all, .all⟩ = false := by
-  refine ⟨?_, ?_⟩
-  · have h : (lookupRate exp1aResults .think + lookupRate exp1bResults .think : Nat)
-        = 115 := by decide
-    unfold thinkAvgRate; rw [h]; norm_num
-  · rfl
+    ¬ believesSomeMeaning .local_ .all := by
+  refine ⟨?_, fun h => h.2 trivial⟩
+  have h : (lookupRate exp1aResults .think + lookupRate exp1bResults .think : Nat)
+      = 115 := by decide
+  unfold thinkAvgRate; rw [h]; norm_num
 
 end AttitudesBridge
 

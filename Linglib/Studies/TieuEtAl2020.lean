@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.TieuEtAl2020
 import Linglib.Features.Polarity
-import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Semantics.Alternatives.Lexical
 
 /-!
@@ -260,22 +259,18 @@ theorem exp3_confirms_asymmetry :
   decide
 
 
--- ### Cross-directory bridge: multiplicity parallels scalar implicatures
+-- ### Multiplicity parallels scalar implicatures
 
-/-- The multiplicity inference exhibits DE blocking — the same pattern as
-    classical scalar implicatures documented in ScalarImplicatures/Basic.lean.
-
-    Specifically: the some/all DE blocking datum shows implicatures arise in UE
-    but not DE, exactly paralleling the multiplicity pattern in the
-    fed-giraffes rows. -/
+/-- The multiplicity inference exhibits DE blocking: available in the
+    positive fed-giraffes row, unavailable under negation — the same
+    UE-arises / DE-blocked pattern as the classical *some*/*all* scalar
+    implicature ([horn-1972]). -/
 theorem multiplicity_parallels_si_de_blocking :
-    Phenomena.ScalarImplicatures.someAllBlocking.implicatureInUE = true ∧
-    Phenomena.ScalarImplicatures.someAllBlocking.implicatureInDE = false ∧
     fedGiraffesPos.bind (·.readings.lookup "multiplicity (>1)") =
       some .acceptable ∧
     fedGiraffesNeg.bind (·.readings.lookup "multiplicity (>1)") =
       some .unacceptable :=
-  ⟨rfl, rfl, by decide, by decide⟩
+  ⟨by decide, by decide⟩
 
 /-- Both the number scale and the quantifier scale predict the same
     pattern: stronger alternatives in UE, none/weaker in DE. -/
