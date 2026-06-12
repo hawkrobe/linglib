@@ -1,45 +1,54 @@
-import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Phi.Geometry
+import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
 # Preminger 2014 — Agreement and Its Failures [preminger-2014]
 [bejar-rezac-2003] [halle-marantz-1993] [harley-ritter-2002]
-[stiebels-2006] [halpert-2012]
+[nevins-2011] [stiebels-2006] [halpert-2012]
 
 [preminger-2014], *Agreement and Its Failures* (MIT Press, LI
-Monographs 68), applies [bejar-rezac-2003]'s relativized-probing
-mechanism (with the Person Licensing Condition) to the Kichean Agent
-Focus construction (Ch. 4) and uses the resulting failure cases to
-argue for an "obligatory operations" model of φ-Agree (Ch. 5). The
+Monographs 68), applies [bejar-rezac-2003]'s relativized probing
+(with the Person Licensing Condition) to the Kichean Agent Focus
+construction (Ch. 4) and uses the resulting failure cases to argue
+for an "obligatory operations" model of φ-Agree (Ch. 5). The
 fragment in `Fragments/Mayan/Kaqchikel/Agreement.lean` carries the
-typology-neutral data (paradigm exponents, person-number cells,
-argument positions, the empirical AF table); this file adds the
-analytical apparatus.
+theory-neutral data; this file adds the analytical apparatus.
+Section and example numbers below were verified against the
+monograph manuscript; page numbers are omitted (draft and published
+pagination differ).
 
 ## Attribution discipline
 
 Per Preminger's own framing:
 
 - The **feature geometry** [φ] → [PERSON] → [participant] → [author]
-  traces to [harley-ritter-2002]; [preminger-2014] adopts it.
+  traces to [harley-ritter-2002]; [preminger-2014] adopts a
+  simplified version.
 - The **relativized-probing mechanism** and the **Person Licensing
-  Condition (PLC)** are [bejar-rezac-2003]'s; Preminger §4.1 is
-  titled "Background: The Person Case Constraint, and Béjar and
-  Rezac's (2003) Account of It" and §4.4 is "Applying Béjar and
-  Rezac's (2003) Account to Kichean".
-- **DM Vocabulary insertion** for setAVocab/setBVocab follows
-  [halle-marantz-1993]'s Distributed Morphology framework.
-- What is **distinctively Preminger 2014**:
-  - Application of [bejar-rezac-2003] to Kichean AF specifically
-    (Ch 4), with a Kichean-specific structural priority of π⁰ over
-    #⁰ deriving the surface "overflow" pattern.
-  - Arguments against direct salience-hierarchy primitives (Ch 7),
-    targeted at [stiebels-2006] and similar accounts.
-  - The "obligatory operations" model of φ-Agree (Ch 5): φ-Agree is
-    obligatory but failure-tolerant; failed Agree surfaces as the
-    Elsewhere (3SG ∅) entry rather than crashing the derivation.
+  Condition (PLC)** are [bejar-rezac-2003]'s (§4.1, §4.4) — and so
+  is the derivational ordering of person before number probing,
+  which Preminger inherits (π⁰ is merged below #⁰ and probes
+  first; what surfaces is decided by a single morphological slot in
+  which a clitic beats out the exponence of π⁰/#⁰).
+- **Omnivorous agreement** as the name for the surface pattern is
+  [nevins-2011]'s term, which Preminger adopts.
+- **DM Vocabulary insertion** for `setAVocab`/`setBVocab` follows
+  [halle-marantz-1993]. The Elsewhere ∅ entry is this
+  formalization's DM rendering: Preminger's own statement is that
+  the absolutive paradigm has no overt 3rd-person-singular
+  exponence, so failed probing leaves the slot empty.
+- What is **distinctively Preminger 2014**: relativizing π⁰ to
+  [participant] and #⁰ to [plural] for Kichean AF (Ch. 4); the
+  "obligatory operations" model of φ-Agree (Ch. 5) — φ-Agree is
+  obligatory but failure-tolerant, with failed Agree surfacing as
+  default morphology rather than crashing the derivation; and the
+  Ch. 7 case against salience-hierarchy primitives (the Mayanist
+  hierarchy tradition: Dayley, Smith-Stark, Norman & Campbell,
+  Mondloch; and constraint-based recastings such as
+  [stiebels-2006]).
 
 ## Two-probe relativized probing
 
@@ -51,58 +60,56 @@ relativized probes:
 
 The single AF marker reflects π⁰'s output if it succeeds (clitic
 doubling of the [participant]-bearing argument); otherwise #⁰'s
-output (the 3PL marker *e-* by direct exponence); otherwise the
-Elsewhere (3SG ∅) entry. Person and number probes are applied
-*independently* — there is no salience scale.
+output (the 3PL marker *e-* by direct exponence); otherwise the slot
+is empty (∅). There is no salience scale —
+`afAgreementTarget_eq_twoProbe` proves the rank-comparison encoding
+is derived from the two-probe mechanism, not primitive, and
+`personRestrictionOk_iff_plc` derives the person restriction from
+the PLC via `Phi/Probing.lean`'s search-licensing substrate.
 
 ## Why not a hierarchy
 
 A surface-equivalent hierarchy `[+participant] > [+plural] > default`
-would predict the same outputs on the table-(22) cells, but Ch 7
-provides **five** arguments against it (§7.3 summary, p. 127):
+would predict the same outputs on the table-(22) cells, but Ch. 7
+gives five arguments against hierarchy accounts:
 
-1. **Restrictedness** (§7.1, p. 124): "salience" effects surface
-   nowhere else in the language — cognitive salience would predict
-   them in regular transitives too.
-2. **K'ichee' formal addressee *la*** (p. 124–125): a 2nd-person
-   pronoun that behaves morphosyntactically as 3rd person under
-   AF, contrary to a hierarchy that ranks 2nd ≫ 3rd.
-3. **AF person restriction asymmetry** (p. 125): hierarchies don't
-   predict why two 1st/2nd persons are blocked but two 3rd plurals
-   are licit.
-4. **Morphophonological 1st/2nd vs 3rd asymmetry** ("perhaps
-   strongest", §3.4 + p. 125–126, table (148)): 1st/2nd ABS markers
-   stand in the relation `<agreement marker> = <strong pronoun>
-   – <initial approximant>` (eq. 149) — a clitic-doubling signature.
-   3rd-person markers don't. A hierarchy can't capture this.
-5. **Zulu cross-linguistic parallel** (§7.2, p. 127):
-   [halpert-2012]'s analysis of Zulu augmentless nominals uses
-   the same machinery, but operating over augmented/augmentless
-   instead of person/number — substantively different categories
-   that have no plausible "salience" interpretation. The same
-   logic applying to a salience-irrelevant feature contrast
-   undermines the cognitive-salience grounding entirely.
-
-Theorems below verify (3) on the fragment data; (4) is encoded as
-a smoke check (the fragment carries ABS markers but not strong
-pronouns, so the genuine eq.-149 relation cannot be verified
-without extending the fragment); (1), (2), (5) are documented in
-prose and would require additional fragment data (regular
-transitives + K'ichee' fragment + Zulu fragment) to formalize.
+1. **Restrictedness** (§7.1): "salience" effects surface nowhere
+   else in the language (prose only — needs regular-transitive data).
+2. **K'ichee' formal addressee *la***: a 2nd-person pronoun that is
+   morphosyntactically 3rd person under AF, contrary to 2 ≫ 3
+   (prose only — needs a K'ichee' fragment).
+3. **Co-occurrence asymmetry**: a hierarchy is silent on
+   co-occurrence — nothing about it explains why two 1st/2nd-person
+   arguments cannot co-occur while two 3rd-plurals can. The
+   two-probe + PLC account derives both the agreement pattern and
+   the restriction; the hierarchy derives only the former
+   (`ch7_arg3_participant_vs_plural_asymmetry`).
+4. **Morphophonology of the markers** ("perhaps strongest", §3.4):
+   1st/2nd ABS markers stand in the relation `<agreement marker> =
+   <strong pronoun> − <initial approximant>` (149) — a
+   clitic-doubling signature that 3rd-person markers lack
+   (smoke check only — the fragment lacks strong-pronoun forms).
+5. **Zulu parallel** (§7.2): [halpert-2012]'s analysis of Zulu
+   augmentless nominals uses the same machinery over
+   augmented/augmentless — categories with no plausible "salience"
+   reading (prose only — needs a Zulu fragment).
 
 ## Cross-references
 
-- `Syntax/Minimalist/Phi/Geometry.lean` — the substrate:
-  `decomposePerson`, `probeResolutionRank`, multi-cited
-  ([harley-ritter-2002], [bejar-rezac-2003],
-  [preminger-2014], [pancheva-zubizarreta-2018]).
-- `Morphology/DM/VocabSimple.lean` —
-  the substrate: `Vocabulary`, `VocabEntry`, `makePersonVocab`.
-- `Studies/Scott2023.lean` — parallel
-  application of the same DM/Agree machinery to Mam (where Infl's
-  φ-probe is blocked in transitives).
-- `Studies/CoonMateoPedroPreminger2014.lean` —
-  Voice/case-flavor side of the same author cluster's Mayan work.
+- `Syntax/Minimalist/Phi/Geometry.lean` — `decomposePerson`,
+  `probeVisible`, `probeResolutionRank`.
+- `Syntax/Minimalist/Phi/Probing.lean` — `probeSearch`, `Licensed`,
+  `PLC`: the search-and-licensing layer the derivations below
+  consume.
+- `Syntax/Minimalist/ObligatoryOperations.lean` — the Ch. 5 model
+  (`AgreementModel`, `ProbeOutcome`, `PFRealization`), consumed
+  below for the failed-Agree theorems.
+- `Morphology/DM/VocabSimple.lean` — `Vocabulary`,
+  `Agreement.Cell.toPhiFeatures`, `makePersonVocab`, `spellout`.
+- `Studies/Scott2023.lean` — the same DM/Agree machinery applied to
+  Mam (where Infl's φ-probe is blocked in transitives).
+- `Studies/CoonMateoPedroPreminger2014.lean` — Voice/case-flavor
+  side of the same author cluster's Mayan work.
 -/
 
 namespace Preminger2014
@@ -111,17 +118,16 @@ open Kaqchikel
 open Minimalist
 open Agreement
 
--- ============================================================================
--- § 1: Feature Decomposition (grounded in Phi/Geometry.lean)
--- ============================================================================
+/-! ### Feature decomposition (grounded in `Phi/Geometry.lean`) -/
 
-/-- Bears [+participant]? Derived from [harley-ritter-2002]'s
-    feature geometry via `decomposePerson` (Phi/Geometry.lean). -/
+/-- Bears [+participant]? Visibility to π⁰ under relativized probing
+    ([bejar-rezac-2003] via `Agreement.Cell.visibleTo`); derives from
+    [harley-ritter-2002]'s feature geometry through `decomposePerson`. -/
 def IsParticipant (c : Agreement.Cell) : Prop :=
-  (decomposePerson c.toPerson).hasParticipant = true
+  c.visibleTo .participant = true
 
 instance : DecidablePred IsParticipant := fun c =>
-  inferInstanceAs (Decidable ((decomposePerson c.toPerson).hasParticipant = true))
+  inferInstanceAs (Decidable (c.visibleTo .participant = true))
 
 /-- Bears [+author]? -/
 def IsAuthor (c : Agreement.Cell) : Prop :=
@@ -130,58 +136,99 @@ def IsAuthor (c : Agreement.Cell) : Prop :=
 instance : DecidablePred IsAuthor := fun c =>
   inferInstanceAs (Decidable ((decomposePerson c.toPerson).hasAuthor = true))
 
-/-- Convert a person-number cell to a PhiFeature list for the Agree
-    infrastructure. -/
-def toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
-  [.person c.toPerson, .number (if c.isPlural then .plural else .singular)]
+/-- [author] entails [participant]: the [harley-ritter-2002] geometric
+    containment, inherited from `decomposePerson`. -/
+theorem isParticipant_of_isAuthor (c : Agreement.Cell) :
+    IsAuthor c → IsParticipant c := by
+  unfold IsAuthor IsParticipant Agreement.Cell.visibleTo
+  simp only [probeVisible]
+  cases c.toPerson <;> decide
 
--- ============================================================================
--- § 2: DM Vocabulary Insertion ([halle-marantz-1993])
--- ============================================================================
+/-! ### DM Vocabulary insertion ([halle-marantz-1993]) -/
+
+/-- The valued feature bundle a probe carries after agreeing with a
+    DP in cell `c`. -/
+private def cellBundle (c : Agreement.Cell) : FeatureBundle :=
+  c.toPhiFeatures.map (λ p => .valued (.phi p))
 
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
-    Built via the shared `makePersonVocab` helper. -/
+    All six cells have overt exponents. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab Agreement.Cell.pnCells toPhiFeatures
+  makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
     (fun c => (setAExponent.realize c).getD "") (some .v)
 
-/-- Set B as DM Vocabulary entries, contextualized to Infl/T. -/
+/-- Set B as DM Vocabulary entries, contextualized to Infl/T: specific
+    entries for the five overt cells, plus the Elsewhere ∅ entry
+    realizing 3SG and failed agreement (see the module docstring on
+    this DM rendering vs. Preminger's own formulation). -/
 def setBVocab : Vocabulary :=
-  makePersonVocab Agreement.Cell.pnCells toPhiFeatures
-    (fun c => (setBExponent.realize c).getD "") (some .T)
+  makePersonVocab (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
+    Agreement.Cell.toPhiFeatures
+    (fun c => (setBExponent.realize c).getD "") (some .T) ++
+  [{ features := [], exponent := "∅", context := some .T }]
 
--- ============================================================================
--- § 3: Two-Probe Relativized Probing ([bejar-rezac-2003], applied per §4.4)
--- ============================================================================
+/-- Vocabulary insertion recovers the fragment's paradigms: spelling
+    out each cell's valued bundle yields the fragment's exponent — for
+    Set B, the 3SG cell via the Elsewhere entry, the rest via their
+    specific entries. -/
+theorem spellout_matches_paradigm :
+    ∀ c ∈ Agreement.Cell.pnCells,
+      spellout setAVocab (cellBundle c) (some .v) = setAExponent.realize c ∧
+      spellout setBVocab (cellBundle c) (some .T) = setBExponent.realize c := by
+  decide
+
+/-! ### Two-probe relativized probing ([bejar-rezac-2003], applied per §4.4) -/
 
 /-- Probe-resolution rank for a Kaqchikel person-number cell under the
-    two-probe (π⁰ ≫ #⁰) system. Computed via `probeResolutionRank`
+    two-probe (π⁰ before #⁰) system. Computed via `probeResolutionRank`
     on the cell's person + number features. NOT a salience scale —
-    see module docstring. -/
+    `afAgreementTarget_eq_twoProbe` derives it from the probes. -/
 def afRank (c : Agreement.Cell) : Nat :=
   probeResolutionRank c.toPerson c.isPlural
 
 /-- Person restriction ([preminger-2014] (25)): at most one core
-    argument can bear [+participant]. Derives from the Person
-    Licensing Condition (PLC, [bejar-rezac-2003]; cf.
-    [preminger-2014] §4.4 (75)): a [+participant] argument
-    requires an Agree relation with π⁰ to be licensed. Two
-    [+participant] arguments compete for π⁰'s single Agree relation;
-    only one can be licensed; the derivation crashes if both occur.
-    This is the syntactic licensing story, not the morphological
-    clitic-slot competition. -/
+    argument can bear [+participant]. The empirical generalization;
+    it DERIVES from the Person Licensing Condition — see
+    `personRestrictionOk_iff_plc`. This is the syntactic licensing
+    story, not the morphological clitic-slot competition. -/
 def PersonRestrictionOk (subj obj : Agreement.Cell) : Prop :=
   ¬(IsParticipant subj ∧ IsParticipant obj)
 
-instance (subj obj : Agreement.Cell) : Decidable (PersonRestrictionOk subj obj) :=
-  inferInstanceAs (Decidable (¬(IsParticipant subj ∧ IsParticipant obj)))
+instance : DecidableRel PersonRestrictionOk := fun subj obj =>
+  inferInstanceAs (Decidable ¬(IsParticipant subj ∧ IsParticipant obj))
+
+/-- The person restriction derives from the PLC ([bejar-rezac-2003];
+    [preminger-2014] §4.4 (75)): with the AF clause's agent and
+    patient as π⁰'s goal tokens, the PLC holds iff at most one bears
+    [+participant]. A [+participant] argument requires an Agree
+    relation with π⁰ to be licensed; π⁰'s single search licenses at
+    most one token (`allLicensed_iff`), so two [+participant]
+    arguments cannot both be licensed and the derivation crashes. -/
+theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
+    PersonRestrictionOk s o ↔
+      PLC Prod.snd ([(.A, s), (.P, o)] : List (ArgPosition × Agreement.Cell)) := by
+  unfold PersonRestrictionOk PLC
+  rw [allLicensed_iff]
+  constructor
+  · intro h a ha b hb hva hvb
+    rcases List.mem_pair.mp ha with rfl | rfl <;>
+      rcases List.mem_pair.mp hb with rfl | rfl
+    · rfl
+    · exact absurd ⟨hva, hvb⟩ h
+    · exact absurd ⟨hvb, hva⟩ h
+    · rfl
+  · rintro h ⟨hs, ho⟩
+    exact nomatch congrArg Prod.fst
+      (h (.A, s) (.head _) (.P, o) (.tail _ (.head _)) hs ho)
 
 /-- Compute the AF agreement target: the higher-ranked argument under
     the two-probe system. When both have equal rank, the subject is
-    chosen (yielding the same marker either way). Returns `none` if
-    the person restriction is violated. -/
+    chosen (yielding the same marker either way). Returns `none` —
+    the derivation crashes — when the PLC fails on the clause's goal
+    tokens (equivalently, when the surface person restriction is
+    violated: `personRestrictionOk_iff_plc`). -/
 def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
-  if PersonRestrictionOk subj obj then
+  if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
     if afRank subj ≥ afRank obj then some subj else some obj
   else none
 
@@ -191,46 +238,62 @@ def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
 def afMarker (subj obj : Agreement.Cell) : Option String :=
   (afAgreementTarget subj obj).bind setBExponent.realize
 
--- ============================================================================
--- § 4: Verification — Grounding in Phi.Geometry
--- ============================================================================
+/-- The DP a relativized probe finds among the two core arguments:
+    `probeSearch` (`Phi/Probing.lean`) specialized to the AF clause's
+    two-goal sequence. (Which argument the probe reaches first is
+    immaterial for the AF marker — see `afMarker_comm`.) -/
+def probeGoal (t : ProbeTarget) (subj obj : Agreement.Cell) : Option Agreement.Cell :=
+  probeSearch (·.visibleTo t) [subj, obj]
 
-/-- Compact grounding check covering the four key cells of
-    feature-decomposition + probe-rank + author-implies-participant.
-    Replaces what would otherwise be ~6 separate single-cell rfl
-    theorems (per-cell-rfl-inflation anti-pattern). -/
-theorem feature_decomposition_correct :
-    -- IsParticipant matches H&R 2002 + B&R 2003 expectations
+/-- The rank comparison inside `afAgreementTarget` is derived, not
+    primitive: on the φ-cell inventory it coincides with genuinely
+    two-probe resolution — π⁰'s goal if any, else #⁰'s, else the
+    default 3SG cell. This discharges formally the claim that
+    `afRank` is a convenience encoding of [bejar-rezac-2003]'s
+    mechanism rather than a salience scale. -/
+theorem afAgreementTarget_eq_twoProbe :
+    ∀ s ∈ Agreement.Cell.pnCells, ∀ o ∈ Agreement.Cell.pnCells,
+      afAgreementTarget s o =
+        if PersonRestrictionOk s o then
+          (probeGoal .participant s o <|> probeGoal .plural s o <|>
+            some (.pn .third .Sing))
+        else none := by
+  decide
+
+/-! ### Verification: grounding in `Phi.Geometry` -/
+
+/-- Smoke check: feature decomposition and probe ranks on the key
+    cells match the [harley-ritter-2002] + [bejar-rezac-2003]
+    expectations — [+participant] → rank 2, [+plural, −participant]
+    → rank 1, 3SG → rank 0. -/
+theorem feature_decomposition_cells :
     IsParticipant (.pn .first .Sing) ∧
     IsParticipant (.pn .second .Sing) ∧
     ¬IsParticipant (.pn .third .Sing) ∧
     ¬IsParticipant (.pn .third .Plur) ∧
-    -- author entails participant (H&R 2002 containment)
-    (∀ c ∈ Agreement.Cell.pnCells, IsAuthor c → IsParticipant c) ∧
-    -- two-probe ranks: [+participant] → 2, [+plural,−participant] → 1, 3SG → 0
     afRank (.pn .first .Sing) = 2 ∧ afRank (.pn .second .Sing) = 2 ∧
     afRank (.pn .third .Plur) = 1 ∧ afRank (.pn .third .Sing) = 0 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩
-  all_goals decide
+  decide
 
--- ============================================================================
--- § 5: Verification — AF Paradigm ([preminger-2014] table (22))
--- ============================================================================
+/-! ### Verification: AF paradigm ([preminger-2014] table (22)) -/
 
-/-- The full AF paradigm (table 22) is correctly predicted: each
+/-- The full AF paradigm (table (22)) is correctly predicted: each
     empirical datum in the fragment's `afParadigm` matches `afMarker`. -/
 theorem af_paradigm_correct :
-    afParadigm.all (λ d => afMarker d.subject d.object == d.marker) = true := by
+    ∀ d ∈ afParadigm, afMarker d.subject d.object = d.marker := by
   decide
 
 /-- AF agreement is commutative: swapping subject and object yields
-    the same marker for ALL person-number combinations
-    ([preminger-2014] §3.3, (67)). Falls out of two-probe
-    relativized probing — the probes see both arguments
-    symmetrically. -/
-theorem af_commutative :
-    Agreement.Cell.pnCells.all (λ s => Agreement.Cell.pnCells.all (λ o =>
-      afMarker s o == afMarker o s)) = true := by
+    the same marker (empirical statement: §3.2, table (22), which
+    pools subject/object φ as unordered sets; derived as a prediction
+    of the clitic-doubling account in §4.4, representative pair
+    (67a–b)). Of the 36 ordered pairs, the 11 unordered cells of
+    table (22) are empirical; pairs of two participants are
+    unattestable for independent binding-theoretic reasons and are
+    vacuously symmetric (both orders yield `none`). -/
+theorem afMarker_comm :
+    ∀ s ∈ Agreement.Cell.pnCells, ∀ o ∈ Agreement.Cell.pnCells,
+      afMarker s o = afMarker o s := by
   decide
 
 /-- π⁰ output suppresses #⁰ when both have a target: when one
@@ -241,36 +304,68 @@ theorem participant_over_plural :
     afMarker (.pn .third .Plur) (.pn .second .Sing) = some "at-" :=
   ⟨rfl, rfl⟩
 
-/-- PLC violation: two [+participant] arguments are blocked. Default
-    3SG: when both arguments are 3SG, both probes fail to find a
-    target and the Elsewhere entry (∅) surfaces — the empirical
-    signature of obligatory-but-failure-tolerant Agree
-    ([preminger-2014] Ch. 5). -/
+/-- PLC violation: two [+participant] arguments are blocked, in
+    either order. Both arguments 3SG: both probes fail to find a
+    target and the default ∅ surfaces (see
+    `failed_agree_tolerated` for the Ch. 5 reading). -/
 theorem restriction_and_default :
     afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
     afMarker (.pn .second .Sing) (.pn .first .Sing) = none ∧
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Person restriction is symmetric on the cells. -/
-theorem person_restriction_symmetric (s o : Agreement.Cell) :
-    PersonRestrictionOk s o ↔ PersonRestrictionOk o s := by
-  unfold PersonRestrictionOk
-  exact ⟨fun h ⟨h₁, h₂⟩ => h ⟨h₂, h₁⟩, fun h ⟨h₁, h₂⟩ => h ⟨h₂, h₁⟩⟩
+/-- The person restriction is symmetric. -/
+theorem personRestrictionOk_comm (s o : Agreement.Cell) :
+    PersonRestrictionOk s o ↔ PersonRestrictionOk o s :=
+  not_congr and_comm
 
--- ============================================================================
--- § 6: Verification — Ch 7 Anti-Hierarchy Arguments (3 of 5)
--- ============================================================================
+/-! ### Obligatory operations ([preminger-2014] Ch. 5) -/
 
-/-- [preminger-2014] Ch 7 arg 3 (p. 125): a salience hierarchy
-    `[+participant] > [+plural] > default` predicts symmetric
-    blocking — if 1+2 (two participants) is bad, then 3pl+3pl (two
-    plurals) should also be bad by the same logic. The data shows
-    1+2 IS blocked (PLC violation) but 3pl+3pl is FINE. The
-    two-probe + PLC analysis derives this asymmetry: π⁰ targets
-    [participant] under PLC (single Agree relation → restriction);
-    #⁰ targets [plural] without a parallel licensing condition (no
-    competition for 3pl+3pl). -/
+/-- π⁰'s outcome on the AF clause's goal pair: each probe is
+    independently obligatory ([preminger-2014] Ch. 5). -/
+def piOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+  searchOutcome (·.visibleTo .participant) [subj, obj]
+
+/-- #⁰'s outcome on the AF clause's goal pair. -/
+def numOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+  searchOutcome (·.visibleTo .plural) [subj, obj]
+
+/-- Joint outcome of the AF probes: `unvalued` only when both probes
+    fail (i.e., both arguments are 3SG). -/
+def afProbeOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
+  match piOutcome subj obj, numOutcome subj obj with
+  | .unvalued, .unvalued => .unvalued
+  | _, _ => .valued
+
+/-- Failed Agree is tolerated, not crashing ([preminger-2014] Ch. 5):
+    when both probes find no goal (3SG × 3SG), each probe ends
+    unvalued, the derivation converges under the
+    obligatory-operations model, PF realizes the Elsewhere entry, and
+    the observed marker is ∅ — recovered by Vocabulary insertion from
+    the unvalued (empty) bundle. Contrast the PLC case in
+    `restriction_and_default`: failed *licensing* crashes (`none`);
+    failed *Agree* does not. -/
+theorem failed_agree_tolerated :
+    piOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
+    numOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
+    afProbeOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
+    derivationConverges .obligatoryNocrash
+      (afProbeOutcome (.pn .third .Sing) (.pn .third .Sing)) = true ∧
+    (afProbeOutcome (.pn .third .Sing) (.pn .third .Sing)).pfRealization
+      = .elsewhere ∧
+    spellout setBVocab [] (some .T) = some "∅" ∧
+    afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" := by
+  decide
+
+/-! ### Verification: Ch. 7 anti-hierarchy arguments (3 of 5) -/
+
+/-- [preminger-2014] Ch. 7 arg 3: a salience hierarchy
+    `[+participant] > [+plural] > default` is silent on co-occurrence
+    — nothing about it explains why two 1st/2nd-person arguments
+    cannot co-occur while two 3rd plurals can. The two-probe + PLC
+    analysis derives both: π⁰ targets [participant] under the PLC
+    (single Agree relation → restriction); #⁰ targets [plural] with
+    no parallel licensing condition (no competition for 3PL + 3PL). -/
 theorem ch7_arg3_participant_vs_plural_asymmetry :
     -- 1+2 is blocked (PLC violation)
     afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
@@ -278,30 +373,26 @@ theorem ch7_arg3_participant_vs_plural_asymmetry :
     afMarker (.pn .third .Plur) (.pn .third .Plur) = some "e-" :=
   ⟨rfl, rfl⟩
 
-/-- [preminger-2014] Ch 7 arg 4 smoke-check (p. 125–126,
-    table (148), eq. (149)): 1st/2nd ABS markers stand in the
-    relation `<agreement marker> = <strong pronoun> – <initial
-    approximant>` (e.g., 1sg `i(n)-` from *yïn*, 1pl `oj-` from
-    *röj*). 3rd-person markers don't have this property — pointing
-    to clitic doubling for 1st/2nd vs direct exponence for 3rd.
+/-- [preminger-2014] Ch. 7 arg 4 smoke check (§3.4, table (148),
+    relation (149)): 1st/2nd ABS markers stand in the relation
+    `<agreement marker> = <strong pronoun> − <initial approximant>`
+    (e.g., 1sg `i(n)-` from *yïn*, 1pl `oj-` from *röj*; the
+    observation traces to Kaufman 1977). 3rd-person markers lack
+    this property — pointing to clitic doubling for 1st/2nd vs.
+    direct exponence for 3rd.
 
-    UNVERIFIED: this theorem only checks that 1st/2nd and 3rd ABS
-    markers are *distinct in form*, which is necessary but not
-    sufficient for arg 4. The genuine eq.-(149) relation requires
-    strong-pronoun forms (yïn, rat, röj, rïx, rja', rje') which the
-    fragment does not currently carry. A faithful arg-4 theorem
-    awaits extending the fragment with strong pronouns and a
-    suffix-stripping bridge function. -/
-theorem ch7_arg4_form_distinctness_smoke_check :
-    setBExponent.realize (.pn .first .Sing) = some "in-" ∧
-    setBExponent.realize (.pn .second .Sing) = some "at-" ∧
-    setBExponent.realize (.pn .first .Plur) = some "oj-" ∧
-    setBExponent.realize (.pn .second .Plur) = some "ix-" ∧
-    setBExponent.realize (.pn .third .Plur) = some "e-" ∧
-    setBExponent.realize (.pn .first .Sing) ≠ setBExponent.realize (.pn .third .Plur) ∧
-    setBExponent.realize (.pn .second .Sing) ≠ setBExponent.realize (.pn .third .Plur) ∧
-    setBExponent.realize (.pn .first .Plur) ≠ setBExponent.realize (.pn .third .Plur) ∧
-    setBExponent.realize (.pn .second .Plur) ≠ setBExponent.realize (.pn .third .Plur) :=
-  ⟨rfl, rfl, rfl, rfl, rfl, by decide, by decide, by decide, by decide⟩
+    UNVERIFIED: this theorem only checks that 1st/2nd ABS markers
+    are *distinct in form* from the 3rd-person ones, which is
+    necessary but not sufficient for arg 4. The genuine
+    relation (149) requires strong-pronoun forms (yïn, rat, röj,
+    rïx, rja', rje') which the fragment does not currently carry.
+    A faithful arg-4 theorem awaits extending the fragment with
+    strong pronouns and a suffix-stripping bridge function. -/
+theorem ch7_arg4_form_distinctness :
+    ∀ c ∈ [Agreement.Cell.pn .first .Sing, .pn .second .Sing,
+           .pn .first .Plur, .pn .second .Plur],
+      setBExponent.realize c ≠ setBExponent.realize (.pn .third .Plur) ∧
+      setBExponent.realize c ≠ setBExponent.realize (.pn .third .Sing) := by
+  decide
 
 end Preminger2014

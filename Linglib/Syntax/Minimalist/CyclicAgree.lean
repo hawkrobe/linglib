@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
+import Linglib.Syntax.Minimalist.Phi.Probing
 
 /-!
 # Cyclic Agree [bejar-rezac-2009]
@@ -326,6 +327,105 @@ theorem plc_violation_iff_inverse (geom : Geometry) (probe : ProbeArticulation)
     eaIsLicensed geom probe ea ia = false ↔
     isInverseContext geom probe ea ia = true := by
   simp [eaIsLicensed, isInverseContext]
+
+/-! ### Grounding in relativized search (`Phi/Probing.lean`)
+
+An articulated probe is a *family* of flat relativized searches, one
+per segment, over the cyclically ordered token list: B&R's segments
+match independently, so cyclic expansion at the whole-probe level is
+first-visible-goal search at the per-segment level. The residue-based
+definitions above remain definitional — they are the paper's
+mechanism; the factorization is a *result* about it. -/
+
+/-- The two arguments as φ-bearing goal tokens, in cyclic search order:
+    the IA precedes the EA (cycle I before cycle II). -/
+def goalTokens (ea ia : Person) : List (Controller × Person) :=
+  [(.ia, ia), (.ea, ea)]
+
+/-- Visibility of an argument token to a probe segment `s`: the
+    argument's person specification bears `s` (feature-relativized
+    locality). -/
+def segVisible (geom : Geometry) (s : Segment) (t : Controller × Person) : Bool :=
+  (personSpec geom t.2).contains s
+
+/-- The goal a single probe segment Agrees with: the first argument in
+    cyclic order whose specification bears the segment — a flat
+    relativized `probeSearch`. -/
+def segmentGoal (geom : Geometry) (ea ia : Person) (s : Segment) :
+    Option (Controller × Person) :=
+  probeSearch (segVisible geom s) (goalTokens ea ia)
+
+/-- A segment finds the EA token iff the IA bypasses it (leaving it as
+    active residue) and the EA bears it — cycle-II Agree. -/
+theorem segmentGoal_eq_ea_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
+    segmentGoal geom ea ia s = some (.ea, ea) ↔
+      (personSpec geom ia).contains s = false ∧
+      (personSpec geom ea).contains s = true := by
+  simp only [segmentGoal, probeSearch, goalTokens, segVisible, List.find?]
+  cases h1 : (personSpec geom ia).contains s <;>
+    cases h2 : (personSpec geom ea).contains s <;> simp
+
+/-- A segment finds the IA token iff the IA bears it — cycle-I Agree. -/
+theorem segmentGoal_eq_ia_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
+    segmentGoal geom ea ia s = some (.ia, ia) ↔
+      (personSpec geom ia).contains s = true := by
+  simp only [segmentGoal, probeSearch, goalTokens, segVisible, List.find?]
+  cases h1 : (personSpec geom ia).contains s <;>
+    cases h2 : (personSpec geom ea).contains s <;> simp
+
+/-- Existential characterization of the residue-based `eaAgrees`. -/
+theorem eaAgrees_iff_exists (geom : Geometry) (probe : ProbeArticulation)
+    (ea ia : Person) :
+    eaAgrees geom probe ea ia = true ↔
+      ∃ s ∈ probe, (personSpec geom ia).contains s = false ∧
+        (personSpec geom ea).contains s = true := by
+  simp only [eaAgrees, activeResidue, decide_eq_true_eq,
+    List.length_filter_lt_length_iff_exists, List.mem_filter]
+  constructor
+  · rintro ⟨s, ⟨hs, hia⟩, hea⟩
+    exact ⟨s, hs, by simpa using hia, by simpa using hea⟩
+  · rintro ⟨s, hs, hia, hea⟩
+    exact ⟨s, ⟨hs, by simpa using hia⟩, by simpa using hea⟩
+
+/-- **Main bridge**: the EA is person-licensed (`eaIsLicensed`) iff some
+    probe segment's flat relativized search (`Probing.Licensed`) over
+    the cyclically ordered token list finds the EA token. -/
+theorem eaIsLicensed_iff_segment_licensed (geom : Geometry)
+    (probe : ProbeArticulation) (ea ia : Person) :
+    eaIsLicensed geom probe ea ia = true ↔
+      ∃ s ∈ probe, Licensed (segVisible geom s) (goalTokens ea ia) (.ea, ea) := by
+  rw [eaIsLicensed, eaAgrees_iff_exists]
+  exact exists_congr fun s => and_congr_right fun _ =>
+    (segmentGoal_eq_ea_iff geom ea ia s).symm
+
+/-- PLC violation ↔ no segment's search licenses the EA token — the
+    inverse-context characterization restated through the search
+    substrate. -/
+theorem plc_violation_iff_no_segment_licensed (geom : Geometry)
+    (probe : ProbeArticulation) (ea ia : Person) :
+    isInverseContext geom probe ea ia = true ↔
+      ∀ s ∈ probe, ¬ Licensed (segVisible geom s) (goalTokens ea ia) (.ea, ea) := by
+  rw [← plc_violation_iff_inverse, Bool.eq_false_iff, Ne,
+    eaIsLicensed_iff_segment_licensed]
+  simp only [not_exists, not_and]
+
+/-- Cycle decomposition through the search: cycle-I segments are those
+    whose search finds the IA token; cycle-II segments those whose
+    search finds the EA token. Second-cycle effects also factor through
+    `probeSearch`. -/
+theorem cycleSegments_eq_segmentGoal_filters (geom : Geometry)
+    (probe : ProbeArticulation) (ea ia : Person) :
+    cycleSegments geom probe ea ia =
+      (probe.filter (fun s => segmentGoal geom ea ia s == some (.ia, ia)),
+       probe.filter (fun s => segmentGoal geom ea ia s == some (.ea, ea))) := by
+  simp only [cycleSegments, activeResidue, List.filter_filter, Prod.mk.injEq]
+  refine ⟨?_, ?_⟩
+  · exact List.filter_congr fun s _ => by
+      rw [Bool.eq_iff_iff, beq_iff_eq, segmentGoal_eq_ia_iff]
+  · exact List.filter_congr fun s _ => by
+      rw [Bool.eq_iff_iff, beq_iff_eq, segmentGoal_eq_ea_iff]
+      cases h1 : (personSpec geom ia).contains s <;>
+        cases h2 : (personSpec geom ea).contains s <;> simp_all
 
 -- ============================================================================
 -- § 10: Repair Strategies

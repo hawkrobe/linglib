@@ -2,6 +2,7 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Phi.Probing
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.Impoverishment
@@ -176,15 +177,11 @@ open Agreement
     person × number → string tables; here they are parameterized by
     `FeatureBundle` and `Cat` for use with `spellout`. -/
 
-/-- PhiFeature list per Mam person-number cell. -/
-def mamToPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
-  [.person c.toPerson, .number (if c.isPlural then .plural else .singular)]
-
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
     yield the morphological exponent ([scott-2023] Table 2.8).
     All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab Agreement.Cell.pnCells mamToPhiFeatures
+  makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
     (fun c => (setAExponent.realize c).getD "") (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
@@ -194,7 +191,7 @@ def setAVocab : Vocabulary :=
     (no features, tz'=) which surfaces when no specific entry
     matches — also catching the blocked-Infl-probe case in transitives. -/
 def setBVocab : Vocabulary :=
-  makePersonVocab setBSpecificCells mamToPhiFeatures
+  makePersonVocab setBSpecificCells Agreement.Cell.toPhiFeatures
     (fun c => (setBExponent.realize c).getD "") (some .T) ++
     [{ features := [], exponent := defaultSetB, context := some .T }]
 
@@ -349,7 +346,9 @@ theorem setB_transitive_ignores_object :
     This mechanism replaces the older
     "closest-goal intervention" account: it is NOT that the agent
     intervenes between Infl and the object, but that the probe is
-    STOPPED by the VoiceP phase boundary. -/
+    halted by head-encounter satisfaction at transitive Voice
+    ([deal-2024]-style [SAT: φ or Voice_TR]; see the derived probe
+    table below for the search-level statement). -/
 theorem probe_restriction_yields_default :
     -- Transitive: probe blocked → empty → Elsewhere
     spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
@@ -543,6 +542,163 @@ theorem satisfaction_matches_fragment :
   refine ⟨?_, ?_⟩
   · constructor <;> intro h <;> first | (native_decide) | trivial
   · exact ⟨fun _ => trivial, fun _ => by native_decide⟩
+
+/-! ### Deriving the probe table from relativized search (`Phi/Probing.lean`)
+
+The `agreeProbe` table stipulates which head agrees with which
+position. Here it is DERIVED: each probe runs `probeSearch` over the
+goal sequence of its clause, relativized to its satisfaction
+condition. `.P => none` falls out of Voice_TR halting Infl's search
+before any DP (`infl_truncated_at_voiceTR`) plus Voice's own search
+stopping at the closer agent (`voice_finds_A`). The stipulation moves
+from the conclusion (the table) to independently motivated premises:
+`mamInflSatisfaction` (`Agree.lean`) and the clause spine's encounter
+order (Infl > Voice_TR > A > P). The goal lists are stipulated
+linearizations per clause type, not computed from a `SyntacticObject`
+— the tree-geometric derivation exists in `Agree.lean` but is
+`native_decide`-bound; this level matches `Probing.lean`'s altitude. -/
+
+/-- An element a probe encounters while walking its search domain:
+    the argument position it realizes (`none` for non-DP heads like
+    Voice_TR), its feature bundle, and its head category (`none` for
+    DP goals). The `(FeatureBundle, Option Cat)` pair is exactly the
+    argument signature of `SatisfactionCond.isSatisfied`. -/
+structure Encounter where
+  pos : Option ArgPosition
+  feats : FeatureBundle
+  cat : Option Cat
+
+/-- Visibility of an encounter to a probe with satisfaction condition
+    `cond`: the encounter halts the search ([deal-2024] interaction). -/
+def halts (cond : SatisfactionCond) (e : Encounter) : Bool :=
+  cond.isSatisfied e.feats e.cat
+
+/-- The argument position a probe φ-agrees with: run `probeSearch`
+    relativized to the satisfaction condition; the probe agrees with
+    the found element only if satisfaction copied features (feature
+    match, not head encounter). -/
+def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
+    Option ArgPosition :=
+  (probeSearch (halts cond) goals).bind
+    (fun e => if cond.copiedFeatures e.feats e.cat then e.pos else none)
+
+/-- Transitive Voice as an encounter: a head of category `.v`, no
+    φ-features visible to the probe. -/
+def voiceTR : Encounter := ⟨none, [], some .v⟩
+
+/-- A DP goal realizing position `p` with φ-bundle `φ`. -/
+def dpGoal (p : ArgPosition) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
+
+/-- Voice's probe: standard φ feature-match (no head-encounter disjunct). -/
+def voiceSat : SatisfactionCond := .featureMatch (.phi (.person .third))
+
+/-- A probe over an empty search space agrees with nothing. -/
+theorem agreesWith_nil (cond : SatisfactionCond) :
+    agreesWith cond [] = none := rfl
+
+/-- Voice's goal sequence in the clause containing position `p`:
+    Voice probes only in transitives; the agent is closest. -/
+def voiceGoals (φA φP : FeatureBundle) : ArgPosition → List Encounter
+  | .A | .P => [dpGoal .A φA, dpGoal .P φP]
+  | _ => []
+
+/-- Infl's goal sequence in the clause containing position `p`. In a
+    transitive clause Infl c-commands VoiceP, so the FIRST element its
+    downward search encounters is the Voice_TR head, before either DP.
+    In an intransitive there is no transitive Voice; the search reaches
+    S directly. -/
+def inflGoals (φA φP φS : FeatureBundle) : ArgPosition → List Encounter
+  | .A | .P => [voiceTR, dpGoal .A φA, dpGoal .P φP]
+  | .S => [dpGoal .S φS]
+  | .R | .T => []
+
+/-- **The key derivation**: Infl's search over ANY transitive goal
+    sequence (Voice_TR first) yields no agreement target — by `rfl`,
+    for arbitrary material below Voice. The search halts at Voice_TR
+    (head encounter satisfies), no features are copied, so no DP is
+    agreed with. -/
+theorem infl_truncated_at_voiceTR (rest : List Encounter) :
+    agreesWith mamInflSatisfaction (voiceTR :: rest) = none := rfl
+
+/-- In an intransitive, Infl's search finds S and copies its features,
+    provided S bears person. -/
+theorem infl_finds_S (φS : FeatureBundle)
+    (hS : hasValuedFeature φS (.phi (.person .third)) = true) :
+    agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
+  have h1 : halts mamInflSatisfaction ⟨some .S, φS, none⟩ = true := by
+    simp [halts, mamInflSatisfaction_isSatisfied, hS]
+  simp [agreesWith, probeSearch, dpGoal, h1, mamInflSatisfaction_copiedFeatures, hS]
+
+/-- Voice's search finds the agent (closest goal), provided A bears
+    person. -/
+theorem voice_finds_A (φA φP : FeatureBundle)
+    (hA : hasValuedFeature φA (.phi (.person .third)) = true) :
+    agreesWith voiceSat [dpGoal .A φA, dpGoal .P φP] = some .A := by
+  have h1 : halts (.featureMatch (.phi (.person .third)))
+      ⟨some .A, φA, none⟩ = true := by
+    simp [halts, SatisfactionCond.isSatisfied, hA]
+  simp [agreesWith, probeSearch, dpGoal, voiceSat, h1,
+    SatisfactionCond.copiedFeatures, hA]
+
+/-- DERIVED probe table: which head φ-agrees with position `p`,
+    computed by running each probe's `probeSearch` over the goal
+    sequence of the clause containing `p`. -/
+def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgPosition) :
+    Option Cat :=
+  if agreesWith voiceSat (voiceGoals φA φP p) = some p then some .v
+  else if agreesWith mamInflSatisfaction (inflGoals φA φP φS p) = some p
+    then some .T
+  else none
+
+/-- The stipulated table coincides with the derivation, for any clause
+    whose A and S bear person features. -/
+theorem agreeProbe_eq_derived (φA φP φS : FeatureBundle)
+    (hA : hasValuedFeature φA (.phi (.person .third)) = true)
+    (hS : hasValuedFeature φS (.phi (.person .third)) = true) :
+    ∀ p, agreeProbe p = derivedAgreeProbe φA φP φS p := by
+  intro p
+  cases p with
+  | A => simp [agreeProbe, derivedAgreeProbe, voiceGoals,
+      voice_finds_A φA φP hA]
+  | P => simp [agreeProbe, derivedAgreeProbe, voiceGoals, inflGoals,
+      voice_finds_A φA φP hA, infl_truncated_at_voiceTR]
+  | S => simp [agreeProbe, derivedAgreeProbe, voiceGoals, inflGoals,
+      infl_finds_S φS hS, agreesWith_nil]
+  | R => rfl
+  | T => rfl
+
+/-- Concrete instantiation (3SG transitive + 3SG intransitive),
+    kernel-checked end to end. -/
+theorem agreeProbe_eq_derived_3sg :
+    ∀ p, agreeProbe p = derivedAgreeProbe dp3sg dp3sg dp3sg p := by
+  intro p; cases p <;> rfl
+
+/-- φ-valuation outcome of a probe with a satisfaction condition:
+    valued iff the search found a goal AND satisfaction copied
+    features. NOTE: this is NOT `searchOutcome (halts cond)` — a
+    head-encounter halt satisfies the search but leaves the probe
+    φ-unvalued. -/
+def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
+    ProbeOutcome :=
+  if (agreesWith cond goals).isSome then .valued else .unvalued
+
+/-- Transitive Infl: search halts at Voice_TR, probe stays unvalued,
+    and converges with Elsewhere morphology — the §11 facts, now
+    derived from the goal sequence rather than from a stipulated
+    empty bundle. -/
+theorem transitive_unvalued_elsewhere (rest : List Encounter) :
+    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued ∧
+    (valuationOutcome mamInflSatisfaction (voiceTR :: rest)).pfRealization
+      = .elsewhere := ⟨rfl, rfl⟩
+
+/-- Contrast: `searchOutcome` relativized to the satisfaction condition
+    reports `.valued` in the transitive — the search DID find a halting
+    element. The valuation/satisfaction distinction is exactly
+    [deal-2024]'s interaction-vs-satisfaction split. -/
+theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
+    searchOutcome (halts mamInflSatisfaction) (voiceTR :: rest) = .valued ∧
+    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued :=
+  ⟨rfl, rfl⟩
 
 -- The former §13 (Unified Agree — bridging Scott 2023's φ-Agree pipeline
 -- with Elkins-Torrence-Brown 2026's oblique-Agree pipeline) violated the
