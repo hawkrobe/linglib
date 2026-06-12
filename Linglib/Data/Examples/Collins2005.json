@@ -1,0 +1,175 @@
+[
+  {
+    "id": "collins2005_ex10a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (10a)"},
+    "language": "stan1293",
+    "primaryText": "Every letter was signed by its author",
+    "glossedTokens": [],
+    "translation": "Every letter was signed by its author",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["test", "c_command"],
+      ["dependency", "bound_variable"],
+      ["licensee_position", "by_phrase"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean cCommandData. Derived subject 'every letter' binds the pronoun inside the by-phrase: the passive subject c-commands the by-phrase."
+  },
+  {
+    "id": "collins2005_ex10b",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (10b)"},
+    "language": "stan1293",
+    "primaryText": "Its author was arrested by every cop",
+    "glossedTokens": [],
+    "translation": "Its author was arrested by every cop",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "c_command"],
+      ["dependency", "bound_variable"],
+      ["licensee_position", "subject"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean cCommandData. Quantifier in the by-phrase cannot bind into the derived subject: the by-phrase does not c-command the subject. Ungrammatical on the bound-variable reading."
+  },
+  {
+    "id": "collins2005_ex10c",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (10c)"},
+    "language": "stan1293",
+    "primaryText": "No letter was signed by anyone",
+    "glossedTokens": [],
+    "translation": "No letter was signed by anyone",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["test", "c_command"],
+      ["dependency", "npi"],
+      ["licensee_position", "by_phrase"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean cCommandData. Negative derived subject licenses the NPI 'anyone' inside the by-phrase."
+  },
+  {
+    "id": "collins2005_ex10d",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (10d)"},
+    "language": "stan1293",
+    "primaryText": "Anyone was fired by no manager",
+    "glossedTokens": [],
+    "translation": "Anyone was fired by no manager",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "c_command"],
+      ["dependency", "npi"],
+      ["licensee_position", "subject"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean cCommandData. Negative quantifier in the by-phrase cannot license an NPI in the derived subject."
+  },
+  {
+    "id": "collins2005_ex15a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (15a)"},
+    "language": "stan1293",
+    "primaryText": "The cat was let out",
+    "glossedTokens": [],
+    "translation": "The cat was let out",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["test", "particle"],
+      ["has_dp_object", "false"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean particleData. Passive of a particle verb: the particle stays with the verb inside the smuggled PartP."
+  },
+  {
+    "id": "collins2005_ex16a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (16a)"},
+    "language": "stan1293",
+    "primaryText": "The cat was let out the dog",
+    "glossedTokens": [],
+    "translation": "The cat was let out the dog",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "particle"],
+      ["has_dp_object", "true"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean particleData. No post-particle DP object survives in the passive."
+  },
+  {
+    "id": "collins2005_ex16b",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (16b)"},
+    "language": "stan1293",
+    "primaryText": "The cat was let the dog out",
+    "glossedTokens": [],
+    "translation": "The cat was let the dog out",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "particle"],
+      ["has_dp_object", "true"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean (module docstring, ex 16b). No DP object can intercalate between verb and particle in the passive."
+  },
+  {
+    "id": "collins2005_ex23a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (23a)"},
+    "language": "stan1293",
+    "primaryText": "John has kicked the ball",
+    "glossedTokens": [],
+    "translation": "John has kicked the ball",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["test", "aux_selection"],
+      ["aux", "have"],
+      ["complement_form", "past_participle"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean auxiliaryData. Perfect 'have' c-selects a participial complement (PartP)."
+  },
+  {
+    "id": "collins2005_ex23b",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (23b)"},
+    "language": "stan1293",
+    "primaryText": "The ball was kicked",
+    "glossedTokens": [],
+    "translation": "The ball was kicked",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["test", "aux_selection"],
+      ["aux", "be"],
+      ["complement_form", "past_participle"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean auxiliaryData. Passive 'be' likewise requires a participial complement."
+  },
+  {
+    "id": "collins2005_ex23c",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (23c)"},
+    "language": "stan1293",
+    "primaryText": "John has kicking the ball",
+    "glossedTokens": [],
+    "translation": "John has kicking the ball",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "aux_selection"],
+      ["aux", "have"],
+      ["complement_form", "present_participle"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean auxiliaryData. Perfect 'have' rejects a present-participle complement."
+  },
+  {
+    "id": "collins2005_ex23d",
+    "source": {"bibkey": "collins-2005", "paperLabel": "UNVERIFIED (23d)"},
+    "language": "stan1293",
+    "primaryText": "The ball was kick",
+    "glossedTokens": [],
+    "translation": "The ball was kick",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["test", "aux_selection"],
+      ["aux", "be"],
+      ["complement_form", "bare_stem"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Passive.lean auxiliaryData. Passive 'be' rejects a bare-stem complement."
+  }
+]

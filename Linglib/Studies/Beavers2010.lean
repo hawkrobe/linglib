@@ -3,7 +3,7 @@ import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
+import Linglib.Data.Examples.Levin1993
 
 /-!
 # [beavers-2010] The Structure of Lexical Meaning: Why Semantics Really Matters
@@ -39,7 +39,6 @@ open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.AgentivityLattice
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
-open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 -- ════════════════════════════════════════════════════
 -- § 2. L-Thematic Roles as Entailment Sets (§4.3)
@@ -351,26 +350,25 @@ theorem impossible_violates_MAP : ¬ MapHolds impossibleConative := by decide
 -- § 8. Bridge to Existing Data and EntailmentProfile
 -- ════════════════════════════════════════════════════
 
-/-- Bridge to existing alternation data: the conative alternation
-    data for eat, cut, and hit in `Data.lean` records `.participates`,
-    confirming these alternations are attested. -/
+/-- Bridge to [levin-1993]'s judgment rows: the conative alternation is
+    attested for *cut* and *hit*, confirming the Table 3 contrasts. -/
 theorem conative_data_attested :
-    con_cut.result = .participates ∧
-    con_hit.result = .participates := ⟨rfl, rfl⟩
+    Levin1993.Examples.con_cut.judgment = .acceptable ∧
+    Levin1993.Examples.con_hit.judgment = .acceptable := ⟨rfl, rfl⟩
 
-/-- Bridge to existing alternation data: break does NOT participate
+/-- Bridge to [levin-1993]'s judgment rows: break does NOT participate
     in the conative. This is predicted: break objects undergo quantized
     change (CoS), and the conative would weaken to nonquantized — but
     break's meaning inherently requires a specific result state, so the
     weakening is blocked by the verb's lexical semantics. -/
 theorem break_no_conative :
-    con_break.result = .blocked := rfl
+    Levin1993.Examples.con_break.judgment = .ungrammatical := rfl
 
-/-- Bridge to existing alternation data: locative alternation is
-    attested for spray/load verbs. -/
+/-- Bridge to [levin-1993]'s judgment rows: the locative alternation is
+    attested for spray/load verbs, confirming the Table 4 contrasts. -/
 theorem locative_data_attested :
-    loc_spray.result = .participates ∧
-    loc_load.result = .participates := ⟨rfl, rfl⟩
+    Levin1993.Examples.loc_spray.judgment = .acceptable ∧
+    Levin1993.Examples.loc_load.judgment = .acceptable := ⟨rfl, rfl⟩
 
 /-! The `profileToDegree` bridge (formerly §8) and its verification theorems
     have been promoted to `Semantics/Events/Affectedness.lean`.

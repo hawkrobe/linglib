@@ -90,8 +90,8 @@ inductive DiathesisAlternation where
   -- Transitivity alternations (Ch 1)
   /-- *she broke the vase* / *the vase broke*. Diagnoses causation + CoS. -/
   | causativeInchoative
-  /-- *Bill ran the horse*. Causative use of intransitive
-      manner-of-motion verbs. -/
+  /-- *The scientist ran the rats through the maze* ([levin-1993] §1.1.2.2).
+      Causative use of intransitive manner-of-motion verbs. -/
   | inducedAction
   /-- *the bread cuts easily*. Diagnoses change of state. -/
   | middle
@@ -150,11 +150,11 @@ inductive DiathesisAlternation where
       Unaccusative diagnostic: existence/spatial configuration verbs. -/
   | locativeInversion
   -- Other constructions (Ch 7)
-  /-- *she laughed a bitter laugh*. Unergative diagnostic:
-      agentive intransitives can take cognate objects. -/
+  /-- *Paul laughed a cheerful laugh* ([levin-1993] §40.2). Unergative
+      diagnostic: some agentive intransitives take cognate objects. -/
   | cognateObject
-  /-- *she elbowed her way through the crowd*.
-      Manner-of-motion and body-motion verbs. -/
+  /-- *The boy pushed his way through the crowd* ([levin-1993] §7.4).
+      Unergative and transitive verbs. -/
   | wayConstruction
   /-- *hammer the metal flat*. Available to manner verbs. -/
   | resultative
@@ -434,10 +434,11 @@ def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bo
   | .soundEmission, .locativeInversion | .lightEmission, .locativeInversion
   | .mannerOfMotion, .locativeInversion
   | .assumePosition, .locativeInversion => true
-  -- Cognate object: unergative verbs
+  -- Cognate object: unergative verbs. NOT manner of motion: run verbs
+  -- have zero-related nominals but do not take cognate objects
+  -- ([levin-1993] §51.3.2, ex. 998: *The horse jumped a high jump).
   | .mannerOfSpeaking, .cognateObject
-  | .bodyProcess, .cognateObject | .dine, .cognateObject
-  | .mannerOfMotion, .cognateObject => true
+  | .bodyProcess, .cognateObject | .dine, .cognateObject => true
   -- Way construction: manner verbs
   | .mannerOfMotion, .wayConstruction
   | .bodyInternalMotion, .wayConstruction
@@ -639,22 +640,22 @@ theorem mannerOfMotion_wayConstruction :
 theorem mannerOfMotion_directionalPhrase :
     LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true := rfl
 
-/-- Unergative diagnostics: manner-of-motion verbs participate in cognate object
-    and prepositional passive. -/
+/-- Unergative diagnostics dissociate for manner-of-motion verbs: they take
+    the prepositional passive but reject cognate objects, despite having
+    zero-related nominals ([levin-1993] §51.3.2, ex. 998). -/
 theorem unergative_diagnostics :
-    LevinClass.mannerOfMotion.participatesIn .cognateObject = true
+    LevinClass.mannerOfMotion.participatesIn .cognateObject = false
     ∧ LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
 
-/-- Manner-of-motion verbs are diagnostic workhorses: 6 alternations
+/-- Manner-of-motion verbs are diagnostic workhorses: 5 alternations
     from 4 different families. -/
 theorem mannerOfMotion_breadth :
     LevinClass.mannerOfMotion.participatesIn .inducedAction = true
     ∧ LevinClass.mannerOfMotion.participatesIn .wayConstruction = true
     ∧ LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .cognateObject = true
     ∧ LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true
     ∧ LevinClass.mannerOfMotion.participatesIn .locativeInversion = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ### Verbal passive coverage -/
 

@@ -47,8 +47,8 @@ the SelStack from `VerbEntry.complementType`:
 
 - §1 grammatical proper-noun derivations are well-formed
 - §2 ungrammatical c-selection violations fail well-formedness
-- §3 `subcategorization_data_match` agrees with
-  `Phenomena.ArgumentStructure.Subcategorization.data`
+- §3 `subcategorization_data_match` captures the textbook
+  subcategorization contrasts
 - §4 substrate finding: bare common nouns expose a known limitation in
   the canonical `Derivations.lean` derivations
 - §5 resolution: Adger ch. 7's null-D wrapper (`nullDWrap` in
@@ -232,16 +232,15 @@ theorem john_sees_not_wellFormed :
 -- §3: Bridge to Subcategorization Data
 -- ============================================================================
 
-/-- Adger's c-selection predictions agree with
-    `Phenomena.ArgumentStructure.Subcategorization.data` on the
-    proper-noun fragment of the contrast set:
+/-- Adger's c-selection predictions capture the proper-noun fragment
+    of the textbook subcategorization contrast set:
 
     | Frame         | Grammatical    | Ungrammatical          |
     |---------------|----------------|------------------------|
     | intransitive  | "John sleeps"  | "*Mary arrives John"   |
     | transitive    | "John sees Mary" | "*John sees"         |
 
-    The full data file's bare-common-noun examples are addressed in §4. -/
+    The bare-common-noun contrasts are addressed in §4. -/
 theorem subcategorization_data_match :
     john_sleeps.WellFormed
     ∧ ¬ mary_arrives_john_bad.WellFormed
