@@ -4,6 +4,9 @@ import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.English.Definiteness
+import Linglib.Fragments.Thai.Definiteness
+import Linglib.Fragments.Mandarin.Definiteness
+import Linglib.Fragments.Shan.Definiteness
 
 /-!
 # Schwarz (2009): Two Types of Definites in Natural Language
@@ -233,6 +236,69 @@ theorem donkey_use_is_familiarity :
     presupposition type — they pattern together morphologically. -/
 theorem donkey_patterns_with_anaphoric :
     useTypeToPresupType .donkey = useTypeToPresupType .anaphoric := rfl
+
+/-! ### Cross-linguistic realization of donkey anaphora
+
+The cross-linguistic pattern ([schwarz-2009] §3; cf. [moroney-2021]
+Table 4.4 for the parallel pattern with anaphoric definites):
+
+- **German**: strong article (*von dem*) — the two-article system
+  distinguishes the donkey use overtly
+- **Thai/Mandarin**: demonstrative — demonstratives fill the
+  strong-article role
+- **Shan**: bare noun — no articles, so no morphological signal -/
+
+/-- Cross-linguistic datum on how donkey anaphora is expressed
+    morphologically, connecting `DefiniteUseType.donkey` to concrete
+    article forms.
+
+    The article system (`articleSystem`) is *derived* from the language's
+    fragment-level `determiners`, not stipulated independently — the
+    declared `Determiner.Entry` list is the single source of truth. -/
+structure DonkeyArticleDatum where
+  language : String
+  isoCode : String
+  /-- Morphological form used for donkey pronouns -/
+  form : String
+  /-- Declared determiner set (single source of truth from which
+      `articleSystem` is derived). -/
+  determiners : List Determiner.Entry
+
+/-- Schwarz `ArticleType` classification, derived from `determiners`. -/
+def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
+  Determiner.articleType d.determiners
+
+def germanDonkey : DonkeyArticleDatum :=
+  { language := "German", isoCode := "deu"
+    form := "strong article (von dem)"
+    determiners := German.Definiteness.determiners }
+
+def thaiDonkey : DonkeyArticleDatum :=
+  { language := "Thai", isoCode := "tha"
+    form := "demonstrative"
+    determiners := Thai.Definiteness.determiners }
+
+def mandarinDonkey : DonkeyArticleDatum :=
+  { language := "Mandarin", isoCode := "cmn"
+    form := "demonstrative"
+    determiners := Mandarin.Definiteness.determiners }
+
+def shanDonkey : DonkeyArticleDatum :=
+  { language := "Shan", isoCode := "shn"
+    form := "bare noun"
+    determiners := Shan.Definiteness.determiners }
+
+/-- All cross-linguistic donkey article data. -/
+def donkeyArticleData : List DonkeyArticleDatum :=
+  [germanDonkey, thaiDonkey, mandarinDonkey, shanDonkey]
+
+/-- In languages with a weak/strong article distinction, donkey anaphora
+    uses the strong form — never the weak form. This is predicted by
+    `donkey_use_is_familiarity`: strong articles encode familiarity,
+    and donkey anaphora requires familiarity. -/
+theorem weakAndStrong_uses_strong :
+    (donkeyArticleData.filter (·.articleSystem == .weakAndStrong)).all
+      (·.form == "strong article (von dem)") = true := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §7: Bridging split ([schwarz-2013] §3.2)

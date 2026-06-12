@@ -1,4 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Data.Examples.AhnZhu2025
 
 /-
 # Mandarin Demonstrative Semantics
@@ -308,7 +309,8 @@ theorem relatum_slot_is_second_argument {E S : Type}
 
 
 /-!
-This analysis explains the empirical patterns in `Phenomena/Anaphora/Bridging.lean`:
+This analysis explains the empirical patterns in `Data/Examples/AhnZhu2025.json`
+(see the Data section below):
 
 | Noun Type  | Form | Has Relatum Slot? | Relational Bridging? |
 |------------|------|-------------------|----------------------|
@@ -461,5 +463,45 @@ theorem derivation_chain {E S : Type} :
 This is how a library grows cumulatively: later work builds on earlier work,
 creating a web of interconnected results rather than isolated modules.
 -/
+
+-- ============================================================================
+-- Data: the bridging felicity rows (`Data/Examples/AhnZhu2025.json`)
+-- ============================================================================
+
+section Data
+
+open Data.Examples
+
+/-- Value of a `paperFeatures` key, if present. -/
+private def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- Every Mandarin *na*+CL row is acceptable, in both bridging conditions —
+    the pattern `ahn_zhu_derived` accounts for: *na* applies π, so the
+    resulting predicate always has a relatum slot. -/
+theorem naCL_rows_acceptable :
+    ∀ row ∈ Examples.all, featureOf row "definite_form" = some "naCL" →
+      row.judgment = .acceptable := by decide
+
+/-- The bare relational-noun row is acceptable — `relational_bare_can_bridge`:
+    a lexically 2-place noun supplies the relatum slot without π. -/
+theorem bare_relational_row_acceptable :
+    ∀ row ∈ Examples.all,
+      featureOf row "definite_form" = some "bare" →
+      featureOf row "noun_arity" = some "relational" →
+      row.judgment = .acceptable := by decide
+
+/-- The English contrast: demonstrative *that* is infelicitous in both
+    bridging conditions where *the* is fine. This is the contrast that
+    motivates the analysis (na+CL ≠ English *that*); the familiarity
+    requirement of English demonstratives is reported, not derived here. -/
+theorem english_that_vs_the_contrast :
+    ∀ row ∈ Examples.all,
+      (featureOf row "definite_form" = some "that" →
+        row.judgment = .unacceptable) ∧
+      (featureOf row "definite_form" = some "the" →
+        row.judgment = .acceptable) := by decide
+
+end Data
 
 end AhnZhu2025

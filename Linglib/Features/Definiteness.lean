@@ -12,8 +12,8 @@ distinction: article morphology, pragmatic use type, bridging relation, etc.
 
 Used by:
 - `Semantics.Montague/Determiner/Definite.lean` (denotations: ⟦the⟧)
-- `Phenomena/Anaphora/PronounTypology.lean` (cross-linguistic article data)
-- `Phenomena/Anaphora/Bridging.lean` (bridging presupposition types)
+- `Studies/Schwarz2009.lean` (weak/strong articles, donkey anaphora)
+- `Studies/Moroney2021.lean` (bridging subtypes)
 
 -/
 

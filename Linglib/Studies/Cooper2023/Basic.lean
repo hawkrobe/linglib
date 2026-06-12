@@ -1,8 +1,9 @@
 import Linglib.Studies.Cooper2023.Ch8
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Semantics.Dynamic.CDRT.Basic
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Studies.Chomsky1981
+import Linglib.Data.Examples.Geach1962
+import Linglib.Data.Examples.Kanazawa1994
 
 /-!
 # Cooper (2023) — TTR Underspecification [cooper-2023]
@@ -13,12 +14,12 @@ Connects TTR underspecification to anaphora data, drawing on
 
 Connects TTR's localization (donkey anaphora) and binding theory
 (reflexivization, anaphoric resolution) from
-`Semantics.TypeTheoretic.Underspecification` to the empirical
-data in `Phenomena.Anaphora.DonkeyAnaphora` and
-`Phenomena.Anaphora.Coreference`.
+`Semantics.TypeTheoretic.Underspecification` to the donkey rows in
+`Data/Examples/Geach1962.json` / `Kanazawa1994.json` and the binding
+paradigm in `Studies/Chomsky1981.lean`.
 
-Per-datum verification: each theorem verifies one data point from the
-Phenomena files against TTR predictions.
+Per-datum verification: each theorem verifies one data point
+against TTR predictions.
 
 §§ 4–5 establish the truth-conditional bridge from CDRT
 (Dynamic/CDRT/Basic.lean, [muskens-1996]) to TTR for the existential
@@ -33,28 +34,28 @@ namespace Cooper2023
 
 open Semantics.TypeTheoretic
 open Cooper2023Ch8
-open Phenomena.Anaphora.DonkeyAnaphora
-open Phenomena.Anaphora.Coreference
+open Chomsky1981
 
 -- ============================================================================
--- Bridge: TTR donkey predictions -> Phenomena/Anaphora/DonkeyAnaphora
+-- Bridge: TTR donkey predictions -> Data/Examples donkey rows
 -- ============================================================================
 
 /-! ### Per-datum verification: TTR predictions match empirical data
 
-Connect the TTR localization analysis to the theory-neutral donkey
-anaphora data in `Phenomena.Anaphora.DonkeyAnaphora`. Each theorem
-verifies one data point: the empirical datum records a reading as
-available, and TTR produces a witness for that reading.
+Connect the TTR localization analysis to the donkey rows in
+`Data/Examples/Geach1962.json` and `Kanazawa1994.json`. Each theorem
+verifies one data point: the row records a reading as available, and
+TTR produces a witness for that reading.
 
 Changing a Ppty (e.g., making `beats` asymmetric) will break exactly
 the theorems whose empirical predictions depend on it. -/
 
 /-- Geach donkey: weak reading available -- TTR predicts checkmark.
-    `geachDonkey.weakReading = true` and TTR produces a weak (localize) witness
-    for both farmers in the scenario. -/
+    The row records the weak/existential reading and TTR produces a weak
+    (localize) witness for both farmers in the scenario. -/
 theorem geach_weak_available :
-    geachDonkey.weakReading = true ∧
+    Geach1962.Examples.donkey_classic.readings.contains
+      ("weak/existential", .acceptable) = true ∧
     Nonempty (ℒ farmerOwnsBeatsDonkey .farmer1) ∧
     Nonempty (ℒ farmerOwnsBeatsDonkey .farmer2) :=
   ⟨rfl, ⟨farmer1WeakDonkey⟩, ⟨farmer2WeakDonkey⟩⟩
@@ -62,7 +63,8 @@ theorem geach_weak_available :
 /-- Geach donkey: bound reading — TTR confirms the pronoun depends on
     the indefinite via parametric background (the donkey is the Bg). -/
 theorem geach_bound_reading :
-    geachDonkey.boundReading = true ∧
+    Geach1962.Examples.donkey_classic.readings.contains
+      ("bound", .acceptable) = true ∧
     farmerOwnsBeatsDonkey.Bg = DonkeyBg :=
   ⟨rfl, rfl⟩
 
@@ -73,33 +75,35 @@ theorem geach_bound_reading :
     separate conditional gate; see TODO note in `Cooper2023Ch8.lean`
     DonkeyAnaphora section). -/
 theorem strongDominant_readings_available :
-    strongDominant.strongAvailable = true ∧
-    strongDominant.weakAvailable = true ∧
+    Kanazawa1994.Examples.strong_dominant.readings.contains
+      ("strong/universal", .acceptable) = true ∧
+    Kanazawa1994.Examples.strong_dominant.readings.contains
+      ("weak/existential", .acceptable) = true ∧
     Nonempty (ℒ farmerOwnsBeatsDonkey .farmer1) :=
   ⟨rfl, rfl, ⟨farmer1WeakDonkey⟩⟩
 
 -- ============================================================================
--- Bridge: TTR binding -> Phenomena/Anaphora/Coreference (bridge theorem 3)
+-- Bridge: TTR binding -> Chomsky1981 binding paradigm (bridge theorem 3)
 -- ============================================================================
 
 /-! ### Per-datum verification: binding predictions match coreference data
 
-Connect TTR's reflexivization and anaphoric resolution to the theory-neutral binding
-data in `Phenomena.Anaphora.Coreference`.
+Connect TTR's reflexivization and anaphoric resolution to the binding
+paradigm in `Studies/Chomsky1981.lean`.
 
 [cooper-2023] Ch8 section 8.3 gives a type-theoretic account of [chomsky-1981]'s binding conditions:
 - **Condition A** (reflexives must be locally bound): reflexivization forces argument identity
 - **Condition B** (pronouns must be locally free): anaphoric resolution with disjoint reference
 - **Complementary distribution**: reflexivization vs anaphoric resolution for the same position
 
-Each theorem verifies one empirical pattern from `Coreference.lean`.
+Each theorem verifies one empirical pattern from `Studies/Chomsky1981.lean`.
 Changing `reflexivize` or `anaphoricResolve` will break these bridges. -/
 
 /-- TTR's reflexivization predicts Binding Condition A:
     reflexives require a local antecedent because reflexivization forces argument
     identity within the local clause.
     Cooper Ch8, eq (84) + (88): reflexivization at VP level binds reflexive to subject.
-    Matches `reflexivePattern` from Phenomena. -/
+    Matches `Chomsky1981.reflexivePattern`. -/
 theorem reflexive_predicts_condA :
     reflexivePattern.requiresAntecedent = true ∧
     reflexivePattern.antecedentDomain = some .local_ ∧
@@ -110,7 +114,7 @@ theorem reflexive_predicts_condA :
     pronouns allow disjoint reference via anaphoric resolution with a
     constant function (the assignment provides the referent from
     non-local context). Cooper Ch8, eq (28).
-    Matches `pronounPattern` from Phenomena. -/
+    Matches `Chomsky1981.pronounPattern`. -/
 theorem pronoun_predicts_condB :
     pronounPattern.requiresAntecedent = false ∧
     pronounPattern.antecedentDomain = some .nonlocal ∧
@@ -122,7 +126,7 @@ theorem pronoun_predicts_condB :
     by different TTR mechanisms (reflexivization vs anaphoric resolution).
     Cooper Ch8, eqs (67)-(73): "Sam likes him" is NOT appropriate for
     "Sam likes himself" -- reflexivization must be used instead.
-    Matches `complementaryDistributionData` from Phenomena. -/
+    Matches `Chomsky1981.complementaryDistributionData`. -/
 theorem complementary_distribution_predicted :
     reflexivePattern.anaphorType = .reflexive ∧
     pronounPattern.anaphorType = .pronoun ∧

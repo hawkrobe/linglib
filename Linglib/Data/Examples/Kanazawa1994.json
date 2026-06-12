@@ -1,0 +1,24 @@
+[
+  {
+    "id": "kanazawa1994_strong_dominant",
+    "source": {"bibkey": "geach-1962", "paperLabel": "UNVERIFIED the donkey sentence"},
+    "reportedIn": {"bibkey": "kanazawa-1994", "paperLabel": "UNVERIFIED strong reading dominant out of the blue"},
+    "language": "stan1293",
+    "primaryText": "Every farmer who owns a donkey beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every farmer who owns a donkey beats it.",
+    "context": "Out of the blue",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "strong/universal", "judgment": "acceptable"},
+      {"name": "weak/existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["preferred_reading", "strong"],
+      ["quantifier_monotonicity", "upward"]
+    ],
+    "comment": "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa 1994's monotonicity generalization: with upward-entailing 'every' out of the blue, both readings are available but the strong reading dominates."
+  }
+]

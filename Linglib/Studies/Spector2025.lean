@@ -580,7 +580,7 @@ in `rfl`-equality theorems.
 
 `forward_conj_transparency` (above) handles forward intersentential
 anaphora across conjunction (`∃xT(x) ∧ P(x̲)`). It corresponds to
-`Phenomena.Anaphora.DonkeyAnaphora.geachDonkey.boundReading` and to the
+the bound reading of `Geach1962.Examples.donkey_classic` and to the
 veridical-basic case of `Hofmann2025`.
 
 `reverse_conj_transparency_fails` (above) corresponds to the cataphora
@@ -589,7 +589,8 @@ side of the same data (Hofmann's `negatedBasic`).
 `bathroom_transparency` (below) handles the bathroom-disjunction pattern
 (`¬∃xB(x) ∨ H(x̲)`, Roberts 1989; Hofmann's `bathroomDisjunction`).
 It also covers the conditional-donkey pattern
-(`¬∃xF(x) ∨ B(x̲)`, `geachDonkey` / `conditionalDonkey`).
+(`¬∃xF(x) ∨ B(x̲)`, `Geach1962.Examples.donkey_classic` /
+`Heim1982.Examples.conditional_donkey`).
 
 `reverse_bathroom_transparency_fails` (below) accounts for the wrong-order
 bathroom (Hofmann's `wrongOrderBathroom`) and for separate-sentence
@@ -888,9 +889,10 @@ upward-entailing contexts (`some`) prefer weak; downward-entailing
 contexts (`no`, the negated donkey) prefer strong.
 
 End-to-end derivations of these readings on a concrete toy world
-(corresponding to `geachDonkey` and `negatedDonkey` in
-`Phenomena.Anaphora.DonkeyAnaphora`) are deferred — see §6.7 entry in
-the **Deferred work** docstring at the end of this file.
+(corresponding to `Geach1962.Examples.donkey_classic` and Kanazawa's
+negated donkey "No farmer who owns a donkey beats it") are deferred —
+see §6.7 entry in the **Deferred work** docstring at the end of this
+file.
 -/
 
 end WeakStrongTruth

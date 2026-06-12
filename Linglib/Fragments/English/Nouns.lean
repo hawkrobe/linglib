@@ -171,6 +171,8 @@ def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true, gend
 def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true, gender := some .masculine }
 def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true, gender := some .feminine }
 def fred : NounEntry := { formSg := "Fred", formPl := none, proper := true, gender := some .masculine }
+def sam : NounEntry := { formSg := "Sam", formPl := none, proper := true }
+def pat : NounEntry := { formSg := "Pat", formPl := none, proper := true }
 
 def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
 
@@ -180,7 +182,7 @@ def allNouns : List NounEntry := [
   water, sand, furniture, rice, gold, air, wine, coffee, beer, milk, tea,
   martini, margarita, negroni, mojito, daiquiri, mimosa,
   cappuccino, americano, latte, macchiato,
-  john, mary, bill, sue, fred,
+  john, mary, bill, sue, fred, sam, pat,
   bean
 ]
 
