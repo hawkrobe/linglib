@@ -1,18 +1,22 @@
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Dynamic.Connectives.PartialCCP
-import Linglib.Phenomena.Presupposition.Basic
 
 /-!
-# NeoGricean Presuppositions to Phenomena
+# Heim (1983): Projection and Partial Context Change
 [heim-1983] [karttunen-1973]
 
-Connects the NeoGricean presupposition infrastructure (trigger types, derivation
-tracking, SI interaction) to empirical presupposition data from
-`Phenomena.Presupposition.Basic`.
+The classic King and factive-verb examples, their `PartialProp` denotations,
+NeoGricean `PresupDerivation` wrappers, and the filtering predictions derived
+from partial context change potentials.
 
-Provides example derivations wrapping the King, conditional, and factive verb
-examples from Phenomena for NeoGricean SI computation.
+## Main declarations
 
+- `kingExists`, `kingBald`, `ifKingThenBald`: the King example, with
+  `ifKingThenBald_no_presup` showing conditional filtering.
+- `johnKnowsRaining`: the factive example.
+- `conditional_admitted_everywhere` / `bare_consequent_not_admitted`: the
+  filtering recorded in the trigger tables, derived from `PartialCCP`
+  admittance rather than stipulated.
 -/
 
 
@@ -20,13 +24,97 @@ namespace Heim1983
 
 open Semantics.Presupposition
 open Semantics.Presupposition.TriggerTypology
-open Phenomena.Presupposition
 
 /--
-Wrap the King example from Phenomena for NeoGricean use.
+World type for the king example.
 
-This creates a PresupDerivation from the theory-neutral King example,
-adding trigger information for SI computation.
+Two possible states:
+- kingExists: There is a (unique) king in this world
+- noKing: There is no king in this world
+-/
+inductive KingWorld where
+  | kingExists : KingWorld
+  | noKing : KingWorld
+  deriving DecidableEq, Repr, Inhabited
+
+/--
+"The king exists" — a presuppositionless assertion.
+
+This sentence has:
+- No presupposition (trivially true)
+- Assertion: the king exists
+-/
+def kingExists : PartialProp KingWorld :=
+  { presup := λ _ => True
+  , assertion := λ w => match w with
+      | .kingExists => True
+      | .noKing => False
+  }
+
+/--
+"The king is bald" — presupposes king exists.
+
+This sentence has:
+- Presupposition: the king exists
+- Assertion: the king is bald (true when king exists)
+-/
+def kingBald : PartialProp KingWorld :=
+  { presup := λ w => match w with
+      | .kingExists => True
+      | .noKing => False
+  , assertion := λ _ => True
+  }
+
+/--
+"If the king exists, the king is bald" — using filtering implication.
+
+Demonstrates presupposition filtering: the antecedent's assertion
+satisfies the consequent's presupposition.
+-/
+def ifKingThenBald : PartialProp KingWorld :=
+  PartialProp.impFilter kingExists kingBald
+
+/--
+"If the king exists, the king is bald" has no presupposition.
+
+This demonstrates presupposition filtering.
+-/
+theorem ifKingThenBald_no_presup : ifKingThenBald.presup = λ _ => True := by
+  funext w
+  simp only [ifKingThenBald, PartialProp.impFilter, kingExists, kingBald]
+  cases w <;> simp
+
+/--
+World type for factive verb examples.
+
+Models whether it's raining and whether John believes it.
+-/
+inductive RainWorld where
+  | rainingBelieved    -- It's raining and John believes it
+  | rainingNotBelieved -- It's raining but John doesn't believe it
+  | notRaining         -- It's not raining
+  deriving DecidableEq, Repr, Inhabited
+
+/--
+"John knows that it's raining" — factive presupposition.
+
+Presupposes: it's raining
+Asserts: John believes it's raining
+-/
+def johnKnowsRaining : PartialProp RainWorld :=
+  { presup := λ w => match w with
+      | .rainingBelieved => True
+      | .rainingNotBelieved => True
+      | .notRaining => False
+  , assertion := λ w => match w with
+      | .rainingBelieved => True
+      | .rainingNotBelieved => False
+      | .notRaining => False
+  }
+
+/--
+The King example as a `PresupDerivation`, adding trigger information
+for NeoGricean SI computation.
 -/
 def kingBaldDerivation : PresupDerivation KingWorld :=
   { meaning := kingBald

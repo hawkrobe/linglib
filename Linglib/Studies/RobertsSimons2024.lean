@@ -1,8 +1,7 @@
 import Linglib.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Aktionsart
-import Linglib.Phenomena.Presupposition.Diagnostics
-import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-!
 # Preconditions and Projection: Explaining Non-Anaphoric Presupposition
@@ -36,7 +35,6 @@ This study file imports and bridges:
 - `ChangeOfState.Theory` (CoS presuppositions)
 - `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
-- `Diagnostics` (empirical diagnostic data)
 -/
 
 namespace RobertsSimons2024
@@ -44,8 +42,7 @@ namespace RobertsSimons2024
 open Semantics.Presupposition.OntologicalPreconditions
 open Features.ChangeOfState
 open Features
-open Phenomena.Presupposition.Diagnostics
-open Phenomena.Presupposition.ProjectiveContent
+open Semantics.Presupposition.ProjectiveContent
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -53,20 +50,11 @@ open Phenomena.Presupposition.ProjectiveContent
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- The theory predicts the empirical pattern: preconditions project,
-    consequences don't. Verified against diagnostic data. -/
+    consequences don't. -/
 theorem precondition_projects_consequence_doesnt :
     EntailmentRelation.projects .precondition = true ∧
     EntailmentRelation.projects .consequence = false ∧
     EntailmentRelation.projects .concomitant = false := ⟨rfl, rfl, rfl⟩
-
-/-- Diagnostic data confirms: prior state passes "allows for", projects.
-    Result state fails "allows for", doesn't project. -/
-theorem theoryPredictsPattern :
-    stopPattern.priorPassesAllowsFor = true ∧
-    priorStateProjection.projectsThroughNegation = true ∧
-    stopPattern.resultFailsAllowsFor = true ∧
-    resultStateProjection.projectsThroughNegation = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
 
 
 -- ═══════════════════════════════════════════════════════════════════════

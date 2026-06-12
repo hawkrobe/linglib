@@ -1,12 +1,12 @@
 import Linglib.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Phenomena.Presupposition.Basic
+import Linglib.Studies.Heim1983
 
 /-!
 # Schlenker (2009): Local Contexts
 [schlenker-2009]
 
 Projection predictions of the local-context theory, applied to the
-theory-neutral examples in `Phenomena.Presupposition.Basic`. The
+King and conditional examples from `Studies.Heim1983`. The
 per-connective local contexts are substrate
 (`Semantics.Presupposition.LocalContext`); belief embedding
 ([schlenker-2009] §3.1.2) is `Semantics.Presupposition.BeliefEmbedding`.
@@ -33,7 +33,7 @@ open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
-open Phenomena.Presupposition
+open Heim1983
 
 variable {W : Type*} {Agent : Type*}
 

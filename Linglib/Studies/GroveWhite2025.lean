@@ -1,6 +1,5 @@
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Probabilistic.ParamPred
-import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Core.Order.Rat01
@@ -27,11 +26,10 @@ inference judgments for clause-embedding predicates:
   Gradient distinctions reflect gradient inference contributions.
 
 Both hypotheses are recorded as `FactivityHypothesis.FDH` and
-`FactivityHypothesis.FGH` in `Phenomena.Presupposition.Gradience`,
-where they are exposed as the two `GradienceSource` values. The paper's
-distinctive content is encoded *here*: the τ-parameterised model and the
-2 × 2 model space crossing factivity discreteness with world-knowledge
-discreteness.
+`FactivityHypothesis.FGH`, exposed as the two `GradienceSource` values
+(resolved vs unresolved indeterminacy). The paper's distinctive formal
+content is the τ-parameterised model and the 2 × 2 model space crossing
+factivity discreteness with world-knowledge discreteness.
 
 ## The Discrete-Factivity Model
 
@@ -92,7 +90,6 @@ namespace GroveWhite2025
 
 open Semantics.Attitudes.Factivity
 open Semantics.Probabilistic
-open Phenomena.Presupposition.Gradience
 open DegenTonhauser2021
 open DegenTonhauser2022
 open Core.Order (Rat01)
@@ -263,6 +260,32 @@ end DiscreteFactivity
 /-! ## §4. The 2 × 2 model space -/
 
 section ModelVariants
+
+/-- Sources of gradience in inference judgment tasks. -/
+inductive GradienceSource where
+  /-- Resolved on each occasion but varying across occasions (type-level). -/
+  | resolved
+  /-- Persists even after fixing the interpretation (token-level). -/
+  | unresolved
+  deriving DecidableEq, Repr
+
+/-- The choice between the discrete (FDH) and gradient (FGH) hypotheses
+    is a binary choice of source for the gradient projection observations.
+
+    Defined as `@[reducible] def` rather than `abbrev` so the unfolding is
+    explicit (mathlib convention). -/
+@[reducible] def FactivityHypothesis : Type := GradienceSource
+
+/-- The Fundamental Discreteness Hypothesis (definition (7a), p. 10):
+    factivity is a discrete property of an expression on each occasion
+    of use. Observed gradience arises from resolved indeterminacy. -/
+def FactivityHypothesis.FDH : FactivityHypothesis := .resolved
+
+/-- The Fundamental Gradience Hypothesis (definition (7b), p. 10):
+    there is no property distinguishing factive from non-factive
+    occurrences. Gradient distinctions reflect gradient inference
+    contributions. -/
+def FactivityHypothesis.FGH : FactivityHypothesis := .unresolved
 
 /-- The four model variants from Sect. 4.3–4.4, crossing factivity
     (discrete/gradient) × world knowledge (discrete/gradient). Each model

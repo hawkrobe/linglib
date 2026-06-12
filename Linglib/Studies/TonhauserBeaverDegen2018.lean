@@ -1,5 +1,4 @@
 import Linglib.Discourse.AtIssueness
-import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # [tonhauser-beaver-degen-2018]: How Projective Is Projective Content?
@@ -324,7 +323,6 @@ theorem establish_separated_from_top :
 -- ════════════════════════════════════════════════════
 
 open Discourse.AtIssueness
-open Phenomena.Presupposition.ProjectiveContent
 
 /-- Lift an expression type's projectivity rating to a bounded degree. -/
 def ExpressionType.toProjectivityDegree (e : ExpressionType) : ProjectivityDegree :=

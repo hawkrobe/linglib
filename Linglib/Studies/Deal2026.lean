@@ -3,7 +3,7 @@ import Linglib.Typology.Complementation
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Probe
 import Linglib.Syntax.Minimalist.ClauseSpine
-import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Semantics.Presupposition.ProjectiveContent
 
 /-! # Deal (2026): Clausal complementation as relativization, revisited
 
@@ -84,7 +84,7 @@ namespace Deal2026
 
 open NezPerce.ClausalEmbedding
 open Typology.Complementation
-open Phenomena.Presupposition.ProjectiveContent (ProjectiveClass)
+open Semantics.Presupposition.ProjectiveContent (ProjectiveClass)
 open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
   hasValuedFeature FeatureBundle FeatureVal GramFeature ābar_is_Ā)
 
@@ -444,7 +444,7 @@ theorem reCanonical_strategy :
 /-! ### Bridge to [tonhauser-beaver-roberts-simons-2013] taxonomy
 
 The Tonhauser et al. classes are formalised in
-`Phenomena/Presupposition/ProjectiveContent.lean` (`ProjectiveClass.classA`–
+`Semantics/Presupposition/ProjectiveContent.lean` (`ProjectiveClass.classA`–
 `classD`). Factive predicates project as Class C (SCF=no, OLE=yes — the same
 class as English *know*). The Class C trigger `know_complement` is one of
 the listed examples (see `ProjectiveTrigger.know_complement`).
@@ -482,7 +482,7 @@ theorem neki_no_projection :
 
 The Studies file integrates four independent substrate layers:
 - Fragment: per-verb consensus typology (CTPClass, factive)
-- Tonhauser projective content: ProjectiveClass (Phenomena/Presupposition/)
+- Tonhauser projective content: ProjectiveClass (Semantics/Presupposition/)
 - Deal-internal: EmbeddingStrategy + NotionalComplementShape
 - Typology: ComplementClauseStructure surface enum
 
