@@ -7,8 +7,9 @@ import Linglib.Morphology.MorphRule
 Pipil (Uto-Aztecan; El Salvador) has two distinct AVC constructions
 in [anderson-2006], with **different auxiliaries**:
 
-- **LEX-headed CAPABILITY AVC** (Campbell 1985: 139). Capability
-  auxiliary *weli* uninflected; LV carries subject agreement.
+- **LEX-headed CAPABILITY AVC** (Ch 3 ex. 49, p. 130; Campbell
+  1985: 139). Capability auxiliary *weli* uninflected; LV carries
+  subject agreement.
 - **SPLIT/DOUBLED PROGRESSIVE AVC** (Ch 5 §5.2.2, ex. 133a-c, p. 224).
   Progressive auxiliary *yu* (← 'go'); subjects doubly marked on AUX
   and LV; objects only on LV. AUX root *yu* encodes prospective TAM
@@ -38,8 +39,9 @@ def location : String := "El Salvador"
 
 /-! ## Lex-headed pattern (Anderson 2006; Campbell 1985: 139) -/
 
-/-- Lex-headed AVC form: capability auxiliary *weli* uninflected;
-    subject marking on the lexical verb.
+/-- Lex-headed AVC form ([anderson-2006] Ch 3 ex. 49, p. 130):
+    capability auxiliary *weli* uninflected; subject marking on the
+    lexical verb.
     *weli ni-nehnemi wehka*
     'CAP 1-walk far'
     'I can walk far'
@@ -82,9 +84,9 @@ def splitDoubledDistribution : InflDistribution :=
 /-! ## Primary pattern alias
 
 The split/doubled pattern is what Anderson Ch 5 §5.2.2 highlights
-for Pipil; the lex-headed *weli* pattern is the chapter-3 alternative
-flagged in Anderson's footnote 6 on p. 220-221 as a co-existing
-construction. The Anderson 2006 study file consumes both. -/
+for Pipil; the lex-headed *weli* pattern is Anderson's chapter-3
+capability construction (ex. 49, p. 130). The Anderson 2006 study
+file consumes both. -/
 
 def form : String := splitDoubledForm
 def gloss : String := splitDoubledGloss

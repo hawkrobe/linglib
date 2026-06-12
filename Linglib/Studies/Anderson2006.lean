@@ -11,6 +11,7 @@ import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
 import Linglib.Morphology.Grammaticalization
 import Linglib.Features.Aktionsart
+import Linglib.Data.Examples.Anderson2006
 
 /-!
 # Anderson (2006): Auxiliary Verb Constructions
@@ -26,7 +27,7 @@ grammaticalization framework.
 1. **Inflectional pattern typology** (`InflPattern` from substrate):
    auxHeaded, lexHeaded, doubled, split, splitDoubled — defined in
    `Typology/AuxiliaryVerbs.lean`, verified per-datum here.
-2. **Semantic head invariant** (Anderson p. 23, Table 3.1 p. 117):
+2. **Semantic head invariant** (Anderson p. 23, Table 3.1 p. 116):
    the lexical verb is always the semantic head, regardless of where
    inflection sits.
 3. **Typed inflectional distribution**: `InflDistribution` (from
@@ -48,13 +49,13 @@ Sample of 9 AVC datums across 7 languages, covering all 5 patterns:
 - Gorum (doubled)
 - Jakaltek (split, abs/erg)
 - Pipil split/doubled (Anderson ch. 5 ex. 133, p. 224)
-- Pipil lex-headed (Anderson p. 220-221 fn. 6, with *weli*)
+- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130, with *weli*)
 - Finnish split (negative auxiliary *ei*) [karlsson-2017]
 - Hemba split/doubled
 
 ## 2026-04-30 audit fixes
 
-PDF-verified against Anderson 2006 (book pp. 5, 114, 117, 121, 224)
+PDF-verified against Anderson 2006 (book pp. 5, 114, 116, 121, 224)
 and Heine 1993 (book p. 48ff. via Anderson p. 5):
 
 - **Doyayo `.split` → `.lexHeaded`** (Ch 3 ex. 15a) + new
@@ -110,7 +111,8 @@ theorem). -/
 
 /-- English *have eaten* — aux-headed (AUX *have* carries tense and
     agreement, LV *eaten* is a past participle). Anderson ch. 2
-    (p. 40) describes English perfects schematically as *have V-ed*;
+    (p. 40) describes the English perfect as AUX *have* with the LV
+    in the *-ed* ~ *-en* form;
     the specific *have eaten* form is this file's instantiation of
     that pattern, not a verbatim Anderson example. -/
 def english : AVCDatum :=
@@ -121,8 +123,8 @@ def english : AVCDatum :=
 
 /-- Doyayo lex-headed (Anderson Ch 3 ex. 15a, p. 121).
     *mi¹ (gi²) kpel¹-ko¹* 'I'm going to pour'. Auxiliary `gi²`
-    uninflected (parenthesized in Anderson's gloss); LV carries
-    proximate-future TAM. Form derived from
+    parenthesized in Anderson's example, carrying only tonal subject
+    person (Anderson p. 120); LV carries proximate TAM. Form derived from
     `Doyayo.AuxiliaryVerbs.lexHeadedForm`. -/
 def doyayo : AVCDatum :=
   { language := "Doyayo"
@@ -132,7 +134,7 @@ def doyayo : AVCDatum :=
   , gloss := Doyayo.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223).
-    *hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ* 'they might come bite you'.
+    *hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ* 'they might come bite you'.
     Subject `hi¹` doubly marked on AUX and LV; object `-mɔ` only
     on LV. Anderson p. 223: "this pattern... is common in Doyayo." -/
 def doyayoSplitDoubled : AVCDatum :=
@@ -173,11 +175,12 @@ def pipilSplitDoubled : AVCDatum :=
   , distribution := some Pipil.AuxiliaryVerbs.splitDoubledDistribution
   , gloss := Pipil.AuxiliaryVerbs.splitDoubledGloss }
 
-/-- Pipil lex-headed (Anderson p. 220-221 fn. 6; Campbell 1985: 139).
-    *weli ni-nehnemi wehka* 'I can walk far'. AUX *weli* uninflected;
-    LV carries subject agreement. Anderson explicitly contrasts
-    this with the split/doubled pattern in fn. 6 as a coexisting
-    Pipil construction. -/
+/-- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130; Campbell 1985: 139).
+    *weli ni-nehnemi wehka* 'CAP 1-walk far' 'I can walk far'.
+    AUX *weli* uninflected; LV carries subject agreement. Anderson's
+    fn. 6 (p. 221) separately documents lex-headed/split-doubled
+    variation in the Pipil *progressive* — a different AVC from
+    this capability construction. -/
 def pipilLexHeaded : AVCDatum :=
   { language := "Pipil"
   , form := Pipil.AuxiliaryVerbs.lexHeadedForm
@@ -187,9 +190,11 @@ def pipilLexHeaded : AVCDatum :=
 
 /-- Finnish negative auxiliary *ei* (split): person/number on aux,
     TAM on lexical verb (connegative form). Anderson §1.7.2 (p. 33-34)
-    treats Uralic negative auxiliaries as a class spanning multiple
-    AVC patterns — Udihe and Neyo as aux-headed, Kokota as split,
-    Kwerba as lex-headed, 'Iipay as doubled. Finnish *ei* itself is
+    presents negative auxiliaries as a family-level Uralic trait
+    (with connegative-marked LV, exx. 44-48) and, across other
+    families, as spanning multiple AVC patterns — Udihe and Neyo
+    aux-headed, Kokota split, Kwerba lex-headed, 'Iipay doubled.
+    Finnish *ei* itself is
     not classified by Anderson in §1.7.2 with a specific pattern label;
     the split classification here follows [karlsson-2017] §19.5
     where the connegative suffix on the LV is the load-bearing diagnostic.
@@ -413,10 +418,12 @@ theorem hemba_splitDoubled_agreement_doubled :
 
 /-! ## Dual headedness
 
-Anderson p. 117 Table 3.1 distinguishes three notions of head:
-inflectional, phrasal/syntactic, and semantic. The semantic head
-(content provider) is always the lexical verb (Anderson p. 23);
-the inflectional host varies by pattern. This mismatch is what
+Anderson distinguishes three notions of head — inflectional,
+phrasal/syntactic, and semantic (§1.4, pp. 22-24; Table 3.1 on
+p. 116 tabulates the assignment for the lex-headed pattern). The
+semantic head (content provider) is always the lexical verb
+(Anderson p. 23: "It is the lexical verb"); the inflectional
+host varies by pattern. This mismatch is what
 makes AVCs typologically distinctive. -/
 
 /-- The semantic head and inflectional host coincide only in
@@ -431,42 +438,43 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
 
 [anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
 across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
-Kokota; lex-headed in Kwerba; doubled in 'Iipay. The
-NegStrategy → InflPattern mapping lives in `Typology/Negation.lean`
-(`NegStrategy.expectedInflPattern` encodes the most common
-verbal-negator → aux-headed mapping; the other patterns Anderson
-documents are not yet a Lean-checkable `NegStrategy → InflPattern`
-typology because they require finer sub-typing of
-`NegStrategy.negVerb`). -/
+Kokota; lex-headed in Kwerba; doubled in 'Iipay. The example rows
+live in `Data/Examples/Anderson2006.json` (Komi (47a,b), Udihe (49),
+Kwerba (52a,b), all verified against the book); each row's
+`infl_pattern` feature records the book's classification where it
+states one. The NegStrategy → InflPattern mapping lives in
+`Typology/Negation.lean`: `NegStrategy.expectedInflPattern` encodes
+the most common verbal-negator → aux-headed mapping, and the Kwerba
+rows witness below that it is a tendency, not a law. -/
 
-/-- A negative-auxiliary datum ([anderson-2006] §1.7.2). -/
-structure NegAuxDatum where
-  language : String
-  strategy : NegStrategy
-  form : String
-  gloss : String := ""
-  deriving Repr, BEq
+/-- Value of a row's `paperFeatures` key, if present. -/
+private def featureOf (row : Data.Examples.LinguisticExample)
+    (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-/-- Komi *oz* — negative auxiliary verb ([anderson-2006]). -/
-def komi : NegAuxDatum :=
-  { language := "Komi"
-  , strategy := .negVerb
-  , form := "oz"
-  , gloss := "oz mun 'NEG go'" }
-
-/-- Udihe *e-si* — negative auxiliary verb (past tense on the neg aux)
-    ([anderson-2006] §1.7.2, which classifies the Udihe negative
-    auxiliary construction as aux-headed). -/
-def udihe : NegAuxDatum :=
-  { language := "Udihe"
-  , strategy := .negVerb
-  , form := "e-si"
-  , gloss := "e-si ŋene 'NEG-PST go' (didn't go)" }
-
-/-- Anderson §1.7.2 classifies the Udihe negative-auxiliary construction
-    as aux-headed; the strategy-level projection agrees. -/
+/-- Udihe (49) *bi ei-mi sa:* is classified aux-headed by Anderson,
+    and the strategy-level projection expects exactly that. -/
 theorem udihe_negVerb_expects_auxHeaded :
-    udihe.strategy.expectedInflPattern = some .auxHeaded := rfl
+    featureOf Examples.udihe_neg "infl_pattern" = some "auxHeaded" ∧
+    NegStrategy.negVerb.expectedInflPattern = some .auxHeaded :=
+  ⟨rfl, rfl⟩
+
+/-- Kwerba (52a,b) shows a negative auxiliary in a *lex-headed* AVC
+    (the lexical verb hosts the inflection), so the aux-headed
+    expectation of `NegStrategy.expectedInflPattern` is defeasible —
+    Anderson's own four-pattern list is the counterexample source. -/
+theorem kwerba_negVerb_lexHeaded_counterexample :
+    featureOf Examples.kwerba_neg_fut "infl_pattern" = some "lexHeaded" ∧
+    NegStrategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
+  ⟨rfl, by decide⟩
+
+/-- The Komi tense alternation (47a,b) sits entirely on the negative
+    auxiliary: same lexical verb token, different auxiliary form. -/
+theorem komi_tense_on_aux :
+    Examples.komi_neg_pres.glossedTokens.getLast? =
+      Examples.komi_neg_past.glossedTokens.getLast? ∧
+    Examples.komi_neg_pres.primaryText ≠ Examples.komi_neg_past.primaryText :=
+  ⟨rfl, by decide⟩
 
 /-! ## LV form predictions across patterns
 
