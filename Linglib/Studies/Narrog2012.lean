@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Narrog
-import Linglib.Phenomena.Modality.ComparePosition
+import Linglib.Studies.Hacquard2010
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
@@ -232,6 +232,27 @@ theorem target_is_mood (c : GramCategory) (h : c.changeRole = .target) :
 def GramCategory.toHacquardPosition : GramCategory → ModalPosition
   | c => if c.toOrientation == .eventOriented then .belowAsp else .aboveAsp
 
+/-- Orientation-level bridge: Narrog's speaker-orientation maps to
+    Hacquard's modal position. Event-oriented = belowAsp;
+    speaker-oriented and mood = aboveAsp. -/
+def narrogOrientationToPosition : SpeakerOrientationLevel → ModalPosition
+  | .eventOriented => .belowAsp
+  | .speakerOriented => .aboveAsp
+  | .mood => .aboveAsp
+
+/-- The orientation-level bridge preserves the epistemic availability
+    prediction: event-oriented categories (belowAsp) lack content and
+    cannot project epistemic; speaker-oriented and mood categories
+    (aboveAsp) have content and can. -/
+theorem narrog_hacquard_bridge :
+    (narrogOrientationToPosition .eventOriented).defaultBinder.canProjectEpistemic
+      = false ∧
+    (narrogOrientationToPosition .speakerOriented).defaultBinder.canProjectEpistemic
+      = true ∧
+    (narrogOrientationToPosition .mood).defaultBinder.canProjectEpistemic
+      = true :=
+  ⟨rfl, rfl, rfl⟩
+
 /-- Event-oriented categories map to belowAsp (VP events, no content). -/
 theorem event_oriented_below_asp :
     GramCategory.toHacquardPosition .voice = .belowAsp ∧
@@ -331,7 +352,7 @@ theorem langacker_stages_monotone :
     differently. -/
 theorem three_way_agreement_epistemic_above_root :
     -- Cinque: epistemic heads are high
-    Phenomena.Modality.ComparePosition.CinqueModHead.modEpistemic.isHigh = true ∧
+    Hacquard2010.CinqueModHead.modEpistemic.isHigh = true ∧
     -- Hacquard: high position licenses epistemic
     ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
     -- Narrog: epistemic has higher scope level than dynamic
@@ -379,11 +400,10 @@ theorem orientationOfFlavor_consistent :
   | circumstantial => exact ⟨⟨.nonVolitive, .eventOriented⟩, rfl, rfl⟩
 
 /-- `toHacquardPosition` factors through `toOrientation` and
-    `ComparePosition.narrogOrientationToPosition`. This links the category-level
-    bridge (§4) to the orientation-level bridge in `ComparePosition`. -/
+    `narrogOrientationToPosition`. This links the category-level
+    bridge (§4) to the orientation-level bridge. -/
 theorem toHacquardPosition_factors (c : GramCategory) :
-    c.toHacquardPosition =
-      Phenomena.Modality.ComparePosition.narrogOrientationToPosition c.toOrientation := by
+    c.toHacquardPosition = narrogOrientationToPosition c.toOrientation := by
   cases c <;> rfl
 
 end Narrog2012
