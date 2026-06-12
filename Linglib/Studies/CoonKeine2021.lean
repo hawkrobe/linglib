@@ -77,8 +77,20 @@ person restriction (their (75)) with the (84) syncretism fix and the
 fully-syncretic singular; `german_copula` derives the
 assumed-identity restriction (their (51)) with the past-tense *war*
 fix (their fn. 32). `not_gluttonous_singleton` is their (86):
-many probes on one DP is never gluttony. Number hierarchy effects
-(German *SG>PL) await number segments — see the §4 section note.
+many probes on one DP is never gluttony.
+
+## Number, reverse PCC, repairs (§3.4.3–§3.5, (40)–(42))
+
+The segment-generic core (`GluttonousOn`) instantiates at the number
+geometry (their (12)): `no_number_case_constraint` derives the
+missing "Number Case Constraint" — π's clitic doubling starves #'s
+search space in ditransitives — against German copula number
+gluttony (*SG>PL), where nothing doubles.
+`reverse_pcc_diagnoses_strong` is their fn. 26: Slovenian's
+order-flipping Strong PCC is derivable by the branching probe but
+not by K-opacity. `repairs_shield_goals` covers the §3.5 repairs:
+PP/FP encapsulation, *y*-cliticization, and Basque absolutive
+displacement all shrink the probe's search space below two.
 -/
 
 namespace CoonKeine2021
@@ -113,15 +125,25 @@ theorem ckSpec_filter_eq_personSpec (p : Person) :
       CyclicAgree.personSpec .standard p := by
   cases p <;> rfl
 
-/-- A goal DP: its person, and whether it is encapsulated under a
-    K(ase) shell (their §3.4.1: Basque datives are formally 3rd
-    person — only [PERS] is visible from outside). -/
+/-- A goal DP: its person and number, and whether it is encapsulated
+    under a K(ase) shell (their §3.4.1: Basque datives are formally
+    3rd person — only [PERS] is visible from outside). -/
 structure Goal where
   person : Person
   kOpaque : Bool := false
+  plural : Bool := false
   deriving DecidableEq, Repr
 
-/-- The φ-segments a goal exposes to outside probing. -/
+/-- A φ-transparent goal DP. -/
+def dp (p : Person) : Goal := { person := p }
+
+/-- A K-opaque (dative) goal DP. -/
+def dat (p : Person) : Goal := { person := p, kOpaque := true }
+
+/-- A φ-transparent plural goal DP. -/
+def dpPl (p : Person) : Goal := { person := p, plural := true }
+
+/-- The person segments a goal exposes to outside probing. -/
 def Goal.visibleSegs (g : Goal) : List Segment :=
   if g.kOpaque then [.pi] else ckSpec g.person
 
@@ -150,22 +172,43 @@ def meFirstProbe : Probe := [.pi, .speaker]
     with φ-transparent datives. -/
 def branchingStrongProbe : Probe := [.pi, .participant, .speaker, .addressee]
 
-/-- Agree, their (14): a segment agrees with the closest accessible
-    goal bearing it — `probeSearch` over position-indexed tokens
-    (two same-φ arguments remain distinct agreed-with tokens). -/
-def segGoal (s : Segment) (goals : List Goal) : Option (Goal × Nat) :=
-  probeSearch (fun t => decide (s ∈ t.1.visibleSegs)) goals.zipIdx
+/-- Agree, their (14), generic in the segment type ((11) person,
+    (12) number): a segment agrees with the closest accessible goal
+    bearing it — `probeSearch` over position-indexed tokens (two
+    same-φ arguments remain distinct agreed-with tokens). -/
+def segGoalOn {σ : Type*} (bears : σ → Goal → Bool) (s : σ)
+    (goals : List Goal) : Option (Goal × Nat) :=
+  probeSearch (fun t => bears s t.1) goals.zipIdx
 
-/-- Feature gluttony (their (15)–(16)): two segments of one probe
-    agree with distinct DPs. Not itself fatal; the crash comes from
-    downstream resolution (their (30) for clitics, syncretism for
-    agreement). -/
-def Gluttonous (P : Probe) (goals : List Goal) : Prop :=
+/-- Feature gluttony (their (15)–(16)), generic in the segment type:
+    two segments of one probe agree with distinct DPs. Not itself
+    fatal; the crash comes from downstream resolution (their (30)
+    for clitics, syncretism for agreement). -/
+def GluttonousOn {σ : Type*} (bears : σ → Goal → Bool) (P : List σ)
+    (goals : List Goal) : Prop :=
   ∃ s₁ ∈ P, ∃ s₂ ∈ P, ∃ t₁ ∈ goals.zipIdx, ∃ t₂ ∈ goals.zipIdx,
-    segGoal s₁ goals = some t₁ ∧ segGoal s₂ goals = some t₂ ∧ t₁.2 ≠ t₂.2
+    segGoalOn bears s₁ goals = some t₁ ∧
+    segGoalOn bears s₂ goals = some t₂ ∧ t₁.2 ≠ t₂.2
 
-instance (P : Probe) (goals : List Goal) : Decidable (Gluttonous P goals) := by
-  unfold Gluttonous; infer_instance
+instance {σ : Type*} (bears : σ → Goal → Bool) (P : List σ)
+    (goals : List Goal) : Decidable (GluttonousOn bears P goals) := by
+  unfold GluttonousOn; infer_instance
+
+/-- Person-segment visibility: the segment is in the goal's exposed
+    geometry. -/
+def personBears (s : Segment) (g : Goal) : Bool :=
+  decide (s ∈ g.visibleSegs)
+
+/-- Agree for the person probe (their (14) over the (11) geometry). -/
+def segGoal (s : Segment) (goals : List Goal) : Option (Goal × Nat) :=
+  segGoalOn personBears s goals
+
+/-- Person-probe gluttony. -/
+def Gluttonous (P : Probe) (goals : List Goal) : Prop :=
+  GluttonousOn personBears P goals
+
+instance (P : Probe) (goals : List Goal) : Decidable (Gluttonous P goals) :=
+  inferInstanceAs (Decidable (GluttonousOn personBears P goals))
 
 /-! ### Gluttony is limited to inverse configurations -/
 
@@ -212,7 +255,7 @@ theorem gluttonous_only_inverse (P : Probe) {hi lo : Goal}
     violates (30) mid-derivation, simultaneous violates binary
     Merge), so gluttony here IS the predicted ban. -/
 def pccViolation (P : Probe) (ioOpaque : Bool) (io do_ : Person) : Prop :=
-  Gluttonous P [⟨io, ioOpaque⟩, ⟨do_, false⟩]
+  Gluttonous P [{ person := io, kOpaque := ioOpaque }, dp do_]
 
 instance (P : Probe) (b : Bool) (io do_ : Person) :
     Decidable (pccViolation P b io do_) :=
@@ -271,7 +314,7 @@ theorem branching_strong_pcc_table :
     order removes the inversion. -/
 theorem basque_dat_abs_contrast :
     pccViolation weakProbe true .third .first ∧
-    ¬ Gluttonous weakProbe [⟨.first, false⟩, ⟨.third, true⟩] := by
+    ¬ Gluttonous weakProbe [dp .first, dat .third] := by
   decide
 
 /-! ### Universal predictions (their §3.4.2) -/
@@ -314,8 +357,8 @@ theorem ban_part_part_implies_ban_three_part (P : Probe)
   -- the only segment a 1st-person DO can win against a 2nd-person IO
   -- is [uSPKR] — checked segment by segment
   have spk_of : ∀ s : Segment,
-      segGoal s [⟨.second, false⟩, ⟨.first, false⟩] =
-        some (⟨.first, false⟩, 1) → s = .speaker := by
+      segGoal s [dp .second, dp .first] =
+        some (dp .first, 1) → s = .speaker := by
     intro s h
     cases s
     · exact absurd h (by decide)
@@ -331,7 +374,7 @@ theorem ban_part_part_implies_ban_three_part (P : Probe)
     · exact absurd rfl hne
   -- with [uPERS] and [uSPKR] both on the probe, 3>1 is gluttonous
   exact ⟨.pi, hwf.1, .speaker, hspk,
-    (⟨.third, false⟩, 0), by decide, (⟨.first, false⟩, 1), by decide,
+    (dp .third, 0), by decide, (dp .first, 1), by decide,
     by decide, by decide, by decide⟩
 
 /-! ### Rival accounts (their §2) -/
@@ -345,7 +388,7 @@ theorem ban_part_part_implies_ban_three_part (P : Probe)
     disagreement is over whether hierarchy effects track licensing
     needs or the probe.) -/
 theorem probeless_divergence_from_plc :
-    ¬ Gluttonous [] [⟨.first, false⟩, ⟨.second, false⟩] ∧
+    ¬ Gluttonous [] [dp .first, dp .second] ∧
     ¬ BejarRezac2003.PLCOk [] [⟨.first, false⟩] := by
   decide
 
@@ -491,16 +534,16 @@ def icelandicMediopassive : List VI :=
       person restriction is "completely lifted in the singular". -/
 theorem icelandic_dat_nom :
     -- *3 > 1PL: gluttonous and morphologically unresolvable
-    (Gluttonous weakProbe [⟨.third, true⟩, ⟨.first, false⟩] ∧
+    (Gluttonous weakProbe [dat .third, dp .first] ∧
       ¬ MorphOk icelandicMediopassive true
-        (acquiredValues weakProbe [⟨.third, true⟩, ⟨.first, false⟩])) ∧
+        (acquiredValues weakProbe [dat .third, dp .first])) ∧
     -- 3 > 2PL: gluttonous BUT resolvable (-ust syncretism)
-    (Gluttonous weakProbe [⟨.third, true⟩, ⟨.second, false⟩] ∧
+    (Gluttonous weakProbe [dat .third, dp .second] ∧
       MorphOk icelandicMediopassive true
-        (acquiredValues weakProbe [⟨.third, true⟩, ⟨.second, false⟩])) ∧
+        (acquiredValues weakProbe [dat .third, dp .second])) ∧
     -- singular: resolvable for every person of the nominative
     (∀ p ∈ persons, MorphOk icelandicMediopassive false
-      (acquiredValues weakProbe [⟨.third, true⟩, ⟨p, false⟩])) := by
+      (acquiredValues weakProbe [dat .third, dp p])) := by
   decide
 
 /-! #### German copula constructions (§4.1) -/
@@ -532,15 +575,116 @@ def germanPastSg : List VI :=
       logic as the PCC's probeless environments. -/
 theorem german_copula :
     -- *3 > 2 present: gluttonous and unresolvable
-    (Gluttonous weakProbe [⟨.third, false⟩, ⟨.second, false⟩] ∧
+    (Gluttonous weakProbe [dp .third, dp .second] ∧
       ¬ MorphOk germanPresentSg false
-        (acquiredValues weakProbe [⟨.third, false⟩, ⟨.second, false⟩])) ∧
+        (acquiredValues weakProbe [dp .third, dp .second])) ∧
     -- ?3 > 1 past: gluttonous but war-syncretism resolves
-    (Gluttonous weakProbe [⟨.third, false⟩, ⟨.first, false⟩] ∧
+    (Gluttonous weakProbe [dp .third, dp .first] ∧
       MorphOk germanPastSg false
-        (acquiredValues weakProbe [⟨.third, false⟩, ⟨.first, false⟩])) ∧
+        (acquiredValues weakProbe [dp .third, dp .first])) ∧
     -- nonfinite: no probe, no gluttony
-    ¬ Gluttonous ([] : Probe) [⟨.third, false⟩, ⟨.second, false⟩] := by
+    ¬ Gluttonous ([] : Probe) [dp .third, dp .second] := by
   decide
+
+/-! ### The number probe and the missing "Number Case Constraint"
+    ((40)–(42), §3.4.3)
+
+Their (40) probe-specification hierarchy — `[uφ] → [uπ] → [uπ ▷ u#]
+→ [uπ ▷ u# ▷ uΓ]` — entails that a number probe is only ever present
+alongside a person probe that probes first. Together with clitic
+doubling removing the doubled DP (their §3.2), this derives the
+absence of a "Number Case Constraint" in ditransitives: π doubles the
+IO before # probes, so # sees a single goal and cannot glutton. In
+German copulas there is no clitic doubling, so # sees both DPs —
+number gluttony in SG>PL (their (52)/(64)/(67)). The PF side of the
+German number effect (3SG *ist* vs. 3PL *sind* demands) mirrors the
+person case and awaits a segment-generic VI layer. -/
+
+/-- Number geometry, their (12): singular = [NUM], plural =
+    [NUM [PL]]. -/
+inductive NumSeg where
+  | num
+  | pl
+  deriving DecidableEq, Repr
+
+/-- The number segments a goal exposes. -/
+def Goal.visibleNumSegs (g : Goal) : List NumSeg :=
+  if g.plural then [.num, .pl] else [.num]
+
+/-- Number-segment visibility. -/
+def numBears (s : NumSeg) (g : Goal) : Bool :=
+  decide (s ∈ g.visibleNumSegs)
+
+/-- The articulated number probe [uNUM [uPL]] (their (23)/(55)). -/
+def numProbe : List NumSeg := [.num, .pl]
+
+/-- Clitic doubling renders the doubled DP invisible to subsequent
+    probing (their §3.2): the tokens π agreed with are removed from
+    #'s search space (their (42)). -/
+def afterCliticDoubling (piP : Probe) (goals : List Goal) : List Goal :=
+  (goals.zipIdx.filter
+    (fun t => ! piP.any (fun s => segGoal s goals == some t))).map (·.1)
+
+/-- No "Number Case Constraint" (their (40)–(42), Basque (41)): in a
+    clitic-doubling ditransitive, π doubles the IO, removing it from
+    #'s search space — # probes a singleton and cannot glutton, even
+    with a more number-specified DO. In German copulas (their (67)),
+    with no clitic doubling, # sees both DPs: *SG>PL gluttons
+    (their (52)/(64)), PL>SG does not. -/
+theorem no_number_case_constraint :
+    -- Basque (41), 3SG.DAT > 3PL.ABS: π doubles the IO...
+    afterCliticDoubling weakProbe [dat .third, dpPl .third]
+      = [dpPl .third] ∧
+    -- ...so # probes a singleton: no gluttony despite SG>PL
+    ¬ GluttonousOn numBears numProbe [dpPl .third] ∧
+    -- German copula: no doubling — *SG>PL gluttons, PL>SG does not
+    GluttonousOn numBears numProbe [dp .third, dpPl .third] ∧
+    ¬ GluttonousOn numBears numProbe [dpPl .third, dp .third] := by
+  decide
+
+/-! ### Reverse PCC (§3.4.4) -/
+
+/-- The reverse PCC (their (44)–(45), after Stegovec's Slovenian)
+    and its fn. 26 diagnostic. `Goal` carries no case, so gluttony
+    tracks structural order alone: reordering the DO above the IO
+    flips which DP the person restriction targets — the reverse PCC
+    comes for free. Slovenian shows the *Strong* PCC in both orders,
+    which diagnoses the implementation: under K-opacity the reversed
+    order puts the opaque dative LOW, where its bare [PERS] cannot
+    out-specify the higher DP — no gluttony, hence no reverse
+    effect; the branching probe (fn. 22 (i)) with φ-transparent
+    datives keeps the ban symmetric. Slovenian's Strong PCC must
+    therefore be the branching probe, with the dative's φ-features
+    always visible. -/
+theorem reverse_pcc_diagnoses_strong :
+    -- branching probe, transparent goals: banned in both orders
+    (Gluttonous branchingStrongProbe [dp .second, dp .first] ∧
+      Gluttonous branchingStrongProbe [dp .first, dp .second]) ∧
+    -- K-opacity: standard order bans, reversed order cannot —
+    -- the opaque dative low is never more specified than the DP above
+    (Gluttonous weakProbe [dat .third, dp .second] ∧
+      ¬ Gluttonous weakProbe [dp .second, dat .first]) := by
+  decide
+
+/-! ### PCC repairs (§3.5) -/
+
+/-- An empty search space is never gluttonous. -/
+theorem not_gluttonous_nil (P : Probe) : ¬ Gluttonous P [] := by
+  rintro ⟨_, _, _, _, t, htm, _⟩
+  exact nomatch htm
+
+/-- The §3.5 repairs all shield a goal from the probe, leaving at
+    most one accessible DP — and a probe over at most one goal can
+    never glutton: French PP-realization of the IO (their (46)–(47);
+    the PP-encapsulation assumption is [bejar-rezac-2003]'s, cf.
+    `BejarRezac2003.pp_repair`), Greek strong — FP-encapsulated —
+    object pronouns (their (48)–(49)), French locative-*y*
+    cliticization of the repaired PP, and Basque absolutive
+    displacement around π (their (50)). Last-resort uses of these
+    structures (Rezac's ᑬ) translate as: extra structure is
+    sanctioned iff the probe would otherwise glutton. -/
+theorem repairs_shield_goals (P : Probe) (g : Goal) :
+    ¬ Gluttonous P [g] ∧ ¬ Gluttonous P [] :=
+  ⟨not_gluttonous_singleton P g, not_gluttonous_nil P⟩
 
 end CoonKeine2021
