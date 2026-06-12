@@ -26,7 +26,7 @@ in a [chomsky-2000] probe-goal system:
   dative absorbs — the PCC.
 
 Through `Phi/Probing.lean`, the [π]-probe is the **off-diagonal**
-licensing shape: visibility is total (`probeSearch ⊤` = closest goal),
+licensing shape: visibility is total (`pi.vis = ⊤` — closest goal),
 neediness is bearing [participant] — the same shape as Mam's Voice_TR
 (visible, halting, non-valuing intervener; `Studies/Scott2023.lean`)
 and Zulu's L⁰ (`Studies/Halpert2012.lean`). [preminger-2014] Ch. 4's
@@ -76,8 +76,12 @@ instance : DecidablePred Argument.IsParticipant := fun a =>
     activity as Caselessness but leaves open why same-projection
     Case valuation does not deactivate the French nominative for the
     second cycle; ¬F gives the right extension.) -/
+def pi : Probe Argument :=
+  { vis := fun _ => true, act := fun a => !a.fLicensed }
+
+/-- One cycle of [π]-Agree: `pi.agree` over the ordered goals. -/
 def piAgree (goals : List Argument) : Option Argument :=
-  probeAgree (fun _ => true) (fun a => !a.fLicensed) goals
+  pi.agree goals
 
 /-- The PLC over a derivation's [π]-Agree cycles: every interpretable
     1st/2nd person feature enters an Agree relation with a functional
@@ -107,7 +111,7 @@ instance (cycles : List (List Argument)) (args : List Argument) :
     from the PLC. -/
 theorem piAgree_absorbed (dat acc : Argument) (hd : dat.fLicensed = true) :
     piAgree [dat, acc] = none :=
-  probeAgree_eq_none_of_inactive rfl (by simp [hd])
+  Probe.agree_eq_none_of_inactive rfl (by simp [pi, hd])
 
 /-- Single-cycle collapse onto the substrate's `(needs, vis)`
     licensing shape: one [π]-cycle over the base order satisfies the
@@ -118,23 +122,23 @@ theorem piAgree_absorbed (dat acc : Argument) (hd : dat.fLicensed = true) :
     multi-cycle repairs ((16)–(17)) escape this signature entirely. -/
 theorem plcOk_singleCycle_iff_allLicensed (goals : List Argument) :
     PLCOk [goals] goals ↔
-      AllLicensed (fun a => decide a.IsParticipant && !a.fLicensed)
-        (fun _ => true) goals := by
-  unfold PLCOk AllLicensed
+      (Probe.indiscriminate (α := Argument)).AllLicensed
+        (fun a => decide a.IsParticipant && !a.fLicensed) goals := by
+  unfold PLCOk Probe.AllLicensed
   constructor
   · intro h a ha hneeds
     simp only [Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hneeds
     rcases h a ha hneeds.1 with hF' | ⟨gs, hgs, hag⟩
     · exact nomatch hneeds.2.symm.trans hF'
     · rw [List.mem_singleton.mp hgs] at hag
-      exact (probeAgree_eq_some_iff.mp hag).1
+      exact (Probe.agree_eq_some_iff.mp hag).1
   · intro h a ha hpart
     cases hF : a.fLicensed with
     | true => exact Or.inl rfl
     | false =>
       refine Or.inr ⟨goals, List.mem_singleton_self _, ?_⟩
-      exact probeAgree_eq_some_iff.mpr
-        ⟨h a ha (by simp [hpart, hF]), by simp [hF]⟩
+      exact (Probe.agree_eq_some_iff (p := pi)).mpr
+        ⟨h a ha (by simp [hpart, hF]), by simp [pi, hF]⟩
 
 /-- **The PCC** (their (1)/(7), generalized): in a double-object
     configuration — dative over accusative, one [π]-Agree cycle on

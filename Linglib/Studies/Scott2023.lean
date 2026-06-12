@@ -546,7 +546,7 @@ theorem satisfaction_matches_fragment :
 /-! ### Deriving the probe table from relativized search (`Phi/Probing.lean`)
 
 The `agreeProbe` table stipulates which head agrees with which
-position. Here it is DERIVED: each probe runs `probeSearch` over the
+position. Here it is DERIVED: each probe runs `Probe.search` over the
 goal sequence of its clause, relativized to its satisfaction
 condition. `.P => none` falls out of Voice_TR halting Infl's search
 before any DP (`infl_truncated_at_voiceTR`) plus Voice's own search
@@ -573,15 +573,18 @@ structure Encounter where
 def halts (cond : SatisfactionCond) (e : Encounter) : Bool :=
   cond.isSatisfied e.feats e.cat
 
-/-- The argument position a probe φ-agrees with: `probeAgree`
-    relativized to the satisfaction condition, with feature-copying
-    as the activity condition — the probe agrees with the found
-    element only if satisfaction copied features (feature match, not
-    head encounter). -/
+/-- A satisfaction-conditioned probe as a `Probe` over encounters:
+    visibility = halting ([deal-2024] interaction), activity =
+    feature copying. -/
+def satProbe (cond : SatisfactionCond) : Probe Encounter :=
+  { vis := halts cond, act := fun e => cond.copiedFeatures e.feats e.cat }
+
+/-- The argument position a probe φ-agrees with: `(satProbe cond).agree`
+    — the probe agrees with the found element only if satisfaction
+    copied features (feature match, not head encounter). -/
 def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
     Option ArgPosition :=
-  (probeAgree (halts cond)
-    (fun e => cond.copiedFeatures e.feats e.cat) goals).bind (·.pos)
+  ((satProbe cond).agree goals).bind (·.pos)
 
 /-- Transitive Voice as an encounter: a head of category `.v`, no
     φ-features visible to the probe. -/
@@ -628,8 +631,8 @@ theorem infl_finds_S (φS : FeatureBundle)
     agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
   have h1 : halts mamInflSatisfaction ⟨some .S, φS, none⟩ = true := by
     simp [halts, mamInflSatisfaction_isSatisfied, hS]
-  simp [agreesWith, probeAgree, probeSearch, Option.filter_some, dpGoal, h1,
-    mamInflSatisfaction_copiedFeatures, hS]
+  simp [agreesWith, satProbe, Probe.agree, Probe.search, Option.filter_some,
+    dpGoal, h1, mamInflSatisfaction_copiedFeatures, hS]
 
 /-- Voice's search finds the agent (closest goal), provided A bears
     person. -/
@@ -639,11 +642,11 @@ theorem voice_finds_A (φA φP : FeatureBundle)
   have h1 : halts (.featureMatch (.phi (.person .third)))
       ⟨some .A, φA, none⟩ = true := by
     simp [halts, SatisfactionCond.isSatisfied, hA]
-  simp [agreesWith, probeAgree, probeSearch, Option.filter_some, dpGoal,
-    voiceSat, h1, SatisfactionCond.copiedFeatures, hA]
+  simp [agreesWith, satProbe, Probe.agree, Probe.search, Option.filter_some,
+    dpGoal, voiceSat, h1, SatisfactionCond.copiedFeatures, hA]
 
 /-- DERIVED probe table: which head φ-agrees with position `p`,
-    computed by running each probe's `probeSearch` over the goal
+    computed by running each probe's `Probe.search` over the goal
     sequence of the clause containing `p`. -/
 def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgPosition) :
     Option Cat :=
@@ -677,7 +680,7 @@ theorem agreeProbe_eq_derived_3sg :
 
 /-- φ-valuation outcome of a probe with a satisfaction condition:
     valued iff the search found a goal AND satisfaction copied
-    features. NOTE: this is NOT `searchOutcome (halts cond)` — a
+    features. NOTE: this is NOT `(satProbe cond).outcome` — a
     head-encounter halt satisfies the search but leaves the probe
     φ-unvalued. -/
 def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
@@ -693,12 +696,12 @@ theorem transitive_unvalued_elsewhere (rest : List Encounter) :
     (valuationOutcome mamInflSatisfaction (voiceTR :: rest)).pfRealization
       = .elsewhere := ⟨rfl, rfl⟩
 
-/-- Contrast: `searchOutcome` relativized to the satisfaction condition
+/-- Contrast: `Probe.outcome` relativized to the satisfaction condition
     reports `.valued` in the transitive — the search DID find a halting
     element. The valuation/satisfaction distinction is exactly
     [deal-2024]'s interaction-vs-satisfaction split. -/
 theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
-    searchOutcome (halts mamInflSatisfaction) (voiceTR :: rest) = .valued ∧
+    (satProbe mamInflSatisfaction).outcome (voiceTR :: rest) = .valued ∧
     valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued :=
   ⟨rfl, rfl⟩
 
