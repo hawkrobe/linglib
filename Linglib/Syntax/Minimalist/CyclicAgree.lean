@@ -353,12 +353,16 @@ def goalTokens (ea ia : Person) : List (Controller × Person) :=
 def segVisible (geom : Geometry) (s : Segment) (t : Controller × Person) : Bool :=
   (personSpec geom t.2).contains s
 
+/-- A probe segment as a `Probe` over argument tokens. -/
+def segProbe (geom : Geometry) (s : Segment) : Probe (Controller × Person) :=
+  .ofVis (segVisible geom s)
+
 /-- The goal a single probe segment Agrees with: the first argument in
     cyclic order whose specification bears the segment — a flat
-    relativized `probeSearch`. -/
+    relativized `Probe.search`. -/
 def segmentGoal (geom : Geometry) (ea ia : Person) (s : Segment) :
     Option (Controller × Person) :=
-  probeSearch (segVisible geom s) (goalTokens ea ia)
+  (segProbe geom s).search (goalTokens ea ia)
 
 /-- A segment finds the EA token iff the IA bypasses it (leaving it as
     active residue) and the EA bears it — cycle-II Agree. -/
@@ -366,7 +370,7 @@ theorem segmentGoal_eq_ea_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
     segmentGoal geom ea ia s = some (.ea, ea) ↔
       (personSpec geom ia).contains s = false ∧
       (personSpec geom ea).contains s = true := by
-  simp only [segmentGoal, probeSearch, goalTokens, segVisible, List.find?]
+  simp only [segmentGoal, segProbe, Probe.ofVis, Probe.search, goalTokens, segVisible, List.find?]
   cases h1 : (personSpec geom ia).contains s <;>
     cases h2 : (personSpec geom ea).contains s <;> simp
 
@@ -374,7 +378,7 @@ theorem segmentGoal_eq_ea_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
 theorem segmentGoal_eq_ia_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
     segmentGoal geom ea ia s = some (.ia, ia) ↔
       (personSpec geom ia).contains s = true := by
-  simp only [segmentGoal, probeSearch, goalTokens, segVisible, List.find?]
+  simp only [segmentGoal, segProbe, Probe.ofVis, Probe.search, goalTokens, segVisible, List.find?]
   cases h1 : (personSpec geom ia).contains s <;>
     cases h2 : (personSpec geom ea).contains s <;> simp
 
@@ -393,12 +397,12 @@ theorem eaAgrees_iff_exists (geom : Geometry) (probe : ProbeArticulation)
     exact ⟨s, ⟨hs, by simpa using hia⟩, by simpa using hea⟩
 
 /-- **Main bridge**: the EA is person-licensed (`eaIsLicensed`) iff some
-    probe segment's flat relativized search (`Probing.Licensed`) over
+    probe segment's flat relativized search (`Probe.Licensed`) over
     the cyclically ordered token list finds the EA token. -/
 theorem eaIsLicensed_iff_segment_licensed (geom : Geometry)
     (probe : ProbeArticulation) (ea ia : Person) :
     eaIsLicensed geom probe ea ia = true ↔
-      ∃ s ∈ probe, Licensed (segVisible geom s) (goalTokens ea ia) (.ea, ea) := by
+      ∃ s ∈ probe, (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
   rw [eaIsLicensed, eaAgrees_iff_exists]
   exact exists_congr fun s => and_congr_right fun _ =>
     (segmentGoal_eq_ea_iff geom ea ia s).symm
@@ -409,7 +413,7 @@ theorem eaIsLicensed_iff_segment_licensed (geom : Geometry)
 theorem plc_violation_iff_no_segment_licensed (geom : Geometry)
     (probe : ProbeArticulation) (ea ia : Person) :
     isInverseContext geom probe ea ia = true ↔
-      ∀ s ∈ probe, ¬ Licensed (segVisible geom s) (goalTokens ea ia) (.ea, ea) := by
+      ∀ s ∈ probe, ¬ (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
   rw [← plc_violation_iff_inverse, Bool.eq_false_iff, Ne,
     eaIsLicensed_iff_segment_licensed]
   simp only [not_exists, not_and]
@@ -417,7 +421,7 @@ theorem plc_violation_iff_no_segment_licensed (geom : Geometry)
 /-- Cycle decomposition through the search: cycle-I segments are those
     whose search finds the IA token; cycle-II segments those whose
     search finds the EA token. Second-cycle effects also factor through
-    `probeSearch`. -/
+    `Probe.search`. -/
 theorem cycleSegments_eq_segmentGoal_filters (geom : Geometry)
     (probe : ProbeArticulation) (ea ia : Person) :
     cycleSegments geom probe ea ia =

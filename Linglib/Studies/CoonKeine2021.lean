@@ -157,36 +157,32 @@ def Goal.visibleSegs (g : Goal) : List Segment :=
 
 /-! ### Probes and segment-based Agree (their (13), (14), (39)) -/
 
-/-- A probe: its unvalued segments (their (13)) — the same object as
-    `CyclicAgree.ProbeArticulation`, since both descend from
-    [bejar-rezac-2009]. -/
-abbrev Probe := ProbeArticulation
 
 /-- Their (39a): [uPERS [uPART]] — Weak PCC (Catalan). Identical to
     [bejar-rezac-2009]'s partial probe (`CyclicAgree.partialProbe`),
     by construction. -/
-def weakProbe : Probe := CyclicAgree.partialProbe
+def weakProbe : ProbeArticulation := CyclicAgree.partialProbe
 
 /-- Their (39b): [uPERS [uPART [uSPKR]]] — Ultrastrong PCC.
     Identical to [bejar-rezac-2009]'s full probe under the standard
     geometry (`CyclicAgree.fullProbeStd`). -/
-def ultrastrongProbe : Probe := CyclicAgree.fullProbeStd
+def ultrastrongProbe : ProbeArticulation := CyclicAgree.fullProbeStd
 
 /-- Their (39c): [uPERS [uSPKR]] — Me-First PCC (missing
     intermediate segment; see their fn. 22). -/
-def meFirstProbe : Probe := [.pi, .speaker]
+def meFirstProbe : ProbeArticulation := [.pi, .speaker]
 
 /-- Their fn. 22 (i): [uPERS [uPART [uSPKR][uADDR]]] — Strong PCC
     with φ-transparent datives. -/
-def branchingStrongProbe : Probe := [.pi, .participant, .speaker, .addressee]
+def branchingStrongProbe : ProbeArticulation := [.pi, .participant, .speaker, .addressee]
 
 /-- Agree, their (14), generic in the segment type ((11) person,
     (12) number): a segment agrees with the closest accessible goal
-    bearing it — `probeSearch` over position-indexed tokens (two
+    bearing it — `Probe.search` over position-indexed tokens (two
     same-φ arguments remain distinct agreed-with tokens). -/
 def segGoalOn {σ : Type*} (bears : σ → Goal → Bool) (s : σ)
     (goals : List Goal) : Option (Goal × Nat) :=
-  probeSearch (fun t => bears s t.1) goals.zipIdx
+  (Probe.ofVis fun t => bears s t.1).search goals.zipIdx
 
 /-- Feature gluttony (their (15)–(16)), generic in the segment type:
     two segments of one probe agree with distinct DPs. Not itself
@@ -212,10 +208,10 @@ def segGoal (s : Segment) (goals : List Goal) : Option (Goal × Nat) :=
   segGoalOn personBears s goals
 
 /-- Person-probe gluttony. -/
-def Gluttonous (P : Probe) (goals : List Goal) : Prop :=
+def Gluttonous (P : ProbeArticulation) (goals : List Goal) : Prop :=
   GluttonousOn personBears P goals
 
-instance (P : Probe) (goals : List Goal) : Decidable (Gluttonous P goals) :=
+instance (P : ProbeArticulation) (goals : List Goal) : Decidable (Gluttonous P goals) :=
   inferInstanceAs (Decidable (GluttonousOn personBears P goals))
 
 /-! ### Gluttony is limited to inverse configurations -/
@@ -237,17 +233,19 @@ private theorem segGoal_pair (s : Segment) (hi lo : Goal) :
     exposes is also borne by the higher goal, no probe is
     gluttonous over them — direct (17)–(18) and balanced (19)–(20)
     configurations are safe. -/
-theorem gluttonous_only_inverse (P : Probe) {hi lo : Goal}
+theorem gluttonous_only_inverse (P : ProbeArticulation) {hi lo : Goal}
     (hsub : ∀ s, s ∈ lo.visibleSegs → s ∈ hi.visibleSegs) :
     ¬ Gluttonous P [hi, lo] := by
   rintro ⟨s₁, _, s₂, _, t₁, _, t₂, _, h₁, h₂, hne⟩
   have hkey : ∀ s, ∀ t : Goal × Nat, segGoal s [hi, lo] = some t → t.2 = 0 := by
     intro s t ht
     rw [show segGoal s [hi, lo] =
-          probeSearch (fun t => decide (s ∈ t.1.visibleSegs)) [(hi, 0), (lo, 1)]
+          (Probe.ofVis fun t => decide (s ∈ t.1.visibleSegs)).search
+            [(hi, 0), (lo, 1)]
         from rfl,
-      probeSearch_pair_of_imp (a := (hi, 0)) (b := (lo, 1))
-        (by simpa using hsub s)] at ht
+      Probe.search_pair_of_imp (a := (hi, 0)) (b := (lo, 1))
+        (by simpa [Probe.ofVis] using hsub s)] at ht
+    simp only [Probe.ofVis] at ht
     by_cases hhi : decide (s ∈ hi.visibleSegs) = true
     · rw [if_pos hhi] at ht
       exact Option.some.inj ht ▸ rfl
@@ -262,10 +260,10 @@ theorem gluttonous_only_inverse (P : Probe) {hi lo : Goal}
     host; under gluttony this is jointly unsatisfiable (one-at-a-time
     violates (30) mid-derivation, simultaneous violates binary
     Merge), so gluttony here IS the predicted ban. -/
-def pccViolation (P : Probe) (ioOpaque : Bool) (io do_ : Person) : Prop :=
+def pccViolation (P : ProbeArticulation) (ioOpaque : Bool) (io do_ : Person) : Prop :=
   Gluttonous P [{ person := io, kOpaque := ioOpaque }, dp do_]
 
-instance (P : Probe) (b : Bool) (io do_ : Person) :
+instance (P : ProbeArticulation) (b : Bool) (io do_ : Person) :
     Decidable (pccViolation P b io do_) :=
   inferInstanceAs (Decidable (Gluttonous _ _))
 
@@ -332,7 +330,7 @@ theorem basque_dat_abs_contrast :
     goal's geometry, so gluttony is impossible — "the gluttony
     account therefore derives the fact that no such PCC pattern
     exists". -/
-theorem direct_never_banned (P : Probe) (io : Person) :
+theorem direct_never_banned (P : ProbeArticulation) (io : Person) :
     ¬ pccViolation P false io .third := by
   apply gluttonous_only_inverse
   intro s hs
@@ -376,7 +374,7 @@ theorem not_gluttonous_single_segment {σ : Type*} (bears : σ → Goal → Bool
     fortiori, while [uPERS] still lands on the IO. (Rootedness — the
     one property every probe of their (13)/(39) has — suffices; full
     downward closure is not needed.) -/
-theorem ban_part_part_implies_ban_three_part (P : Probe)
+theorem ban_part_part_implies_ban_three_part (P : ProbeArticulation)
     (hpi : Segment.pi ∈ P)
     (h : pccViolation P false .second .first) :
     pccViolation P false .third .first := by
@@ -486,7 +484,7 @@ are interspeaker-variable. -/
 
 /-- The values a probe acquires: the visible geometry of each
     distinct goal token some segment agreed with (their (16)). -/
-def acquiredValues (P : Probe) (goals : List Goal) : List (List Segment) :=
+def acquiredValues (P : ProbeArticulation) (goals : List Goal) : List (List Segment) :=
   (goals.zipIdx.filter
     (fun t => P.any (fun s => segGoal s goals == some t))).map
     (fun t => t.1.visibleSegs)
@@ -494,7 +492,7 @@ def acquiredValues (P : Probe) (goals : List Goal) : List (List Segment) :=
 /-- One DP agreeing with many probes is not gluttony (their (86):
     Icelandic multiple participle agreement): a single goal can never
     yield two distinct tokens. -/
-theorem not_gluttonous_singleton (P : Probe) (g : Goal) :
+theorem not_gluttonous_singleton (P : ProbeArticulation) (g : Goal) :
     ¬ Gluttonous P [g] := by
   rintro ⟨s₁, _, s₂, _, t₁, ht₁m, t₂, ht₂m, _, _, hne⟩
   cases ht₁m with
@@ -618,7 +616,7 @@ theorem german_copula :
       MorphOk germanPastSg false
         (acquiredValues weakProbe [dp .third, dp .first])) ∧
     -- nonfinite: no probe, no gluttony
-    ¬ Gluttonous ([] : Probe) [dp .third, dp .second] := by
+    ¬ Gluttonous ([] : ProbeArticulation) [dp .third, dp .second] := by
   decide
 
 /-! ### The number probe and the missing "Number Case Constraint"
@@ -656,7 +654,7 @@ def numProbe : List NumSeg := [.num, .pl]
 /-- Clitic doubling renders the doubled DP invisible to subsequent
     probing (their §3.2): the tokens π agreed with are removed from
     #'s search space (their (42)). -/
-def afterCliticDoubling (piP : Probe) (goals : List Goal) : List Goal :=
+def afterCliticDoubling (piP : ProbeArticulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter
     (fun t => ! piP.any (fun s => segGoal s goals == some t))).map (·.1)
 
@@ -704,7 +702,7 @@ theorem reverse_pcc_diagnoses_strong :
 /-! ### PCC repairs (§3.5) -/
 
 /-- An empty search space is never gluttonous. -/
-theorem not_gluttonous_nil (P : Probe) : ¬ Gluttonous P [] := by
+theorem not_gluttonous_nil (P : ProbeArticulation) : ¬ Gluttonous P [] := by
   rintro ⟨_, _, _, _, t, htm, _⟩
   exact nomatch htm
 
@@ -718,7 +716,7 @@ theorem not_gluttonous_nil (P : Probe) : ¬ Gluttonous P [] := by
     displacement around π (their (50)). Last-resort uses of these
     structures (Rezac's ᑬ) translate as: extra structure is
     sanctioned iff the probe would otherwise glutton. -/
-theorem repairs_shield_goals (P : Probe) (g : Goal) :
+theorem repairs_shield_goals (P : ProbeArticulation) (g : Goal) :
     ¬ Gluttonous P [g] ∧ ¬ Gluttonous P [] :=
   ⟨not_gluttonous_singleton P g, not_gluttonous_nil P⟩
 

@@ -18,10 +18,10 @@ failure-tolerance, adopted by [preminger-2014] Ch. 6 as the second
 case study in tolerated failed agreement.
 
 Formalized through `Phi/Probing.lean`: L⁰ is the **indiscriminate**
-instance of `probeSearch` (`vis = ⊤`, so bare minimality delivers
+instance of `Probe.search` (`Probe.indiscriminate`, so bare minimality delivers
 `List.head?`; augmented nominals intervene, her Chomsky-2000-style
 intervention), and the licensing condition is the off-diagonal
-`AllLicensed needs ⊤` with `needs` = augmentless. Contrast Kichean
+`Probe.AllLicensed` with `needs` = augmentless. Contrast Kichean
 ([preminger-2014] Ch. 4): the diagonal case, π⁰ relativized to
 exactly the needy, hence omnivorous and position-insensitive.
 
@@ -50,11 +50,13 @@ structure Nominal where
     don't (while still intervening for L⁰). -/
 def needsL (n : Nominal) : Bool := !n.augmented
 
-/-- L⁰'s goal in a vP: an indiscriminate `probeSearch` — every
-    element is visible, so bare minimality delivers the structurally
-    highest one. -/
+/-- L⁰ itself: the indiscriminate probe — every element is visible,
+    so bare minimality delivers the structurally highest one. -/
+def L : Probe Nominal := Probe.indiscriminate
+
+/-- L⁰'s goal in a vP. -/
 def lGoal (vp : List Nominal) : Option Nominal :=
-  probeSearch (fun _ => true) vp
+  L.search vp
 
 /-- Bare minimality, as a theorem: the indiscriminate search takes
     the head of the sequence. -/
@@ -64,14 +66,14 @@ theorem lGoal_eq_head? (vp : List Nominal) : lGoal vp = vp.head? := by
 /-- The licensing condition on a simplex vP: every augmentless
     nominal is licensed by L⁰'s single search. -/
 def LicensingOk (vp : List Nominal) : Prop :=
-  AllLicensed needsL (fun _ => true) vp
+  L.AllLicensed needsL vp
 
 instance (vp : List Nominal) : Decidable (LicensingOk vp) :=
-  inferInstanceAs (Decidable (AllLicensed needsL (fun _ => true) vp))
+  inferInstanceAs (Decidable (L.AllLicensed needsL vp))
 
 /-- L⁰'s probing outcome: valued iff the vP has any overt content. -/
 def lOutcome (vp : List Nominal) : ProbeOutcome :=
-  searchOutcome (fun _ => true) vp
+  L.outcome vp
 
 /-- The conjoint/disjoint marker (present tense) as the spellout of
     L⁰: conjoint ∅- when L⁰ found a goal, disjoint *ya-* when it
@@ -101,11 +103,11 @@ theorem disjoint_iff_empty (vp : List Nominal) :
 
 /-- An augmentless nominal is licensed iff it is the structurally
     highest element of its vP — her ch. 3: L "licenses the highest
-    element in vP". Instance of `allLicensed_const_true_iff`. -/
+    element in vP". Instance of `Probe.indiscriminate_allLicensed_iff`. -/
 theorem licensingOk_iff_highest (vp : List Nominal) :
     LicensingOk vp ↔
       ∀ n ∈ vp, needsL n = true → vp.head? = some n :=
-  allLicensed_const_true_iff
+  Probe.indiscriminate_allLicensed_iff
 
 /-- At most one augmentless nominal per simplex vP (her transitive
     and intransitive LP schemas): L⁰'s single Agree relation licenses

@@ -74,7 +74,7 @@ The `probeResolutionRank` function below assigns rank 2 to
 [+participant] DPs, rank 1 to [+plural, −participant] DPs, and
 rank 0 elsewhere — the *surface effect* of the two-probe (π⁰
 before #⁰) system on a single DP. Its derived status is a theorem:
-target resolution is `cascadeSearch` over the two probes
+target resolution is `Probe.cascade` over the two probes
 (`Phi/Probing.lean`), and the rank comparison agrees with the
 cascade on the φ-cell inventory
 (`Preminger2014.afAgreementTarget_eq_rank`). It is not a salience

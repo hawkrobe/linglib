@@ -68,7 +68,7 @@ relativized probes:
 The single AF marker reflects π⁰'s output if it succeeds (clitic
 doubling of the [participant]-bearing argument); otherwise #⁰'s
 output (the 3PL marker *e-* by direct exponence); otherwise the slot
-is empty (∅). This slot competition is `cascadeSearch` over the two
+is empty (∅). This slot competition is `Probe.cascade` over the two
 probes, definitionally: `afAgreementTarget` IS the cascade, the ∅
 row is failed Agree realized by the DM Elsewhere entry, and the rank
 comparison is the derived form (`afAgreementTarget_eq_rank`).
@@ -108,7 +108,7 @@ gives five arguments against hierarchy accounts:
 
 - `Syntax/Minimalist/Phi/Geometry.lean` — `decomposePerson`,
   `probeVisible`, `probeResolutionRank`.
-- `Syntax/Minimalist/Phi/Probing.lean` — `probeSearch`, `Licensed`,
+- `Syntax/Minimalist/Phi/Probing.lean` — `Probe`, `Probe.Licensed`,
   `PLC`: the search-and-licensing layer the derivations below
   consume.
 - `Syntax/Minimalist/ObligatoryOperations.lean` — the Ch. 5 model
@@ -213,13 +213,13 @@ instance : DecidableRel PersonRestrictionOk := fun subj obj =>
     patient as π⁰'s goal tokens, the PLC holds iff at most one bears
     [+participant]. A [+participant] argument requires an Agree
     relation with π⁰ to be licensed; π⁰'s single search licenses at
-    most one token (`allLicensed_iff`), so two [+participant]
+    most one token (`Probe.allLicensed_iff`), so two [+participant]
     arguments cannot both be licensed and the derivation crashes. -/
 theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
     PersonRestrictionOk s o ↔
       PLC Prod.snd ([(.A, s), (.P, o)] : List (ArgPosition × Agreement.Cell)) := by
   unfold PersonRestrictionOk PLC
-  rw [allLicensed_iff]
+  rw [Probe.allLicensed_iff]
   constructor
   · intro h a ha b hb hva hvb
     rcases List.mem_pair.mp ha with rfl | rfl <;>
@@ -246,11 +246,16 @@ theorem ch4_relativization_contrast :
         List (ArgPosition × Agreement.Cell)) := by
   decide
 
+/-- π⁰: the person probe, relativized to [participant]. -/
+def piProbe : Probe Agreement.Cell := .ofVis (·.visibleTo .participant)
+
+/-- #⁰: the number probe, relativized to [plural]. -/
+def numProbe : Probe Agreement.Cell := .ofVis (·.visibleTo .plural)
+
 /-- The two AF probes in slot order: π⁰'s clitic output beats #⁰'s
     direct exponence in the single morphological slot
     ([preminger-2014] §4.4). -/
-def afProbes : List (Agreement.Cell → Bool) :=
-  [(·.visibleTo .participant), (·.visibleTo .plural)]
+def afProbes : List (Probe Agreement.Cell) := [piProbe, numProbe]
 
 /-- The AF agreement target, by probe cascade: π⁰'s goal if it finds
     one, else #⁰'s, else `none` — both probes failed (3SG × 3SG) and
@@ -259,7 +264,7 @@ def afProbes : List (Agreement.Cell → Bool) :=
     winning probe it takes the closer one (the subject) — immaterial
     for the marker (`afMarker_comm`). -/
 def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
-  cascadeSearch afProbes [subj, obj]
+  Probe.cascade afProbes [subj, obj]
 
 /-- The AF agreement marker: the Set B exponent of the cascade's
     target; the Elsewhere ∅ via DM insertion from the unvalued bundle
@@ -349,11 +354,11 @@ theorem personRestrictionOk_comm (s o : Agreement.Cell) :
 /-- π⁰'s outcome on the AF clause's goal pair: each probe is
     independently obligatory ([preminger-2014] Ch. 5). -/
 def piOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
-  searchOutcome (·.visibleTo .participant) [subj, obj]
+  piProbe.outcome [subj, obj]
 
 /-- #⁰'s outcome on the AF clause's goal pair. -/
 def numOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
-  searchOutcome (·.visibleTo .plural) [subj, obj]
+  numProbe.outcome [subj, obj]
 
 /-- Joint outcome of the AF probes: `unvalued` only when both probes
     fail (i.e., both arguments are 3SG). -/
@@ -373,8 +378,8 @@ theorem afAgreementTarget_eq_none_iff (subj obj : Agreement.Cell) :
     cases piOutcome subj obj <;> cases numOutcome subj obj <;> decide
   rw [hmatch]
   unfold afAgreementTarget piOutcome numOutcome
-  rw [cascadeSearch_eq_none_iff, searchOutcome_eq_unvalued_iff,
-      searchOutcome_eq_unvalued_iff]
+  rw [Probe.cascade_eq_none_iff, Probe.outcome_eq_unvalued_iff,
+      Probe.outcome_eq_unvalued_iff]
   simp [afProbes]
 
 /-- Failed Agree is tolerated, not crashing ([preminger-2014] Ch. 5):
@@ -439,10 +444,10 @@ theorem ch7_arg4_form_distinctness :
 /-- [preminger-2014] Ch. 7 arg 5 (§7.2, via Ch. 6): [halpert-2012]'s
     Zulu runs the same search-and-licensing substrate over a
     salience-irrelevant contrast. Kichean is the diagonal instance
-    (`AllLicensed vis vis`: π⁰ relativized to exactly the
+    (diagonal `Probe.AllLicensed`: π⁰ relativized to exactly the
     licensing-needy [participant] cells), so a needy argument is
     licensed even from object position — the probe skips non-bearers.
-    Zulu's L⁰ is the off-diagonal instance (`AllLicensed needs ⊤`:
+    Zulu's L⁰ is the off-diagonal instance (`Probe.indiscriminate`:
     indiscriminate probe, augmentless = needy), so an augmented
     subject intervenes and a lower augmentless nominal goes
     unlicensed. Same machinery, opposite skippability — and there is
