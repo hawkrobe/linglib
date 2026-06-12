@@ -14,7 +14,7 @@ structural forms (Figure 4, eqs 2, 3, 4a–c). Subsequent literature has
 generalized this to graded/probabilistic causation
 ([cao-white-lassiter-2025]), counterfactual simulation
 ([beller-gerstenberg-2025]), and refined necessity definitions
-([nadathur-2024]). This file formalizes SBH 2009's specific
+([nadathur-2023-implicatives]). This file formalizes SBH 2009's specific
 *structural* claims as the historical foundation.
 
 ## What is formalized

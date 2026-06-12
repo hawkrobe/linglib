@@ -15,7 +15,7 @@ aliases for legacy SBH-style binary semantics.
   `cause` then developing produces `xE` at `effect`. Polymorphic generalization
   of [nadathur-lauer-2020] Definition 23.
 
-- **`causallyNecessary M s cause xC effect xE`**: [nadathur-2024]
+- **`causallyNecessary M s cause xC effect xE`**: [nadathur-2023-implicatives]
   Definition 10b — precondition + achievability + but-for clauses.
   Refactored to use abstract quantification over `Valuation α` (see "Refactor"
   below); the previous `allExtensions`/`freeExtensions` enumeration was
@@ -171,7 +171,7 @@ noncomputable def cfSeed [DecidableEq V]
     (see `counterfactualSimulate_eq_pure_of_deterministic` below).
 
     Subsumes (with appropriate derived predicates):
-    - `causallyNecessary` ([nadathur-2024] Def 10b, discrete)
+    - `causallyNecessary` ([nadathur-2023-implicatives] Def 10b, discrete)
     - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
     - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
     - Lassiter probabilistic counterfactuals with overt probability operators
@@ -259,10 +259,10 @@ theorem whetherCause_eq_indicator_of_deterministic
   · simp [h, PMF.pure_apply_self]
 
 -- ════════════════════════════════════════════════════
--- § Nadathur 2024 Def 10b: causallyNecessary (BoolSEM only)
+-- § Nadathur 2023 Def 10b: causallyNecessary (BoolSEM only)
 -- ════════════════════════════════════════════════════
 
-/-! Port of [nadathur-2024] Definition 10b to V2. Specialized to
+/-! Port of [nadathur-2023-implicatives] Definition 10b to V2. Specialized to
     `BoolSEM` (the binary substrate the original definition was given on);
     polymorphic generalization to multi-valued α can come if a consumer
     needs it. -/
@@ -400,7 +400,7 @@ namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
-/-- **Consistent supersituation** check ([nadathur-2024] Def 9b):
+/-- **Consistent supersituation** check ([nadathur-2023-implicatives] Def 9b):
     `s'` is consistent with `base` under `M` iff every value `s'` fixes
     on a vertex undetermined in `base` agrees with what per-vertex
     development of `base` would produce.
@@ -417,9 +417,16 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     (base s' : Valuation α) :
     Decidable (isConsistentSuper M base s') := Classical.dec _
 
+/-- Every valuation is a consistent supersituation of itself: the
+    undetermined-in-`base` premise contradicts the fixed-in-`s'` premise.
+    Standard witness for `causallyNecessary.achievable`. -/
+theorem isConsistentSuper_self (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M] (s : Valuation α) : isConsistentSuper M s s :=
+  fun _ _ hn hs => by simp [hn] at hs
+
 namespace causallyNecessary
 
-/-- **Precondition** ([nadathur-2024] Def 10b): neither
+/-- **Precondition** ([nadathur-2023-implicatives] Def 10b): neither
     `cause = xC` nor `effect = xE` is already entailed by `s` under `M`.
     Stated directly via `developDetVtx`. -/
 def precondition (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
@@ -431,7 +438,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (precondition M s cause xC effect xE) := Classical.dec _
 
-/-- **Achievability** clause (i) of [nadathur-2024] Def 10b.
+/-- **Achievability** clause (i) of [nadathur-2023-implicatives] Def 10b.
     Abstract quantification over `Valuation α`: there exists a
     supersituation of `s.extend cause xC` (consistent with the per-vertex
     development) under which `effect` develops to `xE`.
@@ -451,7 +458,7 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (achievable M s cause xC effect xE) := Classical.dec _
 
-/-- **But-for** clause (ii) of [nadathur-2024] Def 10b. Abstract
+/-- **But-for** clause (ii) of [nadathur-2023-implicatives] Def 10b. Abstract
     quantification: every consistent supersituation of `s` that doesn't
     fix `cause = xC` must fail to develop `effect = xE`.
 
@@ -472,7 +479,7 @@ noncomputable instance [DecidableValuation α]
 
 end causallyNecessary
 
-/-- **Causal Necessity** ([nadathur-2024] Definition 10b),
+/-- **Causal Necessity** ([nadathur-2023-implicatives] Definition 10b),
     polymorphic over value types.
 
     ⟨cause, xC⟩ is causally necessary for ⟨effect, xE⟩ relative to `s`

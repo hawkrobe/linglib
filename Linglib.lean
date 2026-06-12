@@ -1314,7 +1314,7 @@ import Linglib.Studies.Cacchioli2025
 import Linglib.Studies.Grano2024
 import Linglib.Studies.Karttunen1971
 import Linglib.Studies.LiuYip2026
-import Linglib.Studies.Nadathur2024
+import Linglib.Studies.Nadathur2023
 import Linglib.Studies.Osborne2019Control
 import Linglib.Studies.TheilerRoelofsenAloni2018
 import Linglib.Studies.Bondarenko2022
