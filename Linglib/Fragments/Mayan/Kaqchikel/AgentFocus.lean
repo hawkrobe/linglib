@@ -1,5 +1,5 @@
 import Linglib.Typology.Extraction
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 
 /-!
 # Kaqchikel Agent Focus Fragment [erlewine-2016]
@@ -162,7 +162,7 @@ theorem af_has_suffix : VerbForm.agentFocus.hasAFSuffix = true := rfl
     Not a true pivot system — AF is a locality-sensitive repair for
     clause-local agent extraction, not a symmetric voice alternation.
     Transitive is the basic form; AF is derived (triggered by SSAL). -/
-def kaqVoiceSystem : Interfaces.VoiceSystemProfile :=
+def kaqVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "Kaqchikel"
     voices := [ ⟨"Transitive", .agent⟩, ⟨"Agent Focus", .agent⟩ ]
     symmetry := .asymmetrical

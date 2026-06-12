@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
@@ -251,7 +251,7 @@ theorem rtv_af_marker_neq_antip :
 
 /-- K'iche' voice system profile. Five voices, asymmetrical (Active
     is the basic form). -/
-def kicheVoiceSystem : Interfaces.VoiceSystemProfile :=
+def kicheVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "K'iche'"
   , voices :=
     [ ⟨"Active Voice", .agent⟩

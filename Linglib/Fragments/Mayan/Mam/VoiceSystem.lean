@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 
 /-!
 # Mam Voice System Profile (theory-neutral)
@@ -34,7 +34,7 @@ namespace Mam
     are derived (non-phase, implicit agent). Voice does not determine
     pivot for extraction — instead, Voice carries [uOblique] which
     conditions extraction morphology (=(y)a'). -/
-def mamVoiceSystem : Interfaces.VoiceSystemProfile :=
+def mamVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "Mam"
     voices := [ ⟨"Agentive Voice", .agent⟩, ⟨"Passive Voice", .patient⟩,
                 ⟨"Antipassive Voice", .agent⟩ ]

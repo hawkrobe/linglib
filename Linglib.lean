@@ -112,7 +112,7 @@ import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
 import Linglib.Features.QParticleLayer
 import Linglib.Features.AnsweringSystem
-import Linglib.Phenomena.SocialMeaning.IndexicalField
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
@@ -156,7 +156,7 @@ import Linglib.Syntax.Binding.Semantics
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Causation.Variable
@@ -404,9 +404,7 @@ import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Move
 import Linglib.Discourse.SpeechAct.Update
 import Linglib.Phenomena.Subjecthood.SubjectProperties
-import Linglib.Phenomena.NullSubject.Basic
-import Linglib.Phenomena.NullSubject.Defs
-import Linglib.Phenomena.NullSubject.Universals
+import Linglib.Typology.NullSubject
 import Linglib.Features.Subjectivity
 import Linglib.Data.Examples.Schema
 import Linglib.Data.PHOIBLE.Schema

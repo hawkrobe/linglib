@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 
 /-!
 # English Predicates
@@ -32,7 +32,7 @@ export Adjectival (
     Active is the basic, unmarked form. Passive is morphologically
     derived (BE + past participle) and syntactically marked (agent
     demotion to optional by-phrase, patient promotion to subject). -/
-def englishVoiceSystem : Interfaces.VoiceSystemProfile :=
+def englishVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "English"
     voices := [ ⟨"Active", .agent⟩, ⟨"Passive", .patient⟩ ]
     symmetry := .asymmetrical

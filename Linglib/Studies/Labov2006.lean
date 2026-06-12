@@ -1,4 +1,4 @@
-import Linglib.Phenomena.SocialMeaning.IndexicalField
+import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -58,7 +58,7 @@ set_option autoImplicit false
 
 namespace Labov2006
 
-open Phenomena.SocialMeaning.IndexicalField
+open SocialMeaning.IndexicalField
 
 -- ============================================================================
 -- §1. Social class groups (Ch. 7, Table 7.6)

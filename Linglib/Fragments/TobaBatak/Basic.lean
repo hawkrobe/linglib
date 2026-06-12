@@ -1,5 +1,5 @@
 import Linglib.Typology.Extraction
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 
 /-!
 # Toba Batak Fragment [erlewine-2018]
@@ -158,7 +158,7 @@ def tbExtractionProfile : Typology.ExtractionProfile :=
     locative, instrumental), Toba Batak has only actor and object
     voice. The system is symmetrical — neither voice is morphologically
     basic. -/
-def tbVoiceSystem : Interfaces.VoiceSystemProfile :=
+def tbVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "Toba Batak"
     voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
     symmetry := .symmetrical

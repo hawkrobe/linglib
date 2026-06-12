@@ -1,5 +1,5 @@
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Phenomena.NullSubject.Universals
+import Linglib.Typology.NullSubject
 
 /-!
 # Minimal Pronoun Theory
@@ -136,7 +136,7 @@ inductive PronForm where
 
 /-- Whether a language's minimal-pronoun inventory realizes the
     controlled-subject context with an overt form. This is the
-    Minimalism-side bridge to `Phenomena.NullSubject.ProDropProfile.hasOvertPRO`.
+    Minimalism-side bridge to `Typology.NullSubject.ProDropProfile.hasOvertPRO`.
     The typological criterion is non-nullness, not specifically `.pronoun`:
     [ostrove-2026]'s universal is about overt-vs-null PRO, so an
     inventory whose controlled-subject form is `.reflexive` would also
@@ -148,19 +148,19 @@ instance (inv : MinPronInventory PronForm) : Decidable inv.hasOvertPRO :=
   inferInstanceAs (Decidable (_ ≠ _))
 
 -- ════════════════════════════════════════════════════════════════
--- § 3.5: Bridge to `Phenomena.NullSubject.SubjectAssignment`
+-- § 3.5: Bridge to `Typology.NullSubject.SubjectAssignment`
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.NullSubject in
+open Typology.NullSubject in
 /-- Project a `PronForm` to the framework-agnostic `Exponent` (null vs
     overt). Both `.pronoun` and `.reflexive` count as overt — the
-    typological criterion in `Phenomena.NullSubject` is non-nullness. -/
-def PronForm.toExponent : PronForm → Phenomena.NullSubject.Exponent
+    typological criterion in `Typology.NullSubject` is non-nullness. -/
+def PronForm.toExponent : PronForm → Typology.NullSubject.Exponent
   | .null      => .null
   | .pronoun   => .overt
   | .reflexive => .overt
 
-open Phenomena.NullSubject in
+open Typology.NullSubject in
 /-- Project a Minimalist `MinPronInventory` to the framework-agnostic
     `SubjectAssignment`. The `BVAContext` axis maps `controlled
     SubjectContext`s to `controlledSubject`; all other contexts get
@@ -176,7 +176,7 @@ def MinPronInventory.toSubjectAssignment
       | _               => .free
     (inv.realize bva).toExponent
 
-open Phenomena.NullSubject in
+open Typology.NullSubject in
 /-- Bridge theorem: the abstract `hasOvertPRO` over the projected
     assignment agrees with the inventory's own `hasOvertPRO`. This is
     the Minimalism→Core grounding: changing the inventory propagates

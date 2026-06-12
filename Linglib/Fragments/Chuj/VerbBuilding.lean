@@ -1,5 +1,5 @@
 import Linglib.Morphology.RootTypology
-import Linglib.Phenomena.ArgumentStructure.VoiceSystem
+import Linglib.Typology.VoiceSystem
 
 /-!
 # Chuj Verb Building Fragment [coon-2019]
@@ -288,7 +288,7 @@ def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
     whether an external argument is overt, implicit, or absent.
     Each voice form is built independently from root + v/Voice⁰: passive
     is not derived from active. -/
-def chujVoiceSystem : Interfaces.VoiceSystemProfile :=
+def chujVoiceSystem : Typology.VoiceSystemProfile :=
   { language := "Chuj"
     voices := [ ⟨"Active (Ø)", .agent⟩
               , ⟨"Agentive intransitive (-w)", .agent⟩
