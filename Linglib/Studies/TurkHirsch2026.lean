@@ -5,14 +5,14 @@ import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Fragments.Turkish.QuestionParticles
-import Linglib.Phenomena.Questions.PolarAnswers
+import Linglib.Data.Examples.TurkHirsch2026
 import Mathlib.Data.Set.Basic
 
 /-!
 # Türk & Hirsch (2026) — Category Match constrains polar question alternatives
 [turk-hirsch-2026] [atlamaz-2023] [fox-katzir-2011] [rooth-1992]
 
-Connects the empirical judgments in `PolarAnswers.lean` (modal answers
+Connects the empirical judgments in `TurkHirsch2026.Examples` (modal answers
 are infelicitous to Turkish polar questions) to the formal explanation
 [turk-hirsch-2026] propose: [fox-katzir-2011] category match
 over UPOS tags applied to the focus alternatives evoked by the polarity
@@ -220,16 +220,15 @@ theorem typeTheo_ne_polar : typeTheoQ ≠ polarQ := by
 -- §6  Bridge: data ↔ theory
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Connect the empirical judgments from `PolarAnswers.lean` to the
+/-! Connect the empirical judgments from `TurkHirsch2026.Examples` to the
     formal model. The data says modal answers are infelicitous;
     the theory (category match) explains why: □p is excluded from
     the Hamblin alternative set. -/
 
-open Phenomena.Questions.PolarAnswers
-
-/-- The empirical datum: modal answer is infelicitous. -/
+/-- The empirical datum: the deontic modal answer
+    ("Ali uyumalı" to "Ali uyuyor mu?") is unacceptable. -/
 theorem data_modal_infelicitous :
-    turkishPolar_must.felicitous = false := rfl
+    Examples.polar_must.judgment = .unacceptable := rfl
 
 /-- The theory predicts it: □p is not an answer under category match. -/
 theorem theory_modal_excluded : mustP ∉ catMatchQ :=

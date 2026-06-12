@@ -1,4 +1,5 @@
 import Linglib.Semantics.Questions.Partition.Constructors
+import Linglib.Data.Examples.GroenendijkStokhof1984
 
 /-!
 # [groenendijk-stokhof-1984]: Studies on the Semantics of Questions
@@ -26,6 +27,14 @@ theorems about refinement, exhaustivity, and de dicto answers.
   not guaranteed to give semantic (partition-based) answers.
 * **refinement_iff_answer_transfer**: G&S refinement is equivalent to
   ANS-transfer between questions.
+
+The Ch. VI judgment data (mention-some, pragmatic answerhood,
+pair-list/choice scope readings) lives as typed `LinguisticExample`
+rows in the generated `Data.Examples.GroenendijkStokhof1984` module;
+per-phenomenon accessors are below. TODO: wiring the Italian-newspaper
+row (`gs1984_mentionsome_italian_newspaper`) to the `MentionSome`
+predicates of `Semantics/Questions/Resolution.lean` is the genuine
+future contribution.
 -/
 
 namespace GroenendijkStokhof1984
@@ -168,5 +177,38 @@ theorem refinement_iff_answer_transfer {W : Type*} (q1 q2 : GSQuestion W) :
     q1 ⊑ q2 ↔ (∀ w v, QUD.ans q1 w v = true → QUD.ans q2 w v = true) :=
   ⟨λ h => refinement_transfers_answers q1 q2 h,
    λ h => answer_transfer_implies_refinement q1 q2 h⟩
+
+/-! ### Ch. VI example data -/
+
+open Data.Examples
+
+/-- Ch. VI §5 mention-some examples. -/
+def mentionSomeExamples : List LinguisticExample :=
+  Examples.all.filter (·.paperFeatures.lookup "phenomenon" == some "mention_some")
+
+/-- Ch. VI pragmatic-answerhood examples. -/
+def pragmaticAnswerhoodExamples : List LinguisticExample :=
+  Examples.all.filter
+    (·.paperFeatures.lookup "phenomenon" == some "pragmatic_answerhood")
+
+/-- Ch. VI §2 scope-reading examples (pair-list and choice). -/
+def scopeReadingExamples : List LinguisticExample :=
+  Examples.all.filter (λ e =>
+    e.paperFeatures.lookup "phenomenon" == some "pair_list" ||
+    e.paperFeatures.lookup "phenomenon" == some "choice")
+
+/-- Data consistency for the Ch. VI §5.4 verb-licensing rows: the
+    licensors marked as blocking mention-some are exactly *depends*,
+    *matter*, *determine*, and those marked as allowing it are *know*,
+    *wonder*, *find out* — the split the dissertation claims. -/
+theorem mentionSome_licensor_partition :
+    ((mentionSomeExamples.filterMap (λ e =>
+        if e.paperFeatures.lookup "licenses_mention_some" == some "false"
+        then e.paperFeatures.lookup "licensor" else none)).eraseDups,
+     (mentionSomeExamples.filterMap (λ e =>
+        if e.paperFeatures.lookup "licenses_mention_some" == some "true"
+        then e.paperFeatures.lookup "licensor" else none)).eraseDups) =
+    (["depends", "matter", "determine"], ["know", "wonder", "find out"]) := by
+  decide
 
 end GroenendijkStokhof1984

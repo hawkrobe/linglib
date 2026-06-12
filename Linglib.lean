@@ -1718,16 +1718,12 @@ import Linglib.Studies.Elliott2025
 import Linglib.Studies.Mirrazi2024
 import Linglib.Studies.TesslerTenenbaumGoodman2022
 import Linglib.Studies.LuckingGinzburg2022
-import Linglib.Phenomena.Questions.Basic
 import Linglib.Studies.BhattDayal2020
 import Linglib.Studies.Dryer2013Question
 import Linglib.Fragments.English.Questions
 import Linglib.Fragments.HindiUrdu.Questions
 import Linglib.Fragments.Japanese.Questions
 import Linglib.Fragments.Italian.Questions
-import Linglib.Phenomena.Questions.Embedding
-import Linglib.Phenomena.Questions.MentionSome
-import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Studies.Zheng2025
 import Linglib.Studies.RomeroHan2004
 import Linglib.Studies.Romero2024
@@ -1735,12 +1731,7 @@ import Linglib.Studies.Romero2024
 import Linglib.Phenomena.Verum.Basic
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.MartinezVera2026
-import Linglib.Phenomena.Questions.PolarAnswers
-import Linglib.Phenomena.Questions.PolarAnswerStructure
 import Linglib.Studies.Holmberg2016
-import Linglib.Phenomena.Questions.PragmaticAnswerhood
-import Linglib.Phenomena.Questions.ScopeReadings
-import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Studies.GartnerGyuris2017
 import Linglib.Studies.Dayal2025
 import Linglib.Studies.ChanShen2026
@@ -2858,3 +2849,6 @@ import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Examples.Kriz2015
 import Linglib.Data.Examples.TieuEtAl2020
 import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
+import Linglib.Data.Examples.GroenendijkStokhof1984
+import Linglib.Data.Examples.TurkHirsch2026
+import Linglib.Data.Examples.Holmberg2016

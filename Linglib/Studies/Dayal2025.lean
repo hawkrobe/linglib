@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Phenomena.Questions.Embedding
 import Linglib.Studies.BhattDayal2020
 
 /-!
@@ -15,16 +14,14 @@ rogative split, and McCloskey-style quasi-subordination.
 This study file is the canonical home for:
 
 1. **Clause-typing typology** (§4.4): forced-CP vs delayed-PerspP variation
-   across English/Italian/Hindi-Urdu (formerly in
-   `Phenomena/Questions/Typology.lean` §B–C).
+   across English/Italian/Hindi-Urdu.
 2. **Hindi-Urdu shiftiness** (§3.2): the McCloskey parallel for Hindi-Urdu
-   *jaanna:* (formerly in `Phenomena/Questions/Typology.lean` §D).
+   *jaanna:*.
 3. **Newari conjunct/disjunct** (§5.2): the perspective-shift evidence
-   from Newari person marking (formerly in
-   `Phenomena/Questions/Typology.lean` §E).
+   from Newari person marking.
 4. **Left-Periphery bridge**: the verification of the LeftPeriphery
-   `SelectionClass` apparatus against `Phenomena.Questions.Embedding`
-   data and the cross-linguistic shiftiness data.
+   `SelectionClass` apparatus against the English embedding data (§5)
+   and the cross-linguistic shiftiness data.
 
 ## Cross-framework relations
 
@@ -45,7 +42,6 @@ This study file is the canonical home for:
 namespace Dayal2025
 
 open Syntax.Minimalist.LeftPeriphery
-open Phenomena.Questions.Embedding
 open BhattDayal2020
 
 -- ============================================================================
@@ -212,6 +208,27 @@ def allCrossLingShiftinessData : List CrossLingShiftinessDatum :=
   [hindi_urdu_want_to_know, hindi_urdu_know_bare,
    hindi_urdu_know_negated, hindi_urdu_know_questioned]
 
+/-- English: bare responsive *remember* rejects embedded inversion
+    ([mccloskey-2006]). -/
+def remember_bare : CrossLingShiftinessDatum :=
+  { language := "English", verb := "remember"
+  , sentence := "*I remember [was Henry a communist↑]"
+  , negated := false, questioned := false, quasiSubOk := false }
+
+/-- English: negated *remember* licenses embedded inversion
+    ([mccloskey-2006]). -/
+def remember_negated : CrossLingShiftinessDatum :=
+  { language := "English", verb := "remember"
+  , sentence := "I don't remember [was Henry a communist↑]"
+  , negated := true, questioned := false, quasiSubOk := true }
+
+/-- English: questioned *remember* licenses embedded inversion
+    ([mccloskey-2006]). -/
+def remember_questioned : CrossLingShiftinessDatum :=
+  { language := "English", verb := "remember"
+  , sentence := "Does Sue remember [was Henry a communist↑]"
+  , negated := false, questioned := true, quasiSubOk := true }
+
 /-- Hindi-Urdu shiftiness parallels English: bare responsive blocks quasi-sub,
     negation and questioning license it. -/
 theorem hindi_urdu_shiftiness_parallels_english :
@@ -252,7 +269,84 @@ def allConjunctDisjunctData : List ConjunctDisjunctDatum :=
 -- §5. Verification against empirical embedding data
 -- ============================================================================
 
-/-- Classify each empirical datum from Phenomena.Questions.Embedding. -/
+/-- Embedding judgment for an English attitude predicate
+    ([dayal-2025]: §§1–3). -/
+structure EmbeddingDatum where
+  verb : String
+  /-- "V whether/who..." -/
+  subordination : Bool
+  /-- "V [did S leave↑]" (embedded inversion + matrix intonation) -/
+  quasiSubordination : Bool
+  /-- 'V, "Did S leave?"' -/
+  quotation : Bool
+  deriving Repr
+
+-- Rogative predicates (embed only interrogatives)
+
+def investigate_d : EmbeddingDatum :=
+  { verb := "investigate"
+  , subordination := true, quasiSubordination := false, quotation := false }
+
+def depend_on_d : EmbeddingDatum :=
+  { verb := "depend on"
+  , subordination := true, quasiSubordination := false, quotation := false }
+
+def wonder_d : EmbeddingDatum :=
+  { verb := "wonder"
+  , subordination := true, quasiSubordination := true, quotation := false }
+
+def ask_d : EmbeddingDatum :=
+  { verb := "ask"
+  , subordination := true, quasiSubordination := true, quotation := true }
+
+-- Responsive predicates (embed both declaratives and interrogatives)
+
+def know_d : EmbeddingDatum :=
+  { verb := "know"
+  , subordination := true, quasiSubordination := false, quotation := false }
+
+/-- Predicate of Relevance: responsive but resists question-to-proposition
+reduction ([elliott-etal-2017]). The reduction-resistance is a separate
+property — see `Elliott2017`. -/
+def care_d : EmbeddingDatum :=
+  { verb := "care"
+  , subordination := true, quasiSubordination := false, quotation := false }
+
+/-- Predicate of Relevance ([elliott-etal-2017]). -/
+def matter_d : EmbeddingDatum :=
+  { verb := "matter"
+  , subordination := true, quasiSubordination := false, quotation := false }
+
+-- Uninterrogative predicates (declaratives only)
+
+def believe_d : EmbeddingDatum :=
+  { verb := "believe"
+  , subordination := false, quasiSubordination := false, quotation := false }
+
+def allEmbeddingData : List EmbeddingDatum :=
+  [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
+
+/-- Quasi-subordination implies subordination ([dayal-2025]). -/
+-- UNVERIFIED: ex (20)
+theorem quasi_sub_implies_sub :
+    ∀ d ∈ allEmbeddingData,
+      d.quasiSubordination = true → d.subordination = true := by
+  intro d hd hq
+  simp [allEmbeddingData] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
+
+/-- Quotation implies quasi-subordination ([dayal-2025]). -/
+-- UNVERIFIED: ex (20)
+theorem quotation_implies_quasi_sub :
+    ∀ d ∈ allEmbeddingData,
+      d.quotation = true → d.quasiSubordination = true := by
+  intro d hd hq
+  simp [allEmbeddingData] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
+
+/-- Classify each empirical embedding datum. -/
 def classifyVerb : String → SelectionClass
   | "investigate" => .rogativeCP
   | "depend on"   => .rogativeCP
@@ -267,19 +361,15 @@ def classifyVerb : String → SelectionClass
 /-- The theory correctly predicts all embedding judgments from the data. -/
 theorem theory_predicts_embedding :
     ∀ d ∈ allEmbeddingData,
-      allowsEmbedding (classifyVerb d.verb)
-        Syntax.Minimalist.LeftPeriphery.EmbedType.subordination
-        false false = d.subordination ∧
-      allowsEmbedding (classifyVerb d.verb)
-        Syntax.Minimalist.LeftPeriphery.EmbedType.quasiSubordination
-        false false = d.quasiSubordination ∧
-      allowsEmbedding (classifyVerb d.verb)
-        Syntax.Minimalist.LeftPeriphery.EmbedType.quotation
-        false false = d.quotation := by
+      allowsEmbedding (classifyVerb d.verb) .subordination false false
+        = d.subordination ∧
+      allowsEmbedding (classifyVerb d.verb) .quasiSubordination false false
+        = d.quasiSubordination ∧
+      allowsEmbedding (classifyVerb d.verb) .quotation false false
+        = d.quotation := by
   intro d hd
-  simp only [allEmbeddingData, List.mem_cons, List.mem_singleton, List.mem_nil_iff,
-             or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> native_decide
+  simp only [allEmbeddingData, List.mem_cons, List.mem_nil_iff, or_false] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
 /-- Shiftiness predictions match McCloskey's data for *remember* (responsive). -/
 theorem shiftiness_predicted :

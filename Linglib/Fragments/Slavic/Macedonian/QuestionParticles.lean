@@ -19,7 +19,7 @@ Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.macedonian`: PQ strategy profile (negationTriggersBias = false)
+- `Simik2024.macedonian` (`Studies/Simik2024`): PQ strategy profile (negationTriggersBias = false)
 
 -/
 

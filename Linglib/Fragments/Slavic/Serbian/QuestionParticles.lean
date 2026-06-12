@@ -16,9 +16,8 @@ layer assignment lives in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.serbian`: PQ strategy profile (da li + verb movement)
-- `SlavicPQStrategies.zar`: bias particle data (outerNeg/innerNeg)
-- Bridge theorems in `SlavicPQStrategies` (Phenomena imports Fragments)
+- `Simik2024.serbian` (`Studies/Simik2024`): PQ strategy profile (da li + verb movement)
+- Layer assignments and Fragment-derived bias theorems in `Studies/Simik2024`
 
 -/
 

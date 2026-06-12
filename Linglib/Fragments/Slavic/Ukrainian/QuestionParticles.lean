@@ -16,7 +16,7 @@ layer assignment lives in `Simik2024`.
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.ukrainian`: PQ strategy profile (clause-initial čy obligatory)
+- `Simik2024.ukrainian` (`Studies/Simik2024`): PQ strategy profile (clause-initial čy obligatory)
 - Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian razve
 
 -/

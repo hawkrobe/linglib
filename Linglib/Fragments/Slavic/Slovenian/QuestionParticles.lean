@@ -18,7 +18,7 @@ Incompatible with DeclPQs ([simik-2024] ex. 28).
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.slovenian`: PQ strategy profile
+- `Simik2024.slovenian` (`Studies/Simik2024`): PQ strategy profile
 
 -/
 

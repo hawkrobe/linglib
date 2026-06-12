@@ -18,9 +18,8 @@ left-peripheral layer assignment lives in
 
 ## Cross-Module Connections
 
-- `SlavicPQStrategies.russian`: PQ strategy profile (intonation default, li formal)
-- `SlavicPQStrategies.razve`: bias particle data (outerNeg/innerNeg)
-- Bridge theorems in `SlavicPQStrategies` (Phenomena imports Fragments)
+- `Simik2024.russian` (`Studies/Simik2024`): PQ strategy profile (intonation default, li formal)
+- Layer assignments and Fragment-derived bias theorems in `Studies/Simik2024`
 
 -/
 

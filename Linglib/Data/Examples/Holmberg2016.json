@@ -1,0 +1,48 @@
+[
+  {
+    "id": "holmberg2016_english_yes_to_neg",
+    "source": {"bibkey": "holmberg-2016", "paperLabel": "yes answering a negative question (English, polarity-based)"},
+    "language": "stan1293",
+    "primaryText": "Doesn't John drink? — Yes.",
+    "discourseSegments": [
+      "Doesn't John drink?",
+      "Yes."
+    ],
+    "glossedTokens": [],
+    "translation": "Doesn't John drink? — Yes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["question_polarity", "negative"],
+      ["particle", "yes"],
+      ["answer_polarity", "positive"],
+      ["system", "polarityBased"]
+    ],
+    "comment": "Migrated from Phenomena/Questions/PolarAnswerStructure.lean english_yes_to_neg; the prior Lean file's chapter pointers are stripped here. In the polarity-based English system, 'Yes' answering the negative question means 'John drinks': the particle assigns positive polarity to the elided answer clause."
+  },
+  {
+    "id": "holmberg2016_japanese_hai_to_neg",
+    "source": {"bibkey": "holmberg-2016", "paperLabel": "hai answering a negative question (Japanese, truth-based)"},
+    "language": "nucl1643",
+    "primaryText": "Kare-wa nomanai no? — Hai.",
+    "discourseSegments": [
+      "Kare-wa nomanai no?",
+      "Hai."
+    ],
+    "glossedTokens": [],
+    "translation": "Doesn't he drink? — Yes (= he doesn't drink).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["question_polarity", "negative"],
+      ["particle", "hai"],
+      ["answer_polarity", "negative"],
+      ["system", "truthBased"]
+    ],
+    "comment": "Migrated from Phenomena/Questions/PolarAnswerStructure.lean japanese_hai_to_neg; the prior Lean file's chapter pointers are stripped here. In the truth-based Japanese system, 'Hai' affirms the question's negative proposition: it means 'He doesn't drink' — the opposite answer polarity from English 'Yes' to the same negative question."
+  }
+]
