@@ -24,9 +24,11 @@ listener level, plus discrimination-driven ordering preferences at the
 speaker level using linglib's `trajectoryProb` (chain-rule product of
 per-step normalized softmaxes). Note that linglib's `trajectoryProb` is not
 literally S&W's `S1^inc` (which accumulates utilities with a single global
-normalization rather than per-step softmaxes); see
-`Composition.trajectoryProb_eq_compose_chain` for the deferred A≡C
-equivalence statement.
+normalization rather than per-step softmaxes). Per-step S1 normalizers are
+world-dependent, so speaker chaining and stage-to-stage listener chaining
+(`RSA.RSAConfig.composeWithPrior`) generically diverge at the pragmatic
+layer ([cohn-gordon-goodman-potts-2019]); they agree at the literal layer,
+where iterated Bayesian update equals the PoE posterior.
 
 What this file does **not** formalize:
 - Asymmetric per-class semantics (k%-threshold for size dimensions à la
