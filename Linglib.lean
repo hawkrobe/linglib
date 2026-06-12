@@ -1237,11 +1237,7 @@ import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.Bohnemeyer2004
-import Linglib.Phenomena.ArgumentStructure.Passive
-import Linglib.Phenomena.ArgumentStructure.Subcategorization
-import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Studies.Storment2026
-import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Studies.Adger2003
 import Linglib.Studies.Landman2020
 import Linglib.Studies.Levin1993
@@ -1268,8 +1264,6 @@ import Linglib.Studies.Hacquard2010
 import Linglib.Studies.Zhao2025
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Studies.Smith1997
-import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Studies.Amato2025Auxiliary
 import Linglib.Studies.Anderson2006
 import Linglib.Studies.Olivier2026
@@ -2853,3 +2847,7 @@ import Linglib.Data.Examples.Geach1962
 import Linglib.Data.Examples.Kanazawa1994
 import Linglib.Data.Examples.ElliottSudo2025
 import Linglib.Data.Examples.AhnZhu2025
+import Linglib.Data.Examples.Collins2005
+import Linglib.Data.Examples.Storment2026
+import Linglib.Data.Examples.LevinRappaportHovav1995
+import Linglib.Data.Examples.Levin1993

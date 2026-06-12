@@ -16,9 +16,8 @@ under **two** distinct AVC patterns:
   is a grammaticalized motion verb encoding TAM. Sources: Wiering
   and Wiering 1994: 217, 221, 222.
 
-This Fragment exposes BOTH patterns; the `Phenomena/AuxiliaryVerbs/
-Studies/Anderson2006.lean` study file consumes them as two separate
-`AVCDatum`s.
+This Fragment exposes BOTH patterns; the `Studies/Anderson2006.lean`
+study file consumes them as two separate `AVCDatum`s.
 
 The earlier single-pattern entry (W&W 1994: 75 'they will be
 catching him for me' classified as `.split`) was removed in the

@@ -1,11 +1,12 @@
-import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
+import Linglib.Data.Examples.Storment2026
+import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.AuxiliaryVerbs
 
 /-!
 # Quotative Inversion as Smuggling
@@ -31,26 +32,17 @@ inversion in English and Setswana.
 - **§6**: Locative inversion shares the same mechanism. QI and LI are
   both nonactive inverse-voice constructions.
 
-## Cross-paper meta-bridges (live elsewhere per CLAUDE.md convention)
-
-The following comparisons are the formalizer's synthesis, not Storment's
-claims. They live in topic-named files alongside this study:
-
-- `../Unaccusativity/ProtoRoles.lean` — Dowty proto-role profiles vs.
-  Storment's QI-based unaccusativity classification (the MoS divergence)
-- `../Unaccusativity/VerbClasses.lean` — Levin verb classes vs. the QI
-  classification (alignment + the §37.3 within-class split)
-- `../Unaccusativity/IslandSensitivity.lean` — [storment-2026]'s
-  smuggling-licenses-QI prediction vs. [lu-pan-degen-2025]'s
-  discourse-sourced MoS island finding (compatibility, not contradiction)
+Example rows live in `Data/Examples/Storment2026.json` (QI/LI data) and
+`Data/Examples/LevinRappaportHovav1995.json` (classic locative-inversion
+diagnostics).
 -/
 
 namespace Storment2026
 
 open Semantics.Lexical
 open English.Predicates.Verbal
-open Phenomena.ArgumentStructure.Unaccusativity.Data
-open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
+open Data.Examples
+open Typology.AuxiliaryVerbs (TransitivityClass canonicalSelection)
 open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data
@@ -81,10 +73,8 @@ theorem arrive_unaccusative : arrive.unaccusative = true := rfl
 
 /-! ## §3. TransitivityClass derivation
 
-Maps a `Verb` to its three-way transitivity classification used by
-the auxiliary-selection system (`Phenomena/AuxiliaryVerbs/Selection.lean`).
-Stays in this study file because `TransitivityClass` lives in `Phenomena/`
-and cannot be imported by substrate (`Semantics/`, `Syntax/`, etc.). -/
+Maps a `Verb` to the three-way transitivity classification used by
+the auxiliary-selection substrate (`Typology/AuxiliaryVerbs.lean`). -/
 
 /-- Derive `TransitivityClass` from `Verb` fields. -/
 def deriveTransitivityClass (v : Verb) : TransitivityClass :=
@@ -171,29 +161,29 @@ theorem communication_unergatives_derivedQI :
     (LI), not a fronted quote (QI). -/
 theorem arrive_no_qi : arrive.toVerb.derivedQI = false := rfl
 
-/-- Consistency: each (verb, QI-datum) pair has its empirical result
-    matching `derivedQI`. Pairs the diagnostic data in
-    `Unaccusativity/Data.lean` with the smuggling prediction. -/
+/-- Consistency: each (QI row, verb) pair has its judgment matching
+    `derivedQI`. Pairs the rows of `Data/Examples/Storment2026.json`
+    with the smuggling prediction. -/
 theorem qi_data_matches_derivedQI :
-    ∀ p ∈ ([(qi_whisper,    whisper.toVerb),
-            (qi_murmur,     murmur.toVerb),
-            (qi_shout,      shout.toVerb),
-            (qi_cry,        cry.toVerb),
-            (qi_scream,     scream.toVerb),
-            (qi_mumble,     mumble.toVerb),
-            (qi_mutter,     mutter.toVerb),
-            (qi_shriek,     shriek.toVerb),
-            (qi_yell,       yell.toVerb),
-            (qi_groan,      groan.toVerb),
-            (qi_grumble,    grumble.toVerb),
-            (qi_hiss,       hiss.toVerb),
-            (qi_sigh,       sigh.toVerb),
-            (qi_whimper,    whimper.toVerb),
-            (qi_snap,       snap.toVerb),
-            (qi_speak,      speak.toVerb),
-            (qi_talk,       talk.toVerb)] :
-            List (DiagnosticDatum × Verb)),
-      (p.1.result = .passes) ↔ (p.2.derivedQI = true) := by
+    ∀ p ∈ ([(Examples.qi_whisper,    whisper.toVerb),
+            (Examples.qi_murmur,     murmur.toVerb),
+            (Examples.qi_shout,      shout.toVerb),
+            (Examples.qi_cry,        cry.toVerb),
+            (Examples.qi_scream,     scream.toVerb),
+            (Examples.qi_mumble,     mumble.toVerb),
+            (Examples.qi_mutter,     mutter.toVerb),
+            (Examples.qi_shriek,     shriek.toVerb),
+            (Examples.qi_yell,       yell.toVerb),
+            (Examples.qi_groan,      groan.toVerb),
+            (Examples.qi_grumble,    grumble.toVerb),
+            (Examples.qi_hiss,       hiss.toVerb),
+            (Examples.qi_sigh,       sigh.toVerb),
+            (Examples.qi_whimper,    whimper.toVerb),
+            (Examples.qi_snap,       snap.toVerb),
+            (Examples.qi_speak,      speak.toVerb),
+            (Examples.qi_talk,       talk.toVerb)] :
+            List (LinguisticExample × Verb)),
+      (p.1.judgment = .acceptable) ↔ (p.2.derivedQI = true) := by
   intro p hp; fin_cases hp <;> decide
 
 /-! ## §9. QI ∥ LI distributional contrasts (Storment §6)
@@ -207,32 +197,33 @@ membership is captured by `Minimalist.qiCanonical` and `liCanonical` in
 /-- whisper passes QI but is only marginal in LI — same mechanism
     (smuggling), different inputs. -/
 theorem qi_li_diverge_on_whisper :
-    qi_whisper.result = .passes ∧ loc_whisper.result = .marginal :=
+    Examples.qi_whisper.judgment = .acceptable ∧
+    LevinRappaportHovav1995.Examples.loc_whisper.judgment = .marginal :=
   ⟨rfl, rfl⟩
 
 /-- The transitivity constraint (§5): QI is blocked with multiple DP
     arguments (using `warn` per Storment eq. 125, naturally
     ditransitive); QI is fine with a quote + PP goal. -/
 theorem qi_transitivity_constraint :
-    qi_warn_double_obj.result = .fails ∧
-    qi_whisper_transitive.result = .passes :=
+    Examples.qi_warn_double_obj.judgment = .unacceptable ∧
+    Examples.qi_whisper_transitive.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
 /-- LI categorically blocks pronominal subjects; QI merely degrades them. -/
 theorem li_vs_qi_pronouns :
-    li_arrive_pronoun.result = .fails ∧
-    qi_whisper_pronoun.result = .marginal :=
+    Examples.li_arrive_pronoun.judgment = .unacceptable ∧
+    Examples.qi_whisper_pronoun.judgment = .marginal :=
   ⟨rfl, rfl⟩
 
 /-- LI blocks transitive verbs, just as QI does. -/
-theorem li_blocks_transitive : li_kick.result = .fails := rfl
+theorem li_blocks_transitive : Examples.li_kick.judgment = .unacceptable := rfl
 
 /-- Unified smuggling analysis (§6): LI with `arrive` works because
     arrive projects non-thematic Voice, permitting VP-smuggling — the
     same mechanism that licenses QI. -/
 theorem li_arrive_smuggling_unified :
     arrive.toVerb.voiceFor = voiceAnticausative ∧
-    loc_arrive.result = .passes :=
+    LevinRappaportHovav1995.Examples.loc_arrive.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
 /-! ## §11 + §12. The QI derivation (Storment §3 + §4)
@@ -275,61 +266,61 @@ def qiSmuggling : QIDerivation where
   quoteBinder := .discourseQUOT
 
 /-! Each structural position predicts an observable property. We verify
-each prediction against the §3 data. The bridge theorems below pair
+each prediction against the §3 rows. The bridge theorems below pair
 the position assignment (Storment's claim) with the empirical observation
 (also Storment's claim). -/
-
-open Phenomena.ArgumentStructure.Unaccusativity.Data (QIStructuralDatum)
 
 /-- Theme-as-operator in Spec,TP → agreement can track agent via
     defective circumvention (§3.1). -/
 theorem theme_specTP_agreement :
     qiSmuggling.themePosition = .specTP ∧
-    qi_agreement_english.result = .passes :=
+    Examples.qi_agreement_english.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
 /-- Theme-as-operator is phi-deficient → Setswana SM surfaces as
     default SM17 (§3.1). -/
 theorem theme_specTP_setswana_sm17 :
     qiSmuggling.themePosition = .specTP ∧
-    qi_agreement_setswana.result = .passes :=
+    Examples.qi_agreement_setswana.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
-/-- Theme-as-operator A-moves → cannot license parasitic gaps (§3.2). -/
+/-- Theme-as-operator A-moves → cannot license parasitic gaps, unlike
+    the A-bar-moved preposed quote of the non-QI baseline (§3.2). -/
 theorem theme_specTP_no_parasitic_gap :
     qiSmuggling.themePosition = .specTP ∧
-    qi_parasitic_gap_blocked.result = .fails :=
-  ⟨rfl, rfl⟩
+    Examples.qi_parasitic_gap_blocked.judgment = .unacceptable ∧
+    Examples.qi_parasitic_gap_baseline.judgment = .acceptable :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- Theme-as-operator A-moves → compatible with subject-to-subject
     raising (§3.3). -/
 theorem theme_specTP_raising :
     qiSmuggling.themePosition = .specTP ∧
-    qi_raising.result = .passes :=
+    Examples.qi_raising.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
 /-- Agent in Spec,vP → Setswana disjoint morpheme blocked (§3.4). -/
 theorem agent_specvP_conjoint :
     qiSmuggling.agentPosition = .specvP ∧
-    qi_conjoint_disjoint.result = .fails :=
+    Examples.qi_conjoint_disjoint.judgment = .unacceptable :=
   ⟨rfl, rfl⟩
 
 /-- Quote (separately from operator) bound by Discourse⁰[QUOT] → can
     split around verb + agent, need not be grammatical (§3.5). -/
 theorem quote_discourseQUOT_split :
     qiSmuggling.quoteBinder = .discourseQUOT ∧
-    qi_quote_split.result = .passes ∧
-    qi_quote_nongrammatical.result = .passes :=
+    Examples.qi_quote_split.judgment = .acceptable ∧
+    Examples.qi_quote_nongrammatical.judgment = .acceptable :=
   ⟨rfl, rfl, rfl⟩
 
 /-- VP smuggling predicts: VP-internal material (complements) precedes
     Agent; vP-external material (adjuncts) follows Agent (§2). -/
 theorem vp_smuggling_ordering :
     qiSmuggling.vpPosition = .specVoiceP ∧
-    qi_ordering_complement.result = .passes ∧
-    qi_ordering_depictive.result = .passes ∧
-    qi_ordering_manner.result = .passes ∧
-    qi_ordering_purpose.result = .passes :=
+    Examples.qi_ordering_complement.judgment = .acceptable ∧
+    Examples.qi_ordering_depictive.judgment = .acceptable ∧
+    Examples.qi_ordering_manner.judgment = .acceptable ∧
+    Examples.qi_ordering_purpose.judgment = .acceptable :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ## §13. Inverse-voice family membership

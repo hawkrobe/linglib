@@ -34,8 +34,8 @@ representations under the SC analysis.
   (dative alternation + particle placement) studied from a processing
   perspective — heaviness drives linearization while abstract structure
   drives priming.
-- `Phenomena.ArgumentStructure.DativeAlternation`: Records both DOC and PD
-  frames as grammatical — the precondition for the priming study.
+- Both DOC and PD frames are grammatical — the precondition for the
+  priming study.
 -/
 
 namespace HaddicanEtAl2026

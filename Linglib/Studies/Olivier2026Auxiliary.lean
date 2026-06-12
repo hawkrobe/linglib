@@ -1,4 +1,4 @@
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phase
 
@@ -95,7 +95,7 @@ theorem in this file; we encode only the diachronic French
 
 namespace Olivier2026Auxiliary
 
-open Phenomena.AuxiliaryVerbs.Selection
+open Typology.AuxiliaryVerbs
 
 /-! ## Matrix-verb taxonomy and clitic position -/
 

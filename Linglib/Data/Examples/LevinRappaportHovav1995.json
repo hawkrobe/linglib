@@ -1,0 +1,34 @@
+[
+  {
+    "id": "levinrappaporthovav1995_loc_arrive",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "UNVERIFIED locative inversion of an unaccusative (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "Into the room arrived a messenger.",
+    "glossedTokens": [],
+    "translation": "Into the room arrived a messenger.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["diagnostic", "locative_inversion"],
+      ["verb", "arrive"],
+      ["verb_class", "unaccusative"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean loc_arrive. Attribution follows the dissolved file's header citation [levin-hovav-1995]; locative inversion of unaccusatives is their flagship diagnostic. Consumed by Studies/Storment2026.lean for the unified smuggling analysis of LI."
+  },
+  {
+    "id": "levinrappaporthovav1995_loc_whisper",
+    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "UNVERIFIED locative inversion of a manner-of-speaking verb (no example number recorded)"},
+    "language": "stan1293",
+    "primaryText": "From the back of the room whispered a voice.",
+    "glossedTokens": [],
+    "translation": "From the back of the room whispered a voice.",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["diagnostic", "locative_inversion"],
+      ["verb", "whisper"],
+      ["verb_class", "manner_of_speaking"]
+    ],
+    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean loc_whisper. Manner-of-speaking verbs show variable acceptability in locative inversion. Attribution follows the dissolved file's header citation [levin-hovav-1995]."
+  }
+]

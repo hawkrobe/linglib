@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Studies.GoldbergJackendoff2004
-import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
+import Linglib.Data.Examples.Levin1993
 
 /-!
 # Levin (2026): The door pushed open
@@ -52,7 +52,7 @@ This study connects four existing layers:
 - `Semantics.Causation.Resultatives`: construction adds CAUSE;
   PCC maps onto the independent-source/tightness infrastructure
 - `English.Predicates`: verb and adjective entries
-- `Phenomena.ArgumentStructure.DiathesisAlternations`: existing alternation data
+- `Data.Examples.Levin1993`: alternation judgment rows
 
 The central theoretical insight — that *constructions* can license
 alternation behavior that *verbs* lack in isolation — is a construction
@@ -107,13 +107,11 @@ theorem all_classes_no_causative_alternation :
       (! ·.participatesIn .causativeInchoative) = true := by
   decide
 
-/-- Cross-reference: the existing alternation data in
-    `DiathesisAlternations.Data` already records that *hit* (§18.1) is
-    blocked for causative/inchoative. Our theorem agrees. -/
+/-- Cross-reference: [levin-1993]'s judgment rows already record that *hit*
+    (§18.1) is blocked for causative/inchoative ("*The door hit.", ex. 25b).
+    Our theorem agrees. -/
 theorem agrees_with_diathesis_data :
-    Phenomena.ArgumentStructure.DiathesisAlternations.Data.ci_hit.result
-      == .blocked := by
-  decide
+    Levin1993.Examples.ci_hit.judgment = .ungrammatical := rfl
 
 /-- All core classes are pure manner roots
     ([beavers-koontz-garboden-2020]): they encode no state, no result,

@@ -1,7 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -31,7 +30,6 @@ namespace Dowty1991
 
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
-open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
@@ -138,7 +136,9 @@ theorem psych_inchoative_stimulus_is_subject :
 
 /-! [dowty-1991] identifies three classes based on CoS distribution
     across non-subject arguments. When CoS is symmetric (both or neither),
-    alternation is possible. When asymmetric, the CoS argument is fixed as DO. -/
+    alternation is possible. When asymmetric, the CoS argument is fixed as DO.
+    The comparison with [levin-1993]'s alternation judgments lives in
+    `Studies/Levin1993.lean` (`dowty_*` theorems). -/
 
 def cosSymmetric (arg1 arg2 : EntailmentProfile) : Bool :=
   arg1.changeOfState == arg2.changeOfState
@@ -154,13 +154,6 @@ def sprayLoadLocation : EntailmentProfile :=
 theorem sprayLoad_cos_symmetric :
     cosSymmetric sprayLoadTheme sprayLoadLocation = true := by decide
 
-theorem sprayLoad_locative_data :
-    loc_spray.result = .participates ∧ loc_load.result = .participates := ⟨rfl, rfl⟩
-
-theorem sprayLoad_fragment :
-    spray.levinClass = some .sprayLoad ∧
-    load.levinClass = some .sprayLoad := ⟨rfl, rfl⟩
-
 -- ── break class ──
 
 def breakDirectObject : EntailmentProfile :=
@@ -174,9 +167,6 @@ theorem break_cos_asymmetric :
 
 theorem break_DO_more_patient :
     breakDirectObject.pPatientScore > breakInstrument.pPatientScore := by decide
-
-theorem break_no_locative :
-    LevinClass.break_.participatesIn .locative = false := by decide
 
 -- ── hit class ──
 
@@ -194,11 +184,6 @@ theorem hit_no_cos :
 
 theorem hit_no_IT :
     hitArg1.incrementalTheme = false ∧ hitArg2.incrementalTheme = false := ⟨rfl, rfl⟩
-
-theorem hit_alternation_data :
-    con_hit.result = .participates ∧
-    ci_hit.result = .blocked ∧
-    mid_hit.result = .blocked := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Table 1: Agentivity × Telicity → Unaccusativity (§12, p.607)

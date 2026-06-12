@@ -1,0 +1,1114 @@
+[
+  {
+    "id": "levin1993_ci_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(22), p. 9"},
+    "language": "stan1293",
+    "primaryText": "The little boy broke the window.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The little boy broke the window.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The window broke.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "causativeInchoative"],
+      ["participates", "true"]
+    ],
+    "comment": "Causative (22b) / inchoative (22a). Break is a pure change-of-state verb; the causative variant adds a notion of cause."
+  },
+  {
+    "id": "levin1993_mid_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(13b), p. 6"},
+    "language": "stan1293",
+    "primaryText": "Crystal vases break easily.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Crystal vases break easily.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "middle"],
+      ["participates", "true"]
+    ],
+    "comment": "Middle construction: verbs of causing a change of state."
+  },
+  {
+    "id": "levin1993_con_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(14b), p. 6"},
+    "language": "stan1293",
+    "primaryText": "*Janet broke at the vase.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Janet broke at the vase.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "conative"],
+      ["participates", "false"]
+    ],
+    "comment": "Conative requires both contact and motion components; break lacks both."
+  },
+  {
+    "id": "levin1993_bppa_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(16b), p. 7"},
+    "language": "stan1293",
+    "primaryText": "*Janet broke Bill on the finger.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Janet broke Bill on the finger.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Janet broke Bill's finger.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "bodyPartPossessorAscension"],
+      ["participates", "false"]
+    ],
+    "comment": "Body-part possessor ascension requires a contact component, which break lacks."
+  },
+  {
+    "id": "levin1993_ci_cut",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(23b), p. 9"},
+    "language": "stan1293",
+    "primaryText": "*The string cut.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The string cut.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Margaret cut the string.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "cut"],
+      ["levin_class", "21.1"],
+      ["alternation", "causativeInchoative"],
+      ["participates", "false"]
+    ],
+    "comment": "Blocked on the interpretation 'became cut': cut's meaning inherently involves an instrument, requiring an agent, so it is never found in the inchoative."
+  },
+  {
+    "id": "levin1993_mid_cut",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(13a), p. 6"},
+    "language": "stan1293",
+    "primaryText": "The bread cuts easily.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The bread cuts easily.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "cut"],
+      ["levin_class", "21.1"],
+      ["alternation", "middle"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_con_cut",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(14a), p. 6"},
+    "language": "stan1293",
+    "primaryText": "Margaret cut at the bread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Margaret cut at the bread.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "cut"],
+      ["levin_class", "21.1"],
+      ["alternation", "conative"],
+      ["participates", "true"]
+    ],
+    "comment": "Conative meaning: roughly 'Margaret tried to cut the bread' (no entailment of completion)."
+  },
+  {
+    "id": "levin1993_bppa_cut",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(15b), p. 7"},
+    "language": "stan1293",
+    "primaryText": "Margaret cut Bill on the arm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Margaret cut Bill on the arm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Margaret cut Bill's arm.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "cut"],
+      ["levin_class", "21.1"],
+      ["alternation", "bodyPartPossessorAscension"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_ci_hit",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(25b), p. 9"},
+    "language": "stan1293",
+    "primaryText": "*The door hit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The door hit.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Carla hit the door.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hit"],
+      ["levin_class", "18.1"],
+      ["alternation", "causativeInchoative"],
+      ["participates", "false"]
+    ],
+    "comment": "Hit is not a change-of-state verb, so it is not found in the causative/inchoative alternation."
+  },
+  {
+    "id": "levin1993_mid_hit",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(13d), p. 6"},
+    "language": "stan1293",
+    "primaryText": "*Door frames hit easily.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Door frames hit easily.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hit"],
+      ["levin_class", "18.1"],
+      ["alternation", "middle"],
+      ["participates", "false"]
+    ],
+    "comment": "No change-of-state component. Simple 'contact through motion' sense of hit (Levin's fn. 4)."
+  },
+  {
+    "id": "levin1993_con_hit",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(14d), p. 6"},
+    "language": "stan1293",
+    "primaryText": "Carla hit at the door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Carla hit at the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hit"],
+      ["levin_class", "18.1"],
+      ["alternation", "conative"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_bppa_hit",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(18b), p. 7"},
+    "language": "stan1293",
+    "primaryText": "Carla hit Bill on the back.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Carla hit Bill on the back.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Carla hit Bill's back.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hit"],
+      ["levin_class", "18.1"],
+      ["alternation", "bodyPartPossessorAscension"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_ci_touch",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(24b), p. 9"},
+    "language": "stan1293",
+    "primaryText": "*The cat touched.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The cat touched.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Terry touched the cat.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "touch"],
+      ["levin_class", "20"],
+      ["alternation", "causativeInchoative"],
+      ["participates", "false"]
+    ],
+    "comment": "Touch is not a change-of-state verb."
+  },
+  {
+    "id": "levin1993_mid_touch",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(13c), p. 6"},
+    "language": "stan1293",
+    "primaryText": "*Cats touch easily.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Cats touch easily.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "touch"],
+      ["levin_class", "20"],
+      ["alternation", "middle"],
+      ["participates", "false"]
+    ],
+    "comment": "No change-of-state component."
+  },
+  {
+    "id": "levin1993_con_touch",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(14c), p. 6"},
+    "language": "stan1293",
+    "primaryText": "*Terry touched at the cat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Terry touched at the cat.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "touch"],
+      ["levin_class", "20"],
+      ["alternation", "conative"],
+      ["participates", "false"]
+    ],
+    "comment": "Touch is a pure verb of contact; the motion component required by the conative is missing."
+  },
+  {
+    "id": "levin1993_bppa_touch",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(17b), p. 7"},
+    "language": "stan1293",
+    "primaryText": "Terry touched Bill on the shoulder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Terry touched Bill on the shoulder.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Terry touched Bill's shoulder.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "touch"],
+      ["levin_class", "20"],
+      ["alternation", "bodyPartPossessorAscension"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_con_push",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.3 (95)"},
+    "language": "stan1293",
+    "primaryText": "I pushed at/on/against the table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I pushed at/on/against the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I pushed the table.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "push"],
+      ["levin_class", "12"],
+      ["alternation", "conative"],
+      ["participates", "true"]
+    ],
+    "comment": "Push/pull verbs (94) alternate in the conative. Corrected from the constructed 'She pushed at the door.' of the prior Lean data file to Levin's (95b)."
+  },
+  {
+    "id": "levin1993_loc_spray",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§2.3.1 (125), p. 51"},
+    "language": "stan1293",
+    "primaryText": "Jack sprayed paint on the wall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jack sprayed paint on the wall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Jack sprayed the wall with paint.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "spray"],
+      ["levin_class", "9.7"],
+      ["alternation", "locative"],
+      ["participates", "true"]
+    ],
+    "comment": "Locative variant / with variant. Corrected from the constructed 'She sprayed ...' of the prior Lean data file."
+  },
+  {
+    "id": "levin1993_loc_load",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§9.7 (52)"},
+    "language": "stan1293",
+    "primaryText": "Jessica loaded boxes on the wagon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jessica loaded boxes on the wagon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Jessica loaded the wagon with boxes.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "load"],
+      ["levin_class", "9.7"],
+      ["alternation", "locative"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from the constructed 'She loaded hay onto the truck.' of the prior Lean data file to the §9.7 property listing."
+  },
+  {
+    "id": "levin1993_dat_give",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; give ∈ alternating GIVE VERBS, §2.1 (115) and §13.1"},
+    "language": "stan1293",
+    "primaryText": "She gave a book to him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She gave a book to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She gave him a book.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "give"],
+      ["levin_class", "13.1"],
+      ["alternation", "dative"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence pair is constructed; Levin's §13.1 dative example (172) uses lend ('They lent a bicycle to me / They lent me a bicycle'). Give's participation is grounded in the (115a) GIVE VERBS list."
+  },
+  {
+    "id": "levin1993_dat_send",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§11.1 (129)"},
+    "language": "stan1293",
+    "primaryText": "Nora sent the book to Peter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nora sent the book to Peter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Nora sent Peter the book.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "send"],
+      ["levin_class", "11.1"],
+      ["alternation", "dative"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from the constructed 'She sent a package to him.' of the prior Lean data file. Cf. the animacy restriction (117): Bill sent Tom/*London a package."
+  },
+  {
+    "id": "levin1993_ben_carve",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§2.2 (121), p. 49"},
+    "language": "stan1293",
+    "primaryText": "Martha carved a toy for the baby.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Martha carved a toy for the baby.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Martha carved the baby a toy.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "carve"],
+      ["levin_class", "26.1"],
+      ["alternation", "benefactive"],
+      ["participates", "true"]
+    ],
+    "comment": "Carve is cross-listed 21.2/26.1; the benefactive alternation targets its BUILD VERBS use (the (120e) alternating list)."
+  },
+  {
+    "id": "levin1993_ss_radiate",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.1.3 (36), p. 32"},
+    "language": "stan1293",
+    "primaryText": "Heat radiates from the sun.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Heat radiates from the sun.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The sun radiates heat.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "radiate"],
+      ["levin_class", "43.4"],
+      ["alternation", "substanceSource"],
+      ["participates", "true"]
+    ],
+    "comment": "Only found with verbs of substance emission."
+  },
+  {
+    "id": "levin1993_mp_carve",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§2.4.1 (147), p. 56"},
+    "language": "stan1293",
+    "primaryText": "Martha carved a toy out of the piece of wood.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Martha carved a toy out of the piece of wood.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Martha carved the piece of wood into a toy.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "carve"],
+      ["levin_class", "26.1"],
+      ["alternation", "materialProduct"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_uo_eat",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.2.1 (38), p. 33"},
+    "language": "stan1293",
+    "primaryText": "Mike ate the cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mike ate the cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mike ate.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "eat"],
+      ["levin_class", "39.1"],
+      ["alternation", "unspecifiedObject"],
+      ["participates", "true"]
+    ],
+    "comment": "Intransitive variant understood as 'Mike ate a meal or something one typically eats.'"
+  },
+  {
+    "id": "levin1993_uo_devour",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§39.4 (652)"},
+    "language": "stan1293",
+    "primaryText": "*Cynthia devoured.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Cynthia devoured.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Cynthia devoured the pizza.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "devour"],
+      ["levin_class", "39.4"],
+      ["alternation", "unspecifiedObject"],
+      ["participates", "false"]
+    ],
+    "comment": "Devour verbs require an expressed object. Corrected from the constructed '*Mike devoured.' of the prior Lean data file."
+  },
+  {
+    "id": "levin1993_uro_meet",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.2.4 (59), p. 36"},
+    "language": "stan1293",
+    "primaryText": "Anne met Cathy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anne met Cathy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Anne and Cathy met.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "meet"],
+      ["levin_class", "36.3"],
+      ["alternation", "understoodReciprocalObject"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_ti_develop",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§6.1 (321), p. 89"},
+    "language": "stan1293",
+    "primaryText": "A problem developed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A problem developed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "There developed a problem.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "develop"],
+      ["levin_class", "48.1.1"],
+      ["alternation", "thereInsertion"],
+      ["participates", "true"]
+    ],
+    "comment": "Develop is listed under VERBS OF APPEARANCE in the §6.1 alternating list (320d)."
+  },
+  {
+    "id": "levin1993_ti_appear",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§6.1 (322), p. 89"},
+    "language": "stan1293",
+    "primaryText": "A ship appeared on the horizon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A ship appeared on the horizon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "There appeared a ship on the horizon.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "appear"],
+      ["levin_class", "48.1.1"],
+      ["alternation", "thereInsertion"],
+      ["participates", "true"]
+    ],
+    "comment": "Subject to the definiteness effect (323): *There appeared the ship on the horizon."
+  },
+  {
+    "id": "levin1993_li_live",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§6.2 (335), p. 92"},
+    "language": "stan1293",
+    "primaryText": "An old woman lives in the woods.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An old woman lives in the woods.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "In the woods lives an old woman.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "live"],
+      ["levin_class", "47.1"],
+      ["alternation", "locativeInversion"],
+      ["participates", "true"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "levin1993_is_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§3.3 (275), p. 80"},
+    "language": "stan1293",
+    "primaryText": "David broke the window with a hammer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "David broke the window with a hammer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The hammer broke the window.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "instrumentSubject"],
+      ["participates", "true"]
+    ],
+    "comment": "Intermediary instruments can become subjects."
+  },
+  {
+    "id": "levin1993_is_eat",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§3.3 (276), p. 80"},
+    "language": "stan1293",
+    "primaryText": "*The spoon ate the ice cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The spoon ate the ice cream.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Doug ate the ice cream with a spoon.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "eat"],
+      ["levin_class", "39.1"],
+      ["alternation", "instrumentSubject"],
+      ["participates", "false"]
+    ],
+    "comment": "Enabling/facilitating instruments cannot become subjects; eat only takes enabling instruments."
+  },
+  {
+    "id": "levin1993_ia_run",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.1.2.2 (25)"},
+    "language": "stan1293",
+    "primaryText": "The scientist ran the rats through the maze.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The scientist ran the rats through the maze.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The rats ran through the maze.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "run"],
+      ["levin_class", "51.3.2"],
+      ["alternation", "inducedAction"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from the constructed 'Bill ran the horse.' of the prior Lean data file; Levin notes the transitive variant requires an (at least understood) directional phrase."
+  },
+  {
+    "id": "levin1993_ia_walk",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; walk ∈ §1.1.2.2 (23) RUN VERBS (some)"},
+    "language": "stan1293",
+    "primaryText": "The dog walked.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The dog walked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She walked the dog.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "walk"],
+      ["levin_class", "51.3.2"],
+      ["alternation", "inducedAction"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence pair is constructed; walk's participation is grounded in the (23) alternating list. Levin's examples (24)-(25) use jump and run with overt directional phrases."
+  },
+  {
+    "id": "levin1993_ia_appear",
+    "source": {"bibkey": "levin-1993", "paperLabel": "(8), p. 4"},
+    "language": "stan1293",
+    "primaryText": "*The magician appeared a rabbit out of his hat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The magician appeared a rabbit out of his hat.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "A rabbit appeared out of the magician's hat.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "appear"],
+      ["levin_class", "48.1.1"],
+      ["alternation", "inducedAction"],
+      ["participates", "false"]
+    ],
+    "comment": "Corrected from the constructed '*She appeared the ghost.' of the prior Lean data file. Levin presents (8) as the absence of a causative form for appear (verbs of appearance are not change-of-state verbs, fn. 6 p. 9; cf. §48.1.1 '*The magician appeared a dove from his sleeve'); classified here under inducedAction as the causativization of an intransitive."
+  },
+  {
+    "id": "levin1993_ubpo_wave",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§1.2.2 (40), p. 34"},
+    "language": "stan1293",
+    "primaryText": "The departing passenger waved his hand at the crowd.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The departing passenger waved his hand at the crowd.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The departing passenger waved at the crowd.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "wave"],
+      ["levin_class", "40.3.2"],
+      ["alternation", "understoodBodyPartObject"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from the constructed 'Bill waved his hand.' of the prior Lean data file. Wave (hand) is a WINK VERB (§40.3.2), listed in (39a); the prior file classed it as a 40.1 body-process verb."
+  },
+  {
+    "id": "levin1993_uro_wash",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; wash ∈ §1.2.3 (47a) DRESS VERBS"},
+    "language": "stan1293",
+    "primaryText": "Bill washed himself.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bill washed himself.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Bill washed.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "wash"],
+      ["levin_class", "41.1.1"],
+      ["alternation", "understoodReflexiveObject"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence pair is constructed; wash's participation is grounded in the (47a) DRESS VERBS list. Levin's example (48) uses dress ('Jill dressed herself hurriedly / Jill dressed hurriedly')."
+  },
+  {
+    "id": "levin1993_tt_turn",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§2.4.3 (159)"},
+    "language": "stan1293",
+    "primaryText": "The witch turned him into a frog.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The witch turned him into a frog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The witch turned him from a prince into a frog.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "turn"],
+      ["levin_class", "26.6"],
+      ["alternation", "totalTransformation"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from 'The witch turned the prince into a frog.' of the prior Lean data file to Levin's (159a/b) pair."
+  },
+  {
+    "id": "levin1993_way_elbow",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; X's way attested for unergative and transitive verbs, §7.4 (365)–(366)"},
+    "language": "stan1293",
+    "primaryText": "She elbowed her way through the crowd.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She elbowed her way through the crowd.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "elbow"],
+      ["levin_class", "51.3"],
+      ["alternation", "wayConstruction"],
+      ["participates", "true"]
+    ],
+    "comment": "Neither this sentence nor the verb elbow appears in Levin's book; the construction is attested for unergatives and transitives ('The boy pushed his way through the crowd', (366a)). Class 51.3 follows the prior Lean data file."
+  },
+  {
+    "id": "levin1993_co_laugh",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§40.2 (686)"},
+    "language": "stan1293",
+    "primaryText": "Paul laughed a cheerful laugh.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Paul laughed a cheerful laugh.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Paul laughed.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "laugh"],
+      ["levin_class", "40.2"],
+      ["alternation", "cognateObject"],
+      ["participates", "true"]
+    ],
+    "comment": "Corrected from the constructed 'She laughed a bitter laugh.' of the prior Lean data file, which also misclassed laugh as a 37.3 manner-of-speaking verb; Levin lists laugh under VERBS OF NONVERBAL EXPRESSION (§40.2; §7.1 (347a))."
+  },
+  {
+    "id": "levin1993_co_grunt",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§7.1 (350)"},
+    "language": "stan1293",
+    "primaryText": "?Heather grunted a disinterested grunt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "?Heather grunted a disinterested grunt.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [
+      {"form": "Heather grunted.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "grunt"],
+      ["levin_class", "37.3"],
+      ["alternation", "cognateObject"],
+      ["participates", "marginal"]
+    ],
+    "comment": "Levin marks both the manner-of-speaking class (349) and the cognate-object example (350b) with '?': cognate objects are marginal for this class."
+  },
+  {
+    "id": "levin1993_co_jump",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§51.3.2 (998)"},
+    "language": "stan1293",
+    "primaryText": "*The horse jumped a high jump.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*The horse jumped a high jump.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "jump"],
+      ["levin_class", "51.3.2"],
+      ["alternation", "cognateObject"],
+      ["participates", "false"]
+    ],
+    "comment": "Run verbs do not take cognate objects despite having zero-related nominals (§51.3.2 comments). Replaces the prior Lean data file's co_run ('He ran a good race.', recorded as participating), which contradicts Levin."
+  },
+  {
+    "id": "levin1993_dp_run",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; run ∈ §7.8 (405) RUN VERBS"},
+    "language": "stan1293",
+    "primaryText": "She ran to the store.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She ran to the store.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "run"],
+      ["levin_class", "51.3.2"],
+      ["alternation", "directionalPhrase"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed; run's participation is grounded in the (405) list. Levin's example (406) uses tiptoe ('Audrey tiptoed / Audrey tiptoed to the door')."
+  },
+  {
+    "id": "levin1993_vp_break",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; cf. §5.1 (306)"},
+    "language": "stan1293",
+    "primaryText": "The window was broken by the boy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The window was broken by the boy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "break"],
+      ["levin_class", "45.1"],
+      ["alternation", "verbalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed; Levin's §5.1 example (306) uses slice ('The mushrooms were sliced by the cook')."
+  },
+  {
+    "id": "levin1993_vp_give",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; cf. §5.1 (306)"},
+    "language": "stan1293",
+    "primaryText": "The book was given to her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The book was given to her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "give"],
+      ["levin_class", "13.1"],
+      ["alternation", "verbalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed."
+  },
+  {
+    "id": "levin1993_vp_eat",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; cf. §5.1 (306)"},
+    "language": "stan1293",
+    "primaryText": "The cake was eaten.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cake was eaten.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "eat"],
+      ["levin_class", "39.1"],
+      ["alternation", "verbalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed."
+  },
+  {
+    "id": "levin1993_vp_see",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; cf. §5.1 (306)"},
+    "language": "stan1293",
+    "primaryText": "The ship was seen on the horizon.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The ship was seen on the horizon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "see"],
+      ["levin_class", "30.1"],
+      ["alternation", "verbalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed."
+  },
+  {
+    "id": "levin1993_vp_measure",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§54.1 (1030)"},
+    "language": "stan1293",
+    "primaryText": "*Ten pounds was weighed by the package.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "*Ten pounds was weighed by the package.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "The package weighed ten pounds.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "weigh"],
+      ["levin_class", "54.1"],
+      ["alternation", "verbalPassive"],
+      ["participates", "false"]
+    ],
+    "comment": "Register verbs (measure, read, register, total, weigh) resist passivization. Corrected from the constructed '*Five pounds are weighed by this box.' of the prior Lean data file."
+  },
+  {
+    "id": "levin1993_pp_sleep",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§5.2 (311)"},
+    "language": "stan1293",
+    "primaryText": "This bed was slept in by George Washington.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This bed was slept in by George Washington.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "George Washington slept in this bed.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "sleep"],
+      ["levin_class", "40.4"],
+      ["alternation", "prepositionalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Levin's canonical unergative prepositional passive. Corrected from the constructed 'The bed was slept in.' of the prior Lean data file, which also classed sleep as a §50 assume-position verb; Levin lists sleep under §40.4 SNOOZE VERBS."
+  },
+  {
+    "id": "levin1993_pp_talk",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed"},
+    "language": "stan1293",
+    "primaryText": "The matter was talked about.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The matter was talked about.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "talk"],
+      ["levin_class", "37.5"],
+      ["alternation", "prepositionalPassive"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence is constructed and not in Levin's §5.2, whose examples use sleep and appear; talk is a §37.5 TALK VERB (the prior Lean data file classed it 37.3 manner of speaking)."
+  },
+  {
+    "id": "levin1993_sw_swarm",
+    "source": {"bibkey": "levin-1993", "paperLabel": "§2.3.4 (139)"},
+    "language": "stan1293",
+    "primaryText": "Bees are swarming in the garden.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bees are swarming in the garden.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The garden is swarming with bees.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "swarm"],
+      ["levin_class", "47.5.1"],
+      ["alternation", "swarm"],
+      ["participates", "true"]
+    ],
+    "comment": "Locative variant / with variant. Corrected from the past-tense paraphrase of the prior Lean data file, which also classed swarm as 47.1; Levin's SWARM VERBS are §47.5.1."
+  },
+  {
+    "id": "levin1993_sw_crawl",
+    "source": {"bibkey": "levin-1993", "paperLabel": "UNVERIFIED constructed; crawl ∈ §2.3.4 (138f) SWARM VERBS"},
+    "language": "stan1293",
+    "primaryText": "Ants crawled on the counter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ants crawled on the counter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "The counter crawled with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "crawl"],
+      ["levin_class", "47.5.1"],
+      ["alternation", "swarm"],
+      ["participates", "true"]
+    ],
+    "comment": "Sentence pair is constructed; crawl's participation in the swarm alternation is grounded in the (138f) list (the prior Lean data file classed this use as 51.3 manner of motion)."
+  }
+]

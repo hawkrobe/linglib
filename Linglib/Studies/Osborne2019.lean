@@ -5,23 +5,13 @@ import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Phenomena.ArgumentStructure.Subcategorization
-import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
 # DG Valency Bridge: [osborne-2019]
 [tesniere-1959]
 
-Full derivation chain from DG valency theory to argument structure
-phenomena, grounded in the English Fragment lexicon.
-
-## Three-Way Connection
-
-```
-Fragments/English/Predicates/Verbal (complementType → ArgStr frame)
-    ↓ ↑
-DG ArgStr / LexRule / checkVerbSubcat ↔ Phenomena/ArgumentStructure data
-```
+Full derivation chain from DG valency theory to subcategorization and
+passive contrasts, grounded in the English Fragment lexicon.
 
 Each verb's DG frame is DERIVED from its Fragment entry's `complementType`
 field via `complementToArgStr`, not stipulated independently. The DG
@@ -43,7 +33,7 @@ passiveRule (LexRule) ← valency change derivation
     ↓
 isCatena / isConstituent ← structural analysis (Ch 4)
     ↓
-Phenomena data match ← grammaticality predictions
+grammaticality contrasts ← predictions for the example sentences
 ```
 
 -/
@@ -121,18 +111,15 @@ theorem passive_valence_consistent :
 -- §3: Grammatical Trees
 -- ============================================================================
 
-/-- "John sleeps" — intransitive, no object.
-    Matches `Subcategorization.data` pair 1. -/
+/-- "John sleeps" — intransitive, no object. -/
 def intransTree :=
   mkSVTree john sleeps (complementToArgStr English.Predicates.Verbal.sleep.complementType)
 
-/-- "John devours pizza" — transitive with object.
-    Matches `Subcategorization.data` pair 3. -/
+/-- "John devours pizza" — transitive with object. -/
 def transTree :=
   mkSVOTree john devours pizza (complementToArgStr English.Predicates.Verbal.devour.complementType)
 
-/-- "John gives Mary book" — ditransitive with two objects.
-    Matches `Subcategorization.data` pair 5. -/
+/-- "John gives Mary book" — ditransitive with two objects. -/
 def ditransTree :=
   mkDitransTree john gives mary book
     (complementToArgStr English.Predicates.Verbal.give.complementType)
@@ -146,8 +133,7 @@ def activeTree : DepTree :=
                none, none] }
 
 /-- "The ball was kicked" — short passive; the passive analysis derives
-    `argStr_VPassive` from kick's transitive frame (`passive_frame_matches`).
-    Matches `Passive.data` pair 1. -/
+    `argStr_VPassive` from kick's transitive frame (`passive_frame_matches`). -/
 def passiveTree : DepTree :=
   { words := [the_, ball, was_, kicked_pass]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩]
@@ -166,8 +152,7 @@ def longPassiveTree : DepTree :=
 -- §4: Ungrammatical Trees
 -- ============================================================================
 
-/-- "*John sleeps book" — intransitive with spurious object.
-    Matches `Subcategorization.data` pair 1. -/
+/-- "*John sleeps book" — intransitive with spurious object. -/
 def intrans_with_obj : DepTree :=
   { words := [john, sleeps, book]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
@@ -175,13 +160,11 @@ def intrans_with_obj : DepTree :=
     frames := [none, complementToArgStr English.Predicates.Verbal.sleep.complementType,
                none] }
 
-/-- "*John devours" — transitive missing required object.
-    Matches `Subcategorization.data` pair 3. -/
+/-- "*John devours" — transitive missing required object. -/
 def trans_no_obj :=
   mkSVTree john devours (complementToArgStr English.Predicates.Verbal.devour.complementType)
 
-/-- "*John gives Mary" — ditransitive missing direct object.
-    Matches `Subcategorization.data` pair 5. -/
+/-- "*John gives Mary" — ditransitive missing direct object. -/
 def ditrans_no_obj : DepTree :=
   { words := [john, gives, mary]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩]
@@ -189,8 +172,7 @@ def ditrans_no_obj : DepTree :=
     frames := [none, complementToArgStr English.Predicates.Verbal.give.complementType,
                none] }
 
-/-- "*The ball was kicked the ball" — passive with spurious object.
-    Matches `Passive.data` pair 1. -/
+/-- "*The ball was kicked the ball" — passive with spurious object. -/
 def passive_with_obj : DepTree :=
   { words := [the_, ball, was_, kicked_pass, the_, ball]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
@@ -332,18 +314,17 @@ theorem valency_derivation_chain :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- LEVEL 6: Bridge to Phenomena Data
+-- LEVEL 6: Grammaticality Contrasts
 -- ============================================================================
 
-/-- DG subcategorization predictions match all data pairs in
-    `Phenomena.ArgumentStructure.Subcategorization.data`:
+/-- DG subcategorization predictions capture the textbook contrasts:
 
-    | Data pair | Grammatical          | Ungrammatical         | Frame      |
-    |-----------|---------------------|-----------------------|------------|
-    | 1         | "John sleeps"       | "*John sleeps book"   | argStr_V0  |
-    | 3         | "John devours pizza"| "*John devours"       | argStr_VN  |
-    | 5         | "John gives Mary …" | "*John gives Mary"    | argStr_VNN | -/
-theorem subcategorization_data_match :
+    | Grammatical          | Ungrammatical         | Frame      |
+    |---------------------|-----------------------|------------|
+    | "John sleeps"       | "*John sleeps book"   | argStr_V0  |
+    | "John devours pizza"| "*John devours"       | argStr_VN  |
+    | "John gives Mary …" | "*John gives Mary"    | argStr_VNN | -/
+theorem subcategorization_contrasts :
     checkVerbSubcat intransTree = true ∧
     checkVerbSubcat intrans_with_obj = false ∧
     checkVerbSubcat transTree = true ∧
@@ -352,18 +333,15 @@ theorem subcategorization_data_match :
     checkVerbSubcat ditrans_no_obj = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- DG passive predictions match `Phenomena.ArgumentStructure.Passive.data`:
-
-    | Data pair | Grammatical             | Ungrammatical                    |
-    |-----------|------------------------|----------------------------------|
-    | 1         | "the ball was kicked"  | "*the ball was kicked the ball"  | -/
-theorem passive_data_match :
+/-- DG passive prediction captures the contrast
+    "the ball was kicked" / "*the ball was kicked the ball". -/
+theorem passive_contrasts :
     checkVerbSubcat passiveTree = true ∧
     checkVerbSubcat passive_with_obj = false :=
   ⟨rfl, rfl⟩
 
 /-
-## Summary: Three-Way Connection
+## Summary
 
 ```
 Fragments/English/Predicates/Verbal
@@ -377,9 +355,6 @@ DepTree instances (trees carry Fragment-derived frames)
 grammatical ✓ / ungrammatical ✗
         ↓ passiveRule.transform
 obj removed → argStr_VPassive surface frame
-        ↓ matches
-Phenomena.ArgumentStructure.Subcategorization.data
-Phenomena.ArgumentStructure.Passive.data
 ```
 
 Each level is independently verifiable by `rfl` or `native_decide`.

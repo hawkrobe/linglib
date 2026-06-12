@@ -2,7 +2,7 @@ import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Typology.Adposition
 import Linglib.Studies.Dendikken1995ParticleVerbs
-import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Semantics.Spatial.Trace
 
 /-!
@@ -39,7 +39,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
 - `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
 - `Semantics.Spatial.Trace`: PathShape → telicity
-- `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
+- `Typology.AuxiliaryVerbs` auxiliary selection: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
 - `Data.WALS.Features.F85A`: cross-linguistic adposition order
 -/
@@ -191,7 +191,7 @@ theorem place_path_family :
     auxiliary selection`. -/
 
 open Semantics.Spatial.Trace (pathShapeToTelicity)
-open Phenomena.AuxiliaryVerbs.Selection
+open Typology.AuxiliaryVerbs
 
 /-- All directional adpositions in the inventory carry a PathShape. -/
 theorem directional_adpositions_have_pathShape :
@@ -219,12 +219,11 @@ theorem op_bounded_telic :
   ⟨rfl, rfl⟩
 
 /-- End-to-end: telic → unaccusative → *zijn* (be) in Dutch.
-    Dutch has a split auxiliary system; unaccusative (telic change-of-state)
-    verbs select *zijn*, matching [broekhuis-corver-2026]'s ex. 22. -/
+    Dutch has a split auxiliary system ([sorace-2000]); unaccusative
+    (telic change-of-state) verbs select *zijn*, matching
+    [broekhuis-corver-2026]'s ex. 22. -/
 theorem telic_unaccusative_zijn :
-    canonicalSelection .unaccusative = .be ∧
-    dutchAankomen.selectionRule = .split :=
-  ⟨rfl, rfl⟩
+    canonicalSelection .unaccusative = .be := rfl
 
 /-- *op* (bounded) vs *van* (source): distinct PathShapes but both telic.
     Goal-oriented and origin-oriented directionality both yield telic VPs. -/
