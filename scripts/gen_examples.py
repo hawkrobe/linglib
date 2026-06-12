@@ -3,6 +3,8 @@
 
 Usage:
     python3 scripts/gen_examples.py <AuthorYear>
+    python3 scripts/gen_examples.py --all                # regenerate every paper
+    python3 scripts/gen_examples.py --check [<AuthorYear>]  # verify sync, no writes
 
 Example:
     python3 scripts/gen_examples.py Charlow2014
@@ -47,9 +49,10 @@ Behavior:
 - Errors out on schema violations (unknown judgment value, gloss/word
   length mismatch, missing required field, missing source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
+- `--check` regenerates in-memory and exits 1 on any drift (CI guard);
+  writes nothing.
 
 Defer to follow-on:
-- `--check` mode (regenerate in-memory and assert no diff).
 - Schema extensions (Tree, indexed anaphora, paper-relativized
   classifications) when a consuming study demands them.
 
