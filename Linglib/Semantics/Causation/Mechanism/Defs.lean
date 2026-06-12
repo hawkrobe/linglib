@@ -14,7 +14,7 @@ mathlib `Kernel.deterministic := dirac ∘ f` pattern (see
 `Mathlib/Probability/Kernel/Basic.lean`):
 - Deterministic mechanism = PMF.pure-valued (Dirac delta) — see
   `Mechanism/Deterministic.lean`
-- Stochastic mechanism = arbitrary PMF — see `Mechanism/PMF.lean`
+- Stochastic mechanism = arbitrary PMF-valued `run`
 
 `IsDeterministic` is a `Prop` mixin class that consumers can require
 when they need to extract the deterministic function (mirroring

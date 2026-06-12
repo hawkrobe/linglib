@@ -30,7 +30,7 @@ arguments but **none** of V1's.  This predicts:
    or source); pure causers are ungrammatical — derived from data via
    `CcfRole.isV1Participant`, not stipulated
 4. **V-V morphology**: `MorphWord.compound` captures the binary V1-V2 structure
-5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffect`)
+5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffectOn`)
 6. **Phase complements**: grammaticalized V2 subset with fixed `CoSType`
    (standard Mandarin grammar, supplementing the thesis's V-V analysis)
 

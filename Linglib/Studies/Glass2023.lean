@@ -1,4 +1,5 @@
 import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Studies.NadathurLauer2020
 
 /-!
 # Glass 2023: Anna Karenina Principle and *cause*
@@ -127,5 +128,18 @@ theorem glass_cause_is_causallySufficient {V : Type*} [Fintype V] [DecidableEq V
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) :
     causeSemGlass M bg cause effect ↔
       Semantics.Causation.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
+
+/-- **Glass vs N&L diverge on the Bus scenario**: "Ava's training caused
+    Lia to take the bus" is true on Glass's sufficiency-based *cause* but
+    false on [nadathur-lauer-2020]'s necessity-based *cause* — the same
+    verb, the same scenario, opposite predictions. The two conjuncts are
+    [nadathur-lauer-2020]'s own (33a)/(33b) verdicts, repackaged as the
+    rival-accounts comparison this paper draws. -/
+theorem glass_nl_diverge_on_bus :
+    causeSemGlass NadathurLauer2020.Bus.busSEM NadathurLauer2020.Bus.s_b .Tr .Bs ∧
+    ¬ Necessity.causeSem NadathurLauer2020.Bus.busSEM NadathurLauer2020.Bus.s_b
+        .Tr true .Bs true :=
+  ⟨NadathurLauer2020.Bus.make_felicitous_for_bus,
+   NadathurLauer2020.Bus.cause_infelicitous_for_bus⟩
 
 end Glass2023
