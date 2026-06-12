@@ -85,9 +85,14 @@ def graph : CausalGraph V := ⟨fun
   | .G => {.D}
   | .F => {.G, .P, .L}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
     (fire ignites only when grass inflammable, power on, line touching). -/
@@ -119,28 +124,27 @@ noncomputable def s_b : Valuation (fun _ : V => Bool) :=
 /-- Extended background s_b1: the line is also known to be down. -/
 noncomputable def s_b1 : Valuation (fun _ : V => Bool) := s_b.extend .L true
 
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails fireSEM s v x ↔
+      SEM.developDetVtxFuel fireSEM s 3 v = some x :=
+  SEM.causallyEntails_iff_fuel fireSEM depth depth_lt (by cases v <;> decide) s x
+
 /-- (31a) `#Restoring power made the field catch fire.` Make-side: P=true
     is NOT sufficient for F=true relative to s_b. With L undetermined,
-    the fire mechanism `G ∧ P ∧ L` cannot fire to true. -/
+    the fire mechanism `G ∧ P ∧ L` stays unsettled (Def 23's clause (b)
+    fails). -/
 theorem make_infelicitous_for_fire :
     ¬ makeSem fireSEM s_b .P true .F true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  intro h
-  have hFalse : (fireSEM.developDet (s_b.extend V.P true)).hasValue V.F false :=
-    developDet_hasValue_of_developDetOn_hasValue
-      (vs := [V.D, V.G, V.L, V.P, V.F]) (n := 5) (by decide)
-  rw [Valuation.hasValue] at h hFalse
-  exact Bool.noConfusion (Option.some.inj (h.symm.trans hFalse))
+  rintro ⟨-, hb⟩
+  exact absurd (entails_iff.mp hb) (by decide)
 
 /-- (31b, with extended background s_b1 where L is also known) `Restoring
     power caused the field to catch fire.` Both *make* and *cause* hold.
     With s_b1 fixing D=G=L=1, P=true is both sufficient and necessary
     for F=true. -/
 theorem make_felicitous_for_fire_with_known_line :
-    makeSem fireSEM s_b1 .P true .F true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.D, V.G, V.L, V.P, V.F]) (n := 5) (by decide)
+    makeSem fireSEM s_b1 .P true .F true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 end Fire
 
@@ -160,9 +164,14 @@ def graph : CausalGraph V := ⟨fun
   | .Bk => {.Vis, .Tr}
   | .Bs => {.Rn, .Bk}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs => 2)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs => 2
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Bus dynamics: Bk := Vis ∧ Tr (bike taken when Ava visits AND trains);
     Bs := Rn ∨ Bk (bus taken when rain OR bike gone). The OR for Bs
@@ -195,40 +204,35 @@ noncomputable instance : SEM.IsDeterministic busSEM where
 noncomputable def s_b : Valuation (fun _ : V => Bool) :=
   Valuation.empty.extend .Vis true |>.extend .Rn true
 
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails busSEM s v x ↔
+      SEM.developDetVtxFuel busSEM s 3 v = some x :=
+  SEM.causallyEntails_iff_fuel busSEM depth depth_lt (by cases v <;> decide) s x
+
+private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
+    BoolSEM.causallyNecessary busSEM s c e ↔
+      SEM.causallyNecessaryFuel busSEM 3 s c true e true :=
+  SEM.causallyNecessary_iff_fuel busSEM depth depth_lt
+    (by intro v; cases v <;> decide) s c true e true
+
 /-- (33a) `Ava's training made Lia take the bus to work.` Make-side:
-    T=true is sufficient for B=true relative to s_b. With Vis=Rn=1
-    in background, Tr:=1 forces Bk:=1 forces Bs:=1. -/
+    T=true is sufficient for B=true relative to s_b: under the strict
+    dynamics Bs stays unsettled in the background (Bk waits on Tr), so
+    Def 23's non-inevitability clause (a) holds, and Tr:=1 forces
+    Bk:=1 forces Bs:=1 for clause (b). -/
 theorem make_felicitous_for_bus :
-    makeSem busSEM s_b .Tr true .Bs true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.Vis, V.Tr, V.Rn, V.Bk, V.Bs]) (n := 5) (by decide)
+    makeSem busSEM s_b .Tr true .Bs true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
-/-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side:
-    fails N&L's Def 24 / project-canonical Def 10b necessity.
-
-    Under this substrate's eager-default semantics (every undetermined
-    root vertex defaults to its `const` mechanism value), `developDetVtx
-    busSEM s_b .Bs = true` already (because Rn=true in s_b suffices via
-    the OR mechanism). This makes causeSem's **precondition** clause
-    fail: "the dynamics does not already entail effect=xE in the
-    background" is false here.
-
-    N&L's stepwise semantics (which leaves Bs undetermined until both
-    parents are determined) instead derives infelicity via the noAlternative
-    clause — a consistent supersituation lacking Tr=true that still
-    produces Bs=true. Same empirical conclusion (cause infelicitous),
-    different load-bearing clause; see module docstring on substrate
-    deviation. -/
+set_option maxRecDepth 4096 in
+/-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side: fails
+    Def 10b necessity via the **no-alternative** clause, exactly N&L's
+    route: the exogenous settlement `s_b[Tr ↦ 0]` still entails Bs = 1
+    (rain alone suffices via the OR mechanism) without entailing Tr = 1. -/
 theorem cause_infelicitous_for_bus :
     ¬ causeSem busSEM s_b .Tr true .Bs true := by
-  rintro ⟨_, ⟨_, hPre⟩, _, _⟩
-  -- hPre : developDetVtx busSEM s_b .Bs ≠ true
-  -- But under eager-default semantics, dev .Bs from s_b = Rn ∨ Bk =
-  -- true ∨ (Vis ∧ default Tr) = true ∨ (true ∧ false) = true.
-  apply hPre
-  exact developDetVtx_of_developDetOn_hasValue
-    (vs := [V.Vis, V.Tr, V.Rn, V.Bk, V.Bs]) (n := 5) (by decide)
+  rintro ⟨-, hnec⟩
+  exact absurd (necessary_iff.mp hnec) (by decide)
 
 end Bus
 
@@ -251,9 +255,14 @@ def graph : CausalGraph V := ⟨fun
   | .Q => ∅ | .S => ∅
   | .L => {.Q, .S}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .Q => 0 | .S => 0 | .L => 1)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .Q => 0 | .S => 0 | .L => 1
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Lighthouse dynamics: L := Q ∧ S (collapse requires both
     earthquake-induced foundation damage AND extreme storms). -/
@@ -288,14 +297,17 @@ def validBackgroundFor (idx : V → Nat) (t : Nat)
     (s : Valuation (fun _ : V => Bool)) : Prop :=
   ∀ v, (s.get v).isSome → idx v ≤ t
 
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails lighthouseSEM s v x ↔
+      developDetVtxFuel lighthouseSEM s 2 v = some x :=
+  SEM.causallyEntails_iff_fuel lighthouseSEM depth depth_lt (by cases v <;> decide) s x
+
 /-- (35d) `The storms made the tower collapse.` Felicitous: with
     background fixing Q=true (the earlier necessary cause), S=true
     suffices for L=true. -/
 theorem make_felicitous_for_storms :
-    makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.Q, V.S, V.L]) (n := 3) (by decide)
+    makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
     Def 28 temporal-location constraint: the only background under which
@@ -303,61 +315,42 @@ theorem make_felicitous_for_storms :
     happens at time 2 > 1 = time of Q. So no temporally-valid background
     supports the make-claim.
 
-    Concretely: for the make-claim to hold per Def 23, need a background
-    `s` such that adding Q to s develops L. Under eager-default semantics,
-    `dev L from (s + Q:=true) = Q ∧ S`. For this to equal true, S must
-    be fixed to true in s. But `lighthouseTimes .S = 2 > 1`, so any such
-    `s` violates `validBackgroundFor lighthouseTimes 1`. -/
+    Concretely: for the make-claim to hold per Def 23(b), the strict
+    development of `s + (Q := true)` must fix L = 1, which requires S to
+    be fixed in s. But `lighthouseTimes .S = 2 > 1`, so any such `s`
+    violates `validBackgroundFor lighthouseTimes 1` — S stays u-valued
+    and L = Q ∧ S stays unsettled. -/
 theorem make_infelicitous_for_earthquake :
     ∀ s, validBackgroundFor lighthouseTimes 1 s →
       ¬ makeSem lighthouseSEM s .Q true .L true := by
   intro s hValid
-  unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff]
-  intro h
-  -- h : developDetVtx lighthouseSEM (s.extend .Q true) .L = true
-  -- Per validBackgroundFor and lighthouseTimes .S = 2 > 1, s.get .S = none.
-  have hSnone : s.get .S = none := by
-    by_contra hSome
-    have hIsSome : (s.get .S).isSome := by
-      cases h' : s.get .S
-      · exact absurd h' hSome
-      · rfl
-    have := hValid .S hIsSome
-    simp [lighthouseTimes] at this
-  -- developDetVtx of L in s.extend .Q true: L undetermined → mech L (parents)
-  -- mech L = Q ∧ S = true ∧ developDetVtx s' .S
-  -- developDetVtx s' .S: S undetermined in s' (since hSnone) → const false = false
-  -- So mech L = true ∧ false = false ≠ true. Contradiction with h.
-  rw [developDetVtx_unfold] at h
-  have hLnone : (s.extend .Q true).get .L = none := by
-    rw [Valuation.extend_get_ne (by decide : V.L ≠ V.Q)]
-    -- s.get .L: validBackgroundFor with t=1 and lighthouseTimes .L = 3 > 1
-    -- so s can't fix .L either
-    by_contra hSome
-    have hIsSome : (s.get .L).isSome := by
-      cases h' : s.get .L
-      · exact absurd h' hSome
-      · rfl
-    have := hValid .L hIsSome
-    simp [lighthouseTimes] at this
-  rw [hLnone] at h
-  -- h is now mech .L applied to parent values = true
-  -- Compute parent values
-  have hVtxQ : developDetVtx lighthouseSEM (s.extend .Q true) .Q = true := by
-    rw [developDetVtx_unfold, Valuation.extend_get_same]
-  have hVtxS : developDetVtx lighthouseSEM (s.extend .Q true) .S = false := by
-    rw [developDetVtx_unfold]
+  rintro ⟨-, hb⟩
+  -- S is fixed by neither s (time 2 > 1) nor the Q-extension, so the
+  -- strict dynamics leaves L = Q ∧ S unsettled.
+  have hSnone : (s.extend V.Q true).get V.S = none := by
     rw [Valuation.extend_get_ne (by decide : V.S ≠ V.Q)]
-    rw [hSnone]
-    rfl
-  -- Strategy: prove `developDetVtx ... .L = false` independently and
-  -- combine with h via Bool inequality.
-  -- Reduce h to the same form, then substitute parent values.
-  change (developDetVtx lighthouseSEM (s.extend V.Q true) V.Q &&
-          developDetVtx lighthouseSEM (s.extend V.Q true) V.S) = true at h
-  rw [hVtxQ, hVtxS] at h
-  exact Bool.false_ne_true h
+    by_contra hSome
+    have hIsSome : (s.get V.S).isSome := by
+      cases h' : s.get V.S
+      · exact absurd h' hSome
+      · rfl
+    have := hValid V.S hIsSome
+    simp [lighthouseTimes] at this
+  have hSdev : developDetVtx? lighthouseSEM (s.extend V.Q true) V.S = none :=
+    developDetVtx?_exogenous _ hSnone (by decide)
+  have hLnone : (s.extend V.Q true).get V.L = none := by
+    rw [Valuation.extend_get_ne (by decide : V.L ≠ V.Q)]
+    by_contra hSome
+    have hIsSome : (s.get V.L).isSome := by
+      cases h' : s.get V.L
+      · exact absurd h' hSome
+      · rfl
+    have := hValid V.L hIsSome
+    simp [lighthouseTimes] at this
+  have hLdev : developDetVtx? lighthouseSEM (s.extend V.Q true) V.L = none :=
+    developDetVtx?_inner_none _ hLnone ⟨V.S, by decide⟩ hSdev
+  rw [SEM.causallyEntails, hLdev] at hb
+  simp at hb
 
 end Lighthouse
 
@@ -409,9 +402,14 @@ def graph : CausalGraph V := ⟨fun
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .WD => 0 | .G => 0 | .D => 1)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Permission dynamics (Fig 5): D := W_D ∧ G. Both desire AND
     permission needed for dancing. -/
@@ -442,12 +440,15 @@ def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails permissionSEM s v x ↔
+      developDetVtxFuel permissionSEM s 2 v = some x :=
+  SEM.causallyEntails_iff_fuel permissionSEM depth depth_lt (by cases v <;> decide) s x
+
 /-- Bare sufficiency holds: G:=true is sufficient for D=true given W_D=true. -/
 theorem permission_makeSem :
-    makeSem permissionSEM bg .G true .D true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
+    makeSem permissionSEM bg .G true .D true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (40a) `??Gurung made the children dance.` Volitional-action
     constraint VIOLATED: with W_D fixed in bg, W_D := false is sufficient
@@ -460,12 +461,10 @@ theorem permission_violates_volitional_constraint :
   -- Specialize to W_D
   apply h .WD rfl
   refine ⟨?_, ?_⟩
-  · -- makeSem permissionSEM (bg + G:=true) WD false D false. With bg fully
-    -- concrete (Valuation.empty.extend .WD true), the developDetOn iteration
-    -- decides directly via the canonical bridge.
-    unfold makeSem SEM.causallySufficient developsToValue
-    exact developDet_hasValue_of_developDetOn_hasValue
-      (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
+  · -- makeSem permissionSEM (bg + G:=true) WD false D false: with G granted,
+    -- D = W_D ∧ G is settled true (so D = false is not inevitable), and
+    -- revoking the desire settles D = false.
+    exact ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
   · -- (bg.remove .G).get .WD ≠ none. bg fixes .WD=true; removing .G doesn't change that.
     intro hNone
     -- (bg.remove .G).get .WD: .WD ≠ .G so remove doesn't touch it; equals bg.get .WD = some true.
@@ -501,9 +500,14 @@ def graph : CausalGraph V := ⟨fun
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .WD => 0 | .G => 0 | .D => 1)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Command dynamics (Fig 6): D := W_D ∨ G. Either authority alone OR
     independent desire suffices for dancing. -/
@@ -528,41 +532,53 @@ def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
-/-- Bare sufficiency holds with empty background: G:=true alone forces D=true. -/
-theorem command_makeSem :
-    makeSem commandSEM Valuation.empty .G true .D true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails commandSEM s v x ↔
+      developDetVtxFuel commandSEM s 2 v = some x :=
+  SEM.causallyEntails_iff_fuel commandSEM depth depth_lt (by cases v <;> decide) s x
 
-/-- (41a)/(42a) `Gurung made the children dance` (in command context).
-    Volitional-action constraint SATISFIED: W_D := false is NOT sufficient
-    for D := false (D = W_D ∨ G with G=true gives D=true regardless).
-    First conjunct of Def 43's bad condition fails, so constraint holds. -/
+/-- (41) context: the children are independently eager (W_D = 1). -/
+noncomputable def bgEager : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .WD true
+
+/-- (42) context: the children are reluctant (W_D = 0). -/
+noncomputable def bgReluctant : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .WD false
+
+/-- (41) Bare sufficiency in the eager context: with W_D = 1 fixed,
+    D = W_D ∨ G stays unsettled while G is (Def 23a holds under the
+    strict dynamics), and G := 1 settles it. N&L's (41)/(42) contexts
+    differ only in the background setting of W_D; *make* is felicitous
+    in both. -/
+theorem command_makeSem_eager :
+    makeSem commandSEM bgEager .G true .D true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+
+/-- (42) Bare sufficiency in the reluctant context (W_D = 0). -/
+theorem command_makeSem_reluctant :
+    makeSem commandSEM bgReluctant .G true .D true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+
+/-- (42a) `Gurung made the children dance` (reluctant context).
+    Volitional-action constraint SATISFIED: W_D := false is NOT
+    sufficient for D := false (D = W_D ∨ G with G = 1 settles true
+    regardless), so Def 43's bad condition fails on its first conjunct. -/
 theorem command_satisfies_volitional_constraint :
-    volitionalActionConstraint commandSEM intentions Valuation.empty .G .D := by
+    volitionalActionConstraint commandSEM intentions bgReluctant .G .D := by
   intro wE hWE
   -- intentions .D = some .WD; so wE = .WD.
   cases hWE
-  intro ⟨hSuf, _⟩
-  -- hSuf : makeSem commandSEM (empty + G:=true) .WD false .D false
-  --      ≡ developDet of D = some false on the concrete valuation.
-  -- But D mech = WD ∨ G = false ∨ true = true, so the canonical value is true.
-  -- Use the decide-machinery to obtain the true witness, then contradict hSuf.
-  unfold makeSem SEM.causallySufficient developsToValue at hSuf
-  have hTrue :
-      (commandSEM.developDet ((Valuation.empty.extend V.G true).extend V.WD false)).hasValue V.D true :=
-    developDet_hasValue_of_developDetOn_hasValue
-      (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
-  rw [Valuation.hasValue] at hSuf hTrue
-  exact Bool.noConfusion (Option.some.inj (hSuf.symm.trans hTrue))
+  rintro ⟨⟨-, hb⟩, -⟩
+  -- hb : the strict development of bgReluctant + G:=1 + WD:=0 entails D = 0;
+  -- but D = W_D ∨ G = 0 ∨ 1 = 1.
+  exact absurd (entails_iff.mp hb) (by decide)
 
-/-- (41a)/(42a) Combined: command scenario gives BOTH bare sufficiency
-    AND volitional constraint satisfaction → make-felicitous. -/
+/-- (42a) Combined: the reluctant command scenario gives BOTH bare
+    sufficiency AND volitional-constraint satisfaction → make-felicitous. -/
 theorem command_make_felicitous :
-    makeSem commandSEM Valuation.empty .G true .D true ∧
-    volitionalActionConstraint commandSEM intentions Valuation.empty .G .D :=
-  ⟨command_makeSem, command_satisfies_volitional_constraint⟩
+    makeSem commandSEM bgReluctant .G true .D true ∧
+    volitionalActionConstraint commandSEM intentions bgReluctant .G .D :=
+  ⟨command_makeSem_reluctant, command_satisfies_volitional_constraint⟩
 
 end Command
 
@@ -581,9 +597,14 @@ def graph : CausalGraph V := ⟨fun
   | .WD => {.G}
   | .D => {.WD}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .G => 0 | .WD => 1 | .D => 2)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun | .G => 0 | .WD => 1 | .D => 2
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Persuasion dynamics (Fig 7): W_D := G (Gurung's action shapes
     desires); D := W_D (children dance iff they want to). -/
@@ -606,12 +627,15 @@ def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails persuasionSEM s v x ↔
+      developDetVtxFuel persuasionSEM s 3 v = some x :=
+  SEM.causallyEntails_iff_fuel persuasionSEM depth depth_lt (by cases v <;> decide) s x
+
 /-- Bare sufficiency: G:=true forces W_D=true forces D=true. -/
 theorem persuasion_makeSem :
-    makeSem persuasionSEM Valuation.empty .G true .D true := by
-  unfold makeSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := [V.G, V.WD, V.D]) (n := 3) (by decide)
+    makeSem persuasionSEM Valuation.empty .G true .D true :=
+  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
 
 /-- (44a) `Gurung made the children dance (by playing their favourite song).`
     Volitional-action constraint SATISFIED: although W_D := false is

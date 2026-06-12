@@ -12,42 +12,40 @@ aliases for legacy SBH-style binary semantics.
   Replaces the old `developsToTrue` (Bool-specialized) with a polymorphic version.
 
 - **`causallySufficient M s cause xC effect xE`**: extending `s` with `xC` at
-  `cause` then developing produces `xE` at `effect`. Polymorphic generalization
-  of [nadathur-lauer-2020] Definition 23.
+  `cause` then eager-totally developing produces `xE` at `effect` — the bare
+  sufficiency clause over `developDetVtx`, kept for consumers that want plain
+  development entailment (Glass, SBH, INUS, CC-selection).
 
-- **`causallyNecessary M s cause xC effect xE`**: [nadathur-2023-implicatives]
-  Definition 10b — precondition + achievability + but-for clauses.
-  Refactored to use abstract quantification over `Valuation α` (see "Refactor"
-  below); the previous `allExtensions`/`freeExtensions` enumeration was
-  noncomputable and opaque to structural reduction.
+- **`causallyEntails M s v x`**: [nadathur-2023-implicatives] Definition 5 —
+  the strict T_D fixed point (`developDetVtx?`) assigns `x` to `v`. The
+  paper-faithful predicates below are stated over this notion.
+
+- **`isConsistentSuper M base s'`**: Definition 9b, "not the opposite" form.
+
+- **`causallyNecessary M s cause xC effect xE`**: Definition 10b —
+  preamble + achievability + no-alternative, with supersituations quantified
+  over exogenous settlements (see `IsExogenousSettlement` for why the literal
+  quantification is unfaithful to the paper's own verdicts).
 
 `BoolSEM`-namespace aliases specialize the polymorphic predicates to
 `α := fun _ => Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
 
-## Refactor (post-`Deterministic.lean`)
-
-Internally these predicates call `developDetVtx M s v = x` (per-vertex,
-structurally reducible via `WellFounded.fix_eq`) instead of the old opaque
-`(M.developDet s).hasValue v x`. The `(M.developDet s).hasValue v x` API
-shape still works via `developDet_hasValue_iff` — same call sites, cleanly
-reducible internals.
-
-`causallyNecessary`'s achievability/but-for clauses are now stated as abstract
-quantifications over `Valuation α` (`∃ s', s.le s' ∧ ...` / `∀ s', s.le s' → ...`)
-rather than enumeration over a noncomputable `allExtensions` list. Concrete
-proofs supply existential witnesses directly and discharge universals by case
-analysis on which free vertices `s'` fixes (the `isConsistentSuper` clause
-constrains `s'`'s values to agree with `developDetVtx M s`). Same paper
-content; structurally provable.
-
 ## Computability
 
-`developDet` is noncomputable (cascading from `WellFounded.fix`). Predicates
-here are noncomputable. `Decidable` instances via `Classical.dec`. Concrete
-proofs reduce structurally via `developDetVtx_unfold` + `rfl` rather than
-through `Fintype.elems.toList` opacity (which blocked the previous substrate).
-Matches the mathlib `Polynomial.eval` precedent: noncomputable canonical
-definition, structurally reducible per-vertex unfolding lemmas.
+The canonical predicates are noncomputable (`WellFounded.fix`); `Decidable`
+instances on them are `Classical.dec` and do **not** support `decide`.
+Concrete claims go through the fuel bridge instead: `causallyEntails_iff_fuel`
+and `causallyNecessary_iff_fuel` rewrite to the kernel-reducible
+`developDetVtxFuel` / `causallyNecessaryFuel` forms given a per-model rank
+certificate (the depth function already supplied to `IsDAG.of_depth`), after
+which `decide` evaluates them — including the Def 10b supersituation
+quantifiers, which range over the finite valuation space. Study idiom:
+
+`theorem foo : makeSem M bg c true e true :=`
+`  ⟨fun h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩`
+
+with `entails_iff` a one-line per-model instantiation of
+`causallyEntails_iff_fuel`.
 -/
 
 namespace Semantics.Causation.SEM
@@ -389,100 +387,178 @@ namespace Semantics.Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
-/-- **Consistent supersituation** check ([nadathur-2023-implicatives] Def 9b):
-    `s'` is consistent with `base` under `M` iff every value `s'` fixes
-    on a vertex undetermined in `base` agrees with what per-vertex
-    development of `base` would produce.
+/-- **Causal entailment** ([nadathur-2023-implicatives] Def 5): the strict
+    T_D fixed point relative to `s` assigns `x` to `v` ("s ⊨_D ⟨v, x⟩").
+    Stated over the partial `developDetVtx?` — an undetermined exogenous
+    vertex entails nothing, and an inner vertex entails nothing while any
+    parent is u-valued. Contrast the eager-total `developsToValue` above. -/
+def causallyEntails [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M] (s : Valuation α) (v : V) (x : α v) : Prop :=
+  developDetVtx? M s v = some x
 
-    Refactored from the previous `∀ yv ≠ xv, ¬ hasValue` form: in the
-    deterministic case the vertex's value is unique, so the condition
-    simplifies to "the s'-fixed value equals the developed value." -/
-def isConsistentSuper (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M] (s : Valuation α) (v : V) (x : α v) :
+    Decidable (causallyEntails M s v x) := Classical.dec _
+
+/-- Transfer a fuel-mirror computation to `causallyEntails` (both
+    polarities, via the fuel bridge). The study idiom for concrete claims:
+    `(causallyEntails_iff_fuel M rank @hrank hn s v x).mpr (by decide)`. -/
+theorem causallyEntails_iff_fuel [DecidableEq V] (M : SEM V α)
+    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
+    {n : ℕ} {v : V} (hn : rank v < n) (s : Valuation α) (x : α v) :
+    causallyEntails M s v x ↔ developDetVtxFuel M s n v = some x := by
+  rw [causallyEntails, ← developDetVtxFuel_eq_developDetVtx? M rank hrank s hn]
+
+/-- Strict causal entailment of the extended background implies the bare
+    eager-total sufficiency predicate (`causallySufficient`): the partial
+    development refines the total one wherever it resolves. -/
+theorem causallySufficient_of_causallyEntails [Fintype V] [DecidableEq V]
+    [DecidableValuation α] {M : SEM V α} [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M] {s : Valuation α} {cause : V} {xC : α cause}
+    {effect : V} {xE : α effect}
+    (h : causallyEntails M (s.extend cause xC) effect xE) :
+    causallySufficient M s cause xC effect xE :=
+  (developDet_hasValue_iff M (s.extend cause xC) effect xE).mpr
+    (developDetVtx_eq_of_developDetVtx?_eq_some M h)
+
+/-- **Consistent supersituation** ([nadathur-2023-implicatives] Def 9b),
+    faithful "not the opposite" form: `s'` extends `base`, and for every
+    vertex `s'` newly fixes, `base` does not causally entail a *different*
+    value there. Def 9b restricts the condition to inner variables; that
+    restriction is automatic here, since `developDetVtx?` is `none` at
+    undetermined exogenous vertices. -/
+def isConsistentSuper [DecidableEq V] [DecidableValuation α] (M : SEM V α)
+    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (base s' : Valuation α) : Prop :=
-  ∀ (x : V) (xv : α x),
-    base.get x = none → s'.get x = some xv → developDetVtx M base x = xv
+  base.le s' ∧
+  ∀ (x : V) (xv : α x), base.get x = none → s'.get x = some xv →
+    ∀ yv : α x, yv ≠ xv → ¬ causallyEntails M base x yv
 
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (base s' : Valuation α) :
+noncomputable instance [DecidableEq V] [DecidableValuation α] (M : SEM V α)
+    [CausalGraph.IsDAG M.graph] [IsDeterministic M] (base s' : Valuation α) :
     Decidable (isConsistentSuper M base s') := Classical.dec _
 
-/-- Every valuation is a consistent supersituation of itself: the
-    undetermined-in-`base` premise contradicts the fixed-in-`s'` premise.
-    Standard witness for `causallyNecessary.achievable`. -/
-theorem isConsistentSuper_self (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M] (s : Valuation α) : isConsistentSuper M s s :=
-  fun _ _ hn hs => by simp [hn] at hs
+/-- Every valuation is a consistent supersituation of itself. -/
+theorem isConsistentSuper_self [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) : isConsistentSuper M s s :=
+  ⟨fun _ _ h => h, fun _ _ hn hs => by simp [hn] at hs⟩
+
+/-- **Exogenous settlement**: `s'` extends `base` by fixing only
+    exogenous (parentless) vertices.
+
+    Project-canonical restriction on Def 10b's supersituation
+    quantifiers. Quantifying over *all* consistent supersituations (the
+    literal Def 9b/10b reading) falsifies the paper's own §6.1.1
+    verdicts: relative to the Dreyfus background, fixing the undetermined
+    inner vertex MSG (plus LST, ¬BRK) is Def-9b-consistent and reaches
+    COM without entailing NRV, contradicting the claim that ⟨NRV,1⟩ is
+    causally necessary for ⟨COM,1⟩. The paper's worked example (21b)
+    considers only background settlements ("the only such available");
+    this definition makes that reading explicit. -/
+def IsExogenousSettlement [DecidableValuation α] (M : SEM V α)
+    (base s' : Valuation α) : Prop :=
+  base.le s' ∧
+  ∀ v : V, base.get v = none → (s'.get v).isSome → M.graph.parents v = ∅
+
+/-- Information order, executable characterization. -/
+theorem Valuation.le_iff_forall [DecidableValuation α] {s₁ s₂ : Valuation α} :
+    s₁.le s₂ ↔ ∀ v : V, (s₁.get v).isSome → s₁.get v = s₂.get v := by
+  constructor
+  · intro h v hv
+    obtain ⟨x, hx⟩ := Option.isSome_iff_exists.mp hv
+    rw [hx]; exact (h v x hx).symm
+  · intro h v x hx
+    have := h v (by rw [hx]; rfl)
+    rw [hx] at this; exact this.symm
+
+instance [DecidableEq V] [Fintype V] [DecidableValuation α] (s₁ s₂ : Valuation α) :
+    Decidable (s₁.le s₂) :=
+  decidable_of_iff _ Valuation.le_iff_forall.symm
+
+instance [DecidableEq V] [Fintype V] [DecidableValuation α] (M : SEM V α)
+    (base s' : Valuation α) : Decidable (IsExogenousSettlement M base s') :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Exogenous settlements are automatically Def-9b-consistent: a newly
+    fixed vertex is parentless and undetermined in `base`, so `base`
+    causally entails nothing about it. -/
+theorem IsExogenousSettlement.isConsistentSuper [DecidableEq V] [DecidableValuation α]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {base s' : Valuation α} (h : IsExogenousSettlement M base s') :
+    isConsistentSuper M base s' := by
+  refine ⟨h.1, fun x xv hn hs yv _ hent => ?_⟩
+  have hExo : M.graph.parents x = ∅ := h.2 x hn (by rw [hs]; rfl)
+  rw [causallyEntails, developDetVtx?_exogenous M hn hExo] at hent
+  simp at hent
 
 namespace causallyNecessary
 
-/-- **Precondition** ([nadathur-2023-implicatives] Def 10b): neither
-    `cause = xC` nor `effect = xE` is already entailed by `s` under `M`.
-    Stated directly via `developDetVtx`. -/
-def precondition (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+/-- **Preamble of Definition 10** ([nadathur-2023-implicatives], with
+    footnote 8's rationale): the background entails neither the cause
+    fact nor the effect fact. Shared by Def 10a (sufficiency, see
+    `Implicative.manageSem`) and Def 10b (necessity, below). -/
+def precondition [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
-  developDetVtx M s cause ≠ xC ∧ developDetVtx M s effect ≠ xE
+  ¬ causallyEntails M s cause xC ∧ ¬ causallyEntails M s effect xE
 
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (precondition M s cause xC effect xE) := Classical.dec _
 
-/-- **Achievability** clause (i) of [nadathur-2023-implicatives] Def 10b.
-    Abstract quantification over `Valuation α`: there exists a
-    supersituation of `s.extend cause xC` (consistent with the per-vertex
-    development) under which `effect` develops to `xE`.
-
-    Concrete proofs supply the existential witness directly (typically
-    just the extended valuation itself, or a minimal further extension). -/
+/-- **Achievability**, clause (i) of Def 10b: some consistent
+    supersituation `s'` of `s + (cause = xC)` with `effect ∉ dom(s')`
+    causally entails `effect = xE`. Quantified over exogenous settlements
+    (see `IsExogenousSettlement`); Def 9b consistency is then automatic
+    (`IsExogenousSettlement.isConsistentSuper`). -/
 def achievable [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
-  let sCause := s.extend cause xC
-  ∃ s' : Valuation α,
-    sCause.le s' ∧ isConsistentSuper M sCause s' ∧ developDetVtx M s' effect = xE
+  ∃ s' : Valuation α, IsExogenousSettlement M (s.extend cause xC) s' ∧
+    s'.get effect = none ∧ causallyEntails M s' effect xE
 
 noncomputable instance [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (achievable M s cause xC effect xE) := Classical.dec _
 
-/-- **But-for** clause (ii) of [nadathur-2023-implicatives] Def 10b. Abstract
-    quantification: every consistent supersituation of `s` that doesn't
-    fix `cause = xC` must fail to develop `effect = xE`.
-
-    Concrete proofs case-analyze on which free vertices `s'` fixes; the
-    `isConsistentSuper` clause forces those values to agree with
-    `developDetVtx M s`, narrowing the cases to a finite enumeration. -/
-def noAlternative [DecidableValuation α]
+/-- **No-alternative**, clause (ii) of Def 10b in positive-implication
+    form: every consistent supersituation of `s` (exogenous settlement,
+    `effect ∉ dom(s')`) that causally entails `effect = xE` also causally
+    entails `cause = xC` — every consistent path to the effect goes
+    through the cause. The paper's exclusion `s' ⊭ ⟨X,x⟩` is the
+    *developed* entailment, not the syntactic `s'.get cause ≠ some xC`. -/
+def noAlternative [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
-  ∀ s' : Valuation α, s.le s' → s'.get cause ≠ some xC →
-    isConsistentSuper M s s' → developDetVtx M s' effect ≠ xE
+  ∀ s' : Valuation α, IsExogenousSettlement M s s' → s'.get effect = none →
+    causallyEntails M s' effect xE → causallyEntails M s' cause xC
 
-noncomputable instance [DecidableValuation α]
+noncomputable instance [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (noAlternative M s cause xC effect xE) := Classical.dec _
 
 end causallyNecessary
 
-/-- **Causal Necessity** ([nadathur-2023-implicatives] Definition 10b),
-    polymorphic over value types.
+/-- **Causal Necessity** ([nadathur-2023-implicatives] Definition 10b)
+    over the strict T_D development, polymorphic over value types:
 
-    ⟨cause, xC⟩ is causally necessary for ⟨effect, xE⟩ relative to `s`
-    under `M` iff:
-    - **Precondition**: `s` does not develop `cause` to `xC` nor `effect` to `xE`.
-    - **(i) Achievability**: some consistent supersituation of `s.extend cause xC`
-      develops `effect` to `xE`.
-    - **(ii) But-for**: no consistent supersituation of `s` lacking
-      `cause = xC` develops `effect` to `xE`.
+    - **Preamble**: `s` entails neither `cause = xC` nor `effect = xE`.
+    - **(i) Achievability**: some consistent supersituation of
+      `s + (cause = xC)` not fixing the effect entails `effect = xE`.
+    - **(ii) No-alternative**: every consistent supersituation of `s` not
+      fixing the effect that entails `effect = xE` entails `cause = xC`.
 
-    Supersedes the simple but-for test from [nadathur-lauer-2020]
-    Definition 24. Refactored from the previous `allExtensions`/`freeExtensions`
-    enumeration to abstract `Valuation α` quantification — see
-    `Counterfactual.lean` module docstring. -/
+    Supersituations are quantified over exogenous settlements — see
+    `IsExogenousSettlement` for why the literal Def 9b/10b quantification
+    is unfaithful to the paper's own verdicts. -/
 def causallyNecessary [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
@@ -495,6 +571,58 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessary M s cause xC effect xE) := Classical.dec _
+
+-- ════════════════════════════════════════════════════
+-- § Executable Def 10b (fuel form) and decidability
+-- ════════════════════════════════════════════════════
+
+/-- Executable mirror of `causallyNecessary` at fuel `n`: every
+    `causallyEntails` clause replaced by its `developDetVtxFuel` form.
+    Genuinely decidable (the supersituation quantifiers range over the
+    Pi-`Fintype` of valuations). Connected to the canonical predicate by
+    `causallyNecessary_iff_fuel`. -/
+def causallyNecessaryFuel [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [IsDeterministic M] (n : ℕ)
+    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Prop :=
+  (¬ developDetVtxFuel M s n cause = some xC ∧
+   ¬ developDetVtxFuel M s n effect = some xE) ∧
+  (∃ s' : Valuation α, IsExogenousSettlement M (s.extend cause xC) s' ∧
+    s'.get effect = none ∧ developDetVtxFuel M s' n effect = some xE) ∧
+  (∀ s' : Valuation α, IsExogenousSettlement M s s' → s'.get effect = none →
+    developDetVtxFuel M s' n effect = some xE →
+    developDetVtxFuel M s' n cause = some xC)
+
+instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [IsDeterministic M] (n : ℕ)
+    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Decidable (causallyNecessaryFuel M n s cause xC effect xE) := by
+  unfold causallyNecessaryFuel
+  infer_instance
+
+/-- The canonical Def 10b coincides with its fuel form once the fuel
+    exceeds a rank function for the graph. Study idiom:
+    `(causallyNecessary_iff_fuel M rank @hrank hn s …).mpr (by decide)`. -/
+theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
+    {n : ℕ} (hn : ∀ v : V, rank v < n)
+    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    causallyNecessary M s cause xC effect xE ↔
+      causallyNecessaryFuel M n s cause xC effect xE := by
+  have hpt : ∀ (t : Valuation α) (v : V) (x : α v),
+      causallyEntails M t v x ↔ developDetVtxFuel M t n v = some x :=
+    fun t v x => causallyEntails_iff_fuel M rank @hrank (hn v) t x
+  unfold causallyNecessary causallyNecessary.precondition
+    causallyNecessary.achievable causallyNecessary.noAlternative
+    causallyNecessaryFuel
+  exact and_congr
+    (and_congr (not_congr (hpt s cause xC)) (not_congr (hpt s effect xE)))
+    (and_congr
+      (exists_congr fun s' => and_congr_right fun _ =>
+        and_congr_right fun _ => hpt s' effect xE)
+      (forall_congr' fun s' => imp_congr_right fun _ => imp_congr_right fun _ =>
+        imp_congr (hpt s' effect xE) (hpt s' cause xC)))
 
 end Semantics.Causation.SEM
 

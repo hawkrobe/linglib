@@ -74,18 +74,38 @@ def Prerequisite.isSpecific : Prerequisite → Bool
 -- § V2 Polymorphic Semantics
 -- ════════════════════════════════════════════════════
 
-/-- V2 manage-sem: prerequisite-as-`xP` is causally sufficient for
-    complement-as-`xC`. Polymorphic over value types. -/
-abbrev manageSem {V : Type*} {α : V → Type*}
+/-- V2 manage-sem ([nadathur-2023-implicatives] Definition 10a with the
+    Definition 10 preamble, over the strict T_D development):
+    prerequisite-as-`xP` is causally sufficient for complement-as-`xC` —
+    the background entails neither fact, and augmenting it with the
+    prerequisite causally entails the complement. Polymorphic over value
+    types. -/
+def manageSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) : Prop :=
-  SEM.causallySufficient M background prerequisite xP complement xC
+  SEM.causallyNecessary.precondition M background prerequisite xP complement xC ∧
+  SEM.causallyEntails M (background.extend prerequisite xP) complement xC
+
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (prerequisite : V) (xP : α prerequisite)
+    (complement : V) (xC : α complement) :
+    Decidable (manageSem M background prerequisite xP complement xC) :=
+  Classical.dec _
 
 /-- V2 fail-sem: prerequisite-as-`xP` is NOT causally sufficient for
-    complement-as-`xC`. -/
+    complement-as-`xC`.
+
+    TODO: this is denial of the sufficiency presupposition, which is what
+    the Dreyfus infelicity judgments test, but it is NOT Proposal 32's
+    semantics for negative implicative *assertions* (assert ¬A(x) with
+    both presuppositions intact); the `Features.Implicative.toSemantics`
+    `.negative` dispatch below inherits the same caveat. -/
 abbrev failSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
