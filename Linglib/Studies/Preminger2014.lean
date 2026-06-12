@@ -3,6 +3,7 @@ import Linglib.Syntax.Minimalist.Phi.Probing
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Studies.Halpert2012
 
 /-!
 # Preminger 2014 — Agreement and Its Failures [preminger-2014]
@@ -94,7 +95,7 @@ gives five arguments against hierarchy accounts:
 5. **Zulu parallel** (§7.2): [halpert-2012]'s analysis of Zulu
    augmentless nominals uses the same machinery over
    augmented/augmentless — categories with no plausible "salience"
-   reading (prose only — needs a Zulu fragment).
+   reading (`ch7_arg5_zulu_parallel`, via `Studies/Halpert2012.lean`).
 
 ## Cross-references
 
@@ -412,6 +413,32 @@ theorem ch7_arg4_form_distinctness :
            .pn .first .Plur, .pn .second .Plur],
       setBExponent.realize c ≠ setBExponent.realize (.pn .third .Plur) ∧
       setBExponent.realize c ≠ setBExponent.realize (.pn .third .Sing) := by
+  decide
+
+/-- [preminger-2014] Ch. 7 arg 5 (§7.2, via Ch. 6): [halpert-2012]'s
+    Zulu runs the same search-and-licensing substrate over a
+    salience-irrelevant contrast. Kichean is the diagonal instance
+    (`AllLicensed vis vis`: π⁰ relativized to exactly the
+    licensing-needy [participant] cells), so a needy argument is
+    licensed even from object position — the probe skips non-bearers.
+    Zulu's L⁰ is the off-diagonal instance (`AllLicensed needs ⊤`:
+    indiscriminate probe, augmentless = needy), so an augmented
+    subject intervenes and a lower augmentless nominal goes
+    unlicensed. Same machinery, opposite skippability — and no
+    salience reading of augmented/augmentless is available, which
+    undermines the cognitive-salience grounding of hierarchy
+    accounts. Both systems realize failed probing as default
+    morphology (Kichean covert ∅, Zulu overt *ya-*). -/
+theorem ch7_arg5_zulu_parallel :
+    -- Kichean: π⁰ skips a 3SG subject and licenses a 1SG object
+    PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :
+      List (ArgPosition × Agreement.Cell)) ∧
+    -- Zulu: an augmented subject intervenes; the augmentless object
+    -- is unlicensed
+    ¬ Halpert2012.LicensingOk [⟨1, true⟩, ⟨5, false⟩] ∧
+    -- both probes' failures converge with default morphology
+    afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" ∧
+    Halpert2012.lSpellout [] = "ya-" := by
   decide
 
 end Preminger2014
