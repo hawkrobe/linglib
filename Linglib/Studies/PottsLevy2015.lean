@@ -1,7 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # [potts-levy-2015]: Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
@@ -332,30 +331,18 @@ theorem s1_w1_A_vs_AorX :
   rsa_predict
 
 -- ============================================================================
--- §9. Bridge to Hurford Data
+-- §9. Hurford Disjunctions
 -- ============================================================================
 
-/-! The Hurford data in `Phenomena.ScalarImplicatures.Basic` records
-that "some or all" is felicitous, rescued by exhaustification.
-This is exactly the phenomenon [potts-levy-2015] models: the
-`excl` lexicon plays the role of exhaustification, making the
-disjuncts non-overlapping and the sentence informative.
+/-! Hurford disjunctions like "some or all" are felicitous, rescued by
+exhaustification. This is exactly the phenomenon [potts-levy-2015]
+models: the `excl` lexicon plays the role of exhaustification, making
+the disjuncts non-overlapping and the sentence informative (proved by
+`excl_disjoint` and the L1 predictions above).
 
-The connection: `someOrAll.rescueMethod = some "exh(some) = some but
-not all"` corresponds to our `excl_is_base_minus_A` theorem, which
-shows excl(X) = base(X) ∧ ¬A — the same operation as exh. -/
-
-open Phenomena.ScalarImplicatures in
-/-- The Hurford datum "some or all" is felicitous. Our model
-    explains WHY: the excl lexicon makes the disjunction informative
-    (proved by `excl_disjoint` and the L1 predictions above). -/
-theorem matches_someOrAll_felicitous :
-    someOrAll.felicitous = true := rfl
-
-open Phenomena.ScalarImplicatures in
-/-- The rescue method is exhaustification — matching our `excl` lexicon. -/
-theorem matches_someOrAll_rescue :
-    someOrAll.rescueMethod = some "exh(some) = some but not all" := rfl
+The connection: exh(some) = some-but-not-all corresponds to our
+`excl_is_base_minus_A` theorem, which shows excl(X) = base(X) ∧ ¬A —
+the same operation as exh. -/
 
 -- ============================================================================
 -- §10. Expertise Model (S2-level)

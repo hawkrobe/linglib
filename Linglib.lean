@@ -1775,10 +1775,7 @@ import Linglib.Studies.GroszJoshiWeinstein1995
 import Linglib.Studies.PoesioEtAl2004
 import Linglib.Studies.WesterbeekKoolenMaes2015
 import Linglib.Studies.Krifka2026
-import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Basic
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Attitudes
+import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Studies.FrankeBergen2020
 import Linglib.Studies.BaleEtAl2025
 import Linglib.Studies.ChemlaSpector2011

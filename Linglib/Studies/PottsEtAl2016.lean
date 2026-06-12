@@ -1,7 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
-import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # [potts-etal-2016]: Embedded Implicatures as Pragmatic Inferences
@@ -314,29 +313,29 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 -- ============================================================================
 
 /-! The outer quantifiers "every" and "no" in the [potts-etal-2016] model
-agree with the generic quantity domain semantics from `Phenomena.ScalarImplicatures.QuantityDomain.meaning`.
+agree with the shared quantifier semantics `Alternatives.Quantifiers.worldMeaning`.
 This grounds the stipulated `utteranceTruth` in the shared quantifier infrastructure.
 
-See also: `GoodmanStuhlmuller2013PMF`'s `qMeaning` definition (uses
-the same `QuantityDomain.meaning`-derived shape). -/
+Compare `GoodmanStuhlmuller2013PMF`'s `qMeaning`, an independent
+implementation of the same count-threshold semantics. -/
 
 private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
     predCount sq lex w < 4 := by
   cases sq <;> cases lex <;> cases w <;> decide
 
-/-- "Every player hit X" ↔ `Quantity.meaning 3 .all` applied to `predCount`. -/
+/-- "Every player hit X" ↔ `worldMeaning 3 .all` applied to `predCount`. -/
 theorem outer_every_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
     utteranceTruth lex (.stmt .every sq) w =
-    Phenomena.ScalarImplicatures.QuantityDomain.meaning 3 .all
-      ⟨predCount sq lex w, predCount_lt_four sq lex w⟩ := by
-  cases sq <;> cases lex <;> cases w <;> native_decide
+    Alternatives.Quantifiers.worldMeaning 3 .all
+      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ := by
+  cases sq <;> cases lex <;> cases w <;> decide
 
-/-- "No player hit X" ↔ `Quantity.meaning 3 .none_` applied to `predCount`. -/
+/-- "No player hit X" ↔ `worldMeaning 3 .none_` applied to `predCount`. -/
 theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
     utteranceTruth lex (.stmt .no sq) w =
-    Phenomena.ScalarImplicatures.QuantityDomain.meaning 3 .none_
-      ⟨predCount sq lex w, predCount_lt_four sq lex w⟩ := by
-  cases sq <;> cases lex <;> cases w <;> native_decide
+    Alternatives.Quantifiers.worldMeaning 3 .none_
+      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ := by
+  cases sq <;> cases lex <;> cases w <;> decide
 
 -- ============================================================================
 -- §10. Cross-Study Connections
@@ -344,25 +343,12 @@ theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
 
 /-! The [potts-etal-2016] predictions connect to two other parts of linglib:
 
-1. **`someAllBlocking`** (`ScalarImplicatures.Basic`): The empirical datum that
-   "some" implicatures are present in UE and blocked in DE. The Potts model
-   derives both sides: UE enrichment (§7) and DE blocking (§6).
-
-2. **`Geurts2010`** (`ScalarImplicatures.Studies.Geurts2010`): Notes that the
+1. **`Geurts2010`** (`ScalarImplicatures.Studies.Geurts2010`): Notes that the
    minimal LU model inverts the predictions, but "the full Potts et al. model
    derives the correct pattern." The theorems here are the formal backing.
 
-3. **`EmbeddedSIPrediction`** (`LexicalUncertainty.Compositional`): Tracks
+2. **`EmbeddedSIPrediction`** (`LexicalUncertainty.Compositional`): Tracks
    embedded SI predictions by context type. The Potts model demonstrates the
    negation case: local reading dispreferred in DE (global NNN preferred). -/
-
-open Phenomena.ScalarImplicatures in
-/-- The Potts model matches the `someAllBlocking` empirical pattern:
-    UE enrichment present (implicatureInUE = true) and
-    DE blocking present (implicatureInDE = false). -/
-theorem matches_someAllBlocking :
-    someAllBlocking.implicatureInUE = true ∧
-    someAllBlocking.implicatureInDE = false := by
-  exact ⟨rfl, rfl⟩
 
 end PottsEtAl2016

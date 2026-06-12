@@ -1,5 +1,3 @@
-import Linglib.Phenomena.ScalarImplicatures.Embedded.Basic
-import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.GeurtsPouscoulous2009
 
 /-!
@@ -8,33 +6,22 @@ import Linglib.Studies.GeurtsPouscoulous2009
 The textbook successor to [geurts-pouscoulous-2009]. Geurts 2010
 (Cambridge UP) consolidates the Standard-Recipe / competence-based
 neo-Gricean account whose §8 sketch in GP 2009 this file extends. The
-DE-blocking / UE-allowing core pattern documented in
-`Phenomena.ScalarImplicatures.Basic.someAllBlocking` and refined into
-the four-experiment program of GP 2009 anchors the textbook's Ch. 2–3.
+core empirical pattern anchoring the textbook's Ch. 2–3 — scalar
+implicatures blocked in downward-entailing contexts but available in
+upward-entailing ones — is the explanandum of GP 2009's four-experiment
+program; the [potts-etal-2016] LU model derives the correct pattern
+(see `Studies/PottsEtAl2016`).
 
 ## Connection to GP 2009
 
-`empirical_pattern_documented` records the qualitative DE-blocks /
-UE-allows pattern that the textbook's §3.2 takes as the empirical
-explanandum. `gp2009_data_anchors_pattern` shows the GP 2009
-∅-condition data (93%/94% endorsement of the *some*→*not all*
-inference) is the quantitative grounding.
+`gp2009_data_anchors_pattern` shows the GP 2009 ∅-condition data
+(93%/94% endorsement of the *some*→*not all* inference) is the
+quantitative grounding for the textbook's UE-pattern claim.
 -/
 
 namespace Geurts2010
 
-open Phenomena.ScalarImplicatures.Embedded.Simplified
-open Phenomena.ScalarImplicatures
 open GeurtsPouscoulous2009
-
-/-- The empirical DE-blocking / UE-allowing pattern that grounds the
-textbook's neo-Gricean account. The simplified LU model predicts the
-opposite; the full [potts-etal-2016] model derives the correct
-pattern via lexical uncertainty. -/
-theorem empirical_pattern_documented :
-    someAllBlocking.implicatureInDE = false ∧
-    someAllBlocking.implicatureInUE = true := by
-  decide
 
 /-- The GP 2009 ∅-condition (unembedded *some*) endorsement rates
 anchor the textbook's UE-pattern claim quantitatively: 93% (Exp 1a,
