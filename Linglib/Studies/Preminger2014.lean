@@ -61,11 +61,13 @@ relativized probes:
 The single AF marker reflects π⁰'s output if it succeeds (clitic
 doubling of the [participant]-bearing argument); otherwise #⁰'s
 output (the 3PL marker *e-* by direct exponence); otherwise the slot
-is empty (∅). There is no salience scale —
-`afAgreementTarget_eq_twoProbe` proves the rank-comparison encoding
-is derived from the two-probe mechanism, not primitive, and
-`personRestrictionOk_iff_plc` derives the person restriction from
-the PLC via `Phi/Probing.lean`'s search-licensing substrate.
+is empty (∅). This slot competition is `cascadeSearch` over the two
+probes, definitionally: `afAgreementTarget` IS the cascade, the ∅
+row is failed Agree realized by the DM Elsewhere entry, and the rank
+comparison is the derived form (`afAgreementTarget_eq_rank`).
+There is no salience scale, and `personRestrictionOk_iff_plc`
+derives the person restriction from the PLC via `Phi/Probing.lean`'s
+search-licensing substrate.
 
 ## Why not a hierarchy
 
@@ -182,7 +184,8 @@ theorem spellout_matches_paradigm :
 /-- Probe-resolution rank for a Kaqchikel person-number cell under the
     two-probe (π⁰ before #⁰) system. Computed via `probeResolutionRank`
     on the cell's person + number features. NOT a salience scale —
-    `afAgreementTarget_eq_twoProbe` derives it from the probes. -/
+    `afAgreementTarget_eq_rank` derives the rank comparison from the
+    probe cascade. -/
 def afRank (c : Agreement.Cell) : Nat :=
   probeResolutionRank c.toPerson c.isPlural
 
@@ -221,43 +224,42 @@ theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
     exact nomatch congrArg Prod.fst
       (h (.A, s) (.head _) (.P, o) (.tail _ (.head _)) hs ho)
 
-/-- Compute the AF agreement target: the higher-ranked argument under
-    the two-probe system. When both have equal rank, the subject is
-    chosen (yielding the same marker either way). Returns `none` —
-    the derivation crashes — when the PLC fails on the clause's goal
-    tokens (equivalently, when the surface person restriction is
-    violated: `personRestrictionOk_iff_plc`). -/
+/-- The two AF probes in slot order: π⁰'s clitic output beats #⁰'s
+    direct exponence in the single morphological slot
+    ([preminger-2014] §4.4). -/
+def afProbes : List (Agreement.Cell → Bool) :=
+  [(·.visibleTo .participant), (·.visibleTo .plural)]
+
+/-- The AF agreement target, by probe cascade: π⁰'s goal if it finds
+    one, else #⁰'s, else `none` — both probes failed (3SG × 3SG) and
+    the slot stays empty. Pure Agree: grammaticality (the PLC) is
+    checked at `afMarker`. When both arguments are visible to the
+    winning probe it takes the closer one (the subject) — immaterial
+    for the marker (`afMarker_comm`). -/
 def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
+  cascadeSearch afProbes [subj, obj]
+
+/-- The AF agreement marker: the Set B exponent of the cascade's
+    target; the Elsewhere ∅ via DM insertion from the unvalued bundle
+    when both probes failed; `none` (ungrammatical) when the PLC
+    fails on the clause's goal tokens (equivalently, when the surface
+    person restriction is violated: `personRestrictionOk_iff_plc`). -/
+def afMarker (subj obj : Agreement.Cell) : Option String :=
   if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
-    if afRank subj ≥ afRank obj then some subj else some obj
+    ((afAgreementTarget subj obj).bind setBExponent.realize) <|>
+      spellout setBVocab [] (some .T)
   else none
 
-/-- The AF agreement marker for a given subject-object combination:
-    Set B exponent of the resolved target, or `none` for restriction
-    violations. -/
-def afMarker (subj obj : Agreement.Cell) : Option String :=
-  (afAgreementTarget subj obj).bind setBExponent.realize
-
-/-- The DP a relativized probe finds among the two core arguments:
-    `probeSearch` (`Phi/Probing.lean`) specialized to the AF clause's
-    two-goal sequence. (Which argument the probe reaches first is
-    immaterial for the AF marker — see `afMarker_comm`.) -/
-def probeGoal (t : ProbeTarget) (subj obj : Agreement.Cell) : Option Agreement.Cell :=
-  probeSearch (·.visibleTo t) [subj, obj]
-
-/-- The rank comparison inside `afAgreementTarget` is derived, not
-    primitive: on the φ-cell inventory it coincides with genuinely
-    two-probe resolution — π⁰'s goal if any, else #⁰'s, else the
-    default 3SG cell. This discharges formally the claim that
-    `afRank` is a convenience encoding of [bejar-rezac-2003]'s
-    mechanism rather than a salience scale. -/
-theorem afAgreementTarget_eq_twoProbe :
+/-- The rank encoding (`probeResolutionRank`, [bejar-rezac-2003]
+    convenience form) is derived from the cascade: on the φ-cell
+    inventory the cascade's target is the higher-ranked argument —
+    except that double rank-0 (both probes fail) is an honest `none`
+    rather than a default target. -/
+theorem afAgreementTarget_eq_rank :
     ∀ s ∈ Agreement.Cell.pnCells, ∀ o ∈ Agreement.Cell.pnCells,
       afAgreementTarget s o =
-        if PersonRestrictionOk s o then
-          (probeGoal .participant s o <|> probeGoal .plural s o <|>
-            some (.pn .third .Sing))
-        else none := by
+        if afRank s = 0 ∧ afRank o = 0 then none
+        else if afRank s ≥ afRank o then some s else some o := by
   decide
 
 /-! ### Verification: grounding in `Phi.Geometry` -/
@@ -306,8 +308,9 @@ theorem participant_over_plural :
 
 /-- PLC violation: two [+participant] arguments are blocked, in
     either order. Both arguments 3SG: both probes fail to find a
-    target and the default ∅ surfaces (see
-    `failed_agree_tolerated` for the Ch. 5 reading). -/
+    target (`afAgreementTarget` is `none`) and ∅ surfaces from the
+    Elsewhere entry (see `failed_agree_tolerated` for the Ch. 5
+    reading). -/
 theorem restriction_and_default :
     afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
     afMarker (.pn .second .Sing) (.pn .first .Sing) = none ∧
@@ -337,6 +340,21 @@ def afProbeOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
   | .unvalued, .unvalued => .unvalued
   | _, _ => .valued
 
+/-- The cascade comes back empty exactly when the joint probe outcome
+    is `unvalued` — Agree-level failure and outcome-level failure are
+    the same fact, for arbitrary φ-cells. -/
+theorem afAgreementTarget_eq_none_iff (subj obj : Agreement.Cell) :
+    afAgreementTarget subj obj = none ↔ afProbeOutcome subj obj = .unvalued := by
+  have hmatch : afProbeOutcome subj obj = .unvalued ↔
+      piOutcome subj obj = .unvalued ∧ numOutcome subj obj = .unvalued := by
+    unfold afProbeOutcome
+    cases piOutcome subj obj <;> cases numOutcome subj obj <;> decide
+  rw [hmatch]
+  unfold afAgreementTarget piOutcome numOutcome
+  rw [cascadeSearch_eq_none_iff, searchOutcome_eq_unvalued_iff,
+      searchOutcome_eq_unvalued_iff]
+  simp [afProbes]
+
 /-- Failed Agree is tolerated, not crashing ([preminger-2014] Ch. 5):
     when both probes find no goal (3SG × 3SG), each probe ends
     unvalued, the derivation converges under the
@@ -346,6 +364,7 @@ def afProbeOutcome (subj obj : Agreement.Cell) : ProbeOutcome :=
     `restriction_and_default`: failed *licensing* crashes (`none`);
     failed *Agree* does not. -/
 theorem failed_agree_tolerated :
+    afAgreementTarget (.pn .third .Sing) (.pn .third .Sing) = none ∧
     piOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     numOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     afProbeOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
