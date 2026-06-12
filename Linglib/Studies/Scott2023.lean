@@ -573,14 +573,15 @@ structure Encounter where
 def halts (cond : SatisfactionCond) (e : Encounter) : Bool :=
   cond.isSatisfied e.feats e.cat
 
-/-- The argument position a probe φ-agrees with: run `probeSearch`
-    relativized to the satisfaction condition; the probe agrees with
-    the found element only if satisfaction copied features (feature
-    match, not head encounter). -/
+/-- The argument position a probe φ-agrees with: `probeAgree`
+    relativized to the satisfaction condition, with feature-copying
+    as the activity condition — the probe agrees with the found
+    element only if satisfaction copied features (feature match, not
+    head encounter). -/
 def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
     Option ArgPosition :=
-  (probeSearch (halts cond) goals).bind
-    (fun e => if cond.copiedFeatures e.feats e.cat then e.pos else none)
+  (probeAgree (halts cond)
+    (fun e => cond.copiedFeatures e.feats e.cat) goals).bind (·.pos)
 
 /-- Transitive Voice as an encounter: a head of category `.v`, no
     φ-features visible to the probe. -/
@@ -627,7 +628,8 @@ theorem infl_finds_S (φS : FeatureBundle)
     agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
   have h1 : halts mamInflSatisfaction ⟨some .S, φS, none⟩ = true := by
     simp [halts, mamInflSatisfaction_isSatisfied, hS]
-  simp [agreesWith, probeSearch, dpGoal, h1, mamInflSatisfaction_copiedFeatures, hS]
+  simp [agreesWith, probeAgree, probeSearch, Option.filter_some, dpGoal, h1,
+    mamInflSatisfaction_copiedFeatures, hS]
 
 /-- Voice's search finds the agent (closest goal), provided A bears
     person. -/
@@ -637,8 +639,8 @@ theorem voice_finds_A (φA φP : FeatureBundle)
   have h1 : halts (.featureMatch (.phi (.person .third)))
       ⟨some .A, φA, none⟩ = true := by
     simp [halts, SatisfactionCond.isSatisfied, hA]
-  simp [agreesWith, probeSearch, dpGoal, voiceSat, h1,
-    SatisfactionCond.copiedFeatures, hA]
+  simp [agreesWith, probeAgree, probeSearch, Option.filter_some, dpGoal,
+    voiceSat, h1, SatisfactionCond.copiedFeatures, hA]
 
 /-- DERIVED probe table: which head φ-agrees with position `p`,
     computed by running each probe's `probeSearch` over the goal

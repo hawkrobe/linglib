@@ -16,11 +16,15 @@ licenses at most one goal (`allLicensed_iff`).
 
 The search is stated for any goal type `α` with a `Bool` visibility
 predicate; the φ-instantiation (`Agreement.Cell.visibleTo`, `PLC`)
-specializes it to [bejar-rezac-2003]'s person probe. The
-*unrelativized* instance (`vis = ⊤`, bare minimality: the goal is
-`List.head?`) is [halpert-2012]'s Zulu L⁰ — see
-`Studies/Halpert2012.lean` and the cross-linguistic point of
-[preminger-2014] Ch. 7. [bejar-rezac-2009]'s articulated probe is a *family* of
+specializes it to the participant-relativized person probe of
+[preminger-2014]'s Kichean analysis. Relativization is Preminger's
+addition (§4.2, recalling [rizzi-1990]): [bejar-rezac-2003]'s own
+π-probe is *unrelativized* — the closest goal matches and can
+absorb it without valuing (`probeAgree`; `Studies/BejarRezac2003.lean`)
+— and the unrelativized, bare-minimality instance (`vis = ⊤`, goal
+= `List.head?`) is also [halpert-2012]'s Zulu L⁰
+(`Studies/Halpert2012.lean`, the cross-linguistic point of
+[preminger-2014] Ch. 7). [bejar-rezac-2009]'s articulated probe is a *family* of
 these searches, one per probe segment over the cyclically ordered
 token list — see `CyclicAgree.eaIsLicensed_iff_segment_licensed`.
 For probe *horizons* (what terminates search across domains, Keine)
@@ -30,9 +34,13 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 ## Main declarations
 
 - `probeSearch` — first goal visible to the probe, in structural order.
+- `probeAgree` — search then Agree: the found goal, if it passes the
+  activity condition (match without valuation absorbs the probe).
 - `searchOutcome` — the `ProbeOutcome` of an obligatory probing operation.
-- `Licensed`, `AllLicensed` — licensing as being found by the search.
-- `allLicensed_iff` — all visible goals licensed ↔ visible goals subsingleton.
+- `Licensed`, `AllLicensed needs vis` — every licensing-needy goal is
+  found by the search; diagonal characterization `allLicensed_iff`
+  (visible goals subsingleton), off-diagonal
+  `allLicensed_const_true_iff` (every needy goal is the closest).
 - `cascadeSearch` — ordered probe sequence: first probe with output wins
   (the single-slot morphological competition).
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
@@ -40,17 +48,27 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 
 namespace Minimalist
 
+variable {α : Type*}
+
 /-! ### Relativized search -/
 
 section Search
 
-variable {α : Type*}
-
-/-- The goal a relativized probe finds in an ordered goal sequence:
-    the first goal visible to it, skipping invisible ones
-    ([bejar-rezac-2003] relativized probing). -/
+/-- The goal a probe finds in an ordered goal sequence: the first
+    goal visible to it, skipping invisible ones (relativized probing,
+    [preminger-2014] §4.2; an unrelativized probe — `vis = ⊤` — takes
+    the closest goal outright). -/
 def probeSearch (vis : α → Bool) (goals : List α) : Option α :=
   goals.find? vis
+
+/-- Search then Agree: the goal the search finds, if it passes the
+    activity condition `act` — the match vs. Agree distinction. The
+    closest visible goal can absorb the probe without valuing it
+    ([bejar-rezac-2003]'s inactive dative, `Studies/BejarRezac2003.lean`;
+    [deal-2024]-style interaction vs. satisfaction,
+    `Studies/Scott2023.lean`). -/
+def probeAgree (vis act : α → Bool) (goals : List α) : Option α :=
+  (probeSearch vis goals).filter act
 
 variable {vis : α → Bool} {goals : List α}
 
@@ -70,13 +88,33 @@ theorem visible_of_probeSearch_eq_some {a : α}
     (h : probeSearch vis goals = some a) : vis a = true :=
   List.find?_some h
 
+/-- The probe Agrees with `a` iff the search finds `a` and `a` is
+    active. -/
+theorem probeAgree_eq_some_iff {act : α → Bool} {a : α} :
+    probeAgree vis act goals = some a ↔
+      probeSearch vis goals = some a ∧ act a = true := by
+  cases h : probeSearch vis goals with
+  | none => simp [probeAgree, h]
+  | some b =>
+    simp only [probeAgree, h, Option.filter_some, Option.ite_none_right_eq_some,
+      Option.some.injEq]
+    constructor
+    · rintro ⟨hb, rfl⟩
+      exact ⟨rfl, hb⟩
+    · rintro ⟨hb, ha⟩
+      exact ⟨hb ▸ ha, hb.symm ▸ rfl⟩
+
+/-- An inactive closest goal absorbs the probe: match without Agree. -/
+theorem probeAgree_eq_none_of_inactive {act : α → Bool} {a : α}
+    (h : probeSearch vis goals = some a) (ha : act a = false) :
+    probeAgree vis act goals = none := by
+  simp [probeAgree, h, Option.filter_some, ha]
+
 end Search
 
 /-! ### Probe outcomes ([preminger-2014] Ch. 5) -/
 
 section Outcome
-
-variable {α : Type*}
 
 /-- The outcome of an obligatory probing operation over a goal
     sequence: `valued` iff the search finds a goal. -/
@@ -118,8 +156,6 @@ end Outcome
 
 section Licensing
 
-variable {α : Type*}
-
 /-- A goal is licensed by a probe iff the probe's single search
     reaches it ([bejar-rezac-2003]: licensing is an Agree relation
     with the probe). -/
@@ -143,7 +179,9 @@ theorem Licensed.unique {a b : α}
 theorem licensed_const_true_iff {a : α} :
     Licensed (fun _ => true) goals a ↔ goals.head? = some a := by
   unfold Licensed probeSearch
-  cases goals <;> simp
+  cases goals <;>
+    simp only [List.find?_nil, List.find?_cons_of_pos, List.head?_nil,
+      List.head?_cons]
 
 /-- Every goal that needs licensing is licensed by the probe's
     search. Which goals *need* licensing (`needs`) and which the
@@ -161,9 +199,10 @@ instance [DecidableEq α] (needs vis : α → Bool) (goals : List α) :
 
 /-- On the diagonal (probe relativized to exactly the needy), all
     needy goals are licensed iff the visible goals are subsingleton:
-    one search, one Agree relation, at most one licensee. The general
-    fact behind person-restriction effects ([bejar-rezac-2003]'s PCC,
-    [preminger-2014]'s AF restriction). -/
+    one search, one Agree relation, at most one licensee — the fact
+    behind [preminger-2014]'s AF person restriction. (The off-diagonal
+    variant of the same one-licensee engine drives
+    [bejar-rezac-2003]'s PCC — `Studies/BejarRezac2003.lean`.) -/
 theorem allLicensed_iff :
     AllLicensed vis vis goals ↔
       ∀ a ∈ goals, ∀ b ∈ goals, vis a = true → vis b = true → a = b := by
@@ -200,8 +239,6 @@ end Licensing
 /-! ### Probe cascades -/
 
 section Cascade
-
-variable {α : Type*}
 
 /-- The goal an ordered sequence of probes delivers: the first probe's
     finding, else the next's, and so on — `probeSearch` at the goal
@@ -253,12 +290,18 @@ def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : ProbeTarget) : Boo
     [preminger-2014] (40)/(75)): every [participant]-bearing goal
     token must be licensed by the person probe's search. Goal tokens
     have type `α` with a φ-cell projection, so two arguments with
-    identical φ remain distinct licensees. -/
-def PLC {α : Type*} (cellOf : α → Agreement.Cell) (goals : List α) : Prop :=
+    identical φ remain distinct licensees.
+
+    This is [preminger-2014]'s single-cycle, search-only, diagonal
+    rendering of the condition: it omits [bejar-rezac-2003]'s
+    F-licensing route (a nominal's own φ-bearing P/dative/focus head
+    counts as a licensing Agree relation) and multi-cycle repairs —
+    for the paper's own condition see `BejarRezac2003.PLCOk`. -/
+def PLC (cellOf : α → Agreement.Cell) (goals : List α) : Prop :=
   AllLicensed (λ a => (cellOf a).visibleTo .participant)
     (λ a => (cellOf a).visibleTo .participant) goals
 
-instance {α : Type*} [DecidableEq α] (cellOf : α → Agreement.Cell) (goals : List α) :
+instance [DecidableEq α] (cellOf : α → Agreement.Cell) (goals : List α) :
     Decidable (PLC cellOf goals) :=
   inferInstanceAs (Decidable (AllLicensed _ _ goals))
 

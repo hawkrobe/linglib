@@ -4,6 +4,7 @@ import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Studies.Halpert2012
+import Linglib.Studies.BejarRezac2003
 
 /-!
 # Preminger 2014 — Agreement and Its Failures [preminger-2014]
@@ -11,8 +12,9 @@ import Linglib.Studies.Halpert2012
 [nevins-2011] [stiebels-2006] [halpert-2012]
 
 [preminger-2014], *Agreement and Its Failures* (MIT Press, LI
-Monographs 68), applies [bejar-rezac-2003]'s relativized probing
-(with the Person Licensing Condition) to the Kichean Agent Focus
+Monographs 68), applies [bejar-rezac-2003]'s split-probe system and
+Person Licensing Condition — with relativized probing, Preminger's
+own addition (§4.2) — to the Kichean Agent Focus
 construction (Ch. 4) and uses the resulting failure cases to argue
 for an "obligatory operations" model of φ-Agree (Ch. 5). The
 fragment in `Fragments/Mayan/Kaqchikel/Agreement.lean` carries the
@@ -28,12 +30,16 @@ Per Preminger's own framing:
 - The **feature geometry** [φ] → [PERSON] → [participant] → [author]
   traces to [harley-ritter-2002]; [preminger-2014] adopts a
   simplified version.
-- The **relativized-probing mechanism** and the **Person Licensing
-  Condition (PLC)** are [bejar-rezac-2003]'s (§4.1, §4.4) — and so
-  is the derivational ordering of person before number probing,
-  which Preminger inherits (π⁰ is merged below #⁰ and probes
-  first; what surfaces is decided by a single morphological slot in
-  which a clitic beats out the exponence of π⁰/#⁰).
+- The **split π/# probes** (person probing first) and the **Person
+  Licensing Condition (PLC)** are [bejar-rezac-2003]'s (§4.1, §4.4).
+  **Relativized probing** is Preminger's own addition (§4.2,
+  recalling [rizzi-1990]) — B&R's π-probe is explicitly NOT
+  relativized (see `Studies/BejarRezac2003.lean` and
+  `ch4_relativization_contrast`). The separate-heads implementation
+  (π⁰ merged below #⁰, probing first; B&R put both probes on one
+  head) is also Preminger's; what surfaces is decided by a single
+  morphological slot in which a clitic beats out the exponence of
+  π⁰/#⁰.
 - **Omnivorous agreement** as the name for the surface pattern is
   [nevins-2011]'s term, which Preminger adopts.
 - **DM Vocabulary insertion** for `setAVocab`/`setBVocab` follows
@@ -87,7 +93,8 @@ gives five arguments against hierarchy accounts:
    two-probe + PLC account derives both the agreement pattern and
    the restriction; the hierarchy derives only the former
    (`ch7_arg3_participant_vs_plural_asymmetry`).
-4. **Morphophonology of the markers** ("perhaps strongest", §3.4):
+4. **Morphophonology of the markers** ("perhaps strongest" per
+   §7.1; the morphophonology is detailed in §3.4):
    1st/2nd ABS markers stand in the relation `<agreement marker> =
    <strong pronoun> − <initial approximant>` (149) — a
    clitic-doubling signature that 3rd-person markers lack
@@ -224,6 +231,20 @@ theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
   · rintro h ⟨hs, ho⟩
     exact nomatch congrArg Prod.fst
       (h (.A, s) (.head _) (.P, o) (.tail _ (.head _)) hs ho)
+
+/-- [preminger-2014] Ch. 4's move (§4.2), made formal:
+    [bejar-rezac-2003]'s ⊤-visible π-probe is absorbed by an
+    F-licensed 3rd-person dative, stranding a participant below it —
+    the PCC. The Kichean π⁰, relativized to [participant], skips the
+    same 3rd-person goal and licenses the lower participant.
+    Relativization to exactly the licensing-needy class is what
+    converts absorption into omnivorous licensing. -/
+theorem ch4_relativization_contrast :
+    ¬ BejarRezac2003.PLCOk [[⟨.third, true⟩, ⟨.first, false⟩]]
+        [⟨.third, true⟩, ⟨.first, false⟩] ∧
+    PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :
+        List (ArgPosition × Agreement.Cell)) := by
+  decide
 
 /-- The two AF probes in slot order: π⁰'s clitic output beats #⁰'s
     direct exponence in the single morphological slot
@@ -424,11 +445,12 @@ theorem ch7_arg4_form_distinctness :
     Zulu's L⁰ is the off-diagonal instance (`AllLicensed needs ⊤`:
     indiscriminate probe, augmentless = needy), so an augmented
     subject intervenes and a lower augmentless nominal goes
-    unlicensed. Same machinery, opposite skippability — and no
-    salience reading of augmented/augmentless is available, which
-    undermines the cognitive-salience grounding of hierarchy
-    accounts. Both systems realize failed probing as default
-    morphology (Kichean covert ∅, Zulu overt *ya-*). -/
+    unlicensed. Same machinery, opposite skippability — and there is
+    little plausible salience grounding for augmented/augmentless,
+    a contrast sensitive to purely structural relations such as
+    c-command, undermining the cognitive-salience grounding of
+    hierarchy accounts. Both systems realize failed probing as
+    default morphology (Kichean covert ∅, Zulu overt *ya-*). -/
 theorem ch7_arg5_zulu_parallel :
     -- Kichean: π⁰ skips a 3SG subject and licenses a 1SG object
     PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :

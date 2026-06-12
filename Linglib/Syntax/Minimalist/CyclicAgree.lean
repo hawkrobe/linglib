@@ -335,7 +335,12 @@ per segment, over the cyclically ordered token list: B&R's segments
 match independently, so cyclic expansion at the whole-probe level is
 first-visible-goal search at the per-segment level. The residue-based
 definitions above remain definitional — they are the paper's
-mechanism; the factorization is a *result* about it. -/
+mechanism; the factorization is a *result* about it.
+
+Cf. `Studies/BejarRezac2003.lean` for the 2003 precursor's
+second-cycle repair: formally distinct mechanisms — 2003 varies the
+goal *order* under one probe; cyclic expansion here varies the
+*relativization* (per segment) over one order. -/
 
 /-- The two arguments as φ-bearing goal tokens, in cyclic search order:
     the IA precedes the EA (cycle I before cycle II). -/

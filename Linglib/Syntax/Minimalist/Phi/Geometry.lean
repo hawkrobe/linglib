@@ -12,26 +12,32 @@ implies the next:
     [φ] → [NUMBER] → [plural]
 
 This decomposition drives **relativized probing**
-([bejar-rezac-2003]): a probe seeking [participant] skips DPs
-that lack it (3rd person), targeting only 1st/2nd person DPs. A
-separate probe seeking [plural] skips DPs that lack it (singulars),
-targeting only plurals.
+([preminger-2014] §4.2, recalling [rizzi-1990]'s Relativized
+Minimality): a probe seeking [participant] skips DPs that lack it
+(3rd person), targeting only 1st/2nd person DPs. A separate probe
+seeking [plural] skips DPs that lack it (singulars), targeting
+only plurals.
 
-[bejar-rezac-2003] apply this two-probe mechanism to derive
-the Person Case Constraint; [bejar-rezac-2009] formalize it as
-Cyclic Agree. [preminger-2014] §4.4 applies the same B&R 2003
-mechanism to Kichean Agent Focus — explicitly reframing earlier
-"omnivorous hierarchy" accounts in terms of two independently
-relativized probes π⁰ ([participant]) and #⁰ ([plural]). [preminger-2014] Ch. 7 then argues against
+[bejar-rezac-2003] introduce the split π/# probes (person probing
+first) and the Person Licensing Condition, deriving the Person
+Case Constraint with an *unrelativized* π-probe — the dative
+matches it and absorbs it (see `Studies/BejarRezac2003.lean`);
+[bejar-rezac-2009] develop the system into Cyclic Agree.
+[preminger-2014] §4.4 ports the split-probe + PLC system to
+Kichean Agent Focus, *adding* the relativization of π⁰ to
+[participant] and #⁰ to [plural] — reframing earlier "omnivorous
+hierarchy" accounts. [preminger-2014] Ch. 7 then argues against
 direct hierarchy/scale primitives like
-`[+participant] > [+plural] > default`, on four grounds:
+`[+participant] > [+plural] > default`, on five grounds:
 restrictedness of "salience" effects to AF, K'ichee' formal
 addressee *la* (a 2nd-person form patterning as 3rd-person under
 AF), the AF person restriction (1+2 blocked but 3pl+3pl licit),
-and the morphophonological 1st/2nd vs 3rd asymmetry (clitic
+the morphophonological 1st/2nd vs 3rd asymmetry (clitic
 doubling vs direct exponence, [preminger-2014] §3.4 and
-§4.4). The relativized-probing mechanism derives the same surface
-patterns without committing to a salience scale.
+§4.4), and the Zulu parallel ([halpert-2012]: the same machinery
+over augmented/augmentless). The relativized-probing mechanism
+derives the same surface patterns without committing to a salience
+scale.
 
 ## Extended Geometry: [±proximate]
 
