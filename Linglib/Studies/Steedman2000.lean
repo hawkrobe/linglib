@@ -22,8 +22,8 @@ CCG predictions from [steedman-2000], one section per phenomenon:
   recovered from the type-raising directions a language's verb categories
   license.
 - **Cross-serial dependencies**: Dutch verb clusters ([bresnan-etal-1982])
-  with cross-serial NP-verb bindings (the substrate direction-flips the
-  book's crossed-composition analysis — see the section header).
+  with cross-serial NP-verb bindings, via the book's leftward argument
+  categories and forward crossed composition.
 - **Verb clusters and quantifier scope** (§6.8): verb-raising orders are
   scope-ambiguous, verb-projection-raising orders surface-only; predictions
   are computed via `CCG.Scope.analyzeDerivation` and checked against the
@@ -219,11 +219,10 @@ end Gapping
 /-! ### Cross-serial dependencies
 
 Dutch verb clusters ([bresnan-etal-1982]) with cross-serial NP-verb
-bindings. Caveat: the book's analysis gives the cluster verbs leftward NP
-slots and composes them by forward *crossed* composition; the substrate
-derivations in `CCG.CrossSerial` flip the NP slots rightward so plain
-B/B² suffice (flagged there as not matching Dutch surface order). The
-binding permutation — the empirical target — is unaffected. -/
+bindings, using the surface-faithful derivations of `CCG.CrossSerial`:
+cluster verbs carry leftward NP slots and the cluster composes by forward
+crossed composition, per the book's own Dutch fragment, so the yield
+matches the attested word order. -/
 
 section CrossSerial
 
@@ -245,22 +244,21 @@ structure AnnotatedDerivation where
   deriving Repr
 
 /-- "Jan Piet zag zwemmen" with cross-serial bindings: Jan is the subject
-of "zag", Piet the argument picked up by "zwemmen". -/
+of "zag", Piet the argument bound into the cluster. -/
 def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
   { n := 2
-  , deriv := jan_zag_zwemmen_piet
+  , deriv := jan_piet_zag_zwemmen_sub
   , words := ["Jan", "Piet", "zag", "zwemmen"]
   , binding := VerbClusterBinding.identity 2
   }
 
-/-- "Jan Piet Marie zag helpen zwemmen": the verb cluster composes into a
-3-place predicate absorbing Marie (outermost slot → zwemmen), Piet
-(inner slot → helpen), and Jan (subject → zag) — the cross-serial
-binding pattern. (Direction-flipped from the book's crossed-composition
-analysis; see the section header.) -/
+/-- "Jan Piet Marie zag helpen zwemmen": `zag >B× (helpen zwemmen)` makes
+the cluster a leftward-seeking 3-place predicate; Marie binds `helpen`'s
+slot, Piet `zag`'s object slot, Jan the subject — the cross-serial
+binding pattern, in the attested word order. -/
 def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
   { n := 3
-  , deriv := jan_piet_marie_zag_helpen_zwemmen_deriv
+  , deriv := jan_piet_marie_zag_helpen_zwemmen_sub
   , words := ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"]
   , binding := VerbClusterBinding.identity 3
   }
@@ -272,6 +270,15 @@ theorem dutch_jan_piet_zag_zwemmen_binding :
 theorem dutch_jan_piet_marie_zag_helpen_zwemmen_binding :
     dutch_jan_piet_marie_zag_helpen_zwemmen.binding = dutch_3np_3v.binding := rfl
 
+/-- The derivations spell out exactly the annotated surface words. -/
+theorem dutch_jan_piet_zag_zwemmen_yield :
+    dutch_jan_piet_zag_zwemmen.deriv.yield = dutch_jan_piet_zag_zwemmen.words := by
+  decide
+
+theorem dutch_jan_piet_marie_zag_helpen_zwemmen_yield :
+    dutch_jan_piet_marie_zag_helpen_zwemmen.deriv.yield
+      = dutch_jan_piet_marie_zag_helpen_zwemmen.words := by decide
+
 end CrossSerial
 
 /-! ### Verb clusters and quantifier scope (§6.8)
@@ -280,9 +287,11 @@ Scope tracks word order: in the verb-raising order the cluster forms by
 composition, so a quantified argument combines with a function containing
 the tensed verb and can take scope over it; in the verb-projection-raising
 order it combines with the embedded verb alone. The derivations below are
-schematic `DerivStep` trees (the toy `Cat` lacks the crossed composition
-real Dutch clusters need); they capture the composed-cluster vs.
-applied-cluster contrast driving the account. -/
+category-checked `DerivStep` trees: the verb-raising cluster forms by
+forward crossed composition (`CCG.forwardCompX`), the
+verb-projection-raising order by plain application — the composed-cluster
+vs. applied-cluster contrast driving the account. (The toy `Cat` still
+drops the book's features, e.g. the `VP₋SUB` restriction on `>B×`.) -/
 
 section Quantification
 
@@ -296,15 +305,15 @@ inductive VerbOrder where
   | verbProjectionRaising
   deriving DecidableEq, Repr, Inhabited
 
-/-- Verb-raising order, schematized on Dutch (99a): the cluster
-*probeert te zingen* forms by composition before taking the object. -/
+/-- Verb-raising order, Dutch (99a): the cluster *probeert te zingen*
+forms by crossed composition before taking the object to its left. -/
 def verbRaisingDeriv : DerivStep :=
   .bapp (.lex ⟨"veel liederen", NP⟩)
-    (.fcomp (.lex ⟨"probeert", IV / IV⟩) (.lex ⟨"te zingen", IV \ NP⟩))
+    (.fcompx (.lex ⟨"probeert", IV / IV⟩) (.lex ⟨"te zingen", IV \ NP⟩))
 
-/-- Verb-projection-raising order, schematized on Dutch (99b): the matrix
-verb applies to an already-saturated embedded VP, so the quantified
-object never combines with a function containing the tensed verb. -/
+/-- Verb-projection-raising order, Dutch (99b): the matrix verb applies to
+an already-saturated embedded VP, so the quantified object never combines
+with a function containing the tensed verb. -/
 def verbProjectionRaisingDeriv : DerivStep :=
   .fapp (.lex ⟨"probeert", IV / IV⟩)
     (.bapp (.lex ⟨"veel liederen", NP⟩) (.lex ⟨"te zingen", IV \ NP⟩))
@@ -313,6 +322,12 @@ def verbProjectionRaisingDeriv : DerivStep :=
 def schematicDeriv : VerbOrder → DerivStep
   | .verbRaising => verbRaisingDeriv
   | .verbProjectionRaising => verbProjectionRaisingDeriv
+
+/-- Both derivations are category-valid and derive the same category. -/
+theorem verbRaisingDeriv_cat : verbRaisingDeriv.cat = some IV := rfl
+
+theorem verbProjectionRaisingDeriv_cat :
+    verbProjectionRaisingDeriv.cat = some IV := rfl
 
 theorem analyzeDerivation_verbRaisingDeriv :
     analyzeDerivation verbRaisingDeriv = .composed := rfl

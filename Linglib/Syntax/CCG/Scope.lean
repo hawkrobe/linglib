@@ -47,6 +47,7 @@ def analyzeDerivation : DerivStep → DerivationType
     | _, _ => .directApp
   | .fcomp _ _ => .composed
   | .bcomp _ _ => .composed
+  | .fcompx _ _ => .composed
   | .ftr _ _ => .typeRaised
   | .btr _ _ => .typeRaised
   | .coord d1 d2 =>
