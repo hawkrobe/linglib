@@ -39,9 +39,11 @@ nominative over the dative, whereupon the projection of T introduces
 a fresh [π]-probe and a *second Agree cycle* finds the nominative
 first. Icelandic, where the dative itself satisfies the EPP and stays
 highest, keeps the PCC in dative-nominative constructions (their
-(12)). The second-cycle mechanism is the seed of [bejar-rezac-2009]'s
-cyclic Agree (`Syntax/Minimalist/CyclicAgree.lean`). Modeled here as
-a list of probe cycles, each an ordered goal sequence.
+(12)). Modeled here as a list of probe cycles, each an ordered goal
+sequence. The second-cycle mechanism prefigures [bejar-rezac-2009]'s
+cyclic Agree (see `CyclicAgree.lean`), but the two are formally
+distinct: 2003 varies the goal *order* under one probe; 2009 varies
+the *relativization* (per-segment) over one order.
 -/
 
 namespace BejarRezac2003
@@ -67,17 +69,26 @@ instance : DecidablePred Argument.IsParticipant := fun a =>
   inferInstanceAs (Decidable ((decomposePerson a.person).hasParticipant = true))
 
 /-- One cycle of [π]-Agree over an ordered goal sequence: the probe
-    matches the closest goal (every NP bears [π], so visibility is
-    total — `probeSearch ⊤`) and Agrees with it only if it is still
-    active (Case not yet valued, ¬F). An inactive match absorbs the
-    probe without valuing it (their (9)). -/
+    matches the closest goal (every NP bears [π], per their (8), so
+    visibility is total) and Agrees with it only if it is active —
+    not licensed by its own φ-bearing F. An inactive match absorbs
+    the probe without valuing it (their (9)). (The paper glosses
+    activity as Caselessness but leaves open why same-projection
+    Case valuation does not deactivate the French nominative for the
+    second cycle; ¬F gives the right extension.) -/
 def piAgree (goals : List Argument) : Option Argument :=
-  (probeSearch (fun _ => true) goals).bind
-    (fun a => if a.fLicensed then none else some a)
+  probeAgree (fun _ => true) (fun a => !a.fLicensed) goals
 
 /-- The PLC over a derivation's [π]-Agree cycles: every interpretable
     1st/2nd person feature enters an Agree relation with a functional
-    category — its own F, or some cycle's [π]-probe. -/
+    category — its own F, or some cycle's [π]-probe. Intended
+    invariant (not enforced): each cycle is a reordering of `args`
+    (the French repair re-probes the *same* two arguments in reversed
+    order). Differs from the substrate `Minimalist.PLC` — Preminger's
+    single-cycle, search-only, probe-relativized rendering — by the
+    paper's F-licensing disjunct and the multiplicity of cycles; the
+    single-cycle case collapses onto the substrate shape
+    (`plcOk_singleCycle_iff_allLicensed`). -/
 def PLCOk (cycles : List (List Argument)) (args : List Argument) : Prop :=
   ∀ a ∈ args, a.IsParticipant →
     (a.fLicensed = true ∨ ∃ goals ∈ cycles, piAgree goals = some a)
@@ -95,8 +106,35 @@ instance (cycles : List (List Argument)) (args : List Argument) :
     a crash (cf. `ObligatoryOperations`); ungrammaticality comes only
     from the PLC. -/
 theorem piAgree_absorbed (dat acc : Argument) (hd : dat.fLicensed = true) :
-    piAgree [dat, acc] = none := by
-  simp [piAgree, probeSearch, List.find?, hd]
+    piAgree [dat, acc] = none :=
+  probeAgree_eq_none_of_inactive rfl (by simp [hd])
+
+/-- Single-cycle collapse onto the substrate's `(needs, vis)`
+    licensing shape: one [π]-cycle over the base order satisfies the
+    PLC iff `AllLicensed` holds with neediness "participant and not
+    F-licensed" and total visibility. The recoding is lossy by
+    design: it folds the F-licensing route into ¬needy, whereas the
+    paper counts F-licensing as itself an Agree relation; and the
+    multi-cycle repairs ((16)–(17)) escape this signature entirely. -/
+theorem plcOk_singleCycle_iff_allLicensed (goals : List Argument) :
+    PLCOk [goals] goals ↔
+      AllLicensed (fun a => decide a.IsParticipant && !a.fLicensed)
+        (fun _ => true) goals := by
+  unfold PLCOk AllLicensed
+  constructor
+  · intro h a ha hneeds
+    simp only [Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hneeds
+    rcases h a ha hneeds.1 with hF' | ⟨gs, hgs, hag⟩
+    · exact nomatch hneeds.2.symm.trans hF'
+    · rw [List.mem_singleton.mp hgs] at hag
+      exact (probeAgree_eq_some_iff.mp hag).1
+  · intro h a ha hpart
+    cases hF : a.fLicensed with
+    | true => exact Or.inl rfl
+    | false =>
+      refine Or.inr ⟨goals, List.mem_singleton_self _, ?_⟩
+      exact probeAgree_eq_some_iff.mpr
+        ⟨h a ha (by simp [hpart, hF]), by simp [hF]⟩
 
 /-- **The PCC** (their (1)/(7), generalized): in a double-object
     configuration — dative over accusative, one [π]-Agree cycle on
@@ -109,7 +147,7 @@ theorem strong_pcc (dat acc : Argument)
   constructor
   · intro h hacc
     rcases h acc (List.mem_pair.mpr (Or.inr rfl)) hacc with hF | ⟨gs, hgs, hag⟩
-    · exact absurd hF (by simp [ha])
+    · exact nomatch ha.symm.trans hF
     · rw [List.mem_singleton.mp hgs, piAgree_absorbed dat acc hd] at hag
       exact nomatch hag
   · intro hacc a ha' hpart
@@ -138,12 +176,14 @@ theorem pp_repair :
   decide
 
 /-- The dative-nominative split (their (12) vs. (13)/(16)–(17)):
-    Icelandic datives satisfy the EPP and stay highest, so the single
+    Icelandic datives satisfy the EPP and stay highest, so the
     [π]-cycle is absorbed and a 1st/2nd nominative violates the PLC
-    (*þið*, their (12)). In French the nominative raises over the
-    dative and T's projection opens a second [π]-cycle over the
-    reversed order, which finds the now-highest active nominative —
-    PCC obviated (their (13)). -/
+    (*þið*, their (12)). (Modeled as a single cycle; per their (25c)
+    Icelandic also projects a second one, but the dative still
+    intervenes — extensionally the same.) In French the nominative
+    raises over the dative and T's projection opens a second
+    [π]-cycle over the reversed order, which finds the now-highest
+    active nominative — PCC obviated (their (13)). -/
 theorem dnc_split :
     -- Icelandic: one cycle, dative highest — 2nd-person nominative out
     ¬ PLCOk [[⟨.third, true⟩, ⟨.second, false⟩]]

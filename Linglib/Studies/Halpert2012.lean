@@ -12,9 +12,10 @@ highest there, and at most one occurs per simplex clause. The
 **conjoint/disjoint** alternation on the verb (present tense:
 conjoint ∅- vs. disjoint *ya-*) is the morphological spellout of L⁰
 itself (her ch. 4): "the disjoint appears when L fails to find a
-goal", and "the derivation converges even if a probe fails to find a
-goal" — failure-tolerance, adopted by [preminger-2014] Ch. 6 as the
-second case study in tolerated failed agreement.
+goal", and "As long as probing is attempted, the derivation will
+still converge even if a probe fails to find a goal" —
+failure-tolerance, adopted by [preminger-2014] Ch. 6 as the second
+case study in tolerated failed agreement.
 
 Formalized through `Phi/Probing.lean`: L⁰ is the **indiscriminate**
 instance of `probeSearch` (`vis = ⊤`, so bare minimality delivers
@@ -27,7 +28,9 @@ exactly the needy, hence omnivorous and position-insensitive.
 Scope: simplex clauses only — the dissertation's second licensing
 route (V⁰ together with specifier-taking CAUS/APPL heads, licensing
 one additional augmentless nominal; her LP schemas in ch. 3) is not
-modeled.
+modeled. `Nominal` also under-populates L⁰'s search space: her L⁰
+targets any vP-internal XP (locatives, adverbs), so a conjoint fed
+by a non-nominal is not representable here.
 -/
 
 namespace Halpert2012
@@ -53,6 +56,11 @@ def needsL (n : Nominal) : Bool := !n.augmented
 def lGoal (vp : List Nominal) : Option Nominal :=
   probeSearch (fun _ => true) vp
 
+/-- Bare minimality, as a theorem: the indiscriminate search takes
+    the head of the sequence. -/
+theorem lGoal_eq_head? (vp : List Nominal) : lGoal vp = vp.head? := by
+  cases vp <;> rfl
+
 /-- The licensing condition on a simplex vP: every augmentless
     nominal is licensed by L⁰'s single search. -/
 def LicensingOk (vp : List Nominal) : Prop :=
@@ -77,18 +85,17 @@ def lSpellout (vp : List Nominal) : String :=
 
 /-! ### The conjoint/disjoint distribution -/
 
-/-- Disjoint iff vP is empty: the conjoint requires overt postverbal
-    material — L⁰'s indiscriminate search is sensitive even to
-    non-arguments, which is the learner's evidence that L⁰ is
-    unrelativized ([preminger-2014] Ch. 7's locative-modifier
-    point). -/
+/-- Disjoint iff vP is empty (after A-movement): the conjoint
+    requires overt vP-internal material — L⁰'s indiscriminate search
+    is sensitive even to non-arguments, which is the learner's
+    evidence that L⁰ is unrelativized ([preminger-2014] Ch. 6
+    §6.1.3's locative-modifier point). -/
 theorem disjoint_iff_empty (vp : List Nominal) :
     lSpellout vp = "ya-" ↔ vp = [] := by
   cases vp with
-  | nil => exact ⟨fun _ => rfl, fun _ => rfl⟩
+  | nil => exact iff_of_true rfl rfl
   | cons a t =>
-    have hne : ("∅-" : String) ≠ "ya-" := by decide
-    exact ⟨fun h => absurd h hne, fun h => nomatch h⟩
+    exact iff_of_false (show ("∅-" : String) ≠ "ya-" by decide) (nomatch ·)
 
 /-! ### Licensing: highest-only and at-most-one -/
 
@@ -107,10 +114,11 @@ theorem at_most_one_augmentless {vp : List Nominal} (h : LicensingOk vp) :
     ∀ n ∈ vp, ∀ m ∈ vp, needsL n = true → needsL m = true → n = m :=
   fun n hn m hm hn' hm' => (h n hn hn').unique (h m hm hm')
 
-/-! ### The negative-existential VS(O) paradigm -/
+/-! ### The negated-expletive VS(O) paradigm -/
 
-/-- The augmentless distribution in negative existentials (her ch. 3
-    paradigm; reproduced as [preminger-2014] (128)): an augmentless
+/-- The augmentless distribution in negated transitive-expletive
+    clauses — augmentless nominals are NPIs in these contexts (her
+    ch. 3 paradigm, (127); reproduced as [preminger-2014] (128)): an augmentless
     nominal is fine alone or above an augmented object; blocked in
     pairs (single Agree relation) and below an augmented subject
     (intervention). Tokens: *muntu* '1person', *qanda* '5egg'. -/
@@ -127,9 +135,10 @@ theorem augmentless_distribution :
 
 /-! ### Tolerated failed agreement -/
 
-/-- Failure-tolerance, in her own terms ("the derivation converges
-    even if a probe fails to find a goal"; "when L fails to find a
-    goal, the derivation records this failure in the morphological
+/-- Failure-tolerance, in her own terms ("As long as probing is
+    attempted, the derivation will still converge even if a probe
+    fails to find a goal"; "When L fails to find a goal, the
+    derivation records this failure in the morphological
     spell-out"): an empty vP leaves L⁰ unvalued, the derivation
     converges under the obligatory-operations model, and PF realizes
     the failure as the overt disjoint *ya-*. With any goal — even a
