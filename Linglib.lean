@@ -1899,6 +1899,7 @@ import Linglib.Studies.Aissen2003Agreement
 import Linglib.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Studies.AdamsonZompi2025
 import Linglib.Studies.BejarRezac2009
+import Linglib.Studies.BejarRezac2003
 import Linglib.Studies.Deal2024
 import Linglib.Studies.ClemDeal2024
 import Linglib.Studies.PanchevaZubizarreta2018
