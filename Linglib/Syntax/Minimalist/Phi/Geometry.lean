@@ -145,7 +145,8 @@ def decomposePerson : Person → DecomposedPerson
     - **π⁰** seeks [participant]: targets 1st/2nd person DPs
     - **#⁰** seeks [plural]: targets plural DPs
 
-    π⁰ structurally outranks #⁰ (person probing > number probing). -/
+    π⁰ is merged below #⁰ and probes first — person-before-number
+    probing, inherited from [bejar-rezac-2003]. -/
 inductive ProbeTarget where
   /-- π⁰: person probe, seeks [participant]. -/
   | participant
@@ -176,10 +177,11 @@ def probeVisible (target : ProbeTarget) (person : Person) (isPlural : Bool) : Bo
     - Rank 0: invisible to both probes (3SG default)
 
     Derived from the probing mechanism ([bejar-rezac-2003]),
-    not stipulated as a salience scale: π⁰ takes priority over #⁰
-    by virtue of being structurally higher and earlier in the
-    derivation, and each probe targets any DP bearing the sought
-    feature. The rank captures the combined effect on a single DP.
+    not stipulated as a salience scale: π⁰ is merged below #⁰ and
+    probes earlier in the derivation, its clitic output beats other
+    exponence in the single morphological slot, and each probe
+    targets any DP bearing the sought feature. The rank captures
+    the combined effect on a single DP.
     See module docstring for why this is a convenience encoding,
     not an endorsement of the salience-scale analyses
     [preminger-2014] Ch. 7 argues against. -/

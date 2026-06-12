@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Agreement.Paradigm
 
 /-!
 # VocabSimple: Minimalist-specific Vocabulary Insertion
@@ -119,6 +120,11 @@ theorem empty_features_matches_any (entry : VocabEntry)
 -- ============================================================================
 -- § 4: Vocabulary Builders
 -- ============================================================================
+
+/-- The φ-feature list of a person-number cell, in the shape `makePersonVocab`
+    consumes. Shared by the Mayan agreement studies (Scott2023, Preminger2014). -/
+def _root_.Agreement.Cell.toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
+  [.person c.toPerson, .number (if c.isPlural then .plural else .singular)]
 
 /-- Build a Vocabulary from a paradigm cell type. For each cell `pn`, emits
     one VocabEntry whose features are `toPhi pn` lifted into valued

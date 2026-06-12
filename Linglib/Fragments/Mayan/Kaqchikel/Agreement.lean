@@ -1,6 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
@@ -12,8 +11,9 @@ agreement morphology: paradigm exponents, person-number cells, argument
 positions, and the empirical AF agreement table.
 
 The theory-laden apparatus that interprets this data — DM Vocabulary
-insertion, Phi.Geometry feature decomposition, the omnivorous
-hierarchy, the AgreeOutcome inductive — lives in
+insertion (`setAVocab`/`setBVocab`), Phi.Geometry feature
+decomposition (`IsParticipant`), and the two-probe choice rule
+(`afRank`, `afMarker`) — lives in
 `Studies/Preminger2014.lean`. Per the project
 Fragment-discipline rule (CLAUDE.md), fragments hold only consensus
 typological metadata; paper-specific apparatus is consumed in study
@@ -101,7 +101,10 @@ def setAExponent : ExponentTable :=
 /-- Set B (ABS) markers: preverbal markers on Infl/T cross-referencing
     the absolutive argument. The 3SG form (∅) is
     also the Elsewhere entry — the default when no more specific entry
-    matches, as in the failure case of obligatory agreement (Ch. 5). -/
+    matches, as in the failure case of obligatory agreement (Ch. 5).
+    Citation forms: 1SG and 2SG are *i(n)-* and *a(t)-*, whose
+    parenthesized segments drop in certain phonological contexts
+    (e.g., 1SG surfaces as *i-* in *x-i-tz'et-ö*). -/
 def setBExponent : ExponentTable :=
   [(.pn .first .Sing, "in-"), (.pn .second .Sing, "at-"), (.pn .third .Sing, "∅"),
    (.pn .first .Plur, "oj-"), (.pn .second .Plur, "ix-"), (.pn .third .Plur, "e-")]

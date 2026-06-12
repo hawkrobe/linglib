@@ -624,4 +624,20 @@ theorem mam_intransitive_copies :
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
       none = true := by rfl
 
+/-- Infl's satisfaction condition, unfolded: φ-match or Voice_TR encounter. -/
+theorem mamInflSatisfaction_isSatisfied (fb : FeatureBundle) (ctx : Option Cat) :
+    mamInflSatisfaction.isSatisfied fb ctx
+      = (hasValuedFeature fb (.phi (.person .third)) || ctx == some Cat.v) := by
+  simp [mamInflSatisfaction, SatisfactionCond.isSatisfied, atomicSatisfied]
+
+/-- Head-encounter satisfaction never copies: Infl copies features iff
+    they are there to copy, whatever the context. -/
+theorem mamInflSatisfaction_copiedFeatures (fb : FeatureBundle) (ctx : Option Cat) :
+    mamInflSatisfaction.copiedFeatures fb ctx
+      = hasValuedFeature fb (.phi (.person .third)) := by
+  cases hv : hasValuedFeature fb (.phi (.person .third)) <;>
+    cases hc : ctx == some Cat.v <;>
+      simp [mamInflSatisfaction, SatisfactionCond.copiedFeatures, atomicSatisfied,
+        List.find?, hv, hc]
+
 end Minimalist
