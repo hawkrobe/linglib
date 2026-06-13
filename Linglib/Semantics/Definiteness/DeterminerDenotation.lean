@@ -1,6 +1,7 @@
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Reference.Nominal
+import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # The denotation of a determiner
@@ -41,6 +42,10 @@ deictic feature projects: deixis filters the referent but never selects it
   of the possessee restrictor that stands in the possession relation to the
   possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
   `Semantics/Quantification/Possessive.lean`.
+* `interpret_possessive_eq_possessiveSortal`, `Possessive.denote_isSome_iff_iotaPresupposition`,
+  `Possessive.toCarrier` — the determiner denotation *is* the
+  `ArgumentStructure.Relational` carrier API: same restrictor (Barker's
+  `possessiveSortal`), same definedness presupposition, same referent.
 
 ## Implementation notes
 
@@ -185,5 +190,72 @@ theorem Possessive.denote_licensed (p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
     Determiner.licenses [.possessive p] (Description.possessive R possessor rel) :=
   ⟨.possessive p, List.mem_singleton_self _, trivial⟩
+
+/-! ### Unification with the relational carrier API
+
+The possessive determiner's denotation (`Description.possessive`/`russellIota`)
+and the `ArgumentStructure.Relational` possessive-carrier API are not two
+analyses — they are the same construction. The determiner's restrictor *is*
+Barker's `possessiveSortal` (π of the noun predicate and the possession
+relation); its definedness presupposition *is* the carrier's Russellian
+iota-presupposition; and at a context where the presupposition holds, the
+determiner assembles into a `DefinitePossessive` carrier whose
+`existsUnique_possessee` selects the very referent the determiner does. -/
+
+section CarrierUnification
+
+open Semantics.ArgumentStructure.Relational
+
+variable (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+  (g : Assignment E) (gs : SitAssignment W)
+
+/-- The possessive determiner's restrictor *is* Barker's `possessiveSortal` (π of
+the noun predicate `R` and the possession relation `rel`): the `Definiteness` and
+`ArgumentStructure` encodings select through the same construction, by
+construction. -/
+theorem interpret_possessive_eq_possessiveSortal :
+    interpret (.possessive R possessor rel) g gs
+      = russellIota (fun x => possessiveSortal (S := PUnit) (possessor g gs)
+          (fun y _ => R g gs y) (fun a b _ => rel g gs a b) x PUnit.unit) :=
+  rfl
+
+/-- The possessive determiner's definedness presupposition *is* the carrier
+API's Russellian iota-presupposition (`HasIotaWitness`'s condition). -/
+theorem Possessive.denote_isSome_iff_iotaPresupposition (p : Possessive) :
+    ((p.denote R possessor rel).selector (g, gs) PUnit.unit).isSome
+      ↔ iotaPresupposition
+          (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit := by
+  rw [Possessive.denote_selector]
+  show (russellIota (fun x => R g gs x ∧ rel g gs (possessor g gs) x)).isSome ↔ _
+  rw [russellIota_isSome_iff_existsUnique]
+  unfold existsUnique Existence Uniqueness iotaPresupposition
+  constructor
+  · rintro ⟨⟨x, hx⟩, huniq⟩
+    exact ⟨x, hx, fun y hy => huniq y x hy hx⟩
+  · rintro ⟨x, hx, huniq⟩
+    exact ⟨⟨x, hx⟩, fun a b ha hb => (huniq a ha).trans (huniq b hb).symm⟩
+
+/-- At a context where its presupposition holds, the possessive determiner
+assembles into a `DefinitePossessive` carrier (over the trivial situation) whose
+possessee predicate is the determiner's restrictor. -/
+def Possessive.toCarrier
+    (h : iotaPresupposition
+      (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
+    DefinitePossessive E PUnit where
+  possessor := possessor g gs
+  predicate := fun x _ => R g gs x ∧ rel g gs (possessor g gs) x
+  presupposition := fun _ => h
+
+/-- The carrier's unique possessee (`existsUnique_possessee`, inherited from
+`HasIotaWitness`) is the referent the determiner selects — the two encodings
+agree by construction. -/
+theorem Possessive.toCarrier_existsUnique
+    (h : iotaPresupposition
+      (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
+    ∃! y : E, HasPossesseePredicate.possesseePredicate
+      (Possessive.toCarrier R possessor rel g gs h) y PUnit.unit :=
+  existsUnique_possessee _ PUnit.unit
+
+end CarrierUnification
 
 end Semantics.Definiteness
