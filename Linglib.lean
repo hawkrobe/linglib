@@ -2832,4 +2832,5 @@ import Linglib.Core.Logic.TweetyNixon
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Studies.Barker1995
+import Linglib.Studies.ParteeBorschev2003
 import Linglib.Studies.ViknerJensen2002
