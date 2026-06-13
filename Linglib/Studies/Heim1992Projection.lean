@@ -29,7 +29,7 @@ connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
 The *other* half of [heim-1992] — comparative-belief desire
 semantics for `want`/`wish`/`hope` — is at
 `Studies/Heim1992.lean`. Both halves of the paper are
-formalized; the substrate splits along the natural Phenomena boundary
+formalized; the substrate splits along the natural empirical boundary
 (presupposition vs modality).
 
 -/

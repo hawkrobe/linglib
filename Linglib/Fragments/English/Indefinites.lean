@@ -43,7 +43,7 @@ theorem english_paradigm_is_AAA : paradigm.syncretism = some .AAA := rfl
 /-- English's WALS F46A classification: derived from the paradigm's
     morphological-basis distribution (single basis `.genericNoun` →
     F46A `.genericNounBased`). Cross-check vs `F46A.allData` lives in
-    `Phenomena/Indefinites/Typology.lean`. -/
+    `Studies/Haspelmath1997.lean`. -/
 theorem english_paradigm_is_genericNounBased :
     paradigm.toWALS46A = some .genericNounBased := rfl
 

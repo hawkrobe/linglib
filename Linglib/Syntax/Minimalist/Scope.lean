@@ -25,8 +25,8 @@ Inverse scope is unavailable when:
 In earlier versions, `PositionedQuantifier` carried a stipulated
 `inDoubleObject : Bool` flag. This has been replaced: the theory layer
 provides `superiorityFromTree`, which derives superiority from
-asymmetric c-command in a `SyntacticObject` tree. Bridge files in
-`Phenomena/` use this to connect DOC scope freezing to
+asymmetric c-command in a `SyntacticObject` tree.
+`Studies/Bruening2001.lean` uses this to connect DOC scope freezing to
 [larson-1988]'s tree derivation.
 
 -/

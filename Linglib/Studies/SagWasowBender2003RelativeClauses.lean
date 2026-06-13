@@ -5,7 +5,7 @@ import Linglib.Syntax.HPSG.RelativeClauses
 [sag-wasow-bender-2003] [pollard-sag-1994]
 
 Connects the HPSG relative clause mechanism (MOD feature + SLASH/GAP
-+ Head-Modifier Schema) to empirical data in `Phenomena.FillerGap`.
++ Head-Modifier Schema) to empirical relative-clause data (inlined below).
 
 ## Main results
 
@@ -96,7 +96,7 @@ def ppRelWho : RelClauseConfig :=
 #guard relClauseLicensed ppRelWho
 
 -- ============================================================================
--- Connecting to Phenomena Data
+-- Connecting to Empirical Data
 -- ============================================================================
 
 /-- Object relative clause data matches HPSG derivation.

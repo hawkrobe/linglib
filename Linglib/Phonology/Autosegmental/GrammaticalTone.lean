@@ -46,7 +46,7 @@ triggers tonal modification of its complement, e.g., Kalabari associative
 L-H melody on nouns).
 
 This module provides the core types and operations. Language-specific
-instantiations live in `Fragments/`; empirical applications in `Phenomena/`.
+instantiations live in `Fragments/`; empirical applications in `Studies/`.
 
 ## References
 

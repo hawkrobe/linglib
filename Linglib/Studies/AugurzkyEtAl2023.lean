@@ -28,7 +28,7 @@ The `no` / `not every` asymmetry is the central puzzle.
 
 ## Provenance
 
-This data was previously bundled inside `Phenomena/Imprecision/Projection.lean`
+This data was previously bundled inside an imprecision-projection file
 (then `Studies/Haslinger2025.lean`). Moved here at 0.230.521 — the empirical
 anchor is Augurzky et al. 2023, not Haslinger. The asymmetry's *theoretical
 explanation* in the original file invoked exhaustification logic from

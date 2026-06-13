@@ -78,7 +78,7 @@ for the Theme.
 - `Studies/Dendikken1995` — the triadic
   formalisation (book ch. 3). Same SC-in-SC template, V-slot filled
   with abstract BE rather than V_emb.
-- `Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995` — the
+- `Studies/Dendikken1995ParticleVerbs` — the
   simplex PVC formalisation (book ch. 2.4). Particles in PVCs
   ≡ affixal particles in causatives at the syntactic level
   (book p. 235 ex. 25).
@@ -133,7 +133,7 @@ def V_schaffen : SyntacticObject := mkLeafPhon .V [.D] "schaffen" 505
 
 Each "affixal causativiser/applicativiser" morpheme is realised here
 as a category-P leaf with no selectional features — the canonical
-shape for a particle (compare `Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995`'s
+shape for a particle (compare `Studies/Dendikken1995ParticleVerbs`'s
 particle leaves like `mkLeafPhon .P [] "up"`). -/
 
 /-- French causative X is empty (*faire* construction). -/

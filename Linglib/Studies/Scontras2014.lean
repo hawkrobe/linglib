@@ -44,13 +44,13 @@ Container nouns can be disambiguated:
 
 ## Architecture
 
-This is a Phenomena file: it encodes empirical observations and proves that
+This file encodes empirical observations and proves that
 the Fragment entries (class assignments) correctly predict the Theory's
 MEASURE-reading licensing.
 
 Dependency chain:
   Theory (`licensesMeasureReading`) → Fragment (`QuantizingNounEntry.nounClass`)
-    → Phenomena (this file)
+    → Studies (this file)
 
 -/
 
@@ -181,7 +181,7 @@ class + reading to a MEASURE-licensing prediction (Scontras Table 3.5 p. 89).
 We prove that this prediction matches the empirical observation for EVERY
 example in our data.
 
-This is the payoff of the Theories → Fragments → Phenomena architecture: if
+This is the payoff of the Theories → Fragments → Studies architecture: if
 someone changes a noun's class assignment in the Fragment, or changes the
 `licensesMeasureReading` function in the Theory, the bridge theorems break. -/
 

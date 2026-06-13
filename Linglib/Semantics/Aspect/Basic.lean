@@ -97,8 +97,9 @@ inductive ViewpointType where
 /-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
     without the full interval-based `Event Time → Prop`/`IntervalPred` machinery.
 
-    Used by `Modal/Ability.lean` (actuality inferences) and
-    `Phenomena/ActualityInferences/Data.lean` where the key insight is simply
+    Used by `Modal/Ability.lean` and the actuality-inference consumers
+    (`Modality/ActualityEntailments.lean`, `Studies/Hacquard2006.lean`)
+    where the key insight is simply
     "perfective requires actualization, imperfective doesn't." -/
 inductive ViewpointAspectB where
   | perfective

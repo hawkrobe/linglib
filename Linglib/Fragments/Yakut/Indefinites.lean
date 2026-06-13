@@ -20,7 +20,7 @@ dayanï 'anybody'"); not formalized as a separate entry.
 Since all four series use the interrogative `kim` 'who' as their host, the
 paradigm derives to [wals-2013] F46A `.interrogativeBased` —
 matching WALS's classification for `iso = "sah"` (verified in
-`Phenomena/Indefinites/Typology.lean`).
+`Studies/Haspelmath1997.lean`).
 
 The Degano & Aloni 7-type classification of `ere` and `eme` (types ii and
 iii respectively, after [bubnov-2026] Table 1) is theory-side
@@ -93,7 +93,7 @@ theorem yakut_paradigm_is_ABB :
 /-- Yakut's paradigm uses a single morphological basis (interrogative
     `kim`) across all four forms, deriving the WALS F46A classification
     `.interrogativeBased`. The cross-check against [wals-2013]
-    F46A.allData lives in `Phenomena/Indefinites/Typology.lean`. -/
+    F46A.allData lives in `Studies/Haspelmath1997.lean`. -/
 theorem yakut_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl
 

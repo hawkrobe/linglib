@@ -21,7 +21,7 @@ grammaticality judgments, and co-occurrence restrictions.
 
 -/
 
-namespace Phenomena.Complementation.Cacchioli2025
+namespace Cacchioli2025
 
 -- ============================================================================
 -- Section A: Prefix inventory
@@ -286,4 +286,4 @@ theorem all_prefixes_verbal :
     catFamily kemzi.headCat = .verbal ∧
     catFamily ay_n.headCat = .verbal := by decide
 
-end Phenomena.Complementation.Cacchioli2025
+end Cacchioli2025

@@ -31,7 +31,7 @@ private def grammaticalForCoreference (ws : List Word) : Bool :=
   decide (Binding.grammaticalForCoreference Binding.bindingClassOf ws)
 
 -- ============================================================================
--- Capturing the Phenomena Data
+-- Capturing the Coreference Data
 -- ============================================================================
 
 /-- Check all pairs in a PhenomenonData -/
@@ -39,7 +39,7 @@ def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
   capturesPhenomenonData grammaticalForCoreference phenom
 
 -- ============================================================================
--- Theorems - Dependency Grammar Captures Imported Phenomena
+-- Theorems - Dependency Grammar Captures the Imported Binding Data
 -- ============================================================================
 
 /-- Dependency Grammar captures reflexiveCoreferenceData -/

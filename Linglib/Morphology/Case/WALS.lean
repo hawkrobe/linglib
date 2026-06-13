@@ -17,7 +17,7 @@ in the same `Linglib/Typology/{Domain}.lean` mould as `WordOrder.lean`,
 - **Ch 50** (Iggesen 2013): Asymmetrical Case-Marking — Iggesen's actual
   five-way WALS partition (`symmetrical`, `additiveQuantitativelyAsymmetrical`,
   `subtractiveQuantitativelyAsymmetrical`, `qualitativelyAsymmetrical`,
-  `syncretismInRelevantNpTypes`). Note: an earlier `Phenomena/Case/Typology.lean`
+  `syncretismInRelevantNpTypes`). Note: an earlier case-typology
   file silently re-coded this dimension in Aissen-friendly conditioning-factor
   categories (`animacyOnly` / `definitenessOnly` / `pronounOnly` / etc.); that
   re-coding was deleted in the dissolution because (a) it didn't match the

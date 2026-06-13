@@ -8,8 +8,8 @@ Universal part-of-speech tags (UPOS), morphological features, and dependency
 relations from UD v2.
 
 These provide theory-neutral lexical categories, morphological annotations,
-and grammatical relations that can be used in Phenomena/ and mapped to/from
-theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
+and grammatical relations that can be used throughout the library and mapped
+to/from theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
 
 Official site: <https://universaldependencies.org/>
 

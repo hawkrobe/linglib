@@ -10,7 +10,7 @@ specific-unknown (AAB pattern); *quidam* (interrogative `qui` + `-dam`)
 covers specific-known. Both forms are interrogative-based.
 
 Latin is not in [wals-2013] F46A's 326-language sample, so no WALS
-bridge theorem is stated for Latin in `Phenomena/Indefinites/Typology.lean`.
+bridge theorem is stated for Latin in `Studies/Haspelmath1997.lean`.
 The morphological-basis encoding is recorded for cross-linguistic
 comparison anyway.
 -/

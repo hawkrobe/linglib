@@ -17,7 +17,7 @@ The abstract Spector framework lives in
 `Semantics/Exhaustification/Operators/Basic.lean`. This file holds the
 empirical exemplars — small finite worlds, scale-specific alternative
 sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
-theory file in line with the project's Theory/Phenomena split.
+theory file in line with the project's theory/Studies split.
 
 It also collects the [chierchia-2013] Maximize Strength worked
 examples (matrix-clause SI computed, DE-context SI suppressed) as a small

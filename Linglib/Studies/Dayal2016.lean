@@ -50,7 +50,7 @@ holds (`IsExhaustivelyResolvable`).
 
 * **Number sensitivity** (§2.3.1–§2.3.3) requires plural / atomic
   individuals (`Sharvy 1980`/`Link 1983` join semilattice). Deferred
-  to a follow-up that uses `Phenomena.Plurality` substrate.
+  to a follow-up that uses the `Semantics/Plurality/` substrate.
 * **Scope marking** (§2.2.2 ex. 33–37) is a syntax-side phenomenon
   (German *was*-construction, Hindi-Urdu *kyaa*); deferred to the
   Hindi-Urdu fragment + Dayal-2025 study.

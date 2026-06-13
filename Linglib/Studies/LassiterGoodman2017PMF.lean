@@ -193,8 +193,7 @@ Supervaluation (`Fine1975.lean`) maps borderline to `Truth3.indet`;
 epistemicism denies the very framing (borderline cases have determinate
 Boolean truth values we don't know); TCS predicts borderline
 contradictions are tolerantly *true*, with empirical support from
-[alxatib-pelletier-2011]. See `Phenomena/Gradability/Compare.lean`
-for the comparison taxonomy. -/
+[alxatib-pelletier-2011]. -/
 
 /-- **Borderline-case theorem**: when both some threshold below `h` AND
 some threshold ≥ `h` are in the posterior support, the metalinguistic
@@ -450,8 +449,7 @@ maximised at the maximally borderline `P_T = 1/2`.
 
 Empirical contrast: [alxatib-pelletier-2011] report **44.7%
 acceptance** for "X is tall and not tall" applied to the median
-(borderline) man in their visual stimulus. The data is encoded at
-`Phenomena/Gradability/Vagueness.lean::alxatibPelletier2011Tall`.
+(borderline) man in their visual stimulus.
 
 `44.7% > 25%`, so a literal-meaning probabilistic account cannot
 reproduce the data. This is the formal expression of the empirical

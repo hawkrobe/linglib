@@ -50,7 +50,7 @@ categories from Cysouw's paradigmatic framework. Three singular categories
 combinations of participants).
 
 The full paradigmatic structure machinery (morpheme classes, homophony types,
-language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
+language data) lives in `Studies/Cysouw2009.lean`.
 
 -/
 

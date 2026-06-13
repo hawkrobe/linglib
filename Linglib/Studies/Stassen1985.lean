@@ -443,13 +443,13 @@ theorem turkish_three_layer :
 /-- Korean: absolute deranking predicts non-finite medial verbs. -/
 theorem korean_deranking_consistent :
     koreanCT = .absoluteDeranking ∧
-    Phenomena.ClauseChaining.korean.medialVerbForm =
+    ClauseChaining.korean.medialVerbForm =
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 
 theorem turkish_deranking_consistent :
     turkishCT = .absoluteDeranking ∧
-    Phenomena.ClauseChaining.turkish.medialVerbForm =
+    ClauseChaining.turkish.medialVerbForm =
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 

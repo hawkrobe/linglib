@@ -51,7 +51,7 @@ open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
 --
 -- The 8 DOM language profiles plus monotonicity / 1D-classification /
 -- scale-dominance / extreme-cell theorems were dissolved here from a
--- former `Phenomena/Case/Typology.lean` mash-up (which mixed WALS Iggesen
+-- former case-typology mash-up file (which mixed WALS Iggesen
 -- substrate with Aissen DOM data). DOM data empirically belongs to Aissen
 -- 2003 — it is the empirical input the OT factorial typology (§§1–8 below)
 -- predicts. The substrate type `DifferentialMarkingProfile` lives in

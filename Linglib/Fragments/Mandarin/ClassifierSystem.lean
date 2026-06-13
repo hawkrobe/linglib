@@ -9,7 +9,7 @@ import Linglib.Fragments.Mandarin.Classifiers
 Classifier-system metadata for Mandarin (ISO `cmn`). The lexical
 classifier inventory itself lives in `Fragments/Mandarin/Classifiers.lean`;
 this file aggregates that inventory into the typological-system summary
-(`NounCategorizationSystem`) consumed by `Phenomena/Classifiers/Typology.lean`.
+(`NounCategorizationSystem`) consumed by `Typology/ClassifierSystem.lean`.
 
 The per-language claims (obligatoriness with numerals + demonstratives,
 default 个 gè, semantic-with-lexical-residue assignment) follow

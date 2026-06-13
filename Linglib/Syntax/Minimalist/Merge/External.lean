@@ -612,7 +612,7 @@ Linglib's `Derivation` (in `Syntax/Minimalist/Derivation.lean`)
 has constructors `Step.emR`, `Step.emL`, `Step.im`. There is no
 `Step.sideward` because Sideward is suppressed by Prop 1.5.1; there is
 no `Step.wlm` because Wholesale Late Merger derivations were never
-attested in Phenomena consumers and MCB §1.7 predicts wlm-outputs are
+attested in downstream consumers and MCB §1.7 predicts wlm-outputs are
 derivable from EM/IM regardless.
 
 This section provides the **EM-only chain bridge**: a joint linguistic+
