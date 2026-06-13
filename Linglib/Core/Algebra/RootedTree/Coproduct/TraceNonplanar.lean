@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+import Linglib.Core.Algebra.RootedTree.Coproduct.TraceCoassoc
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
@@ -54,15 +55,16 @@ work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
 
 ## Status
 
-`[UPSTREAM]` candidate. MCB Lemma 1.2.10's grading content
-(`mcb_lemma_1_2_10`) is fully proved. One `sorry` remains: Δ^c
-coassociativity (`comulCN_coassoc`), stated under the `TraceCoherent`
-hypothesis — see its docstring. The earlier plan to derive it from a
-GL/Δ^c pairing duality was abandoned: that duality is **false** (GL
-grafting never removes trace markers, so no orientation of
-`⟨x ⋆ y, z⟩ = pairing₂ (… ) (Δ^c z)` can hold; counterexamples in
-`scratch/validate_duality.lean` V4). The duality route works for the
-deletion variant Δ^ρ — see `Coproduct/PruningDuality.lean`.
+`[UPSTREAM]` candidate. Sorry-free. MCB Lemma 1.2.10 is fully proved: both
+its grading content (`mcb_lemma_1_2_10`) and Δ^c coassociativity
+(`comulCN_coassoc`), the latter under the `TraceCoherent` hypothesis. The
+coassoc proof is the direct double-cut bijection `doubleCut_eq`, descended
+from the planar `DoubleCut.coassT` (`Coproduct/TraceCoassoc.lean`) through
+`Nonplanar.mk`. The earlier plan to derive it from a GL/Δ^c pairing duality
+was abandoned: that duality is **false** (GL grafting never removes trace
+markers, so no orientation of `⟨x ⋆ y, z⟩ = pairing₂ (… ) (Δ^c z)` can hold;
+counterexamples in `scratch/validate_duality.lean` V4). The duality route
+works for the deletion variant Δ^ρ — see `Coproduct/PruningDuality.lean`.
 -/
 
 namespace RootedTree
@@ -1135,19 +1137,91 @@ private theorem rhsExpand (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α
       rhs_per_pair]
   rfl
 
+/-! ### Descent of the double-cut enumerators through `Nonplanar.mk`
+
+The Nonplanar `dcLHS`/`dcRHS` are the projections (via `Nonplanar.mk`) of the
+planar `DoubleCut.dcLHSP`/`dcRHSP`; `DoubleCut.coassT` then gives the bijection. -/
+
+/-- Project a planar (crown, trunk) pair to Nonplanar. -/
+private def projPair (p : Forest (Planar (α ⊕ β)) × Forest (Planar (α ⊕ β))) :
+    Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β)) :=
+  (p.1.map Nonplanar.mk, p.2.map Nonplanar.mk)
+
+private theorem treeCutsN_mk (τ : Nonplanar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+    treeCutsN τ (Nonplanar.mk t)
+      = (DoubleCut.treeCutsP (τ ∘ Nonplanar.mk) t).map projPair := by
+  unfold treeCutsN DoubleCut.treeCutsP
+  rw [cutSummandsCN_mk, Multiset.map_cons, Multiset.map_map, Multiset.map_map]
+  congr 1
+
+/-- Naturality of the cut combiner under `projPair`. -/
+private theorem combinerProjG_nat
+    (A B : Multiset (Forest (Planar (α ⊕ β)) × Forest (Planar (α ⊕ β)))) :
+    ((A.map projPair) ×ˢ (B.map projPair)).map ConnesKreimer.combinerProjG
+      = ((A ×ˢ B).map (fun pq => (pq.1.1 + pq.2.1, pq.1.2 + pq.2.2))).map projPair := by
+  rw [← ConnesKreimer.map_prodMap_product_G, Multiset.map_map, Multiset.map_map]
+  apply Multiset.map_congr rfl; rintro ⟨⟨F1, m1⟩, ⟨F2, m2⟩⟩ _
+  show ConnesKreimer.combinerProjG
+      ((F1.map Nonplanar.mk, m1.map Nonplanar.mk), (F2.map Nonplanar.mk, m2.map Nonplanar.mk))
+    = projPair (F1 + F2, m1 + m2)
+  show (F1.map Nonplanar.mk + F2.map Nonplanar.mk, m1.map Nonplanar.mk + m2.map Nonplanar.mk)
+      = ((F1 + F2).map Nonplanar.mk, (m1 + m2).map Nonplanar.mk)
+  rw [Multiset.map_add, Multiset.map_add]
+
+private theorem forestCutsN_mk (τ : Nonplanar (α ⊕ β) → β)
+    (F : Forest (Planar (α ⊕ β))) :
+    forestCutsN τ (F.map Nonplanar.mk)
+      = (DoubleCut.forestCutsP (τ ∘ Nonplanar.mk) F).map projPair := by
+  induction F using Multiset.induction with
+  | empty =>
+    rw [Multiset.map_zero, forestCutsN_zero, DoubleCut.forestCutsP_zero,
+        Multiset.map_singleton]; rfl
+  | cons t F ih =>
+    rw [Multiset.map_cons, forestCutsN_cons, treeCutsN_mk, ih, DoubleCut.forestCutsP_cons,
+        DoubleCut.convFP_eq, combinerProjG_nat]
+
+private theorem dcLHS_mk (τ : Nonplanar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+    dcLHS τ (Nonplanar.mk t) = (DoubleCut.dcLHSP (τ ∘ Nonplanar.mk) t).map DoubleCut.proj3 := by
+  unfold dcLHS DoubleCut.dcLHSP
+  rw [treeCutsN_mk, Multiset.bind_map, Multiset.map_bind]
+  apply Multiset.bind_congr; rintro ⟨F, G⟩ _
+  show (forestCutsN τ (F.map Nonplanar.mk)).map (fun A12 => (A12.1, A12.2, G.map Nonplanar.mk))
+      = ((DoubleCut.forestCutsP (τ ∘ Nonplanar.mk) F).map
+          (fun A12 => (A12.1, A12.2, G))).map DoubleCut.proj3
+  rw [forestCutsN_mk, Multiset.map_map, Multiset.map_map]
+  apply Multiset.map_congr rfl; rintro ⟨A1, A2⟩ _; rfl
+
+private theorem dcRHS_mk (τ : Nonplanar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
+    dcRHS τ (Nonplanar.mk t) = (DoubleCut.dcRHSP (τ ∘ Nonplanar.mk) t).map DoubleCut.proj3 := by
+  unfold dcRHS DoubleCut.dcRHSP
+  rw [treeCutsN_mk, Multiset.bind_map, Multiset.map_bind]
+  apply Multiset.bind_congr; rintro ⟨F, G⟩ _
+  show (forestCutsN τ (G.map Nonplanar.mk)).map (fun B12 => (F.map Nonplanar.mk, B12.1, B12.2))
+      = ((DoubleCut.forestCutsP (τ ∘ Nonplanar.mk) G).map
+          (fun B12 => (F, B12.1, B12.2))).map DoubleCut.proj3
+  rw [forestCutsN_mk, Multiset.map_map, Multiset.map_map]
+  apply Multiset.map_congr rfl; rintro ⟨B1, B2⟩ _; rfl
+
+/-- The planar trace coherence descends from the Nonplanar one. -/
+private theorem traceCoherentP_of_coherent (τ : Nonplanar (α ⊕ β) → β)
+    (hτ : TraceCoherent τ) : DoubleCut.TraceCoherentP (τ ∘ Nonplanar.mk) := by
+  intro t p hp
+  have hmem : ConnesKreimer.projSummand p ∈ cutSummandsCN τ (Nonplanar.mk t) := by
+    rw [cutSummandsCN_mk]; exact Multiset.mem_map.mpr ⟨p, hp, rfl⟩
+  exact hτ (Nonplanar.mk t) (ConnesKreimer.projSummand p) hmem
+
 /-- **The double-cut bijection** (MCB Lemma 1.2.10's combinatorial core):
     the LHS and RHS double-cut enumerators of a tree agree as Nonplanar
-    multisets, under trace coherence. Validated computationally
-    (`scratch/validate_duality.lean` V7).
-
-    TODO: prove by structural induction at the `Planar` level (descend via
-    `cutSummandsCN_mk`), constructing the cut-order-swap bijection on
-    nested admissible cuts; `TraceCoherent` reconciles the trunk-marker
-    label written by the deeper cut in the two orders. -/
+    multisets, under trace coherence. Proved by descending through
+    `Nonplanar.mk` to the planar `DoubleCut.coassT`. -/
 private theorem doubleCut_eq (τ : Nonplanar (α ⊕ β) → β)
     (hτ : TraceCoherent τ) (T : Nonplanar (α ⊕ β)) :
     dcLHS τ T = dcRHS τ T := by
-  sorry
+  induction T using Quotient.inductionOn with
+  | _ t =>
+    show dcLHS τ (Nonplanar.mk t) = dcRHS τ (Nonplanar.mk t)
+    rw [dcLHS_mk, dcRHS_mk,
+        DoubleCut.coassT (τ ∘ Nonplanar.mk) (traceCoherentP_of_coherent τ hτ) t]
 
 end DoubleCut
 
@@ -1200,7 +1274,7 @@ theorem comulCN_coassoc_tree
     GL/Δ^c pairing duality is dead — that duality is false (see the
     Trace coherence section above); the duality route works only for
     Δ^ρ (`Coproduct/PruningDuality.lean`). -/
-theorem comulCN_coassoc [CharZero R'] [NoZeroDivisors R']
+theorem comulCN_coassoc
     (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     TensorProduct.assoc R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
@@ -1467,7 +1541,7 @@ variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
 /-- **AlgHom-form coassoc** of `comulCAlgHomN` under trace coherence.
     Follows from `comulCN_coassoc` by AlgHom extensionality. -/
-theorem comulCAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R']
+theorem comulCAlgHomN_coassoc_algHom
     (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     (Algebra.TensorProduct.assoc R' R' R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
@@ -1717,7 +1791,7 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     * `counit_rTensor_comulCAlgHomN` (proved).
     * `counit_lTensor_comulCAlgHomN` (proved). -/
 @[reducible] noncomputable def bialgebraC
-    [CharZero R'] [NoZeroDivisors R'] (τ : Nonplanar (α' ⊕ β') → β')
+    (τ : Nonplanar (α' ⊕ β') → β')
     (hτ : TraceCoherent τ) :
     Bialgebra R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
   Bialgebra.ofAlgHom (comulCAlgHomN (R := R') τ) ((ConnesKreimer.counit (R := R')) :
@@ -1951,7 +2025,7 @@ private theorem comulCForestN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
     (inductive formula `S(x) = -x - Σ S(x_(1)) · x_(2)`) after quotienting
     by the (1 - α) ideal for α a lexical-item generator. Deferred to
     sibling file. -/
-theorem mcb_lemma_1_2_10 [CharZero R''] [NoZeroDivisors R'']
+theorem mcb_lemma_1_2_10
     (τ : Nonplanar (α'' ⊕ β'') → β'') :
     -- (1) Bialgebra structure: `bialgebraC` (for trace-coherent τ).
     -- (2) Edge-count grading: each gradedPiece is a Submodule.
