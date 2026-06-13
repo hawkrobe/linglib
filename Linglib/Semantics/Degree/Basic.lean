@@ -26,7 +26,7 @@ for framework-level theorems. `Gradability.Basic` uses concrete
 `Degree max := Fin (max + 1)` for computation in RSA models and Fragment
 entries. The two serve different clients: this module is imported by
 `Degree/Comparative.lean` and other framework siblings; `Gradability.Basic`
-is imported by `Fragments/English/` and `Phenomena/Gradability/` bridges.
+is imported by `Fragments/English/` and gradability `Studies/` files.
 -/
 
 namespace Semantics.Degree

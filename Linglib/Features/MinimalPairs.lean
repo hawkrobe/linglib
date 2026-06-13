@@ -84,8 +84,8 @@ def capturesPhenomenonData (pred : List Word → Bool) (phenom : PhenomenonData)
 
     Unlike `MinimalPair` which uses `List Word` (requiring feature
     specifications), this type uses raw strings that can be parsed by any
-    theory. This keeps empirical data in `Phenomena/` free from
-    theoretical commitments. -/
+    theory. This keeps empirical data free from theoretical
+    commitments. -/
 structure SentencePair where
   /-- The grammatical sentence -/
   grammatical : String

@@ -47,12 +47,12 @@ the origin (the final verb's context).
    DS = `.agent` differs
 -/
 
-namespace Phenomena.ClauseChaining
+namespace ClauseChaining
 
 open _root_.Typology.ClauseChaining
 
 -- ============================================================================
--- Language data (was `Phenomena/ClauseChaining/Data.lean`; inlined per the
+-- Language data (inlined per the
 -- provenance-tracking policy). [sarvasy-aikhenvald-2025] is the natural
 -- owner — the parameter sample comes from this paper.
 -- ============================================================================
@@ -224,7 +224,7 @@ because the SR morpheme absorbs sequential/simultaneous distinctions. -/
 theorem noSR_richer_relations :
     allLanguages.all (λ p => p.hasSR || p.relationsMarked.length ≥ 7) = true := by decide
 
-end Phenomena.ClauseChaining
+end ClauseChaining
 
 
 -- ============================================================================
@@ -237,7 +237,7 @@ namespace SarvasyAikhenvald2025
 -- Part I: Fragment Verification
 -- ============================================================================
 
-open Phenomena.ClauseChaining
+open ClauseChaining
 open Typology.ClauseChaining
 open Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
 open Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers

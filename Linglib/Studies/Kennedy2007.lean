@@ -9,7 +9,7 @@ import Linglib.Semantics.Degree.HasMeasure
 [kennedy-2007] [kennedy-mcnally-2005] [schwarzschild-2005] [solt-2015] [winter-2005]
 
 Bridge connecting [kennedy-2007]'s measure function approach to the
-comparative construction data in `Phenomena/Comparison/`.
+comparative construction data collected below.
 
 ## Key Bridges
 

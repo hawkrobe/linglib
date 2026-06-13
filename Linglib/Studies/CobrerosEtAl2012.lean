@@ -55,9 +55,9 @@ TCS prediction direction matches the data.
 ## Architecture
 
 This file is anchored on the Cobreros-Egré-Ripley-van Rooij 2012 paper
-itself. Per CLAUDE.md "no bridge files" + "Theory examples to Phenomena"
-discipline, the worked example was extracted here from a previous
-embedding inside `Semantics/Supervaluation/TCS.lean`.
+itself. Per the "no bridge files" + "worked examples live in Studies, not
+theory files" discipline, the worked example was extracted here from a
+previous embedding inside `Semantics/Supervaluation/TCS.lean`.
 -/
 
 namespace CobrerosEtAl2012
@@ -392,7 +392,8 @@ theorem tcs_borderline_contradiction_categorical
       `PMF`-typed instance of this generic bound.
 
     The empirical Alxatib-Pelletier 2011 acceptance rate (44.7% — see
-    `Phenomena/Gradability/Vagueness.lean::alxatibPelletier2011Tall`)
+    the [alxatib-pelletier-2011] contrast section of
+    `Studies/LassiterGoodman2017PMF.lean`)
     exceeds the product-rule's 25% ceiling, refuting the literal-rule
     framework empirically. TCS's categorical prediction is consistent
     with the empirical direction without committing to any specific
@@ -434,13 +435,12 @@ theorem klein_delineation_tension_concrete :
   ⟨b_is_borderline, c_is_borderline, by decide, by simp [soritesModel], by simp [soritesModel]⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. Backwards-compatibility shim for Compare.lean
+-- § 11. Single-premise sorites unsoundness
 -- ════════════════════════════════════════════════════
 
 /-- Single-premise sorites unsoundness (the previous formalization's
     `sorites_chain_invalid`). Subsumed by `st_three_step_invalid` above
-    but exposed here under the historical name so `Phenomena/Gradability/Compare.lean`
-    keeps building without theorem-statement changes. -/
+    but kept under the historical name. -/
 theorem sorites_chain_invalid :
     ¬ tcsConsequence (D := Elt) (Pred := VPred) .strict .tolerant
       [.atom (.pred .tall .a)] (.atom (.pred .tall .d)) := by

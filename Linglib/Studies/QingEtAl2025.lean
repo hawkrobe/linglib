@@ -144,7 +144,7 @@ We can verify that predictions match observations:
 Semantics.Attitudes.BuilderProperties.Attitude.nvpClass hope.attitude = some.class3_cDist_positive
 -- This predicts: canTakeQuestion = false
 
--- From Phenomena/QingEtAl2025/Data.lean:
+-- From the empirical data in this file:
 hopeEn.takesPolQ = false ∧ hopeEn.takesWhQ = false ✓
 ```
 

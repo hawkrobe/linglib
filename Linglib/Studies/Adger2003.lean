@@ -63,7 +63,7 @@ open Minimalist Minimalist.FromFragments
 /-! ## §0: Lexicon — Fragment-grounded SO building blocks
 
 Migrated from the deleted `Syntax/Minimalism/Derivations.lean`;
-instances belong in Phenomena per the architecture audit. Each SO is a
+instances belong in `Studies/` per the architecture audit. Each SO is a
 leaf with `Cat` and `SelStack` derived from its Fragment lexical entry.
 
 ### LIToken id allocation (one-derivation scope)

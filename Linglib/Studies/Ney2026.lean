@@ -92,8 +92,8 @@ Insinuative reference is distinct from:
 [ney-2026] §5 proposes reserving "insinuation" for the Camp-style
 implicature phenomenon and using "insinuative speech" as the broader
 deniability-preserving category encompassing all four. This file's
-namespace is `Ney2026`; a future
-`Phenomena.InsinuativeSpeech.*` superclass with sibling Camp / Saul
+namespace is `Ney2026`; a future shared insinuative-speech
+superclass with sibling Camp / Saul
 formalizations is the obvious organising principle but is not built
 here.
 

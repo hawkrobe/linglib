@@ -5,8 +5,8 @@ import Linglib.Studies.Ross1967
 # Bridge: HPSG Extraction to Filler-Gap Phenomena
 [sag-wasow-bender-2003] [hofmeister-sag-2010]
 
-Connects HPSG's Head-Filler Schema and SLASH mechanism to empirical
-filler-gap data in `Phenomena.FillerGap`.
+Connects HPSG's Head-Filler Schema and SLASH mechanism to the
+empirical island taxonomy from `Studies/Ross1967`.
 
 ## Main results
 
@@ -103,7 +103,7 @@ example : extractionLicensed weakIslandNP = true := rfl
 example : extractionLicensed weakIslandPP = false := rfl
 
 -- ============================================================================
--- Connecting to Phenomena Data
+-- Connecting to the Ross 1967 Island Taxonomy
 -- ============================================================================
 
 /-- Map island constraint types to HPSG GAP restrictions.

@@ -87,7 +87,7 @@ the right granularity.
 
 ## Layer position
 
-`Features/`. Importable from any Theories/, Phenomena/, or Fragments/
+`Features/`. Importable from any theory-layer, Fragments/, or Studies/
 consumer that needs to type a discourse referent's cognitive status.
 The Centering MEDIATED tier
 (`Discourse/Centering/Instances/InformationStatus.lean`) used

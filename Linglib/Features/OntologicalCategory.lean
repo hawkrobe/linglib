@@ -9,12 +9,12 @@ The ontological-category axis of pro-forms: the categories [haspelmath-1997]'s
 "correlative pronoun" paradigm (his §3.1.3 Table 3.1) ranges over. The same axis is
 shared by interrogative, demonstrative, relative, and indefinite pronoun types and by
 their pronominal-adverb members (*where* / *when* / *how*), so it lives in `Features/`
-as substrate that both `Typology/` and `Phenomena/` can type their data by.
+as substrate that both `Typology/` and `Studies/` can type their data by.
 
 ## Provenance
 
-Promoted from the former `Phenomena.Questions.WhSemanticType` (a Phenomena-layer enum,
-hence unusable as substrate by `Typology/`). The wh-side `entity` case is split into
+Promoted from a former wh-question `WhSemanticType` enum, which lived too high in
+the import graph to serve as substrate for `Typology/`. The wh-side `entity` case is split into
 `person` / `thing` — the distinction [haspelmath-1997] notes is made "practically
 everywhere" (*who* vs *what*), and the one indefinite and negative pronouns turn on
 (*nobody* vs *nothing*). Renamings: `degree → amount`, `classificatory → property`,

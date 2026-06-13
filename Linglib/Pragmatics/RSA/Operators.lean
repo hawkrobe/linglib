@@ -58,7 +58,7 @@ denominator AND the uniform prior in one move.
 
 Phase 1 of the RSA → mathlib-PMF migration: this file is a pure addition.
 `RSAConfig` and `RSAConfig.L1` (in `Basic.lean`) remain in place; consumer
-code is unchanged. A subsequent phase migrates one Phenomena study end-to-end
+code is unchanged. A subsequent phase migrates one RSA study end-to-end
 to demonstrate that `rsa_predict` reflection still applies to operator
 applications.
 -/

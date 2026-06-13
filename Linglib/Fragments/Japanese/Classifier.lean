@@ -37,7 +37,7 @@ every projection function and every consumer that pattern-matches on
 
 `Classifier.toEntry : Classifier → ClassifierEntry` is the migration seam
 to the old `Typology.ClassifierEntry` record type that
-sibling fragments (Mandarin, Shan, Chol) and `Phenomena/Classifiers/Typology`
+sibling fragments (Mandarin, Shan, Chol) and `Typology/ClassifierSystem`
 still consume. Once those fragments are migrated to the same enum pattern,
 both this bridge and `ClassifierEntry` itself can be retired.
 
@@ -259,14 +259,14 @@ def lookup (s : String) : Option Classifier :=
   all.find? fun c => c.form = s
 
 /-- The list of all semantic parameters encoded by some classifier in the
-    inventory (with duplicates removed). Used by `Phenomena/Classifiers/Typology`
-    to compute `preferredSemantics`. -/
+    inventory (with duplicates removed). Used by
+    `Fragments/Japanese/ClassifierSystem` to compute `preferredSemantics`. -/
 def allEncodedParams : List SemanticParameter :=
   (all.flatMap encodes).eraseDups
 
 /-! ## §5: Bridge to legacy `ClassifierEntry`
 
-Migration seam: `Phenomena/Classifiers/Typology.lean` and the sibling
+Migration seam: `Typology/ClassifierSystem.lean` and the sibling
 fragments (Mandarin, Shan, Chol) still consume `Typology.
 ClassifierEntry`. `toEntry` projects a typed `Classifier` back to the
 legacy record so cross-language aggregations continue to work during

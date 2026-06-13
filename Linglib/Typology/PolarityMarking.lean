@@ -10,8 +10,8 @@ Per-language typological substrate for polarity-marking strategies
 (neg → affirm switches): the form-class taxonomy + per-marker
 environments + the cross-linguistic entry record. Fragment files for
 Dutch, German, English, Italian, Spanish, French, Swedish populate
-the schema; Phenomena/Polarity/Studies files consume it for
-cross-linguistic predictions.
+the schema; Studies files (TurcoBraunDimroth2014, GarassinoJacob2018,
+MaticNikolaeva2018) consume it for cross-linguistic predictions.
 
 Moved from `Features/InformationStructure.lean` in the 0.230.493 cleanup
 (commit 3/3 of the InformationStructure dump-bag dissolution; cluster B

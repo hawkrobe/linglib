@@ -238,7 +238,7 @@ theorem strength_coarsening_agrees :
 
 -- `GivennessStatus` and `GivennessStatus.rank` were promoted to
 -- `Features/Givenness.lean` (the substrate layer) so Centering and
--- other non-Phenomena consumers can import them. The Ariel-specific
+-- other substrate-level consumers can import them. The Ariel-specific
 -- `toAccessibility` projection below remains here as the
 -- study-specific bridge.
 

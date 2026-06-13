@@ -2,7 +2,8 @@
 # Coordination Types
 
 Shared types for cross-linguistic coordination morphology, used by
-Fragment lexicons and Phenomena/Coordination studies.
+Fragment lexicons, `Typology/Coordination`, and coordination studies
+(e.g. `Studies/MitrovicSauerland2016`).
 
 ## CoordRole
 

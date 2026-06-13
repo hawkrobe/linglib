@@ -44,7 +44,7 @@ An evaluative measure function assigns a rational-valued "goodness of fit"
 score to each degree on a scale.
 
 - `form`: the adjectival base (e.g., "horrible")
-- `valence`: evaluative valence from the Phenomena layer
+- `valence`: evaluative valence from `Features/Valence`
 - `mu`: the measure function μ : Nat → ℚ (takes degree's Nat value)
 
 The measure function captures how well a degree matches the evaluative
@@ -168,8 +168,8 @@ theorem goldilocks_at_norm_10 :
 Bridge between evaluative valence and evaluative measure behavior:
 negative-evaluative measures peak at extremes, positive at the norm.
 
-This connects the Phenomena-layer `EvaluativeValence` to the
-Theory-layer `EvaluativeMeasure` structural properties.
+This connects the `Features/`-layer `EvaluativeValence` to the
+theory-layer `EvaluativeMeasure` structural properties.
 -/
 theorem negative_valence_extreme_peak :
     (muHorrible 10).valence = .negative ∧

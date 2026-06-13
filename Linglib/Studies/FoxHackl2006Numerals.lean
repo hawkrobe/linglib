@@ -8,7 +8,7 @@ import Linglib.Semantics.Numerals.Basic
 [fox-hackl-2006] [kennedy-2015]
 
 Surfaces the maximal informativity theorems from
-`Semantics/Entailment/Extremum.lean` at the Phenomena level,
+`Semantics/Entailment/Extremum.lean` at the Studies level,
 connecting numeral semantics (the named `*Meaning` functions) to the
 `HasMaxInf` / `IsMaxInf` infrastructure and the [fox-hackl-2006]
 density predictions.

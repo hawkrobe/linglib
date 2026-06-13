@@ -118,9 +118,9 @@ theorem types_ordered :
     proposition > situation > event in transparency-decreasing order.
 
     Local to this Studies file; promotion to `Syntax/Complementation/`
-    is contingent on a second paper-anchored consumer (see Phenomena/Control
-    studies and Studies/Grano2024.lean as candidate
-    second sites).
+    is contingent on a second paper-anchored consumer (the control
+    studies — e.g. Studies/Landau2015.lean — and Studies/Grano2024.lean
+    are candidate second sites).
 
     `LinearOrder` is *not* derived: the implicational content of the ICH is
     a theorem about a *transparency relation*, not a structural property of

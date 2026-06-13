@@ -336,7 +336,7 @@ end SyntacticObject
 
 /-- Cascade combinator: lift a `FreeMagma (LIToken ⊕ Nat) → β` aux to
     `SyntacticObject → β`, hiding the `FreeMagma.CommRel` machinery
-    from Phenomena consumers. Same as `FreeCommMagma.lift` modulo the
+    from downstream consumers. Same as `FreeCommMagma.lift` modulo the
     SO type ascription at the SO interface. The `_respects` hypothesis
     still has to be provided, but the type signature is consumer-friendly.
 
@@ -1204,9 +1204,9 @@ def SyntacticObject.shape : SyntacticObject → FreeCommMagma Unit :=
 /-- The unit shape — a single leaf in `FreeCommMagma Unit`. Useful
     abbreviation for stating shape equalities like
     `so.shape = leafShape * (leafShape * leafShape)`. Was previously
-    duplicated as `private def leafShape` in three Phenomena Studies
-    files (DendikkenBasic, HaddicanEtAl, Causatives); hoisted to
-    substrate to eliminate the triplicate. -/
+    duplicated as `private def leafShape` in three Studies files
+    (Dendikken1995, HaddicanEtAl2026, Dendikken1995Causatives);
+    hoisted to substrate to eliminate the triplicate. -/
 abbrev leafShape : FreeCommMagma Unit := FreeCommMagma.of ()
 
 @[simp] theorem SyntacticObject.shape_leaf (tok : LIToken) :

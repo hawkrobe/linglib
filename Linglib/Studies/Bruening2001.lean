@@ -399,7 +399,7 @@ def availableReadings (config : MinimalistScopeConfig) : Availability :=
   else
     .ambiguous
 
--- Predictions for Phenomena
+-- Predictions for the empirical examples
 
 /-- Build config from a freezing example (fallback path — no tree). -/
 def configFromExample (ex : Example) : MinimalistScopeConfig :=

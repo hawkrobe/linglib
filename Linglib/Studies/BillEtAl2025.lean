@@ -417,16 +417,17 @@ theorem georgian_contradicts_transparency :
 -- Connection to Form-Meaning Correspondences
 
 /-!
-## Link to Phenomena/Gradability/Imprecision/FormMeaning.lean
+## Link to form-meaning correspondences (`Studies/Haslinger2025.lean`)
 
 The Transparency Principle is the acquisition-side counterpart of
-the No Needless Manner Violations principle formalized in FormMeaning.lean.
+the No Needless Manner Violations principle formalized in
+`Studies/Haslinger2025.lean`.
 
 Both principles relate form complexity to meaning:
 - NNMV: More complex form → more precise meaning
 - Transparency: More overt form-meaning mapping → easier acquisition
 
-The `andBoth` datum in FormMeaning.lean is particularly relevant:
+The `andBoth` datum in `Studies/Haslinger2025.lean` is particularly relevant:
 "Ann and Bert" (J-only) vs "both Ann and Bert" (≈ J+MU).
 "Both" adds precision (removes homogeneity gap) — it's arguably an
 overt realization of MU/distributivity, paralleling the J-MU strategy.
