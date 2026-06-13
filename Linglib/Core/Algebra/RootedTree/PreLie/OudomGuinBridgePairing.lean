@@ -57,7 +57,7 @@ open PreLie.OudomGuinCirc
 
 namespace GrossmanLarson
 
-variable {α : Type*} [DecidableEq (Nonplanar α)]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (Nonplanar α)]
 
 /-! ### ε is multiplicative for the GL product
 
@@ -70,11 +70,11 @@ The cardinality preservation lemma `Nonplanar.insertionMultiset_card_eq`
     For non-zero host A: every NIM output has cardinality |A| ≥ 1, so ε = 0.
     For host A = 0: NIM(0, B) = {0} iff B = 0, else empty. -/
 private theorem counit_insertionBasis (A B : Forest (Nonplanar α)) :
-    (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
-          (GrossmanLarson.insertionBasis (R := ℤ) A B)) =
-      (counit (ConnesKreimer.of' A : ConnesKreimer ℤ (Nonplanar α))) *
-        (counit (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α))) := by
+          (GrossmanLarson.insertionBasis (R := R) A B)) =
+      (counit (ConnesKreimer.of' A : ConnesKreimer R (Nonplanar α))) *
+        (counit (ConnesKreimer.of' B : ConnesKreimer R (Nonplanar α))) := by
   -- Unfold insertionBasis: sum over NIM(A, B) of of' F'.
   -- ε of sum = sum of ε. ε(of' F') = if F'.card = 0 then 1 else 0.
   -- Case on A:
@@ -83,22 +83,22 @@ private theorem counit_insertionBasis (A B : Forest (Nonplanar α)) :
   unfold GrossmanLarson.insertionBasis
   -- Goal: counit (unop ((NIM A B).map (fun F' => of' F')).sum) =
   --        counit (of' A) * counit (of' B)
-  show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+  show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
       ((Nonplanar.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := ℤ) F').sum =
+        fun F' => ConnesKreimer.of' (R := R) F').sum =
     _
   -- counit (Σ ...) = Σ counit (...).
   rw [show ((Nonplanar.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := ℤ) F').sum =
+        fun F' => ConnesKreimer.of' (R := R) F').sum =
       ((Nonplanar.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := ℤ) F').sum from rfl]
+        fun F' => ConnesKreimer.of' (R := R) F').sum from rfl]
   -- Use additivity of counit through Multiset.sum.
-  rw [show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+  rw [show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         ((Nonplanar.insertionMultiset A B).map
-          (fun F' => ConnesKreimer.of' (R := ℤ) F')).sum =
+          (fun F' => ConnesKreimer.of' (R := R) F')).sum =
       ((Nonplanar.insertionMultiset A B).map
-        (fun F' => (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
-          (ConnesKreimer.of' (R := ℤ) F'))).sum from ?_]
+        (fun F' => (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
+          (ConnesKreimer.of' (R := R) F'))).sum from ?_]
   swap
   · -- counit preserves Multiset.sum via additivity.
     induction Nonplanar.insertionMultiset A B using Multiset.induction with
@@ -147,31 +147,31 @@ private theorem counit_insertionBasis (A B : Forest (Nonplanar α)) :
       i.e. `B₁ = B`; then `ε(unop(insertion(of' A)(of' B))) = ε(of' A) · ε(of' B) = 0`
       via `counit_insertionBasis`. -/
 private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
-    (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
-          ((GrossmanLarson.of' (R := ℤ) A : GrossmanLarson ℤ α) *
+          ((GrossmanLarson.of' (R := R) A : GrossmanLarson R α) *
             GrossmanLarson.of' B)) =
-      (counit (ConnesKreimer.of' A : ConnesKreimer ℤ (Nonplanar α))) *
-        (counit (ConnesKreimer.of' B : ConnesKreimer ℤ (Nonplanar α))) := by
+      (counit (ConnesKreimer.of' A : ConnesKreimer R (Nonplanar α))) *
+        (counit (ConnesKreimer.of' B : ConnesKreimer R (Nonplanar α))) := by
   by_cases hB : B = 0
   · subst hB
     -- of' A *_GL of' 0 = of' A *_GL 1 = of' A.
-    have h_of_zero : (GrossmanLarson.of' (R := ℤ) (0 : Forest (Nonplanar α)) :
-          GrossmanLarson ℤ α) = 1 := GrossmanLarson.of'_zero
+    have h_of_zero : (GrossmanLarson.of' (R := R) (0 : Forest (Nonplanar α)) :
+          GrossmanLarson R α) = 1 := GrossmanLarson.of'_zero
     rw [h_of_zero, GrossmanLarson.mul_one]
-    show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (ConnesKreimer.of' A) =
-      (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (ConnesKreimer.of' A) *
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (ConnesKreimer.of' (0 : Forest (Nonplanar α)))
     rw [show (ConnesKreimer.of' (0 : Forest (Nonplanar α)) :
-            ConnesKreimer ℤ (Nonplanar α)) = 1 from
+            ConnesKreimer R (Nonplanar α)) = 1 from
         ConnesKreimer.of'_zero, map_one]
     ring
   · -- B ≠ 0: counit(of' B) = 0, RHS = counit(of' A) * 0 = 0.
     have hBcard : B.card ≠ 0 := fun hc => hB (Multiset.card_eq_zero.mp hc)
-    have hCBzero : (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    have hCBzero : (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (ConnesKreimer.of' B) = 0 := by
       rw [ConnesKreimer.counit_of', if_neg hBcard]
     rw [hCBzero, mul_zero]
@@ -183,14 +183,14 @@ private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
     -- so the sum is 0.
     -- Helper: per-summand (CK product after unop) identity.
     have h_summand : ∀ B₁ : Forest (Nonplanar α),
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           ((GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := ℤ) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer ℤ (Nonplanar α)) *
-            ConnesKreimer.of' (R := ℤ) (B - B₁)) =
-        (counit (ConnesKreimer.of' A : ConnesKreimer ℤ (Nonplanar α))) *
-          (counit (ConnesKreimer.of' (R := ℤ) (B₁ + (B - B₁)) :
-            ConnesKreimer ℤ (Nonplanar α))) := by
+              (GrossmanLarson.insertion (R := R) (GrossmanLarson.of' A)
+                (GrossmanLarson.of' B₁)) : ConnesKreimer R (Nonplanar α)) *
+            ConnesKreimer.of' (R := R) (B - B₁)) =
+        (counit (ConnesKreimer.of' A : ConnesKreimer R (Nonplanar α))) *
+          (counit (ConnesKreimer.of' (R := R) (B₁ + (B - B₁)) :
+            ConnesKreimer R (Nonplanar α))) := by
       intro B₁
       -- counit (X *_CK Y) = counit X * counit Y (algebra hom).
       rw [map_mul]
@@ -200,32 +200,32 @@ private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
       rw [counit_insertionBasis A B₁]
       -- counit (of' (B₁ + (B - B₁))) = counit (of' B₁ * of'(B - B₁))
       --                              = counit (of' B₁) * counit (of'(B - B₁)).
-      rw [show (ConnesKreimer.of' (R := ℤ) (B₁ + (B - B₁)) :
-              ConnesKreimer ℤ (Nonplanar α)) =
-            ConnesKreimer.of' (R := ℤ) B₁ * ConnesKreimer.of' (R := ℤ) (B - B₁) from
+      rw [show (ConnesKreimer.of' (R := R) (B₁ + (B - B₁)) :
+              ConnesKreimer R (Nonplanar α)) =
+            ConnesKreimer.of' (R := R) B₁ * ConnesKreimer.of' (R := R) (B - B₁) from
           ConnesKreimer.of'_add B₁ (B - B₁)]
       rw [map_mul]
       ring
     -- Outer: expand (of' A) * (of' B) via productForest, push counit through sum.
     -- Generic helper: push counit (algebra hom) ∘ unop through Multiset.sum.
     -- (unop is identity coercion, so this reduces to map_multiset_sum on counit.)
-    have h_push_counit_unop_sum : ∀ s : Multiset (GrossmanLarson ℤ α),
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    have h_push_counit_unop_sum : ∀ s : Multiset (GrossmanLarson R α),
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
             (GrossmanLarson.unop s.sum) =
           (s.map (fun x =>
-            (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+            (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
               (GrossmanLarson.unop x))).sum :=
-      fun s => map_multiset_sum (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) s
+      fun s => map_multiset_sum (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) s
     -- Each summand of the productForest sum reduces to 0 after counit ∘ unop:
     -- op (unop(insertion (of' A) (of' B₁)) * unop(of'(B-B₁))) — after unop on the outer,
     -- becomes the inner CK product. counit applied via h_summand: = 0 for B₁ ⊆ B.
     have h_each_zero : ∀ x ∈ B.powerset.map (fun B₁ =>
         GrossmanLarson.op
           ((GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := ℤ) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer ℤ (Nonplanar α)) *
+              (GrossmanLarson.insertion (R := R) (GrossmanLarson.of' A)
+                (GrossmanLarson.of' B₁)) : ConnesKreimer R (Nonplanar α)) *
             GrossmanLarson.unop (GrossmanLarson.of' (B - B₁)))),
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop x) = 0 := by
       intro x hx
       rw [Multiset.mem_map] at hx
@@ -234,16 +234,16 @@ private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
       have hB₁add : B₁ + (B - B₁) = B := by
         rw [add_comm]; exact Multiset.sub_add_cancel hB₁le
       rw [← hx_eq]
-      show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           ((GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := ℤ) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer ℤ (Nonplanar α)) *
+              (GrossmanLarson.insertion (R := R) (GrossmanLarson.of' A)
+                (GrossmanLarson.of' B₁)) : ConnesKreimer R (Nonplanar α)) *
             GrossmanLarson.unop (GrossmanLarson.of' (B - B₁))) = 0
-      show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           ((GrossmanLarson.unop
-              (GrossmanLarson.insertion (R := ℤ) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer ℤ (Nonplanar α)) *
-            ConnesKreimer.of' (R := ℤ) (B - B₁)) = 0
+              (GrossmanLarson.insertion (R := R) (GrossmanLarson.of' A)
+                (GrossmanLarson.of' B₁)) : ConnesKreimer R (Nonplanar α)) *
+            ConnesKreimer.of' (R := R) (B - B₁)) = 0
       rw [h_summand B₁, hB₁add, hCBzero, mul_zero]
     -- Now compute LHS via productForest expansion.
     rw [GrossmanLarson.of'_mul_of']
@@ -260,160 +260,160 @@ private theorem counit_gl_mul_basis (A B : Forest (Nonplanar α)) :
 
 /-- The counit `ε` on CK is multiplicative for the GL product.
     Bilinear extension of `counit_gl_mul_basis`. -/
-theorem counit_gl_mul (x y : ConnesKreimer ℤ (Nonplanar α)) :
-    (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+theorem counit_gl_mul (x y : ConnesKreimer R (Nonplanar α)) :
+    (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
-          ((GrossmanLarson.op x : GrossmanLarson ℤ α) * GrossmanLarson.op y)) =
+          ((GrossmanLarson.op x : GrossmanLarson R α) * GrossmanLarson.op y)) =
       (counit x) * (counit y) := by
   refine Finsupp.induction_linear x ?_ ?_ ?_
   · -- x = 0
-    change (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    change (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
-          ((0 : GrossmanLarson ℤ α) * GrossmanLarson.op y)) =
-      (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) 0 *
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) y
+          ((0 : GrossmanLarson R α) * GrossmanLarson.op y)) =
+      (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) 0 *
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) y
     rw [GrossmanLarson.zero_mul_gl,
-        show GrossmanLarson.unop (0 : GrossmanLarson ℤ α) =
-            (0 : ConnesKreimer ℤ (Nonplanar α)) from rfl,
+        show GrossmanLarson.unop (0 : GrossmanLarson R α) =
+            (0 : ConnesKreimer R (Nonplanar α)) from rfl,
         map_zero, zero_mul]
   · -- x = x₁ + x₂
     intro x₁ x₂ ih₁ ih₂
-    let x₁' : ConnesKreimer ℤ (Nonplanar α) := x₁
-    let x₂' : ConnesKreimer ℤ (Nonplanar α) := x₂
-    show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
+    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
+    show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
         (GrossmanLarson.unop
-          ((GrossmanLarson.op (x₁' + x₂') : GrossmanLarson ℤ α) *
+          ((GrossmanLarson.op (x₁' + x₂') : GrossmanLarson R α) *
             GrossmanLarson.op y)) =
-      (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) (x₁' + x₂') *
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) y
-    rw [show (GrossmanLarson.op (x₁' + x₂') : GrossmanLarson ℤ α) =
+      (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) (x₁' + x₂') *
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) y
+    rw [show (GrossmanLarson.op (x₁' + x₂') : GrossmanLarson R α) =
           GrossmanLarson.op x₁' + GrossmanLarson.op x₂' from rfl,
         add_mul,
         show GrossmanLarson.unop
-              ((GrossmanLarson.op x₁' : GrossmanLarson ℤ α) * GrossmanLarson.op y +
+              ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y +
                 GrossmanLarson.op x₂' * GrossmanLarson.op y) =
             GrossmanLarson.unop
-                ((GrossmanLarson.op x₁' : GrossmanLarson ℤ α) * GrossmanLarson.op y) +
+                ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y) +
               GrossmanLarson.unop
                 (GrossmanLarson.op x₂' * GrossmanLarson.op y) from rfl,
-        show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+        show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
               (GrossmanLarson.unop
-                  ((GrossmanLarson.op x₁' : GrossmanLarson ℤ α) * GrossmanLarson.op y) +
+                  ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y) +
                 GrossmanLarson.unop
                   (GrossmanLarson.op x₂' * GrossmanLarson.op y)) =
             counit (GrossmanLarson.unop
-                  ((GrossmanLarson.op x₁' : GrossmanLarson ℤ α) * GrossmanLarson.op y)) +
+                  ((GrossmanLarson.op x₁' : GrossmanLarson R α) * GrossmanLarson.op y)) +
               counit (GrossmanLarson.unop
                 (GrossmanLarson.op x₂' * GrossmanLarson.op y)) from
           map_add _ _ _]
-    rw [ih₁, ih₂, map_add (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) x₁' x₂']
+    rw [ih₁, ih₂, map_add (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x₁' x₂']
     ring
   · -- x = single F r
     intro F r
     refine Finsupp.induction_linear y ?_ ?_ ?_
     · -- y = 0
-      let x_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single F r
-      change (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      change (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
-            ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) *
-              (0 : GrossmanLarson ℤ α))) =
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) x_single *
-          (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) 0
+            ((GrossmanLarson.op x_single : GrossmanLarson R α) *
+              (0 : GrossmanLarson R α))) =
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single *
+          (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) 0
       rw [GrossmanLarson.mul_zero_gl,
-          show GrossmanLarson.unop (0 : GrossmanLarson ℤ α) =
-              (0 : ConnesKreimer ℤ (Nonplanar α)) from rfl,
+          show GrossmanLarson.unop (0 : GrossmanLarson R α) =
+              (0 : ConnesKreimer R (Nonplanar α)) from rfl,
           map_zero, mul_zero]
     · -- y = y₁ + y₂
       intro y₁ y₂ ih₁ ih₂
-      let x_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single F r
-      let y₁' : ConnesKreimer ℤ (Nonplanar α) := y₁
-      let y₂' : ConnesKreimer ℤ (Nonplanar α) := y₂
-      show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let y₁' : ConnesKreimer R (Nonplanar α) := y₁
+      let y₂' : ConnesKreimer R (Nonplanar α) := y₂
+      show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
-            ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) *
+            ((GrossmanLarson.op x_single : GrossmanLarson R α) *
               GrossmanLarson.op (y₁' + y₂'))) =
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) x_single *
-          (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) (y₁' + y₂')
-      rw [show (GrossmanLarson.op (y₁' + y₂') : GrossmanLarson ℤ α) =
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single *
+          (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) (y₁' + y₂')
+      rw [show (GrossmanLarson.op (y₁' + y₂') : GrossmanLarson R α) =
             GrossmanLarson.op y₁' + GrossmanLarson.op y₂' from rfl,
           mul_add,
           show GrossmanLarson.unop
-              ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) * GrossmanLarson.op y₁' +
+              ((GrossmanLarson.op x_single : GrossmanLarson R α) * GrossmanLarson.op y₁' +
                 GrossmanLarson.op x_single * GrossmanLarson.op y₂') =
             GrossmanLarson.unop
-                ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) * GrossmanLarson.op y₁') +
+                ((GrossmanLarson.op x_single : GrossmanLarson R α) * GrossmanLarson.op y₁') +
               GrossmanLarson.unop
                 (GrossmanLarson.op x_single * GrossmanLarson.op y₂') from rfl,
-          show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+          show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
                 (GrossmanLarson.unop
-                    ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) *
+                    ((GrossmanLarson.op x_single : GrossmanLarson R α) *
                       GrossmanLarson.op y₁') +
                   GrossmanLarson.unop
                     (GrossmanLarson.op x_single * GrossmanLarson.op y₂')) =
               counit (GrossmanLarson.unop
-                    ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) *
+                    ((GrossmanLarson.op x_single : GrossmanLarson R α) *
                       GrossmanLarson.op y₁')) +
                 counit (GrossmanLarson.unop
                   (GrossmanLarson.op x_single * GrossmanLarson.op y₂')) from
             map_add _ _ _]
-      rw [ih₁, ih₂, map_add (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) y₁' y₂']
+      rw [ih₁, ih₂, map_add (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) y₁' y₂']
       ring
     · -- y = single G s: factor r, s, apply counit_gl_mul_basis F G
       intro G s
-      let x_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single F r
-      let y_single : ConnesKreimer ℤ (Nonplanar α) := Finsupp.single G s
-      show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
-            ((GrossmanLarson.op x_single : GrossmanLarson ℤ α) *
+            ((GrossmanLarson.op x_single : GrossmanLarson R α) *
               GrossmanLarson.op y_single)) =
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) x_single *
-          (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) y_single
-      have hx : x_single = r • (ConnesKreimer.of' (R := ℤ) F) := by
-        show (Finsupp.single F r : ConnesKreimer ℤ (Nonplanar α)) =
-            r • (Finsupp.single F (1 : ℤ) : ConnesKreimer ℤ (Nonplanar α))
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) x_single *
+          (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) y_single
+      have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
+        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+            r • (Finsupp.single F (1 : R) : ConnesKreimer R (Nonplanar α))
         exact (Finsupp.smul_single_one F r).symm
-      have hy : y_single = s • (ConnesKreimer.of' (R := ℤ) G) := by
-        show (Finsupp.single G s : ConnesKreimer ℤ (Nonplanar α)) =
-            s • (Finsupp.single G (1 : ℤ) : ConnesKreimer ℤ (Nonplanar α))
+      have hy : y_single = s • (ConnesKreimer.of' (R := R) G) := by
+        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
+            s • (Finsupp.single G (1 : R) : ConnesKreimer R (Nonplanar α))
         exact (Finsupp.smul_single_one G s).symm
       rw [hx, hy]
       -- Pull r, s through op and *.
-      rw [show (GrossmanLarson.op (r • ConnesKreimer.of' (R := ℤ) F) :
-            GrossmanLarson ℤ α) =
-          r • GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) F) from rfl,
-          show (GrossmanLarson.op (s • ConnesKreimer.of' (R := ℤ) G) :
-            GrossmanLarson ℤ α) =
-          s • GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) G) from rfl,
+      rw [show (GrossmanLarson.op (r • ConnesKreimer.of' (R := R) F) :
+            GrossmanLarson R α) =
+          r • GrossmanLarson.op (ConnesKreimer.of' (R := R) F) from rfl,
+          show (GrossmanLarson.op (s • ConnesKreimer.of' (R := R) G) :
+            GrossmanLarson R α) =
+          s • GrossmanLarson.op (ConnesKreimer.of' (R := R) G) from rfl,
           GrossmanLarson.smul_mul_gl, GrossmanLarson.mul_smul_gl]
       -- unop is linear (rfl), counit is linear → pull r, s out.
       rw [show GrossmanLarson.unop (r • s • ((GrossmanLarson.op
-              (ConnesKreimer.of' (R := ℤ) F) : GrossmanLarson ℤ α) *
-                GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) G))) =
+              (ConnesKreimer.of' (R := R) F) : GrossmanLarson R α) *
+                GrossmanLarson.op (ConnesKreimer.of' (R := R) G))) =
             r • s • GrossmanLarson.unop ((GrossmanLarson.op
-                (ConnesKreimer.of' (R := ℤ) F) : GrossmanLarson ℤ α) *
-                GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) G)) from rfl,
-          show (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+                (ConnesKreimer.of' (R := R) F) : GrossmanLarson R α) *
+                GrossmanLarson.op (ConnesKreimer.of' (R := R) G)) from rfl,
+          show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
               (r • s • GrossmanLarson.unop ((GrossmanLarson.op
-                  (ConnesKreimer.of' (R := ℤ) F) : GrossmanLarson ℤ α) *
-                  GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) G))) =
-            r • s • (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+                  (ConnesKreimer.of' (R := R) F) : GrossmanLarson R α) *
+                  GrossmanLarson.op (ConnesKreimer.of' (R := R) G))) =
+            r • s • (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
               (GrossmanLarson.unop ((GrossmanLarson.op
-                  (ConnesKreimer.of' (R := ℤ) F) : GrossmanLarson ℤ α) *
-                  GrossmanLarson.op (ConnesKreimer.of' (R := ℤ) G))) from by
-          rw [map_smul (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ),
-              map_smul (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)]]
+                  (ConnesKreimer.of' (R := R) F) : GrossmanLarson R α) *
+                  GrossmanLarson.op (ConnesKreimer.of' (R := R) G))) from by
+          rw [map_smul (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R),
+              map_smul (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)]]
       -- Apply counit_gl_mul_basis F G via `change` to bridge op (CK.of' _) → GL.of' _.
-      change r • s • (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
+      change r • s • (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
           (GrossmanLarson.unop
-            ((GrossmanLarson.of' (R := ℤ) F : GrossmanLarson ℤ α) *
+            ((GrossmanLarson.of' (R := R) F : GrossmanLarson R α) *
               GrossmanLarson.of' G)) =
-        (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
-            (r • ConnesKreimer.of' (R := ℤ) F) *
-          (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)
-            (s • ConnesKreimer.of' (R := ℤ) G)
+        (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
+            (r • ConnesKreimer.of' (R := R) F) *
+          (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
+            (s • ConnesKreimer.of' (R := R) G)
       rw [counit_gl_mul_basis F G,
-          map_smul (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ),
-          map_smul (counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ)]
+          map_smul (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R),
+          map_smul (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)]
       -- Now both sides are r • s • (counit_F * counit_G) (with coefficient gymnastics).
       simp only [smul_eq_mul]
       ring
@@ -426,35 +426,35 @@ theorem counit_gl_mul (x y : ConnesKreimer ℤ (Nonplanar α)) :
     Specifically:
     `⟨unop (op X * op Y), B+_a z⟩ = ε(X) · ⟨B-_a Y, z⟩ + ⟨unop (op (B-_a X) * op Y), z⟩`. -/
 theorem pairing_apply_bPlus_gl_mul (a : α)
-    (X Y z : ConnesKreimer ℤ (Nonplanar α)) :
-    pairing (R := ℤ) (GrossmanLarson.unop
-        ((GrossmanLarson.op X : GrossmanLarson ℤ α) * GrossmanLarson.op Y))
-      (ConnesKreimer.bPlusLin (R := ℤ) a z) =
-      (counit X) * pairing (R := ℤ) (bMinusLin (R := ℤ) a Y) z +
-      pairing (R := ℤ) (GrossmanLarson.unop
-          ((GrossmanLarson.op (bMinusLin (R := ℤ) a X) : GrossmanLarson ℤ α) *
+    (X Y z : ConnesKreimer R (Nonplanar α)) :
+    pairing (R := R) (GrossmanLarson.unop
+        ((GrossmanLarson.op X : GrossmanLarson R α) * GrossmanLarson.op Y))
+      (ConnesKreimer.bPlusLin (R := R) a z) =
+      (counit X) * pairing (R := R) (bMinusLin (R := R) a Y) z +
+      pairing (R := R) (GrossmanLarson.unop
+          ((GrossmanLarson.op (bMinusLin (R := R) a X) : GrossmanLarson R α) *
             GrossmanLarson.op Y)) z := by
   -- Step 1: B+/B- adjoint: ⟨W, B+_a z⟩ = ⟨B-_a W, z⟩ with W = unop(op X * op Y).
   rw [← bMinusLin_pairing_adjoint a (GrossmanLarson.unop
-        ((GrossmanLarson.op X : GrossmanLarson ℤ α) * GrossmanLarson.op Y)) z]
+        ((GrossmanLarson.op X : GrossmanLarson R α) * GrossmanLarson.op Y)) z]
   -- Step 2: Phase C identity: B-_a (unop (op X * op Y)) = ε(X) • B-_a Y + unop (op (B-_a X) * op Y).
   have hC := bMinusLin_gl_mul a X Y
   -- Express LHS bMinusLin a (op X * op Y).unop in form matching hC's LHS.
-  have hLHS_form : bMinusLin (R := ℤ) a
+  have hLHS_form : bMinusLin (R := R) a
       (GrossmanLarson.unop
-        ((GrossmanLarson.op X : GrossmanLarson ℤ α) * GrossmanLarson.op Y)) =
-    bMinusLin (R := ℤ) a
-      ((GrossmanLarson.op X : GrossmanLarson ℤ α) * GrossmanLarson.op Y) := rfl
+        ((GrossmanLarson.op X : GrossmanLarson R α) * GrossmanLarson.op Y)) =
+    bMinusLin (R := R) a
+      ((GrossmanLarson.op X : GrossmanLarson R α) * GrossmanLarson.op Y) := rfl
   rw [hLHS_form, hC]
   -- Step 3: pairing is additive in first arg.
   rw [LinearMap.map_add, LinearMap.add_apply]
   -- Step 4: pairing pulls out ε(X) scalar from the first summand.
-  rw [show pairing (R := ℤ)
-        (((counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) X) •
-          bMinusLin (R := ℤ) a Y) =
-      ((counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) X) •
-        pairing (R := ℤ) (bMinusLin a Y) from
-      LinearMap.map_smul (pairing : ConnesKreimer ℤ _ →ₗ[ℤ] _) _ _]
+  rw [show pairing (R := R)
+        (((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) X) •
+          bMinusLin (R := R) a Y) =
+      ((counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) X) •
+        pairing (R := R) (bMinusLin a Y) from
+      LinearMap.map_smul (pairing : ConnesKreimer R _ →ₗ[R] _) _ _]
   rw [LinearMap.smul_apply]
   -- Goal: (counit X) • pairing (B-_a Y) z + pairing (unop (op (B-_a X) * op Y)) z
   --     = (counit X) * pairing (B-_a Y) z + pairing (unop (op (B-_a X) * op Y)) z

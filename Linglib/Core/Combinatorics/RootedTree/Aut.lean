@@ -5,8 +5,11 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+import Mathlib.Data.Multiset.Antidiagonal
 import Mathlib.Data.Multiset.Basic
+import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Data.Nat.Factorial.Basic
 
 set_option autoImplicit false
@@ -320,6 +323,323 @@ private theorem ofList_map_mk_qout (lst : List (Nonplanar α)) :
     apply Finset.prod_congr rfl
     intro t _
     ring
+
+/-! ### Multinomial split identity
+
+The automorphism count of a disjoint union `F + G` factors through any
+fixed split: `|Aut(F+G)| = N · |Aut F| · |Aut G|` where `N` counts the
+occurrences of the ordered pair `(F, G)` among the two-sided sub-multiset
+splits of `F + G` (`Multiset.antidiagonal`). Per distinct tree `t`, this
+is `(m₁ + m₂)! = C(m₁ + m₂, m₁) · m₁! · m₂!` with `mᵢ` the
+multiplicities in `F`, `G` — `Nat.add_choose_mul_factorial_mul_factorial`
+aggregated over `(F + G).toFinset`. The adjoint role: this is exactly
+what makes the symmetry-weighted pairing turn CK multiplication into the
+sub-multiset split coproduct (`GrossmanLarsonPairing.pairing_of'_mul`).
+
+Computationally validated (`scratch/validate_duality.lean`, V2 battery,
+exhaustive over forests of weight ≤ 3 plus duplicate-tree traps). -/
+
+/-- Count of an ordered split `(F, G)` in `antidiagonal (F + G)` equals the
+    count of `G` in `powerset (F + G)`: `antidiagonal_eq_map_powerset`
+    expresses the antidiagonal as the powerset mapped through the injective
+    `t ↦ (s - t, t)`, and the second coordinate `G` is in the image at
+    exactly one preimage. -/
+private theorem count_antidiagonal_eq_count_powerset
+    (F G : Multiset (Nonplanar α)) :
+    letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    Multiset.count (F, G) (Multiset.antidiagonal (F + G)) =
+      Multiset.count G (Multiset.powerset (F + G)) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  rw [Multiset.antidiagonal_eq_map_powerset]
+  -- Map is `fun t => (F + G - t, t)`, which is injective in `t` (second coord).
+  have hinj : Function.Injective
+      (fun t : Multiset (Nonplanar α) => (F + G - t, t)) := by
+    intro t₁ t₂ h
+    exact ((Prod.mk.injEq _ _ _ _).mp h).2
+  -- `(F, G) = (F + G - G, G)` because `F + G - G = F`.
+  have hpair : ((F + G - G, G) : Multiset (Nonplanar α) × _) = (F, G) := by
+    rw [Multiset.add_sub_cancel_right]
+  rw [← hpair]
+  exact Multiset.count_map_eq_count' _ _ hinj _
+
+/-- Pascal-style aggregation helper used inside `count_powerset_eq_prod_choose`.
+    At every element of `H'.toFinset`, the per-element identity
+    `H'.count t.choose ((a ::ₘ F').count t) + H'.count t.choose (F'.count t)
+      = (a ::ₘ H').count t.choose ((a ::ₘ F').count t)` collapses two
+    `H'.count t`-indexed products into one `(a ::ₘ H').count t`-indexed product,
+    using `Nat.choose_succ_succ'` at `t = a` and matching `cons`-counts elsewhere. -/
+private theorem pascal_choose_sum_aux
+    (F' H' : Multiset (Nonplanar α)) (a : Nonplanar α)
+    (ha_in_H' : a ∈ H') :
+    letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    H'.toFinset.prod (fun t => (H'.count t).choose ((a ::ₘ F').count t)) +
+        H'.toFinset.prod (fun t => (H'.count t).choose (F'.count t)) =
+      H'.toFinset.prod
+        (fun t => ((a ::ₘ H').count t).choose ((a ::ₘ F').count t)) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Pull `a` out of each Finset prod via `prod_eq_prod_diff_singleton_mul`.
+  have ha_toFin : a ∈ H'.toFinset := Multiset.mem_toFinset.mpr ha_in_H'
+  rw [Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+        (f := fun t => (H'.count t).choose ((a ::ₘ F').count t)),
+      Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+        (f := fun t => (H'.count t).choose (F'.count t)),
+      Finset.prod_eq_prod_diff_singleton_mul ha_toFin
+        (f := fun t => ((a ::ₘ H').count t).choose ((a ::ₘ F').count t))]
+  -- At each `t ∈ H'.toFinset \ {a}`, the three products agree (count_cons on a t ≠ a).
+  have h_diff_LHS1 :
+      (H'.toFinset \ {a}).prod (fun t => (H'.count t).choose ((a ::ₘ F').count t))
+        = (H'.toFinset \ {a}).prod (fun t => (H'.count t).choose (F'.count t)) := by
+    refine Finset.prod_congr rfl ?_
+    intro t ht
+    have ht_ne_a : t ≠ a := by
+      rw [Finset.mem_sdiff, Finset.mem_singleton] at ht
+      exact ht.2
+    rw [Multiset.count_cons_of_ne ht_ne_a]
+  have h_diff_RHS :
+      (H'.toFinset \ {a}).prod
+          (fun t => ((a ::ₘ H').count t).choose ((a ::ₘ F').count t))
+        = (H'.toFinset \ {a}).prod (fun t => (H'.count t).choose (F'.count t)) := by
+    refine Finset.prod_congr rfl ?_
+    intro t ht
+    have ht_ne_a : t ≠ a := by
+      rw [Finset.mem_sdiff, Finset.mem_singleton] at ht
+      exact ht.2
+    rw [Multiset.count_cons_of_ne ht_ne_a,
+        Multiset.count_cons_of_ne ht_ne_a]
+  rw [h_diff_LHS1, h_diff_RHS]
+  -- Now: P * x + P * y = P * z (where P = diff prod common factor).
+  rw [← mul_add]
+  congr 1
+  -- Normalize counts at `a` via `count_cons_self`.
+  simp only [Multiset.count_cons_self]
+  -- Goal:
+  --   H'.count a.choose (F'.count a + 1) + H'.count a.choose (F'.count a)
+  --   = (H'.count a + 1).choose (F'.count a + 1)
+  -- Pascal: `(n+1).choose (k+1) = n.choose k + n.choose (k+1)`.
+  rw [Nat.choose_succ_succ', add_comm]
+
+/-- The count of `F` in `powerset H` is the product over distinct elements
+    of `H` of `(H.count t).choose (F.count t)`, provided `F ≤ H`. Proved by
+    induction on `H`: at `H = a ::ₘ H'`, split `powerset (a ::ₘ H')` via
+    Pascal's rule and case on `a ∈ F`. -/
+private theorem count_powerset_eq_prod_choose
+    (F H : Multiset (Nonplanar α)) (hFH : F ≤ H) :
+    letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    Multiset.count F (Multiset.powerset H) =
+      H.toFinset.prod (fun t => (H.count t).choose (F.count t)) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  induction H using Multiset.induction_on generalizing F with
+  | empty =>
+    -- `F ≤ 0` forces `F = 0`. RHS is empty product = 1.
+    have hF : F = 0 := Multiset.le_zero.mp hFH
+    subst hF
+    simp [Multiset.powerset_zero, Multiset.toFinset_zero]
+  | cons a H' ih =>
+    rw [Multiset.powerset_cons, Multiset.count_add]
+    -- `cons a` is injective.
+    have h_inj : Function.Injective (Multiset.cons a) := fun _ _ h =>
+      (Multiset.cons_inj_right a).mp h
+    by_cases ha_in_F : a ∈ F
+    · -- `a ∈ F`: F = a ::ₘ F' with F' ≤ H'.
+      obtain ⟨F', hF_eq⟩ := Multiset.exists_cons_of_mem ha_in_F
+      subst hF_eq
+      have hF'_le : F' ≤ H' := (Multiset.cons_le_cons_iff a).mp hFH
+      -- Second summand = count F' (powerset H'); rewrite via `count_map_eq_count'`.
+      have h_second :
+          Multiset.count (a ::ₘ F')
+              ((Multiset.powerset H').map (Multiset.cons a)) =
+            Multiset.count F' (Multiset.powerset H') :=
+        Multiset.count_map_eq_count' _ _ h_inj F'
+      by_cases ha_in_H' : a ∈ H'
+      · -- a ∈ H'. Sub-case on whether `a ::ₘ F' ≤ H'` (i.e. `count a F' < count a H'`).
+        have ha_pos : 1 ≤ Multiset.count a H' :=
+          Multiset.one_le_count_iff_mem.mpr ha_in_H'
+        have h_aH'_toFinset : (a ::ₘ H').toFinset = H'.toFinset := by
+          rw [Multiset.toFinset_cons]
+          exact Finset.insert_eq_of_mem (Multiset.mem_toFinset.mpr ha_in_H')
+        -- F'.count a ≤ H'.count a (from F' ≤ H').
+        have h_cF'_le_cH' : Multiset.count a F' ≤ Multiset.count a H' :=
+          Multiset.le_iff_count.mp hF'_le a
+        by_cases h_strict : Multiset.count a F' + 1 ≤ Multiset.count a H'
+        · -- A1: `a ::ₘ F' ≤ H'`. Apply ih to both `a ::ₘ F'` and `F'`.
+          have h_le' : a ::ₘ F' ≤ H' := by
+            rw [Multiset.le_iff_count]
+            intro b
+            have h_master := Multiset.le_iff_count.mp hFH b
+            by_cases hb : b = a
+            · rw [hb, Multiset.count_cons_self, Multiset.count_cons_self] at h_master
+              rw [hb, Multiset.count_cons_self]; omega
+            · rw [Multiset.count_cons_of_ne hb, Multiset.count_cons_of_ne hb] at h_master
+              rw [Multiset.count_cons_of_ne hb]; exact h_master
+          rw [ih (a ::ₘ F') h_le', h_second, ih F' hF'_le]
+          rw [h_aH'_toFinset]
+          exact pascal_choose_sum_aux F' H' a ha_in_H'
+        · -- A2: `count a F' + 1 > count a H'`. Combined with `count a F' ≤ count a H'`,
+          -- forces `count a F' = count a H'`. So `a ::ₘ F' ≰ H'`, first summand = 0.
+          have h_eq : Multiset.count a F' = Multiset.count a H' := by omega
+          have h_first_zero :
+              Multiset.count (a ::ₘ F') (Multiset.powerset H') = 0 := by
+            rw [Multiset.count_eq_zero, Multiset.mem_powerset]
+            intro h_le_H'
+            have := Multiset.le_iff_count.mp h_le_H' a
+            rw [Multiset.count_cons_self] at this
+            omega
+          rw [h_first_zero, Nat.zero_add, h_second, ih F' hF'_le]
+          rw [h_aH'_toFinset]
+          -- Goal: ∏ t ∈ H'.toFinset, H'.count t.choose F'.count t
+          --     = ∏ t ∈ H'.toFinset, (a ::ₘ H').count t.choose (a ::ₘ F').count t.
+          refine Finset.prod_congr rfl ?_
+          intro t _
+          by_cases ht_eq : t = a
+          · -- At t = a: H'.count a.choose F'.count a on LHS;
+            -- (H'.count a + 1).choose (F'.count a + 1) on RHS.
+            -- Using h_eq, F'.count a = H'.count a, so LHS = n.choose n = 1 and
+            -- RHS = (n+1).choose (n+1) = 1.
+            subst ht_eq
+            rw [Multiset.count_cons_self, Multiset.count_cons_self, h_eq]
+            simp
+          · rw [Multiset.count_cons_of_ne ht_eq, Multiset.count_cons_of_ne ht_eq]
+      · -- a ∉ H': first summand is 0 (a ::ₘ F' ≰ H').
+        have h_first_zero : Multiset.count (a ::ₘ F') (Multiset.powerset H') = 0 := by
+          rw [Multiset.count_eq_zero, Multiset.mem_powerset]
+          intro h_le_H'
+          have := Multiset.le_iff_count.mp h_le_H' a
+          rw [Multiset.count_cons_self, Multiset.count_eq_zero.mpr ha_in_H'] at this
+          omega
+        rw [h_first_zero, Nat.zero_add, h_second, ih F' hF'_le]
+        rw [Multiset.toFinset_cons]
+        have h_a_notin : a ∉ H'.toFinset := fun h =>
+          ha_in_H' (Multiset.mem_toFinset.mp h)
+        rw [Finset.prod_insert h_a_notin]
+        rw [Multiset.count_cons_self, Multiset.count_cons_self,
+            Multiset.count_eq_zero.mpr ha_in_H']
+        -- `F'.count a = 0` since `F' ≤ H'` and `a ∉ H'`.
+        have h_count_aF' : Multiset.count a F' = 0 := by
+          rw [Multiset.count_eq_zero]
+          intro h_mem
+          exact ha_in_H' (Multiset.subset_of_le hF'_le h_mem)
+        rw [h_count_aF']
+        simp only [Nat.zero_add, Nat.choose_self, one_mul]
+        refine Finset.prod_congr rfl ?_
+        intro t ht
+        have ht_ne_a : t ≠ a := fun h => h_a_notin (h ▸ ht)
+        rw [Multiset.count_cons_of_ne ht_ne_a, Multiset.count_cons_of_ne ht_ne_a]
+    · -- a ∉ F: F ≤ H'.
+      have hF_le' : F ≤ H' := by
+        rw [Multiset.le_iff_count]
+        intro b
+        by_cases hb : b = a
+        · subst hb
+          rw [Multiset.count_eq_zero.mpr ha_in_F]
+          exact Nat.zero_le _
+        · have h_master := Multiset.le_iff_count.mp hFH b
+          rw [Multiset.count_cons_of_ne hb] at h_master
+          exact h_master
+      -- Second summand is 0 (F doesn't contain `a`).
+      have h_second_zero :
+          Multiset.count F ((Multiset.powerset H').map (Multiset.cons a)) = 0 := by
+        rw [Multiset.count_eq_zero, Multiset.mem_map]
+        rintro ⟨S, _, hS⟩
+        have : a ∈ F := hS ▸ Multiset.mem_cons_self a S
+        exact ha_in_F this
+      rw [h_second_zero, Nat.add_zero, ih F hF_le']
+      rw [Multiset.toFinset_cons]
+      by_cases ha_in_H' : a ∈ H'
+      · rw [Finset.insert_eq_of_mem (Multiset.mem_toFinset.mpr ha_in_H')]
+        refine Finset.prod_congr rfl ?_
+        intro t _
+        by_cases ht_eq : t = a
+        · subst ht_eq
+          rw [Multiset.count_cons_self, Multiset.count_eq_zero.mpr ha_in_F]
+          simp [Nat.choose_zero_right]
+        · rw [Multiset.count_cons_of_ne ht_eq]
+      · have h_a_notin : a ∉ H'.toFinset :=
+          fun h => ha_in_H' (Multiset.mem_toFinset.mp h)
+        rw [Finset.prod_insert h_a_notin]
+        rw [Multiset.count_cons_self, Multiset.count_eq_zero.mpr ha_in_H',
+            Multiset.count_eq_zero.mpr ha_in_F]
+        simp only [Nat.zero_add, Nat.choose_zero_right, one_mul]
+        refine Finset.prod_congr rfl ?_
+        intro t ht
+        have ht_ne_a : t ≠ a := fun h => h_a_notin (h ▸ ht)
+        rw [Multiset.count_cons_of_ne ht_ne_a]
+
+/-- Per-element multinomial: at every distinct tree `t`,
+    `((F+G).count t).choose (G.count t) * (F.count t)! * (G.count t)!
+      = ((F+G).count t)!`. This is
+    `Nat.add_choose_mul_factorial_mul_factorial` with
+    `i = F.count t`, `j = G.count t`, after rewriting
+    `(F+G).count t = F.count t + G.count t`. -/
+private theorem pointwise_factorial_split
+    (F G : Multiset (Nonplanar α)) (t : Nonplanar α) :
+    letI : DecidableEq (Nonplanar α) := Classical.decEq _
+    ((F + G).count t).choose (G.count t) *
+        Nat.factorial (F.count t) * Nat.factorial (G.count t) =
+      Nat.factorial ((F + G).count t) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  rw [Multiset.count_add]
+  exact Nat.add_choose_mul_factorial_mul_factorial _ _
+
+/-- **Multinomial split identity** for `forestAutCard`:
+    `count (F,G) (antidiagonal (F+G)) · |Aut F| · |Aut G| = |Aut (F+G)|`. -/
+theorem forestAutCard_add (F G : Multiset (Nonplanar α)) :
+    (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+     Multiset.count (F, G) (Multiset.antidiagonal (F + G))) *
+      (forestAutCard F * forestAutCard G) = forestAutCard (F + G) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  rw [count_antidiagonal_eq_count_powerset]
+  rw [count_powerset_eq_prod_choose G (F + G) (Multiset.le_add_left G F)]
+  -- Unfold forestAutCard in three places.
+  unfold forestAutCard
+  -- Extend `F.toFinset`/`G.toFinset` prods to `(F+G).toFinset` prods
+  -- (extension by factors equal to 1).
+  set S := (F + G).toFinset with hS_def
+  have hF_sub : F.toFinset ⊆ S := by
+    intro t ht
+    rw [hS_def, Multiset.mem_toFinset] at *
+    exact Multiset.subset_of_le (Multiset.le_add_right F G) ht
+  have hG_sub : G.toFinset ⊆ S := by
+    intro t ht
+    rw [hS_def, Multiset.mem_toFinset] at *
+    exact Multiset.subset_of_le (Multiset.le_add_left G F) ht
+  have hF_ext : F.toFinset.prod
+      (fun t => Nat.factorial (F.count t) * autCard t ^ F.count t) =
+      S.prod (fun t => Nat.factorial (F.count t) * autCard t ^ F.count t) := by
+    refine Finset.prod_subset hF_sub ?_
+    intro t _ htF
+    have h_cF : F.count t = 0 := Multiset.count_eq_zero.mpr (fun h_mem =>
+      htF (Multiset.mem_toFinset.mpr h_mem))
+    rw [h_cF]; simp
+  have hG_ext : G.toFinset.prod
+      (fun t => Nat.factorial (G.count t) * autCard t ^ G.count t) =
+      S.prod (fun t => Nat.factorial (G.count t) * autCard t ^ G.count t) := by
+    refine Finset.prod_subset hG_sub ?_
+    intro t _ htG
+    have h_cG : G.count t = 0 := Multiset.count_eq_zero.mpr (fun h_mem =>
+      htG (Multiset.mem_toFinset.mpr h_mem))
+    rw [h_cG]; simp
+  rw [hF_ext, hG_ext]
+  -- Combine into a single `Finset.prod` over `S`.
+  rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl ?_
+  intro t _
+  -- Per-element identity:
+  --   choose(G.count t) * ((F.count t! * a^F.count t) * (G.count t! * a^G.count t))
+  -- = (F.count t + G.count t)! * a^(F.count t + G.count t)
+  -- where a = autCard t. Use `pointwise_factorial_split` and `pow_add`.
+  have h_fact := pointwise_factorial_split F G t
+  rw [Multiset.count_add] at h_fact
+  rw [Multiset.count_add, pow_add]
+  -- Goal: choose(m₂) * ((m₁! * a^m₁) * (m₂! * a^m₂)) = (m₁+m₂)! * (a^m₁ * a^m₂)
+  -- where m₁ = F.count t, m₂ = G.count t.
+  set m₁ := F.count t
+  set m₂ := G.count t
+  set a := autCard t
+  -- h_fact : (m₁ + m₂).choose m₂ * m₁! * m₂! = (m₁ + m₂)!
+  calc (m₁ + m₂).choose m₂ * (m₁.factorial * a ^ m₁ * (m₂.factorial * a ^ m₂))
+      = ((m₁ + m₂).choose m₂ * m₁.factorial * m₂.factorial) *
+          (a ^ m₁ * a ^ m₂) := by ring
+    _ = (m₁ + m₂).factorial * (a ^ m₁ * a ^ m₂) := by rw [h_fact]
 
 end Nonplanar
 

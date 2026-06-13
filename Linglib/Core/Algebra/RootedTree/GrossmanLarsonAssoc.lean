@@ -1076,7 +1076,7 @@ Each helper expresses one stage of the LHS or RHS expansion. -/
 /-- Basis-form rewrite: `(of' F₁) * (of' F₂)` as a sum of basis vectors `of' (X + (F₂ - B₁))`
     indexed by `B₁ ⊆ F₂` and `X ∈ NIM F₁ B₁`. Uses `mul_of'_sum_form` then
     `insertion_of'_of'` and `of'_add` to collapse to a forest sum. -/
-private theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
+theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
     (of' F₁ : GrossmanLarson R α) * of' F₂ =
       (letI : DecidableEq (Nonplanar α) := Classical.decEq _
        F₂.powerset.bind fun B₁ =>
