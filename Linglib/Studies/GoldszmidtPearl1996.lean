@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.SystemZ
-import Linglib.Phenomena.DefaultReasoning.TweetyNixon
+import Linglib.Core.Logic.TweetyNixon
 import Linglib.Studies.Veltman1996
 import Linglib.Pragmatics.RSA.Ranking
 
@@ -49,7 +49,7 @@ namespace GoldszmidtPearl1996
 
 open Core.Logic.SystemZ
 open Core.Logic.Ranking
-open Phenomena.DefaultReasoning
+open Core.Logic.TweetyNixon
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. Knowledge Base (rules r₁–r₃ from Example 17)

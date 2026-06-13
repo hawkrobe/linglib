@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Islands.Basic
+import Linglib.Studies.Ross1967
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
 
@@ -89,8 +89,6 @@ permits (or vice versa) is left as a future critical experiment.
 -/
 
 namespace Adger2025
-
-open Phenomena.Islands
 
 -- §1. Substrate re-export
 

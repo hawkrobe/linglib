@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Assertion.Basic
+import Linglib.Data.Examples.Gunlogson2001
 import Linglib.Discourse.Gunlogson
 import Mathlib.Data.Set.Basic
 
@@ -25,7 +25,6 @@ namespace Gunlogson2001
 
 open Discourse.Gunlogson
 open Discourse.Commitment (CommitmentSource)
-open Phenomena.Assertion
 
 -- ════════════════════════════════════════════════════
 -- § 1. Rising = Other-Generated Source
@@ -61,20 +60,18 @@ theorem falling_is_self_generated {W : Type*}
 -- § 2. Data Bridge
 -- ════════════════════════════════════════════════════
 
-/-- The rising declarative data matches Gunlogson's prediction:
-    rising → no speaker commitment, attributed to addressee. -/
+/-- The rising row of the "It's raining" pair records no speaker
+    commitment and attribution to the addressee — the profile
+    `rising_is_other_generated` derives from the mechanism. -/
 theorem data_matches_theory :
-    -- Data: rising declaratives don't commit the speaker
-    (risingExamples.filter (·.isRising)).all (! ·.speakerCommits) = true ∧
-    -- Theory: rising declaratives leave speaker's slate unchanged
-    -- (captured by `rising_is_other_generated` above)
-    -- Data: rising content is attributed to addressee
-    (risingExamples.filter (·.isRising)).all (·.attributedToAddressee) = true :=
-  ⟨rfl, rfl⟩
+    Examples.rising_decl.paperFeatures.lookup "speaker_commits" = some "false" ∧
+    Examples.rising_decl.paperFeatures.lookup "attributed_to_addressee" = some "true" := by
+  decide
 
-/-- The falling declarative data matches Gunlogson's prediction:
-    falling → speaker commits. -/
+/-- The falling row records speaker commitment — the profile
+    `falling_is_self_generated` derives from the mechanism. -/
 theorem falling_data_matches :
-    (risingExamples.filter (! ·.isRising)).all (·.speakerCommits) = true := rfl
+    Examples.falling_decl.paperFeatures.lookup "speaker_commits" = some "true" := by
+  decide
 
 end Gunlogson2001

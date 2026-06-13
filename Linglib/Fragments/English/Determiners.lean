@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # English Determiners
@@ -8,19 +8,17 @@ import Linglib.Semantics.Quantification.Lexicon
 English-specific determiner lexicon. The shared `QuantifierEntry`
 structure (and the `QForce`/`Monotonicity`/`Strength` enums) lives in
 `Semantics/Quantification/Lexicon.lean`; this file is the
-English instantiation and a small numerical-determiner sublexicon.
+English instantiation, a small numerical-determiner sublexicon, and the
+canonical 6-element ⟨none, few, some, half, most, all⟩ quantity scale
+(`QuantityWord`) with its B&C-style GQ denotation table.
 
 ## Scope
 
-This file carries only **descriptive lexical data** — facts a reference
-grammar of English would record. Per-paper model parameters
-(GQT thresholds, prototype-theory prototypes/spreads), compositional
-denotations, scalar-paradigm projections, and theory-bridge theorems
-all live elsewhere:
+This file carries descriptive lexical data and its projection to the
+GQ denotations. Per-paper model parameters (GQT thresholds,
+prototype-theory prototypes/spreads) and theory-bridge theorems live
+elsewhere:
 
-- Canonical 6-element ⟨none, few, some, half, most, all⟩ paradigm and
-  its B&C-style GQ denotation table:
-  `Phenomena/Quantification/Inventory.lean`.
 - Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`,
   …): `Semantics/Quantification/Quantifier.lean`.
 - GQT/PT meaning operators consuming numerical parameters:
@@ -188,6 +186,55 @@ def neither : QuantifierEntry :=
   , monotonicity := .decreasing
   , strength := .strong  -- K&S §3.3: negative strong
   }
+
+/-! ## The Canonical Quantity Scale
+[barwise-cooper-1981] [van-tiel-franke-sauerland-2021]
+
+The 6-element ⟨none, few, some, half, most, all⟩ scale used cross-paper
+to evaluate quantifier theories — empirical implicature studies
+([van-tiel-franke-sauerland-2021]), GQ universals ([barwise-cooper-1981]),
+and polarity bridges ([von-fintel-1993]).
+-/
+
+/-- The canonical 6-element quantity scale. -/
+inductive QuantityWord where
+  | none_ | few | some_ | half | most | all
+  deriving Repr, DecidableEq, Inhabited
+
+instance : Fintype QuantityWord where
+  elems := {.none_, .few, .some_, .half, .most, .all}
+  complete := fun x => by cases x <;> simp
+
+/-- Lexical entry for each quantity word. -/
+def QuantityWord.entry : QuantityWord → QuantifierEntry
+  | .none_ => _root_.English.Determiners.none_
+  | .few   => _root_.English.Determiners.few
+  | .some_ => _root_.English.Determiners.some_
+  | .half  => _root_.English.Determiners.half
+  | .most  => _root_.English.Determiners.most
+  | .all   => _root_.English.Determiners.all
+
+/-- Convenience accessor. -/
+def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
+  q.entry.monotonicity
+
+/-- All quantity words as a list. -/
+def QuantityWord.toList : List QuantityWord :=
+  [.none_, .few, .some_, .half, .most, .all]
+
+/-- Canonical model-theoretic generalized-quantifier denotation
+    (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
+    `Semantics.Quantification.Quantifier`. -/
+noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
+    {α : Type*} [Fintype α] : Core.Quantification.GQ α :=
+  open Semantics.Quantification.Quantifier in
+  match q with
+  | .none_ => no_sem
+  | .some_ => some_sem
+  | .all   => every_sem
+  | .most  => most_sem
+  | .few   => few_sem
+  | .half  => half_sem
 
 /-! ## Lexicon Access -/
 

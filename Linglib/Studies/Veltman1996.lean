@@ -1,4 +1,4 @@
-import Linglib.Phenomena.DefaultReasoning.TweetyNixon
+import Linglib.Core.Logic.TweetyNixon
 import Linglib.Semantics.Dynamic.UpdateSemantics.Frames
 
 /-!
@@ -31,7 +31,7 @@ the normalcy predicate in the GEN operator for generic sentences.
 
 namespace Veltman1996
 
-open Phenomena.DefaultReasoning
+open Core.Logic.TweetyNixon
 open Semantics.Dynamic.Default
 open Core.Order (NormalityOrder)
 open Classical

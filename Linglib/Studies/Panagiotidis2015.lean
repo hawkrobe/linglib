@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Morphology.CategoryChanging
+import Linglib.Morphology.RootFamily
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
@@ -34,7 +34,7 @@ ExtendedProjection/Basic.lean (CategorialFeatures, isCategorizer, categorialFeat
     ↓
 THIS BRIDGE FILE
     ↓
-Phenomena/Morphology/CategoryChanging.lean (RootFamily, LexCat)
+Morphology/RootFamily.lean (RootFamily, LexCat)
 ```
 
 -/
@@ -42,7 +42,7 @@ Phenomena/Morphology/CategoryChanging.lean (RootFamily, LexCat)
 namespace Panagiotidis2015
 
 open Minimalist
-open Phenomena.Morphology.CategoryChanging
+open Morphology (LexCat RootFamily)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Categorizer ↔ LexCat Correspondence
@@ -170,6 +170,40 @@ theorem different_categorizers_different_families :
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Data–Theory Connection
 -- ════════════════════════════════════════════════════════════════
+
+/-! ### English root families ([panagiotidis-2015] §5.2, [marantz-1997])
+
+Standard examples from the Distributed Morphology literature: roots that
+surface as nouns, verbs, and adjectives via different morphological
+processes. -/
+
+/-- √DESTROY: destroy (V), destruction (N), destructive (A) -/
+def destroy : RootFamily := ⟨"DESTROY",
+  [("destroy", .verb), ("destruction", .noun), ("destructive", .adjective)]⟩
+
+/-- √BEAUTY: beautify (V), beauty (N), beautiful (A) -/
+def beauty : RootFamily := ⟨"BEAUTY",
+  [("beautify", .verb), ("beauty", .noun), ("beautiful", .adjective)]⟩
+
+/-- √CLEAR: clear (V), clarity (N), clear (A) -/
+def clear : RootFamily := ⟨"CLEAR",
+  [("clear", .verb), ("clarity", .noun), ("clear", .adjective)]⟩
+
+/-- √PRODUCE: produce (V), product/production (N), productive (A) -/
+def produce : RootFamily := ⟨"PRODUCE",
+  [("produce", .verb), ("production", .noun), ("productive", .adjective)]⟩
+
+/-- √CREATE: create (V), creation (N), creative (A) -/
+def create : RootFamily := ⟨"CREATE",
+  [("create", .verb), ("creation", .noun), ("creative", .adjective)]⟩
+
+/-- √ACT: act (V), action (N), active (A) -/
+def act : RootFamily := ⟨"ACT",
+  [("act", .verb), ("action", .noun), ("active", .adjective)]⟩
+
+/-- All sample root families. -/
+def allFamilies : List RootFamily :=
+  [destroy, beauty, clear, produce, create, act]
 
 /-- A root family is predicted to be tricategorial iff categorization by
     each of v, n, a is possible. Since all three categorizers are available

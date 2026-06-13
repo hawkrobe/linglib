@@ -3,7 +3,6 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
-import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Processing.SelfPacedReading
 
 open Features (Acceptability)
@@ -40,8 +39,6 @@ Key findings:
 -/
 
 namespace AlstottAravind2026
-
-open Phenomena
 
 -- ============================================================================
 -- § 1: Types
@@ -418,23 +415,30 @@ theorem complet_triple_convergence :
 -- § 11: Theory Comparison — Rett vs Under-specification
 -- ============================================================================
 
-open Phenomena.TemporalConnectives.Compare
+/-- Rival accounts of *before*/*after* readings compared by the paper.
+    Only [rett-2020]'s ambiguity account posits covert aspectual operators
+    (INCHOAT/COMPLET); under-specification accounts ([anscombe-1964],
+    [krifka-2010b]) and intensional accounts ([beaver-condoravdi-2003],
+    [ogihara-steinert-threlkeld-2024]) derive the non-default readings
+    from a single lexical entry without covert operators. -/
+inductive RivalAccount where
+  | ambiguity
+  | underspecification
+  | intensional
+  deriving DecidableEq, Repr
 
-/-- The paper's central finding: Rett's ambiguity theory predicts processing
-    asymmetries between readings, and this prediction is confirmed by the data.
-    Under-specification theories (Anscombe, B&C, O&ST) do not predict such costs. -/
-theorem rett_uniquely_predicts_processing_cost :
-    rettProfile.predictsProcessingCost = true ∧
-    anscombeProfile.predictsProcessingCost = false ∧
-    ostProfile.predictsProcessingCost = false ∧
-    bcProfile.predictsProcessingCost = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Does the account posit covert coercion operators — and with them a
+    measurable processing cost for non-default readings? This is the
+    empirical discriminator the paper's four experiments test. -/
+def RivalAccount.positsCoercion : RivalAccount → Bool
+  | .ambiguity => true
+  | .underspecification | .intensional => false
 
-/-- The data confirms the prediction: significant processing costs exist
-    for coerced readings (Exps 1b, 2, 4). The only theory that predicts
-    this is Rett's, which posits covert coercion operators. -/
+/-- The data confirm the ambiguity account's distinctive prediction:
+    significant processing costs exist for coerced readings (Exps 1b, 2, 4),
+    which only a coercion-positing account predicts. -/
 theorem data_supports_rett :
-    rettProfile.positsCoercion = true ∧
+    RivalAccount.ambiguity.positsCoercion = true ∧
     exp1b_rt.significant = true ∧
     exp2_rt.significant = true ∧
     exp4_rt.significant = true :=
@@ -444,7 +448,7 @@ theorem data_supports_rett :
     the theory posits coercion, and languages like Tagalog and Serbian
     realize it morphologically. -/
 theorem coercion_has_crosslinguistic_reflexes :
-    rettProfile.positsCoercion = true ∧
+    RivalAccount.ambiguity.positsCoercion = true ∧
     Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
     Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl⟩

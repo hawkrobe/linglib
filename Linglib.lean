@@ -1165,9 +1165,7 @@ import Linglib.Studies.Asudeh2022
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
-import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Studies.Rett2020
-import Linglib.Phenomena.Assertion.Basic
 import Linglib.Studies.BringGunlogson2000
 import Linglib.Studies.CohenKrifka2014
 import Linglib.Studies.Gunlogson2001
@@ -1288,7 +1286,6 @@ import Linglib.Studies.Stalnaker1975
 import Linglib.Studies.Stalnaker1981
 import Linglib.Studies.VonFintelIatridou2005
 import Linglib.Studies.ZaniCiardelliSanfelici2026
-import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Studies.Spohn1988
 import Linglib.Studies.GoldszmidtPearl1996
 import Linglib.Studies.DarwichePearl1997
@@ -1440,7 +1437,6 @@ import Linglib.Studies.ZaslavskyEtAl2019
 import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
-import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Studies.Amato2025
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.Erlewine2018
@@ -1568,8 +1564,6 @@ import Linglib.Studies.Halpert2012
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Studies.BickelNichols2013
 import Linglib.Studies.AckermanMalouf2013
-import Linglib.Phenomena.Morphology.CategoryChanging
-import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
 import Linglib.Studies.Panagiotidis2015
 import Linglib.Studies.HahnDegenFutrell2021Morphology
 import Linglib.Studies.RathiHahnFutrell2026
@@ -1680,7 +1674,6 @@ import Linglib.Studies.TaraldsenEtAl2018
 import Linglib.Studies.LittleMoroneyRoyer2022
 import Linglib.Studies.Sudo2016
 import Linglib.Studies.Bruening2001
-import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Studies.BarwiseCooper1981
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Studies.ScontrasPearl2021Quantification
@@ -1770,8 +1763,6 @@ import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.IatridouZeijlstra2021
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.Pancheva2003
-import Linglib.Phenomena.TemporalConnectives.Compare
-import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Studies.Cruse1973
 import Linglib.Studies.OgiharaST2024
@@ -2849,3 +2840,11 @@ import Linglib.Data.Examples.Rooth1992
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Data.Examples.Thomas2026
 import Linglib.Data.Examples.BergenGoodman2015
+import Linglib.Data.Examples.Gunlogson2001
+import Linglib.Data.Examples.MoensSteedman1988
+import Linglib.Data.Examples.Karttunen1974
+import Linglib.Data.Examples.AlstottAravind2026
+import Linglib.Data.Examples.Giannakidou2002
+import Linglib.Data.Examples.LuPanDegen2025
+import Linglib.Morphology.RootFamily
+import Linglib.Core.Logic.TweetyNixon

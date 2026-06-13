@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Quantification.Inventory
+import Linglib.Fragments.English.Determiners
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Mathlib.Data.Rat.Defs
@@ -302,7 +302,7 @@ to demonstrate the key theoretical insights computably.
 
 namespace RSAModel
 
-open Phenomena.Quantification.Inventory
+open English.Determiners
   renaming QuantityWord → ModelQuantityWord
 
 /-- Domain size (simplified from 432 to 10) -/
@@ -424,7 +424,7 @@ end RSAModel
 monotonicity classifications. -/
 
 /-- Convert canonical 6-element model word to the 17-element empirical data type. -/
-def toDataWord : Phenomena.Quantification.Inventory.QuantityWord → QuantityWord
+def toDataWord : English.Determiners.QuantityWord → QuantityWord
   | .none_ => .none_
   | .few   => .few
   | .some_ => .some_
@@ -437,14 +437,14 @@ def toDataWord : Phenomena.Quantification.Inventory.QuantityWord → QuantityWor
 Note: "half" is classified as nonMonotone in the three-way system but as
 "increasing" in the binary empirical classification. -/
 theorem monotonicity_matches_data_increasing
-    (q : Phenomena.Quantification.Inventory.QuantityWord) :
+    (q : English.Determiners.QuantityWord) :
     q ≠ .half →
     (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
 theorem monotonicity_matches_data_decreasing
-    (q : Phenomena.Quantification.Inventory.QuantityWord) :
+    (q : English.Determiners.QuantityWord) :
     (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide

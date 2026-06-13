@@ -1,7 +1,7 @@
 import Linglib.Typology.TemporalConnectives
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Phenomena.TemporalConnectives.NegationData
+import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Dutch.TemporalConnectives
@@ -448,39 +448,125 @@ theorem eventiveUntil_strictly_stronger :
   ⟨fun _ _ h => h.2, notUntil_not_implies_eventiveUntil⟩
 
 -- ============================================================================
--- § 9: Bridge to NegationData
+-- § 9: Bridge to the Example Rows
 -- ============================================================================
 
-open Phenomena.TemporalConnectives.NegationData
+open Data.Examples
 
-/-- The NegationData actualization three-way split aligns with the formal
-    semantics: eventive-type (entailment) corresponds to `eventiveUntil`
-    (overlap + lateness), endpoint-type (implicature) to `Karttunen.until`
-    (overlap alone), and before-type (none) to `Karttunen.notUntil`
-    (lateness alone). -/
-theorem actualization_matches_semantics :
-    -- Eventive type: actualization is entailed (eventiveUntil)
-    greek_para_monon.actualizationStatus = .entailment ∧
-    english_npi_until.actualizationStatus = .entailment ∧
-    -- Endpoint type: actualization is an implicature (durative until)
-    greek_mexri.actualizationStatus = .implicature ∧
-    english_dur_until.actualizationStatus = .implicature ∧
-    -- Before type: no actualization (¬before = notUntil)
-    greek_prin.actualizationStatus = .none :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- Giannakidou's three-way semantic typology of *until*-type connectives:
+    before-type (*prin*), endpoint-type (durative *until*, *mexri*), and
+    eventive-type (NPI-*until*, *para monon*). -/
+inductive UntilType where
+  | before
+  | endpoint
+  | eventive
+  deriving DecidableEq, Repr
 
-/-- The aspect diagnostic from NegationData: durative *until* (*mexri*)
-    requires imperfective main clause; NPI-*until* (*para monon*) does not.
-    This matches the formal result: wide-scope requires homogeneity
-    (= imperfective), narrow-scope does not. -/
-theorem aspect_matches_scope :
-    -- mexri requires durative → wide scope requires homogeneity
-    greek_mexri.requiresDurativeMain = true ∧
-    -- para monon has no durative restriction → narrow scope doesn't need it
-    greek_para_monon.requiresDurativeMain = false ∧
-    -- prin has no durative restriction
-    greek_prin.requiresDurativeMain = false :=
-  ⟨rfl, rfl, rfl⟩
+/-- Whether a connective entails that the main-clause event actually
+    occurred at the boundary time: an entailment (cancellation yields
+    contradiction, ex. 38), a cancellable Q-implicature (ex. 7), or
+    absent entirely (exx. 72–73). -/
+inductive ActualizationStatus where
+  | entailment
+  | implicature
+  | absent
+  deriving DecidableEq, Repr
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The row's `semantic_type` feature as an `UntilType`. -/
+def untilTypeOf (row : LinguisticExample) : Option UntilType :=
+  match featureOf row "semantic_type" with
+  | some "before"   => some .before
+  | some "endpoint" => some .endpoint
+  | some "eventive" => some .eventive
+  | _ => none
+
+/-- The row's `actualization` feature as an `ActualizationStatus`. -/
+def actualizationOf (row : LinguisticExample) : Option ActualizationStatus :=
+  match featureOf row "actualization" with
+  | some "entailment"  => some .entailment
+  | some "implicature" => some .implicature
+  | some "none"        => some .absent
+  | _ => none
+
+/-- The actualization status each semantic type carries, matching the
+    formal operators: eventive = `eventiveUntil` (the overlap conjunct
+    entails actualization), endpoint = `Karttunen.until` (boundary
+    change-of-state only implicated), before = `Karttunen.notUntil` under
+    negation (lateness alone, cf. `negBefore_lacks_actualization`). -/
+def UntilType.actualization : UntilType → ActualizationStatus
+  | .before   => .absent
+  | .endpoint => .implicature
+  | .eventive => .entailment
+
+/-- Every row's actualization annotation is determined by its semantic
+    type — the three-way split that is the paper's central claim. -/
+theorem actualization_determined_by_type :
+    ∀ row ∈ Examples.all,
+      actualizationOf row = (untilTypeOf row).map UntilType.actualization := by
+  decide
+
+/-- Endpoint-type rows are exactly the veridical ones: durative *until*
+    presupposes its complement, while before-type and eventive-type
+    connectives are nonveridical. -/
+theorem veridical_iff_endpoint :
+    ∀ row ∈ Examples.all,
+      (featureOf row "complement_veridical" = some "true" ↔
+        untilTypeOf row = some .endpoint) := by
+  decide
+
+/-- Endpoint-type rows are exactly the ones with the durative main-clause
+    restriction. The formal correlate: wide scope requires homogeneity
+    (`impfDen_homogeneous`), which only durative/imperfective main clauses
+    provide; narrow scope (`narrowScopeNotUntil`) does not. -/
+theorem durative_main_iff_endpoint :
+    ∀ row ∈ Examples.all,
+      (featureOf row "requires_durative_main" = some "true" ↔
+        untilTypeOf row = some .endpoint) := by
+  decide
+
+/-- Eventive-type rows are exactly the ones requiring an anti-veridical
+    (DE) trigger — the licensing condition on *para monon* and English
+    NPI-*until*. -/
+theorem requires_de_iff_eventive :
+    ∀ row ∈ Examples.all,
+      (featureOf row "requires_de" = some "true" ↔
+        untilTypeOf row = some .eventive) := by
+  decide
+
+/-- Before-type rows license NPIs; endpoint-type rows do not. (Eventive
+    rows split: English NPI-*until* hosts NPIs, *para monon* does not.) -/
+theorem npi_licensing_by_type :
+    ∀ row ∈ Examples.all,
+      (untilTypeOf row = some .before →
+        featureOf row "licenses_npis" = some "true") ∧
+      (untilTypeOf row = some .endpoint →
+        featureOf row "licenses_npis" = some "false") := by
+  decide
+
+/-- Greek lexicalizes all three semantic types as distinct connectives:
+    *prin* (before), *mexri* (endpoint), *para monon* (eventive). -/
+theorem greek_lexicalizes_three_types :
+    ∀ ty : UntilType, ∃ row ∈ Examples.all,
+      row.language = "mode1248" ∧ untilTypeOf row = some ty := by
+  intro ty; cases ty <;> decide
+
+/-- The mood restriction each semantic type imposes in Greek. -/
+def UntilType.greekMood : UntilType → Option String
+  | .before   => some "subjunctive"
+  | .endpoint => some "indicative"
+  | .eventive => none
+
+/-- Greek mood tracks the semantic type: subjunctive for before-type,
+    indicative for endpoint-type, no mood restriction for eventive-type.
+    The mood split is the morphological reflex of (non)veridicality. -/
+theorem greek_mood_tracks_type :
+    ∀ row ∈ Examples.all, row.language = "mode1248" →
+      featureOf row "mood" = (untilTypeOf row).bind UntilType.greekMood := by
+  decide
 
 -- ============================================================================
 -- § 10: Bridge to Greek Fragment
@@ -785,25 +871,17 @@ theorem dutch_confirmed :
     pas.complementVeridical = false :=
   ⟨by decide, rfl, rfl⟩
 
--- Bridge to NegationData --
+-- Bridge to the example rows --
 
-open Phenomena.TemporalConnectives.NegationData in
-/-- The NegationData three-way actualization split is consistent with
-    the typological strategies: all strategies preserve the semantic
-    distinction between durative (implicature) and eventive (entailment)
-    actualization. -/
-theorem actualization_universal :
-    greek_mexri.actualizationStatus = .implicature ∧
-    english_dur_until.actualizationStatus = .implicature ∧
-    greek_para_monon.actualizationStatus = .entailment ∧
-    english_npi_until.actualizationStatus = .entailment :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-open Phenomena.TemporalConnectives.NegationData in
-/-- English NPI-*until* and Greek *para monon* agree on semantic type:
-    both are eventive (not before-type). -/
-theorem english_greek_eventive_agree :
-    english_npi_until.semanticType = greek_para_monon.semanticType :=
-  rfl
+/-- The eventive type is attested in both English (NPI-*until*) and Greek
+    (*para monon*): the lexicalization strategies differ, but the semantic
+    type — and with it the actualization entailment
+    (`actualization_determined_by_type`) — is preserved. -/
+theorem eventive_attested_crosslinguistically :
+    (∃ row ∈ Examples.all,
+      row.language = "stan1293" ∧ untilTypeOf row = some .eventive) ∧
+    (∃ row ∈ Examples.all,
+      row.language = "mode1248" ∧ untilTypeOf row = some .eventive) := by
+  constructor <;> decide
 
 end Giannakidou2002

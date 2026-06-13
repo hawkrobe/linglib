@@ -154,7 +154,6 @@ open Singlish.Questions (WhStrategy fullMovement partialMovement
   whInSitu theHell)
 open Mandarin.Questions (daodi)
 open Typology.Question (WhInterpMechanism)
-open Phenomena.Islands (IslandSource)
 open Typology.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalist.ANDL
