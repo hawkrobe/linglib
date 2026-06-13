@@ -59,7 +59,7 @@ For 5-vertex SEMs, ~5 layers of unfolding suffice. No `Fintype` reasoning;
 no opaque `Multiset.toList`.
 -/
 
-namespace Semantics.Causation.SEM
+namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -352,4 +352,4 @@ theorem developDetVtx?_eq_of_fuel
 
 end FuelBridge
 
-end Semantics.Causation.SEM
+end Causation.SEM

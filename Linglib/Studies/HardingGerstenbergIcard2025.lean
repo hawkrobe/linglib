@@ -64,7 +64,7 @@ predictions:
 
 namespace HardingGerstenbergIcard2025
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 open BoolSEM (manipulates)
 
 /-! ## §3 Substrate: ExplanationGame -/

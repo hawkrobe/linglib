@@ -3382,7 +3382,7 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
 -- ════════════════════════════════════════════════════
 
 /-! These verify that the Fragment's causative annotations are consistent
-with the formal semantics in `Semantics.Causation`.
+with the formal semantics in `Causation`.
 
 The semantic-dispatch grounding theorems (e.g., `make_semantics`,
 `cause_semantics`, `prevent_semantics`, `sufficiency_verbs_share_truth_conditions`,
@@ -3538,7 +3538,7 @@ theorems above remain intact. -/
 
 namespace V2
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 open Features
 
 variable {V : Type*} {α : V → Type*}
@@ -3548,17 +3548,17 @@ variable {V : Type*} {α : V → Type*}
 /-- V2 "make" → `Sufficiency.makeSem` (polymorphic). -/
 theorem make_semantics :
     make.causative.map (Causative.toSemantics M) =
-    some (Semantics.Causation.Sufficiency.makeSem M) := rfl
+    some (Causation.Sufficiency.makeSem M) := rfl
 
 /-- V2 "cause" → `Necessity.causeSem` (polymorphic). -/
 theorem cause_semantics :
     cause.causative.map (Causative.toSemantics M) =
-    some (Semantics.Causation.Necessity.causeSem M) := rfl
+    some (Causation.Necessity.causeSem M) := rfl
 
 /-- V2 "prevent" → `Prevention.preventSem` (polymorphic). -/
 theorem prevent_semantics :
     prevent.causative.map (Causative.toSemantics M) =
-    some (Semantics.Causation.Prevention.preventSem M) := rfl
+    some (Causation.Prevention.preventSem M) := rfl
 
 /-- V2: make/force/let/have/get share `Sufficiency.makeSem` truth conditions. -/
 theorem sufficiency_verbs_share_truth_conditions :
@@ -3582,12 +3582,12 @@ theorem lexical_causatives_match_make :
 /-- "manage" → polymorphic `Implicative.manageSem`. -/
 theorem manage_semantics_implicative :
     manage.implicative.map (Implicative.toSemantics M) =
-    some (Semantics.Causation.Implicative.manageSem M) := rfl
+    some (Causation.Implicative.manageSem M) := rfl
 
 /-- "fail" → polymorphic `Implicative.failSem`. -/
 theorem fail_semantics_implicative :
     fail.implicative.map (Implicative.toSemantics M) =
-    some (Semantics.Causation.Implicative.failSem M) := rfl
+    some (Causation.Implicative.failSem M) := rfl
 
 end V2
 

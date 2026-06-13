@@ -48,7 +48,7 @@ with `entails_iff` a one-line per-model instantiation of
 `causallyEntails_iff_fuel`.
 -/
 
-namespace Semantics.Causation.SEM
+namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 variable [Fintype V] [DecidableEq V] [DecidableValuation α]
@@ -261,21 +261,21 @@ theorem whetherCause_eq_indicator_of_deterministic
   · simp [h]
   · simp [h]
 
-end Semantics.Causation.SEM
+end Causation.SEM
 
 -- ════════════════════════════════════════════════════
 -- § BoolSEM specializations (legacy SBH-style binary semantics)
 -- ════════════════════════════════════════════════════
 
-namespace Semantics.Causation.BoolSEM
+namespace Causation.BoolSEM
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-open Semantics.Causation (SEM Valuation BoolSEM)
-open Semantics.Causation.SEM (developsToValue causallySufficient)
+open Causation (SEM Valuation BoolSEM)
+open Causation.SEM (developsToValue causallySufficient)
 
 /-- `BoolSEM`-flavored `causallySufficient`: setting `cause = true` develops
-    `effect = true`. Matches old `Semantics.Causation.causallySufficient` semantics. -/
+    `effect = true`. Matches old `Causation.causallySufficient` semantics. -/
 abbrev causallySufficient (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.causallySufficient M s cause true effect true
@@ -355,9 +355,9 @@ theorem not_manipulates_of_developDetOn_eq (M : BoolSEM V)
   rw [h1', h2']
   exact fun h => h rfl
 
-end Semantics.Causation.BoolSEM
+end Causation.BoolSEM
 
-namespace Semantics.Causation.SEM
+namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -670,13 +670,13 @@ theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuati
       (forall_congr' fun s' => imp_congr_right fun _ => imp_congr_right fun _ =>
         imp_congr (hpt s' effect xE) (hpt s' cause xC)))
 
-end Semantics.Causation.SEM
+end Causation.SEM
 
-namespace Semantics.Causation.BoolSEM
+namespace Causation.BoolSEM
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-open Semantics.Causation (SEM Valuation BoolSEM)
+open Causation (SEM Valuation BoolSEM)
 
 /-- `BoolSEM`-flavored `causallyNecessary`: setting `cause = true` is
     necessary (Def 10b) for `effect = true`. -/
@@ -689,4 +689,4 @@ noncomputable instance (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation _) (cause effect : V) :
     Decidable (causallyNecessary M s cause effect) := Classical.dec _
 
-end Semantics.Causation.BoolSEM
+end Causation.BoolSEM

@@ -50,12 +50,12 @@ Key differences from the modern analysis:
 
 namespace Karttunen1971
 
-open Semantics.Causation.Implicative
+open Causation.Implicative
 open Features (Causative)
 open English.Predicates.Verbal
 open English.Predicates.Copular (beAble)
 open Semantics.Lexical
-open Semantics.Causation
+open Causation
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Karttunen's Four-Cell Classification (§§9–11)

@@ -85,7 +85,7 @@ around (71)).
 
 namespace BeaversZubair2013
 
-open Semantics.Causation
+open Causation
 open Sinhala.Verbs
 
 -- ════════════════════════════════════════════════════

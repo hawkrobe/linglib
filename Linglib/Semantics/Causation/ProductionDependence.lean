@@ -33,7 +33,7 @@ d-causes without producing anything.
 
 -/
 
-namespace Semantics.Causation.ProductionDependence
+namespace Causation.ProductionDependence
 
 open Core (WorldTimeIndex)
 
@@ -261,7 +261,7 @@ P-CAUSE (production) → completion (the cause directly completes a
 sufficient set). D-CAUSE (dependence) → membership (any necessary
 condition qualifies). -/
 
-open Semantics.Causation.CCSelection
+open Causation.CCSelection
 
 /-- Map causation type to CC-selection mode.
 
@@ -288,4 +288,4 @@ The three encodings (CausationType, CCSelectionMode, Causative) remain
 consistent at the enum level (`production_selects_completion` etc.); the
 semantic-dispatch consistency follows from the V2 hub structure. -/
 
-end Semantics.Causation.ProductionDependence
+end Causation.ProductionDependence

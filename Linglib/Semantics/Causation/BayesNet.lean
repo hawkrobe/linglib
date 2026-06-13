@@ -18,7 +18,7 @@ distributions with conditional probability, independence, and correlation.
 
 -/
 
-namespace Semantics.Causation.BayesNet
+namespace Causation.BayesNet
 
 -- Causal Relations
 
@@ -243,4 +243,4 @@ theorem bayes_theorem (w : WorldState) (hA : 0 < w.pA) (hC : 0 < w.pC) :
 
 end WorldState
 
-end Semantics.Causation.BayesNet
+end Causation.BayesNet

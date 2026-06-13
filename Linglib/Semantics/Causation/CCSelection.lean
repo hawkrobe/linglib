@@ -20,9 +20,9 @@ The legacy `CausalDynamics`-based `completesForEffect`,
 The polymorphic V2 versions are promoted to canonical here.
 -/
 
-namespace Semantics.Causation.CCSelection
+namespace Causation.CCSelection
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- How a causative construction selects its cause from a causal model. -/
 inductive CCSelectionMode where
@@ -52,7 +52,7 @@ noncomputable instance {V : Type*} {α : V → Type*}
     `developDetOn` computations (cause-on develops the effect true;
     cause-off develops it false). The computations close by `decide`. -/
 theorem completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq V]
-    {M : Semantics.Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
+    {M : Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M]
     {bg : Valuation (fun _ : V => Bool)} {c e : V} (vs : List V) (n : ℕ)
     (h1 : (SEM.developDetOn M vs n (bg.extend c true)).hasValue e true)
@@ -67,7 +67,7 @@ theorem completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq 
 /-- Bool-model bridge, negative: the sufficiency half fails — the cause-on
     development reaches the effect `false`, so no completion. -/
 theorem not_completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq V]
-    {M : Semantics.Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
+    {M : Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M]
     {bg : Valuation (fun _ : V => Bool)} {c e : V} (vs : List V) (n : ℕ)
     (h1 : (SEM.developDetOn M vs n (bg.extend c true)).hasValue e false) :
@@ -78,4 +78,4 @@ theorem not_completesForEffect_of_developDetOn {V : Type*} [Fintype V] [Decidabl
   have h1'' : (M.developDet (bg.extend c true)).get e = some false := h1'
   exact Bool.noConfusion (Option.some.inj (hs'.symm.trans h1''))
 
-end Semantics.Causation.CCSelection
+end Causation.CCSelection

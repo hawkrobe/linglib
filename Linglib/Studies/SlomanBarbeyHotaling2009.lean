@@ -57,7 +57,7 @@ hubs. Structural predicates avoid the `develop` noncomputable cascade.
 
 namespace SlomanBarbeyHotaling2009
 
-open Semantics.Causation (BoolSEM CausalGraph)
+open Causation (BoolSEM CausalGraph)
 
 variable {V : Type*}
 
