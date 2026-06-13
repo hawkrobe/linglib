@@ -554,7 +554,7 @@ means event can be concurrent with the change.
 The End Theme Postulate links the Theme of the complex event to the
 end state: End(e₁, s) & Theme(e₁, x) |= Theme(s, x).
 
-See also `Semantics.Causation.Resultatives` for the complementary analysis
+See also `Causation.Resultatives` for the complementary analysis
 via causal dynamics, structural sufficiency, and CC-selection. -/
 
 -- ────────────────────────────────────────────────────

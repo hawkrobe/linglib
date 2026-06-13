@@ -36,7 +36,7 @@ it to a {0,1} indicator under `IsDeterministic` via
 `develop_eq_pure_of_deterministic` (Basic.lean). Sorry-free.
 -/
 
-namespace Semantics.Causation.SEM
+namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
 
@@ -71,4 +71,4 @@ theorem probabilisticSuf_of_deterministic
   · simp [h]
   · simp [h]
 
-end Semantics.Causation.SEM
+end Causation.SEM

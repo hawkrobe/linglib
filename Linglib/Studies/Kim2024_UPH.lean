@@ -52,8 +52,8 @@ verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
 namespace Kim2024_UPH
 
 open Minimalist
-open Semantics.Causation.Psych
-open Semantics.Causation.PsychLink
+open Causation.Psych
+open Causation.PsychLink
 open English.Predicates.Verbal
 open Pesetsky1995.PsychVerbs
 open SolstadBott2022
@@ -333,7 +333,7 @@ theorem external_implies_extensional :
     These theorems verify that each verb's derived stimulus type
     predicts the correct PP frame and Cause-cooccurrence behavior. -/
 
-open Semantics.Causation.Psych (StimulusType CausalSource.toStimulusType)
+open Causation.Psych (StimulusType CausalSource.toStimulusType)
 
 /-- Derive a verb's stimulus type from its causal source. -/
 def derivedStimulusType (v : VerbEntry) : Option StimulusType :=

@@ -244,6 +244,258 @@ theorem pairing_nondegenerate
   · exact hx
   · exact absurd hx hauts_ne
 
+/-! ### Product rule
+
+Pairing against a CK product decomposes over the two-sided sub-multiset
+splits of the first argument (`Multiset.antidiagonal`) — the
+symmetry-weighted pairing turns CK multiplication into the split
+coproduct. The combinatorial heart is the multinomial identity
+`Nonplanar.forestAutCard_add` (`Aut.lean`). Computationally validated
+(`scratch/validate_duality.lean`, V2 battery). -/
+
+/-- **Pairing product rule** (basis form):
+    `⟨W, C₁ · C₂⟩ = Σ_{W = W₁ + W₂} ⟨W₁, C₁⟩ · ⟨W₂, C₂⟩`.
+
+    Only the split `(C₁, C₂)` survives the diagonal pairing, with
+    multiplicity `count (C₁,C₂) (antidiagonal W)`; the autCard weights
+    recombine via `Nonplanar.forestAutCard_add`. -/
+theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (Nonplanar α)) :
+    pairing (R := R) (ConnesKreimer.of' W)
+        (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
+      ((Multiset.antidiagonal W).map (fun p =>
+        pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+        pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂))).sum := by
+  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+  -- Step 1: collapse `of' C₁ * of' C₂` to `of' (C₁ + C₂)`, then evaluate
+  -- the pairing on the diagonal.
+  rw [← ConnesKreimer.of'_add, pairing_of'_of']
+  -- Step 2: simplify each term on the RHS via `pairing_of'_of'`.
+  have h_rhs_simp :
+      ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+          pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' C₂))).sum =
+      ((Multiset.antidiagonal W).map (fun p =>
+          (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+          (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum := by
+    congr 1
+    refine Multiset.map_congr rfl ?_
+    intro p _
+    rw [pairing_of'_of', pairing_of'_of']
+  rw [h_rhs_simp]
+  -- Step 3: split on whether `W = C₁ + C₂` using `split_ifs` to handle the
+  -- Classical.dec instance baked into `pairing_of'_of'`.
+  by_cases hW : W = C₁ + C₂
+  · -- W = C₁ + C₂. LHS = forestAutCard W.
+    rw [if_pos hW]
+    -- Use `filter_eq'` to extract the (C₁, C₂) summand.
+    -- Each term: nonzero only when p = (C₁, C₂).
+    -- Rewrite via filter (· = (C₁,C₂)) + filter (· ≠ ...).
+    have h_partition :
+        ((Multiset.antidiagonal W).map (fun p =>
+            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum =
+        ((((Multiset.antidiagonal W).filter (· = (C₁, C₂))).map (fun p =>
+            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) +
+        ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
+            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) := by
+      rw [← Multiset.sum_add, ← Multiset.map_add]
+      congr 1
+      rw [Multiset.filter_add_not]
+    rw [h_partition]
+    -- Vanishing piece: every p ≠ (C₁, C₂) in antidiagonal W gives a 0 term.
+    have h_vanish :
+        ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
+            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum) = 0 := by
+      rw [show ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun p =>
+              (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+              (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum)
+            = ((((Multiset.antidiagonal W).filter (· ≠ (C₁, C₂))).map (fun _ =>
+              (0 : R))).sum) from ?_]
+      · simp
+      refine congr_arg _ (Multiset.map_congr rfl ?_)
+      intro p hp
+      rw [Multiset.mem_filter] at hp
+      obtain ⟨hp_mem, hp_ne⟩ := hp
+      have hp_sum : p.1 + p.2 = W := Multiset.mem_antidiagonal.mp hp_mem
+      -- If p.1 = C₁ then p.1 + p.2 = W = C₁ + C₂, so p.2 = C₂, contradicting `p ≠ (C₁, C₂)`.
+      by_cases h1 : p.1 = C₁
+      · have h2 : p.2 = C₂ := by
+          have heq : p.1 + p.2 = C₁ + C₂ := hp_sum.trans hW
+          rw [h1] at heq
+          exact add_left_cancel heq
+        exact absurd (Prod.ext h1 h2) hp_ne
+      · rw [if_neg h1, zero_mul]
+    rw [h_vanish, add_zero]
+    -- Surviving piece: `filter (· = (C₁,C₂)) (antidiagonal W) = replicate (count ...) (C₁,C₂)`.
+    subst hW
+    rw [Multiset.filter_eq']
+    rw [Multiset.map_replicate, Multiset.sum_replicate]
+    -- Goal: forestAutCard (C₁+C₂) = count • ((if True then ... else 0) * (if True then ... else 0))
+    simp only [↓reduceIte]
+    rw [nsmul_eq_mul]
+    -- Goal: ↑(forestAutCard (C₁+C₂)) = ↑(count ...) * (↑(forestAutCard C₁) * ↑(forestAutCard C₂))
+    -- Use S1 cast to R.
+    have hS1 := Nonplanar.forestAutCard_add C₁ C₂
+    have hcast := congr_arg (Nat.cast (R := R)) hS1
+    push_cast at hcast
+    -- hcast : ↑count * (↑forestAutCard C₁ * ↑forestAutCard C₂) = ↑forestAutCard (C₁+C₂)
+    -- `forestAutCard` here is the GL re-export of `Nonplanar.forestAutCard`.
+    show (Nonplanar.forestAutCard (C₁ + C₂) : R) =
+        ((Multiset.count (C₁, C₂) (Multiset.antidiagonal (C₁ + C₂)) : ℕ) : R) *
+          ((Nonplanar.forestAutCard C₁ : R) * (Nonplanar.forestAutCard C₂ : R))
+    -- Decidable instances on Forest = Multiset (Nonplanar α) are unique up to
+    -- propositional equality; `convert` closes the residual.
+    convert hcast.symm using 4
+  · -- W ≠ C₁ + C₂. LHS = 0. The if uses Classical.dec (from `pairing_of'_of'`'s `letI`).
+    simp only [if_neg hW]
+    -- Every p ∈ antidiagonal W has p.1 + p.2 = W ≠ C₁ + C₂. So at every p, the term is 0.
+    symm
+    -- Rewrite the map via map_congr so each term becomes 0; then sum of all-zeros = 0.
+    have h_each_zero :
+        ((Multiset.antidiagonal W).map (fun p =>
+            (if p.1 = C₁ then (forestAutCard p.1 : R) else 0) *
+            (if p.2 = C₂ then (forestAutCard p.2 : R) else 0))).sum =
+          ((Multiset.antidiagonal W).map (fun _ => (0 : R))).sum := by
+      congr 1
+      refine Multiset.map_congr rfl ?_
+      intro p hp_mem
+      have hp_sum : p.1 + p.2 = W := Multiset.mem_antidiagonal.mp hp_mem
+      by_cases h1 : p.1 = C₁
+      · by_cases h2 : p.2 = C₂
+        · exfalso
+          apply hW
+          rw [← hp_sum, h1, h2]
+        · rw [if_pos h1, if_neg h2, mul_zero]
+      · rw [if_neg h1, zero_mul]
+    rw [h_each_zero]
+    -- Sum of all-zeros = 0.
+    simp [Multiset.map_const']
+
+/-- **Pairing product rule** (bilinear form): pairing a basis vector
+    against a product decomposes over the antidiagonal splits of the
+    basis forest. Bilinear extension of `pairing_of'_mul_of'`. -/
+theorem pairing_of'_mul (W : Forest (Nonplanar α))
+    (z₁ z₂ : ConnesKreimer R (Nonplanar α)) :
+    pairing (R := R) (ConnesKreimer.of' W) (z₁ * z₂) =
+      ((Multiset.antidiagonal W).map (fun p =>
+        pairing (R := R) (ConnesKreimer.of' p.1) z₁ *
+        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
+  -- First extend in z₂ at basis z₁, then in z₁.
+  have aux : ∀ (C₁ : Forest (Nonplanar α))
+      (z₂ : ConnesKreimer R (Nonplanar α)),
+      pairing (R := R) (ConnesKreimer.of' W)
+          (ConnesKreimer.of' C₁ * z₂) =
+        ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+          pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
+    intro C₁ z₂
+    refine Finsupp.induction_linear z₂ ?_ ?_ ?_
+    · show pairing (R := R) (ConnesKreimer.of' W)
+          (ConnesKreimer.of' C₁ * (0 : ConnesKreimer R (Nonplanar α))) =
+        ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+          pairing (R := R) (ConnesKreimer.of' p.2)
+            (0 : ConnesKreimer R (Nonplanar α)))).sum
+      rw [mul_zero, map_zero]
+      symm
+      refine Multiset.sum_eq_zero fun r hr => ?_
+      obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
+      rw [map_zero, mul_zero]
+    · intro a b iha ihb
+      let a' : ConnesKreimer R (Nonplanar α) := a
+      let b' : ConnesKreimer R (Nonplanar α) := b
+      show pairing (R := R) (ConnesKreimer.of' W)
+          (ConnesKreimer.of' C₁ * (a' + b')) =
+        ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+          pairing (R := R) (ConnesKreimer.of' p.2) (a' + b'))).sum
+      rw [mul_add, map_add]
+      rw [show pairing (R := R) (ConnesKreimer.of' W)
+            (ConnesKreimer.of' C₁ * a') = _ from iha,
+          show pairing (R := R) (ConnesKreimer.of' W)
+            (ConnesKreimer.of' C₁ * b') = _ from ihb,
+          ← Multiset.sum_map_add]
+      refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_)
+      show pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+            pairing (R := R) (ConnesKreimer.of' p.2) a' +
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+            pairing (R := R) (ConnesKreimer.of' p.2) b' = _
+      rw [map_add, mul_add]
+    · intro G s
+      let g' : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      have hsingle : g' = s • (ConnesKreimer.of' (R := R) G) := by
+        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
+            s • (Finsupp.single G 1 : ConnesKreimer R (Nonplanar α))
+        exact (Finsupp.smul_single_one G s).symm
+      show pairing (R := R) (ConnesKreimer.of' W)
+          (ConnesKreimer.of' C₁ * g') =
+        ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+          pairing (R := R) (ConnesKreimer.of' p.2) g')).sum
+      rw [hsingle, mul_smul_comm, map_smul, smul_eq_mul,
+          pairing_of'_mul_of' W C₁ G]
+      rw [show ((Multiset.antidiagonal W).map (fun p =>
+            pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+            pairing (R := R) (ConnesKreimer.of' p.2)
+              (s • ConnesKreimer.of' (R := R) G))) =
+          ((Multiset.antidiagonal W).map (fun p => s *
+            (pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
+             pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' G)))) from
+        Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
+      rw [Multiset.sum_map_mul_left]
+  refine Finsupp.induction_linear z₁ ?_ ?_ ?_
+  · show pairing (R := R) (ConnesKreimer.of' W)
+        ((0 : ConnesKreimer R (Nonplanar α)) * z₂) =
+      ((Multiset.antidiagonal W).map (fun p =>
+        pairing (R := R) (ConnesKreimer.of' p.1)
+          (0 : ConnesKreimer R (Nonplanar α)) *
+        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
+    rw [zero_mul, map_zero]
+    symm
+    refine Multiset.sum_eq_zero fun r hr => ?_
+    obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
+    rw [map_zero, zero_mul]
+  · intro a b iha ihb
+    let a' : ConnesKreimer R (Nonplanar α) := a
+    let b' : ConnesKreimer R (Nonplanar α) := b
+    show pairing (R := R) (ConnesKreimer.of' W) ((a' + b') * z₂) =
+      ((Multiset.antidiagonal W).map (fun p =>
+        pairing (R := R) (ConnesKreimer.of' p.1) (a' + b') *
+        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
+    rw [add_mul, map_add]
+    rw [show pairing (R := R) (ConnesKreimer.of' W) (a' * z₂) = _ from iha,
+        show pairing (R := R) (ConnesKreimer.of' W) (b' * z₂) = _ from ihb,
+        ← Multiset.sum_map_add]
+    refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_)
+    show pairing (R := R) (ConnesKreimer.of' p.1) a' *
+          pairing (R := R) (ConnesKreimer.of' p.2) z₂ +
+        pairing (R := R) (ConnesKreimer.of' p.1) b' *
+          pairing (R := R) (ConnesKreimer.of' p.2) z₂ = _
+    rw [map_add, add_mul]
+  · intro F r
+    let f' : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+    have hsingle : f' = r • (ConnesKreimer.of' (R := R) F) := by
+      show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+          r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
+      exact (Finsupp.smul_single_one F r).symm
+    show pairing (R := R) (ConnesKreimer.of' W) (f' * z₂) =
+      ((Multiset.antidiagonal W).map (fun p =>
+        pairing (R := R) (ConnesKreimer.of' p.1) f' *
+        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
+    rw [hsingle, smul_mul_assoc, map_smul, smul_eq_mul, aux F z₂]
+    rw [show ((Multiset.antidiagonal W).map (fun p =>
+          pairing (R := R) (ConnesKreimer.of' p.1)
+            (r • ConnesKreimer.of' (R := R) F) *
+          pairing (R := R) (ConnesKreimer.of' p.2) z₂)) =
+        ((Multiset.antidiagonal W).map (fun p => r *
+          (pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' F) *
+           pairing (R := R) (ConnesKreimer.of' p.2) z₂))) from
+      Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
+    rw [Multiset.sum_map_mul_left]
+
 end GrossmanLarson
 
 end RootedTree

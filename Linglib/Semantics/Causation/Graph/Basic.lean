@@ -16,7 +16,7 @@ intermediate adapter); consumers can use mathlib's existing API for
 reflexive-transitive closures.
 -/
 
-namespace Semantics.Causation.CausalGraph
+namespace Causation.CausalGraph
 
 variable {V : Type*}
 
@@ -82,4 +82,4 @@ theorem IsDAG.of_depth (G : CausalGraph V) (depth : V → ℕ)
     exact Subrelation.wf (fun {a b} => hsub a b)
       (InvImage.wf depth Nat.lt_wfRel.wf)
 
-end Semantics.Causation.CausalGraph
+end Causation.CausalGraph

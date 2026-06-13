@@ -1869,6 +1869,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
@@ -1887,6 +1888,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
+import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra

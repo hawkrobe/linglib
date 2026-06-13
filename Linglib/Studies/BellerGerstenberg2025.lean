@@ -496,11 +496,11 @@ theorem exp3_full_best :
 -- Section 11: Bridge to Structural Causal Models
 -- ============================================================================
 
-/-! ## Bridge to Semantics.Causation
+/-! ## Bridge to Causation
 
 Beller & Gerstenberg's W, H, S dimensions can be COMPUTED from structural
 causal models, grounding the primitive Boolean features in the counterfactual
-reasoning machinery of `Semantics.Causation`.
+reasoning machinery of `Causation`.
 
 | B&G aspect | Structural definition |
 |------------|---------------------|
@@ -516,8 +516,8 @@ For simple causal models, the two coincide.
 
 section StructuralBridge
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
 
 /-- Vertex enum for B&G's bridge models.
     `cause`, `alt`, `effect`, `intermediate` — covers solo, overdetermination, chain. -/
@@ -692,16 +692,16 @@ These are the deepest integration points: a change to `normalDevelopment`,
 
 section EndToEnd
 
-open Semantics.Causation
-open Semantics.Causation.ProductionDependence (causationType)
+open Causation
+open Causation.ProductionDependence (causationType)
 
 /-! End-to-end pipeline theorems linking V2 BoolSEM models to RSA S1
     predictions. `causationType` (from `ProductionDependence.lean`)
     takes plain Bools, so its inputs are computed with the SEM
     predicates and passed through. -/
 
-open Semantics.Causation Semantics.Causation.SEM
-open Semantics.Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
+open Causation Causation.SEM
+open Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
 
 private lemma bgDepth_lt_solo :
     ∀ {u v : BGVar}, u ∈ soloGraph.parents v → bgDepth u < bgDepth v := by

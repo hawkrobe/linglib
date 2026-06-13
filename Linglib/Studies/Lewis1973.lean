@@ -53,7 +53,7 @@ strictly stronger. Bridge theorems comparing the two belong in
 namespace Lewis1973
 
 open Core (WorldTimeIndex)
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lewis's Counterfactual Predicates (V2)

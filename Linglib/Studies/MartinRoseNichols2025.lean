@@ -30,7 +30,7 @@ four binary properties:
 namespace MartinRoseNichols2025.ThickThin
 
 open Semantics.Lexical
-open Semantics.Causation.ProductionDependence
+open Causation.ProductionDependence
 open English.Predicates.Verbal (VerbEntry)
 namespace V
   -- Re-export Fragment verb entries under a short alias to avoid name clashes
@@ -265,7 +265,7 @@ namespace MartinRoseNichols2025.Compare
 
 open Minimalist
 open Semantics.Lexical.EventStructure
-open Semantics.Causation.ProductionDependence
+open Causation.ProductionDependence
 open MartinRoseNichols2025.ThickThin
 
 -- § 1: Template ↔ Syntactic Structure

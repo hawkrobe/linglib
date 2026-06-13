@@ -57,7 +57,7 @@ The discourse production study confirms key patterns:
 
 namespace Urdu.CausativeSystem
 
-open Semantics.Causation.Morphological
+open Causation.Morphological
 
 -- ════════════════════════════════════════════════════
 -- § 1. Construction Definitions

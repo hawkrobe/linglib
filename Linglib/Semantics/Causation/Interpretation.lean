@@ -46,7 +46,7 @@ disagreement is theorem-provable.
 -- ════════════════════════════════════════════════════
 
 /-! Methods on `Features.Causative` that depend on heavy semantic
-machinery (`Semantics.Causation.SEM`, `CausalGraph`, the `Necessity`/
+machinery (`Causation.SEM`, `CausalGraph`, the `Necessity`/
 `Sufficiency`/`Prevention` modules) live here rather than in
 `Features/Causation.lean`, which is kept import-free per the
 "Features/ stays lightweight" convention. The `namespace
@@ -55,8 +55,8 @@ distributing methods on a type across files based on import weight. -/
 
 namespace Features.Causative
 
-open Semantics.Causation.CCSelection
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation.CCSelection
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- The CC-selection mode associated with each variant.
 
@@ -75,11 +75,11 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
     Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
-  | .cause => Semantics.Causation.Necessity.causeSem M
-  | .make => Semantics.Causation.Sufficiency.makeSem M
-  | .force => Semantics.Causation.Sufficiency.makeSem M
-  | .enable => Semantics.Causation.Sufficiency.makeSem M
-  | .prevent => Semantics.Causation.Prevention.preventSem M
+  | .cause => Causation.Necessity.causeSem M
+  | .make => Causation.Sufficiency.makeSem M
+  | .force => Causation.Sufficiency.makeSem M
+  | .enable => Causation.Sufficiency.makeSem M
+  | .prevent => Causation.Prevention.preventSem M
 
 end Features.Causative
 
@@ -87,7 +87,7 @@ end Features.Causative
 -- § Derivation theorems (substrate-independent)
 -- ════════════════════════════════════════════════════
 
-namespace Semantics.Causation.Interpretation
+namespace Causation.Interpretation
 
 open Semantics.Lexical
 open Features
@@ -121,4 +121,4 @@ theorem sufficiency_selects_completion (b : Causative)
 theorem necessity_selects_member :
     Causative.cause.selectionMode = .memberOfSufficientSet := rfl
 
-end Semantics.Causation.Interpretation
+end Causation.Interpretation

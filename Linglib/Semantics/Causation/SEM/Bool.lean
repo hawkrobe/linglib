@@ -9,11 +9,11 @@ where every vertex has value type `Bool`). Lives in its own file so the
 core `SEM/Defs.lean` stays focused on the general API.
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 /-- A `BoolSEM V` is the SBH-style binary substrate: every vertex's
     value is `Bool`. Convenience abbreviation for consumers that don't
     need multi-valued variables. -/
 abbrev BoolSEM (V : Type*) := SEM V (fun _ => Bool)
 
-end Semantics.Causation
+end Causation

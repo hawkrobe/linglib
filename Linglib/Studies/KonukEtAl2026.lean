@@ -41,8 +41,8 @@ with the explicit vertex list.
 
 namespace KonukEtAl2026
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.Strength (nsm samplingPropensity)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.Strength (nsm samplingPropensity)
 
 -- ════════════════════════════════════════════════════
 -- § Vertex enum (combines both experiments)

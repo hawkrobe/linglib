@@ -34,9 +34,9 @@ The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 -/
 
-namespace Semantics.Causation.PsychLink
+namespace Causation.PsychLink
 
-open Semantics.Causation.Psych (CausalSource)
+open Causation.Psych (CausalSource)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
@@ -265,4 +265,4 @@ theorem maintenance_three_properties {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Semantics.Causation.PsychLink
+end Causation.PsychLink

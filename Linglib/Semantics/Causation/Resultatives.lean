@@ -37,7 +37,7 @@ Sections:
    `Mandarin.Resultatives`.
 -/
 
-namespace Semantics.Causation.Resultatives
+namespace Causation.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
@@ -45,8 +45,8 @@ open Features
 open Semantics.Lexical
 open Features.ChangeOfState
 open Features (Causative)
-open Semantics.Causation.ProductionDependence
-open Semantics.Causation.CCSelection
+open Causation.ProductionDependence
+open Causation.CCSelection
 
 /-! ## Agreement with Boolean flags -/
 
@@ -219,4 +219,4 @@ inductive ResultOrientation where
   | subjectOriented
   deriving DecidableEq, Repr
 
-end Semantics.Causation.Resultatives
+end Causation.Resultatives

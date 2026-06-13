@@ -21,9 +21,9 @@ arity-uniform with `causallySufficient`/`causeSem` so `Causative.toSemantics`
 dispatches uniformly across all five force-dynamic variants.
 -/
 
-namespace Semantics.Causation.Prevention
+namespace Causation.Prevention
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 prevention semantics: preventer-as-`xPrev` blocks effect-from-
     being-`xE`, AND there exists some alternative preventer value that
@@ -46,4 +46,4 @@ noncomputable instance {V : Type*} {α : V → Type*}
     (effect : V) (xE : α effect) :
     Decidable (preventSem M bg preventer xP effect xE) := Classical.dec _
 
-end Semantics.Causation.Prevention
+end Causation.Prevention
