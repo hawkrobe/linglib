@@ -1889,6 +1889,14 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
+import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
+import Linglib.Core.Algebra.RootedTree.DysonSchwinger
+import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
+import Linglib.Core.Algebra.RootedTree.PreLie.BMinusSL
+import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
+import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
