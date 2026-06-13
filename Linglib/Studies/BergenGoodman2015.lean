@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Phenomena.Focus.ProsodicExhaustivity
+import Linglib.Data.Examples.BergenGoodman2015
 
 /-!
 # [bergen-goodman-2015]
@@ -482,29 +482,38 @@ plausible licenses fragment use.
 
 
 -- ============================================================================
--- § 8. Bridge: Prosody Data
+-- § 8. Prosody Data
 -- ============================================================================
 
 /-!
-## Bridge: ProsodicExhaustivity
+## Prosody data (`Data/Examples/BergenGoodman2015.json`)
 
-The noisy channel model explains the data in
-`Phenomena.Focus.ProsodicExhaustivity`:
-
-- `stressedSubject`: "BOB went" → exhaustive reading
-- `unstressedSubject`: "Bob went" → non-exhaustive reading
-
-The model derives this from noise reduction: stress lowers the noise rate,
-and the listener infers that the speaker had reason to protect the stressed
-word, implying exhaustive knowledge.
+The paper's stress/exhaustivity stimuli: "BOB went to the movies" is read
+exhaustively (only Bob went), "Bob went to the movies" is not. The model
+derives the contrast from noise reduction: stress lowers the noise rate, and
+the listener infers that the speaker had reason to protect the stressed word,
+implying exhaustive knowledge.
 -/
 
-open Phenomena.Focus.ProsodicExhaustivity in
-/-- The model's prediction aligns with the prosody data. -/
-theorem prosody_matches_data :
-    stressedSubject.reading = .exhaustive ∧
-    unstressedSubject.reading = .nonExhaustive :=
-  ⟨rfl, rfl⟩
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : Data.Examples.LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- Utterance adapter: a row's `stress` feature as a `ProsodyModel.Utterance`. -/
+def uttOf (row : Data.Examples.LinguisticExample) : Option ProsodyModel.Utterance :=
+  match featureOf row "stress" with
+  | some "subject" => some .BOB_went
+  | some "none"    => some .bobWent
+  | _              => none
+
+/-- The model's L1 assigns the exhaustive meaning more probability at the
+    stressed row's utterance than at the unstressed row's, matching the rows'
+    recorded `reading` contrast. -/
+theorem model_matches_stress_rows :
+    ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
+      uttOf Examples.unstressed_subject = some u_u ∧
+      ProsodyModel.cfg.L1 u_s .onlyBob > ProsodyModel.cfg.L1 u_u .onlyBob :=
+  ⟨_, _, rfl, rfl, ProsodyModel.stress_increases_exhaustivity⟩
 
 
 -- ============================================================================

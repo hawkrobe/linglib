@@ -1,4 +1,5 @@
 import Linglib.Semantics.Questions.Probabilistic
+import Linglib.Data.Examples.Thomas2026
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!
@@ -34,6 +35,10 @@ consequences.
 * `Witness.answers_discriminates` — a concrete Fin-3 model in which `Answers`
   holds of informative evidence and fails of the trivial `univ`, exercising the
   `raises_prob` and `dominates` fields of the answerhood structure.
+* `too_acceptable_iff_def64_satisfied` — over the paper's examples
+  (`Data/Examples/Thomas2026.json`), a *too* row is acceptable iff the paper's
+  Def 64 diagnosis is "satisfied"; the equation is uniform across the standard
+  and argument-building uses, which is the paper's unification thesis.
 
 ## Implementation notes
 
@@ -123,6 +128,28 @@ def IsTooLicensedByDQ (prejacent antecedent : Set W)
     relevant question satisfies the felicity conditions ([thomas-2026] §5.5). -/
 def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
   ∀ rq : Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
+
+/-! ### Data conformance
+
+Each row of `Data/Examples/Thomas2026.json` records the paper's Def 64
+diagnosis as a `def64_status` feature: `satisfied`, or the condition the paper
+identifies as failing (`antecedent_violation` for (3), `conjunction_violation`
+for (72)/(19c), `prejacent_violation_i` for (11), `prejacent_violation_ii` for
+(30)). The *either* row carries no diagnosis — fn. 9 leaves *either* to future
+work — so the transfer equation is stated for *too* rows only. -/
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : Data.Examples.LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- **Transfer equation**: a *too* row is acceptable iff the paper exhibits an
+    (ANT, RQ) pair satisfying all of Def 64. Uniform across the standard and
+    argument-building rows — [thomas-2026]'s unification thesis. -/
+theorem too_acceptable_iff_def64_satisfied :
+    ∀ row ∈ Examples.all, featureOf row "particle" = some "too" →
+      (row.judgment = .acceptable ↔
+        featureOf row "def64_status" = some "satisfied") := by
+  decide
 
 end Thomas2026
 

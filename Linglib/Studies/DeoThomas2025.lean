@@ -12,6 +12,17 @@ the interaction of domain widening with different alternative sources and Gricea
 maxim failures. *Only* shares the exhaustification semantics but requires Roothian
 alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
+## Main declarations
+
+- `JustFlavor`, `ContextType`: the paper's §2 taxonomy
+- `flavorOf`, `contextTypeOf`: adapters over `Data/Examples/DeoThomas2025.json`
+- `only_substitutes_iff_roothian` and friends: the §2 generalizations,
+  quantified over the example rows
+- `justFlavorFromConstruction`: the [thomas-deo-2020] construction → flavor
+  bridge
+- `refinement_implies_wider`, `finer_granularity_implies_wider`: finer
+  granularity yields wider questions (§3.1.2–3.2, Figure 1)
+
 -/
 
 import Linglib.Semantics.Questions.Partition.QUD
@@ -19,17 +30,41 @@ import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Granularity
 import Linglib.Semantics.Mood.PartitionAsInquiry
-import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Semantics.Degree.Granularity
+import Linglib.Data.Examples.DeoThomas2025
+import Linglib.Studies.ThomasDeo2020
 
 namespace DeoThomas2025
 
-open Phenomena.Focus.Exclusives
--- open removed: Question is top-level after Semantics/Questions/ relocation
+open Data.Examples (LinguisticExample)
 
 -- ============================================================================
--- A. Alternative Source
+-- A. The §2 Taxonomy
 -- ============================================================================
+
+/-- The interpretive flavors of *just* ([deo-thomas-2025]: §2).
+    Nine constructors covering the paper's 7 major categories, with
+    precisifying split into equality/proximity (§2.3.1-2) and complement
+    exclusion separated from rank order (§2.1). -/
+inductive JustFlavor where
+  | complementExclusion  -- "She just went to Spain and Portugal" → nowhere else
+  | rankOrder            -- "She is just an intern" → nothing higher on scale
+  | emphatic             -- "The food was just amazing!" → exceeds expectations
+  | precisifyingEquality -- "The tank is just full" → exactly (= paraphrase)
+  | precisifyingProximity -- "Fafen is just older than Siri" → barely (≈ slightly)
+  | minimalSufficiency   -- "Just a 3.5 GPA is sufficient" → nothing less needed
+  | unexplanatory        -- "The lamp just broke" → no identifiable cause
+  | unelaboratory        -- "Fido is just a dog" → no further elaboration needed
+  | counterexpectational -- "She just ate the communion wafer!" → norm violation
+  deriving Repr, DecidableEq
+
+/-- Why the widest answerable construal is optimal at context
+    ([deo-thomas-2025] (37)). -/
+inductive ContextType where
+  | answerable  -- (37a): widest construal is answerable (Quality + Relevance)
+  | qualityFail -- (37b): wider construals fail Quality (speaker lacks evidence)
+  | relevanceFail -- (37c): wider construals fail Relevance (not discourse-relevant)
+  deriving Repr, DecidableEq
 
 /-- Where the alternatives for *just* come from.
     Roothian alternatives are the standard focus-semantic alternatives;
@@ -55,7 +90,41 @@ def associatedSource : JustFlavor → AlternativeSource
   | .counterexpectational  => .normative
 
 -- ============================================================================
--- B. Discourse Context
+-- B. Row Adapters (Data/Examples/DeoThomas2025.json)
+-- ============================================================================
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- A row's `flavor` feature as a `JustFlavor`. -/
+def flavorOf (row : LinguisticExample) : Option JustFlavor :=
+  match featureOf row "flavor" with
+  | some "complementExclusion"   => some .complementExclusion
+  | some "rankOrder"             => some .rankOrder
+  | some "emphatic"              => some .emphatic
+  | some "precisifyingEquality"  => some .precisifyingEquality
+  | some "precisifyingProximity" => some .precisifyingProximity
+  | some "minimalSufficiency"    => some .minimalSufficiency
+  | some "unexplanatory"         => some .unexplanatory
+  | some "unelaboratory"         => some .unelaboratory
+  | some "counterexpectational"  => some .counterexpectational
+  | _ => none
+
+/-- A row's `context_type` feature as a `ContextType`. -/
+def contextTypeOf (row : LinguisticExample) : Option ContextType :=
+  match featureOf row "context_type" with
+  | some "answerable"    => some .answerable
+  | some "qualityFail"   => some .qualityFail
+  | some "relevanceFail" => some .relevanceFail
+  | _ => none
+
+/-- Whether the row's `#only` substitution test succeeds. -/
+def onlyOkOf (row : LinguisticExample) : Bool :=
+  featureOf row "only_ok" == some "true"
+
+-- ============================================================================
+-- C. Discourse Context
 -- ============================================================================
 
 /-- A discourse context provides construals of an underspecified question (UQ)
@@ -84,10 +153,6 @@ variable {W : Type*}
 def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
   ctx.quality q && ctx.relevance q
 
--- ============================================================================
--- C. Widest Answerable Question
--- ============================================================================
-
 /-- OPT_c(Q) ([deo-thomas-2025] (35)): the optimal question in a set
     of construals.
 
@@ -104,7 +169,7 @@ def isWidestAnswerable (ctx : DiscourseContext W) (q : Question W) : Prop :=
   ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
 
 /-- Classify a discourse context by WHY the widest answerable construal
-    is optimal. Connects to `Phenomena.Focus.Exclusives.ContextType`.
+    is optimal ([deo-thomas-2025] (37)).
 
     - (37a) answerable: all construals are answerable → CQ = widest overall
     - (37b) qualityFail: some construal fails Quality (speaker lacks evidence)
@@ -118,96 +183,130 @@ def classifyContext (ctx : DiscourseContext W) : ContextType :=
     .relevanceFail
 
 -- ============================================================================
--- D. Core theorems
+-- D. The §2 Generalizations over the Example Rows
 -- ============================================================================
 
--- Theorem 1: *only* substitutes iff the alternative source is Roothian
+/-- *Only* can substitute for *just* exactly in the complement-exclusion
+    and rank-order uses. -/
+theorem only_substitutes_iff_exclusive :
+    ∀ row ∈ Examples.all,
+      onlyOkOf row = true ↔
+        (flavorOf row = some .complementExclusion ∨
+         flavorOf row = some .rankOrder) := by
+  decide
 
-/-- *Only* can replace *just* exactly when the alternatives are Roothian
-    (complement-exclusion and rank-order). Verified against all empirical data. -/
+/-- *Only* can replace *just* exactly when the alternatives are Roothian. -/
 theorem only_substitutes_iff_roothian :
-    ∀ d ∈ allJustData,
-      d.onlyOk = true ↔ associatedSource d.flavor = .roothian := by
-  intro d hd
-  simp [allJustData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-                   rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [associatedSource, complementExclusion_vacation, rankOrder_intern,
-          emphatic_amazing, emphatic_enormous,
-          precisifying_eq_full, precisifying_prox_older, precisifying_temporal,
-          minSuff_cat, minSuff_gpa,
-          unexplanatory_lamp, unexplanatory_mangoes,
-          unelaboratory_dog, unelaboratory_proton, unelaboratory_mad,
-          counterexp_texting, counterexp_wafer]
+    ∀ row ∈ Examples.all,
+      onlyOkOf row = true ↔
+        (flavorOf row).map associatedSource = some .roothian := by
+  decide
 
--- Theorem 2: Context type determines flavor family
+/-- Unexplanatory uses arise when wider construals fail Quality (37b). -/
+theorem unexplanatory_is_quality_fail :
+    ∀ row ∈ Examples.all,
+      flavorOf row = some .unexplanatory →
+        contextTypeOf row = some .qualityFail := by
+  decide
 
-/-- Quality-failure contexts yield only causal-alternative flavors
-    (unexplanatory, minimal sufficiency). -/
+/-- Unelaboratory uses arise when wider construals fail Relevance (37c). -/
+theorem unelaboratory_is_relevance_fail :
+    ∀ row ∈ Examples.all,
+      flavorOf row = some .unelaboratory →
+        contextTypeOf row = some .relevanceFail := by
+  decide
+
+/-- All other uses — complement exclusion, rank order, emphatic,
+    precisifying, minimal sufficiency, counterexpectational — arise when
+    the widest construal IS answerable (37a). -/
+theorem standard_uses_are_answerable :
+    ∀ row ∈ Examples.all,
+      contextTypeOf row = some .answerable ↔
+        (flavorOf row ≠ some .unexplanatory ∧
+         flavorOf row ≠ some .unelaboratory) := by
+  decide
+
+/-- Quality-failure contexts yield only causal-alternative flavors. -/
 theorem quality_fail_implies_causal :
-    ∀ d ∈ allJustData,
-      d.contextType = .qualityFail →
-        associatedSource d.flavor = .causal := by
-  intro d hd hctx
-  simp [allJustData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-                   rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [associatedSource, complementExclusion_vacation, rankOrder_intern,
-              emphatic_amazing, emphatic_enormous,
-              precisifying_eq_full, precisifying_prox_older, precisifying_temporal,
-              minSuff_cat, minSuff_gpa,
-              unexplanatory_lamp, unexplanatory_mangoes,
-              unelaboratory_dog, unelaboratory_proton, unelaboratory_mad,
-              counterexp_texting, counterexp_wafer]
+    ∀ row ∈ Examples.all,
+      contextTypeOf row = some .qualityFail →
+        (flavorOf row).map associatedSource = some .causal := by
+  decide
 
-/-- Relevance-failure contexts yield only elaboration-alternative flavors
-    (unelaboratory). -/
+/-- Relevance-failure contexts yield only elaboration-alternative flavors. -/
 theorem relevance_fail_implies_elaboration :
-    ∀ d ∈ allJustData,
-      d.contextType = .relevanceFail →
-        associatedSource d.flavor = .elaboration := by
-  intro d hd hctx
-  simp [allJustData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-                   rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [associatedSource, complementExclusion_vacation, rankOrder_intern,
-              emphatic_amazing, emphatic_enormous,
-              precisifying_eq_full, precisifying_prox_older, precisifying_temporal,
-              minSuff_cat, minSuff_gpa,
-              unexplanatory_lamp, unexplanatory_mangoes,
-              unelaboratory_dog, unelaboratory_proton, unelaboratory_mad,
-              counterexp_texting, counterexp_wafer]
-
--- Theorem 3: *only* requires shared CQ (Roothian alternatives)
+    ∀ row ∈ Examples.all,
+      contextTypeOf row = some .relevanceFail →
+        (flavorOf row).map associatedSource = some .elaboration := by
+  decide
 
 /-- *only* is felicitous only with Roothian alternatives (shared CQ).
     *just* is felicitous regardless of alternative source.
     This is WHY they diverge: *only* exhaustifies over shared alternatives,
     *just* widens the question. -/
 theorem only_requires_shared_cq :
-    ∀ d ∈ allJustData,
-      d.onlyOk = true →
-        associatedSource d.flavor = .roothian := by
-  intro d hd honlyOk
-  exact (only_substitutes_iff_roothian d hd).mp honlyOk
+    ∀ row ∈ Examples.all,
+      onlyOkOf row = true →
+        (flavorOf row).map associatedSource = some .roothian :=
+  fun row hrow h => (only_substitutes_iff_roothian row hrow).mp h
 
--- Theorem 4: Every flavor appears in the data
-
-/-- All 9 `JustFlavor` constructors are attested in the empirical data. -/
+/-- All 9 `JustFlavor` constructors are attested in the example rows. -/
 theorem all_flavors_attested :
-    (allJustData.any (λ d => d.flavor == .complementExclusion)) = true ∧
-    (allJustData.any (λ d => d.flavor == .rankOrder)) = true ∧
-    (allJustData.any (λ d => d.flavor == .emphatic)) = true ∧
-    (allJustData.any (λ d => d.flavor == .precisifyingEquality)) = true ∧
-    (allJustData.any (λ d => d.flavor == .precisifyingProximity)) = true ∧
-    (allJustData.any (λ d => d.flavor == .minimalSufficiency)) = true ∧
-    (allJustData.any (λ d => d.flavor == .unexplanatory)) = true ∧
-    (allJustData.any (λ d => d.flavor == .unelaboratory)) = true ∧
-    (allJustData.any (λ d => d.flavor == .counterexpectational)) = true := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ∀ f : JustFlavor, Examples.all.any (flavorOf · == some f) = true := by
+  intro f
+  cases f <;> decide
 
 -- ============================================================================
--- E. WXDY bridge ([kay-fillmore-1999])
+-- E. Construction → Flavor Bridge ([thomas-deo-2020])
+-- ============================================================================
+
+open Semantics.Degree (AdjectivalConstruction)
+
+/-- Derive *just* flavor from adjectival construction type.
+    [thomas-deo-2020] predict:
+    - comparative + just → precisifying proximity (barely)
+    - equative + just → precisifying equality (exactly) -/
+def justFlavorFromConstruction : AdjectivalConstruction → JustFlavor
+  | .comparative => .precisifyingProximity
+  | .equative => .precisifyingEquality
+  | _ => .complementExclusion
+
+/-- "Fafen is just older than Siri" — comparative + just = proximity. -/
+theorem comparative_yields_proximity :
+    flavorOf Examples.precisifying_prox_older =
+      some (justFlavorFromConstruction .comparative) := by
+  decide
+
+/-- Equative + just = equality ("just as tall as" ≈ "exactly as tall as").
+    Note: `precisifying_eq_full` ("just full") achieves equality via a
+    closed-scale endpoint standard, not via equative morphology. The
+    shared flavor (`.precisifyingEquality`) reflects parallel pragmatic
+    effects through different compositional routes. -/
+theorem equative_yields_equality :
+    flavorOf Examples.precisifying_eq_full =
+      some (justFlavorFromConstruction .equative) := by
+  decide
+
+/-- Every equative datum of [thomas-deo-2020] §3 receives the flavor of
+    the 2025 corpus's equality row. -/
+theorem equative_data_match_corpus :
+    ∀ d ∈ ThomasDeo2020.allGranularityData,
+      d.construction = .equative →
+        some (justFlavorFromConstruction d.construction) =
+          flavorOf Examples.precisifying_eq_full := by
+  decide
+
+/-- Every comparative datum of [thomas-deo-2020] §3 receives the flavor of
+    the 2025 corpus's proximity row. -/
+theorem comparative_data_match_corpus :
+    ∀ d ∈ ThomasDeo2020.allGranularityData,
+      d.construction = .comparative →
+        some (justFlavorFromConstruction d.construction) =
+          flavorOf Examples.precisifying_prox_older := by
+  decide
+
+-- ============================================================================
+-- F. WXDY bridge ([kay-fillmore-1999])
 -- ============================================================================
 
 /-- WXDY's incredulity arises from a normative expectation violation:
@@ -225,7 +324,7 @@ theorem wxdy_incongruity_is_counterexpectational :
     wxdyAlternativeSource = associatedSource .counterexpectational := rfl
 
 -- ============================================================================
--- F. Granularity-Width Bridge (Figure 1)
+-- G. Granularity-Width Bridge (Figure 1)
 -- ============================================================================
 
 /-! ### Partition refinement implies question width
@@ -341,7 +440,7 @@ theorem refinement_implies_wider {W : Type*}
       exact hFine (q.iseqv.symm hv₀_C₁)
 
 -- ============================================================================
--- G. Granularity–Question Composition (§3.1.2 + §3.2)
+-- H. Granularity–Question Composition (§3.1.2 + §3.2)
 -- ============================================================================
 
 /-! ### The full chain: finer granularity → wider question
@@ -377,7 +476,7 @@ theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
     w₀ v₀ hCoarse hFine
 
 -- ============================================================================
--- H. Concrete Verification: Figure 1
+-- I. Concrete Verification: Figure 1
 -- ============================================================================
 
 /-- The 8-point age scale from Figure 1 ([deo-thomas-2025]). -/

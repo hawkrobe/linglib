@@ -4,13 +4,13 @@ import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Composition.Tree
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Focus.Basic
+import Linglib.Data.Examples.Rooth1992
 
 /-!
 # [rooth-1992] Bridge — Focus Interpretation [rooth-1992]
 
-Bridges the empirical data in `Focus/Basic.lean` to the formal theory
-in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
+Bridges the example rows in `Data/Examples/Rooth1992.json` to the formal
+theory in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
 compositional derivational chain through Montague semantics and
 connection to English fragment entries.
 
@@ -48,14 +48,14 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 - `Focus`, `Background` — focus/background partition (§4)
 - `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
 - `FocusedSentence.infoStructure` — IS extractor (§5b; previously a `HasInfoStructure` instance)
-- `FIPApplication` — FIP application classification (§8)
+- `featureOf`, `fipPrediction` — row adapters over `Data/Examples/Rooth1992.json` (§8)
 - `Tree`, `interp` — compositional derivation (§10–§11)
 - `Derivation` — derivation bundles (§13)
 - `English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
 
 -/
 
-namespace Phenomena.Focus.Rooth1992Bridge
+namespace Rooth1992Bridge
 
 open Features.InformationStructure
 open Semantics.Alternatives
@@ -333,63 +333,72 @@ theorem only_focus_determines_meaning :
   intro h; exact absurd (congrFun h billOnly) (by decide)
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §8  Per-Datum Verification (connect to Focus/Basic.lean)
+-- §8  Bridge: Data Rows ↔ Theory
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- The Q-A congruent datum uses the correct FIPApplication. -/
-theorem datum_qa_congruent_app :
-    Basic.qaCongruent.application = .qaCongruence := rfl
-
-/-- The Q-A incongruent datum uses the correct FIPApplication. -/
-theorem datum_qa_incongruent_app :
-    Basic.qaIncongruent.application = .qaCongruence := rfl
-
-/-- Focus in the congruent answer matches the data. -/
-theorem datum_qa_congruent_focus :
-    Basic.qaCongruent.focus = "Fred" := rfl
-
-/-- Focus in the incongruent answer matches the data. -/
-theorem datum_qa_incongruent_focus :
-    Basic.qaIncongruent.focus = "beans" := rfl
-
-/-- The "only Bill" datum uses focusing adverb application. -/
-theorem datum_only_bill_app :
-    Basic.roothOnlyBill.application = .focusingAdverb := rfl
-
-/-- The "only Sue" datum uses focusing adverb application. -/
-theorem datum_only_sue_app :
-    Basic.roothOnlySue.application = .focusingAdverb := rfl
-
--- ═══════════════════════════════════════════════════════════════════════
--- §9  Bridge: Data ↔ Theory
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! The data (Basic.lean) says "FRED ate the beans" is congruent and
-    "#Fred ate the BEANS" is incongruent with "Who ate the beans?".
-    The theory (FIP, §6) explains:
+/-! The rows (`Data/Examples/Rooth1992.json`) record that "FRED ate the
+    beans" is congruent and "#Fred ate the BEANS" is incongruent with
+    "Who ate the beans?". The theory (FIP, §6) explains:
 
     - Subject focus produces a focus value equal to the question
       denotation (§6a), so FIP is satisfied.
     - Object focus produces a focus value that differs (§6b):
       maryAteBeans ∈ ⟦Q⟧° but maryAteBeans ∉ ⟦A⟧f, so FIP fails.
 
-    For "only" (§7), the data says focus determines what "only"
+    For "only" (§7), the rows say focus determines what "only"
     excludes. The theory confirms: the FIP constrains the domain C
     of "only" to be a subset of the focus value, so different focus
     positions yield different exclusion domains. -/
 
-/-- Bridge: congruent judgment confirmed by FIP. -/
-theorem bridge_qa_congruent :
-    Basic.qaCongruent.application = .qaCongruence ∧
-    Semantics.Focus.Interpretation.qaCongruent
-      fv_subjectFocus q_whoAteBeans :=
-  ⟨rfl, rfl⟩
+open _root_.Rooth1992
 
-/-- Bridge: incongruent judgment explained by FIP failure. -/
-theorem bridge_qa_incongruent :
-    Basic.qaIncongruent.application = .qaCongruence ∧
-    ¬ fip q_whoAteBeans fv_objectFocus :=
-  ⟨rfl, fip_fails_object_focus⟩
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : Data.Examples.LinguisticExample) (key : String) :
+    Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The FIP prediction for a row, read off its `focus` feature: subject
+    focus ("Fred") evokes the subject-alternative focus value, object
+    focus ("beans") the object-alternative one (§6). -/
+def fipPrediction (row : Data.Examples.LinguisticExample) : Prop :=
+  match featureOf row "focus" with
+  | some "Fred"  => fip q_whoAteBeans fv_subjectFocus
+  | some "beans" => fip q_whoAteBeans fv_objectFocus
+  | _ => False
+
+/-- **Transfer**: a Q-A row is acceptable iff its focus value satisfies
+    the FIP against "Who ate the beans?" ([rooth-1992] (26d)). Subject
+    focus passes (§6a); object focus fails (§6b). -/
+theorem qa_acceptable_iff_fip :
+    ∀ row ∈ Examples.all,
+      featureOf row "fip_application" = some "qaCongruence" →
+      (row.judgment = .acceptable ↔ fipPrediction row) := by
+  intro row hrow happ
+  simp only [Examples.all, List.mem_cons, List.not_mem_nil, or_false] at hrow
+  rcases hrow with rfl | rfl | rfl | rfl
+  · exact absurd happ (by decide)
+  · exact absurd happ (by decide)
+  · exact ⟨fun _ => fip_congruent, fun _ => rfl⟩
+  · exact ⟨fun h => absurd h (by decide),
+           fun h => absurd h fip_fails_object_focus⟩
+
+/-- Distinct focusing-adverb rows carry distinct `focus` features: the
+    rows form an association-with-focus minimal pair. -/
+theorem focusingAdverb_rows_differ_in_focus :
+    ∀ r₁ ∈ Examples.all, ∀ r₂ ∈ Examples.all,
+      featureOf r₁ "fip_application" = some "focusingAdverb" →
+      featureOf r₂ "fip_application" = some "focusingAdverb" →
+      r₁.id ≠ r₂.id → featureOf r₁ "focus" ≠ featureOf r₂ "focus" := by
+  decide
+
+/-- Bridge: the focusing-adverb rows differ only in focus position, and
+    the theory maps distinct focus positions to distinct "only"
+    meanings (§7). -/
+theorem bridge_only_association :
+    featureOf Examples.only_bill "focus" ≠
+      featureOf Examples.only_sue "focus" ∧
+    onlyBill ≠ onlyJohn :=
+  ⟨by decide, only_focus_determines_meaning⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §10  Montague Model and Compositional Lexicon
@@ -576,4 +585,4 @@ theorem endToEnd_question_grounded :
     (∀ w, treeResult (focusLex w) tree_maryAteBeans = some (ateInWorld w E.beans E.mary)) := by
   exact ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
 
-end Phenomena.Focus.Rooth1992Bridge
+end Rooth1992Bridge
