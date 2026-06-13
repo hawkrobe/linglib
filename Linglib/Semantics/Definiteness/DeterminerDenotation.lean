@@ -36,14 +36,18 @@ deictic feature projects: deixis filters the referent but never selects it
 * `Article.denotations` — an article's possible `NominalDenot`s, the image of
   `Article.toDescriptions` under `Description.denote`; a syncretic article
   (English *the*) denotes both the weak and the strong description.
+* `Possessive.denote` — the possessive determiner's `NominalDenot`
+  (previously deferred): a definite description selecting the unique satisfier
+  of the possessee restrictor that stands in the possession relation to the
+  possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
+  `Semantics/Quantification/Possessive.lean`.
 
 ## Implementation notes
 
 Context is the bi-assignment `Assignment E × SitAssignment W` and the
 world coordinate is trivial (`PUnit`), matching the static case of
 `PersonalPronoun.denote`. `Quantifier` (a generalized quantifier, not an
-individual denotation — it has no `NominalDenot`) and `Possessive` remain
-deferred.
+individual denotation — it has no `NominalDenot`) remains deferred.
 -/
 
 namespace Semantics.Definiteness
@@ -145,5 +149,41 @@ theorem Article.denotations_licensed (a : Article)
       Determiner.licenses [.article a] k ∧ nd = k.denote := by
   obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
   exact ⟨k, Determiner.licenses_mem_toDescriptions a R idx k hk, rfl⟩
+
+/-! ### The possessive determiner's denotation -/
+
+/-- A possessive determiner's denotation as a `NominalDenot` (the
+`Possessive.denote` deferred by the lexical file): the definite
+description selecting the unique satisfier of the possessee restrictor `R` that
+stands in `rel` to the `possessor` — i.e. the `Description.possessive` selector
+(`russellIota` of `R ∧ rel possessor ·`). The intrinsic presupposition is
+vacuous; the definite's only presupposition is definedness, exposed as the
+selector returning `some`.
+
+The narrowing-aware GQ form for quantificational possessors ("every student's
+cat") is `Semantics.Quantification.Possessive.PossW` — `(individual a)` of
+`PossW` reduces here when the possessor is an entity. -/
+noncomputable def _root_.Possessive.denote (_p : Possessive)
+    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
+    NominalDenot (Assignment E × SitAssignment W) PUnit E :=
+  (Description.possessive R possessor rel).denote
+
+/-- A possessive determiner's selector is the possessive description's
+selector — the determiner picks the unique possessee related to the
+possessor by construction. -/
+@[simp]
+theorem Possessive.denote_selector (p : Possessive)
+    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+    (g : Assignment E) (gs : SitAssignment W) (w : PUnit) :
+    (p.denote R possessor rel).selector (g, gs) w =
+      interpret (.possessive R possessor rel) g gs := rfl
+
+/-- A possessive determiner licenses its own denotation — the denotational
+pipeline and the licensing pipeline agree, parallel to
+`Article.denotations_licensed`. -/
+theorem Possessive.denote_licensed (p : Possessive)
+    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
+    Determiner.licenses [.possessive p] (Description.possessive R possessor rel) :=
+  ⟨.possessive p, List.mem_singleton_self _, trivial⟩
 
 end Semantics.Definiteness
