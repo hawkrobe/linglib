@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Basic
 
 /-!
 # Possessive Quantifiers
@@ -24,13 +24,13 @@ which keeps narrowing in the scope.
 - `possW_individual_existential_import`: "John's A B" entails John possesses
   an A-thing ([peters-westerstahl-2013])
 - `possessiveAsNPQ_iff_possW`: [barker-2011]'s type ⟨1⟩ possessive
-  (`Relational.possessiveAsNPQ`) is `PossW` of a Montagovian individual with
+  (`Possessive.asNPQ`) is `PossW` of a Montagovian individual with
   existential `Q₂`
 - `poss_not_quantityInvariant`: possessive GQs with a fixed `R` are not
   isomorphism-invariant (P&W p. 256)
 -/
 
-namespace Semantics.Quantification.Possessive
+namespace Possessive
 
 open Core.Quantification
 
@@ -167,7 +167,7 @@ theorem possW_individual_existential_import {Q₂ : GQ α} {R : α → α → Pr
 /-! ### Denoting a bundled carrier
 
 A possessive carrier bundling a possessor and a possession relation (any
-`HasPossessor` + `HasPossessionRelation` instance, e.g. `PossessiveSemantics`)
+`HasPossessor` + `HasPossessionRelation` instance, e.g. `Possessive.Carrier`)
 denotes, at a situation, as the `PossW` of its possessor taken whole. Routing
 every carrier through one operator is what makes the API unified: a carrier
 inherits narrowing and existential import with no bespoke proof. -/
@@ -193,15 +193,15 @@ theorem carrierGQ_existential_import {γ E S : Type*}
 /-! ### Bridge to Barker's type ⟨1⟩ possessive -/
 
 /-- [barker-2011]'s possessive NPQ (`⟦John's⟧ = fun P => ∃ y, R j y ∧ P y`,
-    `Relational.possessiveAsNPQ`) is `PossW` at a Montagovian individual with
+    `Possessive.asNPQ`) is `PossW` at a Montagovian individual with
     existential `Q₂` and trivial possessee restrictor — the possessee class is
     folded into `R` by Barker's π shift. -/
 theorem possessiveAsNPQ_iff_possW {E : Type*} (a : E) (R : E → E → Bool)
     (P : E → Prop) :
-    Semantics.ArgumentStructure.Relational.possessiveAsNPQ a R P ↔
+    Possessive.asNPQ a R P ↔
       PossW (individual a) some_sem (fun x y => R x y = true)
         (fun _ => True) P := by
-  unfold Semantics.ArgumentStructure.Relational.possessiveAsNPQ PossW dom
+  unfold Possessive.asNPQ PossW dom
     individual some_sem
   constructor
   · rintro ⟨y, hR, hP⟩
@@ -232,4 +232,4 @@ theorem poss_not_quantityInvariant :
   obtain ⟨x, ⟨-, b, hb, -, hb'⟩, -⟩ := hiff.mp hpos
   exact absurd (hb' ▸ hb) (by simp)
 
-end Semantics.Quantification.Possessive
+end Possessive

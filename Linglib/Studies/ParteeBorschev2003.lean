@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Basic
 
 /-!
 # Partee & Borschev 2003: Genitives, relational nouns, and argument-modifier ambiguity
@@ -11,10 +11,10 @@ a free contextual relation. The two construction types map exactly onto the
 substrate:
 
 * **argument genitive** (relational head noun supplies R): `of John's = λR[R(John)]`,
-  `teacher of John's = λx[teacher(John)(x)]` — this is `possessiveRelational`.
+  `teacher of John's = λx[teacher(John)(x)]` — this is `viaArgument`.
 * **modifier genitive** (sortal head noun + free relation `Rᵢ`):
   `of John's = λPλx[P(x) ∧ Rᵢ(John)(x)]`, `team of John's = λx[team(x) ∧ Rᵢ(John)(x)]`
-  — this is `possessiveSortal` (Barker's `π`).
+  — this is `viaModifier` (Barker's `π`).
 
 ## Main statements
 
@@ -27,7 +27,7 @@ substrate:
   outside its scope gives different predicates. J&V's coercion derives both;
   P&B's split derives only the R-outside reading — J&V's empirical advantage.
 * `predicateGenitive_eq` — P&B §5.1: the predicate genitive *John's* (*that team
-  is John's*) is a bare ⟨e,t⟩ predicate `λx[Rᵢ(John)(x)]` = `possessiveRelational`,
+  is John's*) is a bare ⟨e,t⟩ predicate `λx[Rᵢ(John)(x)]` = `viaArgument`,
   which the uniform argument-only approach cannot produce standalone.
 
 ## References
@@ -40,6 +40,7 @@ substrate:
 namespace ParteeBorschev2003
 
 open Semantics.ArgumentStructure.Relational
+open Possessive
 
 variable {E S : Type*}
 
@@ -54,7 +55,7 @@ J&V, with the construction for P&B — but the result is identical. -/
 genitive. The "two theories of genitives" are, on the coerced-sortal case, a
 single denotation reached two ways. -/
 theorem vj_coerce_eq_pb_modifier (possessor : E) (P : Pred1 E S) (R : Pred2 E S) :
-    possessiveRelational possessor (π P R) = possessiveSortal possessor P R :=
+    viaArgument possessor (π P R) = viaModifier possessor P R :=
   rfl
 
 /-! ### The predicate genitive (P&B §5.1)
@@ -65,9 +66,9 @@ elliptical argument NP, so English needs the modifier genitive — a problem for
 the uniform argument-only approach. -/
 
 /-- The predicate genitive *John's* is the possessee predicate `λx[R possessor x]`
-= `possessiveRelational possessor R`, a genuine ⟨e,t⟩ predicate (here `Pred1`). -/
+= `viaArgument possessor R`, a genuine ⟨e,t⟩ predicate (here `Pred1`). -/
 theorem predicateGenitive_eq (possessor : E) (R : Pred2 E S) :
-    (fun x s => R possessor x s) = possessiveRelational possessor R :=
+    (fun x s => R possessor x s) = viaArgument possessor R :=
   rfl
 
 /-! ### The readings of *Mary's former mansion* (P&B §4.3)
@@ -82,13 +83,13 @@ alone; J&V's coercion can introduce `R` at the noun-shift, deriving both. -/
 that is now Mary's*. The only reading P&B's split derives. -/
 def readingA (former : Pred1 E S → Pred1 E S) (possessor : E)
     (noun : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
-  possessiveSortal possessor (former noun) R
+  viaModifier possessor (former noun) R
 
 /-- Reading B: the free relation is inside `formerRel`'s scope — *something that
 was formerly Mary's mansion*. Available on J&V's coercion. -/
 def readingB (formerRel : Pred2 E S → Pred2 E S) (possessor : E)
     (noun : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
-  possessiveRelational possessor (formerRel (π noun R))
+  viaArgument possessor (formerRel (π noun R))
 
 namespace FormerMansion
 
@@ -116,9 +117,9 @@ theorem readingA_ne_readingB :
     readingA former 1 mansion owns ≠ readingB formerRel 1 mansion owns := by
   intro h
   have hA : ¬ readingA former 1 mansion owns 0 true := by
-    unfold readingA possessiveSortal π former mansion owns; decide
+    unfold readingA viaModifier π former mansion owns; decide
   have hB : readingB formerRel 1 mansion owns 0 true := by
-    unfold readingB possessiveRelational formerRel π mansion owns; decide
+    unfold readingB viaArgument formerRel π mansion owns; decide
   rw [h] at hA
   exact hA hB
 

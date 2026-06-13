@@ -1,5 +1,6 @@
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Basic
 
 /-!
 # Categorizer Semantics [adamson-2024] [barker-2011]
@@ -166,10 +167,10 @@ def teopHouseSortal (isHouse : Pred1 E S) : Pred1 E S :=
   nSortalDenot isHouse
 
 /-- With a specific possessor, the iPossessed body part reduces to a
-    property (Barker's possessiveRelational). -/
+    property (`Possessive.viaArgument`). -/
 theorem ipossessed_with_possessor (john : E) (x : E) (s : S) :
     teopSpleenIPossessed isSpleen bodyPartOf john x s =
-    possessiveRelational john (π isSpleen bodyPartOf) x s := rfl
+    Possessive.viaArgument john (π isSpleen bodyPartOf) x s := rfl
 
 /-- The sortal noun has no relatum slot — it cannot directly take a
     possessor without π. -/

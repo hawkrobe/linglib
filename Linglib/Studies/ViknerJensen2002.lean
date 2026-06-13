@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.Possessive.Basic
 
 /-!
 # Vikner & Jensen 2002: A semantic analysis of the English genitive
@@ -11,7 +11,7 @@ Pustejovsky qualia rather than stipulated.
 
 * **Four lexical relation types** (§3.1.2): inherent, part-whole, agentive,
   control. These *are* the project's `PossessionRelationType` — V&J is the
-  source of that taxonomy (cited in `ArgumentStructure/Relational.lean`), and
+  source of that taxonomy (cited in `Semantics/Possessive/Basic.lean`), and
   this study is its first consumer.
 * **Qualia derivation** (§3.2.3): the relation type follows from lexical
   structure — inherent from relationality, part-whole from the constitutive
@@ -20,9 +20,9 @@ Pustejovsky qualia rather than stipulated.
 * **The denotation** (§3.2.3, (20)–(21)): the genitive is the possessor plus a
   narrow-scope definite — the unique entity standing in the resolved relation to
   the possessor. The relation combines with the noun via Barker's `π`
-  (`possessiveRelational` for a relational noun, `possessiveSortal` for a coerced
+  (`viaArgument` for a relational noun, `viaModifier` for a coerced
   sortal noun); uniqueness is `iotaPresupposition`, and a worked entry feeds the
-  `DefinitePossessive` carrier's `existsUnique_possessee`.
+  `Possessive.Definite` carrier's `existsUnique_possessee`.
 
 ## Main statements
 
@@ -30,7 +30,7 @@ Pustejovsky qualia rather than stipulated.
   qualia-derivation predictions (decide-checked).
 * `girlsTeacher_existsUnique` — V&J's inherent genitive as a carrier-API
   definite (unique referent via `existsUnique_possessee`).
-* `girlsCar_eq_sortal` — V&J's coerced (control) genitive as `possessiveSortal`.
+* `girlsCar_eq_sortal` — V&J's coerced (control) genitive as `viaModifier`.
 
 ## References
 
@@ -40,6 +40,7 @@ Pustejovsky qualia rather than stipulated.
 namespace ViknerJensen2002
 
 open Semantics.ArgumentStructure.Relational
+open Possessive
 
 /-! ### Qualia structure (Pustejovsky, as used by V&J §3.2.1) -/
 
@@ -123,19 +124,19 @@ relation to the possessor. -/
 def teacherRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 1
 
 /-- *the girl's teacher* (inherent, V&J (21)): the possessee predicate is the
-relation applied to the possessor (`possessiveRelational`), and there is a unique
+relation applied to the possessor (`viaArgument`), and there is a unique
 satisfier — V&J's narrow-scope definite, here as `iotaPresupposition`. -/
 theorem girlsTeacher_unique (s : Unit) :
-    iotaPresupposition (possessiveRelational (E := Fin 4) 0 teacherRel) s := by
+    iotaPresupposition (viaArgument (E := Fin 4) 0 teacherRel) s := by
   refine ⟨1, ⟨rfl, rfl⟩, ?_⟩
   rintro y ⟨-, hy⟩
   exact hy
 
-/-- *the girl's teacher* as a `DefinitePossessive` carrier: its unique referent
+/-- *the girl's teacher* as a `Possessive.Definite` carrier: its unique referent
 is delivered by the carrier API's `existsUnique_possessee`, no bespoke proof. -/
-def theGirlsTeacher : DefinitePossessive (Fin 4) Unit where
+def theGirlsTeacher : Possessive.Definite (Fin 4) Unit where
   possessor := 0
-  predicate := possessiveRelational 0 teacherRel
+  predicate := viaArgument 0 teacherRel
   presupposition := girlsTeacher_unique
 
 theorem girlsTeacher_existsUnique (s : Unit) :
@@ -149,10 +150,10 @@ def controlRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 2
 def carPred : Pred1 (Fin 4) Unit := fun y _ => y = 2
 
 /-- *the girl's car* (coerced, control): the sortal noun is shifted to a relation
-via Barker's `π` (`possessiveSortal`), and the result selects the controlled car.
+via Barker's `π` (`viaModifier`), and the result selects the controlled car.
 This is V&J's coercion of a non-relational head noun. -/
 theorem girlsCar_eq_sortal (y : Fin 4) :
-    possessiveSortal (E := Fin 4) 0 carPred controlRel y () ↔ y = 2 := by
+    viaModifier (E := Fin 4) 0 carPred controlRel y () ↔ y = 2 := by
   constructor
   · rintro ⟨hcar, -, -⟩; exact hcar
   · rintro rfl; exact ⟨rfl, rfl, rfl⟩

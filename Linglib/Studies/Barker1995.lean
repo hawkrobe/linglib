@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification.Possessive
+import Linglib.Semantics.Possessive.GQ
 
 /-!
 # Barker 1995: *Possessive Descriptions*
@@ -10,13 +10,13 @@ the dissertation's signature claims, tested against concrete models:
   quantification to those possessors that stand in the possession relation to
   some possessee. *Most planets' rings are made of ice* is evaluated only over
   planets that have rings. The substrate operator
-  `Semantics.Quantification.Possessive.Poss` builds this in via the domain
+  `Possessive.Poss` builds this in via the domain
   restriction `dom A R`; here we exhibit a model where narrowing flips the truth
   value (demonstrated with `every`, since the `dom` restriction is independent of
   the choice of possessor quantifier; `most` is noncomputable cardinality).
 
 * **Definiteness and uniqueness**: a definite possessive denotes a unique
-  possessee. The `HasIotaWitness` capability of `DefinitePossessive` yields this
+  possessee. The `HasIotaWitness` capability of `Possessive.Definite` yields this
   via `existsUnique_possessee` with no bespoke proof — the payoff of the
   composable-mixin design.
 
@@ -37,7 +37,7 @@ the dissertation's signature claims, tested against concrete models:
 namespace Barker1995
 
 open Core.Quantification
-open Semantics.Quantification.Possessive
+open Possessive
 open Semantics.ArgumentStructure.Relational
 
 /-! ### Narrowing
@@ -89,7 +89,7 @@ sisters"), exercising the possessive-carrier capability mixins
 
 /-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
 `1`. Entities are `Fin 3` (boy, cat, dog); one situation. -/
-def theBoysCat : DefinitePossessive (Fin 3) Unit where
+def theBoysCat : Possessive.Definite (Fin 3) Unit where
   possessor := 0
   predicate := fun y _ => y = 1
   presupposition := fun _ => ⟨1, rfl, fun _ hy => hy⟩
@@ -103,13 +103,12 @@ theorem theBoysCat_unique (s : Unit) :
 /-- The sibling relation: `0`'s siblings are `1` and `2`. -/
 def sibling : Fin 3 → Fin 3 → Prop := fun x y => x = 0 ∧ (y = 1 ∨ y = 2)
 
-/-- "John's sisters": possessor `0` (John), with the (lexical) sibling relation
-as the possession relation. -/
-def johnsSisters : PossessiveSemantics (Fin 3) Unit where
+/-- "John's sisters": possessor `0` (John), with the sibling relation as the
+possession relation (a relational noun, so the restrictor is trivial). -/
+def johnsSisters : Possessive.Carrier (Fin 3) Unit where
   possessor := 0
-  possesseePred := fun y _ => sibling 0 y
   relation := fun x y _ => sibling x y
-  relationIsLexical := true
+  restrictor := fun _ _ => True
 
 /-- The relational possessive's `possesseeSet` is its lexical possession
 relation applied to the possessor — derived through the `HasPossessor` and
@@ -127,11 +126,10 @@ because planet 2 has no ring. Reuses the planets/rings model above. -/
 
 /-- "planet 2's rings": possessor `2`, with `hasRing` as the possession
 relation. -/
-def planet2sRings : PossessiveSemantics (Fin 5) Unit where
+def planet2sRings : Possessive.Carrier (Fin 5) Unit where
   possessor := 2
-  possesseePred := fun y _ => isRing y ∧ hasRing 2 y
   relation := fun x y _ => hasRing x y
-  relationIsLexical := true
+  restrictor := fun y _ => isRing y
 
 /-- *Planet 2's rings are icy* is false: via the unified carrier denotation,
 existential import (`carrierGQ_existential_import`) requires planet 2 to possess
