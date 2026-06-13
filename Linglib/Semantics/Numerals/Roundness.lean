@@ -16,9 +16,9 @@ The 6 properties (ordered by frequency effect, [woodin-etal-2023]):
 5. Multiple of 10 (β = 0.52)
 6. Multiple of 5 (β = 0.06) — weakest predictor
 
-This module lives in Core because both Phenomena (empirical data) and
-Theories (Semantics.Montague, NeoGricean, RSA) depend on the roundness
-score, avoiding a cross-layer Theories→Phenomena import.
+This module lives in substrate because both empirical consumers
+(`Studies/`) and theory files (Semantics.Montague, NeoGricean, RSA)
+depend on the roundness score.
 
 -/
 
@@ -146,7 +146,7 @@ The contextual score derives from actual divisibility properties relative
 to the base (not a flat bonus), paralleling how standard k-ness derives
 from divisibility by 2/2.5/5/10 × powers of 10.
 
-Composes with `GranularityDatum` in `Phenomena.Gradability.Imprecision.Numerals`.
+Composes with `GranularityDatum` in `Studies/ThomasDeo2020.lean`.
 -/
 def roundnessInContext (n : Nat) (base : Nat) : Nat :=
   max (roundnessScore n) (contextualRoundnessScore n base)

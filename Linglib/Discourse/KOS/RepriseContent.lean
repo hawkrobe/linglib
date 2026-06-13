@@ -58,7 +58,7 @@ by what they query.
 
 This enum mirrors the `CRReading` enum in
 `Studies/Ginzburg2012.lean`. We declare it here so that
-`KOS/RepriseContent.lean` does not depend downstream on any Phenomena file. -/
+`KOS/RepriseContent.lean` does not import from `Studies/`. -/
 inductive RFReading where
   /-- "Are you asking/saying that p?" — confirms propositional content -/
   | clausalConfirmation

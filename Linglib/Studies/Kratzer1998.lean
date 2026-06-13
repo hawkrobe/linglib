@@ -25,8 +25,8 @@ The `kratzerEnglishPast` / `kratzerGermanPreterit` / `kratzerZeroTense`
 lexical entries live at the Theories layer
 (`Tense/SOT/Decomposition.lean`) because
 `Fragments/{English,German,Italian}/Tense.lean` consume them via the
-`Fragments → Theories` import direction. CLAUDE.md's "Fragments
-imports Theories, not Phenomena" discipline forces the substrate
+`Fragments → Theories` import direction. The "Fragments import
+Theories, never Studies" layering discipline forces the substrate
 placement; this Studies file collects the paper-anchored cross-paper
 claims and bridge theorems that don't need to be Fragment-visible.
 

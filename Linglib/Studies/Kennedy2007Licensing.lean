@@ -13,7 +13,7 @@ import Linglib.Features.Antonymy
 
 Connects the abstract `adjMeasure` and `LicensingPipeline` algebra
 (Core/Scale) to concrete Fragment entries (`tall`, `full`, `wet`, `dry`)
-and Phenomena data (`closurePuzzle`, `completelyModifier`).
+and empirical data (`closurePuzzle`, `completelyModifier`, both below).
 
 ## Bridge Structure
 

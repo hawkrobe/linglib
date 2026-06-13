@@ -43,7 +43,8 @@ between functional head and root.
 - `TemplateHead.vBecome` = the templatic operator that result roots lexicalize
 - `CoSType.inception` = BECOME as ¬P→P transition (ChangeOfState/Theory)
 - `Template.achievement`/`.accomplishment` = templates containing BECOME (EventStructure)
-- Crosslinguistic data validates the correlations (Phenomena)
+- Crosslinguistic data validates the correlations (`Studies/`, e.g.
+  `Coon2019`, `BeaversEtAl2021`)
 
 ## Unified Root (§§15–17)
 

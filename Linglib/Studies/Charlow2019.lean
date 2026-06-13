@@ -320,7 +320,7 @@ non-interreducible theorems in their respective files. -/
 -- algebraic interpretation: both reduce to `cylindrify` from
 -- `Core.CylindricAlgebra`. These bridges previously lived in
 -- `Linglib/Core/Logic/CylindricAlgebra/DynamicSemantics.lean`, but a Core
--- file importing from Studies inverted the substrate→Phenomena arrow.
+-- file importing from Studies inverted the substrate→Studies dependency arrow.
 -- They live here now: a Studies file importing the Core substrate it
 -- depends on is layering-legal.
 

@@ -114,8 +114,8 @@ end CDRT
 
 -- The Charlow 2019 bridges that previously lived here have been moved to
 -- `Linglib/Studies/Charlow2019.lean` (§ Cylindric algebra bridges).
--- A Core file cannot import from Studies — the substrate→Phenomena arrow
--- runs the other way. The DPL and CDRT bridges above are layering-legal
+-- A Core file cannot import from Studies — the dependency arrow runs
+-- substrate→Studies. The DPL and CDRT bridges above are layering-legal
 -- because their substrate lives in `Semantics/Dynamic/`.
 
 end Core.CylindricAlgebra

@@ -2,13 +2,13 @@ import Linglib.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Studies.Ross1967
 
 /-!
-# Bridge: DG Islands → Phenomena Island Constraints
+# Bridge: DG Islands → Ross 1967 Island Constraints
 [osborne-2019] [ross-1967]
 
 Maps the DG rising-catena island taxonomy from [osborne-2019] to the
-Phenomena island constraint types from `Ross1967`.
+island `ConstraintType` taxonomy from `Studies/Ross1967`.
 
-Three of Osborne's island types have direct Phenomena equivalents:
+Three of Osborne's island types have direct `ConstraintType` equivalents:
 - adjunct → .adjunct
 - subject → .subject
 - wh-island → .embeddedQuestion
@@ -22,7 +22,7 @@ namespace Osborne2019Islands
 open DepGrammar.Islands (OsborneIslandType)
 
 /-- Map `OsborneIslandType` to `ConstraintType` for the shared types. -/
-def toPhenomenaConstraintType :
+def toRossConstraintType :
     OsborneIslandType → Option ConstraintType
   | .adjunct       => some .adjunct
   | .subject       => some .subject

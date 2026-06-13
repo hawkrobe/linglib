@@ -391,7 +391,7 @@ The Auxiliaries Fragment is a hub: other studies that analyse the
 same entries ([condoravdi-2002], [kratzer-1981], etc.) record
 their own morphological preconditions parallel to these. To enumerate
 every analysis that touches a given entry, grep for
-`English.Auxiliaries.<entry>` across `Phenomena/`.
+`English.Auxiliaries.<entry>` across the library.
 
 This section records *morphological* preconditions only. The C&S
 semantic clauses (`willSem`, `wouldSem`) and their downstream theorems

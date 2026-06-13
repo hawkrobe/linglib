@@ -37,7 +37,7 @@ length and listener confusion. Bridges synchronic copredication judgments
 ([asher-2011], [gotham-2017]) to a diachronic functional account.
 -/
 
-namespace Phenomena.Polysemy
+namespace XuEtAl2024.Polysemy
 
 open Pragmatics.Communication (AsymmetricCommModel)
 open Pragmatics.Efficiency (CostPair weightedCost)
@@ -295,4 +295,4 @@ theorem all_english_reuse_creates_polysemy :
     (reuseIsPolysemyGeneration englishReuse).length = englishReuse.length := by
   decide
 
-end Phenomena.Polysemy
+end XuEtAl2024.Polysemy

@@ -13,7 +13,7 @@ Maps Fragment lexical entries (`VerbEntry`, `PersonalPronoun`, `NounEntry`,
 appropriate `Cat` and `SelStack` features.
 
 Concrete derivation *instances* using these projections live in
-`Phenomena/`, anchored to specific paper analyses (e.g.
+`Studies/`, anchored to specific paper analyses (e.g.
 `Studies/Adger2003.lean` for c-selection).
 
 ## Sections

@@ -138,7 +138,7 @@ Similar to "around" but more formal register.
 Interacts with roundness: "approximately 100" natural,
 "approximately 99" marked.
 
-Source: Phenomena/Gradability/Imprecision/Numerals.lean
+Source: `Studies/Haslinger2025.lean` (ApproximatelyDatum)
 -/
 def approximately : NumeralModifierEntry :=
   { form := "approximately"
@@ -198,7 +198,7 @@ def between : NumeralModifierEntry :=
 ⟦exactly n⟧ = λx. x = n
 Removes imprecision. Point signal.
 
-Source: Phenomena/Gradability/Imprecision/Numerals.lean (ExactlyModifierDatum)
+Source: `Studies/Haslinger2025.lean` (ExactlyModifierDatum)
 -/
 def exactly : NumeralModifierEntry :=
   { form := "exactly"

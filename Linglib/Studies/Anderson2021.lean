@@ -642,13 +642,14 @@ theorem conversationStep_lr_zero (cg : DistributionalCG MFWorld) (u : MFUtteranc
   exact updateCG_lr_zero cg _ _ w
 
 -- ════════════════════════════════════════════════════
--- § 15. Bridge to Empirical Observations (Basic.lean)
+-- § 15. Qualitative information-sharing properties
 -- ════════════════════════════════════════════════════
 
-/-! The RSA predictions above verify properties from `Phenomena.Dialogue.Basic`:
+/-! The RSA predictions above verify the qualitative properties of
+successful information sharing:
 
 1. **Contributions informative**: S1 prefers specific utterances over null
-   (§9, `s1_null_suboptimal`), matching `contributionsInformative = true`.
+   (§9, `s1_null_suboptimal`).
 
 2. **Uncertainty decreases**: L1 concentrates probability after hearing
    an informative utterance (this section).
@@ -659,15 +660,13 @@ theorem conversationStep_lr_zero (cg : DistributionalCG MFWorld) (u : MFUtteranc
 /-- L1 concentrates probability after an informative utterance:
 L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
 uniform L1 (= 1/4), while "studyHumanity" concentrates on the 2
-German-studying worlds (= 1/2). This matches
-`Phenomena.Dialogue.successfulInfoSharing.uncertaintyDecreases`. -/
+German-studying worlds (= 1/2). -/
 theorem l1_concentrates_after_utterance :
     mfRSA.L1 .studyHumanity .nancy > mfRSA.L1 .null .nancy := by
   rsa_predict
 
 /-- Informed speakers are informative: S1 assigns higher probability
-to a true specific utterance than to null. This matches
-`Phenomena.Dialogue.successfulInfoSharing.contributionsInformative`. -/
+to a true specific utterance than to null. -/
 theorem s1_informed_speaker_is_informative :
     mfRSA.S1 () .nancy .studyHumanity > mfRSA.S1 () .nancy .null :=
   s1_null_suboptimal

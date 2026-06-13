@@ -30,7 +30,7 @@ assignment. Three main results:
 ## Integration
 
 - **Typology ↔ DM bridge**: `SemanticBasis.toGenderDimension` connects the
-  typological `SemanticBasis` (from `Phenomena/Gender/Typology.lean`) to
+  typological `SemanticBasis` (from `Studies/Corbett1991.lean`) to
   the DM `GenderDimension` (from `Morphology/DM/Categorizer.lean`),
   making explicit that the semantic core properties are the *same things*
   parameterized as feature dimensions in the structural approach.

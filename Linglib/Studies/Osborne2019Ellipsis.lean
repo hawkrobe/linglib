@@ -30,8 +30,8 @@ def toGappingEllipsisType :
   | .gapping => some .gapping
   | .stripping => some .stripping
   | .sluicing => some .sluicing
-  | .pseudogapping => none  -- No Phenomena equivalent
-  | .fragmentAnswer => none  -- No Phenomena equivalent
+  | .pseudogapping => none  -- No Steedman2000 equivalent
+  | .fragmentAnswer => none  -- No Steedman2000 equivalent
 
 /-- Gapping (from Steedman's taxonomy) is a special case of catena-ellipsis.
     The verb alone is elided — always a singleton catena. -/
