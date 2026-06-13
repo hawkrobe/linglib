@@ -26,11 +26,10 @@ through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. Validated computationally:
-`scratch/validate_duality.lean` V5/V7/V8.
+`[UPSTREAM]` candidate. Sorry-free. The bijection statement was validated by
+exhaustive small-tree computation (canonical-form multiset comparison) before
+the structural proof, including the failure for marker-sensitive `τ`.
 -/
-
-set_option autoImplicit false
 
 open RootedTree RootedTree.ConnesKreimer
 
@@ -651,11 +650,10 @@ theorem dcr_cons (τ : Planar (α ⊕ β) → β) (F : FP (α ⊕ β)) (l : List
       = (Cl τ l).map (fun q => (F, q.1, q.2)) + dcr τ S := by
   unfold dcr; rw [Multiset.cons_bind]
 
-/-! **Children-list coassoc** (LLEM3, `coassL`) and **per-child coassoc**
+/-! **Children-list coassoc** (`coassL`) and **per-child coassoc**
     (`coassA`), proved by mutual structural recursion mirroring
     `cutListSummandsG`/`augActionG`. `coassL` is the engine of the per-tree
-    node step; `coassA` is the coherence-using combinatorial core (validated
-    `scratch/validate_duality.lean` V8). -/
+    node step; `coassA` is the coherence-using combinatorial core. -/
 mutual
 theorem coassL (τ : Planar (α ⊕ β) → β) (hτ : TraceCoherentP τ) :
     ∀ cs : List (Planar (α ⊕ β)),
