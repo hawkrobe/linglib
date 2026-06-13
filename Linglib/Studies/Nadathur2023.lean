@@ -21,21 +21,22 @@ the rest of the codebase attributes to implicative verbs.
   is causally necessary and sufficient for MSG — (34a), via
   `nrv_necessary_for_msg` (Def 10b) and `nrv_sufficient_for_msg`.
 - `dare_infelicitous_for_com`, `dare_infelicitous_for_spy`: NRV is not
-  sufficient for COM / SPY ((34c), (34d)).
+  sufficient for COM / SPY ((34c), (34d)) — though it is necessary for
+  both (`nrv_necessary_for_com`, `nrv_necessary_for_spy`), completing
+  the paper's "necessary but not sufficient" verdicts.
 
 ## Implementation notes
 
-The substrate's eager-default `developDet` resolves undetermined exogenous
-vertices to their `const false` mechanism values, so the infelicity
-verdicts hold because LST defaults to false; in the paper's stepwise
-dynamics they hold because LST stays unsettled. Same verdicts, different
-route — see the parallel note at `NadathurLauer2020.Bus`.
+Theorems are stated over the strict T_D development (`developDetVtx?`,
+faithful to the paper's Definitions 4–5): the infelicity verdicts hold
+because COM and SPY stay *unsettled* while LST and BRK are unresolved —
+the paper's route. Concrete claims are discharged through the fuel
+bridge (`causallyEntails_iff_fuel` / `causallyNecessary_iff_fuel`) with
+the model's depth function as rank certificate, then `decide`.
 
-TODO: the paper also classes NRV as causally necessary (but not
-sufficient) for COM and SPY; those positive necessity claims need the
-achievability clause to resolve LST = true, which the eager-default
-`isConsistentSuper` cannot represent — the substrate gap behind the
-deferred *manage* examples (35a–d).
+TODO: the *manage* examples (35a–d) need set-valued prerequisites (the
+(35c) prerequisite is the conjunction NRV ∧ LST ∧ ¬BRK, [nadathur-2023-implicatives]
+fn. 21); `manageSem` currently takes a single prerequisite vertex.
 -/
 
 namespace Nadathur2023
@@ -51,12 +52,6 @@ open Semantics.Causation.Implicative (manageSem failSem ImplicativeClass Prerequ
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
   deriving DecidableEq, Fintype, Repr
 
-/-- Vertices in topological order: one `stepOnceDetOn` sweep settles each
-    vertex from its already-settled parents. Used by the `developDetOn`
-    bridge proofs below. -/
-def varList : List V :=
-  [.INT, .NRV, .LST, .BRK, .SEC, .MSG, .COM, .SPY]
-
 /-- Causal graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK},
     SPY←{SEC,COM}; INT, NRV, LST, BRK exogenous. -/
 def graph : CausalGraph V := ⟨fun
@@ -66,10 +61,16 @@ def graph : CausalGraph V := ⟨fun
   | .COM => {.MSG, .LST, .BRK}
   | .SPY => {.SEC, .COM}⟩
 
-instance : CausalGraph.IsDAG graph := CausalGraph.IsDAG.of_depth graph
-  (fun | .INT => 0 | .NRV => 0 | .LST => 0 | .BRK => 0
-       | .SEC => 1 | .MSG => 1 | .COM => 2 | .SPY => 3)
-  (fun {u v} h => by cases v <;> cases u <;> simp_all [graph])
+/-- Depth certificate (also the rank for the fuel bridge). -/
+def depth : V → ℕ := fun
+  | .INT => 0 | .NRV => 0 | .LST => 0 | .BRK => 0
+  | .SEC => 1 | .MSG => 1 | .COM => 2 | .SPY => 3
+
+private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
 
 /-- Dreyfus SEM, with the negative `¬BRK` precondition encoded directly in
     the COM mechanism. -/
@@ -109,57 +110,34 @@ theorem dare_semantics_via_manageSem :
     ImplicativeClass.dare.prerequisite = some Prerequisite.courage :=
   ⟨rfl, rfl⟩
 
-/-- Sufficiency presupposition (32iii) for (34a): NRV is causally
-    sufficient for MSG. -/
-theorem nrv_sufficient_for_msg :
-    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true := by
-  unfold manageSem SEM.causallySufficient developsToValue
-  exact developDet_hasValue_of_developDetOn_hasValue
-    (vs := varList) (n := 1) (by decide)
+private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
+    SEM.causallyEntails dreyfusSEM s v x ↔
+      developDetVtxFuel dreyfusSEM s 4 v = some x :=
+  SEM.causallyEntails_iff_fuel dreyfusSEM depth depth_lt (by cases v <;> decide) s x
 
+private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
+    Implicative.necessityPresup dreyfusSEM s c true e true ↔
+      SEM.causallyNecessaryFuel dreyfusSEM 4 s c true e true :=
+  SEM.causallyNecessary_iff_fuel dreyfusSEM depth depth_lt
+    (by intro v; cases v <;> decide) s c true e true
+
+/-- Sufficiency presupposition (32iii) for (34a): NRV is causally
+    sufficient (Def 10a) for MSG — neither fact is entailed by the
+    background, and adding NRV = 1 causally entails MSG = 1. -/
+theorem nrv_sufficient_for_msg :
+    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true :=
+  ⟨⟨fun h => absurd (entails_iff.mp h) (by decide),
+    fun h => absurd (entails_iff.mp h) (by decide)⟩,
+   entails_iff.mpr (by decide)⟩
+
+set_option maxRecDepth 400000 in
+set_option maxHeartbeats 2000000 in
 /-- Necessity presupposition (32i) for (34a): NRV is causally necessary
-    (Def 10b) for MSG. Precondition and achievability reduce to
-    `developDetOn` computations; the but-for clause holds because a
-    consistent supersituation can fix MSG only to its background
-    development (false), and NRV — fixed false or left to its default —
-    zeroes the INT ∧ NRV mechanism. -/
+    (Def 10b) for MSG. Decided through the fuel bridge: the
+    supersituation quantifiers range over the finite valuation space. -/
 theorem nrv_necessary_for_msg :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true := by
-  have hBgMsg : developDetVtx dreyfusSEM dreyfusBg V.MSG = false :=
-    developDetVtx_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
-  · -- precondition: background does not already develop NRV = true
-    rw [developDetVtx_of_developDetOn_hasValue (M := dreyfusSEM)
-      (vs := varList) (n := 1) (x := false) (by decide)]
-    exact Bool.false_ne_true
-  · -- precondition: background does not already develop MSG = true
-    rw [hBgMsg]; exact Bool.false_ne_true
-  · -- achievability: the extended valuation itself is the witness
-    exact ⟨dreyfusBg.extend V.NRV true, Valuation.le_refl _,
-      isConsistentSuper_self _ _,
-      developDetVtx_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)⟩
-  · -- but-for: no consistent supersituation lacking NRV = true reaches MSG = true
-    intro s' _ hnrv hcons
-    have hNrvFalse : developDetVtx dreyfusSEM s' V.NRV = false := by
-      cases hget : s'.get V.NRV with
-      | none => rw [developDetVtx_undet _ _ _ hget]; rfl
-      | some xv =>
-          rw [developDetVtx_extended _ _ _ _ hget]
-          cases xv
-          · rfl
-          · exact absurd hget hnrv
-    have hMsgFalse : developDetVtx dreyfusSEM s' V.MSG = false := by
-      cases hget : s'.get V.MSG with
-      | some xv =>
-          have hxv : xv = false := (hcons V.MSG xv (by decide) hget).symm.trans hBgMsg
-          rw [developDetVtx_extended _ _ _ _ hget, hxv]
-      | none =>
-          rw [developDetVtx_undet _ _ _ hget]
-          change (developDetVtx dreyfusSEM s' V.INT &&
-                  developDetVtx dreyfusSEM s' V.NRV) = false
-          rw [hNrvFalse, Bool.and_false]
-    rw [hMsgFalse]
-    exact Bool.false_ne_true
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true :=
+  necessary_iff.mpr (by decide)
 
 /-- (34a) *Dreyfus dared to send a message to the Germans* — felicitous:
     "NRV is the only undetermined condition for the truth of MSG: it is
@@ -172,29 +150,72 @@ theorem dare_felicitous_for_msg :
   ⟨nrv_necessary_for_msg, nrv_sufficient_for_msg⟩
 
 /-- (34c) *?/# Dreyfus dared to establish communication with the Germans* —
-    infelicitous: NRV is not causally sufficient for COM, whose conditions
-    LST and BRK remain unresolved in the background. -/
+    infelicitous: NRV is not causally sufficient for COM, which stays
+    unsettled while LST and BRK are unresolved in the background. -/
 theorem dare_infelicitous_for_com :
     failSem dreyfusSEM dreyfusBg .NRV true .COM true := by
-  unfold failSem manageSem SEM.causallySufficient developsToValue
-  intro h
-  have hFalse : (dreyfusSEM.developDet (dreyfusBg.extend V.NRV true)).hasValue V.COM false :=
-    developDet_hasValue_of_developDetOn_hasValue
-      (vs := varList) (n := 1) (by decide)
-  rw [Valuation.hasValue] at h hFalse
-  exact Bool.noConfusion (Option.some.inj (h.symm.trans hFalse))
+  rintro ⟨-, hb⟩
+  exact absurd (entails_iff.mp hb) (by decide)
 
-/-- (34d) *?/# Dreyfus dared to spy for the Germans* — infelicitous: NRV is
-    not causally sufficient for SPY (its ancestors LST, BRK, COM are all
-    undetermined). -/
+/-- (34d) *?/# Dreyfus dared to spy for the Germans* — infelicitous: NRV
+    is not causally sufficient for SPY (its conditions LST, BRK, COM are
+    all undetermined). -/
 theorem dare_infelicitous_for_spy :
     failSem dreyfusSEM dreyfusBg .NRV true .SPY true := by
-  unfold failSem manageSem SEM.causallySufficient developsToValue
-  intro h
-  have hFalse : (dreyfusSEM.developDet (dreyfusBg.extend V.NRV true)).hasValue V.SPY false :=
-    developDet_hasValue_of_developDetOn_hasValue
-      (vs := varList) (n := 1) (by decide)
-  rw [Valuation.hasValue] at h hFalse
-  exact Bool.noConfusion (Option.some.inj (h.symm.trans hFalse))
+  rintro ⟨-, hb⟩
+  exact absurd (entails_iff.mp hb) (by decide)
+
+set_option maxRecDepth 400000 in
+set_option maxHeartbeats 2000000 in
+/-- (34c), necessity half: "⟨NRV,1⟩ is causally necessary but not
+    sufficient for COM" — achievability settles the exogenous LST = 1,
+    BRK = 0; every consistent path to COM = 1 runs through NRV = 1. Was
+    unprovable under the eager-default dynamics (achievability could
+    never resolve an exogenous unknown). -/
+theorem nrv_necessary_for_com :
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true :=
+  necessary_iff.mpr (by decide)
+
+set_option maxRecDepth 400000 in
+set_option maxHeartbeats 2000000 in
+/-- (34d), necessity half: NRV is causally necessary but not sufficient
+    for SPY ("BRK, LST, COM ∈ Anc(SPY) are all undetermined"). -/
+theorem nrv_necessary_for_spy :
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true :=
+  necessary_iff.mpr (by decide)
+
+/-- (34c)/(34d) complete profiles: NRV is causally **necessary but not
+    sufficient** for COM and for SPY — the paper's exact §6.1.1 verdicts,
+    as single statements. -/
+theorem nrv_necessary_not_sufficient_for_com_and_spy :
+    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true ∧
+     failSem dreyfusSEM dreyfusBg .NRV true .COM true) ∧
+    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true ∧
+     failSem dreyfusSEM dreyfusBg .NRV true .SPY true) :=
+  ⟨⟨nrv_necessary_for_com, dare_infelicitous_for_com⟩,
+   ⟨nrv_necessary_for_spy, dare_infelicitous_for_spy⟩⟩
+
+/-- Fact B, negative half, at (34b): *Dreyfus did not dare to send a
+    message* — no consistent completion of the negative-assertion context
+    realizes MSG. Instantiates
+    `Implicative.no_complement_of_negative_assertion` at the Dreyfus
+    model. -/
+theorem no_msg_without_nerve :
+    ∀ s', SEM.IsExogenousSettlement dreyfusSEM (dreyfusBg.extend .NRV false) s' →
+      s'.get .MSG = none → ¬ SEM.causallyEntails dreyfusSEM s' .MSG true :=
+  Implicative.no_complement_of_negative_assertion dreyfusSEM
+    (by decide) (by decide) (by decide) nrv_necessary_for_msg
+
+/-- Fact C at (34a): in the Dreyfus context, a consistent completion
+    realizes MSG exactly when Dreyfus has the nerve — the prerequisite is
+    sufficient and necessary, so the *dare* claim's truth value tracks
+    NRV across all consistent resolutions. -/
+theorem msg_iff_nerve :
+    ∀ s', SEM.IsExogenousSettlement dreyfusSEM dreyfusBg s' →
+      s'.get .MSG = none →
+      (SEM.causallyEntails dreyfusSEM s' .MSG true ↔
+       SEM.causallyEntails dreyfusSEM s' .NRV true) :=
+  Implicative.complement_iff_prerequisite dreyfusSEM
+    (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
 
 end Nadathur2023

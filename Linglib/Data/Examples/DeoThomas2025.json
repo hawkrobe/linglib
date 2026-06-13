@@ -1,0 +1,338 @@
+[
+  {
+    "id": "deothomas2025_complement_exclusion_vacation",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.1 — complement exclusion"},
+    "language": "stan1293",
+    "primaryText": "She just went to Spain and Portugal",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She just went to Spain and Portugal",
+    "context": "Where did Mary go for her vacation this year?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She only went to Spain and Portugal", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "complementExclusion"],
+      ["only_ok", "true"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean complementExclusion_vacation. Inference: Mary did not go to any country other than Spain and Portugal. The alternatives field carries the #only substitution test (here felicitous)."
+  },
+  {
+    "id": "deothomas2025_rank_order_intern",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.1 — rank order"},
+    "language": "stan1293",
+    "primaryText": "She is just an intern",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She is just an intern",
+    "context": "What is Mary's job at the hospital?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "She is only an intern", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "rankOrder"],
+      ["only_ok", "true"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean rankOrder_intern. Inference: Mary is nothing more senior than an intern."
+  },
+  {
+    "id": "deothomas2025_emphatic_amazing",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.2 — emphatic"},
+    "language": "stan1293",
+    "primaryText": "The food was just amazing!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The food was just amazing!",
+    "context": "How good was the food?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#The food was only amazing!", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean emphatic_amazing. Inference: the degree of goodness exceeds contextual expectations."
+  },
+  {
+    "id": "deothomas2025_emphatic_enormous",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.2 — emphatic"},
+    "language": "stan1293",
+    "primaryText": "The Empire State Building is just gigantic!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Empire State Building is just gigantic!",
+    "context": "How big is the Empire State Building?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#The Empire State Building is only gigantic!", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "emphatic"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean emphatic_enormous. Inference: the size exceeds what the speaker expected to be relevant."
+  },
+  {
+    "id": "deothomas2025_precisifying_eq_full",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (equality)"},
+    "language": "stan1293",
+    "primaryText": "The tank is just full",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The tank is just full",
+    "context": "How full is the tank?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#The tank is only full", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingEquality"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_eq_full. Inference: the tank is full at the highest level of precision (= exactly full)."
+  },
+  {
+    "id": "deothomas2025_precisifying_prox_older",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (proximity)"},
+    "language": "stan1293",
+    "primaryText": "Fafen is just older than Siri",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fafen is just older than Siri",
+    "context": "How much older than Siri is Fafen?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#Fafen is only older than Siri", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_prox_older. Inference: Fafen is older by the smallest relevant amount (= barely/slightly)."
+  },
+  {
+    "id": "deothomas2025_precisifying_temporal",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.3 — precisifying (temporal proximity)"},
+    "language": "stan1293",
+    "primaryText": "My sister just got here",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "My sister just got here",
+    "context": "When did your sister get here?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#My sister only got here", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "precisifyingProximity"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean precisifying_temporal. Inference: the arrival was at the finest temporal granularity (= just now)."
+  },
+  {
+    "id": "deothomas2025_minsuff_cat",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.4 — minimal sufficiency"},
+    "language": "stan1293",
+    "primaryText": "Just one cat will make Patrick happy",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Just one cat will make Patrick happy",
+    "context": "What is sufficient for Patrick to be happy?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#Only one cat will make Patrick happy", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "minimalSufficiency"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean minSuff_cat. Inference: one cat is causally sufficient; nothing less is needed."
+  },
+  {
+    "id": "deothomas2025_minsuff_gpa",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.4 — minimal sufficiency"},
+    "language": "stan1293",
+    "primaryText": "Just a 3.5 GPA is sufficient for Jason to stay in the program",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Just a 3.5 GPA is sufficient for Jason to stay in the program",
+    "context": "What GPA is sufficient to stay in the program?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#Only a 3.5 GPA is sufficient for Jason to stay in the program", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "minimalSufficiency"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean minSuff_gpa. Inference: 3.5 is the minimum sufficient GPA; nothing less works."
+  },
+  {
+    "id": "deothomas2025_unexplanatory_lamp",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.5 — unexplanatory"},
+    "language": "stan1293",
+    "primaryText": "I was sitting there and the lamp just broke!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I was sitting there and the lamp just broke!",
+    "context": "Why is the lamp broken?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#I was sitting there and the lamp only broke!", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unexplanatory"],
+      ["only_ok", "false"],
+      ["context_type", "qualityFail"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unexplanatory_lamp. Inference: the speaker can identify no explanation for the lamp's breaking."
+  },
+  {
+    "id": "deothomas2025_unexplanatory_mangoes",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.5 — unexplanatory"},
+    "language": "stan1293",
+    "primaryText": "I just had extra mangoes",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I just had extra mangoes",
+    "context": "Why did you make mango-mousse cake?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#I only had extra mangoes", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unexplanatory"],
+      ["only_ok", "false"],
+      ["context_type", "qualityFail"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unexplanatory_mangoes. Inference: there is no stronger explanation than having extra mangoes."
+  },
+  {
+    "id": "deothomas2025_unelaboratory_dog",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "language": "stan1293",
+    "primaryText": "Fido is just a dog",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fido is just a dog",
+    "context": "What kind of dog is Fido?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#Fido is only a dog", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unelaboratory"],
+      ["only_ok", "false"],
+      ["context_type", "relevanceFail"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_dog. Inference: no further elaboration is needed or relevant."
+  },
+  {
+    "id": "deothomas2025_unelaboratory_proton",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "language": "stan1293",
+    "primaryText": "A proton is just a hydrogen atom without an electron",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A proton is just a hydrogen atom without an electron",
+    "context": "What is a proton?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#A proton is only a hydrogen atom without an electron", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unelaboratory"],
+      ["only_ok", "false"],
+      ["context_type", "relevanceFail"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_proton. Inference: no more elaboration is needed to define a proton."
+  },
+  {
+    "id": "deothomas2025_unelaboratory_mad",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.6 — unelaboratory"},
+    "language": "stan1293",
+    "primaryText": "I am just mad",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I am just mad",
+    "context": "Why are you mad?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#I am only mad", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "unelaboratory"],
+      ["only_ok", "false"],
+      ["context_type", "relevanceFail"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean unelaboratory_mad. Inference: the speaker is not mad at anyone in particular."
+  },
+  {
+    "id": "deothomas2025_counterexp_texting",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.7 — counterexpectational"},
+    "language": "stan1293",
+    "primaryText": "He started seeing an ex-girlfriend and just stopped texting me",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He started seeing an ex-girlfriend and just stopped texting me",
+    "context": "What happened to your relationship?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#He started seeing an ex-girlfriend and only stopped texting me", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "counterexpectational"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean counterexp_texting. Inference: the subject referent failed to adhere to norms."
+  },
+  {
+    "id": "deothomas2025_counterexp_wafer",
+    "source": {"bibkey": "deo-thomas-2025", "paperLabel": "UNVERIFIED §2.7 — counterexpectational"},
+    "language": "stan1293",
+    "primaryText": "The priest gave Charlotte her communion wafer and she just ate it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The priest gave Charlotte her communion wafer and she just ate it!",
+    "context": "What happened at the church?",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "#The priest gave Charlotte her communion wafer and she only ate it!", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["flavor", "counterexpectational"],
+      ["only_ok", "false"],
+      ["context_type", "answerable"]
+    ],
+    "comment": "Migrated from Phenomena/Focus/Exclusives.lean counterexp_wafer. Inference: Charlotte behaved in a way inconsistent with Catholic norms."
+  }
+]
