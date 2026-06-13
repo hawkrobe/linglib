@@ -1355,14 +1355,11 @@ import Linglib.Studies.Funakoshi2016
 import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
-import Linglib.Phenomena.Focus.Basic
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.Roberts2012
 import Linglib.Studies.Rooth1992
-import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
-import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Studies.Ahn2015
 import Linglib.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
@@ -2842,6 +2839,10 @@ import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Data.Examples.Levin1993
 import Linglib.Data.Examples.Anderson2006
+import Linglib.Data.Examples.Rooth1992
+import Linglib.Data.Examples.DeoThomas2025
+import Linglib.Data.Examples.Thomas2026
+import Linglib.Data.Examples.BergenGoodman2015
 import Linglib.Data.Examples.Kubota2026
 import Linglib.Data.Examples.VonFintelGillies2010
 import Linglib.Data.Examples.VonFintelGillies2021

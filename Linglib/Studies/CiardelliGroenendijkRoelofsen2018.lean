@@ -90,7 +90,7 @@ already implements the paper).
   is at the meaning side (`Question W`); the syntactic translation
   layer is not formalised here.
 * **Ch 6** Disjunction, clause typing, intonation: partial coverage in
-  `Semantics/Mood/` and `Phenomena/Focus/`.
+  `Semantics/Mood/` and the focus studies (`Studies/Rooth1992.lean`).
 * **Ch 7** Conditionals: the substrate exposes `⇨` via the
   `HeytingAlgebra` instance; [ciardelli-groenendijk-roelofsen-2018]
   Ch 7's full empirical analysis lives in

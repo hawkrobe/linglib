@@ -40,7 +40,7 @@ noncomputable def causeSem {V : Type*} {α : V → Type*}
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (background : Valuation α)
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) : Prop :=
-  (M.developDet (background.extend cause xC)).hasValue effect xE ∧
+  SEM.causallyEntails M (background.extend cause xC) effect xE ∧
   SEM.causallyNecessary M background cause xC effect xE
 
 noncomputable instance {V : Type*} {α : V → Type*}

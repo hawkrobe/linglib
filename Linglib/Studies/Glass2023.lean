@@ -139,7 +139,8 @@ theorem glass_nl_diverge_on_bus :
     causeSemGlass NadathurLauer2020.Bus.busSEM NadathurLauer2020.Bus.s_b .Tr .Bs ∧
     ¬ Necessity.causeSem NadathurLauer2020.Bus.busSEM NadathurLauer2020.Bus.s_b
         .Tr true .Bs true :=
-  ⟨NadathurLauer2020.Bus.make_felicitous_for_bus,
+  ⟨SEM.causallySufficient_of_causallyEntails
+      NadathurLauer2020.Bus.make_felicitous_for_bus.2,
    NadathurLauer2020.Bus.cause_infelicitous_for_bus⟩
 
 end Glass2023
