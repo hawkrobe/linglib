@@ -144,6 +144,110 @@ theorem augActionG_eq_some
   rw [augActionG_eq, h]
   rw [Multiset.singleton_add]
 
+/-! ### Weight conservation under generic cuts
+
+For extraction policies whose replacement entries carry unit total
+weight (Δ^c's single trace leaf, `extractC`), every cut summand
+conserves vertices up to one replacement vertex per crown component:
+crown weight plus remainder weight equals the original weight plus the
+crown's component count. At the edge level this is exact conservation —
+the grading of MCB Lemma 1.2.10 (`TraceNonplanar.lean`). -/
+
+private theorem weightList_append (l₁ l₂ : List (Planar α)) :
+    Planar.weightList (l₁ ++ l₂) =
+      Planar.weightList l₁ + Planar.weightList l₂ := by
+  induction l₁ with
+  | nil => show Planar.weightList l₂ = 0 + Planar.weightList l₂; omega
+  | cons t ts ih =>
+    show Planar.weight t + Planar.weightList (ts ++ l₂) =
+      Planar.weight t + Planar.weightList ts + Planar.weightList l₂
+    rw [ih]
+    omega
+
+mutual
+
+/-- Cut summands conserve weight (tree level): crown weight plus trunk
+    weight equals the tree weight plus one replacement vertex per crown
+    component. Requires unit-weight replacement entries. -/
+theorem cutSummandsG_weight
+    (extract : Planar α → Option (List (Planar α)))
+    (hext : ∀ t r, extract t = some r → Planar.weightList r = 1) :
+    ∀ (t : Planar α), ∀ p ∈ cutSummandsG extract t,
+      (Multiset.map Planar.weight p.1).sum + Planar.weight p.2 =
+        Planar.weight t + Multiset.card p.1
+  | .node a cs => by
+    intro p hp
+    rw [cutSummandsG_node] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    have h := cutListSummandsG_weight extract hext cs q hq
+    show (Multiset.map Planar.weight q.1).sum +
+        (1 + Planar.weightList q.2) =
+      (1 + Planar.weightList cs) + Multiset.card q.1
+    omega
+
+/-- Mutual aux: weight conservation for children-list cut summands. -/
+theorem cutListSummandsG_weight
+    (extract : Planar α → Option (List (Planar α)))
+    (hext : ∀ t r, extract t = some r → Planar.weightList r = 1) :
+    ∀ (cs : List (Planar α)), ∀ q ∈ cutListSummandsG extract cs,
+      (Multiset.map Planar.weight q.1).sum + Planar.weightList q.2 =
+        Planar.weightList cs + Multiset.card q.1
+  | [] => by
+    intro q hq
+    rw [cutListSummandsG_nil] at hq
+    obtain rfl := Multiset.mem_singleton.mp hq
+    show (Multiset.map Planar.weight 0).sum + Planar.weightList [] =
+      Planar.weightList [] + Multiset.card 0
+    rfl
+  | t :: ts => by
+    intro q hq
+    rw [cutListSummandsG_cons] at hq
+    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
+    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
+    have h1 := augActionG_weight extract hext t pr.1 ha
+    have h2 := cutListSummandsG_weight extract hext ts pr.2 hq'
+    show (Multiset.map Planar.weight (pr.1.1 + pr.2.1)).sum +
+        Planar.weightList (pr.1.2 ++ pr.2.2) =
+      (Planar.weight t + Planar.weightList ts) +
+        Multiset.card (pr.1.1 + pr.2.1)
+    rw [Multiset.map_add, Multiset.sum_add, weightList_append,
+        Multiset.card_add]
+    omega
+
+/-- Mutual aux: weight conservation for per-child actions. -/
+theorem augActionG_weight
+    (extract : Planar α → Option (List (Planar α)))
+    (hext : ∀ t r, extract t = some r → Planar.weightList r = 1) :
+    ∀ (t : Planar α), ∀ a ∈ augActionG extract t,
+      (Multiset.map Planar.weight a.1).sum + Planar.weightList a.2 =
+        Planar.weight t + Multiset.card a.1
+  | t => by
+    intro a ha
+    rw [augActionG_eq] at ha
+    rcases Multiset.mem_add.mp ha with h | h
+    · cases hex : extract t with
+      | none =>
+        rw [hex] at h
+        exact absurd h (Multiset.notMem_zero a)
+      | some r =>
+        rw [hex] at h
+        obtain rfl := Multiset.mem_singleton.mp h
+        have hr := hext t r hex
+        show (Multiset.map Planar.weight {t}).sum + Planar.weightList r =
+          Planar.weight t + Multiset.card {t}
+        rw [Multiset.map_singleton, Multiset.sum_singleton, hr,
+            Multiset.card_singleton]
+    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
+      have h := cutSummandsG_weight extract hext t p hp
+      show (Multiset.map Planar.weight p.1).sum +
+          (Planar.weight p.2 + Planar.weightList []) =
+        Planar.weight t + Multiset.card p.1
+      show (Multiset.map Planar.weight p.1).sum +
+          (Planar.weight p.2 + 0) = Planar.weight t + Multiset.card p.1
+      omega
+
+end
+
 /-! ### Sanity: cuts of a leaf are just the empty cut -/
 
 section Tests
