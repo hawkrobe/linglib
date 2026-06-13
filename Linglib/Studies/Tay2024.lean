@@ -30,7 +30,7 @@ arguments but **none** of V1's.  This predicts:
    or source); pure causers are ungrammatical — derived from data via
    `CcfRole.isV1Participant`, not stipulated
 4. **V-V morphology**: `MorphWord.compound` captures the binary V1-V2 structure
-5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffectOn`)
+5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffect`)
 6. **Phase complements**: grammaticalized V2 subset with fixed `CoSType`
    (standard Mandarin grammar, supplementing the thesis's V-V analysis)
 
@@ -345,16 +345,20 @@ Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
 Direct causation = single edge, no intermediate with an independent
 energy source. This is the same tightness constraint identified for
 English resultatives by [levin-2019] — formalized via the canonical
-`completesForEffectOn` predicate from `Semantics.Causation.SEM.Counterfactual`. -/
+`completesForEffect` predicate from `Semantics.Causation.CCSelection`. -/
 
 open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open BoolSEM (causallySufficientOn completesForEffectOn)
+open Semantics.Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
 
 namespace Dasi
 
 inductive V | hitting | death deriving DecidableEq, Fintype, Repr
 def varList : List V := [.hitting, .death]
 def graph : CausalGraph V := ⟨fun | .hitting => ∅ | .death => {.hitting}⟩
+
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .hitting => 0 | .death => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 /-- dǎ-sǐ "hit-die": hitting → death. Direct causation. -/
 noncomputable def model : BoolSEM V :=
@@ -363,19 +367,20 @@ noncomputable def model : BoolSEM V :=
       | .hitting => const (G := graph) false
       | .death => deterministic (fun ρ => ρ ⟨.hitting, by simp [graph]⟩) }
 
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
     | .hitting => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .death => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem sufficient :
-    causallySufficientOn model varList Valuation.empty 1 .hitting .death := by
-  unfold causallySufficientOn; rfl
+    BoolSEM.causallySufficient model Valuation.empty .hitting .death :=
+  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
 
 theorem tight :
-    completesForEffectOn model varList Valuation.empty 1 .hitting .death := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .hitting true false .death true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end Dasi
 
@@ -385,6 +390,10 @@ inductive V | crying | tired deriving DecidableEq, Fintype, Repr
 def varList : List V := [.crying, .tired]
 def graph : CausalGraph V := ⟨fun | .crying => ∅ | .tired => {.crying}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .crying => 0 | .tired => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 /-- kū-lèi "cry-tired": crying → tired. Subject-oriented, direct. -/
 noncomputable def model : BoolSEM V :=
   { graph := graph
@@ -392,15 +401,16 @@ noncomputable def model : BoolSEM V :=
       | .crying => const (G := graph) false
       | .tired => deterministic (fun ρ => ρ ⟨.crying, by simp [graph]⟩) }
 
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
     | .crying => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .tired => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem tight :
-    completesForEffectOn model varList Valuation.empty 1 .crying .tired := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .crying true false .tired true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end Kulei
 
@@ -410,6 +420,10 @@ inductive V | pushing | openV deriving DecidableEq, Fintype, Repr
 def varList : List V := [.pushing, .openV]
 def graph : CausalGraph V := ⟨fun | .pushing => ∅ | .openV => {.pushing}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .pushing => 0 | .openV => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 /-- tuī-kāi "push-open": pushing → open. Mandarin parallel to
     English "push X open". -/
 noncomputable def model : BoolSEM V :=
@@ -418,15 +432,16 @@ noncomputable def model : BoolSEM V :=
       | .pushing => const (G := graph) false
       | .openV => deterministic (fun ρ => ρ ⟨.pushing, by simp [graph]⟩) }
 
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
     | .pushing => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .openV => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem tight :
-    completesForEffectOn model varList Valuation.empty 1 .pushing .openV := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .pushing true false .openV true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end Tuikai
 
@@ -499,8 +514,7 @@ theorem vv_compound_become :
 
 theorem vv_compound_architecture :
     -- Tight causation (direct, single edge)
-    completesForEffectOn Dasi.model Dasi.varList
-      Valuation.empty 1 .hitting .death ∧
+    completesForEffect Dasi.model Valuation.empty .hitting true false .death true ∧
     -- Morphological compound
     dasi_morph.IsCompound ∧
     -- Subject-oriented resultatives exist (no DOR)

@@ -61,15 +61,37 @@ def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α := fun w =>
   if w = v then none else s w
 
 /-- Information ordering: every value defined in `s₁` matches in `s₂`. -/
-def le [DecidableValuation α] (s₁ s₂ : Valuation α) : Prop :=
+def le (s₁ s₂ : Valuation α) : Prop :=
   ∀ v x, s₁.hasValue v x → s₂.hasValue v x
 
-theorem le_refl [DecidableValuation α] (s : Valuation α) : s.le s :=
+theorem le_refl (s : Valuation α) : s.le s :=
   fun _ _ h => h
 
-theorem le_trans [DecidableValuation α] {s₁ s₂ s₃ : Valuation α}
+theorem le_trans {s₁ s₂ s₃ : Valuation α}
     (h₁ : s₁.le s₂) (h₂ : s₂.le s₃) : s₁.le s₃ :=
   fun v x h => h₂ v x (h₁ v x h)
+
+theorem le_antisymm {s₁ s₂ : Valuation α}
+    (h₁ : s₁.le s₂) (h₂ : s₂.le s₁) : s₁ = s₂ := by
+  funext v
+  show s₁.get v = s₂.get v
+  cases h : s₁.get v with
+  | some x => exact (h₁ v x h).symm
+  | none =>
+      cases h' : s₂.get v with
+      | none => rfl
+      | some y =>
+          have hy : s₁.get v = some y := h₂ v y h'
+          rw [h] at hy
+          simp at hy
+
+/-- The information order is a partial order (mathlib `Finset`-style
+    instance; `s₁.le s₂` and `s₁ ≤ s₂` are definitionally equal). -/
+instance : PartialOrder (Valuation α) where
+  le s₁ s₂ := s₁.le s₂
+  le_refl := le_refl
+  le_trans _ _ _ := le_trans
+  le_antisymm _ _ := le_antisymm
 
 @[simp] theorem extend_get_same [DecidableEq V]
     (s : Valuation α) (v : V) (x : α v) :
@@ -82,7 +104,7 @@ theorem extend_get_ne [DecidableEq V]
   simp [extend, get, h]
 
 /-- Extending at an undetermined vertex only adds information. -/
-theorem le_extend [DecidableEq V] [DecidableValuation α] {s : Valuation α}
+theorem le_extend [DecidableEq V] {s : Valuation α}
     {v : V} (x : α v) (h : s.get v = none) : s.le (s.extend v x) := by
   intro w y hw
   by_cases hwv : w = v

@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Semantics.Causation.CCSelection
 
 /-!
 # A Communication-First Account of Explanation
@@ -64,7 +65,7 @@ predictions:
 namespace HardingGerstenbergIcard2025
 
 open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open BoolSEM (causallySufficientOn completesForEffectOn manipulates)
+open BoolSEM (manipulates)
 
 /-! ## §3 Substrate: ExplanationGame -/
 
@@ -77,10 +78,6 @@ structure ExplanationGame (V W : Type*)
   modelOf : W → BoolSEM V
   /-- World w → its exogenous context (a partial valuation over V). -/
   contextOf : W → Valuation (fun _ : V => Bool)
-  /-- Vertex list for `developDetOn` (typically all of V in some order). -/
-  vs : List V
-  /-- Iteration depth for `developDetOn` (typically `Fintype.card V`). -/
-  n : Nat
   /-- Each world's model is deterministic. -/
   isDet : ∀ w, SEM.IsDeterministic (modelOf w)
   /-- Each world's graph is acyclic. -/
@@ -104,21 +101,19 @@ Milk-Theft Example 4). -/
 /-- Halpern-Pearl-style actual causation, simplified to existential
     Boolean witness. AC1: `cause` and `effect` both fired at `(M, u)`.
     AC2 (witness form): some valuation `s'` makes `cause` but-for
-    `effect` via `BoolSEM.completesForEffectOn`. -/
+    `effect` via `CCSelection.completesForEffect`. -/
 noncomputable def actualCause {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [SEM.IsDeterministic M]
-    (vs : List V) (u : Valuation (fun _ : V => Bool)) (n : Nat)
-    (cause effect : V) : Prop :=
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (u : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   u.hasValue cause true ∧
-  (developDetOn M vs n u).hasValue effect true ∧
+  (M.developDet u).hasValue effect true ∧
   ∃ s' : Valuation (fun _ : V => Bool),
-    completesForEffectOn M vs s' n cause effect
+    CCSelection.completesForEffect M s' cause true false effect true
 
 noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [SEM.IsDeterministic M]
-    (vs : List V) (u : Valuation (fun _ : V => Bool)) (n : Nat)
-    (cause effect : V) :
-    Decidable (actualCause M vs u n cause effect) := Classical.dec _
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (u : Valuation (fun _ : V => Bool)) (cause effect : V) :
+    Decidable (actualCause M u cause effect) := Classical.dec _
 
 /-! ### Messages and meaning -/
 
@@ -137,7 +132,7 @@ noncomputable def ExplanationGame.meaning (G : ExplanationGame V W)
     (m : Message V) (w : W) : Prop :=
   haveI := G.isDet w
   haveI := G.isDag w
-  actualCause (G.modelOf w) G.vs (G.contextOf w) G.n m.cause G.factVar
+  actualCause (G.modelOf w) (G.contextOf w) m.cause G.factVar
 
 noncomputable instance ExplanationGame.meaning_decidable
     (G : ExplanationGame V W) (m : Message V) (w : W) :
@@ -319,8 +314,6 @@ instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
 noncomputable def game : ExplanationGame V World where
   modelOf := modelOf
   contextOf _ := lateBg
-  vs := lmVarList
-  n := 1
   isDet w := inferInstance
   isDag w := inferInstance
   prior _ := 1  -- uniform
@@ -361,31 +354,38 @@ theorem B_manipulates_in_mConj : game.worldManipulates V.B .mConj := by
     T = 1 is an actual cause of C = 1 there. -/
 theorem msg_T_true_in_mT : game.meaning ⟨V.T⟩ .mT := by
   unfold ExplanationGame.meaning actualCause
-  refine ⟨?_, ?_, lateBg, ?_, ?_⟩
-  · decide                              -- AC1a: lateBg has T = true
-  · decide                              -- AC1b: develops C = true
-  · unfold causallySufficientOn; rfl    -- witness: sufficiency at lateBg
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+  refine ⟨by decide, ?_, lateBg, ?_⟩
+  · -- AC1b: develops C = true
+    show (semT.developDet lateBg).hasValue V.C true
+    exact SEM.developDet_hasValue_of_developDetOn_hasValue
+      (vs := lmVarList) (n := 1) (by decide)
+  · -- witness: but-for completion at lateBg
+    show CCSelection.completesForEffect semT lateBg V.T true false V.C true
+    exact CCSelection.completesForEffect_of_developDetOn lmVarList 1
+      (by decide) (by decide)
 
 /-- The "because T" message is also true at M_∧: T = 1 is an actual
     cause of C = 1 (with B = 1 fixed by lateBg, flipping T flips C). -/
 theorem msg_T_true_in_mConj : game.meaning ⟨V.T⟩ .mConj := by
   unfold ExplanationGame.meaning actualCause
-  refine ⟨?_, ?_, lateBg, ?_, ?_⟩
-  · decide
-  · decide
-  · unfold causallySufficientOn; rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+  refine ⟨by decide, ?_, lateBg, ?_⟩
+  · show (semConj.developDet lateBg).hasValue V.C true
+    exact SEM.developDet_hasValue_of_developDetOn_hasValue
+      (vs := lmVarList) (n := 1) (by decide)
+  · show CCSelection.completesForEffect semConj lateBg V.T true false V.C true
+    exact CCSelection.completesForEffect_of_developDetOn lmVarList 1
+      (by decide) (by decide)
 
 /-- B is not but-for C in M_T even at the actual context `lateBg`:
     flipping B from 1 to 0 leaves C at `true`, since semT's mechanism
-    for C reads only T. (The full `¬ meaning ⟨B⟩ mT` claim — that NO
-    witness valuation makes B but-for C — requires a witness-irrelevance
-    lemma about C's parent set; deferred.) -/
+    for C reads only T — the but-for half of `completesForEffect` fails.
+    (The full `¬ meaning ⟨B⟩ mT` claim — that NO witness valuation makes
+    B but-for C — requires a witness-irrelevance lemma about C's parent
+    set; deferred.) -/
 theorem B_not_butFor_at_lateBg :
-    ¬ completesForEffectOn semT lmVarList lateBg 1 V.B V.C := by
-  rintro ⟨_, hNotBut⟩
-  apply hNotBut; rfl
+    ¬ CCSelection.completesForEffect semT lateBg V.B true false V.C true :=
+  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := lmVarList) (n := 1) (by decide))
 
 end LateMeeting
 
@@ -493,8 +493,6 @@ instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
 noncomputable def game : ExplanationGame V World where
   modelOf := modelOf
   contextOf _ := roofBg
-  vs := roofVarList
-  n := 1
   isDet w := inferInstance
   isDag w := inferInstance
   prior _ := 1
@@ -601,8 +599,6 @@ instance (w : World) : CausalGraph.IsDAG (modelOf w).graph := by
 noncomputable def game : ExplanationGame V World where
   modelOf := modelOf
   contextOf := contextOf
-  vs := milkVarList
-  n := 1
   isDet w := inferInstance
   isDag w := inferInstance
   prior _ := 1
@@ -643,22 +639,26 @@ theorem Da_doesnt_manipulate_in_uBoth : ¬ game.worldManipulates V.Da .uBoth := 
     M (sole cause; lateBg-as-witness suffices). -/
 theorem msg_Ch_true_in_uC : game.meaning ⟨V.Ch⟩ .uC := by
   unfold ExplanationGame.meaning actualCause
-  refine ⟨?_, ?_, bgC, ?_, ?_⟩
-  · decide
-  · decide
-  · unfold causallySufficientOn; rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+  refine ⟨by decide, ?_, bgC, ?_⟩
+  · show (semDisj.developDet bgC).hasValue V.M true
+    exact SEM.developDet_hasValue_of_developDetOn_hasValue
+      (vs := milkVarList) (n := 1) (by decide)
+  · show CCSelection.completesForEffect semDisj bgC V.Ch true false V.M true
+    exact CCSelection.completesForEffect_of_developDetOn milkVarList 1
+      (by decide) (by decide)
 
 /-- HP-style actual cause via off-actual witness: Charlie IS an actual
     cause of M at u_{C,D} despite not being but-for there. Witness:
     `bgC` (sets Da = false off-actual), where Charlie becomes but-for. -/
 theorem msg_Ch_true_in_uBoth : game.meaning ⟨V.Ch⟩ .uBoth := by
   unfold ExplanationGame.meaning actualCause
-  refine ⟨?_, ?_, bgC, ?_, ?_⟩
-  · decide
-  · decide
-  · unfold causallySufficientOn; rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+  refine ⟨by decide, ?_, bgC, ?_⟩
+  · show (semDisj.developDet bgBoth).hasValue V.M true
+    exact SEM.developDet_hasValue_of_developDetOn_hasValue
+      (vs := milkVarList) (n := 1) (by decide)
+  · show CCSelection.completesForEffect semDisj bgC V.Ch true false V.M true
+    exact CCSelection.completesForEffect_of_developDetOn milkVarList 1
+      (by decide) (by decide)
 
 end MilkTheft
 

@@ -1,4 +1,5 @@
 import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Semantics.Causation.CCSelection
 
 /-!
 # [bar-asher-siegal-2026]: Causation and Causal Relations
@@ -35,8 +36,8 @@ when an alternative explanation exists.
 Member-mode (Def 10b causally-necessary) divergence between *open* and
 *cause* awaits substrate support for multi-parent disjunctive mechanisms.
 
-Sufficiency/completion predicates are imported from
-`Semantics.Causation.BoolSEM` (`causallySufficientOn`, `completesForEffectOn`)
+Sufficiency/completion predicates are imported from the substrate
+(`BoolSEM.causallySufficient`, `CCSelection.completesForEffect`)
 rather than re-stipulated locally — see CLAUDE.md "Theory-hub denotation
 as study-file constraint."
 -/
@@ -71,6 +72,28 @@ def manualGraph : CausalGraph V := ⟨fun
   | .electricity => ∅
   | .circuit => ∅
   | .doorOpens => {.handle, .lock}⟩
+
+/-- Depth certificate for the full graph. -/
+def fullDepth : V → ℕ := fun
+  | .circuit => 1 | .doorOpens => 2 | _ => 0
+
+private lemma fullDepth_lt : ∀ {u v : V},
+    u ∈ fullGraph.parents v → fullDepth u < fullDepth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG fullGraph :=
+  CausalGraph.IsDAG.of_depth fullGraph fullDepth (fun h => fullDepth_lt h)
+
+/-- Depth certificate for the manual graph. -/
+def manualDepth : V → ℕ := fun
+  | .doorOpens => 1 | _ => 0
+
+private lemma manualDepth_lt : ∀ {u v : V},
+    u ∈ manualGraph.parents v → manualDepth u < manualDepth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+instance : CausalGraph.IsDAG manualGraph :=
+  CausalGraph.IsDAG.of_depth manualGraph manualDepth (fun h => manualDepth_lt h)
 
 /-- Door-opens mechanism (full model): manual OR automatic, both need ¬lock. -/
 noncomputable def doorOpensFullMech : Mechanism fullGraph (fun _ => Bool) .doorOpens :=
@@ -126,43 +149,45 @@ noncomputable instance : SEM.IsDeterministic manualModel where
     | .circuit => inferInstanceAs (Mechanism.IsDeterministic (const _))
     | .doorOpens => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
+instance : CausalGraph.IsDAG fullModel.graph :=
+  inferInstanceAs (CausalGraph.IsDAG fullGraph)
+
+instance : CausalGraph.IsDAG manualModel.graph :=
+  inferInstanceAs (CausalGraph.IsDAG manualGraph)
+
 /-- Background: lock disengaged. -/
 def unlocked : Valuation (fun _ : V => Bool) :=
   Valuation.empty.extend .lock false
 
-open BoolSEM (causallySufficientOn completesForEffectOn)
-
+open Semantics.Causation.CCSelection in
 /-- **Manual-only model**: handle completes the sufficient set for
     doorOpens (full *open* and *cause* felicity, per [bar-asher-siegal-2026]).
     Both completion and member modes succeed because there's no
     alternative pathway. -/
 theorem handle_completes_manual :
-    completesForEffectOn manualModel varList unlocked 1 .handle .doorOpens := by
-  refine ⟨?_, ?_⟩
-  · unfold causallySufficientOn; rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect manualModel unlocked .handle true false .doorOpens true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
+open Semantics.Causation.CCSelection in
 /-- **Full model with handle alone**: handle completes the manual
     sufficient set, satisfying *open*-style completion CC-selection.
     The automatic pathway doesn't fire because button=false in `unlocked`. -/
 theorem handle_completes_full :
-    completesForEffectOn fullModel varList unlocked 2 .handle .doorOpens := by
-  refine ⟨?_, ?_⟩
-  · unfold causallySufficientOn; rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect fullModel unlocked .handle true false .doorOpens true :=
+  completesForEffect_of_developDetOn varList 2 (by decide) (by decide)
 
+open Semantics.Causation.CCSelection in
 /-- **Overdetermination in the full model**: when both pathways are
     independently activated (button=true, electricity=true alongside
     handle=true), removing handle still leaves doorOpens true via the
-    automatic pathway — completion CC-selection FAILS for handle.
-    This captures [bar-asher-siegal-2026]'s point that *open* is
-    infelicitous under overdetermination. -/
+    automatic pathway — the but-for half of completion CC-selection
+    FAILS for handle. This captures [bar-asher-siegal-2026]'s point
+    that *open* is infelicitous under overdetermination. -/
 theorem handle_no_completion_overdetermined :
-    ¬ completesForEffectOn fullModel varList
+    ¬ completesForEffect fullModel
         (unlocked.extend .button true |>.extend .electricity true)
-        2 .handle .doorOpens := by
-  intro ⟨_, hNot⟩
-  apply hNot
-  rfl
+        .handle true false .doorOpens true :=
+  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := varList) (n := 2) (by decide))
 
 end BarAsherSiegal2026
