@@ -44,7 +44,7 @@ as study-file constraint."
 
 namespace BarAsherSiegal2026
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 
 /-- Six-vertex door scenario. Inductive enum so `Fintype.elems`
     gives a fixed canonical order and `developDet` reduces structurally. -/
@@ -159,7 +159,7 @@ instance : CausalGraph.IsDAG manualModel.graph :=
 def unlocked : Valuation (fun _ : V => Bool) :=
   Valuation.empty.extend .lock false
 
-open Semantics.Causation.CCSelection in
+open Causation.CCSelection in
 /-- **Manual-only model**: handle completes the sufficient set for
     doorOpens (full *open* and *cause* felicity, per [bar-asher-siegal-2026]).
     Both completion and member modes succeed because there's no
@@ -168,7 +168,7 @@ theorem handle_completes_manual :
     completesForEffect manualModel unlocked .handle true false .doorOpens true :=
   completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
-open Semantics.Causation.CCSelection in
+open Causation.CCSelection in
 /-- **Full model with handle alone**: handle completes the manual
     sufficient set, satisfying *open*-style completion CC-selection.
     The automatic pathway doesn't fire because button=false in `unlocked`. -/
@@ -176,7 +176,7 @@ theorem handle_completes_full :
     completesForEffect fullModel unlocked .handle true false .doorOpens true :=
   completesForEffect_of_developDetOn varList 2 (by decide) (by decide)
 
-open Semantics.Causation.CCSelection in
+open Causation.CCSelection in
 /-- **Overdetermination in the full model**: when both pathways are
     independently activated (button=true, electricity=true alongside
     handle=true), removing handle still leaves doorOpens true via the

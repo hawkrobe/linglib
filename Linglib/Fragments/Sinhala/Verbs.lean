@@ -39,7 +39,7 @@ predictive engine of B&Z's analysis.
 
 namespace Sinhala.Verbs
 
-open Semantics.Causation
+open Causation
 
 /-- A Colloquial Sinhala verb root.
 

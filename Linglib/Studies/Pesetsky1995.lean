@@ -188,7 +188,7 @@ end Pesetsky1995.PsychVerbs
 namespace Pesetsky1995
 
 open Minimalist
-open Semantics.Causation.Psych
+open Causation.Psych
 open Pesetsky1995.PsychVerbs
 open English.Predicates.Verbal
 

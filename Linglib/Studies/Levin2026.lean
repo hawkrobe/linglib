@@ -49,7 +49,7 @@ isolation.
 
 This study connects four existing layers:
 - `Core.Lexical.LevinClass`: verb classes lack causative alternation (§12, §18)
-- `Semantics.Causation.Resultatives`: construction adds CAUSE;
+- `Causation.Resultatives`: construction adds CAUSE;
   PCC maps onto the independent-source/tightness infrastructure
 - `English.Predicates`: verb and adjective entries
 - `Data.Examples.Levin1993`: alternation judgment rows
@@ -69,7 +69,7 @@ open LevinClass (pushPull hit wipe)
 open English.Predicates.Verbal (push pull kick)
 open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
-open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
+open Causation.Resultatives (resultativeCausativeBuilder)
 open Features.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   ArgStructureConstruction)
@@ -495,8 +495,8 @@ a lexically noncausative.
 Per-scenario causal models for these contrasts live below in §7
 (`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
 substrate, using `BoolSEM.causallySufficient` from
-`Semantics.Causation.SEM.Counterfactual` and `CCSelection.completesForEffect`
-from `Semantics.Causation.CCSelection`. -/
+`Causation.SEM.Counterfactual` and `CCSelection.completesForEffect`
+from `Causation.CCSelection`. -/
 
 /-- *Freeze* independently shows the causative alternation;
     *push* does not. This confirms the classification: *freeze solid*
@@ -963,7 +963,7 @@ theorem mandarin_tui_kai_is_cognate :
 -- ════════════════════════════════════════════════════
 
 open English.Predicates.Verbal (make cause)
-open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
+open Causation.Resultatives (resultativeCausativeBuilder)
 
 /-- Resultative CAUSE matches the Fragment entry for "make". -/
 theorem resultative_cause_matches_make_verb :
@@ -990,8 +990,8 @@ Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
 so the `developDetOn` computations close by `decide`. -/
 
 section Scenarios
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
 
 namespace HammerFlat
 

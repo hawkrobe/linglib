@@ -43,7 +43,7 @@ verb's event provides CON(e), just like an attitude verb's event does.
 
 namespace Kim2024
 
-open Semantics.Causation.Psych
+open Causation.Psych
 open Semantics.Modality.EventRelativity
 open Semantics.Modality (ModalFlavor)
 

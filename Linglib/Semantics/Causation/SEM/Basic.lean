@@ -42,7 +42,7 @@ computable variants. Structural simp lemmas let proofs unfold via
 rewriting rather than runtime evaluation.
 -/
 
-namespace Semantics.Causation.SEM
+namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -875,4 +875,4 @@ DAG give the same PMF. Provable via `PMF.bind_comm` + a lemma showing
 ready. Not load-bearing for current consumers; deferred until a study
 needs to reason about `develop` against a hand-picked vertex order. -/
 
-end Semantics.Causation.SEM
+end Causation.SEM

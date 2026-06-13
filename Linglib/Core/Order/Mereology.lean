@@ -201,7 +201,7 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
 
     The three axioms — extensive, monotone, idempotent — are grounded
     in Mathlib's `ClosureOperator`. (Compare with the causal-SEM
-    operator `Semantics.Causation.SEM.developDet`: that operator is
+    operator `Causation.SEM.developDet`: that operator is
     info-extensive but NOT order-monotone, per Schulz [schulz-2011]
     footnote 7, so it does NOT instantiate `ClosureOperator`. The
     mereological case is genuinely closure-operator-shaped.)

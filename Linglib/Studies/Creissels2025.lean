@@ -33,7 +33,7 @@ This study file bridges [creissels-2025]'s framework (formalized in
 namespace Creissels2025
 
 open Syntax.ArgumentStructure.Alternation
-open Semantics.Causation.Morphological
+open Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)
 open Typology (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)

@@ -15,7 +15,7 @@ because Pearl SEM API consumes parent enumerations directly (mechanisms
 fold over `parents v`).
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 /-- A directed graph over `V` represented by parent finsets. The graph
     structure is value-type-agnostic: mechanisms and values layer on top
@@ -54,4 +54,4 @@ def children (G : CausalGraph V) [DecidableEq V] [Fintype V] (v : V) : Finset V 
 
 end CausalGraph
 
-end Semantics.Causation
+end Causation

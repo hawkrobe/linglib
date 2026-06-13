@@ -188,11 +188,11 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (via Semantics.Causation)
+-- Causal Model Infrastructure (via Causation)
 -- ============================================================================
 
 /-!
-The belief formation causal model uses `Semantics.Causation` — the V2 SEM
+The belief formation causal model uses `Causation` — the V2 SEM
 substrate (PMF-canonical Mechanism, BoolSEM specialization for the
 deterministic-binary case). The PLC predicate is defined via
 `SEM.developDetOn` with an explicit vertex list so kernel reduction
@@ -200,7 +200,7 @@ works structurally (no `native_decide`; mathlib-quality `rfl`/`decide`
 proofs).
 -/
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 
 -- ============================================================================
 -- Belief Formation Causal Model (Roberts & Özyıldız 2025)

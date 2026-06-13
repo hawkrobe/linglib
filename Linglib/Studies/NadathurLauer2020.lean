@@ -66,9 +66,9 @@ that file's `Overdetermination` namespace is *symmetric* overdetermination
 
 namespace NadathurLauer2020
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.Sufficiency (makeSem)
-open Semantics.Causation.Necessity (causeSem)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.Sufficiency (makeSem)
+open Causation.Necessity (causeSem)
 
 -- ════════════════════════════════════════════════════
 -- § §3.6.1 Fire scenario (necessary but insufficient)
