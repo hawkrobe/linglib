@@ -1,6 +1,7 @@
 import Linglib.Pragmatics.Expressives.Outlook
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Japanese.Particles
+import Linglib.Data.Examples.Kubota2026
 
 /-!
 # Kubota 2026: outlook management
@@ -14,7 +15,8 @@ formalised via [coppock-2018]'s outlook-based semantics and the [farkas-bruce-20
 model; an outlook marker denotes an `Outlook` (an outlook-indexed two-dimensional meaning).
 
 The lexical inventory is theory-neutral and lives in `Fragments/Japanese/Particles.lean`
-(`Japanese.OutlookMarkers`); this file carries the paper's apparatus: the stance
+(`Japanese.OutlookMarkers`); the judgment data ((10), (37)-(46)) in
+`Data/Examples/Kubota2026.json`. This file carries the paper's apparatus: the stance
 classification, the modal selectional restrictions, and the dual-layer denotation.
 
 ## Main definitions
@@ -30,6 +32,10 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
   attitude holder under embedding ((42)).
 * `semete_rejects_epistemic`, `nanka_accepts_all_modals`, `semete_unique_modal_restriction`
   — the modal selectional facts ((45)-(46)).
+* `felicitous_iff_counterstance_salient` — over the (37)-(39) rows, an outlook-marked
+  utterance is felicitous iff the discourse context makes a counterstance salient.
+* `modal_row_acceptable_iff_compat` — over the (45)-(46) rows, acceptability is exactly
+  membership of the row's modal flavor in the marker's `modalCompat`.
 
 ## References
 
@@ -41,6 +47,7 @@ namespace Kubota2026
 open Pragmatics.Expressives (Outlook TwoDimProp SecondaryMeaningProperties)
 open Semantics.Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
+open Data.Examples (LinguisticExample)
 
 /-! ### Stance classification -/
 
@@ -137,6 +144,50 @@ theorem semete_unique_modal_restriction :
 
 end Marker
 
+/-! ### The paper's rows ([kubota-2026] (10), (37)-(46))
+
+The judgment data live in `Data/Examples/Kubota2026.json`. The adapters read a row's
+`paperFeatures` back into the theory's vocabulary; the theorems restate the paper's
+generalizations as facts about the rows. -/
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The row's marker, as classified in `Marker.all` (by romaji form). -/
+def markerOf (row : LinguisticExample) : Option Marker :=
+  (featureOf row "marker").bind fun r => Marker.all.find? (·.form.romaji == r)
+
+/-- The row's modal flavor, from the `modalFlavor` feature. -/
+def flavorOf (row : LinguisticExample) : Option ModalFlavor :=
+  match featureOf row "modalFlavor" with
+  | some "epistemic"      => some .epistemic
+  | some "deontic"        => some .deontic
+  | some "bouletic"       => some .bouletic
+  | some "circumstantial" => some .circumstantial
+  | _                     => none
+
+/-- **Counterstance requirement** ([kubota-2026] (37)-(39)): an outlook-marked utterance
+is felicitous iff the discourse context makes a counterstance salient — (37)/(39)-Q1
+follow an evaluative assertion or question, (38)/(39)-Q2 a neutral question. -/
+theorem felicitous_iff_counterstance_salient :
+    ∀ row ∈ Examples.all, featureOf row "phenomenon" = some "counterstance" →
+      (row.judgment = .acceptable ↔ featureOf row "counterstanceSalient" = some "true") := by
+  decide
+
+/-- The theory's prediction for a marker–modal row: the row's flavor lies in the
+marker's selectional restriction. -/
+def predictedCompat (row : LinguisticExample) : Option Bool := do
+  pure (decide ((← flavorOf row) ∈ (← markerOf row).modalCompat))
+
+/-- **Modal selection over the rows** ([kubota-2026] (45)-(46)): a marker–modal row is
+acceptable iff the marker's `modalCompat` contains the row's flavor — the selectional
+restrictions in `Marker` are exactly the attested judgment pattern. -/
+theorem modal_row_acceptable_iff_compat :
+    ∀ row ∈ Examples.all, featureOf row "phenomenon" = some "modalInteraction" →
+      (row.judgment = .acceptable ↔ predictedCompat row = some true) := by
+  decide
+
 /-! ### Outlook denotation and perspective shift
 
 An outlook marker denotes an `Outlook` ([coppock-2018]): a counterstance presupposition plus
@@ -144,9 +195,9 @@ an outlook-relative evaluation. Perspective shift ([kubota-2026] (42)) is then *
 CI tracks the outlook, so under an attitude verb (which supplies the holder's outlook) it
 shifts to the holder, unlike a pure expressive. -/
 
-/-- [kubota-2026] (42): "My advisor thought I wouldn't get into SALT (*nanka*/*dōse*)."
-`O := Bool` (advisor's pessimistic outlook vs. speaker's confident one); the negative
-evaluation holds exactly at the pessimistic outlook. -/
+/-- [kubota-2026] (42) (`Examples.ex42_perspective_shift`): "My advisor thought I wouldn't
+get into SALT (*nanka*/*dōse*)." `O := Bool` (advisor's pessimistic outlook vs. speaker's
+confident one); the negative evaluation holds exactly at the pessimistic outlook. -/
 def saltDenotation : Outlook Unit Bool where
   prejacent := fun _ => True
   counterstance := fun _ => True

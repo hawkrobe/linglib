@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Semantics.Exhaustification.FreeChoice
-import Linglib.Phenomena.Modality.ModalConcord.Data
+import Linglib.Studies.RotterLiu2025Concord
 import Mathlib.Data.Set.Basic
 
 /-!

@@ -57,7 +57,7 @@ predictions that depend on them.
 - The Epistemic Grid for two propositional variables (Example 4.34,
   Figure 14) — natural sequel for engaging Hawke & Steinert-Threlkeld
   2021 and Aloni-Incurvati-Schlöder 2023 on Inheritance.
-- Comparison theorems against `Phenomena/Modality/FreeChoice.lean`
+- Comparison theorems against the free-choice studies
   (the orthogonal phenomenon HM 2024 also addresses; HM's account
   predicts free-choice failure at x₁ — `free_choice_fails_at_x1` — but
   the cross-paper agreement bridge is unwritten).
@@ -786,8 +786,8 @@ theorem hm_predicts_disjSyll_failure :
     on any state with `Nontrivial W`.
 
     Both files acknowledge this divergence in prose; the theorem below
-    makes the structural contradiction Lean-checkable — the *first*
-    cross-framework Lean-checkable contradiction in `Phenomena/Modality/`.
+    makes the structural contradiction Lean-checkable — a
+    cross-framework contradiction stated at theorem level.
     Per linglib's mission: theoretical incompatibilities should be visible
     at theorem level, not docstring level. -/
 
