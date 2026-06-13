@@ -106,6 +106,66 @@ def toPartialProp (nd : NominalDenot Ctx W E) (scope : E → W → Prop)
   PartialProp.and { presup := nd.presup c, assertion := fun _ => True }
     (nd.resolve scope c)
 
+/-! ### Monad structure
+
+`NominalDenot Ctx W` is the presupposition-projecting partiality monad: `bind`
+threads the partial referent (`Option.bind`) and accumulates presuppositions,
+projecting the continuation's presupposition through definedness of the head
+(`Option.elim`). This is what lets a re-selection (e.g. possessive-of) compose
+as a Kleisli arrow while a head's intrinsic presupposition (φ-features, deixis)
+rides along. -/
+
+instance : Monad (NominalDenot Ctx W) where
+  pure a := { presup := fun _ _ => True, selector := fun _ _ => some a }
+  bind nd k :=
+    { presup := fun c w =>
+        nd.presup c w ∧ (nd.selector c w).elim True (fun e => (k e).presup c w)
+      selector := fun c w => (nd.selector c w).bind (fun e => (k e).selector c w) }
+
+/-- Extensionality: a `NominalDenot` is its presupposition and selector. -/
+@[ext] theorem ext {nd₁ nd₂ : NominalDenot Ctx W E}
+    (hp : nd₁.presup = nd₂.presup) (hs : nd₁.selector = nd₂.selector) : nd₁ = nd₂ := by
+  cases nd₁; cases nd₂; cases hp; cases hs; rfl
+
+universe u
+variable {α β γ : Type u}
+
+@[simp] theorem pure_selector (a : α) (c : Ctx) (w : W) :
+    (pure a : NominalDenot Ctx W α).selector c w = some a := rfl
+
+@[simp] theorem pure_presup (a : α) (c : Ctx) (w : W) :
+    (pure a : NominalDenot Ctx W α).presup c w = True := rfl
+
+@[simp] theorem bind_selector (nd : NominalDenot Ctx W α)
+    (k : α → NominalDenot Ctx W β) (c : Ctx) (w : W) :
+    (nd >>= k).selector c w = (nd.selector c w).bind (fun e => (k e).selector c w) := rfl
+
+@[simp] theorem bind_presup (nd : NominalDenot Ctx W α)
+    (k : α → NominalDenot Ctx W β) (c : Ctx) (w : W) :
+    (nd >>= k).presup c w =
+      (nd.presup c w ∧ (nd.selector c w).elim True (fun e => (k e).presup c w)) := rfl
+
+/-- Left identity: feeding a pure referent to a continuation is the continuation
+at that referent. -/
+theorem pure_bind (a : α) (k : α → NominalDenot Ctx W β) :
+    (pure a : NominalDenot Ctx W α) >>= k = k a := by
+  ext c w <;> simp
+
+/-- Right identity: re-selecting a denotation by `pure` is the identity. -/
+theorem bind_pure (nd : NominalDenot Ctx W α) : nd >>= pure = nd := by
+  ext c w <;>
+    simp only [bind_presup, bind_selector, pure_presup, pure_selector] <;>
+    cases nd.selector c w <;> simp
+
+/-- Associativity: nested binds compose — the law that makes possessive nesting
+(*John's mother's friend*) free. -/
+theorem bind_assoc (nd : NominalDenot Ctx W α) (k : α → NominalDenot Ctx W β)
+    (h : β → NominalDenot Ctx W γ) :
+    nd >>= k >>= h = nd >>= fun a => k a >>= h := by
+  ext c w <;>
+    simp only [bind_presup, bind_selector] <;>
+    cases nd.selector c w <;> simp [and_assoc]
+
 end NominalDenot
 
 end Semantics.Reference
