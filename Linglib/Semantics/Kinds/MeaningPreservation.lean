@@ -735,9 +735,6 @@ theorem meaning_preservation_derives_kind_preference :
 - `Semantics/Lexical/Noun/Kind/NMP.lean` - Chierchia's NMP, ∩/∪ operators, DKP
 - `Semantics/Lexical/Noun/Kind/Generics.lean` - GEN operator for generic readings
 
-## Empirical Data
-
-- `Phenomena/Generics/KindReference.lean` - cross-linguistic patterns, singular kinds, scopelessness
 -/
 
 end Semantics.Kinds.MeaningPreservation

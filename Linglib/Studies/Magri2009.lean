@@ -3,7 +3,7 @@ import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Kinds.SortedOntology
-import Linglib.Phenomena.Generics.BarePlurals
+import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Fragments.German.BarePluralWordOrder
 
 /-!
@@ -1044,50 +1044,67 @@ end OvertAlways
 /-! ### Predictions match empirical BPS data
 
 [magri-2009]'s theory predicts that individual-level predicates block
-the existential reading of bare plural subjects. The data in
-`Phenomena.Generics.BarePlurals` independently records these judgments
-as empirical observations ([cohen-erteschik-shir-2002]).
+the existential reading of bare plural subjects. The rows in
+`Data/Examples/CohenErteschikShir2002.json` independently record these
+judgments as empirical observations ([cohen-erteschik-shir-2002]).
 
-The bridge theorems verify that every ILP datum with
-`existentialOK = false` is correctly predicted by the BH+MH mechanism,
-and every SLP-with-locative-argument datum with `existentialOK = true`
-is correctly predicted as non-odd. -/
+The bridge theorems verify that every ILP row lacks an acceptable
+existential reading — exactly what the BH+MH mechanism predicts —
+and every SLP-with-locative-argument row has one. -/
 
 section BarePluralBridge
 
-open Phenomena.Generics.BarePlurals
+open Data.Examples
 
-/-- All individual-level predicates in the BarePlurals data lack the
-existential reading — matching [magri-2009]'s prediction that the
-∃-BPS of an ILP is odd (BH + MH + homogeneity). -/
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The row's predicate level ([carlson-1977]), read from the
+    `predicate_level` feature. -/
+def predicateLevelOf (row : LinguisticExample) : Option PredicateLevel :=
+  match featureOf row "predicate_level" with
+  | some "individual" => some .individualLevel
+  | some "stage"      => some .stageLevel
+  | _                 => none
+
+/-- Is the existential reading of the bare plural subject acceptable? -/
+def existentialOK (row : LinguisticExample) : Bool :=
+  (row.readings.find? (·.1 == "existential")).map (·.2) == some .acceptable
+
+/-- Every individual-level row lacks the existential reading — matching
+[magri-2009]'s prediction that the ∃-BPS of an ILP is odd
+(BH + MH + homogeneity). -/
 theorem ilp_data_matches_magri_prediction :
-    iLevelData.all (λ d =>
-      d.predicateLevel == .individualLevel && !d.existentialOK) = true := by
-  native_decide
+    ∀ row ∈ CohenErteschikShir2002.Examples.all,
+      predicateLevelOf row = some .individualLevel → existentialOK row = false := by
+  decide
 
-/-- All stage-level predicates with locative arguments in the BarePlurals
-data HAVE the existential reading — matching [magri-2009]'s prediction
-that the ∃-BPS of an SLP is fine (no homogeneity → no mismatch). -/
+/-- Every stage-level row with a locative argument HAS the existential
+reading — matching [magri-2009]'s prediction that the ∃-BPS of an SLP
+is fine (no homogeneity → no mismatch). -/
 theorem slp_argument_data_matches_magri_prediction :
-    sLevelArgumentData.all (λ d =>
-      d.toBarePluralDatum.predicateLevel == .stageLevel &&
-      d.toBarePluralDatum.existentialOK) = true := by
-  native_decide
+    ∀ row ∈ CohenErteschikShir2002.Examples.all,
+      featureOf row "locative_status" = some "argument" →
+        predicateLevelOf row = some .stageLevel ∧ existentialOK row = true := by
+  decide
 
-/-- The BPS scenario for ILPs is odd, AND the ILP data independently
-confirms no existential reading. Cross-validation between theory (BH+MH)
+/-- The BPS scenario for ILPs is odd, AND the ILP rows independently
+confirm no existential reading. Cross-validation between theory (BH+MH)
 and empirical observation. -/
 theorem magri_predicts_ilp_no_existential :
     bpsScenario.blindOdd .existential_ = true ∧
-    iLevelData.all (λ d => !d.existentialOK) = true :=
-  ⟨by decide, by decide⟩
+    ∀ row ∈ CohenErteschikShir2002.Examples.all,
+      predicateLevelOf row = some .individualLevel → existentialOK row = false :=
+  ⟨by decide, ilp_data_matches_magri_prediction⟩
 
-/-- The BPS scenario for SLPs is fine, AND the SLP-argument data
-independently confirms existential reading available. -/
+/-- The BPS scenario for SLPs is fine, AND the SLP-argument rows
+independently confirm the existential reading is available. -/
 theorem magri_predicts_slp_existential :
     bpsSLPScenario.blindOdd .existential_ = false ∧
-    sLevelArgumentData.all (λ d => d.toBarePluralDatum.existentialOK) = true :=
-  ⟨by decide, by decide⟩
+    ∀ row ∈ CohenErteschikShir2002.Examples.all,
+      featureOf row "locative_status" = some "argument" → existentialOK row = true :=
+  ⟨by decide, fun row h hf => (slp_argument_data_matches_magri_prediction row h hf).2⟩
 
 end BarePluralBridge
 

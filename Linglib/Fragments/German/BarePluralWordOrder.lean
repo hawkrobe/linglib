@@ -28,7 +28,7 @@ strengthening is vacuous.
 
 ## Cross-Module Connections
 
-- `Phenomena.Generics.BarePlurals`: English BPS reading data
+- `Data/Examples/CohenErteschikShir2002.json`: English BPS reading data
 - `Magri2009`: BH+MH mechanism
 -/
 

@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Semantics.Degree.Basic
-import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Features.Antonymy
 import Mathlib.Probability.Distributions.Uniform
 
 /-!

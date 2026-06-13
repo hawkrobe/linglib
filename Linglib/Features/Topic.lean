@@ -53,8 +53,7 @@ This file deliberately does NOT formalize:
 `Features/`. Sibling of `Features/Givenness.lean`,
 `Features/Accessibility.lean`, and `Features/InformationStructure.lean`.
 Importable from any consumer that needs to type a constituent as
-topical or contrastive-topic. Currently `Phenomena/Generics/BarePlurals.lean`
-has a local `TopicFocusDatum` that could migrate here in a follow-up.
+topical or contrastive-topic.
 -/
 
 set_option autoImplicit false

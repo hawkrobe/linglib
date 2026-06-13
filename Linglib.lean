@@ -1365,9 +1365,6 @@ import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Studies.Ahn2015
 import Linglib.Studies.ThomasDeo2020
-import Linglib.Phenomena.Generics.BareNames
-import Linglib.Phenomena.Generics.BarePlurals
-import Linglib.Phenomena.Generics.KindReference
 import Linglib.Studies.LeBruynDeSwart2022
 import Linglib.Studies.Cohen1999
 import Linglib.Studies.Cohen2013
@@ -1552,14 +1549,12 @@ import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
-import Linglib.Phenomena.Negation.Basic
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Studies.NapoliNespor1976
 import Linglib.Studies.Stakov2026
 import Linglib.Studies.Stakov2026Typology
-import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Studies.AlbrightHayes2003
 import Linglib.Studies.ODonnell2015
 import Linglib.Studies.Bybee1985
@@ -1594,7 +1589,6 @@ import Linglib.Studies.Dryer2013Negation
 import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Horn1989
 import Linglib.Studies.PlunkettSundell2013
-import Linglib.Phenomena.Negation.Denial
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Studies.HaslingerEtAl2025
@@ -2848,3 +2842,9 @@ import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Data.Examples.Levin1993
 import Linglib.Data.Examples.Anderson2006
+import Linglib.Data.Examples.LeBruynDeSwart2022
+import Linglib.Data.Examples.CohenErteschikShir2002
+import Linglib.Data.Examples.Gasparri2025
+import Linglib.Data.Examples.VanDerSandtMaier2003
+import Linglib.Data.Examples.TesslerFranke2019
+import Linglib.Studies.Gasparri2025
