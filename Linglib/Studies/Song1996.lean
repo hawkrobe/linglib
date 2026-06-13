@@ -391,7 +391,7 @@ theorem morphological_dominates :
 -- Bridge: Song's Typology ↔ Comrie's Complexity Scale
 -- ============================================================================
 
-open Semantics.Causation.Morphological (CausativeComplexity)
+open Causation.Morphological (CausativeComplexity)
 
 /-- Song's construction types map to [comrie-1989]'s complexity scale.
 

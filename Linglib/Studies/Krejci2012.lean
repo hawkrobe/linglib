@@ -49,7 +49,7 @@ namespace Krejci2012
 
 open Semantics.Lexical
 open Root.FeatureSignature
-open Semantics.Causation.Morphological
+open Causation.Morphological
 open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.ArgDerivation
 

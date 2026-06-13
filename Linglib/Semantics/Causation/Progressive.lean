@@ -33,10 +33,10 @@ checks type-level sufficiency (`BoolSEM.causallySufficient`);
 (`CCSelection.completesForEffect`).
 -/
 
-namespace Semantics.Causation.Progressive
+namespace Causation.Progressive
 
 open Core (WorldTimeIndex)
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causal Process (V2)
@@ -287,4 +287,4 @@ structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
   /-- The causal trajectory is viable: initiator is type-level sufficient. -/
   causallyViable : @CausalProcess.typeLevelHolds V _ _ process dagInst detInst
 
-end Semantics.Causation.Progressive
+end Causation.Progressive

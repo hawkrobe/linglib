@@ -26,9 +26,9 @@ qualitative claims are recoverable via concrete `BoolSEM` models in
 study files (e.g., `Levin2026.HammerFlat`).
 -/
 
-namespace Semantics.Causation.Sufficiency
+namespace Causation.Sufficiency
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 sufficiency for "make" ([nadathur-lauer-2020] Definition 23, both
     clauses, over the strict T_D development):
@@ -56,4 +56,4 @@ noncomputable instance {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (makeSem M background cause xC effect xE) := Classical.dec _
 
-end Semantics.Causation.Sufficiency
+end Causation.Sufficiency

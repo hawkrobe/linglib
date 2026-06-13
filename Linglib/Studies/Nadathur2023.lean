@@ -8,7 +8,7 @@ The Dreyfus scenario of [nadathur-2023-implicatives] (§6.1.1, Figure 3;
 introduced in [nadathur-2019] ch. 3 as "the modified Dreyfus scenario",
 adapted from [baglini-francez-2016]): an eight-vertex structural causal
 model discriminating where two-way *dare* is felicitous. The felicity
-theorems are stated through `Semantics.Causation.Implicative.manageSem` /
+theorems are stated through `Causation.Implicative.manageSem` /
 `failSem` — the substrate formalization of this paper's prerequisite
 account (Proposal 32) — so they instantiate the same sufficiency predicate
 the rest of the codebase attributes to implicative verbs.
@@ -42,8 +42,8 @@ fn. 21); `manageSem` currently takes a single prerequisite vertex.
 
 namespace Nadathur2023
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.Implicative (manageSem failSem ImplicativeClass Prerequisite)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.Implicative (manageSem failSem ImplicativeClass Prerequisite)
 
 /-- Dreyfus scenario vertices ([nadathur-2023-implicatives] §6.1.1, Figure 3):
     INT (Dreyfus intends to spy), NRV (he has the nerve), LST (a German is
@@ -236,7 +236,7 @@ with `Nadathur2023.no_msg_without_nerve`. -/
 
 namespace Karttunen1971
 
-open Semantics.Causation.Implicative
+open Causation.Implicative
 
 /-- Convert `KarttunenClass` to `ImplicativeClass`
     ([nadathur-2023-implicatives]). `aspectGoverned` is always false

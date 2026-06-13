@@ -287,8 +287,8 @@ theorem class_type_alignment :
 -- § Bridge: SemanticType ↔ CausalSource
 -- ════════════════════════════════════════════════════
 
-open Semantics.Causation.Psych (CausalSource)
-open Semantics.Causation.PsychLink (PsychCausalLink eventiveLink maintenanceLink
+open Causation.Psych (CausalSource)
+open Causation.PsychLink (PsychCausalLink eventiveLink maintenanceLink
   CausalSource.toLink)
 
 /-- Map Hartshorne et al.'s semantic type to Kim's CausalSource.

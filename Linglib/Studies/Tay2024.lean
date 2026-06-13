@@ -37,7 +37,7 @@ arguments but **none** of V1's.  This predicts:
 ## Architecture
 
 Connects:
-- `Semantics.Causation.Resultatives`: causal dynamics, CC-selection,
+- `Causation.Resultatives`: causal dynamics, CC-selection,
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
 - `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
@@ -50,7 +50,7 @@ namespace Tay2024
 
 open Core (WorldTimeIndex)
 
-open Semantics.Causation.Resultatives
+open Causation.Resultatives
 open Morphology.WordStructure
 open Features.ChangeOfState (CoSType priorStatePresup)
 open Mandarin.Resultatives
@@ -345,10 +345,10 @@ Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
 Direct causation = single edge, no intermediate with an independent
 energy source. This is the same tightness constraint identified for
 English resultatives by [levin-2019] — formalized via the canonical
-`completesForEffect` predicate from `Semantics.Causation.CCSelection`. -/
+`completesForEffect` predicate from `Causation.CCSelection`. -/
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open Semantics.Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
+open Causation Causation.Mechanism Causation.SEM
+open Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
 
 namespace Dasi
 

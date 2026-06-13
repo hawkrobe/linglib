@@ -13,9 +13,9 @@ examples were deleted in Phase D-H. The polymorphic V2
 `hasCoerciveImplication` is promoted to canonical here.
 -/
 
-namespace Semantics.Causation.CoerciveImplication
+namespace Causation.CoerciveImplication
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/
 inductive ActionType
@@ -50,4 +50,4 @@ noncomputable instance {V : Type*} {α : V → Type*}
     (effect : V) (xE : α effect) :
     Decidable (hasCoerciveImplication M bg causer xC vol effect xE) := Classical.dec _
 
-end Semantics.Causation.CoerciveImplication
+end Causation.CoerciveImplication

@@ -25,7 +25,7 @@ requires `event`. Both predictions follow from `≤`-checks on the
 lattice rather than from stipulated lexical exceptions.
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 /-- The three irreducible sorts (atoms) a causer position may resolve
     to. Used as the underlying Finset of `CauserSort`; not intended
@@ -151,4 +151,4 @@ abbrev admitsVolitive (s : CauserSort) : Prop := event ≤ s
 
 end CauserSort
 
-end Semantics.Causation
+end Causation

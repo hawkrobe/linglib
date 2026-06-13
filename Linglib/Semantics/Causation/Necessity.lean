@@ -5,7 +5,7 @@ import Linglib.Semantics.Causation.SEM.Counterfactual
 [nadathur-2023-implicatives] [nadathur-lauer-2020] [schulz-2011]
 
 Causal necessity semantics for the verb "cause." The core definition
-`causallyNecessary` (in `Semantics.Causation.SEM`) implements
+`causallyNecessary` (in `Causation.SEM`) implements
 [nadathur-2023-implicatives] Definition 10b (supersituation necessity:
 precondition + achievability + but-for), superseding the simple but-for
 test from [nadathur-lauer-2020] Definition 24.
@@ -28,9 +28,9 @@ The legacy `CausalDynamics`-based `causeSem`/`isINUSCause`/
 are promoted to canonical here.
 -/
 
-namespace Semantics.Causation.Necessity
+namespace Causation.Necessity
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 causal-necessity semantics for "cause": setting cause to xC
     develops effect to xE AND cause-as-xC is causally necessary
@@ -84,4 +84,4 @@ noncomputable instance {V : Type*} {α : V → Type*}
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (actuallyCaused M s cause xC effect xE) := Classical.dec _
 
-end Semantics.Causation.Necessity
+end Causation.Necessity

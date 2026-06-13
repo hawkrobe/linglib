@@ -38,7 +38,7 @@ needed.
 
 namespace Glass2023
 
-open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
+open Causation Causation.Mechanism Causation.SEM
 
 /-! ## Local vs Global Sufficiency / Necessity (defs 8–11)
 
@@ -119,7 +119,7 @@ implicature. -/
 abbrev causeSemGlass {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
-  Semantics.Causation.BoolSEM.causallySufficient M bg cause effect
+  Causation.BoolSEM.causallySufficient M bg cause effect
 
 /-- Glass's *cause* is truth-conditionally identical to N&L's *make*
     (`causallySufficient`). The difference is pragmatic. -/
@@ -127,7 +127,7 @@ theorem glass_cause_is_causallySufficient {V : Type*} [Fintype V] [DecidableEq V
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) :
     causeSemGlass M bg cause effect ↔
-      Semantics.Causation.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
+      Causation.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
 
 /-- **Glass vs N&L diverge on the Bus scenario**: "Ava's training caused
     Lia to take the bus" is true on Glass's sufficiency-based *cause* but

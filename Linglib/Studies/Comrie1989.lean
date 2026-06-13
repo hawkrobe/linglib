@@ -33,7 +33,7 @@ grammatical domains:
   The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
   that governs causee demotion.
 - **Causatives** (Ch 8): Morphological complexity correlates with semantic
-  directness (`Semantics.Causation.Morphological`); causee
+  directness (`Causation.Morphological`); causee
   marking follows the GR hierarchy (`CauseeSlot`).
 
 The shared infrastructure in `Features.Prominence` ensures the animacy
@@ -330,7 +330,7 @@ theorem dyirbal_syntacticErg_converges :
 -- § 4: Causative Hierarchies
 -- ============================================================================
 
-open Semantics.Causation.Morphological
+open Causation.Morphological
     (CausativeComplexity CausativeConstruction Mediation comrie_monotone
      CauseeSlot causeeDemotion)
 
@@ -394,7 +394,7 @@ accessibility (Ch 7):
 
     Subject > Direct Object > Indirect Object > Oblique
 
-`CauseeSlot` (in `Semantics.Causation.Morphological`) and
+`CauseeSlot` (in `Causation.Morphological`) and
 `AHPosition` (in `Typology.RelativeClause.Basic`) encode overlapping
 portions of this hierarchy independently. The bridge function
 `causeeToAH` maps causee slots to their corresponding AH positions,

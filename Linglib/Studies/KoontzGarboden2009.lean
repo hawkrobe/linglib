@@ -152,7 +152,7 @@ inchoatives have CAUSE.
 namespace KoontzGarboden2009
 
 open Spanish.Predicates
-open Semantics.Causation.Morphological
+open Causation.Morphological
 open Semantics.Lexical.EventStructure
 open KoontzGarboden2009.Monotonicity
 open Minimalist (VerbHead)

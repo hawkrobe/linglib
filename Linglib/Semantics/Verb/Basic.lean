@@ -13,7 +13,7 @@ open Features
 open Semantics.Lexical
 open Features.ChangeOfState
 open Core.NaturalLogic (EntailmentSig)
-open Semantics.Causation.Psych (CausalSource)
+open Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Aspect.Incremental (VerbIncClass)

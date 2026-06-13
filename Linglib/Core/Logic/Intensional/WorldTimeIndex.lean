@@ -8,7 +8,7 @@ for intensional, dynamic, modal, and tense semantics. This is the
 Lewis/Kaplan-style "index of evaluation" with world and temporal
 coordinates only — *not* the full Kratzer parthood-structured situation
 (see `Core.Logic.Intensional.Situations`) and *not* the Pearl/Halpern
-partial valuation (see `Semantics.Causation.Situation`).
+partial valuation (see `Causation.Situation`).
 
 The name `WorldTimeIndex` is preferred over `Situation` to disambiguate
 from the two more substantive `Situation` types in those neighbouring

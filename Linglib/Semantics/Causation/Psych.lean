@@ -26,7 +26,7 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 
 -/
 
-namespace Semantics.Causation.Psych
+namespace Causation.Psych
 
 /-- Source of causation for psych causatives ([kim-2024] UPH).
 
@@ -176,4 +176,4 @@ theorem source_determines_stimulus_properties :
     (CausalSource.toStimulusType .internal).conflictsWithCause = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Semantics.Causation.Psych
+end Causation.Psych

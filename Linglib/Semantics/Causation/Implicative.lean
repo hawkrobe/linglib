@@ -39,11 +39,11 @@ were deleted in Phase D-H. The polymorphic V2 versions
 dispatch) are promoted to canonical here.
 -/
 
-namespace Semantics.Causation.Implicative
+namespace Causation.Implicative
 
 open Features (Implicative)
 open Features
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 -- ════════════════════════════════════════════════════
 -- § Prerequisite Types ([nadathur-2023-implicatives])
@@ -356,21 +356,21 @@ theorem specific_vs_bleached :
     (ImplicativeClass.manage.prerequisite.bind (some ·.isSpecific)) = some false := by
   exact ⟨rfl, rfl⟩
 
-end Semantics.Causation.Implicative
+end Causation.Implicative
 
 -- ════════════════════════════════════════════════════
 -- § `Features.Implicative.toSemantics` dispatch (V2 polymorphic)
 -- ════════════════════════════════════════════════════
 
 /-! Lives here rather than in `Features/Causation.lean` because the
-dispatch needs `Semantics.Causation.SEM` + the `Implicative.manageSem`/`failSem`
+dispatch needs `Causation.SEM` + the `Implicative.manageSem`/`failSem`
 machinery defined above; `Features/Causation.lean` is kept import-free.
 Standard mathlib pattern: methods on a type may live in a sibling
 file via `namespace TypeName` block when import weight matters. -/
 
 namespace Features.Implicative
 
-open Semantics.Causation (SEM CausalGraph Valuation DecidableValuation)
+open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 dispatch: map an `Implicative` polarity to its V2 polymorphic
     semantic function. -/
@@ -378,7 +378,7 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
     Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
-  | .positive => Semantics.Causation.Implicative.manageSem M
-  | .negative => Semantics.Causation.Implicative.failSem M
+  | .positive => Causation.Implicative.manageSem M
+  | .negative => Causation.Implicative.failSem M
 
 end Features.Implicative

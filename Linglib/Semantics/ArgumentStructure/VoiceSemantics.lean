@@ -135,7 +135,7 @@ theorem berSemG_eq_suppressArg {E W : Type} {τ : Ty} (n : ℕ)
     *ber-* targets arguments other than causers and so doesn't need
     the U_I restriction. -/
 def causerSuppress {E W : Type} {τ : Ty}
-    (s : Semantics.Causation.CauserSort)
+    (s : Causation.CauserSort)
     (_h : s.admitsIndividual)
     (z : E) (vp : Denot E W (.e ⇒ τ)) : Denot E W τ :=
   suppressArg z vp
@@ -144,7 +144,7 @@ def causerSuppress {E W : Type} {τ : Ty}
     `suppressArg`: the truth conditions are identical, the
     restriction lives only at the type level. -/
 theorem causerSuppress_eq_suppressArg {E W : Type} {τ : Ty}
-    (s : Semantics.Causation.CauserSort)
+    (s : Causation.CauserSort)
     (h : s.admitsIndividual)
     (z : E) (vp : Denot E W (.e ⇒ τ)) :
     causerSuppress s h z vp = suppressArg z vp := rfl

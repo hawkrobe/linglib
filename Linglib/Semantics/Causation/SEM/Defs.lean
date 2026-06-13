@@ -18,7 +18,7 @@ Phase A scope: structure + mixins only. Forward propagation, intervention,
 and counterfactual queries live in `SEM/Basic.lean`.
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 /-- A **structural equation model**: a causal graph with a mechanism at
     every vertex over a per-vertex value type `α`.
@@ -48,4 +48,4 @@ instance (M : SEM V α) [h : IsDeterministic M] (v : V) :
 end SEM
 
 
-end Semantics.Causation
+end Causation

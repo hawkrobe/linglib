@@ -48,10 +48,10 @@ import Linglib.Semantics.Causation.Interpretation
 namespace CaoWhiteLassiter2025
 
 open Core (WorldTimeIndex)
-open Semantics.Causation (BoolSEM CausalGraph Valuation Mechanism)
-open Semantics.Causation.Mechanism (const)
-open Semantics.Causation.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
-open Semantics.Causation.CoerciveImplication (ActionType)
+open Causation (BoolSEM CausalGraph Valuation Mechanism)
+open Causation.Mechanism (const)
+open Causation.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
+open Causation.CoerciveImplication (ActionType)
 open Features (Causative)
 open Features
 
@@ -84,10 +84,10 @@ that recovers this special case from the canonical PMF form. -/
     `IsDeterministic`. -/
 noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Semantics.Causation.SEM.IsDeterministic M]
+    [Causation.SEM.IsDeterministic M]
     (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
-  if Semantics.Causation.BoolSEM.causallySufficient M background cause effect then 1 else 0
+  if Causation.BoolSEM.causallySufficient M background cause effect then 1 else 0
 
 /-- **Grounding theorem**: under `IsDeterministic`, the canonical PMF-valued
     `probabilisticSuf` collapses to the deterministic {0,1} indicator.
@@ -95,13 +95,13 @@ noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     a parallel definition. -/
 theorem probabilisticSuf_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Semantics.Causation.SEM.IsDeterministic M]
+    [Causation.SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (c e : V)
     (hc : bg.get c = none) :
     probabilisticSuf M bg c true e true = deterministicSuf M bg c e := by
   unfold deterministicSuf
   rw [probabilisticSuf_of_deterministic]
-  rw [Semantics.Causation.SEM.developDet_intervene_eq_developDet_extend M bg c true hc]
+  rw [Causation.SEM.developDet_intervene_eq_developDet_extend M bg c true hc]
   congr 1
 
 /-! ## ALT → ActionType Bridge

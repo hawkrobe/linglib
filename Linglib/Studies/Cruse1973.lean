@@ -44,7 +44,7 @@ and is marginal for others.
 namespace Cruse1973
 
 open Semantics.ArgumentStructure
-open Semantics.Causation.CoerciveImplication
+open Causation.CoerciveImplication
 open Features (Causative)
 open Features
 open Semantics.Lexical

@@ -29,7 +29,7 @@ when they need to extract the deterministic function (mirroring
 `IsMarkovKernel` in `Mathlib/Probability/Kernel/Defs.lean`).
 -/
 
-namespace Semantics.Causation
+namespace Causation
 
 variable {V : Type*}
 
@@ -60,4 +60,4 @@ class IsDeterministic (m : Mechanism G α v) where
 
 end Mechanism
 
-end Semantics.Causation
+end Causation
