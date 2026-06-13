@@ -1,5 +1,6 @@
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Sufficiency
+import Linglib.Studies.Karttunen1971
 
 /-!
 # [nadathur-lauer-2020]: Causal Necessity, Causal Sufficiency, and the Implications of Causative Verbs
@@ -703,5 +704,72 @@ theorem necessity_cancellable :
 theorem necessity_reinforceable :
     makeSem Fire.fireSEM Fire.s_b1 .P true .F true :=
   Fire.make_felicitous_for_fire_with_known_line
+
+-- ════════════════════════════════════════════════════
+-- § Karttunen's entailment cells: same pattern, different mechanism
+-- ════════════════════════════════════════════════════
+
+/-! N&L's central observation against entailment-based taxonomy:
+periphrastic causatives share [karttunen-1971]'s sufficient-only
+entailment cell while differing in causal mechanism (sufficiency for
+*make* vs necessity for *cause*). The comparison is N&L's, so it lives
+here; `necessity_cancellable` above is its kernel-checked witness. -/
+
+namespace KarttunenCells
+
+open Karttunen1971 (KarttunenClass)
+open Features (Implicative Causative)
+
+/-- Derive the `KarttunenClass` cell from an `Implicative` polarity
+    (two-way cell: complement entailment under both polarities). -/
+def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
+  { isSufficient := true, isNecessary := true, polarity := b }
+
+/-- Map modern `Causative` to the Karttunen cell that matches the
+    builder's **entailment pattern** (Karttunen's original criterion).
+
+    All positive causative builders (make, force, enable, cause) share the
+    same Karttunen cell: sufficient-only. This is because:
+    - Affirmative "V-ed X to VP" → VP (all require the effect occurred)
+    - Negation "didn't V X to VP" ↛ ¬VP (effect might occur from other causes)
+
+    [nadathur-lauer-2020]'s insight: these verbs differ in causal
+    MECHANISM (sufficiency vs necessity) despite sharing the same
+    ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
+def karttunenOfCausative : Causative → KarttunenClass
+  | .make | .force | .enable | .cause =>
+    { isSufficient := true, isNecessary := false, polarity := .positive }
+  | .prevent =>
+    { isSufficient := true, isNecessary := false, polarity := .negative }
+
+theorem manage_karttunen_class :
+    karttunenOfImplicative .positive = KarttunenClass.manage := rfl
+
+theorem fail_karttunen_class :
+    karttunenOfImplicative .negative = KarttunenClass.fail := rfl
+
+theorem force_karttunen_class :
+    karttunenOfCausative .force = KarttunenClass.force := rfl
+
+theorem prevent_karttunen_class :
+    karttunenOfCausative .prevent = KarttunenClass.prevent := rfl
+
+/-- All positive causative builders map to `KarttunenClass.force`
+    (Karttunen's sufficient-only cell). -/
+theorem cause_karttunen_class :
+    karttunenOfCausative .cause = KarttunenClass.force := rfl
+
+/-- `cause` and `make` have the same Karttunen entailment cell
+    (sufficient-only) despite having different causal mechanisms.
+    This is the central insight of [nadathur-lauer-2020]: same
+    entailment pattern ≠ same truth conditions. The difference is
+    kernel-checked at `NadathurLauer2020.necessity_cancellable` (the Bus
+    scenario: `makeSem` holds while `causeSem` fails). -/
+theorem cause_make_same_cell_different_mechanism :
+    karttunenOfCausative .cause = karttunenOfCausative .make ∧
+    Causative.cause.assertsNecessity ≠ Causative.make.assertsNecessity := by
+  exact ⟨rfl, by decide⟩
+
+end KarttunenCells
 
 end NadathurLauer2020

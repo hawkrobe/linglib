@@ -1,4 +1,5 @@
 import Linglib.Semantics.Causation.Implicative
+import Linglib.Studies.Karttunen1971
 
 /-!
 # Nadathur 2023: Causal Semantics for Implicative Verbs
@@ -219,3 +220,38 @@ theorem msg_iff_nerve :
     (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
 
 end Nadathur2023
+
+-- ════════════════════════════════════════════════════
+-- § Karttunen 1971 classification recovered
+-- ════════════════════════════════════════════════════
+
+/-! [nadathur-2023-implicatives] §2 motivates the prerequisite account
+from [karttunen-1971]'s descriptive 2×2 taxonomy; the conversion lives
+here (the later paper draws the comparison). The two-way cell's defining
+entailment pattern is not stipulated but *derived*:
+`Implicative.twoWay_entailment_profile` produces both halves of Fact B
+from the sufficiency + necessity presuppositions, witnessed concretely
+at the Dreyfus model by `Nadathur2023.dare_felicitous_for_msg` together
+with `Nadathur2023.no_msg_without_nerve`. -/
+
+namespace Karttunen1971
+
+open Semantics.Causation.Implicative
+
+/-- Convert `KarttunenClass` to `ImplicativeClass`
+    ([nadathur-2023-implicatives]). `aspectGoverned` is always false
+    because Karttunen's 1971 analysis does not account for aspect — a
+    limitation the modern analysis corrects. -/
+def KarttunenClass.toImplicativeClass (k : KarttunenClass) : ImplicativeClass :=
+  { polarity := k.polarity
+    directionality := if k.isTwoWay then .twoWay else .oneWay
+    aspectGoverned := false
+    prerequisite := if k.isTwoWay then some .unspecified else none }
+
+theorem karttunen_manage_matches :
+    KarttunenClass.manage.toImplicativeClass = ImplicativeClass.manage := rfl
+
+theorem karttunen_fail_matches :
+    KarttunenClass.fail.toImplicativeClass = ImplicativeClass.fail := rfl
+
+end Karttunen1971

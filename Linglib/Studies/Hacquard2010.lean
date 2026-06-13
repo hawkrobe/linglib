@@ -31,6 +31,14 @@ but not all combinations are attested. A modal must be keyed to the
 participants and running time of the MOST LOCAL event. Event projection
 (holder(e), τ(e)) derives the correct pair for each event binder,
 explaining why certain pairs are systematically absent.
+
+## Part III: Against Cartographic Stipulation
+
+[cinque-1999] builds the position–flavor correlation into a universal
+hierarchy of dedicated functional heads; Hacquard derives it from content
+licensing. The accounts agree extensionally on matrix clauses
+(`matrix_clause_equivalence`) and come apart in embedded contexts
+(`embedded_epistemic_derived`).
 -/
 
 namespace Hacquard2010
@@ -235,5 +243,87 @@ theorem events_richer_than_pairs :
     EventBinder.speechAct.availableFlavors =
       EventBinder.attitude.availableFlavors :=
   ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- Part III: Against Cartographic Stipulation ([cinque-1999])
+-- ============================================================================
+
+/-! [cinque-1999] proposes a universal hierarchy of functional projections
+with dedicated heads for each modal flavor
+(Mod_epistemic > Mod_irrealis > … > Mod_root > Mod_ability): epistemic
+modals are high because an epistemic head sits above TP, root modals low
+because root/ability heads sit below AspP. The position–flavor correlation
+is stipulated in the head inventory. Content licensing (§7) derives the
+same matrix-clause correlation from a single predicate, and additionally
+predicts the embedded pattern — a high modal under an attitude verb binds
+the (contentful) attitude event, so the epistemic state reported is the
+attitude holder's — which the cartographic account must re-stipulate. -/
+
+/-- A [cinque-1999] functional head for modality: each modal flavor
+occupies a dedicated syntactic position. -/
+inductive CinqueModHead where
+  /-- Mod_epistemic: above TP (high) -/
+  | modEpistemic
+  /-- Mod_irrealis: above TP (high) -/
+  | modIrrealis
+  /-- Mod_root: below AspP (low) -/
+  | modRoot
+  /-- Mod_ability: below AspP (low) -/
+  | modAbility
+  deriving DecidableEq, Repr
+
+/-- Cinque's stipulated flavor for each head. -/
+def CinqueModHead.flavor : CinqueModHead → ModalFlavor
+  | .modEpistemic => .epistemic
+  | .modIrrealis => .epistemic
+  | .modRoot => .circumstantial
+  | .modAbility => .circumstantial
+
+/-- Cinque's stipulated height for each head. -/
+def CinqueModHead.isHigh : CinqueModHead → Bool
+  | .modEpistemic => true
+  | .modIrrealis => true
+  | .modRoot => false
+  | .modAbility => false
+
+/-- In [cinque-1999]'s system, high = epistemic by stipulation: the
+correlation is built into the functional-head inventory. -/
+theorem cinque_high_epistemic (h : CinqueModHead) :
+    h.isHigh = (h.flavor == .epistemic) := by
+  cases h <;> rfl
+
+/-- On matrix clauses the two accounts are extensionally equivalent:
+high modals are epistemic, low modals circumstantial. The difference is
+explanatory depth — Cinque stipulates the correlation, content licensing
+derives it. -/
+theorem matrix_clause_equivalence :
+    -- Cinque: high heads are epistemic
+    (∀ h : CinqueModHead, h.isHigh = true → h.flavor = .epistemic) ∧
+    -- Hacquard: high position → epistemic available
+    (ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true) ∧
+    -- Cinque: low heads are circumstantial
+    (∀ h : CinqueModHead, h.isHigh = false → h.flavor = .circumstantial) ∧
+    -- Hacquard: low position → only circumstantial
+    (ModalPosition.belowAsp.defaultBinder.availableFlavors = [.circumstantial]) := by
+  refine ⟨?_, rfl, ?_, rfl⟩ <;> (intro h hh; cases h <;> simp_all [CinqueModHead.isHigh, CinqueModHead.flavor])
+
+/-- Embedded contexts are where the accounts diverge: content licensing
+predicts that a high modal under an attitude verb binds the attitude
+event, which is contentful, so the epistemic reading tracks the attitude
+holder; a low embedded modal still binds the VP event and stays
+non-epistemic. The cartographic account must re-stipulate an embedded
+Mod_epistemic head and has no structural answer to whose epistemic state
+the modal reports. -/
+theorem embedded_epistemic_derived :
+    -- Attitude events are contentful
+    EventBinder.attitude.hasContent = true ∧
+    -- High embedded modal binds to attitude event
+    ModalPosition.aboveAsp.withAttitude = .attitude ∧
+    -- Attitude event licenses epistemic
+    ModalPosition.aboveAsp.withAttitude.canProjectEpistemic = true ∧
+    -- Low embedded modal still binds to VP event → no epistemic
+    ModalPosition.belowAsp.withAttitude = .vpEvent ∧
+    ModalPosition.belowAsp.withAttitude.canProjectEpistemic = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end Hacquard2010

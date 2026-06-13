@@ -588,7 +588,8 @@ it true in almost all conditions.
 
 Explanation: participants may give "might be possible" a **modal
 concord** reading, collapsing the two modals to a single "possible".
-See `Phenomena/Modality/ModalConcord` for the general phenomenon.
+See `Studies/RotterLiu2025Concord` and `Studies/LiuRotter2025` for the
+general phenomenon.
 This is qualitative; not formalised here. -/
 
 end HerbstrittFranke2019.PMF

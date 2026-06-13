@@ -1478,17 +1478,13 @@ import Linglib.Studies.BaleSchwarz2026
 import Linglib.Studies.Scontras2014
 import Linglib.Studies.Kratzer2012Conditionals
 import Linglib.Studies.Cooper2023.Ch6
-import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Studies.RotterLiu2025Concord
-import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Studies.LiuRotter2025
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
 import Linglib.Studies.Mendes2025
-import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Core.Logic.Modal.BSML.Scenarios
 import Linglib.Studies.Kratzer2012Informational
-import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.ChampollionAlsopGrosu2019
 import Linglib.Studies.AlonsoOvalleMoghiseh2025
@@ -1665,7 +1661,6 @@ import Linglib.Studies.Beaver2001.Basic
 import Linglib.Studies.Blutner2000
 import Linglib.Studies.Karttunen1973
 import Linglib.Studies.Glass2025
-import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998
 import Linglib.Studies.Downing1996
@@ -1936,7 +1931,6 @@ import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
-import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Studies.Ferreira2023
 import Linglib.Studies.Partee1973
 -- Theories: Dependency Grammar
@@ -2843,6 +2837,11 @@ import Linglib.Data.Examples.Rooth1992
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Data.Examples.Thomas2026
 import Linglib.Data.Examples.BergenGoodman2015
+import Linglib.Data.Examples.Kubota2026
+import Linglib.Data.Examples.VonFintelGillies2010
+import Linglib.Data.Examples.VonFintelGillies2021
+import Linglib.Studies.VonFintelGillies2010
+import Linglib.Studies.VonFintelGillies2021
 import Linglib.Data.Examples.LeBruynDeSwart2022
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Data.Examples.Gasparri2025

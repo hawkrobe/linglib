@@ -234,6 +234,25 @@ theorem complement_iff_prerequisite
       simp at hent
     exact SEM.causallyEntails_mono hcons hsuf.2
 
+/-- **The two-way entailment profile** — [karttunen-1971]'s defining
+    criterion for the *manage* class — follows from the prerequisite
+    account: in a context satisfying both presuppositions, the positive
+    assertion entails the complement (Fact B, positive) and any negative
+    assertion precludes it in every consistent completion (Fact B,
+    negative). This is the derivation [nadathur-2023-implicatives]
+    advertises for Facts A–C at the class level. -/
+theorem twoWay_entailment_profile
+    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
+    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
+    (hsuf : manageSem M background p xP c xC)
+    (hnec : necessityPresup M background p xP c xC) :
+    SEM.causallyEntails M (background.extend p xP) c xC ∧
+    ∀ xP', xP' ≠ xP → ∀ s',
+      SEM.IsExogenousSettlement M (background.extend p xP') s' →
+      s'.get c = none → ¬ SEM.causallyEntails M s' c xC :=
+  ⟨complement_of_positive_assertion M hsuf,
+   fun _ hne s' h1 h2 => no_complement_of_negative_assertion M hexo hp hne hnec s' h1 h2⟩
+
 end CharacteristicEntailments
 
 -- ════════════════════════════════════════════════════

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "vonfintelgillies2021_cant_possible",
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (5), (22)"},
+    "language": "stan1293",
+    "primaryText": "Suppose it's possible the keys are in the drawer but they can't be.",
+    "glossedTokens": [],
+    "translation": "Suppose it's possible the keys are in the drawer but they can't be.",
+    "context": "Flat-footed conjunction of 'possible phi' with 'can't phi', embedded under suppose.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["kind", "inference"],
+      ["pattern", "cant_possible_contradiction"],
+      ["modal", "cant"]
+    ],
+    "comment": "Observation 5: can't phi excludes 'it's possible that phi'; the conditional-antecedent variant ('If it's possible the keys are in the drawer but they can't be, then ...') is equally incoherent. If can't were weak necessity over not-phi, the conjunction should be coherent — the Mantra's dilemma. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantPossibleContradiction."
+  },
+  {
+    "id": "vonfintelgillies2021_phil_dinner",
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (24)"},
+    "language": "stan1293",
+    "primaryText": "Dinner must be ready.",
+    "glossedTokens": [],
+    "translation": "Dinner must be ready.",
+    "context": "Phil has cooked the dinner, checking all the food himself, and knows it is ready.",
+    "judgment": "unacceptable",
+    "alternatives": [{"form": "Dinner is ready.", "judgment": "acceptable"}],
+    "paperFeatures": [
+      ["kind", "must_pair"],
+      ["modal", "must"],
+      ["evidence", "direct"],
+      ["must_entails_prejacent", "true"]
+    ],
+    "comment": "Anti-knowledge: Phil's complete checking counts as direct-enough information and blocks must even though no single perceptual event settles 'dinner is ready' — the indirectness signal is about knowledge, not perception. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean philCooksDinner."
+  },
+  {
+    "id": "vonfintelgillies2021_meryl_dinner",
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (25)"},
+    "language": "stan1293",
+    "primaryText": "Dinner must be ready.",
+    "glossedTokens": [],
+    "translation": "Dinner must be ready.",
+    "context": "Meryl followed the recipe's instructions but has not checked everything herself and wonders whether anything more was planned.",
+    "judgment": "acceptable",
+    "alternatives": [{"form": "Dinner is ready.", "judgment": "acceptable"}],
+    "paperFeatures": [
+      ["kind", "must_pair"],
+      ["modal", "must"],
+      ["evidence", "indirect"],
+      ["must_entails_prejacent", "true"]
+    ],
+    "comment": "Meryl's information is indirect: she followed the steps but lacks full direct knowledge of what counts as ready, so must is licensed. Minimal pair with the Phil row. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean merylCooksDinner."
+  }
+]
