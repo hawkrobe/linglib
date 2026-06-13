@@ -55,7 +55,7 @@ of MCB's `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` (since Π_{d,p} is identity here).
 Δ^d does **not** have a separate Bialgebra structure in this file. By
 the equivalence theorem, consumers wanting a Bialgebra should compose
 through `embedInlAlgHom` and use the Δ^ρ structure
-(`PruningNonplanar.instBialgebraRho`). MCB's Lemma 1.2.12 (Δ^d weak
+(`PruningDuality.instBialgebraRho`). MCB's Lemma 1.2.12 (Δ^d weak
 coassoc with distance-≤-1 multiplicity discrepancy) is specific to the
 binary `Π_{d,p}` step which is identity in our setting; in our n-ary
 substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.

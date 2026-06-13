@@ -2,7 +2,10 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Data.List.Forall2
 import Mathlib.Logic.Relation
+import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
+import Mathlib.Algebra.Group.Nat.Defs
 import Mathlib.Data.Multiset.Basic
+import Mathlib.Data.Multiset.MapFold
 
 set_option autoImplicit false
 
@@ -606,6 +609,40 @@ theorem node_eta (t : Nonplanar α) : node (rootLabel t) (rootChildren t) = t :=
   | h p =>
     cases p with
     | node a cs => exact node_mk_planar_list a cs
+
+/-! ### Weight of a `node` -/
+
+private theorem weightList_eq_sum_map (cs : List (Planar α)) :
+    Planar.weightList cs = (cs.map Planar.weight).sum := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih =>
+    show Planar.weight c + Planar.weightList cs = _
+    rw [List.map_cons, List.sum_cons, ih]
+
+/-- Every tree has at least one vertex (the root). -/
+theorem weight_pos (t : Nonplanar α) : 0 < t.weight := by
+  refine Quotient.inductionOn t fun p => ?_
+  cases p with
+  | node a cs =>
+    show 0 < Planar.weight (.node a cs)
+    show 0 < 1 + Planar.weightList cs
+    omega
+
+/-- Weight of a smart-constructor `node`: one (the root) plus the total
+    weight of the children multiset. -/
+@[simp] theorem weight_node (a : α) (F : Multiset (Nonplanar α)) :
+    (node a F).weight = 1 + (F.map weight).sum := by
+  refine Quotient.inductionOn F fun lst => ?_
+  show (mk (.node a (lst.map Quotient.out))).weight = _
+  rw [weight_mk]
+  show 1 + Planar.weightList (lst.map Quotient.out) = _
+  rw [weightList_eq_sum_map, List.map_map]
+  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
+  congr 1
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show (mk (Quotient.out t)).weight = weight t
+  exact congrArg weight (Quotient.out_eq t)
 
 end Nonplanar
 
