@@ -2,7 +2,7 @@
 # Core Types for Genericity
 
 Shared vocabulary for the study of generic sentences, used across
-`Phenomena/Generics/` data files and `Theories/` study files.
+genericity data and study files.
 
 The two types here capture the organizing axes of the field as surveyed
 in the introduction to *Genericity* (Mari, Beyssade, Del Prete, OUP 2013):

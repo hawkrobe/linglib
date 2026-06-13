@@ -1359,9 +1359,6 @@ import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Studies.Ahn2015
 import Linglib.Studies.ThomasDeo2020
-import Linglib.Phenomena.Generics.BareNames
-import Linglib.Phenomena.Generics.BarePlurals
-import Linglib.Phenomena.Generics.KindReference
 import Linglib.Studies.LeBruynDeSwart2022
 import Linglib.Studies.Cohen1999
 import Linglib.Studies.Cohen2013
@@ -1477,17 +1474,13 @@ import Linglib.Studies.BaleSchwarz2026
 import Linglib.Studies.Scontras2014
 import Linglib.Studies.Kratzer2012Conditionals
 import Linglib.Studies.Cooper2023.Ch6
-import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Studies.RotterLiu2025Concord
-import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Studies.LiuRotter2025
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
 import Linglib.Studies.Mendes2025
-import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Core.Logic.Modal.BSML.Scenarios
 import Linglib.Studies.Kratzer2012Informational
-import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.ChampollionAlsopGrosu2019
 import Linglib.Studies.AlonsoOvalleMoghiseh2025
@@ -1545,14 +1538,12 @@ import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
-import Linglib.Phenomena.Negation.Basic
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Studies.NapoliNespor1976
 import Linglib.Studies.Stakov2026
 import Linglib.Studies.Stakov2026Typology
-import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Studies.AlbrightHayes2003
 import Linglib.Studies.ODonnell2015
 import Linglib.Studies.Bybee1985
@@ -1585,7 +1576,6 @@ import Linglib.Studies.Dryer2013Negation
 import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Horn1989
 import Linglib.Studies.PlunkettSundell2013
-import Linglib.Phenomena.Negation.Denial
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Studies.HaslingerEtAl2025
@@ -1665,7 +1655,6 @@ import Linglib.Studies.Beaver2001.Basic
 import Linglib.Studies.Blutner2000
 import Linglib.Studies.Karttunen1973
 import Linglib.Studies.Glass2025
-import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998
 import Linglib.Studies.Downing1996
@@ -1933,7 +1922,6 @@ import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
-import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Studies.Ferreira2023
 import Linglib.Studies.Partee1973
 -- Theories: Dependency Grammar
@@ -2840,6 +2828,17 @@ import Linglib.Data.Examples.Rooth1992
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Data.Examples.Thomas2026
 import Linglib.Data.Examples.BergenGoodman2015
+import Linglib.Data.Examples.Kubota2026
+import Linglib.Data.Examples.VonFintelGillies2010
+import Linglib.Data.Examples.VonFintelGillies2021
+import Linglib.Studies.VonFintelGillies2010
+import Linglib.Studies.VonFintelGillies2021
+import Linglib.Data.Examples.LeBruynDeSwart2022
+import Linglib.Data.Examples.CohenErteschikShir2002
+import Linglib.Data.Examples.Gasparri2025
+import Linglib.Data.Examples.VanDerSandtMaier2003
+import Linglib.Data.Examples.TesslerFranke2019
+import Linglib.Studies.Gasparri2025
 import Linglib.Data.Examples.Gunlogson2001
 import Linglib.Data.Examples.MoensSteedman1988
 import Linglib.Data.Examples.Karttunen1974

@@ -20,7 +20,7 @@ on determiners is the primary scope diagnostic for negation position.
 - The žádný/nějaký contrast mirrors English *any* (NPI) vs *some* (PPI),
   but Czech žádný is an NCI requiring Agree with ¬,
   not just DE licensing.
-- Bridges to `Phenomena.Negation.CzechThreeWayNeg.Diagnostic` for per-position
+- Bridges to `Semantics.Negation.CzechNegation.Diagnostic` for per-position
   compatibility.
 
 -/

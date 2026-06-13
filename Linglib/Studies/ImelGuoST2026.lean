@@ -10,7 +10,7 @@ import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Washo.Modals
 import Linglib.Fragments.Koryak.Modals
-import Linglib.Phenomena.Modality.GermanModals
+import Linglib.Fragments.German.Predicates.Modal
 
 /-!
 # Cross-Linguistic Modal Typology
@@ -203,7 +203,24 @@ theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide
 
 -- ============================================================================
--- §10: Washo (isolate) — [bochnak-2015a], [bochnak-2015b]
+-- §10: German (Indo-European) — derived from Fragment
+-- ============================================================================
+
+open German.Predicates.Modal (GermanModalEntry allModals)
+
+/-- German modal inventory, derived from the Fragment (single source of truth).
+    *Sollte* is counted separately from *sollen* per morphological
+    individuation ([steinert-threlkeld-imel-guo-2023] §4.3). -/
+def german : ModalInventory :=
+  .fromAuxEntries "German" "Indo-European" "Kratzer (1981)"
+    allModals GermanModalEntry.form GermanModalEntry.modalMeaning
+
+/-- All seven German modals satisfy IFF (including *sollte* as distinct
+    from *sollen*). -/
+theorem german_all_iff : german.allIFF = true := by decide
+
+-- ============================================================================
+-- §11: Washo (isolate) — [bochnak-2015a], [bochnak-2015b]
 -- ============================================================================
 
 /-- Washo is a key counterexample to the SAV universal: *-eʔ* expresses
@@ -229,7 +246,7 @@ theorem washo_eq_not_sav :
     Semantics.Modality.Typology.satisfiesSAV [ne, nd, pe, pd] = false := by native_decide
 
 -- ============================================================================
--- §11: Koryak (Chukotko-Kamchatkan) — [mocnik-abramovitz-2019]
+-- §12: Koryak (Chukotko-Kamchatkan) — [mocnik-abramovitz-2019]
 -- ============================================================================
 
 /-- Koryak *ivək* is the other SAV counterexample: it expresses both
@@ -246,7 +263,7 @@ theorem koryak_all_iff : koryak.allIFF = true := by native_decide
 theorem koryak_size : koryak.size = 1 := by native_decide
 
 -- ============================================================================
--- §12: Unattested meanings: the IFF universal rules out *mighst*
+-- §13: Unattested meanings: the IFF universal rules out *mighst*
 -- ============================================================================
 
 /-- The hypothetical modal *mighst* (epistemic possibility + deontic
@@ -261,13 +278,13 @@ theorem mighst_not_sav :
     Semantics.Modality.Typology.satisfiesSAV [pe, nd] = false := by native_decide
 
 -- ============================================================================
--- §13: Cross-Linguistic Summary
+-- §14: Cross-Linguistic Summary
 -- ============================================================================
 
 /-- All twelve inventories. -/
 def allInventories : List ModalInventory :=
   [tlingit, javanese, gitksan, korean, greek, mandarin, dutch, hungarian, english,
-   Phenomena.Modality.GermanModalsBridge.german, washo, koryak]
+   german, washo, koryak]
 
 /-- Ten of twelve encoded languages have perfect IFF degree (1.0). -/
 theorem ten_of_twelve_perfect_iff :
@@ -283,7 +300,7 @@ theorem sav_counterexamples_satisfy_iff :
     washo.allIFF = true ∧ koryak.allIFF = true := ⟨washo_all_iff, koryak_all_iff⟩
 
 -- ============================================================================
--- §14: IFF and Efficient Communication
+-- §15: IFF and Efficient Communication
 -- ============================================================================
 
 /-! ## Efficient Communication (Imel, Guo, & [imel-guo-steinert-threlkeld-2026])

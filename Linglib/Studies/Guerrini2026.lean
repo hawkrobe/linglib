@@ -6,7 +6,6 @@ import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Studies.TesslerGoodman2019
-import Linglib.Phenomena.Generics.KindReference
 import Linglib.Studies.Longobardi2001
 
 /-! # Guerrini (2026): Distributive Kind Predication
@@ -71,12 +70,11 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Semantics.Kinds.NMP (NominalMapping Kind CanDenoteKind
+open Semantics.Kinds.NMP (NominalMapping NominalDenotation Kind CanDenoteKind
   CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
 open Semantics.Plurality (distMaximal allSatisfy noneSatisfy)
 open Semantics.Plurality.Trivalent (pluralTruthValue)
-open Phenomena.Generics.KindReference (NominalDenotation)
 
 -- ============================================================================
 -- § 1: Structural Ambiguity — The Two LFs
@@ -346,7 +344,7 @@ theorem kindPlural_removers :
 -- § 5: English BP Ambiguity (Guerrini's diagram (145))
 -- ============================================================================
 
--- NominalDenotation (.kind | .property) is imported from KindReference.lean.
+-- NominalDenotation (.kind | .property) comes from `Semantics.Kinds.NMP`.
 
 /-- Cross-linguistic nominal form. -/
 inductive NominalExpression where

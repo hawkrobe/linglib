@@ -700,6 +700,42 @@ open Semantics.Causation.ProductionDependence (causationType)
     takes plain Bools, so its inputs are computed with the SEM
     predicates and passed through. -/
 
+open Semantics.Causation Semantics.Causation.SEM
+open Semantics.Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
+
+private lemma bgDepth_lt_solo :
+    ∀ {u v : BGVar}, u ∈ soloGraph.parents v → bgDepth u < bgDepth v := by
+  intro u v h; revert h; cases u <;> cases v <;> decide
+
+private lemma solo_entails_iff {s : Valuation (fun _ : BGVar => Bool)}
+    {v : BGVar} {x : Bool} :
+    SEM.causallyEntails soloModel s v x ↔
+      SEM.developDetVtxFuel soloModel s 3 v = some x :=
+  SEM.causallyEntails_iff_fuel soloModel bgDepth bgDepth_lt_solo
+    (by cases v <;> decide) s x
+
+private lemma solo_necessary_iff {bg : Valuation (fun _ : BGVar => Bool)}
+    {c e : BGVar} :
+    causallyNecessary soloModel bg c e ↔
+      SEM.causallyNecessaryFuel soloModel 3 bg c true e true :=
+  SEM.causallyNecessary_iff_fuel soloModel bgDepth bgDepth_lt_solo
+    (by intro v; cases v <;> decide) bg c true e true
+
+set_option maxRecDepth 100000 in
+/-- The solo model computes the full-profile world `⟨W,H,S⟩ = ⟨1,1,1⟩`:
+    Def 10b necessity and bare sufficiency proven through the fuel
+    bridge, then converted into the `decide`-wrapped Bools. -/
+theorem solo_causalWorld :
+    causalWorldFromModel soloModel Valuation.empty .cause .effect =
+      { whether := true, how := true, sufficient := true } := by
+  have hNec : causallyNecessary soloModel Valuation.empty .cause .effect :=
+    solo_necessary_iff.mpr (by decide)
+  have hSuf : causallySufficient soloModel Valuation.empty .cause .effect :=
+    SEM.causallySufficient_of_causallyEntails (solo_entails_iff.mpr (by decide))
+  have hDir : hasDirectLaw soloModel .cause .effect := by decide
+  unfold causalWorldFromModel
+  rw [decide_eq_true hNec, decide_eq_true hSuf, decide_eq_true hDir]
+
 /-- **Solo cause → S1 prefers "caused".**
     From a V2 model with one direct law (cause → effect), the pipeline
     produces the correct pragmatic prediction. -/
@@ -708,12 +744,10 @@ theorem solo_cause_chain :
     expressionMeaning cw .caused = true ∧
     cfg.S1 () cw .caused > cfg.S1 () cw .enabled ∧
     cfg.S1 () cw .caused > cfg.S1 () cw .affected := by
-  refine ⟨?_, ?_, ?_⟩
-  · -- cw.caused reduces structurally
-    show expressionMeaning _ .caused = true
-    sorry  -- TODO: structural reduction over noncomputable causalWorldFromModel
-  · sorry
-  · sorry
+  refine ⟨?_, ?_, ?_⟩ <;> rw [solo_causalWorld]
+  · decide
+  · rsa_predict
+  · rsa_predict
 
 end EndToEnd
 

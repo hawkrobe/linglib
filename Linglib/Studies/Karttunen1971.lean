@@ -30,7 +30,10 @@ descriptive taxonomy. The modern consensus ([nadathur-2023]) derives
 the entailment patterns from **causal structure** rather than from
 presuppositional schemas. The theory layer (`Causation/Implicative.lean`)
 implements the modern causal analysis; this study file preserves
-Karttunen's original classification and bridges it to the modern types.
+Karttunen's original classification. The bridges to the modern types
+live with the papers that draw them: `Studies/Nadathur2023.lean`
+(classification conversion) and `Studies/NadathurLauer2020.lean`
+(entailment cells vs causal mechanism).
 
 Key differences from the modern analysis:
 - Karttunen treats the entailment as arising from a *presupposition* that
@@ -135,76 +138,7 @@ theorem force_prevent_same_profile :
   exact ⟨rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. Bridge to Modern Classification ([nadathur-2023])
--- ════════════════════════════════════════════════════════════════
-
-/-- Convert KarttunenClass to ImplicativeClass (Nadathur 2023).
-    Note: `aspectGoverned` is always false because Karttunen's 1971
-    analysis does not account for aspect — a limitation the modern
-    analysis corrects. -/
-def KarttunenClass.toImplicativeClass (k : KarttunenClass) : ImplicativeClass :=
-  { polarity := k.polarity
-    directionality := if k.isTwoWay then .twoWay else .oneWay
-    aspectGoverned := false
-    prerequisite := if k.isTwoWay then some .unspecified else none }
-
-theorem karttunen_manage_matches :
-    KarttunenClass.manage.toImplicativeClass = ImplicativeClass.manage := rfl
-
-theorem karttunen_fail_matches :
-    KarttunenClass.fail.toImplicativeClass = ImplicativeClass.fail := rfl
-
-/-- Derive KarttunenClass from an Implicative (two-way cell). -/
-def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
-  { isSufficient := true, isNecessary := true, polarity := b }
-
-/-- Map modern `Causative` to the Karttunen cell that matches the
-    builder's **entailment pattern** (Karttunen's original criterion).
-
-    All positive causative builders (make, force, enable, cause) share the
-    same Karttunen cell: sufficient-only. This is because:
-    - Affirmative "V-ed X to VP" → VP (all require the effect occurred)
-    - Negation "didn't V X to VP" ↛ ¬VP (effect might occur from other causes)
-
-    The modern insight of [nadathur-lauer-2020] is that these verbs
-    differ in causal MECHANISM (sufficiency vs necessity) despite sharing
-    the same ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
-def karttunenOfCausative : Causative → KarttunenClass
-  | .make | .force | .enable | .cause =>
-    { isSufficient := true, isNecessary := false, polarity := .positive }
-  | .prevent =>
-    { isSufficient := true, isNecessary := false, polarity := .negative }
-
-theorem manage_karttunen_class :
-    karttunenOfImplicative .positive = KarttunenClass.manage := rfl
-
-theorem fail_karttunen_class :
-    karttunenOfImplicative .negative = KarttunenClass.fail := rfl
-
-theorem force_karttunen_class :
-    karttunenOfCausative .force = KarttunenClass.force := rfl
-
-theorem prevent_karttunen_class :
-    karttunenOfCausative .prevent = KarttunenClass.prevent := rfl
-
-/-- `cause` and `make` have the same Karttunen entailment cell
-    (sufficient-only) despite having different causal mechanisms.
-    This is the central insight of [nadathur-lauer-2020]: same
-    entailment pattern ≠ same truth conditions. The difference emerges
-    in overdetermination scenarios where `causallySufficient` is true but `causeSem`
-    is false (kernel-checked at `NadathurLauer2020.necessity_cancellable`). -/
-theorem cause_make_same_cell_different_mechanism :
-    karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    Causative.cause.assertsNecessity ≠ Causative.make.assertsNecessity := by
-  exact ⟨rfl, by decide⟩
-
-/-- All positive causative builders map to `KarttunenClass.force`
-    (Karttunen's sufficient-only cell). -/
-theorem cause_karttunen_class :
-    karttunenOfCausative .cause = KarttunenClass.force := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Fragment Verification (ex. 2)
+-- § 2. Fragment Verification (ex. 2)
 -- ════════════════════════════════════════════════════════════════
 
 /-! Verify that Fragment verb entries carry the correct annotations,

@@ -316,7 +316,7 @@ theorem cardinal_proportional_divergence :
     (`Semantics/Kinds/SortedOntology.lean §2`) is reused
     here directly rather than re-stipulated; the same enum is
     consumed by `Fragments/German/BarePluralWordOrder.lean` and
-    `Phenomena/Generics/BarePlurals.lean`. -/
+    `Studies/Magri2009.lean`. -/
 
 /-- Solt's distribution claim: in the presence of an individual-level
     predicate, only the proportional reading is licensed. Encoded as a

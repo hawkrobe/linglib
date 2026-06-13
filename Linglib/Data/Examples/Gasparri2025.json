@@ -1,0 +1,128 @@
+[
+  {
+    "id": "gasparri2025_ruth_dancer",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 4"},
+    "language": "stan1293",
+    "primaryText": "Ruth is a dancer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Ruth is a dancer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "acceptable"},
+      {"name": "generic", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "bare_name"],
+      ["licensor", "none"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean ruth_dancer. Bare singular name without a licensor: the token reading is fine, the generic reading ('people called Ruth are dancers') is degraded — generic recalcitrance."
+  },
+  {
+    "id": "gasparri2025_the_tiger_striped",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 4"},
+    "language": "stan1293",
+    "primaryText": "The tiger is striped.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The tiger is striped.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "acceptable"},
+      {"name": "generic", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "definite_common"],
+      ["licensor", "none"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean the_tiger_striped. Ordinary definite singular: generic reading available without any licensor — the baseline bare names fail to match."
+  },
+  {
+    "id": "gasparri2025_ruth_good_grades",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 21"},
+    "language": "stan1293",
+    "primaryText": "According to the numbers, Ruth has good grades in biology.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "According to the numbers, Ruth has good grades in biology.",
+    "context": "Naming-convention context: statistical generalization over people called Ruth.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "questionable"},
+      {"name": "generic", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "bare_name"],
+      ["licensor", "generic_context"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean ruth_good_grades. A naming-convention context licenses the generic reading of the bare singular name."
+  },
+  {
+    "id": "gasparri2025_tristan_extinct",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "language": "stan1293",
+    "primaryText": "Tristan is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Tristan is extinct.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "questionable"},
+      {"name": "generic", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "bare_name"],
+      ["licensor", "kind_level_pred"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean tristan_extinct. Bare singular names resist kind-level predicates even though those select for kinds."
+  },
+  {
+    "id": "gasparri2025_quoted_tristan_extinct",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "language": "stan1293",
+    "primaryText": "'Tristan' is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "'Tristan' is extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "questionable"},
+      {"name": "generic", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "quoted_name"],
+      ["licensor", "kind_level_pred"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean quoted_tristan_extinct. Quotation rescues kind-level predication for names: the quoted name denotes the name-kind."
+  },
+  {
+    "id": "gasparri2025_dodo_extinct",
+    "source": {"bibkey": "gasparri-2025", "paperLabel": "UNVERIFIED ex. 34-35"},
+    "language": "stan1293",
+    "primaryText": "The dodo is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The dodo is extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "token", "judgment": "questionable"},
+      {"name": "generic", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["subject_type", "definite_common"],
+      ["licensor", "kind_level_pred"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BareNames.lean dodo_extinct. Definite common NPs accept kind-level predicates — the parallel bare names break and quotation restores."
+  }
+]
