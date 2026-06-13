@@ -40,7 +40,7 @@ deictic feature projects: deixis filters the referent but never selects it
   (previously deferred): a definite description selecting the unique satisfier
   of the possessee restrictor that stands in the possession relation to the
   possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
-  `Semantics/Quantification/Possessive.lean`.
+  `Semantics/Possessive/GQ.lean`.
 
 ## Implementation notes
 
@@ -161,7 +161,7 @@ vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 
 The narrowing-aware GQ form for quantificational possessors ("every student's
-cat") is `Semantics.Quantification.Possessive.PossW` — `(individual a)` of
+cat") is `Possessive.PossW` — `(individual a)` of
 `PossW` reduces here when the possessor is an entity. -/
 noncomputable def _root_.Possessive.denote (_p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :

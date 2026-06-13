@@ -2236,7 +2236,8 @@ import Linglib.Semantics.Quantification.Syllogistic.Trees
 import Linglib.Semantics.Quantification.Syllogistic.Square
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Exceptive
-import Linglib.Semantics.Quantification.Possessive
+import Linglib.Semantics.Possessive.Basic
+import Linglib.Semantics.Possessive.GQ
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.ChoiceFunction
@@ -2832,3 +2833,4 @@ import Linglib.Core.Logic.TweetyNixon
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Studies.Barker1995
+import Linglib.Studies.ParteeBorschev2001
