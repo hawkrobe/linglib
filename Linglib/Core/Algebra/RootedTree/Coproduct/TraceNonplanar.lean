@@ -54,11 +54,15 @@ work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
 
 ## Status
 
-`[UPSTREAM]` candidate. Most proofs landed; two `sorry`s remain: the
-GL/Δ^c duality identity `pairing_gl_eq_pairing_coproduct_C` and the
-grading half of `mcb_lemma_1_2_10`. The R.6 pairing substrate
-(`GrossmanLarsonPairing.lean`, `Aut.lean`) is sorry-free; the R.5 GL
-substrate is closed (`GrossmanLarson.mul_assoc`, `GrossmanLarsonMonoid.lean`).
+`[UPSTREAM]` candidate. MCB Lemma 1.2.10's grading content
+(`mcb_lemma_1_2_10`) is fully proved. One `sorry` remains: Δ^c
+coassociativity (`comulCN_coassoc`), stated under the `TraceCoherent`
+hypothesis — see its docstring. The earlier plan to derive it from a
+GL/Δ^c pairing duality was abandoned: that duality is **false** (GL
+grafting never removes trace markers, so no orientation of
+`⟨x ⋆ y, z⟩ = pairing₂ (… ) (Δ^c z)` can hold; counterexamples in
+`scratch/validate_duality.lean` V4). The duality route works for the
+deletion variant Δ^ρ — see `Coproduct/PruningDuality.lean`.
 -/
 
 namespace RootedTree
@@ -549,19 +553,15 @@ noncomputable def comulCAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
   rw [AddMonoidAlgebra.lift_single, one_smul]
   rfl
 
-/-! ### Duality bridge: GL associativity ↔ Δ^c coassociativity
+/-! ### Tensor-extended pairings
 
-The headline of R.6+R.7. The pairing `⟨·, ·⟩` from
-`GrossmanLarsonPairing.lean` realizes a non-degenerate bilinear form on
-`H × H → R`. By extending to `H ⊗ H → R` via `pairing₂ x⊗y w⊗z =
-pairing x w · pairing y z`, the GL product `⋆` and Δ^c are paired:
-```
-pairing (product x y) z = pairing₂ (x ⊗ y) (Δ^c z)
-```
-This identity makes GL associativity equivalent to Δ^c coassociativity.
-The Δ^c coassoc theorem (`comulCN_coassoc` below) follows from GL
-associativity (`GrossmanLarson.mul_assoc`) by transporting through this
-duality. **TODO**: state + prove. -/
+The pairing `⟨·, ·⟩` from `GrossmanLarsonPairing.lean` extends to the
+tensor square (`pairing₂`) and cube (`pairing₃`). These power the GL/CK
+duality for the deletion coproduct Δ^ρ (`Coproduct/PruningDuality.lean`:
+`⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`). For the trace variant Δ^c no
+such duality holds — the trunk of a proper cut contains trace-marker
+leaves that GL grafting can never produce — so Δ^c coassociativity
+(`comulCN_coassoc` below) is a separate combinatorial statement. -/
 
 /-- The **tensor-extended pairing** `H ⊗ H →ₗ H ⊗ H →ₗ R`, defined by
     `pairing₂ (x ⊗ y) (w ⊗ z) = pairing x w * pairing y z` and extended
@@ -572,9 +572,8 @@ duality. **TODO**: state + prove. -/
     `pair = TP.lift pairing : H ⊗ H →ₗ R`; contract via `mul' R R`;
     curry the result.
 
-    Decoration-free: works on `ConnesKreimer R (Nonplanar α)` for any `α`.
-    The trace-aware `pairing_gl_eq_pairing_coproduct_C` instantiates at
-    `α := α ⊕ β`. -/
+    Decoration-free: works on `ConnesKreimer R (Nonplanar α)` for any
+    `α`. Consumed by the Δ^ρ duality (`Coproduct/PruningDuality.lean`). -/
 noncomputable def pairing₂ :
     (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R]
     (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R] R :=
@@ -638,68 +637,53 @@ noncomputable def pairing₃ :
         (GrossmanLarson.pairing b y * GrossmanLarson.pairing c z) := by
   rfl
 
-/-- **The GL/CK duality theorem** (Foissy 2018 §4.2): the GL `★` product
-    and Δ^c coproduct are paired via the symmetry-weighted pairing:
+/-! ### Trace coherence
 
-    `pairing (gl x y) z = pairing₂ (x ⊗ y) (Δ^c z)`
+There is **no** GL/Δ^c pairing duality: for any marker-free `z` with a
+proper admissible cut, the trunk side of `Δ^c z` carries trace-marker
+leaves, while every forest in the support of a GL product `x ⋆ y` has at
+least as many markers as `x` and `y` combined (grafting never removes
+vertices) — so `⟨x ⋆ y, z⟩ = 0` against any cut summand that would make
+the right side nonzero, in either slot orientation. Checked
+computationally in `scratch/validate_duality.lean` (V4). An earlier
+sorry-fenced duality statement here was false and has been removed; the
+duality (with crossed slots) is true for the deletion variant Δ^ρ and is
+proved in `Coproduct/PruningDuality.lean`.
 
-    **This is a known result** in the literature:
-    * Foissy, L. (2018), "Bidendriform bialgebras, trees, and free
-      quasi-symmetric functions" or related — the GL-CK duality identity
-      at the level of pairing + cut summands.
-    * Manchon, D. survey — same identity in the combinatorial-Hopf
-      framework.
+Δ^c coassociativity itself is **not τ-generic** either: iterating Δ^c
+re-encodes already-cut subtrees, so the marker written by a second-stage
+cut is `τ` of a tree *containing markers*, while the opposite cut order
+writes `τ` of the original subtree. For `τ` sensitive to that difference
+coassociativity fails (counterexample: `τ` = count of `Sum.inl`
+vertices, `z` an inl-labeled 3-chain; `scratch/validate_duality.lean`
+V5). [marcolli-chomsky-berwick-2025]'s proof of Lemma 1.2.10 (book
+p. 37–38) silently uses that their trace labels compose under
+contraction ("the accessible terms of accessible terms … are themselves
+accessible terms"); `TraceCoherent` is that hypothesis made explicit. -/
 
-    **Formalization status (2026-05-18)**: `sorry`-fenced as a top-level
-    axiom. Combinatorial proof requires either (a) direct enumeration of
-    grafting sites of `gl x y` matched against cut summands of `z`
-    (Foissy 2018 §4.2 proof style — ~200-500 LOC of combinatorial work)
-    or (b) descent via a planar duality identity (similar substantial
-    LOC). Deferred until a tractable abstract path is found.
+/-- **Trace coherence**: `τ` does not distinguish a cut trunk (with its
+    trace markers) from the tree it was cut from. This is the condition
+    under which iterated Δ^c cuts commute (coassociativity): second-stage
+    markers computed on marked trunks agree with markers computed on the
+    original tree. Constant encoders satisfy it (`traceCoherent_const`);
+    [marcolli-chomsky-berwick-2025]'s identity trace satisfies it in
+    spirit via label expansion (their marker labels denote subtrees of
+    the *original* tree). -/
+def TraceCoherent (τ : Nonplanar (α ⊕ β) → β) : Prop :=
+  ∀ T : Nonplanar (α ⊕ β), ∀ p ∈ cutSummandsCN τ T, τ p.2 = τ T
 
-    **Downstream consumers** (`comulCN_coassoc`, the Δ^c-coassoc
-    derivation; ultimately the Bialgebra instance for MCB Lemma 1.2.10
-    via duality with `GL.mul_assoc_ℤ`) trust this as a named axiom. -/
-theorem pairing_gl_eq_pairing_coproduct_C
-    (τ : Nonplanar (α ⊕ β) → β)
-    (x y z : ConnesKreimer R (Nonplanar (α ⊕ β))) :
-    GrossmanLarson.pairing
-        (GrossmanLarson.product x y) z =
-      pairing₂ (R := R)
-        (x ⊗ₜ[R] y)
-        (comulCAlgHomN (R := R) τ z) := by
-  sorry
+/-- Constant trace encoders are coherent. -/
+theorem traceCoherent_const (b : β) :
+    TraceCoherent (fun _ : Nonplanar (α ⊕ β) => b) :=
+  fun _ _ _ => rfl
 
-/-! ### Auxiliary: `pairing₃` chain via two applications of Foissy 2018 §4.2
+/-! ### Auxiliary: `pairing₃` reduction helpers
 
-The two helpers below express `pairing₃` evaluated against the LHS / RHS
-of coassoc in terms of `pairing` against `gl(gl x y) z'` / `gl x (gl y z')`.
-These compose two applications of `pairing_gl_eq_pairing_coproduct_C`
-through `pairing₂`'s tensor structure. -/
+Generic reduction lemmas for `pairing₃` on shifted tensor shapes,
+consumed by the Δ^ρ duality chain in `Coproduct/PruningDuality.lean`. -/
 
 section CoassocChain
 variable (τ : Nonplanar (α ⊕ β) → β)
-
-/-- The LHS LinearMap of `comulCN_coassoc`:
-    `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c : CK →ₗ CK ⊗ (CK ⊗ CK)`. -/
-private noncomputable def coassocLHSLin :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₗ[R]
-      ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-        (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))) :=
-  (TensorProduct.assoc R _ _ _).toLinearMap ∘ₗ
-    (comulCAlgHomN (R := R) τ).toLinearMap.rTensor _ ∘ₗ
-    (comulCAlgHomN (R := R) τ).toLinearMap
-
-/-- The RHS LinearMap of `comulCN_coassoc`:
-    `(id ⊗ Δ^c) ∘ Δ^c : CK →ₗ CK ⊗ (CK ⊗ CK)`. -/
-private noncomputable def coassocRHSLin :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) →ₗ[R]
-      ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-        (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))) :=
-  (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ ∘ₗ
-    (comulCAlgHomN (R := R) τ).toLinearMap
 
 /-! ### Helpers: `pairing₃` on shifted-tensor forms
 
@@ -747,72 +731,6 @@ These compose two applications of `pairing_gl_eq_pairing_coproduct_C`
 `pairing₃_assoc_rTensor_comul` / `pairing₃_lTensor_comul` lemmas
 generalize over the inner Δ^c-image, enabling a clean specialization
 to `V = Δ^c z`. -/
-
-/-- Intermediate: combining `assoc` + `rTensor (Δ^c)` + `pairing₃` via
-    one application of the Foissy axiom. -/
-private lemma pairing₃_assoc_rTensor_comul
-    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
-    (V : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((TensorProduct.assoc R _ _ _)
-          ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _ V)) =
-      pairing₂ (R := R) (GrossmanLarson.product x y ⊗ₜ[R] z') V := by
-  induction V using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b =>
-    rw [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_assoc_tmul,
-        ← pairing_gl_eq_pairing_coproduct_C τ x y a, pairing₂_tmul_tmul]
-  | add V₁ V₂ ih₁ ih₂ =>
-    rw [map_add, map_add, map_add, ih₁, ih₂, map_add]
-
-/-- Intermediate: combining `lTensor (Δ^c)` + `pairing₃` via one
-    application of the Foissy axiom. -/
-private lemma pairing₃_lTensor_comul
-    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
-    (W : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ W) =
-      pairing₂ (R := R) (x ⊗ₜ[R] GrossmanLarson.product y z') W := by
-  induction W using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b =>
-    rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_tmul_apply,
-        ← pairing_gl_eq_pairing_coproduct_C τ y z' b, pairing₂_tmul_tmul]
-  | add W₁ W₂ ih₁ ih₂ =>
-    rw [map_add, map_add, ih₁, ih₂, map_add]
-
-/-- **LHS chain via Foissy 2018 §4.2 (twice)**: pairing the LHS coassoc
-    expression against a pure triple tensor reduces to pairing the
-    left-associated GL product against `z`. -/
-theorem pairing₃_coassocLHSLin
-    (x y z' z : ConnesKreimer R (Nonplanar (α ⊕ β))) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocLHSLin (R := R) τ z) =
-      GrossmanLarson.pairing
-        (GrossmanLarson.product (GrossmanLarson.product x y) z') z := by
-  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((TensorProduct.assoc R _ _ _)
-          ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _
-            ((comulCAlgHomN (R := R) τ).toLinearMap z))) = _
-  rw [AlgHom.toLinearMap_apply, pairing₃_assoc_rTensor_comul]
-  exact (pairing_gl_eq_pairing_coproduct_C τ
-          (GrossmanLarson.product x y) z' z).symm
-
-/-- **RHS chain via Foissy 2018 §4.2 (twice)**: pairing the RHS coassoc
-    expression against a pure triple tensor reduces to pairing the
-    right-associated GL product against `z`. -/
-theorem pairing₃_coassocRHSLin
-    (x y z' z : ConnesKreimer R (Nonplanar (α ⊕ β))) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocRHSLin (R := R) τ z) =
-      GrossmanLarson.pairing
-        (GrossmanLarson.product x (GrossmanLarson.product y z')) z := by
-  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((comulCAlgHomN (R := R) τ).toLinearMap.lTensor _
-          ((comulCAlgHomN (R := R) τ).toLinearMap z)) = _
-  rw [AlgHom.toLinearMap_apply, pairing₃_lTensor_comul]
-  exact (pairing_gl_eq_pairing_coproduct_C τ x
-          (GrossmanLarson.product y z') z).symm
 
 end CoassocChain
 
@@ -980,34 +898,27 @@ which requires `R` to be a Ring (so `CK R T` has `AddCommGroup`). -/
 section CoassocCommRing
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
-/-- **Coassociativity of `comulCAlgHomN` (Δ^c on Nonplanar)**.
+/-- **Coassociativity of `comulCAlgHomN` (Δ^c on Nonplanar)**, under
+    trace coherence.
 
-    Derived via the GL/CK duality (`pairing_gl_eq_pairing_coproduct_C`,
-    axiom-pivoted to Foissy 2018 §4.2) + `GrossmanLarson.mul_assoc`
-    (Q6 closed at OudomGuinBridge.lean over `[CommSemiring R]`, lifted
-    here over `[CommRing R]`) + `pairing₃_nondegenerate`.
+    NOT τ-generic: without `TraceCoherent τ`, iterating Δ^c writes
+    second-stage markers computed on marked trunks, and the two cut
+    orders disagree (counterexample: `τ` = inl-vertex count on an
+    inl-labeled 3-chain; validated in `scratch/validate_duality.lean`
+    V5). Under coherence the double-cut enumerations agree — this is
+    [marcolli-chomsky-berwick-2025] Lemma 1.2.10's coassociativity
+    (book p. 37–38, the quotient-composition argument "the accessible
+    terms of accessible terms … are themselves accessible terms").
 
-    **Structural proof CLOSED**: this theorem compiles via the chain
-    1. `LinearMap.ext`: reduce to pointwise `LHS z = RHS z`.
-    2. `sub_eq_zero` + `pairing₃_nondegenerate`: reduce to
-       `pairing₃ t (LHS z) = pairing₃ t (RHS z)` for all test `t`.
-    3. `TensorProduct.induction_on` thrice: reduce `t` to pure
-       triple tensors `x ⊗ (y ⊗ z')`.
-    4. Per pure tensor: apply `pairing₃_coassocLHSLin` and
-       `pairing₃_coassocRHSLin` to get `pairing (gl(gl x y) z') z =
-       pairing (gl x (gl y z')) z`.
-    5. Apply `GrossmanLarson.mul_assoc x y z'` (Q6) to conclude.
-
-    **Sorry'd substrate** (4 deferred lemmas, all natural extensions):
-    * `pairing_gl_eq_pairing_coproduct_C` (Foissy 2018 §4.2 axiom).
-    * `pairing₃_coassocLHSLin` (LHS chain via Foissy twice).
-    * `pairing₃_coassocRHSLin` (RHS chain via Foissy twice).
-    * `pairing₃_nondegenerate` (tensor lift of binary nondegen).
-
-    Specialized to `[CommRing R]` for AddCommGroup (subtraction).
-    `[CharZero R] [NoZeroDivisors R]` for nondegeneracy. -/
+    TODO: prove by the double-cut bijection: both sides enumerate
+    pairs of disjoint admissible-cut stages of each tree of `z`;
+    `TraceCoherent` makes the marker labels written in either order
+    agree. The earlier plan to transport `GrossmanLarson.mul_assoc`
+    through a GL/Δ^c pairing duality is dead — that duality is false
+    (see the Trace coherence section above); the duality route works
+    only for Δ^ρ (`Coproduct/PruningDuality.lean`). -/
 theorem comulCN_coassoc [CharZero R'] [NoZeroDivisors R']
-    (τ : Nonplanar (α' ⊕ β') → β') :
+    (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     TensorProduct.assoc R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
@@ -1016,35 +927,7 @@ theorem comulCN_coassoc [CharZero R'] [NoZeroDivisors R']
       (comulCAlgHomN (R := R') τ).toLinearMap =
     (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _ ∘ₗ
       (comulCAlgHomN (R := R') τ).toLinearMap := by
-  -- Diamond fix: addCommGroupOf registered locally (no global instance,
-  -- so OG bridge's op_smul := rfl chain stays intact).
-  letI : AddCommGroup (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
-    ConnesKreimer.addCommGroupOf
-  -- LHS / RHS are the coassocLHSLin / coassocRHSLin (renamed without τ for brevity).
-  -- Reduce to pointwise: LHS z = RHS z for all z.
-  ext z
-  -- Reduce to pairing-equality via pairing₃_unique.
-  apply pairing₃_unique
-  intro t
-  -- Reduce t to pure triple tensors via induction.
-  induction t using TensorProduct.induction_on with
-  | zero => simp
-  | tmul x rest =>
-    induction rest using TensorProduct.induction_on with
-    | zero => simp
-    | tmul y z' =>
-      -- Pure triple: reduce LHS/RHS pairings to GL associativity via Foissy chain.
-      show pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocLHSLin τ z) =
-           pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocRHSLin τ z)
-      rw [pairing₃_coassocLHSLin, pairing₃_coassocRHSLin,
-          ← GrossmanLarson.mul_def, ← GrossmanLarson.mul_def,
-          ← GrossmanLarson.mul_def, ← GrossmanLarson.mul_def,
-          GrossmanLarson.mul_assoc]
-    | add a b iha ihb =>
-      simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply,
-                 iha, ihb]
-  | add a b iha ihb =>
-    simp only [map_add, LinearMap.add_apply, iha, ihb]
+  sorry
 
 end CoassocCommRing
 
@@ -1266,10 +1149,10 @@ uniqueness substrate (`cutSummandsCN_filter_empty`) above. -/
 section BialgebraInst
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
-/-- **AlgHom-form coassoc** of `comulCAlgHomN`. Follows from `comulCN_coassoc`
-    (LinearMap-form, closed structurally) by AlgHom extensionality. -/
+/-- **AlgHom-form coassoc** of `comulCAlgHomN` under trace coherence.
+    Follows from `comulCN_coassoc` by AlgHom extensionality. -/
 theorem comulCAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R']
-    (τ : Nonplanar (α' ⊕ β') → β') :
+    (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     (Algebra.TensorProduct.assoc R' R' R'
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
         (ConnesKreimer R' (Nonplanar (α' ⊕ β')))
@@ -1281,7 +1164,7 @@ theorem comulCAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R']
   apply AlgHom.toLinearMap_injective
   -- The .toLinearMap of both AlgHom expressions equals the corresponding
   -- LinearMap composition. `comulCN_coassoc` gives the equality.
-  exact comulCN_coassoc τ
+  exact comulCN_coassoc τ hτ
 
 /-! ### Counit laws — factored via per-tree + forest helpers
 
@@ -1505,21 +1388,25 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
   rw [comulCAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
   exact counit_lTensor_comulCForestN τ F (fun T _ => counit_lTensor_comulCTreeN τ T)
 
-/-- **`Bialgebra` instance** on `ConnesKreimer R' (Nonplanar (α' ⊕ β'))`
-    with Δ^c as the coproduct.
+/-- **`Bialgebra` structure** on `ConnesKreimer R' (Nonplanar (α' ⊕ β'))`
+    with Δ^c as the coproduct, for a trace-coherent encoder.
 
-    The graded bialgebra structure of MCB Lemma 1.2.10. Registered via
+    The graded bialgebra structure of MCB Lemma 1.2.10. Built via
     `Bialgebra.ofAlgHom` with `comulCAlgHomN τ` as the coproduct and the
-    inherited `counit` from CK. Depends on:
-    * `comulCAlgHomN_coassoc_algHom` (closed structurally).
+    inherited `counit` from CK. A `def`, not an `instance`: coassociativity
+    needs `TraceCoherent τ` (it is false for arbitrary `τ` — see
+    `comulCN_coassoc`), which instance resolution cannot synthesize.
+    Depends on:
+    * `comulCAlgHomN_coassoc_algHom` (sorried, under trace coherence).
     * `counit_rTensor_comulCAlgHomN` (proved).
     * `counit_lTensor_comulCAlgHomN` (proved). -/
-noncomputable instance instBialgebraC
-    [CharZero R'] [NoZeroDivisors R'] (τ : Nonplanar (α' ⊕ β') → β') :
+@[reducible] noncomputable def bialgebraC
+    [CharZero R'] [NoZeroDivisors R'] (τ : Nonplanar (α' ⊕ β') → β')
+    (hτ : TraceCoherent τ) :
     Bialgebra R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
   Bialgebra.ofAlgHom (comulCAlgHomN (R := R') τ) ((ConnesKreimer.counit (R := R')) :
           ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
-    (comulCAlgHomN_coassoc_algHom τ)
+    (comulCAlgHomN_coassoc_algHom τ hτ)
     (counit_rTensor_comulCAlgHomN τ)
     (counit_lTensor_comulCAlgHomN τ)
 
@@ -1537,9 +1424,10 @@ Per `marcolli-chomsky-berwick-2025` p. 37, Lemma 1.2.10:
 
 This section formalizes the statement: defines edge-count grading on
 forests, sets up the graded subspaces, and packages MCB Lemma 1.2.10
-as a theorem combining `instBialgebraC` with grading compatibility.
-
-The grading proofs are sorry'd; the statement is the packaging. -/
+as a theorem combining the Δ^c bialgebra structure (`bialgebraC`, for
+trace-coherent encoders) with grading compatibility. Both grading
+halves are fully proved (edge conservation through the trace cut
+machinery: `cutSummandsCN_weight`). -/
 
 section MCBLemma1_2_10
 variable {R'' : Type*} [CommRing R''] {α'' β'' : Type*}
@@ -1564,10 +1452,172 @@ noncomputable def gradedPiece (X : Type*) (n : ℕ) :
   Submodule.span R''
     {x | ∃ F : Forest (Nonplanar X), F.edgeCount = n ∧ x = ConnesKreimer.of' F}
 
+/-! ### Edge bookkeeping for `edgeCount` -/
+
+private theorem edgeCount_add {X : Type*} (F G : Forest (Nonplanar X)) :
+    Forest.edgeCount (F + G) = Forest.edgeCount F + Forest.edgeCount G := by
+  show ((F + G).map (fun T => T.weight - 1)).sum = _
+  rw [Multiset.map_add, Multiset.sum_add]
+  rfl
+
+private theorem edgeCount_singleton {X : Type*} (T : Nonplanar X) :
+    Forest.edgeCount ({T} : Forest (Nonplanar X)) = T.weight - 1 := by
+  show (({T} : Multiset (Nonplanar X)).map (fun T => T.weight - 1)).sum = _
+  rw [Multiset.map_singleton, Multiset.sum_singleton]
+
+/-- `Σ (wᵢ − 1) + card = Σ wᵢ` for planar forests (each `wᵢ ≥ 1`). -/
+private theorem sum_map_weight_sub_one_add_card {γ : Type*}
+    (F : Multiset (Planar γ)) :
+    ((F.map (fun t => Planar.weight t - 1)).sum + Multiset.card F =
+      (F.map Planar.weight).sum) := by
+  induction F using Multiset.induction_on with
+  | empty => rfl
+  | cons a F ih =>
+    have h1 : 1 ≤ Planar.weight a := by
+      cases a with
+      | node x cs => show 1 ≤ 1 + Planar.weightList cs; omega
+    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons,
+        Multiset.sum_cons, Multiset.card_cons]
+    omega
+
+/-- **Edge conservation for Δ^c cut summands**: the trace marker replaces
+    the cut subtree by a unit-weight leaf, so crown edges plus trunk
+    weight recover the tree weight exactly. Descends
+    `cutSummandsG_weight` (`Coproduct/Defs.lean`) through `Nonplanar.mk`. -/
+private theorem cutSummandsCN_weight (τ : Nonplanar (α'' ⊕ β'') → β'')
+    (T : Nonplanar (α'' ⊕ β'')) :
+    ∀ p ∈ cutSummandsCN τ T,
+      Forest.edgeCount p.1 + p.2.weight = T.weight := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar (α'' ⊕ β''), T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp
+  rw [cutSummandsCN_mk] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  rw [ConnesKreimer.cutSummandsCP_def] at hq
+  have hext : ∀ (t : Planar (α'' ⊕ β'')) r,
+      ConnesKreimer.extractC (τ ∘ Nonplanar.mk) t = some r →
+      Planar.weightList r = 1 := by
+    intro t r h
+    cases t with
+    | node x cs =>
+      cases x with
+      | inl a =>
+        rw [ConnesKreimer.extractC_inl] at h
+        obtain rfl := (Option.some.injEq _ _ ▸ h :
+          [ConnesKreimer.traceLeaf ((τ ∘ Nonplanar.mk)
+            (Planar.node (Sum.inl a) cs))] = r)
+        rfl
+      | inr b =>
+        rw [ConnesKreimer.extractC_inr] at h
+        exact absurd h (by simp)
+  have h := ConnesKreimer.cutSummandsG_weight _ hext T₀ q hq
+  have hsub := sum_map_weight_sub_one_add_card q.1
+  show Forest.edgeCount (q.1.map Nonplanar.mk) +
+      (Nonplanar.mk q.2).weight = (Nonplanar.mk T₀).weight
+  rw [Nonplanar.weight_mk, Nonplanar.weight_mk]
+  rw [show Forest.edgeCount (q.1.map Nonplanar.mk) =
+      ((q.1.map (fun t => Planar.weight t - 1)).sum) from by
+    show ((q.1.map Nonplanar.mk).map
+        (fun T => Nonplanar.weight T - 1)).sum = _
+    rw [Multiset.map_map]
+    rfl]
+  omega
+
+/-! ### Homogeneous tensor span at fixed total edge degree -/
+
+/-- The span of basis tensors `of' F₁ ⊗ of' F₂` with total edge count
+    `n` — the homogeneous degree-`n` piece of the tensor square through
+    which Δ^c factors. -/
+private noncomputable def gradedTensorSpan (n : ℕ) :
+    Submodule R'' (ConnesKreimer R'' (Nonplanar (α'' ⊕ β'')) ⊗[R'']
+      ConnesKreimer R'' (Nonplanar (α'' ⊕ β''))) :=
+  Submodule.span R'' {y | ∃ F₁ F₂ : Forest (Nonplanar (α'' ⊕ β'')),
+    Forest.edgeCount F₁ + Forest.edgeCount F₂ = n ∧
+    y = ConnesKreimer.of' F₁ ⊗ₜ[R''] ConnesKreimer.of' F₂}
+
+/-- Multiplicativity of the graded tensor spans: degrees add. -/
+private theorem gradedTensorSpan_mul {m k : ℕ}
+    {u v : ConnesKreimer R'' (Nonplanar (α'' ⊕ β'')) ⊗[R'']
+      ConnesKreimer R'' (Nonplanar (α'' ⊕ β''))}
+    (hu : u ∈ gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') m)
+    (hv : v ∈ gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') k) :
+    u * v ∈ gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') (m + k) := by
+  have hle : gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') m *
+      gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') k ≤
+      gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') (m + k) := by
+    rw [gradedTensorSpan, gradedTensorSpan, Submodule.span_mul_span]
+    refine Submodule.span_le.mpr ?_
+    rintro w ⟨a, ⟨F₁, F₂, hab, rfl⟩, b, ⟨G₁, G₂, hgk, rfl⟩, rfl⟩
+    refine Submodule.subset_span ⟨F₁ + G₁, F₂ + G₂, ?_, ?_⟩
+    · rw [edgeCount_add, edgeCount_add]
+      omega
+    · show (ConnesKreimer.of' F₁ ⊗ₜ[R''] ConnesKreimer.of' F₂) *
+        (ConnesKreimer.of' G₁ ⊗ₜ[R''] ConnesKreimer.of' G₂) =
+        ConnesKreimer.of' (F₁ + G₁) ⊗ₜ[R''] ConnesKreimer.of' (F₂ + G₂)
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← ConnesKreimer.of'_add,
+        ← ConnesKreimer.of'_add]
+  exact hle (Submodule.mul_mem_mul hu hv)
+
+/-- Tree-level membership: `Δ^c` of a single tree is homogeneous of
+    degree the tree's edge count. -/
+private theorem comulCTreeN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
+    (T : Nonplanar (α'' ⊕ β'')) :
+    comulCTreeN (R := R'') τ T ∈
+      gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') (T.weight - 1) := by
+  unfold comulCTreeN
+  refine Submodule.add_mem _ ?_ ?_
+  · refine Submodule.subset_span ⟨{T}, 0, ?_, ?_⟩
+    · rw [edgeCount_singleton]
+      show T.weight - 1 + Forest.edgeCount (0 : Forest (Nonplanar (α'' ⊕ β''))) =
+        T.weight - 1
+      show T.weight - 1 + 0 = T.weight - 1
+      omega
+    · rw [ConnesKreimer.of'_zero]
+      rfl
+  · refine multiset_sum_mem _ ?_
+    intro c hc
+    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
+    have hcons := cutSummandsCN_weight τ T p hp
+    have hpos := Nonplanar.weight_pos p.2
+    refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
+    rw [edgeCount_singleton]
+    omega
+
+/-- Forest-level membership: `Δ^c` of a forest is homogeneous of degree
+    its edge count. -/
+private theorem comulCForestN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
+    (F : Forest (Nonplanar (α'' ⊕ β''))) :
+    comulCForestN (R := R'') τ F ∈
+      gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'')
+        (Forest.edgeCount F) := by
+  induction F using Multiset.induction_on with
+  | empty =>
+    rw [comulCForestN_zero]
+    refine Submodule.subset_span
+      ⟨0, 0, rfl, ?_⟩
+    rw [Algebra.TensorProduct.one_def, ConnesKreimer.of'_zero]
+  | cons T F ih =>
+    have hcons : comulCForestN (R := R'') τ (T ::ₘ F) =
+        comulCTreeN (R := R'') τ T * comulCForestN (R := R'') τ F := by
+      show comulCForestN (R := R'') τ (({T} : Multiset (Nonplanar (α'' ⊕ β''))) + F) = _
+      rw [comulCForestN_add]
+      congr 1
+      show ((({T} : Multiset (Nonplanar (α'' ⊕ β''))).map
+          (comulCTreeN (R := R'') τ)).prod) = _
+      rw [Multiset.map_singleton, Multiset.prod_singleton]
+    rw [hcons,
+        show Forest.edgeCount (T ::ₘ F) =
+          (T.weight - 1) + Forest.edgeCount F from by
+        show ((T ::ₘ F).map (fun T => T.weight - 1)).sum = _
+        rw [Multiset.map_cons, Multiset.sum_cons]
+        rfl]
+    exact gradedTensorSpan_mul (comulCTreeN_mem τ T) ih
+
 /-- **MCB Lemma 1.2.10** — the graded bialgebra structure.
 
     States that:
-    1. The bialgebra `instBialgebraC` is registered (from `comulCAlgHomN`).
+    1. The bialgebra structure `bialgebraC` (from `comulCAlgHomN`, for
+       trace-coherent encoders).
     2. The space `V^c(𝔉_{SO_0})` is graded by `edgeCount`.
     3. The product (⊔ = disjoint union) preserves grading additively:
        `V_n ⊗ V_m → V_{n+m}` (because `edgeCount(F + G) = edgeCount(F) + edgeCount(G)`).
@@ -1587,7 +1637,7 @@ noncomputable def gradedPiece (X : Type*) (n : ℕ) :
     sibling file. -/
 theorem mcb_lemma_1_2_10 [CharZero R''] [NoZeroDivisors R'']
     (τ : Nonplanar (α'' ⊕ β'') → β'') :
-    -- (1) Bialgebra structure (already registered as instBialgebraC).
+    -- (1) Bialgebra structure: `bialgebraC` (for trace-coherent τ).
     -- (2) Edge-count grading: each gradedPiece is a Submodule.
     -- (3) Product preserves grading: of'(F+G).edgeCount = F.edgeCount + G.edgeCount.
     (∀ F G : Forest (Nonplanar (α'' ⊕ β'')),
@@ -1602,20 +1652,22 @@ theorem mcb_lemma_1_2_10 [CharZero R''] [NoZeroDivisors R'']
           xi ∈ gradedPiece (α'' ⊕ β'') i ∧
           yi ∈ gradedPiece (α'' ⊕ β'') j ∧
           y = xi ⊗ₜ[R''] yi}) := by
-  refine ⟨?_, ?_⟩
-  · -- Forest.edgeCount (F + G) = F.edgeCount + G.edgeCount.
-    -- Per-tree definition: trivial via Multiset.map_add + Multiset.sum_add.
-    intro F G
-    show ((F + G).map (fun T => T.weight - 1)).sum =
-         (F.map (fun T => T.weight - 1)).sum +
-         (G.map (fun T => T.weight - 1)).sum
-    rw [Multiset.map_add, Multiset.sum_add]
-  · -- Δ^c preserves grading.
-    -- Each cut summand (p, q) of T has edgeCount(p) + edgeCount(q) ≤ edgeCount(T)
-    -- (with equality up to the cut edges; the trace marker doesn't add edges).
-    -- Formally, the trace-aware cut machinery is set up so the grading is
-    -- exactly preserved.
-    sorry
+  refine ⟨edgeCount_add, ?_⟩
+  · -- Δ^c preserves grading exactly: each cut summand splits the edges
+    -- (the trace marker replaces the cut subtree by a unit-weight leaf,
+    -- `cutSummandsCN_weight`), and the homogeneous tensor spans multiply
+    -- additively (`gradedTensorSpan_mul`).
+    intro n F hF
+    rw [comulCAlgHomN_apply_of']
+    have hmem := comulCForestN_mem (R'' := R'') τ F
+    rw [hF] at hmem
+    refine SetLike.le_def.mp (Submodule.span_le.mpr ?_) hmem
+    rintro y ⟨F₁, F₂, hsum, rfl⟩
+    exact Submodule.subset_span
+      ⟨Forest.edgeCount F₁, Forest.edgeCount F₂, hsum,
+        ConnesKreimer.of' F₁, ConnesKreimer.of' F₂,
+        Submodule.subset_span ⟨F₁, rfl, rfl⟩,
+        Submodule.subset_span ⟨F₂, rfl, rfl⟩, rfl⟩
 
 end MCBLemma1_2_10
 
