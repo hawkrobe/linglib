@@ -1,0 +1,46 @@
+[
+  {
+    "id": "gunlogson2001_falling_decl",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "falling declarative"
+    },
+    "language": "stan1293",
+    "primaryText": "It's raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["intonation", "falling"],
+      ["speaker_commits", "true"],
+      ["attributed_to_addressee", "false"]
+    ],
+    "comment": "Gunlogson's signature minimal pair: a falling declarative commits the speaker to its content."
+  },
+  {
+    "id": "gunlogson2001_rising_decl",
+    "source": {
+      "bibkey": "gunlogson-2001",
+      "paperLabel": "rising declarative"
+    },
+    "language": "stan1293",
+    "primaryText": "It's raining?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["intonation", "rising"],
+      ["speaker_commits", "false"],
+      ["attributed_to_addressee", "true"]
+    ],
+    "comment": "Same words, rising intonation: the speaker does not commit; the content is attributed to the addressee, inviting confirmation or denial."
+  }
+]

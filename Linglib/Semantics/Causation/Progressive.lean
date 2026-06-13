@@ -1,5 +1,6 @@
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Aspect.SubeventStructure
 
 /-!
@@ -27,9 +28,9 @@ coherent — type-level process in progress, token-level result never obtained.
 ## V2 substrate
 
 `CausalProcess V` is polymorphic over the vertex type. `progressiveTrue`
-checks type-level sufficiency (`BoolSEM.causallySufficientOn`);
+checks type-level sufficiency (`BoolSEM.causallySufficient`);
 `perfectiveTrue` adds token-level but-for completion
-(`BoolSEM.completesForEffectOn`).
+(`CCSelection.completesForEffect`).
 -/
 
 namespace Semantics.Causation.Progressive
@@ -44,12 +45,15 @@ open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
 /-- A causal process for telic predicates, parameterized over a vertex type `V`.
 
     Bundles a `BoolSEM V` (the type-level causal model), an explicit
-    vertex list (for `developDetOn`-based kernel reduction), the initiating
-    action vertex, the result vertex, and any enabling-condition valuation. -/
+    vertex list (proof-side only: feeds `developDetOn` computations in
+    `decide`-based proofs), the initiating action vertex, the result
+    vertex, and any enabling-condition valuation. -/
 structure CausalProcess (V : Type*) [Fintype V] [DecidableEq V] where
   /-- The type-level causal model. -/
   M : BoolSEM V
-  /-- Topologically-ordered vertex list for structural unfolding. -/
+  /-- Topologically-ordered vertex list. Proof-side only: not consumed
+      by the semantic predicates, but useful for `developDetOn`-based
+      `decide` proofs about concrete processes. -/
   vertexList : List V
   /-- The initiating action vertex. -/
   initiator : V
@@ -70,29 +74,32 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
     result exists. The progressive asserts this — no commitment to the
     result actually obtaining in the actual world. -/
 noncomputable def typeLevelHolds (proc : CausalProcess V)
-    [SEM.IsDeterministic proc.M] : Prop :=
-  BoolSEM.causallySufficientOn proc.M proc.vertexList proc.enablingConditions 1
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] : Prop :=
+  BoolSEM.causallySufficient proc.M proc.enablingConditions
     proc.initiator proc.result
 
-noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+noncomputable instance (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] :
     Decidable proc.typeLevelHolds := Classical.dec _
 
 /-- Progressive semantics: type-level process underway, completion open. -/
 noncomputable def progressiveTrue (proc : CausalProcess V)
-    [SEM.IsDeterministic proc.M] : Prop :=
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] : Prop :=
   proc.typeLevelHolds
 
-noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+noncomputable instance (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] :
     Decidable proc.progressiveTrue := Classical.dec _
 
-/-- But-for completion test (`BoolSEM.completesForEffectOn`): cause being
-    true → effect; cause being false → ¬ effect. -/
+/-- But-for completion test (`CCSelection.completesForEffect`): cause
+    being true → effect; cause being false → ¬ effect. -/
 noncomputable def completesForEffect (proc : CausalProcess V)
-    [SEM.IsDeterministic proc.M] : Prop :=
-  BoolSEM.completesForEffectOn proc.M proc.vertexList proc.enablingConditions 1
-    proc.initiator proc.result
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] : Prop :=
+  CCSelection.completesForEffect proc.M proc.enablingConditions
+    proc.initiator true false proc.result true
 
-noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+noncomputable instance (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] :
     Decidable proc.completesForEffect := Classical.dec _
 
 /-- Perfective semantics: token-level causation completed.
@@ -101,10 +108,11 @@ noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     necessary (removing it would prevent the result). This captures
     "Mary opened the door." -/
 noncomputable def perfectiveTrue (proc : CausalProcess V)
-    [SEM.IsDeterministic proc.M] : Prop :=
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] : Prop :=
   proc.completesForEffect
 
-noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+noncomputable instance (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] :
     Decidable proc.perfectiveTrue := Classical.dec _
 
 end CausalProcess
@@ -126,6 +134,10 @@ def maryVarList : List MaryVar := [.action, .doorOpen]
 def maryGraph : CausalGraph MaryVar :=
   ⟨fun | .action => ∅ | .doorOpen => {.action}⟩
 
+instance : CausalGraph.IsDAG maryGraph :=
+  CausalGraph.IsDAG.of_depth maryGraph (fun | .action => 0 | .doorOpen => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 /-- Door-opening SEM: doorOpen := action. -/
 noncomputable def marySEM : BoolSEM MaryVar :=
   { graph := maryGraph
@@ -145,20 +157,25 @@ noncomputable def maryOpening : CausalProcess MaryVar :=
 noncomputable instance : SEM.IsDeterministic maryOpening.M :=
   inferInstanceAs (SEM.IsDeterministic marySEM)
 
+instance : CausalGraph.IsDAG maryOpening.M.graph :=
+  inferInstanceAs (CausalGraph.IsDAG maryGraph)
+
 /-- The progressive is true: Mary's action is type-level sufficient. -/
 theorem maryOpening_progressive : maryOpening.progressiveTrue := by
   unfold CausalProcess.progressiveTrue CausalProcess.typeLevelHolds
-  rfl
+  exact SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := maryVarList) (n := 1) (by decide)
 
 /-- The perfective is true: Mary's action completed the process. -/
 theorem maryOpening_perfective : maryOpening.perfectiveTrue := by
-  refine ⟨?_, ?_⟩
-  · rfl
-  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+  unfold CausalProcess.perfectiveTrue CausalProcess.completesForEffect
+  exact CCSelection.completesForEffect_of_developDetOn maryVarList 1
+    (by decide) (by decide)
 
 /-- Perfective entails progressive (for the same process). -/
 theorem perfective_entails_progressive {V : Type*} [Fintype V] [DecidableEq V]
-    (proc : CausalProcess V) [SEM.IsDeterministic proc.M]
+    (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M]
     (h : proc.perfectiveTrue) :
     proc.progressiveTrue := h.1
 
@@ -179,6 +196,10 @@ def odVarList : List OdVar := [.a, .b, .r]
 
 def odGraph : CausalGraph OdVar :=
   ⟨fun | .a => ∅ | .b => ∅ | .r => {.a, .b}⟩
+
+instance : CausalGraph.IsDAG odGraph :=
+  CausalGraph.IsDAG.of_depth odGraph (fun | .a => 0 | .b => 0 | .r => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 /-- R := A ∨ B (disjunctive overdetermination). -/
 noncomputable def odSEM : BoolSEM OdVar :=
@@ -202,18 +223,22 @@ noncomputable def overdetProc : CausalProcess OdVar :=
 noncomputable instance : SEM.IsDeterministic overdetProc.M :=
   inferInstanceAs (SEM.IsDeterministic odSEM)
 
+instance : CausalGraph.IsDAG overdetProc.M.graph :=
+  inferInstanceAs (CausalGraph.IsDAG odGraph)
+
 /-- Progressive holds for the overdetermination witness. -/
 theorem overdet_progressive : overdetProc.progressiveTrue := by
   unfold CausalProcess.progressiveTrue CausalProcess.typeLevelHolds
-  rfl
+  exact SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := odVarList) (n := 1) (by decide)
 
 /-- Perfective FAILS for the overdetermination witness — even with
     `initiator = false`, the backup B in `enablingConditions` produces
-    the result. -/
+    the result, so the but-for half of `completesForEffect` fails. -/
 theorem overdet_not_perfective : ¬ overdetProc.perfectiveTrue := by
-  intro ⟨_, hNot⟩
-  apply hNot
-  rfl
+  intro h
+  exact h.2 (SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := odVarList) (n := 1) (by decide))
 
 /-- **Imperfective paradox**: progressive does NOT entail perfective.
     Witnessed by the overdetermination scenario. -/
@@ -229,10 +254,11 @@ theorem progressive_not_entails_perfective :
     all inertia worlds (normal continuations). The causal model account
     refines this: "normal continuation" means "the SEM develops the
     initiator into the result" — i.e., type-level sufficiency. -/
-theorem typeLevelHolds_is_developOn {V : Type*} [Fintype V] [DecidableEq V]
-    (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+theorem typeLevelHolds_is_develop {V : Type*} [Fintype V] [DecidableEq V]
+    (proc : CausalProcess V)
+    [CausalGraph.IsDAG proc.M.graph] [SEM.IsDeterministic proc.M] :
     proc.typeLevelHolds ↔
-    (developDetOn proc.M proc.vertexList 1
+    (proc.M.developDet
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
 
@@ -252,11 +278,13 @@ structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
     (Time : Type*) [LinearOrder Time] where
   /-- The causal process underlying the event -/
   process : CausalProcess V
+  /-- IsDAG instance for process.M.graph (carried explicitly). -/
+  dagInst : CausalGraph.IsDAG process.M.graph
   /-- IsDeterministic instance for proc.M (carried explicitly). -/
   detInst : SEM.IsDeterministic process.M
   /-- The temporal phases: activity and result with ordering -/
   phases : Semantics.Aspect.SubeventStructure.SubeventPhases Time
   /-- The causal trajectory is viable: initiator is type-level sufficient. -/
-  causallyViable : @CausalProcess.typeLevelHolds V _ _ process detInst
+  causallyViable : @CausalProcess.typeLevelHolds V _ _ process dagInst detInst
 
 end Semantics.Causation.Progressive

@@ -370,6 +370,14 @@ def CanDenoteProperty (mapping : NominalMapping) : Prop :=
 instance : DecidablePred CanDenoteProperty := fun m => by
   cases m <;> unfold CanDenoteProperty <;> infer_instance
 
+/-- Denotation type for bare nominal expressions: kind (type e individual
+    concept) vs property (type ⟨e,t⟩). The two values name the targets of
+    `CanDenoteKind` and `CanDenoteProperty`. -/
+inductive NominalDenotation where
+  | kind
+  | property
+  deriving Repr, DecidableEq
+
 -- Mass/Count Distinction
 -- Uses `MassCount` from `Core.Lexical.Word`.
 
@@ -468,8 +476,8 @@ theorem bare_plural_ok_bare_singular_not (bp : BlockingPrinciple)
 /-! Bare plurals are scopeless because DKP introduces a *local* existential: the
 existential closure sits inside negation and cannot scope out. This locality is the
 theorem `chierchia_position_invariant` below — Chierchia's derivation is the same
-whether or not the bare plural has scrambled. See `Phenomena/Generics/KindReference.lean`
-for empirical scope data. -/
+whether or not the bare plural has scrambled. See
+`Data/Examples/LeBruynDeSwart2022.json` for empirical scope data. -/
 
 /--
 When ∩ is undefined (NP doesn't denote a kind), we fall back to ∃.
@@ -547,11 +555,9 @@ example : downDefinedFor .mass false = true := rfl
 
 ## Empirical Data
 
-For empirical patterns (cross-linguistic data, scope judgments, predicate
-class effects), see:
-- `Phenomena/Generics/KindReference.lean` - unified kind reference phenomena
-- `Phenomena/Generics/BarePlurals.lean` - generic vs existential readings
-- `Phenomena/Generics/Data.lean` - generic sentence patterns
+For empirical patterns (scope judgments, predicate class effects), see
+`Data/Examples/LeBruynDeSwart2022.json` and
+`Data/Examples/CohenErteschikShir2002.json`.
 
 For kind formation by salient equivalence relations (the Mendia 2020
 framework that subsumes Carlson's Disjointness Condition), see

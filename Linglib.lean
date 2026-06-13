@@ -1163,9 +1163,7 @@ import Linglib.Studies.Asudeh2022
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
-import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Studies.Rett2020
-import Linglib.Phenomena.Assertion.Basic
 import Linglib.Studies.BringGunlogson2000
 import Linglib.Studies.CohenKrifka2014
 import Linglib.Studies.Gunlogson2001
@@ -1284,7 +1282,6 @@ import Linglib.Studies.Stalnaker1975
 import Linglib.Studies.Stalnaker1981
 import Linglib.Studies.VonFintelIatridou2005
 import Linglib.Studies.ZaniCiardelliSanfelici2026
-import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Studies.Spohn1988
 import Linglib.Studies.GoldszmidtPearl1996
 import Linglib.Studies.DarwichePearl1997
@@ -1355,9 +1352,6 @@ import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Studies.Ahn2015
 import Linglib.Studies.ThomasDeo2020
-import Linglib.Phenomena.Generics.BareNames
-import Linglib.Phenomena.Generics.BarePlurals
-import Linglib.Phenomena.Generics.KindReference
 import Linglib.Studies.LeBruynDeSwart2022
 import Linglib.Studies.Cohen1999
 import Linglib.Studies.Cohen2013
@@ -1429,7 +1423,6 @@ import Linglib.Studies.ZaslavskyEtAl2019
 import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
-import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Studies.Amato2025
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.Erlewine2018
@@ -1532,14 +1525,12 @@ import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
-import Linglib.Phenomena.Negation.Basic
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Studies.NapoliNespor1976
 import Linglib.Studies.Stakov2026
 import Linglib.Studies.Stakov2026Typology
-import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Studies.AlbrightHayes2003
 import Linglib.Studies.ODonnell2015
 import Linglib.Studies.Bybee1985
@@ -1551,8 +1542,6 @@ import Linglib.Studies.Halpert2012
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Studies.BickelNichols2013
 import Linglib.Studies.AckermanMalouf2013
-import Linglib.Phenomena.Morphology.CategoryChanging
-import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
 import Linglib.Studies.Panagiotidis2015
 import Linglib.Studies.HahnDegenFutrell2021Morphology
 import Linglib.Studies.RathiHahnFutrell2026
@@ -1574,7 +1563,6 @@ import Linglib.Studies.Dryer2013Negation
 import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Horn1989
 import Linglib.Studies.PlunkettSundell2013
-import Linglib.Phenomena.Negation.Denial
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Studies.HaslingerEtAl2025
@@ -1661,7 +1649,6 @@ import Linglib.Studies.TaraldsenEtAl2018
 import Linglib.Studies.LittleMoroneyRoyer2022
 import Linglib.Studies.Sudo2016
 import Linglib.Studies.Bruening2001
-import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Studies.BarwiseCooper1981
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Studies.ScontrasPearl2021Quantification
@@ -1749,8 +1736,6 @@ import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.IatridouZeijlstra2021
 import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.Pancheva2003
-import Linglib.Phenomena.TemporalConnectives.Compare
-import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Studies.Cruse1973
 import Linglib.Studies.OgiharaST2024
@@ -2828,5 +2813,19 @@ import Linglib.Data.Examples.VonFintelGillies2010
 import Linglib.Data.Examples.VonFintelGillies2021
 import Linglib.Studies.VonFintelGillies2010
 import Linglib.Studies.VonFintelGillies2021
+import Linglib.Data.Examples.LeBruynDeSwart2022
+import Linglib.Data.Examples.CohenErteschikShir2002
+import Linglib.Data.Examples.Gasparri2025
+import Linglib.Data.Examples.VanDerSandtMaier2003
+import Linglib.Data.Examples.TesslerFranke2019
+import Linglib.Studies.Gasparri2025
+import Linglib.Data.Examples.Gunlogson2001
+import Linglib.Data.Examples.MoensSteedman1988
+import Linglib.Data.Examples.Karttunen1974
+import Linglib.Data.Examples.AlstottAravind2026
+import Linglib.Data.Examples.Giannakidou2002
+import Linglib.Data.Examples.LuPanDegen2025
+import Linglib.Morphology.RootFamily
+import Linglib.Core.Logic.TweetyNixon
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025

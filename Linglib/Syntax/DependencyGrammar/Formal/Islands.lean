@@ -25,12 +25,11 @@ extraction that produces a risen catena with non-contiguous yield.
   `Catena.lean` / `Discontinuity.lean`; statements are `... = true`.
 * The `OsborneIslandType` enum is consumed by `Studies/Osborne2019Islands.lean`,
   which bridges the three cases (adjunct, subject, whIsland) that line up with
-  the Ross-1967 inventory in `Phenomena.Islands.ConstraintType`.
+  the Ross-1967 inventory in `ConstraintType` (`Studies/Ross1967.lean`).
 
 ## Todo
 
-* Promote `Phenomena.Islands.ConstraintType` to substrate (e.g. `Typology/Islands.lean`)
-  so this file can consume the canonical Ross-1967 enum directly and
+* Consume the canonical Ross-1967 `ConstraintType` enum directly so
   `OsborneIslandType` becomes a refinement mapping onto it.
 -/
 

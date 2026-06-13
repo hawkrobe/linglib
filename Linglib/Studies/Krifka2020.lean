@@ -1,5 +1,4 @@
 import Linglib.Discourse.LayeredAssertion
-import Linglib.Phenomena.Assertion.Basic
 
 /-!
 # Layered Assertive Clauses: JP/ComP modifiers
@@ -17,7 +16,8 @@ of [krifka-2015] (see sibling
 - §1 — Hedges as JP modifiers ("I think p" → epistemicStatus := weak)
 - §2 — Oaths as ComP modifiers ("I swear p" → commitmentStrength := strong)
 - §3 — JP/ComP independence (commute, layer non-interaction)
-- §4 — Data bridges to `Phenomena/Assertion/Basic.lean` empirical data
+- §4 — Rank orderings: hedges weaken, oaths strengthen, relative to the
+  `.standard` default
 
 ## Out of scope
 
@@ -31,8 +31,6 @@ of [krifka-2015] (see sibling
 namespace Krifka2020
 
 open Discourse.Krifka
-open Phenomena.Assertion (hedgeExamples oathExamples
-  all_hedges_reduce all_oaths_increase)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Hedges as JP Modifiers
@@ -107,25 +105,19 @@ theorem hedgedOath_content_eq {W : Type*} (la : LayeredAssertion W) :
     (hedgedOath la).content = la.content := rfl
 
 -- ════════════════════════════════════════════════════
--- § 4. Empirical-Data Bridges
+-- § 4. Rank Orderings
 -- ════════════════════════════════════════════════════
 
-/-- All hedges reduce commitment, AND the JP-modifier mechanism produces
-    a strictly lower-rank epistemic status than `.standard`. The data
-    side is `all_hedges_reduce` from `Phenomena/Assertion/Basic.lean`;
-    the mechanism side is the JP-modifier rank ordering. -/
-theorem hedge_data_bridge :
-    hedgeExamples.all (·.reducesCommitment) = true ∧
-    CommitmentStrength.weak.rank < CommitmentStrength.standard.rank :=
-  ⟨all_hedges_reduce, by decide⟩
+/-- Hedging produces a strictly lower-rank epistemic status than the
+    `.standard` default: "I think p" weakens the assertion. -/
+theorem hedgeAsJP_rank_lt_standard {W : Type*} (la : LayeredAssertion W) :
+    (hedgeAsJP la).epistemicStatus.rank < CommitmentStrength.standard.rank :=
+  show CommitmentStrength.weak.rank < CommitmentStrength.standard.rank by decide
 
-/-- All oaths increase commitment, AND the ComP-modifier mechanism
-    produces a strictly higher-rank commitment strength than `.standard`.
-    The data side is `all_oaths_increase` from `Basic.lean`; the
-    mechanism side is the ComP-modifier rank ordering. -/
-theorem oath_data_bridge :
-    oathExamples.all (·.increasesCommitment) = true ∧
-    CommitmentStrength.strong.rank > CommitmentStrength.standard.rank :=
-  ⟨all_oaths_increase, by decide⟩
+/-- Oaths produce a strictly higher-rank commitment strength than the
+    `.standard` default: "I swear p" strengthens the assertion. -/
+theorem oathAsComP_rank_gt_standard {W : Type*} (la : LayeredAssertion W) :
+    (oathAsComP la).commitmentStrength.rank > CommitmentStrength.standard.rank :=
+  show CommitmentStrength.strong.rank > CommitmentStrength.standard.rank by decide
 
 end Krifka2020

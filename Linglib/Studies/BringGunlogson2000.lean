@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Assertion.Basic
 import Linglib.Discourse.Gunlogson
 import Mathlib.Data.Set.Basic
 

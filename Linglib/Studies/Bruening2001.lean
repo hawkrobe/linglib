@@ -17,9 +17,7 @@ phase-theoretic barriers).
 Theory-neutral scope-freezing examples primarily compiled from
 [bruening-2001], with contributions from [larson-1988]
 (double-object construction examples) and [may-1985]
-(foundational scope-availability vocabulary). Was formerly
-`Phenomena/Quantification/Data.lean`; renamed per the
-provenance-tracking policy.
+(foundational scope-availability vocabulary).
 
 ## Part II: Theoretical analysis (Minimalist QR)
 
@@ -30,10 +28,6 @@ goal asymmetrically c-commands the theme. Other freezing contexts
 (possessor, passive, attitude) are analyzed via DP-phase /
 adjunct-island / clause-boundary barriers.
 
-Was formerly `Phenomena/Quantification/MinimalismScope.lean`;
-absorbed here per the "study files own the analysis they advance"
-policy (CLAUDE.md).
-
 ## Sections
 - `ScopeFreezing`: Empirical configurations where inverse scope is unavailable
 - `MinimalistAnalysis`: Theoretical derivation of freezing from Minimalist QR
@@ -43,7 +37,7 @@ The verb-cluster word-order scope data formerly housed here was
 `Linglib.Data.Examples.Steedman2000` / `Linglib.Studies.Steedman2000`.
 -/
 
-namespace Phenomena.Quantification.Bruening2001
+namespace Bruening2001
 
 -- ============================================================================
 -- § Scope Freezing
@@ -336,7 +330,7 @@ end ScopeFreezing
 
 
 -- ============================================================================
--- Part II: Minimalist Analysis (was Phenomena/Quantification/MinimalismScope.lean)
+-- Part II: Minimalist Analysis
 -- ============================================================================
 
 section MinimalistAnalysis
@@ -490,4 +484,4 @@ theorem doc_superiority_from_tree :
 
 end MinimalistAnalysis
 
-end Phenomena.Quantification.Bruening2001
+end Bruening2001

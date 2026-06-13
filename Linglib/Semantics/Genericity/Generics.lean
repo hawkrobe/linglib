@@ -227,10 +227,6 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 - `Semantics/Lexical/Noun/Kind/NMP.lean` - Kind reference, bare plurals, DKP
 - `Studies/TesslerGoodman2019.lean` - RSA treatment of generics
 
-## Empirical Data
-
-- `Phenomena/Generics/Data.lean` - prevalence asymmetries, rare property generics
-- `Phenomena/Generics/KindReference.lean` - kind-level predicates, cross-linguistic patterns
 -/
 
 -- Homogeneity Presupposition

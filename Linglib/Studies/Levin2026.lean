@@ -494,8 +494,9 @@ a lexically noncausative.
 
 Per-scenario causal models for these contrasts live below in §7
 (`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
-substrate, using `BoolSEM.causallySufficientOn` / `completesForEffectOn`
-from `Semantics.Causation.SEM.Counterfactual`. -/
+substrate, using `BoolSEM.causallySufficient` from
+`Semantics.Causation.SEM.Counterfactual` and `CCSelection.completesForEffect`
+from `Semantics.Causation.CCSelection`. -/
 
 /-- *Freeze* independently shows the causative alternation;
     *push* does not. This confirms the classification: *freeze solid*
@@ -981,16 +982,16 @@ theorem resultative_cause_differs_from_cause_verb :
 
 Each causative resultative maps to a concrete `BoolSEM V` where the
 verbal subevent causally determines the result vertex. Sufficiency and
-completion are stated via the canonical `BoolSEM.causallySufficientOn` /
-`completesForEffectOn` predicates so kernel reduction closes the
-structural theorems via `unfold + rfl`.
+completion are stated via the canonical `BoolSEM.causallySufficient` /
+`CCSelection.completesForEffect` predicates, proved by lifting
+`developDetOn` computations through the soundness bridges.
 
 Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
-so `developDetOn` reduces structurally without `decide`. -/
+so the `developDetOn` computations close by `decide`. -/
 
 section Scenarios
 open Semantics.Causation Semantics.Causation.Mechanism Semantics.Causation.SEM
-open BoolSEM (causallySufficientOn completesForEffectOn)
+open Semantics.Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
 
 namespace HammerFlat
 
@@ -1001,11 +1002,17 @@ def varList : List V := [.hammering, .flat]
 
 def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .hammering => 0 | .flat => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .hammering => const (G := graph) false
       | .flat => deterministic (fun ρ => ρ ⟨.hammering, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1013,13 +1020,12 @@ noncomputable instance : SEM.IsDeterministic model where
     | .flat => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem hammer_sufficient_for_flat :
-    causallySufficientOn model varList Valuation.empty 1 .hammering .flat := by
-  unfold causallySufficientOn; rfl
+    BoolSEM.causallySufficient model Valuation.empty .hammering .flat :=
+  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
 
 theorem hammer_completes_flat :
-    completesForEffectOn model varList Valuation.empty 1 .hammering .flat := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .hammering true false .flat true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end HammerFlat
 
@@ -1032,11 +1038,17 @@ def varList : List V := [.kicking, .in_field]
 
 def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .in_field => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .kicking => const (G := graph) false
       | .in_field => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1044,13 +1056,12 @@ noncomputable instance : SEM.IsDeterministic model where
     | .in_field => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem kick_sufficient_for_field :
-    causallySufficientOn model varList Valuation.empty 1 .kicking .in_field := by
-  unfold causallySufficientOn; rfl
+    BoolSEM.causallySufficient model Valuation.empty .kicking .in_field :=
+  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
 
 theorem kick_completes_field :
-    completesForEffectOn model varList Valuation.empty 1 .kicking .in_field := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .kicking true false .in_field true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end KickIntoField
 
@@ -1063,11 +1074,17 @@ def varList : List V := [.laughing, .silly]
 
 def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .laughing => 0 | .silly => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .laughing => const (G := graph) false
       | .silly => deterministic (fun ρ => ρ ⟨.laughing, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1075,8 +1092,8 @@ noncomputable instance : SEM.IsDeterministic model where
     | .silly => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem laugh_sufficient_for_silly :
-    causallySufficientOn model varList Valuation.empty 1 .laughing .silly := by
-  unfold causallySufficientOn; rfl
+    BoolSEM.causallySufficient model Valuation.empty .laughing .silly :=
+  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
 
 end LaughSilly
 
@@ -1093,19 +1110,29 @@ def varList : List V := [.freezing, .solid]
 /-- Empty graph: no causal relations (noncausative resultative). -/
 def graph : CausalGraph V := ⟨fun _ => ∅⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun _ => 0)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun _ => const (G := graph) false }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det _ := inferInstanceAs (Mechanism.IsDeterministic (const _))
 
 /-- Freezing is NOT sufficient for solidity in the empty-edge model. -/
 theorem freeze_not_sufficient :
-    ¬ causallySufficientOn model varList Valuation.empty 1 .freezing .solid := by
+    ¬ BoolSEM.causallySufficient model Valuation.empty .freezing .solid := by
   intro h
-  unfold causallySufficientOn at h
-  exact Bool.false_ne_true (Option.some.inj h)
+  have hf : (model.developDet (Valuation.empty.extend V.freezing true)).get V.solid
+      = some false :=
+    SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
+  have h' : (model.developDet (Valuation.empty.extend V.freezing true)).get V.solid
+      = some true := h
+  exact Bool.noConfusion (Option.some.inj (h'.symm.trans hf))
 
 end FreezeSolid
 
@@ -1124,12 +1151,19 @@ def graph : CausalGraph V := ⟨fun
   | .tea_removal => {.drinking}
   | .teapot_dry => {.tea_removal}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph
+    (fun | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .drinking => const (G := graph) false
       | .tea_removal => deterministic (fun ρ => ρ ⟨.drinking, by simp [graph]⟩)
       | .teapot_dry => deterministic (fun ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1140,9 +1174,8 @@ noncomputable instance : SEM.IsDeterministic model where
 /-- Tight despite being a chain: removing drinking leaves tea_removal
     undetermined (no independent source), so teapot_dry doesn't fire. -/
 theorem drink_completes_dry :
-    completesForEffectOn model varList Valuation.empty 1 .drinking .teapot_dry := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .drinking true false .teapot_dry true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end DrinkTeapotDry
 
@@ -1155,11 +1188,17 @@ def varList : List V := [.kicking, .door_open]
 
 def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .door_open => 1)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .kicking => const (G := graph) false
       | .door_open => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1167,9 +1206,8 @@ noncomputable instance : SEM.IsDeterministic model where
     | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem kick_door_completes_direct :
-    completesForEffectOn model varList Valuation.empty 1 .kicking .door_open := by
-  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
-  intro h; exact Bool.false_ne_true (Option.some.inj h)
+    completesForEffect model Valuation.empty .kicking true false .door_open true :=
+  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
 
 end KickDoorDirect
 
@@ -1195,6 +1233,11 @@ def graph : CausalGraph V := ⟨fun
   | .ball_motion => {.kicking, .ball_energy}
   | .door_open => {.ball_motion}⟩
 
+instance : CausalGraph.IsDAG graph :=
+  CausalGraph.IsDAG.of_depth graph
+    (fun | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
+    (by intro u v h; revert h; cases u <;> cases v <;> decide)
+
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
@@ -1203,6 +1246,8 @@ noncomputable def model : BoolSEM V :=
       | .ball_motion => deterministic (fun ρ =>
           ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
       | .door_open => deterministic (fun ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
+
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
 noncomputable instance : SEM.IsDeterministic model where
   mech_det v := match v with
@@ -1215,12 +1260,12 @@ def ballHasEnergyBg : Valuation (fun _ : V => Bool) :=
   Valuation.empty.extend .ball_energy true
 
 /-- NOT tight: removing kicking still allows ball_energy → ball_motion
-    → door_open. The kick is not necessary. -/
+    → door_open, so the but-for half of `completesForEffect` fails.
+    The kick is not necessary. -/
 theorem independent_source_breaks_necessity :
-    ¬ completesForEffectOn model varList ballHasEnergyBg 1 .kicking .door_open := by
-  intro ⟨_, hNot⟩
-  apply hNot
-  rfl
+    ¬ completesForEffect model ballHasEnergyBg .kicking true false .door_open true :=
+  fun ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
+    (vs := varList) (n := 1) (by decide))
 
 end IndependentSourceBreaksNecessity
 

@@ -54,7 +54,7 @@ Dependency chain:
 
 -/
 
-namespace Phenomena.Quantification.Scontras2014
+namespace Scontras2014
 
 open Semantics.Measurement
   (QuantizingNounClass ContainerReading licensesMeasureReading)
@@ -313,4 +313,4 @@ theorem locative_context_yields_no_MEASURE :
       ¬ licensesMeasureReading d.noun.nounClass (some d.forcedReading) := by
   simp [allDisambiguations]; decide
 
-end Phenomena.Quantification.Scontras2014
+end Scontras2014

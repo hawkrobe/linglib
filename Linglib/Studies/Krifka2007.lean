@@ -1,7 +1,7 @@
 import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Semantics.Gradability.AntonymPrediction
 import Linglib.Pragmatics.Implicature.Markedness
-import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraint.OT.Basic
 import Linglib.Phonology.Constraint.Superoptimal
 
@@ -49,13 +49,14 @@ with form complexity: |happy| < |unhappy| < |not happy| < |not unhappy|
 ## Verification
 
 Formalizes the quadruplet structure, proves the contradictory synonymy
-puzzle and its resolution via ThresholdPair, and bridges to the empirical
-data in `FlexibleNegation.lean`. The pragmatic mechanism connecting
+puzzle and its resolution via ThresholdPair, and states transfer equations
+against [tessler-franke-2019]'s quadruplet rows
+(`Data/Examples/TesslerFranke2019.json`). The pragmatic mechanism connecting
 contradictory base → effective ThresholdPair is derived via two routes:
 1. **Bidirectional OT** (§ 9 below): [blutner-2000]'s weak BiOT (eq. 14)
    derives the four-way form-meaning assignment via the greatest-fixed-point
    computation in `Core.Optimization.Evaluation.superoptimal`.
-2. **RSA model**: [tessler-franke-2019] (`Studies/TesslerFranke2020.lean`)
+2. **RSA model**: [tessler-franke-2019] (`Studies/TesslerFranke2020PMF.lean`)
    derives the same effect through Bayesian pragmatic reasoning.
 -/
 
@@ -69,7 +70,8 @@ open Semantics.Gradability (ThresholdPair inGapRegion
   AntonymForm contradictoryDenot_synonymy strengthenedDenot_breaks_synonymy)
 open Semantics.Gradability.Antonymy
 open Semantics.Degree (positiveMeaning)
-open Phenomena.Negation.FlexibleNegation
+open Data.Examples
+open Features (NegationType)
 open Phonology.Constraint (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
 open Phonology.Constraint.OT (NamedConstraint)
@@ -168,28 +170,63 @@ theorem extreme_degrees :
   ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Bridge to FlexibleNegation Data
+-- § 6. Transfer: Tessler-Franke Quadruplet Rows
 -- ════════════════════════════════════════════════════
 
-/-- FlexibleNegation classifies "unhappy" as contrary — this is the
+/-! [tessler-franke-2019]'s quadruplet rows
+(`Data/Examples/TesslerFranke2019.json`) classify each form by its
+innermost negation (`inner_neg`), preferred interpretation
+(`interpretation`), cost parameter (`cost`), and whether the form is judged
+equivalent to the bare positive (`equivalent_to_positive`). The theorems
+below are the transfer equations between those classifications and the
+strengthened model (§ 4-5). -/
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- Quadruplet-form adapter: the row's `form` feature as an `AntonymForm`. -/
+def formOf (row : LinguisticExample) : Option AntonymForm :=
+  match featureOf row "form" with
+  | some "positive" => some .positive
+  | some "notPositive" => some .notPositive
+  | some "negative" => some .negative
+  | some "notNegative" => some .notNegative
+  | _ => none
+
+/-- Interpretation adapter: the row's preferred `interpretation` feature as a
+    `NegationType`. -/
+def interpretationOf (row : LinguisticExample) : Option NegationType :=
+  match featureOf row "interpretation" with
+  | some "contrary" => some .contrary
+  | some "contradictory" => some .contradictory
+  | _ => none
+
+/-- **Interpretation follows the innermost negation**: a row's preferred
+    interpretation is contrary iff its innermost negation is morphological.
+    "Not unhappy" inherits the contrary reading of the inner *un-* — the
     *effective* (post-strengthening) semantics, consistent with Krifka's
     analysis where the contrary behavior is pragmatically derived. -/
-theorem unhappy_effectively_contrary :
-    unhappy_contrary.expectedInterpretation = .contrary := rfl
+theorem interpretation_follows_inner_neg :
+    ∀ row ∈ TesslerFranke2019.Examples.all,
+      (featureOf row "inner_neg" = some "morphological" ↔
+        interpretationOf row = some .contrary) := by
+  decide
 
-/-- The empirical double-negation non-equivalence is derived from
-    the strengthened model (§3): synonymy is broken by the gap. -/
-theorem double_neg_nonequivalence :
-    happy_double_neg.areEquivalent = false := rfl
+private instance {max : Nat} (tp : ThresholdPair max) (q : AntonymForm)
+    (d : Degree max) : Decidable (AntonymForm.strengthenedDenot tp q d) := by
+  cases q <;> dsimp [AntonymForm.strengthenedDenot] <;> infer_instance
 
-/-- The gap prediction from FlexibleNegation data corresponds to
-    `contrary_gap_exists` applied to the strengthened model. -/
-theorem gap_prediction_derived :
-    prediction_double_neg_gap.statement =
-      "∃d, P(d | 'not unhappy') > 0 ∧ P(d | 'happy') = 0" ∧
-    (∃ d : HappyDeg, notContraryNegMeaning d happyTP
-                    ∧ ¬ positiveMeaning' d happyTP) :=
-  ⟨rfl, contrary_gap_exists happyTP happy_gap_strict⟩
+/-- **Transfer equation**: a row is judged equivalent to the bare positive iff
+    the strengthened denotation of its form coincides with `positive` at every
+    degree. The load-bearing case is `notNegative` ("not unhappy"): the gap
+    (§ 5, Prediction 3-4) puts it on the non-equivalent side. -/
+theorem equivalent_to_positive_iff_strengthened :
+    ∀ row ∈ TesslerFranke2019.Examples.all, ∀ f ∈ formOf row,
+      (featureOf row "equivalent_to_positive" = some "true" ↔
+        ∀ d : HappyDeg, (AntonymForm.strengthenedDenot happyTP f d ↔
+          AntonymForm.strengthenedDenot happyTP .positive d)) := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bridge to Markedness Infrastructure
@@ -203,14 +240,16 @@ theorem unhappy_marked_by_morphology :
       Implicature.Markedness.unhappy_with_morphology = some "unhappy" := by
   decide
 
-/-- Cost asymmetry in FlexibleNegation data reflects Krifka's
-    form complexity ordering. -/
-theorem cost_asymmetry_reflects_complexity :
-    unhappy_vs_not_happy.cheapForm = "unhappy" ∧
-    unhappy_vs_not_happy.costlyForm = "not happy" ∧
-    unhappy_vs_not_happy.cheapMeaning = .contrary ∧
-    unhappy_vs_not_happy.costlyMeaning = .contradictory := by
-  simp [unhappy_vs_not_happy]
+/-- **Cost = complexity**: the rows' cost parameters (`C(un-) = 2`,
+    `C(not) = 3`, additive) equal Krifka's form complexity
+    (`AntonymForm.complexity`) at every quadruplet form. With
+    `interpretation_follows_inner_neg` this is Horn's division of pragmatic
+    labor: the cheaper single negation ("unhappy") takes the contrary
+    reading, the costlier one ("not happy") the marked contradictory one. -/
+theorem cost_eq_complexity :
+    ∀ row ∈ TesslerFranke2019.Examples.all, ∀ f ∈ formOf row,
+      featureOf row "cost" = some (toString f.complexity) := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Unconditionals: Evidence for Contradictory Base

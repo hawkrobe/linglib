@@ -1,7 +1,6 @@
 import Linglib.Semantics.Focus.BackgroundedIslands
 import Linglib.Studies.Ross1967
 import Linglib.Studies.HofmeisterSag2010
-import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Studies.Sag2010
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
@@ -9,29 +8,45 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Data.Examples.LuPanDegen2025
 
 /-!
-# Bridge: Backgrounded Islands → Island Classification
+# Evidence for a Discourse Account of Manner-of-Speaking Islands
 [lu-pan-degen-2025]
 
-Connects the formal backgroundedness model (Semantics/Focus) to the
-shared island infrastructure in `Phenomena/FillerGap/Islands/Data.lean` and
-to the lexical infrastructure in `Core/Lexical/LevinClass.lean`.
+[lu-pan-degen-2025] (*Language* 101(4): 627–659) reports five acceptability
+judgment experiments testing the causal relationship between discourse
+backgroundedness and the manner-of-speaking (MoS) island effect, and this
+file connects that data to the formal backgroundedness model
+(`Semantics/Focus/BackgroundedIslands`) and the lexical substrate
+(`Semantics/Lexical/LevinClass`).
 
-## Layer connections
+## Key findings (§0 data)
+
+1. Prosodic focus on the embedded object ameliorates the MoS island (Exp 1)
+2. The same manipulation creates island effects with the bridge verb *say* (Exp 2a)
+3. MoS verbs default-background their complements more than *say* (Exp 2b)
+4. Adding manner adverbs to *say* replicates the MoS island effect (Exp 3a)
+5. The say+adverb island is also sensitive to prosodic manipulation (Exp 3b)
+6. Verb-frame frequency does NOT predict the effect (all experiments)
+
+Mean acceptability ratings and backgroundedness proportions are coded as
+`Nat` (× 100). Stimulus sentences live in
+`Data/Examples/LuPanDegen2025.json` (generated module
+`Data.Examples.LuPanDegen2025`).
+
+## Derivation chain (§2–§7)
 
 ```
-Core/Lexical/LevinClass   →  mannerSpec = true for MoS verbs (§37.3)
+Semantics/Lexical/LevinClass  →  mannerSpec = true for MoS verbs (§37.3)
          ↓
-Theories/Focus/BackgroundedIslands  →  mannerSpec ↔ hasMannerWeight → island
+Semantics/Focus/BackgroundedIslands  →  mannerSpec ↔ hasMannerWeight → island
          ↓
-Phenomena/FillerGap/Islands/Data    →  ConstraintType.mannerOfSpeaking = discourse/weak
+mosIslandSources = [.discourse], mosIslandStrength = .weak
 ```
 
 The MoS island is classified as weak (ameliorable) and discourse-sourced, and
-we derive both properties from the formal model. The derivation chain runs
-from Levin's meaning components through QUD-determined backgroundedness to
-extraction predictions, with no stipulation.
+we derive both properties from the experimental data and the formal model.
 
 -/
 
@@ -41,16 +56,327 @@ namespace LuPanDegen2025
 open Semantics.Focus.BackgroundedIslands
 open Semantics.Lexical
 
+/-! ## §0. Experimental Data
+
+Acceptability and backgroundedness aggregates from the five experiments.
+-/
+
+/-! ### Experiment 1: Discourse Effects on MoS Islands
+
+Prosodic focus on the embedded object ameliorates the MoS island effect.
+N = 94 (after exclusions). Within-subjects: 2 focus conditions × 12 MoS
+verbs (whisper, mutter, shout, yell, scream, mumble, stammer, whine,
+groan, moan, shriek, murmur). Stimuli (9): `exp1_verbfocus`,
+`exp1_embeddedfocus` in `Data.Examples.LuPanDegen2025`. (Figure 4) -/
+
+section Experiment1
+
+/-- Exp 1 mean acceptability (× 100). Figure 4b. -/
+def exp1_acceptability_embeddedFocus : Nat := 68
+def exp1_acceptability_verbFocus : Nat := 57
+def exp1_acceptability_goodFiller : Nat := 79
+def exp1_acceptability_badFiller : Nat := 14
+
+/-- Exp 1 backgroundedness proportion (× 100). Figure 4a. -/
+def exp1_backgrounded_embeddedFocus : Nat := 14
+def exp1_backgrounded_verbFocus : Nat := 76
+
+/-- Focus manipulation changed backgroundedness (manipulation check).
+β = −2.46, SE = 0.40, z = −6.14, p < 0.001. -/
+theorem exp1_focus_changes_backgroundedness :
+    exp1_backgrounded_embeddedFocus < exp1_backgrounded_verbFocus := by decide
+
+/-- **Main result**: Foregrounding the embedded object ameliorates the island.
+β = 0.23, SE = 0.03, t = 7.10, p < 0.001. -/
+theorem exp1_focus_ameliorates_island :
+    exp1_acceptability_embeddedFocus > exp1_acceptability_verbFocus := by decide
+
+/-- MoS island sentences are degraded relative to grammatical fillers. -/
+theorem exp1_island_degraded :
+    exp1_acceptability_verbFocus < exp1_acceptability_goodFiller := by decide
+
+/-- Even ameliorated MoS islands remain below grammatical filler level. -/
+theorem exp1_ameliorated_still_degraded :
+    exp1_acceptability_embeddedFocus < exp1_acceptability_goodFiller := by decide
+
+end Experiment1
+
+/-! ### Experiment 2a: MoS Verbs and *Say*
+
+Both verb types show focus effects, but MoS verbs are overall more degraded.
+The same prosodic manipulation that ameliorates MoS islands can CREATE
+island-like effects for the bridge verb *say*.
+N = 97. 2 focus × 2 verb type. (Figure 7) -/
+
+section Experiment2a
+
+/-- Exp 2a acceptability (× 100). Figure 7b. -/
+def exp2a_acc_mos_embeddedFocus : Nat := 58
+def exp2a_acc_mos_verbFocus : Nat := 50
+def exp2a_acc_say_embeddedFocus : Nat := 80
+def exp2a_acc_say_verbFocus : Nat := 73
+def exp2a_acc_goodFiller : Nat := 85
+def exp2a_acc_badFiller : Nat := 16
+
+/-- Exp 2a backgroundedness (× 100). Figure 7a. -/
+def exp2a_bg_mos_embeddedFocus : Nat := 12
+def exp2a_bg_mos_verbFocus : Nat := 77
+def exp2a_bg_say_embeddedFocus : Nat := 10
+def exp2a_bg_say_verbFocus : Nat := 20
+
+/-- MoS verbs show focus effect.
+β = 0.14, SE = 0.02, t = 9.14, p < 0.001. -/
+theorem exp2a_mos_focus_effect :
+    exp2a_acc_mos_embeddedFocus > exp2a_acc_mos_verbFocus := by decide
+
+/-- *Say* also shows focus effect (can create island-like degradation).
+Focus × verb-type interaction NOT significant (β = 0.005, p = 0.509). -/
+theorem exp2a_say_focus_effect :
+    exp2a_acc_say_embeddedFocus > exp2a_acc_say_verbFocus := by decide
+
+/-- MoS verbs are overall more degraded than *say*.
+β = −0.08, SE = 0.01, t = −5.49, p < 0.001. -/
+theorem exp2a_mos_lt_say :
+    exp2a_acc_mos_verbFocus < exp2a_acc_say_verbFocus ∧
+    exp2a_acc_mos_embeddedFocus < exp2a_acc_say_embeddedFocus := by decide
+
+/-- MoS verb complements are more backgrounded than *say* complements.
+β = 0.59, SE = 0.14, z = 4.27, p < 0.001. -/
+theorem exp2a_mos_more_backgrounded :
+    exp2a_bg_mos_verbFocus > exp2a_bg_say_verbFocus := by decide
+
+end Experiment2a
+
+/-! ### Experiment 2b: Default Backgroundedness
+
+Without focus manipulation, MoS verbs default-background their complements
+more than *say*. This is the crucial **baseline** measurement.
+N = 94. MoS vs Say, no focus manipulation. (Figure 10) -/
+
+section Experiment2b
+
+/-- Exp 2b acceptability (× 100). Figure 10b. -/
+def exp2b_acc_mos : Nat := 68
+def exp2b_acc_say : Nat := 77
+def exp2b_acc_goodFiller : Nat := 81
+def exp2b_acc_badFiller : Nat := 13
+
+/-- Exp 2b backgroundedness (× 100). Figure 10a. -/
+def exp2b_bg_mos : Nat := 62
+def exp2b_bg_say : Nat := 28
+
+/-- MoS verbs default-background complements more than *say*.
+β = 0.96, SE = 0.16, z = 6.06, p < 0.001. -/
+theorem exp2b_mos_more_backgrounded :
+    exp2b_bg_mos > exp2b_bg_say := by decide
+
+/-- MoS extraction is less acceptable than *say* extraction.
+β = −0.14, SE = 0.02, t = −9.26, p < 0.001. -/
+theorem exp2b_mos_less_acceptable :
+    exp2b_acc_mos < exp2b_acc_say := by decide
+
+/-- **Core correlation**: more backgrounded → less acceptable extraction.
+This is the key link between backgroundedness and islandhood. -/
+theorem exp2b_backgroundedness_predicts_acceptability :
+    (exp2b_bg_mos > exp2b_bg_say) ∧ (exp2b_acc_mos < exp2b_acc_say) := by decide
+
+/-- *Say* extraction approaches grammatical-filler level.
+β = −0.02, SE = 0.01, t = −1.83, p = 0.067 (n.s.). -/
+theorem exp2b_say_near_grammatical :
+    exp2b_acc_say < exp2b_acc_goodFiller := by decide
+
+end Experiment2b
+
+/-! ### Experiment 3a: Say + Manner Adverb Creates Islands
+
+**The paper's key novel prediction**: adding manner adverbs to *say*
+replicates the MoS island effect. This is predicted ONLY by the
+backgroundedness account. N = 93. Say vs Say+Adverb. Stimuli (18):
+`exp3a_say`, `exp3a_sayadverb` in `Data.Examples.LuPanDegen2025`.
+(Figure 14) -/
+
+section Experiment3a
+
+/-- Exp 3a acceptability (× 100). Figure 14. -/
+def exp3a_acc_say : Nat := 77
+def exp3a_acc_sayAdverb : Nat := 53
+def exp3a_acc_goodFiller : Nat := 80
+def exp3a_acc_badFiller : Nat := 11
+
+/-- **KEY RESULT**: Adding a manner adverb to *say* degrades extraction.
+β = −0.24, SE = 0.02, t = −12.4, p < 0.001.
+
+Predicted by backgroundedness account (manner adverb adds manner weight).
+NOT predicted by subjacency (same CP structure ± adverb).
+NOT predicted by frequency (predicate-frame frequency n.s., p = 0.664). -/
+theorem exp3a_adverb_creates_island :
+    exp3a_acc_sayAdverb < exp3a_acc_say := by decide
+
+/-- Say+adverb is substantially degraded relative to grammatical fillers. -/
+theorem exp3a_adverb_degraded :
+    exp3a_acc_sayAdverb < exp3a_acc_goodFiller := by decide
+
+/-- *Say* alone patterns with grammatical fillers. -/
+theorem exp3a_say_near_grammatical :
+    exp3a_acc_goodFiller - exp3a_acc_say < exp3a_acc_say - exp3a_acc_sayAdverb := by
+  decide
+
+end Experiment3a
+
+/-! ### Experiment 3b: Discourse Effect on Say+Adverb Islands
+
+Prosodic focus ameliorates the say+adverb island, confirming that the effect
+in Experiment 3a is discourse-driven, not a structural complexity artifact.
+N = 94. 2 focus conditions (adverb-focus vs embedded-focus). Stimuli (20):
+`exp3b_adverbfocus`, `exp3b_embeddedfocus` in
+`Data.Examples.LuPanDegen2025`. (Figure 17) -/
+
+section Experiment3b
+
+/-- Exp 3b acceptability (× 100). Figure 17b. -/
+def exp3b_acc_embeddedFocus : Nat := 68
+def exp3b_acc_adverbFocus : Nat := 50
+def exp3b_acc_goodFiller : Nat := 78
+def exp3b_acc_badFiller : Nat := 15
+
+/-- Exp 3b backgroundedness (× 100). Figure 17a. -/
+def exp3b_bg_embeddedFocus : Nat := 35
+def exp3b_bg_adverbFocus : Nat := 72
+
+/-- Focus manipulation changes backgroundedness in say+adverb construction.
+β = −3.99, SE = 0.74, z = −5.42, p < 0.001. -/
+theorem exp3b_focus_changes_backgroundedness :
+    exp3b_bg_embeddedFocus < exp3b_bg_adverbFocus := by decide
+
+/-- Foregrounding embedded object ameliorates the say+adverb island.
+β = 0.21, SE = 0.03, t = 6.90, p < 0.001. -/
+theorem exp3b_focus_ameliorates :
+    exp3b_acc_embeddedFocus > exp3b_acc_adverbFocus := by decide
+
+end Experiment3b
+
+/-! ### Negative results: frequency does not predict
+
+Verb-frame frequency and sentence complement ratio (SCR) are n.s. in every
+experiment that tested them, ruling out the verb-frame frequency account:
+
+- Exp 1: freq β = −0.003, p = 0.874; SCR β = −0.0002, p = 0.987
+- Exp 2b: freq β = −0.001, p = 0.981; SCR β = 0.008, p = 0.754
+- Exp 3a: freq β = −0.005, p = 0.664; SCR β = −0.003, p = 0.793
+- Exp 3b: freq β = 0.01, p = 0.712; SCR β = 0.01, p = 0.587
+
+(0/8 tests significant; see `frequencyMoS` in §8 for the typed
+manipulation-level encoding.) -/
+
+/-! ### Cross-experiment generalizations -/
+
+/-- Focus amelioration is consistent across all tested configurations. -/
+theorem focus_amelioration_consistent :
+    -- Exp 1: MoS verbs
+    (exp1_acceptability_embeddedFocus > exp1_acceptability_verbFocus) ∧
+    -- Exp 2a: MoS verbs (replication)
+    (exp2a_acc_mos_embeddedFocus > exp2a_acc_mos_verbFocus) ∧
+    -- Exp 2a: *say* (extension)
+    (exp2a_acc_say_embeddedFocus > exp2a_acc_say_verbFocus) ∧
+    -- Exp 3b: say + adverb (novel construction)
+    (exp3b_acc_embeddedFocus > exp3b_acc_adverbFocus) := by decide
+
+/-- More backgrounded → lower extraction acceptability, consistently. -/
+theorem backgroundedness_anticorrelates_with_acceptability :
+    -- Exp 1
+    (exp1_backgrounded_verbFocus > exp1_backgrounded_embeddedFocus ∧
+     exp1_acceptability_verbFocus < exp1_acceptability_embeddedFocus) ∧
+    -- Exp 2b (cross-verb)
+    (exp2b_bg_mos > exp2b_bg_say ∧
+     exp2b_acc_mos < exp2b_acc_say) ∧
+    -- Exp 3b
+    (exp3b_bg_adverbFocus > exp3b_bg_embeddedFocus ∧
+     exp3b_acc_adverbFocus < exp3b_acc_embeddedFocus) := by decide
+
+/-- The MoS island effect is NOT an artifact of verb-class confounds:
+the say+adverb construction replicates it with the same bridge verb. -/
+theorem mos_effect_not_verb_class_artifact :
+    -- Say alone: no island
+    exp3a_acc_say > exp3a_acc_sayAdverb ∧
+    -- MoS verb: island (baseline from Exp 2b)
+    exp2b_acc_say > exp2b_acc_mos := by decide
+
+/-! ### Island source derivation
+
+The MoS island effect is classified as a weak, discourse-sourced island.
+The source classification is DERIVED from the experimental evidence above,
+not stipulated in a global lookup table:
+
+1. **Not syntactic**: prosodic focus ameliorates the effect (Exps 1, 3b).
+   Syntactic constraints (PIC, subjacency) are insensitive to prosodic focus.
+2. **Not processing**: verb-frame frequency is non-predictive (0/8 tests).
+   Processing accounts predict frequency effects.
+3. **Discourse**: say+adverb replicates the effect without structural change
+   (Exp 3a). Only the backgroundedness account predicts this — adding a
+   manner adverb to a bridge verb increases manner salience, shifting the
+   QUD and backgrounding the complement. -/
+
+/-- MoS islands are discourse-sourced.
+Derived from three empirical dissociations (above) that rule out
+syntactic and processing sources. -/
+def mosIslandSources : List IslandSource := [.discourse]
+
+/-- MoS islands are weak: ameliorated by prosodic focus.
+Derived from Experiments 1 and 3b: embedded-focus conditions are
+significantly more acceptable than verb-focus conditions. -/
+def mosIslandStrength : ConstraintStrength := .weak
+
+/-- The strength classification is empirically supported:
+prosodic focus improves extraction across all tested configurations. -/
+theorem weak_classification_justified :
+    mosIslandStrength = .weak ∧
+    -- Exp 1: prosodic focus ameliorates MoS island
+    (exp1_acceptability_embeddedFocus > exp1_acceptability_verbFocus) ∧
+    -- Exp 3b: prosodic focus ameliorates say+adverb island
+    (exp3b_acc_embeddedFocus > exp3b_acc_adverbFocus) := by decide
+
+/-- MoS islands and wh-islands are both weak (ameliorable), but by
+DIFFERENT mechanisms: MoS by prosodic focus (information structure),
+wh-islands by D-linking (filler complexity). Same strength label,
+different sources, different amelioration strategies. -/
+theorem mos_vs_wh_same_strength_different_source :
+    mosIslandStrength = .weak ∧
+    mosIslandSources ≠ [IslandSource.syntactic] := ⟨rfl, by decide⟩
+
+/-! ### Stimulus rows
+
+The example stimuli are typed rows in `Data.Examples.LuPanDegen2025`
+(UNVERIFIED against the published item lists; reconstructed from the
+paper's in-text examples). Their judgment coding mirrors the mean-rating
+direction: island conditions (verb focus, say+adverb, adverb focus) are
+`.marginal`; ameliorated/bridge conditions are `.acceptable`. -/
+
+section StimulusRows
+
+open Data.Examples
+
+/-- Value of a `paperFeatures` key, if present. -/
+private def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
+
+/-- The stimulus rows' judgment coding matches the rating data: a row is
+`.marginal` iff it instantiates an island condition (the lower-rated
+member of its experimental contrast). -/
+theorem stimulus_judgments_track_island_conditions :
+    ∀ row ∈ Examples.all,
+      (featureOf row "island_condition" = some "true" ↔
+        row.judgment = .marginal) := by decide
+
+end StimulusRows
+
 /-! ## §1. Island Source Classification
 
 The paper's core contribution is the double dissociation between discourse-
-sourced MoS islands and syntactically-sourced traditional islands. The MoS
-source is imported from `MannerOfSpeaking.mosIslandSources` (derived from
-the experimental evidence there). The traditional island classification
-is the baseline consensus view: these islands arise from structural
-constraints on movement (subjacency, PIC, Relativized Minimality). -/
-
-open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
+sourced MoS islands (`mosIslandSources`, derived in §0 from the experimental
+evidence) and syntactically-sourced traditional islands. The traditional
+island classification is the baseline consensus view: these islands arise
+from structural constraints on movement (subjacency, PIC, Relativized
+Minimality). -/
 
 /-- Traditional islands (wh, CNPC, adjunct, coordinate, subject, sentential
 subject) are syntactically sourced. This is the baseline consensus against
@@ -305,17 +631,16 @@ theorem fragment_gradient_contrast :
 
 /-! ## §7. Experimental Data → Formal Model Connection
 
-The experimental data in `Islands/MannerOfSpeaking.lean` records per-experiment
-acceptability and backgroundedness values. Here we connect these empirical
-observations to the formal model's predictions, closing the loop between
-raw data and theoretical derivation.
+The experimental data in §0 records per-experiment acceptability and
+backgroundedness values. Here we connect these empirical observations
+to the formal model's predictions, closing the loop between raw data
+and theoretical derivation.
 
 The key connection: the formal model predicts that backgroundedness causes
 extraction degradation (`complementStatus .given → .rank = 0`).
 The experimental data confirms this directionally: higher backgroundedness
 proportions consistently co-occur with lower acceptability ratings. -/
 
-open Phenomena.Islands.MannerOfSpeaking in
 /-- **Experimental data matches formal model direction**: the formal model
 predicts that backgrounded complements have degraded extraction.
 Experiments 1, 2b, and 3b all show the predicted anti-correlation:
@@ -328,7 +653,6 @@ theorem experimental_matches_model :
      exp1_acceptability_verbFocus < exp1_acceptability_embeddedFocus) := by
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
-open Phenomena.Islands.MannerOfSpeaking in
 /-- **Say+adverb replicates formal model prediction**: adding manner weight
 compositionally (say + adverb) degrades extraction without changing syntax.
 This is exactly what the formal model predicts: manner weight → backgroundedness
