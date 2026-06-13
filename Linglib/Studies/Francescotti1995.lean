@@ -1,5 +1,4 @@
 import Linglib.Fragments.English.FocusParticles
-import Linglib.Phenomena.Focus.Basic
 
 /-!
 # [francescotti-1995]

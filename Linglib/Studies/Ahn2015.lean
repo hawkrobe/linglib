@@ -1,5 +1,4 @@
 import Linglib.Semantics.Exhaustification.FreeChoice
-import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -122,109 +121,105 @@ theorem either_npi_via_chierchia (C : FreeChoice.Ctx World)
 -- Data
 -- ═══════════════════════════════════════════════════════════════════════════
 
-open Phenomena.Focus.AdditiveParticles (AdditiveParticleDatum)
+/-- An additive-particle example as Ahn discusses it: an antecedent/prejacent
+    pair, the particle, and the felicity verdict. -/
+structure Datum where
+  sentence : String
+  antecedent : String
+  prejacent : String
+  particle : String
+  resolvedQuestion : Option String
+  felicitous : Bool
+  notes : String := ""
+  source : String := "Ahn (2015)"
+  deriving DecidableEq, Repr
 
 /-- "either" with parallel negation — licensed (negative context). -/
-def eitherBasic : AdditiveParticleDatum :=
+def eitherBasic : Datum :=
   { sentence := "John didn't come. Mary didn't come either."
   , antecedent := "John didn't come"
   , prejacent := "Mary didn't come"
   , particle := "either"
   , resolvedQuestion := some "Who didn't come?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Negative context: ¬(q ∨ p) → exhaustification vacuous"
-  , source := "Ahn (2015)" }
+  , felicitous := true
+  , notes := "Negative context: ¬(q ∨ p) → exhaustification vacuous" }
 
 /-- Verb focus with "either" — licensed. -/
-def eitherVerb : AdditiveParticleDatum :=
+def eitherVerb : Datum :=
   { sentence := "John doesn't sing. He doesn't dance either."
   , antecedent := "John doesn't sing"
   , prejacent := "John doesn't dance"
   , particle := "either"
   , resolvedQuestion := some "What doesn't John do?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Negative context with verb focus"
-  , source := "Ahn (2015)" }
+  , felicitous := true
+  , notes := "Negative context with verb focus" }
 
 /-- "either" in positive context — ungrammatical (Ahn's (41)). -/
-def eitherPositiveUngrammatical : AdditiveParticleDatum :=
+def eitherPositiveUngrammatical : Datum :=
   { sentence := "*John left either."
   , antecedent := "Mary left"
   , prejacent := "John left"
   , particle := "either"
   , resolvedQuestion := some "Who left?"
-  , felicity := .odd
-  , useType := .standard
-  , notes := "Positive context: O_ALT(q ∨ p) = ⊥ (see either_positive_contradiction)"
-  , source := "Ahn (2015)" }
+  , felicitous := false
+  , notes := "Positive context: O_ALT(q ∨ p) = ⊥ (see either_positive_contradiction)" }
 
 /-- "too" under negation — grammatical (Ahn's (24)–(25)). -/
-def tooUnderNegation : AdditiveParticleDatum :=
+def tooUnderNegation : Datum :=
   { sentence := "Sue bought some books. Mary didn't buy them too."
   , antecedent := "Sue bought some books"
   , prejacent := "Mary bought them"
   , particle := "too"
   , resolvedQuestion := some "Who bought the books?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Negation scopes over too: ¬(q ⊓ p) = qᶜ ⊔ pᶜ (see too_demorgan)"
-  , source := "Ahn (2015)" }
+  , felicitous := true
+  , notes := "Negation scopes over too: ¬(q ⊓ p) = qᶜ ⊔ pᶜ (see too_demorgan)" }
 
 /-- "almost" does not license "either" (Ahn's (45)).
     Rullmann's licensing condition wrongly predicts *almost* licenses
     *either*. The exhaustification account correctly rules it out. -/
-def almostDoesNotLicenseEither : AdditiveParticleDatum :=
+def almostDoesNotLicenseEither : Datum :=
   { sentence := "*The paper is almost finished either."
   , antecedent := ""
   , prejacent := "The paper is finished"
   , particle := "either"
   , resolvedQuestion := none
-  , felicity := .odd
-  , useType := .standard
-  , notes := "Almost is DE but exhaustification still contradicts (Ahn's advantage over Rullmann)"
-  , source := "Ahn (2015)" }
+  , felicitous := false
+  , notes := "Almost is DE but exhaustification still contradicts (Ahn's advantage over Rullmann)" }
 
 /-- Rullmann's problem case: *either* blocked after positive antecedent (Ahn's (5)). -/
-def rullmannProblem : AdditiveParticleDatum :=
+def rullmannProblem : Datum :=
   { sentence := "John washed the dishes. *He shouldn't do the laundry either."
   , antecedent := "John washed the dishes"
   , prejacent := "He does the laundry"
   , particle := "either"
   , resolvedQuestion := some "What should he do?"
-  , felicity := .odd
-  , useType := .standard
+  , felicitous := false
   , notes := "Positive antecedent incompatible with either"
   , source := "Ahn (2015), Rullmann (2003)" }
 
 /-- Negative antecedent with parallel structure — basic "either" (Ahn's (32)). -/
-def eitherNegAntecedent : AdditiveParticleDatum :=
+def eitherNegAntecedent : Datum :=
   { sentence := "Bill didn't leave. John didn't leave either."
   , antecedent := "Bill didn't leave"
   , prejacent := "John didn't leave"
   , particle := "either"
   , resolvedQuestion := some "Who didn't leave?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "¬⟦either⟧(q)(p) = ¬(q ⊔ p) = qᶜ ⊓ pᶜ"
-  , source := "Ahn (2015)" }
+  , felicitous := true
+  , notes := "¬⟦either⟧(q)(p) = ¬(q ⊔ p) = qᶜ ⊓ pᶜ" }
 
 /-- Non-presuppositional "too" — the elevator example (Ahn's intro).
     Under the conjunctive account, *too* asserts q ⊓ p, and the whole
     assertion is entailed, so q need not be presupposed. -/
-def elevatorToo : AdditiveParticleDatum :=
+def elevatorToo : Datum :=
   { sentence := "I don't know if Mary is in the elevator. But if John is in the elevator too, we will go over the weight limit."
   , antecedent := "Mary is in the elevator"
   , prejacent := "John is in the elevator"
   , particle := "too"
   , resolvedQuestion := some "Will we go over the weight limit?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Additive meaning not fully presupposed — motivates conjunctive account"
-  , source := "Ahn (2015)" }
+  , felicitous := true
+  , notes := "Additive meaning not fully presupposed — motivates conjunctive account" }
 
-def examples : List AdditiveParticleDatum :=
+def examples : List Datum :=
   [ eitherBasic, eitherVerb, eitherPositiveUngrammatical
   , tooUnderNegation, almostDoesNotLicenseEither, rullmannProblem
   , eitherNegAntecedent, elevatorToo ]
