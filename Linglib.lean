@@ -1154,7 +1154,7 @@ import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.Thai.PolarityItems
 import Linglib.Fragments.Tagalog.PolarityItems
 import Linglib.Fragments.Swahili.PolarityItems
--- Phenomena
+-- Studies
 import Linglib.Studies.SlomanBarbeyHotaling2009
 import Linglib.Studies.SpalekMcNally2026
 import Linglib.Studies.AckemaNeeleman2018
@@ -1378,7 +1378,7 @@ import Linglib.Studies.Nouwen2024
 import Linglib.Studies.Nouwen2024PMF
 import Linglib.Studies.Partee2010
 import Linglib.Studies.Rett2015
--- Phenomena: Comparison (extracted from Gradability/)
+-- Comparison (extracted from Gradability/)
 import Linglib.Studies.Stassen2013Comparison
 import Linglib.Studies.Bresnan1973
 import Linglib.Studies.Kennedy1999
@@ -1401,11 +1401,11 @@ import Linglib.Studies.CondoravdiLauer2012
 import Linglib.Studies.Roberts2023
 import Linglib.Studies.RuytenbeekEtAl2017
 import Linglib.Studies.SumersEtAl2023
--- Phenomena: Implicit Causality (Solstad & Bott 2022)
+-- Implicit Causality (Solstad & Bott 2022)
 import Linglib.Studies.SolstadBott2022
--- Phenomena: Presupposition — Solstad & Bott 2024 (occasion verb projectivity)
+-- Presupposition — Solstad & Bott 2024 (occasion verb projectivity)
 import Linglib.Studies.SolstadBott2024
--- Phenomena: Imprecision (extracted from Gradability/)
+-- Imprecision (extracted from Gradability/)
 import Linglib.Studies.Haslinger2025
 import Linglib.Studies.SoltWaldon2019
 import Linglib.Studies.WoodinEtAl2024
@@ -1414,9 +1414,9 @@ import Linglib.Studies.BeltramaSchwarz2024
 import Linglib.Studies.BeltramaSoltBurnett2022
 import Linglib.Studies.LassiterGoodman2017PMF
 import Linglib.Studies.BumfordRett2021
--- Phenomena: Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)
+-- Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)
 import Linglib.Studies.BeckmanPierrehumbert1986
--- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
+-- Iconicity (sign language classifier predicates, viewpoints)
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.ZaslavskyEtAl2019
@@ -1668,7 +1668,7 @@ import Linglib.Fragments.Italian.Questions
 import Linglib.Studies.Zheng2025
 import Linglib.Studies.RomeroHan2004
 import Linglib.Studies.Romero2024
--- Phenomena: Verum (Höhle 1992 origin + cross-linguistic studies)
+-- Verum (Höhle 1992 origin + cross-linguistic studies)
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.MartinezVera2026
 import Linglib.Studies.Holmberg2016
@@ -2518,7 +2518,7 @@ import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Presupposition.TriggerTypology
--- Phenomena studies depending on Implicature/Alternatives/Exhaustification
+-- Studies depending on Implicature/Alternatives/Exhaustification
 import Linglib.Studies.Rett2015Implicature
 import Linglib.Studies.BaleKhanjian2014
 import Linglib.Studies.BarLev2021

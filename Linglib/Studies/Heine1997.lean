@@ -447,7 +447,7 @@ theorem wals_agrees_with_predicativeSource :
 -- ============================================================================
 
 /-! Per-language verifications previously co-located in Fragment files.
-    Moved here per CLAUDE.md "Fragments never import Phenomena" rule:
+    Moved here per the layering rule that Fragments never import Studies:
     paper-anchored predictions must live in the paper's study file. -/
 
 /-! ### Russian: Location Schema (primary) + Action Schema (`imet'`, secondary). -/

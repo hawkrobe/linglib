@@ -8,7 +8,7 @@ import Linglib.Typology.WordOrder
 
 Framework-agnostic enum for storing per-language adposition order
 (WALS Ch 85). Lives in `Typology/` so both `Fragments/` (per-language
-profiles) and `Phenomena/` (cross-linguistic generalisations) can
+profiles) and `Studies/` (cross-linguistic generalisations) can
 import without violating the layered dependency hierarchy.
 
 Sister substrate to `Typology.WordOrder` — same shape (enum with

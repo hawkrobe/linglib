@@ -106,8 +106,9 @@ omission triggers an ACI only when honorification is locally relevant.
   line of analysis (late-merge at PF following [lo-guercio-orlando-2022]);
   not formalized.
 * §4 embeddability data (paper (55)-(60)) — paper devotes 3 pages;
-  promote to a `Phenomena/Expressives/Embeddability.lean` hub once a
-  second study (Kratzer 1999 or Potts 2007) contributes parallel stimuli.
+  promote to a shared embeddability generalisation (`Data/Generalizations/`)
+  once a second study (Kratzer 1999 or Potts 2007) contributes parallel
+  stimuli.
 * §4 Magri-style oddness puzzles (paper (64)-(68)) — paper itself
   declares this unresolved/erratic; defer.
 * The `priorMention_yes_ACI` reachability hypothesis is currently

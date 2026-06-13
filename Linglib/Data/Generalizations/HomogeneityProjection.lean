@@ -11,8 +11,8 @@ literature spans [lobner-2000], [gajewski-2005],
 [spector-2013], [magri-2014], [kriz-chemla-2015],
 [kriz-2016], [bar-lev-2021], [augurzky-etal-2023],
 [kriz-spector-2021], and [haslinger-2025-diss]; the empirical
-generalisation predates any one formal account, justifying a `Phenomena/`
-(theory-neutral) anchor.
+generalisation predates any one formal account, justifying a theory-neutral
+`Data/Generalizations/` anchor.
 
 ## Main declarations
 

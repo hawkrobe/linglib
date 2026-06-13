@@ -8,8 +8,8 @@ import Linglib.Core.Logic.Modal.Defs
 
 Categorical primitives for the primary/secondary implicature distinction
 of [sauerland-2004]. Pure pragmatic theory — no RSA, no specific
-empirical paper. Consumed by `Phenomena/.../Studies/` files (e.g.,
-`Numerals/Studies/Kennedy2015.lean`) that need a categorical implicature
+empirical paper. Consumed by `Studies/` files (e.g.,
+`Studies/Kennedy2015.lean`) that need a categorical implicature
 operator alongside or instead of an RSA derivation.
 
 ## Sauerland's Framework

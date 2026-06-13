@@ -139,7 +139,7 @@ Where does pronoun resolution come from?
 | Bayesian | posterior conditioning on observed reference |
 
 The deepest seam — not in the lookup signature, but in how lookups get
-used by `Phenomena/.../Studies/`. Each Studies file commits in its own
+used by `Studies/` files. Each Studies file commits in its own
 resolution semantics. (Karttunen 1976 introduced *the idea* of drefs
 without the assignment-update formalization, so the binding row is
 attributed to Heim/Kamp.)

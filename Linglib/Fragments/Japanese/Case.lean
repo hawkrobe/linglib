@@ -66,8 +66,8 @@ successors — Heycock, Tomioka — not yet in the bib) treats *-ga* as
 ambiguous between a neutral-description marker and an exhaustive-
 listing/focus marker, with *-wa* (intentionally excluded from this Fragment
 as a topic/focus particle, not a case marker) covering categorical/topic
-readings. The right home for those distinctions is a future
-`Phenomena/InformationStructure/` study file, not this Fragment.
+readings. The right home for those distinctions is a future `Studies/`
+file on Japanese information structure, not this Fragment.
 
 Other phenomena out of scope at the case-marking layer:
 - Dative subjects in stative-experiencer constructions (*Tarō-ni eigo-ga

@@ -354,8 +354,8 @@ instance {C W : Type} : Core.Order.HasContent (Tree C W) W where
 /-! ### `Branching.yield`-instance simp lemmas
 
 Make the generic `Branching.yield` reduce by `simp`/`decide` at
-concrete `Tree` constructors — the prerequisite for consumers (Studies,
-Phenomena) to replace bespoke yield computations with the generic API. -/
+concrete `Tree` constructors — the prerequisite for consumers (Studies
+files) to replace bespoke yield computations with the generic API. -/
 
 @[simp] theorem branching_content_terminal {C W : Type} (c : C) (w : W) :
     Core.Order.HasContent.content? (Tree.terminal c w) = some w := rfl

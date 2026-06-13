@@ -79,7 +79,7 @@ by this file.
   sibling accounts whose distinct predictions can be refuted by explicit
   theorem rather than by docstring claim.
 - A `Fragments/Ndebele/` graduation once a second Ndebele paper lands.
-- Cross-Bantu typology hub `Phenomena/Agreement/Bantu.lean`.
+- A cross-Bantu agreement typology hub under `Typology/`.
 - Typeclass-based phasehood-attestation registry (per the audit's
   "obvious next move"): would let convergence with E&S 2025 be
   true-by-construction via `instance` declarations.

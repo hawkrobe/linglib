@@ -49,7 +49,7 @@ shape that doesn't reduce to softmax.
 
 ## Architectural role
 
-Substrate for RSA-style speaker constructions across `Phenomena/`:
+Substrate for RSA-style speaker constructions across `Studies/`:
 [frank-goodman-2012], [goodman-stuhlmuller-2013],
 [kao-etal-2014-metaphor], [lassiter-goodman-2017],
 [herbstritt-franke-2019], [yoon-etal-2020], etc. Replaces

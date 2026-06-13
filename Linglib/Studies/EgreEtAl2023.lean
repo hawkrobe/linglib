@@ -858,12 +858,12 @@ theorem bir_matches_closed_form :
 
 -- Bridge: BIR closed-form matches empirical data
 
-/-- Closed form matches Phenomena datum for center: P(x=20 | around 20) = 21/441. -/
+/-- Closed form matches the empirical datum for center: P(x=20 | around 20) = 21/441. -/
 theorem closed_form_matches_phenomena_center :
     birClosedForm 20 20 = closedForm_center.expectedProb := by
   native_decide
 
-/-- Closed form matches Phenomena datum for offset: P(x=15 | around 20) = 16/441. -/
+/-- Closed form matches the empirical datum for offset: P(x=15 | around 20) = 16/441. -/
 theorem closed_form_matches_phenomena_offset5 :
     birClosedForm 20 15 = closedForm_offset5.expectedProb := by
   native_decide

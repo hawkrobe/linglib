@@ -14,7 +14,7 @@ running non-linguistic example (§3.2 with Fig 3.7, cross-referenced from
 syntactic triangle of Figure 7.6 (p. 161, "A triangle in syntax and in
 kinship").
 
-This study file is the Phenomena-level demonstration that the *same*
+This study file is the demonstration that the *same*
 `WordGrammar.Inheritance.Network` infrastructure used by `WordGrammar.englishAuxNet`
 also supports a kinship hierarchy. Two demos:
 

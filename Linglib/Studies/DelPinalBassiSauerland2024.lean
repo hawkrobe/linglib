@@ -53,7 +53,7 @@ open Semantics.Presupposition.Accommodation
 -- ============================================================================
 
 /-!
-## Bridge to Phenomena
+## Bridge to the Free Choice Data
 
 pex predicts that free choice is a pragmatic inference (derived by the
 covert operator pex), not a semantic entailment — consistent with the observed

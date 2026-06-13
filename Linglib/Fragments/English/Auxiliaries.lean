@@ -46,8 +46,7 @@ the last audit):
   side, indirectly)
 
 To find every claim made about a particular entry, grep for
-`English.Auxiliaries.<entry>` across `Phenomena/` and
-`Theories/`.
+`English.Auxiliaries.<entry>` across the library.
 -/
 
 

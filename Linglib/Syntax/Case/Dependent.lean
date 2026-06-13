@@ -337,7 +337,7 @@ In a tripartite system, both dependent ergative and dependent accusative
 are active simultaneously: the higher NP gets ERG, the lower gets ACC,
 and an NP with no case competitor gets unmarked ABS. These are properties
 of the algorithm, not of any particular language. Language-specific
-derivations (e.g., SJA Mam) belong in `Phenomena/Case/Bridge/`. -/
+derivations live in Studies files (e.g., SJA Mam in `Studies/Scott2023`). -/
 
 /-- Tripartite transitive: higher NP gets dependent ERG. -/
 theorem tripartite_higher_gets_erg :
