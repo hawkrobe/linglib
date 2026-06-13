@@ -1,75 +1,62 @@
-import Linglib.Phenomena.Conditionals.LeftNested.Data
+import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.German.Conditionals
 
 /-!
 # Left-Nested Conditionals: Bridge
-[lassiter-2025]
+[lassiter-2025] [cao-white-lassiter-2025]
 
-Connects the LNC empirical data from [cao-white-lassiter-2025] to the conditional
-marker typology in `Fragments/{Language}/Conditionals.lean`.
+Connects the LNC data from [cao-white-lassiter-2025]
+(`Data/Examples/CaoWhiteLassiter2025.json`) to the conditional marker
+typology in `Fragments/{Language}/Conditionals.lean`.
 
-## Bridge Structure
+## Main declarations
 
-1. **Marker type verification**: the LNC acceptability pattern correlates
-   with marker type — PC-compatible markers (`.both`) yield acceptable LNCs,
-   HC-only markers (`.hcOnly`) yield degraded LNCs.
-2. **Per-datum marker connection**: links specific LNC examples to their
-   corresponding Fragment marker entries.
+- `markerOf`: adapter reading a row's `marker` feature into the Fragment's
+  `ConditionalMarker` entry
+- `acceptable_iff_marker_licenses`: a marker-diagnostic row is acceptable
+  iff its marker can mark premise conditionals or non-bare content makes an
+  HC reading available
 -/
 
 namespace Lassiter2025
 
-open Phenomena.Conditionals.LeftNested
-open Semantics.Conditionals (ConditionalMarkerType)
+open Data.Examples
+open CaoWhiteLassiter2025
+open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
--- ════════════════════════════════════════════════════════════════
--- § Marker Type Verification
--- ════════════════════════════════════════════════════════════════
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-/-!
-The LNC acceptability pattern correlates with marker type:
-- PC-compatible markers (`.both`) yield acceptable LNCs
-- HC-only markers (`.hcOnly`) yield degraded LNCs
+/-- Marker adapter: the Fragment entry for the row's conditional marker. -/
+def markerOf (row : LinguisticExample) : Option ConditionalMarker :=
+  match featureOf row "marker" with
+  | some "nara"  => some Japanese.Conditionals.nara
+  | some "ra"    => some Japanese.Conditionals.ra
+  | some "wenn"  => some German.Conditionals.wenn
+  | some "falls" => some German.Conditionals.falls
+  | _ => none
 
-These guards verify that the Fragment marker entries have the expected
-types, connecting the LNC empirical data to the marker typology.
--/
+/-- Whether the row's inner conditional has bare (non-modal, non-generic)
+    content. Bare content forces the premise-conditional reading, so an
+    HC-only marker cannot rescue the LNC. -/
+def bareContent (row : LinguisticExample) : Bool :=
+  featureOf row "content" == some "bare"
 
--- PC-compatible markers → acceptable LNCs
-#guard Japanese.Conditionals.nara.markerType == .both
-#guard German.Conditionals.wenn.markerType == .both
+/-- The marker typology's prediction for a row: the LNC is licensed iff the
+    marker can mark premise conditionals (`.both`) or non-bare content makes
+    an HC reading available. -/
+def markerLicenses (row : LinguisticExample) : Option Bool :=
+  (markerOf row).map (fun m => m.markerType == .both || !bareContent row)
 
--- HC-only markers → degraded LNCs
-#guard Japanese.Conditionals.ra.markerType == .hcOnly
-#guard German.Conditionals.falls.markerType == .hcOnly
-
--- ════════════════════════════════════════════════════════════════
--- § Acceptability–Marker Type Correlation
--- ════════════════════════════════════════════════════════════════
-
-/-- Japanese nara (PC-compatible) yields acceptable LNC. -/
-theorem nara_ok_and_pc_compatible :
-    ex15_japaneseNara.acceptability == "ok" ∧
-    Japanese.Conditionals.nara.markerType == .both :=
-  ⟨rfl, rfl⟩
-
-/-- Japanese -ra (HC-only) yields degraded LNC. -/
-theorem ra_odd_and_hc_only :
-    ex16_japaneseRa.acceptability == "odd" ∧
-    Japanese.Conditionals.ra.markerType == .hcOnly :=
-  ⟨rfl, rfl⟩
-
-/-- German wenn (PC-compatible) yields acceptable LNC. -/
-theorem wenn_ok_and_pc_compatible :
-    ex20_germanWenn.acceptability == "ok" ∧
-    German.Conditionals.wenn.markerType == .both :=
-  ⟨rfl, rfl⟩
-
-/-- German falls (HC-only) yields degraded LNC. -/
-theorem falls_marginal_and_hc_only :
-    ex21_germanFalls.acceptability == "marginal" ∧
-    German.Conditionals.falls.markerType == .hcOnly :=
-  ⟨rfl, rfl⟩
+/-- **Transfer equation**: every marker-diagnostic row is acceptable iff the
+    marker typology licenses it — PC-compatible nara/wenn yield acceptable
+    bare LNCs, HC-only -ra/falls yield degraded ones, and modal content
+    rescues falls (ex. 22). -/
+theorem acceptable_iff_marker_licenses :
+    ∀ row ∈ Examples.all, markerOf row ≠ none →
+      (row.judgment = .acceptable ↔ markerLicenses row = some true) := by
+  decide
 
 end Lassiter2025

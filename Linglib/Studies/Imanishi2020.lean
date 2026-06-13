@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Features.Case.Basic
@@ -51,7 +50,43 @@ Three strategies satisfy this:
 namespace Imanishi2020
 
 open Minimalist
-open Phenomena.Ergativity
+open Mayan (MarkerSet ABSPosition)
+
+-- ============================================================================
+-- § 0: Accusative-Side Alignment Patterns
+-- ============================================================================
+
+/-- Alignment pattern in the accusative (non-perfective) side of the Mayan
+    split. Records which marker set cross-references S (= A on the
+    accusative side) and which cross-references O.
+
+    **Kaqchikel type** (S = ABS, O = ERG/GEN): S and A are
+    cross-referenced by absolutive (set B) markers; the transitive object
+    by ergative/genitive (set A). **Chol/Q'anjob'al type**: the mirror
+    image. -/
+structure AccSidePattern where
+  /-- Marker set cross-referencing S (intransitive subject) and
+      A (transitive subject) — these pattern together on the accusative side. -/
+  sMarker : MarkerSet
+  /-- Marker set cross-referencing O (transitive object). -/
+  oMarker : MarkerSet
+  deriving DecidableEq, Repr
+
+/-- Kaqchikel-type accusative alignment: S/A = set B (ABS), O = set A (ERG/GEN). -/
+def kaqchikelPattern : AccSidePattern :=
+  { sMarker := .setB, oMarker := .setA }
+
+/-- Chol/Q'anjob'al-type accusative alignment: S/A = set A (ERG/GEN), O = set B (ABS). -/
+def cholPattern : AccSidePattern :=
+  { sMarker := .setA, oMarker := .setB }
+
+/-- The two accusative-side patterns are distinct. -/
+theorem patterns_distinct : kaqchikelPattern ≠ cholPattern := by decide
+
+/-- The two patterns are mirror images: the marker sets are swapped. -/
+theorem patterns_mirror :
+    kaqchikelPattern.sMarker = cholPattern.oMarker ∧
+    kaqchikelPattern.oMarker = cholPattern.sMarker := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 1: The Restriction on Nominalization (RON)
@@ -71,7 +106,7 @@ structure RON where
 -- § 2: Mayan Absolutive Parameter
 -- ============================================================================
 
--- Reuses `ABSPosition` from `Basic.lean` directly.
+-- Reuses `Mayan.ABSPosition` from `Fragments/Mayan/Params.lean` directly.
 
 -- ============================================================================
 -- § 3: Language Parameterization

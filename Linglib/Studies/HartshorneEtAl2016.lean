@@ -51,7 +51,7 @@ of CAUSE (the outermost predicate), so it is highest → subject.
 
 namespace HartshorneEtAl2016
 
-open Phenomena.PsychVerbs (PsychVerbClass ClassIIReading SubjectRole)
+open Pesetsky1995.PsychVerbs (PsychVerbClass ClassIIReading SubjectRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Semantic Type Distinction

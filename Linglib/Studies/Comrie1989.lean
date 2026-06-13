@@ -1,6 +1,5 @@
 import Linglib.Features.Prominence
 import Linglib.Typology.RelativeClause.Basic
-import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
 import Linglib.Studies.Dixon1994
@@ -45,8 +44,14 @@ hierarchy parallel between the AH and causee demotion is proved below.
 
 [comrie-1989] argues that "subject" is not a primitive grammatical
 relation but a **bundle** of coding and behavioral properties that converge
-in accusative languages and diverge under ergativity. Formalized in
-`Phenomena.Subjecthood.SubjectProperties`.
+in accusative languages and diverge under ergativity (§1a below). Coding
+properties (case, agreement, word order) are the "surface" identification
+of the subject NP; behavioral properties (conjunction reduction,
+reflexivization, raising, equi-deletion, relativization accessibility)
+are the "deep" cross-clausal tests. In morphologically ergative languages
+the two diverge: coding picks out S=P (absolutive) while behavioral tests
+still pick out S=A. Full convergence on S=P (syntactic ergativity,
+Dyirbal subordinate clauses) is rare.
 
 ## Relative clauses and the AH (Ch 7)
 
@@ -81,7 +86,81 @@ imported by every downstream module. -/
 
 open Features.Prominence (AnimacyLevel ArgumentRole)
 open Typology.Alignment (AlignmentType)
-open Phenomena.Subjecthood.SubjectProperties
+
+-- ============================================================================
+-- § 1a: Subject Property Bundles (Ch 5)
+-- ============================================================================
+
+/-- Coding properties: how the subject NP is morphologically marked.
+    These are "surface" properties visible from case and agreement alone. -/
+inductive CodingProperty where
+  | caseMarking       -- receives nominative/absolutive case
+  | verbAgreement     -- triggers person/number agreement on finite verb
+  | wordOrderPosition -- occupies canonical subject position
+  deriving DecidableEq, Repr
+
+/-- Behavioral properties: how the subject NP participates in
+    syntactic operations that span clause boundaries. These are
+    the "deep" properties that motivate a grammatical-relation analysis. -/
+inductive BehavioralProperty where
+  | conjunctionReduction  -- deleted/omitted NP under coordination
+  | reflexivization       -- antecedent of clause-bound reflexives
+  | raisingTarget         -- NP that raises to higher clause
+  | equiDeletion          -- controlled PRO in complement clause
+  | relativizationAccess  -- most accessible on AH
+  deriving DecidableEq, Repr
+
+/-- All coding properties (for finite enumeration). -/
+def CodingProperty.all : List CodingProperty :=
+  [.caseMarking, .verbAgreement, .wordOrderPosition]
+
+/-- All behavioral properties (for finite enumeration). -/
+def BehavioralProperty.all : List BehavioralProperty :=
+  [.conjunctionReduction, .reflexivization, .raisingTarget,
+   .equiDeletion, .relativizationAccess]
+
+/-- A subject property bundle: for each property, which NP grouping
+    it picks out in a given language.
+
+    - `true` = S=A grouping (accusative pattern for that property)
+    - `false` = S=P grouping (ergative pattern for that property)
+
+    A language's "subject" is well-defined when all properties agree;
+    it is a non-primitive cluster concept when they diverge. -/
+structure SubjectPropertyBundle where
+  coding : CodingProperty → Bool
+  behavioral : BehavioralProperty → Bool
+
+/-- Accusative convergence: all properties pick out S=A.
+    English, Latin, Russian, Japanese, etc. -/
+def accusativeBundle : SubjectPropertyBundle where
+  coding := λ _ => true
+  behavioral := λ _ => true
+
+/-- Morphological ergativity with accusative syntax: coding picks S=P
+    (absolutive case/agreement), but behavioral tests pick S=A.
+    This is the common pattern in "ergative" languages: Dyirbal main
+    clauses, many Australian and Mayan languages. -/
+def morphErgativityBundle : SubjectPropertyBundle where
+  coding := λ _ => false
+  behavioral := λ _ => true
+
+/-- Full (syntactic) ergativity: both coding AND behavioral properties
+    pick out S=P. Rare cross-linguistically; Dyirbal subordinate clauses
+    are the classic example. -/
+def syntacticErgativityBundle : SubjectPropertyBundle where
+  coding := λ _ => false
+  behavioral := λ _ => false
+
+/-- Whether all subject properties converge on the same NP.
+    Convergence means all coding and behavioral properties agree on either
+    S=A (accusative) or S=P (ergative). Divergence — some properties
+    picking S=A and others S=P — means "subject" is not a unitary concept
+    in that language. -/
+def SubjectPropertyBundle.converges (b : SubjectPropertyBundle) : Bool :=
+  let allVals := CodingProperty.all.map b.coding ++
+                 BehavioralProperty.all.map b.behavioral
+  allVals.all (· == true) || allVals.all (· == false)
 
 -- ============================================================================
 -- § 2: Alignment → Differential Marking Direction
@@ -130,9 +209,9 @@ properties also pick S=P (**syntactic** ergativity, rare) or S=A
 (**morphological** ergativity, common) is a parametric dimension.
 
 The `toSubjectBundle` function derives the predicted subject property
-bundle from alignment type, so the three stipulated bundles in
-`Phenomena.Subjecthood.SubjectProperties` become consequences of alignment classification
-rather than independent definitions. -/
+bundle from alignment type, so the three canonical bundles of §1a become
+consequences of alignment classification rather than independent
+definitions. -/
 
 /-- Derive the predicted subject property bundle from alignment type.
     Non-ergative alignment → all properties S=A (accusative bundle).

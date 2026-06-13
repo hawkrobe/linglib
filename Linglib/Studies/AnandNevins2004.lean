@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Context.Shifts
@@ -11,8 +10,7 @@ import Linglib.Data.Examples.AnandNevins2004
 [anand-nevins-2004] [banfield-1982] [kaplan-1989] [schlenker-2003]
 
 End-to-end derivation chain connecting the ContextTower infrastructure
-to the direct reference and indexical shift data in
-`Phenomena.Reference.DirectReference`.
+to the Zazaki indexical-shift data in `Data.Examples.AnandNevins2004`.
 
 ## Derivation Chain
 
@@ -25,7 +23,7 @@ Semantics.Reference.FreeIndirectDiscourse (FIDProfile)
     ↓
 This file: tower operations model Kaplan's thesis and its violations
     ↓
-Phenomena.Reference.DirectReference (MonsterThesis, shift languages)
+Data.Examples.AnandNevins2004 (Zazaki rows (4) and (7))
 ```
 
 ## Key Results
@@ -42,13 +40,10 @@ Phenomena.Reference.DirectReference (MonsterThesis, shift languages)
 
 -/
 
-open Phenomena.Reference
-
 namespace AnandNevins2004
 
 open Semantics.Context
 open Semantics.Reference.FreeIndirectDiscourse
-open Data.Examples (LinguisticExample)
 
 -- ============================================================================
 -- § Concrete Context Type
@@ -87,10 +82,6 @@ theorem english_I_is_narrator :
 theorem english_now_is_speech_time :
     englishAttitudeTower.innermost.time = 0 := rfl
 
-/-- Kaplan's thesis holds for English — consistent with `monsterThesis.holdsForEnglish`. -/
-theorem kaplan_holds_english :
-    DirectReference.monsterThesis.holdsForEnglish = true := rfl
-
 -- ============================================================================
 -- § Shift Languages: perspectiveShift
 -- ============================================================================
@@ -111,10 +102,18 @@ theorem shifted_I_is_character :
 theorem shifted_now_is_attitude_time :
     shiftLanguageTower.innermost.time = -3 := rfl
 
-/-- The monster thesis IS challenged cross-linguistically — consistent with
-    `monsterThesis.challengedCrossLinguistically`. -/
+/-- Monsters exist: [anand-nevins-2004]'s (4) records the shifted reading
+    of Zazaki embedded `ɛz` as acceptable — the witness against Kaplan's
+    prohibition that `shiftLanguageTower` models. -/
 theorem monsters_exist :
-    DirectReference.monsterThesis.challengedCrossLinguistically = true := rfl
+    Examples.ex4.readings[1]? = some ("shifted (ɛz = Hesen)", .acceptable) := rfl
+
+/-- [anand-nevins-2004]'s (7): the temporal indexical shifts obligatorily —
+    only the attitude-anchored reading of embedded `vizeri` is acceptable,
+    the utterance-anchored one is not. This is the row that
+    `shifted_now_is_attitude_time` models on the time coordinate. -/
+theorem temporal_shift_obligatory :
+    Examples.ex7.readings.map Prod.snd = [.acceptable, .unacceptable] := rfl
 
 -- ============================================================================
 -- § FID: Mixed Access (Narrator Agent + Character Time/World)

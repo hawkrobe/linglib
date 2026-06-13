@@ -1,6 +1,5 @@
 import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Highlighting
-import Linglib.Phenomena.Verum.Basic
 
 /-!
 # Höhle (1992): *Verum-Fokus im Deutschen*
@@ -29,19 +28,11 @@ suspension of p) and serves to settle that prior issue.
 * A felicity condition aligning with the cross-linguistic
   generalisation: VF is licensed exactly when the prejacent's negation
   is highlighted in the prior context.
+* `VerumOperator`, the shared felicity-condition signature that
+  verum-marker analyses across the literature instantiate, so that
+  cross-paper agreement / divergence theorems can be stated uniformly.
 
 ## Relation to other studies
-
-This file used to live at `Studies/Hohle1992.lean`
-as a 158-LOC file of bare `def` data records (sentences and tags) with
-no actual analysis of Höhle's verum-focus operator. Re-homed here as
-part of the Verum directory landing, replacing the data-only content
-with the formal operator and its felicity profile. The German prosodic
-data (auxiliary stress, negation stress) is illustrative of the
-substrate, not stipulated as primitive — see `Phenomena/Verum/Basic`
-for the cross-linguistic verum-marker inventory.
-
-Adjacent studies the substrate is shared with:
 
 * `Studies/MartinezVera2026.lean` — the same
   highlighting + ⟨A, N⟩ machinery applied to Saraguro Kichwa `=mi`.
@@ -100,10 +91,38 @@ theorem verumFelicitous_after_highlighting_neg
   refine ⟨?_, h⟩
   simp [addSalient]
 
+/-- A verum operator: a function from a discourse context and a layered
+    proposition to a felicity proposition.
+
+    A "verum marker" is any morphological, prosodic, or syntactic device
+    whose felicitous use requires that the truth of its scope proposition
+    be at issue in a way that excludes (or strongly contrasts with) its
+    negation. Theories disagree on the *mechanism* — focus over polarity
+    ([hohle-1992], [repp-2013], [goodhue-2022a]), a dedicated operator on
+    the common ground ([romero-han-2004],
+    [gutzmann-hartmann-matthewson-2020]), or discourse management
+    ([matthewson-2021], [martinez-vera-2026]) — but agree on the licensing
+    profile. Inhabitants of this structure formalise the competing
+    analyses:
+
+    * `hohleAsVerumOperator` (paired with `verumFelicitous`) — Höhle's
+      polarity-focus account.
+    * `MartinezVera2026.miAsVerumOperatorPolar` — MV's focus-marker
+      account, equivalent to Höhle's on the polar reduction (see
+      `mi_polar_iff_verumFelicitous` in that file).
+
+    The shared signature lets cross-paper bridge / refutation theorems
+    be stated uniformly: "instance A and instance B agree on input X"
+    or "instance A and instance B differ on input Y." -/
+structure VerumOperator (W : Type*) where
+  /-- The felicity condition: when does the verum-marker license the
+      utterance in this discourse context for this layered prejacent? -/
+  felicitous : HighlightingContext W → BiLayered W → Prop
+
 /-- Höhle's verum-focus operator packaged as a `VerumOperator`, so that
     cross-paper bridge / refutation theorems can be stated against other
     inhabitants of the same shared structure. -/
-def hohleAsVerumOperator : Phenomena.Verum.Basic.VerumOperator W :=
+def hohleAsVerumOperator : VerumOperator W :=
   { felicitous := fun c β => verumFelicitous c β }
 
 @[simp] theorem hohleAsVerumOperator_apply (c : HighlightingContext W)

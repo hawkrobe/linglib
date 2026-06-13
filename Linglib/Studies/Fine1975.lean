@@ -1,7 +1,6 @@
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Gradability.Basic
-import Linglib.Phenomena.Gradability.Vagueness
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -27,7 +26,6 @@ gradable adjectives, and proves results specific to degree semantics:
 - § 4: External penumbral connections (pink/red — multi-predicate)
 - § 5: Bridge — `inGapRegion` ↔ `Truth3.indet`
 - § 6: Higher-order D operator
-- § 7: Verification of `Vagueness.lean` data
 
 ## Connection to Kamp (1975)
 
@@ -43,8 +41,6 @@ P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 is the existential dual of supervaluation. See
 `Semantics/Comparison/Delineation.lean`.
 -/
-
-open Phenomena.Gradability
 
 namespace Fine1975
 
@@ -214,31 +210,5 @@ theorem D_idempotent {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
   refine ⟨fun h => ?_, fun h _ _ => h⟩
   obtain ⟨s₀, hs₀⟩ := S.nonempty
   exact h s₀ hs₀
-
--- ════════════════════════════════════════════════════
--- § 7. Verification: Vagueness.lean Data
--- ════════════════════════════════════════════════════
-
-open Phenomena.Gradability.Vagueness
-
-/-- Excluded middle data says supervaluationism captures it;
-    `Supervaluation.Basic.excludedMiddle_superTrue` proves this. -/
-theorem excludedMiddle_captured :
-    excludedMiddle.supervaluationismCaptures = true := rfl
-
-/-- Non-contradiction data says supervaluationism captures it;
-    `Supervaluation.Basic.nonContradiction_superFalse` proves this. -/
-theorem nonContradiction_captured :
-    nonContradiction.supervaluationismCaptures = true := rfl
-
-/-- Comparative entailment data says supervaluationism captures it;
-    `comparative_entailment` proves this. -/
-theorem comparativeEntailment_captured :
-    comparativeEntailment.supervaluationismCaptures = true := rfl
-
-/-- The D operator data says it eliminates borderline cases;
-    `Supervaluation.Basic.definitely_iff_superTrue` shows D = super-truth. -/
-theorem definitelyOperator_eliminates :
-    definitelyOperator.eliminatesBorderline = true := rfl
 
 end Fine1975

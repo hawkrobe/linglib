@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.Constructions.ParticleVerbs
 
 /-!
 # Particle verb constructions — small-clause analysis
@@ -41,18 +40,35 @@ to SpecSC. It does **not** capture:
   account of the pronoun ban derives from LF reanalysis interacting with
   pronominal cliticization, again pending the LF reanalysis substrate.
 
-The empirical pattern (`pronoun_split = good`, `pronoun_continuous = bad`,
-`heavy_continuous = good`, `heavy_split = bad`) is recorded in
-`ParticleVerbs.Data` as theory-neutral data; explanations from any
-particular account (den Dikken, Kayne, Construction Grammar, processing)
-are property of the corresponding study file.
+## Main declarations
 
+- `ParticleVerb`, `inventory`: English verb-particle lexical entries
+- `pvToSmallClause`: the simplex PVC as a P-headed small clause
+- `pvToSmallClause_isSmallClause`: the SC satisfies the companion
+  `IsSmallClause` predicate
 -/
 
 namespace Dendikken1995ParticleVerbs
 
 open Minimalist
-open Phenomena.Constructions.ParticleVerbs
+
+/-! ## Particle verb inventory -/
+
+/-- A particle verb entry: verb + particle + gloss. -/
+structure ParticleVerb where
+  verb     : String
+  particle : String
+  meaning  : String
+  deriving Repr, DecidableEq
+
+def pick_up   : ParticleVerb := ⟨"pick",  "up",  "lift / collect"⟩
+def lift_up   : ParticleVerb := ⟨"lift",  "up",  "raise"⟩
+def throw_out : ParticleVerb := ⟨"throw", "out", "discard"⟩
+def put_down  : ParticleVerb := ⟨"put",   "down", "set down"⟩
+def call_off  : ParticleVerb := ⟨"call",  "off", "cancel"⟩
+
+def inventory : List ParticleVerb :=
+  [pick_up, lift_up, throw_out, put_down, call_off]
 
 /-! ## Simplex PVC: surface SC after NP-movement
 

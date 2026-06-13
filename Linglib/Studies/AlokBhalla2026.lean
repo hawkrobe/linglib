@@ -14,6 +14,14 @@ head (Fin or SA) and a null addressee DP.
    - Fin-based AA → freely embeddable (FinP embeds under C)
 3. [iHON] is a relational feature: ⟦iHON⟧ = λx. S_i ≺ x
 
+## Crosslinguistic survey (§0)
+
+Typological data on AA — where verbs encode addressee features — and the
+morphosyntactic expression of honorifics ([alok-bhalla-2026], Table 1;
+distinctions following [portner-pak-zanuttini-2019]): how the allocutive
+marker is realized (`AMType`), where it can appear (`Embeddability`), and
+where honorification surfaces (`HonDomain`).
+
 ## Connections
 
 - **Agree.lean**: AA validity reduces to `validAgree`
@@ -27,7 +35,6 @@ head (Fin or SA) and a null addressee DP.
 -/
 
 import Linglib.Syntax.Minimalist.Agree
-import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
@@ -38,10 +45,98 @@ import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
 
-namespace Minimalist.Phenomena.Allocutivity
+namespace AlokBhalla2026
 
 open Minimalist
-open Phenomena.Politeness.Honorifics
+
+-- ============================================================================
+-- Section 0: Crosslinguistic Survey ([alok-bhalla-2026], Table 1)
+-- ============================================================================
+
+/-- Morphosyntactic type of allocutive marker
+    ([portner-pak-zanuttini-2019] §2). -/
+inductive AMType where
+  | agreeMorpheme    -- verbal inflectional morpheme (Magahi, Basque)
+  | particle         -- free-standing particle (Korean, Japanese)
+  | cliticPronoun    -- clitic pronoun attached to verb (Galician)
+  deriving Repr, DecidableEq
+
+/-- Distribution across clause types ([portner-pak-zanuttini-2019] §3.1). -/
+inductive Embeddability where
+  | rootOnly       -- allocutive marking restricted to root clauses
+  | limitedEmbed   -- can embed under some predicates (e.g., speech/thought)
+  | freelyEmbed    -- no embedding restriction
+  deriving Repr, DecidableEq
+
+/-- Where honorification surfaces. -/
+inductive HonDomain where
+  | verbal   -- verbal agreement only
+  | nominal  -- nominal morphology only (e.g., Japanese -san)
+  | both     -- verbal and nominal
+  deriving Repr, DecidableEq
+
+/-- A single allocutive datum: one language's profile. -/
+structure AllocDatum where
+  language : String
+  amType : AMType
+  embeddability : Embeddability
+  /-- Whether the language has a T/V pronoun distinction -/
+  hasTV : Bool
+  /-- Whether 3rd person honorifics exist -/
+  has3PHon : Bool
+  /-- Where honorification is realized -/
+  domain : HonDomain
+  deriving Repr, DecidableEq
+
+def basque : AllocDatum :=
+  ⟨"Souletian Basque", .agreeMorpheme, .rootOnly, true, false, .verbal⟩
+
+def magahi : AllocDatum :=
+  ⟨"Magahi", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+
+def korean : AllocDatum :=
+  ⟨"Korean", .particle, .rootOnly, true, true, .both⟩
+
+def japanese : AllocDatum :=
+  ⟨"Japanese", .particle, .rootOnly, true, true, .both⟩
+
+def tamil : AllocDatum :=
+  ⟨"Tamil", .agreeMorpheme, .limitedEmbed, true, true, .verbal⟩
+
+def galician : AllocDatum :=
+  ⟨"Galician", .cliticPronoun, .freelyEmbed, true, false, .verbal⟩
+
+def hindi : AllocDatum :=
+  ⟨"Hindi", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+
+def maithili : AllocDatum :=
+  ⟨"Maithili", .agreeMorpheme, .freelyEmbed, true, true, .both⟩
+
+def punjabi : AllocDatum :=
+  ⟨"Punjabi", .agreeMorpheme, .limitedEmbed, true, true, .verbal⟩
+
+def allAllocData : List AllocDatum :=
+  [basque, magahi, korean, japanese, tamil, galician, hindi, maithili, punjabi]
+
+/-- At least one language restricts allocutive marking to root clauses. -/
+theorem rootOnly_languages_exist :
+    ∃ d ∈ allAllocData, d.embeddability = .rootOnly :=
+  ⟨basque, by simp [allAllocData], rfl⟩
+
+/-- At least one language freely embeds allocutive marking. -/
+theorem freelyEmbed_languages_exist :
+    ∃ d ∈ allAllocData, d.embeddability = .freelyEmbed :=
+  ⟨magahi, by simp [allAllocData], rfl⟩
+
+/-- All allocutive languages in the survey mark the verbal domain
+    (verbal or both). -/
+theorem all_have_verbal :
+    allAllocData.all (λ d => d.domain == .verbal || d.domain == .both) = true := by
+  native_decide
+
+/-- All surveyed allocutive languages have a T/V pronoun distinction. -/
+theorem all_have_tv :
+    allAllocData.all (λ d => d.hasTV) = true := by native_decide
 
 -- ============================================================================
 -- Section A: Allocutive Agree
@@ -275,4 +370,4 @@ theorem neutral_h : levelToHonLevel .neutral = .h := rfl
 /-- Register bridge: formal maps to high-honorific. -/
 theorem formal_hh : levelToHonLevel .formal = .hh := rfl
 
-end Minimalist.Phenomena.Allocutivity
+end AlokBhalla2026

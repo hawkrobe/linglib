@@ -3,7 +3,6 @@ import Linglib.Phonology.Constraint.OT.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Phenomena.Politeness.Honorifics
 
 /-!
 # Wang (Ruoan) 2023: Honorifics without [HON]
@@ -48,7 +47,7 @@ This file connects three layers:
 3. Binary case: ToD >> MP! derives unmarked recruitment
 4. Ternary case: Strong/Weak ToD for articulated number systems
 5. [iHON] eliminability — bridge to [alok-bhalla-2026]
-6. Bridges to `Honorifics.lean` and phi-feature denotations
+6. Bridges to phi-feature denotations
 7. General structural theorem: ToD >> MP! selects unmarked for ANY candidate set
 8. HonLevel ↔ ContainmentPair bridge — `ContainmentPairLike HonLevel` instance
 -/
@@ -62,7 +61,6 @@ open Phonology.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkFactorialOptima mkFactorialTypologySize)
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
-open Phenomena.Politeness.Honorifics (AllocDatum allAllocData)
 
 -- ============================================================================
 -- §1  Typological Data
@@ -403,26 +401,17 @@ theorem ihon_redundant_for_recruitment :
   ⟨by native_decide, rfl, fun s => by cases s <;> rfl⟩
 
 -- ============================================================================
--- §6  Bridges to PhiFeatures and Allocutive Data
+-- §6  Bridges to PhiFeatures
 -- ============================================================================
 
 /-!
 ## §6: Bridges
-
-### Per-domain bridges
 
 Each recruitment strategy targets a specific phi-feature domain.
 The recruited cell (`.minimal`) corresponds to a specific `PartialProp`
 denotation from `PhiFeatures`: `plSem` (number), `thirdSem` (person),
 or `indefSem` (definiteness). All three are `phiPresup` at the minimal
 cell, which has a vacuous presupposition — this is WHY ToD selects them.
-
-### Allocutive data bridges
-
-The allocutive data in `Honorifics.lean` tracks `hasTV` (T/V pronoun
-distinction = plural recruitment) and `has3PHon` (3rd-person honorifics
-= person recruitment). Both correspond to the `.minimal` cell in their
-respective phi-feature domains.
 -/
 
 section DomainBridges
@@ -450,33 +439,6 @@ theorem recruited_cells_have_vacuous_presup {E : Type*} (innerP outerP : E → P
   intro s x; cases s <;> trivial
 
 end DomainBridges
-
-section AllocutiveBridges
-
-/-- The `hasTV` field in `AllocDatum` tracks whether a language uses
-    the plural (= minimal number cell) recruitment strategy.
-    All 9 allocutive languages have T/V. Cross-reference: `Honorifics.all_have_tv`. -/
-theorem allocData_tv_uses_minimal :
-    allAllocData.all (fun d => d.hasTV) = true ∧
-    honStrategyCell .plural = .minimal :=
-  ⟨by native_decide, rfl⟩
-
-/-- Languages with `has3PHon = true` use the minimal PERSON cell.
-    The languages are: Magahi, Korean, Japanese, Tamil, Hindi, Maithili, Punjabi. -/
-theorem allocData_3phon_uses_minimal :
-    (allAllocData.filter (fun d => d.has3PHon)).length = 7 ∧
-    honStrategyCell .thirdPerson = .minimal :=
-  ⟨by native_decide, rfl⟩
-
-/-- Dual-domain languages (hasTV ∧ has3PHon) recruit the minimal cell
-    independently in both the number and person domains. -/
-theorem dual_domain_both_minimal :
-    ∀ d ∈ allAllocData, d.hasTV && d.has3PHon = true →
-      honStrategyCell .plural = .minimal ∧
-      honStrategyCell .thirdPerson = .minimal :=
-  fun _ _ _ => ⟨rfl, rfl⟩
-
-end AllocutiveBridges
 
 -- ============================================================================
 -- §7  General Structural Theorem: ToD >> MP! Selects Unmarked

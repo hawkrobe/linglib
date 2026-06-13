@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Mathlib.Data.Fintype.Basic
 
@@ -72,7 +71,6 @@ set_option autoImplicit false
 namespace Eckert2008
 
 open SocialMeaning.IndexicalField
-open Phenomena.SocialMeaning.ING
 open SocialMeaning.EckertMontague
 open SocialMeaning.SCM
 
@@ -94,6 +92,21 @@ inductive TraitKind where
 -- ============================================================================
 -- §2. The (ING) variable — Figure 3
 -- ============================================================================
+
+/-- The two variants of the (ING) variable — the alternation between
+    velar [ɪŋ] (*-ing*) and apical [ɪn] (*-in'*) variants of the English
+    progressive/gerund suffix, arguably the most-studied variable in
+    sociolinguistics ([labov-2006], [campbell-kibler-2007],
+    [eckert-2008], [burnett-2019]). Velar is the standard/prestige
+    variant; apical is the vernacular variant. -/
+inductive INGVariant where
+  | velar   -- *-ing* [ɪŋ]
+  | apical  -- *-in'* [ɪn]
+  deriving DecidableEq, Repr, Inhabited
+
+instance : Fintype INGVariant where
+  elems := {.velar, .apical}
+  complete := by intro x; cases x <;> simp
 
 /-- Bipolar social dimensions of (ING) meaning, from
     [campbell-kibler-2007]'s matched guise experiments.

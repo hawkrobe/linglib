@@ -1,0 +1,74 @@
+[
+  {
+    "id": "tg2022_tall_basketball",
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "language": "stan1293",
+    "primaryText": "tall basketball player",
+    "glossedTokens": [],
+    "translation": "tall basketball player",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["adjective", "tall"],
+      ["polarity", "positive"],
+      ["noun", "basketball player"],
+      ["prior_expectation", "high"],
+      ["inferred_class", "superordinate"]
+    ],
+    "comment": "Positive adjective + high prior expectation: inferred comparison class is superordinate (tall even compared to people in general)."
+  },
+  {
+    "id": "tg2022_short_basketball",
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "language": "stan1293",
+    "primaryText": "short basketball player",
+    "glossedTokens": [],
+    "translation": "short basketball player",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["adjective", "short"],
+      ["polarity", "negative"],
+      ["noun", "basketball player"],
+      ["prior_expectation", "high"],
+      ["inferred_class", "subordinate"]
+    ],
+    "comment": "Negative adjective + high prior expectation: inferred comparison class is subordinate (short for a basketball player)."
+  },
+  {
+    "id": "tg2022_tall_jockey",
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "language": "stan1293",
+    "primaryText": "tall jockey",
+    "glossedTokens": [],
+    "translation": "tall jockey",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["adjective", "tall"],
+      ["polarity", "positive"],
+      ["noun", "jockey"],
+      ["prior_expectation", "low"],
+      ["inferred_class", "subordinate"]
+    ],
+    "comment": "Positive adjective + low prior expectation: inferred comparison class is subordinate (tall for a jockey)."
+  },
+  {
+    "id": "tg2022_short_jockey",
+    "source": {"bibkey": "tessler-goodman-2022", "paperLabel": "UNVERIFIED §3.2.1, Fig. 3"},
+    "language": "stan1293",
+    "primaryText": "short jockey",
+    "glossedTokens": [],
+    "translation": "short jockey",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["adjective", "short"],
+      ["polarity", "negative"],
+      ["noun", "jockey"],
+      ["prior_expectation", "low"],
+      ["inferred_class", "superordinate"]
+    ],
+    "comment": "Negative adjective + low prior expectation: inferred comparison class is superordinate (short even compared to people in general)."
+  }
+]

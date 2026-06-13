@@ -1,8 +1,8 @@
 import Linglib.Semantics.Iconic.Basic
 import Linglib.Semantics.Reference.Monsters
-import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Semantics.Context.Shifts
+import Mathlib.Data.Rat.Defs
 
 /-!
 # Schlenker, Lamberton & Lamberton (2026)
@@ -41,14 +41,58 @@ is on a 7-point scale (7 = best, 1 = worst). Classifier direction
 (left vs. right) systematically determines the character's inferred path.
 -/
 
-open Phenomena.Iconicity
-
 namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
 open Semantics.Reference.Monsters (IsTowerMonster)
 open Semantics.Context
 open ASL (SigningSpace)
+
+-- ════════════════════════════════════════════════════════════════
+-- § Classifier Motion: empirical vocabulary
+-- ════════════════════════════════════════════════════════════════
+
+/-- Direction of a classifier's movement in signing space. -/
+inductive ClassifierDirection where
+  | passingLeft    -- classifier moves past the signer's head on the left
+  | passingRight   -- classifier moves past the signer's head on the right
+  | approaching    -- classifier moves toward the signer
+  | receding       -- classifier moves away from the signer
+  | stationary     -- classifier does not move
+  deriving DecidableEq, Repr
+
+/-- Whether classifier movement is dynamic (involves motion). -/
+def ClassifierDirection.isDynamic : ClassifierDirection → Bool
+  | .stationary => false
+  | _ => true
+
+/-- The type of motion interpretation triggered by a classifier. -/
+inductive MotionType where
+  | absolute  -- the object itself moves (standard interpretation)
+  | relative  -- the object appears to move from a moving viewpoint
+  deriving DecidableEq, Repr
+
+/-- The traveling shot generalization: when a classifier denoting a
+    static object moves in signing space, the movement is interpreted
+    as relative motion from a moving viewpoint, not as absolute motion
+    of the object. -/
+structure TravelingShotEffect where
+  /-- The static object class -/
+  objectClass : String
+  /-- The classifier's direction in signing space -/
+  classifierDirection : ClassifierDirection
+  /-- The motion type is relative, not absolute -/
+  motionType : MotionType
+  /-- The classifier direction determines the character's inferred path -/
+  classifierDirection_isDynamic : classifierDirection.isDynamic = true
+  motionType_isRelative : motionType = .relative
+
+/-- Role Shift status of a classifier construction. -/
+inductive RoleShiftStatus where
+  | strict     -- body rotation, eyegaze shift, agreement changes
+  | broad      -- signer's body represents another character (no rotation)
+  | absent     -- no Role Shift markers
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § Analysis I: Dynamic Viewpoints (§7)
@@ -220,7 +264,7 @@ end EndToEnd
 
 /-- An acceptability judgment on a 7-point scale. -/
 structure Judgment where
-  score : Float
+  score : ℚ
   numSessions : Nat
   deriving Repr
 
@@ -251,7 +295,7 @@ def paradigm13 : List Condition :=
       judgment := ⟨7, 3⟩ },
     { classifierDirection := .passingRight,
       roleShiftStatus := .broad,
-      judgment := ⟨6.3, 3⟩ } ]
+      judgment := ⟨63/10, 3⟩ } ]
 
 /-- Paradigm (19): Role-shifted version of (7). Strict Role Shift
     (body rotation). Same interpretive effect. -/

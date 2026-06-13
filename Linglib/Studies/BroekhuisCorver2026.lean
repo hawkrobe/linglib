@@ -320,7 +320,7 @@ theorem af_only_intransitive :
     the category of intransitive adpositions in the fragment. -/
 theorem pvc_predCat_is_P :
     Dendikken1995ParticleVerbs.pvc_pred_is_P
-      Phenomena.Constructions.ParticleVerbs.pick_up 0 1 = rfl := rfl
+      Dendikken1995ParticleVerbs.pick_up 0 1 = rfl := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. R-pronominalization and morphological complexity

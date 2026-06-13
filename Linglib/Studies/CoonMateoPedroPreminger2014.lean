@@ -1,5 +1,4 @@
-import Linglib.Phenomena.Ergativity.Basic
-import Linglib.Phenomena.Ergativity.MayanAlignment
+import Linglib.Features.Case.Basic
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ClauseSpine
@@ -7,6 +6,11 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Tseltal.Agreement
+import Linglib.Fragments.Mayan.Tsotsil.Agreement
+import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
 # Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
@@ -52,8 +56,7 @@ supporting its role as a case-assigner.
 namespace CoonMateoPedroPreminger2014
 
 open Minimalist
-open Phenomena.Ergativity
-open Mayan (ABSPosition CaseLocus toCaseLocus)
+open Mayan (ABSPosition CaseLocus toCaseLocus MayanLang)
 
 -- § 1 uses `CaseLocus` and `toCaseLocus` from `Mayan.Params`.
 
@@ -351,21 +354,29 @@ theorem fragments_ground_tada :
     hasSyntacticErgativity (toCaseLocus Chol.absPosition) = false :=
   ⟨rfl, rfl⟩
 
+/-- Absolutive structural position (HIGH-ABS / LOW-ABS) indexed by Mayan
+    language, routed to the per-language Fragment value. The substantive
+    parameter for Tada's Generalization. -/
+def absPositionOf : MayanLang → ABSPosition
+  | .Chol      => Chol.absPosition
+  | .Qanjobal  => Qanjobal.absPosition
+  | .Kaqchikel => Kaqchikel.absPosition
+  | .Tseltal   => Tseltal.absPosition
+  | .Tsotsil   => Tsotsil.absPosition
+  | .Mam       => Mam.absPosition
+  | .Kiche     => Kiche.absPosition
+
 /-- **Tada's Generalization, parameterized form**: a Mayan language
     exhibits syntactic ergativity (the analytical predicate from §4)
     **iff** it is HIGH-ABS. Quantified over `Mayan.MayanLang`
-    via the cross-Mayan `absPositionOf` dispatcher
-    (`Phenomena.Ergativity.MayanAlignment`).
+    via the Fragment-routed `absPositionOf` dispatcher.
 
     Replaces the per-language enumeration in `fragments_ground_tada`
     with a single quantified theorem that scales as the `MayanLang`
     registry grows. -/
-theorem mayan_tada (lang : Mayan.MayanLang) :
-    hasSyntacticErgativity
-        (toCaseLocus (Phenomena.Ergativity.MayanAlignment.absPositionOf lang))
-      = true ↔
-      Phenomena.Ergativity.MayanAlignment.absPositionOf lang =
-        Mayan.ABSPosition.high := by
+theorem mayan_tada (lang : MayanLang) :
+    hasSyntacticErgativity (toCaseLocus (absPositionOf lang)) = true ↔
+      absPositionOf lang = ABSPosition.high := by
   cases lang <;> decide
 
 /-- Q'anjob'al's extraction data is consistent with the prediction:
@@ -422,6 +433,82 @@ theorem tada_from_case_theory (pos : ABSPosition) :
     hasSyntacticErgativity (toCaseLocus pos) =
       (pos == .high) := by
   cases pos <;> rfl
+
+-- ============================================================================
+-- § 9a: Tada's Generalization (empirical table)
+-- ============================================================================
+
+/-- A Mayan language's observable extraction behavior. -/
+structure MayanExtractionDatum where
+  name : String
+  absPosition : ABSPosition
+  /-- Does the language ban A-bar extraction of transitive subjects? -/
+  hasExtractionAsymmetry : Bool
+  deriving DecidableEq, Repr
+
+/-- Tada's Generalization data (table (19) of [coon-mateo-pedro-preminger-2014],
+    extending [tada-1993]).
+
+    For the seven languages with linglib Fragments, `absPosition` and the
+    extraction-asymmetry flag are routed through the Fragment values
+    (`absPosition`, `extractionProfile`) rather than duplicated here.
+
+    The two noted outliers are Yucatec and Ixil (LOW-ABS with extraction
+    asymmetries). Yucatec's AF differs significantly from other Mayan AF;
+    Ixil's absolutive morphemes behave like full pronominal forms. -/
+def tadasTable : List MayanExtractionDatum :=
+  -- HIGH-ABS, +extraction asymmetries
+  [ ⟨"Q'anjob'al",  Qanjobal.absPosition,
+      decide (Qanjobal.extractionProfile.Marks .subject)⟩
+  , ⟨"Akatek",      .high, true⟩
+  , ⟨"Popti'",      .high, true⟩
+  , ⟨"Chuj",        .high, true⟩
+  , ⟨"Q'eqchi'",    .high, true⟩
+  , ⟨"Uspantek",    .high, true⟩
+  , ⟨"Poqomchi'",   .high, true⟩
+  , ⟨"Poqomam",     .high, true⟩
+  , ⟨"K'ichee'",    Kiche.absPosition,
+      decide (Kiche.extractionProfile.Marks .subject)⟩
+  , ⟨"Kaqchikel",   Kaqchikel.absPosition,
+      decide (Kaqchikel.extractionProfile.Marks .subject)⟩
+  , ⟨"Tz'utujil",   .high, true⟩
+  , ⟨"Sakapultek",  .high, true⟩
+  , ⟨"Sipakapense", .high, true⟩
+  , ⟨"Mam",         Mam.absPosition,
+      decide (Mam.extractionProfile.Marks .subject)⟩
+  , ⟨"Awakatek",    .high, true⟩
+  -- LOW-ABS, +extraction asymmetries (outliers)
+  , ⟨"Yucatec",     .low,  true⟩
+  , ⟨"Ixil",        .low,  true⟩
+  -- LOW-ABS, -extraction asymmetries
+  , ⟨"Lakantun",    .low,  false⟩
+  , ⟨"Mopan",       .low,  false⟩
+  , ⟨"Itzaj",       .low,  false⟩
+  , ⟨"Chol",        Chol.absPosition,
+      decide (Chol.extractionProfile.Marks .subject)⟩
+  , ⟨"Chontal",     .low,  false⟩
+  , ⟨"Tseltal",     Tseltal.absPosition,
+      decide (Tseltal.extractionProfile.Marks .subject)⟩
+  , ⟨"Tsotsil",     Tsotsil.absPosition,
+      decide (Tsotsil.extractionProfile.Marks .subject)⟩
+  , ⟨"Tojol-ab'al", .low,  false⟩ ]
+
+/-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/
+theorem high_abs_all_have_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .high)).all
+      (fun l => l.hasExtractionAsymmetry) = true := by decide
+
+/-- All LOW-ABS languages except the two noted outliers lack
+    extraction asymmetries. -/
+theorem low_abs_mostly_lack_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .low &&
+      l.name != "Yucatec" && l.name != "Ixil")).all
+      (fun l => !l.hasExtractionAsymmetry) = true := by decide
+
+/-- No HIGH-ABS language lacks extraction asymmetries (unattested cell). -/
+theorem high_abs_none_lack_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .high &&
+      !l.hasExtractionAsymmetry)).length = 0 := by decide
 
 -- ============================================================================
 -- § 10: Three Factors for Syntactic Ergativity
@@ -513,6 +600,18 @@ theorem attested_cells :
     predictedUnattested qanjobalTypology = false ∧
     predictedUnattested cholTypology = false ∧
     predictedUnattested englishTypology = false := ⟨rfl, rfl, rfl⟩
+
+/-- The +morph.erg column of table (10), grounded in Fragment data:
+    every formalised Mayan language with the standard ergative-absolutive
+    base assigns case canonically ergatively (A → ERG, S/P → ABS) in the
+    perfective. The `isStandard` hypothesis scopes around San Juan Atitán
+    Mam, whose perfective is morphologically tripartite (see
+    `Mayan.MayanLang.isStandard` and `Studies/Scott2023.lean`). -/
+theorem mayan_perfective_ergative
+    (lang : MayanLang) (h : lang.isStandard = true)
+    (r : Features.Prominence.ArgumentRole) :
+    Mayan.caseAt lang .Perf r = Alignment.ergative.assignCase r := by
+  cases lang <;> first | rfl | (simp [Mayan.MayanLang.isStandard] at h)
 
 -- ============================================================================
 -- § 12: Person-Conditioned AF (bridge)

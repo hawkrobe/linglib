@@ -4,7 +4,6 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Semantics.Degree.Differential
 import Linglib.Semantics.Gradability.Delineation
-import Linglib.Phenomena.Comparison.Compare
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -591,10 +590,10 @@ theorem modalComparative_from_maxDeg {W : Type*} {D : Type*} [LinearOrder D]
     3. Cross-dimensional: "Ede is more tall than broad"
 
     Klein's framework has no degree ontology, so metric information
-    (distances, ratios) cannot be expressed. The existing
-    `klein_measure_equivalence` shows Klein agrees on simple
-    comparatives (via `measureDelineation`), but this agreement
-    breaks down for measure phrase constructions.
+    (distances, ratios) cannot be expressed. `klein_agrees_on_simple`
+    below shows Klein agrees on simple comparatives (via
+    `measureDelineation`), but this agreement breaks down for measure
+    phrase constructions.
 
     This limitation motivates von Stechow's R4/R5 (addition and
     multiplication on degrees) which Klein cannot express. -/
@@ -618,15 +617,17 @@ def kleinLimitations : List KleinLimitation :=
 
 /-- Klein agrees with von Stechow's synthesis on simple comparatives:
     the degree comparison μ(a) > μ(b) induces a Klein ordering via
-    `measureDelineation` (from `Compare.klein_measure_equivalence`).
-    The divergence is only on differential and factor constructions. -/
+    `measureDelineation` (uses `ordering_iff_degree` from the theory
+    layer). The divergence is only on differential and factor
+    constructions. -/
 theorem klein_agrees_on_simple {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (cc : Set Entity) (a b : Entity)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
       Semantics.Gradability.Delineation.ordering
-        (Semantics.Gradability.Delineation.measureDelineation μ) cc a b :=
-  Phenomena.Comparison.Compare.klein_measure_equivalence μ cc a b ha hb
+        (Semantics.Gradability.Delineation.measureDelineation μ) cc a b := by
+  simp only [comparativeSem,
+    Semantics.Gradability.Delineation.ordering_iff_degree μ cc a b ha hb]
 
 -- ════════════════════════════════════════════════════
 -- § 8. Cross-Category Generalization (§XI.4)

@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.Constructions.ParticleVerbs
+import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Studies.Bruening2021
 
 /-!
@@ -120,12 +120,12 @@ def V_make   : SyntacticObject := mkLeafPhon .V [.D] "make" 11
 def DP_child : SyntacticObject := mkLeafPhon .D [] "the child" 12
 def VP_laugh : SyntacticObject := mkLeafPhon .V [] "laugh" 13
 
-/-- Experimental PVC primes derive from the ParticleVerbs inventory. -/
+/-- Experimental PVC primes derive from the [dendikken-1995] inventory. -/
 theorem experimental_pvcs_in_inventory :
-    (Phenomena.Constructions.ParticleVerbs.inventory.any
-      (· == Phenomena.Constructions.ParticleVerbs.lift_up)) = true ∧
-    (Phenomena.Constructions.ParticleVerbs.inventory.any
-      (· == Phenomena.Constructions.ParticleVerbs.put_down)) = true := by
+    (Dendikken1995ParticleVerbs.inventory.any
+      (· == Dendikken1995ParticleVerbs.lift_up)) = true ∧
+    (Dendikken1995ParticleVerbs.inventory.any
+      (· == Dendikken1995ParticleVerbs.put_down)) = true := by
   constructor <;> decide
 
 /-- The ApplP analysis uses a LOW applicative. -/

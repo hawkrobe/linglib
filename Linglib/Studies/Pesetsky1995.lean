@@ -37,7 +37,7 @@ adjunction through the Cascade spine, and nonaffixal overt prepositions
 
 set_option autoImplicit false
 
-namespace Phenomena.PsychVerbs
+namespace Pesetsky1995.PsychVerbs
 
 -- ============================================================================
 -- Belletti-Rizzi 1988 / Kim 2024 empirical data
@@ -178,7 +178,7 @@ theorem cause_sm_cooccurrence_illformed :
     (tsmData.filter (fun d => d.causePresent && d.smPresent)).all
       (!·.wellFormed) = true := by decide
 
-end Phenomena.PsychVerbs
+end Pesetsky1995.PsychVerbs
 
 
 -- ============================================================================
@@ -189,7 +189,7 @@ namespace Pesetsky1995
 
 open Minimalist
 open Semantics.Causation.Psych
-open Phenomena.PsychVerbs
+open Pesetsky1995.PsychVerbs
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
