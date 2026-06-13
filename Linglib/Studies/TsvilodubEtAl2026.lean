@@ -1,5 +1,7 @@
 import Linglib.Pragmatics.RSA.Canonical
-import Linglib.Phenomena.Clarification.Basic
+import Linglib.Core.Agent.DecisionTheory
+import Linglib.Studies.DongEtAl2026PMF
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -18,9 +20,8 @@ utility `1 − δ`; a behavioral policy `π = SoftMax(α · EU)` over the
 `P(r_cq) = Logistic(τ · (ExpRegret(r*) − c))`, where `ExpRegret(r*)` is the
 expected regret of the best action — the expected value of perfect
 information ([raiffa-schlaifer-1961]). This file formalises all three
-layers, building on `Core.DecisionTheory.DecisionProblem` and
-`Phenomena.Clarification.evpi` (whose docstring already identifies the
-paper's ExpRegret with EVPI).
+layers, building on `Core.DecisionTheory.DecisionProblem`; `evpi` below
+identifies the paper's ExpRegret with EVPI.
 
 ## Main statements
 
@@ -59,7 +60,70 @@ set_option autoImplicit false
 namespace TsvilodubEtAl2026
 
 open scoped ENNReal NNReal
-open Core.DecisionTheory Phenomena.Clarification
+open Core.DecisionTheory
+
+/-! ### Expected value of perfect information
+
+[raiffa-schlaifer-1961]'s EVPI over a `Core.DecisionTheory.DecisionProblem`:
+the gap between the oracle value (expected utility under perfect
+information) and the value of acting now. EVPI is the maximum possible
+`questionUtility` ([van-rooy-2003]) — it equals `questionUtility` on the
+identity partition, so any specific clarification question yields at most
+EVPI; it is the paper's `ExpRegret(r*)` and the upper bound on
+[dong-etal-2026]'s VoI. -/
+
+/-- Maximum utility achievable at world `w` across actions.
+
+    With Finset actions, this is `sup'` over utilities at world `w`. -/
+def bestUtilityAt {W A : Type*} (dp : DecisionProblem W A)
+    (actions : Finset A) (w : W) : ℚ :=
+  if h : actions.Nonempty then actions.sup' h (dp.utility w) else 0
+
+/-- Oracle value: expected utility under perfect information.
+    `Σ_w P(w) · max_a U(w, a)` -/
+def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem W A)
+    (actions : Finset A) : ℚ :=
+  ∑ w : W, dp.prior w * bestUtilityAt dp actions w
+
+/-- Expected value of perfect information (EVPI).
+
+    EVPI = oracleValue − dpValue
+         = Σ_w P(w) · max_a U(w,a) − max_a Σ_w P(w) · U(w,a)
+
+    Equivalently, the expected regret of the current best action.
+
+    [raiffa-schlaifer-1961] -/
+def evpi {W A : Type*} [Fintype W] [DecidableEq W]
+    (dp : DecisionProblem W A) (actions : Finset A) : ℚ :=
+  oracleValue dp actions - dpValue dp actions
+
+/-- EVPI is non-negative: acting with perfect information is at least
+    as good as acting without.
+
+    Proof sketch: For each action `a`, its expected utility `EU(a)` equals
+    `Σ_w P(w) · U(w,a)`. The oracle value `Σ_w P(w) · max_a' U(w,a')`
+    is pointwise ≥ `Σ_w P(w) · U(w,a)` since `max_a' U(w,a') ≥ U(w,a)`.
+    Therefore `oracleValue ≥ EU(a)` for every `a`, hence
+    `oracleValue ≥ max_a EU(a) = dpValue`. -/
+theorem evpi_nonneg {W A : Type*} [Fintype W] [DecidableEq W]
+    (dp : DecisionProblem W A) (actions : Finset A)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (hne : actions.Nonempty) :
+    0 ≤ evpi dp actions := by
+  unfold evpi
+  suffices h : dpValue dp actions ≤ oracleValue dp actions by linarith
+  -- dpValue = sup' of expectedUtility; show each EU(a) ≤ oracleValue
+  unfold dpValue oracleValue
+  rw [dif_pos hne]
+  apply Finset.sup'_le
+  intro a ha
+  -- EU(a) = Σ_w P(w) · U(w,a) ≤ Σ_w P(w) · bestUtilityAt w
+  apply Finset.sum_le_sum
+  intro w _
+  apply mul_le_mul_of_nonneg_left _ (hprior w)
+  -- U(w,a) ≤ bestUtilityAt w
+  unfold bestUtilityAt
+  rw [dif_pos hne]
+  exact Finset.le_sup' _ ha
 
 /-! ### The decision problem ⟨G, P, R, U⟩ -/
 
@@ -179,8 +243,8 @@ private theorem dpValue_eq {ε δ : ℚ} (hε : ε ≤ 1/2) :
 
 /-- **The interaction in closed form**: for the paper's decision problem,
 the expected regret of the best action — `ExpRegret(r*)`, i.e. the expected
-value of perfect information ([raiffa-schlaifer-1961],
-`Phenomena.Clarification.evpi`) — is `min ε δ`. Regret is bounded by the
+value of perfect information ([raiffa-schlaifer-1961], `evpi`) — is
+`min ε δ`. Regret is bounded by the
 uncertainty *and* by the cost of the safe action, so uncertainty raises
 regret only while it stays below the cost: the paper's headline claim that
 uncertainty matters most when acting incorrectly is costly. -/
@@ -275,18 +339,18 @@ theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ)
     cqProb τ c epsLow deltaLarge < cqProb τ c epsHigh deltaLarge :=
   ⟨noNeedToAsk τ c, tl_justAsk hτ c⟩
 
-/-! ### The hub decision-rule instance: a soft gate
+/-! ### The shared decision-rule instance: a soft gate
 
-The logistic gate instantiates `Phenomena.Clarification.ClarifyRule` as a
-*soft* threshold, against [dong-etal-2026]'s sharp
-`Phenomena.Clarification.sharpRule`: it is never binary — at zero net value
-it clarifies with probability 1/2 (`softGateRule_apply_zero`, vs
-`sharpRule_binary`). Cf. the paper's Exp 2 contrast between binarized CQ
-rates and gradient action rates. -/
+The logistic gate instantiates `DongEtAl2026.ClarifyRule` as a *soft*
+threshold, against [dong-etal-2026]'s sharp `DongEtAl2026.sharpRule`: it
+is never binary — at zero net value it clarifies with probability 1/2
+(`softGateRule_apply_zero`, vs `DongEtAl2026.sharpRule_binary`). Cf. the
+paper's Exp 2 contrast between binarized CQ rates and gradient action
+rates. -/
 
-/-- The logistic gate as a hub `ClarifyRule` over the net regret signal. -/
+/-- The logistic gate as a `ClarifyRule` over the net regret signal. -/
 noncomputable def softGateRule {τ : ℝ} (hτ : 0 < τ) :
-    Phenomena.Clarification.ClarifyRule where
+    DongEtAl2026.ClarifyRule where
   propensity := cqGate τ 0
   mono := (cqGate_strictMono hτ 0).monotone
   nonneg x := (cqGate_pos τ 0 x).le

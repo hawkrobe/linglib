@@ -364,7 +364,6 @@ import Linglib.Morphology.Paradigm
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Pragmatics.Efficiency
-import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Entropy
@@ -399,7 +398,6 @@ import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Move
 import Linglib.Discourse.SpeechAct.Update
-import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Typology.NullSubject
 import Linglib.Features.Subjectivity
 import Linglib.Data.Examples.Schema
@@ -1227,7 +1225,6 @@ import Linglib.Studies.Beck2001
 import Linglib.Studies.Sternefeld1998
 import Linglib.Studies.GroenendijkStokhof1991
 import Linglib.Studies.Dixon1994
-import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
@@ -1266,7 +1263,6 @@ import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Studies.Cumming2026
 import Linglib.Studies.Lakoff1970
 import Linglib.Studies.Moon2026
-import Linglib.Phenomena.Conditionals.LeftNested.Data
 import Linglib.Studies.AlonsoOvalle2009
 import Linglib.Studies.Belnap1970
 import Linglib.Studies.CarianiGoldstein2020
@@ -1292,7 +1288,6 @@ import Linglib.Studies.DarwichePearl1997
 import Linglib.Studies.Veltman1996
 import Linglib.Studies.Moroney2021
 import Linglib.Studies.Jenks2018
-import Linglib.Phenomena.Clarification.Basic
 import Linglib.Studies.DongEtAl2026PMF
 import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Studies.Anderson2021
@@ -1318,7 +1313,6 @@ import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.Kubota2026
 import Linglib.Studies.OsborneGross2012.Data
-import Linglib.Phenomena.Constructions.ParticleVerbs
 import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Studies.Dendikken1995Resultatives
 import Linglib.Studies.Levin2026
@@ -1351,7 +1345,6 @@ import Linglib.Studies.Kalyakin2026
 import Linglib.Studies.Funakoshi2016
 import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.Merchant2013
-import Linglib.Phenomena.Entailment.Basic
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.Roberts2012
 import Linglib.Studies.Rooth1992
@@ -1372,7 +1365,6 @@ import Linglib.Studies.DelPrete2013
 import Linglib.Studies.AsherPelletier2013
 import Linglib.Studies.Corbett1991
 import Linglib.Studies.Kramer2020
-import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Studies.AlexandropoulouGotzner2024
 import Linglib.Studies.AlexandropoulouGotzner2024JoS
 import Linglib.Studies.CarianiSantorioWellwood2024
@@ -1386,9 +1378,7 @@ import Linglib.Studies.Nouwen2024
 import Linglib.Studies.Nouwen2024PMF
 import Linglib.Studies.Partee2010
 import Linglib.Studies.Rett2015
-import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
-import Linglib.Phenomena.Comparison.Compare
 import Linglib.Studies.Stassen2013Comparison
 import Linglib.Studies.Bresnan1973
 import Linglib.Studies.Kennedy1999
@@ -1427,7 +1417,6 @@ import Linglib.Studies.BumfordRett2021
 -- Phenomena: Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)
 import Linglib.Studies.BeckmanPierrehumbert1986
 -- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
-import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.ZaslavskyEtAl2019
@@ -1453,7 +1442,6 @@ import Linglib.Studies.Osborne2019Islands
 import Linglib.Studies.SagWasowBender2003Extraction
 import Linglib.Studies.SagWasowBender2003RelativeClauses
 import Linglib.Studies.Scott2021
-import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Studies.PaapeVasishth2026
 import Linglib.Studies.KaoEtAl2015PMF
 import Linglib.Studies.SpinosoDiPiano2025PMF
@@ -1465,7 +1453,6 @@ import Linglib.Studies.ClausWalch2024
 import Linglib.Studies.Cummins2015
 import Linglib.Studies.Kennedy2015
 import Linglib.Studies.Snyder2026
-import Linglib.Phenomena.Numerals.Embedding
 import Linglib.Studies.FoxHackl2006Numerals
 import Linglib.Studies.HuangSpelkeSnedeker2013
 import Linglib.Studies.Spector2013
@@ -1602,7 +1589,6 @@ import Linglib.Studies.VonFintel1993
 import Linglib.Studies.VonFintel1999
 import Linglib.Studies.Haspelmath1997Polarity
 import Linglib.Studies.HoulihanEtAl2023
-import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Studies.FrancikClark1985
 import Linglib.Studies.MachinoEtAl2025
 import Linglib.Studies.YoonEtAl2020
@@ -1683,7 +1669,6 @@ import Linglib.Studies.Zheng2025
 import Linglib.Studies.RomeroHan2004
 import Linglib.Studies.Romero2024
 -- Phenomena: Verum (Höhle 1992 origin + cross-linguistic studies)
-import Linglib.Phenomena.Verum.Basic
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.MartinezVera2026
 import Linglib.Studies.Holmberg2016
@@ -1700,7 +1685,6 @@ import Linglib.Studies.CohnGordonEtAl2019
 import Linglib.Studies.DaleReiter1995
 import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.EngelhardtEtAl2006
-import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Studies.FrankGoodman2012PMF
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.Ney2026
@@ -1769,7 +1753,6 @@ import Linglib.Studies.PottsEtAl2016
 import Linglib.Studies.PottsLevy2015
 import Linglib.Studies.GoodmanStuhlmuller2013PMF
 import Linglib.Typology.Phonology
-import Linglib.Phenomena.Phonology.Alternation
 import Linglib.Studies.Maddieson2013
 import Linglib.Studies.AfkirZellou2025
 import Linglib.Fragments.German.Phonology
@@ -1831,7 +1814,6 @@ import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
 import Linglib.Studies.Cysouw2009
-import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Studies.Aissen2003Agreement
 import Linglib.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Studies.AdamsonZompi2025
@@ -2122,7 +2104,6 @@ import Linglib.Studies.AlokBhalla2026
 import Linglib.Studies.Wang2023
 import Linglib.Studies.Gutzmann2015
 import Linglib.Studies.Deo2025
-import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Studies.Burnett2019
 import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
@@ -2238,7 +2219,6 @@ import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Composition.Scope
-import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Studies.AhnZhu2025
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Semantics.Measurement.Basic
@@ -2847,3 +2827,5 @@ import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Data.Examples.LuPanDegen2025
 import Linglib.Morphology.RootFamily
 import Linglib.Core.Logic.TweetyNixon
+import Linglib.Data.Examples.TesslerGoodman2022
+import Linglib.Data.Examples.CaoWhiteLassiter2025

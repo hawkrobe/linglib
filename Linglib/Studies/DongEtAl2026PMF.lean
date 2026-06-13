@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Posterior
-import Linglib.Phenomena.Clarification.Basic
+import Mathlib.Data.Real.Basic
 
 /-!
 # [dong-etal-2026]: the Value-of-Information clarify-or-commit model
@@ -58,13 +58,18 @@ results here concern the per-question clarify-or-commit decision.
 This PMF/`ℝ≥0∞` formulation parallels the `ℝ`-valued expected-information-gain
 substrate `Core.Agent.ExperimentDesign.eig` (with value function `V U`):
 `V_le_Vpost` is the PMF analogue of `ExperimentDesign.eig_nonneg_of_convex`
-and of `Phenomena.Clarification.evpi_nonneg`. The theory-neutral
-clarify-or-commit data lives in `Phenomena/Clarification/Basic.lean`.
+and of `TsvilodubEtAl2026.evpi_nonneg`.
+
+`ClarifyRule` is the shared clarify-or-commit decision-rule contract: both
+this paper and [tsvilodub-etal-2026] decide clarification from a net
+value-of-information signal, this paper through the sharp threshold
+`sharpRule` (`worthAsking_iff_sharpRule`), Tsvilodub et al. through a
+logistic gate (`TsvilodubEtAl2026.softGateRule`).
 
 ## Todo
 
-* Discharge the `Phenomena/Clarification/Basic.lean` docstring claim that EVPI
-  is the upper bound on VoI for any question into a theorem
+* Discharge the claim that EVPI (`TsvilodubEtAl2026.evpi`) is the upper
+  bound on VoI for any question into a theorem
   `worthAsking c U b κ → c < EVPI`.
 * Relate `VoI` / `V_le_Vpost` to `Core.Agent.ExperimentDesign.eig` /
   `eig_nonneg_of_convex` (bridging the `ℝ≥0∞`-on-`PMF` and `ℝ`-on-`Fintype`
@@ -316,25 +321,62 @@ theorem revealing_worth_asking_medical :
     worthAsking 0 ((10 : ℝ≥0∞) • correctnessUtility) uniformBelief revealingQuestion :=
   medical_worth_asking_of_animal 0 _ _ _ revealing_worth_asking
 
-/-! ### The hub decision-rule instance: a sharp threshold -/
+/-! ### The decision rule: a sharp threshold -/
 
-/-- The account instantiates `Phenomena.Clarification.sharpRule`: asking is
-worth its cost exactly when the sharp-threshold rule fires on the net
-(real-valued) value signal. The soft-gate rival is
-`TsvilodubEtAl2026.softGateRule`. -/
+/-- A clarify-or-commit decision rule: clarification propensity as a
+monotone `[0, 1]`-valued function of the net value-of-information signal
+(value minus cost). The shared contract of this paper's sharp threshold
+and [tsvilodub-etal-2026]'s logistic gate
+(`TsvilodubEtAl2026.softGateRule`). -/
+structure ClarifyRule where
+  /-- Clarification propensity given the net value signal. -/
+  propensity : ℝ → ℝ
+  mono : Monotone propensity
+  nonneg : ∀ x, 0 ≤ propensity x
+  le_one : ∀ x, propensity x ≤ 1
+
+/-- The sharp-threshold rule: clarify exactly when the net value is
+positive (the paper's `worthAsking`; see `worthAsking_iff_sharpRule`). -/
+noncomputable def sharpRule : ClarifyRule where
+  propensity x := if 0 < x then 1 else 0
+  mono x y hxy := by
+    show (if 0 < x then (1 : ℝ) else 0) ≤ if 0 < y then 1 else 0
+    by_cases hx : 0 < x
+    · rw [if_pos hx, if_pos (hx.trans_le hxy)]
+    · rw [if_neg hx]
+      split <;> norm_num
+  nonneg x := by split <;> norm_num
+  le_one x := by split <;> norm_num
+
+theorem sharpRule_apply_of_pos {x : ℝ} (h : 0 < x) : sharpRule.propensity x = 1 :=
+  if_pos h
+
+theorem sharpRule_apply_of_nonpos {x : ℝ} (h : ¬ 0 < x) : sharpRule.propensity x = 0 :=
+  if_neg h
+
+/-- The sharp rule is binary — the formal signature of a threshold process,
+against which soft gates contrast (`TsvilodubEtAl2026.softGateRule_apply_zero`). -/
+theorem sharpRule_binary (x : ℝ) :
+    sharpRule.propensity x = 0 ∨ sharpRule.propensity x = 1 := by
+  by_cases hx : 0 < x
+  · exact Or.inr (sharpRule_apply_of_pos hx)
+  · exact Or.inl (sharpRule_apply_of_nonpos hx)
+
+/-- The account instantiates `sharpRule`: asking is worth its cost exactly
+when the sharp-threshold rule fires on the net (real-valued) value signal.
+The soft-gate rival is `TsvilodubEtAl2026.softGateRule`. -/
 theorem worthAsking_iff_sharpRule {c : ℝ≥0∞} (hc : c ≠ ∞) (U : Θ → A → ℝ≥0∞)
     (b : PMF Θ) (κ : Θ → PMF Y) (hV : VoI U b κ ≠ ∞) :
     worthAsking c U b κ ↔
-      Phenomena.Clarification.sharpRule.propensity
-        ((VoI U b κ).toReal - c.toReal) = 1 := by
+      sharpRule.propensity ((VoI U b κ).toReal - c.toReal) = 1 := by
   rw [worthAsking]
   constructor
   · intro h
-    exact Phenomena.Clarification.sharpRule_apply_of_pos
+    exact sharpRule_apply_of_pos
       (sub_pos.mpr ((ENNReal.toReal_lt_toReal hc hV).mpr h))
   · intro h
     by_contra hlt
-    rw [Phenomena.Clarification.sharpRule_apply_of_nonpos (not_lt.mpr
+    rw [sharpRule_apply_of_nonpos (not_lt.mpr
       (sub_nonpos.mpr ((ENNReal.toReal_le_toReal hV hc).mpr (not_lt.mp hlt))))] at h
     norm_num at h
 

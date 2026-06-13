@@ -8,7 +8,7 @@ import Linglib.Pragmatics.SocialMeaning.PropertySpace
 The SCM property space: 6 properties organized as 3 bipolar dimensions
 (competence, warmth, solidarity). The `SocialDimension` type (axis
 labels) and `SCMProperty` type (pole endpoints) live here rather than
-in `Phenomena/SocialMeaning/IndexicalField.lean` because they are specific to the SCM
+in `Pragmatics/SocialMeaning/IndexicalField.lean` because they are specific to the SCM
 theoretical framework.
 
 ## Types

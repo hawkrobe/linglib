@@ -2,7 +2,8 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Phenomena.Gradability.ComparisonClass
+import Linglib.Features.PropertyDomain
+import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Semantics.Quantification.DomainRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -426,31 +427,65 @@ theorem jockey_short_infers_super :
     jockeyCfg.L1_latent .short .subordinate := by rsa_predict
 
 -- ============================================================================
--- § 9. Connection to Comparison Class Data
+-- § 9. Grounding: Polarity × Expectations Rows
 -- ============================================================================
 
-/-! The polarity × expectations interaction from §§ 6, 8 matches the empirical
-patterns in `Phenomena.Gradability.ComparisonClass`:
+/-! The polarity × expectations interaction from §§ 6, 8 grounds the rows in
+`Data/Examples/TesslerGoodman2022.json` (§3.2.1, Fig. 3): in every row, the
+EXPECTED adjective (consistent with the kind's height distribution) is
+attested with SUPERORDINATE comparison and the UNEXPECTED adjective with
+SUBORDINATE comparison. `L1_matches_all_rows` replicates the paper's Eq. 1
+prediction for each row. -/
 
-| Data pattern | L1 inference | S1 endorsed | S1 not endorsed |
-|-------------|-------------|-------------|-----------------|
-| `tallBasketball` → super | `basketball_tall_infers_super` | `basketball_tall_endorsed_super` | `basketball_tall_not_endorsed_sub` |
-| `shortBasketball` → sub | `basketball_short_infers_sub` | `basketball_short_endorsed_sub` | `basketball_short_not_endorsed_super` |
-| `tallJockey` → sub | `jockey_tall_infers_sub` | `jockey_tall_endorsed_sub` | `jockey_tall_not_endorsed_super` |
-| `shortJockey` → super | `jockey_short_infers_super` | `jockey_short_endorsed_super` | `jockey_short_not_endorsed_sub` |
+open Data.Examples
 
-In every case, the EXPECTED adjective (consistent with the kind's height
-distribution) triggers SUPERORDINATE comparison, and the UNEXPECTED adjective
-triggers SUBORDINATE comparison. The L1 inference theorems (§ 8) directly
-replicate the paper's Eq. 1 prediction. -/
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-open Phenomena.Gradability.ComparisonClass in
-/-- The data records the polarity × expectations pattern. -/
-theorem polarity_expectations_confirmed :
-    tallBasketball.inferredClass = "superordinate" ∧
-    shortBasketball.inferredClass = "subordinate" ∧
-    tallJockey.inferredClass = "subordinate" ∧
-    shortJockey.inferredClass = "superordinate" := ⟨rfl, rfl, rfl, rfl⟩
+/-- Kind adapter: the row's `noun` feature as a `Kind`. -/
+def kindOf (row : LinguisticExample) : Option Kind :=
+  match featureOf row "noun" with
+  | some "basketball player" => some .basketballPlayer
+  | some "jockey"            => some .jockey
+  | _ => none
+
+/-- Utterance adapter: the row's `adjective` feature as an `Utterance`. -/
+def uttOf (row : LinguisticExample) : Option Utterance :=
+  match featureOf row "adjective" with
+  | some "tall"  => some .tall
+  | some "short" => some .short
+  | _ => none
+
+/-- Comparison-class adapter: the row's attested `inferred_class` feature. -/
+def ccOf (row : LinguisticExample) : Option ComparisonClass :=
+  match featureOf row "inferred_class" with
+  | some "subordinate"   => some .subordinate
+  | some "superordinate" => some .superordinate
+  | _ => none
+
+/-- The alternative comparison class. -/
+def ComparisonClass.flip : ComparisonClass → ComparisonClass
+  | .subordinate   => .superordinate
+  | .superordinate => .subordinate
+
+/-- The pragmatic listener prefers the row's attested comparison class over
+    the alternative (vacuous when a row lacks the adapter features). -/
+def L1Matches (row : LinguisticExample) : Prop :=
+  match kindOf row, uttOf row, ccOf row with
+  | some k, some u, some c =>
+      (mkCompClassCfg k).L1_latent u c > (mkCompClassCfg k).L1_latent u c.flip
+  | _, _, _ => True
+
+/-- **Transfer theorem** (Eq. 1, Fig. 3): on every row, L1's posterior
+    prefers the attested comparison class. -/
+theorem L1_matches_all_rows : ∀ row ∈ Examples.all, L1Matches row := by
+  intro row hrow
+  fin_cases hrow
+  · exact basketball_tall_infers_super
+  · exact basketball_short_infers_sub
+  · exact jockey_tall_infers_sub
+  · exact jockey_short_infers_super
 
 -- ============================================================================
 -- § 10. Alternative: Literal Listener Model (Eq. 6, Fig. 2)

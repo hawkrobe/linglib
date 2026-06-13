@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.Psychophysics
 import Linglib.Pragmatics.RSA.Channel
@@ -67,7 +66,34 @@ set_option autoImplicit false
 
 namespace GilesEtAl2026
 
-open Phenomena.Reference.SearchEfficiency
+-- ============================================================================
+-- §0. Search Efficiency Display Types (Exp 1 conditions)
+-- ============================================================================
+
+/-- The experimental conditions of Exp 1, defined by the sufficiency ×
+    discriminability interaction: which attribute identifies the target
+    (sufficient vs. redundant) crossed with how easy each attribute is to
+    search (high vs. low discriminability, set via psychophysical
+    staircases). -/
+inductive DisplayType where
+  /-- Sufficient attribute: high discriminability,
+      Redundant attribute: low discriminability. -/
+  | sHighRLow
+  /-- Sufficient attribute: low discriminability,
+      Redundant attribute: high discriminability. -/
+  | sLowRHigh
+  /-- Both attributes: high discriminability. -/
+  | baseline
+  deriving Repr, DecidableEq
+
+/-- The search efficiency view's prediction: overinformativeness is high
+    exactly when the sufficient attribute is hard to search and the
+    redundant attribute facilitates search. When the sufficient attribute
+    is already search-efficient, redundancy adds no benefit. -/
+def searchEfficiencyPredicts : DisplayType → Bool
+  | .sLowRHigh => true   -- high overinformativeness predicted
+  | .baseline  => false  -- intermediate (lower than sLowRHigh)
+  | .sHighRLow => false  -- low overinformativeness predicted
 
 -- ============================================================================
 -- §1. Regression Results
@@ -76,15 +102,18 @@ open Phenomena.Reference.SearchEfficiency
 /-- A regression coefficient from a Bayesian mixed-effects logistic model
     with 95% credible interval. -/
 structure BayesianCoefficient where
-  β : Float
-  se : Float
-  ci_lower : Float
-  ci_upper : Float
-  deriving Repr
+  β : ℚ
+  se : ℚ
+  ci_lower : ℚ
+  ci_upper : ℚ
+  deriving Repr, DecidableEq
 
-/-- Whether the 95% CI excludes zero (evidence of a reliable effect). -/
-def BayesianCoefficient.isSignificant (c : BayesianCoefficient) : Bool :=
-  c.ci_lower > 0 || c.ci_upper < 0
+/-- The 95% CI excludes zero (evidence of a reliable effect). -/
+def BayesianCoefficient.IsSignificant (c : BayesianCoefficient) : Prop :=
+  0 < c.ci_lower ∨ c.ci_upper < 0
+
+instance : DecidablePred BayesianCoefficient.IsSignificant :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 -- ============================================================================
 -- §2. Experiment 1: Search Efficiency Across Modalities (N = 72)
@@ -142,18 +171,17 @@ def exp2_orientation : BayesianCoefficient :=
 
 /-- All Exp 1 effects are significant (95% CI excludes zero). -/
 theorem exp1_all_significant :
-    exp1_material_redundant.isSignificant ∧
-    exp1_baseline.isSignificant ∧
-    exp1_sHighRLow.isSignificant := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+    exp1_material_redundant.IsSignificant ∧
+    exp1_baseline.IsSignificant ∧
+    exp1_sHighRLow.IsSignificant := by native_decide
 
 /-- The colour vs orientation effect is significant. -/
 theorem exp2_orientation_significant :
-    exp2_orientation.isSignificant := by native_decide
+    exp2_orientation.IsSignificant := by native_decide
 
 /-- The low-frequency colour effect is NOT significant. -/
 theorem exp2_lf_colour_not_significant :
-    ¬exp2_lf_colour.isSignificant := by native_decide
+    ¬exp2_lf_colour.IsSignificant := by native_decide
 
 -- ============================================================================
 -- §5. Search Efficiency Predictions
@@ -163,15 +191,13 @@ theorem exp2_lf_colour_not_significant :
     When the sufficient attribute is hard to search and the redundant
     attribute facilitates search, speakers overinform more. -/
 theorem search_efficiency_ordering :
-    exp1_sHighRLow.isSignificant ∧ exp1_sHighRLow.β < 0 := by
-  constructor <;> native_decide
+    exp1_sHighRLow.IsSignificant ∧ exp1_sHighRLow.β < 0 := by native_decide
 
 /-- The search efficiency ordering: S-Low/R-High > Baseline.
     Speakers don't just mention all high-discriminability attributes;
     they selectively overinform to help difficult searches. -/
 theorem search_efficiency_vs_baseline :
-    exp1_baseline.isSignificant ∧ exp1_baseline.β < 0 := by
-  constructor <;> native_decide
+    exp1_baseline.IsSignificant ∧ exp1_baseline.β < 0 := by native_decide
 
 -- ============================================================================
 -- §6. Bridge: Colour > Material (Cross-Modal Search Efficiency)
@@ -185,20 +211,19 @@ theorem search_efficiency_vs_baseline :
     in the auditory modality via impact sounds, with discriminability
     equalized via psychophysical staircases. -/
 theorem colour_exceeds_material :
-    exp1_material_redundant.isSignificant ∧
-    exp1_material_redundant.β < 0 := by
-  constructor <;> native_decide
+    exp1_material_redundant.IsSignificant ∧
+    exp1_material_redundant.β < 0 := by native_decide
 
 /-- Converging evidence with [kursat-degen-2021]: both studies
     find colour used redundantly more than material. The present study
     adds cross-modal generalisation. -/
 theorem converging_with_kursat_degen :
     -- This study: colour > material (cross-modal, equalized discriminability)
-    exp1_material_redundant.isSignificant ∧
+    exp1_material_redundant.IsSignificant ∧
     -- Kursat & Degen 2021: colour > material (visual, perceptual difficulty)
     KursatDegen2021.exp2_redundancy.significant ∧
-    KursatDegen2021.exp2_redundancy.beta > 0 := by
-  refine ⟨?_, rfl, ?_⟩ <;> native_decide
+    KursatDegen2021.exp2_redundancy.beta > 0 :=
+  ⟨by native_decide, rfl, by native_decide⟩
 
 -- ============================================================================
 -- §7. Bridge: Noise Discrimination
@@ -233,14 +258,14 @@ theorem colour_privilege_residual :
     -- Theory: colour and orientation have equal discrimination
     RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
     -- Data: colour is overinformed SIGNIFICANTLY more than orientation
-    exp2_orientation.isSignificant ∧ exp2_orientation.β < 0 := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 :=
+  ⟨RSA.Noise.color_eq_orientation, by native_decide, by native_decide⟩
 
 /-- Word frequency does not explain the colour privilege: low-frequency
     colour terms (teal, jade) produce overinformativeness rates
     indistinguishable from high-frequency terms (green, blue). -/
 theorem frequency_does_not_explain :
-    ¬exp2_lf_colour.isSignificant := by native_decide
+    ¬exp2_lf_colour.IsSignificant := by native_decide
 
 -- ============================================================================
 -- §9. Bridge: cs-RSA and Overinformativeness
@@ -259,10 +284,8 @@ theorem csrsa_grounding :
     RSA.Noise.noiseGap RSA.Noise.colorMatch RSA.Noise.colorMismatch >
     RSA.Noise.noiseGap RSA.Noise.materialMatch RSA.Noise.materialMismatch ∧
     -- Data: colour used redundantly more than material
-    exp1_material_redundant.isSignificant := by
-  constructor
-  · native_decide
-  · native_decide
+    exp1_material_redundant.IsSignificant :=
+  ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- §11. Bridge: [engelhardt-etal-2006] Over-Description Rates
@@ -276,8 +299,8 @@ theorem overinformativeness_is_efficient :
     -- Engelhardt: speakers over-describe 31% of the time
     EngelhardtEtAl2006.exp1_target_1ref.modified > 0.2 ∧
     -- This study: over-description tracks search efficiency
-    exp1_sHighRLow.isSignificant := by
-  exact ⟨by native_decide, by native_decide⟩
+    exp1_sHighRLow.IsSignificant :=
+  ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- §12. Search Efficiency Display Types
@@ -456,8 +479,9 @@ theorem within_feature_monotonicity_but_not_across :
     -- ...but fails to distinguish BETWEEN equal-d' features
     RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
     -- Data: colour >> orientation despite equal d'
-    exp2_orientation.isSignificant ∧ exp2_orientation.β < 0 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 :=
+  ⟨RSA.Noise.color_gt_size, RSA.Noise.size_gt_material,
+   RSA.Noise.color_eq_orientation, by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- §15. Bridge: PoE Architecture from Dimension Independence

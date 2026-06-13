@@ -1,4 +1,4 @@
-import Linglib.Phenomena.SyntacticAmbiguity.Basic
+import Linglib.Processing.Cost.Profile
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Presupposition.Basic
@@ -42,8 +42,6 @@ bimodality ([van-schijndel-linzen-2021], [huang-etal-2024]).
 
 ## Connections
 
-- `Basic.lean`: Reuses `Disambiguation`, `ReferentialContext`, `Condition`,
-  `disambiguationProfile`, `rc_pareto_harder`
 - `Core.ProcessingModel`: Ordinal profile bridge (§ 7)
 - `Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
   presupposition of `the_uniq` grounds the context manipulation — bare
@@ -55,7 +53,86 @@ bimodality ([van-schijndel-linzen-2021], [huang-etal-2024]).
 
 namespace PaapeVasishth2026
 
-open Phenomena.SyntacticAmbiguity
+-- ════════════════════════════════════════════════════
+-- § 0. CC/RC Temporary Ambiguity
+-- ════════════════════════════════════════════════════
+
+/-! ### The complement clause / relative clause ambiguity
+
+In [altmann-garnham-dennis-1992]'s design, the substring *the woman that
+he'd risked his life for* is temporarily ambiguous between a CC complement
+of *told* and an RC modifying *the woman*. The parser commits before the
+disambiguating material arrives; an incorrect commitment yields a
+garden-path effect at disambiguation.
+
+Two hypotheses frame the debate: **context-sensitive attachment** (discourse
+context modulates first-pass parsing, predicting a context × disambiguation
+interaction) vs. **context-insensitive attachment** (purely syntactic
+first-pass preferences, predicting a disambiguation main effect with no
+interaction). The paper's answer is a graded compromise — "the answer is
+both." -/
+
+/-- The two readings of a temporarily ambiguous CC/RC string. -/
+inductive Disambiguation where
+  /-- Complement clause: *told the woman [that he'd risked his life for many people]* -/
+  | complementClause
+  /-- Relative clause: *told [the woman that he'd risked his life for] to install ...* -/
+  | relativeClause
+  deriving DecidableEq, Repr
+
+/-- Referential context: whether the discourse makes the definite NP's
+    referent uniquely identifiable without a modifier. -/
+inductive ReferentialContext where
+  /-- Only one possible referent (e.g., *a man and a woman*) —
+      a bare definite *the woman* suffices, so an RC modifier is
+      pragmatically unnecessary. -/
+  | uniqueReferent
+  /-- Multiple possible referents (e.g., *two women*) —
+      a bare definite *the woman* violates uniqueness, so an RC
+      modifier is pragmatically licensed. -/
+  | nonUniqueReferents
+  deriving DecidableEq, Repr
+
+/-- Whether the referential context supports the disambiguation type.
+    Non-unique referents support RC (the modifier is needed to identify
+    the referent); unique referents support CC (no modifier needed). -/
+def contextSupports : ReferentialContext → Disambiguation → Bool
+  | .nonUniqueReferents, .relativeClause   => true
+  | .uniqueReferent,     .complementClause => true
+  | _,                   _                 => false
+
+/-- An experimental condition in the CC/RC × context design. -/
+structure Condition where
+  disambiguation : Disambiguation
+  context : ReferentialContext
+  deriving DecidableEq, Repr
+
+/-- Whether disambiguation and context match (context supports the
+    actual disambiguation). -/
+def Condition.isMatch (c : Condition) : Bool :=
+  contextSupports c.context c.disambiguation
+
+open ProcessingModel in
+/-- RC disambiguation is harder than CC on the processing profile:
+    the RC requires crossing a clause boundary (the relative clause)
+    and involves a filler-gap dependency that increases locality. -/
+def disambiguationProfile : Disambiguation → ProcessingProfile
+  | .relativeClause =>
+    { locality := 3       -- filler-gap dependency within the RC
+      boundaries := 1     -- RC clause boundary
+      referentialLoad := 1 -- definite NP referent must be resolved
+      ease := 0 }
+  | .complementClause =>
+    { locality := 1       -- short attachment to matrix verb
+      boundaries := 0     -- no additional clause boundary
+      referentialLoad := 0
+      ease := 1 }         -- CC is the default/preferred analysis
+
+open ProcessingModel in
+/-- RC is Pareto-harder than CC. -/
+theorem rc_pareto_harder :
+    (disambiguationProfile .relativeClause).compare
+    (disambiguationProfile .complementClause) = .harder := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 1. Multinomial Processing Tree
@@ -464,7 +541,7 @@ theorem noTriage_beats_full :
 /-! ### From ordinal to quantitative
 
 The `ProcessingProfile` from `Core.ProcessingModel` captures the ordinal
-claim that RC is harder than CC (see `rc_pareto_harder` in `Basic.lean`).
+claim that RC is harder than CC (`rc_pareto_harder`, § 0).
 The MPT *explains* this ordering by decomposing it into quantitative
 components: RC has higher garden-path probability, higher reanalysis cost,
 and lower reanalysis success rate. The ordinal profile is the observable
@@ -575,7 +652,7 @@ theorem bare_succeeds_unique :
     uniqueDomain, List.filter, isWoman, Option.isSome_some]
 
 /-- The full argument chain: uniqueness presupposition grounds
-    `contextSupports` from `Basic.lean`.
+    `contextSupports` (§ 0).
 
     1. Non-unique context → bare definite fails → RC modifier needed
     2. This is exactly `contextSupports .nonUniqueReferents .relativeClause`

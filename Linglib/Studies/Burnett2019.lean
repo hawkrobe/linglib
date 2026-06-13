@@ -2,7 +2,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Pragmatics.IBR.Basic
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Phenomena.SocialMeaning.ING
+import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -50,7 +50,7 @@ namespace Burnett2019
 
 open SocialMeaning
 open SocialMeaning.EckertMontague
-open Phenomena.SocialMeaning.ING
+open Eckert2008 (INGVariant)
 open RSA
 
 -- ============================================================================
@@ -80,7 +80,7 @@ instance : Fintype Persona where
   elems := {.coolGuy, .sternLeader, .doofus, .asshole}
   complete := by intro x; cases x <;> simp
 
--- INGVariant is imported from Phenomena.SocialMeaning.ING
+-- INGVariant is imported from Studies/Eckert2008
 -- Burnett's *-ing* = .velar, *-in'* = .apical
 
 -- ============================================================================

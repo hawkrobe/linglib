@@ -4,7 +4,6 @@ import Linglib.Semantics.Highlighting
 import Linglib.Features.Evidentiality
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Phenomena.Verum.Basic
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.RomeroHan2004
 
@@ -411,7 +410,7 @@ theorem mi_polar_iff_verumFelicitous
     alternative set `{β.atIssue, β.atIssueᶜ}`. The shared abstraction lets
     `mi_polar_iff_verumFelicitous` (above) be re-stated as a felicity
     equivalence between two `VerumOperator W` instances. -/
-def miAsVerumOperatorPolar : Phenomena.Verum.Basic.VerumOperator W :=
+def miAsVerumOperatorPolar : Hohle1992.VerumOperator W :=
   { felicitous := fun c β =>
       miFelicitous c ({{w | β.atIssue w}, ({w | β.atIssue w} : Set W)ᶜ}) β }
 
@@ -422,8 +421,7 @@ def miAsVerumOperatorPolar : Phenomena.Verum.Basic.VerumOperator W :=
 
 /-- Cross-paper bridge restated at the `VerumOperator` level: under
     contingent scope, MV's polar-reduction operator and Höhle's
-    verum-focus operator are extensionally equivalent. The first
-    formal cross-paper agreement in the Verum/ directory. -/
+    verum-focus operator are extensionally equivalent. -/
 theorem mi_eq_hohle_as_verumOperator
     (c : HighlightingContext W) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
     miAsVerumOperatorPolar.felicitous c β ↔
