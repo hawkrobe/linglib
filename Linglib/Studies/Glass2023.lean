@@ -116,7 +116,7 @@ implicature. -/
 
 /-- Glass's proposed truth condition for "C causes E" ([glass-2023b]
     def 12): C is causally sufficient for E in the actual background. -/
-noncomputable def causeSemGlass {V : Type*} [Fintype V] [DecidableEq V]
+abbrev causeSemGlass {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     (bg : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   Semantics.Causation.BoolSEM.causallySufficient M bg cause effect

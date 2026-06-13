@@ -35,9 +35,9 @@ noncomputable def preventSem {V : Type*} {α : V → Type*}
     (bg : Valuation α)
     (preventer : V) (xPrev : α preventer)
     (effect : V) (xE : α effect) : Prop :=
-  ¬ (M.developDet (bg.extend preventer xPrev)).hasValue effect xE ∧
+  ¬ SEM.causallySufficient M bg preventer xPrev effect xE ∧
   ∃ xPrev_alt : α preventer, xPrev_alt ≠ xPrev ∧
-    (M.developDet (bg.extend preventer xPrev_alt)).hasValue effect xE
+    SEM.causallySufficient M bg preventer xPrev_alt effect xE
 
 noncomputable instance {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]

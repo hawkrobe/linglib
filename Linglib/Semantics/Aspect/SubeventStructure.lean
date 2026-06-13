@@ -383,7 +383,7 @@ theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
     · intro h₁
       first | rfl | exact (h₁ : False).elim
     · intro h₁
-      first | trivial | exact absurd h₁ (by decide)
+      trivial
 
 end MoensSteedmanClass
 

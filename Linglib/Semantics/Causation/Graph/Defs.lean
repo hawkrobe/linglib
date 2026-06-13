@@ -34,10 +34,10 @@ def empty : CausalGraph V := ⟨fun _ => ∅⟩
 instance : Inhabited (CausalGraph V) := ⟨empty⟩
 
 /-- A vertex is a root iff it has no parents. -/
-def isRoot (G : CausalGraph V) (v : V) : Prop :=
+def IsRoot (G : CausalGraph V) (v : V) : Prop :=
   G.parents v = ∅
 
-instance (G : CausalGraph V) (v : V) [DecidableEq V] : Decidable (G.isRoot v) :=
+instance (G : CausalGraph V) (v : V) [DecidableEq V] : Decidable (G.IsRoot v) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The children of a vertex: vertices `u` for which `v ∈ parents u`.
@@ -49,8 +49,8 @@ def children (G : CausalGraph V) [DecidableEq V] [Fintype V] (v : V) : Finset V 
     {u v : V} : u ∈ G.children v ↔ v ∈ G.parents u := by
   simp [children]
 
-@[simp] theorem isRoot_iff_parents_empty (G : CausalGraph V) (v : V) :
-    G.isRoot v ↔ G.parents v = ∅ := Iff.rfl
+@[simp] theorem IsRoot_iff_parents_empty (G : CausalGraph V) (v : V) :
+    G.IsRoot v ↔ G.parents v = ∅ := Iff.rfl
 
 end CausalGraph
 

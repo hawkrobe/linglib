@@ -16,6 +16,14 @@ mathlib `Kernel.deterministic := dirac ∘ f` pattern (see
   `Mechanism/Deterministic.lean`
 - Stochastic mechanism = arbitrary PMF-valued `run`
 
+A computable `DetSEM` structure (bare per-vertex functions, Dirac
+embedding) was considered and declined (2026-06 audit): kernel reduction
+already routes through `IsDeterministic.toFun` without touching `PMF`,
+and the fuel mirror (`SEM.developDetVtxFuel`) provides the computable
+evaluation path, so the refactor buys no proof power for its migration
+cost. The `noncomputable` markers on concrete study SEMs are the
+accepted residue.
+
 `IsDeterministic` is a `Prop` mixin class that consumers can require
 when they need to extract the deterministic function (mirroring
 `IsMarkovKernel` in `Mathlib/Probability/Kernel/Defs.lean`).
