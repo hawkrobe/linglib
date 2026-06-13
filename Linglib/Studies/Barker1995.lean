@@ -1,5 +1,4 @@
 import Linglib.Semantics.Quantification.Possessive
-import Linglib.Semantics.ArgumentStructure.PossessiveCapabilities
 
 /-!
 # Barker 1995: *Possessive Descriptions*
@@ -85,7 +84,8 @@ theorem narrowing_flips_truth_value :
 /-! ### Definiteness and the capability mixins
 
 A definite possessive ("the boy's cat") and a relational possessive ("John's
-sisters"), exercising the `PossessiveCapabilities` mixins. -/
+sisters"), exercising the possessive-carrier capability mixins
+(`HasIotaWitness`, `HasPossessor`, `HasPossessionRelation`). -/
 
 /-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
 `1`. Entities are `Fin 3` (boy, cat, dog); one situation. -/
@@ -117,5 +117,31 @@ relation applied to the possessor — derived through the `HasPossessor` and
 theorem johnsSisters_possesseeSet (y : Fin 3) (s : Unit) :
     possesseeSet johnsSisters y s ↔ sibling 0 y :=
   Iff.rfl
+
+/-! ### Narrowing through a carrier
+
+The same narrowing, now for a type ⟨1⟩ possessor ("planet 2's rings"). A carrier
+bundles a single possessor, so narrowing surfaces as existential import: routed
+through the unified `carrierGQ` denotation, *planet 2's rings are icy* is false
+because planet 2 has no ring. Reuses the planets/rings model above. -/
+
+/-- "planet 2's rings": possessor `2`, with `hasRing` as the possession
+relation. -/
+def planet2sRings : PossessiveSemantics (Fin 5) Unit where
+  possessor := 2
+  possesseePred := fun y _ => isRing y ∧ hasRing 2 y
+  relation := fun x y _ => hasRing x y
+  relationIsLexical := true
+
+/-- *Planet 2's rings are icy* is false: via the unified carrier denotation,
+existential import (`carrierGQ_existential_import`) requires planet 2 to possess
+a ring, but it has none — narrowing at the individual level. -/
+theorem planet2sRings_no_icy_rings :
+    ¬ carrierGQ planet2sRings some_sem () isRing isIcy := by
+  intro h
+  obtain ⟨b, _, hr⟩ := carrierGQ_existential_import planet2sRings some_sem () h
+  have hb : hasRing 2 b := hr
+  simp only [hasRing] at hb
+  rcases hb with ⟨h2, _⟩ | ⟨h2, _⟩ <;> exact absurd h2 (by decide)
 
 end Barker1995
