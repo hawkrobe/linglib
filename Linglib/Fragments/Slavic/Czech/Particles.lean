@@ -246,7 +246,7 @@ theorem particle_signatures_distinct :
 -- ============================================================================
 
 /-! Corpus data (NahodouCorpusData, InterNPQUseCategory) and use category
-distributions are in `Phenomena.Negation.CzechThreeWayNeg.Typology` §§20–21,
+distributions are in `Studies/Stakov2026Typology.lean`,
 where they live alongside the other empirical data for these papers. -/
 
 /-- Whether a particle requires evidential bias (biased context)

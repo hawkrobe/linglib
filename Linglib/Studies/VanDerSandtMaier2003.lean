@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Negation.Denial
 import Linglib.Semantics.ContentLayer
+import Linglib.Data.Examples.VanDerSandtMaier2003
 
 /-!
 # Van der Sandt & Maier (2003) — Denials in Discourse
@@ -11,7 +11,18 @@ Formalization of directed reverse anaphora (RA*) applied to the paper's worked
 examples, connecting:
 
 - `Semantics.ContentLayer` — `offensiveLayers` (which layers are offensive)
-- `Phenomena.Negation.Denial` — empirical denial data
+- `Data/Examples/VanDerSandtMaier2003.json` — the paper's denial/correction
+  discourse rows
+
+## Denial ≠ negation
+
+The paper's central architectural claim: denial and negation are orthogonal.
+Negation is a semantic operator; denial is a discourse operation
+(non-monotonic correction of contextual information). A denial can use a
+positive sentence ("Mary IS happy" denying "Mary is unhappy", ex. 6), and a
+negative sentence can be a plain assertion. The `DenialType` taxonomy below
+classifies denials by the content layer the correction targets — one
+mechanism, three targets.
 
 ## Layered DRT apparatus
 
@@ -55,7 +66,42 @@ set_option autoImplicit false
 namespace VanDerSandtMaier2003
 
 open Semantics.ContentLayer
-open Phenomena.Negation.Denial
+open Data.Examples
+
+/-! ### Denial taxonomy
+
+[van-der-sandt-maier-2003]'s three denial types are not different operations
+but one mechanism (non-monotonic discourse correction) targeting different
+content layers. The fourth empirical category — register/connotation denials
+like "not a LAdy — my WIfe" (69) — maps to the implicature layer alongside
+scalar implicature. -/
+
+/-- The type of a denial, determined by which content layer the correction
+targets. -/
+inductive DenialType where
+  /-- Targets at-issue content; the presupposition survives.
+      (5): "Mary is not happy." -/
+  | propositional
+  /-- Targets presupposed content; the assertion falls with it.
+      (30b): "The king of France is NOT bald — France does not have a king." -/
+  | presuppositional
+  /-- Targets enrichment beyond truth conditions; literal meaning survives.
+      (29b): "It's not POSSIBLE — it's NECESSARY." -/
+  | implicature
+  deriving DecidableEq, Repr
+
+/-- Map a denial type to the content layer it targets. -/
+def DenialType.targetLayer : DenialType → ContentLayer
+  | .propositional => .atIssue
+  | .presuppositional => .presupposition
+  | .implicature => .implicature
+
+/-- No two denial types target the same layer: the taxonomy is exactly the
+layer structure. -/
+theorem DenialType.targetLayer_injective :
+    Function.Injective DenialType.targetLayer := by
+  intro d₁ d₂ h
+  cases d₁ <;> cases d₂ <;> simp_all [targetLayer]
 
 /-! ### Layered DRT (LDRT) substrate
 
@@ -169,9 +215,9 @@ doesn't have a king."
 The correction targets the existence presupposition of the definite. Off = {pr,
 fr}: both layers conflict with "no king".
 
-The `Denial.lean` datum `kingBald_presuppositional` uses a different sentence (ex.
-30b) but the same denial type — presuppositional; the bridge theorem below
-connects the Off computation to that datum's target layer. -/
+The row `vdsm2003_ex30b_king` uses a different sentence (ex. 30b) but the same
+scenario and denial type — presuppositional; the §5 transfer theorem connects
+the Off computation to every row tagged with this scenario. -/
 
 private inductive KFW | kingWalks | kingStands | noKing
   deriving DecidableEq, Repr
@@ -257,8 +303,8 @@ a close relative). The literal predication (lady, nice) and presupposition
 (pointing) survive; only the stranger implicature is retracted. Off = {imp}.
 
 The paper's derivation has 4 utterances; σ₂ (affirmation) is monotonic merge and
-omitted; Off depends only on σ₁ + σ₄. The `Denial.lean` datum `lady_wife` uses a
-related sentence (ex. 13) but the same denial type. -/
+omitted; Off depends only on σ₁ + σ₄. The row `vdsm2003_ex13_lady` uses a
+related sentence (ex. 13) but the same scenario and denial type. -/
 
 private inductive LadyW | ladyStranger | ladyWife | notLadyWife
   deriving DecidableEq, Repr
@@ -335,28 +381,44 @@ theorem denial_result_layers :
 theorem implicature_retracted :
     (φ₃.conditions.map (·.layer)).count .implicature = 0 := by decide
 
-/-! ### §5. Off → DenialDatum bridge
+/-! ### §5. Off → row transfer
 
-The Off computations above agree with the denial-type classification in
-`Phenomena.Negation.Denial`: each Off result contains the target layer of the
-corresponding `DenialDatum` — a semantic computation over layered propositions
-matching the empirical denial-type taxonomy. -/
+The Off computations above agree with the paper's denial-type classification
+of its rows (`Data/Examples/VanDerSandtMaier2003.json`): for every row whose
+discourse scenario is formalized as a `LayeredProp` above, the computed
+offensive layers include the layer targeted by the row's denial type. -/
 
-/-- The Off result for the modal example includes the datum's target layer. -/
-theorem modal_off_agrees_with_datum :
-    (offensiveLayers modalLayered (fun w => w == .nec) modalWorlds).contains
-    possible_necessary.denialType.targetLayer = true := by decide
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-/-- The Off result for the KF example includes the datum's target layer. -/
-theorem kf_off_agrees_with_datum :
-    (offensiveLayers kfLayered (fun w => w == .noKing) kfWorlds).contains
-    kingBald_presuppositional.denialType.targetLayer = true := by decide
+/-- Denial-type adapter: the row's `denial_type` feature as a `DenialType`. -/
+def denialTypeOf (row : LinguisticExample) : Option DenialType :=
+  match featureOf row "denial_type" with
+  | some "propositional" => some .propositional
+  | some "presuppositional" => some .presuppositional
+  | some "implicature" => some .implicature
+  | _ => none
 
-/-- The Off result for the lady/wife example includes the datum's target layer. -/
-theorem lady_off_agrees_with_datum :
-    (offensiveLayers ladyLayered
-      (fun w => w == .ladyWife || w == .notLadyWife) ladyWorlds).contains
-    lady_wife.denialType.targetLayer = true := by decide
+/-- The Off computation of the `LayeredProp` scenario named by the row's
+`scenario` feature. -/
+private def scenarioOff (row : LinguisticExample) : Option (List ContentLayer) :=
+  match featureOf row "scenario" with
+  | some "kingOfFrance" =>
+      some (offensiveLayers kfLayered (fun w => w == .noKing) kfWorlds)
+  | some "modal" =>
+      some (offensiveLayers modalLayered (fun w => w == .nec) modalWorlds)
+  | some "lady" =>
+      some (offensiveLayers ladyLayered
+        (fun w => w == .ladyWife || w == .notLadyWife) ladyWorlds)
+  | _ => none
+
+/-- **Transfer**: the Off computation of every formalized scenario contains
+the target layer of each row classified under that scenario. -/
+theorem off_contains_target_layer :
+    ∀ row ∈ Examples.all, ∀ d ∈ denialTypeOf row, ∀ off ∈ scenarioOff row,
+      off.contains d.targetLayer = true := by
+  decide
 
 /-! ### §6. Denial ≠ negation (§2.1)
 
@@ -365,21 +427,24 @@ is a discourse operation (non-monotonic correction); negation is a semantic
 operator. A denial can use a positive sentence, and a negative sentence can be a
 plain assertion. -/
 
-/-- Positive denial exists: the denial utterance IS the correction, with no
-negation involved. Denial is a discourse function, not a syntactic form. -/
-theorem positive_denial_is_correction :
-    maryHappy_positive.denial = maryHappy_positive.correction := rfl
-
-/-- Positive denial is propositional — it targets fr, like negative propositional
-denials. The mechanism is the same regardless of surface polarity. -/
-theorem positive_denial_targets_fr :
-    maryHappy_positive.denialType.targetLayer = .atIssue := rfl
+/-- Positive denial is propositional: every row whose denial utterance is
+syntactically positive (ex. 6, where the denial IS the correction) targets fr,
+like negative propositional denials. The mechanism is the same regardless of
+surface polarity. -/
+theorem positive_denial_propositional :
+    ∀ row ∈ Examples.all, featureOf row "surface_polarity" = some "positive" →
+      denialTypeOf row = some .propositional := by
+  decide
 
 /-- The same surface negation can correspond to different denial types,
-disambiguated by the correction (§2.3: "still" denials, ex. 19–20). -/
+disambiguated by the correction (§2.3: "still" denials, ex. 19–20): two rows
+share the denial utterance (second discourse segment) but target different
+layers. -/
 theorem same_surface_different_types :
-    still_propositional.denial = still_presuppositional.denial ∧
-    still_propositional.denialType ≠ still_presuppositional.denialType :=
-  ⟨rfl, by decide⟩
+    ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all,
+      r₁.discourseSegments[1]? = r₂.discourseSegments[1]? ∧
+      denialTypeOf r₁ = some .propositional ∧
+      denialTypeOf r₂ = some .presuppositional := by
+  decide
 
 end VanDerSandtMaier2003

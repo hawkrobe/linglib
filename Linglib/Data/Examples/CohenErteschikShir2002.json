@@ -1,0 +1,125 @@
+[
+  {
+    "id": "cohenerteschikshir2002_boys_brave",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
+    "language": "stan1293",
+    "primaryText": "Boys are brave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Boys are brave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "individual"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysAreBrave. I-level predicate forces the generic reading of the bare plural subject."
+  },
+  {
+    "id": "cohenerteschikshir2002_italians_good_looking",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
+    "language": "stan1293",
+    "primaryText": "Italians are good-looking.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Italians are good-looking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "individual"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean italiansGoodLooking. I-level predicate; no existential reading."
+  },
+  {
+    "id": "cohenerteschikshir2002_lawyers_intelligent",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.1"},
+    "language": "stan1293",
+    "primaryText": "Lawyers are intelligent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Lawyers are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "individual"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean lawyersIntelligent. I-level predicate forces the generic reading."
+  },
+  {
+    "id": "cohenerteschikshir2002_boys_present",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
+    "language": "stan1293",
+    "primaryText": "Boys are present.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Boys are present.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "stage"],
+      ["locative_status", "argument"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean boysArePresent. S-level predicate with a locative ARGUMENT licenses the existential reading ('there are boys here')."
+  },
+  {
+    "id": "cohenerteschikshir2002_firemen_available",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
+    "language": "stan1293",
+    "primaryText": "Firemen are available.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Firemen are available.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "stage"],
+      ["locative_status", "argument"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean firemenAvailable. S-level predicate with an implicit locative argument (for some task/location)."
+  },
+  {
+    "id": "cohenerteschikshir2002_soldiers_arrived",
+    "source": {"bibkey": "cohen-erteschik-shir-2002", "paperLabel": "UNVERIFIED §2.2"},
+    "language": "stan1293",
+    "primaryText": "Soldiers arrived.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Soldiers arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "generic", "judgment": "acceptable"},
+      {"name": "existential", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "stage"],
+      ["locative_status", "argument"]
+    ],
+    "comment": "Migrated from Phenomena/Generics/BarePlurals.lean soldiersArrived. Motion verb with an implicit goal argument; existential reading available."
+  }
+]

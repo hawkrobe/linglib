@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quotation.Mixed
 import Linglib.Semantics.Reference.Monsters
-import Linglib.Phenomena.Negation.Denial
+import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.Maier2014
 import Linglib.Studies.HarrisPotts2009
 import Linglib.Studies.Horn1989
@@ -76,7 +76,7 @@ docstring-only claim.
   False
 - `kg_metalinguistic_chain_targets_appropriateness` (§3) — exhibits
   the `applyApprop` chain producing appropriateness content (vs.
-  `Phenomena.Negation.Denial.DenialType.implicature`'s implicature
+  `VanDerSandtMaier2003.DenialType.implicature`'s implicature
   layer)
 - `kg_refutes_plunkett_sundell` (§4) — instantiates P&S's
   `MetalinguisticDispute` with K-G's shared standard and proves the
@@ -94,7 +94,7 @@ the architecture that derives them).
 
 The three-way `DenialType` taxonomy (propositional / presuppositional /
 implicature) from [van-der-sandt-maier-2003] — formalized in
-`Phenomena/Negation/Denial.lean` — groups register and connotation
+`Studies/VanDerSandtMaier2003.lean` — groups register and connotation
 denials under `implicature`. K-G's analysis (paper §5, p.28-30) derives
 metalinguistic-negation truth conditions from `♦` (appropriateness
 modal) composed with `𝔐`, with `↓` shunting before negation. The
@@ -586,7 +586,7 @@ theorem mongeese_blocks_dn_elimination
 /--
 **K-G's metalinguistic negation does NOT match `DenialType.implicature`.**
 
-`Phenomena.Negation.Denial` (formalising [van-der-sandt-maier-2003])
+`VanDerSandtMaier2003` (formalising [van-der-sandt-maier-2003])
 classifies register/connotation denials as `DenialType.implicature`,
 which maps to `ContentLayer.implicature`. K-G's chain produces content
 on the **appropriateness** dimension via `applyApprop` —

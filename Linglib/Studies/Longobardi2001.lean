@@ -1,6 +1,5 @@
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.SortedOntology
-import Linglib.Phenomena.Generics.KindReference
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.Greek.StandardModern.Nouns
@@ -769,19 +768,19 @@ theorem greek_bare_restriction_from_strong_d :
 end FragmentBridges
 
 -- ============================================================================
--- § 16: Bridge to KindReference Data
+-- § 16: Kind Denotation Predictions
 -- ============================================================================
 
 /-- Longobardi's theory predicts the Italian vs English BP denotation
-    data in `KindReference.lean`.
+    contrast (the same contrast Guerrini 2026 derives via `CanDenote`).
 
     English BPs: kind denotation available (weak D → referential OK)
     Italian bare plurals: kind denotation unavailable (strong D)
     Italian definite plurals: kind denotation available (overt D fills D) -/
 theorem kind_reference_predictions :
-    -- English BP can denote kind (= KindReference.englishBPKind.available)
+    -- English BP can denote kind
     bnCanBeReferential english = true ∧
-    -- Italian bare pl cannot denote kind (= KindReference.italianBarePlKind.available)
+    -- Italian bare pl cannot denote kind
     bnCanBeReferential romance = false ∧
     -- Italian def pl can denote kind (overt D overrides strong D)
     CanDenoteKind (toNominalMapping romance) True := ⟨rfl, rfl, trivial⟩

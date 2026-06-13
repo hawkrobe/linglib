@@ -6,8 +6,8 @@ import Mathlib.Data.Fintype.Basic
 [stankova-2025] [zeijlstra-2004]
 
 Pure type definitions for the three-way negation distinction in Czech polar
-questions (Staňková 2026). Extracted from `Phenomena.Negation.CzechThreeWayNeg`
-so that Fragment files can reference these types without importing empirical data.
+questions (Staňková 2026), kept free of empirical data so that Fragment files
+can reference these types without importing it.
 
 -/
 
