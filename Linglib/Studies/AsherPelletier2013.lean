@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Normality
 import Linglib.Semantics.Genericity.Generics
-import Linglib.Phenomena.DefaultReasoning.TweetyNixon
+import Linglib.Core.Logic.TweetyNixon
 
 /-!
 # [asher-pelletier-2012] — More Truths about Generic Truth
@@ -36,8 +36,8 @@ fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
 2. **`traditionalGEN`** (`Lexical/Noun/Kind/Generics.lean`): GEN's `normal`
    parameter is the Bool-level projection of a normality ordering.
 
-3. **`TweetyNixon`** (`Phenomena/DefaultReasoning/TweetyNixon.lean`):
-   the Tweety Triangle data — the classic test case for A&P's system.
+3. **`TweetyNixon`** (`Core/Logic/TweetyNixon.lean`):
+   the Tweety Triangle scenario — the classic test case for A&P's system.
 
 ## Refinement vs Specificity
 
@@ -54,7 +54,7 @@ specificity-resolved result directly.
 namespace AsherPelletier2013
 
 open Core.Order (NormalityOrder)
-open Phenomena.DefaultReasoning
+open Core.Logic.TweetyNixon
 
 -- ═══ Generic Truth via Normality Orderings ═══
 
@@ -127,14 +127,6 @@ def opusBirdsFly : PerIndividualDatum :=
 theorem both_generics_true :
     opusPenguinsDontFly.scopeHolds = true ∧
     opusBirdsFly.scopeHolds = true := ⟨rfl, rfl⟩
-
-/-- Specificity determines which default to apply for inference:
-    the more specific "penguins don't fly" overrides "birds fly"
-    for penguins. This is a property of defeasible inference with
-    the > conditional, not of the per-individual evaluation itself. -/
-theorem specificity_selects_penguin_default :
-    opusPenguinsDontFly.scopeHolds = true ∧
-    tweety_doesnt_fly = true := ⟨rfl, rfl⟩
 
 
 -- ═══ Context-Dependent Normality (§12.3, ex. 9) ═══
@@ -240,10 +232,6 @@ theorem penguin_nofly_more_normal :
 theorem bird_fly_more_normal :
     tweetyLe .birdFlies .birdNoFly = true ∧
     tweetyLe .birdNoFly .birdFlies = false := ⟨rfl, rfl⟩
-
-/-- The empirical judgments match: Robin flies, Tweety doesn't. -/
-theorem tweety_resolved :
-    robin_flies = true ∧ tweety_doesnt_fly = true := ⟨rfl, rfl⟩
 
 
 -- ═══ Bridge to traditionalGEN ═══

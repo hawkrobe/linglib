@@ -38,8 +38,8 @@ from the gap-host word to the filler.
 
 ## Todo
 
-* Promote `Phenomena.Islands.ConstraintType` to substrate so this file and
-  `Formal/Islands.lean` can share a single Ross-1967 enum.
+* Consume the Ross-1967 `ConstraintType` enum (`Studies/Ross1967.lean`) here
+  and in `Formal/Islands.lean` so the two files share a single inventory.
 * Build a cross-framework `FillerGap` abstraction so `HPSG.SlashValue`,
   `LongDistance.GapType`, and Minimalist movement labels all specialise a
   shared interface.

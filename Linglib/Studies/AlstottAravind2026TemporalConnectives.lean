@@ -1,53 +1,36 @@
 import Linglib.Studies.Rett2020
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Fragments.English.TemporalExpressions
-import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
+import Linglib.Data.Examples.MoensSteedman1988
+import Linglib.Data.Examples.Karttunen1974
+import Linglib.Data.Examples.AlstottAravind2026
 
 /-!
 # Aspect × Temporal Connective Interaction Bridge
-[alstott-aravind-2026] [moens-steedman-1988] [rett-2020]
+[alstott-aravind-2026] [moens-steedman-1988] [karttunen-1974] [rett-2020]
 
 Connects three layers:
 
-1. **Fragment field**: `TemporalExprEntry.embeddedTelicityEffect : Bool`
-2. **Theory**: `VendlerClass.telicity`, `INCHOAT`, `COMPLET` operators
-3. **Data**: `AspectInteraction` judgments from [moens-steedman-1988]
+1. **Fragment**: `TemporalExprEntry` fields (`embeddedTelicityEffect`,
+   `defaultReading`, `coercedReading`, `triggeredCoercion`)
+2. **Theory**: `VendlerClass` features, `INCHOAT`/`COMPLET`, and
+   `MoensSteedmanClass.whenTarget`
+3. **Data**: per-paper rows in `Data.Examples.{MoensSteedman1988,
+   Karttunen1974, AlstottAravind2026}`
 
-## What This File Proves
+## Main declarations
 
-1. `embeddedTelicityEffect = true` holds exactly for connectives whose truth
-   conditions change depending on the Vendler class of the embedded clause
-   (*before*, *after*). This is because they reference boundary points
-   (onset/telos) that depend on aspect.
-
-2. `embeddedTelicityEffect = false` holds for connectives that use overlap
-   or containment semantics (*while*, *when*, *until*, *since*), which are
-   insensitive to the internal temporal structure of the embedded clause.
-
-3. The `triggeredCoercion` field is grounded in the theory's `INCHOAT` and
-   `COMPLET` operators: INCHOAT extracts the onset point (= `CoSType.inception`),
-   COMPLET extracts the telos (= `CoSType.cessation`).
-
-4. The `satisfiesDurativeRestriction` predicate (from Data) picks out
-   exactly states and activities — the SIP-having Vendler classes that
-   satisfy the durative requirement for *until* and *since* main clauses.
-
-## The Explanatory Chain
-
-```
-VendlerClass.telicity TemporalExprEntry.embeddedTelicityEffect
-.telic /.atelic ──────────► true (before, after: reading depends on telicity)
-                                false (while, when, until, since: insensitive)
-
-VendlerClass.duration *until*/*since* selectional restriction
-.durative ─────────────────► satisfiesDurativeRestriction = true (OK)
-.punctual ─────────────────► satisfiesDurativeRestriction = false (BAD)
-
-INCHOAT / COMPLET Fragment.triggeredCoercion
-  INCHOAT(stative) = onset ───► "INCHOAT" for within_, after_ (coerced)
-  COMPLET(telic) = telos ─────► "COMPLET" for at_punct, before_ (coerced)
-```
-
+- `vendlerOf`, `featureOf`: adapters reading a row's `paperFeatures`
+- `coercion_tracks_embedded_telicity`: a *before*/*after* row records a
+  coercion operator exactly when the connective × embedded-telicity pair
+  demands one (COMPLET for *before* + telic, INCHOAT for *after* + atelic)
+- `satisfiesDurativeRestriction`, `until_acceptable_iff_durative`: Karttunen's
+  durative selectional restriction, derived from Vendler features, predicts
+  each *until* row's acceptability
+- `when_coercion_matches_ms`: each *when* row's coercion annotation is the
+  one `MoensSteedmanClass.whenTarget` predicts for its Vendler class
+- `inchoat_extracts_onset`, `complet_extracts_telos`: the Fragment's coercion
+  labels grounded in the operators' interval-set behavior
 -/
 
 namespace AlstottAravind2026TemporalConnectives
@@ -55,9 +38,10 @@ namespace AlstottAravind2026TemporalConnectives
 open Features
 open Tense.TemporalConnectives
 open English.TemporalExpressions
-open Phenomena.TemporalConnectives.AspectInteractionData
+open Data.Examples
 open Core.Order
 open NonemptyInterval
+open Semantics.Aspect.SubeventStructure (MoensSteedmanClass WhenTarget)
 
 -- ============================================================================
 -- § 1: Telicity Sensitivity Pattern
@@ -96,48 +80,102 @@ theorem telicity_sensitivity_iff_ordering :
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 2: Fragment ↔ Data Agreement
+-- § 2: Row Adapters
 -- ============================================================================
 
-/-- The Fragment's `embeddedTelicityEffect` for *before* is consistent with
-    the data: *before* + stative is acceptable without coercion (default
-    before-start reading), but *before* + accomplishment has a coerced
-    alternative (before-finish via COMPLET). -/
-theorem before_telicity_data_agree :
-    before_.embeddedTelicityEffect = true ∧
-    before_stative.acceptableWithout = true ∧
-    before_accomplishment.coercionType = some "COMPLET" :=
-  ⟨rfl, rfl, rfl⟩
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (row : LinguisticExample) (key : String) : Option String :=
+  (row.paperFeatures.find? (·.1 == key)).map (·.2)
 
-/-- The Fragment's `embeddedTelicityEffect` for *after* is consistent with
-    the data: *after* + accomplishment is default (after-finish), but
-    *after* + stative has a coerced alternative (after-start via INCHOAT). -/
-theorem after_telicity_data_agree :
-    after_.embeddedTelicityEffect = true ∧
-    after_accomplishment.acceptableWithout = true ∧
-    after_stative.coercionType = some "INCHOAT" :=
-  ⟨rfl, rfl, rfl⟩
+/-- Vendler-class adapter: the row's `vendler_class` feature. -/
+def vendlerOf (row : LinguisticExample) : Option VendlerClass :=
+  match featureOf row "vendler_class" with
+  | some "state"          => some .state
+  | some "activity"       => some .activity
+  | some "achievement"    => some .achievement
+  | some "accomplishment" => some .accomplishment
+  | some "semelfactive"   => some .semelfactive
+  | _ => none
 
 -- ============================================================================
--- § 3: Durative Selectional Restriction ↔ VendlerClass
+-- § 3: *Before*/*After* — Coercion Tracks Embedded Telicity
 -- ============================================================================
 
-/-- The *until* interaction data is grounded in the durative selectional
-    restriction: each main-clause `acceptableWithout` value tracks
-    `satisfiesDurativeRestriction` on its VendlerClass. The data layer
-    (Fragment-level acceptability judgments) and the predicate layer
-    (theory-level SIP-class membership, see
-    `AspectInteractionData.durative_restriction_iff_state_or_activity`)
-    agree by construction. -/
-theorem until_selectional_restriction_grounded :
-    until_state_main.acceptableWithout = satisfiesDurativeRestriction .state ∧
-    until_activity_main.acceptableWithout = satisfiesDurativeRestriction .activity ∧
-    until_achievement_main.acceptableWithout = satisfiesDurativeRestriction .achievement ∧
-    until_accomplishment_main.acceptableWithout = satisfiesDurativeRestriction .accomplishment :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- The coercion operator a *before*/*after* clause needs for its non-default
+    reading: COMPLET (telos extraction) for *before* + telic embedded clauses,
+    INCHOAT (onset extraction) for *after* + atelic embedded clauses; the
+    remaining combinations have only the default reading. -/
+def expectedCoercion (conn : String) (c : VendlerClass) : Option String :=
+  match conn, c.telicity with
+  | "before", .telic  => some "COMPLET"
+  | "after",  .atelic => some "INCHOAT"
+  | _, _ => none
+
+/-- **Transfer equation** over the *before*/*after* rows: a row records a
+    coercion operator exactly when its connective × embedded-telicity pair
+    demands one. The two coerced cells are the conditions tested in
+    [alstott-aravind-2026]'s Exps 2 (COMPLET) and 4 (INCHOAT). -/
+theorem coercion_tracks_embedded_telicity :
+    ∀ row ∈ AlstottAravind2026.Examples.all,
+      featureOf row "coercion" =
+        (featureOf row "connective").bind fun conn =>
+          (vendlerOf row).bind fun c => expectedCoercion conn c := by
+  decide
+
+/-- The rows' recorded default readings are the Fragment's defaults:
+    before-start for *before*, after-finish for *after* ([rett-2020]'s
+    strong defaults). -/
+theorem default_reading_matches_fragment :
+    before_.defaultReading = .beforeStart ∧
+    after_.defaultReading = .afterFinish ∧
+    ∀ row ∈ AlstottAravind2026.Examples.all,
+      featureOf row "default_reading" =
+        (featureOf row "connective").bind fun conn =>
+          if conn = "before" then some "before-start"
+          else if conn = "after" then some "after-finish"
+          else none :=
+  ⟨rfl, rfl, by decide⟩
+
+/-- A row records a coerced reading exactly when it records a coercion
+    operator, and the reading is the Fragment's `coercedReading`:
+    before-finish under COMPLET, after-start under INCHOAT. -/
+theorem coerced_reading_matches_fragment :
+    before_.coercedReading = some .beforeFinish ∧
+    after_.coercedReading = some .afterStart ∧
+    ∀ row ∈ AlstottAravind2026.Examples.all,
+      featureOf row "coerced_reading" =
+        (featureOf row "coercion").bind fun op =>
+          if op = "COMPLET" then some "before-finish"
+          else if op = "INCHOAT" then some "after-start"
+          else none :=
+  ⟨rfl, rfl, by decide⟩
 
 -- ============================================================================
--- § 4: Coercion Operators ↔ Aspect Features
+-- § 4: *Until* — Durative Selectional Restriction
+-- ============================================================================
+
+/-- [karttunen-1974]'s durative selectional restriction on *until*/*since*
+    main clauses, derived from the Vendler feature decomposition: atelic and
+    durative — exactly the subinterval-property (homogeneous) classes. -/
+def satisfiesDurativeRestriction (c : VendlerClass) : Bool :=
+  c.telicity == .atelic && c.duration == .durative
+
+/-- The durative restriction picks out exactly states and activities. -/
+theorem durative_restriction_iff_state_or_activity (c : VendlerClass) :
+    satisfiesDurativeRestriction c = true ↔ c = .state ∨ c = .activity := by
+  cases c <;> decide
+
+/-- **Transfer equation** over the *until* main-clause rows: a row is
+    acceptable iff its main clause's Vendler class satisfies the durative
+    restriction. -/
+theorem until_acceptable_iff_durative :
+    ∀ row ∈ Karttunen1974.Examples.all,
+      (row.judgment = .acceptable ↔
+        (vendlerOf row).map satisfiesDurativeRestriction = some true) := by
+  decide
+
+-- ============================================================================
+-- § 5: Coercion Operators ↔ Aspect Features
 -- ============================================================================
 
 /-- INCHOAT extracts the onset of an atelic/stative denotation.
@@ -168,103 +206,60 @@ theorem triggered_coercion_entries :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 5: *When* Coercion ↔ VendlerClass Punctuality
+-- § 6: *When* — Coercion Predicted by M&S Event Types
 -- ============================================================================
 
-/-- *When* accepts states and achievements without coercion: states are
-    homogeneous (any subinterval works for overlap), and achievements
-    are already punctual. Activities and accomplishments require coercion
-    to achievement because *when* selects a single reference point. -/
-theorem when_coercion_from_vendler :
-    -- No coercion needed: already compatible
-    when_state.acceptableWithout = true ∧      -- homogeneous
-    when_achievement.acceptableWithout = true ∧ -- already punctual
-    -- Coercion needed: not compatible
-    when_activity.acceptableWithout = false ∧
-    when_accomplishment.acceptableWithout = false ∧
-    -- Coercion target is always achievement
-    when_activity.resultClass = some .achievement ∧
-    when_accomplishment.resultClass = some .achievement :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Embed Vendler classes into [moens-steedman-1988] event types
+    (achievements as culminations, semelfactives as points; the two M&S
+    atomic types collapse to `achievement` at Vendler granularity). -/
+def msOf : VendlerClass → MoensSteedmanClass
+  | .state          => .state
+  | .activity       => .process
+  | .accomplishment => .culminatedProcess
+  | .achievement    => .culmination
+  | .semelfactive   => .point
 
-/-- *When*'s coercion need correlates with the Vendler class:
-    classes that are either stative or punctual need no coercion.
-    This is because *when* selects a reference point, and statives
-    trivially provide one (any subinterval) while achievements
-    ARE a single point. -/
-def whenCompatible (c : VendlerClass) : Bool :=
-  c == .state || c == .achievement
+/-- The coercion a *when*-clause triggers for each `WhenTarget`: inception
+    coercion for processes, completion coercion for culminated processes,
+    and none where the event directly supplies a reference point. -/
+def whenCoercionLabel : WhenTarget → Option String
+  | .inceptionCoercion  => some "inception"
+  | .completionCoercion => some "culmination"
+  | .directCulmination | .homogeneousOverlap => none
 
-theorem when_compatible_iff_no_coercion :
-    whenCompatible .state = true ∧
-    whenCompatible .achievement = true ∧
-    whenCompatible .activity = false ∧
-    whenCompatible .accomplishment = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- **Transfer equation** over the *when* rows: each row's coercion
+    annotation is exactly the one `MoensSteedmanClass.whenTarget` predicts
+    for its Vendler class. States need no coercion (homogeneous overlap),
+    achievements ARE culmination points, activities coerce to their onset,
+    accomplishments to their telos. -/
+theorem when_coercion_matches_ms :
+    ∀ row ∈ MoensSteedman1988.Examples.all,
+      featureOf row "coercion" =
+        (vendlerOf row).bind fun c => whenCoercionLabel (msOf c).whenTarget := by
+  decide
 
--- ============================================================================
--- § 6: Coercion Network ↔ Aspectual Shift Operations
--- ============================================================================
-
-/-- Moens & Steedman's "strip-process" coercion (accomplishment → achievement)
-    corresponds to the theory's telicize-then-punctualize, but more precisely
-    it is the inverse of `duratize`: it removes duration. -/
-theorem strip_process_matches :
-    stripProcess.source = .accomplishment ∧
-    stripProcess.target = .achievement ∧
-    VendlerClass.accomplishment.duration = .durative ∧
-    VendlerClass.achievement.duration = .punctual :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Moens & Steedman's "add-result" coercion (activity → accomplishment)
-    corresponds to the theory's `telicize` operation:
-    adding a natural endpoint to an atelic predicate. -/
-theorem add_result_matches_telicize :
-    addResult.source = .activity ∧
-    addResult.target = .accomplishment ∧
-    activityProfile.telicize.toVendlerClass = .accomplishment :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Moens & Steedman's "iterate" coercion (achievement → activity)
-    corresponds to the theory's `duratize ∘ atelicize`:
-    stretching a punctual event over time and removing the endpoint. -/
-theorem iterate_matches_duratize :
-    iterate_.source = .achievement ∧
-    iterate_.target = .activity ∧
-    achievementProfile.duratize.toVendlerClass = .accomplishment ∧
-    -- After duratize + atelicize: activity
-    (achievementProfile.duratize.atelicize).toVendlerClass = .activity :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- When *when* coerces, the result is punctual: every coerced *when* row
+    records achievement as its result class. -/
+theorem when_coercion_targets_achievement :
+    ∀ row ∈ MoensSteedman1988.Examples.all,
+      (featureOf row "coercion").isSome →
+        featureOf row "result_class" = some "achievement" := by
+  decide
 
 -- ============================================================================
--- § 7: When-Coercion ↔ M&S Event Types
+-- § 7: M&S Coercion Network ↔ Aspectual Shift Operations
 -- ============================================================================
 
-open Semantics.Aspect.SubeventStructure (MoensSteedmanClass WhenTarget)
+/-- [moens-steedman-1988] Fig. 2's "add-result" transition
+    (process → culminated process) is the theory's `telicize`: adding a
+    natural endpoint to an activity yields an accomplishment. -/
+theorem add_result_is_telicize :
+    activityProfile.telicize.toVendlerClass = .accomplishment := rfl
 
-/-- M&S's unified *when*-semantics agrees with the empirical coercion
-    pattern: *when* needs no coercion iff `whenCompatible` is true.
-    The M&S analysis *explains* the pattern: states are compatible
-    because they're homogeneous; achievements because they already ARE
-    culmination points. Processes and accomplishments require coercion
-    because *when* must access a culmination they don't directly provide. -/
-theorem ms_when_agrees_with_data (c : MoensSteedmanClass) :
-    (c.whenTarget = .directCulmination ∨ c.whenTarget = .homogeneousOverlap) ↔
-    (whenCompatible c.toProfile.toVendlerClass = true) := by
-  cases c <;> simp [MoensSteedmanClass.whenTarget, MoensSteedmanClass.toProfile,
-    stateProfile, activityProfile, achievementProfile, accomplishmentProfile,
-    AspectualProfile.toVendlerClass, whenCompatible] <;> decide
-
-/-- M&S's coercion type matches the data layer: inception coercion
-    targets processes (= Vendler activities), completion coercion targets
-    culminated processes (= Vendler accomplishments). -/
-theorem ms_coercion_type_matches :
-    -- Inception (INCHOAT): process onset
-    (MoensSteedmanClass.process.whenTarget = .inceptionCoercion ∧
-     when_activity.coercionType = some "inception") ∧
-    -- Completion (strip-process): culminated process telos
-    (MoensSteedmanClass.culminatedProcess.whenTarget = .completionCoercion ∧
-     when_accomplishment.coercionType = some "culmination") :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+/-- Fig. 2's iteration transition (point → process) at Vendler granularity
+    is `duratize` followed by `atelicize`: stretching a punctual event over
+    time and removing the endpoint yields an activity. -/
+theorem iterate_is_duratize_atelicize :
+    (achievementProfile.duratize.atelicize).toVendlerClass = .activity := rfl
 
 end AlstottAravind2026TemporalConnectives

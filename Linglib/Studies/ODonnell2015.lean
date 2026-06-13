@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
 import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!
@@ -9,23 +8,23 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 First study file using the FG-family substrate from
 `Morphology/FragmentGrammars/`. Demonstrates the API on
 the central empirical contrast of [odonnell-2015] Chapter 7
-(Fig 7.3, p. 262 / Table 7.1, p. 265): the productivity contrast
-between the highly productive English nominaliser *-ness* and the
-unproductive *-ion* and *-ate*. Data anchor:
-`Phenomena/Morphology/Productivity/FrequencySpectrum.lean`.
+(Fig 7.3, p. 262): the productivity contrast between the highly
+productive English nominaliser *-ness* and the unproductive *-ion*
+and *-ate*.
 
 ## Empirical content
 
 The book's Chapter 7 load-bearing claim is qualitative:
 **`-ness:Adj>N` is productive; `-ion:V>N` and `-ate:BND>V` are not.**
 On Fig 7.3 (p. 262), only the FG model places `-ness` in its top-5
-productive suffixes; DMPCFG, MAG, DOP1 and ENDOP all wrongly elevate
-`-ion`, and three of those also wrongly elevate `-ate`. The data
-file `FrequencySpectrum.lean` encodes a strict ordering
-`ness > ion > ate` via `Suffix.productivityIndex`; the
-`ion > ate` half is a tie-break (both are unproductive on novel
-forms but `-ate` is structurally more restricted), not part of
-[odonnell-2015]'s central contrast.
+productive suffixes; all four competing models (DMPCFG, MAG, DOP1,
+ENDOP) rank `-ion` first or second, and three of those (DMPCFG, DOP1,
+ENDOP) also wrongly elevate `-ate` (pp. 261–263). Table 7.1 (p. 265)
+adds that only FG correlates strongly with Baayen's hapax-based
+productivity estimators. `Suffix.productivityIndex` encodes a strict
+ordering `ness > ion > ate`; the `ion > ate` half is a tie-break
+(both are unproductive on novel forms but `-ate` is structurally more
+restricted), not part of [odonnell-2015]'s central contrast.
 
 Note that `-ate` is **not** a nominaliser — it is a verb-forming
 suffix that selects bound stems (e.g. *segregate* from bound
@@ -55,7 +54,104 @@ dichotomy Lean-checkable.
 
 namespace ODonnell2015
 
-open Morphology.FragmentGrammars Phenomena.Morphology.Productivity
+open Morphology.FragmentGrammars
+
+/-! ## The three suffixes
+
+[odonnell-2015] Chapter 7's central productivity contrast (pp. 261–263).
+The terms "productive" and "unproductive" are pre-theoretic descriptions
+consistent with the literature the book reviews; the data below commits
+to nothing about *why* one suffix is productive and another is not. -/
+
+/-- The three English derivational suffixes of the Chapter 7 contrast.
+
+- *-ness* (Adj>N): "perhaps the most commonly-discussed productive
+  suffix in English" (p. 261); *pine-scented* → *pine-scentedness*.
+- *-ion* (V>N): high type and token frequency but unproductive on novel
+  verbs — the competing models' "obviously absurd prediction" is that it
+  attaches to arbitrary verbs, producing \**meetion* "a MEETING event"
+  (pp. 261–262).
+- *-ate* (BND>V): a verb-forming suffix "restricted, by its categorial
+  definition, from attaching to anything besides bound stems" (p. 263),
+  e.g. *segregate* from bound *segregat-*. -/
+inductive Suffix where
+  | ness
+  | ion
+  | ate
+  deriving DecidableEq, Repr
+
+/-- A pre-theoretic *productivity index* for the three suffixes — higher
+is more productive. Coding `ness > ion > ate` reproduces the ordering
+implied by [odonnell-2015] Chapter 7 (Fig 7.3 and the §7.3.1.1
+discussion). The `ion > ate` direction is a tie-break: both are
+unproductive on novel forms, but `ate` is structurally more restricted
+(bound stems only), so we rank it strictly lower. -/
+def Suffix.productivityIndex : Suffix → Nat
+  | .ness => 2
+  | .ion  => 1
+  | .ate  => 0
+
+/-- The pre-theoretic strict ordering on the three suffixes by
+productivity. Any theory of productivity that purports to account for
+the [odonnell-2015] Chapter 7 data must reproduce this ordering;
+failure to do so falsifies the theory against the data (this is exactly
+the discriminator deployed against DMPCFG / MAG / DOP1 / ENDOP in
+Fig 7.3, all of which place *-ion* in their top 5). -/
+def moreProductiveThan (a b : Suffix) : Prop :=
+  a.productivityIndex > b.productivityIndex
+
+instance : DecidableRel moreProductiveThan := fun a b =>
+  inferInstanceAs (Decidable (a.productivityIndex > b.productivityIndex))
+
+/-! ## Frequency-spectrum statistics (Fig 7.4, pp. 267–268)
+
+The book's distributional evidence: *-ness* has the "large number of
+rare events" (LNRE) shape characteristic of a productive process — a
+spectrum "sharply peaked at low-frequency forms"; *-ion*'s spectrum has
+few hapaxes and spreads its mass through higher frequency ranges
+(cf. §1.2.6 and Fig 1.1 on unproductive *-ity*/*-th*). Fig 7.4 reports
+spectra for *-ness* and *-ion* only; the book gives no spectrum for
+*-ate*, whose unproductivity is categorial (bound stems only). -/
+
+/-- Corpus statistics for a suffix in the Chapter 7 training corpus
+(CELEX-derived): word types, word tokens, hapax legomena. -/
+structure SpectrumStats where
+  wordTypes  : Nat
+  wordTokens : Nat
+  hapaxes    : Nat
+  deriving DecidableEq, Repr
+
+/-- *-ness*: 1024 word types, 15,568 tokens, 350 hapaxes
+([odonnell-2015] pp. 267–268). LNRE-shaped: hapax-rich, spectrum
+peaked at frequency 1 (Fig 7.4, left). -/
+def nessStats : SpectrumStats := ⟨1024, 15568, 350⟩
+
+/-- *-ion*: 1117 word types, 162,573 tokens, 83 hapaxes
+([odonnell-2015] pp. 267–268). Not LNRE-shaped: hapax-poor, mass
+spread toward higher frequencies (Fig 7.4, right). -/
+def ionStats : SpectrumStats := ⟨1117, 162573, 83⟩
+
+/-- *-ness* is hapax-richer than *-ion* (350/1024 vs 83/1117) — the
+distributional fingerprint of productivity that Baayen's hapax-based
+estimators measure and that the FG model exploits (p. 268). Stated by
+cross-multiplication to stay in `Nat`. -/
+theorem ness_hapax_richer :
+    nessStats.hapaxes * ionStats.wordTypes >
+      ionStats.hapaxes * nessStats.wordTypes := by decide
+
+/-- *-ness* has the higher type–token ratio (1024/15,568 vs
+1117/162,573): *-ion*'s distribution is dominated by reuse of
+high-frequency existing words, not novel coinage. -/
+theorem ness_higher_type_token_ratio :
+    nessStats.wordTypes * ionStats.wordTokens >
+      ionStats.wordTypes * nessStats.wordTokens := by decide
+
+/-- *-ion* has more than an order of magnitude more tokens than
+*-ness* — the token-frequency gap that misleads DMPCFG, which "bases
+productivity inferences purely on the token frequency of suffixes"
+(p. 268). -/
+theorem ion_token_frequency_dominates :
+    ionStats.wordTokens > 10 * nessStats.wordTokens := by decide
 
 /-! ## Toy CFG -/
 
@@ -124,9 +220,7 @@ instance : DecidableEq suffixGrammar.NT :=
 
 /-! ## Bridge from data layer + DMPCFG instance -/
 
-/-- Bridge from `Productivity.Suffix` to the rules of this grammar.
-    Free-standing, not `Suffix.toRule` — dot notation would resolve
-    to `Productivity.Suffix.toRule`. -/
+/-- Bridge from `Suffix` to the rules of this grammar. -/
 def suffixToRule : Suffix → ContextFreeRule Sym SuffixNT
   | .ness => rNess
   | .ion  => rIon
@@ -147,10 +241,9 @@ def pseudoVal (r : ContextFreeRule Sym SuffixNT) : ℝ :=
   else 1
 
 /-- A `DMPCFG` over `suffixGrammar` whose per-rule pseudo-counts are
-    derived from `Suffix.productivityIndex` (the data layer's
-    qualitative productivity ranking). The connection is structural:
-    if the data file revises `productivityIndex`, the pseudo-counts
-    here change in lockstep. -/
+    derived from `Suffix.productivityIndex` (the qualitative productivity
+    ranking). The connection is structural: revising `productivityIndex`
+    changes the pseudo-counts here in lockstep. -/
 def dmpcfgFromObserved : DMPCFG suffixGrammar where
   pseudo := pseudoVal
   pseudo_pos r _ := by
@@ -219,12 +312,11 @@ theorem corpusProb_pos_for_empty (M : DMPCFG suffixGrammar) :
     0 < M.corpusProb 0 := by
   rw [DMPCFG.corpusProb_zero]; exact zero_lt_one
 
-/-- Structural drift sentry: a stronger productivity ranking in the
-    data layer (`Phenomena/Morphology/Productivity/FrequencySpectrum`)
-    implies a larger DMPCFG pseudo-count for the corresponding rule.
-    Propagates `moreProductiveThan` through `pseudoVal`, so this
-    breaks if `Suffix.productivityIndex` is revised in a way that
-    contradicts the rule-level encoding. -/
+/-- Structural drift sentry: a stronger productivity ranking
+    (`moreProductiveThan`) implies a larger DMPCFG pseudo-count for the
+    corresponding rule. Propagates `moreProductiveThan` through
+    `pseudoVal`, so this breaks if `Suffix.productivityIndex` is revised
+    in a way that contradicts the rule-level encoding. -/
 theorem dmpcfgFromObserved_pseudo_respects_productivity
     {a b : Suffix} (h : moreProductiveThan a b) :
     dmpcfgFromObserved.pseudo (suffixToRule a) >

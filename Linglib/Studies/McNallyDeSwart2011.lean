@@ -1,6 +1,6 @@
 import Linglib.Semantics.Kinds.Subkinds
 import Linglib.Fragments.Dutch.Adjectives
-import Linglib.Phenomena.Morphology.CategoryChanging
+import Linglib.Morphology.RootFamily
 
 /-!
 # Inflection and Derivation: How Adjectives and Nouns Refer to Abstract Objects
@@ -57,7 +57,7 @@ paper-specific scaffolding for one analysis.
 
 ## Cross-references
 
-* `Phenomena/Morphology/CategoryChanging.lean` (`RootFamily`) formalises
+* `Morphology/RootFamily.lean` (`RootFamily`) formalises
   the [marantz-1997] uncategorised-roots pattern that
   [mcnally-deswart-2011] §3.1 explicitly invokes: `[[rood]] = red`
   is an entity-denoting root that *both* the noun `rood_N` and the
@@ -108,7 +108,7 @@ in `Fragments/Dutch/Adjectives.lean`; this file uses those entries as the
 carrier identifying each colour or taste subkind.
 
 The [marantz-1997] uncategorised-roots framework — formalised in
-`Phenomena/Morphology/CategoryChanging.lean` as `RootFamily` — is the
+`Morphology/RootFamily.lean` as `RootFamily` — is the
 substrate for the same idea. Each Dutch `AdjEntry` projects to a
 `RootFamily` whose `forms` list records the three category-stamped surface
 forms (uninflected adjective, inflected adjective per M&deS §3.4, derived
@@ -118,7 +118,7 @@ connection code-level, not just docstring. -/
 end McNallyDeSwart2011
 
 /-- Lift a Dutch `AdjEntry` into a [marantz-1997]-style
-    `RootFamily` (`Phenomena/Morphology/CategoryChanging.lean`). The
+    `RootFamily` (`Morphology/RootFamily.lean`). The
     uninflected and inflected forms are both adjectival per
     [mcnally-deswart-2011] §2.3, §3.4 (the inflected form remains
     adjectival under the het-as-∩ analysis); the `-heid` derivative is a
@@ -129,13 +129,13 @@ end McNallyDeSwart2011
     Fragment's namespace so dot notation `a.toRootFamily` works. -/
 def Dutch.Adjectives.AdjEntry.toRootFamily
     (a : Dutch.Adjectives.AdjEntry) :
-    Phenomena.Morphology.CategoryChanging.RootFamily :=
+    Morphology.RootFamily :=
   let inflForms := match a.formInfl with
     | none   => []
-    | some s => [(s, Phenomena.Morphology.CategoryChanging.LexCat.adjective)]
+    | some s => [(s, Morphology.LexCat.adjective)]
   let nominalForms := match a.nominalHeid with
     | none   => []
-    | some s => [(s, Phenomena.Morphology.CategoryChanging.LexCat.noun)]
+    | some s => [(s, Morphology.LexCat.noun)]
   { rootLabel := a.form
     forms := (a.form, .adjective) :: inflForms ++ nominalForms }
 
@@ -158,7 +158,7 @@ example : Dutch.Adjectives.roze.toRootFamily.forms.length = 1 := by
 /-- Adjectives spanning category projections always include the
     uninflected adjectival form. -/
 theorem toRootFamily_includes_uninflected (a : AdjEntry) :
-    (a.form, Phenomena.Morphology.CategoryChanging.LexCat.adjective)
+    (a.form, Morphology.LexCat.adjective)
       ∈ a.toRootFamily.forms := by
   unfold Dutch.Adjectives.AdjEntry.toRootFamily
   cases a.formInfl <;> cases a.nominalHeid <;> simp

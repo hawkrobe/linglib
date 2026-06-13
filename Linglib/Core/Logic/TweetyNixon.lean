@@ -1,29 +1,25 @@
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Default Reasoning: Classic Examples
+# Tweety Triangle and Nixon Diamond
+[veltman-1996] [goldszmidt-pearl-1996] [asher-pelletier-2012]
 
-Theory-neutral data for two classic default reasoning examples:
+The two classic default-reasoning testbeds, as finite world types shared
+by the rival accounts in `Studies/Veltman1996`, `Studies/GoldszmidtPearl1996`,
+and `Studies/AsherPelletier2013`:
 
-1. **Tweety Triangle**: Birds normally fly. Tweety is a
-   bird. Tweety is a penguin. Penguins are birds. Penguins normally
-   don't fly. Conclusion: Tweety presumably doesn't fly (the more
-   specific default wins).
+1. **Tweety Triangle** (specificity): birds normally fly; penguins are
+   birds; penguins normally don't fly. The more specific default wins.
+2. **Nixon Diamond** (conflicting defaults): Quakers are normally
+   pacifist; Republicans are normally not; Nixon is both.
 
-2. **Nixon Diamond** (multiple attributions): Quakers are normally
-   pacifist. Republicans are normally not pacifist. Nixon is both a
-   Quaker and a Republican. Conclusion: agnosticism — neither
-   "presumably pacifist" nor "presumably not pacifist" follows.
+## Main declarations
 
-These examples test *specificity* (Tweety) and *conflicting defaults*
-(Nixon). Both require conditional defaults ("if φ then normally ψ")
-to formalize properly — unconditional defaults can only express the
-degenerate case.
+- `TweetyWorld`, `isBird`, `isPenguin`, `flies`, `penguin_is_bird`
+- `NixonWorld`, `isQuaker`, `isRepublican`, `isPacifist`
 -/
 
-namespace Phenomena.DefaultReasoning
-
--- ═══ Tweety Triangle ═══
+namespace Core.Logic.TweetyNixon
 
 /-- The Tweety world: 4 possible states of an entity. -/
 inductive TweetyWorld : Type where
@@ -68,18 +64,6 @@ instance : DecidablePred flies :=
 theorem penguin_is_bird : ∀ w, isPenguin w → isBird w := by
   intro w hw; cases w <;> simp_all [isPenguin, isBird]
 
-/-- Empirical judgment: given "birds normally fly" and "penguins
-    normally don't fly", Tweety (a penguin) presumably doesn't fly.
-    The more specific default (penguins) overrides the general one
-    (birds). -/
-def tweety_doesnt_fly : Bool := true
-
-/-- Empirical judgment: non-penguin birds presumably do fly. -/
-def robin_flies : Bool := true
-
-
--- ═══ Nixon Diamond ═══
-
 /-- The Nixon world: 4 possible states. -/
 inductive NixonWorld : Type where
   | quakerPacifist     -- Quaker, pacifist
@@ -105,11 +89,4 @@ def isPacifist : NixonWorld → Prop
   | repPacifist => True
   | _ => False
 
-/-- Empirical judgment: given conflicting defaults ("Quakers normally
-    pacifist", "Republicans normally not pacifist"), a Quaker Republican
-    is agnostic — neither "presumably pacifist" nor "presumably not
-    pacifist" should follow. -/
-def nixon_agnostic : Bool := true
-
-
-end Phenomena.DefaultReasoning
+end Core.Logic.TweetyNixon

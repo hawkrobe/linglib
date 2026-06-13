@@ -1,5 +1,4 @@
 import Linglib.Fragments.English.Determiners
-import Linglib.Phenomena.Quantification.Inventory
 
 /-!
 # But-Exceptives [von-fintel-1993]
@@ -360,8 +359,7 @@ def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
 -- Bridge: Fragment QForce ↔ Exceptive Licensing
 -- ============================================================================
 
-open English.Determiners (QForce)
-open Phenomena.Quantification.Inventory (QuantityWord)
+open English.Determiners (QForce QuantityWord)
 
 /-- Map Fragment QForce to Exceptive QuantifierType. -/
 def qforceToExceptiveType : QForce → Option QuantifierType

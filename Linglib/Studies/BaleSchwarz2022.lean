@@ -47,7 +47,7 @@ The 2022 paper uses division explicitly in its lexical entry (eq. 16);
 the 2026 paper shows this is reformulable using multiplication only.
 -/
 
-namespace Phenomena.Quantification.BaleSchwarz2022
+namespace BaleSchwarz2022
 
 open Semantics.Measurement
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
@@ -815,7 +815,7 @@ end Derivation
 The measurement verb examples formalized here (ex. 6: "The sample weighs
 0.9 grams per milliliter") are simplex-dimension uses of *per* with
 compositional interpretation — exactly the class that
-`Phenomena.Quantification.BaleSchwarz2026.PerPhraseExample` classifies as
+`BaleSchwarz2026.PerPhraseExample` classifies as
 `dimType := .simplex` and `source := .compositional`.
 
 The 2026 paper extends the anaphoric theory with:
@@ -826,4 +826,4 @@ The 2026 paper extends the anaphoric theory with:
 The unit sensitivity presupposition (eq. 43) originates in this 2022 paper
 and is carried forward into the 2026 analysis. -/
 
-end Phenomena.Quantification.BaleSchwarz2022
+end BaleSchwarz2022

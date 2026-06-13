@@ -5,7 +5,6 @@ import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
-import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
@@ -66,8 +65,7 @@ to the GQ property predicates in `Core.Quantification` and
 
 namespace BarwiseCooper1981
 
-open English.Determiners (Monotonicity Strength)
-open Phenomena.Quantification.Inventory
+open English.Determiners (Monotonicity Strength QuantityWord)
 open Semantics.Quantification.Quantifier
 open Core.Quantification
 open Semantics.Quantification.DomainRestriction (DomainRestrictor

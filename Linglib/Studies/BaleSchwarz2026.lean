@@ -44,9 +44,8 @@ Two tests distinguish compositional from non-compositional *per*-phrases:
 
 -/
 
-namespace Phenomena.Quantification.BaleSchwarz2026
+namespace BaleSchwarz2026
 
-open Phenomena
 open Features.Dimension (Dimension QuotientDimension DimensionType)
 open English.MeasurePhrases (PerInterpretation)
 
@@ -293,7 +292,7 @@ The simplex-dimension examples in this file (ex8a: "weighs thirteen grams
 per milliliter") are exactly the class formalized in BaleSchwarz2022 with
 full compositional derivations and dimension tracking. -/
 
-open Phenomena.Quantification.BaleSchwarz2022 (perAnaphoric perPresup)
+open BaleSchwarz2022 (perAnaphoric perPresup)
 
 /-- The 2026 paper's simplex/compositional classification matches the
 2022 paper's anaphoric theory: simplex-dimension *per*-phrases are
@@ -312,4 +311,4 @@ theorem unit_sensitivity_carries_forward {E : Type*}
     perPresup μ 1 x = true ∧ perPresup μ 1000 x = false := by
   simp [perPresup, h]; decide
 
-end Phenomena.Quantification.BaleSchwarz2026
+end BaleSchwarz2026
