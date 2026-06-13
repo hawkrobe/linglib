@@ -109,3 +109,26 @@ instance : HasIotaWitness (DefinitePossessive E S) E S :=
   ⟨fun a => a.presupposition⟩
 
 end Semantics.ArgumentStructure.Relational
+
+/-! ### Consuming the capabilities
+
+Capability-polymorphic results: stated once over the mixin classes, inherited by
+every instance. This is the payoff of the `Add`/`Mul`-style design — a consumer
+depends on exactly the axes it touches, and new carriers get the results for
+free, with no carrier-specific reproof. -/
+
+variable {α E S : Type*}
+
+/-- The possessee set determined by any carrier bundling a possessor and a
+possession relation: the entities standing in the relation to the possessor. -/
+def possesseeSet [HasPossessor α E] [HasPossessionRelation α E S] (a : α) :
+    Pred1 E S :=
+  fun y s => HasPossessionRelation.possessionRelation a (HasPossessor.possessor a) y s
+
+/-- Any carrier bearing a Russellian iota-witness denotes a unique possessee at
+every situation. Definite possessives inherit `∃!`-reference with no
+carrier-specific reproof. -/
+theorem existsUnique_possessee [HasPossesseePredicate α E S] [HasIotaWitness α E S]
+    (a : α) (s : S) :
+    ∃! y : E, HasPossesseePredicate.possesseePredicate a y s :=
+  HasIotaWitness.iotaWitness a s

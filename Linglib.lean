@@ -2832,3 +2832,4 @@ import Linglib.Core.Logic.TweetyNixon
 import Linglib.Data.Examples.TesslerGoodman2022
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Semantics.ArgumentStructure.PossessiveCapabilities
+import Linglib.Studies.Barker1995
