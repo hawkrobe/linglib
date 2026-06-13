@@ -67,6 +67,10 @@ def le [DecidableValuation α] (s₁ s₂ : Valuation α) : Prop :=
 theorem le_refl [DecidableValuation α] (s : Valuation α) : s.le s :=
   fun _ _ h => h
 
+theorem le_trans [DecidableValuation α] {s₁ s₂ s₃ : Valuation α}
+    (h₁ : s₁.le s₂) (h₂ : s₂.le s₃) : s₁.le s₃ :=
+  fun v x h => h₂ v x (h₁ v x h)
+
 @[simp] theorem extend_get_same [DecidableEq V]
     (s : Valuation α) (v : V) (x : α v) :
     (s.extend v x).get v = some x := by
@@ -76,6 +80,14 @@ theorem extend_get_ne [DecidableEq V]
     {s : Valuation α} {v w : V} {x : α v} (h : w ≠ v) :
     (s.extend v x).get w = s.get w := by
   simp [extend, get, h]
+
+/-- Extending at an undetermined vertex only adds information. -/
+theorem le_extend [DecidableEq V] [DecidableValuation α] {s : Valuation α}
+    {v : V} (x : α v) (h : s.get v = none) : s.le (s.extend v x) := by
+  intro w y hw
+  by_cases hwv : w = v
+  · subst hwv; rw [Valuation.hasValue, h] at hw; exact absurd hw (by simp)
+  · rwa [Valuation.hasValue, extend_get_ne hwv]
 
 @[simp] theorem empty_get (v : V) : (Valuation.empty (α := α)).get v = none := rfl
 
