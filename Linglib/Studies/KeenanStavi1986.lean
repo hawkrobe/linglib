@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Counting
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Fragments.English.Toy
 
 /-!
@@ -12,13 +12,13 @@ artificial `m_sem` fails conservativity, and `every`/`most` fail
 existentiality. The witness type is the toy fragment's `ToyEntity`.
 
 The property definitions (`Conservative`, `Existential`) live in
-`Core.Logic.Quantification`; positive results for English determiners
+`Quantification`; positive results for English determiners
 live there and in `Studies/BarwiseCooper1981.lean`.
 -/
 
 namespace KeenanStavi1986
 
-open Core.Quantification
+open Quantification
 open Semantics.Montague (ToyEntity)
 open Semantics.Montague.ToyLexicon (student_sem thing_sem)
 

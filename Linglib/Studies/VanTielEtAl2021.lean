@@ -319,7 +319,7 @@ def allModelQuantityWords : List ModelQuantityWord := ModelQuantityWord.toList
 
 /-- Monotonicity of each model word (lifted from the canonical inventory). -/
 def modelMonotonicity (q : ModelQuantityWord) :
-    Semantics.Quantification.Lexicon.Monotonicity :=
+    Quantification.Lexicon.Monotonicity :=
   q.monotonicity
 
 -- GQT Parameters (per-paper threshold settings, B&C-style)
@@ -337,14 +337,14 @@ def threshold : ModelQuantityWord → Nat
   | .all   => domainSize
 
 /-- GQT meaning via the parametric operator from
-    `Semantics.Quantification.Quantifier`. -/
+    `Quantification.Quantifier`. -/
 def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
-  Semantics.Quantification.Quantifier.gqtMeaning
+  Quantification.Quantifier.gqtMeaning
     domainSize m.monotonicity (threshold m) t
 
 /-- GQT meaning as rational (for RSA arithmetic). -/
 def gqtMeaningRat (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Semantics.Quantification.Quantifier.gqtMeaningRat
+  Quantification.Quantifier.gqtMeaningRat
     domainSize m.monotonicity (threshold m) t
 
 -- PT Parameters (per-paper prototype + spread settings)
@@ -439,13 +439,13 @@ Note: "half" is classified as nonMonotone in the three-way system but as
 theorem monotonicity_matches_data_increasing
     (q : English.Determiners.QuantityWord) :
     q ≠ .half →
-    (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
+    (RSAModel.modelMonotonicity q = Quantification.Lexicon.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
 theorem monotonicity_matches_data_decreasing
     (q : English.Determiners.QuantityWord) :
-    (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
+    (RSAModel.modelMonotonicity q = Quantification.Lexicon.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide
 

@@ -56,7 +56,7 @@ and `Comparisons/GenericSemantics.lean` for the formal comparison.
 
 namespace Semantics.Genericity.Generics
 
-open Semantics.Quantification.CovertQuantifier
+open Quantification.CovertQuantifier
 
 -- Core Types
 

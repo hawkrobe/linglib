@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Polyadic Quantifiers
@@ -16,9 +16,9 @@ model-theoretic level, complementing linglib's syntactic scope mechanisms
 in `Semantics/Composition/Scope.lean` and `Studies/HeimKratzer1998.lean`.
 -/
 
-namespace Core.Quantification.Polyadic
+namespace Quantification.Polyadic
 
-open Core.Quantification
+open Quantification
 
 variable {α : Type*}
 
@@ -102,4 +102,4 @@ theorem resume_mono_in_R (Q : GQ α) (A : α → Prop)
   unfold resume at *
   exact hUp A _ _ hR hRes
 
-end Core.Quantification.Polyadic
+end Quantification.Polyadic

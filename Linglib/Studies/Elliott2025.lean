@@ -1,11 +1,11 @@
-import Linglib.Core.Logic.PolarizedIndividuals
+import Linglib.Semantics.Quantification.PolarizedIndividuals
 
 /-!
 # Split Scope via Polarized Individuals [elliott-2025]
 [rullmann-1995] [barwise-cooper-1981]
 
 Connects standard quantifier denotations to the polarized individual
-decomposition from `Core.Logic.PolarizedIndividuals`, then derives
+decomposition from `Quantification.PolarizedIndividuals`, then derives
 the split-scope reading of negative quantifiers under modals.
 
 ## Decomposition (§1)
@@ -20,7 +20,7 @@ pairs via the `ConsGQ` Boolean algebra:
 
 The key compositional fact is `pos_sup_neg`:
 `(e,+) ⊔ (e,-) = λR S. R(e)`, already proved in
-`Core.Logic.PolarizedIndividuals`.
+`Quantification.PolarizedIndividuals`.
 
 ## Split Scope (§3-§4)
 
@@ -41,7 +41,7 @@ can end up at different heights.
 
 namespace Elliott2025
 
-open Core.Quantification
+open Quantification
 
 variable {α : Type*}
 
@@ -128,7 +128,7 @@ theorem outer_neg_some_eq_no (entities : List α) (R S : α → Prop) :
 -- ============================================================================
 
 /-- The split scope reading: `(e,+) ⊔ (e,-) = λR S. R(e)`.
-    Re-exported from `Core.Logic.PolarizedIndividuals`. The lattice-theoretic
+    Re-exported from `Quantification.PolarizedIndividuals`. The lattice-theoretic
     content of split scope: scope is "split" between the positive and negative
     polarities, yielding a quantifier that ignores scope entirely. -/
 theorem split_scope (e : α) :

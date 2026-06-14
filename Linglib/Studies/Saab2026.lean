@@ -29,7 +29,7 @@ namespace Saab2026
 
 open Minimalist
 open Minimalist.Ellipsis.Nominal
-open Semantics.Quantification.Binominal
+open Quantification.Binominal
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: Nominal Extended Projection Well-Formedness

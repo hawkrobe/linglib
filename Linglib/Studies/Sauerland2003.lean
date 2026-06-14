@@ -293,7 +293,7 @@ the restrictor directly — but the results coincide. See
 `je_der_agrees_with_qforall`.
 -/
 
-open Semantics.Quantification.UnifiedUniversal (QForall dng_atoms)
+open Quantification.UnifiedUniversal (QForall dng_atoms)
 
 /-- **JE** (30b): universal quantifier over atoms of a group individual.
 

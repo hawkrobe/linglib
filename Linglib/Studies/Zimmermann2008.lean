@@ -1,7 +1,7 @@
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 
 /-!
 # [zimmermann-2008]: Quantification in Hausa
@@ -56,8 +56,8 @@ exhibited here (see Todo).
 * The Chadic typology of class-B universals (Z2008 §3.4).
 -/
 
-open Semantics.Quantification.UnifiedUniversal
-open Semantics.Quantification.ONEModifiers
+open Quantification.UnifiedUniversal
+open Quantification.ONEModifiers
 
 namespace Hausa.Determiners.UniversalQuantifier
 
@@ -76,7 +76,7 @@ end Hausa.Determiners.UniversalQuantifier
 namespace Zimmermann2008
 
 open Hausa.Determiners
-open Core.Quantification (some_sem)
+open Quantification (some_sem)
 
 /-! ### A 3-passenger SG-count Hausa domain
 

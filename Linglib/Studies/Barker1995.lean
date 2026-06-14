@@ -36,7 +36,7 @@ the dissertation's signature claims, tested against concrete models:
 
 namespace Barker1995
 
-open Core.Quantification
+open Quantification
 open Possessive
 open Semantics.ArgumentStructure.Relational
 

@@ -71,7 +71,7 @@ the habitual-side domain.
 
 namespace Cohen2013
 
-open Semantics.Quantification.CovertQuantifier
+open Quantification.CovertQuantifier
 open Semantics.Scope (ScopeConfig)
 
 /-! ### Reinterpretation mechanisms ([cohen-2013], [nunberg-1995])

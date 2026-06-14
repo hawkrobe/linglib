@@ -336,7 +336,7 @@ connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩) to the Kennedy
 maximality view (type ⟨d,t⟩). -/
 
 section GQTBridge
-open Classical Core.Logic.Intensional Semantics.Quantification
+open Classical Core.Logic.Intensional Quantification
 
 /-- GQT "at least `n`" agrees with `atLeastMeaning` on intersection cardinality. -/
 theorem gqt_atLeast_agrees {α : Type*} [Fintype α]

@@ -31,8 +31,8 @@ and English fragment data to the empirical claims in [ten-wolde-2023].
 
 namespace TenWolde2023
 
-open Semantics.Quantification.Binominal
-open Semantics.Quantification.Binominal
+open Quantification.Binominal
+open Quantification.Binominal
 open Semantics.Gradability.GradableNouns (exampleIdiot)
 open English.Binominals
 
@@ -44,7 +44,7 @@ open English.Binominals
 
 The three evaluative constructions differ on multiple diagnostics.
 These theorems verify the Table 4.2 claims against the formalized
-diagnostic functions in `Semantics.Quantification.Binominal`. -/
+diagnostic functions in `Quantification.Binominal`. -/
 
 /-- EBNP: N₁ allows plural, Det₂ marks number, of replaceable by copula. -/
 theorem ebnp_profile :
