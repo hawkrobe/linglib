@@ -72,6 +72,30 @@ theorem conservativity_universal :
   · exact Quantification.most_conservative
   · exact Quantification.every_conservative
 
+/-- The English quantifier lexicon assigns only conservative denotations
+    ([barwise-cooper-1981]): every `GQ` in its range satisfies CONSERV. The
+    per-form witness feeding the theory-layer lift `Quantifier.denote_conservative`. -/
+theorem englishLexicon_conservative {α : Type*} [Fintype α] (s : String) :
+    ∀ g ∈ English.Determiners.englishLexicon (α := α) s, Conservative g := by
+  intro g hg
+  unfold English.Determiners.englishLexicon at hg
+  split at hg <;> simp only [List.mem_singleton, List.not_mem_nil] at hg
+  all_goals (subst hg; first
+    | exact no_conservative | exact few_conservative | exact some_conservative
+    | exact half_conservative | exact most_conservative | exact every_conservative
+    | exact both_conservative | exact neither_conservative)
+
+/-- **Conservativity universal, record-keyed.** Every marked English quantifier
+    denotes conservatively — the [barwise-cooper-1981] universal stated over the
+    `Quantifier` *records* (via the theory-layer `Quantifier.denote`), not the
+    `QuantityWord` enum. Obtained from the cross-linguistic lift
+    `Quantifier.denote_conservative` applied to `englishLexicon_conservative`;
+    vacuous for forms outside the lexicon (`denote = []`). -/
+theorem conservativity_universal_denote {α : Type*} [Fintype α] (q : Quantifier) :
+    ∀ g ∈ q.denote (English.Determiners.englishLexicon (α := α)), Conservative g :=
+  Quantifier.denote_conservative English.Determiners.englishLexicon
+    (englishLexicon_conservative (α := α)) q
+
 -- ============================================================================
 -- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
 -- ============================================================================

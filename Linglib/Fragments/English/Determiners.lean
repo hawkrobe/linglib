@@ -1,6 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Determiner.Basic
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.QuantifierDenotation
 import Linglib.Semantics.Quantification.Lexicon
 
 /-!
@@ -239,6 +240,51 @@ noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
   | .most  => most_sem
   | .few   => few_sem
   | .half  => half_sem
+
+/-- The English quantifier lexicon: the form ↦ `GQ` valuation realizing each
+    `Quantifier` record's denotation (`Quantifier.denote`). *every*/*all*/*each*
+    share `every_sem`; *both*/*neither* are the dual-restricted universals
+    ([barwise-cooper-1981]). *many* — a vague cardinal — has no fixed `GQ` yet
+    (the cardinal/proportional split of [partee-1989] is deferred), so it
+    denotes `[]`. This is the record-keyed companion to the enum-keyed
+    `QuantityWord.gqDenotation`. -/
+noncomputable def englishLexicon {α : Type*} [Fintype α] : Quantifier.Lexicon α :=
+  open Quantification in
+  fun s => match s with
+    | "none"    => [no_sem]
+    | "few"     => [few_sem]
+    | "some"    => [some_sem]
+    | "half"    => [half_sem]
+    | "most"    => [most_sem]
+    | "all"     => [every_sem]
+    | "every"   => [every_sem]
+    | "each"    => [every_sem]
+    | "both"    => [both_sem]
+    | "neither" => [neither_sem]
+    | _         => []
+
+/-! ### Record ↦ denotation (the marking records reach the canonical `GQ`s) -/
+
+section Denote
+open Quantification
+variable {α : Type*} [Fintype α]
+
+@[simp] theorem none_denote : none_.denote (englishLexicon (α := α)) = [no_sem] := rfl
+@[simp] theorem few_denote : few.denote (englishLexicon (α := α)) = [few_sem] := rfl
+@[simp] theorem some_denote : some_.denote (englishLexicon (α := α)) = [some_sem] := rfl
+@[simp] theorem half_denote : half.denote (englishLexicon (α := α)) = [half_sem] := rfl
+@[simp] theorem most_denote : most.denote (englishLexicon (α := α)) = [most_sem] := rfl
+@[simp] theorem all_denote : all.denote (englishLexicon (α := α)) = [every_sem] := rfl
+@[simp] theorem every_denote : every.denote (englishLexicon (α := α)) = [every_sem] := rfl
+@[simp] theorem each_denote : each.denote (englishLexicon (α := α)) = [every_sem] := rfl
+@[simp] theorem both_denote : both.denote (englishLexicon (α := α)) = [both_sem] := rfl
+@[simp] theorem neither_denote :
+    neither.denote (englishLexicon (α := α)) = [neither_sem] := rfl
+/-- *many* is a vague cardinal with no fixed `GQ` denotation yet ([partee-1989]
+    cardinal/proportional split, deferred) — hence the empty denotation list. -/
+@[simp] theorem many_denote : many.denote (englishLexicon (α := α)) = [] := rfl
+
+end Denote
 
 /-! ## Lexicon Access -/
 

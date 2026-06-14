@@ -2241,6 +2241,7 @@ import Linglib.Semantics.Numerals.Precision
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.QuantifierDenotation
 import Linglib.Semantics.Quantification.Syllogistic.Defs
 import Linglib.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Semantics.Quantification.Syllogistic.Trees
