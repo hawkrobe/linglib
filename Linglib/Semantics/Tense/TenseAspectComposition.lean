@@ -36,6 +36,7 @@ The eval* operators instantiate the situation (fixing world and time).
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.LexicalType
+import Linglib.Core.Logic.Quantification.Basic
 
 namespace Tense.TenseAspectComposition
 
@@ -53,15 +54,26 @@ variable {W Time : Type*} [LinearOrder Time]
 def evalPres (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
   p ⟨w, tc⟩
 
-/-- Evaluate a point predicate with existential past (PAST).
-    PAST: ∃t < tc, p(w)(t). -/
-def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
-  ∃ t : Time, t < tc ∧ p ⟨w, t⟩
+/-- Existential tense evaluation: the GQ `some` (`Core.Quantification.some_sem`)
+    over times `rel`-related to the evaluation time `tc`, scope `p` at `⟨w, ·⟩`.
+    `evalPast`/`evalFut` are the `<`/`>` instances. -/
+def evalRel (rel : Time → Time → Prop) (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+  Core.Quantification.some_sem (fun t => rel t tc) (fun t => p ⟨w, t⟩)
 
-/-- Evaluate a point predicate with existential future (FUTURE).
-    FUT: ∃t > tc, p(w)(t). -/
+omit [LinearOrder Time] in
+/-- Monotone in the body predicate — inherited from `some_scope_up`, not reproved. -/
+theorem evalRel_mono {rel : Time → Time → Prop} {p q : PointPred W Time}
+    (h : ∀ x, p x → q x) {tc : Time} {w : W} :
+    evalRel rel p tc w → evalRel rel q tc w :=
+  Core.Quantification.some_scope_up _ _ _ fun _ hp => h _ hp
+
+/-- Evaluate a point predicate with existential past (PAST): `∃ t < tc, p(w)(t)`. -/
+def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
+  evalRel (· < ·) p tc w
+
+/-- Evaluate a point predicate with existential future (FUTURE): `∃ t > tc, p(w)(t)`. -/
 def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
-  ∃ t : Time, t > tc ∧ p ⟨w, t⟩
+  evalRel (· > ·) p tc w
 
 /-- The pipeline's existential past is [sharvit-2014]'s quantificational
     past with trivial restrictor: `evalPast` = `quantificationalPast` over
@@ -70,7 +82,7 @@ def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
     types over the operators the rest of the codebase already uses. -/
 theorem evalPast_iff_quantificationalPast (p : PointPred W Time) (tc : Time) (w : W) :
     evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
-  simp [evalPast, quantificationalPast]
+  simp [evalPast, evalRel, quantificationalPast, Core.Quantification.some_sem]
 
 /-! ### Composed Tense–Aspect Forms -/
 

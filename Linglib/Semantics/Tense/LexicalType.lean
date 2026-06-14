@@ -1,5 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Semantics.Tense.GramTense
+import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Reference.Nominal
 
 /-!
 # Tense as a typed lexical object
@@ -15,7 +17,7 @@ in `Studies.Sharvit2014`.
 
 * `Tense.LexicalType` — pronominal vs quantificational tense.
 * `Tense.pronominalLookup` — the pronominal-past partial lookup ((30a)).
-* `Tense.quantificationalPast` — the quantificational past operator ((30b)).
+* `Tense.quantificationalPast` — the quantificational past, the GQ `some` over `K` ((30b)).
 -/
 
 namespace Tense
@@ -55,27 +57,50 @@ theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
     pronominalLookup g j k = none ↔ ¬ g k < g j := by
   unfold pronominalLookup; split <;> simp_all
 
+/-- A tense pronoun is a nominal denotation over `Time` ([partee-1973]): the
+    referent selector is the total assignment lookup `resolve`, the intrinsic
+    presupposition is the tense constraint. Entity pronouns
+    (`Semantics.Reference.PronounDenotation`) are the same `NominalDenot`
+    construction over `Entity`, so "tense is a pronoun" holds by construction. -/
+def _root_.TensePronoun.toNominalDenot {Time : Type*} [LinearOrder Time]
+    (tp : TensePronoun) :
+    Semantics.Reference.NominalDenot (TemporalAssignment Time) PUnit Time where
+  presup := fun g _ => tp.fullPresupposition g
+  selector := fun g _ => some (tp.resolve g)
+
+@[simp] theorem _root_.TensePronoun.toNominalDenot_presup {Time : Type*} [LinearOrder Time]
+    (tp : TensePronoun) (g : TemporalAssignment Time) (w : PUnit) :
+    tp.toNominalDenot.presup g w = tp.fullPresupposition g := rfl
+
+@[simp] theorem _root_.TensePronoun.toNominalDenot_selector {Time : Type*} [LinearOrder Time]
+    (tp : TensePronoun) (g : TemporalAssignment Time) (w : PUnit) :
+    tp.toNominalDenot.selector g w = some (tp.resolve g) := rfl
+
 /-- The two codebase formalizations of [partee-1973] pronominal tense coincide:
-    `pronominalLookup` agrees with the `TensePronoun` architecture (full presupposition
-    plus resolution), for any binding `mode`. -/
+    `pronominalLookup` is the presupposition-gated referent of the tense pronoun's
+    `NominalDenot` (`TensePronoun.toNominalDenot`), for any binding `mode`. -/
 theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
     (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : TenseInterpretation) :
     pronominalLookup g j k = some t ↔
-      (TensePronoun.mk k .past mode j).fullPresupposition g ∧
-      (TensePronoun.mk k .past mode j).resolve g = t :=
-  pronominalLookup_eq_some_iff g j k t
+      (TensePronoun.mk k .past mode j).toNominalDenot.presup g ⟨⟩ ∧
+      (TensePronoun.mk k .past mode j).toNominalDenot.selector g ⟨⟩ = some t := by
+  simp only [TensePronoun.toNominalDenot_presup, TensePronoun.toNominalDenot_selector,
+    Option.some.injEq]
+  exact pronominalLookup_eq_some_iff g j k t
 
-/-- [sharvit-2014] (30b): quantificational past; restrictor `K` bounds the
-    quantification domain. -/
+/-- [sharvit-2014] (30b): quantificational past as the generalized quantifier
+    `some` (`Core.Quantification.some_sem`) over the contextual restrictor `K`,
+    with scope "precedes `t` and satisfies `p`". Definitionally
+    `∃ t' ∈ K, t' < t ∧ p t'`. -/
 def quantificationalPast {Time : Type*} [LT Time]
     (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=
-  ∃ t' ∈ K, t' < t ∧ p t'
+  Core.Quantification.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
 
-/-- The quantificational past is monotone in its body predicate. -/
+/-- Monotone in the body predicate — inherited from scope-monotonicity of `some`
+    (`Core.Quantification.some_scope_up`), not reproved. -/
 theorem quantificationalPast_mono {Time : Type*} [LT Time]
     {K : Set Time} {p q : Time → Prop} (h : ∀ t, p t → q t) {t : Time} :
-    quantificationalPast K p t → quantificationalPast K q t := by
-  rintro ⟨t', htK, hlt, hp⟩
-  exact ⟨t', htK, hlt, h _ hp⟩
+    quantificationalPast K p t → quantificationalPast K q t :=
+  Core.Quantification.some_scope_up _ _ _ fun _ hS => ⟨hS.1, h _ hS.2⟩
 
 end Tense
