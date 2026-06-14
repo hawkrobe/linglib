@@ -5,7 +5,7 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 # Argument Structure Derivation Pipeline
 
 [beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
-[rappaport-hovav-levin-2024] [dowty-1991]
+[dowty-1991]
 
 The derivational chain from root content to argument structure, made
 explicit as composed functions:

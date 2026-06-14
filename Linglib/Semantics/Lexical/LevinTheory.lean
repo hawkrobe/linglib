@@ -16,7 +16,7 @@ The `LevinClass` enum and its classification data (`meaningComponents`,
 `Semantics/Lexical/MeaningComponents.lean`.
 
 This file provides the theoretical content that depends on `Root.Kinds`:
-the root signature label, the root–MC bridge enums, and the universal
+the root signature label, the root–MC comparison enums, and the universal
 consistency/divergence theorems that ground them. `LevinClass` is a *lossy
 realization label*, not a source of truth (that is `Verb.Root.kinds`); the
 theorems below are the non-decorative grounding — each holds for every class
@@ -27,11 +27,11 @@ restated.
 
 The `rootEntailments` signature label and its universal soundness theorem.
 
-## § 2. Root–MC bridge
+## § 2. Root–MC comparison
 
 Classification enums (CausationSource, ResultKind, MannerKind) naming the
 systematic divergences between B&KG root features and Levin meaning
-components, plus the universal consistency theorems and a divergence witness.
+components, plus the universal consistency theorems and divergence witnesses.
 -/
 
 -- ════════════════════════════════════════════════════
@@ -209,18 +209,14 @@ theorem rootEntailments_wellFormed (c : LevinClass) :
     c.rootEntailments.WellFormed := by cases c <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 2. Root–MC Bridge ([beavers-koontz-garboden-2020])
+-- § 2. Root–MC Comparison ([beavers-koontz-garboden-2020], [levin-1993])
 -- ════════════════════════════════════════════════════
 
-/-! ### Root–MC correspondence (2026 consensus)
+/-! ### Root–MC comparison
 
-The 2026 consensus in lexical semantics ([beavers-koontz-garboden-2020],
-[rappaport-hovav-levin-2024]) treats root entailments as primary:
-verb behavior at the Levin diagnostic level is determined by root content
-plus semantic field membership plus template structure.
-
-But the B&KG root features and the Levin meaning components are NOT
-isomorphic — they conceptualize different levels of granularity:
+[levin-1993]'s meaning components and [beavers-koontz-garboden-2020]'s root
+entailments are two independently-motivated lexical decompositions; they are
+NOT isomorphic — they conceptualize different levels of granularity:
 
 | B&KG concept | Levin concept | Relationship |
 |---|---|---|
@@ -228,8 +224,15 @@ isomorphic — they conceptualize different levels of granularity:
 | `manner` | `mannerSpec` ∨ `instrumentSpec` | B&KG broader: includes contact-manner (hit) |
 | `cause` | `causation` | Distinct: root-level vs event-level causation |
 
-The three `*Kind` enums below name the specific cases where the two
-frameworks diverge, making the divergences grep-able and testable. -/
+Because B&KG `result`/`manner` are *coarser* than the Levin features, neither
+table is a function of the other (`give` carries `result` but
+`changeOfState = false`; `hit` carries `manner` but `mannerSpec = false`), so
+the two are related by the consistency/divergence theorems below, not by a
+derivation — a morphism `meaningComponents = f rootEntailments` is not just
+absent from the literature but mathematically impossible here, and the
+manner/result-complementarity dispute ([beavers-koontz-garboden-2020] vs the
+Rappaport Hovav & Levin tradition) is exactly over this independence. The three
+`*Kind` enums name the specific divergences, making them grep-able and testable. -/
 
 /-- Where a verb class's event-level causation originates.
 

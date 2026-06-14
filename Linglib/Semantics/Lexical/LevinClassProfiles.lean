@@ -6,7 +6,7 @@ import Linglib.Semantics.Lexical.LevinTheory
 # Levin Class → Entailment Profile Mapping
 
 [levin-1993] [dowty-1991] [beavers-2010]
-[beavers-koontz-garboden-2020] [rappaport-hovav-levin-2024]
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
 
 Maps [levin-1993] verb classes to proto-role entailment profiles
 ([dowty-1991]), encoding the argument-structure generalizations
@@ -224,9 +224,9 @@ theorem directedMotion_subject_role :
 -- § 7. Root.Kinds → ArgTemplate (the missing derivation)
 -- ════════════════════════════════════════════════════
 
-/-! Root kind signatures determine argument templates — this is the
-field consensus ([beavers-koontz-garboden-2020], [rappaport-hovav-levin-2024]).
-The derivational direction runs:
+/-! Root kind signatures determine argument templates — the derivational
+direction in the argument-realization tradition ([beavers-koontz-garboden-2020]
+roots, [rappaport-hovav-levin-1998] event-template linking). The chain runs:
 
     Root.Kinds → Template → ArgTemplate → ThetaRole labels
 
