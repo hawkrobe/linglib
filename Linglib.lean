@@ -2757,6 +2757,7 @@ import Linglib.Studies.KeenanStavi1986
 import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Studies.ChatzikyriakidisLuo2017
 import Linglib.Core.Logic.FirstOrder.Kripke
+import Linglib.Core.Logic.FirstOrder.QuantifierRank
 import Linglib.Core.Logic.Modal.QBSML.StandardTranslation
 import Linglib.Core.Logic.Modal.QBSML.FreeChoice
 import Linglib.Studies.Yan2023
