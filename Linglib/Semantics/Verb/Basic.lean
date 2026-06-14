@@ -1,4 +1,5 @@
 import Linglib.Semantics.Verb.Defs
+import Linglib.Semantics.Lexical.Roots.Closure
 
 /-! # Verb entry — derived API
 
@@ -33,16 +34,17 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
 /-- The verb's within-class quality profile ([spalek-mcnally-2026]), read off its
-    `root` (where the profile is now carried — formerly a separate `Verb` field).
-    `none` when the verb has no root. -/
-def Verb.rootProfile (v : Verb) : Option Verb.Root.Profile :=
-  v.root.map (·.profile)
+    `root` (where the profile is carried). -/
+def Verb.rootProfile (v : Verb) : Verb.Root.Profile :=
+  v.root.profile
 
-/-- The verb's B&KG kind signature ([beavers-koontz-garboden-2020]), read off its
-    `root` (the source of truth). `none` when the verb has no root. Root-only — the
-    coarser class-derived view is `Verb.classKinds` (`Verb/RootContent.lean`). -/
-def Verb.kinds (v : Verb) : Option Verb.Root.Kinds :=
-  v.root.map (·.kinds)
+/-- The verb's kind signature ([beavers-koontz-garboden-2020]): the collocational
+    closure of its root's kinds (`cause ⟹ result ⟹ state`), which the
+    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on. (The
+    raw, un-closed atom-kinds are `v.root.kinds`; the coarse class-derived view is
+    `Verb.classKinds`.) -/
+def Verb.closedKinds (v : Verb) : Verb.Root.Kinds :=
+  v.root.closedKinds
 
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile
@@ -67,33 +69,12 @@ def Verb.isDoxastic (v : Verb) : Bool :=
 def Verb.isPreferential (v : Verb) : Bool :=
   v.attitude.map (·.isPreferential) |>.getD false
 
-/-- Does this attitude distribute over conjunction?
-    DERIVED from complementSig: any signature that refines `.mono`
-    (mono, additive, mult, addMult, all) distributes. -/
-def Verb.distribOverConj (v : Verb) : Bool :=
-  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
-
-/-- Is the complement position upward-entailing?
-    DERIVED from complementSig. -/
-def Verb.isComplementUE (v : Verb) : Bool :=
-  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
-
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def Verb.preferentialValence (v : Verb) : Option AttitudeValence :=
   v.attitude.bind (·.valence)
 
 -- Note: Verb.cDistributive, Verb.nvpClass, and Verb.takesQuestion
 -- are derived properties defined in Semantics.Intensional/Attitude/BuilderProperties.lean
-
-/--
-Get the CoS semantics for a verb (if it's a CoS verb).
-
-Returns `some (cosSemantics t P)` if the verb has a CoS type,
-where `P` is the activity predicate (complement denotation).
--/
-def Verb.getCoSSemantics {W : Type*} (v : Verb) (P : W → Prop) :
-    Option (PartialProp W) :=
-  v.cosType.map λ t => cosSemantics t P
 
 /-- Does this verb presuppose its complement via factivity?
     DERIVED from attitude: true iff the verb is doxastic veridical. -/

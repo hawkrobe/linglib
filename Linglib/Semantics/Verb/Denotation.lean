@@ -1,6 +1,7 @@
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Verb denotation — what a verb *does*
@@ -23,16 +24,22 @@ participant roles.
   profiles
 * `Verb.CosModel` + `inchoative`/`causative`/`denote` — the change-of-state
   denotation, dispatched on the root's `kinds`
+* `CosModel.again` + `againRestitutive`/`againRepetitiveBecome`/`againRepetitiveCause`
+  — the sublexical *again* operator and its three attachment readings
 
 ## Main results
 
 * `CosModel.causative_entails_inchoative`, `denote_result_entails_resultState` —
   the [beavers-koontz-garboden-2020] entailments, *derived* from the root signature
+* `CosModel.againPresup_cause_entails_state`, `result_restitution_entails_change`
+  — the [beavers-koontz-garboden-2020] (25) reading hierarchy and the result-root
+  restitutive collapse, *derived* from the change-of-state entailments
 
 ## References
 
 * [davidson-1967], [parsons-1990] (neo-Davidsonian composition)
-* [beavers-koontz-garboden-2020] (the change-of-state decomposition)
+* [beavers-koontz-garboden-2020] (the change-of-state decomposition; sublexical *again*)
+* [von-stechow-1996] (the *again* presupposition analysis adopted in BKG (26))
 * [dowty-1991] (the proto-role profiles that drive the theta-grid)
 -/
 
@@ -128,8 +135,8 @@ theorem causative_entails_resultState (M : CosModel Entity State Time)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     Event Time → Prop :=
-  if LexKind.cause ∈ (v.kinds).getD ∅ then M.causative v y x
-  else if LexKind.result ∈ (v.kinds).getD ∅ then M.inchoative v x
+  if LexKind.cause ∈ v.closedKinds then M.causative v y x
+  else if LexKind.result ∈ v.closedKinds then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -140,13 +147,129 @@ def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     (v : Verb) (y x : Entity) (e : Event Time)
-    (hres : LexKind.result ∈ (v.kinds).getD ∅)
+    (hres : LexKind.result ∈ v.closedKinds)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ (v.kinds).getD ∅
+  by_cases hc : LexKind.cause ∈ v.closedKinds
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h
     exact ⟨e, M.inchoative_entails_resultState v x e h⟩
+
+/-- The denotational result entailment **is** the template diagnostic: a verb
+    whose root's `EventStructure.Template` embeds a result state has a denotation
+    entailing that result state — `denote_result_entails_resultState` and
+    `Template.HasResultState` are one fact, through the closed kind signature
+    ([beavers-koontz-garboden-2020]; [rappaport-hovav-levin-1998]). -/
+theorem denote_result_from_template (M : CosModel Entity State Time)
+    (v : Verb) (ht : v.root.template.HasResultState) (y x : Entity) (e : Event Time)
+    (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
+  refine M.denote_result_entails_resultState v y x e ?_ h
+  show LexKind.result ∈ v.root.closedKinds
+  exact (Verb.Root.template_hasResultState_iff v.root).mp ht
+
+/-! ### Sublexical *again* — the restitutive/repetitive hierarchy
+    ([beavers-koontz-garboden-2020] §1.3.2, exs (25)–(27))
+
+`again` is a presupposition trigger that can attach at three points in the
+change-of-state structure — the root, `vbecome`, or `vcause` — yielding the three
+readings of *Mary flattened the rug again* in BKG (25): restitutive ("it had been
+flat", a prior **state**), repetitive over the change ("it had flattened", a prior
+**become** event), and repetitive over the causation ("Mary had flattened it", a
+prior **cause** event). BKG (26) (a simplified [von-stechow-1996]) defines
+`⟦again⟧ = λPλe. P(e) ∧ ∂∃e′[e′ ≪ e ∧ P(e′)]`: `P` of the eventuality, plus the
+presupposition (`∂`) of a strictly earlier `P`-eventuality (`e′ ≪ e`). The reading
+hierarchy `(25c) ⊨ (25b) ⊨ (25a)` and the result-root collapse (§2.4, exs
+(43)/(45): a result root's state entails its own change, so even root-scope
+*again* is repetitive) fall out of the change-of-state entailments above. -/
+
+/-- BKG (26): the sublexical modifier *again*. Given a precedence `≪` (`lt`) on an
+    eventuality type `ι` and a predicate `P`, *again* asserts `P e` and presupposes
+    a strictly earlier `e′ ≪ e` with `P e′`. Following BKG we do not analyse the
+    `∂` operator further — the earlier-eventuality conjunct *is* the presupposition
+    (`againPresup`). -/
+def again {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) : Prop :=
+  P e ∧ ∃ e', lt e' e ∧ P e'
+
+/-- The presupposition *again* contributes (BKG (26), the `∂`-marked conjunct):
+    a strictly earlier eventuality also satisfying `P`. -/
+def againPresup {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) : Prop :=
+  ∃ e', lt e' e ∧ P e'
+
+theorem again_iff {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) :
+    again lt P e ↔ P e ∧ againPresup lt P e := Iff.rfl
+
+/-- BKG (27a): *again* attached low, to the root `√V`. The asserted/presupposed
+    predicate is the root **state**, so the presupposition is of a strictly
+    earlier root-state of the patient — the restitutive reading. -/
+def againRestitutive (M : CosModel Entity State Time)
+    (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State) : Prop :=
+  again ltS (M.rootState v x) s
+
+/-- BKG (27b): *again* attached to `vbecomeP`. The predicate is the inchoative
+    **change** event, so the presupposition is of a strictly earlier change —
+    the repetitive-over-change reading. -/
+def againRepetitiveBecome (M : CosModel Entity State Time)
+    (ltE : Event Time → Event Time → Prop) (v : Verb) (x : Entity)
+    (e : Event Time) : Prop :=
+  again ltE (M.inchoative v x) e
+
+/-- BKG (27c): *again* attached high, to `vcauseP`. The predicate is the
+    causative **causing** event, so the presupposition is of a strictly earlier
+    causation — the repetitive-over-causation reading. -/
+def againRepetitiveCause (M : CosModel Entity State Time)
+    (ltE : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
+    (w : Event Time) : Prop :=
+  again ltE (M.causative v y x) w
+
+/-- BKG (25) hierarchy, upper step: the repetitive-causation presupposition (25c,
+    "Mary had flattened it before") entails the repetitive-change presupposition
+    (25b, "it had flattened before") — the earlier causing event *is* an earlier
+    change, by `causative_entails_inchoative`. The `≪`-witness is carried through. -/
+theorem againPresup_cause_entails_become (M : CosModel Entity State Time)
+    (lt : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
+    (w : Event Time) (h : againPresup lt (M.causative v y x) w) :
+    ∃ w', lt w' w ∧ ∃ e, M.inchoative v x e := by
+  obtain ⟨w', hlt, hcaus⟩ := h
+  exact ⟨w', hlt, M.causative_entails_inchoative v y x w' hcaus⟩
+
+/-- BKG (25) hierarchy, lower step: the repetitive-change presupposition (25b,
+    "it had flattened before") entails the restitutive presupposition (25a, "it
+    had been flat before") — the earlier change gives rise to an earlier root
+    state, by `inchoative_entails_resultState`. -/
+theorem againPresup_become_entails_state (M : CosModel Entity State Time)
+    (lt : Event Time → Event Time → Prop) (v : Verb) (x : Entity)
+    (e : Event Time) (h : againPresup lt (M.inchoative v x) e) :
+    ∃ e', lt e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s := by
+  obtain ⟨e', hlt, hinch⟩ := h
+  exact ⟨e', hlt, M.inchoative_entails_resultState v x e' hinch⟩
+
+/-- BKG (25) hierarchy, end to end: the repetitive-causation presupposition (25c)
+    entails the restitutive presupposition (25a) — "Mary had flattened it before"
+    ⊨ "it had been flat before". The two steps composed through the change-of-state
+    decomposition (`causative_entails_resultState`). -/
+theorem againPresup_cause_entails_state (M : CosModel Entity State Time)
+    (lt : Event Time → Event Time → Prop) (v : Verb) (y x : Entity)
+    (w : Event Time) (h : againPresup lt (M.causative v y x) w) :
+    ∃ w', lt w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s := by
+  obtain ⟨w', hlt, hcaus⟩ := h
+  exact ⟨w', hlt, M.causative_entails_resultState v y x w' hcaus⟩
+
+/-- BKG §2.4 (45): for a *result* root the root state itself entails a prior
+    change (`∃ become`), so even the low/restitutive attachment of *again* over
+    the root carries a change entailment — the restitutive reading collapses into
+    the repetitive one ([beavers-koontz-garboden-2020]: "result roots never admit
+    truly restitutive readings"). Formally, the restitutive presupposition (an earlier
+    state) already delivers an earlier change. The premise `hres` is BKG (45a)'s
+    meaning, realized by a root whose `closedKinds` contain `.result` (cf.
+    `denote_result_entails_resultState`). -/
+theorem result_restitution_entails_change (M : CosModel Entity State Time)
+    (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State)
+    (hres : ∀ s, M.rootState v x s → ∃ e, M.become s e)
+    (h : againPresup ltS (M.rootState v x) s) :
+    ∃ s', ltS s' s ∧ ∃ e, M.become s' e := by
+  obtain ⟨s', hlt, hst⟩ := h
+  obtain ⟨e, hbec⟩ := hres s' hst
+  exact ⟨s', hlt, e, hbec⟩
 
 end Verb.CosModel

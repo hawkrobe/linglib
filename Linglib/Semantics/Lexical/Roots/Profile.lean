@@ -30,11 +30,11 @@ namespace Root.Profile
 
     Roots are **regions**, not points: a verb like *tear* is compatible with
     a range of force levels, not a single one. -/
-abbrev Range (α : Type) := Option (List α)
+abbrev Range (α : Type*) := Option (List α)
 
 namespace Range
 
-variable {α : Type}
+variable {α : Type*}
 
 def unconstrained : Range α := none
 
