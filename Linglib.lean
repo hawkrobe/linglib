@@ -2270,6 +2270,7 @@ import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Binominal
+import Linglib.Semantics.Quantification.Lindstrom
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
