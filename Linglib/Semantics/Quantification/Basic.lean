@@ -137,14 +137,14 @@ theorem innerNeg_every_eq_no :
 /-- The dual of `every` is `some`: Q̌(every) = some. -/
 theorem dualQ_every_eq_some :
     (dualQ (every_sem (α := α)) : GQ α) = (some_sem (α := α) : GQ α) := by
-  funext R S; simp only [dualQ, outerNeg, innerNeg, every_sem, some_sem]
+  funext R S; simp only [dualQ, outerNeg_apply, innerNeg, every_sem, some_sem]
   exact propext ⟨fun h => by push_neg at h; exact h,
                  fun ⟨x, hR, hS⟩ h => h x hR hS⟩
 
 /-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
 theorem outerNeg_some_eq_no :
     (outerNeg (some_sem (α := α)) : GQ α) = (no_sem (α := α) : GQ α) := by
-  funext R S; simp only [outerNeg, some_sem, no_sem]
+  funext R S; simp only [outerNeg_apply, some_sem, no_sem]
   exact propext ⟨fun h x hR hS => h ⟨x, hR, hS⟩,
                  fun h ⟨x, hR, hS⟩ => h x hR hS⟩
 
@@ -227,12 +227,21 @@ theorem every_filtrating : Filtrating (every_sem (α := α)) := by
 
 /-! ### Aristotelian square of opposition
 
-The six theorems below establish the four Aristotelian relations among GQ
-denotations `(every_sem, some_sem, no_sem, outerNeg every_sem)` at fixed
-restrictor `R`. They work over `Prop`-valued predicates, while
-`Core.Logic.Aristotelian.Basic` formulates the same relations over
-`Bool`-valued predicates. The two frameworks are mathematically equivalent
-but type-different. -/
+The four Aristotelian relations among GQ denotations `(every_sem, some_sem, no_sem,
+outerNeg every_sem)` at a fixed restrictor `R`, where the corners are elements of the
+Pi-instance Boolean algebra `(α → Prop) → Prop`.
+
+The **contradictory** diagonals are placed on the `Aristotelian` hub by construction:
+since `outerNeg = ᶜ` (`Defs.outerNeg`), every quantifier is `Aristotelian.IsContradictory`
+to its outer negation — `isContradictory_outerNeg`, which is just `isCompl_compl` — and the
+A–O and E–I diagonals are instances. The pointwise `↔`-form theorems
+(`every_contradicts_notEvery`, `no_contradicts_some`) are the unfolded readings.
+
+**Contrariety** and **subalternation** are *not* hub relations: they hold only under
+existential import (non-empty restrictor) and are `|R|`-sensitive — at a singleton `R`,
+`every`/`no` are contradictory, not contrary — so the unconditional `IsContrary`/`IsSubaltern`
+do not apply. They stay as the conditional theorems (`a_e_contrary`, `subalternation_a_i`, …),
+the faithful Aristotelian-vs-Boolean existential-import treatment. -/
 
 /-- Contradiction (A vs O): the A-form and O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : α → Prop) :
@@ -275,21 +284,29 @@ theorem subcontrariety_i_o (R S : α → Prop)
   · right; intro hA; apply h
     obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
 
-/-- The canonical A↔O contradiction diagonal, packaged as
-    `Aristotelian.IsContradictory` over the Pi-instance Boolean algebra
-    on `(α → Prop) → Prop`. -/
+/-- Every quantifier is `Aristotelian.IsContradictory` to its outer negation: the Boolean
+    complement law `isCompl_compl` on the Pi-instance Boolean algebra `(α → Prop) → Prop`
+    (where `outerNeg = ᶜ`). The square's contradictory diagonals are instances — this is the
+    "single home" for the diagonals, by construction rather than re-derivation. -/
+theorem isContradictory_outerNeg (q : GQ α) (R : α → Prop) :
+    Aristotelian.IsContradictory ((q R) : (α → Prop) → Prop) (outerNeg q R) :=
+  isCompl_compl
+
+/-- A–O diagonal: `every` and `not-every` are contradictory. -/
 theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
     Aristotelian.IsContradictory
       ((every_sem (α := α) R) : (α → Prop) → Prop)
-      (outerNeg (every_sem (α := α)) R) := by
-  unfold Aristotelian.IsContradictory
-  rw [isCompl_iff, disjoint_iff, codisjoint_iff]
-  refine ⟨?_, ?_⟩
-  · funext S
-    exact propext ⟨fun ⟨h1, h2⟩ => h2 h1, fun h => h.elim⟩
-  · funext S
-    exact propext ⟨fun _ => trivial, fun _ =>
-      (Classical.em (every_sem (α := α) R S)).elim Or.inl Or.inr⟩
+      (outerNeg (every_sem (α := α)) R) :=
+  isContradictory_outerNeg _ R
+
+/-- E–I diagonal: `no` and `some` are contradictory, since `some = ~no`. -/
+theorem no_satisfies_isContradictory_pointwise (R : α → Prop) :
+    Aristotelian.IsContradictory
+      ((no_sem (α := α) R) : (α → Prop) → Prop)
+      (some_sem (α := α) R) := by
+  have hno : outerNeg (no_sem (α := α)) = some_sem := by
+    rw [← innerNeg_every_eq_no]; exact dualQ_every_eq_some
+  rw [← hno]; exact isContradictory_outerNeg _ R
 
 /-! ### Basic left monotonicities ([peters-westerstahl-2006] §5.5) -/
 

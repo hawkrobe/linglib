@@ -1,6 +1,7 @@
 import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
+import Mathlib.Order.BooleanAlgebra.Basic
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.Truth3
 
@@ -312,10 +313,13 @@ def QuantityInvariant (q : GQ α) : Prop :=
 
 /-! #### Duality (B&C §4.11) -/
 
-/-- Outer negation: `(~Q)(A,B) = ¬Q(A,B)` (B&C §4.11).
+/-- Outer negation: `(~Q)(A,B) = ¬Q(A,B)` (B&C §4.11). This is exactly the Boolean
+    complement on the pointwise Boolean algebra `GQ α`, named for the linguistic
+    duality square (it pairs with the non-Boolean `innerNeg`/`dualQ`).
     Example: ~every = not-every ("Not every student passed"). -/
-def outerNeg (q : GQ α) : GQ α :=
-  fun R S => ¬ q R S
+def outerNeg (q : GQ α) : GQ α := qᶜ
+
+@[simp] theorem outerNeg_apply (q : GQ α) (R S : α → Prop) : outerNeg q R S = ¬ q R S := rfl
 
 /-- Inner negation: `(Q~)(A,B) = Q(A, ¬B)` (B&C §4.11).
     Example: every~ = every...not ("Every student didn't pass"). -/
