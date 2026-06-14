@@ -1,33 +1,25 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Data.UD.Basic
-import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Thematic Roles — type definitions
 
-Neo-Davidsonian thematic roles as two-place predicates relating
-entities to events. This file is the `Defs` partner to `LF.lean`: pure
-type/structure declarations and the Fragment ↔ Theory bridge.
+Neo-Davidsonian thematic roles as two-place predicates relating entities to
+events. The `Defs` partner to `LF.lean`, which builds the thematic axioms,
+Davidsonian logical forms, and adverbial modification on top of these types.
 
 ## Main definitions
 
-* `ThematicRel` — `Entity → Event Time → Prop`, the core neo-Davidsonian
-  relation type
-* `EventRel` — event-first generalization (argument may be proposition,
-  performance, content, etc.; cf. [rudin-2025b] §4.4–4.7)
-* `ThematicFrame` — a model's assignment of role relations
-  (agent / patient / theme / experiencer / goal / source /
-  instrument / stimulus / holder)
-* `ThetaRole.toRel` — Fragment-layer `ThetaRole` enum → `ThematicFrame` field
+* `ThematicRel` — the core relation type `Entity → Event Time → Prop`
+* `EventRel` — event-first generalization to non-entity arguments ([rudin-2025b])
+* `ThematicFrame` — a model's assignment of the role relations
 
 ## References
 
 * [davidson-1967], [parsons-1990] (neo-Davidsonian foundations)
-* [rudin-2025b] (EventRel for non-entity arguments)
+* [rudin-2025b] (`EventRel` for non-entity arguments)
 -/
 
 namespace Semantics.ArgumentStructure
-
 
 /-- A thematic relation: a two-place predicate relating an entity to an event.
     The core neo-Davidsonian type.
@@ -71,19 +63,5 @@ structure ThematicFrame (Entity Time : Type*) [LinearOrder Time] where
   /-- Holder: entity in a state. Distinct from Agent: selects for
       states, not actions. -/
   holder : ThematicRel Entity Time
-
-/-- Map the Fragment-layer ThetaRole enum to the corresponding
-    ThematicFrame field. Bridges lexical annotations to semantic content. -/
-def ThetaRole.toRel {Entity Time : Type*} [LinearOrder Time]
-    (θ : ThetaRole) (frame : ThematicFrame Entity Time) : ThematicRel Entity Time :=
-  match θ with
-  | .agent       => frame.agent
-  | .patient     => frame.patient
-  | .theme       => frame.theme
-  | .experiencer => frame.experiencer
-  | .goal        => frame.goal
-  | .source      => frame.source
-  | .instrument  => frame.instrument
-  | .stimulus    => frame.stimulus
 
 end Semantics.ArgumentStructure
