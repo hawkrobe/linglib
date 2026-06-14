@@ -88,6 +88,12 @@ structure Root where
   outcomes : Option OutcomeCardinality := none
   deriving DecidableEq
 
+/-- `Repr`/`BEq` from the data + `DecidableEq` (the `Finset` field blocks deriving
+    either); needed so `Verb` can carry `root : Option Verb.Root` and still derive
+    `Repr`/`BEq`. -/
+instance : Repr Root := ⟨fun r _ => repr r.name⟩
+instance : BEq Root := ⟨fun a b => decide (a = b)⟩
+
 namespace Root
 
 /-- The derived feature signature of a root: the set of kinds its
