@@ -1,7 +1,7 @@
 import Mathlib.Init
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Modal.Defs
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Choice Functions for Indefinite Determiners
@@ -46,7 +46,7 @@ contextually-given CF is fixed before negation applies, and negation
 binds no situation variable that could shift it.
 -/
 
-namespace Semantics.Quantification.ChoiceFunction
+namespace Quantification.ChoiceFunction
 
 /-! ### Choice Functions -/
 
@@ -298,7 +298,7 @@ diverge on island-escape and pseudo-de-dicto readings. The asymmetry is
 *deliberately exposed*, not collapsed: that visibility is the linglib
 thesis. -/
 
-open Core.Quantification
+open Quantification
 
 /-- Forward bridge: a correct CF, applied to the noun property, witnesses
     the corresponding `some_sem` reading whenever the restrictor is
@@ -350,4 +350,4 @@ theorem correct_cfs_disagree_on_some_sem :
   · show ¬ f₂ (fun _ => True) = true
     simp [f₂]
 
-end Semantics.Quantification.ChoiceFunction
+end Quantification.ChoiceFunction

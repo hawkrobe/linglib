@@ -27,7 +27,7 @@ in the study files that commit to specific values.
 
 set_option autoImplicit false
 
-namespace Semantics.Quantification.Lexicon
+namespace Quantification.Lexicon
 
 inductive QForce where
   | universal
@@ -69,4 +69,4 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
   , features := { number := d.numberRestriction }
   }
 
-end Semantics.Quantification.Lexicon
+end Quantification.Lexicon

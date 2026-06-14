@@ -25,7 +25,7 @@ this pattern.
 - `Semantics.Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
   `Studies/Narrog2010.lean`) is an instance of subjectification.
-- `Semantics.Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
+- `Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
   parallels the subjectification trajectory in the nominal domain
   (binominal steps formalized in `Studies/TenWolde2023.lean`).
 - `Morphology/Grammaticalization.lean`: subjectification is a semantic

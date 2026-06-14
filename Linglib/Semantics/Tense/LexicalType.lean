@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Semantics.Tense.GramTense
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Reference.Nominal
 
 /-!
@@ -89,18 +89,18 @@ theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Ti
   exact pronominalLookup_eq_some_iff g j k t
 
 /-- [sharvit-2014] (30b): quantificational past as the generalized quantifier
-    `some` (`Core.Quantification.some_sem`) over the contextual restrictor `K`,
+    `some` (`Quantification.some_sem`) over the contextual restrictor `K`,
     with scope "precedes `t` and satisfies `p`". Definitionally
     `∃ t' ∈ K, t' < t ∧ p t'`. -/
 def quantificationalPast {Time : Type*} [LT Time]
     (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=
-  Core.Quantification.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
+  Quantification.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
 
 /-- Monotone in the body predicate — inherited from scope-monotonicity of `some`
-    (`Core.Quantification.some_scope_up`), not reproved. -/
+    (`Quantification.some_scope_up`), not reproved. -/
 theorem quantificationalPast_mono {Time : Type*} [LT Time]
     {K : Set Time} {p q : Time → Prop} (h : ∀ t, p t → q t) {t : Time} :
     quantificationalPast K p t → quantificationalPast K q t :=
-  Core.Quantification.some_scope_up _ _ _ fun _ hS => ⟨hS.1, h _ hS.2⟩
+  Quantification.some_scope_up _ _ _ fun _ hS => ⟨hS.1, h _ hS.2⟩
 
 end Tense

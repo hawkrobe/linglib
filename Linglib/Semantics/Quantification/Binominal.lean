@@ -7,7 +7,7 @@ import Linglib.Semantics.Gradability.Intensification
 # Binominal Noun Phrase Semantics
 
 Cross-linguistic semantic composition rules for binominal (N₁-of-N₂)
-constructions, connecting the taxonomy in `Semantics.Quantification.Binominal` to
+constructions, connecting the taxonomy in `Quantification.Binominal` to
 the semantic theories for gradable nouns and quantizing nouns.
 
 ## Evaluative BNP Semantics (Stage 4)
@@ -37,7 +37,7 @@ atomizers, and measure terms — instantiate pseudo-partitive binominals
 in [ten-wolde-2023]'s taxonomy.
 -/
 
-namespace Semantics.Quantification.Binominal
+namespace Quantification.Binominal
 
 open Semantics.Gradability
 open Semantics.Gradability.GradableNouns (GradableNoun)
@@ -313,4 +313,4 @@ theorem ebnp_not_entails_em :
     emSemantics hellEval doctorQuality (Semantics.Degree.thr 3) isDoctorB .sarah = false := by
   constructor <;> native_decide
 
-end Semantics.Quantification.Binominal
+end Quantification.Binominal

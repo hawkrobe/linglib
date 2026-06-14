@@ -25,7 +25,7 @@ Naming follows mathlib idiom: theorems describe what they prove rather
 than the EFCI-literature label, so non-EFCI consumers can find them.
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 variable {D : Type*}
 
@@ -74,4 +74,4 @@ theorem uniqueness_precludes_universality {a b : D} (hab : a ≠ b)
   intro hall
   exact hab ((huniq a (hall a)).trans (huniq b (hall b)).symm)
 
-end Core.Quantification
+end Quantification

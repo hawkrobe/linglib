@@ -38,7 +38,7 @@ namespace Minimalist.FromFragments
 open Minimalist
 open English.Predicates.Verbal (VerbEntry)
 open English.Nouns (NounEntry)
-open Semantics.Quantification.Lexicon (QuantifierEntry)
+open Quantification.Lexicon (QuantifierEntry)
 
 section SelectionalEncoding
 

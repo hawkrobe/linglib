@@ -107,7 +107,7 @@ inductive PossessionRelationType where
 `⟦John's⟧ = fun R P ↦ ∃ y, R possessor y ∧ P y`. Not isomorphism-invariant: it
 depends on the identity of the possessor, not just cardinalities. -/
 def asNPQ {E : Type*} (possessor : E) (R : E → E → Bool) :
-    Core.Quantification.NPQ E :=
+    Quantification.NPQ E :=
   fun P => ∃ y : E, R possessor y = true ∧ P y
 
 end Possessive

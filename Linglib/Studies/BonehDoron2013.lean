@@ -52,7 +52,7 @@ namespace BonehDoron2013
 
 open Core (WorldTimeIndex)
 
-open Semantics.Quantification.CovertQuantifier
+open Quantification.CovertQuantifier
 open Semantics.Genericity.Generics (Situation traditionalGEN)
 open Semantics.Aspect (ViewpointAspectB)
 

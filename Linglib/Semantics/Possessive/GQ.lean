@@ -32,7 +32,7 @@ which keeps narrowing in the scope.
 
 namespace Possessive
 
-open Core.Quantification
+open Quantification
 
 variable {α : Type*}
 

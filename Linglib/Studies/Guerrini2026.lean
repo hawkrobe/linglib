@@ -1839,7 +1839,7 @@ section CompositionalTreeDemo
 
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
-open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp)
+open Quantification.CovertQuantifier (genThreshold dist dpp)
 open Syntax
 
 /-- Demo entity domain: three individual lions plus the lion-kind

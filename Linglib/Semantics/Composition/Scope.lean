@@ -26,7 +26,7 @@ namespace Semantics.Scope
 
 open Core.Logic.Intensional
 open ScopeTheory
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 
 -- Scope Configurations
 

@@ -69,7 +69,7 @@ crossover on the individual skolem index).
   contrast (§3.4).
 -/
 
-open Semantics.Quantification.ChoiceFunction
+open Quantification.ChoiceFunction
 
 namespace Owusu2022
 

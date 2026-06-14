@@ -22,7 +22,7 @@ with no overt realization. This module provides:
 ## Usage
 
 ```
-open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp extendLexicon)
+open Quantification.CovertQuantifier (genThreshold dist dpp extendLexicon)
 
 def myLex : Lexicon E W :=
   extendLexicon baseLex
@@ -31,7 +31,7 @@ def myLex : Lexicon E W :=
 ```
 -/
 
-namespace Semantics.Quantification.CovertQuantifier
+namespace Quantification.CovertQuantifier
 
 variable {D : Type}
 
@@ -220,4 +220,4 @@ def extendLexicon {E W : Type} (base : Lexicon E W)
 
 end Compositional
 
-end Semantics.Quantification.CovertQuantifier
+end Quantification.CovertQuantifier

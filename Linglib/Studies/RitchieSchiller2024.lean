@@ -61,8 +61,8 @@ set_option autoImplicit false
 
 namespace RitchieSchiller2024
 
-open Semantics.Quantification.Quantifier (every_sem some_sem)
-open Semantics.Quantification.DomainRestriction
+open Quantification.Quantifier (every_sem some_sem)
+open Quantification.DomainRestriction
 
 -- ============================================================================
 -- §1. Domain Types

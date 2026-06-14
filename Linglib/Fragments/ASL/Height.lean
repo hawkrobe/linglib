@@ -104,7 +104,7 @@ instance : OrderBot VerticalHeight where
     The nesting theorems `DDRP.every_nesting`, `DDRP.some_nesting`, and
     `DDRP.no_nesting` apply automatically. -/
 abbrev HeightDDRP (E : Type*) :=
-  Semantics.Quantification.DomainRestriction.DDRP VerticalHeight E
+  Quantification.DomainRestriction.DDRP VerticalHeight E
 
 /-- Construct a height-indexed DDRP from a height assignment function.
 

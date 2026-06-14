@@ -35,7 +35,7 @@ The Aristotelian (sortal-restricted) variant where the full Square holds is
 the natural follow-up in `Aristotelian.lean` (TODO).
 -/
 
-namespace Semantics.Quantification.Syllogistic
+namespace Quantification.Syllogistic
 
 open Aristotelian (AristotelianRel Diagram IsContradictory isContradictory_iff_forall)
 
@@ -135,4 +135,4 @@ noncomputable def aieoSquare (X Y : Region → Bool) : Diagram Corner (VennState
     -- Contrary / Subcontrary / Subaltern cases: cornerRel never labels them, so vacuous
     all_goals (intro h; cases i <;> cases j <;> simp [cornerRel] at h)
 
-end Semantics.Quantification.Syllogistic
+end Quantification.Syllogistic

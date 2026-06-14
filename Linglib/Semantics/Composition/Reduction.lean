@@ -1,6 +1,6 @@
 import Linglib.Semantics.Composition.Model
 import Linglib.Core.Logic.FirstOrder.Binders
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 import Mathlib.ModelTheory.Semantics
 import Mathlib.ModelTheory.Satisfiability
 import Mathlib.Tactic.FinCases
@@ -42,7 +42,7 @@ namespace Semantics.Composition
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
 open Core.Logic.Intensional
-open Core.Quantification (every_sem some_sem no_sem)
+open Quantification (every_sem some_sem no_sem)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)
@@ -62,7 +62,7 @@ structure FOWords where
   or_ : String := "or"
 
 /-- The logical vocabulary's lexicon entries: GQ denotations from
-`Core.Quantification`, truth-functional connectives from
+`Quantification`, truth-functional connectives from
 `Core.Logic.Intensional`. The connectives flip arguments so that
 `[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
 def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s =>
@@ -500,7 +500,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
           (FOWords.lexicon_every m.E m.W)) hN hbind]
       refine some_t_congr ?_
       rw [m.realizeAt_all₁ w g]
-      simp only [Core.Quantification.every_sem, m.realizeAt_imp]
+      simp only [Quantification.every_sem, m.realizeAt_imp]
       exact forall_congr' fun x =>
         imp_congr (hrestr x).symm (by rw [hquant x])
     · rw [if_neg hq1] at hq
@@ -514,7 +514,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
             (FOWords.lexicon_some m.E m.W hnd)) hN hbind]
         refine some_t_congr ?_
         rw [m.realizeAt_ex₁ w g]
-        simp only [Core.Quantification.some_sem, m.realizeAt_inf]
+        simp only [Quantification.some_sem, m.realizeAt_inf]
         exact exists_congr fun x =>
           and_congr (hrestr x).symm (by rw [hquant x])
       · rw [if_neg hq2] at hq
@@ -528,7 +528,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
               (FOWords.lexicon_no m.E m.W hnd)) hN hbind]
           refine some_t_congr ?_
           rw [m.realizeAt_all₁ w g]
-          simp only [Core.Quantification.no_sem, m.realizeAt_imp,
+          simp only [Quantification.no_sem, m.realizeAt_imp,
             m.realizeAt_not]
           exact forall_congr' fun x =>
             imp_congr (hrestr x).symm (by rw [hquant x])

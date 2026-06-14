@@ -57,7 +57,7 @@ open Core.Logic.Intensional.Variables
 open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 /-! ### Model and lexicon -/

@@ -30,7 +30,7 @@ elsewhere:
 
 namespace English.Determiners
 
-export Semantics.Quantification.Lexicon
+export Quantification.Lexicon
   (QForce Monotonicity Strength QuantifierEntry)
 
 def none_ : QuantifierEntry :=
@@ -160,7 +160,7 @@ def an : QuantifierEntry :=
 /-- "both" - universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both.
     Compositional denotation `both_sem` lives in
-    `Semantics.Quantification.Quantifier`.
+    `Quantification.Quantifier`.
 
     `numberRestriction := some .Dual` carries the dual core concept
     ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause
@@ -178,7 +178,7 @@ def both : QuantifierEntry :=
 /-- "neither" - negative dual, presupposes exactly 2.
     K&S (83b): [_Det (not one) of the two] ⇒ neither.
     Compositional denotation `neither_sem` lives in
-    `Semantics.Quantification.Quantifier`. -/
+    `Quantification.Quantifier`. -/
 def neither : QuantifierEntry :=
   { form := "neither"
   , qforce := .negative
@@ -224,10 +224,10 @@ def QuantityWord.toList : List QuantityWord :=
 
 /-- Canonical model-theoretic generalized-quantifier denotation
     (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
-    `Semantics.Quantification.Quantifier`. -/
+    `Quantification.Quantifier`. -/
 noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
-    {α : Type*} [Fintype α] : Core.Quantification.GQ α :=
-  open Semantics.Quantification.Quantifier in
+    {α : Type*} [Fintype α] : Quantification.GQ α :=
+  open Quantification.Quantifier in
   match q with
   | .none_ => no_sem
   | .some_ => some_sem

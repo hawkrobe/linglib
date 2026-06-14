@@ -14,12 +14,12 @@ the empty region {¬A, ¬B, ¬C} is excluded since it does not affect quantifier
 truth conditions.
 
 Used by:
-- `Semantics.Quantification.Syllogistic.Basic` for the semantics
+- `Quantification.Syllogistic.Basic` for the semantics
 - `TesslerTenenbaumGoodman2022` and any
   future Bayesian/RSA/mental-models paper formalisation
 -/
 
-namespace Semantics.Quantification.Syllogistic
+namespace Quantification.Syllogistic
 
 /-! ### Aristotelian Quantifiers (A/I/O/E square) -/
 
@@ -99,4 +99,4 @@ def Conclusion.short : Conclusion → String
   | .noAC => "Eac" | .noCA => "Eca"
   | .nvc => "NVC"
 
-end Semantics.Quantification.Syllogistic
+end Quantification.Syllogistic

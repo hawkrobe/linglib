@@ -256,7 +256,7 @@ theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
 -- § Plain Indefinites (Choice Function Semantics)
 -- ════════════════════════════════════════════════════
 
-open Semantics.Quantification.ChoiceFunction (IndefType SkolemCF)
+open Quantification.ChoiceFunction (IndefType SkolemCF)
 
 /-- Farsi plain indefinite entry, extending `IndefiniteDeterminer` with
     choice-function properties relevant to [mirrazi-2024]. -/

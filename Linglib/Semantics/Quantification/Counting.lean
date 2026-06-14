@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.NormNum
@@ -24,7 +24,7 @@ and the bridge to model-agnostic `QuantityInvariant`.
 * `Proportional` — truth-value depends only on the ratio |A∩B|/|A\B|.
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 /-- Count of elements satisfying a predicate, via `Finset.univ.filter`. -/
 def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
@@ -585,4 +585,4 @@ theorem half_proportional : Proportional (half_sem (α := α)) := by
   rw [count_decompose R₁ S₁, count_decompose R₂ S₂]
   exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
 
-end Core.Quantification
+end Quantification
