@@ -684,4 +684,127 @@ theorem half_proportional : Proportional ⟦half⟧ := by
   rw [count_decompose R₁ S₁, count_decompose R₂ S₂]
   exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
 
+/-! ### Proportional ⇒ not intersective / not monotone (witnessed counterexamples)
+
+The proportional determiners `most`, `few`, `half` are *not* intersective:
+they fail the `Existential` property (felicity in there-sentences), even though
+B&C's Table II labels `few`/`half` "weak". `Existential q` (`q R S ↔ q (R∩S) ⊤`)
+is false for them because the truth value depends on `|R∖S|`, not just on `|R∩S|`.
+Refuting it needs a domain with `|α| ≥ 3` (over `Fin 1`/`Fin 2` `most` is vacuously
+`Existential`), so the witnessed statements pin `α := Fin 3`. `half` is moreover
+non-monotone in scope (goes true→false as the scope grows), and `most` is not
+symmetric. -/
+
+/-- `count` is independent of the chosen `DecidablePred` instance: any instance
+    equals the canonical synthesized one. Lets the classical-`DecidablePred`
+    `count` frozen into the counting denotations be evaluated by `decide`. -/
+theorem count_eq_decidable (P : α → Prop) (inst' : DecidablePred P)
+    [DecidablePred P] :
+    @count α _ P inst' = count P := by
+  unfold count; congr 1; apply Finset.filter_congr_decidable
+
+/-- `most` is proportional, not intersective: it fails `Existential`. Witness over
+    `Fin 3`: `R = ⊤`, `S = {0}` gives `|R∩S| = 1`, `|R∖S| = 2`, so `most R S` is
+    false (`1 > 2` fails) while `most (R∩S) ⊤` is true (`|R∩S| = 1 > 0`). -/
+theorem not_existential_most_sem : ¬ Existential (most_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun _ => True) (fun x => x = 0)
+  simp only [most_sem, true_and, not_true, and_false, and_true] at key
+  rw [count_eq_decidable (fun x : Fin 3 => x = 0),
+      count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
+      count_eq_decidable (fun _ : Fin 3 => False)] at key
+  simp only [count] at key
+  revert key; decide
+
+/-- `few` is proportional, not intersective: it fails `Existential`, despite B&C's
+    "weak" label. Witness over `Fin 3`: `R = ⊤`, `S = {0}` gives `|R∩S| = 1 <
+    |R∖S| = 2`, so `few R S` is true while `few (R∩S) ⊤` is false
+    (`|R∩S| < |∅| = 0` is impossible). -/
+theorem not_existential_few_sem : ¬ Existential (few_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun _ => True) (fun x => x = 0)
+  simp only [few_sem, true_and, not_true, and_false, and_true] at key
+  rw [count_eq_decidable (fun x : Fin 3 => x = 0),
+      count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
+      count_eq_decidable (fun _ : Fin 3 => False)] at key
+  simp only [count] at key
+  revert key; decide
+
+/-- `half` is proportional, not intersective: it fails `Existential`, despite B&C's
+    "weak" label. Witness over `Fin 3`: `R = {0,1}`, `S = {0}` gives `half R S`
+    true (`2·|R∩S| = 2 = |R|`) while `half (R∩S) ⊤` requires `|R∩S| = 0`, false. -/
+theorem not_existential_half_sem : ¬ Existential (half_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun x => x = 0 ∨ x = 1) (fun x => x = 0)
+  simp only [half_sem, and_true,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
+    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
+  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
+    simp only [count]; decide
+  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by
+    simp only [count]; decide
+  rw [v1, v2] at key; revert key; decide
+
+/-- `half` is not scope-upward-monotone. Witness over `Fin 3`: `R = {0,1}`,
+    `S = {0} ⊆ S' = {0,1}`; `half R S` is true (`2·1 = 2 = |R|`) but `half R S'`
+    is false (`2·2 = 4 ≠ 2`) — growing the scope flips it true→false. -/
+theorem half_not_scopeUp : ¬ ScopeUpwardMono (half_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun x => x = 0 ∨ x = 1) (fun x => x = 0) (fun x => x = 0 ∨ x = 1)
+    (fun _ hx => Or.inl hx)
+  simp only [half_sem,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) _,
+    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
+  have v0 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
+    simp only [count]; decide
+  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) = 2 := by
+    simp only [count]; decide
+  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count]; decide
+  rw [v0, v1, v2] at key; revert key; decide
+
+/-- `half` is not scope-downward-monotone. Witness over `Fin 3`: `R = {0,1}`,
+    `S = ∅ ⊆ S' = {0}`; `half R S'` is true (`2·1 = 2 = |R|`) but `half R S` is
+    false (`2·0 = 0 ≠ 2`) — shrinking the scope flips it true→false. -/
+theorem half_not_scopeDown : ¬ ScopeDownwardMono (half_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun x => x = 0 ∨ x = 1) (fun _ => False) (fun x => x = 0)
+    (fun _ hx => absurd hx id)
+  simp only [half_sem, and_false,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
+    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
+  have v0 : (count fun _ : Fin 3 => False) = 0 := by simp only [count]; decide
+  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
+    simp only [count]; decide
+  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count]; decide
+  rw [v0, v1, v2] at key; revert key; decide
+
+/-- `half` is non-monotone in scope: neither scope-upward nor scope-downward
+    monotone ([van-de-pol-etal-2023]). -/
+theorem half_not_monotone :
+    ¬ ScopeUpwardMono (half_sem : GQ (Fin 3)) ∧
+    ¬ ScopeDownwardMono (half_sem : GQ (Fin 3)) :=
+  ⟨half_not_scopeUp, half_not_scopeDown⟩
+
+/-- `most` is not symmetric: `most R S ↔ most S R` fails. Witness over `Fin 3`:
+    `R = {0}`, `S = {0,1}`; `most R S` is true (`|R∩S| = 1 > |R∖S| = 0`) but
+    `most S R` is false (`|S∩R| = 1 > |S∖R| = 1` fails). -/
+theorem not_qsymmetric_most_sem : ¬ QSymmetric (most_sem : GQ (Fin 3)) := by
+  intro h
+  have key := h (fun x => x = 0) (fun x => x = 0 ∨ x = 1)
+  simp only [most_sem,
+    count_eq_decidable (fun x : Fin 3 => x = 0 ∧ (x = 0 ∨ x = 1)) _,
+    count_eq_decidable (fun x : Fin 3 => x = 0 ∧ ¬ (x = 0 ∨ x = 1)) _,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
+    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) _] at key
+  have v0 : (count fun x : Fin 3 => x = 0 ∧ (x = 0 ∨ x = 1)) = 1 := by
+    simp only [count]; decide
+  have v1 : (count fun x : Fin 3 => x = 0 ∧ ¬ (x = 0 ∨ x = 1)) = 0 := by
+    simp only [count]; decide
+  have v2 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
+    simp only [count]; decide
+  have v3 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) = 1 := by
+    simp only [count]; decide
+  rw [v0, v1, v2, v3] at key; revert key; decide
+
 end Quantification

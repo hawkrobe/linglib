@@ -1,5 +1,6 @@
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
+import Linglib.Features.Number.Basic
 
 /-!
 # Determiner
@@ -102,9 +103,19 @@ structure DemonstrativeDeterminer extends Determiner where
     shared word-class-neutrally with `DemonstrativePronoun`. -/
 instance : Demonstrative DemonstrativeDeterminer := ⟨DemonstrativeDeterminer.deictic⟩
 
-/-- A quantificational determiner (every/some/most/no). Its denotation is a
-generalized quantifier (`Semantics/Quantification`); deferred. -/
-structure Quantifier extends Determiner
+/-- A quantificational determiner (every/some/most/no), marked like a `Pronoun`: a
+decidable lexical record carrying only what the *meaning leaves open* — the morphosyntactic
+idiosyncrasies on which synonymous determiners diverge. Its denotation is a generalized
+quantifier (`Semantics/Quantification`) supplied *externally* (the entry carries no `GQ`,
+exactly as `Pronoun` carries no referent); everything the meaning *fixes* — force, class,
+monotonicity, strength, conservativity — is a theorem about that denotation, not a field. -/
+structure Quantifier extends Determiner where
+  /-- Selectional number: the grammatical number the determiner combines with
+      (*every* → singular, *all*/*most* → plural; `none` = number-neutral). Not fixed by the
+      GQ — *every* and *all* can share a denotation yet differ here. -/
+  numberRestriction : Option Number := none
+  /-- Selects mass NPs? (*much*/*all* do; *every*/*both* don't.) Likewise not fixed by the GQ. -/
+  selectsMass : Bool := false
   deriving DecidableEq, Repr
 
 /-- A possessive determiner (my/your/the boy's). Its denotation is definiteness

@@ -108,7 +108,7 @@ theorem the_is_every_on_singletons {α : Type*}
 -- §4: Bridge to Fragments/English/Determiners.lean
 -- ============================================================================
 
-open English.Determiners (QForce QuantifierEntry)
+open English.Determiners (QForce)
 
 /-- English "the" is `QForce.definite` — its denotation is given by
 composing `presupOfReferent` with `russellIotaList domain restrictor`
