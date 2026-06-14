@@ -1,6 +1,7 @@
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Verb denotation — what a verb *does*
@@ -128,8 +129,8 @@ theorem causative_entails_resultState (M : CosModel Entity State Time)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     Event Time → Prop :=
-  if LexKind.cause ∈ (v.kinds).getD ∅ then M.causative v y x
-  else if LexKind.result ∈ (v.kinds).getD ∅ then M.inchoative v x
+  if LexKind.cause ∈ (v.closedKinds).getD ∅ then M.causative v y x
+  else if LexKind.result ∈ (v.closedKinds).getD ∅ then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -140,13 +141,28 @@ def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     (v : Verb) (y x : Entity) (e : Event Time)
-    (hres : LexKind.result ∈ (v.kinds).getD ∅)
+    (hres : LexKind.result ∈ (v.closedKinds).getD ∅)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ (v.kinds).getD ∅
+  by_cases hc : LexKind.cause ∈ (v.closedKinds).getD ∅
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h
     exact ⟨e, M.inchoative_entails_resultState v x e h⟩
+
+/-- The denotational result entailment **is** the template diagnostic: a verb
+    whose root's `EventStructure.Template` embeds a result state has a denotation
+    entailing that result state — `denote_result_entails_resultState` and
+    `Template.HasResultState` are one fact, through the closed kind signature
+    ([beavers-koontz-garboden-2020]; [rappaport-hovav-levin-1998]). -/
+theorem denote_result_from_template (M : CosModel Entity State Time)
+    (v : Verb) (r : Verb.Root) (hroot : v.root = some r)
+    (ht : r.template.HasResultState) (y x : Entity) (e : Event Time)
+    (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
+  refine M.denote_result_entails_resultState v y x e ?_ h
+  have heq : (v.closedKinds).getD ∅ = r.closedKinds := by
+    simp [Verb.closedKinds, hroot]
+  rw [heq]
+  exact (Verb.Root.template_hasResultState_iff r).mp ht
 
 end Verb.CosModel

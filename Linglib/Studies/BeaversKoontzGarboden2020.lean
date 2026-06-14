@@ -227,4 +227,13 @@ theorem crack_template_hasResultState : crack.template.HasResultState := by deci
 
 theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
 
+/-- √crack's template embeds a result state, so by `denote_result_from_template`
+    its denotation entails the result state in any model — the template diagnostic
+    and the denotational entailment are *one* fact through `crack`'s `kinds`. -/
+theorem crack_template_forces_denote_result {Entity State Time : Type*}
+    [LinearOrder Time] (M : Verb.CosModel Entity State Time) (y x : Entity)
+    (e : Event Time) (h : M.denote crackV y x e) :
+    ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
+  M.denote_result_from_template crackV crack rfl crack_template_hasResultState y x e h
+
 end BeaversKoontzGarboden2020

@@ -1,4 +1,5 @@
 import Linglib.Semantics.Verb.Defs
+import Linglib.Semantics.Lexical.Roots.Closure
 
 /-! # Verb entry — derived API
 
@@ -43,6 +44,11 @@ def Verb.rootProfile (v : Verb) : Option Verb.Root.Profile :=
     coarser class-derived view is `Verb.classKinds` (`Verb/RootContent.lean`). -/
 def Verb.kinds (v : Verb) : Option Verb.Root.Kinds :=
   v.root.map (·.kinds)
+
+/-- The verb's collocationally-closed kind signature (`cause ⟹ result ⟹ state`).
+    The event-structure spine runs on this — it aligns with `Verb.Root.template`. -/
+def Verb.closedKinds (v : Verb) : Option Verb.Root.Kinds :=
+  v.root.map (·.closedKinds)
 
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile
