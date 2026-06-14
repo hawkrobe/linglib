@@ -160,6 +160,45 @@ structure RootClassification where
 /-- Does this root lexically entail prior change? -/
 def RootClassification.entailsChange (r : RootClassification) : Bool := r.changeType.entailsChange
 
+/-! ### Root change type, and its blindness to the outcome axis
+
+`RootType` is a *projection* of a root's entailment signature, derived not
+stored — `Root.changeType` is the derived analog of the stored
+`RootClassification.changeType`. Crucially it is blind to the [bhadra-2024]
+outcome axis (`Root.outcomes`, the orthogonal dimension `Root` now carries): two
+roots with the same entailments share a `changeType` whatever their outcomes —
+which is precisely why outcome cardinality is a genuinely independent dimension
+of root content, the one that drives reversative *un-* where the manner/result
+typology cannot. -/
+
+/-- The change-entailment type of a root, derived from its feature signature:
+    a root entails change iff its signature carries `result` ([beavers-etal-2021]).
+    The derived analog of `RootClassification.changeType`. -/
+def Root.changeType (r : _root_.Root) : RootType :=
+  if LexKind.result ∈ r.featureSignature then .result else .propertyConcept
+
+theorem Root.changeType_eq_result_iff (r : _root_.Root) :
+    r.changeType = .result ↔ r.HasResult := by
+  unfold Root.changeType _root_.Root.HasResult
+  by_cases h : LexKind.result ∈ r.featureSignature <;> simp [h]
+
+/-- `changeType` is blind to outcomes: same entailments ⇒ same `changeType`,
+    whatever the `outcomes`. The formal statement of why [bhadra-2024]'s outcome
+    cardinality is an independent axis the manner/result signature cannot see. -/
+theorem Root.changeType_ignores_outcomes {r r' : _root_.Root}
+    (h : r.entailments = r'.entailments) : r.changeType = r'.changeType := by
+  have hsig : r.featureSignature = r'.featureSignature := by
+    unfold _root_.Root.featureSignature; rw [h]
+  unfold Root.changeType; rw [hsig]
+
+/-- A *bend*-like and a *break*-like root with the same entailments but different
+    outcome cardinality share a `changeType` — only the outcome axis tells them
+    apart ([bhadra-2024]). -/
+example :
+    (Root.mk "x" {.becomesState "s", .hasCause} (some .multi)).changeType
+      = (Root.mk "x" {.becomesState "s", .hasCause} (some .singleton)).changeType :=
+  Root.changeType_ignores_outcomes rfl
+
 /-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021] ex. 5).
 
     [dixon-1982] identifies seven semantic categories. [beavers-etal-2021]

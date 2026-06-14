@@ -2366,6 +2366,7 @@ import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Typology
 import Linglib.Semantics.Lexical.Roots.Closure
 import Linglib.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Lexical.Roots.OutcomeCardinality
 import Linglib.Semantics.Lexical.Roots.Outcomes
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TheorySpace
