@@ -1,6 +1,8 @@
 import Linglib.Semantics.Quantification.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Finset.Card
+import Mathlib.Logic.Equiv.Basic
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -372,9 +374,11 @@ theorem at_most_n_coSmooth (n : Nat) :
 
 /-! ### Quantity / isomorphism closure ([mostowski-1957])
 
-Cardinality-based, `Fintype`-gated. Bridges to the model-agnostic
-`QuantityInvariant` (in `Defs.lean`) are sorry'd pending a Prop-predicate
-adaptation of the cell-bijection machinery. -/
+Cardinality-based, `Fintype`-gated. `quantityInvariant_of_quantity` and
+`quantity_of_quantityInvariant` bridge to the model-agnostic
+`QuantityInvariant` (in `Defs.lean`): the four Venn cells are the fibers of
+the `Bool × Bool` code `x ↦ (decide (R x), decide (S x))`, and equal cell
+cardinalities glue (`Equiv.ofFiberEquiv`) into a domain bijection. -/
 
 /-- Quantity / isomorphism closure: `Q(A, B)` depends only on the four
     cardinalities `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`.
@@ -393,21 +397,104 @@ def Quantity (q : GQ α) : Prop :=
     (q R₁ S₁ ↔ q R₂ S₂)
 
 /-- `Quantity → QuantityInvariant`: cardinality-dependence implies
-    bijection-invariance.
-    TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
+    bijection-invariance. Each cell count of `(A', B')` equals the
+    corresponding cell count of `(A, B)`: the bijection `f` maps the
+    `(A', B')`-cell into the `(A, B)`-cell (membership transported by the
+    `A ∘ f ↔ A'`, `B ∘ f ↔ B'` hypotheses), so the filters have equal card. -/
 theorem quantityInvariant_of_quantity (q : GQ α) (hQ : Quantity q) :
     QuantityInvariant q := by
-  sorry
+  classical
+  intro A B A' B' f hBij hA hB
+  -- For each cell predicate `P`, `count (P A B) = count (P A' B')`. The
+  -- bijection `f` maps the `(A', B')`-cell into the `(A, B)`-cell (membership
+  -- transported by `hA`/`hB`), so the two filters have equal cardinality.
+  have key : ∀ (P Q : α → Prop) [DecidablePred P] [DecidablePred Q],
+      (∀ x, Q x ↔ P (f x)) → count P = count Q := by
+    intro P Q _ _ hPQ
+    refine (Finset.card_bij (fun x _ => f x) ?_ ?_ ?_).symm
+    · intro x hx
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+      exact (hPQ x).mp hx
+    · intro x₁ _ x₂ _ h; exact hBij.injective h
+    · intro y hy
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy
+      obtain ⟨x, rfl⟩ := hBij.surjective y
+      refine ⟨x, ?_, rfl⟩
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      exact (hPQ x).mpr hy
+  refine hQ A B A' B' ?_ ?_ ?_ ?_
+  · exact key _ _ (fun x => by rw [hA x, hB x])
+  · exact key _ _ (fun x => by rw [hA x, hB x])
+  · exact key _ _ (fun x => by rw [hA x, hB x])
+  · exact key _ _ (fun x => by rw [hA x, hB x])
 
 variable [DecidableEq α]
 
+/-- The four Venn cells of `(R, S)` as the fibers of the `Bool × Bool` code
+    `x ↦ (decide (R x), decide (S x))`. The fiber over `(true, true)` is
+    `R ∩ S`, over `(true, false)` is `R ∖ S`, etc. -/
+private def cellCode (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
+    α → Bool × Bool :=
+  fun x => (decide (R x), decide (S x))
+
+/-- Each cell count is the `Fintype.card` of the corresponding `cellCode`
+    fiber. The `b₁`/`b₂` flags select which of the four cells. -/
+private theorem card_cellCode_fiber (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] (b₁ b₂ : Bool) :
+    Fintype.card { x // cellCode R S x = (b₁, b₂) } =
+      count (fun x => (if b₁ then R x else ¬ R x) ∧
+                      (if b₂ then S x else ¬ S x)) := by
+  rw [Fintype.card_subtype]
+  simp only [count, cellCode, Prod.mk.injEq]
+  congr 1
+  ext x
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  cases b₁ <;> cases b₂ <;> simp [decide_eq_true_eq]
+
 /-- `QuantityInvariant → Quantity`: bijection-invariance implies
-    cardinality-dependence.
-    TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
+    cardinality-dependence. Equal cell cardinalities give, cell by cell, an
+    equivalence of `cellCode` fibers (`Fintype.equivOfCardEq`); gluing the four
+    over the partition of `α` (`Equiv.ofFiberEquiv`) yields a bijection `f`
+    with `R₁ ∘ f ↔ R₂` and `S₁ ∘ f ↔ S₂`, to which `hQ` applies. -/
 theorem quantity_of_quantityInvariant (q : GQ α)
     (hQ : QuantityInvariant q) :
     Quantity q := by
-  sorry
+  classical
+  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  -- Cell-by-cell equality of `cellCode` fiber cardinalities.
+  have hCard : ∀ c : Bool × Bool,
+      Fintype.card { x // cellCode R₂ S₂ x = c } =
+        Fintype.card { x // cellCode R₁ S₁ x = c } := by
+    rintro ⟨b₁, b₂⟩
+    rw [card_cellCode_fiber R₂ S₂ b₁ b₂, card_cellCode_fiber R₁ S₁ b₁ b₂]
+    cases b₁ <;> cases b₂
+    · -- (false, false): ¬R ∧ ¬S
+      exact hFF.symm
+    · -- (false, true): ¬R ∧ S
+      exact hFT.symm
+    · -- (true, false): R ∧ ¬S
+      exact hTF.symm
+    · -- (true, true): R ∧ S
+      exact hTT.symm
+  -- Per-fiber equivalence, glued into a global bijection of `α`.
+  let e : ∀ c, { x // cellCode R₂ S₂ x = c } ≃ { x // cellCode R₁ S₁ x = c } :=
+    fun c => Fintype.equivOfCardEq (hCard c)
+  let f : α ≃ α := Equiv.ofFiberEquiv e
+  -- `f` preserves the code: `cellCode R₁ S₁ (f x) = cellCode R₂ S₂ x`.
+  have hf : ∀ x, cellCode R₁ S₁ (f x) = cellCode R₂ S₂ x :=
+    fun x => Equiv.ofFiberEquiv_map e x
+  -- Reading off the two components of the code gives the iff hypotheses.
+  have hR : ∀ x, R₁ (f x) ↔ R₂ x := by
+    intro x
+    have := congrArg Prod.fst (hf x)
+    simp only [cellCode, decide_eq_decide] at this
+    exact this
+  have hS : ∀ x, S₁ (f x) ↔ S₂ x := by
+    intro x
+    have := congrArg Prod.snd (hf x)
+    simp only [cellCode, decide_eq_decide] at this
+    exact this
+  exact hQ R₁ S₁ R₂ S₂ f f.bijective hR hS
 
 /-! ### Quantity closure -/
 
@@ -457,8 +544,8 @@ private theorem every_quantityInvariant :
   exact forall_congr' fun x => by
     rw [show A (f x) ↔ A' x from hA x, show B (f x) ↔ B' x from hB x]
 
-theorem every_quantity : Quantity (every_sem (α := α)) := by
-  sorry -- Requires quantity_of_quantityInvariant which itself is sorry'd
+theorem every_quantity : Quantity (every_sem (α := α)) :=
+  quantity_of_quantityInvariant _ every_quantityInvariant
 
 theorem most_quantity : Quantity (most_sem (α := α)) := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _

@@ -125,21 +125,21 @@ def isDoctorB (p : GradableNouns.Person) : Bool := decide (isDoctor p)
 /-- George is "that idiot of a doctor": he is a doctor (true) and
     his idiocy degree (8) exceeds the standard (3). -/
 theorem george_is_idiot_doctor :
-    ebnpSemantics exampleIdiot isDoctorB .george = true := by native_decide
+    ebnpSemantics exampleIdiot isDoctorB .george = true := by decide
 
 /-- Sarah is also "an idiot of a doctor": doctor (true), idiocy 4 ≥ 3. -/
 theorem sarah_is_idiot_doctor :
-    ebnpSemantics exampleIdiot isDoctorB .sarah = true := by native_decide
+    ebnpSemantics exampleIdiot isDoctorB .sarah = true := by decide
 
 /-- Floyd is not "an idiot of a doctor": he is not a doctor. -/
 theorem floyd_not_idiot_doctor :
-    ebnpSemantics exampleIdiot isDoctorB .floyd = false := by native_decide
+    ebnpSemantics exampleIdiot isDoctorB .floyd = false := by decide
 
 /-- George would be an idiot even if he weren't a doctor — the
     gradable noun threshold is independent of the N₂ restriction.
     This confirms that ebnpSemantics is genuinely conjunctive. -/
 theorem george_idiot_independent :
-    exampleIdiot.pos .george = true := by native_decide
+    exampleIdiot.pos .george = true := by decide
 
 /-! ### : Evaluative Modifier (EM) Semantics -/
 
@@ -262,32 +262,50 @@ def hellEval : EvaluativeMeasure 10 := muHorrible 10
 μ_hell(9) = |9−5| = 4 > 3 = θ_eval ✓. -/
 theorem george_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .george = true := by
-  native_decide
+  simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
+             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat]
+  norm_num
 
 /-- Sarah is not "a hell of a doctor": quality (6) yields
 μ_hell(6) = |6−5| = 1, not > 3. -/
 theorem sarah_not_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .sarah = false := by
-  native_decide
+  simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
+             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat]
+  norm_num
 
 /-- George is "a hell of a good doctor": good(9 > 5) ✓ AND
 μ_hell(9) = 4 > 3 ✓. BI compounds both thresholds. -/
 theorem george_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .george = true := by
-  native_decide
+  simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
+             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Semantics.Degree.positiveMeaning,
+             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat,
+             Bool.and_eq_true, decide_eq_true_eq]
+  refine ⟨trivial, ?_, ?_⟩
+  · decide
+  · norm_num
 
 /-- Sarah is not "a hell of a good doctor": good(6 > 5) ✓ but
 μ_hell(6) = 1, not > 3. She's good, but not hell-level good. -/
 theorem sarah_not_hell_of_good_doctor :
     biSemantics hellEval doctorQuality (thr 5) (thr 3) isDoctorB .sarah = false := by
-  native_decide
+  simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
+             Semantics.Gradability.Intensification.intensifiedMeaning,
+             Semantics.Degree.positiveMeaning,
+             Semantics.Degree.Degree.toNat, Semantics.Degree.Threshold.toNat,
+             Bool.and_eq_false_iff, decide_eq_false_iff_not]
+  right
+  push Not
+  norm_num
 
 /-- BI → EM entailment holds in the worked example:
 George's BI truth entails his EM truth (by `bi_entails_em`). -/
 theorem george_bi_entails_em :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .george = true :=
   bi_entails_em hellEval doctorQuality (thr 5) (thr 3) isDoctorB .george
-    (by native_decide)
+    george_hell_of_good_doctor
 
 end EMBIExample
 
@@ -310,7 +328,7 @@ The worked example witnesses both directions of independence:
     idiot-doctor) but fails `emSemantics` (she is not a hell-of-a-doctor). -/
 theorem ebnp_not_entails_em :
     ebnpSemantics exampleIdiot isDoctorB .sarah = true ∧
-    emSemantics hellEval doctorQuality (Semantics.Degree.thr 3) isDoctorB .sarah = false := by
-  constructor <;> native_decide
+    emSemantics hellEval doctorQuality (Semantics.Degree.thr 3) isDoctorB .sarah = false :=
+  ⟨by decide, sarah_not_hell_of_doctor⟩
 
 end Quantification.Binominal
