@@ -17,9 +17,9 @@ a restrictor and a scope to a proposition. The properties defined here
 are purely logical — they hold at the predicate level and require
 no model infrastructure. Decidability is recovered pointwise via
 `[Fintype α] + [DecidablePred R] + [DecidablePred S]` for the concrete
-denotations defined in `Semantics.Quantification.Quantifier`.
+denotations defined in `Quantification.Quantifier`.
 
-The theory-specific module `Semantics.Quantification.Quantifier` defines
+The theory-specific module `Quantification.Quantifier` defines
 concrete denotations (`every_sem`, `some_sem`, etc.) and proves they satisfy
 these properties.
 
@@ -30,7 +30,7 @@ these properties.
 - **§3 Mathlib bridge**: connection to `Monotone`/`Antitone`
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 /-- Generalized quantifier denotation: restrictor → scope → proposition.
 
@@ -296,7 +296,7 @@ def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
     (unary) quantifiers; the extension to binary determiners is due to
     [van-benthem-1984] (building on Lindström 1966).
 
-    The model-specific version in `Semantics.Quantification.Quantifier.Quantity`
+    The model-specific version in `Quantification.Quantifier.Quantity`
     uses cardinalities directly, which requires `FiniteModel`. This version
     captures the same intuition without model infrastructure.
 
@@ -403,4 +403,4 @@ theorem restrictorDownMono_iff_antitone (q : GQ α) :
   exact ⟨fun h S _ _ hle hq => h _ _ S hle hq,
          fun h _ _ S hle hq => h S hle hq⟩
 
-end Core.Quantification
+end Quantification

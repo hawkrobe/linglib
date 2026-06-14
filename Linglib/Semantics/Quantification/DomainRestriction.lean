@@ -45,9 +45,9 @@ satisfying C is equivalent to restricting the restrictor to C ∩ R.
 
 set_option autoImplicit false
 
-namespace Semantics.Quantification.DomainRestriction
+namespace Quantification.DomainRestriction
 
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 
 /-! ### Domain-restricted quantifiers -/
 
@@ -158,7 +158,7 @@ theorem every_restricted_spectator {α : Type*}
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mp (h1 x ⟨hC, hR⟩)
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mpr (h1 x ⟨hC, hR⟩)
 
-open Core.Quantification (Conservative GQ) in
+open Quantification (Conservative GQ) in
 /-- Conservativity is preserved under domain restriction: if Q is conservative,
     then Q restricted by any domain predicate C is also conservative.
     Generalizes `every_restricted_conservative` from `every_sem` to any
@@ -286,4 +286,4 @@ theorem DDRP.no_nesting {S : Type*} [Preorder S] [OrderTop S]
     no_restricted (d.region s₁) R Sc :=
   λ hno => no_restricted_anti_mono (λ _ hx => d.monotone h hx) hno
 
-end Semantics.Quantification.DomainRestriction
+end Quantification.DomainRestriction

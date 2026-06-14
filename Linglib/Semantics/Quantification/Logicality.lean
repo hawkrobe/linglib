@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Logicality and Invariance Conditions
@@ -16,9 +16,9 @@ Key result: INJ ≡ ISOM + EXT ([peters-westerstahl-2006] Ch 9 Prop 3).
 Since EXT is trivial for `GQ α`, INJ ↔ ISOM in our setting.
 -/
 
-namespace Core.Quantification.Logicality
+namespace Quantification.Logicality
 
-open Core.Quantification
+open Quantification
 
 variable {α β : Type*}
 
@@ -84,4 +84,4 @@ theorem quantityInvariant_is_isom (q : GQ α) :
       (q A B ↔ q A' B')) :=
   Iff.rfl
 
-end Core.Quantification.Logicality
+end Quantification.Logicality

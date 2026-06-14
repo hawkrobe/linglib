@@ -4,6 +4,7 @@ import Linglib.Semantics.Lexical.LevinTheory
 import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Arity
 import Linglib.Semantics.Lexical.Roots.Profile
+import Linglib.Semantics.Lexical.Roots.Outcomes
 
 open Semantics.Lexical
 

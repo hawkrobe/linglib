@@ -74,7 +74,7 @@ open Semantics.Composition
 open Semantics.Composition.Continuation
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 open Semantics.Reference.Binding
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables

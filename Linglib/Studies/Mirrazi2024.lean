@@ -59,7 +59,7 @@ descriptive content.
 
 namespace Mirrazi2024
 
-open Semantics.Quantification.ChoiceFunction
+open Quantification.ChoiceFunction
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 open Semantics.Attitudes.NegRaising (negRaisesAt)
 open Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)

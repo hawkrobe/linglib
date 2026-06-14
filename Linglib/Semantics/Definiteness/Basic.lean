@@ -42,7 +42,7 @@ This module retains:
 namespace Semantics.Definiteness
 
 open Core.Logic.Intensional (Ty)
-open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
+open Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Semantics.Presupposition (PartialProp)
 open Features.Definiteness (DefPresupType Definiteness)

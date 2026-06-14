@@ -683,7 +683,7 @@ to superordinate widens the reference population.
 This connects comparison class inference to the same nesting pattern used
 by [ritchie-schiller-2024]'s domain restriction possibilities. -/
 
-open Semantics.Quantification.DomainRestriction (DDRP)
+open Quantification.DomainRestriction (DDRP)
 
 private def ComparisonClass.toFin : ComparisonClass → Fin 2
   | .subordinate => 0

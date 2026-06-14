@@ -13,7 +13,7 @@ Venn-state semantics (grounded in the same `every_sem`/`some_sem`/`no_sem`
 denotations via `Model.lexiconFO`).
 -/
 
-namespace Semantics.Quantification.Syllogistic
+namespace Quantification.Syllogistic
 
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁ realize_all₁ realize_ex₁)
@@ -158,4 +158,4 @@ theorem ferio :
 
 end Syllogisms
 
-end Semantics.Quantification.Syllogistic
+end Quantification.Syllogistic

@@ -22,7 +22,7 @@ realizes the dual core concept (`JereticEtAl2025.CoreConcept.Id.dual`).
 
 namespace French.Determiners
 
-open Semantics.Quantification.Lexicon
+open Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
 /-- *tous* — universal, plural. The French universal of [chemla-2007]'s

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification
+import Linglib.Semantics.Quantification
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
@@ -14,7 +14,7 @@ representation theorem for conservative GQs.
 individuals** — entity–polarity pairs `(e, ±)` that encode whether an
 entity witnesses the restrictor ∩ scope (positive) or the restrictor ∖
 scope (negative). The conservative GQ lattice (`ConsGQ`, §12 of
-`Core.Logic.Quantification`) is the algebraic setting.
+`Semantics.Quantification`) is the algebraic setting.
 
 The module is organized in five sections:
 
@@ -43,7 +43,7 @@ The module is organized in five sections:
 
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 -- ============================================================================
 -- §1 — Trivalent Values
@@ -389,4 +389,4 @@ noncomputable instance : BooleanAlgebra (ConsGQ α) where
 
 end ConsGQ_BA
 
-end Core.Quantification
+end Quantification

@@ -54,7 +54,7 @@ namespace Asudeh2022
 
 open Core.Logic.Intensional
 open Semantics.Montague
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Glue Logic: Implicational Fragment of Linear Logic

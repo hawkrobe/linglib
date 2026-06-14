@@ -3,8 +3,8 @@ import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.PositionProfile
-import Linglib.Core.Logic.Quantification.Basic
-import Linglib.Core.Logic.Quantification.Counting
+import Linglib.Semantics.Quantification.Basic
+import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Model witnesses for the licensing-context table
@@ -35,7 +35,7 @@ namespace Semantics.Polarity.Licensing
 
 open Features (LicensingContext)
 open Core.NaturalLogic
-open Core.Quantification
+open Quantification
 open Semantics.Entailment (World pnot)
 open Semantics.Entailment.AntiAdditivity (atMost2_student atMost_isDE_scope)
 open Semantics.Entailment.StrawsonEntailment

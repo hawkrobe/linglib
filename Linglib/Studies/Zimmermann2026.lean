@@ -55,7 +55,7 @@ sources' formalizations: `Studies/Zimmermann2008` (Hausa model,
   [owusu-2022] rivalry on the shared Akan entries.
 -/
 
-open Semantics.Quantification.ChoiceFunction (IndefType)
+open Quantification.ChoiceFunction (IndefType)
 
 namespace Akan.Determiners.Indefinite
 
@@ -82,8 +82,8 @@ end Hausa.Determiners.Indefinite
 
 namespace Zimmermann2026
 
-open Core.Quantification
-open Semantics.Quantification.ChoiceFunction
+open Quantification
+open Quantification.ChoiceFunction
 
 /-- (13): under the ∃-analysis (16b), the two scopings of *wani* under
 negation are truth-conditionally distinct — on [zimmermann-2008]'s

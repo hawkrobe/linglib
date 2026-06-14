@@ -42,8 +42,8 @@ author sets.
 
 namespace HaslingerHienEtAl2025
 
-open Semantics.Quantification.UnifiedUniversal
-open Semantics.Quantification.ONEModifiers
+open Quantification.UnifiedUniversal
+open Quantification.ONEModifiers
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent

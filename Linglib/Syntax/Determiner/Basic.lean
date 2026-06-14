@@ -38,7 +38,7 @@ An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (`Semantics/Definiteness/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description.
-(`Core/Logic/Quantification`), and the `Possessive` possession relation remain
+(`Semantics/Quantification`), and the `Possessive` possession relation remain
 deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `form`.
 This file stays the Frame-free lexical/typological layer.
 -/
@@ -103,7 +103,7 @@ structure DemonstrativeDeterminer extends Determiner where
 instance : Demonstrative DemonstrativeDeterminer := ⟨DemonstrativeDeterminer.deictic⟩
 
 /-- A quantificational determiner (every/some/most/no). Its denotation is a
-generalized quantifier (`Core/Logic/Quantification`); deferred. -/
+generalized quantifier (`Semantics/Quantification`); deferred. -/
 structure Quantifier extends Determiner
   deriving DecidableEq, Repr
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification
+import Linglib.Semantics.Quantification
 import Linglib.Typology.PolarityItem
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Quantification.Quantifier
@@ -13,8 +13,8 @@ NPI licensing to downward entailingness (DE). The core claim:
 
 > Weak NPIs are licensed in downward-entailing contexts.
 
-This file bridges the GQ monotonicity proofs from `Core.Quantification` and
-`Semantics.Quantification.Quantifier` to the NPI licensing classification
+This file bridges the GQ monotonicity proofs from `Quantification` and
+`Quantification.Quantifier` to the NPI licensing classification
 indexed by `Typology.PolarityItem.LicensingContext`, making the DE ↔ NPI
 connection formally explicit.
 
@@ -31,11 +31,11 @@ connection formally explicit.
 
 namespace Ladusaw1979
 
-open Core.Quantification
+open Quantification
 open Typology.PolarityItem (LicensingContext)
 open Core.Logic.Intensional
 open Semantics.Montague (ToyEntity)
-open Semantics.Quantification.Quantifier
+open Quantification.Quantifier
 
 -- ============================================================================
 -- §1. Monotonicity classification of licensing contexts
@@ -80,7 +80,7 @@ variable {α : Type*} [Fintype α] [DecidableEq α]
     Verified instances:
     - `no_scope_down`: "No student saw anyone" ✓
     - `few_scope_down`: "Few students saw anyone" ✓ -/
-structure ScopeDELicensesWeakNPIs (q : Core.Quantification.GQ α) where
+structure ScopeDELicensesWeakNPIs (q : Quantification.GQ α) where
   scopeDE : ScopeDownwardMono q
   /-- The licensing context this corresponds to -/
   context : LicensingContext
@@ -108,7 +108,7 @@ def few_scope_licenses_weak :
     Verified instances:
     - `every_restrictor_down`: "Everyone who saw anyone was questioned" ✓
     - `no_restrictor_down`: "No one who saw anyone was questioned" ✓ -/
-structure RestrictorDELicensesWeakNPIs (q : Core.Quantification.GQ α) where
+structure RestrictorDELicensesWeakNPIs (q : Quantification.GQ α) where
   restrictorDE : RestrictorDownwardMono q
   context : LicensingContext
   isDE : licensingStrength context = .downwardEntailing ∨
@@ -142,7 +142,7 @@ def no_restrictor_licenses_weak :
 
     Counter-example: "few" is merely DE, not anti-additive:
     - *"Few people lifted a finger to help" ✗ -/
-structure AntiAddLicensesStrongNPIs (q : Core.Quantification.GQ α) where
+structure AntiAddLicensesStrongNPIs (q : Quantification.GQ α) where
   laa : LeftAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
@@ -165,7 +165,7 @@ def no_laa_licenses_strong :
 /-- Scope-level anti-additivity also licenses strong NPIs.
     `RightAntiAdditive q` means the scope of `q` is anti-additive.
     "Nobody lifted a finger" is licensed by scope-level AA of `no`. -/
-structure ScopeAALicensesStrongNPIs (q : Core.Quantification.GQ α) where
+structure ScopeAALicensesStrongNPIs (q : Quantification.GQ α) where
   raa : RightAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive

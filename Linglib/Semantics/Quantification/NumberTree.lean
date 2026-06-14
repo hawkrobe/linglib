@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Number-Tree Quantifiers
@@ -13,7 +13,7 @@ uniqueness theorem (§10e), the GQ→NumberTreeGQ bridge (§10f),
 and counting quantifiers (§11).
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 variable {α : Type*}
 
@@ -725,4 +725,4 @@ def conservativeQuantifierCount (n : Nat) : Nat :=
 #guard conservativeQuantifierCount 4 == 32768
 
 
-end Core.Quantification
+end Quantification

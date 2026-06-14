@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Quantification.Defs
-import Linglib.Core.Logic.Quantification.Properties
+import Linglib.Semantics.Quantification.Defs
+import Linglib.Semantics.Quantification.Properties
 import Linglib.Core.Logic.Aristotelian.Basic
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Core.Logic.Aristotelian.Basic
 
 The three propositional GQs `every_sem`, `some_sem`, `no_sem` and the property
 proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
-their proofs live in `Core.Logic.Quantification.Counting`.
+their proofs live in `Semantics.Quantification.Counting`.
 
 ## Main declarations
 
@@ -17,7 +17,7 @@ their proofs live in `Core.Logic.Quantification.Counting`.
 * Conservativity/monotonicity/symmetry/intersectivity/duality/etc. proofs.
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 /-! ### Denotations -/
 
@@ -347,4 +347,4 @@ theorem every_satisfiesUniversals : SatisfiesUniversals (every_sem (α := α)) :
 theorem no_satisfiesUniversals : SatisfiesUniversals (no_sem (α := α)) :=
   ⟨no_conservative, Or.inr no_scope_down⟩
 
-end Core.Quantification
+end Quantification
