@@ -32,6 +32,12 @@ def Verb.derivedUnaccusative (v : Verb) : Bool :=
 def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
+/-- The verb's within-class quality profile ([spalek-mcnally-2026]), read off its
+    `root` (where the profile is now carried — formerly a separate `Verb` field).
+    `none` when the verb has no root. -/
+def Verb.rootProfile (v : Verb) : Option Verb.Root.Profile :=
+  v.root.map (·.profile)
+
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile
     ([levin-1993], [dowty-1991]). -/
