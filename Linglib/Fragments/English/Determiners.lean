@@ -269,20 +269,26 @@ section Denote
 open Quantification
 variable {α : Type*} [Fintype α]
 
-@[simp] theorem none_denote : none_.denote (englishLexicon (α := α)) = [no_sem] := rfl
-@[simp] theorem few_denote : few.denote (englishLexicon (α := α)) = [few_sem] := rfl
-@[simp] theorem some_denote : some_.denote (englishLexicon (α := α)) = [some_sem] := rfl
-@[simp] theorem half_denote : half.denote (englishLexicon (α := α)) = [half_sem] := rfl
-@[simp] theorem most_denote : most.denote (englishLexicon (α := α)) = [most_sem] := rfl
-@[simp] theorem all_denote : all.denote (englishLexicon (α := α)) = [every_sem] := rfl
-@[simp] theorem every_denote : every.denote (englishLexicon (α := α)) = [every_sem] := rfl
-@[simp] theorem each_denote : each.denote (englishLexicon (α := α)) = [every_sem] := rfl
-@[simp] theorem both_denote : both.denote (englishLexicon (α := α)) = [both_sem] := rfl
-@[simp] theorem neither_denote :
-    neither.denote (englishLexicon (α := α)) = [neither_sem] := rfl
+/-- Denotation brackets: `⟦p⟧` is the denotation of `p`, the standard linguistic
+    (Heim & Kratzer) notation. Here `⟦q⟧ = q.denote englishLexicon` for an English
+    quantifier record. **Local for now**; the goal is a library-wide `⟦·⟧`
+    interpretation. (Overloads cleanly with mathlib's `Quotient.mk` `⟦·⟧`, which
+    linglib doesn't use.) -/
+local notation:max "⟦" q "⟧" => Quantifier.denote q englishLexicon
+
+@[simp] theorem none_denote : (⟦none_⟧ : List (GQ α)) = [no_sem] := rfl
+@[simp] theorem few_denote : (⟦few⟧ : List (GQ α)) = [few_sem] := rfl
+@[simp] theorem some_denote : (⟦some_⟧ : List (GQ α)) = [some_sem] := rfl
+@[simp] theorem half_denote : (⟦half⟧ : List (GQ α)) = [half_sem] := rfl
+@[simp] theorem most_denote : (⟦most⟧ : List (GQ α)) = [most_sem] := rfl
+@[simp] theorem all_denote : (⟦all⟧ : List (GQ α)) = [every_sem] := rfl
+@[simp] theorem every_denote : (⟦every⟧ : List (GQ α)) = [every_sem] := rfl
+@[simp] theorem each_denote : (⟦each⟧ : List (GQ α)) = [every_sem] := rfl
+@[simp] theorem both_denote : (⟦both⟧ : List (GQ α)) = [both_sem] := rfl
+@[simp] theorem neither_denote : (⟦neither⟧ : List (GQ α)) = [neither_sem] := rfl
 /-- *many* is a vague cardinal with no fixed `GQ` denotation yet ([partee-1989]
     cardinal/proportional split, deferred) — hence the empty denotation list. -/
-@[simp] theorem many_denote : many.denote (englishLexicon (α := α)) = [] := rfl
+@[simp] theorem many_denote : (⟦many⟧ : List (GQ α)) = [] := rfl
 
 end Denote
 

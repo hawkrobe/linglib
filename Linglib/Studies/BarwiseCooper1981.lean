@@ -85,14 +85,19 @@ theorem englishLexicon_conservative {α : Type*} [Fintype α] (s : String) :
     | exact half_conservative | exact most_conservative | exact every_conservative
     | exact both_conservative | exact neither_conservative)
 
+/-- Denotation brackets: `⟦q⟧` is the denotation of English quantifier record `q`
+    (`q.denote englishLexicon`). The standard linguistic notation, local to this
+    study for now. -/
+local notation:max "⟦" q "⟧" => Quantifier.denote q English.Determiners.englishLexicon
+
 /-- **Conservativity universal, record-keyed.** Every marked English quantifier
     denotes conservatively — the [barwise-cooper-1981] universal stated over the
-    `Quantifier` *records* (via the theory-layer `Quantifier.denote`), not the
+    `Quantifier` *records* (via `⟦·⟧` = `Quantifier.denote`), not the
     `QuantityWord` enum. Obtained from the cross-linguistic lift
     `Quantifier.denote_conservative` applied to `englishLexicon_conservative`;
-    vacuous for forms outside the lexicon (`denote = []`). -/
+    vacuous for forms outside the lexicon (`⟦q⟧ = []`). -/
 theorem conservativity_universal_denote {α : Type*} [Fintype α] (q : Quantifier) :
-    ∀ g ∈ q.denote (English.Determiners.englishLexicon (α := α)), Conservative g :=
+    ∀ g ∈ (⟦q⟧ : List (GQ α)), Conservative g :=
   Quantifier.denote_conservative English.Determiners.englishLexicon
     (englishLexicon_conservative (α := α)) q
 
