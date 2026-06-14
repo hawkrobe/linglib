@@ -67,33 +67,12 @@ def Verb.isDoxastic (v : Verb) : Bool :=
 def Verb.isPreferential (v : Verb) : Bool :=
   v.attitude.map (·.isPreferential) |>.getD false
 
-/-- Does this attitude distribute over conjunction?
-    DERIVED from complementSig: any signature that refines `.mono`
-    (mono, additive, mult, addMult, all) distributes. -/
-def Verb.distribOverConj (v : Verb) : Bool :=
-  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
-
-/-- Is the complement position upward-entailing?
-    DERIVED from complementSig. -/
-def Verb.isComplementUE (v : Verb) : Bool :=
-  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
-
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def Verb.preferentialValence (v : Verb) : Option AttitudeValence :=
   v.attitude.bind (·.valence)
 
 -- Note: Verb.cDistributive, Verb.nvpClass, and Verb.takesQuestion
 -- are derived properties defined in Semantics.Intensional/Attitude/BuilderProperties.lean
-
-/--
-Get the CoS semantics for a verb (if it's a CoS verb).
-
-Returns `some (cosSemantics t P)` if the verb has a CoS type,
-where `P` is the activity predicate (complement denotation).
--/
-def Verb.getCoSSemantics {W : Type*} (v : Verb) (P : W → Prop) :
-    Option (PartialProp W) :=
-  v.cosType.map λ t => cosSemantics t P
 
 /-- Does this verb presuppose its complement via factivity?
     DERIVED from attitude: true iff the verb is doxastic veridical. -/
