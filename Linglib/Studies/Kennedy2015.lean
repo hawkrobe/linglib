@@ -2,6 +2,7 @@ import Linglib.Semantics.Numerals.Basic
 import Linglib.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # [kennedy-2015]: De-Fregean numerals — neo-Gricean derivation
