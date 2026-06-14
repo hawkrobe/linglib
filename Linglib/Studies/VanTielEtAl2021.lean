@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Determiners
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Mathlib.Data.Rat.Defs
 
@@ -336,16 +336,18 @@ def threshold : ModelQuantityWord → Nat
   | .most  => 6
   | .all   => domainSize
 
-/-- GQT meaning via the parametric operator from
-    `Quantification.Quantifier`. -/
+/-- GQT meaning: van Tiel's threshold scale-model. At the word's fitted
+    threshold and monotonicity direction, is the intersection count `t` true?
+    The deliberately-impoverished GQT foil to the prototype model below. -/
 def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
-  Quantification.Quantifier.gqtMeaning
-    domainSize m.monotonicity (threshold m) t
+  match m.monotonicity with
+  | .increasing  => t.val ≥ threshold m
+  | .decreasing  => t.val ≤ threshold m
+  | .nonMonotone => t.val == threshold m
 
 /-- GQT meaning as rational (for RSA arithmetic). -/
 def gqtMeaningRat (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Quantification.Quantifier.gqtMeaningRat
-    domainSize m.monotonicity (threshold m) t
+  if gqtMeaning m t then 1 else 0
 
 -- PT Parameters (per-paper prototype + spread settings)
 

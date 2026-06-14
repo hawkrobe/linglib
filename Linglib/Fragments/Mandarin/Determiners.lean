@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
@@ -31,11 +32,11 @@ open English.Determiners (QForce Monotonicity Strength)
 open Typology (ClassifierEntry)
 open Mandarin.Classifiers (ge)
 
-/-- Mandarin quantifier entry. Extends the English pattern with
-    classifier requirements (Mandarin-specific morphosyntax). -/
-structure MandarinQuantEntry where
-  /-- Hànzì form -/
-  hanzi : String
+/-- Mandarin quantifier entry. `extends Syntax.Determiner.Quantifier` (the
+    marked-determiner base — the inherited `form` holds the hànzì surface form)
+    and adds classifier requirements (Mandarin-specific morphosyntax) and the
+    typological metadata labels (`qforce`/`monotonicity`/`strength`). -/
+structure MandarinQuantEntry extends Quantifier where
   /-- Pīnyīn romanization -/
   pinyin : String
   /-- English gloss -/
@@ -59,7 +60,7 @@ structure MandarinQuantEntry where
 /-- 每 měi "every" — universal, singular-like, requires classifier.
     měi-gè xuéshēng 每个学生 "every-CL student" -/
 def mei : MandarinQuantEntry :=
-  { hanzi := "每"
+  { form := "每"
   , pinyin := "měi"
   , gloss := "every"
   , qforce := .universal
@@ -71,7 +72,7 @@ def mei : MandarinQuantEntry :=
 /-- 所有 suǒyǒu "all" — universal, plural-like, no classifier required.
     suǒyǒu xuéshēng 所有学生 "all students" -/
 def suoyou : MandarinQuantEntry :=
-  { hanzi := "所有"
+  { form := "所有"
   , pinyin := "suǒyǒu"
   , gloss := "all"
   , qforce := .universal
@@ -82,7 +83,7 @@ def suoyou : MandarinQuantEntry :=
     quánbù xuéshēng 全部学生 "all students".
     Synonym of suǒyǒu; does not require a classifier. -/
 def quanbu : MandarinQuantEntry :=
-  { hanzi := "全部"
+  { form := "全部"
   , pinyin := "quánbù"
   , gloss := "all"
   , qforce := .universal
@@ -93,7 +94,7 @@ def quanbu : MandarinQuantEntry :=
     hěnduō xuéshēng 很多学生 "many students".
     Can optionally co-occur with dōu but does not require it. -/
 def henduo : MandarinQuantEntry :=
-  { hanzi := "很多"
+  { form := "很多"
   , pinyin := "hěnduō"
   , gloss := "many"
   , qforce := .existential
@@ -103,7 +104,7 @@ def henduo : MandarinQuantEntry :=
 /-- 大部分 dà-bùfèn "most/the greater part" — proportional, increasing, strong.
     dà-bùfèn xuéshēng 大部分学生 "most students" -/
 def dabufen : MandarinQuantEntry :=
-  { hanzi := "大部分"
+  { form := "大部分"
   , pinyin := "dà-bùfèn"
   , gloss := "most"
   , qforce := .proportional

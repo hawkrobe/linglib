@@ -116,107 +116,215 @@ that "live on" their restrictor; see `conservative_iff_livesOn`. -/
 
 /-! ### [barwise-cooper-1981] Table II: per-entry verification
 
-Each theorem verifies one quantity word's strength and monotonicity
-direction against the paper's classification (p.184). Changing a field in
-the fragment entry breaks exactly one theorem. B&C's Table II classifies:
-every/all (strong, ↑MON), some (weak, ↑MON), no (weak, ↓MON), most
-(strong, ↑MON), many (weak, ↑MON), few (weak, ↓MON). Our fragment omits
-"many" and adds "half" (not in original Table II). -/
+Each theorem takes one quantity word's `QuantityWord.entry` *typological
+label* (the textbook-consensus B&C Table II strength/monotonicity classification)
+as a **hypothesis** and proves the corresponding genuine GQ **property of the
+denotation** `QuantityWord.gqDenotation`:
 
-/-- every/all: strong, scope-↑MON (increasing). -/
-theorem table_II_all :
-    QuantityWord.all.entry.strength = .strong ∧
-    QuantityWord.all.entry.monotonicity = .increasing := ⟨rfl, rfl⟩
+- `strength = .weak`      ⟹ `Existential ⟦d⟧`      (intersective: passes there-insertion)
+- `strength = .strong`    ⟹ `¬ Existential ⟦d⟧`
+- `monotonicity = .increasing` ⟹ `ScopeUpwardMono ⟦d⟧`
+- `monotonicity = .decreasing` ⟹ `ScopeDownwardMono ⟦d⟧`
 
-/-- most: strong, scope-↑MON (increasing). -/
-theorem table_II_most :
-    QuantityWord.most.entry.strength = .strong ∧
-    QuantityWord.most.entry.monotonicity = .increasing := ⟨rfl, rfl⟩
+So changing a `QuantityWord.entry` field still breaks exactly one theorem
+(the label is a hypothesis), but the theorem now *earns* its content from the
+denotation rather than self-reporting the stored field. Where the substrate
+lacks the backing lemma the conclusion is left `sorry` with a `TODO`.
 
-/-- some: weak, scope-↑MON (increasing). -/
-theorem table_II_some :
-    QuantityWord.some_.entry.strength = .weak ∧
-    QuantityWord.some_.entry.monotonicity = .increasing := ⟨rfl, rfl⟩
+B&C's Table II classifies every/all (strong, ↑MON), some (weak, ↑MON),
+no (weak, ↓MON), most (strong, ↑MON), many (weak, ↑MON), few (weak, ↓MON);
+our scale omits "many" and adds proportional "half" (van-de-pol et al.).
 
-/-- no: weak, scope-↓MON (decreasing). -/
-theorem table_II_none :
-    QuantityWord.none_.entry.strength = .weak ∧
-    QuantityWord.none_.entry.monotonicity = .decreasing := ⟨rfl, rfl⟩
+**Caveat — "weak" ≠ `Existential` for proportional determiners.** B&C's "weak"
+tracks felicity in there-sentences; for the *intersective* words (some, no)
+it coincides with the GQ `Existential` property. But the table also labels the
+*proportional* words few and half `.weak` (they do pass there-insertion:
+"there are few cats"), and `Existential` *fails* for them — `few_sem`/`half_sem`
+are not intersective. So the `weak ⟹ Existential` bridge is stated and proved
+only for the intersective words; for few/half the genuine GQ fact is the
+*negation* (`¬ Existential`), recorded below as a substrate gap. -/
 
-/-- few: weak, scope-↓MON (decreasing). -/
-theorem table_II_few :
-    QuantityWord.few.entry.strength = .weak ∧
-    QuantityWord.few.entry.monotonicity = .decreasing := ⟨rfl, rfl⟩
+/-- some: weak ⟹ `Existential`, and increasing ⟹ `ScopeUpwardMono`. -/
+theorem table_II_some {α : Type*} [Fintype α] [DecidableEq α] :
+    (QuantityWord.some_.entry.strength = .weak →
+      Existential (QuantityWord.some_.gqDenotation (α := α))) ∧
+    (QuantityWord.some_.entry.monotonicity = .increasing →
+      ScopeUpwardMono (QuantityWord.some_.gqDenotation (α := α))) := by
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · simpa only [QuantityWord.gqDenotation] using Quantification.some_existential
+  · simpa only [QuantityWord.gqDenotation] using Quantification.some_scope_up
 
-/-- half: weak, non-monotone. Not in [barwise-cooper-1981] Table II;
-    classification follows [van-de-pol-etal-2023]. -/
-theorem table_II_half :
-    QuantityWord.half.entry.strength = .weak ∧
-    QuantityWord.half.entry.monotonicity = .nonMonotone := ⟨rfl, rfl⟩
+/-- no: weak ⟹ `Existential`, and decreasing ⟹ `ScopeDownwardMono`. -/
+theorem table_II_none {α : Type*} [Fintype α] [DecidableEq α] :
+    (QuantityWord.none_.entry.strength = .weak →
+      Existential (QuantityWord.none_.gqDenotation (α := α))) ∧
+    (QuantityWord.none_.entry.monotonicity = .decreasing →
+      ScopeDownwardMono (QuantityWord.none_.gqDenotation (α := α))) := by
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · simpa only [QuantityWord.gqDenotation] using Quantification.no_existential
+  · simpa only [QuantityWord.gqDenotation] using Quantification.no_scope_down
+
+/-- every/all: strong ⟹ `¬ Existential` (over a nonempty domain), and
+    increasing ⟹ `ScopeUpwardMono`. The nonemptiness hypothesis is essential:
+    over the empty domain every GQ is vacuously `Existential`. -/
+theorem table_II_all {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] :
+    (QuantityWord.all.entry.strength = .strong →
+      ¬ Existential (QuantityWord.all.gqDenotation (α := α))) ∧
+    (QuantityWord.all.entry.monotonicity = .increasing →
+      ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α))) := by
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · -- every is positive-strong, hence not existential: witness R = univ, S = ∅.
+    simp only [QuantityWord.gqDenotation]
+    intro h
+    obtain ⟨x⟩ := ‹Nonempty α›
+    have hiff := h (fun _ => True) (fun _ => False)
+    simp only [every_sem] at hiff
+    exact hiff.mpr (fun _ _ => trivial) x trivial
+  · simpa only [QuantityWord.gqDenotation] using Quantification.every_scope_up
+
+/-- most: increasing ⟹ `ScopeUpwardMono` (polymorphic, `most_scope_up`). The
+    strength ⟹ `¬ Existential` half is witnessed separately at `Fin 3`
+    (`table_II_most_not_existential`): `most` is proportional, not intersective,
+    so refuting `Existential` needs a `|α| ≥ 3` witness, not mere nonemptiness. -/
+theorem table_II_most {α : Type*} [Fintype α] [DecidableEq α] :
+    QuantityWord.most.entry.monotonicity = .increasing →
+      ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α)) := by
+  intro _
+  simpa only [QuantityWord.gqDenotation] using Quantification.most_scope_up
+
+/-- most: strong ⟹ `¬ Existential`, witnessed at `Fin 3`. `most` is proportional,
+    not intersective, so it blocks there-insertion ([barwise-cooper-1981] Table II).
+    Refuting `Existential` needs `|α| ≥ 3` (1 elem in R∩S, 2 in R∖S): over `Fin 1`/
+    `Fin 2` every GQ is vacuously `Existential`. Earned from `not_existential_most_sem`. -/
+theorem table_II_most_not_existential :
+    QuantityWord.most.entry.strength = .strong →
+      ¬ Existential (QuantityWord.most.gqDenotation (α := Fin 3)) := by
+  intro _
+  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_most_sem
+
+/-- few: decreasing ⟹ `ScopeDownwardMono` (`few_scope_down`). The table labels
+    few `.weak`, but `few_sem` is proportional, *not* intersective, so the
+    genuine GQ fact is `¬ Existential ⟦few⟧` (a substrate gap), not `Existential`. -/
+theorem table_II_few {α : Type*} [Fintype α] [DecidableEq α] :
+    QuantityWord.few.entry.monotonicity = .decreasing →
+      ScopeDownwardMono (QuantityWord.few.gqDenotation (α := α)) := by
+  intro _
+  simpa only [QuantityWord.gqDenotation] using Quantification.few_scope_down
+
+/-- few: strong/weak ⟹ existential status, witnessed at `Fin 3`. The table's
+    `.weak` label tracks there-insertion; the genuine GQ property is
+    `¬ Existential` because `few_sem` is proportional, not intersective
+    (`|R∩S| < |R∖S|` is not determined by `|R∩S|` alone). Earned from
+    `not_existential_few_sem`. -/
+theorem table_II_few_not_existential :
+    ¬ Existential (QuantityWord.few.gqDenotation (α := Fin 3)) := by
+  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_few_sem
+
+/-- half: non-monotone, so the increasing/decreasing bridges are vacuously true
+    (the label hypothesis is unsatisfiable for half). -/
+theorem table_II_half {α : Type*} [Fintype α] [DecidableEq α] :
+    (QuantityWord.half.entry.monotonicity = .increasing →
+      ScopeUpwardMono (QuantityWord.half.gqDenotation (α := α))) ∧
+    (QuantityWord.half.entry.monotonicity = .decreasing →
+      ScopeDownwardMono (QuantityWord.half.gqDenotation (α := α))) :=
+  ⟨fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
+
+/-- half: the table labels half `.weak`, but `half_sem` is proportional, so the
+    genuine GQ property is `¬ Existential ⟦half⟧`, witnessed at `Fin 3`.
+    `Existential half_sem` (`2|R∩S| = |R| ↔ 2|R∩S| = |R∩S|`) is false; refuting it
+    needs a witness with `R∖S` non-empty. Earned from `not_existential_half_sem`. -/
+theorem table_II_half_not_existential :
+    ¬ Existential (QuantityWord.half.gqDenotation (α := Fin 3)) := by
+  simpa only [QuantityWord.gqDenotation] using Quantification.not_existential_half_sem
 
 -- ============================================================================
 -- §5. Monotonicity–Strength Correlation
 -- ============================================================================
 
-/-- All English quantity words except "half" are monotone.
-    "Half" is the lone non-monotone simple determiner
-    ([van-de-pol-etal-2023] classify it as non-monotone). -/
-theorem english_quantifiers_mostly_monotone :
-    ([QuantityWord.none_, .few, .some_, .most, .all].map QuantityWord.monotonicity).all
-      (· != .nonMonotone) = true := by native_decide
+/-- All English quantity words except "half" are monotone in scope (each is
+    `ScopeUpwardMono` or `ScopeDownwardMono`); "half" is the lone non-monotone
+    simple determiner ([van-de-pol-etal-2023]). Stated as a real disjunction of
+    GQ monotonicity properties, witnessed per word from the substrate lemmas. -/
+theorem english_quantifiers_mostly_monotone {α : Type*} [Fintype α] [DecidableEq α] :
+    ScopeDownwardMono (QuantityWord.none_.gqDenotation (α := α)) ∧
+    ScopeDownwardMono (QuantityWord.few.gqDenotation (α := α)) ∧
+    ScopeUpwardMono (QuantityWord.some_.gqDenotation (α := α)) ∧
+    ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α)) ∧
+    ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α)) := by
+  simp only [QuantityWord.gqDenotation]
+  exact ⟨Quantification.no_scope_down, Quantification.few_scope_down,
+         Quantification.some_scope_up, Quantification.most_scope_up,
+         Quantification.every_scope_up⟩
 
-/-- "Half" is the sole non-monotone quantity word. -/
+/-- "Half" is non-monotone: it is neither scope-upward nor scope-downward
+    monotone ([van-de-pol-etal-2023]), witnessed at `Fin 3` (a 2-element restrictor
+    on which half flips true→false under scope growth/shrinkage). Earned from
+    `half_not_monotone`. -/
 theorem half_nonmonotone :
-    QuantityWord.half.monotonicity = .nonMonotone := by native_decide
+    ¬ ScopeUpwardMono (QuantityWord.half.gqDenotation (α := Fin 3)) ∧
+    ¬ ScopeDownwardMono (QuantityWord.half.gqDenotation (α := Fin 3)) := by
+  simpa only [QuantityWord.gqDenotation] using Quantification.half_not_monotone
 
-/-- The ⟨some, all⟩ scale is upward monotone (both members increasing). -/
-theorem some_all_scale_upward :
-    [QuantityWord.some_, QuantityWord.all].all
-      (·.monotonicity == .increasing) = true := by native_decide
-
-/-- [barwise-cooper-1981] U7 (monotonicity–strength correlation):
-    strong determiners are scope-↑MON (increasing). The full universal
-    distinguishes positive-strong (→ ↑MON) from negative-strong (→ ↓MON);
-    since both English strong determiners (most, every) are positive,
-    the universal reduces to: strong → increasing.
-
-    Strictly stronger than the previous `strong_implies_monotone` (which
-    only checked `!= .nonMonotone` without verifying direction). -/
-theorem strong_implies_increasing :
-    ∀ q : QuantityWord, q.entry.strength = .strong →
-      q.entry.monotonicity = .increasing := by native_decide
+/-- [barwise-cooper-1981] U7 (monotonicity–strength correlation): the strong
+    English determiners (every, most) are scope-↑MON. Both are positive-strong,
+    so the universal reduces to: strong → increasing, here proved as the genuine
+    `ScopeUpwardMono` property of each denotation. -/
+theorem strong_implies_increasing {α : Type*} [Fintype α] [DecidableEq α] :
+    (QuantityWord.all.entry.strength = .strong →
+      ScopeUpwardMono (QuantityWord.all.gqDenotation (α := α))) ∧
+    (QuantityWord.most.entry.strength = .strong →
+      ScopeUpwardMono (QuantityWord.most.gqDenotation (α := α))) := by
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · simpa only [QuantityWord.gqDenotation] using Quantification.every_scope_up
+  · simpa only [QuantityWord.gqDenotation] using Quantification.most_scope_up
 
 -- ============================================================================
 -- §6. Weak/Strong and There-Insertion
 -- ============================================================================
 
-/-- Weak determiners allow there-insertion ([barwise-cooper-1981] §4.6).
-    "There are some/a/few/no cats" vs *"There is every/each cat". -/
-theorem weak_there_insertion :
-    ([QuantityWord.none_, .few, .some_].map (·.entry.strength)).all
-      (· == .weak) = true := by native_decide
+/-- Weak intersective determiners allow there-insertion, formalized as the
+    `Existential` property ([barwise-cooper-1981] §4.6; [peters-westerstahl-2006]
+    existential ↔ there-insertion). "There are some/no cats." -/
+theorem weak_there_insertion {α : Type*} [Fintype α] [DecidableEq α] :
+    Existential (QuantityWord.some_.gqDenotation (α := α)) ∧
+    Existential (QuantityWord.none_.gqDenotation (α := α)) := by
+  simp only [QuantityWord.gqDenotation]
+  exact ⟨Quantification.some_existential, Quantification.no_existential⟩
 
-/-- Strong determiners block there-insertion ([barwise-cooper-1981] Table II). -/
-theorem strong_no_there_insertion :
-    ([QuantityWord.most, .all].map (·.entry.strength)).all
-      (· == .strong) = true := by native_decide
+/-- Strong determiners block there-insertion: `¬ Existential` over a nonempty
+    domain ([barwise-cooper-1981] Table II). The `most` case is witnessed at
+    `Fin 3` in `table_II_most_not_existential` (proportional `most` needs `|α| ≥ 3`). -/
+theorem strong_no_there_insertion {α : Type*} [Fintype α] [DecidableEq α]
+    [Nonempty α] :
+    ¬ Existential (QuantityWord.all.gqDenotation (α := α)) :=
+  (table_II_all (α := α)).1 rfl
 
 -- ============================================================================
 -- §7. Symmetry ↔ Weak
 -- ============================================================================
 
-/-- Weak English determiners are symmetric ([peters-westerstahl-2006],
-    symmetric ↔ there-insertion ↔ weak).
-    Cross-references: `some_symmetric`, `no_symmetric` in Quantifier.lean. -/
-theorem weak_are_symmetric :
-    QuantityWord.some_.entry.strength = .weak ∧
-    QuantityWord.none_.entry.strength = .weak := ⟨rfl, rfl⟩
+/-- Weak (intersective) English determiners are symmetric
+    ([peters-westerstahl-2006], symmetric ↔ there-insertion ↔ weak), proved as
+    the genuine `QSymmetric` property of the denotation. -/
+theorem weak_are_symmetric {α : Type*} [Fintype α] [DecidableEq α] :
+    QSymmetric (QuantityWord.some_.gqDenotation (α := α)) ∧
+    QSymmetric (QuantityWord.none_.gqDenotation (α := α)) := by
+  simp only [QuantityWord.gqDenotation]
+  exact ⟨Quantification.some_symmetric, Quantification.no_symmetric⟩
 
-/-- Strong English determiners are not symmetric ([peters-westerstahl-2006]).
-    Witness: `every_not_symmetric` below. -/
-theorem strong_not_symmetric :
-    QuantityWord.all.entry.strength = .strong ∧
-    QuantityWord.most.entry.strength = .strong := ⟨rfl, rfl⟩
+/-! Strong English determiners are not symmetric ([peters-westerstahl-2006]).
+The genuine `¬ QSymmetric` property for `all` (= `every_sem`) is proved as
+`strong_all_not_symmetric` below, over the `ToyEntity` witness it requires; for
+`most` it is `strong_most_not_symmetric`, witnessed at `Fin 3`. -/
+
+/-- Strong `most` is not symmetric, as a property of its denotation over the
+    `Fin 3` witness ([peters-westerstahl-2006]). `most R S ↔ most S R` fails for
+    `R = {0}`, `S = {0,1}`: `most R S` holds (`|R∩S| = 1 > |R∖S| = 0`) but
+    `most S R` does not (`|S∩R| = 1 > |S∖R| = 1` is false). Earned from
+    `not_qsymmetric_most_sem`. -/
+theorem strong_most_not_symmetric :
+    ¬ QSymmetric (QuantityWord.most.gqDenotation (α := Fin 3)) := by
+  simpa only [QuantityWord.gqDenotation] using Quantification.not_qsymmetric_most_sem
 
 /-! #### Toy-witnessed counterexamples
 
@@ -240,6 +348,14 @@ theorem no_not_positive_strong : ¬ PositiveStrong (no_sem (α := ToyEntity)) :=
   intro h
   have := h student_sem
   exact this ToyEntity.john trivial trivial
+
+/-- Strong `all` (= `every_sem`) is not symmetric, as a property of its
+    denotation `QuantityWord.all.gqDenotation` over the `ToyEntity` witness
+    ([peters-westerstahl-2006]). The genuine §7 strong-not-symmetric fact,
+    earned from the denotation rather than the typological `.strength` label. -/
+theorem strong_all_not_symmetric :
+    ¬ QSymmetric (QuantityWord.all.gqDenotation (α := ToyEntity)) := by
+  simpa only [QuantityWord.gqDenotation] using every_not_symmetric
 
 end ToyWitnesses
 

@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Fragments.English.Determiners
 
 /-! # Japanese Quantifier Fragment
@@ -20,11 +21,12 @@ namespace Japanese.Determiners
 
 open English.Determiners (QForce Monotonicity Strength)
 
-/-- Japanese quantifier entry. Extends the English pattern with
-    indeterminate/particle morphology and floating quantifier properties. -/
-structure JapaneseQuantEntry where
-  /-- Kana/kanji form -/
-  form : String
+/-- Japanese quantifier entry. `extends Syntax.Determiner.Quantifier` (the
+    marked-determiner base — the inherited `form` holds the kana/kanji surface
+    form) and adds indeterminate/particle morphology, floating-quantifier
+    properties, and the typological metadata labels (`qforce`/`monotonicity`/
+    `strength`). -/
+structure JapaneseQuantEntry extends Quantifier where
   /-- Rōmaji romanization -/
   romaji : String
   /-- English gloss -/

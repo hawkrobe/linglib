@@ -8,7 +8,7 @@ import Linglib.Fragments.English.FunctionWords
 [alstott-aravind-2026] [heinamaki-1974] [rett-2020] [karttunen-1974] [ogihara-steinert-threlkeld-2024] [iatridou-anagnostopoulou-izvorski-2001] [vendler-1957]
 
 Lexical entries for English temporal expressions, organised into two sibling
-structures (mathlib pattern, mirroring `QuantifierEntry` + `NumericalDetEntry`
+structures (mathlib pattern, mirroring `Quantifier` + `NumericalDetEntry`
 in `Determiners.lean`):
 
 - `TemporalExprEntry` — **ordering expressions**: subordinating connectives
@@ -495,7 +495,7 @@ inductive DurationKind where
     Iatridou-Zeijlstra 2021's domain-widening profile) lives as
     partial projections from this structure in the relevant Theory
     or Studies file (mathlib-style pattern: same discipline as
-    `QuantifierEntry → gqDenotation/ptMeaning/gqtMeaning` in
+    `QuantityWord → gqDenotation/ptMeaning/gqtMeaning` in
     `Determiners.lean`).
 
     Cross-references for *in years* (the NPI-gap entry):

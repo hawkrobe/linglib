@@ -1,96 +1,132 @@
 import Linglib.Data.UD.Basic
+import Linglib.Syntax.Determiner.Basic
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # English Determiners
 [horn-1972] [barwise-cooper-1981]
 
-English-specific determiner lexicon. The shared `QuantifierEntry`
-structure (and the `QForce`/`Monotonicity`/`Strength` enums) lives in
-`Semantics/Quantification/Lexicon.lean`; this file is the
-English instantiation, a small numerical-determiner sublexicon, and the
-canonical 6-element ⟨none, few, some, half, most, all⟩ quantity scale
-(`QuantityWord`) with its B&C-style GQ denotation table.
+English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
+(a decidable record carrying only the morphosyntax synonyms diverge on) and
+typed by the standard determiner taxonomy in `Syntax/Determiner/Basic.lean`:
+
+- the genuinely quantificational words (every, some, no, most, few, half, all,
+  each, many, both, neither) are `Syntax.Determiner.Quantifier`;
+- the definites/indefinites (the, a, an) are `Article`s and the demonstratives
+  (this, that, these, those) are `DemonstrativeDeterminer`s.
+
+A determiner's **denotation** is a generalized quantifier supplied externally —
+the marked record carries no `GQ`, exactly as `Pronoun` carries no referent.
+For the six-word quantity scale the form↦`GQ` map is `QuantityWord.gqDenotation`
+(`Semantics/Quantification`); everything a meaning *fixes* (force, monotonicity,
+strength, conservativity) is a theorem about that denotation, not a stored field
+(see `Studies/BarwiseCooper1981.lean`).
+
+The cross-paper typological labels (B&C Table II strength/monotonicity, K&S
+force) are kept as the textbook-consensus `QuantityWord.entry : QuantityWord.Metadata`
+metadata table (a small local record over the `Quantification.Lexicon` enums),
+consumed by GQT and exceptive studies that need the descriptive classification
+rather than the denotation.
 
 ## Scope
 
-This file carries descriptive lexical data and its projection to the
-GQ denotations. Per-paper model parameters (GQT thresholds,
-prototype-theory prototypes/spreads) and theory-bridge theorems live
-elsewhere:
+This file carries descriptive lexical data, its projection to GQ denotations,
+and the typological metadata table. Per-paper model parameters (GQT thresholds,
+prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
 
-- Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`,
-  …): `Semantics/Quantification/Quantifier.lean`.
+- Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`, …):
+  `Semantics/Quantification/Quantifier.lean`.
 - GQT/PT meaning operators consuming numerical parameters:
-  `Semantics/Quantification/Quantifier.lean` (`gqtMeaning`),
+  `Studies/VanTielEtAl2021.lean` (`gqtMeaning`, van Tiel's threshold scale-model),
   `Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
-- Per-paper parameter values:
-  `Studies/VanTielEtAl2021.lean`.
+- Per-paper parameter values: `Studies/VanTielEtAl2021.lean`.
 -/
 
 namespace English.Determiners
 
 export Quantification.Lexicon
-  (QForce Monotonicity Strength QuantifierEntry)
+  (QForce Monotonicity Strength)
 
-def none_ : QuantifierEntry :=
-  { form := "none", qforce := .negative, allowsMass := true, monotonicity := .decreasing }
+/-! ## Quantificational determiners
 
-def few : QuantifierEntry :=
-  { form := "few", qforce := .proportional, numberRestriction := some .Plur
-  , monotonicity := .decreasing }
+Marked `Quantifier` records: `form`, the selectional `numberRestriction`
+(root `Number`), and `selectsMass`. The meaning leaves these open — *every* and
+*all* can share a denotation yet differ in `numberRestriction`. -/
 
-def some_ : QuantifierEntry :=
-  { form := "some", qforce := .existential, allowsMass := true, monotonicity := .increasing }
+/-- "none" — negative, accepts mass NPs. -/
+def none_ : Quantifier := { form := "none", selectsMass := true }
 
-def half : QuantifierEntry :=
-  { form := "half", qforce := .proportional, allowsMass := true, monotonicity := .nonMonotone }
+/-- "few" — proportional, plural. -/
+def few : Quantifier := { form := "few", numberRestriction := some .plural }
 
-/-- "most" - more than half -/
-def most : QuantifierEntry :=
-  { form := "most"
-  , qforce := .proportional
-  , numberRestriction := some .Plur
-  , allowsMass := true
-  , monotonicity := .increasing
-  , strength := .strong  -- B&C Table II: *"There are most cats"
-  }
+/-- "some" — existential, accepts mass NPs. -/
+def some_ : Quantifier := { form := "some", selectsMass := true }
 
-/-- "all" - everything satisfies -/
-def all : QuantifierEntry :=
-  { form := "all"
-  , qforce := .universal
-  , numberRestriction := some .Plur
-  , allowsMass := true
-  , monotonicity := .increasing
-  , strength := .strong  -- B&C Table II: *"There is all cats"
-  }
+/-- "half" — proportional, accepts mass NPs. -/
+def half : Quantifier := { form := "half", selectsMass := true }
 
-/-- "every" - universal, singular -/
-def every : QuantifierEntry :=
-  { form := "every"
-  , qforce := .universal
-  , numberRestriction := some .Sing
-  , monotonicity := .increasing
-  , strength := .strong  -- B&C Table II: *"There is every cat"
-  }
+/-- "most" — proportional, plural, accepts mass NPs. -/
+def most : Quantifier :=
+  { form := "most", numberRestriction := some .plural, selectsMass := true }
 
-/-- "each" - universal, distributive -/
-def each : QuantifierEntry :=
-  { form := "each"
-  , qforce := .universal
-  , numberRestriction := some .Sing
-  , monotonicity := .increasing
-  , strength := .strong  -- B&C Table II: *"There is each cat"
-  }
+/-- "all" — universal, plural, accepts mass NPs. -/
+def all : Quantifier :=
+  { form := "all", numberRestriction := some .plural, selectsMass := true }
 
-/-- "many" - a large number -/
-def many : QuantifierEntry :=
-  { form := "many"
-  , qforce := .proportional
-  , numberRestriction := some .Plur
-  , monotonicity := .increasing
-  }
+/-- "every" — universal, singular. -/
+def every : Quantifier := { form := "every", numberRestriction := some .singular }
+
+/-- "each" — universal, distributive, singular. -/
+def each : Quantifier := { form := "each", numberRestriction := some .singular }
+
+/-- "many" — proportional, plural. -/
+def many : Quantifier := { form := "many", numberRestriction := some .plural }
+
+/-- "both" — universal dual, presupposes exactly 2.
+    K&S (83a): [_Det each of the two] ⇒ both. Compositional denotation
+    `both_sem` lives in `Quantification.Quantifier`.
+
+    `numberRestriction := some .dual` carries the dual core concept
+    ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause `|R| ≥ 2`
+    on the denotation side reflects the Harbour `dualPredOnLattice` reading
+    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
+def both : Quantifier := { form := "both", numberRestriction := some .dual }
+
+/-- "neither" — negative dual, presupposes exactly 2.
+    K&S (83b): [_Det (not one) of the two] ⇒ neither. Compositional denotation
+    `neither_sem` lives in `Quantification.Quantifier`. -/
+def neither : Quantifier := { form := "neither", numberRestriction := some .dual }
+
+/-! ## Articles and demonstratives
+
+The definites/indefinites and demonstratives are *not* quantifiers: their
+denotation is definiteness, not a generalized quantifier. -/
+
+/-- "the" — definite article, syncretic over both [schwarz-2009] strengths. -/
+def the : Article :=
+  { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
+  , uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+
+/-- "a" — indefinite article, singular. -/
+def a : Article :=
+  { form := "a", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+
+/-- "an" — indefinite article, singular (phonological allomorph of *a*). -/
+def an : Article :=
+  { form := "an", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+
+/-- "this" — proximal demonstrative determiner, singular. -/
+def this : DemonstrativeDeterminer := { form := "this", deictic := .proximal }
+
+/-- "that" — distal demonstrative determiner, singular. -/
+def that : DemonstrativeDeterminer := { form := "that", deictic := .distal }
+
+/-- "these" — proximal demonstrative determiner, plural. -/
+def these : DemonstrativeDeterminer := { form := "these", deictic := .proximal }
+
+/-- "those" — distal demonstrative determiner, plural. -/
+def those : DemonstrativeDeterminer := { form := "those", deictic := .distal }
 
 /-! ## Numerical Determiners
 [barwise-cooper-1981] [van-de-pol-etal-2023]
@@ -134,59 +170,6 @@ def fewerThan (n : Nat) : NumericalDetEntry :=
   { form := s!"fewer than {n}", qforce := .proportional
   , monotonicity := .decreasing, threshold := n }
 
-/-! ## Definite Determiners (less relevant for quantity scales) -/
-
-def the : QuantifierEntry :=
-  { form := "the", qforce := .definite, allowsMass := true, strength := .strong }
-
-def this : QuantifierEntry :=
-  { form := "this", qforce := .definite, numberRestriction := some .Sing, strength := .strong }
-
-def that : QuantifierEntry :=
-  { form := "that", qforce := .definite, numberRestriction := some .Sing, strength := .strong }
-
-def these : QuantifierEntry :=
-  { form := "these", qforce := .definite, numberRestriction := some .Plur, strength := .strong }
-
-def those : QuantifierEntry :=
-  { form := "those", qforce := .definite, numberRestriction := some .Plur, strength := .strong }
-
-def a : QuantifierEntry :=
-  { form := "a", qforce := .existential, numberRestriction := some .Sing }
-
-def an : QuantifierEntry :=
-  { form := "an", qforce := .existential, numberRestriction := some .Sing }
-
-/-- "both" - universal dual, presupposes exactly 2.
-    K&S (83a): [_Det each of the two] ⇒ both.
-    Compositional denotation `both_sem` lives in
-    `Quantification.Quantifier`.
-
-    `numberRestriction := some .Dual` carries the dual core concept
-    ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause
-    `|R| ≥ 2` on the denotation side reflects the Harbour
-    `dualPredOnLattice` reading
-    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def both : QuantifierEntry :=
-  { form := "both"
-  , qforce := .universal
-  , numberRestriction := some .Dual
-  , monotonicity := .increasing
-  , strength := .strong  -- K&S §3.2: definite dets are strong
-  }
-
-/-- "neither" - negative dual, presupposes exactly 2.
-    K&S (83b): [_Det (not one) of the two] ⇒ neither.
-    Compositional denotation `neither_sem` lives in
-    `Quantification.Quantifier`. -/
-def neither : QuantifierEntry :=
-  { form := "neither"
-  , qforce := .negative
-  , numberRestriction := some .Dual
-  , monotonicity := .decreasing
-  , strength := .strong  -- K&S §3.3: negative strong
-  }
-
 /-! ## The Canonical Quantity Scale
 [barwise-cooper-1981] [van-tiel-franke-sauerland-2021]
 
@@ -205,14 +188,35 @@ instance : Fintype QuantityWord where
   elems := {.none_, .few, .some_, .half, .most, .all}
   complete := fun x => by cases x <;> simp
 
-/-- Lexical entry for each quantity word. -/
-def QuantityWord.entry : QuantityWord → QuantifierEntry
-  | .none_ => _root_.English.Determiners.none_
-  | .few   => _root_.English.Determiners.few
-  | .some_ => _root_.English.Determiners.some_
-  | .half  => _root_.English.Determiners.half
-  | .most  => _root_.English.Determiners.most
-  | .all   => _root_.English.Determiners.all
+/-- B&C Table II typological metadata: the textbook-consensus descriptive
+    labels (force, monotonicity, weak/strong strength) a quantity word carries.
+    A small local record over the `Quantification.Lexicon` enums — *not* the
+    lexical marking (that is `Quantifier`, above) and *not* the denotation
+    (that is `QuantityWord.gqDenotation`). -/
+structure QuantityWord.Metadata where
+  /-- Quantificational force. -/
+  qforce : QForce
+  /-- Monotonicity (typological label). -/
+  monotonicity : Monotonicity := .increasing
+  /-- Weak/strong (B&C Table II). -/
+  strength : Strength := .weak
+  deriving Repr, BEq, DecidableEq
+
+/-- B&C Table II typological metadata for each quantity word: force,
+    monotonicity, and weak/strong strength. This is the textbook-consensus
+    descriptive classification ([barwise-cooper-1981] Table II,
+    [van-de-pol-etal-2023] for *half*), *not* the denotation — the denotation
+    is `QuantityWord.gqDenotation`, and the properties this table labels are
+    theorems about it (`Studies/BarwiseCooper1981.lean`). Consumed by the GQT
+    model ([van-tiel-franke-sauerland-2021]) and the exceptive-licensing bridge
+    ([von-fintel-1993]) that want the descriptive label. -/
+def QuantityWord.entry : QuantityWord → QuantityWord.Metadata
+  | .none_ => { qforce := .negative, monotonicity := .decreasing, strength := .weak }
+  | .few   => { qforce := .proportional, monotonicity := .decreasing, strength := .weak }
+  | .some_ => { qforce := .existential, monotonicity := .increasing, strength := .weak }
+  | .half  => { qforce := .proportional, monotonicity := .nonMonotone, strength := .weak }
+  | .most  => { qforce := .proportional, monotonicity := .increasing, strength := .strong }
+  | .all   => { qforce := .universal, monotonicity := .increasing, strength := .strong }
 
 /-- Convenience accessor. -/
 def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
@@ -238,18 +242,21 @@ noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
 
 /-! ## Lexicon Access -/
 
-/-- All quantifier entries (excluding definites). -/
-def allQuantifiers : List QuantifierEntry := [
+/-- All quantificational determiner entries (excluding definites). -/
+def allQuantifiers : List Quantifier := [
   none_, few, some_, half, most, all, every, each, many, both, neither
 ]
 
-/-- All determiner entries (including definites). -/
-def allDeterminers : List QuantifierEntry := [
-  the, this, that, these, those, a, an
-] ++ allQuantifiers
+/-- All article entries. -/
+def allArticles : List Article := [the, a, an]
 
-/-- Lookup by form. -/
-def lookup (form : String) : Option QuantifierEntry :=
-  allDeterminers.find? λ d => d.form == form
+/-- All demonstrative-determiner entries. -/
+def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
+
+/-- The full inventory as a heterogeneous `List Determiner.Entry`
+    (the per-language form a Fragment declares). -/
+def inventory : List Determiner.Entry :=
+  allArticles.map .article ++ allDemonstratives.map .demonstrative ++
+    allQuantifiers.map .quantifier
 
 end English.Determiners
