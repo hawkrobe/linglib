@@ -7,6 +7,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Semantics.Verb.Denotation
 
 /-!
 # Anderson (2006): Modern Grammars of Case [anderson-jm-2006]
@@ -312,16 +313,11 @@ theorem experiencer_agent_distinct_same_rank :
 -- § 3: Verb → Scenario (End-to-End Bridge)
 -- ============================================================================
 
-private def subjectRole (v : Verb) : Option ThetaRole :=
-  v.effectiveSubjectEntailments.bind (·.toRole)
-
-private def objectRole (v : Verb) : Option ThetaRole :=
-  v.effectiveObjectEntailments.bind (·.toRole)
-
-/-- Derive Anderson's `Scenario` from a Fragment verb entry's derived roles. -/
+/-- Derive Anderson's `Scenario` from a Fragment verb entry's derived roles
+    (`Verb.subjectRole`/`objectRole`, the canonical theta-grid). -/
 def toScenario (v : Verb) : Scenario :=
-  ⟨(subjectRole v |>.map thetaToCaseRelation).toList ++
-   (objectRole v |>.map thetaToCaseRelation).toList⟩
+  ⟨(v.subjectRole |>.map thetaToCaseRelation).toList ++
+   (v.objectRole |>.map thetaToCaseRelation).toList⟩
 
 -- ============================================================================
 -- § 4: Anderson as LinkingTheory
@@ -373,7 +369,7 @@ theorem experiencer_correctly_predicted :
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
       (andersonPredictedSubjectTheta v.toVerb).isSome ==
-      (subjectRole v.toVerb).isSome).length = allVerbs.length := by
+      (v.toVerb.subjectRole).isSome).length = allVerbs.length := by
   native_decide
 
 -- ============================================================================
@@ -415,10 +411,10 @@ theorem experiencer_distinguished :
     not collapsed into agent (for verbs with entailment profiles). -/
 theorem experiencer_verbs_correct :
     (allVerbs.filter λ v =>
-      (subjectRole v.toVerb) == some .experiencer ∧
+      (v.toVerb.subjectRole) == some .experiencer ∧
       andersonPredictedSubjectTheta v.toVerb == some .experiencer).length =
     (allVerbs.filter λ v =>
-      (subjectRole v.toVerb) == some .experiencer).length := by
+      (v.toVerb.subjectRole) == some .experiencer).length := by
   native_decide
 
 -- ============================================================================
