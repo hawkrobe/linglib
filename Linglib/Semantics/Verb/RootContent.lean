@@ -16,22 +16,17 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 
 ## Main definitions
 
-* `Verb.kinds` — the verb's entailment-kind signature (root, else Levin)
+* `Verb.classKinds` — the class-derived kind signature (the coarse Levin view)
 * `Verb.outcomes` — the verb's outcome-set cardinality (root only)
 * `Verb.changeType` — the verb's change-entailment type (derived from its root)
+
+(`Verb.kinds`, the root-sourced signature, lives in `Verb/Basic.lean`.)
 -/
 
 open Verb
 open Semantics.Lexical
 
-/-- The verb's B&KG kind signature, read off its annotated `root` (the fine
-    source of truth). `none` when the verb carries no root. Sibling of `outcomes`
-    and `changeType` — root-only, no class fallback; the coarser class-derived
-    signature is `classKinds`. -/
-def Verb.kinds (v : Verb) : Option Verb.Root.Kinds :=
-  v.root.map (·.kinds)
-
-/-- The signature [levin-1993] attributes to the verb *via its class*
+/-- The kind signature [levin-1993] attributes to the verb *via its class*
     (`LevinClass.rootEntailments`) — the coarse REALIZATION-layer view, distinct
     from the root's own `kinds`. They are independent provenances; a
     `classKinds = kinds` agreement is a theorem, not a default. -/

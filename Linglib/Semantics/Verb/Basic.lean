@@ -38,6 +38,12 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
 def Verb.rootProfile (v : Verb) : Option Verb.Root.Profile :=
   v.root.map (·.profile)
 
+/-- The verb's B&KG kind signature ([beavers-koontz-garboden-2020]), read off its
+    `root` (the source of truth). `none` when the verb has no root. Root-only — the
+    coarser class-derived view is `Verb.classKinds` (`Verb/RootContent.lean`). -/
+def Verb.kinds (v : Verb) : Option Verb.Root.Kinds :=
+  v.root.map (·.kinds)
+
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile
     ([levin-1993], [dowty-1991]). -/
