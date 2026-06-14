@@ -277,12 +277,12 @@ structure Verb extends
     Verb.Causation, Verb.Attitude where
   /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
-  /-- The verb's lexical root — its entailment atoms, derived B&KG feature
+  /-- The verb's lexical root — its entailment atoms, derived B&KG kind
       signature, and [bhadra-2024] outcome axis. The content carrier the Verb
-      API integrates around (P-HUB): when present, the verb's signature / outcome
-      / change-type are read off *this* root rather than the `levinClass` table.
-      `none` until a Fragment annotates it. -/
-  root : Option Root := none
+      API integrates around (P-HUB): the verb's signature / outcome / change-type
+      are read off *this* root rather than the `levinClass` table. Total, with
+      the trivial root `{}` (no annotation) as the `⊥`. -/
+  root : Root := {}
   /-- Citation form (cross-linguistic) -/
   form : String
   /-- Does the verb denote the performance of an illocutionary act?
