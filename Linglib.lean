@@ -177,6 +177,7 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.Verb.RootContent
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.Constraint.Weighted

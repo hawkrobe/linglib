@@ -13,6 +13,7 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.Lexical.Roots.Basic
 import Linglib.Semantics.Lexical.Roots.Profile
 
 /-! # Verb entry — core type
@@ -258,6 +259,11 @@ structure Attitude where
 
 end Verb
 
+section
+-- Open the `Verb` namespace so the `root` field below resolves `Root` as
+-- `Verb.Root`: inside the `structure Verb` body the `Verb` *type* shadows the
+-- `Verb` *namespace*, so a bare `Verb.Root` mis-parses as a field projection.
+open _root_.Verb
 /--
 Cross-linguistic verb core: all semantic fields shared across languages.
 
@@ -274,6 +280,12 @@ structure Verb extends
   /-- Root-specific quality dimensions (within-class variation;
       [spalek-mcnally-2026]). -/
   rootProfile : Option Verb.Root.Profile := none
+  /-- The verb's lexical root — its entailment atoms, derived B&KG feature
+      signature, and [bhadra-2024] outcome axis. The content carrier the Verb
+      API integrates around (P-HUB): when present, the verb's signature / outcome
+      / change-type are read off *this* root rather than the `levinClass` table.
+      `none` until a Fragment annotates it. -/
+  root : Option Root := none
   /-- Citation form (cross-linguistic) -/
   form : String
   /-- Does the verb denote the performance of an illocutionary act?
@@ -284,3 +296,5 @@ structure Verb extends
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
   deriving Repr, BEq
+
+end
