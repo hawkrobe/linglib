@@ -6,10 +6,10 @@ import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.Closure
 
 /-!
-# Root Feature Signatures
+# Root Kind Signatures
 
 The four-feature vocabulary of [beavers-koontz-garboden-2020]'s root
-typology (ch. 5): a root's **feature signature** records which *kinds*
+typology (ch. 5): a root's **kind signature** records which *kinds*
 of lexical entailment it carries — state, manner, result, cause — as a
 `Finset LexKind`, so signatures inherit the Boolean lattice of finite
 sets (`≤` is "carries at most these kinds").
@@ -30,14 +30,14 @@ substrate.
 ## Main declarations
 
 * `LexKind`, with its collocational `PartialOrder`
-* `Root.FeatureSignature := Finset LexKind`
-* `Root.FeatureSignature.close`, `Root.FeatureSignature.closeOp`,
-  `Root.FeatureSignature.WellFormed`
+* `Root.Kinds := Finset LexKind`
+* `Root.Kinds.close`, `Root.Kinds.closeOp`,
+  `Root.Kinds.WellFormed`
 * canonical signatures (`propertyConcept`, `pureResult`,
   `causativeResult`, `pureManner`, `mannerResult`, `fullSpec`,
   `minimal`)
-* `Root.FeatureSignature.ViolatesBifurcation`,
-  `Root.FeatureSignature.HasMannerAndResult`
+* `Root.Kinds.ViolatesBifurcation`,
+  `Root.Kinds.HasMannerAndResult`
 -/
 
 namespace Verb
@@ -79,37 +79,37 @@ instance : DecidableLE LexKind := fun _ _ => inferInstanceAs (Decidable (_ = tru
 
 end LexKind
 
-/-! ### Feature signatures -/
+/-! ### Kind signatures -/
 
-/-- A root feature signature: the set of entailment kinds carried.
+/-- A root kind signature: the set of entailment kinds carried.
     `≤` (= `⊆`) and the lattice operations come from `Finset`. -/
-abbrev Root.FeatureSignature := Finset LexKind
+abbrev Root.Kinds := Finset LexKind
 
-namespace Root.FeatureSignature
+namespace Root.Kinds
 
 /-- The collocational closure: a signature carrying `cause` is
     completed with `result` and `state`; one carrying `result` is
     completed with `state`. This is the lower closure under the
     `LexKind` order (`mem_close_iff`). -/
-def close (s : Root.FeatureSignature) : Root.FeatureSignature :=
+def close (s : Root.Kinds) : Root.Kinds :=
   s ∪ (if .cause ∈ s then {.result, .state} else ∅)
     ∪ (if .result ∈ s then {.state} else ∅)
 
-theorem le_close : ∀ s : Root.FeatureSignature, s ≤ close s := by decide
+theorem le_close : ∀ s : Root.Kinds, s ≤ close s := by decide
 
-theorem close_idem : ∀ s : Root.FeatureSignature, close (close s) = close s := by
+theorem close_idem : ∀ s : Root.Kinds, close (close s) = close s := by
   decide
 
-theorem close_mono : ∀ {s t : Root.FeatureSignature}, s ≤ t → close s ≤ close t := by
+theorem close_mono : ∀ {s t : Root.Kinds}, s ≤ t → close s ≤ close t := by
   decide
 
 /-- `close` is the lower closure under the collocational order:
     `k` is in the closure iff some kind in `s` dominates it. -/
-theorem mem_close_iff : ∀ (s : Root.FeatureSignature) (k : LexKind),
+theorem mem_close_iff : ∀ (s : Root.Kinds) (k : LexKind),
     k ∈ close s ↔ ∃ j ∈ s, k ≤ j := by decide
 
 /-- The collocational closure as a mathlib `ClosureOperator`. -/
-def closeOp : ClosureOperator Root.FeatureSignature where
+def closeOp : ClosureOperator Root.Kinds where
   toFun := close
   monotone' _ _ := close_mono
   le_closure' := le_close
@@ -117,13 +117,13 @@ def closeOp : ClosureOperator Root.FeatureSignature where
 
 /-- A signature is well-formed iff it already satisfies the
     collocational constraints (it is a fixed point of `close`). -/
-def WellFormed (s : Root.FeatureSignature) : Prop := close s = s
+def WellFormed (s : Root.Kinds) : Prop := close s = s
 
-instance (s : Root.FeatureSignature) : Decidable s.WellFormed :=
+instance (s : Root.Kinds) : Decidable s.WellFormed :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Well-formedness is downward-closedness in the `LexKind` order. -/
-theorem wellFormed_iff_isLowerSet (s : Root.FeatureSignature) :
+theorem wellFormed_iff_isLowerSet (s : Root.Kinds) :
     s.WellFormed ↔ IsLowerSet (↑s : Set LexKind) := by
   constructor
   · intro hwf a b hba ha
@@ -137,7 +137,7 @@ theorem wellFormed_iff_isLowerSet (s : Root.FeatureSignature) :
 
 /-- Closure output is always well-formed — the collocational
     constraints hold of closed signatures *by construction*. -/
-theorem close_wellFormed : ∀ s : Root.FeatureSignature, (close s).WellFormed :=
+theorem close_wellFormed : ∀ s : Root.Kinds, (close s).WellFormed :=
   close_idem
 
 /-! ### Canonical signatures
@@ -148,12 +148,12 @@ ch. 5 (their example display (12), §5.4). -/
 /-- +S −M −R −C: property concept roots (√FLAT, √DRY).
     Deadjectival COS verbs — the root names the result state.
     Complement position. -/
-def propertyConcept : Root.FeatureSignature := {.state}
+def propertyConcept : Root.Kinds := {.state}
 
 /-- +S −M +R −C: internally caused result roots (√BLOSSOM, √RUST).
     Root entails both a state and a change to that state, but not
     external causation. Complement position. -/
-def pureResult : Root.FeatureSignature := {.state, .result}
+def pureResult : Root.Kinds := {.state, .result}
 
 /-- +S −M +R +C: externally caused result roots (√CRACK, √BREAK).
     Root entails a state, change, AND causation. If roots subdivide by
@@ -161,32 +161,32 @@ def pureResult : Root.FeatureSignature := {.state, .result}
     (1995) externally vs internally caused change-of-state distinction
     ([beavers-koontz-garboden-2020], hedged as a possibility).
     Complement position. -/
-def causativeResult : Root.FeatureSignature := {.state, .result, .cause}
+def causativeResult : Root.Kinds := {.state, .result, .cause}
 
 /-- −S +M −R −C: pure manner roots (√JOG, √RUN, √SWIM).
     Root specifies action manner without entailing any state.
     Adjoined position. -/
-def pureManner : Root.FeatureSignature := {.manner}
+def pureManner : Root.Kinds := {.manner}
 
 /-- +S +M +R −C: manner + result without cause. Well-formed per the
     constraints; [beavers-koontz-garboden-2020] leave its attestation
     an open question ("whether a change and a manner can exist together
     in a single meaning without causation"), with candidate witnesses
     *slide* and motion-in-sound-emission *buzz*. -/
-def mannerResult : Root.FeatureSignature := {.state, .manner, .result}
+def mannerResult : Root.Kinds := {.state, .manner, .result}
 
 /-- +S +M +R +C: fully specified roots (√HAND adjoined, √DROWN and the
     other manner-of-killing roots in complement position;
     [beavers-koontz-garboden-2020] chs. 3–4). These are the attested
     MRC violators. The adjoined/complement contrast is carried by
     `Root.Position`, not by the signature. -/
-def fullSpec : Root.FeatureSignature := {.state, .manner, .result, .cause}
+def fullSpec : Root.Kinds := {.state, .manner, .result, .cause}
 
 /-- −S −M −R −C: minimal roots — no structural entailments.
     Conservative default for classes not yet studied under B&KG's
     framework. Not a row in B&KG's typology (which only lists roots
     with at least one positive feature). -/
-def minimal : Root.FeatureSignature := ∅
+def minimal : Root.Kinds := ∅
 
 /-- Every canonical signature is well-formed. -/
 theorem canonical_wellFormed :
@@ -199,54 +199,54 @@ theorem canonical_wellFormed :
 
 /-- The ontological kinds — all the Bifurcation Thesis allows a root
     to carry. -/
-def ontological : Root.FeatureSignature := {.state, .manner}
+def ontological : Root.Kinds := {.state, .manner}
 
 /-- A signature violates the Bifurcation Thesis ([embick-2009]; the
     assumption of [arad-2005]) iff it carries templatic (eventive)
     content — it is not bounded by `ontological`. -/
-def ViolatesBifurcation (s : Root.FeatureSignature) : Prop := ¬ s ≤ ontological
+def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
 
-instance (s : Root.FeatureSignature) : Decidable s.ViolatesBifurcation :=
+instance (s : Root.Kinds) : Decidable s.ViolatesBifurcation :=
   inferInstanceAs (Decidable (¬ _ ≤ _))
 
 /-- Violation is carrying a `result` or `cause` kind. -/
 theorem violatesBifurcation_iff :
-    ∀ s : Root.FeatureSignature,
+    ∀ s : Root.Kinds,
       s.ViolatesBifurcation ↔ .result ∈ s ∨ .cause ∈ s := by decide
 
 /-- Bifurcation violation is monotone: adding entailments cannot
     repair a violation. (Equivalently, the thesis carves out a lower
     set of the signature lattice.) -/
 theorem violatesBifurcation_mono :
-    ∀ {s t : Root.FeatureSignature}, s ≤ t →
+    ∀ {s t : Root.Kinds}, s ≤ t →
       s.ViolatesBifurcation → t.ViolatesBifurcation := by decide
 
 /-- A signature has both manner and result — the configuration
     Manner/Result Complementarity ([rappaport-hovav-levin-2010])
     claims no root realizes. -/
-def HasMannerAndResult (s : Root.FeatureSignature) : Prop :=
+def HasMannerAndResult (s : Root.Kinds) : Prop :=
   {LexKind.manner, LexKind.result} ≤ s
 
-instance (s : Root.FeatureSignature) : Decidable s.HasMannerAndResult :=
+instance (s : Root.Kinds) : Decidable s.HasMannerAndResult :=
   inferInstanceAs (Decidable (_ ≤ _))
 
 /-- MRC violation is monotone in the signature order. -/
 theorem hasMannerAndResult_mono :
-    ∀ {s t : Root.FeatureSignature}, s ≤ t →
+    ∀ {s t : Root.Kinds}, s ≤ t →
       s.HasMannerAndResult → t.HasMannerAndResult := by decide
 
 /-- Both theses are invariant under collocational closure: `close`
     only adds `state`/`result` kinds forced by `cause`, never `manner`,
     and a closed signature violates Bifurcation iff its base does. -/
 theorem violatesBifurcation_close_iff :
-    ∀ s : Root.FeatureSignature,
+    ∀ s : Root.Kinds,
       (close s).ViolatesBifurcation ↔ s.ViolatesBifurcation := by decide
 
 theorem hasMannerAndResult_close_iff :
-    ∀ s : Root.FeatureSignature,
+    ∀ s : Root.Kinds,
       (close s).HasMannerAndResult ↔
         s.HasMannerAndResult ∨ (.manner ∈ s ∧ .cause ∈ s) := by decide
 
-end Root.FeatureSignature
+end Root.Kinds
 
 end Verb

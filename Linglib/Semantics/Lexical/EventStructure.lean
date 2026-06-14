@@ -124,7 +124,7 @@ theorem cause_implies_resultState (t : Template) :
 `Template` is a **function** of the root's collocational kind signature, not a
 parallel theory: `.cause` → accomplishment, `.result` → achievement, `.manner` →
 activity, else state. The `HasCause`/`HasResultState` diagnostics then reduce to
-signature membership (`ofSignature_hasCause_iff`/`hasResultState_iff`), so the
+signature membership (`ofKinds_hasCause_iff`/`hasResultState_iff`), so the
 denotational result entailment and `cause_implies_resultState` are one fact seen
 through the signature. -/
 
@@ -132,46 +132,46 @@ section Signature
 open Verb (LexKind Root)
 
 /-- The event-structure template determined by a root's (closed) kind signature. -/
-def Template.ofSignature (σ : Root.FeatureSignature) : Template :=
+def Template.ofKinds (σ : Root.Kinds) : Template :=
   if LexKind.cause ∈ σ then .accomplishment
   else if LexKind.result ∈ σ then .achievement
   else if LexKind.manner ∈ σ then .activity
   else .state
 
 /-- `HasCause` reduces to carrying the `cause` kind. -/
-theorem ofSignature_hasCause_iff (σ : Root.FeatureSignature) :
-    (Template.ofSignature σ).HasCause ↔ LexKind.cause ∈ σ := by
-  unfold Template.ofSignature
+theorem ofKinds_hasCause_iff (σ : Root.Kinds) :
+    (Template.ofKinds σ).HasCause ↔ LexKind.cause ∈ σ := by
+  unfold Template.ofKinds
   split_ifs <;> simp_all [Template.HasCause]
 
 /-- For a well-formed (collocationally closed) signature, `HasResultState`
     reduces to carrying the `result` kind — via `cause` ⟹ `result`. -/
-theorem ofSignature_hasResultState_iff {σ : Root.FeatureSignature}
+theorem ofKinds_hasResultState_iff {σ : Root.Kinds}
     (h : σ.WellFormed) :
-    (Template.ofSignature σ).HasResultState ↔ LexKind.result ∈ σ := by
+    (Template.ofKinds σ).HasResultState ↔ LexKind.result ∈ σ := by
   have hcr : LexKind.cause ∈ σ → LexKind.result ∈ σ := by
     intro hc
-    have hr : LexKind.result ∈ Root.FeatureSignature.close σ :=
-      (Root.FeatureSignature.mem_close_iff σ LexKind.result).mpr
+    have hr : LexKind.result ∈ Root.Kinds.close σ :=
+      (Root.Kinds.mem_close_iff σ LexKind.result).mpr
         ⟨LexKind.cause, hc, by decide⟩
-    have he : Root.FeatureSignature.close σ = σ := h
+    have he : Root.Kinds.close σ = σ := h
     rwa [he] at hr
-  unfold Template.ofSignature
+  unfold Template.ofKinds
   split_ifs with hc hr hm <;> simp_all [Template.HasResultState]
 
 /-- A root's event-structure template, read off its collocational closure. -/
 def _root_.Verb.Root.template (r : Root) : Template :=
-  Template.ofSignature r.closedFeatureSignature
+  Template.ofKinds r.closedKinds
 
 /-- A root entails a result state (template-level) iff it carries `result` —
     the [beavers-koontz-garboden-2020] result entailment, bridged to the
     `EventStructure` template diagnostic. -/
 theorem _root_.Verb.Root.template_hasResultState_iff (r : Root) :
-    r.template.HasResultState ↔ LexKind.result ∈ r.closedFeatureSignature := by
-  apply ofSignature_hasResultState_iff
-  show Root.FeatureSignature.close r.closedFeatureSignature = r.closedFeatureSignature
-  unfold Verb.Root.closedFeatureSignature
-  exact Root.FeatureSignature.close_idem _
+    r.template.HasResultState ↔ LexKind.result ∈ r.closedKinds := by
+  apply ofKinds_hasResultState_iff
+  show Root.Kinds.close r.closedKinds = r.closedKinds
+  unfold Verb.Root.closedKinds
+  exact Root.Kinds.close_idem _
 
 end Signature
 

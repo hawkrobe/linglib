@@ -8,7 +8,7 @@ force, robustness, instrument, dimensionality, agent properties. A
 multi-paper synthesis ([talmy-1988], [talmy-2000], [dowty-1991],
 [majid-boster-bowerman-2008], [spalek-mcnally-2026]); no single paper
 carries this profile. Structural entailments (state, manner, result,
-cause) are the separate `Root.FeatureSignature` (`Roots/Signature.lean`).
+cause) are the separate `Root.Kinds` (`Roots/Signature.lean`).
 
 ## Main declarations
 
@@ -177,7 +177,7 @@ open Profile (Range)
 /-- Within-class root content profile.
 
     Captures **quality** dimensions of root content — force, robustness,
-    agent properties — as opposed to `Root.FeatureSignature`, which captures
+    agent properties — as opposed to `Root.Kinds`, which captures
     **structural** entailments (state, manner, result, cause).
 
     Each dimension is a `Range` of acceptable values; `none` means the

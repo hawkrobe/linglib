@@ -23,7 +23,7 @@ or `=s` is required to form a transitive stem from an underived root:
 | `=∅` (root)     | agent-patient salient  | lexically transitive ("require two arguments")            |
 | `=s` (CAUS)     | patient-salient        | spontaneous state change; one (patient) argument salient   |
 
-The structural conditions are over (B&K-G feature signature × Coon
+The structural conditions are over (B&K-G kind signature × Coon
 arity): zero derivation tracks root transitivity
 (`Root.Arity.selectsTheme`); the two intransitive transitivisers split
 by signature (manner vs result). Each condition is the corresponding
@@ -47,7 +47,7 @@ open Yukatek.Roots
     without inherent result. -/
 def affectiveT : DerivOp :=
   { name := "=t"
-  , applies := fun r => IsAgentSalient r.featureSignature (arity r)
+  , applies := fun r => IsAgentSalient r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-- Zero derivation `=∅`: signals that the root is already lexically
@@ -68,7 +68,7 @@ def zeroDeriv : DerivOp :=
     result without specified manner. -/
 def causativeS : DerivOp :=
   { name := "=s"
-  , applies := fun r => IsPatientSalient r.featureSignature (arity r)
+  , applies := fun r => IsPatientSalient r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-- Positional inchoative `-tal` (allomorph `-lah`): forms a positional stem from a
@@ -79,7 +79,7 @@ def causativeS : DerivOp :=
     result, or cause atoms. -/
 def positionalTal : DerivOp :=
   { name := "-tal"
-  , applies := fun r => IsPositional r.featureSignature (arity r)
+  , applies := fun r => IsPositional r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-! ### The inventory -/

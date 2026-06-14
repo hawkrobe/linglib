@@ -10,10 +10,10 @@ and +cause entails +result.
 
 Two levels of closure, each a mathlib `ClosureOperator`:
 
-* **Kind level** (canonical): `Root.closedFeatureSignature` is the
-  collocational closure `Root.FeatureSignature.close` of the root's
+* **Kind level** (canonical): `Root.closedKinds` is the
+  collocational closure `Root.Kinds.close` of the root's
   derived signature. Both book restrictions hold of closed signatures
-  by construction (`closedFeatureSignature_wellFormed`).
+  by construction (`closedKinds_wellFormed`).
 * **Atom level** (label-tracking): `Root.closedEntailments` closes the
   labeled atom set under `bkgRules` (`becomesState s ⇒ hasState s`),
   packaged as `bkgCloseOp`. Only the result→state edge is expressible
@@ -23,7 +23,7 @@ Two levels of closure, each a mathlib `ClosureOperator`:
 ## Main declarations
 
 * `bkgRules`, `bkgClose`, `bkgCloseOp`, `Root.closedEntailments`
-* `Root.closedFeatureSignature`
+* `Root.closedKinds`
 * `mem_kind_closedEntailments` — the atom/kind bridge
 -/
 
@@ -36,7 +36,7 @@ namespace Verb
     the resulting state attribution `s`, label preserved). The
     cause→result restriction is not expressible at atom level
     (`hasCause` carries no label) and is handled by
-    `Root.FeatureSignature.close`. -/
+    `Root.Kinds.close`. -/
 def bkgRules : LexEntailment → Finset LexEntailment
   | .becomesState s => {.hasState s}
   | _ => ∅
@@ -96,28 +96,28 @@ def closedEntailments (r : Root) : Finset LexEntailment :=
 
 /-! ### Kind-level closure -/
 
-/-- The closed feature signature: the collocational closure of the
+/-- The closed kind signature: the collocational closure of the
     derived signature. Captures both book restrictions (result→state
     and cause→result). -/
-def closedFeatureSignature (r : Root) : Root.FeatureSignature :=
-  r.featureSignature.close
+def closedKinds (r : Root) : Root.Kinds :=
+  r.kinds.close
 
 /-- The closed signature satisfies the collocational constraints by
     construction — what `RootEntailments.WellFormed` used to stipulate
     is a theorem of closure. -/
-theorem closedFeatureSignature_wellFormed (r : Root) :
-    r.closedFeatureSignature.WellFormed :=
-  Root.FeatureSignature.close_wellFormed _
+theorem closedKinds_wellFormed (r : Root) :
+    r.closedKinds.WellFormed :=
+  Root.Kinds.close_wellFormed _
 
-theorem featureSignature_le_closed (r : Root) :
-    r.featureSignature ≤ r.closedFeatureSignature :=
-  Root.FeatureSignature.le_close _
+theorem kinds_le_closed (r : Root) :
+    r.kinds ≤ r.closedKinds :=
+  Root.Kinds.le_close _
 
 /-- Both theses are insensitive to the closure edges: a root violates
     Bifurcation iff its closed signature does. -/
 theorem closed_violatesBifurcation_iff (r : Root) :
-    r.closedFeatureSignature.ViolatesBifurcation ↔ r.ViolatesBifurcation :=
-  Root.FeatureSignature.violatesBifurcation_close_iff _
+    r.closedKinds.ViolatesBifurcation ↔ r.ViolatesBifurcation :=
+  Root.Kinds.violatesBifurcation_close_iff _
 
 /-! ### The atom/kind bridge -/
 
@@ -125,18 +125,18 @@ theorem closed_violatesBifurcation_iff (r : Root) :
     `state` kind whenever a result atom is present. -/
 theorem mem_kind_closedEntailments {r : Root} {k : LexKind} :
     (∃ a ∈ r.closedEntailments, a.kind = some k) ↔
-      k ∈ r.featureSignature ∨ (k = .state ∧ r.HasResult) := by
+      k ∈ r.kinds ∨ (k = .state ∧ r.HasResult) := by
   simp only [closedEntailments, bkgClose, Finset.mem_union, Finset.mem_biUnion]
   constructor
   · rintro ⟨a, ha | ⟨b, hb, hab⟩, hk⟩
-    · exact .inl (Root.mem_featureSignature.mpr ⟨a, ha, hk⟩)
+    · exact .inl (Root.mem_kinds.mpr ⟨a, ha, hk⟩)
     · obtain ⟨hak, hbk⟩ := bkgRules_kind hab
       refine .inr ⟨by rw [hk] at hak; exact Option.some_inj.mp hak, ?_⟩
-      exact Root.mem_featureSignature.mpr ⟨b, hb, hbk⟩
+      exact Root.mem_kinds.mpr ⟨b, hb, hbk⟩
   · rintro (hk | ⟨rfl, hres⟩)
-    · obtain ⟨a, ha, hak⟩ := Root.mem_featureSignature.mp hk
+    · obtain ⟨a, ha, hak⟩ := Root.mem_kinds.mp hk
       exact ⟨a, .inl ha, hak⟩
-    · obtain ⟨b, hb, hbk⟩ := Root.mem_featureSignature.mp hres
+    · obtain ⟨b, hb, hbk⟩ := Root.mem_kinds.mp hres
       cases b <;> simp [LexEntailment.kind] at hbk
       rename_i lab
       exact ⟨.hasState lab, .inr ⟨_, hb, by simp [bkgRules]⟩, rfl⟩
@@ -147,10 +147,10 @@ theorem mem_kind_closedEntailments {r : Root} {k : LexKind} :
     only). -/
 theorem kind_closedEntailments_le (r : Root) {k : LexKind}
     (h : ∃ a ∈ r.closedEntailments, a.kind = some k) :
-    k ∈ r.closedFeatureSignature := by
+    k ∈ r.closedKinds := by
   rcases mem_kind_closedEntailments.mp h with hk | ⟨rfl, hres⟩
-  · exact featureSignature_le_closed r hk
-  · exact (Root.FeatureSignature.mem_close_iff _ _).mpr
+  · exact kinds_le_closed r hk
+  · exact (Root.Kinds.mem_close_iff _ _).mpr
       ⟨.result, hres, by decide⟩
 
 end Root

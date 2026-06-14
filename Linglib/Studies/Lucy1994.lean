@@ -60,10 +60,10 @@ open Yukatek.Operators
 /-- A root's predicted salience class: the substrate classifier
     applied to its signature and the fragment's arity assignment. -/
 abbrev predictedClass (r : Root) : Option SalienceClass :=
-  classOf r.featureSignature (arity r)
+  classOf r.kinds (arity r)
 
 theorem class_depends_only_on_signature_and_arity
-    (r₁ r₂ : Root) (h : r₁.featureSignature = r₂.featureSignature)
+    (r₁ r₂ : Root) (h : r₁.kinds = r₂.kinds)
     (h' : arity r₁ = arity r₂) :
     predictedClass r₁ = predictedClass r₂ := by
   unfold predictedClass
@@ -72,7 +72,7 @@ theorem class_depends_only_on_signature_and_arity
 /-! ### Predicted class agrees with operator applicability -/
 
 /-! Both `predictedClass` and the inventory's applicability profile
-    factor through the pair (feature signature × arity), drawn from a
+    factor through the pair (kind signature × arity), drawn from a
     32-element fintype. Each characterisation therefore reduces —
     after rewriting the profile to pair level
     (`applicableNames_eq_profile`) and generalising the pair — to a
@@ -85,14 +85,14 @@ theorem class_depends_only_on_signature_and_arity
     name appears. -/
 private theorem applicableNames_eq_profile (r : Root) :
     inventory.applicableNames r =
-      (if IsAgentSalient r.featureSignature (arity r) then ["=t"] else []) ++
+      (if IsAgentSalient r.kinds (arity r) then ["=t"] else []) ++
       (if IsAgentPatientSalient (arity r) then ["=∅"] else []) ++
-      (if IsPatientSalient r.featureSignature (arity r) then ["=s"] else []) ++
-      (if IsPositional r.featureSignature (arity r) then ["-tal"] else []) := by
+      (if IsPatientSalient r.kinds (arity r) then ["=s"] else []) ++
+      (if IsPositional r.kinds (arity r) then ["-tal"] else []) := by
   simp only [inventory, Inventory.applicableNames, affectiveT, zeroDeriv,
     causativeS, positionalTal, List.filter_cons, List.filter_nil,
     decide_eq_true_eq]
-  generalize r.featureSignature = s
+  generalize r.kinds = s
   generalize arity r = a
   revert s a
   decide
@@ -101,7 +101,7 @@ local macro "lucy_applicable " r:term : tactic =>
   `(tactic|
     (rw [applicableNames_eq_profile]
      unfold predictedClass
-     generalize ($r).featureSignature = s
+     generalize ($r).kinds = s
      generalize arity $r = a
      revert s a
      decide))
@@ -142,9 +142,9 @@ theorem applicableNames_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
       predictedClass r₁ = predictedClass r₂ := by
   rw [applicableNames_eq_profile, applicableNames_eq_profile]
   unfold predictedClass
-  generalize r₁.featureSignature = s₁
+  generalize r₁.kinds = s₁
   generalize arity r₁ = a₁
-  generalize r₂.featureSignature = s₂
+  generalize r₂.kinds = s₂
   generalize arity r₂ = a₂
   revert s₁ a₁ s₂ a₂
   decide
@@ -223,11 +223,11 @@ theorem rootTransitives_respect_mrc :
 
 /-! ### Closure robustness -/
 
-/-- The class predicted from a root's *closed* feature signature
-    (the collocational closure `Root.FeatureSignature.close` of the derived
+/-- The class predicted from a root's *closed* kind signature
+    (the collocational closure `Root.Kinds.close` of the derived
     signature). Arity is closure-invariant. -/
 def closedPredictedClass (r : Root) : Option SalienceClass :=
-  classOf r.closedFeatureSignature (arity r)
+  classOf r.closedKinds (arity r)
 
 /-- For cause-free roots, collocational closure does not change the
     Lucy 1994 salience classification: arity is untouched, the only
@@ -241,9 +241,9 @@ def closedPredictedClass (r : Root) : Option SalienceClass :=
 theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
     closedPredictedClass r = predictedClass r := by
   unfold Root.HasCause at h
-  unfold closedPredictedClass predictedClass Root.closedFeatureSignature
+  unfold closedPredictedClass predictedClass Root.closedKinds
   revert h
-  generalize r.featureSignature = s
+  generalize r.kinds = s
   generalize arity r = a
   revert s a
   decide
