@@ -54,10 +54,6 @@ linguistic realization functor on top of it.
   class to GQ `outerNeg`.
 * `someDet_holds_eq_compl`/`noDet_toGQ_eq_innerNeg`/`someDet_toGQ_eq_dualQ` — the `no`/`some`
   corners as the complement/inner-negation/dual images of the model-theoretic structure.
-
-`L_UV`/`uvRel`/`uRel`/`vRel` are re-derived in `Studies.BarwiseCooper1981` (its
-Appendix-C Fraïssé argument predates this substrate); that copy will be deduped against
-this one in a follow-up.
 -/
 
 universe u v

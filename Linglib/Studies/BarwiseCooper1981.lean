@@ -6,6 +6,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Quantification.DomainRestriction
+import Linglib.Semantics.Quantification.Lindstrom
 import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
 
 /-!
@@ -100,6 +101,32 @@ theorem conservativity_universal_denote {α : Type*} [Fintype α] (q : Quantifie
     ∀ g ∈ (⟦q⟧ : List (GQ α)), Conservative g :=
   Quantifier.denote_conservative English.Determiners.englishLexicon
     (englishLexicon_conservative (α := α)) q
+
+/-! ### The lexical denotation meets the model-theoretic realization
+
+The two `→ GQ` maps for the Aristotelian core agree: the *lexical* denotation of
+a `Quantifier` record (`⟦·⟧` = `Quantifier.denote`) is the singleton of the
+*model-theoretic realization* of the corresponding Lindström class
+(`Quantification.Det.toGQ`). Each is `every_denote`/`some_denote`/`none_denote`
+composed with `everyDet_toGQ`/`someDet_toGQ`/`noDet_toGQ`. -/
+
+open English.Determiners (every some_ none_)
+
+/-- `⟦every⟧` is the realization of the Lindström class `everyDet`: the lexical
+    denotation and the model-theoretic realization functor agree on *every*. -/
+theorem denote_every_eq_everyDet {α : Type*} [Fintype α] :
+    (⟦every⟧ : List (GQ α)) = [everyDet.toGQ α] := by
+  rw [everyDet_toGQ]; exact English.Determiners.every_denote
+
+/-- `⟦some⟧` is the realization of the Lindström class `someDet`. -/
+theorem denote_some_eq_someDet {α : Type*} [Fintype α] :
+    (⟦some_⟧ : List (GQ α)) = [someDet.toGQ α] := by
+  rw [someDet_toGQ]; exact English.Determiners.some_denote
+
+/-- `⟦no⟧` (the *none* record) is the realization of the Lindström class `noDet`. -/
+theorem denote_no_eq_noDet {α : Type*} [Fintype α] :
+    (⟦none_⟧ : List (GQ α)) = [noDet.toGQ α] := by
+  rw [noDet_toGQ]; exact English.Determiners.none_denote
 
 -- ============================================================================
 -- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
@@ -562,20 +589,9 @@ because a region-respecting correspondence can always be extended:
 namespace BarwiseCooper1981
 
 open FirstOrder Language
-
-/-- Relation symbols: two unary predicates. -/
-inductive uvRel : ℕ → Type
-  | U : uvRel 1
-  | V : uvRel 1
-  deriving DecidableEq
-
-/-- The monadic language of C12 (equality is built into the formula type). -/
-def L_UV : Language :=
-  { Functions := fun _ => Empty
-    Relations := uvRel }
-
-abbrev uRel : L_UV.Relations 1 := .U
-abbrev vRel : L_UV.Relations 1 := .V
+-- `L_UV`/`uvRel`/`uRel`/`vRel` are the shared monadic-determiner language; the
+-- substrate copy lives in `Semantics/Quantification/Lindstrom.lean`.
+open Quantification (uvRel L_UV uRel vRel)
 
 /-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
 B&C's notation). -/
@@ -1047,6 +1063,7 @@ automorphism argument"), reducing to C12's models. -/
 namespace BarwiseCooper1981
 
 open FirstOrder Language
+open Quantification (uvRel L_UV uRel vRel)
 
 /-- Formulas of B&C's `L(Q)`: the monadic language of C12 (atoms `U`, `V`,
 equality) plus the unrelativized majority quantifier `Qx[·]`. De Bruijn
