@@ -176,6 +176,7 @@ import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Basic
+import Linglib.Semantics.Verb.Denotation
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.Constraint.Weighted
@@ -2365,6 +2366,7 @@ import Linglib.Semantics.Lexical.Roots.Template
 import Linglib.Semantics.Lexical.Roots.Typology
 import Linglib.Semantics.Lexical.Roots.Closure
 import Linglib.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Lexical.Roots.Outcomes
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.Word
