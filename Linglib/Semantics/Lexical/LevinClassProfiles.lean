@@ -239,9 +239,11 @@ theorem perception_subject_role :
 theorem psychCausal_subject_role :
     psychCausal.subjectProfile.toRole = some .stimulus := by native_decide
 
-/-- Directed-motion subject → none (mixed P-Agent + P-Patient). -/
+/-- Directed-motion subject → patient: the unaccusative subject of *arrive*
+    undergoes a change of location (`changeOfState`) without agentivity. Formerly
+    `none` (the moving subject was dropped); `toRole` now restores it. -/
 theorem directedMotion_subject_role :
-    directedMotion.subjectProfile.toRole = none := by native_decide
+    directedMotion.subjectProfile.toRole = some .patient := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Root.Kinds → ArgTemplate (the missing derivation)
