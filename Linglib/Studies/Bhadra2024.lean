@@ -1,847 +1,428 @@
 import Linglib.Morphology.RootTypology
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
+import Mathlib.Data.ENat.Basic
 
 /-!
 # Bhadra 2024: Verb roots encode outcomes
 
 [bhadra-2024]
 
-Bhadra, D. (2024). Verb roots encode outcomes: argument structure and
-lexical semantics of reversal and restitution. *Linguistics and Philosophy*
-47: 557–610.
+The reversative prefix *un-* and the restitutive prefix *re-* are result-state
+modifiers sensitive to the **outcome set** a verb root lexically encodes
+([bhadra-2024], §5). Every verb root carries a set of outcomes `O` — the
+states its object can be in after the action — and a contextual set of
+thresholds `T` of states it can start from.
 
-## Summary
+The two affixes split along two independent axes:
 
-The reversative prefix *un-* and the restitutive prefix *re-* are sensitive
-to the **outcome set** of the base verb root. All verb roots come equipped
-with sets of outcomes (possible states of the object after the action).
-The cardinality of this set determines affix compatibility:
+* ***un-*** is driven by **outcome-set cardinality** (eq. 66): it needs
+  `O.Nontrivial` (`|O| > 1`, the *potential-for-change* / PFC profile) plus
+  inverse equivalence between the base result and the un-event's boundaries.
+  Singleton or empty outcome sets block it.
+* ***re-*** is *not* cardinality-sensitive (eq. 72); it needs result
+  equivalence with a prior event (eq. 68 i) and that the object can re-enter a
+  threshold state (eq. 68 ii). Consumption/destruction verbs block it because
+  their outcome leaves the object outside every threshold.
 
-- PFC verbs (fold, wrap, coil): multi-membered outcomes → *un-* ✓, *re-* ✓
-- IE verbs (hit, scrub, kick): singleton outcomes, surface only → *un-* ✗, *re-* ✗
-- COS verbs (break, destroy, paint): singleton outcomes → *un-* ✗, *re-* partial
+## Main definitions
 
-## Key formalizations
+* `VerbRoot` — a root's base predicate (`EventRel`), outcome set, threshold set
+* `resState` / `preState` — state at the right / left event boundary (eqs. 64–65)
+* `unSem` / `reSem` — the *un-* and *re-* denotations (eqs. 66, 68)
+* `LevinClass.outcomeCard` — the single Levin-class → outcome-cardinality bridge
+  (`ℕ∞`; eq. 62 hierarchy multi > singleton > empty)
 
-1. `ForceTransmissionClass` classifies verbs by impact type (§§2, 3, 4)
-2. `BoundaryStates` formalizes `res`/`pre` operators for state equivalence (§5.2)
-3. `LevinClass.forceTransmissionClass` bridges Levin classes to outcome classes
-4. Per-verb *un-* and *re-* predictions verified against empirical data from (12), (45)
+## Main results
 
-## Substrate (was Morphology/ReversalRestitution.lean, relocated 0.230.455)
+* `subsingleton_blocks_un` — `¬ O.Nontrivial → ¬ unSem` (eq. 67), with the
+  singleton and empty corollaries
+* `*_un` / `*_re` per-verb predictions, derived compositionally and bridged from
+  Fragment entries via `Verb.levinClass`
 
-The §§1-14 substrate below was previously a separate top-level theory file;
-Bhadra 2024 is the originating paper, so the substrate now anchors here per
-CLAUDE.md "every file is anchored". The deferred follow-up is to extract the
-theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
-`Set.multiMembered`) into `Semantics/ArgumentStructure/Affectedness/Profile.lean` once
-a second consumer materialises.
+## References
+
+* [bhadra-2024] (the Verb-Root-Outcomes framework)
+* [beavers-2010], [dowty-1991] (affectedness hierarchy this grounds in)
+* [levin-1993] (verb classes the outcome bridge keys on)
 -/
-
-open Semantics.Lexical
-open Semantics.Lexical.EventStructure
-open Semantics.ArgumentStructure.EntailmentProfile
-open Semantics.ArgumentStructure.Affectedness.Profile
-
--- ════════════════════════════════════════════════════
--- § 1. Outcome Set Cardinality (eq. 62)
--- ════════════════════════════════════════════════════
-
-/-- Cardinality of a verb root's outcome set. -/
-inductive OutcomeCardinality where
-  | multi
-  | singleton
-  | empty
-  deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 2. Force Transmission Classification (Table 1)
--- ════════════════════════════════════════════════════
-
-inductive ForceTransmissionClass where
-  | potentialForChange
-  | impingementEffecting
-  | integralChange
-  | noForceTransmission
-  deriving DecidableEq, Repr
-
-def ForceTransmissionClass.outcomeCardinality : ForceTransmissionClass → OutcomeCardinality
-  | .potentialForChange => .multi
-  | .impingementEffecting => .singleton
-  | .integralChange => .singleton
-  | .noForceTransmission => .empty
-
--- ════════════════════════════════════════════════════
--- § 3. Boundary State Operators (eqs. 64–65)
--- ════════════════════════════════════════════════════
-
-structure BoundaryStates (S : Type) where
-  pre : S
-  res : S
-
-instance {S : Type} [BEq S] : BEq (BoundaryStates S) where
-  beq a b := a.pre == b.pre && a.res == b.res
-
--- ════════════════════════════════════════════════════
--- § 4. Reversal and Restitution Conditions (eqs. 49–50)
--- ════════════════════════════════════════════════════
-
-def reversible {S : Type} [BEq S] (base affixed : BoundaryStates S) : Bool :=
-  base.res == affixed.pre && affixed.res == base.pre
-
-def restitutive {S : Type} [BEq S] (base affixed : BoundaryStates S) : Bool :=
-  affixed.res == base.res
-
--- ════════════════════════════════════════════════════
--- § 5. un- and re- Compatibility (eqs. 66–68, Fig. 5)
--- ════════════════════════════════════════════════════
-
-def ForceTransmissionClass.unCompatible : ForceTransmissionClass → Bool
-  | .potentialForChange => true
-  | _ => false
-
-def ForceTransmissionClass.reCompatible : ForceTransmissionClass → Bool
-  | .potentialForChange => true
-  | .integralChange => true
-  | _ => false
-
--- ════════════════════════════════════════════════════
--- § 6. LevinClass → ForceTransmissionClass Bridge
--- ════════════════════════════════════════════════════
-
-def LevinClass.forceTransmissionClass : LevinClass → ForceTransmissionClass
-  | .coil => .potentialForChange
-  | .bend => .potentialForChange
-  | .hit => .impingementEffecting
-  | .swat => .impingementEffecting
-  | .wipe => .impingementEffecting
-  | .touch => .impingementEffecting
-  | .break_ => .integralChange
-  | .destroy => .integralChange
-  | .cooking => .integralChange
-  | .otherCoS => .integralChange
-  | .entitySpecificCoS => .integralChange
-  | .calibratableCoS => .integralChange
-  | .color => .integralChange
-  | .imageCreation => .integralChange
-  | .build => .integralChange
-  | .create => .integralChange
-  | .grow => .integralChange
-  | .knead => .integralChange
-  | .turn => .integralChange
-  | .cut => .integralChange
-  | .carve => .integralChange
-  | .eat => .integralChange
-  | .devour => .integralChange
-  | .murder => .integralChange
-  | .poison => .integralChange
-  | .mix => .integralChange
-  | .amalgamate => .integralChange
-  | .separate => .integralChange
-  | .split => .integralChange
-  | .conceal => .integralChange
-  | .clear => .integralChange
-  | .dress => .integralChange
-  | _ => .noForceTransmission
-
-def LevinClass.reCompatible : LevinClass → Bool
-  | .coil | .bend => true
-  | .break_ | .color | .imageCreation | .build | .create | .grow
-  | .knead | .otherCoS | .cooking | .calibratableCoS | .clear
-  | .entitySpecificCoS | .conceal | .dress | .separate
-  | .mix | .amalgamate => true
-  | .destroy | .eat | .devour | .murder | .poison | .turn
-  | .cut | .carve | .split => false
-  | .hit | .swat | .wipe | .touch => false
-  | _ => false
-
--- ════════════════════════════════════════════════════
--- § 7. Key Structural Theorems
--- ════════════════════════════════════════════════════
-
-theorem un_requires_multi (ftc : ForceTransmissionClass) :
-    ftc.unCompatible = true → ftc.outcomeCardinality = .multi := by
-  cases ftc <;> simp [ForceTransmissionClass.unCompatible,
-    ForceTransmissionClass.outcomeCardinality]
-
-theorem pfc_unique_overlap :
-    ForceTransmissionClass.unCompatible .potentialForChange = true ∧
-    ForceTransmissionClass.reCompatible .potentialForChange = true := ⟨rfl, rfl⟩
-
-theorem ie_disallows_both :
-    ForceTransmissionClass.unCompatible .impingementEffecting = false ∧
-    ForceTransmissionClass.reCompatible .impingementEffecting = false := ⟨rfl, rfl⟩
-
-theorem cos_un_blocked_re_available :
-    ForceTransmissionClass.unCompatible .integralChange = false ∧
-    ForceTransmissionClass.reCompatible .integralChange = true := ⟨rfl, rfl⟩
-
-theorem noforce_disallows_both :
-    ForceTransmissionClass.unCompatible .noForceTransmission = false ∧
-    ForceTransmissionClass.reCompatible .noForceTransmission = false := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge to EventStructure
--- ════════════════════════════════════════════════════
-
-theorem pfc_orthogonal_to_hasResultState :
-    (LevinClass.eventTemplate .bend).HasResultState ∧
-    ¬ (LevinClass.eventTemplate .coil).HasResultState ∧
-    LevinClass.forceTransmissionClass .bend = .potentialForChange ∧
-    LevinClass.forceTransmissionClass .coil = .potentialForChange := by
-  refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
-
-theorem bend_cos_per_levin_pfc_per_bhadra :
-    (LevinClass.meaningComponents .bend).changeOfState = true ∧
-    LevinClass.forceTransmissionClass .bend = .potentialForChange := ⟨rfl, rfl⟩
-
-theorem ie_templates :
-    LevinClass.eventTemplate .wipe = .accomplishment ∧
-    LevinClass.eventTemplate .hit = .activity := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 9. Bridge to Affectedness Hierarchy
--- ════════════════════════════════════════════════════
-
-theorem affectedness_bridge_pfc :
-    profileToDegree ⟨false, false, false, false, false,
-                     false, false, true, true, false⟩ = .potential := rfl
-
-theorem affectedness_bridge_ie_kick :
-    profileToDegree kickObjectProfile = .nonquantized := rfl
-
--- ════════════════════════════════════════════════════
--- § 10. Bridge to RootTypology
--- ════════════════════════════════════════════════════
-
-theorem result_roots_singleton_outcomes :
-    RootType.entailsChange .result = true ∧
-    RootType.allowsRestitutiveAgain .result = false := ⟨rfl, rfl⟩
-
-theorem pc_roots_allow_restitutive_again :
-    RootType.allowsRestitutiveAgain .propertyConcept = true ∧
-    RootType.entailsChange .propertyConcept = false := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 11. Compositional VRO Framework (eqs. 53, 59, 60)
--- ════════════════════════════════════════════════════
-
-section CompositionalVRO
-
-
-variable {Entity State Time : Type*} [LinearOrder Time]
-
-abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
-
-abbrev Applies (Entity Time : Type*) [LinearOrder Time] := Entity → Event Time → Prop
-
-structure VerbRootVRO (Entity State Time : Type*) [LinearOrder Time] where
-  verb : Entity → Event Time → Prop
-  applies : Entity → Event Time → Prop
-  outcomes : Set State
-  thresholds : Set State
-
-def resState (stateAt : StateFunction Entity State Time)
-    (e : Event Time) (x : Entity) : State :=
-  stateAt (Event.τ e).snd x
-
-def preState (stateAt : StateFunction Entity State Time)
-    (e : Event Time) (x : Entity) : State :=
-  stateAt (Event.τ e).fst x
-
-def Set.multiMembered (s : Set State) : Prop :=
-  ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
-
-def unSem (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Event Time) : Prop :=
-  ∃ e' : Event Time,
-    vro.verb x e' ∧
-    vro.applies x e' ∧
-    (Event.τ e').precedes (Event.τ e) ∧
-    resState stateAt e' x = preState stateAt e x ∧
-    vro.outcomes.multiMembered ∧
-    resState stateAt e x = preState stateAt e' x
-
-def rePresupposition (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Event Time) : Prop :=
-  ∃ e' : Event Time,
-    vro.verb x e' ∧
-    vro.applies x e' ∧
-    (Event.τ e').precedes (Event.τ e) ∧
-    resState stateAt e x = resState stateAt e' x
-
-def reSem (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Event Time) : Prop :=
-  rePresupposition stateAt vro x e ∧
-  vro.applies x e ∧
-  vro.verb x e
-
-theorem singleton_blocks_un
-    (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (h_single : ∃ s, vro.outcomes = {s})
-    (x : Entity) (e : Event Time) :
-    ¬ unSem stateAt vro x e := by
-  intro ⟨e', _, _, _, _, h_multi, _⟩
-  obtain ⟨s, hs⟩ := h_single
-  obtain ⟨s₁, s₂, h1, h2, hne⟩ := h_multi
-  rw [hs] at h1 h2
-  simp [Set.mem_singleton_iff] at h1 h2
-  exact hne (h1.trans h2.symm)
-
-theorem empty_blocks_un
-    (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (h_empty : vro.outcomes = ∅)
-    (x : Entity) (e : Event Time) :
-    ¬ unSem stateAt vro x e := by
-  intro ⟨e', _, _, _, _, h_multi, _⟩
-  obtain ⟨s₁, _, h1, _, _⟩ := h_multi
-  rw [h_empty] at h1
-  exact h1
-
-end CompositionalVRO
-
--- ════════════════════════════════════════════════════
--- (Original Bhadra2024.lean continues below — per-verb verification)
--- ════════════════════════════════════════════════════
 
 namespace Bhadra2024
 
-open ForceTransmissionClass OutcomeCardinality
+open Semantics.Lexical
+open Semantics.Lexical.EventStructure
+open Semantics.ArgumentStructure (EventRel)
+open Semantics.ArgumentStructure.EntailmentProfile
+open Semantics.ArgumentStructure.Affectedness.Profile
 
--- ════════════════════════════════════════════════════
--- § 1. Per-Class un- Compatibility (from paper's (12))
--- ════════════════════════════════════════════════════
+/-! ### The compositional verb root (eqs. 53–60)
 
-/-! Only surface contact verbs (PFC class) allow *un-*:
-    - (d) Surface contact: unpin, unwrap, untwist, unpack, unplug ✓
-    - (a) Physical property: *unpaint, *unclean, *unfix, *unbreak ✗
-    - (b) Transforms: *unturn, *uncarve ✗
-    - (e) Creation: *unbuild, *unconstruct ✗
-    - (f) Consumption: *undestroy, *uneat ✗
-    - (g) Degree achievements: *unfill, *unwarm ✗
-    - (h) No change: *unswim, *unwalk ✗ -/
+A verb root lexically encodes its base predicate `P` (the `⟨v,⟨e,t⟩⟩` meaning
+the affixes modify), its outcome set `O` (states at the right boundary, eq. 56a),
+and — contextually — its threshold set `T` (states at the left boundary,
+eq. 56b). `APPLIES` (eq. 59) is folded into `verb`: the predicate already
+encodes that the action's force is exerted on the object. -/
 
-/-- PFC classes allow un-. -/
-theorem coil_un : (LevinClass.forceTransmissionClass .coil).unCompatible = true := rfl
-theorem bend_un : (LevinClass.forceTransmissionClass .bend).unCompatible = true := rfl
+/-- A state function tracks an object's lexically-relevant property at each time
+    point (the paper's *state* `k : t ↦ l(x)`, eq. 53; `State` abstracts the
+    lifespan point). -/
+abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
 
-/-- COS classes disallow un-. -/
-theorem break_no_un : (LevinClass.forceTransmissionClass .break_).unCompatible = false := rfl
-theorem color_no_un : (LevinClass.forceTransmissionClass .color).unCompatible = false := rfl
-theorem build_no_un : (LevinClass.forceTransmissionClass .build).unCompatible = false := rfl
-theorem destroy_no_un : (LevinClass.forceTransmissionClass .destroy).unCompatible = false := rfl
-theorem eat_no_un : (LevinClass.forceTransmissionClass .eat).unCompatible = false := rfl
-theorem calibratable_no_un :
-    (LevinClass.forceTransmissionClass .calibratableCoS).unCompatible = false := rfl
+/-- A verb root in the Verb-Root-Outcomes framework. `verb` is the base
+    predicate `P(e)(x)` (event-first, as in eqs. 60–61); `outcomes` is the
+    lexical set `O`; `thresholds` is the contextual set `T`. -/
+structure VerbRoot (Entity State Time : Type*) [LinearOrder Time] where
+  /-- The base predicate `P(e)(x)` the affixes modify (`⟨v,⟨e,t⟩⟩`). -/
+  verb : EventRel Time Entity
+  /-- The lexically-encoded outcome set `O` (states at the right boundary). -/
+  outcomes : Set State
+  /-- The contextual threshold set `T` (states at the left boundary). -/
+  thresholds : Set State
 
-/-- IE classes disallow un-. -/
-theorem hit_no_un : (LevinClass.forceTransmissionClass .hit).unCompatible = false := rfl
-theorem wipe_no_un : (LevinClass.forceTransmissionClass .wipe).unCompatible = false := rfl
+variable {Entity State Time : Type*} [LinearOrder Time]
 
-/-- No-change classes disallow un-. -/
-theorem swim_no_un :
-    (LevinClass.forceTransmissionClass .mannerOfMotion).unCompatible = false := rfl
+/-- `res(e)(x)` (eq. 64): the object's state at the right boundary of `e`. -/
+def resState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+  k (Event.τ e).snd x
 
--- ════════════════════════════════════════════════════
--- § 2. Per-Class re- Compatibility (from paper's (45))
--- ════════════════════════════════════════════════════
+/-- `pre(e)(x)` (eq. 65): the object's state at the left boundary of `e`. -/
+def preState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+  k (Event.τ e).fst x
 
-/-! *re-* is more permissive than *un-*:
-    - (a) Physical property: repaint ✓, reclean ✓, refix ✓, rebreak ✓
-    - (d) Surface contact: repin ✓, rewrap ✓, retwist ✓
-    - (e) Creation: rebuild ✓, reconstruct ✓, recreate ✓
-    - (g) Degree achievements: refill ⊳, rewarm ⊳
-    But *re-* is blocked when the object is eliminated:
-    - (f) Consumption: *redestroy, *reeat ✗
-    - (b) Transforms: *retransform ✗ (mostly)
-    - IE: *rehit, *rescrub ✗
-    - No change: *reswim, *rewalk ✗ -/
+/-! ### *un-* and *re-* as result-state modifiers (eqs. 66, 68) -/
 
-/-- PFC classes allow re-. -/
-theorem coil_re : LevinClass.reCompatible .coil = true := rfl
-theorem bend_re : LevinClass.reCompatible .bend = true := rfl
+/-- Reversative *un-* (eq. 66). `unSem k vro e x` holds iff there is a prior
+    base event `e'` whose result is the un-event's start state
+    (`res(e') = pre(e)`), the outcome set is multi-membered (`O.Nontrivial`,
+    `|O| > 1`), and the un-event undoes it (`res(e) = pre(e')`). The vacuous
+    `∃Q. Q(e)(x)` of the paper's presupposition is dropped. -/
+def unSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Time)
+    (e : Event Time) (x : Entity) : Prop :=
+  ∃ e' : Event Time,
+    vro.verb e' x ∧
+    (Event.τ e').precedes (Event.τ e) ∧
+    resState k e' x = preState k e x ∧
+    vro.outcomes.Nontrivial ∧
+    resState k e x = preState k e' x
 
-/-- Physical property and creation COS classes allow re-. -/
-theorem break_re : LevinClass.reCompatible .break_ = true := rfl
-theorem color_re : LevinClass.reCompatible .color = true := rfl
-theorem build_re : LevinClass.reCompatible .build = true := rfl
-theorem otherCoS_re : LevinClass.reCompatible .otherCoS = true := rfl
-theorem cooking_re : LevinClass.reCompatible .cooking = true := rfl
+/-- Restitutive *re-* (eq. 68). `reSem k vro e x` holds iff there is a prior
+    base event `e'` with the same result (`res(e) = res(e')`, eq. 68 i), the
+    re-event starts from a valid threshold state (`pre(e) ∈ T`, eq. 68 ii — the
+    cyclic-*re-* condition, eq. 72), and the base predicate holds of the
+    re-event (`P(e)(x)`). Unlike `unSem`, this places no cardinality demand on
+    `O`. -/
+def reSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Time)
+    (e : Event Time) (x : Entity) : Prop :=
+  (∃ e' : Event Time,
+    vro.verb e' x ∧
+    (Event.τ e').precedes (Event.τ e) ∧
+    resState k e x = resState k e' x) ∧
+  preState k e x ∈ vro.thresholds ∧
+  vro.verb e x
 
-/-- Consumption, destruction, killing COS classes block re-. -/
-theorem destroy_no_re : LevinClass.reCompatible .destroy = false := rfl
-theorem eat_no_re : LevinClass.reCompatible .eat = false := rfl
-theorem murder_no_re : LevinClass.reCompatible .murder = false := rfl
-theorem turn_no_re : LevinClass.reCompatible .turn = false := rfl
+/-! ### Cardinality blocks *un-* (eq. 67) -/
 
-/-- IE classes block re-. -/
-theorem hit_no_re : LevinClass.reCompatible .hit = false := rfl
-theorem wipe_no_re : LevinClass.reCompatible .wipe = false := rfl
+/-- The core asymmetry: a verb whose outcome set is *not* multi-membered cannot
+    host *un-* ([bhadra-2024], eq. 67). The multi-membered presupposition of
+    `unSem` fails. -/
+theorem subsingleton_blocks_un (k : StateFunction Entity State Time)
+    (vro : VerbRoot Entity State Time) (h : ¬ vro.outcomes.Nontrivial)
+    (e : Event Time) (x : Entity) :
+    ¬ unSem k vro e x := by
+  rintro ⟨_, _, _, _, hnt, _⟩
+  exact h hnt
 
-/-- No-change classes block re- (paper's (45h): *reswim, *rewalk). -/
-theorem swim_no_re : LevinClass.reCompatible .mannerOfMotion = false := rfl
+/-- Singleton outcome sets (IE and COS verbs) block *un-*. -/
+theorem singleton_blocks_un (k : StateFunction Entity State Time)
+    (vro : VerbRoot Entity State Time) (s : State) (hs : vro.outcomes = {s})
+    (e : Event Time) (x : Entity) :
+    ¬ unSem k vro e x :=
+  subsingleton_blocks_un k vro
+    (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_singleton) e x
 
--- ════════════════════════════════════════════════════
--- § 3. Outcome Cardinality Verification
--- ════════════════════════════════════════════════════
+/-- Empty outcome sets (no-change-specified verbs) block *un-*. -/
+theorem empty_blocks_un (k : StateFunction Entity State Time)
+    (vro : VerbRoot Entity State Time) (hs : vro.outcomes = ∅)
+    (e : Event Time) (x : Entity) :
+    ¬ unSem k vro e x :=
+  subsingleton_blocks_un k vro
+    (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
 
-/-- PFC verbs have multi-membered outcome sets. -/
-theorem pfc_multi :
-    (ForceTransmissionClass.outcomeCardinality .potentialForChange) = .multi := rfl
+/-! ### The Levin-class → outcome-cardinality bridge (eq. 62)
 
-/-- IE verbs have singleton outcome sets (impingement only). -/
-theorem ie_singleton :
-    (ForceTransmissionClass.outcomeCardinality .impingementEffecting) = .singleton := rfl
+The single per-class datum: the cardinality of a verb root's lexical outcome
+set, valued in `ℕ∞`. PFC roots have open-ended outcome sets (eq. 60:
+`O = {k | k = APPLIES(e)(x)}`, unbounded), idealized as `⊤`; IE and COS roots
+have a single lexically-specified result (eqs. 61a–g); no-change roots have
+none (eq. 61h). Only `1 < ·` is load-bearing (it drives *un-*); the three tiers
+realize the eq. 62 hierarchy `multi > singleton > empty`. -/
 
-/-- COS verbs have singleton outcome sets (specific result). -/
-theorem cos_singleton :
-    (ForceTransmissionClass.outcomeCardinality .integralChange) = .singleton := rfl
+/-- Outcome-set cardinality of a Levin verb class ([bhadra-2024], eq. 62). -/
+def LevinClass.outcomeCard : LevinClass → ℕ∞
+  | .coil | .bend => ⊤
+  | .hit | .swat | .wipe | .touch => 1
+  | .break_ | .destroy | .cooking | .otherCoS | .entitySpecificCoS
+  | .calibratableCoS | .color | .imageCreation | .build | .create | .grow
+  | .knead | .turn | .cut | .carve | .eat | .devour | .murder | .poison
+  | .mix | .amalgamate | .separate | .split | .conceal | .clear | .dress => 1
+  | _ => 0
 
-/-- No-change verbs have empty outcome sets. -/
-theorem nochange_empty :
-    (ForceTransmissionClass.outcomeCardinality .noForceTransmission) = .empty := rfl
+/-- The eq. 62 hierarchy, witnessed on a representative of each tier:
+    multi-membered (PFC) > singleton (IE, COS) > empty (no change). -/
+theorem outcome_hierarchy :
+    LevinClass.outcomeCard .bend = ⊤ ∧
+    LevinClass.outcomeCard .hit = 1 ∧
+    LevinClass.outcomeCard .break_ = 1 ∧
+    LevinClass.outcomeCard .mannerOfMotion = 0 ∧
+    (0 : ℕ∞) < 1 ∧ (1 : ℕ∞) < ⊤ := by
+  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_⟩ <;> simp
 
--- ════════════════════════════════════════════════════
--- § 4. Worked Example: fold/unfold ([bhadra-2024] §5.2, eqs. 74–75)
--- ════════════════════════════════════════════════════
+/-- *un-* prediction is **derived** from cardinality: PFC classes have
+    `1 < outcomeCard`, every other class does not. -/
+theorem bend_predicts_un : 1 < LevinClass.outcomeCard .bend := by
+  simp [LevinClass.outcomeCard]
 
-/-- Possible states of a parchment under folding.
-    Illustrates the multi-membered outcome set of a PFC verb:
-    folding can yield any of these states depending on the
-    force and manner of folding. -/
-inductive ParchmentState where
-  | flat | slightlyCreased | folded | tightlyFolded
-  deriving DecidableEq, Repr
+theorem coil_predicts_un : 1 < LevinClass.outcomeCard .coil := by
+  simp [LevinClass.outcomeCard]
 
-/-- fold(parchment): flat → folded -/
-def foldBoundary : BoundaryStates ParchmentState := ⟨.flat, .folded⟩
-/-- unfold(parchment): folded → flat (reverses fold) -/
-def unfoldBoundary : BoundaryStates ParchmentState := ⟨.folded, .flat⟩
+theorem break_blocks_un_class : ¬ (1 < LevinClass.outcomeCard .break_) := by
+  simp [LevinClass.outcomeCard]
 
-/-- Reversibility: fold and unfold satisfy the inverse equivalence condition.
-    `res(fold) = pre(unfold)` and `res(unfold) = pre(fold)`. -/
-theorem fold_unfold_reversible :
-    reversible foldBoundary unfoldBoundary = true := rfl
+theorem hit_blocks_un_class : ¬ (1 < LevinClass.outcomeCard .hit) := by
+  simp [LevinClass.outcomeCard]
 
-/-- Restitution: refold achieves the same result as fold.
-    `res(refold) = res(fold)`. -/
-def refoldBoundary : BoundaryStates ParchmentState := ⟨.flat, .folded⟩
-theorem fold_refold_restitutive :
-    restitutive foldBoundary refoldBoundary = true := rfl
+theorem destroy_blocks_un_class : ¬ (1 < LevinClass.outcomeCard .destroy) := by
+  simp [LevinClass.outcomeCard]
 
--- ════════════════════════════════════════════════════
--- § 5. Worked Example: paint/repaint ([bhadra-2024] §5.2, eqs. 76–77)
--- ════════════════════════════════════════════════════
+theorem color_blocks_un_class : ¬ (1 < LevinClass.outcomeCard .color) := by
+  simp [LevinClass.outcomeCard]
 
-/-- States of a wall under painting. Singleton outcome set:
-    painting deterministically yields the `painted` state. -/
-inductive WallState where
-  | unpainted | painted
-  deriving DecidableEq, Repr
+theorem mannerOfMotion_blocks_un_class :
+    ¬ (1 < LevinClass.outcomeCard .mannerOfMotion) := by
+  simp [LevinClass.outcomeCard]
 
-def paintBoundary : BoundaryStates WallState := ⟨.unpainted, .painted⟩
-def repaintBoundary : BoundaryStates WallState := ⟨.unpainted, .painted⟩
+/-! ### Worked examples (eqs. 60–61, 66–71) -/
 
-/-- repaint satisfies restitution: `res(repaint) = res(paint)`. -/
-theorem paint_repaint_restitutive :
-    restitutive paintBoundary repaintBoundary = true := rfl
+section Examples
 
-/-- *unpaint is blocked: color (24) is COS with singleton outcomes.
-    un- requires multi-membered outcomes (PFC only). -/
-theorem paint_un_blocked :
-    (LevinClass.forceTransmissionClass .color).unCompatible = false := rfl
-
--- ════════════════════════════════════════════════════
--- § 6. Structural Results (Fig. 5)
--- ════════════════════════════════════════════════════
-
-/-- PFC is the unique class compatible with BOTH *un-* and *re-*.
-    This is the central distributional generalization of the paper. -/
-theorem pfc_is_overlap_class :
-    -- PFC: both ✓
-    (ForceTransmissionClass.unCompatible .potentialForChange = true ∧
-     ForceTransmissionClass.reCompatible .potentialForChange = true) ∧
-    -- No other class has un-compatible = true
-    ForceTransmissionClass.unCompatible .impingementEffecting = false ∧
-    ForceTransmissionClass.unCompatible .integralChange = false ∧
-    ForceTransmissionClass.unCompatible .noForceTransmission = false :=
-  ⟨⟨rfl, rfl⟩, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 7. Bridge: Bhadra Reclassifies Bend from COS to PFC
--- ════════════════════════════════════════════════════
-
-/-- [bhadra-2024] reclassifies the bend class (45.2) from COS to PFC.
-
-    [levin-1993]: bend has `changeOfState = true` (diagnosed by
-    causative/inchoative alternation: "the paper folded" / "she folded the paper").
-
-    [bhadra-2024]: fold has multi-membered outcomes (slightly creased,
-    halfway bent, tightly folded, etc.) → PFC, not COS. The change IS
-    possible but not to a SPECIFIC fixed state.
-
-    This is the paper's central theoretical move: outcome set structure is
-    a finer-grained classification than the traditional COS label. -/
-theorem bend_reclassification :
-    -- COS per Levin (changeOfState = true in meaning components)
-    (LevinClass.meaningComponents .bend).changeOfState = true ∧
-    -- PFC per Bhadra (multi-membered outcome set)
-    LevinClass.forceTransmissionClass .bend = .potentialForChange ∧
-    -- Consequence: un- compatible
-    (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
-    -- Consequence: re- compatible
-    LevinClass.reCompatible .bend = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge: Wiping verbs ↔ IE classification
--- ════════════════════════════════════════════════════
-
-/-- The wiping-verbs class (Levin 10.4) is classified as IE in
-[bhadra-2024]. Its event-structure template is `.accomplishment`
-(via the standard decision tree); the deeper two-predicate motion+contact
-substructure of these verbs ([rappaport-hovav-levin-2024]) is at
-`Studies/RappaportHovavLevin2024.lean`. -/
-theorem wipe_is_ie :
-    LevinClass.eventTemplate .wipe = .accomplishment ∧
-    LevinClass.forceTransmissionClass .wipe = .impingementEffecting := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 9. End-to-End: Fragment Verb → LevinClass → un-/re- Prediction
--- ════════════════════════════════════════════════════
-
-open English.Predicates.Verbal in
-/-- End-to-end chain: the Fragment entry for "kick" (Levin 18.1 hit class)
-    derives IE classification and correctly predicts both un- and re- blocking.
-    kick.levinClass → .hit → .impingementEffecting → unCompatible=false, reCompatible=false -/
-theorem kick_end_to_end :
-    kick.toVerb.levinClass = some .hit ∧
-    (LevinClass.forceTransmissionClass .hit) = .impingementEffecting ∧
-    (LevinClass.forceTransmissionClass .hit).unCompatible = false ∧
-    LevinClass.reCompatible .hit = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- End-to-end chain: the Fragment entry for "bend" (Levin 45.2)
-    derives PFC classification and correctly predicts both un- and re- compatibility.
-    bend.levinClass → .bend → .potentialForChange → unCompatible=true, reCompatible=true -/
-theorem bend_end_to_end :
-    English.Predicates.Verbal.bend.toVerb.levinClass = some .bend ∧
-    (LevinClass.forceTransmissionClass .bend) = .potentialForChange ∧
-    (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
-    LevinClass.reCompatible .bend = true := ⟨rfl, rfl, rfl, rfl⟩
-
-open English.Predicates.Verbal in
-/-- End-to-end chain: the Fragment entry for "break" (Levin 45.1)
-    derives COS classification → un- blocked, re- allowed.
-    break.levinClass → .break_ → .integralChange → unCompatible=false, reCompatible=true -/
-theorem break_end_to_end :
-    break_.toVerb.levinClass = some .break_ ∧
-    (LevinClass.forceTransmissionClass .break_) = .integralChange ∧
-    (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
-    LevinClass.reCompatible .break_ = true := ⟨rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 10. Compositional VRO Worked Examples ([bhadra-2024] §5)
--- ════════════════════════════════════════════════════
-
-section CompositionalExamples
-
-/-- VRO for "fold": PFC verb with multi-membered outcome set.
-    The parchment can end up in any of several states after folding.
-    Outcome set = {slightlyCreased, folded, tightlyFolded} (3 members).
-    Threshold set = {flat, slightlyCreased} (contextual pre-states). -/
-def foldVRO : VerbRootVRO Unit ParchmentState ℤ where
-  verb := λ _ _ => True  -- simplified: fold always applies
-  applies := λ _ _ => True
-  outcomes := {.slightlyCreased, .folded, .tightlyFolded}
-  thresholds := {.flat, .slightlyCreased}
-
-/-- fold's outcome set is multi-membered: slightlyCreased ≠ folded. -/
-theorem fold_outcomes_multi : foldVRO.outcomes.multiMembered :=
-  ⟨.slightlyCreased, .folded,
-   Or.inl rfl, Or.inr (Or.inl rfl),
-   ParchmentState.noConfusion⟩
-
-/-- VRO for "break": COS verb with singleton outcome set.
-    Breaking yields exactly one lexically specified result: broken. -/
-inductive LimbState where
-  | intact | broken
-  deriving DecidableEq, Repr
-
-def breakVRO : VerbRootVRO Unit LimbState ℤ where
-  verb := λ _ _ => True
-  applies := λ _ _ => True
-  outcomes := {.broken}  -- singleton: only one result state
-  thresholds := {.intact}
-
-/-- break's singleton outcome set blocks un-: *unbreak is predicted
-    to fail because |O| = 1, so the multi-membered presupposition
-    of un- (eq. 66) cannot be satisfied. -/
-theorem break_blocks_un (stateAt : StateFunction Unit LimbState ℤ)
-    (x : Unit) (e : Event ℤ) :
-    ¬ unSem stateAt breakVRO x e :=
-  singleton_blocks_un stateAt breakVRO ⟨.broken, rfl⟩ x e
-
-/-- VRO for "hit": IE verb with singleton outcome set (surface alteration).
-    The object's surface is altered in exactly one way. -/
-inductive SurfaceState where
-  | unaltered | surfaceAltered
-  deriving DecidableEq, Repr
-
-def hitVRO : VerbRootVRO Unit SurfaceState ℤ where
-  verb := λ _ _ => True
-  applies := λ _ _ => True
-  outcomes := {.surfaceAltered}  -- singleton: surface alteration only
-  thresholds := {.unaltered}
-
-/-- hit's singleton outcome set blocks un-: *unhit is predicted
-    to fail for the same reason as *unbreak. -/
-theorem hit_blocks_un (stateAt : StateFunction Unit SurfaceState ℤ)
-    (x : Unit) (e : Event ℤ) :
-    ¬ unSem stateAt hitVRO x e :=
-  singleton_blocks_un stateAt hitVRO ⟨.surfaceAltered, rfl⟩ x e
-
-/-- VRO for "destroy": COS consumption verb with singleton outcome set.
-    The outcome (ceased to exist) is also a blocking threshold for re-,
-    since the object cannot be acted on again after being destroyed. -/
-inductive ObjectExistence where
-  | exists_ | ceasedToExist
-  deriving DecidableEq, Repr
-
-def destroyVRO : VerbRootVRO Unit ObjectExistence ℤ where
-  verb := λ _ _ => True
-  applies := λ _ _ => True
-  outcomes := {.ceasedToExist}
-  -- Threshold is the PRE-state: the object must exist before destruction
-  thresholds := {.exists_}
-
-/-- destroy blocks un- (singleton outcomes). -/
-theorem destroy_blocks_un (stateAt : StateFunction Unit ObjectExistence ℤ)
-    (x : Unit) (e : Event ℤ) :
-    ¬ unSem stateAt destroyVRO x e :=
-  singleton_blocks_un stateAt destroyVRO ⟨.ceasedToExist, rfl⟩ x e
-
-/-- The three-way distributional split is derived from outcome set structure:
-    - PFC (fold): multi-membered → un- possible
-    - COS (break): singleton → un- blocked
-    - IE (hit): singleton → un- blocked -/
-theorem distributional_split_derived :
-    foldVRO.outcomes.multiMembered ∧
-    (∃ s, breakVRO.outcomes = {s}) ∧
-    (∃ s, hitVRO.outcomes = {s}) :=
-  ⟨fold_outcomes_multi, ⟨.broken, rfl⟩, ⟨.surfaceAltered, rfl⟩⟩
-
-end CompositionalExamples
-
--- ════════════════════════════════════════════════════
--- § 11. Stress Tests: Positive Existence Proofs
--- ════════════════════════════════════════════════════
-
-/-! The theorems in § 10 prove that un- is BLOCKED for certain verb classes.
-    But blocking theorems alone don't guarantee the compositional semantics
-    is non-vacuous. We also need to show un- and re- are SATISFIABLE for the
-    classes that should allow them. The following construct concrete event
-    witnesses and state functions to demonstrate positive satisfiability. -/
-
-section StressTests
-
-/-- Event from t=0 to t=5 (the base event, e.g. folding). -/
+/-- Event from `t = 0` to `t = 5` (the base event). -/
 private def ev₁ : Event ℤ where
   runtime := ⟨⟨0, 5⟩, by omega⟩
   sort := .dynamic
 
-/-- Event from t=10 to t=15 (the reversal/restitution event, e.g. unfolding). -/
+/-- Event from `t = 10` to `t = 15` (the reversal / restitution event). -/
 private def ev₂ : Event ℤ where
   runtime := ⟨⟨10, 15⟩, by omega⟩
   sort := .dynamic
 
-/-- ev₁ temporally precedes ev₂: τ(ev₁).snd < τ(ev₂).fst. -/
-private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
-  show (5 : ℤ) < 10; omega
-
-/-- State function for fold/unfold: the parchment starts flat, is folded
-    during ev₁, and returns to flat during ev₂.
-    - t ≤ 0: flat (pre-state of fold)
-    - 0 < t ≤ 5: folded (result of fold)
-    - 5 < t ≤ 10: folded (between events)
-    - 10 < t: flat (result of unfold) -/
-private def foldUnfoldState : StateFunction Unit ParchmentState ℤ := λ t _ =>
-  if t ≤ 0 then .flat
-  else if t ≤ 10 then .folded
-  else .flat
-
-/-- Boundary state verification: pre(ev₁) = flat, res(ev₁) = folded,
-    pre(ev₂) = folded, res(ev₂) = flat. -/
-private theorem fold_unfold_boundaries :
-    preState foldUnfoldState ev₁ () = .flat ∧
-    resState foldUnfoldState ev₁ () = .folded ∧
-    preState foldUnfoldState ev₂ () = .folded ∧
-    resState foldUnfoldState ev₂ () = .flat := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- **Positive existence: un- IS satisfiable for PFC verbs.**
-    Constructs a concrete witness showing `unSem` holds for fold. -/
-theorem fold_un_satisfiable :
-    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
-    unSem stateAt foldVRO x e :=
-  ⟨foldUnfoldState, (), ev₂, ev₁, trivial, trivial,
-   ev₁_precedes_ev₂,
-   -- resState ev₁ () = preState ev₂ ()  (folded = folded)
-   rfl,
-   fold_outcomes_multi,
-   -- resState ev₂ () = preState ev₁ ()  (flat = flat)
-   rfl⟩
-
-/-- Event from t=20 to t=25 (the re-event, e.g. re-folding). -/
+/-- Event from `t = 20` to `t = 25` (a third, re- event). -/
 private def ev₃ : Event ℤ where
   runtime := ⟨⟨20, 25⟩, by omega⟩
   sort := .dynamic
 
-/-- State function for fold/unfold/refold scenario:
-    - t ≤ 0: flat (pre-state of first fold)
-    - 0 < t ≤ 5: folded (result of first fold, ev₁)
-    - 5 < t ≤ 15: flat (result of unfold, ev₂)
-    - 15 < t: folded (result of refold, ev₃) -/
-private def foldRefoldState : StateFunction Unit ParchmentState ℤ := λ t _ =>
-  if t ≤ 0 then .flat
-  else if t ≤ 5 then .folded
-  else if t ≤ 20 then .flat
-  else .folded
+private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
+  show (5 : ℤ) < 10; omega
 
-/-- ev₁ precedes ev₃. -/
 private theorem ev₁_precedes_ev₃ : (Event.τ ev₁).precedes (Event.τ ev₃) := by
   show (5 : ℤ) < 20; omega
 
-/-- **Positive existence: re- IS satisfiable for PFC verbs.**
-    Three-event scenario: fold(ev₁), unfold(ev₂), refold(ev₃).
-    The rePresupposition of ev₃ is witnessed by ev₁ (prior fold with
-    matching result state). -/
-theorem fold_re_satisfiable :
-    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
-    reSem stateAt foldVRO x e :=
-  ⟨foldRefoldState, (), ev₃,
-   -- rePresupposition: ∃ e', verb e' ∧ applies e' ∧ precedes ∧ resState match
-   ⟨ev₁, trivial, trivial, ev₁_precedes_ev₃, rfl⟩,
-   -- applies holds of re-event
-   trivial,
-   -- verb holds of the re-event
-   trivial⟩
+/-! #### fold: a PFC root (multi-membered outcomes) -/
 
-/-- State function for break/rebreak scenario:
-    - t ≤ 0: intact (pre-state of first break)
-    - 0 < t ≤ 5: broken (result of first break, ev₁)
-    - 5 < t ≤ 15: intact (repaired between events)
-    - 15 < t: broken (result of rebreak, ev₃) -/
-private def breakRebreakState : StateFunction Unit LimbState ℤ := λ t _ =>
-  if t ≤ 0 then .intact
-  else if t ≤ 5 then .broken
-  else if t ≤ 20 then .intact
-  else .broken
+/-- States of a parchment under folding (eq. 54: a multi-membered outcome set). -/
+inductive ParchmentState where
+  | flat | slightlyCreased | folded | tightlyFolded
+  deriving DecidableEq, Repr
 
-/-- **Positive existence: re- IS satisfiable for COS verbs.**
-    COS verbs (break) block un- but allow re-. This demonstrates
-    that reSem is satisfiable for break despite singleton outcomes. -/
+/-- *fold* (Levin `bend` class): a multi-membered outcome set. -/
+def foldVRO : VerbRoot Unit ParchmentState ℤ where
+  verb := fun _ _ => True
+  outcomes := {.slightlyCreased, .folded, .tightlyFolded}
+  thresholds := {.flat, .slightlyCreased}
+
+theorem fold_outcomes_multi : foldVRO.outcomes.Nontrivial :=
+  ⟨.slightlyCreased, by simp [foldVRO], .folded, by simp [foldVRO], by decide⟩
+
+/-- State of the parchment for a fold-then-unfold scenario:
+    flat before `ev₁`, folded between the events, flat after `ev₂`. -/
+private def foldUnfoldState : StateFunction Unit ParchmentState ℤ := fun t _ =>
+  if t ≤ 0 then .flat else if t ≤ 10 then .folded else .flat
+
+/-- **Positive: *un-* IS satisfiable for fold** (eq. 66 worked example,
+    "Veena unfolded the parchment"). -/
+theorem fold_un_satisfiable :
+    unSem foldUnfoldState foldVRO ev₂ () :=
+  ⟨ev₁, trivial, ev₁_precedes_ev₂, rfl, fold_outcomes_multi, rfl⟩
+
+/-! #### break: a COS root (singleton outcome), *un-* blocked, *re-* allowed -/
+
+inductive LimbState where
+  | intact | broken
+  deriving DecidableEq, Repr
+
+/-- *break* (Levin `break_` class): a single lexically-specified result
+    (eq. 61a). -/
+def breakVRO : VerbRoot Unit LimbState ℤ where
+  verb := fun _ _ => True
+  outcomes := {.broken}
+  thresholds := {.intact}
+
+/-- *unbreak* is blocked: the singleton outcome set fails eq. 67. -/
+theorem break_blocks_un (k : StateFunction Unit LimbState ℤ) (e : Event ℤ) :
+    ¬ unSem k breakVRO e () :=
+  singleton_blocks_un k breakVRO .broken rfl e ()
+
+/-- State for a break / repair / rebreak scenario: the limb is repaired
+    (intact) between the events, so the rebreak can start from a threshold. -/
+private def breakRebreakState : StateFunction Unit LimbState ℤ := fun t _ =>
+  if t ≤ 0 then .intact else if t ≤ 5 then .broken
+  else if t ≤ 20 then .intact else .broken
+
+/-- **Positive: *re-* IS satisfiable for break** (rebreak a limb): result
+    equivalence holds and the re-event starts from the `intact` threshold. -/
 theorem break_re_satisfiable :
-    ∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
-    reSem stateAt breakVRO x e :=
-  ⟨breakRebreakState, (), ev₃,
-   ⟨ev₁, trivial, trivial, ev₁_precedes_ev₃, rfl⟩,
-   trivial, trivial⟩
+    reSem breakRebreakState breakVRO ev₃ () :=
+  ⟨⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
+   by simp [breakVRO, preState, breakRebreakState, ev₃, Event.τ], trivial⟩
 
-/-- **Cross-layer agreement: Boolean and compositional predictions align.**
-    The Boolean layer (ForceTransmissionClass) and compositional layer (VRO)
-    agree on the un- prediction for fold (both allow) and break (both block). -/
-theorem cross_layer_un_agreement :
-    -- Boolean layer: PFC allows un-, COS blocks un-
-    (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
-    (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
-    -- Compositional layer: fold (PFC) un- is satisfiable
-    (∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
-      unSem stateAt foldVRO x e) ∧
-    -- Compositional layer: break (COS) un- is blocked
-    (∀ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
-      ¬ unSem stateAt breakVRO x e) :=
-  ⟨rfl, rfl,
-   fold_un_satisfiable,
-   λ stateAt x e => singleton_blocks_un stateAt breakVRO ⟨.broken, rfl⟩ x e⟩
+/-! #### hit: an IE root (singleton outcome), *un-* blocked -/
 
--- ════════════════════════════════════════════════════
--- § 12. APPLIES Blocks re-destroy Compositionally
--- ════════════════════════════════════════════════════
+inductive SurfaceState where
+  | unaltered | surfaceAltered
+  deriving DecidableEq, Repr
 
-/-! With APPLIES in the semantics, we can now compositionally derive that
-    *redestroy is blocked — not just via the Boolean layer, but because
-    APPLIES fails when the object has ceased to exist. This closes the
-    gap between the Boolean prediction (`destroy_no_re`) and the
-    compositional semantics (`reSem`). -/
+/-- *hit* (Levin `hit` class): impingement, a single surface-alteration result
+    (eq. 61g). -/
+def hitVRO : VerbRoot Unit SurfaceState ℤ where
+  verb := fun _ _ => True
+  outcomes := {.surfaceAltered}
+  thresholds := {.unaltered}
 
-/-- VRO for "destroy" with state-aware APPLIES: force can only be exerted
-    on an object that exists at the start of the event.
-    The `applies` predicate is parameterized by a state function, capturing
-    the fact that you can't destroy what doesn't exist. -/
-def destroyVRO_withApplies (stateAt : StateFunction Unit ObjectExistence ℤ)
-    : VerbRootVRO Unit ObjectExistence ℤ where
-  verb := λ _ _ => True
-  applies := λ _ e => stateAt (Event.τ e).fst () = .exists_
-  outcomes := {.ceasedToExist}
-  thresholds := {.exists_}
+theorem hit_blocks_un (k : StateFunction Unit SurfaceState ℤ) (e : Event ℤ) :
+    ¬ unSem k hitVRO e () :=
+  singleton_blocks_un k hitVRO .surfaceAltered rfl e ()
 
-/-- State function for a destroy scenario: the object exists until destroyed
-    at t=5, then ceases to exist permanently.
-    - t ≤ 5: exists (available for force transmission)
-    - t > 5: ceasedToExist (no longer available) -/
-private def postDestroyState : StateFunction Unit ObjectExistence ℤ := λ t _ =>
-  if t ≤ 5 then .exists_ else .ceasedToExist
+/-! #### load vs shatter: the *re-* minimal pair (eqs. 69–71)
 
-/-- APPLIES holds for the destroy event (ev₁: t=0..5): the object exists
-    at t=0 when force is first exerted. -/
-private theorem destroy_applies_ev₁ :
-    (destroyVRO_withApplies postDestroyState).applies () ev₁ := by
-  show postDestroyState (Event.τ ev₁).fst () = .exists_; rfl
+Both are singleton-outcome (so both block *un-*); they differ on *re-* purely
+through the threshold condition (eq. 68 ii). After loading, the truck can be
+loaded again (it re-enters a threshold); after shattering, the mirror cannot. -/
 
-/-- APPLIES fails for any event after destruction: at t≥10, the object
-    has ceased to exist. -/
-private theorem destroy_not_applies_ev₃ :
-    ¬ (destroyVRO_withApplies postDestroyState).applies () ev₃ := by
-  show ¬ (postDestroyState (Event.τ ev₃).fst () = .exists_)
-  simp [postDestroyState, ev₃, Event.τ]
+inductive TruckState where
+  | empty | partlyLoaded | full
+  deriving DecidableEq, Repr
 
-/-- **Compositional re- blocking for destroy.**
-    With state-aware APPLIES, `reSem` is unsatisfiable for destroy because
-    the re-event requires APPLIES(e)(x), but the object has ceased to exist
-    after the first destruction. The proof shows the assertion's APPLIES
-    condition directly contradicts the post-destruction state. -/
-theorem destroy_re_blocked_compositionally :
-    ¬ reSem postDestroyState (destroyVRO_withApplies postDestroyState) () ev₃ := by
-  intro ⟨_, h_applies, _⟩
-  exact destroy_not_applies_ev₃ h_applies
+/-- *load* (degree achievement, eq. 70): a single contextually-salient result;
+    the object stays loadable. -/
+def loadVRO : VerbRoot Unit TruckState ℤ where
+  verb := fun _ _ => True
+  outcomes := {.full}
+  thresholds := {.empty, .partlyLoaded}
 
-/-- **Cross-layer re- agreement for destroy.**
-    The Boolean layer (`destroy_no_re`) and the compositional layer
-    (`destroy_re_blocked_compositionally`) now agree: *redestroy is blocked
-    at both levels.
+/-- State for *reload*: the truck is partly unloaded between the events, so the
+    reload starts from the `partlyLoaded` threshold. -/
+private def loadReloadState : StateFunction Unit TruckState ℤ := fun t _ =>
+  if t ≤ 0 then .empty else if t ≤ 5 then .full
+  else if t ≤ 20 then .partlyLoaded else .full
 
-    For break, both layers agree that re- IS allowed:
-    Boolean (`break_re`) and compositional (`break_re_satisfiable`). -/
-theorem cross_layer_re_agreement :
-    -- Boolean: destroy blocks re-, break allows re-
-    LevinClass.reCompatible .destroy = false ∧
-    LevinClass.reCompatible .break_ = true ∧
-    -- Compositional: destroy re- blocked (with state-aware APPLIES)
-    ¬ reSem postDestroyState (destroyVRO_withApplies postDestroyState) () ev₃ ∧
-    -- Compositional: break re- satisfiable
-    (∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
-      reSem stateAt breakVRO x e) :=
-  ⟨rfl, rfl,
-   destroy_re_blocked_compositionally,
-   break_re_satisfiable⟩
+/-- **Positive: *re-* IS satisfiable for load** (eq. 69a "reloaded the truck"). -/
+theorem load_re_satisfiable :
+    reSem loadReloadState loadVRO ev₃ () :=
+  ⟨⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
+   by simp [loadVRO, preState, loadReloadState, ev₃, Event.τ], trivial⟩
 
-end StressTests
+inductive MirrorState where
+  | intact | shattered
+  deriving DecidableEq, Repr
+
+/-- *shatter* (eq. 71): a single result that leaves the object outside every
+    threshold — it cannot be shattered again. -/
+def shatterVRO : VerbRoot Unit MirrorState ℤ where
+  verb := fun _ _ => True
+  outcomes := {.shattered}
+  thresholds := {.intact}
+
+/-- State for an attempted *reshatter*: the mirror stays shattered, so it never
+    re-enters the `intact` threshold. -/
+private def shatterState : StateFunction Unit MirrorState ℤ := fun t _ =>
+  if t ≤ 0 then .intact else .shattered
+
+/-- **Negative: *re-* is blocked for shatter** (eq. 69b "#reshattered the
+    mirror"): the cyclic-*re-* threshold condition (eq. 68 ii) fails — the
+    shattered mirror is never in the `intact` threshold the re-event needs. -/
+theorem shatter_re_blocked : ¬ reSem shatterState shatterVRO ev₃ () := by
+  rintro ⟨_, hthresh, _⟩
+  simp [shatterVRO, preState, shatterState, ev₃, Event.τ] at hthresh
+
+end Examples
+
+/-! ### End-to-end: Fragment entry → Levin class → prediction
+
+The Fragment verb's `levinClass` drives the outcome cardinality, which drives
+the *un-* prediction. -/
+
+open English.Predicates.Verbal in
+/-- *kick* (Levin 18.1 `hit`) → singleton outcomes → *un-* blocked. -/
+theorem kick_un_blocked :
+    kick.toVerb.levinClass = some .hit ∧
+    ¬ (1 < LevinClass.outcomeCard .hit) :=
+  ⟨rfl, hit_blocks_un_class⟩
+
+/-- *bend* (Levin 45.2) → multi-membered outcomes → *un-* predicted. -/
+theorem bend_un_predicted :
+    English.Predicates.Verbal.bend.toVerb.levinClass = some .bend ∧
+    1 < LevinClass.outcomeCard .bend :=
+  ⟨rfl, bend_predicts_un⟩
+
+open English.Predicates.Verbal in
+/-- *break* (Levin 45.1) → singleton outcomes → *un-* blocked. -/
+theorem break_un_blocked :
+    break_.toVerb.levinClass = some .break_ ∧
+    ¬ (1 < LevinClass.outcomeCard .break_) :=
+  ⟨rfl, break_blocks_un_class⟩
+
+/-! ### Bridges to the substrate
+
+The outcome-cardinality classification is finer than the change-of-state label
+([bhadra-2024]'s central move): `bend` is CoS per [levin-1993] yet has a
+multi-membered (PFC) outcome set. -/
+
+/-- [bhadra-2024] reclassifies `bend` from a flat change-of-state verb to a
+    potential-for-change root: CoS per [levin-1993]'s meaning components, but
+    multi-membered (and hence *un-*-compatible) by outcome cardinality. -/
+theorem bend_reclassification :
+    (LevinClass.meaningComponents .bend).changeOfState = true ∧
+    LevinClass.outcomeCard .bend = ⊤ ∧
+    1 < LevinClass.outcomeCard .bend :=
+  ⟨rfl, rfl, bend_predicts_un⟩
+
+/-- The outcome-cardinality classification is orthogonal to event-template
+    result states: `bend` and `coil` share the PFC profile but differ on
+    whether their template carries a result state. -/
+theorem outcomeCard_orthogonal_to_hasResultState :
+    (LevinClass.eventTemplate .bend).HasResultState ∧
+    ¬ (LevinClass.eventTemplate .coil).HasResultState ∧
+    LevinClass.outcomeCard .bend = ⊤ ∧
+    LevinClass.outcomeCard .coil = ⊤ := by
+  refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
+
+/-- Affectedness bridge: the PFC profile projects to `potential` change on the
+    [beavers-2010] hierarchy, while IE verbs like *kick* project to
+    `nonquantized`. -/
+theorem affectedness_bridge :
+    profileToDegree ⟨false, false, false, false, false,
+                     false, false, true, true, false⟩ = .potential ∧
+    profileToDegree kickObjectProfile = .nonquantized :=
+  ⟨rfl, rfl⟩
+
+/-- RootTypology bridge: result roots entail change and lack the restitutive
+    *again* reading; property-concept roots are the reverse. -/
+theorem roottype_bridge :
+    RootType.entailsChange .result = true ∧
+    RootType.allowsRestitutiveAgain .result = false ∧
+    RootType.entailsChange .propertyConcept = false ∧
+    RootType.allowsRestitutiveAgain .propertyConcept = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Bhadra2024
