@@ -39,7 +39,7 @@ open Syntax
 open Semantics.Composition.Tree
 open Semantics.Montague (ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem student_sem)
-open Quantification.Quantifier (some_sem every_sem)
+open Quantification (some_sem every_sem)
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Source Tree

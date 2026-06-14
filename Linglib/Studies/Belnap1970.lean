@@ -74,7 +74,7 @@ namespace Belnap1970
 open Semantics.Presupposition (PartialProp)
 open Core.Duality (Truth3)
 open Aristotelian (Square SquareRelations)
-open Quantification.Quantifier
+open Quantification
 open Semantics.Montague (ToyEntity)
 
 -- ════════════════════════════════════════════════════════════════

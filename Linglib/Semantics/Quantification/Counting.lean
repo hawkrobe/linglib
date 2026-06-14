@@ -112,7 +112,7 @@ theorem count_bij_inv (f : α → α) (hBij : Function.Bijective f)
     exact ⟨x, by simp [Finset.mem_filter, hy], rfl⟩
 
 /-- Equivalent predicates produce equal counts. -/
-private theorem count_congr_iff {P Q : α → Prop}
+theorem count_congr_iff {P Q : α → Prop}
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x ↔ Q x) : count P = count Q := by
   unfold count; congr 1; ext x
@@ -122,7 +122,7 @@ private theorem count_congr_iff {P Q : α → Prop}
 
 /-- Instance-polymorphic: `count(R∧S) = count(R∧(R∧S))` for any
     `DecidablePred` instances. -/
-private theorem count_and_idem_any (R S : α → Prop)
+theorem count_and_idem_any (R S : α → Prop)
     (inst1 : DecidablePred (fun x : α => R x ∧ S x))
     (inst2 : DecidablePred (fun x : α => R x ∧ (R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
@@ -132,7 +132,7 @@ private theorem count_and_idem_any (R S : α → Prop)
 
 /-- Instance-polymorphic: `count(R∧¬S) = count(R∧¬(R∧S))` for any
     `DecidablePred` instances. -/
-private theorem count_neg_idem_any (R S : α → Prop)
+theorem count_neg_idem_any (R S : α → Prop)
     (inst1 : DecidablePred (fun x : α => R x ∧ ¬ S x))
     (inst2 : DecidablePred (fun x : α => R x ∧ ¬ (R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
@@ -142,14 +142,14 @@ private theorem count_neg_idem_any (R S : α → Prop)
          fun ⟨hR, hN⟩ => ⟨hR, fun hS => hN ⟨hR, hS⟩⟩⟩
 
 /-- If `P` implies `Q` pointwise, then `|filter P| ≤ |filter Q|`. -/
-private theorem count_le_of_imp {P Q : α → Prop}
+theorem count_le_of_imp {P Q : α → Prop}
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x → Q x) : count P ≤ count Q := by
   apply Finset.card_le_card
   intro x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact h x
 
 /-- |R| = |R∩S| + |R\S|. -/
-private theorem count_decompose (R S : α → Prop)
+theorem count_decompose (R S : α → Prop)
     [DecidablePred R] [DecidablePred S] :
     count (fun x : α => R x) =
       count (fun x : α => R x ∧ S x) +
@@ -163,31 +163,43 @@ private theorem count_decompose (R S : α → Prop)
   · simp only [Finset.disjoint_filter]
     intro x _ ⟨_, h1⟩ ⟨_, h2⟩; exact h2 h1
 
+/-- Denotation brackets for the named determiners (`α` pinned to the section variable),
+    so statements read `Conservative ⟦most⟧`. The `n`-parameterized cardinals
+    (`at_least_n_sem n`, …) stay explicit. -/
+local notation:max "⟦every⟧" => (every_sem : GQ α)
+local notation:max "⟦some⟧" => (some_sem : GQ α)
+local notation:max "⟦no⟧" => (no_sem : GQ α)
+local notation:max "⟦most⟧" => (most_sem : GQ α)
+local notation:max "⟦few⟧" => (few_sem : GQ α)
+local notation:max "⟦half⟧" => (half_sem : GQ α)
+local notation:max "⟦both⟧" => (both_sem : GQ α)
+local notation:max "⟦neither⟧" => (neither_sem : GQ α)
+
 /-! ### Conservativity of counting GQs -/
 
-theorem most_conservative : Conservative (most_sem (α := α)) := by
+theorem most_conservative : Conservative ⟦most⟧ := by
   intro R S; simp only [most_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
 
-theorem few_conservative : Conservative (few_sem (α := α)) := by
+theorem few_conservative : Conservative ⟦few⟧ := by
   intro R S; simp only [few_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
 
-theorem half_conservative : Conservative (half_sem (α := α)) := by
+theorem half_conservative : Conservative ⟦half⟧ := by
   intro R S; simp only [half_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _]; exact h
 
-theorem both_conservative : Conservative (both_sem (α := α)) := by
+theorem both_conservative : Conservative ⟦both⟧ := by
   intro R S; simp only [both_sem]; rw [every_conservative R S]
 
-theorem neither_conservative : Conservative (neither_sem (α := α)) := by
-  intro R S; simp only [neither_sem, gqMeet]; rw [no_conservative R S]
+theorem neither_conservative : Conservative ⟦neither⟧ := by
+  intro R S; simp only [neither_sem, gqMeet_apply]; rw [no_conservative R S]
 
 theorem at_least_n_conservative (n : Nat) :
     Conservative (at_least_n_sem (α := α) n) := by
@@ -226,7 +238,7 @@ theorem between_n_m_conservative (n k : Nat) :
 
 /-- `⟦some⟧ = ⟦at least 1⟧`. -/
 theorem some_eq_at_least_1 :
-    (some_sem (α := α) : GQ α) = (at_least_n_sem (α := α) 1 : GQ α) := by
+    ⟦some⟧ = (at_least_n_sem (α := α) 1 : GQ α) := by
   funext R S
   simp only [some_sem, at_least_n_sem]
   refine propext ⟨fun ⟨x, hR, hS⟩ => ?_, fun h => ?_⟩
@@ -248,19 +260,19 @@ theorem at_most_eq_outerNeg_at_least_succ (n : Nat) :
 
 /-- `⟦no⟧ = ⟦at most 0⟧`. -/
 theorem no_eq_at_most_0 :
-    (no_sem (α := α) : GQ α) = (at_most_n_sem (α := α) 0 : GQ α) := by
+    ⟦no⟧ = (at_most_n_sem (α := α) 0 : GQ α) := by
   rw [← outerNeg_some_eq_no, some_eq_at_least_1, at_most_eq_outerNeg_at_least_succ]
 
 /-- `⟦exactly n⟧ = ⟦at least n⟧ ⊓ ⟦at most n⟧`. -/
 theorem exactly_eq_meet_at_least_at_most (n : Nat) :
     (exactly_n_sem (α := α) n : GQ α) =
     (gqMeet (at_least_n_sem (α := α) n) (at_most_n_sem (α := α) n) : GQ α) := by
-  funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet]
+  funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet_apply]
   exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
 
 /-- `⟦all but 0⟧ = ⟦every⟧`. -/
 theorem all_but_0_eq_every :
-    (all_but_n_sem (α := α) 0 : GQ α) = (every_sem (α := α) : GQ α) := by
+    (all_but_n_sem (α := α) 0 : GQ α) = ⟦every⟧ := by
   funext R S; simp only [all_but_n_sem, every_sem]
   refine propext ⟨fun h x hR => ?_, fun h => ?_⟩
   · by_contra hS
@@ -273,7 +285,7 @@ theorem all_but_0_eq_every :
 
 /-! ### Scope monotonicity of counting GQs -/
 
-theorem few_scope_down : ScopeDownwardMono (few_sem (α := α)) := by
+theorem few_scope_down : ScopeDownwardMono ⟦few⟧ := by
   intro R S S' hSS' h
   simp only [few_sem] at *
   have h1 : count (fun x : α => R x ∧ S x) ≤
@@ -284,7 +296,7 @@ theorem few_scope_down : ScopeDownwardMono (few_sem (α := α)) := by
     count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
   omega
 
-theorem most_scope_up : ScopeUpwardMono (most_sem (α := α)) := by
+theorem most_scope_up : ScopeUpwardMono ⟦most⟧ := by
   intro R S S' hSS' h
   simp only [most_sem] at *
   have h1 : count (fun x : α => R x ∧ S x) ≤
@@ -308,7 +320,7 @@ theorem at_most_n_scope_down (n : Nat) :
 
 /-! ### Smoothness -/
 
-theorem most_downNE : DownNEMon (most_sem (α := α)) := by
+theorem most_downNE : DownNEMon ⟦most⟧ := by
   intro R S R' hSub hKeep hQ
   simp only [most_sem] at *
   have hEq : count (fun x : α => R' x ∧ S x) =
@@ -322,7 +334,7 @@ theorem most_downNE : DownNEMon (most_sem (α := α)) := by
     count_le_of_imp fun x ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩
   omega
 
-theorem most_upSE : UpSEMon (most_sem (α := α)) := by
+theorem most_upSE : UpSEMon ⟦most⟧ := by
   intro R S R' hSub hDiff hQ
   simp only [most_sem] at *
   have hEq : count (fun x : α => R' x ∧ ¬ S x) =
@@ -336,7 +348,7 @@ theorem most_upSE : UpSEMon (most_sem (α := α)) := by
     count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩
   omega
 
-theorem most_smooth : Smooth (most_sem (α := α)) :=
+theorem most_smooth : Smooth ⟦most⟧ :=
   ⟨most_downNE, most_upSE⟩
 
 theorem at_least_n_restrictor_up (n : Nat) :
@@ -528,34 +540,34 @@ theorem exactly_n_quantity (n : Nat) :
   rw [exactly_eq_meet_at_least_at_most]
   exact quantity_gqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity n)
 
-theorem some_quantity : Quantity (some_sem (α := α)) := by
+theorem some_quantity : Quantity ⟦some⟧ := by
   rw [some_eq_at_least_1]; exact at_least_n_quantity 1
 
-theorem no_quantity : Quantity (no_sem (α := α)) := by
+theorem no_quantity : Quantity ⟦no⟧ := by
   rw [no_eq_at_most_0]; exact at_most_n_quantity 0
 
 /-- `⟦every⟧` satisfies `QuantityInvariant` (proved directly via bijection
     invariance of `∀`). -/
 private theorem every_quantityInvariant :
-    QuantityInvariant (every_sem (α := α)) := by
+    QuantityInvariant ⟦every⟧ := by
   intro A B A' B' f hBij hA hB
   simp only [every_sem]
   rw [forall_bij_inv f hBij]
   exact forall_congr' fun x => by
     rw [show A (f x) ↔ A' x from hA x, show B (f x) ↔ B' x from hB x]
 
-theorem every_quantity : Quantity (every_sem (α := α)) :=
+theorem every_quantity : Quantity ⟦every⟧ :=
   quantity_of_quantityInvariant _ every_quantityInvariant
 
-theorem most_quantity : Quantity (most_sem (α := α)) := by
+theorem most_quantity : Quantity ⟦most⟧ := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _
   simp only [most_sem]; omega
 
-theorem few_quantity : Quantity (few_sem (α := α)) := by
+theorem few_quantity : Quantity ⟦few⟧ := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _
   simp only [few_sem]; omega
 
-theorem half_quantity : Quantity (half_sem (α := α)) := by
+theorem half_quantity : Quantity ⟦half⟧ := by
   intro R₁ S₁ R₂ S₂ hTT _ _ _
   simp only [half_sem]
   constructor <;> intro h
@@ -577,10 +589,10 @@ theorem between_n_m_quantity (n k : Nat) :
 
 /-! ### Satisfies universals (counting) -/
 
-theorem most_satisfiesUniversals : SatisfiesUniversals (most_sem (α := α)) :=
+theorem most_satisfiesUniversals : SatisfiesUniversals ⟦most⟧ :=
   ⟨most_conservative, Or.inl most_scope_up⟩
 
-theorem few_satisfiesUniversals : SatisfiesUniversals (few_sem (α := α)) :=
+theorem few_satisfiesUniversals : SatisfiesUniversals ⟦few⟧ :=
   ⟨few_conservative, Or.inr few_scope_down⟩
 
 theorem at_least_n_satisfiesUniversals (n : Nat) :
@@ -644,12 +656,12 @@ private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
     rw [Nat.mul_comm a₁ b₂] at hcross
     exact Nat.mul_left_cancel (by omega) hcross
 
-theorem most_proportional : Proportional (most_sem (α := α)) := by
+theorem most_proportional : Proportional ⟦most⟧ := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
   simp only [most_sem]
   exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
 
-theorem few_proportional : Proportional (few_sem (α := α)) := by
+theorem few_proportional : Proportional ⟦few⟧ := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
   simp only [few_sem]
   exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
@@ -664,7 +676,7 @@ private theorem half_prop_core (a₁ b₁ a₂ b₂ : Nat)
   · have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mpr (by omega)
     omega
 
-theorem half_proportional : Proportional (half_sem (α := α)) := by
+theorem half_proportional : Proportional ⟦half⟧ := by
   intro R₁ S₁ R₂ S₂
   dsimp only []
   intro hNE₁ hNE₂ hCross

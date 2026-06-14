@@ -341,22 +341,22 @@ open Classical Core.Logic.Intensional Quantification
 /-- GQT "at least `n`" agrees with `atLeastMeaning` on intersection cardinality. -/
 theorem gqt_atLeast_agrees {α : Type*} [Fintype α]
     (n : Nat) (R S : α → Prop) :
-    Quantifier.at_least_n_sem n R S ↔
-    atLeastMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
+    at_least_n_sem n R S ↔
+    atLeastMeaning n (count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 /-- GQT "at most `n`" agrees with `atMostMeaning` on intersection cardinality. -/
 theorem gqt_atMost_agrees {α : Type*} [Fintype α]
     (n : Nat) (R S : α → Prop) :
-    Quantifier.at_most_n_sem n R S ↔
-    atMostMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
+    at_most_n_sem n R S ↔
+    atMostMeaning n (count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 /-- GQT "exactly `n`" agrees with `bareMeaning` on intersection cardinality. -/
 theorem gqt_exactly_agrees {α : Type*} [Fintype α]
     (n : Nat) (R S : α → Prop) :
-    Quantifier.exactly_n_sem n R S ↔
-    bareMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
+    exactly_n_sem n R S ↔
+    bareMeaning n (count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 end GQTBridge
