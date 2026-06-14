@@ -41,6 +41,7 @@ S marked like A (accusative).
 
 namespace Yukatek
 
+open Verb
 open Semantics.Aspect (ViewpointAspectB)
 open Semantics.Lexical.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)

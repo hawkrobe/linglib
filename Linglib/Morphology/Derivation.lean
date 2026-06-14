@@ -21,6 +21,8 @@ architectural primitives.
 
 namespace Morphology.Derivation
 
+open Verb
+
 /-! ### Operators and inventories -/
 
 /-- A morphological operator: a name and a structural condition on

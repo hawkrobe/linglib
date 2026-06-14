@@ -25,6 +25,8 @@ Falsifying witnesses live in `Studies/BeaversKoontzGarboden2020.lean`.
   `Root.RespectsMannerResultComplementarity`
 -/
 
+namespace Verb
+
 namespace Root
 
 /-- A root *violates* Bifurcation iff it itself carries templatic
@@ -72,3 +74,5 @@ instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
   inferInstanceAs (Decidable (¬ _))
 
 end Root
+
+end Verb

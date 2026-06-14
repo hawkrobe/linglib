@@ -177,7 +177,8 @@ end Semantics.Lexical
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
-open Root.FeatureSignature
+open Verb
+open Verb.Root.FeatureSignature
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles

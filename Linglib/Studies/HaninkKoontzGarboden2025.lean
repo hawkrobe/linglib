@@ -63,6 +63,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 namespace HaninkKoontzGarboden2025
 
+open Verb
 open KoontzGarboden2009.Monotonicity
 open Morphology.DM (Categorizer)
 open Semantics.ArgumentStructure.Relational (π Pred1 Pred2)

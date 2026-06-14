@@ -62,6 +62,7 @@ varies across languages.
 
 namespace MajidBosterBowerman2008
 
+open Verb
 open Semantics.Lexical
 open Features
 open InstrumentType ObjectDimensionality Robustness ResultType

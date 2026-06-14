@@ -40,6 +40,8 @@ substrate.
   `Root.FeatureSignature.HasMannerAndResult`
 -/
 
+namespace Verb
+
 /-! ### Lexical entailment kinds -/
 
 /-- The four kinds of lexical entailment of
@@ -246,3 +248,5 @@ theorem hasMannerAndResult_close_iff :
         s.HasMannerAndResult ∨ (.manner ∈ s ∧ .cause ∈ s) := by decide
 
 end Root.FeatureSignature
+
+end Verb

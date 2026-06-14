@@ -34,6 +34,7 @@ applicability matches predicted salience by construction.
 
 namespace Yukatek.Operators
 
+open Verb
 open Morphology.Derivation
 open Yukatek.Roots
 

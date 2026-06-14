@@ -17,6 +17,8 @@ cause) are the separate `Root.FeatureSignature` (`Roots/Signature.lean`).
 * `Root.Profile` — the bundled profile
 -/
 
+namespace Verb
+
 namespace Root.Profile
 
 /-! ### Range mechanism -/
@@ -225,3 +227,5 @@ instance (rp₁ rp₂ : Profile) : Decidable (rp₁.overlaps rp₂) :=
 end Profile
 
 end Root
+
+end Verb

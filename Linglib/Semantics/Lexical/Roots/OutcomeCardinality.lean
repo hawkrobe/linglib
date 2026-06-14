@@ -25,7 +25,7 @@ outcome axis without depending on `Event`/`EventRel`.
 * [bhadra-2024] (roots encode outcome sets; the eq. 62 hierarchy)
 -/
 
-namespace Semantics.Lexical
+namespace Verb
 
 /-- The cardinality tier of an outcome set ([bhadra-2024], eq. 62). -/
 inductive OutcomeCardinality where
@@ -76,4 +76,4 @@ theorem ofSet_eq_empty (h : ¬ O.Nonempty) : ofSet O = .empty := by
 
 end OutcomeCardinality
 
-end Semantics.Lexical
+end Verb

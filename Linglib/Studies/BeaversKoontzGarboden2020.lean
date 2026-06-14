@@ -39,6 +39,8 @@ which root types are attested.
 
 namespace BeaversKoontzGarboden2020
 
+open Verb
+
 /-! ### The six representative roots -/
 
 /-- √flat — pure state. -/

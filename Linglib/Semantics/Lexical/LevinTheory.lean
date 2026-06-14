@@ -36,6 +36,7 @@ components, plus universal consistency theorems.
 
 section LevinClassMethods
 open Semantics.Lexical
+open Verb
 open Root.FeatureSignature
 namespace Semantics.Lexical
 
@@ -368,7 +369,7 @@ theorem break_manner_none :
 
 /-- Root structural contribution to meaning components.
     Maps result → changeOfState and manner → mannerSpec. -/
-def _root_.Root.FeatureSignature.structuralMC (re : Root.FeatureSignature) : MeaningComponents :=
+def _root_.Verb.Root.FeatureSignature.structuralMC (re : Root.FeatureSignature) : MeaningComponents :=
   { changeOfState := decide (.result ∈ re)
   , contact := false
   , motion := false

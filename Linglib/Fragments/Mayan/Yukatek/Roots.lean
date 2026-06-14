@@ -55,6 +55,8 @@ identifier use; original orthography is preserved in docstrings.
 
 namespace Yukatek.Roots
 
+open Verb
+
 -- ════════════════════════════════════════════════════
 -- § 1. Agent-Salient Roots (manner only, take `=t`)
 -- ════════════════════════════════════════════════════

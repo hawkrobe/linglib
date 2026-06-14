@@ -58,6 +58,7 @@ in `VocabularyInsertion.lean`.
 namespace Morphology.DM
 
 open Minimalist
+open Verb
 
 -- ============================================================================
 -- § 1: Categorizer Type

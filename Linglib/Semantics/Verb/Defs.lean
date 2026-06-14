@@ -24,8 +24,8 @@ semantic fields shared across languages.
 
 `Verb` is the **semantic spine** of a verb entry. Its fields are organised
 into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
-`Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`, `Verb.Attitude`,
-`Verb.Root` — which `Verb` composes via `extends`. Flat field access
+`Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`, `Verb.Attitude`
+— which `Verb` composes via `extends`. Flat field access
 (`v.complementType`, `v.attitude`, …) is preserved by `extends`-flattening, and
 language fragments extend `Verb` with their own inflectional paradigms.
 
@@ -35,7 +35,7 @@ primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
 ## Main declarations
 * `Verb` — the composed verb entry spine
 * `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`,
-  `Verb.Attitude`, `Verb.Root` — the field facets
+  `Verb.Attitude` — the field facets
 
 ## Design
 [bale-schwarz-2026] [dayal-2025] [heim-1992] [icard-2012] [kennedy-2007] [maier-2015] [qing-uegaki-2025] [rappaport-hovav-levin-2024] [solstad-bott-2024] [rappaport-hovav-levin-1998]
@@ -256,15 +256,6 @@ structure Attitude where
   complementSig : Option EntailmentSig := none
   deriving Repr, BEq
 
-/-- Root content: Levin class and root-specific quality profile
-    ([levin-1993]; [spalek-mcnally-2026]). -/
-structure Root where
-  /-- [levin-1993] verb class (§§ 9–57). -/
-  levinClass : Option LevinClass := none
-  /-- Root-specific quality dimensions (within-class variation). -/
-  rootProfile : Option _root_.Root.Profile := none
-  deriving Repr, BEq
-
 end Verb
 
 /--
@@ -277,7 +268,12 @@ morphological fields appropriate to their inflectional system.
 -/
 structure Verb extends
     Verb.ArgStructure, Verb.Aspect, Verb.Presupposition,
-    Verb.Causation, Verb.Attitude, Verb.Root where
+    Verb.Causation, Verb.Attitude where
+  /-- [levin-1993] verb class (§§ 9–57). -/
+  levinClass : Option LevinClass := none
+  /-- Root-specific quality dimensions (within-class variation;
+      [spalek-mcnally-2026]). -/
+  rootProfile : Option Verb.Root.Profile := none
   /-- Citation form (cross-linguistic) -/
   form : String
   /-- Does the verb denote the performance of an illocutionary act?

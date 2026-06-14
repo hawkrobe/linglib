@@ -22,6 +22,8 @@ ch. 3 are not modeled.
 * `Root.EventStructure` — heads composed with a positioned root
 -/
 
+namespace Verb
+
 /-! ### Templatic heads -/
 
 /-- The three primitive event-structural heads of
@@ -108,3 +110,5 @@ def accomplishmentOf (r : Root) : EventStructure :=
   ⟨[.v_cause, .v_become], r, .complement⟩
 
 end Root
+
+end Verb
