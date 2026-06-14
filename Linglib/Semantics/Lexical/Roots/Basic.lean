@@ -97,11 +97,19 @@ structure Root where
   profile : Verb.Root.Profile := {}
   deriving DecidableEq
 
-/-- `Repr`/`BEq` from the data + `DecidableEq` (the `Finset` field blocks deriving
-    either); needed so `Verb` can carry `root : Option Verb.Root` and still derive
-    `Repr`/`BEq`. -/
-instance : Repr Root := ⟨fun r _ => repr r.name⟩
+/-- `Finset` carries neither `Repr` nor `BEq`, so `Root` cannot `deriving` either;
+    we supply both by hand so `Verb` can derive `Repr`/`BEq` over its `root` field.
+    The `Repr` shows the `name`, `outcomes`, and `profile` fields in full plus the
+    `entailments` cardinality — the entailment *set* itself has no computable `Repr`
+    (`Finset`/`Multiset` would need a `LinearOrder` on the elements to render), but
+    this already distinguishes roots that differ in outcomes/profile, which the old
+    name-only `Repr` collapsed. The `BEq` is the lawful `DecidableEq`-backed one. -/
+instance : Repr Root :=
+  ⟨fun r _ => repr (r.name, r.entailments.card, r.outcomes, r.profile)⟩
 instance : BEq Root := ⟨fun a b => decide (a = b)⟩
+instance : LawfulBEq Root where
+  eq_of_beq h := of_decide_eq_true h
+  rfl := decide_eq_true_eq.mpr rfl
 
 namespace Root
 
