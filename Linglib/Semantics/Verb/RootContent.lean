@@ -24,10 +24,19 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 open Verb
 open Semantics.Lexical
 
-/-- The verb's B&KG feature signature: from its annotated `root` if present, else
-    its Levin class's signature ([levin-1993] fallback, via `rootEntailments`). -/
+/-- The verb's B&KG feature signature, read off its annotated `root` (the fine
+    source of truth). `none` when the verb carries no root. Sibling of `outcomes`
+    and `changeType` — root-only, no class fallback; the coarser class-derived
+    signature is `classSignature`. -/
 def Verb.featureSignature (v : Verb) : Option Verb.Root.FeatureSignature :=
-  v.root.map (·.featureSignature) <|> v.levinClass.map LevinClass.rootEntailments
+  v.root.map (·.featureSignature)
+
+/-- The signature [levin-1993] attributes to the verb *via its class*
+    (`LevinClass.rootEntailments`) — the coarse REALIZATION-layer view, distinct
+    from the root's own `featureSignature`. They are independent provenances; a
+    `classSignature = featureSignature` agreement is a theorem, not a default. -/
+def Verb.classSignature (v : Verb) : Option Verb.Root.FeatureSignature :=
+  v.levinClass.map LevinClass.rootEntailments
 
 /-- The verb's outcome-set cardinality ([bhadra-2024]), read off its `root`. No
     Levin fallback: the per-class outcome assignment is a Study-level claim. -/
@@ -59,6 +68,6 @@ theorem Verb.changeType_ignores_outcomes {v v' : Verb} {r r' : Verb.Root}
     the same-entailment root with a different outcome cardinality agree — only the
     outcome axis distinguishes them. -/
 example (v : Verb) :
-    ({ v with root := some ⟨"r", ∅, some .multi⟩ }).changeType
-      = ({ v with root := some ⟨"r", ∅, some .singleton⟩ }).changeType :=
+    ({ v with root := some { entailments := ∅, outcomes := some .multi } }).changeType
+      = ({ v with root := some { entailments := ∅, outcomes := some .singleton } }).changeType :=
   Verb.changeType_ignores_outcomes rfl rfl rfl
