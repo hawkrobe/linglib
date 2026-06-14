@@ -4,12 +4,12 @@ import Linglib.Morphology.RootTypology
 /-!
 # Verb ↔ root content accessors
 
-The integration seam (P-HUB) between a `Verb` and the root it carries
-(`Verb.root : Option Verb.Root`): a verb's B&KG kind signature, [bhadra-2024]
-outcome cardinality, and change-entailment type are read off *its own root* when
-present, falling back to its Levin class only for the signature (the per-class
-outcome assignment is a Study-level claim, so there is no Levin fallback for
-outcomes).
+The integration seam (P-HUB) between a `Verb` and the (total) root it carries
+(`Verb.root : Verb.Root`): a verb's [bhadra-2024] outcome cardinality and
+change-entailment type are read off its own root. The coarse Levin-class view
+of the kind signature (`Verb.classKinds`) is kept as a *separate, named*
+provenance — the realization label's prediction, not the source of truth
+(`Verb.kinds`); the two agree only by theorem, never by construction.
 
 `RootType` and `Verb.Root.changeType` live in `Morphology/RootTypology.lean`, so
 these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
@@ -17,10 +17,16 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 ## Main definitions
 
 * `Verb.classKinds` — the class-derived kind signature (the coarse Levin view)
-* `Verb.outcomes` — the verb's outcome-set cardinality (root only)
+* `Verb.outcomes` — the verb's outcome-set cardinality
 * `Verb.changeType` — the verb's change-entailment type (derived from its root)
 
-(`Verb.kinds`, the root-sourced signature, lives in `Verb/Basic.lean`.)
+## Main results
+
+* `Verb.classKinds_wellFormed` — the class view, when present, is a well-formed
+  signature (grounded in `rootEntailments_wellFormed`)
+
+(`Verb.kinds`, the root-sourced source-of-truth signature, lives in
+`Verb/Basic.lean`.)
 -/
 
 open Verb
@@ -32,6 +38,19 @@ open Semantics.Lexical
     `classKinds = kinds` agreement is a theorem, not a default. -/
 def Verb.classKinds (v : Verb) : Option Verb.Root.Kinds :=
   v.levinClass.map LevinClass.rootEntailments
+
+/-- The class-derived signature, when present, is well-formed (collocationally
+    closed) — `classKinds`'s grounding, inherited from `rootEntailments_wellFormed`.
+    The stronger `classKinds ⊆ Verb.kinds` is deliberately *not* a theorem:
+    `classKinds` (the Levin label's prediction) and `Verb.kinds` (the verb's own
+    root) are independent provenances, so they coincide only for a faithfully
+    classified verb — a per-verb hypothesis the type does not enforce. -/
+theorem Verb.classKinds_wellFormed (v : Verb) :
+    ∀ s ∈ v.classKinds, s.WellFormed := by
+  intro s hs
+  simp only [Verb.classKinds] at hs
+  obtain ⟨c, -, rfl⟩ := Option.mem_map.1 hs
+  exact Semantics.Lexical.rootEntailments_wellFormed c
 
 /-- The verb's outcome-set cardinality ([bhadra-2024]), read off its `root`
     (`none` where the root is not annotated for outcomes). -/

@@ -38,11 +38,16 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
 def Verb.rootProfile (v : Verb) : Verb.Root.Profile :=
   v.root.profile
 
-/-- The verb's kind signature ([beavers-koontz-garboden-2020]): the collocational
-    closure of its root's kinds (`cause ⟹ result ⟹ state`), which the
-    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on. (The
-    raw, un-closed atom-kinds are `v.root.kinds`; the coarse class-derived view is
-    `Verb.classKinds`.) -/
+/-- The verb's raw kind signature ([beavers-koontz-garboden-2020]): the
+    un-closed atom-kinds of its root, the source of truth for what the verb
+    structurally entails. `Verb.closedKinds` is its collocational closure and
+    `Verb.classKinds` the coarse class-derived view (an independent provenance). -/
+def Verb.kinds (v : Verb) : Verb.Root.Kinds :=
+  v.root.kinds
+
+/-- The verb's closed kind signature ([beavers-koontz-garboden-2020]): the
+    collocational closure of `Verb.kinds` (`cause ⟹ result ⟹ state`), which the
+    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on. -/
 def Verb.closedKinds (v : Verb) : Verb.Root.Kinds :=
   v.root.closedKinds
 

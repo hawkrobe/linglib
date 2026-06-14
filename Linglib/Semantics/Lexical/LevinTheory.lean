@@ -10,24 +10,28 @@ import Linglib.Semantics.Lexical.EventStructure
 # Levin Verb Class Theory
 [levin-1993] [dowty-1991] [beavers-koontz-garboden-2020]
 
-The `LevinClass` enum and its classification data (`MeaningComponents`,
-`meaningComponents`, `predictsUnaccusative`, `isVerbOfCreation`) are
-defined in `Core/Lexical/VerbClass.lean`.
+The `LevinClass` enum and its classification data (`meaningComponents`,
+`predictsUnaccusative`, `isVerbOfCreation`) live in
+`Semantics/Lexical/LevinClass.lean`; `MeaningComponents` in
+`Semantics/Lexical/MeaningComponents.lean`.
 
 This file provides the theoretical content that depends on `Root.Kinds`:
-root signature mapping, root–MC bridge enums, and universal consistency
-theorems.
+the root signature label, the root–MC comparison enums, and the universal
+consistency/divergence theorems that ground them. `LevinClass` is a *lossy
+realization label*, not a source of truth (that is `Verb.Root.kinds`); the
+theorems below are the non-decorative grounding — each holds for every class
+and breaks if a table row changes, so per-class `rfl` spot-checks are not
+restated.
 
-## § 1. Root entailment mapping ([beavers-koontz-garboden-2020])
+## § 1. Root entailment label ([beavers-koontz-garboden-2020])
 
-Root kind signatures, well-formedness verification, and
-manner+result (MRC) tests.
+The `rootEntailments` signature label and its universal soundness theorem.
 
-## § 2. Root–MC bridge
+## § 2. Root–MC comparison
 
 Classification enums (CausationSource, ResultKind, MannerKind) naming the
 systematic divergences between B&KG root features and Levin meaning
-components, plus universal consistency theorems.
+components, plus the universal consistency theorems and divergence witnesses.
 -/
 
 -- ════════════════════════════════════════════════════
@@ -189,51 +193,30 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §57 Weather
   | .weather => minimal            -- (default)
 
-/-! ### Well-formedness verification -/
+/-! ### Table soundness (universal)
 
-theorem break_root_wf : (LevinClass.rootEntailments .break_).WellFormed := by decide
-theorem cut_root_wf : (LevinClass.rootEntailments .cut).WellFormed := by decide
-theorem hit_root_wf : (LevinClass.rootEntailments .hit).WellFormed := by decide
-theorem touch_root_wf : (LevinClass.rootEntailments .touch).WellFormed := by decide
-theorem give_root_wf : (LevinClass.rootEntailments .give).WellFormed := by decide
-theorem destroy_root_wf : (LevinClass.rootEntailments .destroy).WellFormed := by decide
-theorem murder_root_wf : (LevinClass.rootEntailments .murder).WellFormed := by decide
-theorem poison_root_wf : (LevinClass.rootEntailments .poison).WellFormed := by decide
+`rootEntailments` is a lossy realization *label*, not a source of truth. It
+earns its place via a theorem that holds for *every* class and breaks if a
+row is changed: every assigned signature is well-formed (collocationally
+closed). Invert any row to an unclosed signature and this fails — the
+grounding is not decorative. Manner/result complementarity of these
+signatures is covered by the canonical kinds-layer theory
+(`Roots/Closure.lean`, `closed_violatesBifurcation_iff`), which quantifies
+over all `Root.Kinds`, so no per-class MRC spot-check is restated here. -/
 
-/-! ### Manner/Result Complementarity verification -/
-
-theorem cut_hasMannerAndResult :
-    (LevinClass.rootEntailments .cut).HasMannerAndResult := by decide
-theorem cooking_hasMannerAndResult :
-    (LevinClass.rootEntailments .cooking).HasMannerAndResult := by decide
-theorem poison_hasMannerAndResult :
-    (LevinClass.rootEntailments .poison).HasMannerAndResult := by decide
-theorem break_not_hasMannerAndResult :
-    ¬ (LevinClass.rootEntailments .break_).HasMannerAndResult := by decide
-theorem hit_not_hasMannerAndResult :
-    ¬ (LevinClass.rootEntailments .hit).HasMannerAndResult := by decide
-
-/-! ### VOC–root entailment theorems -/
-
-/-- Core creation classes have causativeResult root signatures. -/
-theorem build_class_causative :
-    LevinClass.build.rootEntailments = causativeResult := rfl
-theorem create_class_causative :
-    LevinClass.create.rootEntailments = causativeResult := rfl
+/-- Every Levin class is assigned a well-formed (closed) root signature. -/
+theorem rootEntailments_wellFormed (c : LevinClass) :
+    c.rootEntailments.WellFormed := by cases c <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 2. Root–MC Bridge ([beavers-koontz-garboden-2020])
+-- § 2. Root–MC Comparison ([beavers-koontz-garboden-2020], [levin-1993])
 -- ════════════════════════════════════════════════════
 
-/-! ### Root–MC correspondence (2026 consensus)
+/-! ### Root–MC comparison
 
-The 2026 consensus in lexical semantics ([beavers-koontz-garboden-2020],
-[rappaport-hovav-levin-2024]) treats root entailments as primary:
-verb behavior at the Levin diagnostic level is determined by root content
-plus semantic field membership plus template structure.
-
-But the B&KG root features and the Levin meaning components are NOT
-isomorphic — they conceptualize different levels of granularity:
+[levin-1993]'s meaning components and [beavers-koontz-garboden-2020]'s root
+entailments are two independently-motivated lexical decompositions; they are
+NOT isomorphic — they conceptualize different levels of granularity:
 
 | B&KG concept | Levin concept | Relationship |
 |---|---|---|
@@ -241,8 +224,15 @@ isomorphic — they conceptualize different levels of granularity:
 | `manner` | `mannerSpec` ∨ `instrumentSpec` | B&KG broader: includes contact-manner (hit) |
 | `cause` | `causation` | Distinct: root-level vs event-level causation |
 
-The three `*Kind` enums below name the specific cases where the two
-frameworks diverge, making the divergences grep-able and testable. -/
+Because B&KG `result`/`manner` are *coarser* than the Levin features, neither
+table is a function of the other (`give` carries `result` but
+`changeOfState = false`; `hit` carries `manner` but `mannerSpec = false`), so
+the two are related by the consistency/divergence theorems below, not by a
+derivation — a morphism `meaningComponents = f rootEntailments` is not just
+absent from the literature but mathematically impossible here, and the
+manner/result-complementarity dispute ([beavers-koontz-garboden-2020] vs the
+Rappaport Hovav & Levin tradition) is exactly over this independence. The three
+`*Kind` enums name the specific divergences, making them grep-able and testable. -/
 
 /-- Where a verb class's event-level causation originates.
 
@@ -308,62 +298,11 @@ def LevinClass.mannerKind (c : LevinClass) : MannerKind :=
   else if mc.mannerSpec then .mannerSpec
   else .unspecified
 
-/-! #### Causation source verification -/
-
-theorem break_causation_rootExternal :
-    LevinClass.causationSource .break_ = .rootExternal := rfl
-theorem destroy_causation_rootExternal :
-    LevinClass.causationSource .destroy = .rootExternal := rfl
-theorem murder_causation_rootExternal :
-    LevinClass.causationSource .murder = .rootExternal := rfl
-theorem eat_causation_rootNonDetachable :
-    LevinClass.causationSource .eat = .rootNonDetachable := rfl
-theorem devour_causation_rootNonDetachable :
-    LevinClass.causationSource .devour = .rootNonDetachable := rfl
-theorem put_causation_template :
-    LevinClass.causationSource .put = .template := rfl
-theorem send_causation_template :
-    LevinClass.causationSource .send = .template := rfl
-theorem grow_causation_template :
-    LevinClass.causationSource .grow = .template := rfl
-theorem hit_causation_none :
-    LevinClass.causationSource .hit = .none := rfl
-theorem mannerOfMotion_causation_none :
-    LevinClass.causationSource .mannerOfMotion = .none := rfl
-
-/-! #### Result kind verification -/
-
-theorem break_result_stateChange :
-    LevinClass.resultKind .break_ = .stateChange := rfl
-theorem destroy_result_stateChange :
-    LevinClass.resultKind .destroy = .stateChange := rfl
-theorem throw_result_locationChange :
-    LevinClass.resultKind .throw = .locationChange := rfl
-theorem inherentlyDirectedMotion_result_locationChange :
-    LevinClass.resultKind .inherentlyDirectedMotion = .locationChange := rfl
-theorem leave_result_locationChange :
-    LevinClass.resultKind .leave = .locationChange := rfl
-theorem give_result_possessionChange :
-    LevinClass.resultKind .give = .possessionChange := rfl
-theorem hit_result_none :
-    LevinClass.resultKind .hit = .none := rfl
-
-/-! #### Manner kind verification -/
-
-theorem cooking_manner_mannerSpec :
-    LevinClass.mannerKind .cooking = .mannerSpec := rfl
-theorem mannerOfMotion_manner_mannerSpec :
-    LevinClass.mannerKind .mannerOfMotion = .mannerSpec := rfl
-theorem cut_manner_instrumentSpec :
-    LevinClass.mannerKind .cut = .instrumentSpec := rfl
-theorem poke_manner_instrumentSpec :
-    LevinClass.mannerKind .poke = .instrumentSpec := rfl
-theorem hit_manner_unspecified :
-    LevinClass.mannerKind .hit = .unspecified := rfl
-theorem pushPull_manner_unspecified :
-    LevinClass.mannerKind .pushPull = .unspecified := rfl
-theorem break_manner_none :
-    LevinClass.mannerKind .break_ = .none := rfl
+/-! The `causationSource`/`resultKind`/`mannerKind` classifiers are grounded
+not by per-class `rfl` confirmations (which merely restate a row of the
+`def` and break in lockstep when the row changes) but by the universal
+consistency theorems below, which relate them to the root signature and the
+event template and break under a genuine table change. -/
 
 /-! ### Root-structural MC contribution -/
 
@@ -413,5 +352,18 @@ theorem template_resultState_not_iff_resultKind_stateChange :
       c.eventTemplate.HasResultState ∧ c.resultKind ≠ .stateChange := by
   refine ⟨.aspectual, ?_⟩
   decide
+
+/-- The naive structural prediction `structuralMC ∘ rootEntailments` is *not*
+    a refinement of the hand-specified `meaningComponents`: a class can carry
+    `result` in its root signature (so `structuralMC` predicts `changeOfState`)
+    yet have Levin `changeOfState = false` — change of possession/location
+    carries `result` in B&KG but is not a change *of state* for Levin. This
+    divergence witness is why the bridge enums (`ResultKind` et al.) exist and
+    `meaningComponents` is not just `structuralMC ∘ rootEntailments`. -/
+theorem structuralMC_diverges_from_meaningComponents :
+    ∃ c : LevinClass,
+      (Verb.Root.Kinds.structuralMC c.rootEntailments).changeOfState = true ∧
+      c.meaningComponents.changeOfState = false :=
+  ⟨.give, by decide⟩
 
 end Semantics.Lexical
