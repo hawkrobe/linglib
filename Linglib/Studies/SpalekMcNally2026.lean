@@ -68,14 +68,14 @@ theorem both_causative :
     vs. "??rasgó un trozo de pan" (§3.2). -/
 theorem patient_restriction_differs :
     tear_.rootProfile ≠ rasgar.rootProfile := by
-  simp [tear_, rasgar]
+  decide
 
 /-- *tear* implies bidirectional (contrary-direction) force;
     *rasgar* implies unidirectional (linear/gash-like) force. -/
 theorem force_direction_differs :
     tear_.rootProfile.bind (·.forceDir) ≠
     rasgar.rootProfile.bind (·.forceDir) := by
-  simp [tear_, rasgar]
+  decide
 
 /-- *tear* is compatible with controlled action; *rasgar* is not.
     [spalek-mcnally-2026] ex. (17): "carefully tore the tin foil" ✓
@@ -83,7 +83,7 @@ theorem force_direction_differs :
 theorem agent_control_differs :
     tear_.rootProfile.bind (·.agentControl) ≠
     rasgar.rootProfile.bind (·.agentControl) := by
-  simp [tear_, rasgar]
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Root Overlap (Translation Equivalence Zone)

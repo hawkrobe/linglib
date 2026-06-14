@@ -201,7 +201,7 @@ structure Profile where
   /-- Patient dimensionality: [majid-boster-bowerman-2008].
       *tear* selects for 2D objects (cloth, paper); *snap* for 1D (stick, twig). -/
   patientDim : Range ObjectDimensionality := none
-  deriving BEq, Repr, Inhabited
+  deriving DecidableEq, BEq, Repr, Inhabited
 
 namespace Profile
 

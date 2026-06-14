@@ -1,5 +1,6 @@
 import Linglib.Semantics.Lexical.Roots.Signature
 import Linglib.Semantics.Lexical.Roots.OutcomeCardinality
+import Linglib.Semantics.Lexical.Roots.Profile
 
 /-!
 # Atomic Lexical Entailments and Roots
@@ -80,12 +81,20 @@ end LexEntailment
     where one atom may entail another) is layered on top in
     `Roots/Closure.lean`. -/
 structure Root where
-  name : String
-  entailments : Finset LexEntailment
+  /-- The root form; `""` for an unnamed annotation (e.g. a quality-profile-only
+      root carried by a verb whose root form is its citation form). -/
+  name : String := ""
+  /-- The B&KG structural-entailment atoms; `∅` where the root's structural
+      content has not been annotated (its `featureSignature` is then uninformative,
+      and a verb falls back to its class via `Verb.classSignature`). -/
+  entailments : Finset LexEntailment := ∅
   /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
       orthogonal to the `featureSignature` (derived from `entailments`). `none`
       where the root has not been annotated for outcomes. -/
   outcomes : Option OutcomeCardinality := none
+  /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
+      [majid-boster-bowerman-2008]); `{}` (all unconstrained) by default. -/
+  profile : Verb.Root.Profile := {}
   deriving DecidableEq
 
 /-- `Repr`/`BEq` from the data + `DecidableEq` (the `Finset` field blocks deriving

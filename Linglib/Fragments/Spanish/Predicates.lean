@@ -199,13 +199,13 @@ def rasgar : SpanishVerbEntry :=
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
     levinClass := some .break_,
-    rootProfile := some {
+    root := some { profile := {
       forceMag := some [.low, .moderate]
       forceDir := some [.unidirectional]
       patientRob := some [.insubstantial, .flimsy]
       resultType := some [.separation, .surfaceBreach]
       agentControl := some [.incompatible, .neutral]
-    } }
+    } } }
 
 /-- *asesinar* "assassinate" — AGENT causer required. No anticausative.
     Reflexivization yields reflexive reading only (*El senador se asesinó*
