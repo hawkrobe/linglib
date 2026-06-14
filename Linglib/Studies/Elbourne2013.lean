@@ -396,15 +396,15 @@ theorem qud_refinement_monotone
 /-! ### Bridge 1: "the" → the_sit -/
 
 theorem the_is_definite :
-    English.Determiners.the.qforce = .definite := rfl
+    English.Determiners.the.definiteness = .definite := rfl
 
 theorem english_the_is_uniqueness :
-    qforceToPresupType English.Determiners.the.qforce =
-    some DefPresupType.uniqueness := rfl
+    DefPresupType.uniqueness ∈ English.Determiners.the.presupTypes := by
+  decide
 
 theorem english_demonstratives_are_definite :
-    English.Determiners.this.qforce = .definite ∧
-    English.Determiners.that.qforce = .definite :=
+    English.Determiners.this.deictic = .proximal ∧
+    English.Determiners.that.deictic = .distal :=
   ⟨rfl, rfl⟩
 
 /-! ### Bridge 3: Pronouns → the_sit + NP-deletion -/

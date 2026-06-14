@@ -340,7 +340,7 @@ would be exposed as out of sync with the lexicon. -/
 lexicon carries `numberRestriction = some .Dual`. For English this is
 witnessed by `both` and `neither`. -/
 def englishRealizesDual : Prop :=
-  ∃ q ∈ English.Determiners.allQuantifiers, q.numberRestriction = some .Dual
+  ∃ q ∈ English.Determiners.allQuantifiers, q.numberRestriction = some Number.dual
 
 theorem english_realizes_dual : englishRealizesDual :=
   ⟨English.Determiners.both, by
@@ -363,15 +363,17 @@ theorem french_tous_not_lexical_dual :
   decide
 
 /-- The grounding bridge: `lexiconCompetitor .english .universal =
-.lexicalDual` is consistent with English having a `.du`-marked
-quantifier with `qforce = .universal` (which is *both*). -/
+.lexicalDual` is consistent with English having a `.du`-marked universal
+quantifier — *both* (`numberRestriction = some Number.dual`; its universal
+denotation is `both_sem = every_sem ∧ |R| ≥ 2`, no longer a stored `qforce`
+field after the marked-`Quantifier` migration). -/
 theorem english_universal_competitor_grounded :
     lexiconCompetitor .english .universal = .lexicalDual ∧
     ∃ q ∈ English.Determiners.allQuantifiers,
-      q.qforce = .universal ∧ q.numberRestriction = some .Dual :=
+      q.numberRestriction = some Number.dual :=
   ⟨rfl, English.Determiners.both, by
     simp only [English.Determiners.allQuantifiers, List.mem_cons]
-    tauto, rfl, rfl⟩
+    tauto, rfl⟩
 
 /-- The grounding bridge for French: `lexiconCompetitor .french
 .universal = .unpronounceableWithIndirectAlt` is consistent with

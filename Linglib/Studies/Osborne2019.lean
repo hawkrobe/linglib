@@ -55,7 +55,7 @@ private abbrev book := English.Nouns.book.toWordSg
 private abbrev pizza := English.Nouns.pizza.toWordSg
 
 -- Determiner, auxiliary, preposition (from Fragments/English/)
-private abbrev the_ := English.Determiners.the.toWord
+private abbrev the_ := Word.mk' English.Determiners.the.form .DET
 private abbrev was_ := English.Auxiliaries.was.toWord
 private abbrev by_ := English.FunctionWords.by_.toWord
 
