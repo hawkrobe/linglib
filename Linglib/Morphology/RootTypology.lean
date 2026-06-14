@@ -196,8 +196,8 @@ theorem Verb.Root.changeType_ignores_outcomes {r r' : Verb.Root}
     outcome cardinality share a `changeType` — only the outcome axis tells them
     apart ([bhadra-2024]). -/
 example :
-    (Root.mk "x" {.becomesState "s", .hasCause} (some .multi)).changeType
-      = (Root.mk "x" {.becomesState "s", .hasCause} (some .singleton)).changeType :=
+    ({ entailments := {.becomesState "s", .hasCause}, outcomes := some .multi } : Root).changeType
+      = ({ entailments := {.becomesState "s", .hasCause}, outcomes := some .singleton } : Root).changeType :=
   Root.changeType_ignores_outcomes rfl
 
 /-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021] ex. 5).

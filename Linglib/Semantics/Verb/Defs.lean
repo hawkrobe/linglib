@@ -277,9 +277,6 @@ structure Verb extends
     Verb.Causation, Verb.Attitude where
   /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
-  /-- Root-specific quality dimensions (within-class variation;
-      [spalek-mcnally-2026]). -/
-  rootProfile : Option Verb.Root.Profile := none
   /-- The verb's lexical root — its entailment atoms, derived B&KG feature
       signature, and [bhadra-2024] outcome axis. The content carrier the Verb
       API integrates around (P-HUB): when present, the verb's signature / outcome

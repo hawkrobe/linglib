@@ -1,4 +1,6 @@
 import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
@@ -44,17 +46,17 @@ open Verb
 /-! ### The six representative roots -/
 
 /-- √flat — pure state. -/
-def flat : Root := ⟨"flat", {.hasState "flat"}, none⟩
+def flat : Root := ⟨"flat", {.hasState "flat"}, none, {}⟩
 
 /-- √jog — pure manner of motion. -/
-def jog : Root := ⟨"jog", {.hasManner "jogging-gait", .motion}, none⟩
+def jog : Root := ⟨"jog", {.hasManner "jogging-gait", .motion}, none, {}⟩
 
 /-- √blossom — result with no specified manner or cause (an
     internally caused change of state). -/
-def blossom : Root := ⟨"blossom", {.becomesState "flowering"}, none⟩
+def blossom : Root := ⟨"blossom", {.becomesState "flowering"}, none, {}⟩
 
 /-- √crack — caused result without specified manner. -/
-def crack : Root := ⟨"crack", {.becomesState "fissured", .hasCause}, none⟩
+def crack : Root := ⟨"crack", {.becomesState "fissured", .hasCause}, none, {}⟩
 
 /-- √hand — manner + cause + result, adjoined position. The
     possession result is non-cancelable ("#Mary handed John the book,
@@ -63,13 +65,13 @@ def crack : Root := ⟨"crack", {.becomesState "fissured", .hasCause}, none⟩
 def hand : Root := ⟨"hand",
   {.hasManner "by-hand-transfer",
    .becomesState "in-recipient-possession",
-   .hasCause}, none⟩
+   .hasCause}, none, {}⟩
 
 /-- √drown — manner of killing (Levin 1993's *crucify, drown, hang,
     electrocute* class; [beavers-koontz-garboden-2020] ch. 4):
     manner + cause + result, complement position. -/
 def drown : Root := ⟨"drown",
-  {.hasManner "submersion-in-liquid", .becomesState "dead", .hasCause}, none⟩
+  {.hasManner "submersion-in-liquid", .becomesState "dead", .hasCause}, none, {}⟩
 
 /-! ### Feature signatures
 
@@ -173,5 +175,56 @@ theorem jog_respectsBifurcation : jog.RespectsBifurcation := by decide
     Complementarity. -/
 theorem crack_respectsMannerResultComplementarity :
     crack.RespectsMannerResultComplementarity := by decide
+
+/-! ### The roots cash out denotationally ([beavers-koontz-garboden-2020] §1.3.2)
+
+Threading the roots through the change-of-state denotation (`Verb.CosModel`): a
+verb's denotation is dispatched on its root's `featureSignature`, so the kinds
+proven above *select the event template* and the result entailment of (6)
+follows from the signature. √crack (`+cause+result`) entails a result state in
+any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
+
+/-- `crack` the change-of-state verb (`Mary cracked the vase`). -/
+def crackV : Verb := { form := "crack", complementType := .np, root := some crack }
+
+/-- `jog` the pure-manner activity verb (`Mary jogged`). -/
+def jogV : Verb := { form := "jog", complementType := .none, root := some jog }
+
+/-- √crack carries `.result`, so in **any** model its denotation entails the
+    result state — the non-cancelable result of [beavers-koontz-garboden-2020]
+    (6), derived from crack's signature rather than stipulated. -/
+theorem crack_denote_entails_result {Entity State Time : Type*} [LinearOrder Time]
+    (M : Verb.CosModel Entity State Time) (y x : Entity) (e : Event Time)
+    (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
+  M.denote_result_entails_resultState crackV y x e (by decide) h
+
+/-- √jog has no `.result` (nor `.cause`), so its denotation is the bare manner
+    core — no `become`, no result state. Only the change-of-state root entails a
+    result. -/
+theorem jog_denote_eq_manner {Entity State Time : Type*} [LinearOrder Time]
+    (M : Verb.CosModel Entity State Time) (y x : Entity) :
+    M.denote jogV y x = M.manner jogV := by
+  unfold Verb.CosModel.denote
+  rw [if_neg (by decide), if_neg (by decide)]
+
+/-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
+
+`Verb.Root.template` reads the event-structure template off a root's
+collocational closure; the kinds proven above fix it, and `HasResultState`
+reduces to carrying `result` (`Verb.Root.template_hasResultState_iff`). So the
+denotational result entailment (√crack) and the template result diagnostic are
+*one fact* seen through `featureSignature`. -/
+
+theorem flat_template : flat.template = .state := by decide
+theorem jog_template : jog.template = .activity := by decide
+theorem blossom_template : blossom.template = .achievement := by decide
+theorem crack_template : crack.template = .accomplishment := by decide
+
+/-- √crack's template embeds a result state (it carries `result`); √jog's does
+    not — the *break*/*hit* contrast, now at the template layer and provably the
+    same signature fact as `crack_denote_entails_result`. -/
+theorem crack_template_hasResultState : crack.template.HasResultState := by decide
+
+theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
 
 end BeaversKoontzGarboden2020
