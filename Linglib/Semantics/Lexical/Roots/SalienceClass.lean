@@ -14,7 +14,7 @@ here as one enum.
 The structural characterization of each class needs **two**
 dimensions. Agent-patient salience is *root transitivity*: these roots
 "require two arguments and refer to events involving the action of one
-entity on another" ([lucy-1994]) — `Root.Arity.selectsTheme`, the
+entity on another" ([lucy-1994]) — `Verb.Root.Arity.selectsTheme`, the
 Mayan root-transitive class of [coon-2019]. It is NOT a B&K-G feature
 configuration: *p'is* 'measure' and *lo'š* 'punch' are manner roots
 with no entailed change of state. The two intransitive classes are
@@ -65,10 +65,10 @@ construction* rather than only provable per-case. -/
 /-- Agent-salient: intransitive manner-of-action root (requires `=t`
     to transitivise; [lucy-1994]: "actions or activities that some
     entity undertakes"). -/
-def IsAgentSalient (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+def IsAgentSalient (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) : Prop :=
   ar = .noTheme ∧ .manner ∈ s ∧ .result ∉ s
 
-instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+instance (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) :
     Decidable (IsAgentSalient s ar) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -76,28 +76,28 @@ instance (s : Root.FeatureSignature) (ar : Root.Arity) :
     "require[s] two arguments" ([lucy-1994]), i.e. selects a theme
     ([coon-2019]'s √TV). Signature-independent: root transitives need
     not entail any change of state (*p'is* 'measure'). -/
-def IsAgentPatientSalient (ar : Root.Arity) : Prop :=
+def IsAgentPatientSalient (ar : Verb.Root.Arity) : Prop :=
   ar = .selectsTheme
 
-instance (ar : Root.Arity) : Decidable (IsAgentPatientSalient ar) :=
+instance (ar : Verb.Root.Arity) : Decidable (IsAgentPatientSalient ar) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Patient-salient: intransitive change-of-state root (requires `=s`
     to transitivise; [lucy-1994]: "state changes that some entity
     undergoes more or less spontaneously"). -/
-def IsPatientSalient (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+def IsPatientSalient (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) : Prop :=
   ar = .noTheme ∧ .manner ∉ s ∧ .result ∈ s
 
-instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+instance (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) :
     Decidable (IsPatientSalient s ar) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Positional: pure stative configurational root (requires `-tal`
     for the inchoative; [lucy-1994]). -/
-def IsPositional (s : Root.FeatureSignature) (ar : Root.Arity) : Prop :=
+def IsPositional (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) : Prop :=
   ar = .noTheme ∧ s = {.state}
 
-instance (s : Root.FeatureSignature) (ar : Root.Arity) :
+instance (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) :
     Decidable (IsPositional s ar) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -107,7 +107,7 @@ instance (s : Root.FeatureSignature) (ar : Root.Arity) :
     class ([lucy-1994]) by dispatching on the four named conditions,
     which align with operator applicability conditions in
     `Fragments/Mayan/Yukatek/Operators.lean`. -/
-def classOf (s : Root.FeatureSignature) (ar : Root.Arity) :
+def classOf (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity) :
     Option SalienceClass :=
   if IsAgentPatientSalient ar then some .agentPatient
   else if IsAgentSalient s ar then some .agent
@@ -123,7 +123,7 @@ def classOf (s : Root.FeatureSignature) (ar : Root.Arity) :
     not pure `{state}` fall outside all four; see
     `classOf_eq_none_iff`.) -/
 theorem classes_pairwise_disjoint :
-    ∀ (s : Root.FeatureSignature) (ar : Root.Arity),
+    ∀ (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity),
       ¬ (IsAgentSalient s ar ∧ IsAgentPatientSalient ar) ∧
       ¬ (IsAgentSalient s ar ∧ IsPatientSalient s ar) ∧
       ¬ (IsAgentSalient s ar ∧ IsPositional s ar) ∧
@@ -137,7 +137,7 @@ theorem classes_pairwise_disjoint :
     roots with neither a manner nor a result kind, other than pure
     `{state}`, are unclassified by Lucy's Yukatek diagnostic. -/
 theorem classOf_eq_none_iff :
-    ∀ (s : Root.FeatureSignature) (ar : Root.Arity),
+    ∀ (s : Verb.Root.FeatureSignature) (ar : Verb.Root.Arity),
       classOf s ar = none ↔
         ¬ IsAgentSalient s ar ∧ ¬ IsAgentPatientSalient ar ∧
         ¬ IsPatientSalient s ar ∧ ¬ IsPositional s ar := by

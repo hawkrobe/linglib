@@ -118,7 +118,7 @@ theorem agrees_with_diathesis_data :
     no causation. The result and causation come from the construction. -/
 theorem all_classes_pure_manner :
     intrPushOpenClasses.all
-      (·.rootEntailments == Root.FeatureSignature.pureManner) = true := by
+      (·.rootEntailments == Verb.Root.FeatureSignature.pureManner) = true := by
   decide
 
 /-- All core classes encode contact and motion but NOT change of state
@@ -766,7 +766,7 @@ theorem blocked_wrong_adjective :
 theorem end_to_end_push_open :
     -- Step 1-2: verb class blocks alternation alone
     LevinClass.pushPull.participatesIn .causativeInchoative = false ∧
-    LevinClass.rootEntailments .pushPull == Root.FeatureSignature.pureManner ∧
+    LevinClass.rootEntailments .pushPull == Verb.Root.FeatureSignature.pureManner ∧
     -- Step 3: fusion — construction adds CoS + causation → alternation predicted
     predictedAlternationInConstruction
       LevinClass.pushPull.meaningComponents

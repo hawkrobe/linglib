@@ -10,7 +10,7 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 The derivational chain from root content to argument structure, made
 explicit as composed functions:
 
-    Root.FeatureSignature → Template → ArgTemplate → ThetaRole
+    Verb.Root.FeatureSignature → Template → ArgTemplate → ThetaRole
 
 Each step exists in the literature: [beavers-koontz-garboden-2020]
 define root entailments; [rappaport-hovav-levin-1998] define event
@@ -51,7 +51,7 @@ open Semantics.Lexical
 open Semantics.Lexical.EventStructure (Template)
 open Features.LevinClassProfiles
 open Semantics.ArgumentStructure.EntailmentProfile
-open Root.FeatureSignature
+open Verb.Root.FeatureSignature
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root-Template Compatibility
@@ -75,18 +75,18 @@ open Root.FeatureSignature
       BECOME to apply to (template adds the change)
     - **accomplishment** `[[x ACT] CAUSE [BECOME [y STATE]]]`: root
       provides state for the caused result -/
-def RootLicensesTemplate (re : Root.FeatureSignature) : Template → Prop
+def RootLicensesTemplate (re : Verb.Root.FeatureSignature) : Template → Prop
   | .state         => .state ∈ re
   | .activity      => .manner ∈ re
   | .achievement   => .state ∈ re
   | .accomplishment => .state ∈ re
 
-instance (re : Root.FeatureSignature) (t : Template) :
+instance (re : Verb.Root.FeatureSignature) (t : Template) :
     Decidable (RootLicensesTemplate re t) := by
   cases t <;> unfold RootLicensesTemplate <;> infer_instance
 
 /-- All templates licensed by a root (captures alternation). -/
-def licensedTemplates (re : Root.FeatureSignature) : List Template :=
+def licensedTemplates (re : Verb.Root.FeatureSignature) : List Template :=
   [.state, .activity, .achievement, .accomplishment].filter
     (λ t => decide (RootLicensesTemplate re t))
 
@@ -194,7 +194,7 @@ def templateArgTemplate (t : Template) : ArgTemplate where
     | causativeResult (BREAK) | accomplishment |
     | pureManner (JOG) | activity |
     | fullSpec (CUT) | accomplishment | -/
-def primaryTemplate (re : Root.FeatureSignature) : Option Template :=
+def primaryTemplate (re : Verb.Root.FeatureSignature) : Option Template :=
   if .cause ∈ re then some .accomplishment
   else if .result ∈ re then some .achievement
   else if .manner ∈ re then some .activity
@@ -234,14 +234,14 @@ theorem primary_licensed_canonical :
 
 /-- The full derivational pipeline: root entailments → primary
     template → template-level ArgTemplate. -/
-def derivePrimary (re : Root.FeatureSignature) : Option ArgTemplate :=
+def derivePrimary (re : Verb.Root.FeatureSignature) : Option ArgTemplate :=
   (primaryTemplate re).map templateArgTemplate
 
 /-- All ArgTemplates derivable from a root (one per licensed template).
     Multiple entries represent alternation possibilities:
     e.g., a causativeResult root derives both an accomplishment
     ArgTemplate (transitive) and a state ArgTemplate (bare stative). -/
-def deriveAll (re : Root.FeatureSignature) : List ArgTemplate :=
+def deriveAll (re : Verb.Root.FeatureSignature) : List ArgTemplate :=
   (licensedTemplates re).map templateArgTemplate
 
 -- § 4a. Pipeline produces non-trivial results
@@ -290,7 +290,7 @@ def activityObjectProfile (mc : MeaningComponents) : Option EntailmentProfile :=
     For other templates, the template's own profiles are used directly.
 
     Returns `none` for roots with no structural entailments (minimal). -/
-def deriveEnriched (re : Root.FeatureSignature) (mc : MeaningComponents) : Option ArgTemplate :=
+def deriveEnriched (re : Verb.Root.FeatureSignature) (mc : MeaningComponents) : Option ArgTemplate :=
   match primaryTemplate re with
   | none => none
   | some t =>
@@ -526,7 +526,7 @@ theorem caused_result_full :
     consequence of downward closure under the collocational order —
     not a per-signature stipulation. -/
 theorem root_typology_hierarchy :
-    ∀ s : Root.FeatureSignature, s.WellFormed →
+    ∀ s : Verb.Root.FeatureSignature, s.WellFormed →
       (.cause ∈ s → .result ∈ s) ∧ (.result ∈ s → .state ∈ s) := by decide
 
 /-- PC and result roots differ in licensing predictions:
@@ -568,7 +568,7 @@ directedMotion, and minimal-rootEntailments classes need overrides.
 The full derivational chain:
 
     Root entailments → Template → Template profiles → Root enrichment → Class override
-    (Root.FeatureSignature)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
+    (Verb.Root.FeatureSignature)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
 -/
 
 end Semantics.ArgumentStructure.ArgDerivation

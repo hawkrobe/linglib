@@ -12,12 +12,12 @@ cause) are the separate `Root.FeatureSignature` (`Roots/Signature.lean`).
 
 ## Main declarations
 
-* `Root.Profile.Range` — within-class variation along a dimension
+* `Verb.Root.Profile.Range` — within-class variation along a dimension
 * the dimension enums (`ForceLevel`, `Robustness`, `InstrumentType`, …)
-* `Root.Profile` — the bundled profile
+* `Verb.Root.Profile` — the bundled profile
 -/
 
-namespace Root.Profile
+namespace Verb.Root.Profile
 
 /-! ### Range mechanism -/
 
@@ -54,7 +54,7 @@ def overlaps [BEq α] : Range α → Range α → Bool
 
 end Range
 
-end Root.Profile
+end Verb.Root.Profile
 
 /-! ### Quality dimensions -/
 
@@ -168,7 +168,7 @@ inductive AgentControl where
   | compatible    -- compatible with careful/controlled action
   deriving DecidableEq, Repr
 
-namespace Root
+namespace Verb.Root
 
 open Profile (Range)
 
@@ -224,4 +224,4 @@ instance (rp₁ rp₂ : Profile) : Decidable (rp₁.overlaps rp₂) :=
 
 end Profile
 
-end Root
+end Verb.Root

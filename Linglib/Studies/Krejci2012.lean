@@ -48,7 +48,7 @@ Texas at Austin.
 namespace Krejci2012
 
 open Semantics.Lexical
-open Root.FeatureSignature
+open Verb.Root.FeatureSignature
 open Causation.Morphological
 open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.ArgDerivation
@@ -227,7 +227,7 @@ theorem dress_same_form : dress.lexicalCausative = none := rfl
 -- ════════════════════════════════════════════════════
 
 /-! [krejci-2012]'s claim that eat and dress have causative event
-    structure aligns with their `Root.FeatureSignature` classification:
+    structure aligns with their `Verb.Root.FeatureSignature` classification:
     both are `causativeResult` ({state, result, cause}), meaning the
     root itself entails external causation. -/
 

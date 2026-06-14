@@ -177,7 +177,7 @@ end Semantics.Lexical
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
-open Root.FeatureSignature
+open Verb.Root.FeatureSignature
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles
@@ -243,14 +243,14 @@ theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = none := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Root.FeatureSignature → ArgTemplate (the missing derivation)
+-- § 7. Verb.Root.FeatureSignature → ArgTemplate (the missing derivation)
 -- ════════════════════════════════════════════════════
 
 /-! Root feature signatures determine argument templates — this is the
 field consensus ([beavers-koontz-garboden-2020], [rappaport-hovav-levin-2024]).
 The derivational direction runs:
 
-    Root.FeatureSignature → Template → ArgTemplate → ThetaRole labels
+    Verb.Root.FeatureSignature → Template → ArgTemplate → ThetaRole labels
 
 `toArgTemplate` formalizes the default derivation. It
 captures the majority pattern: causative roots produce agent subjects
@@ -285,7 +285,7 @@ These overrides are documented and verified below. -/
     (causativeResult): both produce the same default ArgTemplate.
     The manner flag restricts HOW the cause proceeds (cutting vs.
     breaking), not WHETHER there's an agent. -/
-def toArgTemplate (re : Root.FeatureSignature) : Option ArgTemplate :=
+def toArgTemplate (re : Verb.Root.FeatureSignature) : Option ArgTemplate :=
   if .cause ∈ re then
     some resultChange
   else if .result ∈ re then
