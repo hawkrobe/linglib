@@ -61,7 +61,7 @@ set_option autoImplicit false
 
 namespace RitchieSchiller2024
 
-open Quantification.Quantifier (every_sem some_sem)
+open Quantification (every_sem some_sem)
 open Quantification.DomainRestriction
 
 -- ============================================================================

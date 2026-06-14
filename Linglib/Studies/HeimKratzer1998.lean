@@ -58,6 +58,7 @@ open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
 open Quantification.Quantifier
+open Quantification
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 /-! ### Model and lexicon -/

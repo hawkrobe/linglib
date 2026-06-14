@@ -47,8 +47,6 @@ set_option autoImplicit false
 
 namespace Quantification.DomainRestriction
 
-open Quantification.Quantifier
-
 /-! ### Domain-restricted quantifiers -/
 
 /-- A domain restrictor is a predicate selecting contextually relevant entities. -/

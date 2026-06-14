@@ -37,7 +37,7 @@ for the full opposition diagram in the Demey–Smessaert sense.
 
 namespace Quantification.Syllogistic
 
-open Quantification.Quantifier
+open Quantification
   (every_sem some_sem no_sem subalternation_a_i)
 
 /-! ### Syllogistic forms (modern reading, no existential import) -/
