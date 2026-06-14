@@ -9,7 +9,7 @@ the events it describes and the participants in those events.
 Following [beavers-koontz-garboden-2020], we treat these as
 *structured atoms* rather than as a fixed feature vector: a **root**
 is a finite collection of such atoms, and its feature signature
-(`Verb.Root.FeatureSignature`) is the *derived* set of kinds its atoms realize —
+(`Root.FeatureSignature`) is the *derived* set of kinds its atoms realize —
 exposing the Bifurcation Thesis of Roots and Manner/Result
 Complementarity as testable conjectures rather than architectural
 commitments.
@@ -18,9 +18,9 @@ commitments.
 
 * `LexEntailment` — labeled atoms; `LexEntailment.kind` projects the
   B&K-G kind, if any
-* `Verb.Root` — a named list of atoms
-* `Verb.Root.featureSignature` — the derived signature
-* `Verb.Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
+* `Root` — a named list of atoms
+* `Root.featureSignature` — the derived signature
+* `Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
 -/
 
 /-! ### Atomic entailments -/
@@ -77,7 +77,7 @@ end LexEntailment
     directly. A closure operation (B&K-G's networks of entailments
     where one atom may entail another) is layered on top in
     `Roots/Closure.lean`. -/
-structure Verb.Root where
+structure Root where
   name : String
   entailments : Finset LexEntailment
   /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
@@ -86,36 +86,36 @@ structure Verb.Root where
   outcomes : Option Semantics.Lexical.OutcomeCardinality := none
   deriving DecidableEq
 
-namespace Verb.Root
+namespace Root
 
 /-- The derived feature signature of a root: the set of kinds its
     atoms realize. -/
-def featureSignature (r : Verb.Root) : Verb.Root.FeatureSignature :=
+def featureSignature (r : Root) : Root.FeatureSignature :=
   Finset.univ.filter (fun k => ∃ a ∈ r.entailments, a.kind = some k)
 
-theorem mem_featureSignature {r : Verb.Root} {k : LexKind} :
+theorem mem_featureSignature {r : Root} {k : LexKind} :
     k ∈ r.featureSignature ↔ ∃ a ∈ r.entailments, a.kind = some k := by
   simp [featureSignature]
 
 /-- The root entails attribution of some state. -/
-def HasState (r : Verb.Root) : Prop := .state ∈ r.featureSignature
+def HasState (r : Root) : Prop := .state ∈ r.featureSignature
 
 /-- The root specifies some manner. -/
-def HasManner (r : Verb.Root) : Prop := .manner ∈ r.featureSignature
+def HasManner (r : Root) : Prop := .manner ∈ r.featureSignature
 
 /-- The root entails some change of state (B&K-G "result"). -/
-def HasResult (r : Verb.Root) : Prop := .result ∈ r.featureSignature
+def HasResult (r : Root) : Prop := .result ∈ r.featureSignature
 
 /-- The root entails causation. -/
-def HasCause (r : Verb.Root) : Prop := .cause ∈ r.featureSignature
+def HasCause (r : Root) : Prop := .cause ∈ r.featureSignature
 
-instance (r : Verb.Root) : Decidable r.HasState :=
+instance (r : Root) : Decidable r.HasState :=
   inferInstanceAs (Decidable (_ ∈ _))
-instance (r : Verb.Root) : Decidable r.HasManner :=
+instance (r : Root) : Decidable r.HasManner :=
   inferInstanceAs (Decidable (_ ∈ _))
-instance (r : Verb.Root) : Decidable r.HasResult :=
+instance (r : Root) : Decidable r.HasResult :=
   inferInstanceAs (Decidable (_ ∈ _))
-instance (r : Verb.Root) : Decidable r.HasCause :=
+instance (r : Root) : Decidable r.HasCause :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-end Verb.Root
+end Root

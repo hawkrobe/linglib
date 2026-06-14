@@ -20,55 +20,55 @@ Falsifying witnesses live in `Studies/BeaversKoontzGarboden2020.lean`.
 
 ## Main declarations
 
-* `Verb.Root.ViolatesBifurcation`, `Verb.Root.HasMannerAndResult`, and their
-  negations `Verb.Root.RespectsBifurcation`,
-  `Verb.Root.RespectsMannerResultComplementarity`
+* `Root.ViolatesBifurcation`, `Root.HasMannerAndResult`, and their
+  negations `Root.RespectsBifurcation`,
+  `Root.RespectsMannerResultComplementarity`
 -/
 
-namespace Verb.Root
+namespace Root
 
 /-- A root *violates* Bifurcation iff it itself carries templatic
     (eventive) meaning — change of state or cause
-    (`Verb.Root.FeatureSignature.violatesBifurcation_iff`). The Bifurcation
+    (`Root.FeatureSignature.violatesBifurcation_iff`). The Bifurcation
     Thesis ([embick-2009]; [arad-2005]) is the universal claim that no
     root does. (The ditransitive prepositional heads P_loc and P_have,
     which [beavers-koontz-garboden-2020] also treat as templatic, are
     not modeled here.) -/
-def ViolatesBifurcation (r : Verb.Root) : Prop :=
+def ViolatesBifurcation (r : Root) : Prop :=
   r.featureSignature.ViolatesBifurcation
 
-instance (r : Verb.Root) : Decidable r.ViolatesBifurcation :=
-  inferInstanceAs (Decidable (Verb.Root.FeatureSignature.ViolatesBifurcation _))
+instance (r : Root) : Decidable r.ViolatesBifurcation :=
+  inferInstanceAs (Decidable (Root.FeatureSignature.ViolatesBifurcation _))
 
 /-- Negation of `ViolatesBifurcation`: the root carries only
     ontological entailments (state, manner). -/
-def RespectsBifurcation (r : Verb.Root) : Prop :=
+def RespectsBifurcation (r : Root) : Prop :=
   ¬ r.ViolatesBifurcation
 
-instance (r : Verb.Root) : Decidable r.RespectsBifurcation :=
+instance (r : Root) : Decidable r.RespectsBifurcation :=
   inferInstanceAs (Decidable (¬ _))
 
 /-- The thesis as an order statement: a root respects Bifurcation iff
     its signature is bounded by the ontological kinds. -/
-theorem respectsBifurcation_iff_le {r : Verb.Root} :
+theorem respectsBifurcation_iff_le {r : Root} :
     r.RespectsBifurcation ↔
-      r.featureSignature ≤ Verb.Root.FeatureSignature.ontological :=
+      r.featureSignature ≤ Root.FeatureSignature.ontological :=
   not_not
 
 /-- A root has both manner and result entailments — Manner/Result
     Complementarity ([rappaport-hovav-levin-2010]) is the universal
     claim that no root does. -/
-def HasMannerAndResult (r : Verb.Root) : Prop :=
+def HasMannerAndResult (r : Root) : Prop :=
   r.featureSignature.HasMannerAndResult
 
-instance (r : Verb.Root) : Decidable r.HasMannerAndResult :=
-  inferInstanceAs (Decidable (Verb.Root.FeatureSignature.HasMannerAndResult _))
+instance (r : Root) : Decidable r.HasMannerAndResult :=
+  inferInstanceAs (Decidable (Root.FeatureSignature.HasMannerAndResult _))
 
 /-- Negation of `HasMannerAndResult`. -/
-def RespectsMannerResultComplementarity (r : Verb.Root) : Prop :=
+def RespectsMannerResultComplementarity (r : Root) : Prop :=
   ¬ r.HasMannerAndResult
 
-instance (r : Verb.Root) : Decidable r.RespectsMannerResultComplementarity :=
+instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
   inferInstanceAs (Decidable (¬ _))
 
-end Verb.Root
+end Root

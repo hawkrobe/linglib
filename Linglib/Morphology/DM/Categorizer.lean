@@ -647,7 +647,7 @@ theorem complement_selection_at_root_level (r : RootClassification) (c1 c2 : Cat
 theorem theme_selecting_root_always_selects (r : RootClassification) (c : Categorizer)
     (h : r.arity = .selectsTheme) :
     (CategorizedRoot.mk r c).root.arity.hasInternalArg = true := by
-  simp [h, Verb.Root.Arity.hasInternalArg]
+  simp [h, Root.Arity.hasInternalArg]
 
 -- ============================================================================
 -- § 4: Layered Derivation (Denominal, Deadjectival, Deverbal)

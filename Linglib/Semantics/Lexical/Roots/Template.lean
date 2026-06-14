@@ -18,8 +18,8 @@ ch. 3 are not modeled.
 ## Main declarations
 
 * `TemplaticHead` — the three primitive heads
-* `Verb.Root.Position` — complement vs adjoined attachment
-* `Verb.Root.EventStructure` — heads composed with a positioned root
+* `Root.Position` — complement vs adjoined attachment
+* `Root.EventStructure` — heads composed with a positioned root
 -/
 
 /-! ### Templatic heads -/
@@ -50,14 +50,14 @@ inductive TemplaticHead where
     eligibility ([kalyakin-2026]), result-state modifier scope, and the
     restitutive/repetitive *again* ambiguity
     ([beavers-koontz-garboden-2020], [merchant-2013]). -/
-inductive Verb.Root.Position where
+inductive Root.Position where
   | complement
   | adjoined
   deriving DecidableEq, Repr
 
 /-! ### Composed event structures -/
 
-namespace Verb.Root
+namespace Root
 
 /-- An event structure: a list of templatic heads (outermost first)
     composed with a root in a specific structural position.
@@ -70,8 +70,8 @@ namespace Verb.Root
       manner root in adjoined position -/
 structure EventStructure where
   heads : List TemplaticHead
-  root : Verb.Root
-  position : Verb.Root.Position
+  root : Root
+  position : Root.Position
 
 namespace EventStructure
 
@@ -94,17 +94,17 @@ end EventStructure
 
 /-- A pure activity: `[v_act]` with manner root adjoined.
     [x ACT⟨manner⟩] -/
-def activityOf (r : Verb.Root) : EventStructure :=
+def activityOf (r : Root) : EventStructure :=
   ⟨[.v_act], r, .adjoined⟩
 
 /-- An achievement: `[v_become]` with state root as complement.
     [BECOME [x ⟨STATE⟩]] -/
-def achievementOf (r : Verb.Root) : EventStructure :=
+def achievementOf (r : Root) : EventStructure :=
   ⟨[.v_become], r, .complement⟩
 
 /-- An accomplishment: `[v_cause, v_become]` with state root as
     complement to BECOME. [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]] -/
-def accomplishmentOf (r : Verb.Root) : EventStructure :=
+def accomplishmentOf (r : Root) : EventStructure :=
   ⟨[.v_cause, .v_become], r, .complement⟩
 
-end Verb.Root
+end Root

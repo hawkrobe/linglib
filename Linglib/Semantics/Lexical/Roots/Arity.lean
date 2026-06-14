@@ -19,19 +19,19 @@ does not project it as a complement.
 
 ## Main declarations
 
-* `Verb.Root.Arity` — `selectsTheme` (√TV) vs `noTheme`
+* `Root.Arity` — `selectsTheme` (√TV) vs `noTheme`
 -/
 
 /-- Root-level argument selection ([coon-2019]): does the root
     obligatorily take an internal (theme) argument? `selectsTheme` is
     Coon's √TV — the Mayan root-transitive class; `noTheme` covers
     √ITV, √NOM, √POS. -/
-inductive Verb.Root.Arity where
+inductive Root.Arity where
   | selectsTheme
   | noTheme
   deriving DecidableEq, Fintype, Repr
 
 /-- Does this root arity entail an obligatory internal argument? -/
-def Verb.Root.Arity.hasInternalArg : Verb.Root.Arity → Bool
+def Root.Arity.hasInternalArg : Root.Arity → Bool
   | .selectsTheme => true
   | .noTheme => false

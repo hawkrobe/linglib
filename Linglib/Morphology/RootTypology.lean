@@ -67,7 +67,6 @@ open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.EntailmentProfile
 open Features.ChangeOfState
 open Features
-open Verb
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Type Subclasses ([beavers-etal-2021] §3.1)
@@ -175,30 +174,30 @@ typology cannot. -/
 /-- The change-entailment type of a root, derived from its feature signature:
     a root entails change iff its signature carries `result` ([beavers-etal-2021]).
     The derived analog of `RootClassification.changeType`. -/
-def Verb.Root.changeType (r : Verb.Root) : RootType :=
+def Root.changeType (r : _root_.Root) : RootType :=
   if LexKind.result ∈ r.featureSignature then .result else .propertyConcept
 
-theorem Verb.Root.changeType_eq_result_iff (r : Verb.Root) :
+theorem Root.changeType_eq_result_iff (r : _root_.Root) :
     r.changeType = .result ↔ r.HasResult := by
-  unfold Verb.Root.changeType Verb.Root.HasResult
+  unfold Root.changeType _root_.Root.HasResult
   by_cases h : LexKind.result ∈ r.featureSignature <;> simp [h]
 
 /-- `changeType` is blind to outcomes: same entailments ⇒ same `changeType`,
     whatever the `outcomes`. The formal statement of why [bhadra-2024]'s outcome
     cardinality is an independent axis the manner/result signature cannot see. -/
-theorem Verb.Root.changeType_ignores_outcomes {r r' : Verb.Root}
+theorem Root.changeType_ignores_outcomes {r r' : _root_.Root}
     (h : r.entailments = r'.entailments) : r.changeType = r'.changeType := by
   have hsig : r.featureSignature = r'.featureSignature := by
-    unfold Verb.Root.featureSignature; rw [h]
-  unfold Verb.Root.changeType; rw [hsig]
+    unfold _root_.Root.featureSignature; rw [h]
+  unfold Root.changeType; rw [hsig]
 
 /-- A *bend*-like and a *break*-like root with the same entailments but different
     outcome cardinality share a `changeType` — only the outcome axis tells them
     apart ([bhadra-2024]). -/
 example :
-    (Verb.Root.mk "x" {.becomesState "s", .hasCause} (some .multi)).changeType
-      = (Verb.Root.mk "x" {.becomesState "s", .hasCause} (some .singleton)).changeType :=
-  Verb.Root.changeType_ignores_outcomes rfl
+    (Root.mk "x" {.becomesState "s", .hasCause} (some .multi)).changeType
+      = (Root.mk "x" {.becomesState "s", .hasCause} (some .singleton)).changeType :=
+  Root.changeType_ignores_outcomes rfl
 
 /-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021] ex. 5).
 
@@ -1576,7 +1575,7 @@ inductive TemplateHead where
     - +manner alone → no v_act (manner without causation doesn't entail
       activity — √JOG specifies jogging manner but v_act still provides
       the activity frame) -/
-def Verb.Root.FeatureSignature.entailedHeads (s : Verb.Root.FeatureSignature) : List TemplateHead :=
+def Root.FeatureSignature.entailedHeads (s : Root.FeatureSignature) : List TemplateHead :=
   (if LexKind.result ∈ s then [.vBecome] else []) ++
   (if LexKind.cause ∈ s then [.vCause] else []) ++
   (if LexKind.manner ∈ s ∧ LexKind.cause ∈ s then [.vAct] else [])
