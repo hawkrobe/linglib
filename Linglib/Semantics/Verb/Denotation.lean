@@ -215,8 +215,8 @@ theorem causative_entails_resultState (M : CosModel Entity State Time)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     Event Time → Prop :=
-  if LexKind.cause ∈ (v.root.map (·.kinds)).getD ∅ then M.causative v y x
-  else if LexKind.result ∈ (v.root.map (·.kinds)).getD ∅ then M.inchoative v x
+  if LexKind.cause ∈ (v.kinds).getD ∅ then M.causative v y x
+  else if LexKind.result ∈ (v.kinds).getD ∅ then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -227,10 +227,10 @@ def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     (v : Verb) (y x : Entity) (e : Event Time)
-    (hres : LexKind.result ∈ (v.root.map (·.kinds)).getD ∅)
+    (hres : LexKind.result ∈ (v.kinds).getD ∅)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ (v.root.map (·.kinds)).getD ∅
+  by_cases hc : LexKind.cause ∈ (v.kinds).getD ∅
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h
