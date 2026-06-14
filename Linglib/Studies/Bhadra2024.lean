@@ -29,7 +29,7 @@ The two affixes split along two independent axes:
 
 ## Main definitions
 
-* `VerbRoot` — a root's base predicate (`EventRel`), outcome set, threshold set
+* `VerbOutcomes` — a root's base predicate (`EventRel`), outcome set, threshold set
 * `resState` / `preState` — state at the right / left event boundary (eqs. 64–65)
 * `unSem` / `reSem` — the *un-* and *re-* denotations (eqs. 66, 68)
 * `LevinClass.outcomeCard` — the single Levin-class → outcome-cardinality bridge
@@ -59,37 +59,14 @@ open Semantics.ArgumentStructure.Affectedness.Profile
 
 /-! ### The compositional verb root (eqs. 53–60)
 
-A verb root lexically encodes its base predicate `P` (the `⟨v,⟨e,t⟩⟩` meaning
-the affixes modify), its outcome set `O` (states at the right boundary, eq. 56a),
-and — contextually — its threshold set `T` (states at the left boundary,
-eq. 56b). `APPLIES` (eq. 59) is folded into `verb`: the predicate already
-encodes that the action's force is exerted on the object. -/
-
-/-- A state function tracks an object's lexically-relevant property at each time
-    point (the paper's *state* `k : t ↦ l(x)`, eq. 53; `State` abstracts the
-    lifespan point). -/
-abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
-
-/-- A verb root in the Verb-Root-Outcomes framework. `verb` is the base
-    predicate `P(e)(x)` (event-first, as in eqs. 60–61); `outcomes` is the
-    lexical set `O`; `thresholds` is the contextual set `T`. -/
-structure VerbRoot (Entity State Time : Type*) [LinearOrder Time] where
-  /-- The base predicate `P(e)(x)` the affixes modify (`⟨v,⟨e,t⟩⟩`). -/
-  verb : EventRel Time Entity
-  /-- The lexically-encoded outcome set `O` (states at the right boundary). -/
-  outcomes : Set State
-  /-- The contextual threshold set `T` (states at the left boundary). -/
-  thresholds : Set State
+A verb root lexically encodes its base predicate `P` (the `⟨v,⟨e,t⟩⟩` meaning the
+affixes modify), its outcome set `O` (states at the right boundary, eq. 56a), and
+its threshold set `T` (left boundary, eq. 56b) — the substrate `VerbOutcomes`
+(`Roots/Outcomes.lean`), with `resState`/`preState` the eq. 64–65 boundary
+operators and `StateFunction` the paper's *state* `k : t ↦ l(x)` (eq. 53).
+`APPLIES` (eq. 59) is folded into `verb`. -/
 
 variable {Entity State Time : Type*} [LinearOrder Time]
-
-/-- `res(e)(x)` (eq. 64): the object's state at the right boundary of `e`. -/
-def resState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
-  k (Event.τ e).snd x
-
-/-- `pre(e)(x)` (eq. 65): the object's state at the left boundary of `e`. -/
-def preState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
-  k (Event.τ e).fst x
 
 /-! ### *un-* and *re-* as result-state modifiers (eqs. 66, 68) -/
 
@@ -98,7 +75,7 @@ def preState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity)
     (`res(e') = pre(e)`), the outcome set is multi-membered (`O.Nontrivial`,
     `|O| > 1`), and the un-event undoes it (`res(e) = pre(e')`). The vacuous
     `∃Q. Q(e)(x)` of the paper's presupposition is dropped. -/
-def unSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Time)
+def unSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
     (e : Event Time) (x : Entity) : Prop :=
   ∃ e' : Event Time,
     vro.verb e' x ∧
@@ -113,7 +90,7 @@ def unSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Tim
     cyclic-*re-* condition, eq. 72), and the base predicate holds of the
     re-event (`P(e)(x)`). Unlike `unSem`, this places no cardinality demand on
     `O`. -/
-def reSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Time)
+def reSem (k : StateFunction Entity State Time) (vro : VerbOutcomes Entity State Time)
     (e : Event Time) (x : Entity) : Prop :=
   (∃ e' : Event Time,
     vro.verb e' x ∧
@@ -128,7 +105,7 @@ def reSem (k : StateFunction Entity State Time) (vro : VerbRoot Entity State Tim
     host *un-* ([bhadra-2024], eq. 67). The multi-membered presupposition of
     `unSem` fails. -/
 theorem subsingleton_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbRoot Entity State Time) (h : ¬ vro.outcomes.Nontrivial)
+    (vro : VerbOutcomes Entity State Time) (h : ¬ vro.outcomes.Nontrivial)
     (e : Event Time) (x : Entity) :
     ¬ unSem k vro e x := by
   rintro ⟨_, _, _, _, hnt, _⟩
@@ -136,7 +113,7 @@ theorem subsingleton_blocks_un (k : StateFunction Entity State Time)
 
 /-- Singleton outcome sets (IE and COS verbs) block *un-*. -/
 theorem singleton_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbRoot Entity State Time) (s : State) (hs : vro.outcomes = {s})
+    (vro : VerbOutcomes Entity State Time) (s : State) (hs : vro.outcomes = {s})
     (e : Event Time) (x : Entity) :
     ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
@@ -144,11 +121,21 @@ theorem singleton_blocks_un (k : StateFunction Entity State Time)
 
 /-- Empty outcome sets (no-change-specified verbs) block *un-*. -/
 theorem empty_blocks_un (k : StateFunction Entity State Time)
-    (vro : VerbRoot Entity State Time) (hs : vro.outcomes = ∅)
+    (vro : VerbOutcomes Entity State Time) (hs : vro.outcomes = ∅)
     (e : Event Time) (x : Entity) :
     ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
+
+/-- *un-*'s cardinality demand (eq. 67, `|O| > 1`) is exactly the substrate
+    `OutcomeCardinality.multi` tier (eq. 62, `empty < singleton < multi`): hosting
+    *un-* forces the verb root's outcome set into the top tier. Wires Bhadra's
+    outcome cardinality to the `OutcomeCardinality` substrate. -/
+theorem un_requires_multi_cardinality (k : StateFunction Entity State Time)
+    (vro : VerbOutcomes Entity State Time) (e : Event Time) (x : Entity)
+    (h : unSem k vro e x) : vro.cardinality = Verb.OutcomeCardinality.multi := by
+  obtain ⟨_, _, _, _, hnt, _⟩ := h
+  exact Verb.OutcomeCardinality.ofSet_eq_multi hnt
 
 /-! ### The Levin-class → outcome-cardinality bridge (eq. 62)
 
@@ -236,7 +223,7 @@ inductive ParchmentState where
   deriving DecidableEq, Repr
 
 /-- *fold* (Levin `bend` class): a multi-membered outcome set. -/
-def foldVRO : VerbRoot Unit ParchmentState ℤ where
+def foldVRO : VerbOutcomes Unit ParchmentState ℤ where
   verb := fun _ _ => True
   outcomes := {.slightlyCreased, .folded, .tightlyFolded}
   thresholds := {.flat, .slightlyCreased}
@@ -263,7 +250,7 @@ inductive LimbState where
 
 /-- *break* (Levin `break_` class): a single lexically-specified result
     (eq. 61a). -/
-def breakVRO : VerbRoot Unit LimbState ℤ where
+def breakVRO : VerbOutcomes Unit LimbState ℤ where
   verb := fun _ _ => True
   outcomes := {.broken}
   thresholds := {.intact}
@@ -294,7 +281,7 @@ inductive SurfaceState where
 
 /-- *hit* (Levin `hit` class): impingement, a single surface-alteration result
     (eq. 61g). -/
-def hitVRO : VerbRoot Unit SurfaceState ℤ where
+def hitVRO : VerbOutcomes Unit SurfaceState ℤ where
   verb := fun _ _ => True
   outcomes := {.surfaceAltered}
   thresholds := {.unaltered}
@@ -315,7 +302,7 @@ inductive TruckState where
 
 /-- *load* (degree achievement, eq. 70): a single contextually-salient result;
     the object stays loadable. -/
-def loadVRO : VerbRoot Unit TruckState ℤ where
+def loadVRO : VerbOutcomes Unit TruckState ℤ where
   verb := fun _ _ => True
   outcomes := {.full}
   thresholds := {.empty, .partlyLoaded}
@@ -338,7 +325,7 @@ inductive MirrorState where
 
 /-- *shatter* (eq. 71): a single result that leaves the object outside every
     threshold — it cannot be shattered again. -/
-def shatterVRO : VerbRoot Unit MirrorState ℤ where
+def shatterVRO : VerbOutcomes Unit MirrorState ℤ where
   verb := fun _ _ => True
   outcomes := {.shattered}
   thresholds := {.intact}

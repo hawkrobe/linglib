@@ -104,6 +104,7 @@ namespace Semantics.ArgumentStructure.EntailmentProfile
     - Sentience without causation → experiencer
     - Causation without sentience → stimulus
     - P-Patient features without P-Agent → patient (if CoS) or theme
+    - Movement (no agent/patient features) → theme (e.g. `arrive`'s subject)
     - IE only → goal (ambiguous with source)
     - No distinguishing features → none
 
@@ -115,11 +116,14 @@ def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
   if p.volition then some .agent
   else if p.sentience && !p.causation then some .experiencer
   else if p.causation && !p.sentience then some .stimulus
-  else if !p.volition && !p.sentience && !p.causation && !p.movement then
-    -- No core P-Agent features (at most IE). Disambiguate by P-Patient.
+  else if !p.volition && !p.sentience && !p.causation then
+    -- No core P-Agent features (at most IE / movement). Disambiguate by P-Patient,
+    -- then movement (a moving entity is a theme — e.g. `arrive`'s subject), then
+    -- independent existence.
     if p.pPatientScore > 0 then
       if p.changeOfState || p.causallyAffected then some .patient
       else some .theme
+    else if p.movement then some .theme
     else if p.independentExistence then some .goal
     else none
   else none
@@ -189,8 +193,10 @@ theorem kick_object_toRole : kickObjectProfile.toRole = some .patient := by rfl
 /-- "see" subject profile → experiencer. -/
 theorem see_subject_toRole : seeSubjectProfile.toRole = some .experiencer := by rfl
 
-/-- "arrive" subject profile → none (mixed P-Agent + P-Patient: movement disqualifies). -/
-theorem arrive_subject_toRole : arriveSubjectProfile.toRole = none := by rfl
+/-- "arrive" subject profile → patient: the unaccusative subject undergoes a
+    change of location (`changeOfState`) without agentivity. (Formerly `none` —
+    `movement` disqualified it, dropping the subject.) -/
+theorem arrive_subject_toRole : arriveSubjectProfile.toRole = some .patient := by rfl
 
 /-- "die" subject profile → patient (pure P-Patient). -/
 theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by rfl
