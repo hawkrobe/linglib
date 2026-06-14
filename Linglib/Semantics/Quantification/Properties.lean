@@ -70,7 +70,7 @@ theorem dualQ_involution (q : GQ α) : dualQ (dualQ q) = q := by
 theorem quantityInvariant_outerNeg (q : GQ α)
     (h : QuantityInvariant q) : QuantityInvariant (outerNeg q) := by
   intro A B A' B' f hBij hA hB
-  simp only [outerNeg, not_iff_not]
+  simp only [outerNeg_apply, not_iff_not]
   exact h A B A' B' f hBij hA hB
 
 /-- Inner negation preserves QuantityInvariant: if Q is bijection-invariant,
@@ -421,7 +421,7 @@ theorem symmetric_iff_upSW_downNE (q : GQ α) (hCons : Conservative q) :
 /-- Conservativity is closed under complement. -/
 theorem conservative_outerNeg (q : GQ α) (h : Conservative q) :
     Conservative (outerNeg q) := by
-  intro R S; simp only [outerNeg, not_iff_not]; exact h R S
+  intro R S; simp only [outerNeg_apply, not_iff_not]; exact h R S
 
 /-- Conservativity is closed under meet. -/
 theorem conservative_gqMeet (f g : GQ α)

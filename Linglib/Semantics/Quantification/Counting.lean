@@ -243,7 +243,7 @@ theorem some_eq_at_least_1 :
 theorem at_most_eq_outerNeg_at_least_succ (n : Nat) :
     (at_most_n_sem (α := α) n : GQ α) =
     (outerNeg (at_least_n_sem (α := α) (n + 1)) : GQ α) := by
-  funext R S; simp only [at_most_n_sem, at_least_n_sem, outerNeg]
+  funext R S; simp only [at_most_n_sem, at_least_n_sem, outerNeg_apply]
   exact propext ⟨fun h hGe => by omega, fun h => by omega⟩
 
 /-- `⟦no⟧ = ⟦at most 0⟧`. -/
@@ -501,7 +501,7 @@ theorem quantity_of_quantityInvariant (q : GQ α)
 theorem quantity_outerNeg (q : GQ α) (h : Quantity q) :
     Quantity (outerNeg q) := by
   intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  simp only [outerNeg]; exact Iff.not (h R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
+  simp only [outerNeg_apply]; exact Iff.not (h R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
 
 theorem quantity_gqMeet (q₁ q₂ : GQ α)
     (h₁ : Quantity q₁) (h₂ : Quantity q₂) :
