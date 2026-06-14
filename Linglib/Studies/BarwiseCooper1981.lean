@@ -6,6 +6,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Quantification.DomainRestriction
+import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
 
 /-!
 # Quantifier Universals Bridge
@@ -747,6 +748,159 @@ theorem more_than_half_not_definable :
       (funext fun e => e.elim) (funext fun i => i.elim0))
   exact hmth₁ ((hφ _ (struc₁ m (3 * m + 1))).mp
     (hsent₁.mpr (hagree.mpr (hsent₂.mp ((hφ _ (struc₂ m (3 * m + 1))).mpr hmth₂)))))
+
+/-! ### The same result via the general Ehrenfeucht–Fraïssé apparatus
+
+The proof above is B&C's hand-rolled Fraïssé argument. The same conclusion follows
+from the project's *general* finite-rank EF engine
+(`Core.Logic.FirstOrder.EhrenfeuchtFraisseGame`): build, for each rank `k`, a pair of
+`L_UV`-structures that are rank-`k` back-and-forth equivalent yet separated by *more
+than half*, then feed `nEquiv_of_backForth` into `not_foDefinable_of_nEquiv`. This
+section is a *demonstration* of that apparatus on a known result — the colored-set
+back-and-forth of Libkin, *Elements of Finite Model Theory* §3 (Cor 3.10 and the two-
+unary-predicate "colored sets" example) — alongside, not in place of, B&C's own proof.
+
+The rank-`k` witnesses are exactly B&C's `struc₁`/`struc₂` instantiated at `m = k + 1`
+on the domain `Fin (3·(k+1)+1)`: the colour classes `U∩V`, `V \ U`, and `¬V` then each
+have matching size or both have size `≥ k + 1`, which is the "enough room" condition the
+`RegionMatch`-extension lemmas (`extend₁₂`/`extend₂₁`) already discharge. -/
+
+/-- Every `L_UV`-term is a variable, restated over `Fin m'` free variables (the file's
+`term_eq_var` is `private` and over `Empty`). -/
+private theorem term_eq_var_fin {γ : Type} (t : L_UV.Term γ) : ∃ i, t = Term.var i := by
+  cases t with
+  | var i => exact ⟨i, rfl⟩
+  | func f _ => exact f.elim
+
+private theorem sumElim_eq_append {m' n k : ℕ} (v : Fin m' → Fin k) (xs : Fin n → Fin k)
+    (i : Fin m' ⊕ Fin n) : Sum.elim v xs i = (Fin.append v xs) (finSumFinEquiv i) := by
+  rcases i with i | i <;> simp [Fin.append_left, Fin.append_right]
+
+/-- **Quantifier-free agreement (`BackForth 0` base case).** Region-matched tuples
+satisfy the same quantifier-rank-`0` formulas. Generalized over the bound-variable count
+`n` (so the `all` case is vacuous: it would force `qr ≥ 1`); the free tuple `v`/`w` and
+the bound tuple `xs`/`ys` are matched jointly via `Fin.append`. -/
+private theorem realize_iff_of_regionMatch_qf (m k : ℕ) :
+    ∀ {m' n : ℕ} (φ : L_UV.BoundedFormula (Fin m') n), φ.qr = 0 →
+      ∀ {v w : Fin m' → Fin k} {xs ys : Fin n → Fin k},
+        RegionMatch m k (Fin.append v xs) (Fin.append w ys) →
+        (@BoundedFormula.Realize L_UV _ (struc₁ m k) (Fin m') n φ v xs ↔
+         @BoundedFormula.Realize L_UV _ (struc₂ m k) (Fin m') n φ w ys) := by
+  intro m' n φ
+  induction φ with
+  | falsum => intro _ v w xs ys _; exact Iff.rfl
+  | equal t₁ t₂ =>
+    intro _ v w xs ys h
+    obtain ⟨i, rfl⟩ := term_eq_var_fin t₁
+    obtain ⟨j, rfl⟩ := term_eq_var_fin t₂
+    simp only [BoundedFormula.Realize, Term.realize_var]
+    rw [sumElim_eq_append v xs i, sumElim_eq_append v xs j,
+        sumElim_eq_append w ys i, sumElim_eq_append w ys j]
+    exact h.inj _ _
+  | rel R ts =>
+    intro _ v w xs ys h
+    cases R with
+    | U =>
+      obtain ⟨i, hi⟩ := term_eq_var_fin (ts 0)
+      simp only [BoundedFormula.Realize]
+      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim v xs) (ts p)) 0).val < m ↔
+        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim w ys) (ts p)) 0).val < m + 1
+      simp only [hi, Term.realize_var]
+      rw [sumElim_eq_append v xs i, sumElim_eq_append w ys i]
+      exact h.inU _
+    | V =>
+      obtain ⟨i, hi⟩ := term_eq_var_fin (ts 0)
+      simp only [BoundedFormula.Realize]
+      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim v xs) (ts p)) 0).val < 2 * m ↔
+        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim w ys) (ts p)) 0).val < 2 * m
+      simp only [hi, Term.realize_var]
+      rw [sumElim_eq_append v xs i, sumElim_eq_append w ys i]
+      exact h.inV _
+  | imp f₁ f₂ ih₁ ih₂ =>
+    intro hφ v w xs ys h
+    rw [BoundedFormula.qr_imp] at hφ
+    simp only [BoundedFormula.realize_imp]
+    exact imp_congr (ih₁ (by omega) h) (ih₂ (by omega) h)
+  | all f ih =>
+    intro hφ v w xs ys h
+    rw [BoundedFormula.qr_all] at hφ
+    omega
+
+/-- **The colored-set back-and-forth between `struc₁` and `struc₂`.** A region match of
+two `ℓ`-tuples lifts to the rank-`r` EF back-and-forth as long as `ℓ + r < m` (so each of
+the `r` remaining rounds still has "enough room" to extend the correspondence). The base
+case is `realize_iff_of_regionMatch_qf`; the forth/back steps reuse the file's
+`extend₁₂`/`extend₂₁`. -/
+private theorem backForth_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
+    ∀ (r : ℕ) {ℓ : ℕ}, ℓ + r < m → ∀ {v w : Fin ℓ → Fin k}, RegionMatch m k v w →
+      @BackForth L_UV (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) r ℓ v w := by
+  intro r
+  induction r with
+  | zero =>
+    intro ℓ _ v w h φ hφ
+    have hv : Fin.append v (default : Fin 0 → Fin k) = v := by
+      rw [Subsingleton.elim (default : Fin 0 → Fin k) Fin.elim0, Fin.append_elim0]; rfl
+    have hw : Fin.append w (default : Fin 0 → Fin k) = w := by
+      rw [Subsingleton.elim (default : Fin 0 → Fin k) Fin.elim0, Fin.append_elim0]; rfl
+    exact realize_iff_of_regionMatch_qf m k φ hφ (v := v) (w := w)
+      (xs := default) (ys := default) (by rw [hv, hw]; exact h)
+  | succ r ih =>
+    intro ℓ hℓ v w h
+    refine ⟨fun a => ?_, fun b => ?_⟩
+    · obtain ⟨b, hb⟩ := extend₁₂ m k hk (by omega) h a
+      exact ⟨b, ih (by omega) hb⟩
+    · obtain ⟨a, ha⟩ := extend₂₁ m k hk (by omega) h b
+      exact ⟨a, ih (by omega) ha⟩
+
+/-- `MoreThanHalf` as a property of bundled `L_UV`-structures, for the EF inexpressibility
+corollary `not_foDefinable_of_nEquiv`. -/
+def MoreThanHalfPred (M : CategoryTheory.Bundled.{0} L_UV.Structure) : Prop :=
+  MoreThanHalf M M.str
+
+/-- Rank-`k` witness `A`: `U = [0, k+1)`, `V = [0, 2k+2)` on `Fin (3k+4)` — exactly half
+the V's are U's, so `¬ MoreThanHalf`. -/
+def efWitnessA (k : ℕ) : CategoryTheory.Bundled.{0} L_UV.Structure :=
+  ⟨Fin (3 * (k + 1) + 1), struc₁ (k + 1) (3 * (k + 1) + 1)⟩
+
+/-- Rank-`k` witness `B`: `U = [0, k+2)`, `V = [0, 2k+2)` on `Fin (3k+4)` — more than half
+the V's are U's, so `MoreThanHalf`. -/
+def efWitnessB (k : ℕ) : CategoryTheory.Bundled.{0} L_UV.Structure :=
+  ⟨Fin (3 * (k + 1) + 1), struc₂ (k + 1) (3 * (k + 1) + 1)⟩
+
+private theorem not_moreThanHalf_efWitnessA (k : ℕ) : ¬ MoreThanHalfPred (efWitnessA k) := by
+  show ¬ MoreThanHalf (Fin (3 * (k + 1) + 1)) (struc₁ (k + 1) (3 * (k + 1) + 1))
+  rw [moreThanHalf_iff (m := k + 1) (c := k + 1) _ (fun _ => Iff.rfl) (fun _ => Iff.rfl)
+    (by omega) (by omega)]
+  omega
+
+private theorem moreThanHalf_efWitnessB (k : ℕ) : MoreThanHalfPred (efWitnessB k) := by
+  show MoreThanHalf (Fin (3 * (k + 1) + 1)) (struc₂ (k + 1) (3 * (k + 1) + 1))
+  rw [moreThanHalf_iff (m := k + 1) (c := k + 2) _ (fun _ => Iff.rfl) (fun _ => Iff.rfl)
+    (by omega) (by omega)]
+  omega
+
+private theorem nEquiv_efWitness (k : ℕ) : NEquiv k (efWitnessA k) (efWitnessB k) := by
+  haveI : Nonempty (efWitnessA k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
+  haveI : Nonempty (efWitnessB k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
+  refine nEquiv_of_backForth (efWitnessA k) (efWitnessB k) ?_
+  rw [Subsingleton.elim (default : Fin 0 → (efWitnessA k : Type))
+        (default : Fin 0 → Fin (3 * (k + 1) + 1)),
+      Subsingleton.elim (default : Fin 0 → (efWitnessB k : Type))
+        (default : Fin 0 → Fin (3 * (k + 1) + 1))]
+  exact backForth_of_regionMatch (k + 1) (3 * (k + 1) + 1) (by omega) k (ℓ := 0) (by omega)
+    (v := default) (w := default) ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
+
+/-- **C12 via the general EF apparatus** ([barwise-cooper-1981] Appendix C, reproved
+through `Core.Logic.FirstOrder.EhrenfeuchtFraisseGame`). *More than half the V's are U's*
+is not first-order definable: for each rank `k` the structures `efWitnessA k` and
+`efWitnessB k` are `k`-equivalent (a colored-set back-and-forth) yet disagree on the
+property, so `not_foDefinable_of_nEquiv` applies. Cf. `more_than_half_not_definable`, which
+proves the same via B&C's own hand-rolled Fraïssé argument; Libkin, *Elements of Finite
+Model Theory* §3 (Cor 3.10 + colored sets). -/
+theorem more_than_half_not_FODefinable_via_EF : ¬ FODefinable MoreThanHalfPred := by
+  refine not_foDefinable_of_nEquiv (fun n => ⟨efWitnessA n, efWitnessB n, nEquiv_efWitness n, ?_⟩)
+  intro hiff
+  exact not_moreThanHalf_efWitnessA n (hiff.mpr (moreThanHalf_efWitnessB n))
 
 end BarwiseCooper1981
 
