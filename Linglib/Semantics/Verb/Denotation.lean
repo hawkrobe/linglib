@@ -129,8 +129,8 @@ theorem causative_entails_resultState (M : CosModel Entity State Time)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     Event Time → Prop :=
-  if LexKind.cause ∈ (v.closedKinds).getD ∅ then M.causative v y x
-  else if LexKind.result ∈ (v.closedKinds).getD ∅ then M.inchoative v x
+  if LexKind.cause ∈ v.closedKinds then M.causative v y x
+  else if LexKind.result ∈ v.closedKinds then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -141,10 +141,10 @@ def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     (v : Verb) (y x : Entity) (e : Event Time)
-    (hres : LexKind.result ∈ (v.closedKinds).getD ∅)
+    (hres : LexKind.result ∈ v.closedKinds)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ (v.closedKinds).getD ∅
+  by_cases hc : LexKind.cause ∈ v.closedKinds
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h
@@ -156,13 +156,10 @@ theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     `Template.HasResultState` are one fact, through the closed kind signature
     ([beavers-koontz-garboden-2020]; [rappaport-hovav-levin-1998]). -/
 theorem denote_result_from_template (M : CosModel Entity State Time)
-    (v : Verb) (r : Verb.Root) (hroot : v.root = some r)
-    (ht : r.template.HasResultState) (y x : Entity) (e : Event Time)
+    (v : Verb) (ht : v.root.template.HasResultState) (y x : Entity) (e : Event Time)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   refine M.denote_result_entails_resultState v y x e ?_ h
-  have heq : (v.closedKinds).getD ∅ = r.closedKinds := by
-    simp [Verb.closedKinds, hroot]
-  rw [heq]
-  exact (Verb.Root.template_hasResultState_iff r).mp ht
+  show LexKind.result ∈ v.root.closedKinds
+  exact (Verb.Root.template_hasResultState_iff v.root).mp ht
 
 end Verb.CosModel

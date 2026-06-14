@@ -34,18 +34,17 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
 /-- The verb's within-class quality profile ([spalek-mcnally-2026]), read off its
-    `root` (where the profile is now carried — formerly a separate `Verb` field).
-    `none` when the verb has no root. -/
-def Verb.rootProfile (v : Verb) : Option Verb.Root.Profile :=
-  v.root.map (·.profile)
+    `root` (where the profile is carried). -/
+def Verb.rootProfile (v : Verb) : Verb.Root.Profile :=
+  v.root.profile
 
 /-- The verb's kind signature ([beavers-koontz-garboden-2020]): the collocational
     closure of its root's kinds (`cause ⟹ result ⟹ state`), which the
-    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on.
-    `none` when the verb has no root. (The raw, un-closed atom-kinds are
-    `v.root.kinds`; the coarse class-derived view is `Verb.classKinds`.) -/
-def Verb.closedKinds (v : Verb) : Option Verb.Root.Kinds :=
-  v.root.map (·.closedKinds)
+    event-structure spine (`Verb.Root.template`, `CosModel.denote`) runs on. (The
+    raw, un-closed atom-kinds are `v.root.kinds`; the coarse class-derived view is
+    `Verb.classKinds`.) -/
+def Verb.closedKinds (v : Verb) : Verb.Root.Kinds :=
+  v.root.closedKinds
 
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile

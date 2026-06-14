@@ -129,7 +129,7 @@ def run : VerbEntry where
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate]
     agentVolition := some [.volitional]
     agentControl := some [.compatible]
@@ -159,7 +159,7 @@ def eat : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.low, .moderate]
     agentVolition := some [.volitional]
     agentControl := some [.compatible]
@@ -173,7 +173,7 @@ def kick : VerbEntry := .mkRegular {
   objectEntailments := some ⟨false, false, false, false, false, true, false, true, true, false⟩
   vendlerClass := some .activity
   levinClass := some .hit
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate, .high]
     forceDir := some [.unidirectional]
     agentVolition := some [.neutral, .volitional]
@@ -801,7 +801,7 @@ def kill : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .murder
-  root := some { profile := {
+  root := { profile := {
     resultType := some [.totalDestruction]
     agentVolition := some [.neutral, .volitional]
     agentControl := some [.neutral, .compatible]
@@ -821,7 +821,7 @@ def break_ : VerbEntry where
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .break_
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate, .high]
     -- forceDir unconstrained: *break* covers snapping (bidirectional),
     -- hammering (omnidirectional), and directed blows (unidirectional)
@@ -851,7 +851,7 @@ def tear_ : VerbEntry where
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .break_
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate, .high]
     forceDir := some [.bidirectional, .unidirectional]
     patientRob := some [.flimsy, .moderate, .robust]
@@ -931,7 +931,7 @@ def burn : VerbEntry := .mkRegular {
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .otherCoS
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate, .high]
     patientRob := some [.flimsy, .moderate, .robust]
     resultType := some [.totalDestruction, .deformation]
@@ -946,7 +946,7 @@ def destroy : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .destroy
-  root := some { profile := {
+  root := { profile := {
     resultType := some [.totalDestruction]
     agentVolition := some [.neutral, .volitional]
     agentControl := some [.neutral, .compatible]
@@ -963,7 +963,7 @@ def melt : VerbEntry := .mkRegular {
   verbIncClass := some .sinc
   causative := some .make
   levinClass := some .otherCoS
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.low, .moderate]
     patientRob := some [.moderate, .robust]
     resultType := some [.deformation]
@@ -1114,7 +1114,7 @@ def devour : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .devour
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.moderate, .high]
     agentVolition := some [.volitional]
     agentControl := some [.neutral]
@@ -1175,7 +1175,7 @@ def sweep : VerbEntry where
   subjectEntailments := some ⟨false, false, false, true, true, false, false, false, false, false⟩
   passivizable := true
   levinClass := some .wipe
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.low, .moderate]
     forceDir := some [.unidirectional]
     agentVolition := some [.volitional]
@@ -1195,7 +1195,7 @@ def sweep_instr : VerbEntry where
   passivizable := true
   senseTag := .instrumental
   levinClass := some .wipe
-  root := some { profile := {
+  root := { profile := {
     forceMag := some [.low, .moderate]
     forceDir := some [.unidirectional]
     agentVolition := some [.volitional]
@@ -2369,7 +2369,7 @@ def cut : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .cut
-  root := some { profile := {
+  root := { profile := {
     resultType := some [.surfaceBreach]
     instrumentType := some [.sharpBlade]
   } }

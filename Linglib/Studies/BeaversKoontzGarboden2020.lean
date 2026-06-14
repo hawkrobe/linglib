@@ -185,10 +185,10 @@ follows from the signature. √crack (`+cause+result`) entails a result state in
 any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
 
 /-- `crack` the change-of-state verb (`Mary cracked the vase`). -/
-def crackV : Verb := { form := "crack", complementType := .np, root := some crack }
+def crackV : Verb := { form := "crack", complementType := .np, root := crack }
 
 /-- `jog` the pure-manner activity verb (`Mary jogged`). -/
-def jogV : Verb := { form := "jog", complementType := .none, root := some jog }
+def jogV : Verb := { form := "jog", complementType := .none, root := jog }
 
 /-- √crack carries `.result`, so in **any** model its denotation entails the
     result state — the non-cancelable result of [beavers-koontz-garboden-2020]
@@ -234,6 +234,6 @@ theorem crack_template_forces_denote_result {Entity State Time : Type*}
     [LinearOrder Time] (M : Verb.CosModel Entity State Time) (y x : Entity)
     (e : Event Time) (h : M.denote crackV y x e) :
     ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
-  M.denote_result_from_template crackV crack rfl crack_template_hasResultState y x e h
+  M.denote_result_from_template crackV crack_template_hasResultState y x e h
 
 end BeaversKoontzGarboden2020

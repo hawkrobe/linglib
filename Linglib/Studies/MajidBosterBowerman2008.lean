@@ -508,7 +508,7 @@ theorem cut_break_same_template :
 open English.Predicates.Verbal in
 /-- Extract the root profile from a Fragment verb entry. -/
 private def fragmentProfile (v : VerbEntry) : Root.Profile :=
-  v.rootProfile.getD {}
+  v.rootProfile
 
 open English.Predicates.Verbal
 

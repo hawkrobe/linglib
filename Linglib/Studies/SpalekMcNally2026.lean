@@ -73,16 +73,16 @@ theorem patient_restriction_differs :
 /-- *tear* implies bidirectional (contrary-direction) force;
     *rasgar* implies unidirectional (linear/gash-like) force. -/
 theorem force_direction_differs :
-    tear_.rootProfile.bind (·.forceDir) ≠
-    rasgar.rootProfile.bind (·.forceDir) := by
+    tear_.rootProfile.forceDir ≠
+    rasgar.rootProfile.forceDir := by
   decide
 
 /-- *tear* is compatible with controlled action; *rasgar* is not.
     [spalek-mcnally-2026] ex. (17): "carefully tore the tin foil" ✓
     vs. "??rasgaron con cuidado el papel de aluminio" (§3.2). -/
 theorem agent_control_differs :
-    tear_.rootProfile.bind (·.agentControl) ≠
-    rasgar.rootProfile.bind (·.agentControl) := by
+    tear_.rootProfile.agentControl ≠
+    rasgar.rootProfile.agentControl := by
   decide
 
 -- ════════════════════════════════════════════════════
@@ -94,7 +94,7 @@ theorem agent_control_differs :
     where both verbs are applicable. This overlap zone is where they
     function as translation equivalents (§4.2, Table 1). -/
 theorem roots_overlap :
-    (tear_.rootProfile.get!).overlaps (rasgar.rootProfile.get!) := by
+    tear_.rootProfile.overlaps rasgar.rootProfile := by
   decide
 
 -- ════════════════════════════════════════════════════
