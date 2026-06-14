@@ -13,7 +13,7 @@ invariant (`OutcomeCardinality`) lives in `Roots/OutcomeCardinality.lean` so tha
 A verb root lexically encodes the **set of outcomes** its object can be in after
 the action — the dimension [bhadra-2024] adds to root semantics, orthogonal to
 the manner/result/cause kinds of [beavers-koontz-garboden-2020]'s
-`Root.FeatureSignature` (*bend* and *break* share a signature, differ in
+`Root.Kinds` (*bend* and *break* share a signature, differ in
 outcomes).
 
 ## Main definitions

@@ -5,7 +5,7 @@ import Linglib.Morphology.RootTypology
 # Verb ↔ root content accessors
 
 The integration seam (P-HUB) between a `Verb` and the root it carries
-(`Verb.root : Option Verb.Root`): a verb's B&KG feature signature, [bhadra-2024]
+(`Verb.root : Option Verb.Root`): a verb's B&KG kind signature, [bhadra-2024]
 outcome cardinality, and change-entailment type are read off *its own root* when
 present, falling back to its Levin class only for the signature (the per-class
 outcome assignment is a Study-level claim, so there is no Levin fallback for
@@ -16,7 +16,7 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 
 ## Main definitions
 
-* `Verb.featureSignature` — the verb's entailment-kind signature (root, else Levin)
+* `Verb.kinds` — the verb's entailment-kind signature (root, else Levin)
 * `Verb.outcomes` — the verb's outcome-set cardinality (root only)
 * `Verb.changeType` — the verb's change-entailment type (derived from its root)
 -/
@@ -24,18 +24,18 @@ these accessors (which mention them) live here rather than in `Verb/Basic.lean`.
 open Verb
 open Semantics.Lexical
 
-/-- The verb's B&KG feature signature, read off its annotated `root` (the fine
+/-- The verb's B&KG kind signature, read off its annotated `root` (the fine
     source of truth). `none` when the verb carries no root. Sibling of `outcomes`
     and `changeType` — root-only, no class fallback; the coarser class-derived
-    signature is `classSignature`. -/
-def Verb.featureSignature (v : Verb) : Option Verb.Root.FeatureSignature :=
-  v.root.map (·.featureSignature)
+    signature is `classKinds`. -/
+def Verb.kinds (v : Verb) : Option Verb.Root.Kinds :=
+  v.root.map (·.kinds)
 
 /-- The signature [levin-1993] attributes to the verb *via its class*
     (`LevinClass.rootEntailments`) — the coarse REALIZATION-layer view, distinct
-    from the root's own `featureSignature`. They are independent provenances; a
-    `classSignature = featureSignature` agreement is a theorem, not a default. -/
-def Verb.classSignature (v : Verb) : Option Verb.Root.FeatureSignature :=
+    from the root's own `kinds`. They are independent provenances; a
+    `classKinds = kinds` agreement is a theorem, not a default. -/
+def Verb.classKinds (v : Verb) : Option Verb.Root.Kinds :=
   v.levinClass.map LevinClass.rootEntailments
 
 /-- The verb's outcome-set cardinality ([bhadra-2024]), read off its `root`. No
@@ -44,7 +44,7 @@ def Verb.outcomes (v : Verb) : Option Verb.OutcomeCardinality :=
   v.root.bind (·.outcomes)
 
 /-- The verb's change-entailment type ([beavers-etal-2021]), derived from its
-    root's feature signature. -/
+    root's kind signature. -/
 def Verb.changeType (v : Verb) : Option RootType :=
   v.root.map Verb.Root.changeType
 

@@ -218,84 +218,84 @@ def rootTransitives : List Root := [kuc, pis, los]
 def arity (r : Root) : Root.Arity :=
   if r ∈ rootTransitives then .selectsTheme else .noTheme
 
-/-! ### Per-root feature signatures -/
+/-! ### Per-root kind signatures -/
 
 /-! Agent-salient roots → `{.manner}`. -/
 
 theorem siit_signature :
-    siit.featureSignature = {.manner} := by decide
+    siit.kinds = {.manner} := by decide
 theorem tziib_signature :
-    tziib.featureSignature = {.manner} := by decide
+    tziib.kinds = {.manner} := by decide
 theorem miis_signature :
-    miis.featureSignature = {.manner} := by decide
+    miis.kinds = {.manner} := by decide
 theorem cheh_signature :
-    cheh.featureSignature = {.manner} := by decide
+    cheh.kinds = {.manner} := by decide
 theorem paak_signature :
-    paak.featureSignature = {.manner} := by decide
+    paak.kinds = {.manner} := by decide
 
 /-! Agent-patient salient (root-transitive) roots → `{.manner}`. -/
 
 theorem kuc_signature :
-    kuc.featureSignature = {.manner} := by decide
+    kuc.kinds = {.manner} := by decide
 theorem pis_signature :
-    pis.featureSignature = {.manner} := by decide
+    pis.kinds = {.manner} := by decide
 theorem los_signature :
-    los.featureSignature = {.manner} := by decide
+    los.kinds = {.manner} := by decide
 
 /-! Patient-salient roots → `{.result}`. -/
 
 theorem kiim_signature :
-    kiim.featureSignature = {.result} := by decide
+    kiim.kinds = {.result} := by decide
 theorem haanCease_signature :
-    haanCease.featureSignature = {.result} := by decide
+    haanCease.kinds = {.result} := by decide
 theorem luub_signature :
-    luub.featureSignature = {.result} := by decide
+    luub.kinds = {.result} := by decide
 theorem ok_signature :
-    ok.featureSignature = {.result} := by decide
+    ok.kinds = {.result} := by decide
 theorem ah_signature :
-    ah.featureSignature = {.result} := by decide
+    ah.kinds = {.result} := by decide
 theorem wen_signature :
-    wen.featureSignature = {.result} := by decide
+    wen.kinds = {.result} := by decide
 theorem siih_signature :
-    siih.featureSignature = {.result} := by decide
+    siih.kinds = {.result} := by decide
 theorem tuub_signature :
-    tuub.featureSignature = {.result} := by decide
+    tuub.kinds = {.result} := by decide
 theorem kaah_signature :
-    kaah.featureSignature = {.result} := by decide
+    kaah.kinds = {.result} := by decide
 theorem chuun_signature :
-    chuun.featureSignature = {.result} := by decide
+    chuun.kinds = {.result} := by decide
 theorem chenCease_signature :
-    chenCease.featureSignature = {.result} := by decide
+    chenCease.kinds = {.result} := by decide
 theorem hoop_signature :
-    hoop.featureSignature = {.result} := by decide
+    hoop.kinds = {.result} := by decide
 theorem heel_signature :
-    heel.featureSignature = {.result} := by decide
+    heel.kinds = {.result} := by decide
 theorem paat_signature :
-    paat.featureSignature = {.result} := by decide
+    paat.kinds = {.result} := by decide
 
 /-! Motion roots (also patient-salient) → `{.result}`. -/
 
 theorem maan_signature :
-    maan.featureSignature = {.result} := by decide
+    maan.kinds = {.result} := by decide
 theorem taal_signature :
-    taal.featureSignature = {.result} := by decide
+    taal.kinds = {.result} := by decide
 theorem bin_signature :
-    bin.featureSignature = {.result} := by decide
+    bin.kinds = {.result} := by decide
 theorem naak_signature :
-    naak.featureSignature = {.result} := by decide
+    naak.kinds = {.result} := by decide
 theorem liik_signature :
-    liik.featureSignature = {.result} := by decide
+    liik.kinds = {.result} := by decide
 
 /-! Positional roots → `{.state}`. -/
 
 theorem cin_signature :
-    cin.featureSignature = {.state} := by decide
+    cin.kinds = {.state} := by decide
 theorem kul_signature :
-    kul.featureSignature = {.state} := by decide
+    kul.kinds = {.state} := by decide
 
-/-! ### Per-root closed feature signatures -/
+/-! ### Per-root closed kind signatures -/
 
-/-! The collocational closure (`Root.FeatureSignature.close`) adds `.state`
+/-! The collocational closure (`Root.Kinds.close`) adds `.state`
     to any signature containing `.result`, and `.result` + `.state` to
     any containing `.cause`. No Yukatek root here carries a `.cause`
     atom, so only the result→state edge fires. Closure does *not*
@@ -307,37 +307,37 @@ theorem kul_signature :
     (cf. `Lucy1994.predictedClass_closure_invariant`). -/
 
 theorem siit_closed_signature :
-    siit.closedFeatureSignature = {.manner} := by decide
+    siit.closedKinds = {.manner} := by decide
 
 theorem tziib_closed_signature :
-    tziib.closedFeatureSignature = {.manner} := by decide
+    tziib.closedKinds = {.manner} := by decide
 
 theorem kuc_closed_signature :
-    kuc.closedFeatureSignature = {.manner} := by decide
+    kuc.closedKinds = {.manner} := by decide
 
 theorem pis_closed_signature :
-    pis.closedFeatureSignature = {.manner} := by decide
+    pis.closedKinds = {.manner} := by decide
 
 theorem los_closed_signature :
-    los.closedFeatureSignature = {.manner} := by decide
+    los.closedKinds = {.manner} := by decide
 
 theorem kiim_closed_signature :
-    kiim.closedFeatureSignature = {.state, .result} := by decide
+    kiim.closedKinds = {.state, .result} := by decide
 
 theorem haanCease_closed_signature :
-    haanCease.closedFeatureSignature = {.state, .result} := by decide
+    haanCease.closedKinds = {.state, .result} := by decide
 
 theorem luub_closed_signature :
-    luub.closedFeatureSignature = {.state, .result} := by decide
+    luub.closedKinds = {.state, .result} := by decide
 
 theorem ok_closed_signature :
-    ok.closedFeatureSignature = {.state, .result} := by decide
+    ok.closedKinds = {.state, .result} := by decide
 
 theorem cin_closed_signature :
-    cin.closedFeatureSignature = {.state} := by decide
+    cin.closedKinds = {.state} := by decide
 
 theorem kul_closed_signature :
-    kul.closedFeatureSignature = {.state} := by decide
+    kul.closedKinds = {.state} := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Class Lists

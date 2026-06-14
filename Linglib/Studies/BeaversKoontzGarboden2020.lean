@@ -23,9 +23,9 @@ the falsification of the Bifurcation Thesis of Roots ([embick-2009];
 
 The +state cells of √blossom, √crack, √hand, √drown are *derived*:
 the book's typology values are the collocational closures
-(`Root.closedFeatureSignature`) of the base atom kinds, and each
+(`Root.closedKinds`) of the base atom kinds, and each
 closed signature is one of the canonical typology rows
-(`Root.FeatureSignature.pureResult`, `causativeResult`, `fullSpec`).
+(`Root.Kinds.pureResult`, `causativeResult`, `fullSpec`).
 √blossom falsifies Bifurcation on its own, since change of state is
 templatic (`v_become`) content. √hand and √drown additionally falsify
 Manner/Result Complementarity; they differ only in root position
@@ -73,50 +73,50 @@ def hand : Root := ⟨"hand",
 def drown : Root := ⟨"drown",
   {.hasManner "submersion-in-liquid", .becomesState "dead", .hasCause}, none, {}⟩
 
-/-! ### Feature signatures
+/-! ### Kind signatures
 
 Base signatures record the atom kinds; closed signatures are their
 collocational closures, and coincide with the canonical rows of the
 book's typology. -/
 
-theorem flat_featureSignature : flat.featureSignature = {.state} := by
+theorem flat_kinds : flat.kinds = {.state} := by
   decide
 
-theorem jog_featureSignature : jog.featureSignature = {.manner} := by
+theorem jog_kinds : jog.kinds = {.manner} := by
   decide
 
-theorem blossom_featureSignature :
-    blossom.featureSignature = {.result} := by decide
+theorem blossom_kinds :
+    blossom.kinds = {.result} := by decide
 
-theorem crack_featureSignature :
-    crack.featureSignature = {.result, .cause} := by decide
+theorem crack_kinds :
+    crack.kinds = {.result, .cause} := by decide
 
-theorem hand_featureSignature :
-    hand.featureSignature = {.manner, .result, .cause} := by decide
+theorem hand_kinds :
+    hand.kinds = {.manner, .result, .cause} := by decide
 
-theorem drown_featureSignature :
-    drown.featureSignature = {.manner, .result, .cause} := by decide
+theorem drown_kinds :
+    drown.kinds = {.manner, .result, .cause} := by decide
 
-theorem flat_closedFeatureSignature :
-    flat.closedFeatureSignature = Root.FeatureSignature.propertyConcept := by
+theorem flat_closedKinds :
+    flat.closedKinds = Root.Kinds.propertyConcept := by
   decide
 
-theorem jog_closedFeatureSignature :
-    jog.closedFeatureSignature = Root.FeatureSignature.pureManner := by decide
+theorem jog_closedKinds :
+    jog.closedKinds = Root.Kinds.pureManner := by decide
 
-theorem blossom_closedFeatureSignature :
-    blossom.closedFeatureSignature = Root.FeatureSignature.pureResult := by
+theorem blossom_closedKinds :
+    blossom.closedKinds = Root.Kinds.pureResult := by
   decide
 
-theorem crack_closedFeatureSignature :
-    crack.closedFeatureSignature = Root.FeatureSignature.causativeResult := by
+theorem crack_closedKinds :
+    crack.closedKinds = Root.Kinds.causativeResult := by
   decide
 
-theorem hand_closedFeatureSignature :
-    hand.closedFeatureSignature = Root.FeatureSignature.fullSpec := by decide
+theorem hand_closedKinds :
+    hand.closedKinds = Root.Kinds.fullSpec := by decide
 
-theorem drown_closedFeatureSignature :
-    drown.closedFeatureSignature = Root.FeatureSignature.fullSpec := by decide
+theorem drown_closedKinds :
+    drown.closedKinds = Root.Kinds.fullSpec := by decide
 
 /-! ### Falsifying the Bifurcation Thesis -/
 
@@ -179,7 +179,7 @@ theorem crack_respectsMannerResultComplementarity :
 /-! ### The roots cash out denotationally ([beavers-koontz-garboden-2020] §1.3.2)
 
 Threading the roots through the change-of-state denotation (`Verb.CosModel`): a
-verb's denotation is dispatched on its root's `featureSignature`, so the kinds
+verb's denotation is dispatched on its root's `kinds`, so the kinds
 proven above *select the event template* and the result entailment of (6)
 follows from the signature. √crack (`+cause+result`) entails a result state in
 any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
@@ -213,7 +213,7 @@ theorem jog_denote_eq_manner {Entity State Time : Type*} [LinearOrder Time]
 collocational closure; the kinds proven above fix it, and `HasResultState`
 reduces to carrying `result` (`Verb.Root.template_hasResultState_iff`). So the
 denotational result entailment (√crack) and the template result diagnostic are
-*one fact* seen through `featureSignature`. -/
+*one fact* seen through `kinds`. -/
 
 theorem flat_template : flat.template = .state := by decide
 theorem jog_template : jog.template = .activity := by decide

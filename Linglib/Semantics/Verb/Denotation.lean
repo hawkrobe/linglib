@@ -143,7 +143,7 @@ For a change-of-state verb the opaque lexical core unpacks into the
 event-structural decomposition of [beavers-koontz-garboden-2020] (22)–(24): a
 root denotes a *state* predicate `⟦√V⟧(x,s)`, and the verb's event predicate is
 built by the templatic operators `become'` and `cause'`. The root's
-`featureSignature` selects which operators apply — `.result` → `become`,
+`kinds` selects which operators apply — `.result` → `become`,
 `.cause` → `cause`/`effector` — so the decomposition is the denotational payoff
 of the root's kinds. -/
 
@@ -210,13 +210,13 @@ theorem causative_entails_resultState (M : CosModel Entity State Time)
   exact ⟨e, hinch⟩
 
 /-- The verb's change-of-state denotation, dispatched on its root's
-    `featureSignature` (cf. [beavers-koontz-garboden-2020] (18)–(19)): `.cause` →
+    `kinds` (cf. [beavers-koontz-garboden-2020] (18)–(19)): `.cause` →
     causative, else `.result` → inchoative, else the bare manner core. The root's
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     Event Time → Prop :=
-  if LexKind.cause ∈ (v.root.map (·.featureSignature)).getD ∅ then M.causative v y x
-  else if LexKind.result ∈ (v.root.map (·.featureSignature)).getD ∅ then M.inchoative v x
+  if LexKind.cause ∈ (v.root.map (·.kinds)).getD ∅ then M.causative v y x
+  else if LexKind.result ∈ (v.root.map (·.kinds)).getD ∅ then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -227,10 +227,10 @@ def denote (M : CosModel Entity State Time) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State Time)
     (v : Verb) (y x : Entity) (e : Event Time)
-    (hres : LexKind.result ∈ (v.root.map (·.featureSignature)).getD ∅)
+    (hres : LexKind.result ∈ (v.root.map (·.kinds)).getD ∅)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : LexKind.cause ∈ (v.root.map (·.featureSignature)).getD ∅
+  by_cases hc : LexKind.cause ∈ (v.root.map (·.kinds)).getD ∅
   · rw [if_pos hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [if_neg hc, if_pos hres] at h

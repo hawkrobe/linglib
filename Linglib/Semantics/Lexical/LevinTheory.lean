@@ -14,13 +14,13 @@ The `LevinClass` enum and its classification data (`MeaningComponents`,
 `meaningComponents`, `predictsUnaccusative`, `isVerbOfCreation`) are
 defined in `Core/Lexical/VerbClass.lean`.
 
-This file provides the theoretical content that depends on `Root.FeatureSignature`:
+This file provides the theoretical content that depends on `Root.Kinds`:
 root signature mapping, root–MC bridge enums, and universal consistency
 theorems.
 
 ## § 1. Root entailment mapping ([beavers-koontz-garboden-2020])
 
-Root feature signatures, well-formedness verification, and
+Root kind signatures, well-formedness verification, and
 manner+result (MRC) tests.
 
 ## § 2. Root–MC bridge
@@ -37,10 +37,10 @@ components, plus universal consistency theorems.
 section LevinClassMethods
 open Semantics.Lexical
 open Verb
-open Root.FeatureSignature
+open Root.Kinds
 namespace Semantics.Lexical
 
-/-- Root feature signature for each Levin class.
+/-- Root kind signature for each Levin class.
 
     Assignments marked (B&KG) are directly from [beavers-koontz-garboden-2020] Table 12 and Chapters 2–5. Others are inferred from class
     semantics following B&KG's framework:
@@ -52,7 +52,7 @@ namespace Semantics.Lexical
 
     Classes marked (default) use `minimal` as a conservative placeholder
     pending detailed study under B&KG's framework. -/
-def LevinClass.rootEntailments : LevinClass → Root.FeatureSignature
+def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §9 Putting: template provides CAUSE+BECOME; root content varies
   | .put => minimal                -- (default)
   | .funnel => pureManner          -- manner of channeling
@@ -369,7 +369,7 @@ theorem break_manner_none :
 
 /-- Root structural contribution to meaning components.
     Maps result → changeOfState and manner → mannerSpec. -/
-def _root_.Verb.Root.FeatureSignature.structuralMC (re : Root.FeatureSignature) : MeaningComponents :=
+def _root_.Verb.Root.Kinds.structuralMC (re : Root.Kinds) : MeaningComponents :=
   { changeOfState := decide (.result ∈ re)
   , contact := false
   , motion := false
