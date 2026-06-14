@@ -1,4 +1,5 @@
 import Linglib.Semantics.Lexical.Roots.Signature
+import Linglib.Semantics.Lexical.Roots.OutcomeCardinality
 
 /-!
 # Atomic Lexical Entailments and Roots
@@ -79,6 +80,10 @@ end LexEntailment
 structure Root where
   name : String
   entailments : Finset LexEntailment
+  /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
+      orthogonal to the `featureSignature` (derived from `entailments`). `none`
+      where the root has not been annotated for outcomes. -/
+  outcomes : Option Semantics.Lexical.OutcomeCardinality := none
   deriving DecidableEq
 
 namespace Root
