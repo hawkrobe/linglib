@@ -325,15 +325,33 @@ theorem pos_inf_neg (e : α) :
     individuals are incomparable in the ConsGQ lattice (they form an
     antichain).
 
-    TODO: revive proof after Bool→Prop GQ migration.  The original proof
-    instantiates the implication at a witness pair `(· = x.1, λ _ => x.2)`;
-    after the migration, the subtype `≤` no longer applies as cleanly and
-    the case-split on `x.2 / y.2` interacts awkwardly with Prop equality.
-    The downstream code uses `pos_sup_neg`/`pos_inf_neg` rather than this
-    antichain lemma, so the gap is non-blocking. -/
+    The order on `ConsGQ α` is pointwise implication, so `≤` unfolds to
+    `∀ R S, toGQ x R S → toGQ y R S`. Instantiating at the restrictor
+    `(· = x.1)` and a scope that selects `x`'s polarity forces `y.1 = x.1`
+    (first conjunct) and `y.2 = x.2` (the polarity branch). -/
 theorem toConsGQ_le_iff [DecidableEq α] (x y : PolInd α) :
     toConsGQ x ≤ toConsGQ y ↔ x = y := by
-  sorry
+  obtain ⟨a, p⟩ := x
+  obtain ⟨b, q⟩ := y
+  refine ⟨fun h => ?_, fun h => h ▸ le_refl _⟩
+  -- `h R S : toGQ (a, p) R S → toGQ (b, q) R S`, pointwise.
+  cases p
+  · -- negative individual `(a, false)`: witness scope `(· ≠ a)`.
+    have hy := h (· = a) (· ≠ a) (by simp [toGQ])
+    simp only [toGQ] at hy
+    obtain ⟨hba, hpol⟩ := hy
+    subst hba
+    cases q
+    · rfl
+    · simp at hpol
+  · -- positive individual `(a, true)`: witness scope `(· = a)`.
+    have hy := h (· = a) (· = a) (by simp [toGQ])
+    simp only [toGQ] at hy
+    obtain ⟨hba, hpol⟩ := hy
+    subst hba
+    cases q
+    · simp at hpol
+    · rfl
 
 /-- The embedding is order-reflecting: an injection into `ConsGQ α`. -/
 theorem toConsGQ_injective [DecidableEq α] :

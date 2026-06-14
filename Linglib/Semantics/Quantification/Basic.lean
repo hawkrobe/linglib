@@ -336,7 +336,8 @@ theorem no_coSmooth_partial :
   ⟨restrictorDownMono_to_downNW _ no_restrictor_down,
    restrictorDownMono_to_downNE _ no_restrictor_down⟩
 
-/-! ### Satisfies universals ([van-de-pol-etal-2023]) -/
+/-! ### Satisfies universals: B&C's CONS + MON ([barwise-cooper-1981]; used as a
+learnability/complexity target by [van-de-pol-etal-2023]) -/
 
 theorem some_satisfiesUniversals : SatisfiesUniversals (some_sem (α := α)) :=
   ⟨some_conservative, Or.inl some_scope_up⟩
