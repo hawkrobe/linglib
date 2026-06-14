@@ -58,7 +58,7 @@ study files, so theorems at this layer slot in directly.
 Pure-logic facts about "exclusive satisfiers of a predicate"
 (`P d ∧ ∀ e ≠ d, ¬P e`) — which characterize the structural shape of
 *pre-exhaustified* domain alternatives — live in
-`Linglib/Core/Logic/Quantification/Exclusive.lean`. That file is
+`Linglib/Semantics/Quantification/Exclusive.lean`. That file is
 framework-agnostic; this file is the Excluder-API specialization.
 
 ## Todo

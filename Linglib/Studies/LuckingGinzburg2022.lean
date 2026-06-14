@@ -1,6 +1,6 @@
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Core.Logic.Quantification.NumberTree
+import Linglib.Semantics.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -31,9 +31,9 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 - **Ordered set bipartitions**: defined here (`BP`)
 - **Witness sets**: `Semantics.TypeTheoretic.WitnessQuantification` —
   `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
-- **GQT properties**: `Semantics.Quantification.Quantifier` —
+- **GQT properties**: `Quantification.Quantifier` —
   `GQ`, `Conservative`
-- **Conservative count**: `Core.Quantification.conservativeQuantifierCount`
+- **Conservative count**: `Quantification.conservativeQuantifierCount`
 - **Dog example**: reuses `DogWorld` from TTR Ch. 7
 -/
 
@@ -41,7 +41,7 @@ namespace LuckingGinzburg2022
 
 open Semantics.TypeTheoretic
 open Cooper2023Ch7
-open Core.Quantification
+open Quantification
 
 -- ============================================================================
 -- §1. Ordered Set Bipartitions (§2.3, (15))

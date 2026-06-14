@@ -12,8 +12,8 @@ import Linglib.Semantics.Quantification.DomainRestriction
 [barwise-cooper-1981] [mostowski-1957] [peters-westerstahl-2006] [van-benthem-1984] [van-de-pol-etal-2023]
 
 Bridges the English determiner fragment (`English.Determiners.QuantityWord`)
-to the GQ property predicates in `Core.Quantification` and
-`Semantics.Quantification.Quantifier`.
+to the GQ property predicates in `Quantification` and
+`Quantification.Quantifier`.
 
 ## Empirical phenomena verified
 
@@ -44,17 +44,17 @@ to the GQ property predicates in `Core.Quantification` and
 
 ## Thread map
 
-- **Formal definitions**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
+- **Formal definitions**: `Quantification` — `Conservative`, `ScopeUpwardMono`,
   `ScopeDownwardMono`, `QuantityInvariant`, `PositiveStrong`, `QSymmetric`,
   `outerNeg`, `innerNeg`, `dualQ`
-- **Concrete denotations**: `Semantics.Quantification.Quantifier` —
+- **Concrete denotations**: `Quantification.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `English.Determiners.QuantityWord.gqDenotation`
-- **Domain restriction**: `Semantics.Quantification.DomainRestriction` —
+- **Domain restriction**: `Quantification.DomainRestriction` —
   `DomainRestrictor`, `DDRP`, `conservative_domain_restricted`
-- **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
+- **Impossibility theorems**: `Quantification.NumberTreeGQ` —
   `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
-- **Counting formula**: `Core.Quantification.conservativeQuantifierCount`
+- **Counting formula**: `Quantification.conservativeQuantifierCount`
 - **Appendix C** (this file, below): C12 — *more than half* is not
   first-order definable over finite models (`more_than_half_not_definable`,
   restated through the codebase's ⟦most⟧ as `most_sem_not_definable`);
@@ -66,9 +66,9 @@ to the GQ property predicates in `Core.Quantification` and
 namespace BarwiseCooper1981
 
 open English.Determiners (Monotonicity Strength QuantityWord)
-open Semantics.Quantification.Quantifier
-open Core.Quantification
-open Semantics.Quantification.DomainRestriction (DomainRestrictor
+open Quantification.Quantifier
+open Quantification
+open Quantification.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
 
 -- ============================================================================
@@ -84,12 +84,12 @@ theorem conservativity_universal :
     Conservative (q.gqDenotation (α := α)) := by
   intro q α inst inst2
   cases q <;> simp only [QuantityWord.gqDenotation]
-  · exact Semantics.Quantification.Quantifier.no_conservative
-  · exact Semantics.Quantification.Quantifier.few_conservative
-  · exact Semantics.Quantification.Quantifier.some_conservative
-  · exact Semantics.Quantification.Quantifier.half_conservative
-  · exact Semantics.Quantification.Quantifier.most_conservative
-  · exact Semantics.Quantification.Quantifier.every_conservative
+  · exact Quantification.Quantifier.no_conservative
+  · exact Quantification.Quantifier.few_conservative
+  · exact Quantification.Quantifier.some_conservative
+  · exact Quantification.Quantifier.half_conservative
+  · exact Quantification.Quantifier.most_conservative
+  · exact Quantification.Quantifier.every_conservative
 
 -- ============================================================================
 -- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
@@ -272,7 +272,7 @@ end ToyWitnesses
 theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
     dualQ (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.some_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.dualQ_every_eq_some
+  exact Quantification.Quantifier.dualQ_every_eq_some
 
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no ([barwise-cooper-1981] §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
@@ -280,7 +280,7 @@ theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
 theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     innerNeg (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.innerNeg_every_eq_no
+  exact Quantification.Quantifier.innerNeg_every_eq_no
 
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no ([barwise-cooper-1981] §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
@@ -288,7 +288,7 @@ theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
 theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     outerNeg (QuantityWord.some_.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.outerNeg_some_eq_no
+  exact Quantification.Quantifier.outerNeg_some_eq_no
 
 -- ============================================================================
 -- §9. Left anti-additivity → NPI licensing
@@ -314,8 +314,8 @@ theorem positive_strong_determiners_upward_monotone :
     ScopeUpwardMono (q.gqDenotation (α := α)) := by
   intro q α inst inst2 hPS
   cases q
-  case all => exact Semantics.Quantification.Quantifier.every_scope_up
-  case some_ => exact Semantics.Quantification.Quantifier.some_scope_up
+  case all => exact Quantification.Quantifier.every_scope_up
+  case some_ => exact Quantification.Quantifier.some_scope_up
   -- TODO: Adapt remaining cases for Prop-valued GQs.
   -- The vacuity argument (PositiveStrong contradicted by R = fun _ => False)
   -- needs count lemmas adapted for Prop predicates.
@@ -335,7 +335,7 @@ theorem positive_strong_determiners_upward_monotone :
    - no:      symmetric + quasi-universal → disjointness (A ∩ B = ∅)
    - not all: almost-connected + irreflexive
 
-   Proved in `Core.Quantification`:
+   Proved in `Quantification`:
    - `vanBenthem_refl_antisym_is_inclusion`:  CONSERV + reflexive + antisymmetric → "all"
    - `vanBenthem_symm_quasiRefl_is_overlap`:  CONSERV + symmetric + quasi-reflexive → "some"
      (→ direction fully proved; ← direction needs QUANT/isomorphism invariance)
@@ -1194,8 +1194,8 @@ theorem more_than_half_not_Q_definable :
 
 private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
     [DecidablePred P] :
-    Core.Quantification.count P = Set.ncard {x | P x} := by
-  rw [Core.Quantification.count, Set.ncard_eq_toFinset_card']
+    Quantification.count P = Set.ncard {x | P x} := by
+  rw [Quantification.count, Set.ncard_eq_toFinset_card']
   congr 1
   ext x
   simp
@@ -1204,9 +1204,9 @@ private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
 theorems are about the denotation the rest of the codebase attributes to
 *most*, not a local re-implementation. -/
 theorem mostUV_iff_most_sem {M : Type} [Fintype M] (U V : M → Prop) :
-    MostUV U V ↔ Core.Quantification.most_sem V U := by
+    MostUV U V ↔ Quantification.most_sem V U := by
   classical
-  unfold MostUV Core.Quantification.most_sem
+  unfold MostUV Quantification.most_sem
   rw [count_eq_ncard, count_eq_ncard]
   have hcomm : {x | U x ∧ V x} = {x | V x ∧ U x} := by
     ext x
@@ -1227,7 +1227,7 @@ theorem most_sem_not_definable :
     ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
       (S : L_UV.Structure M),
       (@Sentence.Realize L_UV M S φ ↔
-        Core.Quantification.most_sem (fun x => S.RelMap vRel ![x])
+        Quantification.most_sem (fun x => S.RelMap vRel ![x])
           (fun x => S.RelMap uRel ![x])) := by
   rintro ⟨φ, hφ⟩
   exact more_than_half_not_definable ⟨φ, fun M _ _ S =>
@@ -1250,7 +1250,7 @@ theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
         (g : Core.Assignment M),
         HoldsAt (Model.ofStructure M S)
           ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
-          Core.Quantification.most_sem (fun x => S.RelMap vRel ![x])
+          Quantification.most_sem (fun x => S.RelMap vRel ![x])
             (fun x => S.RelMap uRel ![x]) := by
   rintro ⟨t, φ, h, hcl, htree⟩
   refine most_sem_not_definable ⟨φ.toSentence hcl, ?_⟩

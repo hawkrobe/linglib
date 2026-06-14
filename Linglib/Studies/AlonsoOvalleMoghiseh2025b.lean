@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Generators
+import Linglib.Semantics.Quantification.Generators
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): Number Marking in *What* Interrogatives
@@ -51,7 +51,7 @@ set_option autoImplicit false
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Core.Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
+open Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
   conjGQ_iff_forall disjGQ_iff_exists conjGQ_le_individual individual_le_disjGQ
   conjGQ_le_disjGQ' individual)
 
@@ -97,7 +97,7 @@ theorem bought_distributive (w : World) :
 
 /-! The GQ generators `conjGQs`/`disjGQs` and their underlying lattice
     operations (`conjGQ`/`disjGQ`) are imported from
-    `Core.Logic.Quantification.Generators`, where they are defined as
+    `Quantification.Generators`, where they are defined as
     iterated meets/joins of Montagovian individual quantifiers.
 
     - `conjGQ X P = X.all P` — universal quantification over X
@@ -186,7 +186,7 @@ def ciDomain : List Entity := allEntities.filter (fun e => decide (isAtom e))
        (by disjunction introduction), so EP always holds.
 
     The entailment facts in (1) and (3) are derived from the lattice
-    structure of GQ generators in `Core.Logic.Quantification.Generators`:
+    structure of GQ generators in `Quantification.Generators`:
     - `conjGQ_le_individual`: ⊓(X) ≤ individual(a) for a ∈ X
     - `individual_le_disjGQ`: individual(a) ≤ ⊔(X) for a ∈ X
     - `conjGQ_le_disjGQ'`: ⊓(X) ≤ ⊔(X) for non-empty X
@@ -538,7 +538,7 @@ theorem ro_eliminates_disjunction :
     Each proposition in `hamblinSet dom` is `conjGQ X (bought · w)` or
     `disjGQ X (bought · w)` for some non-empty X ⊆ dom. This connects
     the study's concrete Hamblin set to the lattice-theoretic GQ
-    generators in `Core.Logic.Quantification.Generators`. -/
+    generators in `Quantification.Generators`. -/
 theorem hamblinSet_decomposition (dom : List Entity) (w : World) :
     ∀ p ∈ hamblinSet dom, ∃ X ∈ nonemptySubsets dom,
       (p w = true ↔ conjGQ X (λ e => bought e w = true)) ∨

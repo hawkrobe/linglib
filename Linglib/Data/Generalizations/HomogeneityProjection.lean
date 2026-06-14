@@ -67,7 +67,7 @@ mapping would be wrong for at least one consumer.
   no linglib study file yet).
 * Prove decidable per-datum predictions and cross-account divergence
   theorems once those implementations land.
-* Add a denotation hook `EmbeddingOperator → ∀ α, Core.Quantification.GQ α`
+* Add a denotation hook `EmbeddingOperator → ∀ α, Quantification.GQ α`
   once accounts derive predictions structurally rather than dispatch on
   label (per [peters-westerstahl-2006] discipline).
 -/

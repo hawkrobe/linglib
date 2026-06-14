@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Properties
+import Linglib.Semantics.Quantification.Properties
 
 /-!
 # Conservative GQ Lattice
@@ -11,7 +11,7 @@ lifts pointwise). Closure under `⊔`/`⊓` follows from
 `conservative_gqJoin`/`conservative_gqMeet`.
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 variable {α : Type*}
 
@@ -76,4 +76,4 @@ instance : OrderTop (ConsGQ α) where
 
 end ConsGQ
 
-end Core.Quantification
+end Quantification

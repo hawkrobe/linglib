@@ -3,7 +3,7 @@ import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Composition
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Plurality.Algebra
 import Mathlib.Data.Fintype.Basic
@@ -137,7 +137,7 @@ is the predicate-based version.
 
 /--
 `setEvery` (from `PIP.Composition`, = set inclusion `R ⊆ S`) agrees with
-`Core.Quantification.every_sem` (= `∀ x, R x → S x`).
+`Quantification.every_sem` (= `∀ x, R x → S x`).
 
 This is the genuine, load-bearing bridge: `setEvery` is `Set`-typed while
 `every_sem` is predicate-typed (defeq, but the binder annotations differ,
@@ -146,27 +146,27 @@ quantifier theory directly — conservativity, the Zwarts monotonicity
 hierarchy, duality — with no PIP-local re-derivation.
 -/
 theorem setEvery_eq_every_sem {α : Type*} (R S : Set α) :
-    setEvery R S ↔ Core.Quantification.every_sem R S :=
+    setEvery R S ↔ Quantification.every_sem R S :=
   ⟨fun h x hx => h hx, fun h x hx => h x hx⟩
 
-/-- `setSome` agrees with `Core.Quantification.some_sem`. -/
+/-- `setSome` agrees with `Quantification.some_sem`. -/
 theorem setSome_eq_some_sem {α : Type*} (R S : Set α) :
-    setSome R S ↔ Core.Quantification.some_sem R S :=
+    setSome R S ↔ Quantification.some_sem R S :=
   ⟨fun ⟨x, hx⟩ => ⟨x, hx.1, hx.2⟩, fun ⟨x, hr, hs⟩ => ⟨x, hr, hs⟩⟩
 
 /-- Conservativity of `setEvery`, inherited from
-    `Core.Quantification.every_conservative` (not re-proved). -/
+    `Quantification.every_conservative` (not re-proved). -/
 theorem setEvery_conservative' {α : Type*} (R S : Set α) :
     setEvery R S ↔ setEvery R (R ∩ S) := by
   rw [setEvery_eq_every_sem, setEvery_eq_every_sem]
-  exact Core.Quantification.every_conservative R S
+  exact Quantification.every_conservative R S
 
 /-- Conservativity of `setSome`, inherited from
-    `Core.Quantification.some_conservative` (not re-proved). -/
+    `Quantification.some_conservative` (not re-proved). -/
 theorem setSome_conservative' {α : Type*} (R S : Set α) :
     setSome R S ↔ setSome R (R ∩ S) := by
   rw [setSome_eq_some_sem, setSome_eq_some_sem]
-  exact Core.Quantification.some_conservative R S
+  exact Quantification.some_conservative R S
 
 
 -- ============================================================

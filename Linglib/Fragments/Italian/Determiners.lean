@@ -20,7 +20,7 @@ Italian quantifiers agree in gender and/or number with their NP:
 
 namespace Italian.Determiners
 
-open Semantics.Quantification.Lexicon
+open Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
 /-- Italian quantifier entry: shared `QuantifierEntry` + gender. -/

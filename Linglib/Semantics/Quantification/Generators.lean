@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # GQ Generators: Meets and Joins of Individual Quantifiers
@@ -40,7 +40,7 @@ characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
 - `conjGQ_append` / `disjGQ_append` — compositionality
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 variable {α : Type*}
 
@@ -340,4 +340,4 @@ def conjGQs (dom : List α) : List (NPQ α) :=
 def disjGQs (dom : List α) : List (NPQ α) :=
   (nonemptySubsets dom).map disjGQ
 
-end Core.Quantification
+end Quantification

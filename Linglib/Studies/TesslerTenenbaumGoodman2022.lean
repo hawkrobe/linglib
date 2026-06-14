@@ -27,7 +27,7 @@ between syllogisms, this entropy varies, which is why the paper's MCMC fits repo
 different optimal α values for SC vs BA — same functional form, different scale).
 This per-syllogism cancellation is proved as `stateCom_eq_beliefAlignment`.
 
-## Substrate (`Semantics.Quantification.Syllogistic`)
+## Substrate (`Quantification.Syllogistic`)
 
 This file consumes the syllogistic substrate at `Semantics/Quantification/`:
 
@@ -73,7 +73,7 @@ set_option autoImplicit false
 
 namespace TesslerTenenbaumGoodman2022
 
-open Semantics.Quantification.Syllogistic
+open Quantification.Syllogistic
   (Region VennState AristQuant Syllogism Conclusion
    hasA hasB hasC syllAll syllSome syllSomeNot syllNone
    barbara allAB_allCB someSome
@@ -258,7 +258,7 @@ theorem all_entails_some_AC (s : VennState)
   unfold concMeaning syllSome
   simp only [decide_eq_true_eq]
   refine ⟨r, ⟨hsr, hAr⟩, ?_⟩
-  rw [Semantics.Quantification.Syllogistic.syllAll_eq_true_iff] at hAll
+  rw [Quantification.Syllogistic.syllAll_eq_true_iff] at hAll
   exact hAll r ⟨hsr, hAr⟩
 
 /-- Strict informativity: "All A-C" is compatible with strictly fewer states
@@ -312,9 +312,9 @@ def naiveL0Post (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
 def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
   if c = .nvc then 1
   else if syl.order1AB && syl.order2BC then      -- Figure 1: prefer A-C
-    if Semantics.Quantification.Syllogistic.Conclusion.isAC c then β else 1
+    if Quantification.Syllogistic.Conclusion.isAC c then β else 1
   else if !syl.order1AB && !syl.order2BC then    -- Figure 4: prefer C-A
-    if !Semantics.Quantification.Syllogistic.Conclusion.isAC c then β else 1
+    if !Quantification.Syllogistic.Conclusion.isAC c then β else 1
   else 1                                          -- Figures 2 & 3: no bias
 
 /-- Belief Alignment score for conclusion c given syllogism syl.
@@ -365,7 +365,7 @@ theorem barbara_l0_concentrates_on_allAC (s : VennState) :
   unfold concMeaning tesslerAll
   simp only [Bool.and_eq_true, decide_eq_true_eq]
   refine ⟨?_, hExA⟩
-  exact Semantics.Quantification.Syllogistic.barbara_valid s hAB hBC
+  exact Quantification.Syllogistic.barbara_valid s hAB hBC
 
 /-- For the invalid syllogism (All A-B, All C-B), the L₀ posterior does NOT
     concentrate on any single conclusion — some consistent states satisfy

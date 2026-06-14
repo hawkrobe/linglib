@@ -1,5 +1,5 @@
 import Linglib.Semantics.TypeTheoretic.Basic
-import Linglib.Core.Logic.Quantification
+import Linglib.Semantics.Quantification
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Powerset
 
@@ -258,7 +258,7 @@ def anaphoraAvailable : QuantName → List AnaphoraRef
 
 /-! ### Induced classical GQ denotations -/
 
-open Core.Quantification
+open Quantification
 
 /-- The GQ induced by existential witness sets:
 `exist(A, B)` iff some element bears both `A` and `B`. -/

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification
+import Linglib.Semantics.Quantification
 
 /-!
 # Exceptive Quantifiers
@@ -28,9 +28,9 @@ Under CONSERV, only PositiveStrong/NegativeStrong quantifiers produce
 non-trivial exceptive readings — explaining the universal-only pattern.
 -/
 
-namespace Semantics.Quantification.Exceptive
+namespace Quantification.Exceptive
 
-open Core.Quantification
+open Quantification
 
 variable {α : Type*}
 
@@ -191,4 +191,4 @@ theorem symmetric_not_exceptive (Q : GQ α)
   rw [h1]
   exact hPS _
 
-end Semantics.Quantification.Exceptive
+end Quantification.Exceptive

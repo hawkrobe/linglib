@@ -125,7 +125,7 @@ def Lexicalizes {Tok : Type} (lex : List Tok)
 end CoreConcept
 
 open CoreConcept
-open Semantics.Quantification.Lexicon (QuantifierEntry)
+open Quantification.Lexicon (QuantifierEntry)
 
 -- ============================================================================
 -- §1  Languages and quantifier slots

@@ -4,7 +4,7 @@ import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Data.Examples.Schema
-import Linglib.Core.Logic.Quantification.Exclusive
+import Linglib.Semantics.Quantification.Exclusive
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Fintype.Fin
@@ -683,7 +683,7 @@ the results hold at full generality.
 
 namespace Abstract
 
-open Core.Quantification (neg_all_exclusive_alts exclusive_false_of_universal)
+open Quantification (neg_all_exclusive_alts exclusive_false_of_universal)
 
 
 /-! #### Internal scaffolding

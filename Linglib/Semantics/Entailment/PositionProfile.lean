@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Entailment.Soundness
 
 /-!
@@ -16,7 +16,7 @@ conditional antecedents) is the special case of reading one section of a
 `Sig₂.SoundFor`.
 
 The GQ bridges connect the profile to the existing per-position machinery
-in `Core.Logic.Quantification`: the four `DoubleMono` cells realize
+in `Quantification`: the four `DoubleMono` cells realize
 mono/anti profiles, and `Left`/`RightAntiAdditive` are sectionwise
 `IsAntiAdditive` at the `Prop` instance. `every_sem` and `no_sem` get
 certified profiles as worked instances.
@@ -34,7 +34,7 @@ certified profiles as worked instances.
 namespace Core.NaturalLogic
 
 open Semantics.Entailment.AntiAdditivity
-open Core.Quantification
+open Quantification
 
 /-- A per-position signature profile for a two-place operator. For
 determiners the positions are restrictor and scope; under the restrictor
@@ -74,7 +74,7 @@ variable {α : Type*}
 
 /-- The signature profile of each [van-benthem-1984] double-monotonicity
 class, at mono/anti granularity. -/
-def _root_.Core.Quantification.DoubleMono.toSig₂ : DoubleMono → Sig₂
+def _root_.Quantification.DoubleMono.toSig₂ : DoubleMono → Sig₂
   | .upUp => ⟨.mono, .mono⟩
   | .downUp => ⟨.anti, .mono⟩
   | .upDown => ⟨.mono, .anti⟩

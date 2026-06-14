@@ -1,6 +1,6 @@
 import Linglib.Semantics.TypeTheoretic.Discourse
 import Linglib.Semantics.TypeTheoretic.WitnessQuantification
-import Linglib.Core.Logic.Quantification
+import Linglib.Semantics.Quantification
 import Mathlib.Data.Finset.Card
 
 /-!
@@ -10,7 +10,7 @@ import Mathlib.Data.Finset.Card
 [barwise-cooper-1981] [van-benthem-1984]
 
 Cooper's *From Perception to Communication* Ch. 7 replaces classical
-set-theoretic GQ denotations (cf. `Core.Quantification.GQ`) with *witness
+set-theoretic GQ denotations (cf. `Quantification.GQ`) with *witness
 sets* — finite sets of individuals satisfying cardinality conditions
 specific to each quantifier. The reusable substrate (witness-set types,
 particular/general witness conditions, induced GQ denotations,
@@ -288,7 +288,7 @@ section Ch7Theorems
 
 variable {E : Type} [DecidableEq E]
 
-open Core.Quantification
+open Quantification
 
 end Ch7Theorems
 
@@ -296,7 +296,7 @@ section Ch7Theorems_contd
 
 variable {E : Type} [DecidableEq E]
 
-open Core.Quantification
+open Quantification
 
 /-! #### Purification and donkey anaphora
 

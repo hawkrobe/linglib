@@ -53,7 +53,7 @@ are disjoint. See `Studies/Nickel2009.lean`.
 namespace Cohen1999
 
 open Semantics.Genericity.Generics
-open Semantics.Quantification.CovertQuantifier
+open Quantification.CovertQuantifier
 -- Cohen's Probability-Based GEN
 
 /-- Cohen's GEN: a generic "Ps are Q" is true iff the conditional probability

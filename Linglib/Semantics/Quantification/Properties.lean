@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Generalized Quantifier Properties — Theorems
@@ -9,7 +9,7 @@ left monotonicity and smoothness, Boolean closure, type ⟨1⟩ theorems,
 van Benthem characterization, and entailment-signature bridge.
 -/
 
-namespace Core.Quantification
+namespace Quantification
 
 variable {α : Type*}
 
@@ -937,4 +937,4 @@ def notEveryEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .antiM
 #guard EntailmentSig.toContextPolarity noEntailmentSig.1 == .downward
 #guard EntailmentSig.toContextPolarity notEveryEntailmentSig.1 == .upward
 
-end Core.Quantification
+end Quantification

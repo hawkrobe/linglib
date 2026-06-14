@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Quantification.Basic
-import Linglib.Core.Logic.Quantification.Counting
+import Linglib.Semantics.Quantification.Basic
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Quantification.Lexicon
 
@@ -10,7 +10,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 The GQ substrate (concrete denotations like `every_sem`, `most_sem`, …
 plus their properties: conservativity, monotonicity, smoothness, quantity,
-proportionality, etc.) lives in `Core.Logic.Quantification.{Basic, Counting}`.
+proportionality, etc.) lives in `Quantification.{Basic, Counting}`.
 
 This file is the **typed layer**: the `Ty.det` semantic type, the
 Type-Shifting bridge `A_eq_some_sem`, and the `gqtMeaning` operator for
@@ -19,12 +19,12 @@ GQT signature. Toy-witnessed examples and counterexamples live in
 `Studies/BarwiseCooper1981.lean` and `Studies/KeenanStavi1986.lean`.
 -/
 
-namespace Semantics.Quantification.Quantifier
+namespace Quantification.Quantifier
 
 open Core.Logic.Intensional
-open Core.Quantification
+open Quantification
 
-export Core.Quantification
+export Quantification
   (every_sem some_sem no_sem
    most_sem few_sem half_sem both_sem neither_sem
    at_least_n_sem at_most_n_sem exactly_n_sem all_but_n_sem between_n_m_sem m_sem
@@ -96,7 +96,7 @@ as a `Bool` over a finite "intersection-count" world. Used by
 quantity-implicature studies (e.g., van Tiel et al. 2021) that plug
 per-paper threshold parameters into the same GQT machinery. -/
 
-open Semantics.Quantification.Lexicon (Monotonicity) in
+open Quantification.Lexicon (Monotonicity) in
 /-- GQT meaning: at threshold `θ`, with monotonicity `mono`, in a domain of
     size `n`, is the count `t` true? -/
 def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) :
@@ -106,15 +106,15 @@ def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) :
   | .decreasing  => t.val ≤ θ
   | .nonMonotone => t.val == θ
 
-open Semantics.Quantification.Lexicon (Monotonicity) in
+open Quantification.Lexicon (Monotonicity) in
 /-- Rational version of `gqtMeaning` (1 if true, 0 if false). -/
 def gqtMeaningRat (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) :
     ℚ :=
   if gqtMeaning n mono θ t then 1 else 0
 
-open Semantics.Quantification.Lexicon (Monotonicity) in
+open Quantification.Lexicon (Monotonicity) in
 theorem gqtMeaningRat_nonneg (n : Nat) (mono : Monotonicity) (θ : Nat)
     (t : Fin (n + 1)) : 0 ≤ gqtMeaningRat n mono θ t := by
   simp only [gqtMeaningRat]; split_ifs <;> norm_num
 
-end Semantics.Quantification.Quantifier
+end Quantification.Quantifier
