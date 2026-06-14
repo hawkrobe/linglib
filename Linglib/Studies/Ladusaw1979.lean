@@ -35,7 +35,6 @@ open Quantification
 open Typology.PolarityItem (LicensingContext)
 open Core.Logic.Intensional
 open Semantics.Montague (ToyEntity)
-open Quantification.Quantifier
 
 -- ============================================================================
 -- §1. Monotonicity classification of licensing contexts

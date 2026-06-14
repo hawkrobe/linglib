@@ -73,7 +73,7 @@ set_option autoImplicit false
 
 namespace DavidsonGagne2022
 
-open Quantification.Quantifier (every_sem some_sem)
+open Quantification (every_sem some_sem)
 open Quantification.DomainRestriction
 open ASL.Height
 

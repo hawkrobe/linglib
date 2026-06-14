@@ -43,31 +43,11 @@ to the GQ property predicates in `Quantification` and
 - `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`:
   [van-de-pol-etal-2023] LZ complexity effect sizes.
 
-## Thread map
-
-- **Formal definitions**: `Quantification` — `Conservative`, `ScopeUpwardMono`,
-  `ScopeDownwardMono`, `QuantityInvariant`, `PositiveStrong`, `QSymmetric`,
-  `outerNeg`, `innerNeg`, `dualQ`
-- **Concrete denotations**: `Quantification.Quantifier` —
-  `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
-- **Fragment entries**: `English.Determiners.QuantityWord.gqDenotation`
-- **Domain restriction**: `Quantification.DomainRestriction` —
-  `DomainRestrictor`, `DDRP`, `conservative_domain_restricted`
-- **Impossibility theorems**: `Quantification.NumberTreeGQ` —
-  `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
-- **Counting formula**: `Quantification.conservativeQuantifierCount`
-- **Appendix C** (this file, below): C12 — *more than half* is not
-  first-order definable over finite models (`more_than_half_not_definable`,
-  restated through the codebase's ⟦most⟧ as `most_sem_not_definable`);
-  C13 — not definable even from the unrelativized majority quantifier
-  (`more_than_half_not_Q_definable`): *most* is a determiner.
-
 -/
 
 namespace BarwiseCooper1981
 
 open English.Determiners (Monotonicity Strength QuantityWord)
-open Quantification.Quantifier
 open Quantification
 open Quantification.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
@@ -85,12 +65,12 @@ theorem conservativity_universal :
     Conservative (q.gqDenotation (α := α)) := by
   intro q α inst inst2
   cases q <;> simp only [QuantityWord.gqDenotation]
-  · exact Quantification.Quantifier.no_conservative
-  · exact Quantification.Quantifier.few_conservative
-  · exact Quantification.Quantifier.some_conservative
-  · exact Quantification.Quantifier.half_conservative
-  · exact Quantification.Quantifier.most_conservative
-  · exact Quantification.Quantifier.every_conservative
+  · exact Quantification.no_conservative
+  · exact Quantification.few_conservative
+  · exact Quantification.some_conservative
+  · exact Quantification.half_conservative
+  · exact Quantification.most_conservative
+  · exact Quantification.every_conservative
 
 -- ============================================================================
 -- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
@@ -273,7 +253,7 @@ end ToyWitnesses
 theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
     dualQ (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.some_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Quantification.Quantifier.dualQ_every_eq_some
+  exact Quantification.dualQ_every_eq_some
 
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no ([barwise-cooper-1981] §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
@@ -281,7 +261,7 @@ theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
 theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     innerNeg (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Quantification.Quantifier.innerNeg_every_eq_no
+  exact Quantification.innerNeg_every_eq_no
 
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no ([barwise-cooper-1981] §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
@@ -289,7 +269,7 @@ theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
 theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     outerNeg (QuantityWord.some_.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Quantification.Quantifier.outerNeg_some_eq_no
+  exact Quantification.outerNeg_some_eq_no
 
 -- ============================================================================
 -- §9. Left anti-additivity → NPI licensing
@@ -315,8 +295,8 @@ theorem positive_strong_determiners_upward_monotone :
     ScopeUpwardMono (q.gqDenotation (α := α)) := by
   intro q α inst inst2 hPS
   cases q
-  case all => exact Quantification.Quantifier.every_scope_up
-  case some_ => exact Quantification.Quantifier.some_scope_up
+  case all => exact Quantification.every_scope_up
+  case some_ => exact Quantification.some_scope_up
   -- TODO: Adapt remaining cases for Prop-valued GQs.
   -- The vacuity argument (PositiveStrong contradicted by R = fun _ => False)
   -- needs count lemmas adapted for Prop predicates.

@@ -227,7 +227,7 @@ def QuantityWord.toList : List QuantityWord :=
     `Quantification.Quantifier`. -/
 noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
     {α : Type*} [Fintype α] : Quantification.GQ α :=
-  open Quantification.Quantifier in
+  open Quantification in
   match q with
   | .none_ => no_sem
   | .some_ => some_sem
