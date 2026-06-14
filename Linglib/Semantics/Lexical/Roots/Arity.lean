@@ -22,6 +22,8 @@ does not project it as a complement.
 * `Root.Arity` — `selectsTheme` (√TV) vs `noTheme`
 -/
 
+namespace Verb
+
 /-- Root-level argument selection ([coon-2019]): does the root
     obligatorily take an internal (theme) argument? `selectsTheme` is
     Coon's √TV — the Mayan root-transitive class; `noTheme` covers
@@ -35,3 +37,5 @@ inductive Root.Arity where
 def Root.Arity.hasInternalArg : Root.Arity → Bool
   | .selectsTheme => true
   | .noTheme => false
+
+end Verb

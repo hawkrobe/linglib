@@ -39,6 +39,7 @@ Under vVPE, the light verb (v head) survives while the nominal root
 
 namespace Dargwa.ComplexPredicates
 
+open Verb
 
 -- ============================================================================
 -- § 1: Light Verb Inventory

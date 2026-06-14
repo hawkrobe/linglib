@@ -36,6 +36,8 @@ motion-roots-non-class theorem, per-root verifications — lives in
 * `classOf` — the salience classifier
 -/
 
+namespace Verb
+
 /-- Salience classification of verbal roots ([lucy-1994]): the 3-way
     transitiviser cut plus the positional class. "Salience" is shorthand
     for "default case-role assignment at the propositional level" — *not*
@@ -142,3 +144,5 @@ theorem classOf_eq_none_iff :
         ¬ IsAgentSalient s ar ∧ ¬ IsAgentPatientSalient ar ∧
         ¬ IsPatientSalient s ar ∧ ¬ IsPositional s ar := by
   decide
+
+end Verb

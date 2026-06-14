@@ -30,6 +30,7 @@ outcomes).
 
 namespace Semantics.Lexical
 
+open Verb
 open Semantics.ArgumentStructure (EventRel)
 
 /-! ### Event boundaries (eqs. 64–65)

@@ -50,6 +50,7 @@ generically for all `DeletionSpine` instances.
 
 namespace Minimalist.Ellipsis
 
+open Verb
 
 -- ════════════════════════════════════════════════════
 -- § 0. Generic Deletion Spine

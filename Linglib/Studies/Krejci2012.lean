@@ -47,6 +47,7 @@ Texas at Austin.
 
 namespace Krejci2012
 
+open Verb
 open Semantics.Lexical
 open Root.FeatureSignature
 open Causation.Morphological

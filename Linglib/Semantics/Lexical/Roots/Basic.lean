@@ -23,6 +23,8 @@ commitments.
 * `Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
 -/
 
+namespace Verb
+
 /-! ### Atomic entailments -/
 
 /-- An atomic claim a root can make. The four B&K-G kinds
@@ -83,7 +85,7 @@ structure Root where
   /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
       orthogonal to the `featureSignature` (derived from `entailments`). `none`
       where the root has not been annotated for outcomes. -/
-  outcomes : Option Semantics.Lexical.OutcomeCardinality := none
+  outcomes : Option OutcomeCardinality := none
   deriving DecidableEq
 
 namespace Root
@@ -119,3 +121,5 @@ instance (r : Root) : Decidable r.HasCause :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 end Root
+
+end Verb

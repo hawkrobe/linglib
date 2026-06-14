@@ -45,6 +45,7 @@ finite lookups.
 
 namespace Lucy1994
 
+open Verb
 open Morphology.Derivation
 open Yukatek.Roots
 open Yukatek.Operators

@@ -27,6 +27,8 @@ Two levels of closure, each a mathlib `ClosureOperator`:
 * `mem_kind_closedEntailments` — the atom/kind bridge
 -/
 
+namespace Verb
+
 /-! ### Atom-level rules and closure -/
 
 /-- The documented B&K-G atom-level entailment rule:
@@ -152,3 +154,5 @@ theorem kind_closedEntailments_le (r : Root) {k : LexKind}
       ⟨.result, hres, by decide⟩
 
 end Root
+
+end Verb

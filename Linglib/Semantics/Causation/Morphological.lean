@@ -73,6 +73,7 @@ the external cause entirely, yielding monoeventive structure.
 
 namespace Causation.Morphological
 
+open Verb
 open Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.AgentivityLattice (AgentivityNode)
 
