@@ -1,4 +1,5 @@
 import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Verb.Denotation
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
@@ -173,5 +174,36 @@ theorem jog_respectsBifurcation : jog.RespectsBifurcation := by decide
     Complementarity. -/
 theorem crack_respectsMannerResultComplementarity :
     crack.RespectsMannerResultComplementarity := by decide
+
+/-! ### The roots cash out denotationally ([beavers-koontz-garboden-2020] §1.3.2)
+
+Threading the roots through the change-of-state denotation (`Verb.CosModel`): a
+verb's denotation is dispatched on its root's `featureSignature`, so the kinds
+proven above *select the event template* and the result entailment of (6)
+follows from the signature. √crack (`+cause+result`) entails a result state in
+any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
+
+/-- `crack` the change-of-state verb (`Mary cracked the vase`). -/
+def crackV : Verb := { form := "crack", complementType := .np, root := some crack }
+
+/-- `jog` the pure-manner activity verb (`Mary jogged`). -/
+def jogV : Verb := { form := "jog", complementType := .none, root := some jog }
+
+/-- √crack carries `.result`, so in **any** model its denotation entails the
+    result state — the non-cancelable result of [beavers-koontz-garboden-2020]
+    (6), derived from crack's signature rather than stipulated. -/
+theorem crack_denote_entails_result {Entity State Time : Type*} [LinearOrder Time]
+    (M : Verb.CosModel Entity State Time) (y x : Entity) (e : Event Time)
+    (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
+  M.denote_result_entails_resultState crackV y x e (by decide) h
+
+/-- √jog has no `.result` (nor `.cause`), so its denotation is the bare manner
+    core — no `become`, no result state. Only the change-of-state root entails a
+    result. -/
+theorem jog_denote_eq_manner {Entity State Time : Type*} [LinearOrder Time]
+    (M : Verb.CosModel Entity State Time) (y x : Entity) :
+    M.denote jogV y x = M.manner jogV := by
+  unfold Verb.CosModel.denote
+  rw [if_neg (by decide), if_neg (by decide)]
 
 end BeaversKoontzGarboden2020
