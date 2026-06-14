@@ -2,42 +2,25 @@ import Mathlib.Data.Set.Basic
 import Linglib.Semantics.Tense.GramTense
 
 /-!
-# Tense as a typed lexical object [sharvit-2014]
+# Tense as a typed lexical object
 
-[sharvit-2014]'s central distinction ((30), p. 274): tenses come in
-two semantic types across languages, motivated by cross-linguistic
-variation in *before*-clauses (Japanese vs Polish/English) and attitude
-reports (English vs Japanese vs Polish).
+[sharvit-2014] argues tense comes in two cross-linguistic semantic types ((30), p. 274):
+*pronominal* (after [partee-1973]; an element of `D_i`) and *quantificational* (a Priorean
+operator over time-predicates). They diverge on past-under-past in *before*-clauses, where
+quantificational past triggers Inherent Presupposition Failure under [beaver-condoravdi-2003]'s
+`before` (`Tense.TemporalConnectives.Before`); the cross-linguistic typology ((98), (99)) is
+in `Studies.Sharvit2014`.
 
-## Two semantic types
+## Main definitions
 
-- **Pronominal tense** (after [partee-1973]): an element of `D_i`. A
-  pronominal past `past_{j,k}` carries two indices — `j` *evaluation*,
-  `k` *referential*. When defined, `[[past_{j,k}]]^g := g k`, with
-  definedness condition `g k < g j` ((30a)).
-
-- **Quantificational tense** (after Prior 1967, Montague 1974): an
-  operator. `[[PAST]]^{K,g}(p)(t)` is true iff `∃ t' ∈ K, t' < t ∧ p t'`
-  ((30b)). The contextually-supplied restrictor `K ⊆ Time` constrains the
-  domain of quantification.
-
-## Empirical signature
-
-The two types make different predictions for *past-under-past in
-before-clauses*: quantificational past triggers Inherent Presupposition
-Failure under [beaver-condoravdi-2003]'s `before` semantics, because
-no minimum exists in a dense set of times preceded by a quantificational-
-past witness. The IPF mechanism is in
-`Semantics/Tense/TemporalConnectives/Before.lean`.
-
-The cross-linguistic typology ((98), (99)) lives in
-`Studies/Sharvit2014.lean`.
+* `Tense.LexicalType` — pronominal vs quantificational tense.
+* `Tense.pronominalLookup` — the pronominal-past partial lookup ((30a)).
+* `Tense.quantificationalPast` — the quantificational past operator ((30b)).
 -/
 
 namespace Tense
 
-/-- [sharvit-2014]'s two semantic types for tense lexical items
-    ((30), p. 274). -/
+/-- [sharvit-2014]'s two semantic types of tense ((30)). -/
 inductive LexicalType
   /-- Pronominal: an element of `D_i`, two-indexed `past_{j,k}`. -/
   | pronominal
@@ -45,35 +28,36 @@ inductive LexicalType
   | quantificational
   deriving DecidableEq, Repr
 
-/-- [sharvit-2014]'s no-mixing assumption (§6.1, p. 300): a language
-    has either pronominal or quantificational tenses, not both, and not
-    neither. The two types are distinct as a structural fact. -/
+/-- The two semantic types are distinct. ([sharvit-2014]'s language-level no-mixing
+    constraint — a language has tenses of just one type — lives in `Studies.Sharvit2014`.) -/
 theorem LexicalType.pronominal_ne_quantificational :
     LexicalType.pronominal ≠ LexicalType.quantificational :=
   nofun
 
-/-- [sharvit-2014] (30a), p. 274: pronominal-past lookup. The two
-    indices are `j` (evaluation) and `k` (referential); the past is
-    *defined* iff `g k < g j`, in which case it denotes `g k`.
-
-    Modeled as `Option Time` (mathlib idiom for partial functions). -/
+/-- [sharvit-2014] (30a): pronominal-past lookup `[[past_{j,k}]]^g`. Indices `j`
+    (evaluation), `k` (referential); defined iff `g k < g j`, then `g k`. Uses `Option`
+    (not `Part`/`PFun`) as the domain is decidable; the shape is `Option.guard`. -/
 def pronominalLookup {Time : Type*} [LT Time] [DecidableLT Time]
     (g : ℕ → Time) (j k : ℕ) : Option Time :=
   if g k < g j then some (g k) else none
 
 /-- The pronominal past denotes the referential index when defined. -/
+@[simp]
 theorem pronominalLookup_eq_some_iff {Time : Type*} [LT Time]
     [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) (t : Time) :
     pronominalLookup g j k = some t ↔ g k < g j ∧ g k = t := by
-  unfold pronominalLookup
-  by_cases h : g k < g j <;> simp [h, eq_comm]
+  unfold pronominalLookup; split <;> simp_all
 
-/-- Sharvit's pronominal past ((30a)) and the `TensePronoun` architecture
-    are the same object: `pronominalLookup g j k` is defined with value `t`
-    iff the past-constraint tense pronoun with referential index `k` and
-    evaluation index `j` satisfies its full presupposition and resolves to
-    `t`. The codebase's two formalizations of [partee-1973]-style
-    pronominal tense provably coincide (in any binding `mode`). -/
+/-- The pronominal past is undefined exactly when the constraint fails. -/
+@[simp]
+theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
+    [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) :
+    pronominalLookup g j k = none ↔ ¬ g k < g j := by
+  unfold pronominalLookup; split <;> simp_all
+
+/-- The two codebase formalizations of [partee-1973] pronominal tense coincide:
+    `pronominalLookup` agrees with the `TensePronoun` architecture (full presupposition
+    plus resolution), for any binding `mode`. -/
 theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
     (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : TenseInterpretation) :
     pronominalLookup g j k = some t ↔
@@ -81,8 +65,8 @@ theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Ti
       (TensePronoun.mk k .past mode j).resolve g = t :=
   pronominalLookup_eq_some_iff g j k t
 
-/-- [sharvit-2014] (30b), p. 274: quantificational past. The
-    contextual restrictor `K` constrains the domain of quantification. -/
+/-- [sharvit-2014] (30b): quantificational past; restrictor `K` bounds the
+    quantification domain. -/
 def quantificationalPast {Time : Type*} [LT Time]
     (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=
   ∃ t' ∈ K, t' < t ∧ p t'
