@@ -1,6 +1,5 @@
 import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Indirect
 import Linglib.Semantics.Alternatives.Structural
@@ -125,7 +124,6 @@ def Lexicalizes {Tok : Type} (lex : List Tok)
 end CoreConcept
 
 open CoreConcept
-open Quantification.Lexicon (QuantifierEntry)
 
 -- ============================================================================
 -- §1  Languages and quantifier slots
@@ -266,13 +264,13 @@ encoding here is consistent with it.
 
 Justification per cell:
 - English *all* → `.lexicalDual` because `English.Determiners.both`
-  has `numberRestriction := some .Dual` (see `both_neither_dual_marked`).
+  has `numberRestriction := some .dual`.
 - English *no* → `.lexicalDual` via *neither*.
 - French *tous* → `.unpronounceableWithIndirectAlt` because
   `French.Determiners.les_deux` has `numberRestriction :=
-  some .Dual` and is no more complex than *tous les NP*.
-- French *aucun* → `.noCompetitor` because no Fragment entry has both
-  `qforce = .negative` and `numberRestriction = some .Dual` and no
+  some .dual` and is no more complex than *tous les NP*.
+- French *aucun* → `.noCompetitor` because no Fragment entry is both
+  negative and `numberRestriction = some .dual` and no
   surrogate at sufficient simplicity exists (paper §5.2).
 - German *alle* → `.lexicalDual` via *beide* (Fragment not yet built).
 - German *keine* → `.noCompetitor` per paper §5.2 (no German *neither*).
@@ -337,7 +335,7 @@ but checks: if `English.Determiners.both` were not
 would be exposed as out of sync with the lexicon. -/
 
 /-- English realizes the dual core concept iff some entry in the
-lexicon carries `numberRestriction = some .Dual`. For English this is
+lexicon carries `numberRestriction = some .dual`. For English this is
 witnessed by `both` and `neither`. -/
 def englishRealizesDual : Prop :=
   ∃ q ∈ English.Determiners.allQuantifiers, q.numberRestriction = some Number.dual
@@ -352,14 +350,14 @@ French *both*); it does have `les_deux` realizing the dual core
 concept on the definite slot. This is the paper's central observation:
 French has the dual concept but lacks its universal lexicalization. -/
 def frenchHasDualOnDefinite : Prop :=
-  French.Determiners.les_deux.numberRestriction = some .Dual
+  French.Determiners.les_deux.numberRestriction = some .dual
 
 theorem french_dual_on_definite : frenchHasDualOnDefinite := rfl
 
 /-- French *tous* is plural-restricted, NOT dual — the gap the paper
 explains via Indirect Alternatives. -/
 theorem french_tous_not_lexical_dual :
-    French.Determiners.tous.numberRestriction ≠ some .Dual := by
+    French.Determiners.tous.numberRestriction ≠ some .dual := by
   decide
 
 /-- The grounding bridge: `lexiconCompetitor .english .universal =
@@ -377,13 +375,15 @@ theorem english_universal_competitor_grounded :
 
 /-- The grounding bridge for French: `lexiconCompetitor .french
 .universal = .unpronounceableWithIndirectAlt` is consistent with
-French lacking a `.du`-marked universal AND having *les deux*
-realizing dual on the definite slot (the indirect alternative). -/
+French *tous* being plural-restricted (not `.dual`-marked) AND *les
+deux* realizing dual on the definite slot (the indirect alternative).
+*tous*'s universal force is a fact about its denotation, no longer a
+stored `qforce` field after the marked-`Quantifier` migration. -/
 theorem french_universal_competitor_grounded :
     lexiconCompetitor .french .universal = .unpronounceableWithIndirectAlt ∧
-    French.Determiners.tous.qforce = .universal ∧
-    French.Determiners.tous.numberRestriction ≠ some .Dual ∧
-    French.Determiners.les_deux.numberRestriction = some .Dual := by
+    French.Determiners.tous.numberRestriction = some .plural ∧
+    French.Determiners.tous.numberRestriction ≠ some .dual ∧
+    French.Determiners.les_deux.numberRestriction = some .dual := by
   refine ⟨rfl, rfl, ?_, rfl⟩
   decide
 

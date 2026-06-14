@@ -3,13 +3,12 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # Minimalism: Fragment Lexicon → Syntactic Object Interpretation
 
 Maps Fragment lexical entries (`VerbEntry`, `PersonalPronoun`, `NounEntry`,
-`QuantifierEntry`) into Minimalist `SyntacticObject` leaves with the
+`Quantifier`) into Minimalist `SyntacticObject` leaves with the
 appropriate `Cat` and `SelStack` features.
 
 Concrete derivation *instances* using these projections live in
@@ -38,7 +37,6 @@ namespace Minimalist.FromFragments
 open Minimalist
 open English.Predicates.Verbal (VerbEntry)
 open English.Nouns (NounEntry)
-open Quantification.Lexicon (QuantifierEntry)
 
 section SelectionalEncoding
 
@@ -83,10 +81,10 @@ def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
   else
     mkLeafPhon .N [] n.formSg id
 
-/-- Convert a `QuantifierEntry` (determiner) to a `SyntacticObject` leaf
+/-- Convert a `Quantifier` (determiner) to a `SyntacticObject` leaf
     with `Cat = .D` and `SelStack = [.N]` (Adger ch. 7 eq. 110:
     `the [D, uN]`). -/
-def determinerToSO (d : QuantifierEntry) (id : Nat) : SyntacticObject :=
+def determinerToSO (d : Quantifier) (id : Nat) : SyntacticObject :=
   mkLeafPhon .D [.N] d.form id
 
 end EntryProjections

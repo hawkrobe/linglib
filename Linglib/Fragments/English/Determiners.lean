@@ -24,10 +24,10 @@ strength, conservativity) is a theorem about that denotation, not a stored field
 (see `Studies/BarwiseCooper1981.lean`).
 
 The cross-paper typological labels (B&C Table II strength/monotonicity, K&S
-force) are kept as the textbook-consensus `QuantityWord.entry : QuantifierEntry`
-metadata table (`Semantics/Quantification/Lexicon.lean`), consumed by GQT and
-exceptive studies that need the descriptive classification rather than the
-denotation.
+force) are kept as the textbook-consensus `QuantityWord.entry : QuantityWord.Metadata`
+metadata table (a small local record over the `Quantification.Lexicon` enums),
+consumed by GQT and exceptive studies that need the descriptive classification
+rather than the denotation.
 
 ## Scope
 
@@ -38,7 +38,7 @@ prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
 - Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`, …):
   `Semantics/Quantification/Quantifier.lean`.
 - GQT/PT meaning operators consuming numerical parameters:
-  `Semantics/Quantification/Quantifier.lean` (`gqtMeaning`),
+  `Studies/VanTielEtAl2021.lean` (`gqtMeaning`, van Tiel's threshold scale-model),
   `Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
 - Per-paper parameter values: `Studies/VanTielEtAl2021.lean`.
 -/
@@ -46,7 +46,7 @@ prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
 namespace English.Determiners
 
 export Quantification.Lexicon
-  (QForce Monotonicity Strength QuantifierEntry)
+  (QForce Monotonicity Strength)
 
 /-! ## Quantificational determiners
 
@@ -188,6 +188,20 @@ instance : Fintype QuantityWord where
   elems := {.none_, .few, .some_, .half, .most, .all}
   complete := fun x => by cases x <;> simp
 
+/-- B&C Table II typological metadata: the textbook-consensus descriptive
+    labels (force, monotonicity, weak/strong strength) a quantity word carries.
+    A small local record over the `Quantification.Lexicon` enums — *not* the
+    lexical marking (that is `Quantifier`, above) and *not* the denotation
+    (that is `QuantityWord.gqDenotation`). -/
+structure QuantityWord.Metadata where
+  /-- Quantificational force. -/
+  qforce : QForce
+  /-- Monotonicity (typological label). -/
+  monotonicity : Monotonicity := .increasing
+  /-- Weak/strong (B&C Table II). -/
+  strength : Strength := .weak
+  deriving Repr, BEq, DecidableEq
+
 /-- B&C Table II typological metadata for each quantity word: force,
     monotonicity, and weak/strong strength. This is the textbook-consensus
     descriptive classification ([barwise-cooper-1981] Table II,
@@ -196,22 +210,13 @@ instance : Fintype QuantityWord where
     theorems about it (`Studies/BarwiseCooper1981.lean`). Consumed by the GQT
     model ([van-tiel-franke-sauerland-2021]) and the exceptive-licensing bridge
     ([von-fintel-1993]) that want the descriptive label. -/
-def QuantityWord.entry : QuantityWord → QuantifierEntry
-  | .none_ => { form := "none", qforce := .negative, allowsMass := true
-              , monotonicity := .decreasing, strength := .weak }
-  | .few   => { form := "few", qforce := .proportional
-              , numberRestriction := some .Plur
-              , monotonicity := .decreasing, strength := .weak }
-  | .some_ => { form := "some", qforce := .existential, allowsMass := true
-              , monotonicity := .increasing, strength := .weak }
-  | .half  => { form := "half", qforce := .proportional, allowsMass := true
-              , monotonicity := .nonMonotone, strength := .weak }
-  | .most  => { form := "most", qforce := .proportional
-              , numberRestriction := some .Plur, allowsMass := true
-              , monotonicity := .increasing, strength := .strong }
-  | .all   => { form := "all", qforce := .universal
-              , numberRestriction := some .Plur, allowsMass := true
-              , monotonicity := .increasing, strength := .strong }
+def QuantityWord.entry : QuantityWord → QuantityWord.Metadata
+  | .none_ => { qforce := .negative, monotonicity := .decreasing, strength := .weak }
+  | .few   => { qforce := .proportional, monotonicity := .decreasing, strength := .weak }
+  | .some_ => { qforce := .existential, monotonicity := .increasing, strength := .weak }
+  | .half  => { qforce := .proportional, monotonicity := .nonMonotone, strength := .weak }
+  | .most  => { qforce := .proportional, monotonicity := .increasing, strength := .strong }
+  | .all   => { qforce := .universal, monotonicity := .increasing, strength := .strong }
 
 /-- Convenience accessor. -/
 def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
