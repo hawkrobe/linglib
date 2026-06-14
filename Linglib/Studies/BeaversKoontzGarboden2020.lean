@@ -1,5 +1,6 @@
 import Linglib.Semantics.Lexical.Roots.Closure
 import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
@@ -205,5 +206,25 @@ theorem jog_denote_eq_manner {Entity State Time : Type*} [LinearOrder Time]
     M.denote jogV y x = M.manner jogV := by
   unfold Verb.CosModel.denote
   rw [if_neg (by decide), if_neg (by decide)]
+
+/-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
+
+`Verb.Root.template` reads the event-structure template off a root's
+collocational closure; the kinds proven above fix it, and `HasResultState`
+reduces to carrying `result` (`Verb.Root.template_hasResultState_iff`). So the
+denotational result entailment (√crack) and the template result diagnostic are
+*one fact* seen through `featureSignature`. -/
+
+theorem flat_template : flat.template = .state := by decide
+theorem jog_template : jog.template = .activity := by decide
+theorem blossom_template : blossom.template = .achievement := by decide
+theorem crack_template : crack.template = .accomplishment := by decide
+
+/-- √crack's template embeds a result state (it carries `result`); √jog's does
+    not — the *break*/*hit* contrast, now at the template layer and provably the
+    same signature fact as `crack_denote_entails_result`. -/
+theorem crack_template_hasResultState : crack.template.HasResultState := by decide
+
+theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
 
 end BeaversKoontzGarboden2020
