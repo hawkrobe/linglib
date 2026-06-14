@@ -156,23 +156,23 @@ def allVerbs : List LexReflexiveVerb :=
 -- ════════════════════════════════════════════════════
 
 /-- All four verbs pass the *again* ambiguity diagnostic. -/
-theorem all_again : allVerbs.all (·.againAmbiguity) = true := by native_decide
+theorem all_again : allVerbs.all (·.againAmbiguity) = true := by decide
 
 /-- All four verbs pass the *re-* prefixation diagnostic. -/
-theorem all_re : allVerbs.all (·.rePrefixation) = true := by native_decide
+theorem all_re : allVerbs.all (·.rePrefixation) = true := by decide
 
 /-- All four verbs pass the *almost* ambiguity diagnostic. -/
-theorem all_almost : allVerbs.all (·.almostAmbiguity) = true := by native_decide
+theorem all_almost : allVerbs.all (·.almostAmbiguity) = true := by decide
 
 /-- All four verbs pass the negation-over-CAUSE diagnostic. -/
-theorem all_negation : allVerbs.all (·.negationOverCause) = true := by native_decide
+theorem all_negation : allVerbs.all (·.negationOverCause) = true := by decide
 
 /-- All four diagnostics pass for every verb in the dataset:
     the simple forms of eat, wash, dress, and learn are bieventive. -/
 theorem all_bieventive :
     allVerbs.all (λ v =>
       v.againAmbiguity && v.rePrefixation &&
-      v.almostAmbiguity && v.negationOverCause) = true := by native_decide
+      v.almostAmbiguity && v.negationOverCause) = true := by decide
 
 /-- Middles and ingestives are both represented. -/
 theorem both_subtypes :
@@ -284,7 +284,7 @@ theorem accomplishment_has_variant :
     accomplishment). The template infrastructure predicts alternation;
     the blocking is root-level, not template-level. -/
 theorem eat_root_alternation_possible :
-    (licensedTemplates (LevinClass.rootEntailments .eat)).length = 3 := by native_decide
+    (licensedTemplates (LevinClass.rootEntailments .eat)).length = 3 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bridge to Event Structure
@@ -378,6 +378,6 @@ theorem middle_no_theta :
 
 /-- The causativizability hierarchy holds for all 12 languages. -/
 theorem hierarchy_holds :
-    krejciLanguages.all (·.respectsHierarchy) = true := by native_decide
+    krejciLanguages.all (·.respectsHierarchy) = true := by decide
 
 end Krejci2012

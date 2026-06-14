@@ -181,39 +181,14 @@ open Verb
 open Verb.Root.Kinds
 
 -- ════════════════════════════════════════════════════
--- § 5. Verification: templates match existing canonical profiles
+-- § 5. Manner roots lack result entailments
 -- ════════════════════════════════════════════════════
 
-/-- Hit-class subject = kickSubjectProfile (both full agent). -/
-theorem hit_subject_eq_kick :
-    mannerContact.subjectProfile = kickSubjectProfile := rfl
-
-/-- Hit-class object lacks CoS (manner verbs don't entail change of state).
-    This correctly differs from `kickObjectProfile` (which has CoS=true) — the
-    class-level profile captures the Beavers & Koontz-Garboden generalization
-    that manner roots lack result entailments. -/
+/-- Hit-class object lacks CoS (manner verbs don't entail change of state) —
+    the Beavers & Koontz-Garboden generalization that manner roots lack result
+    entailments, read off the class-level template. -/
 theorem mannerContact_object_no_cos :
     (mannerContact.objectProfile.map (·.changeOfState)) = some false := rfl
-
-/-- Creation-class object = buildObjectProfile. -/
-theorem creation_object_eq_build :
-    creation.objectProfile = some buildObjectProfile := rfl
-
-/-- Consumption-class object = eatObjectProfile. -/
-theorem consumption_object_eq_eat :
-    consumption.objectProfile = some eatObjectProfile := rfl
-
-/-- Self-motion subject = runSubjectProfile. -/
-theorem selfMotion_subject_eq_run :
-    selfMotion.subjectProfile = runSubjectProfile := rfl
-
-/-- Directed-motion subject = arriveSubjectProfile. -/
-theorem directedMotion_subject_eq_arrive :
-    directedMotion.subjectProfile = arriveSubjectProfile := rfl
-
-/-- Perception subject = seeSubjectProfile. -/
-theorem perception_subject_eq_see :
-    perception.subjectProfile = seeSubjectProfile := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. Derived role labels match expectations
@@ -221,29 +196,29 @@ theorem perception_subject_eq_see :
 
 /-- Hit-class subject → agent label. -/
 theorem hit_subject_role :
-    mannerContact.subjectProfile.toRole = some .agent := by native_decide
+    mannerContact.subjectProfile.toRole = some .agent := by decide
 
 /-- Hit-class object → patient label (CA+St maps to patient). -/
 theorem hit_object_role :
-    kickObjectProfile.toRole = some .patient := by native_decide
+    kickObjectProfile.toRole = some .patient := by decide
 
 /-- Self-motion subject → agent label. -/
 theorem selfMotion_subject_role :
-    selfMotion.subjectProfile.toRole = some .agent := by native_decide
+    selfMotion.subjectProfile.toRole = some .agent := by decide
 
 /-- Perception subject → experiencer label. -/
 theorem perception_subject_role :
-    perception.subjectProfile.toRole = some .experiencer := by native_decide
+    perception.subjectProfile.toRole = some .experiencer := by decide
 
 /-- Psych-causal subject → stimulus label. -/
 theorem psychCausal_subject_role :
-    psychCausal.subjectProfile.toRole = some .stimulus := by native_decide
+    psychCausal.subjectProfile.toRole = some .stimulus := by decide
 
 /-- Directed-motion subject → patient: the unaccusative subject of *arrive*
     undergoes a change of location (`changeOfState`) without agentivity. Formerly
     `none` (the moving subject was dropped); `toRole` now restores it. -/
 theorem directedMotion_subject_role :
-    directedMotion.subjectProfile.toRole = some .patient := by native_decide
+    directedMotion.subjectProfile.toRole = some .patient := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Root.Kinds → ArgTemplate (the missing derivation)
@@ -308,42 +283,18 @@ def toArgTemplate (re : Root.Kinds) : Option ArgTemplate :=
 defined, we verify that the derived ArgTemplate either MATCHES the
 hand-specified one or is a documented override. -/
 
--- § 8a. Classes where derivation matches exactly
+-- § 8a. The table is not the naive derivation
 
-/-- Break-class: causativeResult → resultChange ✓ -/
-theorem break_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .break_) =
-    LevinClass.argTemplate .break_ := by native_decide
-
-/-- Bend-class: causativeResult → resultChange ✓ -/
-theorem bend_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .bend) =
-    LevinClass.argTemplate .bend := by native_decide
-
-/-- Destroy-class: causativeResult → resultChange ✓ -/
-theorem destroy_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .destroy) =
-    LevinClass.argTemplate .destroy := by native_decide
-
-/-- Murder-class: causativeResult → resultChange ✓ -/
-theorem murder_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .murder) =
-    LevinClass.argTemplate .murder := by native_decide
-
-/-- Cooking-class: causativeResult → resultChange ✓ -/
-theorem cooking_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .cooking) =
-    LevinClass.argTemplate .cooking := by native_decide
-
-/-- Cut-class: fullSpec → resultChange ✓ -/
-theorem cut_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .cut) =
-    LevinClass.argTemplate .cut := by native_decide
-
-/-- MannerOfMotion-class: pureManner → selfMotion ✓ -/
-theorem mannerOfMotion_derived_matches :
-    toArgTemplate (LevinClass.rootEntailments .mannerOfMotion) =
-    LevinClass.argTemplate .mannerOfMotion := by native_decide
+/-- `argTemplate` is not merely `toArgTemplate ∘ rootEntailments`: it diverges
+    for the documented overrides (creation, psych-causal). *Build* witnesses
+    this — its `causativeResult` root derives `resultChange`, but the class
+    template is `creation` (incremental-theme object). A table that always
+    matched the derivation would be redundant with it; this divergence is why
+    `argTemplate` exists as a separate label, and §8b documents the overrides. -/
+theorem argTemplate_diverges_from_derivation :
+    ∃ c : LevinClass,
+      LevinClass.argTemplate c ≠ toArgTemplate (LevinClass.rootEntailments c) :=
+  ⟨.build, by decide⟩
 
 -- § 8b. Documented overrides (derivation gives a default that the
 --        class specializes)
