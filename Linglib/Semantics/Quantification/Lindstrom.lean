@@ -1,6 +1,5 @@
 import Linglib.Core.Logic.FirstOrder.Lindstrom
 import Linglib.Semantics.Quantification.Basic
-import Linglib.Core.Logic.Aristotelian.Basic
 
 /-!
 # Realizing Lindström quantifiers as GQ denotations
@@ -26,12 +25,14 @@ condition. It falls straight out of `iso_inv`, because a bijection `f` with
 `everyDet_toGQ`/`someDet_toGQ`/`noDet_toGQ` show the GQ denotations the codebase already
 uses (`every_sem`, `some_sem`, `no_sem`) are precisely their realizations.
 
-The final section *derives the square of opposition from the model theory*: the four
-corners are iso-invariant classes, the contradictory relations are `IsCompl` on those
-classes (`Aristotelian.IsContradictory`, not stipulated), and `toGQ` carries the class-level
-square to the GQ duality operators — an Aristotelian morphism [deklerck-vignero-demey-2024].
-Contrariety and subalternation need existential import: they degenerate over arbitrary
-structures (logic-sensitivity, [demey-frijters-2023]).
+The final section *grounds the square of opposition in the model theory*. The square has a
+single home — the `Aristotelian.IsContradictory`/… relations, instantiated on `GQ α` in
+`Quantification.Basic`. Rather than restate them on a new carrier, `toGQ` is shown to be the
+[deklerck-vignero-demey-2024] **Aristotelian morphism** carrying the class-level Boolean
+structure onto the GQ duality operators (`toGQ_compl` realizes `outerNeg`; `noDet`/`someDet`
+realize the inner-negation/dual corners), so the GQ square is the *image* of the
+model-theoretic one. Existential-import/logic-sensitivity ([demey-frijters-2023]) lives with
+the relations at the GQ layer (`Quantification.a_e_contrary`).
 
 The general `LindstromQuantifier` layer is `[UPSTREAM]`-adjacent; this file is the
 linguistic realization functor on top of it.
@@ -49,12 +50,10 @@ linguistic realization functor on top of it.
   `Quantification.QuantityInvariant`.
 * `everyDet_toGQ`/`someDet_toGQ`/`noDet_toGQ` — realizations are `every_sem`/`some_sem`/
   `no_sem`.
-* `isContradictory_every_notEvery`/`isContradictory_no_some` — the square's diagonals as
-  `IsCompl` of iso-invariant classes.
-* `compl_toGQ`/`noDet_toGQ_eq_innerNeg`/`someDet_toGQ_eq_dualQ` — `toGQ` realizes the
-  class-level square as the GQ duality operators.
-* `not_isContrary_every_no`/`not_isSubaltern_every_some` — the existential-import
-  degeneracy (logic-sensitivity).
+* `toGQ_compl` — `toGQ` is the Aristotelian morphism: it carries the Boolean complement of a
+  class to GQ `outerNeg`.
+* `someDet_holds_eq_compl`/`noDet_toGQ_eq_innerNeg`/`someDet_toGQ_eq_dualQ` — the `no`/`some`
+  corners as the complement/inner-negation/dual images of the model-theoretic structure.
 
 `L_UV`/`uvRel`/`uRel`/`vRel` are re-derived in `Studies.BarwiseCooper1981` (its
 Appendix-C Fraïssé argument predates this substrate); that copy will be deduped against
@@ -232,90 +231,47 @@ theorem noDet_toGQ (α : Type u) : noDet.toGQ α = (no_sem : GQ α) := by
   simp only [Det.toGQ, noDet, Set.mem_setOf_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, no_sem]
 
-/-! ### The square of opposition, derived from the model theory
+/-! ### The square of opposition: `toGQ` realizes it from the model theory
 
-The Aristotelian square's four corners are iso-invariant classes — `everyDet` (A),
-`someDet` (I), `noDet` (E), and `everyDet.compl` (O, *not-every*) — and the relations
-among them are *Boolean-algebra facts on those classes*: `Aristotelian.IsContradictory`
-is `IsCompl` on `Set (Bundled L_UV.Structure)`, the genuine complement of an iso-invariant
-class. The realization functor `toGQ` carries the class-level square down to the GQ-level
-duality operators (`outerNeg`/`innerNeg`/`dualQ`), so the GQ square is the *image* of the
-model-theoretic one — an Aristotelian morphism in the sense of [deklerck-vignero-demey-2024]
-— not an independent stipulation.
+The square of opposition has a single home. Its relations are the
+`Aristotelian.IsContradictory`/`IsContrary`/`IsSubaltern` of [demey-smessaert-2018],
+instantiated on `GQ α` in `Quantification.Basic` (the working layer): `every_contradicts_notEvery`,
+`no_contradicts_some`, and the existential-import-gated `a_e_contrary`/`subalternation_a_i`
+(contrariety and subalternation need a non-empty restrictor — the logic-sensitivity of
+[demey-frijters-2023]). This section does *not* restate them on a new carrier; it shows the
+realization functor `toGQ` is the [deklerck-vignero-demey-2024] **Aristotelian morphism**
+carrying the class-level Boolean structure onto those GQ duality operators, so the GQ square is
+the *image* of the model-theoretic one.
 
-Only the **contradictory** (diagonal) relations hold unconditionally. **Contrariety** and
-**subalternation** require *existential import* (a non-empty restrictor) and degenerate over
-arbitrary structures, where `every` and `no` are jointly vacuously true: this is the
-logic-sensitivity of [demey-frijters-2023], the gap between the `(𝓕, FOL)` and `(𝓕, SYL)`
-readings of one fragment. `not_isContrary_every_no` and `not_isSubaltern_every_some` exhibit
-the degeneracy concretely. -/
+Concretely: `outerNeg` is realized by the Boolean complement of the iso-invariant class
+(`toGQ_compl`); the `E`/`I` corners `no`/`some` are the inner-negation and dual images of `every`
+(`noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dualQ`); and the `no`/`some` contradictory diagonal
+is the class-level fact `some = ¬ no` (`someDet_holds_eq_compl`) pushed through the morphism. -/
 
-/-- `some` is the (Boolean) complement of `no` as iso-invariant classes: `∃x. Ux ∧ Vx` is
-the negation of `∀x. Ux → ¬Vx`. The model-theoretic source of the `no`/`some` diagonal. -/
+/-- `some` is the Boolean complement of `no` as iso-invariant classes: `∃x. Ux ∧ Vx` is the
+negation of `∀x. Ux → ¬Vx`. The model-theoretic source of the `no`/`some` contradictory
+diagonal — `toGQ`-image is `Quantification.no_contradicts_some`. -/
 theorem someDet_holds_eq_compl : (someDet.{u}).holds = (noDet.{u}).holdsᶜ := by
   ext M
   simp only [someDet, noDet, Set.mem_setOf_eq, Set.mem_compl_iff, not_forall, not_not,
     exists_prop]
 
-/-- **A–O diagonal.** `every` and `not-every` (`everyDet.compl`) are contradictory: the
-Boolean complement of an iso-invariant class, by construction (not stipulated). -/
-theorem isContradictory_every_notEvery :
-    Aristotelian.IsContradictory (everyDet.{u}).holds (everyDet.{u}).compl.holds := by
-  rw [LindstromQuantifier.compl_holds]; exact isCompl_compl
-
-/-- **E–I diagonal.** `no` and `some` are contradictory: `some = ¬ no` as classes. -/
-theorem isContradictory_no_some :
-    Aristotelian.IsContradictory (noDet.{u}).holds (someDet.{u}).holds := by
-  rw [someDet_holds_eq_compl]; exact isCompl_compl
-
-/-- Outer negation realizes: `(¬Q).toGQ = outerNeg Q.toGQ`. The realization functor is a
-homomorphism for outer negation — the [deklerck-vignero-demey-2024] Aristotelian morphism
-carrying the class-level square to the GQ duality square. -/
-theorem compl_toGQ (Q : Det.{u}) (α : Type u) : Det.toGQ Q.compl α = outerNeg (Q.toGQ α) := by
+/-- **The Aristotelian morphism (outer negation).** `toGQ` carries the Boolean complement of an
+iso-invariant class to GQ outer negation: `(¬Q).toGQ = outerNeg Q.toGQ`
+([deklerck-vignero-demey-2024]). With `everyDet`, this realizes the `A`/`O` contradictory
+diagonal as `Quantification.every_contradicts_notEvery`. -/
+theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Q.compl α = outerNeg (Q.toGQ α) := by
   funext A B
   simp only [Det.toGQ, LindstromQuantifier.compl_holds, Set.mem_compl_iff, outerNeg]
 
-/-- `no` realizes the inner negation of `every` (`every…not = no`): the E corner is the
-inner-negation image of the A corner. -/
+/-- The `E` corner: `no` realizes the inner negation of `every` (`every…not = no`). -/
 theorem noDet_toGQ_eq_innerNeg (α : Type u) :
     noDet.toGQ α = innerNeg (everyDet.toGQ α) := by
   rw [noDet_toGQ, everyDet_toGQ, innerNeg_every_eq_no]
 
-/-- `some` realizes the dual of `every` (`every̌ = some`): the I corner is the dual image
-of the A corner. -/
+/-- The `I` corner: `some` realizes the dual of `every` (`every̌ = some`). -/
 theorem someDet_toGQ_eq_dualQ (α : Type u) :
     someDet.toGQ α = dualQ (everyDet.toGQ α) := by
   rw [someDet_toGQ, everyDet_toGQ, dualQ_every_eq_some]
-
-/-! #### Logic-sensitivity: the classical square needs existential import -/
-
-/-- Empty-restrictor witness: `U` (restrictor) holds of nothing, so over this structure
-`every` and `no` are *both* vacuously true. -/
-@[reducible] def emptyRestrictor : Bundled.{0} L_UV.Structure :=
-  ⟨PUnit, structOfAB (fun _ => False) (fun _ => True)⟩
-
-private theorem emptyRestrictor_mem_every : emptyRestrictor ∈ (everyDet.{0}).holds := by
-  intro x hu; exact (hu : False).elim
-
-private theorem emptyRestrictor_mem_no : emptyRestrictor ∈ (noDet.{0}).holds := by
-  intro x hu; exact (hu : False).elim
-
-private theorem emptyRestrictor_not_mem_some : emptyRestrictor ∉ (someDet.{0}).holds := by
-  rintro ⟨x, hu, -⟩; exact (hu : False)
-
-/-- **Logic-sensitivity (contrariety).** Over arbitrary `L_UV`-structures `every` and `no`
-are *not* contrary — both hold vacuously when the restrictor is empty. Classical contrariety
-is the `(𝓕, SYL)` reading (existential import), not the `(𝓕, FOL)` one [demey-frijters-2023]. -/
-theorem not_isContrary_every_no :
-    ¬ Aristotelian.IsContrary (everyDet.{0}).holds (noDet.{0}).holds := by
-  rintro ⟨hdisj, -⟩
-  exact Set.disjoint_left.mp hdisj emptyRestrictor_mem_every emptyRestrictor_mem_no
-
-/-- **Logic-sensitivity (subalternation).** Over arbitrary `L_UV`-structures `every` does
-*not* entail `some`: the empty-restrictor model satisfies `every` but not `some`. -/
-theorem not_isSubaltern_every_some :
-    ¬ Aristotelian.IsSubaltern (everyDet.{0}).holds (someDet.{0}).holds := by
-  intro hlt
-  exact emptyRestrictor_not_mem_some (hlt.le emptyRestrictor_mem_every)
 
 end Quantification
