@@ -483,159 +483,6 @@ theorem markedness_from_semantics (rt : RootType) :
   cases rt <;> simp [verbalMarkedness, RootType.entailsChange]
 
 -- ════════════════════════════════════════════════════
--- § 7. Root Denotations (§3.6, eq. 20–21)
--- ════════════════════════════════════════════════════
-
-/-- A root's denotation: a state predicate over entities and states.
-    [beavers-etal-2021] eq. 20a: ⟦√FLAT⟧ = λx.λs[flat'(x, s)]. -/
-abbrev RootDenotation (Entity State : Type) := Entity → State → Prop
-
-/-- A meaning postulate: the root's state predicate entails a prior
-    change event. [beavers-etal-2021] eq. 21a:
-    ∀x.∀s[cracked'(x, s) → ∃e'[become'(e', s)]]. -/
-def MeaningPostulateEntailsChange
-    {Entity State Event : Type}
-    (rootPred : RootDenotation Entity State)
-    (become : Event → State → Prop) : Prop :=
-  ∀ x s, rootPred x s → ∃ e, become e s
-
--- ════════════════════════════════════════════════════
--- § 7b. Root Denotation: Change-in-Denotation Architecture (B&[beavers-koontz-garboden-2020] §2.5)
--- ════════════════════════════════════════════════════
-
-/-- Root denotation architecture (B&[beavers-koontz-garboden-2020] §2.5, eqs. 37a–b), where
-    change is CONSTITUTIVE of the result root's meaning rather than an
-    external meaning postulate (cf. [beavers-etal-2021] eq. 21).
-
-    The formal contrast:
-    - √FLAT = λxλs[flat'(x,s)] — pure state, no change in truth conditions
-    - √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]] — change IN the root
-
-    The earlier [beavers-etal-2021] analysis used a separate structure
-    with an external meaning postulate constraining result roots. B&KG
-    argue the change IS what the root means, not an external constraint.
-
-    The empirical payoff: the *again* diagnostic's reading collapse for result
-    roots (§12b below) follows logically from this architecture. If change is
-    in the root, scoping *again* over root vs. over vP yields the same
-    presupposition — explaining the collapse without stipulation. -/
-inductive RootDen (Entity State Event : Type) where
-  /-- PC root: pure state predicate. The state can hold without prior change.
-      √FLAT = λxλs[flat'(x,s)] — "the table is flat" doesn't presuppose
-      any prior flattening event. -/
-  | pc (statePred : Entity → State → Prop)
-  /-- Result root: state predicate constitutively entailing change.
-      √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]]
-      The existential over becoming events is PART OF the root's truth
-      conditions, not a separate meaning postulate. -/
-  | result
-    (statePred : Entity → State → Prop)
-    (become : Event → State → Prop)
-    (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
-  /-- Manner+result root: state predicate entailing change AND manner
-      restriction on the causing event (B&[beavers-koontz-garboden-2020] §4.5.3, eq. 74).
-      √GUILLOTINE = λxλs[dead'(x,s) ∧ ∃e'∃v[cause'(v,e') ∧ become'(s,e')
-                          ∧ ∀v'[cause'(v',e') → guillotining'(v')]]]
-      The root packages both the result state AND a restriction on how
-      that result is brought about. This violates Manner/Result
-      Complementarity — manner and result coexist in one root. -/
-  | mannerResult
-    (statePred : Entity → State → Prop)
-    (become : Event → State → Prop)
-    (manner : Event → Prop)
-    (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
-    (entailsManner : ∀ x s, statePred x s → ∃ v, manner v)
-
-/-- Extract the RootType from a BKG denotation.
-    Manner+result roots map to `.result` at the Boolean level — they
-    entail change, which is all the Chapter 2 typology cares about.
-    The manner dimension is only visible at the denotation level. -/
-def RootDen.rootType {Entity State Event : Type} :
-    RootDen Entity State Event → RootType
-  | .pc _ => .propertyConcept
-  | .result _ _ _ => .result
-  | .mannerResult _ _ _ _ _ => .result
-
-/-- Extract the underlying state predicate from any root type. -/
-def RootDen.statePred {Entity State Event : Type} :
-    RootDen Entity State Event → (Entity → State → Prop)
-  | .pc pred => pred
-  | .result pred _ _ => pred
-  | .mannerResult pred _ _ _ _ => pred
-
-/-- Whether the root carries its own BECOME relation (built into the denotation). -/
-def RootDen.carriesBECOME {Entity State Event : Type} :
-    RootDen Entity State Event → Bool
-  | .pc _ => false
-  | .result _ _ _ => true
-  | .mannerResult _ _ _ _ _ => true
-
-/-- Carrying BECOME built-in is the same as entailing change.
-    This connects the denotation architecture to the Boolean flag. -/
-theorem RootDen.carriesBECOME_iff_entailsChange
-    {Entity State Event : Type}
-    (rd : RootDen Entity State Event) :
-    rd.carriesBECOME = rd.rootType.entailsChange := by
-  cases rd <;> rfl
-
-/-- For result roots, the meaning postulate is DERIVED from the denotation —
-    not a separate axiom. This is the formal content of B&KG's argument:
-    change isn't externally constrained — it's what the root means. -/
-theorem RootDen.meaning_postulate_derived
-    {Entity State Event : Type}
-    (pred : Entity → State → Prop) (become : Event → State → Prop)
-    (h : ∀ x s, pred x s → ∃ e, become e s) :
-    MeaningPostulateEntailsChange pred become :=
-  h
-
-/-- Whether the root carries a manner restriction on causation (B&[beavers-koontz-garboden-2020] §4.5.3).
-    Only manner+result roots have this — PC and pure result roots do not
-    restrict how causation proceeds. -/
-def RootDen.carriesMANNER {Entity State Event : Type} :
-    RootDen Entity State Event → Bool
-  | .pc _ => false
-  | .result _ _ _ => false
-  | .mannerResult _ _ _ _ _ => true
-
-/-- A root denotation violates MRC iff it carries both BECOME and a manner
-    restriction — i.e., it encodes both result and manner in one root.
-    Derived from the two independent predicates, not pattern-matched separately. -/
-def RootDen.denotationViolatesMRC {Entity State Event : Type}
-    (rd : RootDen Entity State Event) : Bool :=
-  rd.carriesBECOME && rd.carriesMANNER
-
-/-- Manner+result denotations violate MRC. -/
-theorem RootDen.mannerResult_violates {Entity State Event : Type}
-    (sp : Entity → State → Prop) (become : Event → State → Prop)
-    (manner : Event → Prop)
-    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
-    (RootDen.mannerResult sp become manner hc hm :
-      RootDen Entity State Event).denotationViolatesMRC = true := rfl
-
-/-- Result-only denotations respect MRC. -/
-theorem RootDen.result_respects {Entity State Event : Type}
-    (sp : Entity → State → Prop) (become : Event → State → Prop)
-    (hc : ∀ x s, sp x s → ∃ e, become e s) :
-    (RootDen.result sp become hc :
-      RootDen Entity State Event).denotationViolatesMRC = false := rfl
-
-/-- PC denotations respect MRC. -/
-theorem RootDen.pc_respects {Entity State Event : Type}
-    (sp : Entity → State → Prop) :
-    (RootDen.pc sp : RootDen Entity State Event).denotationViolatesMRC = false := rfl
-
-/-- **Bridge: denotation-level MRC → signature-level MRC
-    (`Root.Kinds.HasMannerAndResult`).**
-    MRC violation requires BOTH conditions — having manner alone
-    (if such a constructor existed) would not be a violation. -/
-theorem RootDen.mrc_requires_both {Entity State Event : Type}
-    (rd : RootDen Entity State Event)
-    (h : rd.denotationViolatesMRC = true) :
-    rd.carriesBECOME = true ∧ rd.carriesMANNER = true := by
-  simp [RootDen.denotationViolatesMRC] at h
-  exact h
-
--- ════════════════════════════════════════════════════
 -- § 7c. Ditransitive Root Classes (B&[beavers-koontz-garboden-2020] Ch. 3)
 -- ════════════════════════════════════════════════════
 
@@ -733,56 +580,6 @@ theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
 
 end Semantics.Lexical
-
--- ════════════════════════════════════════════════════
--- § 7d. Ditransitive Root Denotations (B&[beavers-koontz-garboden-2020] §3.5–3.6)
--- ════════════════════════════════════════════════════
-
-/-- A ditransitive root's denotation (B&[beavers-koontz-garboden-2020] §3.5, eqs. 46–55).
-    Parallel to `RootDen` for CoS roots (§7b).
-
-    The formal contrast:
-    - √SEND = λyλzλe[send'(y,z,e)] — event predicate only
-    - √GIVE = λyλzλe[give'(y,z,e) ∧ have'(z,y)] — possession IN the root
-
-    Templates always add prospective possession (via ◇). Whether the root
-    ALSO adds actual possession determines cancellation behavior, telicity,
-    and *again* readings — the same architecture as CoS roots with BECOME. -/
-inductive DitransitiveDen (Entity Event : Type) where
-  /-- Root WITHOUT possession entailment. Like PC roots for CoS:
-      the template provides the (prospective) possession. -/
-  | simple (eventPred : Entity → Entity → Event → Prop)
-  /-- Root WITH actual possession entailment. Like result roots for CoS:
-      possession is IN the root's truth conditions.
-      The `entailsPoss` proof is constitutive — not a meaning postulate. -/
-  | withPossession
-    (eventPred : Entity → Entity → Event → Prop)
-    (possess : Entity → Entity → Prop)
-    (entailsPoss : ∀ y z e, eventPred y z e → possess z y)
-
-/-- Whether possession is cancelable for a verb with this root.
-    Root-entailed actual possession is NOT cancelable; template-only
-    prospective possession IS cancelable.
-
-    Structural parallel to `RootDen.carriesBECOME`: root-constitutive
-    content cannot be canceled in either domain. -/
-def DitransitiveDen.possessionCancelable {Entity Event : Type} :
-    DitransitiveDen Entity Event → Bool
-  | .simple _ => true
-  | .withPossession _ _ _ => false
-
-/-- A send-type denotation (simple) has cancelable possession. -/
-theorem simple_possession_cancelable {Entity Event : Type}
-    (ep : Entity → Entity → Event → Prop) :
-    (DitransitiveDen.simple ep :
-      DitransitiveDen Entity Event).possessionCancelable = true := rfl
-
-/-- A give-type denotation (withPossession) has uncancelable possession. -/
-theorem withPossession_not_cancelable {Entity Event : Type}
-    (ep : Entity → Entity → Event → Prop) (poss : Entity → Entity → Prop)
-    (h : ∀ y z e, ep y z e → poss z y) :
-    (DitransitiveDen.withPossession ep poss h :
-      DitransitiveDen Entity Event).possessionCancelable = false := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7e. MRC Diagnostics (B&[beavers-koontz-garboden-2020] §§4.2–4.3)
@@ -1017,20 +814,23 @@ theorem admitsBasicStative_iff_no_change (rt : RootType) :
   cases rt <;> simp [RootType.admitsBasicStative, RootType.entailsChange]
 
 -- ════════════════════════════════════════════════════
--- § 12. The Again Diagnostic (§3.4, eq. 14–16)
+-- § 12. The Again Diagnostic ([beavers-koontz-garboden-2020] §1.3.2, §2.4)
 -- ════════════════════════════════════════════════════
 
-/-- Sublexical modifier 'again' has two readings:
+/-- Reading-count tabulation of sublexical *again* by root type
+    ([beavers-koontz-garboden-2020] §1.3.2 (25), §2.4 (46)–(47)). *again* attaches
+    either low (to the root, restitutive) or high (over `vbecome`, repetitive):
 
-    (14a) RESTITUTIVE: again attaches to just the root
-          → restores a prior state (one sharpening event)
-    (14b) REPETITIVE: again attaches to the whole vP (including v_become)
-          → repeats the entire change event (two sharpenings)
+    - RESTITUTIVE: presupposes only a prior state — available iff the root is
+      change-free (PC roots, BKG (46));
+    - REPETITIVE: presupposes a prior change — always available.
 
-    Under the non-bifurcated analysis:
-    - PC roots: again over √ROOT yields a pure state → restitutive OK
-    - Result roots: again over √ROOT still entails change (root has it)
-      → restitutive reading collapses into repetitive -/
+    A result root's state itself entails change, so its low/restitutive attachment
+    still presupposes change and collapses into the repetitive reading (BKG (47),
+    "result roots never admit truly restitutive readings"). The *mechanism* — the
+    presuppositional operator and the reading hierarchy — is the canonical
+    `Verb.CosModel.again` (see `result_restitution_entails_change`); this enum just
+    records how many distinct readings each `RootType` admits. -/
 inductive AgainReading where
   | restitutive   -- again scopes over root only
   | repetitive    -- again scopes over vP (includes BECOME)
@@ -1057,86 +857,6 @@ theorem pc_has_restitutive :
   simp [RootType.againReadings]
 
 -- ════════════════════════════════════════════════════
--- § 12b. Again Diagnostic: Compositional Derivation (B&[beavers-koontz-garboden-2020] §2.5)
--- ════════════════════════════════════════════════════
-
-/-- What *again* presupposes at a given scope position.
-
-    *again* is a presupposition trigger: attaching it to constituent C
-    presupposes that C's denotation held at some prior time. The distinction
-    between priorState and priorChange determines whether restitutive and
-    repetitive readings are distinct or collapse into one. -/
-inductive AgainPresupposition where
-  | priorState   -- presupposes a prior state held (no change implied)
-  | priorChange  -- presupposes a prior change event occurred
-  deriving DecidableEq, Repr
-
-/-- What *again* presupposes when scoping over just the root.
-
-    For PC roots (√FLAT): *again*[√FLAT](x) presupposes x was previously flat.
-    This is a pure state presupposition — no change is implied.
-
-    For result roots (√CRACK): *again*[√CRACK](x) presupposes x was previously
-    cracked. But √CRACK's denotation INCLUDES ∃e'[become'(s,e')], so this
-    presupposition ENTAILS a prior change event.
-
-    For manner+result roots (√GUILLOTINE): *again* over the root presupposes
-    prior change+manner. The root packages BECOME + manner restriction,
-    so root-scope *again* entails a prior mannered change event (§4.5.2). -/
-def RootDen.againOverRoot {Entity State Event : Type} :
-    RootDen Entity State Event → AgainPresupposition
-  | .pc _ => .priorState
-  | .result _ _ _ => .priorChange
-  | .mannerResult _ _ _ _ _ => .priorChange
-
-/-- What *again* presupposes when scoping over vP (v_become + root).
-    Always presupposes prior change, regardless of root type, because
-    v_become introduces BECOME compositionally. -/
-def againOverVP : AgainPresupposition := .priorChange
-
-/-- PC roots: root-scope and vP-scope *again* yield DISTINCT presuppositions.
-    Root-scope → prior state (no change); vP-scope → prior change.
-    Two distinct presuppositions → two available readings. -/
-theorem pc_again_distinct {Entity State Event : Type}
-    (pred : Entity → State → Prop) :
-    (RootDen.pc pred : RootDen Entity State Event).againOverRoot ≠
-    (againOverVP : AgainPresupposition) := by
-  simp [RootDen.againOverRoot, againOverVP]
-
-/-- Result roots: root-scope and vP-scope *again* yield THE SAME presupposition.
-    Both presuppose prior change — root-scope because change is in the
-    denotation, vP-scope because v_become introduces it.
-    Same presupposition → readings collapse into one. -/
-theorem result_again_collapsed {Entity State Event : Type}
-    (pred : Entity → State → Prop) (become : Event → State → Prop)
-    (h : ∀ x s, pred x s → ∃ e, become e s) :
-    (RootDen.result pred become h : RootDen Entity State Event).againOverRoot =
-    (againOverVP : AgainPresupposition) := rfl
-
-/-- Predicted *again* readings from the BKG denotation architecture.
-    Distinct presuppositions → both readings available.
-    Collapsed presuppositions → only repetitive.
-    Manner+result roots collapse like result roots — the manner
-    restriction adds no new scope point because it's within the root. -/
-def RootDen.predictedAgainReadings {Entity State Event : Type} :
-    RootDen Entity State Event → List AgainReading
-  | .pc _ => [.restitutive, .repetitive]
-  | .result _ _ _ => [.repetitive]
-  | .mannerResult _ _ _ _ _ => [.repetitive]
-
-/-- **The key bridge**: the BKG denotation architecture predicts the SAME
-    again-reading distribution as the Boolean `RootType.againReadings`.
-
-    This validates the compositional explanation: the reading collapse
-    for result roots is not stipulated — it follows from change being
-    constitutive of the root's meaning. The Boolean function encodes
-    the SAME prediction, but the compositional analysis explains WHY. -/
-theorem bkg_again_matches_boolean {Entity State Event : Type}
-    (rd : RootDen Entity State Event) :
-    rd.predictedAgainReadings = rd.rootType.againReadings := by
-  cases rd <;> rfl
-
--- ════════════════════════════════════════════════════
 -- § 12c. Ditransitive Telicity and *Again* (B&[beavers-koontz-garboden-2020] §§3.7, 3.9)
 -- ════════════════════════════════════════════════════
 
@@ -1160,41 +880,6 @@ theorem telic_iff_actual_possession (c : DitransitiveRootClass) :
   cases c <;> simp [DitransitiveRootClass.obligatorilyTelic,
     DitransitiveRootClass.entailments]
 
-/-- What *again* presupposes over the root of a ditransitive denotation.
-    Parallel to `RootDen.againOverRoot` (§12b): root-constitutive content
-    makes root-scope and vP-scope *again* collapse.
-
-    -.withPossession: root carries possession → *again* over root
-      presupposes prior possession (= prior change) → collapse
-    -.simple: root has no possession → *again* over root presupposes
-      prior event only (= prior state) → distinct readings -/
-def DitransitiveDen.againOverRoot {Entity Event : Type} :
-    DitransitiveDen Entity Event → AgainPresupposition
-  | .simple _ => .priorState
-  | .withPossession _ _ _ => .priorChange
-
-/-- *again* over the ditransitive vP always presupposes prior caused
-    possession (from template CAUSE + ◇have'). -/
-def againOverDitransitiveVP : AgainPresupposition := .priorChange
-
-/-- Give-type: root-scope and vP-scope *again* yield the SAME
-    presupposition. Parallel to `result_again_collapsed`. -/
-theorem give_den_again_collapsed {Entity Event : Type}
-    (ep : Entity → Entity → Event → Prop) (poss : Entity → Entity → Prop)
-    (h : ∀ y z e, ep y z e → poss z y) :
-    (DitransitiveDen.withPossession ep poss h :
-      DitransitiveDen Entity Event).againOverRoot =
-    againOverDitransitiveVP := rfl
-
-/-- Send-type: root-scope and vP-scope *again* yield DISTINCT
-    presuppositions. Parallel to `pc_again_distinct`. -/
-theorem send_den_again_distinct {Entity Event : Type}
-    (ep : Entity → Entity → Event → Prop) :
-    (DitransitiveDen.simple ep :
-      DitransitiveDen Entity Event).againOverRoot ≠
-    againOverDitransitiveVP := by
-  simp [DitransitiveDen.againOverRoot, againOverDitransitiveVP]
-
 /-- Predicted *again* readings for each ditransitive root class. -/
 def DitransitiveRootClass.againReadings :
     DitransitiveRootClass → List AgainReading
@@ -1205,82 +890,6 @@ def DitransitiveRootClass.againReadings :
 theorem give_one_send_two_again :
     (DitransitiveRootClass.againReadings .causedPossession).length = 1 ∧
     (DitransitiveRootClass.againReadings .sending).length = 2 := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 12d. Manner+Result Roots and *Again* (B&[beavers-koontz-garboden-2020] §4.5.2)
--- ════════════════════════════════════════════════════
-
-/-- Manner+result roots: root-scope and vP-scope *again* yield THE SAME
-    presupposition, just like pure result roots. But the reason is RICHER:
-    the root packages BECOME + manner, so root-scope *again* presupposes
-    a prior mannered change event — which is strictly MORE than what
-    vP-scope presupposes (just prior change).
-
-    Observable prediction: only repetitive reading available.
-    Same as result roots, but for a different reason — manner is also
-    caught in the collapse because it's inside the root. -/
-theorem mannerResult_again_collapsed {Entity State Event : Type}
-    (sp : Entity → State → Prop) (become : Event → State → Prop)
-    (manner : Event → Prop)
-    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
-    (RootDen.mannerResult sp become manner hc hm :
-      RootDen Entity State Event).againOverRoot =
-    (againOverVP : AgainPresupposition) := rfl
-
-/-- Manner+result roots lack the restitutive reading. -/
-theorem mannerResult_no_restitutive {Entity State Event : Type}
-    (sp : Entity → State → Prop) (become : Event → State → Prop)
-    (manner : Event → Prop)
-    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
-    (RootDen.mannerResult sp become manner hc hm :
-      RootDen Entity State Event).predictedAgainReadings = [.repetitive] := rfl
-
-/-- The three-way root denotation typology (B&[beavers-koontz-garboden-2020] §4.5.5):
-    PC, result, and manner+result roots ALL correctly predict *again*
-    readings via the unified `bkg_again_matches_boolean` bridge.
-
-    PC roots: two readings (restitutive + repetitive)
-    Result roots: one reading (repetitive) — change in root
-    Manner+result roots: one reading (repetitive) — change + manner in root -/
-theorem three_way_again_summary :
-    -- PC roots: two readings (restitutive + repetitive)
-    (RootType.againReadings .propertyConcept).length = 2 ∧
-    -- Result roots: one reading (repetitive only)
-    (RootType.againReadings .result).length = 1 ∧
-    -- Manner+result roots: also one reading (from denotation-level collapse)
-    ∀ {Entity State Event : Type} (mr : RootDen Entity State Event),
-      mr.denotationViolatesMRC = true →
-      mr.predictedAgainReadings.length = 1 := by
-  refine ⟨rfl, rfl, ?_⟩
-  intro Entity State Event mr hmr
-  cases mr with
-  | pc _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at hmr
-  | result _ _ _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at hmr
-  | mannerResult _ _ _ _ _ => rfl
-
-/-- **Bridge: MRC-violating roots → collapsed *again* readings.**
-    If a root denotation violates MRC (manner+result), it has only
-    repetitive *again*. The diagnostic MRC violation predicts the
-    *again* collapse. -/
-theorem mrc_violation_implies_again_collapse {Entity State Event : Type}
-    (rd : RootDen Entity State Event)
-    (h : rd.denotationViolatesMRC = true) :
-    rd.predictedAgainReadings = [.repetitive] := by
-  cases rd with
-  | pc _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at h
-  | result _ _ _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at h
-  | mannerResult _ _ _ _ _ => rfl
-
-/-- **Bridge: MRC-respecting result roots → collapsed *again* too.**
-    Collapsed *again* is necessary but NOT sufficient for MRC violation.
-    Pure result roots also collapse, but they don't violate MRC. -/
-theorem again_collapse_not_sufficient_for_mrc {Entity State Event : Type}
-    (sp : Entity → State → Prop) (become : Event → State → Prop)
-    (hc : ∀ x s, sp x s → ∃ e, become e s) :
-    (RootDen.result sp become hc :
-      RootDen Entity State Event).predictedAgainReadings = [.repetitive] ∧
-    (RootDen.result sp become hc :
-      RootDen Entity State Event).denotationViolatesMRC = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. Consequence for Event-Structural Theory (§9)
