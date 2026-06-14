@@ -187,7 +187,7 @@ theorem both_conservative : Conservative (both_sem (α := α)) := by
   intro R S; simp only [both_sem]; rw [every_conservative R S]
 
 theorem neither_conservative : Conservative (neither_sem (α := α)) := by
-  intro R S; simp only [neither_sem, gqMeet]; rw [no_conservative R S]
+  intro R S; simp only [neither_sem, gqMeet_apply]; rw [no_conservative R S]
 
 theorem at_least_n_conservative (n : Nat) :
     Conservative (at_least_n_sem (α := α) n) := by
@@ -255,7 +255,7 @@ theorem no_eq_at_most_0 :
 theorem exactly_eq_meet_at_least_at_most (n : Nat) :
     (exactly_n_sem (α := α) n : GQ α) =
     (gqMeet (at_least_n_sem (α := α) n) (at_most_n_sem (α := α) n) : GQ α) := by
-  funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet]
+  funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet_apply]
   exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
 
 /-- `⟦all but 0⟧ = ⟦every⟧`. -/

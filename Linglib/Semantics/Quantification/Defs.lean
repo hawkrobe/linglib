@@ -333,16 +333,22 @@ def dualQ (q : GQ α) : GQ α :=
 
 /-! #### Boolean algebra (K&S §2.3) -/
 
-/-- Meet of two GQ denotations: (f ∧ g)(A,B) = f(A,B) ∧ g(A,B).
+/-- Meet of two GQ denotations: determiner conjunction. This is the meet `⊓` on the
+    pointwise Boolean algebra `GQ α`, named for the linguistic operation.
     K&S (20): conjunction of dets, e.g., "both John's and Mary's".
     Also: "between n and m" = (at least n) ∧ (at most m). -/
-def gqMeet (f g : GQ α) : GQ α :=
-  fun R S => f R S ∧ g R S
+def gqMeet (f g : GQ α) : GQ α := f ⊓ g
 
-/-- Join of two GQ denotations: (f ∨ g)(A,B) = f(A,B) ∨ g(A,B).
+@[simp] theorem gqMeet_apply (f g : GQ α) (R S : α → Prop) :
+    gqMeet f g R S = (f R S ∧ g R S) := rfl
+
+/-- Join of two GQ denotations: determiner disjunction. This is the join `⊔` on the
+    pointwise Boolean algebra `GQ α`.
     K&S (24): disjunction of dets, e.g., "either John's or Mary's". -/
-def gqJoin (f g : GQ α) : GQ α :=
-  fun R S => f R S ∨ g R S
+def gqJoin (f g : GQ α) : GQ α := f ⊔ g
+
+@[simp] theorem gqJoin_apply (f g : GQ α) (R S : α → Prop) :
+    gqJoin f g R S = (f R S ∨ g R S) := rfl
 
 /-- Restriction of a GQ by a restricting function (adjective/relative clause).
     K&S (66): h_f(s) = h(f(s)). In our representation, the adjective
