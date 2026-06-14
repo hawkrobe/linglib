@@ -5,7 +5,7 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 # Argument Structure Derivation Pipeline
 
 [beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
-[rappaport-hovav-levin-2024] [dowty-1991]
+[dowty-1991]
 
 The derivational chain from root content to argument structure, made
 explicit as composed functions:
@@ -138,17 +138,17 @@ theorem fullSpec_licenses :
     "The rug is flat" (state) / "The rug flattened" (achievement) /
     "Kim flattened the rug" (accomplishment). -/
 theorem pc_alternation_count :
-    (licensedTemplates propertyConcept).length = 3 := by native_decide
+    (licensedTemplates propertyConcept).length = 3 := by decide
 
 /-- Pure manner roots license 1 template — no alternation into
     state-based frames (*"Kim jogged the ball broken"). -/
 theorem pureManner_alternation_count :
-    (licensedTemplates pureManner).length = 1 := by native_decide
+    (licensedTemplates pureManner).length = 1 := by decide
 
 /-- Full-spec roots license all 4 templates — maximal flexibility
     (conative, causative/inchoative, locative, etc.). -/
 theorem fullSpec_alternation_count :
-    (licensedTemplates fullSpec).length = 4 := by native_decide
+    (licensedTemplates fullSpec).length = 4 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Template → ArgTemplate
@@ -250,11 +250,11 @@ def deriveAll (re : Root.Kinds) : List ArgTemplate :=
 /-- causativeResult roots derive 3 ArgTemplates (state, achievement,
     accomplishment variants). -/
 theorem causativeResult_derives_three :
-    (deriveAll causativeResult).length = 3 := by native_decide
+    (deriveAll causativeResult).length = 3 := by decide
 
 /-- fullSpec roots derive 4 ArgTemplates (all templates). -/
 theorem fullSpec_derives_four :
-    (deriveAll fullSpec).length = 4 := by native_decide
+    (deriveAll fullSpec).length = 4 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Root-Enriched Derivation
