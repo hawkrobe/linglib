@@ -144,7 +144,7 @@ def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
   | .lex _ => none
   | .ftr _ _ => none
   | .btr _ _ => none
-  | .coord _ _ => none
+  | .coord _ _ _ => none
 
 /-! ### HPSG classification -/
 
