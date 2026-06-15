@@ -2,6 +2,7 @@ import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Boundness
+import Linglib.Semantics.Coordination.Defs
 import Linglib.Features.Coordination
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
@@ -64,7 +65,7 @@ structure ConjParticle where
   language : String
   form : String
   gloss : String
-  role : CoordRole
+  role : Coordinator.Role
   boundMorpheme : Bool  -- clitic/suffix vs free morpheme
   deriving Repr
 

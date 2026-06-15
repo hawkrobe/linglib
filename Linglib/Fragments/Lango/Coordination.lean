@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Lango Coordination Morphemes
@@ -16,15 +16,13 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.lango`).
 
 namespace Lango.Coordination
 
-open Features.Coordination
-
 /-- *kèdè* — J particle, also comitative marker. Free, prepositive medial.
     Diachronic source: comitative ('with') → coordinator ('and'). -/
-def kede : CoordEntry :=
+def kede : Coordinator :=
   { form := "kèdè", gloss := "and; with"
   , role := .j, boundness := .free
   , note := "comitative-derived; identical form for 'with' and 'and'" }
 
-def allEntries : List CoordEntry := [kede]
+def allEntries : List Coordinator := [kede]
 
 end Lango.Coordination

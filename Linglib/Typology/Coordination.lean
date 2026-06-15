@@ -1,4 +1,5 @@
 import Linglib.Features.Boundness
+import Linglib.Semantics.Coordination.Defs
 import Linglib.Features.Coordination
 import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F63A
@@ -168,12 +169,12 @@ def ConjComitativeRelation.toAndWithStatus :
 /-! ### Per-language structs -/
 
 /-- A coordination entry annotated with its diachronic source.
-    Wraps `CoordEntry` (from `Features.Coordination`) with typological
+    Wraps `Coordinator` (from `Features.Coordination`) with typological
     metadata. For languages with Fragment files, `entry` references the
     Fragment entry directly — no data duplication. -/
 structure SourcedEntry where
   /-- The coordination morpheme entry. -/
-  entry : CoordEntry
+  entry : Coordinator
   /-- Likely diachronic source, if known. -/
   source : Option DiachronicSource := none
   deriving Repr

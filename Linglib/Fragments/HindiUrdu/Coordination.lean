@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Hindi-Urdu Coordination Morphemes
@@ -17,20 +17,18 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hindiUrdu`).
 
 namespace HindiUrdu.Coordination
 
-open Features.Coordination
-
 /-- *aur* — J particle. Free, prepositive medial. -/
-def aur : CoordEntry :=
+def aur : Coordinator :=
   { form := "aur", gloss := "and"
   , role := .j, boundness := .free }
 
 /-- *bhii* — MU particle, also additive ('also/too').
     Free, used bisyndetically: "A bhii B bhii". -/
-def bhii : CoordEntry :=
+def bhii : Coordinator :=
   { form := "bhii", gloss := "also, too; and (MU)"
   , role := .mu, boundness := .free, alsoAdditive := true
   , correlative := true }
 
-def allEntries : List CoordEntry := [aur, bhii]
+def allEntries : List Coordinator := [aur, bhii]
 
 end HindiUrdu.Coordination

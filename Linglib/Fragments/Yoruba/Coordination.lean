@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Yoruba Coordination Morphemes
@@ -14,15 +14,13 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.yoruba`).
 
 namespace Yoruba.Coordination
 
-open Features.Coordination
-
 /-- *àtí* — J particle, used bisyndetically: "àtí A àtí B". Free, prepositive. -/
-def ati : CoordEntry :=
+def ati : Coordinator :=
   { form := "àtí", gloss := "and"
   , role := .j, boundness := .free
   , correlative := true
   , note := "bisyndetic prepositive (co-A co-B pattern)" }
 
-def allEntries : List CoordEntry := [ati]
+def allEntries : List Coordinator := [ati]
 
 end Yoruba.Coordination

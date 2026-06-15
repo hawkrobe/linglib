@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Latin Coordination Morphemes
@@ -22,8 +22,6 @@ encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
 namespace Latin.Coordination
 
-open Features.Coordination
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
@@ -31,7 +29,7 @@ open Features.Coordination
 /-- *et* — primary conjunction, J particle. Free, prepositive.
     "Caesar et Brutus" = "Caesar and Brutus".
     Also used correlatively: "et A et B" = "both A and B". -/
-def et : CoordEntry :=
+def et : Coordinator :=
   { form := "et", gloss := "and"
   , role := .j, boundness := .free
   , correlative := true }
@@ -39,7 +37,7 @@ def et : CoordEntry :=
 /-- *-que* — enclitic conjunction, MU particle. Bound, postpositive.
     "senatus populusque" = "senate and people".
     Historically connected to the additive/inclusive particle. -/
-def que : CoordEntry :=
+def que : Coordinator :=
   { form := "-que", gloss := "and (enclitic)"
   , role := .mu, boundness := .bound
   , alsoAdditive := true
@@ -48,7 +46,7 @@ def que : CoordEntry :=
 /-- *atque* / *ac* — emphatic conjunction, J variant.
     *ac* before consonants, *atque* before vowels.
     "atque" < *ad-que (lit. "and to that"). -/
-def atque : CoordEntry :=
+def atque : Coordinator :=
   { form := "atque/ac", gloss := "and also, and moreover"
   , role := .j, boundness := .free
   , note := "ac before consonants; emphatic variant of et" }
@@ -56,7 +54,7 @@ def atque : CoordEntry :=
 /-- *neque* / *nec* — negative coordination.
     "neque A neque B" = "neither A nor B".
     Morphologically ne + -que (negation + MU enclitic). -/
-def neque : CoordEntry :=
+def neque : Coordinator :=
   { form := "neque/nec", gloss := "and not, neither...nor"
   , role := .negCoord, boundness := .free
   , correlative := true
@@ -64,25 +62,25 @@ def neque : CoordEntry :=
 
 /-- *aut* — exclusive/strong disjunction.
     "aut A aut B" = "either A or B (but not both)". -/
-def aut : CoordEntry :=
+def aut : Coordinator :=
   { form := "aut", gloss := "or (exclusive)"
   , role := .disj, boundness := .free
   , correlative := true }
 
 /-- *vel* — inclusive/weak disjunction.
     "vel A vel B" = "A or B (or both)". -/
-def vel : CoordEntry :=
+def vel : Coordinator :=
   { form := "vel", gloss := "or (inclusive)"
   , role := .disj, boundness := .free
   , correlative := true }
 
 /-- *sed* — adversative conjunction.
     "non A sed B" = "not A but B". -/
-def sed : CoordEntry :=
+def sed : Coordinator :=
   { form := "sed", gloss := "but"
   , role := .advers, boundness := .free }
 
-def allEntries : List CoordEntry :=
+def allEntries : List Coordinator :=
   [et, que, atque, neque, aut, vel, sed]
 
 -- ============================================================================

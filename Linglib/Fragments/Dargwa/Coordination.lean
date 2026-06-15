@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Dargwa (Tanti) Coordination [sumbatova-2021]
@@ -32,8 +32,6 @@ is predicted by M&S: languages can have MU without J.
 
 namespace Dargwa.Coordination
 
-open Features.Coordination
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
@@ -42,7 +40,7 @@ open Features.Coordination
     Repeated after each conjunct: "A=ra B=ra" = 'A and B'.
     Also sentence-level additive: "nuka=ra" = 'we too'.
     This is a MU particle. -/
-def ra : CoordEntry :=
+def ra : Coordinator :=
   { form := "=ra", gloss := "and, also, too; ADD"
   , role := .mu, boundness := .bound
   , alsoAdditive := true
@@ -51,18 +49,18 @@ def ra : CoordEntry :=
 /-- *ja...ja* — disjunction. Free, repeated before each disjunct.
     "ja A ja B" = 'either A or B'.
     With negation: 'neither A nor B'. -/
-def ja : CoordEntry :=
+def ja : Coordinator :=
   { form := "ja", gloss := "or; neither...nor (with NEG)"
   , role := .disj, boundness := .free
   , note := "repeated before each disjunct" }
 
 /-- *=nu* — contrastive/causal particle.
     Marks contrast between clauses or causal relation. -/
-def nu : CoordEntry :=
+def nu : Coordinator :=
   { form := "=nu", gloss := "but; because"
   , role := .advers, boundness := .bound }
 
-def allEntries : List CoordEntry := [ra, ja, nu]
+def allEntries : List Coordinator := [ra, ja, nu]
 
 -- ============================================================================
 -- Verification

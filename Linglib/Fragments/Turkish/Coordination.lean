@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Turkish Coordination Morphemes
@@ -20,10 +20,8 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.turkish`).
 
 namespace Turkish.Coordination
 
-open Features.Coordination
-
 /-- *ve* — J particle (Arabic loan). Free, prepositive medial. -/
-def ve : CoordEntry :=
+def ve : Coordinator :=
   { form := "ve", gloss := "and"
   , role := .j, boundness := .free
   , note := "Arabic-origin loan" }
@@ -31,11 +29,11 @@ def ve : CoordEntry :=
 /-- *de* — MU clitic, also additive. Bound enclitic on first word of
     non-initial coordinand (monosyndetic A B-co); bisyndetic *de…de* as
     a marked emphatic variant. -/
-def de : CoordEntry :=
+def de : Coordinator :=
   { form := "de", gloss := "also; and (MU)"
   , role := .mu, boundness := .bound, alsoAdditive := true
   , note := "enclitic per Kornfilt 1997; also vowel-harmony variant 'da'" }
 
-def allEntries : List CoordEntry := [ve, de]
+def allEntries : List Coordinator := [ve, de]
 
 end Turkish.Coordination

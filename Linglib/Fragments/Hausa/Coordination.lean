@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Hausa Coordination Morphemes
@@ -16,15 +16,13 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hausa`).
 
 namespace Hausa.Coordination
 
-open Features.Coordination
-
 /-- *da* — J particle, also comitative marker. Free, prepositive.
     Diachronic source: comitative ('with') → coordinator ('and'). -/
-def da : CoordEntry :=
+def da : Coordinator :=
   { form := "da", gloss := "and; with"
   , role := .j, boundness := .free
   , note := "comitative-derived; identical form for 'with' and 'and'" }
 
-def allEntries : List CoordEntry := [da]
+def allEntries : List Coordinator := [da]
 
 end Hausa.Coordination
