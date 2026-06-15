@@ -1571,6 +1571,7 @@ import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.QingEtAl2025
+import Linglib.Studies.Champollion2016
 import Linglib.Studies.Champollion2017
 import Linglib.Studies.TieuEtAl2020
 import Linglib.Studies.TieuKrizChemla2019
