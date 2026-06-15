@@ -63,6 +63,7 @@ import Linglib.Semantics.Quantification.Exclusive
 import Linglib.Core.Logic.Aristotelian.Basic
 import Linglib.Core.Logic.Aristotelian.Bitstring
 import Linglib.Core.Logic.Aristotelian.Diagram
+import Linglib.Core.Logic.Aristotelian.Morphism
 import Linglib.Core.Logic.Aristotelian.Partition
 import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Linglib.Core.Logic.Aristotelian.Square
