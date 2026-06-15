@@ -690,16 +690,6 @@ def TraceForest.sigma {α β : Type*} (F : TraceForest α β) : Nat := F.b₀ + 
     TraceForest.sigma (F + G) = F.sigma + G.sigma := by
   unfold sigma; rw [b₀_add, alpha_add]; omega
 
-/-- **MCB Lemma 1.6.3 eq. 1.6.6** (book p. 65): `σ(M(T_v, T_w)) = σ(T_v) +
-    σ(T_w) + 1` at the singleton-forest level. -/
-theorem TraceForest.sigma_merge_singleton {α β : Type*} (T_v T_w : TraceTree α β) :
-    TraceForest.sigma ({TraceTree.node T_v T_w} : TraceForest α β)
-      = TraceForest.sigma ({T_v} : TraceForest α β)
-        + TraceForest.sigma ({T_w} : TraceForest α β) + 1 := by
-  rw [sigma_singleton, sigma_singleton, sigma_singleton,
-      TraceTree.accCount_merge]
-  omega
-
 /-! ## §7: Δ^c-aware forest measures (αᶜ, σᶜ)
 [marcolli-chomsky-berwick-2025] §1.6.2
 
@@ -732,6 +722,16 @@ def TraceTree.accCountC {α β : Type*} : TraceTree α β → Nat := fun T => T.
 @[simp] theorem TraceTree.accCountC_node {α β : Type*} (l r : TraceTree α β) :
     (TraceTree.node l r).accCountC = l.nonTraceSize + r.nonTraceSize := by
   show (1 + l.nonTraceSize + r.nonTraceSize) - 1 = l.nonTraceSize + r.nonTraceSize
+  omega
+
+/-- The Δ^c analogue of `accCount_merge` (MCB Lemma 1.6.3 eq. 1.6.5 for αᶜ): for
+    a node whose children each carry at least one non-trace vertex, the
+    contraction-aware count satisfies `αᶜ(node X Y) = αᶜ(X) + αᶜ(Y) + 2`. -/
+theorem TraceTree.accCountC_merge {α β : Type*} (X Y : TraceTree α β)
+    (hX : X.nonTraceSize ≥ 1) (hY : Y.nonTraceSize ≥ 1) :
+    (TraceTree.node X Y).accCountC = X.accCountC + Y.accCountC + 2 := by
+  rw [TraceTree.accCountC_node]
+  show X.nonTraceSize + Y.nonTraceSize = (X.nonTraceSize - 1) + (Y.nonTraceSize - 1) + 2
   omega
 
 /-- αᶜ on a forest. Non-trace non-root vertex count summed across components. -/
