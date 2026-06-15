@@ -127,6 +127,13 @@ theorem traceLeafCount_planarEquiv {t s : Planar (α ⊕ β)}
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
+theorem traceLeafCountList_eq_sum_map (cs : List (Planar (α ⊕ β))) :
+    Planar.traceLeafCountList cs = (cs.map Planar.traceLeafCount).sum := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih =>
+    rw [Planar.traceLeafCountList_cons, List.map_cons, List.sum_cons, ih]
+
 end Planar
 
 namespace Nonplanar
@@ -153,6 +160,40 @@ def traceLeafCount : Nonplanar (α ⊕ β) → Nat :=
     subtraction handles the all-trace edge case (e.g. `T = traceLeaf b`, where
     `α = 0` and `#traceLeaves = 1`). -/
 def accCountC (t : Nonplanar (α ⊕ β)) : ℕ := t.accCount - t.traceLeafCount
+
+/-- Trace leaves of a lexical-rooted node: the root contributes none, so the
+    count is the children's total. -/
+@[simp] theorem traceLeafCount_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
+    (Nonplanar.node (Sum.inl a) F).traceLeafCount = (F.map Nonplanar.traceLeafCount).sum := by
+  refine Quotient.inductionOn F fun lst => ?_
+  show (mk (.node (Sum.inl a) (lst.map Quotient.out))).traceLeafCount = _
+  rw [traceLeafCount_mk]
+  show Planar.traceLeafCount (.node (Sum.inl a) (lst.map Quotient.out)) = _
+  rw [Planar.traceLeafCount_inl, Planar.traceLeafCountList_eq_sum_map, List.map_map]
+  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show (mk (Quotient.out t)).traceLeafCount = Nonplanar.traceLeafCount t
+  exact congrArg Nonplanar.traceLeafCount (Quotient.out_eq t)
+
+/-- External Merge adds two accessible terms in the trace-aware count: the two
+    children's roots become accessible (MCB Lemma 1.6.3, eq. 1.6.5). Needs each
+    child to have a lexical vertex (`traceLeafCount < weight`), automatic for a
+    real syntactic object. -/
+theorem accCountC_merge (a : α) (l r : Nonplanar (α ⊕ β))
+    (hl : l.traceLeafCount < l.weight) (hr : r.traceLeafCount < r.weight) :
+    (Nonplanar.node (Sum.inl a) {l, r}).accCountC = l.accCountC + r.accCountC + 2 := by
+  have hw := Nonplanar.accCount_merge (Sum.inl a) l r
+  have htl : (Nonplanar.node (Sum.inl a) {l, r}).traceLeafCount
+      = l.traceLeafCount + r.traceLeafCount := by
+    rw [traceLeafCount_node_inl]
+    simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
+      Multiset.map_singleton, Multiset.sum_singleton]
+  have hbl : l.traceLeafCount ≤ l.accCount := by
+    rw [Nonplanar.accCount_eq_weight_sub_one]; omega
+  have hbr : r.traceLeafCount ≤ r.accCount := by
+    rw [Nonplanar.accCount_eq_weight_sub_one]; omega
+  simp only [accCountC, htl, hw]
+  omega
 
 /-- The **complexity grading** `#L` restricted to lexical leaves:
     `#L_{SO₀}(T) = #L(T) − #traceLeaves(T)`. The trace-exclusion follows the
