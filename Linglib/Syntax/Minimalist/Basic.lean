@@ -1,8 +1,9 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Algebra.Free
+import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Core.Combinatorics.RootedTree.Decorated
+import Linglib.Core.Algebra.Free
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.Command
 

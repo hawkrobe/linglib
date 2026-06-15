@@ -119,6 +119,39 @@ theorem cutSummandsN_weight (T : Nonplanar α) :
         Multiset.map_congr rfl (fun x _ => Nonplanar.weight_mk x)]
   exact hcons
 
+/-- **No proper cut extracts the whole tree as its crown.** For any cut summand
+    `p ∈ cutSummandsN T`, the crown forest `p.1` is never the singleton `{T}`.
+    The full-tree extraction is the separate `ofTree T ⊗ 1` term of `comulTreeN`,
+    not a member of `cutSummandsN T`. Derived from vertex conservation
+    (`cutSummandsN_weight`) plus `weight_pos`: a `{T}` crown would force the trunk
+    weight to vanish. Load-bearing for the Merge cross-term elimination
+    (`Minimalist.Merge.mergeOp_pair`). -/
+theorem cutSummandsN_crown_ne_singleton (T : Nonplanar α)
+    (p : Forest (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
+    p.1 ≠ ({T} : Forest (Nonplanar α)) := by
+  intro hcrown
+  have hw := cutSummandsN_weight T p hp
+  rw [hcrown] at hw
+  simp only [Multiset.map_singleton, Multiset.sum_singleton] at hw
+  have := p.2.weight_pos
+  omega
+
+/-- **No cut of `T` has `T` itself in its crown.** Every crown component is a
+    proper part of `T`, so it weighs strictly less than `T`; the full-weight `T`
+    cannot be a crown member. From vertex conservation (`cutSummandsN_weight`)
+    plus `weight_pos`. Mirrors legacy `CutShape.not_mem_cutForest_self`;
+    load-bearing for the Sideward cross-term elimination
+    (`Minimalist.Merge.mergeOp_sideward_2b/3b`). -/
+theorem cutSummandsN_self_not_mem_crown (T : Nonplanar α)
+    (p : Forest (Nonplanar α) × Nonplanar α) (hp : p ∈ cutSummandsN T) :
+    T ∉ p.1 := by
+  intro hT_mem
+  have hw := cutSummandsN_weight T p hp
+  have hp2 := p.2.weight_pos
+  have h_le : T.weight ≤ (p.1.map Nonplanar.weight).sum :=
+    Multiset.le_sum_of_mem (Multiset.mem_map_of_mem _ hT_mem)
+  omega
+
 /-- **Single-cut Δᵈ accessible-term extraction** (MCB eq. 1.6.7): deleting one
     accessible subtree `mover` from `T` and rebinarizing the remainder
     (`contractUnary p.2`) removes two accessible terms — the subtree's edge and
