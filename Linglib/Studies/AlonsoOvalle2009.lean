@@ -1,4 +1,5 @@
 import Linglib.Studies.Santorio2018
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Alonso-Ovalle 2009 — "Counterfactuals, correlatives, and disjunction"
@@ -57,6 +58,8 @@ namespace AlonsoOvalle2009
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 open Santorio2018 (DecAlt sdaEval sdaEval_iff_forall)
+open McKayVanInwagen1977 (CropWorld cropSim goodWeather sunCold bumperCrop
+  bumperCrop_lewis_true bumperCrop_conjunction_false)
 
 
 /-! ## §1 The bumper crop scenario (p. 208)
@@ -131,5 +134,36 @@ theorem ao_conjunction_inference {W : Type*} [DecidableEq W] [Fintype W]
   exact ⟨h' ⟨A, inferInstance⟩ (by simp [aoAlternatives]),
          h' ⟨B, inferInstance⟩ (by simp [aoAlternatives])⟩
 
+
+/-! ## §1 The divergence: Boolean `or` (`Coordinator.op .disj`) is the wrong meaning
+
+The Coordinator API's disjunction `Coordinator.op .disj` is the Boolean join `⊔` — at the
+proposition carrier `CropWorld → Prop`, exactly the *union* `goodWeather ∨ sunCold` whose
+minimal-change reading [alonso-ovalle-2009] (p. 208–210, the bumper-crop counterfactual)
+refutes. So feeding `op .disj` to a counterfactual antecedent overgenerates: it collapses the
+disjuncts into one proposition, predicting the disjunctive counterfactual TRUE, where the
+alternative-semantics reading (disjuncts kept as a *set*) correctly predicts FALSE. This is
+the disjunction analogue of the [champollion-2016-coordination] `and`-overgeneration: `op` is
+faithful at the Boolean carrier, but the rival construal the data demands diverges from it. -/
+
+/-- `Coordinator.op .disj` at the proposition carrier IS the Boolean union of the disjuncts —
+    the [lewis-1973] reading [alonso-ovalle-2009] refutes (eqn 6, p. 209). -/
+theorem op_disj_eq_union :
+    (Coordinator.op .disj goodWeather sunCold : CropWorld → Prop)
+      = (fun w => goodWeather w ∨ sunCold w) := rfl
+
+/-- **The payoff** ([alonso-ovalle-2009] §1, p. 208–210): the Boolean disjunction
+    `Coordinator.op .disj` (= the union `goodWeather ⊔ sunCold`, `op_disj_eq_union`) fed to the
+    minimal-change conditional **overgenerates** — it predicts *"if good weather or the sun grew
+    cold, we'd have a bumper crop"* TRUE (`bumperCrop_lewis_true`: the closest union-world is a
+    good-weather world), whereas the alternative-semantics reading (disjuncts kept as a *set*)
+    correctly predicts it FALSE (the cold-sun alternative gives no crop). So `op .disj` is NOT
+    the meaning of `or` in a disjunctive antecedent: the alternatives must stay separate. -/
+theorem op_disj_overgenerates_disjunctive_counterfactual :
+    universalCounterfactual cropSim (fun w => goodWeather w ∨ sunCold w) bumperCrop .actual ∧
+    ¬ aoConditional cropSim (aoAlternatives goodWeather sunCold) bumperCrop .actual := by
+  refine ⟨bumperCrop_lewis_true, fun h => ?_⟩
+  exact bumperCrop_conjunction_false
+    (ao_conjunction_inference cropSim goodWeather sunCold bumperCrop .actual h)
 
 end AlonsoOvalle2009
