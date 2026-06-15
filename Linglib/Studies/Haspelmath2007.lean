@@ -65,8 +65,6 @@ language sample below to formalise the J-μ predictions; the `iso` and
 namespace Haspelmath2007
 
 open Typology.Coordination
-open Features.Coordination
-
 /-! ### M&S focus languages -/
 
 /-- English only has J ("and"). "Both...and" is sometimes analyzed as J-MU,

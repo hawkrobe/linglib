@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Georgian Coordination Morphemes
@@ -24,15 +24,13 @@ to the Transparency Principle prediction).
 
 namespace Georgian.Coordination
 
-open Features.Coordination
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
 
 /-- *da* — primary conjunction, J particle. Free, prepositive.
     "nino da giorgi" = "Nino and Giorgi". -/
-def da : CoordEntry :=
+def da : Coordinator :=
   { form := "da", gloss := "and"
   , role := .j, boundness := .free }
 
@@ -40,24 +38,24 @@ def da : CoordEntry :=
     Conjunction: "nino-c giorgi-c" = "both Nino and Giorgi".
     Additive: "nino-c dzinavs" = "Nino also sleeps".
     The bound status of -c contrasts with Hungarian free "is". -/
-def c_ : CoordEntry :=
+def c_ : Coordinator :=
   { form := "-c", gloss := "also, too; and (MU)"
   , role := .mu, boundness := .bound
   , alsoAdditive := true }
 
 /-- *an* — disjunction. Free, prepositive.
     "nino an giorgi" = "Nino or Giorgi". -/
-def an : CoordEntry :=
+def an : Coordinator :=
   { form := "an", gloss := "or"
   , role := .disj, boundness := .free }
 
 /-- *magram* — adversative conjunction.
     "lamazia magram dzviri" = "beautiful but expensive". -/
-def magram : CoordEntry :=
+def magram : Coordinator :=
   { form := "magram", gloss := "but"
   , role := .advers, boundness := .free }
 
-def allEntries : List CoordEntry :=
+def allEntries : List Coordinator :=
   [da, c_, an, magram]
 
 -- ============================================================================

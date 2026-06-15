@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Irish Coordination Morphemes
@@ -15,39 +15,37 @@ encodes the structural pattern (a_co_b only, J-only strategy).
 
 namespace Irish.Coordination
 
-open Features.Coordination
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
 
 /-- *agus* — conjunction, J particle. Free, prepositive.
     "Sean agus Maire" = "Sean and Maire". -/
-def agus : CoordEntry :=
+def agus : Coordinator :=
   { form := "agus", gloss := "and"
   , role := .j, boundness := .free }
 
 /-- *no* — disjunction. Free, prepositive.
     "Sean no Maire" = "Sean or Maire". -/
-def no_ : CoordEntry :=
+def no_ : Coordinator :=
   { form := "nó", gloss := "or"
   , role := .disj, boundness := .free }
 
 /-- *na* — negative disjunction / comparative particle.
     "ni Sean na Maire" = "neither Sean nor Maire".
     Also used in comparatives: "nios mo na" = "bigger than". -/
-def na_ : CoordEntry :=
+def na_ : Coordinator :=
   { form := "ná", gloss := "nor, than"
   , role := .negDisj, boundness := .free
   , note := "also comparative particle" }
 
 /-- *ach* — adversative conjunction.
     "Ta se fuar ach tirim" = "It is cold but dry". -/
-def ach : CoordEntry :=
+def ach : Coordinator :=
   { form := "ach", gloss := "but"
   , role := .advers, boundness := .free }
 
-def allEntries : List CoordEntry :=
+def allEntries : List Coordinator :=
   [agus, no_, na_, ach]
 
 -- ============================================================================

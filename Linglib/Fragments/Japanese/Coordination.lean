@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 import Linglib.Fragments.Japanese.Determiners
 
 /-!
@@ -44,8 +44,6 @@ quantification = interrogative (all are ∨ over elements).
 
 namespace Japanese.Coordination
 
-open Features.Coordination
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
@@ -56,7 +54,7 @@ open Features.Coordination
     "Taroo to iku" = "go with Taro".
     This dual function is WHY Japanese is classified as a WITH-language
     in WALS Ch 63 (`andIdenticalToWith`). -/
-def to_ : CoordEntry :=
+def to_ : Coordinator :=
   { form := "to", gloss := "and; with"
   , role := .j, boundness := .bound }
 
@@ -67,7 +65,7 @@ def to_ : CoordEntry :=
     This triple role is the morphological proof that conjunction MU,
     additive focus, and universal quantification are the same operation:
     finite meet (∧) in Boolean algebra. -/
-def mo : CoordEntry :=
+def mo : Coordinator :=
   { form := "mo", gloss := "also, too; and (MU); every"
   , role := .mu, boundness := .bound
   , alsoAdditive := true, alsoQuantifier := true }
@@ -78,12 +76,12 @@ def mo : CoordEntry :=
     Existential quantifier: "dare-ka" = "someone" (indeterminate + ka).
     Boolean dual of "mo": where "mo" marks finite meets (∧),
     "ka" marks finite joins (∨). -/
-def ka : CoordEntry :=
+def ka : Coordinator :=
   { form := "ka", gloss := "or; question; some"
   , role := .disj, boundness := .bound
   , alsoQuantifier := true }
 
-def allEntries : List CoordEntry :=
+def allEntries : List Coordinator :=
   [to_, mo, ka]
 
 -- ============================================================================

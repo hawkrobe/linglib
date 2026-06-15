@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Kannada Coordination Morphemes
@@ -16,15 +16,13 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.kannada`).
 
 namespace Kannada.Coordination
 
-open Features.Coordination
-
 /-- *-u* — MU particle, also additive/focus. Bound enclitic, postpositive
     on each coordinand giving the bisyndetic A-co B-co pattern. -/
-def u : CoordEntry :=
+def u : Coordinator :=
   { form := "-u", gloss := "and; also"
   , role := .mu, boundness := .bound, alsoAdditive := true
   , note := "bisyndetic postpositive enclitic; Dravidian additive particle" }
 
-def allEntries : List CoordEntry := [u]
+def allEntries : List Coordinator := [u]
 
 end Kannada.Coordination

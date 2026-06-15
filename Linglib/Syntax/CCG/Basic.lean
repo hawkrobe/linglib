@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Combinatory Categorial Grammar (CCG)
@@ -155,7 +155,7 @@ inductive DerivStep where
   | fcompx : DerivStep → DerivStep → DerivStep -- forward crossed comp
   | ftr : DerivStep → Cat → DerivStep          -- forward type-raise to target
   | btr : DerivStep → Cat → DerivStep          -- backward type-raise to target
-  | coord : Features.Coordination.CoordRole → DerivStep → DerivStep → DerivStep
+  | coord : Coordinator.Role → DerivStep → DerivStep → DerivStep
       -- coordination (X c X ⇒ X); `c` is the coordinator's role (and/or/but/nor)
   deriving Repr
 

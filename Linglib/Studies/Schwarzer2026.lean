@@ -3,7 +3,6 @@ import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
 import Linglib.Typology.WordOrder
-import Linglib.Features.Coordination
 import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -52,7 +51,6 @@ out linear/temporal closeness accounts and supports bottom-up analyses.
 namespace Schwarzer2026
 
 open Features
-open Features.Coordination
 open German.Predicates
 open Typology.WordOrder
 open BrueningAlKhalaf2020

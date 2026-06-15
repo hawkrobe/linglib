@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # English Coordination Morphemes
@@ -19,32 +19,30 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.english`).
 
 namespace English.Coordination
 
-open Features.Coordination
-
 /-- *and* — primary conjunction, J particle. Free, prepositive. -/
-def and_ : CoordEntry :=
+def and_ : Coordinator :=
   { form := "and", gloss := "and"
   , role := .j, boundness := .free
   , correlative := true
   , note := "correlative use as 'both…and'" }
 
 /-- *or* — disjunction. Free, prepositive; correlative as 'either…or'. -/
-def or_ : CoordEntry :=
+def or_ : Coordinator :=
   { form := "or", gloss := "or"
   , role := .disj, boundness := .free
   , correlative := true }
 
 /-- *but* — adversative. Free, prepositive. -/
-def but_ : CoordEntry :=
+def but_ : Coordinator :=
   { form := "but", gloss := "but"
   , role := .advers, boundness := .free }
 
 /-- *nor* — negative disjunction; correlative 'neither…nor'. -/
-def nor_ : CoordEntry :=
+def nor_ : Coordinator :=
   { form := "nor", gloss := "nor"
   , role := .negDisj, boundness := .free
   , correlative := true }
 
-def allEntries : List CoordEntry := [and_, or_, but_, nor_]
+def allEntries : List Coordinator := [and_, or_, but_, nor_]
 
 end English.Coordination

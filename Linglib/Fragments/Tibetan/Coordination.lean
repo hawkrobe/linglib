@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Classical Tibetan Coordination Morphemes
@@ -17,15 +17,13 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.classicalTibetan`).
 
 namespace Tibetan.Coordination
 
-open Features.Coordination
-
 /-- *-daŋ* — J particle (Classical Tibetan), comitative-derived. Bound,
     postpositive on the first coordinand giving A-co B pattern. -/
-def dang : CoordEntry :=
+def dang : Coordinator :=
   { form := "-daŋ", gloss := "and; with"
   , role := .j, boundness := .bound
   , note := "Classical; comitative-derived; medial postpositive on first conjunct" }
 
-def allEntries : List CoordEntry := [dang]
+def allEntries : List Coordinator := [dang]
 
 end Tibetan.Coordination

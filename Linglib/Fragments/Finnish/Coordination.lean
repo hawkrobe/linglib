@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Finnish Coordination Morphemes
@@ -15,19 +15,17 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.finnish`).
 
 namespace Finnish.Coordination
 
-open Features.Coordination
-
 /-- *ja* — J particle. Free, prepositive medial. -/
-def ja : CoordEntry :=
+def ja : Coordinator :=
   { form := "ja", gloss := "and"
   , role := .j, boundness := .free }
 
 /-- *-kin* — MU particle, also additive. Bound, postpositive on each
     coordinand for the bisyndetic 'both…and' pattern. -/
-def kin : CoordEntry :=
+def kin : Coordinator :=
   { form := "-kin", gloss := "also, too; and (MU)"
   , role := .mu, boundness := .bound, alsoAdditive := true }
 
-def allEntries : List CoordEntry := [ja, kin]
+def allEntries : List Coordinator := [ja, kin]
 
 end Finnish.Coordination

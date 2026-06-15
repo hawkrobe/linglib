@@ -1,3 +1,4 @@
+import Linglib.Semantics.Coordination.Defs
 import Linglib.Features.Coordination
 
 /-!
@@ -19,28 +20,28 @@ open Features.Coordination
 /-- *und* — conjunction proper (J particle, free word).
     "Die Stadt beendet [DP die Überarbeitung] und [CP dass für
     Neugeborene ein Baum gepflanzt wird]." -/
-def und : CoordEntry where
+def und : Coordinator where
   form := "und"
   gloss := "and"
   role := .j
   boundness := .free
 
 /-- *oder* — disjunction. -/
-def oder : CoordEntry where
+def oder : Coordinator where
   form := "oder"
   gloss := "or"
   role := .disj
   boundness := .free
 
 /-- *aber* — adversative ("but", contrastive). -/
-def aber : CoordEntry where
+def aber : Coordinator where
   form := "aber"
   gloss := "but"
   role := .advers
   boundness := .free
 
 /-- *sondern* — adversative ("but rather", corrective; requires negation). -/
-def sondern : CoordEntry where
+def sondern : Coordinator where
   form := "sondern"
   gloss := "but.rather"
   role := .advers

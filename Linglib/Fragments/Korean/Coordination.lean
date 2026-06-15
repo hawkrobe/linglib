@@ -1,4 +1,4 @@
-import Linglib.Features.Coordination
+import Linglib.Semantics.Coordination.Defs
 
 /-!
 # Korean Coordination Morphemes
@@ -18,20 +18,18 @@ Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.korean`).
 
 namespace Korean.Coordination
 
-open Features.Coordination
-
 /-- *-(i)rang* — J particle, informal register. Bound, postpositive. -/
-def irang : CoordEntry :=
+def irang : Coordinator :=
   { form := "-(i)rang", gloss := "and"
   , role := .j, boundness := .bound
   , note := "informal register; -kwa/-hako are more formal alternatives" }
 
 /-- *-to* — MU particle, additive. Bound, postpositive on each conjunct.
     Doubles as the additive focus particle ("also/too"). -/
-def to_ : CoordEntry :=
+def to_ : Coordinator :=
   { form := "-to", gloss := "also, too; and (MU)"
   , role := .mu, boundness := .bound, alsoAdditive := true }
 
-def allEntries : List CoordEntry := [irang, to_]
+def allEntries : List Coordinator := [irang, to_]
 
 end Korean.Coordination
