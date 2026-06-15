@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Boundness
 import Linglib.Semantics.Coordination.Defs
-import Linglib.Features.Coordination
+import Linglib.Typology.Coordination
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
 
@@ -54,7 +54,7 @@ so the M&S derivation is the definition itself, not a theorem.
 
 namespace BillEtAl2025
 
-open Features.Coordination
+open Typology.Coordination
 
 -- Conjunction Particle Typology
 

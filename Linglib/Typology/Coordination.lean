@@ -1,6 +1,5 @@
 import Linglib.Features.Boundness
 import Linglib.Semantics.Coordination.Defs
-import Linglib.Features.Coordination
 import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F63A
 import Linglib.Data.WALS.Features.F64A
@@ -55,11 +54,36 @@ language WALS sample).
 
 namespace Typology.Coordination
 
-open Features.Coordination
+/-! ### [mitrovic-sauerland-2014] conjunction strategy -/
 
-private abbrev ch56 := Data.WALS.F56A.allData
-private abbrev ch63 := Data.WALS.F63A.allData
-private abbrev ch64 := Data.WALS.F64A.allData
+/-- Cross-linguistic conjunction strategy. [mitrovic-sauerland-2014] decompose DP
+    conjunction into three semantic pieces: J (set intersection), MU (subset), and a
+    type-shifter; languages vary in which pieces are overtly realized. -/
+inductive ConjunctionStrategy where
+  /-- Only J particle overt (e.g., English "and", Hungarian "es", Georgian "da"). -/
+  | jOnly
+  /-- Only MU particles overt (e.g., Japanese "mo...mo", Hungarian "is...is",
+      Georgian "-c...-c"). -/
+  | muOnly
+  /-- Both J and MU overt (e.g., Hungarian "is es...is", Georgian "-c da...-c"). -/
+  | jMu
+  deriving DecidableEq, Repr
+
+/-- Number of overt functional morphemes per strategy. Under [mitrovic-sauerland-2016] the
+    underlying structure always has 3 pieces (J + MU1 + MU2); what varies is how many are
+    pronounced. -/
+def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
+  | .jOnly  => 1
+  | .muOnly => 2
+  | .jMu    => 3
+
+/-- Under [mitrovic-sauerland-2016] there are always 3 semantic pieces. -/
+def ConjunctionStrategy.semanticPieceCount : Nat := 3
+
+/-- [mitrovic-sauerland-2016] + Transparency Principle: more overt morphemes -> easier to
+    acquire (closer to a 1-to-1 form-meaning mapping). -/
+def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
+  ConjunctionStrategy.overtMorphemeCount
 
 /-! ### Haspelmath 2007 structural enums -/
 
@@ -169,7 +193,7 @@ def ConjComitativeRelation.toAndWithStatus :
 /-! ### Per-language structs -/
 
 /-- A coordination entry annotated with its diachronic source.
-    Wraps `Coordinator` (from `Features.Coordination`) with typological
+    Wraps `Coordinator` (from `Semantics/Coordination/Defs`) with typological
     metadata. For languages with Fragment files, `entry` references the
     Fragment entry directly — no data duplication. -/
 structure SourcedEntry where
@@ -267,33 +291,5 @@ instance (sys : ConjunctionSystem) : Decidable sys.hasBisyndetic := by
 /-- The boundness of a language's MU particle, if it has one. -/
 def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :=
   (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
-
-/-! ### WALS corpus generalisations -/
-
-/-- F63A: "and" being different from "with" is the majority pattern (131 > 103). -/
-theorem and_languages_majority :
-    (ch63.filter (·.value == .andDifferentFromWith)).length >
-    (ch63.filter (·.value == .andIdenticalToWith)).length := by native_decide
-
-/-- F63A: languages where "and" = "with" form a substantial minority (103/234,
-    44%) — comitative-to-coordinator grammaticalization is still transparent
-    in many languages, but the AND-pattern dominates. -/
-theorem comitative_source_substantial_minority :
-    (ch63.filter (·.value == .andIdenticalToWith)).length * 2 < ch63.length ∧
-    (ch63.filter (·.value == .andIdenticalToWith)).length * 3 > ch63.length := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- F64A: identity of NP and VP conjunction is the majority pattern (161/301). -/
-theorem nom_verbal_identity_is_majority :
-    (ch64.filter (·.value == .identity)).length >
-    (ch64.filter (·.value == .differentiation)).length ∧
-    (ch64.filter (·.value == .identity)).length >
-    (ch64.filter (·.value == .bothExpressedByJuxtaposition)).length := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- F64A: juxtaposition for both NP and VP conjunction is rare (15/301 = 5%). -/
-theorem juxtaposition_rare :
-    (ch64.filter (·.value == .bothExpressedByJuxtaposition)).length * 20 <
-    ch64.length := by native_decide
 
 end Typology.Coordination

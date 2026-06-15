@@ -48,7 +48,6 @@ import Linglib.Semantics.Dynamic.ParameterizedUpdate
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Features.Boundness
-import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Semantics.Quantification
 import Linglib.Semantics.Quantification.Basic
