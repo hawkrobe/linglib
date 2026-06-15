@@ -1866,6 +1866,8 @@ import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
+import Linglib.Core.Combinatorics.RootedTree.Counting
+import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
