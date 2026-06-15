@@ -1877,6 +1877,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Algebra.RootedTree.InsertionLieDuality
 import Linglib.Core.Algebra.RootedTree.FormSet
