@@ -373,40 +373,6 @@ theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
   rw [hHom.map_sup]
   exact hxy
 
-/-! ### Meaning Postulates (per-verb distributivity) -/
-
-/-- Meaning postulates for verb distributivity (§6.2–6.3). Encodes which
-    verbs have distributive reference along which roles.
-
-    - `see` is distributive on both agent and theme: "The boys saw the
-      girls" entails each boy saw each girl.
-    - `kill` is distributive on theme only: "The boys killed the chicken"
-      entails the chicken was killed (by the group).
-    - `meet` is NOT distributive on agent: "The boys met" does NOT entail
-      each boy met (collective only).
-
-    Axiomatized following the CLAUDE.md convention (prefer sorry over
-    weakening; the proofs require model-theoretic content). The Verb-API
-    successor is `Verb.StratifiesOver` over a verb's `denote`. -/
-class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
-    [SemilatticeSup (Event Time)] [PartialOrder Entity]
-    (agentOf themeOf : Event Time → Entity)
-    (see kill meet : Event Time → Prop) where
-  /-- "see" has distributive reference along the agent role. -/
-  see_agent_distributive : DistributiveReferenceUniv agentOf see
-  /-- "see" has distributive reference along the theme role. -/
-  see_theme_distributive : DistributiveReferenceUniv themeOf see
-  /-- "kill" has distributive reference along the theme role. -/
-  kill_theme_distributive : DistributiveReferenceUniv themeOf kill
-  /-- "kill" does NOT have distributive reference along the agent role
-      (collective causation). Ch 4 §4.5.1: group agents can collectively
-      cause death. -/
-  kill_agent_not_distributive : ¬ DistributiveReferenceUniv agentOf kill
-  /-- "meet" does NOT have distributive reference along the agent role
-      (inherently collective). Ch 4 §4.5.1: meeting requires multiple
-      participants. -/
-  meet_agent_not_distributive : ¬ DistributiveReferenceUniv agentOf meet
-
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/
 
 /-- for-adverbials require subinterval reference (Champollion Ch 5 §5.4).
