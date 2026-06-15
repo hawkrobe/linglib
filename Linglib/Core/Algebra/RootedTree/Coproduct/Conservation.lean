@@ -200,6 +200,69 @@ theorem augActionG_traceLeafCount
 
 end
 
+mutual
+
+/-- **Crown trace leaves are bounded by the source's** (tree level): the extracted
+    crown forest of any cut has no more trace leaves than the whole tree, since
+    each crown component is a subtree. Independent of the replacement policy
+    (no `hext` hypothesis) — only the crown side is counted. Together with
+    `cutSummandsG_traceLeafCount` this forces ≥ 1 fresh trace per cut into the
+    trunk (`cutSummandsCN_trunk_traceLeafCount_ge_card`). -/
+theorem cutSummandsG_crown_traceLeafCount_le
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (t : Planar (α ⊕ β)), ∀ p ∈ cutSummandsG extract t,
+      (Multiset.map Planar.traceLeafCount p.1).sum ≤ Planar.traceLeafCount t
+  | .node a cs => by
+    intro p hp
+    rw [cutSummandsG_node] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    show (Multiset.map Planar.traceLeafCount q.1).sum ≤ Planar.traceLeafCount (.node a cs)
+    exact (cutListSummandsG_crown_traceLeafCount_le extract cs q hq).trans
+      (Planar.traceLeafCountList_le_node a cs)
+
+/-- Mutual aux: crown trace-leaf bound for children-list cut summands. -/
+theorem cutListSummandsG_crown_traceLeafCount_le
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (cs : List (Planar (α ⊕ β))), ∀ q ∈ cutListSummandsG extract cs,
+      (Multiset.map Planar.traceLeafCount q.1).sum ≤ Planar.traceLeafCountList cs
+  | [] => by
+    intro q hq
+    rw [cutListSummandsG_nil] at hq
+    obtain rfl := Multiset.mem_singleton.mp hq
+    exact Nat.zero_le _
+  | t :: ts => by
+    intro q hq
+    rw [cutListSummandsG_cons] at hq
+    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
+    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
+    have h1 := augActionG_crown_traceLeafCount_le extract t pr.1 ha
+    have h2 := cutListSummandsG_crown_traceLeafCount_le extract ts pr.2 hq'
+    show (Multiset.map Planar.traceLeafCount (pr.1.1 + pr.2.1)).sum ≤
+      Planar.traceLeafCount t + Planar.traceLeafCountList ts
+    rw [Multiset.map_add, Multiset.sum_add]
+    omega
+
+/-- Mutual aux: crown trace-leaf bound for per-child actions. -/
+theorem augActionG_crown_traceLeafCount_le
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (t : Planar (α ⊕ β)), ∀ a ∈ augActionG extract t,
+      (Multiset.map Planar.traceLeafCount a.1).sum ≤ Planar.traceLeafCount t
+  | t => by
+    intro a ha
+    rw [augActionG_eq] at ha
+    rcases Multiset.mem_add.mp ha with h | h
+    · cases hex : extract t with
+      | none => rw [hex] at h; exact absurd h (Multiset.notMem_zero a)
+      | some r =>
+        rw [hex] at h
+        obtain rfl := Multiset.mem_singleton.mp h
+        show (Multiset.map Planar.traceLeafCount {t}).sum ≤ Planar.traceLeafCount t
+        simp only [Multiset.map_singleton, Multiset.sum_singleton, le_refl]
+    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
+      exact cutSummandsG_crown_traceLeafCount_le extract t p hp
+
+end
+
 /-- The Δ^c extraction policy leaves unit-trace-count replacements. -/
 private theorem extractC_traceLeafCountList_one (τ : Planar (α ⊕ β) → β) :
     ∀ t r, extractC τ t = some r → Planar.traceLeafCountList r = 1 := by
@@ -279,6 +342,17 @@ theorem cutSummandsCN_weight (τ : Nonplanar (α ⊕ β) → β)
 def Cut.numContractions (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℕ :=
   Multiset.card p.1
 
+/-- The **Minimal-Search depth** of a Δ^c cut summand (MCB §1.5.2): the total
+    extraction depth `Σ d_{v_i}`, read off the trunk's trace markers. The Δ^c
+    quotient places a trace leaf at each cut site at *exactly* the cut depth, so
+    the trunk's `traceDepthSum` is the signed `+d` extraction cost of MCB rule 1.
+    Under Internal Merge the matching `−d` quotient term (rule 2) references this
+    same value and cancels it (cost 0); Sideward Merge incurs it uncancelled
+    (cost > 0, `Cut.depthC_pos`). Depends only on the trunk `p.2`, like
+    `Cut.numContractions` depends only on the crown. -/
+def Cut.depthC (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℕ :=
+  p.2.traceDepthSum
+
 /-- **Lexical (non-trace) vertex conservation**: combining weight and
     trace-leaf conservation, the trace leaf added at each cut is excluded
     from the lexical count exactly when the vertex it replaced is removed,
@@ -292,6 +366,40 @@ theorem cutSummandsCN_lexical_conservation (τ : Nonplanar (α ⊕ β) → β)
   intro p hp
   have hw := cutSummandsCN_weight τ T p hp
   have ht := cutSummandsCN_traceLeafCount τ T p hp
+  omega
+
+/-- **Crown trace leaves bounded by the source's**, descended to `Nonplanar`:
+    the extracted crown forest of a Δ^c cut has no more trace markers than `T`.
+    (Each crown component is a subtree of `T`.) -/
+theorem cutSummandsCN_crown_traceLeafCount_le (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T,
+      (p.1.map Nonplanar.traceLeafCount).sum ≤ T.traceLeafCount := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp
+  rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  have hle := ConnesKreimer.cutSummandsG_crown_traceLeafCount_le
+    (ConnesKreimer.extractC (τ ∘ Nonplanar.mk)) T₀ q hq
+  show ((q.1.map Nonplanar.mk).map Nonplanar.traceLeafCount).sum ≤
+    (Nonplanar.mk T₀).traceLeafCount
+  rw [Nonplanar.traceLeafCount_mk, Multiset.map_map,
+      show q.1.map (Nonplanar.traceLeafCount ∘ Nonplanar.mk) =
+          q.1.map Planar.traceLeafCount from
+        Multiset.map_congr rfl (fun x _ => Nonplanar.traceLeafCount_mk x)]
+  exact hle
+
+/-- **Each Δ^c contraction leaves ≥ 1 trace marker in the trunk** (MCB Lemma
+    1.6.3 corollary): the trunk's trace count is at least the number of cuts.
+    From trace-leaf conservation (`Σtrace(crown) + trace(trunk) = trace(T) + #cuts`)
+    and the crown bound (`Σtrace(crown) ≤ trace(T)`). -/
+theorem cutSummandsCN_trunk_traceLeafCount_ge_card (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T, Multiset.card p.1 ≤ p.2.traceLeafCount := by
+  intro p hp
+  have hcons := cutSummandsCN_traceLeafCount τ T p hp
+  have hle := cutSummandsCN_crown_traceLeafCount_le τ T p hp
   omega
 
 /-! ### Non-degeneracy: lexical-rooted pieces have a non-trace vertex
@@ -420,6 +528,20 @@ theorem traceLeafCount_lt_weight_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
     rw [Nonplanar.traceLeafCount_mk, Nonplanar.weight_mk]
     exact Planar.traceLeafCount_lt_weight_of_inl a cs
 
+/-- A lexical-rooted nonplanar tree puts every trace marker at depth ≥ 1, so its
+    depth-weighted trace count dominates its plain trace count. -/
+theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
+    (h : t.rootLabel = Sum.inl a) : t.traceLeafCount ≤ t.traceDepthSum := by
+  obtain ⟨t₀, rfl⟩ : ∃ t₀ : Planar (α ⊕ β), t = Nonplanar.mk t₀ :=
+    ⟨t.out, (Quotient.out_eq t).symm⟩
+  rw [Nonplanar.rootLabel_mk] at h
+  cases t₀ with
+  | node x cs =>
+    rw [Planar.label_node] at h
+    subst h
+    rw [Nonplanar.traceLeafCount_mk, Nonplanar.traceDepthSum_mk]
+    exact Planar.traceLeafCount_le_traceDepthSum_of_inl a cs
+
 end Nonplanar
 
 /-! ### α extraction identity (MCB eq. 1.6.8) -/
@@ -519,5 +641,71 @@ theorem cutSummandsCN_accCountC_pair (τ : Nonplanar (α ⊕ β) → β)
     Multiset.card_singleton] at hw hl
   simp only [Nonplanar.accCountC, Nonplanar.accCount]
   omega
+
+/-! ### Minimal-Search positivity (MCB Prop 1.5.1, Sideward direction) -/
+
+/-- **A proper Δ^c cut of a lexical-rooted object costs ≥ 1** (MCB Prop 1.5.1).
+    The trunk keeps the tree's lexical root (`cutSummandsCN_trunk_rootLabel`), so
+    each of its `#cuts ≥ 1` fresh trace markers sits at depth ≥ 1; hence the
+    Minimal-Search depth `Cut.depthC p = Σ d_{v_i} ≥ #cuts ≥ 1`. This is the
+    uncancelled Sideward cost that vanishes at ε → 0, leaving only the cost-0
+    External and Internal Merges. -/
+theorem Cut.depthC_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) (a₀ : α)
+    (hT : T.rootLabel = Sum.inl a₀)
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (hproper : p.1 ≠ 0) :
+    1 ≤ Cut.depthC p := by
+  have htrunk_root : p.2.rootLabel = Sum.inl a₀ :=
+    (cutSummandsCN_trunk_rootLabel τ T p hp).trans hT
+  have h1 : Multiset.card p.1 ≤ p.2.traceLeafCount :=
+    cutSummandsCN_trunk_traceLeafCount_ge_card τ T p hp
+  have h2 : p.2.traceLeafCount ≤ p.2.traceDepthSum :=
+    Nonplanar.traceLeafCount_le_traceDepthSum_of_rootInl p.2 a₀ htrunk_root
+  have h3 : 1 ≤ Multiset.card p.1 := by
+    rw [Nat.one_le_iff_ne_zero, Ne, Multiset.card_eq_zero]; exact hproper
+  show 1 ≤ p.2.traceDepthSum
+  omega
+
+/-! ### Signed Minimal-Search cost (MCB §1.5.2 rules 1–2)
+
+The cost of a Merge `𝔐(α,β)` sums the *signed* depth-costs of its two operands.
+An extracted accessible term costs `+d` (rule 1); a contraction quotient costs
+`−d` (rule 2). Internal Merge re-grafts an extracted crown with its own quotient,
+so the two costs of the *same* cut cancel; Sideward Merge grafts a crown with a
+non-matching partner, leaving `+d` uncancelled. -/
+
+/-- **Extraction cost** of a Δ^c cut (MCB rule 1): pulling out the crown costs
+    `+d`, the cut depth `Cut.depthC`. Signed (ℤ) so it can cancel the quotient
+    cost under Internal Merge. -/
+def Cut.extractionCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℤ :=
+  (Cut.depthC p : ℤ)
+
+/-- **Quotient cost** of a Δ^c cut (MCB rule 2): the contraction quotient (trunk)
+    costs `−d` — a deep quotient is close to the whole tree, hence cheap. The
+    negative companion to `Cut.extractionCost`. -/
+def Cut.quotientCost (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) : ℤ :=
+  -(Cut.depthC p : ℤ)
+
+/-- **Internal Merge cancellation** (MCB Prop 1.5.1, IM bullet): re-merging an
+    extracted crown `T_v` with its OWN quotient `T_i/T_v` sums the two signed
+    costs of the *same* cut, `(+d) + (−d) = 0` — the cost-0 that survives ε → 0.
+    Derives from the two signed rules, not stipulated. -/
+theorem Cut.extractionCost_add_quotientCost
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :
+    Cut.extractionCost p + Cut.quotientCost p = 0 := by
+  simp only [Cut.extractionCost, Cut.quotientCost, add_neg_cancel]
+
+/-- **Sideward Merge cost is positive** (MCB Prop 1.5.1, Sideward bullets):
+    grafting an extracted crown of a lexical-rooted object with a non-matching
+    partner leaves the `+d` extraction cost uncancelled (no quotient operand to
+    supply the `−d`). Vanishes at ε → 0. -/
+theorem Cut.extractionCost_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β))
+    (a₀ : α) (hT : T.rootLabel = Sum.inl a₀)
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (hproper : p.1 ≠ 0) :
+    0 < Cut.extractionCost p := by
+  have h := Cut.depthC_pos τ T a₀ hT p hp hproper
+  simp only [Cut.extractionCost]
+  exact_mod_cast h
 
 end RootedTree

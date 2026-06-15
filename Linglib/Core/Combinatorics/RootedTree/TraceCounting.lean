@@ -134,6 +134,116 @@ theorem traceLeafCountList_eq_sum_map (cs : List (Planar (α ⊕ β))) :
   | cons c cs ih =>
     rw [Planar.traceLeafCountList_cons, List.map_cons, List.sum_cons, ih]
 
+/-! ### `traceDepthSum` — depth-weighted trace-marker count (Minimal Search depth)
+
+The **Minimal Search depth** `d_v` of MCB §1.5.2 (book p. 59): the sum over
+trace-marker leaves of their distance from the root. A single recursion
+suffices — descending into the children adds `1` per trace leaf below them
+(`+ traceLeafCountList cs`), so a trace leaf at depth `d` is counted `d`
+times, contributing `d`. A bare trace leaf at the root contributes `0`.
+
+For a Δ^c cut, the quotient (trunk) places a trace leaf at each cut site at
+exactly the cut depth (`Coproduct.Trace.traceLeaf`), so
+`traceDepthSum(quotient)` reads off the total extraction depth `Σ d_{v_i}`
+of MCB rule 1 directly — no enumeration tagging required. -/
+
+mutual
+/-- Sum of root-distances of the `Sum.inr`-labeled (trace-marker) leaves. -/
+def traceDepthSum : Planar (α ⊕ β) → Nat
+  | .node _ cs => traceDepthSumList cs + traceLeafCountList cs
+/-- Auxiliary: trace-depth across a list of children, measured in the
+    children's own frame (the parent adds the `+1`-per-level offset). -/
+def traceDepthSumList : List (Planar (α ⊕ β)) → Nat
+  | []      => 0
+  | t :: ts => traceDepthSum t + traceDepthSumList ts
+end
+
+theorem traceDepthSum_node (a : α ⊕ β) (cs : List (Planar (α ⊕ β))) :
+    traceDepthSum (Planar.node a cs) = traceDepthSumList cs + traceLeafCountList cs := rfl
+
+@[simp] theorem traceDepthSumList_nil :
+    traceDepthSumList ([] : List (Planar (α ⊕ β))) = 0 := rfl
+
+@[simp] theorem traceDepthSumList_cons (t : Planar (α ⊕ β))
+    (ts : List (Planar (α ⊕ β))) :
+    traceDepthSumList (t :: ts) = traceDepthSum t + traceDepthSumList ts := rfl
+
+@[simp] theorem traceDepthSum_leaf_inl (a : α) :
+    traceDepthSum (Planar.node (Sum.inl a) [] : Planar (α ⊕ β)) = 0 := rfl
+
+@[simp] theorem traceDepthSum_leaf_inr (b : β) :
+    traceDepthSum (Planar.node (Sum.inr b) [] : Planar (α ⊕ β)) = 0 := rfl
+
+theorem traceDepthSumList_eq_sum_map (cs : List (Planar (α ⊕ β))) :
+    traceDepthSumList cs = (cs.map traceDepthSum).sum := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [traceDepthSumList_cons, List.map_cons, List.sum_cons, ih]
+
+/-- The node-level per-child contribution `traceDepthSum c + traceLeafCount c`,
+    summed: combines the two list statistics into one map. -/
+theorem traceDepthSumList_add_traceLeafCountList (cs : List (Planar (α ⊕ β))) :
+    traceDepthSumList cs + traceLeafCountList cs
+      = (cs.map (fun c => traceDepthSum c + traceLeafCount c)).sum := by
+  rw [traceDepthSumList_eq_sum_map, traceLeafCountList_eq_sum_map]
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [List.map_cons, List.sum_cons]; omega
+
+/-! #### Trace-depth invariance under `PlanarEquiv` -/
+
+private theorem traceDepthSumList_perm (cs ds : List (Planar (α ⊕ β)))
+    (h : List.Perm cs ds) : traceDepthSumList cs = traceDepthSumList ds := by
+  induction h with
+  | nil => rfl
+  | cons _ _ ih => rw [traceDepthSumList_cons, traceDepthSumList_cons, ih]
+  | swap _ _ _ => simp only [traceDepthSumList_cons]; omega
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+private theorem traceDepthSum_planarStep {t s : Planar (α ⊕ β)}
+    (h : PlanarStep t s) : t.traceDepthSum = s.traceDepthSum := by
+  induction h with
+  | swapAtRoot =>
+    rename_i a l r pre post
+    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
+      List.Perm.append_left pre (.swap r l post)
+    rw [traceDepthSum_node, traceDepthSum_node,
+        traceDepthSumList_perm _ _ hperm, traceLeafCountList_perm _ _ hperm]
+  | recurse hstep ih =>
+    rename_i a pre old new post
+    have hc : old.traceLeafCount = new.traceLeafCount := traceLeafCount_planarStep hstep
+    rw [traceDepthSum_node, traceDepthSum_node,
+        traceDepthSumList_eq_sum_map, traceDepthSumList_eq_sum_map,
+        traceLeafCountList_eq_sum_map, traceLeafCountList_eq_sum_map]
+    simp only [List.map_append, List.map_cons, List.sum_append, List.sum_cons, ih, hc]
+
+theorem traceDepthSum_planarEquiv {t s : Planar (α ⊕ β)}
+    (h : PlanarEquiv t s) : t.traceDepthSum = s.traceDepthSum := by
+  induction h with
+  | rel _ _ hstep => exact traceDepthSum_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- The children's trace leaves are bounded by the node's: a `Sum.inr` root
+    can only *add* a trace leaf (the empty-trace-leaf case), never remove one. -/
+theorem traceLeafCountList_le_node (a : α ⊕ β) (cs : List (Planar (α ⊕ β))) :
+    traceLeafCountList cs ≤ traceLeafCount (Planar.node a cs) := by
+  rcases eq_or_ne cs [] with h | h
+  · subst h; exact Nat.zero_le _
+  · exact (traceLeafCount_node_of_ne_nil a cs h).ge
+
+/-- **A lexical root puts every trace marker at depth ≥ 1**: for a
+    `Sum.inl`-rooted tree, the depth-weighted trace count dominates the plain
+    trace count (`traceDepthSum = traceDepthSumList + traceLeafCountList`, and the
+    `+ traceLeafCountList` term is exactly the descent of each child trace by one
+    level). Underlies the Minimal-Search positivity `Cut.depthC_pos`. -/
+theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (Planar (α ⊕ β))) :
+    traceLeafCount (Planar.node (Sum.inl a) cs) ≤
+      traceDepthSum (Planar.node (Sum.inl a) cs) := by
+  rw [traceLeafCount_inl, traceDepthSum_node]
+  exact Nat.le_add_left _ _
+
 end Planar
 
 namespace Nonplanar
@@ -154,6 +264,42 @@ def traceLeafCount : Nonplanar (α ⊕ β) → Nat :=
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
     (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceLeafCount = 1 := rfl
+
+/-- The **Minimal Search depth** `d_v` of MCB §1.5: the sum of root-distances
+    of the trace-marker leaves, lifted from `Planar.traceDepthSum`. For a Δ^c
+    cut, `traceDepthSum` of the quotient is the total extraction depth. -/
+def traceDepthSum : Nonplanar (α ⊕ β) → Nat :=
+  Nonplanar.lift Planar.traceDepthSum
+    (fun _ _ h => Planar.traceDepthSum_planarEquiv h)
+
+@[simp] theorem traceDepthSum_mk (t : Planar (α ⊕ β)) :
+    (mk t).traceDepthSum = t.traceDepthSum := rfl
+
+@[simp] theorem traceDepthSum_leaf_inl (a : α) :
+    (leaf (Sum.inl a) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := rfl
+
+@[simp] theorem traceDepthSum_leaf_inr (b : β) :
+    (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := rfl
+
+/-- Trace-depth of a node decomposes over children: each child `c`
+    contributes its own trace-depth plus one per trace leaf it carries
+    (the `+1` for the extra level between the node and `c`). -/
+@[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
+    (Nonplanar.node (Sum.inl a) F).traceDepthSum
+      = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum := by
+  refine Quotient.inductionOn F fun lst => ?_
+  show (mk (.node (Sum.inl a) (lst.map Quotient.out))).traceDepthSum = _
+  rw [traceDepthSum_mk]
+  show Planar.traceDepthSum (.node (Sum.inl a) (lst.map Quotient.out)) = _
+  rw [Planar.traceDepthSum_node, Planar.traceDepthSumList_add_traceLeafCountList,
+      List.map_map]
+  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
+  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
+  show Planar.traceDepthSum (Quotient.out t) + Planar.traceLeafCount (Quotient.out t)
+      = Nonplanar.traceDepthSum t + Nonplanar.traceLeafCount t
+  congr 1
+  · exact congrArg Nonplanar.traceDepthSum (Quotient.out_eq t)
+  · exact congrArg Nonplanar.traceLeafCount (Quotient.out_eq t)
 
 /-- The **trace-excluding accessible-term count** `αᶜ(T) = α(T) − #traceLeaves(T)`:
     a trace leaf is a vertex but not an accessible term (MCB p. 66). Truncated
@@ -259,6 +405,21 @@ example (a : α) (b : β) : (traceWitness a b).weight = 2 := rfl
 example (a : α) (b : β) : (traceWitness a b).traceLeafCount = 1 := rfl
 example (a : α) (b : β) : (traceWitness a b).accCountC = 0 := rfl
 example (a : α) (b : β) : (traceWitness a b).leafCountSO0 = 0 := rfl
+
+/-- The trace leaf of `traceWitness` sits at depth 1, so `traceDepthSum = 1`. -/
+example (a : α) (b : β) : (traceWitness a b).traceDepthSum = 1 := rfl
+
+/-- A trace leaf two levels down contributes depth 2 to `traceDepthSum`. -/
+example (a a' : α) (b : β) :
+    Nonplanar.traceDepthSum
+      (Nonplanar.mk (.node (Sum.inl a) [.node (Sum.inl a') [.node (Sum.inr b) []]])) = 2 := rfl
+
+/-- Two trace leaves at depths 1 and 2 sum to 3 — the multi-extraction
+    additivity `d_v = Σ d_{v_i}` of MCB rule 3. -/
+example (a a' : α) (b b' : β) :
+    Nonplanar.traceDepthSum
+      (Nonplanar.mk (.node (Sum.inl a)
+        [.node (Sum.inr b) [], .node (Sum.inl a') [.node (Sum.inr b') []]])) = 3 := rfl
 
 /-- `σᶜ` undercounts `#V` on the contraction quotient: the trace leaf is a
     vertex but not an accessible term. -/
