@@ -41,6 +41,15 @@ def genDisj (τ : Ty) (E W : Type) : Denot E W τ → Denot E W τ → Denot E W
   | .fn _ τ' => λ f g => λ x => genDisj τ' E W (f x) (g x)
   | .intens a => λ f g => λ i => genDisj a E W (f i) (g i)
 
+/-- Generalized negation (pointwise complement) — the recursion form of `·ᶜ`,
+    needed for negative coordination (`nor` = `¬(A ∨ B)`). Junk at `.e`. -/
+def genNeg (τ : Ty) (E W : Type) : Denot E W τ → Denot E W τ :=
+  match τ with
+  | .t => λ p => ¬p
+  | .e => λ x => x
+  | .fn _ τ' => λ f => λ x => genNeg τ' E W (f x)
+  | .intens a => λ f => λ i => genNeg a E W (f i)
+
 theorem genConj_at_t (E W : Type) (p q : Prop) :
     genConj .t E W p q = (p ∧ q) := rfl
 
