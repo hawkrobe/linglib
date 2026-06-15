@@ -489,4 +489,35 @@ theorem cutSummandsCN_accCountC_single (τ : Nonplanar (α ⊕ β) → β)
   simp only [Nonplanar.accCountC, Nonplanar.accCount]
   omega
 
+/-- **Two-cut accessible-term extraction** (MCB eq. 1.6.8 for a 2-edge admissible
+    cut): contracting two accessible subtrees `Tv`, `Tw` adds two contractions,
+    `αᶜ(T) = αᶜ(Tv) + αᶜ(Tw) + αᶜ(T/^c {Tv,Tw}) + 2`. Used for Sideward Merge 3(a). -/
+theorem cutSummandsCN_accCountC_pair (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) (a₀ : α) (F₀ : Forest (Nonplanar (α ⊕ β)))
+    (hT : T = Nonplanar.node (Sum.inl a₀) F₀)
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (Tv Tw : Nonplanar (α ⊕ β)) (hcard : p.1 = {Tv, Tw}) :
+    T.accCountC = Tv.accCountC + Tw.accCountC + p.2.accCountC + 2 := by
+  have hw := cutSummandsCN_weight τ T p hp
+  have hl := cutSummandsCN_traceLeafCount τ T p hp
+  have hTv_lt : Tv.traceLeafCount < Tv.weight :=
+    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tv
+      (by rw [hcard]; exact Multiset.mem_cons_self Tv {Tw})
+  have hTw_lt : Tw.traceLeafCount < Tw.weight :=
+    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tw
+      (by rw [hcard]; exact Multiset.mem_cons_of_mem (Multiset.mem_singleton_self Tw))
+  have hT_root : T.rootLabel = Sum.inl a₀ := by
+    rw [hT, Nonplanar.rootLabel_node]
+  have hT_lt : T.traceLeafCount < T.weight :=
+    Nonplanar.traceLeafCount_lt_weight_of_rootInl T a₀ hT_root
+  have hp2_lt : p.2.traceLeafCount < p.2.weight :=
+    Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+      ((cutSummandsCN_trunk_rootLabel τ T p hp).trans hT_root)
+  rw [hcard] at hw hl
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
+    Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_cons,
+    Multiset.card_singleton] at hw hl
+  simp only [Nonplanar.accCountC, Nonplanar.accCount]
+  omega
+
 end RootedTree
