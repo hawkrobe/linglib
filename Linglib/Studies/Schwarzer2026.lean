@@ -4,6 +4,7 @@ import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
 import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
+import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -77,7 +78,7 @@ The competing analyses make different predictions for the preverbal
 (= OV) condition. All agree on the postverbal (= VO) condition.
 -/
 
-open Minimalist (ForceHead)
+open Minimalist (ForceHead CoordSymmetry)
 open German (german)
 
 /-- German has V2 in root declaratives: the finite verb moves to C°,

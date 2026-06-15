@@ -1,3 +1,4 @@
+import Linglib.Features.Boundness
 import Linglib.Features.Coordination
 import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F63A

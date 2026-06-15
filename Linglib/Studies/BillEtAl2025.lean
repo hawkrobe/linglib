@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Features.Boundness
 import Linglib.Features.Coordination
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016

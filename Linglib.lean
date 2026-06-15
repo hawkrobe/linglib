@@ -47,6 +47,7 @@ import Linglib.Features.Acceptability
 import Linglib.Semantics.Dynamic.ParameterizedUpdate
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
+import Linglib.Features.Boundness
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Semantics.Quantification
@@ -2131,6 +2132,7 @@ import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Syntax.Minimalist.Questions
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Multidominance
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification

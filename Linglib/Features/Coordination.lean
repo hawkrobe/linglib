@@ -1,3 +1,5 @@
+import Linglib.Features.Boundness
+
 /-!
 # Coordination Types
 
@@ -15,12 +17,6 @@ decomposition and beyond:
 - `advers` — adversative ("but")
 - `negDisj` — negative disjunction ("nor")
 - `negCoord` — negative coordination ("neither...nor")
-
-## Boundness
-
-Whether a morpheme is a free word or a bound clitic/suffix.
-Relevant to acquisition: [clark-2017] argues free morphemes
-are acquired more readily than bound ones.
 
 ## CoordEntry
 
@@ -51,14 +47,6 @@ inductive CoordRole where
   | negDisj
   /-- Negative coordination (Latin "neque/nec" = "neither...nor") -/
   | negCoord
-  deriving DecidableEq, Repr, BEq
-
-/-- Morphological boundness: free word vs bound clitic/suffix. -/
-inductive Boundness where
-  /-- Independent word (Hungarian "is", English "and") -/
-  | free
-  /-- Clitic or suffix (Georgian "-c", Latin "-que") -/
-  | bound
   deriving DecidableEq, Repr, BEq
 
 /-- A coordination morpheme entry, used by all Fragment lexicons. -/
@@ -128,30 +116,5 @@ to acquire (closer to 1-to-1 form-meaning mapping).
 -/
 def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
   ConjunctionStrategy.overtMorphemeCount
-
--- ============================================================================
--- Structural Symmetry ([schwarzer-2026])
--- ============================================================================
-
-/--
-Structural symmetry of a coordinate phrase.
-
-The three groups of analyses for selection-violating coordination
-([schwarzer-2026]) disagree on this parameter:
-- **Bottom-up accounts** assume `asymmetric` structure: the first conjunct
-  is structurally more prominent (c-commands the second), so only it must
-  satisfy the selector's c-selectional requirements.
-- **Linear/temporal closeness accounts** are compatible with either, but
-  their predictions derive from linear/temporal order, not structure.
-- **Symmetric accounts** ([neeleman-etal-2022], [przepiorkowski-2024])
-  posit flat or multidominance structures with no structural prominence.
--/
-inductive CoordSymmetry where
-  /-- Flat or multidominance: no conjunct is structurally more prominent. -/
-  | symmetric
-  /-- Binary &P: first conjunct is structurally more prominent
-      (c-commands the second conjunct). -/
-  | asymmetric
-  deriving DecidableEq, Repr, BEq
 
 end Features.Coordination
