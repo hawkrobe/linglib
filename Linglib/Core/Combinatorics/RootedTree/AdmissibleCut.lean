@@ -1079,46 +1079,33 @@ theorem nonTraceSize_remainder_pos_of_cutForest_singleton [Inhabited β]
   obtain ⟨l, r, rfl⟩ := isNode_of_cutForest_singleton c β_t h_cf
   exact nonTraceSize_remainder_pos_of_node c
 
-/-- **MCB Lemma 1.6.3 eq. 1.6.8** (book p. 65): for a single-edge cut on
-    `T` extracting accessible term `β_t`, the contraction-quotient's
-    accCountC satisfies `α(T) = α(T_v) + α^c(T/^c T_v) + 1`. The `+1`
-    accounts for the root vertex of `T` (counted in `accCount T = T.size − 1`
-    but not in the per-piece sum since the root is the new merged node
-    when re-merging).
+/-- Convenience wrapper: the tree in a singleton `cutForest = {β_t}` of a
+    trace-free `T` is itself trace-free. Discharges the membership obligation
+    of `nonTraceSize_eq_size_of_mem_cutForest`. -/
+theorem nonTraceSize_eq_size_of_cutForest_singleton
+    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
+    (h_tf : T.nonTraceSize = T.size)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
+    β_t.nonTraceSize = β_t.size := by
+  apply nonTraceSize_eq_size_of_mem_cutForest c β_t h_tf
+  rw [h_cf]; exact Multiset.mem_singleton.mpr rfl
 
-    Concretely: `T.size − 1 = (β_t.size − 1) + ((T/^c β_t).nonTraceSize − 1) + 1`
-    follows from `cut_size_conservation_contraction` with cutForest = {β_t}
-    and the size-pos witnesses. -/
+/-- **MCB Lemma 1.6.3 eq. 1.6.8** (book p. 65): `α(T) = α(T_v) + αᶜ(T/^c T_v) + 1`.
+    Stated in αᶜ form for a trace-free `T` (where `α(T) = αᶜ(T)`) so it feeds the
+    Δ^c size-delta proofs directly: `αᶜ(T) = αᶜ(β_t) + αᶜ(T/^c β_t) + 1`. The trace
+    cancellation ("deeper copy") is internal to `accCountC` on the quotient. -/
 theorem singleEdgeCut_contraction_alpha [Inhabited β]
     {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
     (h_tf : T.nonTraceSize = T.size)
     (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
-    T.accCount = β_t.accCount + c.remainder.accCountC + 1 := by
+    T.accCountC = β_t.accCountC + c.remainder.accCountC + 1 := by
   have h := cut_size_conservation_contraction c h_tf
   rw [h_cf, TraceForest.sizeForest_singleton] at h
+  have h_β_tf := nonTraceSize_eq_size_of_cutForest_singleton c β_t h_tf h_cf
   have hβ := β_t.size_pos
   have hRem_pos : c.remainder.nonTraceSize ≥ 1 :=
     nonTraceSize_remainder_pos_of_cutForest_singleton c β_t h_cf
-  show T.size - 1 = (β_t.size - 1) + (c.remainder.nonTraceSize - 1) + 1
-  omega
-
-/-- **MCB Lemma 1.6.3 eq. 1.6.10** (book p. 65): `σ(T) = σ(T_v) + σ(T/^c T_v)`
-    for a single-edge cut on T extracting β_t. (No `+1` in this case — the
-    root vertex is already counted in σ_v + σ_q via the b₀ contribution.)
-
-    Concretely: `1 + (T.size − 1) = (1 + (β_t.size − 1)) + (1 + ((T/^c β_t).nonTraceSize − 1))`
-    follows from `cut_size_conservation_contraction`. -/
-theorem singleEdgeCut_contraction_sigma [Inhabited β]
-    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
-    (h_tf : T.nonTraceSize = T.size)
-    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
-    TraceForest.sigma ({T} : TraceForest α β)
-      = TraceForest.sigma ({β_t} : TraceForest α β)
-      + TraceForest.sigmaC ({c.remainder} : TraceForest α β) := by
-  have h_alpha := singleEdgeCut_contraction_alpha c β_t h_tf h_cf
-  rw [TraceForest.sigma_singleton, TraceForest.sigma_singleton,
-      TraceForest.sigmaC_singleton]
-  show 1 + T.accCount = 1 + β_t.accCount + (1 + c.remainder.accCountC)
+  show T.nonTraceSize - 1 = (β_t.nonTraceSize - 1) + (c.remainder.nonTraceSize - 1) + 1
   omega
 
 /-- **Single-edge cut produces non-collapsing remainder**: if a cut has
@@ -1329,8 +1316,8 @@ theorem numContractions_twoEdge
     **Corollary of `cut_size_conservation`** with `numContractions = 1`
     (single-edge case, by `numContractions_singleEdge`).
 
-    Used by `MinimalYield.im_pair_size_deltas_deltaD` and
-    `MinimalYield.sideward_2b_size_deltas_deltaD` to discharge the
+    Used by `MinimalYield.im_pair_size_deltas_deletion` and
+    `MinimalYield.sideward_2b_size_deltas_deletion` to discharge the
     `h_size` hypothesis from cut data. -/
 theorem singleEdgeCut_size_relation
     {T : TraceTree α β} (c : CutShape T) (β_t Q : TraceTree α β)
@@ -1341,6 +1328,65 @@ theorem singleEdgeCut_size_relation
   have h_nc := numContractions_singleEdge c β_t h_cf
   rw [h_cf, h_rd, TraceForest.sizeForest_singleton, h_nc] at h_general
   simpa using h_general
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.7** (book p. 65): for a single-edge cut on `T`
+    extracting `β_t` with deletion-quotient `Q`, the Δ^d counting of accessible
+    terms satisfies `α(T) = α(β_t) + α(Q) + 2`. The additive `accCount` form of
+    `singleEdgeCut_size_relation` — it discharges the `size → accCount` bridge
+    once (internalising the size-positivity) so consumers reason additively. -/
+theorem singleEdgeCut_deletion_alpha
+    {T : TraceTree α β} (c : CutShape T) (β_t Q : TraceTree α β)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β))
+    (h_rd : c.remainderDeletion = some Q) :
+    T.accCount = β_t.accCount + Q.accCount + 2 := by
+  have h := singleEdgeCut_size_relation c β_t Q h_cf h_rd
+  have hβ := β_t.size_pos
+  have hQ := Q.size_pos
+  show T.size - 1 = (β_t.size - 1) + (Q.size - 1) + 2
+  omega
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.7, two-edge form** (book p. 70): for a two-edge cut
+    `cutForest = {a, b}` with deletion-quotient `Q`, the Δ^d counting satisfies
+    `α(T) = α(a) + α(b) + α(Q) + numContractions c + 2` — the additive `accCount`
+    form of `cut_size_conservation` for the pair case. -/
+theorem pairCut_deletion_alpha
+    {T : TraceTree α β} (c : CutShape T) (a b Q : TraceTree α β)
+    (h_cf : c.cutForest = ({a, b} : TraceForest α β))
+    (h_rd : c.remainderDeletion = some Q) :
+    T.accCount = a.accCount + b.accCount + Q.accCount + numContractions c + 2 := by
+  have h := cut_size_conservation c
+  rw [h_cf, h_rd, TraceForest.sizeForest_pair] at h
+  simp only [Option.elim] at h
+  have ha := a.size_pos
+  have hb := b.size_pos
+  have hQ := Q.size_pos
+  show T.size - 1 = (a.size - 1) + (b.size - 1) + (Q.size - 1) + numContractions c + 2
+  omega
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.8, two-edge form** (book p. 71): for a two-edge cut
+    `cutForest = {a, b}` on a trace-free `T` with contraction-quotient remainder,
+    the Δ^c counting satisfies `αᶜ(T) = αᶜ(a) + αᶜ(b) + αᶜ(T/^c {a,b}) + 2`. The
+    αᶜ analogue of `pairCut_deletion_alpha`. -/
+theorem pairCut_contraction_alpha [Inhabited β]
+    {T : TraceTree α β} (c : CutShape T) (a b : TraceTree α β)
+    (h_tf : T.nonTraceSize = T.size)
+    (h_cf : c.cutForest = ({a, b} : TraceForest α β))
+    (h_rem_pos : c.remainder.nonTraceSize ≥ 1) :
+    T.accCountC = a.accCountC + b.accCountC + c.remainder.accCountC + 2 := by
+  have h := cut_size_conservation_contraction c h_tf
+  rw [h_cf, TraceForest.sizeForest_pair] at h
+  have h_a_tf : a.nonTraceSize = a.size :=
+    nonTraceSize_eq_size_of_mem_cutForest c a h_tf
+      (by rw [h_cf]; exact Multiset.mem_cons_self _ _)
+  have h_b_tf : b.nonTraceSize = b.size :=
+    nonTraceSize_eq_size_of_mem_cutForest c b h_tf
+      (by rw [h_cf, show ({a, b} : TraceForest α β) = a ::ₘ ({b} : TraceForest α β) from rfl,
+          Multiset.mem_cons]; exact Or.inr (Multiset.mem_singleton.mpr rfl))
+  have ha := a.size_pos
+  have hb := b.size_pos
+  show T.nonTraceSize - 1
+      = (a.nonTraceSize - 1) + (b.nonTraceSize - 1) + (c.remainder.nonTraceSize - 1) + 2
+  omega
 
 end CutShape
 
