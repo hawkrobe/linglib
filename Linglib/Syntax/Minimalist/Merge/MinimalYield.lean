@@ -128,6 +128,27 @@ theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : Nonplanar (α ⊕
     rw [Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
     omega
 
+/-- `im_pair_size_deltas_contraction` with the αᶜ relation discharged from a Δᶜ
+    admissible cut: re-merging an accessible subtree `β_t` of `T = node (inl a₀) F₀`
+    with the contraction quotient `p.2` raises `αᶜ`, `σᶜ` by one. -/
+theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
+    (τ : Nonplanar (α ⊕ β) → β) (F₀ : Forest (Nonplanar (α ⊕ β)))
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β))
+    (hp : p ∈ cutSummandsCN τ (Nonplanar.node (Sum.inl a₀) F₀))
+    (β_t : Nonplanar (α ⊕ β)) (hcard : p.1 = {β_t}) :
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.b₀ ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alphaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.alphaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1
+      ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.sigmaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1 :=
+  im_pair_size_deltas_contraction lbl
+    (cutSummandsCN_crown_traceLeafCount_lt_weight τ _ p hp β_t
+      (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
+    (Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+      ((cutSummandsCN_trunk_rootLabel τ _ p hp).trans (by rw [Nonplanar.rootLabel_node])))
+    (cutSummandsCN_accCountC_single τ _ a₀ F₀ rfl p hp β_t hcard)
+
 /-! ### Sideward Merge -/
 
 /-- Sideward Merge of type 2(b) leaves the component count `b₀` unchanged. -/
