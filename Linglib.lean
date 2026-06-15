@@ -2222,7 +2222,9 @@ import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree
+import Linglib.Semantics.Coordination.Basic
 import Linglib.Semantics.Composition.Tree
+import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.WriterMonad

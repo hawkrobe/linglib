@@ -222,4 +222,46 @@ theorem entails_singleton (p q : Denot E W .prop) :
     entails (E := E) (W := W) [p] q = box (fun i => impl (p i) (q i)) := by
   simp [entails, trueAt, box, impl]
 
+-- ════════════════════════════════════════════════════════════════
+-- § Boolean-Algebra Instances on `Denot E W τ`
+-- ════════════════════════════════════════════════════════════════
+
+/-! The pointwise Boolean-algebra structure of conjoinable types, registered
+explicitly by recursion on `τ` (base `Prop`, then the `Pi` lift for `fn`/`intens`).
+Instance resolution cannot synthesize these on its own — it does not unfold the
+`Denot` `def` — so the recursion instances make `BooleanAlgebra (Denot E W τ)`
+available for every conjoinable type. Non-conjoinable types (`.e`) get no instance,
+which is exactly correct: `⊓`/`⊔` are a type error on entities.
+
+With these in scope, [partee-rooth-1983]'s `genConj`/`genDisj` are `⊓`/`⊔` at
+*every* conjoinable type (not just the `t` base case proved above), so the bespoke
+recursion is provably the pointwise lattice operation. -/
+
+instance instBooleanAlgebraDenotT : BooleanAlgebra (Denot E W .t) :=
+  inferInstanceAs (BooleanAlgebra Prop)
+
+instance instBooleanAlgebraDenotFn (a b : Ty) [BooleanAlgebra (Denot E W b)] :
+    BooleanAlgebra (Denot E W (a ⇒ b)) :=
+  inferInstanceAs (BooleanAlgebra (Denot E W a → Denot E W b))
+
+instance instBooleanAlgebraDenotIntens (a : Ty) [BooleanAlgebra (Denot E W a)] :
+    BooleanAlgebra (Denot E W (.intens a)) :=
+  inferInstanceAs (BooleanAlgebra (W → Denot E W a))
+
+open Conjunction in
+/-- Generalized conjunction is `⊓` at `⟨e,t⟩` — the inductive step, where the
+earlier `genConj_eq_inf_t` only covered the `t` base case. -/
+theorem genConj_eq_inf_et (f g : Denot E W (.e ⇒ .t)) :
+    genConj (.e ⇒ .t) E W f g = f ⊓ g := rfl
+
+open Conjunction in
+/-- Generalized conjunction is `⊓` at `⟨e,⟨e,t⟩⟩` (binary relations). -/
+theorem genConj_eq_inf_eet (f g : Denot E W (.e ⇒ .e ⇒ .t)) :
+    genConj (.e ⇒ .e ⇒ .t) E W f g = f ⊓ g := rfl
+
+open Conjunction in
+/-- Generalized disjunction is `⊔` at `⟨e,t⟩`. -/
+theorem genDisj_eq_sup_et (f g : Denot E W (.e ⇒ .t)) :
+    genDisj (.e ⇒ .t) E W f g = f ⊔ g := rfl
+
 end Core.Logic.Intensional.Algebra

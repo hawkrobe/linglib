@@ -1,6 +1,7 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Conjunction
+import Linglib.Semantics.Coordination.Basic
 import Linglib.Semantics.Composition.Combinator
 
 /-!
@@ -167,15 +168,16 @@ def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
       some ⟨backwardTypeRaise x t, T m⟩
 
   | .coord d1 d2 => do
-      -- Coordination: X and X → X, semantically generalized conjunction
-      -- ([partee-rooth-1983]), restricted to conjoinable types
+      -- Coordination: X and X → X, via the Coordinator API (`Coordinator.op .j`,
+      -- here its runtime form `engineOp`; = generalized conjunction [partee-rooth-1983]),
+      -- restricted to conjoinable types.
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then
         let ty := catToTy c1
         if ty.isConjoinable then
           let m2' : Denot E W (catToTy c1) := h ▸ m2
-          some ⟨c1, genConj ty E W m1 m2'⟩
+          some ⟨c1, Coordinator.engineOp .j ty E W m1 m2'⟩
         else none
       else none
 
