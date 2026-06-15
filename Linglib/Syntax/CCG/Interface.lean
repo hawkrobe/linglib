@@ -167,17 +167,18 @@ def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
       let ⟨x, m⟩ ← d.interp lex
       some ⟨backwardTypeRaise x t, T m⟩
 
-  | .coord d1 d2 => do
-      -- Coordination: X and X → X, via the Coordinator API (`Coordinator.op .j`,
-      -- here its runtime form `engineOp`; = generalized conjunction [partee-rooth-1983]),
-      -- restricted to conjoinable types.
+  | .coord role d1 d2 => do
+      -- Coordination: X c X → X, via the Coordinator API — the meaning is `Coordinator.op`
+      -- of the coordinator's own `role` (runtime form `engineOp`; = generalized conjunction
+      -- [partee-rooth-1983] at `.j`), restricted to conjoinable types. The `role` is read off
+      -- the derivation, so *which* coordinator is used is truth-conditionally load-bearing.
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then
         let ty := catToTy c1
         if ty.isConjoinable then
           let m2' : Denot E W (catToTy c1) := h ▸ m2
-          some ⟨c1, Coordinator.engineOp .j ty E W m1 m2'⟩
+          some ⟨c1, Coordinator.engineOp role ty E W m1 m2'⟩
         else none
       else none
 

@@ -1,3 +1,5 @@
+import Linglib.Features.Coordination
+
 /-!
 # Combinatory Categorial Grammar (CCG)
 
@@ -153,7 +155,8 @@ inductive DerivStep where
   | fcompx : DerivStep → DerivStep → DerivStep -- forward crossed comp
   | ftr : DerivStep → Cat → DerivStep          -- forward type-raise to target
   | btr : DerivStep → Cat → DerivStep          -- backward type-raise to target
-  | coord : DerivStep → DerivStep → DerivStep  -- coordination (X and X ⇒ X)
+  | coord : Features.Coordination.CoordRole → DerivStep → DerivStep → DerivStep
+      -- coordination (X c X ⇒ X); `c` is the coordinator's role (and/or/but/nor)
   deriving Repr
 
 /-- Get the category of a derivation. -/
@@ -185,7 +188,7 @@ def DerivStep.cat : DerivStep → Option Cat
   | .btr d t => do
     let x ← d.cat
     some (backwardTypeRaise x t)
-  | .coord d1 d2 => do
+  | .coord _ d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
     coordinate c1 c2
@@ -195,7 +198,8 @@ def DerivStep.cat : DerivStep → Option Cat
 Combinatory rules concatenate their daughters and type-raising leaves the string
 untouched, so the yield is independent of the derivation's combinatory structure —
 the property that lets a CCG derivation witness a string language. (Coordination
-elides the conjunction word, which `DerivStep.coord` does not carry.) -/
+elides the conjunction's surface form in the yield; `DerivStep.coord` carries the
+coordinator's `role`, not its spelled-out word.) -/
 def DerivStep.yield : DerivStep → List String
   | .lex e => [e.form]
   | .fapp d1 d2 => d1.yield ++ d2.yield
@@ -205,7 +209,7 @@ def DerivStep.yield : DerivStep → List String
   | .fcompx d1 d2 => d1.yield ++ d2.yield
   | .ftr d _ => d.yield
   | .btr d _ => d.yield
-  | .coord d1 d2 => d1.yield ++ d2.yield
+  | .coord _ d1 d2 => d1.yield ++ d2.yield
 
 end Derivations
 
@@ -249,7 +253,7 @@ def DerivStep.opCount : DerivStep → Nat
   | .fcompx d1 d2 => 2 + d1.opCount + d2.opCount
   | .ftr d _ => 1 + d.opCount                     -- type-raising has cost
   | .btr d _ => 1 + d.opCount
-  | .coord d1 d2 => 1 + d1.opCount + d2.opCount
+  | .coord _ d1 d2 => 1 + d1.opCount + d2.opCount
 
 /-- Depth of derivation tree. -/
 def DerivStep.depth : DerivStep → Nat
@@ -261,7 +265,7 @@ def DerivStep.depth : DerivStep → Nat
   | .fcompx d1 d2 => 1 + max d1.depth d2.depth
   | .ftr d _ => 1 + d.depth
   | .btr d _ => 1 + d.depth
-  | .coord d1 d2 => 1 + max d1.depth d2.depth
+  | .coord _ d1 d2 => 1 + max d1.depth d2.depth
 
 example : derivesS john_sleeps = true := rfl
 example : derivesS john_sees_mary = true := rfl
@@ -283,7 +287,7 @@ def john_likes : DerivStep := .fcomp john_tr (.lex ⟨"likes", TV⟩)
 def mary_tr : DerivStep := .ftr (.lex ⟨"Mary", NP⟩) S
 def mary_hates : DerivStep := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
 
-def john_likes_and_mary_hates : DerivStep := .coord john_likes mary_hates
+def john_likes_and_mary_hates : DerivStep := .coord .j john_likes mary_hates
 
 def john_likes_and_mary_hates_beans : DerivStep :=
   .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)

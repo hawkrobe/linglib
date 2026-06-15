@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Fragments.English.Toy
+import Linglib.Fragments.English.Coordination
 import Linglib.Studies.BresnanEtAl1982
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.CrossSerial
@@ -68,7 +69,7 @@ theorem john_likes_and_mary_hates_beans_cat :
     john_likes_and_mary_hates_beans.cat = some S := rfl
 
 def john_sleeps_and_mary_sleeps : DerivStep :=
-  .coord
+  .coord .j
     (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
     (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩))
 
@@ -153,7 +154,7 @@ theorem getMeaning_john_likes_and_mary_hates_beans :
 
 /-- The spelled-out paraphrase "John likes beans and Mary hates beans". -/
 def john_likes_beans_and_mary_hates_beans : DerivStep :=
-  .coord
+  .coord .j
     (.bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"likes", TV⟩) (.lex ⟨"beans", NP⟩)))
     (.bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"hates", TV⟩) (.lex ⟨"beans", NP⟩)))
 
@@ -163,6 +164,39 @@ yields the same predicate-argument structure as the canonical one. -/
 theorem nonConstituentCoord_eq_spelledOut :
     getMeaning (john_likes_and_mary_hates_beans.interp toySemLexicon) =
       getMeaning (john_likes_beans_and_mary_hates_beans.interp toySemLexicon) := rfl
+
+/-! ### The coordinator's `role` is truth-conditionally load-bearing
+
+`interp` reads the coordinator's `role` off the `.coord` node — it no longer hardcodes
+conjunction — so *which* coordinator a derivation uses is part of its truth conditions.
+Using the actual English fragment coordinators, conjoining a true sentence `p` and a false
+sentence `q` with `and_` (`role = .j`) gives `p ∧ q` (false), while `or_` (`role = .disj`)
+gives `p ∨ q` (true). They differ, so the marking's `role` field is load-bearing — flipping
+`English.Coordination.and_.role` to `.disj` would break the theorem below, rather than no
+theorem depending on it. -/
+
+/-- Minimal lexicon: sentence `p` is true, `q` is false. -/
+private def pqLex : SemLexicon Unit Unit := fun w _ =>
+  match w with
+  | "p" => some ⟨.atom .S, True⟩
+  | "q" => some ⟨.atom .S, False⟩
+  | _ => none
+
+private def dp : DerivStep := .lex ⟨"p", .atom .S⟩
+private def dq : DerivStep := .lex ⟨"q", .atom .S⟩
+
+/-- The coordinator's `role` flips the truth conditions: English `and_` yields `p ∧ q`,
+    `or_` yields `p ∨ q`, and these differ at `p = ⊤`, `q = ⊥`. Flipping a fragment
+    coordinator's `role` collapses the inequality, so the `role` marking is not decorative. -/
+theorem coord_role_load_bearing :
+    getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex) ≠
+    getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex) := by
+  have hand : getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex)
+      = some (True ∧ False) := rfl
+  have hor : getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex)
+      = some (True ∨ False) := rfl
+  rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
+  exact fun h => (h.mpr (Or.inl trivial)).2
 
 end Coordination
 

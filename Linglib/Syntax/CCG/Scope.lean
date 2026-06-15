@@ -50,7 +50,7 @@ def analyzeDerivation : DerivStep → DerivationType
   | .fcompx _ _ => .composed
   | .ftr _ _ => .typeRaised
   | .btr _ _ => .typeRaised
-  | .coord d1 d2 =>
+  | .coord _ d1 d2 =>
     match analyzeDerivation d1, analyzeDerivation d2 with
     | .typeRaised, _ | _, .typeRaised => .typeRaised
     | .composed, _ | _, .composed => .composed
