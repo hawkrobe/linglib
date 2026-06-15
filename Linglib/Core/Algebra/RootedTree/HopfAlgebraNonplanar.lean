@@ -445,8 +445,10 @@ private lemma cutListSummandsP_filter_card_zero :
 end
 
 /-- The empty cut `(0, T)` appears with multiplicity exactly 1 in
-    `cutSummandsN T`. Descent from the planar uniqueness lemma. -/
-private lemma cutSummandsN_filter_card_zero (T : Nonplanar α) :
+    `cutSummandsN T`. Descent from the planar uniqueness lemma. Public: consumed
+    by `Minimalist.Merge.mergeOp_factor_out_singleton` to isolate the surviving
+    empty-cut summand. -/
+lemma cutSummandsN_filter_card_zero (T : Nonplanar α) :
     (cutSummandsN T).filter (fun pf => pf.1.card = 0) = {(0, T)} := by
   -- Pick a planar rep T = mk T₀.
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=

@@ -517,6 +517,27 @@ noncomputable def comulTreeN (T : Nonplanar α) :
   + ((cutSummandsN T).map
       (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
+/-- A **filtered nonplanar tree-level Δ^ρ**: the `T ⊗ 1` primitive term plus
+    the cut-summand sum restricted to summands satisfying `pred`. Generalizes
+    `comulTreeN` (the `pred = always-true` case); used to carve phase-restricted
+    sub-coproducts (e.g. the phase coproduct Δ^c_Φ of
+    [marcolli-chomsky-berwick-2025] §1.14). -/
+noncomputable def comulTreeNFiltered (T : Nonplanar α)
+    (pred : Forest (Nonplanar α) × Nonplanar α → Prop) [DecidablePred pred] :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+  + (((cutSummandsN T).filter pred).map
+      (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
+
+/-- The filter drops nothing when every cut summand satisfies `pred`, recovering
+    the full `comulTreeN`. -/
+theorem comulTreeNFiltered_eq_comulTreeN (T : Nonplanar α)
+    (pred : Forest (Nonplanar α) × Nonplanar α → Prop) [DecidablePred pred]
+    (hAll : ∀ p ∈ cutSummandsN T, pred p) :
+    comulTreeNFiltered (R := R) T pred = comulTreeN (R := R) T := by
+  unfold comulTreeNFiltered comulTreeN
+  rw [Multiset.filter_eq_self.mpr hAll]
+
 /-- The **nonplanar forest-level Δ^ρ**: multiplicative product of
     tree-level coproducts over the components of the forest. -/
 noncomputable def comulForestN (F : Forest (Nonplanar α)) :
