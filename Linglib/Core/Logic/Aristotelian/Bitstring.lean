@@ -131,6 +131,36 @@ theorem isAtom_anchor (σ : ι → Bool) (hCons : ∃ w, anchor φ σ w = true) 
     · have hself : (b : W → Bool) ≤ (b : W → Bool)ᶜ := hble.trans hR
       exact Subtype.ext (le_compl_self.mp hself)
 
+/-- Converse of `isAtom_anchor`: every atom of `closure (Set.range φ)` is a consistent
+anchor cell. -/
+theorem atom_imp_anchor {a : BooleanSubalgebra.closure (Set.range φ)} (ha : IsAtom a) :
+    ∃ σ, a.val = anchor φ σ ∧ ∃ w, anchor φ σ w = true := by
+  obtain ⟨w, hw⟩ : ∃ w, a.val w = true := by
+    by_contra hcon
+    push Not at hcon
+    refine ha.1 (Subtype.ext (funext fun w => ?_))
+    show a.val w = (⊥ : W → Bool) w
+    simp only [Pi.bot_apply]
+    exact Bool.eq_false_iff.mpr (hcon w)
+  obtain ⟨σ, hcons⟩ := anchor_jointly_exhaustive φ w
+  refine ⟨σ, ?_, w, hcons⟩
+  have hα : IsAtom (⟨anchor φ σ, anchor_mem_closure φ σ⟩ :
+      BooleanSubalgebra.closure (Set.range φ)) := isAtom_anchor φ σ ⟨w, hcons⟩
+  rcases anchor_le_or_le_compl_mem_closure φ σ a.2 with hL | hR
+  · exact (congrArg Subtype.val ((ha.le_iff_eq hα.ne_bot).mp hL)).symm
+  · have hcompl : (a.val)ᶜ w = true := (le_iff_forall.mp hR) w hcons
+    simp only [Pi.compl_apply, hw] at hcompl
+    exact absurd hcompl (by decide)
+
+/-- The atoms of `closure (Set.range φ)` are **exactly** the consistent anchor cells — the
+partition-cell ↔ atom correspondence underlying the bitstring representation. -/
+theorem isAtom_iff_anchor {a : BooleanSubalgebra.closure (Set.range φ)} :
+    IsAtom a ↔ ∃ σ, a.val = anchor φ σ ∧ ∃ w, anchor φ σ w = true := by
+  refine ⟨atom_imp_anchor φ, ?_⟩
+  rintro ⟨σ, heq, hcons⟩
+  rw [show a = ⟨anchor φ σ, anchor_mem_closure φ σ⟩ from Subtype.ext heq]
+  exact isAtom_anchor φ σ hcons
+
 end
 
 section WorldEnumeration
