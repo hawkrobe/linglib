@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.Aristotelian.Basic
 import Linglib.Core.Logic.Aristotelian.Partition
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Order
 import Mathlib.Order.BooleanSubalgebra
 
@@ -343,6 +344,13 @@ noncomputable def bitstringOrderIso :
           bitstringOf_apply_at_anchor φ hψ₂ i hw]
       exact h w
 
+/-! ### Boolean complexity -/
+
+/-- The Boolean complexity of a fragment: its bitstring length `|partition| = log₂ |𝔹(𝓕)|`. By
+`nonempty_orderIso_closure_iff` this is the complete invariant of the Boolean closure up to
+order-isomorphism ([demey-smessaert-2024]). -/
+def boolComplexity : ℕ := (partition ι W φ).card
+
 /-! ### Theorem 2: Aristotelian transfer
 
 Each relation transfers along the Boolean isomorphism `bitstringOrderIso`
@@ -370,5 +378,32 @@ theorem isSubaltern_bitstring_iff :
 end Transfer
 
 end WorldEnumeration
+
+/-! ### Classification up to Boolean isomorphism -/
+
+section Classification
+variable {ι' W' : Type*}
+  [Fintype W] [Fintype ι] [DecidableEq ι]
+  [Fintype W'] [Fintype ι'] [DecidableEq ι']
+  (φ : ι → W → Bool) (ψ : ι' → W' → Bool)
+
+/-- **Classification of fragments up to Boolean isomorphism** ([demey-smessaert-2024]): the
+Boolean closures of two fragments are order-isomorphic iff the fragments have equal Boolean
+complexity. The complete invariant is thus a single natural number — and fragments of different
+complexity are never Boolean-isomorphic (the obstruction behind the Keynes–Johnson 7 vs 6). -/
+theorem nonempty_orderIso_closure_iff :
+    Nonempty (BooleanSubalgebra.closure (Set.range φ) ≃o
+      BooleanSubalgebra.closure (Set.range ψ)) ↔ boolComplexity φ = boolComplexity ψ := by
+  constructor
+  · rintro ⟨e⟩
+    have hcard := Fintype.card_congr
+      ((bitstringOrderIso φ).symm.trans (e.trans (bitstringOrderIso ψ))).toEquiv
+    simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin] at hcard
+    exact Nat.pow_right_injective (le_refl 2) hcard
+  · intro h
+    simp only [boolComplexity] at h
+    exact ⟨(h ▸ bitstringOrderIso φ).trans (bitstringOrderIso ψ).symm⟩
+
+end Classification
 
 end Aristotelian
