@@ -15,27 +15,39 @@ isomorphism onto `Fin n → Bool` (Theorem 1), hence an Aristotelian isomorphism
 ## Main declarations
 
 * `bitstringOf` — the bitstring map (Definition 7).
-* `bitstringOf_orderIso` — the isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`.
+* `bitstringOrderIso` — the isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`.
 * `isAtom_anchor` — consistent anchor cells are the atoms of the closure.
 * `isContradictory_bitstring_iff` and siblings — the Aristotelian relations transfer.
 
 ## Implementation notes
 
-The closure-membership lemmas need only `[Fintype ι]` and live in the plain `{W}`
-scope; the world-enumeration declarations index the `partition` and live in
-`section WorldEnumeration` (`[Fintype W]`) below.
+The closure-membership lemmas need only `[Fintype ι]` (literal membership needs no
+index instances). `[DecidableEq ι]` enters only with the `partition`, so the
+world-enumeration declarations — which also require `[Fintype W]` — live in
+`section WorldEnumeration` below.
+
+`isAtom_anchor` is the `partition`-cell case of mathlib's atom representation for
+finite Boolean algebras (`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`); the
+bitstring isomorphism is its explicit `Fin n`-indexed form.
 -/
 
 namespace Aristotelian
 
-variable {W : Type*}
+/-- A `Bool`-valued infimum is `true` iff every entry is. -/
+private theorem iInf_bool_eq_true {κ : Type*} (g : κ → Bool) :
+    (⨅ i, g i) = true ↔ ∀ i, g i = true := by
+  rw [← top_eq_true, iInf_eq_top]
+
+variable {W : Type*} {ι : Type*}
 
 /-! ### Anchor-decidedness -/
 
+section
+variable [Fintype ι] (φ : ι → W → Bool)
+
 /-- Lemma 6 for the indexed-family `anchor`: every closure element is entailed by
 an anchor or by its complement ([demey-smessaert-2018]). -/
-theorem anchor_le_or_le_compl_mem_closure
-    {ι : Type*} [Fintype ι] (φ : ι → W → Bool) (σ : ι → Bool) {ψ : W → Bool}
+theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
     anchor φ σ ≤ ψ ∨ anchor φ σ ≤ ψᶜ := by
   induction hψ using BooleanSubalgebra.closure_bot_sup_induction with
@@ -45,25 +57,16 @@ theorem anchor_le_or_le_compl_mem_closure
     · left
       rw [le_iff_forall]
       intro w hw
-      unfold anchor at hw
-      rw [decide_eq_true_eq] at hw
-      have := hw i
-      rw [if_pos h] at this
-      exact this
+      simp only [anchor, decide_eq_true_eq] at hw
+      simpa only [if_pos h] using hw i
     · right
       rw [le_iff_forall]
       intro w hw
-      have hf : σ i = false := Bool.eq_false_iff.mpr h
-      unfold anchor at hw
-      rw [decide_eq_true_eq] at hw
+      simp only [anchor, decide_eq_true_eq] at hw
       have := hw i
       rw [if_neg h] at this
-      simp [this]
-  | bot =>
-    right
-    rw [le_iff_forall]
-    intro w _
-    rfl
+      simp only [Pi.compl_apply, this, Bool.compl_eq_bnot, Bool.not_false]
+  | bot => exact Or.inr (by simp only [compl_bot, le_top])
   | sup x _ y _ ihx ihy =>
     rcases ihx with hx | hx
     · left; exact hx.trans le_sup_left
@@ -77,71 +80,43 @@ theorem anchor_le_or_le_compl_mem_closure
 
 /-! ### Anchor formulas lie in the closure -/
 
-private theorem lit_mem_closure {ι : Type*} [Fintype ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) (i : ι) :
+omit [Fintype ι] in
+private theorem lit_mem_closure (σ : ι → Bool) (i : ι) :
     (if σ i then φ i else (φ i)ᶜ) ∈
     BooleanSubalgebra.closure (Set.range φ) := by
-  by_cases h : σ i = true
-  · simp only [h, ↓reduceIte]
-    exact BooleanSubalgebra.subset_closure ⟨i, rfl⟩
-  · have hf : σ i = false := Bool.eq_false_iff.mpr h
-    simp only [hf, Bool.false_eq_true, ↓reduceIte]
+  cases h : σ i
+  · simp only [Bool.false_eq_true, ↓reduceIte]
     exact BooleanSubalgebra.compl_mem (BooleanSubalgebra.subset_closure ⟨i, rfl⟩)
+  · simp only [↓reduceIte]
+    exact BooleanSubalgebra.subset_closure ⟨i, rfl⟩
 
-/-- The anchor over a `Finset s`: the conjunction of literals `±φ i` for `i ∈ s`. -/
-private def anchorOnFinset {ι : Type*} [DecidableEq ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) (s : Finset ι) : W → Bool :=
-  fun w => decide (∀ i ∈ s, if σ i then φ i w = true else φ i w = false)
-
-private theorem anchorOnFinset_empty {ι : Type*} [DecidableEq ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) :
-    anchorOnFinset φ σ ∅ = (⊤ : W → Bool) := by
+/-- An anchor is the infimum of its literals `±φ i`. -/
+theorem anchor_eq_iInf (σ : ι → Bool) :
+    anchor φ σ = ⨅ i, (if σ i then φ i else (φ i)ᶜ) := by
   funext w
-  simp [anchorOnFinset]
+  rw [iInf_apply]
+  unfold anchor
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, iInf_bool_eq_true]
+  refine forall_congr' fun i => ?_
+  rw [ite_apply]
+  cases hi : σ i
+  · simp only [Bool.false_eq_true, ↓reduceIte, Pi.compl_apply, Bool.compl_eq_bnot,
+      Bool.not_eq_eq_eq_not, Bool.not_true]
+  · simp only [↓reduceIte]
 
-private theorem anchorOnFinset_insert {ι : Type*} [DecidableEq ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) (i : ι) (s : Finset ι) :
-    anchorOnFinset φ σ (insert i s) =
-    anchorOnFinset φ σ s ⊓ (if σ i then φ i else (φ i)ᶜ) := by
-  funext w
-  show decide _ = _
-  rw [decide_eq_decide.mpr (Finset.forall_mem_insert (s := s) (a := i)
-        (p := fun j => if σ j then φ j w = true else φ j w = false))]
-  rw [Bool.decide_and, Bool.and_comm, Pi.inf_apply]
-  congr 1
-  cases hi : σ i <;> simp
-
-private theorem anchorOnFinset_mem_closure {ι : Type*} [DecidableEq ι] [Fintype ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) (s : Finset ι) :
-    anchorOnFinset φ σ s ∈ BooleanSubalgebra.closure (Set.range φ) := by
-  induction s using Finset.induction_on with
-  | empty =>
-    rw [anchorOnFinset_empty]
-    exact (BooleanSubalgebra.closure (Set.range φ)).top_mem
-  | insert i s his ih =>
-    rw [anchorOnFinset_insert φ σ i s]
-    exact (BooleanSubalgebra.closure (Set.range φ)).infClosed' ih
-      (lit_mem_closure φ σ i)
-
-/-- Anchor formulas lie in the Boolean closure of `Set.range φ`. -/
-theorem anchor_mem_closure {ι : Type*} [DecidableEq ι] [Fintype ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) :
+/-- Anchor formulas lie in the Boolean closure of `Set.range φ` — an anchor is the
+infimum of its literals, each of which lies in the closure. -/
+theorem anchor_mem_closure (σ : ι → Bool) :
     anchor φ σ ∈ BooleanSubalgebra.closure (Set.range φ) := by
-  have hEq : anchor φ σ = anchorOnFinset φ σ Finset.univ := by
-    funext w
-    unfold anchor anchorOnFinset
-    congr 1
-    exact propext ⟨fun h i _ => h i, fun h i => h i (Finset.mem_univ i)⟩
-  rw [hEq]
-  exact anchorOnFinset_mem_closure φ σ Finset.univ
+  rw [anchor_eq_iInf]
+  exact BooleanSubalgebra.iInf_mem (fun i => lit_mem_closure φ σ i)
 
 /-! ### Atoms of the closure -/
 
 /-- A consistent anchor cell is an atom of `closure (Set.range φ)`: it is below or
 disjoint from every closure element (Lemma 6), so once nonzero nothing lies
 strictly between it and `⊥`. -/
-theorem isAtom_anchor {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (σ : ι → Bool) (hCons : ∃ w, anchor φ σ w = true) :
+theorem isAtom_anchor (σ : ι → Bool) (hCons : ∃ w, anchor φ σ w = true) :
     IsAtom (⟨anchor φ σ, anchor_mem_closure φ σ⟩ :
       BooleanSubalgebra.closure (Set.range φ)) := by
   refine ⟨?_, fun b hb => ?_⟩
@@ -156,94 +131,82 @@ theorem isAtom_anchor {ι : Type*} [Fintype ι] [DecidableEq ι]
     · have hself : (b : W → Bool) ≤ (b : W → Bool)ᶜ := hble.trans hR
       exact Subtype.ext (le_compl_self.mp hself)
 
+end
+
 section WorldEnumeration
 
-variable [Fintype W]
+variable [Fintype W] [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool)
 
 /-! ### Bitstring representation (Definition 7) -/
 
 /-- A positional index for the anchor cells, via `partition.equivFin`. -/
-private noncomputable def anchorIndex {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) :
+noncomputable def anchorIndex :
     Fin (partition ι W φ).card → (ι → Bool) :=
   fun i => ((partition ι W φ).equivFin.symm i).val
 
 /-- The bitstring of `ψ` relative to `φ`: bit `i` is `true` iff anchor `i` entails
 `ψ` ([demey-smessaert-2018], Definition 7). -/
-noncomputable def bitstringOf {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (ψ : W → Bool) :
+noncomputable def bitstringOf (ψ : W → Bool) :
     Fin (partition ι W φ).card → Bool :=
   fun i => decide (∀ w, anchor φ (anchorIndex φ i) w = true → ψ w = true)
 
-private theorem anchorIndex_consistent {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (i : Fin (partition ι W φ).card) :
+/-- Each partition cell is consistent: some world satisfies the anchor at index `i`. -/
+theorem anchorIndex_consistent (i : Fin (partition ι W φ).card) :
     ∃ w, anchor φ (anchorIndex φ i) w = true := by
-  classical
-  have hMem : ((partition ι W φ).equivFin.symm i).val ∈ partition ι W φ :=
-    ((partition ι W φ).equivFin.symm i).property
-  unfold partition at hMem
-  rw [Finset.mem_filter] at hMem
-  simpa [anchorIndex] using hMem.2
+  have hMem := ((partition ι W φ).equivFin.symm i).property
+  simp only [partition, Finset.mem_filter] at hMem
+  simpa only [anchorIndex, decide_eq_true_eq] using hMem.2
 
 /-! ### Bitstring evaluation -/
 
 /-- If `w` satisfies anchor `i` and `ψ` is in the closure, then `bitstringOf φ ψ i`
 is `ψ w`. -/
-theorem bitstringOf_eq_apply_at_anchor
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) {ψ : W → Bool}
+theorem bitstringOf_apply_at_anchor {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ))
     (i : Fin (partition ι W φ).card) {w : W}
     (hw : anchor φ (anchorIndex φ i) w = true) :
     bitstringOf φ ψ i = ψ w := by
   rcases anchor_le_or_le_compl_mem_closure φ (anchorIndex φ i) hψ with hL | hR
   · have hβ : bitstringOf φ ψ i = true := by
-      unfold bitstringOf
-      rw [decide_eq_true_eq]
+      simp only [bitstringOf, decide_eq_true_eq]
       exact fun w' hw' => (le_iff_forall.mp hL) w' hw'
     have hψw : ψ w = true := (le_iff_forall.mp hL) w hw
     rw [hβ, hψw]
   · have hψw : ψ w = false := by
       have := (le_iff_forall.mp hR) w hw
-      simpa using this
+      simpa only [Pi.compl_apply, Bool.compl_eq_bnot, Bool.not_eq_eq_eq_not,
+        Bool.not_true] using this
     have hβ : bitstringOf φ ψ i = false := by
       cases hb : bitstringOf φ ψ i
       · rfl
       · exfalso
-        unfold bitstringOf at hb
-        rw [decide_eq_true_eq] at hb
+        simp only [bitstringOf, decide_eq_true_eq] at hb
         rw [hb w hw] at hψw
-        exact Bool.noConfusion hψw
+        exact absurd hψw (by decide)
     rw [hβ, hψw]
 
 /-- An anchor index satisfied by `w`. -/
-noncomputable def worldAnchorIndex {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (w : W) : Fin (partition ι W φ).card :=
+noncomputable def worldAnchorIndex (w : W) : Fin (partition ι W φ).card :=
   let σ := Classical.choose (anchor_jointly_exhaustive φ w)
   let hσ := Classical.choose_spec (anchor_jointly_exhaustive φ w)
   (partition ι W φ).equivFin ⟨σ, by
-    unfold partition
-    rw [Finset.mem_filter]
+    simp only [partition, Finset.mem_filter]
     exact ⟨Finset.mem_univ _, decide_eq_true ⟨w, hσ⟩⟩⟩
 
-theorem anchor_worldAnchorIndex {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (w : W) :
+theorem anchor_worldAnchorIndex (w : W) :
     anchor φ (anchorIndex φ (worldAnchorIndex φ w)) w = true := by
   unfold worldAnchorIndex anchorIndex
   simp only [Equiv.symm_apply_apply]
   exact Classical.choose_spec (anchor_jointly_exhaustive φ w)
 
 /-- `bitstringOf φ ψ` at a world's anchor index recovers `ψ` at that world. -/
-theorem bitstringOf_apply_at_world
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) {ψ : W → Bool}
+theorem bitstringOf_apply_at_world {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) (w : W) :
     bitstringOf φ ψ (worldAnchorIndex φ w) = ψ w :=
-  bitstringOf_eq_apply_at_anchor φ hψ _ (anchor_worldAnchorIndex φ w)
+  bitstringOf_apply_at_anchor φ hψ _ (anchor_worldAnchorIndex φ w)
 
 /-- `bitstringOf φ` is injective on the Boolean closure. -/
-theorem bitstringOf_injOn_closure
-    {ι : Type*} [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool) :
+theorem bitstringOf_injOn_closure :
     Set.InjOn (bitstringOf φ)
       (BooleanSubalgebra.closure (Set.range φ) : Set (W → Bool)) := by
   intro ψ₁ hψ₁ ψ₂ hψ₂ hEq
@@ -254,33 +217,27 @@ theorem bitstringOf_injOn_closure
 
 /-- The supremum of the anchor cells whose bit is `true` — the inverse of
 `bitstringOf` on the closure. -/
-noncomputable def bitstringInverse {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (b : Fin (partition ι W φ).card → Bool) : W → Bool :=
+noncomputable def bitstringInverse (b : Fin (partition ι W φ).card → Bool) : W → Bool :=
   ⨆ i, (if b i then anchor φ (anchorIndex φ i) else (⊥ : W → Bool))
 
-theorem bitstringInverse_mem_closure {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (b : Fin (partition ι W φ).card → Bool) :
+theorem bitstringInverse_mem_closure (b : Fin (partition ι W φ).card → Bool) :
     bitstringInverse φ b ∈ BooleanSubalgebra.closure (Set.range φ) := by
   unfold bitstringInverse
   apply BooleanSubalgebra.iSup_mem
   intro i
-  by_cases h : b i = true
-  · simp only [h, ↓reduceIte]
-    exact anchor_mem_closure φ _
-  · have hf : b i = false := Bool.eq_false_iff.mpr h
-    simp only [hf, Bool.false_eq_true, ↓reduceIte]
+  cases h : b i
+  · simp only [Bool.false_eq_true, ↓reduceIte]
     exact (BooleanSubalgebra.closure (Set.range φ)).bot_mem
+  · simp only [↓reduceIte]
+    exact anchor_mem_closure φ _
 
-private theorem anchorIndex_injective {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) :
+private theorem anchorIndex_injective :
     Function.Injective (anchorIndex φ) := by
   intro i j h
   unfold anchorIndex at h
   exact (partition ι W φ).equivFin.symm.injective (Subtype.ext h)
 
-private theorem anchor_at_world_unique
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) {i j : Fin (partition ι W φ).card} {w : W}
+private theorem anchor_at_world_unique {i j : Fin (partition ι W φ).card} {w : W}
     (hi : anchor φ (anchorIndex φ i) w = true)
     (hj : anchor φ (anchorIndex φ j) w = true) :
     i = j := by
@@ -291,53 +248,37 @@ private theorem anchor_at_world_unique
 
 /-- If `w` satisfies anchor `j`, then `bitstringInverse φ b w` is the `j`-th bit:
 the `iSup` collapses to the summand at `j`. -/
-theorem bitstringInverse_apply_at_anchor
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (b : Fin (partition ι W φ).card → Bool)
+theorem bitstringInverse_apply_at_anchor (b : Fin (partition ι W φ).card → Bool)
     (j : Fin (partition ι W φ).card) {w : W}
     (hw : anchor φ (anchorIndex φ j) w = true) :
     bitstringInverse φ b w = b j := by
   unfold bitstringInverse
   rw [iSup_apply]
   apply le_antisymm
-  · apply iSup_le
-    intro i
+  · refine iSup_le fun i => ?_
     by_cases hij : i = j
     · subst hij
-      by_cases hbi : b i = true
-      · simp [hbi, hw]
-      · have : b i = false := Bool.eq_false_iff.mpr hbi
-        simp [this]
+      cases hbi : b i <;>
+        simp only [hw, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, le_refl]
     · have hf : anchor φ (anchorIndex φ i) w = false := by
         cases hai : anchor φ (anchorIndex φ i) w
         · rfl
         · exact absurd (anchor_at_world_unique φ hai hw) hij
-      by_cases hbi : b i = true
-      · simp [hbi, hf]
-      · have : b i = false := Bool.eq_false_iff.mpr hbi
-        simp [this]
-  · by_cases hbj : b j = true
-    · have h1 : (if b j then anchor φ (anchorIndex φ j) else (⊥ : W → Bool)) w = true := by
-        simp [hbj, hw]
-      calc b j = true := hbj
-        _ = (if b j then anchor φ (anchorIndex φ j) else (⊥ : W → Bool)) w := h1.symm
-        _ ≤ ⨆ i, (if b i then anchor φ (anchorIndex φ i) else (⊥ : W → Bool)) w :=
-            le_iSup (fun i => (if b i then anchor φ (anchorIndex φ i)
-                                       else (⊥ : W → Bool)) w) j
-    · have : b j = false := Bool.eq_false_iff.mpr hbj
-      rw [this]
-      exact Bool.false_le _
+      cases hbi : b i <;>
+        simp only [hf, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, Bool.false_le]
+  · refine le_iSup_of_le j ?_
+    cases hbj : b j
+    · exact Bool.false_le _
+    · simp only [↓reduceIte, hw, le_refl]
 
-theorem bitstringOf_bitstringInverse {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) (b : Fin (partition ι W φ).card → Bool) :
+theorem bitstringOf_bitstringInverse (b : Fin (partition ι W φ).card → Bool) :
     bitstringOf φ (bitstringInverse φ b) = b := by
   funext j
   obtain ⟨w, hw⟩ := anchorIndex_consistent φ j
-  rw [bitstringOf_eq_apply_at_anchor φ (bitstringInverse_mem_closure φ b) j hw]
+  rw [bitstringOf_apply_at_anchor φ (bitstringInverse_mem_closure φ b) j hw]
   exact bitstringInverse_apply_at_anchor φ b j hw
 
-theorem bitstringInverse_bitstringOf {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (φ : ι → W → Bool) {ψ : W → Bool}
+theorem bitstringInverse_bitstringOf {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
     bitstringInverse φ (bitstringOf φ ψ) = ψ := by
   funext w
@@ -349,8 +290,7 @@ theorem bitstringInverse_bitstringOf {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- **Theorem 1** ([demey-smessaert-2018]): `bitstringOf φ` is an order
 isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`, `n = |partition|`. -/
-noncomputable def bitstringOf_orderIso
-    {ι : Type*} [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool) :
+noncomputable def bitstringOrderIso :
     BooleanSubalgebra.closure (Set.range φ) ≃o
     (Fin (partition ι W φ).card → Bool) where
   toFun := fun ⟨ψ, _⟩ => bitstringOf φ ψ
@@ -369,34 +309,33 @@ noncomputable def bitstringOf_orderIso
       exact this hw₁
     · intro h i
       obtain ⟨w, hw⟩ := anchorIndex_consistent φ i
-      rw [bitstringOf_eq_apply_at_anchor φ hψ₁ i hw,
-          bitstringOf_eq_apply_at_anchor φ hψ₂ i hw]
+      rw [bitstringOf_apply_at_anchor φ hψ₁ i hw,
+          bitstringOf_apply_at_anchor φ hψ₂ i hw]
       exact h w
 
 /-! ### Theorem 2: Aristotelian transfer
 
-Each relation transfers along the Boolean isomorphism `bitstringOf_orderIso`
+Each relation transfers along the Boolean isomorphism `bitstringOrderIso`
 ([demey-smessaert-2018], Theorem 2). -/
 
 section Transfer
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool)
-  (a b : BooleanSubalgebra.closure (Set.range φ))
+variable (a b : BooleanSubalgebra.closure (Set.range φ))
 
 theorem isContradictory_bitstring_iff :
     IsContradictory (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsContradictory a b :=
-  isContradictory_apply_orderIso (bitstringOf_orderIso φ)
+  isContradictory_apply_orderIso (bitstringOrderIso φ)
 
 theorem isContrary_bitstring_iff :
     IsContrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsContrary a b :=
-  isContrary_apply_orderIso (bitstringOf_orderIso φ)
+  isContrary_apply_orderIso (bitstringOrderIso φ)
 
 theorem isSubcontrary_bitstring_iff :
     IsSubcontrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsSubcontrary a b :=
-  isSubcontrary_apply_orderIso (bitstringOf_orderIso φ)
+  isSubcontrary_apply_orderIso (bitstringOrderIso φ)
 
 theorem isSubaltern_bitstring_iff :
     IsSubaltern (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsSubaltern a b :=
-  isSubaltern_apply_orderIso (bitstringOf_orderIso φ)
+  isSubaltern_apply_orderIso (bitstringOrderIso φ)
 
 end Transfer
 
