@@ -37,9 +37,18 @@ open Core.Logic.Intensional.Conjunction
     Aliases `Features.Coordination.CoordRole` pending the marking migration. -/
 abbrev Role := Features.Coordination.CoordRole
 
-/-- **DO layer.** The operation a coordinator denotes, polymorphic over any
-    Boolean-algebra carrier: the role selects the *method* (`⊓`/`⊔`/`·ᶜ∘⊔`), the
-    instance supplies the *algebra*. -/
+/-- **DO layer — the *at-issue* truth-conditional operation** a coordinator denotes,
+    polymorphic over any Boolean-algebra carrier: the role selects the *method*
+    (`⊓`/`⊔`/`·ᶜ∘⊔`), the instance supplies the *algebra*.
+
+    **Faithfulness scope.** Faithful for `and` (`.j`), `or` (`.disj`), and `nor`
+    (`.negDisj`/`.negCoord`). The additive `.mu` and adversative `.advers` give only the
+    at-issue *meet* `⊓` (`op_mu_eq_j`, `op_advers_eq_j`): their extra content is NOT
+    captured here and *diverges* —
+    * `.mu` (M&S additive/focus particle) → `Studies/MitrovicSauerland2016`;
+    * `.advers` (`but`) → the adversative *contrast* is a discourse relation, and `but`
+      is non-commutative at that level, which the commutative `⊓` structurally cannot
+      represent — it lives in the Contrast/discourse layer, not in `op`. -/
 def op {α : Type*} [BooleanAlgebra α] : Role → α → α → α
   | .j | .mu | .advers => (· ⊓ ·)
   | .disj => (· ⊔ ·)
@@ -56,6 +65,23 @@ theorem genDisj_eq_op_et {E W : Type} (f g : Denot E W (.e ⇒ .t)) :
 theorem op_j_t {E W : Type} (p q : Denot E W .t) : op .j p q = (p ⊓ q) := rfl
 theorem op_disj_t {E W : Type} (p q : Denot E W .t) : op .disj p q = (p ⊔ q) := rfl
 theorem op_nor_t {E W : Type} (p q : Denot E W .t) : op .negDisj p q = (p ⊔ q)ᶜ := rfl
+
+/-! ### Faithfulness: `op` collapses additive/adversative onto `and` (visible divergence)
+
+`op` is the at-issue truth-conditional core. `mu` (additive) and `but` (adversative)
+collapse onto `and`'s meet here; the lemmas below make that collapse *explicit and
+proven* rather than silent. The additional content (M&S additive/focus; adversative
+contrast, including `but`'s discourse-level non-commutativity) is not in `op` — it
+diverges to the M&S study / the Contrast layer. -/
+
+/-- Additive `.mu` has the same at-issue denotation as `and`; its M&S additive/focus
+    dimension diverges (see `Studies/MitrovicSauerland2016`). -/
+theorem op_mu_eq_j {α : Type*} [BooleanAlgebra α] : (op .mu : α → α → α) = op .j := rfl
+
+/-- Adversative `.advers` (`but`) has the same at-issue denotation as `and`; its contrast
+    is a discourse relation outside `op` (and `but` is non-commutative at that level,
+    which the commutative `⊓` cannot represent). -/
+theorem op_advers_eq_j {α : Type*} [BooleanAlgebra α] : (op .advers : α → α → α) = op .j := rfl
 
 /-- Engine-side operation: runtime dispatch on the type `τ` via the recursion forms,
     which the bridges above prove equal to `op` at every conjoinable type. The engine
