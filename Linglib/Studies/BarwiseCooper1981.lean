@@ -731,7 +731,8 @@ theorem realize_iff_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
     · exact e.elim
     rcases j with e | j
     · exact e.elim
-    simpa [Realize₁, Realize₂, Term.realize] using h.inj i j
+    simp only [Realize₁, Realize₂, Term.realize_var, Sum.elim_inr]
+    exact h.inj i j
   | rel R ts =>
     intro _ a b h
     cases R with

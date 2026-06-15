@@ -338,7 +338,7 @@ theorem toConsGQ_le_iff [DecidableEq α] (x y : PolInd α) :
   cases p
   · -- negative individual `(a, false)`: witness scope `(· ≠ a)`.
     have hy := h (· = a) (· ≠ a) (by simp [toGQ])
-    simp only [toGQ] at hy
+    simp only [toGQ, ne_eq] at hy
     obtain ⟨hba, hpol⟩ := hy
     subst hba
     cases q

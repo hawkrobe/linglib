@@ -132,9 +132,8 @@ works with products in a bialgebra; missing from mathlib. -/
     Mathlib gap. -/
 noncomputable def Coalgebra.Repr.mul {R H : Type*}
     [CommSemiring R] [Semiring H] [Bialgebra R H]
-    {x y : H} (𝓡x : Coalgebra.Repr R x) (𝓡y : Coalgebra.Repr R y) :
-    Coalgebra.Repr R (x * y) where
-  ι := 𝓡x.ι × 𝓡y.ι
+    {x y : H} {ιx ιy : Type*} (𝓡x : Coalgebra.Repr R x ιx) (𝓡y : Coalgebra.Repr R y ιy) :
+    Coalgebra.Repr R (x * y) (ιx × ιy) where
   index := 𝓡x.index ×ˢ 𝓡y.index
   left := fun p => 𝓡x.left p.1 * 𝓡y.left p.2
   right := fun p => 𝓡x.right p.1 * 𝓡y.right p.2
@@ -179,36 +178,68 @@ theorem IsDualPrimitive.convBracket_mem
   -- Sweedler reprs for x, y, and x*y (via Coalgebra.Repr.mul).
   let 𝓡x := Coalgebra.Repr.arbitrary R x
   let 𝓡y := Coalgebra.Repr.arbitrary R y
-  -- Step 1. Express convBracket via any Repr.
-  have br_eq : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z,
-      convBracket L₁ L₂ z =
-        (∑ i ∈ 𝓡.index, L₁ (𝓡.left i) * L₂ (𝓡.right i)) -
-        (∑ i ∈ 𝓡.index, L₂ (𝓡.left i) * L₁ (𝓡.right i)) := fun z 𝓡 => by
-    show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) z = _
-    show (toConv L₁ * toConv L₂ : WithConv _).ofConv z -
-         (toConv L₂ * toConv L₁ : WithConv _).ofConv z = _
+  let 𝓡xy := 𝓡x.mul 𝓡y
+  -- Step 1. Express convBracket via any Repr. Universe-monomorphic helpers
+  -- (local `have` cannot be universe-polymorphic in Lean 4).
+  have br_eq_xy : convBracket L₁ L₂ (x * y) =
+      (∑ i ∈ 𝓡xy.index, L₁ (𝓡xy.left i) * L₂ (𝓡xy.right i)) -
+      (∑ i ∈ 𝓡xy.index, L₂ (𝓡xy.left i) * L₁ (𝓡xy.right i)) := by
+    show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) (x * y) = _
+    show (toConv L₁ * toConv L₂ : WithConv _).ofConv (x * y) -
+         (toConv L₂ * toConv L₁ : WithConv _).ofConv (x * y) = _
     exact congrArg₂ (· - ·)
-      (𝓡.convMul_apply (toConv L₁) (toConv L₂))
-      (𝓡.convMul_apply (toConv L₂) (toConv L₁))
+      (𝓡xy.convMul_apply (toConv L₁) (toConv L₂))
+      (𝓡xy.convMul_apply (toConv L₂) (toConv L₁))
+  have br_eq_x : convBracket L₁ L₂ x =
+      (∑ i ∈ 𝓡x.index, L₁ (𝓡x.left i) * L₂ (𝓡x.right i)) -
+      (∑ i ∈ 𝓡x.index, L₂ (𝓡x.left i) * L₁ (𝓡x.right i)) := by
+    show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) x = _
+    show (toConv L₁ * toConv L₂ : WithConv _).ofConv x -
+         (toConv L₂ * toConv L₁ : WithConv _).ofConv x = _
+    exact congrArg₂ (· - ·)
+      (𝓡x.convMul_apply (toConv L₁) (toConv L₂))
+      (𝓡x.convMul_apply (toConv L₂) (toConv L₁))
+  have br_eq_y : convBracket L₁ L₂ y =
+      (∑ i ∈ 𝓡y.index, L₁ (𝓡y.left i) * L₂ (𝓡y.right i)) -
+      (∑ i ∈ 𝓡y.index, L₂ (𝓡y.left i) * L₁ (𝓡y.right i)) := by
+    show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) y = _
+    show (toConv L₁ * toConv L₂ : WithConv _).ofConv y -
+         (toConv L₂ * toConv L₁ : WithConv _).ofConv y = _
+    exact congrArg₂ (· - ·)
+      (𝓡y.convMul_apply (toConv L₁) (toConv L₂))
+      (𝓡y.convMul_apply (toConv L₂) (toConv L₁))
   -- Step 2. Counit-collapse helpers (via `mul_one`, `one_mul`, `1*1=1` in WithConv).
-  have right_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z, ∀ L : H →ₗ[R] R,
-      ∑ i ∈ 𝓡.index, L (𝓡.left i) * counit (𝓡.right i) = L z := fun z 𝓡 L => by
-    have happly : (toConv L * (1 : WithConv (H →ₗ[R] R))) z = L z := by
-      rw [mul_one]
-    rw [𝓡.convMul_apply (toConv L) (1 : WithConv (H →ₗ[R] R))] at happly
+  have right_collapse_x : ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡x.index, L (𝓡x.left i) * counit (𝓡x.right i) = L x := fun L => by
+    have happly : (toConv L * (1 : WithConv (H →ₗ[R] R))) x = L x := by rw [mul_one]
+    rw [𝓡x.convMul_apply (toConv L) (1 : WithConv (H →ₗ[R] R))] at happly
     simpa [LinearMap.convOne_apply] using happly
-  have left_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z, ∀ L : H →ₗ[R] R,
-      ∑ i ∈ 𝓡.index, counit (𝓡.left i) * L (𝓡.right i) = L z := fun z 𝓡 L => by
-    have happly : ((1 : WithConv (H →ₗ[R] R)) * toConv L) z = L z := by
-      rw [one_mul]
-    rw [𝓡.convMul_apply (1 : WithConv (H →ₗ[R] R)) (toConv L)] at happly
+  have right_collapse_y : ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡y.index, L (𝓡y.left i) * counit (𝓡y.right i) = L y := fun L => by
+    have happly : (toConv L * (1 : WithConv (H →ₗ[R] R))) y = L y := by rw [mul_one]
+    rw [𝓡y.convMul_apply (toConv L) (1 : WithConv (H →ₗ[R] R))] at happly
     simpa [LinearMap.convOne_apply] using happly
-  have counit_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z,
-      ∑ i ∈ 𝓡.index, counit (R := R) (𝓡.left i) * counit (𝓡.right i) = counit z := fun z 𝓡 => by
-    have happly : ((1 : WithConv (H →ₗ[R] R)) * (1 : WithConv (H →ₗ[R] R))) z =
-        (1 : WithConv (H →ₗ[R] R)) z := by
-      rw [one_mul]
-    rw [𝓡.convMul_apply (1 : WithConv (H →ₗ[R] R)) (1 : WithConv (H →ₗ[R] R))] at happly
+  have left_collapse_x : ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡x.index, counit (𝓡x.left i) * L (𝓡x.right i) = L x := fun L => by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * toConv L) x = L x := by rw [one_mul]
+    rw [𝓡x.convMul_apply (1 : WithConv (H →ₗ[R] R)) (toConv L)] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  have left_collapse_y : ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡y.index, counit (𝓡y.left i) * L (𝓡y.right i) = L y := fun L => by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * toConv L) y = L y := by rw [one_mul]
+    rw [𝓡y.convMul_apply (1 : WithConv (H →ₗ[R] R)) (toConv L)] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  have counit_collapse_x :
+      ∑ i ∈ 𝓡x.index, counit (R := R) (𝓡x.left i) * counit (𝓡x.right i) = counit x := by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * (1 : WithConv (H →ₗ[R] R))) x =
+        (1 : WithConv (H →ₗ[R] R)) x := by rw [one_mul]
+    rw [𝓡x.convMul_apply (1 : WithConv (H →ₗ[R] R)) (1 : WithConv (H →ₗ[R] R))] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  have counit_collapse_y :
+      ∑ i ∈ 𝓡y.index, counit (R := R) (𝓡y.left i) * counit (𝓡y.right i) = counit y := by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * (1 : WithConv (H →ₗ[R] R))) y =
+        (1 : WithConv (H →ₗ[R] R)) y := by rw [one_mul]
+    rw [𝓡y.convMul_apply (1 : WithConv (H →ₗ[R] R)) (1 : WithConv (H →ₗ[R] R))] at happly
     simpa [LinearMap.convOne_apply] using happly
   -- Step 3. Sweedler-expand `(M ⋆ N)(x·y)` for any primitives M, N.
   -- Using h_M (resp. h_N) on L_*(x.l · y.l) (resp. L_*(x.r · y.r))
@@ -274,11 +305,11 @@ theorem IsDualPrimitive.convBracket_mem
     -- Split sums via add distribution and factor i-vs-j parts via sum_mul_sum.
     simp only [Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.mul_sum]
     -- Now each of the 4 terms is of the form (Σ_i f i) * (Σ_j g j). Apply collapse on y-sums.
-    rw [counit_collapse y 𝓡y, left_collapse y 𝓡y N, right_collapse y 𝓡y M]
+    rw [counit_collapse_y, left_collapse_y N, right_collapse_y M]
     -- The fourth term's inner-j-sum stays as a sum; the i-side collapses for terms 2/3/4.
-    rw [right_collapse x 𝓡x M, left_collapse x 𝓡x N, counit_collapse x 𝓡x]
+    rw [right_collapse_x M, left_collapse_x N, counit_collapse_x]
   -- Step 4. Rewrite goal via br_eq, unfold 𝓡xy = 𝓡x.mul 𝓡y, apply expand twice, ring.
-  rw [br_eq (x * y) (𝓡x.mul 𝓡y), br_eq x 𝓡x, br_eq y 𝓡y]
+  rw [br_eq_xy, br_eq_x, br_eq_y]
   change (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
             L₁ (𝓡x.left p.1 * 𝓡y.left p.2) * L₂ (𝓡x.right p.1 * 𝓡y.right p.2)) -
          (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,

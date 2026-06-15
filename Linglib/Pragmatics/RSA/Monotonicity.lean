@@ -74,7 +74,7 @@ namespace RSAConfig
     `cfg.L1agent.score u w₁ < cfg.L1agent.score u w₂` automatically.
 
     Specialization of `RationalAction.policy_lt_of_score_lt` to `L1agent`. -/
-@[gcongr]
+@[gcongr only]
 theorem L1_lt_of_score_lt (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W)
     (h : cfg.L1agent.score u w₁ < cfg.L1agent.score u w₂) :
     cfg.L1 u w₁ < cfg.L1 u w₂ :=
@@ -97,7 +97,7 @@ theorem L1_lt_iff_score_lt (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W) :
 /-- L1 cross-utterance comparison via cross-product. Different `u` means
     different denominators, so we use the cross-product trick (no positivity
     hypothesis needed — it's derived from the cross-product). -/
-@[gcongr]
+@[gcongr only]
 theorem L1_lt_cross_of_cross_lt (cfg : RSAConfig U W) (u₁ u₂ : U) (w : W)
     (h : cfg.L1agent.score u₁ w * cfg.L1agent.totalScore u₂ <
          cfg.L1agent.score u₂ w * cfg.L1agent.totalScore u₁) :
@@ -107,7 +107,7 @@ theorem L1_lt_cross_of_cross_lt (cfg : RSAConfig U W) (u₁ u₂ : U) (w : W)
 /-- S1 same-state comparison via score comparison.
 
     Both sides share `(l, w)`, hence the same `S1agent.totalScore w`. -/
-@[gcongr]
+@[gcongr only]
 theorem S1_lt_of_score_lt (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
     (u₁ u₂ : U)
     (h : (cfg.S1agent l).score w u₁ < (cfg.S1agent l).score w u₂) :
@@ -132,7 +132,7 @@ theorem S1_lt_iff_score_lt (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
 
 /-- S1 cross-world comparison via cross-product (different `w` → different
     denominator). -/
-@[gcongr]
+@[gcongr only]
 theorem S1_lt_cross_of_cross_lt (cfg : RSAConfig U W) (l : cfg.Latent)
     (w₁ w₂ : W) (u : U)
     (h : (cfg.S1agent l).score w₁ u * (cfg.S1agent l).totalScore w₂ <
@@ -144,7 +144,7 @@ theorem S1_lt_cross_of_cross_lt (cfg : RSAConfig U W) (l : cfg.Latent)
 
     Both sides share `(l, u)`, hence the same `L0agent.totalScore u`. The
     score IS the meaning, so this reduces to a comparison of meaning values. -/
-@[gcongr]
+@[gcongr only]
 theorem L0_lt_of_meaning_lt (cfg : RSAConfig U W) (l : cfg.Latent) (u : U)
     (w₁ w₂ : W)
     (h : cfg.meaning cfg.initial l u w₁ < cfg.meaning cfg.initial l u w₂) :

@@ -114,8 +114,7 @@ theorem exhaustive_answers {W E : Type*} [DecidableEq E]
   constructor
   · intro h e he
     have := List.map_eq_map_iff.mp h e he
-    simp at this
-    exact this
+    simpa using this
   · intro h
     exact List.map_eq_map_iff.mpr λ e he => by simp [h e he]
 

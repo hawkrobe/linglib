@@ -385,13 +385,13 @@ theorem trivial_satisfies_pattern :
     obtain ⟨k, a⟩ := c
     simp only [ColorCells] at hc
     subst hc
-    cases k <;> simp [trivialLooks]
+    cases k <;> simp [trivialLooks, HasContrastCondition.setContrast] <;> norm_num
   scalar_contrast_reduces_competitor := by
     intro c hc
     obtain ⟨k, a⟩ := c
     simp only [ScalarCells] at hc
     subst hc
-    cases k <;> simp [trivialLooks]
+    cases k <;> simp [trivialLooks, HasContrastCondition.setContrast] <;> norm_num
   material_effect_smaller := by
     intro cP cQ hP hQ
     obtain ⟨kP, aP⟩ := cP
@@ -401,21 +401,21 @@ theorem trivial_satisfies_pattern :
     subst hQ
     rcases hP with hC | hS
     all_goals (subst_vars; cases kP <;> cases kQ <;>
-      simp [contrastEffect, trivialLooks] <;> norm_num)
+      simp [contrastEffect, trivialLooks, HasContrastCondition.setContrast] <;> norm_num)
   scalar_baseline_lower_than_color := by
     intro cS cC hS hC
     obtain ⟨kS, aS⟩ := cS
     obtain ⟨kC, aC⟩ := cC
     simp only [ScalarCells, ColorCells] at hS hC
     subst hS; subst hC
-    simp [roleSum, trivialLooks]; norm_num
+    simp [roleSum, trivialLooks, HasContrastCondition.setContrast]; norm_num
   scalar_baseline_lower_than_material := by
     intro cS cM hS hM
     obtain ⟨kS, aS⟩ := cS
     obtain ⟨kM, aM⟩ := cM
     simp only [ScalarCells, MaterialCells] at hS hM
     subst hS; subst hM
-    simp [roleSum, trivialLooks]; norm_num
+    simp [roleSum, trivialLooks, HasContrastCondition.setContrast]; norm_num
 
 -- ============================================================================
 -- §6. Cross-Study Bridges

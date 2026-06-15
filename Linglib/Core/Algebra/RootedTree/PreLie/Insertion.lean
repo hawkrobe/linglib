@@ -397,7 +397,7 @@ theorem insertion_perm_guests (t : Planar α)
       (insertion t Ts').map Nonplanar.mk := by
   have := pairSum_perm_guests t [] h
   unfold pairSum at this
-  simpa [insertion_def, Multiset.map_coe, List.map_map] using this
+  simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
 
 /-- Guest-list `Forall₂ PlanarEquiv` lifts to `insertion mk`-equality. -/
 theorem insertion_planarEquiv_guests (t : Planar α)

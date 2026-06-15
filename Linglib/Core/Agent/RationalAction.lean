@@ -145,7 +145,7 @@ theorem RationalAction.policy_not_lt_of_score_le (ra : RationalAction S A) (s : 
 
 /-- Strict policy monotonicity: strictly higher score gives strictly higher
     probability. -/
-@[gcongr]
+@[gcongr only]
 theorem RationalAction.policy_lt_of_score_lt (ra : RationalAction S A) (s : S)
     (a₁ a₂ : A) (hlt : ra.score s a₁ < ra.score s a₂) :
     ra.policy s a₁ < ra.policy s a₂ := by
@@ -181,7 +181,7 @@ theorem RationalAction.policy_lt_cross (ra : RationalAction S A) (s₁ s₂ : S)
 /-- Cross-state policy comparison, with the `totalScore > 0` hypotheses derived
     from the cross-product inequality itself (so no positivity hypothesis is
     needed). -/
-@[gcongr]
+@[gcongr only]
 theorem RationalAction.policy_lt_cross_of_cross_lt (ra : RationalAction S A)
     (s₁ s₂ : S) (a : A)
     (h_cross : ra.score s₁ a * ra.totalScore s₂ < ra.score s₂ a * ra.totalScore s₁) :

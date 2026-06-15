@@ -134,7 +134,7 @@ theorem isCompatible_iff_finset (E : Finset (Finset W)) :
       rw [mem_inf_id_iff]
       intro a ha
       have : (↑a : Set W) ∈ asSetOfSets E := mem_asSetOfSets.mpr ⟨a, ha, rfl⟩
-      simpa using hu _ this
+      exact Finset.mem_coe.mp (hu _ this)
   · rintro ⟨hsub, hphi, ⟨u, hu⟩⟩
     refine ⟨?_, ?_, ?_⟩
     · exact mem_asSetOfSets.mpr ⟨φ, hphi, rfl⟩
@@ -150,7 +150,7 @@ theorem isCompatible_iff_finset (E : Finset (Finset W)) :
       intro s hs
       rcases mem_asSetOfSets.mp hs with ⟨a, ha_mem, rfl⟩
       rw [mem_inf_id_iff] at hu
-      simpa using hu a ha_mem
+      exact Finset.mem_coe.mpr (hu a ha_mem)
 
 instance decidableIsCompatible (E : Finset (Finset W)) :
     Decidable (IsCompatible ALT φ E) :=

@@ -138,7 +138,7 @@ namespace RegularProp
 
 instance : SetLike (RegularProp F) S where
   coe := RegularProp.carrier
-  coe_injective' := by
+  coe_injective := by
     rintro ⟨A, _⟩ ⟨B, _⟩ (rfl : A = B)
     rfl
 

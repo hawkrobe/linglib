@@ -633,8 +633,8 @@ theorem product_language_le (G : ContextFreeGrammar T) (M : DFA T σ) :
         simp only [List.length_append, List.length_cons, List.length_nil] at hlen
         have hpre : pre = [] := List.length_eq_zero_iff.mp (by omega)
         have hpost : post = [] := List.length_eq_zero_iff.mp (by omega)
-        rw [hpre, hpost] at ht_eq
-        simpa using ht_eq
+        rw [hpre, hpost, List.nil_append, List.append_nil] at ht_eq
+        exact ht_eq
       subst hv_eq
       -- Now apply product_derives_lift on the rest.
       have hp : Projects (G := G) (σ := σ)

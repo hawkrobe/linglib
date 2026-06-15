@@ -74,7 +74,8 @@ structure Threshold (max : Nat) where
   value : Fin max
   deriving Repr, DecidableEq
 
-instance {n : Nat} (h : 0 < n := by omega) : Inhabited (Threshold n) := ⟨⟨0, h⟩⟩
+instance {n : Nat} [NeZero n] : Inhabited (Threshold n) :=
+  ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩⟩
 
 /-- `Threshold max` inherits a linear order from `Fin max`. -/
 instance {max : Nat} : LinearOrder (Threshold max) :=
