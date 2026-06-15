@@ -79,6 +79,146 @@ theorem weightList_contractUnaryList_add :
     omega
 end
 
+/-! ### Bridges to `List.map` / `List.sum` and the ≥2-child reductions -/
+
+theorem contractUnaryList_eq_map (cs : List (Planar α)) :
+    contractUnaryList cs = cs.map contractUnary := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [contractUnaryList_cons, List.map_cons, ih]
+
+theorem unaryCountList_eq_sum_map (cs : List (Planar α)) :
+    unaryCountList cs = (cs.map unaryCount).sum := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [unaryCountList_cons, List.map_cons, List.sum_cons, ih]
+
+theorem contractUnary_node_of_two_le (a : α) (L : List (Planar α)) (h : 2 ≤ L.length) :
+    contractUnary (.node a L) = .node a (contractUnaryList L) := by
+  rcases L with _ | ⟨c, _ | ⟨d, cs⟩⟩
+  · simp at h
+  · simp at h
+  · rfl
+
+theorem unaryCount_node_of_two_le (a : α) (L : List (Planar α)) (h : 2 ≤ L.length) :
+    unaryCount (.node a L) = unaryCountList L := by
+  rcases L with _ | ⟨c, _ | ⟨d, cs⟩⟩
+  · simp at h
+  · simp at h
+  · rfl
+
+private theorem two_le_length_append_of {pre post : List (Planar α)} {x : Planar α}
+    (h : ¬ (pre = [] ∧ post = [])) : 2 ≤ (pre ++ x :: post).length := by
+  rcases pre with _ | ⟨p, ps⟩ <;> rcases post with _ | ⟨q, qs⟩
+  · exact absurd ⟨rfl, rfl⟩ h
+  · simp only [List.length_append, List.length_nil, List.length_cons]; omega
+  · simp only [List.length_append, List.length_nil, List.length_cons]; omega
+  · simp only [List.length_append, List.length_cons]; omega
+
+/-! ### `unaryCount` is `PlanarEquiv`-invariant -/
+
+private theorem unaryCountList_perm {cs ds : List (Planar α)} (h : cs.Perm ds) :
+    unaryCountList cs = unaryCountList ds := by
+  induction h with
+  | nil => rfl
+  | cons _ _ ih => simp only [unaryCountList_cons]; omega
+  | swap _ _ _ => simp only [unaryCountList_cons]; omega
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+theorem unaryCount_planarStep {t s : Planar α} (hstep : PlanarStep t s) :
+    unaryCount t = unaryCount s := by
+  induction hstep with
+  | @swapAtRoot a l r pre post =>
+    rw [unaryCount_node_of_two_le a (pre ++ l :: r :: post)
+          (two_le_length_append_of (by simp)),
+        unaryCount_node_of_two_le a (pre ++ r :: l :: post)
+          (two_le_length_append_of (by simp))]
+    exact unaryCountList_perm ((List.Perm.swap r l post).append_left pre)
+  | @recurse a pre old new post _ ih =>
+    by_cases h1 : pre = [] ∧ post = []
+    · obtain ⟨rfl, rfl⟩ := h1
+      show 1 + unaryCount old = 1 + unaryCount new
+      omega
+    · rw [unaryCount_node_of_two_le a (pre ++ old :: post) (two_le_length_append_of h1),
+          unaryCount_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1),
+          unaryCountList_eq_sum_map, unaryCountList_eq_sum_map,
+          List.map_append, List.map_append, List.map_cons, List.map_cons,
+          List.sum_append, List.sum_append, List.sum_cons, List.sum_cons, ih]
+
+theorem unaryCount_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    unaryCount t = unaryCount s := by
+  induction h with
+  | rel _ _ hstep => exact unaryCount_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-! ### `contractUnary` is `PlanarEquiv`-invariant -/
+
+theorem contractUnary_planarStep {t s : Planar α} (hstep : PlanarStep t s) :
+    PlanarEquiv (contractUnary t) (contractUnary s) := by
+  induction hstep with
+  | @swapAtRoot a l r pre post =>
+    rw [contractUnary_node_of_two_le a (pre ++ l :: r :: post)
+          (two_le_length_append_of (by simp)),
+        contractUnary_node_of_two_le a (pre ++ r :: l :: post)
+          (two_le_length_append_of (by simp)),
+        contractUnaryList_eq_map, contractUnaryList_eq_map]
+    exact planarEquiv_root_perm
+      ((List.Perm.append_left pre (List.Perm.swap r l post)).map contractUnary)
+  | @recurse a pre old new post _ ih =>
+    by_cases h1 : pre = [] ∧ post = []
+    · obtain ⟨rfl, rfl⟩ := h1
+      exact ih
+    · rw [contractUnary_node_of_two_le a (pre ++ old :: post) (two_le_length_append_of h1),
+          contractUnary_node_of_two_le a (pre ++ new :: post) (two_le_length_append_of h1),
+          contractUnaryList_eq_map, contractUnaryList_eq_map,
+          List.map_append, List.map_append, List.map_cons, List.map_cons]
+      apply planarEquiv_node_componentwise
+      generalize pre.map contractUnary = P
+      induction P with
+      | nil =>
+        exact List.Forall₂.cons ih
+          (List.forall₂_same.mpr (fun _ _ => PlanarEquiv.refl _))
+      | cons p ps ihp => exact List.Forall₂.cons (PlanarEquiv.refl p) ihp
+
+theorem contractUnary_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    PlanarEquiv (contractUnary t) (contractUnary s) := by
+  induction h with
+  | rel _ _ hstep => exact contractUnary_planarStep hstep
+  | refl _ => exact PlanarEquiv.refl _
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
 end Planar
+
+/-! ### Nonplanar `contractUnary` / `unaryCount` -/
+
+namespace Nonplanar
+
+variable {α : Type*}
+
+/-- The number of unary nodes of a nonplanar tree. -/
+def unaryCount : Nonplanar α → Nat :=
+  Nonplanar.lift Planar.unaryCount (fun _ _ h => Planar.unaryCount_planarEquiv h)
+
+@[simp] theorem unaryCount_mk (t : Planar α) : (mk t).unaryCount = t.unaryCount := rfl
+
+/-- Rebinarize: contract every unary node (MCB Δᵈ, Def. 1.2.5). -/
+def contractUnary : Nonplanar α → Nonplanar α :=
+  Quotient.map Planar.contractUnary (fun _ _ h => Planar.contractUnary_planarEquiv h)
+
+@[simp] theorem contractUnary_mk (t : Planar α) :
+    contractUnary (mk t) = mk (Planar.contractUnary t) := rfl
+
+/-- Each contracted unary node drops one vertex. -/
+theorem weight_contractUnary_add (t : Nonplanar α) :
+    (contractUnary t).weight + t.unaryCount = t.weight := by
+  refine Quotient.inductionOn t fun p => ?_
+  show (mk (Planar.contractUnary p)).weight + (mk p).unaryCount = (mk p).weight
+  rw [weight_mk, unaryCount_mk, weight_mk]
+  exact Planar.weight_contractUnary_add p
+
+end Nonplanar
 
 end RootedTree
