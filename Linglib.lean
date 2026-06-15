@@ -1880,6 +1880,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.GenericNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
@@ -2182,6 +2183,7 @@ import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Syntax.Minimalist.Merge.Phase
 import Linglib.Syntax.Minimalist.Merge.PhaseCoproduct
+import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 import Linglib.Syntax.Minimalist.SpellOut
 import Linglib.Syntax.Minimalist.Linearization.LCA
 import Linglib.Morphology.DM.VocabSimple
