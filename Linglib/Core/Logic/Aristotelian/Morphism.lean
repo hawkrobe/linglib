@@ -133,6 +133,7 @@ structure BooleanIso (D : Diagram ι α) (D' : Diagram ι' α') where
   extends_corners : ∀ i, closureIso (D.corner i) = D'.corner (toEquiv i)
 
 namespace BooleanIso
+open BooleanSubalgebra Diagram
 
 /-- The identity Boolean isomorphism. -/
 @[refl] protected def refl (D : Diagram ι α) : BooleanIso D D :=
@@ -158,14 +159,11 @@ rewrite with `disjoint_iff_forall` / `codisjoint_iff_forall` / `le_iff_forall` f
 def toAristotelianIso (bi : BooleanIso D D') : AristotelianIso D D' where
   toEquiv := bi.toEquiv
   map_disjoint i j := by
-    simp only [← Diagram.coe_corner, BooleanSubalgebra.disjoint_coe, ← bi.extends_corners,
-      disjoint_map_orderIso_iff]
+    simp only [← coe_corner, disjoint_coe, ← bi.extends_corners, disjoint_map_orderIso_iff]
   map_codisjoint i j := by
-    simp only [← Diagram.coe_corner, BooleanSubalgebra.codisjoint_coe, ← bi.extends_corners,
-      codisjoint_map_orderIso_iff]
+    simp only [← coe_corner, codisjoint_coe, ← bi.extends_corners, codisjoint_map_orderIso_iff]
   map_lt i j := by
-    simp only [← Diagram.coe_corner, BooleanSubalgebra.coe_lt_coe, ← bi.extends_corners,
-      bi.closureIso.lt_iff_lt]
+    simp only [← coe_corner, coe_lt_coe, ← bi.extends_corners, bi.closureIso.lt_iff_lt]
 
 /-- Forget a Boolean isomorphism down to its underlying Aristotelian isomorphism. -/
 instance : CoeOut (BooleanIso D D') (AristotelianIso D D') := ⟨toAristotelianIso⟩
