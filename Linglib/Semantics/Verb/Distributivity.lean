@@ -14,10 +14,9 @@ denotation rather than stored. `Verb.StratifiesOver` evaluates
 `CosModel` denotation along an actual role relation.
 
 This is the owner-relative home (P-OWNER in the Verb-API roadmap) for
-distributivity: it supersedes Bool distributivity tags and the
-see/kill/meet-hardcoding `Stratified.VerbDistributivity` postulate class,
-which asked distributivity of free-floating event predicates rather than
-of a verb's denotation.
+distributivity: it supersedes the Bool distributivity tags and the former
+see/kill/meet-hardcoding postulate class, which asked distributivity of
+free-floating event predicates rather than of a verb's denotation.
 
 ## Main definitions
 
