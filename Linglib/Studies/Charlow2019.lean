@@ -103,7 +103,7 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
   let g : Assignment E := λ _ => e₁
   let h : Assignment E := Function.update g 0 e₂
   refine ⟨g, h, ?_, ?_, ?_⟩
-  · intro heq; exact hne (by simpa using congr_fun heq 0)
+  · intro heq; exact hne (by simpa [g, h] using congr_fun heq 0)
   · exact ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₂)),
            e₂, update_eq_ite g 0 e₂, by simp⟩
   · refine ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₁)),

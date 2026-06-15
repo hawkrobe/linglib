@@ -329,15 +329,13 @@ private theorem squaredDist_update (a b : FormVec n) (j₀ : Fin n) (x : ℝ) :
     squaredDist (Function.update a j₀ x) b
       = squaredDist a b - (a j₀ - b j₀) ^ 2 + (x - b j₀) ^ 2 := by
   unfold squaredDist
-  have h : ∀ j, (Function.update a j₀ x j - b j) ^ 2
-      = Function.update (fun j' => (a j' - b j') ^ 2) j₀ ((x - b j₀) ^ 2) j := fun j => by
-    rcases eq_or_ne j j₀ with hj | hj
-    · subst hj; simp only [Function.update_self]
-    · simp only [Function.update_of_ne hj]
-  rw [Finset.sum_congr rfl fun j _ => h j,
-    Finset.sum_update_of_mem (Finset.mem_univ j₀),
-    Finset.sum_eq_sum_diff_singleton_add (Finset.mem_univ j₀)
-      (fun j' => (a j' - b j') ^ 2)]
+  rw [← Finset.add_sum_erase Finset.univ
+        (fun j => (Function.update a j₀ x j - b j) ^ 2) (Finset.mem_univ j₀),
+      ← Finset.add_sum_erase Finset.univ
+        (fun j => (a j - b j) ^ 2) (Finset.mem_univ j₀),
+      Finset.sum_congr rfl fun j hj => by
+        rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]]
+  simp only [Function.update_self]
   ring
 
 /-- **T-Coordinate-optimality**: `G` is an ERM solution iff at every form

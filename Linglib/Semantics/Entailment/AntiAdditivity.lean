@@ -304,7 +304,7 @@ theorem atMost_not_antiAdditive :
     have hall_w0 : ∀ w ∈ ws, w = .w0 := by
       intro w hw
       have := (hall w hw).2
-      simpa [p0] using this
+      exact this
     -- A nodup list whose every element is w0 has length ≤ 1
     rcases ws with _ | ⟨a, t⟩
     · simp

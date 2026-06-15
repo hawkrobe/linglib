@@ -185,7 +185,7 @@ nontrivial `polar p` question are all decidable. These reduce to
 
 /-- `Resolves σ (polar p)` is decidable when `σ ⊆ p` and `σ ⊆ pᶜ` are
     decidable and `p`'s nontriviality is given. -/
-instance Resolves.decidable_polar {p σ : Set W}
+def Resolves.decidable_polar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (Resolves σ (polar p)) :=
@@ -194,7 +194,7 @@ instance Resolves.decidable_polar {p σ : Set W}
 /-- `MentionAll σ (polar p)` is decidable under the same hypotheses as
     `Resolves`. The two are equivalent on polar questions: deciding
     `p` is the only requirement. -/
-instance MentionAll.decidable_polar {p σ : Set W}
+def MentionAll.decidable_polar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (MentionAll σ (polar p)) :=

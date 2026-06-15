@@ -518,7 +518,8 @@ theorem transfer_repr {W α : Type*}
     ∀ A B : Set W, sys.ge A B ↔ (transportMeasure e m).inducedGe A B := by
   intro A B
   have h := hm (e '' A) (e '' B)
-  simpa only [transportFA, comapFA, Equiv.symm_image_image] using h
+  simpa only [transportFA, comapFA, Equiv.symm_image_image, transportMeasure,
+    FinAddMeasure.inducedGe] using h
 
 /-- Null pattern transport: j is null in `transportFA σ sys` iff `σ.symm j` is null in `sys`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)

@@ -239,7 +239,8 @@ theorem Path.length_lt_of_nodup [DecidableEq α] {r : α → α → Prop} {a b :
   have hsub : List.Subperm (b :: chain) s :=
     hbchain_nodup.subperm hbchain_subset
   have hle : (b :: chain).length ≤ s.length := hsub.length_le
-  simpa using hle
+  simp only [List.length_cons] at hle
+  omega
 
 -- ----------------------------------------------------------------------------
 -- Bounded BFS over a step function
@@ -368,7 +369,8 @@ theorem Path.length_lt_of_nodup_finset [DecidableEq α] {r : α → α → Prop}
   have h_len_eq : (b :: chain).toFinset.card = (b :: chain).length :=
     List.toFinset_card_of_nodup hbchain_nodup
   have : (b :: chain).length ≤ s.card := h_len_eq ▸ h_card_le
-  simpa using this
+  simp only [List.length_cons] at this
+  omega
 
 /-- Bounded BFS over a `Finset`-valued step function. Internal helper for
 `decidable_of_finset_step`. -/

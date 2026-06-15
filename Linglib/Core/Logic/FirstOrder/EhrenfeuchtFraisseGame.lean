@@ -225,6 +225,6 @@ theorem nEquiv_of_backForth {k : ℕ} (M N : Bundled.{w} L.Structure)
   have key := BackForth.agree h (BoundedFormula.relabelEquiv e φ) hqr
   rw [BoundedFormula.realize_relabelEquiv, BoundedFormula.realize_relabelEquiv] at key
   simpa only [Sentence.Realize, Formula.Realize,
-    Subsingleton.elim (default ∘ e.symm) default] using key
+    Subsingleton.elim (default ∘ ⇑e) default] using key
 
 end FirstOrder.Language

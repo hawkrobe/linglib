@@ -411,7 +411,7 @@ theorem realize_st? (K : KripkeStructure (monadicLang Const Pred) W M) :
         intro hsort
         obtain ⟨d, hd⟩ : ∃ d : M,
             Function.update val (Sum.inl x) z (Sum.inl x) = Sum.inr d := by
-          simpa using hsort
+          simpa [stStructure_relMap_indiv] using hsort
         rw [Function.update_self] at hd
         subst hd
         refine (ih hφ ?_ ?_).mp (h d)
@@ -472,7 +472,7 @@ theorem realize_st? (K : KripkeStructure (monadicLang Const Pred) W M) :
         obtain ⟨hsort, hreal⟩ := hz
         obtain ⟨d, hd⟩ : ∃ d : M,
             Function.update val (Sum.inl x) z (Sum.inl x) = Sum.inr d := by
-          simpa using hsort
+          simpa [stStructure_relMap_indiv] using hsort
         rw [Function.update_self] at hd
         subst hd
         refine ⟨d, (ih hφ ?_ ?_).mpr hreal⟩

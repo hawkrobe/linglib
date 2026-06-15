@@ -54,7 +54,8 @@ structure ThresholdPair (max : Nat) where
   gap_exists : neg ≤ pos := by decide
   deriving Repr
 
-instance {n : Nat} (h : 0 < n := by omega) : Inhabited (ThresholdPair n) :=
+instance {n : Nat} [NeZero n] : Inhabited (ThresholdPair n) :=
+  have h : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   ⟨{ pos := ⟨⟨0, h⟩⟩, neg := ⟨⟨0, h⟩⟩, gap_exists := le_refl _ }⟩
 
 instance {n : Nat} : BEq (ThresholdPair n) where

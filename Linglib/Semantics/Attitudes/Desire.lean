@@ -1108,13 +1108,14 @@ theorem wantWithSloman_blocks_conflict
     (h_p_ne_negp : (p : Set W) ≠ (fun w => ¬ p w)) :
     ¬ (wantWithSloman belS pr V θ alts p ∧
        wantWithSloman belS pr V θ alts (fun w => ¬ p w)) := by
+  simp only [wantWithSloman, slomanPrinciple]
   rintro ⟨⟨_, hSlomanP⟩, ⟨_, hSlomanNegP⟩⟩
   -- Sloman for p: E_V(p) > E_V(¬p) (since ¬p is in alts and ≠ p)
-  have h1 : expectedValue pr V belS p > expectedValue pr V belS (fun w => ¬ p w) :=
-    hSlomanP _ h_negp_in_alts h_p_ne_negp.symm
+  have h1 : expectedValue pr V belS p > expectedValue pr V belS (fun w => ¬ p w) := by
+    exact hSlomanP ⟨fun w => ¬ p w, inferInstance⟩ h_negp_in_alts h_p_ne_negp.symm
   -- Sloman for ¬p: E_V(¬p) > E_V(p) (since p is in alts and ≠ ¬p)
-  have h2 : expectedValue pr V belS (fun w => ¬ p w) > expectedValue pr V belS p :=
-    hSlomanNegP _ h_p_in_alts h_p_ne_negp
+  have h2 : expectedValue pr V belS (fun w => ¬ p w) > expectedValue pr V belS p := by
+    exact hSlomanNegP ⟨p, inferInstance⟩ h_p_in_alts h_p_ne_negp
   exact absurd (lt_trans h1 h2) (lt_irrefl _)
 
 /-! ### §6. Intermediacy of `expectedValue` (paper §7.5, §7.6 p.188)

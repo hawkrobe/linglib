@@ -1162,6 +1162,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
     -- h_collapse uses Classical.decEq for the if-then-else; goal uses local instance.
     -- Decidable instances on the same proposition are subsingletons.
     convert h_collapse using 4
+    · rfl
   · -- A is not singleton-a-rooted. bMinusLin a (of' A) = 0 and counit (of' A) handled by sub-cases.
     have hBmin : bMinusLin (R := R) a (ConnesKreimer.of' A) = 0 := by
       show bMinusLin (R := R) a (of' A) = 0
