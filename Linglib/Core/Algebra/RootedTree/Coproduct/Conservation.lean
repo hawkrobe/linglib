@@ -294,4 +294,199 @@ theorem cutSummandsCN_lexical_conservation (τ : Nonplanar (α ⊕ β) → β)
   have ht := cutSummandsCN_traceLeafCount τ T p hp
   omega
 
+/-! ### Non-degeneracy: lexical-rooted pieces have a non-trace vertex
+
+The single-cut α extraction identity (eq. 1.6.8) needs that each piece (the
+extracted subtree, the trunk, the whole tree) has at least one non-trace
+vertex, so that `accCountC = #V − 1 − #trace` does not truncate. Crown
+components are always `Sum.inl`-rooted (the Δ^c policy declines to cut trace
+nodes), and the trunk keeps the tree's root. -/
+
+namespace Planar
+
+variable {α β : Type*}
+
+mutual
+theorem traceLeafCount_le_weight :
+    ∀ (t : Planar (α ⊕ β)), traceLeafCount t ≤ weight t
+  | .node (Sum.inl _) cs => by
+    rw [traceLeafCount_inl]
+    show traceLeafCountList cs ≤ 1 + weightList cs
+    have := traceLeafCountList_le_weightList cs
+    omega
+  | .node (Sum.inr _) [] => Nat.le_refl _
+  | .node (Sum.inr _) (c :: cs) => by
+    rw [traceLeafCount_inr_cons]
+    show traceLeafCountList (c :: cs) ≤ 1 + weightList (c :: cs)
+    have := traceLeafCountList_le_weightList (c :: cs)
+    omega
+theorem traceLeafCountList_le_weightList :
+    ∀ (cs : List (Planar (α ⊕ β))), traceLeafCountList cs ≤ weightList cs
+  | [] => Nat.zero_le _
+  | c :: cs => by
+    rw [traceLeafCountList_cons]
+    show traceLeafCount c + traceLeafCountList cs ≤ weight c + weightList cs
+    have h1 := traceLeafCount_le_weight c
+    have h2 := traceLeafCountList_le_weightList cs
+    omega
+end
+
+theorem traceLeafCount_lt_weight_of_inl (a : α) (cs : List (Planar (α ⊕ β))) :
+    traceLeafCount (Planar.node (Sum.inl a) cs) < weight (Planar.node (Sum.inl a) cs) := by
+  rw [traceLeafCount_inl]
+  show traceLeafCountList cs < 1 + weightList cs
+  have := traceLeafCountList_le_weightList cs
+  omega
+
+end Planar
+
+namespace ConnesKreimer
+
+variable {α β : Type*}
+
+mutual
+/-- Every crown component of a cut is one the policy chose to extract. -/
+theorem cutSummandsG_crown_isSome
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (t : Planar (α ⊕ β)), ∀ p ∈ cutSummandsG extract t,
+      ∀ Tv ∈ p.1, extract Tv ≠ none
+  | .node a cs => by
+    intro p hp Tv hTv
+    rw [cutSummandsG_node] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    exact cutListSummandsG_crown_isSome extract cs q hq Tv hTv
+theorem cutListSummandsG_crown_isSome
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (cs : List (Planar (α ⊕ β))), ∀ q ∈ cutListSummandsG extract cs,
+      ∀ Tv ∈ q.1, extract Tv ≠ none
+  | [] => by
+    intro q hq Tv hTv
+    rw [cutListSummandsG_nil] at hq
+    obtain rfl := Multiset.mem_singleton.mp hq
+    exact absurd hTv (Multiset.notMem_zero Tv)
+  | t :: ts => by
+    intro q hq Tv hTv
+    rw [cutListSummandsG_cons] at hq
+    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
+    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
+    rcases Multiset.mem_add.mp hTv with h | h
+    · exact augActionG_crown_isSome extract t pr.1 ha Tv h
+    · exact cutListSummandsG_crown_isSome extract ts pr.2 hq' Tv h
+theorem augActionG_crown_isSome
+    (extract : Planar (α ⊕ β) → Option (List (Planar (α ⊕ β)))) :
+    ∀ (t : Planar (α ⊕ β)), ∀ a ∈ augActionG extract t,
+      ∀ Tv ∈ a.1, extract Tv ≠ none
+  | t => by
+    intro a ha Tv hTv
+    rw [augActionG_eq] at ha
+    rcases Multiset.mem_add.mp ha with h | h
+    · cases hex : extract t with
+      | none => rw [hex] at h; exact absurd h (Multiset.notMem_zero a)
+      | some r =>
+        rw [hex] at h
+        obtain rfl := Multiset.mem_singleton.mp h
+        obtain rfl := Multiset.mem_singleton.mp hTv
+        rw [hex]; exact Option.some_ne_none r
+    · obtain ⟨pp, hpp, rfl⟩ := Multiset.mem_map.mp h
+      exact cutSummandsG_crown_isSome extract t pp hpp Tv hTv
+end
+
+/-- The Δ^c policy extracts only `Sum.inl`-rooted (lexical) subtrees. -/
+theorem extractC_ne_none_imp_inl (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β))
+    (h : extractC τ t ≠ none) : ∃ a cs, t = Planar.node (Sum.inl a) cs := by
+  cases t with
+  | node x cs =>
+    cases x with
+    | inl a => exact ⟨a, cs, rfl⟩
+    | inr b => rw [extractC_inr] at h; exact absurd rfl h
+
+end ConnesKreimer
+
+namespace Nonplanar
+
+variable {α β : Type*}
+
+/-- A lexical-rooted (`Sum.inl`) nonplanar tree has a non-trace vertex
+    (its root), so its trace leaves number strictly fewer than its vertices. -/
+theorem traceLeafCount_lt_weight_of_rootInl (t : Nonplanar (α ⊕ β)) (a : α)
+    (h : t.rootLabel = Sum.inl a) : t.traceLeafCount < t.weight := by
+  obtain ⟨t₀, rfl⟩ : ∃ t₀ : Planar (α ⊕ β), t = Nonplanar.mk t₀ :=
+    ⟨t.out, (Quotient.out_eq t).symm⟩
+  rw [Nonplanar.rootLabel_mk] at h
+  cases t₀ with
+  | node x cs =>
+    rw [Planar.label_node] at h
+    subst h
+    rw [Nonplanar.traceLeafCount_mk, Nonplanar.weight_mk]
+    exact Planar.traceLeafCount_lt_weight_of_inl a cs
+
+end Nonplanar
+
+/-! ### α extraction identity (MCB eq. 1.6.8) -/
+
+variable {α β : Type*}
+
+/-- Crown components of a Δ^c cut are lexical-rooted, hence have strictly
+    more vertices than trace leaves. -/
+theorem cutSummandsCN_crown_traceLeafCount_lt_weight (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.traceLeafCount < Tv.weight := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp Tv hTv
+  rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  change Tv ∈ q.1.map Nonplanar.mk at hTv
+  obtain ⟨Tv₀, hTv₀, rfl⟩ := Multiset.mem_map.mp hTv
+  have hne := ConnesKreimer.cutSummandsG_crown_isSome _ T₀ q hq Tv₀ hTv₀
+  obtain ⟨a, cs, rfl⟩ := ConnesKreimer.extractC_ne_none_imp_inl (τ ∘ Nonplanar.mk) Tv₀ hne
+  rw [Nonplanar.traceLeafCount_mk, Nonplanar.weight_mk]
+  exact Planar.traceLeafCount_lt_weight_of_inl a cs
+
+/-- A Δ^c cut never touches the root: the trunk keeps the tree's root label. -/
+theorem cutSummandsCN_trunk_rootLabel (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T, p.2.rootLabel = T.rootLabel := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp
+  rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  cases T₀ with
+  | node a cs =>
+    rw [ConnesKreimer.cutSummandsG_node] at hq
+    obtain ⟨q', hq', rfl⟩ := Multiset.mem_map.mp hq
+    show (Nonplanar.mk (Planar.node a q'.2)).rootLabel =
+      (Nonplanar.mk (Planar.node a cs)).rootLabel
+    rw [Nonplanar.rootLabel_mk, Nonplanar.rootLabel_mk, Planar.label_node,
+        Planar.label_node]
+
+/-- **Single-cut accessible-term extraction** (MCB eq. 1.6.8): contracting one
+    accessible subtree `Tv` out of a lexical-rooted syntactic object splits its
+    accessible terms as `αᶜ(T) = αᶜ(Tv) + αᶜ(T/^c Tv) + 1` — the `+1` is the
+    contraction itself. Uses `accCountC` throughout (the trace placeholder left
+    at the cut site is not an accessible term). -/
+theorem cutSummandsCN_accCountC_single (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) (a₀ : α) (F₀ : Forest (Nonplanar (α ⊕ β)))
+    (hT : T = Nonplanar.node (Sum.inl a₀) F₀)
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
+    (Tv : Nonplanar (α ⊕ β)) (hcard : p.1 = {Tv}) :
+    T.accCountC = Tv.accCountC + p.2.accCountC + 1 := by
+  have hw := cutSummandsCN_weight τ T p hp
+  have hl := cutSummandsCN_traceLeafCount τ T p hp
+  have hTv_lt : Tv.traceLeafCount < Tv.weight :=
+    cutSummandsCN_crown_traceLeafCount_lt_weight τ T p hp Tv
+      (by rw [hcard]; exact Multiset.mem_singleton_self Tv)
+  have hT_root : T.rootLabel = Sum.inl a₀ := by
+    rw [hT, Nonplanar.rootLabel_node]
+  have hT_lt : T.traceLeafCount < T.weight :=
+    Nonplanar.traceLeafCount_lt_weight_of_rootInl T a₀ hT_root
+  have hp2_lt : p.2.traceLeafCount < p.2.weight :=
+    Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+      ((cutSummandsCN_trunk_rootLabel τ T p hp).trans hT_root)
+  rw [hcard] at hw hl
+  simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw hl
+  simp only [Nonplanar.accCountC, Nonplanar.accCount]
+  omega
+
 end RootedTree
