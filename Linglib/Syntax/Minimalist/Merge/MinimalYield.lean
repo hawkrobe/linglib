@@ -1,6 +1,7 @@
 import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
+import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
@@ -108,6 +109,22 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ �
   · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
     rw [hnode]
     omega
+
+/-- `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ
+    admissible cut: deleting `mover` from `T` and rebinarizing the remainder
+    (`contractUnary p.2`) leaves `b₀`, `α`, `σ` unchanged. `unaryCount p.2 = 1`
+    characterizes a single edge cut at a binary node. -/
+theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : Nonplanar (α ⊕ β))
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ ConnesKreimer.cutSummandsN T)
+    (mover : Nonplanar (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.unaryCount = 1) :
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.alpha ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) :=
+  im_pair_size_deltas_deletion lbl
+    (ConnesKreimer.cutSummandsN_accCount_single_deletion T p hp mover hcard huc)
 
 /-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ`, `σᶜ` by one
     (Δᶜ counting): the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
