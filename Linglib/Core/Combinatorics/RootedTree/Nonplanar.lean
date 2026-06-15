@@ -174,6 +174,58 @@ theorem weight_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
+/-! #### Leaf-count invariance -/
+
+/-- Leaf count is invariant under children-list permutation: `leafCountList`
+    is a sum, hence permutation-invariant. -/
+private theorem leafCountList_perm (cs ds : List (Planar α))
+    (h : List.Perm cs ds) :
+    leafCountList cs = leafCountList ds := by
+  induction h with
+  | nil => rfl
+  | cons _ _ ih =>
+    show leafCount _ + leafCountList _ = leafCount _ + leafCountList _
+    rw [ih]
+  | swap _ _ _ =>
+    show leafCount _ + (leafCount _ + leafCountList _)
+       = leafCount _ + (leafCount _ + leafCountList _)
+    omega
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Leaf count is invariant under `PlanarStep`. -/
+private theorem leafCount_planarStep {t s : Planar α} (h : PlanarStep t s) :
+    t.leafCount = s.leafCount := by
+  induction h with
+  | swapAtRoot =>
+    rename_i a l r pre post
+    rw [leafCount_node_of_ne_nil a (pre ++ l :: r :: post) (by simp),
+        leafCount_node_of_ne_nil a (pre ++ r :: l :: post) (by simp)]
+    apply leafCountList_perm
+    apply List.Perm.append_left
+    exact .swap r l post
+  | recurse _ ih =>
+    rename_i a pre old new post _hstep
+    rw [leafCount_node_of_ne_nil a (pre ++ old :: post) (by simp),
+        leafCount_node_of_ne_nil a (pre ++ new :: post) (by simp)]
+    induction pre with
+    | nil =>
+      show leafCount old + leafCountList post = leafCount new + leafCountList post
+      rw [ih]
+    | cons head tail ih_pre =>
+      simp only [List.cons_append]
+      show leafCount head + leafCountList (tail ++ old :: post)
+         = leafCount head + leafCountList (tail ++ new :: post)
+      rw [ih_pre]
+
+/-- Leaf count is invariant under `PlanarEquiv`. -/
+theorem leafCount_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    t.leafCount = s.leafCount := by
+  induction h with
+  | rel _ _ hstep => exact leafCount_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
 /-! #### Label invariance -/
 
 /-- The root label is preserved by every `PlanarStep`. -/
@@ -459,6 +511,16 @@ def weight : Nonplanar α → Nat :=
 @[simp] theorem weight_leaf (a : α) : (leaf a : Nonplanar α).weight = 1 := by
   show (Planar.leaf a).weight = 1
   unfold Planar.leaf Planar.weight Planar.weightList; rfl
+
+/-- The **leaf count** (number of childless vertices) of a nonplanar tree,
+    lifted from `Planar.leafCount` via `PlanarEquiv`-invariance. MCB's
+    complexity grading `#L` (Def. 1.6.2) is built on this. -/
+def leafCount : Nonplanar α → Nat :=
+  Nonplanar.lift Planar.leafCount (fun _ _ h => Planar.leafCount_planarEquiv h)
+
+@[simp] theorem leafCount_mk (t : Planar α) : (mk t).leafCount = t.leafCount := rfl
+
+@[simp] theorem leafCount_leaf (a : α) : (leaf a : Nonplanar α).leafCount = 1 := rfl
 
 /-- The **arity** (root child count) of a nonplanar tree. -/
 def arity : Nonplanar α → Nat :=
@@ -755,6 +817,13 @@ theorem map_map (f : α → β) (g : β → γ) (t : Nonplanar α) :
   intro p
   show (map f (mk p)).isLeaf = (mk p).isLeaf
   rw [map_mk, isLeaf_mk, isLeaf_mk, Planar.isLeaf_map]
+
+@[simp] theorem leafCount_map (f : α → β) (t : Nonplanar α) :
+    (map f t).leafCount = t.leafCount := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show (map f (mk p)).leafCount = (mk p).leafCount
+  rw [map_mk, leafCount_mk, leafCount_mk, Planar.leafCount_map]
 
 end Nonplanar
 

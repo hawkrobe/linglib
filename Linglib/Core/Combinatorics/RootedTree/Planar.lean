@@ -136,6 +136,36 @@ def isLeaf : Planar α → Bool
 @[simp] theorem isLeaf_node_cons (a : α) (c : Planar α) (cs : List (Planar α)) :
     Planar.isLeaf (Planar.node a (c :: cs)) = false := rfl
 
+mutual
+/-- The **leaf count** of a tree: number of childless vertices. A leaf
+    (`node _ []`) counts as `1`; an internal node delegates to its
+    children (whose empty-list sum is `0`, so it is not double-counted). -/
+def leafCount : Planar α → Nat
+  | .node _ []        => 1
+  | .node _ (c :: cs) => leafCountList (c :: cs)
+/-- Auxiliary: total leaf count across a list of trees. -/
+def leafCountList : List (Planar α) → Nat
+  | []      => 0
+  | t :: ts => leafCount t + leafCountList ts
+end
+
+@[simp] theorem leafCount_node_nil (a : α) :
+    Planar.leafCount (Planar.node a [] : Planar α) = 1 := rfl
+
+@[simp] theorem leafCountList_nil :
+    Planar.leafCountList ([] : List (Planar α)) = 0 := rfl
+
+@[simp] theorem leafCountList_cons (t : Planar α) (ts : List (Planar α)) :
+    Planar.leafCountList (t :: ts) = leafCount t + leafCountList ts := rfl
+
+/-- On a non-leaf node, `leafCount` is the `leafCountList` of its children.
+    Clears the empty/nonempty split in the `leafCount` definition. -/
+theorem leafCount_node_of_ne_nil (a : α) (L : List (Planar α)) (h : L ≠ []) :
+    Planar.leafCount (Planar.node a L) = leafCountList L := by
+  cases L with
+  | nil => contradiction
+  | cons c cs => rfl
+
 /-! ## §4: Smart constructors -/
 
 /-- A **leaf** with the given α-label. -/
@@ -271,6 +301,25 @@ end
     | nil => rfl
     | cons _ _ => rfl
 
+mutual
+@[simp] theorem leafCount_map {β : Type*} (f : α → β) :
+    ∀ (t : Planar α), (map f t).leafCount = t.leafCount
+  | .node _ [] => by rw [map_node]; rfl
+  | .node a (c :: cs) => by
+    rw [map_node, mapList_cons]
+    show leafCountList (map f c :: mapList f cs) = leafCountList (c :: cs)
+    rw [leafCountList_cons, leafCountList_cons, leafCount_map f c,
+      leafCountList_mapList f cs]
+theorem leafCountList_mapList {β : Type*} (f : α → β) :
+    ∀ (cs : List (Planar α)), leafCountList (mapList f cs) = leafCountList cs
+  | [] => by rfl
+  | c :: cs => by
+    rw [mapList_cons]
+    show leafCount (map f c) + leafCountList (mapList f cs)
+       = leafCount c + leafCountList cs
+    rw [leafCount_map f c, leafCountList_mapList f cs]
+end
+
 /-! ## §5b: Sanity tests at compile time -/
 
 example : Planar.weight (leaf 1 : Planar Nat) = 1 := by
@@ -280,11 +329,14 @@ example : Planar.depth (leaf 1 : Planar Nat) = 1 := by
   unfold leaf depth depthMaxList; rfl
 example : Planar.isLeaf (leaf 1 : Planar Nat) = true := rfl
 
+example : Planar.leafCount (leaf 1 : Planar Nat) = 1 := rfl
+
 example : Planar.weight (binary 1 (leaf 2) (leaf 3) : Planar Nat) = 3 := by
   unfold binary leaf weight weightList; rfl
 example : Planar.arity (binary 1 (leaf 2) (leaf 3) : Planar Nat) = 2 := rfl
 example : Planar.depth (binary 1 (leaf 2) (leaf 3) : Planar Nat) = 2 := by
   unfold binary leaf depth depthMaxList; rfl
+example : Planar.leafCount (binary 1 (leaf 2) (leaf 3) : Planar Nat) = 2 := rfl
 
 /-! ## §6: Inhabited -/
 
