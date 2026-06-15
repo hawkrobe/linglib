@@ -204,7 +204,7 @@ theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
 
     Used by `rsa_predict` to eliminate the shared normalization constant
     when comparing `L1_latent u l₁ < L1_latent u l₂`. -/
-@[gcongr]
+@[gcongr only]
 theorem L1_latent_lt_of_score_lt (cfg : RSAConfig U W) (u : U)
     (l₁ l₂ : cfg.Latent)
     (h : (cfg.L1_latent_agent u).score () l₁ < (cfg.L1_latent_agent u).score () l₂) :
@@ -224,7 +224,7 @@ noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U)
 
     Used by `rsa_predict` to eliminate the shared normalization constant
     when comparing `L1_marginal u P < L1_marginal u Q`. -/
-@[gcongr]
+@[gcongr only]
 theorem L1_marginal_lt_of_score_sum_lt (cfg : RSAConfig U W) (u : U)
     (P Q : W → Prop) [DecidablePred P] [DecidablePred Q]
     (h : (Finset.univ.filter P).sum (cfg.L1agent.score u) <

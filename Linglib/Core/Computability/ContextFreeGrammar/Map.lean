@@ -150,8 +150,9 @@ theorem applyHom_language_subset (h : T → List T') (G : ContextFreeGrammar T) 
   show (G.applyHom h).Derives [.nonterminal G.initial]
         ((Core.StringHom.apply h w).map .terminal)
   have hd := Derives.applyHom h hw
-  convert hd using 2
-  exact (ContextFreeRule.applyHomList_map_terminal h w).symm
+  convert hd using 1
+  · simp [ContextFreeRule.Symbol.applyHom]
+  · simp [Core.StringHom.apply, ContextFreeRule.applyHomList_map_terminal]
 
 -- ============================================================================
 -- Backward direction helpers (private to this file)

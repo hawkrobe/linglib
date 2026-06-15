@@ -2584,7 +2584,7 @@ private theorem gl_product_eq_oudomGuinStar_tprod
         have h := congrArg GrossmanLarson.unop h_GL_split
         rw [unop_add, unop_add] at h
         -- The last term has unop ∘ op = id (definitional).
-        convert h using 2
+        convert h using 2 <;> simp only [GrossmanLarson.unop_op, GrossmanLarson.op_unop]
       -- Now use h_SL_split_additive to combine.
       -- h_SL_split_additive (CK):
       --   ckIso(X★(D·ι(ofTree t))) + ckIso(X★(D○ι(ofTree t)))

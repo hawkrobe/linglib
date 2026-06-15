@@ -112,6 +112,11 @@ namespace GuinOudom
 variable {R : Type*} [CommRing R]
 variable {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
 
+-- The commutator `LieRing`/`LieAlgebra` on the endomorphism ring
+-- `Module.End R (S(L))` is `local` in mathlib (`Algebra.Lie.OfAssociative`);
+-- bring it into scope so `MLieHom`/`MAlgHom` can target it.
+attribute [local instance 100] LieRing.ofAssociativeRing
+
 /-- The per-x linear map `L →ₗ[R] S(L)`: `y ↦ ι (y * x)`. Composition of
 mathlib's `LinearMap.mulRight x : L →ₗ[R] L` (the `R`-linear right
 multiplication-by-x, available since `RightPreLieAlgebra` provides
@@ -335,7 +340,6 @@ theorem M_lie_hom (a b : L) :
     have h := preLieAction_lie_anti (R := R) a b
     have hu := congrArg
       (fun (D : Derivation R (SymmetricAlgebra R L) (SymmetricAlgebra R L)) => D u) h
-    simp only at hu
     rw [Ring.lie_def] at hu
     rwa [Derivation.commutator_apply, Derivation.neg_apply] at hu
   -- All remaining differences are S(L)-polynomial in ι, mul, and L-action terms.

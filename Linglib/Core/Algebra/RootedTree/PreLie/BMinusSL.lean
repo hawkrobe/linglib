@@ -459,9 +459,10 @@ private theorem bMinusLin_SL_ι_mul_eps (a : α) (Z : LL) (Y : SL) :
         (((SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap).comp
           (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)))
         (bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z)) by
-    simpa only [LinearMap.comp_apply, LinearMap.mulLeft_apply,
-      LinearMap.smulRight_apply, AlgHom.toLinearMap_apply]
-      using LinearMap.congr_fun h_eq z
+    have := LinearMap.congr_fun h_eq z
+    simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply,
+      LinearMap.smulRight_apply, AlgHom.toLinearMap_apply] at this
+    exact this
   apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
   intro n f
   simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply,

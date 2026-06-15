@@ -256,7 +256,8 @@ theorem IsRegular.finite_syntacticMonoid {L : Language α} (h : L.IsRegular) :
         (x ++ FreeMonoid.toList u) (x ++ FreeMonoid.toList v) := by
       intro a b
       have := huv (a ++ x) b
-      simpa [List.append_assoc] using this
+      simp only [List.append_assoc] at this ⊢
+      exact this
     exact hxshift.leftQuotient_eq
   -- Lift the action through the quotient.
   let phi : L.syntacticMonoid → (LQ → LQ) := fun cls =>

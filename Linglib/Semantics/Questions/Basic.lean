@@ -97,7 +97,7 @@ variable {W : Type u}
     `LowerSet`, etc. -/
 instance : SetLike (Question W) (Set W) where
   coe := props
-  coe_injective' P Q h := by cases P; cases Q; congr
+  coe_injective P Q h := by cases P; cases Q; congr
 
 /-- Membership normalization: `q ∈ P.props` rewrites to `q ∈ P`. Mirrors
     mathlib's `mem_carrier` pattern (`SetLike.Basic` line 92). -/

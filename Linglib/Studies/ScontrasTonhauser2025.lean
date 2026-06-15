@@ -294,18 +294,36 @@ private theorem c_filter :
 private theorem meaning_pos_high (u : Utterance) :
     ∃ w₀, 0 < cfgBelHigh.meaning cfgBelHigh.initial .all u w₀ := by
   cases u
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning, factivePos,
-      HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by simp only [cfg, speakerCredenceBool, literalMeaning, factiveNeg,
-      HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning, nonFactivePos,
-      HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w01, by simp only [cfg, speakerCredenceBool, literalMeaning, nonFactiveNeg,
-      HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning,
-      HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by simp only [cfg, speakerCredenceBool, literalMeaning,
-      HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .knowPos .w11
+                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, factivePos,
+        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w10, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .knowNeg .w10
+                        then (worldPriorQ (2/3) .w10 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, factiveNeg,
+        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .thinkPos .w11
+                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, nonFactivePos,
+        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w01, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w01 && literalMeaning .thinkNeg .w01
+                        then (worldPriorQ (2/3) .w01 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, nonFactiveNeg,
+        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .cPos .w11
+                        then (worldPriorQ (2/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning,
+        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w10, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .cNeg .w10
+                        then (worldPriorQ (2/3) .w10 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning,
+        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
 
 set_option maxHeartbeats 1600000 in
 private theorem high_totalScore_pos (u : Utterance) :
@@ -394,18 +412,36 @@ theorem bel_qud_marginal_eq_prior_high (u : Utterance) :
 private theorem meaning_pos_low (u : Utterance) :
     ∃ w₀, 0 < cfgBelLow.meaning cfgBelLow.initial .all u w₀ := by
   cases u
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning, factivePos,
-      HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by simp only [cfg, speakerCredenceBool, literalMeaning, factiveNeg,
-      HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning, nonFactivePos,
-      HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w01, by simp only [cfg, speakerCredenceBool, literalMeaning, nonFactiveNeg,
-      HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w11, by simp only [cfg, speakerCredenceBool, literalMeaning,
-      HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
-  · exact ⟨.w10, by simp only [cfg, speakerCredenceBool, literalMeaning,
-      HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .knowPos .w11
+                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, factivePos,
+        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w10, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .knowNeg .w10
+                        then (worldPriorQ (1/3) .w10 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, factiveNeg,
+        HasBelief.bel, WorldState.bel, HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .thinkPos .w11
+                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, nonFactivePos,
+        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w01, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w01 && literalMeaning .thinkNeg .w01
+                        then (worldPriorQ (1/3) .w01 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning, nonFactiveNeg,
+        HasBelief.bel, WorldState.bel, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w11, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w11 && literalMeaning .cPos .w11
+                        then (worldPriorQ (1/3) .w11 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning,
+        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
+  · exact ⟨.w10, by
+      change (0 : ℝ) < if speakerCredenceBool .all .w10 && literalMeaning .cNeg .w10
+                        then (worldPriorQ (1/3) .w10 : ℝ) else 0
+      simp only [speakerCredenceBool, literalMeaning,
+        HasComplement.c, WorldState.c, worldPriorQ]; push_cast; norm_num⟩
 
 set_option maxHeartbeats 1600000 in
 private theorem low_totalScore_pos (u : Utterance) :

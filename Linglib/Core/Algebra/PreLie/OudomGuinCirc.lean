@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.PreLie.GuinOudom
-import Linglib.Core.RingTheory.Coalgebra.Convolution
+import Mathlib.RingTheory.Coalgebra.Convolution
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
@@ -47,7 +47,7 @@ is required for associativity.**
 **Q1b construction landed (2026-05-16).** `oudomGuinCirc` is built via
 `SymmetricAlgebra.lift` into the convolution algebra
 `WithConv (S(L) →ₗ[R] S(L))`. The convolution-algebra structure
-(`LinearMap.convAlgebra` in `Linglib.Core.RingTheory.Coalgebra.Convolution`)
+(`LinearMap.convAlgebra` in `Mathlib.RingTheory.Coalgebra.Convolution`)
 makes `S(L) →ₗ[R] S(L)` an `R`-algebra under the convolution product
 `(f * g)(c) := μ ∘ (f ⊗ g) ∘ Δ(c)`, commutative because `S(L)` is
 cocommutative (Q1a).

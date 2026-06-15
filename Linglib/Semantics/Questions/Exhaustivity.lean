@@ -477,7 +477,7 @@ true** (`isExhaustivelyResolvable_polar_of_nontrivial`), so the
 underlies [dayal-1996]'s observation that polar EP is
 unproblematic — the EP only becomes contentful for wh-questions. -/
 
-instance IsExhaustivelyResolvable.decidable_polar {p : Set W}
+def IsExhaustivelyResolvable.decidable_polar {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (w : W) :
     Decidable (IsExhaustivelyResolvable (polar p) w) :=
   isTrue (isExhaustivelyResolvable_polar_of_nontrivial hne hnu w)

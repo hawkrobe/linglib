@@ -155,7 +155,7 @@ theorem anchorIndex_consistent (i : Fin (partition ι W φ).card) :
     ∃ w, anchor φ (anchorIndex φ i) w = true := by
   have hMem := ((partition ι W φ).equivFin.symm i).property
   simp only [partition, Finset.mem_filter] at hMem
-  simpa only [anchorIndex, decide_eq_true_eq] using hMem.2
+  exact of_decide_eq_true hMem.2
 
 /-! ### Bitstring evaluation -/
 

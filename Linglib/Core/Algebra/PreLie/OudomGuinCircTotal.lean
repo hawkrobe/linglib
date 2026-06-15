@@ -298,7 +298,7 @@ theorem circTTensor_symRel (T : L) {a b : TensorAlgebra R L}
     -- key : T * x * y - T * (x * y) = T * y * x - T * (y * x)
     -- Goal: reduces to `key` after if-reduction on `fun i => if i = 0 then ... else ...`.
     simp only [if_pos, show (1 : Fin 2) ≠ 0 from by decide]
-    convert key using 2
+    convert key using 2 <;> simp
 
 /-! ## §5: Lift to `SymmetricAlgebra` via `Submodule.liftQ`
 

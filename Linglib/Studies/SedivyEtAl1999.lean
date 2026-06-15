@@ -274,11 +274,11 @@ theorem trivial_satisfies_pattern :
   contrast_speeds_target := by
     intro c
     obtain ⟨_, ty, _⟩ := c
-    cases ty <;> simp [trivialRT]
+    cases ty <;> simp [trivialRT, HasContrastCondition.setContrast] <;> norm_num
   contrast_reduces_competitor_looks := by
     intro c
     obtain ⟨_, _, _⟩ := c
-    simp [trivialLooks]
+    simp [trivialLooks, HasContrastCondition.setContrast] <;> norm_num
   contrast_attenuates_typicality := by
     intro ta; simp [trivialRT]; norm_num
 

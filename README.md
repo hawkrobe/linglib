@@ -1,13 +1,13 @@
 # Linglib
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
-[![Lean 4](https://img.shields.io/badge/Lean-v4.29.1-blue)](https://leanprover.github.io/)
-[![Mathlib](https://img.shields.io/badge/mathlib-v4.29.1-blueviolet)](https://github.com/leanprover-community/mathlib4)
+[![Lean 4](https://img.shields.io/badge/Lean-v4.31.0-blue)](https://leanprover.github.io/)
+[![Mathlib](https://img.shields.io/badge/mathlib-v4.31.0-blueviolet)](https://github.com/leanprover-community/mathlib4)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
 A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing.
 
-> ⚠️ This is an experiment in "AI for Linguistics" using recent advances in proof assistants. Please let us know if you identify any inaccuracies. 
+> ⚠️ This is an experiment in "AI for Linguistics" using recent advances in proof assistants. Spotted an inaccuracy? [Open an issue](https://github.com/hawkrobe/linglib/issues) — we'd love to hear about it.
 
 ## Why
 
@@ -21,10 +21,15 @@ Decades of progress in formal linguistics live in prose scattered across hundred
 
 ## How It's Organized
 
-Linglib separates **phenomena** (what we observe) from **theories** (what explains it).
+Linglib is built in layers, each grounded in the one below it by `import` rather than restated independently:
 
-`Phenomena/` contains theory-neutral empirical data — acceptability judgments, experimental results, distributional patterns. `Theories/` contains formal theories that make predictions about those phenomena. The connection between them is explicit: theories prove theorems that reference the data.
- `Core/` has shared infrastructure like propositions, intensions, accessibility relations, `Fragments/` exposes typological and lexical data for specific languages. 
+- **`Core/`, `Features/`** — framework-agnostic infrastructure: propositions, intensions, accessibility relations, scales, and per-entry feature taxonomies.
+- **Theory layer** (`Semantics/`, `Syntax/`, `Pragmatics/`, `Morphology/`, `Phonology/`, `Processing/`, `Discourse/`) — reusable formal theories that make predictions.
+- **`Typology/`, `Data/`** — per-language typological substrate and theory-neutral empirical data (per-paper example sets, pooled cross-paper datasets). `Data/` imports no theories.
+- **`Fragments/`** — lexical entries for ~100 languages, typed by the theory layer.
+- **`Studies/`** — paper-anchored studies, the test suite: each file formalizes a paper and proves its predictions against the data.
+
+The connection between data and theory is explicit: studies prove theorems that reference the empirical rows, so changing a theory surfaces exactly which downstream predictions no longer follow.
 
 ## Building
 
@@ -35,18 +40,21 @@ lake build
 
 ## Using Linglib in your own Lake project
 
-Add to your `lakefile.lean`:
+Linglib pins a specific toolchain (currently **Lean v4.31.0 / mathlib v4.31.0**), so your project's `lean-toolchain` must match. Add to your `lakefile.lean`:
 
 ```lean
 require linglib from git
-  "https://github.com/hawkrobe/linglib" @ "main"
+  "https://github.com/hawkrobe/linglib" @ "v4.31.0"
 ```
 
-Then `import Linglib` — or, more selectively, e.g. `import Linglib.Theories.Pragmatics.RSA.Basic`.
+(Use `@ "main"` to track the latest development instead of the pinned release.)
 
-## Docs
+Then `import Linglib` — or, more selectively, e.g. `import Linglib.Pragmatics.RSA.Basic`.
 
-[https://hawkrobe.github.io/linglib/](https://hawkrobe.github.io/linglib/)
+## Links
+
+- **Project site & API docs:** [linglib.io](https://linglib.io/) — also hosts the blog, an interactive dependency map, and the bibliography.
+- **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

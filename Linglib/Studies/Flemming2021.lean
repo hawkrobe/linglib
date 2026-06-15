@@ -163,6 +163,7 @@ theorem clash_diff_is_one (pair : Fin 4) :
     schwaDiff (clashPairs pair).2 2 - schwaDiff (clashPairs pair).1 2 = 1 := by
   fin_cases pair <;> simp [clashPairs, schwaDiff]
 
+set_option maxHeartbeats 400000 in
 /-- **Logit uniformity for \*Clash** ([flemming-2021] §7.1):
     the \*Clash contribution to the harmony difference is the same
     across all four paired contexts.

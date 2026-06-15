@@ -569,7 +569,7 @@ theorem posterior_chained_lt_iff_score_lt {α β γ : Type*}
 multiplying by it preserves the pointwise inequality, and `tsum` is monotone.
 
 Foundation lemma for cross-utterance / cross-kernel marginal comparisons. -/
-@[gcongr]
+@[gcongr only]
 theorem marginal_le_marginal {α β : Type*} {κ₁ κ₂ : α → PMF β} {μ : PMF α}
     {b : β} (h : ∀ a, κ₁ a b ≤ κ₂ a b) :
     marginal κ₁ μ b ≤ marginal κ₂ μ b :=
@@ -583,7 +583,7 @@ with the prior multiplier supplying both directions of the cancellation.
 Use case: "speaker assigns higher probability to `u` at world `w₀` (and no
 less anywhere else) — therefore the marginal probability of utterance `u`
 strictly increases." -/
-@[gcongr]
+@[gcongr only]
 theorem marginal_lt_marginal {α β : Type*} {κ₁ κ₂ : α → PMF β} {μ : PMF α}
     {b : β} {a₀ : α} (hμ : μ a₀ ≠ 0) (h : ∀ a, κ₁ a b ≤ κ₂ a b)
     (hi : κ₁ a₀ b < κ₂ a₀ b) :
