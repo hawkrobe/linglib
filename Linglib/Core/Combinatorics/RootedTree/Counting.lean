@@ -31,8 +31,9 @@ over the unfaithful planar-binary `TraceTree`.
 
 ## TODO
 
-* `leafCount` (complexity grading `#L`, Def 1.6.2) — needs `Planar.leafCount` + lift.
-* Trace-aware `accCountC`/`alphaC`/`sigmaC` on `Nonplanar (α ⊕ β)` (`TraceCounting.lean`).
+* Trace-aware `accCountC`/`alphaC`/`sigmaC` and the complexity grading `#L`
+  on lexical leaves (`leafCountSO0`) over `Nonplanar (α ⊕ β)` (`TraceCounting.lean`);
+  builds on the carrier `Nonplanar.leafCount`.
 * The admissible-cut layer (`Fintype`-enumerable cuts + extraction identities 1.6.7/1.6.8).
 -/
 
