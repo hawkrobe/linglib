@@ -2272,7 +2272,6 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Expressives.Outlook
 import Linglib.Semantics.Quotation.Mixed
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
