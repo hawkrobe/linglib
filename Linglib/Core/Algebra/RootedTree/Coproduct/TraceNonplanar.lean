@@ -87,7 +87,7 @@ namespace ConnesKreimer
 /-! ### Pointwise projection for the G-form -/
 
 /-- Project a planar cut summand to a nonplanar one. -/
-private def projSummand : Forest (Planar α) × Planar α →
+def projSummand : Forest (Planar α) × Planar α →
     Forest (Nonplanar α) × Nonplanar α :=
   fun p => (p.1.map Nonplanar.mk, Nonplanar.mk p.2)
 
