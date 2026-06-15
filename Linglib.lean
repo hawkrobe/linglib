@@ -1870,6 +1870,7 @@ import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
 import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
+import Linglib.Core.Combinatorics.RootedTree.Rebinarize
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
@@ -1880,6 +1881,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
+import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Algebra.RootedTree.InsertionLieDuality
 import Linglib.Core.Algebra.RootedTree.FormSet

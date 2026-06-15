@@ -1,6 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.Minimalist.Basic
 
 set_option autoImplicit false
 
@@ -195,7 +196,7 @@ between theories … become visible across the codebase").
 The bundled theorem below is *honestly* a verdict-comparison: a
 conjunction of two unrelated propositions about different structural
 objects, both true. A genuine reduction would require a translation
-`SynGraph → TraceForest` lifting `satisfiesAL ↔ MinimalYieldWeak`;
+`SynGraph → Forest (Nonplanar …)` lifting `satisfiesAL ↔ MinimalYieldWeak`;
 no such bridge is in scope here. -/
 
 /-- Verdict comparison: the canonical Sideward configuration is rejected
@@ -205,11 +206,11 @@ no such bridge is in scope here. -/
     parameters `T_i Tnode T_iq`; the MCB conjunct does not reference the
     AL graph. The bundling is documentation, not a reduction. -/
 theorem adger_and_mcb_both_reject_sideward
-    (T_i Tnode T_iq : ConnesKreimer.TraceTree Minimalist.LIToken Unit) :
+    (T_i Tnode T_iq : RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit)) :
     -- MCB: Sideward 3(a)-shape transformation violates MinimalYieldWeak
     (¬ Minimalist.Merge.MinimalYieldWeak
-        ({T_i} : ConnesKreimer.TraceForest Minimalist.LIToken Unit)
-        ({Tnode, T_iq} : ConnesKreimer.TraceForest Minimalist.LIToken Unit))
+        ({T_i} : RootedTree.Forest (RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit)))
+        ({Tnode, T_iq} : RootedTree.Forest (RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit))))
     ∧
     -- Adger: the canonical Sideward subjunction configuration fails AL
     (g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false) :=

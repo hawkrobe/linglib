@@ -1,4 +1,7 @@
-import Linglib.Syntax.Minimalist.Merge.External
+import Linglib.Core.Combinatorics.RootedTree.Counting
+import Linglib.Core.Combinatorics.RootedTree.TraceCounting
+import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
+import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
@@ -6,452 +9,227 @@ import Mathlib.Order.OrderDual
 # Minimal Yield (MCB Definition 1.6.1)
 [marcolli-chomsky-berwick-2025] §1.6.1, Def 1.6.1 on book p. 63
 
-Realises M-C-B's **Minimal Yield principle** as a predicate on forest
-transformations and proves the per-merge counting characterizations of
-**Prop 1.6.4** (EM/IM, book p. 66) and **Prop 1.6.8** (Sideward, book p. 69).
+M-C-B's **Minimal Yield principle** as a predicate on workspace transformations,
+with the per-merge counting characterizations of **Prop 1.6.4** (EM/IM, p. 66)
+and **Prop 1.6.8** (Sideward, p. 69), on the canonical nonplanar carrier
+`Nonplanar (α ⊕ β)` (`Sum.inl` lexical, `Sum.inr` trace). A *workspace* is a
+`Forest (Nonplanar (α ⊕ β)) = Multiset (Nonplanar (α ⊕ β))`; External Merge of
+`S`, `S'` builds `Nonplanar.node (Sum.inl lbl) {S, S'}`.
 
-The principle (Def 1.6.1, eq. 1.6.2) asks three things of a transformation
-`Φ`: `b₀(Φ F) ≤ b₀ F` (no divergence), `α(Φ F) ≥ α F` (no information loss),
-and `σ(Φ F) = σ F + 1` (minimality of yield). MCB's parenthetical **weak
-form** drops the last condition; we provide `MinimalYield` (strong) and
-`MinimalYieldWeak` (the first two bounds only). The strong form rules out
-Sideward 3(a)/3(b) under Δ^c, the weak form under Δ^d (p. 69).
+The principle (Def 1.6.1, eq. 1.6.2) asks of a transformation `Φ`:
+`b₀(Φ F) ≤ b₀ F` (no divergence), `α(Φ F) ≥ α F` (no information loss),
+`σ(Φ F) = σ F + 1` (minimal yield). `MinimalYield` (strong) and
+`MinimalYieldWeak` (first two bounds) are stated relationally.
 
 ## Per-merge signatures (Prop 1.6.4 + Prop 1.6.8)
 
 | Merge | Δb₀ | Δα | Δσ | Strong | Weak |
 |---|---|---|---|---|---|
-| External (Δ^c, Δ^d) | −1 | +2 | +1 | ✓ | ✓ |
-| Internal w/ Δ^c | 0 | +1 | +1 | ✓ | ✓ |
-| Internal w/ Δ^d | 0 | 0 | 0 | ✗ (Δσ=0) | ✓ |
-| Sideward 2(b) Δ^c | 0 | +1 | +1 | ✓ | ✓ |
-| Sideward 2(b) Δ^d | 0 | 0 | 0 | ✗ (Δσ=0) | ✓ |
-| Sideward 3(a) Δ^c | +1 | 0 | +1 | ✗ (Δb₀>0) | ✗ (Δb₀>0) |
-| Sideward 3(a) Δ^d | +1 | −2 | −1 | ✗ (Δb₀>0) | ✗ (Δb₀>0) |
-| Sideward 3(b) Δ^c | +1 | 0 | +1 | ✗ (Δb₀>0) | ✗ (Δb₀>0) |
-| Sideward 3(b) Δ^d | +1 | −2 | −1 | ✗ (Δb₀>0) | ✗ (Δb₀>0) |
+| External | −1 | +2 | +1 | ✓ | ✓ |
+| Internal Δᶜ | 0 | +1 | +1 | ✓ | ✓ |
+| Internal Δᵈ | 0 | 0 | 0 | ✗ | ✓ |
+| Sideward 2(b) Δᶜ | 0 | +1 | +1 | ✓ | ✓ |
+| Sideward 3(a)/3(b) | +1 | ⋯ | ⋯ | ✗ | ✗ |
 
-`sideward_3a_size_deltas_deletion` proves the 3(a)/Δ^d row generalized over
-`numContractions c_i`, with `..._specific` recovering MCB's stated
-(+1, −2, −1) for the 2-edge cut via `numContractions_twoEdge`.
-
-IM/Δ^d and Sideward 2(b)/Δ^d share the (0, 0, 0) signature (**Remark 1.6.9**,
-book p. 71): indistinguishable by sizes, separated only by No Complexity Loss
-(`InducedMapNCL` / `sideward_2b_violatesInducedMapNCL` in `NoComplexityLoss.lean`).
+The size-delta theorems take the accessible-term relation as a hypothesis
+(`accCount`/`accCountC` extraction, MCB Lemma 1.6.3, eqs. 1.6.7/1.6.8);
 Sideward 3(a)/3(b) are ruled out by both forms via Δb₀ > 0.
-
-## TODO
-
-Define the per-transformation lift `MinimalYieldTransformation Φ := ∀ F, MinimalYield F (Φ F)`
-(and its weak analogue); the violation theorems here are currently stated on the
-case-specific workspace shapes rather than on a `Φ`.
 -/
 
 namespace Minimalist.Merge
 
-open ConnesKreimer TraceTree TraceForest
+open RootedTree
 
 variable {α β : Type*}
 
-/-- The weak Minimal Yield principle: a forest transformation does not
-    increase `b₀` and does not decrease `α`. -/
-structure MinimalYieldWeak (F F' : TraceForest α β) : Prop where
-  noDivergence  : F'.b₀ ≤ F.b₀
-  noInfoLoss    : F.alpha ≤ F'.alpha
+/-! ### The Minimal Yield principle -/
 
-/-- The Minimal Yield principle: the weak form together with `σ` increasing
-    by exactly one. -/
-structure MinimalYield (F F' : TraceForest α β) : Prop extends MinimalYieldWeak F F' where
-  minimalYield  : F'.sigma = F.sigma + 1
+/-- The weak Minimal Yield principle: no increase in `b₀`, no decrease in `α`. -/
+structure MinimalYieldWeak (F F' : Forest (Nonplanar (α ⊕ β))) : Prop where
+  noDivergence : Forest.b₀ F' ≤ Forest.b₀ F
+  noInfoLoss   : Forest.alpha F ≤ Forest.alpha F'
 
-/-! ### `MinimalYieldWeak` as a Pareto pullback preorder
+/-- The Minimal Yield principle: the weak form plus `σ` up by exactly one. -/
+structure MinimalYield (F F' : Forest (Nonplanar (α ⊕ β))) : Prop
+    extends MinimalYieldWeak F F' where
+  minimalYield : Forest.sigma F' = Forest.sigma F + 1
 
-The two `MinimalYieldWeak` bounds are a Pareto comparison on the `(b₀ᵒᵈ, α)`
-signature (`b₀` dualised so fewer components ranks higher), sharing the
-`PullbackPreorder` shape of `DerivationCost.pullbackPreorder` and
-`Core.Optimization.paretoPullbackPreorder`. The strong form is outside this
-picture: its `σ = +1` is an equality, not a ≤. -/
+/-! ### `MinimalYieldWeak` as a Pareto pullback preorder -/
 
-/-- The Pareto signature `(b₀ᵒᵈ, α)` of a forest, with `b₀` dualised so that
-    fewer components ranks higher. -/
-def MinimalYieldSignature (F : TraceForest α β) : ℕᵒᵈ × ℕ :=
-  (OrderDual.toDual F.b₀, F.alpha)
+/-- The Pareto signature `(b₀ᵒᵈ, α)`, `b₀` dualised so fewer components ranks higher. -/
+def MinimalYieldSignature (F : Forest (Nonplanar (α ⊕ β))) : ℕᵒᵈ × ℕ :=
+  (OrderDual.toDual (Forest.b₀ F), Forest.alpha F)
 
-/-- `MinimalYieldWeak F F'` is exactly the Pareto order on the `(b₀ᵒᵈ, α)`
-    signature. -/
-theorem minimalYieldWeak_iff_signature_le {F F' : TraceForest α β} :
+theorem minimalYieldWeak_iff_signature_le {F F' : Forest (Nonplanar (α ⊕ β))} :
     MinimalYieldWeak F F' ↔ MinimalYieldSignature F ≤ MinimalYieldSignature F' :=
-  ⟨fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩,
-   fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩⟩
+  ⟨fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩, fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩⟩
 
-/-- `MinimalYieldWeak` packaged as a `Core.Order.PullbackPreorder` via
-    `MinimalYieldSignature`. Not a `Preorder TraceForest` instance:
-    `TraceForest` already carries the multiset order. -/
+/-- `MinimalYieldWeak` packaged as a `PullbackPreorder`. -/
 def minimalYieldWeakPullbackPreorder :
-    Core.Order.PullbackPreorder (TraceForest α β) (ℕᵒᵈ × ℕ) :=
-  Core.Order.PullbackPreorder.ofProj MinimalYieldSignature
-    (fun _ _ => inferInstance)
+    Core.Order.PullbackPreorder (Forest (Nonplanar (α ⊕ β))) (ℕᵒᵈ × ℕ) :=
+  Core.Order.PullbackPreorder.ofProj MinimalYieldSignature (fun _ _ => inferInstance)
 
 /-! ### External Merge -/
 
 /-- External Merge of a pair satisfies Minimal Yield: Δb₀ = −1, Δα = +2, Δσ = +1. -/
-theorem em_pair_satisfiesMinimalYield (S S' : TraceTree α β) :
-    MinimalYield ({S, S'} : TraceForest α β)
-                 ({.node S S'} : TraceForest α β) := by
-  refine ⟨⟨?_, ?_⟩, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, b₀_singleton, b₀_cons, alpha_singleton, alpha_cons,
-      accCount_merge, sigma_singleton, sigma_cons] <;>
+theorem em_pair_satisfiesMinimalYield (lbl : α) (S S' : Nonplanar (α ⊕ β)) :
+    MinimalYield ({S, S'} : Forest (Nonplanar (α ⊕ β)))
+                 ({Nonplanar.node (Sum.inl lbl) {S, S'}}) := by
+  have hnode : (Nonplanar.node (Sum.inl lbl) {S, S'}).accCount
+      = S.accCount + S'.accCount + 2 := Nonplanar.accCount_merge (Sum.inl lbl) S S'
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · simp only [Forest.b₀_singleton, Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_zero]
+    omega
+  · rw [Forest.alpha_singleton, hnode]
+    simp only [Multiset.insert_eq_cons, Forest.alpha_cons, Forest.alpha_singleton]
+    omega
+  · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
+    rw [hnode]
+    simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton, Forest.b₀_zero,
+      Forest.alpha_cons, Forest.alpha_singleton]
     omega
 
-/-! ### Internal Merge, Δ^d -/
+/-! ### Internal Merge -/
 
-/-- Internal Merge via composition leaves `b₀`, `α`, and `σ` unchanged (Δ^d counting). -/
-theorem im_pair_size_deltas_deletion {T mover Q : TraceTree α β}
+/-- Internal Merge via composition leaves `b₀`, `α`, `σ` unchanged (Δᵈ counting):
+    the accessible-term relation `α(T) = α(mover) + α(Q) + 2` is MCB eq. 1.6.7. -/
+theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : Nonplanar (α ⊕ β)}
     (h : T.accCount = mover.accCount + Q.accCount + 2) :
-    b₀ ({.node mover Q} : TraceForest α β)
-        = b₀ ({T} : TraceForest α β)
-      ∧
-    alpha ({.node mover Q} : TraceForest α β)
-        = alpha ({T} : TraceForest α β)
-      ∧
-    sigma ({.node mover Q} : TraceForest α β)
-        = sigma ({T} : TraceForest α β) := by
-  refine ⟨rfl, ?_, ?_⟩ <;>
-    simp only [alpha_singleton, sigma_singleton, accCount_merge, h]
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.alpha ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) := by
+  have hnode : (Nonplanar.node (Sum.inl lbl) {mover, Q}).accCount
+      = mover.accCount + Q.accCount + 2 := Nonplanar.accCount_merge (Sum.inl lbl) mover Q
+  refine ⟨rfl, ?_, ?_⟩
+  · rw [Forest.alpha_singleton, Forest.alpha_singleton, hnode]
+    omega
+  · simp only [Forest.sigma, Forest.b₀_singleton, Forest.alpha_singleton]
+    rw [hnode]
+    omega
 
-/-- `im_pair_size_deltas_deletion` with the size hypothesis discharged from a
-    single-edge cut. -/
-theorem im_pair_size_deltas_deletion_of_cut {T mover Q : TraceTree α β}
-    (c : CutShape T) (h_cf : c.cutForest = ({mover} : TraceForest α β))
-    (h_rd : c.remainderDeletion = some Q) :
-    b₀ ({.node mover Q} : TraceForest α β)
-        = b₀ ({T} : TraceForest α β)
-      ∧
-    alpha ({.node mover Q} : TraceForest α β)
-        = alpha ({T} : TraceForest α β)
-      ∧
-    sigma ({.node mover Q} : TraceForest α β)
-        = sigma ({T} : TraceForest α β) :=
-  im_pair_size_deltas_deletion (CutShape.singleEdgeCut_deletion_alpha c mover Q h_cf h_rd)
+/-- `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ
+    admissible cut: deleting `mover` from `T` and rebinarizing the remainder
+    (`contractUnary p.2`) leaves `b₀`, `α`, `σ` unchanged. `unaryCount p.2 = 1`
+    characterizes a single edge cut at a binary node. -/
+theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : Nonplanar (α ⊕ β))
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) (hp : p ∈ ConnesKreimer.cutSummandsN T)
+    (mover : Nonplanar (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.unaryCount = 1) :
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alpha ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.alpha ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.sigma ({Nonplanar.node (Sum.inl lbl) {mover, Nonplanar.contractUnary p.2}}
+        : Forest (Nonplanar (α ⊕ β))) = Forest.sigma ({T} : Forest (Nonplanar (α ⊕ β))) :=
+  im_pair_size_deltas_deletion lbl
+    (ConnesKreimer.cutSummandsN_accCount_single_deletion T p hp mover hcard huc)
 
-/-! ### Internal Merge, Δ^c -/
+/-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ`, `σᶜ` by one
+    (Δᶜ counting): the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
+theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : Nonplanar (α ⊕ β)}
+    (hβ : β_t.traceLeafCount < β_t.weight) (hQ : Q.traceLeafCount < Q.weight)
+    (h : T.accCountC = β_t.accCountC + Q.accCountC + 1) :
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.b₀ ({T} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alphaC ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.alphaC ({T} : Forest (Nonplanar (α ⊕ β))) + 1
+      ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, Q}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.sigmaC ({T} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+  refine ⟨rfl, ?_, ?_⟩
+  · rw [Forest.alphaC_singleton, Forest.alphaC_singleton,
+        Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
+    omega
+  · simp only [Forest.sigmaC, Forest.b₀_singleton, Forest.alphaC_singleton]
+    rw [Nonplanar.accCountC_merge lbl β_t Q hβ hQ]
+    omega
 
-/-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ` and `σᶜ`
-    by one (Δ^c counting). -/
-theorem im_pair_size_deltas_contraction [Inhabited β]
-    {T β_t : TraceTree α β} (c : CutShape T)
-    (h_tf : T.nonTraceSize = T.size)
-    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
-    b₀ ({(.node β_t c.remainder : TraceTree α β)} : TraceForest α β)
-        = b₀ ({T} : TraceForest α β)
-      ∧
-    alphaC ({(.node β_t c.remainder : TraceTree α β)} : TraceForest α β)
-        = alphaC ({T} : TraceForest α β) + 1
-      ∧
-    sigmaC ({(.node β_t c.remainder : TraceTree α β)} : TraceForest α β)
-        = sigmaC ({T} : TraceForest α β) + 1 := by
-  have h_β_tf := CutShape.nonTraceSize_eq_size_of_cutForest_singleton c β_t h_tf h_cf
-  have h_rem_pos : c.remainder.nonTraceSize ≥ 1 :=
-    CutShape.nonTraceSize_remainder_pos_of_cutForest_singleton c β_t h_cf
-  have h_β_pos : β_t.nonTraceSize ≥ 1 := by rw [h_β_tf]; exact β_t.size_pos
-  refine ⟨rfl, ?_, ?_⟩ <;>
-    simp only [alphaC_singleton, sigmaC_singleton,
-      accCountC_merge β_t c.remainder h_β_pos h_rem_pos,
-      CutShape.singleEdgeCut_contraction_alpha c β_t h_tf h_cf]
-  omega
+/-- `im_pair_size_deltas_contraction` with the αᶜ relation discharged from a Δᶜ
+    admissible cut: re-merging an accessible subtree `β_t` of `T = node (inl a₀) F₀`
+    with the contraction quotient `p.2` raises `αᶜ`, `σᶜ` by one. -/
+theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
+    (τ : Nonplanar (α ⊕ β) → β) (F₀ : Forest (Nonplanar (α ⊕ β)))
+    (p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β))
+    (hp : p ∈ cutSummandsCN τ (Nonplanar.node (Sum.inl a₀) F₀))
+    (β_t : Nonplanar (α ⊕ β)) (hcard : p.1 = {β_t}) :
+    Forest.b₀ ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.b₀ ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β)))
+      ∧ Forest.alphaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.alphaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1
+      ∧ Forest.sigmaC ({Nonplanar.node (Sum.inl lbl) {β_t, p.2}} : Forest (Nonplanar (α ⊕ β)))
+        = Forest.sigmaC ({Nonplanar.node (Sum.inl a₀) F₀} : Forest (Nonplanar (α ⊕ β))) + 1 :=
+  im_pair_size_deltas_contraction lbl
+    (cutSummandsCN_crown_traceLeafCount_lt_weight τ _ p hp β_t
+      (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
+    (Nonplanar.traceLeafCount_lt_weight_of_rootInl p.2 a₀
+      ((cutSummandsCN_trunk_rootLabel τ _ p hp).trans (by rw [Nonplanar.rootLabel_node])))
+    (cutSummandsCN_accCountC_single τ _ a₀ F₀ rfl p hp β_t hcard)
 
 /-! ### Sideward Merge -/
 
 /-- Sideward Merge of type 2(b) leaves the component count `b₀` unchanged. -/
-theorem sideward_2b_b₀_preserved (T_i T_j Tnode T_j_q : TraceTree α β) :
-    b₀ ({Tnode, T_j_q} : TraceForest α β)
-      = b₀ ({T_i, T_j} : TraceForest α β) := by
-  simp only [Multiset.insert_eq_cons, b₀_cons, b₀_singleton]
-
-/-- Sideward Merge of type 2(b) leaves `b₀`, `α`, and `σ` unchanged (Δ^d counting). -/
-theorem sideward_2b_size_deltas_deletion
-    {T_i T_j β_t Tnode T_j_q : TraceTree α β}
-    (h_T_j : T_j.accCount = β_t.accCount + T_j_q.accCount + 2)
-    (h_node : Tnode.accCount = T_i.accCount + β_t.accCount + 2) :
-    b₀ ({Tnode, T_j_q} : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β)
-      ∧
-    alpha ({Tnode, T_j_q} : TraceForest α β)
-        = alpha ({T_i, T_j} : TraceForest α β)
-      ∧
-    sigma ({Tnode, T_j_q} : TraceForest α β)
-        = sigma ({T_i, T_j} : TraceForest α β) := by
-  refine ⟨sideward_2b_b₀_preserved T_i T_j Tnode T_j_q, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alpha_cons, alpha_singleton, sigma_cons,
-      sigma_singleton, h_T_j, h_node] <;>
-    omega
-
-/-- `sideward_2b_size_deltas_deletion` with both hypotheses discharged from a
-    single-edge cut. -/
-theorem sideward_2b_size_deltas_deletion_of_cut
-    {T_i T_j β_t T_j_q : TraceTree α β}
-    (c : CutShape T_j) (h_cf : c.cutForest = ({β_t} : TraceForest α β))
-    (h_rd : c.remainderDeletion = some T_j_q) :
-    b₀ ({(.node T_i β_t : TraceTree α β), T_j_q} : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β)
-      ∧
-    alpha ({(.node T_i β_t : TraceTree α β), T_j_q}
-                          : TraceForest α β)
-        = alpha ({T_i, T_j} : TraceForest α β)
-      ∧
-    sigma ({(.node T_i β_t : TraceTree α β), T_j_q}
-                          : TraceForest α β)
-        = sigma ({T_i, T_j} : TraceForest α β) :=
-  sideward_2b_size_deltas_deletion
-    (CutShape.singleEdgeCut_deletion_alpha c β_t T_j_q h_cf h_rd)
-    (accCount_merge T_i β_t)
-
-/-- Sideward Merge of type 2(b) leaves `b₀` fixed and raises `αᶜ` and `σᶜ`
-    by one (Δ^c counting). -/
-theorem sideward_2b_size_deltas_contraction [Inhabited β]
-    {T_i T_j β_t : TraceTree α β}
-    (c : CutShape T_j) (h_T_j_tf : T_j.nonTraceSize = T_j.size)
-    (h_T_i_tf : T_i.nonTraceSize = T_i.size)
-    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
-    b₀ ({(.node T_i β_t : TraceTree α β), c.remainder} : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β)
-      ∧
-    alphaC ({(.node T_i β_t : TraceTree α β), c.remainder} : TraceForest α β)
-        = alphaC ({T_i, T_j} : TraceForest α β) + 1
-      ∧
-    sigmaC ({(.node T_i β_t : TraceTree α β), c.remainder} : TraceForest α β)
-        = sigmaC ({T_i, T_j} : TraceForest α β) + 1 := by
-  have h_β_tf := CutShape.nonTraceSize_eq_size_of_cutForest_singleton c β_t h_T_j_tf h_cf
-  have h_rem_pos : c.remainder.nonTraceSize ≥ 1 :=
-    CutShape.nonTraceSize_remainder_pos_of_cutForest_singleton c β_t h_cf
-  have h_β_pos : β_t.nonTraceSize ≥ 1 := by rw [h_β_tf]; exact β_t.size_pos
-  have h_T_i_pos : T_i.nonTraceSize ≥ 1 := by rw [h_T_i_tf]; exact T_i.size_pos
-  refine ⟨sideward_2b_b₀_preserved T_i T_j _ c.remainder, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alphaC_cons, alphaC_singleton, sigmaC_cons,
-      sigmaC_singleton, accCountC_merge T_i β_t h_T_i_pos h_β_pos,
-      CutShape.singleEdgeCut_contraction_alpha c β_t h_T_j_tf h_cf] <;>
-    omega
+theorem sideward_2b_b₀_preserved (T_i T_j Tnode T_j_q : Nonplanar (α ⊕ β)) :
+    Forest.b₀ ({Tnode, T_j_q} : Forest (Nonplanar (α ⊕ β)))
+      = Forest.b₀ ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) := by
+  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
 
 /-- Sideward Merge of type 3(a) increases the component count `b₀` by one. -/
-theorem sideward_3a_b₀_increases (T_i Tnode T_iq : TraceTree α β) :
-    b₀ ({Tnode, T_iq} : TraceForest α β)
-      = b₀ ({T_i} : TraceForest α β) + 1 := by
-  simp only [Multiset.insert_eq_cons, b₀_cons, b₀_singleton]
+theorem sideward_3a_b₀_increases (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
+    Forest.b₀ ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β)))
+      = Forest.b₀ ({T_i} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
 
 /-- Sideward Merge of type 3(b) increases the component count `b₀` by one. -/
-theorem sideward_3b_b₀_increases
-    (T_i T_j Tnode T_iq T_jq : TraceTree α β) :
-    b₀ ({Tnode, T_iq, T_jq} : TraceForest α β)
-      = b₀ ({T_i, T_j} : TraceForest α β) + 1 := by
-  simp only [Multiset.insert_eq_cons, b₀_cons, b₀_singleton]
+theorem sideward_3b_b₀_increases (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
+    Forest.b₀ ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β)))
+      = Forest.b₀ ({T_i, T_j} : Forest (Nonplanar (α ⊕ β))) + 1 := by
+  simp only [Multiset.insert_eq_cons, Forest.b₀_cons, Forest.b₀_singleton]
 
-/-- Sideward Merge of type 3(b): Δb₀ = +1, Δα = −2, Δσ = −1 (Δ^d counting). -/
-theorem sideward_3b_size_deltas_deletion
-    {T_i T_j a b T_iq T_jq : TraceTree α β}
-    (h_i : T_i.accCount = a.accCount + T_iq.accCount + 2)
-    (h_j : T_j.accCount = b.accCount + T_jq.accCount + 2) :
-    b₀ ({(.node a b : TraceTree α β), T_iq, T_jq} : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β) + 1
-      ∧
-    alpha ({(.node a b : TraceTree α β), T_iq, T_jq}
-                          : TraceForest α β) + 2
-        = alpha ({T_i, T_j} : TraceForest α β)
-      ∧
-    sigma ({(.node a b : TraceTree α β), T_iq, T_jq}
-                          : TraceForest α β) + 1
-        = sigma ({T_i, T_j} : TraceForest α β) := by
-  refine ⟨sideward_3b_b₀_increases T_i T_j _ T_iq T_jq, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alpha_cons, alpha_singleton, sigma_cons,
-      sigma_singleton, accCount_merge, h_i, h_j] <;>
-    omega
-
-/-- `sideward_3b_size_deltas_deletion` with both size hypotheses discharged from
-    single-edge cuts. -/
-theorem sideward_3b_size_deltas_deletion_of_cut
-    {T_i T_j a b T_iq T_jq : TraceTree α β}
-    (c_i : CutShape T_i) (h_cf_i : c_i.cutForest = ({a} : TraceForest α β))
-    (h_rd_i : c_i.remainderDeletion = some T_iq)
-    (c_j : CutShape T_j) (h_cf_j : c_j.cutForest = ({b} : TraceForest α β))
-    (h_rd_j : c_j.remainderDeletion = some T_jq) :
-    b₀ ({(.node a b : TraceTree α β), T_iq, T_jq} : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β) + 1
-      ∧
-    alpha ({(.node a b : TraceTree α β), T_iq, T_jq}
-                          : TraceForest α β) + 2
-        = alpha ({T_i, T_j} : TraceForest α β)
-      ∧
-    sigma ({(.node a b : TraceTree α β), T_iq, T_jq}
-                          : TraceForest α β) + 1
-        = sigma ({T_i, T_j} : TraceForest α β) :=
-  sideward_3b_size_deltas_deletion
-    (CutShape.singleEdgeCut_deletion_alpha c_i a T_iq h_cf_i h_rd_i)
-    (CutShape.singleEdgeCut_deletion_alpha c_j b T_jq h_cf_j h_rd_j)
-
-/-! ### Sideward 3(a): two-edge cut full deltas -/
-
-/-- Sideward Merge of type 3(a): Δb₀ = +1, with Δα and Δσ governed by the
-    cut's contraction count `numContractions c_i` (Δ^d counting). -/
-theorem sideward_3a_size_deltas_deletion
-    {T_i a b T_iq : TraceTree α β} (c_i : CutShape T_i)
-    (h_cf : c_i.cutForest = ({a, b} : TraceForest α β))
-    (h_rd : c_i.remainderDeletion = some T_iq) :
-    b₀ ({(.node a b : TraceTree α β), T_iq} : TraceForest α β)
-        = b₀ ({T_i} : TraceForest α β) + 1
-      ∧
-    alpha ({(.node a b : TraceTree α β), T_iq} : TraceForest α β)
-        + CutShape.numContractions c_i
-        = alpha ({T_i} : TraceForest α β)
-      ∧
-    sigma ({(.node a b : TraceTree α β), T_iq} : TraceForest α β)
-        + CutShape.numContractions c_i
-        = sigma ({T_i} : TraceForest α β) + 1 := by
-  have h := CutShape.pairCut_deletion_alpha c_i a b T_iq h_cf h_rd
-  refine ⟨sideward_3a_b₀_increases T_i _ T_iq, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alpha_cons, alpha_singleton, sigma_cons,
-      sigma_singleton, accCount_merge, h] <;>
-    omega
-
-/-- `sideward_3a_size_deltas_deletion` for a genuine 2-edge cut: Δb₀ = +1,
-    Δα = −2, Δσ = −1 (the contraction count is `2`). -/
-theorem sideward_3a_size_deltas_deletion_specific
-    {T_i a b T_iq : TraceTree α β} (c_i : CutShape T_i)
-    (h_cf : c_i.cutForest = ({a, b} : TraceForest α β))
-    (h_rd : c_i.remainderDeletion = some T_iq) :
-    b₀ ({(.node a b : TraceTree α β), T_iq} : TraceForest α β)
-        = b₀ ({T_i} : TraceForest α β) + 1
-      ∧
-    alpha ({(.node a b : TraceTree α β), T_iq} : TraceForest α β) + 2
-        = alpha ({T_i} : TraceForest α β)
-      ∧
-    sigma ({(.node a b : TraceTree α β), T_iq} : TraceForest α β) + 1
-        = sigma ({T_i} : TraceForest α β) := by
-  have h_card : c_i.cutForest.card = 2 := by
-    rw [h_cf, show ({a, b} : TraceForest α β) = a ::ₘ ({b} : TraceForest α β) from rfl,
-        Multiset.card_cons, Multiset.card_singleton]
-  have h_nc := CutShape.numContractions_twoEdge c_i T_iq h_card h_rd
-  have ⟨h_b₀, h_α, h_σ⟩ := sideward_3a_size_deltas_deletion c_i h_cf h_rd
-  rw [h_nc] at h_α h_σ
-  refine ⟨h_b₀, h_α, ?_⟩
-  omega
-
-/-- Sideward Merge of type 3(a): Δb₀ = +1, Δαᶜ = 0, Δσᶜ = +1 (Δ^c counting). -/
-theorem sideward_3a_size_deltas_contraction [Inhabited β]
-    {T_i a b : TraceTree α β} (c_i : CutShape T_i)
-    (h_T_i_tf : T_i.nonTraceSize = T_i.size)
-    (h_cf : c_i.cutForest = ({a, b} : TraceForest α β)) :
-    b₀ ({(.node a b : TraceTree α β), c_i.remainder} : TraceForest α β)
-        = b₀ ({T_i} : TraceForest α β) + 1
-      ∧
-    alphaC ({(.node a b : TraceTree α β), c_i.remainder} : TraceForest α β)
-        = alphaC ({T_i} : TraceForest α β)
-      ∧
-    sigmaC ({(.node a b : TraceTree α β), c_i.remainder} : TraceForest α β)
-        = sigmaC ({T_i} : TraceForest α β) + 1 := by
-  have h_a_tf : a.nonTraceSize = a.size := by
-    apply CutShape.nonTraceSize_eq_size_of_mem_cutForest c_i a h_T_i_tf
-    rw [h_cf]; exact Multiset.mem_cons_self _ _
-  have h_b_tf : b.nonTraceSize = b.size := by
-    apply CutShape.nonTraceSize_eq_size_of_mem_cutForest c_i b h_T_i_tf
-    rw [h_cf]
-    rw [show ({a, b} : TraceForest α β) = a ::ₘ ({b} : TraceForest α β) from rfl,
-        Multiset.mem_cons]
-    right; exact Multiset.mem_singleton.mpr rfl
-  have h_rem_pos : c_i.remainder.nonTraceSize ≥ 1 := by
-    cases T_i with
-    | leaf _ =>
-        cases c_i; simp only [CutShape.cutForest] at h_cf
-        have : a ∈ ({a, b} : TraceForest α β) := Multiset.mem_cons_self _ _
-        rw [← h_cf] at this; exact absurd this (Multiset.notMem_zero _)
-    | trace _ =>
-        cases c_i; simp only [CutShape.cutForest] at h_cf
-        have : a ∈ ({a, b} : TraceForest α β) := Multiset.mem_cons_self _ _
-        rw [← h_cf] at this; exact absurd this (Multiset.notMem_zero _)
-    | node _ _ => exact CutShape.nonTraceSize_remainder_pos_of_node c_i
-  have h_a_pos : a.nonTraceSize ≥ 1 := by rw [h_a_tf]; exact a.size_pos
-  have h_b_pos : b.nonTraceSize ≥ 1 := by rw [h_b_tf]; exact b.size_pos
-  refine ⟨sideward_3a_b₀_increases T_i _ c_i.remainder, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alphaC_cons, alphaC_singleton, sigmaC_cons,
-      sigmaC_singleton, accCountC_merge a b h_a_pos h_b_pos,
-      CutShape.pairCut_contraction_alpha c_i a b h_T_i_tf h_cf h_rem_pos] <;>
-    omega
-
-/-- Sideward Merge of type 3(b): Δb₀ = +1, Δαᶜ = 0, Δσᶜ = +1 (Δ^c counting). -/
-theorem sideward_3b_size_deltas_contraction [Inhabited β]
-    {T_i T_j a b : TraceTree α β}
-    (c_i : CutShape T_i) (h_T_i_tf : T_i.nonTraceSize = T_i.size)
-    (h_cf_i : c_i.cutForest = ({a} : TraceForest α β))
-    (c_j : CutShape T_j) (h_T_j_tf : T_j.nonTraceSize = T_j.size)
-    (h_cf_j : c_j.cutForest = ({b} : TraceForest α β)) :
-    b₀ ({(.node a b : TraceTree α β), c_i.remainder, c_j.remainder}
-                       : TraceForest α β)
-        = b₀ ({T_i, T_j} : TraceForest α β) + 1
-      ∧
-    alphaC ({(.node a b : TraceTree α β), c_i.remainder, c_j.remainder}
-                          : TraceForest α β)
-        = alphaC ({T_i, T_j} : TraceForest α β)
-      ∧
-    sigmaC ({(.node a b : TraceTree α β), c_i.remainder, c_j.remainder}
-                          : TraceForest α β)
-        = sigmaC ({T_i, T_j} : TraceForest α β) + 1 := by
-  have h_a_tf := CutShape.nonTraceSize_eq_size_of_cutForest_singleton c_i a h_T_i_tf h_cf_i
-  have h_b_tf := CutShape.nonTraceSize_eq_size_of_cutForest_singleton c_j b h_T_j_tf h_cf_j
-  have h_a_pos : a.nonTraceSize ≥ 1 := by rw [h_a_tf]; exact a.size_pos
-  have h_b_pos : b.nonTraceSize ≥ 1 := by rw [h_b_tf]; exact b.size_pos
-  refine ⟨sideward_3b_b₀_increases _ _ _ c_i.remainder c_j.remainder, ?_, ?_⟩ <;>
-    simp only [Multiset.insert_eq_cons, alphaC_cons, alphaC_singleton, sigmaC_cons,
-      sigmaC_singleton, accCountC_merge a b h_a_pos h_b_pos,
-      CutShape.singleEdgeCut_contraction_alpha c_i a h_T_i_tf h_cf_i,
-      CutShape.singleEdgeCut_contraction_alpha c_j b h_T_j_tf h_cf_j] <;>
-    omega
-
-/-- Sideward Merge of type 3(a) violates the weak Minimal Yield principle, since
-    `b₀` increases. -/
-theorem sideward_3a_violates_noDivergenceWeak
-    (T_i Tnode T_iq : TraceTree α β) :
-    ¬ MinimalYieldWeak ({T_i} : TraceForest α β)
-                       ({Tnode, T_iq} : TraceForest α β) := by
+/-- Sideward Merge of type 3(a) violates the weak Minimal Yield principle (Δb₀ > 0). -/
+theorem sideward_3a_violates_noDivergenceWeak (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYieldWeak ({T_i} : Forest (Nonplanar (α ⊕ β)))
+                       ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β))) := by
   intro h
   have hd := h.noDivergence
   rw [sideward_3a_b₀_increases T_i Tnode T_iq] at hd
   omega
 
-/-- Sideward Merge of type 3(b) violates the weak Minimal Yield principle, since
-    `b₀` increases. -/
+/-- Sideward Merge of type 3(b) violates the weak Minimal Yield principle (Δb₀ > 0). -/
 theorem sideward_3b_violates_noDivergenceWeak
-    (T_i T_j Tnode T_iq T_jq : TraceTree α β) :
-    ¬ MinimalYieldWeak ({T_i, T_j} : TraceForest α β)
-                       ({Tnode, T_iq, T_jq} : TraceForest α β) := by
+    (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYieldWeak ({T_i, T_j} : Forest (Nonplanar (α ⊕ β)))
+                       ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β))) := by
   intro h
   have hd := h.noDivergence
   rw [sideward_3b_b₀_increases T_i T_j Tnode T_iq T_jq] at hd
   omega
 
 /-- Strong-form corollary of `sideward_3a_violates_noDivergenceWeak`. -/
-theorem sideward_3a_violates_noDivergence (T_i Tnode T_iq : TraceTree α β) :
-    ¬ MinimalYield ({T_i} : TraceForest α β)
-                   ({Tnode, T_iq} : TraceForest α β) :=
+theorem sideward_3a_violates_noDivergence (T_i Tnode T_iq : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYield ({T_i} : Forest (Nonplanar (α ⊕ β)))
+                   ({Tnode, T_iq} : Forest (Nonplanar (α ⊕ β))) :=
   fun h => sideward_3a_violates_noDivergenceWeak T_i Tnode T_iq h.toMinimalYieldWeak
 
 /-- Strong-form corollary of `sideward_3b_violates_noDivergenceWeak`. -/
 theorem sideward_3b_violates_noDivergence
-    (T_i T_j Tnode T_iq T_jq : TraceTree α β) :
-    ¬ MinimalYield ({T_i, T_j} : TraceForest α β)
-                   ({Tnode, T_iq, T_jq} : TraceForest α β) :=
+    (T_i T_j Tnode T_iq T_jq : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYield ({T_i, T_j} : Forest (Nonplanar (α ⊕ β)))
+                   ({Tnode, T_iq, T_jq} : Forest (Nonplanar (α ⊕ β))) :=
   fun h => sideward_3b_violates_noDivergenceWeak T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
 
 /-! ### Unit merge -/
 
-/-- The unit-merge stage `{T} → {β, T/β}` violates the weak Minimal Yield
-    principle, since `b₀` increases. -/
-theorem unitMerge_violates_noDivergenceWeak (T β_t Q : TraceTree α β) :
-    ¬ MinimalYieldWeak ({T} : TraceForest α β)
-                       ({β_t, Q} : TraceForest α β) :=
+/-- The unit-merge stage `{T} → {β, T/β}` violates weak Minimal Yield (Δb₀ > 0). -/
+theorem unitMerge_violates_noDivergenceWeak (T β_t Q : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYieldWeak ({T} : Forest (Nonplanar (α ⊕ β)))
+                       ({β_t, Q} : Forest (Nonplanar (α ⊕ β))) :=
   sideward_3a_violates_noDivergenceWeak T β_t Q
 
 /-- Strong-form corollary of `unitMerge_violates_noDivergenceWeak`. -/
-theorem unitMerge_violates_noDivergence (T β_t Q : TraceTree α β) :
-    ¬ MinimalYield ({T} : TraceForest α β)
-                   ({β_t, Q} : TraceForest α β) :=
+theorem unitMerge_violates_noDivergence (T β_t Q : Nonplanar (α ⊕ β)) :
+    ¬ MinimalYield ({T} : Forest (Nonplanar (α ⊕ β)))
+                   ({β_t, Q} : Forest (Nonplanar (α ⊕ β))) :=
   sideward_3a_violates_noDivergence T β_t Q
 
 end Minimalist.Merge
