@@ -14,8 +14,9 @@ three specializations linglib uses.
   distributivity-via-θ; Ch 6 atelicity reuse): `d = θ`, `γ = Atom`.
 * `SSR` / `SSR_univ` — Stratified Subinterval Reference (Ch 4 §4.6
   atelicity-via-τ; Ch 5 §5.4 motivation): `d = τ`, `γ = proper subinterval`.
-* `SMR` / `SMR_univ` — *linglib coinage*; `d = μ`, `γ = strict less-than`
-  (Ch 7 §7.4 measurement of substance pseudopartitives: *thirty liters of
+* `SMR` / `SMR_univ` — [champollion-2017]'s *stratified measurement
+  reference* (Def 61 in §4.6; final Defs 52–53 in Ch 7 §7.4); `d = μ`,
+  `γ = strict less-than` (substance pseudopartitives: *thirty liters of
   water*, *five feet of snow*).
 
 ## Granularity signature: binary, not unary
@@ -145,6 +146,47 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → SDR θ P x
 
+/-! ### Relational SDR (neo-Davidsonian roles)
+
+Champollion's `SDR` takes a *functional* thematic role `θ : α → Entity`
+(the unique role-filler). linglib's neo-Davidsonian roles are
+*relational* — `ArgumentStructure.ThematicRel = Entity → Event → Prop`,
+`Agent(a, e)` — with thematic uniqueness available as
+`ArgumentStructure.UP`. `SDRrel` is the relational form, so the
+distributivity property composes directly with a `ThematicFrame` /
+`Verb.denote` without picking a role function. It coincides with the
+functional `SDR` on a role's graph (`sdrRel_graph`). -/
+
+/-- Relational Stratified Distributive Reference: the role is a
+    neo-Davidsonian relation `R : Entity → α → Prop`. A stratum `y` counts
+    iff it has an atomic `R`-filler. Under thematic uniqueness
+    (`ArgumentStructure.UP R`) that filler is unique, recovering "the
+    `R`-filler of `y` is atomic". -/
+def SDRrel {Entity α : Type*} [PartialOrder Entity] [SemilatticeSup α]
+    (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
+  AlgClosure (λ y => P y ∧ ∃ a, R a y ∧ Atom a) x
+
+/-- Universal relational SDR: every P-element has relational SDR along R. -/
+def SDRrel_univ {Entity α : Type*} [PartialOrder Entity] [SemilatticeSup α]
+    (R : Entity → α → Prop) (P : α → Prop) : Prop :=
+  ∀ x, P x → SDRrel R P x
+
+/-- Relational SDR is monotone in the predicate. -/
+theorem sdrRel_mono {Entity α : Type*} [PartialOrder Entity] [SemilatticeSup α]
+    {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
+    ∀ x, SDRrel R P x → SDRrel R Q x := by
+  intro x hx
+  exact algClosure_mono (λ y ⟨hp, ha⟩ => ⟨h y hp, ha⟩) x hx
+
+/-- Relational SDR along a functional role's graph coincides with the
+    functional `SDR` — the bridge justifying `SDRrel` as the faithful
+    relational generalization of [champollion-2017]'s SDR. -/
+theorem sdrRel_graph {Entity α : Type*} [PartialOrder Entity] [SemilatticeSup α]
+    {θ : α → Entity} {P : α → Prop} {x : α} :
+    SDRrel (λ a y => θ y = a) P x ↔ SDR θ P x := by
+  unfold SDRrel SDR SR AtomicGranularity
+  simp only [exists_eq_left']
+
 /-! ### SSR — Stratified Subinterval Reference ([champollion-2017] eq. 38) -/
 
 /-- Proper-subinterval granularity: inner runtime is a proper subinterval
@@ -173,18 +215,18 @@ def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
 
 /-! ### SMR — Stratified Measurement Reference -/
 
-/-! **Naming caveat.** "SMR" is linglib's name for the measurement
-    specialization of SR. [champollion-2017] does not give this
-    specialization a separate name — Ch 7 §7.4 writes it directly as
-    `SR_{μ, λd.d < μ(x)}` (eqs. 18-26 for *thirty liters of water*,
-    *five feet of snow*, *two degrees Celsius of global warming*, etc.).
+/-! **SMR** is [champollion-2017]'s *stratified measurement reference*
+    (his named property and abbreviation): Def 61 in the Ch 4 §4.6
+    unification, with final universal/restricted forms Defs 52–53 in
+    Ch 7 §7.4, written as `SR_{μ, λd.d < μ(x)}` (*thirty liters of water*,
+    *five feet of snow*, *two degrees Celsius of global warming*).
 
     The strict-less-than granularity is Champollion's faithful translation
-    of [schwarzschild-2006]'s monotonic measure function predicate
-    (Ch 7 eq. 8: `μ` is monotonic iff `a < b → μ(a) < μ(b)`), with
-    Schwarzschild's intensive/extensive distinction
-    (cf. [krifka-1998] Sec. 3.4) reduced to whether the resulting
-    SMR presupposition is satisfiable on the given substance noun.
+    of [schwarzschild-2006]'s monotonic measure-function predicate
+    (Ch 7 eq. 8: `μ` is monotonic iff `a < b → μ(a) < μ(b)`), with the
+    extensive/intensive measure-function distinction ([krifka-1998])
+    reduced to whether the resulting SMR presupposition is satisfiable on
+    the given substance noun.
 -/
 
 /-- Stratified Measurement Reference: dimension is a measure function μ,
@@ -374,7 +416,9 @@ theorem qua_incompatible_with_ssr
 /-! ### for-Adverbial Compatibility -/
 
 /-- The "for"-adverbial adds a duration constraint on the event runtime
-    and requires the predicate to have SSR (eq. 39).
+    and requires the predicate to have SSR ([champollion-2017]'s
+    for-adverbial entry, eq. (72), restated for *for an hour* as eq. (21);
+    eq. (39) is the SSR constraint on its Share).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SSR(V)(e). -/
 def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     [SemilatticeSup (Event Time)]
