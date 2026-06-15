@@ -15,11 +15,11 @@ are a homomorphic image of the `EntailmentSig` monoid — see
 context function with its monotonicity proof on the toy `World` model.
 -/
 
-namespace Semantics.Entailment.Polarity
+namespace Entailment
 
 export Core.NaturalLogic (ContextPolarity)
 
-open Semantics.Entailment
+open Entailment
 
 /-- A context function is upward entailing if it preserves entailment:
 `Monotone` on sets of worlds. -/
@@ -70,21 +70,6 @@ theorem de_comp_ue {α β γ : Type*} {f : Set β → Set γ} {g : Set α → Se
     (hf : IsDownwardEntailing f) (hg : IsUpwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_monotone hg
-
-
-/-- Check if f is upward entailing on given test cases (decidable approximation). -/
-def isUpwardEntailing (f : Set World → Set World)
-    [∀ p : Set World, [DecidablePred p] → DecidablePred (f p)]
-    (tests : List (Set World × Set World)) : Prop :=
-  ∀ pq ∈ tests, ∀ _ : DecidablePred pq.1, ∀ _ : DecidablePred pq.2,
-    entails pq.1 pq.2 → entails (f pq.1) (f pq.2)
-
-/-- Check if f is downward entailing on given test cases (decidable approximation). -/
-def isDownwardEntailing (f : Set World → Set World)
-    [∀ p : Set World, [DecidablePred p] → DecidablePred (f p)]
-    (tests : List (Set World × Set World)) : Prop :=
-  ∀ pq ∈ tests, ∀ _ : DecidablePred pq.1, ∀ _ : DecidablePred pq.2,
-    entails pq.1 pq.2 → entails (f pq.2) (f pq.1)
 
 
 /-- Negation reverses entailment. -/
@@ -198,4 +183,4 @@ theorem implicature_allowed_double_negation :
   simp only [implicatureAllowed, composePolarity, negationPolarity, mkDownward,
              GroundedPolarity.toContextPolarity]
 
-end Semantics.Entailment.Polarity
+end Entailment

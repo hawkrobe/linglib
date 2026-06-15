@@ -18,7 +18,7 @@ Reference: [van-benthem-1986], [ladusaw-1980],
 [barwise-cooper-1981].
 -/
 
-namespace Semantics.Entailment
+namespace Entailment
 
 /-- A small finite set of worlds for decidable reasoning. -/
 inductive World where
@@ -82,4 +82,4 @@ instance : DecidablePred (· ∈ pNone) := fun _ => isFalse not_false
 theorem p0_entails_p01 : entails p0 p01 := by decide
 theorem p01_entails_p012 : entails p01 p012 := by decide
 
-end Semantics.Entailment
+end Entailment

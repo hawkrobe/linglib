@@ -33,7 +33,7 @@ This explains why PCs block NPIs despite being semantically DE!
 
 namespace Semantics.Conditionals
 
-open Semantics.Entailment.Polarity
+open Entailment
 open Discourse.Commitment.Table
 
 -- Conditional Type: HC vs PC

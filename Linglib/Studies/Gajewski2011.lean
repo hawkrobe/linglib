@@ -89,9 +89,7 @@ with "DE + scalar endpoint" (Conjecture 48).
 
 namespace Gajewski2011
 
-open Semantics.Entailment
-open Semantics.Entailment.Polarity
-open Semantics.Entailment.StrawsonEntailment
+open Entailment
 
 /-! ## §1 Background — recapitulating Zwarts and von Fintel
 
@@ -220,9 +218,9 @@ Gajewski but not proved; would need a witness function. Open.
 /-- Re-export the substrate Appendix 2 result for paper-citation indexing. -/
 theorem gaj2011_appendix2_AA_implies_intolerant {α : Type*}
     (f : Set α → Prop)
-    (hAA : Semantics.Entailment.AntiAdditivity.IsAntiAdditive f) :
-    Semantics.Entailment.Intolerance.IsIntolerant f :=
-  Semantics.Entailment.Intolerance.antiAdditive_implies_intolerant f hAA
+    (hAA : Entailment.IsAntiAdditive f) :
+    Entailment.IsIntolerant f :=
+  Entailment.antiAdditive_implies_intolerant f hAA
 
 /-! ## §4.1 Conjecture (eq. 48): DE scalar item is AA iff endpoint of scale
 
@@ -281,7 +279,7 @@ them to `only` and verify the empirical match: weak NPIs licensed
 (Condition 3 ✓), strong NPIs blocked (Condition 4 ✗).
 -/
 
-open Semantics.Entailment.PresuppositionLicensing
+open Entailment
 open Semantics.Presupposition (PartialProp)
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",

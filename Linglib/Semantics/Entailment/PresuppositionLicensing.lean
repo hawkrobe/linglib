@@ -35,7 +35,7 @@ DE-ness in the licensee position" — and that strong NPIs are sensitive
 to this destruction while weak NPIs are not.
 -/
 
-namespace Semantics.Entailment.PresuppositionLicensing
+namespace Entailment
 
 /-- A **Karttunen-Peters operator**: a function from an argument set to
     a presuppositional proposition (truth + presup). The presupposition
@@ -200,4 +200,4 @@ theorem all_conditions_reduce_to_DE_when_trivial {W : Type*}
     intro p q hpq w hfull
     exact ⟨hOpFnDE hpq hfull.1, hPresup p w⟩
 
-end Semantics.Entailment.PresuppositionLicensing
+end Entailment

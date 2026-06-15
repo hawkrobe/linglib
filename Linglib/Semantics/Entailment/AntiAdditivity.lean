@@ -35,11 +35,10 @@ domains, his §1.1).
   `atMost1_student` (DE but not anti-additive — the strictness witness).
 -/
 
-namespace Semantics.Entailment.AntiAdditivity
+namespace Entailment
 
 open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
-open Semantics.Entailment
-open Semantics.Entailment.Polarity
+open Entailment
 open List (Sublist)
 
 /-! ### The property family ([icard-2012] Definition 1.7) -/
@@ -376,4 +375,4 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
 end ToyWitnesses
 
-end Semantics.Entailment.AntiAdditivity
+end Entailment

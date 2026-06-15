@@ -17,7 +17,7 @@ not blocked by trivially-true functions.
 
 Anti-additivity and DE-ness of GQ-typed functions are the
 `Set α → Prop` instances of the lattice-general
-`Semantics.Entailment.AntiAdditivity.IsAntiAdditive` and mathlib's
+`Entailment.IsAntiAdditive` and mathlib's
 `Antitone` (`Prop` is a complete lattice).
 
 ## Examples
@@ -36,9 +36,9 @@ Intolerant`) is asserted but not proved by Gajewski; would need a witness
 function that is DE + Intolerant but not AA.
 -/
 
-namespace Semantics.Entailment.Intolerance
+namespace Entailment
 
-open Semantics.Entailment.AntiAdditivity (IsAntiAdditive isAntiAdditive_iff_gq)
+open Entailment (IsAntiAdditive isAntiAdditive_iff_gq)
 
 /-- A GQ-typed function is **trivial** if it is constantly true or
     constantly false. -/
@@ -86,4 +86,4 @@ theorem antiAdditive_implies_intolerant {α : Type*} (f : Set α → Prop)
     intro y
     exact hAA.antitone (Set.subset_univ y) hfUniv
 
-end Semantics.Entailment.Intolerance
+end Entailment

@@ -2319,8 +2319,6 @@ import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Studies.Montague1973
 import Linglib.Semantics.Entailment.PresuppositionLicensing
-import Linglib.Semantics.Entailment.PresuppositionPolarity
-import Linglib.Semantics.Entailment.ScaleInteraction
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs

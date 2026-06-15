@@ -56,9 +56,7 @@ the paper.
 
 namespace VonFintel1999
 
-open Semantics.Entailment
-open Semantics.Entailment.Polarity
-open Semantics.Entailment.StrawsonEntailment
+open Entailment
 
 /-! ## §2 — *only*
 

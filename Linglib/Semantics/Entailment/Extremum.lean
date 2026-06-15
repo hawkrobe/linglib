@@ -57,7 +57,7 @@ an *ergonomic specialization* of Beck-Rullmann answerhood under monotonicity,
 not their primary formulation.
 -/
 
-namespace Semantics.Entailment.Extremum
+namespace Entailment
 
 open Semantics.Degree
 variable {α : Type*} [LinearOrder α]
@@ -287,4 +287,4 @@ theorem _root_.Semantics.Degree.DirectedMeasure.isMaxInf_degreeProperty_congr
   rw [dm₁.isMaxInf_degreeProperty_iff m w hSurj,
       dm₂.isMaxInf_degreeProperty_iff m w (hμ ▸ hSurj), hμ]
 
-end Semantics.Entailment.Extremum
+end Entailment

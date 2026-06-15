@@ -10,7 +10,7 @@ equations, so `⊑` is plain `≤`), and a signature is *sound* for a function
 (`EntailmentSig.SoundFor`) when the function projects every relation as the
 signature's `project` row says (his Lemma 2.5). The characterization
 theorems discharge each row from the property family in
-`Semantics.Entailment.AntiAdditivity` — the additive-family rows need the
+`Entailment` — the additive-family rows need the
 `IsCompletely*` unit conditions, exactly as Icard's tables assume; the
 soundness proofs go through over bounded lattices, not just his Boolean
 lattices.
@@ -44,7 +44,7 @@ unconditionally — every function realizes the no-property row.
 
 namespace Core.NaturalLogic
 
-open Semantics.Entailment.AntiAdditivity
+open Entailment
 
 /-! ### Lattice content of the relations -/
 
@@ -277,7 +277,7 @@ the enum fact `◇⊟ ∘ ◇⊟ = ⊕⊞` against the actual function `pnot ∘
 
 section PnotInstance
 
-open Semantics.Entailment
+open Entailment
 
 theorem pnot_isCompletelyAntiAdditive : IsCompletelyAntiAdditive pnot :=
   ⟨pnot_isAntiAdditive, by show (Set.univ : Set World)ᶜ = ∅; exact Set.compl_univ⟩
