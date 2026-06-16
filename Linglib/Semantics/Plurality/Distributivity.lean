@@ -70,6 +70,7 @@ theorem distMaximal_iff_identity (P : Atom → W → Prop)
   · simp only [Tolerance.identity] at hz_eq
     exact hz_eq ▸ hz_all
 
+omit [DecidableEq Atom] in
 /-- Maximal distributive forces all atoms to satisfy P -/
 theorem distMaximal_forces_all (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) :
@@ -86,6 +87,7 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Prop) [∀ a w, Decid
 
 /-! ### Atom vacuity -/
 
+omit [DecidableEq Atom] in
 /--
 On singletons, `distMaximal` reduces to the predicate itself.
 
@@ -93,17 +95,16 @@ This is WHY `each`/`jeder` forces maximality: when it distributes P to individua
 atoms, the result is just P(a) — there's no plurality for tolerance to weaken.
 [haslinger-etal-2025] §2.3, the argument below the four-way classification.
 -/
-theorem distMaximal_singleton {Atom : Type*} {W : Type*}
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (a : Atom) (w : W) :
+theorem distMaximal_singleton (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (a : Atom) (w : W) :
     distMaximal P {a} w ↔ P a w := by
-  unfold distMaximal
-  simp
+  simp only [distMaximal, Finset.mem_singleton, forall_eq]
 
 /--
 On pairs, `distMaximal` reduces to conjunction of individual checks.
 
 This is the two-atom instance of Link's distributive inference
-(`distr_atom_part` in Link1983.lean): for a distributive P, checking
+(`distr_atom_part` in `Plurality/Algebra.lean`): for a distributive P, checking
 `*P` on a two-atom plurality {a, b} reduces to P(a) ∧ P(b).
 
 When `a = b`, `{a, b} = {a}` (Finset dedup) and the result
@@ -112,8 +113,7 @@ degenerates to `P a w` (= `P a w ∧ P a w` by `and_self`).
 theorem distMaximal_pair (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (a b : Atom) (w : W) :
     distMaximal P {a, b} w ↔ P a w ∧ P b w := by
-  unfold distMaximal
-  simp
+  simp only [distMaximal, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
 
 /--
 **Atom Vacuity Theorem (general).**
@@ -125,9 +125,8 @@ This is because {a} has exactly one nonempty subset (itself), and
 `tol.refl` guarantees `tol.rel {a} {a}` holds. The tolerance parameter
 literally has nothing to vary over.
 -/
-theorem distTolerant_singleton {Atom : Type*} [DecidableEq Atom] {W : Type*}
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (tol : Tolerance Atom) (a : Atom) (w : W) :
+theorem distTolerant_singleton (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (tol : Tolerance Atom) (a : Atom) (w : W) :
     distTolerant P tol {a} w ↔ P a w := by
   unfold distTolerant
   refine ⟨fun ⟨z, hz_mem, hz_ne, _, hz_all⟩ => ?_, fun hPa => ?_⟩
@@ -142,9 +141,8 @@ theorem distTolerant_singleton {Atom : Type*} [DecidableEq Atom] {W : Type*}
 /--
 Corollary: on singletons, all tolerance relations agree.
 -/
-theorem distTolerant_singleton_independent {Atom : Type*} [DecidableEq Atom] {W : Type*}
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (tol₁ tol₂ : Tolerance Atom) (a : Atom) (w : W) :
+theorem distTolerant_singleton_independent (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (tol₁ tol₂ : Tolerance Atom) (a : Atom) (w : W) :
     distTolerant P tol₁ {a} w ↔ distTolerant P tol₂ {a} w := by
   rw [distTolerant_singleton, distTolerant_singleton]
 
