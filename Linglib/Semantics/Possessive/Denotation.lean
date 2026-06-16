@@ -46,7 +46,7 @@ variable {Ctx : Type*} {W E : Type}
 presupposition — definedness is its only presupposition. -/
 noncomputable def theOf (R : E → E → Prop) (possessor : E) : NominalDenot Ctx W E where
   presup := fun _ _ => True
-  selector := fun _ _ => russellIota (E := E) (W := W) (fun y => R possessor y)
+  selector := fun _ _ => russellIota (E := E) (fun y => R possessor y)
 
 /-- *NP's N*: re-select the possessor denotation through the possession relation
 `R`. -/
@@ -68,7 +68,7 @@ relation: defined exactly when the possessor is defined and has a unique
 @[simp] theorem applyTo_selector (nd : NominalDenot Ctx W E) (R : E → E → Prop)
     (c : Ctx) (w : W) :
     (applyTo nd R).selector c w =
-      (nd.selector c w).bind (fun p => russellIota (E := E) (W := W) (fun y => R p y)) := by
+      (nd.selector c w).bind (fun p => russellIota (E := E) (fun y => R p y)) := by
   simp only [applyTo, theOf, NominalDenot.bind_selector]
 
 /-- Nesting (*John's mother's friend*) — from `bind` associativity. -/
@@ -84,6 +84,6 @@ carrier bears the iota-presupposition (`HasIotaWitness`). -/
 noncomputable def Definite.toNominalDenot {S : Type} (d : Possessive.Definite E S) :
     NominalDenot Ctx S E where
   presup := fun _ _ => True
-  selector := fun _ s => russellIota (E := E) (W := S) (fun y => d.predicate y s)
+  selector := fun _ s => russellIota (E := E) (fun y => d.predicate y s)
 
 end Possessive
