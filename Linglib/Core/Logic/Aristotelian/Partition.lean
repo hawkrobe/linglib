@@ -31,7 +31,7 @@ def anchor {ι : Type*} [Fintype ι] (φ : ι → W → Bool)
 /-- The partition of a fragment: all consistent polarity assignments. -/
 def partition (ι : Type*) [Fintype ι] [DecidableEq ι] (W : Type*) [Fintype W]
     (φ : ι → W → Bool) : Finset (ι → Bool) :=
-  Finset.univ.filter (fun σ => decide (∃ w : W, anchor φ σ w = true))
+  Finset.univ.filter (fun σ => ∃ w : W, anchor φ σ w = true)
 
 /-! ### Lemma 3 — mutual exclusivity and joint exhaustion -/
 
@@ -57,9 +57,6 @@ theorem anchor_jointly_exhaustive {ι : Type*} [Fintype ι]
   refine ⟨fun i => φ i w, ?_⟩
   rw [anchor, decide_eq_true_eq]
   intro i
-  by_cases h : φ i w = true
-  · simp [h]
-  · have : φ i w = false := by cases hb : φ i w <;> simp_all
-    simp [this]
+  rcases hb : φ i w with _ | _ <;> simp_all
 
 end Aristotelian
