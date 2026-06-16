@@ -151,7 +151,7 @@ theorem connectivity_middle_ground {α : Type*} [SemilatticeSup α]
     (hDisc : ¬ SelfConnected (a ⊔ b))
     {x y : α} (hx : P x) (hy : P y) (hlt : y < x) :
     ¬ CUM P ∧ ¬ QUA P :=
-  ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ => hQ x y hx hlt hy⟩
+  ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ => hQ hy hx hlt.ne hlt.le⟩
 
 -- ════════════════════════════════════════════════════
 -- § 1. Mixed Drink Recipe
@@ -637,7 +637,7 @@ theorem mixedDrink_not_qua {n : ℕ}
     -- part of a mixed drink is also a mixed drink (e.g., half a
     -- margarita with preserved ratios and connectivity)
     ¬ QUA (mixedDrinkDen recipe μ phase) :=
-  fun hQ => hQ x y hx hlt hy
+  fun hQ => hQ hy hx hlt.ne hlt.le
 
 -- ════════════════════════════════════════════════════
 -- § 11. Instantiating the General Principle

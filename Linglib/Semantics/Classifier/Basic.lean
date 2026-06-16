@@ -97,10 +97,7 @@ abbrev clfForNum {α : Type*} (P : α → Prop) (μ : α → ℚ) (n : ℚ) : α
 theorem clfForNum_qua {α : Type*} [SemilatticeSup α]
     {P : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
     QUA (fun x => QMOD P μ n x) :=
-  fun x y ⟨_, hx⟩ hlt ⟨_, hy⟩ => by
-    have := hμ.strict_mono x y hlt
-    rw [hy, hx] at this
-    exact absurd this (lt_irrefl _)
+  Mereology.qmod_qua P n
 
 -- ============================================================================
 -- §3: Group Classifier — Materialization ([moroney-2021] Ch. 3)
@@ -129,9 +126,8 @@ def groupClf {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
     is itself a group (since groups are atoms). -/
 theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
     (mat : Semantics.Plurality.Algebra.Materialization E D)
-    {P : E → Prop} : QUA (groupClf mat P) := by
-  intro x y ⟨hAtom, _⟩ hlt _
-  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+    {P : E → Prop} : QUA (groupClf mat P) :=
+  Mereology.qua_of_atom fun _ h => h.1
 
 -- ============================================================================
 -- §4: Strategy-Indexed Dispatch

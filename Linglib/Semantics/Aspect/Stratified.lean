@@ -407,7 +407,7 @@ theorem qua_incompatible_with_subintervalReference
   have hne : a ≠ e := by
     intro heq; rw [heq] at hGran
     exact lt_irrefl _ hGran
-  exact hQua e a he (lt_of_le_of_ne hle hne) hPa
+  exact hQua hPa he hne hle
 
 /-! ### for-Adverbial Compatibility -/
 

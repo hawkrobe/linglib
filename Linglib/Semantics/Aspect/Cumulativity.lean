@@ -95,11 +95,11 @@ private theorem cum_propagation_of_cumTheta {θ : α → β → Prop} {OBJ : α 
     `private`. -/
 private theorem qua_propagation_of_mso {θ : α → β → Prop} {OBJ : α → Prop}
     (hUP : UP θ) (hMSO : MSO θ) (hQua : QUA OBJ) :
-    QUA (VP θ OBJ) := by
-  intro e e' ⟨y, hobj, hθ⟩ hlt ⟨z, hobj_z, hθ_z⟩
-  obtain ⟨y', hy'_lt, hθ_y'⟩ := hMSO y e e' hθ hlt
-  have hz_eq : z = y' := hUP z y' e' hθ_z hθ_y'
-  exact hQua y y' hobj hy'_lt (hz_eq ▸ hobj_z)
+    QUA (VP θ OBJ) :=
+  Mereology.qua_of_forall fun e e' ⟨y, hobj, hθ⟩ hlt ⟨z, hobj_z, hθ_z⟩ => by
+    obtain ⟨y', hy'_lt, hθ_y'⟩ := hMSO y e e' hθ hlt
+    have hz_eq : z = y' := hUP z y' e' hθ_z hθ_y'
+    exact hQua (hz_eq ▸ hobj_z) hobj hy'_lt.ne hy'_lt.le
 
 /-- QUA propagation from SINC + UP (explicit-witness smart constructor,
     private). In practice, incremental-theme verbs satisfy both SINC
