@@ -73,12 +73,19 @@ theorem cum_iff {α : Type*} [SemilatticeSup α] {P : α → Prop} :
     CUM P ↔ ∀ (x y : α), P x → P y → P (x ⊔ y) :=
   ⟨fun h _ _ hx hy => h hx hy, fun h _ hx _ hy => h _ _ hx hy⟩
 
-/-- Divisive reference (DIV): P is closed downward under ≤.
+/-- Divisive reference (DIV): P is closed downward under ≤. Grounded in
+    mathlib's `IsLowerSet` — `DIV P` **is** `IsLowerSet {x | P x}`;
+    `div_iff` recovers the paper-faithful `∀ x y` form.
     [champollion-2017] §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
     This is the mereological analog of the subinterval property.
     Only requires `Preorder` since the definition only uses `≤`. -/
-def DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
-  ∀ (x y : α), P x → y ≤ x → P y
+abbrev DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
+  IsLowerSet {x | P x}
+
+/-- Paper-faithful unfolding of `DIV` to the `∀ x y` form. -/
+theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} :
+    DIV P ↔ ∀ (x y : α), P x → y ≤ x → P y :=
+  ⟨fun h _ _ hx hyx => h hyx hx, fun h a b hba ha => h a b ha hba⟩
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
 
@@ -169,7 +176,7 @@ theorem div_closed_under_le {α : Type*} [PartialOrder α]
     (hDiv : DIV P)
     {z : α} (hz : P z) {w : α} (hle : w ≤ z) :
     P w :=
-  hDiv z w hz hle
+  div_iff.mp hDiv z w hz hle
 
 /-- CUM and QUA partition event predicates (for non-trivial predicates):
     a predicate with ≥ 2 distinct elements cannot be both CUM and QUA.
@@ -616,7 +623,7 @@ def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
     a fortiori every proper part has a P-part (itself). -/
 theorem div_implies_gHomogeneous {α : Type*} [PartialOrder α]
     {P : α → Prop} (hDiv : DIV P) : gHomogeneous P :=
-  fun x y hPx hlt => ⟨y, le_refl y, hDiv x y hPx (le_of_lt hlt)⟩
+  fun x y hPx hlt => ⟨y, le_refl y, div_iff.mp hDiv x y hPx (le_of_lt hlt)⟩
 
 /-- g-Homogeneity is vacuously satisfied at atoms: since atoms have
     no proper parts, the universal condition `∀ y < a, ∃ z ≤ y, P z`
