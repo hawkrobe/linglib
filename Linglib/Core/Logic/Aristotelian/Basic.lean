@@ -43,16 +43,6 @@ inherit that API.
 subcontrariety are `Disjoint` / `Codisjoint` combinations, so symmetry and the
 `OrderIso` transfer come almost entirely from mathlib's order API.
 
-The relations are computed relative to a fixed Boolean algebra (equivalently a
-single logic `S`). The same pair can stand in different relations under different
-background logics; this *logic-sensitivity* ([demey-frijters-2023]) is the
-natural next layer.
-
-This is the base of a three-layer development: `Diagram.lean` adds labeled-poset
-structure (squares, hexagons, cubes), and `Bitstring.lean` the partition-based
-bitstring representation. The probabilistic generalization lives in
-`Probabilistic.lean`.
-
 ## Todo
 
 * Prove that `IsUnconnected` coincides with "no Aristotelian relation" under an
@@ -154,57 +144,6 @@ private lemma bool_inf_eq_bot_iff (a b : Bool) :
     a ⊓ b = ⊥ ↔ ¬ (a = true ∧ b = true) := by cases a <;> cases b <;> decide
 private lemma bool_sup_eq_top_iff (a b : Bool) :
     a ⊔ b = ⊤ ↔ (a = true ∨ b = true) := by cases a <;> cases b <;> decide
-private lemma bool_le_iff (a b : Bool) :
-    a ≤ b ↔ (a = true → b = true) := by cases a <;> cases b <;> decide
-
-theorem isContradictory_iff_forall :
-    IsContradictory φ ψ ↔
-      (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ (∀ w, φ w = true ∨ ψ w = true) := by
-  unfold IsContradictory
-  rw [isCompl_iff, disjoint_iff, codisjoint_iff, funext_iff, funext_iff]
-  exact and_congr
-    (forall_congr' fun w => by
-      simp only [Pi.inf_apply, Pi.bot_apply]; exact bool_inf_eq_bot_iff (φ w) (ψ w))
-    (forall_congr' fun w => by
-      simp only [Pi.sup_apply, Pi.top_apply]; exact bool_sup_eq_top_iff (φ w) (ψ w))
-
-theorem isContrary_iff_forall :
-    IsContrary φ ψ ↔
-      (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ ¬ (∀ w, φ w = true ∨ ψ w = true) := by
-  unfold IsContrary
-  rw [disjoint_iff, codisjoint_iff]
-  refine and_congr ?_ (not_congr ?_)
-  · rw [funext_iff]
-    exact forall_congr' fun w => by
-      simp only [Pi.inf_apply, Pi.bot_apply]; exact bool_inf_eq_bot_iff (φ w) (ψ w)
-  · rw [funext_iff]
-    exact forall_congr' fun w => by
-      simp only [Pi.sup_apply, Pi.top_apply]; exact bool_sup_eq_top_iff (φ w) (ψ w)
-
-theorem isSubcontrary_iff_forall :
-    IsSubcontrary φ ψ ↔
-      ¬ (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ (∀ w, φ w = true ∨ ψ w = true) := by
-  unfold IsSubcontrary
-  rw [disjoint_iff, codisjoint_iff]
-  refine and_congr (not_congr ?_) ?_
-  · rw [funext_iff]
-    exact forall_congr' fun w => by
-      simp only [Pi.inf_apply, Pi.bot_apply]; exact bool_inf_eq_bot_iff (φ w) (ψ w)
-  · rw [funext_iff]
-    exact forall_congr' fun w => by
-      simp only [Pi.sup_apply, Pi.top_apply]; exact bool_sup_eq_top_iff (φ w) (ψ w)
-
-theorem isSubaltern_iff_forall :
-    IsSubaltern φ ψ ↔
-      (∀ w, φ w = true → ψ w = true) ∧ ¬ (∀ w, ψ w = true → φ w = true) := by
-  unfold IsSubaltern
-  rw [lt_iff_le_and_ne]
-  have key : (φ ≤ ψ ∧ φ ≠ ψ) ↔ (φ ≤ ψ ∧ ¬ ψ ≤ φ) :=
-    and_congr_right fun hle =>
-      ⟨fun hne hge => hne (le_antisymm hle hge), fun hnge heq => hnge heq.ge⟩
-  rw [key, Pi.le_def, Pi.le_def]
-  exact and_congr (forall_congr' fun w => bool_le_iff (φ w) (ψ w))
-    (not_congr (forall_congr' fun w => bool_le_iff (ψ w) (φ w)))
 
 theorem disjoint_iff_forall :
     Disjoint φ ψ ↔ ∀ w, ¬ (φ w = true ∧ ψ w = true) := by
@@ -220,7 +159,27 @@ theorem codisjoint_iff_forall :
 
 theorem le_iff_forall :
     φ ≤ ψ ↔ ∀ w, φ w = true → ψ w = true := by
-  rw [Pi.le_def]; exact forall_congr' fun w => bool_le_iff (φ w) (ψ w)
+  simp only [Pi.le_def, Bool.le_iff_imp]
+
+theorem isContradictory_iff_forall :
+    IsContradictory φ ψ ↔
+      (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ (∀ w, φ w = true ∨ ψ w = true) := by
+  simp only [IsContradictory, isCompl_iff, disjoint_iff_forall, codisjoint_iff_forall]
+
+theorem isContrary_iff_forall :
+    IsContrary φ ψ ↔
+      (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ ¬ (∀ w, φ w = true ∨ ψ w = true) := by
+  simp only [IsContrary, disjoint_iff_forall, codisjoint_iff_forall]
+
+theorem isSubcontrary_iff_forall :
+    IsSubcontrary φ ψ ↔
+      ¬ (∀ w, ¬ (φ w = true ∧ ψ w = true)) ∧ (∀ w, φ w = true ∨ ψ w = true) := by
+  simp only [IsSubcontrary, disjoint_iff_forall, codisjoint_iff_forall]
+
+theorem isSubaltern_iff_forall :
+    IsSubaltern φ ψ ↔
+      (∀ w, φ w = true → ψ w = true) ∧ ¬ (∀ w, ψ w = true → φ w = true) := by
+  simp only [IsSubaltern, lt_iff_le_not_ge, le_iff_forall]
 
 end Pointwise
 
