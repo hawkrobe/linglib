@@ -178,6 +178,7 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.Verb.Distributivity
 import Linglib.Semantics.Verb.RootContent
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Optimization.Profile
@@ -2271,7 +2272,6 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Expressives.Outlook
 import Linglib.Semantics.Quotation.Mixed
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
