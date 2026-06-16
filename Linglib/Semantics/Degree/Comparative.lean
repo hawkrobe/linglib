@@ -129,8 +129,8 @@ def sComparative {Entity D : Type*} [Preorder D]
     in clausal *than*-comparatives. -/
 theorem sComparative_isAntiAdditive {Entity D : Type*} [Preorder D]
     (μ : Entity → D) :
-    Semantics.Entailment.AntiAdditivity.IsAntiAdditive (sComparative μ) :=
-  Semantics.Entailment.AntiAdditivity.isAntiAdditive_forall_mem
+    Entailment.IsAntiAdditive (sComparative μ) :=
+  Entailment.isAntiAdditive_forall_mem
     (fun d y => d < μ y)
 
 /-- Atomic specialization: at the singleton `{μ b}`, S-comparative

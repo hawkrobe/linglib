@@ -2312,15 +2312,11 @@ import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Studies.Montague1973Quantification
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.Basic
-import Linglib.Semantics.Entailment.Intolerance
 import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.PositionProfile
 import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Studies.Montague1973
-import Linglib.Semantics.Entailment.PresuppositionLicensing
-import Linglib.Semantics.Entailment.PresuppositionPolarity
-import Linglib.Semantics.Entailment.ScaleInteraction
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs

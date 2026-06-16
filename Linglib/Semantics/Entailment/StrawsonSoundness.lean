@@ -36,7 +36,7 @@ deliberately not attempted here — its home is a bridge to
 
 namespace Core.NaturalLogic
 
-open Semantics.Entailment.StrawsonEntailment
+open Entailment
 
 /-- The lattice content of a relation, relativized to a region `D` (the
 worlds where the relevant presuppositions are satisfied). At `D = ⊤` this
@@ -56,49 +56,29 @@ section HoldsOn
 variable {β : Type*} [Lattice β] [BoundedOrder β]
 
 /-- At trivial definedness, relativized content is plain content. -/
+@[simp]
 theorem NLRelation.holdsOn_top {R : NLRelation} {u v : β} :
     R.HoldsOn ⊤ u v ↔ R.Holds u v := by
-  cases R with
-  | equiv =>
-      show u ⊓ ⊤ = v ⊓ ⊤ ↔ u = v
-      rw [inf_top_eq, inf_top_eq]
-  | forward =>
-      show u ⊓ ⊤ ≤ v ↔ u ≤ v
-      rw [inf_top_eq]
-  | reverse =>
-      show v ⊓ ⊤ ≤ u ↔ v ≤ u
-      rw [inf_top_eq]
-  | negation =>
-      show (u ⊓ v ⊓ ⊤ = ⊥ ∧ ⊤ ≤ u ⊔ v) ↔ (u ⊓ v = ⊥ ∧ u ⊔ v = ⊤)
-      rw [inf_top_eq, top_le_iff]
-  | alternation =>
-      show u ⊓ v ⊓ ⊤ = ⊥ ↔ u ⊓ v = ⊥
-      rw [inf_top_eq]
-  | cover =>
-      show ⊤ ≤ u ⊔ v ↔ u ⊔ v = ⊤
-      exact top_le_iff
-  | independent => exact Iff.rfl
+  cases R <;>
+    simp only [NLRelation.HoldsOn, NLRelation.Holds, inf_top_eq, top_le_iff,
+      disjoint_iff, codisjoint_iff, isCompl_iff]
 
 /-- Plain content implies relativized content on any region. -/
 theorem NLRelation.Holds.holdsOn {R : NLRelation} {u v : β} (D : β)
     (h : R.Holds u v) : R.HoldsOn D u v := by
   cases R with
-  | equiv =>
-      have h' : u = v := h
-      subst h'
-      exact rfl
+  | equiv => subst h; rfl
   | forward => exact le_trans inf_le_left h
   | reverse => exact le_trans inf_le_left h
   | negation =>
       obtain ⟨h1, h2⟩ := h
-      refine ⟨?_, ?_⟩
-      · show u ⊓ v ⊓ D = ⊥
-        rw [(h1 : u ⊓ v = ⊥), bot_inf_eq]
-      · exact le_trans le_top (le_of_eq h2.symm)
+      refine ⟨?_, le_top.trans_eq (codisjoint_iff.mp h2).symm⟩
+      show u ⊓ v ⊓ D = ⊥
+      rw [disjoint_iff.mp h1, bot_inf_eq]
   | alternation =>
       show u ⊓ v ⊓ D = ⊥
-      rw [(h : u ⊓ v = ⊥), bot_inf_eq]
-  | cover => exact le_trans le_top (le_of_eq h.symm)
+      rw [disjoint_iff.mp h, bot_inf_eq]
+  | cover => exact le_top.trans_eq (codisjoint_iff.mp h).symm
   | independent => trivial
 
 end HoldsOn
@@ -127,9 +107,7 @@ theorem strawsonSoundFor_top_iff {σ : EntailmentSig} {f : α → β} :
     σ.StrawsonSoundFor f (fun _ => ⊤) ↔ σ.SoundFor f := by
   constructor
   · intro h R x y hR
-    have h2 : (EntailmentSig.project R σ).HoldsOn (⊤ : β) (f x) (f y) := by
-      simpa [inf_idem] using h R x y hR
-    exact NLRelation.holdsOn_top.mp h2
+    simpa only [inf_top_eq, NLRelation.holdsOn_top] using h R x y hR
   · intro h
     exact h.strawsonSoundFor _
 
@@ -148,10 +126,7 @@ theorem strawsonSoundFor_anti_of_isStrawsonDE {f : Set W → Set W'}
     EntailmentSig.StrawsonSoundFor .anti f (fun p => {w | defined p w}) := by
   intro R x y hR
   cases R with
-  | equiv =>
-      have h' : x = y := hR
-      subst h'
-      exact rfl
+  | equiv => subst hR; rfl
   | forward =>
       rintro w ⟨hfy, hdx, _⟩
       exact h x y hR w hdx hfy
@@ -165,7 +140,7 @@ existence presupposition) while failing it classically
 (`onlyFull_not_de`). -/
 theorem onlyFull_strawsonSoundFor_anti (x : W → Prop) :
     EntailmentSig.StrawsonSoundFor .anti (onlyFull x)
-      (fun scope => {w | ∃ w', x w' ∧ scope w'}) :=
+      (fun scope => {_w | ∃ w', x w' ∧ scope w'}) :=
   strawsonSoundFor_anti_of_isStrawsonDE (onlyFull_isStrawsonDE x)
 
 /-- Adversatives (*sorry*, *regret*, *surprised*) realize the `.anti` row

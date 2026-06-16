@@ -13,7 +13,7 @@ coherent architecture with three layers:
 2. **DEStrength ↔ PolarityLicensing bridge** — the entailment hierarchy
    (weak DE / anti-additive / anti-morphic) determines the polarity licensing
    profile, connecting the `Prop`-based semantic properties in
-   `Semantics.Entailment` to the `Bool`-valued empirical classification
+   `Entailment` to the `Bool`-valued empirical classification
    in `Typology.Negation`
 3. **Scoped vs unscoped negation** — a negation operator that retains scope
    into a domain preserves its semantic properties; when scope is blocked
@@ -27,9 +27,9 @@ coherent architecture with three layers:
   propositional negation (no custom `pnot` wrapper)
 - `Core.Logic.NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
   `strengthSufficient`
-- `Semantics.Entailment.Polarity` — `IsDE = Antitone`,
+- `Entailment` — `IsDE = Antitone`,
   `IsUE = Monotone`, `pnot_isDownwardEntailing`
-- `Semantics.Entailment.AntiAdditivity` — `IsAntiAdditive`,
+- `Entailment` — `IsAntiAdditive`,
   `IsAntiMorphic`, `pnot_isAntiMorphic`, `licensesWeakNPI`, `licensesStrongNPI`
 -/
 
@@ -38,9 +38,9 @@ namespace Semantics.Negation
 open Typology.Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Core.NaturalLogic (DEStrength strengthSufficient)
-open Semantics.Entailment (World)
-open Semantics.Entailment.Polarity (IsDE IsUE pnot_isDownwardEntailing)
-open Semantics.Entailment.AntiAdditivity (IsAntiAdditive IsAntiMorphic
+open Entailment (World)
+open Entailment (IsDE IsUE pnot_isDownwardEntailing)
+open Entailment (IsAntiAdditive IsAntiMorphic
   pnot_isAntiAdditive pnot_isAntiMorphic)
 
 /-- Pointwise Bool negation on `W → Bool`. -/
@@ -127,7 +127,7 @@ theorem standardNeg_isAntiMorphic :
 
 The `Bool`-valued `PolarityLicensing` profile in `Typology.Negation` is a
 *consequence* of the `Prop`-based entailment properties in
-`Semantics.Entailment`:
+`Entailment`:
 
 | DEStrength     | Semantic property | Licenses              | Profile           |
 |----------------|-------------------|-----------------------|-------------------|
