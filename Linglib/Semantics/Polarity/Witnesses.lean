@@ -205,7 +205,22 @@ noncomputable def contextWitness? :
   | .adversative => some adversativeWitness
   | .sinceTemporal => some sinceTemporalWitness
   | .superlative => some superlativeWitness
-  | _ => none
+  -- Not yet grounded (no witness operator built). Explicit `none` arms — no `_`
+  -- catch-all — so a newly-added `LicensingContext` fails to compile here rather
+  -- than silently being treated as unwitnessed.
+  | .beforeClause => none
+  | .withoutClause => none
+  | .question => none
+  | .comparativeNP => none
+  | .comparativeS => none
+  | .tooTo => none
+  | .modalPossibility => none
+  | .modalNecessity => none
+  | .imperative => none
+  | .generic => none
+  | .freeRelative => none
+  | .doubtVerb => none
+  | .denyVerb => none
 
 -- Coverage sentries (drift detection, not aggregate counts).
 example : (contextWitness? .negation).isSome = true := rfl
