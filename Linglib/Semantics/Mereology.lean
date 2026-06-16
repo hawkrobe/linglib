@@ -14,6 +14,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Minimal
 import Mathlib.Order.SupClosed
 import Mathlib.Order.UpperLower.Closure
+import Linglib.Core.Order.Antichain
 
 /-!
 # Algebraic Mereology
@@ -411,27 +412,16 @@ theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
 
 /-! ### QUA/CUM Pullback (contravariant functoriality) -/
 
-/-- QUA pullback along strictly monotone maps.
-
-    If `d : α → β` is strictly monotone and `P` is quantized over `β`,
-    then `P ∘ d` is quantized over `α`. This is the general theorem
-    subsuming both `extMeasure_qua` (where d = μ) and the functional
-    version of `qua_propagation` (where d = θ as a function).
-
-    Categorically: QUA is a contravariant functor from the category of
-    partially ordered types with StrictMono morphisms to Prop.
-
-    The relational `qua_propagation` in Krifka1998.lean (using MSO + UP
-    on a binary relation θ) is genuinely different — it operates on
-    relations, not functions. Both coexist: the functional case is a
-    special case of this theorem. -/
+/-- QUA pullback along a strictly monotone map: if `d` is `StrictMono` and `P`
+    is quantized over `β`, then `P ∘ d` is quantized over `α`. The linguistic
+    (setOf-predicate) form of `IsAntichain.preimage_strictMono`
+    (`Core/Order/Antichain.lean`); subsumes `extMeasure_qua` (`d = μ`) and the
+    functional case of the relational `qua_propagation` in Krifka1998.lean. -/
 theorem qua_pullback {α β : Type*} [PartialOrder α] [PartialOrder β]
     {d : α → β} (hd : StrictMono d)
     {P : β → Prop} (hP : QUA P) :
-    QUA (P ∘ d) := by
-  rintro a ha b hb hab hab_le
-  have hlt := hd (lt_of_le_of_ne hab_le hab)
-  exact hP ha hb hlt.ne hlt.le
+    QUA (P ∘ d) :=
+  hP.preimage_strictMono hd
 
 /-- CUM pullback along sum homomorphisms.
 
