@@ -25,7 +25,7 @@ coherent architecture with three layers:
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
 - `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
   propositional negation (no custom `pnot` wrapper)
-- `Core.Logic.NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
+- `NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
   `strengthSufficient`
 - `Entailment` — `IsDE = Antitone`,
   `IsUE = Monotone`, `pnot_isDownwardEntailing`
@@ -37,7 +37,7 @@ namespace Semantics.Negation
 
 open Typology.Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
-open Core.NaturalLogic (DEStrength strengthSufficient)
+open NaturalLogic (DEStrength strengthSufficient)
 open Entailment (World)
 open Entailment (IsDE IsUE pnot_isDownwardEntailing)
 open Entailment (IsAntiAdditive IsAntiMorphic

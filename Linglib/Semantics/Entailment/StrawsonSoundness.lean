@@ -34,7 +34,7 @@ deliberately not attempted here — its home is a bridge to
 `Semantics/Presupposition/`, not an ad-hoc operator.
 -/
 
-namespace Core.NaturalLogic
+namespace NaturalLogic
 
 open Entailment
 
@@ -168,4 +168,4 @@ theorem sinceFull_strawsonSoundFor_anti (pastEvent sinceWindow : W → Set W) :
 
 end SetInstances
 
-end Core.NaturalLogic
+end NaturalLogic

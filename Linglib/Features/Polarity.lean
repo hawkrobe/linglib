@@ -8,7 +8,7 @@ multiplicity inferences, homogeneity gaps, scalar implicatures, etc.
 
 Note: This is distinct from other polarity-like distinctions in the library:
 - `Core.Lexical.UD.Polarity` — morphological feature (`.Pos`/`.Neg`)
-- `Core.NaturalLogic.ContextPolarity` — monotonicity direction (`.upward`/`.downward`)
+- `NaturalLogic.ContextPolarity` — monotonicity direction (`.upward`/`.downward`)
 - `Rett2015Implicature.Polarity` — adjective markedness
 - `Semantics.Presupposition.OntologicalPreconditions.Polarity` — event assertion (`.affirmed`/`.negated`)
 -/

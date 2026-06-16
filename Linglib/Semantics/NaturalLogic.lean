@@ -29,7 +29,7 @@ Natural Language."
 
 -/
 
-namespace Core.NaturalLogic
+namespace NaturalLogic
 
 -- ============================================================================
 -- §1 — NLRelation: Seven Natural Logic Relations
@@ -867,4 +867,4 @@ def negationSig : EntailmentSig := .antiAddMult
 #guard EntailmentSig.project .cover .antiAdd == .alternation        -- ◇ : anti-additive flips ∼ to |
 #guard EntailmentSig.project .cover .antiAddMult == .alternation    -- ◇⊟ : anti-morph swaps | ↔ ∼
 
-end Core.NaturalLogic
+end NaturalLogic
