@@ -1,5 +1,6 @@
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Algebra.BigOperators.Group.List.Defs
+import Mathlib.Data.Nat.Basic
 
 /-!
 # Natural Logic Relations and Entailment Signatures
@@ -539,6 +540,21 @@ inductive DEStrength where
   | antiMorphic    -- Anti-additive + ∧-distributive (= negation)
   deriving DecidableEq, Repr
 
+/-- Rank in the Zwarts chain `weak < antiAdditive < antiMorphic`. -/
+def DEStrength.toNat : DEStrength → Nat
+  | .weak => 0
+  | .antiAdditive => 1
+  | .antiMorphic => 2
+
+theorem DEStrength.toNat_injective : Function.Injective DEStrength.toNat := by
+  intro a b h; cases a <;> cases b <;> simp_all [DEStrength.toNat]
+
+/-- The Zwarts DE hierarchy as the linear order `weak < antiAdditive < antiMorphic`.
+This is the carrier of the canonical `zwartsScale` (`Semantics/Polarity/Licensing.lean`);
+other theories of NPI strength supply other ordered carriers. -/
+instance : LinearOrder DEStrength :=
+  LinearOrder.lift' DEStrength.toNat DEStrength.toNat_injective
+
 /--
 Strength of upward entailingness (dual of DEStrength).
 
@@ -557,15 +573,10 @@ inductive UEStrength where
 Check if a context's DE strength is sufficient for an NPI.
 
 `strengthSufficient contextStrength requiredStrength` returns true
-when `contextStrength ≥ requiredStrength` in the Zwarts hierarchy.
+when `requiredStrength ≤ contextStrength` in the Zwarts hierarchy (`LinearOrder DEStrength`).
 -/
 def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
-  match requiredStrength, contextStrength with
-  | .weak, _ => true
-  | .antiAdditive, .weak => false
-  | .antiAdditive, _ => true
-  | .antiMorphic, .antiMorphic => true
-  | .antiMorphic, _ => false
+  decide (requiredStrength ≤ contextStrength)
 
 #guard strengthSufficient .antiMorphic .weak          -- negation licenses weak NPIs
 #guard strengthSufficient .antiMorphic .antiAdditive   -- negation licenses strong NPIs
