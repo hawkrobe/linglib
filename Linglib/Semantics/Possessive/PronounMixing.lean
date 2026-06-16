@@ -51,7 +51,7 @@ theorem possessivePronoun_selector (p : PersonalPronoun) (i : ℕ)
     (speaker addressee : E) (isFemale isInanimate : E → Prop) (R : E → E → Prop)
     (g : Assignment E) (w : PUnit) :
     (applyTo (p.denote i speaker addressee isFemale isInanimate) R).selector g w
-      = russellIota (E := E) (W := PUnit)
+      = russellIota (E := E)
           (fun y => R (interpPronoun (E := E) (W := PUnit) i g) y) := by
   rw [applyTo_selector]; rfl
 

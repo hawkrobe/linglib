@@ -193,7 +193,7 @@ theorem feminine_per_picks_unique_female {E W : Type}
         (Semantics.Definiteness.Description.ofPresupType .uniqueness
           ((fun _ _ x => (femSem isFemale).presup x) :
             Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx) g gs
-      = Semantics.Definiteness.russellIota (E := E) (W := W) (fun x => isFemale x) :=
+      = Semantics.Definiteness.russellIota (E := E) (fun x => isFemale x) :=
   Semantics.Definiteness.interpret_unique
     ((fun _ _ x => isFemale x) : Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx g gs
 

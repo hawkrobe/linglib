@@ -1213,6 +1213,7 @@ import Linglib.Studies.Charlow2014
 import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Cooper2023.Basic
 import Linglib.Studies.Cooper2023.Ch8
+import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.KampReyle1993
 import Linglib.Studies.KeshetAbney2024
