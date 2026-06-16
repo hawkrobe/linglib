@@ -90,10 +90,8 @@ open Features
 theorem qmod_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
     {n : ℚ} (_hn : 0 < n) :
-    QUA (QMOD R μ n) := by
-  intro x y ⟨_, hx_eq⟩ hlt ⟨_, hy_eq⟩
-  have hμ_qua := extMeasure_qua (μ := μ) n
-  exact hμ_qua x y hx_eq hlt hy_eq
+    QUA (QMOD R μ n) :=
+  Mereology.qmod_qua R n
 
 /-- A CUM mass noun combined with QMOD (via an extensive measure)
     yields a QUA measure phrase. [krifka-1989] §3 D28. -/
@@ -517,7 +515,7 @@ def ATM (P : α → Prop) : Prop :=
     proper P-parts), so it is its own atomic-part witness. -/
 theorem qua_implies_atm {P : α → Prop} (hQua : QUA P) : ATM P := by
   intro x hPx
-  exact ⟨x, le_refl x, hPx, fun z hzlt hPz => hQua x z hPx hzlt hPz⟩
+  exact ⟨x, le_refl x, hPx, fun z hzlt hPz => hQua hPz hPx hzlt.ne hzlt.le⟩
 
 /-! The ATM-but-not-QUA case is genuinely possible — that's this
     section's point. K89's *Ann drank wine in 0.43 seconds* shows that
@@ -666,8 +664,7 @@ def k89Section7Data : List K89QuantDatum :=
 /-- **Forward gap**: a predicate can be K89-QUA on a carrier that has no
     `OrderTop` instance. The singleton predicate `(· = 5)` on `ℕ` is QUA
     (no proper part of 5 in ℕ also equals 5), but ℕ has no maximum. -/
-example : Mereology.QUA (α := ℕ) (· = 5) := by
-  intro x y hPx hlt hPy; omega
+example : Mereology.QUA (α := ℕ) (· = 5) := Mereology.singleton_qua 5
 
 example : NoMaxOrder ℕ := inferInstance
 
@@ -680,7 +677,7 @@ example : ¬ Mereology.QUA (α := Fin 3) (fun k => k.val ≤ 1) := by
   have h1 : (1 : Fin 3).val ≤ 1 := by decide
   have h0 : (0 : Fin 3).val ≤ 1 := by decide
   have hlt : (0 : Fin 3) < 1 := by decide
-  exact h 1 0 h1 hlt h0
+  exact h h0 h1 hlt.ne hlt.le
 
 example : OrderTop (Fin 3) := inferInstance
 example : OrderBot (Fin 3) := inferInstance

@@ -98,9 +98,8 @@ theorem div_atom {P : α → Prop} {x : α} (h : Div P x) : Atom x :=
 
     The proof is structural: it holds for ANY root predicate P,
     regardless of whether P is lexically "mass" or "count." -/
-theorem div_qua (P : α → Prop) : QUA (Div P) := by
-  intro x y ⟨_, hAtom⟩ hlt _
-  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+theorem div_qua (P : α → Prop) : QUA (Div P) :=
+  Mereology.qua_of_atom fun _ h => h.2
 
 /-- **The anti-lexicalist theorem**: the same root yields both
     mass (CUM) and count (QUA) readings via functional structure.
@@ -262,9 +261,8 @@ theorem divCL_sub_div {P : α → Prop} {cl : ClassifierPred α}
     it doesn't change the fundamental property that atoms have
     no proper parts. -/
 theorem divCL_qua (P : α → Prop) (cl : ClassifierPred α) :
-    QUA (DivCL P cl) := by
-  intro x y ⟨_, hAtom, _⟩ hlt _
-  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+    QUA (DivCL P cl) :=
+  Mereology.qua_of_atom fun _ h => h.2.1
 
 /-- Div is DivCL with the trivial classifier.
     Non-classifier languages (English) have covert Div, which is

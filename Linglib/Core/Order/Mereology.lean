@@ -8,6 +8,7 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Order.Closure
 import Mathlib.Order.SupClosed
+import Mathlib.Order.Antichain
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Order.UpperLower.Closure
 import Mathlib.Order.Hom.Lattice
@@ -92,11 +93,23 @@ theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} :
     [krifka-1989] D 14: `QUAₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → ¬ y ⊂ₛ x`.
     [champollion-2017] §2.3.5 reformulates as `∀x,y. P(x) ∧ y < x → ¬P(y)`,
     which is propositionally equivalent (`(A → B → ¬C) ↔ (A → C → ¬B)`).
-    Linglib uses Champollion's form because its introduction pattern fits
-    intro-style proofs more cleanly (assume `P x` and `y < x`, derive `¬ P y`).
-    Telic predicates are canonically quantized. -/
-def QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
-  ∀ (x y : α), P x → y < x → ¬ P y
+    Grounded in mathlib's `IsAntichain` — `QUA P` **is**
+    `IsAntichain (· ≤ ·) {x | P x}` (a quantized predicate's extension is an
+    antichain: its members are pairwise incomparable). A `QUA` hypothesis is
+    *applied directly* as an antichain (`hQ hPx hPy hne : ¬ x ≤ y`); to build one
+    from Champollion's paper form, use `qua_of_forall`. -/
+abbrev QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
+  IsAntichain (· ≤ ·) {x | P x}
+
+/-- Converge Champollion's paper condition into the mathlib `IsAntichain` normal
+    form: if no P-element sits strictly below another P-element, the extension is
+    an antichain. This is the *construction* direction (paper form ⟹ `QUA`); to
+    *use* a `QUA` hypothesis, apply it directly as an antichain. There is no
+    `QUA ⟹ ∀ x y` unfold by design — that runs against the simp grain. -/
+theorem qua_of_forall {α : Type*} [PartialOrder α] {P : α → Prop}
+    (h : ∀ x y, P x → y < x → ¬ P y) : QUA P := by
+  rintro a ha b hb hab hab_le
+  exact h b a hb (lt_of_le_of_ne hab_le hab) ha
 
 /-- Mereological atom: x has no proper part.
     [link-1983] (D.10, D.22 condition 2);
@@ -152,23 +165,32 @@ theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
     {x y : α} (hx : P x) (hy : P y) (hne : x ≠ y) :
     ¬ CUM P := by
   intro hC
-  have hxy := cum_iff.mp hC x y hx hy
-  have hle : x ≤ x ⊔ y := le_sup_left
-  by_cases heq : x = x ⊔ y
-  · have : y ≤ x := heq ▸ le_sup_right
-    by_cases hyx : y = x
-    · exact hne hyx.symm
-    · have hlt : y < x := lt_of_le_of_ne this hyx
-      exact hQ x y hx hlt hy
-  · have hlt : x < x ⊔ y := lt_of_le_of_ne hle heq
-    exact hQ (x ⊔ y) x hxy hlt hx
+  have hxy : P (x ⊔ y) := hC hx hy
+  rcases eq_or_lt_of_le (le_sup_left : x ≤ x ⊔ y) with hx_eq | hx_lt
+  · rcases eq_or_lt_of_le (le_sup_right : y ≤ x ⊔ y) with hy_eq | hy_lt
+    · exact hne (hx_eq.trans hy_eq.symm)
+    · exact hQ hy hxy hy_lt.ne hy_lt.le
+  · exact hQ hx hxy hx_lt.ne hx_lt.le
 
-/-- Atoms are trivially quantized: the singleton {x} is QUA when x is an atom. -/
+/-- Atoms form an antichain: distinct atoms are incomparable (`a ≤ b` with `b`
+    an atom forces `a = b`). The engine behind `qua_of_atom`. -/
+theorem isAntichain_setOf_atom {α : Type*} [PartialOrder α] :
+    IsAntichain (· ≤ ·) {x : α | Atom x} := by
+  rintro a _ha b hb hab hab_le
+  exact hab (hb a hab_le)
+
+/-- **Combinator**: a predicate holding only of atoms is quantized — its
+    extension is a subset of the atoms, which form an antichain
+    (`IsAntichain.subset`). Factors the recurring "atomic ⟹ QUA" pattern
+    (mass-noun part predicates, classifier atoms). -/
+theorem qua_of_atom {α : Type*} [PartialOrder α] {P : α → Prop}
+    (h : ∀ ⦃x⦄, P x → Atom x) : QUA P :=
+  isAntichain_setOf_atom.subset h
+
+/-- Atoms are trivially quantized: the singleton `{x}` is QUA when x is an atom. -/
 theorem atom_qua {α : Type*} [PartialOrder α]
-    {x : α} (hAtom : Atom x) : QUA (· = x) := by
-  intro a b ha hlt hn
-  subst ha; subst hn
-  exact absurd (hAtom b (le_of_lt hlt)) (ne_of_lt hlt).symm
+    {x : α} (hAtom : Atom x) : QUA (· = x) :=
+  qua_of_atom fun _ hz => hz ▸ hAtom
 
 /-- DIV allows extracting parts: if P is DIV and P(z), then P(w) for any w ≤ z. -/
 theorem div_closed_under_le {α : Type*} [PartialOrder α]
@@ -364,9 +386,8 @@ theorem atomize_sub {α : Type*} [PartialOrder α]
 
 /-- Atomized predicates are quantized: no proper part of an atom is an atom. -/
 theorem atomize_qua {α : Type*} [PartialOrder α]
-    {P : α → Prop} : QUA (atomize P) := by
-  intro x y ⟨_, hAtom⟩ hlt _
-  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+    {P : α → Prop} : QUA (atomize P) :=
+  qua_of_atom fun _ h => h.2
 
 /-- Atomize turns cumulative predicates into quantized ones.
     This is the core of CLF-for-N semantics: the classifier takes a
@@ -458,8 +479,10 @@ theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
 theorem qua_pullback {α β : Type*} [PartialOrder α] [PartialOrder β]
     {d : α → β} (hd : StrictMono d)
     {P : β → Prop} (hP : QUA P) :
-    QUA (P ∘ d) :=
-  fun _x _y hx hlt hy => hP _ _ hx (hd hlt) hy
+    QUA (P ∘ d) := by
+  rintro a ha b hb hab hab_le
+  have hlt := hd (lt_of_le_of_ne hab_le hab)
+  exact hP ha hb hlt.ne hlt.le
 
 /-- CUM pullback along sum homomorphisms.
 
@@ -493,10 +516,8 @@ theorem extMeasure_strictMono {α : Type*} [SemilatticeSup α]
     This generalizes `atom_qua`, which required `Atom x`. The Atom
     hypothesis is unnecessary for singletons. -/
 theorem singleton_qua {α : Type*} [PartialOrder α]
-    (n : α) : QUA (· = n) := by
-  intro x y hx hlt hy
-  subst hx; subst hy
-  exact absurd hlt (lt_irrefl _)
+    (n : α) : QUA (· = n) :=
+  Set.Subsingleton.isAntichain (fun _ ha _ hb => ha.trans hb.symm) _
 
 /-- Measure phrases create QUA predicates: `{x : μ(x) = n}` is QUA
     whenever μ is an extensive measure ([krifka-1998] §2.2).
@@ -510,6 +531,13 @@ theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
     QUA (fun x => μ x = n) :=
   qua_pullback (extMeasure_strictMono hμ) (singleton_qua n)
+
+/-- **Combinator**: a measure-quantizing modification is quantized.
+    `QMOD R μ n ⊆ {μ = n}`, an antichain by `extMeasure_qua`, so any subset is
+    too (`IsAntichain.subset`). -/
+theorem qmod_qua {α : Type*} [SemilatticeSup α] {μ : α → ℚ} [ExtMeasure α μ]
+    (R : α → Prop) (n : ℚ) : QUA (QMOD R μ n) :=
+  (extMeasure_qua n).subset fun _ h => h.2
 
 /-- QUA pullback composes: if `d₁ : α → β` and `d₂ : β → γ` are both
     StrictMono, then `QUA P → QUA (P ∘ d₂ ∘ d₁)`.

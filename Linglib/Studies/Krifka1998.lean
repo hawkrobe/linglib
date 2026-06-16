@@ -686,10 +686,9 @@ def someApples : Apple → Prop := fun a => a.Nonempty
 /-- `twoApples` is QUA: a proper part of `{0, 1}` cannot also equal
     `{0, 1}`. This is the standard "exact-cardinality NPs are
     quantized" property at the K89/K98 level. -/
-theorem twoApples_qua : QUA twoApples := by
-  intro x y hx hlt hy
-  -- hx : x = {0,1}, hy : y = {0,1}, hlt : y < x. Substitute to get y < y.
-  rw [hx, hy] at hlt; exact hlt.ne rfl
+theorem twoApples_qua : QUA twoApples :=
+  -- `twoApples` is the singleton predicate `(· = {0,1})`, trivially an antichain.
+  Mereology.qua_of_forall fun x y hx hlt hy => by rw [hx, hy] at hlt; exact hlt.ne rfl
 
 /-- `someApples` is CUM: nonempty ⊔ nonempty = nonempty. Bare plurals
     propagate cumulativity (K89 §3 / K98 §3.3). -/

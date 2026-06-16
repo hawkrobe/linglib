@@ -117,7 +117,7 @@ private theorem middle_ground_stable_of_postulates {θ : α → β → Prop} {OB
   · exact not_cum_vp_of_cumTheta_up hCumTheta hUP ha hb hθ_a hθ_b hSum
   · intro hQua
     obtain ⟨e_y, he_y_lt, hθ_y⟩ := hSinc.mse x e_x y hθ_x hlt
-    exact hQua e_x e_y ⟨x, hx, hθ_x⟩ he_y_lt ⟨y, hy, hθ_y⟩
+    exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
 /-- **¬CUM lifts to VP** (canonical typeclass form). `[IsSincVerb θ]`
     bundles `CumTheta` (via `IsCumThetaVerb` parent class) and `UP`. -/
