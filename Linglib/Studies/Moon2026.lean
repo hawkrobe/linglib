@@ -558,8 +558,8 @@ theorem mixedDrink_not_atom {n : ℕ}
     ¬ Atom x := by
   intro hAtom
   obtain ⟨w⟩ := hx
-  have h0 : w.assign 0 = x := hAtom (w.assign 0) (w.part_le 0)
-  have h1 : w.assign 1 = x := hAtom (w.assign 1) (w.part_le 1)
+  have h0 : w.assign 0 = x := Atom.eq hAtom (w.part_le 0)
+  have h1 : w.assign 1 = x := Atom.eq hAtom (w.part_le 1)
   have hne : (0 : Fin (n + 2)) ≠ 1 := by simp
   have hDisj := w.disjoint 0 1 hne
   rw [h0, h1] at hDisj
