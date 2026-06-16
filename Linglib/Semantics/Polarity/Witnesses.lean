@@ -34,7 +34,7 @@ retirement is deferred.
 namespace Semantics.Polarity.Licensing
 
 open Features (LicensingContext)
-open Core.NaturalLogic
+open NaturalLogic
 open Quantification
 open Entailment (World pnot)
 open Entailment (atMost2_student atMost_isDE_scope)

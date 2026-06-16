@@ -31,7 +31,7 @@ certified profiles as worked instances.
 - `every_sem_soundFor`, `no_sem_soundFor`: certified determiner profiles.
 -/
 
-namespace Core.NaturalLogic
+namespace NaturalLogic
 
 open Entailment
 open Quantification
@@ -164,4 +164,4 @@ example : Sig₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
 
 end GQBridges
 
-end Core.NaturalLogic
+end NaturalLogic

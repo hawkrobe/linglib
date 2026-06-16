@@ -2,7 +2,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Mathlib.Order.BooleanAlgebra.Basic
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Core.Logic.Truth3
 
 /-!

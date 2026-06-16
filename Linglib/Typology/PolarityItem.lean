@@ -1,6 +1,6 @@
 import Linglib.Features.LicensingContext
 import Linglib.Typology.NegativeConcord
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 
 /-!
 # Typology.PolarityItem
@@ -300,7 +300,7 @@ structure PolarityItemEntry where
     anti-morphic) has no registry items yet — extend `PolarityType`
     when one lands. -/
 def PolarityItemEntry.strength (e : PolarityItemEntry) :
-    Option Core.NaturalLogic.DEStrength :=
+    Option NaturalLogic.DEStrength :=
   match e.polarityType with
   | .npiWeak => some .weak
   | .npiFci => some .weak

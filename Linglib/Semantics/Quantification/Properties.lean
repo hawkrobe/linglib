@@ -889,7 +889,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
 
 /-! ### Entailment Signature Bridge ([icard-2012]) -/
 
-open Core.NaturalLogic (EntailmentSig ContextPolarity)
+open NaturalLogic (EntailmentSig ContextPolarity)
 
 /--
 Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
