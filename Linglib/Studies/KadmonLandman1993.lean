@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Typology.PolarityItem
 import Linglib.Semantics.Entailment.Polarity
@@ -45,7 +45,7 @@ not sufficient: *each* and comparative *more often than* are DE yet resist
 
 namespace KadmonLandman1993
 
-open Core.NaturalLogic
+open NaturalLogic
 open Typology.PolarityItem (LicensingContext)
 open Semantics.Polarity.Licensing (LicensingMechanism)
 open Entailment

@@ -44,7 +44,7 @@ open Semantics.Montague (ToyEntity)
     [ladusaw-1979]: DE licenses weak NPIs.
     [zwarts-1998]: anti-additive licenses strong NPIs.
 
-    A coarsening of `Core.NaturalLogic.DEStrength` that collapses the
+    A coarsening of `NaturalLogic.DEStrength` that collapses the
     `.antiMorphic` and `.antiAdditive` cases (Ladusaw treats them
     identically: both license strong NPIs). -/
 inductive LicensingStrength where
@@ -54,7 +54,7 @@ inductive LicensingStrength where
   deriving DecidableEq, Repr
 
 /-- Coarsen a `DEStrength` to Ladusaw's three-way classification. -/
-def LicensingStrength.ofDEStrength : Option Core.NaturalLogic.DEStrength → LicensingStrength
+def LicensingStrength.ofDEStrength : Option NaturalLogic.DEStrength → LicensingStrength
   | some .antiMorphic | some .antiAdditive => .antiAdditive
   | some .weak                              => .downwardEntailing
   | none                                    => .nonDE

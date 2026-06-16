@@ -13,7 +13,7 @@ open Semantics.Presupposition
 open Features
 open Semantics.Lexical
 open Features.ChangeOfState
-open Core.NaturalLogic (EntailmentSig)
+open NaturalLogic (EntailmentSig)
 open Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)

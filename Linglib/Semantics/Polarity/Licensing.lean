@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Features.LicensingContext
 import Linglib.Typology.PolarityItem
 
@@ -120,7 +120,7 @@ structure ContextProperties where
       Strawson reading): the row a Strawson-relativized soundness
       statement (`EntailmentSig.StrawsonSoundFor`) realizes. Coincides
       with the classical row for presupposition-free contexts. -/
-  strawsonSignature : Core.NaturalLogic.EntailmentSig
+  strawsonSignature : NaturalLogic.EntailmentSig
   /-- K&L mechanism: how this context licenses NPIs. -/
   mechanism : LicensingMechanism
   /-- A canonical English example. -/
@@ -133,7 +133,7 @@ structure ContextProperties where
       superlatives: no `EntailmentSig` row is classically sound for
       them. Defaults to the Strawson row (the presupposition-free
       case). -/
-  classicalSignature : Option Core.NaturalLogic.EntailmentSig :=
+  classicalSignature : Option NaturalLogic.EntailmentSig :=
     some strawsonSignature
   deriving Repr
 
@@ -260,7 +260,7 @@ def strengthLicenses (e : Typology.PolarityItem.PolarityItemEntry)
     (c : LicensingContext) : Bool :=
   match (contextProperties c).strawsonSignature.toDEStrength, e.strength with
   | some supplied, some required =>
-      Core.NaturalLogic.strengthSufficient supplied required
+      NaturalLogic.strengthSufficient supplied required
   | _, _ => false
 
 /-- `strengthLicenses` as a proposition. -/

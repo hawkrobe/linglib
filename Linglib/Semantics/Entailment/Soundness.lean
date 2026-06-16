@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Entailment.AntiAdditivity
 
 /-!
@@ -42,7 +42,7 @@ monotonicity `EntailmentSig.project_refines`. `soundFor_all` holds
 unconditionally — every function realizes the no-property row.
 -/
 
-namespace Core.NaturalLogic
+namespace NaturalLogic
 
 open Entailment
 
@@ -203,7 +203,7 @@ theorem soundFor_all (f : α → β) : EntailmentSig.SoundFor .all f :=
 
 /-- Relation-level order soundness: `Refines` is the implication order on
 the lattice content ([icard-2012] §1). -/
-theorem _root_.Core.NaturalLogic.NLRelation.Holds.of_refines
+theorem _root_.NaturalLogic.NLRelation.Holds.of_refines
     {R R' : NLRelation} {u v : β} (h : R.Holds u v) (href : R.Refines R') :
     R'.Holds u v := by
   cases R <;> cases R' <;>
@@ -300,4 +300,4 @@ example : EntailmentSig.SoundFor .addMult (pnot ∘ pnot) :=
 
 end PnotInstance
 
-end Core.NaturalLogic
+end NaturalLogic

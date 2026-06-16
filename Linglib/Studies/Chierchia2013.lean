@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 
 /-!
 # Disjunction Ignorance [chierchia-2013]
@@ -15,7 +15,7 @@ This is different from scalar implicature:
 - Ignorance: "A or B" → speaker doesn't know which
 
 The file provides a `predictReading` function over `ContextPolarity`
-(from `Core.NaturalLogic`) that derives the preferred inclusive/exclusive
+(from `NaturalLogic`) that derives the preferred inclusive/exclusive
 reading from structural position.
 -/
 
@@ -331,7 +331,7 @@ inductive DisjunctionPosition where
   | negation_scope    -- Under negation (DE)
   deriving DecidableEq, Repr
 
-open Core.NaturalLogic (ContextPolarity)
+open NaturalLogic (ContextPolarity)
 
 /--
 Determine context polarity from position.

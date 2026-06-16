@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 
@@ -50,7 +50,7 @@ namespace DenicEtAl2021
 
 /-- The four monotonicity environments tested.
 
-A refinement of `Core.NaturalLogic.ContextPolarity` that keeps DN distinct
+A refinement of `NaturalLogic.ContextPolarity` that keeps DN distinct
 from UE. `ContextPolarity` maps both to `.upward`; the paper shows PIs
 distinguish them empirically. -/
 inductive MonotonicityEnv where
@@ -232,7 +232,7 @@ def ppiItemTested : String := "some"
 -- § Entailment Signature Bridge
 -- ============================================================================
 
-open Core.NaturalLogic
+open NaturalLogic
 open Typology.PolarityItem
 open English.PolarityItems
 
