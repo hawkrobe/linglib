@@ -151,4 +151,26 @@ theorem may_gt_might : EpistemicEntry.may_.θ > EpistemicEntry.might_.θ := by
 /-- `might` = `could` in threshold (both 0.20). -/
 theorem might_eq_could : EpistemicEntry.might_.θ = EpistemicEntry.could_.θ := rfl
 
+-- ============================================================================
+-- §5. Cross-paper: divergence from Herbstritt & Franke (2019)
+-- ============================================================================
+
+/-! [herbstritt-franke-2019] (Cognition 186) independently infers a credence
+threshold for `probably` by Bayesian fitting against urn-production data,
+reporting a posterior mean of 0.549 with 95% HDI [0.500, 0.594] (their Table 6).
+LaBToM's grid-search threshold for `likely` (0.70) lies above the upper bound of
+that HDI, so the two parameter-fitted accounts disagree at the 95%-credibility
+level, not merely on the point estimate. Candidate explanations: lexical
+(`probably` ≠ `likely`), task (urn production vs. Theory-of-Mind in a gridworld),
+or posterior uncertainty (point values vs. intervals). -/
+
+/-- LaBToM's `likely_.θ = 0.70` exceeds the upper bound (0.594) of the 95% HDI
+    that [herbstritt-franke-2019] report for the threshold of `probably`
+    (their Table 6). The two fitted theories disagree at the 95%-credibility
+    level. -/
+theorem labtom_likely_above_hf_probably_hdi :
+    (594 / 1000 : ℚ) < EpistemicEntry.likely_.θ := by
+  show (594 / 1000 : ℚ) < 7 / 10
+  norm_num
+
 end YingEtAl2025
