@@ -27,17 +27,17 @@ Following Demey & Smessaert (and the medieval ordering):
 
 ## Status
 
-The Square is provided as `Diagram` data with the relation matrix labeled.
-The full `relation_correct` discharge is **partial** — modern (FOL) reading
-makes some relations conditional on `∃R`, so we mark those as `unconnected`
-in the labeled matrix and provide them as separate conditional theorems.
-The Aristotelian (sortal-restricted) variant where the full Square holds is
-the natural follow-up in `Aristotelian.lean` (TODO).
+The Square is provided as a `Diagram` (the fragment `cornerForm`); its relations
+are derived. The contradiction diagonals (A↔O, E↔I) hold unconditionally under the
+modern (FOL) reading and are recorded as theorems (`aieoSquare_AO_contradictory`,
+`aieoSquare_EI_contradictory`). The subalternations A→I, E→O are conditional on
+existential import (`∃R`); the sortal-restricted Aristotelian variant where the full
+Square holds is the natural follow-up (TODO).
 -/
 
 namespace Quantification.Syllogistic
 
-open Aristotelian (AristotelianRel Diagram IsContradictory isContradictory_iff_forall)
+open Aristotelian (Diagram IsContradictory isContradictory_iff_forall)
 
 /-! ### Corner indexing -/
 
@@ -54,15 +54,6 @@ def cornerForm (X Y : Region → Bool) : Corner → VennState → Bool
   | .E => fun s => syllNone s X Y
   | .I => fun s => syllSome s X Y
   | .O => fun s => syllSomeNot s X Y
-
-/-- The labeled relation between corners. Modern reading: subalternations
-    A→I and E→O depend on existential import, so they appear as
-    `unconnected` in the unconditional matrix; the contradiction diagonals
-    A↔O and E↔I are unconditional under modern reading. -/
-def cornerRel : Corner → Corner → AristotelianRel
-  | .A, .O | .O, .A => .contradictory
-  | .E, .I | .I, .E => .contradictory
-  | _, _ => .unconnected  -- subalternations + contrariety conditional on ∃R
 
 /-! ### Contradictory diagonal lemmas (modern reading, unconditional) -/
 
@@ -114,25 +105,18 @@ theorem syllNone_contradictory_syllSome (X Y : Region → Bool) :
 
 /-! ### The AIEO Square as a `Diagram` instance -/
 
-/-- The AIEO Square as a `Diagram` instance over `Corner` corners.
-    Discharges the `contradictory` cases via the lemmas above. The
-    `contrary`/`subcontrary`/`subaltern` cases are vacuous because
-    `cornerRel` labels all non-A↔O / non-E↔I pairs as `unconnected`. -/
-noncomputable def aieoSquare (X Y : Region → Bool) : Diagram Corner (VennState → Bool) where
-  φ := cornerForm X Y
-  relation := cornerRel
-  relation_correct := by
-    intro i j
-    refine ⟨?_, ?_, ?_, ?_⟩
-    -- Contradictory case: discharge via the helper lemmas
-    · intro h
-      cases i <;> cases j <;> simp [cornerRel] at h <;>
-        first
-        | exact syllAll_contradictory_syllSomeNot X Y
-        | exact (syllAll_contradictory_syllSomeNot X Y).symm
-        | exact syllNone_contradictory_syllSome X Y
-        | exact (syllNone_contradictory_syllSome X Y).symm
-    -- Contrary / Subcontrary / Subaltern cases: cornerRel never labels them, so vacuous
-    all_goals (intro h; cases i <;> cases j <;> simp [cornerRel] at h)
+/-- The AIEO Square as a `Diagram` over `Corner` corners — the fragment `cornerForm`. -/
+noncomputable def aieoSquare (X Y : Region → Bool) : Diagram Corner (VennState → Bool) :=
+  ⟨cornerForm X Y⟩
+
+/-- A and O are contradictories in the AIEO Square (unconditional, modern reading). -/
+theorem aieoSquare_AO_contradictory (X Y : Region → Bool) :
+    IsContradictory ((aieoSquare X Y).φ .A) ((aieoSquare X Y).φ .O) :=
+  syllAll_contradictory_syllSomeNot X Y
+
+/-- E and I are contradictories in the AIEO Square (unconditional, modern reading). -/
+theorem aieoSquare_EI_contradictory (X Y : Region → Bool) :
+    IsContradictory ((aieoSquare X Y).φ .E) ((aieoSquare X Y).φ .I) :=
+  syllNone_contradictory_syllSome X Y
 
 end Quantification.Syllogistic

@@ -29,34 +29,17 @@ variable {W : Type*} [Fintype W]
 /-! ### Probability of a Boolean predicate -/
 
 /-- The probability of `φ : W → Bool` under `μ : PMF W`, i.e. `μ {w | φ w = true}`. -/
-noncomputable def boolProb (μ : PMF W) (φ : W → Bool) : ℝ≥0∞ :=
+noncomputable abbrev boolProb (μ : PMF W) (φ : W → Bool) : ℝ≥0∞ :=
   PMF.probOfSet μ {w | φ w = true}
 
-@[inherit_doc boolProb]
-notation "P[" φ " ; " μ "]" => boolProb μ φ
-
-/-- The PMF sums to 1 over the finite sample space. -/
-private lemma pmf_sum_univ (μ : PMF W) : ∑ x, μ x = (1 : ℝ≥0∞) := by
-  have h : ∑ x, μ x = (∑' x, μ x : ℝ≥0∞) :=
-    (tsum_eq_sum (f := μ) (s := Finset.univ)
-      (fun x hx => absurd (Finset.mem_univ x) hx)).symm
-  rw [h, PMF.tsum_coe]
-
-/-- Total probability: `P[φ] + P[¬φ] = 1`. -/
+/-- Total probability: `P[φ] + P[¬φ] = 1`, via `PMF.probOfSet_compl_add`. -/
 theorem boolProb_add_compl (μ : PMF W) (φ : W → Bool) :
     boolProb μ φ + boolProb μ (fun w => !φ w) = 1 := by
   classical
-  unfold boolProb PMF.probOfSet
-  rw [PMF.toOuterMeasure_apply_fintype, PMF.toOuterMeasure_apply_fintype,
-      ← Finset.sum_add_distrib]
-  have hsum : ∀ x, ({w | φ w = true} : Set W).indicator μ x +
-                   ({w | (!φ w) = true} : Set W).indicator μ x = μ x := by
-    intro x
-    cases hφ : φ x
-    · simp [Set.indicator, hφ]
-    · simp [Set.indicator, hφ]
-  rw [Finset.sum_congr rfl (fun x _ => hsum x)]
-  exact pmf_sum_univ μ
+  have hset : {w | (!φ w) = true} = {w | φ w = true}ᶜ := by
+    ext w; simp only [Set.mem_setOf_eq, Set.mem_compl_iff]; cases φ w <;> simp
+  show μ.probOfSet {w | φ w = true} + μ.probOfSet {w | (!φ w) = true} = 1
+  rw [hset]; exact μ.probOfSet_compl_add _
 
 /-! ### Probabilistic Aristotelian relations (Definition 1, convex form) -/
 
@@ -78,85 +61,45 @@ def ProbSubaltern (μ : PMF W) (φ ψ : W → Bool) : Prop :=
 
 /-! ### Transfer theorems: Boolean ⇒ Probabilistic (for every μ) -/
 
-/-- Boolean contradictoriness transfers to every measure (`ψ` is pointwise `!φ`). -/
+/-- Boolean contradictoriness transfers to every measure: `{ψ}` is the complement of `{φ}`. -/
 theorem ProbContradictory.of_isContradictory {φ ψ : W → Bool}
-    (h : IsContradictory φ ψ) (μ : PMF W) :
-    ProbContradictory μ φ ψ := by
+    (h : IsContradictory φ ψ) (μ : PMF W) : ProbContradictory μ φ ψ := by
+  classical
   obtain ⟨hAnd, hOr⟩ := isContradictory_iff_forall.mp h
-  have hPointwise : ∀ w, ψ w = !φ w := by
-    intro w
-    have h1 := hAnd w
-    have h2 := hOr w
-    cases hφ : φ w
-    · cases hψ : ψ w
-      · exfalso; exact h2.elim (fun h => by rw [hφ] at h; exact Bool.noConfusion h)
-                                (fun h => by rw [hψ] at h; exact Bool.noConfusion h)
-      · simp [hφ]
-    · cases hψ : ψ w
-      · simp [hφ]
-      · exfalso; exact h1 ⟨hφ, hψ⟩
-  have hψ_eq : ψ = (fun w => !φ w) := funext hPointwise
-  unfold ProbContradictory
-  rw [hψ_eq]
-  exact boolProb_add_compl μ φ
+  have hset : {w | ψ w = true} = {w | φ w = true}ᶜ := by
+    ext w
+    simp only [Set.mem_setOf_eq, Set.mem_compl_iff]
+    exact ⟨fun hψ hφ => hAnd w ⟨hφ, hψ⟩, fun hφ => (hOr w).resolve_left hφ⟩
+  show μ.probOfSet {w | φ w = true} + μ.probOfSet {w | ψ w = true} = 1
+  rw [hset]; exact μ.probOfSet_compl_add _
 
-/-- Boolean subalternation transfers to every measure (PMF monotonicity). -/
+omit [Fintype W] in
+/-- Boolean subalternation transfers to every measure (`probOfSet` monotonicity). -/
 theorem ProbSubaltern.of_isSubaltern {φ ψ : W → Bool}
-    (h : IsSubaltern φ ψ) (μ : PMF W) :
-    ProbSubaltern μ φ ψ := by
-  obtain ⟨hle, _⟩ := isSubaltern_iff_forall.mp h
-  unfold ProbSubaltern boolProb PMF.probOfSet
-  apply MeasureTheory.OuterMeasure.mono
-  intro w hw
-  exact hle w hw
+    (h : IsSubaltern φ ψ) (μ : PMF W) : ProbSubaltern μ φ ψ :=
+  μ.probOfSet_mono fun w hw => le_iff_forall.mp h.le w hw
 
-/-- Boolean contrariety transfers to every measure. -/
+/-- Boolean contrariety transfers to every measure: `{φ} ⊆ {ψ}ᶜ`, so `P[φ] ≤ 1 - P[ψ]`. -/
 theorem ProbContrary.of_isContrary {φ ψ : W → Bool}
-    (h : IsContrary φ ψ) (μ : PMF W) :
-    ProbContrary μ φ ψ := by
+    (h : IsContrary φ ψ) (μ : PMF W) : ProbContrary μ φ ψ := by
   classical
-  obtain ⟨hAnd, _⟩ := isContrary_iff_forall.mp h
-  unfold ProbContrary boolProb PMF.probOfSet
-  rw [PMF.toOuterMeasure_apply_fintype, PMF.toOuterMeasure_apply_fintype,
-      ← Finset.sum_add_distrib]
-  have hbnd : ∀ x ∈ Finset.univ,
-      ({w | φ w = true} : Set W).indicator μ x +
-      ({w | ψ w = true} : Set W).indicator μ x ≤ μ x := by
-    intro x _
-    by_cases hφ : φ x = true
-    · by_cases hψ : ψ x = true
-      · exact absurd ⟨hφ, hψ⟩ (hAnd x)
-      · simp [Set.indicator, hφ, hψ]
-    · by_cases hψ : ψ x = true
-      · simp [Set.indicator, hφ, hψ]
-      · simp [Set.indicator, hφ, hψ]
-  calc (∑ x, (({w | φ w = true} : Set W).indicator μ x +
-              ({w | ψ w = true} : Set W).indicator μ x))
-      ≤ ∑ x, μ x := Finset.sum_le_sum hbnd
-    _ = 1 := pmf_sum_univ μ
+  have hsub : {w | φ w = true} ⊆ {w | ψ w = true}ᶜ :=
+    fun w hw hw' => disjoint_iff_forall.mp h.1 w ⟨hw, hw'⟩
+  calc boolProb μ φ + boolProb μ ψ
+      ≤ μ.probOfSet {w | ψ w = true}ᶜ + boolProb μ ψ := by
+        gcongr; exact μ.probOfSet_mono hsub
+    _ = 1 := by rw [add_comm]; exact μ.probOfSet_compl_add _
 
-/-- Boolean subcontrariety transfers to every measure. -/
+/-- Boolean subcontrariety transfers to every measure: `{ψ}ᶜ ⊆ {φ}`, so `1 - P[ψ] ≤ P[φ]`. -/
 theorem ProbSubcontrary.of_isSubcontrary {φ ψ : W → Bool}
-    (h : IsSubcontrary φ ψ) (μ : PMF W) :
-    ProbSubcontrary μ φ ψ := by
+    (h : IsSubcontrary φ ψ) (μ : PMF W) : ProbSubcontrary μ φ ψ := by
   classical
-  obtain ⟨_, hOr⟩ := isSubcontrary_iff_forall.mp h
-  unfold ProbSubcontrary boolProb PMF.probOfSet
-  rw [PMF.toOuterMeasure_apply_fintype, PMF.toOuterMeasure_apply_fintype,
-      ← Finset.sum_add_distrib]
-  have hbnd : ∀ x ∈ Finset.univ,
-      μ x ≤ ({w | φ w = true} : Set W).indicator μ x +
-            ({w | ψ w = true} : Set W).indicator μ x := by
-    intro x _
-    rcases hOr x with hφ | hψ
-    · simp [Set.indicator, hφ]
-    · by_cases hφ' : φ x = true
-      · simp [Set.indicator, hφ', hψ]
-      · simp [Set.indicator, hφ', hψ]
+  have hsub : {w | ψ w = true}ᶜ ⊆ {w | φ w = true} :=
+    fun w hw => (codisjoint_iff_forall.mp h.2 w).resolve_right hw
+  show (1 : ℝ≥0∞) ≤ boolProb μ φ + boolProb μ ψ
   calc (1 : ℝ≥0∞)
-      = ∑ x, μ x := (pmf_sum_univ μ).symm
-    _ ≤ ∑ x, (({w | φ w = true} : Set W).indicator μ x +
-              ({w | ψ w = true} : Set W).indicator μ x) :=
-        Finset.sum_le_sum hbnd
+      = boolProb μ ψ + μ.probOfSet {w | ψ w = true}ᶜ := (μ.probOfSet_compl_add _).symm
+    _ ≤ boolProb μ ψ + boolProb μ φ := by gcongr; exact μ.probOfSet_mono hsub
+    _ = boolProb μ φ + boolProb μ ψ := add_comm _ _
 
 end Aristotelian

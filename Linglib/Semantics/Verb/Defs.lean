@@ -5,7 +5,7 @@ import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.Linking
@@ -46,7 +46,7 @@ open Semantics.Presupposition
 open Features
 open Semantics.Lexical
 open Features.ChangeOfState
-open Core.NaturalLogic (EntailmentSig)
+open NaturalLogic (EntailmentSig)
 open Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)

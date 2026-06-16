@@ -4,7 +4,7 @@ import Mathlib.Order.Heyting.Hom
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Polarity
 
@@ -37,7 +37,7 @@ domains, his §1.1).
 
 namespace Entailment
 
-open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
+open NaturalLogic (DEStrength UEStrength strengthSufficient)
 open Entailment
 open List (Sublist)
 

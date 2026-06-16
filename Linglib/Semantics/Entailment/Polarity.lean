@@ -1,11 +1,11 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
 
 /-!
 # Grounded context polarity
 
-Semantic grounding for `ContextPolarity` (defined in `Core.NaturalLogic`) via
+Semantic grounding for `ContextPolarity` (defined in `NaturalLogic`) via
 mathlib's `Monotone`/`Antitone` infrastructure: `IsUpwardEntailing`/
 `IsDownwardEntailing` abbreviate `Monotone`/`Antitone` on `Set α → Set β`,
 so the composition rules (UE ∘ UE = UE, DE ∘ DE = UE, mixed = DE) are
@@ -17,7 +17,7 @@ context function with its monotonicity proof on the toy `World` model.
 
 namespace Entailment
 
-export Core.NaturalLogic (ContextPolarity)
+export NaturalLogic (ContextPolarity)
 
 open Entailment
 

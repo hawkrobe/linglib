@@ -55,14 +55,10 @@ theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
   | mem ψ' hψ' =>
     obtain ⟨i, rfl⟩ := hψ'
     by_cases h : σ i = true
-    · left
-      rw [le_iff_forall]
-      intro w hw
+    · refine Or.inl (le_iff_forall.mpr fun w hw => ?_)
       simp only [anchor, decide_eq_true_eq] at hw
       simpa only [if_pos h] using hw i
-    · right
-      rw [le_iff_forall]
-      intro w hw
+    · refine Or.inr (le_iff_forall.mpr fun w hw => ?_)
       simp only [anchor, decide_eq_true_eq] at hw
       have := hw i
       rw [if_neg h] at this
@@ -85,11 +81,10 @@ omit [Fintype ι] in
 private theorem lit_mem_closure (σ : ι → Bool) (i : ι) :
     (if σ i then φ i else (φ i)ᶜ) ∈
     BooleanSubalgebra.closure (Set.range φ) := by
-  cases h : σ i
-  · simp only [Bool.false_eq_true, ↓reduceIte]
-    exact BooleanSubalgebra.compl_mem (BooleanSubalgebra.subset_closure ⟨i, rfl⟩)
-  · simp only [↓reduceIte]
-    exact BooleanSubalgebra.subset_closure ⟨i, rfl⟩
+  have hmem := BooleanSubalgebra.subset_closure (s := Set.range φ) ⟨i, rfl⟩
+  split
+  · exact hmem
+  · exact BooleanSubalgebra.compl_mem hmem
 
 /-- An anchor is the infimum of its literals `±φ i`. -/
 theorem anchor_eq_iInf (σ : ι → Bool) :
@@ -100,10 +95,9 @@ theorem anchor_eq_iInf (σ : ι → Bool) :
   rw [Bool.eq_iff_iff, decide_eq_true_eq, iInf_bool_eq_true]
   refine forall_congr' fun i => ?_
   rw [ite_apply]
-  cases hi : σ i
-  · simp only [Bool.false_eq_true, ↓reduceIte, Pi.compl_apply, Bool.compl_eq_bnot,
+  cases hi : σ i <;>
+    simp only [Bool.false_eq_true, ↓reduceIte, Pi.compl_apply, Bool.compl_eq_bnot,
       Bool.not_eq_eq_eq_not, Bool.not_true]
-  · simp only [↓reduceIte]
 
 /-- Anchor formulas lie in the Boolean closure of `Set.range φ` — an anchor is the
 infimum of its literals, each of which lies in the closure. -/
@@ -129,8 +123,7 @@ theorem isAtom_anchor (σ : ι → Bool) (hCons : ∃ w, anchor φ σ w = true) 
   · have hble : (b : W → Bool) ≤ anchor φ σ := hb.le
     rcases anchor_le_or_le_compl_mem_closure φ σ b.2 with hL | hR
     · exact absurd (Subtype.ext (le_antisymm hble hL)) hb.ne
-    · have hself : (b : W → Bool) ≤ (b : W → Bool)ᶜ := hble.trans hR
-      exact Subtype.ext (le_compl_self.mp hself)
+    · exact Subtype.ext (le_compl_self.mp (hble.trans hR))
 
 /-- Converse of `isAtom_anchor`: every atom of `closure (Set.range φ)` is a consistent
 anchor cell. -/
@@ -186,7 +179,7 @@ theorem anchorIndex_consistent (i : Fin (partition ι W φ).card) :
     ∃ w, anchor φ (anchorIndex φ i) w = true := by
   have hMem := ((partition ι W φ).equivFin.symm i).property
   simp only [partition, Finset.mem_filter] at hMem
-  exact of_decide_eq_true hMem.2
+  exact hMem.2
 
 /-! ### Bitstring evaluation -/
 
@@ -208,12 +201,8 @@ theorem bitstringOf_apply_at_anchor {ψ : W → Bool}
       simpa only [Pi.compl_apply, Bool.compl_eq_bnot, Bool.not_eq_eq_eq_not,
         Bool.not_true] using this
     have hβ : bitstringOf φ ψ i = false := by
-      cases hb : bitstringOf φ ψ i
-      · rfl
-      · exfalso
-        simp only [bitstringOf, decide_eq_true_eq] at hb
-        rw [hb w hw] at hψw
-        exact absurd hψw (by decide)
+      simp only [bitstringOf, decide_eq_false_iff_not, not_forall]
+      exact ⟨w, hw, by rw [hψw]; decide⟩
     rw [hβ, hψw]
 
 /-- An anchor index satisfied by `w`. -/
@@ -222,7 +211,7 @@ noncomputable def worldAnchorIndex (w : W) : Fin (partition ι W φ).card :=
   let hσ := Classical.choose_spec (anchor_jointly_exhaustive φ w)
   (partition ι W φ).equivFin ⟨σ, by
     simp only [partition, Finset.mem_filter]
-    exact ⟨Finset.mem_univ _, decide_eq_true ⟨w, hσ⟩⟩⟩
+    exact ⟨Finset.mem_univ _, w, hσ⟩⟩
 
 theorem anchor_worldAnchorIndex (w : W) :
     anchor φ (anchorIndex φ (worldAnchorIndex φ w)) w = true := by
@@ -253,14 +242,10 @@ noncomputable def bitstringInverse (b : Fin (partition ι W φ).card → Bool) :
 
 theorem bitstringInverse_mem_closure (b : Fin (partition ι W φ).card → Bool) :
     bitstringInverse φ b ∈ BooleanSubalgebra.closure (Set.range φ) := by
-  unfold bitstringInverse
-  apply BooleanSubalgebra.iSup_mem
-  intro i
-  cases h : b i
-  · simp only [Bool.false_eq_true, ↓reduceIte]
-    exact (BooleanSubalgebra.closure (Set.range φ)).bot_mem
-  · simp only [↓reduceIte]
-    exact anchor_mem_closure φ _
+  refine BooleanSubalgebra.iSup_mem fun i => ?_
+  split
+  · exact anchor_mem_closure φ _
+  · exact (BooleanSubalgebra.closure (Set.range φ)).bot_mem
 
 private theorem anchorIndex_injective :
     Function.Injective (anchorIndex φ) := by
@@ -291,16 +276,13 @@ theorem bitstringInverse_apply_at_anchor (b : Fin (partition ι W φ).card → B
     · subst hij
       cases hbi : b i <;>
         simp only [hw, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, le_refl]
-    · have hf : anchor φ (anchorIndex φ i) w = false := by
-        cases hai : anchor φ (anchorIndex φ i) w
-        · rfl
-        · exact absurd (anchor_at_world_unique φ hai hw) hij
+    · have hf : anchor φ (anchorIndex φ i) w = false :=
+        Bool.eq_false_iff.mpr fun hai => hij (anchor_at_world_unique φ hai hw)
       cases hbi : b i <;>
         simp only [hf, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, Bool.false_le]
   · refine le_iSup_of_le j ?_
-    cases hbj : b j
-    · exact Bool.false_le _
-    · simp only [↓reduceIte, hw, le_refl]
+    cases hbj : b j <;>
+      simp only [↓reduceIte, hw, le_refl, Bool.false_eq_true, Pi.bot_apply, Bool.false_le]
 
 theorem bitstringOf_bitstringInverse (b : Fin (partition ι W φ).card → Bool) :
     bitstringOf φ (bitstringInverse φ b) = b := by

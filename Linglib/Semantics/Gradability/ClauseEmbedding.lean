@@ -19,7 +19,7 @@ copula and its syntax belong in the Theory/Syntax layer, not here.
 namespace Semantics.Gradability
 
 open Features (Attitude)
-open Core.NaturalLogic (EntailmentSig)
+open NaturalLogic (EntailmentSig)
 
 /-- A clause-embedding adjective: an adjective that takes a propositional
     complement. Carries the semantic spine shared with clause-embedding verbs

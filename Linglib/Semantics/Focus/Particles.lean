@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Logic.NaturalLogic
+import Linglib.Semantics.NaturalLogic
 
 /-!
 # Focus-sensitive particles: even and only
@@ -72,10 +72,10 @@ def TraditionalEven.defined (even : TraditionalEven (World := World)) : Prop :=
 def TraditionalEven.trueAt (even : TraditionalEven (World := World)) (w : World) : Prop :=
   even.defined ∧ even.prejacent w
 
-open Core.NaturalLogic (ContextPolarity)
+open NaturalLogic (ContextPolarity)
 
 /-- NPI licensing condition: EVEN presupposition must be satisfiable.
-    Uses `ContextPolarity` from `Core.NaturalLogic`. -/
+    Uses `ContextPolarity` from `NaturalLogic`. -/
 def npiLicensed (pol : ContextPolarity) (npiDomain : Set Entity) (regularDomain : Set Entity)
     (_hWider : regularDomain ⊆ npiDomain) : Prop :=
   match pol with

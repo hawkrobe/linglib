@@ -34,7 +34,7 @@ This file remains the paper-anchored entry point and narrative hub.
 Three projector-synthesized fields are gone from the prior incarnation,
 verified against the paper PDF:
 - `Monotonicity` enum + `monotonicity` function — re-stipulated
-  `Core.Logic.NaturalLogic.ContextPolarity` and contained a return-value /
+  `NaturalLogic.ContextPolarity` and contained a return-value /
   comment contradiction for `notEvery`.
 - `ProjectionDatum`/`EmbeddedTruthConditions` structures with `Bool`
   predicate-shape fields and `String` informal-prose fields — violated
