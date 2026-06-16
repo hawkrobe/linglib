@@ -140,7 +140,7 @@ theorem connectivity_breaks_cum {α : Type*} [SemilatticeSup α]
     {x y : α} (hx : P x) (hy : P y)
     (hDisc : ¬ SelfConnected (x ⊔ y)) :
     ¬ CUM P :=
-  fun hCum => hDisc (hConn _ (Mereology.cum_iff.mp hCum x y hx hy))
+  fun hCum => hDisc (hConn _ (hCum hx hy))
 
 /-- ¬CUM ∧ ¬QUA from connectivity: the middle ground between mass and
     standard count that pure mereology cannot express. -/

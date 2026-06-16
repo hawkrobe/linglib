@@ -306,7 +306,7 @@ theorem mentalStateHomogeneity_iff {Event : Type*} [Preorder Event]
     (P : Event → Prop) (h : MentalStateHomogeneity P) (e : Event) :
     P e ↔ ∀ e' : Event, e' ≤ e → P e' := by
   constructor
-  · intro hPe e' hle; exact Mereology.div_iff.mp h e e' hPe hle
+  · intro hPe e' hle; exact h hle hPe
   · intro hAll; exact hAll e (le_refl e)
 
 /-! ## §5.1 Intensity Comparative Max-Reduction
@@ -368,7 +368,7 @@ theorem sortDetermined_isHomogeneous
     (s : Features.Dynamicity) :
     letI := Event.preorder Time
     MentalStateHomogeneity (fun e : Event Time => e.sort = s) := by
-  exact Mereology.div_iff.mpr fun e e' hPe hle =>
+  exact fun e e' hle hPe =>
     (Event.Mereology.sort_preserved e' e hle).trans hPe
 
 /-- On a `PartialOrder` carrier, Pasternak's `MentalStateHomogeneity`

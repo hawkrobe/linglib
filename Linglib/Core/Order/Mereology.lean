@@ -63,31 +63,25 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 
 /-- Cumulative reference (CUM): P is closed under join. Grounded in mathlib's
     `SupClosed` — `CUM P` **is** `SupClosed {x | P x}` (the sup-closed-set
-    predicate); `cum_iff` recovers the paper-faithful `∀ x y` form.
+    predicate). Apply a `CUM` hypothesis directly (`hC hx hy : P (x ⊔ y)`);
+    construct one with a direct lambda (`fun _ hx _ hy => …`), as for any
+    `SupClosed` (cf. mathlib `IsUpperSet.supClosed`).
     [link-1983] (T.11); [krifka-1989] D 12; [champollion-2017] §2.3.2:
     `CUMₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ∪ₛ y)`.
     Activities and states are canonically cumulative. -/
 abbrev CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   SupClosed {x | P x}
 
-/-- Paper-faithful unfolding of `CUM` to Krifka's `∀ x y` form. -/
-theorem cum_iff {α : Type*} [SemilatticeSup α] {P : α → Prop} :
-    CUM P ↔ ∀ (x y : α), P x → P y → P (x ⊔ y) :=
-  ⟨fun h _ _ hx hy => h hx hy, fun h _ hx _ hy => h _ _ hx hy⟩
-
 /-- Divisive reference (DIV): P is closed downward under ≤. Grounded in
-    mathlib's `IsLowerSet` — `DIV P` **is** `IsLowerSet {x | P x}`;
-    `div_iff` recovers the paper-faithful `∀ x y` form.
+    mathlib's `IsLowerSet` — `DIV P` **is** `IsLowerSet {x | P x}`. Apply a
+    `DIV` hypothesis directly (`hDiv hle hz : P w` from `hle : w ≤ z`,
+    `hz : P z`); construct one with a direct lambda (`fun _ _ hba ha => …`).
+    Equivalently `DIV P ↔ Antitone P` via mathlib's `isLowerSet_setOf`.
     [champollion-2017] §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
     This is the mereological analog of the subinterval property.
     Only requires `Preorder` since the definition only uses `≤`. -/
 abbrev DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
   IsLowerSet {x | P x}
-
-/-- Paper-faithful unfolding of `DIV` to the `∀ x y` form. -/
-theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} :
-    DIV P ↔ ∀ (x y : α), P x → y ≤ x → P y :=
-  ⟨fun h _ _ hx hyx => h hyx hx, fun h a b hba ha => h a b ha hba⟩
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
 
@@ -133,7 +127,7 @@ theorem Atom.eq {α : Type*} [PartialOrder α] {x y : α} (h : Atom x) (hy : y �
     This is the fundamental property of algebraic closure. -/
 theorem algClosure_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} : CUM (AlgClosure P) :=
-  cum_iff.mpr (λ _ _ hx hy => AlgClosure.sum hx hy)
+  fun _ hx _ hy => AlgClosure.sum hx hy
 
 /-- P ⊆ *P: algebraic closure extends the original predicate. -/
 theorem subset_algClosure {α : Type*} [SemilatticeSup α]
@@ -161,7 +155,7 @@ theorem algClosure_of_cum {α : Type*} [SemilatticeSup α]
     AlgClosure P x ↔ P x :=
   ⟨fun h => by induction h with
     | base h => exact h
-    | sum _ _ ihx ihy => exact cum_iff.mp hCUM _ _ ihx ihy,
+    | sum _ _ ihx ihy => exact hCUM ihx ihy,
    fun h => AlgClosure.base h⟩
 
 /-- QUA predicates cannot be cumulative (for predicates with ≥ 2 elements).
@@ -204,7 +198,7 @@ theorem div_closed_under_le {α : Type*} [PartialOrder α]
     (hDiv : DIV P)
     {z : α} (hz : P z) {w : α} (hle : w ≤ z) :
     P w :=
-  div_iff.mp hDiv z w hz hle
+  hDiv hle hz
 
 /-- CUM and QUA partition event predicates (for non-trivial predicates):
     a predicate with ≥ 2 distinct elements cannot be both CUM and QUA.
@@ -307,12 +301,8 @@ theorem IsSumHom.cum_preimage {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} (hf : IsSumHom f)
     {P : β → Prop} (hCum : CUM P) :
-    CUM (P ∘ f) := by
-  rw [cum_iff]
-  intro x y hx hy
-  simp only [Function.comp] at *
-  rw [hf.map_sup]
-  exact cum_iff.mp hCum _ _ hx hy
+    CUM (P ∘ f) :=
+  hCum.preimage hf.toSupHom
 
 -- ════════════════════════════════════════════════════
 -- § 5. Overlap and Extensive Measures ([krifka-1998] §2.2)
@@ -425,7 +415,7 @@ noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
 theorem cum_maximal_unique {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hCum : CUM P)
     {x y : α} (hx : isMaximal P x) (hy : isMaximal P y) : x = y := by
-  have hxy := cum_iff.mp hCum x y hx.1 hy.1
+  have hxy := hCum hx.1 hy.1
   have hle_x : x ≤ x ⊔ y := le_sup_left
   have hle_y : y ≤ x ⊔ y := le_sup_right
   have heq_x : x = x ⊔ y := hx.2 (x ⊔ y) hxy hle_x
@@ -659,7 +649,7 @@ def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
     a fortiori every proper part has a P-part (itself). -/
 theorem div_implies_gHomogeneous {α : Type*} [PartialOrder α]
     {P : α → Prop} (hDiv : DIV P) : gHomogeneous P :=
-  fun x y hPx hlt => ⟨y, le_refl y, div_iff.mp hDiv x y hPx (le_of_lt hlt)⟩
+  fun x y hPx hlt => ⟨y, le_refl y, hDiv (le_of_lt hlt) hPx⟩
 
 /-- g-Homogeneity is vacuously satisfied at atoms: since atoms have
     no proper parts, the universal condition `∀ y < a, ∃ z ≤ y, P z`
@@ -937,7 +927,7 @@ theorem cum_sum_exceeds {α : Type*} [SemilatticeSup α]
     {x y : α} (hx : P x) (hy : P y) (h_not_le : ¬ x ≤ y) :
     P (x ⊔ y) ∧ μ (x ⊔ y) > μ y := by
   constructor
-  · exact cum_iff.mp hCum x y hx hy
+  · exact hCum hx hy
   · have hle : y ≤ x ⊔ y := le_sup_right
     have hne : y ≠ x ⊔ y := by
       intro heq; exact h_not_le (heq ▸ le_sup_left)
@@ -954,7 +944,7 @@ theorem cum_sum_exceeds_both {α : Type*} [SemilatticeSup α]
     {x y : α} (hx : P x) (hy : P y)
     (hxy : ¬ x ≤ y) (hyx : ¬ y ≤ x) :
     P (x ⊔ y) ∧ μ (x ⊔ y) > μ x ∧ μ (x ⊔ y) > μ y := by
-  refine ⟨cum_iff.mp hCum x y hx hy, ?_, (cum_sum_exceeds hCum hx hy hxy).2⟩
+  refine ⟨hCum hx hy, ?_, (cum_sum_exceeds hCum hx hy hxy).2⟩
   have hle : x ≤ x ⊔ y := le_sup_left
   have hne : x ≠ x ⊔ y := by
     intro heq; exact hyx (heq ▸ le_sup_right)
@@ -1096,7 +1086,7 @@ theorem cum_exceeds_source {α : Type*} [SemilatticeSup α]
     {x y : α} (hx : P x) (hy : P y) (hyx : ¬ y ≤ x) :
     P (x ⊔ y) ∧ μ (x ⊔ y) > μ x := by
   constructor
-  · exact cum_iff.mp hCum x y hx hy
+  · exact hCum hx hy
   · have hle : x ≤ x ⊔ y := le_sup_left
     have hne : x ≠ x ⊔ y := fun heq => hyx (heq ▸ le_sup_right)
     exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
@@ -1133,7 +1123,7 @@ theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]
       intro x hx
       obtain ⟨z, hPz, hμz⟩ := ih x hx
       obtain ⟨y, hPy, hDisj, hμy⟩ := hSupply z hPz
-      refine ⟨z ⊔ y, cum_iff.mp hCum z y hPz hPy, ?_⟩
+      refine ⟨z ⊔ y, hCum hPz hPy, ?_⟩
       rw [hμ.additive z y hDisj, Nat.cast_succ, add_mul, one_mul]
       linarith
   -- By Archimedean ℚ, find n with n * δ > M - μ(x₀)

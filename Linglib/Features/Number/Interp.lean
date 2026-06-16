@@ -90,7 +90,7 @@ theorem not_nonminimal_of_atoms {P : D → Prop}
     (quantized), with one feature governing both. -/
 theorem additive_subregion_is_cum (Q : D → Prop) :
     Mereology.CUM (fun x => additiveIn Q x) :=
-  Mereology.cum_iff.mpr fun x y hx hy => additiveIn_sup hx hy
+  fun _ hx _ hy => additiveIn_sup hx hy
 
 /-! ### The value denotations -/
 

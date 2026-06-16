@@ -693,8 +693,7 @@ theorem twoApples_qua : QUA twoApples :=
 /-- `someApples` is CUM: nonempty ⊔ nonempty = nonempty. Bare plurals
     propagate cumulativity (K89 §3 / K98 §3.3). -/
 theorem someApples_cum : CUM someApples := by
-  rw [Mereology.cum_iff]
-  intro x y hx _hy
+  intro x hx y _hy
   -- hx : x.Nonempty ⇒ x ⊔ y = x ∪ y is nonempty
   exact hx.mono (by intro a ha; exact Finset.mem_union.mpr (Or.inl ha))
 

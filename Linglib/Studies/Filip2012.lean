@@ -95,7 +95,7 @@ private theorem not_cum_vp_of_cumTheta_up {θ : α → β → Prop} {OBJ : α �
   intro hCum
   have hVP₁ : VP θ OBJ e₁ := ⟨x, hx, hθ₁⟩
   have hVP₂ : VP θ OBJ e₂ := ⟨y, hy, hθ₂⟩
-  obtain ⟨z, hz_obj, hz_θ⟩ := Mereology.cum_iff.mp hCum e₁ e₂ hVP₁ hVP₂
+  obtain ⟨z, hz_obj, hz_θ⟩ := hCum hVP₁ hVP₂
   have hθ_sum := hCumTheta x y e₁ e₂ hθ₁ hθ₂
   have hz_eq := hUP z (x ⊔ y) (e₁ ⊔ e₂) hz_θ hθ_sum
   exact hSum (hz_eq ▸ hz_obj)
