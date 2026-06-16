@@ -60,7 +60,8 @@ variable {β : Type*} [Lattice β] [BoundedOrder β]
 theorem NLRelation.holdsOn_top {R : NLRelation} {u v : β} :
     R.HoldsOn ⊤ u v ↔ R.Holds u v := by
   cases R <;>
-    simp only [NLRelation.HoldsOn, NLRelation.Holds, inf_top_eq, top_le_iff]
+    simp only [NLRelation.HoldsOn, NLRelation.Holds, inf_top_eq, top_le_iff,
+      disjoint_iff, codisjoint_iff, isCompl_iff]
 
 /-- Plain content implies relativized content on any region. -/
 theorem NLRelation.Holds.holdsOn {R : NLRelation} {u v : β} (D : β)
@@ -71,13 +72,13 @@ theorem NLRelation.Holds.holdsOn {R : NLRelation} {u v : β} (D : β)
   | reverse => exact le_trans inf_le_left h
   | negation =>
       obtain ⟨h1, h2⟩ := h
-      refine ⟨?_, le_top.trans_eq h2.symm⟩
+      refine ⟨?_, le_top.trans_eq (codisjoint_iff.mp h2).symm⟩
       show u ⊓ v ⊓ D = ⊥
-      rw [(h1 : u ⊓ v = ⊥), bot_inf_eq]
+      rw [disjoint_iff.mp h1, bot_inf_eq]
   | alternation =>
       show u ⊓ v ⊓ D = ⊥
-      rw [(h : u ⊓ v = ⊥), bot_inf_eq]
-  | cover => exact le_top.trans_eq h.symm
+      rw [disjoint_iff.mp h, bot_inf_eq]
+  | cover => exact le_top.trans_eq (codisjoint_iff.mp h).symm
   | independent => trivial
 
 end HoldsOn
