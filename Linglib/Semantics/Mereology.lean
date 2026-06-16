@@ -320,9 +320,6 @@ theorem atomize_qua {α : Type*} [PartialOrder α]
     {P : α → Prop} : QUA (atomize P) :=
   setOf_minimal_antichain P
 
-def isMaximal {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
-  P x ∧ ∀ (y : α), P y → x ≤ y → x = y
-
 /-- Count atoms below `x`, as the cardinality of the (classically finite)
     set of atomic parts. Used by [charlow-2021] for cardinality tests on
     plural individuals. -/
@@ -334,9 +331,10 @@ noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
     Cumulative predicates have at most one maximal element: the join of all P-elements. -/
 theorem cum_maximal_unique {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : isMaximal P x) (hy : isMaximal P y) : x = y := by
+    {x y : α} (hx : Maximal P x) (hy : Maximal P y) : x = y := by
   have hxy := hCum hx.1 hy.1
-  exact (hx.2 _ hxy le_sup_left).trans (hy.2 _ hxy le_sup_right).symm
+  exact (le_antisymm le_sup_left (hx.2 hxy le_sup_left)).trans
+    (le_antisymm le_sup_right (hy.2 hxy le_sup_right)).symm
 
 theorem qua_pullback {α β : Type*} [PartialOrder α] [PartialOrder β]
     {d : α → β} (hd : StrictMono d)

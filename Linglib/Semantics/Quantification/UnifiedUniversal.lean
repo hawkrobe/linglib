@@ -25,7 +25,7 @@ This is the **Distributivity-Number Generalization (DNG)**.
 ## Architecture
 
 Q_∀ is defined abstractly over `PartialOrder` using `Mereology.Overlap`,
-`Mereology.Atom`, and `Mereology.isMaximal`. A decidable `Finset`-based
+`Mereology.Atom`, and `Mereology.Maximal`. A decidable `Finset`-based
 variant is provided for computational verification.
 
 The connection to the standard GQ `every_sem` (in `Quantifier.lean`) and
@@ -75,12 +75,12 @@ def QForall {α : Type*} [PartialOrder α]
 
 /-! ### Properties of maxNonOverlap -/
 
-/-- maxNonOverlap implies isMaximal: if x absorbs all overlapping
+/-- maxNonOverlap implies Maximal: if x absorbs all overlapping
     P-elements, it is certainly maximal (no proper P-extension). -/
-theorem maxNonOverlap_imp_isMaximal {α : Type*} [PartialOrder α]
+theorem maxNonOverlap_imp_maximal {α : Type*} [PartialOrder α]
     {P : α → Prop} {x : α} (h : maxNonOverlap P x) :
-    isMaximal P x :=
-  ⟨h.1, λ y hy hle => le_antisymm hle (h.2 y hy ⟨x, le_refl x, hle⟩)⟩
+    Maximal P x :=
+  ⟨h.1, λ y hy hle => h.2 y hy ⟨x, le_refl x, hle⟩⟩
 
 /-- For atoms with a disjointness property, maxNonOverlap reduces to
     membership in P.
@@ -95,7 +95,7 @@ theorem maxNonOverlap_of_atom {α : Type*} [PartialOrder α]
     maxNonOverlap P x :=
   ⟨hPx, λ y hy hov => le_of_eq (hDisj y hy hov)⟩
 
-/-- In a CUM predicate, an element that is isMaximal is also
+/-- In a CUM predicate, an element that is Maximal is also
     maxNonOverlap. CUM ensures all P-elements join into the max,
     so any P-element overlapping max is necessarily ≤ max.
 
@@ -103,13 +103,9 @@ theorem maxNonOverlap_of_atom {α : Type*} [PartialOrder α]
     x ≤ x ⊔ y, so x = x ⊔ y (by maximality), hence y ≤ x. -/
 theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hCum : CUM P)
-    {x : α} (hMax : isMaximal P x) :
+    {x : α} (hMax : Maximal P x) :
     maxNonOverlap P x :=
-  ⟨hMax.1, λ y hy _hov => by
-    have hxy := hCum hMax.1 hy
-    have hle : x ≤ x ⊔ y := le_sup_left
-    have heq : x = x ⊔ y := hMax.2 (x ⊔ y) hxy hle
-    exact heq ▸ le_sup_right⟩
+  ⟨hMax.1, λ y hy _hov => le_trans le_sup_right (hMax.2 (hCum hMax.1 hy) le_sup_left)⟩
 
 /-! ### The Distributivity-Number Generalization (DNG) -/
 
@@ -145,7 +141,7 @@ P-elements — the "maximal plurality."
 -/
 theorem dng_cum {α : Type*} [SemilatticeSup α]
     {P Q : α → Prop} (hCum : CUM P)
-    {m : α} (hMax : isMaximal P m)
+    {m : α} (hMax : Maximal P m)
     (hOnly : ∀ (x' : α), maxNonOverlap P x' → x' = m) :
     QForall P Q ↔ Q m := by
   constructor
@@ -158,21 +154,21 @@ theorem dng_cum {α : Type*} [SemilatticeSup α]
 /-- In a CUM predicate, maxNonOverlap elements are unique (= the max).
 
     This derives `hOnly` for `dng_cum`: if P is CUM, any two
-    maxNonOverlap elements must be equal (both are isMaximal,
+    maxNonOverlap elements must be equal (both are Maximal,
     and CUM predicates have at most one maximal element). -/
 theorem maxNonOverlap_unique_of_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hCum : CUM P)
     {x y : α} (hx : maxNonOverlap P x) (hy : maxNonOverlap P y) :
     x = y :=
   cum_maximal_unique hCum
-    (maxNonOverlap_imp_isMaximal hx)
-    (maxNonOverlap_imp_isMaximal hy)
+    (maxNonOverlap_imp_maximal hx)
+    (maxNonOverlap_imp_maximal hy)
 
 /-- Combined DNG-PL: for CUM predicates with a maximal element,
     Q_∀(P)(Q) ↔ Q(m), without needing to supply `hOnly` separately. -/
 theorem dng_cum' {α : Type*} [SemilatticeSup α]
     {P Q : α → Prop} (hCum : CUM P)
-    {m : α} (hMax : isMaximal P m) :
+    {m : α} (hMax : Maximal P m) :
     QForall P Q ↔ Q m :=
   dng_cum hCum hMax (λ _x hx =>
     maxNonOverlap_unique_of_cum hCum hx (maxNonOverlap_of_cum_maximal hCum hMax))
