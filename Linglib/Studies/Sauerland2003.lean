@@ -102,7 +102,7 @@ theorem sg_domain_subset_pl {E : Type*} [PartialOrder E] (x : E) :
 theorem sg_domain_strict_subset_pl {E : Type*} [SemilatticeSup E]
     (a b : E) (_ : Atom a) (_ : Atom b) (hne : a ≠ b) :
     (plSem E).defined (a ⊔ b) ∧ ¬(sgSem E).defined (a ⊔ b) :=
-  ⟨trivial, fun hAtom => hne ((hAtom a le_sup_left).trans (hAtom b le_sup_right).symm)⟩
+  ⟨trivial, fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)⟩
 
 /-- The `specLevel` ordering on `ContainmentPair` is the Feature-Subset
     Principle: more specified cells have strictly smaller presuppositional
@@ -207,7 +207,7 @@ variable {E : Type*} [SemilatticeSup E]
 /-- A coordination of two distinct atoms produces a non-atom. -/
 theorem coordination_nonatom (a b : E) (_ : Atom a) (_ : Atom b)
     (hne : a ≠ b) : ¬Atom (a ⊔ b) :=
-  fun hAtom => hne ((hAtom a le_sup_left).trans (hAtom b le_sup_right).symm)
+  fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)
 
 /-- Each conjunct individually satisfies [Sg]. -/
 theorem conjuncts_singular (a b : E) (ha : Atom a) (hb : Atom b) :

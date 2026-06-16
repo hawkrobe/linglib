@@ -62,8 +62,8 @@ theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
     {P : α → Prop} (h : ONE_AT P) : ONE_empty P where
   has_two := h.has_two
   pairwise_disjoint := λ x y hPx hPy ⟨z, hzx, hzy⟩ =>
-    let hzx_eq := h.all_atomic x hPx z hzx  -- z = x
-    let hzy_eq := h.all_atomic y hPy z hzy  -- z = y
+    let hzx_eq := Atom.eq (h.all_atomic x hPx) hzx  -- z = x
+    let hzy_eq := Atom.eq (h.all_atomic y hPy) hzy  -- z = y
     hzx_eq.symm.trans hzy_eq
 
 /-! ### English UQ Decomposition -/

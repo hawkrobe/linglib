@@ -105,7 +105,7 @@ def D (P : E → Prop) (x : E) : Prop :=
 theorem D_self_of_atom {P : E → Prop} {x : E} (hAtom : Atom x) (hP : P x) :
     D P x := by
   intro y hle _
-  rw [hAtom y hle]
+  rw [Atom.eq hAtom hle]
   exact hP
 
 /-- `D` is monotone in `P`: weakening `P` weakens `D P`. -/
@@ -218,9 +218,8 @@ theorem pred_of_atom_star {P : E → Prop} :
   induction hStar with
   | base hp => exact hp
   | @sum a b _ _ iha _ =>
-    have heq : a = a ⊔ b := hAtom a le_sup_left
-    have hAtom_a : Atom a :=
-      fun y hy => (hAtom y (le_trans hy le_sup_left)).trans heq.symm
+    have heq : a = a ⊔ b := Atom.eq hAtom le_sup_left
+    have hAtom_a : Atom a := heq.symm ▸ hAtom
     have h := iha hAtom_a
     rw [show a ⊔ b = a from heq.symm]
     exact h
@@ -283,7 +282,7 @@ theorem distr_atom_part {P : E → Prop} (hDistr : IsDistr P)
   induction hStar with
   | base hp =>
     intro z hz hle
-    have heq : z = _ := (hDistr _ hp) z hle
+    have heq : z = _ := Atom.eq (hDistr _ hp) hle
     rwa [heq]
   | @sum a b _ _ iha ihb =>
     intro z hz hle
@@ -305,7 +304,7 @@ theorem distr_properPlural_extends {P : E → Prop}
     properPlural P (x ⊔ y) :=
   ⟨AlgClosure.sum (AlgClosure.base hx) (AlgClosure.base hy),
    fun hAtom => hne
-     ((hAtom x le_sup_left).trans (hAtom y le_sup_right).symm)⟩
+     ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)⟩
 
 /-- CUM for the proper plural ⊕P: sums of proper plurals are
     proper plurals. -/
@@ -313,8 +312,8 @@ theorem properPlural_cum {P : E → Prop} {x y : E}
     (hx : properPlural P x) (hy : properPlural P y) :
     properPlural P (x ⊔ y) := by
   refine ⟨AlgClosure.sum hx.1 hy.1, fun hAtom => ?_⟩
-  have : x = x ⊔ y := hAtom x le_sup_left
-  exact hx.2 (fun z hz => by rw [show x ⊔ y = x from this.symm] at hAtom; exact hAtom z hz)
+  have : x = x ⊔ y := Atom.eq hAtom le_sup_left
+  exact hx.2 (fun z hz => by rw [show x ⊔ y = x from this.symm] at hAtom; exact hAtom hz)
 
 end Classification
 
