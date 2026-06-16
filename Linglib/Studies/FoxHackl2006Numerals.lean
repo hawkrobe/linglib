@@ -34,7 +34,7 @@ construction, no bridge lemma needed.
 namespace FoxHackl2006Numerals
 
 open Semantics.Degree
-open Semantics.Entailment.Extremum
+open Entailment
 open Semantics.Numerals
 
 -- ════════════════════════════════════════════════════

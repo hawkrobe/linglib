@@ -36,9 +36,9 @@ namespace Semantics.Polarity.Licensing
 open Features (LicensingContext)
 open Core.NaturalLogic
 open Quantification
-open Semantics.Entailment (World pnot)
-open Semantics.Entailment.AntiAdditivity (atMost2_student atMost_isDE_scope)
-open Semantics.Entailment.StrawsonEntailment
+open Entailment (World pnot)
+open Entailment (atMost2_student atMost_isDE_scope)
+open Entailment
 
 /-- A model-theoretic witness for a licensing-context row: an operator
 (with its definedness/presupposition function) realizing the row's

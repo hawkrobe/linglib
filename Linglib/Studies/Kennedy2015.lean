@@ -61,7 +61,7 @@ needs `w = 4` to be non-trivial).
 namespace Kennedy2015
 
 open Semantics.Numerals
-open Semantics.Entailment (asymStrongerOn)
+open Entailment (asymStrongerOn)
 
 -- ============================================================================
 -- §1: Cardinality worlds and Kennedy's single alternative set

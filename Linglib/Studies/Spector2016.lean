@@ -34,7 +34,7 @@ table of `MaximizeStrengthExample` records.
 namespace Spector2016
 
 open Exhaustification
-open Semantics.Entailment.Polarity (ContextPolarity)
+open Entailment (ContextPolarity)
 
 -- ----------------------------------------------------------------------------
 -- 1: SOME/ALL SCALE

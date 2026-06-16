@@ -33,7 +33,7 @@ certified profiles as worked instances.
 
 namespace Core.NaturalLogic
 
-open Semantics.Entailment.AntiAdditivity
+open Entailment
 open Quantification
 
 /-- A per-position signature profile for a two-place operator. For

@@ -60,7 +60,7 @@ Scope-upward-monotone: if B ⊆ B' and Q(A,B), then Q(A,B').
 
 Under the Pi-of-Prop ordering this is exactly `∀ R, Monotone (q R)`
 (see `scopeUpMono_iff_monotone`). This connects to
-`Semantics.Entailment.Polarity.IsUpwardEntailing = Monotone`.
+`Entailment.IsUpwardEntailing = Monotone`.
 -/
 def ScopeUpwardMono (q : GQ α) : Prop :=
   ∀ (R S S' : α → Prop), (∀ x, S x → S' x) → q R S → q R S'

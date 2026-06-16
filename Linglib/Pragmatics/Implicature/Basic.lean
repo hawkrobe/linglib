@@ -301,7 +301,7 @@ def predictsHighNeutralRate (p : NeoGriceanParams) : Bool :=
 -- Word-driven NeoGricean Parsing
 -- ============================================================
 
-open Semantics.Entailment.Polarity (ContextPolarity) in
+open Entailment (ContextPolarity) in
 /-- Implicature's internal representation for implicature analysis.
 
     Bundles the Standard Recipe result with context information. -/
@@ -324,7 +324,7 @@ def isScalarQuantifierWord (w : Word) : Bool :=
 def findScalarPositionInWords (ws : List Word) : Option Nat :=
   ws.findIdx? isScalarQuantifierWord
 
-open Semantics.Entailment.Polarity (ContextPolarity) in
+open Entailment (ContextPolarity) in
 /-- Determine context polarity from words.
     Simplified: checks for negation markers. -/
 def determinePolarityFromWords (ws : List Word) : ContextPolarity :=
@@ -332,7 +332,7 @@ def determinePolarityFromWords (ws : List Word) : ContextPolarity :=
   then .downward
   else .upward
 
-open Semantics.Entailment.Polarity (ContextPolarity) in
+open Entailment (ContextPolarity) in
 /-- Parse words into Implicature structure.
 
     For now, uses a simplified analysis:

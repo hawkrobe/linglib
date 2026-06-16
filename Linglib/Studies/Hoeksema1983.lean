@@ -94,7 +94,7 @@ namespace Hoeksema1983
 
 open Semantics.Polarity.Licensing
 
-open Semantics.Entailment.AntiAdditivity
+open Entailment
 open Semantics.Degree.Comparative (sComparative sComparative_isAntiAdditive
   sComparative_atomic)
 open Typology.PolarityItem (LicensingContext)
