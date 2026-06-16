@@ -75,7 +75,7 @@ theorem additiveIn_sup {Q : D → Prop}
 theorem minimalIn_of_atom {P : D → Prop}
     (hAllAtoms : ∀ x, P x → Mereology.Atom x)
     {x : D} (hPx : P x) : minimalIn P x :=
-  ⟨hPx, fun y _ hle => hAllAtoms x hPx y hle⟩
+  ⟨hPx, fun y _ hle => Mereology.Atom.eq (hAllAtoms x hPx) hle⟩
 
 /-- The `[−minimal]` complement of an all-atom region is empty
     ([harbour-2014] §4.2). -/
@@ -138,7 +138,7 @@ theorem interp_isSome_iff (P : D → Prop) (n : Number) :
     (`Features/Number/Decomposition.lean`). -/
 theorem singular_subset_minimal (P : D → Prop) {x : D}
     (h : P x ∧ Mereology.Atom x) : minimalIn P x :=
-  ⟨h.1, fun y _ hle => h.2 y hle⟩
+  ⟨h.1, fun y _ hle => Mereology.Atom.eq h.2 hle⟩
 
 /-- Dual and plural partition the non-atoms: every non-atom of `P` is
     dual or plural, never both — the `[±minimal]` split of the

@@ -172,7 +172,7 @@ theorem classifier_quantizes_forNoun {α : Type*} [SemilatticeSup α]
 theorem clfForNoun_mem {α : Type*} [PartialOrder α]
     {P : α → Prop} {x : α} (hAtom : Atom x) (hP : P x) :
     clfForNoun P x :=
-  ⟨hP, hAtom⟩
+  ⟨hP, fun _ _ hyx => hAtom hyx⟩
 
 /-- If P has atoms, then CLF-for-N is non-empty. This is the
     content of the "sortal classifier" requirement: the classifier
@@ -182,6 +182,6 @@ theorem clfForNoun_mem {α : Type*} [PartialOrder α]
 theorem clfForNoun_nonempty {α : Type*} [PartialOrder α]
     {P : α → Prop} {a : α} (hP : P a) (hAtom : Atom a) :
     ∃ x, clfForNoun P x :=
-  ⟨a, hP, hAtom⟩
+  ⟨a, hP, fun _ _ hyx => hAtom hyx⟩
 
 end Semantics.Classifier

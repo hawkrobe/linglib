@@ -9,6 +9,7 @@ import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Order.Closure
 import Mathlib.Order.SupClosed
 import Mathlib.Order.Antichain
+import Mathlib.Order.Minimal
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Order.UpperLower.Closure
 import Mathlib.Order.Hom.Lattice
@@ -111,13 +112,18 @@ theorem qua_of_forall {α : Type*} [PartialOrder α] {P : α → Prop}
   rintro a ha b hb hab hab_le
   exact h b a hb (lt_of_le_of_ne hab_le hab) ha
 
-/-- Mereological atom: x has no proper part.
-    [link-1983] (D.10, D.22 condition 2);
-    [champollion-2017] §2.2: Atom(x) ⇔ ¬∃y. y < x.
-    Defined without OrderBot since many domains lack a natural
-    bottom element. -/
-def Atom {α : Type*} [PartialOrder α] (x : α) : Prop :=
-  ∀ (y : α), y ≤ x → y = x
+/-- Mereological atom: x has no proper part — grounded as mathlib's `IsMin`
+    (minimal element). [link-1983] (D.10); [champollion-2017] §2.2:
+    `Atom(x) ⇔ ¬∃y. y < x`. This is the **absolute** (P-independent) notion;
+    the P-relative one (Krifka D17, "no proper *P*-part") is `atomize` /
+    mathlib `Minimal P`. No `OrderBot` needed — many mereological domains lack
+    a bottom. -/
+abbrev Atom {α : Type*} [PartialOrder α] (x : α) : Prop := IsMin x
+
+/-- An atom's only part is itself — the `y = x` elimination form of `IsMin`. -/
+theorem Atom.eq {α : Type*} [PartialOrder α] {x y : α} (h : Atom x) (hy : y ≤ x) :
+    y = x :=
+  le_antisymm hy (h hy)
 
 -- ════════════════════════════════════════════════════
 -- § 3. Key Theorems
@@ -172,12 +178,12 @@ theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
     · exact hQ hy hxy hy_lt.ne hy_lt.le
   · exact hQ hx hxy hx_lt.ne hx_lt.le
 
-/-- Atoms form an antichain: distinct atoms are incomparable (`a ≤ b` with `b`
-    an atom forces `a = b`). The engine behind `qua_of_atom`. -/
+/-- Atoms form an antichain — the absolute case of mathlib's
+    `setOf_minimal_antichain` (atoms are the `Minimal (fun _ => True)` elements,
+    via `minimal_true`). The engine behind `qua_of_atom`. -/
 theorem isAntichain_setOf_atom {α : Type*} [PartialOrder α] :
     IsAntichain (· ≤ ·) {x : α | Atom x} := by
-  rintro a _ha b hb hab hab_le
-  exact hab (hb a hab_le)
+  simp only [Atom, ← minimal_true]; exact setOf_minimal_antichain _
 
 /-- **Combinator**: a predicate holding only of atoms is quantized — its
     extension is a subset of the atoms, which form an antichain
@@ -368,26 +374,28 @@ theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μT
 -- § 6b. Atomization ([little-moroney-royer-2022])
 -- ════════════════════════════════════════════════════
 
-/-- Atomize a predicate: restrict P to its atomic members.
-    [little-moroney-royer-2022] eq. (13):
-    ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]
+/-- Atomize a predicate to its **P-relative** minimal members — mathlib's
+    `Minimal P`. [little-moroney-royer-2022] eq. (13):
+    `⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]`, which is exactly `Minimal P x`
+    (`minimal_iff_forall_lt`). NB this is *P-relative* (no *P*-element strictly
+    below x), distinct from the absolute `Atom`/`IsMin`; for a divisive P the
+    two coincide (`minimal_iff_isMin`).
 
     In classifier-for-noun theories ([chierchia-1998]; [jenks-2011];
     [dayal-2012]; [nomoto-2013]), the classifier atomizes the noun
-    denotation so the numeral can count individual entities. This is the
-    semantic contribution that distinguishes CLF-for-N from CLF-for-NUM. -/
-def atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop :=
-  fun x => P x ∧ Atom x
+    denotation so the numeral can count individual entities. -/
+abbrev atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop := Minimal P
 
 /-- Atomize restricts: atomize P ⊆ P. -/
 theorem atomize_sub {α : Type*} [PartialOrder α]
     {P : α → Prop} {x : α} (h : atomize P x) : P x :=
   h.1
 
-/-- Atomized predicates are quantized: no proper part of an atom is an atom. -/
+/-- Atomized predicates are quantized: the P-minimal elements form an antichain
+    (mathlib's `setOf_minimal_antichain`). -/
 theorem atomize_qua {α : Type*} [PartialOrder α]
     {P : α → Prop} : QUA (atomize P) :=
-  qua_of_atom fun _ h => h.2
+  setOf_minimal_antichain P
 
 /-- Atomize turns cumulative predicates into quantized ones.
     This is the core of CLF-for-N semantics: the classifier takes a
@@ -665,7 +673,7 @@ theorem atom_gHomogeneous_trivial {α : Type*} [PartialOrder α]
     {P : α → Prop} {a : α} (_hP : P a) (hAtom : Atom a) :
     ∀ y, y < a → ∃ z, z ≤ y ∧ P z := by
   intro y hlt
-  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+  exact absurd (Atom.eq hAtom (le_of_lt hlt)) (ne_of_lt hlt)
 
 /-- A predicate that is cumulative but NOT g-homogeneous has "fake mass"
     behavior ([deal-2017]; [moroney-2021] §2.4): sums of

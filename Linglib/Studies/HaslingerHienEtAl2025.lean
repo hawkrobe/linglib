@@ -141,7 +141,7 @@ def passed : Student → Prop
 theorem student_atoms : ∀ (x : Student), (fun _ => True : Student → Prop) x →
     Mereology.Atom x := by
   intro x _ z hz
-  exact hz
+  exact hz.symm
 
 /-- In a flat order, distinct elements don't overlap. -/
 theorem student_disjoint : ∀ (x y : Student),

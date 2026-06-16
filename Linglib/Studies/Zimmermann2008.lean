@@ -113,7 +113,7 @@ instance : DecidablePred Daura := fun x => match x with
 /-! ### Mereological structure -/
 
 theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x := by
-  intro z hz; exact hz
+  intro z hz; exact hz.symm
 
 theorem faasinjee_disjoint (x y : Faasinjee) (h : Mereology.Overlap x y) :
     x = y := by obtain ⟨z, hzx, hzy⟩ := h; exact hzx.symm.trans hzy
