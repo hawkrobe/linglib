@@ -29,12 +29,12 @@ namespace Features
     gradable-adjective semantics to distinguish licensing patterns of
     the two-threshold model.
 
-    **Cross-reference**: `Aristotelian.AristotelianRel` (in
-    `Core/Logic/Aristotelian/Basic.lean`) is a 5-valued enum that
-    subsumes both constructors here. A future cleanup could replace
-    `NegationType` with `{ r : AristotelianRel // r ∈ {.contradictory, .contrary} }`
-    or have consumers take `AristotelianRel` directly. Deferred until
-    consumer demand pulls the unification. -/
+    **Cross-reference**: `Aristotelian.OppositionRel` (in
+    `Core/Logic/Aristotelian/Basic.lean`) is the opposition-axis enum whose
+    `contradictory` / `contrary` cells subsume both constructors here. A future
+    cleanup could replace `NegationType` with
+    `{ r : OppositionRel // r ∈ {.contradictory, .contrary} }` or have consumers
+    take `OppositionRel` directly. Deferred until consumer demand pulls it. -/
 inductive NegationType where
   | contradictory
   | contrary
