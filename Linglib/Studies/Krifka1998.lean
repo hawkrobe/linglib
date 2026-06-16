@@ -688,7 +688,7 @@ def someApples : Apple → Prop := fun a => a.Nonempty
     quantized" property at the K89/K98 level. -/
 theorem twoApples_qua : QUA twoApples :=
   -- `twoApples` is the singleton predicate `(· = {0,1})`, trivially an antichain.
-  Mereology.qua_of_forall fun x y hx hlt hy => by rw [hx, hy] at hlt; exact hlt.ne rfl
+  Mereology.singleton_qua ({0, 1} : Finset (Fin 3))
 
 /-- `someApples` is CUM: nonempty ⊔ nonempty = nonempty. Bare plurals
     propagate cumulativity (K89 §3 / K98 §3.3). -/

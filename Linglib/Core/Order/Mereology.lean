@@ -101,11 +101,13 @@ theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} :
 abbrev QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   IsAntichain (· ≤ ·) {x | P x}
 
-/-- Converge Champollion's paper condition into the mathlib `IsAntichain` normal
+/-- Convert Champollion's paper condition into the mathlib `IsAntichain` normal
     form: if no P-element sits strictly below another P-element, the extension is
-    an antichain. This is the *construction* direction (paper form ⟹ `QUA`); to
-    *use* a `QUA` hypothesis, apply it directly as an antichain. There is no
-    `QUA ⟹ ∀ x y` unfold by design — that runs against the simp grain. -/
+    an antichain. The *construction* direction (paper form ⟹ `QUA`); to *use* a
+    `QUA` hypothesis, apply it directly as an antichain. Provided one-way on
+    purpose — the antichain form is the working normal form, so no named
+    `QUA ⟹ ∀ x y` unfold is given (unlike the `cum_iff`/`div_iff` siblings, whose
+    `.mp` is needed internally). -/
 theorem qua_of_forall {α : Type*} [PartialOrder α] {P : α → Prop}
     (h : ∀ x y, P x → y < x → ¬ P y) : QUA P := by
   rintro a ha b hb hab hab_le
@@ -166,11 +168,7 @@ theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
     ¬ CUM P := by
   intro hC
   have hxy : P (x ⊔ y) := hC hx hy
-  rcases eq_or_lt_of_le (le_sup_left : x ≤ x ⊔ y) with hx_eq | hx_lt
-  · rcases eq_or_lt_of_le (le_sup_right : y ≤ x ⊔ y) with hy_eq | hy_lt
-    · exact hne (hx_eq.trans hy_eq.symm)
-    · exact hQ hy hxy hy_lt.ne hy_lt.le
-  · exact hQ hx hxy hx_lt.ne hx_lt.le
+  exact hne ((hQ.eq hx hxy le_sup_left).trans (hQ.eq hy hxy le_sup_right).symm)
 
 /-- Atoms form an antichain: distinct atoms are incomparable (`a ≤ b` with `b`
     an atom forces `a = b`). The engine behind `qua_of_atom`. -/
@@ -509,11 +507,9 @@ theorem extMeasure_strictMono {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (hμ : ExtMeasure α μ) : StrictMono μ :=
   fun _a _b hab => hμ.strict_mono _ _ hab
 
-/-- Singleton predicates are quantized on any partial order.
-    `{x | x = n}` is QUA because `y < n → y ≠ n` (by irreflexivity
-    of `<` after substitution).
-
-    This generalizes `atom_qua`, which required `Atom x`. The Atom
+/-- Singleton predicates are quantized on any partial order: the extension
+    `{x | x = n}` is a subsingleton, hence an antichain
+    (`Set.Subsingleton.isAntichain`). Generalizes `atom_qua` — the `Atom x`
     hypothesis is unnecessary for singletons. -/
 theorem singleton_qua {α : Type*} [PartialOrder α]
     (n : α) : QUA (· = n) :=

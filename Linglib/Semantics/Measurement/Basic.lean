@@ -379,7 +379,7 @@ theorem extensive_measureFn_qmod_qua
     (hExt : MeasureFn.IsExtensive μ)
     {R : E → Prop} {n : ℚ} (_hn : 0 < n) :
     Mereology.QUA (Mereology.QMOD R μ.apply n) := by
-  haveI : @Mereology.ExtMeasure E inst μ.apply := hExt
+  haveI := hExt
   exact Mereology.qmod_qua R n
 
 /-- **Bridge to QMOD.** Scontras's `applyNumeral` and Krifka's `QMOD` check the
