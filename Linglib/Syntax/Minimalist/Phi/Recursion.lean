@@ -1,6 +1,5 @@
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Number.Interp
-import Linglib.Core.Order.Mereology
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 
