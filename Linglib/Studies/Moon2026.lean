@@ -229,7 +229,18 @@ structure MixedDrinkWitness {n : ℕ} (recipe : Recipe α n)
 
     The MEASURED PART is the ingredient at `recipe.measuredPart` — it
     provides the unit for individuation and is what *double* targets
-    ([wagiel-2021]). -/
+    ([wagiel-2021]).
+
+    TODO: formula (28)'s `MEASURED PART(y₀)` conjunct is not imposed as a
+    truth condition — `recipe.measuredPart` only records *which* index is
+    the measured part (consumed by `doubleRecipe`); no `MixedDrinkWitness`
+    field asserts it is individuable. So this denotation is Moon's earlier
+    formula (19) plus CONNECTED LIQUID, and [moon-2026] notes (19)
+    over-generates to ratio-structured mass mixtures like *lemonade*. The
+    ¬CUM and ¬QUA results below are unaffected (they use only connectivity
+    and the witness), but the denotation does not yet separate a margarita
+    from ratioed lemonade. Encoding it needs truth conditions for MEASURED
+    PART, which [moon-2026] leaves informal. -/
 def mixedDrinkDen {n : ℕ} (recipe : Recipe α n)
     (μ : α → ℚ) (phase : α → Phase) (x : α) : Prop :=
   Nonempty (MixedDrinkWitness recipe μ phase x)
