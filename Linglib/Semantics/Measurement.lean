@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Gradability.StatesBased
 import Linglib.Semantics.Kinds.MeaningPreservation
@@ -128,7 +128,7 @@ instance : Core.Order.LicensingPipeline MereologicalStatus where
 -- ════════════════════════════════════════════════════
 
 /-- Every `MereoDim` witness yields the unbundled `admissibleMeasure`
-    Prop. `MereoDim` (`Core/Order/Mereology.lean`) bundles `StrictMono` in a
+    Prop. `MereoDim` (`Semantics/Mereology.lean`) bundles `StrictMono` in a
     typeclass with `[PartialOrder]` carriers; `admissibleMeasure`
     (Semantics/Gradability/StatesBased.lean) is the equivalent
     Prop with the more permissive `[Preorder]` carriers. The single

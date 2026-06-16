@@ -651,7 +651,7 @@ def k89Section7Data : List K89QuantDatum :=
     that conflates the two levels. That conflation is convenient for
     cross-framework gluing across [krifka-1989], [kennedy-2007],
     [rouillard-2026] (see the mereological-dimension lemmas in
-    `Core/Order/Mereology.lean` for the structural facts that DO hold —
+    `Semantics/Mereology.lean` for the structural facts that DO hold —
     e.g. `qua_pullback_mereoDim`, `cum_measure_unbounded`), but it does
     not follow from K89's definitions.
     The two examples below show the gap in both directions.

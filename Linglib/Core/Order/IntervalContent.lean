@@ -12,7 +12,7 @@ import Mathlib.Tactic.Abel
 
 A finitely additive, strictly positive content on the nonempty closed
 intervals of a preorder, valued in an ordered additive monoid. The
-order-theoretic sibling of `ExtMeasure` (`Core/Order/Mereology.lean`,
+order-theoretic sibling of `ExtMeasure` (`Semantics/Mereology.lean`,
 [krifka-1998]'s extensive measure functions over a `SemilatticeSup`):
 disjoint intervals have no interval join, so the two substrates coexist
 rather than one subsuming the other.

@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Basic
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 
 /-!
 # Number — lattice semantics for the values

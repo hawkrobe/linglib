@@ -1,5 +1,5 @@
 import Linglib.Semantics.Plurality.Basic
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Mathlib.Data.Finset.Grade
 
 /-!

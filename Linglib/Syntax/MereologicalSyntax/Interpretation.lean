@@ -12,7 +12,7 @@ mereological syntax to the semantic individuation operator (`Div`) from
 [borer-2005]'s nominal theory, closing the gap between two
 independent uses of mereology in the library:
 
-1. **Semantic mereology** (`Core/Order/Mereology.lean`): part-whole over entities.
+1. **Semantic mereology** (`Semantics/Mereology.lean`): part-whole over entities.
    CUM (cumulative), QUA (quantized), Div (individuation to atoms).
 2. **Syntactic mereology** (`MereologicalSyntax/`): part-of over syntactic
    objects. SynObj, subjoin, Dimensionality.

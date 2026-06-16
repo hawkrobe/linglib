@@ -87,7 +87,7 @@ private theorem cum_propagation_of_cumTheta {θ : α → β → Prop} {OBJ : α 
 
     **Functional case**: When θ is a function (not a relation) with
     `IsSumHom` + `Function.Injective`, this reduces to
-    `qua_of_injective_sumHom` in `Core/Order/Mereology.lean` via
+    `qua_of_injective_sumHom` in `Semantics/Mereology.lean` via
     `qua_pullback`. The relational UP + MSO conditions collapse to
     functional injectivity + monotonicity.
 

@@ -1,6 +1,6 @@
 import Mathlib.Logic.Relation
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Features.Individuation
 
 /-!

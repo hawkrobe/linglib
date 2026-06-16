@@ -12,7 +12,7 @@ The key linguistic insight: the boundedness of a directional
 PP determines whether the VP it creates is telic or atelic. Bounded PPs
 ("to the store") yield telic VPs; unbounded PPs ("towards the store")
 yield atelic VPs. This parallels the QUA/CUM mereological classification
-from `Core/Order/Mereology.lean`.
+from `Semantics/Mereology.lean`.
 
 ## Sections
 

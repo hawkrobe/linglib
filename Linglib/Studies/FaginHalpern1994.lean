@@ -178,7 +178,7 @@ def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
 
     - `IsUpwardEntailing = Monotone` (`Entailment/Polarity.lean`)
     - `ScopeUpwardMono ↔ ∀ R, Monotone (q R)` (`Core/Quantification.lean`)
-    - `IsSumHom.monotone : Monotone f` (`Core/Order/Mereology.lean`)
+    - `IsSumHom.monotone : Monotone f` (`Semantics/Mereology.lean`)
     - `MeasureMonotone ↔ ∀ i w, Monotone (wcr i w)` (this definition)
 
     The world-independent special case `isProbabilistic` from

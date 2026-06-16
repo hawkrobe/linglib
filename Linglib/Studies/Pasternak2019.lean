@@ -2,7 +2,7 @@ import Linglib.Semantics.Gradability.StatesBased
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Studies.Wellwood2015
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -343,7 +343,7 @@ When `Event = Event Time` and the preorder comes from
 becomes: vP-predicates respect the event-mereology part-of. We expose
 two substrate consequences below: a downward-closure inheritance lemma
 for sort-determined predicates (using `Event.Mereology.sort_preserved`),
-and a g-homogeneity bridge to `Core/Order/Mereology.lean::gHomogeneous`
+and a g-homogeneity bridge to `Semantics/Mereology.lean::gHomogeneous`
 (triggered when the carrier is a `PartialOrder`).
 
 CSW [cariani-santorio-wellwood-2024] share Pasternak's monotonicity

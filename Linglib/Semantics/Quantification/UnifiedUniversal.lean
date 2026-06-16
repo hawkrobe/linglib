@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 
 /-!
 # Unified Semantics for Universal Quantification

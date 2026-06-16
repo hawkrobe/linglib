@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Syntax.Determiner.Basic
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Description

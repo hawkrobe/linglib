@@ -1,7 +1,7 @@
 import Mathlib.Order.Bounds.Basic
 import Mathlib.Data.Set.Pairwise.Basic
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 
 /-!
 # Schwarzschild Covers and Partitions
