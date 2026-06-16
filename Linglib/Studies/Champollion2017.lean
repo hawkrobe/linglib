@@ -68,8 +68,7 @@ def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Pro
 /-- Lexical cumulativity entails Krifka's `CUM` (closure under binary join). -/
 theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
-  rw [Mereology.cum_iff]
-  intro x y hPx hPy
+  intro x hPx y hPy
   exact (h _).mp (AlgClosure.sum (AlgClosure.base hPx) (AlgClosure.base hPy))
 
 end ThematicRolesAndCumulativity

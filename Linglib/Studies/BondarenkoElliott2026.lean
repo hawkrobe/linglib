@@ -227,7 +227,7 @@ theorem believes_closure_under_entailment
     Believes believe HOLDER CONT M p' := by
   obtain ⟨e, hbel, hhol, hcont⟩ := h_bel
   obtain ⟨e', hlt, hcont'⟩ := h_msi hcont h_lt
-  refine ⟨e', Mereology.div_iff.mp h_div.1 e e' hbel (le_of_lt hlt),
+  refine ⟨e', h_div.1 (le_of_lt hlt) hbel,
           h_div.2 hhol (le_of_lt hlt), hcont'⟩
 
 /-- **Lemma — paper eq. 46**: MSI implies negated belief is *downward*
@@ -372,7 +372,7 @@ theorem positive_sharvit_closure
   -- Step 2 (MSI): get e' < e with CONT_v e' = some p'.
   obtain ⟨e', h_e'_lt, h_cont_e'⟩ := h_msi h_cont_e h_lt
   -- Step 3 (BelievingDIV): e' is a believing of M.
-  have h_bel' : believe e' := Mereology.div_iff.mp h_div.1 e e' h_bel (le_of_lt h_e'_lt)
+  have h_bel' : believe e' := h_div.1 (le_of_lt h_e'_lt) h_bel
   have h_hol' : HOLDER e' = some M := h_div.2 h_hol (le_of_lt h_e'_lt)
   -- Step 4 (WorldLocatedDIV): e' is located at w too.
   have h_loc' : located e' w := h_world_div (le_of_lt h_e'_lt) h_loc
