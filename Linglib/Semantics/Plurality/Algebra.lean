@@ -333,8 +333,14 @@ The pointwise correspondence:
 - Link's `*P(x)` (plural closure) = "the members of `x` all satisfy `P`"
 - `IsDistr(P) ∧ *P(x)` → `∀a atom-part-of x. P(a)` = `distMaximal P x w`
 
-A formal bridge `distMaximal_iff_star_atoms` is left as Todo (requires
-aligning `Finset Atom` with `Type*`-lattice carriers via a coercion). -/
+The formal bridge is proved in `Distributivity.lean`:
+`distMaximal_iff_star_atoms` (star form) and `distMaximal_iff_forall_atom`
+(atom form). It runs through mathlib's `IsAtom`, **not** the bespoke `Atom`
+above: over an `OrderBot` carrier like `Finset Atom` the bespoke
+`Atom x := ∀ y ≤ x, y = x` degenerates to `{⊥}` (only `∅` satisfies it, since
+`∅ ≤ x ∧ ∅ ≠ x` for nonempty `x`), so `distr_atom_part` does not instantiate
+at the free model. `IsAtom` excludes `⊥`, so the atoms are the singletons
+(`Finset.isAtom_iff`). -/
 
 /-- Restatement of `distr_atom_part` under the `star` alias, anticipating
     the Finset-side `distMaximal_forces_all` consumer. -/

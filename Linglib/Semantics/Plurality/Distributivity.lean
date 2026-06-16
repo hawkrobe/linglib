@@ -1,4 +1,6 @@
 import Linglib.Semantics.Plurality.Basic
+import Linglib.Core.Order.Mereology
+import Mathlib.Data.Finset.Grade
 
 /-!
 # Plural Distributivity and Non-Maximality
@@ -23,6 +25,8 @@ distributivity × maximality. The substrate primitives (`Tolerance`,
   — the four-cell typology from [haslinger-etal-2025].
 * `distTolerantQuant` — hypothetical DP-internal tolerant quantifier
   (typology-predicted but unattested).
+* `distMaximal_iff_forall_atom`, `distMaximal_iff_star_atoms` — grounding of
+  `distMaximal` in mathlib's `IsAtom` and Link's star-closure ([link-1983]).
 
 ## Implementation notes
 
@@ -205,5 +209,82 @@ def distTolerantQuant (restrictor scope : Atom → W → Prop)
     (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
   ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x ∧
     (∀ a ∈ z, restrictor a w) ∧ (∀ a ∈ z, scope a w)
+
+/-! ### Grounding in Link's mereology
+
+`distMaximal` over the free `Finset Atom` model is exactly Link's
+distributive inference / star-closure ([link-1983]; `Algebra.star =
+Mereology.AlgClosure`). These two theorems discharge the
+`distMaximal_iff_star_atoms` Todo flagged in `Plurality/Algebra.lean` §6.
+
+The `Algebra.distr_atom_part` route does *not* instantiate at this carrier:
+the bespoke `Mereology.Atom x := ∀ y ≤ x, y = x` degenerates over an
+`OrderBot` lattice — only `⊥`/`∅` satisfies it (for nonempty `x`,
+`∅ ≤ x ∧ ∅ ≠ x` falsifies it). The faithful bridge therefore runs through
+mathlib's `IsAtom` (which excludes `⊥`); over `Finset Atom` the atoms are
+the singletons (`Finset.isAtom_iff`). -/
+
+omit [DecidableEq Atom] in
+/-- `distMaximal` is Link's **distributive inference**: `P` holds maximally
+    on `x` iff every atomic part of `x` satisfies `P`. Grounded in mathlib's
+    `IsAtom` — over `Finset Atom` the atoms are singletons, so this is the
+    `Atom`-correct restatement of `distMaximal_forces_all`. Holds for every
+    `x` (the empty plurality has no atomic parts, so both sides are vacuous). -/
+theorem distMaximal_iff_forall_atom (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    distMaximal P x w ↔ ∀ s : Finset Atom, IsAtom s → s ≤ x → ∀ a ∈ s, P a w := by
+  unfold distMaximal
+  refine ⟨fun h s _ hsx a ha => h a (hsx ha), fun h a ha => ?_⟩
+  exact h {a} (Finset.isAtom_singleton a)
+    (Finset.singleton_subset_iff.mpr ha) a (Finset.mem_singleton_self a)
+
+/-- `distMaximal` is Link's **star-closure** ([link-1983]'s `*`,
+    `Algebra.star = Mereology.AlgClosure`): a nonempty plurality satisfies
+    `P` maximally iff it is a join of `P`-atoms (singletons). Discharges the
+    `Plurality/Algebra.lean` §6 `distMaximal_iff_star_atoms` Todo; the
+    `Nonempty` hypothesis carries the `⊥`-exclusion (`AlgClosure` cannot
+    build `∅`). -/
+theorem distMaximal_iff_star_atoms (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+    distMaximal P x w ↔
+      Mereology.AlgClosure (fun s : Finset Atom => ∃ a, s = {a} ∧ P a w) x := by
+  constructor
+  · intro h
+    have key : ∀ s : Finset Atom, (∀ a ∈ s, P a w) →
+        s = ∅ ∨ Mereology.AlgClosure (fun t : Finset Atom => ∃ a, t = {a} ∧ P a w) s := by
+      intro s
+      induction s using Finset.induction with
+      | empty => intro _; exact Or.inl rfl
+      | @insert a t hat ih =>
+        intro hall
+        have hPa : P a w := hall a (Finset.mem_insert_self a t)
+        have htall : ∀ b ∈ t, P b w := fun b hb => hall b (Finset.mem_insert_of_mem hb)
+        refine Or.inr ?_
+        rcases ih htall with ht0 | hAt
+        · subst ht0
+          have hsingle : (insert a (∅ : Finset Atom)) = {a} := by simp
+          rw [hsingle]
+          exact Mereology.AlgClosure.base ⟨a, rfl, hPa⟩
+        · have hins : (insert a t : Finset Atom) = {a} ⊔ t := by
+            rw [Finset.insert_eq, Finset.sup_eq_union]
+          rw [hins]
+          exact Mereology.AlgClosure.sum (Mereology.AlgClosure.base ⟨a, rfl, hPa⟩) hAt
+    rcases key x h with hx0 | hAx
+    · exact absurd hx0 (Finset.nonempty_iff_ne_empty.mp hne)
+    · exact hAx
+  · intro h
+    clear hne
+    induction h with
+    | base hp =>
+      obtain ⟨b, hb, hPb⟩ := hp
+      subst hb
+      rw [distMaximal_singleton]
+      exact hPb
+    | sum _ _ ih₁ ih₂ =>
+      intro a ha
+      rw [Finset.sup_eq_union, Finset.mem_union] at ha
+      rcases ha with hau | hav
+      · exact ih₁ a hau
+      · exact ih₂ a hav
 
 end Semantics.Plurality.Distributivity
