@@ -36,7 +36,7 @@ variable {W Time : Type*} [LinearOrder Time]
     lack it.
 
     This is the universal-witness (Bennett-Partee 1972) form of stativity
-    along the time dimension. The `SR_univ` decomposition form at
+    along the time dimension. The `Stratified.ReferenceUniv` decomposition form at
     [champollion-2017]'s analogous parameter-space point (dim = τ,
     point-interval granularity) is genuinely different math — ∃-decomposition
     over P-parts vs ∀-projection over hypothetical witness events. The

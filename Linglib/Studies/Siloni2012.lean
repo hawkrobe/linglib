@@ -31,9 +31,9 @@ embedding.
 - `RecipFormation` from `Typology.lean` — extended with nine predicted
   properties and per-language verification
 - `EntailmentProfile` — used to define θ-role bundling
-- `VerbDistributivity` in `Events/Aspect/Stratified.lean` — the
-  `meet_agent_not_sdr` axiom captures the same property: symmetric
-  verbs denote singular events that do not distribute over atomic agents
+- `Verb.StratifiesOver` (`Semantics/Verb/Distributivity.lean`) — the same
+  property: symmetric verbs denote singular events that do not distribute
+  over atomic agents (`¬ meet.StratifiesOver M agentRole`)
 -/
 
 namespace Siloni2012
@@ -186,8 +186,8 @@ theorem properties_complementary :
     are symmetric — "John and Mary kissed" denotes one event of
     mutual kissing, not two directional sub-events.
 
-    The `VerbDistributivity` class in `Events/Aspect/Stratified.lean`
-    axiomatizes the same property: *meet* has `¬ SDR_univ agentOf meet`
+    `Champollion2017.ChampollionPostulates` states the same property via
+    `Verb.StratifiesOver`: *meet* has `¬ meet.StratifiesOver M agentRole`
     — it does not distribute over atomic agents, because the event is
     necessarily collective/atomic. -/
 def isSymmetricVerb : RecipFormation → Prop
@@ -352,8 +352,8 @@ theorem syntactic_not_symmetric :
     - Syntactic: sub-events present, BUT dual role → condition 2 fails
 
     Cross-module connections:
-    - `meetProfile.agentSDR = false` in Champollion2017: same insight
-    - `meet_agent_not_sdr` in StratifiedReference: axiomatizes it -/
+    - `ChampollionPostulates.meet_not_distributes_agent` in Champollion2017:
+      same insight, via `Verb.StratifiesOver` -/
 
 /-- Step 1: Both reciprocal verb types give the subject two θ-roles
     (lexical via bundling §4.1, syntactic via parasitic assignment §4.2). -/

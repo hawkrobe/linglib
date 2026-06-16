@@ -66,8 +66,8 @@ namespace EvQuant
 /-- Existential lift of an event predicate to an event quantifier:
     `λf. ∃e, P e ∧ f e`. The standard way (per [champollion-2015])
     to view a verb's predicate denotation as an event quantifier; used
-    to bridge the predicate-level strata theory (`SR_univ` etc.) to the
-    quantifier-level `AtomDist`. -/
+    to bridge the predicate-level strata theory
+    (`Stratified.ReferenceUniv` etc.) to the quantifier-level `AtomDist`. -/
 def ofPred {Event : Type*} (P : Event → Prop) : EvQuant Event :=
   fun f => ∃ e, P e ∧ f e
 
