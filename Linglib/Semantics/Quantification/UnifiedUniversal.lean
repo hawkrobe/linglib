@@ -106,7 +106,7 @@ theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
     {x : α} (hMax : isMaximal P x) :
     maxNonOverlap P x :=
   ⟨hMax.1, λ y hy _hov => by
-    have hxy := hCum x y hMax.1 hy
+    have hxy := Mereology.cum_iff.mp hCum x y hMax.1 hy
     have hle : x ≤ x ⊔ y := le_sup_left
     have heq : x = x ⊔ y := hMax.2 (x ⊔ y) hxy hle
     exact heq ▸ le_sup_right⟩

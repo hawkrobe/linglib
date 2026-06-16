@@ -64,8 +64,9 @@ def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
 private theorem cum_propagation_of_cumTheta {θ : α → β → Prop} {OBJ : α → Prop}
     (hCum : CumTheta θ) (hObj : CUM OBJ) :
     CUM (VP θ OBJ) := by
+  rw [Mereology.cum_iff]
   intro e₁ e₂ ⟨y₁, hobj₁, hθ₁⟩ ⟨y₂, hobj₂, hθ₂⟩
-  exact ⟨y₁ ⊔ y₂, hObj y₁ y₂ hobj₁ hobj₂, hCum y₁ y₂ e₁ e₂ hθ₁ hθ₂⟩
+  exact ⟨y₁ ⊔ y₂, Mereology.cum_iff.mp hObj y₁ y₂ hobj₁ hobj₂, hCum y₁ y₂ e₁ e₂ hθ₁ hθ₂⟩
 
 /-! ### QUA Propagation (K98 §3.3) -/
 

@@ -312,7 +312,7 @@ theorem distr_properPlural_extends {P : E → Prop}
 theorem properPlural_cum {P : E → Prop} {x y : E}
     (hx : properPlural P x) (hy : properPlural P y) :
     properPlural P (x ⊔ y) := by
-  refine ⟨algClosure_cum _ _ hx.1 hy.1, fun hAtom => ?_⟩
+  refine ⟨AlgClosure.sum hx.1 hy.1, fun hAtom => ?_⟩
   have : x = x ⊔ y := hAtom x le_sup_left
   exact hx.2 (fun z hz => by rw [show x ⊔ y = x from this.symm] at hAtom; exact hAtom z hz)
 
