@@ -128,7 +128,7 @@ theorem algClosure_div_sub_cum (P : α → Prop) (hCum : CUM P) :
   intro x hx
   induction hx with
   | base h => exact h.1
-  | sum _ _ ih₁ ih₂ => exact hCum _ _ ih₁ ih₂
+  | sum _ _ ih₁ ih₂ => exact Mereology.cum_iff.mp hCum _ _ ih₁ ih₂
 
 /-- Counting requires prior individuation.
 

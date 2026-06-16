@@ -143,7 +143,7 @@ theorem isMass_div (P : Property World Atom) (hMass : IsMass World Atom P) (w : 
     then `x ∪ y ∈ P w`. Combining mass-noun instances yields an instance. -/
 theorem isMass_cum (P : Property World Atom) (hMass : IsMass World Atom P) (w : World) :
     Mereology.CUM (P w) :=
-  fun x y hx hy => (hMass w (x ⊔ y)).mpr fun a ha =>
+  Mereology.cum_iff.mpr fun x y hx hy => (hMass w (x ⊔ y)).mpr fun a ha =>
     Or.elim ha (fun h => (hMass w x).mp hx a h) (fun h => (hMass w y).mp hy a h)
 
 end MereologyBridge

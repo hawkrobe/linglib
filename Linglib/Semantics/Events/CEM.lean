@@ -67,6 +67,7 @@ def LexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
 theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     (P : Event Time → Prop) :
     @CUM _ cem.evSemilatticeSup P ↔ LexCum Time P := by
+  rw [Mereology.cum_iff]
   constructor
   · intro h e₁ e₂ h₁ h₂; exact h e₁ e₂ h₁ h₂
   · intro h x y hx hy; exact h x y hx hy
