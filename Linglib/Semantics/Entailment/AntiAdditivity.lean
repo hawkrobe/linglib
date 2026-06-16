@@ -147,6 +147,39 @@ theorem IsAntiMorphic.antitone [Lattice α] [Lattice β]
 
 end PropertyFamily
 
+/-! ### mathlib hom-hierarchy bridges
+
+The function classes are the unbundled predicates for mathlib's bundled
+lattice homs: an additive function *is* a `SupHom`, a multiplicative one an
+`InfHom`. The anti-classes are the same notions read into the order dual —
+anti-additivity is additivity composed with `toDual` (De Morgan duality),
+so the `.antitone` consequences are the duals of the `.monotone` ones. -/
+
+section HomBridges
+
+variable {α β : Type*}
+
+/-- An additive function bundles as a `SupHom`. -/
+def IsAdditive.toSupHom [SemilatticeSup α] [SemilatticeSup β] {f : α → β}
+    (h : IsAdditive f) : SupHom α β where
+  toFun := f
+  map_sup' := h
+
+/-- A multiplicative function bundles as an `InfHom`. -/
+def IsMultiplicative.toInfHom [SemilatticeInf α] [SemilatticeInf β] {f : α → β}
+    (h : IsMultiplicative f) : InfHom α β where
+  toFun := f
+  map_inf' := h
+
+/-- **De Morgan duality**: anti-additivity is additivity into the order
+dual — `f` sends joins to meets iff `toDual ∘ f` preserves joins. -/
+theorem isAntiAdditive_iff_isAdditive_toDual [SemilatticeSup α]
+    [SemilatticeInf β] {f : α → β} :
+    IsAntiAdditive f ↔ IsAdditive (β := βᵒᵈ) (OrderDual.toDual ∘ f) :=
+  Iff.rfl
+
+end HomBridges
+
 /-! ### Pointwise bridges
 
 The equational properties at the `Set` and GQ instances, in the membership
