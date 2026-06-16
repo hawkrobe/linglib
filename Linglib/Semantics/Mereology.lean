@@ -173,17 +173,6 @@ theorem atom_qua {α : Type*} [PartialOrder α]
     {x : α} (hAtom : Atom x) : QUA (· = x) :=
   qua_of_atom fun _ hz => hz ▸ hAtom
 
-/-- DIV allows extracting parts: if P is DIV and P(z), then P(w) for any w ≤ z. -/
-theorem div_closed_under_le {α : Type*} [PartialOrder α]
-    {P : α → Prop}
-    (hDiv : DIV P)
-    {z : α} (hz : P z) {w : α} (hle : w ≤ z) :
-    P w :=
-  hDiv hle hz
-
-/-- CUM and QUA partition event predicates (for non-trivial predicates):
-    a predicate with ≥ 2 distinct elements cannot be both CUM and QUA.
-    [champollion-2017] §2.3.5. -/
 theorem cum_qua_disjoint {α : Type*} [SemilatticeSup α]
     {P : α → Prop}
     (hne : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) :
@@ -192,12 +181,6 @@ theorem cum_qua_disjoint {α : Type*} [SemilatticeSup α]
   obtain ⟨x, y, hpx, hpy, hxy⟩ := hne
   exact qua_cum_incompatible hQ hpx hpy hxy hC
 
-/-- AlgClosure preserves membership: if P x, then AlgClosure P x. -/
-theorem algClosure_of_mem {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} {x : α} (h : P x) : AlgClosure P x :=
-  AlgClosure.base h
-
-/-- AlgClosure is monotone: P ⊆ Q implies *P ⊆ *Q. -/
 theorem algClosure_mono {α : Type*} [SemilatticeSup α]
     {P Q : α → Prop} (h : ∀ (x : α), P x → Q x) :
     ∀ (x : α), AlgClosure P x → AlgClosure Q x := by
@@ -324,23 +307,6 @@ QUA because no proper part of a 2kg entity also weighs 2kg). The theorem
 def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
   λ x => R x ∧ μ x = n
 
-/-- QMOD(R, μ, n) ⊆ R: quantizing modification restricts the base predicate. -/
-theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μTy}
-    {x : α} (h : QMOD R μ n x) : R x :=
-  h.1
-
-/-! ### Atomization ([little-moroney-royer-2022]) -/
-
-/-- Atomize a predicate to its **P-relative** minimal members — mathlib's
-    `Minimal P`. [little-moroney-royer-2022] eq. (13):
-    `⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]`, which is exactly `Minimal P x`
-    (`minimal_iff_forall_lt`). NB this is *P-relative* (no *P*-element strictly
-    below x), distinct from the absolute `Atom`/`IsMin`; for a divisive P the
-    two coincide (`minimal_iff_isMin`).
-
-    In classifier-for-noun theories ([chierchia-1998]; [jenks-2011];
-    [dayal-2012]; [nomoto-2013]), the classifier atomizes the noun
-    denotation so the numeral can count individual entities. -/
 abbrev atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop := Minimal P
 
 /-- Atomize restricts: atomize P ⊆ P. -/
@@ -354,18 +320,6 @@ theorem atomize_qua {α : Type*} [PartialOrder α]
     {P : α → Prop} : QUA (atomize P) :=
   setOf_minimal_antichain P
 
-/-- Atomize turns cumulative predicates into quantized ones.
-    This is the core of CLF-for-N semantics: the classifier takes a
-    cumulative noun denotation (an atomic join-semilattice) and produces
-    a quantized set of atoms suitable for counting. -/
-theorem atomize_of_cum_is_qua {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} (_hCum : CUM P) : QUA (atomize P) :=
-  atomize_qua
-
-/-! ### Maximality and Atom Counting ([charlow-2021]) -/
-
-/-- Maximal in P under ≤: x is in P and no proper extension of x is in P.
-    Used by [charlow-2021] for the M_v operator (mereological maximization). -/
 def isMaximal {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∀ (y : α), P y → x ≤ y → x = y
 
@@ -384,53 +338,14 @@ theorem cum_maximal_unique {α : Type*} [SemilatticeSup α]
   have hxy := hCum hx.1 hy.1
   exact (hx.2 _ hxy le_sup_left).trans (hy.2 _ hxy le_sup_right).symm
 
-/-- The atoms below a join are exactly the atoms below either operand,
-    when atoms are join-prime (`a ≤ u ⊔ v → a ≤ u ∨ a ≤ v`). -/
-theorem atomsBelow_sup {α : Type*} [SemilatticeSup α]
-    (hJP : ∀ (a : α), Atom a → ∀ (u v : α), a ≤ u ⊔ v → a ≤ u ∨ a ≤ v) (x y : α) :
-    {a : α | Atom a ∧ a ≤ x ⊔ y}
-      = {a | Atom a ∧ a ≤ x} ∪ {a | Atom a ∧ a ≤ y} := by
-  ext a
-  simp only [Set.mem_setOf_eq, Set.mem_union]
-  exact ⟨fun ⟨h, hle⟩ => (hJP a h x y hle).imp (⟨h, ·⟩) (⟨h, ·⟩),
-    fun h => h.elim (fun ⟨h, hl⟩ => ⟨h, hl.trans le_sup_left⟩)
-                    (fun ⟨h, hl⟩ => ⟨h, hl.trans le_sup_right⟩)⟩
-
-/-- Atom count is additive over non-overlapping sums, provided atoms are
-    join-prime (i.e., `a ≤ x ⊔ y → a ≤ x ∨ a ≤ y` for atoms `a`).
-    Join-primality holds in distributive lattices but fails in general
-    semilattices (e.g., the M₃ lattice). -/
-theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
-    [Fintype α]
-    (hJP : ∀ (a : α), Atom a → ∀ (u v : α), a ≤ u ⊔ v → a ≤ u ∨ a ≤ v)
-    {x y : α} (hDisj : ¬ Overlap x y) :
-    atomCount α (x ⊔ y) = atomCount α x + atomCount α y := by
-  unfold atomCount
-  rw [atomsBelow_sup hJP, Set.ncard_union_eq
-    (Set.disjoint_left.mpr fun a ha hb => hDisj ⟨a, ha.2, hb.2⟩)
-    (Set.toFinite _) (Set.toFinite _)]
-
-/-! ### QUA/CUM Pullback (contravariant functoriality) -/
-
-/-- QUA pullback along a strictly monotone map: if `d` is `StrictMono` and `P`
-    is quantized over `β`, then `P ∘ d` is quantized over `α`. The linguistic
-    (setOf-predicate) form of `IsAntichain.preimage_strictMono`
-    (`Core/Order/Antichain.lean`); subsumes `extMeasure_qua` (`d = μ`) and the
-    functional case of the relational `qua_propagation` in Krifka1998.lean. -/
 theorem qua_pullback {α β : Type*} [PartialOrder α] [PartialOrder β]
     {d : α → β} (hd : StrictMono d)
     {P : β → Prop} (hP : QUA P) :
     QUA (P ∘ d) :=
   hP.preimage_strictMono hd
 
-/-- CUM pullback along sum homomorphisms.
-
-    If `d : α → β` is a sum homomorphism and `P` is cumulative over `β`,
-    then `P ∘ d` is cumulative over `α`. Wrapper for `IsSumHom.cum_preimage`,
-    named for symmetry with `qua_pullback`.
-
-    Categorically: CUM is a contravariant functor from the category of
-    join semilattices with IsSumHom morphisms to Prop. -/
+/-- CUM pullback along a sum homomorphism: `CUM P → CUM (P ∘ d)`. The CUM twin
+    of `qua_pullback`; wraps `IsSumHom.cum_preimage`. -/
 theorem cum_pullback {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     {d : α → β} (hd : IsSumHom d)
     {P : β → Prop} (hP : CUM P) :
@@ -446,24 +361,14 @@ theorem extMeasure_strictMono {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (hμ : ExtMeasure α μ) : StrictMono μ :=
   fun _a _b hab => hμ.strict_mono _ _ hab
 
-/-- Singleton predicates are quantized on any partial order.
-    `{x | x = n}` is QUA because `y < n → y ≠ n` (by irreflexivity
-    of `<` after substitution).
-
-    This generalizes `atom_qua`, which required `Atom x`. The Atom
-    hypothesis is unnecessary for singletons. -/
+/-- Singleton predicates are quantized: `{x | x = n}` is QUA on any partial
+    order (a subsingleton is an antichain). -/
 theorem singleton_qua {α : Type*} [PartialOrder α]
     (n : α) : QUA (· = n) :=
   Set.Subsingleton.isAntichain (fun _ ha _ hb => ha.trans hb.symm) _
 
-/-- Measure phrases create QUA predicates: `{x : μ(x) = n}` is QUA
-    whenever μ is an extensive measure ([krifka-1998] §2.2).
-    A special case of QUA pullback:
-
-      {x | μ(x) = n} = (· = n) ∘ μ
-
-    and QUA pulls back along the StrictMono map μ. No positivity
-    hypothesis on `n` is needed — the pullback route is fully general. -/
+/-- Measure phrases are quantized: `{x | μ x = n}` is QUA when μ is an extensive
+    measure ([krifka-1998] §2.2) — `singleton_qua` pulled back along μ. -/
 theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
     QUA (fun x => μ x = n) :=
@@ -476,38 +381,6 @@ theorem qmod_qua {α : Type*} [SemilatticeSup α] {μ : α → ℚ} [ExtMeasure 
     (R : α → Prop) (n : ℚ) : QUA (QMOD R μ n) :=
   (extMeasure_qua n).subset fun _ h => h.2
 
-/-- QUA pullback composes: if `d₁ : α → β` and `d₂ : β → γ` are both
-    StrictMono, then `QUA P → QUA (P ∘ d₂ ∘ d₁)`.
-
-    This captures the Krifka dimension chain:
-      Events →θ Entities →μ ℚ
-    where θ extracts the incremental theme and μ measures it. The
-    composition `μ ∘ θ` is StrictMono, so QUA predicates on ℚ
-    (measure phrases like "two kilograms") pull back to QUA predicates
-    on Events (telic VPs like "eat two kilograms of flour"). -/
-theorem qua_pullback_comp {α β γ : Type*}
-    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
-    {d₁ : α → β} {d₂ : β → γ}
-    (hd₁ : StrictMono d₁) (hd₂ : StrictMono d₂)
-    {P : γ → Prop} (hP : QUA P) :
-    QUA (P ∘ d₂ ∘ d₁) :=
-  qua_pullback hd₁ (qua_pullback hd₂ hP)
-
-/-! ### IsSumHom + Injective → StrictMono -/
-
-/-- A sum homomorphism that is injective is strictly monotone.
-
-    `IsSumHom.monotone` gives `Monotone f` (x ≤ y → f(x) ≤ f(y)).
-    Adding injectivity strengthens this: x < y means x ≤ y ∧ x ≠ y,
-    so f(x) ≤ f(y) ∧ f(x) ≠ f(y), i.e., f(x) < f(y).
-
-    This bridges `IsSumHom` (the CUM pullback morphism class) to
-    `StrictMono` (the QUA pullback morphism class): an injective sum
-    homomorphism supports both CUM and QUA pullback.
-
-    Linguistically: a sum-homomorphic thematic role that is also
-    injective (unique participant assignment, Krifka's UE/UO
-    conditions) supports telicity transfer via `qua_pullback`. -/
 theorem IsSumHom.strictMono_of_injective {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} (hf : IsSumHom f) (hinj : Function.Injective f) :
@@ -517,19 +390,9 @@ theorem IsSumHom.strictMono_of_injective {α β : Type*}
 
 /-! ### Functional QUA propagation -/
 
-/-- QUA propagation through an injective sum homomorphism.
-
-    When the relational θ in Krifka's `qua_propagation` (Krifka1998.lean)
-    is actually a function `f` with `IsSumHom` + injectivity, the
-    relational proof (needing UP + MSO) reduces to functional
-    `qua_pullback` via `StrictMono`.
-
-    This is the functional special case of [krifka-1998] §3.3:
-    SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ), where θ is a function
-    rather than a relation, and SINC reduces to IsSumHom + Injective.
-
-    See also: `qua_propagation` in Krifka1998.lean for the relational
-    version using UP + MSO + UO. -/
+/-- QUA propagation through an injective sum homomorphism: the functional case
+    of [krifka-1998] §3.3 (SINC reduces to `IsSumHom` + injective), where the
+    relational `qua_propagation` (Krifka1998.lean) becomes `qua_pullback`. -/
 theorem qua_of_injective_sumHom {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} (hf : IsSumHom f) (hinj : Function.Injective f)
@@ -539,40 +402,6 @@ theorem qua_of_injective_sumHom {α β : Type*}
 
 /-! ### CUM/QUA Pullback Interaction -/
 
-/-- CUM/QUA incompatibility is preserved through composition.
-
-    If P ∘ f has two distinct witnesses x ≠ y, then P ∘ f cannot be
-    both CUM and QUA. This is `cum_qua_disjoint` instantiated to the
-    composed predicate. -/
-theorem cum_qua_dimension_disjoint {α β : Type*}
-    [SemilatticeSup α] [SemilatticeSup β]
-    {f : α → β} {P : β → Prop}
-    {x y : α} (hx : (P ∘ f) x) (hy : (P ∘ f) y) (hne : x ≠ y) :
-    ¬ (CUM (P ∘ f) ∧ QUA (P ∘ f)) :=
-  cum_qua_disjoint ⟨x, y, hx, hy, hne⟩
-
-/-! ### g-Homogeneity ([deal-2017]) -/
-
-/-- g-homogeneous reference ([deal-2017]): every proper part of a
-    P-entity has a P-part below it.
-
-      DIV → g-homogeneous    (proved: `div_implies_gHomogeneous`)
-
-    g-Homogeneity and CUM are independent: a predicate can be
-    g-homogeneous without being CUM (e.g., `{a, b}` where atoms have no
-    proper parts — vacuously g-homogeneous — but `a ⊔ b ∉ P`), and CUM
-    without being g-homogeneous (fake mass nouns, see `FakeMass`).
-
-    NOTE: this is a simplified version of [deal-2017]'s full
-    definition, which involves CUM conjoined with one of four conditions
-    about minimal parts (divisive, lacking stable/non-overlapping/
-    non-strongly-connected minimal parts). Our formalization captures the
-    intuitive core that Deal extracts as the common thread.
-
-    Mass nouns are g-homogeneous: every part of water contains water.
-    Fake mass nouns (English "furniture", Shan bare nouns per
-    [moroney-2021]) are CUM but NOT g-homogeneous: a leg of a
-    chair is part of the furniture but is not itself furniture. -/
 def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ∃ z, z ≤ y ∧ P z
 
@@ -582,29 +411,6 @@ theorem div_implies_gHomogeneous {α : Type*} [PartialOrder α]
     {P : α → Prop} (hDiv : DIV P) : gHomogeneous P :=
   fun x y hPx hlt => ⟨y, le_refl y, hDiv (le_of_lt hlt) hPx⟩
 
-/-- g-Homogeneity is vacuously satisfied at atoms: since atoms have
-    no proper parts, the universal condition `∀ y < a, ∃ z ≤ y, P z`
-    holds trivially.
-
-    This means g-homogeneity failures arise at *non-atomic* P-entities
-    whose proper parts include non-P elements. For fake mass nouns like
-    "furniture", the sum of two chairs is a non-atomic furniture-entity
-    whose proper part (a chair leg) has no furniture-part below it. -/
-theorem atom_gHomogeneous_trivial {α : Type*} [PartialOrder α]
-    {P : α → Prop} {a : α} (_hP : P a) (hAtom : Atom a) :
-    ∀ y, y < a → ∃ z, z ≤ y ∧ P z := by
-  intro y hlt
-  exact absurd (Atom.eq hAtom (le_of_lt hlt)) (ne_of_lt hlt)
-
-/-- A predicate that is cumulative but NOT g-homogeneous has "fake mass"
-    behavior ([deal-2017]; [moroney-2021] §2.4): sums of
-    P-entities are P-entities (CUM), but parts of P-entities need not
-    contain any P-entity (failure of g-homogeneity). English "furniture"
-    and Shan bare nouns exhibit this pattern: the sum of two chairs is
-    furniture (CUM), but a chair leg is part of furniture without itself
-    being furniture (¬g-homogeneous).
-
-    This is a definitional wrapper for naming the property combination. -/
 def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   CUM P ∧ ¬ gHomogeneous P
 
@@ -768,75 +574,14 @@ chains of [krifka-1989]'s linking theory (`Events →θ Entities →μ ℚ`),
 bundling the three sources of `StrictMono` (`ExtMeasure`, injective
 `IsSumHom`, compositions). -/
 
-/-- CUM predicates with incomparable elements can always produce larger
-    measure values via sum.
-
-    If P is CUM and has elements x, y where x ≤ y fails (they are
-    incomparable), then x ⊔ y satisfies P (by CUM) and μ(x ⊔ y) > μ(y)
-    (because y < x ⊔ y and μ is StrictMono).
-
-    This is the structural mechanism behind open/unbounded scales for
-    CUM predicates: given fresh material, CUM can always produce a
-    larger measurement. The incomparability condition is satisfied
-    whenever two P-elements have non-overlapping parts (e.g., two
-    distinct portions of rice, two non-overlapping running events). -/
-theorem cum_sum_exceeds {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ]
-    {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : P x) (hy : P y) (h_not_le : ¬ x ≤ y) :
-    P (x ⊔ y) ∧ μ (x ⊔ y) > μ y := by
-  constructor
-  · exact hCum hx hy
-  · have hle : y ≤ x ⊔ y := le_sup_right
-    have hne : y ≠ x ⊔ y := by
-      intro heq; exact h_not_le (heq ▸ le_sup_left)
-    exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
-
-/-- CUM predicates with incomparable elements yield measure values
-    strictly exceeding both inputs.
-
-    Symmetric version of `cum_sum_exceeds`: μ(x ⊔ y) > μ(x) AND
-    μ(x ⊔ y) > μ(y) when x and y are incomparable. -/
-theorem cum_sum_exceeds_both {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ]
-    {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : P x) (hy : P y)
-    (hxy : ¬ x ≤ y) (hyx : ¬ y ≤ x) :
-    P (x ⊔ y) ∧ μ (x ⊔ y) > μ x ∧ μ (x ⊔ y) > μ y := by
-  refine ⟨hCum hx hy, ?_, (cum_sum_exceeds hCum hx hy hxy).2⟩
-  have hle : x ≤ x ⊔ y := le_sup_left
-  have hne : x ≠ x ⊔ y := by
-    intro heq; exact hyx (heq ▸ le_sup_right)
-  exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
-
-/-- Morphism class of Mereo^op: the category of partially ordered types
-    with strictly monotone maps. A `MereoDim d` instance witnesses that
-    `d` is a mereological dimension — a map along which QUA pulls back.
-
-    Unifies three sources of `StrictMono`:
-    - `ExtMeasure` (via `extMeasure_strictMono`)
-    - `IsSumHom` + `Injective` (via `strictMono_of_injective`)
-    - Compositions of the above (Krifka dimension chains) -/
 class MereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
     (d : α → β) : Prop where
   /-- The underlying strict monotonicity proof. -/
   toStrictMono : StrictMono d
 
-/-! ### MereoDim Instances and Constructors -/
-
-/-- Any `ExtMeasure` is automatically a `MereoDim`: extensive measures
-    are strictly monotone by `extMeasure_strictMono`. -/
-instance instMereoDimOfExtMeasure {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ] : MereoDim μ :=
-  ⟨extMeasure_strictMono hμ⟩
-
-/-- An injective sum homomorphism is a `MereoDim`. Not an instance because
-    `Function.Injective` is not inferrable by typeclass search. -/
 def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f) : MereoDim f :=
   ⟨hf.strictMono_of_injective hinj⟩
-
-/-! ### MereoDim Composition -/
 
 /-- Composition of `MereoDim` morphisms. Captures Krifka's dimension
     chains: `Events →θ Entities →μ ℚ` gives `MereoDim (μ ∘ θ)` when
@@ -850,8 +595,6 @@ theorem MereoDim.comp {α β γ : Type*}
     MereoDim (f ∘ g) :=
   ⟨hf.toStrictMono.comp hg.toStrictMono⟩
 
-/-! ### MereoDim QUA Pullback -/
-
 /-- QUA pullback via `MereoDim`: typeclass-dispatched version of
     `qua_pullback`. When `[MereoDim d]` is available (automatically
     for any `ExtMeasure`), QUA pulls back without manual `StrictMono`
@@ -861,37 +604,6 @@ theorem qua_pullback_mereoDim {α β : Type*} [PartialOrder α] [PartialOrder β
     QUA (P ∘ d) :=
   qua_pullback hd.toStrictMono hP
 
-/-- QUA pullback along a composed dimension chain. Given two `MereoDim`
-    morphisms `d₁ : α → β` and `d₂ : β → γ`, QUA on γ pulls back to
-    QUA on α through the chain `d₂ ∘ d₁`. -/
-theorem qua_pullback_mereoDim_comp {α β γ : Type*}
-    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
-    {d₁ : α → β} {d₂ : β → γ} (hd₁ : MereoDim d₁) (hd₂ : MereoDim d₂)
-    {P : γ → Prop} (hP : QUA P) :
-    QUA (P ∘ d₂ ∘ d₁) :=
-  qua_pullback (hd₂.comp hd₁).toStrictMono hP
-
-/-- Every `MereoDim d` is `Monotone`: the forgetful map from the category
-    of partial orders with strict monotone maps to the category of
-    preorders with monotone maps. -/
-theorem mereoDim_monotone {α β : Type*}
-    [PartialOrder α] [PartialOrder β]
-    {d : α → β} (hd : MereoDim d) :
-    Monotone d :=
-  hd.toStrictMono.monotone
-
-/-- Every `ExtMeasure μ` gives a monotone map to (ℚ, ≤). -/
-theorem extMeasure_monotone {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} (hμ : ExtMeasure α μ) :
-    Monotone μ :=
-  (extMeasure_strictMono hμ).monotone
-
-/-- A mereological dimension chain: a two-leg pipeline
-    Source →f Inter →μ Measure where both legs are MereoDim.
-    The three canonical instances:
-    - Temporal: Events →τ Intervals →dur ℚ
-    - Spatial: Events →σ Paths →dist ℚ
-    - Object: Events →θ Entities →μ ℚ -/
 structure DimensionChain
     {Source Inter Measure : Type*}
     [PartialOrder Source] [PartialOrder Inter] [PartialOrder Measure]
@@ -909,60 +621,6 @@ variable {Source Inter Measure : Type*}
 def composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
   MereoDim.comp dc.leg₂ dc.leg₁
 
-/-- QUA on Measure pulls back to QUA on Source through the full chain. -/
-theorem qua_transfer (dc : DimensionChain f μ)
-    {P : Measure → Prop} (hP : QUA P) :
-    QUA (P ∘ μ ∘ f) := by
-  haveI := dc.composed
-  exact qua_pullback_mereoDim hP
-
-/-- QUA on Inter pulls back to QUA on Source through the first leg. -/
-theorem qua_transfer_leg₁ (dc : DimensionChain f μ)
-    {P : Inter → Prop} (hP : QUA P) :
-    QUA (P ∘ f) := by
-  haveI := dc.leg₁
-  exact qua_pullback_mereoDim hP
-
-/-- QUA on Measure pulls back to QUA on Inter through the second leg. -/
-theorem qua_transfer_leg₂ (dc : DimensionChain f μ)
-    {P : Measure → Prop} (hP : QUA P) :
-    QUA (P ∘ μ) := by
-  haveI := dc.leg₂
-  exact qua_pullback_mereoDim hP
-
-end DimensionChain
-
-/-- CUM + fresh incomparable element → exists P-element with strictly
-    larger measure. The structural content of "CUM → open scale."
-
-    Given P(x) and fresh y with P(y) and ¬ y ≤ x, then x ⊔ y satisfies P
-    (by CUM) and μ(x ⊔ y) > μ(x) (by StrictMono, since x < x ⊔ y). -/
-theorem cum_exceeds_source {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ]
-    {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : P x) (hy : P y) (hyx : ¬ y ≤ x) :
-    P (x ⊔ y) ∧ μ (x ⊔ y) > μ x := by
-  constructor
-  · exact hCum hx hy
-  · have hle : x ≤ x ⊔ y := le_sup_left
-    have hne : x ≠ x ⊔ y := fun heq => hyx (heq ▸ le_sup_right)
-    exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
-
-/-- CUM + disjoint fresh supply with minimum measure → measurement unbounded.
-
-    If P is CUM and for every P-element x there exists a disjoint P-element y
-    with μ(y) ≥ δ > 0, then P-elements achieve arbitrarily large measure.
-    This is the structural content of information collapse: CUM predicates
-    with enough disjoint material have no inherent measurement ceiling.
-
-    The hypothesis requires `¬ Overlap x y` (not merely `¬ y ≤ x`) because
-    overlap allows the increment μ(x ⊔ y) - μ(x) to shrink to zero, making
-    the series of increments convergent. With `¬ Overlap`, additivity gives
-    μ(x ⊔ y) = μ(x) + μ(y) ≥ μ(x) + δ, guaranteeing linear growth.
-
-    The proof iterates `k` disjoint extensions from `x₀`, each adding at
-    least δ to the measure. By the Archimedean property of ℚ, choosing
-    k > (M - μ(x₀)) / δ suffices. -/
 theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ]
     {P : α → Prop} (hCum : CUM P)
@@ -988,24 +646,3 @@ theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]
   obtain ⟨z, hPz, hμz⟩ := iterate n x₀ hx₀
   exact ⟨z, hPz, by rw [div_lt_iff₀ hδ] at hn; linarith⟩
 
-/-- The three dimension chains all instantiate the same pattern:
-    IsSumHom + Injective → MereoDim → QUA pullback.
-    This theorem states the pattern for any sum homomorphism. -/
-theorem sumHom_qua_pullback_pattern {α β : Type*}
-    [SemilatticeSup α] [SemilatticeSup β]
-    {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f)
-    {P : β → Prop} (hP : QUA P) :
-    QUA (P ∘ f) := by
-  haveI := MereoDim.ofInjSumHom hinj
-  exact qua_pullback_mereoDim hP
-
-/-- CUM always pulls back through any sum homomorphism (no injectivity needed).
-    All three dimension chains preserve atelicity/cumulativity. -/
-theorem sumHom_cum_pullback_pattern {α β : Type*}
-    [SemilatticeSup α] [SemilatticeSup β]
-    {f : α → β} [hf : IsSumHom f]
-    {P : β → Prop} (hP : CUM P) :
-    CUM (P ∘ f) :=
-  cum_pullback hf hP
-
-end Mereology
