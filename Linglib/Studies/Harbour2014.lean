@@ -27,7 +27,7 @@ This file consumes that substrate and states the paper's own claims.
    language's sole number feature; `{±additive}` cannot. His (33) defines
    lattice convexity — *verbatim* mathlib's `Set.OrdConnected`, the same
    predicate as [grimm-2018]'s scale-segment condition and the fixed points
-   of `Mereology.convexClosure` — and the first-person lattice makes the
+   of `ordConnectedHull` — and the first-person lattice makes the
    [+additive] value region nonconvex: between the speaker atom and any
    [+additive] plurality lies a [−additive] paucity (`firstPerson_additive_
    not_ordConnected`, the previously prose-only claim). By the convexity
@@ -80,7 +80,7 @@ open Minimalist.Phi.Recursion (HarbourConfig harbour2014Table3)
     `c ∈ L` whenever `a, b ∈ L` and `a ⊑ c ⊑ b`" — definitionally
     mathlib's `Set.OrdConnected`, hence the same predicate as
     [grimm-2018]'s no-discontinuous-class condition and the fixed points of
-    `Mereology.convexClosure`. -/
+    `ordConnectedHull`. -/
 theorem ordConnected_iff_convexity_def {α : Type*} [Preorder α] (L : Set α) :
     L.OrdConnected ↔ ∀ a ∈ L, ∀ b ∈ L, ∀ c, a ≤ c → c ≤ b → c ∈ L := by
   constructor

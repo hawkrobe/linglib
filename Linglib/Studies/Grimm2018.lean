@@ -89,7 +89,7 @@ of the classification's fibers. -/
     class picks out a contiguous segment of the scale. One composition of
     mathlib primitives (`Set.ordConnected_singleton.preimage_mono`); the
     predicate is the same `Set.OrdConnected` that states [harbour-2014]'s
-    convexity condition (`Mereology.ordConnected_iff_convexClosure_eq`). -/
+    convexity condition (`ordConnectedHull_eq_self`). -/
 theorem ordConnected_fiber_of_monotone {α C : Type*} [Preorder α]
     [PartialOrder C] {f : α → C} (hf : Monotone f) (c : C) :
     (f ⁻¹' {c}).OrdConnected :=

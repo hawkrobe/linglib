@@ -85,6 +85,7 @@ import Linglib.Core.Logic.Intensional.Situations
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Antichain
+import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Branching
