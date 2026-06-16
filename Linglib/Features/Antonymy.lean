@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Core.Logic.Aristotelian.Basic
 
 /-!
 # Antonymy — Contradictory vs Contrary Distinction
@@ -29,16 +30,36 @@ namespace Features
     gradable-adjective semantics to distinguish licensing patterns of
     the two-threshold model.
 
-    **Cross-reference**: `Aristotelian.OppositionRel` (in
-    `Core/Logic/Aristotelian/Basic.lean`) is the opposition-axis enum whose
-    `contradictory` / `contrary` cells subsume both constructors here. A future
-    cleanup could replace `NegationType` with
-    `{ r : OppositionRel // r ∈ {.contradictory, .contrary} }` or have consumers
-    take `OppositionRel` directly. Deferred until consumer demand pulls it. -/
+    Antonymy is genuinely binary (an antonym pair is *either* contradictory *or*
+    contrary — never subcontrary or unconnected), so this stays a 2-case type;
+    `NegationType.toOpposition` embeds it as the `{contradictory, contrary}` slice
+    of the substrate's `Aristotelian.OppositionRel`, and `AntonymPrediction`'s
+    `isContradictory_*Denot` ground the tag in the real opposition between the
+    adjective denotations. -/
 inductive NegationType where
   | contradictory
   | contrary
   deriving Repr, DecidableEq, Fintype
+
+/-- Embed the antonymy type into the substrate's opposition relation: an antonym
+pair occupies exactly the `contradictory` or `contrary` cell of `OppositionRel`. -/
+def NegationType.toOpposition : NegationType → Aristotelian.OppositionRel
+  | .contradictory => .contradictory
+  | .contrary      => .contrary
+
+instance : Coe NegationType Aristotelian.OppositionRel := ⟨NegationType.toOpposition⟩
+
+theorem NegationType.toOpposition_injective :
+    Function.Injective NegationType.toOpposition := by
+  intro a b h; cases a <;> cases b <;> simp_all [NegationType.toOpposition]
+
+/-- The image of `toOpposition` is exactly the two antonym cells of `OppositionRel`. -/
+theorem NegationType.range_toOpposition (r : Aristotelian.OppositionRel) :
+    (∃ n : NegationType, n.toOpposition = r) ↔ r = .contradictory ∨ r = .contrary := by
+  constructor
+  · rintro ⟨n, rfl⟩; cases n <;> simp [NegationType.toOpposition]
+  · rintro (rfl | rfl)
+    exacts [⟨.contradictory, rfl⟩, ⟨.contrary, rfl⟩]
 
 /-- Predicted behaviour of an antonymic adjective pair under sentential
     negation: do positive and negative forms diverge under polarity
