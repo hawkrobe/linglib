@@ -168,7 +168,7 @@ def Evar (v : Dref S E) (P : E → Prop) : Update S :=
 /-- Mereological maximization (eq. 18): retain outputs of `D` whose `v`-value
 is maximal among the `v`-values of all outputs of `D`. -/
 def Mvar (v : Dref S E) (D : Update S) : Update S :=
-  λ i j => D i j ∧ Mereology.isMaximal (λ x => ∃ k, D i k ∧ v k = x) (v j)
+  λ i j => D i j ∧ Maximal (λ x => ∃ k, D i k ∧ v k = x) (v j)
 
 /-- Cardinality test (eq. 19): test (identity on assignments) that the atom
 count of `v` equals `n`. -/
@@ -414,7 +414,7 @@ output state**. This is the non-distributive operator. -/
 def Mvar_u (v : ℕ) (K : StateCCP W E) [PartialOrder E] : StateCCP W E :=
   λ s =>
     let out := K s
-    {p ∈ out | Mereology.isMaximal (λ x => ∃ q ∈ out, q.2 v = x) (p.2 v)}
+    {p ∈ out | Maximal (λ x => ∃ q ∈ out, q.2 v = x) (p.2 v)}
 
 /-- Cardinality test at the state level (eq. 75): filter the context for
 pairs where the atom count of `v` equals `n`. -/
@@ -466,14 +466,14 @@ theorem Mvar_u_nondistributive [PartialOrder E] [Nonempty W]
   have hnotmem : (w, g₁) ∉ Mvar_u 0 id s := by
     simp only [Mvar_u, id, Set.mem_sep_iff]
     intro ⟨_, _, hmax⟩
-    have : a = b := hmax b ⟨(w, g₂), Or.inr rfl, rfl⟩ (le_of_lt hab)
+    have : a = b := le_antisymm (le_of_lt hab) (hmax ⟨(w, g₂), Or.inr rfl, rfl⟩ (le_of_lt hab))
     exact absurd this (ne_of_lt hab)
   -- But (w, g₁) IS in the per-element union: a is maximal in {(w, g₁)}
   have hmem : (w, g₁) ∈ ({p | ∃ i ∈ s, p ∈ Mvar_u 0 id {i}} : Set _) := by
     refine ⟨(w, g₁), Set.mem_insert _ _, Set.mem_sep (Set.mem_singleton _) ⟨⟨(w, g₁), rfl, rfl⟩, ?_⟩⟩
     intro y ⟨q, hq, hqv⟩ hle
     cases Set.mem_singleton_iff.mp hq
-    exact le_antisymm hle (hqv ▸ le_refl _)
+    exact hqv ▸ le_refl _
   exact hnotmem (h s ▸ hmem)
 
 /-- Cardinality tests are distributive: they inspect one pair at a time. -/
@@ -505,13 +505,13 @@ private theorem evar_u_idempotent (v : ℕ) (P : E → Prop) (s : State W E) :
     exact ⟨⟨q.1, Function.update q.2 v x⟩, ⟨q, hqs, rfl, x, hPx, rfl⟩, hw, x, hPx,
            by rw [hg, Function.update_idem]⟩
 
-/-- Congruence for `isMaximal`: pointwise-equivalent predicates give
+/-- Congruence for `Maximal`: pointwise-equivalent predicates give
 equivalent maximality. -/
-private theorem isMaximal_congr {α : Type*} [PartialOrder α] {P Q : α → Prop}
+private theorem maximal_congr {α : Type*} [PartialOrder α] {P Q : α → Prop}
     (h : ∀ x, P x ↔ Q x) (y : α) :
-    Mereology.isMaximal P y ↔ Mereology.isMaximal Q y :=
-  ⟨fun ⟨hp, hm⟩ => ⟨(h y).mp hp, fun z hz hle => hm z ((h z).mpr hz) hle⟩,
-   fun ⟨hq, hm⟩ => ⟨(h y).mpr hq, fun z hz hle => hm z ((h z).mp hz) hle⟩⟩
+    Maximal P y ↔ Maximal Q y :=
+  ⟨fun ⟨hp, hm⟩ => ⟨(h y).mp hp, fun z hz hle => hm ((h z).mpr hz) hle⟩,
+   fun ⟨hq, hm⟩ => ⟨(h y).mpr hq, fun z hz hle => hm ((h z).mp hz) hle⟩⟩
 
 /-- The `v`-values after `Evar_u v P s` are exactly `{x | P x}` (for
 nonempty input). -/
@@ -556,14 +556,14 @@ theorem exactlyN_u_distributive [PartialOrder E] [Fintype E]
     intro ⟨⟨hmem, hmax⟩, hcount⟩
     obtain ⟨q, hqs, hwq, x, hPx, hgq⟩ := hmem
     refine ⟨q, hqs, ⟨⟨⟨q, rfl, hwq, x, hPx, hgq⟩,
-      (isMaximal_congr (fun y => (evar_u_vvals v P s y ⟨q, hqs⟩).trans
+      (maximal_congr (fun y => (evar_u_vvals v P s y ⟨q, hqs⟩).trans
         (evar_u_vvals_single v P q y).symm) _).mp hmax⟩, hcount⟩⟩
   · -- (⊇) Per-element → full pipeline
     intro ⟨i, his, ⟨⟨hmem_i, hmax_i⟩, hcount_i⟩⟩
     obtain ⟨r, hr_eq, hwr, x, hPx, hgr⟩ := hmem_i
     have hri : r = i := hr_eq; rw [hri] at hwr hgr
     exact ⟨⟨⟨i, his, hwr, x, hPx, hgr⟩,
-      (isMaximal_congr (fun y => (evar_u_vvals_single v P i y).trans
+      (maximal_congr (fun y => (evar_u_vvals_single v P i y).trans
         (evar_u_vvals v P s y ⟨i, his⟩).symm) _).mp hmax_i⟩, hcount_i⟩
 
 end UpdateTheoretic

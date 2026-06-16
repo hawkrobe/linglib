@@ -49,7 +49,7 @@ set_option autoImplicit false
 
 namespace Sauerland2003
 
-open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
+open Mereology (Atom AlgClosure CUM cum_maximal_unique algClosure_cum)
 open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (ContainmentPair ContainmentPairLike)
@@ -341,7 +341,7 @@ theorem je_total_trivial {E : Type*} [PartialOrder E]
 
 /-- **every = JE ∘ DER** (30): Sauerland decomposes *every* into two
     morphemes. DER (the definite article) selects the maximal element
-    of `*R` via `Mereology.isMaximal`. JE distributes over atoms of
+    of `*R` via `Maximal`. JE distributes over atoms of
     the result.
 
     `⟦every⟧(R)(P)` = `⟦JE⟧(max(*R))(P)` -/
@@ -357,7 +357,7 @@ def everySem {E : Type*} [PartialOrder E]
     automatically satisfied for star-closed predicates. -/
 theorem der_unique {E : Type*} [SemilatticeSup E]
     (R : E → Prop) (m₁ m₂ : E)
-    (h₁ : isMaximal (AlgClosure R) m₁) (h₂ : isMaximal (AlgClosure R) m₂) :
+    (h₁ : Maximal (AlgClosure R) m₁) (h₂ : Maximal (AlgClosure R) m₂) :
     m₁ = m₂ :=
   cum_maximal_unique (algClosure_cum (P := R)) h₁ h₂
 
