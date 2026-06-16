@@ -1,5 +1,4 @@
 import Linglib.Typology.ClassifierSystem
-import Linglib.Core.Order.Mereology
 import Linglib.Syntax.Tree.Cat
 import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.Intensional.Defs
