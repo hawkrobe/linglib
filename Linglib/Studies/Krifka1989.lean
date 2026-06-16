@@ -1,6 +1,5 @@
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.Plurality.Reference
 import Linglib.Semantics.ArgumentStructure.Properties
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
@@ -73,7 +72,6 @@ namespace Krifka1989
 open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Plurality.Algebra (Materialization)
-open Semantics.Plurality.Reference (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
@@ -230,33 +228,21 @@ theorem all_nps_consistent_with_source :
 /-! ### Grounding in K89 Theory's propositional predicates -/
 
 /-! These theorems exercise the K89 theory file's propositional
-    predicates on abstract domains, providing the bridge from the
-    file-level Bool-tag classification (`MereoTag.cum`/`.qua`) to K89's
-    algebraic content (`CUM`/`QUA` on `α → Prop`). The pattern: the
-    `applesNP.refType = .cum` claim is a Bool tag; the corresponding
-    *propositional* claim is `CUM (BarePlural P)` for any apples-like
-    `P`, and that follows from `barePlural_cum` in K89 theory. -/
+    predicates on abstract domains, bridging the file-level Bool-tag
+    classification (`MereoTag.cum`/`.qua`) to K89's algebraic content
+    (`CUM`/`QUA` on `α → Prop`). The `applesNP.refType = .cum` Bool tag
+    corresponds to the propositional claim `CUM (AlgClosure P)` for any
+    apples-like `P`, which follows from `Mereology.algClosure_cum`. -/
 
 section Grounding
 
 variable {α : Type*}
 
-/-- Bare-plural NPs are cumulative — citation of `barePlural_cum`
-    from `Semantics/Plurality/Reference.lean`. K89 §3 derives
-    this from algebraic closure (*P closed under sum). -/
+/-- Bare-plural NPs are cumulative: K89 §3 derives this from algebraic
+    closure (*P closed under sum), `Mereology.algClosure_cum`. -/
 theorem barePlural_grounded [SemilatticeSup α] {P : α → Prop} :
-    CUM (BarePlural P) :=
-  barePlural_cum
-
-/-- Mass nouns are cumulative by definition (K89 §3, abbrev
-    `MassNoun = CUM` in K89 theory). -/
-theorem massNoun_grounded [SemilatticeSup α] {P : α → Prop} (h : CUM P) :
-    MassNoun P := h
-
-/-- Count nouns are quantized by definition (K89 §3, abbrev
-    `CountNoun = QUA` in K89 theory). -/
-theorem countNoun_grounded [PartialOrder α] {P : α → Prop} (h : QUA P) :
-    CountNoun P := h
+    CUM (AlgClosure P) :=
+  algClosure_cum
 
 end Grounding
 
