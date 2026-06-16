@@ -30,7 +30,7 @@ inherit that API.
 * `IsContradictory`, `IsContrary`, `IsSubcontrary`, `IsSubaltern`,
   `IsUnconnected` — the relations as predicates over `[BooleanAlgebra α]`.
 * `OppositionRel` / `ImplicationRel`, `opposition` / `implication` — the two derived
-  relation axes ([deklerck-vignero-demey-2024]); each a total classifier with `*_eq_*`
+  relation axes ([deklerck-demey-2025]); each a total classifier with `*_eq_*`
   characterizations, jointly recovering `IsUnconnected` as `NCD ∧ NI`.
 * `isContradictory_apply_orderIso` and siblings — a Boolean isomorphism
   (`OrderIso`) is an *Aristotelian isomorphism*: it preserves and reflects all
@@ -56,7 +56,7 @@ namespace Aristotelian
 variable {W : Type*}
 
 /-- The **opposition relation** between two elements of a Boolean algebra
-([deklerck-vignero-demey-2024]): the four mutually-exclusive, jointly-exhaustive cells of
+([deklerck-demey-2025]): the four mutually-exclusive, jointly-exhaustive cells of
 `(Disjoint?, Codisjoint?)`. -/
 inductive OppositionRel
   /-- `Disjoint ∧ Codisjoint` — complementary (`IsCompl`). -/
@@ -69,7 +69,7 @@ inductive OppositionRel
   | nonContradictory
   deriving DecidableEq, Repr, Inhabited
 
-/-- The **implication relation** between two elements ([deklerck-vignero-demey-2024]): the four cells
+/-- The **implication relation** between two elements ([deklerck-demey-2025]): the four cells
 of `(x ≤ y?, y ≤ x?)`. `left` is (proper) subalternation, `bi` is equality, `nonImplication`
 is incomparability. -/
 inductive ImplicationRel
@@ -146,7 +146,7 @@ theorem isSubaltern_apply_orderIso (e : α ≃o β) {φ ψ : α} :
 /-! ### Two-axis classifiers (opposition × implication)
 
 The relation between two elements factors into a `(Disjoint?, Codisjoint?)` *opposition* and a
-`(≤?, ≥?)` *implication* — each a total, mutually-exclusive classifier ([deklerck-vignero-demey-2024]),
+`(≤?, ≥?)` *implication* — each a total, mutually-exclusive classifier ([deklerck-demey-2025]),
 so no contingency hypothesis is needed. -/
 
 /-- The opposition relation of `x, y`, from the meet/join tests. -/
@@ -193,7 +193,7 @@ def implication [DecidableLE α] (x y : α) : ImplicationRel :=
   unfold implication; split_ifs <;> simp_all
 
 /-- `IsUnconnected` is exactly the `(NCD, NI)` cell of the opposition × implication product
-([deklerck-vignero-demey-2024]). -/
+([deklerck-demey-2025]). -/
 theorem isUnconnected_iff_classify [DecidableEq α] [DecidableLE α] {x y : α} :
     IsUnconnected x y ↔
       opposition x y = .nonContradictory ∧ implication x y = .nonImplication := by
