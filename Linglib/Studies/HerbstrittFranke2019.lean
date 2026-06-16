@@ -6,93 +6,54 @@ import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# [herbstritt-franke-2019] on mathlib `PMF` — structural skeleton
-[herbstritt-franke-2019]
+# [herbstritt-franke-2019]: complex probability expressions via RSA on `PMF`
 
-Complex probability expressions & higher-order uncertainty: compositional
-threshold semantics + RSA over an urn scenario with N=10 balls. Cognition
-186 (2019) 50–71.
+Compositional threshold semantics plus an RSA model over an urn scenario
+(`N = 10` balls), formalised on mathlib's `PMF` in the same key as
+`Studies/LassiterGoodman2017PMF.lean`. Cognition 186 (2019) 50–71.
 
-This file formalises the **structural skeleton** of HF 2019 on mathlib's
-`PMF`, in the same key as `Studies/LassiterGoodman2017PMF.lean`
-— honest about what the file does and does not capture.
+The architectural novelty is a Hellinger-distance speaker utility (Eq. 16) in
+place of KL divergence. The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)`
+puts zero mass outside a meaning's extension, so `KL(P_rat.bel ‖ P_LL) = ∞`
+whenever the speaker's belief has support outside it — a strictly probabilistic
+speaker could never say "certainly RED" at 9/10. Hellinger distance is bounded
+by 1, so the speaker can assert it with bounded disutility.
 
-## Scope
+## Main definitions
 
-HF 2019's *novel architectural* contributions are:
+* `obsKernel`, `speakerBelief` — belief formation (Eq. 12) as `PMF.posterior`
+  of the hypergeometric observation kernel, with `ℚ`-valued mirrors
+  `hypergeoQ` / `speakerBeliefQ` for finite-arithmetic checks.
+* `SimpleExpr.meaning`, `complexMeaning` — threshold semantics for simple
+  (Eq. 13-14) and nested (Eq. 22-23) probability expressions.
+* `literalListener`, `pragmaticListener` — the RSA literal listener (uniform on
+  a meaning extension, Eq. 15) and the pragmatic listener as a joint
+  `PMF.posterior` (Eq. 18).
 
-1. **Hellinger-distance speaker utility (Eq. 16) instead of KL divergence**.
-   The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)` puts zero mass
-   outside the meaning extension; `KL(P_rat.bel ‖ P_LL) = ∞` whenever the
-   speaker's belief puts positive mass on a state outside the extension —
-   so a strictly probabilistic speaker can never say "certainly RED" when
-   she observes 9/10 red. Hellinger distance is uniformly bounded by 1,
-   so the speaker can consider any message with bounded disutility. This
-   is HF's central architectural claim about why divergence choice
-   matters; formalised as `klDiv_eq_top_when_zero_support` and
-   `hellingerDist_le_one_finite` in §6 below.
-2. **Three-component joint posterior over `(state, obs, access)`
-   (Eq. 18)** with marginalisations to `(state, obs)` (Eq. 19) and
-   `(state, access)` (Eq. 20). Direct application of
-   `Core/Probability/JointPosterior.lean`'s `posterior_fst_apply` /
-   `posterior_snd_apply` substrate.
-3. **Compositional threshold semantics for nested probability
-   expressions** (Eq. 22-23) — formalised against the theory-layer
-   `Semantics/Modality/EpistemicProbability.nestedThreshold`.
+## Main results
 
-**What this file captures:**
+* `hellinger_admits_what_KL_excludes` — on the witness pair `(pure 9, pure 10)`,
+  `KL = ∞` but `HD ≤ 1`: the formal content of the Hellinger-vs-KL divergence,
+  via `klDiv_eq_top_when_zero_support` and `hellingerDistSq_le_one`.
+* `statePosterior_apply`, `accessPosterior_apply`, `statePosterior_lt_iff` —
+  marginalisations (Eq. 19-20) of the joint posterior, direct corollaries of
+  `Core/Probability/JointPosterior`.
+* `certainly_subset_probably`, `probably_subset_possibly` — nesting of the
+  inferred meaning extensions.
 
-- §1 **Belief formation as `PMF.posterior` of `PMF.hypergeometric`** —
-  no local `obsPrior`/`speakerBeliefR` redefinitions; uses `Core` substrate
-  directly. The bridge to `RSA.Distributions.hypergeometric` is by
-  construction (both reduce to mathlib's `Nat.choose` formula).
-- §2 **Threshold semantics for simple expressions** (Eq. 13-14) with
-  inferred thresholds (Table 6). Decidability checks via `decide`;
-  `native_decide` only for finite-arithmetic verification of the model
-  (per `feedback_proof_style`).
-- §3 **Compositional threshold semantics for complex expressions**
-  (Eq. 22-23) — same pattern, threshold check on posterior probability
-  of the inner proposition.
-- §4 **The RSA model on PMF**: speaker via `PMF.normalize` of
-  softmax-Hellinger; pragmatic listener via `PMF.posterior` over the
-  joint `(state × obs × access)` space.
-- §5 **Joint-posterior marginalisations** (Eq. 19-20) via
-  `posterior_fst_apply` / `posterior_snd_apply`.
-- §6 **The Hellinger-vs-KL architectural claim** — concrete witness
-  showing that KL excludes "true enough" messages but Hellinger doesn't.
-- §7 **Empirical data** (Tables 6, 7, 9, 10) and cross-experiment
-  threshold stability.
-- §8 **Cross-paper engagement** — disagreement with LaBToM [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
-  on `probably`/`likely`, and contrast with [goodman-stuhlmuller-2013]'s
-  KL-utility model (which would reject "certainly" at 9/10).
-
-**Not captured (paper-specific evaluative content, deferred):**
-
-- The full posterior predictive simulation against experimental data —
-  this requires Bayesian parameter estimation in JAGS (the paper's tooling)
-  and the model–data correlations (Tables 7, 10) are statistical claims,
-  not theorems about model structure.
-- Modal concord overprediction — qualitative observation about the
-  compositional model's "might be possible" failure mode (§6 of paper).
-
-## Cross-framework positioning (linglib's "make incompatibilities visible")
-
-Per linglib's "no bridge files" discipline (CLAUDE.md), the framework-
-divergence material is anchored *here* (the chronologically-later paper
-in the cluster) rather than in a dedicated comparison file. The §6
-theorem makes the Hellinger-vs-KL architectural divergence visible at
-theorem level. The §8 disagreement theorem with LaBToM
-(`labtom_likely_above_hf_probably_hdi`) makes the empirical
-posterior-mean disagreement visible at theorem level.
+The cross-paper contrast with [goodman-stuhlmuller-2013] makes the
+speaker-utility divergence (KL vs Hellinger) visible at theorem level. The paper's
+posterior-predictive evaluation (JAGS fits, the model–data correlations of
+Tables 6-10) is statistical, not structural, and is not formalised here.
 -/
 
 set_option autoImplicit false
 
-namespace HerbstrittFranke2019.PMF
+namespace HerbstrittFranke2019
 
 open scoped ENNReal
 
-/-! ## §0. Domain types -/
+/-! ### Domain types -/
 
 /-- Urn state: number of red balls in the urn (0..10). -/
 abbrev UrnState := Fin 11
@@ -105,7 +66,7 @@ def proportion (s : UrnState) : ℚ := s.val / 10
     probability 0 in the kernel. -/
 abbrev Obs := Fin 11
 
-/-! ## §1. Belief formation via `PMF.hypergeometric` (Eq. 12)
+/-! ### Belief formation via the hypergeometric kernel
 
 The observation kernel is the hypergeometric distribution from
 `Core/Probability/Hypergeometric.lean`, embedded into the padded
@@ -129,11 +90,10 @@ noncomputable def speakerBelief (access : ℕ) (h_a : access ≤ 10)
     PMF UrnState :=
   PMF.posterior (obsKernel access h_a) (PMF.uniformOfFintype UrnState) obs h_marg
 
-/-! ### `ℚ`-valued speaker belief for `decide`-style verification
+/-! ### `ℚ`-valued speaker belief for finite-arithmetic verification
 
-Mirrors the existing file's `speakerBeliefQ` for finite-arithmetic
-checks. Bridge to the PMF version: both reduce to the same hypergeometric
-ratio. -/
+Mirrors the existing file's `speakerBeliefQ` for `norm_num` checks. Bridge
+to the PMF version: both reduce to the same hypergeometric ratio. -/
 
 /-- Hypergeometric weight at `(N=10, K=s, n=access, k=obs)` as ℚ. -/
 def hypergeoQ (access obs : ℕ) (s : UrnState) : ℚ :=
@@ -153,25 +113,27 @@ def speakerBeliefQ (access obs : ℕ) (s : UrnState) : ℚ :=
 -- ── Belief formation: model behaviour checks ──
 
 /-- Full access (a=10): belief concentrates on the observed state. -/
-example : speakerBeliefQ 10 5 ⟨5, by omega⟩ = 1 := by native_decide
+example : speakerBeliefQ 10 5 ⟨5, by omega⟩ = 1 := by
+  simp only [speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
 
 /-- Full access: states other than the observed one get probability 0. -/
-example : speakerBeliefQ 10 5 ⟨3, by omega⟩ = 0 := by native_decide
+example : speakerBeliefQ 10 5 ⟨3, by omega⟩ = 0 := by
+  simp only [speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
 
 /-- Partial access (a=4, o=1): belief spreads across feasible states. -/
-example : speakerBeliefQ 4 1 ⟨5, by omega⟩ = 25/231 := by native_decide
+example : speakerBeliefQ 4 1 ⟨5, by omega⟩ = 25/231 := by
+  simp only [speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
 
-/-! ## §2. Simple expression semantics (Eq. 13-14) -/
+/-! ### Simple expression semantics -/
 
 /-- Semantic threshold for "possibly" (posterior mean from Table 6). -/
 def θ_possibly  : ℚ := 247/1000
 
 /-- Semantic threshold for "probably" (posterior mean from Table 6). -/
 def θ_probably  : ℚ := 549/1000
-
-/-- Upper bound of the 95% HDI for `θ_probably` (Table 6). Below LaBToM's
-    `likely_.θ = 0.70`, witnessing posterior-mean divergence. -/
-def θ_probably_upper : ℚ := 594/1000
 
 /-- Semantic threshold for "certainly" (posterior mean from Table 6). -/
 def θ_certainly : ℚ := 949/1000
@@ -200,29 +162,42 @@ def SimpleExpr.meaning : SimpleExpr → UrnState → Bool
   | .certainlyNot => fun s => decide (proportion s < 1 - θ_certainly)
 
 -- ── Simple expression behaviour checks ──
--- Use `native_decide` because `Rat` ordering is opaque to kernel `decide`.
 
-example : SimpleExpr.meaning .certainly ⟨10, by omega⟩ = true := by native_decide
-example : SimpleExpr.meaning .certainly ⟨9, by omega⟩ = false := by native_decide
-example : SimpleExpr.meaning .probably ⟨6, by omega⟩ = true := by native_decide
-example : SimpleExpr.meaning .probably ⟨5, by omega⟩ = false := by native_decide
-example : SimpleExpr.meaning .possibly ⟨3, by omega⟩ = true := by native_decide
-example : SimpleExpr.meaning .possibly ⟨2, by omega⟩ = false := by native_decide
-example : SimpleExpr.meaning .certainlyNot ⟨0, by omega⟩ = true := by native_decide
-example : SimpleExpr.meaning .certainlyNot ⟨1, by omega⟩ = false := by native_decide
-example : SimpleExpr.meaning .probablyNot ⟨4, by omega⟩ = true := by native_decide
-example : SimpleExpr.meaning .probablyNot ⟨5, by omega⟩ = false := by native_decide
+example : SimpleExpr.meaning .certainly ⟨10, by omega⟩ = true := by
+  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
+example : SimpleExpr.meaning .certainly ⟨9, by omega⟩ = false := by
+  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
+example : SimpleExpr.meaning .probably ⟨6, by omega⟩ = true := by
+  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
+example : SimpleExpr.meaning .probably ⟨5, by omega⟩ = false := by
+  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
+example : SimpleExpr.meaning .possibly ⟨3, by omega⟩ = true := by
+  simp only [SimpleExpr.meaning, proportion, θ_possibly]; norm_num
+example : SimpleExpr.meaning .possibly ⟨2, by omega⟩ = false := by
+  simp only [SimpleExpr.meaning, proportion, θ_possibly]; norm_num
+example : SimpleExpr.meaning .certainlyNot ⟨0, by omega⟩ = true := by
+  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
+example : SimpleExpr.meaning .certainlyNot ⟨1, by omega⟩ = false := by
+  simp only [SimpleExpr.meaning, proportion, θ_certainly]; norm_num
+example : SimpleExpr.meaning .probablyNot ⟨4, by omega⟩ = true := by
+  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
+example : SimpleExpr.meaning .probablyNot ⟨5, by omega⟩ = false := by
+  simp only [SimpleExpr.meaning, proportion, θ_probably]; norm_num
 
 /-- Simple expression extensions are nested: certainly ⊂ probably ⊂ possibly. -/
 theorem certainly_subset_probably :
     ∀ s : UrnState, SimpleExpr.meaning .certainly s = true →
-    SimpleExpr.meaning .probably s = true := by native_decide
+    SimpleExpr.meaning .probably s = true := by
+  intro s; fin_cases s <;>
+    simp only [SimpleExpr.meaning, proportion, θ_certainly, θ_probably] <;> norm_num
 
 theorem probably_subset_possibly :
     ∀ s : UrnState, SimpleExpr.meaning .probably s = true →
-    SimpleExpr.meaning .possibly s = true := by native_decide
+    SimpleExpr.meaning .possibly s = true := by
+  intro s; fin_cases s <;>
+    simp only [SimpleExpr.meaning, proportion, θ_probably, θ_possibly] <;> norm_num
 
-/-! ## §3. Compositional complex-expression semantics (Eq. 22-23) -/
+/-! ### Compositional complex-expression semantics -/
 
 /-- Posterior probability that an urn-state proposition φ holds, given
     the speaker's observation. ℚ-valued for decidable verification.
@@ -265,29 +240,40 @@ def complexMeaning (outer : OuterMod) (inner : InnerExpr)
 
 -- ── Complex expression behaviour checks ──
 
-example : complexMeaning .isCertainly .likely 10 8 = true := by native_decide
-example : complexMeaning .isCertainly .likely 10 5 = false := by native_decide
-example : complexMeaning .isCertainly .possible 4 2 = false := by native_decide
-example : complexMeaning .mightBe .possible 4 2 = true := by native_decide
+example : complexMeaning .isCertainly .likely 10 8 = true := by
+  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
+    proportion, θ_probably, speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+example : complexMeaning .isCertainly .likely 10 5 = false := by
+  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
+    proportion, θ_probably, speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+example : complexMeaning .isCertainly .possible 4 2 = false := by
+  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
+    proportion, θ_possibly, speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
+example : complexMeaning .mightBe .possible 4 2 = true := by
+  simp only [complexMeaning, posteriorProb, InnerExpr.meaning, OuterMod.threshold,
+    proportion, θ_possibly, speakerBeliefQ, hypergeoQ]
+  norm_num [Finset.sum_filter, Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Nat.choose]
 
 /-- For HF's specific thresholds, strict `>` and non-strict `≥` give the
     same extension on `UrnState` — no proportion s/10 (s ∈ {0,...,10})
-    exactly equals any threshold. Justifies using `>` (paper Eq. 13)
-    even when the theory-layer `nestedThreshold` uses `≥` (Fagin & Halpern). -/
+    exactly equals any threshold. Justifies using `>` (paper Eq. 13) even
+    when the theory-layer `nestedThreshold` uses `≥` (Fagin & Halpern). -/
 theorem strict_threshold_equiv_ge :
     (∀ s : UrnState, proportion s > θ_certainly ↔ proportion s ≥ θ_certainly) ∧
     (∀ s : UrnState, proportion s > θ_probably ↔ proportion s ≥ θ_probably) ∧
     (∀ s : UrnState, proportion s > θ_possibly ↔ proportion s ≥ θ_possibly) := by
   refine ⟨?_, ?_, ?_⟩ <;> intro s <;> fin_cases s <;>
-    simp [proportion, θ_certainly, θ_probably, θ_possibly] <;> norm_num
+    simp only [proportion, θ_certainly, θ_probably, θ_possibly] <;> norm_num
 
-/-! ## §4. RSA model on PMF (Eq. 15-18)
+/-! ### RSA model on PMF
 
 The literal listener `P_LL(s|m) ∝ ⟦m⟧(s) · P_prior(s)` is the uniform
-distribution on the meaning extension (Eq. 15, with uniform prior).
-The speaker normalises softmax-Hellinger scores (Eq. 16-17). The
-pragmatic listener is `PMF.posterior` over the joint `(state × obs × access)`
-(Eq. 18). -/
+distribution on the meaning extension (Eq. 15, with uniform prior). The
+speaker normalises softmax-Hellinger scores (Eq. 16-17). The pragmatic
+listener is `PMF.posterior` over the joint `(state × obs × access)` (Eq. 18). -/
 
 /-- **Literal listener** (Eq. 15) for a meaning with non-empty extension:
     uniform on the extension. -/
@@ -297,27 +283,31 @@ noncomputable def literalListener (φ : UrnState → Bool)
   PMF.uniformOfFinset ((Finset.univ : Finset UrnState).filter (φ · = true)) h_nonempty
 
 /-- All five simple expressions have non-empty extensions under HF's
-    inferred thresholds — every meaning admits a literal listener.
-    Uses `native_decide` because `Rat` ordering is opaque to `decide`. -/
+    inferred thresholds — every meaning admits a literal listener. -/
 theorem simple_meaning_nonempty (u : SimpleExpr) :
     ((Finset.univ : Finset UrnState).filter (u.meaning · = true)).Nonempty := by
   cases u
-  · exact ⟨⟨0, by omega⟩, by native_decide⟩  -- certainlyNot
-  · exact ⟨⟨0, by omega⟩, by native_decide⟩  -- probablyNot
-  · exact ⟨⟨10, by omega⟩, by native_decide⟩  -- possibly
-  · exact ⟨⟨10, by omega⟩, by native_decide⟩  -- probably
-  · exact ⟨⟨10, by omega⟩, by native_decide⟩  -- certainly
+  · exact ⟨⟨0, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      SimpleExpr.meaning, proportion, θ_certainly]; norm_num⟩  -- certainlyNot
+  · exact ⟨⟨0, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      SimpleExpr.meaning, proportion, θ_probably]; norm_num⟩  -- probablyNot
+  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      SimpleExpr.meaning, proportion, θ_possibly]; norm_num⟩  -- possibly
+  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      SimpleExpr.meaning, proportion, θ_probably]; norm_num⟩  -- probably
+  · exact ⟨⟨10, by omega⟩, by simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      SimpleExpr.meaning, proportion, θ_certainly]; norm_num⟩  -- certainly
 
-/-! ## §5. Joint posterior marginalisations (Eq. 19-20)
+/-! ### Joint posterior marginalisations
 
-HF's Eq. 18 pragmatic listener is `P_PL(s, o, a | m)`. Eq. 19 is the
-marginal `P(s, o | m)` (over access); Eq. 20 is `P(s, a | m)` (over obs).
-Both are direct corollaries of `Core/Probability/JointPosterior.lean`'s
-marginalisation theorems applied to the joint posterior.
+The pragmatic listener is `P_PL(s, o, a | m)`; its marginals `P(s, o | m)`
+(over access) and `P(s, a | m)` (over obs) are direct corollaries of
+`Core/Probability/JointPosterior.lean`'s marginalisation theorems applied to
+the joint posterior.
 
 The structural form here works for *any* speaker kernel `S` and joint
 prior over `(state × access)` — paper-specific instantiation is the
-softmax-Hellinger speaker, which lives in §6 below. -/
+softmax-Hellinger speaker, which lives in the Hellinger-vs-KL section below. -/
 
 section JointPosterior
 
@@ -377,25 +367,21 @@ theorem statePosterior_lt_iff
 
 end JointPosterior
 
-/-! ## §6. Hellinger-vs-KL: the architectural divergence point
+/-! ### Hellinger vs KL: the architectural divergence point
 
-HF's central methodological choice (Eq. 16, footnote): KL divergence
-makes any message with `[m]` not covering speaker's belief support have
-infinite disutility, so the speaker can NEVER consider it. Hellinger
-distance is uniformly bounded by 1, so all messages have bounded
-disutility.
+HF's central methodological choice: KL divergence makes any message whose
+extension fails to cover the speaker's belief support have infinite
+disutility, so the speaker can never consider it. Hellinger distance is
+uniformly bounded by 1, so all messages have bounded disutility.
 
 The two theorems below witness this directly:
-- `klDiv_eq_top_when_zero_support`: KL = ∞ whenever some support point
-  of P has zero mass under Q.
-- `hellingerDistSq_le_one_finite`: H² ≤ 1 always, so HD ≤ 1.
+- `klDiv_eq_top_when_zero_support`: KL = ∞ whenever some support point of `P`
+  has zero mass under `Q`.
+- `hellingerDistSq_le_one`: H² ≤ 1 always, so HD ≤ 1.
 
-Together they make the architectural divergence visible at theorem
-level: there exist (P, Q) pairs where KL-utility excludes Q as a message
-choice but Hellinger-utility admits it.
-
-The theorem `klDiv_eq_top_iff_not_absolutelyContinuous` from mathlib
-(via `PMF.klDiv` rfl-bridge) provides the "iff" form. -/
+Together they make the architectural divergence visible at theorem level:
+there exist `(P, Q)` pairs where KL-utility excludes `Q` as a message choice
+but Hellinger-utility admits it. -/
 
 /-- **KL divergence is `∞` when Q has zero mass on P's support**.
     Direct from mathlib `klDiv_of_not_ac`: KL = ∞ when `P.toMeasure` is
@@ -452,104 +438,6 @@ theorem hellinger_admits_what_KL_excludes :
   · rw [PMF.pure_apply, if_pos rfl]; exact one_ne_zero
   · rw [PMF.pure_apply, if_neg]; intro h; have := Fin.mk.inj_iff.mp h; omega
 
-/-! ## §7. Empirical data (Tables 6, 7, 9, 10) -/
-
-/-- Inferred semantic threshold parameters from the simple expression
-    model (Experiment 1 data, Table 6). Posterior means with 95% HDIs. -/
-structure ThresholdEstimate where
-  mean : ℚ
-  hdi_lower : ℚ
-  hdi_upper : ℚ
-  deriving Repr
-
-def θ_possibly_inferred  : ThresholdEstimate := ⟨247/1000, 200/1000, 299/1000⟩
-def θ_probably_inferred  : ThresholdEstimate := ⟨549/1000, 500/1000, 594/1000⟩
-def θ_certainly_inferred : ThresholdEstimate := ⟨949/1000, 904/1000, 1⟩
-
-/-- Model–data correlation result (Tables 7, 10). -/
-structure CorrelationResult where
-  dimension : String
-  r : ℚ
-  hdi_lower : ℚ
-  hdi_upper : ℚ
-  deriving Repr
-
-def corr_expression : CorrelationResult := ⟨"expression", 861/1000, 824/1000, 902/1000⟩
-def corr_state      : CorrelationResult := ⟨"state", 741/1000, 666/1000, 824/1000⟩
-def corr_access     : CorrelationResult := ⟨"access", 798/1000, 736/1000, 858/1000⟩
-def corr_observation: CorrelationResult := ⟨"observation", 819/1000, 766/1000, 868/1000⟩
-
-/-- All simple-model correlations are substantial (r > 0.5). -/
-theorem all_correlations_positive :
-    corr_expression.r > 1/2 ∧ corr_state.r > 1/2 ∧
-    corr_access.r > 1/2 ∧ corr_observation.r > 1/2 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp only [corr_expression, corr_state, corr_access, corr_observation] <;>
-    norm_num
-
-/-- Inferred outer-modifier thresholds from the complex expression model
-    (Experiment 2, Table 9). Inner thresholds (`θ_possible`, `θ_likely`)
-    overlap with Table 6 — cross-experiment stability. -/
-def θ_possible_complex : ThresholdEstimate := ⟨251/1000, 200/1000, 295/1000⟩
-def θ_might_complex    : ThresholdEstimate := ⟨332/1000, 295/1000, 336/1000⟩
-def θ_likely_complex   : ThresholdEstimate := ⟨549/1000, 504/1000, 599/1000⟩
-def θ_probably_complex : ThresholdEstimate := ⟨690/1000, 629/1000, 745/1000⟩
-def θ_certainly_complex: ThresholdEstimate := ⟨982/1000, 969/1000, 988/1000⟩
-
-def corr_complex_expression : CorrelationResult := ⟨"expression", 654/1000, 596/1000, 719/1000⟩
-def corr_complex_state      : CorrelationResult := ⟨"state", 849/1000, 812/1000, 883/1000⟩
-def corr_complex_access     : CorrelationResult := ⟨"access", 853/1000, 818/1000, 888/1000⟩
-def corr_complex_observation: CorrelationResult := ⟨"observation", 934/1000, 915/1000, 952/1000⟩
-
-/-- **Cross-experiment threshold stability**: the inner-expression
-    `likely`/`possible` thresholds inferred jointly with Experiment 2
-    complex-expression data agree with the simple-expression Experiment 1
-    `probably`/`possibly` thresholds to within a few thousandths.
-
-    Footnote 18: "θ_probably from the simpler model should be mapped onto
-    θ_likely in Table 9 because the latter represents the threshold of
-    the inner expressions." -/
-theorem cross_experiment_threshold_stability :
-    θ_likely_complex.mean = θ_probably_inferred.mean ∧
-    |θ_possible_complex.mean - θ_possibly_inferred.mean| < 5/1000 := by
-  refine ⟨?_, ?_⟩
-  · show (549 / 1000 : ℚ) = 549 / 1000; rfl
-  · show |(251 / 1000 : ℚ) - 247 / 1000| < 5 / 1000
-    rw [show (251/1000 : ℚ) - 247/1000 = 4/1000 from by norm_num,
-        show |(4/1000 : ℚ)| = 4/1000 from abs_of_pos (by norm_num)]
-    norm_num
-
-/-! ## §8. Cross-paper engagement -/
-
-/-!
-### Disagreement with LaBToM [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
-
-HF and LaBToM both infer credence thresholds for English probability
-vocabulary by Bayesian fitting against experimental data, but pick
-different thresholds where their lexicons overlap. HF's posterior mean
-for `probably` is 0.549 with 95% HDI [0.500, 0.594]; LaBToM's point
-estimate for `likely` is 0.700. LaBToM's value lies above the upper
-bound of HF's HDI — the methodologies disagree at the 95%-credibility
-level, not just on the point estimate.
-
-Candidate explanations: lexical (`probably` ≠ `likely`), task (production
-with urns vs Theory-of-Mind in a gridworld), or posterior uncertainty
-(LaBToM reports point values where HF reports intervals).
-
-HF and LaBToM agree on `certainly`/`certain` to within 0.001 — well
-inside both HDIs; no theorem on that pair, the empirical signal isn't
-there. -/
-
-open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
-
-/-- LaBToM's `likely_.θ = 0.70` lies above the upper bound of HF's 95%
-    HDI for `θ_probably` ([0.500, 0.594]). The two parameter-fitted
-    theories disagree at the 95%-credibility level. -/
-theorem labtom_likely_above_hf_probably_hdi :
-    θ_probably_upper < EpistemicEntry.likely_.θ := by
-  show (594 / 1000 : ℚ) < 7 / 10
-  norm_num
-
 /-!
 ### Architectural contrast with [goodman-stuhlmuller-2013]
 
@@ -565,7 +453,7 @@ listener). The only architectural difference is the speaker utility:
 | Utility | `-KL(bel ‖ L0)` | `-HD(bel, L0)` |
 | Admits "true enough"? | NO (KL = ∞ on zero-support) | YES (HD ≤ 1) |
 
-`hellinger_admits_what_KL_excludes` (§6) makes this difference visible:
+`hellinger_admits_what_KL_excludes` makes this difference visible:
 the same speaker belief `pure 9` paired with the literal listener for
 `certainly` (`pure 10`) yields `KL = ∞` but `HD ≤ 1`. Under G&S 2013's
 KL utility this speaker would be excluded from saying "certainly RED";
@@ -578,18 +466,15 @@ on the *finite* side: where KL is finite, H² is too, and bounded.
 Hellinger is the strictly weaker (more permissive) divergence — exactly
 what HF wants for the speaker utility. -/
 
-/-! ### Modal concord overprediction
+/-! ### Modal concord and `might be possible`
 
-The paper notes that the compositional model overpredicts the frequency
-of "might be possible" in production data (§6). The compositional
-semantics assigns "might be possible" a very weak truth condition
-(posterior probability of "possible" exceeds θ_might = 0.332), making
-it true in almost all conditions.
+The paper finds that the compositional model **underpredicts** how often
+speakers choose "might be possible": although its truth condition is weak
+(posterior probability of "possible" exceeds `θ_might = 0.332`), the pragmatic
+speaker prefers logically stronger messages and so assigns the doubly-hedged
+form a low choice rate — yet participants select it far more often than
+predicted. A **modal concord** reading, collapsing the two modals to a single
+"possible" [zeijlstra-2007], would close the gap. Qualitative; not formalised
+here. -/
 
-Explanation: participants may give "might be possible" a **modal
-concord** reading, collapsing the two modals to a single "possible".
-See `Studies/RotterLiu2025Concord` and `Studies/LiuRotter2025` for the
-general phenomenon.
-This is qualitative; not formalised here. -/
-
-end HerbstrittFranke2019.PMF
+end HerbstrittFranke2019

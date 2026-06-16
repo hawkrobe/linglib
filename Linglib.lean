@@ -1213,6 +1213,7 @@ import Linglib.Studies.Charlow2014
 import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Cooper2023.Basic
 import Linglib.Studies.Cooper2023.Ch8
+import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.KampReyle1993
 import Linglib.Studies.KeshetAbney2024
@@ -1484,7 +1485,7 @@ import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Boylan2023
 import Linglib.Studies.Narrog2010
 import Linglib.Studies.Narrog2012
-import Linglib.Studies.HerbstrittFranke2019PMF
+import Linglib.Studies.HerbstrittFranke2019
 import Linglib.Studies.Huijsmans2025
 import Linglib.Core.Logic.Modal.BSML.Bisimulation
 import Linglib.Core.Logic.Modal.BSML.Bridge

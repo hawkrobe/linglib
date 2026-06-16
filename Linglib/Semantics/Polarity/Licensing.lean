@@ -268,6 +268,48 @@ abbrev LicensedBySignature (e : Typology.PolarityItem.PolarityItemEntry)
     (c : LicensingContext) : Prop :=
   strengthLicenses e c = true
 
+/-! ### Polymorphic strength scales
+
+`strengthLicenses` is the Zwarts/`DEStrength` instance of a general pattern: a
+theory of NPI strength is an *ordered carrier* `S` plus how items and contexts
+project onto it, with licensing = `≤` on `S`. Different theories of strength
+(Gajewski plain-vs-exhaustified, Giannakidou veridicality, gradient) instantiate
+it with different carriers — see `scratch/npi-api-design.md`. -/
+
+/-- A **strength scale** for NPI licensing: how items and contexts project onto
+an ordered strength carrier `S`. `none` on either side = "no strength here" (the
+item licenses via another mechanism, or the context supplies none). -/
+structure StrengthScale (Item Context S : Type*) [Preorder S] where
+  /-- The strength an item requires (`none` = not strength-licensed). -/
+  required : Item → Option S
+  /-- The strength a context supplies (`none` = supplies no strength). -/
+  supplied : Context → Option S
+
+/-- Licensing on a scale: the context supplies at least the strength the item
+requires (both sides present). -/
+def StrengthScale.licenses {Item Context S : Type*} [Preorder S]
+    (L : StrengthScale Item Context S) (i : Item) (c : Context) : Prop :=
+  ∃ r ∈ L.required i, ∃ s ∈ L.supplied c, r ≤ s
+
+/-- The canonical Zwarts/[ladusaw-1979] scale: carrier `DEStrength`, item
+strength from `PolarityItemEntry.strength`, context strength from the row's
+Strawson signature. The first instance of `StrengthScale`. -/
+def zwartsScale :
+    StrengthScale Typology.PolarityItem.PolarityItemEntry LicensingContext
+      NaturalLogic.DEStrength where
+  required e := e.strength
+  supplied c := (contextProperties c).strawsonSignature.toDEStrength
+
+/-- The polymorphic scale subsumes the bespoke predicate: `zwartsScale.licenses`
+is exactly `LicensedBySignature` (derive-don't-duplicate). -/
+theorem zwartsScale_licenses_iff (e : Typology.PolarityItem.PolarityItemEntry)
+    (c : LicensingContext) :
+    zwartsScale.licenses e c ↔ LicensedBySignature e c := by
+  simp only [StrengthScale.licenses, zwartsScale, LicensedBySignature,
+    strengthLicenses, NaturalLogic.strengthSufficient]
+  cases (contextProperties c).strawsonSignature.toDEStrength <;>
+    cases e.strength <;> simp
+
 /-- A context is **Strawson-only** when no classical signature row holds
 ([von-fintel-1999]): only-focus, adversatives, temporal *since*,
 superlatives. -/
