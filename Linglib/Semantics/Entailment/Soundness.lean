@@ -10,7 +10,7 @@ equations, so `⊑` is plain `≤`), and a signature is *sound* for a function
 (`EntailmentSig.SoundFor`) when the function projects every relation as the
 signature's `project` row says (his Lemma 2.5). The characterization
 theorems discharge each row from the property family in
-`Semantics.Entailment.AntiAdditivity` — the additive-family rows need the
+`Entailment` — the additive-family rows need the
 `IsCompletely*` unit conditions, exactly as Icard's tables assume; the
 soundness proofs go through over bounded lattices, not just his Boolean
 lattices.
@@ -44,23 +44,23 @@ unconditionally — every function realizes the no-property row.
 
 namespace Core.NaturalLogic
 
-open Semantics.Entailment.AntiAdditivity
+open Entailment
 
 /-! ### Lattice content of the relations -/
 
 /-- The lattice content of a natural-logic relation ([icard-2012]
-Definition 1.2): non-exclusive equations over a bounded lattice. `negation`
-is complementhood (cf. mathlib's `IsCompl`); `forward` is non-strict `≤`
-(the enum comments' `⊂` follows MacCartney's exclusive reading, which the
-projectivity tables do not need). -/
+Definition 1.2), in mathlib's complementation vocabulary: `negation` is
+`IsCompl`, `alternation` is `Disjoint`, `cover` is `Codisjoint`; `forward`
+is non-strict `≤` (the enum comments' `⊂` follows MacCartney's exclusive
+reading, which the projectivity tables do not need). -/
 def NLRelation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
     NLRelation → α → α → Prop
-  | .equiv => fun x y => x = y
-  | .forward => fun x y => x ≤ y
-  | .reverse => fun x y => y ≤ x
-  | .negation => fun x y => x ⊓ y = ⊥ ∧ x ⊔ y = ⊤
-  | .alternation => fun x y => x ⊓ y = ⊥
-  | .cover => fun x y => x ⊔ y = ⊤
+  | .equiv => (· = ·)
+  | .forward => (· ≤ ·)
+  | .reverse => (· ≥ ·)
+  | .negation => IsCompl
+  | .alternation => Disjoint
+  | .cover => Codisjoint
   | .independent => fun _ _ => True
 
 /-! ### Soundness of a signature for a function -/
@@ -112,9 +112,9 @@ theorem soundFor_additive {f : α → β} (h : IsCompletelyAdditive f) :
   | equiv => exact congrArg f hR
   | forward => exact hadd.monotone hR
   | reverse => exact hadd.monotone hR
-  | negation => show f x ⊔ f y = ⊤; rw [← hadd x y, hR.2]; exact htop
+  | negation => exact codisjoint_iff.mpr (by rw [← hadd x y, codisjoint_iff.mp hR.codisjoint]; exact htop)
   | alternation => trivial
-  | cover => show f x ⊔ f y = ⊤; rw [← hadd x y, hR]; exact htop
+  | cover => exact codisjoint_iff.mpr (by rw [← hadd x y, codisjoint_iff.mp hR]; exact htop)
   | independent => trivial
 
 /-- The `.mult` row is sound for completely multiplicative functions. -/
@@ -126,8 +126,8 @@ theorem soundFor_mult {f : α → β} (h : IsCompletelyMultiplicative f) :
   | equiv => exact congrArg f hR
   | forward => exact hmult.monotone hR
   | reverse => exact hmult.monotone hR
-  | negation => show f x ⊓ f y = ⊥; rw [← hmult x y, hR.1]; exact hbot
-  | alternation => show f x ⊓ f y = ⊥; rw [← hmult x y, hR]; exact hbot
+  | negation => exact disjoint_iff.mpr (by rw [← hmult x y, disjoint_iff.mp hR.disjoint]; exact hbot)
+  | alternation => exact disjoint_iff.mpr (by rw [← hmult x y, disjoint_iff.mp hR]; exact hbot)
   | cover => trivial
   | independent => trivial
 
@@ -140,9 +140,9 @@ theorem soundFor_antiAdd {f : α → β} (h : IsCompletelyAntiAdditive f) :
   | equiv => exact congrArg f hR
   | forward => exact haa.antitone hR
   | reverse => exact haa.antitone hR
-  | negation => show f x ⊓ f y = ⊥; rw [← haa x y, hR.2]; exact htop
+  | negation => exact disjoint_iff.mpr (by rw [← haa x y, codisjoint_iff.mp hR.codisjoint]; exact htop)
   | alternation => trivial
-  | cover => show f x ⊓ f y = ⊥; rw [← haa x y, hR]; exact htop
+  | cover => exact disjoint_iff.mpr (by rw [← haa x y, codisjoint_iff.mp hR]; exact htop)
   | independent => trivial
 
 /-- The `.antiMult` row is sound for completely anti-multiplicative
@@ -155,8 +155,8 @@ theorem soundFor_antiMult {f : α → β} (h : IsCompletelyAntiMultiplicative f)
   | equiv => exact congrArg f hR
   | forward => exact ham.antitone hR
   | reverse => exact ham.antitone hR
-  | negation => show f x ⊔ f y = ⊤; rw [← ham x y, hR.1]; exact hbot
-  | alternation => show f x ⊔ f y = ⊤; rw [← ham x y, hR]; exact hbot
+  | negation => exact codisjoint_iff.mpr (by rw [← ham x y, disjoint_iff.mp hR.disjoint]; exact hbot)
+  | alternation => exact codisjoint_iff.mpr (by rw [← ham x y, disjoint_iff.mp hR]; exact hbot)
   | cover => trivial
   | independent => trivial
 
@@ -171,10 +171,10 @@ theorem soundFor_addMult {f : α → β} (hadd : IsCompletelyAdditive f)
   | forward => exact hadd.1.monotone hR
   | reverse => exact hadd.1.monotone hR
   | negation =>
-      exact ⟨by show f x ⊓ f y = ⊥; rw [← hmult.1 x y, hR.1]; exact hmult.2,
-             by show f x ⊔ f y = ⊤; rw [← hadd.1 x y, hR.2]; exact hadd.2⟩
-  | alternation => show f x ⊓ f y = ⊥; rw [← hmult.1 x y, hR]; exact hmult.2
-  | cover => show f x ⊔ f y = ⊤; rw [← hadd.1 x y, hR]; exact hadd.2
+      exact ⟨disjoint_iff.mpr (by rw [← hmult.1 x y, disjoint_iff.mp hR.disjoint]; exact hmult.2),
+             codisjoint_iff.mpr (by rw [← hadd.1 x y, codisjoint_iff.mp hR.codisjoint]; exact hadd.2)⟩
+  | alternation => exact disjoint_iff.mpr (by rw [← hmult.1 x y, disjoint_iff.mp hR]; exact hmult.2)
+  | cover => exact codisjoint_iff.mpr (by rw [← hadd.1 x y, codisjoint_iff.mp hR]; exact hadd.2)
   | independent => trivial
 
 /-- The `.antiAddMult` row is sound for anti-morphisms: completely
@@ -190,10 +190,10 @@ theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
   | forward => exact haa.1.antitone hR
   | reverse => exact haa.1.antitone hR
   | negation =>
-      exact ⟨by show f x ⊓ f y = ⊥; rw [← haa.1 x y, hR.2]; exact haa.2,
-             by show f x ⊔ f y = ⊤; rw [← ham.1 x y, hR.1]; exact ham.2⟩
-  | alternation => show f x ⊔ f y = ⊤; rw [← ham.1 x y, hR]; exact ham.2
-  | cover => show f x ⊓ f y = ⊥; rw [← haa.1 x y, hR]; exact haa.2
+      exact ⟨disjoint_iff.mpr (by rw [← haa.1 x y, codisjoint_iff.mp hR.codisjoint]; exact haa.2),
+             codisjoint_iff.mpr (by rw [← ham.1 x y, disjoint_iff.mp hR.disjoint]; exact ham.2)⟩
+  | alternation => exact codisjoint_iff.mpr (by rw [← ham.1 x y, disjoint_iff.mp hR]; exact ham.2)
+  | cover => exact disjoint_iff.mpr (by rw [← haa.1 x y, codisjoint_iff.mp hR]; exact haa.2)
   | independent => trivial
 
 /-- Every function realizes the • row: `.all` is the no-property
@@ -277,7 +277,7 @@ the enum fact `◇⊟ ∘ ◇⊟ = ⊕⊞` against the actual function `pnot ∘
 
 section PnotInstance
 
-open Semantics.Entailment
+open Entailment
 
 theorem pnot_isCompletelyAntiAdditive : IsCompletelyAntiAdditive pnot :=
   ⟨pnot_isAntiAdditive, by show (Set.univ : Set World)ᶜ = ∅; exact Set.compl_univ⟩

@@ -34,7 +34,7 @@ exhaustification predictions live in `Alternatives/Lexical.lean` and
 namespace Implicature.Scales
 
 open Implicature
-open Semantics.Entailment.Polarity (ContextPolarity)
+open Entailment (ContextPolarity)
 open Alternatives.Quantifiers (QuantExpr)
 open Alternatives.Connectives (ConnExpr)
 open Alternatives (ScaleMembership)

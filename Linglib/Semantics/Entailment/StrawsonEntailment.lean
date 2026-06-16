@@ -32,11 +32,9 @@ AM ⊂ AA ⊂ DE ⊂ Strawson-DE (each strict — see
 `strawsonDE_strictly_weaker_than_DE`).
 -/
 
-namespace Semantics.Entailment.StrawsonEntailment
+namespace Entailment
 
-open Semantics.Entailment
-open Semantics.Entailment.Polarity
-open Semantics.Entailment.AntiAdditivity
+open Entailment
 
 -- ============================================================================
 -- §1 Core definitions (polymorphic)
@@ -756,4 +754,4 @@ theorem monotone_implies_WDE {W : Type*} (f : Set W → Set W)
     IsWDE f believes :=
   fun _p _q hpq _w _hbel hfp => hMono hpq hfp
 
-end Semantics.Entailment.StrawsonEntailment
+end Entailment

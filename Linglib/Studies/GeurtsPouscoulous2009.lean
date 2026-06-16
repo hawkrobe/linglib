@@ -99,7 +99,7 @@ chronological-dependency rule.
 
 namespace GeurtsPouscoulous2009
 
-open Semantics.Entailment.Polarity (ContextPolarity)
+open Entailment (ContextPolarity)
 
 -- ============================================================================
 -- Shared types (paper-internal vocabulary)
@@ -116,7 +116,7 @@ inductive QuantifierContext where
   deriving DecidableEq, Repr
 
 /-- Map a quantifier context to its monotonicity using the canonical
-`Semantics.Entailment.Polarity.ContextPolarity` enum. -/
+`Entailment.ContextPolarity` enum. -/
 def quantifierMonotonicity : QuantifierContext → ContextPolarity
   | .all              => .upward
   | .moreThanOne      => .upward

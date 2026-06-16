@@ -1,7 +1,7 @@
 import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Entailment.Intolerance
-import Linglib.Semantics.Entailment.PresuppositionLicensing
 import Linglib.Semantics.Degree.Comparative
 import Linglib.Studies.VonFintel1999
 import Linglib.Fragments.English.PolarityItems
@@ -43,9 +43,8 @@ with "DE + scalar endpoint" (Conjecture 48).
   of its scale. Documented in §3.3 docstring; the conjecture is
   scale-theoretic and would need scale-side machinery to formalize.
 - `IsIntolerant` predicate (eq. 80) and the Appendix 2 result
-  AA ⊆ DE + Intolerant — both formalized in
-  `Semantics/Entailment/Intolerance.lean`. Re-exported here as
-  `gaj2011_appendix2_AA_implies_intolerant`.
+  AA ⊆ DE + Intolerant — both formalized below (demoted substrate),
+  re-exported as `gaj2011_appendix2_AA_implies_intolerant`.
 - `wouldFull_isStrawsonAA` — Gajewski Appendix 1's actual `would`-with-
   non-vacuity-presupposition SAA result (in
   `Semantics/Entailment/StrawsonEntailment.lean`).
@@ -59,13 +58,12 @@ with "DE + scalar endpoint" (Conjecture 48).
 
 ## §4 framework — both halves now in skeleton
 
-- Conditions 1, 2 (eqs. 59, 66): formalized in
-  `Semantics/Entailment/PresuppositionLicensing.lean` using
-  `Exhaustification.exhMW` (Spector 2016) as the substrate's `O(F, G)`.
+- Conditions 1, 2 (eqs. 59, 66): formalized below (demoted substrate)
+  using `Exhaustification.exhMW` (Spector 2016) as the `O(F, G)` operator.
   Trivial-ALT bridges proved (`condition1_with_no_alts_iff_de`,
   `condition2_with_no_alts_iff_de`). `only`'s satisfaction of Cond 1, 2
   in the trivial limit cited below.
-- Conditions 3, 4 (eqs. 93, 94): formalized in PresuppositionLicensing.lean
+- Conditions 3, 4 (eqs. 93, 94): formalized below (demoted substrate)
   via `KPOperator` over `PartialProp`. `only` satisfies Cond 3 ✓, fails
   Cond 4 ✗ (`gaj2011_only_condition3_yes_condition4_no`).
 
@@ -89,9 +87,224 @@ with "DE + scalar endpoint" (Conjecture 48).
 
 namespace Gajewski2011
 
-open Semantics.Entailment
-open Semantics.Entailment.Polarity
-open Semantics.Entailment.StrawsonEntailment
+open Entailment
+/-! ## Demoted substrate — Intolerance + Karttunen-Peters Conditions
+
+Folded in from the former `Entailment/Intolerance` and
+`Entailment/PresuppositionLicensing` (single-consumer formalisations,
+per the anchoring rule): the Intolerance predicate ([gajewski-2011] eq. 80)
+and the Karttunen-Peters / Chierchia Conditions 1-4 (§4.1, §4.4) were
+consumed only by this study. -/
+
+/-- A GQ-typed function is **trivial** if it is constantly true or
+    constantly false. -/
+def IsTrivial {α : Type*} (f : Set α → Prop) : Prop :=
+  (∀ x : Set α, f x) ∨ (∀ x : Set α, ¬ f x)
+
+/-- [gajewski-2011] eq. 80: a function `f : Set α → Prop` is
+    **Intolerant** iff it is trivial, OR for every `x`, at most one of
+    `f x` and `f xᶜ` holds.
+
+    [horn-1989]: Intolerant functions are "above the midpoint of
+    their scale" — they cannot accept both a property and its
+    complement. -/
+def IsIntolerant {α : Type*} (f : Set α → Prop) : Prop :=
+  IsTrivial f ∨ ∀ x : Set α, ¬ f x ∨ ¬ f xᶜ
+
+/-- [gajewski-2011] Appendix 2 (p. 143): an anti-additive GQ is Intolerant.
+
+    Proof sketch (Gajewski's): suppose `f` is AA and not trivial. For
+    arbitrary `a`, suppose `f a = True` and `f aᶜ = True`. Then
+    `f (a ∪ aᶜ) ↔ f a ∧ f aᶜ` gives `f Set.univ = True`. Since AA
+    implies DE, every `y ⊆ Set.univ` has `f y = True` — contradicting
+    non-triviality. So either `¬f a` or `¬f aᶜ`. -/
+theorem antiAdditive_implies_intolerant {α : Type*} (f : Set α → Prop)
+    (hAA : IsAntiAdditive f) : IsIntolerant f := by
+  by_cases hTriv : IsTrivial f
+  · exact Or.inl hTriv
+  · refine Or.inr ?_
+    intro x
+    by_contra hNeither
+    push Not at hNeither
+    obtain ⟨hfx, hfxc⟩ := hNeither
+    -- Now f x = True and f xᶜ = True. Show f Set.univ = True via AA.
+    have hUnion : x ∪ xᶜ = Set.univ := by
+      ext y
+      simp only [Set.mem_union, Set.mem_compl_iff, Set.mem_univ, iff_true]
+      exact Classical.em (y ∈ x)
+    have hfUniv : f Set.univ := by
+      rw [← hUnion]
+      exact (isAntiAdditive_iff_gq.mp hAA x xᶜ).mpr ⟨hfx, hfxc⟩
+    -- By DE (which AA implies), every y has f y — contradicting
+    -- non-triviality.
+    apply hTriv
+    left
+    intro y
+    exact hAA.antitone (Set.subset_univ y) hfUniv
+
+/-- A **Karttunen-Peters operator**: a function from an argument set to
+    a presuppositional proposition (truth + presup). The presupposition
+    may depend on the argument (per K&P 1979's heritage function). -/
+abbrev KPOperator (W : Type*) : Type _ := Set W → Semantics.Presupposition.PartialProp W
+
+/-- The truth-conditional projection of a K&P operator. -/
+def KPOperator.truth {W : Type*} (op : KPOperator W) : Set W → Set W :=
+  fun arg w => (op arg).assertion w
+
+/-- The presuppositional projection of a K&P operator (parameterized by
+    the argument). -/
+def KPOperator.opPresup {W : Type*} (op : KPOperator W) : Set W → W → Prop :=
+  fun arg w => (op arg).presup w
+
+/-- The full meaning of a K&P operator: assertion *and* presupposition.
+    What's checked for Condition 4 (strong NPI licensing). -/
+def KPOperator.full {W : Type*} (op : KPOperator W) : Set W → Set W :=
+  fun arg w => (op arg).assertion w ∧ (op arg).presup w
+
+/-- [gajewski-2011] eq. 93: **Condition 3** (weak NPI licensing).
+
+    A K&P operator licenses weak NPIs in its argument position iff its
+    truth-conditional projection is DE (Antitone) in the argument. The
+    operator's own presupposition does NOT enter the licensing check —
+    weak NPIs ignore the licenser's presupposition. -/
+def Condition3 {W : Type*} (op : KPOperator W) : Prop :=
+  Antitone op.truth
+
+/-- [gajewski-2011] eq. 94: **Condition 4** (strong NPI licensing).
+
+    A K&P operator licenses strong NPIs in its argument position iff
+    `assertion ∧ operator-presupposition` is DE in the argument. The
+    operator's presupposition CAN destroy DE-ness; if it does, the
+    operator licenses weak but not strong NPIs. -/
+def Condition4 {W : Type*} (op : KPOperator W) : Prop :=
+  Antitone op.full
+
+/-- Trivially: an operator with no presupposition (always-`True`) makes
+    Condition 3 and Condition 4 equivalent. -/
+theorem condition3_iff_condition4_of_trivial_presup {W : Type*}
+    (op : KPOperator W) (h : ∀ (arg : Set W) (w : W), (op arg).presup w) :
+    Condition3 op ↔ Condition4 op := by
+  constructor
+  · intro h3 p q hpq w hfull
+    exact ⟨h3 hpq hfull.1, h p w⟩
+  · intro h4 p q hpq w hassert
+    exact (h4 hpq ⟨hassert, h q w⟩).1
+
+/- Note on Condition 4 vs Condition 3 implication:
+
+   Adding more conjuncts to a meaning can destroy DE-ness in the
+   licensee position — that is precisely the Gajewski point. So
+   Condition 4 does not imply Condition 3 in general, nor vice versa.
+   They are *independent* DE checks on different conjunctions of the
+   K&P content. -/
+
+-- ============================================================================
+-- §2 Conditions 1, 2 — implicature-based licensing (Chierchia line)
+-- ============================================================================
+
+/-!
+## Conditions 1, 2 — the implicature-based licensing line
+
+Whereas Conditions 3, 4 (above) handle presuppositions via the K&P
+framework, Conditions 1, 2 (Gajewski eqs. 59, 66) handle scalar
+implicatures via [chierchia-2004]'s O-operator and
+alternative-set machinery. The two frameworks make parallel
+predictions for `only`: weak NPIs licensed (Condition 1 / Condition 3)
+but strong NPIs blocked (Condition 2 / Condition 4) — once the
+implicatures (Cond 1/2) or presuppositions (Cond 3/4) of the licenser
+are factored in, DE-ness is destroyed.
+
+The substrate's O-operator is `Exhaustification.exhMW` (Spector 2016,
+based on minimal worlds) or its equivalent `exhIE` (innocent-exclusion
+based, agree under closure under conjunction; see Spector Theorem 9).
+We use `exhMW` because its trivial-ALT case is `exhMW ∅ φ = φ` cleanly,
+which simplifies the empty-implicature reduction.
+
+Gajewski's ALT vs ALT-1 distinction (eqs. 54, 55) is encoded as
+two parameters to Condition 2: the standard alternative set ALT and
+the restricted ALT-1 (Chierchia's "highest-scopal-item only").
+-/
+
+/-- [gajewski-2011] eq. 59: **Condition 1** (weak NPI licensing).
+
+    Operator `op` licenses weak NPIs in its argument position iff
+    `O(op(γ), op(ALT(γ)))` is DE in γ, where `alts γ` generates the
+    alternative set against which `op(γ)` is exhaustified.
+
+    `Exhaustification.exhMW` plays the role of Gajewski's `O(F, G)`. -/
+def Condition1 {W : Type*} (op : Set W → Set W)
+    (alts : Set W → Set (Set W)) : Prop :=
+  Antitone (fun γ => Exhaustification.exhMW (alts γ) (op γ))
+
+/-- [gajewski-2011] eq. 66: **Condition 2** (strong NPI licensing).
+
+    Adds a parallel DE check against ALT-1 — the restricted alternative
+    set (Chierchia's "highest-scopal-item only", eq. 55). Strong NPIs
+    are licensed iff *both* DE checks pass: `O(op(γ), op(ALT(γ)))` AND
+    `O(op(γ), op(ALT-1(γ)))`. -/
+def Condition2 {W : Type*} (op : Set W → Set W)
+    (alts altsOne : Set W → Set (Set W)) : Prop :=
+  Condition1 op alts ∧
+  Antitone (fun γ => Exhaustification.exhMW (altsOne γ) (op γ))
+
+/-- Trivial-ALT lemma: with no alternatives, `exhMW` collapses to the
+    prejacent. Spector 2016's minimality reduces to `True` when there
+    are no alternatives to be minimal-with-respect-to. -/
+theorem exhMW_empty_eq {W : Type*} (φ : Set W) :
+    Exhaustification.exhMW (∅ : Set (Set W)) φ = φ := by
+  ext u
+  unfold Exhaustification.exhMW Exhaustification.ltALT Exhaustification.leALT
+  simp
+
+/-- **Trivial-ALT bridge for Cond 1**: Condition 1 with no alternatives
+    reduces to classical DE. -/
+theorem condition1_with_no_alts_iff_de {W : Type*} (op : Set W → Set W) :
+    Condition1 op (fun _ => ∅) ↔ Antitone op := by
+  unfold Condition1
+  have h : (fun γ => Exhaustification.exhMW (∅ : Set (Set W)) (op γ)) = op := by
+    funext γ
+    exact exhMW_empty_eq (op γ)
+  rw [h]
+
+/-- **Trivial-ALT bridge for Cond 2**: with no alternatives in either
+    ALT or ALT-1, Condition 2 reduces to classical DE. The empirical
+    discriminative power of Cond 2 vs Cond 1 only emerges with
+    non-trivial ALT-1 (Chierchia's "highest-scopal-item only"). -/
+theorem condition2_with_no_alts_iff_de {W : Type*} (op : Set W → Set W) :
+    Condition2 op (fun _ => ∅) (fun _ => ∅) ↔ Antitone op := by
+  unfold Condition2
+  rw [condition1_with_no_alts_iff_de]
+  constructor
+  · exact fun ⟨h, _⟩ => h
+  · intro h
+    refine ⟨h, ?_⟩
+    have heq : (fun γ => Exhaustification.exhMW (∅ : Set (Set W)) (op γ)) = op := by
+      funext γ; exact exhMW_empty_eq (op γ)
+    rw [heq]; exact h
+
+/-- **Bridge to Conditions 3, 4**: when `op`'s K&P-form has no
+    presupposition (so the operator is presupposition-free), Conditions
+    3 and 4 collapse, AND Condition 1 with no alternatives reduces to
+    classical DE. Hence presuppositionless + alternative-free ⇒ all
+    four Gajewski conditions reduce to classical DE.
+
+    This is the structural reason Gajewski's framework matters: both
+    presuppositions (the K&P side) AND implicatures (the Chierchia
+    side) can destroy DE-ness in the licensee position; the four
+    conditions track which side does what. -/
+theorem all_conditions_reduce_to_DE_when_trivial {W : Type*}
+    (op : KPOperator W)
+    (hPresup : ∀ arg w, (op arg).presup w)
+    (hOpFnDE : Antitone op.truth) :
+    Condition1 op.truth (fun _ => ∅) ∧
+    Condition3 op ∧
+    Condition4 op := by
+  refine ⟨?_, hOpFnDE, ?_⟩
+  · exact (condition1_with_no_alts_iff_de op.truth).mpr hOpFnDE
+  · -- Cond 4: assert ∧ presup is DE; presup is trivial, so equals assertion
+    intro p q hpq w hfull
+    exact ⟨hOpFnDE hpq hfull.1, hPresup p w⟩
+
 
 /-! ## §1 Background — recapitulating Zwarts and von Fintel
 
@@ -209,8 +422,7 @@ one side of the midpoint of its scale.
 The substrate-level definitions (`IsTrivial`, `IsIntolerant`; GQ-typed
 anti-additivity and DE-ness are the `Set α → Prop` instances of
 `IsAntiAdditive` and `Antitone`) and the Appendix 2 proof
-(`antiAdditive_implies_intolerant`) live in
-`Semantics/Entailment/Intolerance.lean`.
+(`antiAdditive_implies_intolerant`) are defined above (demoted substrate).
 
 The reverse strict inclusion (`AA ⊊ DE + Intolerant`, ex. 84) — i.e.
 exhibiting a DE+Intolerant function that is *not* AA — is asserted by
@@ -220,9 +432,9 @@ Gajewski but not proved; would need a witness function. Open.
 /-- Re-export the substrate Appendix 2 result for paper-citation indexing. -/
 theorem gaj2011_appendix2_AA_implies_intolerant {α : Type*}
     (f : Set α → Prop)
-    (hAA : Semantics.Entailment.AntiAdditivity.IsAntiAdditive f) :
-    Semantics.Entailment.Intolerance.IsIntolerant f :=
-  Semantics.Entailment.Intolerance.antiAdditive_implies_intolerant f hAA
+    (hAA : Entailment.IsAntiAdditive f) :
+    IsIntolerant f :=
+  antiAdditive_implies_intolerant f hAA
 
 /-! ## §4.1 Conjecture (eq. 48): DE scalar item is AA iff endpoint of scale
 
@@ -275,13 +487,13 @@ in the K&P two-dimensional ⟨truth, presup⟩ framework:
 - **Condition 4** (strong NPIs): truth-conditional content *plus the
   operator's presupposition* must be DE.
 
-The substrate predicates `Condition3` and `Condition4` live in
-`Semantics/Entailment/PresuppositionLicensing.lean`. Here we apply
+The predicates `Condition3` and `Condition4` are defined above (demoted
+substrate). Here we apply
 them to `only` and verify the empirical match: weak NPIs licensed
 (Condition 3 ✓), strong NPIs blocked (Condition 4 ✗).
 -/
 
-open Semantics.Entailment.PresuppositionLicensing
+open Entailment
 open Semantics.Presupposition (PartialProp)
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",

@@ -39,7 +39,7 @@ does not.
 namespace Lahiri1998
 
 open Semantics.Focus.Particles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
-open Semantics.Entailment (World allWorlds entails pnot)
+open Entailment (World allWorlds entails pnot)
 open Typology.PolarityItem
 
 /-- A judged Hindi NPI sentence, paired with the licensing context (if any). -/
@@ -130,7 +130,7 @@ def alternativeTypeOf (d : NPIDecomposition) : AlternativeType :=
 -- ============================================================================
 
 /-! We model the cardinality scale using the existing 4-world semantics
-    from `Semantics.Entailment.Basic`.
+    from `Entailment.Basic`.
 
     World assignment:
     - w0: ≥3 entities satisfy the VP

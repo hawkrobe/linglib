@@ -34,7 +34,7 @@ paper-specific IC/FP/MP ranking in `Studies/Wang2025.lean`.
 namespace Semantics.Presupposition.TriggerTypology
 
 open Semantics.Presupposition
-open Semantics.Entailment.Polarity
+open Entailment
 
 /--
 Types of presupposition triggers in natural language.

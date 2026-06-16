@@ -343,7 +343,7 @@ theorem neg_interpretation_constant :
   rfl
 
 /-- Map He et al.'s sentence polarity to compositional context polarity. -/
-def toContextPolarity : Polarity → Semantics.Entailment.Polarity.ContextPolarity
+def toContextPolarity : Polarity → Entailment.ContextPolarity
   | .positive => .upward
   | .negative => .downward
   | .null => .upward
@@ -383,7 +383,7 @@ theorem house_has_bathroom : posMeaning .house .bathroom := trivial
 theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => h trivial
 theorem classroom_doesnt_have_stove : negMeaning .classroom .stove := id
 
-open Semantics.Entailment.Polarity
+open Entailment
 
 /-- Lift He et al. sentences to world-indexed propositions. -/
 def liftToWorlds (s : HKIState) : (HKIState → Bool) :=

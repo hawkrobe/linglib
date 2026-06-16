@@ -48,11 +48,7 @@ namespace KadmonLandman1993
 open Core.NaturalLogic
 open Typology.PolarityItem (LicensingContext)
 open Semantics.Polarity.Licensing (LicensingMechanism)
-open Semantics.Entailment.Polarity
-open Semantics.Entailment (World)
-open Semantics.Entailment.StrawsonEntailment
-  (IsStrawsonDE sorryFull gladFull sorryFull_isStrawsonDE sorryFull_not_de
-   gladFull_isUE condNecessity conditional_antecedent_antitone)
+open Entailment
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 open Ladusaw1979 (licensingStrength)
