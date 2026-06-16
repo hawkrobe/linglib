@@ -16,7 +16,7 @@ sets of *verifying states*, where states form a join-semilattice (the same
   exclusivity/exhaustivity, subject-matter.
 - `Inexact.lean` — inexact truthmaking and exact/inexact entailment.
 - `Closure.lean` — closed/convex/regular closure operators (Jago Def 4),
-  built on `Mereology.AlgClosure` and `Mereology.convexClosure`.
+  built on `Mereology.AlgClosure` and `ordConnectedHull`.
 - `Entailment.lean` — analytic entailment (AC), FDE-style consequence, bridges.
 
 ## Part I: Unilateral propositions

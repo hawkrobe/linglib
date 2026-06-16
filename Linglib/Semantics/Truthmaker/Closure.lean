@@ -1,4 +1,5 @@
 import Linglib.Semantics.Truthmaker.Basic
+import Linglib.Core.Order.UpperLower.Closure
 
 /-! # Closure Conditions on Truthmaker Propositions [jago-2026]
 
@@ -16,10 +17,10 @@ Closures are not redefined here — they are imported from
 
 - `Mereology.AlgClosure P` is `P^⊔` (Jago: closed under fusion).
 - `Mereology.algClosureOp : ClosureOperator (α → Prop)` bundles it.
-- `Mereology.convexClosure P` is `P^∼` (Jago: convex under parthood).
-- `Mereology.convexClosureOp : ClosureOperator (Set α)` bundles it.
-- `Set.OrdConnected` is the convex predicate (via `Mereology.convexClosure`).
-- The regular closure `P^*` is `convexClosure (AlgClosure P)`.
+- `ordConnectedHull P` is `P^∼` (Jago: convex under parthood).
+- `ordConnectedHull : ClosureOperator (Set α)` bundles it.
+- `Set.OrdConnected` is the convex predicate (via `ordConnectedHull`).
+- The regular closure `P^*` is `ordConnectedHull (AlgClosure P)`.
 
 This file provides the **truthmaker-flavored vocabulary** (`IsClosed`,
 `IsRegular`, `regularClose`) and the bridges to mathlib's
@@ -68,14 +69,13 @@ variable {S : Type*} [PartialOrder S]
     Jago's vocabulary. -/
 abbrev IsConvex (p : TMProp S) : Prop := Set.OrdConnected p
 
-/-- Convex closure of a `TMProp`. Re-export of `Mereology.convexClosure`
+/-- Convex closure of a `TMProp` — the order-convex hull `ordConnectedHull`
     (recall `Set α = α → Prop = TMProp α` definitionally). -/
-abbrev convexClose (p : TMProp S) : TMProp S := convexClosure p
+abbrev convexClose (p : TMProp S) : TMProp S := ordConnectedHull p
 
-/-- The convex closure of `p` is convex. Re-export of
-    `Mereology.ordConnected_convexClosure`. -/
+/-- The convex closure of `p` is convex (`ordConnected_ordConnectedHull`). -/
 theorem isConvex_convexClose (p : TMProp S) : IsConvex (convexClose p) :=
-  Mereology.ordConnected_convexClosure p
+  ordConnected_ordConnectedHull p
 
 end Convex
 
@@ -99,10 +99,8 @@ def regularClose (p : TMProp S) : TMProp S :=
 
 /-- `p ⊆ p^*`: regular closure extends the original. -/
 theorem subset_regularClose (p : TMProp S) {s : S} (h : p s) :
-    regularClose p s := by
-  refine ⟨s, ?_, s, ?_, le_refl s, le_refl s⟩
-  · exact AlgClosure.base h
-  · exact AlgClosure.base h
+    regularClose p s :=
+  mem_ordConnectedHull.mpr ⟨s, AlgClosure.base h, s, AlgClosure.base h, le_refl s, le_refl s⟩
 
 /-- The regular closure is convex. -/
 theorem isConvex_regularClose (p : TMProp S) :

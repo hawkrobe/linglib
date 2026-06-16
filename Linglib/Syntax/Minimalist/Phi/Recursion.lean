@@ -496,8 +496,8 @@ This nonconvex cut violates the general requirement that basic meanings
 be convex ([gaerdenfors-2004]).
 
 Convexity here is mathlib's `Set.OrdConnected`: a region is convex iff it
-is a fixed point of `Mereology.convexClosure`
-(`Mereology.ordConnected_iff_convexClosure_eq`) — the same predicate that
+is a fixed point of `ordConnectedHull`
+(`ordConnectedHull_eq_self`) — the same predicate that
 states [grimm-2018]'s no-discontinuous-category condition on countability
 classes (`Studies/Grimm2018.lean`), so Harbour's and Grimm's convexity
 requirements are the same predicate. -/
