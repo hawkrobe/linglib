@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.HasMeasure
 import Linglib.Semantics.Degree.Predicate

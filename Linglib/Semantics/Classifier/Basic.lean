@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Typology.ClassifierSystem
 import Linglib.Semantics.Plurality.Algebra
 

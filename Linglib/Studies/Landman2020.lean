@@ -1,6 +1,6 @@
 import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Data.Set.Card
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 
 /-!
 # Landman (2020) — Iceberg Semantics for Mass Nouns and Count Nouns
@@ -51,7 +51,7 @@ are perspectives on the same stuff, and Boolean atoms play no role.
 
 ## Connections
 
-* The disjointness machinery is `Core/Order/Mereology`'s
+* The disjointness machinery is `Semantics/Mereology`'s
   `OverlapPred`/`DisjointPred`/`nullSchema` (shared with
   [sutton-filip-2021], whose counting bases are this book's bases and
   whose individuation schemas select among its perspectives —

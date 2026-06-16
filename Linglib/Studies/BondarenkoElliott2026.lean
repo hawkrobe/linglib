@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Mereology
+import Linglib.Semantics.Mereology
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Entailment
 import Linglib.Studies.Pasternak2019

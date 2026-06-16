@@ -31,7 +31,7 @@ disjunction ([fox-2007]).
 
 The plural individual `x` is modelled as `Finset Atom` with `a ∈ x`
 for "a is an atomic part of x". The paper uses mereological `≤_AT`
-(atomic part-of) over `Core/Order/Mereology.lean`'s lattice-based `Atom`
+(atomic part-of) over `Semantics/Mereology.lean`'s lattice-based `Atom`
 predicate. The `Finset` representation is simpler and adequate for the
 exhaustification proofs; a mereological formulation can be added as a
 bridge if needed.
