@@ -137,7 +137,7 @@ variable {World Atom : Type*}
     then `y ∈ P w`. Every part of a mass-noun instance is also an instance. -/
 theorem isMass_div (P : Property World Atom) (hMass : IsMass World Atom P) (w : World) :
     Mereology.DIV (P w) :=
-  fun x y hx hyx => (hMass w y).mpr fun a ha => (hMass w x).mp hx a (hyx ha)
+  Mereology.div_iff.mpr fun x y hx hyx => (hMass w y).mpr fun a ha => (hMass w x).mp hx a (hyx ha)
 
 /-- Mass properties have cumulative reference: if `x ∈ P w` and `y ∈ P w`,
     then `x ∪ y ∈ P w`. Combining mass-noun instances yields an instance. -/
