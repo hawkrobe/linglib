@@ -45,6 +45,12 @@ def polar (p : Set W) : Question W :=
 theorem polar_eq_sup (p : Set W) :
     polar p = declarative p ⊔ declarative pᶜ := rfl
 
+/-- **Membership in `polar p`**: a state resolves the polar question iff
+    it is contained in `p` or in `pᶜ` (i.e. it settles the issue either
+    way). -/
+@[simp] theorem mem_polar {p σ : Set W} : σ ∈ polar p ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
+  rw [polar_eq_sup]; simp only [mem_sup, mem_declarative]
+
 @[simp] theorem info_polar (p : Set W) : (polar p).info = Set.univ := by
   rw [polar_eq_sup, info_sup, info_declarative, info_declarative,
       Set.union_compl_self]
@@ -58,22 +64,10 @@ theorem not_isInformative_polar (p : Set W) :
     declaratives because `univ ⊆ p` requires `p = univ`. -/
 theorem isInquisitive_polar_iff (p : Set W) :
     (polar p).isInquisitive ↔ p ≠ ∅ ∧ p ≠ Set.univ := by
-  show (polar p).info ∉ (polar p).props ↔ _
+  show (polar p).info ∉ polar p ↔ _
   rw [info_polar]
-  show (Set.univ : Set W) ∉ (declarative p).props ∪ (declarative pᶜ).props ↔ _
-  simp only [declarative, Set.mem_union, Set.mem_setOf_eq, Set.univ_subset_iff,
-             not_or]
-  refine ⟨?_, ?_⟩
-  · rintro ⟨hnp, hnpc⟩
-    refine ⟨?_, hnp⟩
-    intro he
-    apply hnpc
-    rw [he, Set.compl_empty]
-  · rintro ⟨hne, hnu⟩
-    refine ⟨hnu, ?_⟩
-    intro hpc
-    apply hne
-    rw [← compl_compl p, hpc, Set.compl_univ]
+  simp only [mem_polar, Set.univ_subset_iff, Set.compl_univ_iff, not_or]
+  tauto
 
 /-! ### `alt`-characterization of `polar` -/
 
@@ -468,27 +462,8 @@ corners therefore satisfies `polar p ⊓ polar q ≤ ofList L`. -/
 theorem mem_polar_inf_polar_iff {p q σ : Set W} :
     σ ∈ polar p ⊓ polar q ↔
       σ ⊆ p ∩ q ∨ σ ⊆ p ∩ qᶜ ∨ σ ⊆ pᶜ ∩ q ∨ σ ⊆ pᶜ ∩ qᶜ := by
-  constructor
-  · rintro ⟨hp, hq⟩
-    rw [show (polar p) = declarative p ⊔ declarative pᶜ from rfl] at hp
-    rw [show (polar q) = declarative q ⊔ declarative qᶜ from rfl] at hq
-    rcases hp with hp | hp <;> rcases hq with hq | hq
-    · exact Or.inl (Set.subset_inter hp hq)
-    · exact Or.inr (Or.inl (Set.subset_inter hp hq))
-    · exact Or.inr (Or.inr (Or.inl (Set.subset_inter hp hq)))
-    · exact Or.inr (Or.inr (Or.inr (Set.subset_inter hp hq)))
-  · intro h
-    refine ⟨?_, ?_⟩ <;> rw [polar_eq_sup]
-    · rcases h with h | h | h | h
-      · exact Or.inl (h.trans (Set.inter_subset_left))
-      · exact Or.inl (h.trans (Set.inter_subset_left))
-      · exact Or.inr (h.trans (Set.inter_subset_left))
-      · exact Or.inr (h.trans (Set.inter_subset_left))
-    · rcases h with h | h | h | h
-      · exact Or.inl (h.trans (Set.inter_subset_right))
-      · exact Or.inr (h.trans (Set.inter_subset_right))
-      · exact Or.inl (h.trans (Set.inter_subset_right))
-      · exact Or.inr (h.trans (Set.inter_subset_right))
+  simp only [mem_inf, mem_polar, Set.subset_inter_iff]
+  tauto
 
 /-- **Two polar questions ≤ a covering `ofList`**: if all four
     corners of `polar p ⊓ polar q` are contained in cells of `L`,
