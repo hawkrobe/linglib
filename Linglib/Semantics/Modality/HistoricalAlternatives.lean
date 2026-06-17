@@ -1,6 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Defs.LinearOrder
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Core.Logic.Temporal.Basic
 
 /-!
 # Historical Alternatives
@@ -18,7 +19,9 @@ perfectly match it in matters of particular fact up to that time
 * `historicalBase`, `actualHistoryBase`, `futureHistoryBase` : the temporal
   slices of the historical modal base;
 * `histEquiv` : historical equivalence `≃_t` of [condoravdi-2002];
-* `metaphysicalBase` : the equivalence class of the evaluation world under `≃_t`.
+* `metaphysicalBase` : the equivalence class of the evaluation world under `≃_t`;
+* `toTWFrame` : a relation with `HistoricalProperties`, viewed as a
+  `Core.Logic.Temporal.TWFrame` ([thomason-1984], [von-kutschera-1997]).
 
 ## Main results
 
@@ -26,7 +29,9 @@ perfectly match it in matters of particular fact up to that time
   ([abusch-1997]) is derived from `actualHistoryBase` membership;
 * `alternatives_antitone`, `metaphysicalBase_antitone` : the metaphysical base
   shrinks as time advances;
-* `settled_not_diverse` : settled properties block metaphysical readings.
+* `settled_not_diverse` : settled properties block metaphysical readings;
+* `toTWFrame_sat_N_atom` : the object logic's historical necessity `N` reduces to
+  truth throughout the `metaphysicalBase`.
 -/
 
 open Core (WorldTimeIndex)
@@ -460,5 +465,45 @@ theorem diverse_of_witnesses
     (hP : P w') (hnP : ¬ P w'') :
     diverse MB cg t P :=
   ⟨w, hwcg, w', hw', w'', hw'', hP, hnP⟩
+
+/-! ## Grounding in the T × W object logic
+
+A historical-alternatives relation with `HistoricalProperties` satisfies exactly
+the axioms of a `Core.Logic.Temporal.TWFrame` — per-time equivalence (via
+`histEquiv_equivalence'`) and backward closure — so it *is* a T × W frame. The
+object logic's historical necessity `N` then reduces to quantification over
+`metaphysicalBase`, making the denotational base and the object-language modality
+the same operator ([thomason-1984], [von-kutschera-1997]). -/
+
+section TWFrame
+open Core.Logic.Temporal
+
+variable [LinearOrder Time] {Atom : Type*}
+  (history : HistoricalAlternatives W Time) (hp : HistoricalProperties history)
+
+/-- A historical-alternatives relation with `HistoricalProperties`, viewed as a
+    `TWFrame`: `sim` is `histEquiv`, reusing `histEquiv_equivalence'` for the
+    equivalence axiom and `backwards` for backward closure. -/
+def toTWFrame : TWFrame Time W where
+  sim := histEquiv history
+  sim_equiv t := histEquiv_equivalence' hp t
+  sim_backward w w' hle h := hp.backwards w w' _ _ hle h
+
+@[simp] theorem toTWFrame_sim (t : Time) (w w' : W) :
+    (toTWFrame history hp).sim t w w' ↔ w' ∈ metaphysicalBase history w t := Iff.rfl
+
+/-- Historical necessity `N` in the object logic = truth throughout the
+    metaphysical base. -/
+theorem toTWFrame_sat_N_atom (V : Atom → Time → W → Prop) (p : Atom) (t : Time) (w : W) :
+    (toTWFrame history hp).sat V (.N (.atom p)) t w ↔
+      ∀ w' ∈ metaphysicalBase history w t, V p t w' := by
+  simp only [TWFrame.sat_N, TWFrame.sat_atom, toTWFrame_sim]
+
+/-- The all-worlds modality `box` = truth in every world (the unrestricted base). -/
+theorem toTWFrame_sat_box_atom (V : Atom → Time → W → Prop) (p : Atom) (t : Time) (w : W) :
+    (toTWFrame history hp).sat V (.box (.atom p)) t w ↔ ∀ w', V p t w' := by
+  simp only [TWFrame.sat_box, TWFrame.sat_atom]
+
+end TWFrame
 
 end HistoricalAlternatives
