@@ -32,6 +32,7 @@ import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Bilattice
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
@@ -1342,6 +1343,7 @@ import Linglib.Studies.BillEtAl2025
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Studies.Bruening2025
 import Linglib.Studies.Schwarzer2026
+import Linglib.Studies.Schoter1996
 import Linglib.Studies.Stassen2000
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
