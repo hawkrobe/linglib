@@ -2,6 +2,7 @@ import Mathlib.Order.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.BoundedLattice
+import Linglib.Core.Order.Flat
 
 /-!
 # Three-Valued Truth
@@ -21,6 +22,12 @@ Used for:
 - `Truth3`: three-valued truth (`.true`, `.false`, `.indet`)
 - `Truth3.neg`, `join`, `meet`: Strong Kleene connectives
 - Lattice instances: `false < indet < true`
+- `Truth3.equivFlatBool`: carrier iso `Truth3 ≃ Flat Bool`; the flat order is the
+  *knowledge* order, distinct from the truth order (the Kleene bilattice)
+- `Truth3.toFlat_meet_mono_left` etc.: `Truth3` (truth order) and `Flat Bool`
+  (knowledge order) form the Kleene *bilattice*; strong Kleene `meet`/`join` are
+  interlaced (knowledge-monotone), and weak Kleene is not
+  (`Truth3.meetWeak_not_truthMono`)
 -/
 
 namespace Core.Duality
@@ -487,6 +494,88 @@ theorem meetBelnap_ofBool (a b : Bool) :
 theorem joinBelnap_ofBool (a b : Bool) :
     joinBelnap (ofBool a) (ofBool b) = ofBool (a || b) := by
   cases a <;> cases b <;> rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- The knowledge order: Truth3 as the flat domain `Flat Bool`
+-- [kleene-1952]
+-- ════════════════════════════════════════════════════════════════
+
+section KnowledgeOrder
+
+/-- The carrier bijection `Truth3 ≃ Flat Bool`: `indet ↔ ⊥`, `true ↔ some true`,
+`false ↔ some false`. `Flat Bool` carries the *information/knowledge* order
+(`⊥` below both committed values), distinct from `Truth3`'s *truth* order
+(`false < indet < true`) — the two orders of the Kleene bilattice. -/
+def toFlat : Truth3 → Flat Bool
+  | .indet => none
+  | .true => some Bool.true
+  | .false => some Bool.false
+
+/-- Inverse of `toFlat`. -/
+def ofFlat : Flat Bool → Truth3
+  | none => .indet
+  | some Bool.true => .true
+  | some Bool.false => .false
+
+/-- `Truth3` and the flat domain `Flat Bool` share a carrier. -/
+def equivFlatBool : Truth3 ≃ Flat Bool where
+  toFun := toFlat
+  invFun := ofFlat
+  left_inv a := by cases a <;> rfl
+  right_inv x := by cases x with | none => rfl | some b => cases b <;> rfl
+
+/-- **The Kleene bilattice.** The truth order and the knowledge order genuinely
+differ: in the truth order `false ≤ indet`, but in the knowledge order the
+committed value `false` is not below the uncommitted `indet = ⊥`. -/
+theorem truthOrder_ne_knowledgeOrder :
+    Truth3.false ≤ Truth3.indet ∧ ¬ toFlat .false ≤ toFlat .indet := by decide
+
+/-! ### Interlacing: the Kleene bilattice
+
+`Truth3`'s native order is the *truth* order `false < indet < true`; `Flat Bool`
+(`equivFlatBool`) carries the *knowledge* order `⊥ ⊑ true`, `⊥ ⊑ false`. Two
+orders on one carrier is a *bilattice*. Strong Kleene `∧`/`∨` are the *truth*-
+order lattice operations (`meet := min`, `join := max`); what makes them
+canonical is **interlacing** — they are monotone for the *knowledge* order as
+well ([kleene-1952]'s regularity condition). Weak Kleene is *not* interlaced
+(`meetWeak_not_truthMono`), so it is not a bilattice operation.
+
+`Flat Bool`'s `SemilatticeInf` meet `⊓` is the *consensus* `⊗`; its partial join
+(`PartialUnify`) is the *gullibility* `⊕`, partial because three values lack the
+`⊤` ("both") of a full four-valued bilattice — so `Truth3` is the *consistent
+fragment* of that bilattice. -/
+
+/-- Strong Kleene negation is regular (knowledge-monotone); being unary, it is
+in fact the *unique* monotone extension of Boolean `not`. -/
+theorem toFlat_neg_mono {a b : Truth3} (h : toFlat a ≤ toFlat b) :
+    toFlat (neg a) ≤ toFlat (neg b) := by
+  cases a <;> cases b <;> revert h <;> decide
+
+/-- Strong Kleene conjunction is regular (knowledge-monotone in each argument). -/
+theorem toFlat_meet_mono_left {a a' : Truth3} (b : Truth3)
+    (h : toFlat a ≤ toFlat a') : toFlat (meet a b) ≤ toFlat (meet a' b) := by
+  cases a <;> cases a' <;> cases b <;> revert h <;> decide
+
+/-- Strong Kleene disjunction is regular (knowledge-monotone in each argument). -/
+theorem toFlat_join_mono_left {a a' : Truth3} (b : Truth3)
+    (h : toFlat a ≤ toFlat a') : toFlat (join a b) ≤ toFlat (join a' b) := by
+  cases a <;> cases a' <;> cases b <;> revert h <;> decide
+
+/-- Weak Kleene conjunction is **not** interlaced — it fails monotonicity in the
+*truth* order (`indet ≤ true`, yet `meetWeak indet false = indet ≰ false =
+meetWeak true false`). So, unlike strong Kleene `meet`, it is not a bilattice
+operation. -/
+theorem meetWeak_not_truthMono :
+    ¬ ∀ a a' b : Truth3, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
+  fun h => absurd (h .indet .true .false (by decide)) (by decide)
+
+/-- Weak Kleene disjunction is likewise not interlaced (fails truth-order
+monotonicity). -/
+theorem joinWeak_not_truthMono :
+    ¬ ∀ a a' b : Truth3, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
+  fun h => absurd (h .false .indet .true (by decide)) (by decide)
+
+end KnowledgeOrder
 
 end Truth3
 
