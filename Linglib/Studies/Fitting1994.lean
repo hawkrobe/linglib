@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Bilattice
 
 /-!
 # Kleene's three-valued logic as the consistent fragment of Belnap's FOUR
@@ -6,72 +7,33 @@ import Linglib.Core.Logic.Truth3
 
 [fitting-1994] ("Kleene's Three Valued Logics and Their Children") organizes
 Kleene's logics as fragments of Belnap's four-valued bilattice `FOUR`, sliced by
-the *conflation* `−` (the knowledge-order involution). His key observation: the
-strong Kleene values are exactly those `x` with `x ≤_k −x`, i.e. information that
-does not exceed its own conflation — the *consistent* (non-glut) values.
+the *conflation* `−` (the knowledge-order involution): the strong Kleene values
+are exactly those `x` with `x ≤_k −x` — the *consistent* (non-glut) values.
 
-`FOUR` carries two orders — truth `≤_t` and knowledge `≤_k` — with negation `¬`
-(truth inversion, swaps `true`/`false`) and conflation `−` (knowledge inversion,
-swaps `⊥`/`⊤`). Here `FOUR = Bool × Bool` with coordinates `(for, against)`
-(membership in the true- and false-extensions; [schoter-1996]'s evidence pairs,
-transposed).
-
-This file proves that linglib's `Truth3` (Kleene's three-valued logic,
-[kleene-1952]) is exactly the consistent fragment of `FOUR`, in **both** orders:
-`ofTruth3` embeds `Truth3` onto `{x // Consistent x}`, matching the truth order
-(`Truth3`'s `≤`), the knowledge order (`Truth3.toFlat`, i.e. `Flat Bool`, from
-the Kleene-bilattice grounding), and negation. So the gap logic linglib already
-uses for presupposition is the `I`-free slice of the four-valued bilattice; the
-glut `I` is what trivalence excludes. The bilattice route to natural-language
-entailment, implicature, and presupposition is [schoter-1996].
+`FOUR` and its two orders / negation / conflation are the shared substrate in
+`Core.Logic.Bilattice`. Here we prove the slicing for linglib's `Truth3`
+(Kleene's three-valued logic, [kleene-1952]): `ofTruth3` embeds `Truth3` onto the
+consistent fragment of `FOUR`, matching the truth order (`Truth3`'s `≤`), the
+knowledge order (`Truth3.toFlat`, i.e. `Flat Bool`), and negation. So the gap
+logic linglib uses for presupposition is the `I`-free slice; the glut `I` is what
+trivalence excludes. The bilattice route to natural-language entailment,
+implicature, and presupposition is [schoter-1996] (see `Studies.Schoter1996`).
 
 ## Main results
 
-* `FOUR` — Belnap's four-valued bilattice, `(for, against)` pairs over `Bool`
-* `FOUR.tLE`/`kLE`/`neg`/`conf` — truth & knowledge orders, negation, conflation
-* `FOUR.Consistent` — the non-glut fragment `x ≤_k −x` (`= x ≠ I`)
-* `Fitting1994.tLE_ofTruth3`, `kLE_ofTruth3`, `neg_ofTruth3` — `Truth3` is the
-  consistent fragment of `FOUR` as a bilattice (both orders + negation)
+* `Fitting1994.ofTruth3` — the embedding `Truth3 → FOUR`
+* `Fitting1994.ofTruth3_consistent`, `consistent_range` — its image is exactly
+  the consistent fragment
+* `tLE_ofTruth3`, `kLE_ofTruth3`, `neg_ofTruth3` — `Truth3` is the consistent
+  fragment of `FOUR` as a bilattice (both orders + negation)
 -/
 
-open Core.Duality
+open Core.Duality (Truth3)
+open Bilattice (FOUR)
+open Bilattice.Evidential (tLE kLE neg)
+open Bilattice.FOUR (U T F Consistent)
 
 namespace Fitting1994
-
-/-- Belnap's four-valued bilattice `FOUR`, as `(for, against)` pairs over `Bool`
-(membership in the true- / false-extension). -/
-abbrev FOUR := Bool × Bool
-
-namespace FOUR
-
-/-- `⊥`: neither true nor false — no information (a truth-value gap). -/
-def U : FOUR := (false, false)
-/-- `true`. -/
-def T : FOUR := (true, false)
-/-- `false`. -/
-def F : FOUR := (false, true)
-/-- `⊤`: both true and false — inconsistent (a truth-value glut). -/
-def I : FOUR := (true, true)
-
-/-- Truth order: `x ≤_t y` iff more evidence-for and less evidence-against. -/
-@[reducible] def tLE (x y : FOUR) : Prop := x.1 ≤ y.1 ∧ y.2 ≤ x.2
-/-- Knowledge order: `x ≤_k y` iff more evidence both ways (subset of info). -/
-@[reducible] def kLE (x y : FOUR) : Prop := x.1 ≤ y.1 ∧ x.2 ≤ y.2
-/-- Negation: truth inversion, swaps the two coordinates (`true ↔ false`). -/
-def neg (x : FOUR) : FOUR := (x.2, x.1)
-/-- Conflation `−`: knowledge inversion, `(a,b) ↦ (¬b, ¬a)` (swaps `⊥ ↔ ⊤`). -/
-def conf (x : FOUR) : FOUR := (!x.2, !x.1)
-
-/-- The *consistent* (non-glut) fragment: information does not exceed its own
-conflation, `x ≤_k −x` — equivalently `x ≠ I` ([fitting-1994]). -/
-@[reducible] def Consistent (x : FOUR) : Prop := kLE x (conf x)
-
-@[simp] theorem consistent_iff (x : FOUR) : Consistent x ↔ x ≠ I := by
-  obtain ⟨a, b⟩ := x; cases a <;> cases b <;> decide
-
-end FOUR
-
-open FOUR
 
 /-- The embedding of `Truth3` (Kleene-3) into `FOUR`: `indet ↦ ⊥`, `true ↦ T`,
 `false ↦ F`. Its image is exactly the consistent fragment. -/
@@ -81,7 +43,7 @@ def ofTruth3 : Truth3 → FOUR
   | .false => F
 
 theorem ofTruth3_injective : Function.Injective ofTruth3 := by
-  intro a b h; cases a <;> cases b <;> simp_all [ofTruth3, U, T, F]
+  intro a b; cases a <;> cases b <;> decide
 
 theorem ofTruth3_consistent (a : Truth3) : Consistent (ofTruth3 a) := by
   cases a <;> decide
