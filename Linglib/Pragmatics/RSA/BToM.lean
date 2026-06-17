@@ -75,11 +75,11 @@ def channelClassification (Latent : Type*) : LatentClassification Latent where
 correspondence (previously stubbed in the deleted `Core/Conjectures.lean`):
 
 1. **Accessibility ↔ positive credence**: the categorical accessibility
-   relation `R` from `Core.Logic.Intensional` should be the support of the
+   relation `R` from `Intensional` should be the support of the
    probabilistic credence: `R x w w' ↔ credence x w w' > 0`.
 2. **Doxastic necessity ↔ credence one**: `□_x p ↔ P_x(p) = 1`. The two
    doxastic operators agree at the probability-1 limit.
-3. **Rigidity ↔ common-ground constancy**: a `Core.Intension` is rigid
+3. **Rigidity ↔ common-ground constancy**: a `Intensional.Intension` is rigid
    iff every agent assigns it the same value across all positively-
    credenced worlds.
 

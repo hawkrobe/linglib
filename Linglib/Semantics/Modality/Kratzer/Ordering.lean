@@ -20,13 +20,13 @@ import Mathlib.Data.Set.Basic
 
 namespace Semantics.Modality.Kratzer
 
-/-! The premise primitives live in `Core.Logic.Intensional.Premise`; re-export
+/-! The premise primitives live in `Intensional.Premise`; re-export
 them under `Semantics.Modality.Kratzer` so the historical `Kratzer.foo` call
 style continues to work. The conversational-background primitives
 (`ConvBackground`, `ModalBase`, …) are defined directly in this namespace by
 `ConversationalBackground.lean`. -/
 
-export Core.Logic.Intensional.Premise
+export Intensional.Premise
   (propExtension propIntersection followsFrom isConsistent isCompatibleWith)
 
 variable {W : Type*}

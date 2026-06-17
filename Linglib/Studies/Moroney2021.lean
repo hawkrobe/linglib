@@ -665,8 +665,8 @@ with the parameters used in §7 for all four languages, and connects the
 licensing predicate `Determiner.licenses` to Moroney's central empirical
 finding: Shan licenses anaphoric definiteness without any anaphoric article. -/
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Definiteness (Description)
 
 /-- Shorthand handles for the four Table 4.4 determiner sets, each defined in

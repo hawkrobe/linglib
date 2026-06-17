@@ -70,7 +70,7 @@ set_option autoImplicit false
 
 namespace BellerGerstenberg2025
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 
 -- ============================================================================

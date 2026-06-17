@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Rigidity
 import Mathlib.Data.Fin.Basic
 
 /-! # Montague (1973) intensional examples [montague-1973]
@@ -10,13 +10,13 @@ Toy examples in Montague's PTQ-style intensional logic:
 - De dicto vs de re readings
 
 Uses the infrastructure from
-`Core/Logic/Intensional/Examples.lean`. -/
+`Semantics/Intensional/Examples.lean`. -/
 
 namespace Montague1973Attitudes
 
 abbrev World := Fin 4
 
-open Core.Logic.Intensional
+open Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where
@@ -165,36 +165,36 @@ Hesperus/Phosphorus examples to the direct reference framework. -/
 
 Contrast with `morningStar` above, which is a Fregean individual concept
 that varies across worlds. The proper name always returns `.hesperus`. -/
-def hesperus_rigid : Core.Intension World ToyIEntity :=
-  Core.Intension.rigid .hesperus
+def hesperus_rigid : Intensional.Intension World ToyIEntity :=
+  Intensional.Intension.rigid .hesperus
 
 /-- `morningStar` is NOT rigid: it picks out different entities at
 different worlds. This contrasts with `hesperus_rigid` which IS rigid. -/
-theorem morningStar_not_rigid : ¬ Core.Intension.IsRigid morningStar := by
+theorem morningStar_not_rigid : ¬ Intensional.Intension.IsRigid morningStar := by
   intro h
   have h12 := h (1 : World) (2 : World)
   simp only [morningStar] at h12
   cases h12
 
 /-- `hesperus_rigid` IS rigid (a proper name in the Kripkean sense). -/
-theorem hesperus_rigid_isRigid : Core.Intension.IsRigid hesperus_rigid :=
-  Core.Intension.rigid_isRigid _
+theorem hesperus_rigid_isRigid : Intensional.Intension.IsRigid hesperus_rigid :=
+  Intensional.Intension.rigid_isRigid _
 
 /-- Independence of names vs concepts: a Fregean individual concept
 (`morningStar`) can agree with a Kripkean name (`hesperus_rigid`) at
 one world while diverging at others. -/
 theorem name_vs_concept_independence :
     -- They agree at w0 (both pick out .hesperus)
-    Core.Intension.CoRefer hesperus_rigid morningStar (0 : World) ∧
+    Intensional.Intension.CoRefer hesperus_rigid morningStar (0 : World) ∧
     -- But they are NOT co-extensional
-    ¬ Core.Intension.CoExtensional hesperus_rigid morningStar := by
+    ¬ Intensional.Intension.CoExtensional hesperus_rigid morningStar := by
   constructor
   · -- CoRefer at w0: hesperus_rigid (0 : World) = morningStar (0 : World)
     rfl
   · -- Not co-extensional: they disagree at w2
     intro h
     have := h (2 : World)
-    simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
+    simp only [hesperus_rigid, Intensional.Intension.rigid, morningStar] at this
     cases this
 
 end Montague1973Attitudes

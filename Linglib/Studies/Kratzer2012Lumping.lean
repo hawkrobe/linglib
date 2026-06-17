@@ -137,7 +137,7 @@ still-life painting variant from §5.2.
 
 namespace Kratzer2012Lumping
 
-open Core.Logic.Intensional
+open Intensional
 open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 open Semantics.Conditionals.PremiseSemantic
 

@@ -21,8 +21,8 @@ import Linglib.Semantics.Context.Shifts
 
 namespace Semantics.Reference.Kaplan
 
-open Core (Intension)
-open Core.Intension (rigid IsRigid rigid_isRigid)
+open Intensional (Intension)
+open Intensional.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Reference.Basic
 open Semantics.Context (KContext)
 

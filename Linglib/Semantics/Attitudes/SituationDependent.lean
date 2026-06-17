@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Attitudes.Doxastic
 
@@ -36,7 +36,7 @@ open Tense
 
 namespace Semantics.Attitudes.SituationDependent
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 open Semantics.Attitudes.Doxastic
   (Veridicality DoxasticPredicate AccessRel boxAt veridicalityHolds)
 

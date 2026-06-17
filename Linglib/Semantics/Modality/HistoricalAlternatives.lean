@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Defs.LinearOrder
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Logic.Temporal.Basic
 
 /-!
@@ -34,7 +34,7 @@ perfectly match it in matters of particular fact up to that time
   truth throughout the `metaphysicalBase`.
 -/
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 /-- Historical-alternatives relation: given a ⟨world, time⟩ index, returns the
     worlds that agree with that world up to that time. This is the basis for the

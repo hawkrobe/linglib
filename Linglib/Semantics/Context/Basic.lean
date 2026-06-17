@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Tense.Reichenbach
 
 /-!
@@ -18,7 +18,7 @@ open Time
 
 namespace Semantics.Context
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 

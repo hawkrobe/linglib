@@ -25,7 +25,7 @@ in this study file.
 namespace Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
-open Core.Logic.Intensional (Denot Ty)
+open Intensional (Denot Ty)
 
 variable {E W : Type}
 

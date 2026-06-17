@@ -42,8 +42,8 @@ Choice Raising, Intersection, Minimization). Two results, both routing through t
 
 namespace Champollion2016
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Conjunction
+open Intensional
+open Intensional.Conjunction
 open Semantics.Plurality.Algebra
 
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates

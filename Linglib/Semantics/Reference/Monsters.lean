@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Kaplan
 
 /-!
@@ -30,8 +30,8 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 namespace Semantics.Reference.Monsters
 
 open Semantics.Context
-open Core (Intension)
-open Core.Intension (IsRigid)
+open Intensional (Intension)
+open Intensional.Intension (IsRigid)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Monster

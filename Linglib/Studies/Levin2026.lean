@@ -63,7 +63,7 @@ does not directly accommodate. This file formalizes the specific case.
 namespace Levin2026
 
 open Verb
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Semantics.Lexical
 open LevinClass (pushPull hit wipe)

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Semantics.Mood.POSW
@@ -66,7 +66,7 @@ conservativity. Example "Have a cookie" is (60) in §2.2 (not §3).
 
 namespace Roberts2023
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Semantics.Mood.IllocutionaryMood (sincerityCondition)
 open Semantics.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
@@ -79,7 +79,7 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Core.WorldTimeIndex` and `HistoricalAlternatives`:
+`Intensional.WorldTimeIndex` and `HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────

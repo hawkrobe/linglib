@@ -69,7 +69,8 @@ Subordinate Future.
 
 namespace Tense
 
-open _root_.Core (Assignment WorldTimeIndex)
+open _root_.Core (Assignment)
+open _root_.Intensional (WorldTimeIndex)
 open Semantics.Dynamic.Core
 
 /--

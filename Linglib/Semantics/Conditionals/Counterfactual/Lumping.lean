@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Lattice
-import Linglib.Core.Logic.Intensional.Situations
+import Linglib.Semantics.Intensional.Situations
 
 /-!
 # Lumping
@@ -16,7 +16,7 @@ counterfactuals that arise when independent true propositions are added
 freely (the Paula-paints-a-still-life and zebra-escapes examples in
 [kratzer-2012], §5.4.1).
 
-This module sits on top of `Core/Logic/Intensional/Situations.lean`, which
+This module sits on top of `Semantics/Intensional/Situations.lean`, which
 provides the `SituationFrame` carrier — entity/index types whose `Index`
 carries a partial order representing parthood. Propositions are `Set F.Index`;
 the order grounds both lumping and persistence (= mathlib's `Monotone`,
@@ -51,7 +51,7 @@ formal definitions in §5.4.4 — is out of scope here.
 namespace Semantics.Conditionals.Counterfactual
 
 open Set
-open Core.Logic.Intensional
+open Intensional
 
 /-! ## Lumping ([kratzer-2012] §5.3.3, p. 118)
 

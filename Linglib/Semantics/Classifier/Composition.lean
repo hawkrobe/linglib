@@ -56,11 +56,11 @@ variable {W : Type u} {E : Type v} [PartialOrder E]
 
     In the type-theoretic semantics literature this is a type shift
     `⟨s,n⟩ → ⟨s,⟨e,t⟩⟩`. -/
-def upNum (atomic : Core.Intension W (E → Prop)) (n : NumeralIntens W) :
-    Core.Intension W (E → Prop) :=
+def upNum (atomic : Intensional.Intension W (E → Prop)) (n : NumeralIntens W) :
+    Intensional.Intension W (E → Prop) :=
   fun w x => atomCount atomic w x = n w
 
-@[simp] lemma upNum_apply (atomic : Core.Intension W (E → Prop))
+@[simp] lemma upNum_apply (atomic : Intensional.Intension W (E → Prop))
     (n : NumeralIntens W) (w : W) (x : E) :
     upNum atomic n w x ↔ {y : E | y ≤ x ∧ atomic w y}.ncard = n w := Iff.rfl
 
@@ -73,7 +73,7 @@ def upNum (atomic : Core.Intension W (E → Prop)) (n : NumeralIntens W) :
     over a uniqueness-of-cardinality witness and would establish ∪ ∘ ∩ = id
     on the property image of ∪. Marked `noncomputable` because the inverse
     of an arbitrary intensional property is not constructively decidable. -/
-noncomputable def downNum (atomic P : Core.Intension W (E → Prop)) (w : W) :
+noncomputable def downNum (atomic P : Intensional.Intension W (E → Prop)) (w : W) :
     Option ℕ :=
   open Classical in
   if h : ∃ x, P w x then

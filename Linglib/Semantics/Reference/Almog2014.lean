@@ -60,8 +60,8 @@ open Semantics.Reference.Kaplan (SingularProposition indexical)
 open Semantics.Reference.Donnellan (UseMode referentialExpression)
 open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
 open Semantics.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
-open Core (Intension)
-open Core.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
+open Intensional (Intension)
+open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
   rigid_evalAt_lossy)
 
 /-! ## Canonical Referential Profiles -/

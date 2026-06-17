@@ -1,6 +1,6 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 
 /-!
 # Semantic Equivalence and Spurious Ambiguity
@@ -25,7 +25,7 @@ namespace CCG.Equivalence
 
 open CCG
 open Combinator (B T)
-open Core.Logic.Intensional
+open Intensional
 
 -- Semantic Equivalence
 

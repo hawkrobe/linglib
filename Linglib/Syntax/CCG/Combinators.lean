@@ -1,6 +1,6 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Composition.Combinator
 
 /-!
@@ -18,7 +18,7 @@ Chapters 3 and 8).
 namespace CCG.Combinators
 
 open CCG
-open Core.Logic.Intensional
+open Intensional
 open Combinator
 
 -- The `B`/`T`/`S`/`I`/`K`/`C` algebra lives in `Semantics/Composition/Combinator.lean`

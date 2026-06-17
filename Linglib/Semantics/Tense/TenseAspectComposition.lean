@@ -40,7 +40,7 @@ import Linglib.Semantics.Quantification.Basic
 
 namespace Tense.TenseAspectComposition
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Core.Order
 open Semantics.Aspect

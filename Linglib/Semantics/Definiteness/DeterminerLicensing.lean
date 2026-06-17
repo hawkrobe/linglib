@@ -10,7 +10,7 @@ form needed to realize a given `Description` constructor? Kept separate from
 `E`/`W`-parameterized `Description` substrate.
 -/
 
-open Core.Logic.Intensional.Variables (DenotGS)
+open Intensional.Variables (DenotGS)
 open Semantics.Definiteness (Description)
 open Features.Definiteness (DefPresupType)
 

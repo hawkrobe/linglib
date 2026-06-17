@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Mathlib.Data.Set.Function
 
 /-!
@@ -23,7 +23,7 @@ construction.
 
 ## Reuse
 
-Built on `Core.Intension W τ` (`Core/Logic/Intensional/Rigidity.lean`) — no
+Built on `Intensional.Intension W τ` (`Semantics/Intensional/Rigidity.lean`) — no
 parallel `Concept` type is introduced. The acquaintance predicate is
 `Set.image`-membership; cover exhaustiveness is `Set.SurjOn`. Both are
 mathlib idioms — the only genuinely new content here is naming.
@@ -31,7 +31,7 @@ mathlib idioms — the only genuinely new content here is naming.
 
 namespace Semantics.Reference.Acquaintance
 
-open Core (Intension)
+open Intensional (Intension)
 
 /-- A conceptual cover ([aloni-2001] §3.2): a set of intensions over
     an evaluation index `Idx` representing the agent's available "ways of

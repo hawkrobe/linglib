@@ -18,13 +18,13 @@ This module provides:
 
 -/
 
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Features.ScopeTypes
 
 namespace Semantics.Scope
 
-open Core.Logic.Intensional
+open Intensional
 open ScopeTheory
 open Quantification
 

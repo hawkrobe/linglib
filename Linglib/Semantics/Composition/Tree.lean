@@ -1,6 +1,6 @@
 import Linglib.Syntax.Tree.Basic
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Modification.Basic
 
@@ -38,8 +38,8 @@ Two effect-discipline choices, both visible rather than stipulated:
 
 namespace Semantics.Composition.Tree
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Montague (Lexicon)
 
 /-! ### Composition primitives -/

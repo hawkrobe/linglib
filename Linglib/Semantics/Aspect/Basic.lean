@@ -46,7 +46,7 @@ The constraint `t_LB ⊆ t_r` (subset) was previously transcribed as `∈`
 
 -/
 
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Interval
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Events.Basic
@@ -57,7 +57,7 @@ import Linglib.Semantics.Events.Basic
 
 namespace Semantics.Aspect
 
-open _root_.Core (WorldTimeIndex)
+open _root_.Intensional (WorldTimeIndex)
 open Features
 
 -- ════════════════════════════════════════════════════

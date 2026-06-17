@@ -16,7 +16,7 @@ explicit entity (`E`) and index (`W`) type parameters and a type.
 - `up`, `down` — intension formation / extension extraction (DWP Rules B.14–B.15)
 -/
 
-namespace Core.Logic.Intensional
+namespace Intensional
 
 -- ════════════════════════════════════════════════════════════════
 -- § Semantic Types (DWP Ch. 6, Def B.1)
@@ -85,13 +85,13 @@ def Denot (E W : Type) : Ty → Type
 
 /-- ^α — form the rigid intension of an expression.
     Maps a denotation to the constant function over indices.
-    Definitionally equal to `Core.Intension.rigid`. -/
+    Definitionally equal to `Intensional.Intension.rigid`. -/
 def up {E W : Type} {a : Ty} (x : Denot E W a) : Denot E W (.intens a) :=
   λ _ => x
 
 /-- ˇα — extract the extension at index i.
     Evaluates an intension at a given index.
-    Definitionally equal to `Core.Intension.evalAt`. -/
+    Definitionally equal to `Intensional.Intension.evalAt`. -/
 def down {E W : Type} {a : Ty} (s : Denot E W (.intens a)) (i : W) : Denot E W a :=
   s i
 
@@ -148,4 +148,4 @@ theorem curry_uncurry {E W : Type} (f : Denot E W (.e ⇒ .e ⇒ .t)) :
 theorem uncurry_curry {E : Type} (W : Type) (r : E × E → Prop) :
     uncurry (curry (W := W) r) = r := rfl
 
-end Core.Logic.Intensional
+end Intensional

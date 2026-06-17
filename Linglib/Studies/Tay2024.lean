@@ -48,7 +48,7 @@ Connects:
 
 namespace Tay2024
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Causation.Resultatives
 open Morphology.WordStructure

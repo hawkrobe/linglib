@@ -324,7 +324,7 @@ namespace EveryNot
 
 open BigOperators
 open Real (rpow rpow_nonneg)
-open Core.Logic.Intensional (Denot)
+open Intensional (Denot)
 open Quantification (every_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
@@ -843,7 +843,7 @@ theorem atLeast_truth_table :
 
 -- Compositional Grounding
 
-open Core.Logic.Intensional (Denot)
+open Intensional (Denot)
 open Quantification (exactly_n_sem at_least_n_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 

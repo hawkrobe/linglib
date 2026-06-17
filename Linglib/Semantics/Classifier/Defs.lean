@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Card
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Order.Comparison
 
 /-!
@@ -47,17 +47,17 @@ universe u v
 structure ClassifierDenot (W : Type u) (E : Type v) [PartialOrder E] where
   /-- The sortal presupposition. ⟦-rin⟧ presupposes `flower`; ⟦-nin⟧
       presupposes `human`; ⟦-hiki⟧ presupposes `animal ∧ small`. -/
-  sortal : Core.Intension W (E → Prop)
+  sortal : Intensional.Intension W (E → Prop)
   /-- The countable base whose atomic ⊑-parts of `x` are counted.
       For atomic-sortal classifiers, `counted = sortal` (see `ofSortal`). -/
-  counted : Core.Intension W (E → Prop)
+  counted : Intensional.Intension W (E → Prop)
 
 /-- The atom-count measure: the number of ⊑-atomic `P`-parts of `x` in world
     `w`. Noncomputable (`Set.ncard`); this is the `μ` over which classifier
     counting is ordinary numeral comparison (`Comparison.eq.over`), and the same
     set the Sudo ∪/∩ operators (`upNum`/`downNum`) count. -/
 noncomputable def atomCount {W : Type u} {E : Type v} [PartialOrder E]
-    (P : Core.Intension W (E → Prop)) (w : W) (x : E) : ℕ :=
+    (P : Intensional.Intension W (E → Prop)) (w : W) (x : E) : ℕ :=
   {y : E | y ≤ x ∧ P w y}.ncard
 
 namespace ClassifierDenot
@@ -68,7 +68,7 @@ variable {W : Type u} {E : Type v} [PartialOrder E]
     The sortal and the counting base coincide — the standard case in
     Sudo (4) for `-rin`, (8a) for `-nin`, (8b) for `-hiki` (with the
     sortal being a conjunction `small ∧ animal`). -/
-def ofSortal (P : Core.Intension W (E → Prop)) : ClassifierDenot W E where
+def ofSortal (P : Intensional.Intension W (E → Prop)) : ClassifierDenot W E where
   sortal := P
   counted := P
 
@@ -84,15 +84,15 @@ def ofSortal (P : Core.Intension W (E → Prop)) : ClassifierDenot W E where
 def apply (cl : ClassifierDenot W E) (w : W) (n : ℕ) (x : E) : Prop :=
   cl.sortal w x ∧ x ∈ Core.Order.Comparison.eq.over (atomCount cl.counted w) n
 
-@[simp] lemma ofSortal_sortal (P : Core.Intension W (E → Prop)) :
+@[simp] lemma ofSortal_sortal (P : Intensional.Intension W (E → Prop)) :
     (ofSortal P).sortal = P := rfl
 
-@[simp] lemma ofSortal_counted (P : Core.Intension W (E → Prop)) :
+@[simp] lemma ofSortal_counted (P : Intensional.Intension W (E → Prop)) :
     (ofSortal P).counted = P := rfl
 
 /-- For atomic-sortal classifiers, the body reduces to the join of the
     sortal presupposition and the cardinality constraint over `P`. -/
-lemma apply_ofSortal (P : Core.Intension W (E → Prop)) (w : W) (n : ℕ) (x : E) :
+lemma apply_ofSortal (P : Intensional.Intension W (E → Prop)) (w : W) (n : ℕ) (x : E) :
     apply (ofSortal P) w n x ↔
       P w x ∧ {y : E | y ≤ x ∧ P w y}.ncard = n := Iff.rfl
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Comparative
@@ -57,11 +57,11 @@ differences of degree operators or definite descriptions. -/
 tower-based indexical ACTUALLY (which manipulates context-index pairs for
 demonstratives) — von Stechow's operator is simpler: given a
 world-dependent value, extract its extension at `w₀`. Defined via
-`Core.Intension.evalAt` with arguments flipped (world first, for
+`Intensional.Intension.evalAt` with arguments flipped (world first, for
 readability in comparative constructions where the actual world is
 syntactically prominent). -/
 def actuallyDeg {W D : Type*} (w₀ : W) (f : W → D) : D :=
-  Core.Intension.evalAt f w₀
+  Intensional.Intension.evalAt f w₀
 
 section IntensionalCore
 
@@ -110,13 +110,13 @@ the ACTUALLY-extracted actual-world degree. -/
 theorem deRe_unfolds
     (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) :
     deReComparative μ w₀ wBel x ↔ μ wBel x > μ w₀ x := by
-  simp [deReComparative, actuallyDeg, Core.Intension.evalAt]
+  simp [deReComparative, actuallyDeg, Intensional.Intension.evalAt]
 
 /-- Maximal degree across a set of accessible worlds.
 "The biggest a polar bear could be" = max over ◇-accessible worlds of
 `μ(polar bear)`. Used for modal comparatives. The `acc` parameter is a
 set of worlds (typically `{w | R w₀ w = true}` for some
-`Core.Logic.Intensional.BAccessRel R` and base world `w₀`). -/
+`Intensional.BAccessRel R` and base world `w₀`). -/
 def IsMaxDegOverWorlds
     (acc : Set W) (μw : W → D) (d : D) : Prop :=
   (∃ w ∈ acc, μw w = d) ∧ ∀ w ∈ acc, μw w ≤ d
@@ -436,7 +436,7 @@ section RussellExample
   /-- De re reading (with ACTUALLY): John's belief-world length (8)
       exceeds the actual length (5). Consistent thought. -/
   example : deReComparative yachtLength true false () := by
-    simp [deReComparative, actuallyDeg, Core.Intension.evalAt, yachtLength]
+    simp [deReComparative, actuallyDeg, Intensional.Intension.evalAt, yachtLength]
 
   /-- De dicto reading: contradictory by `deDicto_absurd`. -/
   example : ¬ deDictoComparative yachtLength false () :=

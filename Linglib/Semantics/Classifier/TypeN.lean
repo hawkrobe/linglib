@@ -1,5 +1,5 @@
 import Mathlib.Data.Nat.Basic
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # Numerals as Type-n Singular Terms
@@ -43,12 +43,12 @@ universe u
 /-- A numeral intension: a function from worlds to natural-number meanings.
     [sudo-2016] (eq. 2) ⟦six⟧ = λw_s. 6 is a `NumeralIntens W` for any
     world type `W`. -/
-abbrev NumeralIntens (W : Type u) := Core.Intension W ℕ
+abbrev NumeralIntens (W : Type u) := Intensional.Intension W ℕ
 
 /-- The rigid numeral intension: a numeral `n` denotes the constant function
     `λw. n`. This is `Intension.rigid` specialized to `ℕ`. -/
 def NumeralIntens.const {W : Type u} (n : ℕ) : NumeralIntens W :=
-  Core.Intension.rigid n
+  Intensional.Intension.rigid n
 
 @[simp] lemma NumeralIntens.const_apply {W : Type u} (n : ℕ) (w : W) :
     NumeralIntens.const n w = n := rfl
@@ -56,7 +56,7 @@ def NumeralIntens.const {W : Type u} (n : ℕ) : NumeralIntens W :=
 /-- Every constant numeral intension is rigid. Sudo's empirical claim that
     numerals do not vary across worlds is the rigidity of `NumeralIntens.const`. -/
 theorem NumeralIntens.const_isRigid {W : Type u} (n : ℕ) :
-    Core.Intension.IsRigid (NumeralIntens.const (W := W) n) :=
-  Core.Intension.rigid_isRigid n
+    Intensional.Intension.IsRigid (NumeralIntens.const (W := W) n) :=
+  Intensional.Intension.rigid_isRigid n
 
 end Semantics.Classifier

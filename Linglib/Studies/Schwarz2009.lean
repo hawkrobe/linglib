@@ -67,8 +67,8 @@ We verify:
 namespace Schwarz2009
 
 open Features.Definiteness
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Definiteness
 
 -- ════════════════════════════════════════════════════════════════

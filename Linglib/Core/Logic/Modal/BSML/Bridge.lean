@@ -225,7 +225,7 @@ open Core.Logic.Modal (diamond)
 `BSMLModel.access : W → Finset W` can be converted to a Prop-valued
 `AccessRel W = W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
 canonical accessibility-relation type in
-`Core.Logic.Intensional`.
+`Intensional`.
 -/
 
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
@@ -236,7 +236,7 @@ def BSMLModel.toAccessRel (M : BSMLModel W Atom) :
 
 /-- `classicalEval` of ◇φ agrees with `diamond` (Prop-valued possibility),
     connecting BSML's classical evaluation to the shared modal logic
-    infrastructure from `Core.Logic.Intensional`. -/
+    infrastructure from `Intensional`. -/
 theorem classicalEval_agrees_diamond_poss
     (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) :
     classicalEval M (.poss φ) w = true ↔

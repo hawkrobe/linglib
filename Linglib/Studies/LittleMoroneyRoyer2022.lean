@@ -1,7 +1,7 @@
 import Linglib.Typology.ClassifierSystem
 import Linglib.Syntax.Tree.Cat
 import Linglib.Core.Logic.Assignment
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.Chierchia1998
 import Linglib.Fragments.Mayan.Chol.ClassifierSystem
@@ -47,7 +47,7 @@ constraint rather than realized as a stand-alone constituent of type
 namespace LittleMoroneyRoyer2022
 
 open Typology
-open Core.Logic.Intensional (Ty)
+open Intensional (Ty)
 open Semantics.Montague (LexEntry Lexicon)
 open Semantics.Composition.Tree (interp)
 open Syntax (Tree)

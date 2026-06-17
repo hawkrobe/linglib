@@ -18,13 +18,13 @@ These mechanisms are independent: a term can exhibit any subset.
 
 -/
 
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Context.Basic
 
 namespace Semantics.Reference.Basic
 
-open Core (Intension)
-open Core.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
+open Intensional (Intension)
+open Intensional.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
   rigid_identity_necessary)
 
 /-! ## Context and Character -/
@@ -117,7 +117,7 @@ theorem properName_isDirectlyReferential {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
   λ _ => rigid_isRigid e
 
-/-- The content of a proper name equals `rigid e`, connecting to Core.Intension. -/
+/-- The content of a proper name equals `rigid e`, connecting to Intensional.Intension. -/
 theorem properName_content_eq_rigid {C W E : Type*} (e : E) (c : C) :
     (properName (W := W) e).character c = rigid e := rfl
 
@@ -145,7 +145,7 @@ theorem properName_deJureRigid {C W E : Type*} (e : E) :
 
 /-- Two proper names that co-refer are co-extensional (Kripke's argument).
 
-Bridge to `Core.Intension.rigid_identity_necessary`: if "Hesperus" and
+Bridge to `Intensional.Intension.rigid_identity_necessary`: if "Hesperus" and
 "Phosphorus" are both proper names and co-refer at the actual world,
 they have the same content. -/
 theorem properNames_corefer_coextensional {C W E : Type*}

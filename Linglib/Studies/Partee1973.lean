@@ -1,7 +1,7 @@
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Semantics.Reference.KaplanLD
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy
@@ -61,9 +61,9 @@ namespace Partee1973
 
 open Tense (interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST)
 open Semantics.Reference.KaplanLD (opNow)
-open Core.SitVarStatus (SitVarStatus)
-open Core (WorldTimeIndex)
-open Core.ReferentialMode (ReferentialMode)
+open Intensional.SitVarStatus (SitVarStatus)
+open Intensional (WorldTimeIndex)
+open Intensional.ReferentialMode (ReferentialMode)
 
 
 -- ════════════════════════════════════════════════════════════════

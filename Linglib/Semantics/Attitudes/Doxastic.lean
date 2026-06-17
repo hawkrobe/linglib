@@ -50,7 +50,7 @@ import Linglib.Semantics.Lexical.MeaningComponents
 
 namespace Semantics.Attitudes.Doxastic
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Features (Veridicality)
 open Features

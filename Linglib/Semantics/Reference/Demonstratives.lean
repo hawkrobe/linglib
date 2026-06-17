@@ -27,8 +27,8 @@ import Linglib.Semantics.Reference.Nominal
 
 namespace Semantics.Reference.Demonstratives
 
-open Core (Intension)
-open Core.Intension (rigid IsRigid rigid_isRigid)
+open Intensional (Intension)
+open Intensional.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Context (KContext)
 open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential)
 

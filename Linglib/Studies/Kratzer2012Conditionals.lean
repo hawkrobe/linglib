@@ -53,7 +53,7 @@ open Semantics.Modality.Kratzer
     NB: This is the *trivial* collapse where one proposition already IS the
     singleton {w}. [kratzer-2012] distinguishes this from totally-realistic
     backgrounds proper (`isTotallyRealistic` in
-    `Core/Logic/Intensional/ConversationalBackground.lean`), which carry many
+    `Semantics/Intensional/ConversationalBackground.lean`), which carry many
     propositions — facts about `w` — whose intersection is `{w}`. The
     lumping/dividing of those propositions does theoretical work in
     counterfactuals (Ch. 3 §3.1). For the §2.9 recipe only `⋂f(w) = {w}`

@@ -1,5 +1,5 @@
 import Linglib.Features.InformationStructure
-import Linglib.Core.Logic.Intensional.Premise
+import Linglib.Semantics.Intensional.Premise
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Polarity.Operator
@@ -89,7 +89,7 @@ def deonticBase : PolarWorld → List (PolarWorld → Prop)
 /-- Kratzer-grounded deontic must: `□p` as [kratzer-1977] Def 5
     (`mustInView`) over the deontic premise set. -/
 def mustGrounded (w : PolarWorld) : Prop :=
-  Core.Logic.Intensional.Premise.mustInView deonticBase pProp w
+  Intensional.Premise.mustInView deonticBase pProp w
 
 /-- □p = "Ali must sleep" (deontic necessity). The Set reflection of
     `mustGrounded`; equivalence proved by `mustP_iff_mustGrounded`. -/
@@ -100,10 +100,10 @@ def mustP : Set PolarWorld := {sleeps_must, nosleep_must}
     proposition, not a hand-tuned function. -/
 theorem mustP_iff_mustGrounded (w : PolarWorld) :
     w ∈ mustP ↔ mustGrounded w := by
-  unfold mustGrounded Core.Logic.Intensional.Premise.mustInView
-         Core.Logic.Intensional.Premise.followsFrom
-         Core.Logic.Intensional.Premise.propIntersection
-         Core.Logic.Intensional.Premise.propExtension
+  unfold mustGrounded Intensional.Premise.mustInView
+         Intensional.Premise.followsFrom
+         Intensional.Premise.propIntersection
+         Intensional.Premise.propExtension
   cases w
   · -- sleeps_must: deonticBase = [pProp], obligation entails p
     simp [mustP, deonticBase, pProp, p]

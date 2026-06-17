@@ -11,15 +11,15 @@ substrate shared by extensional Heim-Kratzer composition, DPL-style register
 state, CDRT, Charlow continuations, and trivalent partial-valuation systems.
 
 `Assignment E := ℕ → E` is **pre-intensional** — pure Tarski variable mapping —
-so it lives in `Core/Logic/` rather than inside `Core/Logic/Intensional/`.
+so it lives in `Core/Logic/` rather than inside `Semantics/Intensional/`.
 The intensional substrate (`Denot E W`, situation assignments
-`Assignment W`, `DenotGS`) builds on this in `Core/Logic/Intensional/`.
+`Assignment W`, `DenotGS`) builds on this in `Semantics/Intensional/`.
 
 Pointwise update of a total assignment is mathlib's `Function.update`
 (no parallel API here): `Function.update_self`, `Function.update_of_ne`,
 `Function.update_idem`, `Function.update_comm`, and `Function.update_eq_self`
 are the update laws. The Heim-Kratzer notation `g[n ↦ x]` is declared in
-`Core/Logic/Intensional/Variables.lean`.
+`Semantics/Intensional/Variables.lean`.
 
 ## When to use `Assignment E` vs raw `Nat → E`
 

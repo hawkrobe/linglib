@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Variables
 
 /-!
 # Maximality and Coppock–Beaver Factorization
@@ -6,7 +6,7 @@ import Linglib.Core.Logic.Intensional.Variables
 
 Predicate operators consumed by the `Description` interpretation function in
 `Semantics/Definiteness/Interpret.lean`. They operate over entity predicates
-`E → Prop` — the extensional fragment of `Core.Logic.Intensional.Denot E W .et`.
+`E → Prop` — the extensional fragment of `Intensional.Denot E W .et`.
 At type `.et` a denotation reduces to `E → Prop` with no occurrence of the
 situation type `W`, so these world-blind operators do not bind it: they apply
 to any IL denotation of type `.et` by defeq, with `E` inferred from the

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Composition.TypeShifting
@@ -20,7 +20,7 @@ counterexamples live in `Studies/BarwiseCooper1981.lean` and
 
 namespace Quantification.Quantifier
 
-open Core.Logic.Intensional
+open Intensional
 open Quantification
 
 /-! ### Semantic-type alias -/

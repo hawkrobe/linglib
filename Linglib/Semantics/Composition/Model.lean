@@ -43,7 +43,7 @@ defeq `abbrev`s, and one `@[simp]` `funMap`/`RelMap` lemma per symbol — see
 set_option autoImplicit false
 
 open FirstOrder Language
-open Core.Logic.Intensional
+open Intensional
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Context.Tower
@@ -49,7 +49,8 @@ open Tense
 
 namespace Percus2000
 
-open Core (WorldTimeIndex Assignment)
+open Core (Assignment)
+open Intensional (WorldTimeIndex)
 open Semantics.Context
 open Features (Attitude)
 

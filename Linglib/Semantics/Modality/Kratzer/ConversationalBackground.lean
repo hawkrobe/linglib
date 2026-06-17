@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Premise
+import Linglib.Semantics.Intensional.Premise
 
 /-!
 # Conversational Backgrounds
@@ -12,7 +12,7 @@ A conversational background maps worlds to sets of propositions. Two roles:
   ordering propositions they satisfy.
 -/
 
-open Core.Logic.Intensional.Premise (propIntersection)
+open Intensional.Premise (propIntersection)
 
 namespace Semantics.Modality.Kratzer
 

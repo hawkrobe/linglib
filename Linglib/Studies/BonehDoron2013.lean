@@ -50,7 +50,7 @@ the simple past tense form, the periphrastic *used to*, and *would*.
 
 namespace BonehDoron2013
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Quantification.CovertQuantifier
 open Semantics.Genericity.Generics (Situation traditionalGEN)

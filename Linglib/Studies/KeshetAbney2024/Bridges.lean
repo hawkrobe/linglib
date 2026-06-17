@@ -20,7 +20,7 @@ between PIP's formulation and the standard treatments in:
 1. **Presupposition projection** — PIP's F operator ↔ `PartialProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `GQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
-4. **Modal logic** — PIP's must/might ↔ `Core.Logic.Intensional.box/diamond`
+4. **Modal logic** — PIP's must/might ↔ `Intensional.box/diamond`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
@@ -249,7 +249,7 @@ frame condition: reflexivity).
 The `must_truth_agrees_box` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
-normal modal logics from `Core.Logic.Intensional`.
+normal modal logics from `Intensional`.
 -/
 
 /-!
@@ -266,7 +266,7 @@ it is intentionally omitted.
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
 Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
-`Core.Logic.Intensional` — the same accessibility type PIP's modal
+`Intensional` — the same accessibility type PIP's modal
 operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
@@ -295,7 +295,7 @@ This is structurally identical to [kratzer-1991]'s analysis where:
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
 
-The formal connection is established via `Core.Logic.Intensional.box`:
+The formal connection is established via `Intensional.box`:
 `must_truth_agrees_box` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
 `box R (p g)`.

@@ -40,7 +40,7 @@ in mixed scenarios:
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Semantics.Conditionals
 open Core.Duality (Truth3 ProjectionType dist)

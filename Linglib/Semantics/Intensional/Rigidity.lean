@@ -10,7 +10,7 @@ Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, evaluation,
 and referential interpretation modes.
 
-These primitives are shared by `Core.Logic.Intensional.Defs`,
+These primitives are shared by `Intensional.Defs`,
 `Semantics.Reference/`, `Semantics.Attitudes/`, and `RSA/` — any module
 that needs world-parameterized meanings.
 
@@ -34,7 +34,7 @@ versions; `Frame.lean` provides the IL-typed versions.
   the operator-side dual of `IsRigid`
 -/
 
-namespace Core
+namespace Intensional
 
 /-- An intension of type τ over indices W: a function from worlds to extensions.
     [gallin-1975]'s Ty2 type system: every type τ has an intensional
@@ -266,14 +266,14 @@ def StableCharacter {C W τ : Type*} (char : C → Intension W τ) : Prop :=
 
 end Intension
 
-end Core
+end Intensional
 
 
 -- ════════════════════════════════════════════════════════════════
 -- Referential Mode ([partee-1973])
 -- ════════════════════════════════════════════════════════════════
 
-namespace Core.ReferentialMode
+namespace Intensional.ReferentialMode
 
 /-- [partee-1973]'s three-way interpretive classification for referential
     expressions. Applies uniformly to pronouns (entity variables) and
@@ -304,14 +304,14 @@ def ReferentialMode.isFree : ReferentialMode → Bool
   | .indexical | .anaphoric => true
   | .bound => false
 
-end Core.ReferentialMode
+end Intensional.ReferentialMode
 
 
 -- ════════════════════════════════════════════════════════════════
 -- Situation Variable Status ([elbourne-2013])
 -- ════════════════════════════════════════════════════════════════
 
-namespace Core.SitVarStatus
+namespace Intensional.SitVarStatus
 
 /-- [elbourne-2013]'s two-way classification of situation variables.
     Coarsens `ReferentialMode`'s three-way distinction: indexical and
@@ -323,7 +323,7 @@ inductive SitVarStatus where
   | bound
   deriving DecidableEq, Repr
 
-open Core.ReferentialMode (ReferentialMode)
+open Intensional.ReferentialMode (ReferentialMode)
 
 /-- Expand Elbourne's two-way classification to Partee's three-way.
     Free situation variables correspond to either indexical or anaphoric
@@ -345,9 +345,9 @@ theorem sitVarStatus_roundtrip (s : SitVarStatus) :
   cases s <;> simp [SitVarStatus.toReferentialModes] at hm <;>
     rcases hm with rfl | rfl <;> rfl
 
-end Core.SitVarStatus
+end Intensional.SitVarStatus
 
-namespace Core
+namespace Intensional
 
 /-! ### Operator extensionality
 
@@ -434,4 +434,4 @@ theorem comp {α β : Type*} {O₁ : (W → α) → W → β} {O₂ : (W → β)
 
 end IsExtensionalAt
 
-end Core
+end Intensional

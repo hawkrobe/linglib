@@ -205,7 +205,7 @@ theorem _root_.Semantics.TypeTheoretic.ModalTypeSystem.roundtrip
     ((mts.toModalSystem Unit).poss w).witnesses P () ↔ (mts w P = true) :=
   Iff.rfl
 
-/-! ## Bridge: ModalSystem ↔ Core.Logic.Intensional.BAccessRel
+/-! ## Bridge: ModalSystem ↔ Intensional.BAccessRel
 
 A Cooper modal system induces a Kripke accessibility relation for each type T:
 R_T(p₁, p₂) holds iff every witness of T in p₁ is also a witness in p₂.
@@ -1148,10 +1148,10 @@ theorem hesperus_phosphorus_same_entity :
 end Ch6Phenomena
 
 -- ============================================================================
--- Bridge: Core.Intension (item 11)
+-- Bridge: Intensional.Intension (item 11)
 -- ============================================================================
 
-/-! ## Bridge: ModalSystem → Core.Intension
+/-! ## Bridge: ModalSystem → Intensional.Intension
 
 TTR's ModalSystem achieves intensionality without `Intension W τ`:
 a type T can have different extensions across possibilities,
@@ -1160,13 +1160,13 @@ which is exactly what an intension does across worlds. -/
 /-- A ModalSystem induces an intension for each type: the function
 mapping each possibility to the type's extension at that possibility. -/
 def modalSystem_induces_intension {Ty Obj : Type} (ms : ModalSystem Ty Obj)
-    (T : Ty) : Core.Intension ms.Poss (Obj → Prop) :=
+    (T : Ty) : Intensional.Intension ms.Poss (Obj → Prop) :=
   λ p => ms.ext p T
 
 /-- A type is rigid in a modal system iff its extension is constant
-across all possibilities — matching Core.Intension.IsRigid. -/
+across all possibilities — matching Intensional.Intension.IsRigid. -/
 def ModalSystem.isRigidType {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) : Prop :=
-  Core.Intension.IsRigid (modalSystem_induces_intension ms T)
+  Intensional.Intension.IsRigid (modalSystem_induces_intension ms T)
 
 -- ============================================================================
 -- Bridge: MeaningPostulate → believe (item 13)

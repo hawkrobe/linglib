@@ -82,7 +82,7 @@ CF and the restrictor — `SkolemCF.applyIntension`). The `.bare` cell is
 `none` — *not CF-analyzed here*, not undefined: bare NPs receive
 kind/indefinite readings (App. A) outside the CF analysis. -/
 def skolemDenot {S E : Type*} (f : SkolemCF S E) (s₀ : S) :
-    Indefinite → Option (Core.Intension S (E → Prop) → E)
+    Indefinite → Option (Intensional.Intension S (E → Prop) → E)
   | .bi => some (f.applyIntension s₀)
   | .bare => none
 
@@ -99,7 +99,7 @@ some restrictor member fails `VP`, witnessed by the CF's choice. It does
 not entail the narrow-scope ¬ > ∃ (see the model below). -/
 theorem bi_wide_scope_specific {S E : Type*}
     {f : SkolemCF S E} {s₀ : S} (hf : (f s₀).isCorrect)
-    {P : Core.Intension S (E → Prop)} {VP : E → Prop} (hN : ∃ x, P s₀ x) :
+    {P : Intensional.Intension S (E → Prop)} {VP : E → Prop} (hN : ∃ x, P s₀ x) :
     ∀ d ∈ skolemDenot f s₀ .bi, ¬ VP (d P) → ∃ x, P s₀ x ∧ ¬ VP x := by
   simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
   exact cf_wide_scope_specific (f s₀) hf hN
@@ -109,7 +109,7 @@ a single CF/restrictor pair where the tied denotation `f_s(P(s))`
 differs from the restrictor-shifted variant `f_s(P(s'))` and from the
 CF-index-shifted variant `f_s'(P(s))`. -/
 theorem tying_contentful :
-    ∃ (S E : Type) (f : SkolemCF S E) (P : Core.Intension S (E → Prop))
+    ∃ (S E : Type) (f : SkolemCF S E) (P : Intensional.Intension S (E → Prop))
       (s s' : S), f.applyIntension s P ≠ f s (P s') ∧
         f.applyIntension s P ≠ f s' (P s) := by
   classical
@@ -159,9 +159,9 @@ denotation picks *Ama* from the (rigid, on this one-situation model)
 *onipa* domain, and she did not sing. -/
 theorem bi_wide_scope_witnessed :
     ∀ d ∈ skolemDenot preferAma () .bi,
-      ¬ ToDwom (d (Core.Intension.rigid (fun _ => True))) := by
+      ¬ ToDwom (d (Intensional.Intension.rigid (fun _ => True))) := by
   simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
-  simp only [SkolemCF.applyIntension, Core.Intension.rigid, preferAma,
+  simp only [SkolemCF.applyIntension, Intensional.Intension.rigid, preferAma,
     if_true]
   exact id
 

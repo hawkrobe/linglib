@@ -202,8 +202,8 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
 theorem abusch_derives_temporal_de_re_full
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Tense.DeRe.TemporalDeReReading W E P Time)
-    (hRigid : Core.Intension.IsRigid dr.concept)
-    (alternatives : Set (Core.WorldTimeIndex W Time))
+    (hRigid : Intensional.Intension.IsRigid dr.concept)
+    (alternatives : Set (Intensional.WorldTimeIndex W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isAbuschFelicitous alternatives Tense.past := by
   refine ⟨(Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore, ?_⟩
@@ -218,7 +218,7 @@ theorem abusch_derives_temporal_de_re_full
 theorem abusch_derives_temporal_de_re_full_metaphysical
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Tense.DeRe.TemporalDeReReading W E P Time)
-    (hRigid : Core.Intension.IsRigid dr.concept)
+    (hRigid : Intensional.Intension.IsRigid dr.concept)
     (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) Tense.past :=

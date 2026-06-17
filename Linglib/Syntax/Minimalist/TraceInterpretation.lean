@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Basic
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Variables
 
 /-!
 # Trace Interpretation
@@ -29,7 +29,7 @@ detected via `isTrace so`.
 
 namespace Minimalist
 
-open Core.Logic.Intensional Core.Logic.Intensional.Variables
+open Intensional Intensional.Variables
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)

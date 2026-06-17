@@ -38,7 +38,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Mereology
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Morphology.Word
 
 
@@ -61,12 +61,12 @@ def Individual.atom {Atom : Type*} (a : Atom) : Individual Atom := {a}
 variable (World Atom : Type*)
 
 /-- A property (intension): function from worlds to sets of individuals.
-    This is `Core.Intension World (Set (Individual Atom))`. -/
-abbrev Property := Core.Intension World (Set (Individual Atom))
+    This is `Intensional.Intension World (Set (Individual Atom))`. -/
+abbrev Property := Intensional.Intension World (Set (Individual Atom))
 
 /-- An individual concept: function from worlds to individuals.
-    This is `Core.Intension World (Individual Atom)`. -/
-abbrev IndividualConcept := Core.Intension World (Individual Atom)
+    This is `Intensional.Intension World (Individual Atom)`. -/
+abbrev IndividualConcept := Intensional.Intension World (Individual Atom)
 
 /--
 Kinds are a special subset of individual concepts.

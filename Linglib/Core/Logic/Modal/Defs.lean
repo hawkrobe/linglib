@@ -11,7 +11,7 @@ The bare foundation for accessibility-restricted modal logic, parameterised by
 frame conditions, and the relational `box`/`diamond`. The modal-axiom theorems
 (`RestrictedModality.lean`) build on it.
 
-Montague's S5 `box`/`diamond` in `Core.Logic.Intensional.Quantification` is the
+Montague's S5 `box`/`diamond` in `Intensional.Quantification` is the
 universal-accessibility special case (`box universalR`), but it lives in the
 typed IL layer and is developed independently there.
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 
 /-!
 # PTQ Syntactic Categories and the Category-to-Type Correspondence
@@ -30,9 +30,9 @@ Montague's key design decision: uniformly intensionalize all functor-argument
 composition, then recover extensionality via meaning postulates when needed.
 -/
 
-namespace Core.Logic.Intensional.CategoryType
+namespace Intensional.CategoryType
 
-open Core.Logic.Intensional
+open Intensional
 
 -- ════════════════════════════════════════════════════════════════
 -- § Syntactic Categories (DWP Def 7-1)
@@ -204,4 +204,4 @@ theorem T_conjoinable : PtqCat.T.isConjoinable = true := rfl
 /-- Entities (e) are not conjoinable. -/
 theorem e_not_conjoinable : PtqCat.e.isConjoinable = false := rfl
 
-end Core.Logic.Intensional.CategoryType
+end Intensional.CategoryType

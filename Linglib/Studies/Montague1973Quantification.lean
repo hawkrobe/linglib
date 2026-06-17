@@ -18,12 +18,12 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 -/
 
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Mathlib.Data.Set.Basic
 
 namespace Montague1973
 
-open Core.Logic.Intensional
+open Intensional
 
 -- Section 1: Types (IL - Intensional Logic)
 

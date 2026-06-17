@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Situations
+import Linglib.Semantics.Intensional.Situations
 
 /-!
 # Clause Denotation: Situation [bondarenko-2022] [moltmann-2021]
@@ -59,7 +59,7 @@ namespace Semantics.Attitudes.ClauseDenotation.Situation
     situations where the father is absent.
 
     Parameter `S` is the situation-index sort; in practice this is
-    typically a `Core.Logic.Intensional.SituationFrame.Index` carrying
+    typically a `Intensional.SituationFrame.Index` carrying
     a parthood preorder, but this file does not require `[PartialOrder S]`
     so that downstream consumers can specialize freely. -/
 structure SituationIndividual (S : Type*) where

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Mathlib.Logic.Relation
 
 /-!
@@ -52,7 +52,7 @@ strictly stronger. Bridge theorems comparing the two belong in
 
 namespace Lewis1973
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 open Causation Causation.Mechanism Causation.SEM
 
 -- ════════════════════════════════════════════════════

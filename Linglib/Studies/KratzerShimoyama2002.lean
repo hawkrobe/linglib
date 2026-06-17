@@ -274,7 +274,7 @@ The **distribution requirement** (to be derived as implicature in §8):
 distributes alternatives over accessible worlds.
 
 Note: We use `Prop`-valued accessibility here (rather than the `Bool`-valued
-`Core.Logic.Intensional.BAccessRel`) to stay in `Prop` throughout the Hamblin
+`Intensional.BAccessRel`) to stay in `Prop` throughout the Hamblin
 semantics. The singleton collapse theorem below shows these Hamblin modals
 reduce to standard Kripke modals when the alternative set is a singleton.
 -/
@@ -284,7 +284,7 @@ section ModalInteraction
 variable {W : Type}
 
 /-- Prop-valued accessibility relation for Hamblin modal semantics.
-    Named distinctly from `Core.Logic.Intensional.BAccessRel` (which is Bool-valued)
+    Named distinctly from `Intensional.BAccessRel` (which is Bool-valued)
     to avoid shadowing. -/
 abbrev HamblinAccessRel (W : Type) := W → W → Prop
 

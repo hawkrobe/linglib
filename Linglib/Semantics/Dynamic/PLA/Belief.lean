@@ -534,12 +534,12 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
     refine ⟨hp, e, he, ?_⟩
     intro q hq
     specialize hall q hq
-    simp only [hc, Core.Intension.rigid] at hall
+    simp only [hc, Intensional.Intension.rigid] at hall
     exact hall
   · intro ⟨hp, e, he, hall⟩
-    refine ⟨hp, Core.Intension.rigid e, ⟨e, he, rfl⟩, ?_⟩
+    refine ⟨hp, Intensional.Intension.rigid e, ⟨e, he, rfl⟩, ?_⟩
     intro q hq
-    simp only [Core.Intension.rigid]
+    simp only [Intensional.Intension.rigid]
     exact hall q hq
 
 

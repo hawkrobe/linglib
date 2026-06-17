@@ -2,7 +2,7 @@
 [kratzer-1981] Modal Operators — IL Foundation
 
 Kratzer-style necessity and possibility, defined as `box`/`diamond` from
-`Core.Logic.Intensional` over conversational-background-derived accessibility
+`Intensional` over conversational-background-derived accessibility
 relations. Frame conditions on the accessibility relation are derived from
 conversational-background properties; modal-axiom derivations then follow from
 the polymorphic correspondence theorems in `RestrictedModality`.

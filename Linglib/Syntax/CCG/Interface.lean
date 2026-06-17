@@ -1,6 +1,6 @@
 import Linglib.Syntax.CCG.Basic
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Conjunction
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Coordination.Basic
 import Linglib.Semantics.Composition.Combinator
 
@@ -26,8 +26,8 @@ semantics theorems live in `Studies/Steedman2000.lean`.
 
 namespace CCG
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Conjunction
+open Intensional
+open Intensional.Conjunction
 open Combinator
 
 /-! ### Type correspondence -/
