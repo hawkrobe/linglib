@@ -35,7 +35,7 @@ Holliday–Mandelkern's Proposition 4.8.
 
 This file depends on:
 - `Linglib.Semantics.Modality.Orthologic.Frames` — substrate
-  (compatibility frames, `orthoNeg`, `disj`, `isRegular`, `regularClosure`).
+  (compatibility frames, `orthoNeg`, `disj`, `IsRegular`, `regularClosure`).
 - `Linglib.Core.Order.Ortholattice` — abstract `OrthocomplementedLattice`
   typeclass.
 
@@ -54,7 +54,7 @@ variable {S : Type*} {F : CompatFrame S}
 
 /-- The orthocomplement of any set is regular (whether or not the original set is). -/
 theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
-    isRegular F (orthoNeg F A) := by
+    IsRegular F (orthoNeg F A) := by
   intro x
   by_cases h : x ∈ orthoNeg F A
   · exact Or.inl h
@@ -68,7 +68,7 @@ theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
 
 /-- Regular sets are closed under intersection. -/
 theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
-    (hA : isRegular F A) (hB : isRegular F B) : isRegular F (A ∩ B) := by
+    (hA : IsRegular F A) (hB : IsRegular F B) : IsRegular F (A ∩ B) := by
   intro x
   by_cases h : x ∈ A ∩ B
   · exact Or.inl h
@@ -85,22 +85,22 @@ theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
 /-- The disjunction `disj F A B = orthoNeg F (orthoNeg F A ∩ orthoNeg F B)`
     is regular (immediate from `orthoNeg_isRegular`). -/
 theorem disj_isRegular (F : CompatFrame S) (A B : Set S) :
-    isRegular F (disj F A B) :=
+    IsRegular F (disj F A B) :=
   orthoNeg_isRegular F _
 
 /-- The empty set is regular (vacuously: take `y = x` by reflexivity). -/
-theorem empty_isRegular (F : CompatFrame S) : isRegular F (∅ : Set S) := by
+theorem empty_isRegular (F : CompatFrame S) : IsRegular F (∅ : Set S) := by
   intro x
   exact Or.inr ⟨x, F.compat_refl x, fun _ _ h => h.elim⟩
 
 /-- The full set is regular (trivially). -/
-theorem univ_isRegular (F : CompatFrame S) : isRegular F (Set.univ : Set S) :=
+theorem univ_isRegular (F : CompatFrame S) : IsRegular F (Set.univ : Set S) :=
   fun _ => Or.inl trivial
 
 /-- The load-bearing involutivity: `orthoNeg² A = A` for regular `A`.
     [holliday-mandelkern-2024] Proposition 4.8. -/
 theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
-    (hA : isRegular F A) : orthoNeg F (orthoNeg F A) = A := by
+    (hA : IsRegular F A) : orthoNeg F (orthoNeg F A) = A := by
   apply Set.eq_of_subset_of_subset
   · intro x hx
     rcases hA x with hxA | ⟨y, hxy, hy⟩
@@ -132,7 +132,7 @@ structure RegularProp (F : CompatFrame S) where
   /-- The underlying set of the regular proposition. -/
   carrier : Set S
   /-- The regularity proof. -/
-  regular' : isRegular F carrier
+  regular' : IsRegular F carrier
 
 namespace RegularProp
 
@@ -142,13 +142,13 @@ instance : SetLike (RegularProp F) S where
     rintro ⟨A, _⟩ ⟨B, _⟩ (rfl : A = B)
     rfl
 
-@[simp] theorem mem_mk (A : Set S) (hA : isRegular F A) (x : S) :
+@[simp] theorem mem_mk (A : Set S) (hA : IsRegular F A) (x : S) :
     x ∈ (⟨A, hA⟩ : RegularProp F) ↔ x ∈ A := Iff.rfl
 
-@[simp] theorem coe_mk (A : Set S) (hA : isRegular F A) :
+@[simp] theorem coe_mk (A : Set S) (hA : IsRegular F A) :
     ((⟨A, hA⟩ : RegularProp F) : Set S) = A := rfl
 
-theorem regular (A : RegularProp F) : isRegular F (A : Set S) := A.regular'
+theorem regular (A : RegularProp F) : IsRegular F (A : Set S) := A.regular'
 
 -- ════════════════════════════════════════════════════
 -- § 3. Lattice Operations

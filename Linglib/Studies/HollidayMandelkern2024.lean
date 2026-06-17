@@ -187,22 +187,22 @@ theorem distrib_rhs_at_x3 :
 -- ════════════════════════════════════════════════════
 
 /-- x₁ is a world (maximal possibility). -/
-theorem x1_is_world : isWorld pathFrame .x1 := by decide
+theorem x1_is_world : IsWorld pathFrame .x1 := by decide
 
 /-- x₅ is a world. -/
-theorem x5_is_world : isWorld pathFrame .x5 := by decide
+theorem x5_is_world : IsWorld pathFrame .x5 := by decide
 
 /-- x₃ is NOT a world — it's a partial possibility, compatible with
     possibilities on both sides without being a refinement of either. -/
-theorem x3_not_world : ¬ isWorld pathFrame .x3 := by decide
+theorem x3_not_world : ¬ IsWorld pathFrame .x3 := by decide
 
 /-- All propositions in the ortholattice are regular. -/
-theorem regular_left : isRegular pathFrame pLeft := by decide
-theorem regular_right : isRegular pathFrame pRight := by decide
-theorem regular_mid : isRegular pathFrame pMid := by decide
+theorem regular_left : IsRegular pathFrame pLeft := by decide
+theorem regular_right : IsRegular pathFrame pRight := by decide
+theorem regular_mid : IsRegular pathFrame pMid := by decide
 
-theorem regular_empty : isRegular pathFrame (∅ : Set Poss5) := empty_isRegular pathFrame
-theorem regular_full : isRegular pathFrame (Set.univ : Set Poss5) := univ_isRegular pathFrame
+theorem regular_empty : IsRegular pathFrame (∅ : Set Poss5) := empty_isRegular pathFrame
+theorem regular_full : IsRegular pathFrame (Set.univ : Set Poss5) := univ_isRegular pathFrame
 
 -- ════════════════════════════════════════════════════
 -- § 3a. Lifting to RegularProp (typeclass-level reasoning)
