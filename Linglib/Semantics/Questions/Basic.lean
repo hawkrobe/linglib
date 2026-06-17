@@ -403,6 +403,32 @@ theorem sInf_eq (S : Set (Question W)) : sInf S = sInfContent S := rfl
 theorem top_eq : (⊤ : Question W) = top := rfl
 theorem bot_eq : (⊥ : Question W) = bot := rfl
 
+@[simp] theorem mem_inf {P Q : Question W} {q : Set W} :
+    q ∈ P ⊓ Q ↔ q ∈ P ∧ q ∈ Q := Iff.rfl
+
+@[simp] theorem mem_sup {P Q : Question W} {q : Set W} :
+    q ∈ P ⊔ Q ↔ q ∈ P ∨ q ∈ Q := Iff.rfl
+
+@[simp] theorem mem_bot {q : Set W} : q ∈ (⊥ : Question W) ↔ q = ∅ := Iff.rfl
+
+@[simp] theorem mem_top {q : Set W} : q ∈ (⊤ : Question W) := trivial
+
+/-- A state lies in `X` iff its principal ideal entails `X`: `declarative s`
+    is the smallest `Question` containing `s`. -/
+theorem mem_iff_declarative_le {X : Question W} {s : Set W} :
+    s ∈ X ↔ declarative s ≤ X := by
+  rw [le_def]
+  refine ⟨fun hs _r hr => X.downward_closed s hs _ (mem_declarative.mp hr), fun h => h ?_⟩
+  exact mem_declarative.mpr subset_rfl
+
+/-- **Heyting implication, pointwise**: `s` resolves `P ⇨ Q` iff every
+    substate of `s` that resolves `P` also resolves `Q`. The defining
+    property of the Heyting arrow on inquisitive contents. -/
+theorem mem_himp {P Q : Question W} {s : Set W} :
+    s ∈ (P ⇨ Q) ↔ ∀ r ⊆ s, r ∈ P → r ∈ Q := by
+  rw [mem_iff_declarative_le, le_himp_iff, inf_eq_conj, le_def]
+  exact ⟨fun h _r hrs hrP => h ⟨hrs, hrP⟩, fun h _r hr => h _r hr.1 hr.2⟩
+
 @[simp] theorem mem_sSup_props {S : Set (Question W)} {q : Set W} :
     q ∈ (sSup S).props ↔ q = ∅ ∨ ∃ P ∈ S, q ∈ P.props := Iff.rfl
 
