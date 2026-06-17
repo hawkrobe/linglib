@@ -12,10 +12,10 @@ alternatives, *will* applies its prejacent at a single **selected**
 world picked out by a Stalnaker-style selection function indexed by a
 modal parameter `f`.
 
-`⟦will_f A⟧^{w,s,g} = 1  iff  ⟦A⟧^{s(w, g(f)), s, g} = 1`
+`⟦will_f A⟧^w = 1  iff  ⟦A⟧^{s(w, f)} = 1`
 
 where `s : SelectionFunction W` is a contextually supplied selection
-function and `g(f)` is the relevant set of historical alternatives.
+function and `f : Set W` is the relevant set of historical alternatives.
 
 ## Three constraints [cariani-santorio-2018]
 
@@ -69,7 +69,7 @@ open scoped ENNReal
 
 variable {W : Type*}
 
-/-! ## §1. The selectional truth-condition -/
+/-! ### The selectional truth-condition -/
 
 /-- Selectional truth-condition for *will* [cariani-santorio-2018].
 
@@ -92,7 +92,7 @@ instance willSem_decidable (s : SelectionFunction W) (A : W → Prop)
     Decidable (willSem s A f w) :=
   inferInstanceAs (Decidable (A _))
 
-/-! ## §2. Scopelessness, CEM, and unembedded collapse -/
+/-! ### Scopelessness, CEM, and unembedded collapse -/
 
 /-- **Negation Swap** [cariani-santorio-2018]: under selectional
     semantics, *will* commutes with negation. `will ¬A ↔ ¬ will A`.
@@ -132,7 +132,7 @@ theorem unembedded_collapse (s : SelectionFunction W) (A : W → Prop)
   unfold willSem
   rw [s.centering w f hw]
 
-/-! ## §3. Content transparency
+/-! ### Content transparency
 
 The substantive transparency claim of [cariani-santorio-2018]
 §8.1 footnote 30: as a *proposition* (set of worlds), `‖will A‖` is
@@ -214,7 +214,7 @@ theorem will_or_union_modalParam_eq (s : SelectionFunction W)
   · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
   · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
 
-/-! ## §4. Validity₂ (paper §6)
+/-! ### Validity₂ (paper §6)
 
 [cariani-santorio-2018] distinguish *validity₁* (truth at the
 context of utterance) from *validity₂* (truth at *every* index
@@ -276,7 +276,7 @@ theorem postsemantic_will_excluded_middle (A : W → Prop)
       sCtx fCtx wCtx :=
   valid2_implies_valid1 (valid2_will_excluded_middle A) sCtx fCtx wCtx
 
-/-! ## §5. Bridge to historical alternatives
+/-! ### Bridge to historical alternatives
 
 Selectional `will` parameterized by the metaphysical modal base of
 [condoravdi-2002] — the historical-alternatives substrate from
@@ -301,7 +301,7 @@ theorem willHistorical_reflexive_collapse {Time : Type*}
   apply unembedded_collapse
   exact hRefl ⟨w, t⟩
 
-/-! ## §6. The universal-quantifier foil
+/-! ### The universal-quantifier foil
 
 The universal-quantifier reading is what [cariani-santorio-2018]
 argue against. Section 8.1's cognitive-role argument is decisive
@@ -332,7 +332,7 @@ theorem universal_negation_swap_fails {A : W → Prop} {f : Set W} {w : W}
     fun hAll => hnA2 (hAll w₂ hw₂f)
   exact hLHS_false (hiff.mpr hRHS_true)
 
-/-! ## §7. Cognitive role (paper §8.1)
+/-! ### Cognitive role (paper §8.1)
 
 The selectional analysis predicts `μ(‖will A‖_f) = μ(‖A‖_f)` whenever
 the credence `μ` is supported on the modal parameter `f`. This
@@ -365,7 +365,7 @@ theorem cognitive_role (s : SelectionFunction W) (A f : Set W) (μ : PMF W)
   simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
   exact and_congr_left fun hw => by rw [s.centering w f (h_supp hw)]
 
-/-! ## §9. Multi-premise validity (paper §6)
+/-! ### Multi-premise validity (paper §6)
 
 [cariani-santorio-2018] §6 distinguishes Validity₁ (truth at the
 context) from Validity₂ (truth at every index). Both notions extend
@@ -414,7 +414,7 @@ theorem valid2_will_modus_ponens (A B : W → Prop) :
     hPrem (fun s f w => willSem s A f w) (by simp)
   exact hIff.mp hA
 
-/-! ## §8. *Would* as past-tense morphological derivative of *will*
+/-! ### *Would* as the past-tense form of *will*
 [cariani-santorio-2018] §5.3.2
 
 [cariani-santorio-2018] §5.3.2 argues that *would* is not a separate
@@ -425,12 +425,11 @@ parameterises `f` to the historical alternatives at the speech time;
 past *would* parameterises `f` to a counterfactual base, typically
 supplied by an *if*-clause.
 
-The shared truth-condition means every theorem about *will* lifts
-automatically to *would*: Negation Swap, Will Excluded Middle, the
-collapse-on-membership theorem, the cognitive-role prediction. This
-is the formal payoff of analysing *would* as a tense form of *will*
-rather than as an independent operator: the entire §2–§7 architecture
-is reused unchanged. -/
+Because `wouldSem = willSem` definitionally (`wouldSem_eq_willSem`),
+every theorem about *will* — Negation Swap, Will Excluded Middle,
+unembedded collapse, the cognitive-role prediction — transfers to
+*would* by rewriting with that identity, so no separate *would*
+lemmas are stated. -/
 
 /-- **Selectional `would`** [cariani-santorio-2018] §5.3.2:
     definitionally identical to `willSem`. The morphological past-tense
@@ -440,50 +439,13 @@ def wouldSem (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) : Prop :=
   willSem s A f w
 
-@[simp] theorem wouldSem_def (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) :
-    wouldSem s A f w ↔ A (s.sel w f) := Iff.rfl
-
 /-- **Past-tense morphology = parameter shift, not semantic shift**
     [cariani-santorio-2018] §5.3.2: *would* and *will* have the
     same selectional truth-condition. The difference is purely in the
-    modal parameter `f` supplied by the tense morpheme. -/
+    modal parameter `f` supplied by the tense morpheme. Every *will*
+    theorem transfers to *would* by rewriting with this identity. -/
 theorem wouldSem_eq_willSem (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
     wouldSem s A f w = willSem s A f w := rfl
-
-/-- **Would Excluded Middle**, lifted from `will_excluded_middle` via
-    the morphological identity. -/
-theorem would_excluded_middle (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) :
-    wouldSem s A f w ∨ wouldSem s (fun w' => ¬ A w') f w :=
-  will_excluded_middle s A f w
-
-/-- **Would Negation Swap**, lifted from `negation_swap`. -/
-theorem would_negation_swap (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) :
-    wouldSem s (fun w' => ¬ A w') f w ↔ ¬ wouldSem s A f w :=
-  negation_swap s A f w
-
-/-- **Would-Centering / unembedded collapse for *would***: when `w` is
-    in the modal parameter, *would A* collapses to `A w`, lifted from
-    `unembedded_collapse`. -/
-theorem would_unembedded_collapse (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) (hw : w ∈ f) :
-    wouldSem s A f w ↔ A w :=
-  unembedded_collapse s A f w hw
-
-/-- **Would Excluded Middle is valid₂**, by the same argument as
-    `valid2_will_excluded_middle`. -/
-theorem valid2_would_excluded_middle (A : W → Prop) :
-    Valid2 (W := W) fun s f w =>
-      wouldSem s A f w ∨ wouldSem s (fun w' => ¬ A w') f w :=
-  fun s f w => would_excluded_middle s A f w
-
-/-- **Would Negation Swap is valid₂**. -/
-theorem valid2_would_negation_swap (A : W → Prop) :
-    Valid2 (W := W) fun s f w =>
-      wouldSem s (fun w' => ¬ A w') f w ↔ ¬ wouldSem s A f w :=
-  fun s f w => would_negation_swap s A f w
 
 end Semantics.Modality.Selectional
