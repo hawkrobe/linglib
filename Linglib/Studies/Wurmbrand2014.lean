@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Data.Examples.Wurmbrand2014

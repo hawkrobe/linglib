@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Pronoun
 
 /-!
 # Compositional Tense Operators
