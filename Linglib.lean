@@ -1321,6 +1321,7 @@ import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Studies.FaginHalpern1994
 import Linglib.Studies.Faller2019
 import Linglib.Studies.FillmoreKayOConnor1988
+import Linglib.Studies.Fitting1994
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
 import Linglib.Studies.Kubota2026
