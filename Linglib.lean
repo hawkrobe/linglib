@@ -89,6 +89,7 @@ import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Branching
+import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.Command
 import Linglib.Core.Order.Normality
@@ -2249,6 +2250,7 @@ import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Composition.Scope
 import Linglib.Studies.AhnZhu2025
 import Linglib.Studies.DeganoAloni2025

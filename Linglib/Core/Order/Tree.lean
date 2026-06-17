@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Defs.PartialOrder
+import Linglib.Core.Order.LeftLinear
 
 /-!
 # Tree Orders
@@ -76,5 +77,13 @@ def TreeOrder.properDom {Node : Type*} [PartialOrder Node]
 def upperBounds {Node : Type*} [PartialOrder Node]
     (T : TreeOrder Node) (a : Node) (P : Set Node) : Set Node :=
   {b | T.properDom b a ∧ b ∈ P}
+
+/-- A `TreeOrder`'s Connected Ancestor Condition is exactly left-linearity: the
+    syntactic-tree CAC and the branching-time no-backward-branching axiom are one and
+    the same. Use `haveI := T.toIsLeftLinear` to inherit `IsLeftLinear.isChain_Iio`
+    ("ancestors are linearly ordered") on the node type. -/
+@[reducible] def TreeOrder.toIsLeftLinear {Node : Type*} [PartialOrder Node]
+    (T : TreeOrder Node) : IsLeftLinear Node :=
+  ⟨@fun a b c => T.ancestor_connected a b c⟩
 
 end Core.Order
