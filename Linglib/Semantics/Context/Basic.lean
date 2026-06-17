@@ -14,6 +14,8 @@ projection; `KContext` is the full Kaplanian structure.
 
 -/
 
+open Time
+
 namespace Semantics.Context
 
 open Core (WorldTimeIndex)

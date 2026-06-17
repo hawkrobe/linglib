@@ -62,17 +62,17 @@ theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
     presupposition is the tense constraint. Entity pronouns
     (`Semantics.Reference.PronounDenotation`) are the same `NominalDenot`
     construction over `Entity`, so "tense is a pronoun" holds by construction. -/
-def _root_.TensePronoun.toNominalDenot {Time : Type*} [LinearOrder Time]
+def TensePronoun.toNominalDenot {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) :
     Semantics.Reference.NominalDenot (TemporalAssignment Time) PUnit Time where
   presup := fun g _ => tp.fullPresupposition g
   selector := fun g _ => some (tp.resolve g)
 
-@[simp] theorem _root_.TensePronoun.toNominalDenot_presup {Time : Type*} [LinearOrder Time]
+@[simp] theorem TensePronoun.toNominalDenot_presup {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) (w : PUnit) :
     tp.toNominalDenot.presup g w = tp.fullPresupposition g := rfl
 
-@[simp] theorem _root_.TensePronoun.toNominalDenot_selector {Time : Type*} [LinearOrder Time]
+@[simp] theorem TensePronoun.toNominalDenot_selector {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) (w : PUnit) :
     tp.toNominalDenot.selector g w = some (tp.resolve g) := rfl
 

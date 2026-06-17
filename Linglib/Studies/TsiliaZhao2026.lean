@@ -56,6 +56,8 @@ which is why English ⌈then⌉ is compatible with it.
 
 -/
 
+open Time
+
 namespace TsiliaZhao2026
 
 open Tense

@@ -52,6 +52,8 @@ classification in `Features.Evidentiality`. `EPCondition.IsNonfuture` and
 
 -/
 
+open Time
+
 namespace Tense.Evidential
 
 open Core.Order

@@ -44,6 +44,9 @@ Fragments/English/Predicates/Verbal.lean
 
 -/
 
+open Time
+open Tense
+
 namespace Percus2000
 
 open Core (WorldTimeIndex Assignment)

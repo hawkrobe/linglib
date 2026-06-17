@@ -40,6 +40,8 @@ and simultaneous readings) but differ on what "past" means:
 
 -/
 
+open Time
+
 namespace Tense.SOT.Decomposition
 
 open Tense

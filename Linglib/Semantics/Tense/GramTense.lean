@@ -2,6 +2,7 @@ import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Relation
+import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Context.Shifts
@@ -36,56 +37,13 @@ and `Attitudes/` theories build on. The temporal primitives it imports
 
 -/
 
+open Time
+
 open Core.Order
 open Core.ReferentialMode (ReferentialMode)
 open Core (Assignment WorldTimeIndex)
 
-
-/-! ### GramTense -/
-
-/--
-Grammatical tense: a temporal relation imposed by tense morphology.
-
-Following the Reichenbach/Klein tradition:
-- PAST: reference time before speech time
-- PRESENT: reference time overlaps speech time
-- FUTURE: reference time after speech time
--/
-inductive GramTense where
-  | past
-  | present
-  | future
-  /-- [klecha-2016]'s non-past tense: perspective ≤ ref (present or future).
-      Distinct from `.present` (ref = perspective). The non-past is what allows
-      embedded tense under circumstantial modals to have future-oriented readings:
-      ⟦NPST⟧ = λp λt λu λh[p(t)(h) & u ≤ t], i.e., ref ≥ perspective. -/
-  | nonpast
-  deriving DecidableEq, Repr, Inhabited
-
-namespace GramTense
-
-/-- The temporal constraint imposed by a grammatical tense.
-    Past: ref < perspective. Present: ref = perspective. Future: ref > perspective.
-    Nonpast: ref ≥ perspective ([klecha-2016]).
-    This is the core ordering that Priorean operators assert and
-    Abusch's tense pronouns presuppose. -/
-def constrains {Time : Type*} [LinearOrder Time]
-    (t : GramTense) (refTime perspTime : Time) : Prop :=
-  match t with
-  | .past => refTime < perspTime
-  | .present => refTime = perspTime
-  | .future => refTime > perspTime
-  | .nonpast => refTime ≥ perspTime
-
-instance {Time : Type*} [LinearOrder Time] (t : GramTense) (r p : Time) :
-    Decidable (t.constrains r p) :=
-  match t with
-  | .past => inferInstanceAs (Decidable (r < p))
-  | .present => inferInstanceAs (Decidable (r = p))
-  | .future => inferInstanceAs (Decidable (r > p))
-  | .nonpast => inferInstanceAs (Decidable (r ≥ p))
-
-end GramTense
+namespace Tense
 
 
 /-! ### SOTParameter -/
@@ -148,7 +106,6 @@ abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
 abbrev TemporalAssignment (Time : Type*) := Assignment Time
 
-namespace Tense
 
 /-- Modified temporal assignment `g[n ↦ t]`. Specializes `Function.update`. -/
 abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
@@ -192,9 +149,7 @@ theorem zeroTense_receives_binder_time {Time : Type*}
   Function.update_self n binderTime g
 
 
-end Tense
 
-open Tense
 
 /-! ### SitProp (Prop-valued) -/
 
@@ -286,7 +241,6 @@ def TensePronoun.fullPresupposition {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
   tp.constraint.constrains (tp.resolve g) (tp.evalTime g)
 
-namespace Tense
 
 /-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
     This is the root-clause default: tense is checked against speech time. -/
@@ -306,7 +260,6 @@ theorem evalTime_shifts_under_embedding {Time : Type*}
     (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime
   exact zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
 
-end Tense
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}
@@ -326,7 +279,6 @@ theorem TensePronoun.bound_present_simultaneous {Time : Type*}
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind
 
-namespace Tense
 
 /-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time (indexical rigidity) AND matrix event time
@@ -335,7 +287,6 @@ def doubleAccess {Time : Type*} (p : Time → Prop)
     (speechTime matrixEventTime : Time) : Prop :=
   p speechTime ∧ p matrixEventTime
 
-end Tense
 
 /-- An indexical present tense presupposes resolution to speech time. -/
 theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Time]
@@ -409,7 +360,6 @@ into the tower: when the temporal assignment encodes tower time coordinates
 - `tense_root_bridge` — root clause: `evalTimeIndex = 0` means origin time
 - `von_stechow_tower` — pushing a temporal shift = Von Stechow's perspective shift -/
 
-namespace Tense
 
 section TemporalBridge
 
@@ -510,5 +460,6 @@ theorem von_stechow_tower_innermost
   simp only [temporalShift]
 
 end TemporalBridge
+
 
 end Tense

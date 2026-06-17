@@ -57,6 +57,8 @@ example.
 
 -/
 
+open Time
+
 namespace ArreguiKusumoto1998
 
 open Data.Examples (LinguisticExample)

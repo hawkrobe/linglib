@@ -58,6 +58,8 @@ files consume it). Verified against the Kiparsky 2002 PDF: the
 
 -/
 
+open Time
+
 namespace Kiparsky2002
 
 open Core.Order

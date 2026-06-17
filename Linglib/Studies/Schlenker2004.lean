@@ -65,6 +65,8 @@ Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 
 -/
 
+open Tense
+
 namespace Schlenker2004
 
 open Semantics.Context

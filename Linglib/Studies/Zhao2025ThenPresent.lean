@@ -37,6 +37,8 @@ reference ("during then"), the presuppositions clash.
 
 -/
 
+open Time
+
 namespace Zhao2025ThenPresent
 
 open Tense

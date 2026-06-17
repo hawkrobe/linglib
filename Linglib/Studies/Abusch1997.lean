@@ -90,6 +90,8 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 -/
 
+open Time
+
 namespace Abusch1997
 
 open Tense
@@ -317,7 +319,7 @@ theorem abusch_derives_embeddedSickSimultaneous :
     Per Abusch: a free past variable below the matrix event time. -/
 theorem abusch_derives_embeddedSickShifted :
     embeddedSickShifted.isPast := by
-  simp only [ReichenbachFrame.isPast, embeddedSickShifted, shiftedFrame,
+  simp only [ReichenbachFrame.isPast_def, embeddedSickShifted, shiftedFrame,
     Tense.embeddedFrame, matrixSaid]; omega
 
 /-- The matrix "said" frame is perfective (E = R). -/

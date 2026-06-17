@@ -52,6 +52,9 @@ can be future-oriented:
 
 -/
 
+open Time
+open Tense
+
 namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)

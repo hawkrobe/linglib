@@ -4,12 +4,12 @@ import Linglib.Semantics.Tense.GramTense
 # Compositional Tense Operators
 [mendes-2025] [partee-1973]
 
-Semantic operators for grammatical tense (PAST, PRES, FUT), in two styles:
-Reichenbach-style (tense relates R to P on a frame, `applyTense`) and
-situation-semantic ([mendes-2025]: operators constrain the temporal
-coordinate of a situation argument). Both are driven by the shared
-temporal-relation kernel (`precedes`/`coincides`/`follows`), which is also
-the source of truth for the dynamic counterparts in `Tense/Dynamic.lean`.
+Semantic operators for grammatical tense (PAST, PRES, FUT) in the
+situation-semantic style ([mendes-2025]: operators constrain the temporal
+coordinate of a situation argument), driven by the shared temporal-relation
+kernel (`precedes`/`coincides`/`follows`), which also grounds the dynamic
+counterparts in `Tense/Dynamic.lean`. (Reichenbach frame-based tense
+predicates live in `Tense/Reichenbach.lean`.)
 Following [partee-1973], tenses are pronoun-like: they retrieve temporal
 reference points rather than quantify over all times.
 -/
@@ -167,40 +167,6 @@ Simple FUTURE: Event time follows speech time.
 -/
 def futSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTime : Time) : Prop :=
   eventTime > speechTime ∧ P eventTime
-
-
-/--
-Apply a tense to a Reichenbach frame, constraining R relative to P.
-Tense locates reference time relative to perspective time,
-not speech time. In root clauses P = S, so this reduces to the standard
-Reichenbach analysis. In SOT languages, embedded P shifts to the matrix
-event time, making the embedded tense relative.
--/
-def applyTense {Time : Type*} [LinearOrder Time] (t : GramTense) (f : ReichenbachFrame Time) : Prop :=
-  match t with
-  | .past => f.referenceTime < f.perspectiveTime
-  | .present => f.referenceTime = f.perspectiveTime
-  | .future => f.referenceTime > f.perspectiveTime
-  | .nonpast => f.referenceTime ≥ f.perspectiveTime
-
-instance {Time : Type*} [LinearOrder Time] (t : GramTense) (f : ReichenbachFrame Time) :
-    Decidable (applyTense t f) :=
-  match t with
-  | .past => inferInstanceAs (Decidable (_ < _))
-  | .present => inferInstanceAs (Decidable (_ = _))
-  | .future => inferInstanceAs (Decidable (_ > _))
-  | .nonpast => inferInstanceAs (Decidable (_ ≥ _))
-
-
-/-! ### applyTense ↔ GramTense.constrains Bridge -/
-
-/-- `applyTense` is the Reichenbach-frame projection of `GramTense.constrains`:
-    applying a tense to a frame is equivalent to the tense's temporal constraint
-    on the frame's R and P. -/
-theorem applyTense_eq_constrains {Time : Type*} [LinearOrder Time]
-    (t : GramTense) (f : ReichenbachFrame Time) :
-    applyTense t f ↔ t.constrains f.referenceTime f.perspectiveTime := by
-  cases t <;> rfl
 
 
 /--

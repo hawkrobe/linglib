@@ -55,6 +55,8 @@ referential mechanism operates over different domains.
 
 -/
 
+open Tense
+
 namespace Partee1973
 
 open Tense (interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST)

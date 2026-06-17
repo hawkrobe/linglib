@@ -16,6 +16,8 @@ modules (`Modality.TemporalConstraint`, `Tense.ModalTense`) and by
 phenomena-layer study files. It depends only on `GramTense` from Core.
 -/
 
+open Tense
+
 namespace Semantics.Modality
 
 

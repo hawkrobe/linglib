@@ -43,6 +43,8 @@ contrast as separate Lean defs would be vacuous.
 
 -/
 
+open Time
+
 namespace Sharvit2003
 
 open Tense
@@ -66,7 +68,7 @@ def embeddedPresentUnderFuture : ReichenbachFrame ℤ :=
 
 /-- Matrix frame satisfies `isFuture` (R > P). -/
 theorem matrixWillSayIsFuture : matrixWillSay.isFuture := by
-  simp only [ReichenbachFrame.isFuture, matrixWillSay]; omega
+  simp only [ReichenbachFrame.isFuture_def, matrixWillSay]; omega
 
 /-- Embedded present under future: R = P relative to shifted perspective. -/
 theorem embeddedPresentUnderFutureIsPresent : embeddedPresentUnderFuture.isPresent := by
