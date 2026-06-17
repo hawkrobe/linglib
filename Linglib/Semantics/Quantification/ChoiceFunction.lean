@@ -283,7 +283,7 @@ theorem box_not_extensionalAt :
     ∃ (S : Type) (R : AccessRel S) (s₀ : S),
       ¬ Intensional.IsExtensionalAt (box R) s₀ := by
   refine ⟨Bool, universalR, false,
-    Core.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
+    Intensional.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
   refine ⟨fun s => s = s, fun s => false = s, rfl, fun h => ?_⟩
   exact Bool.noConfusion ((iff_of_eq h).mp (fun v _ => rfl) true trivial)
 
