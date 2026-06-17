@@ -1,4 +1,5 @@
 import Linglib.Core.Order.LeftLinear
+import Linglib.Core.Order.Relation
 import Mathlib.Order.Zorn
 import Mathlib.Order.Directed
 
@@ -203,5 +204,40 @@ def kaufmannPast [PartialOrder M] (φ : OProp M) : OProp M := oPast φ
     notions of "settled that φ will happen" coincide. -/
 theorem isInevitable_iff_oSupervaluation_oFut [PartialOrder M] (φ : MProp M) (m : M) :
     IsInevitable φ m ↔ oSupervaluation (oFut (oAtom φ)) m := Iff.rfl
+
+/-! ### Grounding in the `Core.Order` comparison kernel
+
+The Ockhamist past/future operators reuse the shared point-comparison kernel (`Core.Order.holds` over
+`Finset Ordering`) rather than re-stipulating "earlier"/"later": `oPast`'s witness sits `before` the
+evaluation moment, `oFut`'s sits `after` it. Since `Core.Order.before = Tense.past` and
+`Core.Order.after = Tense.future`, branching-time tense and the rest of the library's tense are the
+*same* comparison. These are the **linear-frame** reductions (no branching, so the comparison is total
+on all of `M`); for a genuinely branching frame the comparison lives on each history's chain order
+(`Flag`'s `LinearOrder`), `oFut_oAtom_holds_on_hist`. -/
+
+@[simp] theorem oPast_oAtom_iff_holds {M : Type*} [LinearOrder M]
+    (φ : MProp M) (m : M) (h : Flag M) :
+    oPast (oAtom φ) m h ↔ ∃ m', Core.Order.holds Core.Order.before m' m ∧ φ m' := by
+  simp only [oPast, oAtom, Core.Order.holds_before]
+
+@[simp] theorem oFut_oAtom_iff_holds {M : Type*} [LinearOrder M]
+    (φ : MProp M) (m : M) (h : Flag M) :
+    oFut (oAtom φ) m h ↔ ∃ m' ∈ h, Core.Order.holds Core.Order.after m' m ∧ φ m' := by
+  simp only [oFut, oAtom, Core.Order.holds_after]
+
+/-- **Genuine-branching grounding** (`oFut` on any branching frame): the future witness comparison
+    is `Core.Order.holds after` over the history's own chain order (mathlib's `LinearOrder ↥h` for a
+    maximal chain `h`). So the Ockhamist future *along a history* is literally the comparison-kernel
+    future, with the chain supplying the linear order `Core.Order.holds` requires. -/
+theorem oFut_oAtom_holds_on_hist {M : Type*} [PartialOrder M]
+    [DecidableEq M] [DecidableRel (· ≤ · : M → M → Prop)] [DecidableLT M]
+    (φ : MProp M) {m : M} {h : Flag M} (hm : m ∈ h) :
+    oFut (oAtom φ) m h ↔ ∃ x : ↥h, Core.Order.holds Core.Order.after x ⟨m, hm⟩ ∧ φ (x : M) := by
+  simp only [oFut, oAtom, Core.Order.holds_after]
+  constructor
+  · rintro ⟨m', hm', hlt, hφ⟩
+    exact ⟨⟨m', hm'⟩, hlt, hφ⟩
+  · rintro ⟨x, hlt, hφ⟩
+    exact ⟨x, x.2, hlt, hφ⟩
 
 end BranchingTime
