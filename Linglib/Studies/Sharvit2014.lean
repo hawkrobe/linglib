@@ -1,327 +1,289 @@
 import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Tense.SOT.Decomposition
-import Linglib.Semantics.Tense.SOT.Ambiguity
 
 /-!
 # [sharvit-2014]: On the universal principles of tense embedding
-[sharvit-2014] [ogihara-sharvit-2012] [sharvit-2003]
-[beaver-condoravdi-2003] [partee-1973]
+[sharvit-2014] [ogihara-sharvit-2012] [sharvit-2003] [beaver-condoravdi-2003] [partee-1973]
 
-[sharvit-2014] ("On the universal principles of tense embedding: The
-lesson from *before*", *J. Semantics* 31(2):263-313) makes the
-cross-linguistic distinction between **pronominal** and **quantificational**
-tense (after [partee-1973] vs Prior 1967) the central engine for
-explaining variation in *before*-clauses (English/Polish vs Japanese) and
-attitude reports (English vs Polish vs Japanese).
+[sharvit-2014] ("On the universal principles of tense embedding: The lesson from *before*",
+*J. Semantics* 31(2):263-313) makes the pronominal/quantificational tense distinction (after
+[partee-1973] vs Prior 1967) the engine for cross-linguistic variation in *before*-clauses
+(English/Polish vs Japanese) and attitude reports. The IPF mechanism it rests on is the
+[beaver-condoravdi-2003] `before` semantics (`Semantics/Tense/TemporalConnectives/Before.lean`);
+the pronominal/quantificational substrate is `Semantics/Tense/LexicalType.lean`.
 
-The pronominal/quantificational substrate is in
-`Semantics/Tense/LexicalType.lean`; the
-[beaver-condoravdi-2003] `before` semantics + IPF mechanism is in
-`Semantics/Tense/TemporalConnectives/Before.lean`.
+## Main definitions
 
-## Sharvit's parameter space (numbered example (98), p. 300)
+* `Shiftability` — three-valued present shiftability ((71), p. 289): a fully shiftable
+  present (Japanese), a semi-shiftable one (Polish), or a non-shiftable one (English).
+* `LanguageTenseProfile` — a language's three tense parameters ((98), p. 300): the SOT rule,
+  the present's shiftability, and the *past* tense's lexical type (`Option LexicalType`,
+  no-mixing structural; `none` = tenseless / out of scope).
+* The derived predicates (`wellFormedPastUnderPastBefore`, …) are grounded in the substrate, not
+  re-stipulated: well-formedness routes through `Before.triggersIPFInBefore`, SOT-deletion through
+  `Decomposition.sotDeletionApplicable`.
+* `eq99a`/`eq99b`/`eq99c` — Sharvit's three universal predictions ((99), p. 301).
 
-A tensed language is characterized by three Boolean/typed parameters:
+## Scope
 
-- `hasSOT` — whether the language has the SOT rule (delete an embedded
-  agreeing tense)
-- `shiftablePresent` — whether the present tense's evaluation index can
-  be bound (vs. forced free)
-- `tenseLexicalType : Option LexicalType` — pronominal or quantificational
-  (Sharvit's no-mixing assumption is enforced *structurally* by the
-  `Option` type: at most one type per language); `none` indicates a
-  tenseless language, falling outside Sharvit's framework
-
-Tenseless languages (Mandarin per Lin 2003-2010; St'át'imcets per
-[matthewson-2006]; Medumba per Mucha 2017; Yucatec per Bohnemeyer
-2002) are not in Sharvit's scope; they fall under future Studies files
-that would extend the substrate. The `tenseLexicalType = none` case is
-present as scaffolding.
-
-## Predictions (numbered example (99), p. 301)
-
-Three universal predictions Sharvit derives from this parameter space,
-each kernel-checked over the attested-type table:
-
-1. **(99a)**: a language with well-formed PRES-under-PAST in *before*
-   exhibits p-shiftability (rather than No-p-shiftability) in
-   present-under-past
-2. **(99b)**: a language with well-formed PAST-under-PAST in *before*
-   AND embedded p-shiftability has "simultaneous" readings of
-   past-under-past in attitudes
-3. **(99c)**: a language with well-formed PAST-under-PAST in *before*
-   AND no "simultaneous" readings exhibits No-p-shiftability of
-   past-under-past *before*
-
-## Scope qualifications
-
-- **No-mixing assumption** (§6.1, p. 300): structurally enforced by
-  `tenseLexicalType : Option LexicalType` (the `Option` cannot carry both
-  values).
-- **No-tenseless assumption** (§6.1, p. 299): predictions apply only to
-  tensed languages, encoded as the `hasTenses` precondition. Languages
-  challenging this assumption (St'át'imcets, Medumba, Mandarin) require a
-  separate study file.
-- **Modern Greek** (§6.2, parameters in (105a) on p. 304): excluded from
-  the typology table pending bib support for the "semantic subjunctive"
-  parameter, which Sharvit herself frames as "merely to illustrate this
-  point" (p. 305).
-- **Spanish A vs B** (§6.2, parameters in (105b/c) on p. 304; fn 17 on
-  p. 302): excluded pending independent dialect-typological support —
-  Sharvit's footnote 17 acknowledges the Peninsular/River Plate divide is
-  unclear.
-
-## Provenance
-
-The earlier `Studies/Sharvit2014.lean` was a 124-LOC orphan whose F5
-theorem went through a fictitious `SimultaneousTense` struct in
-`Embedded/Simultaneous.lean` (Phase G, 0.230.462, deleted that
-substrate). This rewrite (Phase H, 0.230.463) restructures the typology
-to use `Option LexicalType` (no-mixing structural), splits
-`pShiftability` into bare-vs-embedded after a 2-round audit identified
-the predicate as overloaded, drops `modernGreek` pending bib support,
-and corrects locator hallucinations ("table 98" → "(98)", "eq 105" →
-"(105)" — Sharvit numbers them as examples, not as tables/equations).
+In the typology: English (type 6), Polish (type 10), Japanese (type 11) of (98). Excluded:
+Modern Greek and Spanish A/B (§6.2, (105), pp. 303-304), which need a mood parameter and — for
+Spanish B — a *mixed* past/present lexical type this profile cannot represent (Sharvit frames them
+as illustrative, p. 305); and tenseless languages (`pastLexicalType = none`), outside the
+no-tenseless assumption (§6.1, p. 299).
 -/
 
 namespace Sharvit2014
 
 open Tense (LexicalType)
-open Tense.TemporalConnectives.Before
+open Tense.TemporalConnectives.Before (triggersIPFInBefore)
+open Tense.SOT.Decomposition (sotDeletionApplicable)
 
-/-! ### §1. The parameter space (Sharvit's numbered example (98)) -/
+/-! ### The parameter space ((98)) -/
 
-/-- A language's tense profile per [sharvit-2014] (98), p. 300.
-    The no-mixing assumption is enforced structurally by
-    `tenseLexicalType : Option LexicalType`; tenselessness is `none`. -/
+/-- The present tense's shiftability, three-valued per [sharvit-2014] (71)/(78), pp. 288-291:
+    Japanese is fully shiftable, Polish semi-shiftable (bindable, but not by the same binder as
+    its referential index), English non-shiftable (forced free). The distinction is load-bearing:
+    only a *fully* shiftable present yields a well-formed present-under-past *before*-clause, so
+    Polish patterns with English there despite being bindable in attitudes. -/
+inductive Shiftability
+  /-- Forced free; cannot be bound (English). -/
+  | nonShiftable
+  /-- Bindable, but not by the binder of its referential index (Polish). -/
+  | semiShiftable
+  /-- Freely bindable (Japanese). -/
+  | fullyShiftable
+  deriving DecidableEq, Repr
+
+/-- A language's tense profile per [sharvit-2014] (98), p. 300: the SOT rule, the present's
+    shiftability, and the *past* tense's lexical type. The no-mixing assumption (§6.1, p. 300)
+    is enforced structurally by `Option LexicalType` (one past type, or `none` for tenseless). -/
 structure LanguageTenseProfile where
   /-- The SOT rule: deletion of an agreeing embedded tense. -/
-  hasSOT          : Bool
-  /-- The present's evaluation index can be bound (vs forced free). -/
-  shiftablePresent : Bool
-  /-- The language's tense lexical type, or `none` for tenseless
-      languages (outside Sharvit's framework). -/
-  tenseLexicalType : Option LexicalType
+  hasSOT : Bool
+  /-- The present tense's shiftability ((71), p. 289). -/
+  presentShiftability : Shiftability
+  /-- The *past* tense's lexical type, or `none` for tenseless languages (outside
+      [sharvit-2014]'s framework). -/
+  pastLexicalType : Option LexicalType
   deriving DecidableEq, Repr
 
 namespace LanguageTenseProfile
 
-/-- Sharvit's "tensed language" precondition (§6.1, p. 299). -/
-@[simp] def hasTenses (L : LanguageTenseProfile) : Bool :=
-  L.tenseLexicalType.isSome
+/-- The language has tenses ([sharvit-2014]'s no-tenseless precondition, §6.1, p. 299). -/
+def hasTenses (L : LanguageTenseProfile) : Bool := L.pastLexicalType.isSome
 
-/-- The language's past tense is pronominal (after [partee-1973]). -/
-@[simp] def isPronominal (L : LanguageTenseProfile) : Bool :=
-  L.tenseLexicalType == some .pronominal
+/-- The past tense is pronominal (after [partee-1973]). -/
+def isPronominal (L : LanguageTenseProfile) : Bool := L.pastLexicalType == some .pronominal
 
-/-- The language's past tense is quantificational (after Prior 1967). -/
-@[simp] def isQuantificational (L : LanguageTenseProfile) : Bool :=
-  L.tenseLexicalType == some .quantificational
+/-- The past tense is quantificational (after Prior 1967). -/
+def isQuantificational (L : LanguageTenseProfile) : Bool :=
+  L.pastLexicalType == some .quantificational
 
-/-! Derived empirical predicates. The substrate facts in
-    `TemporalConnectives/Before.lean` (`ipf_quantificationalPast` +
-    `pastUnderBefore_wellFormed_iff`) determine these definitions; they
-    are not independent stipulations. -/
+/-- The present can be bound at all (semi- or fully shiftable) — enough to host a
+    "now"-thought in attitudes. -/
+def hasShiftablePresent (L : LanguageTenseProfile) : Bool :=
+  L.presentShiftability != .nonShiftable
 
-/-- Sharvit's claim: PAST-under-PAST in *before* is well-formed iff the
-    past is pronominal — quantificational past triggers IPF (proved in
-    `Before.ipf_quantificationalPast`). -/
-@[simp] def wellFormedPastUnderPastBefore (L : LanguageTenseProfile) : Bool :=
-  L.isPronominal
+/-- The present is *fully* shiftable (Japanese), the condition for a well-formed
+    present-under-past *before*-clause ((78), p. 291). -/
+def hasFullyShiftablePresent (L : LanguageTenseProfile) : Bool :=
+  L.presentShiftability == .fullyShiftable
 
-/-- Sharvit's claim: PRES-under-PAST in *before* is well-formed iff the
-    present is shiftable (the Stump effect, p. 278). -/
-@[simp] def wellFormedPresentUnderPastBefore (L : LanguageTenseProfile) : Bool :=
-  L.shiftablePresent
+/-! ### Derived empirical predicates
 
-/-- Sharvit's claim: a language has "simultaneous" readings of
-    past-under-past in attitude reports iff its past is pronominal AND
-    the SOT rule is available ((59b), p. 284). -/
-@[simp] def simultaneousAttitudeReading (L : LanguageTenseProfile) : Bool :=
-  L.isPronominal && L.hasSOT
+These are not independent stipulations: the *before*-well-formedness predicate routes through the
+[beaver-condoravdi-2003] IPF dispatch `Before.triggersIPFInBefore`, and the SOT-derived predicates
+through Kratzer's deletion condition `Decomposition.sotDeletionApplicable`. -/
 
-/-- **Bare** *before*-clause p-shiftability (Sharvit example (51), p.
-    281): the embedded past in "John left before Sally arrived" can refer
-    to a future Sally-arrival time. Requires quantificational past:
-    Japanese has it, English/Polish do not. -/
-@[simp] def pShiftabilityBare (L : LanguageTenseProfile) : Bool :=
-  L.isQuantificational
+/-- SOT-deletion of an agreeing past-under-past applies when the language has the SOT rule, routed
+    through `Decomposition.sotDeletionApplicable` (Kratzer's morphological-identity condition, here
+    `.past`/`.past`). -/
+def sotAppliesPastUnderPast (L : LanguageTenseProfile) : Bool :=
+  L.hasSOT && sotDeletionApplicable .past .past
 
-/-- **Embedded** *before*-clause p-shiftability (Sharvit examples (66)-
-    (68), p. 287): when the bare *before*-clause is itself embedded
-    under a matrix attitude verb, even pronominal-past languages acquire
-    p-shiftability via SOT-deletion of the matrix past. -/
-@[simp] def pShiftabilityEmbedded (L : LanguageTenseProfile) : Bool :=
-  L.isQuantificational || (L.isPronominal && L.hasSOT)
+/-- PAST-under-PAST in *before* is well-formed iff the past does not trigger IPF — the
+    technical core `Before.ipf_quantificationalPast`. The body calls the IPF dispatch
+    `Before.triggersIPFInBefore`; `wellFormedPastUnderPastBefore_iff_pronominal` records the
+    resulting equivalence to `isPronominal` (= `Before.pastUnderBefore_wellFormed_iff`). -/
+def wellFormedPastUnderPastBefore (L : LanguageTenseProfile) : Bool :=
+  match L.pastLexicalType with
+  | some τ => !triggersIPFInBefore τ
+  | none   => false
 
-/-- [sharvit-2014]'s Embeddability Principle (Sharvit 2003, restated
-    p. 299): every language has at least one mechanism for embedding a
-    "now"-thought (SOT-deletion, shiftable present, or quantificational
-    past). -/
-@[simp] def respectsEmbeddability (L : LanguageTenseProfile) : Bool :=
-  L.hasSOT || L.shiftablePresent || L.isQuantificational
+/-- PRES-under-PAST in *before* is well-formed iff the present is *fully* shiftable (the Stump
+    effect, p. 278): English (non-shiftable) and Polish (semi-shiftable) are both ruled out; only
+    Japanese is well-formed ((78), p. 291). -/
+def wellFormedPresentUnderPastBefore (L : LanguageTenseProfile) : Bool :=
+  L.hasFullyShiftablePresent
+
+/-- "Simultaneous" past-under-past reading in attitude reports ((59b), p. 284): the past is
+    pronominal and SOT-deletion applies. This is the *SOT-derived* reading; Japanese's distinct
+    (present-tense) simultaneous reading ((47), p. 280) is a different mechanism, not this. -/
+def simultaneousAttitudeReading (L : LanguageTenseProfile) : Bool :=
+  L.isPronominal && L.sotAppliesPastUnderPast
+
+/-- **Bare** *before*-clause p-shiftability ((51), p. 281): the embedded past can refer to a
+    future time. Requires a quantificational past (Japanese); absent in English/Polish. -/
+def pShiftabilityBare (L : LanguageTenseProfile) : Bool := L.isQuantificational
+
+/-- **Embedded** *before*-clause p-shiftability ((66)-(68), p. 287): under a matrix attitude verb,
+    even pronominal-past languages acquire p-shiftability via SOT-deletion of the matrix past.
+    (Hedged in the paper — "for many speakers".) -/
+def pShiftabilityEmbedded (L : LanguageTenseProfile) : Bool :=
+  L.isQuantificational || (L.isPronominal && L.sotAppliesPastUnderPast)
+
+/-- [sharvit-2014]'s Embeddability Principle (Sharvit 2003, restated p. 299): every language has
+    at least one mechanism for embedding a "now"-thought (SOT, a shiftable present, or a
+    quantificational past). -/
+def respectsEmbeddability (L : LanguageTenseProfile) : Bool :=
+  L.hasSOT || L.hasShiftablePresent || L.isQuantificational
+
+/-- A pronominal past is not quantificational — the `Option LexicalType` no-mixing constraint. -/
+theorem isQuantificational_eq_false_of_isPronominal (L : LanguageTenseProfile) :
+    L.isPronominal = true → L.isQuantificational = false := by
+  intro h
+  have : L.pastLexicalType = some .pronominal := by
+    simpa [isPronominal] using h
+  simp [isQuantificational, this]
+
+/-- Well-formedness of past-under-past in *before* coincides with a pronominal past — imported
+    from the IPF result (`Before.pastUnderBefore_wellFormed_iff`), not re-stipulated. -/
+theorem wellFormedPastUnderPastBefore_iff_pronominal (L : LanguageTenseProfile) :
+    L.wellFormedPastUnderPastBefore = true ↔ L.isPronominal = true := by
+  cases hτ : L.pastLexicalType with
+  | none => simp [wellFormedPastUnderPastBefore, isPronominal, hτ]
+  | some τ => cases τ <;> simp [wellFormedPastUnderPastBefore, isPronominal, triggersIPFInBefore, hτ]
 
 end LanguageTenseProfile
 
-/-! ### §2. Attested language types (numbered example (98)) -/
+/-! ### Attested language types ((98), p. 300) -/
 
-/-- English (type 6 in (98), p. 300): SOT, non-shiftable present,
-    pronominal past. -/
+/-- English (type 6 in (98)): SOT, non-shiftable present, pronominal past. -/
 def english : LanguageTenseProfile where
-  hasSOT          := true
-  shiftablePresent := false
-  tenseLexicalType := some .pronominal
+  hasSOT := true
+  presentShiftability := .nonShiftable
+  pastLexicalType := some .pronominal
 
-/-- Polish (type 10 in (98), p. 300): no SOT, semi-shiftable present
-    (counts as shiftable for the typology), pronominal past. The
-    "semi-shiftable" hedge in §4.2 is a Sharvit-internal refinement
-    distinguishing Polish from Japanese; Grønn & von Stechow have argued
-    against the parameter, attributing the Polish pattern to Aktionsart
-    instead. Encoding here follows Sharvit; see linguistics audit
-    findings (round-2). -/
+/-- Polish (type 10 in (98)): no SOT, semi-shiftable present, pronominal past. The
+    "semi-shiftable" hedge (§4.2) distinguishes Polish from Japanese: Polish's present is
+    bindable in attitudes but not fully shiftable, so present-under-past in *before* is still
+    ill-formed (it patterns with English, not Japanese). Grønn & von Stechow argue against the
+    parameter, attributing the Polish pattern to Aktionsart; the encoding here follows Sharvit. -/
 def polish : LanguageTenseProfile where
-  hasSOT          := false
-  shiftablePresent := true
-  tenseLexicalType := some .pronominal
+  hasSOT := false
+  presentShiftability := .semiShiftable
+  pastLexicalType := some .pronominal
 
-/-- Japanese (type 11 in (98), p. 300): no SOT, fully-shiftable present,
-    quantificational past. The quantificational classification is in
-    line with [ogihara-1996], the canonical reference; it is the
-    dominant view but contested by relative-tense alternatives
-    (Kusumoto 1999, Sudo 2012). -/
+/-- Japanese (type 11 in (98)): no SOT, fully-shiftable present, quantificational past. The
+    quantificational classification follows [ogihara-1996], the canonical and dominant view;
+    it is contested by relative-tense alternatives (Kusumoto 1999, Sudo 2012). -/
 def japanese : LanguageTenseProfile where
-  hasSOT          := false
-  shiftablePresent := true
-  tenseLexicalType := some .quantificational
+  hasSOT := false
+  presentShiftability := .fullyShiftable
+  pastLexicalType := some .quantificational
 
-/-- The attested language types in Sharvit's table.
+/-- The attested language types in Sharvit's table ((98)). -/
+def attestedTypes : List LanguageTenseProfile := [english, polish, japanese]
 
-    Excluded: Modern Greek (§6.2; pending bib support for the semantic
-    subjunctive parameter), Spanish A and B (§6.2; the dialectal split is
-    a Sharvit-internal device per fn 17). Tenseless languages
-    (St'át'imcets, Medumba, Mandarin) are out of scope per Sharvit's
-    no-tenseless assumption and would land in separate Studies files. -/
-def attestedTypes : List LanguageTenseProfile :=
-  [english, polish, japanese]
+/-! ### Structural constraints (§6.1) -/
 
-/-! ### §3. Structural constraints (§6.1) -/
+/-- Every attested language has tenses (the no-tenseless assumption holds within scope). -/
+theorem all_attested_have_tenses : ∀ L ∈ attestedTypes, L.hasTenses = true := by decide
 
-/-- Every attested language has tenses (Sharvit's no-tenseless
-    assumption holds within scope). -/
-theorem all_attested_have_tenses :
-    ∀ L ∈ attestedTypes, L.hasTenses = true := by decide
-
-/-- Every attested language respects [sharvit-2014]'s Embeddability
-    Principle (Sharvit 2003, restated p. 299). -/
+/-- Every attested language respects [sharvit-2014]'s Embeddability Principle. -/
 theorem all_attested_respect_embeddability :
     ∀ L ∈ attestedTypes, L.respectsEmbeddability = true := by decide
 
-/-! ### §4. Cross-linguistic predictions (Sharvit's numbered example (99)) -/
+/-! ### Cross-linguistic predictions ((99), p. 301)
 
-/-- [sharvit-2014] (99a), p. 301: a well-formed present-under-past
-    in *before* implies the language has a shiftable present.
-    Definitional under our derivation discipline (the well-formedness
-    predicate is *defined* via shiftability per the Stump-effect
-    argument, p. 278) — the typology theorem witnesses that the
-    derivation goes through on every attested type. -/
-theorem eq99a_pres_under_past_before_implies_shiftable :
-    ∀ L ∈ attestedTypes, L.hasTenses = true →
-      L.wellFormedPresentUnderPastBefore = true → L.shiftablePresent = true := by
-  decide
+Stated and proved over *all* profiles, not the three attested rows: each prediction follows
+structurally from the parameter definitions and the substrate grounding. -/
 
-/-- [sharvit-2014] (99b), p. 301: well-formed PAST-under-PAST in
-    *before* + embedded p-shiftability ⇒ simultaneous reading of
-    past-under-past in attitudes. The substantive content: given (99b's
-    antecedent (1)) `isPronominal`, the `isQuantificational` disjunct of
-    `pShiftabilityEmbedded` is false; so the antecedent (2) reduces to
-    `isPronominal ∧ hasSOT`, which is exactly `simultaneousAttitudeReading`. -/
-theorem eq99b_before_and_embedded_pshift_imply_simultaneous :
-    ∀ L ∈ attestedTypes, L.hasTenses = true →
-      L.wellFormedPastUnderPastBefore = true →
-      L.pShiftabilityEmbedded = true →
+/-- [sharvit-2014] (99a): a well-formed present-under-past in *before* implies a shiftable present.
+    Non-trivial under the three-valued `Shiftability`: well-formedness needs *full* shiftability,
+    which strictly implies the weaker "shiftable at all" (Polish witnesses the gap). -/
+theorem eq99a_pres_under_past_before_implies_shiftable (L : LanguageTenseProfile) :
+    L.wellFormedPresentUnderPastBefore = true → L.hasShiftablePresent = true := by
+  cases hs : L.presentShiftability <;>
+    simp [LanguageTenseProfile.wellFormedPresentUnderPastBefore,
+      LanguageTenseProfile.hasFullyShiftablePresent, LanguageTenseProfile.hasShiftablePresent, hs]
+
+/-- [sharvit-2014] (99b): well-formed PAST-under-PAST in *before* + embedded p-shiftability ⇒
+    a simultaneous reading of past-under-past in attitudes. Given a pronominal past (from
+    well-formedness), the `isQuantificational` disjunct of `pShiftabilityEmbedded` vanishes, so the
+    embedded p-shiftability *is* the SOT-deletion that licenses the simultaneous reading. -/
+theorem eq99b_before_and_embedded_pshift_imply_simultaneous (L : LanguageTenseProfile) :
+    L.wellFormedPastUnderPastBefore = true → L.pShiftabilityEmbedded = true →
       L.simultaneousAttitudeReading = true := by
-  decide
+  intro hwf hemb
+  have hpron : L.isPronominal = true :=
+    (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mp hwf
+  have hquant : L.isQuantificational = false :=
+    LanguageTenseProfile.isQuantificational_eq_false_of_isPronominal L hpron
+  simp only [LanguageTenseProfile.pShiftabilityEmbedded, hquant, hpron, Bool.false_or,
+    Bool.true_and] at hemb
+  simp only [LanguageTenseProfile.simultaneousAttitudeReading, hpron, Bool.true_and]
+  exact hemb
 
-/-- [sharvit-2014] (99c), p. 301: well-formed PAST-under-PAST in
-    *before* + no simultaneous reading in attitudes ⇒ No-p-shiftability
-    of bare past-under-past *before*. Contrapositive of the Japanese-
-    case generalization: the bare *before*-clause needs quantificational
-    past for p-shiftability, but pronominal+no-SOT languages (Polish)
-    lack both the simultaneous attitude reading AND the bare *before*
-    p-shiftability. -/
-theorem eq99c_before_and_no_simultaneous_imply_no_bare_pshift :
-    ∀ L ∈ attestedTypes, L.hasTenses = true →
-      L.wellFormedPastUnderPastBefore = true →
-      L.simultaneousAttitudeReading = false →
+/-- [sharvit-2014] (99c): well-formed PAST-under-PAST in *before* + no simultaneous reading ⇒
+    No-p-shiftability of bare past-under-past *before*. Under this encoding the consequent already
+    follows from well-formedness (a pronominal past is not quantificational, so the bare clause
+    lacks p-shiftability); the no-simultaneous antecedent (`_hNoSim`) is Sharvit's, kept for
+    fidelity to (99c) but not load-bearing here. -/
+theorem eq99c_before_and_no_simultaneous_imply_no_bare_pshift (L : LanguageTenseProfile) :
+    L.wellFormedPastUnderPastBefore = true → L.simultaneousAttitudeReading = false →
       L.pShiftabilityBare = false := by
-  decide
+  intro hwf _hNoSim
+  have hpron : L.isPronominal = true :=
+    (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mp hwf
+  exact LanguageTenseProfile.isQuantificational_eq_false_of_isPronominal L hpron
 
-/-! ### §5. Per-language verifications -/
+/-! ### Substrate connection: IPF and quantificational past
 
-example : english.wellFormedPastUnderPastBefore = true := rfl
+The `wellFormedPastUnderPastBefore` predicate is grounded in the [beaver-condoravdi-2003] IPF
+result formalized in `TemporalConnectives/Before.lean`; the two theorems below consume that
+grounding via `wellFormedPastUnderPastBefore_iff_pronominal`. -/
 
-example : english.simultaneousAttitudeReading = true := rfl
+/-- Quantificational-past languages (Japanese) fail `wellFormedPastUnderPastBefore`, matching the
+    IPF prediction (`Before.ipf_quantificationalPast`). -/
+theorem quant_past_languages_fail_before (L : LanguageTenseProfile) :
+    L.isQuantificational = true → L.wellFormedPastUnderPastBefore = false := by
+  intro h
+  have : L.pastLexicalType = some .quantificational := by
+    simpa [LanguageTenseProfile.isQuantificational] using h
+  simp [LanguageTenseProfile.wellFormedPastUnderPastBefore, this, triggersIPFInBefore]
 
-example : english.pShiftabilityBare = false := rfl
+/-- Pronominal-past languages (English, Polish) satisfy `wellFormedPastUnderPastBefore`, in keeping
+    with `Before.pastUnderBefore_wellFormed_iff`. -/
+theorem pronominal_past_languages_pass_before (L : LanguageTenseProfile) :
+    L.isPronominal = true → L.wellFormedPastUnderPastBefore = true :=
+  fun h => (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mpr h
 
-example : english.pShiftabilityEmbedded = true := rfl
+/-! ### Per-language payload
 
-example : japanese.wellFormedPastUnderPastBefore = false := rfl
+The central typological contrast — and a regression guard on the three-valued shiftability: a
+binary `shiftablePresent` would wrongly make Polish's present-under-past in *before* well-formed. -/
 
 example : japanese.pShiftabilityBare = true := rfl
+example : english.pShiftabilityBare = false := rfl
+example : polish.wellFormedPresentUnderPastBefore = false := rfl
+example : japanese.wellFormedPresentUnderPastBefore = true := rfl
 
-example : polish.wellFormedPastUnderPastBefore = true := rfl
+/-! ### Cross-paper bridge to [kratzer-1998]
 
-example : polish.simultaneousAttitudeReading = false := rfl
+The Sharvit ↔ [klecha-2016] comparison (same simultaneous-reading prediction, different
+mechanisms) lives in the later paper's study file, `Studies/Klecha2016.lean §F1`. -/
 
-example : polish.pShiftabilityBare = false := rfl
+/-- [sharvit-2014]'s prediction for English: SOT + pronominal past yields the simultaneous reading
+    of past-under-past in attitudes. -/
+theorem english_predicts_simultaneous : english.simultaneousAttitudeReading = true := rfl
 
-example : polish.pShiftabilityEmbedded = false := rfl
-
-/-! ### §6. Substrate connection: IPF kills quantificational past
-
-The `wellFormedPastUnderPastBefore` predicate is justified by the
-[beaver-condoravdi-2003] IPF result formalized in
-`TemporalConnectives/Before.lean`. -/
-
-/-- Quantificational-past languages (Japanese) fail
-    `wellFormedPastUnderPastBefore`, matching the IPF prediction
-    (`Before.ipf_quantificationalPast`). -/
-theorem quant_past_languages_fail_before :
-    ∀ L ∈ attestedTypes,
-      L.isQuantificational = true → L.wellFormedPastUnderPastBefore = false := by
-  decide
-
-/-- Pronominal-past languages (English, Polish) satisfy
-    `wellFormedPastUnderPastBefore`, in keeping with
-    `Before.pastUnderBefore_wellFormed_iff`. -/
-theorem pronominal_past_languages_pass_before :
-    ∀ L ∈ attestedTypes,
-      L.isPronominal = true → L.wellFormedPastUnderPastBefore = true := by
-  decide
-
-/-! ### §7. Cross-paper bridge: Sharvit ↔ Klecha on past-under-past
-
-[klecha-2016]'s DOX + NPST modal-base derivation predicts the
-simultaneous reading from semantic NPST under doxastic accessibility.
-[sharvit-2014]'s SOT + pronominal-past derivation predicts the same
-reading from morphological deletion of the embedded past. The agreement
-is at the *value layer*; the *mechanism* divergence — Klecha's modal
-base vs Sharvit's SOT — is real and discussed in
-`Studies/Klecha2016.lean §F1`. -/
-
-/-- [sharvit-2014]'s prediction for English: SOT + pronominal past →
-    simultaneous reading of past-under-past in attitudes. -/
-theorem english_predicts_simultaneous :
-    english.simultaneousAttitudeReading = true := rfl
-
-/-- The bridge to [kratzer-1998]: when SOT applies in English,
-    Sharvit's pronominal-past-with-SOT and Kratzer's deletion mechanism
-    both produce a tense-stripped embedded clause. -/
-theorem english_sot_matches_kratzer :
-    english.hasSOT = true ∧
-    Tense.SOT.Decomposition.sotDeletionApplicable .past .past = true :=
-  ⟨rfl, rfl⟩
+/-- Bridge to [kratzer-1998]: English's SOT rule realizes Kratzer's deletion of an agreeing
+    past-under-past — `english.hasSOT` and Kratzer's morphological-identity condition
+    (`Decomposition.sotDeletionApplicable .past .past`) jointly license the "null" embedded past. -/
+theorem english_sot_realizes_kratzer_deletion :
+    english.sotAppliesPastUnderPast = true := rfl
 
 end Sharvit2014

@@ -29,6 +29,9 @@ evidential constraints to Lakoff's false-tense diagnostic.
 
 -/
 
+open Time
+open Tense
+
 namespace English.Tense
 
 open _root_.Tense.Evidential

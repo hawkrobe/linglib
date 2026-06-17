@@ -1,3 +1,4 @@
+import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Domain
 import Linglib.Semantics.Tense.System
 
@@ -31,8 +32,10 @@ existing four-field record — downstream call sites continue to use
 work with `f.toDomain` and `relatedByName`.
 -/
 
-open Tense (Domain Orientation TO)
+open Tense (Domain Orientation TO GramTense)
 open AllenRelation (precedesSet equalSet)
+
+namespace Time
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
@@ -46,64 +49,66 @@ extended with [kiparsky-2002]'s perspective time P.
 P = S in root clauses but diverges for flashbacks, free indirect discourse,
 and embedded tenses. Tense locates R relative to P (not S).
 -/
-structure ReichenbachFrame (Time : Type*) where
+structure ReichenbachFrame (T : Type*) where
   /-- Speech time (S): when the utterance occurs -/
-  speechTime : Time
+  speechTime : T
   /-- Perspective time (P): origin of temporal deixis.
       Equals S in root clauses; shifts in flashback, FID, embedded tenses. -/
-  perspectiveTime : Time
+  perspectiveTime : T
   /-- Reference time (R): the time under discussion -/
-  referenceTime : Time
+  referenceTime : T
   /-- Event time (E): when the described event occurs (E) -/
-  eventTime : Time
+  eventTime : T
 
 namespace ReichenbachFrame
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
-/-- PAST: R < P (reference time precedes perspective time).
-    [kiparsky-2002]: tense locates R relative to P, not S. -/
-def isPast (f : ReichenbachFrame Time) : Prop :=
-  f.referenceTime < f.perspectiveTime
+/-- PAST: R < P (reference time precedes perspective time) — a view of
+    `GramTense.constrains`. [kiparsky-2002]: tense locates R relative to P, not S. -/
+def isPast (f : ReichenbachFrame T) : Prop :=
+  GramTense.past.constrains f.referenceTime f.perspectiveTime
 
-/-- PRESENT: R = P (reference time equals perspective time). -/
-def isPresent (f : ReichenbachFrame Time) : Prop :=
+/-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
+    needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
+    typechecking); it is definitionally `GramTense.present.constrains`. -/
+def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 
 /-- FUTURE: P < R (perspective time precedes reference time). -/
-def isFuture (f : ReichenbachFrame Time) : Prop :=
-  f.perspectiveTime < f.referenceTime
+def isFuture (f : ReichenbachFrame T) : Prop :=
+  GramTense.future.constrains f.referenceTime f.perspectiveTime
+
+/-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — the view of
+    `GramTense.nonpast.constrains`. Completes the four-way relation on frames. -/
+def isNonpast (f : ReichenbachFrame T) : Prop :=
+  GramTense.nonpast.constrains f.referenceTime f.perspectiveTime
 
 /-- Simple case: P = S (root clause, no perspective shift). -/
-def isSimpleCase (f : ReichenbachFrame Time) : Prop :=
+def isSimpleCase (f : ReichenbachFrame T) : Prop :=
   f.perspectiveTime = f.speechTime
 
 /-- Kiparsky's unmarked P–R default: P ≤ R. -/
-def defaultPR (f : ReichenbachFrame Time) : Prop :=
+def defaultPR (f : ReichenbachFrame T) : Prop :=
   f.perspectiveTime ≤ f.referenceTime
 
 /-- Kiparsky's unmarked E–R default: E ≤ R. -/
-def defaultER (f : ReichenbachFrame Time) : Prop :=
+def defaultER (f : ReichenbachFrame T) : Prop :=
   f.eventTime ≤ f.referenceTime
-
-/-- In the simple case (P = S), isPast reduces to R < S. -/
-theorem isPast_simpleCase (f : ReichenbachFrame Time) (h : f.isSimpleCase) :
-    f.isPast ↔ f.referenceTime < f.speechTime := by
-  simp only [isPast, isSimpleCase] at *; rw [h]
 
 /-- Perfective: E ⊆ R (event contained in reference).
     Simplified to E = R for point-based times.
     TODO: proper interval-based perfective/imperfective distinction
     lives in `Semantics/Aspect/Basic.lean` (`ViewpointAspectB`). -/
-def isPerfective (f : ReichenbachFrame Time) : Prop :=
+def isPerfective (f : ReichenbachFrame T) : Prop :=
   f.eventTime = f.referenceTime
 
 /-- Perfect: E < R (event precedes reference) -/
-def isPerfect (f : ReichenbachFrame Time) : Prop :=
+def isPerfect (f : ReichenbachFrame T) : Prop :=
   f.eventTime < f.referenceTime
 
 /-- Prospective: R < E (reference precedes event) -/
-def isProspective (f : ReichenbachFrame Time) : Prop :=
+def isProspective (f : ReichenbachFrame T) : Prop :=
   f.referenceTime < f.eventTime
 
 /-! ### Unfolding lemmas and decidability
@@ -112,61 +117,73 @@ One `_def` simp lemma and one `Decidable` instance per predicate, so
 consumers can close concrete goals with `decide` and rewrite with
 `simp only [isPast_def]` instead of unfolding definitions by hand. -/
 
-@[simp] theorem isPast_def (f : ReichenbachFrame Time) :
+@[simp] theorem isPast_def (f : ReichenbachFrame T) :
     f.isPast ↔ f.referenceTime < f.perspectiveTime := Iff.rfl
 
-omit [LinearOrder Time] in
-@[simp] theorem isPresent_def (f : ReichenbachFrame Time) :
+omit [LinearOrder T] in
+@[simp] theorem isPresent_def (f : ReichenbachFrame T) :
     f.isPresent ↔ f.referenceTime = f.perspectiveTime := Iff.rfl
 
-@[simp] theorem isFuture_def (f : ReichenbachFrame Time) :
+@[simp] theorem isFuture_def (f : ReichenbachFrame T) :
     f.isFuture ↔ f.perspectiveTime < f.referenceTime := Iff.rfl
 
-omit [LinearOrder Time] in
-@[simp] theorem isSimpleCase_def (f : ReichenbachFrame Time) :
+@[simp] theorem isNonpast_def (f : ReichenbachFrame T) :
+    f.isNonpast ↔ f.perspectiveTime ≤ f.referenceTime := Iff.rfl
+
+omit [LinearOrder T] in
+@[simp] theorem isSimpleCase_def (f : ReichenbachFrame T) :
     f.isSimpleCase ↔ f.perspectiveTime = f.speechTime := Iff.rfl
 
-@[simp] theorem defaultPR_def (f : ReichenbachFrame Time) :
+@[simp] theorem defaultPR_def (f : ReichenbachFrame T) :
     f.defaultPR ↔ f.perspectiveTime ≤ f.referenceTime := Iff.rfl
 
-@[simp] theorem defaultER_def (f : ReichenbachFrame Time) :
+@[simp] theorem defaultER_def (f : ReichenbachFrame T) :
     f.defaultER ↔ f.eventTime ≤ f.referenceTime := Iff.rfl
 
-omit [LinearOrder Time] in
-@[simp] theorem isPerfective_def (f : ReichenbachFrame Time) :
+omit [LinearOrder T] in
+@[simp] theorem isPerfective_def (f : ReichenbachFrame T) :
     f.isPerfective ↔ f.eventTime = f.referenceTime := Iff.rfl
 
-@[simp] theorem isPerfect_def (f : ReichenbachFrame Time) :
+@[simp] theorem isPerfect_def (f : ReichenbachFrame T) :
     f.isPerfect ↔ f.eventTime < f.referenceTime := Iff.rfl
 
-@[simp] theorem isProspective_def (f : ReichenbachFrame Time) :
+@[simp] theorem isProspective_def (f : ReichenbachFrame T) :
     f.isProspective ↔ f.referenceTime < f.eventTime := Iff.rfl
 
-instance (f : ReichenbachFrame Time) : Decidable f.isPast :=
+/-- In the simple case (P = S), `isPast` reduces to R < S. -/
+theorem isPast_simpleCase (f : ReichenbachFrame T) (h : f.isSimpleCase) :
+    f.isPast ↔ f.referenceTime < f.speechTime := by
+  simp only [isPast_def, isSimpleCase_def] at h ⊢
+  rw [h]
+
+instance (f : ReichenbachFrame T) : Decidable f.isPast :=
   inferInstanceAs (Decidable (f.referenceTime < f.perspectiveTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isPresent :=
+instance (f : ReichenbachFrame T) : Decidable f.isPresent :=
   inferInstanceAs (Decidable (f.referenceTime = f.perspectiveTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isFuture :=
+instance (f : ReichenbachFrame T) : Decidable f.isFuture :=
   inferInstanceAs (Decidable (f.perspectiveTime < f.referenceTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isSimpleCase :=
-  inferInstanceAs (Decidable (f.perspectiveTime = f.speechTime))
-
-instance (f : ReichenbachFrame Time) : Decidable f.defaultPR :=
+instance (f : ReichenbachFrame T) : Decidable f.isNonpast :=
   inferInstanceAs (Decidable (f.perspectiveTime ≤ f.referenceTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.defaultER :=
+instance (f : ReichenbachFrame T) : Decidable f.isSimpleCase :=
+  inferInstanceAs (Decidable (f.perspectiveTime = f.speechTime))
+
+instance (f : ReichenbachFrame T) : Decidable f.defaultPR :=
+  inferInstanceAs (Decidable (f.perspectiveTime ≤ f.referenceTime))
+
+instance (f : ReichenbachFrame T) : Decidable f.defaultER :=
   inferInstanceAs (Decidable (f.eventTime ≤ f.referenceTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isPerfective :=
+instance (f : ReichenbachFrame T) : Decidable f.isPerfective :=
   inferInstanceAs (Decidable (f.eventTime = f.referenceTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isPerfect :=
+instance (f : ReichenbachFrame T) : Decidable f.isPerfect :=
   inferInstanceAs (Decidable (f.eventTime < f.referenceTime))
 
-instance (f : ReichenbachFrame Time) : Decidable f.isProspective :=
+instance (f : ReichenbachFrame T) : Decidable f.isProspective :=
   inferInstanceAs (Decidable (f.referenceTime < f.eventTime))
 
 /-! ### Domain Bridge -/
@@ -181,27 +198,27 @@ instance (f : ReichenbachFrame Time) : Decidable f.isProspective :=
     Proved equal to `Domain.ofReichenbachPoints` (`toDomain_eq`); the
     four `find?` simp lemmas inherited from `Domain` then resolve all
     role lookups by `rfl`. -/
-def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
+def toDomain (f : ReichenbachFrame T) : Domain T Orientation :=
   Domain.ofReichenbachPoints f.speechTime f.perspectiveTime
     f.referenceTime f.eventTime
 
-@[simp] theorem toDomain_eq (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_eq (f : ReichenbachFrame T) :
     f.toDomain = Domain.ofReichenbachPoints
       f.speechTime f.perspectiveTime f.referenceTime f.eventTime := rfl
 
-@[simp] theorem toDomain_labels (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_labels (f : ReichenbachFrame T) :
     f.toDomain.labels = Domain.reichenbachLabels := rfl
 
-@[simp] theorem toDomain_findUtterance (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_findUtterance (f : ReichenbachFrame T) :
     f.toDomain.find? .utterance = some (TO.pure f.speechTime) := rfl
 
-@[simp] theorem toDomain_findPerspective (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_findPerspective (f : ReichenbachFrame T) :
     f.toDomain.find? .perspective = some (TO.pure f.perspectiveTime) := rfl
 
-@[simp] theorem toDomain_findTopic (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_findTopic (f : ReichenbachFrame T) :
     f.toDomain.find? .topic = some (TO.pure f.referenceTime) := rfl
 
-@[simp] theorem toDomain_findSituation (f : ReichenbachFrame Time) :
+@[simp] theorem toDomain_findSituation (f : ReichenbachFrame T) :
     f.toDomain.find? .situation = some (TO.pure f.eventTime) := rfl
 
 -- ──── Predicate bridges: each predicate as a `relatedByName` query ────
@@ -209,35 +226,35 @@ def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
 /-- `isPast` is exactly `topic precedes perspective` in the Allen
     algebra against the domain — the Reichenbach predicate grounded by
     construction in the Allen projection function on point intervals. -/
-theorem isPast_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isPast_iff_relatedByName (f : ReichenbachFrame T) :
     f.isPast ↔ f.toDomain.relatedByName precedesSet .topic .perspective := by
   rw [Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findPerspective f)]
   exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isFuture` is exactly `perspective precedes topic` in the Allen
     algebra against the domain. -/
-theorem isFuture_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isFuture_iff_relatedByName (f : ReichenbachFrame T) :
     f.isFuture ↔ f.toDomain.relatedByName precedesSet .perspective .topic := by
   rw [Domain.relatedByName_iff precedesSet (toDomain_findPerspective f) (toDomain_findTopic f)]
   exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isPresent` is exactly `topic equal perspective` in the Allen
     algebra against the domain. -/
-theorem isPresent_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isPresent_iff_relatedByName (f : ReichenbachFrame T) :
     f.isPresent ↔ f.toDomain.relatedByName equalSet .topic .perspective := by
   rw [Domain.relatedByName_iff equalSet (toDomain_findTopic f) (toDomain_findPerspective f)]
   exact (TO.pure_equal_iff _ _).symm
 
 /-- `isPerfect` is exactly `situation precedes topic` in the Allen
     algebra against the domain. -/
-theorem isPerfect_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isPerfect_iff_relatedByName (f : ReichenbachFrame T) :
     f.isPerfect ↔ f.toDomain.relatedByName precedesSet .situation .topic := by
   rw [Domain.relatedByName_iff precedesSet (toDomain_findSituation f) (toDomain_findTopic f)]
   exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isProspective` is exactly `topic precedes situation` in the Allen
     algebra against the domain. -/
-theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isProspective_iff_relatedByName (f : ReichenbachFrame T) :
     f.isProspective ↔ f.toDomain.relatedByName precedesSet .topic .situation := by
   rw [Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findSituation f)]
   exact (TO.pure_precedes_iff _ _).symm
@@ -246,7 +263,7 @@ theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
     algebra against the domain. (For the point-time approximation; the
     proper interval-based perfective/imperfective distinction lives in
     `Semantics/Lexical/Verb/ViewpointAspect.lean`.) -/
-theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
+theorem isPerfective_iff_relatedByName (f : ReichenbachFrame T) :
     f.isPerfective ↔ f.toDomain.relatedByName equalSet .situation .topic := by
   rw [Domain.relatedByName_iff equalSet (toDomain_findSituation f) (toDomain_findTopic f)]
   exact (TO.pure_equal_iff _ _).symm
@@ -264,8 +281,8 @@ end ReichenbachFrame
     predicates remain on `ReichenbachFrame`; the Allen bridges above
     (`*_iff_relatedByName`) show how they project into the algebra. -/
 
-instance reichenbachFrame_tenseSystem {Time : Type*} [LinearOrder Time] :
-    TenseSystem (ReichenbachFrame Time) Time Orientation where
+instance reichenbachFrame_tenseSystem {T : Type*} [LinearOrder T] :
+    TenseSystem (ReichenbachFrame T) T Orientation where
   toDomain := ReichenbachFrame.toDomain
   anchor := .perspective
   located := .topic
@@ -273,8 +290,8 @@ instance reichenbachFrame_tenseSystem {Time : Type*} [LinearOrder Time] :
     rw [ReichenbachFrame.toDomain_labels]
     decide
 
-instance reichenbachFrame_aspectSystem {Time : Type*} [LinearOrder Time] :
-    AspectSystem (ReichenbachFrame Time) Time Orientation where
+instance reichenbachFrame_aspectSystem {T : Type*} [LinearOrder T] :
+    AspectSystem (ReichenbachFrame T) T Orientation where
   toDomain := ReichenbachFrame.toDomain
   event := .situation
   reference := .topic
@@ -287,29 +304,29 @@ specialization of the interval-native generic layer. -/
 
 section GenericSpecialization
 
-variable {Time : Type*} [LinearOrder Time]
+variable {T : Type*} [LinearOrder T]
 
-@[simp] theorem tenseSystem_isPast_iff (f : ReichenbachFrame Time) :
+@[simp] theorem tenseSystem_isPast_iff (f : ReichenbachFrame T) :
     TenseSystem.isPast f ↔ f.isPast :=
   (ReichenbachFrame.isPast_iff_relatedByName f).symm
 
-@[simp] theorem tenseSystem_isPresent_iff (f : ReichenbachFrame Time) :
+@[simp] theorem tenseSystem_isPresent_iff (f : ReichenbachFrame T) :
     TenseSystem.isPresent f ↔ f.isPresent :=
   (ReichenbachFrame.isPresent_iff_relatedByName f).symm
 
-@[simp] theorem tenseSystem_isFuture_iff (f : ReichenbachFrame Time) :
+@[simp] theorem tenseSystem_isFuture_iff (f : ReichenbachFrame T) :
     TenseSystem.isFuture f ↔ f.isFuture :=
   (ReichenbachFrame.isFuture_iff_relatedByName f).symm
 
-@[simp] theorem aspectSystem_isPerfect_iff (f : ReichenbachFrame Time) :
+@[simp] theorem aspectSystem_isPerfect_iff (f : ReichenbachFrame T) :
     AspectSystem.isPerfect f ↔ f.isPerfect :=
   (ReichenbachFrame.isPerfect_iff_relatedByName f).symm
 
-@[simp] theorem aspectSystem_isPerfective_iff (f : ReichenbachFrame Time) :
+@[simp] theorem aspectSystem_isPerfective_iff (f : ReichenbachFrame T) :
     AspectSystem.isPerfective f ↔ f.isPerfective :=
   (ReichenbachFrame.isPerfective_iff_relatedByName f).symm
 
-@[simp] theorem aspectSystem_isProspective_iff (f : ReichenbachFrame Time) :
+@[simp] theorem aspectSystem_isProspective_iff (f : ReichenbachFrame T) :
     AspectSystem.isProspective f ↔ f.isProspective :=
   (ReichenbachFrame.isProspective_iff_relatedByName f).symm
 
@@ -319,7 +336,7 @@ variable {Time : Type*} [LinearOrder Time]
     "the imperfective is unrepresentable in the point-frame core" is
     here a theorem, not a docstring. -/
 theorem ReichenbachFrame.not_aspectSystem_isImperfective
-    (f : ReichenbachFrame Time) : ¬ AspectSystem.isImperfective f := by
+    (f : ReichenbachFrame T) : ¬ AspectSystem.isImperfective f := by
   rintro ⟨i, j, hi, hj, hrel⟩
   have hi' : f.toDomain.find? .topic = some i := hi
   have hj' : f.toDomain.find? .situation = some j := hj
@@ -330,3 +347,5 @@ theorem ReichenbachFrame.not_aspectSystem_isImperfective
   exact TO.not_pure_properContainment _ _ hrel
 
 end GenericSpecialization
+
+end Time

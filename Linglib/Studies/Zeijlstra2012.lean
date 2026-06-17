@@ -49,9 +49,10 @@ reversing its c-command direction.
 * Temporal de re, counterfactual tense, and relative-clause tense are not addressed.
 -/
 
+open Time
+
 namespace Zeijlstra2012
 
-open Tense
 open Tense
 open Minimalist (FeatureVal GramFeature Interpretability)
 

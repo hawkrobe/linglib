@@ -43,9 +43,10 @@ collects the paper-attributed theorems.
 
 -/
 
+open Time
+
 namespace VonStechow2009
 
-open Tense
 open Tense
 
 

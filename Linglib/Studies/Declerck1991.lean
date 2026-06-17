@@ -31,6 +31,8 @@ companion volume, [declerck-1991-grammar].
 - `putiDefault`: Declerck's principle of unmarked temporal interpretation
 -/
 
+open Time
+
 namespace Declerck1991
 
 open Tense (shiftedFrame)

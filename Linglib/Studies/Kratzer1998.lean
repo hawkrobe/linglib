@@ -51,6 +51,8 @@ judgment.
 
 -/
 
+open Time
+
 namespace Kratzer1998
 
 open Tense.SOT.Decomposition

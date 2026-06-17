@@ -43,9 +43,10 @@ puzzle (where they actually diverge).
 
 -/
 
+open Time
+
 namespace Ogihara1996
 
-open Tense
 open Tense
 open Tense.SOT.Ambiguity (PastReading)
 open Data.Examples (LinguisticExample)
@@ -173,7 +174,7 @@ theorem pluperfect_is_perfect : pluperfectShifted.isPerfect := by
 
 /-- Pluperfect: R < P (past tense relative to embedded perspective). -/
 theorem pluperfect_is_past : pluperfectShifted.isPast := by
-  simp only [ReichenbachFrame.isPast, pluperfectShifted, embeddedFrame,
+  simp only [ReichenbachFrame.isPast_def, pluperfectShifted, embeddedFrame,
     matrixItta]; omega
 
 

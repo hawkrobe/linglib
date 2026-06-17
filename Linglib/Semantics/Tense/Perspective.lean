@@ -36,6 +36,8 @@ Tenses are presupposition triggers anchored to π:
 
 -/
 
+open Time
+
 namespace Tense.Perspective
 
 open Semantics.Presupposition

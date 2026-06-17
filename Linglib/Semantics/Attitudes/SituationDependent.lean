@@ -31,6 +31,9 @@ situation-dependent types natively, with backward-compat wrappers.
 
 -/
 
+open Time
+open Tense
+
 namespace Semantics.Attitudes.SituationDependent
 
 open Core (WorldTimeIndex)

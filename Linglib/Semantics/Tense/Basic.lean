@@ -20,6 +20,10 @@ SOT frame constructors.
 - `AttitudeTemporalSemantics`: how an attitude verb shifts eval time
 -/
 
+open Time
+
+namespace Tense
+
 /-! ### AttitudeTemporalSemantics -/
 
 /-- How an attitude verb shifts the evaluation time for its complement.
@@ -48,8 +52,6 @@ inductive EmbeddedTenseReading where
   | shifted       -- embedded event BEFORE matrix event (back-shifted)
   | simultaneous  -- embedded event AT matrix event time (SOT deletion)
   deriving DecidableEq, Repr, Inhabited
-
-namespace Tense
 
 
 /-- Standard eval time shift: embedded eval time = matrix event time.
