@@ -170,56 +170,44 @@ omit [BoundedOrder B] [BoundedOrder (Know B)] in
 /-- A building block for Avron Prop 3.2: from `y ≤ b` (truth), `y ≤ y ⊗ b`. The
 knowledge meet `⊗` is truth-monotone, so `y = y ⊗ y ≤ b ⊗ y = y ⊗ b`. -/
 private theorem tle_kInf_of_tle {y b : B} (h : y ≤ b) : y ≤ y ⊗ b := by
-  have := Interlaced.kInf_tmono h y
-  rwa [kInf_self, kInf_comm] at this
+  simpa only [kInf_self, kInf_comm] using Interlaced.kInf_tmono h y
 
 omit [BoundedOrder B] [BoundedOrder (Know B)] in
 /-- Dual building block: from `a ≤ y` (truth), `y ⊗ a ≤ y`. -/
 private theorem kInf_tle_of_tle {a y : B} (h : a ≤ y) : y ⊗ a ≤ y := by
-  have := Interlaced.kInf_tmono h y
-  rwa [kInf_self, kInf_comm] at this
+  simpa only [kInf_self, kInf_comm] using Interlaced.kInf_tmono h y
 
 omit [BoundedOrder B] [BoundedOrder (Know B)] in
 /-- A building block for the dual of Prop 3.2: from `a ≤ y` (truth),
 `y ⊕ a ≤ y`. The knowledge join `⊕` is truth-monotone. -/
 private theorem kSup_tle_of_tle {a y : B} (h : a ≤ y) : (y ⊕ a : B) ≤ y := by
-  have := Interlaced.kSup_tmono h y
-  rwa [kSup_self, kSup_comm] at this
+  simpa only [kSup_self, kSup_comm] using Interlaced.kSup_tmono h y
 
 omit [BoundedOrder B] [BoundedOrder (Know B)] in
 /-- Dual building block: from `y ≤ b` (truth), `y ≤ y ⊕ b`. -/
 private theorem tle_kSup_of_tle {y b : B} (h : y ≤ b) : y ≤ (y ⊕ b : B) := by
-  have := Interlaced.kSup_tmono h y
-  rwa [kSup_self, kSup_comm] at this
+  simpa only [kSup_self, kSup_comm] using Interlaced.kSup_tmono h y
 
 omit [BoundedOrder (Know B)] in
 /-- [avron-1996] Cor 3.8(1) in `B`-land: every element is the knowledge-join of
 its knowledge-meets with the truth bounds, `x = (x ⊗ ⊤) ⊕ (x ⊗ ⊥)`. Proved by
 truth-antisymmetry: both `x ≤ (x ⊗ ⊤) ⊕ (x ⊗ ⊥)` and the reverse hold, each
 via truth-monotonicity of `⊕` plus knowledge absorption. -/
-private theorem decomp_kSup (x : B) : ((x ⊗ ⊤) ⊕ (x ⊗ ⊥) : B) = x := by
-  apply le_antisymm
-  · -- `(x ⊗ ⊤) ⊕ (x ⊗ ⊥) ≤ x`: bound via `x ⊗ ⊥ ≤ x` (truth-mono of `⊕`)
-    have h₁ : x ⊗ ⊥ ≤ x := kInf_tle_of_tle bot_le
-    have := Interlaced.kSup_tmono h₁ (x ⊗ ⊤)
-    rwa [kSup_kInf_self, kSup_comm (x ⊗ ⊥) (x ⊗ ⊤)] at this
-  · -- `x ≤ (x ⊗ ⊤) ⊕ (x ⊗ ⊥)`: bound via `x ≤ x ⊗ ⊤` (truth-mono of `⊕`)
-    have h₂ : x ≤ x ⊗ ⊤ := tle_kInf_of_tle le_top
-    have := Interlaced.kSup_tmono h₂ (x ⊗ ⊥)
-    rwa [kSup_kInf_self] at this
+private theorem decomp_kSup (x : B) : ((x ⊗ ⊤) ⊕ (x ⊗ ⊥) : B) = x :=
+  le_antisymm
+    (by simpa only [kSup_kInf_self, kSup_comm] using
+      Interlaced.kSup_tmono (kInf_tle_of_tle bot_le : x ⊗ ⊥ ≤ x) (x ⊗ ⊤))
+    (by simpa only [kSup_kInf_self] using
+      Interlaced.kSup_tmono (tle_kInf_of_tle le_top : x ≤ x ⊗ ⊤) (x ⊗ ⊥))
 
 omit [BoundedOrder (Know B)] in
 /-- Dual of [avron-1996] Cor 3.8: `x = (x ⊕ ⊤) ⊗ (x ⊕ ⊥)`. -/
-private theorem decomp_kInf (x : B) : ((x ⊕ ⊤) ⊗ (x ⊕ ⊥) : B) = x := by
-  apply le_antisymm
-  · -- `(x ⊕ ⊤) ⊗ (x ⊕ ⊥) ≤ x`: bound via `x ⊕ ⊥ ≤ x` (truth-mono of `⊗`)
-    have h₁ : (x ⊕ ⊥ : B) ≤ x := kSup_tle_of_tle bot_le
-    have := Interlaced.kInf_tmono h₁ (x ⊕ ⊤ : B)
-    rwa [kInf_kSup_self, kInf_comm (x ⊕ ⊥ : B) (x ⊕ ⊤ : B)] at this
-  · -- `x ≤ (x ⊕ ⊤) ⊗ (x ⊕ ⊥)`: bound via `x ≤ x ⊕ ⊤` (truth-mono of `⊗`)
-    have h₂ : x ≤ (x ⊕ ⊤ : B) := tle_kSup_of_tle le_top
-    have := Interlaced.kInf_tmono h₂ (x ⊕ ⊥ : B)
-    rwa [kInf_kSup_self] at this
+private theorem decomp_kInf (x : B) : ((x ⊕ ⊤) ⊗ (x ⊕ ⊥) : B) = x :=
+  le_antisymm
+    (by simpa only [kInf_kSup_self, kInf_comm] using
+      Interlaced.kInf_tmono (kSup_tle_of_tle bot_le : (x ⊕ ⊥ : B) ≤ x) (x ⊕ ⊤ : B))
+    (by simpa only [kInf_kSup_self] using
+      Interlaced.kInf_tmono (tle_kSup_of_tle le_top : x ≤ (x ⊕ ⊤ : B)) (x ⊕ ⊥ : B))
 
 omit [BoundedOrder (Know B)] in
 /-- On the knowledge-ideal below the truth top `t`, the truth order refines into
@@ -227,8 +215,7 @@ the knowledge order: if `u ≤ₖ t` and `u ≤ v` (truth) then `u ≤ₖ v`. Pr
 the knowledge-monotonicity of truth meet (`inf_kmono`) plus `u ⊓ v = u`. -/
 private theorem kLE_of_tle_of_kLE_top {u v : B} (hu : u ≤ₖ ⊤) (huv : u ≤ v) :
     u ≤ₖ v := by
-  have key : (u ⊓ v : B) ≤ₖ (⊤ ⊓ v : B) := Interlaced.inf_kmono hu v
-  rwa [top_inf_eq, inf_eq_left.mpr huv] at key
+  simpa only [top_inf_eq, inf_eq_left.mpr huv] using Interlaced.inf_kmono hu v
 
 omit [BoundedOrder (Know B)] in
 /-- Dual: on the knowledge-ideal below the truth bottom `f`, the truth order
@@ -236,8 +223,7 @@ refines into the *reverse* knowledge order: if `u ≤ₖ f` and `v ≤ u` (truth
 `u ≤ₖ v`. Proved from the knowledge-monotonicity of truth join (`sup_kmono`). -/
 private theorem kLE_of_tge_of_kLE_bot {u v : B} (hu : u ≤ₖ ⊥) (hvu : v ≤ u) :
     u ≤ₖ v := by
-  have key : (u ⊔ v : B) ≤ₖ (⊥ ⊔ v : B) := Interlaced.sup_kmono hu v
-  rwa [bot_sup_eq, sup_eq_left.mpr hvu] at key
+  simpa only [bot_sup_eq, sup_eq_left.mpr hvu] using Interlaced.sup_kmono hu v
 
 omit [BoundedOrder (Know B)] in
 /-- The truth-order comparison underlying [avron-1996]'s onto direction: if `b` is
@@ -248,11 +234,9 @@ join `a ⊔ b`, using both `sup_kmono` and `inf_kmono`. -/
 private theorem tle_of_kLE_top_kLE_bot {a b : B} (ha : a ≤ₖ ⊤) (hb : b ≤ₖ ⊥) :
     b ≤ a := by
   have hc1 : (a ⊔ b : B) ≤ₖ a := by
-    have := Interlaced.sup_kmono hb a
-    rwa [bot_sup_eq, sup_comm b a] at this
+    simpa only [sup_comm, sup_bot_eq] using Interlaced.sup_kmono hb a
   have hc2 : a ≤ₖ (a ⊔ b : B) := by
-    have := Interlaced.inf_kmono ha (a ⊔ b)
-    rwa [inf_sup_self, top_inf_eq] at this
+    simpa only [inf_sup_self, top_inf_eq] using Interlaced.inf_kmono ha (a ⊔ b)
   exact sup_eq_left.mp (kLE_antisymm hc1 hc2)
 
 omit [BoundedOrder (Know B)] in
@@ -261,23 +245,19 @@ knowledge-meet of `a ⊕ b` with the truth top recovers `a`, `(a ⊕ b) ⊗ t = 
 private theorem kInf_top_kSup (a b : B) (ha : a ≤ₖ ⊤) (hb : b ≤ₖ ⊥) :
     ((a ⊕ b) ⊗ ⊤ : B) = a := by
   have hba : b ≤ a := tle_of_kLE_top_kLE_bot ha hb
-  -- `a ⊕ b ≤ a` (truth) and `a ⊗ ⊤ = a`, so `(a ⊕ b) ⊗ ⊤ ≤ a` (truth)
   have hsab : (a ⊕ b : B) ≤ a := by
-    have := Interlaced.kSup_tmono hba a
-    rwa [kSup_self, kSup_comm b a] at this
+    simpa only [kSup_self, kSup_comm] using Interlaced.kSup_tmono hba a
   have haT : (a ⊗ ⊤ : B) = a := toKnow.injective (by
     simp only [toKnow_kInf]; exact inf_eq_left.mpr ha)
   have hwle : ((a ⊕ b) ⊗ ⊤ : B) ≤ a := by
-    have := Interlaced.kInf_tmono hsab ⊤
-    rwa [haT] at this
-  -- knowledge sides: `(a ⊕ b) ⊗ t ≤ₖ t` and `a ≤ₖ (a ⊕ b) ⊗ t`
+    simpa only [haT] using Interlaced.kInf_tmono hsab ⊤
   have hw_kT : ((a ⊕ b) ⊗ ⊤ : B) ≤ₖ ⊤ := by
     rw [kLE_def, toKnow_kInf]; exact inf_le_right
   have hwa : ((a ⊕ b) ⊗ ⊤ : B) ≤ₖ a := kLE_of_tle_of_kLE_top hw_kT hwle
   have haw : a ≤ₖ ((a ⊕ b) ⊗ ⊤ : B) := by
     rw [kLE_def, toKnow_kInf]
     exact le_inf (by rw [← kLE_def]; exact (le_sup_left : a ≤ₖ a ⊕ b)) ha
-  exact (kLE_antisymm hwa haw)
+  exact kLE_antisymm hwa haw
 
 omit [BoundedOrder (Know B)] in
 /-- [avron-1996] Thm 4.3 onto, second component: for `a ≤ₖ t`, `b ≤ₖ f`,
@@ -285,23 +265,19 @@ omit [BoundedOrder (Know B)] in
 private theorem kInf_bot_kSup (a b : B) (ha : a ≤ₖ ⊤) (hb : b ≤ₖ ⊥) :
     ((a ⊕ b) ⊗ ⊥ : B) = b := by
   have hba : b ≤ a := tle_of_kLE_top_kLE_bot ha hb
-  -- `b ≤ a ⊕ b` (truth) and `b ⊗ ⊥ = b`, so `b ≤ (a ⊕ b) ⊗ ⊥` (truth)
   have hbab : b ≤ (a ⊕ b : B) := by
-    have := Interlaced.kSup_tmono hba b
-    rwa [kSup_self] at this
+    simpa only [kSup_self] using Interlaced.kSup_tmono hba b
   have hbF : (b ⊗ ⊥ : B) = b := toKnow.injective (by
     simp only [toKnow_kInf]; exact inf_eq_left.mpr hb)
   have hwge : b ≤ ((a ⊕ b) ⊗ ⊥ : B) := by
-    have := Interlaced.kInf_tmono hbab ⊥
-    rwa [hbF] at this
-  -- knowledge sides
+    simpa only [hbF] using Interlaced.kInf_tmono hbab ⊥
   have hw_kF : ((a ⊕ b) ⊗ ⊥ : B) ≤ₖ ⊥ := by
     rw [kLE_def, toKnow_kInf]; exact inf_le_right
   have hwb : ((a ⊕ b) ⊗ ⊥ : B) ≤ₖ b := kLE_of_tge_of_kLE_bot hw_kF hwge
   have hbw : b ≤ₖ ((a ⊕ b) ⊗ ⊥ : B) := by
     rw [kLE_def, toKnow_kInf]
     exact le_inf (by rw [← kLE_def]; exact (le_sup_right : b ≤ₖ a ⊕ b)) hb
-  exact (kLE_antisymm hwb hbw)
+  exact kLE_antisymm hwb hbw
 
 /-- [avron-1996] Cor 3.5: the truth bounds are complementary in the knowledge
 order (`t ⊗ f = ⊥`, `t ⊕ f = ⊤`). Derived from interlacing via `decomp_kSup`
