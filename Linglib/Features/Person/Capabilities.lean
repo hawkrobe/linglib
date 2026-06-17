@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Flat
+import Linglib.Features.Agreement
 import Linglib.Features.Person.Basic
 
 /-!
@@ -57,7 +58,7 @@ end HasPerson
 theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasPerson.Compatible f1 f2 :=
-  Flat.compat_of_clause_map Person.fromUD <| by
+  Features.compat_of_clause_map Person.fromUD <| by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto

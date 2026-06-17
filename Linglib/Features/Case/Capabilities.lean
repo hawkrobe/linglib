@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Flat
+import Linglib.Features.Agreement
 import Linglib.Features.Case.Basic
 
 /-!
@@ -60,7 +61,7 @@ end HasCase
 theorem UD.MorphFeatures.compatible_hasCase {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasCase.Compatible f1 f2 :=
-  Flat.compat_of_clause_map Case.fromUD <| by
+  Features.compat_of_clause_map Case.fromUD <| by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto

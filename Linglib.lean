@@ -6,6 +6,7 @@ and their interfaces. See README.md for documentation links.
 -/
 -- Core
 import Linglib.Features.Basic
+import Linglib.Features.Agreement
 import Linglib.Features.Dimension
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
