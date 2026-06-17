@@ -42,26 +42,27 @@ coexisting with the existing namespaced `Module.Flat` and `ConvexCone.Flat`
 * `Flat` — the order-carrying alias, with `PartialOrder`, `OrderBot`,
   `SemilatticeInf`, `OmegaCompletePartialOrder`, and `PartialUnify` instances
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
-* `Flat.ωSup` — the supremum of a chain (the eventual value, or `⊥`)
+* `Flat.ωSup_mem_range` — chains attain their supremum (the domain has height ≤ 2)
+* `Flat.ωScottContinuous_of_monotone` — monotone maps out of `Flat` are continuous
+* `Flat.liftEquiv` — the free-domain universal property: functions `α → D` are
+  exactly strict continuous maps `Flat α →𝒄 D`
 * `Flat.compat_iff` — slot compatibility (`Compat`), characterized
 * `Flat.unify_distinct_eq_none` — distinct atoms do not unify (the
   non-distributivity witness)
 
 ## TODO
 
-The order skeleton is here; the domain-theoretic content that makes it the
-*free domain* rather than an ad-hoc poset is not yet formalized:
+The free-domain universal property is now `liftEquiv` (with its enabling lemma
+`ωScottContinuous_of_monotone`). The remaining domain-theoretic program:
 
-* **Universal property.** `Flat` is the free pointed ω-CPO on a set: strict
-  continuous maps `Flat α →𝒄 D` into a pointed domain `D` correspond to bare
-  functions `α → D`. State the free–forgetful adjunction `Flat ⊣ U`.
+* **Categorical freeness.** Package `liftEquiv` as a free–forgetful adjunction
+  between `Type` and the pointed `ωCPO` category — `Flat ⊣ U` (template:
+  mathlib's `latToBddLatForgetAdjunction`, the free bounded lattice via
+  `WithBot`).
 * **Lifting monad.** Give `Flat` (= `Option`) its ω-CPO monad structure — the
   partiality/lifting monad — whose Kleisli arrows `α → Flat β` are partial
-  continuous functions; `PartialUnify.unify` is one such arrow, which is why it
-  composes through `Option.bind` (`unify_assoc`).
-* **Scott continuity.** Every monotone map out of `Flat α` is continuous
-  (chains are eventually constant), so a map `Flat α →𝒄 D` is fixed by its
-  values on atoms. Record the `ωScottContinuous` lemmas.
+  continuous functions; `PartialUnify.unify` is one, which is why it composes
+  through `Option.bind` (`unify_assoc`). (mathlib has this for `Part`.)
 * **Algebraicity / bounded-completeness.** Every element of `Flat α` is compact,
   making it an algebraic (finite-height) bounded-complete domain — the
   Scott-domain packaging of the partial join `PartialUnify` provides.
@@ -187,19 +188,21 @@ supremum. This is the *flat domain*, the canonical nontrivial example of an
 `OmegaCompletePartialOrder`. -/
 
 section OmegaCPO
-open OmegaCompletePartialOrder (Chain)
+open OmegaCompletePartialOrder
+  (Chain ωScottContinuous ContinuousHom ωSup le_ωSup isLUB_range_ωSup)
 
 open Classical in
-/-- The supremum of a chain in the flat order: the committed value if the
-chain ever leaves `⊥`, and `⊥` otherwise. -/
-noncomputable def ωSup (c : Chain (Flat α)) : Flat α :=
+/-- The supremum of a chain in the flat order: the committed value if the chain
+ever leaves `⊥`, and `⊥` otherwise. The implementation behind the `ωSup`
+projection (cf. `Prod.ωSupImpl`); state results about `ωSup`. -/
+private noncomputable def ωSupImpl (c : Chain (Flat α)) : Flat α :=
   if h : ∃ i, (c i).isSome then c (Nat.find h) else none
 
-private theorem ωSup_isLUB (c : Chain (Flat α)) :
-    IsLUB (Set.range c) (ωSup c) := by
+private theorem ωSupImpl_isLUB (c : Chain (Flat α)) :
+    IsLUB (Set.range c) (ωSupImpl c) := by
   refine ⟨?_, ?_⟩
   · rintro _ ⟨j, rfl⟩
-    unfold ωSup
+    unfold ωSupImpl
     split
     · next h =>
       intro a ha
@@ -212,7 +215,7 @@ private theorem ωSup_isLUB (c : Chain (Flat α)) :
       intro a ha
       exact absurd ⟨j, by rw [ha]; rfl⟩ h
   · intro u hu
-    unfold ωSup
+    unfold ωSupImpl
     split
     · next h => exact hu (Set.mem_range_self (Nat.find h))
     · exact Option.FlatLE.none_le u
@@ -220,9 +223,70 @@ private theorem ωSup_isLUB (c : Chain (Flat α)) :
 /-- The flat domain is an `OmegaCompletePartialOrder`: chains are eventually
 constant, so their suprema are the eventual value (or `⊥`). -/
 noncomputable instance : OmegaCompletePartialOrder (Flat α) where
-  ωSup := ωSup
-  le_ωSup c i := (ωSup_isLUB c).1 (Set.mem_range_self i)
-  ωSup_le c x hub := (ωSup_isLUB c).2 (by rintro _ ⟨i, rfl⟩; exact hub i)
+  ωSup := ωSupImpl
+  le_ωSup c i := (ωSupImpl_isLUB c).1 (Set.mem_range_self i)
+  ωSup_le c x hub := (ωSupImpl_isLUB c).2 (by rintro _ ⟨i, rfl⟩; exact hub i)
+
+/-- Chains in the flat domain attain their supremum — `ωSup c` is some `c i`:
+the domain has height ≤ 2. -/
+theorem ωSup_mem_range (c : Chain (Flat α)) : ωSup c ∈ Set.range c := by
+  show ωSupImpl c ∈ Set.range c
+  unfold ωSupImpl
+  split
+  · next h => exact ⟨Nat.find h, rfl⟩
+  · next h =>
+    refine ⟨0, ?_⟩
+    by_contra hne
+    refine h ⟨0, ?_⟩
+    cases hc : c 0 with
+    | none => exact absurd hc hne
+    | some a => rfl
+
+/-- Every monotone map out of the flat domain is `ωScottContinuous`: chains
+attain their suprema (`ωSup_mem_range`), so continuity is automatic. This is
+the key fact behind the universal property `liftEquiv`. -/
+theorem ωScottContinuous_of_monotone {D : Type*} [OmegaCompletePartialOrder D]
+    {f : Flat α → D} (hf : Monotone f) : ωScottContinuous f := by
+  refine ωScottContinuous.of_monotone_map_ωSup ⟨hf, fun c => ?_⟩
+  refine IsLUB.unique ?_ (isLUB_range_ωSup _)
+  refine ⟨?_, fun u hu => ?_⟩
+  · rintro _ ⟨i, rfl⟩
+    exact hf (le_ωSup c i)
+  · obtain ⟨k, hk⟩ := ωSup_mem_range c
+    rw [← hk]
+    exact hu ⟨k, rfl⟩
+
+/-- The extension of `g : α → D` to the flat domain by `⊥ ↦ ⊥`. -/
+private def liftFun {D : Type*} [Bot D] (g : α → D) : Flat α → D
+  | none => ⊥
+  | some a => g a
+
+private theorem liftFun_monotone {D : Type*} [Preorder D] [OrderBot D]
+    (g : α → D) : Monotone (liftFun g) := by
+  intro x y hxy
+  cases x with
+  | none => exact bot_le
+  | some a =>
+    obtain rfl : y = some a := le_def.mp hxy a rfl
+    exact le_refl _
+
+/-- **The flat domain is free.** Strict continuous maps out of `Flat α` into a
+pointed domain `D` are exactly functions `α → D` — the universal property of
+the free domain. The forward map precomposes with `some`; the inverse extends
+by `⊥ ↦ ⊥`, continuous by `ωScottContinuous_of_monotone`. -/
+noncomputable def liftEquiv {D : Type*} [OmegaCompletePartialOrder D] [OrderBot D] :
+    (α → D) ≃ {f : Flat α →𝒄 D // f ⊥ = ⊥} where
+  toFun g := ⟨ContinuousHom.ofFun (liftFun g)
+    (ωScottContinuous_of_monotone (liftFun_monotone g)), rfl⟩
+  invFun f a := f.1 (some a)
+  left_inv g := by funext a; rfl
+  right_inv := by
+    rintro ⟨f, hf⟩
+    refine Subtype.ext (DFunLike.ext _ _ ?_)
+    intro x
+    cases x with
+    | none => exact hf.symm
+    | some a => rfl
 
 end OmegaCPO
 
