@@ -6,6 +6,7 @@ import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
+import Mathlib.Order.UpperLower.Basic
 import Linglib.Semantics.Questions.Support
 
 /-!
@@ -151,6 +152,25 @@ theorem isDeclarative_iff_not_isInquisitive (P : Question W) :
   not_not.symm
 
 /-! ### Constructors -/
+
+/-- Smart constructor from a lower (downward-closed) family of
+    information states containing `∅`. Packages the two `Question`
+    obligations in mathlib's `IsLowerSet` vocabulary, so a caller holding
+    a persistence proof (`IsLowerSet`) and an empty-state witness builds
+    the `Question` directly instead of re-deriving `downward_closed`
+    inline. -/
+def ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s) (lower : IsLowerSet s) :
+    Question W where
+  props := s
+  contains_empty := empty_mem
+  downward_closed := fun _p hp _q hq => lower hq hp
+
+@[simp] theorem props_ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s)
+    (lower : IsLowerSet s) : (ofLowerSet s empty_mem lower).props = s := rfl
+
+@[simp] theorem mem_ofLowerSet {s : Set (Set W)} {empty_mem : ∅ ∈ s}
+    {lower : IsLowerSet s} {q : Set W} :
+    q ∈ ofLowerSet s empty_mem lower ↔ q ∈ s := Iff.rfl
 
 /-- The **declarative** content of a proposition `p`: the principal
     ideal `{q | q ⊆ p}`. Single alternative `p`; non-inquisitive;

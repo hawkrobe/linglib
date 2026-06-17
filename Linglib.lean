@@ -124,7 +124,6 @@ import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Evidential.Basic
-import Linglib.Semantics.Questions.Denotation
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Semantics.Questions.Partition.Binary
@@ -2511,6 +2510,7 @@ import Linglib.Studies.Fox2018
 import Linglib.Studies.Xiang2022
 import Linglib.Studies.George2011
 import Linglib.Studies.CiardelliGroenendijkRoelofsen2018
+import Linglib.Studies.Ciardelli2022
 import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Pragmatics.DecisionTheoretic.MerinBridge
 import Linglib.Semantics.Questions.Resolution
