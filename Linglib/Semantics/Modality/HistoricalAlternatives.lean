@@ -31,7 +31,9 @@ perfectly match it in matters of particular fact up to that time
   shrinks as time advances;
 * `settled_not_diverse` : settled properties block metaphysical readings;
 * `toTWFrame_sat_N_atom` : the object logic's historical necessity `N` reduces to
-  truth throughout the `metaphysicalBase`.
+  truth throughout the `metaphysicalBase`;
+* `settled_iff_determined` : Condoravdi's `settled` = object-logic historical determinacy
+  (`N P ∨ N ¬P`) — settled-*whether* (bilateral), the analogue of `oSettled`, not `IsInevitable`.
 -/
 
 open Intensional (WorldTimeIndex)
@@ -503,6 +505,47 @@ theorem toTWFrame_sat_N_atom (V : Atom → Time → W → Prop) (p : Atom) (t : 
 theorem toTWFrame_sat_box_atom (V : Atom → Time → W → Prop) (p : Atom) (t : Time) (w : W) :
     (toTWFrame history hp).sat V (.box (.atom p)) t w ↔ ∀ w', V p t w' := by
   simp only [TWFrame.sat_box, TWFrame.sat_atom]
+
+include hp in
+/-- The evaluation world is always a metaphysical alternative to itself. -/
+theorem mem_metaphysicalBase_self (t : Time) (w : W) :
+    w ∈ metaphysicalBase history w t := hp.refl ⟨w, t⟩
+
+/-- A formula is **historically determined** at `(t, w)` — the object logic decides it,
+    `N a ∨ N ¬a` — iff it is constant across the metaphysical base. The single-world,
+    formula-general core of settledness. -/
+theorem toTWFrame_N_or_N_neg_iff (V : Atom → Time → W → Prop) (a : OForm Atom) (t : Time) (w : W) :
+    ((toTWFrame history hp).sat V a.N t w ∨ (toTWFrame history hp).sat V a.neg.N t w) ↔
+      ∀ w' ∈ metaphysicalBase history w t,
+        ((toTWFrame history hp).sat V a t w' ↔ (toTWFrame history hp).sat V a t w) := by
+  simp only [TWFrame.sat_N, TWFrame.sat_neg, toTWFrame_sim]
+  constructor
+  · rintro (h | h) w' hw'
+    · exact iff_of_true (h w' hw') (h w (mem_metaphysicalBase_self history hp t w))
+    · exact iff_of_false (h w' hw') (h w (mem_metaphysicalBase_self history hp t w))
+  · intro hd
+    rcases Classical.em ((toTWFrame history hp).sat V a t w) with hw | hw
+    · exact Or.inl fun w' hw' => (hd w' hw').mpr hw
+    · exact Or.inr fun w' hw' ha => hw ((hd w' hw').mp ha)
+
+/-- Condoravdi's `settled` over a common ground is object-logic historical determinacy at every
+    cg-world: `N P ∨ N ¬P` for the lifted valuation. This is **settled-*whether*** (bilateral,
+    history-blind — the analogue of `oSettled`/`IsSettledWhether`, **not** the unilateral
+    `IsInevitable`). `P` is the already-forward-instantiated world proposition (Condoravdi's
+    `AT([t₀,_), ·, P)`; the AT-wrapper is discharged by the caller). Cf. [klecha-2016]'s
+    `futureHistoryBase` — the slice on which determinacy can fail. -/
+theorem settled_iff_determined (cg : Set W) (P : W → Prop) (t : Time) :
+    settled history cg t P ↔
+      ∀ w ∈ cg,
+        ((toTWFrame history hp).sat (fun _ _ w' => P w') (.N (.atom ())) t w ∨
+         (toTWFrame history hp).sat (fun _ _ w' => P w') (.N (.neg (.atom ()))) t w) := by
+  unfold settled
+  refine forall_congr' fun w => imp_congr_right fun _ => ?_
+  rw [toTWFrame_N_or_N_neg_iff history hp]
+  simp only [TWFrame.sat_atom]
+  constructor
+  · intro h w' hw'; exact (h w' hw').symm
+  · intro h w' hw'; exact (h w' hw').symm
 
 end TWFrame
 
