@@ -254,7 +254,7 @@ def willDeletion [LT Time] (f : TensePerspective Time) : Prop :=
 /-- Classify a tense use as true (grammatical tense matches the temporal
     relation) or false (tense encodes psychological perspective instead),
     reusing the `TenseUseType` classification of the judgment data. -/
-def classifyUse [LinearOrder Time] (gramTense : Finset Ordering)
+def classifyUse [LinearOrder Time] (gramTense : GramTense)
     (f : TensePerspective Time) : TenseUseType :=
   match gramTense with
   | .past    => if f.eventTime < f.speechTime then .trueTense else .falseTense

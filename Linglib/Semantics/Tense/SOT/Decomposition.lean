@@ -57,7 +57,7 @@ open Tense
     `matrixTense`: the tense of the matrix clause
     `embeddedTense`: the tense of the embedded clause
     Returns whether deletion is possible. -/
-def sotDeletionApplicable (matrixTense embeddedTense : Finset Ordering) : Bool :=
+def sotDeletionApplicable (matrixTense embeddedTense : GramTense) : Bool :=
   matrixTense == embeddedTense
 
 /-- Deletion is applicable for past-under-past (the core SOT case). -/

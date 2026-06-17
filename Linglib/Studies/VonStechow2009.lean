@@ -12,10 +12,10 @@ anchor.
 
 ## Core Mechanisms
 
-1. **Feature checking** = `Core.Order.holds Finset Ordering` (substrate primitive
+1. **Feature checking** = `GramTense.constrains` (substrate primitive
    in `Core/Time/Tense.lean`). The "checking" terminology is von
    Stechow's; the underlying predicate is the framework-neutral
-   `Core.Order.holds feature refTime evalTime`.
+   `feature.constrains refTime evalTime`.
 2. **Perspective shift** = `embeddedFrame` (substrate primitive in
    `Semantics/Tense/Basic.lean`). The attitude verb sets the
    embedded eval time = matrix E. von Stechow calls this "perspective
@@ -29,7 +29,7 @@ anchor.
 After the 0.230.452 wrapper-trim and the Phase E 0.230.456 split, this
 file has no concept-file companion in `Semantics/Tense/`.
 [von-stechow-2009]'s contribution is *terminological* — the
-"feature checking" name for what is structurally `Core.Order.holds Finset Ordering`
+"feature checking" name for what is structurally `GramTense.constrains`
 applied at a `embeddedFrame`-shifted eval time. The substrate lives
 entirely in `Tense` and `Tense.Basic`; this file
 collects the paper-attributed theorems.
@@ -59,7 +59,7 @@ open Tense
     the matrix event time. -/
 theorem vonStechow_derives_shifted {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time)
-    (hPast : Core.Order.holds Finset Ordering .past embeddedR matrixFrame.eventTime) :
+    (hPast : GramTense.constrains .past embeddedR matrixFrame.eventTime) :
     (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
   simp only [embeddedFrame, ReichenbachFrame.isPast]
   exact hPast
@@ -94,7 +94,7 @@ theorem vonStechow_derives_double_access {Time : Type*}
     movement — any eval time source works. -/
 theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
     (rcPerspective : Time) (rcRefTime : Time)
-    (hPast : Core.Order.holds Finset Ordering .past rcRefTime rcPerspective) :
+    (hPast : GramTense.constrains .past rcRefTime rcPerspective) :
     rcRefTime < rcPerspective :=
   hPast
 
@@ -108,7 +108,7 @@ theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
     the same value. -/
 theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) :
-    Core.Order.holds Finset Ordering tp.constraint (tp.resolve g) (tp.evalTime g) ↔
+    GramTense.constrains tp.constraint (tp.resolve g) (tp.evalTime g) ↔
     tp.fullPresupposition g :=
   Iff.rfl
 

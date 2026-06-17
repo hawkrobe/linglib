@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Finset Ordering
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.Features
 
@@ -15,7 +15,7 @@ reversing its c-command direction.
 
 ## Main declarations
 
-* `TenseHead` — a tense head carrying a `Finset Ordering` value and an `Interpretability`.
+* `TenseHead` — a tense head carrying a `GramTense` value and an `Interpretability`.
 * `TenseHead.IsSemanticallyActive` — only interpretable heads contribute to LF.
 * `UpwardAgree` — the reverse-Agree configuration: the goal c-commands the probe.
 * `SOTAgreeConfig` — one interpretable `[iPAST]` over a list of `[uPAST]` heads.
@@ -58,13 +58,13 @@ open Minimalist (FeatureVal GramFeature Interpretability)
 
 /-! ### Tense feature interpretability -/
 
-/-- A tense head: a `Finset Ordering` value together with an `Interpretability`
+/-- A tense head: a `GramTense` value together with an `Interpretability`
     status. Following [zeijlstra-2012], `[iPAST]` (`.interpretable`)
     contributes past semantics; `[uPAST]` (`.uninterpretable`) is checked by
     Agree and is semantically vacuous. -/
 structure TenseHead where
   /-- The tense value (past/present/future). -/
-  tense : Finset Ordering
+  tense : GramTense
   /-- Whether this tense feature is interpretable or uninterpretable. -/
   status : Interpretability
   deriving DecidableEq, Repr

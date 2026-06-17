@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Tense.Finset Ordering
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Nouns

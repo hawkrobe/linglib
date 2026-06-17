@@ -92,7 +92,7 @@ def allEntries : List TAMEEntry :=
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions. -/
 structure TensePerspectiveEntry extends TAMEEntry where
   /-- The grammatical tense this form realizes -/
-  gramTense : Finset Ordering
+  gramTense : GramTense
   /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
   formType : TenseFormType
 
@@ -179,7 +179,7 @@ theorem kratzerPassatoProssimo_deictic :
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head. -/
 theorem kratzerPassatoProssimo_underlyingPresent :
-    kratzerPassatoProssimo.tensePronoun.constraint = Tense.present := rfl
+    kratzerPassatoProssimo.tensePronoun.constraint = GramTense.present := rfl
 
 /-- Italian passato prossimo shares the same underlying tense pronoun
     as English present perfect: both use `kratzerEnglishPast` (PRESENT

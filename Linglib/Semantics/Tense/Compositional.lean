@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Finset Ordering
+import Linglib.Semantics.Tense.GramTense
 
 /-!
 # Compositional Tense Operators

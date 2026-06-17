@@ -67,8 +67,8 @@ theorem perfekt_deictic :
     Both can refer to past events, but only Perfekt is deictic-compatible.
     This explains why Perfekt has largely replaced Preterit in spoken German. -/
 theorem preterit_perfekt_contrast :
-    kratzerPreterit.tensePronoun.constraint = Tense.past ∧
-    kratzerPerfekt.tensePronoun.constraint = Tense.present ∧
+    kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
+    kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
     ¬ kratzerPreterit.canBeDeictic ∧
     kratzerPerfekt.canBeDeictic := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide

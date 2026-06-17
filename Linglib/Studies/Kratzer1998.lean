@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Tense.Finset Ordering
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Data.Examples.Kratzer1998
 
 /-!
@@ -91,7 +91,7 @@ open Features (Judgment)
     out-of-the-blue example (40a) ("Who built this Church?…") is
     `.acceptable`. -/
 theorem english_simple_past_chain :
-    kratzerSimplePast.tensePronoun.constraint = Tense.present ∧
+    kratzerSimplePast.tensePronoun.constraint = GramTense.present ∧
     kratzerSimplePast.hasPerfect = true ∧
     Examples.ex40a.judgment = Judgment.acceptable :=
   ⟨rfl, rfl, rfl⟩
@@ -103,7 +103,7 @@ theorem english_simple_past_chain :
     + `hasPerfect = false`; the empirical anchor is `Examples.ex40b`
     (deviant out of the blue, star per Kratzer). -/
 theorem german_preterit_chain :
-    kratzerPreterit.tensePronoun.constraint = Tense.past ∧
+    kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
     kratzerPreterit.hasPerfect = false ∧
     Examples.ex40b.judgment = Judgment.ungrammatical :=
   ⟨rfl, rfl, rfl⟩
@@ -116,7 +116,7 @@ theorem german_preterit_chain :
     `kratzerSimplePast`'s), which is the substantive content of "same
     decomposition." -/
 theorem german_perfekt_chain :
-    kratzerPerfekt.tensePronoun.constraint = Tense.present ∧
+    kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
     kratzerPerfekt.hasPerfect = true ∧
     Examples.ex40c.judgment = Judgment.acceptable ∧
     kratzerPerfekt.tensePronoun.constraint =
@@ -130,7 +130,7 @@ theorem german_perfekt_chain :
     in `Tense/SOT/Decomposition.lean` carry the underlying claims; this
     theorem just binds them locally for cross-reference. -/
 theorem zero_tense_chain :
-    (kratzerZeroTense 1).constraint = Tense.present ∧
+    (kratzerZeroTense 1).constraint = GramTense.present ∧
     Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
   ⟨zero_tense_is_present 1, zero_tense_overtness 1⟩
 
