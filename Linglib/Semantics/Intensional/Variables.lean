@@ -24,6 +24,7 @@ built on `Intensional.Denot`.
 namespace Intensional.Variables
 
 open Intensional
+open _root_.Core (Assignment)
 
 /-- Heim-Kratzer assignment-modification notation: `g[n ↦ x]` is
 `Function.update g n x`. The `Function.update_*` lemmas (`update_self`,
