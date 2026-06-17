@@ -59,16 +59,11 @@ variable {W : Type u}
     in some `r`-equivalence class (i.e., everything in `q` agrees on the
     `r`-question). The maximal such propositions are the equivalence
     classes themselves. -/
-def fromSetoid (r : Setoid W) : Question W where
-  props := {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}
-  contains_empty := Or.inl rfl
-  downward_closed := fun p hp q hq => by
-    rcases hp with hempty | ⟨c, hc, hpc⟩
-    · left
-      rw [hempty] at hq
-      exact Set.subset_empty_iff.mp hq
-    · right
-      exact ⟨c, hc, hq.trans hpc⟩
+def fromSetoid (r : Setoid W) : Question W :=
+  ofLowerSet {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c} (Or.inl rfl) <| by
+    rintro a b hba (rfl | ⟨c, hc, hac⟩)
+    · exact Or.inl (Set.subset_empty_iff.mp hba)
+    · exact Or.inr ⟨c, hc, hba.trans hac⟩
 
 /-- The informative content of a partition-based inquiry is the whole
     universe: every world is in some equivalence class, so every world
@@ -77,8 +72,8 @@ def fromSetoid (r : Setoid W) : Question W where
     information. -/
 theorem info_fromSetoid (r : Setoid W) : (fromSetoid r).info = Set.univ := by
   ext w
-  simp only [info, fromSetoid, Set.mem_sUnion, Set.mem_setOf_eq, Set.mem_univ,
-             iff_true]
+  simp only [info, fromSetoid, props_ofLowerSet, Set.mem_sUnion, Set.mem_setOf_eq,
+             Set.mem_univ, iff_true]
   refine ⟨{x | r x w}, ?_, ?_⟩
   · exact Or.inr ⟨{x | r x w}, Setoid.mem_classes r w, subset_rfl⟩
   · exact Setoid.refl' r w
