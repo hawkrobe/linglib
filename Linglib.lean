@@ -44,6 +44,7 @@ import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Modal.Bisimulation
 import Linglib.Core.Logic.Temporal.Defs
 import Linglib.Core.Logic.Temporal.Basic
+import Linglib.Core.Logic.Temporal.Soundness
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
