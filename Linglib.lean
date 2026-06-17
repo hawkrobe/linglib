@@ -2251,6 +2251,7 @@ import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.BranchingTime
+import Linglib.Semantics.Modality.BranchingCollapse
 import Linglib.Semantics.Composition.Scope
 import Linglib.Studies.AhnZhu2025
 import Linglib.Studies.DeganoAloni2025
