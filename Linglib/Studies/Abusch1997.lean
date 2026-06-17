@@ -18,7 +18,7 @@ attitude complements.
 Two derivation styles coexist in this file:
 
 1. **Value-level shadow** (`abusch_derives_*` against `TensePronoun.fullPresupposition`):
-   tense pronoun + `GramTense.constrains` + temporal assignment.
+   tense pronoun + `Core.Order.holds` + temporal assignment.
    Captures Abusch's predictions at the value level without committing
    to the centered-world architecture. Cheap, presupposition-free.
 
@@ -111,13 +111,13 @@ open Data.Examples (LinguisticExample)
     licenses this reading, but it isn't load-bearing in this proof —
     the conclusion follows for any tense pronoun whose resolution is
     below the matrix event time. A full Abusch derivation would
-    project through `tp.constraint.constrains` from the binding mode. -/
+    project through `Core.Order.holds tp.constraint` from the binding mode. -/
 theorem abusch_derives_shifted {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time)
     (matrixFrame : ReichenbachFrame Time)
     (hPresup : tp.resolve g < matrixFrame.eventTime) :
     (embeddedFrame matrixFrame (tp.resolve g) (tp.resolve g)).isPast := by
-  simp only [embeddedFrame, ReichenbachFrame.isPast]
+  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
   exact hPresup
 
 /-- [abusch-1997] derives the simultaneous reading: a bound
@@ -163,10 +163,10 @@ theorem abusch_derives_double_access {Time : Type*}
     by the attitude verb to put the matrix event time at `tp.evalTimeIndex`. -/
 theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time)
-    (hPast : tp.constraint = .past)
+    (hPast : tp.constraint = Tense.past)
     (hBefore : tp.resolve g < tp.evalTime g) :
     tp.fullPresupposition g := by
-  simp only [TensePronoun.fullPresupposition, GramTense.constrains, hPast]
+  simp only [TensePronoun.fullPresupposition, hPast, Tense.past, Core.Order.holds_before]
   exact hBefore
 
 
@@ -184,7 +184,8 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isFelicitousWith .past := hBefore
+    dr.isFelicitousWith Tense.past :=
+  (Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore
 
 /-- [abusch-1997]'s temporal de re with **modal-alternative
     quantification** (substrate-level lift of the §3 p. 9 base-world
@@ -204,8 +205,8 @@ theorem abusch_derives_temporal_de_re_full
     (hRigid : Core.Intension.IsRigid dr.concept)
     (alternatives : Set (Core.WorldTimeIndex W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isAbuschFelicitous alternatives .past := by
-  refine ⟨hBefore, ?_⟩
+    dr.isAbuschFelicitous alternatives Tense.past := by
+  refine ⟨(Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore, ?_⟩
   exact Tense.DeRe.TemporalDeReReading.IsRigidAcrossAlternatives_of_concept_isRigid
     dr hRigid alternatives
 
@@ -220,7 +221,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
     (hRigid : Core.Intension.IsRigid dr.concept)
     (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) .past :=
+    dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) Tense.past :=
   abusch_derives_temporal_de_re_full dr hRigid _ hBefore
 
 /-- **PLA ↔ Abusch substrate unification**: PLA's `isAcquaintedWith`

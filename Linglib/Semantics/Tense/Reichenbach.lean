@@ -32,7 +32,7 @@ existing four-field record — downstream call sites continue to use
 work with `f.toDomain` and `relatedByName`.
 -/
 
-open Tense (Domain Orientation TO GramTense)
+open Tense (Domain Orientation TO)
 open AllenRelation (precedesSet equalSet)
 
 namespace Time
@@ -65,24 +65,24 @@ namespace ReichenbachFrame
 variable {T : Type*} [LinearOrder T]
 
 /-- PAST: R < P (reference time precedes perspective time) — a view of
-    `GramTense.constrains`. [kiparsky-2002]: tense locates R relative to P, not S. -/
+    `Core.Order.holds Tense.past`. [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame T) : Prop :=
-  GramTense.past.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.past f.referenceTime f.perspectiveTime
 
 /-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
     needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is definitionally `GramTense.present.constrains`. -/
+    typechecking); it is definitionally `Core.Order.holds Tense.present`. -/
 def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 
 /-- FUTURE: P < R (perspective time precedes reference time). -/
 def isFuture (f : ReichenbachFrame T) : Prop :=
-  GramTense.future.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.future f.referenceTime f.perspectiveTime
 
 /-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — the view of
-    `GramTense.nonpast.constrains`. Completes the four-way relation on frames. -/
+    `Core.Order.holds Tense.nonpast`. Completes the four-way relation on frames. -/
 def isNonpast (f : ReichenbachFrame T) : Prop :=
-  GramTense.nonpast.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.nonpast f.referenceTime f.perspectiveTime
 
 /-- Simple case: P = S (root clause, no perspective shift). -/
 def isSimpleCase (f : ReichenbachFrame T) : Prop :=
@@ -118,17 +118,20 @@ consumers can close concrete goals with `decide` and rewrite with
 `simp only [isPast_def]` instead of unfolding definitions by hand. -/
 
 @[simp] theorem isPast_def (f : ReichenbachFrame T) :
-    f.isPast ↔ f.referenceTime < f.perspectiveTime := Iff.rfl
+    f.isPast ↔ f.referenceTime < f.perspectiveTime :=
+  Core.Order.holds_before f.referenceTime f.perspectiveTime
 
 omit [LinearOrder T] in
 @[simp] theorem isPresent_def (f : ReichenbachFrame T) :
     f.isPresent ↔ f.referenceTime = f.perspectiveTime := Iff.rfl
 
 @[simp] theorem isFuture_def (f : ReichenbachFrame T) :
-    f.isFuture ↔ f.perspectiveTime < f.referenceTime := Iff.rfl
+    f.isFuture ↔ f.perspectiveTime < f.referenceTime :=
+  Core.Order.holds_after f.referenceTime f.perspectiveTime
 
 @[simp] theorem isNonpast_def (f : ReichenbachFrame T) :
-    f.isNonpast ↔ f.perspectiveTime ≤ f.referenceTime := Iff.rfl
+    f.isNonpast ↔ f.perspectiveTime ≤ f.referenceTime :=
+  Core.Order.holds_notBefore f.referenceTime f.perspectiveTime
 
 omit [LinearOrder T] in
 @[simp] theorem isSimpleCase_def (f : ReichenbachFrame T) :
@@ -156,17 +159,17 @@ theorem isPast_simpleCase (f : ReichenbachFrame T) (h : f.isSimpleCase) :
   simp only [isPast_def, isSimpleCase_def] at h ⊢
   rw [h]
 
-instance (f : ReichenbachFrame T) : Decidable f.isPast :=
-  inferInstanceAs (Decidable (f.referenceTime < f.perspectiveTime))
+instance (f : ReichenbachFrame T) : Decidable f.isPast := by
+  unfold isPast; infer_instance
 
 instance (f : ReichenbachFrame T) : Decidable f.isPresent :=
   inferInstanceAs (Decidable (f.referenceTime = f.perspectiveTime))
 
-instance (f : ReichenbachFrame T) : Decidable f.isFuture :=
-  inferInstanceAs (Decidable (f.perspectiveTime < f.referenceTime))
+instance (f : ReichenbachFrame T) : Decidable f.isFuture := by
+  unfold isFuture; infer_instance
 
-instance (f : ReichenbachFrame T) : Decidable f.isNonpast :=
-  inferInstanceAs (Decidable (f.perspectiveTime ≤ f.referenceTime))
+instance (f : ReichenbachFrame T) : Decidable f.isNonpast := by
+  unfold isNonpast; infer_instance
 
 instance (f : ReichenbachFrame T) : Decidable f.isSimpleCase :=
   inferInstanceAs (Decidable (f.perspectiveTime = f.speechTime))
@@ -228,14 +231,16 @@ def toDomain (f : ReichenbachFrame T) : Domain T Orientation :=
     construction in the Allen projection function on point intervals. -/
 theorem isPast_iff_relatedByName (f : ReichenbachFrame T) :
     f.isPast ↔ f.toDomain.relatedByName precedesSet .topic .perspective := by
-  rw [Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findPerspective f)]
+  rw [isPast_def,
+    Domain.relatedByName_iff precedesSet (toDomain_findTopic f) (toDomain_findPerspective f)]
   exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isFuture` is exactly `perspective precedes topic` in the Allen
     algebra against the domain. -/
 theorem isFuture_iff_relatedByName (f : ReichenbachFrame T) :
     f.isFuture ↔ f.toDomain.relatedByName precedesSet .perspective .topic := by
-  rw [Domain.relatedByName_iff precedesSet (toDomain_findPerspective f) (toDomain_findTopic f)]
+  rw [isFuture_def,
+    Domain.relatedByName_iff precedesSet (toDomain_findPerspective f) (toDomain_findTopic f)]
   exact (TO.pure_precedes_iff _ _).symm
 
 /-- `isPresent` is exactly `topic equal perspective` in the Allen

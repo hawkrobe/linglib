@@ -1,4 +1,3 @@
-import Linglib.Core.Order.Relation
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Semantics.Context.Basic
@@ -40,7 +39,6 @@ open Data.Examples (LinguisticExample)
 
 namespace TOChain
 
-open Core.Order (Relation)
 open Tense (Domain NamedTO Orientation)
 
 /-! ### Time-spheres -/
@@ -66,7 +64,7 @@ inductive TimeSphere where
 time of orientation related to the next TO inward by a temporal relation.
 
 Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
-the link for TO₂ is `⟨.sub 0, .before, t₂⟩` — meaning TO₂ (= `.sub 0`,
+the link for TO₂ is `⟨.sub 0, .lt, t₂⟩` — meaning TO₂ (= `.sub 0`,
 one step out from the binding TO₁ = `.perspective`) stands in the
 `before` relation to the next TO outward. The `.situation` role
 labels TO_sit. -/
@@ -74,10 +72,10 @@ structure TOLink (Time : Type*) where
   /-- The orientation-time role of this link (`.situation` for TO_sit;
       `.sub n` for an intermediate TO). -/
   name : Orientation
-  /-- How this TO relates to the next TO inward toward TO₁.
-      `before` = this TO precedes the next; `after` = this TO follows it;
-      `overlapping` = simultaneous. -/
-  relation : Relation
+  /-- How this TO relates to the next TO inward toward TO₁, as a point comparison
+      (`Ordering`): `.lt` = this TO precedes the next (before); `.gt` = this TO follows
+      it (after); `.eq` = simultaneous (overlapping). -/
+  relation : Ordering
   /-- The resolved time value. -/
   time : Time
 
@@ -154,21 +152,21 @@ TO_sit before TO₁, TS = TO_sit. -/
 def preterit (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.situation, .before, toSit⟩]
+  chain := [⟨.situation, .lt, toSit⟩]
   timeSphere := .past
 
 /-- **Present tense**: TS simul TO_sit, TO_sit includes t₀. Present time-sphere.
 
 Declerck's key claim: the present tense does NOT assert `TO_sit = t₀`
 but rather `TO_sit includes t₀`. For point times this degenerates to
-equality (captured by `.overlapping`); interval-level inclusion is
+equality (captured by `.eq`); interval-level inclusion is
 handled by `NonemptyInterval.le_def`.
 
 Example: "John is in London." -/
 def present (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.situation, .overlapping, toSit⟩]
+  chain := [⟨.situation, .eq, toSit⟩]
   timeSphere := .present
 
 /-- **Present perfect**: TS simul TO_sit, TO_sit before TO₁.
@@ -187,7 +185,7 @@ full situation extends through t₀, is not representable here. -/
 def presentPerfect (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.situation, .before, toSit⟩]
+  chain := [⟨.situation, .lt, toSit⟩]
   timeSphere := .present
 
 /-- **Past perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ before TO₁.
@@ -199,7 +197,7 @@ Example: "John had left before we arrived." -/
 def pastPerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.sub 0, .before, to2⟩, ⟨.situation, .before, toSit⟩]
+  chain := [⟨.sub 0, .lt, to2⟩, ⟨.situation, .lt, toSit⟩]
   timeSphere := .past
 
 /-- **Future tense**: TS simul TO_sit, TO_sit after TO₁. Present time-sphere.
@@ -209,7 +207,7 @@ Example: "I will do it next week." -/
 def future (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.situation, .after, toSit⟩]
+  chain := [⟨.situation, .gt, toSit⟩]
   timeSphere := .present
 
 /-- **Future perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ after TO₁.
@@ -223,7 +221,7 @@ Example: "John will have left when we arrive." -/
 def futurePerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.sub 0, .after, to2⟩, ⟨.situation, .before, toSit⟩]
+  chain := [⟨.sub 0, .gt, to2⟩, ⟨.situation, .lt, toSit⟩]
   timeSphere := .present
 
 /-- **Conditional tense**: TS simul TO_sit, TO_sit after TO₂, TO₂ before TO₁.
@@ -236,7 +234,7 @@ weathered many London storms and would weather many more." -/
 def conditional (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.sub 0, .before, to2⟩, ⟨.situation, .after, toSit⟩]
+  chain := [⟨.sub 0, .lt, to2⟩, ⟨.situation, .gt, toSit⟩]
   timeSphere := .past
 
 /-- **Conditional perfect**: TS simul TO_sit, TO_sit before TO₃,
@@ -247,7 +245,7 @@ Example: "He would have left by then." -/
 def conditionalPerfect (t0 to2 to3 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨.sub 0, .before, to2⟩, ⟨.sub 1, .after, to3⟩, ⟨.situation, .before, toSit⟩]
+  chain := [⟨.sub 0, .lt, to2⟩, ⟨.sub 1, .gt, to3⟩, ⟨.situation, .lt, toSit⟩]
   timeSphere := .past
 
 end Schemata
@@ -272,7 +270,7 @@ theorem DeclercianSchema.toFrame_not_isPerfect (s : DeclercianSchema Time) :
 
 /-- Preterit projects to a frame satisfying PAST (R < P). -/
 theorem preterit_isPast (t0 toSit : Time) (h : toSit < t0) :
-    (preterit t0 toSit).toFrame.isPast := h
+    (preterit t0 toSit).toFrame.isPast := (ReichenbachFrame.isPast_def _).mpr h
 
 omit [LinearOrder Time] in
 /-- Present projects to a frame satisfying PRESENT (R = P) for point times. -/
@@ -283,7 +281,7 @@ theorem present_isPresent (t0 : Time) :
 (= P). The present-sphere membership is tracked by `timeSphere`, not by
 the Reichenbach R/P relation. -/
 theorem presentPerfect_frame_isPast (t0 toSit : Time) (h : toSit < t0) :
-    (presentPerfect t0 toSit).toFrame.isPast := h
+    (presentPerfect t0 toSit).toFrame.isPast := (ReichenbachFrame.isPast_def _).mpr h
 
 omit [LinearOrder Time] in
 /-- Preterit and present perfect produce identical Reichenbach frames for
@@ -304,11 +302,11 @@ TO_sit < TO₂ < TO₁, so R (= TO_sit) < P (= TO₁). -/
 theorem pastPerfect_isPast (t0 to2 toSit : Time)
     (h₁ : toSit < to2) (h₂ : to2 < t0) :
     (pastPerfect t0 to2 toSit).toFrame.isPast :=
-  lt_trans h₁ h₂
+  (ReichenbachFrame.isPast_def _).mpr (lt_trans h₁ h₂)
 
 /-- Future projects to FUTURE (P < R). -/
 theorem future_isFuture (t0 toSit : Time) (h : t0 < toSit) :
-    (future t0 toSit).toFrame.isFuture := h
+    (future t0 toSit).toFrame.isFuture := (ReichenbachFrame.isFuture_def _).mpr h
 
 end Bridge
 
@@ -513,11 +511,11 @@ the domain-internal `prePast`/`postPast` positions. Defaults to the
 sphere's center for empty chains and non-strict relations. -/
 def zoneOf (s : DeclercianSchema Time) : Zone :=
   match s.timeSphere, s.chain.length, (s.chain.getLast?).map TOLink.relation with
-  | .past,    1, some .before => .past         -- preterit
-  | .past,    _, some .before => .prePast      -- past perfect, conditional perfect
-  | .past,    _, some .after  => .postPast     -- conditional
-  | .present, _, some .before => .prePresent   -- present perfect, future perfect
-  | .present, _, some .after  => .postPresent  -- future
+  | .past,    1, some .lt => .past         -- preterit
+  | .past,    _, some .lt => .prePast      -- past perfect, conditional perfect
+  | .past,    _, some .gt  => .postPast     -- conditional
+  | .present, _, some .lt => .prePresent   -- present perfect, future perfect
+  | .present, _, some .gt  => .postPresent  -- future
   | .past,    _, _            => .past
   | .present, _, _            => .present
 
@@ -624,7 +622,7 @@ def domainShiftCameBack : ReichenbachFrame ℤ where
 
 /-- The domain anchor is past (R < P). -/
 theorem domainLeft_isPast : domainLeft.isPast := by
-  show (-5 : ℤ) < 0; decide
+  rw [ReichenbachFrame.isPast_def]; decide
 
 /-- Subordination: `wouldReturn` is posterior within the domain. -/
 theorem domainSubordWouldReturn_posterior :
@@ -682,7 +680,7 @@ def ppsWeatherGood : ReichenbachFrame ℤ :=
 /-- The FPS matrix is an absolute future: P = S and P < R. -/
 theorem fpsSeaside_absolute_future :
     fpsSeaside.isSimpleCase ∧ fpsSeaside.isFuture :=
-  ⟨rfl, by show (0 : ℤ) < 3; decide⟩
+  ⟨rfl, by rw [ReichenbachFrame.isFuture_def]; decide⟩
 
 /-- The PPS protasis is a *relative present*: R = P at the shifted
 perspective, even though the situation is post-present. -/
@@ -874,7 +872,7 @@ theorem perfectOversleptFrame_isPerfect_isPresent :
 /-- The preterit frame is past (R < P) and perfective (E = R). -/
 theorem preteritOversleptFrame_isPast_isPerfective :
     preteritOversleptFrame.isPast ∧ preteritOversleptFrame.isPerfective :=
-  ⟨by show (-3 : ℤ) < 0; decide, rfl⟩
+  ⟨by rw [ReichenbachFrame.isPast_def]; decide, rfl⟩
 
 /-- The two perfect conventions diverge: Declerck's `toFrame` projection
 of the present perfect is not the orthodox perfect frame, and no

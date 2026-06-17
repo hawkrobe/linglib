@@ -82,10 +82,11 @@ def TensePronoun.toNominalDenot {Time : Type*} [LinearOrder Time]
 theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
     (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : TenseInterpretation) :
     pronominalLookup g j k = some t ↔
-      (TensePronoun.mk k .past mode j).toNominalDenot.presup g ⟨⟩ ∧
-      (TensePronoun.mk k .past mode j).toNominalDenot.selector g ⟨⟩ = some t := by
+      (TensePronoun.mk k past mode j).toNominalDenot.presup g ⟨⟩ ∧
+      (TensePronoun.mk k past mode j).toNominalDenot.selector g ⟨⟩ = some t := by
   simp only [TensePronoun.toNominalDenot_presup, TensePronoun.toNominalDenot_selector,
-    Option.some.injEq]
+    TensePronoun.fullPresupposition, TensePronoun.resolve, TensePronoun.evalTime,
+    interpTense, Tense.past, Core.Order.holds_before, Option.some.injEq]
   exact pronominalLookup_eq_some_iff g j k t
 
 /-- [sharvit-2014] (30b): quantificational past as the generalized quantifier

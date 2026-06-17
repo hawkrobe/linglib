@@ -196,10 +196,10 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
 theorem isFelicitousWith_past_imp_upperLimitConstraint
     {W E P T : Type*} [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
-    (h : dr.isFelicitousWith .past) :
+    (h : dr.isFelicitousWith Tense.past) :
     Tense.upperLimitConstraint
       dr.actualRes dr.holderContext.time :=
-  le_of_lt h
+  le_of_lt ((Core.Order.holds_before dr.actualRes dr.holderContext.time).mp h)
 
 
 -- ════════════════════════════════════════════════════════════════

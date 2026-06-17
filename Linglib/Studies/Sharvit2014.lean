@@ -101,7 +101,7 @@ through Kratzer's deletion condition `Decomposition.sotDeletionApplicable`. -/
     through `Decomposition.sotDeletionApplicable` (Kratzer's morphological-identity condition, here
     `.past`/`.past`). -/
 def sotAppliesPastUnderPast (L : LanguageTenseProfile) : Bool :=
-  L.hasSOT && sotDeletionApplicable .past .past
+  L.hasSOT && sotDeletionApplicable Tense.past Tense.past
 
 /-- PAST-under-PAST in *before* is well-formed iff the past does not trigger IPF — the
     technical core `Before.ipf_quantificationalPast`. The body calls the IPF dispatch

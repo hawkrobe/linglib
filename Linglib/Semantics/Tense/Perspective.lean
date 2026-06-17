@@ -64,7 +64,7 @@ theorem presPresup_iff_isPresent {Time : Type*} [LinearOrder Time]
 /-- The PAST presupposition is definitionally equal to `isPast`. -/
 theorem pastPresup_iff_isPast {Time : Type*} [LinearOrder Time]
     (f : ReichenbachFrame Time) :
-    pastPresup f ↔ f.isPast := Iff.rfl
+    pastPresup f ↔ f.isPast := (ReichenbachFrame.isPast_def f).symm
 
 
 /-! ### OP_π: Perspective-Shifting Operator -/

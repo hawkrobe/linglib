@@ -92,7 +92,7 @@ def allEntries : List TAMEEntry :=
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions. -/
 structure TensePerspectiveEntry extends TAMEEntry where
   /-- The grammatical tense this form realizes -/
-  gramTense : GramTense
+  gramTense : Finset Ordering
   /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
   formType : TenseFormType
 
@@ -106,7 +106,7 @@ def passatoProssimoPerspective : TensePerspectiveEntry where
   label := "passato prossimo"
   ep := .downstream
   up := .past
-  gramTense := .past
+  gramTense := Tense.past
   formType := .periphrastic
 
 /-- Passato remoto: past, synthetic. -/
@@ -114,7 +114,7 @@ def passatoRemotoPerspective : TensePerspectiveEntry where
   label := "passato remoto"
   ep := .downstream
   up := .past
-  gramTense := .past
+  gramTense := Tense.past
   formType := .synthetic
 
 /-- Imperfetto: past, synthetic. -/
@@ -122,7 +122,7 @@ def imperfettoPerspective : TensePerspectiveEntry where
   label := "imperfetto"
   ep := .downstream
   up := .past
-  gramTense := .past
+  gramTense := Tense.past
   formType := .synthetic
 
 /-- Presente: present, synthetic. -/
@@ -130,7 +130,7 @@ def presentePerspective : TensePerspectiveEntry where
   label := "presente"
   ep := .downstream
   up := .present
-  gramTense := .present
+  gramTense := Tense.present
   formType := .synthetic
 
 /-- Futuro semplice: future, synthetic. -/
@@ -138,7 +138,7 @@ def futuroSemplicePerspective : TensePerspectiveEntry where
   label := "futuro semplice"
   ep := .unconstrained
   up := .future
-  gramTense := .future
+  gramTense := Tense.future
   formType := .synthetic
 
 -- ════════════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ theorem kratzerPassatoProssimo_deictic :
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head. -/
 theorem kratzerPassatoProssimo_underlyingPresent :
-    kratzerPassatoProssimo.tensePronoun.constraint = GramTense.present := rfl
+    kratzerPassatoProssimo.tensePronoun.constraint = Tense.present := rfl
 
 /-- Italian passato prossimo shares the same underlying tense pronoun
     as English present perfect: both use `kratzerEnglishPast` (PRESENT

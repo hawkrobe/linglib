@@ -105,7 +105,7 @@ open Morphology.Tense
     `allowsFalseTense` is derived: only synthetic forms permit false tense. -/
 structure TensePerspectiveEntry extends TAMEEntry where
   /-- The grammatical tense this form realizes -/
-  gramTense : GramTense
+  gramTense : Finset Ordering
   /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
   formType : TenseFormType
 
@@ -119,7 +119,7 @@ def simplePastPerspective : TensePerspectiveEntry where
   label := "simple past"
   ep := .downstream
   up := .past
-  gramTense := .past
+  gramTense := _root_.Tense.past
   formType := .synthetic
 
 /-- English simple present with perspective: synthetic, allows false uses. -/
@@ -127,7 +127,7 @@ def simplePresentPerspective : TensePerspectiveEntry where
   label := "simple present"
   ep := .downstream
   up := .present
-  gramTense := .present
+  gramTense := _root_.Tense.present
   formType := .synthetic
 
 /-- English periphrastic past "used to V": cannot express false past. -/
@@ -135,7 +135,7 @@ def usedTo : TensePerspectiveEntry where
   label := "used to"
   ep := .downstream
   up := .past
-  gramTense := .past
+  gramTense := _root_.Tense.past
   formType := .periphrastic
 
 /-- English periphrastic future "going to V": cannot express false future. -/
@@ -143,7 +143,7 @@ def goingTo : TensePerspectiveEntry where
   label := "going to"
   ep := .unconstrained
   up := .future
-  gramTense := .future
+  gramTense := _root_.Tense.future
   formType := .periphrastic
 
 -- ════════════════════════════════════════════════════
@@ -188,7 +188,7 @@ theorem kratzerSimplePast_deictic :
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head, not the tense. -/
 theorem kratzerSimplePast_underlyingPresent :
-    kratzerSimplePast.tensePronoun.constraint = GramTense.present := rfl
+    kratzerSimplePast.tensePronoun.constraint = _root_.Tense.present := rfl
 
 /-- Simple past and present perfect share the same underlying decomposition:
     both are PRESENT + PERFECT. The difference is that simple past fuses
@@ -203,7 +203,7 @@ theorem simplePast_presentPerfect_same_decomposition :
     the Kratzer `constraint =.present` records the underlying tense head.
     These are DIFFERENT for English simple past — that's Kratzer's point. -/
 theorem lakoff_kratzer_diverge :
-    simplePastPerspective.gramTense = GramTense.past ∧
-    kratzerSimplePast.tensePronoun.constraint = GramTense.present := ⟨rfl, rfl⟩
+    simplePastPerspective.gramTense = _root_.Tense.past ∧
+    kratzerSimplePast.tensePronoun.constraint = _root_.Tense.present := ⟨rfl, rfl⟩
 
 end English.Tense

@@ -71,32 +71,32 @@ def classOrientation : InfinitivalTenseClass → TemporalOrientation
 /-- *will* = PRES + *woll*; *would* = PAST + *woll* (§2). The tense component
     undergoes SOT; *woll* supplies the future orientation. -/
 structure WollDecomposition where
-  /-- The tense component. -/
-  tense : GramTense
+  /-- The tense component (a `Finset Ordering` comparison cell). -/
+  tense : Finset Ordering
   /-- Whether *woll* is present (future orientation). -/
   hasWoll : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- *will* = present + woll. -/
 def will_ : WollDecomposition where
-  tense := .present
+  tense := present
   hasWoll := true
 
 /-- *would* = past + woll. -/
 def would_ : WollDecomposition where
-  tense := .past
+  tense := past
   hasWoll := true
 
 /-- Plain present (no woll). -/
 def plainPresent : WollDecomposition where
-  tense := .present
+  tense := present
   hasWoll := false
 
 /-- *will* and *would* share the woll component. -/
 theorem will_would_share_woll : will_.hasWoll = would_.hasWoll := rfl
 
 /-- *will* and *would* differ only in tense. -/
-theorem will_would_tense_differs : will_.tense ≠ would_.tense := nofun
+theorem will_would_tense_differs : will_.tense ≠ would_.tense := by decide
 
 /-- Only future-irrealis infinitives contain the future modal *woll*. -/
 def classHasWoll : InfinitivalTenseClass → Bool

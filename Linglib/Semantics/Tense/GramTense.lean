@@ -18,7 +18,7 @@ follows [heim-1994-comments] (commenting on [abusch-1997]) and
 [kratzer-1998]. This single concept projects onto
 five representations of temporal reference in the codebase:
 
-1. **Priorean operators** (PAST/PRES/FUT): `constraint.constrains`
+1. **Priorean operators** (PAST/PRES/FUT): `Core.Order.holds constraint`
 2. **Reichenbach frames** (S, P, R, E): `TensePronoun.toFrame`
 3. **Referential variables**: `TensePronoun.resolve`
 4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
@@ -31,8 +31,9 @@ unified type.
 
 ## Implementation notes
 
-The shared grammatical-tense substrate (`GramTense`, `TensePronoun`, …) the `Tense/`
-and `Attitudes/` theories build on. The temporal primitives it imports
+The shared tense-pronoun substrate (`TensePronoun`, …) the `Tense/`
+and `Attitudes/` theories build on. A tense constraint is a `Finset Ordering`
+comparison category (`Core.Order`); the temporal primitives it imports
 (`Reichenbach`/`Relation`/`WorldTimeIndex`) stay in `Core/`.
 
 -/
@@ -175,21 +176,21 @@ abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
     - A binding mode (indexical, anaphoric, or bound)
 
     This unifies five views of tense:
-    - **Priorean**: `constraint.constrains` (temporal ordering)
+    - **Priorean**: `Core.Order.holds constraint` (temporal ordering)
     - **Reichenbach**: `resolve g` = R, perspective time = P
     - **Referential**: `resolve g = interpTense varIndex g`
     - **Kaplan indexical**: `mode =.indexical` → rigid to speech time
     - **Attitude binding**: `mode =.bound` → zero tense -/
 structure TensePronoun where
   varIndex : ℕ
-  constraint : GramTense
+  constraint : Finset Ordering
   mode : TenseInterpretation
   /-- Index of the evaluation time variable in the temporal assignment.
       Default 0 = speech time slot. Under embedding, attitude verbs update
       this index to point at the matrix event time.
       [klecha-2016]: modals can also shift the eval time index. -/
   evalTimeIndex : ℕ := 0
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 namespace TensePronoun
 
@@ -201,7 +202,7 @@ def resolve {Time : Type*} (tp : TensePronoun)
 /-- Presupposition: the constraint applied to the resolved time. -/
 def presupposition {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (resolvedTime perspectiveTime : Time) : Prop :=
-  tp.constraint.constrains resolvedTime perspectiveTime
+  Core.Order.holds tp.constraint resolvedTime perspectiveTime
 
 /-- Construct the Reichenbach frame. R = g(varIndex), P = perspectiveTime. -/
 def toFrame {Time : Type*} (tp : TensePronoun)
@@ -239,7 +240,7 @@ def TensePronoun.evalTime {Time : Type*} (tp : TensePronoun)
     This makes the eval time compositionally determined rather than stipulated. -/
 def TensePronoun.fullPresupposition {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
-  tp.constraint.constrains (tp.resolve g) (tp.evalTime g)
+  Core.Order.holds tp.constraint (tp.resolve g) (tp.evalTime g)
 
 
 /-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
@@ -274,7 +275,7 @@ theorem TensePronoun.bound_present_simultaneous {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time)
     (speechTime perspTime eventTime : Time)
     (hBind : tp.resolve g = perspTime)
-    (_hPres : tp.constraint = .present) :
+    (_hPres : tp.constraint = present) :
     (tp.toFrame g speechTime perspTime eventTime).isPresent := by
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind
@@ -291,10 +292,10 @@ def doubleAccess {Time : Type*} (p : Time → Prop)
 /-- An indexical present tense presupposes resolution to speech time. -/
 theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (resolvedTime speechTime : Time)
-    (hPres : tp.constraint = .present)
+    (hPres : tp.constraint = present)
     (hPresup : tp.presupposition resolvedTime speechTime) :
     resolvedTime = speechTime := by
-  simp [TensePronoun.presupposition, GramTense.constrains, hPres] at hPresup
+  simp only [TensePronoun.presupposition, hPres, present, Core.Order.holds_overlapping] at hPresup
   exact hPresup
 
 

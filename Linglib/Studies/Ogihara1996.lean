@@ -88,7 +88,7 @@ theorem ogihara_derives_shifted {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time)
     (hPast : embeddedR < matrixFrame.eventTime) :
     (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
-  simp only [embeddedFrame, ReichenbachFrame.isPast]
+  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
   exact hPast
 
 

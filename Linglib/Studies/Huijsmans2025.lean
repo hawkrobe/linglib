@@ -71,7 +71,7 @@ structure Stimulus (Time : Type) where
 
 /-- The three MBT-presupposition profiles Huijsmans's four lexical items
     instantiate. A domain-flavored selector over the abstract
-    `Core.Order.Relation` partition (cf. `EPCondition` in
+    `Core.Order` comparison partition (cf. `EPCondition` in
     `Tense/Evidential.lean`, which selects from the same partition for
     the EAT/ET slot pair). Only three of the five abstract relations
     name a Huijsmans modal; the others are unused here. -/
@@ -89,15 +89,15 @@ inductive MBTProfile where
 /-- Underlying point-relation: the slot pair is `(earliestMBT, earliestPrejT)`,
     and each profile picks one shape from `Relation`. Mirrors
     `EPCondition.toRelation` in `Tense/Evidential.lean`. -/
-def MBTProfile.toRelation : MBTProfile → Core.Order.Relation
-  | .strictPrior    => .before
-  | .nonProspective => .notBefore        -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
-  | .unrestricted   => .unrestricted
+def MBTProfile.toRelation : MBTProfile → Finset Ordering
+  | .strictPrior    => Core.Order.before
+  | .nonProspective => Core.Order.notBefore        -- PrejT ≤ MBT, i.e. MBT ≥ PrejT
+  | .unrestricted   => Core.Order.unrestricted
 
 /-- The MBT-licensing predicate, derived from the abstract partition. -/
 def MBTProfile.licenses {Time : Type} [LinearOrder Time]
     (c : MBTProfile) (s : Stimulus Time) : Prop :=
-  c.toRelation.eval s.earliestMBT s.earliestPrejT
+  Core.Order.holds c.toRelation s.earliestMBT s.earliestPrejT
 
 instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
     (s : Stimulus Time) : Decidable (c.licenses s) := by

@@ -57,17 +57,17 @@ open Tense
     `matrixTense`: the tense of the matrix clause
     `embeddedTense`: the tense of the embedded clause
     Returns whether deletion is possible. -/
-def sotDeletionApplicable (matrixTense embeddedTense : GramTense) : Bool :=
-  matrixTense == embeddedTense
+def sotDeletionApplicable (matrixTense embeddedTense : Finset Ordering) : Bool :=
+  decide (matrixTense = embeddedTense)
 
 /-- Deletion is applicable for past-under-past (the core SOT case). -/
 theorem past_past_deletion :
-    sotDeletionApplicable .past .past = true := rfl
+    sotDeletionApplicable past past = true := by decide
 
 /-- Deletion is NOT applicable for present-under-past (no morphological
     identity between present and past). -/
 theorem present_past_no_deletion :
-    sotDeletionApplicable .past .present = false := rfl
+    sotDeletionApplicable past present = false := by decide
 
 /-- When SOT deletion applies, the embedded reference time becomes
     the matrix event time (the embedded clause inherits matrix temporal
@@ -105,7 +105,7 @@ theorem kratzer_derives_shifted {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time)
     (hPast : embeddedR < matrixFrame.eventTime) :
     (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
-  simp only [embeddedFrame, ReichenbachFrame.isPast]
+  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
   exact hPast
 
 /-- SOT deletion yields the simultaneous reading: R' = E_matrix. -/
@@ -129,7 +129,7 @@ structure KratzerDecomposition where
   tensePronoun : TensePronoun
   /-- Whether a PERFECT aspect head intervenes between VP and Tense -/
   hasPerfect : Bool
-  deriving Repr, DecidableEq
+  deriving DecidableEq
 
 /-- Can this form be used deictically ("out of the blue")?
     Derived: indexical tense head → deictic-compatible. -/
@@ -169,7 +169,7 @@ open Semantics.Aspect
     can be used deictically. Pastness comes from the PERF aspect head. -/
 def kratzerEnglishPast : TensePronoun where
   varIndex := 0
-  constraint := .present   -- KEY: present, not past!
+  constraint := present   -- KEY: present, not past!
   mode := .indexical        -- Can be deictic ("out of the blue")
 
 /-- German Preterit: a genuine PAST pronoun.
@@ -177,17 +177,17 @@ def kratzerEnglishPast : TensePronoun where
     Cannot be used "out of the blue" in modern German. -/
 def kratzerGermanPreterit (n : ℕ) : TensePronoun where
   varIndex := n
-  constraint := .past       -- Genuine past
+  constraint := past       -- Genuine past
   mode := .anaphoric         -- Must find antecedent in discourse
 
 /-- English simple past has PRESENT tense constraint.
     Pastness is in the aspect (PERF), not the tense head. -/
 theorem english_past_is_present :
-    kratzerEnglishPast.constraint = .present := rfl
+    kratzerEnglishPast.constraint = present := rfl
 
 /-- German Preterit has PAST tense constraint. -/
 theorem german_preterit_is_past (n : ℕ) :
-    (kratzerGermanPreterit n).constraint = .past := rfl
+    (kratzerGermanPreterit n).constraint = past := rfl
 
 /-- English simple past is indexical-compatible: can be used "out of the blue."
     German Preterit forces anaphoric mode: cannot be used "out of the blue." -/
@@ -242,13 +242,13 @@ The distribution of overt vs. zero follows from `Overtness`. -/
     a genuinely different morpheme (bound PRESENT) licensed by locality. -/
 def kratzerZeroTense (n : ℕ) : TensePronoun where
   varIndex := n
-  constraint := .present    -- Present, not past
+  constraint := present    -- Present, not past
   mode := .bound            -- Locally bound → surfaces as zero
 
 /-- Zero tense has present constraint (not past).
     Past is NEVER zero/ambiguous in Kratzer's theory. -/
 theorem zero_tense_is_present (n : ℕ) :
-    (kratzerZeroTense n).constraint = .present := rfl
+    (kratzerZeroTense n).constraint = present := rfl
 
 /-- Zero tense surfaces as zero (from Overtness). -/
 theorem zero_tense_overtness (n : ℕ) :

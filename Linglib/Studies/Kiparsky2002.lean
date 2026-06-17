@@ -211,7 +211,7 @@ theorem past_perfect_allows_adverbs {Time : Type*} [LinearOrder Time]
     (h_past : f.isPast)
     (h_perfect : f.isPerfect) :
     f.referenceTime < f.perspectiveTime ∧ f.eventTime < f.referenceTime :=
-  ⟨h_past, h_perfect⟩
+  ⟨(ReichenbachFrame.isPast_def f).mp h_past, h_perfect⟩
 
 /-! ### Puzzle 3: Wh-Puzzle
 
