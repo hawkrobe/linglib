@@ -57,8 +57,20 @@ variable {S : Type*}
     instance separately for each concrete frame. -/
 structure CompatFrame (S : Type*) where
   compat : S → S → Prop
-  compat_refl : ∀ x, compat x x
-  compat_symm : ∀ x y, compat x y ↔ compat y x
+  compat_refl : Std.Refl compat
+  compat_symm : Std.Symm compat
+
+namespace CompatFrame
+
+/-- Compatibility is reflexive (accessor for the bundled `Std.Refl`). -/
+theorem refl (F : CompatFrame S) (x : S) : F.compat x x := F.compat_refl.refl x
+
+/-- Compatibility is symmetric: `h.symm : F.compat y x` for `h : F.compat x y`
+    (mirrors `SimpleGraph.Adj.symm`). -/
+theorem compat.symm {F : CompatFrame S} {x y : S} (h : F.compat x y) : F.compat y x :=
+  F.compat_symm.symm x y h
+
+end CompatFrame
 
 /-! ### Orthocomplement negation and connectives -/
 
@@ -179,7 +191,7 @@ theorem orthoNeg_classical
   simp only [mem_orthoNeg]
   constructor
   · intro h hAx
-    exact h x (F.compat_refl x) hAx
+    exact h x (F.refl x) hAx
   · intro hNotA y hcompat hAy
     have heq := hClassical x y hcompat
     subst heq; exact hNotA hAy
@@ -187,8 +199,8 @@ theorem orthoNeg_classical
 /-- The identity compatibility frame: compat x y ↔ x = y. -/
 def identityFrame [DecidableEq S] : CompatFrame S where
   compat := λ x y => x = y
-  compat_refl := λ _ => rfl
-  compat_symm := λ _ _ => eq_comm
+  compat_refl := ⟨λ _ => rfl⟩
+  compat_symm := ⟨λ _ _ h => h.symm⟩
 
 instance [DecidableEq S] :
     DecidableRel (identityFrame (S := S)).compat := λ a b => by
@@ -213,17 +225,17 @@ def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
   toFun A := { x | ∀ y, F.compat x y → ∃ z, F.compat y z ∧ z ∈ A }
   monotone' _ _ hAB _ hx y hy := by
     obtain ⟨z, hyz, hz⟩ := hx y hy; exact ⟨z, hyz, hAB hz⟩
-  le_closure' _ x hx _ hy := ⟨x, (F.compat_symm _ _).mp hy, hx⟩
+  le_closure' _ x hx _ hy := ⟨x, hy.symm, hx⟩
   idempotent' A := by
     apply Set.eq_of_subset_of_subset
     · intro x hx y hy
       obtain ⟨z, hyz, hz⟩ := hx y hy
-      have hzy : F.compat z y := (F.compat_symm _ _).mp hyz
+      have hzy : F.compat z y := hyz.symm
       obtain ⟨w, hyw, hwA⟩ := hz y hzy
       exact ⟨w, hyw, hwA⟩
     · intro x hx y hy
       obtain ⟨z, hyz, hz⟩ := hx y hy
-      exact ⟨z, hyz, λ y' hy' => ⟨z, (F.compat_symm _ _).mp hy', hz⟩⟩
+      exact ⟨z, hyz, λ y' hy' => ⟨z, hy'.symm, hz⟩⟩
   IsClosed A := IsRegular F A
   isClosed_iff {A} := by
     constructor
@@ -237,7 +249,7 @@ def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
           obtain ⟨z, hyz, hzA⟩ := hx y hxy
           exact hy z hyz hzA
       · intro x hx _ hy
-        exact ⟨x, (F.compat_symm _ _).mp hy, hx⟩
+        exact ⟨x, hy.symm, hx⟩
     · -- c_◇(A) = A → IsRegular F A
       intro hEq x
       by_cases h : x ∈ A
