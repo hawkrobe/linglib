@@ -214,6 +214,13 @@ theorem box_restrict {R₁ R₂ : AccessRel W}
     (hb : box R₁ p w) : box R₂ p w :=
   fun v hwv => hb v (h w v hwv)
 
+/-- **Conversion** (Prior's tense axiom `A ⊃ G P A` / `A ⊃ H F A`): for `R` and its converse
+    `flip R`, `p w → □_{flip R} ◇_R p w`. The correspondence fact that two modalities over a
+    relation and its converse are temporally adjoint (holds for *any* `R`). -/
+theorem self_imp_box_flip_diamond (R : AccessRel W) (p : W → Prop) (w : W)
+    (h : p w) : box (flip R) (diamond R p) w :=
+  fun _ hv => ⟨w, hv, h⟩
+
 /-- Restricting accessibility weakens possibility:
     if `R₂ ⊆ R₁`, then `◇_{R₂} p → ◇_{R₁} p`. -/
 theorem diamond_restrict {R₁ R₂ : AccessRel W}
