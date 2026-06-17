@@ -2311,7 +2311,6 @@ import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Semantics.Plurality.Reference
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Studies.Montague1973Quantification
 import Linglib.Semantics.Entailment.AntiAdditivity
