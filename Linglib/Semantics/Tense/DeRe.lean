@@ -173,8 +173,8 @@ theorem baseCoherent (dr : TemporalDeReReading W E P T) :
     `believe` is constrained to denote a time before the believer's
     now, NOT before the outer speaker's speech time. -/
 def isFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
-    (constraint : GramTense) : Prop :=
-  constraint.constrains dr.actualRes dr.holderContext.time
+    (constraint : Finset Ordering) : Prop :=
+  Core.Order.holds constraint dr.actualRes dr.holderContext.time
 
 /-- **Value-level shadow lemma**: a temporal de re reading is felicitous
     with `tp.constraint` iff the corresponding `TensePronoun.fullPresupposition`
@@ -182,9 +182,9 @@ def isFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
     de re reading's `actualRes` and the eval-time to the holder's now.
 
     This makes precise the sense in which the deleted bare-triple substrate
-    `(referent, evalTime, constraint : GramTense)` was a value-level
+    `(referent, evalTime, constraint : Finset Ordering)` was a value-level
     shadow of the centered-world account: pick `referent := dr.actualRes`,
-    `evalTime := dr.holderContext.time`. -/
+    `evalTime := dr.holderContext.time`. (`constraint : Finset Ordering`.) -/
 theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
     [LinearOrder T] (dr : TemporalDeReReading W E P T) (tp : TensePronoun)
     (g : TemporalAssignment T)
@@ -231,7 +231,7 @@ def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
     captures only the first conjunct; this predicate is what an
     Abusch-faithful study should use. -/
 def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
-    (alternatives : Set (WorldTimeIndex W T)) (constraint : GramTense) : Prop :=
+    (alternatives : Set (WorldTimeIndex W T)) (constraint : Finset Ordering) : Prop :=
   dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
 /-- A rigid time-concept (constant intension, `Core.Intension.IsRigid`)
@@ -261,7 +261,7 @@ theorem IsRigidAcrossAlternatives_of_concept_isRigid
 theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
     (alternatives : Set (WorldTimeIndex W T))
-    (constraint : GramTense)
+    (constraint : Finset Ordering)
     (h : dr.isAbuschFelicitous alternatives constraint) :
     dr.isFelicitousWith constraint := h.1
 

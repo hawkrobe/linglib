@@ -46,9 +46,9 @@ def unrestricted : Finset Ordering := {.lt, .eq, .gt}
 @[simp] theorem holds_after (a b : α) : holds after a b ↔ b < a := by
   simp [holds, after, compare_gt_iff_gt]
 @[simp] theorem holds_overlapping (a b : α) : holds overlapping a b ↔ a = b := by
-  simp [holds, overlapping, compare_eq_iff_eq]
+  simp [holds, overlapping]
 @[simp] theorem holds_notAfter (a b : α) : holds notAfter a b ↔ a ≤ b := by
-  simp [holds, notAfter, compare_lt_iff_lt, compare_eq_iff_eq, le_iff_lt_or_eq]
+  simp [holds, notAfter, compare_lt_iff_lt, le_iff_lt_or_eq]
 @[simp] theorem holds_notBefore (a b : α) : holds notBefore a b ↔ b ≤ a := by
   rw [← not_lt, ← compare_lt_iff_lt]
   simp only [holds, notBefore, Finset.mem_insert, Finset.mem_singleton]

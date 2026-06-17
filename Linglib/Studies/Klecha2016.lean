@@ -102,9 +102,10 @@ tense-side projection. -/
 theorem dox_past_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
-    GramTense.constrains .past refTime evalTime ↔
-    refTime < evalTime :=
-  ⟨λ ⟨_, hPast⟩ => hPast, λ h => ⟨le_of_lt h, h⟩⟩
+    Core.Order.holds Tense.past refTime evalTime ↔
+    refTime < evalTime := by
+  simp only [Tense.past, Core.Order.holds_before]
+  exact ⟨λ ⟨_, hPast⟩ => hPast, λ h => ⟨le_of_lt h, h⟩⟩
 
 /-- CIR ∧ PAST = ⊥: a circumstantial modal base requires RT > t, but
     semantic past tense requires RT < t. The conjunction is empty. The
@@ -114,8 +115,9 @@ theorem dox_past_iff {Time : Type*} [LinearOrder Time]
 theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
-    GramTense.constrains .past refTime evalTime ↔ False :=
-  ⟨λ ⟨hGt, hLt⟩ => absurd hLt (not_lt.mpr (le_of_lt hGt)), False.elim⟩
+    Core.Order.holds Tense.past refTime evalTime ↔ False := by
+  simp only [Tense.past, Core.Order.holds_before]
+  exact ⟨λ ⟨hGt, hLt⟩ => absurd hLt (not_lt.mpr (le_of_lt hGt)), False.elim⟩
 
 /-- DOX ∧ NPST = simultaneous: a doxastic modal base requires RT ≤ t,
     and non-past tense requires RT ≥ t. The conjunction forces RT = t.
@@ -124,9 +126,10 @@ theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
 theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .doxastic evalTime refTime ∧
-    GramTense.constrains .nonpast refTime evalTime ↔
-    refTime = evalTime :=
-  ⟨λ ⟨hLe, hGe⟩ => le_antisymm hLe hGe,
+    Core.Order.holds Tense.nonpast refTime evalTime ↔
+    refTime = evalTime := by
+  simp only [Tense.nonpast, Core.Order.holds_notBefore]
+  exact ⟨λ ⟨hLe, hGe⟩ => le_antisymm hLe hGe,
    λ h => ⟨le_of_eq h, ge_of_eq h⟩⟩
 
 /-- CIR ∧ NPST = future: a circumstantial modal base requires RT > t,
@@ -136,9 +139,10 @@ theorem dox_npst_iff {Time : Type*} [LinearOrder Time]
 theorem cir_npst_iff {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧
-    GramTense.constrains .nonpast refTime evalTime ↔
-    refTime > evalTime :=
-  ⟨λ ⟨hGt, _⟩ => hGt, λ h => ⟨h, le_of_lt h⟩⟩
+    Core.Order.holds Tense.nonpast refTime evalTime ↔
+    refTime > evalTime := by
+  simp only [Tense.nonpast, Core.Order.holds_notBefore]
+  exact ⟨λ ⟨hGt, _⟩ => hGt, λ h => ⟨h, le_of_lt h⟩⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -362,27 +366,27 @@ These theorems instantiate the general results from `ModalTense` at ℤ. -/
 /-- DOX + PAST = past: "Martina thought Carissa got pregnant" (genuine
     past reading). RT < thinking time. -/
 theorem dox_past_gives_past (t r : ℤ) :
-    attitudeTemporalConstraint .doxastic t r ∧ GramTense.constrains .past r t ↔
+    attitudeTemporalConstraint .doxastic t r ∧ Core.Order.holds Tense.past r t ↔
     r < t :=
   dox_past_iff t r
 
 /-- DOX + NPST = simultaneous: "Martina thought Carissa was pregnant"
     where "was" = SOT agreement over NPST. RT = thinking time. -/
 theorem dox_npst_gives_simultaneous (t r : ℤ) :
-    attitudeTemporalConstraint .doxastic t r ∧ GramTense.constrains .nonpast r t ↔
+    attitudeTemporalConstraint .doxastic t r ∧ Core.Order.holds Tense.nonpast r t ↔
     r = t :=
   dox_npst_iff t r
 
 /-- CIR + NPST = future: "Martina hoped Carissa got pregnant" where
     "got" = SOT agreement over NPST + CIR. RT > hoping time. -/
 theorem cir_npst_gives_future (t r : ℤ) :
-    attitudeTemporalConstraint .circumstantial t r ∧ GramTense.constrains .nonpast r t ↔
+    attitudeTemporalConstraint .circumstantial t r ∧ Core.Order.holds Tense.nonpast r t ↔
     r > t :=
   cir_npst_iff t r
 
 /-- CIR + PAST = impossible: no RT can be both > t (CIR) and < t (PAST). -/
 theorem cir_past_is_impossible (t r : ℤ) :
-    ¬(attitudeTemporalConstraint .circumstantial t r ∧ GramTense.constrains .past r t) :=
+    ¬(attitudeTemporalConstraint .circumstantial t r ∧ Core.Order.holds Tense.past r t) :=
   (cir_past_iff_false t r).mp
 
 
@@ -395,17 +399,19 @@ strictly weaker than present (ref = perspective). This matters because NPST
 includes future-oriented readings that present would exclude. -/
 
 /-- Present entails nonpast: if ref = persp, then ref ≥ persp. -/
-theorem present_implies_nonpast (r p : ℤ) (h : GramTense.constrains .present r p) :
-    GramTense.constrains .nonpast r p :=
-  ge_of_eq h
+theorem present_implies_nonpast (r p : ℤ) (h : Core.Order.holds Tense.present r p) :
+    Core.Order.holds Tense.nonpast r p := by
+  simp only [Tense.present, Tense.nonpast, Core.Order.holds_overlapping,
+    Core.Order.holds_notBefore] at h ⊢
+  omega
 
 /-- Nonpast does not entail present: there exist r, p where ref ≥ persp
     but ref ≠ persp (namely, any future time). -/
 theorem nonpast_strictly_weaker :
-    ∃ r p : ℤ, GramTense.constrains .nonpast r p ∧
-              ¬ GramTense.constrains .present r p := by
-  exact ⟨1, 0, by simp [GramTense.constrains],
-                by simp [GramTense.constrains]⟩
+    ∃ r p : ℤ, Core.Order.holds Tense.nonpast r p ∧
+              ¬ Core.Order.holds Tense.present r p := by
+  exact ⟨1, 0, by simp [Tense.nonpast, Core.Order.holds_notBefore],
+                by simp [Tense.present, Core.Order.holds_overlapping]⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -420,25 +426,25 @@ are future-oriented. This follows from `ModalFlavor.toModalBaseKind`. -/
 /-- Epistemic "have to" blocks future orientation. -/
 theorem epistemic_haveto_no_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .epistemic) .future = false :=
+      (ModalFlavor.toModalBaseKind .epistemic) Tense.future = false :=
   epistemic_blocks_future
 
 /-- Circumstantial "have to" permits future orientation. -/
 theorem circumstantial_haveto_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .circumstantial) .future = true :=
+      (ModalFlavor.toModalBaseKind .circumstantial) Tense.future = true :=
   circumstantial_permits_future
 
 /-- Deontic "have to" permits future orientation. -/
 theorem deontic_haveto_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .deontic) .future = true :=
+      (ModalFlavor.toModalBaseKind .deontic) Tense.future = true :=
   deontic_permits_future
 
 /-- Bouletic modals permit future orientation. -/
 theorem bouletic_modal_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .bouletic) .future = true := rfl
+      (ModalFlavor.toModalBaseKind .bouletic) Tense.future = true := rfl
 
 /-- All non-epistemic flavors are CIR-like. -/
 theorem non_epistemic_all_cir (f : ModalFlavor) (h : f ≠ .epistemic) :
@@ -523,7 +529,7 @@ open Gitksan.Modals (imaa requiresDim)
 theorem klecha_predicts_imaa_no_future :
     imaa.meaning.all (fun ff =>
       ModalBaseKind.permitsOrientation
-        (ModalFlavor.toModalBaseKind ff.flavor) .future = false) = true := by
+        (ModalFlavor.toModalBaseKind ff.flavor) Tense.future = false) = true := by
   decide
 
 /-- [matthewson-2013] Fig. 4 records two future-orientation cells
@@ -542,7 +548,7 @@ theorem matthewson_imaa_future_attested :
     and source-grounded. -/
 theorem gitksan_imaa_refutes_universal :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .epistemic) .future ≠
+      (ModalFlavor.toModalBaseKind .epistemic) Tense.future ≠
     requiresDim imaa .future := by decide
 
 /-! ### Architectural consequence
@@ -589,7 +595,7 @@ open Sharvit2014 (english)
 theorem sharvit_klecha_agree_simultaneous_english (sayingTime sickTime : ℤ) :
     english.simultaneousAttitudeReading = true ∧
     (attitudeTemporalConstraint .doxastic sayingTime sickTime ∧
-      GramTense.constrains .nonpast sickTime sayingTime ↔
+      Core.Order.holds Tense.nonpast sickTime sayingTime ↔
       sickTime = sayingTime) :=
   ⟨rfl, dox_npst_iff sayingTime sickTime⟩
 
@@ -718,8 +724,8 @@ three orientations. -/
 theorem klecha_hacquard_complementary :
     Hacquard2006.positionToOrientation .aboveAsp = .present ∧
     Hacquard2006.positionToOrientation .belowAsp = .past ∧
-    ModalBaseKind.permitsOrientation .circumstantial .future = true ∧
-    ModalBaseKind.permitsOrientation .doxastic .future = false := by
+    ModalBaseKind.permitsOrientation .circumstantial Tense.future = true ∧
+    ModalBaseKind.permitsOrientation .doxastic Tense.future = false := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> rfl
 
 
@@ -749,8 +755,9 @@ mechanism. -/
 theorem klecha_covers_hope_future_oriented_reading
     (hopeTime embRT : ℤ) (h : embRT > hopeTime) :
     attitudeTemporalConstraint .circumstantial hopeTime embRT ∧
-    GramTense.constrains .nonpast embRT hopeTime :=
-  ⟨cir_compatible_with_future hopeTime embRT h, le_of_lt h⟩
+    Core.Order.holds Tense.nonpast embRT hopeTime :=
+  ⟨cir_compatible_with_future hopeTime embRT h,
+    (Core.Order.holds_notBefore embRT hopeTime).mpr (le_of_lt h)⟩
 
 
 -- ════════════════════════════════════════════════════════════════

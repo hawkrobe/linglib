@@ -255,7 +255,7 @@ theorem simultaneousFrame_from_tense_pronoun {Time : Type*}
     (g : TemporalAssignment Time) (n : ℕ) (embeddedE : Time)
     (tp : TensePronoun)
     (hIdx : tp.varIndex = n)
-    (_hPres : tp.constraint = .present)
+    (_hPres : tp.constraint = present)
     (hResolve : interpTense n g = matrixFrame.eventTime) :
     tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
     simultaneousFrame matrixFrame embeddedE := by
@@ -271,7 +271,7 @@ theorem shiftedFrame_from_tense_pronoun {Time : Type*}
     (embeddedR embeddedE : Time)
     (tp : TensePronoun)
     (hIdx : tp.varIndex = n)
-    (_hPast : tp.constraint = .past)
+    (_hPast : tp.constraint = past)
     (hResolve : interpTense n g = embeddedR) :
     tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
     shiftedFrame matrixFrame embeddedR embeddedE := by

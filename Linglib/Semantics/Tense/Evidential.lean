@@ -90,21 +90,21 @@ inductive EPCondition where
   | unconstrained
   deriving DecidableEq, Repr
 
-/-- Underlying point-relation: `EPCondition` is a domain-flavored selector
-    over the abstract `Core.Order.Relation` partition. The evidential
+/-- Underlying comparison category: `EPCondition` is a domain-flavored selector
+    over the abstract `Core.Order` partition. The evidential
     vocabulary (downstream/prospective/…) maps onto the abstract
-    before/after/… partition; the slot pair is
+    before/after/… comparison cells; the slot pair is
     `(eventTime, acquisitionTime)`. -/
-def EPCondition.toRelation : EPCondition → Core.Order.Relation
-  | .downstream       => .notAfter
-  | .strictDownstream => .before
-  | .contemporaneous  => .overlapping
-  | .prospective      => .after          -- A < T, i.e. T > A
-  | .unconstrained    => .unrestricted
+def EPCondition.toRelation : EPCondition → Finset Ordering
+  | .downstream       => notAfter
+  | .strictDownstream => before
+  | .contemporaneous  => overlapping
+  | .prospective      => after          -- A < T, i.e. T > A
+  | .unconstrained    => unrestricted
 
 /-- Recover the predicate over `EvidentialFrame ℤ` from an `EPCondition`. -/
 def EPCondition.toConstraint (e : EPCondition) (f : EvidentialFrame ℤ) : Prop :=
-  e.toRelation.eval f.eventTime f.acquisitionTime
+  holds e.toRelation f.eventTime f.acquisitionTime
 
 /-- Map EP constraint shapes to `EvidentialPerspective` where applicable.
     Unconstrained has no single perspective. -/
@@ -225,11 +225,16 @@ theorem EPCondition.nonfuture_implies_downstream
     (ep : EPCondition) (f : EvidentialFrame ℤ)
     (h_nf : ep.IsNonfuture) (h_ep : ep.toConstraint f) :
     downstreamEvidence f := by
-  simp only [toConstraint, toRelation, Core.Order.Relation.eval] at h_ep
   cases ep with
-  | downstream => exact h_ep
-  | strictDownstream => exact le_of_lt h_ep
-  | contemporaneous => exact le_of_eq h_ep
+  | downstream =>
+      simp only [toConstraint, toRelation, Core.Order.holds_notAfter] at h_ep
+      exact h_ep
+  | strictDownstream =>
+      simp only [toConstraint, toRelation, Core.Order.holds_before] at h_ep
+      exact le_of_lt h_ep
+  | contemporaneous =>
+      simp only [toConstraint, toRelation, Core.Order.holds_overlapping] at h_ep
+      exact le_of_eq h_ep
   | prospective => exact absurd h_nf (by decide)
   | unconstrained => exact absurd h_nf (by decide)
 

@@ -15,7 +15,7 @@ reversing its c-command direction.
 
 ## Main declarations
 
-* `TenseHead` — a tense head carrying a `GramTense` value and an `Interpretability`.
+* `TenseHead` — a tense head carrying a `Finset Ordering` comparison cell and an `Interpretability`.
 * `TenseHead.IsSemanticallyActive` — only interpretable heads contribute to LF.
 * `UpwardAgree` — the reverse-Agree configuration: the goal c-commands the probe.
 * `SOTAgreeConfig` — one interpretable `[iPAST]` over a list of `[uPAST]` heads.
@@ -58,16 +58,16 @@ open Minimalist (FeatureVal GramFeature Interpretability)
 
 /-! ### Tense feature interpretability -/
 
-/-- A tense head: a `GramTense` value together with an `Interpretability`
+/-- A tense head: a `Finset Ordering` comparison cell together with an `Interpretability`
     status. Following [zeijlstra-2012], `[iPAST]` (`.interpretable`)
     contributes past semantics; `[uPAST]` (`.uninterpretable`) is checked by
     Agree and is semantically vacuous. -/
 structure TenseHead where
-  /-- The tense value (past/present/future). -/
-  tense : GramTense
+  /-- The tense value (past/present/future) as a `Finset Ordering` comparison cell. -/
+  tense : Finset Ordering
   /-- Whether this tense feature is interpretable or uninterpretable. -/
   status : Interpretability
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- A tense head is semantically active iff its feature is interpretable. -/
 def TenseHead.IsSemanticallyActive (th : TenseHead) : Prop :=
@@ -92,7 +92,6 @@ structure UpwardAgree where
   goal_interpretable : goal.status = .interpretable
   /-- The tense values match. -/
   tense_match : probe.tense = goal.tense
-  deriving Repr
 
 /-- Upward Agree makes the probe semantically vacuous: its feature is
     uninterpretable, so it does not contribute to LF. -/
@@ -121,7 +120,6 @@ structure SOTAgreeConfig where
   matrix_is_interpretable : matrixT.status = .interpretable
   /-- All embedded heads are uninterpretable. -/
   embedded_all_uninterpretable : ∀ t ∈ embeddedTs, t.status = .uninterpretable
-  deriving Repr
 
 /-- In an SOT configuration only the matrix head contributes past semantics;
     all embedded past morphology is vacuous concord. -/
@@ -159,7 +157,7 @@ theorem zeijlstra_derives_shifted {Time : Type*} [LinearOrder Time]
     embeddedT.IsSemanticallyActive ∧
     (shiftedFrame matrixFrame embeddedR embeddedE).isPast := by
   refine ⟨h_i, ?_⟩
-  simp only [shiftedFrame, ReichenbachFrame.isPast]
+  simp only [shiftedFrame, ReichenbachFrame.isPast_def]
   exact h_shifted
 
 /-- Upward Agree fixes the directionality: the goal `[iPAST]` is active and the

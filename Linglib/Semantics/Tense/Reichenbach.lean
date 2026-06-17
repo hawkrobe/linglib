@@ -65,13 +65,13 @@ namespace ReichenbachFrame
 variable {T : Type*} [LinearOrder T]
 
 /-- PAST: R < P (reference time precedes perspective time) — a view of
-    `GramTense.constrains`. [kiparsky-2002]: tense locates R relative to P, not S. -/
+    `Core.Order.holds Tense.past`. [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame T) : Prop :=
   Core.Order.holds Tense.past f.referenceTime f.perspectiveTime
 
 /-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
     needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is definitionally `GramTense.present.constrains`. -/
+    typechecking); it is definitionally `Core.Order.holds Tense.present`. -/
 def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 

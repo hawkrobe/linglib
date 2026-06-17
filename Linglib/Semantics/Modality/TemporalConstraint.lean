@@ -220,17 +220,17 @@ theorem bouletic_is_cir :
 /-- Table 1 consequence: epistemic modals block future orientation. -/
 theorem epistemic_blocks_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .epistemic) .future = false := rfl
+      (ModalFlavor.toModalBaseKind .epistemic) Tense.future = false := by decide
 
 /-- Table 1 consequence: circumstantial modals permit future orientation. -/
 theorem circumstantial_permits_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .circumstantial) .future = true := rfl
+      (ModalFlavor.toModalBaseKind .circumstantial) Tense.future = true := by decide
 
 /-- Table 1 consequence: deontic modals permit future orientation. -/
 theorem deontic_permits_future :
     ModalBaseKind.permitsOrientation
-      (ModalFlavor.toModalBaseKind .deontic) .future = true := rfl
+      (ModalFlavor.toModalBaseKind .deontic) Tense.future = true := by decide
 
 /-- All non-epistemic flavors map to CIR. -/
 theorem non_epistemic_is_cir (f : ModalFlavor) (h : f ≠ .epistemic) :

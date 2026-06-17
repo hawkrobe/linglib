@@ -47,7 +47,7 @@ def kratzerPreterit : KratzerDecomposition where
     Parallel structure to English simple past. Can be used deictically
     because the tense head is present (indexical). -/
 def kratzerPerfekt : KratzerDecomposition where
-  tensePronoun := { varIndex := 0, constraint := .present, mode := .indexical }
+  tensePronoun := { varIndex := 0, constraint := Tense.present, mode := .indexical }
   hasPerfect := true
 
 -- ════════════════════════════════════════════════════
@@ -67,8 +67,8 @@ theorem perfekt_deictic :
     Both can refer to past events, but only Perfekt is deictic-compatible.
     This explains why Perfekt has largely replaced Preterit in spoken German. -/
 theorem preterit_perfekt_contrast :
-    kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
-    kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
+    kratzerPreterit.tensePronoun.constraint = Tense.past ∧
+    kratzerPerfekt.tensePronoun.constraint = Tense.present ∧
     ¬ kratzerPreterit.canBeDeictic ∧
     kratzerPerfekt.canBeDeictic := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
