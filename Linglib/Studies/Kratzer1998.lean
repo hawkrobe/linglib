@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Pronoun
 import Linglib.Data.Examples.Kratzer1998
 
 /-!

@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Reference.Nominal
 
