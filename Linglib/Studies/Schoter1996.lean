@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Bilattice
+import Linglib.Core.Logic.Bilattice.Basic
 import Mathlib.Order.Fin.Basic
 
 /-!
