@@ -1,49 +1,63 @@
-import Mathlib.Order.Basic
+import Mathlib.Order.Compare
+import Mathlib.Data.Finset.Basic
 
 /-!
-# Point temporal relations
+# Comparison categories
 
-The point analogue of `AllenRelation` (which operates on intervals).
-A `Relation` is a domain-flavored selector over the standard partition
-of pairs of times: before, after, overlapping, ≤, ≥, unrestricted.
+A **comparison category** is a `Finset Ordering` — which of `lt`/`eq`/`gt` a pair of elements of a
+linear order may stand in. The atomic categories are the singletons (mathlib `Ordering` itself);
+unions like `≤`/`≥` are larger sets. `holds s a b` says the comparison of `a` and `b` falls in `s`.
 
-Used by tense (`GramTense.constrains` realizes the
-before/overlapping/after/notBefore cells), evidential semantics
-(`EPCondition.toRelation`), and modal-base time
-analyses (`MBTProfile.toRelation` in Huijsmans 2025) — each domain
-provides a name for one shape from the same partition.
+This is framework-agnostic order theory (the point analogue of `AllenRelation` for intervals): it is
+generic over any `[LinearOrder α]` and bakes in **no** notion of time. Tense, evidential, and
+modal-base-time semantics each supply the order (`Time`) and name the categories they use
+(`Tense.past = before`, etc.).
 -/
 
 namespace Core.Order
 
-/-- Temporal relation type for tense operators.
-    Relates two times (typically event time and reference/speech time).
-    The point analogue of `AllenRelation` (which operates on intervals). -/
-inductive Relation where
-  | before       -- t₁ < t₂
-  | after        -- t₁ > t₂
-  | overlapping  -- t₁ ◦ t₂ (simplified to equality for points)
-  | notAfter     -- t₁ ≤ t₂
-  | notBefore    -- t₁ ≥ t₂
-  | unrestricted -- True (no constraint)
-  deriving DecidableEq, Repr
+variable {α : Type*} [LinearOrder α]
 
-namespace Relation
+/-- A pair `a, b` stands in comparison category `s` iff `compare a b` is one of `s`'s orderings. -/
+def holds (s : Finset Ordering) (a b : α) : Prop := compare a b ∈ s
 
-/-- Evaluate a temporal relation on two times -/
-def eval {Time : Type*} [LinearOrder Time] :
-    Relation → Time → Time → Prop
-  | .before, t₁, t₂ => t₁ < t₂
-  | .after, t₁, t₂ => t₁ > t₂
-  | .overlapping, t₁, t₂ => t₁ = t₂
-  | .notAfter, t₁, t₂ => t₁ ≤ t₂
-  | .notBefore, t₁, t₂ => t₁ ≥ t₂
-  | .unrestricted, _, _ => True
+instance (s : Finset Ordering) (a b : α) : Decidable (holds s a b) :=
+  inferInstanceAs (Decidable (_ ∈ s))
 
-instance {Time : Type*} [LinearOrder Time] [DecidableEq Time]
-    (r : Relation) (t₁ t₂ : Time) : Decidable (r.eval t₁ t₂) := by
-  cases r <;> simp [eval] <;> infer_instance
+/-! ### Named comparison categories -/
 
-end Relation
+/-- `a < b`. -/
+def before : Finset Ordering := {.lt}
+/-- `a > b`. -/
+def after : Finset Ordering := {.gt}
+/-- `a = b` (points overlap). -/
+def overlapping : Finset Ordering := {.eq}
+/-- `a ≤ b`. -/
+def notAfter : Finset Ordering := {.lt, .eq}
+/-- `a ≥ b`. -/
+def notBefore : Finset Ordering := {.gt, .eq}
+/-- no constraint. -/
+def unrestricted : Finset Ordering := {.lt, .eq, .gt}
+
+/-! ### Reductions to the underlying order (so consumers' `<`-shaped proofs go through) -/
+
+@[simp] theorem holds_before (a b : α) : holds before a b ↔ a < b := by
+  simp [holds, before, compare_lt_iff_lt]
+@[simp] theorem holds_after (a b : α) : holds after a b ↔ b < a := by
+  simp [holds, after, compare_gt_iff_gt]
+@[simp] theorem holds_overlapping (a b : α) : holds overlapping a b ↔ a = b := by
+  simp [holds, overlapping, compare_eq_iff_eq]
+@[simp] theorem holds_notAfter (a b : α) : holds notAfter a b ↔ a ≤ b := by
+  simp [holds, notAfter, compare_lt_iff_lt, compare_eq_iff_eq, le_iff_lt_or_eq]
+@[simp] theorem holds_notBefore (a b : α) : holds notBefore a b ↔ b ≤ a := by
+  rw [← not_lt, ← compare_lt_iff_lt]
+  simp only [holds, notBefore, Finset.mem_insert, Finset.mem_singleton]
+  cases compare a b <;> simp
+@[simp] theorem holds_unrestricted (a b : α) : holds unrestricted a b ↔ True := by
+  simp only [holds, unrestricted, iff_true]
+  rcases lt_trichotomy a b with h | h | h
+  · simp [compare_lt_iff_lt.mpr h]
+  · simp [compare_eq_iff_eq.mpr h]
+  · simp [compare_gt_iff_gt.mpr h]
 
 end Core.Order

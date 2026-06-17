@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Finset Ordering
 import Linglib.Semantics.Attitudes.Doxastic
 
 /-!
@@ -51,7 +51,7 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 -- ════════════════════════════════════════════════════════════════
 
 -- Situation-dependent proposition type (von Stechow's s(it), Prop-valued):
--- `SitProp` (root-level, defined in `Semantics/Tense/GramTense.lean`).
+-- `SitProp` (root-level, defined in `Semantics/Tense/Finset Ordering.lean`).
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 

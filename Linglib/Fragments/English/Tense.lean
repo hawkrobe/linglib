@@ -105,7 +105,7 @@ open Morphology.Tense
     `allowsFalseTense` is derived: only synthetic forms permit false tense. -/
 structure TensePerspectiveEntry extends TAMEEntry where
   /-- The grammatical tense this form realizes -/
-  gramTense : GramTense
+  gramTense : Finset Ordering
   /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
   formType : TenseFormType
 
@@ -188,7 +188,7 @@ theorem kratzerSimplePast_deictic :
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head, not the tense. -/
 theorem kratzerSimplePast_underlyingPresent :
-    kratzerSimplePast.tensePronoun.constraint = GramTense.present := rfl
+    kratzerSimplePast.tensePronoun.constraint = Tense.present := rfl
 
 /-- Simple past and present perfect share the same underlying decomposition:
     both are PRESENT + PERFECT. The difference is that simple past fuses
@@ -203,7 +203,7 @@ theorem simplePast_presentPerfect_same_decomposition :
     the Kratzer `constraint =.present` records the underlying tense head.
     These are DIFFERENT for English simple past — that's Kratzer's point. -/
 theorem lakoff_kratzer_diverge :
-    simplePastPerspective.gramTense = GramTense.past ∧
-    kratzerSimplePast.tensePronoun.constraint = GramTense.present := ⟨rfl, rfl⟩
+    simplePastPerspective.gramTense = Tense.past ∧
+    kratzerSimplePast.tensePronoun.constraint = Tense.present := ⟨rfl, rfl⟩
 
 end English.Tense

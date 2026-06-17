@@ -32,7 +32,7 @@ existing four-field record — downstream call sites continue to use
 work with `f.toDomain` and `relatedByName`.
 -/
 
-open Tense (Domain Orientation TO GramTense)
+open Tense (Domain Orientation TO Finset Ordering)
 open AllenRelation (precedesSet equalSet)
 
 namespace Time
@@ -65,24 +65,24 @@ namespace ReichenbachFrame
 variable {T : Type*} [LinearOrder T]
 
 /-- PAST: R < P (reference time precedes perspective time) — a view of
-    `GramTense.constrains`. [kiparsky-2002]: tense locates R relative to P, not S. -/
+    `Core.Order.holds Finset Ordering`. [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame T) : Prop :=
-  GramTense.past.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.past f.referenceTime f.perspectiveTime
 
 /-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
     needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is definitionally `GramTense.present.constrains`. -/
+    typechecking); it is definitionally `Core.Order.holds Tense.present`. -/
 def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 
 /-- FUTURE: P < R (perspective time precedes reference time). -/
 def isFuture (f : ReichenbachFrame T) : Prop :=
-  GramTense.future.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.future f.referenceTime f.perspectiveTime
 
 /-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — the view of
-    `GramTense.nonpast.constrains`. Completes the four-way relation on frames. -/
+    `Core.Order.holds Tense.nonpast`. Completes the four-way relation on frames. -/
 def isNonpast (f : ReichenbachFrame T) : Prop :=
-  GramTense.nonpast.constrains f.referenceTime f.perspectiveTime
+  Core.Order.holds Tense.nonpast f.referenceTime f.perspectiveTime
 
 /-- Simple case: P = S (root clause, no perspective shift). -/
 def isSimpleCase (f : ReichenbachFrame T) : Prop :=

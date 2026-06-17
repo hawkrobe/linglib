@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Finset Ordering
 
 /-!
 # Modal Base Kind
@@ -13,7 +13,7 @@ CIR returns future histories (departing from eval time) → future orientation.
 
 This type lives in Core because it is referenced by both theory-layer
 modules (`Modality.TemporalConstraint`, `Tense.ModalTense`) and by
-phenomena-layer study files. It depends only on `GramTense` from Core.
+phenomena-layer study files. It depends only on `Finset Ordering` from Core.
 -/
 
 open Tense
@@ -35,7 +35,7 @@ inductive ModalBaseKind where
 
 /-- The temporal orientation permitted by a modal base kind.
     [klecha-2016] Table 1 and §1.2. -/
-def ModalBaseKind.permitsOrientation : ModalBaseKind → GramTense → Bool
+def ModalBaseKind.permitsOrientation : ModalBaseKind → Finset Ordering → Bool
   | .doxastic, .past => true
   | .doxastic, .present => true
   | .doxastic, .nonpast => true    -- nonpast includes present

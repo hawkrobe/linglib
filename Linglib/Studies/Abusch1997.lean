@@ -18,7 +18,7 @@ attitude complements.
 Two derivation styles coexist in this file:
 
 1. **Value-level shadow** (`abusch_derives_*` against `TensePronoun.fullPresupposition`):
-   tense pronoun + `GramTense.constrains` + temporal assignment.
+   tense pronoun + `Core.Order.holds Finset Ordering` + temporal assignment.
    Captures Abusch's predictions at the value level without committing
    to the centered-world architecture. Cheap, presupposition-free.
 
@@ -111,7 +111,7 @@ open Data.Examples (LinguisticExample)
     licenses this reading, but it isn't load-bearing in this proof —
     the conclusion follows for any tense pronoun whose resolution is
     below the matrix event time. A full Abusch derivation would
-    project through `tp.constraint.constrains` from the binding mode. -/
+    project through `Core.Order.holds tp.constraint` from the binding mode. -/
 theorem abusch_derives_shifted {Time : Type*} [LinearOrder Time]
     (tp : TensePronoun) (g : TemporalAssignment Time)
     (matrixFrame : ReichenbachFrame Time)
@@ -166,7 +166,7 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
     (hPast : tp.constraint = .past)
     (hBefore : tp.resolve g < tp.evalTime g) :
     tp.fullPresupposition g := by
-  simp only [TensePronoun.fullPresupposition, GramTense.constrains, hPast]
+  simp only [TensePronoun.fullPresupposition, Core.Order.holds Finset Ordering, hPast]
   exact hBefore
 
 

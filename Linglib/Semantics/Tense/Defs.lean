@@ -1,61 +1,42 @@
 import Mathlib.Order.Basic
+import Linglib.Core.Order.Relation
 
 /-!
-# Grammatical tense: the temporal relation
+# Grammatical tense as a comparison category
 
-`GramTense` is the four-way grammatical-tense label (past/present/future/nonpast), and
-`GramTense.constrains` is the ordering it imposes on a reference time relative to a perspective time,
-grounded directly in the mathlib order on `T`. The order-requiring frame predicates
-(`ReichenbachFrame.isPast`/`isFuture`/`isNonpast`) and the compositional tense operators are views of
-`constrains`; `isPresent` is the order-free equality (definitionally `constrains .present`, but kept
-bare so present-only theorems need no `LinearOrder`).
+A grammatical tense is a **comparison category** between a reference time and a perspective time —
+a `Finset Ordering` (`Core.Order`). There is no bespoke tense type: the four traditional labels name
+four of the comparison cells `Core.Order` already provides, so tense, evidentials, and modal-base
+time all share one Ordering-grounded spine.
+
+* `past`    = `before`      (ref < perspective)
+* `present` = `overlapping` (ref = perspective)
+* `future`  = `after`       (ref > perspective)
+* `nonpast` = `notBefore`   (ref ≥ perspective — the present-or-future union, [klecha-2016])
+
+The constraint a tense imposes is `Core.Order.holds`, grounded in `Ordering` over the order on `T`.
+The frame predicates (`ReichenbachFrame.isPast`/`isFuture`/`isNonpast`) and the compositional tense
+operators are views of `holds` (with `Core.Order.holds_before` etc. reducing them to `<`/`=`/`≥`).
 
 [klecha-2016] (the `nonpast` case) [kiparsky-2002]
 -/
 
 namespace Tense
 
-/--
-Grammatical tense: a temporal relation imposed by tense morphology.
+open Core.Order (before after overlapping notBefore)
 
-Following the Reichenbach/Klein tradition:
-- PAST: reference time before perspective time
-- PRESENT: reference time overlaps perspective time
-- FUTURE: reference time after perspective time
--/
-inductive GramTense where
-  | past
-  | present
-  | future
-  /-- [klecha-2016]'s non-past tense: perspective ≤ ref (present or future).
-      Distinct from `.present` (ref = perspective). The non-past is what allows
-      embedded tense under circumstantial modals to have future-oriented readings:
-      ⟦NPST⟧ = λp λt λu λh[p(t)(h) & u ≤ t], i.e., ref ≥ perspective. -/
-  | nonpast
-  deriving DecidableEq, Repr, Inhabited
+/-- **Past**: reference time before perspective time. -/
+abbrev past : Finset Ordering := before
 
-namespace GramTense
+/-- **Present**: reference time overlaps (equals) perspective time. -/
+abbrev present : Finset Ordering := overlapping
 
-/-- The temporal constraint imposed by a grammatical tense, grounded directly in the mathlib order
-    on `T`. Past: ref < perspective. Present: ref = perspective. Future: ref > perspective.
-    Nonpast: ref ≥ perspective (the present-or-future union, [klecha-2016]).
-    This is the core ordering that Priorean operators assert and Abusch's tense pronouns presuppose. -/
-def constrains {T : Type*} [LinearOrder T]
-    (t : GramTense) (refTime perspTime : T) : Prop :=
-  match t with
-  | .past => refTime < perspTime
-  | .present => refTime = perspTime
-  | .future => refTime > perspTime
-  | .nonpast => refTime ≥ perspTime
+/-- **Future**: reference time after perspective time. -/
+abbrev future : Finset Ordering := after
 
-instance {T : Type*} [LinearOrder T] (t : GramTense) (r p : T) :
-    Decidable (t.constrains r p) :=
-  match t with
-  | .past => inferInstanceAs (Decidable (r < p))
-  | .present => inferInstanceAs (Decidable (r = p))
-  | .future => inferInstanceAs (Decidable (r > p))
-  | .nonpast => inferInstanceAs (Decidable (r ≥ p))
-
-end GramTense
+/-- **Nonpast** ([klecha-2016]): reference time at or after perspective time — the present-or-future
+    union (`Core.Order.notBefore`), *not* a fourth atomic tense. Lets embedded tense under
+    circumstantial modals have future-oriented readings (⟦NPST⟧ requires ref ≥ perspective). -/
+abbrev nonpast : Finset Ordering := notBefore
 
 end Tense

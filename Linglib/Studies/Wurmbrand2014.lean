@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.GramTense
+import Linglib.Semantics.Tense.Finset Ordering
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Data.Examples.Wurmbrand2014
@@ -72,7 +72,7 @@ def classOrientation : InfinitivalTenseClass → TemporalOrientation
     undergoes SOT; *woll* supplies the future orientation. -/
 structure WollDecomposition where
   /-- The tense component. -/
-  tense : GramTense
+  tense : Finset Ordering
   /-- Whether *woll* is present (future orientation). -/
   hasWoll : Bool
   deriving DecidableEq, Repr
