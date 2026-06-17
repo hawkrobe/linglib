@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Order.Basic
+import Linglib.Core.Logic.Modal.Defs
 
 /-!
 # T × W tense-modal logic: frames, language, and satisfaction
@@ -57,16 +58,20 @@ namespace TWFrame
 
 variable {Time : Type u} {World : Type v} {Atom : Type*} [LinearOrder Time]
 
-/-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`. -/
+open Core.Logic.Modal (box universalR) in
+/-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
+    `G`/`H`/`N`/`box` are `Core.Logic.Modal.box` Kripke modalities over, respectively, future
+    precedence `<`, past precedence `>`, historical equivalence `sim t`, and the universal
+    relation — making the object logic a multimodal Kripke logic by construction. -/
 def sat (F : TWFrame Time World) (V : Atom → Time → World → Prop) :
     OForm Atom → Time → World → Prop
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
-  | .G a,     t, w => ∀ t', t < t' → F.sat V a t' w
-  | .H a,     t, w => ∀ t', t' < t → F.sat V a t' w
-  | .N a,     t, w => ∀ w', F.sim t w w' → F.sat V a t w'
-  | .box a,   t, w => ∀ w', F.sat V a t w'
+  | .G a,     t, w => box (· < ·) (fun t' => F.sat V a t' w) t
+  | .H a,     t, w => box (· > ·) (fun t' => F.sat V a t' w) t
+  | .N a,     t, w => box (F.sim t) (fun w' => F.sat V a t w') w
+  | .box a,   t, w => box universalR (fun w' => F.sat V a t w') w
 
 /-- Local entailment in a model: `a` entails `b` iff `b` holds wherever `a` does. -/
 def entails (F : TWFrame Time World) (V : Atom → Time → World → Prop) (a b : OForm Atom) : Prop :=
