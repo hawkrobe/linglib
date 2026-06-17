@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Logic.Bilattice
+import Linglib.Core.Logic.Bilattice.Basic
 
 /-!
 # Kleene's three-valued logic as the consistent fragment of Belnap's FOUR
