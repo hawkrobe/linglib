@@ -33,6 +33,7 @@ import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Bilattice
+import Linglib.Core.Logic.TwistProduct
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
