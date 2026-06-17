@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Flat
+import Linglib.Features.Agreement
 import Linglib.Features.Number.Basic
 
 /-!
@@ -74,7 +75,7 @@ end HasNumber
 theorem UD.MorphFeatures.compatible_hasNumber {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasNumber.Compatible f1 f2 :=
-  Flat.compat_of_clause Number.fromUD <| by
+  Features.compat_of_clause Number.fromUD <| by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto
