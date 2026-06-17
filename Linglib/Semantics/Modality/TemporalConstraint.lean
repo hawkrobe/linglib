@@ -137,7 +137,7 @@ these theorems re-express it in the Klecha-namespace
 theorem attitudeTemporalConstraint_derived_doxastic
     {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
-    (s s' : Core.WorldTimeIndex W Time)
+    (s s' : Intensional.WorldTimeIndex W Time)
     (h : s' ∈ actualHistoryBase history s) :
     attitudeTemporalConstraint .doxastic s.time s'.time :=
   actualHistoryBase_time_actual history s s' h
@@ -148,7 +148,7 @@ theorem attitudeTemporalConstraint_derived_doxastic
 theorem attitudeTemporalConstraint_derived_circumstantial
     {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
-    (s s' : Core.WorldTimeIndex W Time)
+    (s s' : Intensional.WorldTimeIndex W Time)
     (h : s' ∈ futureHistoryBase history s) :
     attitudeTemporalConstraint .circumstantial s.time s'.time :=
   futureHistoryBase_time_future history s s' h

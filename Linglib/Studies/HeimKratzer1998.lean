@@ -1,6 +1,6 @@
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Variables
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.LexEntry
@@ -52,8 +52,8 @@ than via `evalTree` (which would demand a blanket
 
 namespace HeimKratzer1998
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree

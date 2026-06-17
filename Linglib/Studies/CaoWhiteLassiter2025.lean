@@ -40,14 +40,14 @@ import Mathlib.Data.NNReal.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Causation.CoerciveImplication
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.SEM.Interventional
 import Linglib.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 open Causation (BoolSEM CausalGraph Valuation Mechanism)
 open Causation.Mechanism (const)
 open Causation.SEM (probabilisticSuf probabilisticSuf_of_deterministic)

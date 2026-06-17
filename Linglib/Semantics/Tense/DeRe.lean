@@ -32,7 +32,7 @@ live in `Studies/Abusch1997.lean`.
 
 ## Reuse
 
-- `Core.Intension W τ` (`Core/Logic/Intensional/Rigidity.lean`) — substrate
+- `Intensional.Intension W τ` (`Semantics/Intensional/Rigidity.lean`) — substrate
   for time-concepts. `IsRigid` captures the "same time across alternatives"
   property that distinguishes de re from de dicto temporal anaphora.
   `IsRigidOn` (set-relativized) is the workhorse for modal-alternative
@@ -68,7 +68,7 @@ live in `Studies/Abusch1997.lean`.
   shared-past, Klecha 2016 DOX). The user supplies whichever set the
   consumer's framework demands; convenience constructors
   `metaphysicalAlternatives` (legacy) and `doxasticAlternatives` make
-  the parallel explicit. Concept-rigidity (`Core.Intension.IsRigid`)
+  the parallel explicit. Concept-rigidity (`Intensional.Intension.IsRigid`)
   is sufficient to discharge modal-rigidity for any alternative-set
   — a constant-intension concept is automatically rigid.
 
@@ -99,7 +99,7 @@ live in `Studies/Abusch1997.lean`.
 
 namespace Tense.DeRe
 
-open Core (Intension WorldTimeIndex)
+open Intensional (Intension WorldTimeIndex)
 open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
 
@@ -234,7 +234,7 @@ def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (alternatives : Set (WorldTimeIndex W T)) (constraint : Finset Ordering) : Prop :=
   dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
-/-- A rigid time-concept (constant intension, `Core.Intension.IsRigid`)
+/-- A rigid time-concept (constant intension, `Intensional.Intension.IsRigid`)
     is automatically rigid across any alternative-set. The rigid-concept
     derivations in `Studies/Abusch1997.lean` discharge
     `IsRigidAcrossAlternatives` "for free" via this lemma.

@@ -25,14 +25,14 @@ Pure intension algebra (`varying_not_rigid`, `rigid_neq_nonrigid`,
 
 -/
 
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
 
 namespace Semantics.Reference.Kripke
 
-open Core (Intension)
-open Core.Intension (IsRigid rigid rigid_isRigid CoRefer CoExtensional
+open Intensional (Intension)
+open Intensional.Intension (IsRigid rigid rigid_isRigid CoRefer CoExtensional
   rigid_identity_necessary varying_not_rigid rigid_neq_nonrigid)
 open Semantics.Reference.Basic (properName isDirectlyReferential)
 open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
@@ -121,7 +121,7 @@ theorem nonrigid_scope_sensitive {W E : Type*}
 /-! ## The Modal Argument
 
 Kripke's argument against the description theory of names.
-The formal core chains two lemmas from `Core.Intension`:
+The formal core chains two lemmas from `Intensional.Intension`:
 `varying_not_rigid` (descriptions are non-rigid) and
 `rigid_neq_nonrigid` (rigid ≠ non-rigid). -/
 
@@ -131,7 +131,7 @@ with the description.
 
 This is the formal refutation of the Frege-Russell description theory of
 names. The proof chains `varying_not_rigid` and `rigid_neq_nonrigid`
-from `Core.Intension`. -/
+from `Intensional.Intension`. -/
 theorem modal_argument {W E : Type*}
     (name desc : Intension W E)
     (hRigid : IsRigid name)

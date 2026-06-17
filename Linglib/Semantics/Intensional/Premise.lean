@@ -14,7 +14,7 @@ and lumping all rest, but they have no built-in commitment to "worlds" vs.
 "situations" vs. "times": they make sense for any `Index : Type*` of points
 at which propositions are evaluated.
 
-## Why this lives in `Core/Logic/Intensional/`
+## Why this lives in `Semantics/Intensional/`
 
 A premise set is a `List (Index → Prop)`. The notions of *consistency*,
 *following from*, and *compatibility* are purely set-theoretic facts about
@@ -58,7 +58,7 @@ The revised definitions reduce to the original ones when the premise set is
 itself consistent (`mustInView_iff_mustInView'_of_consistent`).
 -/
 
-namespace Core.Logic.Intensional.Premise
+namespace Intensional.Premise
 
 variable {Index : Type*}
 
@@ -221,4 +221,4 @@ theorem canInView_iff_canInView'_of_consistent
     exact isCompatibleWith_anti_of_subset
       (subset_of_mem_consistentSublists hC) hCompat
 
-end Core.Logic.Intensional.Premise
+end Intensional.Premise

@@ -41,8 +41,8 @@ tiny frame (`Body`: sun / moon / mars, one situation index).
 
 namespace CoppockBeaver2015
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Definiteness
 
 /-! ### A tiny frame for the projection diagnostics -/

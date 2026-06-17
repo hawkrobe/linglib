@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Conjunction
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Boundness
 import Linglib.Semantics.Coordination.Defs
@@ -479,7 +479,7 @@ P(e₁) ∧ P(e₂) equals Link's `distMaximal P {e₁, e₂}`
 (`mu_is_distributive_check`).
 -/
 
-open Core.Logic.Intensional.Conjunction in
+open Intensional.Conjunction in
 /--
 Type-raising an entity and checking subset inclusion of its singleton
 is equivalent to applying the predicate directly.
@@ -490,7 +490,7 @@ This is the core of the M&S decomposition: the roundtrip through
 theorem typeRaise_incl_reduces {E W : Type} (e : E) (p : E → Prop) :
     typeRaise (E := E) (W := W) e p = p e := rfl
 
-open Core.Logic.Intensional.Conjunction in
+open Intensional.Conjunction in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
@@ -534,7 +534,7 @@ general case for arbitrary pluralities.
 
 section MUDistributivity
 
-open Core.Logic.Intensional.Conjunction
+open Intensional.Conjunction
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 

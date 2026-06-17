@@ -323,7 +323,7 @@ lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
 We formalize this using `box`/`diamond` from
-`Core.Logic.Intensional`: a Kripke countermodel exhibits
+`Intensional`: a Kripke countermodel exhibits
 an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge

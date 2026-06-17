@@ -1,5 +1,5 @@
 import Mathlib.Init
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Logic.Modal.Defs
 import Linglib.Semantics.Quantification.Basic
 
@@ -32,7 +32,7 @@ picks possibly different individuals in different worlds (de dicto), while
 the existential closure over the CF itself can sit above negation (wide
 pseudo-scope). When the world variable is **free**, the CF is evaluated at
 the actual world (de re). This is captured by connecting `SkolemCF` to
-`Core.SitVarStatus`.
+`Intensional.SitVarStatus`.
 
 ## Application to African Languages
 
@@ -163,7 +163,7 @@ theorem exists_narrow_scope_under_negation {E : Type*}
 
 /-! ### World Variable and De Re / De Dicto -/
 
-open Core.SitVarStatus (SitVarStatus)
+open Intensional.SitVarStatus (SitVarStatus)
 
 /-- Evaluate a skolemized CF according to the status of its world variable.
     - `SitVarStatus.free`: evaluate at `w₀` (the actual world) → de re
@@ -196,7 +196,7 @@ theorem SkolemCF.cross_world_variation {S E : Type*}
 
 [owusu-2022]'s entry (67) — ⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s)) — feeds one
 situation `s` to both the CF's skolem index and the restrictor. Here the
-restrictor is a genuine intension `Core.Intension S (E → Prop)`. Curry
+restrictor is a genuine intension `Intensional.Intension S (E → Prop)`. Curry
 note: Owusu types P as ⟨e,st⟩ (entity-first) and writes P(s) informally
 for the s-extension {x | P(x)(s)}; `applyIntension` takes the
 situation-first transpose so that `P s` is that extension literally.
@@ -205,7 +205,7 @@ The collapse/divergence pair formalizes [zimmermann-2026]'s gloss of the
 account — "as negation is not an intensional operator, the situational
 skolem argument of the choice function cannot be shifted away from the
 actual resource situation … resulting in wide scope only": operators
-extensional at the matrix situation (`Core.IsExtensionalAt`) neutralize
+extensional at the matrix situation (`Intensional.IsExtensionalAt`) neutralize
 the free/bound distinction for the situation pronoun
 (`bound_free_collapse`), while situation quantifiers (`box`:
 conditionals, attitudes) separate the construals
@@ -225,13 +225,13 @@ open Core.Logic.Modal
 both at the same index — [owusu-2022]'s f_s(P(s)) (entry (67), modulo
 currying; see the section docstring). -/
 def SkolemCF.applyIntension {S E : Type*} (f : SkolemCF S E) (s : S)
-    (P : Core.Intension S (E → Prop)) : E :=
+    (P : Intensional.Intension S (E → Prop)) : E :=
   f s (P s)
 
 /-- On rigid restrictors, `applyIntension` is the extensional `apply`. -/
 theorem SkolemCF.applyIntension_rigid {S E : Type*} (f : SkolemCF S E)
     (s : S) (N : E → Prop) :
-    f.applyIntension s (Core.Intension.rigid N) = f.apply s N := rfl
+    f.applyIntension s (Intensional.Intension.rigid N) = f.apply s N := rfl
 
 /-- `SitVarStatus`-dispatched intensional application: the `free`
 construal anchors the CF and restrictor to the context situation `s₀`;
@@ -239,7 +239,7 @@ the `bound` construal rides the local index `sOp` supplied by a
 scope-taking operator. The intensional generalization of `evalAt`. -/
 def SkolemCF.applyIntensionAt {S E : Type*} (f : SkolemCF S E)
     (status : SitVarStatus) (sOp s₀ : S)
-    (P : Core.Intension S (E → Prop)) : E :=
+    (P : Intensional.Intension S (E → Prop)) : E :=
   match status with
   | .free  => f.applyIntension s₀ P
   | .bound => f.applyIntension sOp P
@@ -249,18 +249,18 @@ theorem SkolemCF.evalAt_eq_applyIntensionAt {S E : Type*}
     (f : SkolemCF S E) (status : SitVarStatus) (w₀ wBound : S)
     (N : E → Prop) :
     f.evalAt status w₀ wBound N =
-      f.applyIntensionAt status wBound w₀ (Core.Intension.rigid N) := by
+      f.applyIntensionAt status wBound w₀ (Intensional.Intension.rigid N) := by
   cases status <;> rfl
 
 /-- **Construal collapse**: under any operator extensional at the matrix
 situation `s₀`, the bound and free construals of the situation pronoun
 are truth-conditionally indistinguishable — for any CF and any
 intensional restrictor. Instantiated at pointwise negation
-(`Core.IsExtensionalAt.neg`) this derives wide-scope-only under
+(`Intensional.IsExtensionalAt.neg`) this derives wide-scope-only under
 negation; see `Studies/Zimmermann2026`. -/
 theorem bound_free_collapse {S E : Type*} {O : (S → Prop) → S → Prop}
-    {s₀ : S} (hO : Core.IsExtensionalAt O s₀) (f : SkolemCF S E)
-    (P : Core.Intension S (E → Prop)) (VP : E → S → Prop) :
+    {s₀ : S} (hO : Intensional.IsExtensionalAt O s₀) (f : SkolemCF S E)
+    (P : Intensional.Intension S (E → Prop)) (VP : E → S → Prop) :
     (O (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
      O (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
   iff_of_eq (hO _ _ rfl)
@@ -270,7 +270,7 @@ the bound and free construals — two situations, a restrictor whose
 extension varies, a CF tracking its index. -/
 theorem bound_free_diverge_box :
     ∃ (S E : Type) (R : AccessRel S) (f : SkolemCF S E)
-      (P : Core.Intension S (E → Prop)) (VP : E → S → Prop) (s₀ : S),
+      (P : Intensional.Intension S (E → Prop)) (VP : E → S → Prop) (s₀ : S),
       box R (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ∧
       ¬ box R (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀ := by
   refine ⟨Bool, Bool, universalR, fun s _ => s, fun s x => x = s,
@@ -281,9 +281,9 @@ theorem bound_free_diverge_box :
 genuine. -/
 theorem box_not_extensionalAt :
     ∃ (S : Type) (R : AccessRel S) (s₀ : S),
-      ¬ Core.IsExtensionalAt (box R) s₀ := by
+      ¬ Intensional.IsExtensionalAt (box R) s₀ := by
   refine ⟨Bool, universalR, false,
-    Core.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
+    Intensional.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
   refine ⟨fun s => s = s, fun s => false = s, rfl, fun h => ?_⟩
   exact Bool.noConfusion ((iff_of_eq h).mp (fun v _ => rfl) true trivial)
 

@@ -32,8 +32,8 @@ not referent selection).
 
 namespace Semantics.Definiteness
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Core (Assignment)
 
 variable {E W : Type}

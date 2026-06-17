@@ -208,8 +208,8 @@ open Semantics.ArgumentStructure.VoiceSemantics
     'break' because its causer sort `.any` admits individuals. The
     obligation is discharged by `decide` over the lattice. -/
 example {E W : Type} (z : E)
-    (vp : Core.Logic.Intensional.Denot E W (.e ⇒ .t)) :
-    Core.Logic.Intensional.Denot E W .t :=
+    (vp : Intensional.Denot E W (.e ⇒ .t)) :
+    Intensional.Denot E W .t :=
   causerSuppress kadann.causerSort (by decide) z vp
 
 /-- For *minimarann* 'murder' the obligation `causerSort.admitsIndividual`

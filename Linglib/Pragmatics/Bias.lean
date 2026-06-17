@@ -236,7 +236,7 @@ theorem licensed_activates_weakEN :
 -- to `Studies/Romero2024.lean` so that this file does not
 -- have to import the Bias stack (CommonGround / InformationStructure /
 -- Discourse.{SpeechAct.Basic,Commitment} / Kratzer.Flavor /
--- Core.Logic.Intensional.Examples). The bridge is predicate-level — sharing only the
+-- Intensional.Examples). The bridge is predicate-level — sharing only the
 -- licensing predicate, not the form-level structure — and lives naturally in
 -- the polar-question phenomenon directory.
 

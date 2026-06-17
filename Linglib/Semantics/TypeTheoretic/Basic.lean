@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Data.UD.Basic
@@ -293,7 +293,7 @@ theorem prop'_true_iff_inhabited {W : Type*} (p : Set W) (w : W) :
     p w ↔ Nonempty (propT (p w)) :=
   ⟨λ h => ⟨PLift.up h⟩, λ ⟨⟨h⟩⟩ => h⟩
 
-/-! ## Bridge to Core.Intension
+/-! ## Bridge to Intensional.Intension
 
 An `Intension W τ` is a function from worlds to extensions. In TTR terms,
 this is a type family indexed by possibilities in a modal type system
@@ -302,7 +302,7 @@ TTR proposition. -/
 
 /-- An intension of Prop is a world-indexed family of TTR propositions. -/
 theorem intension_prop_is_ttr_prop (W : Type*) :
-    Core.Intension W Prop = Set W := rfl
+    Intensional.Intension W Prop = Set W := rfl
 
 /-! ## Modal type systems (Cooper Def 54)
 
@@ -340,26 +340,26 @@ theorem modal_subtype_eq_entailment {W Pred : Type}
       {w | mts.toBProp P₂ w = true} := by
   rfl
 
-/-! ## Bridge: IType + ModalTypeSystem → Core.Intension
+/-! ## Bridge: IType + ModalTypeSystem → Intensional.Intension
 
 An IType, viewed through a Bool-valued modal type system (Def 54),
 induces an intension (W → Bool). Whether this intension is rigid
 (constant across all possibilities) corresponds exactly to
-Core.Intension.IsRigid — connecting Cooper's Ch1 intensional types
+Intensional.Intension.IsRigid — connecting Cooper's Ch1 intensional types
 to the framework-agnostic intension machinery. -/
 
 /-- An IType in a modal type system induces an intension.
     At each possibility w, the type either has witnesses (true) or not (false).
     Def 54: possibilities index witness assignments. -/
 def IType.toIntension {W : Type} (mts : ModalTypeSystem W String)
-    (T : IType) : Core.Intension W Bool :=
+    (T : IType) : Intensional.Intension W Bool :=
   mts.toBProp T.name
 
 /-- An IType's intension is rigid iff it has constant witness status
     across all possibilities. Bridges Ch1 intensional types to IsRigid. -/
 theorem IType.rigid_iff_isRigid {W : Type} (mts : ModalTypeSystem W String)
     (T : IType) :
-    Core.Intension.IsRigid (T.toIntension mts) ↔
+    Intensional.Intension.IsRigid (T.toIntension mts) ↔
     ∀ w₁ w₂ : W, mts w₁ T.name = mts w₂ T.name :=
   Iff.rfl
 
@@ -367,7 +367,7 @@ theorem IType.rigid_iff_isRigid {W : Type} (mts : ModalTypeSystem W String)
     the groundhog/woodchuck phenomenon at the modal level. -/
 theorem IType.coext_not_intEq {W : Type}
     (mts : ModalTypeSystem W String) (T₁ T₂ : IType)
-    (_hCoExt : Core.Intension.CoExtensional (T₁.toIntension mts)
+    (_hCoExt : Intensional.Intension.CoExtensional (T₁.toIntension mts)
                                              (T₂.toIntension mts))
     (hNames : T₁.name ≠ T₂.name) :
     ¬ T₁.intEq T₂ :=

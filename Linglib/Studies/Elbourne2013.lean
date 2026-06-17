@@ -1,7 +1,7 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Definiteness
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
@@ -62,14 +62,14 @@ Fragments/English/Pronouns.lean
 
 namespace Elbourne2013
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
 open Features.Definiteness (DefPresupType)
-open Core.SitVarStatus (SitVarStatus)
+open Intensional.SitVarStatus (SitVarStatus)
 open Semantics.Definiteness (qforceToPresupType)
 open Semantics.Reference.Donnellan (UseMode definiteNominal)
 

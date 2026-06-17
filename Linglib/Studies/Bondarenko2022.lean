@@ -731,7 +731,7 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 -- `Semantics/Attitudes/ClauseDenotation/Content.lean`.
 --
 -- **Comp head** (ex. 151): ⟦Comp⟧^{s,g,t} = λp_{et}.λx_e. x ⊑ s ∧ x ⊩_e p
--- — `x ⊑ s` is situation parthood (`Core/Logic/Intensional/
+-- — `x ⊑ s` is situation parthood (`Semantics/Intensional/
 -- Situations.lean` `≼` / mathlib `≤`); `x ⊩_e p` is exact
 -- exemplification (the bare verifier-membership `p x`,
 -- distinguished from inexact exemplification `Truthmaker/Inexact.
@@ -766,7 +766,7 @@ theorem cont_head_denotation_is_compC {W : Type*}
     (`Semantics/Truthmaker/Basic.lean` `attHolds`-style
     parthood `s ≤ σ x`, `Semantics/Truthmaker/Inexact.lean`
     `inexactVer` for the part-existential variant) and situation
-    parthood (`Core/Logic/Intensional/Situations.lean` `≼`).
+    parthood (`Semantics/Intensional/Situations.lean` `≼`).
 
     `compHead p x evalSit` holds iff `x` is a situation that is
     part of the evaluation situation AND `x` exactly verifies `p`

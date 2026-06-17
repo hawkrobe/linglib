@@ -192,7 +192,7 @@ Three-argument necessity: the modal base β restricted by W₁ is
 included in W₂. When W₁ = ⊤, reduces to β ⊆ W₂.
 
 The modal base β corresponds to `accessRelToBase R w` for an
-`AccessRel W` from `Core.Logic.Intensional`. `PIP.Connectives.must`
+`AccessRel W` from `Intensional`. `PIP.Connectives.must`
 provides the dynamic implementation; `must_truth_iff_mustBase` below
 bridges the static `PIPExprF.must` to this set-based formulation.
 Cf. `Semantics.Modality.Kratzer.simpleNecessity` for the

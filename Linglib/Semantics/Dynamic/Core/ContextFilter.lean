@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Logic.Assignment
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Dynamic.DiscourseRef
 
 /-!
@@ -54,7 +54,8 @@ theorem sep_isContextFilter (p : α → Prop) :
 -- Situation contexts
 -- ════════════════════════════════════════════════════════════════
 
-open _root_.Core (Assignment WorldTimeIndex)
+open _root_.Core (Assignment)
+open _root_.Intensional (WorldTimeIndex)
 
 /--
 A situation-variable dynamic context.

@@ -296,7 +296,7 @@ open Tense.DeRe (TimeConcept TemporalDeReReading)
     Kaplan's thesis at the substrate level — Schlenker via tower
     `.origin` access, Abusch via `Intension.rigid`. -/
 def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
-  Core.Intension.rigid 0
+  Intensional.Intension.rigid 0
 
 /-- [schlenker-2004-sot]'s **`shiftedAccess` (local reading)
     as a non-rigid `TimeConcept`**: the local-context reading IS the
@@ -323,14 +323,14 @@ theorem shiftedAccess_eq_schlenkerShifted :
 
 /-- **`schlenkerPresent` is rigid** (Kaplan-stable). Substrate-level
     witness for the SOT chapter's origin-access mechanism. -/
-theorem schlenkerPresent_isRigid : Core.Intension.IsRigid schlenkerPresent :=
-  Core.Intension.rigid_isRigid _
+theorem schlenkerPresent_isRigid : Intensional.Intension.IsRigid schlenkerPresent :=
+  Intensional.Intension.rigid_isRigid _
 
 /-- **`schlenkerShifted` is non-rigid** (the SOT chapter's shifted
     reading varies with context). Discriminating witness: contexts
     with different `.time` fields (speech time 0 vs matrix event
     time −2). -/
-theorem schlenkerShifted_not_isRigid : ¬ Core.Intension.IsRigid schlenkerShifted := by
+theorem schlenkerShifted_not_isRigid : ¬ Intensional.Intension.IsRigid schlenkerShifted := by
   intro h
   have hContradiction : (0 : ℤ) = -2 :=
     h speechCtx { speechCtx with time := -2 }
@@ -385,7 +385,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     Kaplan-stable from shifted readings uniformly across all three
     frameworks at the substrate level. The same closure lemmas
     (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
-    from `Core/Logic/Intensional/Rigidity.lean`) apply uniformly:
+    from `Semantics/Intensional/Rigidity.lean`) apply uniformly:
 
     | Framework                  | Kaplan-stable      | Shifted          |
     |----------------------------|--------------------|------------------|
@@ -408,8 +408,8 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     `kaplanI_isRigid` and `shiftedI_not_isRigid` prove it at
     `Res = Agent` in `Studies/AnandNevins2004.lean`. -/
 theorem schlenker_substrate_aligned_with_isRigid :
-    Core.Intension.IsRigid schlenkerPresent ∧
-    ¬ Core.Intension.IsRigid schlenkerShifted :=
+    Intensional.Intension.IsRigid schlenkerPresent ∧
+    ¬ Intensional.Intension.IsRigid schlenkerShifted :=
   ⟨schlenkerPresent_isRigid, schlenkerShifted_not_isRigid⟩
 
 /-- **`Intension` functoriality applied to Schlenker**: rigidity of
@@ -419,7 +419,7 @@ theorem schlenker_substrate_aligned_with_isRigid :
     functoriality just as [anand-nevins-2004]'s `kaplanI` is —
     both are instances of the same architectural pattern. -/
 theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
-    Core.Intension.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
+    Intensional.Intension.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
   schlenkerPresent_isRigid.map g
 
 

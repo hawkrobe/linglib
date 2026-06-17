@@ -41,7 +41,7 @@ This module retains:
 
 namespace Semantics.Definiteness
 
-open Core.Logic.Intensional (Ty)
+open Intensional (Ty)
 open Quantification (every_sem some_sem)
 open Quantification.Quantifier (Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)

@@ -94,7 +94,7 @@ open Beavers2010
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)
 open Typology.Voice
 open Semantics.ArgumentStructure.VoiceSemantics
-open Core.Logic.Intensional
+open Intensional
 
 -- ============================================================================
 -- § 2: Indonesian ber- Middle Inventory

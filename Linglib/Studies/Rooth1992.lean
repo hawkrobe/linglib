@@ -413,7 +413,7 @@ theorem bridge_only_association :
       Fragment entry → Montague LexEntry → Tree → interp → Bool
     run once per world to yield a world-indexed proposition. -/
 
-open Core.Logic.Intensional
+open Intensional
 -- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Syntax

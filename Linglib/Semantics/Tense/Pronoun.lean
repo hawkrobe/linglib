@@ -1,6 +1,6 @@
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Reichenbach
@@ -41,8 +41,9 @@ comparison category (`Core.Order`); the temporal primitives it imports
 open Time
 
 open Core.Order
-open Core.ReferentialMode (ReferentialMode)
-open Core (Assignment WorldTimeIndex)
+open Intensional.ReferentialMode (ReferentialMode)
+open Core (Assignment)
+open Intensional (WorldTimeIndex)
 
 namespace Tense
 
@@ -93,10 +94,10 @@ def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
     Tenses parallel pronouns: indexical (deictic), anaphoric
     (discourse-bound), and bound variable (zero tense).
 
-    This is an alias for `Core.ReferentialMode.ReferentialMode`,
+    This is an alias for `Intensional.ReferentialMode.ReferentialMode`,
     which captures Partee's insight that the same three-way classification
     applies to both pronouns and tenses. -/
-abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
+abbrev TenseInterpretation := Intensional.ReferentialMode.ReferentialMode
 
 /-! ### Temporal Variable Infrastructure ([partee-1973]) -/
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.CCSelection
 
@@ -35,7 +35,7 @@ d-causes without producing anything.
 
 namespace Causation.ProductionDependence
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Features (Causative)
 open Features

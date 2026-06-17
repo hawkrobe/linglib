@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Basic
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # Metalinguistic Gradability

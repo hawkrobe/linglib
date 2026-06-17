@@ -8,21 +8,21 @@ binding ([heim-kratzer-1998] Ch. 5).
 Per [buring-2012] §3, a bound pronoun has the *same* denotation as a free
 one — the variable `g(i)` — with binding supplied externally by the β-operator.
 That assignment-based binding is the project-canonical `interpPronoun` /
-`lambdaAbsG` (`Core.Logic.Intensional.Variables`), also the selector of the
+`lambdaAbsG` (`Intensional.Variables`), also the selector of the
 unified pronoun denotation `PersonalPronoun.denote`; this file develops the
 continuation rendering (`W`, `hkBinding`/`bsBinding`) and the cylindric-algebra
 view of the assignment update.
 
 -/
 
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Quantification.Quantifier
 
 namespace Semantics.Reference.Binding
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 
 
 section Continuations

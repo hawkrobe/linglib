@@ -40,7 +40,7 @@ namespace Buring2012
 
 open English.Pronouns (she they)
 open Core (Assignment)
-open Core.Logic.Intensional.Variables (interpPronoun)
+open Intensional.Variables (interpPronoun)
 
 variable {E : Type} [PartialOrder E]
   (g : Assignment E) (i : ℕ) (spk adr : E)

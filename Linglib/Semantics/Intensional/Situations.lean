@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Basic
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 
 /-!
 # Situations: Partial Indices
@@ -25,7 +25,7 @@ literally `Monotone : (S → Prop) → Prop` from mathlib. Possible-worlds
 semantics is the special case where `≤` is the discrete order
 (`s ≤ s' ↔ s = s'`), so every index is maximal.
 
-Putting the abstraction in `Core/Logic/Intensional/` lets all higher
+Putting the abstraction in `Semantics/Intensional/` lets all higher
 modules opt in by adding `[PartialOrder Index]`, without forcing a
 choice of "worlds vs. situations" in the index type.
 
@@ -42,12 +42,12 @@ choice of "worlds vs. situations" in the index type.
 
 The relation **lumping** between propositions and the distinction
 between accidental and non-accidental generalizations belong in
-`Core/Logic/Intensional/Lumping.lean`; those are theory-laden and
+`Semantics/Intensional/Lumping.lean`; those are theory-laden and
 depend on a chosen modal base. This file keeps only the order-theoretic
 core.
 -/
 
-namespace Core.Logic.Intensional
+namespace Intensional
 
 /-! ## Situation frames -/
 
@@ -68,7 +68,7 @@ attribute [instance] SituationFrame.order
 /-- Denotation domains for a situation frame, computed from its entity and
     index types. -/
 abbrev SituationFrame.Denot (F : SituationFrame) : Ty → Type :=
-  _root_.Core.Logic.Intensional.Denot F.Entity F.Index
+  _root_.Intensional.Denot F.Entity F.Index
 
 /-- `s ≤ s'` — `s` is a part of `s'` (situation parthood). -/
 infixl:50 " ≼ " => fun (s s' : _) => s ≤ s'
@@ -152,4 +152,4 @@ theorem discrete_persistent_all (p : W → Prop) : Persistent p :=
 
 end DiscreteCorollaries
 
-end Core.Logic.Intensional
+end Intensional

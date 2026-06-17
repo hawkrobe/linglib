@@ -58,7 +58,7 @@ individual denotation — it has no `NominalDenot`) remains deferred.
 namespace Semantics.Definiteness
 
 open Semantics.Reference (NominalDenot)
-open Core.Logic.Intensional.Variables
+open Intensional.Variables
 open Core (Assignment)
 open Features.Definiteness (DefPresupType)
 

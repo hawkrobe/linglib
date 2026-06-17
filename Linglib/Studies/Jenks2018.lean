@@ -38,8 +38,8 @@ lives in `Moroney2021.lean` per chronology discipline.
 namespace Jenks2018
 
 open Features.Definiteness
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 open Semantics.Definiteness
 
 abbrev mandarinDets := Mandarin.Definiteness.determiners

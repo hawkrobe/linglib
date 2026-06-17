@@ -27,7 +27,7 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 Our encoding parameterizes by an accessibility relation (`KeshetAbney2024.PIP.AccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
 The grounding theorem `must_truth_agrees_box` proves that PIP's `must`
-produces the same truth conditions as `Core.Logic.Intensional.box`.
+produces the same truth conditions as `Intensional.box`.
 
 -/
 
@@ -278,11 +278,11 @@ end Properties
 
 
 -- ============================================================
--- Grounding: PIP modals ↔ Core.Logic.Intensional.box/diamond
+-- Grounding: PIP modals ↔ Intensional.box/diamond
 -- ============================================================
 
 /--
-PIP's `must` produces the same truth conditions as `Core.Logic.Intensional.box`.
+PIP's `must` produces the same truth conditions as `Intensional.box`.
 
 Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
 `box R (p g) w₀` — the body predicate holds at all R-accessible worlds.

@@ -16,7 +16,7 @@ reference points rather than quantify over all times.
 
 namespace Tense
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 
 

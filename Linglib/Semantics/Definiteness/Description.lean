@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Variables
 import Linglib.Features.Deixis
 import Linglib.Features.Definiteness
 
@@ -62,8 +62,8 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
 
 namespace Semantics.Definiteness
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Variables
+open Intensional
+open Intensional.Variables
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Sum Type

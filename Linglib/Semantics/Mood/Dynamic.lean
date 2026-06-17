@@ -74,7 +74,8 @@ operator and the modal donkey anaphora chain that consumes
 
 namespace Semantics.Mood
 
-open _root_.Core (Assignment WorldTimeIndex)
+open _root_.Core (Assignment)
+open _root_.Intensional (WorldTimeIndex)
 open HistoricalAlternatives
 open Semantics.Dynamic.Core
 

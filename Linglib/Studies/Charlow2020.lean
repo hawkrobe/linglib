@@ -200,7 +200,7 @@ handle indefinites compositionally. -/
 section LiftDecomposition
 
 open Semantics.Composition.TypeShifting (lift A ident A_ident_eq_lift)
-open Core.Logic.Intensional (Denot Ty)
+open Intensional (Denot Ty)
 
 variable {E W : Type}
 

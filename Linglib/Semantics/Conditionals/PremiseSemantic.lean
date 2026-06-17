@@ -7,7 +7,7 @@ import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 
 Truth conditions for "would"- and "might"-counterfactuals from
 [kratzer-2012] §5.4.4 ("The formal definitions", p. 132–133),
-built on top of the lumping API in `Core.Logic.Intensional.Lumping`.
+built on top of the lumping API in `Intensional.Lumping`.
 
 ## §5.4.4 in brief
 
@@ -39,7 +39,7 @@ The truth conditions are then:
 ## Architectural placement
 
 This is the **first** formal consumer of the `Lumps` API in
-`Core/Logic/Intensional/Lumping.lean` — closing the orphan-API problem
+`Semantics/Intensional/Lumping.lean` — closing the orphan-API problem
 flagged in earlier reviews. The crucial-set closure condition
 (condition (iii)) literally calls `Lumps q r w`, so the operator
 cannot exist without the lumping API; conversely, the API earns its
@@ -75,7 +75,7 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 
 namespace Semantics.Conditionals.PremiseSemantic
 
-open Core.Logic.Intensional
+open Intensional
 open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 
 variable {F : SituationFrame}

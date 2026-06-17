@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Intensional.Quantification
-import Linglib.Core.Logic.Intensional.Conjunction
+import Linglib.Semantics.Intensional.Quantification
+import Linglib.Semantics.Intensional.Conjunction
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Heyting.Basic
 
@@ -41,9 +41,9 @@ is defined recursively over types and *why* it only works for
 conjoinable types (those admitting a lattice structure).
 -/
 
-namespace Core.Logic.Intensional.Algebra
+namespace Intensional.Algebra
 
-open Core.Logic.Intensional
+open Intensional
 
 variable {E W : Type}
 
@@ -264,4 +264,4 @@ open Conjunction in
 theorem genDisj_eq_sup_et (f g : Denot E W (.e ⇒ .t)) :
     genDisj (.e ⇒ .t) E W f g = f ⊔ g := rfl
 
-end Core.Logic.Intensional.Algebra
+end Intensional.Algebra

@@ -42,7 +42,7 @@ import Linglib.Semantics.Mood.Categories
 
 namespace Semantics.Mood
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open HistoricalAlternatives
 

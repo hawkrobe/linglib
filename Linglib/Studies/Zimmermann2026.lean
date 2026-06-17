@@ -103,7 +103,7 @@ over (16b) for *bí*. -/
 theorem bi_reading_not_narrow :
     ∀ d ∈ Owusu2022.skolemDenot Owusu2022.preferAma () .bi,
       ¬ ((¬ ∃ x, Owusu2022.ToDwom x) ↔
-        ¬ Owusu2022.ToDwom (d (Core.Intension.rigid (fun _ => True)))) :=
+        ¬ Owusu2022.ToDwom (d (Intensional.Intension.rigid (fun _ => True)))) :=
   fun d hd h =>
     h.mpr (Owusu2022.bi_wide_scope_witnessed d hd) Owusu2022.someone_sang
 
@@ -111,19 +111,19 @@ theorem bi_reading_not_narrow :
 intensional operator, the situational skolem argument of the choice
 function cannot be shifted away from the actual resource situation …
 resulting in wide scope only". Pointwise negation is extensional
-(`Core.IsExtensionalAt.neg`), so by the substrate's
+(`Intensional.IsExtensionalAt.neg`), so by the substrate's
 `bound_free_collapse` the bound and free construals of *bí*'s situation
 pronoun coincide under negation — for any CF and restrictor; the wide
 (free) construal is the only reading. Situation quantifiers separate
 the construals (`bound_free_diverge_box`), so the collapse is negation's
 extensionality at work, not a triviality. -/
 theorem bi_negation_construals_collapse {S E : Type*}
-    (f : SkolemCF S E) (s₀ : S) (P : Core.Intension S (E → Prop))
+    (f : SkolemCF S E) (s₀ : S) (P : Intensional.Intension S (E → Prop))
     (VP : E → S → Prop) :
     ((fun p s => ¬ p s)
         (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
      (fun p s => ¬ p s)
         (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
-  bound_free_collapse Core.IsExtensionalAt.neg f P VP
+  bound_free_collapse Intensional.IsExtensionalAt.neg f P VP
 
 end Zimmermann2026

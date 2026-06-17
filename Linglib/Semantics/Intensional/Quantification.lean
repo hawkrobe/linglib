@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 
 /-!
 # IL Quantification, Modality, and Identity
@@ -17,7 +17,7 @@ richer framework (modal base + ordering source) in `Semantics/Modality/`
 generalizes `box`/`diamond` here.
 -/
 
-namespace Core.Logic.Intensional
+namespace Intensional
 
 variable {E W : Type}
 
@@ -238,4 +238,4 @@ theorem box_up_iff [Inhabited W] (p : Denot E W .t) :
 theorem box_down (p : Denot E W .prop) (i : W) :
     down (up (box (E := E) (W := W) p)) i = box p := rfl
 
-end Core.Logic.Intensional
+end Intensional

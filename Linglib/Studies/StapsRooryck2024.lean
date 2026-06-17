@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
@@ -54,7 +54,7 @@ and `VendlerClass`, connecting to the affectedness hierarchy
 
 namespace StapsRooryck2024
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Semantics.Presupposition
 open French.Predicates

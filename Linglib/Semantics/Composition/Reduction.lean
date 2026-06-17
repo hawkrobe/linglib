@@ -41,7 +41,7 @@ namespace Semantics.Composition
 
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
-open Core.Logic.Intensional
+open Intensional
 open Quantification (every_sem some_sem no_sem)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
@@ -63,7 +63,7 @@ structure FOWords where
 
 /-- The logical vocabulary's lexicon entries: GQ denotations from
 `Quantification`, truth-functional connectives from
-`Core.Logic.Intensional`. The connectives flip arguments so that
+`Intensional`. The connectives flip arguments so that
 `[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
 def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s =>
   if s = fw.every then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, every_sem⟩

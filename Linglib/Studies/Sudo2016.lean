@@ -74,7 +74,7 @@ diagnostic battery (`LittleMoroneyRoyer2022.predictionsOf`).
 namespace Sudo2016
 
 open Semantics.Classifier
-open Core.Intension (rigid)
+open Intensional.Intension (rigid)
 
 universe u
 
@@ -87,7 +87,7 @@ type-theoretic, not data-driven. -/
 /-- The toy world type. Sudo's intensional analysis is parameterized over
     worlds; for the purposes of demonstrating type-shifts, a singleton
     world suffices. Real applications would parameterize over a richer
-    `World` type from `Core.Logic.Intensional.Defs`. -/
+    `World` type from `Intensional.Defs`. -/
 abbrev World := Unit
 
 /-- A toy entity domain: a person, a flower, an animal (small), and a
@@ -115,28 +115,28 @@ Each is a constant intension (rigid) over the toy domain. Named here
 theorems can reference them directly. -/
 
 /-- `flower(x)`: sortal for `-rin` (Sudo eq. 4). -/
-def flowerIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .hana)
+def flowerIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .hana)
 
 /-- `human(x)`: sortal for `-nin` (Sudo eq. 8a). -/
-def humanIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .hanako)
+def humanIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .hanako)
 
 /-- `small_animal(x)`: sortal for `-hiki` (Sudo eq. 8b's atomic-sortal core). -/
-def smallAnimalIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .inu)
+def smallAnimalIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .inu)
 
 /-- `bound_volume(x)`: sortal for `-satsu`. -/
-def bookIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .hon)
+def bookIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .hon)
 
 /-- `round(x)`: sortal for `-ko`. -/
-def roundIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .ringo)
+def roundIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .ringo)
 
 /-- `flat(x)`: sortal for `-mai`. -/
-def flatIntens : Core.Intension World (Entity → Prop) :=
-  Core.Intension.rigid (· = .kami)
+def flatIntens : Intensional.Intension World (Entity → Prop) :=
+  Intensional.Intension.rigid (· = .kami)
 
 /-! ## §3: Per-Classifier Denotations
 

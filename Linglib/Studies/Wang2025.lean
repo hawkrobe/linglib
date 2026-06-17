@@ -356,7 +356,7 @@ epistemic stance. It scopes relative to exh_mx:
 - exh_mx >> K: available for complex sentences
 
 Uses a local Bool-valued accessibility relation; for the Prop-valued
-canonical Kripke semantics see `Core.Logic.Intensional.box`.
+canonical Kripke semantics see `Intensional.box`.
 -/
 noncomputable def speakerK [Fintype W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
   fun w => ((Finset.univ : Finset W).toList.filter (R w)).all φ

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 
 /-!
 # Generalized Conjunction
@@ -11,9 +11,9 @@ Conjunction and disjunction defined recursively over the IL type structure:
 - Intension case (`⟨s,a⟩`): pointwise over indices
 -/
 
-namespace Core.Logic.Intensional.Conjunction
+namespace Intensional.Conjunction
 
-open Core.Logic.Intensional
+open Intensional
 
 example : Ty.isConjoinable .t = true := rfl
 example : Ty.isConjoinable .e = false := rfl
@@ -160,4 +160,4 @@ theorem ms_full_derivation {E W : Type} (e1 e2 : Denot E W .e) :
 
 end MSDecomposition
 
-end Core.Logic.Intensional.Conjunction
+end Intensional.Conjunction

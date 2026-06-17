@@ -179,22 +179,22 @@ theorem feminine_per_restrictor_is_femSem {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat) :
     Semantics.Definiteness.Description.ofPresupType .uniqueness
         ((fun _ _ x => (femSem isFemale).presup x) :
-          Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx
+          Intensional.Variables.DenotGS E W .et) sIdx
       = Semantics.Definiteness.Description.unique
           ((fun _ _ x => isFemale x) :
-            Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx := rfl
+            Intensional.Variables.DenotGS E W .et) sIdx := rfl
 
 /-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
     restrictor of the weak-article definite (`ιx[isFemale x]`). -/
 theorem feminine_per_picks_unique_female {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat)
-    (g : Core.Assignment E) (gs : Core.Logic.Intensional.Variables.SitAssignment W) :
+    (g : Core.Assignment E) (gs : Intensional.Variables.SitAssignment W) :
     Semantics.Definiteness.interpret
         (Semantics.Definiteness.Description.ofPresupType .uniqueness
           ((fun _ _ x => (femSem isFemale).presup x) :
-            Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx) g gs
+            Intensional.Variables.DenotGS E W .et) sIdx) g gs
       = Semantics.Definiteness.russellIota (E := E) (fun x => isFemale x) :=
   Semantics.Definiteness.interpret_unique
-    ((fun _ _ x => isFemale x) : Core.Logic.Intensional.Variables.DenotGS E W .et) sIdx g gs
+    ((fun _ _ x => isFemale x) : Intensional.Variables.DenotGS E W .et) sIdx g gs
 
 end PatelGroszGrosz2017

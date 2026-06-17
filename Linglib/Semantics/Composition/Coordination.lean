@@ -16,8 +16,8 @@ API surface; it invokes `Coordinator.engineOp`.
 
 namespace Semantics.Composition.Tree
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Conjunction
+open Intensional
+open Intensional.Conjunction
 
 /-- **Coordination composition mode** — the sibling of `tryFA`/`tryIFA`/`tryPM`.
     Two same-conjoinable-type sisters combine via `Coordinator.op` (through its runtime

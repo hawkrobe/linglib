@@ -31,7 +31,7 @@ namespace Possessive
 open Semantics.Reference (NominalDenot)
 open Semantics.Definiteness (russellIota)
 open Core (Assignment)
-open Core.Logic.Intensional.Variables (interpPronoun)
+open Intensional.Variables (interpPronoun)
 
 variable {E : Type} [PartialOrder E]
 

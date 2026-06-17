@@ -284,7 +284,7 @@ delegates to it. -/
     derivation specialized to ℤ. -/
 theorem ulc_via_history_base {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Core.WorldTimeIndex W ℤ)
+    (matrix embedded : Intensional.WorldTimeIndex W ℤ)
     (h : embedded ∈ actualHistoryBase history matrix) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_doxastic history matrix embedded h
@@ -295,7 +295,7 @@ theorem ulc_via_history_base {W : Type*}
     specialized to ℤ. -/
 theorem future_via_history_base {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Core.WorldTimeIndex W ℤ)
+    (matrix embedded : Intensional.WorldTimeIndex W ℤ)
     (h : embedded ∈ futureHistoryBase history matrix) :
     attitudeTemporalConstraint .circumstantial matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_circumstantial history matrix embedded h
@@ -624,7 +624,7 @@ makes the world-component subset relation kernel-checked. -/
     `histEquiv`. -/
 theorem klecha_cir_world_in_condoravdi_metaphysical
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (s s' : Core.WorldTimeIndex W ℤ)
+    (s s' : Intensional.WorldTimeIndex W ℤ)
     (h : s' ∈ futureHistoryBase history s) :
     s'.world ∈
       HistoricalAlternatives.metaphysicalBase history s.world s.time :=
@@ -636,7 +636,7 @@ theorem klecha_cir_world_in_condoravdi_metaphysical
     `.1` projection (same as the CIR case). -/
 theorem klecha_dox_world_in_condoravdi_metaphysical
     {W : Type*} (history : HistoricalAlternatives W ℤ)
-    (s s' : Core.WorldTimeIndex W ℤ)
+    (s s' : Intensional.WorldTimeIndex W ℤ)
     (h : s' ∈ actualHistoryBase history s) :
     s'.world ∈
       HistoricalAlternatives.metaphysicalBase history s.world s.time :=
@@ -677,7 +677,7 @@ sides* now carry the modal-alternative quantification (via
     which strips it. -/
 theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Core.WorldTimeIndex W ℤ) :
+    (matrix embedded : Intensional.WorldTimeIndex W ℤ) :
     embedded ∈ actualHistoryBase history matrix ↔
     upperLimitConstraintModal history matrix embedded :=
   Iff.rfl
@@ -690,7 +690,7 @@ theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
     with the substrate's `attitudeTemporalConstraint_derived_doxastic`. -/
 theorem abusch_modal_ulc_implies_klecha_dox {W : Type*}
     (history : HistoricalAlternatives W ℤ)
-    (matrix embedded : Core.WorldTimeIndex W ℤ)
+    (matrix embedded : Intensional.WorldTimeIndex W ℤ)
     (h : upperLimitConstraintModal history matrix embedded) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
   attitudeTemporalConstraint_derived_doxastic history matrix embedded h

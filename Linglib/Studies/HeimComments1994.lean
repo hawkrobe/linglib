@@ -56,7 +56,7 @@ pre-composing with the forgetful projection. The image is exactly the
 preservation, set-relativized rigidity preservation, and
 exhaustiveness preservation all factor through the substrate's
 intensional precomp infrastructure
-(`Core/Logic/Intensional/Rigidity.lean`).
+(`Semantics/Intensional/Rigidity.lean`).
 
 ## What's not formalised
 
@@ -81,7 +81,7 @@ intensional precomp infrastructure
 
 namespace HeimComments1994
 
-open Core (Intension WorldTimeIndex)
+open Intensional (Intension WorldTimeIndex)
 open Semantics.Context (KContext)
 open Tense.DeRe (TemporalDeReReading)
 
@@ -108,7 +108,7 @@ abbrev TimeConcept (W T : Type*) := Intension (WorldTimeIndex W T) T
     `Intension.precomp` instantiated at `g := KContext.toSituation` —
     no new content; the pullback's structural properties transport
     from the substrate's `precomp`/`IsRigid.precomp`/`IsRigidOn.precomp`
-    closure lemmas (`Core/Logic/Intensional/Rigidity.lean`). -/
+    closure lemmas (`Semantics/Intensional/Rigidity.lean`). -/
 def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
     Tense.DeRe.TimeConcept W E P T :=
   Intension.precomp KContext.toSituation c

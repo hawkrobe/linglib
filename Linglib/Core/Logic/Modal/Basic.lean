@@ -273,7 +273,7 @@ All PropOps  ⊋  Indicial (Kripke)  ⊋  S5 (IL's □)
 
 **Why this is here even with no current downstream consumer.** These
 theorems are the *architectural anchor* for the design choice that
-restricted modality lives in `Core/Logic/Intensional/`: they prove that
+restricted modality lives in `Semantics/Intensional/`: they prove that
 classical IL S5 is exactly the universal-accessibility special case of
 the polymorphic theory, and that every `box R` is a normal modal
 operator (monotone, distribConj). Non-indicial PropOps (e.g., tense,

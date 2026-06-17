@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Semantics.Intensional.Defs
 import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.CylindricAlgebra
 
@@ -8,7 +8,7 @@ import Linglib.Core.Logic.CylindricAlgebra
 [heim-kratzer-1998] [charlow-2018]
 
 Framework-neutral infrastructure for interpreting expressions with free variables,
-built on `Core.Logic.Intensional.Denot`.
+built on `Intensional.Denot`.
 
 ## Main definitions
 
@@ -21,9 +21,10 @@ built on `Core.Logic.Intensional.Denot`.
 - Cylindric algebra bridge ([henkin-monk-tarski-1971])
 -/
 
-namespace Core.Logic.Intensional.Variables
+namespace Intensional.Variables
 
-open Core.Logic.Intensional
+open Intensional
+open _root_.Core (Assignment)
 
 /-- Heim-Kratzer assignment-modification notation: `g[n ↦ x]` is
 `Function.update g n x`. The `Function.update_*` lemmas (`update_self`,
@@ -263,4 +264,4 @@ def DenotGS.const {E W : Type} {ty : Ty} (d : Denot E W ty) : DenotGS E W ty :=
 theorem DenotGS.ofDenotG_const {E W : Type} {ty : Ty} (d : Denot E W ty) :
     DenotGS.ofDenotG (constDenot d) = DenotGS.const d := rfl
 
-end Core.Logic.Intensional.Variables
+end Intensional.Variables

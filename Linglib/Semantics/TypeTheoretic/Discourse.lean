@@ -405,14 +405,14 @@ theorem merge_preserves_both {pianist statesman : E → Prop}
   simp only [TwoConcept.merge]
   exact ⟨tc.isPianist, h ▸ tc.isStatesman⟩
 
-/-- Bridge to Core.Intension: the Paderewski puzzle is an instance
+/-- Bridge to Intensional.Intension: the Paderewski puzzle is an instance
 of non-rigid identity. -/
 theorem paderewski_nonrigid_identity
     (musician_concept politician_concept : Fin 2 → E)
     (w : Fin 2)
     (_hAgree : musician_concept w = politician_concept w)
     (hDisagree : ∃ w', musician_concept w' ≠ politician_concept w') :
-    ¬ Core.Intension.CoExtensional musician_concept politician_concept := by
+    ¬ Intensional.Intension.CoExtensional musician_concept politician_concept := by
   intro hCoExt
   obtain ⟨w', hw'⟩ := hDisagree
   exact hw' (hCoExt w')

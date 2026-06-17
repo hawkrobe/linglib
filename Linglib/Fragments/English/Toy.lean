@@ -22,7 +22,7 @@ over this fragment belong in `Studies/`. The namespace remains
 
 namespace Semantics.Montague
 
-open Core.Logic.Intensional
+open Intensional
 open FirstOrder
 open Semantics.Composition
 

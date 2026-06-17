@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -36,7 +36,7 @@ until a study reifies it.
 
 namespace RelativeClause
 
-open Core.Logic.Intensional Core.Logic.Intensional.Variables
+open Intensional Intensional.Variables
 open Modifier (intersective intersective_comm)
 
 /--

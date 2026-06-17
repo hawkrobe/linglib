@@ -208,7 +208,7 @@ open Tense.DeRe (EntityConcept TimeConcept)
     the context parameter (yielding non-rigid agent-projection — see
     `shiftedI`). -/
 def kaplanI : EntityConcept Unit Agent Unit ℤ :=
-  Core.Intension.rigid .narrator
+  Intensional.Intension.rigid .narrator
 
 /-- **Anand-Nevins (2004 §1, eq. 2a) shifted "I"** (Zazaki under
     `OP_V`): the operator overwrites the context parameter with the
@@ -222,14 +222,14 @@ def shiftedI : EntityConcept Unit Agent Unit ℤ :=
 
 /-- **Kaplan's "I" is rigid** (entity-side analog of Abusch's "rigid
     time-concept" being the de re reading). -/
-theorem kaplanI_isRigid : Core.Intension.IsRigid kaplanI :=
-  Core.Intension.rigid_isRigid _
+theorem kaplanI_isRigid : Intensional.Intension.IsRigid kaplanI :=
+  Intensional.Intension.rigid_isRigid _
 
 /-- **[anand-nevins-2004]'s shifted "I" is non-rigid** —
     discriminating witness from contexts with different agents.
     Entity-side analog of Abusch's "descriptive time-concept" being
     the de dicto reading. -/
-theorem shiftedI_not_isRigid : ¬ Core.Intension.IsRigid shiftedI := by
+theorem shiftedI_not_isRigid : ¬ Intensional.Intension.IsRigid shiftedI := by
   intro h
   have hContradiction : (Agent.narrator) = .character :=
     h speechCtx { speechCtx with agent := .character }
@@ -260,13 +260,13 @@ theorem kaplanI_at_englishAttitudeTower (c : RefCtx) :
     `Intension.IsRigid` does the work. -/
 example :
     -- Res = Agent (this file)
-    Core.Intension.IsRigid kaplanI ∧
-    ¬ Core.Intension.IsRigid shiftedI ∧
+    Intensional.Intension.IsRigid kaplanI ∧
+    ¬ Intensional.Intension.IsRigid shiftedI ∧
     -- Res = ℤ (Abusch's TimeConcept domain)
-    Core.Intension.IsRigid (Core.Intension.rigid (W := RefCtx) (50 : ℤ)) ∧
-    ¬ Core.Intension.IsRigid (fun c : RefCtx => c.time) := by
+    Intensional.Intension.IsRigid (Intensional.Intension.rigid (W := RefCtx) (50 : ℤ)) ∧
+    ¬ Intensional.Intension.IsRigid (fun c : RefCtx => c.time) := by
   refine ⟨kaplanI_isRigid, shiftedI_not_isRigid,
-          Core.Intension.rigid_isRigid _, ?_⟩
+          Intensional.Intension.rigid_isRigid _, ?_⟩
   intro h
   have hContradiction : (0 : ℤ) = 999 :=
     h speechCtx { speechCtx with time := 999 }
@@ -275,7 +275,7 @@ example :
 /-- **Architectural payoff via `Intension` functoriality** (the deep
     structural claim). Rigidity transfers across `Res` types via
     post-composition with ANY function — by the general
-    `Intension.IsRigid.map` lemma in `Core/Logic/Intensional/Rigidity.lean`.
+    `Intension.IsRigid.map` lemma in `Semantics/Intensional/Rigidity.lean`.
 
     Concretely: [anand-nevins-2004]'s Kaplan-compliant `kaplanI`
     (rigid at `Res = Agent`) yields, for any `f : Agent → ℤ` (e.g.
@@ -293,7 +293,7 @@ example :
     centered-world reduction is formalized once and applies uniformly
     across all `Res` types via the same closure lemma. -/
 theorem kaplanI_lifts_rigidly_to_timeConcept (f : Agent → ℤ) :
-    Core.Intension.IsRigid (fun c : RefCtx => f (kaplanI c)) :=
+    Intensional.Intension.IsRigid (fun c : RefCtx => f (kaplanI c)) :=
   kaplanI_isRigid.map f
 
 /-- **Bidirectional structural equivalence under injective lifting**:
@@ -313,8 +313,8 @@ theorem kaplanI_lifts_rigidly_to_timeConcept (f : Agent → ℤ) :
 theorem entityConcept_rigid_iff_image_rigid_under_injective
     {f : Agent → ℤ} (hf : Function.Injective f)
     (c : EntityConcept Unit Agent Unit ℤ) :
-    Core.Intension.IsRigid c ↔
-    Core.Intension.IsRigid (fun ctx : RefCtx => f (c ctx)) :=
+    Intensional.Intension.IsRigid c ↔
+    Intensional.Intension.IsRigid (fun ctx : RefCtx => f (c ctx)) :=
   ⟨fun h => h.map f, fun h => h.of_map_injective hf⟩
 
 end AnandNevins2004

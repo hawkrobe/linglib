@@ -32,7 +32,7 @@ while preserving the Context of Thought θ (= `tower.origin`).
 
 namespace Tense.ConditionalShift
 
-open Core (WorldTimeIndex)
+open Intensional (WorldTimeIndex)
 
 open Tense
 open Semantics.Context (RichContext KContext ContextTower ContextShift

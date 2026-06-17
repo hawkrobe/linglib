@@ -1,5 +1,5 @@
 import Linglib.Semantics.Coordination.Defs
-import Linglib.Core.Logic.Intensional.Algebra
+import Linglib.Semantics.Intensional.Algebra
 
 /-!
 # The Coordinator operation on `Denot` carriers
@@ -23,8 +23,8 @@ form `engineOp` it consumes.
 
 namespace Coordinator
 
-open Core.Logic.Intensional
-open Core.Logic.Intensional.Conjunction
+open Intensional
+open Intensional.Conjunction
 
 /-! ### Bridges: the [partee-rooth-1983] recursion ARE `op` (bucket (a)) -/
 
