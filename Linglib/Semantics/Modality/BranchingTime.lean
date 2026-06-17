@@ -31,7 +31,7 @@ the felicity facts (eventive futurate present, apprehensionals) turn on it.
 * `Hist` — the histories through a moment.
 * `pPast`; `oAtom`/`oPast`/`oFut`/`oSettled`/`oSupervaluation` — the Peircean/Ockhamist operators.
 * `IsInevitable`, `PresumedSettled`, `IsSettledWhether` — settledness (context-relative).
-* `kaufmannPresent`, `kaufmannPast` — [kaufmann-2005]'s non-deictic tenses, reconstructed in
+* `kaufmannPresent`, `kaufmannPast` — [kaufmann-2005-truth]'s non-deictic tenses, reconstructed in
   Ockhamist branching time by [rumberg-lauer-2023] §4.1.3 (NOT framework-neutral primitives).
 
 ## Main results
@@ -92,6 +92,32 @@ theorem Iic_subset_of_mem [PartialOrder M] [IsLeftLinear M] {m : M} {h : Flag M}
   have hmem : x ∈ (h : Set M) ∪ Set.Iic m := Or.inr hx
   rwa [← heq] at hmem
 
+/-- A history through a non-maximal moment contains a **future** moment: if `m ∈ h` and `m < x`
+    for some `x`, then `h` contains some `y > m`. (Otherwise `insert x h` would be a strictly
+    larger chain, contradicting `h`'s maximality.) The engine of inevitability reasoning: a
+    history cannot stop at a moment that still has a future. -/
+theorem exists_mem_gt_of_lt [PartialOrder M] {m x : M} {h : Flag M}
+    (hm : m ∈ h) (hx : m < x) : ∃ y ∈ h, m < y := by
+  by_contra hcon
+  push_neg at hcon
+  have hbx : ∀ b ∈ (h : Set M), b ≤ x := by
+    intro b hb
+    rcases h.le_or_le hb hm with hbm | hmb
+    · exact le_of_lt (lt_of_le_of_lt hbm hx)
+    · have hbeq : m = b := (hmb.lt_or_eq).resolve_left (hcon b hb)
+      exact le_of_lt (hbeq ▸ hx)
+  have hchain : IsChain (· ≤ ·) (insert x (h : Set M)) := by
+    rintro a ha b hb _
+    simp only [Set.mem_insert_iff] at ha hb
+    rcases ha with rfl | ha <;> rcases hb with rfl | hb
+    · exact Or.inl le_rfl
+    · exact Or.inr (hbx b hb)
+    · exact Or.inl (hbx a ha)
+    · exact h.le_or_le ha hb
+  have heq : (h : Set M) = insert x (h : Set M) := h.max_chain' hchain (Set.subset_insert x _)
+  have hxh : x ∈ (h : Set M) := by rw [heq]; exact Set.mem_insert x _
+  exact hcon x hxh hx
+
 /-! ### Postsemantics
 
 `MProp` = truth at a moment (Peircean); `OProp` = truth at a moment/history pair (Ockhamist;
@@ -149,16 +175,16 @@ def PresumedSettled [PartialOrder M] (C : Set (Flag M)) (φ : MProp M) (m : M) :
 abbrev IsSettledWhether [PartialOrder M] (φ : MProp M) (m : M) : Prop :=
   PresumedSettled (Hist m) φ m
 
-/-! ### Tense translations ([kaufmann-2005] via [rumberg-lauer-2023] §4.1.3)
+/-! ### Tense translations ([kaufmann-2005-truth] via [rumberg-lauer-2023] §4.1.3)
 
-`PRESENT Q := Q ∨ F_O Q`, `PAST Q := P_O Q`. These encode [kaufmann-2005]'s non-deictic-present
+`PRESENT Q := Q ∨ F_O Q`, `PAST Q := P_O Q`. These encode [kaufmann-2005-truth]'s non-deictic-present
 analysis (morphological present = non-pastness) reconstructed in Ockhamism — *not* neutral
 branching primitives ([schulz-2008]'s Peircean reconstruction gives the same surface forms). -/
 
-/-- [kaufmann-2005]'s present (non-deictic), Ockhamist reconstruction. -/
+/-- [kaufmann-2005-truth]'s present (non-deictic), Ockhamist reconstruction. -/
 def kaufmannPresent [PartialOrder M] (φ : OProp M) : OProp M := fun m h => φ m h ∨ oFut φ m h
 
-/-- [kaufmann-2005]'s past, Ockhamist reconstruction. -/
+/-- [kaufmann-2005-truth]'s past, Ockhamist reconstruction. -/
 def kaufmannPast [PartialOrder M] (φ : OProp M) : OProp M := oPast φ
 
 /-! ### Theorems -/

@@ -628,6 +628,7 @@ import Linglib.Processing.VisualWorld
 import Linglib.Processing.SelfPacedReading
 import Linglib.Morphology.WugTest
 import Linglib.Features.MinimalPairs
+import Linglib.Studies.RumbergLauer2023
 import Linglib.Studies.SprouseEtAl2012
 -- Fragments
 import Linglib.Fragments.Arabic.ModernStandard.Negation
