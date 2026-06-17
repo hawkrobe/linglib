@@ -167,6 +167,7 @@ inductive Provable : OForm Atom → Prop where
 /-! ### Soundness -/
 
 open TWFrame
+open Core.Logic.Modal (box_four self_imp_box_flip_diamond)
 
 /-- **Soundness of `TW`** ([von-kutschera-1997]): every `TW`-provable formula is T × W-valid. -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
@@ -185,10 +186,14 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
       simp only [sat_imp, sat_and, sat_N]; exact fun h w' hw' => h.1 w' hw' (h.2 w' hw')
   | a5a _ _ =>
       simp only [sat_imp, sat_and, sat_box]; exact fun h w' => h.1 w' (h.2 w')
-  | a1c _ | a1d _ =>
-      simp only [sat_imp, sat_G, sat_H, sat_Fut, sat_Pst]; exact fun ha t' ht' => ⟨t, ht', ha⟩
+  | a1c _ =>
+      simp only [sat_imp, sat_H, sat_Fut]
+      exact fun ha => self_imp_box_flip_diamond (· < ·) (fun t' => F.sat V _ t' w) t ha
+  | a1d _ =>
+      simp only [sat_imp, sat_G, sat_Pst]
+      exact fun ha => self_imp_box_flip_diamond (· > ·) (fun t' => F.sat V _ t' w) t ha
   | a2 _ =>
-      simp only [sat_imp, sat_G]; exact fun h t' ht' t'' ht'' => h t'' (lt_trans ht' ht'')
+      simp only [sat_imp]; exact fun h => box_four (· < ·) _ _ h
   | a3a _ | a3b _ =>
       simp only [sat_imp, sat_G, sat_H, sat_or, sat_Fut, sat_Pst]
       rintro ⟨t₀, _, ha⟩ t' _
@@ -208,12 +213,12 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   | mp _ _ ihab iha => exact (sat_imp F V _ _ t w).1 (ihab V t w) (iha V t w)
   | necH _ ih => exact fun t' _ => ih V t' w
   | necN _ ih => exact fun w' _ => ih V t w'
-  | necBox _ ih => exact fun w' => ih V t w'
+  | necBox _ ih => exact fun w' _ => ih V t w'
   | @ir a q _ hq ih =>
       classical
       let V' : Atom → Time → World → Prop := fun p t'' w'' => if p = q then t < t'' else V p t'' w''
       have hbox : F.sat V' (OForm.and (.neg (.atom q)) (.G (.atom q))).box t w := by
-        intro w'; refine ⟨?_, fun t' ht' => ?_⟩ <;> simp only [sat_neg, sat_atom, V']
+        intro w' _; refine ⟨?_, fun t' ht' => ?_⟩ <;> simp only [sat_neg, sat_atom, V']
         exacts [lt_irrefl t, ht']
       have hagree : ∀ p, a.mentions p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
         intro p hp tt ww
