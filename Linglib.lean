@@ -1703,7 +1703,7 @@ import Linglib.Studies.CohnGordonEtAl2019
 import Linglib.Studies.DaleReiter1995
 import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.EngelhardtEtAl2006
-import Linglib.Studies.FrankGoodman2012PMF
+import Linglib.Studies.FrankGoodman2012
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.Ney2026
 import Linglib.Studies.SikosEtAl2021
