@@ -2608,6 +2608,7 @@ import Linglib.Pragmatics.RSA.Composition
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.Cancellation
+import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Studies.Haspelmath2001
 import Linglib.Morphology.Grammaticalization
 import Linglib.Studies.Traugott2010
@@ -2883,6 +2884,7 @@ import Linglib.Studies.ViknerJensen2002
 import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.LogitChoice
 import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.CoupledEvaluation
 import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.Psychophysics.SignalDetection
