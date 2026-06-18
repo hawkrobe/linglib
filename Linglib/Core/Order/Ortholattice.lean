@@ -79,9 +79,7 @@ namespace OrthocomplementedLattice
 
 variable {α : Type*} [OrthocomplementedLattice α] {a b : α}
 
--- ════════════════════════════════════════════════════
--- § 1. Basic Identities
--- ════════════════════════════════════════════════════
+/-! ### Basic Identities -/
 
 @[simp]
 theorem inf_compl_eq_bot (a : α) : a ⊓ aᶜ = ⊥ :=
@@ -99,9 +97,7 @@ theorem compl_bot : (⊥ : α)ᶜ = ⊤ := by
 theorem compl_top : (⊤ : α)ᶜ = ⊥ := by
   have h := inf_compl_eq_bot (⊤ : α); rwa [top_inf_eq] at h
 
--- ════════════════════════════════════════════════════
--- § 2. Order Properties
--- ════════════════════════════════════════════════════
+/-! ### Order Properties -/
 
 theorem compl_le_compl_iff_le : aᶜ ≤ bᶜ ↔ b ≤ a :=
   ⟨fun h => OrthocomplementedLattice.compl_compl b ▸
@@ -126,9 +122,7 @@ theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ := by
 theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
   ⟨fun h => compl_compl b ▸ compl_antitone h, fun h => compl_compl a ▸ compl_antitone h⟩
 
--- ════════════════════════════════════════════════════
--- § 3. De Morgan Laws
--- ════════════════════════════════════════════════════
+/-! ### De Morgan Laws -/
 
 theorem compl_sup (a b : α) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := by
   apply le_antisymm
@@ -150,9 +144,7 @@ theorem compl_inf (a b : α) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := by
   rw [OrthocomplementedLattice.compl_compl, OrthocomplementedLattice.compl_compl] at h
   rw [← h, OrthocomplementedLattice.compl_compl]
 
--- ════════════════════════════════════════════════════
--- § 4. IsCompl and ComplementedLattice
--- ════════════════════════════════════════════════════
+/-! ### IsCompl and ComplementedLattice -/
 
 theorem isCompl_compl (a : α) : IsCompl a aᶜ where
   disjoint := disjoint_iff.mpr (inf_compl_eq_bot a)
@@ -163,9 +155,7 @@ instance instComplementedLattice : ComplementedLattice α :=
 
 end OrthocomplementedLattice
 
--- ════════════════════════════════════════════════════
--- § 5. BooleanAlgebra → OrthocomplementedLattice
--- ════════════════════════════════════════════════════
+/-! ### BooleanAlgebra → OrthocomplementedLattice -/
 
 /-- Every Boolean algebra is an orthocomplemented lattice. The converse fails:
     ortholattices need not be distributive. Low priority so existing
@@ -177,15 +167,9 @@ instance (priority := 100) instBooleanOrtho {α : Type*} [BooleanAlgebra α] :
   inf_compl_le_bot := BooleanAlgebra.inf_compl_le_bot
   top_le_sup_compl := BooleanAlgebra.top_le_sup_compl
 
--- ════════════════════════════════════════════════════
--- § 6. Complete Orthocomplemented Lattices
--- ════════════════════════════════════════════════════
+/-! ### Complete Orthocomplemented Lattices -/
 
-/-- A *complete orthocomplemented lattice*: a complete lattice that is also
-    orthocomplemented. Bundling (rather than separate `[CompleteLattice α]` and
-    `[OrthocomplementedLattice α]` instances) shares the single `Lattice`, avoiding a
-    diamond — the same pattern as `CompleteBooleanAlgebra extends CompleteLattice,
-    BooleanAlgebra`. The forgetful instance to `OrthocomplementedLattice` is the free
-    parent projection. -/
+/-- A complete lattice that is also orthocomplemented; bundled like
+    `CompleteBooleanAlgebra` so the single `Lattice` is shared (no diamond). -/
 class CompleteOrthocomplementedLattice (α : Type*) extends
   CompleteLattice α, OrthocomplementedLattice α

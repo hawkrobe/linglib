@@ -5,7 +5,7 @@ import Mathlib.Order.Irreducible
 # Representation of ortholattices by orthoframes
 
 [holliday-mandelkern-2024] Theorem 4.13: every complete ortholattice is isomorphic
-to `Orthoframe.Reg` of its canonical orthoframe; every finite ortholattice via its
+to `Orthoframe.Regular` of its canonical orthoframe; every finite ortholattice via its
 join-irreducibles (Corollary 4.14). This is the converse of the `Orthoframe` layer
 (which gives `frame → ortholattice`).
 
@@ -19,7 +19,7 @@ the nonzero elements of a join-dense `V`, and the representation map is
 **Theorem 4.13 is complete and sorry-free.** The construction (`ofOrtholattice`), the
 extent characterization, the full ortholattice **embedding** (`⊓ ⊔ ¬ ⊤ ⊥` preserved,
 order-reflecting), and — for a `CompleteOrthocomplementedLattice` — the
-**isomorphism** `representation : L ≃o (ofOrtholattice V).Reg` over any join-dense
+**isomorphism** `representation : L ≃o (ofOrtholattice V).Regular` over any join-dense
 `V`. The orthocomplement preservation (`represent_compl`, the heart) falls out of the
 `upperPolar` computation `upperPolar_Iic`; no De Morgan over the join is needed.
 Corollary 4.14 (`representationFinite`) specialises the isomorphism to a
@@ -54,7 +54,7 @@ def ofOrtholattice (V : Set L) : Orthoframe (Point V) where
     (ofOrtholattice V).ortho a b ↔ a.1 ≤ b.1ᶜ := Iff.rfl
 
 /-- The representation map `a ↦ {b ∈ V\{0} | b ≤ a}`, as a concept. -/
-def represent (V : Set L) (a : L) : (ofOrtholattice V).Reg :=
+def represent (V : Set L) (a : L) : (ofOrtholattice V).Regular :=
   Concept.ofObjects (ofOrtholattice V).ortho {b | b.1 ≤ a}
 
 variable {V : Set L}
@@ -158,7 +158,7 @@ variable {L : Type*} [CompleteOrthocomplementedLattice L] {V : Set L}
 
 /-- Surjectivity (the `←` of Theorem 4.13): every concept is `represent V a`, taking
     `a` to be the join of the underlying elements of its extent. -/
-theorem represent_surjective (hV : JoinDense V) (c : (ofOrtholattice V).Reg) :
+theorem represent_surjective (hV : JoinDense V) (c : (ofOrtholattice V).Regular) :
     represent V (sSup (Subtype.val '' c.extent)) = c := by
   apply Concept.ext
   rw [represent_extent hV]
@@ -189,9 +189,9 @@ theorem sSup_represent_extent (hV : JoinDense V) (a : L) :
     · exact hu ⟨⟨c, hcV, hc0⟩, hca, rfl⟩
 
 /-- **The representation isomorphism** ([holliday-mandelkern-2024] Theorem 4.13): a
-    complete ortholattice is order-isomorphic to `Orthoframe.Reg` of its canonical
+    complete ortholattice is order-isomorphic to `Orthoframe.Regular` of its canonical
     orthoframe over any join-dense `V`. -/
-def representation (hV : JoinDense V) : L ≃o (ofOrtholattice V).Reg where
+def representation (hV : JoinDense V) : L ≃o (ofOrtholattice V).Regular where
   toFun := represent V
   invFun c := sSup (Subtype.val '' c.extent)
   left_inv := sSup_represent_extent hV
@@ -211,10 +211,10 @@ theorem joinDense_supIrred [WellFoundedLT L] : JoinDense {a : L | SupIrred a} :=
   exact Finset.sup_le fun b hb => hu ⟨hsIrred hb, hs ▸ Finset.le_sup hb⟩
 
 /-- **Corollary 4.14** ([holliday-mandelkern-2024]): a finite (more generally,
-    well-founded) ortholattice is order-isomorphic to `Orthoframe.Reg` of the
+    well-founded) ortholattice is order-isomorphic to `Orthoframe.Regular` of the
     orthoframe on its join-irreducibles. -/
 def representationFinite [WellFoundedLT L] :
-    L ≃o (ofOrtholattice {a : L | SupIrred a}).Reg :=
+    L ≃o (ofOrtholattice {a : L | SupIrred a}).Regular :=
   representation joinDense_supIrred
 
 end Iso
