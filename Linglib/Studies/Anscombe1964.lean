@@ -232,6 +232,20 @@ theorem npi_licensing_from_monotonicity (A B B' : SentDenotation Time) :
     (timeTrace B ⊆ timeTrace B' → Anscombe.after A B → Anscombe.after A B') :=
   ⟨Anscombe.before_complement_DE A B B', Anscombe.after_complement_UE A B B'⟩
 
+/-- The Anscombe analysis overgenerates ([beaver-condoravdi-2003] (32)-(33), the
+    "ketchup" / "squares had four sides" examples): because *before* universally
+    quantifies over B, "A before B" holds whenever A is instantiated and B never is.
+    This vacuous truth — e.g. "David ate ketchup before he won all the gold medals"
+    predicted true even if he never won — motivates B&C's modal refinement
+    (`BeaverCondoravdi.BC.before`, relativized to historical alternatives, §3). -/
+theorem Anscombe.before_overgenerates (A B : SentDenotation Time)
+    (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
+    Anscombe.before A B := by
+  obtain ⟨t, ht⟩ := hA
+  refine ⟨t, ht, fun t' ht' => ?_⟩
+  rw [hB] at ht'
+  exact ht'.elim
+
 end Tense.TemporalConnectives
 
 /-!
