@@ -89,14 +89,15 @@ def after_veridical_2 : VeridicalityDatum where
 -- § 3: Additional Veridicality Data ([beaver-condoravdi-2003], §2)
 -- ════════════════════════════════════════════════════════════════
 
-/-- "The Supreme Court decided the election before the votes were
-    counted" — non-committal: compatible with votes eventually being
-    counted or never counted ([beaver-condoravdi-2003], ex. 22). -/
+/-- "I left the party before there was any trouble" — non-committal: implies trouble
+    seemed likely but does not commit to whether trouble occurred
+    ([beaver-condoravdi-2003], ex. 43). (B&C's (22), the Supreme Court "uncounted
+    votes" case, is *counterfactual*, not non-committal — see [beaver-condoravdi-2003] §6.) -/
 def before_noncommittal : VeridicalityDatum where
-  sentence := "The Supreme Court decided the election before the votes were counted"
+  sentence := "I left the party before there was any trouble"
   connective := "before"
   complementEntailed := false
-  gloss := "before(decide, count) |/= count (non-committal)"
+  gloss := "before(leave, trouble) |/= trouble (non-committal)"
 
 /-- "Mozart died before he finished the Requiem" — counterfactual:
     Mozart never finished the Requiem ([beaver-condoravdi-2003], ex. 24). -/
@@ -170,27 +171,9 @@ def before_licenses_npis : LogicalPropertyDatum where
   example_ := "Cleo left before anyone noticed / *Cleo left after anyone noticed"
   gloss := "before licenses NPIs; after does not"
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Pragmatic Oddity Data ([beaver-condoravdi-2003], exx. 32-33)
--- ════════════════════════════════════════════════════════════════
-
-/-- "David won the race before he entered it" — pragmatically odd because
-    winning temporally presupposes entering: there is no historical
-    alternative where one wins before entering. ([beaver-condoravdi-2003], ex. 32) -/
-def before_oddity_win : VeridicalityDatum where
-  sentence := "David won the race before he entered it"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(win, enter) — pragmatically odd: winning presupposes entering"
-
-/-- "David entered the race after he won it" — same temporal impossibility
-    viewed through *after*: entering after winning reverses the natural
-    temporal order. ([beaver-condoravdi-2003], ex. 33) -/
-def after_oddity_enter : VeridicalityDatum where
-  sentence := "David entered the race after he won it"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(enter, win) — pragmatically odd: entering presupposes not yet having won"
+-- B&C's (32)/(33) — the "ketchup"/"squares had four sides" Anscombe overgeneration —
+-- are formalized as `BeaverCondoravdi.anscombeBefore_vacuous` (in that paper's anchor),
+-- not as the fabricated "win before entering" examples this file previously carried.
 
 open Tense.TemporalConnectives.BeaverCondoravdi
 
