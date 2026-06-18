@@ -49,7 +49,7 @@ namespace Egressy2026
 
 open Tense (EmbeddedTenseReading SOTParameter availableReadings)
 open SequenceOfTense
-open Core.Order (notAfter before after unrestricted)
+open Core.Order (notAfter before after unrestricted overlapping)
 open Minimalist
 open Hungarian.Predicates
 
@@ -296,9 +296,10 @@ theorem ex11_verb_from_fragment : ex11_mond.matrixVerb = mond.formPastDef := rfl
 
 For the direct-perception examples (4)–(6) the back-shifted reading is excluded
 for *pragmatic* reasons — one cannot directly perceive a past event — even
-though it is grammatically available (`nonSpeech_both`). This is prose in the
-paper, recorded here as the data fact that direct-perception clauses are
-observed simultaneous. -/
+though it is grammatically available (`nonSpeech_both`). This is the layer-2
+`Narrowing` from the foundation: direct perception intersects the grammatical
+reading set with the `overlapping` (=) constraint, leaving simultaneous-only
+(`direct_perception_narrows`). -/
 
 /-- The direct-perception data (perception and dreaming). -/
 def directPerceptionData : List SOTDatum := [ex4_lat, ex5_hall, ex6_almodik]
@@ -311,6 +312,17 @@ theorem direct_perception_simultaneous :
       d.simultaneousObserved &&
         (toReadings (egressyLicense pastMatrix (clauseNode notAfter d.clauseType))
           == [EmbeddedTenseReading.shifted, EmbeddedTenseReading.simultaneous])) = true := by
+  decide
+
+/-- Direct perception as a layer-2 `Narrowing`: it imposes the `overlapping` (=)
+    constraint — only a simultaneous reading is perceivable. -/
+def directPerception : Narrowing Unit := fun _ => overlapping
+
+/-- The prose fact as a theorem: direct perception narrows the grammatically
+    both-readings non-speech license down to simultaneous-only. -/
+theorem direct_perception_narrows :
+    directPerception.apply ()
+        (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) = overlapping := by
   decide
 
 
