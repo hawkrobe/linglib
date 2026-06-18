@@ -413,4 +413,97 @@ theorem histAlt_subset_altIE_trivial
   rw [altIE, Set.mem_setOf_eq, equivIE_trivial_iff_agree]
   exact hIBP w t w' hw'
 
+-- ============================================================================
+-- § 10: Asymmetries of *before* and *after* ([anscombe-1964] time-set semantics)
+-- ============================================================================
+
+/-! [beaver-condoravdi-2003] §2 present three asymmetries that appear to motivate a
+    *non-uniform* lexicon for *before*/*after*, all stated over [anscombe-1964]'s
+    time-set semantics (their (27)): a clause denotes the set of times at which it
+    holds, and
+
+      `A before B` ≔ ∃ t ∈ A, ∀ t' ∈ B, t < t'      (universal over B)
+      `A after  B` ≔ ∃ t ∈ A, ∃ t' ∈ B, t' < t      (existential over B)
+
+    The asymmetries are theorems of these definitions: *before* is antisymmetric
+    ((3)-(4)), transitive ((12)-(14)), and downward-monotone in its complement
+    ((15)-(18), licensing NPIs via [ladusaw-1979]); *after* is none of these
+    ((5)-(11)). B&C's contribution is that the *same* facts follow from their
+    uniform `earliest` semantics (§3 above), so the asymmetries do not force a
+    non-uniform lexicon. The universal-over-B form also overgenerates ((32)-(33),
+    the "ketchup" examples) — `anscombeBefore_vacuous` — which their modal
+    `BC.before` repairs. -/
+
+section Anscombe
+variable {α : Type*} [Preorder α] {A B B' C : Set α}
+
+/-- [anscombe-1964] / [beaver-condoravdi-2003] (27): some A-time precedes *every*
+    B-time. The universal over B drives the asymmetries below. -/
+def anscombeBefore (A B : Set α) : Prop := ∃ t ∈ A, ∀ t' ∈ B, t < t'
+
+/-- [anscombe-1964] / [beaver-condoravdi-2003] (27): some A-time follows *some*
+    B-time (existential over B). -/
+def anscombeAfter (A B : Set α) : Prop := ∃ t ∈ A, ∃ t' ∈ B, t' < t
+
+/-- Antisymmetry of *before* ([beaver-condoravdi-2003] (3)-(4)): `A before B` and
+    `B before A` cannot both hold — some A-time precedes all B-times, so no B-time
+    precedes all A-times. -/
+theorem anscombeBefore_asymm (h₁ : anscombeBefore A B) (h₂ : anscombeBefore B A) :
+    False := by
+  obtain ⟨ta, haA, ha⟩ := h₁
+  obtain ⟨tb, hbB, hb⟩ := h₂
+  exact lt_asymm (ha tb hbB) (hb ta haA)
+
+/-- Transitivity of *before* ([beaver-condoravdi-2003] (12)-(14)). -/
+theorem anscombeBefore_trans (h₁ : anscombeBefore A B) (h₂ : anscombeBefore B C) :
+    anscombeBefore A C := by
+  obtain ⟨ta, haA, ha⟩ := h₁
+  obtain ⟨tb, hbB, hb⟩ := h₂
+  exact ⟨ta, haA, fun tc hcC => lt_trans (ha tb hbB) (hb tc hcC)⟩
+
+/-- *Before* is downward-monotone (antitone) in its complement
+    ([beaver-condoravdi-2003] (15)-(18)): shrinking B preserves `A before B`. This
+    downward-monotonicity is why *before* licenses NPIs ([ladusaw-1979]). -/
+theorem anscombeBefore_antitone (hsub : B ⊆ B') (h : anscombeBefore A B') :
+    anscombeBefore A B := by
+  obtain ⟨t, htA, ht⟩ := h
+  exact ⟨t, htA, fun t' ht'B => ht t' (hsub ht'B)⟩
+
+/-- *After* is upward-monotone in its complement: growing B preserves `A after B`.
+    Upward-monotonicity is why *after* does not license NPIs. -/
+theorem anscombeAfter_monotone (hsub : B ⊆ B') (h : anscombeAfter A B) :
+    anscombeAfter A B' := by
+  obtain ⟨t, htA, t', ht'B, hlt⟩ := h
+  exact ⟨t, htA, t', hsub ht'B, hlt⟩
+
+/-- The Anscombe overgeneration ([beaver-condoravdi-2003] (32)-(33), the "ketchup"/
+    "squares had four sides" examples): because *before* universally quantifies over
+    B, `A before ∅` holds whenever A is instantiated — predicting "David ate ketchup
+    before he won all the gold medals" true even if he never won. B&C's modal
+    `BC.before` (§3) avoids this. -/
+theorem anscombeBefore_vacuous (hA : A.Nonempty) : anscombeBefore A (∅ : Set α) := by
+  obtain ⟨t, ht⟩ := hA
+  exact ⟨t, ht, fun t' ht' => ((Set.mem_empty_iff_false t').mp ht').elim⟩
+
+/-- *After* is NOT antisymmetric ([beaver-condoravdi-2003] (5)-(7)): with overlapping
+    time sets, `A after B` and `B after A` both hold. Witness over ℕ. -/
+theorem anscombeAfter_not_antisymm :
+    ∃ A B : Set ℕ, anscombeAfter A B ∧ anscombeAfter B A := by
+  refine ⟨{0, 2}, {1}, ⟨2, by simp, 1, by simp, by decide⟩,
+    ⟨1, by simp, 0, by simp, by decide⟩⟩
+
+/-- *After* is NOT transitive ([beaver-condoravdi-2003] (8)-(11), the Ginger/Fred/
+    Delores dancing model): `A after B` and `B after C` without `A after C`. Witness
+    `A = {2}`, `B = {1,4}`, `C = {3}`. -/
+theorem anscombeAfter_not_trans :
+    ∃ A B C : Set ℕ, anscombeAfter A B ∧ anscombeAfter B C ∧ ¬ anscombeAfter A C := by
+  refine ⟨{2}, {1, 4}, {3}, ⟨2, by simp, 1, by simp, by decide⟩,
+    ⟨4, by simp, 3, by simp, by decide⟩, ?_⟩
+  rintro ⟨t, htA, t', ht'C, hlt⟩
+  simp only [Set.mem_singleton_iff] at htA ht'C
+  subst htA; subst ht'C
+  exact absurd hlt (by decide)
+
+end Anscombe
+
 end Tense.TemporalConnectives.BeaverCondoravdi
