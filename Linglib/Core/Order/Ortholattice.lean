@@ -1,4 +1,5 @@
 import Mathlib.Order.BooleanAlgebra.Basic
+import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Disjoint
 
 /-!
@@ -121,6 +122,10 @@ theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ := by
   · intro h; rw [← h, OrthocomplementedLattice.compl_compl]
   · intro h; rw [h, OrthocomplementedLattice.compl_compl]
 
+/-- Orthogonality is symmetric: `a ≤ bᶜ ↔ b ≤ aᶜ`. -/
+theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
+  ⟨fun h => compl_compl b ▸ compl_antitone h, fun h => compl_compl a ▸ compl_antitone h⟩
+
 -- ════════════════════════════════════════════════════
 -- § 3. De Morgan Laws
 -- ════════════════════════════════════════════════════
@@ -171,3 +176,16 @@ instance (priority := 100) instBooleanOrtho {α : Type*} [BooleanAlgebra α] :
   compl_antitone := fun h => _root_.compl_le_compl h
   inf_compl_le_bot := BooleanAlgebra.inf_compl_le_bot
   top_le_sup_compl := BooleanAlgebra.top_le_sup_compl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Complete Orthocomplemented Lattices
+-- ════════════════════════════════════════════════════
+
+/-- A *complete orthocomplemented lattice*: a complete lattice that is also
+    orthocomplemented. Bundling (rather than separate `[CompleteLattice α]` and
+    `[OrthocomplementedLattice α]` instances) shares the single `Lattice`, avoiding a
+    diamond — the same pattern as `CompleteBooleanAlgebra extends CompleteLattice,
+    BooleanAlgebra`. The forgetful instance to `OrthocomplementedLattice` is the free
+    parent projection. -/
+class CompleteOrthocomplementedLattice (α : Type*) extends
+  CompleteLattice α, OrthocomplementedLattice α
