@@ -123,6 +123,30 @@ def sizeGatedLicense (boundary : Clause.Size) : LocalLicense :=
 def LocalLicense.gate (L : LocalLicense) (g : Node → Node → Bool) : LocalLicense :=
   fun a c => if g a c then L a c else (L a c).erase Ordering.eq
 
+/-! ### Pragmatic narrowing (layer 2: a constraint on the grammatical reading set)
+
+Grammar (a `LocalLicense`) emits the *grammatically available* reading set; a
+pragmatic inference then *narrows* it — direct perception (one cannot perceive a
+past event), a cessation implicature (a past stative implicates non-overlap with
+now), etc. A narrowing is **intersection with a context-conditioned constraint**
+(a further point-algebra relation), so it can only *remove* readings, never
+license a new one — the grammar/pragmatics boundary, free from
+`Finset.inter_subset_left` rather than a stipulated law. The context `C` is
+whatever the inference consults (polarity, perception-directness, …). -/
+
+/-- A pragmatic narrowing: the point-algebra constraint it imposes, as a function
+    of the context the inference consults. -/
+abbrev Narrowing (C : Type*) := C → Finset Ordering
+
+/-- Narrow a grammatically-licensed reading set: intersect with the constraint. -/
+def Narrowing.apply {C : Type*} (n : Narrowing C) (ctx : C) (s : Finset Ordering) :
+    Finset Ordering := s ∩ n ctx
+
+/-- Pragmatics filters, never licenses: narrowing only removes readings. -/
+theorem Narrowing.apply_subset {C : Type*} (n : Narrowing C) (ctx : C)
+    (s : Finset Ordering) : n.apply ctx s ⊆ s :=
+  Finset.inter_subset_left
+
 /-! ### Worked example: the schemas diverge on an opaque past clause
 
 A concrete demonstration that the interface carries weight: on an opaque past
