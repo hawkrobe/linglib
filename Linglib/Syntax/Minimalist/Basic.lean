@@ -67,6 +67,7 @@ inductive Cat where
   | Top   -- topic ([rizzi-1997] split-CP; hosts [G]/givenness, topic fronting)
   | Fin   -- finiteness ([rizzi-1997] split-CP; allocutive probe in Magahi/Galician)
   | SA    -- speech act head ([speas-tenny-2003]; hosts speaker/addressee)
+  | Say   -- say/assertion layer ([major-2021]; [krifka-2023]; [moulton-2009]); embeds the content of a verbal/representational sign. Distinct from `SA` (root illocutionary layer): `Say` is clause-internal, in the embedded left periphery with Say > Foc > T, and does NOT require a CP ([kiss-2023], [egressy-2026])
   | Force -- force ([rizzi-1997] split-CP; clause-typing [decl]/[interrog])
   | Neg   -- negation ([pollock-1989]; [zanuttini-1997]; hosts [±neg])
   | Mod   -- modality ([cinque-1999]; modal auxiliaries)

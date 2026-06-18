@@ -63,31 +63,6 @@ inductive SOTParameter where
   deriving DecidableEq, Repr
 
 
-/-! ### Williams Cycle stage -/
-
-/-- Williams Cycle stage for sequence of tense ([egressy-2026]).
-
-    A three-way refinement of `SOTParameter`, classifying a language by how
-    many complement boundaries are transparent to upward tense Agree: none
-    (`noSOT`), only sub-CP (`partialSOT`), or all (`fullSOT`). The binary
-    `SOTParameter` cannot express the `partialSOT` stage. -/
-inductive WilliamsCycleStage where
-  /-- No SOT: all boundaries opaque (e.g. Japanese). -/
-  | noSOT
-  /-- Partial SOT: CP opaque, sub-CP transparent (e.g. Hungarian). -/
-  | partialSOT
-  /-- Full SOT: all boundaries transparent (e.g. English). -/
-  | fullSOT
-  deriving DecidableEq, Repr
-
-/-- The binary `SOTParameter` embeds as the Williams Cycle endpoints:
-    `absolute ↦ noSOT`, `relative ↦ fullSOT`. (No inverse: `partialSOT` has no
-    binary image — it is the stage the binary parameter cannot express.) -/
-def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
-  | .absolute => .noSOT
-  | .relative => .fullSOT
-
-
 /-! ### TenseInterpretation -/
 
 /-- Tense interpretation modes.
