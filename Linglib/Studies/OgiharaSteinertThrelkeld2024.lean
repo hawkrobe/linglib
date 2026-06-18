@@ -29,7 +29,7 @@ temporal connectives *before* and *after*.
 - Beaver, D. & Condoravdi, C. (2003), §2 (three readings of *before*).
 -/
 
-namespace OgiharaST2024
+namespace OgiharaSteinertThrelkeld2024
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Veridicality Judgments
@@ -944,7 +944,7 @@ theorem mozart_is_case_iii
 
 end Def19
 
-end OgiharaST2024
+end OgiharaSteinertThrelkeld2024
 
 -- ════════════════════════════════════════════════════════════════
 -- Veridicality ↔ Presupposition Bridge
@@ -964,13 +964,13 @@ For each temporal connective, the Fragment's `complementVeridical` field is
 **grounded** in a theory-level proof, and matches the empirical data.
 -/
 
-namespace OgiharaST2024.VeridicalityBridge
+namespace OgiharaSteinertThrelkeld2024.VeridicalityBridge
 
 open Core.Order
 open NonemptyInterval
 open Tense.TemporalConnectives
 open English.TemporalExpressions
-open OgiharaST2024
+open OgiharaSteinertThrelkeld2024
 
 -- ============================================================================
 -- § 19: Fragment ↔ Theory Agreement (Per-Entry Verification)
@@ -1111,4 +1111,4 @@ theorem bc_readings_in_data :
     before_noncommittal.complementEntailed = false :=
   ⟨rfl, rfl, rfl⟩
 
-end OgiharaST2024.VeridicalityBridge
+end OgiharaSteinertThrelkeld2024.VeridicalityBridge

@@ -12,7 +12,7 @@ analyses live in `Studies/`:
 - `Karttunen1974.lean`: *When*, *while*, *until*, *till*, *since*, *by*
 - `Rett2020.lean`: Antonymy + aspectual coercion + ambidirectionality
 - `BeaverCondoravdi2003.lean`: Intensional uniform analysis with `earliest`
-- `OgiharaST2024.lean` (in `Studies/`): Critique of B&C, eventuality-relative equivalence
+- `OgiharaSteinertThrelkeld2024.lean` (in `Studies/`): Critique of B&C, eventuality-relative equivalence
 
 ## Submodules
 

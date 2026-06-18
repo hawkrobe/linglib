@@ -1756,7 +1756,7 @@ import Linglib.Studies.Kiparsky2002
 import Linglib.Studies.Pancheva2003
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Studies.Cruse1973
-import Linglib.Studies.OgiharaST2024
+import Linglib.Studies.OgiharaSteinertThrelkeld2024
 import Linglib.Studies.Koev2017
 import Linglib.Studies.Egressy2026
 import Linglib.Studies.GokselKerslake2005
