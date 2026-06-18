@@ -112,6 +112,7 @@ import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.Orthoframe
+import Linglib.Core.Order.Orthoframe.Representation
 import Linglib.Core.Order.PreferenceStructure
 import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
