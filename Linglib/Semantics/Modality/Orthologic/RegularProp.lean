@@ -49,9 +49,7 @@ namespace Orthologic
 
 variable {S : Type*} {F : CompatFrame S}
 
--- ════════════════════════════════════════════════════
--- § 1. Closure-under-regularity helpers
--- ════════════════════════════════════════════════════
+/-! ### Closure-under-regularity helpers -/
 
 /-- The orthocomplement of any set is regular (whether or not the original set is). -/
 theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
@@ -120,9 +118,7 @@ theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
     push Not
     exact ⟨x, hxy.symm, hxA⟩
 
--- ════════════════════════════════════════════════════
--- § 2. The Bundled Type RegularProp F
--- ════════════════════════════════════════════════════
+/-! ### The Bundled Type RegularProp F -/
 
 /-- A regular proposition of a compatibility frame `F`: a `Set S` satisfying
     the `◇`-regularity condition. Bundled as a structure with `SetLike`
@@ -151,9 +147,7 @@ instance : SetLike (RegularProp F) S where
 
 theorem regular (A : RegularProp F) : IsRegular F (A : Set S) := A.regular'
 
--- ════════════════════════════════════════════════════
--- § 3. Lattice Operations
--- ════════════════════════════════════════════════════
+/-! ### Lattice Operations -/
 
 instance : Min (RegularProp F) where
   min A B := ⟨(A : Set S) ∩ (B : Set S), inter_isRegular A.regular B.regular⟩
@@ -183,9 +177,7 @@ instance : Compl (RegularProp F) where
 @[simp] theorem coe_compl (A : RegularProp F) :
     ((Aᶜ : RegularProp F) : Set S) = orthoNeg F (A : Set S) := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Lattice + BoundedOrder Instance
--- ════════════════════════════════════════════════════
+/-! ### Lattice + BoundedOrder Instance -/
 
 instance : PartialOrder (RegularProp F) := PartialOrder.ofSetLike (RegularProp F) S
 
@@ -227,9 +219,7 @@ instance : BoundedOrder (RegularProp F) where
   bot_le := fun _ _ hx => hx.elim
   le_top := fun _ _ _ => trivial
 
--- ════════════════════════════════════════════════════
--- § 5. OrthocomplementedLattice Instance
--- ════════════════════════════════════════════════════
+/-! ### OrthocomplementedLattice Instance -/
 
 instance instOrthocomplementedLattice : OrthocomplementedLattice (RegularProp F) where
   compl_compl A := SetLike.coe_injective <|
@@ -288,12 +278,12 @@ theorem isRegular_iff_isExtent (F : CompatFrame S) (A : Set S) :
       upperPolar_eq_lowerPolar F.toOrthoframe.ortho]
 
 /-- **The bridge.** `RegularProp F` is order-isomorphic to the ortholattice of
-    regular propositions of its orthogonality orthoframe (`Orthoframe.Reg`) —
+    regular propositions of its orthogonality orthoframe (`Orthoframe.Regular`) —
     i.e. the concept extents of `¬ compat`. The hand-built
     `OrthocomplementedLattice (RegularProp F)` and the abstract `Concept`-based
     one coincide. -/
 def RegularProp.equivReg (F : CompatFrame S) :
-    RegularProp F ≃o Orthoframe.Reg F.toOrthoframe where
+    RegularProp F ≃o Orthoframe.Regular F.toOrthoframe where
   toFun A := Concept.ofIsExtent F.toOrthoframe.ortho A.carrier
     ((isRegular_iff_isExtent F A.carrier).mp A.regular')
   invFun c := ⟨c.extent, (isRegular_iff_isExtent F c.extent).mpr c.isExtent_extent⟩

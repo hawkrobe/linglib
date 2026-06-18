@@ -6,10 +6,10 @@ import Linglib.Core.Order.Orthoframe.Representation
 
 [holliday-mandelkern-2024] §4.1 — Goldblatt's compatibility-frame semantics for
 orthologic and its completeness theorem (Theorem 4.19). A compatibility model is an
-`Orthoframe` `F` with a valuation `V : Var → F.Reg` assigning each variable a regular
+`Orthoframe` `F` with a valuation `V : Var → F.Regular` assigning each variable a regular
 proposition. The support relation `s ⊩ φ` is defined recursively; the set of
 supporters `{s | s ⊩ φ}` is exactly the extent of the algebraic value
-`Formula.eval V φ` in the ortholattice `F.Reg` (`support_setOf_eq_extent`).
+`Formula.eval V φ` in the ortholattice `F.Regular` (`support_setOf_eq_extent`).
 
 Soundness and completeness then reduce to the algebraic versions (Theorem 3.13): the
 bridge turns frame consequence into the algebraic inequality in every frame algebra,
@@ -35,15 +35,15 @@ variable {Var : Type u} {S : Type u}
 /-- The support relation `s ⊩ φ` of the compatibility model `(F, V)`
     ([holliday-mandelkern-2024] Def 4.16): `¬φ` is supported at `s` exactly when `s`
     is orthogonal to (incompatible with) every point supporting `φ`. -/
-def Support (F : Orthoframe S) (V : Var → F.Reg) (s : S) : Formula Var → Prop
+def Support (F : Orthoframe S) (V : Var → F.Regular) (s : S) : Formula Var → Prop
   | .top => True
   | .var p => s ∈ (V p).extent
   | .neg φ => ∀ t, Support F V t φ → F.ortho s t
   | .and φ ψ => Support F V s φ ∧ Support F V s ψ
 
 /-- **The bridge**: the supporters of `φ` are exactly the extent of its algebraic
-    value `Formula.eval V φ` in `F.Reg`. -/
-theorem support_setOf_eq_extent (F : Orthoframe S) (V : Var → F.Reg) (φ : Formula Var) :
+    value `Formula.eval V φ` in `F.Regular`. -/
+theorem support_setOf_eq_extent (F : Orthoframe S) (V : Var → F.Regular) (φ : Formula Var) :
     {s | Support F V s φ} = (Formula.eval V φ).extent := by
   induction φ with
   | top =>
@@ -69,14 +69,14 @@ theorem support_setOf_eq_extent (F : Orthoframe S) (V : Var → F.Reg) (φ : For
 /-- Semantic consequence over compatibility frames ([holliday-mandelkern-2024]
     Def 4.18): in every model, every point supporting `φ` supports `ψ`. -/
 def FrameConsequence (φ ψ : Formula Var) : Prop :=
-  ∀ {S : Type u} (F : Orthoframe S) (V : Var → F.Reg) (s : S),
+  ∀ {S : Type u} (F : Orthoframe S) (V : Var → F.Regular) (s : S),
     Support F V s φ → Support F V s ψ
 
 @[inherit_doc] scoped infix:50 " ⊨ᶠ " => FrameConsequence
 
 /-- Frame consequence is the algebraic inequality holding in every frame algebra. -/
 theorem frameConsequence_iff_eval {φ ψ : Formula Var} :
-    (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Orthoframe S) (V : Var → F.Reg),
+    (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : Orthoframe S) (V : Var → F.Regular),
       Formula.eval V φ ≤ Formula.eval V ψ := by
   constructor
   · intro h S F V
