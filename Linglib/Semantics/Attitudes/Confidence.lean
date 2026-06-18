@@ -301,8 +301,8 @@ def confidenceLogicalForm {E W : Type*}
     smaller measure than the `p`-themed state. CSW fn. 25 explicitly
     reject the unique-state assumption ("This is not the picture we
     adopt"), but the simplification is useful for theorem statements that
-    don't need the full `max`-quantification. The maximality version lives
-    at the study-file level via `Wellwood2015.adjectival_max_reduces`. -/
+    don't need the full `max`-quantification. The faithful maximality version is
+    `confidenceComparative` below; this is its unique-state reduction. -/
 def comparativeConfidenceLogicalForm {E W : Type*}
     (co : ConfidenceOrdering E W)
     {D : Type*} [LinearOrder D]
@@ -313,5 +313,34 @@ def comparativeConfidenceLogicalForm {E W : Type*}
     s_q.holder = holder ∧ s_q.theme = q ∧
     letI := co.toPreorder
     statesComparativeSem μ s_p s_q
+
+/-! ### Faithful comparative (CSW (47)) and the admissibility spine -/
+
+/-- Comparative confidence (CSW (47)): "A is more confident that `p` than that
+    `q`" — `StatesBased.statesComparative` with the holder/theme predicates as
+    the matrix (`p`) and than-clause (`q`) restrictions. The `max`-quantified
+    than-clause does **not** assume a unique state per theme (CSW fn 25), unlike
+    `comparativeConfidenceLogicalForm`, which is its unique-state reduction. It
+    is measure-based and contrast-blind, so the `confident`/`certain` scale-mate
+    equivalence (CSW (72)) holds by construction. -/
+def confidenceComparative {E W D : Type*} [Preorder D]
+    (μ : ConfidenceState E W → D) (holder : E) (p q : W → Prop) : Prop :=
+  statesComparative (fun s => s.holder = holder ∧ s.theme = p)
+                    (fun s => s.holder = holder ∧ s.theme = q) μ
+
+/-- The admissibility spine (CSW (21)/(31)): when the measure `μ` is admissible
+    (`StrictMono` w.r.t. the holder's confidence ordering), the ordering entails
+    the comparative — if `s_q ≺ s_p` then A is more confident of `s_p` than
+    `s_q`. This ties the measure-comparative to the `ConfidenceOrdering`, the
+    constraint the free-`μ` `comparative_transitive`/`comparative_antisymmetric`
+    lack. (Over a `Preorder`, only this forward direction holds — CSW's ordering
+    need not be connected.) -/
+theorem confidence_more_of_ordering {E W D : Type*} [Preorder D]
+    (co : ConfidenceOrdering E W) (μ : ConfidenceState E W → D)
+    {s_p s_q : ConfidenceState E W} :
+    letI := co.toPreorder
+    admissibleMeasure μ → s_q < s_p → statesComparativeSem μ s_p s_q := by
+  letI := co.toPreorder
+  exact fun h hlt => statesComparativeSem_of_lt μ h hlt
 
 end Semantics.Attitudes.Confidence
