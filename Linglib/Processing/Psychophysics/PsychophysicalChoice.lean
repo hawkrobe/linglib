@@ -1,6 +1,6 @@
 import Linglib.Processing.Psychophysics.Psychophysics
-import Linglib.Core.Agent.ChoiceApproximations
-import Linglib.Core.Agent.UtilityTheory
+import Linglib.Core.DecisionTheory.ChoiceApproximations
+import Linglib.Core.DecisionTheory.UtilityTheory
 
 /-!
 # Psychophysical Choice Bridge [luce-1959]

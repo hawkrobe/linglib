@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraint.NoisyHG
 import Linglib.Phonology.Constraint.Separability
 import Linglib.Phonology.Constraint.System
-import Linglib.Core.Agent.GumbelLuce
+import Linglib.Core.DecisionTheory.GumbelLuce
 
 /-!
 # [flemming-2021]: Comparing MaxEnt and Noisy Harmonic Grammar

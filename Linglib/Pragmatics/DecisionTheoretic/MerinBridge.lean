@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.DecisionTheory
+import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Mathlib.Data.Fintype.Basic
 

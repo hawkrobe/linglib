@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 
 /-!
 # Algebraic Approximations ([luce-1959], §1.G, pp. 34–37) [luce-1959]

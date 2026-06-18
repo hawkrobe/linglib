@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs

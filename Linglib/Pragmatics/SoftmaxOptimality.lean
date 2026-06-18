@@ -1,6 +1,6 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Core.Agent.DecisionTheory
+import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Pragmatics.RSA.Limits
 import Mathlib.Data.Rat.Cast.Defs
 

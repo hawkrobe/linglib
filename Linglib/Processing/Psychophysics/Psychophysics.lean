@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 
 /-!
 # Psychophysics: Stevens' Power Law and Multidimensional Stimuli [luce-1959]

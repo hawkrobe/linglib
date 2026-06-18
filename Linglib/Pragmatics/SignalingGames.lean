@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.DecisionTheory
+import Linglib.Semantics.Questions.DecisionTheory
 
 /-!
 # Signaling Games — credible communication
