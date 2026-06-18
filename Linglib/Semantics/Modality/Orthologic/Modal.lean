@@ -51,7 +51,11 @@ namespace Orthologic
     Per-instance frames may witness all three conditions. -/
 structure ModalCompatFrame (S : Type*) extends CompatFrame S where
   access : S → S → Prop
-  access_refl : ∀ x, access x x
+  access_refl : Std.Refl access
+
+/-- Accessibility is reflexive (accessor for the bundled `Std.Refl`). -/
+theorem ModalCompatFrame.accessRefl {S : Type*} (F : ModalCompatFrame S) (x : S) :
+    F.access x x := F.access_refl.refl x
 
 /-- Box operator: `□A = {x | R(x) ⊆ A}`.
     [holliday-mandelkern-2024] eq. (3). -/
@@ -101,7 +105,7 @@ instance diamond_apply_decidable {S : Type*} [Fintype S] (F : ModalCompatFrame S
 theorem T_axiom_general {S : Type*}
     (F : ModalCompatFrame S) (A : Set S) (x : S)
     (h : x ∈ box F A) : x ∈ A :=
-  h x (F.access_refl x)
+  h x (F.accessRefl x)
 
 -- ════════════════════════════════════════════════════
 -- § 3. R-Regularity, Knowability, Epistemic Frames
@@ -179,7 +183,7 @@ theorem wittgensteinLaw {S : Type*} (F : ModalCompatFrame S) (hK : IsKnowable F)
   -- `compat x y`. But `◇A = orthoNeg (box (orthoNeg A))`, so `x ∈ ◇A`
   -- forbids any compat-witness in `box (orthoNeg A)`. Contradiction.
   have hxCompatY : F.toCompatFrame.compat x y :=
-    hy y (F.access_refl y) y (F.toCompatFrame.compat_refl y)
+    hy y (F.accessRefl y) y (F.toCompatFrame.refl y)
   exact hxDiam y hxCompatY hyBox
 
 namespace EpistemicCompatFrame

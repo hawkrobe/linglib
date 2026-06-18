@@ -1,5 +1,6 @@
 import Linglib.Semantics.Modality.Orthologic.Frames
 import Linglib.Core.Order.Ortholattice
+import Linglib.Core.Order.Orthoframe
 import Mathlib.Data.SetLike.Basic
 
 /-!
@@ -60,11 +61,11 @@ theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
   · exact Or.inl h
   · right
     rw [mem_orthoNeg] at h
-    push_neg at h
+    push Not at h
     obtain ⟨y, hxy, hyA⟩ := h
     refine ⟨y, hxy, fun z hyz hzN => ?_⟩
     rw [mem_orthoNeg] at hzN
-    exact hzN y ((F.compat_symm _ _).mp hyz) hyA
+    exact hzN y (hyz.symm) hyA
 
 /-- Regular sets are closed under intersection. -/
 theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
@@ -91,7 +92,7 @@ theorem disj_isRegular (F : CompatFrame S) (A B : Set S) :
 /-- The empty set is regular (vacuously: take `y = x` by reflexivity). -/
 theorem empty_isRegular (F : CompatFrame S) : IsRegular F (∅ : Set S) := by
   intro x
-  exact Or.inr ⟨x, F.compat_refl x, fun _ _ h => h.elim⟩
+  exact Or.inr ⟨x, F.refl x, fun _ _ h => h.elim⟩
 
 /-- The full set is regular (trivially). -/
 theorem univ_isRegular (F : CompatFrame S) : IsRegular F (Set.univ : Set S) :=
@@ -109,15 +110,15 @@ theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
       rw [mem_orthoNeg] at hx
       have hyN : ¬ y ∈ orthoNeg F A := hx y hxy
       rw [mem_orthoNeg] at hyN
-      push_neg at hyN
+      push Not at hyN
       obtain ⟨z, hyz, hzA⟩ := hyN
       exact hy z hyz hzA
   · intro x hxA
     rw [mem_orthoNeg]
     intro y hxy
     rw [mem_orthoNeg]
-    push_neg
-    exact ⟨x, (F.compat_symm _ _).mp hxy, hxA⟩
+    push Not
+    exact ⟨x, hxy.symm, hxA⟩
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Bundled Type RegularProp F
@@ -198,12 +199,12 @@ instance : Lattice (RegularProp F) where
     intro x hxA
     show x ∈ disj F (A : Set S) (B : Set S)
     intro y hxy hy
-    exact hy.1 x ((F.compat_symm _ _).mp hxy) hxA
+    exact hy.1 x (hxy.symm) hxA
   le_sup_right A B := by
     intro x hxB
     show x ∈ disj F (A : Set S) (B : Set S)
     intro y hxy hy
-    exact hy.2 x ((F.compat_symm _ _).mp hxy) hxB
+    exact hy.2 x (hxy.symm) hxB
   sup_le A B C hAC hBC := by
     intro x hx
     -- hx : x ∈ disj F A.carrier B.carrier
@@ -216,7 +217,7 @@ instance : Lattice (RegularProp F) where
       rcases habs with hyN | hyN
       all_goals
         rw [mem_orthoNeg] at hyN
-        push_neg at hyN
+        push Not at hyN
       · obtain ⟨z, hyz, hzA⟩ := hyN
         exact hy z hyz (hAC hzA)
       · obtain ⟨z, hyz, hzB⟩ := hyN
@@ -238,7 +239,7 @@ instance instOrthocomplementedLattice : OrthocomplementedLattice (RegularProp F)
     exact hxBN y hxy (hAB hyA)
   inf_compl_le_bot A := by
     intro x hx
-    exact hx.2 x (F.compat_refl x) hx.1
+    exact hx.2 x (F.refl x) hx.1
   top_le_sup_compl A := by
     intro x _
     show x ∈ disj F (A : Set S) (orthoNeg F (A : Set S))
@@ -246,8 +247,58 @@ instance instOrthocomplementedLattice : OrthocomplementedLattice (RegularProp F)
     -- hy : y ∈ orthoNeg F A ∩ orthoNeg F (orthoNeg F A)
     -- Apply hy.2 (= y ∈ orthoNeg² A) at z = y via reflexivity:
     -- y ∉ orthoNeg F A. Contradicts hy.1.
-    exact hy.2 y (F.compat_refl y) hy.1
+    exact hy.2 y (F.refl y) hy.1
 
 end RegularProp
+
+/-! ### Bridge to the abstract orthoframe construction -/
+
+open Order
+
+/-- The orthogonality (incompatibility) orthoframe of a compatibility frame:
+    `x ⊥ y ↔ ¬ compat x y`. Symmetry and irreflexivity come from symmetry and
+    reflexivity of `compat`. -/
+def CompatFrame.toOrthoframe (F : CompatFrame S) : Orthoframe S where
+  ortho x y := ¬ F.compat x y
+  ortho_symm := ⟨fun _ _ h hc => h hc.symm⟩
+  ortho_irrefl := ⟨fun a h => h (F.refl a)⟩
+
+/-- `orthoNeg` is the `upperPolar` of the orthogonality relation. -/
+theorem orthoNeg_eq_upperPolar (F : CompatFrame S) (A : Set S) :
+    orthoNeg F A = upperPolar F.toOrthoframe.ortho A := by
+  ext x
+  constructor
+  · intro hx a ha hc
+    exact hx a hc.symm ha
+  · intro hx y hxy hyA
+    exact hx hyA hxy.symm
+
+/-- `IsRegular` is the double-orthonegation fixed-point condition. -/
+theorem isRegular_iff_orthoNeg_orthoNeg (F : CompatFrame S) (A : Set S) :
+    IsRegular F A ↔ orthoNeg F (orthoNeg F A) = A :=
+  ⟨orthoNeg_orthoNeg_of_isRegular F, fun h => h ▸ orthoNeg_isRegular F _⟩
+
+/-- The `◇`-regular sets of `F` are exactly the concept extents of its
+    orthogonality relation; Holliday–Mandelkern's Proposition 4.8 is mathlib's
+    `upperPolar_lowerPolar_upperPolar` (see `Core.Order.Orthoframe`). -/
+theorem isRegular_iff_isExtent (F : CompatFrame S) (A : Set S) :
+    IsRegular F A ↔ IsExtent F.toOrthoframe.ortho A := by
+  rw [isRegular_iff_orthoNeg_orthoNeg, isExtent_iff,
+      orthoNeg_eq_upperPolar, orthoNeg_eq_upperPolar,
+      upperPolar_eq_lowerPolar F.toOrthoframe.ortho]
+
+/-- **The bridge.** `RegularProp F` is order-isomorphic to the ortholattice of
+    regular propositions of its orthogonality orthoframe (`Orthoframe.Reg`) —
+    i.e. the concept extents of `¬ compat`. The hand-built
+    `OrthocomplementedLattice (RegularProp F)` and the abstract `Concept`-based
+    one coincide. -/
+def RegularProp.equivReg (F : CompatFrame S) :
+    RegularProp F ≃o Orthoframe.Reg F.toOrthoframe where
+  toFun A := Concept.ofIsExtent F.toOrthoframe.ortho A.carrier
+    ((isRegular_iff_isExtent F A.carrier).mp A.regular')
+  invFun c := ⟨c.extent, (isRegular_iff_isExtent F c.extent).mpr c.isExtent_extent⟩
+  left_inv := fun _ => rfl
+  right_inv := fun _ => Concept.ext rfl
+  map_rel_iff' := Iff.rfl
 
 end Orthologic
