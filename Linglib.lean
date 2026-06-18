@@ -2227,6 +2227,7 @@ import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Semantics.Supervaluation.TCS
 -- Theories: Semantics.Modality.Orthologic (Holliday-Mandelkern possibility semantics for epistemic modals)
 import Linglib.Semantics.Modality.Orthologic.Frames
+import Linglib.Semantics.Modality.Orthologic.Lifting
 import Linglib.Semantics.Modality.Orthologic.Modal
 import Linglib.Semantics.Modality.Orthologic.RegularProp
 -- Theories: Semantics.Montague (Montague architecture)
