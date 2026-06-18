@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Orthoframe
+import Mathlib.Order.Irreducible
 
 /-!
 # Representation of ortholattices by orthoframes
@@ -21,7 +22,8 @@ order-reflecting), and — for a `CompleteOrthocomplementedLattice` — the
 **isomorphism** `representation : L ≃o (ofOrtholattice V).Reg` over any join-dense
 `V`. The orthocomplement preservation (`represent_compl`, the heart) falls out of the
 `upperPolar` computation `upperPolar_Iic`; no De Morgan over the join is needed.
-Remaining (follow-up): Corollary 4.14 (finite ortholattice via join-irreducibles).
+Corollary 4.14 (`representationFinite`) specialises the isomorphism to a
+well-founded (e.g. finite) ortholattice, taking `V` to be the join-irreducibles.
 -/
 
 open Order Set
@@ -221,6 +223,25 @@ def representation (hV : JoinDense V) : L ≃o (ofOrtholattice V).Reg where
   left_inv := sSup_represent_extent hV
   right_inv := represent_surjective hV
   map_rel_iff' := represent_le_iff hV
+
+/-! ### Corollary 4.14 — the finite case via join-irreducibles -/
+
+/-- The join-irreducibles are join-dense in a well-founded ortholattice (every
+    finite ortholattice is well-founded): each element is the least upper bound of
+    the join-irreducibles below it, by `exists_supIrred_decomposition`. -/
+theorem joinDense_supIrred [WellFoundedLT L] : JoinDense {a : L | SupIrred a} := by
+  intro a
+  refine ⟨fun b hb => hb.2, fun u hu => ?_⟩
+  obtain ⟨s, hs, hsIrred⟩ := exists_supIrred_decomposition a
+  rw [← hs]
+  exact Finset.sup_le fun b hb => hu ⟨hsIrred hb, hs ▸ Finset.le_sup hb⟩
+
+/-- **Corollary 4.14** ([holliday-mandelkern-2024]): a finite (more generally,
+    well-founded) ortholattice is order-isomorphic to `Orthoframe.Reg` of the
+    orthoframe on its join-irreducibles. -/
+def representationFinite [WellFoundedLT L] :
+    L ≃o (ofOrtholattice {a : L | SupIrred a}).Reg :=
+  representation joinDense_supIrred
 
 end Iso
 
