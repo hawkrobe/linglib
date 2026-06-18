@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Probe
 import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Sequence.Basic
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!
@@ -47,6 +48,8 @@ the two Hungarian clause types reproduce the two values of the binary
 namespace Egressy2026
 
 open Tense (EmbeddedTenseReading SOTParameter availableReadings)
+open SequenceOfTense
+open Core.Order (notAfter before after)
 open Minimalist
 open Hungarian.Predicates
 
@@ -119,50 +122,82 @@ theorem sot_opaque_above_say (cs : ComplementSize)
   omega
 
 
-/-! ### The reading rule (language-independent) and the predictions -/
+/-! ### The Egressy license and the predictions
 
-/-- The language-independent rule mapping a boundary's transparency to the
-    available embedded-tense readings: a transparent boundary licenses both the
-    back-shifted and the simultaneous reading (SOT deletion is optional), an
-    opaque boundary only the back-shifted one. -/
-def readingsOf (transparent : Bool) : List EmbeddedTenseReading :=
-  if transparent then [.shifted, .simultaneous] else [.shifted]
+The Sequence-of-Tense rule is a `SequenceOfTense.LocalLicense`: the `Say`-boundary
+size gate, refined by an agreeing-past gate (SOT deletion needs an agreeing
+`PAST`). Built from the shared schemas, so the predictions are the foundation's
+`Simultaneous`/`Backshifted`, not a study-local reading function. -/
 
-/-- The embedded-tense readings available for a clause type — derived from its
-    size via `transparentToSOTAgree`, not stipulated. -/
-def ClauseType.availableReadings (ct : ClauseType) : List EmbeddedTenseReading :=
-  readingsOf ct.complementSize.transparentToSOTAgree
+/-- The `Say` boundary as a framework-neutral `Clause.Size`. -/
+def sayBoundary : Clause.Size := ComplementSize.sayP.toClauseSize
 
-/-- Non-speech-reporting (TP) clauses have *both* readings. -/
+/-- A clause node: a tense cell (`notAfter` = past, `after` = future — the
+    ungated reading set of [kauf-zeijlstra-2018]) and the neutral size of its
+    `ClauseType`. -/
+def clauseNode (tense : Finset Ordering) (ct : ClauseType) : Node :=
+  ⟨tense, ct.complementSize.toClauseSize⟩
+
+/-- A past matrix clause (the container; only its tense matters to licensing). -/
+def pastMatrix : Node := ⟨notAfter, 0⟩
+
+/-- The agreeing-past gate: SOT deletion needs both the container and the
+    contained clause to be morphologically past ([ogihara-1996]). -/
+def agreeingPast : Node → Node → Bool :=
+  fun a c => (a.tense == notAfter) && (c.tense == notAfter)
+
+/-- [egressy-2026]'s license: the `Say`-boundary size gate refined by the
+    agreeing-past gate. The size gate blocks simultaneity in speech-reporting
+    (SayP) clauses; the agreeing-past refinement additionally blocks it under an
+    intervening future (see `ex18`). -/
+def egressyLicense : LocalLicense := (sizeGatedLicense sayBoundary).gate agreeingPast
+
+/-- The framework-neutral `Clause.transparentTo` at the `Say` boundary reproduces
+    the Minimalist `ComplementSize.transparentToSOTAgree` — the bridge that
+    justifies stating SOT over `Clause.Size` rather than `Cat`. -/
+theorem transparentToSOTAgree_iff_clause (cs : ComplementSize) :
+    cs.transparentToSOTAgree = true ↔ Clause.transparentTo cs.toClauseSize sayBoundary := by
+  simp [ComplementSize.transparentToSOTAgree, ComplementSize.toClauseSize, sayBoundary,
+    ComplementSize.sayP, ComplementSize.fLevel, Clause.transparentTo_iff]
+
+/-- Bridge from licensed atoms to the legacy `EmbeddedTenseReading` (atoms are
+    canonical; this adapter feeds the binary `SOTParameter` comparison). -/
+def toReadings (s : Finset Ordering) : List EmbeddedTenseReading :=
+  (if Backshifted s then [EmbeddedTenseReading.shifted] else []) ++
+  (if Simultaneous s then [EmbeddedTenseReading.simultaneous] else [])
+
+/-- Non-speech-reporting (TP) clauses license both readings. -/
 theorem nonSpeech_both :
-    ClauseType.nonSpeechReporting.availableReadings = [.shifted, .simultaneous] := by decide
+    Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) ∧
+    Backshifted  (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting)) := by decide
 
-/-- Speech-reporting (SayP) clauses have *only* the back-shifted reading. -/
+/-- Speech-reporting (SayP) clauses license only the back-shifted reading. -/
 theorem speech_backshift_only :
-    ClauseType.speechReporting.availableReadings = [.shifted] := by decide
+    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) ∧
+    Backshifted    (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) := by decide
 
-/-- The core asymmetry: the simultaneous reading is blocked exactly in
-    speech-reporting clauses. -/
+/-- The core asymmetry: simultaneity is blocked exactly in speech-reporting clauses. -/
 theorem simultaneous_iff_nonSpeech (ct : ClauseType) :
-    .simultaneous ∈ ct.availableReadings ↔ ct = .nonSpeechReporting := by
+    Simultaneous (egressyLicense pastMatrix (clauseNode notAfter ct)) ↔ ct = .nonSpeechReporting := by
   cases ct <;> decide
 
 
 /-! ### Unification with the binary SOT parameter
 
-[egressy-2026]'s point is that Hungarian is *not* at a language-wide "SOT
-stage": its two clause types realize the two values of the binary
-`SOTParameter` ([ogihara-sharvit-2012]) clause-internally. A non-speech-reporting
-clause behaves like an English (`.relative`) complement; a speech-reporting one
-like a Japanese (`.absolute`) complement. -/
+Hungarian is *not* at a language-wide "SOT stage": its two clause types realize
+the two values of the binary `SOTParameter` ([ogihara-sharvit-2012])
+clause-internally — a non-speech-reporting clause behaves like an English
+(`.relative`) complement, a speech-reporting one like a Japanese (`.absolute`) one. -/
 
 /-- A non-speech-reporting clause reproduces the English (`.relative`) parameter. -/
 theorem nonSpeech_eq_relative :
-    ClauseType.nonSpeechReporting.availableReadings = availableReadings .relative := by decide
+    toReadings (egressyLicense pastMatrix (clauseNode notAfter .nonSpeechReporting))
+      = availableReadings .relative := by decide
 
 /-- A speech-reporting clause reproduces the Japanese (`.absolute`) parameter. -/
 theorem speech_eq_absolute :
-    ClauseType.speechReporting.availableReadings = availableReadings .absolute := by decide
+    toReadings (egressyLicense pastMatrix (clauseNode notAfter .speechReporting))
+      = availableReadings .absolute := by decide
 
 
 /-! ### Empirical data ([egressy-2026], §2)
@@ -240,10 +275,10 @@ def allData : List SOTDatum :=
   [ex4_lat, ex5_hall, ex6_almodik, ex7_gondol, ex8_aggaszt,
    ex11_mond, ex11_rikolt, ex11_morog]
 
-/-- The grammatical prediction: the simultaneous reading is available iff the
-    clause is transparent to SOT-Agree. -/
+/-- The grammatical prediction via the Egressy license: is the simultaneous
+    reading available for this datum's clause type (under a past matrix)? -/
 def predictsSimultaneous (d : SOTDatum) : Bool :=
-  d.clauseType.complementSize.transparentToSOTAgree
+  decide (Simultaneous (egressyLicense pastMatrix (clauseNode notAfter d.clauseType)))
 
 /-- Every datum's observed simultaneous availability matches the prediction. -/
 theorem all_data_match :
@@ -273,104 +308,53 @@ def directPerceptionData : List SOTDatum := [ex4_lat, ex5_hall, ex6_almodik]
     absence of the back-shifted reading is pragmatic. -/
 theorem direct_perception_simultaneous :
     directPerceptionData.all (fun d =>
-      d.simultaneousObserved && (d.clauseType.availableReadings == [.shifted, .simultaneous])) = true := by
+      d.simultaneousObserved &&
+        (toReadings (egressyLicense pastMatrix (clauseNode notAfter d.clauseType))
+          == [EmbeddedTenseReading.shifted, EmbeddedTenseReading.simultaneous])) = true := by
   decide
 
 
 /-! ### Multiple embedding and locality ([egressy-2026], §2.3)
 
 Simultaneity is computed **locally** between structurally adjacent clauses
-([ogihara-1996]): the simultaneous reading between a container and its
-immediate complement is licensed iff the complement is transparent
-(non-speech-reporting) *and* both carry `PAST` (an agreeing past for SOT
-deletion). The type of a non-adjacent clause is irrelevant. -/
+([ogihara-1996]): `SequenceOfTense.profile` folds `egressyLicense` pairwise down
+the chain (matrix first). The simultaneity at each level is `Simultaneous` of
+the licensed atoms. -/
 
-/-- Tense of a clause, coarse enough for the locality facts (past vs. the
-    intervening future of [ogihara-1995]'s past-under-*will*-under-past). -/
-inductive ClTense where
-  | past | pres | fut
-  deriving DecidableEq, Repr
-
-/-- Is this `PAST`? (SOT deletion needs an agreeing past above.) -/
-def ClTense.isPast : ClTense → Bool
-  | .past => true
-  | _     => false
-
-/-- A node in an embedding chain: its tense and clause type. -/
-structure ClauseNode where
-  tense : ClTense
-  type  : ClauseType
-  deriving Repr
-
-/-- A multiple-embedding configuration: the matrix tense and the embedded
-    clauses, ordered from the highest complement down to the deepest. -/
-structure EmbConfig where
-  matrixTense : ClTense
-  embedded : List ClauseNode
-
-/-- Local SOT licensing for a (container, contained) adjacency: the contained
-    clause is read simultaneously with its container iff it is transparent
-    (non-speech) and both are `PAST`. -/
-def simLicensed (containerTense : ClTense) (contained : ClauseNode) : Bool :=
-  containerTense.isPast && contained.tense.isPast &&
-    contained.type.complementSize.transparentToSOTAgree
-
-/-- The per-level simultaneity profile, top-to-bottom: for each embedded clause,
-    whether it is simultaneous with its immediate container. -/
-def simProfileAux : ClTense → List ClauseNode → List Bool
-  | _, [] => []
-  | container, c :: rest => simLicensed container c :: simProfileAux c.tense rest
-
-/-- The simultaneity profile of a configuration. -/
-def EmbConfig.simProfile (cfg : EmbConfig) : List Bool :=
-  simProfileAux cfg.matrixTense cfg.embedded
+/-- The per-level simultaneity profile of an embedded chain under a past matrix. -/
+def simProfile (chain : List Node) : List Bool :=
+  (profile egressyLicense pastMatrix chain).map (fun s => decide (Simultaneous s))
 
 /-- ex. (16): shout > see > be. The intermediate (content of the shout) is
     speech-reporting → back-shifted; the deepest (Mari's perception) is
     non-speech-reporting → simultaneous. Only adjacent clauses interact. -/
-def ex16 : EmbConfig where
-  matrixTense := .past
-  embedded := [⟨.past, .speechReporting⟩, ⟨.past, .nonSpeechReporting⟩]
+def ex16 : List Node :=
+  [clauseNode notAfter .speechReporting, clauseNode notAfter .nonSpeechReporting]
+theorem ex16_profile : simProfile ex16 = [false, true] := by decide
 
-theorem ex16_profile : ex16.simProfile = [false, true] := by decide
+/-- ex. (17): hear > shout > be. Intermediate (perception of the shouting) →
+    simultaneous; deepest (content of the shout) → back-shifted. Opposite of (16). -/
+def ex17 : List Node :=
+  [clauseNode notAfter .nonSpeechReporting, clauseNode notAfter .speechReporting]
+theorem ex17_profile : simProfile ex17 = [true, false] := by decide
 
-/-- ex. (17): hear > shout > be. The intermediate (Mari's perception of the
-    shouting) is non-speech-reporting → simultaneous; the deepest (content of
-    the shout) is speech-reporting → back-shifted. The opposite of (16). -/
-def ex17 : EmbConfig where
-  matrixTense := .past
-  embedded := [⟨.past, .nonSpeechReporting⟩, ⟨.past, .speechReporting⟩]
+/-- ex. (10): dream > see > be, all non-speech-reporting → simultaneous throughout. -/
+def ex10 : List Node :=
+  [clauseNode notAfter .nonSpeechReporting, clauseNode notAfter .nonSpeechReporting]
+theorem ex10_profile : simProfile ex10 = [true, true] := by decide
 
-theorem ex17_profile : ex17.simProfile = [true, false] := by decide
-
-/-- ex. (10): dream > see > be, all non-speech-reporting → simultaneous on both
-    levels. -/
-def ex10 : EmbConfig where
-  matrixTense := .past
-  embedded := [⟨.past, .nonSpeechReporting⟩, ⟨.past, .nonSpeechReporting⟩]
-
-theorem ex10_profile : ex10.simProfile = [true, true] := by decide
-
-/-- ex. (15): shout > growl > be, all speech-reporting → back-shifted on both
-    levels. -/
-def ex15 : EmbConfig where
-  matrixTense := .past
-  embedded := [⟨.past, .speechReporting⟩, ⟨.past, .speechReporting⟩]
-
-theorem ex15_profile : ex15.simProfile = [false, false] := by decide
+/-- ex. (15): shout > growl > be, all speech-reporting → back-shifted throughout. -/
+def ex15 : List Node :=
+  [clauseNode notAfter .speechReporting, clauseNode notAfter .speechReporting]
+theorem ex15_profile : simProfile ex15 = [false, false] := by decide
 
 /-- [ogihara-1995]'s ex. (18) (English): *said* > *will claim* > *was*. The
-    deepest `was` has no simultaneous reading with the matrix `said`: its
-    immediate container is the future *will claim*, so there is no agreeing
-    `PAST` above it. Simultaneity needs the *next lowest* tense to be past —
-    locality is over the agreeing tense, independently of clause size. (English
-    is size-insensitive in [egressy-2026]'s terms, so the SayP opacity is not
-    what is at issue here; the `simLicensed` agreeing-past conjunct is.) -/
-def ex18 : EmbConfig where
-  matrixTense := .past
-  embedded := [⟨.fut, .speechReporting⟩, ⟨.past, .speechReporting⟩]
-
-theorem ex18_no_simultaneous : ex18.simProfile = [false, false] := by decide
+    intervening future *will* (`after`) is not an agreeing past, so the deepest
+    `was` has no simultaneous reading — the `agreeingPast` gate blocks it,
+    independently of size (English is size-insensitive here). -/
+def ex18 : List Node :=
+  [clauseNode after .speechReporting, clauseNode notAfter .speechReporting]
+theorem ex18_no_simultaneous : simProfile ex18 = [false, false] := by decide
 
 
 /-! ### Williams-Cycle support over a de re alternative ([egressy-2026], §3.3)
@@ -382,15 +366,11 @@ it predicts the simultaneous reading for speech-reporting clauses too. The
 observed asymmetry (`speech_backshift_only`) therefore favors the SOT-Agree
 analysis, whose dependency obeys the Williams Cycle. -/
 
-/-- The size-blind prediction of an unbounded res-movement de re account. -/
-def deReReadings (_ct : ClauseType) : List EmbeddedTenseReading := [.shifted, .simultaneous]
-
-/-- The de re account overgenerates: it makes the simultaneous reading available
-    for speech-reporting clauses, contradicting the data, whereas the SOT-Agree
-    account correctly blocks it. -/
+/-- The de re account overgenerates: size-blind, it licenses simultaneity for a
+    speech-reporting clause, which `egressyLicense` correctly blocks. -/
 theorem de_re_overgenerates :
-    .simultaneous ∈ deReReadings .speechReporting ∧
-    .simultaneous ∉ ClauseType.speechReporting.availableReadings := by decide
+    Simultaneous (deReLicense pastMatrix (clauseNode notAfter .speechReporting)) ∧
+    ¬ Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) := by decide
 
 
 end Egressy2026
