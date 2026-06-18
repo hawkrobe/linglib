@@ -2,6 +2,7 @@ import Mathlib.Order.Compare
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Union
+import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Comparison categories
@@ -148,5 +149,56 @@ def IsConvex (s : Finset Ordering) : Prop := .lt ∈ s → .gt ∈ s → .eq ∈
 
 instance (s : Finset Ordering) : Decidable (IsConvex s) := by
   unfold IsConvex; infer_instance
+
+/-! ### Relation-algebra laws
+
+The point algebra is a genuine relation algebra: `comp` is associative with unit
+`overlapping`, `converse` is an involution that anti-distributes over `comp`,
+`comp` is additive and monotone, and the convex fragment is closed under `comp`,
+`∩`, and `converse`. All are finite checks over the 8-element carrier (`decide`,
+kernel-verified). mathlib has the *concrete* relation category (`SetRel α β` with
+`comp`/`inv`, and `CategoryTheory.RelCat`) but no abstract relation-algebra class;
+this is the *finite, decidable* point algebra, bridged to the concrete one by
+`holds`: `holds s` is the relation `{(a, b) | compare a b ∈ s}` (a `SetRel α α`),
+with `converse` mirroring `SetRel.inv` (`holds_converse`) and `comp` sound w.r.t.
+`SetRel.comp` (`holds_comp`) — exact only when the order realizes every
+intermediate point. -/
+
+theorem comp_assoc (r s t : Finset Ordering) :
+    comp (comp r s) t = comp r (comp s t) := by revert r s t; decide
+
+theorem overlapping_comp (s : Finset Ordering) : comp overlapping s = s := by
+  revert s; decide
+
+theorem comp_overlapping (s : Finset Ordering) : comp s overlapping = s := by
+  revert s; decide
+
+theorem empty_comp (s : Finset Ordering) : comp ∅ s = ∅ := by revert s; decide
+
+theorem comp_empty (s : Finset Ordering) : comp s ∅ = ∅ := by revert s; decide
+
+theorem converse_converse (s : Finset Ordering) : converse (converse s) = s := by
+  revert s; decide
+
+theorem converse_comp (r s : Finset Ordering) :
+    converse (comp r s) = comp (converse s) (converse r) := by revert r s; decide
+
+theorem comp_union_left (r s t : Finset Ordering) :
+    comp (r ∪ s) t = comp r t ∪ comp s t := by revert r s t; decide
+
+theorem comp_union_right (r s t : Finset Ordering) :
+    comp r (s ∪ t) = comp r s ∪ comp r t := by revert r s t; decide
+
+theorem comp_mono {r₁ r₂ s₁ s₂ : Finset Ordering} (hr : r₁ ⊆ r₂) (hs : s₁ ⊆ s₂) :
+    comp r₁ s₁ ⊆ comp r₂ s₂ := by revert hr hs; revert r₁ r₂ s₁ s₂; decide
+
+theorem isConvex_comp {r s : Finset Ordering} (hr : IsConvex r) (hs : IsConvex s) :
+    IsConvex (comp r s) := by revert hr hs; revert r s; decide
+
+theorem isConvex_inter {r s : Finset Ordering} (hr : IsConvex r) (hs : IsConvex s) :
+    IsConvex (r ∩ s) := by revert hr hs; revert r s; decide
+
+theorem isConvex_converse {s : Finset Ordering} (hs : IsConvex s) :
+    IsConvex (converse s) := by revert hs; revert s; decide
 
 end Core.Order
