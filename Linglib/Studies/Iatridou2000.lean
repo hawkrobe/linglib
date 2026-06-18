@@ -1,4 +1,6 @@
 import Linglib.Semantics.Modality.Exclusion
+import Linglib.Data.Examples.Iatridou2000
+import Linglib.Fragments.English.Conditionals
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -35,6 +37,7 @@ namespace Iatridou2000
 open Semantics.Modality.Exclusion
 open Semantics.Context
 open Semantics.Mood (subjShift)
+open Data.Examples (LinguisticExample)
 
 /-! ### Iatridou's counterfactual typology -/
 
@@ -136,22 +139,6 @@ theorem pastCF_tower_depth {W E P T : Type*} (c : KContext W E P T)
 
 /-! ### Datum structures -/
 
-/-- A morphological datum for a counterfactual conditional: the verb morphology
-    in the antecedent and consequent of one CF type in one language. -/
-structure CFMorphologyDatum where
-  language : String
-  cfType : CounterfactualType
-  /-- Verb morphology in the antecedent (descriptive). -/
-  antecedentForm : String
-  /-- Verb morphology in the consequent (descriptive). -/
-  consequentForm : String
-  hasPastMorph : Bool
-  hasImpfMorph : Bool
-  hasSubjMorph : Bool
-  pastLayers : Nat
-  gloss : String
-  deriving Repr
-
 /-- Whether a language requires subjunctive in CFs, and whether it has a distinct
     past subjunctive. -/
 structure SubjRequirementDatum where
@@ -160,85 +147,32 @@ structure SubjRequirementDatum where
   cfRequiresSubjunctive : Bool
   deriving Repr
 
-/-! ### English data -/
+/-! ### Per-language imperfective ([iatridou-2000], generalization 2)
 
-/-- English FLV: "If he were to take the exam tomorrow, …" -/
-def english_flv : CFMorphologyDatum where
-  language := "English"; cfType := .flv
-  antecedentForm := "were to V"; consequentForm := "would V"
-  hasPastMorph := true; hasImpfMorph := false; hasSubjMorph := false; pastLayers := 1
-  gloss := "If he were to take the exam tomorrow, he would pass."
+The CF-type *layer counts* (generalization 1) are language-neutral properties of
+`CounterfactualType.exclFCount` — see the data theorems below — so there is no
+per-(language × CF-type) morphology table. The one morphological ingredient that varies
+cross-linguistically is the imperfective: a per-language fact. -/
 
-/-- English PresCF: "If he knew the answer, …" -/
-def english_presCF : CFMorphologyDatum where
-  language := "English"; cfType := .presCF
-  antecedentForm := "V-ed"; consequentForm := "would V"
-  hasPastMorph := true; hasImpfMorph := false; hasSubjMorph := false; pastLayers := 1
-  gloss := "If he knew the answer, he would tell us."
+/-- The languages [iatridou-2000] draws CF morphology from. -/
+inductive CFLanguage where
+  | english | greek | french
+  deriving DecidableEq, Repr
 
-/-- English PastCF: "If he had taken the exam, …" -/
-def english_pastCF : CFMorphologyDatum where
-  language := "English"; cfType := .pastCF
-  antecedentForm := "had V-ed"; consequentForm := "would have V-ed"
-  hasPastMorph := true; hasImpfMorph := false; hasSubjMorph := false; pastLayers := 2
-  gloss := "If he had taken the exam yesterday, he would have passed."
+/-- Whether a language uses imperfective morphology in counterfactuals: Greek and French
+    do, English does not. Uniform across CF types within a language. Grounded in the
+    `impf` tags of `Data/Examples/Iatridou2000.json` by `imperfective_grounded` below. -/
+def usesImperfectiveInCF : CFLanguage → Bool
+  | .english => false
+  | .greek => true
+  | .french => true
 
-/-! ### Greek data -/
-
-/-- Greek FLV ([iatridou-2000], ex (8)): "an + past + impf, tha + past + impf".
-    Greek FLV and PresCF have identical morphology; the distinction is by
-    predicate type and temporal adverbials, not by morphology (§4, p. 250). -/
-def greek_flv : CFMorphologyDatum where
-  language := "Greek"; cfType := .flv
-  antecedentForm := "an + past + impf"; consequentForm := "tha + past + impf"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 1
-  gloss := "An eperne afto to siropi, tha yinotan kala."
-
-/-- Greek PresCF: morphologically identical to the Greek FLV (ex (8)); the CF
-    reading arises from the individual-level/stative predicate (Tables 1–2). -/
-def greek_presCF : CFMorphologyDatum where
-  language := "Greek"; cfType := .presCF
-  antecedentForm := "an + past + impf"; consequentForm := "tha + past + impf"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 1
-  gloss := "An iksere ti apandisi, tha mas tin elege."
-
-/-- Greek PastCF ([iatridou-2000], ex (5)): the pluperfect (ixe + participle) adds
-    a second past layer, distinguishing PastCF from PresCF/FLV. -/
-def greek_pastCF : CFMorphologyDatum where
-  language := "Greek"; cfType := .pastCF
-  antecedentForm := "an + past + past + impf"; consequentForm := "tha + past + past + impf"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 2
-  gloss := "An ixe pari to siropi, tha ixe yini kala."
-
-/-! ### French data -/
-
-/-- French FLV: imparfait, conditionnel. -/
-def french_flv : CFMorphologyDatum where
-  language := "French"; cfType := .flv
-  antecedentForm := "imparfait"; consequentForm := "conditionnel"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 1
-  gloss := "S'il passait l'examen demain, il réussirait."
-
-/-- French PresCF: imparfait, conditionnel. -/
-def french_presCF : CFMorphologyDatum where
-  language := "French"; cfType := .presCF
-  antecedentForm := "imparfait"; consequentForm := "conditionnel"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 1
-  gloss := "S'il savait la réponse, il nous le dirait."
-
-/-- French PastCF ([iatridou-2000], ex (99)): plus-que-parfait, conditionnel passé.
-    French uses past *indicative*, not the (lost productive) past subjunctive. -/
-def french_pastCF : CFMorphologyDatum where
-  language := "French"; cfType := .pastCF
-  antecedentForm := "plus-que-parfait"; consequentForm := "conditionnel passé"
-  hasPastMorph := true; hasImpfMorph := true; hasSubjMorph := false; pastLayers := 2
-  gloss := "S'il avait passé l'examen hier, il aurait réussi."
-
-/-- All morphological data. -/
-def allData : List CFMorphologyDatum :=
-  [english_flv, english_presCF, english_pastCF,
-   greek_flv, greek_presCF, greek_pastCF,
-   french_flv, french_presCF, french_pastCF]
+-- The conditional connective used by the English CF data is `if`, which marks both
+-- hypothetical and premise conditionals. The connective is the theory-neutral,
+-- Fragment-level lexical fact (cf. Mizuno's use of Japanese `eba` / Mandarin `ruguo`);
+-- the CF-type morphology classification below is [iatridou-2000]'s analysis (this study).
+#guard English.Conditionals.if_.markerType ==
+  Semantics.Conditionals.ConditionalMarkerType.both
 
 /-! ### Subjunctive-requirement data ([iatridou-2000], §6.1) -/
 
@@ -266,19 +200,59 @@ def allSubjData : List SubjRequirementDatum :=
 
 /-! ### Data theorems -/
 
-/-- Every CF type uses past morphology (generalization 1). -/
-theorem all_cfs_have_past : ∀ d ∈ allData, d.hasPastMorph = true := by decide
+/-- Generalization 1 ([iatridou-2000]): every CF type carries past morphology — it has at
+    least one ExclF (past) layer. A property of the `CounterfactualType` taxonomy, not a
+    per-row stipulation. -/
+theorem cf_has_past_layer (t : CounterfactualType) : 1 ≤ t.exclFCount := by
+  cases t <;> decide
 
-/-- Each datum's past-layer count matches the ExclF count of its CF type — so
-    PastCFs (2 layers) carry strictly more than FLVs/PresCFs (1 layer). -/
-theorem pastLayers_eq_exclFCount :
-    ∀ d ∈ allData, d.pastLayers = d.cfType.exclFCount := by decide
+/-- The pluperfect's extra layer ([iatridou-2000] §3): PastCF carries strictly more ExclF
+    layers than the one-layer FLV and PresCF. -/
+theorem flv_presCF_fewer_layers :
+    CounterfactualType.flv.exclFCount < CounterfactualType.pastCF.exclFCount ∧
+    CounterfactualType.presCF.exclFCount < CounterfactualType.pastCF.exclFCount := by decide
+
+/-- Generalization 2 ([iatridou-2000]): the imperfective is not a universal ingredient of
+    counterfactuality — some languages use it, others do not. -/
+theorem imperfective_not_universal :
+    (∃ l, usesImperfectiveInCF l = true) ∧ (∃ l, usesImperfectiveInCF l = false) :=
+  ⟨⟨.greek, rfl⟩, ⟨.english, rfl⟩⟩
 
 /-- Each language satisfies [iatridou-2000]'s subjunctive generalization (§6.1). -/
 theorem subj_generalization :
     ∀ d ∈ allSubjData,
       iatridouSubjGeneralization d.hasPastSubjunctive d.cfRequiresSubjunctive := by
   unfold iatridouSubjGeneralization; decide
+
+/-! ### Grounding in the glossed stimuli
+
+The generalizations are grounded in the verified glossed sentences of
+`Data/Examples/Iatridou2000.json` (generated `Iatridou2000.Examples`): all three CF types
+are attested, and the per-language imperfective fact matches the examples' `impf` tags. -/
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (e : LinguisticExample) (k : String) : Option String :=
+  (e.paperFeatures.find? (·.1 == k)).map (·.2)
+
+/-- The `impf` tag read as a Bool. -/
+def impfTag (e : LinguisticExample) : Option Bool :=
+  match featureOf e "impf" with
+  | some "yes" => some true
+  | some "no"  => some false
+  | _          => none
+
+/-- All three CF types are attested in the English stimuli. -/
+theorem cf_types_attested :
+    featureOf Examples.en_flv "cf_type" = some "flv" ∧
+    featureOf Examples.en_presCF "cf_type" = some "presCF" ∧
+    featureOf Examples.en_pastCF "cf_type" = some "pastCF" := by decide
+
+/-- `usesImperfectiveInCF` matches the example `impf` tags — English (no), Greek (yes),
+    French (yes). Flipping a JSON tag or the generalization breaks this. -/
+theorem imperfective_grounded :
+    impfTag Examples.en_flv = some (usesImperfectiveInCF .english) ∧
+    impfTag Examples.gr_flv = some (usesImperfectiveInCF .greek) ∧
+    impfTag Examples.fr_flv = some (usesImperfectiveInCF .french) := by decide
 
 /-! ### ContextTower bridge -/
 
@@ -306,8 +280,9 @@ theorem presCF_modal_exclF : ExclF .modal presCFTower := by
 theorem presCF_no_temporal_exclF : ¬ ExclF .temporal presCFTower := by
   unfold ExclF presCFTower actualTower actualCtx subjShift; decide
 
-/-- Tower depth (1) matches the English PresCF past-layer count (1). -/
-theorem presCF_depth_matches_data : presCFTower.depth = english_presCF.pastLayers := rfl
+/-- Tower depth (1) matches the PresCF ExclF-layer count (1). -/
+theorem presCF_depth_matches_data :
+    presCFTower.depth = CounterfactualType.presCF.exclFCount := rfl
 
 /-- PastCF: a modal shift (subjunctive, world) plus a temporal shift (an extra
     past layer, time → -5). -/
@@ -325,10 +300,20 @@ theorem pastCF_modal_exclF : ExclF .modal pastCFTower := by
 theorem pastCF_temporal_exclF : ExclF .temporal pastCFTower := by
   unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift temporalShift; decide
 
-/-- Tower depth (2) matches the English PastCF past-layer count (2). -/
-theorem pastCF_depth_matches_data : pastCFTower.depth = english_pastCF.pastLayers := rfl
+/-- Tower depth (2) matches the PastCF ExclF-layer count (2). -/
+theorem pastCF_depth_matches_data :
+    pastCFTower.depth = CounterfactualType.pastCF.exclFCount := rfl
 
 /-- Even in a PastCF tower (depth 2), the origin context is preserved. -/
 theorem pastCF_origin_preserved : pastCFTower.origin = actualCtx := rfl
+
+/-- The present/past-CF ExclF diagnostics are witnessed by Iatridou's (2a)/(2b): (2a) is
+    a PresCF (one modal ExclF, tower depth 1), (2b) a PastCF (two ExclFs, depth 2). Ties
+    the glossed (2)-stimuli to the ContextTower model. -/
+theorem cf_diagnostics_examples :
+    featureOf Examples.ex2a "cf_type" = some "presCF" ∧
+    featureOf Examples.ex2b "cf_type" = some "pastCF" ∧
+    presCFTower.depth = 1 ∧ pastCFTower.depth = 2 :=
+  ⟨by decide, by decide, rfl, rfl⟩
 
 end Iatridou2000

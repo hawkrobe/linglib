@@ -182,11 +182,11 @@ theorem flv_anderson_correlation (lang : Language) :
   cases lang <;> rfl
 
 /-- Cross-reference to [iatridou-2000]: English has X-marking available for FLV
-    ([mizuno-2024], §4.2), and Iatridou independently classifies the English FLV as
-    carrying a single past layer. The morphological count is Iatridou's; Mizuno cites
+    ([mizuno-2024], §4.2), and Iatridou independently classifies the FLV as carrying a
+    single ExclF (past) layer. The morphological count is Iatridou's; Mizuno cites
     [iatridou-2000] for the FLV connection without adopting her exclusion analysis. -/
 theorem english_flv_matches_iatridou :
-    flvXMarkingAvailable .english = true ∧ Iatridou2000.english_flv.pastLayers = 1 :=
+    flvXMarkingAvailable .english = true ∧ Iatridou2000.CounterfactualType.flv.exclFCount = 1 :=
   ⟨rfl, rfl⟩
 
 /-- FLV X-marking availability read from the example data (`flv_xmarking` tag). -/
