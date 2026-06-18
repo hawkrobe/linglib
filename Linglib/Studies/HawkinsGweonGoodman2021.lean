@@ -124,7 +124,7 @@ def asymMeaning (l : Bool × Bool × Bool) (u : Utt) (w : AsymObj) : Bool :=
 
 Both configurations use the canonical PMF reference-game operators
 (`RSA.L0OfBoolMeaning`, `RSA.S1Belief`, `PMF.posterior`), as in
-`Studies/TesslerFranke2020PMF` and `Studies/FrankGoodman2012PMF`: `L0` is
+`Studies/TesslerFranke2020PMF`: `L0` is
 uniform on an utterance's extension, `S1` is the belief-based speaker with
 `α = 2` and no cost, and `L1` is the Bayesian posterior under a uniform world
 prior. The asymmetric model marginalizes the hidden-object profile via
