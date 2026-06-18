@@ -7,42 +7,21 @@ import Mathlib.Data.SetLike.Basic
 # Regular Propositions of a Compatibility Frame
 [holliday-mandelkern-2024]
 
-The bundled type `RegularProp F` of `◇`-regular subsets of a compatibility
-frame `F`, equipped with its `OrthocomplementedLattice` structure.
+The `◇`-regular subsets of a compatibility frame `F` form an orthocomplemented
+lattice. Rather than re-derive it, this file identifies that lattice with the
+abstract concept lattice of the orthogonality relation `¬ compat`:
+`CompatFrame.Regular F := Orthoframe.Regular F.toOrthoframe` (mathlib `Order.Concept`,
+via `Core.Order.Orthoframe`), so the `OrthocomplementedLattice` structure and
+Holliday–Mandelkern's Proposition 4.8 (`compl_compl`) come for free.
 
-## Construction
+What this file contributes is the **decidable construction interface**: the
+`IsRegular` predicate (a bounded-quantifier `Prop`, hence `decide`-able on finite
+frames), its closure lemmas, the bridge `isRegular_iff_isExtent`, and the smart
+constructor `CompatFrame.regOf` building a `Regular` element from a regularity proof.
 
-`RegularProp F` is a bundled structure (mathlib `Submodule`/`SetLike`
-pattern) wrapping a `Set S` together with its regularity proof. The
-underlying mathematical object is `(regularClosure F).fixedPoints` —
-the fixed points of the `c_◇` closure operator (Holliday–Mandelkern
-footnote 19); this file proves the lattice operations on these fixed
-points form an orthocomplemented lattice.
-
-The four `OrthocomplementedLattice` axioms:
-
-| axiom | difficulty | uses regularity? |
-|-------|------------|------------------|
-| `compl_antitone`  | trivial from `orthoNeg` def      | no  |
-| `inf_compl_le_bot`| one-liner via reflexivity         | no  |
-| `top_le_sup_compl`| from `orthoNeg²` containment       | no  |
-| `compl_compl`     | the substantive theorem (Prop 4.8) | YES |
-
-The load-bearing fact is `orthoNeg_orthoNeg_of_isRegular` — the
-involutivity of `orthoNeg` on regular sets, which is precisely
-Holliday–Mandelkern's Proposition 4.8.
-
-## Architecture
-
-This file depends on:
-- `Linglib.Semantics.Modality.Orthologic.Frames` — substrate
-  (compatibility frames, `orthoNeg`, `disj`, `IsRegular`, `regularClosure`).
-- `Linglib.Core.Order.Ortholattice` — abstract `OrthocomplementedLattice`
-  typeclass.
-
-The `RegularProp F` carrier is the natural mathlib subobject for any
-future ortholattice consumer (BSML, inquisitive semantics, truthmaker
-semantics — all of which traffic in non-Boolean propositional algebras).
+## Main definitions
+* `CompatFrame.toOrthoframe`, `CompatFrame.Regular`, `CompatFrame.regOf`.
+* `isRegular_iff_isExtent` — `IsRegular F` is `IsExtent` of the orthogonality relation.
 -/
 
 namespace Orthologic
@@ -118,128 +97,6 @@ theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
     push Not
     exact ⟨x, hxy.symm, hxA⟩
 
-/-! ### The Bundled Type RegularProp F -/
-
-/-- A regular proposition of a compatibility frame `F`: a `Set S` satisfying
-    the `◇`-regularity condition. Bundled as a structure with `SetLike`
-    instance, mirroring mathlib's subobject pattern (`Submodule`, `Subgroup`,
-    `Subalgebra`). -/
-@[ext]
-structure RegularProp (F : CompatFrame S) where
-  /-- The underlying set of the regular proposition. -/
-  carrier : Set S
-  /-- The regularity proof. -/
-  regular' : IsRegular F carrier
-
-namespace RegularProp
-
-instance : SetLike (RegularProp F) S where
-  coe := RegularProp.carrier
-  coe_injective := by
-    rintro ⟨A, _⟩ ⟨B, _⟩ (rfl : A = B)
-    rfl
-
-@[simp] theorem mem_mk (A : Set S) (hA : IsRegular F A) (x : S) :
-    x ∈ (⟨A, hA⟩ : RegularProp F) ↔ x ∈ A := Iff.rfl
-
-@[simp] theorem coe_mk (A : Set S) (hA : IsRegular F A) :
-    ((⟨A, hA⟩ : RegularProp F) : Set S) = A := rfl
-
-theorem regular (A : RegularProp F) : IsRegular F (A : Set S) := A.regular'
-
-/-! ### Lattice Operations -/
-
-instance : Min (RegularProp F) where
-  min A B := ⟨(A : Set S) ∩ (B : Set S), inter_isRegular A.regular B.regular⟩
-
-instance : Max (RegularProp F) where
-  max A B := ⟨disj F (A : Set S) (B : Set S), disj_isRegular F _ _⟩
-
-instance : Bot (RegularProp F) where
-  bot := ⟨∅, empty_isRegular F⟩
-
-instance : Top (RegularProp F) where
-  top := ⟨Set.univ, univ_isRegular F⟩
-
-instance : Compl (RegularProp F) where
-  compl A := ⟨orthoNeg F (A : Set S), orthoNeg_isRegular F _⟩
-
-@[simp] theorem coe_inf (A B : RegularProp F) :
-    ((A ⊓ B : RegularProp F) : Set S) = (A : Set S) ∩ (B : Set S) := rfl
-
-@[simp] theorem coe_sup (A B : RegularProp F) :
-    ((A ⊔ B : RegularProp F) : Set S) = disj F (A : Set S) (B : Set S) := rfl
-
-@[simp] theorem coe_bot : ((⊥ : RegularProp F) : Set S) = ∅ := rfl
-
-@[simp] theorem coe_top : ((⊤ : RegularProp F) : Set S) = Set.univ := rfl
-
-@[simp] theorem coe_compl (A : RegularProp F) :
-    ((Aᶜ : RegularProp F) : Set S) = orthoNeg F (A : Set S) := rfl
-
-/-! ### Lattice + BoundedOrder Instance -/
-
-instance : PartialOrder (RegularProp F) := PartialOrder.ofSetLike (RegularProp F) S
-
-instance : Lattice (RegularProp F) where
-  inf := (· ⊓ ·)
-  sup := (· ⊔ ·)
-  inf_le_left A B := fun _ hx => hx.1
-  inf_le_right A B := fun _ hx => hx.2
-  le_inf A B C hAB hAC := fun x hx => ⟨hAB hx, hAC hx⟩
-  le_sup_left A B := by
-    intro x hxA
-    show x ∈ disj F (A : Set S) (B : Set S)
-    intro y hxy hy
-    exact hy.1 x (hxy.symm) hxA
-  le_sup_right A B := by
-    intro x hxB
-    show x ∈ disj F (A : Set S) (B : Set S)
-    intro y hxy hy
-    exact hy.2 x (hxy.symm) hxB
-  sup_le A B C hAC hBC := by
-    intro x hx
-    -- hx : x ∈ disj F A.carrier B.carrier
-    by_contra hxC
-    rcases C.regular x with hxC' | ⟨y, hxy, hy⟩
-    · exact hxC hxC'
-    · have habs : ¬ (y ∈ orthoNeg F (A : Set S) ∩ orthoNeg F (B : Set S)) :=
-        hx y hxy
-      rw [Set.mem_inter_iff, not_and_or] at habs
-      rcases habs with hyN | hyN
-      all_goals
-        rw [mem_orthoNeg] at hyN
-        push Not at hyN
-      · obtain ⟨z, hyz, hzA⟩ := hyN
-        exact hy z hyz (hAC hzA)
-      · obtain ⟨z, hyz, hzB⟩ := hyN
-        exact hy z hyz (hBC hzB)
-
-instance : BoundedOrder (RegularProp F) where
-  bot_le := fun _ _ hx => hx.elim
-  le_top := fun _ _ _ => trivial
-
-/-! ### OrthocomplementedLattice Instance -/
-
-instance instOrthocomplementedLattice : OrthocomplementedLattice (RegularProp F) where
-  compl_compl A := SetLike.coe_injective <|
-    orthoNeg_orthoNeg_of_isRegular F A.regular
-  compl_antitone {A B} hAB := by
-    intro x hxBN y hxy hyA
-    exact hxBN y hxy (hAB hyA)
-  inf_compl_le_bot A := by
-    intro x hx
-    exact hx.2 x (F.refl x) hx.1
-  top_le_sup_compl A := by
-    intro x _
-    show x ∈ disj F (A : Set S) (orthoNeg F (A : Set S))
-    intro y hxy hy
-    -- hy : y ∈ orthoNeg F A ∩ orthoNeg F (orthoNeg F A)
-    -- Apply hy.2 (= y ∈ orthoNeg² A) at z = y via reflexivity:
-    -- y ∉ orthoNeg F A. Contradicts hy.1.
-    exact hy.2 y (F.refl y) hy.1
-
-end RegularProp
 
 /-! ### Bridge to the abstract orthoframe construction -/
 
@@ -277,18 +134,37 @@ theorem isRegular_iff_isExtent (F : CompatFrame S) (A : Set S) :
       orthoNeg_eq_upperPolar, orthoNeg_eq_upperPolar,
       upperPolar_eq_lowerPolar F.toOrthoframe.ortho]
 
-/-- **The bridge.** `RegularProp F` is order-isomorphic to the ortholattice of
-    regular propositions of its orthogonality orthoframe (`Orthoframe.Regular`) —
-    i.e. the concept extents of `¬ compat`. The hand-built
-    `OrthocomplementedLattice (RegularProp F)` and the abstract `Concept`-based
-    one coincide. -/
-def RegularProp.equivReg (F : CompatFrame S) :
-    RegularProp F ≃o Orthoframe.Regular F.toOrthoframe where
-  toFun A := Concept.ofIsExtent F.toOrthoframe.ortho A.carrier
-    ((isRegular_iff_isExtent F A.carrier).mp A.regular')
-  invFun c := ⟨c.extent, (isRegular_iff_isExtent F c.extent).mpr c.isExtent_extent⟩
-  left_inv := fun _ => rfl
-  right_inv := fun _ => Concept.ext rfl
-  map_rel_iff' := Iff.rfl
+/-! ### The ortholattice of regular propositions -/
+
+/-- The regular propositions of `F`: the ortholattice `Orthoframe.Regular` of its
+    orthogonality orthoframe (the concept extents of `¬ compat`); Holliday–Mandelkern's
+    Proposition 4.8 is mathlib's `upperPolar_lowerPolar_upperPolar`. The decidable
+    `IsRegular` predicate is the construction interface — use `regOf` to build an
+    element from a regularity proof (e.g. `by decide` on a finite frame). -/
+abbrev CompatFrame.Regular (F : CompatFrame S) : Type _ := Orthoframe.Regular F.toOrthoframe
+
+/-- Build a regular proposition from a set and an `IsRegular` proof. -/
+def CompatFrame.regOf (F : CompatFrame S) (A : Set S) (h : IsRegular F A) : F.Regular :=
+  Concept.ofIsExtent F.toOrthoframe.ortho A ((isRegular_iff_isExtent F A).mp h)
+
+@[simp] theorem CompatFrame.coe_regOf (A : Set S) (h : IsRegular F A) :
+    (F.regOf A h : Set S) = A := rfl
+
+@[simp] theorem CompatFrame.mem_regOf (A : Set S) (h : IsRegular F A) (x : S) :
+    x ∈ F.regOf A h ↔ x ∈ A := Iff.rfl
+
+@[simp] theorem CompatFrame.Regular.coe_inf (A B : F.Regular) :
+    ((A ⊓ B : F.Regular) : Set S) = (A : Set S) ∩ (B : Set S) := rfl
+
+@[simp] theorem CompatFrame.Regular.coe_top :
+    ((⊤ : F.Regular) : Set S) = Set.univ := rfl
+
+@[simp] theorem CompatFrame.Regular.coe_bot :
+    ((⊥ : F.Regular) : Set S) = ∅ := Concept.extent_bot_eq_empty F.toOrthoframe.ortho
+
+@[simp] theorem CompatFrame.Regular.coe_compl (A : F.Regular) :
+    ((Aᶜ : F.Regular) : Set S) = orthoNeg F (A : Set S) := by
+  show (Aᶜ).extent = orthoNeg F A.extent
+  rw [orthoNeg_eq_upperPolar, Concept.extent_compl, ← Concept.upperPolar_extent]
 
 end Orthologic

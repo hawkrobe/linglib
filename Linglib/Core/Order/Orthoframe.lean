@@ -66,6 +66,21 @@ instance instCompl [Std.Symm r] : Compl (Concept S S r) where
 @[simp] theorem intent_compl [Std.Symm r] (c : Concept S S r) :
     cᶜ.intent = upperPolar r c.intent := rfl
 
+/-- A concept of a single-sorted relation is determined by its extent, so concepts
+    form a `SetLike` family with `↑c = c.extent`. (No `PartialOrder` diamond: `SetLike`
+    supplies only `Membership`/coercions, and `Concept`'s order is already `extent`-lifted.) -/
+instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
+  coe c := c.extent
+  coe_injective _ _ h := extent_injective h
+
+/-- For an irreflexive relation the bottom concept has empty extent (no point is
+    orthogonal to everything, including itself). -/
+theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ := by
+  rw [Concept.extent_bot]
+  ext x
+  simp only [Set.mem_empty_iff_false, iff_false]
+  exact fun hx => Std.Irrefl.irrefl x (hx (Set.mem_univ x))
+
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
     lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
     is mathlib's concept lattice; only the orthocomplement and its four axioms
