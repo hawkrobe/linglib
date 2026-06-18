@@ -1,5 +1,8 @@
 import Mathlib.Order.Compare
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Image
+import Mathlib.Data.Finset.Union
+import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Comparison categories
@@ -59,5 +62,143 @@ def unrestricted : Finset Ordering := {.lt, .eq, .gt}
   · simp [compare_lt_iff_lt.mpr h]
   · simp [compare_eq_iff_eq.mpr h]
   · simp [compare_gt_iff_gt.mpr h]
+
+/-! ### Relation-algebra structure: converse and composition
+
+Beyond `Finset`'s Boolean-lattice structure (`⊆`, `∩`, `∪`), `Finset Ordering`
+carries a **converse** (swap `lt`/`gt`) and a **composition** with unit
+`overlapping` — the **point algebra** (the point analogue of `AllenRelation`'s
+interval relations). `comp r s` over-approximates which category `a` stands in to
+`c` given `holds r a b` and `holds s b c`: the transitivity / path-consistency
+operation. Generic over any `[LinearOrder α]`, so one algebra structures time,
+degree, or any other linear domain alike. -/
+
+/-- Swapping the arguments of `compare` swaps the ordering. -/
+theorem swap_compare (a b : α) : (compare a b).swap = compare b a := by
+  rcases lt_trichotomy a b with h | h | h
+  · rw [compare_lt_iff_lt.mpr h, compare_gt_iff_gt.mpr h]; rfl
+  · rw [compare_eq_iff_eq.mpr h, compare_eq_iff_eq.mpr h.symm]; rfl
+  · rw [compare_gt_iff_gt.mpr h, compare_lt_iff_lt.mpr h]; rfl
+
+/-- Converse of a comparison category: swap `lt` and `gt`. -/
+def converse (s : Finset Ordering) : Finset Ordering := s.image Ordering.swap
+
+@[simp] theorem holds_converse (s : Finset Ordering) (a b : α) :
+    holds (converse s) a b ↔ holds s b a := by
+  simp only [holds, converse, Finset.mem_image]
+  constructor
+  · rintro ⟨o, ho, hbo⟩
+    rw [← swap_compare b a] at hbo
+    exact (Ordering.swap_inj.mp hbo) ▸ ho
+  · intro hba
+    exact ⟨compare b a, hba, swap_compare b a⟩
+
+/-- Base composition table for the point algebra: which categories `a` may stand
+    in to `c` given `compare a b` and `compare b c`. -/
+def compBase : Ordering → Ordering → Finset Ordering
+  | .lt, .lt => before
+  | .lt, .eq => before
+  | .eq, o   => {o}
+  | .gt, .eq => after
+  | .gt, .gt => after
+  | _,   _   => unrestricted
+
+/-- Composition of comparison categories (transitivity / path-consistency):
+    the relations `a` may stand in to `c` given `r` between `a, b` and `s`
+    between `b, c`. -/
+def comp (r s : Finset Ordering) : Finset Ordering :=
+  r.biUnion fun o₁ => s.biUnion fun o₂ => compBase o₁ o₂
+
+/-- Base soundness: the actual comparison of `a` and `c` lies in the composed
+    category determined by `compare a b` and `compare b c`. -/
+theorem compare_mem_compBase (a b c : α) :
+    compare a c ∈ compBase (compare a b) (compare b c) := by
+  rcases lt_trichotomy a b with hab | hab | hab <;>
+    rcases lt_trichotomy b c with hbc | hbc | hbc
+  · rw [compare_lt_iff_lt.mpr hab, compare_lt_iff_lt.mpr hbc,
+        compare_lt_iff_lt.mpr (hab.trans hbc)]; decide
+  · rw [compare_lt_iff_lt.mpr hab, compare_eq_iff_eq.mpr hbc,
+        compare_lt_iff_lt.mpr (lt_of_lt_of_eq hab hbc)]; decide
+  · rw [compare_lt_iff_lt.mpr hab, compare_gt_iff_gt.mpr hbc]
+    exact (holds_unrestricted a c).2 trivial
+  · rw [compare_eq_iff_eq.mpr hab, compare_lt_iff_lt.mpr hbc,
+        compare_lt_iff_lt.mpr (lt_of_eq_of_lt hab hbc)]; decide
+  · rw [compare_eq_iff_eq.mpr hab, compare_eq_iff_eq.mpr hbc,
+        compare_eq_iff_eq.mpr (hab.trans hbc)]; decide
+  · rw [compare_eq_iff_eq.mpr hab, compare_gt_iff_gt.mpr hbc,
+        compare_gt_iff_gt.mpr (lt_of_lt_of_eq hbc hab.symm)]; decide
+  · rw [compare_gt_iff_gt.mpr hab, compare_lt_iff_lt.mpr hbc]
+    exact (holds_unrestricted a c).2 trivial
+  · rw [compare_gt_iff_gt.mpr hab, compare_eq_iff_eq.mpr hbc,
+        compare_gt_iff_gt.mpr (lt_of_eq_of_lt hbc.symm hab)]; decide
+  · rw [compare_gt_iff_gt.mpr hab, compare_gt_iff_gt.mpr hbc,
+        compare_gt_iff_gt.mpr (hbc.trans hab)]; decide
+
+/-- Composition is **sound**: it over-approximates the transitive relation. If
+    `a` stands in `r` to `b` and `b` in `s` to `c`, then `a` stands in `comp r s`
+    to `c`. -/
+theorem holds_comp {a b c : α} {r s : Finset Ordering}
+    (hab : holds r a b) (hbc : holds s b c) : holds (comp r s) a c := by
+  simp only [holds, comp, Finset.mem_biUnion]
+  exact ⟨compare a b, hab, compare b c, hbc, compare_mem_compBase a b c⟩
+
+/-- A comparison category is **convex** unless it is the non-convex `{lt, gt}`
+    ("≠", skipping `eq`) — the one relation that takes the point algebra out of
+    its path-consistency-complete fragment. -/
+def IsConvex (s : Finset Ordering) : Prop := .lt ∈ s → .gt ∈ s → .eq ∈ s
+
+instance (s : Finset Ordering) : Decidable (IsConvex s) := by
+  unfold IsConvex; infer_instance
+
+/-! ### Relation-algebra laws
+
+The point algebra is a genuine relation algebra: `comp` is associative with unit
+`overlapping`, `converse` is an involution that anti-distributes over `comp`,
+`comp` is additive and monotone, and the convex fragment is closed under `comp`,
+`∩`, and `converse`. All are finite checks over the 8-element carrier (`decide`,
+kernel-verified). mathlib has the *concrete* relation category (`SetRel α β` with
+`comp`/`inv`, and `CategoryTheory.RelCat`) but no abstract relation-algebra class;
+this is the *finite, decidable* point algebra, bridged to the concrete one by
+`holds`: `holds s` is the relation `{(a, b) | compare a b ∈ s}` (a `SetRel α α`),
+with `converse` mirroring `SetRel.inv` (`holds_converse`) and `comp` sound w.r.t.
+`SetRel.comp` (`holds_comp`) — exact only when the order realizes every
+intermediate point. -/
+
+theorem comp_assoc (r s t : Finset Ordering) :
+    comp (comp r s) t = comp r (comp s t) := by revert r s t; decide
+
+theorem overlapping_comp (s : Finset Ordering) : comp overlapping s = s := by
+  revert s; decide
+
+theorem comp_overlapping (s : Finset Ordering) : comp s overlapping = s := by
+  revert s; decide
+
+theorem empty_comp (s : Finset Ordering) : comp ∅ s = ∅ := by revert s; decide
+
+theorem comp_empty (s : Finset Ordering) : comp s ∅ = ∅ := by revert s; decide
+
+theorem converse_converse (s : Finset Ordering) : converse (converse s) = s := by
+  revert s; decide
+
+theorem converse_comp (r s : Finset Ordering) :
+    converse (comp r s) = comp (converse s) (converse r) := by revert r s; decide
+
+theorem comp_union_left (r s t : Finset Ordering) :
+    comp (r ∪ s) t = comp r t ∪ comp s t := by revert r s t; decide
+
+theorem comp_union_right (r s t : Finset Ordering) :
+    comp r (s ∪ t) = comp r s ∪ comp r t := by revert r s t; decide
+
+theorem comp_mono {r₁ r₂ s₁ s₂ : Finset Ordering} (hr : r₁ ⊆ r₂) (hs : s₁ ⊆ s₂) :
+    comp r₁ s₁ ⊆ comp r₂ s₂ := by revert hr hs; revert r₁ r₂ s₁ s₂; decide
+
+theorem isConvex_comp {r s : Finset Ordering} (hr : IsConvex r) (hs : IsConvex s) :
+    IsConvex (comp r s) := by revert hr hs; revert r s; decide
+
+theorem isConvex_inter {r s : Finset Ordering} (hr : IsConvex r) (hs : IsConvex s) :
+    IsConvex (r ∩ s) := by revert hr hs; revert r s; decide
+
+theorem isConvex_converse {s : Finset Ordering} (hs : IsConvex s) :
+    IsConvex (converse s) := by revert hs; revert s; decide
 
 end Core.Order
