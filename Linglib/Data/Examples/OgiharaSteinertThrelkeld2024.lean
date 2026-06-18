@@ -1,0 +1,216 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `OgiharaSteinertThrelkeld2024` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/OgiharaSteinertThrelkeld2024.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace OgiharaSteinertThrelkeld2024.Examples`.
+-/
+
+namespace OgiharaSteinertThrelkeld2024.Examples
+
+open Data.Examples
+
+def ost2024_after_veridical : LinguisticExample :=
+  { id := "ost2024_after_veridical"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He left after she arrived."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "He left after she arrived."
+    context := "*After* is veridical: the sentence entails that she arrived."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")]
+    comment := "after(leave, arrive) |= arrive"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_before_nonveridical : LinguisticExample :=
+  { id := "ost2024_before_nonveridical"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He left before she arrived."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "He left before she arrived."
+    context := "*Before* is non-veridical: compatible with her arriving (veridical), not arriving (counterfactual), or indeterminate (non-committal)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
+    comment := "before(leave, arrive) |/= arrive"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_before_counterfactual : LinguisticExample :=
+  { id := "ost2024_before_counterfactual"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The bomb exploded before anyone defused it."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "The bomb exploded before anyone defused it."
+    context := "Counterfactual reading of *before*: the defusing did not occur ([beaver-condoravdi-2003], the \"barely prevented\" reading)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
+    comment := "before(explode, defuse) and not defuse"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_after_veridical_2 : LinguisticExample :=
+  { id := "ost2024_after_veridical_2"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She finished her coffee after he left."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "She finished her coffee after he left."
+    context := "*After* is veridical: the sentence entails that he left."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")]
+    comment := "after(finish, leave) |= leave"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_before_noncommittal : LinguisticExample :=
+  { id := "ost2024_before_noncommittal"
+    source := ⟨"beaver-condoravdi-2003", "(43)"⟩
+    reportedIn := some ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    language := "stan1293"
+    primaryText := "I left the party before there was any trouble."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I left the party before there was any trouble."
+    context := "Non-committal reading of *before*: implies trouble seemed likely but does not commit to whether it occurred. (B&C (22), the Supreme Court \"uncounted votes\" case, is counterfactual, not non-committal — B&C §6.)"
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
+    comment := "before(leave, trouble) |/= trouble (non-committal)"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_before_counterfactual_mozart : LinguisticExample :=
+  { id := "ost2024_before_counterfactual_mozart"
+    source := ⟨"beaver-condoravdi-2003", "(24)"⟩
+    reportedIn := some ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
+    language := "stan1293"
+    primaryText := "Mozart died before he finished the Requiem."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Mozart died before he finished the Requiem."
+    context := "Counterfactual reading of *before*: Mozart never finished the Requiem."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
+    comment := "before(die, finish) and not finish (counterfactual)"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_ohtani : LinguisticExample :=
+  { id := "ost2024_ohtani"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(20a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Unfortunately, the 2021 MLB season will be over before Shohei Ohtani earns his 10th win of the season."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Unfortunately, the 2021 MLB season will be over before Shohei Ohtani earns his 10th win of the season."
+    context := "Uttered in the middle of September 2021. The A-time is the end of the 2021 MLB season; the complement (Ohtani's 10th win) can only occur during the season, before the A-time — a counterexample to B&C's forward-branching alt(w,t)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")]
+    comment := "O&ST (20a). Complement temporally bounded before the A-time."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_snow : LinguisticExample :=
+  { id := "ost2024_snow"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(20b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "2020 might come to an end before it snows for the first time this year."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "2020 might come to an end before it snows for the first time this year."
+    context := "Uttered on Christmas Day 2020. *This year* refers to 2020; the first snow of 2020 can only occur in 2020, so a modal alternative placing it after 2020 does not work."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "bc_counterexample"), ("reading", "nonCommittal")]
+    comment := "O&ST (20b). Complement bounded to the end of 2020."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_nostradamus : LinguisticExample :=
+  { id := "ost2024_nostradamus"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(20c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "July 1999 will come to an end before Nostradamus' prophecy about the end of the world comes true."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "July 1999 will come to an end before Nostradamus' prophecy about the end of the world comes true."
+    context := "Uttered a few minutes before the end of July 1999. The prophecy (a King of terror in July 1999) can only come true in July 1999 — not after."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")]
+    comment := "O&ST (20c). Complement bounded to July 1999."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_noncommittal_available : LinguisticExample :=
+  { id := "ost2024_noncommittal_available"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(22a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary will leave the party before Bill gets drunk."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Mary will leave the party before Bill gets drunk."
+    context := "Non-committal reading available: Bill's getting drunk is a normal continuation of being at a party."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "true")]
+    comment := "getting drunk is a normal continuation of being at a party"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ost2024_noncommittal_unavailable : LinguisticExample :=
+  { id := "ost2024_noncommittal_unavailable"
+    source := ⟨"ogihara-steinert-threlkeld-2024", "(22b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary will leave the party before Quebec becomes an independent country."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Mary will leave the party before Quebec becomes an independent country."
+    context := "Non-committal reading unavailable (odd): Quebec's independence is not a contextually normal continuation of the party."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "false")]
+    comment := "Quebec independence is not a contextually normal continuation"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ost2024_after_veridical, ost2024_before_nonveridical, ost2024_before_counterfactual, ost2024_after_veridical_2, ost2024_before_noncommittal, ost2024_before_counterfactual_mozart, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
+
+end OgiharaSteinertThrelkeld2024.Examples

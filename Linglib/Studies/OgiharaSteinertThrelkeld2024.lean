@@ -6,6 +6,7 @@ import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 
 /-!
 # [ogihara-steinert-threlkeld-2024] — Data
@@ -31,12 +32,24 @@ temporal connectives *before* and *after*.
 
 namespace OgiharaSteinertThrelkeld2024
 
+open Data.Examples (LinguisticExample)
+open OgiharaSteinertThrelkeld2024.Examples
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (e : LinguisticExample) (k : String) : Option String :=
+  (e.paperFeatures.find? (·.1 == k)).map (·.2)
+
+/-- A `paperFeatures` flag read as a Bool (`true` iff the value is `"true"`). -/
+def flagOf (e : LinguisticExample) (k : String) : Bool := featureOf e k == some "true"
+
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Veridicality Judgments
 -- ════════════════════════════════════════════════════════════════
 
-/-- An empirical judgment about whether a temporal connective entails
-    the truth of its complement clause. -/
+/-- An empirical judgment about whether a temporal connective entails the truth of its
+    complement clause. Stimuli live in `Data/Examples/OgiharaSteinertThrelkeld2024.json`
+    (generated `OgiharaSteinertThrelkeld2024.Examples`); this record is derived from a
+    `LinguisticExample` by `ofVeridicality`. -/
 structure VeridicalityDatum where
   /-- The example sentence -/
   sentence : String
@@ -48,64 +61,43 @@ structure VeridicalityDatum where
   gloss : String
   deriving Repr
 
+/-- Derive a `VeridicalityDatum` from a generated `LinguisticExample`: the sentence is the
+    `primaryText`; the connective and complement-entailment are `paperFeatures` tags. -/
+def ofVeridicality (e : LinguisticExample) : VeridicalityDatum where
+  sentence := e.primaryText
+  connective := (featureOf e "connective").getD ""
+  complementEntailed := flagOf e "complement_entailed"
+  gloss := e.comment
+
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Core Veridicality Data
 -- ════════════════════════════════════════════════════════════════
 
 /-- "He left after she arrived" entails "she arrived". -/
-def after_veridical : VeridicalityDatum where
-  sentence := "He left after she arrived"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(leave, arrive) |= arrive"
+def after_veridical : VeridicalityDatum := ofVeridicality ost2024_after_veridical
 
-/-- "He left before she arrived" does NOT entail "she arrived".
-    Compatible with: she did arrive (veridical reading), she didn't
-    arrive (counterfactual reading, e.g. "before she could arrive"),
-    or indeterminate (non-committal reading). -/
-def before_nonveridical : VeridicalityDatum where
-  sentence := "He left before she arrived"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(leave, arrive) |/= arrive"
+/-- "He left before she arrived" does NOT entail "she arrived" (compatible with the
+    veridical, counterfactual, or non-committal reading). -/
+def before_nonveridical : VeridicalityDatum := ofVeridicality ost2024_before_nonveridical
 
-/-- "The bomb exploded before anyone defused it" — the complement
-    event (defusing) did NOT occur. This is the counterfactual reading
-    of *before* ([beaver-condoravdi-2003], "barely prevented"). -/
-def before_counterfactual : VeridicalityDatum where
-  sentence := "The bomb exploded before anyone defused it"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(explode, defuse) ∧ ¬defuse"
+/-- "The bomb exploded before anyone defused it" — counterfactual *before*: the defusing
+    did not occur ([beaver-condoravdi-2003], "barely prevented"). -/
+def before_counterfactual : VeridicalityDatum := ofVeridicality ost2024_before_counterfactual
 
 /-- "She finished her coffee after he left" entails "he left". -/
-def after_veridical_2 : VeridicalityDatum where
-  sentence := "She finished her coffee after he left"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(finish, leave) |= leave"
+def after_veridical_2 : VeridicalityDatum := ofVeridicality ost2024_after_veridical_2
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Additional Veridicality Data ([beaver-condoravdi-2003], §2)
 -- ════════════════════════════════════════════════════════════════
 
-/-- "I left the party before there was any trouble" — non-committal: implies trouble
-    seemed likely but does not commit to whether trouble occurred
-    ([beaver-condoravdi-2003], ex. 43). (B&C's (22), the Supreme Court "uncounted
-    votes" case, is *counterfactual*, not non-committal — see [beaver-condoravdi-2003] §6.) -/
-def before_noncommittal : VeridicalityDatum where
-  sentence := "I left the party before there was any trouble"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(leave, trouble) |/= trouble (non-committal)"
+/-- "I left the party before there was any trouble" — non-committal
+    ([beaver-condoravdi-2003], ex. 43; B&C's (22) Supreme Court case is counterfactual). -/
+def before_noncommittal : VeridicalityDatum := ofVeridicality ost2024_before_noncommittal
 
-/-- "Mozart died before he finished the Requiem" — counterfactual:
-    Mozart never finished the Requiem ([beaver-condoravdi-2003], ex. 24). -/
-def before_counterfactual_mozart : VeridicalityDatum where
-  sentence := "Mozart died before he finished the Requiem"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(die, finish) ∧ ¬finish (counterfactual)"
+/-- "Mozart died before he finished the Requiem" — counterfactual
+    ([beaver-condoravdi-2003], ex. 24). -/
+def before_counterfactual_mozart : VeridicalityDatum := ofVeridicality ost2024_before_counterfactual_mozart
 
 -- B&C's before/after logical-property asymmetries (antisymmetry, transitivity, NPI
 -- licensing) are Anscombe's ([anscombe-1964] §I-II), formalized canonically in
@@ -168,7 +160,7 @@ theorem bc_cannot_place_bounded_complement
     The complement (Ohtani's 10th win) can only occur during the season
     (before day 276). (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20a) -/
 def ost_counterexample_ohtani : BCCounterexampleDatum where
-  sentence := "Unfortunately, the 2021 MLB season will be over before Shohei Ohtani earns his 10th win of the season"
+  sentence := ost2024_ohtani.primaryText
   aTime := 276
   complementUpperBound := 275
   boundedBefore := by omega
@@ -180,7 +172,7 @@ def ost_counterexample_ohtani : BCCounterexampleDatum where
     proposal that posits a fictitious snow event after the end of 2020 does not
     work. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20b) -/
 def ost_counterexample_snow : BCCounterexampleDatum where
-  sentence := "2020 might come to an end before it snows for the first time this year"
+  sentence := ost2024_snow.primaryText
   aTime := 366
   complementUpperBound := 366
   boundedBefore := le_refl _
@@ -193,7 +185,7 @@ def ost_counterexample_snow : BCCounterexampleDatum where
     only come true if the world is destroyed in July 1999 — it cannot come true
     after the end of July 1999. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20c) -/
 def ost_counterexample_nostradamus : BCCounterexampleDatum where
-  sentence := "July 1999 will come to an end before Nostradamus' prophecy about the end of the world comes true"
+  sentence := ost2024_nostradamus.primaryText
   aTime := 31
   complementUpperBound := 31
   boundedBefore := le_refl _
@@ -215,25 +207,20 @@ structure NonCommittalDatum where
   explanation : String
   deriving Repr
 
-/-- "Mary will leave the party before Bill gets drunk."
-    Non-committal reading is available: maybe Bill gets drunk, maybe not.
-    B&C's Event Continuation Condition is satisfied (Bill getting drunk is
-    a normal continuation). (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
-def noncommittal_available : NonCommittalDatum where
-  sentence := "Mary will leave the party before Bill gets drunk"
-  nonCommittalAvailable := true
-  explanation := "getting drunk is a normal continuation of being at a party"
+/-- Derive a `NonCommittalDatum` from a generated `LinguisticExample`. -/
+def ofNonCommittal (e : LinguisticExample) : NonCommittalDatum where
+  sentence := e.primaryText
+  nonCommittalAvailable := flagOf e "noncommittal_available"
+  explanation := e.comment
 
-/-- "Mary will leave the party before Quebec becomes an independent country."
-    Non-committal reading is NOT available (sentence is odd): Quebec's
-    independence is not a normal continuation of the party. B&C's Event
-    Continuation Condition should block this, but the mechanism is unclear
-    for *before*-clauses with pragmatically impossible complements.
-    (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
-def noncommittal_unavailable : NonCommittalDatum where
-  sentence := "Mary will leave the party before Quebec becomes an independent country"
-  nonCommittalAvailable := false
-  explanation := "Quebec independence is not a contextually normal continuation"
+/-- "Mary will leave the party before Bill gets drunk" — non-committal reading available
+    (getting drunk is a normal continuation). (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
+def noncommittal_available : NonCommittalDatum := ofNonCommittal ost2024_noncommittal_available
+
+/-- "Mary will leave the party before Quebec becomes an independent country" — non-committal
+    reading unavailable (Quebec independence is not a normal continuation); B&C's Event
+    Continuation Condition should block this. (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
+def noncommittal_unavailable : NonCommittalDatum := ofNonCommittal ost2024_noncommittal_unavailable
 
 /-- The non-committal reading is sensitive to contextual plausibility:
     available when the complement is a normal continuation, unavailable
