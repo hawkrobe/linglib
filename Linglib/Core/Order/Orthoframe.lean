@@ -43,10 +43,8 @@ variable {S : Type*} (r : S → S → Prop)
 
 /-- For a symmetric relation the upper and lower polars coincide. -/
 theorem upperPolar_eq_lowerPolar [Std.Symm r] (s : Set S) :
-    upperPolar r s = lowerPolar r s := by
-  ext x
-  simp only [mem_upperPolar_iff, mem_lowerPolar_iff]
-  exact ⟨fun h _ ha => Std.Symm.symm _ _ (h ha), fun h _ ha => Std.Symm.symm _ _ (h ha)⟩
+    upperPolar r s = lowerPolar r s :=
+  Set.ext fun _ => ⟨fun h _ ha => Std.Symm.symm _ _ (h ha), fun h _ ha => Std.Symm.symm _ _ (h ha)⟩
 
 /-- For a symmetric relation the upper polar of any set is an extent. -/
 theorem isExtent_upperPolar [Std.Symm r] (s : Set S) : IsExtent r (upperPolar r s) := by
@@ -61,8 +59,7 @@ variable {S : Type*} (r : S → S → Prop)
 /-- Orthocomplement of a concept: the concept whose extent is the intent
     (`= upperPolar r`) of `c`. Well-defined because `r` is symmetric. -/
 instance instCompl [Std.Symm r] : Compl (Concept S S r) where
-  compl c := Concept.ofIsExtent r c.intent
-    (by rw [← c.upperPolar_extent]; exact Order.isExtent_upperPolar r c.extent)
+  compl c := .ofIsExtent r c.intent <| c.upperPolar_extent ▸ Order.isExtent_upperPolar r c.extent
 
 @[simp] theorem extent_compl [Std.Symm r] (c : Concept S S r) : cᶜ.extent = c.intent := rfl
 
@@ -75,27 +72,12 @@ instance instCompl [Std.Symm r] : Compl (Concept S S r) where
     are new. -/
 instance instOrthocomplementedLattice [Std.Symm r] [Std.Irrefl r] :
     OrthocomplementedLattice (Concept S S r) where
-  compl_compl c := by
-    apply Concept.ext
-    rw [extent_compl, intent_compl, Order.upperPolar_eq_lowerPolar r, c.lowerPolar_intent]
+  compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
   compl_antitone {c d} h := by
     show d.intent ⊆ c.intent
-    rw [← c.upperPolar_extent, ← d.upperPolar_extent]
-    exact upperPolar_anti r h
-  inf_compl_le_bot c := by
-    show (c ⊓ cᶜ).extent ⊆ (⊥ : Concept S S r).extent
-    rw [extent_inf, extent_compl]
-    intro x hx
-    exact absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
-  top_le_sup_compl c := by
-    show (univ : Set S) ⊆ (c ⊔ cᶜ).extent
-    rw [extent_sup, intent_compl]
-    have hdisj : c.intent ∩ upperPolar r c.intent = (∅ : Set S) := by
-      ext x
-      simp only [Set.mem_inter_iff, mem_upperPolar_iff, Set.mem_empty_iff_false, iff_false,
-        not_and]
-      exact fun hx hall => Std.Irrefl.irrefl x (hall hx)
-    rw [hdisj, lowerPolar_empty]
+    rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
+  inf_compl_le_bot c := fun x hx => absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
+  top_le_sup_compl c := fun _ _ a ha => absurd (ha.2 ha.1) (Std.Irrefl.irrefl a)
 
 end Concept
 
