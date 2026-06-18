@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Decoder
-import Linglib.Core.Agent.GumbelLuce
+import Linglib.Core.DecisionTheory.GumbelLuce
 
 /-!
 # Noise kernels — random utility models

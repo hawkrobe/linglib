@@ -1,5 +1,5 @@
-import Linglib.Core.Agent.ChoiceApproximations
-import Linglib.Core.Agent.RankOrderings
+import Linglib.Core.DecisionTheory.ChoiceApproximations
+import Linglib.Core.DecisionTheory.RankOrderings
 
 /-!
 # Semiorder–Ranking Bridge [luce-1959]

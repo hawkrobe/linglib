@@ -1,6 +1,6 @@
-import Linglib.Core.Agent.RationalAction
-import Linglib.Core.Agent.DecisionTheory
-import Linglib.Core.Agent.BayesianUpdate
+import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.DecisionTheory.BayesianUpdate
 import Mathlib.Analysis.Convex.Jensen
 
 /-!

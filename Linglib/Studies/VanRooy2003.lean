@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Core.Agent.DecisionTheory
+import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Semantics.Questions.DecisionTheoretic
 
 /-!

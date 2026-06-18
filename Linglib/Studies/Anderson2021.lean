@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Agent.Learning
+import Linglib.Core.DecisionTheory.Learning
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.CommitmentSpace
 import Linglib.Discourse.DistributionalCG
