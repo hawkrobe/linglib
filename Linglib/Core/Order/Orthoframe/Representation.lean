@@ -33,27 +33,6 @@ open Order Set
 def JoinDense {L : Type*} [Preorder L] (V : Set L) : Prop :=
   ∀ a : L, IsLUB {b | b ∈ V ∧ b ≤ a} a
 
-/-- A **complete orthocomplemented lattice**: a complete lattice with an
-    orthocomplement satisfying the ortholattice axioms. Bundling avoids the
-    `Lattice` diamond that `[CompleteLattice] [OrthocomplementedLattice]` would
-    create — the single `Lattice` comes from `CompleteLattice`. -/
-class CompleteOrthocomplementedLattice (α : Type*) extends CompleteLattice α, Compl α where
-  /-- Complement is involutive. -/
-  compl_compl (a : α) : aᶜᶜ = a
-  /-- Complement is order-reversing. -/
-  compl_antitone {a b : α} : a ≤ b → bᶜ ≤ aᶜ
-  /-- Non-contradiction. -/
-  inf_compl_le_bot (a : α) : a ⊓ aᶜ ≤ ⊥
-  /-- Excluded middle. -/
-  top_le_sup_compl (a : α) : ⊤ ≤ a ⊔ aᶜ
-
-instance (priority := 100) {α : Type*} [CompleteOrthocomplementedLattice α] :
-    OrthocomplementedLattice α where
-  compl_compl := CompleteOrthocomplementedLattice.compl_compl
-  compl_antitone := CompleteOrthocomplementedLattice.compl_antitone
-  inf_compl_le_bot := CompleteOrthocomplementedLattice.inf_compl_le_bot
-  top_le_sup_compl := CompleteOrthocomplementedLattice.top_le_sup_compl
-
 namespace Orthoframe
 
 variable {L : Type*} [OrthocomplementedLattice L]
@@ -79,11 +58,6 @@ def represent (V : Set L) (a : L) : (ofOrtholattice V).Reg :=
   Concept.ofObjects (ofOrtholattice V).ortho {b | b.1 ≤ a}
 
 variable {V : Set L}
-
-/-- In an ortholattice, `a ≤ bᶜ ↔ b ≤ aᶜ` (orthogonality is symmetric). -/
-theorem _root_.OrthocomplementedLattice.le_compl_comm {a b : L} : a ≤ bᶜ ↔ b ≤ aᶜ :=
-  ⟨fun h => OrthocomplementedLattice.compl_compl b ▸ OrthocomplementedLattice.compl_antitone h,
-   fun h => OrthocomplementedLattice.compl_compl a ▸ OrthocomplementedLattice.compl_antitone h⟩
 
 /-- The upper polar of `{c | c ≤ x}` is `{d | x ≤ dᶜ}` (uses join-density at `x`). -/
 theorem upperPolar_Iic (hV : JoinDense V) (x : L) :
