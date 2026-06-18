@@ -30,7 +30,7 @@ witnesses the central cross-framework disagreement against
 | CSW section | What this file covers                                                |
 |-------------|----------------------------------------------------------------------|
 | §3.3        | POS-free positive form: `inPositiveRegion` over `confidentEntry`     |
-| §4.6 (52)   | Conjunction fallacy compatibility (`Confidence.conjunction_fallacy_compatible`) |
+| §4.6 (52)   | Conjunction fallacy: `conjunction_fallacy_predicted` (→ `confidence_not_probabilistic`) |
 | §4.6 (53)   | Upward monotonicity (`Confidence.confidence_upward_monotone`)        |
 | §4.6 (54)   | Transitivity of comparative confidence                               |
 | §4.6 (55)   | Antisymmetry of equative confidence                                  |
@@ -59,6 +59,8 @@ namespace CarianiSantorioWellwood2024
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
+open Semantics.Attitudes.EpistemicThreshold (AgentCredence isProbabilistic
+  meetsThreshold prob_conjunction_elim confidence_not_probabilistic)
 
 /-! ## §1. Felicity Gradient
 
@@ -174,17 +176,21 @@ def connectednessStance : ConnectednessStance := {}
 
 /-! ### §3.4 Conjunction Fallacy (CSW (52)) -/
 
-/-- CSW (52): it is consistent for "John is not confident that Linda is
-    a banker" and "John is confident that Linda is a feminist banker"
-    to be true together. Confidence orderings are not constrained to
-    respect logical conjunction (CSW's central argument against
-    probability-functional accounts; [tversky-kahneman-1983]).
+/-- CSW (52): it is consistent for "John is not confident that Linda is a
+    banker" and "John is confident that Linda is a feminist banker" to hold
+    together — confidence orderings are not constrained to respect logical
+    conjunction (CSW's central argument against probability-functional accounts;
+    [tversky-kahneman-1983]).
 
-    Witness imported from `Confidence.conjunction_fallacy_compatible`. -/
+    Genuine witness: a non-monotone credence ranking a *consistent* conjunction
+    strictly above a conjunct (`EpistemicThreshold.confidence_not_probabilistic`),
+    which no probability measure can do. The cross-framework consequence is §6's
+    `states_vs_threshold_on_conjunction_fallacy`. -/
 theorem conjunction_fallacy_predicted :
-    ∃ (contrastPt high low : ℕ),
-      contrastPt ≤ high ∧ ¬(contrastPt ≤ low) :=
-  conjunction_fallacy_compatible
+    ∃ (cr : AgentCredence Unit Bool),
+      ¬ isProbabilistic cr ∧
+      ∃ (φ ψ : Bool → Bool), cr () φ < cr () (fun w => φ w && ψ w) :=
+  confidence_not_probabilistic
 
 /-! ### §3.5 Upward Monotonicity (CSW (53)) -/
 
@@ -294,8 +300,8 @@ credence function validates `Pr(p ∧ q) ≤ Pr(p)`.
 
 The two halves of the disagreement are now formal:
 
-- States-based admits the fallacy: `Confidence.conjunction_fallacy_compatible`
-  (and the §3.4 invocation above).
+- States-based admits the fallacy: `confidence_not_probabilistic` (a non-monotone
+  credence ranking a consistent conjunction above a conjunct; §3.4 above).
 - Probabilistic credence forbids it: `EpistemicThreshold.prob_conjunction_elim`.
 - A credence function realizing the fallacy cannot be probabilistic:
   `EpistemicThreshold.confidence_not_probabilistic`.
@@ -303,16 +309,12 @@ The two halves of the disagreement are now formal:
 This study file packages the disagreement as the joint statement
 below. -/
 
-open Semantics.Attitudes.EpistemicThreshold (AgentCredence isProbabilistic
-  meetsThreshold prob_conjunction_elim confidence_not_probabilistic)
-
 /-- The empirical disagreement on CSW (52) / Tversky–Kahneman 1983,
     formalized as the conjunction of two opposing predictions:
 
     1. **States-based prediction** (CSW): there is a confidence ordering
-       admitting the fallacy (`conjunction_fallacy_compatible` provides
-       a Nat witness; `confidence_not_probabilistic` lifts it to an
-       `AgentCredence` witness).
+       admitting the fallacy (`confidence_not_probabilistic` provides an
+       `AgentCredence` witness with consistent propositions).
     2. **Threshold-probabilistic prediction**: any probabilistic credence
        blocks the fallacy at every threshold
        (`prob_conjunction_elim`).
