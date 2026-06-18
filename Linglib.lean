@@ -2609,6 +2609,7 @@ import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.Cancellation
 import Linglib.Pragmatics.RSA.Gibbs
+import Linglib.Pragmatics.RSA.GibbsExample
 import Linglib.Studies.Haspelmath2001
 import Linglib.Morphology.Grammaticalization
 import Linglib.Studies.Traugott2010

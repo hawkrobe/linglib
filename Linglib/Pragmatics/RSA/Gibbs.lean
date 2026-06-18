@@ -3,6 +3,7 @@ import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.InformationTheory.KullbackLeibler.Basic
+import Mathlib.Probability.UniformOn
 import Linglib.Core.Probability.GibbsVariational
 
 /-!
@@ -24,11 +25,17 @@ reimplementation, and is the object on which the variational (free-energy /
 
 ## Main statements
 
-* `speaker_count_singleton` — closed form of the speaker mass at an utterance,
-  for the counting base: `ofReal (exp (score u) / ∑ u', exp (score u'))`.
-* `speaker_count_lt_iff_score_lt` — **monotonicity in informativity**: the
-  speaker prefers `u₂` over `u₁` iff its utility is higher. The partition
-  function cancels; reduces to strict monotonicity of `Real.exp`.
+* `speaker_count_lt_iff_score_lt` / `speaker_uniformOn_lt_iff_score_lt` —
+  **monotonicity in informativity**: the speaker prefers `b` over `a` iff `b` has
+  the higher utility. The partition function cancels; reduces to strict
+  monotonicity of `Real.exp`. The `uniformOn` form discharges every measure-side
+  condition, so an RSA study reduces a speaker preference to a `score` comparison.
+* `listener` / `listener_comp_speaker_marginal` / `listener_region` — the
+  pragmatic listener as the Bayesian posterior `S1 † prior`, stated measure-natively
+  (Bayes consistency, region inference) rather than by pointwise singletons.
+* `speaker_isGreatest` — the RSA speaker is the **rational optimizer**: it attains
+  the greatest expected-utility-minus-KL-cost, a direct instance of the Gibbs /
+  Donsker–Varadhan principle (`MeasureTheory.isGreatest_logIntegralExp`).
 -/
 
 open MeasureTheory Real
@@ -69,6 +76,62 @@ theorem speaker_count_lt_iff_score_lt [Fintype U] [MeasurableSpace U]
     Finset.sum_pos (fun u _ => Real.exp_pos _) ⟨a, Finset.mem_univ a⟩
   rw [ENNReal.ofReal_lt_ofReal_iff (by positivity),
       div_lt_div_iff_of_pos_right hZ, Real.exp_lt_exp]
+
+/-- **Speaker monotonicity, general probability/finite base**: for any finite
+base measure that assigns equal nonzero mass to the two utterances, the speaker
+prefers `b` over `a` iff `b` has the higher utility. Generalizes
+`speaker_count_lt_iff_score_lt` off the counting base — the form the variational
+principle needs, where the base is a *probability* measure (e.g.
+`ProbabilityTheory.uniformOn`). The shared singleton mass and the partition
+function `Z = ∫ y, exp (score y) ∂base` cancel, reducing to `Real.exp`
+monotonicity.
+
+An integrability hypothesis on `exp ∘ score` is required (and is automatic on a
+`Fintype`): without it a non-integrable tilt collapses to the zero measure
+(`MeasureTheory.tilted_of_not_integrable`), making both sides vanish and the
+equivalence false. It mirrors the `h_exp` hypothesis of `speaker_isGreatest`. -/
+theorem speaker_lt_iff_score_lt {U : Type*} [Fintype U] [MeasurableSpace U]
+    [MeasurableSingletonClass U] (base : Measure U) [IsFiniteMeasure base]
+    (score : U → ℝ) (a b : U) (hmass : base {a} = base {b}) (hpos : base {a} ≠ 0)
+    (hexp : Integrable (fun u => Real.exp (score u)) base) :
+    speaker base score {a} < speaker base score {b} ↔ score a < score b := by
+  have : NeZero base := ⟨fun h => hpos (by rw [h]; rfl)⟩
+  have hZ : 0 < ∫ y, Real.exp (score y) ∂base := integral_exp_pos hexp
+  have key : ∀ x : U, speaker base score {x}
+      = ENNReal.ofReal (Real.exp (score x) / ∫ y, Real.exp (score y) ∂base) * base {x} := by
+    intro x
+    rw [speaker, tilted_apply, lintegral_singleton]
+  rw [key a, key b, hmass,
+    ENNReal.mul_lt_mul_iff_left (hmass ▸ hpos) (measure_ne_top base {b}),
+    ENNReal.ofReal_lt_ofReal_iff (by positivity),
+    div_lt_div_iff_of_pos_right hZ, Real.exp_lt_exp]
+
+/-- The uniform prior on a finite type assigns every singleton the same mass
+`(card)⁻¹`. A generic `ProbabilityTheory.uniformOn` fact (upstream candidate),
+tagged `@[simp]` so the equal-mass and nonzero side conditions of
+`speaker_lt_iff_score_lt` discharge automatically over a uniform prior. -/
+@[simp] theorem uniformOn_univ_singleton {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (a : Ω) :
+    ProbabilityTheory.uniformOn (Set.univ : Set Ω) {a} = (Fintype.card Ω : ℝ≥0∞)⁻¹ := by
+  rw [ProbabilityTheory.uniformOn_univ, Measure.count_singleton, ENNReal.div_eq_inv_mul,
+    mul_one]
+
+/-- **Speaker monotonicity over the uniform prior** — the study-facing reduction.
+For the canonical RSA prior (`ProbabilityTheory.uniformOn` over a finite utterance
+type), the speaker prefers `b` over `a` iff `b` has the higher utility. This is
+`speaker_lt_iff_score_lt` with *every* measure-theoretic side condition discharged
+— equal singleton mass and nonzeroness via `uniformOn_univ_singleton`, and
+integrability via `Integrable.of_finite` — so an RSA study reduces a speaker
+preference to a plain `score` comparison with a single `rw`. -/
+theorem speaker_uniformOn_lt_iff_score_lt {U : Type*} [Fintype U] [Nonempty U]
+    [MeasurableSpace U] [MeasurableSingletonClass U] (score : U → ℝ) (a b : U) :
+    speaker (ProbabilityTheory.uniformOn (Set.univ : Set U)) score {a}
+        < speaker (ProbabilityTheory.uniformOn (Set.univ : Set U)) score {b}
+      ↔ score a < score b :=
+  speaker_lt_iff_score_lt _ _ _ _
+    (by rw [uniformOn_univ_singleton, uniformOn_univ_singleton])
+    (by rw [uniformOn_univ_singleton]; exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
+    Integrable.of_finite
 
 /-! ### The pragmatic listener as a Bayesian posterior (measure-native)
 
