@@ -38,6 +38,7 @@ import Linglib.Core.Logic.Bilattice.Representation
 import Linglib.Core.Logic.Bilattice.Interlaced
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.Orthologic
+import Linglib.Core.Logic.Orthologic.FrameSemantics
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilateral.Classical
