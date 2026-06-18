@@ -26,12 +26,12 @@ that stack lives downstream (Core cannot import the semantics layer).
 * `Concept.instOrthocomplementedLattice` — the concept lattice of a symmetric,
   irreflexive relation is an ortholattice.
 * `Orthoframe` — a bundled symmetric, irreflexive orthogonality relation;
-  `Orthoframe.Reg F` is its ortholattice of regular propositions.
+  `Orthoframe.Regular F` is its ortholattice of regular propositions.
 
 ## TODO
 
 * Goldblatt representation ([holliday-mandelkern-2024] Theorem 4.13): every
-  complete ortholattice is isomorphic to `Orthoframe.Reg` of its canonical
+  complete ortholattice is isomorphic to `Orthoframe.Regular` of its canonical
   orthoframe on a join-dense set, with `a ⊥ b ↔ a ≤ bᶜ`.
 -/
 
@@ -66,6 +66,21 @@ instance instCompl [Std.Symm r] : Compl (Concept S S r) where
 @[simp] theorem intent_compl [Std.Symm r] (c : Concept S S r) :
     cᶜ.intent = upperPolar r c.intent := rfl
 
+/-- A concept of a single-sorted relation is determined by its extent, so concepts
+    form a `SetLike` family with `↑c = c.extent`. (No `PartialOrder` diamond: `SetLike`
+    supplies only `Membership`/coercions, and `Concept`'s order is already `extent`-lifted.) -/
+instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
+  coe c := c.extent
+  coe_injective _ _ h := extent_injective h
+
+/-- For an irreflexive relation the bottom concept has empty extent (no point is
+    orthogonal to everything, including itself). -/
+theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ := by
+  rw [Concept.extent_bot]
+  ext x
+  simp only [Set.mem_empty_iff_false, iff_false]
+  exact fun hx => Std.Irrefl.irrefl x (hx (Set.mem_univ x))
+
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
     lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
     is mathlib's concept lattice; only the orthocomplement and its four axioms
@@ -85,7 +100,7 @@ end Concept
 
 /-- An **orthoframe**: a set with a symmetric, irreflexive orthogonality
     relation `ortho` (written `x ⊥ y`). Its regular propositions form an
-    ortholattice (`Orthoframe.Reg`). The `Semantics.Modality.Orthologic`
+    ortholattice (`Orthoframe.Regular`). The `Semantics.Modality.Orthologic`
     compatibility frames are the special case `ortho = ¬compat`. -/
 structure Orthoframe (S : Type*) where
   /-- The orthogonality relation, written `x ⊥ y`. -/
@@ -101,9 +116,9 @@ attribute [instance] ortho_symm ortho_irrefl
 
 /-- The ortholattice of regular propositions of an orthoframe: the concepts of
     its orthogonality relation. -/
-abbrev Reg (F : Orthoframe S) : Type _ := Concept S S F.ortho
+abbrev Regular (F : Orthoframe S) : Type _ := Concept S S F.ortho
 
-instance (F : Orthoframe S) : OrthocomplementedLattice F.Reg :=
+instance (F : Orthoframe S) : OrthocomplementedLattice F.Regular :=
   Concept.instOrthocomplementedLattice F.ortho
 
 end Orthoframe

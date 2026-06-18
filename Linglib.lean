@@ -256,6 +256,7 @@ import Linglib.Semantics.Tense.Domain
 import Linglib.Semantics.Tense.System
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Reichenbach
+import Linglib.Semantics.Tense.Sequence.Basic
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
@@ -2153,6 +2154,7 @@ import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
+import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction

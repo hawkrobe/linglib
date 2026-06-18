@@ -204,11 +204,9 @@ theorem regular_mid : IsRegular pathFrame pMid := by decide
 theorem regular_empty : IsRegular pathFrame (∅ : Set Poss5) := empty_isRegular pathFrame
 theorem regular_full : IsRegular pathFrame (Set.univ : Set Poss5) := univ_isRegular pathFrame
 
--- ════════════════════════════════════════════════════
--- § 3a. Lifting to RegularProp (typeclass-level reasoning)
--- ════════════════════════════════════════════════════
+/-! ### Lifting to regular propositions (typeclass-level reasoning) -/
 
-/-! Pack the path-frame regular sets as `RegularProp pathFrame` elements
+/-! Pack the path-frame regular sets as `pathFrame.Regular` elements
     and demonstrate that the abstract `OrthocomplementedLattice` instance
     immediately delivers the De Morgan / excluded-middle / non-contradiction
     laws that are otherwise proved pointwise via `decide`. The set-membership
@@ -216,13 +214,13 @@ theorem regular_full : IsRegular pathFrame (Set.univ : Set Poss5) := univ_isRegu
     versions below are the same propositions phrased in lattice notation. -/
 
 /-- `{x₁, x₂}` packaged as a regular proposition. -/
-def pLeftReg : RegularProp pathFrame := ⟨pLeft, regular_left⟩
+def pLeftReg : pathFrame.Regular := pathFrame.regOf pLeft regular_left
 
 /-- `{x₄, x₅}` packaged as a regular proposition. -/
-def pRightReg : RegularProp pathFrame := ⟨pRight, regular_right⟩
+def pRightReg : pathFrame.Regular := pathFrame.regOf pRight regular_right
 
 /-- `{x₃}` packaged as a regular proposition. -/
-def pMidReg : RegularProp pathFrame := ⟨pMid, regular_mid⟩
+def pMidReg : pathFrame.Regular := pathFrame.regOf pMid regular_mid
 
 section TypeclassLevel
 open OrthocomplementedLattice
@@ -249,6 +247,7 @@ end TypeclassLevel
     Lattice-level statement of the pointwise `neg_left` theorem. -/
 theorem pLeftReg_compl_eq : pLeftRegᶜ = pRightReg := by
   apply SetLike.coe_injective
+  simp only [CompatFrame.Regular.coe_compl, CompatFrame.coe_regOf]
   ext x
   exact neg_left x
 
@@ -735,7 +734,7 @@ theorem hm_predicts_wittgenstein_infelicitous :
 /-- HM 2024 predicts that classical contradictions are infelicitous —
     matching Yalcin (2007). Witness: `p ∧ ¬p = ∅` on the Epistemic Scale,
     structurally guaranteed by the `inf_compl_eq_bot` ortholattice axiom
-    on `RegularProp pathFrame`. -/
+    on `pathFrame.Regular`. -/
 theorem hm_predicts_classical_infelicitous :
     (∀ x : Poss5, ¬ conj propP (orthoNeg pathFrame propP) x) ∧
     Yalcin2007.felicitousUnderEmbedding
