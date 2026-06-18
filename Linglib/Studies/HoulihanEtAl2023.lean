@@ -1,5 +1,5 @@
-import Linglib.Core.Agent.Emotion
-import Linglib.Core.Agent.BToM
+import Linglib.Pragmatics.Emotion
+import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.GameTheory
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Pragmatics.RSA.Speaker.CombinedUtility

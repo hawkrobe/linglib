@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Optimization.Decoder
 import Linglib.Phonology.Constraint.System
-import Linglib.Core.Agent.CoupledEvaluation
+import Linglib.Core.Probability.CoupledEvaluation
 
 /-!
 # MaxEnt Constraint Systems [storme-2026]

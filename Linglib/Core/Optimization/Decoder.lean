@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
 # Decoders — from scored candidates to probability distributions

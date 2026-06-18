@@ -4,64 +4,37 @@ import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
-# Gumbel-Luce Equivalence (McFadden's Theorem) [mcfadden-1974]
+# Gumbel–Luce equivalence (McFadden's theorem) [mcfadden-1974]
 
-The exact algebraic connection between Gumbel noise in a Random Utility Model
-(RUM) and the Luce choice rule (softmax). [luce-1959]
+The exact algebraic connection between Gumbel noise in a random utility model
+(RUM) and the Luce choice rule (softmax) [luce-1959].
 
-## Random Utility Models
+A RUM assigns each alternative `i` a random utility `Uᵢ = uᵢ + εᵢ`, with `uᵢ`
+deterministic and `εᵢ` random noise, and predicts `P(i chosen) = P(Uᵢ = maxⱼ Uⱼ)`.
+When the `εᵢ` are i.i.d. Gumbel(0, β), this probability is exactly softmax:
 
-A Random Utility Model (RUM) assigns each alternative `i` a random utility:
+    `P(i chosen) = exp(uᵢ/β) / Σⱼ exp(uⱼ/β) = softmax((1/β) • u)ᵢ`.
 
-    `Uᵢ = uᵢ + εᵢ`
+The proof reduces to the Laplace integral `∫₀^∞ exp(-S·t) dt = 1/S` after the
+change of variables `t = exp(-x/β)`. The Gaussian-noise counterpart (Thurstone
+Case V, the normal CDF) is in `Thurstone.lean`.
 
-where `uᵢ` is a deterministic component and `εᵢ` is random noise.
-The choice probability is `P(i chosen) = P(Uᵢ = max_j Uⱼ)`.
+## Main results
 
-Two noise distributions yield closed-form choice probabilities:
-
-- **Gaussian noise** → `Φ` (Thurstone Case V, §2.D of [luce-1959])
-- **Gumbel noise** → softmax ([mcfadden-1974])
-
-## McFadden's Theorem
-
-If the `εᵢ` are i.i.d. Gumbel(0, β), then:
-
-    `P(i chosen) = exp(uᵢ/β) / Σⱼ exp(uⱼ/β) = softmax(u, 1/β)ᵢ`
-
-This is **exact** — no approximation involved. The proof reduces to the
-Laplace integral `∫₀^∞ exp(-S·t) dt = 1/S` after a change of variables.
-
-## Thurstone–Luce Bridge
-
-Combined with the Thurstone result (`Thurstone.lean`), this gives the precise
-relationship between the two models:
-
-- Gaussian noise → normal CDF (Thurstone, exact)
-- Gumbel noise → logistic/softmax (Luce, exact by McFadden)
-- `Φ ≈ logistic` (numerical approximation, max error ~0.01)
-
-The two models are both RUMs, differing only in noise distribution.
-The logistic approximation to the normal CDF (`Thurstone.lean` §4) is what
-connects them, not a foundational assumption.
-
-## Main Results
-
-- `integral_exp_neg_mul_Ioi_zero`: Laplace integral `∫₀^∞ exp(-S·t) dt = 1/S`
-- `mcfaddenIntegral_eq_softmax`: McFadden's theorem (algebraic core)
-- `mcfaddenIntegral_binary`: Binary case reduces to logistic function
-- `gumbelCDF`, `gumbelPDF`: Gumbel distribution definitions
+* `integral_exp_neg_mul_Ioi_zero` — the Laplace integral `∫₀^∞ exp(-S·t) dt = 1/S`.
+* `mcfaddenIntegral_eq_softmax` — McFadden's theorem (algebraic core).
+* `gumbelMaxProb_is_mcfaddenIntegral` — the measure-theoretic content: the Gumbel
+  max-probability integral equals `mcfaddenIntegral`.
+* `mcfaddenIntegral_binary` — the binary case is the logistic function.
+* `gumbel_from_functional_eq` — uniqueness: the Gumbel CDF is the only max-CDF
+  satisfying the defining functional equation.
 -/
-
-set_option autoImplicit false
 
 namespace Core
 
 open Real MeasureTheory Set BigOperators Finset Filter
 
--- ============================================================================
--- §1. Gumbel Distribution
--- ============================================================================
+/-! ### The Gumbel distribution -/
 
 /-- The Gumbel CDF with location 0 and scale `β`:
 
@@ -92,9 +65,7 @@ theorem gumbelPDF_pos {β : ℝ} (hβ : 0 < β) (x : ℝ) : 0 < gumbelPDF β x :
   apply mul_pos (mul_pos _ (exp_pos _)) (exp_pos _)
   exact div_pos one_pos hβ
 
--- ============================================================================
--- §2. Key Integral: ∫₀^∞ exp(-S·t) dt = 1/S
--- ============================================================================
+/-! ### The Laplace integral `∫₀^∞ exp(-S·t) dt = 1/S` -/
 
 /-- The Laplace integral: `∫₀^∞ exp(-S·t) dt = 1/S` for `S > 0`.
 
@@ -110,11 +81,13 @@ theorem integral_exp_neg_mul_Ioi_zero {S : ℝ} (hS : 0 < S) :
   simp only [mul_zero, exp_zero] at h
   rw [h, neg_div_neg_eq]
 
--- ============================================================================
--- §3. McFadden's Theorem (Algebraic Core)
--- ============================================================================
+/-! ### McFadden's theorem: the algebraic core -/
 
-/-- The McFadden integral for alternative `i` with scale `β > 0`:
+section McFadden
+
+variable {ι : Type*} [Fintype ι]
+
+/-- The McFadden integral for alternative `i` with scale `β`:
 
     `Iᵢ = exp(uᵢ/β) · ∫₀^∞ exp(-S·t) dt`
 
@@ -123,27 +96,24 @@ theorem integral_exp_neg_mul_Ioi_zero {S : ℝ} (hS : 0 < S) :
     After the change of variables `t = exp(-x/β)` in the original
     Gumbel density integral, the max-probability `P(Uᵢ = max_j Uⱼ)` takes
     this form. See `gumbelMaxProb_is_mcfaddenIntegral`. -/
-noncomputable def mcfaddenIntegral {ι : Type*} [Fintype ι]
-    (u : ι → ℝ) (β : ℝ) (i : ι) : ℝ :=
+noncomputable def mcfaddenIntegral (u : ι → ℝ) (β : ℝ) (i : ι) : ℝ :=
   exp (u i / β) * ∫ t in Ioi (0 : ℝ), exp (-(∑ j : ι, exp (u j / β)) * t)
 
-/-- **McFadden's Theorem (algebraic core)** — Lemma 1 of [mcfadden-1974]:
-    The McFadden integral equals softmax.
+section Softmax
 
-    For any utilities `u₁, ..., uₙ` and scale `β > 0`:
+variable [Nonempty ι] (u : ι → ℝ) {β : ℝ}
 
-    `exp(uᵢ/β) · ∫₀^∞ exp(-S·t) dt = exp(uᵢ/β) / S = softmax(u, 1/β)ᵢ`
+/-- **McFadden's theorem (algebraic core)** — Lemma 1 of [mcfadden-1974]:
+    the McFadden integral equals softmax. For utilities `u` and scale `β`,
 
-    where `S = Σⱼ exp(uⱼ/β)`.
+    `exp(uᵢ/β) · ∫₀^∞ exp(-S·t) dt = exp(uᵢ/β) / S = softmax((1/β) • u)ᵢ`,
 
-    This is the algebraic content of McFadden's Lemma 1 (p. 111), generalized
-    from unit scale (β = 1) to arbitrary β > 0. McFadden assumes i.i.d. Weibull
-    (Gnedenko extreme value) noise with CDF `P(ε ≤ ε) = exp(-e^{-ε})` —
-    eq. (13) — and derives the softmax selection probability `P_i = e^{V_i} / Σ e^{V_j}`
-    — eq. (12). The probabilistic interpretation is formalized separately in
-    `gumbelMaxProb_is_mcfaddenIntegral`. -/
-theorem mcfaddenIntegral_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
-    (u : ι → ℝ) {β : ℝ} (_hβ : 0 < β) (i : ι) :
+    where `S = Σⱼ exp(uⱼ/β)`. The identity is purely algebraic and holds for
+    every `β` (the RUM-relevant case is `β > 0`). [mcfadden-1974] assumes i.i.d.
+    Weibull (Gnedenko extreme-value) noise with CDF `exp(-e^{-ε})` and derives the
+    softmax selection probability `Pᵢ = e^{Vᵢ} / Σ e^{Vⱼ}`; the probabilistic
+    interpretation is formalized in `gumbelMaxProb_is_mcfaddenIntegral`. -/
+theorem mcfaddenIntegral_eq_softmax (i : ι) :
     mcfaddenIntegral u β i = softmax ((1 / β) • u) i := by
   simp only [mcfaddenIntegral, softmax, Pi.smul_apply, smul_eq_mul]
   have hS : 0 < ∑ j : ι, exp (u j / β) :=
@@ -152,29 +122,29 @@ theorem mcfaddenIntegral_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
   simp_rw [show ∀ j : ι, u j / β = (1 / β) * u j from λ j => by ring]
   rw [mul_one_div]
 
--- ============================================================================
--- §4. Properties
--- ============================================================================
-
 /-- The McFadden integrals sum to 1 (they form a probability distribution). -/
-theorem mcfaddenIntegral_sum {ι : Type*} [Fintype ι] [Nonempty ι]
-    (u : ι → ℝ) {β : ℝ} (hβ : 0 < β) :
+theorem mcfaddenIntegral_sum :
     ∑ i : ι, mcfaddenIntegral u β i = 1 := by
-  simp_rw [mcfaddenIntegral_eq_softmax u hβ]
+  simp_rw [mcfaddenIntegral_eq_softmax]
   exact softmax_sum_eq_one ((1 / β) • u)
 
 /-- Each McFadden integral is positive. -/
-theorem mcfaddenIntegral_pos {ι : Type*} [Fintype ι] [Nonempty ι]
-    (u : ι → ℝ) {β : ℝ} (hβ : 0 < β) (i : ι) :
+theorem mcfaddenIntegral_pos (i : ι) :
     0 < mcfaddenIntegral u β i := by
-  rw [mcfaddenIntegral_eq_softmax u hβ]
+  rw [mcfaddenIntegral_eq_softmax]
   exact softmax_pos ((1 / β) • u) i
 
--- ============================================================================
--- §5. Binary Case: McFadden = Logistic
--- ============================================================================
+end Softmax
 
-/-- **Binary McFadden = Logistic**: For two alternatives, the McFadden integral
+end McFadden
+
+/-! ### Binary case: McFadden equals the logistic function -/
+
+section Binary
+
+variable (u : Fin 2 → ℝ) {β : ℝ}
+
+/-- **Binary McFadden = logistic**: for two alternatives, the McFadden integral
     reduces to the logistic function.
 
     `mcfaddenIntegral([u₁, u₂], β)(0) = Real.sigmoid((u₁ - u₂) / β)`
@@ -184,38 +154,41 @@ theorem mcfaddenIntegral_pos {ι : Type*} [Fintype ι] [Nonempty ι]
 
     Compare with Thurstone Case V (`Thurstone.lean`):
     `P(u₁+η₁ > u₂+η₂) = Φ((u₁-u₂)/(σ√2))` for Gaussian noise η. -/
-theorem mcfaddenIntegral_binary (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
+theorem mcfaddenIntegral_binary :
     mcfaddenIntegral u β 0 = Real.sigmoid ((u 0 - u 1) / β) := by
-  rw [mcfaddenIntegral_eq_softmax u hβ, softmax_binary]
+  rw [mcfaddenIntegral_eq_softmax, softmax_binary]
   congr 1; ring
 
 /-- The binary McFadden integral for alternative 1 is the complement. -/
-theorem mcfaddenIntegral_binary_one (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
+theorem mcfaddenIntegral_binary_one :
     mcfaddenIntegral u β 1 = 1 - Real.sigmoid ((u 0 - u 1) / β) := by
-  have hsum := mcfaddenIntegral_sum u hβ (ι := Fin 2)
+  have hsum := mcfaddenIntegral_sum (u := u) (β := β)
   rw [Fin.sum_univ_two] at hsum
-  linarith [mcfaddenIntegral_binary u hβ]
+  linarith [mcfaddenIntegral_binary (u := u) (β := β)]
 
--- ============================================================================
--- §6. McFadden as RationalAction
--- ============================================================================
+end Binary
+
+/-! ### The Gumbel RUM as a `RationalAction` -/
+
+section GumbelRUM
+
+variable {ι : Type*} [Fintype ι]
 
 /-- Construct a `RationalAction` from a Gumbel RUM.
 
     The score function is `exp(uᵢ/β)`, which gives Luce's choice rule.
     This is the *exact* optimal policy under i.i.d. Gumbel noise
     (by McFadden's theorem), not an approximation. -/
-noncomputable def RationalAction.fromGumbelRUM {ι : Type*} [Fintype ι]
-    (u : ι → ℝ) (β : ℝ) : RationalAction Unit ι where
+noncomputable def RationalAction.fromGumbelRUM (u : ι → ℝ) (β : ℝ) :
+    RationalAction Unit ι where
   score := λ _ i => exp (u i / β)
   score_nonneg := λ _ _ => le_of_lt (exp_pos _)
 
 /-- The Gumbel RUM policy equals the McFadden integral (= softmax). -/
-theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty ι]
-    (u : ι → ℝ) {β : ℝ} (hβ : 0 < β) (i : ι) :
+theorem RationalAction.fromGumbelRUM_policy [Nonempty ι] (u : ι → ℝ) {β : ℝ} (i : ι) :
     (RationalAction.fromGumbelRUM u β).policy () i =
     mcfaddenIntegral u β i := by
-  rw [mcfaddenIntegral_eq_softmax u hβ]
+  rw [mcfaddenIntegral_eq_softmax]
   simp only [RationalAction.policy, RationalAction.fromGumbelRUM,
              RationalAction.totalScore, softmax, Pi.smul_apply, smul_eq_mul]
   have hne : ∑ j : ι, exp (u j / β) ≠ 0 :=
@@ -225,32 +198,36 @@ theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty 
   · congr 1; ring
   · congr 1; ext j; congr 1; ring
 
--- ============================================================================
--- §7. Measure-Theoretic Connection (FTC helpers)
--- ============================================================================
+end GumbelRUM
 
--- F(x) = exp(-S * exp(-x/β)), G(x) = C/S * F(x)
-private noncomputable abbrev gumbelMaxProb_gF (S β x : ℝ) : ℝ := exp (-S * exp (-x / β))
-private noncomputable abbrev gumbelMaxProb_gG (C S β x : ℝ) : ℝ :=
-  C / S * gumbelMaxProb_gF S β x
+/-! ### Measure-theoretic content: the Gumbel max-probability integral -/
 
-private lemma gumbelMaxProb_hasDerivAt_exp_neg_div {β : ℝ} (x : ℝ) :
+/-- `gumbelMaxCDF S β x = exp(-S · exp(-x/β))`: the CDF of the maximum random
+    utility (a scaled Gumbel), the antiderivative core of the McFadden integral. -/
+private noncomputable abbrev gumbelMaxCDF (S β x : ℝ) : ℝ := exp (-S * exp (-x / β))
+
+/-- `gumbelMaxProbAntideriv C S β x = (C/S) · gumbelMaxCDF S β x`: the
+    antiderivative used in the FTC computation of the max-probability integral. -/
+private noncomputable abbrev gumbelMaxProbAntideriv (C S β x : ℝ) : ℝ :=
+  C / S * gumbelMaxCDF S β x
+
+private lemma hasDerivAt_exp_neg_div {β : ℝ} (x : ℝ) :
     HasDerivAt (fun x => exp (-x / β)) (exp (-x / β) * (-1 / β)) x := by
   have h := hasDerivAt_id x |>.neg.div_const β
   exact (Real.hasDerivAt_exp _).comp x (h.congr_deriv (by simp [neg_div]))
 
-private lemma gumbelMaxProb_hasDerivAt_gF (S β x : ℝ) :
-    HasDerivAt (gumbelMaxProb_gF S β)
-      (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) x :=
-  ((gumbelMaxProb_hasDerivAt_exp_neg_div (β := β) x).const_mul (-S)).exp
+private lemma hasDerivAt_gumbelMaxCDF (S β x : ℝ) :
+    HasDerivAt (gumbelMaxCDF S β)
+      (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β)))) x :=
+  ((hasDerivAt_exp_neg_div (β := β) x).const_mul (-S)).exp
 
-private lemma gumbelMaxProb_hasDerivAt_gG (C S β x : ℝ) :
-    HasDerivAt (gumbelMaxProb_gG C S β)
-      (C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))) x :=
-  (gumbelMaxProb_hasDerivAt_gF S β x).const_mul (C / S)
+private lemma hasDerivAt_gumbelMaxProbAntideriv (C S β x : ℝ) :
+    HasDerivAt (gumbelMaxProbAntideriv C S β)
+      (C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β))))) x :=
+  (hasDerivAt_gumbelMaxCDF S β x).const_mul (C / S)
 
-private lemma gumbelMaxProb_tendsto_gF_one {β : ℝ} (hβ : 0 < β) (S : ℝ) :
-    Tendsto (gumbelMaxProb_gF S β) atTop (nhds 1) := by
+private lemma tendsto_gumbelMaxCDF_atTop {β : ℝ} (hβ : 0 < β) (S : ℝ) :
+    Tendsto (gumbelMaxCDF S β) atTop (nhds 1) := by
   show Tendsto (fun x => exp (-S * exp (-x / β))) atTop (nhds 1)
   rw [show (1 : ℝ) = exp 0 from exp_zero.symm]
   exact (continuous_exp.tendsto 0).comp (by
@@ -258,49 +235,49 @@ private lemma gumbelMaxProb_tendsto_gF_one {β : ℝ} (hβ : 0 < β) (S : ℝ) :
     exact (tendsto_exp_atBot.comp
       (tendsto_neg_atTop_atBot.atBot_div_const hβ)).const_mul (-S))
 
-private lemma gumbelMaxProb_tendsto_gF_zero {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
-    Tendsto (gumbelMaxProb_gF S β) atBot (nhds 0) := by
+private lemma tendsto_gumbelMaxCDF_atBot {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
+    Tendsto (gumbelMaxCDF S β) atBot (nhds 0) := by
   show Tendsto (fun x => exp (-S * exp (-x / β))) atBot (nhds 0)
   exact tendsto_exp_atBot.comp
     ((tendsto_exp_atTop.comp
       (tendsto_neg_atBot_atTop.atTop_div_const hβ)).const_mul_atTop_of_neg
       (neg_lt_zero.mpr hS))
 
-private lemma gumbelMaxProb_tendsto_gG_top (C : ℝ) {S β : ℝ} (hβ : 0 < β) :
-    Tendsto (gumbelMaxProb_gG C S β) atTop (nhds (C / S)) := by
-  show Tendsto (fun x => C / S * gumbelMaxProb_gF S β x) atTop (nhds (C / S))
-  simpa using (gumbelMaxProb_tendsto_gF_one hβ S).const_mul (C / S)
+private lemma tendsto_gumbelMaxProbAntideriv_atTop (C : ℝ) {S β : ℝ} (hβ : 0 < β) :
+    Tendsto (gumbelMaxProbAntideriv C S β) atTop (nhds (C / S)) := by
+  show Tendsto (fun x => C / S * gumbelMaxCDF S β x) atTop (nhds (C / S))
+  simpa using (tendsto_gumbelMaxCDF_atTop hβ S).const_mul (C / S)
 
-private lemma gumbelMaxProb_tendsto_gG_bot (C : ℝ) {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
-    Tendsto (gumbelMaxProb_gG C S β) atBot (nhds 0) := by
-  show Tendsto (fun x => C / S * gumbelMaxProb_gF S β x) atBot (nhds 0)
-  simpa using (gumbelMaxProb_tendsto_gF_zero hS hβ).const_mul (C / S)
+private lemma tendsto_gumbelMaxProbAntideriv_atBot (C : ℝ) {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
+    Tendsto (gumbelMaxProbAntideriv C S β) atBot (nhds 0) := by
+  show Tendsto (fun x => C / S * gumbelMaxCDF S β x) atBot (nhds 0)
+  simpa using (tendsto_gumbelMaxCDF_atBot hS hβ).const_mul (C / S)
 
-private lemma gumbelMaxProb_gG_deriv_nonneg {C S β : ℝ}
-    (hC : 0 ≤ C) (hS : 0 < S) (_hβ : 0 < β) (x : ℝ) :
-    0 ≤ C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) := by
+private lemma gumbelMaxProbAntideriv_deriv_nonneg {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) (x : ℝ) :
+    0 ≤ C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β)))) := by
   show 0 ≤ C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β))))
   have : C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β)))) =
       C / (S * β) * (exp (-S * exp (-x / β)) * (S * exp (-x / β))) := by field_simp
   rw [this]; exact mul_nonneg (div_nonneg hC (by positivity))
     (mul_nonneg (le_of_lt (exp_pos _)) (by positivity))
 
-private lemma gumbelMaxProb_integrableOn_Ioi {C S β : ℝ}
+private lemma gumbelMaxProbAntideriv_integrableOn_Ioi {C S β : ℝ}
     (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
     IntegrableOn
-      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))))
+      (fun x => C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β)))))
       (Set.Ioi 0) :=
   integrableOn_Ioi_deriv_of_nonneg'
-    (fun x _ => gumbelMaxProb_hasDerivAt_gG C S β x)
-    (fun x _ => gumbelMaxProb_gG_deriv_nonneg hC hS hβ x)
-    (gumbelMaxProb_tendsto_gG_top C hβ)
+    (fun x _ => hasDerivAt_gumbelMaxProbAntideriv C S β x)
+    (fun x _ => gumbelMaxProbAntideriv_deriv_nonneg hC hS hβ x)
+    (tendsto_gumbelMaxProbAntideriv_atTop C hβ)
 
-private lemma gumbelMaxProb_integrableOn_Iic {C S β : ℝ}
+private lemma gumbelMaxProbAntideriv_integrableOn_Iic {C S β : ℝ}
     (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
     IntegrableOn
-      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))))
+      (fun x => C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β)))))
       (Set.Iic 0) := by
-  set f := fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))
+  set f := fun x => C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β))))
   have hcont : Continuous f := by
     show Continuous fun x =>
       C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β))))
@@ -308,52 +285,52 @@ private lemma gumbelMaxProb_integrableOn_Iic {C S β : ℝ}
   have hfi : ∀ c : ℝ, IntegrableOn f (Set.Ioc c 0) := fun c => hcont.integrableOn_Ioc
   have hint : ∀ c : ℝ, IntervalIntegrable f volume c 0 := fun c => hcont.intervalIntegrable c 0
   have hftc : ∀ c ≤ (0 : ℝ), ∫ x in c..0, f x =
-      gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c := by
+      gumbelMaxProbAntideriv C S β 0 - gumbelMaxProbAntideriv C S β c := by
     intro c hc
     exact intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hc
-      (fun x _ => (gumbelMaxProb_hasDerivAt_gG C S β x).continuousAt.continuousWithinAt)
-      (fun x _ => gumbelMaxProb_hasDerivAt_gG C S β x) (hint c)
+      (fun x _ => (hasDerivAt_gumbelMaxProbAntideriv C S β x).continuousAt.continuousWithinAt)
+      (fun x _ => hasDerivAt_gumbelMaxProbAntideriv C S β x) (hint c)
   have hnorm_eq : ∀ c ≤ (0 : ℝ), ∫ x in c..0, ‖f x‖ = ∫ x in c..0, f x := by
     intro c hc; congr 1; ext x
-    exact norm_of_nonneg (gumbelMaxProb_gG_deriv_nonneg hC hS hβ x)
+    exact norm_of_nonneg (gumbelMaxProbAntideriv_deriv_nonneg hC hS hβ x)
   refine integrableOn_Iic_of_intervalIntegral_norm_tendsto
-    (gumbelMaxProb_gG C S β 0) 0 hfi tendsto_id ?_
-  have hlim : Tendsto (fun c => gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c)
-      atBot (nhds (gumbelMaxProb_gG C S β 0)) := by
-    have h : Tendsto (fun c => gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c)
-        atBot (nhds (gumbelMaxProb_gG C S β 0 - 0)) :=
-      tendsto_const_nhds.sub (gumbelMaxProb_tendsto_gG_bot C hS hβ)
+    (gumbelMaxProbAntideriv C S β 0) 0 hfi tendsto_id ?_
+  have hlim : Tendsto (fun c => gumbelMaxProbAntideriv C S β 0 - gumbelMaxProbAntideriv C S β c)
+      atBot (nhds (gumbelMaxProbAntideriv C S β 0)) := by
+    have h : Tendsto (fun c => gumbelMaxProbAntideriv C S β 0 - gumbelMaxProbAntideriv C S β c)
+        atBot (nhds (gumbelMaxProbAntideriv C S β 0 - 0)) :=
+      tendsto_const_nhds.sub (tendsto_gumbelMaxProbAntideriv_atBot C hS hβ)
     rwa [sub_zero] at h
   exact hlim.congr' (by
     filter_upwards [Filter.Iic_mem_atBot (0 : ℝ)] with c (hc : c ≤ 0)
     rw [hnorm_eq c hc, hftc c hc])
 
-private lemma gumbelMaxProb_integrable_gG_deriv {C S β : ℝ}
+private lemma gumbelMaxProbAntideriv_deriv_integrable {C S β : ℝ}
     (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
     Integrable
-      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))) := by
+      (fun x => C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β))))) := by
   rw [← integrableOn_univ, show (Set.univ : Set ℝ) = Set.Iic 0 ∪ Set.Ioi 0
     from (Set.Iic_union_Ioi).symm]
   exact IntegrableOn.union
-    (gumbelMaxProb_integrableOn_Iic hC hS hβ)
-    (gumbelMaxProb_integrableOn_Ioi hC hS hβ)
+    (gumbelMaxProbAntideriv_integrableOn_Iic hC hS hβ)
+    (gumbelMaxProbAntideriv_integrableOn_Ioi hC hS hβ)
 
-private theorem gumbelMaxProb_gG_integral {C S β : ℝ}
+private theorem gumbelMaxProbAntideriv_integral {C S β : ℝ}
     (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
-    ∫ x : ℝ, C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) =
+    ∫ x : ℝ, C / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β)))) =
     C / S := by
   have := integral_of_hasDerivAt_of_tendsto
-    (fun x => gumbelMaxProb_hasDerivAt_gG C S β x)
-    (gumbelMaxProb_integrable_gG_deriv hC hS hβ)
-    (gumbelMaxProb_tendsto_gG_bot C hS hβ)
-    (gumbelMaxProb_tendsto_gG_top C hβ)
+    (fun x => hasDerivAt_gumbelMaxProbAntideriv C S β x)
+    (gumbelMaxProbAntideriv_deriv_integrable hC hS hβ)
+    (tendsto_gumbelMaxProbAntideriv_atBot C hS hβ)
+    (tendsto_gumbelMaxProbAntideriv_atTop C hβ)
   linarith
 
 private lemma gumbelMaxProb_integrand_eq {n : ℕ}
     (u : Fin n → ℝ) (β : ℝ) (hβ : 0 < β) (i : Fin n) (x : ℝ) :
     gumbelPDF β (x - u i) * ∏ j ∈ univ.erase i, gumbelCDF β (x - u j) =
     exp (u i / β) / (∑ j : Fin n, exp (u j / β)) *
-      (gumbelMaxProb_gF (∑ j : Fin n, exp (u j / β)) β x *
+      (gumbelMaxCDF (∑ j : Fin n, exp (u j / β)) β x *
        (-(∑ j : Fin n, exp (u j / β)) * (exp (-x / β) * (-1 / β)))) := by
   simp only [gumbelPDF, gumbelCDF]
   set S := ∑ j : Fin n, exp (u j / β)
@@ -361,7 +338,7 @@ private lemma gumbelMaxProb_integrand_eq {n : ℕ}
   have hβ_ne : β ≠ 0 := ne_of_gt hβ
   have h_prod : exp (-exp (-(x - u i) / β)) *
       ∏ j ∈ univ.erase i, exp (-exp (-(x - u j) / β)) =
-      gumbelMaxProb_gF S β x := by
+      gumbelMaxCDF S β x := by
     rw [Finset.mul_prod_erase univ (fun j => exp (-exp (-(x - u j) / β))) (mem_univ i)]
     rw [← exp_sum]
     show exp (∑ j : Fin n, -exp (-(x - u j) / β)) = exp (-S * exp (-x / β))
@@ -378,29 +355,20 @@ private lemma gumbelMaxProb_integrand_eq {n : ℕ}
       (exp (-exp (-(x - u i) / β)) * ∏ j ∈ univ.erase i, exp (-exp (-(x - u j) / β)))
       from by ring]
   rw [h_prod, h_exp]
-  show 1 / β * (exp (u i / β) * exp (-x / β)) * gumbelMaxProb_gF S β x =
-    exp (u i / β) / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))
+  show 1 / β * (exp (u i / β) * exp (-x / β)) * gumbelMaxCDF S β x =
+    exp (u i / β) / S * (gumbelMaxCDF S β x * (-S * (exp (-x / β) * (-1 / β))))
   field_simp
 
--- ============================================================================
+/-- **Gumbel RUM = McFadden integral** — the measure-theoretic content of
+    Lemma 1 in [mcfadden-1974].
 
-/-- **Gumbel RUM = McFadden Integral** — the measure-theoretic content
-    of Lemma 1 in [mcfadden-1974] (p. 111).
+    If `ε₁, …, εₙ` are i.i.d. Gumbel(0, β), then the probability that alternative
+    `i` attains the maximum random utility equals the McFadden integral:
 
-    If `ε₁, ..., εₙ` are i.i.d. Gumbel(0, β), then the probability that
-    alternative `i` has the maximum random utility equals the McFadden integral:
+    `P(uᵢ + εᵢ = maxⱼ(uⱼ + εⱼ)) = mcfaddenIntegral u β i`
 
-    `P(uᵢ + εᵢ = max_j(uⱼ + εⱼ)) = mcfaddenIntegral u β i`
-
-    McFadden's proof (p. 111) with `Vᵢ = v(s, xᵢ)`:
-    1. From eq. (13), `F_i(ε + V_i - V_1, ..., ε + V_i - V_J)`
-       `= exp(-ε) · ∏ⱼ exp(-exp(-ε - V_i + V_j))`
-       `= exp(-ε) · exp(-exp(-ε) · Σⱼ exp(V_j - V_i))`
-    2. Substituting in eq. (3) and integrating yields eq. (12):
-       `P_i = e^{V_i} / Σⱼ e^{V_j}`
-
-    The proof uses the antiderivative `G(x) = (C/S) · exp(-S · exp(-x/β))` where
-    `C = exp(uᵢ/β)` and `S = Σⱼ exp(uⱼ/β)`. By FTC on ℝ
+    The proof uses the antiderivative `G(x) = (C/S) · exp(-S · exp(-x/β))` with
+    `C = exp(uᵢ/β)` and `S = Σⱼ exp(uⱼ/β)`: by the FTC on ℝ
     (`integral_of_hasDerivAt_of_tendsto`), `∫ G' = C/S = mcfaddenIntegral`. -/
 theorem gumbelMaxProb_is_mcfaddenIntegral
     {n : ℕ} (u : Fin n → ℝ) (β : ℝ) (hβ : 0 < β) (i : Fin n) :
@@ -410,31 +378,19 @@ theorem gumbelMaxProb_is_mcfaddenIntegral
   have hS : 0 < ∑ j : Fin n, exp (u j / β) :=
     Finset.sum_pos (fun j _ => exp_pos _) ⟨i, mem_univ _⟩
   simp_rw [gumbelMaxProb_integrand_eq u β hβ i]
-  rw [gumbelMaxProb_gG_integral (le_of_lt (exp_pos _)) hS hβ]
+  rw [gumbelMaxProbAntideriv_integral (le_of_lt (exp_pos _)) hS hβ]
   simp only [mcfaddenIntegral]
   rw [integral_exp_neg_mul_Ioi_zero hS]
   ring
 
--- ============================================================================
--- §8. Uniqueness: Gumbel is the Only Distribution Giving Softmax
--- ============================================================================
+/-! ### Uniqueness: Gumbel is the only distribution yielding softmax
 
-/-!
-## McFadden's Lemma 2 (Uniqueness) [mcfadden-1974]
-
-McFadden's Lemma 2 shows that the Gumbel distribution is the **only**
-i.i.d. noise distribution yielding the softmax (Luce) choice rule. The key
-step is: if the max-CDF `G` satisfies the functional equation
-
-    `G(x - c) = G(x) ^ exp(c)` for all `x, c ∈ ℝ`
-
-then `G` must be a Gumbel CDF: `G(t) = exp(-α · exp(-t))` where
-`α = -log(G(0)) > 0`.
-
-The proof sets `x = 0` and `c = -t` in the functional equation, giving
-`G(t) = G(0)^{exp(-t)}`, then rewrites `G(0)^y = exp(log(G(0)) · y)`
-using `rpow_def_of_pos`.
--/
+McFadden's Lemma 2 shows that the Gumbel distribution is the **only** i.i.d. noise
+distribution yielding the softmax (Luce) choice rule. The key step: if the max-CDF
+`G` satisfies the functional equation `G(x - c) = G(x) ^ exp c` for all `x, c`, then
+`G` is a Gumbel CDF `G(t) = exp(-α · exp(-t))` with `α = -log(G 0) > 0`. Setting
+`x = 0`, `c = -t` gives `G t = G 0 ^ exp(-t)`, then `G 0 ^ y = exp(log(G 0) · y)` via
+`rpow_def_of_pos`. -/
 
 /-- If a function G satisfies the functional equation
     `G(x - c) = G(x) ^ exp(c)` for all `x, c ∈ ℝ`,
@@ -443,7 +399,9 @@ using `rpow_def_of_pos`.
     `G(t) = exp(-α · exp(-t))` where `α = -log(G(0)) > 0`.
 
     This is the core of McFadden's Lemma 2: the functional equation
-    characterizing the max-CDF uniquely determines the Gumbel family. -/
+    characterizing the max-CDF uniquely determines the Gumbel family. The
+    hypothesis `G 0 < 1` is unused in this proof but pins down `α > 0`
+    (see `gumbel_alpha_pos`), excluding the degenerate `α = 0` case. -/
 theorem gumbel_from_functional_eq (G : ℝ → ℝ)
     (hG0_pos : 0 < G 0) (_hG0_lt : G 0 < 1)
     (hfe : ∀ x c : ℝ, G (x - c) = (G x) ^ (exp c)) :

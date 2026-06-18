@@ -1,4 +1,5 @@
 import Linglib.Core.Agent.Learning
+import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Phonology.Constraint.Dequantization.OTLimit
 import Linglib.Phonology.Constraint.MaxEnt
 

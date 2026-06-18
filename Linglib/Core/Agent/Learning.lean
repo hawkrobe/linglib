@@ -1,4 +1,5 @@
 import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Probability.SoftmaxTheory
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!

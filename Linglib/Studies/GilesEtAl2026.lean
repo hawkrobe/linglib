@@ -1,5 +1,5 @@
-import Linglib.Core.Agent.SignalDetection
-import Linglib.Core.Agent.Psychophysics
+import Linglib.Processing.Psychophysics.SignalDetection
+import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.KursatDegen2021
 import Linglib.Studies.DegenEtAl2020

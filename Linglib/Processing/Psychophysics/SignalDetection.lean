@@ -460,8 +460,8 @@ theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
 theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).policy () (0 : Fin 2) =
     m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1) := by
-  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy _ one_pos,
-      mcfaddenIntegral_binary _ one_pos]
+  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy,
+      mcfaddenIntegral_binary]
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
   simp only [Fin.isValue, ↓reduceIte, h01, sub_zero, div_one, Real.sigmoid_def,
              SDTModel.likelihoodRatioAt, likelihoodRatio]

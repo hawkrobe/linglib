@@ -208,7 +208,6 @@ import Linglib.Core.Agent.PartitionDT
 import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction
-import Linglib.Core.Agent.CoupledEvaluation
 import Linglib.Phonology.Constraint.MaxEnt
 import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.NoiseKernel
@@ -232,14 +231,9 @@ import Linglib.Phonology.Constraint.Dequantization.Deformation
 import Linglib.Core.Agent.SoftmaxOptimality
 import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Agent.ChoiceApproximations
-import Linglib.Core.Agent.Psychophysics
-import Linglib.Core.Agent.Thurstone
-import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.RankOrderings
 import Linglib.Core.Agent.SemiorderRanking
 import Linglib.Core.Agent.GumbelLuce
-import Linglib.Core.Agent.GaussianChoice
-import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Agent.SocialUtility
 import Linglib.Pragmatics.GameTheory
@@ -358,8 +352,6 @@ import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Semantics.Mereology
 import Linglib.Core.Order.IntervalContent
 import Linglib.Semantics.Attitudes.ContentIndividual
-import Linglib.Core.Agent.BToM
-import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Composition.Continuation
@@ -2884,3 +2876,15 @@ import Linglib.Studies.Barker1995
 import Linglib.Studies.ParteeBorschev2001
 import Linglib.Studies.ParteeBorschev2003
 import Linglib.Studies.ViknerJensen2002
+import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.LogitChoice
+import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Probability.CoupledEvaluation
+import Linglib.Processing.Psychophysics.Thurstone
+import Linglib.Processing.Psychophysics.SignalDetection
+import Linglib.Processing.Psychophysics.GaussianChoice
+import Linglib.Processing.Psychophysics.Psychophysics
+import Linglib.Processing.Psychophysics.PsychophysicalChoice
+import Linglib.Pragmatics.BToM
+import Linglib.Pragmatics.BToMCredence
+import Linglib.Pragmatics.Emotion

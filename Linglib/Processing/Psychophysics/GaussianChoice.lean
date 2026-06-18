@@ -1,7 +1,7 @@
-import Linglib.Core.Agent.SignalDetection
-import Linglib.Core.Agent.Thurstone
+import Linglib.Processing.Psychophysics.SignalDetection
+import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Core.Agent.GumbelLuce
-import Linglib.Core.Agent.Psychophysics
+import Linglib.Processing.Psychophysics.Psychophysics
 
 /-!
 # Gaussian Choice Bridge [luce-1959]
@@ -107,7 +107,7 @@ noncomputable def SDTModel.asThurstoneYesNo (m : SDTModel) : ThurstoneCaseV (Fin
 theorem SDTModel.hitRate_eq_thurstone (m : SDTModel) :
     m.hitRate = m.asThurstoneYesNo.choiceProb 0 1 := by
   simp only [SDTModel.hitRate, SDTModel.tailProb, asThurstoneYesNo,
-             ThurstoneCaseV.choiceProb]
+             ThurstoneCaseV.choiceProb, gaussianChoiceProb]
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
   simp only [h01, ↓reduceIte, sub_zero]
   -- Goal: 1 - normalCDF (c - d'/2) = normalCDF ((d'/2 - c) / ((1/√2) * √2))
@@ -210,10 +210,10 @@ it equates the variances `σ² · 2` (Gaussian difference) and `β² · π²/3`
 
     The two models are both RUMs; they agree when `Φ ≈ logistic`, i.e.,
     when the variance-matched scale `β = σ√6/π` (see `thurstoneLuceK`). -/
-theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (hβ : 0 < β) :
+theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (_hβ : 0 < β) :
     mcfaddenIntegral (λ i : Fin 2 => if i = 0 then d' / 2 else -(d' / 2)) β 0
     = Real.sigmoid (d' / β) := by
-  rw [mcfaddenIntegral_binary _ hβ]
+  rw [mcfaddenIntegral_binary]
   congr 1
   simp only [↓reduceIte]
   have h1 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide

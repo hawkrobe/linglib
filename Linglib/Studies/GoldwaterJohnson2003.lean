@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraint.Dequantization.OTLimit
 import Linglib.Phonology.Constraint.MaxEnt
+import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
 # [goldwater-johnson-2003]: Learning OT Constraint Rankings Using a Maximum Entropy Model
