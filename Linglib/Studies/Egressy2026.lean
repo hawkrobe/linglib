@@ -49,7 +49,7 @@ namespace Egressy2026
 
 open Tense (EmbeddedTenseReading SOTParameter availableReadings)
 open SequenceOfTense
-open Core.Order (notAfter before after)
+open Core.Order (notAfter before after unrestricted)
 open Minimalist
 open Hungarian.Predicates
 
@@ -348,28 +348,38 @@ def ex15 : List Node :=
   [clauseNode notAfter .speechReporting, clauseNode notAfter .speechReporting]
 theorem ex15_profile : simProfile ex15 = [false, false] := by decide
 
-/-- [ogihara-1995]'s ex. (18) (English): *said* > *will claim* > *was*. The
-    intervening future *will* (`after`) is not an agreeing past, so the deepest
-    `was` has no simultaneous reading — the `agreeingPast` gate blocks it,
-    independently of size (English is size-insensitive here). -/
+/-- Past-under-*will*-under-past (English; [ogihara-1996], discussed by
+    [egressy-2026]): *said* > *will claim* > *was*. The intervening future *will*
+    (`after`) is not an agreeing past, so the deepest `was` has no simultaneous
+    reading — the `agreeingPast` gate blocks it, independently of size (English
+    is size-insensitive here). -/
 def ex18 : List Node :=
   [clauseNode after .speechReporting, clauseNode notAfter .speechReporting]
 theorem ex18_no_simultaneous : simProfile ex18 = [false, false] := by decide
 
 
-/-! ### Williams-Cycle support over a de re alternative ([egressy-2026], §3.3)
+/-! ### Williams-Cycle support over an *unbounded* de re alternative ([egressy-2026], §3.3)
 
-A *res*-movement (de re) derivation of the simultaneous reading ([abusch-1988],
-[abusch-1997]) moves the embedded `PAST` to an A-position inside the matrix VP.
-Such movement would not be stopped by the `Say` layer, so it is *size-blind*:
-it predicts the simultaneous reading for speech-reporting clauses too. The
-observed asymmetry (`speech_backshift_only`) therefore favors the SOT-Agree
-analysis, whose dependency obeys the Williams Cycle. -/
+An *unbounded* res-movement (de re) derivation would move the embedded `PAST` to
+an A-position inside the matrix VP, unstopped by the `Say` layer — hence
+*size-blind*. Egressy argues the Williams Cycle rules this out: a size-blind
+mechanism would license simultaneity for speech-reporting clauses, contrary to
+fact. The foil below ([abusch-1988], [abusch-1997]) is exactly that size-blind
+account; the *restricted* de re of [ogihara-sharvit-2012] (and the Polish
+account of Mucha, Renans & Romoli) is a different, constrained mechanism this
+argument does not, on its own, refute. -/
 
-/-- The de re account overgenerates: size-blind, it licenses simultaneity for a
-    speech-reporting clause, which `egressyLicense` correctly blocks. -/
+/-- The unbounded (size-blind) de re foil: it licenses every reading. Local to
+    this study — it is Egressy's reductio against unbounded res-movement, not a
+    neutral SOT mechanism. -/
+def deReUnrestricted : LocalLicense := fun _ _ => unrestricted
+
+/-- The *unbounded* de re foil overgenerates: size-blind, it licenses
+    simultaneity for a speech-reporting clause, which `egressyLicense` correctly
+    blocks. This refutes unbounded res-movement, not the restricted de re of
+    [ogihara-sharvit-2012]. -/
 theorem de_re_overgenerates :
-    Simultaneous (deReLicense pastMatrix (clauseNode notAfter .speechReporting)) ∧
+    Simultaneous (deReUnrestricted pastMatrix (clauseNode notAfter .speechReporting)) ∧
     ¬ Simultaneous (egressyLicense pastMatrix (clauseNode notAfter .speechReporting)) := by decide
 
 
