@@ -14,7 +14,7 @@ for Computation in Linguistics (SCiL)* 6, 121–132.
 
 **SCOPE WARNING.** This file formalizes the *symmetric-PoE
 sanity-check slice* of S&W 2023, **not** their main asymmetric model. The
-paper documents (page 6) that with symmetric per-class continuous semantics
+paper documents that with symmetric per-class continuous semantics
 the incremental listener's order-independence holds *as a sanity check*; their
 predictive results come from the asymmetric semantics + sequence speaker that
 this file does not formalize.
@@ -83,9 +83,7 @@ namespace SchlotterbeckWang2023
 
 open RSA
 
--- ============================================================================
--- §1. Domain Types
--- ============================================================================
+/-! ### Domain types -/
 
 /-- Referents in the reference game. -/
 inductive Referent where
@@ -97,9 +95,7 @@ inductive Word where
   | big | small | blue | green | red | sticker
   deriving DecidableEq, Fintype, Repr
 
--- ============================================================================
--- §2. Boolean Semantics
--- ============================================================================
+/-! ### Boolean semantics -/
 
 /-- Whether a word is veridically true of a referent. -/
 def wordApplies : Word → Referent → Bool
@@ -111,9 +107,7 @@ def wordApplies : Word → Referent → Bool
   | .sticker, _         => true
   | _,        _         => false
 
--- ============================================================================
--- §3. Noisy Lex via RSA.NoisyLex
--- ============================================================================
+/-! ### Noisy lexicon via `RSA.NoisyLex` -/
 
 /-- Per-class perceptual reliability: size words use `sRel`, color words use
     `cRel`, the noun "sticker" applies universally. -/
@@ -141,9 +135,7 @@ def noisyLex (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel ≤ 1)
     · cases w <;> simp only [reliabilityQ] <;> linarith
     · cases w <;> simp only [reliabilityQ] <;> linarith
 
--- ============================================================================
--- §4. Scenes
--- ============================================================================
+/-! ### Scenes -/
 
 /-- **Scene A**: Size-discriminatory scene.
     Objects: {big-blue, small-blue, small-green, small-red}. Target: big-blue.
@@ -162,23 +154,25 @@ def sceneBMembers : Referent → Bool
 /-- The target referent in both scenes. -/
 def target : Referent := .bigBlue
 
--- ============================================================================
--- §5. RSAConfig (via NoisyLex.toRSAConfigSeq)
--- ============================================================================
+/-- Scene A lexicon: sizeRel = 99/100, colorRel = 95/100. -/
+def sceneALex : NoisyLex Word Referent :=
+  noisyLex (99/100) (95/100) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
-/-- Scene A config: sizeRel = 99/100, colorRel = 95/100. -/
+/-- Scene B lexicon: sizeRel = 80/100, colorRel = 95/100. -/
+def sceneBLex : NoisyLex Word Referent :=
+  noisyLex (80/100) (95/100) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-! ### `RSAConfig` via `NoisyLex.toRSAConfigSeq` -/
+
+/-- Scene A config: `sceneALex` over Scene A members. -/
 noncomputable def sceneACfg : RSAConfig Word Referent :=
-  (noisyLex (99/100) (95/100) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num)).toRSAConfigSeq sceneAMembers
+  sceneALex.toRSAConfigSeq sceneAMembers
 
-/-- Scene B config: sizeRel = 80/100, colorRel = 95/100. -/
+/-- Scene B config: `sceneBLex` over Scene B members. -/
 noncomputable def sceneBCfg : RSAConfig Word Referent :=
-  (noisyLex (80/100) (95/100) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num)).toRSAConfigSeq sceneBMembers
+  sceneBLex.toRSAConfigSeq sceneBMembers
 
--- ============================================================================
--- §6. Utterances
--- ============================================================================
+/-! ### Utterances -/
 
 /-- Size-first ordering for the big-blue target. -/
 def sizeFirstUtt : List Word := [.big, .blue, .sticker]
@@ -186,12 +180,10 @@ def sizeFirstUtt : List Word := [.big, .blue, .sticker]
 /-- Color-first ordering for the big-blue target. -/
 def colorFirstUtt : List Word := [.blue, .big, .sticker]
 
--- ============================================================================
--- §7. Prefix-Meaning Properties (via substrate)
--- ============================================================================
+/-! ### Prefix-meaning properties -/
 
 /-- Two-word prefix meaning is order-independent. Direct corollary of
-    `RSA.prefixMeaning_swap`: ℚ-product commutativity over a list of
+    `NoisyLex.prefixMeaning_perm`: ℚ-product commutativity over a list of
     per-word noisy lex values. -/
 theorem prefix_meaning_swap (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel ≤ 1)
     (hc0 : 0 ≤ cRel) (hc1 : cRel ≤ 1) (a b : Word) (r : Referent) :
@@ -200,7 +192,7 @@ theorem prefix_meaning_swap (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel ≤
   (noisyLex sRel cRel hs0 hs1 hc0 hc1).prefixMeaning_perm (List.Perm.swap b a []) r
 
 /-- Swap of the first two words in any-length prefix. Direct corollary of
-    `RSA.prefixMeaning_swap_head` (the generalized head-swap lemma). -/
+    `NoisyLex.prefixMeaning_perm` applied to a head swap. -/
 theorem prefix_meaning_swap_head (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel ≤ 1)
     (hc0 : 0 ≤ cRel) (hc1 : cRel ≤ 1) (a b : Word) (rest : List Word) (r : Referent) :
     (noisyLex sRel cRel hs0 hs1 hc0 hc1).prefixMeaning (a :: b :: rest) r =
@@ -213,13 +205,11 @@ theorem prefix_meaning_product (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel 
     (hc0 : 0 ≤ cRel) (hc1 : cRel ≤ 1) (a b : Word) (r : Referent) :
     (noisyLex sRel cRel hs0 hs1 hc0 hc1).prefixMeaning [a, b] r =
       lexQ sRel cRel a r * lexQ sRel cRel b r := by
-  simp [NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex]
+  simp only [NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, List.map_cons,
+    List.map_nil, List.prod_cons, List.prod_nil, mul_one]
 
--- ============================================================================
--- §8. Predictions (via trajectoryProb)
--- ============================================================================
+/-! ### Predictions via `trajectoryProb` -/
 
-set_option maxHeartbeats 16000000 in
 /-- **Finding**: When size has high discriminatory power (Scene A),
     `S1^inc` prefers size-first ordering. -/
 theorem size_first_when_size_discriminates :
@@ -227,7 +217,6 @@ theorem size_first_when_size_discriminates :
     sceneACfg.trajectoryProb () target colorFirstUtt := by
   rsa_predict
 
-set_option maxHeartbeats 16000000 in
 /-- **Finding**: When both properties discriminate equally but color is
     more reliable (Scene B), `S1^inc` prefers color-first ordering. -/
 theorem color_first_when_color_reliable :
@@ -245,42 +234,32 @@ theorem ordering_preference_flips :
     sceneBCfg.trajectoryProb () target sizeFirstUtt :=
   ⟨size_first_when_size_discriminates, color_first_when_color_reliable⟩
 
--- ============================================================================
--- §9. First-Word Informativity (via S1_at)
--- ============================================================================
+/-! ### First-word informativity via `S1_at` -/
 
-set_option maxHeartbeats 16000000 in
 /-- In Scene A, "big" is more informative than "blue" about the target. -/
 theorem big_more_informative_A :
     sceneACfg.S1_at ([] : List Word) () target .big >
     sceneACfg.S1_at ([] : List Word) () target .blue := by
   rsa_predict
 
-set_option maxHeartbeats 16000000 in
 /-- In Scene B, "blue" is more informative than "big" about the target. -/
 theorem blue_more_informative_B :
     sceneBCfg.S1_at ([] : List Word) () target .blue >
     sceneBCfg.S1_at ([] : List Word) () target .big := by
   rsa_predict
 
--- ============================================================================
--- §10. Target Identification
--- ============================================================================
+/-! ### Target identification -/
 
 /-- After hearing both adjectives, the meaning function assigns highest
     value to the target among Scene A members. -/
 theorem both_orderings_identify_target_A :
     ∀ r : Referent, sceneAMembers r = true → r ≠ target →
-      (noisyLex (99/100) (95/100) (by norm_num) (by norm_num)
-          (by norm_num) (by norm_num)).prefixMeaning
-        [.big, .blue] target >
-      (noisyLex (99/100) (95/100) (by norm_num) (by norm_num)
-          (by norm_num) (by norm_num)).prefixMeaning
-        [.big, .blue] r := by
+      sceneALex.prefixMeaning [.big, .blue] target >
+      sceneALex.prefixMeaning [.big, .blue] r := by
   intro r _ hne; cases r
   · exact absurd rfl hne
   all_goals
-    (simp only [NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, lexQ,
+    (simp only [sceneALex, NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, lexQ,
                 wordApplies, reliabilityQ, target, List.map, List.prod_cons,
                 List.prod_nil, if_true]; norm_num)
 
@@ -288,22 +267,16 @@ theorem both_orderings_identify_target_A :
     value to the target among Scene B members. -/
 theorem both_orderings_identify_target_B :
     ∀ r : Referent, sceneBMembers r = true → r ≠ target →
-      (noisyLex (80/100) (95/100) (by norm_num) (by norm_num)
-          (by norm_num) (by norm_num)).prefixMeaning
-        [.big, .blue] target >
-      (noisyLex (80/100) (95/100) (by norm_num) (by norm_num)
-          (by norm_num) (by norm_num)).prefixMeaning
-        [.big, .blue] r := by
+      sceneBLex.prefixMeaning [.big, .blue] target >
+      sceneBLex.prefixMeaning [.big, .blue] r := by
   intro r _ hne; cases r
   · exact absurd rfl hne
   all_goals
-    (simp only [NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, lexQ,
+    (simp only [sceneBLex, NoisyLex.prefixMeaning, RSA.prefixMeaning, noisyLex, lexQ,
                 wordApplies, reliabilityQ, target, List.map, List.prod_cons,
                 List.prod_nil, if_true]; norm_num)
 
--- ============================================================================
--- §11. Noise Bridge
--- ============================================================================
+/-! ### Noise-channel bridge -/
 
 /-- `lexQ` is an instance of the unified noise channel from `RSA.Noise`:
     onMatch = `reliabilityQ`, onMismatch = `1 − reliabilityQ`. Connects
@@ -315,6 +288,6 @@ theorem lexQ_as_noiseChannel (sRel cRel : ℚ) (w : Word) (r : Referent) :
         (1 - reliabilityQ sRel cRel w)
         (if wordApplies w r then 1 else 0) := by
   simp only [lexQ, RSA.Noise.noiseChannel]
-  split <;> simp
+  split <;> ring
 
 end SchlotterbeckWang2023
