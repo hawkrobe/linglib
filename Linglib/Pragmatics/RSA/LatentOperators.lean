@@ -243,6 +243,77 @@ theorem marginalizeKernel_le_marginalizeKernel {α β : Type*}
   rw [marginalizeKernel_apply, marginalizeKernel_apply]
   exact PMF.marginal_le_marginal (κ₁ := fun l => κ l a₁) (κ₂ := fun l => κ l a₂) h
 
+/-! ## Joint world–latent prior listener
+
+`marginalizeKernel` handles a latent prior independent of the world
+(`L1(w) ∝ P(w)·∑_l P(l)·S1(u|w,l)`). The wonky-world pattern
+([degen-etal-2015]) instead needs a **world-dependent** latent prior
+`P(w|l)·P(l)`: the listener is jointly uncertain about `(w, l)` and its
+world-belief is the `W`-marginal of the `(W × L)` posterior. When
+`P(w|l) = P(w)` the joint factorises and this reduces to the
+`marginalizeKernel` form.
+
+* `jointPrior` — the joint world–latent prior `μ(w,l) = P(l)·P(w|l)`.
+* `jointListener` — the `World`-marginal of the joint posterior.
+* `jointListener_lt_iff_sum_score_lt` / `..._le_..` — inequality
+  decomposition: the marginal normaliser cancels, leaving a comparison of
+  the latent-summed scores `∑_l μ(w,l)·S1(u|w,l)`.
+-/
+
+/-- Joint world–latent prior `μ(w,l) = P(l)·P(w|l)`. -/
+noncomputable def jointPrior (latentPrior : PMF L) (worldGivenLatent : L → PMF W) :
+    PMF (W × L) :=
+  latentPrior.bind (fun l => (worldGivenLatent l).map (·, l))
+
+@[simp] theorem jointPrior_apply (latentPrior : PMF L) (worldGivenLatent : L → PMF W)
+    (w : W) (l : L) :
+    jointPrior latentPrior worldGivenLatent (w, l)
+      = latentPrior l * worldGivenLatent l w := by
+  unfold jointPrior
+  rw [PMF.bind_apply]
+  rw [tsum_eq_single l (fun l' hl' => ?_)]
+  · rw [PMF.map_apply, tsum_eq_single w (fun w' hw' => by
+      rw [if_neg (by simp [Prod.ext_iff, Ne.symm hw'])])]
+    rw [if_pos rfl]
+  · rw [PMF.map_apply, ENNReal.tsum_eq_zero.mpr (fun w' => by
+      rw [if_neg (by simp [Prod.ext_iff]; exact fun _ => Ne.symm hl')]), mul_zero]
+
+/-- Marginalising a `PMF (W × L)` onto its first coordinate sums the latent
+fibre: `(p.map Prod.fst) w = ∑ l, p (w, l)`. -/
+private theorem map_fst_apply (p : PMF (W × L)) (w : W) [Fintype W] [Fintype L] [DecidableEq W] :
+    (p.map Prod.fst) w = ∑ l, p (w, l) := by
+  rw [PMF.map_apply, tsum_fintype, Fintype.sum_prod_type]
+  rw [Finset.sum_eq_single w (fun x _ hx => by simp [Ne.symm hx]) (by simp)]
+  simp
+
+/-- Pragmatic listener with a joint `(World × Latent)` prior: the `World`-marginal
+of the joint posterior. -/
+noncomputable def jointListener {U : Type*} (S1 : W × L → PMF U) (μ : PMF (W × L))
+    (u : U) (h : PMF.marginal S1 μ u ≠ 0) : PMF W :=
+  (PMF.posterior S1 μ u h).map Prod.fst
+
+/-- **Inequality decomposition for `jointListener`** — joint-prior analogue of
+`posterior_lt_iff_kernel_lt_of_uniform`; the marginal normaliser cancels. -/
+theorem jointListener_lt_iff_sum_score_lt {U : Type*} [Fintype W] [Fintype L] [DecidableEq W]
+    (S1 : W × L → PMF U) (μ : PMF (W × L)) (u : U) (h : PMF.marginal S1 μ u ≠ 0) (w₁ w₂ : W) :
+    jointListener S1 μ u h w₁ < jointListener S1 μ u h w₂ ↔
+      (∑ l, μ (w₁, l) * S1 (w₁, l) u) < (∑ l, μ (w₂, l) * S1 (w₂, l) u) := by
+  unfold jointListener
+  rw [map_fst_apply, map_fst_apply]
+  simp_rw [PMF.posterior_apply]
+  rw [← Finset.sum_mul, ← Finset.sum_mul]
+  exact ENNReal.mul_lt_mul_iff_left
+    (ENNReal.inv_ne_zero.mpr (PMF.marginal_ne_top S1 μ u))
+    (ENNReal.inv_ne_top.mpr h)
+
+/-- The `≤` companion of `jointListener_lt_iff_sum_score_lt`. -/
+theorem jointListener_le_iff_sum_score_le {U : Type*} [Fintype W] [Fintype L] [DecidableEq W]
+    (S1 : W × L → PMF U) (μ : PMF (W × L)) (u : U) (h : PMF.marginal S1 μ u ≠ 0) (w₁ w₂ : W) :
+    jointListener S1 μ u h w₁ ≤ jointListener S1 μ u h w₂ ↔
+      (∑ l, μ (w₁, l) * S1 (w₁, l) u) ≤ (∑ l, μ (w₂, l) * S1 (w₂, l) u) := by
+  rw [← not_lt, ← not_lt, not_iff_not]
+  exact jointListener_lt_iff_sum_score_lt S1 μ u h w₂ w₁
+
 /-! ## Sequential between-stage composition (Nouwen eq 73)
 
 Two successive ρ updates, where stage 2's prior is stage 1's L1 output at
