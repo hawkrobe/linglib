@@ -15,12 +15,13 @@ the nonzero elements of a join-dense `V`, and the representation map is
 
 ## Status
 
-The construction (`ofOrtholattice`), the extent characterization, and the full
-ortholattice **embedding** (`⊓ ⊔ ¬ ⊤ ⊥` preserved, order-reflecting) are complete
-and sorry-free. The orthocomplement preservation — the heart of Theorem 4.13 — is
-`represent_compl`, which falls out of the `upperPolar` computation `upperPolar_Iic`
-(no De Morgan over the join is needed). Remaining (PR 3): surjectivity for complete
-`L` to assemble the isomorphism `L ≃o (ofOrtholattice V).Reg`, and Corollary 4.14.
+**Theorem 4.13 is complete and sorry-free.** The construction (`ofOrtholattice`), the
+extent characterization, the full ortholattice **embedding** (`⊓ ⊔ ¬ ⊤ ⊥` preserved,
+order-reflecting), and — for a `CompleteOrthocomplementedLattice` — the
+**isomorphism** `representation : L ≃o (ofOrtholattice V).Reg` over any join-dense
+`V`. The orthocomplement preservation (`represent_compl`, the heart) falls out of the
+`upperPolar` computation `upperPolar_Iic`; no De Morgan over the join is needed.
+Remaining (follow-up): Corollary 4.14 (finite ortholattice via join-irreducibles).
 -/
 
 open Order Set
@@ -29,6 +30,27 @@ open Order Set
     of `V` below it. -/
 def JoinDense {L : Type*} [Preorder L] (V : Set L) : Prop :=
   ∀ a : L, IsLUB {b | b ∈ V ∧ b ≤ a} a
+
+/-- A **complete orthocomplemented lattice**: a complete lattice with an
+    orthocomplement satisfying the ortholattice axioms. Bundling avoids the
+    `Lattice` diamond that `[CompleteLattice] [OrthocomplementedLattice]` would
+    create — the single `Lattice` comes from `CompleteLattice`. -/
+class CompleteOrthocomplementedLattice (α : Type*) extends CompleteLattice α, Compl α where
+  /-- Complement is involutive. -/
+  compl_compl (a : α) : aᶜᶜ = a
+  /-- Complement is order-reversing. -/
+  compl_antitone {a b : α} : a ≤ b → bᶜ ≤ aᶜ
+  /-- Non-contradiction. -/
+  inf_compl_le_bot (a : α) : a ⊓ aᶜ ≤ ⊥
+  /-- Excluded middle. -/
+  top_le_sup_compl (a : α) : ⊤ ≤ a ⊔ aᶜ
+
+instance (priority := 100) {α : Type*} [CompleteOrthocomplementedLattice α] :
+    OrthocomplementedLattice α where
+  compl_compl := CompleteOrthocomplementedLattice.compl_compl
+  compl_antitone := CompleteOrthocomplementedLattice.compl_antitone
+  inf_compl_le_bot := CompleteOrthocomplementedLattice.inf_compl_le_bot
+  top_le_sup_compl := CompleteOrthocomplementedLattice.top_le_sup_compl
 
 namespace Orthoframe
 
@@ -152,11 +174,54 @@ theorem represent_sup (hV : JoinDense V) (a a' : L) :
       OrthocomplementedLattice.compl_inf, OrthocomplementedLattice.compl_compl,
       OrthocomplementedLattice.compl_compl]
 
-/- TODO (Phase B, PR 3): the representation is now a full ortholattice embedding
-   (`⊓ ⊔ ¬ ⊤ ⊥` preserved, order-reflecting). Remaining: surjectivity for complete
-   `L` (`a := sSup` of a concept's extent) to assemble the isomorphism
-   `L ≃o (ofOrtholattice V).Reg` (Theorem 4.13), and Corollary 4.14 via
-   join-irreducibles for finite `L`. Needs a `CompleteLattice + OrthocomplementedLattice`
-   carrier (resolve the `Lattice` diamond). -/
+/-! ### The representation isomorphism (complete case, Theorem 4.13) -/
+
+section Iso
+
+variable {L : Type*} [CompleteOrthocomplementedLattice L] {V : Set L}
+
+/-- Surjectivity (the `←` of Theorem 4.13): every concept is `represent V a`, taking
+    `a` to be the join of the underlying elements of its extent. -/
+theorem represent_surjective (hV : JoinDense V) (c : (ofOrtholattice V).Reg) :
+    represent V (sSup (Subtype.val '' c.extent)) = c := by
+  apply Concept.ext
+  rw [represent_extent hV]
+  ext b
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · intro hb
+    rw [← (Concept.isExtent_extent c).eq]
+    intro d hd
+    show b.1 ≤ d.1ᶜ
+    refine hb.trans (sSup_le ?_)
+    rintro x ⟨e, he, rfl⟩
+    exact hd he
+  · intro hb
+    exact le_sSup ⟨b, hb, rfl⟩
+
+/-- The join of `represent V a`'s extent recovers `a` (the `→` of Theorem 4.13). -/
+theorem sSup_represent_extent (hV : JoinDense V) (a : L) :
+    sSup (Subtype.val '' (represent V a).extent) = a := by
+  rw [represent_extent hV]
+  refine (isLUB_sSup _).unique ⟨?_, ?_⟩
+  · rintro x ⟨b, hb, rfl⟩; exact hb
+  · intro u hu
+    refine (isLUB_le_iff (hV a)).mpr ?_
+    rintro c ⟨hcV, hca⟩
+    rcases eq_or_ne c ⊥ with rfl | hc0
+    · exact bot_le
+    · exact hu ⟨⟨c, hcV, hc0⟩, hca, rfl⟩
+
+/-- **The representation isomorphism** ([holliday-mandelkern-2024] Theorem 4.13): a
+    complete ortholattice is order-isomorphic to `Orthoframe.Reg` of its canonical
+    orthoframe over any join-dense `V`. -/
+def representation (hV : JoinDense V) : L ≃o (ofOrtholattice V).Reg where
+  toFun := represent V
+  invFun c := sSup (Subtype.val '' c.extent)
+  left_inv := sSup_represent_extent hV
+  right_inv := represent_surjective hV
+  map_rel_iff' := represent_le_iff hV
+
+end Iso
 
 end Orthoframe
