@@ -64,6 +64,7 @@ def epSemanticType : Cat → EPSemanticType
   | .Nmlz              => .intermediate   -- F3: nominalizer ([keine-2020])
   | .C                 => .proposition    -- F6: proposition (force)
   | .Force             => .proposition    -- F6: force ([rizzi-1997] split-CP)
+  | .Say               => .proposition    -- F5: say/assertion layer ([major-2021]); embeds propositional content of a sign
   | .SA                => .proposition    -- F7: speech act ([speas-tenny-2003])
 
 -- ═══════════════════════════════════════════════════════════════
@@ -171,7 +172,7 @@ def isTruncated (spine : List Cat) : Bool :=
     This parallels the verbal domain: v ↔ n at the same F-level. -/
 def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
-  | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA
+  | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA | .Say
   | .T | .Neg | .Mod | .Pol | .Asp | .Evid => .v  -- clausal functional heads → vP is argument domain
   | .D | .Q | .Num | .K                      => .n  -- nominal functional heads → nP is argument domain
   | _       => topCat  -- small clause / lexical head → the SC itself is argument domain

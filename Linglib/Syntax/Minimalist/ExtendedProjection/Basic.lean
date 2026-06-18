@@ -60,6 +60,7 @@ def catFeatures : Cat → CatFeatures
   | .C     => ⟨true,  false⟩   -- [+V, -N]
   | .SA    => ⟨true,  false⟩   -- [+V, -N] ([speas-tenny-2003])
   | .Force => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997] split-CP)
+  | .Say   => ⟨true,  false⟩   -- [+V, -N] ([major-2021]; say/assertion layer)
   | .Neg   => ⟨true,  false⟩   -- [+V, -N] ([pollock-1989])
   | .Mod   => ⟨true,  false⟩   -- [+V, -N] ([cinque-1999])
   | .Rel   => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997])
@@ -119,7 +120,7 @@ def fValue : Cat → Nat
   | .Pol | .Asp | .Evid | .Path => 2   -- specification domain (F2)
   | .Fin | .Num | .Nmlz         => 3   -- inner edge / nominalizer (F3)
   | .Foc | .D                   => 4   -- discourse / referential (F4)
-  | .Top | .Rel | .K            => 5   -- topic field / case shell (F5)
+  | .Top | .Rel | .K | .Say     => 5   -- topic field / case shell / say layer (F5); Say > Foc > T ([egressy-2026]), below C
   | .C | .Force                 => 6   -- complementizer/force (F6)
   | .SA                         => 7   -- speech act (F7, [speas-tenny-2003])
 
@@ -178,7 +179,7 @@ inductive CatFamily where
 /-- Map a category to its family.
     This determines which EP it can participate. -/
 def catFamily : Cat → CatFamily
-  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
+  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => .verbal
   | .N | .n | .Num | .Q | .D | .K      => .nominal
   | .A | .a                              => .adjectival
@@ -222,7 +223,7 @@ structure CategorialFeatures where
     in the same EP inherit them (just as in Grimshaw's consistency requirement).
     P and its extended projection bear neither feature — P is the default case. -/
 def categorialFeatures : Cat → CategorialFeatures
-  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
+  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => ⟨false, true⟩   -- [V]
   | .N | .n | .Num | .Q | .D | .K      => ⟨true, false⟩   -- [N]
   | .A | .a                              => ⟨true, true⟩    -- [N, V]
@@ -579,13 +580,29 @@ def ComplementSize.fLevel (cs : ComplementSize) : Nat :=
 def ComplementSize.isPhaseSized (cs : ComplementSize) : Bool :=
   fValue .C ≤ cs.fLevel
 
-/-- A complement is transparent to tense Agree if it is smaller than
-    a full CP — i.e., the highest head is below C in the fseq.
-
-    [egressy-2026]: TP complements (fValue 2) are transparent;
-    CP complements (fValue 6) are opaque. -/
+/-- A complement is transparent to a cross-clausal dependency stopped at the
+    CP phase boundary iff it is smaller than a full CP — its highest head is
+    below C in the fseq. This is the generic phase-sized boundary (≥ CP opaque);
+    for the Say-keyed sequence-of-tense boundary see `transparentToSOTAgree`. -/
 def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
   cs.fLevel < fValue .C
+
+/-- A complement is transparent to sequence-of-tense Agree (the optional LF
+    deletion of an embedded `PAST` under an agreeing matrix `PAST`) iff its
+    highest head is below the `Say` layer in the functional sequence.
+
+    [egressy-2026], generalizing [keine-2019]'s selective opacity (the Williams
+    Cycle in Agree) to the SOT Rule of [ogihara-1996] / [ogihara-sharvit-2012]:
+    SOT-Agree is blocked by a clause-internal `Say` head (Say > T) but crosses
+    a bare TP. Hence non-speech-reporting complements (TP, fValue 2) are
+    transparent; speech-reporting complements (SayP, fValue 5) are opaque. The
+    boundary is `Say`, **not** `C` — Hungarian has no CP and `hogy` is an edge
+    marker, not a complementizer ([kiss-2023]). -/
+def ComplementSize.transparentToSOTAgree (cs : ComplementSize) : Bool :=
+  cs.fLevel < fValue .Say
+
+/-- The speech-reporting (SayP) complement size: highest head is `Say`. -/
+def ComplementSize.sayP : ComplementSize := ⟨.Say⟩
 
 /-- Standard complement sizes. -/
 def ComplementSize.vP : ComplementSize := ⟨.v⟩
