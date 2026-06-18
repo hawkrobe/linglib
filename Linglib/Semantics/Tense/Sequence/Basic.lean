@@ -34,7 +34,7 @@ fit one cell against one anchor; they are deliberately *out* of this interface
 and handled by separate substrate.
 -/
 
-namespace Tense.Sequence
+namespace SequenceOfTense
 
 open Core.Order
 
@@ -107,11 +107,21 @@ are shared. -/
     size-blind. Past = `notAfter` (≤) yields `{lt, eq}` = back-shift ∨ sim. -/
 def relationalLicense : LocalLicense := fun _ c => c.tense
 
-/-- Size-gated schema ([egressy-2026]): an opaque clause (size not below
-    `boundary`) loses the simultaneous (`eq`) atom; a transparent one keeps the
-    full relative tense. -/
+/-- Generic *size gate*: an opaque clause (size not below `boundary`) loses the
+    simultaneous (`eq`) atom; a transparent one keeps the full relative tense.
+    This is the size half of a clause-size SOT account; it is **not** by itself
+    the [egressy-2026] license, which also requires an agreeing past (see
+    `LocalLicense.gate` and `Studies.Egressy2026`). On uniformly past-under-past
+    data the two coincide; they diverge once an intervening future appears. -/
 def sizeGatedLicense (boundary : Clause.Size) : LocalLicense :=
   fun _ c => if Clause.transparentTo c.size boundary then c.tense else c.tense.erase .eq
+
+/-- Refine a license by an extra gate: keep its reading set, but drop the
+    simultaneous atom `.eq` wherever the gate fails. A theory composes its
+    licensing conditions as successive gates — the SOT rule is a size gate
+    refined by an agreeing-past gate, i.e. `(sizeGatedLicense b).gate agreeingPast`. -/
+def LocalLicense.gate (L : LocalLicense) (g : Node → Node → Bool) : LocalLicense :=
+  fun a c => if g a c then L a c else (L a c).erase Ordering.eq
 
 /-- Res-movement de re foil: size- and tense-blind, so it adds the forward atom
     and overgenerates. -/
@@ -141,4 +151,4 @@ example :
     profile (sizeGatedLicense 5) exMatrix [exOpaquePast, exTransparentPast]
       = [before, notAfter] := by decide
 
-end Tense.Sequence
+end SequenceOfTense
