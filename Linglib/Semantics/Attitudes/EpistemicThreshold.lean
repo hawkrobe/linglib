@@ -354,13 +354,13 @@ theorem credence_upward_monotone (cr : AgentCredence E W)
 /-!
 ### Key Divergence from Confidence.lean
 
-CSW's confidence ordering is NOT constrained to respect logical conjunction:
-`conjunction_fallacy_compatible` (Confidence.lean) shows it is consistent
-to be confident of (p ∧ q) without being confident of p.
+CSW's confidence ordering is NOT constrained to respect logical conjunction
+(it imposes no conjunction-monotonicity axiom on the background preorder), so it
+is consistent to be confident of (p ∧ q) without being confident of p.
 
 When `AgentCredence` is a genuine probability measure (as in LaBToM), this
-cannot happen: Pr(A, p ∧ q) ≤ Pr(A, p) always. The two theories make
-different empirical predictions about conjunction fallacy data.
+cannot happen: Pr(A, p ∧ q) ≤ Pr(A, p) always (`isProbabilistic_conj_elim`).
+The witness that the two diverge is `confidence_not_probabilistic` below.
 -/
 
 /-- A probabilistic credence function is `Monotone` (from Mathlib) in
@@ -368,9 +368,10 @@ different empirical predictions about conjunction fallacy data.
     Pr(A, φ) ≤ Pr(A, ψ).
 
     This is the axiom that separates LaBToM's probabilistic credence
-    from CSW's ordinal confidence ordering. CSW's ordering permits
-    conjunction fallacies (`conjunction_fallacy_compatible` in
-    `Confidence.lean`); `isProbabilistic` rules them out.
+    from CSW's ordinal confidence ordering, which imposes no
+    conjunction-monotonicity constraint and so permits conjunction
+    fallacies; `isProbabilistic` rules them out (witness:
+    `confidence_not_probabilistic`).
 
     Conjunction elimination (`isProbabilistic_conj_elim`) is a
     consequence: since `φ ∧ ψ ≤ φ` pointwise, monotonicity gives
@@ -405,40 +406,36 @@ theorem prob_conjunction_elim (cr : AgentCredence E W)
 
 /-- **CSW vs threshold-credence divergence theorem.**
 
-    There exists an `AgentCredence` admitting a conjunction-fallacy
-    witness — formally, an instance where `cr (φ ∧ ψ) > cr φ` — and
-    consequently failing `isProbabilistic`.
+    There exists an `AgentCredence` admitting a conjunction-fallacy witness —
+    `cr (φ ∧ ψ) > cr φ` with `φ`, `ψ`, and `φ ∧ ψ` all *consistent* — that
+    consequently fails `isProbabilistic`.
 
-    This formalizes the empirical disagreement CSW §4.6 (around (52))
-    use to argue against probabilistic-credence accounts of confidence:
-    `Confidence.conjunction_fallacy_compatible` shows the CSW ordering
-    *admits* such witnesses (the John/Linda case from
-    [tversky-kahneman-1983]); this theorem shows that any credence
-    function reproducing such a witness *cannot* satisfy
-    `isProbabilistic`. The two theories therefore make incompatible
-    predictions about the same data point.
+    This formalizes the empirical disagreement CSW §4.6 (around (52)) use against
+    probabilistic-credence accounts of confidence: a confidence ordering can rank
+    a conjunction strictly above one of its conjuncts (the Tversky–Kahneman
+    pattern, [tversky-kahneman-1983]), whereas any probabilistic credence forbids
+    it (`prob_conjunction_elim`). The two theories make incompatible predictions
+    on the same datum.
 
-    Witness construction: `cr` assigns 1 to the always-false proposition
-    and 0 to everything else, on Unit-agent / Bool-world. Then
-    `id ∧ (fun w => !w) = (fun _ => false)`, so `cr (id ∧ neg) = 1 > 0
-    = cr id` realizes the John/Linda pattern. The `cr` is non-monotone
-    because `(fun _ => false) ≤ id` pointwise but `1 > 0`. -/
+    Witness (Unit-agent / Bool-world): `cr a p = if p false then 0 else 1`,
+    `φ = ⊤` (always true), `ψ = {true}` (`fun w => w`). Then `φ ∧ ψ = {true} ⊊ φ`,
+    all three *consistent*, and `cr φ = 0 < 1 = cr (φ ∧ ψ)`. The `cr` is
+    non-monotone because `{true} ≤ ⊤` pointwise yet `cr {true} = 1 > 0 = cr ⊤`.
+    (Earlier this used a `φ ∧ ψ = ⊥` witness — confidence in a contradiction —
+    which proved the existential but modelled the fallacy degenerately.) -/
 theorem confidence_not_probabilistic :
     ∃ (cr : AgentCredence Unit Bool),
       ¬ isProbabilistic cr ∧
       ∃ (φ ψ : Bool → Bool),
         cr () φ < cr () (fun w => φ w && ψ w) := by
-  refine ⟨fun _ φ => match φ true, φ false with
-            | false, false => (1 : ℚ)
-            | _, _         => 0,
-          ?_, id, (fun w => !w), ?_⟩
+  refine ⟨fun _ p => if p false then (0 : ℚ) else 1,
+          ?_, (fun _ => true), (fun w => w), ?_⟩
   · intro h
-    have hle : (fun (_ : Bool) => false) ≤ id := by
-      intro w; cases w <;> decide
+    have hle : (fun w => w) ≤ (fun _ : Bool => true) := by intro w; cases w <;> decide
     have : (1 : ℚ) ≤ 0 := h () hle
     linarith
   · show (0 : ℚ) < 1
-    decide
+    norm_num
 
 
 -- ============================================================================
@@ -785,10 +782,10 @@ introduce an identity-function alias. -/
 ### Conjunction-Closure Side of the CSW Divergence
 
 The headline empirical disagreement between this file and `Confidence.lean`
-is conjunction elimination. CSW's confidence ordering admits the
-conjunction fallacy (`Confidence.conjunction_fallacy_compatible`).
-Probabilistic credence rules it out, as the lemmas in this section make
-precise. The packaged refutation lives in §6
+is conjunction elimination. CSW's confidence ordering admits the conjunction
+fallacy (its background preorder imposes no conjunction-monotonicity
+constraint). Probabilistic credence rules it out, as the lemmas in this
+section make precise. The packaged refutation lives in §6
 (`confidence_not_probabilistic`) above.
 -/
 

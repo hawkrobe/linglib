@@ -23,8 +23,9 @@ Key features:
   (CSW §4.1)
 - **Not per-theme**: the ordering ranks states across themes, not within
   one theme
-- **Not probabilistic**: the ordering need not respect conjunction
-  (`conjunction_fallacy_compatible`, CSW (52))
+- **Not probabilistic**: the ordering need not respect conjunction — there is
+  no conjunction-monotonicity axiom; the divergence witness is
+  `EpistemicThreshold.confidence_not_probabilistic` (CSW (52))
 - **Bounded above (for ordinary holders)**: `certain` picks out the
   maximal elements (CSW §5.2). The maximality assumption is supplied
   per-theorem via `h_top`, not baked into the structure — CSW p.19 hedges
@@ -249,24 +250,21 @@ theorem confident_excludes_doubts {E W : Type*}
   letI := co.toPreorder
   exact disjoint_regions (confidentEntry co confPt) (doubtsEntry co doubtPt) h_strict s
 
-/-- Confidence orderings need not respect logical conjunction:
-    it is consistent to be confident that (p ∧ q) without being
-    confident that p (CSW (52), [tversky-kahneman-1983]).
+/-! ### Conjunction-fallacy compatibility (CSW (52))
 
-    Witness: ℕ as a toy ordering with contrast point 1 — the state ranked
-    2 is in the positive region (1 ≤ 2) while the state ranked 0 is not
-    (¬ 1 ≤ 0). Applied to confidence: assign rank 2 to the (p ∧ q)-state
-    and rank 0 to the p-state. The ordering is subjective and not
-    constrained by logical entailment.
+Confidence orderings need not respect logical conjunction: it is consistent to be
+confident that (p ∧ q) without being confident that p (CSW (52),
+[tversky-kahneman-1983]). In this substrate that is not a *theorem* but the
+*absence of a constraint* — the background `Preorder` carries no
+conjunction-monotonicity axiom, unlike a probability measure.
 
-    CSW §4.6 use this to argue against any probability-functional account:
-    probability functions force `Pr(p ∧ q) ≤ Pr(p)`. The cross-framework
-    refutation is `EpistemicThreshold.confidence_not_probabilistic`,
-    which witnesses that no probabilistic credence agrees with this. -/
-theorem conjunction_fallacy_compatible :
-    ∃ (contrastPt high low : ℕ),
-      contrastPt ≤ high ∧ ¬(contrastPt ≤ low) :=
-  ⟨1, 2, 0, by omega, by omega⟩
+The genuine witness that this diverges from a probabilistic account — a
+non-monotone credence ranking a *consistent* conjunction above a conjunct, which
+no probability measure can do — is
+`EpistemicThreshold.confidence_not_probabilistic`; the packaged cross-framework
+refutation is `CarianiSantorioWellwood2024.states_vs_threshold_on_conjunction_fallacy`.
+(Earlier a vacuous `conjunction_fallacy_compatible : ∃ a b c : ℕ, a ≤ b ∧ ¬ a ≤ c`
+stood here; it encoded nothing about confidence or conjunction and was removed.) -/
 
 /-! ## §5. Bridge to Neo-Davidsonian Event Semantics
 
