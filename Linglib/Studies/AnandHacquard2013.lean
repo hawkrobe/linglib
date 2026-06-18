@@ -1,7 +1,7 @@
 import Linglib.Semantics.Attitudes.Representationality
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Core.Agent.Emotion
+import Linglib.Pragmatics.Emotion
 
 /-!
 # Anand & Hacquard (2013): Epistemics and Attitudes

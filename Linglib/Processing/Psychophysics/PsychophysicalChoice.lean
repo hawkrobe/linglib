@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.Psychophysics
+import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Core.Agent.ChoiceApproximations
 import Linglib.Core.Agent.UtilityTheory
 

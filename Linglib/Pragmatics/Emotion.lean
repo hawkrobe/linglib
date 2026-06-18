@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.BToM
+import Linglib.Pragmatics.BToM
 
 /-!
 # Emotion as Post-Inference Appraisal [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]

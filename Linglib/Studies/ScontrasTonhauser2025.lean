@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Agent.BToM
+import Linglib.Pragmatics.BToM
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Studies.DegenTonhauser2021
 import Linglib.Semantics.Presupposition.Basic

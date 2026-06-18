@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Probability.LogitChoice
 import Mathlib.Algebra.BigOperators.Field
 
 /-!

@@ -70,7 +70,7 @@ theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (c : C) :
     mcfaddenIntegral (harmonyScoreR constraints) 1 c =
     softmax (harmonyScoreR constraints) c := by
-  rw [mcfaddenIntegral_eq_softmax _ one_pos]
+  rw [mcfaddenIntegral_eq_softmax]
   simp only [div_one, one_smul]
 
 -- ============================================================================

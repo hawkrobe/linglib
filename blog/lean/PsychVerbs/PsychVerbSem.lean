@@ -1,8 +1,8 @@
 -- TODO: 4 orphan imports — these modules never landed in main.
 -- import Linglib.Semantics.Causation.PsychCausation
 -- import Linglib.Semantics.Causation.PsychCausalLink
-import Linglib.Core.Agent.BToM
-import Linglib.Core.Agent.Emotion
+import Linglib.Pragmatics.BToM
+import Linglib.Pragmatics.Emotion
 -- import Linglib.Core.StructuralEquationModel
 -- import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Studies.HartshorneEtAl2016

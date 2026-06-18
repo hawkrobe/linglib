@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
 # MaxEnt → OT Limit

@@ -1,5 +1,5 @@
-import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Probability.Gaussian
+import Linglib.Core.Probability.RandomUtility
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 /-!
@@ -73,33 +73,31 @@ variable {Stimulus : Type*}
     `u(a) - u(b)` and variance `2σ²`, hence standard deviation `σ√2`. -/
 noncomputable def ThurstoneCaseV.choiceProb (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) : ℝ :=
-  normalCDF ((m.scale a - m.scale b) / (m.sigma * Real.sqrt 2))
+  gaussianChoiceProb (m.scale a - m.scale b) (m.sigma * Real.sqrt 2)
 
 /-- When `u(a) = u(b)`, the choice probability is `1/2` (indifference). -/
 theorem ThurstoneCaseV.choiceProb_eq (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) (h : m.scale a = m.scale b) :
     m.choiceProb a b = 1 / 2 := by
-  simp only [choiceProb, h, sub_self, zero_div]
-  exact normalCDF_zero
+  simp only [choiceProb, h, sub_self]
+  exact gaussianChoiceProb_zero _
 
 /-- Complementarity: `P(a,b) + P(b,a) = 1`. -/
 theorem ThurstoneCaseV.choiceProb_complement (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) :
     m.choiceProb a b + m.choiceProb b a = 1 := by
   simp only [choiceProb]
-  have : (m.scale b - m.scale a) / (m.sigma * Real.sqrt 2) =
-         -((m.scale a - m.scale b) / (m.sigma * Real.sqrt 2)) := by ring
-  rw [this, normalCDF_neg]
-  ring
+  rw [show m.scale b - m.scale a = -(m.scale a - m.scale b) from by ring]
+  exact gaussianChoiceProb_complement _ _
 
 /-- If `u(a) > u(b)`, then `P(a,b) > 1/2` — the higher-scale stimulus
     is chosen more often than chance. -/
 theorem ThurstoneCaseV.choiceProb_gt_half (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) (h : m.scale b < m.scale a) :
     1 / 2 < m.choiceProb a b := by
-  apply normalCDF_pos_gt_half
-  apply div_pos (sub_pos.mpr h)
-  exact mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
+  simp only [choiceProb]
+  exact half_lt_gaussianChoiceProb (sub_pos.mpr h)
+    (mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
 
 -- ============================================================================
 -- §3. Strong Stochastic Transitivity
@@ -117,10 +115,9 @@ theorem ThurstoneCaseV.transitivity_left (m : ThurstoneCaseV Stimulus)
     (_hab : m.scale b < m.scale a) (hbc : m.scale c < m.scale b) :
     m.choiceProb a b < m.choiceProb a c := by
   simp only [choiceProb]
-  apply normalCDF_strictMono
-  apply div_lt_div_of_pos_right
-  · linarith
-  · exact mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
+  apply gaussianChoiceProb_strictMono
+    (mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
+  linarith
 
 /-- The right half of strong stochastic transitivity:
     if `u(a) > u(b) > u(c)`, then `P(a,c) > P(b,c)`. -/
@@ -129,10 +126,9 @@ theorem ThurstoneCaseV.transitivity_right (m : ThurstoneCaseV Stimulus)
     (hab : m.scale b < m.scale a) (_hbc : m.scale c < m.scale b) :
     m.choiceProb b c < m.choiceProb a c := by
   simp only [choiceProb]
-  apply normalCDF_strictMono
-  apply div_lt_div_of_pos_right
-  · linarith
-  · exact mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
+  apply gaussianChoiceProb_strictMono
+    (mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
+  linarith
 
 -- ============================================================================
 -- §4. Logistic Approximation of the Normal CDF
@@ -191,7 +187,7 @@ theorem thurstone_luce_identity (m : ThurstoneCaseV Stimulus)
     m.choiceProb a b =
     normalCDF (thurstoneLuceK m.sigma * (m.scale a - m.scale b) *
               (Real.sqrt 3 / Real.pi)) := by
-  simp only [ThurstoneCaseV.choiceProb, thurstoneLuceK]
+  simp only [ThurstoneCaseV.choiceProb, gaussianChoiceProb, thurstoneLuceK]
   congr 1
   have h6 : Real.sqrt 6 = Real.sqrt 2 * Real.sqrt 3 := by
     rw [show (6 : ℝ) = 2 * 3 from by norm_num, Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 2)]

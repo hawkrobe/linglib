@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.RationalAction
-import Linglib.Core.Agent.BToM
+import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.RSA.Defs
 
 /-!

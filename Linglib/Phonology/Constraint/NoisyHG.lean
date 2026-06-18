@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Core.Agent.Thurstone
+import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.LogitChoice
 
 /-!
 # Noisy Harmonic Grammar and Normal MaxEnt
@@ -15,7 +16,10 @@ Normal MaxEnt ([flemming-2021]) instead adds i.i.d. Gaussian noise
 N(0,ε²) directly to candidate scores, giving a constant noise standard
 deviation σ_d = ε√2 for binary choice.
 
-Both are instances of Thurstone Case V (`Core.Thurstone`).
+Both are instances of the Gaussian random utility model (`Core.gaussianChoiceProb`,
+the probit choice rule) — the Gaussian sibling of softmax. They ground directly in
+that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
+are sibling applications of the same probit RUM, neither depending on the other.
 
 ## MaxEnt logit-harmony identity
 
@@ -63,44 +67,29 @@ noncomputable def nhgSigmaD {C : Type*}
   sigma * Real.sqrt (violationDiffSqSum constraints a b)
 
 -- ============================================================================
--- § 2: NHG as Thurstone Case V
+-- § 2: NHG binary choice (Gaussian random utility model)
 -- ============================================================================
 
-/-- NHG binary choice as a Thurstone Case V model.
-
-    - Scale values are harmony scores: `scale(0) = H(a)`, `scale(1) = H(b)`
-    - Thurstone σ = σ_d / √2, so that Thurstone's `Φ(d/(σ_T·√2))`
-      equals NHG's `Φ((H(a)−H(b))/σ_d)`.
-
-    Requires non-zero violation differences (otherwise σ_d = 0 and
-    the choice is deterministic). -/
-noncomputable def nhgAsThurstoneV {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (hsigma : 0 < sigma)
-    (a b : C) (h_diff : 0 < violationDiffSqSum constraints a b) :
-    ThurstoneCaseV (Fin 2) where
-  scale i := if i = 0 then harmonyScoreR constraints a
-             else harmonyScoreR constraints b
-  sigma := nhgSigmaD constraints sigma a b / Real.sqrt 2
-  sigma_pos := div_pos (mul_pos hsigma (Real.sqrt_pos.mpr h_diff))
-    (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
-
-/-- **NHG binary choice probability** ([flemming-2021] eq (15)):
+/-- **NHG binary choice probability** ([flemming-2021]):
     `P(a ≻ b) = Φ((H(a) − H(b)) / σ_d)`.
 
-    The Thurstone σ is set to `σ_d / √2` so that Thurstone's
-    `Φ(d / (σ_T · √2))` reduces to `Φ(d / σ_d)`. -/
+    Noisy HG is the Gaussian random utility model (`gaussianChoiceProb`, the
+    probit choice rule) applied to the harmony gap, with the context-dependent
+    NHG noise `σ_d = σ·√(Σⱼ(cⱼ(a)−cⱼ(b))²)` (`nhgSigmaD`). It grounds directly
+    in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
+noncomputable def nhgChoiceProb {C : Type*}
+    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) : ℝ :=
+  gaussianChoiceProb (harmonyScoreR constraints a - harmonyScoreR constraints b)
+    (nhgSigmaD constraints sigma a b)
+
+/-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
+    ([flemming-2021] eq (15)). -/
 theorem nhg_choiceProb_eq {C : Type*}
-    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (hsigma : 0 < sigma)
-    (a b : C) (h_diff : 0 < violationDiffSqSum constraints a b) :
-    (nhgAsThurstoneV constraints sigma hsigma a b h_diff).choiceProb 0 1 =
+    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
+    nhgChoiceProb constraints sigma a b =
     normalCDF ((harmonyScoreR constraints a - harmonyScoreR constraints b) /
                nhgSigmaD constraints sigma a b) := by
-  simp only [nhgAsThurstoneV, ThurstoneCaseV.choiceProb, nhgSigmaD]
-  have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  simp only [h01, ↓reduceIte]
-  have hsqrt2 : (Real.sqrt 2 : ℝ) ≠ 0 :=
-    ne_of_gt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
-  simp only [div_mul_cancel₀ _ hsqrt2]
+  simp only [nhgChoiceProb, gaussianChoiceProb]
 
 -- ============================================================================
 -- § 3: Normal MaxEnt
@@ -115,31 +104,25 @@ theorem nhg_choiceProb_eq {C : Type*}
 noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
   epsilon * Real.sqrt 2
 
-/-- Normal MaxEnt binary choice as a Thurstone Case V model.
-
-    Same as NHG but with constant σ_d = ε√2, so Thurstone σ = ε. -/
-noncomputable def normalMaxEntAsThurstoneV {C : Type*}
-    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (heps : 0 < epsilon)
-    (a b : C) : ThurstoneCaseV (Fin 2) where
-  scale i := if i = 0 then harmonyScoreR constraints a
-             else harmonyScoreR constraints b
-  sigma := epsilon
-  sigma_pos := heps
-
-/-- **Normal MaxEnt binary choice probability** ([flemming-2021] eq (17)):
+/-- **Normal MaxEnt binary choice probability** ([flemming-2021]):
     `P(a ≻ b) = Φ((H(a) − H(b)) / (ε√2))`.
 
-    Since the Thurstone σ is ε and `normalMaxEntSigmaD ε = ε√2`,
-    Thurstone's `Φ(d / (ε · √2))` directly gives the Normal MaxEnt formula. -/
+    Like NHG, the Gaussian random utility model (`gaussianChoiceProb`) applied
+    to the harmony gap — but with the *constant* noise `σ_d = ε√2`
+    (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
+noncomputable def normalMaxEntChoiceProb {C : Type*}
+    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) : ℝ :=
+  gaussianChoiceProb (harmonyScoreR constraints a - harmonyScoreR constraints b)
+    (normalMaxEntSigmaD epsilon)
+
+/-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
+    ([flemming-2021] eq (17)). -/
 theorem normalMaxEnt_choiceProb_eq {C : Type*}
-    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (heps : 0 < epsilon)
-    (a b : C) :
-    (normalMaxEntAsThurstoneV constraints epsilon heps a b).choiceProb 0 1 =
+    (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (a b : C) :
+    normalMaxEntChoiceProb constraints epsilon a b =
     normalCDF ((harmonyScoreR constraints a - harmonyScoreR constraints b) /
                normalMaxEntSigmaD epsilon) := by
-  simp only [normalMaxEntAsThurstoneV, ThurstoneCaseV.choiceProb, normalMaxEntSigmaD]
-  have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  simp only [h01, ↓reduceIte]
+  simp only [normalMaxEntChoiceProb, gaussianChoiceProb]
 
 -- ============================================================================
 -- § 4: MaxEnt Logit-Harmony Identity
