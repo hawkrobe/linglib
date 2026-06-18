@@ -15,9 +15,12 @@ the nonzero elements of a join-dense `V`, and the representation map is
 
 ## Status
 
-WIP. The construction (`ofOrtholattice`), the extent characterization, and the
-order-embedding are complete; orthocomplement-preservation and the isomorphism are
-`sorry` (TODO — `¬`-preservation is HM's [71] Thms 2.3/2.5, the heart of the proof).
+The construction (`ofOrtholattice`), the extent characterization, and the full
+ortholattice **embedding** (`⊓ ⊔ ¬ ⊤ ⊥` preserved, order-reflecting) are complete
+and sorry-free. The orthocomplement preservation — the heart of Theorem 4.13 — is
+`represent_compl`, which falls out of the `upperPolar` computation `upperPolar_Iic`
+(no De Morgan over the join is needed). Remaining (PR 3): surjectivity for complete
+`L` to assemble the isomorphism `L ≃o (ofOrtholattice V).Reg`, and Corollary 4.14.
 -/
 
 open Order Set
@@ -125,17 +128,35 @@ theorem represent_bot (hV : JoinDense V) : represent V (⊥ : L) = ⊥ :=
     rw [← Concept.extent_subset_extent_iff, represent_extent hV]
     exact fun b hb => absurd (le_bot_iff.mp hb) b.2.2
 
-/-- **Orthocomplement preservation** — the heart of Theorem 4.13
-    ([holliday-mandelkern-2024], via [71] Thms 2.3/2.5). The `⊇` inclusion needs
-    De Morgan over the join: `(∀ c ≤ a, b ≤ ¬c) → b ≤ ⨅ ¬c = ¬(⨆ c) = ¬a`.
-    TODO. -/
+/-- **Orthocomplement preservation** ([holliday-mandelkern-2024] Theorem 4.13).
+    The orthocomplement of `represent V a` has extent `upperPolar ortho {b ≤ a}`,
+    which `upperPolar_Iic` computes as `{d | a ≤ dᶜ} = {d | d ≤ aᶜ}` — exactly the
+    extent of `represent V aᶜ`. No De Morgan over the join is needed: the
+    `upperPolar` computation already carries the argument. -/
 theorem represent_compl (hV : JoinDense V) (a : L) :
     represent V aᶜ = (represent V a)ᶜ := by
-  sorry
+  apply Concept.ext
+  rw [Concept.extent_compl, ← Concept.upperPolar_extent]
+  simp only [represent_extent hV]
+  rw [upperPolar_Iic hV]
+  ext b
+  exact OrthocomplementedLattice.le_compl_comm
 
-/- TODO (Phase B, PR 3): with `represent_compl` and surjectivity for complete `L`,
-   assemble the isomorphism `L ≃o (ofOrtholattice V).Reg` (Theorem 4.13) and the
-   finite corollary 4.14 via join-irreducibles. The complete case additionally
-   needs `compl_sSup` (the complete-ortholattice De Morgan) as substrate. -/
+/-- `represent` preserves joins (from `⊓`- and `ᶜ`-preservation via De Morgan). -/
+theorem represent_sup (hV : JoinDense V) (a a' : L) :
+    represent V (a ⊔ a') = represent V a ⊔ represent V a' := by
+  rw [show a ⊔ a' = (aᶜ ⊓ a'ᶜ)ᶜ by
+        rw [OrthocomplementedLattice.compl_inf, OrthocomplementedLattice.compl_compl,
+            OrthocomplementedLattice.compl_compl],
+      represent_compl hV, represent_inf hV, represent_compl hV, represent_compl hV,
+      OrthocomplementedLattice.compl_inf, OrthocomplementedLattice.compl_compl,
+      OrthocomplementedLattice.compl_compl]
+
+/- TODO (Phase B, PR 3): the representation is now a full ortholattice embedding
+   (`⊓ ⊔ ¬ ⊤ ⊥` preserved, order-reflecting). Remaining: surjectivity for complete
+   `L` (`a := sSup` of a concept's extent) to assemble the isomorphism
+   `L ≃o (ofOrtholattice V).Reg` (Theorem 4.13), and Corollary 4.14 via
+   join-irreducibles for finite `L`. Needs a `CompleteLattice + OrthocomplementedLattice`
+   carrier (resolve the `Lattice` diamond). -/
 
 end Orthoframe
