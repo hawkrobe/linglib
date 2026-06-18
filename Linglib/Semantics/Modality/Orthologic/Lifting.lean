@@ -84,7 +84,7 @@ theorem eBset_regular (a : B) : IsRegular (epistemicFrame B) (eBset a) := by
 
 /-- The embedding `e_B : B → O(Bᵉ)` ([holliday-mandelkern-2024] Theorem 5.7.2) as a
     regular proposition. -/
-def eB (a : B) : RegularProp (epistemicFrame B) := ⟨eBset a, eBset_regular a⟩
+def eB (a : B) : (epistemicFrame B).Regular := (epistemicFrame B).regOf (eBset a) (eBset_regular a)
 
 @[simp] theorem mem_eB (a : B) (q : Possibility B) : q ∈ (eB a : Set _) ↔ q.truth ≤ a :=
   Iff.rfl
@@ -104,29 +104,29 @@ theorem eB_le_iff {a a' : B} : eB a ≤ eB a' ↔ a ≤ a' := by
   · exact bot_le
   · exact @h ⟨a, ⊤, ha, le_top⟩ (le_refl a)
 
-theorem eB_injective : Function.Injective (eB : B → RegularProp (epistemicFrame B)) :=
+theorem eB_injective : Function.Injective (eB : B → (epistemicFrame B).Regular) :=
   fun _ _ h => le_antisymm (eB_le_iff.mp h.le) (eB_le_iff.mp h.ge)
 
 theorem eB_top : eB (⊤ : B) = ⊤ := by
   apply SetLike.coe_injective
-  rw [coe_eB, RegularProp.coe_top]
+  rw [coe_eB, CompatFrame.Regular.coe_top]
   ext q; simp [eBset]
 
 theorem eB_bot : eB (⊥ : B) = ⊥ := by
   apply SetLike.coe_injective
-  rw [coe_eB, RegularProp.coe_bot]
+  rw [coe_eB, CompatFrame.Regular.coe_bot]
   ext q; simp [eBset, le_bot_iff, q.truth_ne_bot]
 
 theorem eB_inf (a a' : B) : eB (a ⊓ a') = eB a ⊓ eB a' := by
   apply SetLike.coe_injective
-  rw [coe_eB, RegularProp.coe_inf, coe_eB, coe_eB]
+  rw [coe_eB, CompatFrame.Regular.coe_inf, coe_eB, coe_eB]
   ext q; simp [eBset, le_inf_iff]
 
 /-- `e_B` preserves complement ([holliday-mandelkern-2024] Thm 5.7.2): the orthonegation
     of `e_B(a)` is `e_B(aᶜ)`. The `←` direction reuses the witness `(q ⊓ a, q.info)`. -/
 theorem eB_compl (a : B) : eB aᶜ = (eB a)ᶜ := by
   apply SetLike.coe_injective
-  rw [coe_eB, RegularProp.coe_compl, coe_eB]
+  rw [coe_eB, CompatFrame.Regular.coe_compl, coe_eB]
   ext q
   simp only [eBset, Set.mem_setOf_eq, mem_orthoNeg]
   constructor

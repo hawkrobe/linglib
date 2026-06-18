@@ -215,10 +215,8 @@ theorem identityFrame_classical [DecidableEq S]
 /-! ### The c_◇ closure operator -/
 
 /-- The c_◇ closure operator on `Set S` for a compatibility frame `F`,
-    mapping `A ↦ {x | ∀ y ◇ x, ∃ z ◇ y, z ∈ A}`. The fixed points of
-    `regularClosure F` are precisely the ◇-regular sets — making
-    `RegularProp F = (regularClosure F).fixedPoints` a mathlib-typed
-    closure-operator-based construction.
+    mapping `A ↦ {x | ∀ y ◇ x, ∃ z ◇ y, z ∈ A}`. Its fixed points are precisely the
+    `◇`-regular sets (`IsRegular F`), i.e. the underlying sets of `CompatFrame.Regular`.
     [holliday-mandelkern-2024] footnote 19 (page 858 of the
     published JPL version). -/
 def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
