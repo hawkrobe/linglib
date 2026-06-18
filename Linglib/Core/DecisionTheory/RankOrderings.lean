@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 
 /-!
 # Rank Orderings [luce-1959]

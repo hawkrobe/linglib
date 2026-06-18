@@ -1,6 +1,6 @@
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
-import Linglib.Core.Agent.GumbelLuce
+import Linglib.Core.DecisionTheory.GumbelLuce
 import Linglib.Processing.Psychophysics.Psychophysics
 
 /-!

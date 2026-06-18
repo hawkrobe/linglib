@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Relevance
-import Linglib.Core.Agent.DecisionTheory
+import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Semantics.Questions.Resolution
 
 /-!

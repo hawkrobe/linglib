@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.SocialUtility
+import Linglib.Pragmatics.SocialMeaning.SocialUtility
 import Mathlib.Data.Fintype.Basic
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.DecisionTheory.RationalAction
 
 /-!
 # Luce's Utility Decomposition Theory (Chapter 3) [luce-1959]
