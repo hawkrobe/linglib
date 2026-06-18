@@ -6,6 +6,7 @@ import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 
 /-!
 # [ogihara-steinert-threlkeld-2024] — Data
@@ -31,12 +32,24 @@ temporal connectives *before* and *after*.
 
 namespace OgiharaSteinertThrelkeld2024
 
+open Data.Examples (LinguisticExample)
+open OgiharaSteinertThrelkeld2024.Examples
+
+/-- Value of a `paperFeatures` key, if present. -/
+def featureOf (e : LinguisticExample) (k : String) : Option String :=
+  (e.paperFeatures.find? (·.1 == k)).map (·.2)
+
+/-- A `paperFeatures` flag read as a Bool (`true` iff the value is `"true"`). -/
+def flagOf (e : LinguisticExample) (k : String) : Bool := featureOf e k == some "true"
+
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Veridicality Judgments
 -- ════════════════════════════════════════════════════════════════
 
-/-- An empirical judgment about whether a temporal connective entails
-    the truth of its complement clause. -/
+/-- An empirical judgment about whether a temporal connective entails the truth of its
+    complement clause. Stimuli live in `Data/Examples/OgiharaSteinertThrelkeld2024.json`
+    (generated `OgiharaSteinertThrelkeld2024.Examples`); this record is derived from a
+    `LinguisticExample` by `ofVeridicality`. -/
 structure VeridicalityDatum where
   /-- The example sentence -/
   sentence : String
@@ -48,149 +61,54 @@ structure VeridicalityDatum where
   gloss : String
   deriving Repr
 
+/-- Derive a `VeridicalityDatum` from a generated `LinguisticExample`: the sentence is the
+    `primaryText`; the connective and complement-entailment are `paperFeatures` tags. -/
+def ofVeridicality (e : LinguisticExample) : VeridicalityDatum where
+  sentence := e.primaryText
+  connective := (featureOf e "connective").getD ""
+  complementEntailed := flagOf e "complement_entailed"
+  gloss := e.comment
+
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Core Veridicality Data
 -- ════════════════════════════════════════════════════════════════
 
 /-- "He left after she arrived" entails "she arrived". -/
-def after_veridical : VeridicalityDatum where
-  sentence := "He left after she arrived"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(leave, arrive) |= arrive"
+def after_veridical : VeridicalityDatum := ofVeridicality ost2024_after_veridical
 
-/-- "He left before she arrived" does NOT entail "she arrived".
-    Compatible with: she did arrive (veridical reading), she didn't
-    arrive (counterfactual reading, e.g. "before she could arrive"),
-    or indeterminate (non-committal reading). -/
-def before_nonveridical : VeridicalityDatum where
-  sentence := "He left before she arrived"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(leave, arrive) |/= arrive"
+/-- "He left before she arrived" does NOT entail "she arrived" (compatible with the
+    veridical, counterfactual, or non-committal reading). -/
+def before_nonveridical : VeridicalityDatum := ofVeridicality ost2024_before_nonveridical
 
-/-- "The bomb exploded before anyone defused it" — the complement
-    event (defusing) did NOT occur. This is the counterfactual reading
-    of *before* ([beaver-condoravdi-2003], "barely prevented"). -/
-def before_counterfactual : VeridicalityDatum where
-  sentence := "The bomb exploded before anyone defused it"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(explode, defuse) ∧ ¬defuse"
+/-- "The bomb exploded before anyone defused it" — counterfactual *before*: the defusing
+    did not occur ([beaver-condoravdi-2003], "barely prevented"). -/
+def before_counterfactual : VeridicalityDatum := ofVeridicality ost2024_before_counterfactual
 
 /-- "She finished her coffee after he left" entails "he left". -/
-def after_veridical_2 : VeridicalityDatum where
-  sentence := "She finished her coffee after he left"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(finish, leave) |= leave"
+def after_veridical_2 : VeridicalityDatum := ofVeridicality ost2024_after_veridical_2
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Additional Veridicality Data ([beaver-condoravdi-2003], §2)
 -- ════════════════════════════════════════════════════════════════
 
-/-- "The Supreme Court decided the election before the votes were
-    counted" — non-committal: compatible with votes eventually being
-    counted or never counted ([beaver-condoravdi-2003], ex. 22). -/
-def before_noncommittal : VeridicalityDatum where
-  sentence := "The Supreme Court decided the election before the votes were counted"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(decide, count) |/= count (non-committal)"
+/-- "I left the party before there was any trouble" — non-committal
+    ([beaver-condoravdi-2003], ex. 43; B&C's (22) Supreme Court case is counterfactual). -/
+def before_noncommittal : VeridicalityDatum := ofVeridicality ost2024_before_noncommittal
 
-/-- "Mozart died before he finished the Requiem" — counterfactual:
-    Mozart never finished the Requiem ([beaver-condoravdi-2003], ex. 24). -/
-def before_counterfactual_mozart : VeridicalityDatum where
-  sentence := "Mozart died before he finished the Requiem"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(die, finish) ∧ ¬finish (counterfactual)"
+/-- "Mozart died before he finished the Requiem" — counterfactual
+    ([beaver-condoravdi-2003], ex. 24). -/
+def before_counterfactual_mozart : VeridicalityDatum := ofVeridicality ost2024_before_counterfactual_mozart
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Logical Property Data ([beaver-condoravdi-2003], §1)
--- ════════════════════════════════════════════════════════════════
+-- B&C's before/after logical-property asymmetries (antisymmetry, transitivity, NPI
+-- licensing) are Anscombe's ([anscombe-1964] §I-II), formalized canonically in
+-- `Studies/Anscombe1964.lean` (`Anscombe.before_antisymmetric`, `before_transitive`,
+-- `after_not_antisymmetric`, `after_not_transitive`, `before_complement_DE`,
+-- `after_complement_UE`). They are not Ogihara & Steinert-Threlkeld's contribution, so
+-- this study consumes them rather than restating them.
 
-/-- A judgment about a logical property of a temporal connective:
-    does it hold, fail, or hold only under conditions? -/
-structure LogicalPropertyDatum where
-  /-- Property name -/
-  property : String
-  /-- Connective -/
-  connective : String
-  /-- Does the property hold? -/
-  holds : Bool
-  /-- Example sentence(s) -/
-  example_ : String
-  /-- Brief explanation -/
-  gloss : String
-  deriving Repr
-
-/-- *Before* is antisymmetric: "Cleo was in America before David was"
-    and "David was in America before Cleo was" cannot both be true
-    (with non-overlapping intervals). ([beaver-condoravdi-2003], exx. 3-4) -/
-def before_antisymmetric : LogicalPropertyDatum where
-  property := "antisymmetry"
-  connective := "before"
-  holds := true
-  example_ := "Cleo was in America before David was / #David was in America before Cleo was"
-  gloss := "before(A,B) → ¬before(B,A) (when A,B non-overlapping)"
-
-/-- *After* is NOT antisymmetric: overlapping intervals allow both
-    directions. ([beaver-condoravdi-2003], exx. 5-7, diagram 7) -/
-def after_not_antisymmetric : LogicalPropertyDatum where
-  property := "antisymmetry"
-  connective := "after"
-  holds := false
-  example_ := "Cleo was in America after David was / David was in America after Cleo was"
-  gloss := "after(A,B) ∧ after(B,A) possible with overlapping intervals"
-
-/-- *Before* is transitive: if A before B and B before C, then A before C.
-    ([beaver-condoravdi-2003], exx. 12-14) -/
-def before_transitive : LogicalPropertyDatum where
-  property := "transitivity"
-  connective := "before"
-  holds := true
-  example_ := "Delores was in America before Ginger / Ginger before Fred → Delores before Fred"
-  gloss := "before(A,B) ∧ before(B,C) → before(A,C)"
-
-/-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). ([beaver-condoravdi-2003], exx. 8-11) -/
-def after_not_transitive : LogicalPropertyDatum where
-  property := "transitivity"
-  connective := "after"
-  holds := false
-  example_ := "Fred after Ginger, Ginger after Delores, but #Fred after Delores"
-  gloss := "after(A,B) ∧ after(B,C) ↛ after(A,C)"
-
-/-- *Before* licenses NPIs; *after* does not. ([beaver-condoravdi-2003], exx. 15-18) -/
-def before_licenses_npis : LogicalPropertyDatum where
-  property := "NPI licensing"
-  connective := "before"
-  holds := true
-  example_ := "Cleo left before anyone noticed / *Cleo left after anyone noticed"
-  gloss := "before licenses NPIs; after does not"
-
--- ════════════════════════════════════════════════════════════════
--- § 5: Pragmatic Oddity Data ([beaver-condoravdi-2003], exx. 32-33)
--- ════════════════════════════════════════════════════════════════
-
-/-- "David won the race before he entered it" — pragmatically odd because
-    winning temporally presupposes entering: there is no historical
-    alternative where one wins before entering. ([beaver-condoravdi-2003], ex. 32) -/
-def before_oddity_win : VeridicalityDatum where
-  sentence := "David won the race before he entered it"
-  connective := "before"
-  complementEntailed := false
-  gloss := "before(win, enter) — pragmatically odd: winning presupposes entering"
-
-/-- "David entered the race after he won it" — same temporal impossibility
-    viewed through *after*: entering after winning reverses the natural
-    temporal order. ([beaver-condoravdi-2003], ex. 33) -/
-def after_oddity_enter : VeridicalityDatum where
-  sentence := "David entered the race after he won it"
-  connective := "after"
-  complementEntailed := true
-  gloss := "after(enter, win) — pragmatically odd: entering presupposes not yet having won"
+-- B&C's (32)/(33) — the "ketchup"/"squares had four sides" Anscombe overgeneration —
+-- are formalized as `Anscombe.before_overgenerates` (in `Studies/Anscombe1964.lean`),
+-- not as the fabricated "win before entering" examples this file previously carried.
 
 open Tense.TemporalConnectives.BeaverCondoravdi
 
@@ -242,7 +160,7 @@ theorem bc_cannot_place_bounded_complement
     The complement (Ohtani's 10th win) can only occur during the season
     (before day 276). (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20a) -/
 def ost_counterexample_ohtani : BCCounterexampleDatum where
-  sentence := "Unfortunately, the 2021 MLB season will be over before Shohei Ohtani earns his 10th win of the season"
+  sentence := ost2024_ohtani.primaryText
   aTime := 276
   complementUpperBound := 275
   boundedBefore := by omega
@@ -254,7 +172,7 @@ def ost_counterexample_ohtani : BCCounterexampleDatum where
     proposal that posits a fictitious snow event after the end of 2020 does not
     work. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20b) -/
 def ost_counterexample_snow : BCCounterexampleDatum where
-  sentence := "2020 might come to an end before it snows for the first time this year"
+  sentence := ost2024_snow.primaryText
   aTime := 366
   complementUpperBound := 366
   boundedBefore := le_refl _
@@ -267,7 +185,7 @@ def ost_counterexample_snow : BCCounterexampleDatum where
     only come true if the world is destroyed in July 1999 — it cannot come true
     after the end of July 1999. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20c) -/
 def ost_counterexample_nostradamus : BCCounterexampleDatum where
-  sentence := "July 1999 will come to an end before Nostradamus' prophecy about the end of the world comes true"
+  sentence := ost2024_nostradamus.primaryText
   aTime := 31
   complementUpperBound := 31
   boundedBefore := le_refl _
@@ -289,25 +207,20 @@ structure NonCommittalDatum where
   explanation : String
   deriving Repr
 
-/-- "Mary will leave the party before Bill gets drunk."
-    Non-committal reading is available: maybe Bill gets drunk, maybe not.
-    B&C's Event Continuation Condition is satisfied (Bill getting drunk is
-    a normal continuation). (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
-def noncommittal_available : NonCommittalDatum where
-  sentence := "Mary will leave the party before Bill gets drunk"
-  nonCommittalAvailable := true
-  explanation := "getting drunk is a normal continuation of being at a party"
+/-- Derive a `NonCommittalDatum` from a generated `LinguisticExample`. -/
+def ofNonCommittal (e : LinguisticExample) : NonCommittalDatum where
+  sentence := e.primaryText
+  nonCommittalAvailable := flagOf e "noncommittal_available"
+  explanation := e.comment
 
-/-- "Mary will leave the party before Quebec becomes an independent country."
-    Non-committal reading is NOT available (sentence is odd): Quebec's
-    independence is not a normal continuation of the party. B&C's Event
-    Continuation Condition should block this, but the mechanism is unclear
-    for *before*-clauses with pragmatically impossible complements.
-    (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
-def noncommittal_unavailable : NonCommittalDatum where
-  sentence := "Mary will leave the party before Quebec becomes an independent country"
-  nonCommittalAvailable := false
-  explanation := "Quebec independence is not a contextually normal continuation"
+/-- "Mary will leave the party before Bill gets drunk" — non-committal reading available
+    (getting drunk is a normal continuation). (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
+def noncommittal_available : NonCommittalDatum := ofNonCommittal ost2024_noncommittal_available
+
+/-- "Mary will leave the party before Quebec becomes an independent country" — non-committal
+    reading unavailable (Quebec independence is not a normal continuation); B&C's Event
+    Continuation Condition should block this. (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
+def noncommittal_unavailable : NonCommittalDatum := ofNonCommittal ost2024_noncommittal_unavailable
 
 /-- The non-committal reading is sensitive to contextual plausibility:
     available when the complement is a normal continuation, unavailable
@@ -387,11 +300,6 @@ theorem veridicality_asymmetry :
     after_veridical.complementEntailed ≠ before_nonveridical.complementEntailed := by
   decide
 
-/-- Before and after are opposites on all logical properties tested. -/
-theorem logical_property_asymmetry :
-    before_antisymmetric.holds ≠ after_not_antisymmetric.holds ∧
-    before_transitive.holds ≠ after_not_transitive.holds := by
-  exact ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge content (merged from Bridge.lean)
@@ -492,133 +400,6 @@ theorem scenario_before_projects :
     let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .dynamic⟩
     Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
-
--- ════════════════════════════════════════════════════════════════
--- § 14: Logical Properties ([beaver-condoravdi-2003], §1)
--- ════════════════════════════════════════════════════════════════
-
-/-! The logical properties of *before* and *after* noted by B&C follow
-    directly from the quantificational structure. We verify each on
-    concrete interval scenarios over ℤ, matching the B&C diagrams. -/
-
-private def i_cleo_b : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by omega⟩
-private def i_david_b : NonemptyInterval ℤ := ⟨⟨8, 12⟩, by omega⟩
-
-/-- *Before* is antisymmetric on non-overlapping statives: if A before B,
-    then ¬(B before A). ([beaver-condoravdi-2003], exx. 3-4)
-
-    Scenario: Cleo [1,5], David [8,12]. Cleo before David holds;
-    David before Cleo does not.
-
-    The ∀-quantifier in Anscombe.before enforces this: if all of B
-    follows some point in A, then no point in B precedes all of A. -/
-theorem before_antisymmetric_scenario :
-    Anscombe.before (stativeDenotation i_cleo_b) (stativeDenotation i_david_b) ∧
-    ¬Anscombe.before (stativeDenotation i_david_b) (stativeDenotation i_cleo_b) := by
-  simp only [Anscombe.before, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
-    i_cleo_b, i_david_b, Set.mem_setOf_eq]
-  constructor
-  · exact ⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩
-  · intro ⟨t, ⟨ht1, ht2⟩, hall⟩
-    have := hall 1 ⟨le_refl _, by omega⟩; omega
-
-private def i_cleo_a : NonemptyInterval ℤ := ⟨⟨1, 8⟩, by omega⟩
-private def i_david_a : NonemptyInterval ℤ := ⟨⟨5, 12⟩, by omega⟩
-
-/-- *After* is NOT antisymmetric: overlapping intervals allow both
-    after(A,B) and after(B,A). ([beaver-condoravdi-2003], exx. 5-7, diagram 7)
-
-    Scenario: Cleo [1,8], David [5,12]. Both Cleo-after-David and
-    David-after-Cleo hold because ∃ requires only one witness. -/
-theorem after_not_antisymmetric_scenario :
-    Anscombe.after (stativeDenotation i_cleo_a) (stativeDenotation i_david_a) ∧
-    Anscombe.after (stativeDenotation i_david_a) (stativeDenotation i_cleo_a) := by
-  simp only [Anscombe.after, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
-    i_cleo_a, i_david_a, Set.mem_setOf_eq]
-  exact ⟨⟨8, ⟨by omega, le_refl _⟩, 5, ⟨le_refl _, by omega⟩, by omega⟩,
-         ⟨12, ⟨by omega, le_refl _⟩, 1, ⟨le_refl _, by omega⟩, by omega⟩⟩
-
-/-- Helper intervals for the transitivity scenarios. Using top-level defs
-    so `simp` can unfold interval fields for `omega`. -/
-private def i_delores_t : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
-private def i_ginger_t : NonemptyInterval ℤ := ⟨⟨6, 8⟩, by omega⟩
-private def i_fred_t : NonemptyInterval ℤ := ⟨⟨11, 13⟩, by omega⟩
-
-/-- *Before* is transitive: A before B ∧ B before C → A before C.
-    ([beaver-condoravdi-2003], exx. 12-14)
-
-    Scenario: Delores [1,3], Ginger [6,8], Fred [11,13]. -/
-theorem before_transitive_scenario :
-    Anscombe.before (stativeDenotation i_delores_t) (stativeDenotation i_ginger_t) ∧
-    Anscombe.before (stativeDenotation i_ginger_t) (stativeDenotation i_fred_t) ∧
-    Anscombe.before (stativeDenotation i_delores_t) (stativeDenotation i_fred_t) := by
-  simp only [Anscombe.before, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
-    i_delores_t, i_ginger_t, i_fred_t, Set.mem_setOf_eq]
-  exact ⟨⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩,
-         ⟨6, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩,
-         ⟨1, ⟨le_refl _, by omega⟩, fun t' ⟨h, _⟩ => by omega⟩⟩
-
-private def i_fred_a : NonemptyInterval ℤ := ⟨⟨1, 3⟩, by omega⟩
-private def i_ginger_a : NonemptyInterval ℤ := ⟨⟨2, 5⟩, by omega⟩
-private def i_delores_a : NonemptyInterval ℤ := ⟨⟨4, 7⟩, by omega⟩
-
-/-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). ([beaver-condoravdi-2003], exx. 8-11)
-
-    Scenario: Fred [1,3], Ginger [2,5], Delores [4,7].
-    Fred after Ginger: t=3, t'=2. ✓
-    Ginger after Delores: t=5, t'=4. ✓
-    Fred after Delores: need t ∈ [1,3], t' ∈ [4,7], t' < t — impossible
-    since max(Fred)=3 < 4=min(Delores). ✗ -/
-theorem after_not_transitive_scenario :
-    Anscombe.after (stativeDenotation i_fred_a) (stativeDenotation i_ginger_a) ∧
-    Anscombe.after (stativeDenotation i_ginger_a) (stativeDenotation i_delores_a) ∧
-    ¬Anscombe.after (stativeDenotation i_fred_a) (stativeDenotation i_delores_a) := by
-  simp only [Anscombe.after, timeTrace_stativeDenotation, NonemptyInterval.mem_def,
-    i_fred_a, i_ginger_a, i_delores_a, Set.mem_setOf_eq]
-  refine ⟨⟨3, ⟨by omega, by omega⟩, 2, ⟨by omega, by omega⟩, by omega⟩,
-          ⟨5, ⟨by omega, by omega⟩, 4, ⟨by omega, by omega⟩, by omega⟩, ?_⟩
-  rintro ⟨t, ⟨h1, h2⟩, t', ⟨h3, h4⟩, hlt⟩; omega
-
--- ════════════════════════════════════════════════════════════════
--- § 15: Logical Properties — General Theorems
--- ════════════════════════════════════════════════════════════════
-
-/-- *Before* is antisymmetric in general: `before(A,B) → ¬before(B,A)`.
-
-    From the ∀ in Anscombe's *before*: if ∃t ∈ A, ∀t' ∈ B, t < t',
-    then for any s ∈ B we get t < s. But before(B,A) gives ∀ t ∈ A, s < t,
-    so s < t and t < s — contradiction.
-
-    Note: no non-emptiness assumption needed. -/
-theorem before_antisymmetric_general {Time : Type*} [LinearOrder Time]
-    (A B : SentDenotation Time) :
-    Anscombe.before A B → ¬Anscombe.before B A := by
-  intro ⟨t, ht, hall_B⟩ ⟨s, hs, hall_A⟩
-  exact lt_asymm (hall_A t ht) (hall_B s hs)
-
-/-- *Before* is transitive in general: `before(A,B) → before(B,C) → before(A,C)`.
-
-    From `before(A,B)`: ∃t ∈ A, ∀t' ∈ B, t < t'.
-    From `before(B,C)`: ∃s ∈ B, ∀s' ∈ C, s < s'.
-    Then t < s (from the first, since s ∈ B), and for any u ∈ C, s < u
-    (from the second). So t < u by transitivity of <. Witness: t ∈ A.
-
-    Note: no non-emptiness assumption needed — `s ∈ timeTrace B` is
-    provided by the second hypothesis. -/
-theorem before_transitive_general {Time : Type*} [LinearOrder Time]
-    (A B C : SentDenotation Time) :
-    Anscombe.before A B → Anscombe.before B C → Anscombe.before A C := by
-  intro ⟨t, ht, hall_B⟩ ⟨s, hs, hall_C⟩
-  exact ⟨t, ht, fun u hu => lt_trans (hall_B s hs) (hall_C u hu)⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 16: NPI Licensing Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-- The NPI datum matches the Fragment entry: *before* licenses NPIs. -/
-theorem npi_datum_matches_fragment :
-    before_.licensesNPI = before_licenses_npis.holds := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 17: Cross-Linguistic Bridge (Japanese)
