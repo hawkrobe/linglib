@@ -102,8 +102,8 @@ instance : DecidableRel Poss5.compat := fun a b => by
 /-- The path compatibility frame: adjacent possibilities are compatible. -/
 def pathFrame : CompatFrame Poss5 where
   compat := Poss5.compat
-  compat_refl := fun x => by cases x <;> simp [Poss5.compat]
-  compat_symm := fun x y => by cases x <;> cases y <;> simp [Poss5.compat]
+  compat_refl := ⟨fun x => by cases x <;> simp [Poss5.compat]⟩
+  compat_symm := ⟨fun x y => by cases x <;> cases y <;> simp [Poss5.compat]⟩
 
 instance : DecidableRel pathFrame.compat :=
   inferInstanceAs (DecidableRel Poss5.compat)
@@ -293,7 +293,7 @@ instance : DecidableRel Poss5.epistAccess := fun a b => by
 def epistemicScale : ModalCompatFrame Poss5 where
   toCompatFrame := pathFrame
   access := Poss5.epistAccess
-  access_refl := fun x => by cases x <;> simp [Poss5.epistAccess]
+  access_refl := ⟨fun x => by cases x <;> simp [Poss5.epistAccess]⟩
 
 instance : DecidableRel epistemicScale.access :=
   inferInstanceAs (DecidableRel Poss5.epistAccess)
