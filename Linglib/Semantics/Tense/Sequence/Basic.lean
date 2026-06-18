@@ -123,15 +123,11 @@ def sizeGatedLicense (boundary : Clause.Size) : LocalLicense :=
 def LocalLicense.gate (L : LocalLicense) (g : Node → Node → Bool) : LocalLicense :=
   fun a c => if g a c then L a c else (L a c).erase Ordering.eq
 
-/-- Res-movement de re foil: size- and tense-blind, so it adds the forward atom
-    and overgenerates. -/
-def deReLicense : LocalLicense := fun _ _ => unrestricted
-
 /-! ### Worked example: the schemas diverge on an opaque past clause
 
 A concrete demonstration that the interface carries weight: on an opaque past
-clause (grade `5`, boundary `5`), the relational and de re schemas license the
-simultaneous reading but the size-gated one does not. -/
+clause (grade `5`, boundary `5`), the relational schema licenses the simultaneous
+reading but the size-gated one does not. -/
 
 /-- A matrix past clause (size below any boundary used here). -/
 def exMatrix : Node := ⟨notAfter, 0⟩
@@ -142,7 +138,6 @@ def exTransparentPast : Node := ⟨notAfter, 0⟩
 
 example : Simultaneous (relationalLicense exMatrix exOpaquePast) := by decide
 example : ¬ Simultaneous (sizeGatedLicense 5 exMatrix exOpaquePast) := by decide
-example : Simultaneous (deReLicense exMatrix exOpaquePast) := by decide
 
 /-- The size-gated profile over a chain `[opaque, transparent]`: the opaque
     level is back-shift only (`before`), the transparent level keeps both
