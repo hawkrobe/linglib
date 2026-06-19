@@ -135,18 +135,18 @@ def resolveI : Bool → Bool → Segment
 -- ============================================================================
 
 -- Back/front classification
-theorem a_is_back : a_vowel.HasValue .back true = true := by native_decide
-theorem e_is_front : e_vowel.HasValue .back false = true := by native_decide
-theorem ö_is_front : ö_vowel.HasValue .back false = true := by native_decide
-theorem u_is_back : u_vowel.HasValue .back true = true := by native_decide
+theorem a_is_back : a_vowel.HasValue .back true = true := by decide
+theorem e_is_front : e_vowel.HasValue .back false = true := by decide
+theorem ö_is_front : ö_vowel.HasValue .back false = true := by decide
+theorem u_is_back : u_vowel.HasValue .back true = true := by decide
 
 -- Rounding
-theorem ü_is_round : ü_vowel.HasValue .round true = true := by native_decide
-theorem ı_is_unround : ı_vowel.HasValue .round false = true := by native_decide
+theorem ü_is_round : ü_vowel.HasValue .round true = true := by decide
+theorem ı_is_unround : ı_vowel.HasValue .round false = true := by decide
 
 -- Height
-theorem i_is_high : i_vowel.HasValue .high true = true := by native_decide
-theorem a_is_low : a_vowel.HasValue .low true = true := by native_decide
+theorem i_is_high : i_vowel.HasValue .high true = true := by decide
+theorem a_is_low : a_vowel.HasValue .low true = true := by decide
 
 -- Archiphoneme resolution
 theorem resolveA_back : resolveA true = a_vowel := rfl
@@ -162,25 +162,25 @@ theorem resolveI_front_unround : resolveI false false = i_vowel := rfl
 
 /-- Palatal harmony extracts [back] from a back-vowel stem. -/
 theorem palatal_back_stem :
-    triggerValue palatalHarmony [a_vowel] = some true := by native_decide
+    triggerValue palatalHarmony [a_vowel] = some true := by decide
 
 /-- Palatal harmony extracts [−back] from a front-vowel stem. -/
 theorem palatal_front_stem :
-    triggerValue palatalHarmony [e_vowel] = some false := by native_decide
+    triggerValue palatalHarmony [e_vowel] = some false := by decide
 
 /-- Labial harmony extracts [round] from a rounded stem. -/
 theorem labial_round_stem :
-    triggerValue labialHarmony [o_vowel] = some true := by native_decide
+    triggerValue labialHarmony [o_vowel] = some true := by decide
 
 /-- Labial harmony extracts [−round] from an unrounded stem. -/
 theorem labial_unround_stem :
-    triggerValue labialHarmony [ı_vowel] = some false := by native_decide
+    triggerValue labialHarmony [ı_vowel] = some false := by decide
 
 -- 2D harmony: göz (front, rounded) determines both dimensions
 theorem göz_palatal : triggerValue palatalHarmony [ö_vowel] = some false := by
-  native_decide
+  decide
 theorem göz_labial : triggerValue labialHarmony [ö_vowel] = some true := by
-  native_decide
+  decide
 
 /-- **OSL transduction harmonizes the suffix** (`System.transduce`, the proved
     2-OSL function `palatalHarmony.transduce_isLeftOSL`): a [−back] target after
@@ -192,11 +192,11 @@ theorem palatal_transduce_spreads_back :
 
 -- Cross-backness: a and e disagree on dorsal features
 theorem a_e_dorsal_disagree :
-    agreeAt a_vowel e_vowel .dorsal = false := by native_decide
+    agreeAt a_vowel e_vowel .dorsal = false := by decide
 
 -- Same-backness: a and o agree on [back]
 theorem a_o_same_back :
     a_vowel.HasValue .back true = true ∧
-    o_vowel.HasValue .back true = true := ⟨by native_decide, by native_decide⟩
+    o_vowel.HasValue .back true = true := ⟨by decide, by decide⟩
 
 end Turkish.VowelHarmony

@@ -145,22 +145,22 @@ def finnishHarmony : System :=
 -- ============================================================================
 
 /-- /a/ is a back vowel. -/
-theorem a_is_back : isBackVowel a_vowel = true := by native_decide
+theorem a_is_back : isBackVowel a_vowel = true := by decide
 
 /-- /ä/ is a front vowel. -/
-theorem ä_is_front : isFrontVowel ä_vowel = true := by native_decide
+theorem ä_is_front : isFrontVowel ä_vowel = true := by decide
 
 /-- /e/ is neutral. -/
-theorem e_is_neutral : isNeutral e_vowel = true := by native_decide
+theorem e_is_neutral : isNeutral e_vowel = true := by decide
 
 /-- /i/ is neutral. -/
-theorem i_is_neutral : isNeutral i_vowel = true := by native_decide
+theorem i_is_neutral : isNeutral i_vowel = true := by decide
 
 /-- /o/ is not neutral (it's a harmonic back vowel). -/
-theorem o_not_neutral : isNeutral o_vowel = false := by native_decide
+theorem o_not_neutral : isNeutral o_vowel = false := by decide
 
 /-- /ö/ is not neutral (it's a harmonic front vowel). -/
-theorem ö_not_neutral : isNeutral ö_vowel = false := by native_decide
+theorem ö_not_neutral : isNeutral ö_vowel = false := by decide
 
 -- ============================================================================
 -- § 5: Harmony System Verification
@@ -168,32 +168,32 @@ theorem ö_not_neutral : isNeutral ö_vowel = false := by native_decide
 
 /-- Back-vowel stems yield back harmony. -/
 theorem back_stem_harmony :
-    triggerValue finnishHarmony [a_vowel] = some true := by native_decide
+    triggerValue finnishHarmony [a_vowel] = some true := by decide
 
 /-- Front-vowel stems yield front harmony. -/
 theorem front_stem_harmony :
-    triggerValue finnishHarmony [ä_vowel] = some false := by native_decide
+    triggerValue finnishHarmony [ä_vowel] = some false := by decide
 
 /-- Neutral-only stems have no trigger (default to front harmony). -/
 theorem neutral_only_no_trigger :
     triggerValue finnishHarmony [e_vowel, i_vowel] = none := by
-  native_decide
+  decide
 
 /-- A back stem with a neutral vowel still yields back harmony
     (the neutral vowel is not a trigger, so `triggerValue` finds /a/). -/
 theorem back_with_neutral :
     triggerValue finnishHarmony [a_vowel, i_vowel] = some true := by
-  native_decide
+  decide
 
 /-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails
     between them, confirming they belong to different harmony classes. -/
 theorem a_ä_dorsal_disagree :
-    agreeAt a_vowel ä_vowel .dorsal = false := by native_decide
+    agreeAt a_vowel ä_vowel .dorsal = false := by decide
 
 /-- Dorsal agreement holds between /a/ and /o/ (both [+back]). -/
 theorem a_o_dorsal_agree_on_back :
     a_vowel.HasValue .back true = true ∧
     o_vowel.HasValue .back true = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end Finnish.VowelHarmony

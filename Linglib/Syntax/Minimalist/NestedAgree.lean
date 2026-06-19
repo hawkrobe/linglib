@@ -49,9 +49,9 @@ with `[Decidable]` instances; `runStack` returns
 ## Sibling mechanisms in `Syntax/Minimalism/`
 
 `Syntax/Minimalism/CyclicAgree.lean` ([bejar-rezac-2009])
-and `LongDistanceAgree.lean` ([szabolcsi-2009]) are sibling
-Layer-2 patterns. All three address "what does a probe do beyond its
-first operation," but the answers differ:
+and Long-Distance Agree ([szabolcsi-2009], `Studies/Allotey2021.lean`)
+are sibling Layer-2 patterns. All three address "what does a probe do
+beyond its first operation," but the answers differ:
 
 - **Nested Agree** (this file): *multiple ordered probes* on a single
   head, all forced to target the *same* goal under maximized matching;
@@ -61,7 +61,7 @@ first operation," but the answers differ:
   with multiple feature segments; cycle I targets the IA, cycle II
   targets the EA via the *expanded* residue domain. Subsequent
   cycles see *more* (residue + EA), not less.
-- **Long-Distance Agree** (`LongDistanceAgree.lean`): a *single probe*
+- **Long-Distance Agree** (`Studies/Allotey2021.lean`): a *single probe*
   in the matrix relaxes locality across a non-defective C, reaching
   an embedded goal.
 

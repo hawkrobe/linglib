@@ -113,7 +113,7 @@ def click_posterior : ArticulatorSpec where
     it involves spreading a smaller constituent. -/
 theorem nasal_assimilation_scope :
     GeomNode.softPalate.features.length < GeomNode.place.features.length := by
-  native_decide
+  decide
 
 /-- Nasality is NOT under the place node — spreading place does not
     spread nasality. This is Sagey's core structural argument for the
