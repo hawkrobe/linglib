@@ -469,29 +469,26 @@ biradicals like √wd — turn out to have *distinct* radicals after all
 (/w/ ≠ /d/), with surface gemination produced by template spreading
 rather than root identity.
 
-The `Root.satisfiesOCP` predicate (in `Morphology`) makes this
+The `Root.IsOCPClean` predicate (in `Morphology`) makes this
 verifiable rather than asserted. -/
 
 /-- [faust-2026] page 432: √wd has no OCP violation at the root
     level — even though [wäddäd-ä] surfaces with adjacent identical
     [d][d], the surface gemination is a template-spreading effect. -/
-theorem amharic_wd_satisfies_root_ocp :
-    Root.satisfiesOCP Amharic.wd = true := rfl
+theorem amharic_wd_satisfies_root_ocp : Root.IsOCPClean Amharic.wd := by decide
 
 /-- [faust-2026]'s reanalysis: √fdj (the triradical analysis) has
     no OCP violation. -/
-theorem amharic_fdj_satisfies_root_ocp :
-    Root.satisfiesOCP Amharic.fdj = true := rfl
+theorem amharic_fdj_satisfies_root_ocp : Root.IsOCPClean Amharic.fdj := by decide
 
 /-- And the Hebrew [j]-final root √klj also satisfies the OCP. -/
-theorem hebrew_klj_satisfies_root_ocp :
-    Root.satisfiesOCP Hebrew.klj = true := rfl
+theorem hebrew_klj_satisfies_root_ocp : Root.IsOCPClean Hebrew.klj := by decide
 
 /-- Sanity: a hypothetical OCP-violating biradical √dd (which
     [broselow-1984] would have posited but [faust-2026]
     rejects) really does violate the OCP under our predicate. -/
 theorem hypothetical_dd_violates_root_ocp :
-    Root.satisfiesOCP (⟨["d", "d"]⟩ : Root String) = false := rfl
+    ¬ Root.IsOCPClean (⟨["d", "d"]⟩ : Root String) := by decide
 
 -- ============================================================================
 -- § 10: Strict CV hollow roots + NCC ([faust-2026] (12)–(13))

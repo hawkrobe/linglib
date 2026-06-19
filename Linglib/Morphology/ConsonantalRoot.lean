@@ -1,5 +1,4 @@
 import Linglib.Phonology.OCP
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
 /-!
 # Consonantal Roots
@@ -67,47 +66,17 @@ def finalSegment (r : Root α) : Option α := r.segments.getLast?
 /-- The segment at position `i`, if in range. -/
 def segmentAt (r : Root α) (i : Nat) : Option α := r.segments[i]?
 
-/-- Auxiliary: count adjacent identical segments in a root.
-    A root with no adjacent duplicates returns `0`. Used by
-    `satisfiesOCP` and by templatic-morphology studies that need
-    to check root-level OCP independently of any specific tier
-    projection (cf. `Phonology.Constraints.adjacentIdentical`,
-    which is the tier-projection-level analogue used inside OT
-    constraint constructors). -/
-def adjDupCount [BEq α] : List α → Nat
-  | [] | [_] => 0
-  | a :: b :: rest => (if a == b then 1 else 0) + adjDupCount (b :: rest)
+/-- **Root-level OCP** ([mccarthy-1981], [faust-2026]): a consonantal root has no two
+    adjacent identical segments. Segment-level and theory-neutral — it commits to no
+    tier projection or feature decomposition (stronger tier-relative variants go
+    through `Phonology.OCP.IsCleanOn`). Definitionally the segment tier being
+    `Phonology.OCP.IsClean`. -/
+def IsOCPClean [DecidableEq α] (r : Root α) : Prop :=
+  Phonology.OCP.IsClean r.segments
 
-/-- Root-level OCP ([mccarthy-1981], [faust-2026]): a root
-    has no adjacent identical segments. The predicate is segment-level
-    and theory-neutral — it does not commit to any particular tier
-    projection or feature decomposition. Specific theories may impose
-    stronger OCP variants on derived tiers (place, voicing, etc.) via
-    `Phonology.Constraints.mkOCP`. -/
-def satisfiesOCP [BEq α] (r : Root α) : Bool := adjDupCount r.segments == 0
-
-/-- `adjDupCount` is the substrate `countAdjacent (· = ·)` on the segment list;
-    `LawfulBEq` reconciles `==` with `=`. -/
-theorem adjDupCount_eq_countAdjacent [DecidableEq α] [LawfulBEq α] (xs : List α) :
-    adjDupCount xs = Core.Computability.Subregular.countAdjacent (· = ·) xs := by
-  induction xs with
-  | nil => rfl
-  | cons a t ih =>
-    cases t with
-    | nil => rfl
-    | cons b rest =>
-      simp only [adjDupCount, Core.Computability.Subregular.countAdjacent, ih]
-      by_cases h : a = b <;> simp [h]
-
-/-- **Root-level OCP is `Phonology.OCP.IsClean`**: a root satisfies the
-    segment-level OCP iff its segment tier is OCP-clean. Routes the hand-rolled
-    `adjDupCount` through the unified predicate ([faust-2026]'s consumer). -/
-theorem satisfiesOCP_iff_isClean [DecidableEq α] [LawfulBEq α] (r : Root α) :
-    satisfiesOCP r = true ↔ Phonology.OCP.IsClean r.segments := by
-  unfold satisfiesOCP
-  rw [beq_iff_eq, adjDupCount_eq_countAdjacent,
-    Core.Computability.Subregular.countAdjacent_eq_zero_iff_isChain]
-  rfl
+instance instDecidablePredIsOCPClean [DecidableEq α] :
+    DecidablePred (IsOCPClean (α := α)) :=
+  fun r => inferInstanceAs (Decidable (Phonology.OCP.IsClean r.segments))
 
 end Root
 end Morphology
