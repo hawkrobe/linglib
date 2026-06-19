@@ -61,6 +61,6 @@ def nwukwuNa : PolarityItemEntry :=
 
 theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
+      (λ e => e.scalarDirection == .strengthening) = true := by decide
 
 end Korean.PolarityItems

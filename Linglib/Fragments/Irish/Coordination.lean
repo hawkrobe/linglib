@@ -55,11 +55,11 @@ def allEntries : List Coordinator :=
 /-- All Irish coordination morphemes are free (no bound clitics). -/
 theorem all_free :
     allEntries.all (·.boundness == .free) = true := by
-  native_decide
+  decide
 
 /-- Irish has exactly one conjunction morpheme (J-only, no MU). -/
 theorem one_conjunction :
     (allEntries.filter (·.role == .j)).length = 1 := by
-  native_decide
+  decide
 
 end Irish.Coordination

@@ -141,7 +141,7 @@ def allClasses : List PossessedNounClass :=
 
 /-- Total iPossessable nouns: ~175 ([dixon-2004] p. 310). -/
 theorem total_ipossessable :
-    (allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by native_decide
+    (allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by decide
 
 -- ============================================================================
 -- § 2: *mano* 'arm' Paradigm (Table 5; [dixon-2004] p. 315)
@@ -269,7 +269,7 @@ def freeVsPossessedForms : List FreeVsPossessed :=
     112/175 = 64% of all iPossessable nouns. -/
 theorem all_classes_inalienable :
     allClasses.all (·.inalienabilityRank.toNat ≥ InalienabilityRank.culturalItem.toNat)
-    = true := by native_decide
+    = true := by decide
 
 /-- The four highest-ranked inalienable categories (body parts, spatial
     relations, part-whole, and kinship-adjacent) account for the majority:
@@ -278,6 +278,6 @@ theorem all_classes_inalienable :
 theorem core_inalienable_majority :
     let core := allClasses.filter (·.inalienabilityRank.toNat ≥
                   InalienabilityRank.partWhole.toNat)
-    (core.map (·.memberCount)).foldl (· + ·) 0 = 118 := by native_decide
+    (core.map (·.memberCount)).foldl (· + ·) 0 = 118 := by decide
 
 end Jarawara

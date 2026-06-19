@@ -174,12 +174,12 @@ theorem regular_cannot_affect : numberGenderPipeline .regular = false := rfl
 theorem gender_change_tracks_glh :
     allNouns.all (fun n =>
       n.genderChanges == n.pluralClass.canAffectGender) = true := by
-  native_decide
+  decide
 
 /-- All -a plural nouns are masculine in the singular. The gender change
     is always masc → fem, never fem → masc. -/
 theorem aPlural_always_masc_sg :
-    aPluralNouns.all (fun n => n.sgGender == .masculine) = true := by native_decide
+    aPluralNouns.all (fun n => n.sgGender == .masculine) = true := by decide
 
 /-- The -a plural class is exclusively body parts and measure nouns.
     6 of 9 are body parts — the same semantic class that drives
@@ -187,6 +187,6 @@ theorem aPlural_always_masc_sg :
 theorem aPlural_body_part_count :
     (aPluralNouns.filter (fun n =>
       ["arm", "finger", "knee", "lip", "bone", "eyebrow"].contains n.gloss)).length = 6 := by
-  native_decide
+  decide
 
 end Italian.NumberGender

@@ -35,9 +35,9 @@ def entry : AdjAgreementEntry where
   dpFeatures   := dpFeatures
 
 /-- Italian pred = attr (both carry φ). -/
-theorem same_agreement : entry.sameAgreement = true := by native_decide
+theorem same_agreement : entry.sameAgreement = true := by decide
 
 /-- Italian is NOT φ/κ-complete: adjectives lack case. -/
-theorem not_phi_kappa_complete : entry.phiKappaComplete = false := by native_decide
+theorem not_phi_kappa_complete : entry.phiKappaComplete = false := by decide
 
 end Italian.AdjAgreement

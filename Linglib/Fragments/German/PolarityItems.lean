@@ -63,6 +63,6 @@ theorem irgendein_is_npi_fci : irgendein.polarityType = .npiFci := rfl
 
 theorem german_npis_strengthening :
     [irgendein, wer, niemand].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
+      (λ e => e.scalarDirection == .strengthening) = true := by decide
 
 end German.PolarityItems

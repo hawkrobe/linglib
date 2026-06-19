@@ -87,7 +87,7 @@ theorem default_is_default : defaultClassifier.isDefault = true := rfl
 /-- All non-default classifiers carry at least one semantic parameter. -/
 theorem specific_classifiers_motivated :
     (allClassifiers.filter (!·.isDefault)).all
-      (·.semantics.length > 0) = true := by native_decide
+      (·.semantics.length > 0) = true := by decide
 
 /-- Ch'ol classifiers are bound morphemes (suffixes on the numeral stem).
     All forms begin with a hyphen, indicating bound status. -/

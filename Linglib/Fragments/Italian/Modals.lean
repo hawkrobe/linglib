@@ -168,20 +168,20 @@ def allExamples : List RestructuringExample :=
 theorem high_has_epistemic :
     potere_high.availableFlavors.elem .epistemic = true ∧
     dovere_high.availableFlavors.elem .epistemic = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Restructured examples lack epistemic as a flavor. -/
 theorem low_lacks_epistemic :
     potere_low_clitic.availableFlavors.elem .epistemic = false ∧
     dovere_low_aux.availableFlavors.elem .epistemic = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- The core generalization: restructured ↔ no epistemic. -/
 theorem restructuring_blocks_epistemic :
     allExamples.all (λ ex =>
       if ex.isRestructured then !(ex.availableFlavors.elem .epistemic)
       else ex.availableFlavors.elem .epistemic
-    ) = true := by native_decide
+    ) = true := by decide
 
 
 -- ════════════════════════════════════════════════════

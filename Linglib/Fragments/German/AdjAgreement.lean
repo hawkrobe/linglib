@@ -37,6 +37,6 @@ def entry : AdjAgreementEntry where
   dpFeatures   := dpFeatures
 
 /-- German pred ≠ attr: predicative is bare. -/
-theorem not_same_agreement : entry.sameAgreement = false := by native_decide
+theorem not_same_agreement : entry.sameAgreement = false := by decide
 
 end German.AdjAgreement

@@ -146,13 +146,13 @@ def futuroSemplicePerspective : TensePerspectiveEntry where
 -- ════════════════════════════════════════════════════════════════
 
 /-- Synthetic forms allow false tense. -/
-theorem passatoRemoto_allows_false : passatoRemotoPerspective.allowsFalseTense = true := by native_decide
-theorem imperfetto_allows_false : imperfettoPerspective.allowsFalseTense = true := by native_decide
-theorem presente_allows_false : presentePerspective.allowsFalseTense = true := by native_decide
-theorem futuro_allows_false : futuroSemplicePerspective.allowsFalseTense = true := by native_decide
+theorem passatoRemoto_allows_false : passatoRemotoPerspective.allowsFalseTense = true := by decide
+theorem imperfetto_allows_false : imperfettoPerspective.allowsFalseTense = true := by decide
+theorem presente_allows_false : presentePerspective.allowsFalseTense = true := by decide
+theorem futuro_allows_false : futuroSemplicePerspective.allowsFalseTense = true := by decide
 
 /-- Periphrastic forms block false tense. -/
-theorem passatoProssimo_blocks_false : passatoProssimoPerspective.allowsFalseTense = false := by native_decide
+theorem passatoProssimo_blocks_false : passatoProssimoPerspective.allowsFalseTense = false := by decide
 
 /-- Passato prossimo and passato remoto: both past, different formType. -/
 theorem prossimo_remoto_distinction :

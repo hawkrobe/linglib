@@ -131,12 +131,12 @@ def genderIINouns : List Noun :=
 def bodyPartNouns : List Noun :=
   [bina, kuri, iru, vuha, ihu, revasin, hena, moo]
 
-theorem genderI_all_gI : genderINouns.all (·.gender == .gI) = true := by native_decide
-theorem genderII_all_gII : genderIINouns.all (·.gender == .gII) = true := by native_decide
-theorem bodyParts_all_marked : bodyPartNouns.all (·.isBodyPart) = true := by native_decide
-theorem bodyParts_default_gII : bodyPartNouns.all (·.gender == .gII) = true := by native_decide
+theorem genderI_all_gI : genderINouns.all (·.gender == .gI) = true := by decide
+theorem genderII_all_gII : genderIINouns.all (·.gender == .gII) = true := by decide
+theorem bodyParts_all_marked : bodyPartNouns.all (·.isBodyPart) = true := by decide
+theorem bodyParts_default_gII : bodyPartNouns.all (·.gender == .gII) = true := by decide
 theorem bodyParts_iPossessed_gI :
-    bodyPartNouns.all (iPossessedGender · == .gI) = true := by native_decide
+    bodyPartNouns.all (iPossessedGender · == .gI) = true := by decide
 
 /-- The article paradigm: iPossessed body part gets *a*,
     unpossessed body part gets *o*. -/

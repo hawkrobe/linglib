@@ -139,16 +139,16 @@ theorem henduo_weak : henduo.strength = .weak := rfl
 
 theorem strong_qps_are_strong :
     (allQuantifiers.filter (·.pinyin != "hěnduō")).all
-      (·.strength == .strong) = true := by native_decide
+      (·.strength == .strong) = true := by decide
 
 /-- All quantifiers that require a classifier have a typicalClassifier set. -/
 theorem requires_cl_has_typical :
     (allQuantifiers.filter (·.requiresClassifier)).all
-      (·.typicalClassifier.isSome) = true := by native_decide
+      (·.typicalClassifier.isSome) = true := by decide
 
 /-- All typical classifiers are 个 (the default). -/
 theorem typical_classifier_is_default :
     (allQuantifiers.filterMap (·.typicalClassifier)).all
-      (·.isDefault) = true := by native_decide
+      (·.isDefault) = true := by decide
 
 end Mandarin.Determiners

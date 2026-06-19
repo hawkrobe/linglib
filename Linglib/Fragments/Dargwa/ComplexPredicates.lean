@@ -256,12 +256,12 @@ theorem antipassive_causative_inverse :
 theorem most_lvs_have_gender :
     (allLightVerbs.filter (·.genderSlot)).length ≥
     (allLightVerbs.filter (fun lv => !lv.genderSlot)).length := by
-  native_decide
+  decide
 
 /-- Some light verbs are bound (only used in complex predicates). -/
 theorem some_lvs_bound :
     (allLightVerbs.filter (·.boundToComplex)).length ≥ 1 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 7: NV Root Position ([kalyakin-2026] §2.2)

@@ -652,6 +652,6 @@ theorem ter_classes_covered :
     rules. If a root or meN- form is changed incorrectly, this breaks. -/
 theorem all_men_forms_derived :
     allVerbs.all (fun (v : IndonesianVerbEntry) =>
-      v.formMeN == deriveMeN v.form) = true := by native_decide
+      v.formMeN == deriveMeN v.form) = true := by decide
 
 end Indonesian.Predicates

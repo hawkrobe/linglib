@@ -290,11 +290,11 @@ theorem mejorar_blocks_stylLE : mejorar.licensesStylLE = false := rfl
     [koontz-garboden-2009] §§3.1–3.2. -/
 theorem effector_verbs_alternate :
     (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
-      (·.causativeAlternation) = true := by native_decide
+      (·.causativeAlternation) = true := by decide
 
 theorem agent_verbs_dont_alternate :
     (allVerbs.filter (fun v => v.causerSpec == some .agent)).all
-      (!·.causativeAlternation) = true := by native_decide
+      (!·.causativeAlternation) = true := by decide
 
 -- ============================================================================
 -- § 4c: Muñoz-Pérez (2026) Stylistic LE
@@ -303,11 +303,11 @@ theorem agent_verbs_dont_alternate :
 /-- All Muñoz-Pérez verbs that license stylistic LE are inchoative. -/
 theorem stylLE_verbs_are_inchoative :
     (munozVerbs.filter (·.licensesStylLE)).all
-      (fun v => isInchoative v.verbHead) = true := by native_decide
+      (fun v => isInchoative v.verbHead) = true := by decide
 
 /-- The only Muñoz-Pérez verb that blocks stylistic LE is unmarked. -/
 theorem blocking_verb_is_unmarked :
     (munozVerbs.filter (!·.licensesStylLE)).all
-      (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
+      (fun v => v.anticausativeMarking == .unmarked) = true := by decide
 
 end Spanish.Predicates

@@ -60,6 +60,6 @@ def herhangiBiri : PolarityItemEntry :=
 
 theorem turkish_npis_strengthening :
     [kimse, hicKimse].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
+      (λ e => e.scalarDirection == .strengthening) = true := by decide
 
 end Turkish.PolarityItems

@@ -362,7 +362,7 @@ theorem all_verbs_use_attested_pattern :
     allDyadicVerbs.all (fun v =>
       match v.firstObject with
       | some o => attested.contains (v.subjectCase, o)
-      | none => false) = true := by native_decide
+      | none => false) = true := by decide
 
 -- ============================================================================
 -- § 9: Verification Theorems
@@ -372,23 +372,23 @@ theorem all_verbs_use_attested_pattern :
 
 /-- All verbs in the quirky list have non-nominative subjects. -/
 theorem quirky_verbs_are_quirky :
-    quirkySubjectVerbs.all (·.quirkySubject) = true := by native_decide
+    quirkySubjectVerbs.all (·.quirkySubject) = true := by decide
 
 /-- No verb in the nominative-subject list has a quirky subject. -/
 theorem nom_verbs_not_quirky :
-    nomSubjectVerbs.all (fun v => !v.quirkySubject) = true := by native_decide
+    nomSubjectVerbs.all (fun v => !v.quirkySubject) = true := by decide
 
 -- § 9.2: Case assignment
 
 /-- Quirky subjects have fixed (lexical) case assignment. -/
 theorem quirky_subjects_are_fixed :
     quirkySubjectVerbs.all
-      (fun v => v.subjectCaseAssignment == .fixed) = true := by native_decide
+      (fun v => v.subjectCaseAssignment == .fixed) = true := by decide
 
 /-- Nominative subjects have derived (structural) case assignment. -/
 theorem nom_subjects_are_derived :
     nomSubjectVerbs.all
-      (fun v => v.subjectCaseAssignment == .derived) = true := by native_decide
+      (fun v => v.subjectCaseAssignment == .derived) = true := by decide
 
 -- § 9.3: Agreement
 
@@ -416,12 +416,12 @@ theorem an_agrees_with_object :
 /-- Comprehensive: quirky verbs with NOM objects agree with that object. -/
 theorem quirky_with_nom_object_agrees :
     (quirkySubjectVerbs.filter (fun v => v.firstObject == some .nom)).all
-      (fun v => v.agreementTarget == .nominativeArg) = true := by native_decide
+      (fun v => v.agreementTarget == .nominativeArg) = true := by decide
 
 /-- Comprehensive: quirky verbs without any NOM argument default to 3sg. -/
 theorem quirky_without_nom_defaults :
     (quirkySubjectVerbs.filter (fun v => v.firstObject != some .nom)).all
-      (fun v => v.agreementTarget == .default3sg) = true := by native_decide
+      (fun v => v.agreementTarget == .default3sg) = true := by decide
 
 -- § 9.4: Subject diagnostics
 
@@ -447,7 +447,7 @@ theorem quirky_fails_only_agreement :
 /-- All ditransitive verbs have nominative subjects. -/
 theorem ditrans_nom_subjects :
     ditransitiveVerbs.all (fun v => v.subjectCase == .nom) = true := by
-  native_decide
+  decide
 
 /-- All 6 attested ditransitive object patterns are represented. -/
 theorem six_ditrans_patterns :

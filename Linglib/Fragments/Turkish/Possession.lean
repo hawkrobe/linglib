@@ -128,11 +128,11 @@ def locationNotions : List PossessiveNotion :=
 
 /-- Genitive Schema does not express physical possession in Turkish. -/
 theorem genitive_not_physical :
-    ¬genitiveNotions.contains .physical := by native_decide
+    ¬genitiveNotions.contains .physical := by decide
 
 /-- Location Schema does not express inalienable possession in Turkish. -/
 theorem location_not_inalienable :
-    ¬locationNotions.contains .inalienable := by native_decide
+    ¬locationNotions.contains .inalienable := by decide
 
 -- ============================================================================
 -- §6. Turkish Possession Profile (PossessionProfile bundle)

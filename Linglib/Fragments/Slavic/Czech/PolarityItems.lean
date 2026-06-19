@@ -98,11 +98,11 @@ def items : List PolarityItemEntry :=
 /-- All Czech n-words are licensed by negation. -/
 theorem all_npis_licensed_by_negation :
     items.all (fun e => e.licensingContexts.contains .negation) = true := by
-  native_decide
+  decide
 
 /-- The *ni-* series is morphologically marked as `indefPlusNeg`. -/
 theorem niSeries_morphology :
     [nikdo, nic, nikdy, nikam].all (fun e => e.morphology == .indefPlusNeg) = true := by
-  native_decide
+  decide
 
 end Czech.PolarityItems

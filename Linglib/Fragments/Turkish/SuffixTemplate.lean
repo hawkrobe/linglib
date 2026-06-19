@@ -58,22 +58,22 @@ def NounSlot.rank : NounSlot → Nat
 -- § Ordering verification
 -- ============================================================================
 
-theorem voice_before_neg : VerbSlot.voice.rank < VerbSlot.negation.rank := by native_decide
-theorem neg_before_tam : VerbSlot.negation.rank < VerbSlot.tam.rank := by native_decide
-theorem tam_before_cop : VerbSlot.tam.rank < VerbSlot.copula.rank := by native_decide
-theorem cop_before_agr : VerbSlot.copula.rank < VerbSlot.agreement.rank := by native_decide
-theorem agr_before_q : VerbSlot.agreement.rank < VerbSlot.question.rank := by native_decide
+theorem voice_before_neg : VerbSlot.voice.rank < VerbSlot.negation.rank := by decide
+theorem neg_before_tam : VerbSlot.negation.rank < VerbSlot.tam.rank := by decide
+theorem tam_before_cop : VerbSlot.tam.rank < VerbSlot.copula.rank := by decide
+theorem cop_before_agr : VerbSlot.copula.rank < VerbSlot.agreement.rank := by decide
+theorem agr_before_q : VerbSlot.agreement.rank < VerbSlot.question.rank := by decide
 
-theorem plural_before_poss : NounSlot.plural.rank < NounSlot.possessive.rank := by native_decide
-theorem poss_before_case : NounSlot.possessive.rank < NounSlot.case.rank := by native_decide
+theorem plural_before_poss : NounSlot.plural.rank < NounSlot.possessive.rank := by decide
+theorem poss_before_case : NounSlot.possessive.rank < NounSlot.case.rank := by decide
 
 /-- Negation cannot follow TAM (reversed order). -/
 theorem neg_not_after_tam :
-    ¬(VerbSlot.tam.rank < VerbSlot.negation.rank) := by native_decide
+    ¬(VerbSlot.tam.rank < VerbSlot.negation.rank) := by decide
 
 /-- Case cannot precede possessive (reversed order). -/
 theorem case_not_before_poss :
-    ¬(NounSlot.case.rank < NounSlot.possessive.rank) := by native_decide
+    ¬(NounSlot.case.rank < NounSlot.possessive.rank) := by decide
 
 /-- Voice suffixes can stack (two voice entries at rank 0 is well-formed).
     Example: *yap-tır-ıl-* (do-CAUS-PASS). -/
@@ -86,12 +86,12 @@ theorem voice_stacking_ok :
 
 /-- All 8 TAM categories fill the .tam slot (slot rank 2). -/
 theorem tam_entries_fill_tam_slot :
-    TAM.entries.length = 8 ∧ VerbSlot.tam.rank = 2 := ⟨by native_decide, rfl⟩
+    TAM.entries.length = 8 ∧ VerbSlot.tam.rank = 2 := ⟨by decide, rfl⟩
 
 /-- Negation (-mA-) occupies slot rank 1, strictly before TAM (slot rank 2).
     This matches the surface order: gel-**me**-**di** (stem-NEG-PST). -/
 theorem negation_precedes_tam :
-    VerbSlot.negation.rank < VerbSlot.tam.rank := by native_decide
+    VerbSlot.negation.rank < VerbSlot.tam.rank := by decide
 
 /-- The question particle mI fills the outermost verbal slot (rank 5).
     It follows agreement, yielding: gel-di-**m** **mi**? (come-PST-1SG Q). -/
