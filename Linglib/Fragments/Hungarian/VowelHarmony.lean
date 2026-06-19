@@ -11,7 +11,7 @@ harmonic (non-neutral) stem vowel spreads rightward to suffix vowels.
 This is the most widely studied vowel harmony system in the literature,
 with over 50 theoretical treatments cited in [siptar-torkenczy-2000].
 
-## Why Hungarian stress-tests `HarmonySystem`
+## Why Hungarian stress-tests `Harmony.System`
 
 Hungarian harmony is structurally similar to Finnish (both spread [back]
 rightward with transparent neutral vowels), but introduces three phenomena
@@ -72,7 +72,7 @@ vacillation. It only matters for front stems.
 [siptar-torkenczy-2000] §6.1 analyses Hungarian VH using
 Clements/Hume unary place features (COR, LAB, DOR) with four rules:
 Link Place, Link DOR, Spread Place, Spread DOR. This is place-NODE
-spreading, not individual binary-feature spreading. Our `HarmonySystem`
+spreading, not individual binary-feature spreading. Our `System`
 with a single `feature : Feature` field cannot capture node-level
 operations. The two-system decomposition (palatal + labial) used here
 is an approximation that works for the data but does not reflect the
@@ -84,7 +84,7 @@ set_option autoImplicit false
 namespace Hungarian.VowelHarmony
 
 open Phonology (Segment Feature FeatureVal)
-open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
+open Phonology.Harmony (System HarmonyDir triggerValue
   harmonizeOne harmonyDomain spreadSuffix)
 
 -- ============================================================================
@@ -185,8 +185,8 @@ def classifyVowel (s : Segment) : HarmonyRole :=
     Structurally identical to `finnishHarmony` but with a larger neutral
     class (4 vowels vs 2). [siptar-torkenczy-2000] §3.2.1,
     [rose-walker-2011]. -/
-def hungarianPalatalHarmony : HarmonySystem :=
-  HarmonySystem.mk' (feature := .back)
+def hungarianPalatalHarmony : System :=
+  System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTransparent := isNeutral)
@@ -201,8 +201,8 @@ def hungarianPalatalHarmony : HarmonySystem :=
 
     The rounding value only matters for front stems (back stems always
     get the back suffix variant regardless of rounding). -/
-def hungarianLabialHarmony : HarmonySystem :=
-  HarmonySystem.mk' (feature := .round)
+def hungarianLabialHarmony : System :=
+  System.mk' (feature := .round)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (·.HasValue .syllabic true))
     (isTransparent := (λ _ => false))
@@ -303,7 +303,7 @@ theorem a_is_backHarmonic : isBackHarmonic a_vowel = true := by native_decide
 theorem o_is_backHarmonic : isBackHarmonic o_vowel = true := by native_decide
 
 -- ============================================================================
--- § 7: Stress Tests — Where `HarmonySystem` Succeeds
+-- § 7: Stress Tests — Where `Harmony.System` Succeeds
 -- ============================================================================
 
 /-! ### Class IA: Simple harmonic stems
@@ -402,7 +402,7 @@ theorem üveg_front :
   native_decide
 
 -- ============================================================================
--- § 8: Stress Tests — Where `HarmonySystem` Fails
+-- § 8: Stress Tests — Where `Harmony.System` Fails
 -- ============================================================================
 
 /-! ### Class IIA: Simple neutral stems — THE CRITICAL FAILURE
@@ -594,7 +594,7 @@ theorem víz_twoDim :
 -- § 12: Cross-Linguistic Comparison
 -- ============================================================================
 
-/-! Hungarian and Finnish palatal harmony share the same `HarmonySystem`
+/-! Hungarian and Finnish palatal harmony share the same `System`
     structure: both spread [back] rightward with transparent neutral vowels.
 
     Key structural differences:
@@ -611,7 +611,7 @@ theorem hungarian_finnish_same_feature :
     hungarianPalatalHarmony.feature = Feature.back := rfl
 
 theorem hungarian_finnish_same_direction :
-    hungarianPalatalHarmony.rule.side = .left := rfl
+    hungarianPalatalHarmony.side = .left := rfl
 
 /-- Both Hungarian and Turkish have two-dimensional harmony:
     palatal ([back]) + labial ([round]). -/
@@ -643,8 +643,8 @@ theorem hungarian_turkish_both_twoDim :
     Only /i, í/ are transparent; /e, é/ block spreading.
     [siptar-torkenczy-2000] §3.2.3: /e/ is the least transparent
     neutral vowel (most likely to block). -/
-def palatalHarmony_eBlocks : HarmonySystem :=
-  HarmonySystem.mk' (feature := .back)
+def palatalHarmony_eBlocks : System :=
+  System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTransparent := (λ s => s.HasValue .syllabic true &&
