@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Probe.Phi
 
 /-!
 # Béjar & Rezac 2003 — Person Licensing and the Derivation of PCC Effects

@@ -2112,13 +2112,15 @@ import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.Agree
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Syntax.Minimalist.Probe.Phi
+import Linglib.Syntax.Minimalist.Probe.Profile
+import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.NestedAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
-import Linglib.Syntax.Minimalist.Phi.Probing
 import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.ObligatoryOperations

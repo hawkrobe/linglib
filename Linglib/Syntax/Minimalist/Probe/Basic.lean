@@ -1,38 +1,43 @@
 import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 /-!
-# Probes: relativized search over a goal sequence
+# Probe: relativized search over a goal sequence
 [bejar-rezac-2003] [preminger-2014]
 
-The derivational middle layer between DP-level probe visibility
-(`probeVisible`, `Phi/Geometry.lean`) and PF-level outcomes
-(`Probe.Outcome`, `ObligatoryOperations.lean`). A `Probe` bundles what
-it *sees* (`vis` — interaction/halting: the search stops at the first
-visible goal) and what it can *value* there (`act` — activity: a
-visible but inactive goal absorbs the probe without valuing it,
-[bejar-rezac-2003]'s inactive dative, [deal-2024]-style interaction
-vs. satisfaction). Licensing is being the goal the search reaches —
-from which the Person Licensing Condition's effects derive: one
-search licenses at most one goal (`Probe.allLicensed_iff`).
+The canonical, theory-agnostic probe primitive. A `Probe α` searches a
+goal sequence of arbitrary type `α`; everything probe-shaped in the
+library denotes one of these by a `toProbe`-map rather than
+re-implementing search (see **Probe specifications** below). The probe
+bundles what it *sees* (`vis` — interaction/halting: the search stops at
+the first visible goal) and what it can *value* there (`act` —
+activity: a visible but inactive goal absorbs the probe without valuing
+it, [bejar-rezac-2003]'s inactive dative, [deal-2024]-style interaction
+vs. satisfaction). Licensing is being the goal the search reaches — from
+which the Person Licensing Condition's effects derive: one search
+licenses at most one goal (`Probe.allLicensed_iff`).
+
+This file is the maximally-general core (`α` arbitrary); the φ-feature
+*specialization* (`Agreement.Cell.visibleTo`, `Probe.Target.toProbe`,
+`PLC`) lives in `Probe/Phi.lean`, the Deal satisfaction-condition spec
+in `Probe/Satisfaction.lean`, and Keine's locality/horizon spec in
+`Probe/Profile.lean`. `Minimalist/Probe.lean` re-exports the lot.
 
 Relativization is [preminger-2014]'s addition (§4.2, recalling
-[rizzi-1990]): the φ-instantiation (`Agreement.Cell.visibleTo`,
-`PLC`) specializes `vis` to his participant-relativized person probe.
-[bejar-rezac-2003]'s own π-probe is *unrelativized* — the closest
-goal matches and can absorb it (`Studies/BejarRezac2003.lean`) — and
-the unrelativized, bare-minimality probe (`Probe.indiscriminate`,
-goal = `List.head?`) is [halpert-2012]'s Zulu L⁰
-(`Studies/Halpert2012.lean`, the cross-linguistic point of
-[preminger-2014] Ch. 7). [bejar-rezac-2009]'s articulated probe is a
-*family* of these searches, one per probe segment over the cyclically
-ordered token list — see `CyclicAgree.eaIsLicensed_iff_segment_licensed`,
-and `Phi/Articulation.lean` for the laws of articulation. For probe
+[rizzi-1990]): the φ-instantiation (`Agreement.Cell.visibleTo`, `PLC`)
+specializes `vis` to his participant-relativized person probe.
+[bejar-rezac-2003]'s own π-probe is *unrelativized* — the closest goal
+matches and can absorb it (`Studies/BejarRezac2003.lean`) — and the
+unrelativized, bare-minimality probe (`Probe.indiscriminate`, goal =
+`List.head?`) is [halpert-2012]'s Zulu L⁰ (`Studies/Halpert2012.lean`,
+the cross-linguistic point of [preminger-2014] Ch. 7).
+[bejar-rezac-2009]'s articulated probe is a *family* of these searches,
+one per probe segment over the cyclically ordered token list — see
+`CyclicAgree.eaIsLicensed_iff_segment_licensed`, and
+`Phi/Articulation.lean` for the laws of articulation. For probe
 *horizons* (what terminates search across domains, Keine) see
-`Syntax/Minimalist/Probe.lean`; for conditional feature-acquiring
-re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
+`Probe/Profile.lean`; for conditional feature-acquiring re-probing see
+`Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
 
 ## Main declarations
 
@@ -49,19 +54,19 @@ re-probing see `Syntax/Minimalist/Probing/DefectiveCircumvention.lean`.
   goal is the closest).
 - `Probe.cascade` — ordered probe sequence: first probe with output
   wins (the single-slot morphological competition).
-- `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
 
 ## Probe specifications
 
 Theory-side probe descriptions relate to `Probe` by *denotation*
 (canonical `toProbe`-maps), not extension — the relationship is
 one-to-many for articulated probes and state-indexed for dynamic
-ones: `Probe.Target.toProbe` (here), `SatisfactionCond.toProbe`
-(`Studies/Scott2023.lean`), `Probe.Articulated.toProbes`
-(`Phi/Articulation.lean`, the per-segment family),
-`CyclicAgree.segProbe` (per segment and geometry), and
-`Deal2024.ProbeState.probe` (the state-indexed family whose
-narrowing law is `probe_vis_antitone`).
+ones: `Probe.Target.toProbe` (`Probe/Phi.lean`),
+`SatisfactionCond.toProbe` (`Probe/Satisfaction.lean`),
+`Probe.Profile.toProbe` (`Probe/Profile.lean`),
+`Probe.Articulated.toProbes` (`Phi/Articulation.lean`, the per-segment
+family), `CyclicAgree.segProbe` (per segment and geometry), and
+`Deal2024.ProbeState.probe` (the state-indexed family whose narrowing
+law is `probe_vis_antitone`).
 -/
 
 namespace Minimalist
@@ -161,6 +166,13 @@ theorem agree_eq_none_of_inactive {a : α}
     p.agree goals = none := by
   simp [agree, h, Option.filter_some, ha]
 
+/-- Locality as list search: the probe finds `a` iff `a` is visible and
+    every earlier goal is invisible (no intervener). -/
+theorem search_eq_some_iff_closest {a : α} :
+    p.search goals = some a ↔
+      p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
+  List.find?_eq_some_iff_append
+
 /-! ### Outcomes ([preminger-2014] Ch. 5) -/
 
 /-- The outcome of an obligatory probing operation over a goal
@@ -211,6 +223,13 @@ instance [DecidableEq α] (p : Probe α) (goals : List α) (a : α) :
 theorem Licensed.unique {a b : α}
     (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
   Option.some.inj (ha.symm.trans hb)
+
+/-- Licensing is being the closest visible goal: no matching goal
+    intervenes (`search_eq_some_iff_closest` in the licensing API). -/
+theorem licensed_iff_closest {a : α} :
+    p.Licensed goals a ↔
+      p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
+  search_eq_some_iff_closest
 
 /-- Licensing by the indiscriminate probe is being the structurally
     closest goal — bare minimality, [halpert-2012]'s L⁰. -/
@@ -312,39 +331,5 @@ theorem mem_of_cascade_eq_some {a : α}
   mem_of_search_eq_some hq
 
 end Probe
-
-/-! ### φ-probes -/
-
-/-- Visibility of a φ-cell to a relativized probe: the cell bears the
-    feature the probe seeks (`probeVisible`, `Phi/Geometry.lean`). -/
-def _root_.Agreement.Cell.visibleTo (c : Agreement.Cell) (t : Probe.Target) : Bool :=
-  probeVisible t c.toPerson c.isPlural
-
-/-- The probe a `Probe.Target` specification denotes: relativized to
-    the sought feature, over φ-cells. The canonical
-    specification-to-`Probe` map for the substrate's probe enum —
-    [preminger-2014]'s π⁰ is `Probe.Target.participant.toProbe`, his
-    #⁰ is `Probe.Target.plural.toProbe`. -/
-def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Cell :=
-  .ofVis (·.visibleTo t)
-
-/-- The Person Licensing Condition ([bejar-rezac-2003];
-    [preminger-2014] (40)/(75)): every [participant]-bearing goal
-    token must be licensed by the person probe's search. Goal tokens
-    have type `α` with a φ-cell projection, so two arguments with
-    identical φ remain distinct licensees.
-
-    This is [preminger-2014]'s single-cycle, search-only, diagonal
-    rendering of the condition: it omits [bejar-rezac-2003]'s
-    F-licensing route (a nominal's own φ-bearing P/dative/focus head
-    counts as a licensing Agree relation) and multi-cycle repairs —
-    for the paper's own condition see `BejarRezac2003.PLCOk`. -/
-def PLC (cellOf : α → Agreement.Cell) (goals : List α) : Prop :=
-  (Probe.ofVis fun a => (cellOf a).visibleTo .participant).AllLicensed
-    (fun a => (cellOf a).visibleTo .participant) goals
-
-instance [DecidableEq α] (cellOf : α → Agreement.Cell) (goals : List α) :
-    Decidable (PLC cellOf goals) :=
-  inferInstanceAs (Decidable (Probe.AllLicensed _ _ goals))
 
 end Minimalist

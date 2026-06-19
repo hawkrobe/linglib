@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Phase
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Agree (Minimalist Feature Checking)
@@ -102,75 +102,17 @@ def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
 -- § 3: Locality (Closest Goal)
 -- ============================================================================
 
-/-- X intervenes between probe and goal (within tree `root`) iff:
-    - probe c-commands X
-    - X c-commands goal
-    - X has a matching valued feature -/
-def intervenes (root : SyntacticObject) (probe x goal : SyntacticObject)
-    (xFeatures : FeatureBundle) (ftype : FeatureVal) : Prop :=
-  cCommandsIn root probe x ∧
-  cCommandsIn root x goal ∧
-  hasValuedFeature xFeatures ftype = true
+-- "Closest matching goal, no intervener" is the canonical list engine
+-- `Probe.search` (`Probe/Basic.lean`, `search_eq_some_iff_closest`); the
+-- tree-native `closestGoal`/`closestGoalWith`/`intervenes` reinventions
+-- (zero consumers) were retired. `SyntacticObject` is a commutative magma
+-- with no canonical c-command linearization, so the tree↔list bridge is
+-- not definitional; `closestGoalB` below is the decidable tree presentation.
 
-/-- Goal is the closest matching goal for probe.
-
-    **Caveat**: this definition existentially quantifies over feature
-    bundles (`∃ xFeats`), meaning ANY structurally intervening node
-    blocks regardless of its actual features. This is strictly stronger
-    than necessary — a V° with no phi-features would block a phi-probe.
-    For derivations that need to distinguish nodes by their actual
-    features, use `closestGoalWith` (propositional, with feature
-    assignment) or `closestGoalB` (boolean, with matching predicate). -/
-def closestGoal (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  validAgree a root ∧
-  ¬∃ (x : SyntacticObject) (xFeats : FeatureBundle),
-    isTermOf x root ∧
-    x ≠ a.goal ∧
-    intervenes root a.probe x a.goal xFeats a.feature
-
--- ============================================================================
--- § 3b: Feature-Aware Locality
--- ============================================================================
-
-/-- A feature assignment maps each syntactic object in a tree to its
-    actual feature bundle. -/
-abbrev FeatureAssignment := SyntacticObject → FeatureBundle
-
-/-- Goal is the closest matching goal for probe, given a feature
-    assignment that determines each node's actual features.
-
-    Compared to `closestGoal`: the existential `∃ xFeats` is replaced
-    by `fa x`, so only nodes whose ACTUAL features match can intervene.
-    This correctly models Agree: a V° (no phi-features) should not
-    block T°'s phi-probe even if V° is structurally between T° and the
-    subject DP. `closestGoal` is strictly stronger (see
-    `closestGoal_implies_closestGoalWith`). -/
-def closestGoalWith (a : AgreeRelation) (root : SyntacticObject)
-    (fa : FeatureAssignment) : Prop :=
-  validAgree a root ∧
-  ¬∃ x, isTermOf x root ∧ x ≠ a.goal ∧
-    intervenes root a.probe x a.goal (fa x) a.feature
-
-/-- `closestGoal` (existential over features) implies `closestGoalWith`
-    (fixed feature assignment): if no node with ANY features intervenes,
-    then no node with its ACTUAL features intervenes. -/
-theorem closestGoal_implies_closestGoalWith
-    (a : AgreeRelation) (root : SyntacticObject) (fa : FeatureAssignment)
-    (h : closestGoal a root) : closestGoalWith a root fa :=
-  ⟨h.1, fun ⟨x, hTerm, hNeq, hInt⟩ => h.2 ⟨x, fa x, hTerm, hNeq, hInt⟩⟩
-
-/-- Boolean closest-goal check: is `goal` the closest node matching
-    `pred` in `probe`'s c-command domain within `root`?
-
-    This is the computational counterpart of `closestGoalWith`, using
-    decidable `cCommandsIn` and a matching predicate. `pred` determines
-    which nodes are potential goals/interveners — typically a category
-    check (e.g., "is this node D-bearing?").
-
-    1. `probe` c-commands `goal`
-    2. `goal` matches the predicate
-    3. No other matching node is both c-commanded by `probe` AND
-       c-commands `goal` (= no intervener) -/
+/-- Decidable tree presentation of `Probe.search`-locality
+    (`Probe.search_eq_some_iff_closest`, `pred` playing `Probe.vis`):
+    `goal` is `pred`-matching and c-commanded by `probe`, with no
+    `pred`-matching node c-commanded by `probe` c-commanding `goal`. -/
 def closestGoalB (root probe goal : SyntacticObject)
     (pred : SyntacticObject → Bool) : Bool :=
   decide (cCommandsIn root probe goal) &&
@@ -400,70 +342,10 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
   validAgree a root ∧
   isActive a.goalFeatures = true
 
--- ============================================================================
--- § 10: Multiple Agree ([hiraiwa-2001], 2005)
--- ============================================================================
-
-/-- Multiple Agree: a probe agreeing with a list of goals -/
-structure MultipleAgree where
-  probe : SyntacticObject
-  probeFeatures : FeatureBundle
-  goals : List (SyntacticObject × FeatureBundle)
-  feature : FeatureVal
-  -- All goals must have the relevant valued feature
-  goalsHaveFeature : goals.all (λ ⟨_, gf⟩ => hasValuedFeature gf feature)
-  deriving Repr
-
-/-- Is Multiple Agree valid? Each goal must be c-commanded by probe (within tree) -/
-def MultipleAgree.isValid (ma : MultipleAgree) (root : SyntacticObject) : Prop :=
-  hasUnvaluedFeature ma.probeFeatures ma.feature = true ∧
-  ∀ (g : SyntacticObject × FeatureBundle), g ∈ ma.goals →
-    cCommandsIn root ma.probe g.1
-
-/-- Apply Multiple Agree: value probe's feature, mark all goals -/
-def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
-  match ma.goals.head? with
-  | none => none
-  | some (_, gf) =>
-    match getValuedFeature gf ma.feature with
-    | none => none
-    | some goalFeat =>
-      some (ma.probeFeatures.map λ f =>
-        if f.isUnvalued && (f.featureType == ma.feature) then
-          match valueFeature f goalFeat with
-          | some v => v
-          | none => f
-        else f)
-
--- ============================================================================
--- § 11: Defective Intervention ([chomsky-2000])
--- ============================================================================
-
-/-- A defective element: has some matching features but incomplete set -/
-structure DefectiveElement where
-  so : SyntacticObject
-  features : FeatureBundle
-  -- Has at least one phi feature
-  hasPartialPhi : (features.any λ f => match f.featureType with
-    | .phi _ => true
-    | _ => false) = true
-  -- But not a complete phi set (deficient)
-  isDeficient : Bool  -- Simplified: mark as deficient
-  deriving Repr
-
-/-- Does X defectively intervene between probe and goal (within tree `root`)?
-
-    X defectively intervenes if:
-    - X is between probe and goal (c-command wise)
-    - X has matching features
-    - X is defective (can't be a full goal) -/
-def defectivelyIntervenes (root : SyntacticObject) (probe x goal : SyntacticObject)
-    (xDef : DefectiveElement) (ftype : FeatureVal) : Prop :=
-  cCommandsIn root probe x ∧
-  cCommandsIn root x goal ∧
-  xDef.so = x ∧
-  xDef.isDeficient = true ∧
-  (xDef.features.any λ f => featuresMatch f (.unvalued ftype)) = true
+-- Multiple Agree ([hiraiwa-2001]) is `Probe` over a goal list; defective
+-- intervention ([chomsky-2000]) is a visible-but-inactive closest goal
+-- absorbing the probe (`Probe.agree_eq_none_of_inactive`). The former
+-- `MultipleAgree`/`DefectiveElement` reinventions (zero consumers) were retired.
 
 -- ============================================================================
 -- § 12: Phase-Bounded Agree
@@ -526,118 +408,5 @@ theorem neg_features_match :
 
 theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
-
--- ============================================================================
--- § 14: Satisfaction Conditions ([deal-2024]; [keine-2019])
--- ============================================================================
-
-/-- How a probe's search can be terminated.
-
-    Standard Agree assumes a probe is satisfied only by finding a matching
-    valued feature (simple feature match). [deal-2024] argues for richer
-    conditions to capture e.g. Mam's Infl probe, which is satisfied by
-    EITHER matching φ-features OR encountering transitive Voice:
-
-    **Mam example** ([scott-2023], via [deal-2024]):
-    - Infl carries [uφ] with satisfaction [SAT: φ or Voice_TR]
-    - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
-    - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"
-
-    This turns the Mam bridge's prose account into a computable derivation:
-    ```
-    def mamInflSatisfaction : SatisfactionCond :=
-.disjunctive [.featureMatch (.phi (.person.third)),.headEncounter.v]
-    ```
--/
-inductive SatisfactionCond where
-  /-- Standard: probe is satisfied by finding a matching valued feature. -/
-  | featureMatch : FeatureVal → SatisfactionCond
-  /-- Disjunctive: probe is satisfied by ANY of these conditions.
-      Models [deal-2024]'s interaction-based probes. -/
-  | disjunctive : List SatisfactionCond → SatisfactionCond
-  /-- Head encounter: probe is satisfied by encountering a head of this
-      category, even without feature matching. The probe stops but copies
-      no features — yielding the Elsewhere (default) exponent at PF. -/
-  | headEncounter : Cat → SatisfactionCond
-  deriving Repr
-
-/-- Is an atomic (non-disjunctive) condition met? -/
-private def atomicSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
-    (ctx : Option Cat) : Bool :=
-  match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
-  | .headEncounter cat => ctx == some cat
-  | .disjunctive _ => false  -- nested disjunctions handled at top level
-
-/-- Check whether a satisfaction condition is met.
-
-    `fb` is the feature bundle of the element the probe encounters.
-    `ctx` is the syntactic category of that element (if it's a head).
-    Returns `true` if the probe should stop searching. -/
-def SatisfactionCond.isSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
-    (ctx : Option Cat) : Bool :=
-  match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
-  | .disjunctive conds => conds.any (atomicSatisfied · fb ctx)
-  | .headEncounter cat => ctx == some cat
-
-/-- Did the probe copy features, or just stop?
-
-    When satisfied by feature match, the probe copies features (→ real agreement).
-    When satisfied by head encounter, no features are copied (→ default/Elsewhere).
-    For disjunctive conditions, feature copying occurs iff the first satisfied
-    condition is a feature match. -/
-def SatisfactionCond.copiedFeatures (cond : SatisfactionCond) (fb : FeatureBundle)
-    (ctx : Option Cat) : Bool :=
-  match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
-  | .disjunctive conds =>
-    match conds.find? (atomicSatisfied · fb ctx) with
-    | some (.featureMatch ft) => hasValuedFeature fb ft
-    | _ => false  -- head encounter or nested → no features copied
-  | .headEncounter _ => false
-
-/-- Mam's Infl probe satisfaction condition:
-    satisfied by EITHER matching φ-features OR encountering transitive Voice. -/
-def mamInflSatisfaction : SatisfactionCond :=
-  .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
-
-/-- Intransitive environment: the probe encounters a DP with φ-features
-    (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
-theorem mam_intransitive_satisfied :
-    mamInflSatisfaction.isSatisfied
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-      none = true := by rfl
-
-/-- Transitive environment: the probe encounters Voice_TR (category.v).
-    Head encounter is satisfied → probe stops without copying features. -/
-theorem mam_transitive_satisfied :
-    mamInflSatisfaction.isSatisfied [] (some .v) = true := by rfl
-
-/-- In the transitive case, no features are copied — yielding default. -/
-theorem mam_transitive_no_copy :
-    mamInflSatisfaction.copiedFeatures [] (some .v) = false := by rfl
-
-/-- In the intransitive case, features ARE copied — yielding real agreement. -/
-theorem mam_intransitive_copies :
-    mamInflSatisfaction.copiedFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-      none = true := by rfl
-
-/-- Infl's satisfaction condition, unfolded: φ-match or Voice_TR encounter. -/
-theorem mamInflSatisfaction_isSatisfied (fb : FeatureBundle) (ctx : Option Cat) :
-    mamInflSatisfaction.isSatisfied fb ctx
-      = (hasValuedFeature fb (.phi (.person .third)) || ctx == some Cat.v) := by
-  simp [mamInflSatisfaction, SatisfactionCond.isSatisfied, atomicSatisfied]
-
-/-- Head-encounter satisfaction never copies: Infl copies features iff
-    they are there to copy, whatever the context. -/
-theorem mamInflSatisfaction_copiedFeatures (fb : FeatureBundle) (ctx : Option Cat) :
-    mamInflSatisfaction.copiedFeatures fb ctx
-      = hasValuedFeature fb (.phi (.person .third)) := by
-  cases hv : hasValuedFeature fb (.phi (.person .third)) <;>
-    cases hc : ctx == some Cat.v <;>
-      simp [mamInflSatisfaction, SatisfactionCond.copiedFeatures, atomicSatisfied,
-        List.find?, hv, hc]
 
 end Minimalist
