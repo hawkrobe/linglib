@@ -164,15 +164,6 @@ namespace Tier
 
 variable {F : Type u} {V : Type v}
 
-/-- **Tier-level merger** at adjacent positions: pairwise `merge` between
-    the bundle at position `i` and the bundle at position `i+1`. This is
-    the primitive operation behind the OCP — a constraint that drives
-    merger of adjacent identical features. -/
-def mergeAdjacent : Tier F V → Tier F V
-  | []               => []
-  | [b]              => [b]
-  | b₁ :: b₂ :: rest => FeatureBundle.merge b₁ b₂ :: mergeAdjacent (b₂ :: rest)
-
 /-- **Local assimilation along a tier** at feature `f`: each bundle takes
     its value at `f` from its left neighbour (when the left neighbour
     specifies `f`). Models leftward-trigger spreading. -/
