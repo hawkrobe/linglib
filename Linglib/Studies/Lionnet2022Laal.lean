@@ -124,19 +124,28 @@ theorem superHigh_is_the_gap : TRN.superHigh ∉ laalToneInventory := by decide
 
 /-- Lionnet (ex. 54–55, 58) notes — but explicitly does *not* adopt — an optional
 OCP-`[raised]` economy under which two adjacent identical `[−raised]` autosegments
-(a root and suffix both `[−raised]`) fuse into one multiply-linked autosegment.
-That fusion is `Phonology.OCP.collapse` on the tone tier with `mergeTRN` as the
-payload-merging `combine`: two adjacent L tones collapse to one. -/
+fuse into one multiply-linked autosegment. When two adjacent tones are *fully*
+identical, that fusion is `Phonology.OCP.collapse mergeTRN` (discharging its
+`combine z z = z` obligation with `mergeTRN_self`): two adjacent L tones collapse
+to one. -/
 theorem ocp_raised_merge_LL :
     Phonology.OCP.collapse mergeTRN [TRN.L, TRN.L] = [TRN.L] := by decide
 
-/-- Under that optional economy the merged tone tier is OCP-clean — no two
-adjacent identical TRNs remain. The substrate retraction theorem
-`Phonology.OCP.collapse_clean`, discharged by `mergeTRN_self`. This is the merger
-face of the same OCP principle whose prohibition face (the TSL₂ constraint) lives
-in `Phonology.Subregular.OCP`. -/
+/-- OCP-`[raised]` is **tier-relative** ([chandlee-jardine-2019]): it constrains the
+`[raised]`-projected tier (`IsCleanOn` reading `.raised`), not whole TRNs. H and L
+are distinct *tones* but both `[−raised]`, so adjacent they violate OCP-`[raised]`
+even though `[TRN.H, TRN.L]` is clean as a whole-TRN tier. -/
+theorem ocp_raised_is_tier_relative :
+    ¬ Phonology.OCP.IsCleanOn (fun _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
+      Phonology.OCP.IsClean [TRN.H, TRN.L] := by decide
+
+/-- Under the optional economy, fusing adjacent identical `[raised]` autosegments
+leaves the `[raised]`-projected tier OCP-clean — the faithful tier-relative reading
+of Lionnet (ex. 54–55, 58), via the substrate retraction `collapse_clean`. The
+merger face of the same OCP principle whose prohibition (TSL₂) face lives in
+`Phonology.Subregular.OCP`. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse mergeTRN tier) :=
-  Phonology.OCP.collapse_clean mergeTRN mergeTRN_self tier
+    Phonology.OCP.IsClean (Phonology.OCP.collapse (fun a _ => a) (tier.map (·.raised))) :=
+  Phonology.OCP.collapse_clean _ (fun _ => rfl) _
 
 end Lionnet2022Laal

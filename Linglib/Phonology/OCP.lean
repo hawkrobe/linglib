@@ -8,23 +8,31 @@ import Mathlib.Data.List.Destutter
 /-!
 # The Obligatory Contour Principle
 
-[mccarthy-1986] [goldsmith-1976] [mccarthy-1981] [mccarthy-prince-1995]
+[mccarthy-1986] [goldsmith-1976] [mccarthy-prince-1995]
+[heinz-rawal-tanner-2011] [chandlee-heinz-2018] [chandlee-jardine-2019]
 
-The Obligatory Contour Principle bans adjacent identical autosegments on a
-tier. It is one principle with three faces, which this file unifies around a
-single satisfaction predicate.
+This file formalises the **categorical, strict-identity, single-tier** OCP — the
+reading that bans two *identical* adjacent autosegments on one tier. (Gradient,
+similarity-scaled OCP — [frisch-pierrehumbert-broe-2004]'s Arabic OCP-Place,
+which proves no categorical model fits its data — is a different object and lives
+in the thresholded-TSL substrate, not here.) It has three faces, unified around
+one satisfaction predicate `OCP.IsClean`.
 
-* **The constraint** — `OCP.IsClean`: a tier is OCP-clean when no two adjacent
-  elements are identical (`List.IsChain (· ≠ ·)`). This is the prohibition
-  reading ([mccarthy-1986]).
+* **The constraint** — `OCP.IsClean`: no two adjacent elements are identical
+  (`List.IsChain (· ≠ ·)`); the prohibition reading ([mccarthy-1986]). On a
+  *projected* tier this is `OCP.IsCleanOn` — the OCP is intrinsically
+  tier-relative ([chandlee-jardine-2019]). As a stringset the constraint is
+  **tier-based strictly local** (TSL₂, [heinz-rawal-tanner-2011]).
 * **The repairs** — a tier transformation enforces the OCP when it lands in the
   clean set. The fusion/merger repair ([goldsmith-1976], [mccarthy-prince-1995]'s
   Correspondence, [burzio-1998]'s Multiple Correspondence) collapses each run of
   identical adjacent elements into one (multiply-linked) element: `OCP.collapse`.
   Its output is clean (`collapse_clean`) and it fixes already-clean tiers
-  (`collapse_idempotent_on_clean`), i.e. it is a **retraction onto `IsClean`**.
+  (`collapse_idempotent_on_clean`), i.e. a **retraction onto `IsClean`**. As a
+  string map `collapse` is input-strictly-local ([chandlee-heinz-2018]); on an
+  autosegmental tier the OCP repairs are A-ISL ([chandlee-jardine-2019]).
 * **The subregular characterization** — that the constraint is a TSL₂ language
-  lives in `Phonology.Subregular.OCP` (`mkOCPOnTier_zero_iff_isChain`), which
+  lives in `Phonology.Subregular.OCP` (`mkOCPOnTier_zero_iff_isClean`), which
   consumes this `IsClean`.
 
 `collapse` generalises mathlib's `List.destutter (· ≠ ·)`
@@ -45,6 +53,7 @@ that will earn the deferred `Repair` abstraction.
 ## Main definitions
 
 * `OCP.IsClean` — no two adjacent elements are identical.
+* `OCP.IsCleanOn` — the OCP on a projected tier (tier-relativity).
 * `OCP.collapse` — the OCP-merger normal form (fusion repair).
 
 ## Main results
@@ -62,7 +71,11 @@ variable {α : Type*}
 
 /-- A tier is **OCP-clean** when no adjacent pair is identical — the
 [mccarthy-1986] prohibition condition over the whole tier, as mathlib's
-`List.IsChain (· ≠ ·)`. -/
+`List.IsChain (· ≠ ·)`.
+
+Adjacency-only, hence strictly weaker than `List.Nodup` (`[1, 2, 1]` is clean but
+not nodup, as `(· ≠ ·)` is not transitive): `Nodup`/sublist-closure lemmas do not
+transfer. -/
 def IsClean (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs
 
@@ -74,8 +87,19 @@ def IsClean (xs : List α) : Prop :=
     IsClean (x :: y :: rs) ↔ x ≠ y ∧ IsClean (y :: rs) := by
   simp only [IsClean, List.isChain_cons_cons]
 
+/-- OCP on the tier projected from `xs` by keeping the `p`-elements and reading
+`proj` (autosegmental tier-relativity, [chandlee-jardine-2019]). The flat
+`IsClean` is the `p = ⊤`, `proj = id` case. -/
+def IsCleanOn {β : Type*} (p : α → Prop) [DecidablePred p] (proj : α → β)
+    (xs : List α) : Prop :=
+  IsClean ((xs.filter (fun a => decide (p a))).map proj)
+
 instance decidableIsClean [DecidableEq α] : DecidablePred (IsClean (α := α)) :=
   fun xs => inferInstanceAs (Decidable (List.IsChain (· ≠ ·) xs))
+
+instance decidableIsCleanOn {β : Type*} [DecidableEq β] (p : α → Prop)
+    [DecidablePred p] (proj : α → β) : DecidablePred (IsCleanOn p proj) :=
+  fun _ => inferInstanceAs (Decidable (IsClean _))
 
 section
 variable [DecidableEq α]
