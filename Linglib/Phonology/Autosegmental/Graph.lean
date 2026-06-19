@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Image
+import Mathlib.Algebra.Group.Defs
 import Linglib.Phonology.Autosegmental.NoCrossing
 
 /-!
@@ -456,6 +457,21 @@ theorem concat_assoc (A B C : Graph α β) :
   · simp only [links_concat, upper_concat, lower_concat, List.length_append,
                Finset.image_union, Finset.image_image, shiftLink_comp]
     rw [Finset.union_assoc]
+
+/-- **The monoid of autosegmental representations** ([jardine-heinz-2015]
+    Theorems 1, 3): graphs form a `Monoid` under concatenation, with `empty`
+    as the unit. `A * B = A.concat B`, `1 = empty`; the monoid laws are
+    `empty_concat`/`concat_empty`/`concat_assoc`. -/
+instance instMonoid : Monoid (Graph α β) where
+  mul := concat
+  one := empty
+  mul_assoc := concat_assoc
+  one_mul := empty_concat
+  mul_one := concat_empty
+
+@[simp] theorem mul_eq_concat (A B : Graph α β) : A * B = A.concat B := rfl
+
+@[simp] theorem one_eq_empty : (1 : Graph α β) = empty := rfl
 
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
