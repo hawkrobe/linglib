@@ -74,7 +74,7 @@ instance : DecidablePred isBlack :=
   fun e => by cases e <;> unfold isBlack <;> infer_instance
 
 /-- Normal ravens for the "raven" restrictor class: the non-albino ones.
-    These are the output of `NormalityOrder.optimal` applied to ravens. -/
+    These are the output of `Normality.optimal` applied to ravens. -/
 def normalRavens : List Raven := [.normal1, .normal2]
 
 /-- Normal albino ravens: all albino ravens are "normal" for their subkind.

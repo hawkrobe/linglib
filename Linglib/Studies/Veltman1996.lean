@@ -33,7 +33,7 @@ namespace Veltman1996
 
 open Core.Logic.TweetyNixon
 open Semantics.Dynamic.Default
-open Core.Order (NormalityOrder)
+open Core.Order
 open Classical
 
 
@@ -95,12 +95,12 @@ theorem ex310_i_exception :
     satisfies ¬p. This is [veltman-1996]'s coherence check
     (Definition 3.9). -/
 theorem ex310_i_conflict :
-    ¬∃ w ∈ (normallyUpdate atomP σ₀).order.optimal Set.univ, ¬atomP w := by
+    ¬∃ w ∈ Normality.optimal (normallyUpdate atomP σ₀).order Set.univ, ¬atomP w := by
   intro ⟨w, hw_opt, hnp⟩
   have hex : ∃ v ∈ (Set.univ : Set PQWorld), atomP v :=
     ⟨w₁, Set.mem_univ _, atomP_w₁⟩
   simp only [normallyUpdate, σ₀, ExpState.init] at hw_opt
-  rw [NormalityOrder.refine_total_optimal atomP Set.univ hex] at hw_opt
+  rw [Normality.refine_total_optimal atomP Set.univ hex] at hw_opt
   exact hnp hw_opt.2
 
 -- ─── Example 3.10(ii): Exceptions defeat presumptions ───
@@ -116,7 +116,7 @@ theorem ex310_ii_defeat :
   intro h
   apply h w₀
   simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
-    NormalityOrder.optimal]
+    Normality.optimal]
   refine ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun v ⟨_, hnpv⟩ _ => ?_⟩
   exact ⟨True.intro, fun hpv => absurd hpv hnpv⟩
 
@@ -124,7 +124,7 @@ theorem ex310_ii_defeat :
 
     [veltman-1996], Examples 3.10(ii): normally p, ¬p ⊩ normally p. -/
 theorem ex310_ii_rule_persists :
-    (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).order.respects atomP :=
+    Normality.respects (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).order atomP :=
   persistence_assert (normallyUpdate atomP σ₀) atomP _ (normally_creates_respect σ₀ atomP)
 
 -- ─── Example 3.10(iii): Irrelevant information ───
@@ -138,11 +138,11 @@ theorem ex310_iii_irrelevant :
   intro w ⟨⟨_, hqw⟩, hopt⟩
   simp only [normallyUpdate, σ₀, ExpState.init] at hopt
   by_contra hnpw
-  have hle : (NormalityOrder.total.refine atomP).le w₃ w :=
+  have hle : (Normality.refine Normality.total atomP).le w₃ w :=
     ⟨True.intro, fun _ => atomP_w₃⟩
   have hw₃_mem : w₃ ∈ ({w ∈ Set.univ | atomQ w} : Set PQWorld) :=
     ⟨Set.mem_univ _, atomQ_w₃⟩
-  exact hnpw ((hopt w₃ hw₃_mem hle).2 atomP_w₃)
+  exact hnpw ((hopt hw₃_mem hle).2 atomP_w₃)
 
 -- ─── Example 3.10(iv): Independent defaults ───
 
@@ -158,11 +158,11 @@ theorem ex310_iv_independence :
   simp only [normallyUpdate, σ₀, ExpState.init] at hopt
   by_contra hnqw
   -- w₂ (¬p, q) dominates any ¬p ∧ ¬q world
-  have hle : ((NormalityOrder.total.refine atomP).refine atomQ).le w₂ w :=
+  have hle : (Normality.refine (Normality.refine Normality.total atomP) atomQ).le w₂ w :=
     ⟨⟨True.intro, fun hpw => absurd hpw hnpw⟩, fun hqw => absurd hqw hnqw⟩
   have hw₂_mem : w₂ ∈ ({w ∈ Set.univ | ¬atomP w} : Set PQWorld) :=
     ⟨Set.mem_univ _, atomP_w₂⟩
-  exact hnqw ((hopt w₂ hw₂_mem hle).2 atomQ_w₂)
+  exact hnqw ((hopt hw₂_mem hle).2 atomQ_w₂)
 
 -- ─── Example 3.10(v): Ambiguity ───
 
@@ -178,12 +178,12 @@ theorem ex310_v_ambiguity_p :
   intro h
   apply h w₂
   simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
-    NormalityOrder.optimal]
+    Normality.optimal]
   refine ⟨⟨Set.mem_univ _, fun ⟨hp, _⟩ => atomP_w₂ hp⟩, fun v ⟨_, hnpq⟩ hle => ?_⟩
   -- hle gives atomQ v (via the atomQ-refinement component evaluated at w₂)
   obtain ⟨⟨_, _⟩, hqv_imp⟩ := hle
   have hqv : atomQ v := hqv_imp atomQ_w₂
-  show ((NormalityOrder.total.refine atomP).refine atomQ).le w₂ v
+  show (Normality.refine (Normality.refine Normality.total atomP) atomQ).le w₂ v
   exact ⟨⟨True.intro, fun hpv => absurd ⟨hpv, hqv⟩ hnpq⟩, fun _ => atomQ_w₂⟩
 
 /-- Symmetric: w₁ (p, ¬q) is optimal but ¬q, so "presumably q" fails.
@@ -197,12 +197,12 @@ theorem ex310_v_ambiguity_q :
   intro h
   apply h w₁
   simp only [ExpState.optimal, assertUpdate, normallyUpdate, σ₀, ExpState.init,
-    NormalityOrder.optimal]
+    Normality.optimal]
   refine ⟨⟨Set.mem_univ _, fun ⟨_, hq⟩ => atomQ_w₁ hq⟩, fun v ⟨_, hnpq⟩ hle => ?_⟩
   -- hle gives atomP v (via the atomP-refinement component evaluated at w₁)
   obtain ⟨⟨_, hpv_imp⟩, _⟩ := hle
   have hpv : atomP v := hpv_imp atomP_w₁
-  show ((NormalityOrder.total.refine atomP).refine atomQ).le w₁ v
+  show (Normality.refine (Normality.refine Normality.total atomP) atomQ).le w₁ v
   exact ⟨⟨True.intro, fun _ => atomP_w₁⟩, fun hqv => absurd ⟨hpv, hqv⟩ hnpq⟩
 
 end Examples310
@@ -220,22 +220,20 @@ def birdDomain : Set TweetyWorld := { w | isBird w }
 def penguinDomain : Set TweetyWorld := { w | isPenguin w }
 
 /-- Ordering for the bird domain: promotes flying. -/
-private def birdOrd : NormalityOrder TweetyWorld where
-  le w v := (flies v → flies w)
-  le_refl _ := id
-  le_trans _ _ _ huv hvw h := huv (hvw h)
+private def birdOrd : Preorder TweetyWorld :=
+  Preorder.ofLE (fun w v => flies v → flies w) (fun _ => id)
+    (fun _ _ _ huv hvw h => huv (hvw h))
 
 /-- Ordering for the penguin domain: promotes ¬flying. -/
-private def penguinOrd : NormalityOrder TweetyWorld where
-  le w v := (¬flies v → ¬flies w)
-  le_refl _ := id
-  le_trans _ _ _ huv hvw h := huv (hvw h)
+private def penguinOrd : Preorder TweetyWorld :=
+  Preorder.ofLE (fun w v => ¬flies v → ¬flies w) (fun _ => id)
+    (fun _ _ _ huv hvw h => huv (hvw h))
 
 private noncomputable def tweetyPattern (d : Set TweetyWorld) :
-    NormalityOrder TweetyWorld :=
+    Preorder TweetyWorld :=
   if d = penguinDomain then penguinOrd
   else if d = birdDomain then birdOrd
-  else NormalityOrder.total
+  else Normality.total
 
 noncomputable def tweetyFrame : ExpFrame TweetyWorld :=
   ⟨tweetyPattern⟩
@@ -258,7 +256,7 @@ private theorem pat_bird : tweetyPattern birdDomain = birdOrd := by
 
 private theorem pat_other (d : Set TweetyWorld)
     (hp : d ≠ penguinDomain) (hb : d ≠ birdDomain) :
-    tweetyPattern d = NormalityOrder.total := by
+    tweetyPattern d = Normality.total := by
   unfold tweetyPattern; rw [if_neg hp, if_neg hb]
 
 private theorem sub_penguin_ne_bird (d : Set TweetyWorld)
@@ -312,21 +310,19 @@ open NixonWorld
 def quakerDomain : Set NixonWorld := { w | isQuaker w }
 def repDomain : Set NixonWorld := { w | isRepublican w }
 
-private def quakerOrd : NormalityOrder NixonWorld where
-  le w v := (isPacifist v → isPacifist w)
-  le_refl _ := id
-  le_trans _ _ _ huv hvw h := huv (hvw h)
+private def quakerOrd : Preorder NixonWorld :=
+  Preorder.ofLE (fun w v => isPacifist v → isPacifist w) (fun _ => id)
+    (fun _ _ _ huv hvw h => huv (hvw h))
 
-private def repOrd : NormalityOrder NixonWorld where
-  le w v := (¬isPacifist v → ¬isPacifist w)
-  le_refl _ := id
-  le_trans _ _ _ huv hvw h := huv (hvw h)
+private def repOrd : Preorder NixonWorld :=
+  Preorder.ofLE (fun w v => ¬isPacifist v → ¬isPacifist w) (fun _ => id)
+    (fun _ _ _ huv hvw h => huv (hvw h))
 
 private noncomputable def nixonPattern (d : Set NixonWorld) :
-    NormalityOrder NixonWorld :=
+    Preorder NixonWorld :=
   if d = quakerDomain then quakerOrd
   else if d = repDomain then repOrd
-  else NormalityOrder.total
+  else Normality.total
 
 noncomputable def nixonFrame : ExpFrame NixonWorld :=
   ⟨nixonPattern⟩
@@ -391,9 +387,10 @@ variable {W : Type*}
     and χ produces an ordering that promotes (ψ ∧ χ)-worlds.
 
     [veltman-1996], §5 (p.256): CC is valid. -/
-theorem conjConsequents_respects (no : NormalityOrder W)
+theorem conjConsequents_respects (no : Preorder W)
     (ψ χ : W → Prop) :
-    ((no.refine ψ).refine χ).respects (fun w => ψ w ∧ χ w) := by
+    Normality.respects (Normality.refine (Normality.refine no ψ) χ)
+      (fun w => ψ w ∧ χ w) := by
   intro w v ⟨⟨_, hψ⟩, hχ⟩ ⟨hψv, hχv⟩
   exact ⟨hψ hψv, hχ hχv⟩
 
@@ -407,7 +404,7 @@ theorem conjConsequents_frame (π : ExpFrame W) (d : Set W)
   by_cases hd : d' = d
   · subst hd
     simp only [ExpFrame.refineAt_target]
-    exact NormalityOrder.refine_of_respects _ _ (conjConsequents_respects _ ψ χ)
+    exact Normality.refine_of_respects _ _ (conjConsequents_respects _ ψ χ)
   · simp only [ExpFrame.refineAt_unchanged _ _ _ _ hd]
 
 -- ─── Invalid: Contraposition (counterexample) ───
@@ -431,8 +428,9 @@ theorem contraposition_fails :
     intro heq
     have h3 : w₃ ∈ d' := by rw [heq]; exact atomP_w₃
     exact absurd atomQ_w₃ (hd' h3)
-  simp only [ExpFrame.refineAt_unchanged _ _ _ _ hd'_ne, ExpFrame.total, ExpFrame.const]
-  exact True.intro
+  have heq := ExpFrame.refineAt_unchanged (ExpFrame.total (W := PQWorld))
+    { w : PQWorld | atomP w } atomQ d' hd'_ne
+  rw [heq]; exact True.intro
 
 -- ─── Invalid: Strengthening the Antecedent (counterexample) ───
 
@@ -469,8 +467,9 @@ theorem defeasible_modus_tollens_fails :
     intro heq
     have h3 : w₃ ∈ d' := by rw [heq]; exact atomP_w₃
     exact absurd atomQ_w₃ (hd' h3)
-  simp only [ExpFrame.refineAt_unchanged _ _ _ _ hd'_ne, ExpFrame.total, ExpFrame.const]
-  exact True.intro
+  have heq := ExpFrame.refineAt_unchanged (ExpFrame.total (W := PQWorld))
+    { w : PQWorld | atomP w } atomQ d' hd'_ne
+  rw [heq]; exact True.intro
 
 end InferencePatterns
 
@@ -492,12 +491,12 @@ variable {W : Type*}
 
     This theorem witnesses the structural identity: "all optimal worlds
     in a domain satisfy the scope" is just the definition of optimality
-    restated. The substantive bridge is that `NormalityOrder.optimal`
-    provides the normalcy predicate for GEN, and `NormalityOrder.refine`
+    restated. The substantive bridge is that `Normality.optimal`
+    provides the normalcy predicate for GEN, and `Normality.refine`
     provides the dynamic mechanism for learning new generic rules. -/
-theorem optimal_as_normalcy (no : NormalityOrder W) (d : Set W)
+theorem optimal_as_normalcy (no : Preorder W) (d : Set W)
     (scope : W → Prop) :
-    (∀ w ∈ no.optimal d, scope w) ↔
+    (∀ w ∈ Normality.optimal no d, scope w) ↔
     ∀ w, w ∈ d → (∀ v ∈ d, no.le v w → no.le w v) → scope w := by
   constructor
   · intro h w hwd hopt; exact h w ⟨hwd, hopt⟩

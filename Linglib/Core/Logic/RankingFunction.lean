@@ -189,15 +189,12 @@ theorem rankProp_union [Fintype W] (κ : RankingFunction W)
     every non-empty subset of ℕ has a minimum, so among the
     φ-worlds with rank ≤ κ(w), we can find a minimal one. -/
 def toPlausibilityOrder (κ : RankingFunction W) : PlausibilityOrder W where
-  le := fun w v => κ.rank w ≤ κ.rank v
-  le_refl := fun _ => Nat.le_refl _
-  le_trans := fun _ _ _ h1 h2 => Nat.le_trans h1 h2
+  toPreorder := Preorder.lift κ.rank
   smooth := fun φ w hφw => by
     classical
-    -- Among φ-worlds with rank ≤ κ(w), find one with minimal rank.
-    -- Such worlds exist (w itself qualifies).
-    -- The ranks of candidates form a nonempty subset of ℕ.
-    -- Use Nat.find to get the minimal rank value.
+    show ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧
+      ∀ u, φ u → κ.rank u ≤ κ.rank v → κ.rank v ≤ κ.rank u
+    -- Among φ-worlds with rank ≤ κ(w), find one with minimal rank (via `Nat.find`).
     let minRank := Nat.find (⟨κ.rank w, w, hφw, Nat.le_refl _, rfl⟩ :
       ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n)
     obtain ⟨v, hφv, hvw, hvrank⟩ := Nat.find_spec (⟨κ.rank w, w, hφw, Nat.le_refl _, rfl⟩ :
@@ -226,7 +223,7 @@ def toPreferential (κ : RankingFunction W) : PreferentialConsequence W :=
     distinguishes ranked models from merely preferential models and
     is what makes Rational Monotonicity hold. -/
 theorem ranking_connected (κ : RankingFunction W) :
-    κ.toPlausibilityOrder.toNormalityOrder.connected := by
+    Core.Order.Normality.connected κ.toPlausibilityOrder.toPreorder := by
   intro w v
   show κ.rank w ≤ κ.rank v ∨ κ.rank v ≤ κ.rank w
   omega

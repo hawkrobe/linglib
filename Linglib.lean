@@ -102,6 +102,7 @@ import Linglib.Core.Order.Branching
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.Command
+import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility

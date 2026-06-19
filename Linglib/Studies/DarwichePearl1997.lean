@@ -37,7 +37,8 @@ transformations that respect AGM success but violate the D&P constraints.
 
 ## Linguistic Connection
 
-Ranking functions → `PlausibilityOrder` → `NormalityOrder` → Kratzer's
+Ranking functions → `PlausibilityOrder` → normality ordering (`Preorder`)
+→ Kratzer's
 ordering sources for modals/conditionals. The D&P postulates constrain
 how modal bases evolve under discourse update — without them, an
 agent's conditional beliefs can shift arbitrarily between utterances.
@@ -49,7 +50,7 @@ the ordering of live possibilities evolves rationally.
 namespace DarwichePearl1997
 
 open Core.Logic.Ranking
-open Core.Order (NormalityOrder)
+open Core.Order.Normality
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. World Type
@@ -66,21 +67,21 @@ instance : Fintype W4 :=
 open W4
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 2. Ranking → NormalityOrder Bridge
+-- § 2. Ranking → Normality Ordering (Preorder) Bridge
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- Convert a ranking function to its induced normality ordering.
     `le w v ↔ κ(w) ≤ κ(v)`. Defined directly (not via `toPlausibilityOrder`)
     so that `le` reduces for `native_decide`. -/
-@[reducible] def rankToOrder (κ : RankingFunction W4) : NormalityOrder W4 where
-  le w v := κ.rank w ≤ κ.rank v
-  le_refl _ := Nat.le_refl _
-  le_trans _ _ _ h1 h2 := Nat.le_trans h1 h2
+@[reducible] def rankToOrder (κ : RankingFunction W4) : Preorder W4 :=
+  Preorder.ofLE (fun w v => κ.rank w ≤ κ.rank v)
+    (fun _ => Nat.le_refl _)
+    (fun _ _ _ h1 h2 => Nat.le_trans h1 h2)
 
 /-- `rankToOrder` agrees with the canonical path through `PlausibilityOrder`. -/
 theorem rankToOrder_eq_canonical (κ : RankingFunction W4) :
-    rankToOrder κ = κ.toPlausibilityOrder.toNormalityOrder :=
-  NormalityOrder.ext fun _ _ => Iff.rfl
+    rankToOrder κ = κ.toPlausibilityOrder.toPreorder :=
+  le_antisymm (fun _ _ h => h) (fun _ _ h => h)
 
 /-- AGM success: all rank-0 worlds in the posterior satisfy μ. -/
 @[reducible] def agmSuccess (post : RankingFunction W4)
@@ -107,16 +108,16 @@ def mu_A1 : W4 → Bool | .w1 => false | _ => true
 
 theorem A1_agm : agmSuccess post_A1 mu_A1 := by native_decide
 theorem A1_violates_CR1 :
-    ¬NormalityOrder.satisfies_CR1 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
+    ¬satisfies_CR1 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
   native_decide
 theorem A1_satisfies_CR2 :
-    NormalityOrder.satisfies_CR2 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
+    satisfies_CR2 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
   native_decide
 theorem A1_satisfies_CR3 :
-    NormalityOrder.satisfies_CR3 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
+    satisfies_CR3 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
   native_decide
 theorem A1_satisfies_CR4 :
-    NormalityOrder.satisfies_CR4 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
+    satisfies_CR4 (rankToOrder prior_A1) (rankToOrder post_A1) mu_A1 := by
   native_decide
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -139,16 +140,16 @@ def mu_A2 : W4 → Bool | .w3 => true | .w4 => true | _ => false
 
 theorem A2_agm : agmSuccess post_A2 mu_A2 := by native_decide
 theorem A2_satisfies_CR1 :
-    NormalityOrder.satisfies_CR1 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
+    satisfies_CR1 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
   native_decide
 theorem A2_violates_CR2 :
-    ¬NormalityOrder.satisfies_CR2 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
+    ¬satisfies_CR2 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
   native_decide
 theorem A2_satisfies_CR3 :
-    NormalityOrder.satisfies_CR3 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
+    satisfies_CR3 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
   native_decide
 theorem A2_satisfies_CR4 :
-    NormalityOrder.satisfies_CR4 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
+    satisfies_CR4 (rankToOrder prior_A2) (rankToOrder post_A2) mu_A2 := by
   native_decide
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -171,16 +172,16 @@ def mu_A3 : W4 → Bool | .w1 => true | .w2 => true | _ => false
 
 theorem A3_agm : agmSuccess post_A3 mu_A3 := by native_decide
 theorem A3_satisfies_CR1 :
-    NormalityOrder.satisfies_CR1 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
+    satisfies_CR1 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
   native_decide
 theorem A3_satisfies_CR2 :
-    NormalityOrder.satisfies_CR2 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
+    satisfies_CR2 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
   native_decide
 theorem A3_violates_CR3 :
-    ¬NormalityOrder.satisfies_CR3 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
+    ¬satisfies_CR3 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
   native_decide
 theorem A3_satisfies_CR4 :
-    NormalityOrder.satisfies_CR4 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
+    satisfies_CR4 (rankToOrder prior_A3) (rankToOrder post_A3) mu_A3 := by
   native_decide
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -203,16 +204,16 @@ def mu_A4 : W4 → Bool | .w1 => true | .w2 => true | _ => false
 
 theorem A4_agm : agmSuccess post_A4 mu_A4 := by native_decide
 theorem A4_satisfies_CR1 :
-    NormalityOrder.satisfies_CR1 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
+    satisfies_CR1 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
   native_decide
 theorem A4_satisfies_CR2 :
-    NormalityOrder.satisfies_CR2 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
+    satisfies_CR2 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
   native_decide
 theorem A4_satisfies_CR3 :
-    NormalityOrder.satisfies_CR3 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
+    satisfies_CR3 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
   native_decide
 theorem A4_violates_CR4 :
-    ¬NormalityOrder.satisfies_CR4 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
+    ¬satisfies_CR4 (rankToOrder prior_A4) (rankToOrder post_A4) mu_A4 := by
   native_decide
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -225,29 +226,29 @@ theorem A4_violates_CR4 :
     This is the content of [darwiche-pearl-1997], Appendix A. -/
 theorem CR_independence :
     -- CR1 independent: violated alone
-    (∃ p q : NormalityOrder W4, ∃ μ,
-      ¬NormalityOrder.satisfies_CR1 p q μ ∧
-      NormalityOrder.satisfies_CR2 p q μ ∧
-      NormalityOrder.satisfies_CR3 p q μ ∧
-      NormalityOrder.satisfies_CR4 p q μ) ∧
+    (∃ p q : Preorder W4, ∃ μ,
+      ¬satisfies_CR1 p q μ ∧
+      satisfies_CR2 p q μ ∧
+      satisfies_CR3 p q μ ∧
+      satisfies_CR4 p q μ) ∧
     -- CR2 independent: violated alone
-    (∃ p q : NormalityOrder W4, ∃ μ,
-      NormalityOrder.satisfies_CR1 p q μ ∧
-      ¬NormalityOrder.satisfies_CR2 p q μ ∧
-      NormalityOrder.satisfies_CR3 p q μ ∧
-      NormalityOrder.satisfies_CR4 p q μ) ∧
+    (∃ p q : Preorder W4, ∃ μ,
+      satisfies_CR1 p q μ ∧
+      ¬satisfies_CR2 p q μ ∧
+      satisfies_CR3 p q μ ∧
+      satisfies_CR4 p q μ) ∧
     -- CR3 independent: violated alone
-    (∃ p q : NormalityOrder W4, ∃ μ,
-      NormalityOrder.satisfies_CR1 p q μ ∧
-      NormalityOrder.satisfies_CR2 p q μ ∧
-      ¬NormalityOrder.satisfies_CR3 p q μ ∧
-      NormalityOrder.satisfies_CR4 p q μ) ∧
+    (∃ p q : Preorder W4, ∃ μ,
+      satisfies_CR1 p q μ ∧
+      satisfies_CR2 p q μ ∧
+      ¬satisfies_CR3 p q μ ∧
+      satisfies_CR4 p q μ) ∧
     -- CR4 independent: violated alone
-    (∃ p q : NormalityOrder W4, ∃ μ,
-      NormalityOrder.satisfies_CR1 p q μ ∧
-      NormalityOrder.satisfies_CR2 p q μ ∧
-      NormalityOrder.satisfies_CR3 p q μ ∧
-      ¬NormalityOrder.satisfies_CR4 p q μ) :=
+    (∃ p q : Preorder W4, ∃ μ,
+      satisfies_CR1 p q μ ∧
+      satisfies_CR2 p q μ ∧
+      satisfies_CR3 p q μ ∧
+      ¬satisfies_CR4 p q μ) :=
   ⟨⟨rankToOrder prior_A1, rankToOrder post_A1, mu_A1,
     A1_violates_CR1, A1_satisfies_CR2, A1_satisfies_CR3, A1_satisfies_CR4⟩,
    ⟨rankToOrder prior_A2, rankToOrder post_A2, mu_A2,
@@ -280,7 +281,7 @@ theorem CR_independence :
     RankingFunction.revise
       → satisfies C1–C4 (this file's counterexamples show AGM alone doesn't)
       → PlausibilityOrder (via toPlausibilityOrder)
-      → NormalityOrder (via toNormalityOrder)
+      → normality ordering / Preorder (via toPreorder)
       → Kratzer ordering sources (via fromProps)
       → modal/conditional semantics
     ```

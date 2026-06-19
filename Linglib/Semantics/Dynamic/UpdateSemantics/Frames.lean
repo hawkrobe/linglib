@@ -22,7 +22,7 @@ exception.
 
 ## Key definitions
 
-- `ExpFrame W`: function `Set W → NormalityOrder W`
+- `ExpFrame W`: function `Set W → Preorder W`
 - `ExpFrame.normal`: Def 4.3 — check all subdomains, not just d
 - `ExpFrame.coherent`: Def 4.3(iii) — every non-empty d has normals
 - `ExpFrame.refineAt`: Def 4.5 — refine pattern at domain d only
@@ -47,7 +47,7 @@ when every ordering is connected).
 
 namespace Semantics.Dynamic.Default
 
-open Core.Order (NormalityOrder)
+open Core.Order
 
 variable {W : Type*}
 
@@ -62,7 +62,7 @@ variable {W : Type*}
     orderings — this is what enables conditional defaults. -/
 structure ExpFrame (W : Type*) where
   /-- The per-domain normality ordering -/
-  pattern : Set W → NormalityOrder W
+  pattern : Set W → Preorder W
 
 /-- Extensionality for frames: two frames are equal iff they assign
     the same ordering to every domain. -/
@@ -99,17 +99,17 @@ def ExpFrame.coherent (π : ExpFrame W) : Prop :=
     the latter iff `respects`, we use `respects` directly. -/
 def ExpFrame.isDefault (π : ExpFrame W) (d : Set W) (e : W → Prop) :
     Prop :=
-  (∃ w ∈ d, e w) ∧ (π.pattern d).respects e
+  (∃ w ∈ d, e w) ∧ Normality.respects (π.pattern d) e
 
 /-- The **constant frame**: assigns the same ordering to every domain.
     This embeds §3's single-ordering setup into the §4 framework. -/
-def ExpFrame.const (no : NormalityOrder W) : ExpFrame W :=
+def ExpFrame.const (no : Preorder W) : ExpFrame W :=
   ⟨fun _ => no⟩
 
 /-- The **total frame**: assigns the total ordering to every domain.
     The initial state before any defaults have been processed. -/
 def ExpFrame.total : ExpFrame W :=
-  ExpFrame.const NormalityOrder.total
+  ExpFrame.const Normality.total
 
 
 -- ═══ Frame Refinement ═══
@@ -128,7 +128,7 @@ open Classical in
     normal in any d' ⊇ d. -/
 noncomputable def ExpFrame.refineAt (π : ExpFrame W) (d : Set W)
     (e : W → Prop) : ExpFrame W :=
-  ⟨fun d' => if d' = d then (π.pattern d).refine e else π.pattern d'⟩
+  ⟨fun d' => if d' = d then Normality.refine (π.pattern d) e else π.pattern d'⟩
 
 /-- Domains other than d are unchanged by refinement. -/
 theorem ExpFrame.refineAt_unchanged (π : ExpFrame W) (d : Set W)
@@ -139,7 +139,7 @@ theorem ExpFrame.refineAt_unchanged (π : ExpFrame W) (d : Set W)
 /-- The target domain gets its ordering refined. -/
 theorem ExpFrame.refineAt_target (π : ExpFrame W) (d : Set W)
     (e : W → Prop) :
-    (π.refineAt d e).pattern d = (π.pattern d).refine e := by
+    (π.refineAt d e).pattern d = Normality.refine (π.pattern d) e := by
   unfold refineAt; exact if_pos rfl
 
 
@@ -242,7 +242,7 @@ theorem ExpFrame.refineAt_comm_same (π : ExpFrame W) (d : Set W)
   by_cases hd : d' = d
   · subst hd
     simp only [refineAt_target]
-    exact NormalityOrder.refine_comm _ _ _
+    exact Normality.refine_comm _ _ _
   · simp only [refineAt_unchanged _ d _ d' hd]
 
 /-- **Commutativity at different domains**: refinements at da ≠ db
@@ -268,26 +268,26 @@ theorem ExpFrame.refineAt_idempotent (π : ExpFrame W) (d : Set W)
   by_cases hd : d' = d
   · subst hd
     simp only [refineAt_target]
-    exact NormalityOrder.refine_idempotent _ _
+    exact Normality.refine_idempotent _ _
   · simp only [refineAt_unchanged _ d _ d' hd]
 
 /-- If πd already respects e, refinement at d is a no-op. -/
 theorem ExpFrame.refineAt_of_respects (π : ExpFrame W) (d : Set W)
-    (e : W → Prop) (h : (π.pattern d).respects e) :
+    (e : W → Prop) (h : Normality.respects (π.pattern d) e) :
     π.refineAt d e = π := by
   apply ExpFrame.ext; intro d'
   by_cases hd : d' = d
   · subst hd
     rw [refineAt_target]
-    exact NormalityOrder.refine_of_respects _ _ h
+    exact Normality.refine_of_respects _ _ h
   · exact refineAt_unchanged _ d _ d' hd
 
 /-- After refinement at d, the pattern at d respects e. -/
 theorem ExpFrame.refineAt_creates_respect (π : ExpFrame W) (d : Set W)
     (e : W → Prop) :
-    ((π.refineAt d e).pattern d).respects e := by
+    Normality.respects ((π.refineAt d e).pattern d) e := by
   rw [refineAt_target]
-  exact NormalityOrder.refine_respects _ _
+  exact Normality.refine_respects _ _
 
 
 -- ═══ Coherence Preservation ═══
@@ -331,7 +331,7 @@ theorem ExpFrame.refineAt_coherent_iff (π : ExpFrame W) (d : Set W)
     obtain ⟨hwd, hne_w⟩ := hnorm_sub (refineAt_normal_mono π d e d₀ hw_ref)
     -- But the refined pattern at d forces e w (using the e-witness v₀)
     have h := hw_ref.2 d hd_sub hwd v₀ hv₀d
-    rw [refineAt_target] at h
+    rw [refineAt_target, Normality.refine_le] at h
     exact hne_w (h.2 hev₀)
   · -- ←: no bad superdomain → refined coherent
     intro hno_bad d₀ hd₀_ne
@@ -346,7 +346,7 @@ theorem ExpFrame.refineAt_coherent_iff (π : ExpFrame W) (d : Set W)
       refine ⟨w, hw_norm.1, fun d' hd' hwd' v hv => ?_⟩
       by_cases hd'_eq : d' = d
       · -- d' = d: refined pattern demands (πd).le ∧ (e v → e w)
-        rw [hd'_eq, refineAt_target]
+        rw [hd'_eq, refineAt_target, Normality.refine_le]
         constructor
         · have := hw_norm.2 d' hd' hwd' v hv; rwa [hd'_eq] at this
         · intro _; by_contra hne_w; rw [hd'_eq] at hwd'; exact hw_ok ⟨hwd', hne_w⟩
@@ -367,11 +367,11 @@ theorem ExpFrame.refineAt_coherent_iff (π : ExpFrame W) (d : Set W)
     for connected orderings, "top in every subdomain" reduces to
     "optimal in d" — since optimal = top when the ordering is total
     or connected. -/
-theorem ExpFrame.const_normal_of_connected (no : NormalityOrder W)
-    (d : Set W) (hconn : no.connected) :
-    (ExpFrame.const no).normal d = no.optimal d := by
+theorem ExpFrame.const_normal_of_connected (no : Preorder W)
+    (d : Set W) (hconn : Normality.connected no) :
+    (ExpFrame.const no).normal d = Normality.optimal no d := by
   ext w
-  simp only [normal, const, Set.mem_setOf_eq, NormalityOrder.optimal]
+  simp only [normal, const, Set.mem_setOf_eq, Normality.optimal]
   constructor
   · -- normal → optimal: weaker condition
     intro ⟨hwd, hsub⟩
@@ -385,7 +385,7 @@ theorem ExpFrame.const_normal_of_connected (no : NormalityOrder W)
     · exact hwv
     · -- le v w, and v ∈ d' ⊆ d, so v ∈ d
       -- By optimality of w in d: le w v
-      exact hopt v (hd'd hv) hvw
+      exact hopt (hd'd hv) hvw
 
 
 -- ═══ Applicability ═══

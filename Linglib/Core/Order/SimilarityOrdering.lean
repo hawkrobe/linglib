@@ -1,123 +1,102 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Filter
+import Mathlib.Order.Minimal
 import Mathlib.Order.Preorder.Finite
-import Linglib.Core.Order.Normality
+import Mathlib.Data.Finset.Filter
+import Linglib.Core.Order.PreorderLattice
 
 /-!
 # Similarity orderings
 
 [lewis-1973] [stalnaker-1968]
 
-A `SimilarityOrdering W` equips a type of worlds with a *centered* ternary
-relation `closer w₀ w₁ w₂` ("`w₁` is at least as close to `w₀` as `w₂` is")
-that is reflexive and transitive in the second/third arguments at every
-center. This is the order-theoretic substrate of variably-strict
-counterfactuals ([lewis-1973] / [stalnaker-1968]) and of any
-"closest-world" semantics — selectional, supervaluation, homogeneity, etc.
+A `SimilarityOrdering W` is a **centered family of preorders**: for each
+center `w₀`, `atCenter w₀` is the closeness `Preorder` (`(atCenter w₀).le w₁ w₂`
+means `w₁` is at least as close to `w₀` as `w₂`). This replaces the former
+hand-rolled ternary relation `closer` with per-center reflexivity/transitivity
+fields — those are now just the `Preorder` axioms of `atCenter w₀`.
 
-The structure lives in `Core.Order` (not `Conditionals`) because it is a
-general-purpose primitive: it is used directly by counterfactual operators
-in `Semantics/Conditionals/`, by alternative-sensitive operators
-([santorio-2018]), by causal psycholinguistic models in
-`Semantics/Causation/`, and by any future "closest match" theory.
+The closest worlds are mathlib's `Minimal`, and the Limit Assumption is
+`Set.Finite.exists_minimal`.
 
 ## Key operations
 
-- `closer w₀ w₁ w₂` — the relation itself (reflexive, transitive)
-- `closestWorlds w₀ A` — minimal elements of a `Finset` under `closer`
-- `atCenter w₀` — coerce to a `Core.Order.NormalityOrder` centered at `w₀`
-- `isCentered` — strong centering: `w` is the unique closest world to itself
-- `candidateSelections` — the set of selection-function candidates induced
-  by the ordering (bridge to Stalnaker selection)
+- `atCenter w₀` — the closeness preorder centered at `w₀`.
+- `closer w₀ w₁ w₂` — `(atCenter w₀).le w₁ w₂`, the ternary closeness relation.
+- `closestWorlds w₀ A` — minimal elements of a `Finset` under `closer w₀`.
+- `isCentered` — strong centering ([lewis-1973]).
 - `≤[sim, w₀]` notation: `w₁ ≤[sim, w₀] w₂` reads "`w₁` is at least as
-  similar to `w₀` as `w₂` is" ([lewis-1973]-style notation)
-
-## Connection to selection functions
-
-`Semantics.Conditionals.SelectionFunction` and `SimilarityOrdering` are dual presentations of
-the same intuition. A coherent selection function induces a similarity
-ordering via the `coherentSelectionToSimilarity` constructor (which lives
-in `Semantics/Conditionals/Basic.lean` because it depends on
-selection-function machinery from `Semantics.Conditionals.SelectionFunction`).
+  similar to `w₀` as `w₂` is".
 -/
 
 namespace Core.Order
 
 /-! ## Structure -/
 
-/-- A **similarity ordering** on worlds: a centered ternary relation
-    `closer w₀ w₁ w₂` saying that `w₁` is at least as close to `w₀` as
-    `w₂` is, reflexive and transitive in `w₁`/`w₂`/`w₃` at each center
-    `w₀`. -/
+/-- A **similarity ordering**: a centered family of preorders. `atCenter w₀`
+    is the closeness preorder centered at `w₀`. -/
 structure SimilarityOrdering (W : Type*) where
-  /-- `closer w₀ w₁ w₂` means `w₁` is at least as close to `w₀` as `w₂` is. -/
-  closer : W → W → W → Prop
-  /-- Every world is at least as close to any center as itself. -/
-  closer_refl (w₀ w : W) : closer w₀ w w
-  /-- Transitivity in the candidate arguments at a fixed center. -/
-  closer_trans (w₀ w₁ w₂ w₃ : W) :
-    closer w₀ w₁ w₂ → closer w₀ w₂ w₃ → closer w₀ w₁ w₃
-  /-- The relation is decidable. -/
-  closerDec (w₀ w₁ w₂ : W) : Decidable (closer w₀ w₁ w₂)
-
-instance {W : Type*} (sim : SimilarityOrdering W) (w₀ w₁ w₂ : W) :
-    Decidable (sim.closer w₀ w₁ w₂) :=
-  sim.closerDec w₀ w₁ w₂
+  /-- The closeness preorder centered at each world. -/
+  atCenter : W → Preorder W
+  /-- Closeness is decidable at each center. -/
+  decClose : ∀ w₀ w₁ w₂, Decidable ((atCenter w₀).le w₁ w₂)
 
 namespace SimilarityOrdering
 
 variable {W : Type*}
 
+/-- `closer w₀ w₁ w₂` means `w₁` is at least as close to `w₀` as `w₂` is —
+    the `≤` of the preorder centered at `w₀`. -/
+@[reducible] def closer (sim : SimilarityOrdering W) (w₀ w₁ w₂ : W) : Prop :=
+  (sim.atCenter w₀).le w₁ w₂
+
+instance (sim : SimilarityOrdering W) (w₀ w₁ w₂ : W) :
+    Decidable (sim.closer w₀ w₁ w₂) :=
+  sim.decClose w₀ w₁ w₂
+
+/-- Every world is at least as close to any center as itself. -/
+theorem closer_refl (sim : SimilarityOrdering W) (w₀ w : W) : sim.closer w₀ w w :=
+  (sim.atCenter w₀).le_refl w
+
+/-- Transitivity of closeness at a fixed center. -/
+theorem closer_trans (sim : SimilarityOrdering W) (w₀ w₁ w₂ w₃ : W) :
+    sim.closer w₀ w₁ w₂ → sim.closer w₀ w₂ w₃ → sim.closer w₀ w₁ w₃ :=
+  (sim.atCenter w₀).le_trans w₁ w₂ w₃
+
 /-! ## Constructors -/
 
 /-- Construct a `SimilarityOrdering` from a `Bool`-valued function.
-    Reflexivity and transitivity proofs can typically be discharged by
-    `decide` on finite types. -/
+    Reflexivity and transitivity can typically be discharged by `decide`. -/
 def ofBool (f : W → W → W → Bool)
     (hrefl : ∀ w₀ w, f w₀ w w = true)
     (htrans : ∀ w₀ w₁ w₂ w₃, f w₀ w₁ w₂ = true → f w₀ w₂ w₃ = true →
       f w₀ w₁ w₃ = true) :
     SimilarityOrdering W where
-  closer w₀ w₁ w₂ := f w₀ w₁ w₂ = true
-  closer_refl := hrefl
-  closer_trans w₀ w₁ w₂ w₃ := htrans w₀ w₁ w₂ w₃
-  closerDec _ _ _ := inferInstance
-
-/-- The `NormalityOrder` centered at world `w₀`: `le w₁ w₂` iff `w₁` is
-    at least as close to `w₀` as `w₂` is. Bridges variably-strict
-    semantics to the default-reasoning infrastructure (`optimal`,
-    `refine`, `respects`, CR1–CR4) in `Core.Order.Normality`. -/
-def atCenter (sim : SimilarityOrdering W) (w₀ : W) : NormalityOrder W where
-  le := sim.closer w₀
-  le_refl w := sim.closer_refl w₀ w
-  le_trans w₁ w₂ w₃ := sim.closer_trans w₀ w₁ w₂ w₃
+  atCenter w₀ :=
+    Preorder.ofLE (fun w₁ w₂ => f w₀ w₁ w₂ = true) (hrefl w₀)
+      (fun w₁ w₂ w₃ => htrans w₀ w₁ w₂ w₃)
+  decClose w₀ w₁ w₂ := inferInstanceAs (Decidable (f w₀ w₁ w₂ = true))
 
 /-! ## Centering -/
 
-/-- A **strongly centered** similarity ordering: every world is *strictly*
-    closest to itself. This is the centering axiom of [lewis-1973]
-    that licenses the inference from variably-strict to material truth. -/
+/-- A **strongly centered** similarity ordering: every world is strictly
+    closest to itself ([lewis-1973]'s centering axiom). -/
 def isCentered (sim : SimilarityOrdering W) : Prop :=
   ∀ w w' : W, w ≠ w' → sim.closer w w w' ∧ ¬sim.closer w w' w
 
 /-! ## Closest worlds -/
 
 /-- The closest `A`-worlds to `w₀`: the minimal elements of `A` under the
-    similarity preorder centered at `w₀`. In [lewis-1973]'s notation,
-    `min_{≤_w}(A) = {w' ∈ A : ¬∃ w'' ∈ A. w'' <_w w'}`. -/
+    similarity preorder centered at `w₀`. -/
 def closestWorlds [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W)
     (A : Finset W) : Finset W :=
   A.filter fun w' => ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w'
 
 @[simp]
-theorem closestWorlds_empty [DecidableEq W] (sim : SimilarityOrdering W)
-    (w₀ : W) :
+theorem closestWorlds_empty [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W) :
     sim.closestWorlds w₀ ∅ = ∅ := by
   simp only [closestWorlds, Finset.filter_empty]
 
 theorem closestWorlds_subset [DecidableEq W] (sim : SimilarityOrdering W)
-    (w₀ : W) (A : Finset W) :
-    sim.closestWorlds w₀ A ⊆ A :=
+    (w₀ : W) (A : Finset W) : sim.closestWorlds w₀ A ⊆ A :=
   Finset.filter_subset _ A
 
 theorem mem_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W)
@@ -126,43 +105,21 @@ theorem mem_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W)
       w' ∈ A ∧ ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w' := by
   simp only [closestWorlds, Finset.mem_filter]
 
-/-- **Closest-world membership is preserved when restricting to a
-    subset.** If `B ⊆ A` and `w` is a closest `A`-world that lies in
-    `B`, then `w` is also a closest `B`-world. (Restricting to fewer
-    competitors can only preserve, never lose, "closest" status.)
-
-    This is the structural lemma underlying the
-    [ciardelli-zhang-champollion-2018] §1.2 argument that any
-    minimal-change semantics inherits the switches falsification: at the
-    actual world, the closest worlds in `A̅ ∪ B̅` decompose into closest
-    worlds in `A̅` or `B̅` individually. -/
-theorem mem_closestWorlds_of_subset [DecidableEq W]
-    (sim : SimilarityOrdering W)
+/-- **Closest-world membership is preserved when restricting to a subset.** -/
+theorem mem_closestWorlds_of_subset [DecidableEq W] (sim : SimilarityOrdering W)
     {w₀ w : W} {A B : Finset W} (hBA : B ⊆ A)
     (hw : w ∈ sim.closestWorlds w₀ A) (hwB : w ∈ B) :
     w ∈ sim.closestWorlds w₀ B := by
   rw [mem_closestWorlds] at hw ⊢
   exact ⟨hwB, fun w'' hw'' => hw.2 w'' (hBA hw'')⟩
 
-/-- **Limit Assumption** (closest-world existence): every non-empty
-    `Finset` has a closest world under the centered preorder.
-    Discharges the [lewis-1973] "Limit Assumption" automatically
-    on finite types — corresponds to mathlib's
-    `Finite.exists_minimal` once the centered relation is exposed
-    as a `Preorder`.
-
-    The proof routes through `Set.Finite.exists_minimal`, which gives
-    a `Minimal (· ∈ A) m`. Membership in `closestWorlds w₀ A` is
-    equivalent (the filter condition `closer w₀ m w'' ∨ ¬ closer w₀ w'' m`
-    matches `Minimal`'s `∀ y, y ≤ m → m ≤ y` by case-splitting on
-    `closer w₀ w'' m`). -/
-theorem closestWorlds_nonempty [DecidableEq W]
-    (sim : SimilarityOrdering W) (w₀ : W) {A : Finset W} (hne : A.Nonempty) :
+/-- **Limit Assumption** ([lewis-1973]): every non-empty `Finset` has a
+    closest world. Routes through `Set.Finite.exists_minimal` on the
+    preorder centered at `w₀`. -/
+theorem closestWorlds_nonempty [DecidableEq W] (sim : SimilarityOrdering W)
+    (w₀ : W) {A : Finset W} (hne : A.Nonempty) :
     (sim.closestWorlds w₀ A).Nonempty := by
-  letI : Preorder W :=
-    { le := sim.closer w₀
-      le_refl := sim.closer_refl w₀
-      le_trans := sim.closer_trans w₀ }
+  letI : Preorder W := sim.atCenter w₀
   obtain ⟨m, hmA, hmin⟩ :=
     A.finite_toSet.exists_minimal (Finset.coe_nonempty.mpr hne)
   refine ⟨m, ?_⟩
@@ -174,27 +131,17 @@ theorem closestWorlds_nonempty [DecidableEq W]
 
 end SimilarityOrdering
 
-/-! ## Selection-function bridge primitives
+/-! ## Selection-function bridge primitives -/
 
-These derive selection-function-flavoured notions from a similarity
-ordering without depending on `Semantics.Conditionals.SelectionFunction` itself, so they
-can sit in `Core.Order`. The full selection-function ↔ similarity
-duality (`coherentSelectionToSimilarity`) lives in
-`Semantics/Conditionals/Basic.lean` where both sides of the
-bridge are imported. -/
-
-/-- **Candidate selection set**: the worlds in `A ∩ domain` that are
-    minimal at `w` under the similarity ordering. Any selection function
-    `s` with `s(w, A) ∈ candidateSelections sim domain w A` is
-    "legitimate" with respect to `sim`. -/
+/-- **Candidate selection set**: the worlds in `A ∩ domain` that are minimal
+    at `w` under the similarity ordering. -/
 def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
     (domain : Set W) (w : W) (A : Set W) : Set W :=
   let pWorlds := A ∩ domain
   { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
 
 /-- **Comparative-closeness notation** ([lewis-1973]): `w₁ ≤[sim, w₀] w₂`
-    reads "`w₁` is at least as similar to `w₀` as `w₂` is". A direct
-    [lewis-1973]-style alias for `sim.closer w₀ w₁ w₂`. -/
+    reads "`w₁` is at least as similar to `w₀` as `w₂` is". -/
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
   SimilarityOrdering.closer sim w₀ w₁ w₂
 

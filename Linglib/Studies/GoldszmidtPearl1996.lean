@@ -220,7 +220,7 @@ theorem general_default_preserved :
 /-- The induced plausibility ordering is connected (total), so
     Rational Monotonicity holds. -/
 theorem κz_connected :
-    κ_z.toPlausibilityOrder.toNormalityOrder.connected :=
+    Core.Order.Normality.connected κ_z.toPlausibilityOrder.toPreorder :=
   κ_z.ranking_connected
 
 -- ══════════════════════════════════════════════════════════════════════

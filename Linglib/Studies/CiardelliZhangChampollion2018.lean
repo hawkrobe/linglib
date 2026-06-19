@@ -178,10 +178,11 @@ def hamming : World → World → Nat
     is one natural ordering on this scenario; the abstract theorem
     below shows the falsification doesn't depend on this choice. -/
 def hammingSim : SimilarityOrdering World where
-  closer w₀ w₁ w₂ := hamming w₀ w₁ ≤ hamming w₀ w₂
-  closer_refl _ _ := Nat.le_refl _
-  closer_trans _ _ _ _ h₁ h₂ := h₁.trans h₂
-  closerDec _ _ _ := Nat.decLe _ _
+  atCenter w₀ :=
+    Preorder.ofLE (fun w₁ w₂ => hamming w₀ w₁ ≤ hamming w₀ w₂)
+      (fun _ => Nat.le_refl _)
+      (fun _ _ _ h₁ h₂ => h₁.trans h₂)
+  decClose _ _ _ := Nat.decLe _ _
 
 /-! ## Predictions of the universal/Lewis-Stalnaker counterfactual -/
 
