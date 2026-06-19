@@ -1,5 +1,6 @@
 import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Studies.Rubinstein2014
 import Mathlib.Data.Fin.Basic
 
 /-!
@@ -327,5 +328,30 @@ def haveToProfile : NegRaisingProfile where
     This asymmetry motivates the non-quantificational analysis. -/
 theorem should_no_neg_raising : shouldProfile.higherNeg_narrowScope = false := rfl
 theorem must_neg_raises : mustProfile.higherNeg_narrowScope = true := rfl
+
+/-! ### Comparison with the comparative-semantics analysis ([rubinstein-2014])
+
+The third analysis of weak necessity (§2) is [rubinstein-2014]'s: weak necessity
+modals and evaluative comparatives form a natural class with comparative (Kratzer
+ordering-source) semantics tied to negotiable ideals. Both accounts agree on the
+core datum — "I don't think you should go" has a lower-negation reading, "I don't
+think you have to go" does not — but disagree on the **mechanism** and on *must*:
+
+- **[rubinstein-2014]**: *should* genuinely neg-raises (pragmatic O→E strengthening,
+  [horn-1978]); strong necessity modals (*must*, *have to*) do NOT neg-raise.
+- **[agha-jeretic-2026]** / [agha-jeretic-2022]: *should*'s apparent neg-raising is
+  **scopelessness** (homogeneity), not true neg-raising; *must* genuinely neg-raises.
+
+The classifications are directly opposed on *must*. -/
+
+/-- The two analyses assign opposite neg-raising status to *must*: A&J classify it
+    as a neg-raiser (`mustProfile`), whereas [rubinstein-2014]'s stimulus (ex 31b)
+    records *must*'s lower-negation reading as unacceptable. The contradiction is
+    made explicit rather than left implicit (linglib's interconnection thesis). -/
+theorem must_negRaising_diverges_from_rubinstein :
+    mustProfile.higherNeg_narrowScope = true ∧
+    Rubinstein2014.Examples.nr_must.readings.lookup "lowerNeg"
+      = some Features.Judgment.unacceptable :=
+  ⟨rfl, by decide⟩
 
 end AghaJeretic2026

@@ -2,75 +2,52 @@ import Linglib.Studies.Narrog2010
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Data.Examples.Rubinstein2014
 import Mathlib.Data.Fin.Basic
 
 /-!
 # On Necessity and Comparison
 [rubinstein-2014]
 
-Pacific Philosophical Quarterly 95(4): 512–554.
+Supports [sloman-1970]'s proposal that a comparative semantics is the defining
+property of weak necessity. Weak necessity modals (*ought*, *should*) and
+evaluative comparative predicates (*good*, *better*, *preferable*, *worthwhile*)
+form a semantic natural class: both are relativized to **negotiable** ideals —
+priorities not endorsed by all discourse participants.
 
-## Core Proposal
+Rubinstein splits [kratzer-1981]/[kratzer-1991] ordering-source material into two
+kinds. Non-negotiable priorities are promoted to modal-base status, restricting
+the **favored worlds** via [frank-1996]'s compatibility-restricted union; the
+remaining negotiable priorities stay as an ordering source. Strong necessity
+quantifies over *all* favored worlds (no ordering, [frank-1996]'s non-comparative
+analysis); weak necessity over the *best* favored worlds, ranked by the negotiable
+ideals — the comparative component. The reduction `weakNecessityR ≅ necessity` ties
+this back to [von-fintel-iatridou-2008]-style Kratzer semantics.
 
-Weak necessity modals (*ought*, *should*) and evaluative comparative predicates
-(*better*, *good*, *preferable*, *worthwhile*) form a **natural class**: both have
-comparative semantics grounded in Kratzer's ordering sources, and both are
-associated with **negotiable** ideals — priorities not universally endorsed
-by all discourse participants.
+## Main definitions
 
-This is the third of three competing analyses of weak necessity surveyed
-in [agha-jeretic-2026] §2.2:
+* `PriorityTypology` — modal base split into circumstances, non-negotiable
+  priorities, and a negotiable ordering source.
+* `favoredWorlds`, `strongNecessityR`, `weakNecessityR` — the favored-worlds set
+  and the strong/weak necessity operators over it.
+* `WeakNecessityStrategy` — the three crosslinguistic routes to weak necessity.
 
-1. **Domain restriction** ([von-fintel-iatridou-2008]): `Directive.lean`
-2. **Non-quantificational** ([agha-jeretic-2022]): `AghaJeretic2022.lean`
-3. **Comparative semantics** ([rubinstein-2014]): this file
+## Main results
 
-## Key Claims Formalized
+* `strong_entails_weak_R`, `weak_not_entails_strong_R` — the strong/weak asymmetry.
+* `strongR_eq_simpleNecessity`, `weakR_eq_necessity` — reductions to Kratzer
+  semantics when no priorities are promoted.
+* `should_to_haveto_shift` — the tax-report promotion (§3.3): the same prejacent
+  shifts from weak-only to strong necessity when a negotiable ideal is endorsed.
+* `negRaising_iff_fragment_weak`, `evaluatives_neg_raise` — neg-raising tracks
+  the English fragment's weak-necessity marking ([horn-1978] diagnostics).
+* `hebrew_strategy_evaluative`, `weak_rarity` — Hebrew expresses weak necessity
+  only through evaluative comparison; only 62/200 languages grammaticalize it
+  ([narrog-2012]).
 
-1. **Two kinds of priorities** (§3.2): Non-negotiable priorities are promoted
-   to modal-base status (restricting accessible worlds); negotiable priorities
-   remain as ordering source material (ranking worlds).
-
-2. **Favored worlds** (§3.2, def 40): worlds compatible with facts and
-   non-negotiable priorities, via Frank (1996) compatibility-restricted union.
-
-3. **Strong necessity** (§3.2, def 41): `∀w' ∈ Fav(f,h,e). p(w')` — universal
-   quantification over favored worlds, NO ordering source.
-
-4. **Weak necessity** (§3.2, def 42): `∀w' ∈ BEST(Fav(f,h,e), g(e)). p(w')` —
-   universal quantification over the best favored worlds, ordered by
-   negotiable ideals. This IS the comparative component.
-
-5. **Negotiability** (§3.3, def 49): A premise set is negotiable iff not all
-   discourse participants are committed to it. BEST is only defined when the
-   ordering source is negotiable.
-
-6. **Hebrew evidence** (§2.1): Hebrew lacks a lexical weak necessity modal;
-   comparative evaluatives (*yoter tov*, *adif*, *kday*) serve as translations.
-
-7. **Neg-raising** (§2.2): Weak necessity modals and evaluative comparatives
-   are neg-raisers; strong necessity modals are not.
-
-## Theoretical Disagreement with [agha-jeretic-2022]
-
-Both accounts agree on the data: "I don't think you should go" has a
-lower-negation reading, while "I don't think you have to go" does not
-(for most speakers). They disagree on the **mechanism**:
-
-- **Rubinstein**: *should* genuinely neg-raises (pragmatic O→E strengthening,
-  following [horn-2001]). Strong necessity modals do NOT neg-raise.
-- **Agha & Jeretič**: *should*'s apparent neg-raising is **scopelessness**
-  (homogeneity), not true neg-raising. *must* genuinely neg-raises.
-
-## Connection to Existing Infrastructure
-
-- `Directive.lean` provides the [von-fintel-iatridou-2008] analysis where
-  weak necessity = ∀ over a refined best-world set (ordering refinement g ∪ g').
-  Rubinstein differs by *promoting* some priorities to modal-base status.
-- Under the simplifying assumption that no priorities are promoted (h = ∅),
-  Rubinstein's analysis reduces to standard Kratzer necessity (bridge below).
-- `Auxiliaries.lean` classifies English *should*/*ought* as `weakNecessity`
-  and *must* as `necessity`, matching Rubinstein's force assignments.
+Empirical stimuli (Hebrew, Spanish, English diagnostics) live as typed
+`LinguisticExample` rows in `Data.Examples.Rubinstein2014`; theorems quantify over
+their `judgment`/`readings`/`paperFeatures`.
 -/
 
 namespace Rubinstein2014
@@ -80,12 +57,9 @@ abbrev World := Fin 4
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
 open Semantics.Modality (ModalForce)
+open Data.Examples
 
--- ============================================================================
--- §1. Priority Reconceptualization (§3.2)
--- ============================================================================
-
-/-! ## Two kinds of priorities
+/-! ### Priority reconceptualization (§3.2)
 
 Rubinstein argues that norms, ideals, and preferences — traditionally all
 ordering-source material in [kratzer-1981]'s framework — come in two kinds:
@@ -95,8 +69,8 @@ ordering-source material in [kratzer-1981]'s framework — come in two kinds:
 - **Negotiable**: remain as ordering-source material. These rank the favored
   worlds but do not eliminate any from consideration.
 
-Strong necessity modals quantify over all favored worlds (no ordering).
-Weak necessity modals quantify over the BEST favored worlds (with ordering). -/
+Strong necessity modals quantify over all favored worlds (no ordering); weak
+necessity modals quantify over the BEST favored worlds (with ordering). -/
 
 /-- Whether a priority is negotiable among discourse participants.
     A priority is negotiable iff at least one discourse participant is not
@@ -122,20 +96,16 @@ structure PriorityTypology where
       universally endorsed. -/
   negotiable : OrderingSource World
 
--- ============================================================================
--- §2. Favored Worlds (§3.2, definitions 39–40)
--- ============================================================================
+/-! ### Favored worlds (§3.2, definitions 39–40)
 
-/-! ## Compatibility-restricted union and favored worlds
+The favored worlds are determined by combining factual circumstances with
+non-negotiable priorities. When priorities are consistent with circumstances,
+this is simply the intersection of both.
 
-The favored worlds are determined by combining factual circumstances
-with non-negotiable priorities. When priorities are consistent with
-circumstances, this is simply the intersection of both.
-
-Full definition: `Fav(f, h, e) = ∪{∩M : M ∈ f(e) + h(e)}` where
-`f(e) + h(e)` is Frank (1996)'s compatibility-restricted union (def 39).
-When h(w) is consistent with f(w), this reduces to `∩(f(w) ∪ h(w))`.
-We implement the consistent case, which covers the paper's examples. -/
+Full definition: `Fav(f, h, e) = ∪{∩M : M ∈ f(e) + h(e)}` where `f(e) + h(e)`
+is [frank-1996]'s compatibility-restricted union (def 39). When h(w) is
+consistent with f(w), this reduces to `∩(f(w) ∪ h(w))`. We implement the
+consistent case, which covers the paper's examples. -/
 
 /-- **Favored worlds** (definition 40, consistent case):
     worlds satisfying both the factual circumstances f(w) and the
@@ -149,21 +119,17 @@ theorem favored_no_promoted (f : ModalBase World) (g : OrderingSource World) (w 
     favoredWorlds ⟨f, emptyBackground, g⟩ w = accessibleWorlds f w := by
   unfold favoredWorlds accessibleWorlds emptyBackground propIntersection
   ext w'
-  simp [List.append_nil]
+  simp only [List.append_nil]
 
 -- `bestAmong`, `bestAmong_empty`, and `bestAmong_sub` are imported from
 -- `Kratzer.lean`, where they were promoted as general-purpose operations.
 
--- ============================================================================
--- §4. Strong and Weak Necessity (§3.2, definitions 41–42)
--- ============================================================================
+/-! ### Strong and weak necessity (§3.2, definitions 41–42)
 
-/-! ## The must/ought split
-
-Strong necessity quantifies over ALL favored worlds (no ordering).
-Weak necessity quantifies over the BEST favored worlds (ordered by
-negotiable priorities). This is where the comparative semantics enters:
-weak necessity uses world ranking, strong necessity does not. -/
+Strong necessity quantifies over ALL favored worlds (no ordering). Weak
+necessity quantifies over the BEST favored worlds (ordered by negotiable
+priorities). This is where the comparative semantics enters: weak necessity
+uses world ranking, strong necessity does not. -/
 
 /-- **Strong necessity** (definition 41):
     `⟦must⟧ = λpλe∀w'(w' ∈ Fav(f, h, e) → w' ∈ p)`
@@ -181,20 +147,16 @@ def strongNecessityR (pt : PriorityTypology) (p : World → Prop) (w : World) : 
 def weakNecessityR (pt : PriorityTypology) (p : World → Prop) (w : World) : Prop :=
   ∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w'
 
--- ============================================================================
--- §5. Entailment (§1, paper's key asymmetry)
--- ============================================================================
+/-! ### Strong necessity entails weak necessity (§1, the paper's key asymmetry)
 
-/-! ## Strong necessity entails weak necessity
-
-Since `BEST(Fav, g) ⊆ Fav` (the best worlds are a subset of all
-favored worlds), if p holds at all favored worlds, it a fortiori
-holds at all best favored worlds. -/
+Since `BEST(Fav, g) ⊆ Fav` (the best worlds are a subset of all favored
+worlds), if p holds at all favored worlds, it a fortiori holds at all best
+favored worlds. -/
 
 /-- **Strong necessity entails weak necessity** in Rubinstein's framework.
     Parallel to `Directive.strong_entails_weak`, but derived from the
     subset relation `BEST(Fav, g) ⊆ Fav`. -/
-theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
+theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop)
     (w : World) (h : strongNecessityR pt p w) :
     weakNecessityR pt p w := by
   intro w' hw'
@@ -237,7 +199,7 @@ theorem weak_not_entails_strong_R :
     have hW1Fav : (1 : World) ∈ favoredWorlds ce_pt (0 : World) := by rw [hFav]; exact Set.mem_univ _
     -- The single ordering proposition is (λ w => w = (1 : World)).
     have hProp : (λ w : World => w = (1 : World)) ∈ ce_pt.negotiable (0 : World) := by
-      simp [ce_pt]
+      simp only [ce_pt, List.mem_singleton]
     have := hBest (1 : World) hW1Fav (λ w : World => w = (1 : World)) hProp rfl
     exact this
   -- Show strongNecessityR ce_pt ce_p (0 : World) fails: ce_p (0 : World) = ((0 : World) = (1 : World)) is false.
@@ -249,20 +211,16 @@ theorem weak_not_entails_strong_R :
     exact absurd this (by intro h; cases h)
   exact hNotStrong (h ce_pt ce_p (0 : World) hWeak)
 
--- ============================================================================
--- §6. Bridge to Directive.lean
--- ============================================================================
-
-/-! ## Reduction to standard Kratzer semantics
+/-! ### Reduction to standard Kratzer semantics (bridge to `Directive.lean`)
 
 When no priorities are promoted to modal-base status (h = ∅), Rubinstein's
-strong necessity reduces to simple Kratzer necessity (no ordering), and
-her weak necessity reduces to standard Kratzer necessity with the negotiable
+strong necessity reduces to simple Kratzer necessity (no ordering), and her
+weak necessity reduces to standard Kratzer necessity with the negotiable
 ordering source. -/
 
 /-- With no promoted priorities, Rubinstein's strong necessity equals
     simple Kratzer necessity (no ordering). -/
-theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : World → Prop) [DecidablePred p]
+theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : World → Prop)
     (w : World) :
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     simpleNecessity f p w := by
@@ -278,7 +236,7 @@ theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : World → Prop) [D
     differ structurally: Directive treats all priorities as ordering-source
     material; Rubinstein promotes some to modal-base status. -/
 theorem weakR_eq_necessity (f : ModalBase World) (g : OrderingSource World)
-    (p : World → Prop) [DecidablePred p] (w : World) :
+    (p : World → Prop) (w : World) :
     weakNecessityR ⟨f, emptyBackground, g⟩ p w ↔
     necessity f g p w := by
   rw [necessity_iff_all]
@@ -289,7 +247,7 @@ theorem weakR_eq_necessity (f : ModalBase World) (g : OrderingSource World)
 
 /-- When no priorities are promoted AND no negotiable ordering exists,
     strong and weak necessity coincide (both = simple necessity). -/
-theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop) [DecidablePred p]
+theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop)
     (w : World) :
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     weakNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w := by
@@ -302,213 +260,13 @@ theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop) [Dec
        ∀ w' ∈ bestAmong (accessibleWorlds f w) [], p w'
   rw [bestAmong_empty]
 
--- ============================================================================
--- §7. The Evaluative Comparative Natural Class (§1, §2.1.3)
--- ============================================================================
-
-/-! ## Weak necessity modals and evaluative comparatives
-
-The central empirical thesis: *ought*, *should*, *good*, *better*,
-*preferable*, and *worthwhile* share a semantic core — they all involve
-quantification over BEST worlds ranked by negotiable ordering sources.
-
-In Hebrew, which lacks a lexical weak necessity modal, this natural class
-is expressed exclusively through comparative evaluative language.
-
-The paper establishes class membership via two diagnostic tests:
-
-- **Test 1**: "x E q, but doesn't have to q" is felicitous (non-contradictory).
-  This shows E is weaker than strong necessity.
-- **Test 2**: "y has to q, x only E q" sets up a felicitous scalar contrast.
-  This shows E sits below strong necessity on the modal scale. -/
-
-/-- A priority-type modal expression: either a modal verb or an
-    evaluative comparative predicate. -/
-inductive PriorityExpression where
-  | modal (name : String)           -- ought, should
-  | evaluativeComp (name : String)  -- good, better, preferable, worthwhile
-  deriving DecidableEq, Repr
-
-/-- Properties shared by the evaluative comparative natural class. -/
-structure ComparativeClassMember where
-  expression : PriorityExpression
-  /-- Passes Test 1: "x E q, but doesn't have to q" is felicitous. -/
-  passesTest1 : Bool
-  /-- Passes Test 2: "y has to q, x only E q" is felicitous. -/
-  passesTest2 : Bool
-  /-- Supports neg-raising under higher negation (Horn 1978, 1989). -/
-  negRaises : Bool
-  /-- Restricted to priority-type (non-epistemic) interpretation. -/
-  priorityOnly : Bool
-  deriving Repr
-
--- Weak necessity modals
-
-def shouldMember : ComparativeClassMember where
-  expression := .modal "should"
-  passesTest1 := true   -- "You should go, but you don't have to"
-  passesTest2 := true   -- "Waiters have to wash hands, guests only should"
-  negRaises := true     -- "I don't think you should go" ≅ think not-should
-  priorityOnly := false
-
-def oughtMember : ComparativeClassMember where
-  expression := .modal "ought"
-  passesTest1 := true
-  passesTest2 := true
-  negRaises := true
-  priorityOnly := false
-
--- Evaluative comparative predicates
-
-/-- Modal *good* (positive form): "it would be good that p" (p. 517).
-    Distinct from *better* (comparative) — *good* picks the overall best
-    like *ought*, while *better* supports pairwise comparison. -/
-def goodMember : ComparativeClassMember where
-  expression := .evaluativeComp "good"
-  passesTest1 := true   -- "It's good to resign, but he doesn't have to"
-  passesTest2 := true   -- ex. 22: Hebrew "haxi tov" = "most good"
-  negRaises := true     -- ex. 30: "It wouldn't be good to cheat" ≅ good not to
-  priorityOnly := true
-
-def betterMember : ComparativeClassMember where
-  expression := .evaluativeComp "better"
-  passesTest1 := true   -- "It's better to resign, but he doesn't have to"
-  passesTest2 := true   -- ex. 22: "who is accused {better} resign, convicted must"
-  negRaises := true     -- ex. 30 (comparative form of good)
-  priorityOnly := true
-
-def preferableMember : ComparativeClassMember where
-  expression := .evaluativeComp "preferable"
-  passesTest1 := true
-  passesTest2 := true
-  negRaises := true     -- ex. 33: Hebrew 'adif under think-negation cycles
-  priorityOnly := true
-
-def worthwhileMember : ComparativeClassMember where
-  expression := .evaluativeComp "worthwhile"
-  passesTest1 := true   -- ex. 1c
-  passesTest2 := true
-  negRaises := true
-  priorityOnly := true  -- only teleological/bouletic
-
--- Strong necessity modals (for contrast)
-
-def mustMember : ComparativeClassMember where
-  expression := .modal "must"
-  passesTest1 := false  -- *"You must go, but you don't have to" (contradictory)
-  passesTest2 := false  -- *"Waiters have to, guests only must" (≈ same force)
-  negRaises := false    -- ex. 31b: "I don't think you must go" ≠ think must-not
-  priorityOnly := false
-
-def haveToMember : ComparativeClassMember where
-  expression := .modal "have to"
-  passesTest1 := false
-  passesTest2 := false
-  negRaises := false
-  priorityOnly := false
-
-/-- *need* fails Tests 1 and 2 (§2.1.2, examples 16, 18–19), aligning
-    with strong necessity. Hebrew *carix* 'need' similarly aligns with
-    *xayav*/*muxrax* 'must'/'obliged' in direct comparison. Note 14
-    confirms: "we can conclude that need is not a weak modal." -/
-def needMember : ComparativeClassMember where
-  expression := .modal "need"
-  passesTest1 := false  -- ex. 16a: *"He needs to, but doesn't have to" (contradictory)
-  passesTest2 := false  -- ex. 19: *"waiters must, guests only need" (infelicitous)
-  negRaises := false    -- note 16: Hebrew carix shows some NR, but borderline
-  priorityOnly := false
-
-def comparativeClass : List ComparativeClassMember :=
-  [shouldMember, oughtMember, goodMember, betterMember, preferableMember,
-   worthwhileMember]
-
-def strongNecessityModals : List ComparativeClassMember :=
-  [mustMember, haveToMember, needMember]
-
-/-- All members of the evaluative comparative class pass both scalar tests. -/
-theorem class_passes_both_tests :
-    comparativeClass.all (fun m => m.passesTest1 && m.passesTest2) = true := by
-  native_decide
-
-/-- All members of the evaluative comparative class support neg-raising
-    (following Horn's (1978, 1989) classification of weak obligation predicates). -/
-theorem class_neg_raises :
-    comparativeClass.all (·.negRaises) = true := by native_decide
-
-/-- No strong necessity modal passes the scalar tests. -/
-theorem strong_fails_tests :
-    strongNecessityModals.all (fun m => !m.passesTest1 && !m.passesTest2) = true := by
-  native_decide
-
-/-- No strong necessity modal supports neg-raising. -/
-theorem strong_no_neg_raising :
-    strongNecessityModals.all (fun m => !m.negRaises) = true := by native_decide
-
-/-- Evaluative comparatives are restricted to priority-type interpretation;
-    modal verbs are more flexible (can also be epistemic). -/
-theorem evaluatives_priority_only :
-    (comparativeClass.filter (fun m => match m.expression with
-      | .evaluativeComp _ => true | _ => false)).all
-    (·.priorityOnly) = true := by native_decide
-
--- ============================================================================
--- §8. Neg-Raising and Negotiability (§2.2, §3.4)
--- ============================================================================
-
-/-! ## Negotiability explains neg-raising
-
-Rubinstein connects the evaluative comparative class to neg-raising (§3.4):
-modals and predicates that use negotiable ordering sources have an
-"opinionated" alternative (□.¬p) available, enabling the excluded-middle
-inference that underlies neg-raising. Strong necessity modals, which
-quantify over favored worlds WITHOUT ordering, lack this alternative.
-
-### Theoretical disagreement
-
-This classification **disagrees** with [agha-jeretic-2022] /
-[agha-jeretic-2026], who analyze *should*'s apparent neg-raising as
-homogeneity (scopelessness) and classify *must* as the genuine neg-raiser.
-The `NegRaisingProfile` structure in `AghaJeretic2026.lean` encodes their
-opposing classification. -/
-
-/-- Neg-raising availability for a modal or evaluative predicate,
-    following Rubinstein's classification (paper's Table 2, after
-    Horn 1989, p. 323). -/
-structure NegRaisingClassification where
-  predicate : String
-  isWeakNecessity : Bool
-  negRaises : Bool   -- Rubinstein/Horn classification
-  deriving Repr, BEq
-
-def rubinsteinNRClassification : List NegRaisingClassification :=
-  [ ⟨"should", true, true⟩       -- weak necessity: neg-raises
-  , ⟨"ought", true, true⟩        -- weak necessity: neg-raises
-  , ⟨"good", true, true⟩         -- evaluative comp: neg-raises
-  , ⟨"better", true, true⟩       -- evaluative comp: neg-raises
-  , ⟨"preferable", true, true⟩   -- evaluative comp: neg-raises
-  , ⟨"must", false, false⟩       -- strong necessity: does NOT neg-raise
-  , ⟨"have to", false, false⟩    -- strong necessity: does NOT neg-raise
-  ]
-
-/-- In Rubinstein's classification, weak necessity = neg-raising.
-    (Compare `AghaJeretic2026.shouldProfile.higherNeg_narrowScope = false`,
-    which represents the competing analysis where should does NOT neg-raise.) -/
-theorem weak_necessity_iff_negRaises :
-    rubinsteinNRClassification.all
-      (fun c => c.isWeakNecessity == c.negRaises) = true := by native_decide
-
--- ============================================================================
--- §9. The Tax Report Scenario (§3.3, examples 45–47, 51)
--- ============================================================================
-
-/-! ## Negotiable→non-negotiable promotion: should becomes have-to
+/-! ### The tax report scenario (§3.3, examples 45–47, 51)
 
 The paper's central worked example (§3.3): An accountant says "We should
 report all our revenue" — promoting a negotiable ideal about international
 revenue. The law about domestic revenue is non-negotiable. Later, if the
-manager endorses the ideal, the international-revenue clause is promoted
-to non-negotiable status, making "We have to report all our revenue"
-appropriate.
+manager endorses the ideal, the international-revenue clause is promoted to
+non-negotiable status, making "We have to report all our revenue" appropriate.
 
 We model this with two propositions:
 - reportDomestic: a non-negotiable legal obligation (in h)
@@ -519,12 +277,10 @@ private def reportDomestic : World → Prop := λ w => w = (0 : World) ∨ w = (
 private def reportInternational : World → Prop := λ w => w = (0 : World) ∨ w = (2 : World)
 private def reportAll : World → Prop := λ w => reportDomestic w ∧ reportInternational w
 
-instance : DecidablePred reportDomestic := fun w => by
-  unfold reportDomestic; exact inferInstance
-instance : DecidablePred reportInternational := fun w => by
-  unfold reportInternational; exact inferInstance
-instance : DecidablePred reportAll := fun w => by
-  unfold reportAll; exact inferInstance
+instance : DecidablePred reportDomestic := by unfold reportDomestic; infer_instance
+instance : DecidablePred reportInternational := by unfold reportInternational; infer_instance
+instance : DecidablePred reportAll := by
+  unfold reportAll reportDomestic reportInternational; infer_instance
 
 /-- **Scenario A** (ex. 45/51a): "We should report all our revenue."
     Domestic reporting is non-negotiable; international is negotiable. -/
@@ -573,7 +329,7 @@ theorem tax_should_holds :
     unfold reportInternational; left; rfl
   -- The ordering proposition `reportInternational` is in negotiable (0 : World)
   have hPropMem : reportInternational ∈ taxScenarioA.negotiable (0 : World) := by
-    simp [taxScenarioA]
+    simp only [taxScenarioA, List.mem_singleton]
   -- So w' must satisfy reportInternational (it's at-least-as-good as (0 : World))
   have hInt : reportInternational w' := hBest (0 : World) hW0Fav reportInternational hPropMem hW0Int
   exact ⟨hDom, hInt⟩
@@ -617,193 +373,193 @@ theorem should_to_haveto_shift :
     strongNecessityR taxScenarioB reportAll (0 : World) :=
   ⟨tax_must_fails, tax_must_holds_after_promotion⟩
 
--- ============================================================================
--- §10. Hebrew Data (§2.1)
--- ============================================================================
+/-! ### The evaluative comparative natural class (§2.1, §2.1.3)
 
-/-! ## Hebrew: A language without lexical weak necessity
+The central empirical thesis: *ought*, *should*, *good*, *better*,
+*preferable*, and *worthwhile* share a semantic core — quantification over
+BEST worlds ranked by negotiable ordering sources. Class membership is
+diagnosed by two felicity tests (Test 1: "x E q, but doesn't have to q";
+Test 2 with an exclusive: "y has to q, x only E q"). The stimuli are typed
+`LinguisticExample` rows in `Data.Examples.Rubinstein2014`; we read their
+felicity off `judgment`. -/
 
-Hebrew lacks dedicated lexical items comparable to *ought* or *should*,
-and cannot derive weak necessity compositionally from strong necessity
-modals (unlike Spanish *debería* = *deber*+COND). The best translations
-use evaluative comparative language (§2.1.3, examples 21–22).
+/-- Weak-necessity *ought* passes Test 1 (§2.1, ex 8a): "I ought to do the
+    dishes but I don't have to" is felicitous because weak necessity is
+    strictly weaker than have-to. -/
+theorem ought_passes_test1 :
+    Examples.ought_lexical.judgment = .acceptable := by decide
 
-This supports the claim that weak necessity IS comparative: in a language
-where the comparative route is the ONLY route, it surfaces overtly. -/
+/-- The Hebrew evaluative comparatives all pass Test 1 in the bribe scenario
+    (§2.1.3, ex 21): *yoter tov*, *'adif*, and *kday* are felicitous
+    translations of priority-type *ought*. -/
+theorem evaluatives_pass_test1 :
+    [Examples.heb_yoter_tov, Examples.heb_adif, Examples.heb_kday].all
+      (·.judgment == .acceptable) = true := by decide
 
-/-- Strategies for expressing weak necessity crosslinguistically.
-    Extends the typology in `AghaJeretic2022.WeakNecessityMorphology`
-    with the evaluative comparative strategy. -/
+/-- *carix* 'need' fails both strength tests (§2.1.2, ex 16a, 19):
+    substituting it for *ought* is infelicitous, aligning it with strong
+    necessity (*xayav* 'must') rather than the comparative class. -/
+theorem carix_fails_strength_tests :
+    Examples.test1_carix.judgment ≠ .acceptable ∧
+    Examples.test2_carix.judgment ≠ .acceptable := ⟨by decide, by decide⟩
+
+/-- The morphological comparative *better* supports an explicit than-clause
+    (§2.1.3, ex 24), making the comparative backbone overt. Modal *ought*
+    (positive/superlative) only selects the overall best — see [rubinstein-2014]. -/
+theorem better_supports_than_clause :
+    Examples.comp_better.judgment = .acceptable ∧
+    Examples.comp_better.paperFeatures.lookup "pairwise" = some "true" :=
+  ⟨by decide, by decide⟩
+
+/-! ### Neg-raising and negotiability (§2.2, §3.4)
+
+Rubinstein connects the evaluative comparative class to neg-raising (§3.4):
+predicates relativized to negotiable ordering sources have an "opinionated"
+alternative `□.¬p` available, enabling the excluded-middle inference that
+underlies neg-raising. Strong necessity modals, which quantify over favored
+worlds WITHOUT ordering, lack this alternative. Horn's ([horn-1978]) cyclicity
+diagnostic ("I don't think you should leave" ≅ "I think you should stay")
+splits the modals; the stimuli carry the lower-negation reading on `readings`.
+
+The weak/strong split for English modal *verbs* is **derived** from the
+English fragment (`Auxiliaries.lean`) rather than re-stipulated: a verb
+neg-raises iff the fragment marks it weak necessity. -/
+
+/-- Stimuli testing neg-raising under higher negation. -/
+def negRaisingRows : List LinguisticExample :=
+  Examples.all.filter (·.paperFeatures.lookup "diagnostic" == some "negRaising")
+
+/-- Force assigned to an English modal *verb* by the English fragment — the
+    single source of truth for modal force. (Evaluative comparatives are
+    adjectives, outside the auxiliary fragment.) -/
+private def fragmentMarksWeak : String → Bool
+  | "should"  => English.Auxiliaries.should.modalMeaning.any (·.force == .weakNecessity)
+  | "ought"   => English.Auxiliaries.ought.modalMeaning.any (·.force == .weakNecessity)
+  | "must"    => English.Auxiliaries.must.modalMeaning.any (·.force == .weakNecessity)
+  | "have to" => English.Auxiliaries.haveTo.modalMeaning.any (·.force == .weakNecessity)
+  | "need"    => English.Auxiliaries.need.modalMeaning.any (·.force == .weakNecessity)
+  | _         => false
+
+/-- **The neg-raising split, derived from the fragment.** For every English
+    modal-*verb* stimulus, the lower-negation (neg-raising) reading is
+    available iff the English fragment marks the verb as weak necessity.
+    Flipping either the fragment's force assignment or the recorded reading
+    breaks this — the classification is derived, not stipulated. -/
+theorem negRaising_iff_fragment_weak :
+    (negRaisingRows.filter (·.paperFeatures.lookup "category" == some "modalVerb")).all
+      (fun e =>
+        (e.readings.lookup "lowerNeg" == some Features.Judgment.acceptable) ==
+        fragmentMarksWeak ((e.paperFeatures.lookup "modal").getD "")) = true := by decide
+
+/-- Every evaluative-comparative stimulus shows the neg-raising reading
+    (*good*, *better*, *'adif*), the empirical core of the natural-class
+    claim (§2.2, ex 30, 31a, 33). -/
+theorem evaluatives_neg_raise :
+    (negRaisingRows.filter (·.paperFeatures.lookup "category" == some "evaluativeComparative")).all
+      (·.readings.lookup "lowerNeg" == some Features.Judgment.acceptable) = true := by decide
+
+/-- Strong necessity modal verbs (*must*, *have to*) lack the neg-raising
+    reading (§2.2, ex 31b). -/
+theorem strong_verbs_no_neg_raising :
+    (negRaisingRows.filter (fun e =>
+       e.paperFeatures.lookup "category" == some "modalVerb" &&
+       !fragmentMarksWeak ((e.paperFeatures.lookup "modal").getD ""))).all
+      (·.readings.lookup "lowerNeg" == some Features.Judgment.unacceptable) = true := by decide
+
+/-! ### Cross-linguistic typology of weak necessity (§2.1; Table 1, [narrog-2012])
+
+There are three crosslinguistic routes to weak necessity: a dedicated lexical
+item (English *should*/*ought*), compositional weakening of a strong modal
+(Spanish *debería* = *deber*+COND), or evaluative-comparative language
+(Hebrew *yoter tov*). Hebrew lacks the first two; this supports the claim that
+weak necessity is comparative — where the comparative route is the only route,
+it surfaces overtly. Data imported from `Studies/Narrog2010.lean`. -/
+
+/-- Rubinstein's three routes to expressing weak necessity (§2.1). -/
 inductive WeakNecessityStrategy where
   | lexical               -- dedicated item (English should/ought)
   | compositional         -- strong + weakening morphology (Spanish debería)
   | evaluativeComparative -- comparative/evaluative language (Hebrew yoter tov)
   deriving DecidableEq, Repr
 
-structure WeakNecessityProfile where
-  language : String
-  hasLexicalWN : Bool
-  hasCompositionalWN : Bool
-  primaryStrategy : WeakNecessityStrategy
-  examples : List (String × String)  -- (form, gloss)
-  deriving Repr
+/-- English has a lexical weak-necessity strategy (§2.1, ex 8a). -/
+theorem english_lexical :
+    Examples.all.any (fun e =>
+      e.language == "stan1293" &&
+      e.paperFeatures.lookup "strategy" == some "lexical") = true := by decide
 
-def englishWN : WeakNecessityProfile where
-  language := "English"
-  hasLexicalWN := true
-  hasCompositionalWN := false
-  primaryStrategy := .lexical
-  examples := [("should", "weak necessity"), ("ought", "weak necessity")]
+/-- Spanish has a compositional strategy: *deber* + conditional (§2.1, ex 8b). -/
+theorem spanish_compositional :
+    Examples.all.any (fun e =>
+      e.language == "stan1288" &&
+      e.paperFeatures.lookup "strategy" == some "compositional") = true := by decide
 
-def spanishWN : WeakNecessityProfile where
-  language := "Spanish"
-  hasLexicalWN := false
-  hasCompositionalWN := true
-  primaryStrategy := .compositional
-  examples := [("debería (deber+COND)", "should/ought")]
+/-- Hebrew has neither lexical nor compositional weak necessity (§2.1.1–2.1.2):
+    no Hebrew stimulus uses those strategies. -/
+theorem hebrew_lacks_lexical_and_compositional :
+    Examples.all.all (fun e =>
+      !(e.language == "hebr1245") ||
+        (!(e.paperFeatures.lookup "strategy" == some "lexical") &&
+         !(e.paperFeatures.lookup "strategy" == some "compositional"))) = true := by decide
 
-def hebrewWN : WeakNecessityProfile where
-  language := "Hebrew"
-  hasLexicalWN := false
-  hasCompositionalWN := false
-  primaryStrategy := .evaluativeComparative
-  examples :=
-    [ ("yoter tov (more good)", "it is better that")
-    , ("adif (preferable)", "it is preferable that")
-    , ("kday / ra'uy (worthwhile/fitting)", "it is worthwhile that")
-    ]
-
-/-- Hebrew lacks both standard routes to weak necessity. -/
-theorem hebrew_no_standard_wn :
-    hebrewWN.hasLexicalWN = false ∧ hebrewWN.hasCompositionalWN = false :=
-  ⟨rfl, rfl⟩
-
-/-- Hebrew uses evaluative comparatives as its primary strategy. -/
-theorem hebrew_uses_evaluative :
-    hebrewWN.primaryStrategy = .evaluativeComparative := rfl
-
--- ============================================================================
--- §11. Cross-Linguistic Typology (Table 1, Narrog 2012)
--- ============================================================================
-
-/-! ## Deontic necessity is not universally split into strong and weak
-
-Narrog (2010, 2012) surveys 200 genealogically diverse languages. Only 62
-(31%) have grammaticalized means for expressing weak deontic necessity. This
-casts doubt on the universality of weak necessity as a grammatical category,
-and supports Rubinstein's claim that it surfaces through evaluative
-comparison when dedicated grammatical means are absent.
-
-Data imported from `Studies/Narrog2010.lean`. -/
+/-- The Hebrew route to weak necessity is exclusively evaluative-comparative
+    (§2.1.3, ex 21): every Hebrew strategy-bearing stimulus uses it. -/
+theorem hebrew_strategy_evaluative :
+    (Examples.all.filter (fun e =>
+       e.language == "hebr1245" && e.paperFeatures.any (·.1 == "strategy"))).all
+      (·.paperFeatures.lookup "strategy" == some "evaluativeComparative") = true := by decide
 
 open Narrog2010 in
-/-- Only 62 of 200 surveyed languages grammaticalize weak deontic necessity.
-    The total exceeds 200 because some languages have modals of multiple types. -/
-theorem weak_rarity : countOf .weak = 62 := by native_decide
+/-- Only 62 of the 200 surveyed languages grammaticalize weak deontic
+    necessity (Table 1), supporting Rubinstein's claim that weak necessity is
+    not a universal grammatical category. The Table-1 row totals exceed the
+    131 languages with deontic necessity because some have modals of multiple
+    types. -/
+theorem weak_rarity : countOf .weak = 62 := by decide
 
--- ============================================================================
--- §12. Comparative Semantics vs Positive Form (§2.1.3, examples 24–26)
--- ============================================================================
+/-! ### Bridge to the English fragment (`Auxiliaries.lean`)
 
-/-! ## Better can do what ought cannot
+The English fragment classifies modals by force; we verify these match
+Rubinstein's force assignments: *should*/*ought* are weak necessity
+(comparative class), *must*/*need* are strong necessity (non-comparative). -/
 
-When multiple alternatives are salient, the morphological comparative
-*better* can pairwise compare any two, while modal *ought* can only
-pick out the overall best. This follows from the degree semantics:
-*better* accesses the ordering directly (comparative), while *ought*
-quantifies over the maximal elements (positive/superlative).
-
-Hebrew data (example 25) confirms: *adif* 'preferable' supports
-explicit than-clauses (*adif ... me-asher* 'preferable ... than-that'),
-making the comparative structure visible. -/
-
-/-- Whether a priority expression supports explicit pairwise comparison
-    (comparative morphology with a than-clause). -/
-structure ComparisonCapability where
-  expression : String
-  supportsPairwiseComparison : Bool  -- explicit than-clause
-  picksOverallBest : Bool            -- selects unique best option
-  deriving Repr
-
-def betterCapability : ComparisonCapability where
-  expression := "better"
-  supportsPairwiseComparison := true   -- "better that he resign THAN stay"
-  picksOverallBest := false            -- just pairwise, not superlative
-
-def goodCapability : ComparisonCapability where
-  expression := "good"
-  supportsPairwiseComparison := false  -- *"it's good to resign THAN stay"
-  picksOverallBest := true             -- positive form picks overall best
-
-def oughtCapability : ComparisonCapability where
-  expression := "ought"
-  supportsPairwiseComparison := false  -- *"he ought to resign THAN stay"
-  picksOverallBest := true             -- picks the best alternative
-
-/-- *better* supports pairwise comparison; *ought* and *good* do not. -/
-theorem better_pairwise_ought_not :
-    betterCapability.supportsPairwiseComparison = true ∧
-    oughtCapability.supportsPairwiseComparison = false ∧
-    goodCapability.supportsPairwiseComparison = false := ⟨rfl, rfl, rfl⟩
-
-/-- *ought* and *good* (positive form) pick the overall best;
-    *better* (comparative form) just compares pairs. -/
-theorem ought_best_better_pairwise :
-    oughtCapability.picksOverallBest = true ∧
-    goodCapability.picksOverallBest = true ∧
-    betterCapability.picksOverallBest = false := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- §13. Bridge to English Fragment (Auxiliaries.lean)
--- ============================================================================
-
-/-! ## Fragment-layer verification
-
-The English fragment in `Auxiliaries.lean` independently classifies
-modals by force. We verify that these classifications match Rubinstein's
-force assignments: *should*/*ought* are weak necessity (comparative class),
-*must* is strong necessity (non-comparative). -/
-
-open English.Auxiliaries
-
-/-- The English fragment classifies *should* as weak necessity,
-    matching its membership in the evaluative comparative class. -/
+/-- The English fragment classifies *should* as weak necessity. -/
 theorem fragment_should_weak :
     English.Auxiliaries.should.modalMeaning.any
-      (·.force == .weakNecessity) = true := by native_decide
+      (·.force == .weakNecessity) = true := by decide
 
 /-- The English fragment classifies *ought* as weak necessity. -/
 theorem fragment_ought_weak :
     English.Auxiliaries.ought.modalMeaning.any
-      (·.force == .weakNecessity) = true := by native_decide
+      (·.force == .weakNecessity) = true := by decide
 
 /-- The English fragment classifies *must* as strong necessity. -/
 theorem fragment_must_strong :
     English.Auxiliaries.must.modalMeaning.any
-      (·.force == .necessity) = true := by native_decide
+      (·.force == .necessity) = true := by decide
 
 /-- *must* is NOT classified as weak necessity — confirming it is
     outside the evaluative comparative natural class. -/
 theorem fragment_must_not_weak :
     English.Auxiliaries.must.modalMeaning.any
-      (·.force == .weakNecessity) = false := by native_decide
+      (·.force == .weakNecessity) = false := by decide
 
 /-- *should* is NOT classified as strong necessity — confirming the
     asymmetry: comparative class members have strictly weaker force. -/
 theorem fragment_should_not_strong :
     English.Auxiliaries.should.modalMeaning.any
-      (·.force == .necessity) = false := by native_decide
+      (·.force == .necessity) = false := by decide
 
 /-- *need* is classified as strong necessity — matching its exclusion
     from the evaluative comparative class (§2.1.2, note 14). -/
 theorem fragment_need_strong :
     English.Auxiliaries.need.modalMeaning.any
-      (·.force == .necessity) = true := by native_decide
+      (·.force == .necessity) = true := by decide
 
 /-- *need* is NOT classified as weak necessity — confirming it fails
     the scalar tests (examples 16, 18–19). -/
 theorem fragment_need_not_weak :
     English.Auxiliaries.need.modalMeaning.any
-      (·.force == .weakNecessity) = false := by native_decide
+      (·.force == .weakNecessity) = false := by decide
 
 end Rubinstein2014
