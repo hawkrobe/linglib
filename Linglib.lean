@@ -2704,9 +2704,7 @@ import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Phonology.Autosegmental.CoPScope
-import Linglib.Phonology.Autosegmental.DominantCophAgreement
 import Linglib.Phonology.Autosegmental.NoCrossing
-import Linglib.Phonology.Autosegmental.OverwriteEmbedding
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Modularity
 import Linglib.Phonology.Prosodic.Syllable.Defs
