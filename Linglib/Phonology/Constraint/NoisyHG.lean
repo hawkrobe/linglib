@@ -51,7 +51,7 @@ noncomputable def violationDiffSqSum {C : Type*}
     acc + ((con.eval a : ℝ) - (con.eval b : ℝ)) ^ 2) 0
 
 /-- Sum of squared violation differences (ℚ, computable).
-    Use this for concrete examples with `native_decide`. -/
+    Use this for concrete examples with `decide`. -/
 def violationDiffSqSumQ {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) : ℚ :=
   constraints.foldl (λ acc con =>

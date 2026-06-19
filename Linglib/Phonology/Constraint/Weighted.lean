@@ -56,7 +56,7 @@ noncomputable def harmonyScoreR {C : Type*}
 
 /-! `harmonyScoreR` is just `(harmonyScore : ℝ)`. The lemmas below let
 study files state ranking facts in the computable ℚ world (where
-`native_decide`/`decide` work) and lift them to the ℝ world where the
+`decide` works) and lift them to the ℝ world where the
 softmax / `predict` API lives, without writing the
 `show (harmonyScore _ : ℝ) < … from by exact_mod_cast …` boilerplate. -/
 
@@ -87,7 +87,7 @@ theorem harmonyScoreR_eq_iff_harmonyScore_eq {C : Type*}
 /-- `a` strictly dominates `b` in harmony when `H(a) > H(b)`.
 
     A computable, decidable shorthand for the common pattern of
-    discharging score-comparison facts by `decide` / `native_decide`
+    discharging score-comparison facts by `decide`
     before lifting to the ℝ-valued `harmonyScoreR` for use with `softmax`.
 
     Naming note: this is a strict harmony ordering, not a probability-mass
