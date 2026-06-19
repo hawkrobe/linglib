@@ -147,6 +147,6 @@ theorem candidates_length (i : HiatusInput) : (candidates i).length = 5 := by
   cases i <;> rfl
 
 /-- The two vowels are featurally distinct (differ in [±front] and [±back]). -/
-theorem vowels_distinct : ¬(vowelAe == vowelAh) = true := by native_decide
+theorem vowels_distinct : ¬(vowelAe == vowelAh) = true := by decide
 
 end Farsi.Phonology

@@ -120,13 +120,13 @@ def targetWords : List TriconWord :=
 -- § 3: Sonority Profile Verification
 -- ============================================================================
 
-theorem qreb_rising : w_qreb.isRising = true := by native_decide
-theorem qmes_rising : w_qmes.isRising = true := by native_decide
-theorem srem_rising : w_srem.isRising = true := by native_decide
-theorem ntef_falling : w_ntef.isFalling = true := by native_decide
-theorem nqeb_falling : w_nqeb.isFalling = true := by native_decide
-theorem hkem_falling : w_hkem.isFalling = true := by native_decide
-theorem skhef_plateauing : w_skhef.isPlateauing = true := by native_decide
-theorem sfen_plateauing : w_sfen.isPlateauing = true := by native_decide
+theorem qreb_rising : w_qreb.isRising = true := by decide
+theorem qmes_rising : w_qmes.isRising = true := by decide
+theorem srem_rising : w_srem.isRising = true := by decide
+theorem ntef_falling : w_ntef.isFalling = true := by decide
+theorem nqeb_falling : w_nqeb.isFalling = true := by decide
+theorem hkem_falling : w_hkem.isFalling = true := by decide
+theorem skhef_plateauing : w_skhef.isPlateauing = true := by decide
+theorem sfen_plateauing : w_sfen.isPlateauing = true := by decide
 
 end Tarifit.Inventory

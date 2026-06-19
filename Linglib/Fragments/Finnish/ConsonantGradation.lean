@@ -160,24 +160,24 @@ def principalPairs : List GradationPair :=
 /-- There are exactly 3 quantitative gradation pairs. -/
 theorem quantitative_count :
     (principalPairs.filter (·.gradationType == .quantitative)).length = 3 := by
-  native_decide
+  decide
 
 /-- There are exactly 3 qualitative gradation pairs. -/
 theorem qualitative_count :
     (principalPairs.filter (·.gradationType == .qualitative)).length = 3 := by
-  native_decide
+  decide
 
 /-- All quantitative pairs involve geminate shortening (strong form is
     longer than weak form by exactly 1 character). -/
 theorem quantitative_shortening :
     (principalPairs.filter (·.gradationType == .quantitative)).all
       (fun p => p.strong.length == p.weak.length + 1) = true := by
-  native_decide
+  decide
 
 /-- The k → ∅ qualitative alternation is the only deletion (empty weak grade). -/
 theorem k_deletion_unique :
     (principalPairs.filter (fun p => p.weak == "")).length = 1 := by
-  native_decide
+  decide
 
 /-- p → v rule changes voiceless to voiced + continuant. -/
 theorem p_gradation_voices :
