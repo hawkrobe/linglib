@@ -104,7 +104,7 @@ namespace SemanticOrdering
 
 variable {I : Type} (ord : SemanticOrdering I)
 
-/-- Bool-valued le for computation (eval, native_decide). -/
+/-- Bool-valued le for computation (eval, decide). -/
 def leB (i j : I) : Bool := decide (ord.le i j)
 
 /-- Strict ordering (Prop): i is ranked strictly below j. -/

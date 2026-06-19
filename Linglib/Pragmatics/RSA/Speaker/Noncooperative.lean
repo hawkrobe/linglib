@@ -185,10 +185,10 @@ def blameworthinessRank : MeaningLevel → Nat
   | .typicality => 0
 
 theorem assertion_most_blameworthy :
-    blameworthinessRank .assertion > blameworthinessRank .implicature := by native_decide
+    blameworthinessRank .assertion > blameworthinessRank .implicature := by decide
 
 theorem typicality_least_blameworthy :
-    blameworthinessRank .typicality < blameworthinessRank .presupposition := by native_decide
+    blameworthinessRank .typicality < blameworthinessRank .presupposition := by decide
 
 -- Both C&F and Barnett involve misleading at the typicality level:
 -- C&F's "more than 100" exploits typical usage patterns of modified numerals.
@@ -293,16 +293,16 @@ Original paper parameterization: β̂ = 2.26 (additive form).
 Convex reparameterization: goalWeight = 2.26/3.26 = 226/326. -/
 def barnettFitted : NoncooperativeRSAParams :=
   { goalWeight := 226 / 326, τ := 1
-    goalWeight_nonneg := by native_decide
-    goalWeight_le_one := by native_decide }
+    goalWeight_nonneg := by norm_num
+    goalWeight_le_one := by norm_num }
 
 /-- Standard RSA has cooperative orientation -/
 theorem standardRSA_cooperative :
-    orientationOf standardRSA.goalWeight = .cooperative := by native_decide
+    orientationOf standardRSA.goalWeight = .cooperative := by decide
 
 /-- Barnett's fitted model has argumentative orientation -/
 theorem barnettFitted_argumentative :
-    orientationOf barnettFitted.goalWeight = .argumentative := by native_decide
+    orientationOf barnettFitted.goalWeight = .argumentative := by simp [orientationOf, barnettFitted]
 
 /-- In the unified model, BOTH sides use `combined` (convex interpolation):
 - Speaker: `combined goalWeight uEpi uGoal`

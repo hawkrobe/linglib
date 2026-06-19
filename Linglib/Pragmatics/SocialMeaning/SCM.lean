@@ -129,7 +129,7 @@ def scmSpace : PropertySpace :=
 
 /-- The SCM has exactly 8 personae (2^3 from 3 binary dimensions). -/
 theorem scm_persona_count :
-    scmSpace.allPersonaeSets.card = 8 := by native_decide
+    scmSpace.allPersonaeSets.card = 8 := by decide
 
 /-- Incompatible properties are always on the same dimension. -/
 theorem incomp_same_dimension (p q : SCMProperty)

@@ -105,7 +105,7 @@ TODO: Construct a concrete counterexample over `World4` with appropriate
 prior, decidable predicates, and the witnesses showing
 `bayesFactor ctx a = bayesFactor ctx (a ∪ b)` (so the
 strict `>` inequality fails). The original Bool proof relied on
-`native_decide` over a 4-world enumeration; a Prop-level counterexample
+`decide` over a 4-world enumeration; a Prop-level counterexample
 needs explicit decidability for the chosen predicates. -/
 theorem not_if_not_indeed_disjunct :
     ¬ (∀ (ctx : DTSContext World4) (a b : Set World4)

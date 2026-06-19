@@ -253,7 +253,7 @@ def SynGraph.isMereological (g : SynGraph L) : Bool :=
 
 /-! The five key results derived from Angular Locality in
 [adger-2025], Chapter 4, list (35), p. 93. Each is demonstrated
-on a concrete `SynGraph` and verified by `native_decide`.
+on a concrete `SynGraph` and verified by `decide`.
 
 We construct small graphs with specific edge configurations and
 verify that `satisfiesAL` returns the expected result. -/
@@ -286,7 +286,7 @@ private def g_superlocal := mkGraph 2
   [(⟨0, by omega⟩, ⟨1, by omega⟩)] []
 
 theorem al_blocks_superlocal :
-    g_superlocal.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_superlocal.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 -- ────────────────────────────────────────────────────
 -- (35c) Sideward subjunction ruled out
@@ -310,7 +310,7 @@ def g_sideward := mkGraph 3
   [(⟨0, by omega⟩, ⟨2, by omega⟩)]
 
 theorem al_blocks_sideward :
-    g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false := by native_decide
+    g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false := by decide
 
 -- ────────────────────────────────────────────────────
 -- (35d) Parallel subjunction ruled out
@@ -326,7 +326,7 @@ private def g_parallel := mkGraph 3
   [(⟨0, by omega⟩, ⟨1, by omega⟩)] []
 
 theorem al_blocks_parallel :
-    g_parallel.satisfiesAL ⟨2, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_parallel.satisfiesAL ⟨2, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 -- ────────────────────────────────────────────────────
 -- (35e) Cross-dimensional long-distance ruled out
@@ -356,14 +356,14 @@ private def g_crossdim := mkGraph 6
 
 /-- z (transitive 2-part of e) CAN subjoin to y. -/
 theorem al_allows_within_dim :
-    g_crossdim.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_crossdim.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 /-- x (cross-dimensional from e) CANNOT subjoin to y.
     This is the critical test that distinguishes the corrected AL from
     the buggy version: x <₁ u <₂ e crosses dimensions, so x is not
     a within-dimension part of e. -/
 theorem al_blocks_cross_dim :
-    g_crossdim.satisfiesAL ⟨5, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_crossdim.satisfiesAL ⟨5, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 -- ────────────────────────────────────────────────────
 -- (35b) Lowering / downward subjunction ruled out
@@ -383,7 +383,7 @@ private def g_lowering := mkGraph 7
   [(⟨0, by omega⟩, ⟨2, by omega⟩), (⟨1, by omega⟩, ⟨4, by omega⟩)]
 
 theorem al_blocks_lowering :
-    g_lowering.satisfiesAL ⟨3, by decide⟩ ⟨5, by decide⟩ = false := by native_decide
+    g_lowering.satisfiesAL ⟨3, by decide⟩ ⟨5, by decide⟩ = false := by decide
 
 -- ────────────────────────────────────────────────────
 -- (24a) Roll-up movement ALLOWED
@@ -403,11 +403,11 @@ private def g_rollup := mkGraph 5
 
 /-- Roll-up: b (2-part of a) CAN subjoin to e. -/
 theorem al_allows_rollup_2part :
-    g_rollup.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_rollup.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 /-- Roll-up: c (1-part of a) CAN subjoin to e. -/
 theorem al_allows_rollup_1part :
-    g_rollup.satisfiesAL ⟨3, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_rollup.satisfiesAL ⟨3, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- Successive cyclicity: cross-clausal movement requires stops
@@ -448,11 +448,11 @@ private def g_succ_cyc_0 := mkGraph 10
 
 /-- wh CANNOT reach matrix C₁ directly — cross-clausal boundary. -/
 theorem succ_cyc_blocked_cross_clause :
-    g_succ_cyc_0.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_succ_cyc_0.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 /-- wh CAN reach embedded C₂ — within the same EP. -/
 theorem succ_cyc_wh_reaches_embedded_C :
-    g_succ_cyc_0.satisfiesAL ⟨9, by decide⟩ ⟨5, by decide⟩ = true := by native_decide
+    g_succ_cyc_0.satisfiesAL ⟨9, by decide⟩ ⟨5, by decide⟩ = true := by decide
 
 -- Step 2: After wh subjoins to C₂ (C₂ ──2──▶ wh, multiparthood).
 -- Now wh <₂ C₂ <₂ v₁, so wh is a transitive 2-part of v₁.
@@ -469,7 +469,7 @@ private def g_succ_cyc_1 := mkGraph 10
     is forced by AL, just as phase edges force cyclic movement
     in Minimalism. -/
 theorem succ_cyc_wh_reaches_C1_after_stop :
-    g_succ_cyc_1.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_succ_cyc_1.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- Nominal island: D's filled 2-part blocks extraction
@@ -514,12 +514,12 @@ def g_definite_island := mkGraph 10
     The path wh <₂ P <₁ D <₂ v crosses dimensions, so wh is not
     a within-dimension part of any node in C's 1-part chain. -/
 theorem nominal_island_definite_blocks :
-    g_definite_island.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_definite_island.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 /-- wh satisfies AL for D (wh <₂ P, P <₁ D), but D is full —
     `internalSubjoin` returns none because Dimensionality blocks it. -/
 theorem nominal_island_d_full :
-    g_definite_island.internalSubjoin ⟨9, by decide⟩ ⟨5, by decide⟩ = none := by native_decide
+    g_definite_island.internalSubjoin ⟨9, by decide⟩ ⟨5, by decide⟩ = none := by decide
 
 /-! Indefinite structure: D has no 2-part (Det does not subjoin).
     wh can subjoin to D, filling its free 2-part slot. -/
@@ -533,7 +533,7 @@ private def g_indefinite_transparent := mkGraph 10
 
 /-- wh CAN reach D when D has a free 2-part (indefinite = transparent). -/
 theorem nominal_island_indefinite_allows :
-    g_indefinite_transparent.satisfiesAL ⟨9, by decide⟩ ⟨5, by decide⟩ = true := by native_decide
+    g_indefinite_transparent.satisfiesAL ⟨9, by decide⟩ ⟨5, by decide⟩ = true := by decide
 
 /-- After wh subjoins to D, wh CAN reach matrix C.
     wh <₂ D <₂ v, so wh is a transitive 2-part of v.
@@ -546,7 +546,7 @@ private def g_indefinite_after := mkGraph 10
    (⟨6, by omega⟩, ⟨9, by omega⟩), (⟨5, by omega⟩, ⟨9, by omega⟩)]
 
 theorem nominal_island_indefinite_reaches_C :
-    g_indefinite_after.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_indefinite_after.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- Subject island: extraction from within a subject
@@ -588,12 +588,12 @@ def g_subject_island := mkGraph 9
     N_who from being a within-dimension transitive part of any α in
     C's 1-part chain. -/
 theorem subject_island_blocks :
-    g_subject_island.satisfiesAL ⟨8, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_subject_island.satisfiesAL ⟨8, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 /-- The subject DP itself CAN reach C (it is T's 2-part, and T is
     in C's 1-part chain). Subjects can extract, just not their subparts. -/
 theorem subject_itself_can_extract :
-    g_subject_island.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_subject_island.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- Adjunct island: extraction from within an adjunct
@@ -629,12 +629,12 @@ def g_adjunct_island := mkGraph 8
 
 /-- Extraction from within an adjunct is blocked: NP_wh CANNOT reach C. -/
 theorem adjunct_island_blocks :
-    g_adjunct_island.satisfiesAL ⟨7, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g_adjunct_island.satisfiesAL ⟨7, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 /-- The adjunct AdvP itself CAN reach C (it is v's 2-part, and v is
     in C's 1-part chain). Adjuncts can be fronted, just not extracted from. -/
 theorem adjunct_itself_can_extract :
-    g_adjunct_island.satisfiesAL ⟨5, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+    g_adjunct_island.satisfiesAL ⟨5, by decide⟩ ⟨0, by decide⟩ = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- General antilocality
@@ -651,7 +651,7 @@ We verify this for minimal structures of each shape: sub₁ and sub₁₂. -/
 /-- Antilocality for a bare sub₁: the sole complement cannot re-subjoin. -/
 theorem antilocality_sub1 :
     let g := mkGraph 2 [(⟨0, by omega⟩, ⟨1, by omega⟩)] []
-    g.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+    g.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false := by decide
 
 /-- Antilocality for sub₁₂: neither the complement nor the specifier
     can re-subjoin to the head. -/
@@ -661,6 +661,6 @@ theorem antilocality_sub12 :
       [(⟨0, by omega⟩, ⟨2, by omega⟩)]
     g.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false ∧
     g.satisfiesAL ⟨2, by decide⟩ ⟨0, by decide⟩ = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end ALDerivations

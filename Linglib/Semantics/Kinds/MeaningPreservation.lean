@@ -644,7 +644,7 @@ Dayal's selectShift returns.down (the kind-forming shift).
 -/
 theorem dayal_consistent_english_bare_plural :
     let ctx := chierchiaToContext englishBlocking .count true
-    selectShift ctx = some .down := by native_decide
+    selectShift ctx = some .down := by decide
 
 /--
 When ∩ is undefined (singular count) and ι/∃ are blocked (English),
@@ -652,14 +652,14 @@ both frameworks predict bare singular is OUT.
 -/
 theorem dayal_consistent_english_bare_singular_out :
     let ctx := chierchiaToContext englishBlocking .count false
-    selectShift ctx = none := by native_decide
+    selectShift ctx = none := by decide
 
 /--
 Mass nouns: both frameworks predict bare mass nouns are OK (use ∩).
 -/
 theorem dayal_consistent_english_mass_noun :
     let ctx := chierchiaToContext englishBlocking .mass false
-    selectShift ctx = some .down := by native_decide
+    selectShift ctx = some .down := by decide
 
 /--
 Dayal subsumes Chierchia: When a type-shift is available, selectShift finds it.
@@ -672,11 +672,11 @@ The general pattern: selectShift returns Some iff at least one of:
 -/
 theorem dayal_subsumes_chierchia_plural_available :
     let ctx := chierchiaToContext englishBlocking .count true
-    (selectShift ctx).isSome = true := by native_decide
+    (selectShift ctx).isSome = true := by decide
 
 theorem dayal_subsumes_chierchia_singular_blocked :
     let ctx := chierchiaToContext englishBlocking .count false
-    (selectShift ctx).isSome = false := by native_decide
+    (selectShift ctx).isSome = false := by decide
 
 /--
 Romance-like blocking: has definite article, so bare kinds need "the".
@@ -693,7 +693,7 @@ In Romance, bare plurals are also predicted to use ∩ when available.
 -/
 theorem dayal_consistent_romance_bare_plural :
     let ctx := chierchiaToContext romanceBlocking .count true
-    selectShift ctx = some .down := by native_decide
+    selectShift ctx = some .down := by decide
 
 /--
 Meaning Preservation explains Chierchia's blocking.

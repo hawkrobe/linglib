@@ -131,7 +131,7 @@ A weak implicature can hold without the strong implicature
 -/
 theorem weak_without_strong :
     ∃ b : BeliefState, nonBelief b = true ∧ strongImpl b = false := by
-  exact ⟨.noOpinion, by native_decide⟩
+  exact ⟨.noOpinion, by decide⟩
 
 /--
 Theorem: Strong Implies Weak
@@ -211,9 +211,9 @@ theorem outcomes_exhaustive :
       (outcomeOf b = .incompetent ∧ nonBelief b = true ∧ competent b = false) := by
   intro b
   cases b with
-  | belief => left; native_decide
-  | disbelief => right; left; native_decide
-  | noOpinion => right; right; native_decide
+  | belief => left; decide
+  | disbelief => right; left; decide
+  | noOpinion => right; right; decide
 
 
 /--

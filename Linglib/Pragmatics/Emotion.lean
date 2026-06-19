@@ -460,24 +460,24 @@ def allEmotions : List EmotionProfile :=
 -- § 8. Structural Theorems
 -- ════════════════════════════════════════════════════════════════
 
-theorem twenty_emotions : allEmotions.length = 20 := by native_decide
+theorem twenty_emotions : allEmotions.length = 20 := by decide
 
 /-- All 20 emotions have distinct appraisal weight patterns.
     This is the paper's central empirical finding (Fig. 4):
     "the learned appraisal structure is unique for each emotion." -/
 theorem appraisal_patterns_distinguishable :
-    (allEmotions.map (·.weights)).Pairwise (· ≠ ·) := by native_decide
+    (allEmotions.map (·.weights)).Pairwise (· ≠ ·) := by decide
 
 /-- All 20 emotions in the model are retrospective (post-outcome).
     The paper explicitly excludes prospective emotions: "we target
     retrospective emotions... and did not include prospective emotions
     that concern uncertain future events (e.g. hope, fear)" (p. 22). -/
 theorem all_retrospective :
-    (allEmotions.all (·.orientation == .retrospective)) = true := by native_decide
+    (allEmotions.all (·.orientation == .retrospective)) = true := by decide
 
 /-- Embarrassment is purely reputational: all base dimensions are irrelevant. -/
 theorem embarrassment_purely_reputational :
-    embarrassment.isPurelyReputational = true := by native_decide
+    embarrassment.isPurelyReputational = true := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Refined ↔ Qualitative Projections
