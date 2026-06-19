@@ -9,11 +9,14 @@ import Linglib.Core.Order.Comparison
 [rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
 
 Comparative semantics shared across all degree frameworks: the binary
-`comparativeSem` / `equativeSem`, the set-of-degrees generalization
-`clausalComparison`, antonymy as scale reversal, and downward-entailingness of
-*than*-clauses. All three are the measure-pullback predications of the reified
-`Core.Order.Comparison` (`over` at a point standard, `overSet` at a set standard);
-`clausalComparison_eq_overSet` / `comparativeSem_positive_eq_over` make that an identity.
+`comparativeSem` / `equativeSem`, antonymy as scale reversal, and
+downward-entailingness of *than*-clauses. Both binary comparators are
+measure-pullback predications of the reified `Core.Order.Comparison`
+(`over` at a point standard, `overSet` at a set standard);
+`comparativeSem_positive_eq_over` makes that an identity. The set-of-degrees
+S-comparative ([hoeksema-1983]) *is* `Comparison.gt.overSet μ` directly — there is
+no separate clausal-comparison definition; its properties are stated about `overSet`
+here (anti-additivity) and reuse the `Comparison.overSet`/`over` API for the rest.
 Framework-specific content for [rett-2026] (MAX, ambidirectionality, manner
 implicature) lives in `Studies/Rett2026.lean`; [hoeksema-1983]'s polarity-asymmetry
 consumers in `Studies/Hoeksema1983.lean`.
@@ -22,13 +25,13 @@ consumers in `Studies/Hoeksema1983.lean`.
 
 * `comparativeSem` / `equativeSem` — "A is Adj-er / as-Adj-as B" via a directed
   measure on a scale.
-* `clausalComparison` — set-of-degrees comparative ([hoeksema-1983]), anti-additive in
-  its standard (`clausalComparison_isAntiAdditive`): the algebraic source of
+* `gtOverSet_isAntiAdditive` — the S-comparative `Comparison.gt.overSet μ`
+  ([hoeksema-1983]) is anti-additive in its standard: the algebraic source of
   *than*-clause NPI licensing.
-* `mem_clausalComparison_iff_subset_Iio` / `clausalComparison_singleton` — the set-of-degrees
-  comparative as `Set.Iio` interval inclusion (strict mirror of mathlib's
-  `mem_upperBounds_iff_subset_Iic`), collapsing to the binary comparator at a singleton.
-* `clausalComparison_eq_singleton_of_isGreatest` — a than-clause with a greatest degree
+* `mem_gtOverSet_iff_subset_Iio` — the set-of-degrees comparative as `Set.Iio`
+  interval inclusion (strict mirror of mathlib's `mem_upperBounds_iff_subset_Iic`),
+  collapsing to the binary comparator at a singleton via `Comparison.overSet_singleton`.
+* `gtOverSet_eq_singleton_of_isGreatest` — a than-clause with a greatest degree
   reduces to that degree ([bhatt-pancheva-2004], order-theoretic form).
 * `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
 * `comparative_iff_posExt_ssubset` — comparison as extent inclusion ([kennedy-1999]).
@@ -118,72 +121,43 @@ end Boundary
 
 /-! ### Set-of-degrees comparative
 
-The S-comparative `clausalComparison` ([hoeksema-1983] §3.8 Def 7) generalizes
-`comparativeSem` from a single standard to an arbitrary degree-set standard.
-It needs only `[Preorder D]`. -/
+The S-comparative ([hoeksema-1983] §3.8 Def 7) generalizes `comparativeSem` from a
+single standard to an arbitrary degree-set standard. It *is* `Comparison.gt.overSet μ`
+(`μ ⁻¹' strictUpperBounds Δ`) — the strict-`>` set-standard predication of
+`Core.Order.Comparison` — not a separate definition; the binary comparator is its
+singleton case (`Comparison.overSet_singleton`). The properties below are stated
+about `Comparison.gt.overSet μ` directly. Needs only `[Preorder D]`. -/
 
 section SetOfDegrees
 variable {Entity D : Type*} [Preorder D]
 
-/-- S-comparative on a set of degrees ([hoeksema-1983] §3.8 Def 7):
-`y ∈ clausalComparison μ Δ` iff `μ y` strictly exceeds every degree in `Δ`. The
-than-clause supplies the degree set `Δ` (typically existentially closed). -/
-def clausalComparison (μ : Entity → D) (Δ : Set D) : Set Entity :=
-  fun y => ∀ d ∈ Δ, d < μ y
-
-/-- **Grounding**: the set-of-degrees comparative is the strict-`>` *set-standard*
-predication of `Core.Order.Comparison` (`μ ⁻¹' strictUpperBounds Δ`) — the
-fundamental object, with the binary comparator its singleton case
-(`Comparison.overSet_singleton`). True by `rfl`: this is not a reinvention. -/
-theorem clausalComparison_eq_overSet (μ : Entity → D) (Δ : Set D) :
-    clausalComparison μ Δ = Comparison.gt.overSet μ Δ :=
-  rfl
-
-/-- The set-of-degrees comparative as a strict-interval inclusion: `y` clears the
-than-clause iff every standard degree lies strictly below `μ y`. Strict mirror of
-mathlib's `mem_upperBounds_iff_subset_Iic`; both faces are `Iff.rfl` siblings. -/
-theorem mem_clausalComparison_iff_subset_Iio (μ : Entity → D) (Δ : Set D) (y : Entity) :
-    y ∈ clausalComparison μ Δ ↔ Δ ⊆ Set.Iio (μ y) :=
+/-- The set-of-degrees comparative `Comparison.gt.overSet μ` ([hoeksema-1983]) as a
+strict-interval inclusion: `y` clears the than-clause iff every standard degree lies
+strictly below `μ y`. Strict mirror of mathlib's `mem_upperBounds_iff_subset_Iic`;
+both faces are `Iff.rfl` siblings. -/
+theorem mem_gtOverSet_iff_subset_Iio (μ : Entity → D) (Δ : Set D) (y : Entity) :
+    y ∈ Comparison.gt.overSet μ Δ ↔ Δ ⊆ Set.Iio (μ y) :=
   Iff.rfl
 
-/-- A than-clause whose denotation is the single degree `d` reduces to the binary
-comparator `d < μ y`. Strict mirror of mathlib's
-`upperBounds_singleton : upperBounds {a} = Ici a`. -/
-theorem clausalComparison_singleton (μ : Entity → D) (d : D) :
-    clausalComparison μ {d} = {y | d < μ y} := by
-  ext y
-  refine ⟨fun h => h d rfl, ?_⟩
-  intro h x hx
-  rw [Set.mem_singleton_iff] at hx
-  rw [hx]
-  exact h
-
-/-- [hoeksema-1983] Fact 4: the S-comparative is anti-additive in its
-set-of-degrees argument — the algebraic source of NPI licensing in clausal
-*than*-comparatives. -/
-theorem clausalComparison_isAntiAdditive (μ : Entity → D) :
-    Entailment.IsAntiAdditive (clausalComparison μ) :=
+/-- [hoeksema-1983] Fact 4: the S-comparative `Comparison.gt.overSet μ` is
+anti-additive in its set-of-degrees argument — the algebraic source of NPI licensing
+in clausal *than*-comparatives. -/
+theorem gtOverSet_isAntiAdditive (μ : Entity → D) :
+    Entailment.IsAntiAdditive (Comparison.gt.overSet μ) :=
   Entailment.isAntiAdditive_forall_mem (fun d y => d < μ y)
 
-/-- Atomic specialization: at the singleton `{μ b}`, S-comparative membership
-reduces to the binary "taller than `b`" relation. Corollary of
-`clausalComparison_singleton`. -/
-theorem clausalComparison_atomic (μ : Entity → D) (a b : Entity) :
-    a ∈ clausalComparison μ {μ b} ↔ μ b < μ a := by
-  simp only [clausalComparison_singleton, Set.mem_setOf_eq]
-
 /-- **Reduction lemma** ([bhatt-pancheva-2004] §3, order-theoretic form): the
-S-comparative is determined by the *greatest* element of its degree-set
-argument. Needs neither linearity nor density — only `[Preorder D]` and the
+S-comparative `Comparison.gt.overSet μ` is determined by the *greatest* element of its
+degree-set argument. Needs neither linearity nor density — only `[Preorder D]` and the
 `IsGreatest` witness. -/
-theorem clausalComparison_eq_singleton_of_isGreatest (μ : Entity → D) {Δ : Set D}
+theorem gtOverSet_eq_singleton_of_isGreatest (μ : Entity → D) {Δ : Set D}
     {m : D} (hm : IsGreatest Δ m) :
-    clausalComparison μ Δ = clausalComparison μ ({m} : Set D) := by
+    Comparison.gt.overSet μ Δ = Comparison.gt.overSet μ ({m} : Set D) := by
   ext y
   refine ⟨fun h d hd => ?_, fun h d hd => ?_⟩
   · rw [Set.mem_singleton_iff] at hd
-    exact hd ▸ h m hm.1
-  · exact lt_of_le_of_lt (hm.2 hd) (h m rfl)
+    exact hd ▸ h hm.1
+  · exact lt_of_le_of_lt (hm.2 hd) (h rfl)
 
 end SetOfDegrees
 
@@ -207,12 +181,13 @@ extent complementarity rather than being stipulated. -/
 section Extent
 variable {Entity D : Type*} [LinearOrder D]
 
-/-- Bridge: the atomic S-comparative coincides with the binary `comparativeSem`
-on a `LinearOrder`. The set-of-degrees schema strictly generalizes the binary
-comparator. -/
-theorem clausalComparison_atomic_eq_comparativeSem (μ : Entity → D) (a b : Entity) :
-    a ∈ clausalComparison μ {μ b} ↔ comparativeSem μ a b .positive :=
-  clausalComparison_atomic μ a b
+/-- Bridge: the atomic S-comparative `Comparison.gt.overSet μ {μ b}` coincides with
+the binary `comparativeSem` on a `LinearOrder`. The set-of-degrees schema strictly
+generalizes the binary comparator, collapsing at a singleton via
+`Comparison.overSet_singleton`. -/
+theorem gtOverSet_atomic_eq_comparativeSem (μ : Entity → D) (a b : Entity) :
+    a ∈ Comparison.gt.overSet μ {μ b} ↔ comparativeSem μ a b .positive := by
+  rw [Comparison.overSet_singleton, ← comparativeSem_positive_eq_over]
 
 /-- "A is taller than B" iff A's positive extent strictly contains B's
 ([kennedy-1999]). Bridges the point comparison to `posExt_ssubset_iff`. -/

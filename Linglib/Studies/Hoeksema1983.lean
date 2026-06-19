@@ -42,11 +42,11 @@ and arbitrary `sSup`/`sInf` (strengthening Hoeksema's finitary claim)
 gives complement preservation for free on `BooleanAlgebra → BooleanAlgebra`
 homs.
 
-The S-comparative `clausalComparison` (originally [hoeksema-1983] §3.8
-Def 7) and its anti-additivity (Fact 4) live in
-`Semantics/Degree/Comparative.lean` as the natural
-generalization of `comparativeSem` from a binary comparator to a
-degree-set comparator. This file imports them from there.
+The S-comparative is `Core.Order.Comparison.gt.overSet μ` (originally
+[hoeksema-1983] §3.8 Def 7); its anti-additivity (Fact 4,
+`gtOverSet_isAntiAdditive`) lives in `Semantics/Degree/Comparative.lean`
+as the natural generalization of `comparativeSem` from a binary comparator
+to a degree-set comparator. This file imports them from there.
 
 ## Hoeksema's algebraic spine: Definitions 4–8 and Facts 1–4
 
@@ -54,7 +54,7 @@ The §3 algebraic content is formalized in five layers:
 - **Definition 4** (`IsOrderingPreserving`): the abstract property
   `μ b < μ a ↔ a ∈ f Q_b`, where `Q_b = {X | b ∈ X}` is the principal
   ultrafilter at `b` (`principalUltrafilter`).
-- **Definition 7/8** (`clausalComparison` in
+- **Definition 7/8** (`Comparison.gt.overSet μ`, from
   `Semantics/Degree/Comparative.lean`): the S-comparative as
   a set-of-degrees operator.
 - **Fact 1** (`fact1_agree_on_atoms`): two `>`-preserving functions
@@ -68,12 +68,12 @@ The §3 algebraic content is formalized in five layers:
 - **Fact 3** (`npComparativeGQ_monotone`): every Boolean hom is
   monotone increasing — disqualifies the NP-comparative as a Ladusaw
   NPI environment.
-- **Fact 4** (`clausalComparison_isAntiAdditive` in
+- **Fact 4** (`gtOverSet_isAntiAdditive` in
   `Semantics/Degree/Comparative.lean`, cited from
   `IsAntiAdditive.antitone` in `AntiAdditivity.lean`): every
   anti-additive function is antitone — hence the S-comparative
   qualifies as an NPI environment.
-- **§3.9 NP↔S equivalence** (`npComparativeGQ_principal_eq_clausalComparison_singleton`):
+- **§3.9 NP↔S equivalence** (`npComparativeGQ_principal_eq_gtOverSet_singleton`):
   on principal ultrafilters / singleton degree sets, the two
   constructions deliver the same predicate.
 
@@ -95,8 +95,8 @@ namespace Hoeksema1983
 open Semantics.Polarity.Licensing
 
 open Entailment
-open Semantics.Degree (clausalComparison clausalComparison_isAntiAdditive
-  clausalComparison_atomic)
+open Core.Order (Comparison)
+open Semantics.Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
 open Typology.PolarityItem (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 
@@ -317,14 +317,13 @@ theorem npComparativeGQ_uniqueness {μ : Entity → D}
     set `{μ b}`. Both reduce to "is taller than `b`" — explaining the
     empirical equivalence of "I am bigger than you" (NP-form) and
     "I am bigger than you are" (S-form), Hoeksema's Eq. 44a–b. -/
-theorem npComparativeGQ_principal_eq_clausalComparison_singleton
+theorem npComparativeGQ_principal_eq_gtOverSet_singleton
     (μ : Entity → D) (b : Entity) :
-    npComparativeGQ μ (principalUltrafilter b) = clausalComparison μ {μ b} := by
+    npComparativeGQ μ (principalUltrafilter b) = Comparison.gt.overSet μ {μ b} := by
   ext a
-  unfold npComparativeGQ principalUltrafilter clausalComparison npThreshold
-  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage,
-             Set.mem_setOf_eq, Set.mem_singleton_iff]
-  refine ⟨fun h d hd => hd ▸ h, fun h => h (μ b) rfl⟩
+  unfold npComparativeGQ principalUltrafilter npThreshold
+  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_setOf_eq,
+             Comparison.overSet_singleton, Comparison.mem_over, Comparison.rel, gt_iff_lt]
 
 /-! ## Connection to the licensing-context registry -/
 
@@ -336,7 +335,7 @@ theorem comparativeNP_signature_monotone :
     (contextProperties .comparativeNP).strawsonSignature = .mono := rfl
 
 /-- The `.comparativeS` registry slot is anti-additive, matching
-    `clausalComparison_isAntiAdditive`. -/
+    `gtOverSet_isAntiAdditive`. -/
 theorem comparativeS_signature_anti_additive :
     (contextProperties .comparativeS).strawsonSignature = .antiAdd := rfl
 
