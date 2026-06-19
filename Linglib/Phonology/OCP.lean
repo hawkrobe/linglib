@@ -43,24 +43,26 @@ register-tier `[upper]`/`[raised]`). The default `fun a _ => a` keeps the left
 element; `RegisterTier.mergeTRN` is the payload-merging `combine` for the tone
 tier (its `combine z z = z` obligation is `mergeTRN_self`).
 
-McCarthy's ([mccarthy-1986]) wider repair typology (deletion, dissimilation,
-epenthesis, and crucially *blocking* — the antigemination case that is
-[mccarthy-1986]'s own central phenomenon) is intentionally **not** implemented
-here: only repairs with an actual consumer are coded. Note that a *blocker* is
-not a retraction onto `IsClean` but a guard, so it (not fusion) is the strategy
-that will earn the deferred `Repair` abstraction.
+The repair face has two strategies of different mathematical shape. *Fusion*
+(`collapse`) is a **retraction** onto `IsClean` (`collapse_eq_self_iff`), never
+adding material (`collapse_sublist`). *Blocking* (`block`, [mccarthy-1986]'s
+antigemination — its own central phenomenon) is a **guard**: it withholds a rule
+that would create a violation (`block_eq_self`), leaving the input unrepaired, and
+is therefore *not* a retraction. The remaining classical repairs (deletion,
+dissimilation, epenthesis) are not coded — only strategies with a consumer are.
 
 ## Main definitions
 
-* `OCP.IsClean` — no two adjacent elements are identical.
-* `OCP.IsCleanOn` — the OCP on a projected tier (tier-relativity).
-* `OCP.collapse` — the OCP-merger normal form (fusion repair).
+* `OCP.IsClean` / `OCP.IsCleanOn` — OCP-cleanness, flat and on a projected tier.
+* `OCP.collapse` — the fusion repair (OCP-merger normal form).
+* `OCP.block` — the blocking repair (antigemination guard).
 
 ## Main results
 
 * `collapse_default_eq_destutter` — the default merge is `List.destutter`.
-* `collapse_clean` — the repair lands in the OCP-clean set.
-* `collapse_idempotent` — the repair is idempotent (a retraction).
+* `collapse_clean` / `collapse_eq_self_iff` — `collapse` is the retraction onto `IsClean`.
+* `collapse_sublist` — fusion never adds material.
+* `block_eq_self` — antigemination: a rule is blocked when it would violate the OCP.
 -/
 
 namespace Phonology.OCP
@@ -241,6 +243,80 @@ theorem collapse_idempotent (combine : α → α → α) (h : ∀ z : α, combin
     (xs : List α) :
     collapse combine (collapse combine xs) = collapse combine xs :=
   collapse_idempotent_on_clean combine _ (collapse_clean combine h xs)
+
+/-- **Retraction characterisation**: `collapse` fixes a tier iff it is OCP-clean.
+With `collapse_clean` this says `collapse` is the retraction onto `IsClean`.
+Mirrors `List.destutter_eq_self_iff`. -/
+@[simp] theorem collapse_eq_self_iff (combine : α → α → α) (h : ∀ z : α, combine z z = z)
+    (xs : List α) : collapse combine xs = xs ↔ IsClean xs :=
+  ⟨fun he => he ▸ collapse_clean combine h xs, collapse_idempotent_on_clean combine xs⟩
+
+/-! ### Normal-form lemmas -/
+
+private theorem collapseAux_ne_nil (combine : α → α → α) (x : α) (xs : List α) :
+    collapseAux combine x xs ≠ [] := by
+  induction xs generalizing x with
+  | nil => simp [collapseAux]
+  | cons y rs ih =>
+    by_cases hxy : x = y <;> simp [collapseAux, hxy, ih]
+
+@[simp] theorem collapse_eq_nil (combine : α → α → α) {xs : List α} :
+    collapse combine xs = [] ↔ xs = [] := by
+  cases xs with
+  | nil => simp
+  | cons x rest => simp [collapse, collapseAux_ne_nil]
+
+private theorem collapseAux_sublist (combine : α → α → α) (h : ∀ z : α, combine z z = z) :
+    ∀ (x : α) (xs : List α), (collapseAux combine x xs).Sublist (x :: xs) := by
+  intro x xs
+  induction xs generalizing x with
+  | nil => exact List.Sublist.refl _
+  | cons y rs ih =>
+    by_cases hxy : x = y
+    · rw [hxy, collapseAux_self combine h]
+      exact (ih y).trans (((List.Sublist.refl rs).cons y).cons_cons y)
+    · rw [collapseAux_cons_ne combine hxy rs]
+      exact (ih y).cons_cons x
+
+/-- **Fusion never adds material**: the repair output is a sublist of the input
+(under `combine z z = z`). -/
+theorem collapse_sublist (combine : α → α → α) (h : ∀ z : α, combine z z = z)
+    (xs : List α) : (collapse combine xs).Sublist xs := by
+  cases xs with
+  | nil => exact List.Sublist.refl _
+  | cons x rest => exact collapseAux_sublist combine h x rest
+
+theorem collapse_length_le (combine : α → α → α) (h : ∀ z : α, combine z z = z)
+    (xs : List α) : (collapse combine xs).length ≤ xs.length :=
+  (collapse_sublist combine h xs).length_le
+
+theorem mem_collapse (combine : α → α → α) (h : ∀ z : α, combine z z = z)
+    {a : α} {xs : List α} (ha : a ∈ collapse combine xs) : a ∈ xs :=
+  (collapse_sublist combine h xs).mem ha
+
+/-! ### The blocking repair -/
+
+/-- **Blocking** ([mccarthy-1986]'s antigemination): apply `rule` only when it
+would not create an OCP violation; otherwise leave the input untouched. Unlike the
+fusion repair `collapse`, a blocker is a *guard*, not a retraction onto `IsClean` —
+the OCP acting to *prevent* a process rather than repair its output. -/
+def block (rule : List α → List α) (xs : List α) : List α :=
+  if IsClean (rule xs) then rule xs else xs
+
+theorem block_eq_rule (rule : List α → List α) {xs : List α} (hc : IsClean (rule xs)) :
+    block rule xs = rule xs := if_pos hc
+
+/-- **Antigemination**: the rule fails to apply exactly when it would create an OCP
+violation, leaving the input unrepaired (contrast `collapse`). -/
+theorem block_eq_self (rule : List α → List α) {xs : List α} (hc : ¬ IsClean (rule xs)) :
+    block rule xs = xs := if_neg hc
+
+/-- Blocking never worsens a clean tier. -/
+theorem block_isClean (rule : List α → List α) {xs : List α} (hx : IsClean xs) :
+    IsClean (block rule xs) := by
+  unfold block; split
+  · assumption
+  · exact hx
 
 end
 
