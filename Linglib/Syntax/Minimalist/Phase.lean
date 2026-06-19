@@ -97,9 +97,14 @@ and [pietraszko-2026] (Ndebele, A-movement & φ-agreement). -/
       Guébie discontinuous harmony requires that the particle, after
       being spelled out inside the lower vP phase, remains accessible
       to A′-fronting in the higher CP phase. Adopted independently by
-      [branan-davis-2019], [halpert-2019], [lee-yip-2024]
-      among others. See `Syntax/Minimalist/Linearization/Cyclic.lean`
-      for the ordering-only locality machinery this mode delegates to.
+      [branan-davis-2019], [lee-yip-2024] among others. See
+      `Syntax/Minimalist/Linearization/Cyclic.lean` for the ordering-only
+      locality machinery this mode delegates to.
+
+      (Note: [halpert-2019]'s "Raising, unphased" is *also* a no-PIC
+      account but a distinct mechanism — phasehood relativized to
+      φ-probes (interaction/satisfaction + EPP), not Cyclic
+      Linearization; see `Studies/Halpert2019.lean`.)
 
     Modular variants (e.g., the [d-alessandro-scheer-2015] "Modular PIC"
     proposal that PIC strength is parametrized per interface module) are
