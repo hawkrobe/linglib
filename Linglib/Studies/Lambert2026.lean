@@ -8,7 +8,9 @@ import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Sandwich
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
-import Linglib.Phonology.SibilantTier
+import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Phonology.Sibilant
+import Linglib.Phonology.Subregular.Agree
 
 /-!
 # [lambert-2026]: Multitier phonotactics with logic and algebra
@@ -105,7 +107,8 @@ namespace Lambert2026
 
 open Core.Computability.Subregular
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
-open Phonology.SibilantTier  -- for SibilantTierSeg constructors in tsuutina refutation
+open Phonology (Sibilant)
+open Phonology.Subregular  -- for `TSLGrammar.agree`
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -602,31 +605,93 @@ theorem karanga_shona_verb_stem_isBTLI :
 -- § 5. Tsuut'ina asymmetric harmony ∈ TSL_2 ∖ BTLI
 -- ============================================================================
 
-/-- The Tsuut'ina sibilant alphabet [cook-1978] is the shared
-three-class `SibilantTierSeg` (anterior `s`, posterior `ʃ`, neutral
-non-sibilant) defined in `Phonology/SibilantTier.lean`. -/
-abbrev TsuutinaSeg := Phonology.SibilantTier.SibilantTierSeg
+/-! ### Sibilant-harmony grammars over the shared `Sibilant` alphabet
 
-/-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony
-[cook-1978] [lambert-2026] §4.2: anterior preceding posterior
-on the sibilant tier is forbidden. Reuses the shared substrate
-`asymmetricHarmonyAntFirst` from `Phonology/SibilantTier.lean`. -/
+Both asymmetric directions plus the symmetric foil, over the shared
+`Phonology.Sibilant` substrate. Lambert's classification draws the
+symmetric-vs-asymmetric comparison: the symmetric grammar is the [hansson-2010]
+Navajo profile (`TSLGrammar.agree`, disagreement forbidden in both directions),
+the anterior-first asymmetric grammar the [cook-1978] Tsuut'ina profile. -/
+
+/-- Forbidden-pair relation: anterior immediately preceding posterior on the tier
+(the [cook-1978] Tsuut'ina adjacency). -/
+def antPostForbidden : Sibilant → Sibilant → Prop
+  | .anterior, .posterior => True
+  | _, _ => False
+
+instance : DecidableRel antPostForbidden
+  | .anterior, .posterior => isTrue trivial
+  | .anterior, .anterior => isFalse not_false
+  | .anterior, .neutral => isFalse not_false
+  | .posterior, _ => isFalse not_false
+  | .neutral, _ => isFalse not_false
+
+/-- Tsuut'ina-style asymmetric harmony: anterior-before-posterior forbidden on the
+tier, the reverse permitted. -/
+def asymmetricHarmonyAntFirst : TSLGrammar 2 Sibilant :=
+  TSLGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
+
+/-- Dual forbidden-pair relation: posterior immediately preceding anterior. -/
+def postAntForbidden : Sibilant → Sibilant → Prop
+  | .posterior, .anterior => True
+  | _, _ => False
+
+instance : DecidableRel postAntForbidden
+  | .posterior, .anterior => isTrue trivial
+  | .posterior, .posterior => isFalse not_false
+  | .posterior, .neutral => isFalse not_false
+  | .anterior, _ => isFalse not_false
+  | .neutral, _ => isFalse not_false
+
+/-- Posterior-first asymmetric harmony grammar (the mirror of
+`asymmetricHarmonyAntFirst`). -/
+def asymmetricHarmonyPostFirst : TSLGrammar 2 Sibilant :=
+  TSLGrammar.ofForbiddenPairs postAntForbidden Sibilant.onTier
+
+/-- Symmetric sibilant harmony: any tier-adjacent disagreement forbidden — the
+[hansson-2010] Navajo profile, the foil for the asymmetric comparison. -/
+def symmetricHarmony : TSLGrammar 2 Sibilant :=
+  TSLGrammar.agree Sibilant.onTier
+
+/-- The symmetric language is contained in the anterior-first asymmetric language:
+forbidding disagreement in both directions rules out everything the one-direction
+constraint does, and more. -/
+theorem symmetricHarmony_lang_subset_asymAntFirst :
+    symmetricHarmony.lang ≤ asymmetricHarmonyAntFirst.lang :=
+  lang_antitone_R (R := antPostForbidden) (R' := (· ≠ ·))
+    (fun a b h => by cases a <;> cases b <;> simp_all [antPostForbidden])
+    Sibilant.onTier
+
+/-- Dual inclusion against the posterior-first asymmetric language. -/
+theorem symmetricHarmony_lang_subset_asymPostFirst :
+    symmetricHarmony.lang ≤ asymmetricHarmonyPostFirst.lang :=
+  lang_antitone_R (R := postAntForbidden) (R' := (· ≠ ·))
+    (fun a b h => by cases a <;> cases b <;> simp_all [postAntForbidden])
+    Sibilant.onTier
+
+/-- The Tsuut'ina sibilant alphabet ([cook-1978]) is the shared three-class
+`Phonology.Sibilant` (anterior `s`, posterior `ʃ`, neutral non-sibilant). -/
+abbrev TsuutinaSeg := Sibilant
+
+/-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony ([cook-1978];
+Lambert's asymmetric classification): anterior preceding posterior on the
+sibilant tier is forbidden, the reverse permitted. -/
 def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg :=
-  Phonology.SibilantTier.asymmetricHarmonyAntFirst
+  asymmetricHarmonyAntFirst
 
 /-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
 language of the TSL_2 witness so that the membership theorem is
 definitional. -/
 def tsuutinaLang : Language TsuutinaSeg := tsuutinaTSLGrammar.lang
 
-/-- **Tsuut'ina asymmetric harmony ∈ TSL_2** (Lambert 2026 §4.2).
-Definitional witness: the TSL_2 grammar `tsuutinaTSLGrammar`. -/
+/-- **Tsuut'ina asymmetric harmony ∈ TSL_2**. Definitional witness: the
+TSL_2 grammar `tsuutinaTSLGrammar`. -/
 theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang :=
   ⟨tsuutinaTSLGrammar, rfl⟩
 
 /-! ### Refutation: Tsuut'ina ∉ BTLI
 
-Lambert (2026) §4.2 parameterised counterexample: for every `k`, the
+Lambert's parameterised counterexample: for every `k`, the
 words `ʃᵏ⁺¹sᵏ⁺¹` (accepted) and `ʃᵏ s ʃ sᵏ` (rejected) share the
 length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
 Both witnesses are sandwiches with **asymmetric** bookends `posterior`
@@ -645,13 +710,13 @@ contribution into the bookend). -/
 tier projection: `posterior^(k+1) ++ anterior^(k+1)` — no anterior
 precedes any posterior. -/
 abbrev tsuutinaAccepted (k : ℕ) : List TsuutinaSeg :=
-  sandwich (k + 1) SibilantTierSeg.posterior [] (k + 1) SibilantTierSeg.anterior
+  sandwich (k + 1) Sibilant.posterior [] (k + 1) Sibilant.anterior
 
 /-- The rejected Tsuut'ina parameterised witness `ʃᵏ s ʃ sᵏ`. The
 internal `[anterior, posterior]` is the forbidden adjacency on the
 sibilant tier. -/
 abbrev tsuutinaRejected (k : ℕ) : List TsuutinaSeg :=
-  sandwich k SibilantTierSeg.posterior [.anterior, .posterior] k SibilantTierSeg.anterior
+  sandwich k Sibilant.posterior [.anterior, .posterior] k Sibilant.anterior
 
 /-- Tier-affix equality on every Bool tier. Case-split on
 `(T posterior, T anterior)`. The (true, true) case applies the
@@ -664,40 +729,40 @@ private lemma tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool) :
     Edge.right.takeAt k ((tsuutinaAccepted k).filter T) =
       Edge.right.takeAt k ((tsuutinaRejected k).filter T) := by
   unfold tsuutinaAccepted tsuutinaRejected
-  match h_post : T SibilantTierSeg.posterior, h_ant : T SibilantTierSeg.anterior with
+  match h_post : T Sibilant.posterior, h_ant : T Sibilant.anterior with
   | false, false =>
-    have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
-    have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
+    have h_post' : ¬ T Sibilant.posterior = true := by simp [h_post]
+    have h_ant' : ¬ T Sibilant.anterior = true := by simp [h_ant]
     rw [filter_sandwich_of_neg_neg h_post' h_ant',
         filter_sandwich_of_neg_neg h_post' h_ant']
-    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T = [] := by
+    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [] := by
       simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_neg h_post']
     simp [h_rej]
   | true, false =>
-    have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
+    have h_ant' : ¬ T Sibilant.anterior = true := by simp [h_ant]
     rw [filter_sandwich_of_pos_neg h_post h_ant',
         filter_sandwich_of_pos_neg h_post h_ant']
     -- accepted: replicate (k+1) post ++ [].filter T = replicate (k+1) post
     -- rejected: replicate k post ++ [post] = replicate (k+1) post
-    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T =
-                 [SibilantTierSeg.posterior] := by
+    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T =
+                 [Sibilant.posterior] := by
       simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_pos h_post]
     rw [List.filter_nil, List.append_nil, h_rej, ← List.replicate_succ']
     exact ⟨rfl, rfl⟩
   | false, true =>
-    have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
+    have h_post' : ¬ T Sibilant.posterior = true := by simp [h_post]
     rw [filter_sandwich_of_neg_pos h_post' h_ant,
         filter_sandwich_of_neg_pos h_post' h_ant]
     -- accepted: [].filter T ++ replicate (k+1) ant = replicate (k+1) ant
     -- rejected: [ant] ++ replicate k ant = replicate (k+1) ant
-    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T =
-                 [SibilantTierSeg.anterior] := by
+    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T =
+                 [Sibilant.anterior] := by
       simp [List.filter_cons_of_pos h_ant, List.filter_cons_of_neg h_post']
     rw [List.filter_nil, List.nil_append, h_rej]
-    show (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior).take k =
-         (List.replicate (k + 1) SibilantTierSeg.anterior).take k ∧
-         (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior).drop _ =
-         (List.replicate (k + 1) SibilantTierSeg.anterior).drop _
+    show (Sibilant.anterior :: List.replicate k Sibilant.anterior).take k =
+         (List.replicate (k + 1) Sibilant.anterior).take k ∧
+         (Sibilant.anterior :: List.replicate k Sibilant.anterior).drop _ =
+         (List.replicate (k + 1) Sibilant.anterior).drop _
     rw [← List.replicate_succ]
     exact ⟨rfl, rfl⟩
   | true, true =>
@@ -715,19 +780,19 @@ none of which equal the forbidden `(anterior, posterior)`. -/
 private lemma tsuutinaAccepted_mem (k : ℕ) :
     tsuutinaAccepted k ∈ tsuutinaLang := by
   show tsuutinaAccepted k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
-                              SibilantTierSeg.onTier).lang
+                              Sibilant.onTier).lang
   rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
   -- Filter to sibilants: identity since no neutrals in the witness.
   have h_filter : (tsuutinaAccepted k).filter
-                    (fun x => decide (SibilantTierSeg.onTier x)) =
+                    (fun x => decide (Sibilant.onTier x)) =
                   tsuutinaAccepted k := by
     unfold tsuutinaAccepted sandwich
     simp
   rw [h_filter]
   -- IsChain (¬ antPostForbidden) on sandwich (k+1) post [] (k+1) ant
   -- = post^(k+1) ++ [] ++ ant^(k+1) = post^(k+1) ++ ant^(k+1).
-  show (sandwich (k + 1) SibilantTierSeg.posterior []
-          (k + 1) SibilantTierSeg.anterior).IsChain
+  show (sandwich (k + 1) Sibilant.posterior []
+          (k + 1) Sibilant.anterior).IsChain
         (fun a b => ¬ antPostForbidden a b)
   unfold sandwich
   rw [List.append_nil, List.isChain_append]
@@ -748,35 +813,35 @@ on the sibilant tier. -/
 private lemma tsuutinaRejected_notMem (k : ℕ) :
     tsuutinaRejected k ∉ tsuutinaLang := by
   show ¬ (tsuutinaRejected k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
-                                  SibilantTierSeg.onTier).lang)
+                                  Sibilant.onTier).lang)
   rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
   -- Filter is identity (no neutrals).
   have h_filter : (tsuutinaRejected k).filter
-                    (fun x => decide (SibilantTierSeg.onTier x)) =
+                    (fun x => decide (Sibilant.onTier x)) =
                   tsuutinaRejected k := by
     unfold tsuutinaRejected sandwich
     simp
   rw [h_filter]
   -- The witness contains the adjacent pair (anterior, posterior).
   -- Unfold sandwich, then use isChain_append_cons_cons to expose the pair.
-  show ¬ (sandwich k SibilantTierSeg.posterior
-            [SibilantTierSeg.anterior, .posterior] k SibilantTierSeg.anterior).IsChain
+  show ¬ (sandwich k Sibilant.posterior
+            [Sibilant.anterior, .posterior] k Sibilant.anterior).IsChain
         (fun a b => ¬ antPostForbidden a b)
   unfold sandwich
   intro hchain
   -- Reassociate: post^k ++ [ant, post] ++ ant^k = post^k ++ (ant :: post :: ant^k).
-  rw [show List.replicate k SibilantTierSeg.posterior ++
-          [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-          List.replicate k SibilantTierSeg.anterior =
-          List.replicate k SibilantTierSeg.posterior ++
-          (SibilantTierSeg.anterior :: SibilantTierSeg.posterior ::
-            List.replicate k SibilantTierSeg.anterior) by
+  rw [show List.replicate k Sibilant.posterior ++
+          [Sibilant.anterior, Sibilant.posterior] ++
+          List.replicate k Sibilant.anterior =
+          List.replicate k Sibilant.posterior ++
+          (Sibilant.anterior :: Sibilant.posterior ::
+            List.replicate k Sibilant.anterior) by
         simp [List.append_assoc]] at hchain
   rw [List.isChain_append_cons_cons] at hchain
-  exact hchain.2.1 (by decide : antPostForbidden SibilantTierSeg.anterior
-                                              SibilantTierSeg.posterior)
+  exact hchain.2.1 (by decide : antPostForbidden Sibilant.anterior
+                                              Sibilant.posterior)
 
-/-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert 2026 §4.2, parametrised
+/-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert's parametrised
 counterexample). -/
 theorem tsuutina_not_isBTLI : ∀ k, ¬ IsBTLI k tsuutinaLang := by
   intro k

@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Phonology.Sibilant
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Multitier
@@ -143,20 +144,22 @@ inductive NSeg where
   | vowel
   deriving DecidableEq, Repr
 
-/-- The harmonizing-class tier predicate: only sibilants project. Non-
-sibilant consonants and vowels are transparent (off-tier). This
-corresponds to the long-distance reading of [hansson-2010]'s
-typology — only the segments participating in the agreement form the
-relevant locality domain. The tier choice is the substantive theoretical
-commitment (cf. the design-boundary docstring on `tierProject`
-non-monotonicity in `ForbiddenPairs.lean`). -/
-@[reducible] def NSeg.onTier : NSeg → Prop
-  | .antSib | .postSib => True
-  | .neutralC | .vowel => False
+/-- `NSeg`'s sibilant class, grounding the tier predicate in the shared
+`Phonology.Sibilant` substrate: the two sibilant series map to `anterior` and
+`posterior`, the transparent material (non-sibilant consonants, vowels) to `neutral`. -/
+@[reducible] def NSeg.toSibilant : NSeg → Sibilant
+  | .antSib => .anterior
+  | .postSib => .posterior
+  | .neutralC | .vowel => .neutral
 
-instance : DecidablePred NSeg.onTier
-  | .antSib | .postSib => isTrue trivial
-  | .neutralC | .vowel => isFalse not_false
+/-- The harmonizing-class tier predicate: only sibilants project; non-sibilant
+consonants and vowels are transparent (off-tier). Grounded in `Sibilant.onTier`
+through `NSeg.toSibilant` rather than re-stipulated, so the tier choice — the
+substantive theoretical commitment — lives in one place. -/
+@[reducible] def NSeg.onTier (s : NSeg) : Prop := Sibilant.onTier s.toSibilant
+
+instance : DecidablePred NSeg.onTier :=
+  fun s => inferInstanceAs (Decidable (Sibilant.onTier s.toSibilant))
 
 -- ============================================================================
 -- § 2: The TSL_2 grammar — instance of the AGREE specialization
@@ -211,10 +214,9 @@ theorem navajoSibilantHarmony_lang_isTSL2 :
   ⟨navajoSibilantHarmony, rfl⟩
 
 /-- **BTSL_2 corollary** (via the PR-4 bridge `IsTierStrictlyLocal.toIsBTSL`
-in `Core.Computability.Subregular.Multitier`): the Navajo sibilant
-harmony stringset is in the multitier closure of strictly local
-languages. Hands the [lambert-2026] BTC framework a Hansson-data
-consumer without re-proving anything. -/
+in `Core.Computability.Subregular.Multitier`): the Navajo sibilant harmony
+stringset lies in the multitier (Boolean) closure of strictly local languages —
+immediate from the TSL_2 result. -/
 theorem navajoSibilantHarmony_lang_isBTSL2 :
     Core.Computability.Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
   navajoSibilantHarmony_lang_isTSL2.toIsBTSL
@@ -286,9 +288,10 @@ naturally captures *transparent* harmony — exactly Navajo's profile.
 [mcmullin-2016] argues that consonant harmony in general requires
 TSL_2, not SP_2: SP cannot model **blocker-style opacity** (where a
 specific intervening consonant breaks long-distance harmony). For
-Navajo's transparent harmony, the two classifications coincide on the
-surface stringset; the typological argument for TSL ⊃ SP shows up only
-when the alphabet admits an opaque blocker (§6.3 below). -/
+Navajo's transparent harmony the two classifications coincide on the
+surface stringset; the typological argument for TSL ⊃ SP turns on opaque
+blockers, which are unattested in Navajo — the rare opaque cases are
+Rwanda and Berber ([hansson-2010] ch. 3) — and are not formalised here. -/
 
 /-- The SP_2 grammar for Navajo sibilant harmony: the permitted
 length-2 subsequences are everything except mixed-place sibilant pairs.
@@ -365,99 +368,5 @@ sibilant class, so the structural helper applies trivially. -/
 theorem controlNoSibilants_legal_SP :
     controlNoSibilants ∈ navajoSibilantHarmonySP.lang :=
   sp_lang_of_one_sibilant_class_absent (.inl (by decide))
-
-/-! ### § 6.3 Where the two diverge: blocker-style opacity
-
-The agreement above is a property of *Navajo*, not of TSL_2 vs SP_2 in
-general. To make the predictive divergence visible we extend the
-alphabet with an **opaque blocker** segment — a non-sibilant consonant
-that, in some hypothetical opaque harmony, projects to the sibilant
-tier and disagrees with both sibilant series. With the blocker on the
-TSL tier, TSL_2 rejects the input `[antSib, blocker, antSib]` (the
-tier-adjacent (antSib, blocker) pair disagrees), while SP_2 accepts it
-(no mixed-place sibilant subsequence is present). This is the
-typological force of [mcmullin-2016]: SP_2 cannot express
-blocker-style opacity at all, regardless of the choice of forbidden
-subsequence — a point that, for Navajo specifically, is moot but for
-the broader class of consonant-harmony systems is decisive. -/
-
-/-- Extended alphabet with an opaque blocker. Used only in §6.3 to
-witness the TSL_2 vs SP_2 divergence — not part of the Navajo
-empirical formalisation in §1–§5. -/
-inductive NSegB where
-  | antSib | postSib | blocker | neutral
-  deriving DecidableEq, Repr
-
-/-- Tier predicate for the *opaque-harmony* TSL_2 instance: the blocker
-projects to the sibilant tier alongside the two sibilant series. With
-AGREE this rejects any tier-adjacent disagreement, including
-sibilant–blocker pairs. -/
-@[reducible] def NSegB.onTierWithBlocker : NSegB → Prop
-  | .antSib | .postSib | .blocker => True
-  | .neutral => False
-
-instance : DecidablePred NSegB.onTierWithBlocker
-  | .antSib | .postSib | .blocker => isTrue trivial
-  | .neutral => isFalse not_false
-
-/-- The TSL_2 grammar with the blocker on the sibilant tier — the
-naïve formalisation of opaque consonant harmony in TSL terms. -/
-@[reducible] def opaqueHarmonyTSL : TSLGrammar 2 NSegB :=
-  TSLGrammar.agree NSegB.onTierWithBlocker
-
-/-- The SP_2 grammar with the same forbidden mixed-sibilant
-subsequences — the SP analysis is unchanged when the alphabet is
-extended, since the blocker is not part of the forbidden subsequences. -/
-def opaqueHarmonySP : SPGrammar 2 NSegB where
-  permitted s := s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
-
-/-- Same structural agreement helper as in §6.2, transported to the
-extended alphabet `NSegB`: any input lacking either sibilant class is
-in `opaqueHarmonySP.lang` regardless of how many blockers it contains. -/
-theorem opaqueSP_lang_of_one_sibilant_class_absent {w : List NSegB}
-    (h : NSegB.antSib ∉ w ∨ NSegB.postSib ∉ w) :
-    w ∈ opaqueHarmonySP.lang := by
-  intro s _ hsub
-  refine ⟨?_, ?_⟩ <;> intro heq <;> subst heq <;>
-    rcases h with hAnt | hPost
-  · exact hAnt (_pair_mem_of_sublist hsub).1
-  · exact hPost (_pair_mem_of_sublist hsub).2
-  · exact hAnt (_pair_mem_of_sublist hsub).2
-  · exact hPost (_pair_mem_of_sublist hsub).1
-
-/-- **Cross-framework divergence** (after [mcmullin-2016]): on the
-input `[antSib, blocker, antSib]` (an opaque-blocker configuration with
-two same-place sibilants), the TSL_2 grammar with the blocker on the
-sibilant tier *rejects*, while the SP_2 grammar *accepts*. SP cannot
-express blocker-style opacity — there is no choice of forbidden
-length-2 subsequence that would reject this input without also
-rejecting transparent same-place sibilant pairs like `[antSib, antSib]`.
-This is the typological force of McMullin's TSL ⊃ SP claim for
-consonant harmony.
-
-The TSL rejection is structural: the input is fully on-tier (all three
-symbols project), so its filter is itself; tier-adjacent pair
-`(antSib, blocker)` disagrees, breaking the `IsChain (· = ·)` predicate
-required for membership. The SP acceptance falls out of
-`opaqueSP_lang_of_one_sibilant_class_absent` since `postSib` is absent. -/
-theorem TSL_SP_divergence_on_blocker :
-    [NSegB.antSib, .blocker, .antSib] ∉ opaqueHarmonyTSL.lang ∧
-    [NSegB.antSib, .blocker, .antSib] ∈ opaqueHarmonySP.lang := by
-  refine ⟨?_, ?_⟩
-  · -- TSL rejects: the on-tier filter is the input itself, and the
-    -- tier-adjacent (antSib, blocker) pair disagrees.
-    intro hmem
-    have hchain := (mem_ofForbiddenPairs_lang_iff_filter_isChain
-      (α := NSegB) (· ≠ ·) NSegB.onTierWithBlocker
-      [NSegB.antSib, .blocker, .antSib]).mp hmem
-    have hfilter :
-        ([NSegB.antSib, .blocker, .antSib] : List NSegB).filter
-          (fun x => decide (NSegB.onTierWithBlocker x)) =
-        [NSegB.antSib, .blocker, .antSib] := by
-      decide
-    rw [hfilter, List.isChain_cons_cons] at hchain
-    exact hchain.1 (by decide)
-  · -- SP accepts: postSib does not appear in the input.
-    exact opaqueSP_lang_of_one_sibilant_class_absent (.inr (by decide))
 
 end Phonology.Studies.Hansson2010
