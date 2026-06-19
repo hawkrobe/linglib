@@ -30,9 +30,15 @@ interpreted, yielding `Δ(A ∘ B)` rather than `ΔA ∘ ΔB`.
 | must A or must B | `□A ∨ □B`     | `□(A ∨ B)`      |
 | may A and may B  | `◇A ∧ ◇B`     | `◇(A ∧ B)`      |
 
+The modal operators `diamond`/`box` are `Core.Logic.Modal.poss`/`nec` (the flat
+S5 modals shared with the whole free-choice stack), so the scope theorems consume
+the substrate's distribution lemmas directly.
+
 ## Main declarations
 
 * `scope_equivalence` — the two disjunction LFs are truth-conditionally equal.
+* `disjunctive_obligation_narrow_weaker` / `_not_wide` — must-or-must: under
+  necessity the narrow LF `□(A ∪ B)` is strictly *weaker* than the wide `□A ∨ □B`.
 * `ConcordDerivation` — two `[u-MOD]` auxiliaries checked by one silent operator.
 * `narrowScope_yields_fc` / `wideScope_underdetermines_fc` — free choice from the
   narrow LF; non-entailment of free choice from the wide LF.
@@ -43,7 +49,7 @@ interpreted, yielding `Δ(A ∘ B)` rather than `ΔA ∘ ΔB`.
 namespace CiardelliGuerrini2026
 
 open Semantics.Modality
-open Exhaustification.FreeChoice (diamond diamond_distributes_iff FCAltSet free_choice_forward)
+open Exhaustification.FreeChoice (diamond box diamond_distributes_iff FCAltSet free_choice_forward)
 open English.Auxiliaries
 
 /-! ### Truth-conditional equivalence
@@ -60,6 +66,36 @@ role as the central observation of [ciardelli-guerrini-2026]. -/
 theorem scope_equivalence {World : Type*} (A B : Set World) :
     diamond (A ∪ B) ↔ diamond A ∨ diamond B :=
   diamond_distributes_iff A B
+
+/-! ### Must-or-must: disjunctive obligation (§2)
+
+Under *necessity*, the scope distinction is **not** truth-conditionally vacuous.
+`diamond`/`box` here are `Core.Logic.Modal.poss`/`nec`, so these theorems consume
+the substrate's flat distribution directly. For disjunction the narrow LF
+`□(A ∪ B)` is strictly *weaker* than the wide LF `□A ∨ □B` — exactly C&G's
+must-or-must contrast: "(either) you must A or you must B" on its salient reading
+is a single disjunctive obligation `□(A ∨ B)`, not two obligations. -/
+
+/-- Wide ⟹ narrow: `□A ∨ □B → □(A ∪ B)`. The narrow disjunctive-obligation LF is
+the weaker reading (monotonicity of `Core.Logic.Modal.nec`). -/
+theorem disjunctive_obligation_narrow_weaker {World : Type*} (A B : Set World) :
+    box A ∨ box B → box (A ∪ B) := by
+  rintro (h | h)
+  · exact Core.Logic.Modal.nec_mono (fun _ ha => Or.inl ha) h
+  · exact Core.Logic.Modal.nec_mono (fun _ hb => Or.inr hb) h
+
+/-- …but **not** conversely: `□(A ∪ B)` does not entail `□A ∨ □B`. A disjunctive
+obligation leaves which disjunct is met open, so neither `□A` nor `□B` follows.
+This is why must-or-must has a genuine narrow reading the wide LF lacks. -/
+theorem disjunctive_obligation_not_wide :
+    ∃ (A B : Set Bool), box (A ∪ B) ∧ ¬ (box A ∨ box B) := by
+  refine ⟨{true}, {false}, ?_, ?_⟩
+  · intro w; cases w
+    · exact Or.inr rfl
+    · exact Or.inl rfl
+  · rintro (h | h)
+    · exact absurd (show false = true from h false) (by decide)
+    · exact absurd (show true = false from h true) (by decide)
 
 /-! ### Scope-ambiguity data (§2)
 
