@@ -28,7 +28,8 @@ theorem here.
 ## Main statements
 
 * `prefers_informative` — the speaker prefers the uniquely-identifying `circle`
-  over the ambiguous `blue` for the target (Fig. 1A).
+  over the ambiguous `blue` for the target (Fig. 1A); `prefers_informative_alpha`
+  shows this holds at every rationality `α > 0` (consuming `RSA.Gibbs.speakerAlpha`).
 * `size_principle` — generally, the speaker prefers the smaller-extension applicable
   utterance.
 * `narrowing_blue` / `narrowing_square` — **pragmatic narrowing**: the speaker is
@@ -151,6 +152,23 @@ theorem prefers_informative : speakerAt .blueCircle {.blue} < speakerAt .blueCir
     show numApplies Feature.circle = 1 from by decide, Nat.cast_ofNat, Nat.cast_one, Real.log_one]
   simp only [neg_zero, neg_lt_zero]
   exact Real.log_pos (by norm_num)
+
+/-- **Robustness to rationality**: the informativeness preference holds at *every*
+rationality level `α > 0`, not just the canonical `α = 1` (`prefers_informative`).
+A consumer of the α-generalized speaker `RSA.Gibbs.speakerAlpha`. -/
+theorem prefers_informative_alpha {α : ℝ} (hα : 0 < α) :
+    RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable .blueCircle) : Set Feature))
+        α score {.blue}
+      < RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable .blueCircle) : Set Feature))
+        α score {.circle} := by
+  have hsc : score .blue < score .circle := by
+    rw [score, score, show numApplies Feature.blue = 2 from by decide,
+      show numApplies Feature.circle = 1 from by decide, Nat.cast_ofNat, Nat.cast_one, Real.log_one]
+    simp only [neg_zero, neg_lt_zero]
+    exact Real.log_pos (by norm_num)
+  simp only [RSA.Gibbs.speakerAlpha]
+  rw [RSA.Gibbs.speaker_countRestrict_lt_iff_score_lt _ _ _ _ (by decide) (by decide)]
+  exact mul_lt_mul_of_pos_left hsc hα
 
 /-- **Size principle**: among applicable utterances, the speaker prefers the one
 with the smaller extension (lower `numApplies`). -/
