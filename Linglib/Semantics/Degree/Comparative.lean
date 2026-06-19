@@ -79,7 +79,7 @@ theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
 the MAX-based formulation. -/
 theorem comparativeSem_eq_MAX (μ : Entity → α) (a b : Entity) :
     comparativeSem μ a b .positive ↔
-      ∃ m ∈ maxOnScale (· > ·) ({μ b} : Set α), μ a > m := by
+      ∃ m ∈ maxOnScale .gt ({μ b} : Set α), μ a > m := by
   simp only [comparativeSem, maxOnScale_singleton, Set.mem_singleton_iff, exists_eq_left]
 
 /-! ### Antonymy as scale reversal -/
@@ -104,13 +104,13 @@ variable {α : Type*} [LinearOrder α]
 
 /-- The comparative depends only on the boundary `μ_b`. -/
 theorem comparative_boundary (μ_a μ_b : α) :
-    (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a > m) ↔ μ_a > μ_b := by
+    (∃ m ∈ maxOnScale .ge {d | d ≤ μ_b}, μ_a > m) ↔ μ_a > μ_b := by
   rw [maxOnScale_ge_atMost]
   simp only [Set.mem_singleton_iff, exists_eq_left]
 
 /-- The equative depends only on the boundary `μ_b`. -/
 theorem equative_boundary (μ_a μ_b : α) :
-    (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a ≥ m) ↔ μ_a ≥ μ_b := by
+    (∃ m ∈ maxOnScale .ge {d | d ≤ μ_b}, μ_a ≥ m) ↔ μ_a ≥ μ_b := by
   rw [maxOnScale_ge_atMost]
   simp only [Set.mem_singleton_iff, exists_eq_left]
 

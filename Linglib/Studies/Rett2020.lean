@@ -57,12 +57,12 @@ variable {Time : Type*} [LinearOrder Time]
 /-- Rett's *before* (eq. 22a): ∃t ∈ times(A) [t ≺ MAX(times(B)_≺)].
     Some time in A precedes the maximal (on the ≺ scale) time of B. -/
 def Rett.before (A B : SentDenotation Time) : Prop :=
-  ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· < ·) (timeTrace B), t < m
+  ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .lt (timeTrace B), t < m
 
 /-- Rett's *after* (eq. 22b): ∃t ∈ times(A) [t ≻ MAX(times(B)_≻)].
     Some time in A succeeds the maximal (on the ≻ scale) time of B. -/
 def Rett.after (A B : SentDenotation Time) : Prop :=
-  ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· > ·) (timeTrace B), t > m
+  ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt (timeTrace B), t > m
 
 -- ============================================================================
 -- § 2: Aspectual Coercion Operators
@@ -215,7 +215,7 @@ to this bound, so negating B is truth-conditionally vacuous.
 
 /-- *Before* truth conditions depend only on MAX₍<₎ of B's time trace. -/
 theorem before_determined_by_max (A B₁ B₂ : SentDenotation Time)
-    (h : maxOnScale (· < ·) (timeTrace B₁) = maxOnScale (· < ·) (timeTrace B₂)) :
+    (h : maxOnScale .lt (timeTrace B₁) = maxOnScale .lt (timeTrace B₂)) :
     Rett.before A B₁ ↔ Rett.before A B₂ := by
   constructor <;> rintro ⟨t, ht, m, hm, htm⟩ <;> exact ⟨t, ht, m, h ▸ hm, htm⟩
 
@@ -255,7 +255,7 @@ theorem timeTrace_stative_closedInterval (i : NonemptyInterval Time) :
 
 /-- MAX₍<₎ of a stative denotation's time trace is {start}. -/
 theorem maxOnScale_lt_stative (i : NonemptyInterval Time) :
-    maxOnScale (· < ·) (timeTrace (stativeDenotation i)) = {i.fst} := by
+    maxOnScale .lt (timeTrace (stativeDenotation i)) = {i.fst} := by
   rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.fst_le_snd]
 
 /-- The time trace of `COMPLET(preEventDenotation bot i)` is the degenerate
@@ -271,7 +271,7 @@ theorem timeTrace_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbo
 
 /-- MAX₍<₎ of the COMPLET of a pre-event denotation is {start}. -/
 theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : NonemptyInterval Time) (hbot : bot ≤ i.fst) :
-    maxOnScale (· < ·) (timeTrace (COMPLET (preEventDenotation bot i hbot))) =
+    maxOnScale .lt (timeTrace (COMPLET (preEventDenotation bot i hbot))) =
     {i.fst} := by
   rw [timeTrace_complet_preEvent, maxOnScale_lt_closedInterval _ _ (le_refl _)]
 
@@ -292,12 +292,12 @@ theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : Nonempt
     truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B). -/
 theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
     ¬ ∀ (A : SentDenotation Time) (B : Set Time),
-      isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· > ·) X, t > m) B := by
+      isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, t > m) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
   have h_amb := h {NonemptyInterval.pure b} {a}
   have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : SentDenotation Time),
-      ∃ m ∈ maxOnScale (· > ·) ({a} : Set Time), t > m :=
+      ∃ m ∈ maxOnScale .gt ({a} : Set Time), t > m :=
     ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
      a, ⟨rfl, fun _ hx' hne => absurd hx' hne⟩, hab⟩
   obtain ⟨t, ht_A, m, ⟨hm_mem, hm_dom⟩, htm⟩ := h_amb.mp h_fB
@@ -443,6 +443,7 @@ theorem scenario1_rett : Rett.before A_early B_stative := by
   refine ⟨1, mem_tt_early.mpr rfl, 5, ⟨mem_tt_stative.mpr ⟨le_refl _, by omega⟩, ?_⟩, by omega⟩
   intro x' hx' hne
   have ⟨h1, _⟩ := mem_tt_stative.mp hx'
+  show 5 < x'
   omega
 
 -- ============================================================================
@@ -460,6 +461,7 @@ theorem scenario2_rett : Rett.after A_late B_stative := by
   refine ⟨12, mem_tt_late.mpr rfl, 10, ⟨mem_tt_stative.mpr ⟨by omega, le_refl _⟩, ?_⟩, by omega⟩
   intro x' hx' hne
   have ⟨_, h2⟩ := mem_tt_stative.mp hx'
+  show 10 > x'
   omega
 
 -- ============================================================================
@@ -480,6 +482,7 @@ theorem scenario3_rett : Rett.before A_early B_telic := by
   refine ⟨1, mem_tt_early.mpr rfl, 3, ⟨mem_tt_telic.mpr ⟨le_refl _, by omega⟩, ?_⟩, by omega⟩
   intro x' hx' hne
   have ⟨h1, _⟩ := mem_tt_telic.mp hx'
+  show 3 < x'
   omega
 
 -- ============================================================================
@@ -497,6 +500,7 @@ theorem scenario4_rett : Rett.after A_late B_telic := by
   refine ⟨12, mem_tt_late.mpr rfl, 8, ⟨mem_tt_telic.mpr ⟨by omega, le_refl _⟩, ?_⟩, by omega⟩
   intro x' hx' hne
   have ⟨_, h2⟩ := mem_tt_telic.mp hx'
+  show 8 > x'
   omega
 
 -- ============================================================================
@@ -524,7 +528,7 @@ theorem scenario6_rett_false : ¬ Rett.after A_inside B_stative := by
   -- If m = 10, then 7 > 10 is false.
   by_cases hm10 : m = 10
   · omega
-  · have h10 := hm_max 10 (mem_tt_stative.mpr ⟨by omega, le_refl _⟩) (Ne.symm hm10)
+  · have h10 : m > 10 := hm_max 10 (mem_tt_stative.mpr ⟨by omega, le_refl _⟩) (Ne.symm hm10)
     omega
 
 -- ============================================================================
