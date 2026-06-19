@@ -74,7 +74,7 @@ open Minimalist.DegreeMovement
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
-open Semantics.Degree.Comparative (sComparative sComparative_eq_singleton_of_isGreatest)
+open Semantics.Degree (clausalComparison clausalComparison_eq_singleton_of_isGreatest)
 open Semantics.Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
 open Typology.PolarityItem (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
@@ -154,14 +154,14 @@ theorem bp_hkc_matches_heim_intensional_data :
 
 /-- B&P's clausal-source than-clause denotation `{d | d ≤ μ b}`
     collapses to the singleton `{μ b}` when fed to the S-comparative.
-    Direct corollary of `sComparative_eq_singleton_of_isGreatest`
+    Direct corollary of `clausalComparison_eq_singleton_of_isGreatest`
     instantiated at the than-clause's greatest element (the standard's
     measure). -/
 theorem thanClause_reduces_to_max
     {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
-    sComparative μ (thanClauseDenotation μ b) =
-      sComparative μ ({μ b} : Set D) :=
-  sComparative_eq_singleton_of_isGreatest μ (thanClauseMax_isGreatest μ b)
+    clausalComparison μ (thanClauseDenotation μ b) =
+      clausalComparison μ ({μ b} : Set D) :=
+  clausalComparison_eq_singleton_of_isGreatest μ (thanClauseMax_isGreatest μ b)
 
 /-- Combining [hoeksema-1983] §3.9 (the principal-ultrafilter /
     singleton-degree-set equivalence) with the B&P reduction:
@@ -172,8 +172,8 @@ theorem thanClause_reduces_to_max
 theorem npGQ_principal_eq_sComp_thanClause
     {D : Type*} [Preorder D] (μ : Entity → D) (b : Entity) :
     npComparativeGQ μ (principalUltrafilter b) =
-      sComparative μ (thanClauseDenotation μ b) := by
-  rw [npComparativeGQ_principal_eq_sComparative_singleton,
+      clausalComparison μ (thanClauseDenotation μ b) := by
+  rw [npComparativeGQ_principal_eq_clausalComparison_singleton,
       ← thanClause_reduces_to_max]
 
 -- ════════════════════════════════════════════════════

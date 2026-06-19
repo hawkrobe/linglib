@@ -313,7 +313,7 @@ theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
 theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     heimComparativeWithMeasure μ a b ↔
-      Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
+      Semantics.Degree.comparativeSem μ a b .positive :=
   Iff.rfl
 
 -- ─── Galois Connection ────────────────────────────

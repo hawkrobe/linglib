@@ -104,7 +104,7 @@ theorem superlative_iff_universal_comparative {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (C : Set Entity) (x : Entity) :
     absoluteSuperlative μ C x ↔
       x ∈ C ∧ ∀ y ∈ C, y ≠ x →
-        Semantics.Degree.Comparative.comparativeSem μ x y .positive := by
-  simp [absoluteSuperlative, Semantics.Degree.Comparative.comparativeSem]
+        Semantics.Degree.comparativeSem μ x y .positive := by
+  simp [absoluteSuperlative, Semantics.Degree.comparativeSem]
 
 end Semantics.Degree.Superlative

@@ -1,4 +1,5 @@
 import Mathlib.Order.Interval.Set.Basic
+import Linglib.Core.Order.StrictBounds
 
 /-!
 # Core/Scales/Comparison.lean — reified degree comparison
@@ -17,16 +18,16 @@ proofs reduce into `Set.mem_Ici` & friends rather than a bespoke lemma set:
 * `Comparison.over μ n` — the predication `μ ⁻¹' (c.interval n)`: the entities
   whose measure lands in the interval. Bare cardinals are `over .eq id`, measure
   phrases `over c μ` for a `MeasureFn`, classifier counting `over .eq (atom-count)`.
-
-`Comparison` (a reified *relation choice*, data) is distinct from `HasComparison`
-(the lawless binary-comparative *typeclass*); the measure-derived instances of
-the latter factor through `Comparison.gt` (see `HasComparison.ofMeasure`).
+* `Comparison.overSet μ Δ` — the *set-standard* generalization `μ ⁻¹' (c.bounds Δ)`:
+  the entities whose measure bounds the whole standard set `Δ`. The point predication
+  `over` is the singleton case (`overSet_singleton`); this is the order-theoretic core
+  of [hoeksema-1983]'s S-comparative, with the binary NP-comparative its singleton face.
 
 ## Main declarations
 
 * `Core.Order.Comparison` — the reified comparison.
 * `Comparison.isStrict` — Class A (`>`,`<`) vs. non-strict (`=`,`≥`,`≤`).
-* `Comparison.over` — preimage-of-interval predication.
+* `Comparison.over` / `Comparison.overSet` — point- and set-standard predications.
 * `Comparison.boundary_mem` — Class A/B as interval-endpoint membership.
 -/
 
@@ -94,5 +95,53 @@ def Comparison.over {E α : Type*} [Preorder α]
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
   cases c <;> simp [Comparison.interval, Comparison.isStrict]
+
+/-! ### Set-standard comparison
+
+The than-clause of a comparative supplies not a point but a *set* of degrees.
+`Comparison.bounds` lifts `Comparison.interval` from a point `n` to a standard set
+`Δ` — the (strict) upper/lower bounds matching the comparison's relation — and
+`Comparison.overSet` is the corresponding measure-pullback predication. The point
+predication `over` is exactly the singleton case (`overSet_singleton`). -/
+
+/-- The standard-set a comparison imposes: the bounds of `Δ` matching the
+comparison's relation (`upperBounds`/`strictUpperBounds`/… per case). Generalizes
+`Comparison.interval` from a point `n` (≡ `{n}`) to a standard set `Δ`. -/
+def Comparison.bounds {α : Type*} [Preorder α] : Comparison → Set α → Set α
+  | .eq => fun Δ => {x | ∀ a ∈ Δ, x = a}
+  | .ge => upperBounds
+  | .gt => strictUpperBounds
+  | .le => lowerBounds
+  | .lt => strictLowerBounds
+
+/-- **Set-standard predication**: the entities whose measure bounds the whole
+standard set `Δ`. The set-standard generalization of `Comparison.over` and the
+order-theoretic core of [hoeksema-1983]'s S-comparative; the binary NP-comparative
+is the singleton case (`overSet_singleton`). -/
+def Comparison.overSet {E α : Type*} [Preorder α]
+    (c : Comparison) (μ : E → α) (Δ : Set α) : Set E :=
+  μ ⁻¹' c.bounds Δ
+
+/-- `bounds` at a singleton standard collapses to the point `interval`. -/
+theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) (n : α) :
+    c.bounds {n} = c.interval n := by
+  cases c
+  case eq =>
+    ext x; simp only [Comparison.bounds, Comparison.interval, Set.mem_setOf_eq,
+      Set.mem_singleton_iff, forall_eq]
+  case ge => simp only [Comparison.bounds, Comparison.interval]; exact upperBounds_singleton
+  case gt => simp only [Comparison.bounds, Comparison.interval, strictUpperBounds_singleton]
+  case le => simp only [Comparison.bounds, Comparison.interval]; exact lowerBounds_singleton
+  case lt => simp only [Comparison.bounds, Comparison.interval, strictLowerBounds_singleton]
+
+@[simp] theorem Comparison.mem_overSet {E α : Type*} [Preorder α]
+    (c : Comparison) (μ : E → α) (Δ : Set α) (x : E) :
+    x ∈ c.overSet μ Δ ↔ μ x ∈ c.bounds Δ := Iff.rfl
+
+/-- **The NP ⊂ S bridge**: the set-standard predication at a singleton standard is
+the point predication. Makes [hoeksema-1983]'s NP↔S equivalence definitional. -/
+@[simp] theorem Comparison.overSet_singleton {E α : Type*} [Preorder α]
+    (c : Comparison) (μ : E → α) (n : α) : c.overSet μ {n} = c.over μ n := by
+  simp only [Comparison.overSet, Comparison.over, Comparison.bounds_singleton]
 
 end Core.Order

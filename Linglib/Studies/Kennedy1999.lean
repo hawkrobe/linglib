@@ -61,7 +61,7 @@ distribution), [bhatt-pancheva-2004] and [lechner-2004]
 
 namespace Kennedy1999
 
-open Semantics.Degree.Comparative (comparativeSem equativeSem
+open Semantics.Degree (comparativeSem equativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
   equativeSem_iff_posExt_subset)
 open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_false posExt_subset_iff negExt_subset_iff extent_galois_antitone)

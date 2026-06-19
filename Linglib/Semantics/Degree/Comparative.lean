@@ -2,251 +2,246 @@ import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Bounds
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.Comparison
 
 /-!
 # Framework-Independent Comparative Semantics
 [rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
 
-Comparative semantics shared across all degree frameworks: the basic
-`comparativeSem` and `equativeSem` functions, the set-of-degrees
-generalization `sComparative`, antonymy as scale reversal, DE-ness of
-than-clauses (NPI licensing), and boundary dependence.
+Comparative semantics shared across all degree frameworks: the binary
+`comparativeSem` / `equativeSem`, the set-of-degrees generalization
+`clausalComparison`, antonymy as scale reversal, and downward-entailingness of
+*than*-clauses. All three are the measure-pullback predications of the reified
+`Core.Order.Comparison` (`over` at a point standard, `overSet` at a set standard);
+`clausalComparison_eq_overSet` / `comparativeSem_positive_eq_over` make that an identity.
+Framework-specific content for [rett-2026] (MAX, ambidirectionality, manner
+implicature) lives in `Studies/Rett2026.lean`; [hoeksema-1983]'s polarity-asymmetry
+consumers in `Studies/Hoeksema1983.lean`.
 
-The set-of-degrees S-comparative `sComparative` (originally
-[hoeksema-1983] §3.8 Def 7) lives here as the natural generalization
-of `comparativeSem` from a binary comparator to a degree-set comparator.
-Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
-the licensing-context registry connection) remain in
-`Studies/Hoeksema1983.lean`.
+## Main declarations
 
-Framework-specific content for Rett 2026 (MAX, ambidirectionality,
-manner implicature) lives in `Studies/Rett2026.lean`.
-
-## Key Results
-
-1. **comparativeSem**: "A is taller than B" iff μ(A) > μ(B) (positive) or
-   μ(A) < μ(B) (negative).
-2. **sComparative**: degree-set generalization; anti-additive in the
-   standard set (the algebraic source of S-comparative NPI licensing).
-3. **sComparative_eq_singleton_of_isGreatest**: the S-comparative is
-   determined by the supremum of its degree-set argument when one
-   exists. Specializes to: a downward-closed than-clause denotation
-   reduces to its maximum ([bhatt-pancheva-2004] §3 reduction).
-4. **Antonymy as scale reversal**: "A taller than B" ↔ "B shorter than A".
-5. **DE-ness of than-clauses**: universal quantification over the standard
-   domain is anti-monotone.
-
+* `comparativeSem` / `equativeSem` — "A is Adj-er / as-Adj-as B" via a directed
+  measure on a scale.
+* `clausalComparison` — set-of-degrees comparative ([hoeksema-1983]), anti-additive in
+  its standard (`clausalComparison_isAntiAdditive`): the algebraic source of
+  *than*-clause NPI licensing.
+* `mem_clausalComparison_iff_subset_Iio` / `clausalComparison_singleton` — the set-of-degrees
+  comparative as `Set.Iio` interval inclusion (strict mirror of mathlib's
+  `mem_upperBounds_iff_subset_Iic`), collapsing to the binary comparator at a singleton.
+* `clausalComparison_eq_singleton_of_isGreatest` — a than-clause with a greatest degree
+  reduces to that degree ([bhatt-pancheva-2004], order-theoretic form).
+* `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
+* `comparative_iff_posExt_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 -/
 
-namespace Semantics.Degree.Comparative
+namespace Semantics.Degree
 
-open Core.Order (ScalePolarity)
-open Semantics.Degree (maxOnScale maxOnScale_singleton maxOnScale_ge_atMost)
--- ════════════════════════════════════════════════════
--- § 1. Scale Direction
--- ════════════════════════════════════════════════════
+open Core.Order (ScalePolarity Comparison)
 
-/-- Comparative direction reuses scale polarity from Core.
-    `positive`: "taller" — MAX picks the highest degrees.
-    `negative`: "shorter" — MAX picks the lowest degrees. -/
+/-! ### Scale direction -/
+
+/-- Comparative direction reuses scale polarity from `Core.Order`.
+`positive` ("taller") makes MAX pick the highest degrees; `negative`
+("shorter") the lowest. -/
 abbrev ScaleDirection := ScalePolarity
 
--- ════════════════════════════════════════════════════
--- § 2. Comparative and Equative Semantics
--- ════════════════════════════════════════════════════
+/-! ### Comparative and equative semantics -/
 
+section Direct
 variable {Entity : Type*} {α : Type*} [LinearOrder α]
 
-/-- Comparative semantics ([rett-2026] / [schwarzschild-2008]):
-    "A is Adj-er than B" iff μ(a) exceeds μ(b) on the directed scale. -/
+/-- Comparative semantics ([rett-2026], [schwarzschild-2008]): "A is Adj-er
+than B" iff `μ a` exceeds `μ b` on the directed scale. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with
   | .positive => μ a > μ b
   | .negative => μ a < μ b
 
-/-- Equative semantics: "A is as Adj as B" iff μ(a) ≥ μ(b) on the
-    directed scale. -/
+/-- Equative semantics: "A is as Adj as B" iff `μ a ≥ μ b` on the directed scale. -/
 def equativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with
   | .positive => μ a ≥ μ b
   | .negative => μ a ≤ μ b
 
-/-- **MAX–direct bridge**: the direct comparison `μ(a) > μ(b)` is
-    equivalent to the MAX-based formulation. -/
+/-- **Grounding**: the positive binary comparative is the strict-`>` point
+predication of `Core.Order.Comparison` at the standard `μ b` — not a reinvention. -/
+theorem comparativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ a ∈ Comparison.gt.over μ (μ b) := by
+  simp only [comparativeSem, Comparison.mem_over, Comparison.rel]
+
+/-- **Grounding**: the positive equative is the `≥` point predication of
+`Core.Order.Comparison` at the standard `μ b`. -/
+theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
+    equativeSem μ a b .positive ↔ a ∈ Comparison.ge.over μ (μ b) := by
+  simp only [equativeSem, Comparison.mem_over, Comparison.rel]
+
+/-- **MAX–direct bridge**: the direct comparison `μ a > μ b` is equivalent to
+the MAX-based formulation. -/
 theorem comparativeSem_eq_MAX (μ : Entity → α) (a b : Entity) :
     comparativeSem μ a b .positive ↔
       ∃ m ∈ maxOnScale (· > ·) ({μ b} : Set α), μ a > m := by
-  simp [comparativeSem, maxOnScale_singleton]
+  simp only [comparativeSem, maxOnScale_singleton, Set.mem_singleton_iff, exists_eq_left]
 
--- ════════════════════════════════════════════════════
--- § 3. Antonymy as Scale Reversal
--- ════════════════════════════════════════════════════
+/-! ### Antonymy as scale reversal -/
 
-/-- "A taller than B" ↔ "B shorter than A" — antonymy is argument swap
-    plus direction reversal. -/
+/-- "A taller than B" ↔ "B shorter than A" — antonymy is argument swap plus
+direction reversal. -/
 theorem taller_shorter_antonymy (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative := by
-  simp [comparativeSem]
+    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
+  Iff.rfl
 
 /-- Equative antonymy: "A as tall as B" ↔ "B as short as A". -/
 theorem equative_antonymy (μ : Entity → α) (a b : Entity) :
-    equativeSem μ a b .positive ↔ equativeSem μ b a .negative := by
-  simp [equativeSem]
+    equativeSem μ a b .positive ↔ equativeSem μ b a .negative :=
+  Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Boundary Dependence
--- ════════════════════════════════════════════════════
+end Direct
 
-/-- The comparative depends only on the boundary μ_b. -/
-theorem comparative_boundary {α : Type*} [LinearOrder α]
-    (μ_a μ_b : α) :
+/-! ### Boundary dependence -/
+
+section Boundary
+variable {α : Type*} [LinearOrder α]
+
+/-- The comparative depends only on the boundary `μ_b`. -/
+theorem comparative_boundary (μ_a μ_b : α) :
     (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a > m) ↔ μ_a > μ_b := by
   rw [maxOnScale_ge_atMost]
-  simp
+  simp only [Set.mem_singleton_iff, exists_eq_left]
 
-/-- The equative depends only on the boundary μ_b. -/
-theorem equative_boundary {α : Type*} [LinearOrder α]
-    (μ_a μ_b : α) :
+/-- The equative depends only on the boundary `μ_b`. -/
+theorem equative_boundary (μ_a μ_b : α) :
     (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a ≥ m) ↔ μ_a ≥ μ_b := by
   rw [maxOnScale_ge_atMost]
-  simp
+  simp only [Set.mem_singleton_iff, exists_eq_left]
 
--- ════════════════════════════════════════════════════
--- § 4½. Set-of-Degrees Comparative (`sComparative`)
--- ════════════════════════════════════════════════════
+end Boundary
+
+/-! ### Set-of-degrees comparative
+
+The S-comparative `clausalComparison` ([hoeksema-1983] §3.8 Def 7) generalizes
+`comparativeSem` from a single standard to an arbitrary degree-set standard.
+It needs only `[Preorder D]`. -/
+
+section SetOfDegrees
+variable {Entity D : Type*} [Preorder D]
 
 /-- S-comparative on a set of degrees ([hoeksema-1983] §3.8 Def 7):
-    `y ∈ sComparative μ Δ` iff `μ y` strictly exceeds every degree in
-    `Δ`. The than-clause supplies a set of degrees `Δ` (typically
-    existentially closed). Generalizes the binary `comparativeSem` from
-    a single standard to an arbitrary degree-set standard. -/
-def sComparative {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (Δ : Set D) : Set Entity :=
+`y ∈ clausalComparison μ Δ` iff `μ y` strictly exceeds every degree in `Δ`. The
+than-clause supplies the degree set `Δ` (typically existentially closed). -/
+def clausalComparison (μ : Entity → D) (Δ : Set D) : Set Entity :=
   fun y => ∀ d ∈ Δ, d < μ y
 
-/-- [hoeksema-1983] Fact 4: the S-comparative is anti-additive in
-    its set-of-degrees argument. The algebraic source of NPI licensing
-    in clausal *than*-comparatives. -/
-theorem sComparative_isAntiAdditive {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) :
-    Entailment.IsAntiAdditive (sComparative μ) :=
-  Entailment.isAntiAdditive_forall_mem
-    (fun d y => d < μ y)
+/-- **Grounding**: the set-of-degrees comparative is the strict-`>` *set-standard*
+predication of `Core.Order.Comparison` (`μ ⁻¹' strictUpperBounds Δ`) — the
+fundamental object, with the binary comparator its singleton case
+(`Comparison.overSet_singleton`). True by `rfl`: this is not a reinvention. -/
+theorem clausalComparison_eq_overSet (μ : Entity → D) (Δ : Set D) :
+    clausalComparison μ Δ = Comparison.gt.overSet μ Δ :=
+  rfl
 
-/-- Atomic specialization: at the singleton `{μ b}`, S-comparative
-    membership reduces to the binary "taller than `b`" relation. The
-    bridge between the Hoeksema set-theoretic schema and the everyday
-    `μ b < μ a` reading. -/
-theorem sComparative_atomic {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (a b : Entity) :
-    a ∈ sComparative μ {μ b} ↔ μ b < μ a := by
-  refine ⟨fun h => h (μ b) rfl, ?_⟩
-  intro h d hd
-  rw [Set.mem_singleton_iff] at hd
-  rw [hd]
+/-- The set-of-degrees comparative as a strict-interval inclusion: `y` clears the
+than-clause iff every standard degree lies strictly below `μ y`. Strict mirror of
+mathlib's `mem_upperBounds_iff_subset_Iic`; both faces are `Iff.rfl` siblings. -/
+theorem mem_clausalComparison_iff_subset_Iio (μ : Entity → D) (Δ : Set D) (y : Entity) :
+    y ∈ clausalComparison μ Δ ↔ Δ ⊆ Set.Iio (μ y) :=
+  Iff.rfl
+
+/-- A than-clause whose denotation is the single degree `d` reduces to the binary
+comparator `d < μ y`. Strict mirror of mathlib's
+`upperBounds_singleton : upperBounds {a} = Ici a`. -/
+theorem clausalComparison_singleton (μ : Entity → D) (d : D) :
+    clausalComparison μ {d} = {y | d < μ y} := by
+  ext y
+  refine ⟨fun h => h d rfl, ?_⟩
+  intro h x hx
+  rw [Set.mem_singleton_iff] at hx
+  rw [hx]
   exact h
 
-/-- **Reduction lemma** ([bhatt-pancheva-2004] §3 in algebraic
-    form): the S-comparative is determined by the *greatest* element of
-    its degree-set argument. Passing a set whose supremum is `m` yields
-    the same predicate as passing `{m}`.
+/-- [hoeksema-1983] Fact 4: the S-comparative is anti-additive in its
+set-of-degrees argument — the algebraic source of NPI licensing in clausal
+*than*-comparatives. -/
+theorem clausalComparison_isAntiAdditive (μ : Entity → D) :
+    Entailment.IsAntiAdditive (clausalComparison μ) :=
+  Entailment.isAntiAdditive_forall_mem (fun d y => d < μ y)
 
-    The proof requires neither linearity nor density of the scale —
-    only `[Preorder D]` and the `IsGreatest` witness. This is the
-    generic order-theoretic content behind B&P's claim that the
-    clausal-source than-clause denotation `{d | d ≤ μ b}` collapses
-    to its maximum. -/
-theorem sComparative_eq_singleton_of_isGreatest {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) {Δ : Set D} {m : D} (hm : IsGreatest Δ m) :
-    sComparative μ Δ = sComparative μ ({m} : Set D) := by
+/-- Atomic specialization: at the singleton `{μ b}`, S-comparative membership
+reduces to the binary "taller than `b`" relation. Corollary of
+`clausalComparison_singleton`. -/
+theorem clausalComparison_atomic (μ : Entity → D) (a b : Entity) :
+    a ∈ clausalComparison μ {μ b} ↔ μ b < μ a := by
+  simp only [clausalComparison_singleton, Set.mem_setOf_eq]
+
+/-- **Reduction lemma** ([bhatt-pancheva-2004] §3, order-theoretic form): the
+S-comparative is determined by the *greatest* element of its degree-set
+argument. Needs neither linearity nor density — only `[Preorder D]` and the
+`IsGreatest` witness. -/
+theorem clausalComparison_eq_singleton_of_isGreatest (μ : Entity → D) {Δ : Set D}
+    {m : D} (hm : IsGreatest Δ m) :
+    clausalComparison μ Δ = clausalComparison μ ({m} : Set D) := by
   ext y
   refine ⟨fun h d hd => ?_, fun h d hd => ?_⟩
   · rw [Set.mem_singleton_iff] at hd
     exact hd ▸ h m hm.1
   · exact lt_of_le_of_lt (hm.2 hd) (h m rfl)
 
-/-- Bridge: the atomic S-comparative coincides with the binary
-    `comparativeSem` on a `LinearOrder`. The set-of-degrees schema is a
-    strict generalization of the binary comparator. -/
-theorem sComparative_atomic_eq_comparativeSem
-    {Entity α : Type*} [LinearOrder α] (μ : Entity → α) (a b : Entity) :
-    a ∈ sComparative μ {μ b} ↔ comparativeSem μ a b .positive :=
-  sComparative_atomic μ a b
+end SetOfDegrees
 
--- ════════════════════════════════════════════════════
--- § 5. NPI Licensing in Comparatives
--- ════════════════════════════════════════════════════
+/-! ### Downward-entailingness of than-clauses -/
 
-/-- Universal quantification over a domain is antitone in the domain.
-    This is the generic monotonicity fact behind the surface observation
-    that *than*-clauses are downward-entailing — not [hoeksema-1983]'s
-    specific anti-additivity / Boolean-homomorphism result, which is
-    proved in `Studies/Hoeksema1983.lean`. -/
-theorem comparative_than_DE {α : Type*} (R : α → α → Prop)
-    (μ_a : α) (D₁ D₂ : Set α) (h_sub : D₁ ⊆ D₂)
-    (h : ∀ d ∈ D₂, R μ_a d) : ∀ d ∈ D₁, R μ_a d :=
+/-- Universal quantification over a domain is antitone in the domain — the
+generic monotonicity fact behind *than*-clauses being downward-entailing (not
+[hoeksema-1983]'s specific anti-additivity result, which is in
+`Studies/Hoeksema1983.lean`). -/
+theorem comparative_than_DE {α : Type*} (R : α → α → Prop) (μ_a : α)
+    (D₁ D₂ : Set α) (h_sub : D₁ ⊆ D₂) (h : ∀ d ∈ D₂, R μ_a d) :
+    ∀ d ∈ D₁, R μ_a d :=
   fun d hd => h d (h_sub hd)
 
--- ════════════════════════════════════════════════════
--- § 6. Manner Implicature (re-exported from Rett)
--- ════════════════════════════════════════════════════
+/-! ### Comparison as extent inclusion
 
-/-- Manner implicature triggered by EN in an ambidirectional construction.
-    `evaluative`: the relation is noteworthy (large gap / early timing).
-    `atypical`: the EN form is pragmatically marked (optional, stylistic). -/
-structure MannerEffect where
-  /-- Does EN trigger an evaluative reading? -/
-  evaluative : Bool
-  /-- Is the EN form pragmatically marked (optional, stylistic)? -/
-  atypical : Bool
-  deriving DecidableEq, Repr
+Three faces of the `posExt` / `negExt` correspondence ([kennedy-1999]): the
+binary comparator equals strict extent inclusion, and antonymy follows from
+extent complementarity rather than being stipulated. -/
 
--- ════════════════════════════════════════════════════
--- § 7. Comparative as Extent Inclusion
--- ════════════════════════════════════════════════════
+section Extent
+variable {Entity D : Type*} [LinearOrder D]
 
-/-- Comparative via extents: "A is taller than B" iff A's positive
-    extent strictly contains B's. Bridges the point comparison
-    to the algebraic `posExt_ssubset_iff` from `Semantics.Degree`. -/
-theorem comparative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔
-      Semantics.Degree.posExt μ b ⊂ Semantics.Degree.posExt μ a := by
-  exact (Semantics.Degree.posExt_ssubset_iff μ b a).symm
+/-- Bridge: the atomic S-comparative coincides with the binary `comparativeSem`
+on a `LinearOrder`. The set-of-degrees schema strictly generalizes the binary
+comparator. -/
+theorem clausalComparison_atomic_eq_comparativeSem (μ : Entity → D) (a b : Entity) :
+    a ∈ clausalComparison μ {μ b} ↔ comparativeSem μ a b .positive :=
+  clausalComparison_atomic μ a b
 
+/-- "A is taller than B" iff A's positive extent strictly contains B's
+([kennedy-1999]). Bridges the point comparison to `posExt_ssubset_iff`. -/
+theorem comparative_iff_posExt_ssubset (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ posExt μ b ⊂ posExt μ a :=
+  (posExt_ssubset_iff μ b a).symm
 
--- ════════════════════════════════════════════════════
--- § 8. Antonymy from Extent Algebra
--- ════════════════════════════════════════════════════
+/-- "A taller than B" iff "B shorter than A", derived from the complementarity
+of positive and negative extents rather than stipulated as a lexical property
+of antonym pairs ([kennedy-1999]). -/
+theorem comparative_iff_negExt_ssubset (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ negExt μ a ⊂ negExt μ b := by
+  rw [comparative_iff_posExt_ssubset, antonymy_biconditional]
 
-/-- "A is taller than B" iff "B is shorter than A" — derived from
-    the complementarity of positive and negative extents, not
-    stipulated as a lexical property of antonym pairs.
-
-    This is [kennedy-1999]'s central result: antonymy equivalence
-    follows from the algebra of extents. Delegates to
-    `Semantics.Degree.antonymy_biconditional`. -/
-theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    comparativeSem μ a b .positive ↔
-      Semantics.Degree.negExt μ a ⊂ Semantics.Degree.negExt μ b := by
-  rw [comparative_iff_posExt_ssubset, Semantics.Degree.antonymy_biconditional]
+end Extent
 
 /-! ### Strengthened, negated, and extent-theoretic equatives
 [kennedy-2007] [rett-2020] [schwarzschild-2008] [thomas-deo-2020]
 
-The literal semantics of the equative is "at least as" (`equativeSem`
-with `.positive`). The "exactly as" reading is derived by scalar
-implicature: choosing *as tall as* over the stronger *taller than*
-implicates that the comparative is false, yielding equality. A
-granularity-based alternative is in `Degree.Granularity`. -/
+The literal equative is "at least as" (`equativeSem .positive`); the "exactly
+as" reading is derived by scalar implicature (choosing *as tall as* over the
+stronger *taller than*). A granularity-based alternative is in
+`Degree.Granularity`. -/
 
 section Equative
-
 variable {Entity D : Type*}
 
-/-- Equative strengthened semantics: "A is as tall as B" iff `μ(A) = μ(B)`.
-The "exactly as" reading, derived by implicature. -/
+/-- Equative strengthened semantics: "A is as tall as B" iff `μ a = μ b` — the
+"exactly as" reading, derived by implicature. -/
 def equativeStrengthened [Preorder D] (μ : Entity → D) (a b : Entity) : Prop :=
   μ a = μ b
 
@@ -255,31 +250,27 @@ theorem equativeStrengthened_entails_sem [LinearOrder D] (μ : Entity → D) (a 
     (h : equativeStrengthened μ a b) : equativeSem μ a b .positive :=
   le_of_eq h.symm
 
-/-- Negated equative: "A is not as tall as B" iff `μ(A) < μ(B)`. -/
+/-- Negated equative: "A is not as tall as B" iff `μ a < μ b`. -/
 def negatedEquative [LinearOrder D] (μ : Entity → D) (a b : Entity) : Prop :=
   μ a < μ b
 
 /-- Negated equative is the negation of the literal equative. -/
 theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     negatedEquative μ a b ↔ ¬ equativeSem μ a b .positive := by
-  simp [negatedEquative, equativeSem, not_le]
+  simp only [negatedEquative, equativeSem, ge_iff_le, not_le]
 
-open Semantics.Degree (posExt posExt_subset_iff posExt_ssubset_iff)
-/-- Equative as positive extent inclusion ([kennedy-1999]):
-"A is as tall as B" iff `posExt(B) ⊆ posExt(A)` — every degree
-B has, A also has. -/
-theorem equativeSem_iff_posExt_subset [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
+/-- Equative as positive extent inclusion ([kennedy-1999]): "A is as tall as B"
+iff `posExt μ b ⊆ posExt μ a` — every degree B has, A also has. -/
+theorem equativeSem_iff_posExt_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
   (posExt_subset_iff μ b a).symm
 
-/-- Negated equative as strict extent inclusion: B has strictly more
-degrees than A. -/
-theorem negatedEquative_iff_posExt_ssubset [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
+/-- Negated equative as strict extent inclusion: B has strictly more degrees
+than A. -/
+theorem negatedEquative_iff_posExt_ssubset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     negatedEquative μ a b ↔ posExt μ a ⊂ posExt μ b :=
   (posExt_ssubset_iff μ a b).symm
 
 end Equative
 
-end Semantics.Degree.Comparative
+end Semantics.Degree
