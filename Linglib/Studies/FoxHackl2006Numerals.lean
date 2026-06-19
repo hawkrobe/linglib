@@ -63,8 +63,7 @@ theorem atLeast_has_maxInf_general (n : ℕ) :
     Contrast with `moreThan_noMaxInf` on dense scales: no rescue there. -/
 theorem moreThan_has_maxInf_nat :
     HasMaxInf (moreThanDeg (α := ℕ) id) 3 :=
-  moreThan_nat_hasMaxInf id 3 (show moreThanDeg id 0 3 from by
-    simp [moreThanDeg])
+  moreThan_nat_hasMaxInf id 3 (show moreThanDeg id 0 3 from by decide)
 
 -- ════════════════════════════════════════════════════
 -- § 3. MIP Derives Exact Meaning

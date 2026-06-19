@@ -3,6 +3,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Tactic.NormNum
 import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.Comparison
 
 /-!
 # Core/Scales/Predicate.lean — degree predicates + monotonicity
@@ -135,24 +136,24 @@ have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
 This is the UDM prediction ([fox-2007] §2). -/
 
 /-- Degree property for "exactly d": the measure at w equals d. -/
-def eqDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  fun d w => μ w = d
+abbrev eqDeg {W : Type*} (μ : W → α) : α → W → Prop :=
+  Comparison.eq.over μ
 
 /-- Degree property for "at least d": the measure at w meets or exceeds d. -/
-def atLeastDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  fun d w => μ w ≥ d
+abbrev atLeastDeg {W : Type*} (μ : W → α) : α → W → Prop :=
+  Comparison.ge.over μ
 
 /-- Degree property for "more than d": the measure strictly exceeds d. -/
-def moreThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  fun d w => μ w > d
+abbrev moreThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
+  Comparison.gt.over μ
 
 /-- Degree property for "at most d": the measure at w is at most d. -/
-def atMostDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  fun d w => μ w ≤ d
+abbrev atMostDeg {W : Type*} (μ : W → α) : α → W → Prop :=
+  Comparison.le.over μ
 
 /-- Degree property for "less than d": the measure is strictly less than d. -/
-def lessThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  fun d w => μ w < d
+abbrev lessThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
+  Comparison.lt.over μ
 
 /-- "At least" is downward monotone: weaker thresholds are easier to satisfy. -/
 theorem atLeastDeg_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (atLeastDeg μ) :=
@@ -206,24 +207,24 @@ theorem typeLower_eqDeg_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
   exact heq'.symm ▸ hd'
 
 instance atLeastDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
-    (d : α) (w : W) : Decidable (atLeastDeg μ d w) := by
-  unfold atLeastDeg; infer_instance
+    (d : α) (w : W) : Decidable (atLeastDeg μ d w) :=
+  inferInstanceAs (Decidable (d ≤ μ w))
 
 instance atMostDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
-    (d : α) (w : W) : Decidable (atMostDeg μ d w) := by
-  unfold atMostDeg; infer_instance
+    (d : α) (w : W) : Decidable (atMostDeg μ d w) :=
+  inferInstanceAs (Decidable (μ w ≤ d))
 
 instance moreThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
-    (d : α) (w : W) : Decidable (moreThanDeg μ d w) := by
-  unfold moreThanDeg; infer_instance
+    (d : α) (w : W) : Decidable (moreThanDeg μ d w) :=
+  inferInstanceAs (Decidable (d < μ w))
 
 instance lessThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
-    (d : α) (w : W) : Decidable (lessThanDeg μ d w) := by
-  unfold lessThanDeg; infer_instance
+    (d : α) (w : W) : Decidable (lessThanDeg μ d w) :=
+  inferInstanceAs (Decidable (μ w < d))
 
 instance eqDeg.decidable {W : Type*} [DecidableEq α] (μ : W → α)
-    (d : α) (w : W) : Decidable (eqDeg μ d w) := by
-  unfold eqDeg; infer_instance
+    (d : α) (w : W) : Decidable (eqDeg μ d w) :=
+  inferInstanceAs (Decidable (μ w = d))
 
 instance typeLower_eqDeg.decidable {W : Type*} (μ : W → α) (d : α) (w : W) :
     Decidable (typeLower (eqDeg μ) d w) :=
@@ -257,7 +258,6 @@ This is the canonical comparison primitive of the scale substrate; the reified
 def relationalGQ {W : Type*} (rel : α → α → Prop) (μ : W → α) (d : α) (w : W) : Prop :=
   rel (μ w) d
 
-omit [LinearOrder α] in
 /-- Specialisation to `(· = ·)` recovers `eqDeg`. -/
 theorem relationalGQ_eq_eqDeg {W : Type*} (μ : W → α) :
     relationalGQ (· = ·) μ = eqDeg μ := rfl
