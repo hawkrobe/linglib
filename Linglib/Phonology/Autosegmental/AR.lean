@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Graph
+import Mathlib.Algebra.Group.Hom.Defs
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.CategoryTheory.Monoidal.Category
 
@@ -198,6 +199,28 @@ theorem empty_concat (A : AR α β) : empty.concat A = A :=
     `Graph.concat_empty`). -/
 theorem concat_empty (A : AR α β) : A.concat empty = A :=
   ext_toGraph (Graph.concat_empty A.toGraph)
+
+/-- ARs form a monoid under concatenation, with the empty AR as unit — the
+    well-formed (in-bounds, planar) submonoid of `Graph`'s concatenation monoid
+    (see `toGraphHom`). The monoid laws are the lifts above. -/
+instance instMonoid : Monoid (AR α β) where
+  mul := concat
+  one := empty
+  mul_assoc := concat_assoc
+  one_mul := empty_concat
+  mul_one := concat_empty
+
+@[simp] theorem mul_eq_concat (A B : AR α β) : A * B = A.concat B := rfl
+
+@[simp] theorem one_eq_empty : (1 : AR α β) = empty := rfl
+
+/-- The underlying-graph projection is a monoid homomorphism: `AR α β` is the
+    in-bounds, planar submonoid of `Graph α β`. Injective by `ext_toGraph`, so
+    it exhibits the autosegmental monoid as a submonoid of all graphs. -/
+def toGraphHom : AR α β →* Graph α β where
+  toFun A := A.toGraph
+  map_one' := rfl
+  map_mul' _ _ := rfl
 
 /-! ### Category instance
 
