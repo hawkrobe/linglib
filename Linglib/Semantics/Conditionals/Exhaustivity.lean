@@ -89,7 +89,7 @@ exhaustification provides exclusion (only t causes C), the QUD-driven
 coverage assumption closes the gap to perfection (every C has a cause,
 the only cause requires p, so ¬p → ¬C).
 
-The proof is purely structural (no `sorry`, no `native_decide`). -/
+The proof is purely structural (no `sorry`, no `decide`). -/
 theorem perfection_from_exclusion_and_coverage
     {ι W : Type*}
     (causes : ι → Set W) (triggers : Set ι)

@@ -273,34 +273,34 @@ def resolveThreeWay (back : Bool) (round : Bool) : Segment :=
 -- ============================================================================
 
 -- Backness
-theorem a_is_back : a_vowel.HasValue .back true = true := by native_decide
-theorem o_is_back : o_vowel.HasValue .back true = true := by native_decide
-theorem u_is_back : u_vowel.HasValue .back true = true := by native_decide
-theorem i_is_front : i_vowel.HasValue .back false = true := by native_decide
-theorem e_is_front : e_vowel.HasValue .back false = true := by native_decide
-theorem ö_is_front : ö_vowel.HasValue .back false = true := by native_decide
-theorem ü_is_front : ü_vowel.HasValue .back false = true := by native_decide
+theorem a_is_back : a_vowel.HasValue .back true = true := by decide
+theorem o_is_back : o_vowel.HasValue .back true = true := by decide
+theorem u_is_back : u_vowel.HasValue .back true = true := by decide
+theorem i_is_front : i_vowel.HasValue .back false = true := by decide
+theorem e_is_front : e_vowel.HasValue .back false = true := by decide
+theorem ö_is_front : ö_vowel.HasValue .back false = true := by decide
+theorem ü_is_front : ü_vowel.HasValue .back false = true := by decide
 
 -- Rounding
-theorem ö_is_round : ö_vowel.HasValue .round true = true := by native_decide
-theorem ü_is_round : ü_vowel.HasValue .round true = true := by native_decide
-theorem i_is_unround : i_vowel.HasValue .round false = true := by native_decide
-theorem e_is_unround : e_vowel.HasValue .round false = true := by native_decide
-theorem a_is_unround : a_vowel.HasValue .round false = true := by native_decide
+theorem ö_is_round : ö_vowel.HasValue .round true = true := by decide
+theorem ü_is_round : ü_vowel.HasValue .round true = true := by decide
+theorem i_is_unround : i_vowel.HasValue .round false = true := by decide
+theorem e_is_unround : e_vowel.HasValue .round false = true := by decide
+theorem a_is_unround : a_vowel.HasValue .round false = true := by decide
 
 -- Harmony classification
-theorem i_is_neutral : isNeutral i_vowel = true := by native_decide
-theorem e_is_neutral : isNeutral e_vowel = true := by native_decide
-theorem ö_not_neutral : isNeutral ö_vowel = false := by native_decide
-theorem ü_not_neutral : isNeutral ü_vowel = false := by native_decide
-theorem a_not_neutral : isNeutral a_vowel = false := by native_decide
-theorem o_not_neutral : isNeutral o_vowel = false := by native_decide
-theorem u_not_neutral : isNeutral u_vowel = false := by native_decide
+theorem i_is_neutral : isNeutral i_vowel = true := by decide
+theorem e_is_neutral : isNeutral e_vowel = true := by decide
+theorem ö_not_neutral : isNeutral ö_vowel = false := by decide
+theorem ü_not_neutral : isNeutral ü_vowel = false := by decide
+theorem a_not_neutral : isNeutral a_vowel = false := by decide
+theorem o_not_neutral : isNeutral o_vowel = false := by decide
+theorem u_not_neutral : isNeutral u_vowel = false := by decide
 
-theorem ö_is_frontHarmonic : isFrontHarmonic ö_vowel = true := by native_decide
-theorem ü_is_frontHarmonic : isFrontHarmonic ü_vowel = true := by native_decide
-theorem a_is_backHarmonic : isBackHarmonic a_vowel = true := by native_decide
-theorem o_is_backHarmonic : isBackHarmonic o_vowel = true := by native_decide
+theorem ö_is_frontHarmonic : isFrontHarmonic ö_vowel = true := by decide
+theorem ü_is_frontHarmonic : isFrontHarmonic ü_vowel = true := by decide
+theorem a_is_backHarmonic : isBackHarmonic a_vowel = true := by decide
+theorem o_is_backHarmonic : isBackHarmonic o_vowel = true := by decide
 
 -- ============================================================================
 -- § 7: Stress Tests — Where `Harmony.System` Succeeds
@@ -315,27 +315,27 @@ theorem o_is_backHarmonic : isBackHarmonic o_vowel = true := by native_decide
     Suffixes: tűz-nek (dat), tűz-től (abl). -/
 theorem tűz_front :
     triggerValue hungarianPalatalHarmony [ü_vowel] = some false := by
-  native_decide
+  decide
 
 /-- *ház* 'house' (IA-b): last vowel /a/ → back harmony.
     Suffixes: ház-nak (dat), ház-tól (abl). -/
 theorem ház_back :
     triggerValue hungarianPalatalHarmony [a_vowel] = some true := by
-  native_decide
+  decide
 
 /-- *koszorú* 'wreath' (IA-b): vowels /o, o, u/ all back → back harmony.
     Suffixes: koszorú-nak, koszorú-tól. -/
 theorem koszorú_back :
     triggerValue hungarianPalatalHarmony [o_vowel, o_vowel, u_vowel] =
       some true := by
-  native_decide
+  decide
 
 /-- *tükör* 'mirror' (IA-f): vowels /ü, ö/ both front harmonic → front.
     Suffixes: tükör-nek, tükör-től. -/
 theorem tükör_front :
     triggerValue hungarianPalatalHarmony [ü_vowel, ö_vowel] =
       some false := by
-  native_decide
+  decide
 
 /-- *hernyó* 'caterpillar' (IA-b): vowels /e, o/ — /e/ is neutral,
     /o/ is the last vowel and is back harmonic → back harmony.
@@ -344,7 +344,7 @@ theorem tükör_front :
 theorem hernyó_back :
     triggerValue hungarianPalatalHarmony [e_vowel, o_vowel] =
       some true := by
-  native_decide
+  decide
 
 /-! ### Class IB: Complex harmonic (disharmonic) stems
     Conflicting harmonic vowels within the stem. The LAST harmonic
@@ -356,7 +356,7 @@ theorem hernyó_back :
 theorem sofőr_front :
     triggerValue hungarianPalatalHarmony [o_vowel, ö_vowel] =
       some false := by
-  native_decide
+  decide
 
 /-- *nüansz* 'nuance' (IB-b): vowels /ü, a/ — last harmonic is /a/ [+back]
     → back suffixes. Suffixes: nüansz-nak, nüansz-tól.
@@ -364,7 +364,7 @@ theorem sofőr_front :
 theorem nüansz_back :
     triggerValue hungarianPalatalHarmony [ü_vowel, a_vowel] =
       some true := by
-  native_decide
+  decide
 
 /-! ### Class IIB-b: Complex neutral, back (transparent)
     These are the textbook transparency cases. A back harmonic vowel
@@ -379,7 +379,7 @@ theorem nüansz_back :
 theorem papír_back :
     triggerValue hungarianPalatalHarmony [a_vowel, i_vowel] =
       some true := by
-  native_decide
+  decide
 
 /-- *kávé* 'coffee': vowels /a, e/ — /e/ is neutral, `triggerValue`
     finds /a/ → back harmony. Suffixes: kávé-nak, kávé-tól.
@@ -389,7 +389,7 @@ theorem papír_back :
 theorem kávé_back :
     triggerValue hungarianPalatalHarmony [a_vowel, e_vowel] =
       some true := by
-  native_decide
+  decide
 
 /-! ### Class IIB-f: Complex neutral, front (transparent from front)
     Front harmonic vowel + neutral → front harmony via last trigger. -/
@@ -399,7 +399,7 @@ theorem kávé_back :
 theorem üveg_front :
     triggerValue hungarianPalatalHarmony [ü_vowel, e_vowel] =
       some false := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 8: Stress Tests — Where `Harmony.System` Fails
@@ -423,7 +423,7 @@ theorem üveg_front :
     cannot determine this. -/
 theorem víz_no_trigger :
     triggerValue hungarianPalatalHarmony [i_vowel] = none := by
-  native_decide
+  decide
 
 /-- *híd* 'bridge' (IIA-b, antiharmonic): only /i/ → `triggerValue`
     returns `none`. The correct answer is BACK (híd-nak, híd-tól),
@@ -433,7 +433,7 @@ theorem víz_no_trigger :
     lexical specification beyond phonological features. -/
 theorem híd_no_trigger :
     triggerValue hungarianPalatalHarmony [i_vowel] = none := by
-  native_decide
+  decide
 
 /-- The critical failure: víz and híd are phonologically identical
     (both have only /i/) but require different suffix harmony.
@@ -446,7 +446,7 @@ theorem víz_híd_indistinguishable :
     Correct answer: back (cél-nak). Another antiharmonic stem. -/
 theorem cél_no_trigger :
     triggerValue hungarianPalatalHarmony [e_vowel] = none := by
-  native_decide
+  decide
 
 /-! ### Vacillation — OPTIONALITY FAILURE
 
@@ -471,7 +471,7 @@ theorem cél_no_trigger :
 theorem hotel_predicted_back :
     triggerValue hungarianPalatalHarmony [o_vowel, e_vowel] =
       some true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 9: Suffix Harmonization
@@ -489,13 +489,13 @@ def archiphoneU : Segment := Segment.ofSpecs
 theorem ház_suffix_becomes_back :
     (harmonizeOne hungarianPalatalHarmony true archiphoneU).HasValue
       .back true = true := by
-  native_decide
+  decide
 
 /-- *tűz* → suffix vowel becomes [−back]. -/
 theorem tűz_suffix_becomes_front :
     (harmonizeOne hungarianPalatalHarmony false archiphoneU).HasValue
       .back false = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 10: Rounding Harmony Verification ([siptar-torkenczy-2000] §3.2.4)
@@ -509,15 +509,15 @@ theorem tűz_suffix_becomes_front :
 -- Labial trigger extraction
 theorem tűz_round :
     triggerValue hungarianLabialHarmony [ü_vowel] = some true := by
-  native_decide
+  decide
 
 theorem víz_unround :
     triggerValue hungarianLabialHarmony [i_vowel] = some false := by
-  native_decide
+  decide
 
 theorem ház_unround :
     triggerValue hungarianLabialHarmony [a_vowel] = some false := by
-  native_decide
+  decide
 
 /-- *tűz-höz*: front (back=false) + rounded (round=true) → /ö/. -/
 theorem tűz_hoz_suffix :
@@ -541,18 +541,18 @@ theorem back_rounding_irrelevant :
 theorem kötény_front :
     triggerValue hungarianPalatalHarmony [ö_vowel, e_vowel] =
       some false := by
-  native_decide
+  decide
 theorem kötény_unround :
     triggerValue hungarianLabialHarmony [ö_vowel, e_vowel] =
       some false := by
-  native_decide
+  decide
 
 /-- *szemölcs-höz*: vowels /e, ö/. Palatal: last trigger /ö/ → front.
     Labial: last vowel /ö/ → rounded. Three-way → /ö/ (höz). -/
 theorem szemölcs_round :
     triggerValue hungarianLabialHarmony [e_vowel, ö_vowel] =
       some true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 11: Two-Dimensional Harmony — End-to-End
@@ -572,14 +572,14 @@ theorem ház_twoDim :
     let back := triggerValue hungarianPalatalHarmony [a_vowel]
     let round := triggerValue hungarianLabialHarmony [a_vowel]
     back = some true ∧ round = some false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Compose both harmony dimensions for a front rounded stem. -/
 theorem tűz_twoDim :
     let back := triggerValue hungarianPalatalHarmony [ü_vowel]
     let round := triggerValue hungarianLabialHarmony [ü_vowel]
     back = some false ∧ round = some true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Compose both harmony dimensions for a front unrounded (neutral) stem.
     Palatal harmony returns `none` (no trigger), but labial harmony
@@ -588,7 +588,7 @@ theorem víz_twoDim :
     let back := triggerValue hungarianPalatalHarmony [i_vowel]
     let round := triggerValue hungarianLabialHarmony [i_vowel]
     back = none ∧ round = some false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 12: Cross-Linguistic Comparison
@@ -657,28 +657,28 @@ def palatalHarmony_eBlocks : System :=
     Contrast: `hotel_predicted_back` in the transparent model gives `some true`. -/
 theorem hotel_eBlocks_no_trigger :
     triggerValue palatalHarmony_eBlocks [o_vowel, e_vowel] = none := by
-  native_decide
+  decide
 
 /-- With /e/ as blocker: *papír* /a, i/ → /i/ is still transparent (high),
     so `triggerValue` finds /a/ → back harmony. Unchanged from transparent model. -/
 theorem papír_eBlocks_still_back :
     triggerValue palatalHarmony_eBlocks [a_vowel, i_vowel] = some true := by
-  native_decide
+  decide
 
 /-- The blocker model shrinks the harmony domain for *hotel*:
     domain after the last blocker (/e/) is empty. -/
 theorem hotel_domain_empty :
     (harmonyDomain palatalHarmony_eBlocks [o_vowel, e_vowel]).length = 0 := by
-  native_decide
+  decide
 
 /-- The transparent model gives the full domain (no blockers). -/
 theorem hotel_domain_full :
     (harmonyDomain hungarianPalatalHarmony [o_vowel, e_vowel]).length = 2 := by
-  native_decide
+  decide
 
 /-- `spreadSuffix` preserves suffix length even with blockers. -/
 theorem spread_preserves_length :
     (spreadSuffix palatalHarmony_eBlocks true [e_vowel, archiphoneU]).length = 2 := by
-  native_decide
+  decide
 
 end Hungarian.VowelHarmony

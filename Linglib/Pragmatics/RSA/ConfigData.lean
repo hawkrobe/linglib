@@ -16,7 +16,7 @@ noncomputable. `RSAConfigData` replaces this with `S1ScoreSpec`, an
 enumeration of the scoring patterns actually used across all implementations.
 
 Each `S1ScoreSpec` variant has:
-1. A computable ℚ implementation (for `native_decide` verification)
+1. A computable ℚ implementation (for `decide` verification)
 2. A noncomputable ℝ expansion (for `toRSAConfig`)
 3. A soundness bridge (the ℝ expansion matches the original `s1Score`)
 
@@ -134,7 +134,7 @@ inductive S2ScoreSpec (U W L : Type*) where
 /-- Computable RSA configuration with ℚ-valued data fields.
 
     Mirrors `RSAConfig` but all fields are computable, enabling
-    `native_decide` verification. The `toRSAConfig` lift casts ℚ → ℝ
+    `decide` verification. The `toRSAConfig` lift casts ℚ → ℝ
     and expands `s1Spec` into the appropriate `s1Score` lambda. -/
 structure RSAConfigData (U W : Type*) [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W] where

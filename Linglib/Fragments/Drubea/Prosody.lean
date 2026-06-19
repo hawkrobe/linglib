@@ -132,7 +132,7 @@ def allStems : List StemEntry :=
     is purely prosodic (register), not segmental. -/
 theorem mono_pairs_same_form :
     monoMinimalPairs.all (fun (a, b) => a.form == b.form) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 4: Utterance-Final Prosody

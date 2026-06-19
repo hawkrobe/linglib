@@ -358,7 +358,7 @@ private def result_slash : SlashValue :=
 Head-Filler discharge → empty SLASH. -/
 theorem extraction_complete :
     result_slash.isEmpty = true := by
-  native_decide
+  decide
 
 end DerivationExamples
 

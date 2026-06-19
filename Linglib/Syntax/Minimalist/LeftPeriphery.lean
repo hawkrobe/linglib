@@ -411,35 +411,35 @@ def fieldSelectionClass (v : VerbEntry) : SelectionClass :=
 
 /-! ## I2. Per-verb verification theorems
 
-Each proved by `native_decide`. Changing one VerbEntry field breaks exactly
+Each proved by `decide`. Changing one VerbEntry field breaks exactly
 one theorem — this is the dense dependency web. -/
 
 theorem know_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.know = .responsive := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.know = .responsive := by decide
 
 theorem believe_is_uninterrogative :
-    fieldSelectionClass English.Predicates.Verbal.believe = .uninterrogative := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.believe = .uninterrogative := by decide
 
 theorem wonder_is_rogativePerspP :
-    fieldSelectionClass English.Predicates.Verbal.wonder = .rogativePerspP := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.wonder = .rogativePerspP := by decide
 
 theorem ask_is_rogativeSAP :
-    fieldSelectionClass English.Predicates.Verbal.ask = .rogativeSAP := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.ask = .rogativeSAP := by decide
 
 theorem investigate_is_rogativeCP :
-    fieldSelectionClass English.Predicates.Verbal.investigate = .rogativeCP := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.investigate = .rogativeCP := by decide
 
 theorem depend_on_is_rogativeCP :
-    fieldSelectionClass English.Predicates.Verbal.depend_on = .rogativeCP := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.depend_on = .rogativeCP := by decide
 
 theorem remember_rog_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.remember_rog = .responsive := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.remember_rog = .responsive := by decide
 
 theorem forget_rog_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.forget_rog = .responsive := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.forget_rog = .responsive := by decide
 
 theorem discover_is_responsive :
-    fieldSelectionClass English.Predicates.Verbal.discover = .responsive := by native_decide
+    fieldSelectionClass English.Predicates.Verbal.discover = .responsive := by decide
 
 /-! ## I3. Cross-layer agreement
 
@@ -453,7 +453,7 @@ theorem classifyVerb_agrees_with_selectionClass :
     classifyVerb "ask" = fieldSelectionClass English.Predicates.Verbal.ask ∧
     classifyVerb "investigate" = fieldSelectionClass English.Predicates.Verbal.investigate ∧
     classifyVerb "depend on" = fieldSelectionClass English.Predicates.Verbal.depend_on ∧
-    classifyVerb "believe" = fieldSelectionClass English.Predicates.Verbal.believe := by native_decide
+    classifyVerb "believe" = fieldSelectionClass English.Predicates.Verbal.believe := by decide
 
 /-- Semantic derivation matches field-based derivation. -/
 theorem deriveSelectionClass_agrees_with_selectionClass :
@@ -461,7 +461,7 @@ theorem deriveSelectionClass_agrees_with_selectionClass :
     deriveSelectionClass English.Predicates.Verbal.wonder = fieldSelectionClass English.Predicates.Verbal.wonder ∧
     deriveSelectionClass English.Predicates.Verbal.ask = fieldSelectionClass English.Predicates.Verbal.ask ∧
     deriveSelectionClass English.Predicates.Verbal.investigate = fieldSelectionClass English.Predicates.Verbal.investigate ∧
-    deriveSelectionClass English.Predicates.Verbal.believe = fieldSelectionClass English.Predicates.Verbal.believe := by native_decide
+    deriveSelectionClass English.Predicates.Verbal.believe = fieldSelectionClass English.Predicates.Verbal.believe := by decide
 
 -- ============================================================================
 -- J. Compositional PerspP via EpistemicModel

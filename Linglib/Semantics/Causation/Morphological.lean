@@ -529,6 +529,6 @@ def krejciLanguages : List CausativizabilityData :=
 
 /-- All 12 languages respect the implicational hierarchy. -/
 theorem krejci_hierarchy_holds :
-    krejciLanguages.all (·.respectsHierarchy) = true := by native_decide
+    krejciLanguages.all (·.respectsHierarchy) = true := by decide
 
 end Causation.Morphological

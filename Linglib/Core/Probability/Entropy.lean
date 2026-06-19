@@ -57,7 +57,7 @@ marginal-from-joint structural lemmas (`PMF.map_apply` on `Prod.fst/snd`)
 and live in Phase 4 of the refactor (cross-paper bridges) along with the
 substrate-level theorems that consume them.
 
-All proofs in this file are structural. No `sorry`, no `native_decide`.
+All proofs in this file are structural. No `sorry`, no `decide`.
 -/
 
 set_option autoImplicit false

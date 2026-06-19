@@ -196,7 +196,7 @@ The belief formation causal model uses `Causation` — the V2 SEM
 substrate (PMF-canonical Mechanism, BoolSEM specialization for the
 deterministic-binary case). The PLC predicate is defined via
 `SEM.developDetOn` with an explicit vertex list so kernel reduction
-works structurally (no `native_decide`; mathlib-quality `rfl`/`decide`
+works structurally (no `decide`; mathlib-quality `rfl`/`decide`
 proofs).
 -/
 
@@ -271,7 +271,7 @@ def beliefVarList : List BeliefVar :=
     produces α at the at-issue vertex.
 
     Defined via `developDetOn` with the explicit `beliefVarList` so kernel
-    reduction works structurally (no `native_decide`). One iteration of
+    reduction works structurally (no `decide`). One iteration of
     `stepOnceDetOn` over a topologically-ordered list propagates the entire
     chain; we use `8 = beliefVarList.length` iterations conservatively. -/
 noncomputable def satisfiesPLC (presup atIssue : BeliefVar) : Prop :=

@@ -260,33 +260,33 @@ Morphological complexity determines markedness: more morphemes = marked.
 -/
 theorem morphological_determines_markedness :
     morphologicalCriterion.computeMarked happy_with_morphology unhappy_with_morphology =
-    some "unhappy" := by native_decide
+    some "unhappy" := by decide
 
 /--
 Scale direction determines markedness for equal morphology pairs.
 -/
 theorem scale_direction_for_equal_morphology :
     scaleDirectionCriterion.computeMarked tall_with_morphology short_with_morphology =
-    some "short" := by native_decide
+    some "short" := by decide
 
 /--
 Default criteria successfully find "short" as marked in tall/short pair.
 -/
 theorem default_finds_short_marked :
-    computeMarked tall_with_morphology short_with_morphology = some "short" := by native_decide
+    computeMarked tall_with_morphology short_with_morphology = some "short" := by decide
 
 /--
 Default criteria successfully find "unhappy" as marked in happy/unhappy pair.
 -/
 theorem default_finds_unhappy_marked :
-    computeMarked happy_with_morphology unhappy_with_morphology = some "unhappy" := by native_decide
+    computeMarked happy_with_morphology unhappy_with_morphology = some "unhappy" := by decide
 
 /--
 Marked form has higher cost than unmarked.
 -/
 theorem marked_costs_more :
     productionCost "short" tall_with_morphology short_with_morphology >
-    productionCost "tall" tall_with_morphology short_with_morphology := by native_decide
+    productionCost "tall" tall_with_morphology short_with_morphology := by decide
 
 
 /-

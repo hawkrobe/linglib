@@ -326,11 +326,11 @@ def someButNotAllSentence : Tree Cat ExWord :=
 
 /-- φ'' contains ConjP — a category absent from φ and L(φ). -/
 theorem symmetric_has_conjp :
-    someButNotAllSentence.containsCat .ConjP = true := by native_decide
+    someButNotAllSentence.containsCat .ConjP = true := by decide
 
 /-- φ does not contain ConjP. -/
 theorem some_lacks_conjp :
-    someSentence.containsCat .ConjP = false := by native_decide
+    someSentence.containsCat .ConjP = false := by decide
 
 /-- No item in L(someSentence) contains ConjP: the lexicon consists
 of terminal leaves (which have no internal structure) and the subtrees
@@ -338,7 +338,7 @@ of φ are {S[...], N(john), VP[...], V(ate), Det(some), N(cake)} —
 none contain ConjP. -/
 theorem source_lacks_conjp :
     (substitutionSource exLexicon someSentence).all
-      (fun t => !t.containsCat .ConjP) = true := by native_decide
+      (fun t => !t.containsCat .ConjP) = true := by decide
 
 -- ── Private helpers for category_preservation ──────────────────
 
@@ -467,7 +467,7 @@ theorem symmetry_problem_solved :
     (by intro s hs
         have := List.all_eq_true.mp source_lacks_conjp s hs
         simp at this; exact this)
-    (by native_decide)
+    (by decide)
     h
   exact absurd symmetric_has_conjp (by rw [h_preserved]; decide)
 
@@ -586,7 +586,7 @@ theorem deletion_produces_alternative :
 
 /-- Deletion reduces tree size. -/
 theorem deletion_reduces_size :
-    justMan.size < tallMan.size := by native_decide
+    justMan.size < tallMan.size := by decide
 
 end Deletion
 

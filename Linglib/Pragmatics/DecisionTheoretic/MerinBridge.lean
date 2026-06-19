@@ -87,7 +87,7 @@ UV of a single cell can be negative ([van-rooy-2003], p. 736).
 The non-negativity result (EVSI ≥ 0) holds for the **expected** UV
 across the full partition {E, ¬E}, not for individual cells (p. 742).
 
-TODO: Original Bool-based proof used `native_decide` over
+TODO: Original Bool-based proof used `decide` over
 World4 (16 topics × 16 evidence props = 256 cases). Per project
 proof-style guidelines, kernel-checkable structural proofs are
 preferred. A Prop-level reformulation needs decidability for
@@ -121,7 +121,7 @@ which gives |E∩H|/|H| = |E∩¬H|/|¬H|, hence |E∩H|/|E| = |H|/4.
 So conditionalEU(a|E) = expectedUtility(a) for each action a,
 making valueAfterLearning = dpValue.
 
-TODO: Original Bool-based proof used `native_decide` over the 256-cell
+TODO: Original Bool-based proof used `decide` over the 256-cell
 finite verification. A kernel-checkable structural proof requires
 case analysis on the discrete partition cells together with
 `DecidablePred e` to evaluate filter cardinalities. -/
