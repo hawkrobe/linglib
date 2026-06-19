@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Obligatory Operations [preminger-2014]
@@ -83,18 +84,10 @@ inductive AgreementModel where
 -- § 2: Probe Outcomes
 -- ============================================================================
 
-/-- The outcome of an obligatory probing operation.
-
-    - **valued**: the probe found a goal and was valued by its φ-features.
-    - **unvalued**: the probe attempted but found no suitable goal.
-      In the crash model, this crashes. In the obligatory-no-crash
-      model, the derivation continues with default morphology. -/
-inductive Probe.Outcome where
-  /-- Probe successfully agreed with a goal. -/
-  | valued
-  /-- Probe attempted but found no suitable goal. -/
-  | unvalued
-  deriving DecidableEq, Repr
+-- `Probe.Outcome` (valued/unvalued) is defined in `Probe/Basic.lean`;
+-- this file adds its PF/convergence interpretation. In the crash model
+-- `unvalued` crashes; in the obligatory-no-crash model the derivation
+-- continues with default morphology.
 
 -- ============================================================================
 -- § 3: Convergence

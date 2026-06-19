@@ -1,27 +1,34 @@
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.Minimalist.ObligatoryOperations
+import Mathlib.Data.Set.Subsingleton
+import Mathlib.Data.List.Basic
 
 /-!
 # Probe: relativized search over a goal sequence
 [bejar-rezac-2003] [preminger-2014]
 
-The canonical, theory-agnostic probe primitive. A `Probe α` searches a
-goal sequence of arbitrary type `α`; everything probe-shaped in the
-library denotes one of these by a `toProbe`-map rather than
-re-implementing search (see **Probe specifications** below). The probe
-bundles what it *sees* (`vis` — interaction/halting: the search stops at
-the first visible goal) and what it can *value* there (`act` —
+The canonical, theory-agnostic relativized-*search* kernel. A `Probe α`
+searches a goal sequence of arbitrary type `α`; probe *specifications*
+(relativized targets, satisfaction conditions, horizon profiles,
+articulated/dynamic probes) denote one of these by a `toProbe`-map
+rather than re-implementing search (see **Probe specifications**). The
+probe bundles what it *sees* (`vis` — interaction/halting: the search
+stops at the first visible goal) and what it can *value* there (`act` —
 activity: a visible but inactive goal absorbs the probe without valuing
 it, [bejar-rezac-2003]'s inactive dative, [deal-2024]-style interaction
 vs. satisfaction). Licensing is being the goal the search reaches — from
 which the Person Licensing Condition's effects derive: one search
 licenses at most one goal (`Probe.allLicensed_iff`).
 
+Scope: this models a probe's *search* (locality, intervention,
+satisfaction). Feature *transmission* — what a successful Agree copies,
+shares, or values, and Multiple-Agree-style simultaneous valuation of
+several goals — is a separate concern (`applyAgree`, `Agree.lean`) not
+folded into `Probe`.
+
 This file is the maximally-general core (`α` arbitrary); the φ-feature
 *specialization* (`Agreement.Cell.visibleTo`, `Probe.Target.toProbe`,
 `PLC`) lives in `Probe/Phi.lean`, the Deal satisfaction-condition spec
 in `Probe/Satisfaction.lean`, and Keine's locality/horizon spec in
-`Probe/Profile.lean`. `Minimalist/Probe.lean` re-exports the lot.
+`Probe/Profile.lean`. There is no umbrella; import the leaf you need.
 
 Relativization is [preminger-2014]'s addition (§4.2, recalling
 [rizzi-1990]): the φ-instantiation (`Agreement.Cell.visibleTo`, `PLC`)
@@ -67,6 +74,23 @@ ones: `Probe.Target.toProbe` (`Probe/Phi.lean`),
 family), `CyclicAgree.segProbe` (per segment and geometry), and
 `Deal2024.ProbeState.probe` (the state-indexed family whose narrowing
 law is `probe_vis_antitone`).
+
+## TODO
+
+- **Transmission axis.** `Probe` models *search*, not what a successful
+  Agree copies/shares/values. A `Probe.agreeWith : Probe α → (α → V) →
+  List α → Σ` (Σ = `Option V` / `List V` for [hiraiwa-2001] Multiple
+  Agree / a shared-occurrence type for Frampton-Gutmann feature-sharing)
+  would fold `applyAgree`, Multiple Agree, Agree-Link/Copy
+  ([arregi-nevins-2012]), and case-by-Agree into one extension.
+- **Upward Agree.** Search is downward (c-command, `search_eq_some_iff_closest`);
+  add a direction parameter for Bjorkman & Zeijlstra (2019)-style upward Agree.
+- **`Preorder (Probe α)`** by pointwise `vis`-refinement, so
+  `outcome_valued_mono` / `Deal2024.probe_vis_antitone` become order facts.
+- **`Articulated.toProbes` ↔ `cascade` bridge**: prove an articulated
+  probe's behaviour is the cascade of its segment probes.
+- **`HalpertHammerly2026.agreementClass`**: re-stipulated relativized
+  search; should be two `Probe` searches with a `_eq_derived` theorem.
 -/
 
 namespace Minimalist
@@ -80,6 +104,15 @@ variable {α : Type*}
 structure Probe (α : Type*) where
   vis : α → Bool
   act : α → Bool := fun _ => true
+
+/-- The outcome of an obligatory probing operation: `valued` if the
+    search found a goal, else `unvalued`. The PF/convergence
+    interpretation (crash vs. default morphology) lives in
+    `ObligatoryOperations.lean`. -/
+inductive Probe.Outcome where
+  | valued
+  | unvalued
+  deriving DecidableEq, Repr
 
 namespace Probe
 
@@ -166,6 +199,26 @@ theorem agree_eq_none_of_inactive {a : α}
     p.agree goals = none := by
   simp [agree, h, Option.filter_some, ha]
 
+@[simp] theorem search_nil : p.search [] = none := rfl
+
+/-- Satisfaction refines interaction: what the probe Agrees with, it found. -/
+theorem agree_le_search {a : α} (h : p.agree goals = some a) :
+    p.search goals = some a :=
+  (agree_eq_some_iff.mp h).1
+
+/-- When every goal is active, Agree coincides with search — the `act`
+    gate is degenerate for `ofVis`-built probes. -/
+theorem agree_eq_search_of_act (h : ∀ a, p.act a = true) :
+    p.agree goals = p.search goals := by
+  rw [agree]
+  cases p.search goals with
+  | none => rfl
+  | some a => rw [Option.filter_some, if_pos (h a)]
+
+theorem agree_eq_none_iff :
+    p.agree goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.act a = true := by
+  simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, agree_eq_some_iff]
+
 /-- Locality as list search: the probe finds `a` iff `a` is visible and
     every earlier goal is invisible (no intervener). -/
 theorem search_eq_some_iff_closest {a : α} :
@@ -207,6 +260,17 @@ theorem outcome_eq_unvalued_iff :
   rw [outcome_eq_unvalued_iff_eq_none]
   exact search_eq_none_iff
 
+/-- Widening visibility can only keep a probe valued: if `p` is valued
+    and `q` sees everything `p` sees (among `goals`), so is `q`. The
+    substrate home of [deal-2024]-style narrowing (`Deal2024`'s
+    `probe_vis_antitone` is the contrapositive on a probe family). -/
+theorem outcome_valued_mono {q : Probe α}
+    (h : ∀ a ∈ goals, p.vis a = true → q.vis a = true) :
+    p.outcome goals = .valued → q.outcome goals = .valued := by
+  simp only [outcome_eq_valued_iff]
+  rintro ⟨a, ha, hva⟩
+  exact ⟨a, ha, h a ha hva⟩
+
 /-! ### Licensing -/
 
 /-- A goal is licensed by a probe iff the probe's single search
@@ -230,6 +294,14 @@ theorem licensed_iff_closest {a : α} :
     p.Licensed goals a ↔
       p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
   search_eq_some_iff_closest
+
+/-- A licensed goal is a member of the sequence. -/
+theorem Licensed.mem {a : α} (h : p.Licensed goals a) : a ∈ goals :=
+  mem_of_search_eq_some h
+
+/-- A licensed goal is visible to the probe. -/
+theorem Licensed.vis {a : α} (h : p.Licensed goals a) : p.vis a = true :=
+  visible_of_search_eq_some h
 
 /-- Licensing by the indiscriminate probe is being the structurally
     closest goal — bare minimality, [halpert-2012]'s L⁰. -/
@@ -317,6 +389,21 @@ theorem cascade_cons {q : Probe α} :
     cascade (q :: ps) goals = (q.search goals <|> cascade ps goals) := by
   rw [cascade, List.findSome?_cons]
   cases q.search goals <;> rfl
+
+@[simp] theorem cascade_nil : cascade ([] : List (Probe α)) goals = none := rfl
+
+@[simp] theorem cascade_singleton {q : Probe α} :
+    cascade [q] goals = q.search goals := by
+  rw [cascade_cons, cascade_nil]
+  cases q.search goals <;> rfl
+
+/-- `cascade` is a monoid map `(List (Probe α), ++) → (Option α, <|>)`:
+    the single-slot competition runs the left probes, then the right. -/
+theorem cascade_append {qs : List (Probe α)} :
+    cascade (ps ++ qs) goals = (cascade ps goals <|> cascade qs goals) := by
+  unfold cascade
+  rw [List.findSome?_append]
+  cases ps.findSome? (·.search goals) <;> rfl
 
 /-- The cascade's goal is licensed by one of its probes. -/
 theorem exists_licensed_of_cascade_eq_some {a : α}

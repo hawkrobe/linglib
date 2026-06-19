@@ -342,10 +342,13 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
   validAgree a root ∧
   isActive a.goalFeatures = true
 
--- Multiple Agree ([hiraiwa-2001]) is `Probe` over a goal list; defective
--- intervention ([chomsky-2000]) is a visible-but-inactive closest goal
--- absorbing the probe (`Probe.agree_eq_none_of_inactive`). The former
--- `MultipleAgree`/`DefectiveElement` reinventions (zero consumers) were retired.
+-- Defective intervention ([chomsky-2000]) is a visible-but-inactive
+-- closest goal absorbing the probe (`Probe.agree_eq_none_of_inactive`).
+-- The former `MultipleAgree`/`DefectiveElement` reinventions (zero
+-- consumers) were retired. Hiraiwa's Multiple Agree (simultaneous
+-- valuation of *all* matching goals) is a transmission operation the
+-- search-only `Probe` API does not model — see `Probe/Basic.lean`'s
+-- scope note.
 
 -- ============================================================================
 -- § 12: Phase-Bounded Agree

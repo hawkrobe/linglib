@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 /-!
 # Halpert 2012 — Argument Licensing and Agreement in Zulu [halpert-2012]
@@ -17,7 +18,7 @@ still converge even if a probe fails to find a goal" —
 failure-tolerance, adopted by [preminger-2014] Ch. 6 as the second
 case study in tolerated failed agreement.
 
-Formalized through `Phi/Probing.lean`: L⁰ is the **indiscriminate**
+Formalized through `Probe/Basic.lean`: L⁰ is the **indiscriminate**
 instance of `Probe.search` (`Probe.indiscriminate`, so bare minimality delivers
 `List.head?`; augmented nominals intervene, her Chomsky-2000-style
 intervention), and the licensing condition is the off-diagonal

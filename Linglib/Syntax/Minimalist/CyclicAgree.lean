@@ -328,7 +328,7 @@ theorem plc_violation_iff_inverse (geom : Geometry) (probe : Probe.Articulation)
     isInverseContext geom probe ea ia = true := by
   simp [eaIsLicensed, isInverseContext]
 
-/-! ### Grounding in relativized search (`Phi/Probing.lean`)
+/-! ### Grounding in relativized search (`Probe/Basic.lean`)
 
 An articulated probe is a *family* of flat relativized searches, one
 per segment, over the cyclically ordered token list: B&R's segments

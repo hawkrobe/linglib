@@ -259,6 +259,16 @@ theorem probe_vis_antitone (g : DealGrammar) (st : ProbeState)
     (h : ((step g st t).probe).vis a = true) : st.probe.vis a = true :=
   dpBears_antitone (step_int_mono g st t) a h
 
+/-- Narrowing the probe cannot gain a goal: if the later (narrower)
+    state's probe still finds one, so did the earlier — the outcome-level
+    form of "interaction only narrows", from the substrate's
+    `Probe.outcome_valued_mono` fed by `probe_vis_antitone`. -/
+theorem probe_outcome_antitone (g : DealGrammar) (st : ProbeState)
+    (t : Person × Nat) (goals : List Person)
+    (h : ((step g st t).probe).outcome goals = .valued) :
+    st.probe.outcome goals = .valued :=
+  Minimalist.Probe.outcome_valued_mono (fun a _ ha => probe_vis_antitone g st t a ha) h
+
 /-- A satisfied probe is inert: satisfaction halts all further
     interaction (her (8b)). -/
 theorem step_of_satisfied (g : DealGrammar) (st : ProbeState)

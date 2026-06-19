@@ -188,8 +188,10 @@ remain unchanged, and `AbarDep` is a thin wrapper providing only the predicate
     *cuukwe* 'know') select bare CPs with no internal `AbarDep`. -/
 def AbarDep := { p : Probe.Profile // p.isĀProbe = true }
 
-/-- An `AbarDep` projects back to its underlying probe. -/
-def AbarDep.toProbe (a : AbarDep) : Probe.Profile := a.val
+/-- An `AbarDep` projects back to its underlying profile. (Named
+    `toProfile`, not `toProbe`, since the file-wide `toProbe` convention
+    denotes a `Probe α` — this returns a `Probe.Profile`.) -/
+def AbarDep.toProfile (a : AbarDep) : Probe.Profile := a.val
 
 /-- The keine Ā-probe is an `AbarDep` (lifted from `ābar_is_Ā`). -/
 def keineĀDep : AbarDep := ⟨keineĀProbe, ābar_is_Ā⟩

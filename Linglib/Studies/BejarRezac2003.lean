@@ -25,7 +25,7 @@ in a [chomsky-2000] probe-goal system:
   F); a weak 1st/2nd accusative has only the [π]-probe, which the
   dative absorbs — the PCC.
 
-Through `Phi/Probing.lean`, the [π]-probe is the **off-diagonal**
+Through `Probe/Basic.lean`, the [π]-probe is the **off-diagonal**
 licensing shape: visibility is total (`pi.vis = ⊤` — closest goal),
 neediness is bearing [participant] — the same shape as Mam's Voice_TR
 (visible, halting, non-valuing intervener; `Studies/Scott2023.lean`)

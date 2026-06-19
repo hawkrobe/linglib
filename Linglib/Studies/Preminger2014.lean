@@ -73,7 +73,7 @@ probes, definitionally: `afAgreementTarget` IS the cascade, the ∅
 row is failed Agree realized by the DM Elsewhere entry, and the rank
 comparison is the derived form (`afAgreementTarget_eq_rank`).
 There is no salience scale, and `personRestrictionOk_iff_plc`
-derives the person restriction from the PLC via `Phi/Probing.lean`'s
+derives the person restriction from the PLC via `Probe/Phi.lean`'s
 search-licensing substrate.
 
 ## Why not a hierarchy
@@ -108,9 +108,9 @@ gives five arguments against hierarchy accounts:
 
 - `Syntax/Minimalist/Phi/Geometry.lean` — `decomposePerson`,
   `probeVisible`, `probeResolutionRank`.
-- `Syntax/Minimalist/Phi/Probing.lean` — `Probe`, `Probe.Licensed`,
-  `PLC`: the search-and-licensing layer the derivations below
-  consume.
+- `Syntax/Minimalist/Probe/Basic.lean` — `Probe`, `Probe.Licensed`;
+  `Probe/Phi.lean` — `PLC`: the search-and-licensing layer the
+  derivations below consume.
 - `Syntax/Minimalist/ObligatoryOperations.lean` — the Ch. 5 model
   (`AgreementModel`, `Probe.Outcome`, `PFRealization`), consumed
   below for the failed-Agree theorems.
