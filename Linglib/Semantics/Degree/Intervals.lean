@@ -1,175 +1,106 @@
 import Linglib.Semantics.Degree.Extent
 import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Comparative
+import Mathlib.Order.Interval.Basic
 
 /-!
 # Schwarzschild's Interval Semantics
 [schwarzschild-2005] [schwarzschild-2008] [schwarzschild-wilkinson-2002]
 
-[schwarzschild-2008] "The Semantics of Comparatives and Other Degree
-Constructions": degrees are reified as **intervals** on a scale, and
-degree morphology manipulates these intervals.
+[schwarzschild-2008] reifies degrees as **intervals** on a scale rather than
+points: "tall" is `[⊥, μ x]`, "short" is `[μ x, ⊤]`, and degree morphology
+manipulates these intervals. Intervals are mathlib's `NonemptyInterval` (the same
+type the time-interval substrate uses). The comparative asserts the matrix
+interval extends past the standard's; subcomparatives compare intervals from
+commensurable scales; differentials specify the interval gap.
 
-## Key Ideas
+## Main declarations
 
-1. **Degrees as intervals**: Rather than points on a scale, degrees are
-   intervals [0, d] (for "tall") or [d, max] (for "short"). The measure
-   function maps entities to intervals.
-
-2. **Than-clause**: Denotes the interval associated with the standard
-   entity. The comparative asserts that the matrix interval properly
-   contains the standard interval.
-
-3. **Subcomparatives**: The interval approach naturally handles
-   subcomparatives ("longer than the desk is wide") because intervals
-   from different scales can be compared when they share a common
-   unit of measurement.
-
-4. **Differential comparatives**: "3 inches taller" specifies the
-   difference between intervals, natural in the interval framework.
-
+* `positiveInterval` / `negativeInterval` — the `[⊥, μ x]` / `[μ x, ⊤]` extents.
+* `intervalComparative` — upper-bound comparison; *is* the consensus
+  `comparativeSem` (`interval_eq_comparativeSem`).
+* `subcomparative` — cross-dimensional comparison ([schwarzschild-wilkinson-2002]).
 -/
 
 namespace Semantics.Degree.Intervals
 
-open Core.Order
 open Semantics.Degree
--- ════════════════════════════════════════════════════
--- § 1. Intervals as Degrees
--- ════════════════════════════════════════════════════
 
-/-- An interval on a linearly ordered scale.
-    Schwarzschild treats degrees as intervals rather than points.
-    For a positive adjective like "tall", the interval is [0, μ(x)]. -/
-structure Interval (D : Type*) [Preorder D] where
-  lower : D
-  upper : D
-  valid : lower ≤ upper
+/-! ### Intervals as degrees -/
 
-/-- The positive interval for entity x: [⊥, μ(x)].
-    This is the "extent to which x is tall" — the interval from
-    the bottom of the scale to x's degree. -/
+/-- The positive interval for `x`: `[⊥, μ x]` — the extent to which `x` is tall. -/
 def positiveInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) : Interval D :=
-  { lower := ⊥, upper := μ x, valid := bot_le }
+    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
+  ⟨(⊥, μ x), bot_le⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Comparative as Interval Comparison
--- ════════════════════════════════════════════════════
+/-- The negative interval for `x`: `[μ x, ⊤]` — the extent to which `x` is short
+([buring-2007] §4: ⟦short⟧ = ⟦LITTLE tall⟧, which inverts the positive interval). -/
+def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) : NonemptyInterval D :=
+  ⟨(μ x, ⊤), le_top⟩
 
-/-- Schwarzschild's comparative: the matrix interval properly extends
-    beyond the standard interval. For positive adjectives, this means
-    [0, μ(a)] properly contains [0, μ(b)], i.e., μ(a) > μ(b). -/
+/-! ### Comparative as interval comparison -/
+
+/-- Schwarzschild's comparative: the matrix interval extends past the standard's,
+i.e. its upper bound is greater. -/
 def intervalComparative {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) : Prop :=
-  (positiveInterval μ b).upper < (positiveInterval μ a).upper
+  (positiveInterval μ b).snd < (positiveInterval μ a).snd
 
-/-- Interval comparative reduces to Kennedy/Heim point comparison.
-    This is expected: for positive intervals [0, μ(x)], comparing
-    upper bounds IS comparing degrees. -/
-theorem interval_eq_point {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+/-- Schwarzschild's interval comparative **is** the consensus point comparative
+([kennedy-1999], [rett-2026]): for positive intervals `[⊥, μ x]`, comparing upper
+bounds is comparing degrees. -/
+theorem interval_eq_comparativeSem {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) :
-    intervalComparative μ a b ↔ μ b < μ a :=
+    intervalComparative μ a b ↔ comparativeSem μ a b .positive :=
   Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 3. Differential Comparatives
--- ════════════════════════════════════════════════════
+/-! ### Differential comparatives -/
 
-/-- Differential comparative: "A is d-much taller than B" asserts
-    that the gap between intervals has extent d.
-
-    In Schwarzschild's framework, the differential is the interval
-    [μ(b), μ(a)] — the gap between the standard and matrix intervals. -/
+/-- The differential interval `[μ b, μ a]` — the gap between standard and matrix
+("A is d-much taller than B" specifies its extent). -/
 def differentialInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (a b : Entity) (h : μ b ≤ μ a) : Interval D :=
-  { lower := μ b, upper := μ a, valid := h }
+    (μ : Entity → D) (a b : Entity) (h : μ b ≤ μ a) : NonemptyInterval D :=
+  ⟨(μ b, μ a), h⟩
 
--- ════════════════════════════════════════════════════
--- § 4. Subcomparatives
--- ════════════════════════════════════════════════════
+/-! ### Subcomparatives -/
 
-/-- Subcomparative: "The table is longer than it is wide."
-
-    Both matrix and standard provide intervals on DIFFERENT scales,
-    but the intervals are compared via a shared unit of measurement
-    (inches, centimeters, etc.).
-
-    Schwarzschild: subcomparatives require that the two scales be
-    **commensurable** — measurable in the same units. -/
+/-- Subcomparative ("longer than it is wide"): two **commensurable** scales
+compared in shared units ([schwarzschild-wilkinson-2002]). -/
 def subcomparative {Entity D : Type*} [LinearOrder D]
     (μ₁ μ₂ : Entity → D) (a b : Entity) : Prop :=
   μ₁ a > μ₂ b
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Extent Functions
--- ════════════════════════════════════════════════════
+/-! ### Bridge to extent functions -/
 
-/-- The positive interval's membership predicate is exactly `posExt`:
-    d is in the interval [⊥, μ(x)] iff d ∈ posExt(μ, x).
-    This connects Schwarzschild's interval semantics to the algebraic
-    extent functions in `Semantics.Degree`. -/
+/-- The positive interval's membership is exactly `posExt`: `d ∈ [⊥, μ x]` iff
+`d ∈ posExt μ x`. Connects Schwarzschild's intervals to the extent algebra. -/
 theorem positiveInterval_iff_posExt {Entity D : Type*}
-    [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) (d : D) :
-    (positiveInterval μ x).lower ≤ d ∧ d ≤ (positiveInterval μ x).upper ↔
-      d ∈ Semantics.Degree.posExt μ x := by
-  simp [positiveInterval, Semantics.Degree.posExt]
+    [LinearOrder D] [BoundedOrder D] (μ : Entity → D) (x : Entity) (d : D) :
+    (positiveInterval μ x).fst ≤ d ∧ d ≤ (positiveInterval μ x).snd ↔
+      d ∈ posExt μ x := by
+  simp [positiveInterval, posExt]
 
--- ════════════════════════════════════════════════════
--- § 6. Negative Intervals and LITTLE
--- ════════════════════════════════════════════════════
+/-! ### Negative intervals and LITTLE -/
 
-/-- The negative interval for entity x: [μ(x), ⊤].
-    This is the "extent to which x is short" — the interval from
-    x's degree to the top of the scale. Negative adjectives (short,
-    narrow, shallow) denote negative intervals on the same underlying
-    measure function as their positive counterpart.
-
-    [buring-2007] §4 (def. 22): ⟦short⟧ = ⟦LITTLE tall⟧, where
-    LITTLE inverts the interval: the positive interval [⊥, μ(x)]
-    becomes the negative interval [μ(x), ⊤]. -/
-def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
-    (μ : Entity → D) (x : Entity) : Interval D :=
-  { lower := μ x, upper := ⊤, valid := le_top }
-
-/-- MUCH is the identity on intervals ([buring-2007] §4, def. 21b):
-    ⟦MUCH⟧ = λi. i. It contributes "little to the meaning of a plain
-    comparative" — it simply denotes the identity function on intervals,
-    which by the semantics of -er is compared by ⊂ before ⊂ applies. -/
-def much {D : Type*} [Preorder D] (i : Interval D) : Interval D := i
-
-/-- LITTLE inverts an interval by swapping the "measured" region.
-    On degree predicates: LITTLE(λd. d ≤ μ(x)) = λd. μ(x) < d.
-    On intervals: maps [⊥, μ(x)] to [μ(x), ⊤].
-
-    [buring-2007] §4 (def. 21d): ⟦LITTLE⟧ = λi.λd. i(d) = 0.
-    The result: x is LITTLE-er long than y iff x's LITTLE-longness
-    (= negative interval) is a proper superset of y's — i.e., x is
-    shorter than y. -/
+/-- LITTLE inverts the positive interval `[⊥, μ x]` into the negative interval
+`[μ x, ⊤]` ([buring-2007] §4). -/
 theorem little_inverts_interval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) :
-    negativeInterval μ x = { lower := (positiveInterval μ x).upper
-                           , upper := ⊤
-                           , valid := le_top } := by
-  simp [negativeInterval, positiveInterval]
+    negativeInterval μ x = ⟨((positiveInterval μ x).snd, ⊤), le_top⟩ :=
+  rfl
 
-/-- Negative interval comparative: x is shorter than y iff
-    x's negative interval extends further down (lower bound is lower),
-    which means μ(x) < μ(y). -/
-theorem negativeInterval_comparative {Entity D : Type*}
-    [LinearOrder D] [BoundedOrder D]
+/-- "Shorter than" via negative intervals: `a` is shorter than `b` iff `a`'s
+negative interval reaches further down, i.e. `μ a < μ b`. -/
+theorem negativeInterval_comparative {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) :
-    (negativeInterval μ a).lower < (negativeInterval μ b).lower ↔
-      μ a < μ b := by
-  simp [negativeInterval]
+    (negativeInterval μ a).fst < (negativeInterval μ b).fst ↔ μ a < μ b :=
+  Iff.rfl
 
-/-- The negative interval contains exactly the degrees in `negExt`
-    plus the boundary point μ(x). The boundary convention difference
-    (negExt uses strict <, intervals use ≤) accounts for the ∨. -/
-theorem negativeInterval_membership {Entity D : Type*}
-    [LinearOrder D] [BoundedOrder D]
+/-- The negative interval starts at `μ x`. -/
+theorem negativeInterval_membership {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) (d : D) :
-    (negativeInterval μ x).lower ≤ d ↔ μ x ≤ d := by
-  simp [negativeInterval]
+    (negativeInterval μ x).fst ≤ d ↔ μ x ≤ d :=
+  Iff.rfl
 
 end Semantics.Degree.Intervals
