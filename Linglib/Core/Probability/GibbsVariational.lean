@@ -25,9 +25,9 @@ Kullback–Leibler divergence anticipated by the module docstring of
 
 ## Main statements
 
-* `toReal_klDiv_tilted_right` — the **Gibbs decomposition identity**:
-  `KL(q ‖ μ.tilted f) = KL(q ‖ μ) − 𝔼_q[f] + logIntegralExp μ f`.
-* `sub_klDiv_le_logIntegralExp` — the **variational inequality**:
+* `toReal_klDiv_tilted_right` — the **Gibbs decomposition identity** (finite `μ`):
+  `KL(q ‖ μ.tilted f) = KL(q ‖ μ) − 𝔼_q[f] + logIntegralExp μ f + (1 − μ.real univ)`.
+* `sub_klDiv_le_logIntegralExp` — the **variational inequality** (probability `μ`):
   `𝔼_q[f] − KL(q ‖ μ) ≤ logIntegralExp μ f` for all `q ≪ μ`.
 * `sub_klDiv_tilted_eq_logIntegralExp` — the bound is **attained** at `μ.tilted f`.
 * `isGreatest_logIntegralExp` — the **variational principle** in `IsGreatest` form:
@@ -36,15 +36,16 @@ Kullback–Leibler divergence anticipated by the module docstring of
 ## Implementation notes
 
 The decomposition reuses the log-likelihood-ratio identity
-`MeasureTheory.integral_llr_tilted_right`; both `klDiv` terms collapse to their
-`llr`-integrals via `toReal_klDiv_of_measure_eq` (the `univ`-mass correction in
-`toReal_klDiv` vanishes because every measure in play is a probability measure —
-`μ.tilted f` is normalized by construction). The statements are over probability
-measures. Two separate relaxations are possible upstream: the *prior* `μ` could be
-`[IsFiniteMeasure]` at the cost of an additive `μ.real univ` correction term; the
-*candidate* `q`, however, is pinned to `[IsProbabilityMeasure]` by
-`integral_llr_tilted_right` itself (which requires it on its left measure), so
-relaxing `q` is a separate upstream concern in `LogLikelihoodRatio`, not here.
+`MeasureTheory.integral_llr_tilted_right`. `μ.tilted f` is always a probability
+measure, so `KL(q ‖ μ.tilted f)` collapses via `toReal_klDiv_of_measure_eq`; the
+`KL(q ‖ μ)` term keeps its `toReal_klDiv` mass correction, giving the
+`1 − μ.real univ` term — which vanishes for probability `μ`.
+
+The decomposition is stated for a *finite, nonzero* prior `μ`; the variational
+results specialize it to a *probability* `μ` (the clean Donsker–Varadhan form). The
+*candidate* `q` is pinned to `[IsProbabilityMeasure]` by `integral_llr_tilted_right`
+itself (it requires this on its left measure), so relaxing `q` is a separate
+upstream concern in `LogLikelihoodRatio`, not here.
 -/
 
 open Real MeasureTheory ProbabilityTheory InformationTheory
@@ -73,25 +74,31 @@ theorem logIntegralExp_const_mul (μ : Measure α) (X : α → ℝ) (t : ℝ) :
     μ.logIntegralExp (fun x => t * X x) = cgf X μ t := by
   simp only [Measure.logIntegralExp, cgf, mgf]
 
-/-- **Gibbs decomposition identity**: for `q ≪ μ` (both probability measures),
-the Kullback–Leibler divergence from the Gibbs measure `μ.tilted f` splits as
-`KL(q ‖ μ.tilted f) = KL(q ‖ μ) − 𝔼_q[f] + logIntegralExp μ f`.
+/-- **Gibbs decomposition identity**: for a finite, nonzero reference measure `μ`
+and a probability measure `q ≪ μ`, the Kullback–Leibler divergence from the Gibbs
+measure `μ.tilted f` splits as
+`KL(q ‖ μ.tilted f) = KL(q ‖ μ) − 𝔼_q[f] + logIntegralExp μ f + (1 − μ.real univ)`.
+The `1 − μ.real univ` correction vanishes when `μ` is a probability measure, giving
+the clean Donsker–Varadhan form used by the variational results below.
 
-A `klDiv`-level repackaging of `integral_llr_tilted_right`: both divergences
-reduce to their `llr`-integrals via `toReal_klDiv_of_measure_eq` (the mass
-correction vanishes — all measures are probability measures), after which the
-log-likelihood-ratio decomposition closes it. -/
-theorem toReal_klDiv_tilted_right (μ q : Measure α) [IsProbabilityMeasure μ]
+A `klDiv`-level repackaging of `integral_llr_tilted_right`: `μ.tilted f` is always a
+probability measure (`isProbabilityMeasure_tilted`), so `KL(q ‖ μ.tilted f)`
+collapses via `toReal_klDiv_of_measure_eq`; `KL(q ‖ μ)` keeps its `toReal_klDiv`
+mass correction `μ.real univ − q.real univ`, the source (with `q.real univ = 1`) of
+the `1 − μ.real univ` term. -/
+theorem toReal_klDiv_tilted_right (μ q : Measure α) [IsFiniteMeasure μ] [NeZero μ]
     [IsProbabilityMeasure q] {f : α → ℝ} (hqμ : q ≪ μ)
     (h_int_llr : Integrable (llr q μ) q) (h_int_f : Integrable f q)
     (h_exp : Integrable (fun x => Real.exp (f x)) μ) :
     (klDiv q (μ.tilted f)).toReal
-      = (klDiv q μ).toReal - (∫ x, f x ∂q) + μ.logIntegralExp f := by
+      = (klDiv q μ).toReal - (∫ x, f x ∂q) + μ.logIntegralExp f + (1 - μ.real Set.univ) := by
   have h_prob_tilt : IsProbabilityMeasure (μ.tilted f) := isProbabilityMeasure_tilted h_exp
   have hq_tilt : q ≪ μ.tilted f := hqμ.trans (absolutelyContinuous_tilted h_exp)
   rw [toReal_klDiv_of_measure_eq hq_tilt (by simp only [measure_univ]),
-      toReal_klDiv_of_measure_eq hqμ (by simp only [measure_univ]),
-      integral_llr_tilted_right hqμ h_int_f h_exp h_int_llr, Measure.logIntegralExp]
+      integral_llr_tilted_right hqμ h_int_f h_exp h_int_llr,
+      toReal_klDiv hqμ h_int_llr, Measure.logIntegralExp]
+  simp only [probReal_univ]
+  ring
 
 /-- **Gibbs / Donsker–Varadhan variational inequality**: for every probability
 measure `q ≪ μ`, expected value minus relative entropy is bounded by the
@@ -104,6 +111,7 @@ theorem sub_klDiv_le_logIntegralExp (μ q : Measure α) [IsProbabilityMeasure μ
     (∫ x, f x ∂q) - (klDiv q μ).toReal ≤ μ.logIntegralExp f := by
   have h := toReal_klDiv_tilted_right μ q hqμ h_int_llr h_int_f h_exp
   have hnn : 0 ≤ (klDiv q (μ.tilted f)).toReal := ENNReal.toReal_nonneg
+  have hμ : μ.real Set.univ = 1 := probReal_univ
   linarith
 
 /-- The variational bound `sub_klDiv_le_logIntegralExp` is **attained** at the
@@ -119,6 +127,7 @@ theorem sub_klDiv_tilted_eq_logIntegralExp (μ : Measure α) [IsProbabilityMeasu
   have h := toReal_klDiv_tilted_right μ (μ.tilted f) (tilted_absolutelyContinuous μ f)
     h_int_llr h_int_f h_exp
   rw [klDiv_self, ENNReal.toReal_zero] at h
+  have hμ : μ.real Set.univ = 1 := probReal_univ
   linarith
 
 /-- **Gibbs / Donsker–Varadhan variational principle**: the log-partition
