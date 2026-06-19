@@ -38,10 +38,12 @@ reimplementation, and is the object on which the variational (free-energy /
 * `speakerAlpha` — the **rationality parameter α** (`S₁ ∝ L0^α`, Boltzmann/softmax
   at inverse temperature α): `speakerAlpha_count_lt_iff_score_lt` (α > 0 keeps the
   order), `speakerAlpha_count_zero_singleton` (α = 0 is uniform), and the
-  zero-temperature limits `speakerAlpha_count_tendsto_one_of_isMax` /
-  `_tendsto_zero_of_exists_gt` (α → ∞ is the argmax / fully-rational speaker).
-* `listener` / `listener_comp_speaker_marginal` / `listener_region` — the pragmatic
-  listener as the Bayesian posterior `S1 † prior`, stated measure-natively.
+  zero-temperature limits `speakerAlpha_countRestrict_tendsto_one_of_isMax` /
+  `_tendsto_zero_of_exists_gt` (α → ∞ is the argmax / fully-rational speaker, over
+  the applicable set).
+* `listener` / `listener_comp_speaker_marginal` / `listener_eq_withDensity` /
+  `listener_region` — the pragmatic listener as the Bayesian posterior `S1 † prior`,
+  stated measure-natively (Bayes consistency, density reweighting, region inference).
 * `speaker_isGreatest` — the RSA speaker is the **rational optimizer** (Gibbs /
   Donsker–Varadhan variational principle).
 -/
@@ -98,7 +100,7 @@ An integrability hypothesis on `exp ∘ score` is required (and is automatic on 
 `Fintype`): without it a non-integrable tilt collapses to the zero measure
 (`MeasureTheory.tilted_of_not_integrable`), making both sides vanish and the
 equivalence false. It mirrors the `h_exp` hypothesis of `speaker_isGreatest`. -/
-theorem speaker_lt_iff_score_lt {U : Type*} [Fintype U] [MeasurableSpace U]
+theorem speaker_lt_iff_score_lt [Fintype U] [MeasurableSpace U]
     [MeasurableSingletonClass U] (base : Measure U) [IsFiniteMeasure base]
     (score : U → ℝ) (a b : U) (hmass : base {a} = base {b}) (hpos : base {a} ≠ 0)
     (hexp : Integrable (fun u => Real.exp (score u)) base) :
@@ -212,7 +214,7 @@ theorem speakerAlpha_count_lt_iff_score_lt [Fintype U] [MeasurableSpace U]
         < speakerAlpha (Measure.count : Measure U) α score {b}
       ↔ score a < score b := by
   rw [speakerAlpha, speaker_count_lt_iff_score_lt]
-  exact ⟨fun h => lt_of_mul_lt_mul_left h hα.le, fun h => mul_lt_mul_of_pos_left h hα⟩
+  exact mul_lt_mul_iff_of_pos_left hα
 
 /-- **α = 0 is the uniform (indifferent) speaker**: with zero rationality the
 speaker ignores utility and spreads its mass uniformly, `(card U)⁻¹` at every
@@ -225,71 +227,114 @@ theorem speakerAlpha_count_zero_singleton [Fintype U] [MeasurableSpace U]
   simp only [zero_mul, Real.exp_zero, Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
     mul_one, one_div]
 
-/-- **α → ∞ concentrates on the unique best utterance**: if `a` strictly maximizes
-the utility, the fully-rational speaker assigns it mass `→ 1`. The softmax becomes
-the argmax; this is the zero-temperature / fully-rational limit. -/
-theorem speakerAlpha_count_tendsto_one_of_isMax [Fintype U] [DecidableEq U] [MeasurableSpace U]
-    [MeasurableSingletonClass U] (score : U → ℝ) (a : U) (hmax : ∀ b, b ≠ a → score b < score a) :
-    Tendsto (fun α => speakerAlpha (Measure.count : Measure U) α score {a}) atTop (𝓝 1) := by
-  have hreal : Tendsto (fun α : ℝ => Real.exp (α * score a) / ∑ u, Real.exp (α * score u))
-      atTop (𝓝 1) := by
-    have hrw : ∀ α : ℝ, Real.exp (α * score a) / ∑ u, Real.exp (α * score u)
-        = (∑ u, Real.exp (α * (score u - score a)))⁻¹ := by
-      intro α
-      have hsum : ∑ u, Real.exp (α * score u)
-          = Real.exp (α * score a) * ∑ u, Real.exp (α * (score u - score a)) := by
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl fun u _ => ?_
-        rw [← Real.exp_add]; congr 1; ring
-      rw [hsum, div_mul_eq_div_div, div_self (Real.exp_ne_zero _), one_div]
-    rw [tendsto_congr hrw]
-    have hg : Tendsto (fun α : ℝ => ∑ u, Real.exp (α * (score u - score a))) atTop (𝓝 1) := by
-      rw [show (1 : ℝ) = ∑ _u : U, (if _u = a then (1 : ℝ) else 0) by simp]
-      refine tendsto_finsetSum _ fun u _ => ?_
-      by_cases hu : u = a
-      · subst hu; simp only [sub_self, mul_zero, Real.exp_zero]; exact tendsto_const_nhds
-      · simp only [if_neg hu]
-        have hc : score u - score a < 0 := by have := hmax u hu; linarith
-        exact Real.tendsto_exp_atBot.comp
-          ((tendsto_mul_const_atBot_of_neg hc).mpr tendsto_id)
-    simpa using hg.inv₀ one_ne_zero
-  have heq : (fun α => speakerAlpha (Measure.count : Measure U) α score {a})
-      = fun α => ENNReal.ofReal (Real.exp (α * score a) / ∑ u, Real.exp (α * score u)) :=
-    funext fun α => speakerAlpha_count_singleton α score a
-  rw [heq, show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
-  exact (ENNReal.continuous_ofReal.tendsto 1).comp hreal
+/-- Closed form of the α-speaker over the **applicable set** `A`: the softmax at
+inverse temperature `α` restricted to `A`. Generalizes `speakerAlpha_count_singleton`
+(the `A = univ` case) to the finite-support speaker the studies consume. -/
+theorem speakerAlpha_countRestrict_singleton [Fintype U] [DecidableEq U] [MeasurableSpace U]
+    [MeasurableSingletonClass U] (A : Finset U) (α : ℝ) (score : U → ℝ) (a : U) (ha : a ∈ A) :
+    speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a}
+      = ENNReal.ofReal (Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x)) :=
+  speaker_countRestrict_singleton A (fun u => α * score u) a ha
 
-/-- **α → ∞ abandons a dominated utterance**: if some utterance strictly beats `a`,
-the fully-rational speaker assigns `a` mass `→ 0`. Dual to
-`speakerAlpha_count_tendsto_one_of_isMax`. -/
-theorem speakerAlpha_count_tendsto_zero_of_exists_gt [Fintype U] [MeasurableSpace U]
-    [MeasurableSingletonClass U] (score : U → ℝ) (a : U) (hbeat : ∃ b, score a < score b) :
-    Tendsto (fun α => speakerAlpha (Measure.count : Measure U) α score {a}) atTop (𝓝 0) := by
-  obtain ⟨b, hb⟩ := hbeat
-  have hreal : Tendsto (fun α : ℝ => Real.exp (α * score a) / ∑ u, Real.exp (α * score u))
+/-- A non-applicable utterance gets zero α-speaker mass. -/
+theorem speakerAlpha_countRestrict_singleton_of_not_mem [Fintype U] [MeasurableSpace U]
+    [MeasurableSingletonClass U] (A : Finset U) (α : ℝ) (score : U → ℝ) (a : U) (ha : a ∉ A) :
+    speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a} = 0 :=
+  speaker_countRestrict_singleton_of_not_mem A (fun u => α * score u) a ha
+
+/-- **α-monotonicity, finite support** (`α > 0`): over the applicable set `A`, the
+positively-rational speaker prefers the higher-utility utterance. -/
+theorem speakerAlpha_countRestrict_lt_iff_score_lt [Fintype U] [MeasurableSpace U]
+    [MeasurableSingletonClass U] (A : Finset U) {α : ℝ} (hα : 0 < α) (score : U → ℝ) (a b : U)
+    (ha : a ∈ A) (hb : b ∈ A) :
+    speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a}
+        < speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {b}
+      ↔ score a < score b := by
+  rw [speakerAlpha, speaker_countRestrict_lt_iff_score_lt A (fun u => α * score u) a b ha hb]
+  exact mul_lt_mul_iff_of_pos_left hα
+
+/-- **α = 0 is the uniform speaker over the applicable set**: zero rationality
+spreads mass uniformly across `A`, `(A.card)⁻¹` at each applicable utterance. -/
+theorem speakerAlpha_countRestrict_zero_singleton [Fintype U] [DecidableEq U] [MeasurableSpace U]
+    [MeasurableSingletonClass U] (A : Finset U) (score : U → ℝ) (a : U) (ha : a ∈ A) :
+    speakerAlpha (Measure.count.restrict (↑A : Set U)) 0 score {a}
+      = ENNReal.ofReal ((A.card : ℝ)⁻¹) := by
+  rw [speakerAlpha_countRestrict_singleton A 0 score a ha]
+  simp only [zero_mul, Real.exp_zero, Finset.sum_const, nsmul_eq_mul, mul_one, one_div]
+
+/-- The softmax "shift" identity that removes the `∞/∞` indeterminacy in the
+zero-temperature limits: dividing through by `exp (α · score a)`,
+`exp (α · score a) / ∑ = (∑ exp (α · (score · − score a)))⁻¹`. -/
+private theorem softmax_shift (A : Finset U) (score : U → ℝ) (a : U) (α : ℝ) :
+    Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x)
+      = (∑ x ∈ A, Real.exp (α * (score x - score a)))⁻¹ := by
+  have hsum : ∑ x ∈ A, Real.exp (α * score x)
+      = Real.exp (α * score a) * ∑ x ∈ A, Real.exp (α * (score x - score a)) := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    rw [← Real.exp_add]; congr 1; ring
+  rw [hsum, div_mul_eq_div_div, div_self (Real.exp_ne_zero _), one_div]
+
+/-- Transfer a real-valued limit of the softmax ratio to the `ℝ≥0∞`-valued speaker
+mass, via continuity of `ENNReal.ofReal`. The shared wrapper of the two
+zero-temperature limits. -/
+private theorem speakerAlpha_countRestrict_tendsto_ofReal [Fintype U] [DecidableEq U]
+    [MeasurableSpace U] [MeasurableSingletonClass U] (A : Finset U) (score : U → ℝ) (a : U)
+    (ha : a ∈ A) {l : ℝ}
+    (h : Tendsto (fun α : ℝ => Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x))
+      atTop (𝓝 l)) :
+    Tendsto (fun α => speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a}) atTop
+      (𝓝 (ENNReal.ofReal l)) := by
+  have heq : (fun α => speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a})
+      = fun α => ENNReal.ofReal (Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x)) :=
+    funext fun α => speakerAlpha_countRestrict_singleton A α score a ha
+  rw [heq]
+  exact (ENNReal.continuous_ofReal.tendsto l).comp h
+
+/-- **α → ∞ concentrates on the unique best applicable utterance**: if `a` strictly
+maximizes the utility over the applicable set `A`, the fully-rational speaker
+assigns it mass `→ 1`. The softmax becomes the argmax (zero-temperature limit). -/
+theorem speakerAlpha_countRestrict_tendsto_one_of_isMax [Fintype U] [DecidableEq U]
+    [MeasurableSpace U] [MeasurableSingletonClass U] (A : Finset U) (score : U → ℝ) (a : U)
+    (ha : a ∈ A) (hmax : ∀ b ∈ A, b ≠ a → score b < score a) :
+    Tendsto (fun α => speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a})
+      atTop (𝓝 1) := by
+  have hreal : Tendsto (fun α : ℝ => Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x))
+      atTop (𝓝 1) := by
+    rw [tendsto_congr (softmax_shift A score a)]
+    have hg : Tendsto (fun α : ℝ => ∑ x ∈ A, Real.exp (α * (score x - score a))) atTop (𝓝 1) := by
+      rw [show (1 : ℝ) = ∑ x ∈ A, (if x = a then (1 : ℝ) else 0) by simp [ha]]
+      refine tendsto_finsetSum _ fun x hx => ?_
+      by_cases hxa : x = a
+      · subst hxa; simp only [sub_self, mul_zero, Real.exp_zero]; exact tendsto_const_nhds
+      · simp only [if_neg hxa]
+        have hc : score x - score a < 0 := by have := hmax x hx hxa; linarith
+        exact Real.tendsto_exp_atBot.comp ((tendsto_mul_const_atBot_of_neg hc).mpr tendsto_id)
+    simpa using hg.inv₀ one_ne_zero
+  have h := speakerAlpha_countRestrict_tendsto_ofReal A score a ha hreal
+  rwa [ENNReal.ofReal_one] at h
+
+/-- **α → ∞ abandons a dominated utterance**: if some applicable utterance strictly
+beats `a`, the fully-rational speaker assigns `a` mass `→ 0`. Dual to
+`speakerAlpha_countRestrict_tendsto_one_of_isMax`. -/
+theorem speakerAlpha_countRestrict_tendsto_zero_of_exists_gt [Fintype U] [DecidableEq U]
+    [MeasurableSpace U] [MeasurableSingletonClass U] (A : Finset U) (score : U → ℝ) (a : U)
+    (ha : a ∈ A) (hbeat : ∃ b ∈ A, score a < score b) :
+    Tendsto (fun α => speakerAlpha (Measure.count.restrict (↑A : Set U)) α score {a})
       atTop (𝓝 0) := by
-    have hrw : ∀ α : ℝ, Real.exp (α * score a) / ∑ u, Real.exp (α * score u)
-        = (∑ u, Real.exp (α * (score u - score a)))⁻¹ := by
-      intro α
-      have hsum : ∑ u, Real.exp (α * score u)
-          = Real.exp (α * score a) * ∑ u, Real.exp (α * (score u - score a)) := by
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl fun u _ => ?_
-        rw [← Real.exp_add]; congr 1; ring
-      rw [hsum, div_mul_eq_div_div, div_self (Real.exp_ne_zero _), one_div]
-    rw [tendsto_congr hrw]
+  obtain ⟨b, hbA, hb⟩ := hbeat
+  have hreal : Tendsto (fun α : ℝ => Real.exp (α * score a) / ∑ x ∈ A, Real.exp (α * score x))
+      atTop (𝓝 0) := by
+    rw [tendsto_congr (softmax_shift A score a)]
     refine Tendsto.inv_tendsto_atTop
       (tendsto_atTop_mono (f := fun α => Real.exp (α * (score b - score a))) ?_ ?_)
     · intro α
-      exact Finset.single_le_sum (f := fun u => Real.exp (α * (score u - score a)))
-        (fun i _ => (Real.exp_pos _).le) (Finset.mem_univ b)
+      exact Finset.single_le_sum (f := fun x => Real.exp (α * (score x - score a)))
+        (fun i _ => (Real.exp_pos _).le) hbA
     · have hc : 0 < score b - score a := by linarith
       exact Real.tendsto_exp_atTop.comp ((tendsto_mul_const_atTop_of_pos hc).mpr tendsto_id)
-  have heq : (fun α => speakerAlpha (Measure.count : Measure U) α score {a})
-      = fun α => ENNReal.ofReal (Real.exp (α * score a) / ∑ u, Real.exp (α * score u)) :=
-    funext fun α => speakerAlpha_count_singleton α score a
-  rw [heq, show (0 : ℝ≥0∞) = ENNReal.ofReal 0 from ENNReal.ofReal_zero.symm]
-  exact (ENNReal.continuous_ofReal.tendsto 0).comp hreal
+  have h := speakerAlpha_countRestrict_tendsto_ofReal A score a ha hreal
+  rwa [ENNReal.ofReal_zero] at h
 
 /-! ### The pragmatic listener as a Bayesian posterior (measure-native)
 
@@ -371,7 +416,7 @@ the greatest value of expected-utility-minus-KL-cost
 optimum being the free energy `base.logIntegralExp score`. A direct instance of
 the Gibbs / Donsker–Varadhan variational principle
 `MeasureTheory.isGreatest_logIntegralExp` at the tilt defining the speaker. -/
-theorem speaker_isGreatest {U : Type*} [MeasurableSpace U] (base : Measure U)
+theorem speaker_isGreatest [MeasurableSpace U] (base : Measure U)
     [IsProbabilityMeasure base] (score : U → ℝ)
     (h_int_f : Integrable score (speaker base score))
     (h_int_llr : Integrable (llr (speaker base score) base) (speaker base score))
