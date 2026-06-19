@@ -1,7 +1,7 @@
 import Linglib.Studies.Narrog2010
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Attitudes.NegRaising
+import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Data.Examples.Rubinstein2014
 import Mathlib.Data.Fin.Basic
@@ -58,7 +58,7 @@ abbrev World := Fin 4
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
 open Semantics.Modality (ModalForce)
-open Semantics.Attitudes.NegRaising (negRaising_iff_subsingleton)
+open Semantics.Homogeneity (negRaising_iff_subsingleton)
 open Data.Examples
 
 /-- Named worlds for the concrete `Fin 4` evaluation frame used in the
@@ -418,7 +418,7 @@ theorem strong_verbs_no_neg_raising :
 
 Rubinstein ties neg-raising to negotiability via an "opinionated alternative".
 The structural content is sharper and fully general, and lives as substrate:
-`NegRaising.negRaising_iff_subsingleton` shows a universal modal neg-raises iff
+`Homogeneity.negRaising_iff_subsingleton` shows a universal modal neg-raises iff
 its domain is a subsingleton. The weak/strong split below is then exactly whether
 the ordering source collapses that domain — a negotiable ideal can, the bare
 favored set cannot. (That subsingleton/decidedness property is also what

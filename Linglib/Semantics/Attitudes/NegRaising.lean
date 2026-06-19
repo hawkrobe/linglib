@@ -1,5 +1,6 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Core.Logic.Aristotelian.Square
+import Linglib.Semantics.Homogeneity.Decided
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening
@@ -39,6 +40,11 @@ a gap between ¬Bel(p) and Bel(¬p)) but NOT for `know` (veridical: ¬know(p)
 includes cases where p is false, so strengthening to know(¬p) would require
 ¬p to be true, which is a factual claim the speaker may not intend).
 
+## See also
+
+The domain-general structural core — neg-raising / force collapse ⟺ the modal's
+domain being a subsingleton — lives in `Semantics/Homogeneity/Decided.lean`. This
+file is the doxastic (believe / think / know) application layer.
 -/
 
 namespace Semantics.Attitudes.NegRaising
@@ -47,9 +53,7 @@ open Aristotelian (Square SquareRelations)
 open Semantics.Attitudes.Doxastic
   (DoxasticPredicate Veridicality boxAt diaAt AccessRel)
 
--- ============================================================================
--- §1 The Doxastic Square
--- ============================================================================
+/-! ### The doxastic square -/
 
 /-- The doxastic square for a belief predicate.
 
@@ -71,7 +75,7 @@ theorem doxasticSquare_contradAO {W E : Type*} (R : AccessRel W E)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
     (doxasticSquare R agent worlds p).A w ↔
     ¬ (doxasticSquare R agent worlds p).O w := by
-  simp [doxasticSquare]
+  simp only [doxasticSquare, not_not]
 
 /-- The doxastic square satisfies the E–I contradiction diagonal.
 
@@ -88,29 +92,56 @@ theorem doxasticSquare_contradEI {W E : Type*} (R : AccessRel W E)
   · intro h w' hw' hR hp
     exact h ⟨w', hw', hR, hp⟩
 
--- ============================================================================
--- §2 Neg-Raising Predicates
--- ============================================================================
+/-! ### Neg-raising and the excluded-middle premise
 
-/-- A neg-raising predicate is a doxastic predicate whose negation is
-pragmatically strengthened from O (¬Bel(p)) to E (Bel(¬p)).
+Neg-raising is the O→E inference `¬Bel(p) → Bel(¬p)`. It is *not* generally valid:
+for a non-veridical attitude the doxastic state is mixed, so `¬Bel(p)` leaves a
+gap. What licenses the strengthening is the **excluded-middle premise** that the
+agent is *opinionated* about `p` (`Bel(p) ∨ Bel(¬p)`), supplied pragmatically
+([gajewski-2007]); given it the inference is a disjunctive syllogism. Being
+opinionated about *every* prejacent is exactly the decided/subsingleton limit
+(`Homogeneity.excludedMiddle_iff_subsingleton`), where neg-raising holds as a
+validity rather than a defeasible move. -/
 
-The `negRaises` field indicates whether the predicate supports this
-inference. Structurally, neg-raising is available when the predicate
-is non-veridical (belief, not knowledge). -/
-structure NegRaisingPredicate (W E : Type*) extends DoxasticPredicate W E where
-  /-- Whether negation of this predicate raises into the complement. -/
-  negRaises : Bool
-
-/-- Neg-raising is the pragmatic inference from O to E:
-¬V(p) is strengthened to V(¬p).
-
-This is the "excluded middle of belief": when a speaker says "I don't
-think p", they implicate they have a settled opinion, namely Bel(¬p). -/
+/-- Neg-raising: the O→E inference `¬Bel(p) → Bel(¬p)` at a world. -/
 def negRaisesAt {W E : Type*} (R : AccessRel W E) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) : Prop :=
   ¬ boxAt R agent w worlds p →
   boxAt R agent w worlds (λ w' => ¬ p w')
+
+/-- The **excluded-middle premise**: the agent is *opinionated* about `p`,
+believing `p` or believing `¬p`. Gajewski's neg-raising presupposition. -/
+def opinionated {W E : Type*} (R : AccessRel W E) (agent : E)
+    (worlds : List W) (p : W → Prop) (w : W) : Prop :=
+  boxAt R agent w worlds p ∨ boxAt R agent w worlds (λ w' => ¬ p w')
+
+/-- **The pragmatic mechanism.** Opinionatedness about `p` licenses the O→E
+strengthening — a disjunctive syllogism. Neg-raising is this inference run on the
+(pragmatically presupposed) excluded-middle premise, not a semantic entailment. -/
+theorem negRaisesAt_of_opinionated {W E : Type*} (R : AccessRel W E) (agent : E)
+    (worlds : List W) (p : W → Prop) (w : W) :
+    opinionated R agent worlds p w → negRaisesAt R agent worlds p w :=
+  fun hem hnot => hem.resolve_left hnot
+
+/-- The accessible-worlds set at `w`; `boxAt … p` is `∀ w' ∈ accessibleSet, p w'`. -/
+def accessibleSet {W E : Type*} (R : AccessRel W E) (agent : E) (worlds : List W)
+    (w : W) : Set W :=
+  {w' | w' ∈ worlds ∧ R agent w w'}
+
+theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : AccessRel W E) (agent : E)
+    (worlds : List W) (p : W → Prop) (w : W) :
+    boxAt R agent w worlds p ↔ ∀ w' ∈ accessibleSet R agent worlds w, p w' := by
+  simp only [boxAt, accessibleSet, Set.mem_setOf_eq, and_imp]
+
+/-- **Validity ⟺ decided state.** The agent is opinionated about *every* prejacent
+(neg-raising then holds as a validity) iff the accessible state is decided — a
+subsingleton — connecting the doxastic layer to the shared `Homogeneity` core. -/
+theorem forall_opinionated_iff_subsingleton {W E : Type*} (R : AccessRel W E)
+    (agent : E) (worlds : List W) (w : W) :
+    (∀ p : W → Prop, opinionated R agent worlds p w) ↔
+      (accessibleSet R agent worlds w).Subsingleton := by
+  rw [← Homogeneity.excludedMiddle_iff_subsingleton (accessibleSet R agent worlds w)]
+  simp only [opinionated, boxAt_iff_forall_accessibleSet]
 
 /-- Neg-raising is available exactly when the predicate admits a gap
 between ¬Bel(p) and Bel(¬p) — i.e., when the O→E strengthening is
@@ -130,56 +161,21 @@ def negRaisingAvailable (v : Veridicality) : Bool :=
   | .nonVeridical => true   -- believe, think: gap exists
   | .veridical => false     -- know: no neg-raising
 
--- ============================================================================
--- §3 Standard Predicate Classifications
--- ============================================================================
-
-/-- "believe" supports neg-raising.
-"I don't believe it's raining" ≈ "I believe it's not raining". -/
-def believeNR {W E : Type*} (R : AccessRel W E) : NegRaisingPredicate W E :=
-  { toDoxasticPredicate := Doxastic.believeTemplate R
-    negRaises := true }
-
-/-- "think" supports neg-raising.
-"I don't think it's raining" ≈ "I think it's not raining". -/
-def thinkNR {W E : Type*} (R : AccessRel W E) : NegRaisingPredicate W E :=
-  { toDoxasticPredicate := Doxastic.thinkTemplate R
-    negRaises := true }
-
-/-- "know" does NOT support neg-raising.
-"I don't know it's raining" ≠ "I know it's not raining". -/
-def knowNR {W E : Type*} (R : AccessRel W E) : NegRaisingPredicate W E :=
-  { toDoxasticPredicate := Doxastic.knowTemplate R
-    negRaises := false }
-
--- ============================================================================
--- §4 Theorems
--- ============================================================================
+/-! ### Veridicality and square lemmas -/
 
 /-- Neg-raising availability aligns with non-veridicality. -/
 theorem negRaising_iff_nonVeridical (v : Veridicality) :
     negRaisingAvailable v = true ↔ v = .nonVeridical := by
-  cases v <;> simp [negRaisingAvailable]
+  cases v <;> decide
 
-/-- "believe" is classified as neg-raising. -/
-theorem believe_negRaises {W E : Type*} (R : AccessRel W E) :
-    (believeNR R : NegRaisingPredicate W E).negRaises = true := rfl
-
-/-- "think" is classified as neg-raising. -/
-theorem think_negRaises {W E : Type*} (R : AccessRel W E) :
-    (thinkNR R : NegRaisingPredicate W E).negRaises = true := rfl
-
-/-- "know" is NOT classified as neg-raising. -/
-theorem know_not_negRaises {W E : Type*} (R : AccessRel W E) :
-    (knowNR R : NegRaisingPredicate W E).negRaises = false := rfl
-
-/-- Neg-raising predicates are non-veridical. -/
-theorem negRaising_implies_nonVeridical {W E : Type*}
-    (V : NegRaisingPredicate W E) (hNR : V.negRaises = true)
-    (hAlign : V.negRaises = negRaisingAvailable V.veridicality) :
-    V.veridicality = .nonVeridical := by
-  rw [hNR] at hAlign
-  exact (negRaising_iff_nonVeridical V.veridicality).mp hAlign.symm
+/-- The standard predicates' neg-raising status is *derived* from their
+veridicality, not stipulated as a flag: believe and think are non-veridical
+(neg-raising available), know is veridical (not). -/
+theorem believe_think_negRaise_know_not {W E : Type*} (R : AccessRel W E) :
+    negRaisingAvailable (Doxastic.believeTemplate R).veridicality = true ∧
+    negRaisingAvailable (Doxastic.thinkTemplate R).veridicality = true ∧
+    negRaisingAvailable (Doxastic.knowTemplate R).veridicality = false :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- The doxastic square for "believe" satisfies the contradiction diagonals. -/
 theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
@@ -191,25 +187,9 @@ theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
   ⟨doxasticSquare_contradAO R agent worlds p w,
    doxasticSquare_contradEI R agent worlds p w⟩
 
--- ============================================================================
--- §3 The excluded-middle core: neg-raising ⟺ subsingleton domain
--- ============================================================================
-
-/-- **The structural core of neg-raising.** A universal modal `∀ w ∈ A, p w`
-validates the neg-raising inference `¬□p → □¬p` for *every* prejacent `p` iff its
-domain `A` is a subsingleton — all worlds in `A` agree on every proposition.
-Equivalently, `A` admits no truth-value gap (cf. `Semantics.Homogeneity`), so this
-single lemma is the formal heart shared by Rubinstein's neg-raising and
-Agha & Jeretič's homogeneity. The doxastic `negRaisesAt` (§2) is the instance
-with `A` the agent's accessible worlds. General over any world type. -/
-theorem negRaising_iff_subsingleton {W : Type*} (A : Set W) :
-    (∀ p : W → Prop, ¬ (∀ w ∈ A, p w) → ∀ w ∈ A, ¬ p w) ↔ A.Subsingleton := by
-  constructor
-  · intro hEM a ha b hb
-    by_contra hab
-    have hnotall : ¬ ∀ w ∈ A, w = a := fun hall => hab (hall b hb).symm
-    exact (hEM (· = a) hnotall a ha) rfl
-  · intro hsub p hnot w hw hpw
-    exact hnot fun v hv => by rw [hsub hv hw]; exact hpw
+-- The domain-general core — neg-raising / force-collapse / excluded middle ⟺ the
+-- domain being a subsingleton — lives in `Semantics/Homogeneity/Decided.lean`,
+-- consumed here (via `forall_opinionated_iff_subsingleton`) and by the modal-force
+-- studies and nominal plural homogeneity.
 
 end Semantics.Attitudes.NegRaising
