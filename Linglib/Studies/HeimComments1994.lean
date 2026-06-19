@@ -185,7 +185,7 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     `Tense.upperLimitConstraint` (typed `[LE Time]`,
     anchored to [heim-1994-comments] in its docstring). This
     bridge theorem projects the substrate's `TemporalDeReReading`
-    `isFelicitousWith .past` (strict `<`) onto the substrate's ULC
+    `IsFelicitousWith .past` (strict `<`) onto the substrate's ULC
     primitive (weak `≤`), via `le_of_lt`.
 
     The implication is one-way: substrate `.past` is strict precedence,
@@ -196,7 +196,7 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
 theorem isFelicitousWith_past_imp_upperLimitConstraint
     {W E P T : Type*} [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
-    (h : dr.isFelicitousWith Tense.past) :
+    (h : dr.IsFelicitousWith Tense.past) :
     Tense.upperLimitConstraint
       dr.actualRes dr.holderContext.time :=
   le_of_lt ((Core.Order.holds_before dr.actualRes dr.holderContext.time).mp h)

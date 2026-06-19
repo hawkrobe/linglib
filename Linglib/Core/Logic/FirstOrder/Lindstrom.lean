@@ -1,4 +1,5 @@
 import Mathlib.ModelTheory.Bundled
+import Mathlib.Order.Hom.Lattice
 
 /-!
 # Lindström generalized quantifiers
@@ -19,8 +20,10 @@ and the linguistic generalized-quantifier API live downstream in `Semantics.Quan
 ## Main definitions
 
 * `FirstOrder.Language.LindstromQuantifier` — an iso-invariant class of `L`-structures.
-* `compl`/`inf`/`sup` — the Boolean algebra of generalized quantifiers (closed under
-  complement, intersection, union, since iso-invariance is preserved).
+* `BooleanAlgebra (LindstromQuantifier L)` — the Boolean algebra of generalized quantifiers
+  (`Qᶜ` outer negation, `Q ⊓ R`/`Q ⊔ R` conjunction/disjunction, `⊤`/`⊥` the trivial quantifiers),
+  obtained by pulling the powerset algebra back along the injective `holds`; `holdsHom` bundles that
+  embedding as a `BoundedLatticeHom`.
 -/
 
 universe u v w
@@ -43,29 +46,58 @@ namespace LindstromQuantifier
 
 variable {L : Language.{u, v}}
 
-/-- Outer negation `¬Q`: the structures *not* in `Q`. (`every ↦ not-every`.) -/
-def compl (Q : LindstromQuantifier.{u, v, w} L) : LindstromQuantifier.{u, v, w} L where
-  holds := Q.holdsᶜ
-  iso_inv h := not_congr (Q.iso_inv h)
+/-! ### Boolean-algebra structure
 
-/-- Meet `Q ⊓ R`: structures in both classes (conjunction of quantifiers). -/
-def inf (Q R : LindstromQuantifier.{u, v, w} L) : LindstromQuantifier.{u, v, w} L where
-  holds := Q.holds ∩ R.holds
-  iso_inv h := and_congr (Q.iso_inv h) (R.iso_inv h)
+The iso-invariant classes are a sub-Boolean-algebra of `Set (Bundled L.Structure)` — closed under
+complement, finite meet/join, `⊤` (all structures) and `⊥` (none), because `L`-isomorphism is an
+equivalence. `holds` is the injective embedding, so the algebra is pulled back along it: `Qᶜ` is
+outer negation (`every ↦ not-every`), `Q ⊓ R`/`Q ⊔ R` are conjunction/disjunction. -/
 
-/-- Join `Q ⊔ R`: structures in either class (disjunction of quantifiers). -/
-def sup (Q R : LindstromQuantifier.{u, v, w} L) : LindstromQuantifier.{u, v, w} L where
-  holds := Q.holds ∪ R.holds
-  iso_inv h := or_congr (Q.iso_inv h) (R.iso_inv h)
+instance : LE (LindstromQuantifier.{u, v, w} L) := ⟨fun Q R => Q.holds ≤ R.holds⟩
+instance : LT (LindstromQuantifier.{u, v, w} L) := ⟨fun Q R => Q.holds < R.holds⟩
+instance : Max (LindstromQuantifier.{u, v, w} L) :=
+  ⟨fun Q R => ⟨Q.holds ∪ R.holds, fun h => or_congr (Q.iso_inv h) (R.iso_inv h)⟩⟩
+instance : Min (LindstromQuantifier.{u, v, w} L) :=
+  ⟨fun Q R => ⟨Q.holds ∩ R.holds, fun h => and_congr (Q.iso_inv h) (R.iso_inv h)⟩⟩
+instance : Top (LindstromQuantifier.{u, v, w} L) := ⟨⟨Set.univ, fun _ => Iff.rfl⟩⟩
+instance : Bot (LindstromQuantifier.{u, v, w} L) := ⟨⟨∅, fun _ => Iff.rfl⟩⟩
+instance : Compl (LindstromQuantifier.{u, v, w} L) :=
+  ⟨fun Q => ⟨Q.holdsᶜ, fun h => not_congr (Q.iso_inv h)⟩⟩
+instance : SDiff (LindstromQuantifier.{u, v, w} L) :=
+  ⟨fun Q R => ⟨Q.holds \ R.holds,
+    fun h => by simp only [Set.mem_sdiff]; exact and_congr (Q.iso_inv h) (not_congr (R.iso_inv h))⟩⟩
+instance : HImp (LindstromQuantifier.{u, v, w} L) :=
+  ⟨fun Q R => ⟨Q.holds ⇨ R.holds,
+    fun h => by simp only [himp_eq]; exact or_congr (R.iso_inv h) (not_congr (Q.iso_inv h))⟩⟩
 
-@[simp] theorem compl_holds (Q : LindstromQuantifier.{u, v, w} L) : Q.compl.holds = Q.holdsᶜ := rfl
-@[simp] theorem inf_holds (Q R : LindstromQuantifier.{u, v, w} L) :
-    (Q.inf R).holds = Q.holds ∩ R.holds := rfl
-@[simp] theorem sup_holds (Q R : LindstromQuantifier.{u, v, w} L) :
-    (Q.sup R).holds = Q.holds ∪ R.holds := rfl
+theorem holds_injective : Function.Injective (holds : LindstromQuantifier.{u, v, w} L → _) :=
+  fun _ _ h => LindstromQuantifier.ext h
 
-@[simp] theorem compl_compl (Q : LindstromQuantifier.{u, v, w} L) : Q.compl.compl = Q := by
-  ext : 1; simp
+/-- The Boolean algebra of generalized quantifiers over `L`, pulled back along the injective `holds`
+embedding into the powerset algebra `Set (Bundled L.Structure)`. -/
+instance : BooleanAlgebra (LindstromQuantifier.{u, v, w} L) :=
+  Function.Injective.booleanAlgebra holds holds_injective
+    (fun {_ _} => Iff.rfl) (fun {_ _} => Iff.rfl)
+    (fun _ _ => rfl) (fun _ _ => rfl) rfl rfl (fun _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
+
+@[simp] theorem holds_sup (Q R : LindstromQuantifier.{u, v, w} L) :
+    (Q ⊔ R).holds = Q.holds ∪ R.holds := rfl
+@[simp] theorem holds_inf (Q R : LindstromQuantifier.{u, v, w} L) :
+    (Q ⊓ R).holds = Q.holds ∩ R.holds := rfl
+@[simp] theorem holds_compl (Q : LindstromQuantifier.{u, v, w} L) : Qᶜ.holds = Q.holdsᶜ := rfl
+@[simp] theorem holds_top : (⊤ : LindstromQuantifier.{u, v, w} L).holds = Set.univ := rfl
+@[simp] theorem holds_bot : (⊥ : LindstromQuantifier.{u, v, w} L).holds = ∅ := rfl
+
+/-- `holds` bundled: the embedding of the generalized-quantifier Boolean algebra into the powerset
+algebra `Set (Bundled L.Structure)` is a `BoundedLatticeHom` (it also preserves `ᶜ`, see
+`holds_compl`) — the Lindström analogue of `Core.Order.holdsHom`. -/
+def holdsHom :
+    BoundedLatticeHom (LindstromQuantifier.{u, v, w} L) (Set (Bundled.{w} L.Structure)) where
+  toFun := holds
+  map_sup' _ _ := rfl
+  map_inf' _ _ := rfl
+  map_top' := rfl
+  map_bot' := rfl
 
 end LindstromQuantifier
 
