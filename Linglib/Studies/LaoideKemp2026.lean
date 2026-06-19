@@ -464,18 +464,112 @@ theorem withHist_isPlanar (stem : FloatingForm CVKind Segment)
 private def someSuffix : FloatingForm CVKind Segment :=
   stemForm "ma" [.C, .V] [.m, .a] {(0, 0), (1, 1)}
 
-/-- **Left-edge locality (no look-ahead).** Appending phonological
-    material on the right of the stem does not change whether `(d)`
-    surfaces: the docking decision is determined by the stem's left
-    edge alone. Shown here for `ól` with a concrete suffix; the
-    general statement is the naturality of the docking process with
-    respect to `⊗` (Layer 2). This is the categorical resolution of
-    the paper's apparent ordering paradox — the conditioning *looks*
-    boundary-spanning but is in fact morpheme-local. -/
+/-- **Left-edge locality (no look-ahead), concrete witness.** Appending
+    phonological material on the right of the stem does not change whether
+    `(d)` surfaces. Shown here for `ól` with a concrete suffix; the general
+    statement (any suffix, configuration level) is
+    `dDockable_withHist_concat_right` below. This is the categorical
+    resolution of the paper's apparent ordering paradox — the conditioning
+    *looks* boundary-spanning but is in fact morpheme-local. -/
 theorem dPrime_right_invariant :
     dPrimeSurfaces (withHist ól) ↔
       dPrimeSurfaces (withHist (ofGraph (ól.toGraph.concat someSuffix.toGraph))) := by
   decide
+
+/-! ### The general no-look-ahead theorem
+
+`dPrime_right_invariant` above is the concrete witness; here it is for
+*every* suffix. The floating `(d)` shifts melody indices only, so
+surface-linkedness of a skeletal slot reduces to the stem's underlying
+links; and suffix material concatenated on the right lands at skeletal
+positions `≥ stem.lower.length`, never touching slots `0`/`1`. The
+docking configuration is therefore determined by the stem's left edge
+alone — the formal content of strict modularity (no look-ahead). -/
+
+/-- Surface-linkedness of skeletal slot `j` on a historic-tense form
+    reduces to the stem having an underlying link to `j`: the floating
+    `(d)` shifts melody indices only, never skeletal ones. -/
+private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Nat) :
+    (withHist X).surfaceGraph.IsLinkedLower j ↔ ∃ a, (a, j) ∈ X.toGraph.links := by
+  have hlinks : (withHist X).surfaceGraph.links =
+      X.toGraph.links.image (Graph.shiftLink 1 0) := by
+    show (historicExponent.concat X.toGraph).links = _
+    rw [Graph.links_concat]
+    simp [historicExponent, Graph.empty]
+  constructor
+  · rintro ⟨p, hp, hpj⟩
+    rw [hlinks, Finset.mem_image] at hp
+    obtain ⟨q, hq, hqp⟩ := hp
+    refine ⟨q.1, ?_⟩
+    have hqj : q.2 = j := by
+      have h2 := congrArg Prod.snd hqp
+      simp only [Graph.shiftLink_apply, Nat.add_zero] at h2
+      rw [h2]; exact hpj
+    rw [← hqj]; exact hq
+  · rintro ⟨a, ha⟩
+    show ∃ p ∈ (withHist X).surfaceGraph.links, p.snd = j
+    refine ⟨(a + 1, j), ?_, rfl⟩
+    rw [hlinks, Finset.mem_image]
+    exact ⟨(a, j), ha, by simp [Graph.shiftLink]⟩
+
+/-- A link to a low skeletal slot (`j < stem.lower.length`) is unaffected
+    by appending a suffix: the suffix's links are shifted to slots
+    `≥ stem.lower.length`, never reaching `j`. -/
+private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment) {j : Nat}
+    (hj : j < stem.lower.length) :
+    (∃ a, (a, j) ∈ (stem.toGraph.concat suffix.toGraph).links) ↔
+      ∃ a, (a, j) ∈ stem.toGraph.links := by
+  rw [Graph.links_concat]
+  constructor
+  · rintro ⟨a, ha⟩
+    rw [Finset.mem_union] at ha
+    rcases ha with h | h
+    · exact ⟨a, h⟩
+    · exfalso
+      rw [Finset.mem_image] at h
+      obtain ⟨q, _, hqe⟩ := h
+      have hsnd := congrArg Prod.snd hqe
+      simp only [Graph.shiftLink_apply] at hsnd
+      omega
+  · rintro ⟨a, ha⟩
+    exact ⟨a, Finset.mem_union.2 (Or.inl ha)⟩
+
+/-- The skeletal (lower) tier of a historic form is the stem's — the
+    floating `(d)` contributes no skeletal slot. -/
+private theorem withHist_lower (Y : FloatingForm CVKind Segment) :
+    (withHist Y).lower = Y.toGraph.lower := by
+  show (historicExponent.concat Y.toGraph).lower = Y.toGraph.lower
+  rw [Graph.lower_concat]; simp [historicExponent]
+
+/-- **The general no-look-ahead theorem.** For *any* suffix, the
+    `(d)`-docking configuration of the historic-tense form is determined
+    by the stem's left two skeletal slots alone — appending phonological
+    material on the right cannot change it (the stem already supplies
+    those slots). The general form of `dPrime_right_invariant`: the
+    formal content of strict modularity. (The post-*lenition* version
+    `dPrimeSurfaces` additionally requires `{L}`-docking to be left-local,
+    which holds for in-bounds stems; this is the configuration-level
+    statement, on which it rests.) -/
+theorem dDockable_withHist_concat_right (stem suffix : FloatingForm CVKind Segment)
+    (h2 : 2 ≤ stem.lower.length) :
+    dDockable (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))) ↔
+      dDockable (withHist stem) := by
+  have hlow : ∀ j, j < stem.lower.length →
+      (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).lower[j]? =
+        (withHist stem).lower[j]? := by
+    intro j hj
+    rw [withHist_lower, withHist_lower]
+    show (stem.toGraph.concat suffix.toGraph).lower[j]? = stem.toGraph.lower[j]?
+    rw [Graph.lower_concat, List.getElem?_append_left hj]
+  have hlink : ∀ j, j < stem.lower.length →
+      ((withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceGraph.IsLinkedLower j ↔
+        (withHist stem).surfaceGraph.IsLinkedLower j) := by
+    intro j hj
+    rw [isLinkedLower_withHist, isLinkedLower_withHist]
+    show (∃ a, (a, j) ∈ (stem.toGraph.concat suffix.toGraph).links) ↔ _
+    exact linked_concat_low stem suffix hj
+  unfold dDockable isCSlot isVSlot
+  rw [hlow 0 (by omega), hlow 1 (by omega), hlink 0 (by omega), hlink 1 (by omega)]
 
 /-! ## §11 Layer 2 — the historic morpheme as a monoidal-category functor
 
