@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Features.Aktionsart
 

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Aspect
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Typology.Complementation
 import Linglib.Features.Aktionsart

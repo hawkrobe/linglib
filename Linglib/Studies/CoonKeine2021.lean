@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.PConstraint

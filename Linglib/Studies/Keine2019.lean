@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Probe.Profile
 
 /-!
 # Selective Opacity [keine-2019]

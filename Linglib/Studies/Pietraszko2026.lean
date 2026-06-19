@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Phase
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.Coon2019
 import Linglib.Studies.CoonMateoPedroPreminger2014

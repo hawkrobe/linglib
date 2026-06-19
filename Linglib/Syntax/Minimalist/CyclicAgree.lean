@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Probe.Phi
 
 /-!
 # Cyclic Agree [bejar-rezac-2009]

@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Probe Profiles ([keine-2019], [keine-2020])
@@ -35,8 +36,11 @@ Hindi, English, and German each have different probe–horizon pairings.
 
 This file imports `ExtendedProjection/Basic.lean` (for `fValue`, `Cat`,
 `ComplementSize`) and `ClauseSpine.lean` (for bilateral label checks in
-vacuity and BIM theorems). The full Agree operation, tree-based horizons,
-and satisfaction conditions remain in `Agree.lean`, which imports this file.
+vacuity and BIM theorems). It is the *horizon* probe specification of
+the canonical `Probe` core (`Probe/Basic.lean`): `Probe.Profile.toProbe`
+denotes a profile as a `Probe α` (visibility = clause transparency).
+The tree-based Agree operation lives in `Agree.lean`; the Deal/Keine
+satisfaction-condition spec in `Probe/Satisfaction.lean`.
 -/
 
 namespace Minimalist
@@ -893,5 +897,13 @@ theorem ābar_does_not_force_agreement_hindi :
       ClauseSpine.cP.projectedHeads = true ∧
     LanguageProbeConfig.hindi.phi.transparentToLabel
       ClauseSpine.cP.projectedHeads = false := by decide
+
+/-! ### Denotation into the canonical `Probe` -/
+
+/-- The `Probe` a horizon profile denotes: sees a goal iff its enclosing
+    clause (highest head `headOf a`) is transparent (`transparentTo`). -/
+def Probe.Profile.toProbe {α : Type*} (p : Probe.Profile) (headOf : α → Cat) :
+    Probe α :=
+  .ofVis fun a => p.transparentTo (headOf a)
 
 end Minimalist

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Profile
 
 /-!
 # Nested Agree [amato-2025]

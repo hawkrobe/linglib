@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Sequence.Basic
 import Linglib.Fragments.Hungarian.Predicates

@@ -1,7 +1,7 @@
 import Linglib.Fragments.NezPerce.ClausalEmbedding
 import Linglib.Typology.Complementation
-import Linglib.Syntax.Minimalist.Agree
-import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Probe.Satisfaction
+import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Semantics.Presupposition.ProjectiveContent
 

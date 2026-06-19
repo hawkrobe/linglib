@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Halpert 2012 — Argument Licensing and Agreement in Zulu [halpert-2012]

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Minimalist.Phi.Probing
+import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
