@@ -42,8 +42,17 @@ namespace Rett2026
 
 open Core.Order (Boundedness)
 open Semantics.Degree (isAmbidirectional)
-open Semantics.Degree.Comparative (MannerEffect)
 open English.Modifiers.Adjectives (AdjModifierEntry)
+
+/-- Manner implicature triggered by EN in an ambidirectional construction.
+`evaluative`: the relation is noteworthy (large gap / early timing).
+`atypical`: the EN form is pragmatically marked (optional, stylistic). -/
+structure MannerEffect where
+  /-- Does EN trigger an evaluative reading? -/
+  evaluative : Bool
+  /-- Is the EN form pragmatically marked (optional, stylistic)? -/
+  atypical : Bool
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1. High vs Low EN (re-exported from ExpletiveNegation)
@@ -354,7 +363,7 @@ theorem while_isAmbidirectional_witness :
 /-- Cross-references `isAmbidirectional .comparative = true` to
     the boundary singletons `Semantics.Degree.maxOnScale_ge_atMost` /
     `Semantics.Degree.maxOnScale_atLeast_singleton`, plus
-    `Semantics.Degree.Comparative.comparative_boundary`. -/
+    `Semantics.Degree.comparative_boundary`. -/
 theorem comparative_isAmbidirectional_witness :
     ENConstruction.comparative.isAmbidirectional = true := rfl
 
@@ -494,7 +503,7 @@ theorem closed_blocks_comparativeEN (b : Boundedness)
 When EN is used in an ambidirectional environment, it is truth-conditionally
 vacuous but pragmatically meaningful. The use of the marked negated form
 (vs the unmarked positive form) triggers a **manner implicature**
-(see `MannerEffect` in `Adjective.Comparative`):
+(classified by `MannerEffect`):
 
 1. **French *avant que... ne***: "before ¬B" → "well before B" (temporal
    distance reading; [cepeda-2018], [krifka-2010b]).

@@ -113,6 +113,7 @@ import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.SetPreimage
+import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.Orthoframe
 import Linglib.Core.Order.Orthoframe.Representation

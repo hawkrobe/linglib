@@ -64,7 +64,7 @@ disambiguate the two, favoring Analysis 1.
 
 namespace Buring2007
 
-open Semantics.Degree.Comparative (comparativeSem ScaleDirection taller_shorter_antonymy)
+open Semantics.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
 open Semantics.Degree.Little (littlePred little_posExt_eq_negExt little_involution
   little_reverses_comparison)
 open Semantics.Degree.Intervals (subcomparative negativeInterval)

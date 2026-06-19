@@ -28,7 +28,7 @@ inverts the measured region.
 
 namespace Semantics.Degree.Little
 
-open Semantics.Degree.Comparative (comparativeSem ScaleDirection taller_shorter_antonymy)
+open Semantics.Degree (comparativeSem ScaleDirection taller_shorter_antonymy)
 
 /-- LITTLE on degree predicates: complementation. -/
 def littlePred {D : Type*} (P : D → Prop) : D → Prop :=

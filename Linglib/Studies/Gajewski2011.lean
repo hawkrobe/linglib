@@ -53,7 +53,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   Gajewski's headline empirical claim made `decide`-checkable over the
   Fragment registry.
 - Hoeksema S-comparative SAA bridge
-  (`bridge_hoeksema_sComparative_strawsonAA`) — the positive test case
+  (`bridge_hoeksema_clausalComparison_strawsonAA`) — the positive test case
   for Gajewski's framework: classically AA → strong NPIs predicted ✓.
 
 ## §4 framework — both halves now in skeleton
@@ -472,7 +472,7 @@ context-dependent truncation à la Chierchia 2004 axiom (i)). Deferred.
 - [crnic-2014] challenges Strawson-based analyses with a
   non-monotonicity reanalysis; engages directly with this paper.
 - [hoeksema-1983] S-comparative is anti-additive (per
-  `bridge_hoeksema_sComparative_strawsonDE` in VonFintel1999) — hence,
+  `bridge_hoeksema_clausalComparison_strawsonDE` in VonFintel1999) — hence,
   per the Zwarts-classical theory, predicted to license strong NPIs.
   Empirically borne out (Hoeksema's data).
 -/
@@ -604,19 +604,19 @@ theorem only_satisfies_condition2_no_alts (x : World → Prop) :
 /-! ## Hoeksema S-comparative — the positive test case
 
 [hoeksema-1983]'s S-comparative is *classically* anti-additive
-(`Semantics/Degree/Comparative.lean::sComparative_isAntiAdditive`),
+(`Semantics/Degree/Comparative.lean::clausalComparison_isAntiAdditive`),
 hence by `antiAdditive_implies_strawsonAA` it is also Strawson-AA.
 This is the **positive test** for Gajewski's framework: an AA operator
 licenses strong NPIs (Hoeksema's data confirms — "Mary is taller than
 anyone is", "in years"-style strong NPIs grammatical in than-S
 comparatives). Contrast vF's recalcitrants which are SAA-but-not-AA
 and hence don't license strong NPIs. -/
-theorem bridge_hoeksema_sComparative_strawsonAA
+theorem bridge_hoeksema_clausalComparison_strawsonAA
     {Entity D : Type*} [Preorder D] (μ : Entity → D)
     (defined : Set D → Entity → Prop) :
-    IsStrawsonAntiAdditive (Semantics.Degree.Comparative.sComparative μ) defined :=
+    IsStrawsonAntiAdditive (Semantics.Degree.clausalComparison μ) defined :=
   antiAdditive_implies_strawsonAA _
-    (Semantics.Degree.Comparative.sComparative_isAntiAdditive μ) _
+    (Semantics.Degree.clausalComparison_isAntiAdditive μ) _
 
 /-! ## Strong-NPI registry consistency
 

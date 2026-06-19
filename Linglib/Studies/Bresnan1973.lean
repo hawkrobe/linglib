@@ -72,7 +72,7 @@ namespace Bresnan1973
 
 open Semantics.Degree (DegPType)
 open Semantics.Degree.ThanClause (ThanClauseType)
-open Semantics.Degree.Comparative (comparativeSem)
+open Semantics.Degree (comparativeSem)
 open Core.Order (ScalePolarity Boundedness)
 -- ════════════════════════════════════════════════════
 -- § 1. QP Structure (Det + Q)

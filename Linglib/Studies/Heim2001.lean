@@ -81,7 +81,7 @@ open Semantics.Degree.Abstraction
   (lowDegP_forall lowDegP_exists highDegP_forall highDegP_exists
    forall_more_high_to_low forall_more_low_to_high exists_more_scope_collapse
    negatedDegreePredicate negatedDegreePredicate_eq)
-open Semantics.Degree.Comparative (comparativeSem)
+open Semantics.Degree (comparativeSem)
 open Minimalist.DegreeMovement
   (IsHeimKennedy ScopeBinding not_isHeimKennedy_QP_above_bound_DegP)
 
