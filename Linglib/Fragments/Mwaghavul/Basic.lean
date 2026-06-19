@@ -151,22 +151,22 @@ def deriveVerb (base : Ideophone) : List TRN :=
   (Phonology.Autosegmental.GrammaticalTone.tonalOverwrite host spec).map TBU.tone
 
 -- M-tone verbaliser: wùlàʃ [L L] → wūlāʃ [M M]
-theorem wuulash_verb : deriveVerb wuulash = [.M, .M] := by native_decide
+theorem wuulash_verb : deriveVerb wuulash = [.M, .M] := by decide
 
 -- M-tone verbaliser on monosyllable: dìːs [L] → dīːs [M]
-theorem diis_verb : deriveVerb diis = [.M] := by native_decide
+theorem diis_verb : deriveVerb diis = [.M] := by decide
 
 -- M-H verbaliser: bìʃɔ̀l [L L] → bīʃɔ́l [M H]
-theorem bishool_verb : deriveVerb bishool = [.M, .H] := by native_decide
+theorem bishool_verb : deriveVerb bishool = [.M, .H] := by decide
 
 -- M-H verbaliser on trisyllable: háŋláyáp [H H H] → hāŋlāyáp [M M H]
-theorem hanlayap_verb : deriveVerb hanlayap = [.M, .M, .H] := by native_decide
+theorem hanlayap_verb : deriveVerb hanlayap = [.M, .M, .H] := by decide
 
 -- M-H verbaliser: kìtíf [L H] → kītíf [M H]
-theorem kitiif_verb : deriveVerb kitiif = [.M, .H] := by native_decide
+theorem kitiif_verb : deriveVerb kitiif = [.M, .H] := by decide
 
 -- M-H verbaliser: jàlpàt [L L] → jālpát [M H]
-theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by native_decide
+theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by decide
 
 -- ============================================================================
 -- S 5: Empirical Generalizations ([akinbo-fwangwar-2026] (13))

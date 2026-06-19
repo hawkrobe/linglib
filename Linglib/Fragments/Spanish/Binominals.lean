@@ -62,6 +62,6 @@ theorem mierda_blocks_npe : mierda.binominalType.licensesNPE = false := rfl
 /-- Every noun's NPE licensing is determined by its binominal type. -/
 theorem all_nouns_npe_from_type :
     allNouns.all (λ n => n.binominalType.licensesNPE = n.binominalType.hasNumE) = true := by
-  native_decide
+  decide
 
 end Spanish.Binominals

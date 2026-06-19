@@ -3392,16 +3392,16 @@ referenced `Causative.toSemantics` over `CausalDynamics`) were removed
 in Phase D-G in favor of the polymorphic V2 versions. -/
 
 /-- "make" asserts sufficiency — derived from its builder. -/
-theorem make_asserts_sufficiency : make.toVerb.assertsSufficiency = true := by native_decide
+theorem make_asserts_sufficiency : make.toVerb.assertsSufficiency = true := by decide
 
 /-- "cause" asserts necessity — derived from its builder. -/
-theorem cause_asserts_necessity : cause.toVerb.assertsNecessity = true := by native_decide
+theorem cause_asserts_necessity : cause.toVerb.assertsNecessity = true := by decide
 
 /-- "make" does NOT assert necessity. -/
-theorem make_not_necessity : make.toVerb.assertsNecessity = false := by native_decide
+theorem make_not_necessity : make.toVerb.assertsNecessity = false := by decide
 
 /-- "cause" does NOT assert sufficiency. -/
-theorem cause_not_sufficiency : cause.toVerb.assertsSufficiency = false := by native_decide
+theorem cause_not_sufficiency : cause.toVerb.assertsSufficiency = false := by decide
 
 /-- make-type verbs (make, have, get) share the `.make` builder. -/
 theorem make_type_verbs_share_semantics :
@@ -3419,7 +3419,7 @@ theorem let_is_permissive :
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
-    prevent.toVerb.assertsSufficiency = false := by native_decide
+    prevent.toVerb.assertsSufficiency = false := by decide
 
 /-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
     falsity), satisfying the FORGET class licensing condition
@@ -3451,8 +3451,8 @@ theorem lexical_causatives_assert_sufficiency :
     burn.toVerb.assertsSufficiency = true ∧
     destroy.toVerb.assertsSufficiency = true ∧
     melt.toVerb.assertsSufficiency = true := by
-  refine ⟨by native_decide, by native_decide, by native_decide,
-          by native_decide, by native_decide⟩
+  refine ⟨by decide, by decide, by decide,
+          by decide, by decide⟩
 
 /-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
 theorem lexical_causatives_differ_from_cause :
@@ -3471,19 +3471,19 @@ removed in Phase D-G. -/
 
 /-- "manage" entails the complement — derived from its builder. -/
 theorem manage_entails_complement_derived :
-    manage.toVerb.entailsComplement = some true := by native_decide
+    manage.toVerb.entailsComplement = some true := by decide
 
 /-- "fail" entails NOT the complement — derived from its builder. -/
 theorem fail_entails_not_complement_derived :
-    fail.toVerb.entailsComplement = some false := by native_decide
+    fail.toVerb.entailsComplement = some false := by decide
 
 /-- "remember" entails the complement — derived from its builder. -/
 theorem remember_entails_complement_derived :
-    remember.toVerb.entailsComplement = some true := by native_decide
+    remember.toVerb.entailsComplement = some true := by decide
 
 /-- "forget" entails NOT the complement — derived from its builder. -/
 theorem forget_entails_not_complement_derived :
-    forget.toVerb.entailsComplement = some false := by native_decide
+    forget.toVerb.entailsComplement = some false := by decide
 
 -- ════════════════════════════════════════════════════
 -- § Morphological Stem + Vacuity

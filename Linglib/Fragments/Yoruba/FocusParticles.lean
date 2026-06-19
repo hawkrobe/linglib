@@ -111,11 +111,11 @@ theorem opposite_head_directions :
 
 /-- Both particles trigger movement to Spec-FocP. -/
 theorem both_trigger_movement :
-    allParticles.all (·.triggersMovement) = true := by native_decide
+    allParticles.all (·.triggersMovement) = true := by decide
 
 /-- Both particles are required for subject focus. -/
 theorem both_required_for_subject :
-    allParticles.all (·.requiredForSubjectFocus) = true := by native_decide
+    allParticles.all (·.requiredForSubjectFocus) = true := by decide
 
 /-- Standard Yorùbá uses head-initial FocP. -/
 theorem standard_head_initial :

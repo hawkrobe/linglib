@@ -220,6 +220,6 @@ theorem mai_qualsiasi_distinct :
 /-- All Italian NPIs have strengthening scalar direction. -/
 theorem italian_npis_strengthening :
     [nessuno, niente, mai, alcuno, neanche].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
+      (λ e => e.scalarDirection == .strengthening) = true := by decide
 
 end Italian.PolarityItems

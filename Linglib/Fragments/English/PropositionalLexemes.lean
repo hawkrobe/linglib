@@ -116,7 +116,7 @@ def propLexemes : List PropLexeme := [yes, no, mmh, huh]
 
 /-- All propositional lexemes have non-empty content rules. -/
 theorem all_have_content_rules :
-    propLexemes.all (fun l => !l.contentRule.isEmpty) = true := by native_decide
+    propLexemes.all (fun l => !l.contentRule.isEmpty) = true := by decide
 
 /-- yes and no both reference MaxQUD (not MaxPending directly).
 [ginzburg-2012] §7.5: both derive content from max-qud via dgb-params. -/
@@ -129,6 +129,6 @@ theorem yes_no_opposite_polarity :
 
 /-- huh is the only CR lexeme. -/
 theorem huh_unique_cr :
-    propLexemes.filter (·.polarity == .cr) = [huh] := by native_decide
+    propLexemes.filter (·.polarity == .cr) = [huh] := by decide
 
 end English.PropositionalLexemes

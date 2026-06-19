@@ -452,17 +452,17 @@ def modifierScales : List ModifierScale :=
 
 /-- All tolerance modifiers convey shape information. -/
 theorem tolerance_modifiers_convey_shape :
-    toleranceModifiers.all (·.conveysShape) = true := by native_decide
+    toleranceModifiers.all (·.conveysShape) = true := by decide
 
 /-- No interval or exact modifiers convey shape information. -/
 theorem non_tolerance_no_shape :
-    (intervalModifiers ++ exactifiers).all (·.conveysShape == false) = true := by native_decide
+    (intervalModifiers ++ exactifiers).all (·.conveysShape == false) = true := by decide
 
 /-- Only tolerance modifiers are sorites-susceptible. -/
 theorem only_tolerance_sorites :
     toleranceModifiers.all (·.soritesSusceptible) = true ∧
     (intervalModifiers ++ exactifiers).all (·.soritesSusceptible == false) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- Verification: [kennedy-2015] Class A/B Properties
@@ -470,11 +470,11 @@ theorem only_tolerance_sorites :
 
 /-- All Class B modifiers generate ignorance implicatures. -/
 theorem classB_all_generate_ignorance :
-    classBModifiers.all (·.generatesIgnorance) = true := by native_decide
+    classBModifiers.all (·.generatesIgnorance) = true := by decide
 
 /-- No Class A modifiers generate ignorance implicatures. -/
 theorem classA_no_ignorance :
-    classAModifiers.all (·.generatesIgnorance == false) = true := by native_decide
+    classAModifiers.all (·.generatesIgnorance == false) = true := by decide
 
 /-- "at most" and "up to" differ only in evaluative valence.
 
@@ -485,27 +485,27 @@ theorem atMost_upTo_differ_only_in_valence :
     atMost.modClass = upTo.modClass ∧
     atMost.boundDir = upTo.boundDir ∧
     atMost.evaluativeValence ≠ upTo.evaluativeValence := by
-  constructor; · native_decide
-  constructor; · native_decide
-  constructor; · native_decide
-  · native_decide
+  constructor; · decide
+  constructor; · decide
+  constructor; · decide
+  · decide
 
 /-- All bound modifiers are classified as bound type. -/
 theorem bound_modifiers_all_bound :
-    boundModifiers.all (·.modType == .bound) = true := by native_decide
+    boundModifiers.all (·.modType == .bound) = true := by decide
 
 /-- No bound modifiers are vague. -/
 theorem bound_modifiers_not_vague :
-    boundModifiers.all (·.isVague == false) = true := by native_decide
+    boundModifiers.all (·.isVague == false) = true := by decide
 
 /-- Approximators are not sorites-susceptible (unlike tolerance modifiers). -/
 theorem approximators_not_sorites :
-    approximatorModifiers.all (·.soritesSusceptible == false) = true := by native_decide
+    approximatorModifiers.all (·.soritesSusceptible == false) = true := by decide
 
 /-- Approximators have polar exclusion (distinguished from tolerance modifiers by type). -/
 theorem approximators_distinct_from_tolerance :
     approximatorModifiers.all (·.modType == .approximator) = true ∧
     toleranceModifiers.all (·.modType == .tolerance) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 end English.NumeralModifiers

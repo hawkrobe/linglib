@@ -91,22 +91,22 @@ def allEntries : List Coordinator :=
 /-- All Japanese coordination particles are bound (postpositive). -/
 theorem all_bound :
     allEntries.all (·.boundness == .bound) = true := by
-  native_decide
+  decide
 
 /-- The MU particle "mo" also serves as an additive particle. -/
 theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
-  native_decide
+  decide
 
 /-- The MU particle "mo" also serves as a quantifier particle. -/
 theorem mu_is_quantifier :
     (allEntries.filter (·.role == .mu)).all (·.alsoQuantifier) = true := by
-  native_decide
+  decide
 
 /-- The disjunction particle "ka" also serves as a quantifier particle. -/
 theorem disj_is_quantifier :
     (allEntries.filter (·.role == .disj)).all (·.alsoQuantifier) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- Determiners Bridge: Coordination ↔ Quantification
@@ -156,6 +156,6 @@ theorem boolean_duality_in_quantifiers :
     -- All ka-particle quantifiers are existential (∨ family)
     (Japanese.Determiners.allQuantifiers.filter
       (·.particle == some "ka")).all (·.qforce == .existential) = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end Japanese.Coordination

@@ -117,8 +117,8 @@ theorem magnus_abb : magnus.suppletion = abb := rfl
 theorem parvus_abb : parvus.suppletion = abb := rfl
 
 /-- Latin has all three attested patterns: AAA, ABB, ABC. -/
-theorem latin_has_aaa : allEntries.any (λ e => e.suppletion == aaa) = true := by native_decide
-theorem latin_has_abb : allEntries.any (λ e => e.suppletion == abb) = true := by native_decide
-theorem latin_has_abc : allEntries.any (λ e => e.suppletion == abc) = true := by native_decide
+theorem latin_has_aaa : allEntries.any (λ e => e.suppletion == aaa) = true := by decide
+theorem latin_has_abb : allEntries.any (λ e => e.suppletion == abb) = true := by decide
+theorem latin_has_abc : allEntries.any (λ e => e.suppletion == abc) = true := by decide
 
 end Latin.Adjectives

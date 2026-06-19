@@ -92,10 +92,10 @@ def inf4 : List InfForm :=
 def allInfForms : List InfForm := inf1 ++ inf2 ++ inf3 ++ inf4
 
 /-- Total number of infinitive forms. -/
-theorem allInfForms_count : allInfForms.length = 9 := by native_decide
+theorem allInfForms_count : allInfForms.length = 9 := by decide
 
 /-- The III infinitive has the richest paradigm (5 forms). -/
-theorem inf3_richest : inf3.length = 5 := by native_decide
+theorem inf3_richest : inf3.length = 5 := by decide
 
 -- ============================================================================
 -- § 3: III Infinitive ↔ Local Case Matrix
@@ -119,37 +119,37 @@ def inf3LocalMappings : List Inf3LocalMapping :=
 
 /-- Exactly 4 of 5 III-infinitive forms map to local case matrix cells. -/
 theorem inf3_local_overlap :
-    (inf3LocalMappings.filter (·.localCell.isSome)).length = 4 := by native_decide
+    (inf3LocalMappings.filter (·.localCell.isSome)).length = 4 := by decide
 
 /-- The one unmapped form is abessive. -/
 theorem inf3_unmapped_is_abessive :
     (inf3LocalMappings.filter (·.localCell.isNone)).length = 1 ∧
     (inf3LocalMappings.filter (·.localCell.isNone))[0]!.infForm.caseName = "abessive" := by
-  native_decide
+  decide
 
 /-- The III infinitive's inessive matches the nominal inessive
     (static + internal cell of the matrix). -/
 theorem inf3_inessive_matches_nominal :
     (localCaseMatrix .static .internal).name = "inessive" ∧
-    inf3[0]!.caseName = "inessive" := by native_decide
+    inf3[0]!.caseName = "inessive" := by decide
 
 /-- The III infinitive's elative matches the nominal elative
     (source + internal cell of the matrix). -/
 theorem inf3_elative_matches_nominal :
     (localCaseMatrix .source .internal).name = "elative" ∧
-    inf3[1]!.caseName = "elative" := by native_decide
+    inf3[1]!.caseName = "elative" := by decide
 
 /-- The III infinitive's illative matches the nominal illative
     (goal + internal cell of the matrix). -/
 theorem inf3_illative_matches_nominal :
     (localCaseMatrix .goal .internal).name = "illative" ∧
-    inf3[2]!.caseName = "illative" := by native_decide
+    inf3[2]!.caseName = "illative" := by decide
 
 /-- The III infinitive's adessive matches the nominal adessive
     (static + external cell of the matrix). -/
 theorem inf3_adessive_matches_nominal :
     (localCaseMatrix .static .external).name = "adessive" ∧
-    inf3[3]!.caseName = "adessive" := by native_decide
+    inf3[3]!.caseName = "adessive" := by decide
 
 /-- The 4 mapped III-infinitive forms cover 3 of the 6 local case matrix cells
     (the 3 internal cases + adessive), leaving ablative and allative unused.
@@ -163,6 +163,6 @@ theorem inf3_covers_internal_column :
     mapped.all (fun lc =>
       lc.locationType == .internal ||
       (lc.direction == .static && lc.locationType == .external)) = true := by
-  native_decide
+  decide
 
 end Finnish.Infinitives

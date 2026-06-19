@@ -225,7 +225,7 @@ def ldData : List KicheLongDistanceDatum := [ldFromCP, ldFromAspP]
     no matrix *wi*. -/
 theorem fronting_particle_generalization :
     ldData.all (λ d => d.embeddedType.hasComp == d.wiOnMatrix) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 5: Extraction Profile

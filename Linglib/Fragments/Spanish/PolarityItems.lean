@@ -90,6 +90,6 @@ def items : List PolarityItemEntry :=
 /-- All Spanish n-words are weak NPIs licensed by negation. -/
 theorem all_npis_licensed_by_negation :
     items.all (fun e => e.licensingContexts.contains .negation) = true := by
-  native_decide
+  decide
 
 end Spanish.PolarityItems

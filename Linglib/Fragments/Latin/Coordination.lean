@@ -90,16 +90,16 @@ def allEntries : List Coordinator :=
 /-- Latin has exactly one bound morpheme: -que. -/
 theorem one_bound_morpheme :
     (allEntries.filter (·.boundness == .bound)).length = 1 := by
-  native_decide
+  decide
 
 /-- The bound morpheme is the MU particle -que. -/
 theorem bound_is_mu :
     (allEntries.filter (·.boundness == .bound)).all (·.role == .mu) = true := by
-  native_decide
+  decide
 
 /-- Latin has correlative uses of J, disjunction, and negative coordination. -/
 theorem correlative_entries :
     (allEntries.filter (·.correlative)).length = 4 := by
-  native_decide
+  decide
 
 end Latin.Coordination

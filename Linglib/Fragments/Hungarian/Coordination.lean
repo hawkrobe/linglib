@@ -68,11 +68,11 @@ def allEntries : List Coordinator :=
     Georgian children found MU harder than Hungarian children did. -/
 theorem all_free :
     allEntries.all (·.boundness == .free) = true := by
-  native_decide
+  decide
 
 /-- The MU particle *is* also serves as an additive particle. -/
 theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
-  native_decide
+  decide
 
 end Hungarian.Coordination

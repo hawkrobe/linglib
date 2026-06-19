@@ -303,7 +303,7 @@ def dutchAdpositions : List DutchAdposition :=
     [broekhuis-corver-2026] §6: postPs derive from prePs by
     complement movement, so postP ⊆ preP. -/
 theorem postP_subset_preP :
-    ∀ a ∈ dutchAdpositions, a.postPOk → a.prePOk := by native_decide
+    ∀ a ∈ dutchAdpositions, a.postPOk → a.prePOk := by decide
 
 /-- Morphologically complex prePs resist R-pronominalization.
     §2.1 ex. 20: *tijdens*, *ondanks*, *zonder* are diachronically
@@ -318,12 +318,12 @@ theorem circumP_parts_not_preP :
 
 /-- All adpositions with directional readings have a PathShape. -/
 theorem directional_has_pathShape :
-    ∀ a ∈ dutchAdpositions, a.directional → a.pathShape.isSome := by native_decide
+    ∀ a ∈ dutchAdpositions, a.directional → a.pathShape.isSome := by decide
 
 /-- PostP-capable adpositions have both locational and directional readings.
     §2.2 ex. 21: preP *op* = locational, postP *op* = directional. -/
 theorem postP_has_both_readings :
     ∀ a ∈ dutchAdpositions, a.postPOk →
-    a.locational ∧ a.directional := by native_decide
+    a.locational ∧ a.directional := by decide
 
 end Dutch.Adpositions

@@ -390,29 +390,29 @@ def nomRoots : List ChujRoot :=
 
 -- Root classification
 theorem tvRoots_selectTheme :
-    tvRoots.all (·.root.arity == .selectsTheme) = true := by native_decide
+    tvRoots.all (·.root.arity == .selectsTheme) = true := by decide
 
 theorem itvRoots_noTheme :
-    itvRoots.all (·.root.arity == .noTheme) = true := by native_decide
+    itvRoots.all (·.root.arity == .noTheme) = true := by decide
 
 theorem posRoots_measureFn :
-    posRoots.all (·.root.denotationType == some .measureFn) = true := by native_decide
+    posRoots.all (·.root.denotationType == some .measureFn) = true := by decide
 
 theorem nomRoots_entityPred :
-    nomRoots.all (·.root.denotationType == some .entityPred) = true := by native_decide
+    nomRoots.all (·.root.denotationType == some .entityPred) = true := by decide
 
 -- Root↔CRootClass bridge
 theorem tvRoots_bridge :
-    tvRoots.all (λ r => rootToClass r.root == .tv) = true := by native_decide
+    tvRoots.all (λ r => rootToClass r.root == .tv) = true := by decide
 
 theorem itvRoots_bridge :
-    itvRoots.all (λ r => rootToClass r.root == .itv) = true := by native_decide
+    itvRoots.all (λ r => rootToClass r.root == .itv) = true := by decide
 
 theorem posRoots_bridge :
-    posRoots.all (λ r => rootToClass r.root == .pos) = true := by native_decide
+    posRoots.all (λ r => rootToClass r.root == .pos) = true := by decide
 
 theorem nomRoots_bridge :
-    nomRoots.all (λ r => rootToClass r.root == .nom) = true := by native_decide
+    nomRoots.all (λ r => rootToClass r.root == .nom) = true := by decide
 
 -- Paradigm grammaticality
 theorem tv_all_voices :

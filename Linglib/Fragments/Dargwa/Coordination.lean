@@ -69,17 +69,17 @@ def allEntries : List Coordinator := [ra, ja, nu]
 /-- Dargwa has no J-only conjunction particle. Its conjunction
     strategy is MU-only (*=ra* repeated on each conjunct). -/
 theorem no_j_particle :
-    (allEntries.filter (·.role == .j)).length = 0 := by native_decide
+    (allEntries.filter (·.role == .j)).length = 0 := by decide
 
 /-- The MU particle *=ra* is also an additive particle,
     as predicted by M&S typology. -/
 theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
-  native_decide
+  decide
 
 /-- The MU particle is bound (enclitic). -/
 theorem mu_is_bound :
     (allEntries.filter (·.role == .mu)).all (·.boundness == .bound) = true := by
-  native_decide
+  decide
 
 end Dargwa.Coordination

@@ -117,7 +117,7 @@ theorem wollen_bouletic : wollen.modalMeaning = cp [.necessity] [.bouletic] := r
 
 /-- *sollte* has wider flavor range than *sollen* (morphological flavor change). -/
 theorem sollte_wider_than_sollen :
-    sollte.modalMeaning.length > sollen.modalMeaning.length := by native_decide
+    sollte.modalMeaning.length > sollen.modalMeaning.length := by decide
 
 /-- Seven modals total (including *sollte* as distinct from *sollen*). -/
 theorem allModals_size : allModals.length = 7 := rfl

@@ -165,33 +165,33 @@ def lookup (form : String) : Option ClassifierEntry :=
 theorem ge_is_default : ge.isDefault = true := rfl
 
 /-- 只 encodes animacy. -/
-theorem zhi_encodes_animacy : zhi.encodes .animacy = true := by native_decide
+theorem zhi_encodes_animacy : zhi.encodes .animacy = true := by decide
 
 /-- 位 encodes humanness. -/
-theorem wei_encodes_humanness : wei.encodes .humanness = true := by native_decide
+theorem wei_encodes_humanness : wei.encodes .humanness = true := by decide
 
 /-- 本 encodes shape. -/
-theorem ben_encodes_shape : ben.encodes .shape = true := by native_decide
+theorem ben_encodes_shape : ben.encodes .shape = true := by decide
 
 /-- All non-default classifiers have at least one semantic parameter. -/
 theorem specific_classifiers_have_semantics :
     (allClassifiers.filter (!·.isDefault)).all (·.semantics.length > 0) = true := by
-  native_decide
+  decide
 
 /-- Sortal classifiers are not mensural. -/
 theorem sortal_classifiers_not_mensural :
-    sortalClassifiers.all (!·.isMensural) = true := by native_decide
+    sortalClassifiers.all (!·.isMensural) = true := by decide
 
 /-- Container classifiers CAN be mensural (structure determines reading). -/
 theorem bei_is_mensural : bei.isMensural = true := rfl
 
 theorem container_classifiers_are_mensural :
-    containerClassifiers.all (·.isMensural) = true := by native_decide
+    containerClassifiers.all (·.isMensural) = true := by decide
 
 theorem container_classifiers_have_semantics :
-    containerClassifiers.all (·.semantics.length > 0) = true := by native_decide
+    containerClassifiers.all (·.semantics.length > 0) = true := by decide
 
 /-- Full inventory: 11 sortal + 4 container = 15 classifiers. -/
-theorem inventory_size : allClassifiers.length = 15 := by native_decide
+theorem inventory_size : allClassifiers.length = 15 := by decide
 
 end Mandarin.Classifiers

@@ -40,9 +40,9 @@ def entry : AdjAgreementEntry where
   dpFeatures   := dpFeatures
 
 /-- Greek pred = attr agreement. -/
-theorem same_agreement : entry.sameAgreement = true := by native_decide
+theorem same_agreement : entry.sameAgreement = true := by decide
 
 /-- Greek adjectives cover all DP φ/κ-features. -/
-theorem phi_kappa_complete : entry.phiKappaComplete = true := by native_decide
+theorem phi_kappa_complete : entry.phiKappaComplete = true := by decide
 
 end Greek.StandardModern.AdjAgreement

@@ -65,16 +65,16 @@ def allEntries : List Coordinator :=
 /-- Georgian has exactly one bound morpheme: the MU clitic -c. -/
 theorem one_bound :
     (allEntries.filter (·.boundness == .bound)).length = 1 := by
-  native_decide
+  decide
 
 /-- The bound morpheme is the MU particle. -/
 theorem bound_is_mu :
     (allEntries.filter (·.boundness == .bound)).all (·.role == .mu) = true := by
-  native_decide
+  decide
 
 /-- The MU particle -c also serves as an additive particle. -/
 theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
-  native_decide
+  decide
 
 end Georgian.Coordination

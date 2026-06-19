@@ -261,7 +261,7 @@ theorem eqya_iff_voice_and_oblique :
     monoData.all (λ d =>
       (d.clauseType.projectsVoice && d.obliqueExtracted && !d.isTemporal) ==
       (d.judgment == .licensed)) = true := by
-  native_decide
+  decide
 
 /-- Multiple spellout: in long-distance extraction, =(y)a' is licensed
     on each predicate whose clause projects Voice. Matrix clause always
@@ -269,7 +269,7 @@ theorem eqya_iff_voice_and_oblique :
 theorem ld_embedded_tracks_voice :
     ldData.all (λ d =>
       d.embeddedClauseType.projectsVoice == (d.embeddedJudgment == .licensed)) = true := by
-  native_decide
+  decide
 
 /-- =(y)a' tracks oblique, not extraction in general: subject and object
     extraction in the same clause size do not trigger =(y)a'. -/

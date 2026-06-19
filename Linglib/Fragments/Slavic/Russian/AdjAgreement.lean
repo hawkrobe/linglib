@@ -34,7 +34,7 @@ def entry : AdjAgreementEntry where
   attrFeatures := longFormFeatures
   dpFeatures   := dpFeatures
 
-theorem same_agreement : entry.sameAgreement = true := by native_decide
-theorem phi_kappa_complete : entry.phiKappaComplete = true := by native_decide
+theorem same_agreement : entry.sameAgreement = true := by decide
+theorem phi_kappa_complete : entry.phiKappaComplete = true := by decide
 
 end Russian.AdjAgreement

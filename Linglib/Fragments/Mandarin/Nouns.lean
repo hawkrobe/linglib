@@ -141,12 +141,12 @@ example : bareNPLicensed = true := rfl
 
 /-- All animal nouns take the animal classifier 只. -/
 theorem animals_take_zhi :
-    [gou, mao, niao].all (·.classifier == some zhi) = true := by native_decide
+    [gou, mao, niao].all (·.classifier == some zhi) = true := by decide
 
 /-- Honorific-human nouns take 位. -/
 theorem honorific_humans_take_wei :
     [laoshi, zuozhe, muqin, fuqin].all (·.classifier == some wei) = true := by
-  native_decide
+  decide
 
 /-- Books take the bound-volume classifier 本. -/
 theorem books_take_ben : shu.classifier = some ben := rfl
@@ -156,7 +156,7 @@ theorem vehicles_take_liang : che.classifier = some liang := rfl
 
 /-- Mass nouns have no classifier. -/
 theorem mass_nouns_no_classifier :
-    [shui, fan].all (·.classifier == none) = true := by native_decide
+    [shui, fan].all (·.classifier == none) = true := by decide
 
 -- ============================================================================
 -- Example NPs

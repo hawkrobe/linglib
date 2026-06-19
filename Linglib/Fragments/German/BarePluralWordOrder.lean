@@ -99,25 +99,25 @@ def allJaDochData : List JaDochDatum :=
 /-- S-predicates allow BPS in both positions. -/
 theorem slp_both_positions :
     (allJaDochData.filter (λ d => d.predicateLevel == .stageLevel)).all
-      (λ d => d.acceptable) = true := by native_decide
+      (λ d => d.acceptable) = true := by decide
 
 /-- I-predicates block BPS to the RIGHT of *ja doch*. -/
 theorem ilp_right_blocked :
     (allJaDochData.filter (λ d =>
       d.predicateLevel == .individualLevel && d.bpsPosition == .rightOfJaDoch)).all
-      (λ d => !d.acceptable) = true := by native_decide
+      (λ d => !d.acceptable) = true := by decide
 
 /-- I-predicates allow BPS to the LEFT of *ja doch* (generic reading). -/
 theorem ilp_left_ok :
     (allJaDochData.filter (λ d =>
       d.predicateLevel == .individualLevel && d.bpsPosition == .leftOfJaDoch)).all
-      (λ d => d.acceptable) = true := by native_decide
+      (λ d => d.acceptable) = true := by decide
 
 /-- The predicate level + position determines acceptability:
 the ONLY unacceptable configuration is ILP + right of *ja doch*. -/
 theorem acceptability_pattern :
     allJaDochData.all (λ d =>
       d.acceptable == !(d.predicateLevel == .individualLevel &&
-                        d.bpsPosition == .rightOfJaDoch)) = true := by native_decide
+                        d.bpsPosition == .rightOfJaDoch)) = true := by decide
 
 end German.BarePluralWordOrder
