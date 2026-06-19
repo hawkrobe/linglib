@@ -148,6 +148,7 @@ import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Features.ModalIndefinite
 import Linglib.Semantics.Modality.ModalBaseKind
+import Linglib.Semantics.Modality.Modal
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Conditionals.SelectionFunction
