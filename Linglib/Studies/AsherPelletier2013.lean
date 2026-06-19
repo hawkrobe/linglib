@@ -29,9 +29,11 @@ fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
 
 ## Connection to Existing Infrastructure
 
-1. **`NormalityOrder`** (`Core/Order/Normality.lean`): preorder structure
-   on worlds. A&P's per-individual normality is a normality ordering
-   *per entity and restrictor class*.
+1. **Normality orderings** (`Core/Order/Normality.lean`): a normality
+   ordering is just a `Preorder` on worlds, with the default-reasoning
+   operations as functions in namespace `Core.Order.Normality`. A&P's
+   per-individual normality is a normality ordering *per entity and
+   restrictor class*.
 
 2. **`traditionalGEN`** (`Lexical/Noun/Kind/Generics.lean`): GEN's `normal`
    parameter is the Bool-level projection of a normality ordering.
@@ -41,7 +43,7 @@ fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
 
 ## Refinement vs Specificity
 
-`processDefault` below uses `NormalityOrder.refine` ([veltman-1996]'s
+`processDefault` below uses `Normality.refine` ([veltman-1996]'s
 operation), which intersects ordering constraints. For the Tweety Triangle,
 Veltman's refinement produces **incomparability** between penguinFlies and
 penguinNoFly (neither is ≤ the other, since each satisfies one default
@@ -53,7 +55,7 @@ specificity-resolved result directly.
 
 namespace AsherPelletier2013
 
-open Core.Order (NormalityOrder)
+open Core.Order
 open Core.Logic.TweetyNixon
 
 -- ═══ Generic Truth via Normality Orderings ═══
@@ -69,15 +71,15 @@ structure DefaultRule (W : Type*) where
 /-- Process a default rule as a refinement of a normality ordering.
 
     "Normally, if P then Q" refines the ordering to promote P∧Q worlds
-    over P∧¬Q worlds via `NormalityOrder.refine`. This is
+    over P∧¬Q worlds via `Normality.refine`. This is
     [veltman-1996]'s monotonic (intersection-based) operation.
 
     Note: A&P's actual system uses per-individual evaluation with
     specificity, which goes beyond simple refinement. See the module
     docstring caveat about refinement vs specificity. -/
-def processDefault {W : Type*} (no : NormalityOrder W)
-    (d : DefaultRule W) : NormalityOrder W :=
-  no.refine (λ w => d.restrictor w → d.scope w)
+def processDefault {W : Type*} (no : Preorder W)
+    (d : DefaultRule W) : Preorder W :=
+  Normality.refine no (λ w => d.restrictor w → d.scope w)
 
 
 -- ═══ Per-Individual Evaluation (§12.3, exx. 7–9) ═══
@@ -179,7 +181,7 @@ def penguinsNormallyDontFly : DefaultRule TweetyWorld :=
 
 /-- Veltman-style refinement of both defaults.
 
-    This uses `NormalityOrder.refine` to process both defaults. The
+    This uses `Normality.refine` to process both defaults. The
     result makes penguinNoFly and penguinFlies **incomparable** — neither
     is ≤ the other — because the two defaults create crossing constraints.
     (penguinFlies satisfies "birds fly" but violates "penguins don't fly";
@@ -190,9 +192,9 @@ def penguinsNormallyDontFly : DefaultRule TweetyWorld :=
     A&P's per-individual evaluation resolves this via specificity,
     encoded in `tweetyLe` below.
 
-    The order of processing doesn't matter (`NormalityOrder.refine_comm`). -/
-def tweetyOrdering : NormalityOrder TweetyWorld :=
-  (processDefault NormalityOrder.total birdsNormallyFly)
+    The order of processing doesn't matter (`Normality.refine_comm`). -/
+def tweetyOrdering : Preorder TweetyWorld :=
+  (processDefault Normality.total birdsNormallyFly)
     |> (processDefault · penguinsNormallyDontFly)
 
 /-- The **specificity-resolved** normality ordering for the Tweety Triangle.

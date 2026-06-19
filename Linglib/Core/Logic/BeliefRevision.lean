@@ -38,7 +38,7 @@ AGM revision operator (this file: K*1–K*5)
 
 namespace Core.Logic.BeliefRevision
 
-open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
+open Core.Order (PlausibilityOrder PreferentialConsequence)
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. AGM Belief Revision (Alchourrón, [alchouron-gardenfors-makinson-1985])
@@ -131,7 +131,7 @@ private lemma sublist_length_lt_of_mem {α : Type*} {l₁ l₂ : List α}
 open Classical in
 noncomputable def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
     (orderingSource : List (W → Prop)) : PlausibilityOrder W where
-  toNormalityOrder := Core.Order.NormalityOrder.fromProps orderingSource
+  toPreorder := Core.Order.Normality.fromProps orderingSource
   smooth := fun φ w hφw => by
     classical
     let sat := fun (v : W) => (orderingSource.filter (fun p => decide (p v))).length

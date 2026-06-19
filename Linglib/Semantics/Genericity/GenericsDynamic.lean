@@ -52,7 +52,7 @@ namespace Semantics.Genericity.GenericsDynamic
 
 The `normalInstances` field packages the output of applying a normality
 restriction to the restrictor class. In a full implementation these would
-be computed from a `NormalityOrder` via `optimal`; here they are provided
+be computed from a normality `Preorder` via `Normality.optimal`; here they are provided
 directly to keep the model concrete and the propositional theorems
 decidable on finite witnesses.
 
@@ -589,7 +589,7 @@ constructors below derive it from different theoretical primitives:
   style).  Normal instances = domain elements satisfying both restrictor
   and normalcy.
 
-- **`fromOrder`** — normality ordering (`NormalityOrder` style).
+- **`fromOrder`** — normality ordering (`Preorder` style).
   Normal instances = optimal restrictor-satisfying entities under the ordering.
   Bridges to [kirkpatrick-2024] Definition 21's N_n functors.
 
@@ -637,7 +637,7 @@ theorem fromPredicate_static
 /-- Compute a `GenericSentence` from a decidable normality ordering.
 
     `le e₁ e₂` means `e₁` is at least as normal as `e₂`,
-    matching `NormalityOrder.le`. The normal instances are the
+    matching `Preorder.le`. The normal instances are the
     **optimal** restrictor-satisfying entities: those not strictly
     dominated by any other restrictor-satisfying entity in the domain.
 

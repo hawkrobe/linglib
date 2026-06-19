@@ -49,15 +49,16 @@ formalized in `Frames.lean` alongside this module.
   reasoning. Veltman's system is the *dynamic* realization: the default
   consequence relation it induces validates System P.
 
-- **Core/Order/Normality.lean**: The `NormalityOrder` type and `refine`
-  operation are defined there as shared infrastructure. This module
-  builds `ExpState` (expectation states) on top of that.
+- **Core/Order/Normality.lean**: The normality ordering (mathlib
+  `Preorder W`) and the `refine` operation are defined there as shared
+  infrastructure. This module builds `ExpState` (expectation states) on
+  top of that.
 
 -/
 
 namespace Semantics.Dynamic.Default
 
-open Core.Order (NormalityOrder)
+open Core.Order
 
 variable {W : Type*}
 
@@ -78,18 +79,18 @@ structure ExpState (W : Type*) where
   /-- The information state: set of worlds compatible with the discourse -/
   info : Set W
   /-- The normality ordering (expectation pattern) -/
-  order : NormalityOrder W
+  order : Preorder W
 
 /-- The initial expectation state: all worlds are possible and equally
     normal. No information, no expectations. -/
 def ExpState.init : ExpState W where
   info := Set.univ
-  order := NormalityOrder.total
+  order := Normality.total
 
 /-- Optimal worlds in the current state: the most normal worlds
     among those compatible with the discourse. -/
 def ExpState.optimal (σ : ExpState W) : Set W :=
-  σ.order.optimal σ.info
+  Normality.optimal σ.order σ.info
 
 
 -- ═══ Update Operations ═══
@@ -108,7 +109,7 @@ def assertUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
     This is the core innovation of [veltman-1996]: defaults operate on
     the expectation pattern, not on the information state. -/
 def normallyUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
-  ⟨σ.info, σ.order.refine φ⟩
+  ⟨σ.info, Normality.refine σ.order φ⟩
 
 section Classical
 open Classical
@@ -172,15 +173,15 @@ theorem presumablyTest_preserves_order (φ : W → Prop) (σ : ExpState W) :
     This is the general form of Veltman's claim that defaults create
     valid presumptions. The connectedness condition is essential: without
     it, a non-φ-world can be optimal by being incomparable with all
-    φ-worlds (see `NormalityOrder.optimal_of_respects_connected`). -/
+    φ-worlds (see `Normality.optimal_of_respects_connected`). -/
 theorem presumably_passes (σ : ExpState W) (φ : W → Prop)
-    (hresp : σ.order.respects φ) (hconn : σ.order.connected)
+    (hresp : Normality.respects σ.order φ) (hconn : Normality.connected σ.order)
     (hex : ∃ w ∈ σ.info, φ w) :
     presumablyTest φ σ = σ := by
   simp only [presumablyTest]
   rw [if_pos]
   intro w hw
-  exact (NormalityOrder.optimal_of_respects_connected σ.order φ σ.info
+  exact (Normality.optimal_of_respects_connected σ.order φ σ.info
     hresp hconn hex hw).2
 
 /-- **The central result**: after processing "normally p", the test
@@ -190,12 +191,12 @@ theorem presumably_passes (σ : ExpState W) (φ : W → Prop)
     and a single refinement from total preserves connectedness. -/
 theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
     (hex : ∃ w ∈ d, φ w) :
-    let σ : ExpState W := ⟨d, NormalityOrder.total⟩
+    let σ : ExpState W := ⟨d, Normality.total⟩
     presumablyTest φ (normallyUpdate φ σ) = normallyUpdate φ σ := by
   simp only [presumablyTest, normallyUpdate, ExpState.optimal]
   rw [if_pos]
   intro w hw
-  rw [NormalityOrder.refine_total_optimal φ d hex] at hw
+  rw [Normality.refine_total_optimal φ d hex] at hw
   exact hw.2
 
 
@@ -207,8 +208,8 @@ theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
 
     [veltman-1996], Proposition 3.6(iv). -/
 theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
-    (h : σ.order.respects φ) :
-    (assertUpdate ψ σ).order.respects φ := h
+    (h : Normality.respects σ.order φ) :
+    Normality.respects (assertUpdate ψ σ).order φ := h
 
 /-- **Persistence under further defaults**: if the ordering respects p,
     then processing "normally q" (for any q) preserves this. Later
@@ -216,15 +217,15 @@ theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
 
     [veltman-1996], Proposition 3.6(iv). -/
 theorem persistence_normally (σ : ExpState W) (φ ψ : W → Prop)
-    (h : σ.order.respects φ) :
-    (normallyUpdate ψ σ).order.respects φ :=
-  NormalityOrder.refine_preserves_respects σ.order φ ψ h
+    (h : Normality.respects σ.order φ) :
+    Normality.respects (normallyUpdate ψ σ).order φ :=
+  Normality.refine_preserves_respects σ.order φ ψ h
 
 /-- After "normally p", the ordering respects p. Combined with
     persistence, this means "normally p" creates a permanent expectation. -/
 theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
-    (normallyUpdate φ σ).order.respects φ :=
-  NormalityOrder.refine_respects σ.order φ
+    Normality.respects (normallyUpdate φ σ).order φ :=
+  Normality.refine_respects σ.order φ
 
 
 -- ═══ Idempotency and Commutativity ═══
@@ -234,11 +235,11 @@ theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
 
     [veltman-1996], Proposition 3.6(ii) at the state level. -/
 theorem normallyUpdate_idempotent (σ : ExpState W) (φ : W → Prop)
-    (h : σ.order.respects φ) :
+    (h : Normality.respects σ.order φ) :
     normallyUpdate φ σ = σ := by
-  show ExpState.mk σ.info (σ.order.refine φ) = σ
+  show ExpState.mk σ.info (Normality.refine σ.order φ) = σ
   congr 1
-  exact NormalityOrder.refine_of_respects σ.order φ h
+  exact Normality.refine_of_respects σ.order φ h
 
 /-- Corollary: "normally φ; normally φ" = "normally φ" from any state. -/
 theorem normallyUpdate_normally_idempotent (σ : ExpState W) (φ : W → Prop) :
@@ -249,10 +250,10 @@ theorem normallyUpdate_normally_idempotent (σ : ExpState W) (φ : W → Prop) :
     "Normally φ; normally ψ" = "normally ψ; normally φ". -/
 theorem normallyUpdate_comm (σ : ExpState W) (φ ψ : W → Prop) :
     normallyUpdate ψ (normallyUpdate φ σ) = normallyUpdate φ (normallyUpdate ψ σ) := by
-  show ExpState.mk σ.info ((σ.order.refine φ).refine ψ) =
-       ExpState.mk σ.info ((σ.order.refine ψ).refine φ)
+  show ExpState.mk σ.info (Normality.refine (Normality.refine σ.order φ) ψ) =
+       ExpState.mk σ.info (Normality.refine (Normality.refine σ.order ψ) φ)
   congr 1
-  exact NormalityOrder.refine_comm σ.order φ ψ
+  exact Normality.refine_comm σ.order φ ψ
 
 
 -- ═══ Conflicting Defaults ═══
@@ -267,16 +268,16 @@ theorem normallyUpdate_comm (σ : ExpState W) (φ ψ : W → Prop) :
     defaults "if Quaker then normally pacifist" and "if Republican then
     normally not pacifist" — requires Veltman's §4 expectation frames. -/
 theorem conflicting_defaults_le (φ : W → Prop) (w v : W) :
-    (NormalityOrder.total.refine φ |>.refine (fun x => ¬φ x)).le w v ↔
+    (Normality.refine (Normality.refine Normality.total φ) (fun x => ¬φ x)).le w v ↔
     (φ v → φ w) ∧ (¬φ v → ¬φ w) := by
-  show (True ∧ (φ v → φ w)) ∧ (¬φ v → ¬φ w) ↔ (φ v → φ w) ∧ (¬φ v → ¬φ w)
-  exact ⟨fun ⟨⟨_, h1⟩, h2⟩ => ⟨h1, h2⟩, fun ⟨h1, h2⟩ => ⟨⟨True.intro, h1⟩, h2⟩⟩
+  rw [Normality.refine_le, Normality.refine_le]
+  exact ⟨fun ⟨⟨_, h1⟩, h2⟩ => ⟨h1, h2⟩, fun ⟨h1, h2⟩ => ⟨⟨trivial, h1⟩, h2⟩⟩
 
 /-- The conflicting-default ordering is equivalent to p-agreement:
     w is at most as normal as v iff they agree on p. -/
 theorem conflicting_defaults_iff_agree (φ : W → Prop) [DecidablePred φ]
     (w v : W) :
-    (NormalityOrder.total.refine φ |>.refine (fun x => ¬φ x)).le w v ↔
+    (Normality.refine (Normality.refine Normality.total φ) (fun x => ¬φ x)).le w v ↔
     (φ w ↔ φ v) := by
   rw [conflicting_defaults_le]
   constructor
@@ -293,15 +294,19 @@ theorem conflicting_defaults_iff_agree (φ : W → Prop) [DecidablePred φ]
     than conflict. -/
 theorem compatible_defaults_optimal (φ ψ : W → Prop) (d : Set W)
     (hφψ : ∀ w, φ w → ψ w) (hex : ∃ w ∈ d, φ w) :
-    (NormalityOrder.total.refine ψ |>.refine φ).optimal d ⊆ { w ∈ d | φ w } := by
-  intro w ⟨hwd, hopt⟩
+    Normality.optimal (Normality.refine (Normality.refine Normality.total ψ) φ) d ⊆
+      { w ∈ d | φ w } := by
+  intro w hw
+  rw [Normality.mem_optimal] at hw
+  obtain ⟨hwd, hopt⟩ := hw
   obtain ⟨v, hvd, hφv⟩ := hex
   refine ⟨hwd, ?_⟩
   by_contra hnφw
   have hψv : ψ v := hφψ v hφv
-  have hle : (NormalityOrder.total.refine ψ |>.refine φ).le v w :=
-    ⟨⟨True.intro, fun _ => hψv⟩, fun h => absurd h hnφw⟩
-  exact hnφw ((hopt v hvd hle).2 hφv)
+  have hle : (Normality.refine (Normality.refine Normality.total ψ) φ).le v w :=
+    Normality.refine_le.mpr ⟨Normality.refine_le.mpr ⟨trivial, fun _ => hψv⟩,
+      fun h => absurd h hnφw⟩
+  exact hnφw ((Normality.refine_le.mp (hopt hvd hle)).2 hφv)
 
 
 end Semantics.Dynamic.Default

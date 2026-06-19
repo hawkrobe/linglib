@@ -21,7 +21,7 @@ observation).
    satisfy the conditions of Theorem 4, the order of processing
    doesn't matter — verified for a concrete 4-world instance.
 
-3. **Connection to NormalityOrder**: Ranking functions induce
+3. **Connection to the normality preorder**: Ranking functions induce
    connected (total) plausibility orderings, refining any
    Kratzer-style ordering source with explicit disbelief grades.
 
@@ -197,15 +197,15 @@ theorem commutativity_verified :
      afterSunny2_thenWarm1.rank .rainy_cold) = (0, 1, 2, 4) := rfl
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 4. Connection to NormalityOrder
+-- § 4. Connection to the Normality Preorder
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- The prior ranking induces a connected (total) plausibility ordering,
     refining any Kratzer-style ordering source with explicit disbelief
     grades. This is the structural connection between ranking functions
-    and the 95+ files downstream of NormalityOrder. -/
+    and the files downstream of the normality preorder. -/
 theorem prior_connected :
-    prior.toPlausibilityOrder.toNormalityOrder.connected :=
+    Core.Order.Normality.connected prior.toPlausibilityOrder.toPreorder :=
   prior.ranking_connected
 
 /-- The prior's belief set: sunny_warm is believed (rank 0).

@@ -168,8 +168,8 @@ theorem perfection_not_entailed_variablyStrict :
       (p q : Set W) (w : W),
       variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
   use Bool
-  exact ⟨⟨fun _ _ _ => True, fun _ _ => trivial, fun _ _ _ _ _ _ => trivial,
-    fun _ _ _ => .isTrue trivial⟩,
+  exact ⟨⟨fun _ => Preorder.ofLE (fun _ _ => True) (fun _ => trivial)
+      (fun _ _ _ _ _ => trivial), fun _ _ _ => .isTrue trivial⟩,
     Set.univ, (· = true), (fun _ => True), false,
     Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, fun _ _ _ => trivial⟩,
     fun h => h Bool.false_ne_true trivial⟩

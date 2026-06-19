@@ -129,13 +129,14 @@ theorem equivalent_trans (o : SatisfactionOrdering α Criterion) {a b c : α}
     (hab : o.equivalent a b) (hbc : o.equivalent b c) : o.equivalent a c :=
   ⟨o.le_trans a b c hab.1 hbc.1, o.le_trans c b a hbc.2 hab.2⟩
 
-/-! ## NormalityOrder projection -/
+/-! ## Normality-ordering projection -/
 
-/-- The induced `NormalityOrder`: connects satisfaction-based orderings
-    (Kratzer modal semantics, Phillips-Brown desire) to the default reasoning
-    infrastructure (`optimal`, `refine`, `respects`, CR1–CR4). -/
-def toNormalityOrder (o : SatisfactionOrdering α Criterion) : NormalityOrder α :=
-  .ofPreorder o.toPreorder
+/-- The induced normality ordering — just the underlying `Preorder`, which
+    connects satisfaction-based orderings (Kratzer modal semantics,
+    Phillips-Brown desire) to the default-reasoning infrastructure
+    (`Normality.optimal`, `Normality.refine`, `Normality.respects`, CR1–CR4). -/
+def toNormalityOrder (o : SatisfactionOrdering α Criterion) : Preorder α :=
+  o.toPreorder
 
 /-! ## Maxima and undominated elements -/
 

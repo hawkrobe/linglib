@@ -1,360 +1,227 @@
-import Mathlib.Data.Set.Basic
+import Mathlib.Order.Minimal
 import Linglib.Core.Order.OfCriteria
+import Linglib.Core.Order.PreorderLattice
 
 /-!
-# Normality Orderings
-[kraus-magidor-1990] [veltman-1996] [rudin-2025a]
+# Normality orderings (default reasoning over preorders)
 
-A normality ordering is a preorder on worlds encoding relative normalcy.
-This structure appears in four places across formal semantics:
+[kraus-magidor-1990] [veltman-1996] [rudin-2025a] [kratzer-1981]
 
-1. **[kratzer-1981]**: ordering sources induce normality orderings
-   for modal semantics (`Semantics/Modality/Kratzer.lean`)
-2. **[kraus-magidor-1990]**: plausibility orderings interpret
-   default consequence, System P (`Core/Logic/BeliefRevision.lean`)
-3. **[veltman-1996]**: expectation patterns are normality orderings that
-   get dynamically refined (`Semantics/Dynamic/UpdateSemantics/`)
-4. **[rudin-2025a]**: ordering-source updates for epistemic modals
-   (`Semantics/Dynamic/Epistemic/`)
+A *normality ordering* is just a `Preorder` on worlds: `p.le w v` means
+`w` is at least as normal as `v`. There is **no bespoke structure** here —
+the order is mathlib's `Preorder`, so the entire order API (`<`, `Minimal`,
+order-duals, monotone maps) is available, and the default-reasoning
+operations are thin definitions over it:
 
-This module extracts the common mathematical core. The `PlausibilityOrder`
-in `BeliefRevision.lean` adds a smoothness condition (every satisfiable
-proposition has minimal elements); for finite types smoothness is automatic,
-and `NormalityOrder` captures the shared preorder structure without it.
+* `optimal p d` — the most-normal worlds in `d` — is mathlib's `Minimal`.
+* `connected p` — totality — is `∀ w v, p.le w v ∨ p.le v w`.
+* `total = ⊤` — the all-equal order — is the top of `CompleteLattice (Preorder W)`.
+* `refine p φ = p ⊓ crit φ` — [veltman-1996]'s promote-φ update — is **meet**
+  with the criterion preorder `crit φ` (`w ≤ v ↔ (φ v → φ w)`). The whole
+  refinement calculus (commutativity, idempotence, the total order as unit)
+  is therefore the meet-semilattice laws (`inf_right_comm`, `inf_right_idem`,
+  `inf_top_eq`).
+* `fromProps` — [kratzer-1981]'s ordering-source order — is `Preorder.ofCriteria`.
 
-## Key definitions
-
-- `NormalityOrder W`: preorder on worlds (reflexive, transitive)
-- `optimal`: most normal worlds in a domain
-- `refine`: promote φ-worlds — [veltman-1996]'s key operation
-- `connected`: every two worlds are comparable (totality)
-- `fromProps`: construct from ordering source — [kratzer-1981]'s pattern
-- `respects` / persistence: defaults survive further updates
+This replaces the former hand-rolled `NormalityOrder` structure (a
+field-for-field reimplementation of `Preorder`).
 -/
 
 namespace Core.Order
-
-/-- A normality ordering: a preorder on worlds.
-    `le w v` means w is at least as normal as v. -/
-structure NormalityOrder (W : Type*) where
-  le : W → W → Prop
-  le_refl : ∀ w, le w w
-  le_trans : ∀ u v w, le u v → le v w → le u w
-
-namespace NormalityOrder
+namespace Normality
 
 variable {W : Type*}
 
-/-- Extensionality: two normality orderings are equal iff they agree on
-    all pairs. Uses `propext` and `funext`. -/
-@[ext]
-theorem ext {a b : NormalityOrder W}
-    (h : ∀ w v, a.le w v ↔ b.le w v) : a = b := by
-  have hle : a.le = b.le := funext fun w => funext fun v => propext (h w v)
-  cases a; cases b; simp only [mk.injEq]; exact hle
+/-! ### Optimality, totality, the total order -/
 
-/-- An ordering is **connected** (total) if every two worlds are
-    comparable: for all w, v, either w ≤ v or v ≤ w. -/
-def connected (no : NormalityOrder W) : Prop :=
-  ∀ w v, no.le w v ∨ no.le v w
+/-- The **optimal** (most normal) worlds in a domain `d`: mathlib's
+    `Minimal` for the membership predicate, under the preorder `p`. -/
+def optimal (p : Preorder W) (d : Set W) : Set W := {w | @Minimal W p.toLE (· ∈ d) w}
 
-/-- The total ordering: all worlds equally normal. This is the initial
-    state before any defaults have been processed. -/
-def total : NormalityOrder W where
-  le := fun _ _ => True
-  le_refl _ := True.intro
-  le_trans _ _ _ _ _ := True.intro
+theorem mem_optimal {p : Preorder W} {d : Set W} {w : W} :
+    w ∈ optimal p d ↔ w ∈ d ∧ ∀ ⦃v⦄, v ∈ d → p.le v w → p.le w v := Iff.rfl
 
-/-- Strict normality: w is strictly more normal than v. -/
-@[reducible] def slt (no : NormalityOrder W) (w v : W) : Prop :=
-  no.le w v ∧ ¬no.le v w
+theorem optimal_subset (p : Preorder W) (d : Set W) : optimal p d ⊆ d := fun _ h => h.1
 
-/-- Optimal (most normal) worlds in a domain: those with no strictly
-    more normal world in the domain.
+/-- A preorder is **connected** (total) if every two worlds are comparable. -/
+def connected (p : Preorder W) : Prop := ∀ w v, p.le w v ∨ p.le v w
 
-    Equivalent to `PlausibilityOrder.minimal` in `BeliefRevision.lean`
-    and to [veltman-1996]'s opt_ε(σ). -/
-def optimal (no : NormalityOrder W) (d : Set W) : Set W :=
-  { w ∈ d | ∀ v ∈ d, no.le v w → no.le w v }
+/-- The **total** normality order: all worlds equally normal — the top of
+    the lattice of preorders. -/
+abbrev total : Preorder W := ⊤
 
-/-- Optimal worlds are in the domain. -/
-theorem optimal_subset (no : NormalityOrder W) (d : Set W) :
-    no.optimal d ⊆ d := fun _ hw => hw.1
+theorem total_connected : connected (total : Preorder W) := fun _ _ => Or.inl trivial
 
-/-- The total ordering is connected. -/
-theorem total_connected : (total : NormalityOrder W).connected :=
-  fun _ _ => Or.inl True.intro
-
-/-- Under the total ordering, every world in the domain is optimal. -/
-theorem total_all_optimal (d : Set W) :
-    NormalityOrder.total.optimal d = d := by
+theorem total_all_optimal (d : Set W) : optimal (total : Preorder W) d = d := by
   ext w
-  simp only [optimal, total, Set.mem_setOf_eq]
-  exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun _ _ _ => True.intro⟩⟩
+  rw [mem_optimal]
+  exact ⟨fun h => h.1, fun h => ⟨h, fun _ _ _ => trivial⟩⟩
 
+/-! ### Refinement as meet with a criterion preorder -/
 
--- ═══ Refinement ═══
+/-- The **criterion preorder** for a property `φ`: `w ≤ v ↔ (φ v → φ w)`.
+    Defined directly (not via `Preorder.ofCriteria {φ}`) so that
+    `(refine p φ).le` reduces definitionally to `p.le … ∧ (φ … → φ …)`. -/
+@[reducible] def crit (φ : W → Prop) : Preorder W :=
+  Preorder.ofLE (fun w v => φ v → φ w) (fun _ => id)
+    (fun _ _ _ hab hbc h => hab (hbc h))
 
-/-- **Refinement**: promote φ-worlds in the normality ordering.
+theorem crit_le {φ : W → Prop} {w v : W} : (crit φ).le w v ↔ (φ v → φ w) := Iff.rfl
 
-    After `refine no φ`, a non-φ-world can no longer be as normal as a
-    φ-world: w ≤' v iff (w ≤ v) ∧ (φ v → φ w).
+/-- **Refinement** ([veltman-1996]): promote φ-worlds. `refine p φ` is the
+    meet of `p` with the criterion preorder for `φ`, so
+    `(refine p φ).le w v ↔ p.le w v ∧ (φ v → φ w)`. -/
+@[reducible] def refine (p : Preorder W) (φ : W → Prop) : Preorder W := p ⊓ crit φ
 
-    This is [veltman-1996]'s key operation. "Normally φ" updates the
-    expectation pattern by intersecting with {⟨w,v⟩ : φ v → φ w}. -/
-def refine (no : NormalityOrder W) (φ : W → Prop) : NormalityOrder W where
-  le w v := no.le w v ∧ (φ v → φ w)
-  le_refl w := ⟨no.le_refl w, id⟩
-  le_trans u v w := fun ⟨huv, hφuv⟩ ⟨hvw, hφvw⟩ =>
-    ⟨no.le_trans u v w huv hvw, fun hw => hφuv (hφvw hw)⟩
+theorem refine_le {p : Preorder W} {φ : W → Prop} {w v : W} :
+    (refine p φ).le w v ↔ p.le w v ∧ (φ v → φ w) := and_congr Iff.rfl crit_le
 
-/-- Refinement strengthens: the refined ordering implies the original. -/
-theorem refine_le_imp (no : NormalityOrder W) (φ : W → Prop)
-    {w v : W} (h : (no.refine φ).le w v) : no.le w v := h.1
+theorem refine_le_imp {p : Preorder W} {φ : W → Prop} {w v : W}
+    (h : (refine p φ).le w v) : p.le w v := (refine_le.mp h).1
 
 /-- After refinement by φ, a non-φ-world cannot be as normal as a φ-world. -/
-theorem refine_separates (no : NormalityOrder W) (φ : W → Prop)
-    {w v : W} (hv : φ v) (hw : ¬φ w) :
-    ¬(no.refine φ).le w v :=
-  fun ⟨_, h⟩ => hw (h hv)
+theorem refine_separates (p : Preorder W) (φ : W → Prop)
+    {w v : W} (hv : φ v) (hw : ¬φ w) : ¬(refine p φ).le w v :=
+  fun h => hw ((refine_le.mp h).2 hv)
 
-/-- After refinement, if v was ≤ w and v is a φ-world while w is not,
-    then v strictly dominates w. -/
-theorem refine_promotes (no : NormalityOrder W) (φ : W → Prop)
-    {w v : W} (hv : φ v) (hw : ¬φ w) (hle : no.le v w) :
-    (no.refine φ).slt v w :=
-  ⟨⟨hle, fun _ => hv⟩, refine_separates no φ hv hw⟩
+/-! ### Respect and persistence -/
 
+/-- An ordering **respects** φ if it already promotes φ-worlds. -/
+def respects (p : Preorder W) (φ : W → Prop) : Prop :=
+  ∀ w v, p.le w v → φ v → φ w
 
--- ═══ Respect and Persistence ═══
+theorem refine_respects (p : Preorder W) (φ : W → Prop) : respects (refine p φ) φ :=
+  fun _ _ h hv => (refine_le.mp h).2 hv
 
-/-- An ordering **respects** φ if it already promotes φ-worlds:
-    whenever w ≤ v and v satisfies φ, then w satisfies φ too.
+/-- **Persistence**: respecting φ survives further refinement. -/
+theorem refine_preserves_respects (p : Preorder W) (φ ψ : W → Prop)
+    (h : respects p φ) : respects (refine p ψ) φ :=
+  fun w v hle => h w v (refine_le_imp hle)
 
-    This captures [veltman-1996]'s notion of "accepting" a default:
-    σ accepts "normally φ" iff σ's pattern already respects φ. -/
-def respects (no : NormalityOrder W) (φ : W → Prop) : Prop :=
-  ∀ w v, no.le w v → φ v → φ w
+theorem respects_refine_iff (p : Preorder W) (φ : W → Prop)
+    (h : respects p φ) {w v : W} : (refine p φ).le w v ↔ p.le w v :=
+  ⟨fun hle => (refine_le.mp hle).1, fun hle => refine_le.mpr ⟨hle, fun hv => h w v hle hv⟩⟩
 
-/-- Refinement by φ always produces an ordering that respects φ. -/
-theorem refine_respects (no : NormalityOrder W) (φ : W → Prop) :
-    (no.refine φ).respects φ := fun _ _ ⟨_, h⟩ => h
+/-- **Idempotency**: refining by φ twice is refining once (`inf_right_idem`). -/
+theorem refine_idempotent (p : Preorder W) (φ : W → Prop) :
+    refine (refine p φ) φ = refine p φ := inf_right_idem _ _
 
-/-- **Persistence**: if an ordering respects φ, further refinement by
-    any ψ still respects φ. Defaults are not undone by later defaults.
+/-- **Commutativity**: refinement order is immaterial (`inf_right_comm`). -/
+theorem refine_comm (p : Preorder W) (φ ψ : W → Prop) :
+    refine (refine p φ) ψ = refine (refine p ψ) φ := inf_right_comm _ _ _
 
-    [veltman-1996], Proposition 3.6(iv). -/
-theorem refine_preserves_respects (no : NormalityOrder W) (φ ψ : W → Prop)
-    (h : no.respects φ) : (no.refine ψ).respects φ :=
-  fun w v ⟨hle, _⟩ => h w v hle
+theorem crit_const_top (b : Prop) : crit (W := W) (fun _ => b) = ⊤ :=
+  le_antisymm le_top (fun _ _ _ => crit_le.mpr id)
 
-/-- When an ordering respects φ, its restriction to φ-worlds is the same
-    as the full ordering: refinement is idempotent on respected defaults. -/
-theorem respects_refine_iff (no : NormalityOrder W) (φ : W → Prop)
-    (h : no.respects φ) {w v : W} :
-    (no.refine φ).le w v ↔ no.le w v :=
-  ⟨fun ⟨hle, _⟩ => hle, fun hle => ⟨hle, h w v hle⟩⟩
+/-- Refining by the universal property is the identity (`inf_top_eq`). -/
+theorem refine_univ (p : Preorder W) : refine p (fun _ => True) = p := by
+  show p ⊓ crit (fun _ => True) = p
+  rw [crit_const_top True, inf_top_eq]
 
+theorem refine_empty (p : Preorder W) : refine p (fun _ => False) = p := by
+  show p ⊓ crit (fun _ => False) = p
+  rw [crit_const_top False, inf_top_eq]
 
-/-- **Idempotency**: refining by φ twice is the same as refining once.
+/-- If an ordering respects φ, refining by φ changes nothing. -/
+theorem refine_of_respects (p : Preorder W) (φ : W → Prop)
+    (h : respects p φ) : refine p φ = p :=
+  le_antisymm inf_le_left (fun w v hle => refine_le.mpr ⟨hle, fun hv => h w v hle hv⟩)
 
-    [veltman-1996], Proposition 3.6(ii): (ε ∘ e) ∘ e = ε ∘ e. -/
-theorem refine_idempotent (no : NormalityOrder W) (φ : W → Prop) :
-    (no.refine φ).refine φ = no.refine φ :=
-  ext fun _ _ => (respects_refine_iff (no.refine φ) φ (refine_respects no φ))
+theorem respects_no_domination (p : Preorder W) (φ : W → Prop)
+    (hresp : respects p φ) {w v : W} (hv : φ v) (hw : ¬φ w) : ¬p.le w v :=
+  fun hle => hw (hresp w v hle hv)
 
-/-- **Commutativity**: the order of refinements doesn't matter.
+/-! ### Connectedness and optimality -/
 
-    Follows from refinement being intersection with a set of pairs:
-    (ε ∘ e₁) ∘ e₂ = ε ∩ R(e₁) ∩ R(e₂) = (ε ∘ e₂) ∘ e₁. -/
-theorem refine_comm (no : NormalityOrder W) (φ ψ : W → Prop) :
-    (no.refine φ).refine ψ = (no.refine ψ).refine φ :=
-  ext fun _ _ => ⟨fun ⟨⟨h, hφ⟩, hψ⟩ => ⟨⟨h, hψ⟩, hφ⟩,
-                  fun ⟨⟨h, hψ⟩, hφ⟩ => ⟨⟨h, hφ⟩, hψ⟩⟩
-
-/-- Refining by the universal property is the identity. -/
-theorem refine_univ (no : NormalityOrder W) :
-    no.refine (fun _ => True) = no :=
-  ext fun _ _ => ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun _ => True.intro⟩⟩
-
-/-- Refining by the empty property is the identity (vacuously). -/
-theorem refine_empty (no : NormalityOrder W) :
-    no.refine (fun _ => False) = no :=
-  ext fun _ _ => ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun hf => hf.elim⟩⟩
-
-/-- **Respecting ordering equality**: if an ordering respects φ, then
-    refining by φ gives back the same ordering.
-
-    [veltman-1996]: ε ∘ e = ε when e is already a default in ε. -/
-theorem refine_of_respects (no : NormalityOrder W) (φ : W → Prop)
-    (h : no.respects φ) : no.refine φ = no :=
-  ext fun _ _ => respects_refine_iff no φ h
-
-
--- ═══ Connectedness and Optimality ═══
-
-/-- Under a **connected** ordering that respects φ, all optimal worlds
-    in a domain satisfy φ — provided the domain has at least one φ-world.
-
-    This generalizes `refine_total_optimal` beyond the total ordering.
-    Connectedness is essential: without it, a non-φ-world can be optimal
-    by being incomparable with all φ-worlds.
-
-    Note: [veltman-1996] Proposition 3.4(i) states this without the
-    connectedness assumption, but his proof implicitly relies on states
-    being reachable from the total ordering, which ensures connectedness
-    after a single refinement. After multiple refinements by "crossing"
-    properties, connectedness can fail and the result no longer holds
-    for arbitrary respecting orderings. -/
-theorem optimal_of_respects_connected (no : NormalityOrder W)
-    (φ : W → Prop) (d : Set W) (hresp : no.respects φ)
-    (hconn : no.connected) (hex : ∃ w ∈ d, φ w) :
-    no.optimal d ⊆ { w ∈ d | φ w } := by
-  intro w ⟨hwd, hopt⟩
+theorem optimal_of_respects_connected (p : Preorder W)
+    (φ : W → Prop) (d : Set W) (hresp : respects p φ)
+    (hconn : connected p) (hex : ∃ w ∈ d, φ w) :
+    optimal p d ⊆ { w ∈ d | φ w } := by
+  intro w hw
+  rw [mem_optimal] at hw
+  obtain ⟨hwd, hopt⟩ := hw
   obtain ⟨v, hvd, hφv⟩ := hex
   refine ⟨hwd, ?_⟩
   rcases hconn w v with hwv | hvw
   · exact hresp w v hwv hφv
-  · exact hresp w v (hopt v hvd hvw) hφv
+  · exact hresp w v (hopt hvd hvw) hφv
 
-
--- ═══ Key Theorem ═══
-
-/-- **Refinement makes φ-worlds optimal.** Starting from the total
-    ordering, refining by φ makes the optimal worlds in any domain d
-    exactly the φ-worlds in d — provided at least one φ-world exists.
-
-    This is the mathematical core of Veltman's system: "normally φ"
-    followed by "presumably φ" succeeds, because refinement guarantees
-    φ-worlds become the most normal. -/
-theorem refine_total_optimal (φ : W → Prop) (d : Set W)
-    (hex : ∃ w ∈ d, φ w) :
-    (total.refine φ).optimal d = { w ∈ d | φ w } := by
+/-- **Refinement makes φ-worlds optimal**: from the total order, refining by
+    φ makes the optimal worlds in `d` exactly the φ-worlds in `d`. -/
+theorem refine_total_optimal (φ : W → Prop) (d : Set W) (hex : ∃ w ∈ d, φ w) :
+    optimal (refine total φ) d = { w ∈ d | φ w } := by
   ext w
+  rw [mem_optimal, Set.mem_setOf_eq]
   constructor
-  · -- → : optimal implies φ
-    intro ⟨hwd, hopt⟩
+  · rintro ⟨hwd, hopt⟩
     obtain ⟨v, hvd, hφv⟩ := hex
     refine ⟨hwd, ?_⟩
     by_contra hnφw
-    -- v ≤' w: total gives True, φ w → φ v is vacuous since ¬φ w
-    have hle : (total.refine φ).le v w :=
-      ⟨True.intro, fun h => absurd h hnφw⟩
-    -- By optimality: w ≤' v, giving φ v → φ w. With φ v → φ w. Contradiction.
-    exact hnφw ((hopt v hvd hle).2 hφv)
-  · -- ← : φ-world is optimal
-    intro ⟨hwd, hφw⟩
-    exact ⟨hwd, fun _ _ _ => ⟨True.intro, fun _ => hφw⟩⟩
+    have hle : (refine total φ).le v w := refine_le.mpr ⟨trivial, fun h => absurd h hnφw⟩
+    exact hnφw ((refine_le.mp (hopt hvd hle)).2 hφv)
+  · rintro ⟨hwd, hφw⟩
+    exact ⟨hwd, fun _ _ _ => refine_le.mpr ⟨trivial, fun _ => hφw⟩⟩
 
-/-- An optimal φ-world under `no` remains optimal under `no.refine φ`.
+theorem optimal_refine_of_mem (p : Preorder W) (φ : W → Prop)
+    (d : Set W) {w : W} (hopt : w ∈ optimal p d) (hφ : φ w) :
+    w ∈ optimal (refine p φ) d := by
+  rw [mem_optimal] at hopt ⊢
+  exact ⟨hopt.1, fun v hv hle =>
+    refine_le.mpr ⟨hopt.2 hv (refine_le.mp hle).1, fun _ => hφ⟩⟩
 
-    If w is optimal in d (no world in d strictly dominates it) and w
-    satisfies φ, then w is still optimal in d after refinement by φ.
-    This is the core lemma for coherence preservation (Proposition 4.7):
-    refinement can't destroy the optimality of worlds that satisfy the
-    refinement property. -/
-theorem optimal_refine_of_mem (no : NormalityOrder W) (φ : W → Prop)
-    (d : Set W) {w : W} (hopt : w ∈ no.optimal d) (hφ : φ w) :
-    w ∈ (no.refine φ).optimal d :=
-  ⟨hopt.1, fun v hv ⟨hle, _⟩ => ⟨hopt.2 v hv hle, fun _ => hφ⟩⟩
-
-/-- Refinement preserves nonemptiness of optimal sets when the original
-    optimal set contains φ-worlds. -/
-theorem optimal_refine_nonempty (no : NormalityOrder W) (φ : W → Prop)
-    (d : Set W) (hex : ∃ w ∈ no.optimal d, φ w) :
-    (no.refine φ).optimal d |>.Nonempty := by
+theorem optimal_refine_nonempty (p : Preorder W) (φ : W → Prop)
+    (d : Set W) (hex : ∃ w ∈ optimal p d, φ w) :
+    (optimal (refine p φ) d).Nonempty := by
   obtain ⟨w, hopt, hφ⟩ := hex
-  exact ⟨w, optimal_refine_of_mem no φ d hopt hφ⟩
+  exact ⟨w, optimal_refine_of_mem p φ d hopt hφ⟩
 
-/-- When the ordering respects φ, no non-φ-world can dominate a φ-world.
-    Combined with optimality, this constrains which worlds can be optimal. -/
-theorem respects_no_domination (no : NormalityOrder W) (φ : W → Prop)
-    (hresp : no.respects φ) {w v : W} (hv : φ v) (hw : ¬φ w) :
-    ¬no.le w v :=
-  fun hle => hw (hresp w v hle hv)
+/-! ### Construction from propositions ([kratzer-1981]) -/
 
+/-- Construct a normality ordering from a list of propositions:
+    `w ≤ v` iff every proposition satisfied by `v` is satisfied by `w`.
+    This is `Preorder.ofCriteria` with the ordering source as criteria. -/
+@[reducible] def fromProps (props : List (W → Prop)) : Preorder W :=
+  Preorder.ofCriteria (fun w p => p w) {p | p ∈ props}
 
--- ═══ Construction from Propositions ═══
-
-/-- Repackage a `Preorder` as a `NormalityOrder`. -/
-def ofPreorder (p : Preorder W) : NormalityOrder W where
-  le := p.le
-  le_refl := p.le_refl
-  le_trans u v w := p.le_trans u v w
-
-/-- Construct a normality ordering from a list of propositions.
-    w ≤ v iff every proposition satisfied by v is also satisfied by w —
-    the criteria-derived preorder `Preorder.ofCriteria` with the ordering
-    source as criteria, repackaged.
-
-    This is [kratzer-1981]'s ordering source construction:
-    {p ∈ A : v ∈ p} ⊆ {p ∈ A : w ∈ p}.
-    `Semantics.Modality.Kratzer.kratzerNormality` is definitionally this;
-    `kratzerPlausibility` in `BeliefRevision.lean` adds smoothness. -/
-def fromProps (props : List (W → Prop)) : NormalityOrder W :=
-  ofPreorder (Preorder.ofCriteria (fun w p => p w) {p | p ∈ props})
-
-/-- The empty ordering source gives the total ordering. -/
 theorem fromProps_nil {w v : W} : (fromProps ([] : List (W → Prop))).le w v :=
   fun _ h => nomatch h
 
-/-- Adding a proposition to the ordering source refines it. -/
 theorem fromProps_cons_le (p : W → Prop) (ps : List (W → Prop))
-    {w v : W} (h : (fromProps (p :: ps)).le w v) :
-    (fromProps ps).le w v :=
+    {w v : W} (h : (fromProps (p :: ps)).le w v) : (fromProps ps).le w v :=
   fun q hq => h q (List.mem_cons_of_mem p hq)
 
-/-- Refining from the total ordering always gives a connected ordering.
-
-    In the total ordering, every pair is related in both directions.
-    After one refinement by φ, the ordering `(φ v → φ w)` is still
-    connected because material implication between truth values always
-    holds in at least one direction.
-
-    This does NOT generalize to arbitrary connected orderings: if only
-    `w ≤ v` holds (not `v ≤ w`) and φ(v), ¬φ(w), neither refined
-    direction holds. And after two refinements by "crossing" properties,
-    connectedness can fail entirely. -/
 theorem refine_total_connected (φ : W → Prop) :
-    (total.refine φ : NormalityOrder W).connected := by
+    connected (refine total φ : Preorder W) := by
   intro w v
   by_cases hφw : φ w
-  · left; exact ⟨True.intro, fun _ => hφw⟩
+  · exact Or.inl (refine_le.mpr ⟨trivial, fun _ => hφw⟩)
   · by_cases hφv : φ v
-    · right; exact ⟨True.intro, fun h => absurd h hφw⟩
-    · left; exact ⟨True.intro, fun h => absurd h hφv⟩
+    · exact Or.inr (refine_le.mpr ⟨trivial, fun h => absurd h hφw⟩)
+    · exact Or.inl (refine_le.mpr ⟨trivial, fun h => absurd h hφv⟩)
 
--- ═══ Darwiche-Pearl Representation Conditions ═══
+/-! ### Darwiche-Pearl representation conditions
 
-/-! [darwiche-pearl-1997], Definition 8. Conditions on how a total
-    pre-order (faithful assignment) may change under revision by μ.
-    These are the representation-theorem equivalents of the iterated
-    revision postulates C1–C4. They constrain how *any* ordering-based
-    semantics — Kratzer modals, Lewis conditionals, Veltman defaults —
-    should evolve under discourse update.
+[darwiche-pearl-1997]: conditions on how a total preorder may change under
+revision by `μ`. `prior`/`post` are the orderings before/after revision. -/
 
-    `prior` and `post` are the orderings before and after revision by μ.
-    Lower in the ordering = more normal/plausible. -/
+/-- CR1: the ordering among μ-worlds is preserved. -/
+@[reducible] def satisfies_CR1 (prior post : Preorder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = true → μ v = true → (prior.le w v ↔ post.le w v)
 
-/-- CR1: The ordering among μ-worlds is preserved. -/
-@[reducible] def satisfies_CR1 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = true → μ v = true →
-    (prior.le w v ↔ post.le w v)
+/-- CR2: the ordering among ¬μ-worlds is preserved. -/
+@[reducible] def satisfies_CR2 (prior post : Preorder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = false → μ v = false → (prior.le w v ↔ post.le w v)
 
-/-- CR2: The ordering among ¬μ-worlds is preserved. -/
-@[reducible] def satisfies_CR2 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = false → μ v = false →
-    (prior.le w v ↔ post.le w v)
-
-/-- CR3: If a μ-world was strictly below a ¬μ-world, it stays strictly below. -/
-@[reducible] def satisfies_CR3 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
+/-- CR3: a μ-world strictly below a ¬μ-world stays strictly below. The strict
+    order is spelled `le … ∧ ¬ le …` (definitionally `<`) so the relation is
+    decidable on finite world sets. -/
+@[reducible] def satisfies_CR3 (prior post : Preorder W) (μ : W → Bool) : Prop :=
   ∀ w v, μ w = true → μ v = false →
-    prior.slt w v → post.slt w v
+    (prior.le w v ∧ ¬ prior.le v w) → (post.le w v ∧ ¬ post.le v w)
 
-/-- CR4: If a μ-world was ≤ a ¬μ-world, it stays ≤. -/
-@[reducible] def satisfies_CR4 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
-  ∀ w v, μ w = true → μ v = false →
-    prior.le w v → post.le w v
+/-- CR4: a μ-world ≤ a ¬μ-world stays ≤. -/
+@[reducible] def satisfies_CR4 (prior post : Preorder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = true → μ v = false → prior.le w v → post.le w v
 
-end NormalityOrder
+end Normality
 end Core.Order

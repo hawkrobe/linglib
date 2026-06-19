@@ -97,12 +97,12 @@ theorem ordering_transitive (A : List (W → Prop)) (u v w : W)
     atLeastAsGoodAs A u w :=
   (kratzerPreorder A).le_trans u v w huv hvw
 
-/-- Kratzer's ordering as a `NormalityOrder` — definitionally
-    `NormalityOrder.fromProps` (the same `Preorder.ofCriteria` order
-    repackaged); connects to default reasoning infrastructure
-    (`optimal`, `refine`, `respects`, CR1–CR4). -/
-def kratzerNormality (A : List (W → Prop)) : Core.Order.NormalityOrder W :=
-  Core.Order.NormalityOrder.fromProps A
+/-- Kratzer's ordering as a normality `Preorder` — definitionally
+    `Normality.fromProps` (the same `Preorder.ofCriteria` order); connects to
+    default-reasoning infrastructure (`Normality.optimal`, `refine`,
+    `respects`, CR1–CR4). -/
+def kratzerNormality (A : List (W → Prop)) : Preorder W :=
+  Core.Order.Normality.fromProps A
 
 /-- Equivalence under the ordering. -/
 def orderingEquiv (A : List (W → Prop)) (w z : W) : Prop :=
