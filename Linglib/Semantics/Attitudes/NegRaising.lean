@@ -191,4 +191,25 @@ theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
   ⟨doxasticSquare_contradAO R agent worlds p w,
    doxasticSquare_contradEI R agent worlds p w⟩
 
+-- ============================================================================
+-- §3 The excluded-middle core: neg-raising ⟺ subsingleton domain
+-- ============================================================================
+
+/-- **The structural core of neg-raising.** A universal modal `∀ w ∈ A, p w`
+validates the neg-raising inference `¬□p → □¬p` for *every* prejacent `p` iff its
+domain `A` is a subsingleton — all worlds in `A` agree on every proposition.
+Equivalently, `A` admits no truth-value gap (cf. `Semantics.Homogeneity`), so this
+single lemma is the formal heart shared by Rubinstein's neg-raising and
+Agha & Jeretič's homogeneity. The doxastic `negRaisesAt` (§2) is the instance
+with `A` the agent's accessible worlds. General over any world type. -/
+theorem negRaising_iff_subsingleton {W : Type*} (A : Set W) :
+    (∀ p : W → Prop, ¬ (∀ w ∈ A, p w) → ∀ w ∈ A, ¬ p w) ↔ A.Subsingleton := by
+  constructor
+  · intro hEM a ha b hb
+    by_contra hab
+    have hnotall : ¬ ∀ w ∈ A, w = a := fun hall => hab (hall b hb).symm
+    exact (hEM (· = a) hnotall a ha) rfl
+  · intro hsub p hnot w hw hpw
+    exact hnot fun v hv => by rw [hsub hv hw]; exact hpw
+
 end Semantics.Attitudes.NegRaising
