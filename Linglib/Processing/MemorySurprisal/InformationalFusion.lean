@@ -56,7 +56,7 @@ over distributions on `Fin n`-typed random variables. The Rathi 2026 study
 file (`Studies/RathiHahnFutrell2026.lean`) instantiates
 them on the paper's toy languages L_agg, L_fus, L_clustered with concrete
 finite distributions, and proves the consequences computationally (`decide`
-on rationals, no `native_decide`).
+on rationals, no `decide`).
 
 The substrate proofs use `Core.InformationTheory.conditionalEntropy_le_entropy`
 (Cover-Thomas 2.6.4) and `mutualInformation_nonneg` (Cover-Thomas 2.6.5).

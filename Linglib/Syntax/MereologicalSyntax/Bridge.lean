@@ -147,10 +147,10 @@ section BridgeTests
 private def t_antilocal := SynObj.sub₁ .C (.leaf .N)
 
 theorem antilocal_al_agrees :
-    angularLocalityOK .N t_antilocal = t_antilocal.alOK_via_graph .N := by native_decide
+    angularLocalityOK .N t_antilocal = t_antilocal.alOK_via_graph .N := by decide
 
 theorem antilocal_isTree :
-    t_antilocal.toSynGraph.isTree = true := by native_decide
+    t_antilocal.toSynGraph.isTree = true := by decide
 
 -- ────────────────────────────────────────────────────
 -- (b) Rollup: C ──1──▶ T ──1──▶ v ──1──▶ V, v ──2──▶ D
@@ -159,17 +159,17 @@ theorem antilocal_isTree :
 private def t_rollup := SynObj.sub₁ .C (.sub₁ .T (.sub₁₂ .v (.leaf .V) (.leaf .D)))
 
 theorem rollup_2part_agrees :
-    angularLocalityOK .D t_rollup = t_rollup.alOK_via_graph .D := by native_decide
+    angularLocalityOK .D t_rollup = t_rollup.alOK_via_graph .D := by decide
 
 theorem rollup_1part_agrees :
-    angularLocalityOK .V t_rollup = t_rollup.alOK_via_graph .V := by native_decide
+    angularLocalityOK .V t_rollup = t_rollup.alOK_via_graph .V := by decide
 
 theorem rollup_isTree :
-    t_rollup.toSynGraph.isTree = true := by native_decide
+    t_rollup.toSynGraph.isTree = true := by decide
 
 theorem rollup_compLine :
     t_rollup.compLine =
-    t_rollup.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
+    t_rollup.toSynGraph.onePartChain ⟨0, by decide⟩ := by decide
 
 -- ────────────────────────────────────────────────────
 -- (c) Cross-dimensional ([adger-2025] p. 95)
@@ -184,17 +184,17 @@ private def t_crossdim := SynObj.sub₁ .C
   (.sub₁₂ .T (.leaf .V) (.sub₁₂ .v (.leaf .N) (.leaf .D)))
 
 theorem crossdim_allows_agrees :
-    angularLocalityOK .D t_crossdim = t_crossdim.alOK_via_graph .D := by native_decide
+    angularLocalityOK .D t_crossdim = t_crossdim.alOK_via_graph .D := by decide
 
 theorem crossdim_blocks_agrees :
-    angularLocalityOK .N t_crossdim = t_crossdim.alOK_via_graph .N := by native_decide
+    angularLocalityOK .N t_crossdim = t_crossdim.alOK_via_graph .N := by decide
 
 theorem crossdim_isTree :
-    t_crossdim.toSynGraph.isTree = true := by native_decide
+    t_crossdim.toSynGraph.isTree = true := by decide
 
 theorem crossdim_compLine :
     t_crossdim.compLine =
-    t_crossdim.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
+    t_crossdim.toSynGraph.onePartChain ⟨0, by decide⟩ := by decide
 
 -- ────────────────────────────────────────────────────
 -- (d) Classifier structure: D ──1──▶ Cl ──1──▶ N
@@ -204,10 +204,10 @@ private def t_classifier := SynObj.sub₁ .D (.sub₁ .Cl (.leaf .N))
 
 theorem classifier_compLine :
     t_classifier.compLine =
-    t_classifier.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
+    t_classifier.toSynGraph.onePartChain ⟨0, by decide⟩ := by decide
 
 theorem classifier_isTree :
-    t_classifier.toSynGraph.isTree = true := by native_decide
+    t_classifier.toSynGraph.isTree = true := by decide
 
 end BridgeTests
 

@@ -84,11 +84,11 @@ theorem scale_matches_entailment :
     isStronger quantScale .all .most = true ∧
     isStronger quantScale .most .some_ = true ∧
     isStronger quantScale .all .some_ = true := by
-  native_decide
+  decide
 
 theorem some_has_stronger_alternatives :
     strongerAlternatives quantScale .some_ = [.most, .all] := by
-  native_decide
+  decide
 
 /-- Quantifier world: domain of size maxN with count of entities satisfying property. -/
 structure QuantWorld (maxN : Nat) where
@@ -117,15 +117,15 @@ theorem entailment_preserved_all_some :
     (worldMeaning 3 .all w1 = true → worldMeaning 3 .some_ w1 = true) ∧
     (worldMeaning 3 .all w2 = true → worldMeaning 3 .some_ w2 = true) ∧
     (worldMeaning 3 .all w3 = true → worldMeaning 3 .some_ w3 = true) := by
-  native_decide
+  decide
 
 theorem some_lower_bounded :
     worldMeaning 3 .some_ w0 = false ∧
     worldMeaning 3 .some_ w1 = true ∧
     worldMeaning 3 .some_ w2 = true ∧
-    worldMeaning 3 .some_ w3 = true := by native_decide
+    worldMeaning 3 .some_ w3 = true := by decide
 
-theorem some_compatible_with_all : worldMeaning 3 .some_ w3 = true := by native_decide
+theorem some_compatible_with_all : worldMeaning 3 .some_ w3 = true := by decide
 
 end Quantifiers
 
@@ -158,11 +158,11 @@ def entails : ConnExpr → ConnExpr → Bool
 theorem and_stronger_than_or :
     isStronger connScale .and_ .or_ = true ∧
     isStronger connScale .or_ .and_ = false := by
-  native_decide
+  decide
 
 theorem or_alternative :
     strongerAlternatives connScale .or_ = [.and_] := by
-  native_decide
+  decide
 
 end Connectives
 
@@ -197,7 +197,7 @@ def entails : ModalExpr → ModalExpr → Bool
 
 theorem necessary_stronger_than_possible :
     isStronger modalScale .necessary .possible = true := by
-  native_decide
+  decide
 
 end Modals
 
@@ -260,11 +260,11 @@ def numberScale : HornScale NumberExpr :=
 
 theorem singular_stronger_than_plural :
     isStronger numberScale .singular .plural = true := by
-  native_decide
+  decide
 
 theorem plural_alternative :
     strongerAlternatives numberScale .plural = [.singular] := by
-  native_decide
+  decide
 
 end Number
 
@@ -272,10 +272,10 @@ def scalarImplicatures {α : Type} [BEq α] (s : HornScale α) (x : α) : List �
   strongerAlternatives s x
 
 example : scalarImplicatures Quantifiers.quantScale .some_ = [.most, .all] := by
-  native_decide
+  decide
 
 example : scalarImplicatures Connectives.connScale .or_ = [.and_] := by
-  native_decide
+  decide
 
 inductive Monotonicity where
   | upward
@@ -291,11 +291,11 @@ def scalarAlternativesInContext {α : Type} [BEq α]
 theorem de_reversal_some :
     scalarAlternativesInContext Quantifiers.quantScale .some_ .upward = [.most, .all] ∧
     scalarAlternativesInContext Quantifiers.quantScale .some_ .downward = [.none_] := by
-  native_decide
+  decide
 
 theorem de_blocks_some_not_all :
     scalarAlternativesInContext Quantifiers.quantScale .all .downward = [.none_, .some_, .most] := by
-  native_decide
+  decide
 
 /-- Sentence polarity determines monotonicity context:
     positive sentences are upward-entailing, negative are downward-entailing.

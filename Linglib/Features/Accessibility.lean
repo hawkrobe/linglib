@@ -132,7 +132,7 @@ abbrev ReferentialForm := AccessibilityLevel
 /-- An unstressed pronoun is more reduced than a full name. -/
 theorem pronoun_more_reduced_than_name :
     AccessibilityLevel.unstressedPron.rank > AccessibilityLevel.fullName.rank := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Next-Mention Bias
@@ -163,7 +163,7 @@ def NextMentionBias.predictedForm : NextMentionBias → ReferentialForm
 theorem high_bias_more_reduced :
     (NextMentionBias.high.predictedForm).rank >
     (NextMentionBias.low.predictedForm).rank := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Weight Bridge
@@ -195,7 +195,7 @@ def ReferentialForm.typicalWeight : ReferentialForm → Nat
 theorem pronoun_lightest :
     ReferentialForm.typicalWeight .unstressedPron ≤
     ReferentialForm.typicalWeight .shortDefDescription := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Discourse Elaboration

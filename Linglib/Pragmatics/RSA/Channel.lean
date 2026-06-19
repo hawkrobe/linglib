@@ -132,16 +132,16 @@ def orientationDiscrimination : ℚ := orientationMatch - orientationMismatch  -
 
 /-- Color has higher discrimination than size -/
 theorem color_gt_size : colorDiscrimination > sizeDiscrimination := by
-  native_decide
+  norm_num [colorDiscrimination, colorMatch, colorMismatch, sizeDiscrimination, sizeMatch, sizeMismatch, materialDiscrimination, materialMatch, materialMismatch, orientationDiscrimination, orientationMatch, orientationMismatch]
 
 /-- Size has higher discrimination than material -/
 theorem size_gt_material : sizeDiscrimination > materialDiscrimination := by
-  native_decide
+  norm_num [colorDiscrimination, colorMatch, colorMismatch, sizeDiscrimination, sizeMatch, sizeMismatch, materialDiscrimination, materialMatch, materialMismatch, orientationDiscrimination, orientationMatch, orientationMismatch]
 
 /-- Colour and orientation have equal discrimination. -/
 theorem color_eq_orientation :
     colorDiscrimination = orientationDiscrimination := by
-  native_decide
+  norm_num [colorDiscrimination, colorMatch, colorMismatch, sizeDiscrimination, sizeMatch, sizeMismatch, materialDiscrimination, materialMatch, materialMismatch, orientationDiscrimination, orientationMatch, orientationMismatch]
 
 /-- Full ordering: color = orientation > size > material -/
 theorem discrimination_ordering :
@@ -174,7 +174,7 @@ def difficultyToDiscrimination : PerceptualDifficulty → ℚ
 /-- Easier perception → higher discrimination -/
 theorem easier_higher_discrimination :
     difficultyToDiscrimination .easy > difficultyToDiscrimination .hard := by
-  native_decide
+  norm_num [colorDiscrimination, colorMatch, colorMismatch, sizeDiscrimination, sizeMatch, sizeMismatch, materialDiscrimination, materialMatch, materialMismatch, orientationDiscrimination, orientationMatch, orientationMismatch, difficultyToDiscrimination]
 
 -- ════════════════════════════════════════════════════
 -- Colour Privilege: Limits of Noise-Based Prediction
@@ -200,7 +200,7 @@ theorem easier_higher_discrimination :
     residual privilege. -/
 theorem noise_model_predicts_no_colour_orientation_difference :
     colorDiscrimination = orientationDiscrimination := by
-  native_decide
+  norm_num [colorDiscrimination, colorMatch, colorMismatch, sizeDiscrimination, sizeMatch, sizeMismatch, materialDiscrimination, materialMatch, materialMismatch, orientationDiscrimination, orientationMatch, orientationMismatch]
 
 /-- Product discrimination is monotone: when match scores are individually
     at least as large AND the gap is at least as large, the weighted

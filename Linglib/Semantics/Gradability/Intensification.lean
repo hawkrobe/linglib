@@ -133,7 +133,7 @@ The horrible measure peaks at extremes: μ(max) ≥ μ(norm).
 Negative-evaluative adjectives assign highest values to extreme degrees.
 -/
 theorem muHorrible_peaks_at_extreme_10 :
-    (muHorrible 10).mu 10 ≥ (muHorrible 10).mu 5 := by native_decide
+    (muHorrible 10).mu 10 ≥ (muHorrible 10).mu 5 := by simp only [muHorrible, muPleasant]; norm_num
 
 /--
 The pleasant measure peaks at norm: μ(norm) ≥ μ(max).
@@ -141,7 +141,7 @@ The pleasant measure peaks at norm: μ(norm) ≥ μ(max).
 Positive-evaluative adjectives assign highest values to moderate degrees.
 -/
 theorem muPleasant_peaks_at_norm_10 :
-    (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 := by native_decide
+    (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 := by simp only [muHorrible, muPleasant]; norm_num
 
 /--
 Goldilocks structural theorem: at extreme degrees (d = max),
@@ -151,7 +151,7 @@ This is the semantic foundation of the Goldilocks effect:
 extreme degrees are more "horrible" than "pleasant".
 -/
 theorem goldilocks_at_extreme_10 :
-    (muHorrible 10).mu 10 ≥ (muPleasant 10).mu 10 := by native_decide
+    (muHorrible 10).mu 10 ≥ (muPleasant 10).mu 10 := by simp only [muHorrible, muPleasant]; norm_num
 
 /--
 Goldilocks structural theorem (converse): at moderate degrees (d = norm),
@@ -160,7 +160,7 @@ the pleasant measure exceeds the horrible measure.
 Moderate degrees are more "pleasant" than "horrible".
 -/
 theorem goldilocks_at_norm_10 :
-    (muPleasant 10).mu 5 ≥ (muHorrible 10).mu 5 := by native_decide
+    (muPleasant 10).mu 5 ≥ (muHorrible 10).mu 5 := by simp only [muHorrible, muPleasant]; norm_num
 
 -- Valence–Class Bridge
 

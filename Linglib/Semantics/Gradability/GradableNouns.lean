@@ -110,13 +110,13 @@ def smallIdiot {E : Type} (noun : GradableNoun E) : E → Bool :=
 
 
 /-- Minimum degree satisfying "big" is d5. -/
-theorem min_big_is_d5 : minDegree posBig = some (deg 5) := by native_decide
+theorem min_big_is_d5 : minDegree posBig = some (deg 5) := by decide
 
 /-- Minimum degree satisfying "small" is d0 (the scale minimum). -/
-theorem min_small_is_d0 : minDegree posSmall = some (deg 0) := by native_decide
+theorem min_small_is_d0 : minDegree posSmall = some (deg 0) := by decide
 
 /-- d0 always satisfies smallness because it is maximally small. -/
-theorem d0_satisfies_small : posSmall (deg 0) = true := by native_decide
+theorem d0_satisfies_small : posSmall (deg 0) = true := by decide
 
 /-- d0 is the unique minimum for smallness. -/
 theorem d0_is_min_for_small : ∀ d : Degree, posSmall d → deg 0 ≤ d := by
@@ -164,15 +164,15 @@ def idiocyMeasure : Person → Degree
 def exampleIdiot : GradableNoun Person := idiotNoun idiocyMeasure
 
 /-- George is an idiot. -/
-theorem george_is_idiot : exampleIdiot.pos .george = true := by native_decide
+theorem george_is_idiot : exampleIdiot.pos .george = true := by decide
 
 /-- George is a big idiot. -/
-theorem george_is_big_idiot : bigIdiot exampleIdiot .george = true := by native_decide
+theorem george_is_big_idiot : bigIdiot exampleIdiot .george = true := by decide
 
 /-- Sarah is an idiot but not a big idiot. -/
 theorem sarah_is_idiot_not_big :
     exampleIdiot.pos .sarah = true ∧ bigIdiot exampleIdiot .sarah = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- "Small idiot" gives same result as "idiot" (vacuous). -/
 theorem small_idiot_same_as_idiot :

@@ -65,7 +65,7 @@ theorem basic_not_implies_plus :
     ∃ (truth : Bool) (b : BeliefState),
       competent b = true ∧ competencePlus truth b = false := by
   -- Speaker believes ψ when ψ is actually false
-  exact ⟨false, .belief, by native_decide⟩
+  exact ⟨false, .belief, by decide⟩
 
 
 /--
@@ -189,7 +189,7 @@ strong implicature is derived.
 theorem outcome_ii_strong :
     let p := processAlternative true .disbelief
     p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
-  native_decide
+  decide
 
 /--
 Theorem: Outcome iii (Incompetent)
@@ -200,7 +200,7 @@ only weak implicature holds.
 theorem outcome_iii_incompetent :
     let p := processAlternative true .noOpinion
     p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
-  native_decide
+  decide
 
 
 /--
