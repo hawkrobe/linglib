@@ -178,7 +178,7 @@ intuitive role of `upper`/`lower`; the type is just a list.
   the atomic `insert`/`erase`.
 * **OCP** ([leben-2018-autoseg] §8). A constraint *within* a tier on
   adjacent identical elements; orthogonal to bipartite linking.
-  Handled by `Phonology/OCPMerger.lean`.
+  Handled by `Phonology.OCP`.
 * **Feature-geometry hierarchy** ([clements-1985],
   [sagey-1986]). Tree of class nodes over feature tiers; each
   edge of the tree is a `Graph` but the hierarchy is paper-specific

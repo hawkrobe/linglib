@@ -125,6 +125,13 @@ section AlgebraicOps
 def merge (b₁ b₂ : FeatureBundle F V) : FeatureBundle F V :=
   fun f => (b₁ f).orElse (fun _ => b₂ f)
 
+/-- Merging a bundle with itself is the identity: `merge` is idempotent on equal
+    arguments. -/
+@[simp] theorem merge_self (b : FeatureBundle F V) : merge b b = b := by
+  funext f
+  simp only [merge]
+  cases b f <;> rfl
+
 /-- **Subtonal / featural assimilation** at feature `f`: the target bundle
     `tgt` adopts whatever value `src` specifies for `f` (if any). All other
     features of `tgt` are unchanged.
@@ -155,15 +162,6 @@ end FeatureBundle
 namespace Tier
 
 variable {F : Type u} {V : Type v}
-
-/-- **Tier-level merger** at adjacent positions: pairwise `merge` between
-    the bundle at position `i` and the bundle at position `i+1`. This is
-    the primitive operation behind the OCP — a constraint that drives
-    merger of adjacent identical features. -/
-def mergeAdjacent : Tier F V → Tier F V
-  | []               => []
-  | [b]              => [b]
-  | b₁ :: b₂ :: rest => FeatureBundle.merge b₁ b₂ :: mergeAdjacent (b₂ :: rest)
 
 /-- **Local assimilation along a tier** at feature `f`: each bundle takes
     its value at `f` from its left neighbour (when the left neighbour

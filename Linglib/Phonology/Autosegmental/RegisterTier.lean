@@ -477,30 +477,18 @@ section Operations
 def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.assimilate f src.toBundle tgt.toBundle)
 
-/-- **OCP merger**: collapse a sequence of TRNs with identical subtonal
-    feature values into a single multiply-linked TRN
-    ([lionnet-2022] ex. 53–54). The Bundle-level merger
-    (`FeatureBundle.merge`) takes the value from the left TRN where it
-    is specified, falling back to the right.
-
-    **Two readings of the OCP — note on theoretical heterogeneity.** The
-    autosegmental tradition ([goldsmith-1976]) treats the OCP as a
-    *transformation* — adjacent identical autosegments at the melodic
-    level are merged into a single multiply-linked autosegment. That is
-    the reading `mergeTRN` implements: a *repair* operation. The
-    subregular tradition ([mccarthy-1986]) treats the OCP as a
-    *prohibition* — a constraint on output well-formedness that
-    *rejects* strings containing adjacent identical autosegments. The
-    prohibition reading is formalized by `Phonology.Subregular.OCP`'s
-    `TSLGrammar.ocp` (Core/Computability/Subregular/ForbiddenPairs.lean
-    plus Phonology/Subregular/OCP.lean) and the OT-side
-    `mkOCPOnTier` constraint. The two readings are operationally
-    distinct (transformation vs. language-membership predicate) and
-    coexist in linglib without a master bridge — the autosegmental
-    formalization fixes a representation, the subregular formalization
-    classifies a stringset. -/
+/-- **Binary TRN merger** ([lionnet-2022] ex. 53–54): merge two TRNs' subtonal
+    features into one, taking each feature from the left TRN where it is specified and
+    falling back to the right (`FeatureBundle.merge`). Models the autosegmental fusion
+    of two associated tones ([goldsmith-1976]); the tier-level OCP merger that
+    collapses a run of identical tones is `Phonology.OCP.collapse`. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
+
+/-- Merging a TRN with itself is the identity: `mergeTRN` is idempotent on equal
+    tones. -/
+@[simp] theorem mergeTRN_self (t : TRN) : mergeTRN t t = t := by
+  simp only [mergeTRN, FeatureBundle.merge_self, TRN.ofBundle_toBundle]
 
 /-- **TRN-level deletion** ([lionnet-2022] §6.2): delete a TRN's
     contribution at one subtonal feature, returning to underspecified.
