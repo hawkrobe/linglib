@@ -2732,7 +2732,7 @@ import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.OTBound
-import Linglib.Phonology.Sibilant
+import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.ItemSpecificity.Defs
 import Linglib.Phonology.ItemSpecificity.IndexedConstraints
 import Linglib.Phonology.ItemSpecificity.RepresentationStrength
