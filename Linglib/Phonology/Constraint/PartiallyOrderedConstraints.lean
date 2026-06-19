@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraint.Cumulativity
 import Linglib.Core.Optimization.PermSubsetCombinatorics
+import Mathlib.Order.Extension.Linear
 
 /-!
 # Partially Ordered Constraints (POC)
@@ -48,10 +49,9 @@ t/d-deletion analysis) that no single OT ranking can reproduce.
 
 ## Where this is used
 
-`Studies/CoetzeePater2011.lean` currently does its POC
-analysis by manually enumerating `permutations constraints` and filtering.
-A follow-up refactor would have CoetzeePater consume `pocPredict` and
-substrate-level POC theorems instead.
+`Studies/CoetzeePater2011.lean` and `Studies/Zuraw2010.lean` consume this
+substrate directly — `pocPredict`, `PicksAt`, and `pocPredict_discrete_binary_rate`
+over the discrete partial order — rather than enumerating rankings by hand.
 -/
 
 namespace Phonology.Constraint
@@ -102,15 +102,14 @@ structure PartialOrderConstraints (n : ℕ) where
   rel : Fin n → Fin n → Prop
   /-- Decidability of the relation (required for `consistentTotalOrders` to
       be a computable `Finset`). -/
-  decidable_rel : DecidableRel rel
-  /-- Reflexivity. -/
-  refl : ∀ a, rel a a
-  /-- Transitivity. -/
-  trans : ∀ {a b c}, rel a b → rel b c → rel a c
-  /-- Antisymmetry. -/
-  antisymm : ∀ {a b}, rel a b → rel b a → a = b
+  [decidableRel : DecidableRel rel]
+  /-- `rel` is a partial order — reflexive, transitive, antisymmetric — bundled
+      as mathlib's `IsPartialOrder` instance instead of three loose proof
+      fields, so the order-relation API (`antisymm_of`, …) applies to it. -/
+  [isPartialOrder : IsPartialOrder (Fin n) rel]
 
-attribute [instance] PartialOrderConstraints.decidable_rel
+attribute [instance] PartialOrderConstraints.decidableRel
+  PartialOrderConstraints.isPartialOrder
 
 namespace PartialOrderConstraints
 
@@ -122,10 +121,10 @@ variable {n : ℕ}
     "no ranking imposed" baseline. -/
 def discrete (n : ℕ) : PartialOrderConstraints n where
   rel := Eq
-  decidable_rel := inferInstance
-  refl := fun _ => rfl
-  trans := Eq.trans
-  antisymm := fun h _ => h
+  isPartialOrder :=
+    { refl := fun _ => rfl
+      trans := fun _ _ _ h₁ h₂ => h₁.trans h₂
+      antisymm := fun _ _ h _ => h }
 
 /-- The total order induced by a permutation `σ`: `rel a b` iff
     `σ.symm a ≤ σ.symm b` (i.e., a appears at least as early as b in σ's
@@ -133,10 +132,10 @@ def discrete (n : ℕ) : PartialOrderConstraints n where
     extension is σ itself (`fromPermutation_consistent_unique` below). -/
 def fromPermutation (σ : Equiv.Perm (Fin n)) : PartialOrderConstraints n where
   rel := fun a b => σ.symm a ≤ σ.symm b
-  decidable_rel := fun _ _ => inferInstance
-  refl := fun _ => le_refl _
-  trans := fun h₁ h₂ => le_trans h₁ h₂
-  antisymm := fun h₁ h₂ => σ.symm.injective (le_antisymm h₁ h₂)
+  isPartialOrder :=
+    { refl := fun _ => le_refl _
+      trans := fun _ _ _ h₁ h₂ => le_trans h₁ h₂
+      antisymm := fun _ _ h₁ h₂ => σ.symm.injective (le_antisymm h₁ h₂) }
 
 /-- A permutation σ is **consistent** with the partial order p if σ⁻¹
     respects rel: whenever `rel a b` holds, σ ranks a at least as early
@@ -207,10 +206,59 @@ theorem consistentTotalOrders_fromPermutation (σ : Equiv.Perm (Fin n)) :
   rw [hτ]
   exact isConsistent_fromPermutation σ
 
-theorem consistentTotalOrders_nonempty_of_fromPermutation
-    (σ : Equiv.Perm (Fin n)) :
-    (fromPermutation σ).consistentTotalOrders.Nonempty :=
-  ⟨σ, mem_consistentTotalOrders_fromPermutation σ⟩
+/-- Opaque carrier for the extended linear order. Wrapping `Fin n` in a fresh
+    structure lets us equip it with the linear-extension order `s` *without*
+    clashing with `Fin n`'s standard order — the diamond that would otherwise
+    make `≤` ambiguous in the goal. -/
+private structure LinExtCarrier (n : ℕ) where ofFin ::
+  /-- The underlying index. -/
+  toFin : Fin n
+
+/-- **Every POC has a consistent linear extension** (Szpilrajn): for *any*
+    partial order `p`, `consistentTotalOrders p` is nonempty. This is what the
+    `IsPartialOrder` instance buys — it is the hypothesis of mathlib's
+    `extend_partialOrder`. Consequently `pocPredict`'s denominator
+    (`consistentTotalOrders.card`) is provably positive for every POC, so
+    `pocPredict` is a genuine distribution, not just on `discrete`/`fromPermutation`. -/
+theorem consistentTotalOrders_nonempty (p : PartialOrderConstraints n) :
+    p.consistentTotalOrders.Nonempty := by
+  classical
+  -- Szpilrajn: extend the partial order `p.rel` to a linear order `s`.
+  obtain ⟨s, hs_lin, hsub⟩ := extend_partialOrder p.rel
+  -- Equip the opaque carrier with `s`, then sort it against `Fin n`'s order.
+  let wEquiv : LinExtCarrier n ≃ Fin n :=
+    { toFun := LinExtCarrier.toFin, invFun := LinExtCarrier.ofFin,
+      left_inv := fun ⟨_⟩ => rfl, right_inv := fun _ => rfl }
+  letI : Fintype (LinExtCarrier n) := Fintype.ofEquiv (Fin n) wEquiv.symm
+  letI : LinearOrder (LinExtCarrier n) :=
+    { le := fun a b => s a.toFin b.toFin
+      le_refl := fun a => hs_lin.refl a.toFin
+      le_trans := fun a b c => hs_lin.trans a.toFin b.toFin c.toFin
+      le_antisymm := fun a b h₁ h₂ => by
+        have := hs_lin.antisymm a.toFin b.toFin h₁ h₂
+        cases a; cases b; simpa using this
+      le_total := fun a b => hs_lin.total a.toFin b.toFin
+      toDecidableLE := Classical.decRel _ }
+  have hcard : Fintype.card (LinExtCarrier n) = n := by
+    rw [Fintype.card_congr wEquiv]; simp
+  -- The order iso `Fin n ≃o LinExtCarrier n` enumerates the carrier in `s`-order;
+  -- composing with `wEquiv` yields the consistent permutation.
+  let e : Fin n ≃o LinExtCarrier n := Fintype.orderIsoFinOfCardEq (LinExtCarrier n) hcard
+  refine ⟨e.toEquiv.trans wEquiv, mem_consistentTotalOrders.mpr ?_⟩
+  intro a b hab
+  show ((e.toEquiv.trans wEquiv).symm a : Fin n) ≤ (e.toEquiv.trans wEquiv).symm b
+  have key : ∀ c : Fin n, (e.toEquiv.trans wEquiv).symm c = e.symm (LinExtCarrier.ofFin c) :=
+    fun _ => rfl
+  rw [key a, key b]
+  exact e.symm.monotone (show s (LinExtCarrier.ofFin a).toFin (LinExtCarrier.ofFin b).toFin from
+    hsub a b hab)
+
+/-- `pocPredict`'s denominator `consistentTotalOrders.card` is strictly positive
+    for **any** POC — the `0/0` guard in `pocPredict` is never exercised on a real
+    partial order. Direct consequence of `consistentTotalOrders_nonempty`. -/
+theorem consistentTotalOrders_card_pos (p : PartialOrderConstraints n) :
+    0 < p.consistentTotalOrders.card :=
+  p.consistentTotalOrders_nonempty.card_pos
 
 end PartialOrderConstraints
 
@@ -222,13 +270,13 @@ namespace SystemicProblem
 
 variable {Input Output : Type*} {n : ℕ}
 
-/-- A partial order p **POC-realizes** the target if it has at least one
-    consistent extension and every consistent extension realizes the target.
-    This is the *categorical* realizability notion: target probability = 1
-    under POC sampling. -/
+/-- A partial order p **POC-realizes** the target if every consistent
+    extension realizes it. There is always at least one consistent extension
+    (`consistentTotalOrders_nonempty`), so this genuinely means target
+    probability = 1 under POC sampling — not the vacuous empty case, which is
+    why no explicit nonemptiness conjunct is needed. -/
 def POCRealizes (P : SystemicProblem Input Output n)
     (p : PartialOrderConstraints n) : Prop :=
-  p.consistentTotalOrders.Nonempty ∧
   ∀ σ ∈ p.consistentTotalOrders, P.OTRealizes σ
 
 /-- A `SystemicProblem` is **POC-realizable** if some partial order
@@ -247,8 +295,8 @@ end SystemicProblem
 theorem poc_realizable_imp_ot_realizable {Input Output : Type*} {n : ℕ}
     (P : SystemicProblem Input Output n) :
     P.IsPOCRealizable → P.IsOTRealizable := by
-  rintro ⟨p, hne, hreal⟩
-  obtain ⟨σ, hσ⟩ := hne
+  rintro ⟨p, hreal⟩
+  obtain ⟨σ, hσ⟩ := p.consistentTotalOrders_nonempty
   exact ⟨σ, hreal σ hσ⟩
 
 /-- **Non-trivial direction**: every OT-realized target is POC-realized
@@ -258,13 +306,9 @@ theorem ot_realizable_imp_poc_realizable {Input Output : Type*} {n : ℕ}
     (P : SystemicProblem Input Output n) :
     P.IsOTRealizable → P.IsPOCRealizable := by
   rintro ⟨σ, hσ⟩
-  refine ⟨PartialOrderConstraints.fromPermutation σ, ?_, ?_⟩
-  · exact PartialOrderConstraints.consistentTotalOrders_nonempty_of_fromPermutation σ
-  · intro τ hτ
-    rw [PartialOrderConstraints.consistentTotalOrders_fromPermutation,
-        Finset.mem_singleton] at hτ
-    rw [hτ]
-    exact hσ
+  refine ⟨PartialOrderConstraints.fromPermutation σ, ?_⟩
+  simpa [SystemicProblem.POCRealizes,
+    PartialOrderConstraints.consistentTotalOrders_fromPermutation] using hσ
 
 /-- **Categorical equivalence**: under categorical realizability,
     OT-realizable and POC-realizable coincide. POC's *probabilistic*
@@ -305,8 +349,9 @@ instance (cands : Input → Finset Output) (vp : Input → Output → Fin n → 
 
 /-- The probability that POC sampling under partial order p selects output
     o for input i: ratio of consistent extensions picking o to total
-    consistent extensions. Uses ℚ's `0/0 = 0` convention to handle the
-    degenerate empty-consistent-set case without an explicit guard. -/
+    consistent extensions. The denominator is always positive
+    (`consistentTotalOrders_card_pos`), so this is a genuine probability; ℚ's
+    `0/0 = 0` convention is a harmless fallback never exercised on a real POC. -/
 def pocPredict (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (p : PartialOrderConstraints n) (i : Input) (o : Output) : ℚ :=
   ((p.consistentTotalOrders.filter
