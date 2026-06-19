@@ -45,8 +45,8 @@ Sibling files in the same directory will add:
 * `CategoryTheory.Category (AR α β)` — the formal category instance.
 * `CategoryTheory.MonoidalCategory (AR α β)` — with `concat` as the
   tensor product, `empty` as the tensor unit, and the associator /
-  unitors derived from the strict equalities `concat_assoc`,
-  `empty_concat`, `concat_empty`.
+  unitors built from the strict concatenation equalities (the `Monoid`
+  laws `mul_assoc`/`one_mul`/`mul_one`).
 
 These complete "the category of autosegmental representations" as a
 formal mathlib monoidal category. They will land as separate commits.
@@ -162,18 +162,16 @@ theorem tensorHom_comp {A A' A'' B B' B'' : AR α β}
       tensorHom (f.comp f') (g.comp g') :=
   Graph.Hom.concatMap_comp A.inBounds A'.inBounds f f' g g'
 
-/-! ### Strict monoid structure (associativity + unitors as equalities)
+/-! ### Monoid structure
 
-The underlying `Graph` operations satisfy `concat_assoc`,
-`empty_concat`, `concat_empty` as *equalities* ([jardine-heinz-2015]
-Theorems 1 + 3). The bundled `AR` lifts these directly: the underlying
-graphs are equal by `Graph.concat_assoc` etc., and the `inBounds` /
-`planar` proofs match by proof irrelevance (they're propositions of
-the same `Graph`).
+`AR α β` is a `Monoid` under concatenation ([jardine-heinz-2015] Theorems 1, 3):
+the laws lift the `Graph` monoid laws (`Graph.concat_assoc` etc.) through
+`ext_toGraph` — the `inBounds`/`planar` proofs match by proof irrelevance. So
+associativity and the unit laws are `mul_assoc`/`one_mul`/`mul_one`, and
+`toGraphHom` exhibits `AR` as the in-bounds, planar submonoid of `Graph`.
 
-These strict equalities mean the `MonoidalCategory`'s associator and
-unitor natural isomorphisms can be constructed as `eqToIso`, which
-trivialises the naturality conditions.
+These are strict equalities, so the `MonoidalCategory`'s associator and unitor
+isomorphisms are built directly (as explicit `Graph.Hom` isos below).
 -/
 
 /-- Two ARs are equal iff their underlying `Graph`s are equal —
@@ -185,30 +183,18 @@ theorem ext_toGraph {A B : AR α β} (h : A.toGraph = B.toGraph) : A = B := by
   subst h
   rfl
 
-/-- Concatenation is associative on AR (lifted from `Graph.concat_assoc`). -/
-theorem concat_assoc (A B C : AR α β) :
-    (A.concat B).concat C = A.concat (B.concat C) :=
-  ext_toGraph (Graph.concat_assoc A.toGraph B.toGraph C.toGraph)
-
-/-- `empty` is a left identity for `concat` on AR (lifted from
-    `Graph.empty_concat`). -/
-theorem empty_concat (A : AR α β) : empty.concat A = A :=
-  ext_toGraph (Graph.empty_concat A.toGraph)
-
-/-- `empty` is a right identity for `concat` on AR (lifted from
-    `Graph.concat_empty`). -/
-theorem concat_empty (A : AR α β) : A.concat empty = A :=
-  ext_toGraph (Graph.concat_empty A.toGraph)
-
 /-- ARs form a monoid under concatenation, with the empty AR as unit — the
     well-formed (in-bounds, planar) submonoid of `Graph`'s concatenation monoid
-    (see `toGraphHom`). The monoid laws are the lifts above. -/
+    (see `toGraphHom`). The laws lift the `Graph` monoid laws through
+    `ext_toGraph` (the `inBounds`/`planar` proofs match by proof irrelevance);
+    [jardine-heinz-2015] Theorems 1, 3. Associativity and the unit laws are the
+    `Monoid` API's `mul_assoc`/`one_mul`/`mul_one`. -/
 instance instMonoid : Monoid (AR α β) where
   mul := concat
   one := empty
-  mul_assoc := concat_assoc
-  one_mul := empty_concat
-  mul_one := concat_empty
+  mul_assoc A B C := ext_toGraph (Graph.concat_assoc A.toGraph B.toGraph C.toGraph)
+  one_mul A := ext_toGraph (Graph.empty_concat A.toGraph)
+  mul_one A := ext_toGraph (Graph.concat_empty A.toGraph)
 
 @[simp] theorem mul_eq_concat (A B : AR α β) : A * B = A.concat B := rfl
 
