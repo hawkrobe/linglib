@@ -29,7 +29,9 @@ theorem here.
 
 * `prefers_informative` — the speaker prefers the uniquely-identifying `circle`
   over the ambiguous `blue` for the target (Fig. 1A); `prefers_informative_alpha`
-  shows this holds at every rationality `α > 0` (consuming `RSA.Gibbs.speakerAlpha`).
+  shows this holds at every rationality `α > 0`, and `fully_rational_picks_circle`
+  that the `α → ∞` speaker concentrates all its mass on `circle` (consuming
+  `RSA.Gibbs.speakerAlpha` and its zero-temperature limit).
 * `size_principle` — generally, the speaker prefers the smaller-extension applicable
   utterance.
 * `narrowing_blue` / `narrowing_square` — **pragmatic narrowing**: the speaker is
@@ -40,7 +42,7 @@ theorem here.
 -/
 
 open MeasureTheory
-open scoped ENNReal
+open scoped ENNReal Topology
 
 namespace FrankGoodman2012
 
@@ -91,67 +93,89 @@ restricted to the applicable utterances `W(r)` by the surprisal `score`. -/
 noncomputable def speakerAt (r : Object) : Measure Feature :=
   RSA.Gibbs.speaker (Measure.count.restrict (↑(applicable r) : Set Feature)) score
 
-/-! ### Speaker mass closed forms (eq. 2) -/
+/-! ### Speaker API at this stimulus
+
+These wrappers carry `by decide` defaults for the applicability side-conditions, so
+the concrete predictions below never spell out `w ∈ applicable r` proofs. -/
 
 /-- At an applicable utterance, the speaker mass is the softmax over `W(r)`. -/
-theorem speakerAt_apply (r : Object) (w : Feature) (h : w ∈ applicable r) :
+theorem speakerAt_apply (r : Object) (w : Feature) (h : w ∈ applicable r := by decide) :
     speakerAt r {w}
       = ENNReal.ofReal (Real.exp (score w) / ∑ x ∈ applicable r, Real.exp (score x)) :=
   RSA.Gibbs.speaker_countRestrict_singleton (applicable r) score w h
 
 /-- A non-applicable utterance gets zero speaker mass. -/
-theorem speakerAt_apply_zero (r : Object) (w : Feature) (h : w ∉ applicable r) :
+theorem speakerAt_apply_zero (r : Object) (w : Feature) (h : w ∉ applicable r := by decide) :
     speakerAt r {w} = 0 :=
   RSA.Gibbs.speaker_countRestrict_singleton_of_not_mem (applicable r) score w h
 
+/-- Speaker preference at a referent reduces to the surprisal comparison. -/
+theorem speakerAt_lt_iff (r : Object) (w₁ w₂ : Feature)
+    (h₁ : w₁ ∈ applicable r := by decide) (h₂ : w₂ ∈ applicable r := by decide) :
+    speakerAt r {w₁} < speakerAt r {w₂} ↔ score w₁ < score w₂ :=
+  RSA.Gibbs.speaker_countRestrict_lt_iff_score_lt (applicable r) score w₁ w₂ h₁ h₂
+
+/-- α-speaker preference at a referent (`α > 0`) reduces to the surprisal comparison. -/
+theorem speakerAtAlpha_lt_iff (r : Object) {α : ℝ} (hα : 0 < α) (w₁ w₂ : Feature)
+    (h₁ : w₁ ∈ applicable r := by decide) (h₂ : w₂ ∈ applicable r := by decide) :
+    RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable r) : Set Feature)) α score {w₁}
+        < RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable r) : Set Feature)) α score {w₂}
+      ↔ score w₁ < score w₂ :=
+  RSA.Gibbs.speakerAlpha_countRestrict_lt_iff_score_lt (applicable r) hα score w₁ w₂ h₁ h₂
+
 /-! ### Numerical bookkeeping -/
 
-private theorem expScore_blue   : Real.exp (score .blue)   = 1 / 2 := by
-  rw [score, show numApplies Feature.blue = 2 from by decide, Nat.cast_ofNat,
-    Real.exp_neg, Real.exp_log (by norm_num)]; norm_num
-private theorem expScore_green  : Real.exp (score .green)  = 1 := by
-  rw [score, show numApplies Feature.green = 1 from by decide, Nat.cast_one,
-    Real.exp_neg, Real.exp_log (by norm_num)]; norm_num
-private theorem expScore_square : Real.exp (score .square) = 1 / 2 := by
-  rw [score, show numApplies Feature.square = 2 from by decide, Nat.cast_ofNat,
-    Real.exp_neg, Real.exp_log (by norm_num)]; norm_num
-private theorem expScore_circle : Real.exp (score .circle) = 1 := by
-  rw [score, show numApplies Feature.circle = 1 from by decide, Nat.cast_one,
-    Real.exp_neg, Real.exp_log (by norm_num)]; norm_num
+/-- Every feature applies to at least one object, so its extension is nonempty. -/
+private theorem numApplies_pos (w : Feature) : 0 < numApplies w := by cases w <;> decide
 
-/-- Partition (total alternative weight) at each referent: `1` at `blueSquare`
-(two ambiguous words), `3/2` at `blueCircle` and `greenSquare` (one ambiguous +
-one uniquely-identifying word). -/
+/-- `exp (score w) = |w|⁻¹` — the literal-listener target probability the speaker
+tilts by (the content of eq. 2). -/
+private theorem expScore (w : Feature) : Real.exp (score w) = (numApplies w : ℝ)⁻¹ := by
+  rw [score, Real.exp_neg, Real.exp_log (by exact_mod_cast numApplies_pos w)]
+
+/-- Partition over a two-word applicable set, in closed form. -/
+private theorem partition_pair (r : Object) (w₁ w₂ : Feature)
+    (h : applicable r = {w₁, w₂}) (hne : w₁ ∉ ({w₂} : Finset Feature)) :
+    ∑ x ∈ applicable r, Real.exp (score x) = (numApplies w₁ : ℝ)⁻¹ + (numApplies w₂ : ℝ)⁻¹ := by
+  rw [h, Finset.sum_insert hne, Finset.sum_singleton, expScore, expScore]
+
+/-- Partition (total alternative weight) at each referent: `1` at `blueSquare` (two
+ambiguous words), `3/2` at `blueCircle` and `greenSquare` (one ambiguous + one
+uniquely-identifying word). -/
 private theorem partition_blueSquare :
     ∑ x ∈ applicable .blueSquare, Real.exp (score x) = 1 := by
-  rw [show applicable Object.blueSquare = {Feature.blue, Feature.square} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_singleton, expScore_blue, expScore_square]
-  norm_num
+  rw [partition_pair .blueSquare .blue .square (by decide) (by decide),
+    show numApplies Feature.blue = 2 from by decide,
+    show numApplies Feature.square = 2 from by decide]; norm_num
 
 private theorem partition_blueCircle :
     ∑ x ∈ applicable .blueCircle, Real.exp (score x) = 3 / 2 := by
-  rw [show applicable Object.blueCircle = {Feature.blue, Feature.circle} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_singleton, expScore_blue, expScore_circle]
-  norm_num
+  rw [partition_pair .blueCircle .blue .circle (by decide) (by decide),
+    show numApplies Feature.blue = 2 from by decide,
+    show numApplies Feature.circle = 1 from by decide]; norm_num
 
 private theorem partition_greenSquare :
     ∑ x ∈ applicable .greenSquare, Real.exp (score x) = 3 / 2 := by
-  rw [show applicable Object.greenSquare = {Feature.green, Feature.square} from by decide,
-    Finset.sum_insert (by decide), Finset.sum_singleton, expScore_green, expScore_square]
-  norm_num
+  rw [partition_pair .greenSquare .green .square (by decide) (by decide),
+    show numApplies Feature.green = 1 from by decide,
+    show numApplies Feature.square = 2 from by decide]; norm_num
 
 /-! ### Predictions -/
+
+/-- `circle` is more informative than `blue`: `score blue < score circle`
+(`= log(1/2) < log 1`). Shared by `prefers_informative` and its α-robust form. -/
+private theorem score_blue_lt_circle : score .blue < score .circle := by
+  rw [score, score, show numApplies Feature.blue = 2 from by decide,
+    show numApplies Feature.circle = 1 from by decide, Nat.cast_ofNat, Nat.cast_one, Real.log_one]
+  simp only [neg_zero, neg_lt_zero]
+  exact Real.log_pos (by norm_num)
 
 /-- **The speaker prefers the uniquely-identifying description** (Fig. 1A): for the
 target (`blueCircle`), `circle` (which uniquely identifies it) gets strictly more
 mass than the ambiguous `blue`. Reduces via `speaker_countRestrict_lt_iff_score_lt`
 to the surprisal comparison `score blue < score circle`. -/
-theorem prefers_informative : speakerAt .blueCircle {.blue} < speakerAt .blueCircle {.circle} := by
-  rw [speakerAt, RSA.Gibbs.speaker_countRestrict_lt_iff_score_lt _ score _ _ (by decide) (by decide),
-    score, score, show numApplies Feature.blue = 2 from by decide,
-    show numApplies Feature.circle = 1 from by decide, Nat.cast_ofNat, Nat.cast_one, Real.log_one]
-  simp only [neg_zero, neg_lt_zero]
-  exact Real.log_pos (by norm_num)
+theorem prefers_informative : speakerAt .blueCircle {.blue} < speakerAt .blueCircle {.circle} :=
+  (speakerAt_lt_iff .blueCircle .blue .circle).mpr score_blue_lt_circle
 
 /-- **Robustness to rationality**: the informativeness preference holds at *every*
 rationality level `α > 0`, not just the canonical `α = 1` (`prefers_informative`).
@@ -160,58 +184,65 @@ theorem prefers_informative_alpha {α : ℝ} (hα : 0 < α) :
     RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable .blueCircle) : Set Feature))
         α score {.blue}
       < RSA.Gibbs.speakerAlpha (Measure.count.restrict (↑(applicable .blueCircle) : Set Feature))
-        α score {.circle} := by
-  have hsc : score .blue < score .circle := by
-    rw [score, score, show numApplies Feature.blue = 2 from by decide,
-      show numApplies Feature.circle = 1 from by decide, Nat.cast_ofNat, Nat.cast_one, Real.log_one]
-    simp only [neg_zero, neg_lt_zero]
-    exact Real.log_pos (by norm_num)
-  simp only [RSA.Gibbs.speakerAlpha]
-  rw [RSA.Gibbs.speaker_countRestrict_lt_iff_score_lt _ _ _ _ (by decide) (by decide)]
-  exact mul_lt_mul_of_pos_left hsc hα
+        α score {.circle} :=
+  (speakerAtAlpha_lt_iff .blueCircle hα .blue .circle).mpr score_blue_lt_circle
+
+/-- **The fully-rational speaker is deterministic** (`α → ∞`): at the target, the
+speaker concentrates all its mass on the uniquely-identifying `circle`. The
+zero-temperature limit of `prefers_informative`, via
+`RSA.Gibbs.speakerAlpha_countRestrict_tendsto_one_of_isMax`. -/
+theorem fully_rational_picks_circle :
+    Filter.Tendsto (fun α => RSA.Gibbs.speakerAlpha
+        (Measure.count.restrict (↑(applicable .blueCircle) : Set Feature)) α score {.circle})
+      Filter.atTop (𝓝 1) := by
+  refine RSA.Gibbs.speakerAlpha_countRestrict_tendsto_one_of_isMax _ score _ (by decide) ?_
+  intro b hb hbne
+  have hb' : b ∈ ({Feature.blue, Feature.circle} : Finset Feature) := by
+    rwa [show applicable Object.blueCircle = {Feature.blue, Feature.circle} from by decide] at hb
+  fin_cases hb'
+  · exact score_blue_lt_circle
+  · exact absurd rfl hbne
 
 /-- **Size principle**: among applicable utterances, the speaker prefers the one
 with the smaller extension (lower `numApplies`). -/
 theorem size_principle (r : Object) (w₁ w₂ : Feature) (h₁ : w₁ ∈ applicable r)
     (h₂ : w₂ ∈ applicable r) (h : numApplies w₂ < numApplies w₁) :
     speakerAt r {w₁} < speakerAt r {w₂} := by
-  have hpos : 0 < numApplies w₂ :=
-    Finset.card_pos.mpr ⟨r, Finset.mem_filter.mpr ⟨Finset.mem_univ r, (Finset.mem_filter.mp h₂).2⟩⟩
-  rw [speakerAt, RSA.Gibbs.speaker_countRestrict_lt_iff_score_lt _ score _ _ h₁ h₂, score, score,
-    neg_lt_neg_iff]
-  exact Real.log_lt_log (by exact_mod_cast hpos) (by exact_mod_cast h)
+  refine (speakerAt_lt_iff r w₁ w₂ h₁ h₂).mpr ?_
+  rw [score, score, neg_lt_neg_iff]
+  exact Real.log_lt_log (by exact_mod_cast numApplies_pos w₂) (by exact_mod_cast h)
 
 /-- **Pragmatic narrowing for "blue"**: the speaker assigns less mass to "blue" at
 `blueCircle` (where "circle" uniquely identifies, raising the partition) than at
-`blueSquare` (where the only alternative "square" is equally ambiguous). This
-asymmetry — `S₁(blue | blueCircle) = 1/3 < 1/2 = S₁(blue | blueSquare)` — is what
-lets a listener hearing "blue" narrow toward `blueSquare`. -/
+`blueSquare` (where the only alternative "square" is equally ambiguous). The
+numerators are equal; the comparison is the partition comparison `3/2 > 1` — which
+is what lets a listener hearing "blue" narrow toward `blueSquare`. -/
 theorem narrowing_blue : speakerAt .blueCircle {.blue} < speakerAt .blueSquare {.blue} := by
-  rw [speakerAt_apply _ _ (by decide), speakerAt_apply _ _ (by decide),
-    partition_blueCircle, partition_blueSquare, expScore_blue,
-    ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
-  norm_num
+  rw [speakerAt_apply .blueCircle .blue, speakerAt_apply .blueSquare .blue,
+    partition_blueCircle, partition_blueSquare, ENNReal.ofReal_lt_ofReal_iff (by positivity),
+    div_one]
+  exact div_lt_self (Real.exp_pos _) (by norm_num)
 
 /-- **Pragmatic narrowing for "square"**: symmetrically, "square" is less likely at
 `greenSquare` (where "green" uniquely identifies) than at `blueSquare`. -/
 theorem narrowing_square : speakerAt .greenSquare {.square} < speakerAt .blueSquare {.square} := by
-  rw [speakerAt_apply _ _ (by decide), speakerAt_apply _ _ (by decide),
-    partition_greenSquare, partition_blueSquare, expScore_square,
-    ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
-  norm_num
+  rw [speakerAt_apply .greenSquare .square, speakerAt_apply .blueSquare .square,
+    partition_greenSquare, partition_blueSquare, ENNReal.ofReal_lt_ofReal_iff (by positivity),
+    div_one]
+  exact div_lt_self (Real.exp_pos _) (by norm_num)
 
 /-- **Unique reference for "green"**: "green" applies only to `greenSquare`, so it
 gets zero mass at `blueSquare` and positive mass at `greenSquare` — the listener
 hearing "green" identifies `greenSquare`. -/
 theorem unique_green : speakerAt .blueSquare {.green} < speakerAt .greenSquare {.green} := by
-  rw [speakerAt_apply_zero _ _ (by decide), speakerAt_apply _ _ (by decide),
-    partition_greenSquare, expScore_green]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+  rw [speakerAt_apply_zero .blueSquare .green, speakerAt_apply .greenSquare .green,
+    partition_greenSquare]
+  exact ENNReal.ofReal_pos.mpr (by positivity)
 
 /-- **Unique reference for "circle"**: "circle" applies only to `blueCircle`. -/
 theorem unique_circle : speakerAt .blueSquare {.circle} < speakerAt .blueCircle {.circle} := by
-  rw [speakerAt_apply_zero _ _ (by decide), speakerAt_apply _ _ (by decide),
-    partition_blueCircle, expScore_circle]
-  exact ENNReal.ofReal_pos.mpr (by norm_num)
+  rw [speakerAt_apply_zero .blueSquare .circle, speakerAt_apply .blueCircle .circle,
+    partition_blueCircle]
+  exact ENNReal.ofReal_pos.mpr (by positivity)
 
 end FrankGoodman2012

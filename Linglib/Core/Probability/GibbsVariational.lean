@@ -18,9 +18,10 @@ Kullback–Leibler divergence anticipated by the module docstring of
 ## Main definitions
 
 * `MeasureTheory.Measure.logIntegralExp μ f = log (∫ x, exp (f x) ∂μ)` — the
-  log-partition / free-energy functional. It generalizes the cumulant generating
-  function `ProbabilityTheory.cgf` (the affine case `f = t • X`); see
-  `logIntegralExp_const_mul`.
+  log-partition / free-energy functional. It is the cumulant generating function
+  at unit argument (`logIntegralExp_eq_cgf : logIntegralExp μ f = cgf f μ 1`), and
+  conversely `cgf X μ t = logIntegralExp μ (t • X)` (`logIntegralExp_const_mul`);
+  the two are interchangeable, with `logIntegralExp` carrying the free-energy reading.
 
 ## Main statements
 
@@ -39,8 +40,11 @@ The decomposition reuses the log-likelihood-ratio identity
 `llr`-integrals via `toReal_klDiv_of_measure_eq` (the `univ`-mass correction in
 `toReal_klDiv` vanishes because every measure in play is a probability measure —
 `μ.tilted f` is normalized by construction). The statements are over probability
-measures; the finite-measure generalization carries an additive `μ.real univ`
-correction and is left for future work.
+measures. Two separate relaxations are possible upstream: the *prior* `μ` could be
+`[IsFiniteMeasure]` at the cost of an additive `μ.real univ` correction term; the
+*candidate* `q`, however, is pinned to `[IsProbabilityMeasure]` by
+`integral_llr_tilted_right` itself (which requires it on its left measure), so
+relaxing `q` is a separate upstream concern in `LogLikelihoodRatio`, not here.
 -/
 
 open Real MeasureTheory ProbabilityTheory InformationTheory
@@ -50,15 +54,21 @@ namespace MeasureTheory
 
 variable {α : Type*} {mα : MeasurableSpace α}
 
-/-- The **log-partition** (free-energy) functional `log ∫ exp f ∂μ`. Generalizes
-the cumulant generating function `ProbabilityTheory.cgf` to an arbitrary
-integrand (the affine case `f = fun x ↦ t * X x` recovers `cgf X μ t`, see
-`logIntegralExp_const_mul`). -/
+/-- The **log-partition** (free-energy) functional `log ∫ exp f ∂μ`. It coincides
+with the cumulant generating function `ProbabilityTheory.cgf` at unit argument
+(`logIntegralExp_eq_cgf`), the free-energy reading being the one that makes the
+variational principle below natural. -/
 noncomputable def Measure.logIntegralExp (μ : Measure α) (f : α → ℝ) : ℝ :=
   Real.log (∫ x, Real.exp (f x) ∂μ)
 
-/-- `logIntegralExp` generalizes the cumulant generating function: on the affine
-family `f = fun x ↦ t * X x` it is `ProbabilityTheory.cgf X μ t`. -/
+/-- The log-partition functional is the cumulant generating function at unit
+argument: `logIntegralExp μ f = cgf f μ 1`. -/
+theorem logIntegralExp_eq_cgf (μ : Measure α) (f : α → ℝ) :
+    μ.logIntegralExp f = cgf f μ 1 := by
+  simp only [Measure.logIntegralExp, cgf, mgf, one_mul]
+
+/-- The cumulant generating function is the log-partition functional of the scaled
+integrand: `cgf X μ t = logIntegralExp μ (t • X)`. -/
 theorem logIntegralExp_const_mul (μ : Measure α) (X : α → ℝ) (t : ℝ) :
     μ.logIntegralExp (fun x => t * X x) = cgf X μ t := by
   simp only [Measure.logIntegralExp, cgf, mgf]
@@ -79,8 +89,8 @@ theorem toReal_klDiv_tilted_right (μ q : Measure α) [IsProbabilityMeasure μ]
       = (klDiv q μ).toReal - (∫ x, f x ∂q) + μ.logIntegralExp f := by
   have h_prob_tilt : IsProbabilityMeasure (μ.tilted f) := isProbabilityMeasure_tilted h_exp
   have hq_tilt : q ≪ μ.tilted f := hqμ.trans (absolutelyContinuous_tilted h_exp)
-  rw [toReal_klDiv_of_measure_eq hq_tilt (by rw [measure_univ, measure_univ]),
-      toReal_klDiv_of_measure_eq hqμ (by rw [measure_univ, measure_univ]),
+  rw [toReal_klDiv_of_measure_eq hq_tilt (by simp only [measure_univ]),
+      toReal_klDiv_of_measure_eq hqμ (by simp only [measure_univ]),
       integral_llr_tilted_right hqμ h_int_f h_exp h_int_llr, Measure.logIntegralExp]
 
 /-- **Gibbs / Donsker–Varadhan variational inequality**: for every probability
