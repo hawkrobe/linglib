@@ -104,6 +104,18 @@ theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
       Phonology.OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
   mkOCPOnTier_zero_iff_isChain name p extract c
 
+/-- **Shared satisfaction predicate** (off-tier): the optimality-theoretic OCP
+markedness constraint `mkOCP` scores zero iff its projection is
+`Phonology.OCP.IsClean` — routing `Phonology.Constraints.adjacentIdentical` (the
+`countAdjacent` form behind `mkOCP`, consumed by Berent2026/Belth2026) through the
+unified predicate. The flat-string companion of `mkOCPOnTier_zero_iff_isClean`. -/
+theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
+    (name : String) (project : C → List α) (c : C) :
+    (mkOCP name project).eval c = 0 ↔ Phonology.OCP.IsClean (project c) := by
+  show countAdjacent (· = ·) (project c) = 0 ↔ _
+  rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
+  rfl
+
 /-- **Bridge** (full TSL_2 language form): a candidate's OCP score is zero iff
 its raw string is in the language of the TSL_2 grammar `TSLGrammar.ocp p`.
 The two perspectives on the OCP — optimality-theoretic constraint and

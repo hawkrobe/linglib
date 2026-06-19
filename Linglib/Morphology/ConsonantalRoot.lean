@@ -1,3 +1,6 @@
+import Linglib.Phonology.OCP
+import Linglib.Core.Computability.Subregular.ForbiddenPairs
+
 /-!
 # Consonantal Roots
 
@@ -82,6 +85,29 @@ def adjDupCount [BEq α] : List α → Nat
     stronger OCP variants on derived tiers (place, voicing, etc.) via
     `Phonology.Constraints.mkOCP`. -/
 def satisfiesOCP [BEq α] (r : Root α) : Bool := adjDupCount r.segments == 0
+
+/-- `adjDupCount` is the substrate `countAdjacent (· = ·)` on the segment list;
+    `LawfulBEq` reconciles `==` with `=`. -/
+theorem adjDupCount_eq_countAdjacent [DecidableEq α] [LawfulBEq α] (xs : List α) :
+    adjDupCount xs = Core.Computability.Subregular.countAdjacent (· = ·) xs := by
+  induction xs with
+  | nil => rfl
+  | cons a t ih =>
+    cases t with
+    | nil => rfl
+    | cons b rest =>
+      simp only [adjDupCount, Core.Computability.Subregular.countAdjacent, ih]
+      by_cases h : a = b <;> simp [h]
+
+/-- **Root-level OCP is `Phonology.OCP.IsClean`**: a root satisfies the
+    segment-level OCP iff its segment tier is OCP-clean. Routes the hand-rolled
+    `adjDupCount` through the unified predicate ([faust-2026]'s consumer). -/
+theorem satisfiesOCP_iff_isClean [DecidableEq α] [LawfulBEq α] (r : Root α) :
+    satisfiesOCP r = true ↔ Phonology.OCP.IsClean r.segments := by
+  unfold satisfiesOCP
+  rw [beq_iff_eq, adjDupCount_eq_countAdjacent,
+    Core.Computability.Subregular.countAdjacent_eq_zero_iff_isChain]
+  rfl
 
 end Root
 end Morphology
