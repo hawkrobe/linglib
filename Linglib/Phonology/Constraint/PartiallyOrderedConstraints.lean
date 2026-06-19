@@ -102,15 +102,14 @@ structure PartialOrderConstraints (n : ℕ) where
   rel : Fin n → Fin n → Prop
   /-- Decidability of the relation (required for `consistentTotalOrders` to
       be a computable `Finset`). -/
-  decidable_rel : DecidableRel rel
-  /-- Reflexivity. -/
-  refl : ∀ a, rel a a
-  /-- Transitivity. -/
-  trans : ∀ {a b c}, rel a b → rel b c → rel a c
-  /-- Antisymmetry. -/
-  antisymm : ∀ {a b}, rel a b → rel b a → a = b
+  [decidableRel : DecidableRel rel]
+  /-- `rel` is a partial order — reflexive, transitive, antisymmetric — bundled
+      as mathlib's `IsPartialOrder` instance instead of three loose proof
+      fields, so the order-relation API (`antisymm_of`, …) applies to it. -/
+  [isPartialOrder : IsPartialOrder (Fin n) rel]
 
-attribute [instance] PartialOrderConstraints.decidable_rel
+attribute [instance] PartialOrderConstraints.decidableRel
+  PartialOrderConstraints.isPartialOrder
 
 namespace PartialOrderConstraints
 
@@ -122,10 +121,10 @@ variable {n : ℕ}
     "no ranking imposed" baseline. -/
 def discrete (n : ℕ) : PartialOrderConstraints n where
   rel := Eq
-  decidable_rel := inferInstance
-  refl := fun _ => rfl
-  trans := Eq.trans
-  antisymm := fun h _ => h
+  isPartialOrder :=
+    { refl := fun _ => rfl
+      trans := fun _ _ _ h₁ h₂ => h₁.trans h₂
+      antisymm := fun _ _ h _ => h }
 
 /-- The total order induced by a permutation `σ`: `rel a b` iff
     `σ.symm a ≤ σ.symm b` (i.e., a appears at least as early as b in σ's
@@ -133,10 +132,10 @@ def discrete (n : ℕ) : PartialOrderConstraints n where
     extension is σ itself (`fromPermutation_consistent_unique` below). -/
 def fromPermutation (σ : Equiv.Perm (Fin n)) : PartialOrderConstraints n where
   rel := fun a b => σ.symm a ≤ σ.symm b
-  decidable_rel := fun _ _ => inferInstance
-  refl := fun _ => le_refl _
-  trans := fun h₁ h₂ => le_trans h₁ h₂
-  antisymm := fun h₁ h₂ => σ.symm.injective (le_antisymm h₁ h₂)
+  isPartialOrder :=
+    { refl := fun _ => le_refl _
+      trans := fun _ _ _ h₁ h₂ => le_trans h₁ h₂
+      antisymm := fun _ _ h₁ h₂ => σ.symm.injective (le_antisymm h₁ h₂) }
 
 /-- A permutation σ is **consistent** with the partial order p if σ⁻¹
     respects rel: whenever `rel a b` holds, σ ranks a at least as early
