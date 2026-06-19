@@ -25,10 +25,10 @@ TSL machinery without restating projection or filtering.
 ## What this enables
 
 Phonological constraints already in the codebase (`mkOCPOnTier` in
-`Phonology/OptimalityTheory/Constraints.lean`, the tonal tier
-in `Phonology/Tier.lean`) reuse the same `Tier.apply` machinery
-as TSL grammars — the bridge is no longer a theorem to discharge but a
-definitional consequence.
+`Phonology/OptimalityTheory/Constraints.lean`, the tonal tier `tonalTier`
+in `Phonology/Autosegmental/BasemapCorrespondence.lean`) reuse the same
+`Tier.apply` machinery as TSL grammars — the bridge is no longer a theorem
+to discharge but a definitional consequence.
 -/
 
 namespace Phonology.Subregular

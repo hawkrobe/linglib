@@ -2697,7 +2697,6 @@ import Linglib.Phonology.Autosegmental.Defs
 import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Tier
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Autosegmental.BasemapCorrespondence
