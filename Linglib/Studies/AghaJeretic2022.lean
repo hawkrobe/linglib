@@ -3,6 +3,7 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive
+import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
@@ -70,6 +71,7 @@ namespace AghaJeretic2022
 
 open Core.Duality (Truth3)
 open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
+open Semantics.Attitudes.NegRaising (negRaising_iff_subsingleton)
 
 -- ============================================================================
 -- §1. Trivalent Semantics for Modals (§4.2)
@@ -1040,5 +1042,49 @@ theorem french_cf_weakens :
 theorem french_devrais_same_flavors :
     French.Modals.devrais.flavors =
     French.Modals.devoir.flavors := rfl
+
+-- ============================================================================
+-- Connection to neg-raising ([rubinstein-2014]) via the shared lemma
+-- ============================================================================
+
+/-! ## Homogeneity and neg-raising are one structural condition
+
+A&J analyse *should*'s wide-scope-under-negation as **homogeneity** (a truth-value
+gap in mixed domains), not genuine neg-raising; [rubinstein-2014] analyses the same
+data as genuine neg-raising. Both reduce to one structural condition on the modal's
+domain — being a subsingleton — via the shared
+`NegRaising.negRaising_iff_subsingleton`. The rival diagnoses of *should* are the
+same fact described differently. -/
+
+/-- A&J's homogeneity (gap-free, i.e. bivalent for every prejacent) and
+    Rubinstein's neg-raising coincide: a universal modal over `A` is gap-free for
+    every prejacent iff it neg-raises for every prejacent — both hold iff `A` is a
+    subsingleton (`NegRaising.negRaising_iff_subsingleton`). -/
+theorem bivalent_iff_negRaising {W : Type*} (A : Set W) :
+    (∀ p : W → Prop, (∀ w ∈ A, p w) ∨ (∀ w ∈ A, ¬ p w)) ↔
+    (∀ p : W → Prop, ¬ (∀ w ∈ A, p w) → ∀ w ∈ A, ¬ p w) := by
+  rw [negRaising_iff_subsingleton A]
+  constructor
+  · intro hbiv a ha b hb
+    rcases hbiv (· = a) with h | h
+    · exact (h b hb).symm
+    · exact absurd rfl (h a ha)
+  · intro hsub p
+    by_cases hp : ∀ w ∈ A, p w
+    · exact Or.inl hp
+    · exact Or.inr ((negRaising_iff_subsingleton A).mpr hsub p hp)
+
+/-- The gap witness, grounded in `shouldEval`: on the mixed two-world domain
+    `should` gaps (`should_mixed`) and the domain is not a subsingleton, so by
+    `bivalent_iff_negRaising` the neg-raising inference fails there too — the
+    homogeneity gap and the neg-raising failure are the same condition. -/
+theorem gap_witness_not_subsingleton :
+    shouldEval [true, false] id = Truth3.indet ∧
+    ¬ ({true, false} : Set Bool).Subsingleton := by
+  refine ⟨by decide, fun h => ?_⟩
+  have : (true : Bool) = false :=
+    h (show (true : Bool) ∈ ({true, false} : Set Bool) by simp)
+      (show (false : Bool) ∈ ({true, false} : Set Bool) by simp)
+  exact absurd this (by decide)
 
 end AghaJeretic2022
