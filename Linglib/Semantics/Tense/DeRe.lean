@@ -37,7 +37,7 @@ live in `Studies/Abusch1997.lean`.
   property that distinguishes de re from de dicto temporal anaphora.
   `IsRigidOn` (set-relativized) is the workhorse for modal-alternative
   rigidity.
-- `Semantics.Context.KContext W E P T` (`Core/Context/Basic.lean`) — the
+- `Semantics.Context.KContext W E P T` (`Semantics/Context/Basic.lean`) — the
   centered Kaplanian context `⟨agent, addressee, world, time, position⟩`.
   Abusch's `⟨x_self, t_now, w⟩` is a 3-field projection; `KContext` is
   the richer object the rest of linglib already commits to.
@@ -56,11 +56,11 @@ live in `Studies/Abusch1997.lean`.
 
 ## Two felicity predicates (value-level vs Abusch-faithful)
 
-- `isFelicitousWith` — local constraint check at the holder's now
+- `IsFelicitousWith` — local constraint check at the holder's now
   (= `holderContext.time`). The value-level shadow of Abusch's
   reading. Equivalent to `TensePronoun.fullPresupposition` (see
   shadow lemma).
-- `isAbuschFelicitous` — adds Abusch §3 modal rigidity: the
+- `IsAbuschFelicitous` — adds Abusch §3 modal rigidity: the
   time-concept identifies the same time across an alternative-set
   parameter. The substrate is **agnostic** about whether the
   alternatives are doxastic (Hintikka belief alternatives, the
@@ -92,9 +92,14 @@ live in `Studies/Abusch1997.lean`.
   exposes the *output* of res-movement (a coherent ⟨concept, holder⟩
   bundle), not the syntactic operation that produces it.
 - **PLA-side individual unification.** The `EntityConcept` analog at
-  `Idx := Assignment E × WitnessSeq E` is what PLA's `Concept E` is
-  (definitionally); the formal unification theorem is in
-  `Studies/Abusch1997.lean`.
+  `Idx := Assignment E × WitnessSeq E` (PLA's `Poss E`) *is* PLA's
+  `Concept E` definitionally — both unfold to `Intension (Poss E) E`.
+  What `Studies/Abusch1997.lean` proves is the *acquaintance-predicate*
+  unification (`pla_isAcquaintedWith_unifies_with_polymorphic`, by
+  `Iff.rfl`): PLA's individual de re and this file's temporal de re are
+  the same polymorphic `Reference.Acquaintance.isAcquaintedWith` at
+  their respective indices. A concept-type unification theorem is not
+  separately stated.
 -/
 
 namespace Tense.DeRe
@@ -172,7 +177,7 @@ theorem baseCoherent (dr : TemporalDeReReading W E P T) :
     for embedded tenses — a past-marked tense res-moved from under
     `believe` is constrained to denote a time before the believer's
     now, NOT before the outer speaker's speech time. -/
-def isFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
+def IsFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (constraint : Finset Ordering) : Prop :=
   Core.Order.holds constraint dr.actualRes dr.holderContext.time
 
@@ -190,8 +195,8 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
     (g : TemporalAssignment T)
     (hRes : tp.resolve g = dr.actualRes)
     (hEval : tp.evalTime g = dr.holderContext.time) :
-    dr.isFelicitousWith tp.constraint ↔ tp.fullPresupposition g := by
-  simp only [isFelicitousWith, TensePronoun.fullPresupposition, hRes, hEval]
+    dr.IsFelicitousWith tp.constraint ↔ tp.fullPresupposition g := by
+  simp only [IsFelicitousWith, TensePronoun.fullPresupposition, hRes, hEval]
 
 
 /-! ### Modal-alternative quantification (Abusch §3) -/
@@ -227,12 +232,12 @@ def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
 /-- **Full Abusch felicity** ([abusch-1997] §3): value-level
     constraint check (actual res-time stands in the constraint's
     relation to the holder's now) AND modal rigidity across a
-    supplied alternative-set. The value-level shadow `isFelicitousWith`
+    supplied alternative-set. The value-level shadow `IsFelicitousWith`
     captures only the first conjunct; this predicate is what an
     Abusch-faithful study should use. -/
-def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
+def IsAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
     (alternatives : Set (WorldTimeIndex W T)) (constraint : Finset Ordering) : Prop :=
-  dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
+  dr.IsFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
 /-- A rigid time-concept (constant intension, `Intensional.Intension.IsRigid`)
     is automatically rigid across any alternative-set. The rigid-concept
@@ -247,7 +252,7 @@ def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
     visible: temporal de re ≡ rigidity preserved under the centered
     coordinate-shift, restricted to whichever alternative set the
     consumer supplies. -/
-theorem IsRigidAcrossAlternatives_of_concept_isRigid
+theorem isRigidAcrossAlternatives_of_isRigid
     (dr : TemporalDeReReading W E P T)
     (h : Intension.IsRigid dr.concept)
     (alternatives : Set (WorldTimeIndex W T)) :
@@ -256,14 +261,14 @@ theorem IsRigidAcrossAlternatives_of_concept_isRigid
 
 /-- **Abusch felicity ⇒ value-level felicity**: the modal-quantified
     predicate strictly refines the value-level shadow. Old code that
-    only checks `isFelicitousWith` is conservative — anything proved
-    via `isAbuschFelicitous` projects through. -/
+    only checks `IsFelicitousWith` is conservative — anything proved
+    via `IsAbuschFelicitous` projects through. -/
 theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
     (alternatives : Set (WorldTimeIndex W T))
     (constraint : Finset Ordering)
-    (h : dr.isAbuschFelicitous alternatives constraint) :
-    dr.isFelicitousWith constraint := h.1
+    (h : dr.IsAbuschFelicitous alternatives constraint) :
+    dr.IsFelicitousWith constraint := h.1
 
 
 /-! ### Alternative-set constructors (modal-base instantiations) -/
@@ -303,7 +308,7 @@ abbrev TimeCover (W E P T : Type*) :=
     out `t` at `c`. The temporal analog of [lewis-1979-attitudes]'s
     acquaintance — instantiating polymorphic `isAcquaintedWith` at
     `Idx := KContext`, `Res := T`. -/
-abbrev isTemporallyAcquaintedWith {W E P T : Type*}
+abbrev isTemporallyAcquaintedWith
     (t : T) (C : TimeCover W E P T) (c : KContext W E P T) : Prop :=
   Semantics.Reference.Acquaintance.isAcquaintedWith t C c
 
