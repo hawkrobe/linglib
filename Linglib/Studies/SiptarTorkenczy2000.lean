@@ -13,7 +13,7 @@ End-to-end OT analysis of Hungarian vowel harmony, connecting:
 1. **Segment features** (`Features.lean`) — Hayes binary feature inventory
 2. **Harmony system** (`Subregular.Harmony`) — trigger/target/transparent predicates
 3. **OT constraints** (below) — SPREAD and IDENT derived from
-   `HarmonySystem` (folded in from the former `Harmony/OT.lean`, this file's sole consumer)
+   `System` (folded in from the former `Harmony/OT.lean`, this file's sole consumer)
 4. **Tableaux** (`Phonology.Constraint.OT`) — `mkTableau` + `optimal` select winner
 5. **Hungarian fragments** (`Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
@@ -48,9 +48,9 @@ open Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
 
 -- ============================================================================
--- § 0: OT constraints derived from a `HarmonySystem`
+-- § 0: OT constraints derived from a `System`
 --
--- SPREAD (markedness) and IDENT-[F] (faithfulness) for any `HarmonySystem`,
+-- SPREAD (markedness) and IDENT-[F] (faithfulness) for any `System`,
 -- plus the `VHCandidate` evaluation type. Folded in from the former
 -- `Phonology/Process/Harmony/OT.lean` (this file was its sole consumer).
 -- ============================================================================
@@ -63,7 +63,7 @@ private theorem feature_beq_self (f : Feature) : (f == f) = true := by
 
 /-- SPREAD violations: count target segments whose harmony feature value
     doesn't match `triggerVal`. -/
-def spreadViolations (sys : HarmonySystem) (triggerVal : Bool)
+def spreadViolations (sys : System) (triggerVal : Bool)
     (suffix : List Segment) : Nat :=
   suffix.filter (λ s =>
     sys.isTarget s && !((s.spec sys.feature) == some triggerVal)
@@ -78,7 +78,7 @@ def spreadViolations (sys : HarmonySystem) (triggerVal : Bool)
     `output.map (·.spec sys.feature)`. This structurally identifies
     IDENT-[F] as IDENT-IO of [mccarthy-prince-1995] restricted to
     the harmony feature. -/
-def identViolations (sys : HarmonySystem)
+def identViolations (sys : System)
     (input output : List Segment) : Nat :=
   (Corr.parallel
     (input.map  (·.spec sys.feature))
@@ -101,7 +101,7 @@ structure VHCandidate where
 
 /-- SPREAD as a `NamedConstraint`: penalizes unharmonized targets in the
     output suffix. Returns 0 when the stem has no trigger. -/
-def mkSpread (sys : HarmonySystem) :
+def mkSpread (sys : System) :
     NamedConstraint VHCandidate where
   name := "SPREAD"
   family := .markedness
@@ -112,36 +112,32 @@ def mkSpread (sys : HarmonySystem) :
 
 /-- IDENT-[F] as a `NamedConstraint`: penalizes feature changes from
     underlying to surface suffix. -/
-def mkIdentHarmony (sys : HarmonySystem) :
+def mkIdentHarmony (sys : System) :
     NamedConstraint VHCandidate where
   name := "IDENT"
   family := .faithfulness
   eval := λ c => identViolations sys c.suffixIn c.suffixOut
 
 /-- After harmonization, a target's harmony feature is set to `val`. -/
-theorem harmonizeOne_spec_feature (sys : HarmonySystem) (val : Bool)
-    (s : Segment) (ht : sys.isTarget s = true) :
+theorem harmonizeOne_spec_feature (sys : System) (val : Bool)
+    (s : Segment) (ht : sys.isTarget s) :
     (harmonizeOne sys val s).spec sys.feature = some val := by
-  simp only [harmonizeOne, ht, ↓reduceIte, feature_beq_self]
+  simp only [harmonizeOne, if_pos ht, writeFeature, feature_beq_self, if_true]
 
 /-- `harmonizeOne` never creates SPREAD violations: the result either
     has the correct feature value (target case) or isn't a target
     (non-target case, returned unchanged). -/
-private theorem harmonizeOne_no_spread (sys : HarmonySystem) (val : Bool)
+private theorem harmonizeOne_no_spread (sys : System) (val : Bool)
     (s : Segment) :
     (sys.isTarget (harmonizeOne sys val s) &&
      !((harmonizeOne sys val s).spec sys.feature == some val)) = false := by
-  unfold harmonizeOne
-  by_cases ht : sys.isTarget s = true
-  · simp only [ht, ↓reduceIte, beq_self_eq_true,
-      Bool.not_true, Bool.and_false]
-  · have hf : sys.isTarget s = false := by
-      cases h : sys.isTarget s <;> simp_all
-    simp only [hf, Bool.false_eq_true, ↓reduceIte, Bool.false_and]
+  by_cases ht : sys.isTarget s
+  · rw [harmonizeOne_spec_feature sys val s ht]; simp
+  · rw [harmonizeOne_nontarget ht]; simp [ht]
 
 /-- Cons lemma: if the head satisfies SPREAD, the violation count on a
     cons equals the count on the tail. -/
-private theorem spreadViolations_cons_ok (sys : HarmonySystem) (val : Bool)
+private theorem spreadViolations_cons_ok (sys : System) (val : Bool)
     (s : Segment) (rest : List Segment)
     (hp : (sys.isTarget s && !((s.spec sys.feature) == some val)) = false) :
     spreadViolations sys val (s :: rest) = spreadViolations sys val rest := by
@@ -150,7 +146,7 @@ private theorem spreadViolations_cons_ok (sys : HarmonySystem) (val : Bool)
 /-- **`spreadSuffix` produces zero SPREAD violations** (when no blockers
     intervene). By induction: `harmonizeOne` fixes each target's feature
     value, so no target in the output disagrees with the trigger. -/
-theorem spreadSuffix_zero_spread (sys : HarmonySystem) (val : Bool)
+theorem spreadSuffix_zero_spread (sys : System) (val : Bool)
     (suffix : List Segment)
     (h : ∀ s ∈ suffix, sys.isBlocker s = false) :
     spreadViolations sys val (spreadSuffix sys val suffix) = 0 := by
@@ -164,13 +160,13 @@ theorem spreadSuffix_zero_spread (sys : HarmonySystem) (val : Bool)
 
 /-- The faithful candidate (no changes) has zero IDENT violations.
     Derived from `Corr.identity_ident_zero`. -/
-theorem faithful_zero_ident (sys : HarmonySystem) (suffix : List Segment) :
+theorem faithful_zero_ident (sys : System) (suffix : List Segment) :
     identViolations sys suffix suffix = 0 := by
   show (Corr.identity _).identViol .lhs .rhs = 0
   exact Corr.identity_ident_zero _
 
 /-- IDENT on empty suffixes is zero. -/
-theorem identViolations_nil (sys : HarmonySystem) :
+theorem identViolations_nil (sys : System) :
     identViolations sys [] [] = 0 := faithful_zero_ident sys []
 
 /-- The output of `spreadSuffix` achieves zero SPREAD violations for the
@@ -178,7 +174,7 @@ theorem identViolations_nil (sys : HarmonySystem) :
     trade-off: the faithful candidate has SPREAD > 0, IDENT = 0; the
     harmonized candidate has SPREAD = 0, IDENT ≥ 0. Under SPREAD ≫ IDENT,
     the harmonized output wins. -/
-theorem spreadSuffix_ot_motivation (sys : HarmonySystem)
+theorem spreadSuffix_ot_motivation (sys : System)
     (stem suffix : List Segment) (val : Bool)
     (h_no_blockers : ∀ s ∈ suffix, sys.isBlocker s = false)
     (hv : triggerValue sys stem = some val) :

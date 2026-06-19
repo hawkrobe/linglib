@@ -27,7 +27,7 @@ This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
 dissimilation, Turkish vowel harmony, Finnish backness harmony with
 neutral-vowel transparency — see [belth-2026]), Rose-Walker harmony
 systems (which structurally **contain** a `TierRule` as their value-prediction
-core — see `Phonology.Harmony.HarmonySystem` in `Subregular/Harmony.lean`), and
+core — see `Phonology.Harmony.System` in `Subregular/Harmony.lean`), and
 any SPE rule whose context is a single tier-adjacent segment.
 
 The schema does **not** cover:
@@ -354,7 +354,7 @@ theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
   rw [htake]
 
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
-Consequently no tier-rule-based prediction (the formal core of a `HarmonySystem`) can
+Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can
 compute a *non-myopic* harmony, such as an unbounded-circumambient pattern. -/
 theorem applyToString_isRightMyopic (r : TierRule α) :
     IsMyopicTowards r.applyToString .right :=
