@@ -181,8 +181,8 @@ end ETBundle
     headedness); the I/U-tier registers |I|/|U| presence.
 
     This is exactly the parametric tier-projection idea of
-    `Phonology/Tier.lean`'s `Phonology.Tier.tonal` for
-    tones, instantiated for ET. -/
+    `BasemapCorrespondence.tonalTier` (the tonal tier, via `Core.Tier.total`)
+    for tones, instantiated for ET. -/
 def aTier (b : ETBundle) : Option Headedness := b .A
 
 /-- The I/U-tier [kaye-lowenstamm-vergnaud-1985]: a pair
