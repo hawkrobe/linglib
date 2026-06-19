@@ -280,10 +280,12 @@ namespace Sagey1986
 -- § 1: Major/Minor Articulator Distinction (Ch. 3)
 -- ============================================================================
 
-/-- In a complex segment, one articulator is designated as major (determines
-    the primary degree of closure seen by syllable structure) and the other
-    as minor. This distinction is Sagey-specific — modern phonology does not
-    uniformly adopt it. -/
+/-- When a complex segment's two articulations **differ in degree of closure**,
+    one articulator is **major** — it receives the segment's lexical
+    degree-of-closure specification — and the other **minor**, its degree of
+    closure predictable ([sagey-1986] §3.3, p.217). Majorness is lexically
+    marked, not reducible to anterior/posterior order. This distinction is
+    Sagey-specific — modern phonology does not uniformly adopt it. -/
 structure MajorMinor where
   major : GeomNode
   minor : GeomNode
@@ -291,12 +293,18 @@ structure MajorMinor where
   minor_is_articulator : minor.IsArticulator
   distinct : major ≠ minor
 
-/-- Nupe labiovelar /k͡p/: dorsal is major (stop closure), labial is minor.
-    Sagey argues this based on nasalization patterns: labiovelars in Nupe
-    nasalize to [ŋ͡m], with the velar nasal first, showing dorsal is the
-    major articulator. -/
-def nupe_kp_articulation : MajorMinor where
-  major := .dorsal
+/-- Margi labiocoronal /ps/: the **coronal** articulation is major, the labial
+    minor — even though coronal is the *more posterior* of the two
+    ([sagey-1986] §3.4, p.258, where Sagey contrasts it with Kinyarwanda [skw],
+    also coronal-major). The point is that majorness cannot be read off
+    articulator order; it must be lexically marked.
+
+    Nupe /k͡p/ is deliberately *not* the example here: Sagey shows that in /k͡p/
+    **both** labial and dorsal are major — they share a degree of closure (both
+    stops) — so it is symmetric, not an asymmetric major/minor segment
+    ([sagey-1986] §3.3, p.217). -/
+def margi_ps_articulation : MajorMinor where
+  major := .coronal
   minor := .labial
   major_is_articulator := by decide
   minor_is_articulator := by decide
@@ -315,8 +323,12 @@ inductive DegreeOfClosure where
   | approximant -- open constriction
   deriving DecidableEq, Repr
 
-/-- An articulator paired with its degree of closure. In Sagey's framework,
-    a click can be [−cont] at coronal and [−cont] at dorsal independently. -/
+/-- An articulator paired with its degree of closure: degree of closure is a
+    property of an articulator node, not the whole segment. In a !Xõ click both
+    the coronal (anterior) and dorsal (velar) closures are stops, but only the
+    major one — the velar — carries the segment's lexical degree-of-closure
+    specification; the anterior closure's is predictable ([sagey-1986] §3.4,
+    p.258). -/
 structure ArticulatorSpec where
   node : GeomNode
   closure : DegreeOfClosure
