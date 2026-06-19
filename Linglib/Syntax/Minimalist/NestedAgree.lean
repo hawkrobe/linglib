@@ -173,6 +173,63 @@ theorem runStack_some_iff (c : NestedAgreeConfig) (i : Nat) :
   · rw [if_neg h]; exact iff_of_false (by simp) h
 
 -- ============================================================================
+-- § 4b: Grounding in `Probe.search`
+-- ============================================================================
+
+/-- The goal-seeking probe: visible exactly at the shared goal. Nested
+    Agree's locality lives in `searchDomain`; the probe itself just seeks
+    the goal. -/
+def NestedAgreeConfig.goalProbe (c : NestedAgreeConfig) : Probe SyntacticObject :=
+  Probe.ofVis (fun y => decide (y = c.goalHead))
+
+private theorem find?_decideEq (L : List SyntacticObject) (g : SyntacticObject) :
+    L.find? (fun y => decide (y = g)) = if g ∈ L then some g else none := by
+  induction L with
+  | nil => simp
+  | cons x xs ih =>
+    by_cases hx : x = g
+    · subst hx; rw [List.find?_cons_of_pos (by simp)]; simp
+    · rw [List.find?_cons_of_neg (by simp [hx]), ih]
+      have hgx : ¬ g = x := fun h => hx h.symm
+      simp [List.mem_cons, hgx]
+
+/-- `runStack` factors through the canonical `Probe.search`: running
+    probe `i` is the goal-seeking probe searching probe `i`'s derived
+    domain (when probe `i` exists). The bespoke membership test *is*
+    `Probe.search` over `searchDomain i`, bringing Nested Agree onto the
+    one probe engine (cf. `CyclicAgree.eaIsLicensed_iff_segment_licensed`).
+    The whole-stack composition is `findSome?`/`Probe.cascade` over the
+    indices; the per-probe truncated domains are why each step is a
+    `search` over its own `searchDomain`, not a `cascade` over one list. -/
+theorem runStack_eq_search (c : NestedAgreeConfig) (i : Nat) :
+    runStack c i =
+      if i < c.length then c.goalProbe.search (c.searchDomain i).toList
+      else none := by
+  have hsearch : c.goalProbe.search (c.searchDomain i).toList
+      = if c.goalHead ∈ c.searchDomain i then some c.goalHead else none := by
+    simp only [NestedAgreeConfig.goalProbe, Probe.search, Probe.ofVis]
+    rw [find?_decideEq]
+    simp only [Multiset.mem_toList]
+  rw [runStack]
+  by_cases hi : i < c.length
+  · rw [if_pos hi, hsearch]
+    by_cases hg : c.goalHead ∈ c.searchDomain i
+    · rw [if_pos ⟨hi, hg⟩, if_pos hg]
+    · rw [if_neg (fun h => hg h.2), if_neg hg]
+  · rw [if_neg hi, if_neg (fun h => hi h.1)]
+
+/-- The Nested-Agree licensing fact in the licensing API: probe `i`
+    licenses the shared goal iff the goal is in probe `i`'s domain. -/
+theorem goalProbe_licensed_iff (c : NestedAgreeConfig) (i : Nat) :
+    c.goalProbe.Licensed (c.searchDomain i).toList c.goalHead ↔
+      c.goalHead ∈ c.searchDomain i := by
+  unfold Probe.Licensed
+  simp only [NestedAgreeConfig.goalProbe, Probe.search, Probe.ofVis]
+  rw [find?_decideEq]
+  simp only [Multiset.mem_toList]
+  by_cases hg : c.goalHead ∈ c.searchDomain i <;> simp [hg]
+
+-- ============================================================================
 -- § 5: Truncation
 -- ============================================================================
 

@@ -544,7 +544,7 @@ theorem satisfaction_matches_fragment :
   · constructor <;> intro h <;> first | (native_decide) | trivial
   · exact ⟨fun _ => trivial, fun _ => by native_decide⟩
 
-/-! ### Deriving the probe table from relativized search (`Phi/Probing.lean`)
+/-! ### Deriving the probe table from relativized search (`Probe/Basic.lean`)
 
 The `agreeProbe` table stipulates which head agrees with which
 position. Here it is DERIVED: each probe runs `Probe.search` over the

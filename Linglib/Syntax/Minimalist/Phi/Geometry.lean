@@ -75,7 +75,7 @@ The `probeResolutionRank` function below assigns rank 2 to
 rank 0 elsewhere — the *surface effect* of the two-probe (π⁰
 before #⁰) system on a single DP. Its derived status is a theorem:
 target resolution is `Probe.cascade` over the two probes
-(`Phi/Probing.lean`), and the rank comparison agrees with the
+(`Probe/Basic.lean`), and the rank comparison agrees with the
 cascade on the φ-cell inventory
 (`Preminger2014.afAgreementTarget_eq_rank`). It is not a salience
 scale ([preminger-2014] Ch. 7).
@@ -189,7 +189,7 @@ def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : B
     targets any DP bearing the sought feature. The rank captures
     the combined effect on a single DP; its derived status is
     `Preminger2014.afAgreementTarget_eq_rank` (cascade resolution,
-    `Phi/Probing.lean`). It is not a salience scale
+    `Probe/Basic.lean`). It is not a salience scale
     ([preminger-2014] Ch. 7). -/
 def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
