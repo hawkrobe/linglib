@@ -1,4 +1,5 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Core.Logic.Modal.Basic
 
 /-!
 # Core Theorems from [chierchia-2013] *Logic in Grammar*
@@ -52,11 +53,12 @@ section FreeChoice
 
 variable {World : Type*}
 
-/-- Possibility modal: ◇p holds iff p is true at some accessible world. -/
-def diamond (p : Set World) : Prop := ∃ w, p w
+/-- Possibility modal `◇p = ∃ w, p w` — the flat S5 possibility
+`Core.Logic.Modal.poss`, so the whole free-choice stack shares one modal. -/
+abbrev diamond (p : Set World) : Prop := Core.Logic.Modal.poss p
 
-/-- Necessity modal: □p holds iff p is true at all accessible worlds. -/
-def box (p : Set World) : Prop := ∀ w, p w
+/-- Necessity modal `□p = ∀ w, p w` — the flat S5 necessity `Core.Logic.Modal.nec`. -/
+abbrev box (p : Set World) : Prop := Core.Logic.Modal.nec p
 
 /-- The alternative set for ◇(p ∨ q) consists of {◇p, ◇q, ◇(p ∧ q)}.
 
