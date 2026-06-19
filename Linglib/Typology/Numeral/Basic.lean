@@ -13,7 +13,7 @@ The comparison vocabulary itself is **not** numeral-specific — it is the share
 degree-comparison primitive `Core.Order.Comparison` (also used by measure
 phrases and gradable comparatives, per [kennedy-2015], [rett-2014]);
 this file just records that a numeral *entry* carries one. The denotation (the
-`relationalGQ`-based meaning, the Kennedy-vs-Horn bare-form choice) lives in
+`Comparison.over`-based meaning, the Kennedy-vs-Horn bare-form choice) lives in
 `Semantics/Numerals/`, which imports this object — the same object/denotation
 split as `Syntax/Pronoun/Basic.lean` vs.
 `Semantics/Reference/PronounDenotation.lean`. The WALS typological survey

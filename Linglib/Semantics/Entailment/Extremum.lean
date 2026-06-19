@@ -60,6 +60,7 @@ not their primary formulation.
 namespace Entailment
 
 open Semantics.Degree
+open Core.Order (Comparison)
 variable {α : Type*} [LinearOrder α]
 
 -- ════════════════════════════════════════════════════
@@ -133,11 +134,10 @@ def MIP_LicensedDown {W : Type*} (P : α → W → Prop) : Prop :=
 -- § 4. Degree-predicate IsMaxInf characterizations
 -- ════════════════════════════════════════════════════
 
-/-! Migrated from `Core/Scales/Scale.lean`: applications of `IsMaxInf` to
-    the canonical degree predicates `atLeastDeg`, `moreThanDeg`, `atMostDeg`
-    (defined in Scale.lean, monotonicity proven there). The pure scale
-    theory stays in Scale.lean; the IsMaxInf-flavored consequences live
-    here as a downstream entailment-theoretic application. -/
+/-! Applications of `IsMaxInf` to the canonical degree predicates
+    `Comparison.{ge,gt,le}.over` (defined in `Core/Order/Comparison.lean`,
+    monotonicity in `Semantics/Degree/Predicate.lean`). The IsMaxInf-flavored
+    consequences live here as a downstream entailment-theoretic application. -/
 
 /-- "At least d" always has a maximally informative element: d₀ = μ(w).
 
@@ -149,7 +149,7 @@ def MIP_LicensedDown {W : Type*} (P : α → W → Prop) : Prop :=
     of scale density: the `≥` relation creates a closed set with a
     natural maximum at the true value. -/
 theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
-    HasMaxInf (atLeastDeg μ) w :=
+    HasMaxInf (Comparison.ge.over μ) w :=
   ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hd hw'⟩
 
 /-- **Implicature asymmetry** ([fox-2007], [fox-hackl-2006]):
@@ -163,7 +163,7 @@ theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     possible world. -/
 theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
     (hSurj : Function.Surjective μ) (w : W) :
-    ¬ HasMaxInf (moreThanDeg μ) w := by
+    ¬ HasMaxInf (Comparison.gt.over μ) w := by
   intro ⟨d₀, hd₀, hent⟩
   obtain ⟨d', hd₀d', hd'w⟩ := DenselyOrdered.dense d₀ (μ w) hd₀
   obtain ⟨m, hd₀m, hmd'⟩ := DenselyOrdered.dense d₀ d' hd₀d'
@@ -177,7 +177,7 @@ theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
     actually used in the proof. -/
 theorem isMaxInf_atLeast_of_hit {W : Type*} (μ : W → α) (m : α) (w : W)
     (hHit : ∃ w', μ w' = m) :
-    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m := by
+    IsMaxInf (Comparison.ge.over μ) m w ↔ μ w = m := by
   constructor
   · intro ⟨hge, hent⟩
     obtain ⟨w_m, hw_m⟩ := hHit
@@ -192,13 +192,13 @@ theorem isMaxInf_atLeast_of_hit {W : Type*} (μ : W → α) (m : α) (w : W)
     equals m, under full surjectivity. Corollary of `isMaxInf_atLeast_of_hit`. -/
 theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m :=
+    IsMaxInf (Comparison.ge.over μ) m w ↔ μ w = m :=
   isMaxInf_atLeast_of_hit μ m w (hSurj m)
 
 /-- On ℕ, "more than m" has `HasMaxInf`: the discrete collapse rescues maximality.
     Contrast with `moreThan_noMaxInf`: on dense scales, `HasMaxInf` fails. -/
 theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W)
-    (hw : moreThanDeg μ 0 w) : HasMaxInf (moreThanDeg μ) w := by
+    (hw : w ∈ Comparison.gt.over μ 0) : HasMaxInf (Comparison.gt.over μ) w := by
   refine ⟨μ w - 1, ?_, fun d hd w' hw' => ?_⟩
   · have : μ w > 0 := hw; show μ w > μ w - 1; omega
   · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
@@ -206,7 +206,7 @@ theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W)
 /-- "At most d" always has a maximally informative element: d₀ = μ(w).
     Symmetric to `atLeast_hasMaxInf`. -/
 theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
-    HasMaxInf (atMostDeg μ) w :=
+    HasMaxInf (Comparison.le.over μ) w :=
   ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
 
 /-- **Kennedy / [rouillard-2026] bridge**: `IsMaxInf` of "at most d" at
@@ -215,7 +215,7 @@ theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     just as it does from "at least". -/
 theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (atMostDeg μ) m w ↔ μ w = m := by
+    IsMaxInf (Comparison.le.over μ) m w ↔ μ w = m := by
   constructor
   · intro ⟨hle, hent⟩
     obtain ⟨w_m, hw_m⟩ := hSurj m
@@ -238,21 +238,21 @@ theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
 /-- MIP derives exact meaning from "at least" (Kennedy's direction). -/
 theorem mip_atLeast_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ eqDeg μ m w :=
-  isMaxInf_atLeast_iff_eq μ m w hSurj
+    IsMaxInf (Comparison.ge.over μ) m w ↔ w ∈ Comparison.eq.over μ m := by
+  rw [isMaxInf_atLeast_iff_eq μ m w hSurj, Comparison.mem_over, Comparison.rel]
 
 /-- MIP derives exact meaning from "at most" (Rouillard's direction). -/
 theorem mip_atMost_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (atMostDeg μ) m w ↔ eqDeg μ m w :=
-  isMaxInf_atMost_iff_eq μ m w hSurj
+    IsMaxInf (Comparison.le.over μ) m w ↔ w ∈ Comparison.eq.over μ m := by
+  rw [isMaxInf_atMost_iff_eq μ m w hSurj, Comparison.mem_over, Comparison.rel]
 
 /-- The MIP is direction-invariant: "at least" and "at most" yield the
     same exact meaning under maximal informativity. Kennedy's type-shift
     and Rouillard's MIP are literally the same operation. -/
 theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
     (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ IsMaxInf (atMostDeg μ) m w := by
+    IsMaxInf (Comparison.ge.over μ) m w ↔ IsMaxInf (Comparison.le.over μ) m w := by
   rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
 
 /-! ### The bundled form: `DirectedMeasure.degreeProperty`

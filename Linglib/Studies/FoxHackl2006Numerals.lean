@@ -16,7 +16,7 @@ density predictions.
 ## Bridge Structure
 
 The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
-`abbrev`s over `Semantics.Degree.{atLeastDeg, moreThanDeg, ...} id` in
+`def`s over `Core.Order.Comparison.{ge, gt, ...}.over id` in
 `Semantics/Numerals/Basic.lean` §2 — the connection holds by
 construction, no bridge lemma needed.
 
@@ -36,6 +36,7 @@ namespace FoxHackl2006Numerals
 open Semantics.Degree
 open Entailment
 open Semantics.Numerals
+open Core.Order (Comparison)
 
 -- ════════════════════════════════════════════════════
 -- § 1. HasMaxInf for "at least" (any scale)
@@ -44,12 +45,12 @@ open Semantics.Numerals
 /-- "At least n" always has a maximally informative element.
     Instantiated on ℕ with `id` as the measure function. -/
 theorem atLeast_has_maxInf_at_3 :
-    HasMaxInf (atLeastDeg (α := ℕ) id) 3 :=
+    HasMaxInf (Comparison.ge.over (α := ℕ) id) 3 :=
   atLeast_hasMaxInf id 3
 
 /-- Generalized: "at least n" has max⊨ at every world n. -/
 theorem atLeast_has_maxInf_general (n : ℕ) :
-    HasMaxInf (atLeastDeg (α := ℕ) id) n :=
+    HasMaxInf (Comparison.ge.over (α := ℕ) id) n :=
   atLeast_hasMaxInf id n
 
 -- ════════════════════════════════════════════════════
@@ -62,8 +63,8 @@ theorem atLeast_has_maxInf_general (n : ℕ) :
 
     Contrast with `moreThan_noMaxInf` on dense scales: no rescue there. -/
 theorem moreThan_has_maxInf_nat :
-    HasMaxInf (moreThanDeg (α := ℕ) id) 3 :=
-  moreThan_nat_hasMaxInf id 3 (show moreThanDeg id 0 3 from by decide)
+    HasMaxInf (Comparison.gt.over (α := ℕ) id) 3 :=
+  moreThan_nat_hasMaxInf id 3 (show (3 : ℕ) ∈ Comparison.gt.over id 0 from by decide)
 
 -- ════════════════════════════════════════════════════
 -- § 3. MIP Derives Exact Meaning
@@ -73,7 +74,7 @@ theorem moreThan_has_maxInf_nat :
     This is the MIP derivation of exact meaning from lower-bound semantics:
     [kennedy-2015]'s "de-Fregean" type-shift IS the MIP. -/
 theorem mip_derives_exact (m n : ℕ) :
-    IsMaxInf (atLeastDeg (α := ℕ) id) m n ↔ n = m :=
+    IsMaxInf (Comparison.ge.over (α := ℕ) id) m n ↔ n = m :=
   isMaxInf_atLeast_iff_eq id m n Function.surjective_id
 
 -- ════════════════════════════════════════════════════

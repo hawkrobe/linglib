@@ -88,6 +88,14 @@ def Comparison.over {E α : Type*} [Preorder α]
     x ∈ c.over μ n ↔ c.rel (μ x) n := by
   simp [Comparison.over]
 
+instance Comparison.relDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
+    [DecidableLT α] (c : Comparison) (a n : α) : Decidable (c.rel a n) := by
+  cases c <;> simp only [Comparison.rel, ge_iff_le, gt_iff_lt] <;> infer_instance
+
+instance Comparison.overDecidable {E α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
+    [DecidableLT α] (c : Comparison) (μ : E → α) (n : α) (x : E) : Decidable (x ∈ c.over μ n) :=
+  decidable_of_iff _ (Comparison.mem_over c μ n x).symm
+
 /-- **Class A/B is interval-endpoint membership.** A non-strict comparison
     (bare `=`, Class B `≥`/`≤`) keeps the boundary `n`; a strict one (Class A
     `>`/`<`) drops it — the whole Class A/B distinction
