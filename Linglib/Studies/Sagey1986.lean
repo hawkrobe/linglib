@@ -1,6 +1,7 @@
 import Linglib.Phonology.Featural.ComplexSegments
 import Linglib.Phonology.Featural.Geometry
 import Linglib.Phonology.Autosegmental.Defs
+import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Core.Order.Interval
 import Mathlib.Data.Set.Pairwise.Basic
@@ -57,7 +58,7 @@ contour segments and geminates are impossible, since two distinct elements
 cannot both be identical to the same time point (§5.2.2). Overlap is the
 correct relation: it is reflexive and symmetric but crucially NOT transitive
 (`NonemptyInterval.overlaps_not_transitive`), which is what allows the NCC proof to
-go through via a contradiction chain (§5.2.3, fn. 6).
+go through via a contradiction chain (§5.2.2, fn. 6).
 
 The derivation (§5.3, p.294): if timing₁ ≺ timing₂ on the timing tier but
 melody₂ ≺ melody₁ on the melody tier, the overlap requirements on valid
@@ -168,6 +169,69 @@ theorem IsNoCrossing.subset {s t : Set (Association T)} (hst : s ⊆ t)
   Set.Pairwise.mono hst h
 
 end Association
+
+/-! ### Grounding the combinatorial No-Crossing Constraint
+
+[goldsmith-1976]'s index-level NCC (`IsNoCrossing` over `Finset (ℕ × ℕ)` in
+`Autosegmental/NoCrossing.lean`) is *stipulated* as the filter on autosegmental
+GEN. [sagey-1986] §5.4 argues it should instead be *derived* from the
+temporal-overlap semantics of association lines (§5.3). This section makes the
+derivation load-bearing: an order-respecting assignment of time intervals to
+tier positions turns an index-level crossing into a Sagey `crosses`, which
+`no_crossing` rules out. The combinatorial filter is thus the discrete shadow
+of the temporal derivation, not an independent axiom. -/
+
+/-- An interval realization of the two tiers: time intervals for lower-tier
+    (timing) positions and upper-tier (melody) positions, each respecting tier
+    index order as temporal precedence. -/
+structure TierRealization (T : Type*) [LinearOrder T] where
+  tim : ℕ → NonemptyInterval T
+  mel : ℕ → NonemptyInterval T
+  tim_mono : ∀ {i j : ℕ}, i < j → (tim i).precedes (tim j)
+  mel_mono : ∀ {k l : ℕ}, k < l → (mel k).precedes (mel l)
+
+/-- The association realizing the index link `(k, i)`: upper-tier position `k`
+    linked to lower-tier position `i`. -/
+def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
+  ⟨⟨R.tim i⟩, ⟨R.mel k⟩⟩
+
+/-- **The combinatorial NCC is derived, not stipulated.** If every link in a set
+    is realized as a *valid* (temporally overlapping) association under some
+    order-respecting interval assignment, the set automatically satisfies
+    [goldsmith-1976]'s index-level No-Crossing Constraint. The stipulated GEN
+    filter (`IsNoCrossing`) is exactly the discrete shadow of [sagey-1986]'s
+    overlap derivation (`no_crossing`): a crossing pair of links would realize
+    two associations that cross, which cannot both overlap-validly. -/
+theorem isNoCrossing_of_validRealization (R : TierRealization T)
+    {links : Finset (ℕ × ℕ)}
+    (hValid : ∀ p ∈ links, validAssociation (R.assoc p.1 p.2)) :
+    IsNoCrossing links := by
+  rw [isNoCrossing_iff]
+  intro l₁ hl₁ l₂ hl₂ hlt
+  by_contra hgt
+  push_neg at hgt
+  exact no_crossing (R.assoc l₂.1 l₂.2) (R.assoc l₁.1 l₁.2)
+    (hValid l₂ hl₂) (hValid l₁ hl₁) ⟨R.tim_mono hgt, R.mel_mono hlt⟩
+
+/-- Witness that the grounding hypothesis is non-vacuous: over `ℤ`, tier
+    position `n` occupies the unit interval `[2n, 2n+1]`, so index order is
+    realized as temporal precedence (consecutive positions are disjoint and
+    ordered). -/
+def TierRealization.canonical : TierRealization ℤ where
+  tim n := ⟨⟨2 * (n : ℤ), 2 * (n : ℤ) + 1⟩, by omega⟩
+  mel n := ⟨⟨2 * (n : ℤ), 2 * (n : ℤ) + 1⟩, by omega⟩
+  tim_mono h := by simp only [NonemptyInterval.precedes]; omega
+  mel_mono h := by simp only [NonemptyInterval.precedes]; omega
+
+/-- Under the canonical realization every diagonal link `(n, n)` is valid — a
+    position overlaps itself — so the grounding theorem's hypothesis is
+    satisfiable (any diagonal link set is `IsNoCrossing` through it), not
+    vacuously true. -/
+theorem canonical_diagonal_valid (n : ℕ) :
+    validAssociation (TierRealization.canonical.assoc n n) := by
+  simp only [validAssociation, TierRealization.canonical, TierRealization.assoc,
+    NonemptyInterval.overlaps]
+  omega
 
 /-! ### Concrete demonstrations -/
 
