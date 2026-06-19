@@ -153,26 +153,26 @@ def postnasalDeletion : Rule where
 theorem t_is_voiceless_stop :
     t.HasValue Feature.continuant false = true ∧
     t.HasValue Feature.voice false = true :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- /n/ is a nasal: [+nasal, +son]. -/
 theorem n_is_nasal :
     n.HasValue Feature.nasal true = true ∧
     n.HasValue Feature.sonorant true = true :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- /æ/ is a vowel: [+syll, +son]. -/
 theorem æ_is_vowel :
     æ.HasValue Feature.syllabic true = true ∧
     æ.HasValue Feature.sonorant true = true :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- /k/ is a voiceless velar stop: [-cont, -voice, +dor]. -/
 theorem k_is_voiceless_velar_stop :
     k.HasValue Feature.continuant false = true ∧
     k.HasValue Feature.voice false = true ∧
     k.HasValue Feature.dorsal true = true :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 4: PHOIBLE-canonical inventory

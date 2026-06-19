@@ -104,19 +104,19 @@ def stopNasalization : Rule where
 
 /-- Korean stops have [-del.rel.], matching the nasalization target. -/
 theorem p_matches_nasalization_target :
-    p.HasValue Feature.delayedRelease false = true := by native_decide
+    p.HasValue Feature.delayedRelease false = true := by decide
 
 theorem t_matches_nasalization_target :
-    t.HasValue Feature.delayedRelease false = true := by native_decide
+    t.HasValue Feature.delayedRelease false = true := by decide
 
 theorem k_matches_nasalization_target :
-    k.HasValue Feature.delayedRelease false = true := by native_decide
+    k.HasValue Feature.delayedRelease false = true := by decide
 
 /-- Vowels and nasals lack [-del.rel.], so they don't trigger nasalization. -/
 theorem a_not_nasalization_target :
-    a.Specified Feature.delayedRelease = false := by native_decide
+    a.Specified Feature.delayedRelease = false := by decide
 
 theorem m_not_nasalization_target :
-    m.Specified Feature.delayedRelease = false := by native_decide
+    m.Specified Feature.delayedRelease = false := by decide
 
 end Korean.Phonology
