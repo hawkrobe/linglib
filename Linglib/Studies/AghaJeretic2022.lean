@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Attitudes.NegRaising
+import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
@@ -71,7 +71,7 @@ namespace AghaJeretic2022
 
 open Core.Duality (Truth3)
 open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
-open Semantics.Attitudes.NegRaising (negRaising_iff_subsingleton)
+open Semantics.Homogeneity (negRaising_iff_subsingleton)
 
 -- ============================================================================
 -- §1. Trivalent Semantics for Modals (§4.2)
@@ -1053,13 +1053,13 @@ A&J analyse *should*'s wide-scope-under-negation as **homogeneity** (a truth-val
 gap in mixed domains), not genuine neg-raising; [rubinstein-2014] analyses the same
 data as genuine neg-raising. Both reduce to one structural condition on the modal's
 domain — being a subsingleton — via the shared
-`NegRaising.negRaising_iff_subsingleton`. The rival diagnoses of *should* are the
+`Homogeneity.negRaising_iff_subsingleton`. The rival diagnoses of *should* are the
 same fact described differently. -/
 
 /-- A&J's homogeneity (gap-free, i.e. bivalent for every prejacent) and
     Rubinstein's neg-raising coincide: a universal modal over `A` is gap-free for
     every prejacent iff it neg-raises for every prejacent — both hold iff `A` is a
-    subsingleton (`NegRaising.negRaising_iff_subsingleton`). -/
+    subsingleton (`Homogeneity.negRaising_iff_subsingleton`). -/
 theorem bivalent_iff_negRaising {W : Type*} (A : Set W) :
     (∀ p : W → Prop, (∀ w ∈ A, p w) ∨ (∀ w ∈ A, ¬ p w)) ↔
     (∀ p : W → Prop, ¬ (∀ w ∈ A, p w) → ∀ w ∈ A, ¬ p w) := by

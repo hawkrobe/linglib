@@ -1,6 +1,7 @@
 import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Studies.Rubinstein2014
+import Linglib.Semantics.Homogeneity.Decided
 import Mathlib.Data.Fin.Basic
 
 /-!
@@ -42,7 +43,9 @@ neg-raising asymmetries between *should* and *must*.
 namespace AghaJeretic2026
 
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
+open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
+open Semantics.Homogeneity (negRaising_iff_subsingleton)
 open English.Auxiliaries
 
 abbrev World := Fin 4
@@ -353,5 +356,27 @@ theorem must_negRaising_diverges_from_rubinstein :
     Rubinstein2014.Examples.nr_must.readings.lookup "lowerNeg"
       = some Features.Judgment.unacceptable :=
   ⟨rfl, by decide⟩
+
+/-! ### The three competing analyses share one neg-raising logic
+
+VFI's domain-restriction *ought* (`Directive.weakNecessity`) is `∀` over the
+refined best-world set `bestWorlds f (g ∪ g') w`, so the shared lemma applies to
+it exactly as to Rubinstein's `BEST(favored, negotiable)` and A&J's gap domain.
+All three rival analyses of weak necessity predict neg-raising via the *same*
+condition — the domain is a subsingleton — and differ only in how each constructs
+that domain. -/
+
+/-- **Domain-restriction (von Fintel & Iatridou) wired to the shared lemma.** VFI
+    weak necessity neg-raises at `(f, g, g', w)` iff its refined best-world domain
+    `bestWorlds f (g ∪ g') w` is a subsingleton — the same
+    `Homogeneity.negRaising_iff_subsingleton` characterization as Rubinstein's
+    `BEST(favored, negotiable)` and A&J's gap domain. -/
+theorem vfiWeak_negRaises_iff {W : Type*} (f : ModalBase W) (g g' : OrderingSource W)
+    (w : W) :
+    (∀ p : W → Prop, ¬ weakNecessity f g g' p w →
+        weakNecessity f g g' (fun w' => ¬ p w') w) ↔
+      (bestWorlds f (combineOrdering g g') w).Subsingleton := by
+  simp only [weakNecessity, necessity_iff_all]
+  exact negRaising_iff_subsingleton _
 
 end AghaJeretic2026
