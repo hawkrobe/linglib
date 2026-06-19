@@ -29,8 +29,9 @@ satisfaction predicate `OCP.IsClean`.
   identical adjacent elements into one (multiply-linked) element: `OCP.collapse`.
   Its output is clean (`collapse_clean`) and it fixes already-clean tiers
   (`collapse_idempotent_on_clean`), i.e. a **retraction onto `IsClean`**. As a string
-  map `collapse` is input-strictly-local ([chandlee-heinz-2018]); on an autosegmental
-  tier the OCP repairs are A-ISL ([chandlee-jardine-2019]).
+  map `collapse` is input-strictly-local ([chandlee-heinz-2018], proved in
+  `Phonology.Subregular.OCP.collapse_isISL`); on an autosegmental tier the OCP repairs
+  are A-ISL ([chandlee-jardine-2019]).
 * **The subregular characterization** — that the constraint is a TSL₂ language lives
   in `Phonology.Subregular.OCP` (`mkOCPOnTier_zero_iff_isClean`), which consumes this
   `IsClean`.
