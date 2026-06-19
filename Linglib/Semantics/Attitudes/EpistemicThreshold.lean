@@ -49,7 +49,7 @@ function maps an entity to a degree on a scale, and the predicate holds
 iff the degree meets a contextual/lexical threshold. Epistemic expressions
 are gradable predicates on a probability scale bounded by [0, 1].
 
-This connection is formalized in §8 via `epistemicAsGradable`.
+This connection is formalized in §8 via `epistemicAsDirectedMeasure`.
 
 ## Unification of Three Formalizations
 
@@ -478,7 +478,7 @@ expressions.
 def epistemicBoundedness : Core.Order.Boundedness := .closed
 
 /-- An epistemic gradable predicate: an `EpistemicEntry` viewed as a
-    `GradablePredicate` on the probability scale.
+    `DirectedMeasure` on the probability scale.
 
     The entity type is `E × (W → Bool)` (agent–proposition pairs), and the
     measure function is agent credence `cr`. This makes the structural
@@ -487,9 +487,8 @@ def epistemicBoundedness : Core.Order.Boundedness := .closed
     Polarity: threshold entries (`believes`, `must`, `likely`) are positive
     (upward monotone: higher credence → more likely to satisfy). Reversed
     entries (`uncertain`, `unlikely`) are negative (downward monotone). -/
-def epistemicAsGradable (cr : AgentCredence E W) (_entry : EpistemicEntry)
-    : Semantics.Degree.GradablePredicate (E × (W → Bool)) ℚ where
-  form := ""
+def epistemicAsDirectedMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry)
+    : Semantics.Degree.DirectedMeasure ℚ (E × (W → Bool)) where
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
 

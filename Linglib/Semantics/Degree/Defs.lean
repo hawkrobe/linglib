@@ -14,7 +14,6 @@ economy classification is in `Kennedy.lean`. Klein-style delineation
 
 ## Main definitions
 
-* `GradablePredicate` — measure-function interface extending `DirectedMeasure`
 * `DegPType`, `StandardType` — DegP compositional taxonomy
 * `ModifierDirection` — amplifier / downtoner axis
 * `AdjectivalConstruction` — surface-construction type for evaluativity
@@ -24,17 +23,6 @@ economy classification is in `Kennedy.lean`. Klein-style delineation
 namespace Semantics.Degree
 
 open Core.Order (Boundedness)
-/-- Minimal interface for a gradable predicate: a measure function mapping
-entities to degrees on a scale with known boundedness.
-
-Extends `DirectedMeasure D Entity` with a lexical `form` field. Every
-degree framework (Kennedy, Heim, Schwarzschild) provides an instance;
-Klein's delineation approach does not use degrees and so does not instantiate
-this interface (see `Gradability/Delineation.lean`). -/
-structure GradablePredicate (Entity D : Type*) [LinearOrder D]
-    extends Semantics.Degree.DirectedMeasure D Entity where
-  /-- The adjective's lexical form (for identification). -/
-  form : String
 
 /-- The compositional structure of a Degree Phrase (DegP).
 
@@ -153,7 +141,7 @@ inductive AdjectiveClass where
   /-- Necessity-relative threshold — *decent*, *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
   /-- Non-gradable: no degree argument, no scale — *atomic*, *prime*,
-  *deceased*, *pregnant*. Outside the `GradablePredicate` fragment;
+  *deceased*, *pregnant*. Outside the gradable (`DirectedMeasure`) system;
   consumers that classify a general adjective should map non-gradables
   here rather than coercing them into a gradable class. -/
   | nonGradable

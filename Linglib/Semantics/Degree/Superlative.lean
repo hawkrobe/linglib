@@ -36,7 +36,7 @@ namespace Semantics.Degree.Superlative
     y ≠ x in C, height(x) > height(y). -/
 def absoluteSuperlative {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
-  x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ x > μ y
+  x ∈ C ∧ ∀ y ∈ C, y ≠ x → comparativeSem μ x y .positive
 
 -- ════════════════════════════════════════════════════
 -- § 2. Relative Superlative
@@ -52,7 +52,7 @@ def absoluteSuperlative {Entity D : Type*} [LinearOrder D]
 def relativeSuperlative {Alt Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (f : Alt → Entity) (focusedAlt : Alt)
     (alternatives : Set Alt) : Prop :=
-  ∀ a ∈ alternatives, a ≠ focusedAlt → μ (f focusedAlt) > μ (f a)
+  ∀ a ∈ alternatives, a ≠ focusedAlt → comparativeSem μ (f focusedAlt) (f a) .positive
 
 -- ════════════════════════════════════════════════════
 -- § 3. Uniqueness and Definiteness
@@ -104,7 +104,7 @@ theorem superlative_iff_universal_comparative {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (C : Set Entity) (x : Entity) :
     absoluteSuperlative μ C x ↔
       x ∈ C ∧ ∀ y ∈ C, y ≠ x →
-        Semantics.Degree.comparativeSem μ x y .positive := by
-  simp [absoluteSuperlative, Semantics.Degree.comparativeSem]
+        Semantics.Degree.comparativeSem μ x y .positive :=
+  Iff.rfl
 
 end Semantics.Degree.Superlative
