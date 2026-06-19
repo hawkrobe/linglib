@@ -2761,8 +2761,6 @@ import Linglib.Semantics.Probabilistic.SDS.ThresholdSemantics
 -- Probing primitives (Roberts 2010, Storment 2025), InverseVoice family,
 -- and three meta-bridges in Unaccusativity/.
 import Linglib.Semantics.Lexical.VerbSmuggling
-import Linglib.Syntax.Minimalist.Probing.DefectiveGoal
-import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.

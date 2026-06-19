@@ -5,7 +5,7 @@ import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
-import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Typology.AuxiliaryVerbs
 
 /-!
@@ -343,17 +343,106 @@ theorem qi_li_share_voice :
 Storment §3.1.4 (eq. 59): the difference between Setswana QI agreement
 (always SM17 default) and English QI agreement (optionally tracks the
 postverbal agent) reduces to a single parameter — whether the probe T⁰
-is allowed to re-probe past the defective quotative-theme operator. The
-defective-circumvention operation is in `Syntax/Minimalism/
-Probing/DefectiveCircumvention.lean`; here we wire it to the QI
-agreement data.
+is allowed to re-probe past the defective quotative-theme operator.
+Roberts's *defective goal* and the *defective-circumvention* operation
+are defined inline below (folded in from the former single-consumer
+`Minimalist/Probing/`); the theorems then wire them to the QI data.
 
 The theorems abstract over the precise feature bundles and feature-
 compatibility predicate — Storment's substantive claim is that the
 *operation* is the same and only the `allowReprobe` parameter varies. -/
 
-open Minimalist.Probing
 open Minimalist (FeatureBundle)
+
+/-- A goal `G` is **defective** w.r.t. a probe `P` iff `G`'s formal
+    features are a proper subset of `P`'s, so checking is incomplete
+    ([roberts-2010], ch. 2; eq. (49) in [storment-2026]). -/
+def DefectiveGoal (probe goal : FeatureBundle) : Prop :=
+  goal ⊆ probe ∧ ∃ f ∈ probe, f ∉ goal
+
+instance (probe goal : FeatureBundle) : Decidable (DefectiveGoal probe goal) := by
+  unfold DefectiveGoal; infer_instance
+
+/-- The empty goal is defective w.r.t. any nonempty probe. -/
+theorem DefectiveGoal.empty_of_nonempty (probe : FeatureBundle)
+    (h : probe ≠ []) : DefectiveGoal probe [] := by
+  refine ⟨List.nil_subset _, ?_⟩
+  match probe, h with
+  | f :: _, _ => exact ⟨f, List.mem_cons_self, List.not_mem_nil⟩
+
+/-- A defective goal is missing some feature the probe has. -/
+theorem DefectiveGoal.exists_missing {probe goal : FeatureBundle}
+    (h : DefectiveGoal probe goal) : ∃ f ∈ probe, f ∉ goal := h.2
+
+/-- A defective goal's features are all in the probe. -/
+theorem DefectiveGoal.subset {probe goal : FeatureBundle}
+    (h : DefectiveGoal probe goal) : goal ⊆ probe := h.1
+
+/-- No goal is defective w.r.t. itself. -/
+theorem DefectiveGoal.irrefl (fb : FeatureBundle) : ¬ DefectiveGoal fb fb := by
+  intro ⟨_, f, hf, hnf⟩; exact hnf hf
+
+/-- The four outcomes of a probe that may invoke defective circumvention
+    ([storment-2025] ch. 2; eq. 59 in [storment-2026]): the probe Agrees
+    with a higher defective goal α, then conditionally re-probes past α
+    to a lower, more specified goal β. -/
+inductive ProbingOutcome where
+  /-- α was not defective; α suffices, no re-probe. -/
+  | trackHigher
+  /-- α defective; re-probe disallowed; default features spell out. -/
+  | defaultAgreement
+  /-- α defective; re-probe to β succeeded (features compatible). -/
+  | trackLower
+  /-- α defective; re-probe to β attempted but features conflict; crash. -/
+  | featureClash
+  deriving DecidableEq, Repr
+
+/-- Defective-circumvention probing, parameterized by `allowReprobe`
+    (may the probe search past a defective goal) and `compatible`
+    (can circumvention complete without feature conflict). -/
+def defectiveCircumvention
+    (probe alpha beta : FeatureBundle) (allowReprobe : Bool)
+    (compatible : FeatureBundle → FeatureBundle → Bool) : ProbingOutcome :=
+  if DefectiveGoal probe alpha then
+    if allowReprobe then
+      (if compatible alpha beta then .trackLower else .featureClash)
+    else .defaultAgreement
+  else .trackHigher
+
+/-- A non-defective higher goal never invokes circumvention. -/
+theorem defectiveCircumvention_trackHigher_of_nondefective
+    (probe alpha beta : FeatureBundle) (allowReprobe : Bool)
+    (compatible : FeatureBundle → FeatureBundle → Bool)
+    (h : ¬ DefectiveGoal probe alpha) :
+    defectiveCircumvention probe alpha beta allowReprobe compatible = .trackHigher := by
+  unfold defectiveCircumvention; simp [h]
+
+/-- Defective higher goal, re-probe disallowed → default agreement
+    (Setswana case). -/
+theorem defectiveCircumvention_default_when_no_reprobe
+    (probe alpha beta : FeatureBundle)
+    (compatible : FeatureBundle → FeatureBundle → Bool)
+    (hd : DefectiveGoal probe alpha) :
+    defectiveCircumvention probe alpha beta false compatible = .defaultAgreement := by
+  unfold defectiveCircumvention; simp [hd]
+
+/-- Defective higher goal, re-probe allowed, β compatible → tracks β
+    (English `advise the dieticians`). -/
+theorem defectiveCircumvention_tracks_lower
+    (probe alpha beta : FeatureBundle)
+    (compatible : FeatureBundle → FeatureBundle → Bool)
+    (hd : DefectiveGoal probe alpha) (hc : compatible alpha beta = true) :
+    defectiveCircumvention probe alpha beta true compatible = .trackLower := by
+  unfold defectiveCircumvention; simp [hd, hc]
+
+/-- Defective higher goal, re-probe allowed, β incompatible → crash
+    (English `*ask we`). -/
+theorem defectiveCircumvention_clash_on_incompatible
+    (probe alpha beta : FeatureBundle)
+    (compatible : FeatureBundle → FeatureBundle → Bool)
+    (hd : DefectiveGoal probe alpha) (hc : compatible alpha beta = false) :
+    defectiveCircumvention probe alpha beta true compatible = .featureClash := by
+  unfold defectiveCircumvention; simp [hd, hc]
 
 /-- The same defective-probing situation produces Setswana's
     obligatory default agreement (no re-probe) and English's optional
