@@ -9,7 +9,7 @@ import Linglib.Core.Computability.Subregular.Sandwich
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Phonology.Sibilant
+import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
 
 /-!
