@@ -400,32 +400,28 @@ theorem listener_region {W U : Type*} [MeasurableSpace W] [MeasurableSpace U]
 /-! ### The RSA speaker is the rational optimizer
 
 `speaker base score = base.tilted score` is a Gibbs measure, so the
-Gibbs / Donsker–Varadhan variational principle
-(`MeasureTheory.isGreatest_logIntegralExp`, proved generically in
-`Core/Probability/GibbsVariational.lean`) applies directly: among all candidate
-distributions over utterances, the speaker is the one **maximizing expected
-utility `𝔼_q[score]` minus the KL cost `KL(q ‖ base)` of departing from the
-prior**, with optimal value the free energy `base.logIntegralExp score`. This
-turns RSA's "rational speaker" from a stipulated softmax into a theorem. -/
+Gibbs / Donsker–Varadhan variational principle (`InformationTheory.isGreatest_cgf`,
+proved generically in `Core/Probability/GibbsVariational.lean`) applies directly:
+among all candidate distributions over utterances, the speaker **maximizes the free
+energy `𝔼_q[score] − KL(q ‖ base)`**, with optimal value the cumulant generating
+function `cgf score base 1` (= `log ∫ exp score ∂base`, the free energy /
+log-partition). This turns RSA's "rational speaker" from a stipulated softmax into a
+theorem. -/
 
 open InformationTheory
 
-/-- The RSA speaker is the **rational optimizer**: `speaker base score` attains
-the greatest value of expected-utility-minus-KL-cost
-`q ↦ 𝔼_q[score] − KL(q ‖ base)` over candidate utterance distributions, the
-optimum being the free energy `base.logIntegralExp score`. A direct instance of
-the Gibbs / Donsker–Varadhan variational principle
-`MeasureTheory.isGreatest_logIntegralExp` at the tilt defining the speaker. -/
+/-- The RSA speaker is the **rational optimizer**: `cgf score base 1` is the greatest
+value of the free-energy functional `base.freeEnergy score` over candidate utterance
+distributions, attained at `speaker base score = base.tilted score`. A direct
+instance of the Gibbs / Donsker–Varadhan variational principle
+`InformationTheory.isGreatest_cgf`. -/
 theorem speaker_isGreatest [MeasurableSpace U] (base : Measure U)
     [IsProbabilityMeasure base] (score : U → ℝ)
     (h_int_f : Integrable score (speaker base score))
     (h_int_llr : Integrable (llr (speaker base score) base) (speaker base score))
     (h_exp : Integrable (fun u => Real.exp (score u)) base) :
-    IsGreatest
-      {x : ℝ | ∃ q : Measure U, IsProbabilityMeasure q ∧ q ≪ base ∧
-        Integrable (llr q base) q ∧ Integrable score q ∧
-        x = (∫ u, score u ∂q) - (klDiv q base).toReal}
-      (base.logIntegralExp score) :=
-  isGreatest_logIntegralExp base h_int_f h_int_llr h_exp
+    IsGreatest (base.freeEnergy score '' {q | IsProbabilityMeasure q ∧ q ≪ base ∧
+        Integrable (llr q base) q ∧ Integrable score q}) (cgf score base 1) :=
+  isGreatest_cgf base h_int_f h_int_llr h_exp
 
 end RSA.Gibbs
