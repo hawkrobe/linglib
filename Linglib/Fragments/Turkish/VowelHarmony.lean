@@ -43,7 +43,7 @@ Examples with *kol* 'arm' [back, rounded]:
 
 ## Harmony systems ([rose-walker-2011])
 
-Turkish VH decomposes into two `HarmonySystem` instances:
+Turkish VH decomposes into two `System` instances:
 - `palatalHarmony`: [back] spreads to all suffix vowels (twofold A)
 - `labialHarmony`: [round] spreads to high suffix vowels only (fourfold I)
 -/
@@ -52,7 +52,7 @@ namespace Turkish.VowelHarmony
 
 open Phonology (Segment Feature)
 open Phonology.Autosegmental (agreeAt)
-open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue)
+open Phonology.Harmony (System HarmonyDir triggerValue)
 
 -- ============================================================================
 -- § 1: Turkish Vowel Inventory (8 vowels)
@@ -96,8 +96,8 @@ def o_vowel : Segment := Segment.ofSpecs
 
 /-- Palatal harmony: [back] spreads from the last stem vowel to all suffix
     vowels. Every vowel is both trigger and target; no transparency. -/
-def palatalHarmony : HarmonySystem :=
-  HarmonySystem.mk' (feature := .back)
+def palatalHarmony : System :=
+  System.mk' (feature := .back)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (·.HasValue .syllabic true))
     (isTransparent := (λ _ => false))
@@ -105,8 +105,8 @@ def palatalHarmony : HarmonySystem :=
 
 /-- Labial harmony: [round] spreads from the last stem vowel to high suffix
     vowels only. Every vowel triggers; only [+high] vowels are targets. -/
-def labialHarmony : HarmonySystem :=
-  HarmonySystem.mk' (feature := .round)
+def labialHarmony : System :=
+  System.mk' (feature := .round)
     (isTrigger     := (·.HasValue .syllabic true))
     (isTarget      := (λ s => s.HasValue .syllabic true && s.HasValue .high true))
     (isTransparent := (λ _ => false))
@@ -181,6 +181,14 @@ theorem göz_palatal : triggerValue palatalHarmony [ö_vowel] = some false := by
   native_decide
 theorem göz_labial : triggerValue labialHarmony [ö_vowel] = some true := by
   native_decide
+
+/-- **OSL transduction harmonizes the suffix** (`System.transduce`, the proved
+    2-OSL function `palatalHarmony.transduce_isLeftOSL`): a [−back] target after
+    a [+back] stem surfaces [+back] — the value propagated from the preceding
+    output segment, the genuine subregular semantics. -/
+theorem palatal_transduce_spreads_back :
+    ((palatalHarmony.transduce [a_vowel, e_vowel])[1]?).bind (·.spec .back)
+      = some true := by decide
 
 -- Cross-backness: a and e disagree on dorsal features
 theorem a_e_dorsal_disagree :
