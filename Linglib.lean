@@ -711,6 +711,7 @@ import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Czech.Negation
 import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Fragments.Laal.Prosody
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Tarifit.Inventory
@@ -1823,6 +1824,7 @@ import Linglib.Studies.SiptarTorkenczy2000
 import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.Lambert2026
 import Linglib.Studies.Hyman2006
+import Linglib.Studies.Lionnet2022Laal
 import Linglib.Studies.Lionnet2025
 import Linglib.Studies.AkinboFwangwar2026
 import Linglib.Studies.McPhersonLamont2026
@@ -2696,7 +2698,7 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Tier
-import Linglib.Phonology.OCPMerger
+import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Phonology.Autosegmental.CoPScope

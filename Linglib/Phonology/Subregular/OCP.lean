@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.TierProjection
+import Linglib.Phonology.OCP
 
 /-!
 # OCP (Obligatory Contour Principle) ↔ TSL_2 — the identity instance
@@ -29,20 +30,17 @@ forbidden-pair infrastructure to `R := (· = ·)`. The OCP-specific names
 `mkOCPOnTier_zero_iff_in_ocp_lang`) are kept as the canonical entry
 points downstream consumers reference.
 
-## OCP-as-prohibition vs OCP-as-merger
+## The subregular face of the OCP
 
-This file formalizes the **prohibition** reading of the OCP — strings
-containing adjacent identical (tier-projected) autosegments are *rejected*
-by `TSLGrammar.ocp p`. The classical autosegmental tradition
-([goldsmith-1976]) instead reads the OCP as a *merger
-transformation*: adjacent identical autosegments are *collapsed* into a
-single multiply-linked autosegment. The merger reading is formalized by
-`Phonology.Autosegmental.RegisterTier.mergeTRN` (and the underlying
-`FeatureBundle.merge`) — a repair operation on representations, not a
-language predicate. The two readings are operationally distinct, both
-trace to the same body of literature, and coexist in linglib without a
-master bridge — the prohibition reading classifies a stringset; the
-merger reading fixes a representation.
+This file is the **subregular characterization** of the OCP — one face of the
+unified `Phonology.OCP` principle. It proves that the prohibition reading (a
+stringset rejecting adjacent identical tier-projected autosegments) is a TSL₂
+language, and that its satisfaction predicate is exactly `Phonology.OCP.IsClean`
+(`mkOCPOnTier_zero_iff_isClean`). The dual fusion repair
+(`Phonology.OCP.collapse`, with `RegisterTier.mergeTRN` as the tone-tier
+`combine`) lands in the same `IsClean` set — so prohibition and merger are not
+two coexisting formalisations but the constraint and a retraction onto it,
+both characterising `Phonology.OCP.IsClean`.
 -/
 
 namespace Phonology.Subregular
@@ -93,6 +91,18 @@ theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
     (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (· ≠ ·) :=
   mkForbidPairsOnTier_zero_iff_isChain name (· = ·) p extract c
+
+/-- **Shared satisfaction predicate**: a candidate's OCP score is zero iff its
+tier-projection is `Phonology.OCP.IsClean`. This is what makes the prohibition
+reading (here) and the fusion repair (`Phonology.OCP.collapse`) two faces of
+one principle rather than parallel formalisations — both characterise
+`Phonology.OCP.IsClean`. -/
+theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
+    (name : String) (p : α → Prop) [DecidablePred p]
+    (extract : C → List α) (c : C) :
+    (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+      Phonology.OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
+  mkOCPOnTier_zero_iff_isChain name p extract c
 
 /-- **Bridge** (full TSL_2 language form): a candidate's OCP score is zero iff
 its raw string is in the language of the TSL_2 grammar `TSLGrammar.ocp p`.

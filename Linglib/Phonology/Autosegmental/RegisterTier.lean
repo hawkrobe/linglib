@@ -483,24 +483,22 @@ def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
     (`FeatureBundle.merge`) takes the value from the left TRN where it
     is specified, falling back to the right.
 
-    **Two readings of the OCP — note on theoretical heterogeneity.** The
-    autosegmental tradition ([goldsmith-1976]) treats the OCP as a
-    *transformation* — adjacent identical autosegments at the melodic
-    level are merged into a single multiply-linked autosegment. That is
-    the reading `mergeTRN` implements: a *repair* operation. The
-    subregular tradition ([mccarthy-1986]) treats the OCP as a
-    *prohibition* — a constraint on output well-formedness that
-    *rejects* strings containing adjacent identical autosegments. The
-    prohibition reading is formalized by `Phonology.Subregular.OCP`'s
-    `TSLGrammar.ocp` (Core/Computability/Subregular/ForbiddenPairs.lean
-    plus Phonology/Subregular/OCP.lean) and the OT-side
-    `mkOCPOnTier` constraint. The two readings are operationally
-    distinct (transformation vs. language-membership predicate) and
-    coexist in linglib without a master bridge — the autosegmental
-    formalization fixes a representation, the subregular formalization
-    classifies a stringset. -/
+    This is the per-element `combine` for the fusion repair
+    `Phonology.OCP.collapse` ([goldsmith-1976]'s transformation reading):
+    `OCP.collapse mergeTRN` merges each run of adjacent identical TRNs into
+    one multiply-linked TRN, landing in the OCP-clean set. The dual
+    prohibition reading ([mccarthy-1986]) — the OCP as a TSL₂ constraint —
+    is the same principle's subregular face in `Phonology.Subregular.OCP`;
+    both characterise `Phonology.OCP.IsClean`. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
+
+/-- Merging a TRN with itself is the identity. Lets `mergeTRN` serve as the
+    `combine` argument to `Phonology.OCP.collapse`: it discharges the
+    `combine z z = z` hypothesis of `collapse_clean`/`collapse_idempotent`,
+    so OCP-merger on the TRN tier preserves and lands in the OCP-clean set. -/
+@[simp] theorem mergeTRN_self (t : TRN) : mergeTRN t t = t := by
+  simp only [mergeTRN, FeatureBundle.merge_self, TRN.ofBundle_toBundle]
 
 /-- **TRN-level deletion** ([lionnet-2022] §6.2): delete a TRN's
     contribution at one subtonal feature, returning to underspecified.

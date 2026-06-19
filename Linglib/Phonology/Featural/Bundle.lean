@@ -125,6 +125,14 @@ section AlgebraicOps
 def merge (b₁ b₂ : FeatureBundle F V) : FeatureBundle F V :=
   fun f => (b₁ f).orElse (fun _ => b₂ f)
 
+/-- Merging a bundle with itself is the identity. Discharges the
+    `combine z z = z` hypothesis of the OCP-merger retraction theorems
+    (`Phonology.OCP.collapse_clean`) when `merge` is used as `combine`. -/
+@[simp] theorem merge_self (b : FeatureBundle F V) : merge b b = b := by
+  funext f
+  simp only [merge]
+  cases b f <;> rfl
+
 /-- **Subtonal / featural assimilation** at feature `f`: the target bundle
     `tgt` adopts whatever value `src` specifies for `f` (if any). All other
     features of `tgt` are unchanged.
