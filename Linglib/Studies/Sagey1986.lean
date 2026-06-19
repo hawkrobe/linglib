@@ -414,12 +414,13 @@ theorem velar_nasal_wf : ComplexWF velar_nasal := by decide
 -- § 5: Impossible Complex Segments (Ch. 2)
 -- ============================================================================
 
-/-- A coronal-only segment (alveolar /t/) with multiple coronal features
-    is NOT complex: [+cor, +ant, −dist] all fall under the single coronal
-    articulator. This formalizes Sagey's key prediction: palatal–velar
-    stops are impossible because palatals and velars are both dorsal —
-    no combination of features under a single articulator can produce a
-    complex segment. -/
+/-- A coronal-only segment (alveolar /t/, [+cor, +ant]) is NOT complex:
+    multiple coronal features fall under the single coronal articulator. This
+    formalizes Sagey's key prediction (§2.2): complex segments are possible
+    only for combinations of two *different* articulators, so no combination of
+    features under a single articulator yields a complex segment. The
+    same-articulator bar is exactly why alveolars and alveopalatals — both
+    coronal — cannot form a doubly-articulated stop ([sagey-1986] §2.2, p.64). -/
 def alveolar_t : Segment :=
   Segment.ofSpecs
     [(.consonantal, true), (.sonorant, false), (.continuant, false),
