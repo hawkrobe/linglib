@@ -1,4 +1,3 @@
-import Linglib.Phonology.Autosegmental.Defs
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Insert
 import Mathlib.Order.Monotone.Monovary
@@ -39,13 +38,6 @@ universe restriction, etc.) for free.
 Its body is the existential index-ordering formulation
 (`[goldsmith-1976]`-style); decidability falls out by
 `Finset.decidableBEx`.
-
-The **substrate hom** `linkToPointAssociation : ℕ × ℕ → Association ℕ`
-bridges this discrete-index substrate to the interval substrate in
-`Defs.lean`: each index pair becomes an `Association` with point
-intervals, and `indexCrosses_iff_crosses_pointAssociation` shows
-the two crossing predicates agree under this map. This connects
-Goldsmith-style index-NCC to Sagey-style interval-NCC by construction.
 
 ## References
 
@@ -115,23 +107,5 @@ theorem IsNoCrossing.insert_of_not_indexCrosses
     · exact absurd ⟨l₁, hl₁, Or.inr ⟨hlt, h⟩⟩ hNX
     · exact h
   · exact hNC l₁ hl₁ l₂ hl₂ hlt
-
-/-! ### Substrate hom: index pair → point-interval `Association` -/
-
-/-- View an index link `(k, i) : ℕ × ℕ` as an `Association ℕ` with point
-    intervals at `k` (timing tier) and `i` (melody tier). The canonical
-    hom from the index-NCC substrate (`IndexCrosses`) to the interval-NCC
-    substrate (`crosses`). -/
-def linkToPointAssociation (l : ℕ × ℕ) : Association ℕ where
-  timing := ⟨NonemptyInterval.pure l.fst⟩
-  melody := ⟨NonemptyInterval.pure l.snd⟩
-
-/-- **Substrate bridge.** Crossing between the point-interval associations
-    of two index links agrees with the index-ordering condition. -/
-theorem indexCrosses_iff_crosses_pointAssociation (l₁ l₂ : ℕ × ℕ) :
-    (l₁.fst < l₂.fst ∧ l₂.snd < l₁.snd) ↔
-    crosses (linkToPointAssociation l₁) (linkToPointAssociation l₂) := by
-  unfold crosses linkToPointAssociation NonemptyInterval.precedes NonemptyInterval.pure
-  simp
 
 end Phonology.Autosegmental

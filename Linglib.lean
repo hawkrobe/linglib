@@ -2706,6 +2706,8 @@ import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.DominantCophAgreement
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.OverwriteEmbedding
+import Linglib.Phonology.Autosegmental.AR
+import Linglib.Phonology.Autosegmental.Modularity
 import Linglib.Phonology.Prosodic.Syllable.Defs
 import Linglib.Phonology.Prosodic.Syllable.Foot
 import Linglib.Phonology.Prosodic.Syllable.NaturalClass
