@@ -17,8 +17,8 @@ Two clusters of theorems:
    `NoMinOrder`) interact with monotonicity to admit/block optima.
 
 2. **Order-sensitive maximality** (§6b of legacy Scale.lean):
-   `maxOnScale R X`, `IsMaxDetermined`, `isAmbidirectional` — Rett 2026's
-   relation-parameterized MAX operator + ambidirectionality scaffolding.
+   `maxOnScale R X`, `isAmbidirectional` — Rett 2026's relation-parameterized
+   MAX operator + ambidirectionality predicate.
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
@@ -192,45 +192,6 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
 def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
 
-/-- A predicate `f` is **MAX_R-determined** iff its value depends only on
-    `maxOnScale R` of its argument: any two sets with the same `MAX_R`
-    yield the same `f`-verdict. The before/until/comparative theorems all
-    establish exactly this: *before* relates A to `MAX₍<₎` of B, the
-    comparative *than*-clause to `MAX₍≥₎` of the degree set, etc. -/
-def IsMaxDetermined {α : Type*} (R : α → α → Prop) (f : Set α → Prop) : Prop :=
-  ∀ B₁ B₂ : Set α, maxOnScale R B₁ = maxOnScale R B₂ → (f B₁ ↔ f B₂)
-
-/-- **Shared informative bound** ⇒ ambidirectionality. The general
-    template behind Rett's typology: if a construction is `MAX_R`-determined
-    and `B` and `Bᶜ` share their `MAX_R`-bound, then the construction is
-    truth-conditionally insensitive to negation of B.
-
-    Each per-construction ambidirectionality theorem in the library is an
-    instance of this template — they prove the shared-bound side condition
-    for a specific `f` and a class of `B`'s, then this lemma packages the
-    result. See `Tense.TemporalConnectives.before_preEvent_ambidirectional`
-    for the canonical instance. -/
-theorem ambidirectional_of_shared_max {α : Type*} {R : α → α → Prop}
-    (f : Set α → Prop) (hf : IsMaxDetermined R f) (B : Set α)
-    (hshared : maxOnScale R B = maxOnScale R Bᶜ) :
-    isAmbidirectional f B :=
-  hf B Bᶜ hshared
-
-/-- **Converse**: an ambidirectional construction must share its `MAX_R`
-    bound between B and Bᶜ — but only when MAX_R alone *witnesses* the
-    distinction. Stated as a contrapositive to make the empirical content
-    explicit: if MAX_R differs between B and Bᶜ but the construction
-    cannot tell them apart by any *other* means (i.e. MAX_R-determined),
-    then the construction is non-ambidirectional. The full converse
-    requires assuming `f` separates sets with distinct MAX_R values, so
-    we instead expose this as a derived fact only under that assumption. -/
-theorem not_ambidirectional_of_distinct_max_separated {α : Type*}
-    {R : α → α → Prop} (f : Set α → Prop) (B : Set α)
-    (hsep : ∀ B₁ B₂ : Set α,
-      maxOnScale R B₁ ≠ maxOnScale R B₂ → ¬ (f B₁ ↔ f B₂))
-    (hdiff : maxOnScale R B ≠ maxOnScale R Bᶜ) :
-    ¬ isAmbidirectional f B :=
-  hsep B Bᶜ hdiff
 
 /-- **Bridge**: `maxOnScale (· ≥ ·)` applied to the "at least" degree set
     `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true

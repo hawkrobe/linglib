@@ -8,9 +8,8 @@ import Linglib.Semantics.Degree.Predicate
 [kennedy-2007] [kennedy-2015] [lassiter-goodman-2017] [krantz-1971]
 
 A `DirectedMeasure D E` packages a degree type, entity type, measure function,
-boundedness classification, and direction. The common algebraic core of
-`GradablePredicate`, degree-domain constructors, and epistemic threshold
-semantics.
+boundedness classification, and direction. The common algebraic core of the
+degree-domain constructors and epistemic threshold semantics.
 
 ## Main declarations
 
@@ -48,9 +47,9 @@ open Core.Order
     an entity type `E`, a measure function `μ : E → D`, boundedness
     (from `ComparativeScale`), and a direction.
 
-    Common algebraic core of `GradablePredicate` (which extends it with `form`),
-    the `numeral`/`adjective` domain constructors, and epistemic thresholds
-    (`DirectedMeasure ℚ (E × (W → Prop))`). The degree property (`atLeastDeg`
+    Common algebraic core of the `numeral`/`adjective` domain constructors and
+    epistemic thresholds (`epistemicAsDirectedMeasure`, on
+    `DirectedMeasure ℚ (E × (W → Bool))`). The degree property (`atLeastDeg`
     for positive, `atMostDeg` for negative) is derived from `direction`, not
     stored — per [lassiter-goodman-2017], the binary direction choice is the
     fundamental parameter. -/
