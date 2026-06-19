@@ -209,53 +209,14 @@ def projectIU (b : ETBundle) : ETBundle :=
     | .U => b .U
     | _  => none
 
--- ============================================================================
--- § 4: Combine for OCP-Merger
--- ============================================================================
-
-/-- Headedness combination for OCP-merger of two adjacent identical
-    elements: the head wins. Used as the `combine` argument to
-    `Phonology.OCP.collapse` when collapsing element-tier runs.
-
-    For the [faust-lampitelli-2026] guttural-synersis case the
-    inputs are bundle-identical (two |A|s of the same headedness
-    flanking a guttural), so the choice of `combine` is irrelevant —
-    the default `fun a _ => a` of `collapse` suffices. The
-    `headedWins` operation is provided as the substrate-level
-    convention for cases where headedness mismatches arise. -/
-def headedWins : Headedness → Headedness → Headedness
-  | _,        .headed => .headed
-  | .headed,  _       => .headed
-  | .bare,    .bare   => .bare
-
-@[simp] theorem headedWins_self (h : Headedness) :
-    headedWins h h = h := by cases h <;> rfl
+/-! ### OCP-merger of element tiers -/
 
 /-- The element-tier OCP merger lands in the OCP-clean set: collapsing runs of
-    identical `Headedness` markers via `headedWins` leaves no two adjacent
-    identicals. ET's instantiation of `Phonology.OCP.collapse_clean` (a third
-    consumer alongside [faust-lampitelli-2026]'s |A|+|A| fusion and
-    [lionnet-2022-laal]'s TRN merger). -/
-theorem headedWins_collapse_clean (xs : List Headedness) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse headedWins xs) :=
-  Phonology.OCP.collapse_clean headedWins headedWins_self xs
-
-/-- Bundle-level combine using `headedWins` element-wise. Idempotent
-    on identical bundles (so admissible as the `combine` argument to
-    `Phonology.OCP.collapse`). -/
-def ETBundle.headedWinsCombine (b₁ b₂ : ETBundle) : ETBundle :=
-  fun e => match b₁ e, b₂ e with
-    | some h₁, some h₂ => some (headedWins h₁ h₂)
-    | some h,  none    => some h
-    | none,    some h  => some h
-    | none,    none    => none
-
-theorem ETBundle.headedWinsCombine_self (b : ETBundle) :
-    ETBundle.headedWinsCombine b b = b := by
-  funext e
-  unfold ETBundle.headedWinsCombine
-  cases h : b e with
-  | none => rfl
-  | some hd => simp [headedWins_self]
+    identical `Headedness` markers (the |A|+|A| guttural fusion of
+    [faust-lampitelli-2026]) leaves no two adjacent identicals. ET's instantiation of
+    `Phonology.OCP.collapse_clean`. -/
+theorem element_tier_collapse_clean (xs : List Headedness) :
+    Phonology.OCP.IsClean (Phonology.OCP.collapse xs) :=
+  Phonology.OCP.collapse_clean xs
 
 end Phonology.ElementTheory

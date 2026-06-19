@@ -477,26 +477,16 @@ section Operations
 def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.assimilate f src.toBundle tgt.toBundle)
 
-/-- **OCP merger**: collapse a sequence of TRNs with identical subtonal
-    feature values into a single multiply-linked TRN
-    ([lionnet-2022] ex. 53–54). The Bundle-level merger
-    (`FeatureBundle.merge`) takes the value from the left TRN where it
-    is specified, falling back to the right.
-
-    This is the per-element `combine` for the fusion repair
-    `Phonology.OCP.collapse` ([goldsmith-1976]'s transformation reading):
-    `OCP.collapse mergeTRN` merges each run of adjacent identical TRNs into
-    one multiply-linked TRN, landing in the OCP-clean set. The dual
-    prohibition reading ([mccarthy-1986]) — the OCP as a TSL₂ constraint —
-    is the same principle's subregular face in `Phonology.Subregular.OCP`;
-    both characterise `Phonology.OCP.IsClean`. -/
+/-- **Binary TRN merger** ([lionnet-2022] ex. 53–54): merge two TRNs' subtonal
+    features into one, taking each feature from the left TRN where it is specified and
+    falling back to the right (`FeatureBundle.merge`). Models the autosegmental fusion
+    of two associated tones ([goldsmith-1976]); the tier-level OCP merger that
+    collapses a run of identical tones is `Phonology.OCP.collapse`. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
 
-/-- Merging a TRN with itself is the identity. Lets `mergeTRN` serve as the
-    `combine` argument to `Phonology.OCP.collapse`: it discharges the
-    `combine z z = z` hypothesis of `collapse_clean`/`collapse_idempotent`,
-    so OCP-merger on the TRN tier preserves and lands in the OCP-clean set. -/
+/-- Merging a TRN with itself is the identity: `mergeTRN` is idempotent on equal
+    tones. -/
 @[simp] theorem mergeTRN_self (t : TRN) : mergeTRN t t = t := by
   simp only [mergeTRN, FeatureBundle.merge_self, TRN.ofBundle_toBundle]
 

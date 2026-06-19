@@ -125,9 +125,8 @@ section AlgebraicOps
 def merge (b₁ b₂ : FeatureBundle F V) : FeatureBundle F V :=
   fun f => (b₁ f).orElse (fun _ => b₂ f)
 
-/-- Merging a bundle with itself is the identity. Discharges the
-    `combine z z = z` hypothesis of the OCP-merger retraction theorems
-    (`Phonology.OCP.collapse_clean`) when `merge` is used as `combine`. -/
+/-- Merging a bundle with itself is the identity: `merge` is idempotent on equal
+    arguments. -/
 @[simp] theorem merge_self (b : FeatureBundle F V) : merge b b = b := by
   funext f
   simp only [merge]

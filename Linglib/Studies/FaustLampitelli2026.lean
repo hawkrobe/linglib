@@ -483,17 +483,15 @@ theorem identicalVowel_synersis_overshoots_walker_rose :
     Laal tones, just instantiated over a different value space
     (`Headedness` vs binary-feature `TRN`). -/
 theorem fusion_is_collapse_instance :
-    Phonology.OCP.collapse (combine := fun a _ => a)
-      [Headedness.bare, Headedness.bare] = [Headedness.bare] := by
-  rfl
+    Phonology.OCP.collapse [Headedness.bare, Headedness.bare] = [Headedness.bare] := by
+  decide
 
 /-- The OCP-merger output is OCP-clean: no two adjacent identical
     elements remain. Direct application of the substrate theorem
     `Phonology.OCP.collapse_clean`. -/
 theorem fusion_output_is_ocp_clean (xs : List Headedness) :
-    Phonology.OCP.IsClean
-      (Phonology.OCP.collapse (combine := fun a _ => a) xs) :=
-  Phonology.OCP.collapse_clean _ (fun _ => rfl) xs
+    Phonology.OCP.IsClean (Phonology.OCP.collapse xs) :=
+  Phonology.OCP.collapse_clean xs
 
 /-! ## §8 Paper-acknowledged scope limits
 
