@@ -260,9 +260,9 @@ theorem someDet_holds_eq_compl : (someDet.{u}).holds = (noDet.{u}).holdsᶜ := b
 iso-invariant class to GQ outer negation: `(¬Q).toGQ = outerNeg Q.toGQ`
 ([deklerck-vignero-demey-2024]). With `everyDet`, this realizes the `A`/`O` contradictory
 diagonal as `Quantification.every_contradicts_notEvery`. -/
-theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Q.compl α = outerNeg (Q.toGQ α) := by
+theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Qᶜ α = outerNeg (Q.toGQ α) := by
   funext A B
-  simp only [Det.toGQ, LindstromQuantifier.compl_holds, Set.mem_compl_iff, outerNeg_apply]
+  simp only [Det.toGQ, LindstromQuantifier.holds_compl, Set.mem_compl_iff, outerNeg_apply]
 
 /-- The `E` corner: `no` realizes the inner negation of `every` (`every…not = no`). -/
 theorem noDet_toGQ_eq_innerNeg (α : Type u) :

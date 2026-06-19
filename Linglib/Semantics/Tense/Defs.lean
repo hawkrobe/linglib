@@ -39,4 +39,8 @@ abbrev future : Finset Ordering := after
     circumstantial modals have future-oriented readings (⟦NPST⟧ requires ref ≥ perspective). -/
 abbrev nonpast : Finset Ordering := notBefore
 
+/-- [klecha-2016]'s point made literal: nonpast **is** the Boolean join of present and future in the
+    comparison-category algebra (`Core.Order`), not a fourth atomic tense. -/
+theorem nonpast_eq_present_sup_future : nonpast = present ⊔ future := by decide
+
 end Tense

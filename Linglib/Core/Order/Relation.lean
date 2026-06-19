@@ -1,4 +1,5 @@
 import Mathlib.Order.Compare
+import Mathlib.Order.Hom.Lattice
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Union
@@ -15,6 +16,14 @@ This is framework-agnostic order theory (the point analogue of `AllenRelation` f
 generic over any `[LinearOrder α]` and bakes in **no** notion of time. Tense, evidential, and
 modal-base-time semantics each supply the order (`Time`) and name the categories they use
 (`Tense.past = before`, etc.).
+
+`Finset Ordering` is the eight-element Boolean algebra `𝒫 {lt, eq, gt}` — the Aristotelian diagram of
+the trichotomy, with the three singletons as atoms and `≤`/`≥`/`≠` as their joins. For each pair
+`a, b`, the map `s ↦ holds s a b` is its **Stone-dual point-evaluation** at `compare a b`: a
+`BoundedLatticeHom` into `Prop` (`holdsHom`, `holds_sup`/`holds_inf`/`holds_compl`/`holds_top`/
+`holds_bot`). Together with `converse` (↦ `SetRel.inv`) and `comp` (↦ `SetRel.comp`) below, this
+exhibits `holds` as a homomorphism from the finite point algebra into the relation algebra
+`SetRel α α`, and makes the named categories' `holds_*` reductions corollaries of one morphism.
 -/
 
 namespace Core.Order
@@ -27,22 +36,72 @@ def holds (s : Finset Ordering) (a b : α) : Prop := compare a b ∈ s
 instance (s : Finset Ordering) (a b : α) : Decidable (holds s a b) :=
   inferInstanceAs (Decidable (_ ∈ s))
 
-/-! ### Named comparison categories -/
+/-! ### `holds` as a Boolean-algebra homomorphism
 
-/-- `a < b`. -/
+For each pair `a, b`, `s ↦ holds s a b` preserves the Boolean structure of `Finset Ordering`: it is
+point-evaluation of the membership relation at `compare a b`. These are the `∪`/`∩`/`ᶜ`/`⊤`/`⊥` half
+of the relation-algebra homomorphism (the `converse`/`comp` half is below). -/
+
+@[simp] theorem holds_sup (s t : Finset Ordering) (a b : α) :
+    holds (s ⊔ t) a b ↔ holds s a b ∨ holds t a b := by
+  simp only [holds, Finset.sup_eq_union, Finset.mem_union]
+
+@[simp] theorem holds_inf (s t : Finset Ordering) (a b : α) :
+    holds (s ⊓ t) a b ↔ holds s a b ∧ holds t a b := by
+  simp only [holds, Finset.inf_eq_inter, Finset.mem_inter]
+
+@[simp] theorem holds_compl (s : Finset Ordering) (a b : α) :
+    holds sᶜ a b ↔ ¬ holds s a b := by
+  simp only [holds, Finset.mem_compl]
+
+@[simp] theorem holds_top (a b : α) : holds (⊤ : Finset Ordering) a b ↔ True := by
+  simp only [holds, Finset.top_eq_univ, Finset.mem_univ]
+
+@[simp] theorem holds_bot (a b : α) : holds (⊥ : Finset Ordering) a b ↔ False := by
+  simp only [holds, Finset.bot_eq_empty, Finset.notMem_empty]
+
+/-- `holds`, bundled. For every `[LinearOrder α]`, the map `s ↦ fun a b => holds s a b` is a
+    `BoundedLatticeHom` from the eight-element Boolean algebra `Finset Ordering` (= `𝒫 {lt, eq, gt}`)
+    into the relation algebra `α → α → Prop` — the Stone-dual evaluation of the comparison-category
+    algebra. With `converse` (`holds_converse`) and `comp` (`holds_comp`) it is the point algebra's
+    image in the concrete relation algebra. -/
+def holdsHom : BoundedLatticeHom (Finset Ordering) (α → α → Prop) where
+  toFun s := fun a b => holds s a b
+  map_sup' s t := by ext a b; simp only [Pi.sup_apply, sup_Prop_eq]; exact holds_sup s t a b
+  map_inf' s t := by ext a b; simp only [Pi.inf_apply, inf_Prop_eq]; exact holds_inf s t a b
+  map_top' := by ext a b; simp only [Pi.top_apply]; exact holds_top a b
+  map_bot' := by ext a b; simp only [Pi.bot_apply]; exact holds_bot a b
+
+@[simp] theorem holdsHom_apply (s : Finset Ordering) (a b : α) :
+    holdsHom s a b = holds s a b := rfl
+
+/-! ### Named comparison categories
+
+The three atoms are the singletons `before`/`overlapping`/`after`; every other category is a Boolean
+combination of them, so the composite `holds_*` reductions below are corollaries of `holds_sup`, not
+separate `compare`-inspections. -/
+
+/-- `a < b` (atom `lt`). -/
 def before : Finset Ordering := {.lt}
-/-- `a > b`. -/
+/-- `a > b` (atom `gt`). -/
 def after : Finset Ordering := {.gt}
-/-- `a = b` (points overlap). -/
+/-- `a = b`, points overlap (atom `eq`). -/
 def overlapping : Finset Ordering := {.eq}
-/-- `a ≤ b`. -/
-def notAfter : Finset Ordering := {.lt, .eq}
-/-- `a ≥ b`. -/
-def notBefore : Finset Ordering := {.gt, .eq}
-/-- no constraint. -/
+/-- `a ≤ b` — the join `before ⊔ overlapping`. -/
+def notAfter : Finset Ordering := before ⊔ overlapping
+/-- `a ≥ b` — the join `after ⊔ overlapping`. -/
+def notBefore : Finset Ordering := after ⊔ overlapping
+/-- `a ≠ b` — the join `before ⊔ after` (the one non-convex category). -/
+def distinct : Finset Ordering := before ⊔ after
+/-- no constraint (`= ⊤`, see `unrestricted_eq_top`); kept as the explicit literal so the
+    `decide`-checked relation-algebra laws below reduce without unfolding `Finset.univ`. -/
 def unrestricted : Finset Ordering := {.lt, .eq, .gt}
 
-/-! ### Reductions to the underlying order (so consumers' `<`-shaped proofs go through) -/
+/-! ### Reductions to the underlying order (so consumers' `<`-shaped proofs go through)
+
+`holds_before`/`holds_after`/`holds_overlapping` discharge the three atoms; each composite category
+then reduces through the homomorphism (`holds_sup`) plus those atoms, rather than by re-inspecting
+`compare`. -/
 
 @[simp] theorem holds_before (a b : α) : holds before a b ↔ a < b := by
   simp [holds, before, compare_lt_iff_lt]
@@ -51,17 +110,15 @@ def unrestricted : Finset Ordering := {.lt, .eq, .gt}
 @[simp] theorem holds_overlapping (a b : α) : holds overlapping a b ↔ a = b := by
   simp [holds, overlapping]
 @[simp] theorem holds_notAfter (a b : α) : holds notAfter a b ↔ a ≤ b := by
-  simp [holds, notAfter, compare_lt_iff_lt, le_iff_lt_or_eq]
+  rw [notAfter, holds_sup, holds_before, holds_overlapping, le_iff_lt_or_eq]
 @[simp] theorem holds_notBefore (a b : α) : holds notBefore a b ↔ b ≤ a := by
-  rw [← not_lt, ← compare_lt_iff_lt]
-  simp only [holds, notBefore, Finset.mem_insert, Finset.mem_singleton]
-  cases compare a b <;> simp
+  rw [notBefore, holds_sup, holds_after, holds_overlapping, le_iff_lt_or_eq, eq_comm]
+@[simp] theorem holds_distinct (a b : α) : holds distinct a b ↔ a ≠ b := by
+  rw [distinct, holds_sup, holds_before, holds_after, lt_or_lt_iff_ne]
+/-- `unrestricted` is the top of the comparison-category Boolean algebra. -/
+theorem unrestricted_eq_top : unrestricted = (⊤ : Finset Ordering) := by decide
 @[simp] theorem holds_unrestricted (a b : α) : holds unrestricted a b ↔ True := by
-  simp only [holds, unrestricted, iff_true]
-  rcases lt_trichotomy a b with h | h | h
-  · simp [compare_lt_iff_lt.mpr h]
-  · simp [compare_eq_iff_eq.mpr h]
-  · simp [compare_gt_iff_gt.mpr h]
+  rw [unrestricted_eq_top, holds_top]
 
 /-! ### Relation-algebra structure: converse and composition
 

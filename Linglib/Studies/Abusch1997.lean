@@ -184,7 +184,7 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isFelicitousWith Tense.past :=
+    dr.IsFelicitousWith Tense.past :=
   (Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore
 
 /-- [abusch-1997]'s temporal de re with **modal-alternative
@@ -193,7 +193,7 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     `alternatives : Set (WorldTimeIndex W Time)`. The substrate is
     modal-base-agnostic; this theorem holds for any alternative-set
     the consumer supplies (doxastic, metaphysical, or other). The
-    full `isAbuschFelicitous` predicate combines the value-level past
+    full `IsAbuschFelicitous` predicate combines the value-level past
     constraint with this modal rigidity.
 
     A rigid time-concept (constant intension) discharges the modal
@@ -205,9 +205,9 @@ theorem abusch_derives_temporal_de_re_full
     (hRigid : Intensional.Intension.IsRigid dr.concept)
     (alternatives : Set (Intensional.WorldTimeIndex W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isAbuschFelicitous alternatives Tense.past := by
+    dr.IsAbuschFelicitous alternatives Tense.past := by
   refine ⟨(Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore, ?_⟩
-  exact Tense.DeRe.TemporalDeReReading.IsRigidAcrossAlternatives_of_concept_isRigid
+  exact Tense.DeRe.TemporalDeReReading.isRigidAcrossAlternatives_of_isRigid
     dr hRigid alternatives
 
 /-- **Metaphysical-instantiation specialization** of
@@ -221,7 +221,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
     (hRigid : Intensional.Intension.IsRigid dr.concept)
     (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) Tense.past :=
+    dr.IsAbuschFelicitous (dr.metaphysicalAlternatives history) Tense.past :=
   abusch_derives_temporal_de_re_full dr hRigid _ hBefore
 
 /-- **PLA ↔ Abusch substrate unification**: PLA's `isAcquaintedWith`

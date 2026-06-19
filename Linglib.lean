@@ -251,6 +251,7 @@ import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Core.Order.Relation
+import Linglib.Core.Order.Opposition
 import Linglib.Semantics.Aspect.AtomDist
 import Linglib.Core.Order.AllenRelation
 import Linglib.Semantics.Tense.Orientation
