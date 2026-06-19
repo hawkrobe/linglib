@@ -1557,6 +1557,7 @@ import Linglib.Studies.KalinBjorkmanEtAl2026
 import Linglib.Studies.Baker1985
 import Linglib.Studies.HalleMarantz1993
 import Linglib.Studies.Halpert2012
+import Linglib.Studies.Halpert2019
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Studies.BickelNichols2013
 import Linglib.Studies.AckermanMalouf2013
@@ -2248,7 +2249,6 @@ import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Semantics.Coordination.Defs
 import Linglib.Semantics.Coordination.Basic
 import Linglib.Semantics.Composition.Tree
