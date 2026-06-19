@@ -16,8 +16,8 @@ degree-domain constructors and epistemic threshold semantics.
 - `DirectedMeasure`: the bundled measure structure.
 - `DirectedMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
 - `DirectedMeasure.degreeProperty`: the degree property derived from
-  `direction` (`atLeastDeg` positive, `atMostDeg` negative); its maximal
-  informativity is characterized in `Semantics/Entailment/Extremum.lean`.
+  `direction` (`Comparison.ge.over` positive, `Comparison.le.over` negative); its
+  maximal informativity is characterized in `Semantics/Entailment/Extremum.lean`.
 - `DirectedMeasure.numeral`, `DirectedMeasure.adjective`: Kennedy-style
   numeral and gradable-adjective domains.
 
@@ -49,10 +49,10 @@ open Core.Order
 
     Common algebraic core of the `numeral`/`adjective` domain constructors and
     epistemic thresholds (`epistemicAsDirectedMeasure`, on
-    `DirectedMeasure ℚ (E × (W → Bool))`). The degree property (`atLeastDeg`
-    for positive, `atMostDeg` for negative) is derived from `direction`, not
-    stored — per [lassiter-goodman-2017], the binary direction choice is the
-    fundamental parameter. -/
+    `DirectedMeasure ℚ (E × (W → Bool))`). The degree property
+    (`Comparison.ge.over` for positive, `Comparison.le.over` for negative) is
+    derived from `direction`, not stored — per [lassiter-goodman-2017], the
+    binary direction choice is the fundamental parameter. -/
 structure DirectedMeasure (D : Type*) [LinearOrder D] (E : Type*) extends ComparativeScale D where
   /-- Measure function: maps entities to degrees on the scale -/
   μ : E → D
@@ -75,14 +75,14 @@ def IsLicensed (dm : DirectedMeasure D E) : Prop := dm.boundedness.IsLicensed
 instance (dm : DirectedMeasure D E) : Decidable dm.IsLicensed :=
   inferInstanceAs (Decidable dm.boundedness.IsLicensed)
 
-/-- The degree property derived from the measure's direction: `atLeastDeg`
-    for positive scales (tall, likely), `atMostDeg` for negative ones
+/-- The degree property derived from the measure's direction: `Comparison.ge.over`
+    for positive scales (tall, likely), `Comparison.le.over` for negative ones
     (short, unlikely). The derivation the structure docstring promises:
     `direction` is the stored parameter, the property follows. -/
-def degreeProperty (dm : DirectedMeasure D E) : D → E → Prop :=
+def degreeProperty (dm : DirectedMeasure D E) : D → Set E :=
   match dm.direction with
-  | .positive => atLeastDeg dm.μ
-  | .negative => atMostDeg dm.μ
+  | .positive => Comparison.ge.over dm.μ
+  | .negative => Comparison.le.over dm.μ
 
 end DirectedMeasure
 
@@ -102,7 +102,7 @@ variable {α : Type*} [LinearOrder α] {W : Type*}
 
 /-- [kennedy-2015] numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
-    Type-shift to exact = MIP applied to atLeastDeg. -/
+    Type-shift to exact = MIP applied to `Comparison.ge.over`. -/
 def numeral (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .closed, μ := μ }
 

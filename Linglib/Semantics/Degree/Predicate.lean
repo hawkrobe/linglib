@@ -9,21 +9,22 @@ import Linglib.Core.Order.Comparison
 # Core/Scales/Predicate.lean — degree predicates + monotonicity
 [fox-2007] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010] [partee-1987]
 
-Predicate transformers and degree-relative comparison primitives, parameterized
-by a measure function `μ : W → α`:
+Predicate transformers over a measure function `μ : W → α`:
 
 - `IsUpwardMonotone` / `IsDownwardMonotone` / `IsConstant` / `AdmitsOptimum`
-- `eqDeg` / `atLeastDeg` / `moreThanDeg` / `atMostDeg` / `lessThanDeg` (Fox 2007 §2)
-- `relationalGQ` (unified Kennedy 2015 GQ denotation)
 - `typeLower` (Partee 1987 existential lowering)
-- Anti-Horn-scale lemmas (general)
+- monotonicity / anti-Horn-scale lemmas about the `Core.Order.Comparison.over`
+  degree predicates (general)
+
+The five degree predicates ("exactly", "at least", "more than", "at most",
+"less than") are `Core.Order.Comparison.{eq,ge,gt,le,lt}.over μ` directly: the
+reified `Core.Order.Comparison` IS the canonical scale-comparison primitive, so
+there is no separate named family. `c.over μ n` is a `Set W`; `w ∈ c.over μ n ↔
+c.rel (μ w) n` (`Comparison.mem_over`), and `c.rel` unfolds to the order
+relation per case.
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
-
-`relationalGQ` stays here as the canonical scale-comparison primitive: it is
-domain-general (numerals, measure phrases, and gradable comparatives all reduce
-to it), and the reified `Core.Order.Comparison` interprets into it.
 -/
 
 namespace Semantics.Degree
@@ -118,55 +119,37 @@ theorem open_notLicensed : ¬ Boundedness.open_.IsLicensed := id
 -- § 6. Degree Properties ([fox-2007] §2)
 -- ════════════════════════════════════════════════════
 
-/-! ### Degree properties for comparison relations
+/-! ### Degree properties as `Comparison.over`
 
-Five degree properties covering all comparison relations, parameterized by
-a measure function `μ : W → α`. These are the building blocks for the named
-numeral meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree
-question semantics.
+The five degree predicates covering all comparison relations are
+`Core.Order.Comparison.{eq,ge,gt,le,lt}.over μ` directly — there is no separate
+named family. `c.over μ d : Set W`, with `w ∈ c.over μ d ↔ c.rel (μ w) d`
+(`Comparison.mem_over`). These are the building blocks for the named numeral
+meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree question
+semantics.
 
-- `atLeastDeg`: closed `≥`, always has max⊨
-- `moreThanDeg`: open `>`, fails on dense scales
-- `eqDeg`: equality `=`, trivially has max⊨
-- `atMostDeg`: closed `≤`
-- `lessThanDeg`: open `<`
+- `Comparison.ge.over μ`: closed `≥`, always has max⊨
+- `Comparison.gt.over μ`: open `>`, fails on dense scales
+- `Comparison.eq.over μ`: equality `=`, trivially has max⊨
+- `Comparison.le.over μ`: closed `≤`
+- `Comparison.lt.over μ`: open `<`
 
 The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
 have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
 This is the UDM prediction ([fox-2007] §2). -/
 
-/-- Degree property for "exactly d": the measure at w equals d. -/
-abbrev eqDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  Comparison.eq.over μ
-
-/-- Degree property for "at least d": the measure at w meets or exceeds d. -/
-abbrev atLeastDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  Comparison.ge.over μ
-
-/-- Degree property for "more than d": the measure strictly exceeds d. -/
-abbrev moreThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  Comparison.gt.over μ
-
-/-- Degree property for "at most d": the measure at w is at most d. -/
-abbrev atMostDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  Comparison.le.over μ
-
-/-- Degree property for "less than d": the measure is strictly less than d. -/
-abbrev lessThanDeg {W : Type*} (μ : W → α) : α → W → Prop :=
-  Comparison.lt.over μ
-
 /-- "At least" is downward monotone: weaker thresholds are easier to satisfy. -/
-theorem atLeastDeg_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (atLeastDeg μ) :=
+theorem geOver_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (Comparison.ge.over μ) :=
   fun _ _ hxy _ hy => le_trans hxy hy
 
 /-- "More than" is downward monotone: weaker thresholds are easier to satisfy. -/
-theorem moreThanDeg_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (moreThanDeg μ) :=
+theorem gtOver_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (Comparison.gt.over μ) :=
   fun _ _ hxy _ hy => lt_of_le_of_lt hxy hy
 
 /-- On ℕ, `>` collapses to `≥` with successor: "more than m" ↔ "at least m+1".
     This is the discrete equivalence that density breaks. -/
-theorem moreThan_eq_atLeast_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
-    moreThanDeg μ m w ↔ atLeastDeg μ (m + 1) w :=
+theorem gtOver_eq_geOver_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
+    w ∈ Comparison.gt.over μ m ↔ w ∈ Comparison.ge.over μ (m + 1) :=
   Iff.rfl
 
 /-! IsMaxInf-flavored consequences of these degree predicates
@@ -184,7 +167,7 @@ theorem moreThan_eq_atLeast_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) 
 [partee-1987]'s BE + iota + existential closure, applied to a degree
 property: from an exact reading `exact d w` ("the measure equals `d`"),
 existentially close to `∃ d' ≥ d, exact d' w`. On any reflexive linear
-order this collapses to `atLeastDeg μ d w` — witness `d' := μ w`.
+order this collapses to `Comparison.ge.over μ d w` — witness `d' := μ w`.
 
 This is the formal content of [kennedy-2015]'s "de-Fregean" derivation
 of the lower-bound numeral reading from the exact reading. The collapse
@@ -196,108 +179,32 @@ generalizes Numeral type-shifting to arbitrary scales. -/
 def typeLower {W : Type*} (exact : α → W → Prop) (d : α) (w : W) : Prop :=
   ∃ d', d' ≥ d ∧ exact d' w
 
-/-- **Type-shift collapse**: `typeLower (eqDeg μ) = atLeastDeg μ`. -/
-theorem typeLower_eqDeg_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
-    typeLower (eqDeg μ) d w ↔ atLeastDeg μ d w := by
+/-- **Type-shift collapse**: existentially lowering the exact property
+    `Comparison.eq.over μ` yields the lower-bound property `Comparison.ge.over μ`. -/
+theorem typeLower_eqOver_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
+    typeLower (fun d' w => w ∈ Comparison.eq.over μ d') d w ↔ w ∈ Comparison.ge.over μ d := by
+  simp only [Comparison.mem_over, Comparison.rel, typeLower, ge_iff_le]
   refine ⟨?_, fun h => ⟨μ w, h, rfl⟩⟩
   rintro ⟨d', hd', heq⟩
-  -- heq : eqDeg μ d' w  unfolds to  μ w = d'
-  have heq' : μ w = d' := heq
-  show μ w ≥ d
-  exact heq'.symm ▸ hd'
-
-instance atLeastDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
-    (d : α) (w : W) : Decidable (atLeastDeg μ d w) :=
-  inferInstanceAs (Decidable (d ≤ μ w))
-
-instance atMostDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
-    (d : α) (w : W) : Decidable (atMostDeg μ d w) :=
-  inferInstanceAs (Decidable (μ w ≤ d))
-
-instance moreThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
-    (d : α) (w : W) : Decidable (moreThanDeg μ d w) :=
-  inferInstanceAs (Decidable (d < μ w))
-
-instance lessThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
-    (d : α) (w : W) : Decidable (lessThanDeg μ d w) :=
-  inferInstanceAs (Decidable (μ w < d))
-
-instance eqDeg.decidable {W : Type*} [DecidableEq α] (μ : W → α)
-    (d : α) (w : W) : Decidable (eqDeg μ d w) :=
-  inferInstanceAs (Decidable (μ w = d))
-
-instance typeLower_eqDeg.decidable {W : Type*} (μ : W → α) (d : α) (w : W) :
-    Decidable (typeLower (eqDeg μ) d w) :=
-  decidable_of_iff _ (typeLower_eqDeg_iff μ d w).symm
+  exact heq.symm ▸ hd'
 
 -- ════════════════════════════════════════════════════
 -- § 6d. [kennedy-2015]'s De-Fregean GQ
 -- ════════════════════════════════════════════════════
 
-/-! ## A unified GQ denotation parameterized by the comparison relation
+/-! ## A unified GQ denotation via `Core.Order.Comparison`
 
 [kennedy-2015] proposes a single denotation for modified and
 unmodified numerals: `λP. max{d | #P ≥ d} REL m`, where the only parameter
 distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
 
-Specialised to a property of the form `atLeastDeg μ`, the maximum degree
-satisfying `atLeastDeg μ d w` is `μ w` itself, so Kennedy's denotation
-collapses to `rel (μ w) m` — captured here as `relationalGQ rel μ m w`.
-
-The five existing degree properties (`eqDeg`, `atLeastDeg`, `moreThanDeg`,
-`atMostDeg`, `lessThanDeg`) are definitionally `relationalGQ` instantiated at
-the corresponding relation. The Class A vs Class B distinction
-([geurts-nouwen-2007], [nouwen-2010]) collapses to a structural
-property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
-
-This is the canonical comparison primitive of the scale substrate; the reified
-`Core.Order.Comparison` (in `Comparison.lean`) selects which `rel` to use. -/
-
-/-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
-    properties are definitionally equal to instantiations of this. -/
-def relationalGQ {W : Type*} (rel : α → α → Prop) (μ : W → α) (d : α) (w : W) : Prop :=
-  rel (μ w) d
-
-/-- Specialisation to `(· = ·)` recovers `eqDeg`. -/
-theorem relationalGQ_eq_eqDeg {W : Type*} (μ : W → α) :
-    relationalGQ (· = ·) μ = eqDeg μ := rfl
-
-/-- Specialisation to `(· ≥ ·)` recovers `atLeastDeg`. -/
-theorem relationalGQ_ge_eq_atLeastDeg {W : Type*} (μ : W → α) :
-    relationalGQ (· ≥ ·) μ = atLeastDeg μ := rfl
-
-/-- Specialisation to `(· > ·)` recovers `moreThanDeg`. -/
-theorem relationalGQ_gt_eq_moreThanDeg {W : Type*} (μ : W → α) :
-    relationalGQ (· > ·) μ = moreThanDeg μ := rfl
-
-/-- Specialisation to `(· ≤ ·)` recovers `atMostDeg`. -/
-theorem relationalGQ_le_eq_atMostDeg {W : Type*} (μ : W → α) :
-    relationalGQ (· ≤ ·) μ = atMostDeg μ := rfl
-
-/-- Specialisation to `(· < ·)` recovers `lessThanDeg`. -/
-theorem relationalGQ_lt_eq_lessThanDeg {W : Type*} (μ : W → α) :
-    relationalGQ (· < ·) μ = lessThanDeg μ := rfl
-
-omit [LinearOrder α] in
-/-- **Class B inclusion at the boundary** (general). If `rel` is reflexive,
-    Kennedy's GQ holds at any world `w` whose measure equals the boundary `d`.
-    Specialised to numerals: "at least 3" / "at most 3" hold at `w = 3`. -/
-theorem relationalGQ_refl_at_boundary {W : Type*} {rel : α → α → Prop}
-    [Std.Refl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
-    relationalGQ rel μ d w := by
-  show rel (μ w) d
-  rw [h]; exact Std.Refl.refl _
-
-omit [LinearOrder α] in
-/-- **Class A exclusion at the boundary** (general). If `rel` is irreflexive,
-    Kennedy's GQ fails at any world `w` whose measure equals the boundary `d`.
-    Specialised to numerals: "more than 3" / "fewer than 3" fail at `w = 3`. -/
-theorem relationalGQ_irrefl_at_boundary {W : Type*} {rel : α → α → Prop}
-    [Std.Irrefl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
-    ¬ relationalGQ rel μ d w := by
-  intro hk
-  have hdd : rel d d := h ▸ (hk : rel (μ w) d)
-  exact (Std.Irrefl.irrefl (r := rel) d) hdd
+Specialised to a property of the form `Comparison.ge.over μ`, the maximum degree
+satisfying `Comparison.ge.over μ d w` is `μ w` itself, so Kennedy's denotation
+collapses to `c.rel (μ w) m` — i.e. `w ∈ c.over μ m` (`Comparison.mem_over`).
+The reified `Core.Order.Comparison` (in `Comparison.lean`) IS this canonical
+comparison primitive; it selects which `rel`/`interval` to use, and the Class
+A vs Class B distinction ([geurts-nouwen-2007], [nouwen-2010]) is its
+`Comparison.boundary_mem` (non-strict comparisons keep the endpoint). -/
 
 -- ════════════════════════════════════════════════════
 -- § 6e. Anti-Horn-Scale Lemmas (general)
@@ -313,53 +220,62 @@ downward monotonicity. Kennedy's unified GQ accommodates both modifier
 directions without needing a Horn scale at all.
 
 The lemmas below state the failure-of-monotonicity and weakness-vs-exact
-results purely in terms of `eqDeg` / `atLeastDeg` / `moreThanDeg` —
-independent of any specific scale. The Nat-specific results in
-`Semantics/Numerals/Basic.lean` are immediate corollaries. -/
+results purely in terms of `Comparison.{eq,ge,gt}.over` — independent of any
+specific scale. The Nat-specific results in `Semantics/Numerals/Basic.lean`
+are immediate corollaries. -/
 
 /-- "More than `d`" and "exactly `d`" are disjoint (general). -/
-theorem moreThanDeg_disjoint_eqDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
-    ¬ (eqDeg μ d w ∧ moreThanDeg μ d w) := by
+theorem gtOver_disjoint_eqOver {W : Type*} (μ : W → α) (d : α) (w : W) :
+    ¬ (w ∈ Comparison.eq.over μ d ∧ w ∈ Comparison.gt.over μ d) := by
+  simp only [Comparison.mem_over, Comparison.rel, gt_iff_lt]
   rintro ⟨h₁, h₂⟩
   exact lt_irrefl d (h₁ ▸ h₂)
 
 /-- "Less than `d`" and "exactly `d`" are disjoint (general). -/
-theorem lessThanDeg_disjoint_eqDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
-    ¬ (eqDeg μ d w ∧ lessThanDeg μ d w) := by
+theorem ltOver_disjoint_eqOver {W : Type*} (μ : W → α) (d : α) (w : W) :
+    ¬ (w ∈ Comparison.eq.over μ d ∧ w ∈ Comparison.lt.over μ d) := by
+  simp only [Comparison.mem_over, Comparison.rel]
   rintro ⟨h₁, h₂⟩
   exact lt_irrefl d (h₁ ▸ h₂)
 
 /-- Bare exact meaning entails "at least" (general half of Class B inclusion). -/
-theorem eqDeg_imp_atLeastDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
-    eqDeg μ d w → atLeastDeg μ d w := fun h => h ▸ le_refl _
+theorem eqOver_imp_geOver {W : Type*} (μ : W → α) (d : α) (w : W) :
+    w ∈ Comparison.eq.over μ d → w ∈ Comparison.ge.over μ d := by
+  simp only [Comparison.mem_over, Comparison.rel, ge_iff_le]
+  exact fun h => h ▸ le_refl _
 
 /-- Bare exact meaning entails "at most" (general; symmetric to above). -/
-theorem eqDeg_imp_atMostDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
-    eqDeg μ d w → atMostDeg μ d w := fun h => h ▸ le_refl _
+theorem eqOver_imp_leOver {W : Type*} (μ : W → α) (d : α) (w : W) :
+    w ∈ Comparison.eq.over μ d → w ∈ Comparison.le.over μ d := by
+  simp only [Comparison.mem_over, Comparison.rel]
+  exact fun h => h ▸ le_refl _
 
 /-- "At least `d`" is strictly weaker than "exactly `d`" (general). Given a
     witness world `w` with `μ w = d'` where `d < d'`, "at least `d`" holds
     but "exactly `d`" fails. -/
-theorem atLeastDeg_strictly_weaker_than_eqDeg {W : Type*} (μ : W → α)
+theorem geOver_strictly_weaker_than_eqOver {W : Type*} (μ : W → α)
     {d d' : α} (hlt : d < d') {w : W} (hμ : μ w = d') :
-    atLeastDeg μ d w ∧ ¬ eqDeg μ d w := by
+    w ∈ Comparison.ge.over μ d ∧ w ∉ Comparison.eq.over μ d := by
+  simp only [Comparison.mem_over, Comparison.rel, ge_iff_le]
   refine ⟨?_, ?_⟩
-  · show μ w ≥ d; rw [hμ]; exact le_of_lt hlt
-  · show ¬ μ w = d; rw [hμ]; exact ne_of_gt hlt
+  · rw [hμ]; exact le_of_lt hlt
+  · rw [hμ]; exact ne_of_gt hlt
 
-/-- Exact `eqDeg` is **not upward-monotone** (general). Given two distinct
+/-- Exact equality is **not upward-monotone** (general). Given two distinct
     boundary values `d ≤ d'` and a witness world with `μ w = d`, the universal
     "if exact at `d` then exact at `d'`" fails — `μ w` cannot equal both. -/
-theorem eqDeg_not_upward_monotone {W : Type*} (μ : W → α)
+theorem eqOver_not_upward_monotone {W : Type*} (μ : W → α)
     {d d' : α} (hne : d ≠ d') (hle : d ≤ d') {w : W} (hμ : μ w = d) :
-    ¬ ∀ x y, x ≤ y → eqDeg μ x w → eqDeg μ y w := by
+    ¬ ∀ x y, x ≤ y → w ∈ Comparison.eq.over μ x → w ∈ Comparison.eq.over μ y := by
+  simp only [Comparison.mem_over, Comparison.rel]
   intro h
   exact hne ((h d d' hle hμ).symm.trans hμ).symm
 
-/-- Exact `eqDeg` is **not downward-monotone** (general). Symmetric to above. -/
-theorem eqDeg_not_downward_monotone {W : Type*} (μ : W → α)
+/-- Exact equality is **not downward-monotone** (general). Symmetric to above. -/
+theorem eqOver_not_downward_monotone {W : Type*} (μ : W → α)
     {d d' : α} (hne : d ≠ d') (hle : d' ≤ d) {w : W} (hμ : μ w = d) :
-    ¬ ∀ x y, y ≤ x → eqDeg μ x w → eqDeg μ y w := by
+    ¬ ∀ x y, y ≤ x → w ∈ Comparison.eq.over μ x → w ∈ Comparison.eq.over μ y := by
+  simp only [Comparison.mem_over, Comparison.rel]
   intro h
   exact hne ((h d d' hle hμ).symm.trans hμ).symm
 
@@ -377,10 +293,10 @@ theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ 
 -- ════════════════════════════════════════════════════
 
 /-- "At most" is upward monotone: larger thresholds are easier to satisfy. -/
-theorem atMostDeg_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (atMostDeg μ) :=
+theorem leOver_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (Comparison.le.over μ) :=
   fun _ _ hxy _ hy => le_trans hy hxy
 
-/-! IsMaxInf-flavored consequences of `atMostDeg` (`atMost_hasMaxInf`,
+/-! IsMaxInf-flavored consequences of "at most" (`atMost_hasMaxInf`,
     `isMaxInf_atMost_iff_eq`) live in
     `Semantics/Entailment/Extremum.lean`. -/
 

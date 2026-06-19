@@ -317,7 +317,7 @@ realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
 realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
 nouns realize only n ∈ ℕ. -/
 
-open Semantics.Degree (atLeastDeg)
+open Core.Order (Comparison)
 open Entailment (IsMaxInf HasMaxInf)
 
 /-- For a measure function μ on ℚ: when n is realized by some entity, the
@@ -328,14 +328,14 @@ Bridges Scontras's exact measure-term meaning with the `max{n | ...} = n`
 form of Kennedy's de-Fregean analysis. -/
 theorem scontras_kennedy_dense {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E)
     (hHit : ∃ e, μ.apply e = n) :
-    IsMaxInf (atLeastDeg μ.apply) n x ↔ μ.apply x = n :=
+    IsMaxInf (Comparison.ge.over μ.apply) n x ↔ μ.apply x = n :=
   Entailment.isMaxInf_atLeast_of_hit μ.apply n x hHit
 
 /-- For a cardinality function on ℕ: same point-realization equivalence.
 *Formalization-internal observation* — see the prose above. -/
 theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
     (hHit : ∃ e, cardFn e = n) :
-    IsMaxInf (atLeastDeg cardFn) n x ↔ cardFn x = n :=
+    IsMaxInf (Comparison.ge.over cardFn) n x ↔ cardFn x = n :=
   Entailment.isMaxInf_atLeast_of_hit cardFn n x hHit
 
 -- ============================================================================
