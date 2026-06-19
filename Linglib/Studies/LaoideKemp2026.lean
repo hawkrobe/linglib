@@ -802,6 +802,113 @@ noncomputable def prefixAssoc (X : AR (TierSpec Segment) (SegSpec CVKind)) :
       tensorLeft X ⋙ tensorLeft historicExponentAR :=
   tensorLeftTensor historicExponentAR X
 
+/-! ## §11.5 The morphism-functor frontier: why lenition is precedence-sensitive
+
+Layer 2 modelled morpheme *prefixing* as the functor `tensorLeft`. The
+deeper question is whether a phonological *process* — `{L}`-lenition — is
+a functor on the autosegmental category, acting on morphisms and not just
+objects. At the graph level, lenition is `delinkInitial`: erase the
+association lines to the leftmost (word-initial) skeletal slot.
+
+The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
+the full category `Graph α β`: a label-preserving reindexing
+(`Graph.Hom`) can move a non-initial element into initial position, after
+which there is *no* morphism between the delinked images at all
+(`delinkInitial_not_functorial`). But over the morphisms that **preserve
+which element is initial** — `fLower j = 0 → j = 0`, satisfied by every
+precedence-preserving `SubgraphEmbeds` translation — it lifts to a genuine
+functor (`delinkInitial_map`, with `delinkInitial_map_id` /
+`delinkInitial_map_comp`). This is the categorical content of the
+linguistic fact that lenition targets the *word-initial* consonant: the
+process respects exactly the structural maps that preserve precedence. -/
+
+section Frontier
+variable {α β : Type*}
+
+/-- The graph-level model of `{L}`-lenition: erase the association lines
+    to the leftmost (slot-0) skeletal position. -/
+def delinkInitial (g : Graph α β) : Graph α β :=
+  { g with links := g.links.filter (fun p => p.snd ≠ 0) }
+
+/-- **`delinkInitial` is functorial over precedence-preserving morphisms.**
+    A `Graph.Hom` that *reflects slot 0* (never maps a non-initial slot to
+    slot 0) lifts to a morphism between the delinked graphs, with the same
+    index maps. Precedence-preserving `SubgraphEmbeds` translations satisfy
+    the hypothesis: a translation sends slot `j` to `j + δ`, which is `0`
+    only when `j = 0`. -/
+def delinkInitial_map {A B : Graph α β} (f : Graph.Hom A B)
+    (hf : ∀ j, f.fLower j = 0 → j = 0) :
+    Graph.Hom (delinkInitial A) (delinkInitial B) where
+  fUpper := f.fUpper
+  fLower := f.fLower
+  upper_label := f.upper_label
+  lower_label := f.lower_label
+  links_preserve := by
+    intro p hp
+    simp only [delinkInitial, Finset.mem_filter] at hp ⊢
+    exact ⟨f.links_preserve p hp.1, fun h0 => hp.2 (hf p.snd h0)⟩
+  upper_canonical := f.upper_canonical
+  lower_canonical := f.lower_canonical
+
+/-- Functor law: `delinkInitial_map` preserves identities. -/
+theorem delinkInitial_map_id (A : Graph α β) :
+    delinkInitial_map (Graph.Hom.id A) (fun _ h => h) = Graph.Hom.id (delinkInitial A) := by
+  apply Graph.Hom.ext <;> rfl
+
+/-- Functor law: `delinkInitial_map` preserves composition. -/
+theorem delinkInitial_map_comp {A B C : Graph α β} (f : Graph.Hom A B) (g : Graph.Hom B C)
+    (hf : ∀ j, f.fLower j = 0 → j = 0) (hg : ∀ j, g.fLower j = 0 → j = 0)
+    (hfg : ∀ j, (f.comp g).fLower j = 0 → j = 0) :
+    delinkInitial_map (f.comp g) hfg =
+      (delinkInitial_map f hf).comp (delinkInitial_map g hg) := by
+  apply Graph.Hom.ext <;> rfl
+
+end Frontier
+
+/-! ### The negative counterexample -/
+
+private def negA : Graph ℕ ℕ := ⟨[0], [0, 1], {(0, 1)}⟩
+private def negB : Graph ℕ ℕ := ⟨[0], [1, 0], {(0, 0)}⟩
+
+/-- A label-preserving reindexing that **swaps** the two skeletal slots,
+    moving the slot-1 element into initial position. A valid `Graph.Hom`
+    that does *not* reflect slot 0 (`fLower 1 = 0`). -/
+private def negSwap : Graph.Hom negA negB where
+  fUpper := _root_.id
+  fLower := fun j => if j = 0 then 1 else if j = 1 then 0 else j
+  upper_label := by decide
+  lower_label := by decide
+  links_preserve := by decide
+  upper_canonical := by
+    intro i hi
+    simp only [negA, negB, List.length_cons, List.length_nil, id_eq] at hi ⊢
+    omega
+  lower_canonical := by
+    intro j hj
+    simp only [negA, List.length_cons, List.length_nil] at hj
+    show (if j = 0 then 1 else if j = 1 then 0 else j) =
+      j - negA.lower.length + negB.lower.length
+    rw [if_neg (by omega : j ≠ 0), if_neg (by omega : j ≠ 1)]
+    simp only [negA, negB, List.length_cons, List.length_nil]
+    omega
+
+/-- **`delinkInitial` is not a functor on the full category.** `negSwap`
+    is a morphism `negA → negB`, yet after delinking there is *no* morphism
+    `delinkInitial negA → delinkInitial negB` at all: the surviving slot-1
+    link of `negA` has been moved onto slot 0 of `negB`, which delinking
+    erases, so link-preservation becomes impossible. A functor would have
+    to supply such a morphism; none exists. The positive
+    `delinkInitial_map` shows the obstruction is exactly the failure to
+    preserve precedence. -/
+theorem delinkInitial_not_functorial :
+    ∃ (A B : Graph ℕ ℕ) (_ : Graph.Hom A B),
+      IsEmpty (Graph.Hom (delinkInitial A) (delinkInitial B)) :=
+  ⟨negA, negB, negSwap, ⟨fun g => by
+    have h := g.links_preserve (0, 1) (by decide)
+    have hempty : (delinkInitial negB).links = ∅ := by decide
+    rw [hempty] at h
+    simp at h⟩⟩
+
 /-! ## §12 The strict-modularity payoff
 
 The phonological analysis above is *strictly modular* in the sense
