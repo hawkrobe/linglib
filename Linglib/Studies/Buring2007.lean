@@ -88,7 +88,7 @@ open Semantics.Degree (posExt negExt crossExtentInclusion crossExtent_always_fal
 theorem little_positive_to_negative {Entity D : Type*}
     [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) :
-    (negativeInterval μ x).lower = (Semantics.Degree.Intervals.positiveInterval μ x).upper := by
+    (negativeInterval μ x).fst = (Semantics.Degree.Intervals.positiveInterval μ x).snd := by
   simp [negativeInterval, Semantics.Degree.Intervals.positiveInterval]
 
 -- ════════════════════════════════════════════════════
