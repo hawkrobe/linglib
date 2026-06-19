@@ -491,18 +491,18 @@ theorem bridge_lahiri_glad_settle_overgeneration :
 
 /-- **Hoeksema's S-comparative is anti-additive, hence trivially Strawson-DE.**
     [hoeksema-1983] proves the S-comparative anti-additive
-    (`Semantics.Degree.clausalComparison_isAntiAdditive`); the
+    (`Semantics.Degree.gtOverSet_isAntiAdditive`); the
     inheritance chain AA → DE → Strawson-DE makes the bridge automatic.
 
     This places the S-comparative in the same Strawson-DE class as
     [von-fintel-1999]'s recalcitrants, but with the additional
     classical AA backing — meaning S-comparatives license *strong* NPIs
     too (whereas vF's `only` only licenses weak NPIs). -/
-theorem bridge_hoeksema_clausalComparison_strawsonDE
+theorem bridge_hoeksema_gtOverSet_strawsonDE
     {Entity D : Type*} [Preorder D] (μ : Entity → D)
     (defined : Set D → Entity → Prop) :
-    IsStrawsonDE (Semantics.Degree.clausalComparison μ) defined :=
+    IsStrawsonDE (Core.Order.Comparison.gt.overSet μ) defined :=
   antitone_implies_strawsonDE _
-    (Semantics.Degree.clausalComparison_isAntiAdditive μ).antitone defined
+    (Semantics.Degree.gtOverSet_isAntiAdditive μ).antitone defined
 
 end VonFintel1999

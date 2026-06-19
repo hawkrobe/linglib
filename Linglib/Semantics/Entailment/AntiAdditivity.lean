@@ -232,7 +232,7 @@ end Bridges
 section ToyWitnesses
 
 /-- Any function of the form `fun X y => ∀ x ∈ X, P x y` is anti-additive in
-`X`. `npComparative` and `clausalComparison` ([hoeksema-1983]) instantiate this
+`X`. `npComparative` and `Comparison.gt.overSet` ([hoeksema-1983]) instantiate this
 with `P x y := μ x < μ y` and `P d y := d < μ y` respectively. -/
 theorem isAntiAdditive_forall_mem {α β : Type*} (P : α → β → Prop) :
     IsAntiAdditive (fun (X : Set α) (y : β) => ∀ x ∈ X, P x y) := by
