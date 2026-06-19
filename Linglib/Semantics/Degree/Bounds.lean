@@ -3,6 +3,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Degree.Predicate
 
 /-!
@@ -17,8 +18,8 @@ Two clusters of theorems:
    `NoMinOrder`) interact with monotonicity to admit/block optima.
 
 2. **Order-sensitive maximality** (§6b of legacy Scale.lean):
-   `maxOnScale R X`, `isAmbidirectional` — Rett 2026's relation-parameterized
-   MAX operator + ambidirectionality predicate.
+   `maxOnScale c X`, `isAmbidirectional` — Rett 2026's MAX operator (the
+   dominance direction is the reified `Comparison`) + ambidirectionality predicate.
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
@@ -124,24 +125,27 @@ theorem not_noMaxOrder_of_orderTop {β : Type*} [Preorder β] [OrderTop β] :
 
 /-! ### Scale-sensitive maximality operator
 
-[rett-2026]: MAX_R(X) picks the element(s)
-of X that R-dominate all other members. For the `<` scale this is the GLB
-(earliest / smallest), for `>` the LUB (latest / largest). The same operator
+[rett-2026]: MAX_c(X) picks the element(s)
+of X that c-dominate all other members. For the `<` scale (`.lt`) this is the GLB
+(earliest / smallest), for `>` (`.gt`) the LUB (latest / largest). The same operator
 underlies both temporal connectives (*before*/*after*) and degree comparatives.
 
 - Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
 /-- Order-sensitive maximality ([rett-2026], def. 1):
-    MAX_R(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → R x x' }.
-    Domain-general over any relation R and set X. -/
-def maxOnScale {α : Type*} (R : α → α → Prop) (X : Set α) : Set α :=
-  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → R x x' }
+    MAX_c(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → c.rel x x' }.
+    The dominance relation is the reified `Core.Order.Comparison` rather than a
+    lawless `R : α → α → Prop` — removing the "fake generality" of an unconstrained
+    relation parameter. Each concrete `c` (`.lt`, `.gt`, `.ge`, …) names an
+    order relation via `Comparison.rel`. -/
+def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
+  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.rel x x' }
 
-/-- MAX on a singleton is that singleton: MAX_R({x}) = {x}.
-    The universal quantifier is vacuously satisfied. -/
-theorem maxOnScale_singleton {α : Type*} (R : α → α → Prop) (x : α) :
-    maxOnScale R {x} = {x} := by
+/-- MAX on a singleton is that singleton: MAX_c({x}) = {x}.
+    The universal quantifier is vacuously satisfied, so this holds for any `c`. -/
+theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
+    maxOnScale c {x} = {x} := by
   ext y
   simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
   constructor
@@ -154,9 +158,9 @@ theorem maxOnScale_singleton {α : Type*} (R : α → α → Prop) (x : α) :
     Dual: MAX₍>₎ on the same interval is `{f}`. -/
 theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
-    maxOnScale (· < ·) { x : α | s ≤ x ∧ x ≤ f } = {s} := by
+    maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
   ext x
-  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨hxs, _⟩, hdom⟩
     by_contra hne
@@ -171,9 +175,9 @@ theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     The maximum element R-dominates all others on the `>` scale. -/
 theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
-    maxOnScale (· > ·) { x : α | s ≤ x ∧ x ≤ f } = {f} := by
+    maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by
   ext x
-  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨_, hxf⟩, hdom⟩
     by_contra hne
@@ -193,17 +197,17 @@ def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
 
 
-/-- **Bridge**: `maxOnScale (· ≥ ·)` applied to the "at least" degree set
+/-- **Bridge**: `maxOnScale .ge` applied to the "at least" degree set
     `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
     value. This connects the relational MAX to `IsMaxInf`.
 
-    The convention: `maxOnScale R X` picks elements x ∈ X with `R x x'` for
-    all other x'. With `R = (· ≥ ·)`, this picks elements ≥ all others,
+    The convention: `maxOnScale c X` picks elements x ∈ X with `c.rel x x'` for
+    all other x'. With `c = .ge`, this picks elements ≥ all others,
     i.e., the maximum. -/
 theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
-    maxOnScale (· ≥ ·) { d : α | d ≤ μ w } = { μ w } := by
+    maxOnScale .ge { d : α | d ≤ μ w } = { μ w } := by
   ext x
-  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff, ge_iff_le]
+  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff, ge_iff_le]
   constructor
   · rintro ⟨hx, hdom⟩
     by_contra hne
@@ -216,7 +220,7 @@ theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
 /-- MAX₍≥₎ on {d | d ≤ b} is {b}. Corollary of `maxOnScale_atLeast_singleton`
     with `μ = id`. Used by the comparative boundary theorems. -/
 theorem maxOnScale_ge_atMost (b : α) :
-    maxOnScale (· ≥ ·) {d | d ≤ b} = {b} :=
+    maxOnScale .ge {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
 
 end Semantics.Degree

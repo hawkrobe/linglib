@@ -99,21 +99,6 @@ end GranularityFunction
 
 variable {D : Type*} [LinearOrder D]
 
-/-- Equative at granularity interval: "as Adj as d_c".
-
-    Paper eq. (45): ⟦as...as d_c⟧^g = λGλx.∃d[d > inf(g(d_c)) ∧ G(d)(x)].
-
-    For upward-monotone G (e.g., tall, where G(d)(x) iff μ(x) ≥ d),
-    the existential reduces to μ_x > inf(g(d_c)). -/
-def eqAt (gi : GranInterval D) (μ_x : D) : Prop := μ_x > gi.lo
-
-/-- Comparative at granularity interval: "Adj-er than d_c".
-
-    Paper eq. (49): ⟦er/more than d_c⟧^g = λGλx.∃d[d > sup(g(d_c)) ∧ G(d)(x)].
-
-    For upward-monotone G, the existential reduces to μ_x > sup(g(d_c)). -/
-def compAt (gi : GranInterval D) (μ_x : D) : Prop := μ_x > gi.hi
-
 -- ════════════════════════════════════════════════════
 -- § 2. Entailment Reversal
 -- ════════════════════════════════════════════════════
@@ -133,20 +118,24 @@ The proofs are one-liners: transitivity of `<` and `≤`. -/
 
 /-- Equatives: finer grain (larger lo) entails coarser grain (smaller lo).
 
+    The equative "as Adj as d_c" (eq. 45) at grain cell `gi`, for
+    upward-monotone G, reduces to `μ_x > gi.lo` (the cell's infimum).
     If μ_x exceeds the fine-grain infimum, it a fortiori exceeds the
     coarse-grain infimum (which is smaller). -/
 theorem eq_fine_entails_coarse (gi₁ gi₂ : GranInterval D)
     (hlo : gi₂.lo ≤ gi₁.lo)
-    (μ_x : D) (h : eqAt gi₁ μ_x) : eqAt gi₂ μ_x :=
+    (μ_x : D) (h : μ_x > gi₁.lo) : μ_x > gi₂.lo :=
   lt_of_le_of_lt hlo h
 
 /-- Comparatives: coarser grain (larger hi) entails finer grain (smaller hi).
 
+    The comparative "Adj-er than d_c" (eq. 49) at grain cell `gi`, for
+    upward-monotone G, reduces to `μ_x > gi.hi` (the cell's supremum).
     If μ_x exceeds the coarse-grain supremum, it a fortiori exceeds the
     fine-grain supremum (which is smaller). -/
 theorem comp_coarse_entails_fine (gi₁ gi₂ : GranInterval D)
     (hhi : gi₁.hi ≤ gi₂.hi)
-    (μ_x : D) (h : compAt gi₂ μ_x) : compAt gi₁ μ_x :=
+    (μ_x : D) (h : μ_x > gi₂.hi) : μ_x > gi₁.hi :=
   lt_of_le_of_lt hhi h
 
 -- ════════════════════════════════════════════════════

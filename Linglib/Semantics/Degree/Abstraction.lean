@@ -34,9 +34,9 @@ and intensional verbs.
 ## Order-Theoretic Foundations
 
 Heim's maximality operator `IsMaxDeg` is Mathlib's `IsGreatest`.
-The matrix predicate `λd. μ(a) ≥ d` and [kennedy-1999]'s
-`posExt μ a` are both the principal downset `Set.Iic (μ a)` — the
-same mathematical object arrived at from different linguistic
+Heim's matrix degree predicate `λd. μ(a) ≥ d` is [kennedy-1999]'s
+`posExt μ a` — the principal downset `Set.Iic (μ a)`, the same
+mathematical object arrived at from different linguistic
 motivations. The scope collapse theorems factor through the degree
 image `μ '' {x | R x}`, connecting to `gc_sSup_Iic` under
 `ConditionallyCompleteLattice`.
@@ -74,45 +74,29 @@ theorem isMaxDeg_iff_isGreatest {D : Type*} [LE D] (P : DegreePredicate D) (d : 
     IsMaxDeg P d ↔ IsGreatest {d' | P d'} d :=
   ⟨fun ⟨h1, h2⟩ => ⟨h1, h2⟩, fun ⟨h1, h2⟩ => ⟨h1, h2⟩⟩
 
-/-- The matrix degree predicate for "A is d-tall": λd. μ(A) ≥ d. -/
-def matrixPredicate {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (a : Entity) : DegreePredicate D :=
-  fun d => μ a ≥ d
-
 /-- The than-clause degree predicate for "B is d-tall": λd. μ(B) ≥ d. -/
 def thanClausePredicate {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) : DegreePredicate D :=
   fun d => μ b ≥ d
 
--- ─── Matrix Predicate = posExt = Iic ──────────────
+-- ─── posExt = Iic: Heim's matrix predicate ──────────
 --
--- Heim's matrix predicate and Kennedy's positive extent
--- are the same mathematical object — the principal downset
--- (Mathlib's Set.Iic):
+-- Heim's matrix degree predicate λd. μ(a) ≥ d and Kennedy's
+-- positive extent are the same mathematical object — the
+-- principal downset (Mathlib's Set.Iic):
 --
---   Heim:    matrixPredicate μ a = λd. μ(a) ≥ d
---   Kennedy: posExt μ a         = {d | d ≤ μ a}
---   = Set.Iic (μ a)
+--   [kennedy-1999]: posExt μ a = {d | d ≤ μ a} = Set.Iic (μ a)
+--
+-- so Heim's scope theory is stated directly on `posExt`.
 
-/-- Matrix predicate membership = `Set.Iic` membership. -/
-theorem matrixPredicate_mem_iff_Iic {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (a : Entity) (d : D) :
-    matrixPredicate μ a d ↔ d ∈ Set.Iic (μ a) := Iff.rfl
-
-/-- Matrix predicate membership = `posExt` membership
-    ([kennedy-1999]). -/
-theorem matrixPredicate_mem_iff_posExt {Entity D : Type*} [Preorder D]
-    (μ : Entity → D) (a : Entity) (d : D) :
-    matrixPredicate μ a d ↔ d ∈ posExt μ a := Iff.rfl
-
-/-- The maximum of a monotone predicate λd. μ(a) ≥ d is μ(a) itself.
+/-- The maximum of the positive extent λd. μ(a) ≥ d is μ(a) itself.
     This grounds the Heim–Kennedy equivalence: max{d: tall(a,d)} = μ(a).
 
     This is Mathlib's `isGreatest_Iic` — the greatest element of
     `{d | d ≤ μ(a)}` is `μ(a)` — specialized to degree semantics. -/
-theorem isMaxDeg_matrixPredicate {Entity D : Type*} [LinearOrder D]
+theorem isMaxDeg_posExt {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a : Entity) :
-    IsMaxDeg (matrixPredicate μ a) (μ a) :=
+    IsMaxDeg (posExt μ a) (μ a) :=
   (isMaxDeg_iff_isGreatest _ _).mpr isGreatest_Iic
 
 -- ════════════════════════════════════════════════════
@@ -131,11 +115,11 @@ def IsMonotoneAdj {Entity D : Type*} [Preorder D]
     (adj : D → Entity → Prop) : Prop :=
   ∀ (x : Entity) (d d' : D), adj d x → d' ≤ d → adj d' x
 
-/-- `matrixPredicate μ a` is always monotone (by construction). -/
-theorem matrixPredicate_monotone {Entity D : Type*} [Preorder D]
+/-- `posExt μ a` is always downward-closed (by construction). -/
+theorem posExt_downwardClosed {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) :
-    ∀ (d d' : D), matrixPredicate μ a d → d' ≤ d →
-      matrixPredicate μ a d' := by
+    ∀ (d d' : D), posExt μ a d → d' ≤ d →
+      posExt μ a d' := by
   intro d d' hd hle
   exact le_trans hle hd
 
@@ -304,9 +288,9 @@ theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
 --
 -- The antonymy biconditional (Extent.lean § 7) is the
 -- statement that posExt and negExt form an antitone Galois
--- connection on (Set D, ⊆). Since matrixPredicate = posExt,
--- Heim's scope theory is built on the same Galois connection
--- that grounds Kennedy's antonymy:
+-- connection on (Set D, ⊆). Heim's matrix degree predicate is
+-- `posExt`, so his scope theory is built on the same Galois
+-- connection that grounds Kennedy's antonymy:
 --
 --   posExt μ a ⊆ posExt μ b  ↔  negExt μ b ⊆ negExt μ a
 --                             ↔  μ a ≤ μ b

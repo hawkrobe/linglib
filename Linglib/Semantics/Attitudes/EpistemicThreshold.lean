@@ -41,7 +41,7 @@ against a threshold (Table 1(a)):
 The threshold semantics is structurally identical to the positive form of
 gradable adjectives:
 
-    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree/Basic.positiveSem)
+    ⟦tall⟧(x) = height(x) ≥ θ_tall (the ≥-threshold condition)
     ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of the same degree-threshold architecture: a measure
@@ -190,7 +190,7 @@ variable {E W : Type*}
     This is the single mechanism underlying all epistemic vocabulary.
     `believes`, `knows`, `certain`, `must`, `might` are all instances.
 
-    Structurally identical to `Degree.positiveSem μ θ x`: both are
+    Structurally identical to the degree-semantic ≥-threshold condition
     `measure(entity) ≥ threshold`. -/
 def meetsThreshold (cr : AgentCredence E W) (θ : ℚ)
     (a : E) (φ : (W → Bool)) : Prop :=
@@ -449,7 +449,7 @@ The structural analogy between adjective degree semantics ([kennedy-2007],
 [lassiter-goodman-2017]) and epistemic threshold semantics: both are
 instances of `μ(entity) ≥ θ`. The threshold semantics makes this precise:
 
-    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree.positiveSem)
+    ⟦tall⟧(x) = height(x) ≥ θ_tall (the ≥-threshold condition)
     ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of `μ(entity) ≥ θ`. The epistemic scale is the
@@ -492,15 +492,15 @@ def epistemicAsDirectedMeasure (cr : AgentCredence E W) (_entry : EpistemicEntry
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
 
-/-- The degree-threshold identity: `meetsThreshold` is `positiveSem`
-    instantiated on the epistemic scale.
+/-- The degree-threshold identity: `meetsThreshold` is the ≥-threshold
+    condition `θ ≤ μ(entity)` with credence as the measure function.
 
     This is the formal statement that epistemic threshold semantics IS
-    degree semantics with credence as the measure function. -/
-theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
+    degree semantics (the positive-form `Comparison.ge.over μ θ`
+    condition) with credence as the measure function. -/
+theorem meetsThreshold_eq_threshold (cr : AgentCredence E W) (θ : ℚ)
     (a : E) (φ : (W → Bool)) :
-    meetsThreshold cr θ a φ ↔
-    Semantics.Degree.positiveSem (fun (p : E × (W → Bool)) => cr p.1 p.2) θ (a, φ) := by
+    meetsThreshold cr θ a φ ↔ θ ≤ cr a φ := by
   rfl
 
 /-- The epistemic scale is licensed: closed → admits absolute standards.

@@ -165,15 +165,15 @@ def instTimes (worlds : Set W) (B : Set (W × T)) : Set T :=
 /-- `earliest` across alternatives: the earliest time at which B is
     instantiated in any world of `alt(w,t)`.
 
-    Uses `maxOnScale (· < ·)` which selects elements dominated by all others
+    Uses `maxOnScale .lt` which selects elements dominated by all others
     on the < ordering — i.e., the minimum / GLB. This is the same operator
     [rett-2020] uses for her MAX₍<₎. -/
 def earliestAlt (alt : HistAlt W T) (B : Set (W × T)) (w : W) (t : T) : Set T :=
-  maxOnScale (· < ·) (instTimes (alt w t) B)
+  maxOnScale .lt (instTimes (alt w t) B)
 
 /-- Membership in `earliestAlt` is exactly mathlib's `IsLeast` on the
     instantiation-times set: B&C's `earliest` operator is the least element
-    of `instTimes`, computed via `maxOnScale (· < ·)`. -/
+    of `instTimes`, computed via `maxOnScale .lt`. -/
 theorem mem_earliestAlt_iff_isLeast (alt : HistAlt W T) (B : Set (W × T))
     (w : W) (t te : T) :
     te ∈ earliestAlt alt B w t ↔ IsLeast (instTimes (alt w t) B) te := by

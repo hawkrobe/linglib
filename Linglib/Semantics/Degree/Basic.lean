@@ -3,15 +3,15 @@ import Linglib.Semantics.Degree.Defs
 /-!
 # Degree Semantics: Positive-Form Semantics
 
-Positive-form semantic operations on the types declared in `Defs.lean`,
-plus threshold-comparison predicates on the concrete `Degree max` /
-`Threshold max` carriers [kennedy-2007] [heim-2001]
-[kennedy-mcnally-2005]. Kennedy 2007's interpretive economy lives
-in the sibling `Kennedy.lean`.
+Threshold-comparison predicates on the concrete `Degree max` /
+`Threshold max` carriers declared in `Defs.lean` [kennedy-2007]
+[heim-2001] [kennedy-mcnally-2005]. The abstract positive-form
+predicate `μ(x) ≥ θ` is just `Comparison.ge.over μ θ` — used directly
+where needed. Kennedy 2007's interpretive economy lives in the sibling
+`Kennedy.lean`.
 
 ## Main definitions
 
-* `positiveSem` — abstract positive-form predicate `μ(x) ≥ θ`
 * `positiveMeaning`, `negativeMeaning`, `antonymMeaning` — concrete
   threshold-comparison predicates on `Degree max` / `Threshold max`
 
@@ -21,34 +21,17 @@ in the sibling `Kennedy.lean`.
 
 ## Relationship to `Gradability.Basic`
 
-This module uses abstract types (`Entity D : Type*` with `LinearOrder D`)
-for framework-level theorems. `Gradability.Basic` uses concrete
-`Degree max := Fin (max + 1)` for computation in RSA models and Fragment
-entries. The two serve different clients: this module is imported by
-`Degree/Comparative.lean` and other framework siblings; `Gradability.Basic`
-is imported by `Fragments/English/` and gradability `Studies/` files.
+This module's concrete `Degree max := Fin (max + 1)` predicates serve
+computation in RSA models and Fragment entries. `Gradability.Basic`
+serves the same clients; this module is imported by
+`Degree/Comparative.lean` and other framework siblings, while
+`Gradability.Basic` is imported by `Fragments/English/` and gradability
+`Studies/` files.
 -/
 
 namespace Semantics.Degree
 
 open Semantics.Degree (Degree Threshold)
-section Abstract
-
-variable {Entity D : Type*} [LinearOrder D]
-
-/-- The positive (unmarked) form of a gradable adjective:
-"Kim is tall" is true iff `μ(Kim) ≥ θ` for a contextual standard `θ`.
-
-This is the common core across Kennedy and Heim:
-* Kennedy: `⟦tall⟧ = λd.λx. height(x) ≥ d`, with `θ = pos(tall)`
-* Heim: `⟦tall⟧ = λx. height(x) ≥ θ_c`
-
-Klein's approach is different: "tall" is true relative to a comparison
-class, with no degree parameter. -/
-def positiveSem (μ : Entity → D) (θ : D) (x : Entity) : Prop :=
-  μ x ≥ θ
-
-end Abstract
 
 /-! ### Concrete threshold-based meanings
 
