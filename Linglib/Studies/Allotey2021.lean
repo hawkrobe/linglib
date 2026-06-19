@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Typology.NullSubject
 import Linglib.Studies.Landau2015
@@ -61,7 +60,6 @@ formalize the V-to-T claim here.
 namespace Allotey2021
 
 open Minimalist.MinimalPronoun
-open Minimalist.LongDistanceAgree
 open Landau2015
 open Typology.NullSubject (ProDropProfile)
 open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
@@ -220,6 +218,27 @@ theorem oc_determined_by_clause_type (c : CTP) :
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Long-Distance Agree Analysis (Allotey's syntactic mechanism)
 -- ════════════════════════════════════════════════════════════════
+
+/-- Long Distance Agree configuration ([szabolcsi-2009]): a matrix probe
+    values an embedded goal's unvalued φ across a non-defective C. Folded
+    in from the former single-consumer `Minimalist/LongDistanceAgree.lean`.
+    The contentful dimension is `cIsDefectiveBlocker` — the cross-clausal
+    locality that the `Probe`/defective-intervention vocabulary
+    (`Studies/Halpert2019.lean`) derives rather than stipulates. -/
+structure LDAConfig where
+  /-- The probe (matrix v/T/Asp) carries valued φ-features. -/
+  probeHasValuedPhi : Bool
+  /-- The goal (embedded D head) carries unvalued φ-features. -/
+  goalHasUnvaluedPhi : Bool
+  /-- The intervening C head blocks LDA (is defective for it);
+      `false` means transparent and LDA proceeds. -/
+  cIsDefectiveBlocker : Bool
+  deriving DecidableEq, Repr
+
+/-- LDA is licensed iff probe and goal have the right feature profile and
+    the intervening C is non-blocking. -/
+def LDAConfig.licenses (cfg : LDAConfig) : Bool :=
+  cfg.probeHasValuedPhi && cfg.goalHasUnvaluedPhi && !cfg.cIsDefectiveBlocker
 
 /-- [allotey-2021]'s syntactic analysis: the embedded overt
     pronoun in a controlled `ni`-clause is a minimal pronoun whose
