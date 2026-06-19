@@ -58,7 +58,7 @@ open Phonology.FeatureGeometry (GeomNode)
 def articulatorNodes : List GeomNode :=
   GeomNode.allNodes.filter (fun n => decide (GeomNode.IsArticulator n))
 
-theorem articulatorNodes_count : articulatorNodes.length = 3 := by native_decide
+theorem articulatorNodes_count : articulatorNodes.length = 3 := rfl
 
 -- ============================================================================
 -- § 2: Active Articulators

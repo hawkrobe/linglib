@@ -371,6 +371,40 @@ def s5Nec {W : Type*} : PropOp W :=
 def s5Poss {W : Type*} : PropOp W :=
   fun p _ => ∃ w, p w
 
+/-! #### Flat S5 operators (world-collapsed)
+
+`poss`/`nec` are the genuinely flat existential/universal modals (`∃ w` / `∀ w`),
+the world-collapsed projection of `s5Poss`/`s5Nec`, whose evaluation world is
+vestigial. These are the canonical flat modals consumed by the implicature
+calculus (`Exhaustification.FreeChoice`) and free-choice scope theory, which do
+not track an evaluation world; `s5Poss_apply`/`s5Nec_apply` connect them back to
+the `PropOp` hierarchy. -/
+
+/-- Flat S5 possibility: `◇p = ∃ w, p w` (no evaluation world). -/
+def poss (p : W → Prop) : Prop := ∃ w, p w
+
+/-- Flat S5 necessity: `□p = ∀ w, p w` (no evaluation world). -/
+def nec (p : W → Prop) : Prop := ∀ w, p w
+
+@[simp] theorem s5Poss_apply (p : W → Prop) (w : W) : s5Poss p w = poss p := rfl
+@[simp] theorem s5Nec_apply (p : W → Prop) (w : W) : s5Nec p w = nec p := rfl
+
+/-- ◇ distributes over ∨ (flat): `◇(p ∨ q) = ◇p ∨ ◇q`. -/
+theorem poss_or (p q : W → Prop) : poss (fun w => p w ∨ q w) = (poss p ∨ poss q) :=
+  propext exists_or
+
+/-- □ distributes over ∧ (flat): `□(p ∧ q) = □p ∧ □q`. -/
+theorem nec_and (p q : W → Prop) : nec (fun w => p w ∧ q w) = (nec p ∧ nec q) :=
+  propext forall_and
+
+/-- ◇ is monotone. -/
+theorem poss_mono {p q : W → Prop} (h : ∀ w, p w → q w) : poss p → poss q :=
+  fun ⟨w, hw⟩ => ⟨w, h w hw⟩
+
+/-- □ is monotone. -/
+theorem nec_mono {p q : W → Prop} (h : ∀ w, p w → q w) : nec p → nec q :=
+  fun hn w => h w (hn w)
+
 /-- **S5 = indicialNec universalR**: the S5 necessity operator is
     the indicial operator with universal accessibility.
     The formal statement that S5 sits at the top of the indicial hierarchy. -/

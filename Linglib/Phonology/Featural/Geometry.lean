@@ -163,16 +163,16 @@ theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
 -- Natural class counts ([hayes-2009] complete inventory: 26 features)
 
-theorem root_features_count : GeomNode.root.features.length = 26 := by native_decide
-theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide
+theorem root_features_count : GeomNode.root.features.length = 26 := rfl
+theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := rfl
 theorem supralaryngeal_features_count :
-    GeomNode.supralaryngeal.features.length = 16 := by native_decide
+    GeomNode.supralaryngeal.features.length = 16 := rfl
 theorem softPalate_features_count :
-    GeomNode.softPalate.features.length = 1 := by native_decide
-theorem place_features_count : GeomNode.place.features.length = 14 := by native_decide
-theorem labial_features_count : GeomNode.labial.features.length = 3 := by native_decide
-theorem coronal_features_count : GeomNode.coronal.features.length = 5 := by native_decide
-theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := by native_decide
+    GeomNode.softPalate.features.length = 1 := rfl
+theorem place_features_count : GeomNode.place.features.length = 14 := rfl
+theorem labial_features_count : GeomNode.labial.features.length = 3 := rfl
+theorem coronal_features_count : GeomNode.coronal.features.length = 5 := rfl
+theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := rfl
 
 -- Subsumption of existing flat predicates
 --
