@@ -3,6 +3,8 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.BasemapCorrespondence
+import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.Constraint.OT.HarmonicSerialism
 import Linglib.Studies.Hyman2006
@@ -727,5 +729,84 @@ def ideophoneVerbProperties : SecondaryMeaningProperties :=
     is recorded by `ideophoneVerbProperties` itself; this `example`
     merely verifies our two records have matching field values. -/
 example : ideophoneVerbProperties = expressiveProperties := rfl
+
+/-! ### General dominant-cophonology ↔ overwrite agreement ([rolle-2018])
+
+The per-tableau agreement theorems in the Tableau24/25/26 sections above are
+instances of a general result: the two parallel formalisms for dominant
+grammatical tone in [rolle-2018] — direct `tonalOverwrite` and constraint-based
+`cophonologicalEval` under a subranking promoting MxBM-C (basemap faithfulness)
+— coincide. When MxBM-C is top-ranked, OT evaluation necessarily selects
+basemap-faithful candidates, which are exactly the `tonalOverwrite` outputs.
+The proof chain goes through `optimal_zero_first` (OT substrate): a candidate
+with 0 violations on the top constraint forces every optimal candidate to 0. -/
+
+section DominantCophAgreement
+
+open Phonology.Autosegmental.GrammaticalTone (TBU Spec tonalOverwrite)
+open Phonology.Autosegmental.BasemapCorrespondence
+open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
+
+/-- **The general agreement theorem**: when MxBM-C (basemap faithfulness)
+    is in the cophonological subranking, every OT-optimal candidate is
+    basemap-faithful — its tonal tier exactly matches the basemap output.
+
+    This is the mathematical core of [rolle-2018] Ch 5: dominant GT
+    is not a special rule but a consequence of promoting a faithfulness
+    constraint. The constraint forces the matrix output to correspond to
+    the basemap output, which is independent of the target's underlying
+    tones (`basemapOutput_tone_independent_whole`). -/
+theorem dominant_coph_selects_basemap_faithful
+    {C : Type} [DecidableEq C]
+    (basemapTier : List TRN)
+    (extractTier : C → List TRN)
+    (defaultRanking : List (NamedConstraint C))
+    (candidates : List C) (h : candidates ≠ [])
+    (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
+    (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier)
+    : let mxbmc := mkBasemapConstraint basemapTier extractTier
+      ∀ c ∈ cophonologicalEval defaultRanking [mxbmc] candidates h,
+        extractTier c = basemapTier := by
+  intro mxbmc c hc
+  simp only [cophonologicalEval, mergeRanking] at hc
+  have hExists : ∃ c₀ ∈ candidates, mxbmc.eval c₀ = 0 := by
+    obtain ⟨c₀, hc₀_mem, hc₀_eq⟩ := hFaithful
+    exact ⟨c₀, hc₀_mem, by simp [mxbmc, mkBasemapConstraint, hc₀_eq,
+      basemapViolations_self_eq_zero]⟩
+  have hZero := mkTableau_optimal_zero_first candidates mxbmc _ h hExists c hc
+  simp only [mxbmc, mkBasemapConstraint] at hZero
+  exact basemapViolations_eq_zero_imp (extractTier c) basemapTier
+    (hLen c (mkTableau_optimal_mem candidates _ h c hc)) hZero
+
+/-- **Dominant cophonology agrees with tonalOverwrite**: for whole-word
+    single-tone replacement, OT evaluation under the dominant cophonology
+    selects candidates whose tonal tier matches the direct `tonalOverwrite`
+    operation. The connection goes through `tonalOverwrite_basemap_faithful`:
+    the tonalOverwrite output equals the basemap output, and
+    `dominant_coph_selects_basemap_faithful` ensures the OT evaluation
+    selects exactly the basemap-faithful candidates. -/
+theorem dominant_coph_agrees_with_tonalOverwrite
+    {S C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq C]
+    (host : List (TBU S)) (t defaultTone : TRN)
+    (extractTier : C → List TRN)
+    (defaultRanking : List (NamedConstraint C))
+    (candidates : List C) (h : candidates ≠ [])
+    (hLen : ∀ c ∈ candidates,
+      (extractTier c).length =
+        (tonalTier (basemapOutput host ⟨"", [t], .whole⟩ defaultTone)).length)
+    (hFaithful : ∃ c ∈ candidates,
+      extractTier c = tonalTier (basemapOutput host ⟨"", [t], .whole⟩ defaultTone))
+    : let spec : Spec := ⟨"", [t], .whole⟩
+      let baseTier := tonalTier (basemapOutput host spec defaultTone)
+      let mxbmc := mkBasemapConstraint baseTier extractTier
+      ∀ c ∈ cophonologicalEval defaultRanking [mxbmc] candidates h,
+        extractTier c = tonalTier (tonalOverwrite host spec) := by
+  intro spec baseTier mxbmc c hc
+  have hFaith := dominant_coph_selects_basemap_faithful
+    baseTier extractTier defaultRanking candidates h hLen hFaithful c hc
+  rw [hFaith]
+  exact (tonalOverwrite_basemap_faithful host t defaultTone).symm
+
+end DominantCophAgreement
 
 end AkinboFwangwar2026
