@@ -29,7 +29,7 @@ Most suffixes contain an **archiphonemic** vowel /A/ that surfaces as
 
 ## Formalization ([rose-walker-2011])
 
-Finnish VH is a single `HarmonySystem` with [back] as the spreading feature.
+Finnish VH is a single `System` with [back] as the spreading feature.
 Neutral vowels /e/ and /i/ are transparent: they satisfy `isTransparent` and
 are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
 
@@ -40,7 +40,7 @@ namespace Finnish.VowelHarmony
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
 open Phonology.Autosegmental (AutosegRep agreeAt)
-open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
+open Phonology.Harmony (System HarmonyDir triggerValue
   harmonizeOne spreadSuffix)
 
 -- ============================================================================
@@ -133,8 +133,8 @@ def classifyVowel (s : Segment) : HarmonyClass :=
 /-- Finnish palatal harmony: [back] spreads from the last harmonic (non-neutral)
     stem vowel to non-neutral suffix vowels. Neutral vowels /e/, /i/ are
     transparent — they neither trigger nor undergo harmony. -/
-def finnishHarmony : HarmonySystem :=
-  HarmonySystem.mk' (feature := .back)
+def finnishHarmony : System :=
+  System.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTransparent := isNeutral)
