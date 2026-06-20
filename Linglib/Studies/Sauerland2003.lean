@@ -54,7 +54,7 @@ open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (ContainmentPair ContainmentPairLike)
 open Semantics.Presupposition (PartialProp)
-open Phonology.Constraint.OT (NamedConstraint mkTableau)
+open Constraint OptimalityTheory
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
 

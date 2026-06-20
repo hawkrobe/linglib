@@ -53,7 +53,7 @@ constraint subranking. The activation predicate is just a
 `SyntacticObject → Bool` so it can match phases by category, by
 specifier content, by feature, or by anything else the analyst can
 decide. `phrasalCophonologicalEval` delegates to
-`Phonology.CophonologyTheory.cophonologicalEval` once the matched
+`OptimalityTheory.CophonologyTheory.cophonologicalEval` once the matched
 cophonology has been selected — there is no parallel ranking-merge
 machinery, just a different trigger.
 
@@ -68,11 +68,11 @@ The substrate's neutral position is to make the SBJ 2020 / SCD 2026
 view expressible without forcing it on consumers.
 -/
 
-namespace Phonology.CophonologyByPhrase
+namespace OptimalityTheory.CophonologyByPhrase
 
-open Phonology.CophonologyTheory (cophonologicalEval mergeRanking
+open OptimalityTheory.CophonologyTheory (cophonologicalEval mergeRanking
   mergeRanking_empty_sub cophonologicalEval_empty_sub)
-open Phonology.Constraint.OT (NamedConstraint)
+open Constraint OptimalityTheory
 open Minimalist (Phase SyntacticObject)
 
 -- ============================================================================
@@ -127,7 +127,7 @@ theorem phrasalCophonologicalEval_empty_sub {C : Type} [DecidableEq C]
     (candidates : List C) (h : candidates ≠ [])
     (hsub : pc.subranking = []) :
     phrasalCophonologicalEval defaultRanking pc candidates h
-      = (Phonology.Constraint.OT.mkTableau candidates defaultRanking h).optimal := by
+      = (OptimalityTheory.mkTableau candidates defaultRanking h).optimal := by
   unfold phrasalCophonologicalEval
   rw [hsub]
   exact cophonologicalEval_empty_sub defaultRanking candidates h
@@ -167,4 +167,4 @@ theorem selectCophonology_applies {C : Type}
 theorem selectCophonology_empty {C : Type} (ph : Phase) :
     selectCophonology ([] : List (PhrasalCophonology C)) ph = none := rfl
 
-end Phonology.CophonologyByPhrase
+end OptimalityTheory.CophonologyByPhrase

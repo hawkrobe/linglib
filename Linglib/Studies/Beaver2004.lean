@@ -1,7 +1,8 @@
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # [beaver-2004]: The Optimization of Discourse Anaphora
@@ -83,7 +84,7 @@ set_option autoImplicit false
 
 namespace Beaver2004
 
-open Discourse.Centering Phonology.Constraint.OT Core.Optimization.Evaluation
+open Discourse.Centering Constraint OptimalityTheory Core.Optimization.Evaluation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Candidate type
@@ -569,7 +570,7 @@ def d12_profile_l_eq_j : ViolationProfile 6 :=
     OT optimization mechanism (lex-min on Nat-vector profiles)
     picks `cand_l_eq_i` as the unique optimal candidate. This is
     the kernel-checked OT-mechanism witness, exercising the
-    `Phonology.Constraint.OT` substrate's `mkProfile` /
+    `Constraint` substrate's `mkProfile` /
     `ViolationProfile.LinearOrder` infrastructure. -/
 theorem d12_lex_picks_l_eq_i :
     d12_profile_l_eq_i < d12_profile_l_eq_j := by decide

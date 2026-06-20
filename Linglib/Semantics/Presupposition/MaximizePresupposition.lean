@@ -1,5 +1,6 @@
 import Linglib.Features.ContainmentPair
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Semantics.Presupposition.PhiFeatures
 
 /-!
@@ -68,8 +69,7 @@ set_option autoImplicit false
 namespace Semantics.Presupposition.MaximizePresupposition
 
 open Features (ContainmentPair)
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
-              mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Constraint OptimalityTheory
 open Core.Optimization.Evaluation
 open Semantics.Presupposition.PhiFeatures
 

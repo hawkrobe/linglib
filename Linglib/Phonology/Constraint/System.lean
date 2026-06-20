@@ -1,7 +1,8 @@
 import Linglib.Core.Optimization.System
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Optimization.Profile
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # Constraint Systems — OT/HG/MaxEnt instantiations of `Core.Optimization.ConstraintSystem`
@@ -22,7 +23,7 @@ A `tableauSystem` bridge view shows that the established `Tableau` API
 is `argminDecoder` over a `LexProfile Nat n` score in disguise.
 -/
 
-namespace Phonology.Constraint
+namespace Constraint
 
 open Core.Optimization
 
@@ -73,7 +74,7 @@ noncomputable def maxEntSystem {Cand : Type*}
 -- § 2: Tableau Bridge
 -- ============================================================================
 
-/-! `Phonology.Constraint.OT.Tableau` is the established study-file API for
+/-! `Constraint.Tableau` is the established study-file API for
 OT (used by `mkTableau ... .optimal = {winner}` patterns). The bridge below
 shows that `Tableau` is a special case of `ConstraintSystem`: the OT score
 `profile : C → ViolationProfile n` is exactly a `LexProfile Nat n`-valued
@@ -83,7 +84,7 @@ score (definitionally), and `Tableau.optimal` is exactly the support of the
 `ConstraintSystem.predict` view via `tableauSystem`. -/
 
 open Core.Optimization.Evaluation
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 
 /-- An OT tableau viewed as a generic `ConstraintSystem`. The score type
     `LexProfile Nat n` is definitionally `ViolationProfile n`, so the
@@ -140,4 +141,4 @@ theorem tableauSystem_predict_loser {C : Type*} [DecidableEq C] {n : Nat}
     (tableauSystem t).predict loser = 0 := by
   rw [tableauSystem_predict_eq, h]; simp [hne]
 
-end Phonology.Constraint
+end Constraint

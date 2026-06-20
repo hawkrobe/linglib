@@ -67,7 +67,7 @@ open Phonology.ItemSpecificity.Indexed
 open Phonology.ItemSpecificity.Scaled
 open Phonology.ItemSpecificity.UseListed
 open Phonology.ItemSpecificity.RepStrength
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Toy lexicon for separation witnesses

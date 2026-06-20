@@ -1,5 +1,6 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # Transderivational Correspondence Theory (TCT)
@@ -57,10 +58,10 @@ within-paradigm OO-Faith) lives in
 `ParadigmUniformity/Transderivational.lean`.
 -/
 
-namespace Phonology.TCT
+namespace OptimalityTheory.TCT
 
-open Phonology.Correspondence (Corr)
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
+open OptimalityTheory.Correspondence (Corr)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: TCT Roles
@@ -207,4 +208,4 @@ theorem TetruSchema.oo_decides_when_m1_ties {C : Type} (s : TetruSchema C)
     (hOO : s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂) :
     s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂ := hOO
 
-end Phonology.TCT
+end OptimalityTheory.TCT

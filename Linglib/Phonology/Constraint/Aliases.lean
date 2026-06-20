@@ -15,7 +15,7 @@ Any Phonology file using OT-tradition names should import this module
 (rather than `Core.Optimization.Evaluation` directly).
 -/
 
-namespace Phonology.Constraint.OT
+namespace Constraint
 
 open Core.Optimization.Evaluation
 
@@ -68,4 +68,4 @@ theorem ViolationProfile.le_apply_zero {n : Nat}
     {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 :=
   Core.Optimization.Evaluation.lexFinNat_le_apply_zero h
 
-end Phonology.Constraint.OT
+end Constraint

@@ -32,8 +32,8 @@ the first place — the central analytical move of [faust-2026] §4.
 namespace Phonology.Templates
 
 open Morphology
-open Phonology.Constraint.OT (NamedConstraint)
-open Phonology.Constraints (mkAlign)
+open Constraint OptimalityTheory
+open OptimalityTheory (mkAlign)
 
 -- ============================================================================
 -- § 1: CV Slots
@@ -333,7 +333,7 @@ theorem intrusionLicensed_with_intruder (m : RootTemplateMatch α)
 /-- The \*Misalignment constraint of [faust-2026] (2): a markedness
     constraint that fires on `RootTemplateMatch` candidates whose
     `isMisaligned` predicate holds. Built via the generic `mkAlign`
-    constructor from `Phonology.Constraints`. -/
+    constructor from `OptimalityTheory`. -/
 def starMisalign {α : Type} : NamedConstraint (RootTemplateMatch α) :=
   mkAlign "*Misalign" fun m => RootTemplateMatch.isMisaligned m = true
 
@@ -348,7 +348,7 @@ theorem starMisalign_is_markedness {α : Type} :
     violates \*Misalign, and the grammar prefers the FILL-violating
     candidate. -/
 def fill {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  Phonology.Constraints.mkMark "FILL"
+  OptimalityTheory.mkMark "FILL"
     (fun m => RootTemplateMatch.allCSlotsFilled m = false)
 
 /-- FILL is classified as markedness. -/
@@ -358,7 +358,7 @@ theorem fill_is_markedness {α : Type} :
 /-- NoCross ([goldsmith-1976]): a markedness constraint penalizing
     candidates whose intruder associations cross root associations. -/
 def noCross {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  Phonology.Constraints.mkMark "NoCross"
+  OptimalityTheory.mkMark "NoCross"
     (fun m => RootTemplateMatch.violatesNCC m = true)
 
 /-- NoCross is classified as markedness. -/

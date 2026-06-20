@@ -1,5 +1,6 @@
 import Linglib.Features.ContainmentPair
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Syntax.Minimalist.Features
@@ -38,7 +39,7 @@ This file connects three layers:
 - `Features.ContainmentPair`: the algebraic structure (specLevel ordering)
 - `Semantics.Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
-- `Phonology.Constraint.OT`: constraint evaluation and factorial typology
+- `Constraint`: constraint evaluation and factorial typology
 
 ## Sections
 
@@ -57,8 +58,7 @@ set_option autoImplicit false
 namespace Wang2023
 
 open Features (ContainmentPair ContainmentPairLike)
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
-              mkFactorialOptima mkFactorialTypologySize)
+open Constraint OptimalityTheory
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
 
@@ -465,8 +465,8 @@ it holds for arbitrary candidate sets. The proof is purely algebraic:
 
 section GeneralTheorem
 
-open Phonology.Constraint.OT (mkTableau_optimal_zero_first mkTableau_optimal_mem)
-open Phonology.Constraint.OT (Tableau buildViolationProfile)
+open Constraint OptimalityTheory
+open Constraint OptimalityTheory
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.

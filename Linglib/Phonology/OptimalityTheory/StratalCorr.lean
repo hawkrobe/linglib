@@ -58,9 +58,9 @@ the grammar bridge in shared types — currently `StratalDerivation` and
 `Corr TCT.Role α` live in non-communicating namespaces.
 -/
 
-namespace Phonology.Stratal
+namespace OptimalityTheory.Stratal
 
-open Phonology.Correspondence (Corr Side)
+open OptimalityTheory.Correspondence (Corr Side)
 
 -- ============================================================================
 -- § 1: StratalRole — the four salient time-points
@@ -159,17 +159,17 @@ def stratalDerivToCorr {α : Type}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .pOut = phraseOut := rfl
 
-end Phonology.Stratal
+end OptimalityTheory.Stratal
 
 -- ============================================================================
 -- § 4: StratalRole → TCT.Role projection
 -- ============================================================================
 
-namespace Phonology.StratalToTCT
+namespace OptimalityTheory.StratalToTCT
 
-open Phonology.Correspondence (Corr)
-open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge)
-open Phonology.TCT (Role)
+open OptimalityTheory.Correspondence (Corr)
+open OptimalityTheory.Stratal (StratalRole stratalDerivToCorr parallelEdge)
+open OptimalityTheory.TCT (Role)
 
 /-- The canonical projection from stratal roles to TCT roles, encoding
     Benua's identification:
@@ -253,4 +253,4 @@ theorem project_oo_edge_eq_parallel {α : Type}
   rw [Corr.diagram_edge_pos _ _ (by decide)]
   rfl
 
-end Phonology.StratalToTCT
+end OptimalityTheory.StratalToTCT

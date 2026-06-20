@@ -1,7 +1,8 @@
 import Mathlib.Order.Nat
 import Mathlib.Data.List.Dedup
 import Mathlib.Logic.Relation
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Core.Relation.ReflTransGen
 
 /-!
@@ -49,7 +50,7 @@ otherwise constraint-based framework. Linglib's siblings:
 
 ## Connection to Linglib
 
-Each individual stratum is evaluated using `Phonology.Constraint.OT.mkTableau` and
+Each individual stratum is evaluated using `OptimalityTheory.mkTableau` and
 `Tableau.optimal`. This module adds the stratal architecture:
 strata ordering, cross-stratal chaining, and reranking specification.
 
@@ -59,9 +60,9 @@ Phrase strata derives the *-am*/*-āni* alternation from a single
 underlying form.
 -/
 
-namespace Phonology.Stratal
+namespace OptimalityTheory.Stratal
 
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily mkTableau)
+open Constraint OptimalityTheory
 open Core.Optimization.Evaluation
 
 -- ============================================================================
@@ -332,4 +333,4 @@ theorem stem_feeds_word : isOutputFeeding .stem .word := rfl
 theorem word_feeds_phrase : isOutputFeeding .word .phrase := rfl
 theorem stem_not_feeds_phrase : ¬ isOutputFeeding .stem .phrase := by decide
 
-end Phonology.Stratal
+end OptimalityTheory.Stratal
