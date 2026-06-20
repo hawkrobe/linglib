@@ -99,6 +99,11 @@ instance : PartialOrder Faasinjee where
   le_trans _ _ _ h1 h2 := h1.trans h2
   le_antisymm _ _ h _ := h
 
+/-- The flat `Faasinjee` order is an `IsAtomicDomain`; its atom/disjoint facts now
+derive from the shared `Mereology` machinery rather than bespoke proofs. -/
+instance : Mereology.IsAtomicDomain Faasinjee :=
+  Mereology.isAtomicDomain_of_le_iff_eq (fun _ _ => Iff.rfl)
+
 /-- *yā daurà wàndà* 'buckled their seatbelt'. -/
 def Daura : Faasinjee → Prop
   | .audu => True
@@ -112,11 +117,11 @@ instance : DecidablePred Daura := fun x => match x with
 
 /-! ### Mereological structure -/
 
-theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x := by
-  intro z hz; exact hz.symm
+theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x :=
+  Mereology.IsAtomicDomain.all_atoms x
 
 theorem faasinjee_disjoint (x y : Faasinjee) (h : Mereology.Overlap x y) :
-    x = y := by obtain ⟨z, hzx, hzy⟩ := h; exact hzx.symm.trans hzy
+    x = y := Mereology.IsAtomicDomain.eq_of_overlap h
 
 /-- `ONE_empty` holds of the universal *faasinjèe* predicate. This is
 the presupposition Z2008's *kō-wh* analysis (via Q_∀ + ONE_∅) places
