@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Prosodic.Word
 
 /-!
@@ -17,7 +17,7 @@ Key design decisions from [hayes-1989]:
 - Glides are moraless (zero morae)
 
 The moraic tier σ → μ → segment replaces the `List Segment` representation
-in `Syllable.Defs`, which is essentially a segmental (X-theory) view.
+in `Syllable`, which is essentially a segmental (X-theory) view.
 
 [hayes-1989]
 -/
