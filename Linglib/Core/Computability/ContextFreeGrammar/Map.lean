@@ -1,19 +1,28 @@
 import Mathlib.Computability.ContextFreeGrammar
-import Linglib.Core.Computability.StringHom
 
 /-!
 # Closure of `IsContextFree` under string homomorphism
 
-The image of a context-free language under a string homomorphism `h : T → List T'`
-is context-free. Construction: replace each terminal `a` in each grammar rule's
-output with the symbol-list `(h a).map .terminal`. Nonterminals are unchanged.
+The image of a context-free language under a string homomorphism — induced by a
+per-symbol map `f : T → List T'` — is context-free. Construction: replace each
+terminal `a` in each grammar rule's output with the symbol-list `(f a).map .terminal`.
+Nonterminals are unchanged.
 
-Owns the `Language.stringMap` definition and proves
-`Language.IsContextFree.stringMap`. Together with the parallel Bar-Hillel
-proof in `InterRegular.lean`, this dissolves the closure axioms previously
-in `Closure.lean`.
+## Main definitions
 
-[hopcroft-motwani-ullman-2000] Theorem 7.24 part 4 (p. 284-285, homomorphism case).
+* `Language.stringMap f : Language T →+* Language T'` — image under the string
+  homomorphism. Since `List α = FreeMonoid α`, the action `List.flatMap f` is the
+  free-monoid lift `FreeMonoid.lift f`; bundled as a semiring hom mirroring mathlib's
+  `Language.map`, of which the letter-to-letter case is the special case
+  `Language.stringMap_letterMap`.
+
+## Main theorems
+
+* `Language.IsContextFree.stringMap` — context-free languages are closed under
+  string homomorphism.
+* `ContextFreeGrammar.applyHom_language` — the grammar construction realizes `stringMap`.
+
+[hopcroft-motwani-ullman-2000] (homomorphism-closure construction).
 -/
 
 open scoped Classical
@@ -22,10 +31,30 @@ universe u v
 
 variable {T : Type u} {T' : Type v}
 
-/-- The homomorphic image of a language under a string homomorphism.
-    `Language.stringMap h L = {h(v) | v ∈ L}`. -/
-def Language.stringMap (h : Core.StringHom T T') (L : Language T) : Language T' :=
-  {w | ∃ v ∈ L, Core.StringHom.apply h v = w}
+/-- The image of a language under the string homomorphism induced by a per-symbol
+    map `f : T → List T'`. On a word the action is `List.flatMap f` — i.e. the
+    free-monoid lift `FreeMonoid.lift f`, since `List α = FreeMonoid α`. Bundled as a
+    semiring hom mirroring mathlib's `Language.map`; the letter-to-letter map is the
+    special case `Language.stringMap_letterMap`. -/
+def Language.stringMap (f : T → List T') : Language T →+* Language T' where
+  toFun := Set.image (List.flatMap f)
+  map_zero' := Set.image_empty _
+  map_one' := Set.image_singleton
+  map_add' := Set.image_union _
+  map_mul' _ _ := Set.image_image2_distrib fun _ _ => List.flatMap_append ..
+
+@[simp] theorem Language.mem_stringMap {f : T → List T'} {L : Language T} {w : List T'} :
+    w ∈ Language.stringMap f L ↔ ∃ v ∈ L, List.flatMap f v = w := Iff.rfl
+
+/-- **Bridge to mathlib's `Language.map`.** The letter-to-letter map `f : T → T'`
+    (singleton outputs) is the special case of `stringMap` that collapses to mathlib's
+    `Language.map f`, so `stringMap` genuinely generalizes the existing letter image. -/
+@[simp] theorem Language.stringMap_letterMap (f : T → T') (L : Language T) :
+    Language.stringMap (fun a => [f a]) L = Language.map f L := by
+  have hfun : (List.flatMap (fun a => [f a]) : List T → List T') = List.map f :=
+    funext fun _ => List.map_eq_flatMap.symm
+  show Set.image (List.flatMap fun a => [f a]) L = Set.image (List.map f) L
+  rw [hfun]
 
 namespace ContextFreeRule
 
@@ -146,13 +175,14 @@ namespace ContextFreeGrammar
     `Language.stringMap h G.language`. -/
 theorem applyHom_language_subset (h : T → List T') (G : ContextFreeGrammar T) :
     Language.stringMap h G.language ≤ (G.applyHom h).language := by
-  rintro w' ⟨w, hw, rfl⟩
+  intro w' hw'
+  obtain ⟨w, hw, rfl⟩ := Language.mem_stringMap.mp hw'
   show (G.applyHom h).Derives [.nonterminal G.initial]
-        ((Core.StringHom.apply h w).map .terminal)
+        ((List.flatMap h w).map .terminal)
   have hd := Derives.applyHom h hw
   convert hd using 1
   · simp [ContextFreeRule.Symbol.applyHom]
-  · simp [Core.StringHom.apply, ContextFreeRule.applyHomList_map_terminal]
+  · simp [ContextFreeRule.applyHomList_map_terminal]
 
 -- ============================================================================
 -- Backward direction helpers (private to this file)
@@ -311,7 +341,7 @@ private lemma derivesLift {h : T → List T'} {G : ContextFreeGrammar T}
 private lemma liftMapTerminal {h : T → List T'} {N : Type*} :
     ∀ {t : List (Symbol T N)} {w' : List T'},
     ContextFreeRule.applyHomList h t = w'.map (Symbol.terminal (N := N)) →
-    ∃ w : List T, t = w.map .terminal ∧ Core.StringHom.apply h w = w' := by
+    ∃ w : List T, t = w.map .terminal ∧ List.flatMap h w = w' := by
   intro t
   induction t with
   | nil =>
@@ -357,7 +387,7 @@ theorem applyHom_language_subset_inv (h : T → List T') (G : ContextFreeGrammar
     simp [ContextFreeRule.applyHomList, ContextFreeRule.Symbol.applyHom]
   obtain ⟨t, hGt, ht_eq⟩ := derivesLift hw' hlift
   obtain ⟨w, hw_term, hw_apply⟩ := liftMapTerminal ht_eq
-  refine ⟨w, ?_, hw_apply⟩
+  refine Language.mem_stringMap.mpr ⟨w, ?_, hw_apply⟩
   show G.Derives [.nonterminal G.initial] (w.map .terminal)
   rw [← hw_term]; exact hGt
 
@@ -369,9 +399,9 @@ end ContextFreeGrammar
 
 namespace Language.IsContextFree
 
-theorem stringMap (h : Core.StringHom T T') {L : Language T}
-    (hL : L.IsContextFree) : (Language.stringMap h L).IsContextFree := by
+theorem stringMap (f : T → List T') {L : Language T}
+    (hL : L.IsContextFree) : (Language.stringMap f L).IsContextFree := by
   obtain ⟨G, rfl⟩ := hL
-  exact ⟨G.applyHom h, ContextFreeGrammar.applyHom_language h G⟩
+  exact ⟨G.applyHom f, ContextFreeGrammar.applyHom_language f G⟩
 
 end Language.IsContextFree

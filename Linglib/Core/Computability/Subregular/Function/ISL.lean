@@ -35,7 +35,7 @@ function-level subregular hierarchy.
   reverse-conjugate of the left class.
 * `isLeftInputStrictlyLocal_left_subsequential` — every Left-ISL
   function is Left-Subsequential, witnessed by `ISLRule.toSFST`.
-* `Core.StringHom.apply_isLeftInputStrictlyLocal_one`,
+* `flatMap_isLeftInputStrictlyLocal_one`,
   `Core.Tier.apply_isLeftInputStrictlyLocal_one` — letterwise
   homomorphisms and tier projections are the `k = 1` specialisation.
 
@@ -226,20 +226,21 @@ lemma isLeftInputStrictlyLocal_const_nil (k : ℕ) :
     show ([] : List β) ++ _ = []
     rw [List.nil_append, ih]
 
-/-! ### StringHom / Tier as the `k = 1` specialisation
+/-! ### Letterwise homomorphisms / Tier as the `k = 1` specialisation
 
-`StringHom α β := α → List β` is the `k = 1` specialisation: the window
-argument is always empty and only the current input symbol matters.
-`Tier α β := α → Option β` is the further erasing specialisation. -/
+A letterwise string homomorphism `h : α → List β` (string action `List.flatMap h`,
+the free-monoid lift) is the `k = 1` specialisation: the window argument is always
+empty and only the current input symbol matters. `Tier α β := α → Option β` is the
+further erasing specialisation. -/
 
-/-- Embed a string homomorphism as a 1-ISL rule (no left context). The
-windowOutput ignores its window argument and behaves letterwise. -/
-def ISLRule.ofStringHom (h : Core.StringHom α β) : ISLRule 1 α β where
+/-- Embed a letterwise string homomorphism `h : α → List β` as a 1-ISL rule (no left
+context). The windowOutput ignores its window argument and behaves letterwise. -/
+def ISLRule.ofStringHom (h : α → List β) : ISLRule 1 α β where
   windowOutput := fun _ x => h x
 
-private lemma ISLRule.applyAux_ofStringHom (h : Core.StringHom α β)
+private lemma ISLRule.applyAux_ofStringHom (h : α → List β)
     (window : List α) (xs : List α) :
-    (ISLRule.ofStringHom h).applyAux window xs = Core.StringHom.apply h xs := by
+    (ISLRule.ofStringHom h).applyAux window xs = List.flatMap h xs := by
   induction xs generalizing window with
   | nil => rfl
   | cons x ys ih =>
@@ -247,18 +248,19 @@ private lemma ISLRule.applyAux_ofStringHom (h : Core.StringHom α β)
     congr 1
     exact ih _
 
-/-- The 1-ISL rule constructed from `h` computes `h` on lists. Definitional
-up to `applyAux` unfolding; the inductive proof handles the window-threading. -/
-@[simp] theorem ISLRule.ofStringHom_apply (h : Core.StringHom α β) :
-    (ISLRule.ofStringHom h).apply = Core.StringHom.apply h := by
+/-- The 1-ISL rule constructed from `h` computes `List.flatMap h` on lists.
+Definitional up to `applyAux` unfolding; the inductive proof handles the window-threading. -/
+@[simp] theorem ISLRule.ofStringHom_apply (h : α → List β) :
+    (ISLRule.ofStringHom h).apply = List.flatMap h := by
   funext xs
   show (ISLRule.ofStringHom h).applyAux [] xs = _
   exact ISLRule.applyAux_ofStringHom h [] xs
 
-/-- **Every string homomorphism is 1-Left-ISL.** The substrate-level claim
-that `StringHom α β` and `ISLRule 1 α β` denote the same function class. -/
-theorem Core.StringHom.apply_isLeftInputStrictlyLocal_one (h : Core.StringHom α β) :
-    IsLeftInputStrictlyLocal 1 (Core.StringHom.apply h) :=
+/-- **Every letterwise string homomorphism is 1-Left-ISL.** The substrate-level
+claim that the letterwise-homomorphism function class (`List.flatMap h` for
+`h : α → List β`) and `ISLRule 1 α β` denote the same function class. -/
+theorem flatMap_isLeftInputStrictlyLocal_one (h : α → List β) :
+    IsLeftInputStrictlyLocal 1 (List.flatMap h) :=
   ⟨ISLRule.ofStringHom h, ISLRule.ofStringHom_apply h⟩
 
 /-- **Every tier projection is 1-Left-ISL.** Tier projections are
@@ -266,7 +268,7 @@ letterwise erasing (`Tier α β := α → Option β`), hence a special case
 of `ISLRule.ofStringHom` via `fun x => (T x).toList`. -/
 theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
     IsLeftInputStrictlyLocal 1 (Core.Tier.apply T) := by
-  -- Tier.apply T = filterMap T = flatMap (Option.toList ∘ T) = StringHom.apply (Option.toList ∘ T)
+  -- Tier.apply T = filterMap T = List.flatMap (fun x => (T x).toList)
   refine ⟨ISLRule.ofStringHom (fun x => (T x).toList), ?_⟩
   rw [ISLRule.ofStringHom_apply]
   funext xs

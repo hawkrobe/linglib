@@ -1,31 +1,35 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.NonContextFree.BlockWitness
+import Linglib.Core.Computability.NonContextFree.AnBnCn
+import Linglib.Core.Computability.ContextFreeGrammar.Closure
 
 /-!
 # {aⁿbⁿcⁿdⁿ}: a four-symbol non-context-free witness language
 
-The single-parameter four-symbol witness `anbncndn = {aⁿbⁿcⁿdⁿ | n ≥ 0}`,
-proven non-context-free via the CFL pumping lemma + the unified adjacency
-lemma in `BlockWitness`.
-
+The single-parameter four-symbol witness `anbncndn = {aⁿbⁿcⁿdⁿ | n ≥ 0}`.
 Membership requires `na = nb = nc = nd` (all four counts equal) **and** the
-sorted shape `aⁿbⁿcⁿdⁿ`. Pumping breaks at least one count equality.
+sorted shape `aⁿbⁿcⁿdⁿ`.
+
+Non-context-freeness is **derived by closure, not re-proved by pumping**: the
+erasing homomorphism `dropD : d ↦ ε` maps `anbncndn` exactly onto the irreducible
+counting core `anbnc = {aⁿbⁿcⁿ}` (`AnBnCn`), so `anbncndn_not_contextFree`
+follows from `anbnc_not_contextFree` through `Language.IsContextFree.stringMap`
+(the hom-closure root in `Map`, run contrapositively via `Closure`). aⁿbⁿcⁿdⁿ is
+the *nested-counting* case; the genuinely *crossing* witness that [shieber-1985]'s
+Swiss-German argument requires is the two-parameter `ambncmdn` sibling, which does
+not reduce by single-symbol erasure.
 
 This file also hosts the **shared `FourSymbol` substrate** consumed by the
 two-parameter relaxation in `NonContextFree.AmBnCmDn`:
 
 * The alphabet (`FourSymbol`, `FourString`, `LawfulBEq`).
 * Witness-form bridges (`makeString_anbncndn_eq_blockwitness`).
-* Three adjacency consequences via `BlockWitness.not_both_in_vxy`
-  (`not_a_and_d_in_vxy`, `not_a_and_c_in_vxy`, `not_b_and_d_in_vxy`).
+* Adjacency consequences via `BlockWitness.not_both_in_vxy`
+  (`not_a_and_c_in_vxy`, `not_b_and_d_in_vxy`).
 * Filter-count machinery (`filter_count`, `filter_eq_nil_of_not_mem`,
   `fourSymbol_filter_total`).
-
-Closure properties for `IsContextFree` (homomorphism, regular intersection)
-live in `Linglib.Core.Computability.ContextFreeGrammar.Closure`.
 -/
 
-/-- Alphabet for cross-serial dependency patterns. -/
+/-- Alphabet for the four-symbol counting witness languages. -/
 inductive FourSymbol where
   | a | b | c | d
   deriving DecidableEq, Repr
@@ -36,7 +40,11 @@ instance : LawfulBEq FourSymbol where
 
 abbrev FourString := List FourSymbol
 
-/-- The language {aⁿbⁿcⁿdⁿ | n ≥ 0}, modeling Dutch cross-serial dependencies. -/
+/-- The language {aⁿbⁿcⁿdⁿ | n ≥ 0}: the pedagogical four-symbol counting language. The
+    genuinely *crossing* witness that [shieber-1985]'s Swiss-German non-context-freeness
+    argument requires is the two-parameter `ambncmdn` sibling; this single-parameter
+    language is the nested-counting case (cf. [bresnan-etal-1982] on Dutch cross-serial
+    word order, which is itself only weakly context-free). -/
 def isInLanguage_anbncndn (w : FourString) : Bool :=
   match w with
   | [] => true
@@ -109,11 +117,6 @@ private theorem not_both_in_vxy_FourSymbol {s t : FourSymbol} {i j : Nat}
     (by decide : ([FourSymbol.a, .b, .c, .d] : List FourSymbol).Nodup)
     hi hj hij (makeString_anbncndn_eq_blockwitness p ▸ hw) hvxy
 
-theorem not_a_and_d_in_vxy (p : Nat) (u vxy z : FourString)
-    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.d ∈ vxy) :=
-  not_both_in_vxy_FourSymbol (i := 0) (j := 3) rfl rfl (by decide) p u vxy z hw hvxy
-
 theorem not_a_and_c_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
     ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.c ∈ vxy) :=
@@ -137,17 +140,6 @@ theorem fourSymbol_filter_total (l : FourString) :
   | cons h t ih =>
     simp only [List.filter_cons, List.length_cons]
     cases h <;> simp <;> omega
-
-private theorem counts_eq_of_inLanguage (w : FourString) (hne : w ≠ [])
-    (hin : isInLanguage_anbncndn w = true) :
-    (w.filter (· == .a)).length = (w.filter (· == .b)).length ∧
-    (w.filter (· == .b)).length = (w.filter (· == .c)).length ∧
-    (w.filter (· == .c)).length = (w.filter (· == .d)).length := by
-  unfold isInLanguage_anbncndn at hin
-  match w, hne with
-  | _ :: _, _ =>
-    simp only [Bool.and_eq_true, beq_iff_eq] at hin
-    exact ⟨hin.1.1.1, hin.1.1.2, hin.1.2⟩
 
 -- ============================================================================
 -- Membership characterizations
@@ -201,81 +193,61 @@ theorem mem_anbncndn_iff (w : FourString) :
     exact makeString_in_language n
 
 -- ============================================================================
--- Pumping fails for {aⁿbⁿcⁿdⁿ}
+-- Non-context-freeness by homomorphic reduction to {aⁿbⁿcⁿ}
 -- ============================================================================
 
-set_option maxHeartbeats 800000 in
-/-- Pumping breaks membership in {aⁿbⁿcⁿdⁿ}. -/
-theorem pump_breaks_anbncndn (p : Nat) (_hp : p > 0) :
-    let w := makeString_anbncndn p
-    ∀ u v x y z : FourString,
-      w = u ++ v ++ x ++ y ++ z →
-      (v ++ x ++ y).length ≤ p →
-      (v.length + y.length) ≥ 1 →
-      ∃ i : Nat, (u ++ List.flatten (List.replicate i v) ++ x ++
-                   List.flatten (List.replicate i y) ++ z) ∉ anbncndn := by
-  intro w u v x y z hw hvxy_len hvy_len
-  use 0
-  simp only [List.replicate_zero, List.flatten_nil, List.append_nil]
-  have hw' : makeString_anbncndn p = u ++ (v ++ x ++ y) ++ z := by
-    have : w = u ++ v ++ x ++ y ++ z := hw
-    simp only [List.append_assoc] at this ⊢; exact this
-  have hcontig := not_a_and_d_in_vxy p u (v ++ x ++ y) z hw' hvxy_len
-  have hvxy_len' : v.length + x.length + y.length ≤ p := by
-    simp only [List.length_append] at hvxy_len; omega
-  show ¬ (isInLanguage_anbncndn (u ++ x ++ z) = true)
-  intro hin
-  have huxz_ne : u ++ x ++ z ≠ [] := by
-    intro h
-    have huxz0 : u.length + x.length + z.length = 0 := by
-      have := congr_arg List.length h; simp only [List.length_append, List.length_nil] at this; omega
-    have hlen : u.length + v.length + x.length + y.length + z.length = 4 * p := by
-      have := congr_arg List.length hw'.symm
-      simp only [makeString_anbncndn, List.length_append, List.length_replicate] at this; omega
-    omega
-  obtain ⟨hab, hbc, hcd⟩ := counts_eq_of_inLanguage _ huxz_ne hin
-  have hrel : ∀ s : FourSymbol,
-      ((u ++ x ++ z).filter (· == s)).length +
-      (v.filter (· == s)).length + (y.filter (· == s)).length = p := by
-    intro s
-    have h1 := filter_count p s; rw [hw'] at h1
-    simp only [List.filter_append, List.length_append] at h1 ⊢; omega
-  have h4k : 4 * ((u ++ x ++ z).filter (· == .a)).length = (u ++ x ++ z).length := by
-    have := fourSymbol_filter_total (u ++ x ++ z); omega
-  have hlen_uxz : (u ++ x ++ z).length + (v.length + y.length) = 4 * p := by
-    have hlen : (makeString_anbncndn p).length = 4 * p := by
-      simp [makeString_anbncndn, List.length_append, List.length_replicate]; omega
-    rw [hw'] at hlen; simp only [List.length_append] at hlen ⊢; omega
-  have hk_eq_p : ((u ++ x ++ z).filter (· == .a)).length = p := by
-    by_cases ha : FourSymbol.a ∈ (v ++ x ++ y)
-    · have hd : FourSymbol.d ∉ (v ++ x ++ y) := fun hd => hcontig ⟨ha, hd⟩
-      have hdv : FourSymbol.d ∉ v :=
-        fun h => hd (List.mem_append_left _ (List.mem_append_left _ h))
-      have hdy : FourSymbol.d ∉ y :=
-        fun h => hd (List.mem_append_right _ h)
-      have hrd := hrel .d
-      rw [filter_eq_nil_of_not_mem v .d hdv, filter_eq_nil_of_not_mem y .d hdy] at hrd
-      simp only [List.length_nil, Nat.add_zero] at hrd; omega
-    · have hav : FourSymbol.a ∉ v :=
-        fun h => ha (List.mem_append_left _ (List.mem_append_left _ h))
-      have hay : FourSymbol.a ∉ y :=
-        fun h => ha (List.mem_append_right _ h)
-      have hra := hrel .a
-      rw [filter_eq_nil_of_not_mem v .a hav, filter_eq_nil_of_not_mem y .a hay] at hra
-      simp only [List.length_nil, Nat.add_zero] at hra; exact hra
-  omega
+/-- The erasing homomorphism `d ↦ ε` (per-symbol map; the string action is
+    `List.flatMap dropD`, the free-monoid lift), relabelling the surviving a/b/c into
+    the `ThreeSymbol` alphabet. The witness for the reduction aⁿbⁿcⁿdⁿ → aⁿbⁿcⁿ. -/
+def dropD : FourSymbol → List ThreeSymbol
+  | FourSymbol.a => [ThreeSymbol.a]
+  | FourSymbol.b => [ThreeSymbol.b]
+  | FourSymbol.c => [ThreeSymbol.c]
+  | FourSymbol.d => []
 
-/-- {aⁿbⁿcⁿdⁿ} does NOT have the CFL pumping property. -/
-theorem anbncndn_not_pumpable :
-    ¬ HasCFLPumpingProperty anbncndn := by
-  intro ⟨p, hp, hpump⟩
-  have hw_in := makeString_in_language p
-  have hw_len : (makeString_anbncndn p).length ≥ p := by
-    simp only [makeString_anbncndn, List.length_append, List.length_replicate]; omega
-  obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ := hpump _ hw_in hw_len
-  obtain ⟨i, hbreak⟩ := pump_breaks_anbncndn p hp u v x y z hw hvxy hvy
-  exact hbreak (hall i)
+private theorem flatten_replicate_singleton {α : Type*} (n : Nat) (x : α) :
+    (List.replicate n [x]).flatten = List.replicate n x := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp [List.replicate_succ, ih]
 
-/-- {aⁿbⁿcⁿdⁿ} is not context-free. -/
+private theorem flatten_replicate_nil {α : Type*} (n : Nat) :
+    (List.replicate n ([] : List α)).flatten = [] := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp [List.replicate_succ, ih]
+
+private theorem dropD_replicate (n : Nat) (s : FourSymbol) :
+    List.flatMap dropD (List.replicate n s) =
+      List.flatten (List.replicate n (dropD s)) := by
+  induction n with
+  | zero => rfl
+  | succ k ih =>
+    rw [List.replicate_succ, List.flatMap_cons, ih, List.replicate_succ, List.flatten_cons]
+
+/-- `dropD` erases the `dⁿ` block and relabels, sending the witness to `makeString_anbnc n`. -/
+@[simp] theorem dropD_makeString (n : Nat) :
+    List.flatMap dropD (makeString_anbncndn n) = makeString_anbnc n := by
+  simp only [makeString_anbncndn, List.flatMap_append, dropD_replicate, dropD,
+             flatten_replicate_singleton, flatten_replicate_nil, List.append_nil, makeString_anbnc]
+
+/-- `dropD` maps `anbncndn` exactly onto the counting core `anbnc`. This image
+    equality is what powers the closure reduction. -/
+theorem stringMap_dropD_anbncndn : Language.stringMap dropD anbncndn = anbnc := by
+  ext w
+  rw [Language.mem_stringMap]
+  constructor
+  · rintro ⟨v, hv, rfl⟩
+    obtain ⟨n, rfl⟩ := (mem_anbncndn_iff v).mp hv
+    rw [dropD_makeString]
+    exact (mem_anbnc_iff _).mpr ⟨n, rfl⟩
+  · intro hw
+    obtain ⟨n, rfl⟩ := (mem_anbnc_iff w).mp hw
+    exact ⟨makeString_anbncndn n, makeString_in_language n, dropD_makeString n⟩
+
+/-- **{aⁿbⁿcⁿdⁿ} is not context-free** — derived by closure from the counting
+    core `anbnc_not_contextFree` via the erasing homomorphism `dropD`, rather than
+    re-proved by pumping. -/
 theorem anbncndn_not_contextFree : ¬ Language.IsContextFree anbncndn :=
-  not_isContextFree_of_not_pumpable anbncndn anbncndn_not_pumpable
+  Language.not_isContextFree_of_stringMap_not dropD
+    (by rw [stringMap_dropD_anbncndn]; exact anbnc_not_contextFree)

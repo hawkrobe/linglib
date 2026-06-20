@@ -323,8 +323,8 @@ theorem crossSerial_order_cf_but_caseMatching_not :
     -- Cross-serial word order is context-free (grammar 29 generates it)
     (∃ _g : ContextFreeGrammar DutchT, True) ∧
     -- Cross-serial order + case-matching is not context-free (Shieber 1985)
-    ¬ HasCFLPumpingProperty anbncndn :=
-  ⟨⟨dutchGrammar, trivial⟩, anbncndn_not_pumpable⟩
+    ¬ Language.IsContextFree anbncndn :=
+  ⟨⟨dutchGrammar, trivial⟩, anbncndn_not_contextFree⟩
 
 /-- The question of whether natural languages are context-free remained open
     as of 1982. [gazdar-pullum-1982] conclude: "Notice that this paper
@@ -338,8 +338,8 @@ theorem crossSerial_order_cf_but_caseMatching_not :
 theorem question_settled_by_shieber :
     (∀ n, Shieber1985.clauseImage
         (Shieber1985.arbitraryDepth n n) ∈ anbncndn) ∧
-    ¬ HasCFLPumpingProperty anbncndn :=
-  ⟨Shieber1985.diagonal_in_language, anbncndn_not_pumpable⟩
+    ¬ Language.IsContextFree anbncndn :=
+  ⟨Shieber1985.diagonal_in_language, anbncndn_not_contextFree⟩
 
 -- ============================================================================
 -- §8: IsContextFree Results (Mathlib Integration)

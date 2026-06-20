@@ -104,7 +104,6 @@ not duplicated here.
 
 namespace Shieber1985
 
-open Core (StringHom)
 open SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================
@@ -229,8 +228,9 @@ def tokenToSymbol : Token → FourSymbol
     singleton {a,b,c,d} letters; matrix tokens are erased. This `[]`-valued
     case is essential for full-SG fidelity: it lets the schema apply to
     sentences with arbitrary boundary material wrapping the cross-serial
-    core. The function is no longer a `StringHom.letterMap` for that reason. -/
-def tokenStringHom : StringHom Token FourSymbol := fun
+    core. The function is no longer a letterwise (singleton-valued) map for that reason.
+    The string action is `List.flatMap tokenStringHom`, the free-monoid lift. -/
+def tokenStringHom : Token → List FourSymbol := fun
   | .matrix => []
   | t       => [tokenToSymbol t]
 
@@ -246,12 +246,12 @@ def clauseImage (c : CaseMatchedClause) : FourString :=
   List.replicate c.datNPs .a ++ List.replicate c.accNPs .b ++
   List.replicate c.datVs .c ++ List.replicate c.accVs .d
 
-/-- The image of a case-matched clause is the `StringHom.apply` of
-    `tokenStringHom` on its case-sorted token sequence. -/
+/-- The image of a case-matched clause is `List.flatMap tokenStringHom` (the
+    free-monoid lift) on its case-sorted token sequence. -/
 theorem clauseImage_eq_apply (c : CaseMatchedClause) :
-    clauseImage c = StringHom.apply tokenStringHom (caseSortedTokens c) := by
+    clauseImage c = List.flatMap tokenStringHom (caseSortedTokens c) := by
   simp [clauseImage, caseSortedTokens, tokenStringHom, tokenToSymbol,
-        StringHom.apply, List.flatMap_append, List.flatMap_replicate]
+        List.flatMap_append, List.flatMap_replicate]
 
 /-- A case-matched clause with m DAT-pairs and n ACC-pairs maps to
     `aᵐ bⁿ cᵐ dⁿ`. -/
@@ -708,7 +708,7 @@ theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     -- ts has cross-serial core (nps ++ vs after stripping matrix) with case-
     -- matched counts on cross-serial tokens.
     obtain ⟨nps, vs, hts_filter, h_nps, h_vs, h_dat, h_acc⟩ := hts_in
-    -- w = StringHom.apply tokenStringHom ts = ts.flatMap tokenStringHom.
+    -- w = List.flatMap tokenStringHom ts = ts.flatMap tokenStringHom.
     have hw_flatMap : w = ts.flatMap tokenStringHom := hApply.symm
     -- Counts in w: p = #a, q = #b, r = #c, s = #d (from the decomposition).
     have h_p : w.countP (· == .a) = p := by
@@ -769,7 +769,7 @@ theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     refine ⟨caseSortedTokens (arbitraryDepth m n),
             caseSortedTokens_in_swissGermanLang m n, ?_⟩
     -- The canonical preimage has no matrix tokens, so flatMap = map.
-    show StringHom.apply tokenStringHom _ = _
+    show List.flatMap tokenStringHom _ = _
     rw [← clauseImage_eq_apply, clauseImage_shape]
     rfl
 

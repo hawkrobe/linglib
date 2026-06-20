@@ -1,22 +1,22 @@
 import Mathlib.Data.List.Basic
 
 /-!
-# Erasing String Homomorphisms and Tier Projections
+# Tier Projections (erasing letterwise homomorphisms)
 
-A **string homomorphism** `h : α* → β*` is a monoid homomorphism on free
-monoids: it satisfies `h(uv) = h(u) ++ h(v)` and `h(ε) = ε`. Such a map is
-**letterwise** when it is determined by its action on single symbols, and
-**erasing** when each symbol maps to *at most one* output symbol.
-
-A **tier projection** in autosegmental phonology ([goldsmith-1976]) and
-in tier-based learning ([belth-2026]) is exactly the letterwise erasing
-case: a per-symbol partial map `α → Option β`, lifted to `α* → β*` via
-`List.filterMap`. This is the morphism `α → β` in the Kleisli category of
+A **tier projection** in autosegmental phonology ([goldsmith-1976]) and in
+tier-based learning ([belth-2026]) is a letterwise *erasing* string
+homomorphism: a per-symbol partial map `α → Option β`, lifted to `α* → β*`
+via `List.filterMap`. This is the morphism `α → β` in the Kleisli category of
 `Option` over the free-monoid functor.
+
+General (non-erasing) string homomorphisms need no bespoke wrapper: a per-symbol
+map is just `α → List β`, and the string action is `List.flatMap` — which, since
+`List α = FreeMonoid α`, *is* the free-monoid lift `FreeMonoid.lift`. CFL closure
+under string homomorphism lives in
+`Linglib.Core.Computability.ContextFreeGrammar.Map`.
 
 This module provides:
 
-- `StringHom α β := α → List β` — the general letterwise homomorphism.
 - `Tier α β := α → Option β` — the erasing case.
 - `Tier.apply` — lift to `List α → List β` (the projection itself).
 - `Tier.id`, `Tier.empty`, `Tier.byClass`, `Tier.total` — constructors.
@@ -33,48 +33,6 @@ directly).
 namespace Core
 
 universe u v
-
--- ============================================================================
--- § 1: Letterwise String Homomorphism
--- ============================================================================
-
-/-- A **letterwise string homomorphism** `α* → β*`: a per-symbol map sending
-    each input symbol to a (possibly empty, possibly multi-symbol) output
-    string. Lifted to lists via `List.flatMap`. -/
-abbrev StringHom (α : Type u) (β : Type v) : Type _ := α → List β
-
-namespace StringHom
-
-variable {α : Type u} {β : Type v}
-
-/-- Lift a letterwise homomorphism to `List α → List β`. -/
-def apply (h : StringHom α β) : List α → List β :=
-  List.flatMap h
-
-/-- Monoid-hom law: `h` distributes over concatenation. -/
-@[simp] theorem apply_append (h : StringHom α β) (xs ys : List α) :
-    apply h (xs ++ ys) = apply h xs ++ apply h ys :=
-  List.flatMap_append
-
-/-- Monoid-hom law: `h` sends the empty word to the empty word. -/
-@[simp] theorem apply_nil (h : StringHom α β) : apply h [] = [] := rfl
-
-/-- The letter-to-letter homomorphism induced by `f : α → β`: each input
-    symbol maps to a singleton output. The image of `apply (letterMap f)`
-    coincides with `List.map f`; see `apply_letterMap`. -/
-def letterMap (f : α → β) : StringHom α β := fun a => [f a]
-
-/-- Letter-to-letter homomorphism applied to a list is `List.map`. -/
-@[simp] theorem apply_letterMap (f : α → β) (xs : List α) :
-    apply (letterMap f) xs = xs.map f := by
-  show List.flatMap (fun a => [f a]) xs = xs.map f
-  exact List.map_eq_flatMap.symm
-
-end StringHom
-
--- ============================================================================
--- § 2: Tier — The Erasing Special Case
--- ============================================================================
 
 /-- A **tier projection** `α* → β*`: a per-symbol partial map.
     Each input symbol either projects to one tier symbol or is erased.
