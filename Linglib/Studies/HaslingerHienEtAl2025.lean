@@ -2,42 +2,66 @@ import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Typology.UniversalQuantifier
 import Linglib.Fragments.German.Distributives
+import Linglib.Fragments.English.Distributives
+import Linglib.Fragments.Dagara.UniversalQuantifier
+import Linglib.Fragments.Moore.UniversalQuantifier
+import Linglib.Fragments.Gourmantchema.UniversalQuantifier
+import Linglib.Fragments.Wolof.UniversalQuantifier
+import Linglib.Fragments.Arabic.Syrian.UniversalQuantifier
+import Linglib.Fragments.English.UniversalQuantifier
+import Linglib.Fragments.German.UniversalQuantifier
+import Linglib.Fragments.Hindi.UniversalQuantifier
+import Linglib.Fragments.Slavic.Russian.UniversalQuantifier
+import Linglib.Fragments.Quechua.Imbabura.UniversalQuantifier
+import Linglib.Fragments.Turkish.UniversalQuantifier
+import Linglib.Fragments.Basque.UniversalQuantifier
+import Linglib.Fragments.Telugu.UniversalQuantifier
+import Linglib.Fragments.Hausa.UniversalQuantifier
+import Linglib.Fragments.Logoori.UniversalQuantifier
 
 /-!
-# [haslinger-etal-2025-nllt]: A Unified Semantics for Universal Quantifiers
-[haslinger-etal-2025-nllt]
+# [haslinger-etal-2025-nllt]: A unified semantics for universal quantifiers
 
-Empirical data and theoretical verification for "A unified semantics for
-distributive and non-distributive universal quantifiers across languages"
-(NLLT 43, 2025).
+Theoretical verification for "A unified semantics for distributive and
+non-distributive universal quantifiers across languages" (NLLT 43, 2025).
 
-## Main Finding
+## Main finding
 
-A single morpheme Q_∀ can derive both distributive and non-distributive
-readings: the reading falls out from the algebraic structure of the
-restrictor (atoms → [+dist], CUM with max → [−dist]). This is the
-**Distributivity-Number Generalization (DNG)**.
+A single morpheme `Q_∀` derives both distributive and non-distributive
+readings: the reading falls out from the algebraic structure of the restrictor
+(atoms → [+dist], a sum-closed/cumulative restrictor with a single maximal
+element → [−dist]). This *derives* the empirical **Distributivity–Number
+Generalization** (DNG): a singular count complement forces [+dist], a plural
+complement forces [−dist] — a strengthening of [gil-1995]'s implicational
+universal (cf. also [winter-2001]). The distributive readings that [−dist]
+forms additionally allow come from a VP-level distributivity operator
+([link-1987]), not from the quantifier.
 
-Two-form languages (English, German, Hindi) add a syntactic head ONE
-below Q_∀ that restricts the complement via presupposition:
-- ONE_∅: non-overlap (English *every*)
-- ONE_AT: atomicity (English *each*)
+Two-form languages (English, German, Hindi, …) realize a syntactic head ONE
+below `Q_∀` that restricts the complement via presupposition:
+- `ONE_∅`: non-overlap (English *every*)
+- `ONE_AT`: atomicity, stronger (English *each*) — following [fassi-fehri-2020]
 
-One-form languages (Dagara, Moore, Wolof, Arabic) use bare Q_∀.
+One-form languages (Dagara, Moore, Gourmantchema, Wolof, Syrian Arabic) use
+bare `Q_∀`, whose reading is fixed by complement number.
 
 ## Relation to [haslinger-etal-2025] (S&P)
 
-The S&P paper (existing `HaslingerEtAl2025.lean`) shows distributivity ≠
-maximality via tolerance. This NLLT paper shows distributivity ≠ number
-via Q_∀ + mereological structure. Complementary results from overlapping
-author sets.
+The S&P paper (`HaslingerEtAl2025.lean`) shows distributivity ≠ maximality via
+tolerance. This NLLT paper shows distributivity ≠ number via `Q_∀` +
+mereological structure. Complementary results from overlapping author sets;
+both consume `Semantics/Plurality/Distributivity.lean` substrate.
 
-## Theory-Layer Grounding
+## Theory-layer grounding
 
-- `UnifiedUniversal.lean`: Q_∀, maxNonOverlap, DNG theorems
-- `ONEModifiers.lean`: ONE_∅, ONE_AT, English every/each decomposition
-- Bridge theorems below connect Q_∀ to existing `distMaximal`/`allViaForallH`
+- `UnifiedUniversal.lean`: `Q_∀`, `maxNonOverlap`, DNG theorems.
+- `ONEModifiers.lean`: `ONE_∅`, `ONE_AT`, English every/each decomposition.
+- `Typology/UniversalQuantifier.lean`: the 1-form/2-form `UQProfile` substrate.
+- The cross-linguistic sample below is *derived* from the per-language Fragment
+  profiles (`Fragments/{Language}/UniversalQuantifier.lean`), not hand-typed.
+- Bridge theorems connect `Q_∀` to existing `distMaximal`/`allViaForallH`.
 -/
 
 namespace HaslingerHienEtAl2025
@@ -47,72 +71,59 @@ open Quantification.ONEModifiers
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent
+open Typology.UniversalQuantifier
 open _root_.Mereology
 
--- ════════════════════════════════════════════════════
--- § 1. Cross-Linguistic Typology
--- ════════════════════════════════════════════════════
+/-! ### Cross-linguistic typology
 
-/-- Classification of UQ systems: 1-form (single UQ) vs 2-form (dist/non-dist split). -/
-inductive UQSystemType where
-  | oneForm   -- Single UQ form: Dagara, Moore, Wolof, Arabic, ...
-  | twoForm   -- Distinct [+dist] / [−dist] forms: English, German, Hindi, ...
-  deriving DecidableEq, Repr
+The 1-form vs 2-form split assembled from the per-language Fragment profiles.
+1-form languages are [haslinger-etal-2025-nllt] Table 2; 2-form languages are
+its Table 1. Each row *is* a Fragment `UQProfile`, so the forms are not restated
+here — they are read off `Fragments/{Language}/UniversalQuantifier.lean`. -/
 
-/-- A language's universal quantifier inventory. -/
-structure UQLanguageEntry where
-  language : String
-  systemType : UQSystemType
-  /-- The [+dist] form (or the sole form in 1-form languages) -/
-  distForm : String
-  /-- The [−dist] form (empty in 1-form languages) -/
-  nonDistForm : String := ""
-  /-- Language family -/
-  family : String
-  deriving Repr
+/-- Typological sample, derived from the Fragment UQ profiles. -/
+def typologicalSample : List UQProfile :=
+  [ -- 1-form languages (single UQ; reading fixed by complement number) — Table 2
+    Dagara.universalQuantifier
+  , Moore.universalQuantifier
+  , Gourmantchema.universalQuantifier
+  , Wolof.universalQuantifier
+  , Arabic.Syrian.universalQuantifier
+    -- 2-form languages (distinct [+dist]/[−dist] forms) — Table 1
+  , English.universalQuantifier
+  , German.universalQuantifier
+  , Hindi.universalQuantifier
+  , Russian.universalQuantifier
+  , Quechua.Imbabura.universalQuantifier
+  , Turkish.universalQuantifier
+  , Basque.universalQuantifier
+  , Telugu.universalQuantifier
+  , Hausa.universalQuantifier
+  , Logoori.universalQuantifier ]
 
-/-- Typological sample from NLLT Table 1 and surrounding discussion. -/
-def typologicalSample : List UQLanguageEntry :=
-  [ -- 1-form languages (bare Q_∀)
-    { language := "Dagara", systemType := .oneForm,
-      distForm := "abe", family := "Gur" }
-  , { language := "Moore", systemType := .oneForm,
-      distForm := "fãa", family := "Gur" }
-  , { language := "Wolof", systemType := .oneForm,
-      distForm := "yépp", family := "Atlantic" }
-  , { language := "Arabic (Egyptian)", systemType := .oneForm,
-      distForm := "kull", family := "Semitic" }
-  , { language := "Tagalog", systemType := .oneForm,
-      distForm := "lahat", family := "Austronesian" }
-  , { language := "Mandarin", systemType := .oneForm,
-      distForm := "suǒyǒu/měi", family := "Sinitic" }
-    -- 2-form languages (Q_∀ + ONE)
-  , { language := "English", systemType := .twoForm,
-      distForm := "every/each", nonDistForm := "all", family := "Germanic" }
-  , { language := "German", systemType := .twoForm,
-      distForm := "jeder", nonDistForm := "alle", family := "Germanic" }
-  , { language := "Hindi", systemType := .twoForm,
-      distForm := "har", nonDistForm := "sab/saaraa", family := "Indo-Aryan" }
-  , { language := "Greek", systemType := .twoForm,
-      distForm := "káthe", nonDistForm := "óloi", family := "Hellenic" }
-  , { language := "Japanese", systemType := .twoForm,
-      distForm := "dono-N-mo", nonDistForm := "zenbu/minna", family := "Japonic" }
-  ]
+/-- The survey samples 15 languages. -/
+theorem sample_size : typologicalSample.length = 15 := by decide
 
-/-- 1-form count -/
+/-- 1-form count (Table 2): Dagara, Moore, Gourmantchema, Wolof, Syrian Arabic. -/
 theorem oneForm_count :
-    (typologicalSample.filter (·.systemType == .oneForm)).length = 6 := by native_decide
+    (typologicalSample.filter (·.systemType == .oneForm)).length = 5 := by decide
 
-/-- 2-form count -/
+/-- 2-form count (Table 1): English, German, Hindi, Russian, Imbabura Quichua,
+    Turkish, Basque, Telugu, Hausa, Logoori. -/
 theorem twoForm_count :
-    (typologicalSample.filter (·.systemType == .twoForm)).length = 5 := by native_decide
+    (typologicalSample.filter (·.systemType == .twoForm)).length = 10 := by decide
 
--- ════════════════════════════════════════════════════
--- § 3. Finite Model: 3-Atom Powerset Lattice
--- ════════════════════════════════════════════════════
+/-- Every sampled language is either 1-form or 2-form — the classification is an
+    exhaustive partition (no row is neither). -/
+theorem oneForm_twoForm_partition :
+    (typologicalSample.filter (·.systemType == .oneForm)).length +
+    (typologicalSample.filter (·.systemType == .twoForm)).length =
+      typologicalSample.length := by decide
 
-/-! Verify DNG on a concrete flat 3-element domain (SG case)
-    and a small semilattice (PL case). -/
+/-! ### Finite model: the DNG on a 3-atom domain
+
+Verify the DNG on a concrete flat 3-element domain (the SG case), where every
+element is an atom and distinct elements are disjoint. -/
 
 section FiniteModel
 
@@ -122,7 +133,7 @@ inductive Student where | alice | bob | carol
 
 instance : Fintype Student where
   elems := {.alice, .bob, .carol}
-  complete := by intro x; cases x <;> simp
+  complete := by intro x; cases x <;> decide
 
 /-- Flat discrete order: x ≤ y ↔ x = y. Every element is an atom. -/
 instance : PartialOrder Student where
@@ -152,14 +163,14 @@ theorem student_disjoint : ∀ (x y : Student),
   -- In Student's flat order, ≤ is =, so hzx : z = x and hzy : z = y
   exact hzx.symm.trans hzy
 
-/-- DNG-SG: Q_∀ on a flat domain distributes to each element. -/
+/-- DNG-SG: `Q_∀` on a flat domain distributes to each element. -/
 theorem dng_sg_concrete :
     QForall (fun _ : Student => True) passed ↔
     ∀ x : Student, passed x := by
   rw [dng_atoms student_atoms student_disjoint]
-  simp
+  simp only [forall_const]
 
-/-- Q_∀(student)(passed) is false: Carol didn't pass. -/
+/-- `Q_∀(student)(passed)` is false: Carol didn't pass. -/
 theorem dng_sg_false : ¬QForall (fun _ : Student => True) passed := by
   rw [dng_sg_concrete]
   intro h
@@ -167,182 +178,135 @@ theorem dng_sg_false : ¬QForall (fun _ : Student => True) passed := by
 
 end FiniteModel
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge to Tolerance-Based Distributivity
--- ════════════════════════════════════════════════════
+/-! ### Bridge to tolerance-based distributivity
 
-/-! Connect Q_∀ on atoms to `distMaximal` from `Distributivity.lean`.
+Connect `Q_∀` on atoms to `distMaximal` from `Distributivity.lean`. For an
+atomic restrictor `P`, `Q_∀(P)(Q)` reduces to `∀x, P(x) → Q(x)` (by
+`dng_atoms`), which is exactly `distMaximal P X w`. The bridge is a semantic
+equivalence on the shared domain, not a definitional equality (different
+signatures: `Q_∀` over `PartialOrder`, `distMaximal` over `Finset Atom`). -/
 
-The key insight: for an atomic restrictor P, Q_∀(P)(Q) reduces to
-∀x, P(x) → Q(x) (by `dng_atoms`). And `distMaximal Q X w = true`
-iff ∀a ∈ X, Q(a)(w) = true. These are the same universal structure.
-
-The bridge is not a definitional equality (different type signatures:
-Q_∀ works over `PartialOrder`, `distMaximal` over `Finset Atom × W → Bool`)
-but a semantic equivalence on the shared domain. -/
-
-/-- Q_∀ on atoms is semantically equivalent to `distMaximal`.
-
-    Both say: "Q holds of every atom in the restrictor."
-    Q_∀ gets there via maxNonOverlap (trivial for atoms).
-    distMaximal gets there via ∀a ∈ X, P(a)(w). -/
+/-- `Q_∀` on atoms is semantically equivalent to `distMaximal`: both say "Q
+    holds of every atom in the restrictor." -/
 theorem QForall_atoms_iff_distMaximal
     {Atom W : Type*} [DecidableEq Atom]
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (X : Finset Atom) (w : W) :
     (∀ a ∈ X, P a w) ↔ distMaximal P X w := Iff.rfl
 
-/-- Q_∀ on a CUM restrictor is semantically equivalent to `allSatisfy`
-    applied to the maximal element (when it exists).
-
-    Both say: "Q holds of every atom in the group." The difference is
-    structural: Q_∀ reaches this via maxNonOverlap selecting the unique
-    max, while `allSatisfy` directly iterates. -/
+/-- `Q_∀` on a cumulative restrictor is equivalent to `allSatisfy` over its
+    atoms: both say "Q holds of every atom in the group." -/
 theorem QForall_cum_iff_allSatisfy
     {Atom W : Type*} [DecidableEq Atom]
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (X : Finset Atom) (w : W) :
     allSatisfy P X w ↔ (∀ a ∈ X, P a w) := by
-  simp [allSatisfy, distMaximal]
+  simp only [allSatisfy, distMaximal]
 
--- ════════════════════════════════════════════════════
--- § 5. English every/each/all Decomposition Verification
--- ════════════════════════════════════════════════════
+/-! ### English every/each/all decomposition
 
-/-! The English decomposition from the paper:
-    - all = Q_∀ (bare, no ONE)
-    - every = Q_∀ + ONE_∅
-    - each = Q_∀ + ONE_∅ + ONE_AT
+The English decomposition from [haslinger-etal-2025-nllt] (eq. 79):
+- all = `Q_∀` (bare, no ONE)
+- every = `Q_∀[ONE_∅]`
+- each = `Q_∀[ONE_∅[ONE_AT]]`
 
-    Verified: each ⊂ every ⊂ all in presuppositional strength. -/
+Verified: each ⊂ every ⊂ all in presuppositional strength. -/
+
 section EnglishDecomposition
 
 variable {α : Type*} [PartialOrder α] {P Q : α → Prop}
 
-/-- *each* entails *every* (ONE_AT ⊂ ONE_∅) -/
+/-- *each* entails *every* (ONE_AT ⊂ ONE_∅). -/
 theorem each_stronger_than_every :
     eachPresup P Q → everyPresup P Q :=
   each_entails_every
 
-/-- *every* entails *all* (ONE_∅ ⊂ no presupposition) -/
+/-- *every* entails *all* (ONE_∅ ⊂ no presupposition). -/
 theorem every_stronger_than_all (h : everyPresup P Q) : QForall P Q :=
   h.2
 
-/-- When ONE_∅ holds, Q_∀ distributes to atoms. -/
+/-- When ONE_∅ holds, `Q_∀` distributes to atoms. -/
 theorem every_is_distributive (hONE : ONE_empty P) :
     QForall P Q ↔ ∀ x, P x → Q x :=
   every_distributes hONE
 
-/-- The full chain: each ⊂ every ⊂ all -/
+/-- The full chain: each ⊂ every ⊂ all. -/
 theorem presup_chain : eachPresup P Q → everyPresup P Q ∧ QForall P Q :=
   fun h => ⟨each_entails_every h, h.2⟩
 
 end EnglishDecomposition
 
--- ════════════════════════════════════════════════════
--- § 6. German Fragment Consistency
--- ════════════════════════════════════════════════════
+/-! ### German fragment consistency
 
-/-! Verify that the German fragment entries in `Fragments/German/Distributives.lean`
-    are consistent with the Q_∀ decomposition.
-
-    - jeder (+dist, +max) = Q_∀[ONE_∅] on atoms = distMaximal ✓
-    - alle (-dist, +max) = bare Q_∀ on CUM = allViaForallH ✓
-    - jeweils (+dist, -max) = distTolerant (orthogonal to Q_∀) ✓ -/
+Verify the German fragment entries in `Fragments/German/Distributives.lean` are
+consistent with the `Q_∀` decomposition:
+- jeder (+dist, +max) = `Q_∀[ONE_∅]` on atoms = `distMaximal`
+- alle (−dist, +max) = bare `Q_∀` on a cumulative restrictor = `allViaForallH`
+- jeweils (+dist, −max) = `distTolerant` (orthogonal to `Q_∀`) -/
 
 /-- German jeder's DistMaxClass matches the ONE_∅ prediction:
     [+dist] (ONE forces atom complement) and [+max] (atoms are vacuously maximal). -/
 theorem jeder_matches_ONE_prediction :
     German.Distributives.jederEntry.distMaxClass = .distMax := rfl
 
-/-- German alle's DistMaxClass matches bare Q_∀ prediction:
-    [−dist] (no ONE, CUM complement → collective) and [+max]. -/
+/-- German alle's DistMaxClass matches the bare `Q_∀` prediction:
+    [−dist] (no ONE, cumulative complement → collective) and [+max]. -/
 theorem alle_matches_bare_QForall :
     German.Distributives.alleEntry.distMaxClass = .nonDistMax := rfl
 
 /-- The DNG explains the dist/non-dist split between jeder and alle:
-    same Q_∀ semantics, different complement structure. -/
+    same `Q_∀` semantics, different complement structure. -/
 theorem german_dng_explained :
     German.Distributives.jederEntry.distMaxClass.isDistributive ∧
     ¬ German.Distributives.alleEntry.distMaxClass.isDistributive := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 7. English Fragment Consistency
--- ════════════════════════════════════════════════════
+/-! ### English fragment consistency
 
-/-! Connect the Q_∀ decomposition to the English fragment's `DistMaxClass`
-    and semantic entries in `Fragments/English/Determiners.lean`.
+Connect the `Q_∀` decomposition to the English distributive Fragment's
+`DistMaxClass` and atomicity entries in `Fragments/English/Distributives.lean`,
+exactly as the German section derives from `Fragments/German/Distributives.lean`.
 
-    The NLLT decomposition predicts:
-    - each = Q_∀[ONE_AT] → [+dist] (atoms), [+max] (atoms vacuously maximal)
-    - every = Q_∀[ONE_∅] → [+dist] (non-overlap), [+max]
-    - all = bare Q_∀ → [−dist] (CUM complement), [+max]
+The NLLT decomposition predicts:
+- each = `Q_∀[ONE_∅[ONE_AT]]` → [+dist] (atoms), [+max]
+- every = `Q_∀[ONE_∅]` → [+dist] (non-overlap), [+max]
+- all = bare `Q_∀` → [−dist] (cumulative complement), [+max]
 
-    These predictions match the Fragment's DistMaxClass assignments. -/
+These predictions are read off the Fragment's entries (no local restipulation). -/
 
-/-- English each's DistMaxClass: +dist (ONE_AT forces atom complement),
-    +max. The classification is local to this study because it lifts
-    fragment lexical-class metadata into the [haslinger-etal-2025-nllt]
-    DistMaxClass typology, which is paper-specific. -/
-def each_distMaxClass : DistMaxClass := .distMax
-
-/-- English every's DistMaxClass: +dist (ONE_∅ forces non-overlap), +max. -/
-def every_distMaxClass : DistMaxClass := .distMax
-
-/-- English all's DistMaxClass: −dist (CUM complement), +max. -/
-def all_distMaxClass : DistMaxClass := .nonDistMax
-
-/-- English each: distributes via `distMaximal`. -/
-def eachSem {Atom W : Type*} [DecidableEq Atom] (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] :
-    Finset Atom → W → Prop :=
-  distMaximal P
-
-/-- English each's DistMaxClass matches the ONE_AT prediction:
-    [+dist] (ONE_AT forces atom complement) and [+max]. -/
+/-- English each's DistMaxClass matches the ONE_AT prediction (+dist, +max). -/
 theorem each_matches_ONE_AT_prediction :
-    each_distMaxClass = .distMax := rfl
+    English.Distributives.eachEntry.distMaxClass = .distMax := rfl
 
-/-- English every's DistMaxClass matches the ONE_∅ prediction:
-    [+dist] (ONE_∅ forces non-overlap) and [+max]. -/
+/-- English every's DistMaxClass matches the ONE_∅ prediction (+dist, +max). -/
 theorem every_matches_ONE_empty_prediction :
-    every_distMaxClass = .distMax := rfl
+    English.Distributives.everyEntry.distMaxClass = .distMax := rfl
 
-/-- English all's DistMaxClass matches bare Q_∀ prediction:
-    [−dist] (no ONE, CUM complement → collective) and [+max]. -/
+/-- English all's DistMaxClass matches the bare `Q_∀` prediction (−dist, +max). -/
 theorem all_matches_bare_QForall_prediction :
-    all_distMaxClass = .nonDistMax := rfl
+    English.Distributives.allEntry.distMaxClass = .nonDistMax := rfl
 
-/-- The NLLT theory predicts each ⊂ every in presuppositional strength.
-    Both share DistMaxClass (both are +dist, +max), but each additionally
-    requires atomicity (ONE_AT). This distinction doesn't show up in
-    DistMaxClass (which collapses each and every) but IS captured by
-    the Q_∀+ONE decomposition. -/
-theorem each_every_same_distmax_different_presup :
-    each_distMaxClass = every_distMaxClass := rfl
+/-- each and every share a DistMaxClass (both +dist, +max), so this axis cannot
+    separate them. The NLLT contrast lives in the atomicity presupposition
+    (`ONE_AT`), recorded by the Fragment's `atomicityPresup` field — exactly the
+    distinction that blocks *each ten minutes* below. [haslinger-etal-2025-nllt] §6.2. -/
+theorem each_every_same_class_different_atomicity :
+    English.Distributives.eachEntry.distMaxClass =
+      English.Distributives.everyEntry.distMaxClass ∧
+    English.Distributives.eachEntry.atomicityPresup = true ∧
+    English.Distributives.everyEntry.atomicityPresup = false :=
+  English.Distributives.each_every_same_class_different_atomicity
 
-/-- `eachSem` = `distMaximal` is the computational counterpart of
-    Q_∀[ONE_AT]: both distribute over atoms.
-    Q_∀[ONE_AT] ⊢ ∀x, P(x) → Q(x) (by `every_distributes`),
-    and `distMaximal` checks ∀a ∈ X, P(a)(w). -/
-theorem eachSem_is_distMaximal {Atom W : Type*} [DecidableEq Atom]
-    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
-    eachSem P = distMaximal P := rfl
+/-! ### The *each ten minutes test
 
--- ════════════════════════════════════════════════════
--- § 8. The *each ten minutes Test
--- ════════════════════════════════════════════════════
+`ONE_AT` explains the ungrammaticality of *each ten minutes*: time intervals are
+not atoms, so the atomicity presupposition fails. *every ten minutes* is fine —
+intervals can be non-overlapping (satisfying `ONE_∅`) without being atomic.
+Following [fassi-fehri-2020]; [haslinger-etal-2025-nllt] §6.2. -/
 
-/-! ONE_AT explains the ungrammaticality of *each ten minutes:
-    time intervals are not atoms, so ONE_AT fails.
-
-    "Every ten minutes" is fine: intervals can be non-overlapping
-    (satisfying ONE_∅) without being atomic. -/
-
-/-- ONE_AT rejects non-atomic predicates.
-    *every ten minutes* is fine (ONE_∅ accepts non-overlapping intervals),
-    but *each ten minutes* is out (ONE_AT requires atoms). -/
+/-- `ONE_AT` rejects non-atomic predicates. *every ten minutes* is fine (`ONE_∅`
+    accepts non-overlapping intervals), but *each ten minutes* is out (`ONE_AT`
+    requires atoms). -/
 theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α]
     {P : α → Prop}
     (hNonAtomic : ∃ x, P x ∧ ¬Atom x)
