@@ -1,6 +1,5 @@
-import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Composition.Scope
-import Linglib.Semantics.Quantification.CovertQuantifier
 
 /-!
 # [cohen-2013]: No Quantification without Reinterpretation
@@ -64,14 +63,15 @@ built directly on `transferGen` and `gamma` from (below):
 3. **Scope hierarchy**: overt > predicateTransfer > typeShift
 
 These connect to (below) (T_g, γ, SHIFT, `QuantifierSource`),
-`Generics.lean` (traditionalGEN), `CovertQuantifier.lean` (shared `covertQ`),
-and `Scope.lean` (ScopeConfig). A local 3-cell `Occasion` enum (below) supplies
-the habitual-side domain.
+the canonical relativized restricted universal `Quantification.everyOn`
+(`Counting.lean`) that both T_g and γ bottom out in, and `Scope.lean`
+(ScopeConfig). A local 3-cell `Occasion` enum (below) supplies the
+habitual-side domain.
 -/
 
 namespace Cohen2013
 
-open Quantification.CovertQuantifier
+open Quantification
 open Semantics.Scope (ScopeConfig)
 
 /-! ### Reinterpretation mechanisms ([cohen-2013], [nunberg-1995])
@@ -94,10 +94,10 @@ kind-level predicate into a quantified predicate over instances of the kind.
 kind x. When `P(∩pandas)` is pragmatically anomalous (kinds don't eat —
 individuals do), Predicate Transfer applies, yielding
 `gen_y[C(y, ∩pandas)][P(y)]`. -/
-def transferGen {Kind Ind : Type}
-    (gen : (Ind → Bool) → (Ind → Bool) → Bool)
+@[reducible] def transferGen {Kind Ind : Type}
+    (gen : (Ind → Bool) → (Ind → Bool) → Prop)
     (instanceOf : Ind → Kind → Bool)
-    (P : Ind → Bool) : Kind → Bool :=
+    (P : Ind → Bool) : Kind → Prop :=
   fun x => gen (fun y => instanceOf y x) P
 
 /-- Partee-Rooth SHIFT: lift an extensional transitive verb to take a
@@ -125,10 +125,10 @@ Triggered by the present-tense / eventive-verb type mismatch, which forces
 γ to fire at the verb level (locally). Locality is why habituals take
 narrow scope. Like SHIFT, γ does not commute with other operators — see
 `gamma_noncommutative` for the concrete instance. -/
-def gamma {Interval Moment : Type}
-    (gen : (Interval → Bool) → (Interval → Bool) → Bool)
+@[reducible] def gamma {Interval Moment : Type}
+    (gen : (Interval → Bool) → (Interval → Bool) → Prop)
     (containedIn : Interval → Moment → Bool)
-    (P : Interval → Bool) : Moment → Bool :=
+    (P : Interval → Bool) : Moment → Prop :=
   fun t => gen (fun e => containedIn e t) P
 
 /-- The mechanism introducing a covert quantifier; determines its scope
@@ -283,9 +283,10 @@ def nestsIn : Stork → NestArea → Bool
   | .s2, .a2 => true
   | _, _ => false
 
-/-- GEN as universal over storks (simplified: all storks are "normal"). -/
-def genStork (restrictor scope : Stork → Bool) : Bool :=
-  covertQ storks restrictor scope
+/-- GEN as the canonical relativized universal over storks (simplified: all
+    storks are "normal"). -/
+@[reducible] def genStork (restrictor scope : Stork → Bool) : Prop :=
+  everyOn storks.toFinset (fun y => restrictor y = true) (fun y => scope y = true)
 
 /-- Chierchia's ∪ applied to ∩storks: every Stork is an instance of the kind. -/
 def instanceOfStork (_ : Stork) (_ : Unit) : Bool := true
@@ -296,22 +297,21 @@ def storkKind : Unit := ()
 /-- **Local T_g**: ∃area(T_g(λy.nestsIn(y, area))(∩storks))
     = ∃area(gen_y[stork(y)][nestsIn(y, area)])
     "There is one area that, in general, storks nest in." -/
-def localTransfer : Bool :=
-  areas.any fun a =>
-    transferGen genStork instanceOfStork (fun y => nestsIn y a) storkKind
+@[reducible] def localTransfer : Prop :=
+  ∃ a ∈ areas, transferGen genStork instanceOfStork (fun y => nestsIn y a) storkKind
 
 /-- **Global T_g**: T_g(λy.∃area(nestsIn(y, area)))(∩storks)
     = gen_y[stork(y)][∃area(nestsIn(y, area))]
     "In general, storks nest in some area (possibly different)." -/
-def globalTransfer : Bool :=
+@[reducible] def globalTransfer : Prop :=
   transferGen genStork instanceOfStork
     (fun y => areas.any fun a => nestsIn y a) storkKind
 
 -- Local T_g is false: no single area works for all storks.
-#guard !localTransfer
+example : ¬ localTransfer := by decide
 
 -- Global T_g is true: each stork has some area.
-#guard globalTransfer
+example : globalTransfer := by decide
 
 /-- **Generic scope ambiguity**: local and global T_g yield different
     truth conditions. This is why generics in transparent contexts
@@ -320,7 +320,7 @@ def globalTransfer : Bool :=
     The two readings correspond to `ScopeConfig.surface` (∃ > gen)
     and `ScopeConfig.inverse` (gen > ∃). -/
 theorem generic_scope_ambiguity :
-    localTransfer = false ∧ globalTransfer = true := ⟨rfl, rfl⟩
+    ¬ localTransfer ∧ globalTransfer := ⟨by decide, by decide⟩
 
 /-- The scope ambiguity matches the empirical datum: both readings available. -/
 theorem generic_both_scopes :
@@ -393,9 +393,10 @@ def smokes : Cigarette → Occasion → Bool
   | .c3, .e3 => true
   | _, _ => false
 
-/-- GEN over occasions (simplified: all occasions are relevant). -/
-def genHab (restrictor scope : Occasion → Bool) : Bool :=
-  covertQ occasions restrictor scope
+/-- GEN over occasions as the canonical relativized universal (simplified:
+    all occasions are relevant). -/
+@[reducible] def genHab (restrictor scope : Occasion → Bool) : Prop :=
+  everyOn occasions.toFinset (fun e => restrictor e = true) (fun e => scope e = true)
 
 /-- All occasions are contained in the relevant interval of speech time t₀. -/
 def containedInSpeech : Occasion → Unit → Bool := fun _ _ => true
@@ -406,22 +407,21 @@ def speechTime : Unit := ()
 /-- **Local γ** (γ at verb, then object composes):
     ∃c(cigarette(c) ∧ γ(λe.smoke(m,c,e))(t₀))
     "There is one cigarette that Mary habitually smokes." -/
-def localGamma : Bool :=
-  cigarettes.any fun c =>
-    gamma genHab containedInSpeech (fun e => smokes c e) speechTime
+@[reducible] def localGamma : Prop :=
+  ∃ c ∈ cigarettes, gamma genHab containedInSpeech (fun e => smokes c e) speechTime
 
 /-- **Global γ** (hypothetical — if γ could apply to the whole VP):
     γ(λe.∃c(cigarette(c) ∧ smoke(m,c,e)))(t₀)
     "Mary is habitually in a situation where she smokes some cigarette." -/
-def globalGamma : Bool :=
+@[reducible] def globalGamma : Prop :=
   gamma genHab containedInSpeech
     (fun e => cigarettes.any fun c => smokes c e) speechTime
 
 -- Local γ is false: no single cigarette is smoked at all occasions.
-#guard !localGamma
+example : ¬ localGamma := by decide
 
 -- Global γ is true: at each occasion, some cigarette is smoked.
-#guard globalGamma
+example : globalGamma := by decide
 
 /-- **Habitual narrow scope**: local and global γ differ, but only
     local is available. The plausible wide-scope reading is blocked
@@ -430,7 +430,7 @@ def globalGamma : Bool :=
     This explains why "#John smokes a cigarette" is odd: the only
     available reading (∃ > hab) is implausible. -/
 theorem habitual_narrow_scope :
-    localGamma = false ∧ globalGamma = true := ⟨rfl, rfl⟩
+    ¬ localGamma ∧ globalGamma := ⟨by decide, by decide⟩
 
 /-- The narrow-scope-only prediction matches the empirical datum. -/
 theorem habitual_matches_datum :
@@ -442,7 +442,7 @@ theorem habitual_matches_datum :
     from §13.3.1 (proved abstractly for SHIFT in `shift_neg_noncommutative`).
     The non-commutativity is what forces γ to apply locally. -/
 theorem gamma_noncommutative :
-    localGamma ≠ globalGamma := by native_decide
+    ¬ (localGamma ↔ globalGamma) := by decide
 
 end HabitualScope
 
@@ -484,25 +484,24 @@ theorem predictions_match_data :
 -- Connection to Existing Infrastructure
 -- ============================================================================
 
-/-- Both T_g and γ produce instances of `covertQ`, confirming that
-    `CovertQuantifier.lean`'s shared infrastructure correctly captures
-    the common logical form. The difference is upstream (how the quantifier
-    is introduced), not downstream (what it evaluates to).
+/-- Both T_g and γ bottom out in the canonical relativized universal
+    `Quantification.everyOn`, confirming that they share the common logical
+    form. The difference is upstream (how the quantifier is introduced), not
+    downstream (what it evaluates to).
 
-    T_g with our stork model reduces to `covertQ storks` because
-    `instanceOfStork y () = true` for all y, making the restrictor
-    equivalent to `fun y => true` — i.e., all storks are in the domain.
-
-    γ with our model reduces to `covertQ occasions` because
-    `containedInSpeech e () = true` for all e, making the restrictor
-    equivalent to `fun e => true` — i.e., all occasions are relevant. -/
-theorem both_reduce_to_covertQ :
-    -- T_g(nestsIn(·, a1))(∩storks) = covertQ storks (λ_ => true) (nestsIn · .a1)
+    T_g with our stork model reduces to `everyOn storks.toFinset` with the
+    restrictor `instanceOfStork · ∩storks` and the scope; γ likewise reduces
+    to `everyOn occasions.toFinset`. Both are `rfl` because `transferGen`/`gamma`
+    are definitionally the relativized universal applied to the kind/moment. -/
+theorem both_reduce_to_everyOn :
+    -- T_g(nestsIn(·, a1))(∩storks) = everyOn storks.toFinset (instanceOf · ∩storks) (nestsIn · .a1)
     transferGen genStork instanceOfStork (fun y => nestsIn y .a1) storkKind =
-    covertQ storks (fun _ => true) (fun y => nestsIn y .a1) ∧
-    -- γ(smoke(c1, ·))(t₀) = covertQ occasions (λ_ => true) (smokes .c1 ·)
+    everyOn storks.toFinset (fun y => instanceOfStork y storkKind = true)
+      (fun y => nestsIn y .a1 = true) ∧
+    -- γ(smoke(c1, ·))(t₀) = everyOn occasions.toFinset (containedIn · t₀) (smokes .c1 ·)
     gamma genHab containedInSpeech (fun e => smokes .c1 e) speechTime =
-    covertQ occasions (fun _ => true) (fun e => smokes .c1 e) :=
+    everyOn occasions.toFinset (fun e => containedInSpeech e speechTime = true)
+      (fun e => smokes .c1 e = true) :=
   ⟨rfl, rfl⟩
 
 /-- The available scope configurations for generics: both surface
