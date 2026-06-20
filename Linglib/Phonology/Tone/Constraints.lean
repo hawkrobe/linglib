@@ -124,6 +124,10 @@ def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
   let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
   ownAlive ∪ docked
 
+/-- All morphemes occurring in `f`, on either tier. -/
+def morphemes : Finset Morpheme :=
+  (f.lower.map SegSpec.morpheme).toFinset ∪ (f.upper.map TierSpec.morpheme).toFinset
+
 /-- `*CROWD` (paper eq. 5): one violation per morpheme with more than `threshold`
     tones (default 2), counting its surviving underlying tones plus tones docked onto
     its TBUs from other morphemes. -/
@@ -131,10 +135,7 @@ def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN
   name := s!"*CROWD({threshold})"
   family := .markedness
   eval := fun f =>
-    let morphIds : Finset Morpheme :=
-      (f.lower.map SegSpec.morpheme).toFinset ∪
-      (f.upper.map TierSpec.morpheme).toFinset
-    [(morphIds.filter (fun m => (tonesForMorpheme f m).card > threshold)).card]
+    [((morphemes f).filter (fun m => threshold < (tonesForMorpheme f m).card)).card]
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
 
@@ -177,9 +178,8 @@ def starMlessL : DirectionalConstraint (FloatingForm S TRN) where
   family := .markedness
   eval := fun f =>
     let aliveValues : List TRN :=
-      f.aliveTierIdxs.filterMap fun k => (f.upper[k]?).map TierSpec.value
-    [aliveValues.zip aliveValues.tail
-      |>.countP fun p => decide (p.1 = TRN.M ∧ p.2 = TRN.L)]
+      f.aliveTierIdxs.filterMap (f.upper[·]?.map TierSpec.value)
+    [(aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L)))]
 
 /-! ### HAVETONE -/
 
@@ -227,8 +227,7 @@ def integrityTone (m : Morpheme) (t : TRN) :
   name := s!"INTEGRITY-{reprStr t}({m.form})"
   family := .faithfulness
   eval := fun f =>
-    let aliveCopies := (List.range f.upper.length).countP fun k =>
-      decide (f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t)
-    [if aliveCopies = 0 then 0 else aliveCopies - 1]
+    [(List.range f.upper.length).countP
+        (fun k => decide (f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t)) - 1]
 
 end Phonology.Tone
