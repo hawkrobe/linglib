@@ -1,4 +1,5 @@
 import Linglib.Data.Examples.Steedman2000
+import Linglib.Syntax.Anaphora.Basic
 import Linglib.Fragments.English.Toy
 import Linglib.Fragments.English.Coordination
 import Linglib.Studies.BresnanEtAl1982
@@ -368,6 +369,23 @@ def HasWordOrderConstraints : EllipsisType → Prop
 
 instance : DecidablePred HasWordOrderConstraints := fun x => by
   cases x <;> unfold HasWordOrderConstraints <;> infer_instance
+
+/-- All four of Steedman's elliptical constructions are *surface* anaphora in
+Hankamer & Sag's sense ([hankamer-sag-1976]): each deletes internal structure
+under identity with a linguistic antecedent. Steedman's taxonomy contains no
+deep anaphor (no *do so*-type pro-form), so the depth axis is constant
+`.surface` over it. -/
+instance : Anaphor.HasDepth EllipsisType := ⟨fun _ => .surface⟩
+
+/-- **Cross-framework non-alignment.** Steedman's CCG cut `isSyntacticallyMediated`
+(gapping/stripping derived by category composition; VP-ellipsis/sluicing handled
+anaphorically) is *not* Hankamer & Sag's deep/surface cut. VP-ellipsis is the
+paradigm *surface* anaphor ([hankamer-sag-1976]; Landau's own surface baseline in
+[landau-2026]) yet CCG treats it as non-mediated — so the two frameworks partition
+the very same constructions differently. -/
+theorem surface_not_syntacticallyMediated :
+    Anaphor.HasDepth.IsSurface EllipsisType.vpEllipsis ∧
+      ¬ isSyntacticallyMediated .vpEllipsis := by decide
 
 end Gapping
 

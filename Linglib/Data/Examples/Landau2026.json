@@ -1,0 +1,201 @@
+[
+  {
+    "id": "landau2026_hebrewEN",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(18a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš la'hakot še-ahavti et ha-šeni.",
+    "glossedTokens": [],
+    "translation": "(There are bands that I liked the second one.)",
+    "context": "Empty noun (EN), deep anaphor: a bare n head hosting a resumptive bound by an Ā-operator.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "nP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, free relative"]
+    ],
+    "comment": "Landau 2026, §2.2 (18a). EN fails EIR: no internal structure to host the resumptive, so the Ā-operator violates the BVQ. NP-ellipsis previously established; EIR gives additional confirmation via the EN/ENP contrast."
+  },
+  {
+    "id": "landau2026_hebrewENP",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(19a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš la'hakot še-ahavti et ha-albom ha-rišon šela'hen, ve-yeš la'hakot še-ahavti et ha-šeni.",
+    "glossedTokens": [],
+    "translation": "There are bands that I liked their first album, and there are bands that I liked their second one.",
+    "context": "Elided noun phrase (ENP), surface anaphor: full nP structure deleted under identity, licensed by [E] on Num.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["domain", "nP"],
+      ["depth", "surface"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, maximizing relative"]
+    ],
+    "comment": "Landau 2026, §2.2 (19a). ENP passes EIR: the resumptive inside the elided nP supplies the variable the operator binds."
+  },
+  {
+    "id": "landau2026_hebrewNCA_DP",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(31a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš li xaver exad še-maxarti.",
+    "glossedTokens": [],
+    "translation": "(I have one friend that I sold.)",
+    "context": "Null complement anaphora (NCA) / pro, deep anaphor in the DP domain.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "DP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, free relative"]
+    ],
+    "comment": "Landau 2026, §3.2 (31a). NCA/pro fails EIR: no internal structure. The existence of AE in Hebrew was debated; EIR provides a novel argument."
+  },
+  {
+    "id": "landau2026_hebrewAE",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(32a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš li xaver še-kaniti et ha-oto šelo, ve-yeš li xaver axer še-maxarti.",
+    "glossedTokens": [],
+    "translation": "I have one friend whose car I bought and I have another one whose car I sold.",
+    "context": "Argument ellipsis (AE) / DP-ellipsis, surface anaphor: full DP structure deleted under identity.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["domain", "DP"],
+      ["depth", "surface"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, free relative"]
+    ],
+    "comment": "Landau 2026, §3.2 (32a). AE passes EIR: a resumptive inside the elided DP supplies the variable. Novel argument for AE in Hebrew."
+  },
+  {
+    "id": "landau2026_hebrewNCA_PP",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(37a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš irgunim še-ani lo xotemet.",
+    "glossedTokens": [],
+    "translation": "(There are organizations that I don't sign.)",
+    "context": "Null PP via NCA, deep anaphor: PP argument omitted, content recovered pragmatically.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "PP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, free relative"]
+    ],
+    "comment": "Landau 2026, §4.2 (37a). Null PP via NCA fails EIR: no internal structure."
+  },
+  {
+    "id": "landau2026_hebrewPPE",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(38a)"},
+    "language": "hebr1245",
+    "primaryText": "yeš irgunim še-ani xotemet al ha-acumot šelahem, ve-yeš irgunim še-ani lo xotemet.",
+    "glossedTokens": [],
+    "translation": "There are organizations that I sign their petitions and there are organizations that I don't.",
+    "context": "PP-ellipsis (PPE), surface anaphor: full PP structure deleted under identity. Data are Landau's own (first documented in Vardi 2022).",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["domain", "PP"],
+      ["depth", "surface"],
+      ["extractionAvailable", "false"],
+      ["abarContext", "restrictive relative, interrogative, free relative"]
+    ],
+    "comment": "Landau 2026, §4.2 (38a). PPE passes EIR: first robust evidence for PP-ellipsis; the paper argues this holds cross-linguistically, not only in Hebrew."
+  },
+  {
+    "id": "landau2026_englishVPE",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(44a)"},
+    "language": "stan1293",
+    "primaryText": "Deep Purple, I never bought their records. Led Zeppelin, I did.",
+    "discourseSegments": [
+      "Deep Purple, I never bought their records.",
+      "Led Zeppelin, I did."
+    ],
+    "glossedTokens": [],
+    "translation": "Deep Purple, I never bought their records. Led Zeppelin, I did.",
+    "context": "VP-ellipsis, surface anaphor: left-dislocated constituent binds a resumptive possessive inside the elided VP. Contrastive baseline for do so.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["domain", "VP"],
+      ["depth", "surface"],
+      ["extractionAvailable", "true"],
+      ["abarContext", "left-dislocation"]
+    ],
+    "comment": "Landau 2026, §5 (44a). VP-ellipsis passes EIR."
+  },
+  {
+    "id": "landau2026_englishDoSo",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(44c)"},
+    "language": "stan1293",
+    "primaryText": "Deep Purple, I never bought their records. Led Zeppelin, I did so.",
+    "discourseSegments": [
+      "Deep Purple, I never bought their records.",
+      "Led Zeppelin, I did so."
+    ],
+    "glossedTokens": [],
+    "translation": "Deep Purple, I never bought their records. Led Zeppelin, I did so.",
+    "context": "do so, deep VP anaphor: left-dislocation with resumptive binding into do so is ungrammatical.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "VP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "true"],
+      ["abarContext", "left-dislocation"]
+    ],
+    "comment": "Landau 2026, §5 (44c). do so fails EIR; Ā-extraction is also impossible, but that is ambiguous between deep anaphor and derivational bleeding. EIR resolves the ambiguity: do so is deep [bruening-2019]."
+  },
+  {
+    "id": "landau2026_dutchDatDoen",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(45a)"},
+    "language": "dutc1256",
+    "primaryText": "Jan, ik heb zijn muffins al eens geproefd; maar Wim, ik heb dat nog niet gedaan.",
+    "glossedTokens": [],
+    "translation": "Jan, I have already tasted his muffins once, but Wim, I haven't done that.",
+    "context": "dat doen 'do that', deep VP anaphor: blocks most Ā-extractions and fails EIR.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "VP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "true"],
+      ["abarContext", "left-dislocation"]
+    ],
+    "comment": "Landau 2026, §5 (45a). dat doen fails EIR (Marcel den Dikken, p.c.)."
+  },
+  {
+    "id": "landau2026_danishDet",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(46b)"},
+    "language": "dani1285",
+    "primaryText": "Den gamle bager, jeg har smagt hans rugbrød, men den nye bager, jeg har det ikke.",
+    "glossedTokens": [],
+    "translation": "The old baker, I have tasted his rye bread, but the new baker, I haven't.",
+    "context": "det 'it', deep VP anaphor: allows A-dependencies but not Ā-dependencies, so it fails EIR.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "VP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "true"],
+      ["abarContext", "left-dislocation"]
+    ],
+    "comment": "Landau 2026, §5 (46b). det fails EIR (Line Mikkelsen, p.c.). The grammatical baseline is (46a)."
+  },
+  {
+    "id": "landau2026_koreanNullObj",
+    "source": {"bibkey": "landau-2026", "paperLabel": "(47b)"},
+    "language": "kore1280",
+    "primaryText": "Na-uy i chinkwu, nay-ka ku-uy cha-lul sasse. Nay-uy ce chinkwu, nay-ka phallasse.",
+    "discourseSegments": [
+      "Na-uy i chinkwu, nay-ka ku-uy cha-lul sasse.",
+      "Nay-uy ce chinkwu, nay-ka phallasse."
+    ],
+    "glossedTokens": [],
+    "translation": "This friend of mine, I bought his car. THAT friend of mine, I sold his car.",
+    "context": "Korean null object, deep anaphor (pro): left-dislocation mandates a resumptive, but the null object fails to host one.",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["domain", "DP"],
+      ["depth", "deep"],
+      ["extractionAvailable", "true"],
+      ["abarContext", "left-dislocation"]
+    ],
+    "comment": "Landau 2026, §5 (47b). Korean null object fails EIR (Heejeong Ko, p.c.), supporting the pro analysis over AE. The grammatical baseline is (47a)."
+  }
+]

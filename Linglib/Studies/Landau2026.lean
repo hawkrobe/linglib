@@ -1,71 +1,36 @@
+import Linglib.Syntax.Anaphora.Diagnostic
+import Linglib.Data.Examples.Landau2026
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Fragments.Hebrew.Relativization
 
 /-!
 # Landau 2026: Silent Resumption [landau-2026]
 
-A New Test for Ellipsis. *Linguistic Inquiry*, Early Access.
+The **Ellipsis-Internal Resumption** (EIR) test distinguishes deep from
+surface anaphora ([hankamer-sag-1976]). By the Ban on Vacuous Quantification
+([chomsky-1982]), an Ā-operator can bind into a null site iff the site has
+LF-visible structure to host a resumptive variable — iff it is a surface
+anaphor (ellipsis). EIR improves on the extraction test: resumptive
+dependencies are fixed at LF, so EIR failure cannot be bled by derivational
+timing and is unambiguously diagnostic of a deep anaphor.
 
-## The EIR Test
-
-The **Ellipsis-Internal Resumption** (EIR) test: a novel diagnostic for
-distinguishing deep from surface anaphora ([hankamer-sag-1976]).
-
-The argumentation chain:
-
-1. **BVQ** ([chomsky-1982]): at LF, every Ā-operator must bind
-   some variable.
-2. A resumptive pronoun inside a null constituent serves as a variable.
-3. A resumptive pronoun can only exist inside a constituent with
-   LF-visible internal structure.
-4. Therefore: an Ā-operator can bind into a null element iff
-   it is a surface anaphor (= ellipsis).
-
-The EIR test has a distinctive advantage over the extraction test.
-When extraction fails out of a null element, the result is ambiguous:
-the element could be a deep anaphor (no structure → BVQ violation),
-*or* a surface anaphor where derivational timing bleeds Ā-extraction.
-When EIR fails, only the deep-anaphor explanation survives, because
-resumptive dependencies are established at LF without intermediate
-movement steps that ellipsis could bleed.
-
-## Hebrew Results
-
-Three ellipsis types confirmed via EIR in domains where extraction
-is impossible (Hebrew DPs are absolute islands; P-stranding is barred):
-- **nP-ellipsis**: previously established; EIR provides additional
-  confirmation via EN/ENP contrast
-- **DP-ellipsis**: debated; EIR provides novel argument for AE
-- **PP-ellipsis**: novel; EIR provides first robust evidence for PPE
-
-## Cross-Linguistic Mixed Anaphors
-
-EIR diagnoses contested "mixed anaphors" as deep:
-- English *do so* — fails EIR (cf. VP-ellipsis, which passes)
-- Dutch *dat doen* — fails EIR
-- Danish *det* — fails EIR
-- Korean null objects — fail EIR (supporting *pro* over AE)
+`allData` gathers the paper's rows — Hebrew nP/DP/PP ellipsis (where the
+extraction test is unavailable: DPs are absolute islands and P-stranding is
+barred) and the cross-linguistic "mixed anaphors" (English *do so*, Dutch
+*dat doen*, Danish *det*, Korean null objects), all diagnosed deep.
 -/
 
 namespace Landau2026
 
 open RelativeClause
+open Anaphor (Depth DepthCause)
+open Data.Examples (LinguisticExample)
 
--- ═══════════════════════════════════════════════════════════════
--- § 1: Types
--- ═══════════════════════════════════════════════════════════════
+/-! ### Types
 
-/-- Anaphoric depth: whether a null element has internal syntactic
-    structure at LF. [hankamer-sag-1976]
-
-    - Deep: no LF-visible structure; content recovered pragmatically
-      or deictically. EN, NCA, *pro*, *do so*, *dat doen*, *det*.
-    - Surface: full structure, phonologically deleted under identity
-      with a linguistic antecedent. VP-ellipsis, ENP, AE, PPE. -/
-inductive AnaphorDepth where
-  | deep
-  | surface
-  deriving DecidableEq, Repr
+Anaphoric depth (deep/surface, [hankamer-sag-1976]) is the framework-neutral
+substrate primitive `Anaphor.Depth`; EN/NCA/*pro*/*do so*/*dat doen*/*det* are
+`.deep`, VP-ellipsis/ENP/AE/PPE are `.surface`. -/
 
 /-- Syntactic domain of the null element. -/
 inductive NullDomain where
@@ -75,359 +40,218 @@ inductive NullDomain where
   | VP  -- Verb phrase
   deriving DecidableEq, Repr
 
--- ═══════════════════════════════════════════════════════════════
--- § 2: BVQ and EIR — Derivation Chain
--- ═══════════════════════════════════════════════════════════════
+/-! ### BVQ and the EIR prediction -/
 
-/-- Step 1: A null element has LF-visible internal structure
-    iff it is a surface anaphor. -/
-def AnaphorDepth.hasStructure : AnaphorDepth → Bool
-  | .surface => true
-  | .deep => false
+/-- **EIR prediction.** A null site passes the Ellipsis-Internal Resumption test
+    iff it has LF-visible internal structure (`Anaphor.Depth.HasInternalStructure`)
+    — iff it is a surface anaphor. The paper's argument: by the BVQ
+    ([chomsky-1982]) an Ā-operator must bind a variable at LF; a resumptive
+    pronoun is that variable, and it can only be hosted inside a site with
+    internal structure; so binding into a null site is licensed iff the site is a
+    surface anaphor. The prediction is therefore *literally* the substrate
+    structural property, not a separate stipulation. -/
+abbrev PassesEIR (d : Depth) : Prop := d.HasInternalStructure
 
-/-- Step 2: A resumptive pronoun (= variable) can only be hosted
-    inside a constituent with internal structure; there must be a
-    syntactic position for it to occupy. -/
-def canContainVariable (d : AnaphorDepth) : Bool := d.hasStructure
+/-! ### EIR vs the classic tests (extraction, agreement)
 
-/-- Step 3: **BVQ** — an Ā-operator binding into a site is
-    well-formed iff the site provides a variable to bind. -/
-def bvqSatisfied (siteHasVariable : Bool) : Bool := siteHasVariable
+All three are `Diagnostic`s over `Anaphor.Depth`: a pass means the site had
+structure to host the variable/trace (surface). They differ only in what a
+*failure* admits — and that single field is the paper's whole point. Extraction and
+agreement are the two *reliable* classic diagnostics ([landau-2026], after
+[merchant-2001]); EIR is the new third one. -/
 
-/-- **EIR prediction**, derived from the chain:
-    structure → can host resumptive → BVQ satisfied → grammatical. -/
-def eirPrediction (d : AnaphorDepth) : Bool :=
-  bvqSatisfied (canContainVariable d)
+/-- The **EIR test** as a depth diagnostic. A pass is `hostsVariable` (surface
+    structure hosts the resumptive); a failure can *only* be a `deepAnaphor`,
+    because resumptive dependencies are established at LF and cannot be bled by
+    derivational timing, nor blocked by islands. -/
+def eir : Diagnostic Bool Depth :=
+  .ofCauses (fun pass => if pass then {.hostsVariable} else {.deepAnaphor}) DepthCause.entails
 
-/-- The derivation chain collapses: EIR passes iff the null
-    element has internal structure. -/
-theorem eir_iff_structure (d : AnaphorDepth) :
-    eirPrediction d = d.hasStructure := by
-  cases d <;> rfl
+/-- The **extraction test** as a depth diagnostic. A pass is `hostsVariable`
+    (surface); a failure is ambiguous — a `deepAnaphor`, or a *surface* site whose
+    Ā-movement was `derivationalBleeding` (bled by ellipsis timing) or
+    `islandBlocking`. That extra ambiguity is exactly the gap EIR closes. -/
+def extraction : Diagnostic Bool Depth :=
+  .ofCauses
+    (fun pass => if pass then {.hostsVariable}
+                 else {.deepAnaphor, .derivationalBleeding, .islandBlocking})
+    DepthCause.entails
 
--- ═══════════════════════════════════════════════════════════════
--- § 3: EIR vs Extraction — Diagnostic Comparison
--- ═══════════════════════════════════════════════════════════════
+@[simp] theorem eir_consistent_true : eir.consistent true = {Depth.surface} := by
+  simp [eir, DepthCause.entails]
 
-/-- What can be concluded from a diagnostic test result. -/
-inductive Conclusion where
-  | definitelySurface
-  | definitelyDeep
-  | inconclusive
-  deriving DecidableEq, Repr
+@[simp] theorem eir_consistent_false : eir.consistent false = {Depth.deep} := by
+  simp [eir, DepthCause.entails]
 
-/-- The extraction test. Success is unambiguous (the operator
-    binds a trace inside the overt structure → surface anaphor).
-    Failure is ambiguous: it could mean the element is deep
-    (no structure → BVQ), *or* that it is surface but derivational
-    timing bleeds Ā-movement through the ellipsis site. -/
-def extractionConclusion (success : Bool) : Conclusion :=
-  if success then .definitelySurface else .inconclusive
+@[simp] theorem extraction_consistent_true : extraction.consistent true = {Depth.surface} := by
+  simp [extraction, DepthCause.entails]
 
-/-- The EIR test. Both outcomes are unambiguous. Resumptive
-    dependencies are established purely at LF (binding, not
-    movement), so there is no derivational step for ellipsis
-    timing to bleed. EIR is also insensitive to island constraints,
-    since resumption freely crosses islands. -/
-def eirConclusion (success : Bool) : Conclusion :=
-  if success then .definitelySurface else .definitelyDeep
+@[simp] theorem extraction_consistent_false :
+    extraction.consistent false = {Depth.deep, Depth.surface} := by
+  simp [extraction, DepthCause.entails, Set.image_insert_eq]
 
-/-- EIR is never inconclusive. -/
-theorem eir_always_conclusive (b : Bool) :
-    eirConclusion b ≠ .inconclusive := by
-  cases b <;> simp [eirConclusion]
+/-- **Headline — Landau's contribution.** EIR *decides* anaphoric depth: on every
+    site the verdict recovers the depth exactly — a pass means surface (ellipsis),
+    a failure means deep. This is what "a new test for ellipsis" amounts to,
+    made precise as `Diagnostic.Decides`. -/
+theorem eir_decides : eir.Decides Depth.testOutcome :=
+  fun d => by cases d <;> simp [Depth.testOutcome]
 
-/-- Extraction failure is inherently inconclusive. -/
-theorem extraction_inconclusive_on_failure :
-    extractionConclusion false = .inconclusive := rfl
+/-- Extraction does **not** decide depth: on a deep site its verdict still admits
+    `surface` (the failure could be a bled or island-blocked extraction), so it is
+    inconclusive exactly where EIR is decisive. -/
+theorem extraction_not_decides : ¬ extraction.Decides Depth.testOutcome := by
+  intro h
+  have hmem : Depth.surface ∈ extraction.consistent (Depth.testOutcome .deep) :=
+    ⟨.derivationalBleeding, by simp [Depth.testOutcome], rfl⟩
+  rw [h .deep] at hmem
+  simp at hmem
 
-/-- When extraction succeeds, it agrees with EIR: both conclude
-    surface. This means EIR is a strict refinement — it agrees
-    where extraction is informative, and resolves the cases where
-    extraction is not. -/
-theorem eir_refines_extraction (b : Bool) :
-    extractionConclusion b = .definitelySurface →
-    eirConclusion b = .definitelySurface := by
-  cases b <;> simp [extractionConclusion, eirConclusion]
+/-- EIR strictly refines extraction: identical on a pass, but EIR resolves the
+    failure extraction leaves open (its failure-causes are a subset). -/
+theorem eir_refines_extraction : eir.Refines extraction := by
+  intro o c hc
+  cases o <;> simp_all [eir, extraction, DepthCause.entails]
 
--- ═══════════════════════════════════════════════════════════════
--- § 4: Data
--- ═══════════════════════════════════════════════════════════════
+/-- The **agreement test** as a depth diagnostic. The other *reliable* classic
+    diagnostic ([landau-2026], after [merchant-2001]). A pass is `hostsVariable`
+    (surface); a failure is ambiguous between a `deepAnaphor` and a surface site
+    whose agreement was `derivationalBleeding` (bled by ellipsis timing). Agreement
+    is not movement, so it has no island confound — but it is still inconclusive on
+    failure. (It is also inapplicable in agreement-less languages, the analogue of
+    `extractionAvailable = false`.) -/
+def agreement : Diagnostic Bool Depth :=
+  .ofCauses
+    (fun pass => if pass then {.hostsVariable} else {.deepAnaphor, .derivationalBleeding})
+    DepthCause.entails
 
-/-- A datum for the Ellipsis-Internal Resumption test. -/
-structure EIRDatum where
-  language : String
-  nullElement : String
-  domain : NullDomain
-  depth : AnaphorDepth
-  /-- Does the null element pass the EIR test?
-      (= can it host a resumptive pronoun bound by an Ā-operator?) -/
-  eirGrammatical : Bool
-  /-- Is extraction from this domain possible in the language?
-      When `false`, the extraction test is inapplicable and EIR
-      is the only viable syntactic diagnostic. -/
-  extractionAvailable : Bool := true
-  abarContext : String := ""
-  source : String := ""
-  deriving Repr
+@[simp] theorem agreement_consistent_false :
+    agreement.consistent false = {Depth.deep, Depth.surface} := by
+  simp [agreement, DepthCause.entails, Set.image_insert_eq]
 
--- ───────────────────────────────────────────────────────────────
--- § 4.1: Hebrew nP Domain
--- ───────────────────────────────────────────────────────────────
+/-- Agreement, like extraction, does **not** decide depth: its failure also admits
+    a bled-but-surface site. EIR escapes this confound too. -/
+theorem agreement_not_decides : ¬ agreement.Decides Depth.testOutcome := by
+  intro h
+  have hmem : Depth.surface ∈ agreement.consistent (Depth.testOutcome .deep) :=
+    ⟨.derivationalBleeding, by simp [Depth.testOutcome], rfl⟩
+  rw [h .deep] at hmem
+  simp at hmem
 
-/-- Empty noun (EN): deep anaphor. A bare n head; content recovered
-    from a restricted deictic set (PERSON, THING, TIME, PLACE).
-    No linguistic antecedent required. Fails EIR.
-    NP-ellipsis in Hebrew is previously established; EIR provides
-    additional confirmation. -/
-def hebrewEN : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "Empty Noun (EN)"
-    domain := .nP
-    depth := .deep
-    eirGrammatical := false
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, free relative"
-    source := "§2.2, (18a–d)" }
+/-- EIR refines agreement too — so EIR decides depth where *both* reliable classic
+    tests are inconclusive, escaping both their derivational-bleeding (and, for
+    extraction, island) confounds. This is Landau's actual headline: EIR matches the
+    confidence of the classic diagnostics while their failure-confounds it lacks. -/
+theorem eir_refines_agreement : eir.Refines agreement := by
+  intro o c hc
+  cases o <;> simp_all [eir, agreement, DepthCause.entails]
 
-/-- Elided noun phrase (ENP): surface anaphor. Full nP structure
-    (root + arguments) deleted under identity with a linguistic
-    antecedent; licensed by [E] on Num. Passes EIR: the resumptive
-    pronoun inside the elided nP provides a variable. -/
-def hebrewENP : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "Elided Noun Phrase (ENP)"
-    domain := .nP
-    depth := .surface
-    eirGrammatical := true
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, maximizing relative"
-    source := "§2.2, (19a–d)" }
+/-! ### Data
 
--- ───────────────────────────────────────────────────────────────
--- § 4.2: Hebrew DP Domain
--- ───────────────────────────────────────────────────────────────
+The empirical rows live in `Data/Examples/Landau2026.json` (typed
+`LinguisticExample`s — the paper's (18a)–(47b) stimuli). The study reads each
+row's EIR-relevant classification by projection: `domain`/`depth`/extraction from
+`paperFeatures`, and grammaticality straight off the example's `judgment` —
+passing EIR *is* the resumptive-binding sentence being acceptable. -/
 
-/-- Null complement anaphora (NCA) / *pro*: deep anaphor.
-    No internal structure; content recovered pragmatically.
-    Fails EIR. The existence of AE in Hebrew was debated;
-    the EIR test provides a novel argument. -/
-def hebrewNCA_DP : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "NCA / pro (null object)"
-    domain := .DP
-    depth := .deep
-    eirGrammatical := false
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, free relative"
-    source := "§3.2, (31a–d)" }
+private def parseDomain : String → NullDomain
+  | "DP" => .DP | "PP" => .PP | "VP" => .VP | _ => .nP
 
-/-- Argument ellipsis (AE) / DP-ellipsis: surface anaphor.
-    Full DP structure deleted under identity with a linguistic
-    antecedent. Passes EIR. Novel argument for AE in Hebrew. -/
-def hebrewAE : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "Argument Ellipsis (AE)"
-    domain := .DP
-    depth := .surface
-    eirGrammatical := true
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, free relative"
-    source := "§3.2, (32a–d)" }
+private def parseDepth : String → Depth
+  | "surface" => .surface | _ => .deep
 
--- ───────────────────────────────────────────────────────────────
--- § 4.3: Hebrew PP Domain
--- ───────────────────────────────────────────────────────────────
+/-- The null-element domain of an EIR example (from `paperFeatures`). -/
+def domainOf (e : LinguisticExample) : NullDomain :=
+  parseDomain ((e.paperFeatures.lookup "domain").getD "nP")
 
-/-- Null PP via NCA: deep anaphor. PP argument omitted; content
-    recovered pragmatically. Fails EIR. -/
-def hebrewNCA_PP : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "NCA (null PP)"
-    domain := .PP
-    depth := .deep
-    eirGrammatical := false
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, free relative"
-    source := "§4.2, (37a–d)" }
+/-- The Hankamer–Sag `Anaphor.Depth` of an EIR example (from `paperFeatures`). -/
+def depthOf (e : LinguisticExample) : Depth :=
+  parseDepth ((e.paperFeatures.lookup "depth").getD "deep")
 
-/-- PP-ellipsis (PPE): surface anaphor. Full PP structure deleted
-    under identity with a linguistic antecedent. Passes EIR.
-    First robust evidence for PP-ellipsis; the paper argues this
-    holds cross-linguistically, not only in Hebrew. -/
-def hebrewPPE : EIRDatum :=
-  { language := "Hebrew"
-    nullElement := "PP-Ellipsis (PPE)"
-    domain := .PP
-    depth := .surface
-    eirGrammatical := true
-    extractionAvailable := false
-    abarContext := "restrictive relative, interrogative, free relative"
-    source := "§4.2, (38a–d)" }
+/-- Whether the example passes EIR — this *is* its grammaticality `judgment`: the
+    resumptive-binding sentence is acceptable iff the site hosts the variable. -/
+def eirGrammatical (e : LinguisticExample) : Bool :=
+  match e.judgment with | .acceptable => true | _ => false
 
--- ───────────────────────────────────────────────────────────────
--- § 4.4: Cross-Linguistic Mixed Anaphors
--- ───────────────────────────────────────────────────────────────
+/-- Whether the extraction test is applicable to the example's domain (`false`
+    for the Hebrew nominal domains, which are absolute islands). -/
+def extractionAvailable (e : LinguisticExample) : Bool :=
+  (e.paperFeatures.lookup "extractionAvailable").getD "true" == "true"
 
-/-- English VP-ellipsis: surface anaphor. Left-dislocated
-    constituent binds a resumptive possessive inside the elided VP.
-    Passes EIR. Contrastive baseline for *do so*. -/
-def englishVPE : EIRDatum :=
-  { language := "English"
-    nullElement := "VP-ellipsis"
-    domain := .VP
-    depth := .surface
-    eirGrammatical := true
-    abarContext := "left-dislocation"
-    source := "§5, (44a–b)" }
+/-! ### Data collections
 
-/-- English *do so*: deep VP anaphor. Left-dislocation with
-    resumptive binding into *do so* is ungrammatical.
-    Ā-extraction is also impossible, but that is ambiguous between
-    deep anaphor and derivational bleeding. EIR resolves the
-    ambiguity: *do so* is deep. [bruening-2019] -/
-def englishDoSo : EIRDatum :=
-  { language := "English"
-    nullElement := "do so"
-    domain := .VP
-    depth := .deep
-    eirGrammatical := false
-    abarContext := "left-dislocation"
-    source := "§5, (44c–d)" }
+EN/NCA/*pro*/*do so*/*dat doen*/*det* are deep; ENP/AE/PPE/VP-ellipsis surface.
+Each example's `comment` in the JSON carries the construction notes. -/
 
-/-- Dutch *dat doen* 'do that': deep VP anaphor.
-    Blocks most Ā-extractions. Fails EIR. -/
-def dutchDatDoen : EIRDatum :=
-  { language := "Dutch"
-    nullElement := "dat doen"
-    domain := .VP
-    depth := .deep
-    eirGrammatical := false
-    abarContext := "left-dislocation"
-    source := "§5, (45a–b)" }
+def hebrewData : List LinguisticExample :=
+  [Examples.hebrewEN, Examples.hebrewENP, Examples.hebrewNCA_DP,
+   Examples.hebrewAE, Examples.hebrewNCA_PP, Examples.hebrewPPE]
 
-/-- Danish *det* 'it': deep VP anaphor. Allows A-dependencies
-    but not Ā-dependencies. Fails EIR. -/
-def danishDet : EIRDatum :=
-  { language := "Danish"
-    nullElement := "det"
-    domain := .VP
-    depth := .deep
-    eirGrammatical := false
-    abarContext := "left-dislocation"
-    source := "§5, (46a–b)" }
+def mixedAnaphorData : List LinguisticExample :=
+  [Examples.englishDoSo, Examples.dutchDatDoen, Examples.danishDet, Examples.koreanNullObj]
 
-/-- Korean null objects: deep anaphor (*pro*). Left-dislocation
-    mandates a resumptive in Korean, but null objects fail to host
-    one — supporting the *pro* analysis over AE. -/
-def koreanNullObj : EIRDatum :=
-  { language := "Korean"
-    nullElement := "null object"
-    domain := .DP
-    depth := .deep
-    eirGrammatical := false
-    abarContext := "left-dislocation"
-    source := "§5, (47a–b)" }
+def crossLingData : List LinguisticExample :=
+  Examples.englishVPE :: mixedAnaphorData
 
--- ═══════════════════════════════════════════════════════════════
--- § 5: Data Collections
--- ═══════════════════════════════════════════════════════════════
+def allData : List LinguisticExample := Examples.all
 
-def hebrewData : List EIRDatum :=
-  [hebrewEN, hebrewENP, hebrewNCA_DP, hebrewAE, hebrewNCA_PP, hebrewPPE]
+/-! ### Summary properties
 
-def mixedAnaphorData : List EIRDatum :=
-  [englishDoSo, dutchDatDoen, danishDet, koreanNullObj]
+Every datum's observed grammaticality (`eirGrammatical`, off its `judgment`)
+matches the `PassesEIR` prediction read off its depth — the `decide p = true ↔ p`
+bridge between a recorded observation and the substrate structural property. -/
 
-def crossLingData : List EIRDatum :=
-  [englishVPE] ++ mixedAnaphorData
-
-def allData : List EIRDatum := hebrewData ++ crossLingData
-
--- ═══════════════════════════════════════════════════════════════
--- § 6: Per-Datum Verification
--- ═══════════════════════════════════════════════════════════════
-
--- Hebrew nP
-theorem en_eir : hebrewEN.eirGrammatical = eirPrediction hebrewEN.depth := rfl
-theorem enp_eir : hebrewENP.eirGrammatical = eirPrediction hebrewENP.depth := rfl
-
--- Hebrew DP
-theorem nca_dp_eir :
-    hebrewNCA_DP.eirGrammatical = eirPrediction hebrewNCA_DP.depth := rfl
-theorem ae_eir : hebrewAE.eirGrammatical = eirPrediction hebrewAE.depth := rfl
-
--- Hebrew PP
-theorem nca_pp_eir :
-    hebrewNCA_PP.eirGrammatical = eirPrediction hebrewNCA_PP.depth := rfl
-theorem ppe_eir : hebrewPPE.eirGrammatical = eirPrediction hebrewPPE.depth := rfl
-
--- Cross-linguistic
-theorem vpe_eir : englishVPE.eirGrammatical = eirPrediction englishVPE.depth := rfl
-theorem do_so_eir :
-    englishDoSo.eirGrammatical = eirPrediction englishDoSo.depth := rfl
-theorem dat_doen_eir :
-    dutchDatDoen.eirGrammatical = eirPrediction dutchDatDoen.depth := rfl
-theorem danish_det_eir :
-    danishDet.eirGrammatical = eirPrediction danishDet.depth := rfl
-theorem korean_null_eir :
-    koreanNullObj.eirGrammatical = eirPrediction koreanNullObj.depth := rfl
-
--- ═══════════════════════════════════════════════════════════════
--- § 7: Summary Properties
--- ═══════════════════════════════════════════════════════════════
-
-/-- All data are consistent: every datum's observed EIR result
-    matches the prediction from its depth classification. -/
+/-- All data are consistent: every example's EIR grammaticality matches the
+    prediction read off its depth classification. -/
 theorem all_eir_consistent :
-    allData.all (λ d => d.eirGrammatical == eirPrediction d.depth) = true := by
-  native_decide
+    ∀ e ∈ allData, (eirGrammatical e = true ↔ PassesEIR (depthOf e)) := by decide
 
-/-- Hebrew has both deep and surface strategies in all three
-    nominal domains (nP, DP, PP). -/
+/-- Hebrew has both deep and surface strategies in all three nominal domains
+    (nP, DP, PP). -/
 theorem hebrew_both_depths_all_domains :
-    hebrewData.any (λ d => d.depth == .deep && d.domain == .nP) = true ∧
-    hebrewData.any (λ d => d.depth == .surface && d.domain == .nP) = true ∧
-    hebrewData.any (λ d => d.depth == .deep && d.domain == .DP) = true ∧
-    hebrewData.any (λ d => d.depth == .surface && d.domain == .DP) = true ∧
-    hebrewData.any (λ d => d.depth == .deep && d.domain == .PP) = true ∧
-    hebrewData.any (λ d => d.depth == .surface && d.domain == .PP) = true := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .nP) ∧
+    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .nP) ∧
+    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .DP) ∧
+    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .DP) ∧
+    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .PP) ∧
+    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .PP) := by decide
 
-/-- Extraction is unavailable for all Hebrew domains tested.
-    This is precisely why the EIR test is needed: it provides
-    syntactic evidence where the extraction test cannot. -/
+/-- Extraction is unavailable for all Hebrew domains tested. This is precisely
+    why the EIR test is needed: it provides syntactic evidence where the
+    extraction test cannot. -/
 theorem hebrew_extraction_unavailable :
-    hebrewData.all (λ d => !d.extractionAvailable) = true := by
-  native_decide
+    ∀ e ∈ hebrewData, extractionAvailable e = false := by decide
 
 /-- All four cross-linguistic mixed anaphors are diagnosed as deep. -/
 theorem mixed_anaphors_deep :
-    mixedAnaphorData.all (λ d => d.depth == .deep) = true := by
-  native_decide
+    ∀ e ∈ mixedAnaphorData, depthOf e = .deep := by decide
 
--- ═══════════════════════════════════════════════════════════════
--- § 8: Integration with Existing Infrastructure
--- ═══════════════════════════════════════════════════════════════
+/-! ### Integration with existing infrastructure -/
 
-/-- Hebrew has a productive resumptive strategy in relativization
-    — the prerequisite for applying the EIR test. The same
-    resumptive pronoun type that `RelativeClause.NPRelType.resumptive` models
-    for relative clauses is what the EIR test probes for inside
-    ellipsis sites. -/
+/-- Hebrew has a productive resumptive strategy in relativization — the
+    prerequisite for applying the EIR test. The same resumptive pronoun type
+    that `RelativeClause.NPRelType.resumptive` models for relative clauses is
+    what the EIR test probes for inside ellipsis sites. -/
 theorem hebrew_has_resumptive_strategy :
     Hebrew.relSheResumptive.npRel = .resumptive := rfl
 
-/-- The resumptive strategy in Hebrew relativization covers the
-    genitive position on the Accessibility Hierarchy, which is
-    where possessive resumptive pronouns (the most common type
-    in the EIR data) sit. -/
+/-- **The EIR test relies on base-generated resumption.** The paper's argument
+    turns on resumptive dependencies being fixed at LF (binding, not movement),
+    so ellipsis timing cannot bleed them — exactly `ResumptiveKind.bound`. The
+    Sichel-refined Hebrew marker `relSheBoundResumptive` carries this kind,
+    making the paper's "binding, not movement" mechanism true by construction
+    against the relativization substrate ([sichel-2014]). -/
+theorem hebrew_resumptive_is_base_generated :
+    Hebrew.relSheBoundResumptive.npRel.resumptiveKind = some .bound := rfl
+
+/-- The resumptive strategy covers the genitive position on the Accessibility
+    Hierarchy, where possessive resumptive pronouns (the most common type in the
+    EIR data) sit. -/
 theorem resumptive_covers_genitive :
     Hebrew.relSheResumptive.Covers .genitive := by decide
 
-/-- The gap strategy does NOT cover genitive — this is why
-    possessive dependencies in Hebrew require resumption, making
-    the EIR test applicable. -/
+/-- The gap strategy does NOT cover genitive — this is why possessive
+    dependencies in Hebrew require resumption, making the EIR test applicable. -/
 theorem gap_excludes_genitive :
     ¬ Hebrew.relSheGap.Covers .genitive := by decide
 
