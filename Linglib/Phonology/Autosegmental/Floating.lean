@@ -269,6 +269,17 @@ def segsOfMorpheme (f : FloatingForm S T) (m : Morpheme) : List SegIdx :=
   (List.range f.lower.length).filter (λ i =>
     (f.lower[i]?).map SegSpec.morpheme = some m)
 
+/-! ### Position counts -/
+
+/-- Count tier (tone) positions satisfying decidable `p`. `List.range`-based so it
+    reduces under kernel `decide` (avoiding `Finset` pipelines). -/
+def countTones (f : FloatingForm S T) (p : TierIdx → Prop) [DecidablePred p] : Nat :=
+  (List.range f.upper.length).countP (fun k => decide (p k))
+
+/-- Count backbone (TBU) positions satisfying decidable `p`. -/
+def countTBUs (f : FloatingForm S T) (p : SegIdx → Prop) [DecidablePred p] : Nat :=
+  (List.range f.lower.length).countP (fun i => decide (p i))
+
 end FloatingForm
 
 end Phonology.Autosegmental
