@@ -1,6 +1,5 @@
 import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Computability.DFA
-import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 
@@ -32,22 +31,6 @@ ARE proved here:
   non-CF argument.
 -/
 
-/-- **Bridge to mathlib's `Language.map`.** When `h` is the letter-to-letter
-    `StringHom.letterMap f` (each input symbol → singleton output), the
-    homomorphic image collapses to mathlib's `Language.map f`, the
-    letter-by-letter image. Lifts mathlib's existing ringHom structure to
-    the letter-map case of `stringMap` automatically. -/
-@[simp] theorem Language.stringMap_letterMap {α β : Type*}
-    (f : α → β) (L : Language α) :
-    Language.stringMap (Core.StringHom.letterMap f) L = Language.map f L := by
-  ext w
-  simp only [Language.stringMap, Set.mem_setOf_eq, Core.StringHom.apply_letterMap,
-             Language.map, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk,
-             Set.mem_image]
-  constructor
-  · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
-  · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
-
 -- ============================================================================
 -- Contrapositive corollaries (the useful direction for non-CF arguments)
 -- ============================================================================
@@ -57,10 +40,10 @@ ARE proved here:
 /-- Contrapositive of homomorphism closure: if the homomorphic image of `L`
     is not context-free, then `L` is not context-free. -/
 theorem Language.not_isContextFree_of_stringMap_not {α β : Type*}
-    (h : Core.StringHom α β) {L : Language α}
-    (hImg : ¬ (Language.stringMap h L).IsContextFree) :
+    (f : α → List β) {L : Language α}
+    (hImg : ¬ (Language.stringMap f L).IsContextFree) :
     ¬ L.IsContextFree :=
-  fun hL => hImg (Language.IsContextFree.stringMap h hL)
+  fun hL => hImg (Language.IsContextFree.stringMap f hL)
 
 /-- Contrapositive of regular-intersection closure: if `L ∩ R` is not
     context-free for some regular `R`, then `L` is not context-free. -/
@@ -80,9 +63,9 @@ theorem Language.not_isContextFree_of_inter_regular_not {α : Type*}
     homomorphic abstraction (e.g., case-marker-only projection) plus
     regular filtering (e.g., case-sorted clause shape). -/
 theorem Language.not_isContextFree_via_witness {α β : Type*}
-    (h : Core.StringHom α β) (R : Language β) {L : Language α}
+    (f : α → List β) (R : Language β) {L : Language α}
     (hR : R.IsRegular)
-    (hWitness : ¬ (Language.stringMap h L ⊓ R).IsContextFree) :
+    (hWitness : ¬ (Language.stringMap f L ⊓ R).IsContextFree) :
     ¬ L.IsContextFree :=
   fun hL =>
-    hWitness ((Language.IsContextFree.stringMap h hL).inter_isRegular hR)
+    hWitness ((Language.IsContextFree.stringMap f hL).inter_isRegular hR)

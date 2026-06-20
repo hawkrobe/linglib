@@ -108,6 +108,35 @@ private theorem makeString_anbnc_in_language (n : Nat) :
     change (makeString_anbnc (k + 1) == makeString_anbnc (k + 1)) = true
     exact beq_self_eq_true _
 
+/-- Membership characterization: every string in `anbnc` is `makeString_anbnc n`
+    for some `n`. Mirror of `mem_anbncndn_iff`; consumed by the homomorphic
+    reduction aⁿbⁿcⁿdⁿ → aⁿbⁿcⁿ in `AnBnCnDn`. -/
+theorem mem_anbnc_iff (w : List ThreeSymbol) :
+    w ∈ anbnc ↔ ∃ n, w = makeString_anbnc n := by
+  constructor
+  · intro hw
+    by_cases hempty : w = []
+    · exact ⟨0, by rw [hempty]; rfl⟩
+    · have heq := isInLang3_nonempty w hempty
+      have hw' : isInLanguage_anbnc w = true := hw
+      rw [heq] at hw'
+      simp only [Bool.and_eq_true, beq_iff_eq] at hw'
+      obtain ⟨⟨h_ab, h_bc⟩, h_eq⟩ := hw'
+      refine ⟨(w.filter (· == .a)).length, ?_⟩
+      have hb_eq : (w.filter (· == .b)).length = (w.filter (· == .a)).length := h_ab.symm
+      have hc_eq : (w.filter (· == .c)).length = (w.filter (· == .a)).length :=
+        h_bc.symm.trans h_ab.symm
+      calc w
+          = List.replicate (w.filter (· == .a)).length .a ++
+              List.replicate (w.filter (· == .b)).length .b ++
+              List.replicate (w.filter (· == .c)).length .c := h_eq
+        _ = List.replicate (w.filter (· == .a)).length .a ++
+              List.replicate (w.filter (· == .a)).length .b ++
+              List.replicate (w.filter (· == .a)).length .c := by rw [hb_eq, hc_eq]
+        _ = makeString_anbnc (w.filter (· == .a)).length := rfl
+  · rintro ⟨n, rfl⟩
+    exact makeString_anbnc_in_language n
+
 set_option maxHeartbeats 800000 in
 /-- {aⁿbⁿcⁿ} does NOT have the CFL pumping property. -/
 theorem anbnc_not_pumpable :

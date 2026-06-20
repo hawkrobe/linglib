@@ -50,11 +50,11 @@ target language lies beyond the context-free tier. -/
 theorem ccg_exceeds_cfg : ¬ Language.IsContextFree anbncndn :=
   anbncndn_not_contextFree
 
-/-- The witness language contains every `aⁿbⁿcⁿdⁿ` string and lacks the CFL pumping
-property, hence is genuinely non-context-free. -/
+/-- The witness language contains every `aⁿbⁿcⁿdⁿ` string and is not context-free
+(the closure corollary `anbncndn_not_contextFree`). -/
 theorem witness_language_non_contextFree :
     (∀ n : Nat, makeString_anbncndn n ∈ anbncndn) ∧
-    ¬ HasCFLPumpingProperty anbncndn :=
-  ⟨makeString_in_language, anbncndn_not_pumpable⟩
+    ¬ Language.IsContextFree anbncndn :=
+  ⟨makeString_in_language, anbncndn_not_contextFree⟩
 
 end CCG.GenerativeCapacity
