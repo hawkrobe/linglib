@@ -138,10 +138,8 @@ def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
 
-/-- A tone pair `(t1, t2)` (in tier order) is **falling** iff it is
-    HM, HL, or ML (paper, eq. 23). TRN's `H`, `M`, `L` are not
-    constructors (they're `def`s), so we use equality rather than
-    pattern matching. -/
+/-- A tone pair `(t1, t2)` (in tier order) is **falling** iff it is HM, HL, or ML
+    (paper eq. 23). -/
 def IsFallingPair (t1 t2 : TRN) : Prop :=
   (t1 = .H ∧ t2 = .M) ∨ (t1 = .H ∧ t2 = .L) ∨ (t1 = .M ∧ t2 = .L)
 
