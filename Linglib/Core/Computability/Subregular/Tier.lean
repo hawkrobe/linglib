@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.StrictlyLocal
-import Linglib.Core.Computability.StringHom
+import Linglib.Core.Computability.Tier
 
 /-!
 # Tier-Based Strictly Local Languages (TSL_k)
