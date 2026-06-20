@@ -199,7 +199,7 @@ import Linglib.Semantics.Verb.RootContent
 import Linglib.Semantics.NaturalLogic
 import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Phonology.Constraint.Superoptimal
+import Linglib.Pragmatics.Superoptimal
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition

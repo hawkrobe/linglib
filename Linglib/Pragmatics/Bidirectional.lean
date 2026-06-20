@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Superoptimal
+import Linglib.Pragmatics.Superoptimal
 
 /-!
 # Bidirectional Optimality Theory

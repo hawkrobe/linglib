@@ -4,7 +4,7 @@ import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
-import Linglib.Phonology.Constraint.Superoptimal
+import Linglib.Pragmatics.Superoptimal
 
 /-!
 # [krifka-2007b] — Negated Antonyms: Creating and Filling the Gap
@@ -73,7 +73,7 @@ open Semantics.Gradability.Antonymy
 open Semantics.Degree (positiveMeaning)
 open Data.Examples
 open Features (NegationType)
-open Constraint (superoptimal superoptimalSet
+open Pragmatics.Bidirectional (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
 open Constraint OptimalityTheory
 

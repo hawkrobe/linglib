@@ -32,7 +32,7 @@ pair via blocking. The maximality direction goes through
 the `LexNatList` preorder from `Core/Optimization/Evaluation.lean`.
 -/
 
-namespace Constraint
+namespace Pragmatics.Bidirectional
 
 open Core.Optimization.Evaluation
 
@@ -478,4 +478,4 @@ theorem strongOptimal_subset_superoptimal
   rw [← superoptimal_coe_eq_set _ _ h_converged] at hp_gfp
   rwa [Finset.mem_coe] at hp_gfp
 
-end Constraint
+end Pragmatics.Bidirectional
