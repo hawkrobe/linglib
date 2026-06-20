@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.StrictlyLocal
-import Linglib.Core.Computability.Tier
+import Mathlib.Data.List.Basic
 
 /-!
 # Tier-Based Strictly Local Languages (TSL_k)
@@ -29,50 +29,28 @@ an SL grammar — projection is the identity. This gives the inclusion
 
 The `tier` here is the *segmental* tier in the sense of [lambert-2022]
 Ch 3 (language-theoretic side, §3.2) — a subset of the alphabet, not an
-autosegmental melody floating above it. The TSL definition specializes to
-the case where projection is `List.filter` over a tier predicate
-(equivalently, an erasing string homomorphism that keeps tier symbols and
-deletes off-tier symbols, with no relabeling). For autosegmental tiers
-(high/low tone, nasal melody, register), see `Phonology/Autosegmental/`.
-
-## Single source of truth: `Core.Tier`
-
-`tierProject` is the alias `Core.Tier.apply (Core.Tier.byClass T)` — the
-class-membership specialization of the autosegmental Kleisli morphism
-`α → Option β`. After the `Tier.byClass` migration to `Prop`+`Decidable`
-predicates, the alias contains *no* `decide` wrapper and the bridge to
-the autosegmental formalism is the identity, available either as
-`rfl` or via `tierProject_eq_apply_byClass` below.
+autosegmental melody floating above it. Accordingly `tierProject` is just
+`List.filter` over a tier predicate (keep tier symbols, delete off-tier
+ones, no relabeling). The autosegmental tier-projection *morphism* (the
+Kleisli `α → Option β` with `byClass`/`lastWith`/`firstWith`) is a phonology
+concept and lives in `Phonology/`; the bridge `tierProject = Tier.apply
+(Tier.byClass T)` is re-established there as an explicit lemma.
 -/
 
 namespace Core.Computability.Subregular
 
 variable {α : Type*}
 
-/-- **Tier projection**: the class-membership specialization of
-`Core.Tier.apply` to a `Prop`-valued predicate `T`. Keeps symbols
-satisfying `T`, erases the rest.
-
-Defined as `Core.Tier.apply (Core.Tier.byClass T)` so the bridge to the
-autosegmental tier formalism is `rfl`. By `Tier.apply_byClass` this
-equals `xs.filter (decide ∘ T)`. -/
+/-- **Tier projection**: keep the symbols satisfying the tier predicate `T`,
+erase the rest. This is `List.filter` over `T` — the language-theoretic tier
+of [lambert-2022], independent of the autosegmental projection morphism. -/
 def tierProject (T : α → Prop) [DecidablePred T] (xs : List α) : List α :=
-  Core.Tier.apply (Core.Tier.byClass T) xs
+  xs.filter (fun x => decide (T x))
 
-/-- **Bridge identity** to the autosegmental tier formalism: `tierProject`
-is by definition `Tier.apply (Tier.byClass T)`. Since the migration of
-`Tier.byClass` to `Prop`+`Decidable` predicates, this is `rfl` with no
-`decide` plumbing. -/
-lemma tierProject_eq_apply_byClass (T : α → Prop) [DecidablePred T]
-    (xs : List α) :
-    tierProject T xs = Core.Tier.apply (Core.Tier.byClass T) xs := rfl
-
-/-- `tierProject` reduces to `List.filter` via `Tier.apply_byClass`. This
-is the canonical bridge to Lambert's filter-based formulation
-[lambert-2022]. -/
+/-- `tierProject` is `List.filter`, by definition. The canonical bridge to
+Lambert's filter-based formulation [lambert-2022]. -/
 lemma tierProject_eq_filter (T : α → Prop) [DecidablePred T] (xs : List α) :
-    tierProject T xs = xs.filter (fun x => decide (T x)) :=
-  Core.Tier.apply_byClass _ _
+    tierProject T xs = xs.filter (fun x => decide (T x)) := rfl
 
 @[simp] lemma tierProject_nil (T : α → Prop) [DecidablePred T] :
     tierProject T ([] : List α) = [] := rfl

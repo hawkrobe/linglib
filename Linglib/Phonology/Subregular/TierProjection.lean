@@ -3,32 +3,29 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Tier
+import Linglib.Phonology.Tier
 import Linglib.Core.Computability.Subregular.Tier
 
 /-!
 # Bridge: Autosegmental Tier ↔ TSL Tier Projection
 
-The autosegmental tier formalism (`Core.Tier`, the Kleisli morphism
-`α → Option β` lifted via `List.filterMap`) and the subregular TSL
-formalism (`Core.Computability.Subregular.tierProject`) share a single
-underlying primitive: `tierProject T` is literally
-`Core.Tier.apply (Core.Tier.byClass T)`, so the two reduce to one
-another by definition.
-
-This file records the resulting `rfl` identity and provides a thin
-adapter for building a TSL_k grammar directly from a `Bool`-valued
-class predicate (the autosegmental constructor shape), so a
-phonological tier (tonal tier, sibilant tier, nasal tier) plugs into
-TSL machinery without restating projection or filtering.
+The autosegmental tier formalism (`Tier`, the Kleisli morphism
+`α → Option β` lifted via `List.filterMap`, now in `Phonology/Tier.lean`) and
+the subregular TSL formalism (`Core.Computability.Subregular.tierProject`,
+`List.filter`) compute the same projection. Since the two now live in different
+layers (Phonology vs Core) they no longer coincide *by definition*, so this file
+records the bridge as an explicit lemma and provides a thin adapter for building
+a TSL_k grammar directly from a `Bool`-valued class predicate (the autosegmental
+constructor shape), so a phonological tier (tonal tier, sibilant tier, nasal
+tier) plugs into TSL machinery without restating projection or filtering.
 
 ## What this enables
 
 Phonological constraints already in the codebase (`mkOCPOnTier` in
 `Phonology/OptimalityTheory/Constraints.lean`, the tonal tier `tonalTier`
-in `Studies/Rolle2018.lean`) reuse the same
-`Tier.apply` machinery as TSL grammars — the bridge is no longer a theorem
-to discharge but a definitional consequence.
+in `Studies/Rolle2018.lean`) reuse the same `Tier.apply` machinery as TSL
+grammars — the bridge `apply_byClass_eq_tierProject` reconnects the two
+projections in one line.
 -/
 
 namespace Phonology.Subregular
@@ -37,13 +34,15 @@ open Core Core.Computability.Subregular
 
 variable {α : Type*}
 
-/-- **Bridge identity** (definitional): `tierProject T` is by definition
-`Tier.apply (Tier.byClass T)`. After the 0.230.x consolidation onto
-`Core.Tier` and the subsequent `Tier.byClass` migration to
-`Prop`+`Decidable`, this is `rfl`. -/
+/-- **Bridge identity**: the autosegmental projection `Tier.apply (Tier.byClass T)`
+and the subregular `tierProject T` are the same map — both reduce to `List.filter`.
+Now that the `Tier` projection morphism lives in `Phonology/` and `tierProject` is
+de-coupled to `List.filter` directly, this is an explicit lemma (via
+`Tier.apply_byClass` and `tierProject_eq_filter`) rather than `rfl`. -/
 theorem apply_byClass_eq_tierProject (T : α → Prop) [DecidablePred T]
     (xs : List α) :
-    Tier.apply (Tier.byClass T) xs = tierProject T xs := rfl
+    Tier.apply (Tier.byClass T) xs = tierProject T xs :=
+  (Tier.apply_byClass T xs).trans (tierProject_eq_filter T xs).symm
 
 /-- **Adapter**: build a TSL_k grammar from a class-membership autosegmental
 tier given as a `Bool` predicate. The TSL tier predicate is `(p · = true)`,

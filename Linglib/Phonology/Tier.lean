@@ -27,10 +27,15 @@ and HG constraint evaluation (`mkOCP` in `Phonology/Constraints.lean`
 already takes a generic `project : C → List α`, so `Tier.apply T` plugs in
 directly).
 
+Home: `Phonology/` (not `Core/`) because the `Tier` abstraction — the
+autosegmental Kleisli morphism with `byClass`/`lastWith`/`firstWith` — is a
+linguistics concept, not upstreamable to `mathlib/Computability`. The
+formal-language tier (a subalphabet, projection = `List.filter`) lives
+separately in `Core/Computability/Subregular/Tier.lean` (the TSL class), which
+no longer depends on this morphism.
+
 [goldsmith-1976] [belth-2026]
 -/
-
-namespace Core
 
 universe u v
 
@@ -137,5 +142,3 @@ def firstWith (T : Tier α β) (q : β → Prop) [DecidablePred q]
   ((apply T xs).filter (fun y => decide (q y))).head?
 
 end Tier
-
-end Core
