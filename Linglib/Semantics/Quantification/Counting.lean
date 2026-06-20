@@ -28,13 +28,127 @@ and the bridge to model-agnostic `QuantityInvariant`.
 
 namespace Quantification
 
-/-- Count of elements satisfying a predicate, via `Finset.univ.filter`. -/
+/-! ### Relativized counting (the maximal-generality primitive)
+
+`countOn` counts over an **explicit** `Finset` domain — decidable with no `Fintype`
+on the carrier. The whole-carrier `count` is its `Finset.univ` specialization
+(`count := countOn Finset.univ`). The threshold/prevalence operators (the
+cross-multiplied `Nat` predicate `thresholdGtOn` and its demoted ℚ view
+`prevalenceOn`, the analogue of `Rel.edgeDensity`) build on `countOn`. -/
+
+/-- Count of elements of `s` satisfying `P`. The Fintype-free counting primitive. -/
+def countOn {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Nat :=
+  (s.filter P).card
+
+/-- "most" over `s`: strictly more `R∧S` than `R∧¬S` in `s`. Division-free.
+    `mostOn Finset.univ = most_sem` (`mostOn_univ`). -/
+def mostOn {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : Prop :=
+  countOn s (fun x => R x ∧ S x) > countOn s (fun x => R x ∧ ¬ S x)
+
+/-- Threshold (`≥`): at least `num/denom` of the `R`'s in `s` are `S`. Cross-multiplied. -/
+def thresholdOn {α : Type*} (s : Finset α) (R S : α → Prop) (num denom : Nat)
+    [DecidablePred R] [DecidablePred S] : Prop :=
+  denom * countOn s (fun x => R x ∧ S x) ≥ num * countOn s R
+
+/-- Threshold (`>`): more than `num/denom` of the `R`'s in `s` are `S`. Cross-multiplied. -/
+def thresholdGtOn {α : Type*} (s : Finset α) (R S : α → Prop) (num denom : Nat)
+    [DecidablePred R] [DecidablePred S] : Prop :=
+  denom * countOn s (fun x => R x ∧ S x) > num * countOn s R
+
+/-- The ℚ prevalence *view* (analogue of `Rel.edgeDensity`): proportion of `R`-in-`s`
+    that are `S`. The derived numeric value; related to `thresholdGtOn` by
+    `thresholdGtOn_iff_prevalenceOn`. -/
+def prevalenceOn {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : ℚ :=
+  if countOn s R = 0 then 0
+  else (countOn s (fun x => R x ∧ S x) : ℚ) / (countOn s R : ℚ)
+
+instance mostOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : Decidable (mostOn s R S) := by
+  unfold mostOn; infer_instance
+
+instance thresholdOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    (num denom : Nat) [DecidablePred R] [DecidablePred S] :
+    Decidable (thresholdOn s R S num denom) := by unfold thresholdOn; infer_instance
+
+instance thresholdGtOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    (num denom : Nat) [DecidablePred R] [DecidablePred S] :
+    Decidable (thresholdGtOn s R S num denom) := by unfold thresholdGtOn; infer_instance
+
+/-- `|s∩R| = |s∩R∩S| + |s∩R\S|`. -/
+theorem countOn_decompose {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] :
+    countOn s R =
+      countOn s (fun x => R x ∧ S x) + countOn s (fun x => R x ∧ ¬ S x) := by
+  simp only [countOn]
+  rw [← Finset.filter_filter R S s, ← Finset.filter_filter R (fun x => ¬ S x) s,
+      Finset.card_filter_add_card_filter_not]
+
+/-- The division-free `thresholdGtOn` agrees with "`prevalenceOn` exceeds `num/denom`",
+    justifying the demotion of the ℚ ratio to a derived view. -/
+theorem thresholdGtOn_iff_prevalenceOn {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] (num denom : Nat)
+    (hdenom : 0 < denom) (hR : 0 < countOn s R) :
+    thresholdGtOn s R S num denom ↔ prevalenceOn s R S > (num : ℚ) / (denom : ℚ) := by
+  unfold thresholdGtOn prevalenceOn
+  rw [if_neg (Nat.pos_iff_ne_zero.mp hR)]
+  have hdQ : (0 : ℚ) < denom := by exact_mod_cast hdenom
+  have hRQ : (0 : ℚ) < countOn s R := by exact_mod_cast hR
+  rw [gt_iff_lt, gt_iff_lt, div_lt_iff₀ hdQ, div_mul_eq_mul_div, lt_div_iff₀ hRQ,
+      mul_comm (countOn s (fun x => R x ∧ S x) : ℚ) (denom : ℚ),
+      ← Nat.cast_mul, ← Nat.cast_mul, Nat.cast_lt]
+
+/-! The relativized `∀`/`∃` companions of `Basic`'s whole-carrier `every_sem`/
+`some_sem`/`no_sem`: bounded over an explicit `Finset`, hence decidable with no
+`Fintype` (`Finset.decidableDforallFinset`). They are *not* duplicates of the
+`_sem` denotations — `every_sem` ranges over the whole (possibly infinite)
+carrier for the general GQ theory, whereas `everyOn s` ranges over `s`; the two
+meet at `s = Finset.univ` (`everyOn_univ`). -/
+
+/-- `s`-relativized restricted universal: every `R` in `s` is `S`. -/
+def everyOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → S x
+
+/-- `s`-relativized existential. -/
+def someOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∃ x ∈ s, R x ∧ S x
+
+/-- `s`-relativized `no`. -/
+def noOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → ¬ S x
+
+instance everyOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : Decidable (everyOn s R S) := by
+  unfold everyOn; infer_instance
+
+instance someOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : Decidable (someOn s R S) := by
+  unfold someOn; infer_instance
+
+instance noOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] : Decidable (noOn s R S) := by
+  unfold noOn; infer_instance
+
+/-- Count of elements satisfying a predicate, via `Finset.univ.filter`.
+    The `Finset.univ` specialization of `countOn`. -/
 def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
-  (Finset.univ.filter P).card
+  countOn Finset.univ P
 
 open Classical
 
 variable {α : Type*} [Fintype α]
+
+/-! ### Whole-carrier recovery (`s = Finset.univ`)
+
+The relativized `∀`/`∃` operators reduce to `Basic`'s whole-carrier denotations
+at `s = univ`, exhibiting them as the general layer's finite specialization. -/
+
+@[simp] theorem everyOn_univ (R S : α → Prop) : everyOn Finset.univ R S ↔ every_sem R S := by
+  simp [everyOn, every_sem]
+
+@[simp] theorem someOn_univ (R S : α → Prop) : someOn Finset.univ R S ↔ some_sem R S := by
+  simp [someOn, some_sem]
+
+@[simp] theorem noOn_univ (R S : α → Prop) : noOn Finset.univ R S ↔ no_sem R S := by
+  simp [noOn, no_sem]
 
 /-! ### Counting denotations -/
 
@@ -102,7 +216,7 @@ open Classical in
 theorem count_bij_inv (f : α → α) (hBij : Function.Bijective f)
     {P : α → Prop} [DecidablePred P] :
     count P = @count _ _ (P ∘ f) (fun x => ‹DecidablePred P› (f x)) := by
-  simp only [count, Function.comp]
+  simp only [count, countOn, Function.comp]
   symm; apply Finset.card_bij (fun x _ => f x)
   · intro x hx; simp [Finset.mem_filter] at hx ⊢; exact hx
   · intro x₁ _ x₂ _ h; exact hBij.injective h
@@ -115,7 +229,7 @@ theorem count_bij_inv (f : α → α) (hBij : Function.Bijective f)
 theorem count_congr_iff {P Q : α → Prop}
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x ↔ Q x) : count P = count Q := by
-  unfold count; congr 1; ext x
+  unfold count countOn; congr 1; ext x
   constructor
   · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mp hx.2⟩
   · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mpr hx.2⟩
@@ -126,7 +240,7 @@ theorem count_and_idem_any (R S : α → Prop)
     (inst1 : DecidablePred (fun x : α => R x ∧ S x))
     (inst2 : DecidablePred (fun x : α => R x ∧ (R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
-  unfold count; congr 1; ext x
+  unfold count countOn; congr 1; ext x
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨fun ⟨hR, hS⟩ => ⟨hR, hR, hS⟩, fun ⟨hR, _, hS⟩ => ⟨hR, hS⟩⟩
 
@@ -136,7 +250,7 @@ theorem count_neg_idem_any (R S : α → Prop)
     (inst1 : DecidablePred (fun x : α => R x ∧ ¬ S x))
     (inst2 : DecidablePred (fun x : α => R x ∧ ¬ (R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
-  unfold count; congr 1; ext x
+  unfold count countOn; congr 1; ext x
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨fun ⟨hR, hNS⟩ => ⟨hR, fun ⟨_, hS⟩ => hNS hS⟩,
          fun ⟨hR, hN⟩ => ⟨hR, fun hS => hN ⟨hR, hS⟩⟩⟩
@@ -154,7 +268,7 @@ theorem count_decompose (R S : α → Prop)
     count (fun x : α => R x) =
       count (fun x : α => R x ∧ S x) +
       count (fun x : α => R x ∧ ¬ S x) := by
-  simp only [count]
+  simp only [count, countOn]
   rw [← Finset.card_union_of_disjoint]
   · congr 1; ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
@@ -242,10 +356,10 @@ theorem some_eq_at_least_1 :
   funext R S
   simp only [some_sem, at_least_n_sem]
   refine propext ⟨fun ⟨x, hR, hS⟩ => ?_, fun h => ?_⟩
-  · simp only [count]
+  · simp only [count, countOn]
     exact Nat.one_le_iff_ne_zero.mpr (Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr
       ⟨Finset.mem_univ _, hR, hS⟩⟩).ne'
-  · simp only [count] at h
+  · simp only [count, countOn] at h
     have hpos : 0 < (Finset.univ.filter (fun x : α => R x ∧ S x)).card := by omega
     obtain ⟨x, hx⟩ := Finset.card_pos.mp hpos
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
@@ -280,7 +394,7 @@ theorem all_but_0_eq_every :
       Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr
         ⟨Finset.mem_univ _, hR, hS⟩⟩
     omega
-  · simp only [count, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  · simp only [count, countOn, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     intro x _ ⟨hR, hNS⟩; exact hNS (h x hR)
 
 /-! ### Scope monotonicity of counting GQs -/
@@ -325,7 +439,7 @@ theorem most_downNE : DownNEMon ⟦most⟧ := by
   simp only [most_sem] at *
   have hEq : count (fun x : α => R' x ∧ S x) =
       count (fun x : α => R x ∧ S x) := by
-    simp only [count]; congr 1; ext x
+    simp only [count, countOn]; congr 1; ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩,
            fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
@@ -339,7 +453,7 @@ theorem most_upSE : UpSEMon ⟦most⟧ := by
   simp only [most_sem] at *
   have hEq : count (fun x : α => R' x ∧ ¬ S x) =
       count (fun x : α => R x ∧ ¬ S x) := by
-    simp only [count]; congr 1; ext x
+    simp only [count, countOn]; congr 1; ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hDiff x hR' hS, hS⟩,
            fun ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩⟩
@@ -363,7 +477,7 @@ theorem at_least_n_downNE (n : Nat) :
   simp only [at_least_n_sem] at *
   have hEq : count (fun x : α => R' x ∧ S x) =
       count (fun x : α => R x ∧ S x) := by
-    simp only [count]; congr 1; ext x
+    simp only [count, countOn]; congr 1; ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩,
            fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
@@ -457,7 +571,7 @@ private theorem card_cellCode_fiber (R S : α → Prop)
       count (fun x => (if b₁ then R x else ¬ R x) ∧
                       (if b₂ then S x else ¬ S x)) := by
   rw [Fintype.card_subtype]
-  simp only [count, cellCode, Prod.mk.injEq]
+  simp only [count, countOn, cellCode, Prod.mk.injEq]
   congr 1
   ext x
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -701,7 +815,7 @@ symmetric. -/
 theorem count_eq_decidable (P : α → Prop) (inst' : DecidablePred P)
     [DecidablePred P] :
     @count α _ P inst' = count P := by
-  unfold count; congr 1; apply Finset.filter_congr_decidable
+  unfold count countOn; congr 1; apply Finset.filter_congr_decidable
 
 /-- `most` is proportional, not intersective: it fails `Existential`. Witness over
     `Fin 3`: `R = ⊤`, `S = {0}` gives `|R∩S| = 1`, `|R∖S| = 2`, so `most R S` is
@@ -713,7 +827,7 @@ theorem not_existential_most_sem : ¬ Existential (most_sem : GQ (Fin 3)) := by
   rw [count_eq_decidable (fun x : Fin 3 => x = 0),
       count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
       count_eq_decidable (fun _ : Fin 3 => False)] at key
-  simp only [count] at key
+  simp only [count, countOn] at key
   revert key; decide
 
 /-- `few` is proportional, not intersective: it fails `Existential`, despite B&C's
@@ -727,7 +841,7 @@ theorem not_existential_few_sem : ¬ Existential (few_sem : GQ (Fin 3)) := by
   rw [count_eq_decidable (fun x : Fin 3 => x = 0),
       count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
       count_eq_decidable (fun _ : Fin 3 => False)] at key
-  simp only [count] at key
+  simp only [count, countOn] at key
   revert key; decide
 
 /-- `half` is proportional, not intersective: it fails `Existential`, despite B&C's
@@ -740,9 +854,9 @@ theorem not_existential_half_sem : ¬ Existential (half_sem : GQ (Fin 3)) := by
     count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
     count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
   have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   rw [v1, v2] at key; revert key; decide
 
 /-- `half` is not scope-upward-monotone. Witness over `Fin 3`: `R = {0,1}`,
@@ -757,10 +871,10 @@ theorem half_not_scopeUp : ¬ ScopeUpwardMono (half_sem : GQ (Fin 3)) := by
     count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) _,
     count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
   have v0 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) = 2 := by
-    simp only [count]; decide
-  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count]; decide
+    simp only [count, countOn]; decide
+  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
   rw [v0, v1, v2] at key; revert key; decide
 
 /-- `half` is not scope-downward-monotone. Witness over `Fin 3`: `R = {0,1}`,
@@ -773,10 +887,10 @@ theorem half_not_scopeDown : ¬ ScopeDownwardMono (half_sem : GQ (Fin 3)) := by
   simp only [half_sem, and_false,
     count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
     count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
-  have v0 : (count fun _ : Fin 3 => False) = 0 := by simp only [count]; decide
+  have v0 : (count fun _ : Fin 3 => False) = 0 := by simp only [count, countOn]; decide
   have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count]; decide
-  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count]; decide
+    simp only [count, countOn]; decide
+  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
   rw [v0, v1, v2] at key; revert key; decide
 
 /-- `half` is non-monotone in scope: neither scope-upward nor scope-downward
@@ -798,13 +912,13 @@ theorem not_qsymmetric_most_sem : ¬ QSymmetric (most_sem : GQ (Fin 3)) := by
     count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
     count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) _] at key
   have v0 : (count fun x : Fin 3 => x = 0 ∧ (x = 0 ∨ x = 1)) = 1 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   have v1 : (count fun x : Fin 3 => x = 0 ∧ ¬ (x = 0 ∨ x = 1)) = 0 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   have v2 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   have v3 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) = 1 := by
-    simp only [count]; decide
+    simp only [count, countOn]; decide
   rw [v0, v1, v2, v3] at key; revert key; decide
 
 end Quantification
