@@ -44,7 +44,7 @@ reduplication for other functions while excluding *f*).
 namespace Phonology.Doubling
 
 open Phonology.Constraint.OT
-open Phonology.Constraints
+open OptimalityTheory
 
 -- ============================================================================
 -- § 1: Doubling Functions

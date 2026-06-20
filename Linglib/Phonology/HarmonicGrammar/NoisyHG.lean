@@ -34,10 +34,10 @@ of the violation profile elsewhere. NHG lacks this property because its
 noise variance σ_d depends on the violation profile.
 -/
 
-namespace Phonology.Constraint
+namespace HarmonicGrammar
 
 
-open Core Real
+open Core Real Phonology.Constraint
 
 -- ============================================================================
 -- § 1: NHG Noise Variance
@@ -288,4 +288,4 @@ theorem nhgCovariance_self {C : Type*}
   congr 1 with acc con
   ring
 
-end Phonology.Constraint
+end HarmonicGrammar

@@ -24,7 +24,7 @@ corollary.
 
 namespace Phonology.Subregular
 
-open Phonology.Constraints
+open OptimalityTheory
 open Core Core.Computability.Subregular
 
 variable {α : Type}

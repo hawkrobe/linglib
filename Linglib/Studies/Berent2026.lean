@@ -52,7 +52,7 @@ data supporting the doubling reversal is in
 -/
 
 open Phonology.Syllable (SonorityRank)
-open Phonology.Constraints
+open OptimalityTheory
 open Phonology.Doubling
 
 namespace Berent2026

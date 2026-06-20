@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
 import Linglib.Phonology.Constraint.System
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
@@ -38,7 +38,7 @@ the model assigns higher harmony (= higher MaxEnt probability via
 
 namespace HayesWilson2008
 
-open Phonology Core.Optimization Phonology.Constraint Phonology.Constraints
+open Phonology Core.Optimization Phonology.Constraint HarmonicGrammar OptimalityTheory
 open Core Core.Optimization Phonology.Constraint.OT Finset Real
 
 -- ============================================================================

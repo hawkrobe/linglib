@@ -1,7 +1,7 @@
 import Linglib.Core.DecisionTheory.Learning
 import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Phonology.Constraint.Dequantization.OTLimit
-import Linglib.Phonology.Constraint.MaxEnt
+import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.MaxEnt
 
 /-!
 # [jaeger-2007]: Maximum Entropy Models and Stochastic Optimality Theory
@@ -43,7 +43,7 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
 
 namespace Jaeger2007
 
-open Core Core.Optimization Phonology.Constraint Real
+open Core Core.Optimization Phonology.Constraint HarmonicGrammar Real
 
 -- ============================================================================
 -- § 1: GLA = SGA (Main Theorem)

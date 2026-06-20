@@ -46,10 +46,10 @@ formalisations but the constraint and a retraction onto it, both characterising
 
 namespace Phonology.Subregular
 
-open Phonology.Constraints
+open OptimalityTheory
 open Core Core.Computability.Subregular
 
--- `α : Type` (rather than `Type*`) is forced by `Phonology.Constraints`
+-- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0.
 variable {α : Type}
 
@@ -107,7 +107,7 @@ theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
 
 /-- **Shared satisfaction predicate** (off-tier): the optimality-theoretic OCP
 markedness constraint `mkOCP` scores zero iff its projection is
-`Phonology.OCP.IsClean` — routing `Phonology.Constraints.adjacentIdentical` (the
+`Phonology.OCP.IsClean` — routing `OptimalityTheory.adjacentIdentical` (the
 `countAdjacent` form behind `mkOCP`, consumed by Berent2026/Belth2026) through the
 unified predicate. The flat-string companion of `mkOCPOnTier_zero_iff_isClean`. -/
 theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]

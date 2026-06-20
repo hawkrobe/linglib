@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.Dequantization.OTLimit
-import Linglib.Phonology.Constraint.MaxEnt
+import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
@@ -43,7 +43,7 @@ models over weighted features, differing only in what the features measure.
 
 namespace GoldwaterJohnson2003
 
-open Core.Optimization Phonology.Constraint Core Finset Real
+open Core.Optimization Phonology.Constraint HarmonicGrammar Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))

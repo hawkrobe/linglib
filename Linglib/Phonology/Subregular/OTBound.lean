@@ -53,7 +53,7 @@ subregular hierarchy.
 
 namespace Phonology.Subregular.OTBound
 
-open Phonology.Constraints
+open OptimalityTheory
 open Core Core.Computability.Subregular
 open Phonology.Constraint.OT (NamedConstraint mkMarkGrad)
 

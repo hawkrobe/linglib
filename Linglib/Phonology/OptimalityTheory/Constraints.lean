@@ -43,7 +43,7 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 `Nat`-valued evaluation function directly.
 -/
 
-namespace Phonology.Constraints
+namespace OptimalityTheory
 
 open Phonology.Constraint
 open Phonology.Constraint.OT
@@ -143,7 +143,7 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String)
 -- ============================================================================
 
 -- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Phonology.Constraint.OT`.
--- Re-export them so `open Phonology.Constraints` includes them.
+-- Re-export them so `open OptimalityTheory` includes them.
 export Phonology.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
@@ -153,7 +153,7 @@ export Phonology.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 -- `countAdjacent` lives at the substrate layer in
 -- `Core.Computability.Subregular.ForbiddenPairs` since it is alphabet-generic
 -- list combinatorics with nothing OT-specific. Re-exported here so consumers
--- of `Phonology.Constraints` see it under the conventional name.
+-- of `OptimalityTheory` see it under the conventional name.
 export Core.Computability.Subregular (countAdjacent)
 
 /-- Build a markedness constraint penalizing tier-adjacent forbidden pairs.
@@ -389,4 +389,4 @@ def mkMarkGradW {C : Type} (name : String) (violations : C → Nat) (w : ℚ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMarkGrad name violations, weight := w }
 
-end Phonology.Constraints
+end OptimalityTheory

@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.NoisyHG
-import Linglib.Phonology.Constraint.Separability
+import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.Constraint.System
 import Linglib.Core.DecisionTheory.GumbelLuce
 
@@ -53,7 +53,7 @@ under MaxEnt. We encode this data and verify:
 
 namespace Flemming2021
 
-open Core.Optimization Phonology.Constraint Core Real
+open Core.Optimization Phonology.Constraint HarmonicGrammar Core Real
 
 -- ============================================================================
 -- § 1: MaxEnt as Gumbel RUM (McFadden)

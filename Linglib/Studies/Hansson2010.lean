@@ -254,13 +254,13 @@ counterpart of `navajoSibilantHarmony` — same tier predicate, packaged as
 a `NamedConstraint` via the `mkAgreeOnTier` specialization. The TSL
 grammar characterizes the *language*; this constraint *evaluates* it. -/
 def navajoAgree : Phonology.Constraint.OT.NamedConstraint (List NSeg) :=
-  Phonology.Constraints.mkAgreeOnTier
+  OptimalityTheory.mkAgreeOnTier
     "AGREE-[ant]/CC" (Tier.byClass NSeg.onTier) id
 
 /-- `navajoAgree` is a markedness constraint by construction. -/
 theorem navajoAgree_is_markedness :
     navajoAgree.family = Phonology.Constraint.OT.ConstraintFamily.markedness :=
-  Phonology.Constraints.mkAgreeOnTier_is_markedness _ _ _
+  OptimalityTheory.mkAgreeOnTier_is_markedness _ _ _
 
 /-- **Bridge**: `navajoAgree` evaluates to zero on a candidate iff the
 candidate is in the TSL_2 language. The "OT-side" and "subregular-side"

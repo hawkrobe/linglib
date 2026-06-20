@@ -39,7 +39,7 @@ three core constraints can produce it. We prove this as
 namespace McCarthyPrince1995
 
 open Core.Optimization Phonology.Constraint.OT
-open Phonology.Constraints
+open OptimalityTheory
 
 -- ============================================================================
 -- § 1: Javanese Intervocalic h-Deletion (Overapplication)
