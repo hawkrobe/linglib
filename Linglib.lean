@@ -65,6 +65,7 @@ import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Quantification.Generators
 import Linglib.Semantics.Quantification.Properties
+import Linglib.Semantics.Quantification.Relativized
 import Linglib.Semantics.Quantification.NumberTree
 import Linglib.Semantics.Quantification.Lattice
 import Linglib.Semantics.Quantification.Logicality
