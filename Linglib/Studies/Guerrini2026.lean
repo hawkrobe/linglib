@@ -1,5 +1,6 @@
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Trivalent
@@ -1013,7 +1014,7 @@ open Semantics.Genericity.Generics (traditionalGEN Situation
 
     This function makes the compositional content of BFG explicit. -/
 def evalBFG (situations : List Situation) (normal : NormalcyPredicate)
-    (kindRestrictor : Restrictor) (predScope : Scope) : Bool :=
+    (kindRestrictor : Restrictor) (predScope : Scope) : Prop :=
   traditionalGEN situations normal kindRestrictor predScope
 
 /-- Table 1 is derivable from LF availability + LF → flavor mapping.
@@ -1477,7 +1478,7 @@ theorem diagram_145_four_paths :
 aspect operator **Hab**. On the "habituality is genericity" view
 ([chierchia-1995], [chierchia-1998]), Hab IS Gen applied to situations
 involving a single individual — in linglib this view collapses Hab into the
-shared `covertQ` skeleton in `CovertQuantifier.lean`. On the Dobrovie-Sorin (2001)
+shared restricted-universal skeleton `Quantification.everyOn`. On the Dobrovie-Sorin (2001)
 view (also [boneh-doron-2013]), Hab is a distinct existential operator
 below Gen; the existential force is recorded by
 `BonehDoron2013.habConfig.force = .existential`.

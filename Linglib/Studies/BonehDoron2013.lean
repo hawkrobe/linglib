@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification.CovertQuantifier
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Genericity.Generics
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Genericity
@@ -13,7 +13,7 @@ Theoretical Linguistics 43.
 
 HAB and GEN are **distinct** covert operators, not a single operator with
 different parameters. They share the same quantificational skeleton
-(`covertQ` in `CovertQuantifier.lean`) but differ in:
+(the relativized restricted universal `Quantification.everyOn`) but differ in:
 
 1. **Quantificational force**: HAB is a modalized *existential* quantifier
    over sums of events; GEN is a modalized *universal* quantifier.
@@ -36,11 +36,11 @@ the simple past tense form, the periphrastic *used to*, and *would*.
 
 ## Connection to Existing Infrastructure
 
-- `CovertQuantifier.lean`: shared skeleton `covertQ`. GEN derives from it
-  (see `gen_skeleton` below). HAB does *not* — B&D's central claim is that
-  HAB is a modalized *existential* over event sums, structurally distinct
-  from `covertQ`'s universal form; its force is recorded by
-  `habConfig.force = .existential`.
+- `Quantification.everyOn` (`Counting.lean`): the shared restricted-universal
+  skeleton. GEN derives from it (see `gen_skeleton` below). HAB does *not* —
+  B&D's central claim is that HAB is a modalized *existential* over event sums,
+  structurally distinct from `everyOn`'s universal form; its force is recorded
+  by `habConfig.force = .existential`.
 - `Aspect/Basic.lean`: `ViewpointAspectB` — the `aspectCompatibility`
   bridge connects B&D's Table (41) to the aspectual infrastructure.
 - `DelPrete2013.lean`: Del Prete's Same-Object Effect (SOE) is the Italian
@@ -52,7 +52,7 @@ namespace BonehDoron2013
 
 open Intensional (WorldTimeIndex)
 
-open Quantification.CovertQuantifier
+open Quantification
 open Semantics.Genericity.Generics (Situation traditionalGEN)
 open Semantics.Aspect (ViewpointAspectB)
 
@@ -72,7 +72,7 @@ inductive QForce where
   deriving DecidableEq, Repr
 
 /-- Configuration for a covert quantifier, recording the structural
-    differences between GEN and HAB beyond the shared `covertQ` skeleton. -/
+    differences between GEN and HAB beyond the shared `everyOn` skeleton. -/
 structure CovertQConfig where
   /-- Quantificational force (existential vs universal) -/
   force : QForce
@@ -98,7 +98,7 @@ def habConfig : CovertQConfig :=
   , isModal := true
   }
 
-/-- GEN and HAB have distinct configurations despite sharing `covertQ`. -/
+/-- GEN and HAB have distinct configurations despite sharing `everyOn`. -/
 theorem gen_hab_distinct : genConfig ≠ habConfig := by decide
 
 /-- GEN and HAB agree on modality (both are modalized) but differ on
@@ -470,18 +470,20 @@ theorem would_no_retrospective :
 
 -- ═══ GEN-side skeleton ═══
 
-/-- GEN's denotation reduces to `covertQ` with restrictor conjoined from
-    a normalcy predicate and a kind/restrictor predicate.
+/-- GEN's denotation reduces to the canonical relativized restricted universal
+    `Quantification.everyOn`, with restrictor conjoined from a normalcy
+    predicate and a kind/restrictor predicate.
 
     HAB does *not* admit a parallel reduction: B&D §6.2.1 argue HAB is
     a modalized *existential* over event sums (`∃x [cigarette(x) & Hab e
-    smoke(e, Mary, x)]`), not a universal over a list. The genuinely
+    smoke(e, Mary, x)]`), not a universal over a domain. The genuinely
     distinctive existential force is recorded by
-    `habConfig.force = .existential`; there is no `covertQ`-style
+    `habConfig.force = .existential`; there is no `everyOn`-style
     derivation theorem for HAB. -/
 theorem gen_skeleton
     (sits : List Situation) (normal restrictor scope : Situation → Bool) :
     traditionalGEN sits normal restrictor scope =
-    covertQ sits (λ s => normal s && restrictor s) scope := rfl
+    everyOn sits.toFinset (fun s => (normal s && restrictor s) = true)
+      (fun s => scope s = true) := rfl
 
 end BonehDoron2013

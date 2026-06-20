@@ -1,139 +1,39 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Composition.LexEntry
 
 /-!
-# Covert Operators: Theory and Compositional Interface
+# Covert Operators: Montague-Typed Constructors
 
 [krifka-etal-1995] [carlson-1977] [guerrini-2026]
 
 Covert operators (Gen, DIST, Hab, DPP) are semantically contentful LF nodes
-with no overt realization. This module provides:
+with no overt realization. This module packages them as `LexEntry` values
+that compose via FA in `evalTree`.
 
-1. **Abstract quantifier theory** (`covertQ`, `measure`, `thresholdQ`) —
-   domain-polymorphic semantics with eliminability proofs. GEN and HAB
-   are both instances.
-
-2. **Montague-typed constructors** (`gen`, `genThreshold`, `dist`, `dpp`,
-   `hab`) — `LexEntry` values that compose via FA in `evalTree`.
-   These package the theory-layer semantics for tree-based interpretation.
+The *semantics* these wrap is the canonical generalized-quantifier substrate
+in `Quantification/Counting.lean` (`everyOn`, `mostOn`, `thresholdOn`,
+`prevalenceOn`, …). GEN's threshold reading is `genThreshold`, whose
+denotation is `Quantification.thresholdOn` over the atom domain; the
+universal reading is `Generics.traditionalGEN`, grounded on
+`Quantification.everyOn`. Earlier versions of this file re-implemented those
+quantifiers in an inferior `Bool`/`List`/ℚ representation
+(`covertQ`/`measure`/`thresholdQ`); those clones are retired in favour of the
+`Counting.lean` API.
 
 ## Usage
 
 ```
-open Quantification.CovertQuantifier (genThreshold dist dpp extendLexicon)
+open Quantification.CovertQuantifier (genThreshold dist dpp)
 
-def myLex : Lexicon E W :=
-  extendLexicon baseLex
-    [("Gen",  genThreshold E W atoms 2 3),
-     ("DIST", dist E W atomsOf)]
+def myLex : Lexicon E W := fun s => match s with
+  | "Gen"  => some (genThreshold E W atoms 2 3)
+  | "DIST" => some (dist E W atomsOf)
+  | _      => none
 ```
 -/
 
 namespace Quantification.CovertQuantifier
-
-variable {D : Type}
-
-/-- A covert quantifier: `∀d ∈ domain. restriction(d) → scope(d)`.
-GEN instantiates with `D = Situation`, `restriction = normal ∧ restrictor`
-(see `traditionalGEN` in `Genericity/Generics.lean`). The "habituality is
-genericity" view ([chierchia-1995], [krifka-etal-1995]) treats
-HAB the same way; the Boneh–Doron view ([boneh-doron-2013]) treats
-HAB as a structurally distinct existential, not a `covertQ` instance —
-see `Studies/BonehDoron2013.lean`. -/
-def covertQ (domain : List D) (restriction : D → Bool) (scope : D → Bool) : Bool :=
-  domain.all λ d => !restriction d || scope d
-
-/-- Dual formulation: no counterexample exists. -/
-def covertQ_dual (domain : List D) (restriction : D → Bool) (scope : D → Bool) : Bool :=
-  !domain.any λ d => restriction d && !scope d
-
-/-- The two formulations are equivalent (De Morgan). -/
-theorem covertQ_equiv (domain : List D) (restriction : D → Bool) (scope : D → Bool) :
-    covertQ domain restriction scope = covertQ_dual domain restriction scope := by
-  simp only [covertQ, covertQ_dual, List.all_eq_not_any_not]
-  congr 1
-  induction domain with
-  | nil => rfl
-  | cons d ds ih =>
-    simp only [List.any_cons]
-    rw [ih]
-    cases restriction d <;> cases scope d <;> rfl
-
-/-- Measure: proportion of restriction-satisfying cases where scope holds. -/
-def measure (domain : List D) (restriction : D → Bool) (scope : D → Bool) : ℚ :=
-  let restricted := domain.filter restriction
-  let satisfied := restricted.filter scope
-  if restricted.length = 0 then 0
-  else (satisfied.length : ℚ) / (restricted.length : ℚ)
-
-/-- Threshold-based alternative: measure > θ. -/
-def thresholdQ (domain : List D) (restriction : D → Bool)
-    (scope : D → Bool) (θ : ℚ) : Bool :=
-  measure domain restriction scope > θ
-
-/-- Measure is non-negative. -/
-theorem measure_nonneg (domain : List D) (restriction : D → Bool) (scope : D → Bool) :
-    measure domain restriction scope ≥ 0 := by
-  simp only [measure]
-  by_cases h : (domain.filter restriction).length = 0
-  · simp [h]
-  · simp only [h, ↓reduceIte]
-    apply div_nonneg
-    · exact Nat.cast_nonneg _
-    · exact Nat.cast_nonneg _
-
-/-- Measure is at most 1 (when restriction domain is non-empty). -/
-theorem measure_le_one (domain : List D) (restriction : D → Bool) (scope : D → Bool)
-    (hNonEmpty : (domain.filter restriction).length > 0) :
-    measure domain restriction scope ≤ 1 := by
-  simp only [measure]
-  have hPos : (domain.filter restriction).length ≠ 0 := Nat.pos_iff_ne_zero.mp hNonEmpty
-  simp only [hPos, ↓reduceIte]
-  have hLenLe : (List.filter scope (List.filter restriction domain)).length ≤
-                (List.filter restriction domain).length :=
-    List.length_filter_le _ _
-  have hDenom : (0 : ℚ) < ↑(List.filter restriction domain).length := by
-    rw [Nat.cast_pos]; exact hNonEmpty
-  calc (↑(List.filter scope (List.filter restriction domain)).length : ℚ) /
-         ↑(List.filter restriction domain).length
-       ≤ ↑(List.filter restriction domain).length /
-         ↑(List.filter restriction domain).length := by
-           apply div_le_div_of_nonneg_right
-           · exact Nat.cast_le.mpr hLenLe
-           · exact le_of_lt hDenom
-     _ = 1 := div_self (ne_of_gt hDenom)
-
-/-- Any covert quantifier configuration can be matched by threshold semantics.
-
-    Note: this is a *degeneracy* result — the existential threshold is either -1
-    (if Q holds) or 1 (if Q fails). It shows eliminability in principle, not that
-    the threshold is informative. The RSA treatment adds substance by making the
-    threshold uncertain and pragmatically inferred. -/
-theorem reduces_to_threshold (domain : List D)
-    (restriction : D → Bool) (scope : D → Bool)
-    (hNonEmpty : (domain.filter restriction).length > 0) :
-    ∃ θ : ℚ, covertQ domain restriction scope =
-             thresholdQ domain restriction scope θ := by
-  let m := measure domain restriction scope
-  by_cases hQ : covertQ domain restriction scope
-  · -- Q = true: pick θ = -1
-    use -1
-    simp only [thresholdQ, hQ]
-    have hNonneg := measure_nonneg domain restriction scope
-    symm; rw [decide_eq_true_iff]
-    have h : (-1 : ℚ) < 0 := by decide
-    linarith
-  · -- Q = false: pick θ = 1
-    use 1
-    simp only [thresholdQ]
-    have hLe := measure_le_one domain restriction scope hNonEmpty
-    have hNotQ : covertQ domain restriction scope = false := by
-      simp only [Bool.eq_false_iff]; exact hQ
-    simp only [hNotQ]
-    symm; rw [decide_eq_false_iff_not]
-    intro hContra; linarith
 
 /-! ### Montague-Typed Constructors -/
 
@@ -146,8 +46,9 @@ open Semantics.Montague (LexEntry Lexicon)
 
     `generally` encodes the truth conditions — different theories
     instantiate it differently (threshold, normalcy, probabilistic).
-    `traditionalGEN` (in `Generics.lean`) and `thresholdQ` (above)
-    are specific instantiations. -/
+    `traditionalGEN` (in `Generics.lean`, grounded on
+    `Quantification.everyOn`) and `Quantification.thresholdOn` are specific
+    instantiations. -/
 def gen (E W : Type)
     (generally : (E → Prop) → (E → Prop) → Prop)
     : LexEntry E W :=
@@ -155,13 +56,14 @@ def gen (E W : Type)
 
 open Classical in
 /-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
-    atoms also satisfy scope. Montague-typed counterpart of `thresholdQ`. -/
-noncomputable def genThreshold (E W : Type) (atoms : List E)
+    atoms also satisfy scope. Montague-typed wrapper whose denotation is the
+    canonical `Quantification.thresholdOn` (cross-multiplied `Nat`, `≥`-form)
+    over the atom domain. Noncomputable only because the Montague denotations
+    `restr`/`scope` are arbitrary `Prop`-predicates (decided classically). -/
+noncomputable def genThreshold (E W : Type) [DecidableEq E] (atoms : List E)
     (num denom : Nat) : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
-    let restricted := atoms.filter (fun x => decide (restr x))
-    let both := restricted.filter (fun x => decide (scope x))
-    denom * both.length ≥ num * restricted.length⟩
+    Quantification.thresholdOn atoms.toFinset restr scope num denom⟩
 
 /-- DIST: `(e→t) → (e→t)`. Distributive operator.
 
@@ -181,17 +83,6 @@ def dpp (E W : Type) (atoms : List E) : LexEntry E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
     ∃ x ∈ atoms, prop x ∧ pred x⟩
 
-/-- Hab: `(e→t) → (e→t)`. Habitual aspectual operator.
-
-    `h` maps a predicate to its habitual counterpart.
-    On the Chierchia/Krifka "Hab-is-Gen" view, `h` collapses into the
-    universal `covertQ` skeleton above; on the Boneh–Doron view it is a
-    distinct existential operator (see
-    `Studies/BonehDoron2013.lean`). -/
-def hab (E W : Type) (h : (E → Prop) → (E → Prop))
-    : LexEntry E W :=
-  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩
-
 /-- EXH: `(s→t) → (s→t)`. Exhaustivity operator (proposition modifier).
 
     `exhOp` maps a proposition to its exhaustified version — typically
@@ -210,13 +101,6 @@ def hab (E W : Type) (h : (E → Prop) → (E → Prop))
 def exh (E W : Type) (exhOp : (W → Prop) → (W → Prop))
     : LexEntry E W :=
   ⟨(.intens .t) ⇒ (.intens .t), exhOp⟩
-
-/-- Extend a lexicon with named covert operators. -/
-def extendLexicon {E W : Type} (base : Lexicon E W)
-    (ops : List (String × LexEntry E W)) : Lexicon E W :=
-  fun s => match ops.find? (fun p => p.1 == s) with
-    | some (_, entry) => some entry
-    | none => base s
 
 end Compositional
 
