@@ -66,6 +66,16 @@ structure DirectionalConstraint (C : Type*) where
   family : ConstraintFamily
   eval : C → List Nat
 
+/-- A directional constraint whose violation vector is the singleton `[count c]` —
+    the parallel-by-nature degenerate case (cf. `EvalMode.le_singleton`). -/
+def DirectionalConstraint.ofCount {C : Type*} (name : String) (family : ConstraintFamily)
+    (count : C → Nat) : DirectionalConstraint C :=
+  { name, family, eval := fun c => [count c] }
+
+@[simp] theorem DirectionalConstraint.ofCount_eval {C : Type*} (name : String)
+    (family : ConstraintFamily) (count : C → Nat) (c : C) :
+    (DirectionalConstraint.ofCount name family count).eval c = [count c] := rfl
+
 -- ============================================================================
 -- § 2: Lex Comparison Across Constraints
 -- ============================================================================

@@ -164,22 +164,16 @@ def maxToneAuto (f : MwaghavulForm) : Nat :=
   (List.range f.upper.length).countP (fun k => decide (f.IsDeleted k))
 
 /-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
-  name := s!"L-ANCH-{reprStr t}({m.form})"
-  family := .faithfulness
-  eval := fun f => [lAnchTone t m f]
+def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm :=
+  .ofCount s!"L-ANCH-{reprStr t}({m.form})" .faithfulness (lAnchTone t m)
 
 /-- R-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def rAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
-  name := s!"R-ANCH-{reprStr t}({m.form})"
-  family := .faithfulness
-  eval := fun f => [rAnchTone t m f]
+def rAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm :=
+  .ofCount s!"R-ANCH-{reprStr t}({m.form})" .faithfulness (rAnchTone t m)
 
 /-- MAX-Tone as a `DirectionalConstraint`. -/
-def maxToneC : DirectionalConstraint MwaghavulForm where
-  name := "MAX-Tone"
-  family := .faithfulness
-  eval := fun f => [maxToneAuto f]
+def maxToneC : DirectionalConstraint MwaghavulForm :=
+  .ofCount "MAX-Tone" .faithfulness maxToneAuto
 
 /-- INTEGRITY-Mᵥ for the verbaliser (canonical case). -/
 def integMv : DirectionalConstraint MwaghavulForm := integrityTone vbzMorph TRN.M
@@ -247,17 +241,13 @@ def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
 
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `DirectionalConstraint`. -/
 def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
-    DirectionalConstraint MwaghavulForm where
-  name := s!"L-ANCH-{reprStr t}({m.form},across)"
-  family := .faithfulness
-  eval := fun f => [lAnchToneAcrossRoots t m rms f]
+    DirectionalConstraint MwaghavulForm :=
+  .ofCount s!"L-ANCH-{reprStr t}({m.form},across)" .faithfulness (lAnchToneAcrossRoots t m rms)
 
 /-- R-ANCHOR across roots as a `DirectionalConstraint`. -/
 def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
-    DirectionalConstraint MwaghavulForm where
-  name := s!"R-ANCH-{reprStr t}({m.form},across)"
-  family := .faithfulness
-  eval := fun f => [rAnchToneAcrossRoots t m rms f]
+    DirectionalConstraint MwaghavulForm :=
+  .ofCount s!"R-ANCH-{reprStr t}({m.form},across)" .faithfulness (rAnchToneAcrossRoots t m rms)
 
 end PerRoot
 
