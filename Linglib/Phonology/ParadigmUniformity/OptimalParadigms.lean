@@ -42,8 +42,8 @@ that phonological behavior tracks paradigm structure. See
 
 namespace Phonology.ParadigmUniformity
 
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
-open Phonology.Correspondence (Corr)
+open Constraint OptimalityTheory
+open OptimalityTheory.Correspondence (Corr)
 
 -- ============================================================================
 -- § 1: OP-MAX-V derived from `Corr.maxViol` via tier projection

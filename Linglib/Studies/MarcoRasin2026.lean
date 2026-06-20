@@ -43,8 +43,8 @@ argument that OP fails "regardless of what constitutes a paradigm."
 
 namespace MarcoRasin2026
 
-open Core.Optimization Phonology.Constraint.OT
-open Phonology.Constraints
+open Core.Optimization Constraint OptimalityTheory
+open OptimalityTheory
 open Phonology.ParadigmUniformity
 open Phonology.Syllable (SonorityRank)
 
@@ -348,7 +348,7 @@ predictions for verbs and nouns, and the *wrong* prediction for adjectives —
 the empirical content of [marco-rasin-2026]'s argument. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Verbal paradigm under McCarthy's OP ranking. -/
 noncomputable def verbSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=

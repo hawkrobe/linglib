@@ -38,8 +38,8 @@ three core constraints can produce it. We prove this as
 
 namespace McCarthyPrince1995
 
-open Core.Optimization Phonology.Constraint.OT
-open Phonology.Constraints
+open Core.Optimization Constraint OptimalityTheory
+open OptimalityTheory
 
 -- ============================================================================
 -- § 1: Javanese Intervocalic h-Deletion (Overapplication)
@@ -111,7 +111,7 @@ theorem javanese_overapplication :
 The constraints `javMaxIO`, `javIdentBR`, `javStarVhV` above stipulate
 violation counts via λ-tables. This section adds the *structural*
 substrate: each candidate is associated with a
-`Corr Phonology.Correspondence.RedupRole Seg` recording the input → base /
+`Corr OptimalityTheory.Correspondence.RedupRole Seg` recording the input → base /
 base ↔ reduplicant correspondences. MAX-IO and "IDENT-BR" violation
 counts are then **derived from `Corr.maxViol`** rather than stipulated.
 
@@ -127,7 +127,7 @@ relation.) -/
 
 namespace JavaneseCorr
 
-open Phonology.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (Corr RedupRole)
 
 /-- Phonological segments for the Javanese stem. Minimal abstract
     inventory (just the contrasts that matter for h-deletion). -/
@@ -187,13 +187,13 @@ theorem javIdentBR_eq_corr (c : JavaneseCand) :
 
 /-- The Javanese tableau as `NamedConstraint (Corr RedupRole Seg)`s.
     These are direct uses of the paper-agnostic
-    `Phonology.Correspondence.Reduplication.maxIO` / `maxBR` — no
+    `OptimalityTheory.Correspondence.Reduplication.maxIO` / `maxBR` — no
     Javanese-specific constraint construction needed. -/
 abbrev javMaxIOFromCorr : NamedConstraint (Corr RedupRole Seg) :=
-  Phonology.Correspondence.Reduplication.maxIO
+  OptimalityTheory.Correspondence.Reduplication.maxIO
 
 abbrev javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
-  Phonology.Correspondence.Reduplication.maxBR
+  OptimalityTheory.Correspondence.Reduplication.maxBR
 
 end JavaneseCorr
 
@@ -286,7 +286,7 @@ markedness over a single output and stays as the original stipulation. -/
 
 namespace BalangaoCorr
 
-open Phonology.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (Corr RedupRole)
 
 /-- Phonological segments for the Balangao stem. Minimal abstract
     inventory (just the contrasts that matter for `tagtag`-reduplication). -/
@@ -675,7 +675,7 @@ constraints. -/
 
 namespace AkanCorr
 
-open Phonology.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (Corr RedupRole)
 
 /-- Phonological segments for the Akan /RED-ka/ paradigm. The minimal
     abstract inventory tracking the [coronal] feature contrast. -/
@@ -756,7 +756,7 @@ For these deterministic OT analyses, the unique-winner pattern collapses
 the `argminDecoder` distribution to probability 1 on the winner. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
 noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=

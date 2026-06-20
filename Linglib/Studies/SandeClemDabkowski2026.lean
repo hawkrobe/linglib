@@ -123,7 +123,7 @@ open Minimalist (PICStrength)
 open Minimalist.Linearization
   (SpelloutAndCheck FrozenFeature FrozenFeatureTable
    extendFrozenFeatures frozenValue)
-open Phonology.CophonologyByPhrase (PhrasalCophonology)
+open OptimalityTheory.CophonologyByPhrase (PhrasalCophonology)
 
 -- ============================================================================
 -- § 1: Guébie vowel inventory and ATR feature

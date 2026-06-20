@@ -36,7 +36,7 @@ the sub-square setup from Z&H 2017).
 
 namespace Magri2025
 
-open Core.Optimization Phonology.Constraint Phonology.Constraint.OT
+open Core.Optimization Constraint Constraint OptimalityTheory HarmonicGrammar
 open ZurawHayes2017
 
 /-! ## § 1: Constraint Independence

@@ -1,6 +1,7 @@
-import Linglib.Phonology.Constraint.OT.Basic
-import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
-import Linglib.Phonology.Constraint.OT.HarmonicSerialism
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
+import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Fragments.Poko.Tone
 import Linglib.Phonology.Autosegmental.Floating
@@ -59,7 +60,7 @@ step witnesses are `decide`-checked (no `sorry`).
 
 namespace McPhersonLamont2026
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Core.Optimization.Evaluation
 
 -- ============================================================================
@@ -281,7 +282,7 @@ theorem weighted_HG_inadequate :
 
 namespace Fig3
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -581,7 +582,7 @@ end Fig3
 
 namespace Eq24
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -663,7 +664,7 @@ end Eq24
 
 namespace Eq21
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -731,7 +732,7 @@ end Eq21
 
 namespace Eq27
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -801,7 +802,7 @@ end Eq27
 
 namespace Eq30
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
@@ -884,7 +885,7 @@ end Eq30
 
 namespace Eq22
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone

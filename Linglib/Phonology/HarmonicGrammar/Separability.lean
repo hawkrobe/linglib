@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.NoisyHG
+import Linglib.Phonology.HarmonicGrammar.NoisyHG
 
 /-!
 # Separable Harmonies and HZ's Generalization [magri-2025]
@@ -56,10 +56,10 @@ These enable applying separability results (independence → HZ, rescaling)
 to any `WeightedConstraint` list without re-proving in Fin-indexed form.
 -/
 
-namespace Phonology.Constraint
+namespace HarmonicGrammar
 
 
-open Core Real Finset
+open Core Real Finset Constraint
 
 -- ============================================================================
 -- § 1: The 2×2 Square of Underlying Forms (§2.4)
@@ -517,4 +517,4 @@ theorem constantLogitDiff_mono_consistent {X : Type*} (d : X → ℝ) (f : ℝ �
   · exact mul_pos_of_neg_of_neg (sub_neg.mpr (hf hlt)) (sub_neg.mpr (hf (by linarith)))
   · exact mul_pos (sub_pos.mpr (hf hgt)) (sub_pos.mpr (hf (by linarith)))
 
-end Phonology.Constraint
+end HarmonicGrammar

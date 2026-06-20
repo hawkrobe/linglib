@@ -52,12 +52,12 @@ data supporting the doubling reversal is in
 -/
 
 open Phonology.Syllable (SonorityRank)
-open Phonology.Constraints
-open Phonology.Doubling
+open OptimalityTheory
+open OptimalityTheory.Doubling
 
 namespace Berent2026
 
-open Core.Optimization Phonology.Constraint.OT
+open Core.Optimization Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient
@@ -162,7 +162,7 @@ theorem ocp_passes_ab {α : Type} [DecidableEq α] (a b : α) (rest : List α)
     This is the core of [berent-2026]'s third argument: the
     reversal is amodal (it transfers from speech to sign) and
     L1-dependent (it depends on the speaker's morphological system).
-    See `Phonology.Doubling.doubling_reversal` for the proof
+    See `OptimalityTheory.Doubling.doubling_reversal` for the proof
     and [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] for
     the experimental evidence. -/
 theorem amodal_doubling_reversal :
@@ -183,7 +183,7 @@ probability-1 reversal: the same OCP-XX assigns probability 1 to
 morphological contexts. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Phonological-context tableau as a generic `ConstraintSystem`. -/
 noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=

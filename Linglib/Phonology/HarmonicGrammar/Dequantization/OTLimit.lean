@@ -33,10 +33,11 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 - `maxent_ot_limit`: main limit theorem
 -/
 
-namespace Phonology.Constraint
+namespace HarmonicGrammar
+open Constraint
 
 
-open Core Phonology.Constraint.OT Core.Optimization.Evaluation Real Finset
+open Core Constraint OptimalityTheory Core.Optimization.Evaluation Real Finset
 
 -- ============================================================================
 -- § 1: OT → HG Weight Construction
@@ -387,4 +388,4 @@ theorem maxent_ot_limit {C : Type} [Fintype C] [Nonempty C] [DecidableEq C]
     (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩)
     (hlex c hc)
 
-end Phonology.Constraint
+end HarmonicGrammar

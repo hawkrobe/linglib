@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.OT.Aliases
+import Linglib.Phonology.Constraint.Aliases
 
 /-!
 # OT — Evaluation Mode (Parallel vs Directional)
@@ -72,7 +72,8 @@ by `HarmonicSerialism.lean`'s combinator, which currently routes the
 `DirectionalTableau` consumer lands when a study file requires it.
 -/
 
-namespace Phonology.Constraint.OT
+namespace OptimalityTheory
+open Constraint
 
 
 /-- Direction of lex comparison on violation position vectors.
@@ -159,4 +160,4 @@ theorem le_singleton (m : EvalMode) (k k' : Nat) :
 
 end EvalMode
 
-end Phonology.Constraint.OT
+end OptimalityTheory

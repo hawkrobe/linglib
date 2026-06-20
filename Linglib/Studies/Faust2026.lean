@@ -60,7 +60,7 @@ This file consumes and exercises the shared infrastructure:
   `satisfies`.
 - `Phonology.Templates.starMisalign` — the \*Misalignment alignment
   constraint, built via the generic `mkAlign` constructor.
-- `Phonology.Constraints.adjacentIdentical` — drives the root-level
+- `OptimalityTheory.adjacentIdentical` — drives the root-level
   OCP, used to verify [faust-2026]'s OCP-related reanalysis.
 
 Per-derivation `decide` theorems test all four combinations of
@@ -671,7 +671,7 @@ Two demonstrations:
    doing real work — without \*Misalignment dominating, the spreading
    candidate would win on template-satisfaction grounds. -/
 
-open Phonology.Constraint.OT (mkTableau mkFactorialOptima)
+open Constraint OptimalityTheory
 
 /-- The √klj candidate set: the spreading attempt and the empty-slot
     actual surface form. Built as the `RootTemplateMatch` values from

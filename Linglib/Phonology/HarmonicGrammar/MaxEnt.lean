@@ -25,7 +25,7 @@ candidates by weighted constraint violations.
 ## Architecture
 
 - `MaxEntGrammar` packages inputs, candidate generation, and weighted constraints
-  (`WeightedConstraint` and `harmonyScore` come from `Phonology.Constraint.Weighted`)
+  (`WeightedConstraint` and `harmonyScore` come from `Constraint.Weighted`)
 - `SystemicConstraint` evaluates *tuples* of outputs (different type signature)
 - `jointHarmonyScore` combines classical + systemic scores over the product space
 - `marginalProb` marginalizes the joint to recover individual mapping probabilities
@@ -38,12 +38,12 @@ score decomposes additively ⇒ the joint distribution factorizes ⇒ each margi
 equals its factor.
 -/
 
-namespace Phonology.Constraint
+namespace HarmonicGrammar
 
 open Core.Optimization
 
 
-open Phonology.Constraint.OT Core
+open Constraint OptimalityTheory Core Constraint
 
 -- ============================================================================
 -- § 1: MaxEnt Grammar (Classical — Individual Mappings)
@@ -236,4 +236,4 @@ theorem MaxEntGrammar.prob_eq_toSystem_predict {I O : Type*} [Fintype O] [Nonemp
   show softmax _ o = (softmaxDecoder 1).decode Finset.univ _ o
   simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem, one_mul]
 
-end Phonology.Constraint
+end HarmonicGrammar

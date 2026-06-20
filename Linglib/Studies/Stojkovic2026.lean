@@ -76,7 +76,7 @@ hypothetical Ukrainian [uv]~[iv] pairs).
 
 namespace Stojkovic2026
 
-open Phonology.Constraint.OT Core.Optimization.Evaluation Phonology.Constraints
+open Constraint OptimalityTheory Core.Optimization.Evaluation OptimalityTheory
 
 /-! ### Candidates -/
 

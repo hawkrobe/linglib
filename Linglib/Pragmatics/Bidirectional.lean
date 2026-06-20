@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Superoptimal
+import Linglib.Pragmatics.Superoptimal
 
 /-!
 # Bidirectional Optimality Theory
@@ -78,7 +78,7 @@ set_option autoImplicit false
 namespace Pragmatics.Bidirectional
 
 open Core.Optimization.Evaluation
-open Phonology.Constraint
+open Constraint
 
 -- ============================================================================
 -- § 1: Q-Principle and I-Principle as Bool Predicates (List-based, decidable)

@@ -8,9 +8,6 @@ import Mathlib.Data.List.Destutter
 /-!
 # The Obligatory Contour Principle
 
-[mccarthy-1986] [goldsmith-1976] [mccarthy-prince-1995]
-[heinz-rawal-tanner-2011] [chandlee-heinz-2018] [chandlee-jardine-2019]
-
 The categorical, strict-identity, single-tier OCP: the ban on two *identical* adjacent
 autosegments on one tier ([mccarthy-1986]), on a projected tier for `IsCleanOn`
 ([chandlee-jardine-2019]). As a stringset the constraint is tier-based strictly local
@@ -39,13 +36,12 @@ and lives in the thresholded-TSL substrate, not here.
 
 namespace Phonology.OCP
 
-variable {α : Type*}
+variable {α β : Type*}
 
 /-! ### The constraint -/
 
-/-- A tier is **OCP-clean** when no adjacent pair is identical ([mccarthy-1986]'s
-prohibition condition). Adjacency-only, so strictly weaker than `List.Nodup`
-(`[1, 2, 1]` is clean): `Nodup` lemmas do not transfer. -/
+/-- A tier is **OCP-clean** when no adjacent pair is identical. Adjacency-only, so
+weaker than `List.Nodup` (`[1, 2, 1]` is clean). -/
 def IsClean (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs
 
@@ -59,14 +55,13 @@ def IsClean (xs : List α) : Prop :=
 
 /-- OCP on the tier projected from `xs` by keeping `p`-elements and reading `proj`
 (tier-relativity, [chandlee-jardine-2019]); flat `IsClean` is the `p = ⊤`, `proj = id` case. -/
-def IsCleanOn {β : Type*} (p : α → Prop) [DecidablePred p] (proj : α → β)
-    (xs : List α) : Prop :=
+def IsCleanOn (p : α → Prop) [DecidablePred p] (proj : α → β) (xs : List α) : Prop :=
   IsClean ((xs.filter (fun a => decide (p a))).map proj)
 
 instance decidableIsClean [DecidableEq α] : DecidablePred (IsClean (α := α)) :=
   fun xs => inferInstanceAs (Decidable (List.IsChain (· ≠ ·) xs))
 
-instance decidableIsCleanOn {β : Type*} [DecidableEq β] (p : α → Prop)
+instance decidableIsCleanOn [DecidableEq β] (p : α → Prop)
     [DecidablePred p] (proj : α → β) : DecidablePred (IsCleanOn p proj) :=
   fun _ => inferInstanceAs (Decidable (IsClean _))
 
@@ -120,23 +115,22 @@ theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs
 
 /-! ### The blocking repair -/
 
+variable (rule : List α → List α)
+
 /-- **Blocking** ([mccarthy-1986]'s antigemination): apply `rule` only when it would not
 create an OCP violation, else leave the input untouched — a guard preventing a process,
 not a retraction repairing its output. -/
-def block (rule : List α → List α) (xs : List α) : List α :=
+def block (xs : List α) : List α :=
   if IsClean (rule xs) then rule xs else xs
 
-theorem block_eq_rule (rule : List α → List α) {xs : List α} (hc : IsClean (rule xs)) :
-    block rule xs = rule xs := if_pos hc
+theorem block_eq_rule {xs : List α} (hc : IsClean (rule xs)) : block rule xs = rule xs := if_pos hc
 
 /-- Antigemination: the rule fails to apply exactly when it would create an OCP
 violation, leaving the input unrepaired (contrast `collapse`). -/
-theorem block_eq_self (rule : List α → List α) {xs : List α} (hc : ¬ IsClean (rule xs)) :
-    block rule xs = xs := if_neg hc
+theorem block_eq_self {xs : List α} (hc : ¬ IsClean (rule xs)) : block rule xs = xs := if_neg hc
 
 /-- Blocking never worsens a clean tier. -/
-theorem block_isClean (rule : List α → List α) {xs : List α} (hx : IsClean xs) :
-    IsClean (block rule xs) := by
+theorem block_isClean {xs : List α} (hx : IsClean xs) : IsClean (block rule xs) := by
   unfold block; split <;> assumption
 
 end
