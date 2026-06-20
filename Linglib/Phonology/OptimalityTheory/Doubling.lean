@@ -1,4 +1,5 @@
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Morphology.MorphProfile
 
@@ -41,10 +42,10 @@ reduplication for other functions while excluding *f*).
 [berent-2026]
 -/
 
-namespace Phonology.Doubling
+namespace OptimalityTheory.Doubling
 
-open Phonology.Constraint.OT
-open Phonology.Constraints
+open Constraint OptimalityTheory
+open OptimalityTheory
 
 -- ============================================================================
 -- § 1: Doubling Functions
@@ -374,4 +375,4 @@ theorem doubling_reversal :
       = {.reduplication} := by
   exact ⟨phon_prefers_XY, morph_prefers_reduplication⟩
 
-end Phonology.Doubling
+end OptimalityTheory.Doubling

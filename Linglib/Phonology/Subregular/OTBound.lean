@@ -53,9 +53,9 @@ subregular hierarchy.
 
 namespace Phonology.Subregular.OTBound
 
-open Phonology.Constraints
+open OptimalityTheory
 open Core Core.Computability.Subregular
-open Phonology.Constraint.OT (NamedConstraint mkMarkGrad)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 2. Existing bridges, restated in zero-set form

@@ -1,5 +1,5 @@
-import Linglib.Phonology.Constraint.OT.Basic
-import Linglib.Phonology.Constraint.OT.EvalMode
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.EvalMode
 
 /-!
 # Directional Tableau — Position-Vector EVAL
@@ -38,7 +38,8 @@ It deliberately does NOT yet ship:
   `HSDerivation` dispatches on `evalMode`; deferred to follow-up)
 -/
 
-namespace Phonology.Constraint.OT
+namespace OptimalityTheory
+open Constraint
 
 
 open Core.Optimization.Evaluation
@@ -204,4 +205,4 @@ example : LexLEByMode .parallel [[2]] [[2]] := by decide
 
 end SmokeTest
 
-end Phonology.Constraint.OT
+end OptimalityTheory

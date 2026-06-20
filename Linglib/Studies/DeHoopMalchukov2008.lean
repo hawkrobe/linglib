@@ -1,6 +1,7 @@
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.Superoptimal
+import Linglib.Pragmatics.Superoptimal
 import Linglib.Features.Prominence
 import Linglib.Studies.Aissen2003
 
@@ -76,9 +77,9 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 namespace DeHoopMalchukov2008
 
-open Phonology.Constraint (superoptimal superoptimalSet
+open Pragmatics.Bidirectional (superoptimal superoptimalSet
   superoptimal_coe_eq_set Blocks)
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Features.Prominence
 open Aissen2003
 open Aissen2003

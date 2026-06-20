@@ -37,10 +37,10 @@ downstream consumers reference.
 
 namespace Phonology.Subregular
 
-open Phonology.Constraints
+open OptimalityTheory
 open Core Core.Computability.Subregular
 
--- `α : Type` (rather than `Type*`) is forced by `Phonology.Constraints`
+-- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0. See
 -- the parallel comment in `OCP.lean`.
 variable {α : Type}

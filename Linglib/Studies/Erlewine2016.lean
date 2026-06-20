@@ -1,6 +1,7 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Syntax.Minimalist.Position
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
@@ -55,7 +56,7 @@ many subsequent papers; [erlewine-2016]'s contribution is the
 specific application to Kichean AF as an OT-competing-candidate
 analysis.
 
-### Connection to Phonology.Constraint.OT
+### Connection to Constraint
 
 The OT tableau uses the lexicographic comparison from
 `Phonology/Constraint/OT/Basic.lean`. The key result `af_is_optimal` shows
@@ -88,7 +89,7 @@ derivation via AF (alternation strategy). Both use
 namespace Erlewine2016
 
 open Kaqchikel Minimalist
-open Phonology.Constraint.OT (mkTableau NamedConstraint ConstraintFamily)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Competing Derivations

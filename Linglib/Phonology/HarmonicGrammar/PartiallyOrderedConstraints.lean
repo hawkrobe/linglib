@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.Cumulativity
+import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Mathlib.Order.Extension.Linear
 
@@ -54,7 +54,7 @@ substrate directly — `pocPredict`, `PicksAt`, and `pocPredict_discrete_binary_
 over the discrete partial order — rather than enumerating rankings by hand.
 -/
 
-namespace Phonology.Constraint
+namespace HarmonicGrammar
 
 open Core.Optimization
 
@@ -431,7 +431,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
   -- Step 1: PicksAt with binary cands reduces to LexStrictlyBetter on chosen vs other
   have h_picksAt_iff_lex :
       PicksAt cands vp σ i chosen ↔
-      Phonology.Constraint.LexStrictlyBetter
+      HarmonicGrammar.LexStrictlyBetter
         (fun k => vp i chosen (σ k)) (fun k => vp i other (σ k)) := by
     unfold PicksAt
     constructor
@@ -595,4 +595,4 @@ theorem pocPredict_discrete_binary_rate
 
 end PartialOrderConstraints
 
-end Phonology.Constraint
+end HarmonicGrammar

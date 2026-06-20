@@ -1,5 +1,6 @@
 import Linglib.Phonology.ItemSpecificity.Defs
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # Indexed Constraints
@@ -31,7 +32,7 @@ theory under-fits relative to `ScaledWeights` /
 namespace Phonology.ItemSpecificity.Indexed
 
 open Phonology.ItemSpecificity
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Stratification

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.OT.ElementaryRankingCondition
+import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Fintype.Card
@@ -58,7 +58,8 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 ERC sets and antimatroids
 -/
 
-namespace Phonology.Constraint.OT
+namespace OptimalityTheory
+open Constraint
 
 
 -- ============================================================================
@@ -686,4 +687,4 @@ theorem RCErc_entailment {n : Nat}
     -- TODO: requires full RCErc definition
     : True := trivial
 
-end Phonology.Constraint.OT
+end OptimalityTheory
