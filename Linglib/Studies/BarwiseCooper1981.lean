@@ -1446,7 +1446,7 @@ theorem more_than_half_not_Q_definable :
 private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
     [DecidablePred P] :
     Quantification.count P = Set.ncard {x | P x} := by
-  rw [Quantification.count, Set.ncard_eq_toFinset_card']
+  rw [Quantification.count, Quantification.countOn, Set.ncard_eq_toFinset_card']
   congr 1
   ext x
   simp
