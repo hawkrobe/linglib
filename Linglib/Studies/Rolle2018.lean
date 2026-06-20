@@ -287,18 +287,18 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
 
 /-- Extract the tonal tier from a list of TBUs.
 
-    Grounded in the `Core.Tier` abstraction
-    (`Core.Tier.apply (Core.Tier.total TBU.tone)`): an erasing string
+    Grounded in the `Tier` abstraction
+    (`Tier.apply (Tier.total TBU.tone)`): an erasing string
     homomorphism `(TBU S)* → TRN*` in the Kleisli category of `Option`.
     The tonal tier is the `total` (no-erasure) case [goldsmith-1976]. -/
 def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
-  Core.Tier.apply (Core.Tier.total TBU.tone) tbus
+  Tier.apply (Tier.total TBU.tone) tbus
 
 /-- The tonal tier reduces to `List.map TBU.tone` (the historical
     formulation), via `Tier.total`'s length-preservation property. -/
 @[simp] theorem tonalTier_eq_map {S : Type} (tbus : List (TBU S)) :
     tonalTier tbus = tbus.map TBU.tone :=
-  Core.Tier.apply_total _ _
+  Tier.apply_total _ _
 
 /-! ### Matrix-Basemap Correspondence — derived from `Corr` -/
 

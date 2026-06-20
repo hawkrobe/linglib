@@ -7,7 +7,6 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Fintype.Vector
 import Linglib.Core.Computability.Subregular.Function.Direction
-import Linglib.Core.Computability.Tier
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
@@ -36,8 +35,8 @@ function-level subregular hierarchy.
 * `isLeftInputStrictlyLocal_left_subsequential` — every Left-ISL
   function is Left-Subsequential, witnessed by `ISLRule.toSFST`.
 * `flatMap_isLeftInputStrictlyLocal_one`,
-  `Core.Tier.apply_isLeftInputStrictlyLocal_one` — letterwise
-  homomorphisms and tier projections are the `k = 1` specialisation.
+  `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and
+  erasing (tier) projections are the `k = 1` specialisation.
 
 ## Implementation notes
 
@@ -230,8 +229,9 @@ lemma isLeftInputStrictlyLocal_const_nil (k : ℕ) :
 
 A letterwise string homomorphism `h : α → List β` (string action `List.flatMap h`,
 the free-monoid lift) is the `k = 1` specialisation: the window argument is always
-empty and only the current input symbol matters. `Tier α β := α → Option β` is the
-further erasing specialisation. -/
+empty and only the current input symbol matters. An erasing letterwise map
+`g : α → Option β` (string action `List.filterMap g`) is the further erasing
+specialisation. -/
 
 /-- Embed a letterwise string homomorphism `h : α → List β` as a 1-ISL rule (no left
 context). The windowOutput ignores its window argument and behaves letterwise. -/
@@ -263,20 +263,21 @@ theorem flatMap_isLeftInputStrictlyLocal_one (h : α → List β) :
     IsLeftInputStrictlyLocal 1 (List.flatMap h) :=
   ⟨ISLRule.ofStringHom h, ISLRule.ofStringHom_apply h⟩
 
-/-- **Every tier projection is 1-Left-ISL.** Tier projections are
-letterwise erasing (`Tier α β := α → Option β`), hence a special case
-of `ISLRule.ofStringHom` via `fun x => (T x).toList`. -/
-theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
-    IsLeftInputStrictlyLocal 1 (Core.Tier.apply T) := by
-  -- Tier.apply T = filterMap T = List.flatMap (fun x => (T x).toList)
-  refine ⟨ISLRule.ofStringHom (fun x => (T x).toList), ?_⟩
+/-- **Every erasing letterwise projection is 1-Left-ISL.** `List.filterMap g`
+(for `g : α → Option β`) is letterwise erasing, hence a special case of
+`ISLRule.ofStringHom` via `fun x => (g x).toList`. Phonological tier projections
+are the instance where `g` is a tier-membership map. -/
+theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
+    IsLeftInputStrictlyLocal 1 (List.filterMap g) := by
+  -- filterMap g = List.flatMap (fun x => (g x).toList)
+  refine ⟨ISLRule.ofStringHom (fun x => (g x).toList), ?_⟩
   rw [ISLRule.ofStringHom_apply]
   funext xs
-  show List.flatMap (fun x => (T x).toList) xs = List.filterMap T xs
+  show List.flatMap (fun x => (g x).toList) xs = List.filterMap g xs
   induction xs with
   | nil => rfl
   | cons x ys ih =>
-    cases h : T x with
+    cases h : g x with
     | none =>
       simp only [List.flatMap_cons, List.filterMap_cons, h, Option.toList_none,
         List.nil_append, ih]

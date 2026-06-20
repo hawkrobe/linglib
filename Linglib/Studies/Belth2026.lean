@@ -304,8 +304,9 @@ theorem latinDissimRule_tolerated_on_examples :
     grounds Belth's tier in the TSL_k subregular hierarchy. -/
 theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     LatSeg.consTier.apply xs =
-      Core.Computability.Subregular.tierProject LatSeg.IsCons xs :=
-  rfl
+      Core.Computability.Subregular.tierProject LatSeg.IsCons xs := by
+  show Tier.apply (Tier.byClass LatSeg.IsCons) xs = _
+  rw [Tier.apply_byClass, Core.Computability.Subregular.tierProject_eq_filter]
 
 /-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
     tier-based subregular language: project to the `[+cons]` tier, then
@@ -323,7 +324,7 @@ def latinTSLGrammar : Core.Computability.Subregular.TSLGrammar 2 LatSeg :=
     forms produced by the rule should not contain adjacent `[+lat]`
     segments on the consonant tier. We expose this connection via
     `OptimalityTheory.mkOCPOnTier`, which already accepts a generic
-    `Core.Tier`. A tier-adjacent pair of identical liquids contributes
+    `Tier`. A tier-adjacent pair of identical liquids contributes
     one violation. -/
 def latinOCP : Constraint.NamedConstraint (List LatSeg) :=
   OptimalityTheory.mkOCPOnTier "OCP/[+cons]" LatSeg.consTier id

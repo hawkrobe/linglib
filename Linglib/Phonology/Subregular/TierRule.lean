@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Option
-import Linglib.Core.Computability.Tier
+import Linglib.Phonology.Tier
 import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
@@ -16,7 +16,7 @@ that factor through a tier projection. A rule has the shape
 
 where:
 
-- `T ⊆ α` is a tier (an erasing string-homomorphism — see `Core.Tier`);
+- `T ⊆ α` is a tier (an erasing string-homomorphism — see `Tier`);
 - `C ⊆ T` is the natural class of the *triggering* tier-adjacent segment;
 - `A ⊆ α` is the natural class of *targets* (here: a single underspecified
   position identified by index, à la [belth-2026]);
