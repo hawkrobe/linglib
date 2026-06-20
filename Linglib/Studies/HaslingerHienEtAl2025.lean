@@ -1,5 +1,6 @@
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
+import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Typology.UniversalQuantifier
@@ -142,26 +143,27 @@ instance : PartialOrder Student where
   le_trans := fun _ _ _ h1 h2 => h1.trans h2
   le_antisymm := fun _ _ h _ => h
 
+/-- The flat `Student` order is the canonical `IsAtomicDomain`: its atomicity and
+disjointness now come from the shared `Mereology` machinery, not bespoke proofs. -/
+instance : IsAtomicDomain Student := isAtomicDomain_of_le_iff_eq (fun _ _ => Iff.rfl)
+
 /-- "passed the exam" -/
 def passed : Student → Prop
   | .alice => True
   | .bob => True
   | .carol => False
 
-/-- In a flat order, all elements are atoms. -/
+/-- All `Student`s are atoms — derived from the `IsAtomicDomain` instance. -/
 theorem student_atoms : ∀ (x : Student), (fun _ => True : Student → Prop) x →
-    Mereology.Atom x := by
-  intro x _ z hz
-  exact hz.symm
+    Mereology.Atom x :=
+  fun x _ => IsAtomicDomain.all_atoms x
 
-/-- In a flat order, distinct elements don't overlap. -/
+/-- Distinct `Student`s don't overlap — derived from the `IsAtomicDomain` instance. -/
 theorem student_disjoint : ∀ (x y : Student),
     (fun _ => True : Student → Prop) x →
     (fun _ => True : Student → Prop) y →
-    Mereology.Overlap x y → x = y := by
-  intro x y _ _ ⟨z, hzx, hzy⟩
-  -- In Student's flat order, ≤ is =, so hzx : z = x and hzy : z = y
-  exact hzx.symm.trans hzy
+    Mereology.Overlap x y → x = y :=
+  fun _ _ _ _ h => IsAtomicDomain.eq_of_overlap h
 
 /-- DNG-SG: `Q_∀` on a flat domain distributes to each element. -/
 theorem dng_sg_concrete :
@@ -313,5 +315,27 @@ theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α]
     (hONE_AT : ONE_AT P) : False := by
   obtain ⟨x, hPx, hNA⟩ := hNonAtomic
   exact hNA (hONE_AT.all_atomic x hPx)
+
+/-! ### Bridge to the canonical generalized quantifier
+
+On an **atomic restrictor sort** (`Mereology.IsAtomicDomain α`), `Q_∀` *is* the
+canonical universal generalized quantifier `every_sem` (`λR S. ∀x. R x → S x`).
+The instance discharges both the atomicity and the disjointness conditions of
+`QForall_eq_standardGQ`, so the bridge is automatic — and `*each ten minutes`
+is exactly the case where the interval sort has no `IsAtomicDomain` instance.
+This snaps the mereological `Q_∀` tower onto the shared `∀`-denotation that the
+Barwise–Cooper `every_sem`, the Lindström `everyDet.toGQ`, and Sauerland's
+`JE∘DER` already meet at, with the atomicity presupposition realized as a
+typeclass on the sort rather than a side condition. -/
+
+/-- On an atomic restrictor sort, `Q_∀` is the canonical universal generalized
+quantifier `every_sem`. The `[IsAtomicDomain α]` instance is *used* — it
+discharges both hypotheses of `QForall_eq_standardGQ`.
+[haslinger-etal-2025-nllt] eq. (30b). -/
+theorem QForall_eq_every_sem {α : Type*} [PartialOrder α] [IsAtomicDomain α]
+    {P Q : α → Prop} :
+    QForall P Q ↔ Quantification.every_sem P Q :=
+  QForall_eq_standardGQ (fun x _ => IsAtomicDomain.all_atoms x)
+    (fun _ _ _ _ h => IsAtomicDomain.eq_of_overlap h)
 
 end HaslingerHienEtAl2025

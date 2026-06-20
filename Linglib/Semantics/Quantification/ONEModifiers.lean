@@ -110,4 +110,14 @@ theorem every_distributes {α : Type*} [PartialOrder α]
   · intro hAll x ⟨hPx, _⟩
     exact hAll x hPx
 
+/-- On an atomic restrictor sort (`Mereology.IsAtomicDomain`), every restrictor
+satisfies `ONE_AT`'s atomicity for free, so the presupposition reduces to the
+`|P| > 1` cardinality condition. This connects the sort-level
+`Mereology.IsAtomicDomain` typeclass to the predicate-level `ONE_AT` structure —
+they are the same atomicity at two granularities, not parallel notions. -/
+theorem ONE_AT_of_isAtomicDomain {α : Type*} [PartialOrder α] [IsAtomicDomain α]
+    {P : α → Prop} (h2 : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) : ONE_AT P where
+  has_two := h2
+  all_atomic := fun x _ => IsAtomicDomain.all_atoms x
+
 end Quantification.ONEModifiers
