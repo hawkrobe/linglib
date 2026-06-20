@@ -2722,8 +2722,7 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints
-import Linglib.Phonology.Autosegmental.BasemapCorrespondence
-import Linglib.Phonology.Autosegmental.CoPScope
+import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Modularity

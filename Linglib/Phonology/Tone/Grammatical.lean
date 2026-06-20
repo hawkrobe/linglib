@@ -327,7 +327,7 @@ def tonalOverwrite {S : Type*} [DecidableEq S] [BEq S] [Repr S]
     over complements. Since dependents are structurally outer relative
     to the head, dominant triggers are always dependents.
 
-    See `CoPScope.dominant_gt_asymmetry_from_scope` for a derivation
+    See `Rolle2018.dominant_gt_asymmetry_from_scope` for a derivation
     of this asymmetry from the CoP-scope ordering, which eliminates
     the stipulation by showing it follows from Spec > Head > Complement.
 

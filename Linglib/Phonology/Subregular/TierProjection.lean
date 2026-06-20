@@ -26,7 +26,7 @@ TSL machinery without restating projection or filtering.
 
 Phonological constraints already in the codebase (`mkOCPOnTier` in
 `Phonology/OptimalityTheory/Constraints.lean`, the tonal tier `tonalTier`
-in `Phonology/Autosegmental/BasemapCorrespondence.lean`) reuse the same
+in `Studies/Rolle2018.lean`) reuse the same
 `Tier.apply` machinery as TSL grammars — the bridge is no longer a theorem
 to discharge but a definitional consequence.
 -/
