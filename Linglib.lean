@@ -2718,7 +2718,7 @@ import Linglib.Phonology.Featural.Underspecification
 import Linglib.Phonology.Featural.ElementTheory
 import Linglib.Phonology.Autosegmental.FeatureSharing
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints

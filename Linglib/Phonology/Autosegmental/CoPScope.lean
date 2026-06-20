@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 
 /-!
 # CoP-scope: cophonological domain scope hierarchy
@@ -52,7 +52,7 @@ This rules out outward dominance from complements.
 
 namespace Phonology.Autosegmental.CoPScope
 
-open Phonology.Autosegmental.GrammaticalTone
+open Tone
 
 /-! ### CoP-scope positions -/
 

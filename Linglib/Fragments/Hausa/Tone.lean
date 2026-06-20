@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Basic
 
 /-!
@@ -19,7 +19,7 @@ Hausa, not a parallel hierarchy:
 - `Tone.TRN` is the
   underlying autosegmental primitive; `HausaTone` is a surface
   inventory whose decomposition is given by `toAutoseg`.
-- `Phonology.Autosegmental.GrammaticalTone.GTSpec` is the GT-trigger
+- `Tone.GTSpec` is the GT-trigger
   type. Hausa uses two of [rolle-2018]'s six dominance cells —
   replacive-dominant and neutral. We expose smart constructors
   `mkReplacive`/`mkNeutral` that fix the other GTSpec fields to the
@@ -33,7 +33,7 @@ Per-cell facts (e.g. *the plural template is dominant*) appear as
 namespace Hausa.Tone
 
 open _root_.Tone (TRN)
-open Phonology.Autosegmental.GrammaticalTone
+open _root_.Tone
   (Spec GTSpec TonalMelody ValuationWindow GTDominance
    GTLevel ExponenceType tonalOverwrite TBU)
 

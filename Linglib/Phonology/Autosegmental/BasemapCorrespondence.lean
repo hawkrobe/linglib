@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
@@ -65,7 +65,7 @@ via a separate Hamming-distance implementation.
 
 namespace Phonology.Autosegmental.BasemapCorrespondence
 
-open Phonology.Autosegmental.GrammaticalTone
+open Tone
 open Tone (TRN)
 open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory

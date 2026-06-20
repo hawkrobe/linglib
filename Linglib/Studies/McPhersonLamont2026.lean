@@ -997,7 +997,7 @@ References: [rolle-2018] (replacive-dominant GT via `tonalOverwrite`),
 
 namespace Phonology.Autosegmental
 
-open Phonology.Autosegmental.GrammaticalTone (TBU)
+open Tone (TBU)
 open Tone (TRN)
 
 /-- Embed a `List (TBU S)` (the output type of `tonalOverwrite`) into

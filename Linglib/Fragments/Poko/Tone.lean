@@ -1,5 +1,5 @@
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
 
 /-!

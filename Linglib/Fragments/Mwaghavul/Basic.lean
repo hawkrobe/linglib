@@ -1,5 +1,5 @@
 import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Tone.Grammatical
 
 /-!
 # Mwaghavul Phonological Fragment
@@ -41,7 +41,7 @@ namespace Mwaghavul
 
 open Tone (TRN TBUKind
   WordProsodicType)
-open Phonology.Autosegmental.GrammaticalTone (TBU Spec ValuationWindow)
+open Tone (TBU Spec ValuationWindow)
 
 -- ============================================================================
 -- S 1: Phonological Inventory
@@ -148,7 +148,7 @@ def deriveVerb (base : Ideophone) : List TRN :=
     | .m  => verbM
     | .mh => verbMH
   let host := base.tones.map λ t => mkTSyl base.form t
-  (Phonology.Autosegmental.GrammaticalTone.tonalOverwrite host spec).map TBU.tone
+  (Tone.tonalOverwrite host spec).map TBU.tone
 
 -- M-tone verbaliser: wùlàʃ [L L] → wūlāʃ [M M]
 theorem wuulash_verb : deriveVerb wuulash = [.M, .M] := by decide
@@ -176,7 +176,7 @@ theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by decide
 theorem m_verb_uniform (i : Ideophone) (h : i.verbType = .m) :
     deriveVerb i = i.tones.map (λ _ => TRN.M) := by
   simp [deriveVerb, h, verbM,
-    Phonology.Autosegmental.GrammaticalTone.tonalOverwrite,
+    Tone.tonalOverwrite,
     List.map_map, Function.comp_def]
 
 /-- M-H derived verbs have M on nonfinal TBUs and H on the final TBU.
@@ -187,6 +187,6 @@ theorem mh_verb_bisyllabic_pattern (i : Ideophone)
   simp [deriveVerb, h, verbMH]
   match i, h2 with
   | ⟨_, _, [_, _], _⟩, _ =>
-    simp [Phonology.Autosegmental.GrammaticalTone.tonalOverwrite]
+    simp [Tone.tonalOverwrite]
 
 end Mwaghavul

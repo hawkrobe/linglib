@@ -573,7 +573,7 @@ end Tableau26
     window of the target-host. Verbalisers are word-level + independent
     prosodic exponence (segmentally null — tone is the sole exponent). -/
 
-open Phonology.Autosegmental.GrammaticalTone
+open Tone
   (GTSpec GTDominance GTLevel ExponenceType DominantGTAsymmetry)
 open Phonology.Autosegmental.CoPScope
   (CoPPosition dominant_gt_asymmetry_from_scope)
@@ -733,7 +733,7 @@ with 0 violations on the top constraint forces every optimal candidate to 0. -/
 
 section DominantCophAgreement
 
-open Phonology.Autosegmental.GrammaticalTone (TBU Spec tonalOverwrite)
+open Tone (TBU Spec tonalOverwrite)
 open Phonology.Autosegmental.BasemapCorrespondence
 open OptimalityTheory.CophonologyTheory (mergeRanking cophonologicalEval)
 
