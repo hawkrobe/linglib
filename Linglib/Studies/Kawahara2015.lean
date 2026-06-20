@@ -1,5 +1,5 @@
 import Linglib.Phonology.Prosodic.Accent
-import Linglib.Phonology.Prosodic.Moraic.Defs
+import Linglib.Phonology.Prosodic.Moraic
 import Linglib.Fragments.Japanese.Prosody
 
 /-!

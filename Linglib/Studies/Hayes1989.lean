@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
+import Linglib.Phonology.Prosodic.CompensatoryLengthening
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!

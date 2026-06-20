@@ -1,6 +1,6 @@
 import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Constraint.System
 
 /-!
@@ -93,7 +93,7 @@ def starSchwaOpen : NamedConstraint (List JTAForm) :=
 
 /-- SONCON: assign * for a CCəC (medial) form when C₂ > C₃ in sonority.
     Parametrized over the sonority ranks of C₂ and C₃, using the
-    `LinearOrder SonorityRank` instance from `Syllable.Defs`. -/
+    `LinearOrder SonorityRank` instance from `Syllable`. -/
 def sonCon (c2 c3 : Phonology.Syllable.SonorityRank) :
     NamedConstraint (List JTAForm) :=
   liftPerMember "SONCON" .markedness fun f =>

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.Prosodic.Syllable
 
 /-!
 # Metrical Foot Structure
