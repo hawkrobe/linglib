@@ -1,9 +1,8 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Phonology.Autosegmental.CoPScope
+import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
@@ -575,7 +574,7 @@ end Tableau26
 
 open Tone
   (GTSpec GTDominance GTLevel ExponenceType DominantGTAsymmetry)
-open Phonology.Autosegmental.CoPScope
+open Rolle2018
   (CoPPosition dominant_gt_asymmetry_from_scope)
 
 /-- M-tone verbaliser (VBZ₁) classified under Rolle 2018:
@@ -734,7 +733,7 @@ with 0 violations on the top constraint forces every optimal candidate to 0. -/
 section DominantCophAgreement
 
 open Tone (TBU Spec tonalOverwrite)
-open Phonology.Autosegmental.BasemapCorrespondence
+open Rolle2018
 open OptimalityTheory.CophonologyTheory (mergeRanking cophonologicalEval)
 
 /-- **The general agreement theorem**: when MxBM-C (basemap faithfulness)
