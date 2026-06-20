@@ -1,7 +1,7 @@
 import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
-import Linglib.Phonology.HarmonicGrammar.Dequantization.ViolationSemiring
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 
 /-!
 # The Constraint-Framework Deformation Lattice

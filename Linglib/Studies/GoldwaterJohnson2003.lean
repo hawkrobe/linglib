@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Probability.SoftmaxTheory
 
