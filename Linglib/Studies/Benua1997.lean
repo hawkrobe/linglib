@@ -64,8 +64,8 @@ machinery — the cross-linguistic point of [benua-1997] is that
 
 namespace Benua1997
 
-open Phonology.Correspondence (Corr)
-open Phonology.TCT (Role TetruSchema)
+open OptimalityTheory.Correspondence (Corr)
+open OptimalityTheory.TCT (Role TetruSchema)
 open Phonology.ParadigmUniformity.Transderivational
   (diagramWithEdge identOOViol)
 open Constraint OptimalityTheory
@@ -424,8 +424,8 @@ the architecturally-distinct derivations producing identical phraseOutput.
 
 namespace StratalComparison
 
-open Phonology.Stratal (StratalDerivation StratalRole stratalDerivToCorr)
-open Phonology.StratalToTCT (project project_preserves_phrase_as_derivative
+open OptimalityTheory.Stratal (StratalDerivation StratalRole stratalDerivToCorr)
+open OptimalityTheory.StratalToTCT (project project_preserves_phrase_as_derivative
                              project_preserves_stem_as_base
                              project_preserves_underlying_as_input
                              project_oo_edge_eq_parallel)
@@ -503,7 +503,7 @@ theorem stratal_stem_is_tct_base :
     `(.base, .derivative)` correspondence. -/
 theorem stratal_chain_collapses_to_oo_edge :
     sundaneseStratalAsTCT.edge .base .derivative =
-      Phonology.Stratal.parallelEdge Sundanese.baseOutput
+      OptimalityTheory.Stratal.parallelEdge Sundanese.baseOutput
         Sundanese.derivOutputOverapplied :=
   project_oo_edge_eq_parallel _ _ _ _
 

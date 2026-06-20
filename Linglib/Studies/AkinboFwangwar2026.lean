@@ -745,7 +745,7 @@ section DominantCophAgreement
 
 open Phonology.Autosegmental.GrammaticalTone (TBU Spec tonalOverwrite)
 open Phonology.Autosegmental.BasemapCorrespondence
-open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
+open OptimalityTheory.CophonologyTheory (mergeRanking cophonologicalEval)
 
 /-- **The general agreement theorem**: when MxBM-C (basemap faithfulness)
     is in the cophonological subranking, every OT-optimal candidate is

@@ -58,9 +58,9 @@ within-paradigm OO-Faith) lives in
 `ParadigmUniformity/Transderivational.lean`.
 -/
 
-namespace Phonology.TCT
+namespace OptimalityTheory.TCT
 
-open Phonology.Correspondence (Corr)
+open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory
 
 -- ============================================================================
@@ -208,4 +208,4 @@ theorem TetruSchema.oo_decides_when_m1_ties {C : Type} (s : TetruSchema C)
     (hOO : s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂) :
     s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂ := hOO
 
-end Phonology.TCT
+end OptimalityTheory.TCT

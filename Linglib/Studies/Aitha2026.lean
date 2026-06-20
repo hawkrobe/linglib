@@ -497,7 +497,7 @@ theorem stem_optimal :
 
 section WordLevel
 
-open Phonology.Stratal
+open OptimalityTheory.Stratal
 open Phonology.ProsodicWord
 
 -- ────────────────────────────────────────────────────────────────────
@@ -700,7 +700,7 @@ repaired by compensatory lengthening. -/
 
 section PhraseLevel
 
-open Phonology.Stratal
+open OptimalityTheory.Stratal
 
 /-- Phrase-level candidates for the postpositional input
     `('sa.mu).('dram).('nun).('ci)` ('ocean-from'), the Word-level
@@ -765,7 +765,7 @@ representations at each level. -/
 
 section StratalRecords
 
-open Phonology.Stratal
+open OptimalityTheory.Stratal
 
 /-- The Stratal-OT derivation of NOM `samudram` 'ocean-NOM'.
 
@@ -821,7 +821,7 @@ so the same-`C` `isPromoted`/`isDemoted` would not typecheck. -/
 
 section CrossStratumReranking
 
-open Phonology.Stratal
+open OptimalityTheory.Stratal
 
 /-- `*DIST-0` is at the *highest* rank in the Word DAT ranking
     (`wordDatRanking`, position 0) and at a *lower* rank in the Phrase
@@ -831,13 +831,13 @@ open Phonology.Stratal
     m-retention at phrase boundaries vs m-deletion + CL inside
     the prosodic word. -/
 theorem dist0_demoted_phrase_relative_to_word :
-    Phonology.Stratal.isDemotedAcross "*DIST-0" phrasePostpRanking wordDatRanking := by
+    OptimalityTheory.Stratal.isDemotedAcross "*DIST-0" phrasePostpRanking wordDatRanking := by
   decide
 
 /-- Conversely, `MAX` is **promoted** going Word → Phrase. Dual aspect
     of the same reranking. -/
 theorem max_promoted_phrase_relative_to_word :
-    Phonology.Stratal.isPromotedAcross "MAX" phrasePostpRanking wordDatRanking := by
+    OptimalityTheory.Stratal.isPromotedAcross "MAX" phrasePostpRanking wordDatRanking := by
   decide
 
 end CrossStratumReranking

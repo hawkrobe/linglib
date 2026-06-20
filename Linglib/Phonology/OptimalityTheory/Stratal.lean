@@ -60,7 +60,7 @@ Phrase strata derives the *-am*/*-āni* alternation from a single
 underlying form.
 -/
 
-namespace Phonology.Stratal
+namespace OptimalityTheory.Stratal
 
 open Constraint OptimalityTheory
 open Core.Optimization.Evaluation
@@ -333,4 +333,4 @@ theorem stem_feeds_word : isOutputFeeding .stem .word := rfl
 theorem word_feeds_phrase : isOutputFeeding .word .phrase := rfl
 theorem stem_not_feeds_phrase : ¬ isOutputFeeding .stem .phrase := by decide
 
-end Phonology.Stratal
+end OptimalityTheory.Stratal

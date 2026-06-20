@@ -48,7 +48,7 @@ Hebrew and proves the four cells of the dissociation table as OT theorems.
 [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
 -/
 
-open Phonology.Doubling
+open OptimalityTheory.Doubling
 
 namespace BerentEtAl2016
 

@@ -56,7 +56,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
 namespace Phonology.ParadigmUniformity
 
 open Constraint OptimalityTheory
-open Phonology.Correspondence (Corr)
+open OptimalityTheory.Correspondence (Corr)
 
 -- ============================================================================
 -- § 1: Anchored paradigm

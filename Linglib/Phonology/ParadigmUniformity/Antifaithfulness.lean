@@ -47,7 +47,7 @@ counts pairs where they *differ*. Together they partition the edge:
 
 namespace Phonology.ParadigmUniformity.Antifaithfulness
 
-open Phonology.Correspondence (Corr)
+open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory
 
 variable {Role : Type*} {α : Type*}
@@ -90,11 +90,11 @@ theorem antifaith_plus_ident_eq_edge_card [DecidableEq α]
     achieves *maximum* antifaith violations: every paired position counts. -/
 theorem identity_antifaith_max [DecidableEq α] (s : List α) :
     antifaithViol (Corr.identity s)
-        Phonology.Correspondence.Side.lhs
-        Phonology.Correspondence.Side.rhs = s.length := by
+        OptimalityTheory.Correspondence.Side.lhs
+        OptimalityTheory.Correspondence.Side.rhs = s.length := by
   have hAdd := antifaith_plus_ident_eq_edge_card (Corr.identity s)
-                  Phonology.Correspondence.Side.lhs
-                  Phonology.Correspondence.Side.rhs
+                  OptimalityTheory.Correspondence.Side.lhs
+                  OptimalityTheory.Correspondence.Side.rhs
   rw [Corr.identity_ident_zero, Nat.add_zero] at hAdd
   rw [hAdd]
   simp only [Corr.identity, Corr.parallel_edge_lhs_rhs]

@@ -67,7 +67,7 @@ namespace Phonology.Autosegmental.BasemapCorrespondence
 
 open Phonology.Autosegmental.GrammaticalTone
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Correspondence (Corr)
+open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory
 
 /-! ### Basemap — deficient projection -/

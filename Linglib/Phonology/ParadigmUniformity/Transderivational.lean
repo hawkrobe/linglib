@@ -34,8 +34,8 @@ base-priority), which is captured in `TCT.TCTGrammar`'s type signatures.
 
 namespace Phonology.ParadigmUniformity.Transderivational
 
-open Phonology.Correspondence (Corr)
-open Phonology.TCT (Role)
+open OptimalityTheory.Correspondence (Corr)
+open OptimalityTheory.TCT (Role)
 open Constraint OptimalityTheory
 
 -- ============================================================================

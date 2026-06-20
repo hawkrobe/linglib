@@ -50,7 +50,7 @@ model-theoretic treatment of [payne-vu-heinz-2017] and
   of the `identity_*_zero` lemmas).
 -/
 
-namespace Phonology.Correspondence
+namespace OptimalityTheory.Correspondence
 
 open Constraint OptimalityTheory
 open Finset
@@ -592,4 +592,4 @@ instance {Role α : Type*} (c : Corr Role α) : Quiver (RoleQuiv c) where
 
 end Corr
 
-end Phonology.Correspondence
+end OptimalityTheory.Correspondence

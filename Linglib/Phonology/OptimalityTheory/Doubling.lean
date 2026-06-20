@@ -42,7 +42,7 @@ reduplication for other functions while excluding *f*).
 [berent-2026]
 -/
 
-namespace Phonology.Doubling
+namespace OptimalityTheory.Doubling
 
 open Constraint OptimalityTheory
 open OptimalityTheory
@@ -375,4 +375,4 @@ theorem doubling_reversal :
       = {.reduplication} := by
   exact ⟨phon_prefers_XY, morph_prefers_reduplication⟩
 
-end Phonology.Doubling
+end OptimalityTheory.Doubling

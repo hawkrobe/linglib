@@ -47,7 +47,7 @@ word) — e.g. `Studies/SandeClemDabkowski2026.lean`
 remains the right substrate for morpheme-internal effects.
 -/
 
-namespace Phonology.CophonologyTheory
+namespace OptimalityTheory.CophonologyTheory
 
 open Morphology.DM.VI (VocabItem)
 open Constraint OptimalityTheory
@@ -186,4 +186,4 @@ theorem coph_dominant_complement {Ctx Root C : Type}
     cvi.isDominantCoph = !cvi.isNonDominantCoph := by
   simp [CophVocabItem.isDominantCoph, CophVocabItem.isNonDominantCoph]
 
-end Phonology.CophonologyTheory
+end OptimalityTheory.CophonologyTheory
