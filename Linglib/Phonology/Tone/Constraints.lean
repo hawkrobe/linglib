@@ -73,20 +73,16 @@ def starFloat : DirectionalConstraint (FloatingForm S TRN) where
 
 /-- `*FLOAT (count)`: count-based variant of `starFloat`, emitting the *total*
     floating-tone count as a singleton `[count]` rather than a position-aware vector. -/
-def starFloatCount : DirectionalConstraint (FloatingForm S TRN) where
-  name := "*FLOAT (count)"
-  family := .markedness
-  eval := fun f => [f.floatIndicator.sum]
+def starFloatCount : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount "*FLOAT (count)" .markedness (fun f => f.floatIndicator.sum)
 
 /-! ### *TAUTDOCK -/
 
 /-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
     per GEN-inserted tautomorphic surface link. -/
-def starTautDock : DirectionalConstraint (FloatingForm S TRN) where
-  name := "*TAUTDOCK"
-  family := .markedness
-  eval := fun f =>
-    [(f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ f.IsTautomorphic l)).card]
+def starTautDock : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount "*TAUTDOCK" .markedness
+    (fun f => (f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ f.IsTautomorphic l)).card)
 
 /-! ### *CROWD (per-morpheme tone count) -/
 
@@ -114,11 +110,9 @@ def morphemes : Finset Morpheme :=
 /-- `*CROWD` (paper eq. 5): one violation per morpheme with more than `threshold`
     tones (default 2), counting its surviving underlying tones plus tones docked onto
     its TBUs from other morphemes. -/
-def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN) where
-  name := s!"*CROWD({threshold})"
-  family := .markedness
-  eval := fun f =>
-    [((morphemes f).filter (fun m => threshold < (tonesForMorpheme f m).card)).card]
+def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount s!"*CROWD({threshold})" .markedness
+    (fun f => ((morphemes f).filter (fun m => threshold < (tonesForMorpheme f m).card)).card)
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
 
@@ -142,72 +136,56 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
 
 /-- `*FALL` (paper eq. 23): one violation per syllable with a falling contour
     (HM, HL, ML). -/
-def starFall : DirectionalConstraint (FloatingForm S TRN) where
-  name := "*FALL"
-  family := .markedness
-  eval := fun f =>
-    [(List.range f.lower.length).countP (fun i => decide (HasFall (f.tierValues i)))]
+def starFall : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount "*FALL" .markedness
+    (fun f => f.countTBUs (fun i => HasFall (f.tierValues i)))
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
 
 /-- `*M<L` (paper eq. 29): one violation per M tone immediately preceding an L on the
     tonal tier — adjacency measured over the surviving (non-deleted) tones in `ulTier`
     order (deletions skip positions). -/
-def starMlessL : DirectionalConstraint (FloatingForm S TRN) where
-  name := "*M<L"
-  family := .markedness
-  eval := fun f =>
+def starMlessL : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount "*M<L" .markedness (fun f =>
     let aliveValues : List TRN :=
       f.aliveTierIdxs.filterMap (f.upper[·]?.map TierSpec.value)
-    [(aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L)))]
+    (aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L))))
 
 /-! ### HAVETONE -/
 
 /-- `HAVETONE` (paper, eq. 17): one violation per syllable not
     associated to any tone. -/
-def haveTone : DirectionalConstraint (FloatingForm S TRN) where
-  name := "HAVETONE"
-  family := .markedness
-  eval := fun f =>
-    [(List.range f.lower.length).countP (fun i => (f.linksTo i).isEmpty)]
+def haveTone : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount "HAVETONE" .markedness
+    (fun f => f.countTBUs (fun i => (f.linksTo i).isEmpty = true))
 
 /-! ### Faithfulness — Generic over Tone Value -/
 
 /-- `MAX(T)` (paper, eq. 7c): one violation per underlying tone of
     value `t` deleted by GEN. -/
-def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
-  name := s!"MAX({reprStr t})"
-  family := .faithfulness
-  eval := fun f =>
-    [(List.range f.upper.length).countP
-      (fun k => decide (f.IsDeleted k ∧ ToneHasValue f k t))]
+def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount s!"MAX({reprStr t})" .faithfulness
+    (fun f => f.countTones (fun k => f.IsDeleted k ∧ ToneHasValue f k t))
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
-def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
-  name := s!"DEP(link)/{reprStr t}"
-  family := .faithfulness
-  eval := fun f =>
-    [(f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ ToneHasValue f l.fst t)).card]
+def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount s!"DEP(link)/{reprStr t}" .faithfulness
+    (fun f => (f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
-def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
-  name := s!"MAX(link)/{reprStr t}"
-  family := .faithfulness
-  eval := fun f =>
-    [(f.links.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card]
+def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount s!"MAX(link)/{reprStr t}" .faithfulness
+    (fun f => (f.links.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
     multiple output correspondents — here, alive `ulTier` entries sharing tone value `t`
     and morpheme `m`. Spreading (one multi-linked entry) → 0; copying (`n` such entries)
     → `n - 1` violations. -/
 def integrityTone (m : Morpheme) (t : TRN) :
-    DirectionalConstraint (FloatingForm S TRN) where
-  name := s!"INTEGRITY-{reprStr t}({m.form})"
-  family := .faithfulness
-  eval := fun f =>
-    [(List.range f.upper.length).countP
-        (fun k => decide (f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t)) - 1]
+    DirectionalConstraint (FloatingForm S TRN) :=
+  .ofCount s!"INTEGRITY-{reprStr t}({m.form})" .faithfulness
+    (fun f => f.countTones (fun k => f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t) - 1)
 
 end Phonology.Tone
