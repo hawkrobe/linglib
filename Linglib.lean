@@ -167,6 +167,8 @@ import Linglib.Discourse.Strategy
 import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Anaphora.Basic
+import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Semantics.Composition.Combinator
@@ -2902,3 +2904,4 @@ import Linglib.Pragmatics.Emotion
 import Linglib.Data.Examples.Mizuno2024
 import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 import Linglib.Data.Examples.Rubinstein2014
+import Linglib.Data.Examples.Landau2026
