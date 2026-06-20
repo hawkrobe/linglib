@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraint.OT.Aliases
+import Linglib.Phonology.Constraint.Aliases
 import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
@@ -45,8 +45,8 @@ an optimal input–output mapping is itself an optimal mapping."
 namespace HarmonicGrammar.ViolationSemiring
 
 
-open Core.Optimization.Evaluation Phonology.Constraint
-open Phonology.Constraint.OT
+open Core.Optimization.Evaluation Constraint
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: The Violation Semiring V

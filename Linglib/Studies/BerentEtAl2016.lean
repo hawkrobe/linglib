@@ -52,7 +52,7 @@ open Phonology.Doubling
 
 namespace BerentEtAl2016
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: L1 Morphological Grammars

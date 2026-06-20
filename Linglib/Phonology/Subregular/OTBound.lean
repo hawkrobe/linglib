@@ -55,7 +55,7 @@ namespace Phonology.Subregular.OTBound
 
 open OptimalityTheory
 open Core Core.Computability.Subregular
-open Phonology.Constraint.OT (NamedConstraint mkMarkGrad)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 2. Existing bridges, restated in zero-set form

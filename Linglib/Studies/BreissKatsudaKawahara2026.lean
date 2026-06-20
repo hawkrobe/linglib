@@ -125,7 +125,7 @@ open Phonology.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchor
 open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency
   novelGradient_inconsistent_with_invariance)
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Real lexical entries from the paper

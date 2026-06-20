@@ -1,7 +1,7 @@
-import Linglib.Phonology.Constraint.OT.Basic
-import Linglib.Phonology.Constraint.OT.EvalMode
-import Linglib.Phonology.Constraint.OT.Iteration
-import Linglib.Phonology.Constraint.OT.DirectionalTableau
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.EvalMode
+import Linglib.Phonology.Constraint.Iteration
+import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 
 /-!
 # Harmonic Serialism — The Combinator
@@ -57,11 +57,11 @@ reuses `Tableau.optimal` directly. Future directional dispatch
 silently routing directional callers to the parallel optimum.
 -/
 
-namespace Phonology.Constraint.OT
+namespace OptimalityTheory
+open Constraint
 
 
 open Core.Optimization.Evaluation
-open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: HSDerivation Specification
@@ -303,4 +303,4 @@ def derive (D : DirectionalHSDerivation C) (pick : Finset C → Option C)
 
 end DirectionalHSDerivation
 
-end Phonology.Constraint.OT
+end OptimalityTheory

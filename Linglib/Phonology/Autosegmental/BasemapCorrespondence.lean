@@ -1,6 +1,7 @@
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 
 /-!
 # Matrix-Basemap Correspondence (MxBM-C)
@@ -67,7 +68,7 @@ namespace Phonology.Autosegmental.BasemapCorrespondence
 open Phonology.Autosegmental.GrammaticalTone
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Correspondence (Corr)
-open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
+open Constraint OptimalityTheory
 
 /-! ### Basemap — deficient projection -/
 

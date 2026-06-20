@@ -38,7 +38,7 @@ three core constraints can produce it. We prove this as
 
 namespace McCarthyPrince1995
 
-open Core.Optimization Phonology.Constraint.OT
+open Core.Optimization Constraint OptimalityTheory
 open OptimalityTheory
 
 -- ============================================================================
@@ -756,7 +756,7 @@ For these deterministic OT analyses, the unique-winner pattern collapses
 the `argminDecoder` distribution to probability 1 on the winner. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
 noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=

@@ -101,7 +101,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Phonology.Constraint.OT Core.Optimization Phonology.Constraint HarmonicGrammar Features
+open Constraint OptimalityTheory Core.Optimization Constraint HarmonicGrammar Features
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================

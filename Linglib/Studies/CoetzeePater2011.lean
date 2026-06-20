@@ -49,8 +49,8 @@ modeling phonological variation, illustrated with English t/d-deletion.
 
 namespace CoetzeePater2011
 
-open Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
-open Core.Optimization Phonology.Constraint HarmonicGrammar
+open Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
+open Core.Optimization Constraint HarmonicGrammar
 open OptimalityTheory
 
 /-! ### Empirical data (tables 7 and 10) -/

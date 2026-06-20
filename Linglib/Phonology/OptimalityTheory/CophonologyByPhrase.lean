@@ -72,7 +72,7 @@ namespace Phonology.CophonologyByPhrase
 
 open Phonology.CophonologyTheory (cophonologicalEval mergeRanking
   mergeRanking_empty_sub cophonologicalEval_empty_sub)
-open Phonology.Constraint.OT (NamedConstraint)
+open Constraint OptimalityTheory
 open Minimalist (Phase SyntacticObject)
 
 -- ============================================================================
@@ -127,7 +127,7 @@ theorem phrasalCophonologicalEval_empty_sub {C : Type} [DecidableEq C]
     (candidates : List C) (h : candidates ≠ [])
     (hsub : pc.subranking = []) :
     phrasalCophonologicalEval defaultRanking pc candidates h
-      = (Phonology.Constraint.OT.mkTableau candidates defaultRanking h).optimal := by
+      = (OptimalityTheory.mkTableau candidates defaultRanking h).optimal := by
   unfold phrasalCophonologicalEval
   rw [hsub]
   exact cophonologicalEval_empty_sub defaultRanking candidates h

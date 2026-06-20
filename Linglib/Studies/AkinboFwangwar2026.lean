@@ -6,7 +6,7 @@ import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.Tone.Constraints
-import Linglib.Phonology.Constraint.OT.HarmonicSerialism
+import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Studies.Hyman2006
 
 /-!
@@ -71,7 +71,7 @@ anchor combinators defined in §2 below.
 
 namespace AkinboFwangwar2026
 
-open Phonology.Constraint.OT
+open Constraint OptimalityTheory
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (integrityTone)

@@ -53,7 +53,7 @@ Telugu nouns exhibit two stem alternation patterns:
 
 namespace Aitha2026
 
-open Core Phonology.Constraint.OT Core.Optimization Core.Optimization.Evaluation
+open Core Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Morphology.DM.VI
 open Phonology.Syllable
 
@@ -1020,7 +1020,7 @@ end MoraicCLConnection
 becomes a probability-1 claim per stratum. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Stem-level metrical parse tableau as a generic `ConstraintSystem`. -/
 noncomputable def stemSystem : ConstraintSystem StemCandidate (LexProfile Nat 3) :=

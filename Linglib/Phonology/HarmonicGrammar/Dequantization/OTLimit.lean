@@ -34,10 +34,10 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 -/
 
 namespace HarmonicGrammar
-open Phonology.Constraint
+open Constraint
 
 
-open Core Phonology.Constraint.OT Core.Optimization.Evaluation Real Finset
+open Core Constraint OptimalityTheory Core.Optimization.Evaluation Real Finset
 
 -- ============================================================================
 -- § 1: OT → HG Weight Construction

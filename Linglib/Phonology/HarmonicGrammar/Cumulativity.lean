@@ -55,7 +55,7 @@ gap per-paper.
 namespace HarmonicGrammar
 
 
-open Phonology.Constraint.OT Finset
+open Constraint OptimalityTheory Finset
 
 -- ============================================================================
 -- § 1: Decidable Lex Comparison

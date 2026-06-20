@@ -72,13 +72,13 @@ other candidate's softmax probability decays exponentially in the gap.
 -/
 
 namespace HarmonicGrammar
-open Phonology.Constraint
+open Constraint
 
 open Core.Optimization
 
 
 open Real Filter Topology Finset
-open Phonology.Constraint.OT HarmonicGrammar.ViolationSemiring
+open Constraint OptimalityTheory HarmonicGrammar.ViolationSemiring
 
 -- ============================================================================
 -- § 1: The Soft Aggregator on Harmony Scores

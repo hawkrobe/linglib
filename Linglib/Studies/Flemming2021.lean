@@ -53,7 +53,7 @@ under MaxEnt. We encode this data and verify:
 
 namespace Flemming2021
 
-open Core.Optimization Phonology.Constraint HarmonicGrammar Core Real
+open Core.Optimization Constraint HarmonicGrammar Core Real
 
 -- ============================================================================
 -- § 1: MaxEnt as Gumbel RUM (McFadden)

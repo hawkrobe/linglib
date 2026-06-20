@@ -210,13 +210,13 @@ characterizes the *language*; this constraint *evaluates* it.
 This case does *not* use `mkAgreeOnTier` (the symmetric `R := (· ≠ ·)`
 specialization) because Kikongo's forbidden pair is asymmetric — see the
 "What this file formalizes" docstring above. -/
-def kikongoAgree : Phonology.Constraint.OT.NamedConstraint (List KSeg) :=
+def kikongoAgree : Constraint.NamedConstraint (List KSeg) :=
   OptimalityTheory.mkForbidPairsOnTier
     "AGREE-[nas]/CC" KSeg.forbidNasalStop (Tier.byClass KSeg.onTier) id
 
 /-- `kikongoAgree` is a markedness constraint by construction. -/
 theorem kikongoAgree_is_markedness :
-    kikongoAgree.family = Phonology.Constraint.OT.ConstraintFamily.markedness :=
+    kikongoAgree.family = Constraint.ConstraintFamily.markedness :=
   OptimalityTheory.mkForbidPairsOnTier_is_markedness _ _ _ _
 
 /-- **Bridge**: `kikongoAgree` evaluates to zero on a candidate iff the

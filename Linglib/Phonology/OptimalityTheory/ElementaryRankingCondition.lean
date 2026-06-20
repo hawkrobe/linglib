@@ -1,4 +1,4 @@
-import Linglib.Phonology.Constraint.OT.Aliases
+import Linglib.Phonology.Constraint.Aliases
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Data.Sign.Basic
 import Mathlib.Data.Fintype.Perm
@@ -43,7 +43,8 @@ some `W`-constraint ([prince-2002] §0 (3)/(4)).
 
 open Core.Optimization.Evaluation
 
-namespace Phonology.Constraint.OT
+namespace OptimalityTheory
+open Constraint
 
 variable {n : ℕ}
 
@@ -386,4 +387,4 @@ theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact hgt
 
-end Phonology.Constraint.OT
+end OptimalityTheory

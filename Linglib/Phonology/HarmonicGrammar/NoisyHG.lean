@@ -37,7 +37,7 @@ noise variance σ_d depends on the violation profile.
 namespace HarmonicGrammar
 
 
-open Core Real Phonology.Constraint
+open Core Real Constraint
 
 -- ============================================================================
 -- § 1: NHG Noise Variance

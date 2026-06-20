@@ -1,4 +1,5 @@
-import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Defs
+import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
@@ -45,8 +46,8 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 
 namespace OptimalityTheory
 
-open Phonology.Constraint
-open Phonology.Constraint.OT
+open Constraint
+open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Faithfulness Constraint Constructors
@@ -139,12 +140,12 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String)
     (mkIntegrity name P).family = .faithfulness := rfl
 
 -- ============================================================================
--- § 2: Markedness Constraint Constructors (re-exported from Phonology.Constraint.OT)
+-- § 2: Markedness Constraint Constructors (re-exported from Constraint)
 -- ============================================================================
 
--- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Phonology.Constraint.OT`.
+-- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Constraint`.
 -- Re-export them so `open OptimalityTheory` includes them.
-export Phonology.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
+export Constraint (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
 -- § 2b: Forbidden-Pair Markedness (OCP, sibilant-harmony, …)
@@ -355,7 +356,7 @@ theorem mkMaxCtx_bounded {C : Type} (name : String)
 -- § 5: Weighted Constraint Constructors
 -- ============================================================================
 
-open Phonology.Constraint
+open Constraint
 
 /-- Build a weighted MAX constraint with a given weight. -/
 def mkMaxW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :

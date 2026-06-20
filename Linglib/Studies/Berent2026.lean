@@ -57,7 +57,7 @@ open Phonology.Doubling
 
 namespace Berent2026
 
-open Core.Optimization Phonology.Constraint.OT
+open Core.Optimization Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient
@@ -183,7 +183,7 @@ probability-1 reversal: the same OCP-XX assigns probability 1 to
 morphological contexts. -/
 
 section PredictAPI
-open Core.Optimization Phonology.Constraint
+open Core.Optimization Constraint
 
 /-- Phonological-context tableau as a generic `ConstraintSystem`. -/
 noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=
