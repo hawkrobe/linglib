@@ -1,8 +1,6 @@
 import Linglib.Morphology.MorphWord
 import Linglib.Phonology.Autosegmental.Graph
-import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.NoCrossing
-import Linglib.Phonology.Autosegmental.RegisterTier
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Insert
@@ -72,8 +70,6 @@ well-formedness ([goldsmith-1976]).
 -/
 
 namespace Phonology.Autosegmental
-
-open Phonology.Autosegmental.RegisterTier (TRN)
 
 -- Re-export `Morpheme` so autosegmental consumers see it unqualified
 -- after `open Phonology.Autosegmental`.
