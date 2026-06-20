@@ -167,6 +167,8 @@ import Linglib.Discourse.Strategy
 import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Anaphora.Basic
+import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Semantics.Composition.Combinator
@@ -2708,11 +2710,11 @@ import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Modularity
-import Linglib.Phonology.Prosodic.Syllable.Defs
-import Linglib.Phonology.Prosodic.Syllable.Foot
-import Linglib.Phonology.Prosodic.Syllable.NaturalClass
-import Linglib.Phonology.Prosodic.Moraic.Defs
-import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
+import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosodic.NaturalClass
+import Linglib.Phonology.Prosodic.Moraic
+import Linglib.Phonology.Prosodic.CompensatoryLengthening
 import Linglib.Phonology.Prosodic.Accent
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Prosodic.Templates
@@ -2902,3 +2904,4 @@ import Linglib.Pragmatics.Emotion
 import Linglib.Data.Examples.Mizuno2024
 import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 import Linglib.Data.Examples.Rubinstein2014
+import Linglib.Data.Examples.Landau2026

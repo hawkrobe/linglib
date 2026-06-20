@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Semantics.Lexical.Roots.Template
+import Linglib.Syntax.Anaphora.Basic
 
 /-!
 # Ellipsis: [E] Features and Deletion Domains
@@ -209,6 +210,15 @@ structure EllipsisType where
   /-- Label for display -/
   name : String := ""
   deriving Repr
+
+/-- Every ellipsis type is a Hankamer–Sag **surface** anaphor ([hankamer-sag-1976]):
+    PF-deletion under identity leaves full internal structure in place. So
+    `EllipsisType` is an `Anaphor.HasDepth` carrier (depth `.surface` throughout) —
+    the depth-axis analogue of a `Bound` pronoun. -/
+instance : Anaphor.HasDepth EllipsisType := ⟨fun _ => .surface⟩
+
+/-- Witness: every ellipsis type is surface. -/
+theorem isSurface (e : EllipsisType) : Anaphor.HasDepth.IsSurface e := rfl
 
 /-- Is a spine position inside the deletion domain of an ellipsis type?
     A position is in the deletion domain iff it is strictly below the

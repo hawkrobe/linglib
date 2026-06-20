@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable.NaturalClass
+import Linglib.Phonology.Prosodic.NaturalClass
 
 /-!
 # Tarifit Consonant Inventory
