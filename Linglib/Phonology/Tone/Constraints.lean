@@ -146,9 +146,7 @@ def IsFallingPair (t1 t2 : TRN) : Prop :=
 instance (t1 t2 : TRN) : Decidable (IsFallingPair t1 t2) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A tone sequence contains a falling adjacent pair. Recursive
-    Prop predicate; the explicit decidability instance below carries
-    the recursion through. -/
+/-- A tone sequence contains a falling adjacent pair. -/
 def HasFall : List TRN → Prop
   | []                  => False
   | [_]                 => False
@@ -161,13 +159,8 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
     have : Decidable (HasFall (t2 :: rest)) := decidableHasFall (t2 :: rest)
     inferInstanceAs (Decidable (IsFallingPair t1 t2 ∨ HasFall (t2 :: rest)))
 
-/-- `*FALL` (paper, eq. 23): one violation per syllable associated with
-    a falling contour (HM, HL, ML).
-
-    A TBU is checked by extracting its surface-linked tones in tier
-    order (via `tierValues`) and scanning for falling adjacent pairs.
-    Uses `List.range` + `countP` rather than `Finset.range` + `filter`
-    + `card` so kernel `decide` reduces. -/
+/-- `*FALL` (paper eq. 23): one violation per syllable with a falling contour
+    (HM, HL, ML). -/
 def starFall : DirectionalConstraint (FloatingForm S TRN) where
   name := "*FALL"
   family := .markedness
@@ -176,18 +169,9 @@ def starFall : DirectionalConstraint (FloatingForm S TRN) where
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
 
-/-- `*M<L` (paper, eq. 29): one violation per M tone that immediately
-    precedes an L tone on the tonal tier. The "tier" is the sequence
-    of surviving (non-deleted) underlying tones in `ulTier` order;
-    deletions skip positions, so adjacency is measured over the alive
-    subsequence.
-
-    Motivates [mcpherson-lamont-2026]'s account of why floating
-    H tones can dock leftward tautomorphically before L (eq. 30):
-    without `*M<L ≫ *TAUTDOCK`, an underlying /M H L/ sequence would
-    prefer H deletion, but that yields a surface ML adjacency which
-    *M<L penalises. Tautomorphic docking of H breaks the ML adjacency,
-    creating an MH contour rather than M-L. -/
+/-- `*M<L` (paper eq. 29): one violation per M tone immediately preceding an L on the
+    tonal tier — adjacency measured over the surviving (non-deleted) tones in `ulTier`
+    order (deletions skip positions). -/
 def starMlessL : DirectionalConstraint (FloatingForm S TRN) where
   name := "*M<L"
   family := .markedness
@@ -234,17 +218,10 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
   eval := fun f =>
     [(f.links.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card]
 
-/-- `INTEGRITY` (paper, [mccarthy-prince-1995]; [akinbo-fwangwar-2026]
-    eq. 22c): no input tone has multiple output correspondents. In our
-    autosegmental encoding, an "output correspondent of an input tone"
-    is an alive ulTier entry sharing the input tone's value AND
-    morpheme. SPREADING (one alive ulTier entry, multi-linked) → 0
-    violations. COPYING (multiple alive ulTier entries with same
-    value+morpheme) → `(count - 1)` violations.
-
-    Parameterised by the morpheme `m` and tone value `t` whose copies
-    are being counted (typically the verbaliser's M or H). The paper's
-    INTEGRITY-Mᵥ is `integrityTone vbzMorph .M`. -/
+/-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
+    multiple output correspondents — here, alive `ulTier` entries sharing tone value `t`
+    and morpheme `m`. Spreading (one multi-linked entry) → 0; copying (`n` such entries)
+    → `n - 1` violations. -/
 def integrityTone (m : Morpheme) (t : TRN) :
     DirectionalConstraint (FloatingForm S TRN) where
   name := s!"INTEGRITY-{reprStr t}({m.form})"
