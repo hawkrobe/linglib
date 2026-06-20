@@ -276,6 +276,44 @@ theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
     (h : Overlap x y) : Overlap y x :=
   let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
 
+/-! ### Atomic domains (discrete orders)
+
+The sort-level, instance-resolvable companion of `QUA`. An `IsAtomicDomain` is a
+`PartialOrder` every element of which is an `Atom` (`IsMin`) — equivalently a
+discrete order (`a ≤ b ↔ a = b`), equivalently a sort on which
+`QUA (fun _ => True)` holds. It is the single consolidation point for the
+"flat/atomic domain" that recurs across studies (the `Student`-style fixtures)
+and that distributive determiners (English *each*, the `ONE_AT` presupposition)
+require of their restrictor sort: a sort with a non-atomic element (time
+intervals) simply has no instance. Everything below reduces to the existing
+`Atom`/`QUA`/`IsAntichain` machinery — this class adds resolution ergonomics, not
+a new notion. -/
+
+/-- A `PartialOrder` all of whose elements are atoms (`IsMin`) — a discrete order
+/ a `≤`-antichain on the whole type. -/
+class IsAtomicDomain (α : Type*) [PartialOrder α] : Prop where
+  /-- Every element is an atom. -/
+  all_atoms : ∀ x : α, Atom x
+
+/-- A discrete order (`a ≤ b ↔ a = b`) is an atomic domain — the canonical way to
+discharge the instance for `Student`-style flat fixtures. -/
+theorem isAtomicDomain_of_le_iff_eq {α : Type*} [PartialOrder α]
+    (h : ∀ a b : α, a ≤ b ↔ a = b) : IsAtomicDomain α where
+  all_atoms x := fun {b} hbx => le_of_eq ((h b x).1 hbx).symm
+
+/-- The whole type of an atomic domain is quantized — the sort-level face of
+`QUA`, routed through `qua_of_atom`. -/
+theorem IsAtomicDomain.qua_true {α : Type*} [PartialOrder α] [IsAtomicDomain α] :
+    QUA (fun _ : α => True) :=
+  qua_of_atom fun x _ => IsAtomicDomain.all_atoms x
+
+/-- In an atomic domain, overlapping elements are equal (atoms are disjoint). -/
+theorem IsAtomicDomain.eq_of_overlap {α : Type*} [PartialOrder α] [IsAtomicDomain α]
+    {x y : α} (h : Overlap x y) : x = y :=
+  let ⟨_, hzx, hzy⟩ := h
+  (Atom.eq (IsAtomicDomain.all_atoms x) hzx).symm.trans
+    (Atom.eq (IsAtomicDomain.all_atoms y) hzy)
+
 /-- Extensive measure function: additive over non-overlapping entities.
     [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
     Examples: weight, volume, number (cardinality). Order-interval sibling:
