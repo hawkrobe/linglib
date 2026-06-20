@@ -20,7 +20,7 @@ singleton-degeneracy guarantee). Equation numbers below are [mcpherson-lamont-20
 * `starMlessL` — `*M<L` (eq. 29): M immediately before L on the tier
 * `maxTone` / `depLinkTone` / `maxLinkTone` — `MAX(T)` / `DEP(link)/T` / `MAX(link)/T` (eq. 7)
 * `haveTone` — `HAVETONE` (eq. 17)
-* `integrityTone` — `INTEGRITY` ([akinbo-fwangwar-2026]; [mcpherson-prince-1995])
+* `integrityTone` — `INTEGRITY` ([akinbo-fwangwar-2026]; [mccarthy-prince-1995])
 
 ## Implementation notes
 
@@ -49,25 +49,16 @@ variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
 /-! ### Predicate Helpers -/
 
 /-- The link `(k, i)` was inserted by GEN (in surface but not in underlying). -/
-def IsInsertedLink (l : Link) : Prop :=
+abbrev IsInsertedLink (l : Link) : Prop :=
   l ∈ f.surfaceLinks ∧ l ∉ f.links
 
-instance (l : Link) : Decidable (IsInsertedLink f l) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
 /-- The link `(k, i)` was deleted by GEN (in underlying but not in surface). -/
-def IsDeletedLink (l : Link) : Prop :=
+abbrev IsDeletedLink (l : Link) : Prop :=
   l ∈ f.links ∧ l ∉ f.surfaceLinks
 
-instance (l : Link) : Decidable (IsDeletedLink f l) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
 /-- The tone at index `k` has value `t`. -/
-def ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
+abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
   (f.upper[k]?).map TierSpec.value = some t
-
-instance (k : TierIdx) (t : TRN) : Decidable (ToneHasValue f k t) :=
-  inferInstanceAs (Decidable (_ = _))
 
 /-! ### *FLOAT (Directional) -/
 
@@ -100,20 +91,12 @@ def starTautDock : DirectionalConstraint (FloatingForm S TRN) where
 /-! ### *CROWD (per-morpheme tone count) -/
 
 /-- The tone at index `k` belongs to morpheme `m`. -/
-def ToneInMorpheme (k : TierIdx) (m : Morpheme) : Prop :=
+abbrev ToneInMorpheme (k : TierIdx) (m : Morpheme) : Prop :=
   (f.upper[k]?).map TierSpec.morpheme = some m
 
-instance (k : TierIdx) (m : Morpheme) :
-    Decidable (ToneInMorpheme f k m) :=
-  inferInstanceAs (Decidable (_ = _))
-
 /-- The TBU at index `i` belongs to morpheme `m`. -/
-def SegInMorpheme (i : SegIdx) (m : Morpheme) : Prop :=
+abbrev SegInMorpheme (i : SegIdx) (m : Morpheme) : Prop :=
   (f.lower[i]?).map SegSpec.morpheme = some m
-
-instance (i : SegIdx) (m : Morpheme) :
-    Decidable (SegInMorpheme f i m) :=
-  inferInstanceAs (Decidable (_ = _))
 
 /-- The set of tone indices counting toward morpheme `m`'s tonal mass:
     surviving underlying tones of `m`, plus tones surface-linked to
@@ -141,11 +124,8 @@ def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN
 
 /-- A tone pair `(t1, t2)` (in tier order) is **falling** iff it is HM, HL, or ML
     (paper eq. 23). -/
-def IsFallingPair (t1 t2 : TRN) : Prop :=
+abbrev IsFallingPair (t1 t2 : TRN) : Prop :=
   (t1 = .H ∧ t2 = .M) ∨ (t1 = .H ∧ t2 = .L) ∨ (t1 = .M ∧ t2 = .L)
-
-instance (t1 t2 : TRN) : Decidable (IsFallingPair t1 t2) :=
-  inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A tone sequence contains a falling adjacent pair. -/
 def HasFall : List TRN → Prop
