@@ -1,5 +1,5 @@
 import Linglib.Semantics.Genericity.Generics
-import Linglib.Semantics.Quantification.CovertQuantifier
+import Linglib.Semantics.Quantification.Counting
 
 /-!
 # [cohen-1999a]: Probability-Based Generic Quantification
@@ -20,9 +20,12 @@ P(Q | P) = 1.
 
 ## Connection to Threshold Semantics
 
-Cohen's GEN is a special case of threshold semantics with θ = 1/2.
-In linglib's infrastructure, `cohenGEN` is definitionally equal to
-`thresholdGeneric situations restrictor scope (1/2)`.
+Cohen's GEN is a special case of threshold semantics with θ = 1/2. The
+conditional probability P(Q | P) is `prevalenceOn` (the proportion of
+restrictor-satisfying elements where the scope holds — the analogue of
+`Rel.edgeDensity`), and `cohenGEN` is `prevalenceOn > 1/2`. The
+division-free, kernel-decidable cross-multiplied form is
+`thresholdGtOn _ _ _ 1 2`; the two agree (`cohen_iff_thresholdGt`).
 
 ## Homogeneity Constraint
 
@@ -47,45 +50,52 @@ view cannot handle conjunctive generics like "Elephants live in Africa
 and Asia." If this is equivalent to the conjunction "Elephants live in
 Africa AND Elephants live in Asia," then both conjuncts would need to
 hold with probability > 0.5, which is impossible if the populations
-are disjoint. See `Studies/Nickel2009.lean`.
+are disjoint. See `Studies/Nickel2009.lean`, which states the
+divergence as a theorem against `cohenGEN`.
 -/
 
 namespace Cohen1999
 
-open Semantics.Genericity.Generics
-open Quantification.CovertQuantifier
--- Cohen's Probability-Based GEN
+open Semantics.Genericity.Generics (Situation)
+open Quantification (prevalenceOn countOn everyOn thresholdGtOn thresholdGtOn_iff_prevalenceOn)
+
+/-! ### Cohen's Probability-Based GEN
+
+The operators are polymorphic over the domain carrier (`prevalenceOn` is), so
+the same `cohenGEN` applies to situation-based models (here) and entity-based
+models ([nickel-2009]). -/
 
 /-- Cohen's GEN: a generic "Ps are Q" is true iff the conditional probability
-    P(Q | P) exceeds 0.5.
+    P(Q | P) exceeds 0.5. `prevalenceOn domain restrictor scope` is that
+    conditional probability, so Cohen's GEN is `prevalenceOn > 1/2`. -/
+def cohenGEN {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
+  prevalenceOn domain restrictor scope > 1 / 2
 
-    `prevalence situations restrictor scope` computes exactly this conditional
-    probability: the proportion of restrictor-satisfying situations where scope
-    holds. So Cohen's GEN is `prevalence > 1/2`. -/
-def cohenGEN
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : Bool :=
-  prevalence situations restrictor scope > 1/2
+instance {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] :
+    Decidable (cohenGEN domain restrictor scope) := by unfold cohenGEN; infer_instance
 
-/-- Cohen's GEN is a special case of threshold semantics with θ = 1/2. -/
-theorem cohen_is_threshold
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : cohenGEN situations restrictor scope =
-      thresholdGeneric situations restrictor scope (1/2) := rfl
+/-- Cohen's GEN agrees with the division-free, kernel-decidable threshold form
+    `thresholdGtOn … 1 2` whenever the restrictor is satisfied somewhere. -/
+theorem cohen_iff_thresholdGt {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] (hR : 0 < countOn domain restrictor) :
+    cohenGEN domain restrictor scope ↔ thresholdGtOn domain restrictor scope 1 2 := by
+  rw [cohenGEN, thresholdGtOn_iff_prevalenceOn domain restrictor scope 1 2 (by norm_num) hR]
+  norm_num
 
-/-- Cohen's "always" requires conditional probability = 1 (no exceptions). -/
-def cohenAlways
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : Bool :=
-  prevalence situations restrictor scope == 1
+/-- Cohen's "always": no exceptions — every restrictor-element satisfies the scope.
+    For a non-empty restrictor domain this is exactly P(Q | P) = 1; stated as the
+    decidable universal `everyOn` rather than the (non-kernel-decidable) ℚ equality. -/
+def cohenAlways {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
+  everyOn domain restrictor scope
 
--- Homogeneity Constraint
+instance {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] :
+    Decidable (cohenAlways domain restrictor scope) := by unfold cohenAlways; infer_instance
+
+/-! ### Homogeneity Constraint -/
 
 /-- Cohen's homogeneity constraint: the conditional probability P(scope | restrictor)
     must be the same in every non-empty sub-partition of the domain.
@@ -93,89 +103,80 @@ def cohenAlways
     Formally: for any sub-predicate `part`, if there are restrictor-satisfying
     elements in that partition, the proportion of scope-satisfying elements among
     `restrictor ∧ part` elements equals the overall proportion among `restrictor`
-    elements.
-
-    This is P(Q | P ∧ Pᵢ) = P(Q | P) for all partition cells Pᵢ.
+    elements — i.e. P(Q | P ∧ Pᵢ) = P(Q | P) for all partition cells Pᵢ.
 
     When homogeneity fails, the generic presupposition fails and the sentence
     is neither true nor false. -/
-def homogeneous
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : Prop :=
-  ∀ (part : Situation → Bool),
-    (situations.filter (λ s => restrictor s && part s)).length > 0 →
-    measure situations (λ s => restrictor s && part s) scope =
-    measure situations restrictor scope
+def homogeneous {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] : Prop :=
+  ∀ (part : α → Prop) [DecidablePred part],
+    0 < countOn domain (fun x => restrictor x ∧ part x) →
+    prevalenceOn domain (fun x => restrictor x ∧ part x) scope =
+    prevalenceOn domain restrictor scope
 
 /-- A generic assertion according to Cohen: the prevalence exceeds 0.5
     AND the homogeneity presupposition is satisfied. -/
-structure CohenGenericJudgment where
-  situations : List Situation
-  restrictor : Restrictor
-  scope : Scope
-  truth : Bool := cohenGEN situations restrictor scope
-  presupposition : Prop := homogeneous situations restrictor scope
+structure CohenGenericJudgment (α : Type*) where
+  domain : Finset α
+  restrictor : α → Prop
+  scope : α → Prop
+  [restrictorDec : DecidablePred restrictor]
+  [scopeDec : DecidablePred scope]
+  holds : Prop := @cohenGEN α domain restrictor scope restrictorDec scopeDec
+  presupposition : Prop := @homogeneous α domain restrictor scope restrictorDec scopeDec
 
--- Examples
+/-! ### Examples -/
 
 section DogsBark
 
 /-- Ten situations: 8 with a barking dog, 2 with a sleeping dog. -/
-def dogSituations : List Situation :=
-  (List.range 10).map (λ n => ⟨n⟩)
+def dogSituations : Finset Situation :=
+  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
 
-def isDog : Restrictor := λ _ => true
+abbrev isDog : Situation → Prop := fun _ => True
 
-def barks : Scope := λ s => s.id < 8
+abbrev barks : Situation → Prop := fun s => s.id < 8
 
--- "Dogs bark" is true on Cohen's account: prevalence = 8/10 > 1/2
-#guard cohenGEN dogSituations isDog barks
+/-- The data: 8 of 10 dog-cases bark (prevalence 8/10 = 4/5). -/
+example : countOn dogSituations (fun s => isDog s ∧ barks s) = 8 ∧
+    countOn dogSituations isDog = 10 := by decide
 
--- Prevalence is 4/5
-#guard prevalence dogSituations isDog barks == 4/5
+/-- "Dogs bark" is true on Cohen's account: prevalence 8/10 > 1/2. -/
+example : cohenGEN dogSituations isDog barks :=
+  (cohen_iff_thresholdGt dogSituations isDog barks (by decide)).mpr (by decide)
 
--- "Dogs always bark" is false: prevalence ≠ 1
-#guard !cohenAlways dogSituations isDog barks
+/-- "Dogs always bark" is false: cases 8 and 9 don't bark. -/
+example : ¬ cohenAlways dogSituations isDog barks := by decide
 
 end DogsBark
 
 section BirdsFly
 
-/-- Birds: 80 flying, 20 non-flying (penguins, ostriches). -/
-def birdSituations : List Situation :=
-  (List.range 100).map (λ n => ⟨n⟩)
+/-- Ten cases: 8 flying, 2 non-flying (penguins, ostriches). -/
+def birdSituations : Finset Situation :=
+  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
 
-def isBird : Restrictor := λ _ => true
+abbrev isBird : Situation → Prop := fun _ => True
 
-def flies : Scope := λ s => s.id < 80
+abbrev flies : Situation → Prop := fun s => s.id < 8
 
--- "Birds fly" is true: prevalence = 80/100 = 4/5 > 1/2
-#guard cohenGEN birdSituations isBird flies
+/-- "Birds fly" is true: prevalence 8/10 > 1/2. -/
+example : cohenGEN birdSituations isBird flies :=
+  (cohen_iff_thresholdGt birdSituations isBird flies (by decide)).mpr (by decide)
 
 end BirdsFly
 
--- Cohen GEN vs Traditional GEN
+/-! ### Cohen GEN vs the relativized universal -/
 
-/-- When traditional GEN is true (all normal restrictor-cases satisfy scope),
-    and the normal+restrictor cases are a majority, Cohen's GEN is also true.
-
-    This shows agreement in the typical case: the traditional analysis with a
-    well-chosen normalcy predicate yields the same truth value as the
-    probability-based analysis. -/
-theorem traditional_true_majority_implies_cohen
-    (situations : List Situation)
-    (normal : NormalcyPredicate)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    (_hTrad : traditionalGEN situations normal restrictor scope = true)
-    (hMajority : prevalence situations restrictor scope > 1/2)
-    : cohenGEN situations restrictor scope = true := by
-  simp only [cohenGEN, decide_eq_true_iff]
-  exact hMajority
-
--- The Key Advantage: No Hidden Parameters
+/-- When the relativized universal is true (all normal restrictor-cases satisfy
+    scope) and the restrictor cases are a majority, Cohen's GEN is also true.
+    Agreement in the typical case. -/
+theorem everyOn_true_majority_implies_cohen {α : Type*}
+    (domain : Finset α) (normal restrictor scope : α → Prop)
+    [DecidablePred normal] [DecidablePred restrictor] [DecidablePred scope]
+    (_hUniv : everyOn domain (fun x => normal x ∧ restrictor x) scope)
+    (hMajority : prevalenceOn domain restrictor scope > 1 / 2)
+    : cohenGEN domain restrictor scope := hMajority
 
 /-!
 ## Cohen's Advantage over Traditional GEN
@@ -188,8 +189,7 @@ prevalence.
 However, Cohen's approach faces its own challenges:
 
 1. **Rare property generics**: "Mosquitoes carry malaria" is judged true
-   despite prevalence well below 50%. Cohen must either deny these are
-   true generics or invoke the homogeneity constraint.
+   despite prevalence well below 50%.
 
 2. **Conjunctive generics**: [nickel-2009]'s "Elephants live in Africa
    and Asia" shows the majority-based view predicts the wrong truth conditions
@@ -200,33 +200,30 @@ However, Cohen's approach faces its own challenges:
    via pragmatic reasoning over priors, not a fixed threshold.
 -/
 
--- Rare Property Problem
-
 section RareProperty
 
-/-- Mosquitoes: only ~1% carry malaria. -/
-def mosquitoSituations : List Situation :=
-  (List.range 100).map (λ n => ⟨n⟩)
+/-- Ten cases: only 1 carries malaria (a low-prevalence property). -/
+def mosquitoSituations : Finset Situation :=
+  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
 
-def isMosquito : Restrictor := λ _ => true
+abbrev isMosquito : Situation → Prop := fun _ => True
 
-def carriesMalaria : Scope := λ s => s.id == 0
+abbrev carriesMalaria : Situation → Prop := fun s => s.id = 0
 
--- "Mosquitoes carry malaria" is FALSE on Cohen's account (prevalence = 1/100),
--- even though speakers judge it true.
--- This is the key empirical challenge for fixed-threshold approaches.
-#guard !cohenGEN mosquitoSituations isMosquito carriesMalaria
+/-- "Mosquitoes carry malaria" is FALSE on Cohen's account (prevalence 1/10 < 1/2),
+    even though speakers judge it true. -/
+example : ¬ cohenGEN mosquitoSituations isMosquito carriesMalaria := by
+  rw [cohen_iff_thresholdGt mosquitoSituations isMosquito carriesMalaria (by decide)]
+  decide
 
 /-- Cohen's prediction conflicts with empirical judgments ([leslie-2008]):
     "Mosquitos carry malaria" has prevalence ~1/100 but judgment ~85/100 (clearly
     true). Cohen predicts false (1/100 < 1/2). -/
 theorem cohen_wrong_on_mosquitoes :
-    (1 : ℚ) / 100 < 1/2 ∧ (85 : ℚ) / 100 > 1/2 := by
+    (1 : ℚ) / 100 < 1 / 2 ∧ (85 : ℚ) / 100 > 1 / 2 := by
   constructor <;> norm_num
 
 end RareProperty
-
--- Homogeneity Failure Example
 
 section HomogeneityFailure
 
@@ -234,45 +231,34 @@ section HomogeneityFailure
     Urban dogs bark more (all 5 bark), rural dogs bark less (1 of 5 barks).
     Overall prevalence = 6/10, but the partition into urban/rural shows
     different rates (5/5 vs 1/5). -/
-def mixedDogSituations : List Situation :=
-  (List.range 10).map (λ n => ⟨n⟩)
+def mixedDogSituations : Finset Situation :=
+  ((List.range 10).map (fun n => (⟨n⟩ : Situation))).toFinset
 
-def allDogs : Restrictor := λ _ => true
+abbrev allDogs : Situation → Prop := fun _ => True
 
-def mixedBarks : Scope := λ s =>
-  if s.id < 5 then true       -- urban dogs: all bark
-  else s.id == 5              -- rural dogs: only one barks
+-- barks iff urban (id<5, all bark) or the one rural barker (id=5): i.e. id < 6
+abbrev mixedBarks : Situation → Prop := fun s => s.id < 6
 
-def urbanPartition : Situation → Bool := λ s => s.id < 5
+abbrev urbanPartition : Situation → Prop := fun s => s.id < 5
 
--- Overall prevalence = 6/10 = 3/5
-#guard prevalence mixedDogSituations allDogs mixedBarks == 3/5
+/-- The data: overall 6/10 bark; urban cell 5/5; rural cell 1/5. -/
+example : countOn mixedDogSituations (fun s => allDogs s ∧ mixedBarks s) = 6 ∧
+    countOn mixedDogSituations allDogs = 10 ∧
+    countOn mixedDogSituations (fun s => (allDogs s ∧ urbanPartition s) ∧ mixedBarks s) = 5 ∧
+    countOn mixedDogSituations (fun s => allDogs s ∧ urbanPartition s) = 5 := by decide
 
--- Urban prevalence = 5/5 = 1
-#guard measure mixedDogSituations (λ s => allDogs s && urbanPartition s) mixedBarks == 1
+/-- The generic "Dogs bark" passes Cohen's > 1/2 test (overall 6/10). -/
+example : cohenGEN mixedDogSituations allDogs mixedBarks :=
+  (cohen_iff_thresholdGt mixedDogSituations allDogs mixedBarks (by decide)).mpr (by decide)
 
--- Rural prevalence = 1/5
-#guard measure mixedDogSituations (λ s => allDogs s && !urbanPartition s) mixedBarks == 1/5
-
--- The generic "Dogs bark" passes the > 0.5 test...
-#guard cohenGEN mixedDogSituations allDogs mixedBarks
-
--- ...but FAILS homogeneity: urban (1) ≠ overall (3/5)
-#guard measure mixedDogSituations (λ s => allDogs s && urbanPartition s) mixedBarks ≠
-       measure mixedDogSituations allDogs mixedBarks
+/-- ...but homogeneity FAILS: the urban rate (5/5) differs from the overall rate
+    (6/10), witnessed by cross-multiplication `5·10 ≠ 6·5`. -/
+theorem homogeneity_fails_mixed :
+    countOn mixedDogSituations (fun s => (allDogs s ∧ urbanPartition s) ∧ mixedBarks s) *
+      countOn mixedDogSituations allDogs ≠
+    countOn mixedDogSituations (fun s => allDogs s ∧ mixedBarks s) *
+      countOn mixedDogSituations (fun s => allDogs s ∧ urbanPartition s) := by decide
 
 end HomogeneityFailure
-
--- Connection to GEN Eliminability
-
-/-- Cohen's account is itself a special case of the general GEN eliminability
-    result in `Comparisons/GenericSemantics.lean`. While that theorem shows
-    ANY GEN configuration can be matched by SOME threshold, Cohen's contribution
-    is fixing the threshold at 0.5 and adding the homogeneity presupposition. -/
-theorem cohen_fixes_threshold :
-    ∀ (situations : List Situation) (restrictor : Restrictor) (scope : Scope),
-    cohenGEN situations restrictor scope =
-    thresholdGeneric situations restrictor scope (1/2) :=
-  λ _ _ _ => rfl
 
 end Cohen1999
