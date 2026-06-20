@@ -1,5 +1,5 @@
-import Linglib.Phonology.Prosodic.Syllable.Defs
-import Linglib.Phonology.Prosodic.Syllable.Foot
+import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosodic.Foot
 
 /-!
 # Accent Assignment and Tone Derivation

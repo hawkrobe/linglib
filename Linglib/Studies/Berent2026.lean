@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Phonology.Constraint.System
@@ -37,7 +37,7 @@ machinery. The deepest formalization insight is that Lean's type system
 already embodies the distinctions Berent draws:
 
 - **Substance-free** = `SonorityRank` is an abstract ordered type, not
-  defined by articulatory features (refactored in `Syllable/Defs.lean`)
+  defined by articulatory features (refactored in `Syllable.lean`)
 - **Algebraic** = `mkOCP` is parametrically polymorphic over `α`
   (added to `Constraints.lean`)
 - **Amodal** = the same polymorphic constraint applies to any feature

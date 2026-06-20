@@ -2710,11 +2710,11 @@ import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Modularity
-import Linglib.Phonology.Prosodic.Syllable.Defs
-import Linglib.Phonology.Prosodic.Syllable.Foot
-import Linglib.Phonology.Prosodic.Syllable.NaturalClass
-import Linglib.Phonology.Prosodic.Moraic.Defs
-import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
+import Linglib.Phonology.Prosodic.Syllable
+import Linglib.Phonology.Prosodic.Foot
+import Linglib.Phonology.Prosodic.NaturalClass
+import Linglib.Phonology.Prosodic.Moraic
+import Linglib.Phonology.Prosodic.CompensatoryLengthening
 import Linglib.Phonology.Prosodic.Accent
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Prosodic.Templates

@@ -1,4 +1,4 @@
-import Linglib.Phonology.Prosodic.Syllable.Foot
+import Linglib.Phonology.Prosodic.Foot
 import Linglib.Features.Prosody
 
 /-!
