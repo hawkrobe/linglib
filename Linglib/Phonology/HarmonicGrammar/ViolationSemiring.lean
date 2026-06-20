@@ -1,6 +1,6 @@
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Phonology.Constraint.Aliases
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
 /-!
@@ -32,7 +32,7 @@ This map always preserves ⊗ (merge/tropical multiplication — linearity
 of the dot product). It preserves ⊕ (min/tropical addition) when weights
 are exponentially separated — which is exactly the content of the HG–OT
 agreement theorem ([smolensky-legendre-2006], formalized in
-`HarmonicGrammar.Dequantization.OTLimit`).
+`HarmonicGrammar.OTLimit`).
 
 ## Monotonicity (Dijkstra's Principle)
 
@@ -143,7 +143,7 @@ abbrev weightedSum {n : Nat} (w : Fin n → ℚ) (v : ViolationProfile n) : ℚ 
 -- ============================================================================
 
 /-- `weightMap` is definitionally equal to `weightedViolations`
-    from `HarmonicGrammar.Dequantization.OTLimit`.
+    from `HarmonicGrammar.OTLimit`.
 
     This bridges the semiring-theoretic framework (violation profiles as
     algebraic objects) to the existing HG–OT agreement machinery

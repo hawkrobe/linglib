@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.Constraint.System
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.OptimalityTheory.Constraints
