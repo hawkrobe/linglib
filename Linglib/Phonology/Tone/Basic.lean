@@ -38,7 +38,7 @@ is shared with [snider-1999], but the features themselves are
   `AnalysisInventory` — prosodic typology primitives.
 * `IsCulminative` — at most one `[-raised]` TRN per stem.
 * `hEpenthesis`, `hEpenthesisSpread` — postlexical operations.
-* `subtonalAssimilate`, `mergeTRN`, `deleteSubtonal`, `dockFloating` —
+* `subtonalAssimilate`, `mergeTRN`, `dockFloating` —
   subtonal feature operations via the bundle view.
 
 ## Implementation notes
@@ -75,10 +75,8 @@ open Phonology.Featural
 
 /-! ### Subtonal features -/
 
-section Subtonal
-
 /-- The two paradigmatic subtonal feature dimensions
-    ([lionnet-2022] ex. 52, after [yip-1980],
+    ([lionnet-2022] ex. 51, after [yip-1980],
     [pulleyblank-1986]).
 
     - `upper`: which register half (upper / lower)
@@ -92,11 +90,7 @@ inductive Subtonal where
   | raised
   deriving DecidableEq, Repr, Inhabited
 
-end Subtonal
-
 /-! ### Tonal root node -/
-
-section TRN
 
 /-- A **Tonal Root Node**: a structural node that bundles a `[±upper]`
     and a `[±raised]` subtonal-feature value and links them to a TBU.
@@ -106,9 +100,10 @@ section TRN
     `none`; for full 3-tone Laal both fields are usually specified.
 
     Implemented as a structure rather than `FeatureBundle Subtonal Bool`
-    so that `DecidableEq`, `BEq`, and `Repr` derive automatically and
-    so that `decide`-based proofs over concrete TRN literals reduce
-    cleanly. The bundle view is recovered by `TRN.toBundle`. -/
+    so that `DecidableEq` and `Repr` derive automatically (and `BEq`
+    follows from `DecidableEq`, below) and so that `decide`-based proofs
+    over concrete TRN literals reduce cleanly. The bundle view is
+    recovered by `TRN.toBundle`. -/
 structure TRN where
   upper  : Option Bool
   raised : Option Bool
@@ -139,24 +134,24 @@ instance : LawfulBEq TRN where
 @[match_pattern] def upstep : TRN := ⟨none, some true⟩
 
 /-- The **High** tone of Laal-style 3-tone systems: `[+upper, -raised]`
-    ([lionnet-2022] §4). Highest pitch. -/
+    ([lionnet-2022] ex. 51). Highest pitch. -/
 def H : TRN := ⟨some true, some false⟩
 
 /-- The **Mid** tone of Laal-style 3-tone systems: `[-upper, +raised]`
-    ([lionnet-2022] §4). M is *not* primitive — it is one of the
-    four `[±u, ±r]` combinations, derived from the binary subtonal
-    features. The Lionnet move: there is no `TRN.M` enum
-    constructor; `M` is just a name for a particular bundle. -/
+    ([lionnet-2022] ex. 51). M is one of the four `[±u, ±r]`
+    combinations, derived from the binary subtonal features — not a
+    primitive enum constructor. -/
 def M : TRN := ⟨some false, some true⟩
 
 /-- The **Low** tone of Laal-style 3-tone systems: `[-upper, -raised]`
-    ([lionnet-2022] §4). Lowest pitch. -/
+    ([lionnet-2022] ex. 51). Lowest pitch. -/
 def L : TRN := ⟨some false, some false⟩
 
 /-- The fourth combination `[+upper, +raised]` — *unattested* in Laal,
-    where it is the gap of the 3-tone system ([lionnet-2022] §4).
-    Provided for typological completeness; an attested 4-tone language
-    or a different 3-tone gap would use this. -/
+    where it is the gap of the subtonal system ([lionnet-2022] ex. 51:
+    "Missing from this system is the subtonal specification
+    `[+upper, +raised]`"). Provided for completeness; an attested 4-tone
+    language or a different 3-tone gap would use this. -/
 def superHigh : TRN := ⟨some true, some true⟩
 
 /-- View a TRN as a `FeatureBundle Subtonal Bool` (the parametric
@@ -180,11 +175,7 @@ def ofBundle (b : FeatureBundle Subtonal Bool) : TRN :=
 
 end TRN
 
-end TRN
-
 /-! ### Pitch realisation -/
-
-section Pitch
 
 /-- Syntagmatic register shift contributed by a TRN, used by the
     terracing realisation `realizePitch`. Reads only the `[raised]`
@@ -192,7 +183,7 @@ section Pitch
     underspecified is inert.
 
     This is *not* the paradigmatic interpretation of `[raised]`
-    ([lionnet-2022] §3). It is the realisation pattern attested in
+    ([lionnet-2022] §5.1). It is the realisation pattern attested in
     register-only systems like Drubea and Numèè ([lionnet-2025]),
     where each `[-raised]` triggers a downstep operation that resets
     the register baseline. -/
@@ -279,16 +270,15 @@ def TRN.absolutePitch (t : TRN) : Int :=
   let r : Int := if t.raised = some true then 1 else 0
   u + r
 
-end Pitch
-
 /-! ### Lionnet's 3-tone typology -/
 
-section Typology3Tone
-
-/-- The four typological classes of 3-tone systems
-    ([lionnet-2022] §4). Each class picks three of the four
-    `[±upper, ±raised]` combinations; the unselected combination is
-    the *gap*. -/
+/-- The four classes of 3-tone system definable over the binary subtonal
+    features `[±upper]`/`[±raised]` ([lionnet-2022] ex. 51): with four
+    full specifications available, a 3-tone system realises three of them,
+    and the unselected combination is the *gap*. The four-way classification
+    by gap is a systematisation of Lionnet's binary-feature account (Laal
+    itself has the `[+upper, +raised]` gap), not a typology the paper
+    surveys. -/
 inductive ThreeToneGap where
   /-- Gap = `[+upper, +raised]` (Laal pattern). -/
   | upperRaised
@@ -307,15 +297,10 @@ def ThreeToneGap.gap : ThreeToneGap → TRN
   | .lowerRaised  => TRN.M                -- ⟨-u, +r⟩
   | .lowerLowered => TRN.L                -- ⟨-u, -r⟩
 
-/-- The Laal-style 3-tone system gap is `[+upper, +raised]`
-    ([lionnet-2022] §4). -/
-theorem laalGap : ThreeToneGap.upperRaised.gap = TRN.superHigh := rfl
-
-end Typology3Tone
+/-- Laal's gap is `[+upper, +raised]` ([lionnet-2022] ex. 51). -/
+theorem laal_gap_eq_superHigh : ThreeToneGap.upperRaised.gap = TRN.superHigh := rfl
 
 /-! ### TBU and word-prosodic typology -/
-
-section TypologyProsody
 
 /-- The prosodic domain that carries TRN specifications. In most tone
     languages this is the syllable; in Drubea and Numèè it is the mora
@@ -369,11 +354,7 @@ structure AnalysisInventory where
   postlexicalProcesses : Nat
   deriving Repr, DecidableEq
 
-end TypologyProsody
-
 /-! ### Culminativity -/
-
-section Culminativity
 
 /-- **Register culminativity**: at most one `[-raised]` TRN per stem.
 
@@ -383,11 +364,7 @@ section Culminativity
 abbrev IsCulminative (ts : List TRN) : Prop :=
   (ts.countP (fun t => t.raised == some false)) ≤ 1
 
-end Culminativity
-
 /-! ### Postlexical operations -/
-
-section Postlexical
 
 /-- **Pre-downstep h-epenthesis** ([lionnet-2025]): insert an
     upstep TRN immediately before a downstep, on a registerless host.
@@ -419,11 +396,7 @@ def hEpenthesisSpread : List TRN → List TRN
       | _                                   => TRN.empty  :: rest'
   | t :: rest                => t :: hEpenthesisSpread rest
 
-end Postlexical
-
 /-! ### Subtonal feature operations -/
-
-section Operations
 
 /-- **Subtonal assimilation** at feature `f`: the target TRN takes its
     value at `f` from the source TRN, leaving its other feature
@@ -447,13 +420,6 @@ def mergeTRN (t₁ t₂ : TRN) : TRN :=
 @[simp] theorem mergeTRN_self (t : TRN) : mergeTRN t t = t := by
   simp only [mergeTRN, FeatureBundle.merge_self, TRN.ofBundle_toBundle]
 
-/-- **TRN-level deletion** ([lionnet-2022] §6.2): delete a TRN's
-    contribution at one subtonal feature, returning to underspecified.
-    Used in replaceness operations where a TRN is partially erased
-    before a floating feature docks. -/
-def deleteSubtonal (f : Subtonal) (t : TRN) : TRN :=
-  TRN.ofBundle (FeatureBundle.delete f t.toBundle)
-
 /-- **Floating-feature docking** ([lionnet-2022] §5.3): a free
     `[±f]` subtonal feature docks onto a target TRN, overwriting
     whatever value it had at `f`. Used for the morphosyntactic
@@ -461,11 +427,7 @@ def deleteSubtonal (f : Subtonal) (t : TRN) : TRN :=
 def dockFloating (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.set f v t.toBundle)
 
-end Operations
-
 /-! ### Verification: Laal subtonal identities -/
-
-section LaalIdentities
 
 /-- The Laal H/M/L tones are exactly three of the four binary
     `[±u, ±r]` combinations — the gap is `superHigh`. -/
@@ -504,11 +466,7 @@ theorem m_lowering_vacuous_on_m :
 theorem floating_minus_raised_lowers_m :
     dockFloating Subtonal.raised false TRN.M = TRN.L := by decide
 
-end LaalIdentities
-
 /-! ### Verification: Drubea/Numèè register-only realisation -/
-
-section RegisterOnlyRealisation
 
 /-- Registerless sequences have uniform pitch. -/
 theorem registerless_uniform (n : Int) :
@@ -585,18 +543,15 @@ theorem single_l_culminative :
 theorem double_l_not_culminative :
     ¬ IsCulminative [TRN.downstep, TRN.downstep] := by decide
 
-end RegisterOnlyRealisation
-
 /-! ### Monotonicity (catathesis-blocking) -/
 
-section Monotonicity
+/-- TRN order by syntagmatic pitch effect: `t₁ ≤ t₂` iff `t₁` is at least
+    as lowering as `t₂`. Lifted from the `Int` order along `TRN.pitchEffect`
+    (`Preorder.lift`) — a `Preorder`, not a `PartialOrder`, since TRNs
+    sharing a `[raised]` value share a pitch effect. -/
+instance : Preorder TRN := Preorder.lift TRN.pitchEffect
 
-/-- TRN-level pitch-effect ordering: `t₁ ≤ t₂` iff `t₁` has a smaller
-    syntagmatic pitch effect than `t₂`. Equivalent to "`t₁` is at least
-    as lowering as `t₂`". -/
-def TRN.le (t₁ t₂ : TRN) : Prop := t₁.pitchEffect ≤ t₂.pitchEffect
-
-instance : DecidableRel TRN.le := fun _ _ => Int.decLe _ _
+instance : DecidableRel ((· ≤ ·) : TRN → TRN → Prop) := fun _ _ => Int.decLe _ _
 
 /-- **Monotonicity of `realizePitch` in the baseline**: a higher starting
     pitch produces pointwise higher output for any fixed TRN sequence.
@@ -620,7 +575,7 @@ theorem realizePitch_baseline_mono (ts : List TRN)
     `realizePitch_baseline_mono`. -/
 theorem realizePitch_mono
     {ts₁ ts₂ : List TRN}
-    (hts : List.Forall₂ TRN.le ts₁ ts₂)
+    (hts : List.Forall₂ (· ≤ ·) ts₁ ts₂)
     {n m : Int} (hnm : n ≤ m) :
     List.Forall₂ (· ≤ ·) (realizePitch n ts₁) (realizePitch m ts₂) := by
   induction hts generalizing n m with
@@ -630,7 +585,5 @@ theorem realizePitch_mono
       Int.add_le_add hnm hhead
     simp only [realizePitch_cons]
     exact .cons hstep (ih hstep)
-
-end Monotonicity
 
 end Tone
