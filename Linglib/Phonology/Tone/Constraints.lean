@@ -28,6 +28,14 @@ Faithfulness (`maxTone`, `maxLinkTone`, `depLinkTone`) compares surface state to
 immutable underlying state stored in `FloatingForm`. Without that underlying-form
 tracking, faithfulness can't fire and the [mcpherson-lamont-2026] LR-vs-RL multi-step
 asymmetry collapses.
+
+`starFloat` (a position-aware indicator vector) and `starFloatCount` (the total count)
+agree with at most one floating tone but diverge as the set grows: count comparison
+cannot tell "delete leftmost" from "delete rightmost" — [mcpherson-lamont-2026]'s
+eq. (62) divergent tie. So the parallel-vs-directional split lives in the *constraint*
+(count vs. indicator), not the EVAL mode: `EvalMode.le .parallel` and
+`EvalMode.le (.directional .leftToRight)` both apply the same `LexLE`; the flag documents
+intent and selects vector reversal for the right-to-left case.
 -/
 
 namespace Phonology.Tone
@@ -72,26 +80,8 @@ def starFloat : DirectionalConstraint (FloatingForm S TRN) where
   family := .markedness
   eval := FloatingForm.floatIndicator
 
-/-- `*FLOAT (count)`: count-based variant of `*FLOAT` that emits the
-    *total* floating-tone count as a singleton vector. Used in regular
-    (non-directional) HS where positions don't matter — only the
-    cardinality of the floating set.
-
-    Distinct from `starFloat` (which emits the position-aware indicator
-    vector). The two coincide when there is at most one floating tone
-    but diverge as the floating set grows: count-based comparison
-    cannot distinguish "delete leftmost" from "delete rightmost" since
-    both reduce the count by 1. This is [mcpherson-lamont-2026]'s
-    eq. (62) "divergent ties" claim — regular HS with `starFloatCount`
-    cannot disambiguate `/kāk^H + rī^H + dō^H/` step 1.
-
-    Architectural note: the substrate's `EvalMode.le .parallel` and
-    `EvalMode.le (.directional .leftToRight)` both use the same `LexLE`
-    on the violation vector. The parallel-vs-directional distinction
-    therefore lives in the *constraint* (count vs indicator), not the
-    EVAL mode flag. The flag remains useful for documenting intent and
-    for the right-to-left case (which uses `LexLE` on the *reversed*
-    vector). -/
+/-- `*FLOAT (count)`: count-based variant of `starFloat`, emitting the *total*
+    floating-tone count as a singleton `[count]` rather than a position-aware vector. -/
 def starFloatCount : DirectionalConstraint (FloatingForm S TRN) where
   name := "*FLOAT (count)"
   family := .markedness
@@ -134,15 +124,9 @@ def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
   let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
   ownAlive ∪ docked
 
-/-- `*CROWD` (paper, eq. 5): one violation per
-    morpheme associated with more than `threshold` tones. Default
-    `threshold = 2` matches the paper.
-
-    Counting includes surviving underlying tones of the morpheme PLUS
-    surface tones from other morphemes docked onto this morpheme's
-    TBUs. This is how the paper (p. 32) blocks rightward docking onto
-    `/rī^H/`: rī already has 2 tones (M + own H), so an external H
-    docking would make 3. -/
+/-- `*CROWD` (paper eq. 5): one violation per morpheme with more than `threshold`
+    tones (default 2), counting its surviving underlying tones plus tones docked onto
+    its TBUs from other morphemes. -/
 def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN) where
   name := s!"*CROWD({threshold})"
   family := .markedness
