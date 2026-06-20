@@ -1,6 +1,6 @@
 import Linglib.Core.DecisionTheory.Learning
 import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 
 /-!

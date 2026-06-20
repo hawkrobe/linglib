@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.Dequantization.OTLimit
+import Linglib.Phonology.HarmonicGrammar.OTLimit
 
 /-!
 # The Cumulativity Gap: HG ⊋ OT
