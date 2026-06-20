@@ -33,6 +33,7 @@ preserves it at the operator level. See `Studies/Haslinger2025.lean`.
 
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Fragments.German.Distributives
 
 namespace HaslingerEtAl2025
 
@@ -56,26 +57,25 @@ structure LexicalItem where
   semanticClass : DistMaxClass
   deriving Repr
 
-/-- jeder (DP-internal and distance): +distributive, +maximal -/
-def jeder : LexicalItem :=
-  { form := "jeder"
-  , gloss := "every/each"
-  , uses := [.dpInternal, .distance]
-  , semanticClass := .distMax }
+/-- Derive a `LexicalItem` from the German distributive Fragment entry, so the
+form/gloss/classification are read off `Fragments/German/Distributives.lean`
+rather than restated here (the fragment is anchored to this same paper). -/
+def LexicalItem.ofEntry (e : German.Distributives.DistributiveEntry) : LexicalItem :=
+  { form := e.form
+  , gloss := e.gloss
+  , uses := (if e.hasDPUse then [.dpInternal] else []) ++
+            (if e.hasDistanceUse then [.distance] else [])
+  , semanticClass := e.distMaxClass }
 
-/-- jeweils (distance only): +distributive, -maximal -/
-def jeweils : LexicalItem :=
-  { form := "jeweils"
-  , gloss := "each/respectively"
-  , uses := [.distance]  -- No DP-internal use!
-  , semanticClass := .distNonMax }
+/-- jeder (DP-internal and distance): +distributive, +maximal. Derived from the
+German fragment's `jederEntry`. -/
+def jeder : LexicalItem := .ofEntry German.Distributives.jederEntry
 
-/-- alle (DP-internal): -distributive, +maximal -/
-def alle : LexicalItem :=
-  { form := "alle"
-  , gloss := "all"
-  , uses := [.dpInternal]
-  , semanticClass := .nonDistMax }
+/-- jeweils (distance only): +distributive, -maximal. Derived from `jeweilsEntry`. -/
+def jeweils : LexicalItem := .ofEntry German.Distributives.jeweilsEntry
+
+/-- alle (DP-internal): -distributive, +maximal. Derived from `alleEntry`. -/
+def alle : LexicalItem := .ofEntry German.Distributives.alleEntry
 
 /-- Definite plurals: -distributive, -maximal -/
 def definitePlural : LexicalItem :=
