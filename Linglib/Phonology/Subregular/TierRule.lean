@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Option
-import Linglib.Core.Computability.StringHom
+import Linglib.Core.Computability.Tier
 import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy

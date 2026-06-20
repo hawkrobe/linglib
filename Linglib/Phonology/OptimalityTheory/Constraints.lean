@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Core.Computability.StringHom
+import Linglib.Core.Computability.Tier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
 /-!

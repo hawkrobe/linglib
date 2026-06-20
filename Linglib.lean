@@ -325,7 +325,7 @@ import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
-import Linglib.Core.Computability.StringHom
+import Linglib.Core.Computability.Tier
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
