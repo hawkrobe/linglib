@@ -2700,7 +2700,7 @@ import Linglib.Phonology.Featural.Bundle
 import Linglib.Phonology.Featural.Underspecification
 import Linglib.Phonology.Featural.ElementTheory
 import Linglib.Phonology.Autosegmental.Defs
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OCP

@@ -284,8 +284,8 @@ namespace Fig3
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Poko (Syll seg mTone hTone)
 
@@ -511,7 +511,7 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
     `starFloat` would not change behaviour. The genuine "regular HS"
     counterpart of `derivationLR` requires a count-emitting *FLOAT. -/
 def fig3RankingCount : List (DirectionalConstraint PokoForm) :=
-  [ haveTone, Phonology.Tone.starFloatCount, starCrowd 2, starTautDock,
+  [ haveTone, Tone.starFloatCount, starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 /-- The fig.3 derivation under regular HS (count-based *FLOAT, parallel
@@ -584,8 +584,8 @@ namespace Eq24
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Poko (Syll seg mTone hTone)
 
@@ -666,8 +666,8 @@ namespace Eq21
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Poko (Syll seg mTone hTone)
 
@@ -734,8 +734,8 @@ namespace Eq27
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Poko (Syll seg mTone hTone)
 
@@ -804,8 +804,8 @@ namespace Eq30
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone starMlessL)
 open Poko (Syll seg mTone hTone lTone)
 
@@ -887,8 +887,8 @@ namespace Eq22
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+open Tone (TRN)
+open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Poko (Syll seg mTone hTone)
 
@@ -998,7 +998,7 @@ References: [rolle-2018] (replacive-dominant GT via `tonalOverwrite`),
 namespace Phonology.Autosegmental
 
 open Phonology.Autosegmental.GrammaticalTone (TBU)
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 
 /-- Embed a `List (TBU S)` (the output type of `tonalOverwrite`) into
     `FloatingForm S TRN`, assigning all TBUs and their tones the same

@@ -1,5 +1,5 @@
 import Linglib.Features.Prosody
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 
 /-!
 # Grammatical Tone
@@ -55,7 +55,7 @@ instantiations live in `Fragments/`; empirical applications in `Studies/`.
 
 namespace Phonology.Autosegmental.GrammaticalTone
 
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 
 /-! ### Tone-bearing units -/
 

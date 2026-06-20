@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 
 /-!
 # Numèè Prosodic Fragment
@@ -32,7 +32,7 @@ status — neither expressible in a flat `List TRN`.
 
 namespace Numee.Prosody
 
-open Phonology.Autosegmental.RegisterTier
+open Tone
 
 -- ============================================================================
 -- § 1: Syllable-Level Representation

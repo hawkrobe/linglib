@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.Floating
 
@@ -47,7 +47,7 @@ fields.
 namespace Poko
 
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 
 -- ============================================================================
 -- § 1: Syllables

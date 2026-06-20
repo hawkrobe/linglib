@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 
 /-!
@@ -44,10 +44,10 @@ eq. (62) divergent tie. So the parallel-vs-directional split lives in the *const
 intent and selects vector reversal for the right-to-left case.
 -/
 
-namespace Phonology.Tone
+namespace Tone
 
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 open Constraint OptimalityTheory
 
 variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
@@ -194,4 +194,4 @@ def integrityTone (m : Morpheme) (t : TRN) :
   .ofCount s!"INTEGRITY-{reprStr t}({m.form})" .faithfulness
     (fun f => f.countTones (fun k => f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t) - 1)
 
-end Phonology.Tone
+end Tone

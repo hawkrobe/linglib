@@ -73,8 +73,8 @@ namespace AkinboFwangwar2026
 
 open Constraint OptimalityTheory
 open Phonology.Autosegmental
-open Phonology.Autosegmental.RegisterTier (TRN)
-open Phonology.Tone (integrityTone)
+open Tone (TRN)
+open Tone (integrityTone)
 open Mwaghavul
 
 -- ============================================================================

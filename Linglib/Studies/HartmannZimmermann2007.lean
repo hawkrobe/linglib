@@ -81,7 +81,7 @@ open Hausa.Inflection
   (PAC Mode TAM cmp_3sm_R cmp_3sm_G cmp_3sf_R cont_3sm_R cont_3sm_G cont_3sf_R
    cmp_1sg_G cont_1sg_R fut_1sg subj_3sm)
 open Hausa.Tone (polarOf)
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 
 /-! ## Pragmatic focus types (paper §1.2, after Uhmann 1991) -/
 

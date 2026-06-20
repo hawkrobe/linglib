@@ -1,5 +1,5 @@
 import Linglib.Features.Prosody
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.KratzerSelkirk2020
 
@@ -45,7 +45,7 @@ across phrases.
 namespace BeckmanPierrehumbert1986
 
 open Features.Prosody
-open Phonology.Autosegmental.RegisterTier
+open Tone
 
 -- ============================================================================
 -- § 1: Accentual Phrase (§2.2)

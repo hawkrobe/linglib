@@ -1398,7 +1398,7 @@ summary of an autosegmental analysis of the same surface tone pattern.
 Cross-references `Phonology/Autosegmental/RegisterTier.lean`,
 `GrammaticalTone.lean`, and `Studies/Lionnet2025.lean`. -/
 theorem lambert_string_input_loses_tone_associations : True := trivial
--- TODO: state and prove via Phonology.Autosegmental.RegisterTier
+-- TODO: state and prove via Tone
 -- representation distinctness with shared string projection.
 
 end Lambert2026
