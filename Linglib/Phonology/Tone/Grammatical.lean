@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Prosody
 import Linglib.Phonology.Tone.Basic
 
@@ -53,9 +58,7 @@ instantiations live in `Fragments/`; empirical applications in `Studies/`.
 [rolle-2018] [hyman-etal-2021]
 -/
 
-namespace Phonology.Autosegmental.GrammaticalTone
-
-open Tone (TRN)
+namespace Tone
 
 /-! ### Tone-bearing units -/
 
@@ -425,4 +428,4 @@ theorem dominant_asymmetry_typical :
 theorem outward_dominance_violates :
     DominantGTAsymmetry.holds ⟨false, true⟩ = false := rfl
 
-end Phonology.Autosegmental.GrammaticalTone
+end Tone
