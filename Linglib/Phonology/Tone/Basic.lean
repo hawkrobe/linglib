@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Data.List.Forall2
 import Mathlib.Data.List.Count
 import Mathlib.Algebra.Order.Group.Defs
@@ -62,57 +67,9 @@ two roles — the features are the representation, the operations
 A TRN is the structural node that gathers a `[±upper]` value and a
 `[±raised]` value and links them to a TBU. Either or both features may
 be **underspecified** (`none`), with surface values filled in by default.
-
-### Three-level systems and the Lionnet typology
-
-With binary `[±upper]` and `[±raised]`, four full specifications are
-possible. [lionnet-2022] observes that *three-level* tone
-systems pick three of these four, and the choice of which combination
-is the *gap* defines four typological classes:
-
-- **Laal**: gap is `[+u, +r]`; H = `[+u, -r]`, M = `[-u, +r]`, L = `[-u, -r]`
-- (other three systems are predicted but rarer)
-
-This file provides the named TRNs for the Laal pattern (`H`, `M`, `L`),
-the register-only TRNs (`empty`, `downstep`, `upstep`) used by Drubea
-and Numèè ([lionnet-2025]), and the typology of all four 3-tone
-systems.
-
-### Two realisation modes
-
-A TRN sequence can be realised as pitch in two ways:
-
-1. **Paradigmatic** (Laal-style, [lionnet-2022]): each TRN's pitch
-   is `2·[upper] + [raised]`, computed independently. No terracing.
-   See `TRN.absolutePitch`.
-
-2. **Terracing** (Drubea/Numèè register-only systems,
-   [lionnet-2025]): each `[-raised]` shifts the running register
-   baseline downward; `[+raised]` upward. Cumulative.
-   See `realizePitch`.
-
-The choice is a property of the *language*, not the representation.
-Drubea/Numèè are register-only systems where the only feature that ever
-varies is `[raised]` — Lionnet 2022's framework subsumes them as a
-degenerate case.
-
-## References
-
-* [yip-1980], [pulleyblank-1986] — `[±upper]` / `[±raised]`
-  subtonal features.
-* [snider-1990], [snider-1999], [snider-2020] — four-tier
-  register-tier geometry.
-* [lionnet-2022] — paradigmatic reformulation of register-tier
-  geometry.
-* [lionnet-2025] — register-only systems (Drubea, Numèè) and
-  postlexical operations.
-* [hyman-2006] — word-prosodic typology.
-* [beckman-pierrehumbert-1986] — catathesis and register reset.
-* [leben-2018] — downstep diagnostics.
-* [goldsmith-1976], [mccarthy-1986] — two readings of the OCP.
 -/
 
-namespace Phonology.Autosegmental.RegisterTier
+namespace Tone
 
 open Phonology.Featural
 
@@ -676,4 +633,4 @@ theorem realizePitch_mono
 
 end Monotonicity
 
-end Phonology.Autosegmental.RegisterTier
+end Tone

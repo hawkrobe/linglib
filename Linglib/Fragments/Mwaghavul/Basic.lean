@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 
 /-!
@@ -39,7 +39,7 @@ this pattern. Data from [akinbo-fwangwar-2026] and
 
 namespace Mwaghavul
 
-open Phonology.Autosegmental.RegisterTier (TRN TBUKind
+open Tone (TRN TBUKind
   WordProsodicType)
 open Phonology.Autosegmental.GrammaticalTone (TBU Spec ValuationWindow)
 

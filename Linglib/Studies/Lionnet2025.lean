@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Studies.Hyman2006
@@ -36,7 +36,7 @@ Tonal languages without tone: downstep in Drubea and Numèè
 
 namespace Lionnet2025
 
-open Phonology.Autosegmental.RegisterTier
+open Tone
 open Drubea.Prosody
 
 -- ============================================================================

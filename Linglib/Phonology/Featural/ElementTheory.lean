@@ -67,7 +67,7 @@ study files (e.g. `Studies/FaustLampitelli2026.lean`),
 not in fragment files.
 
 The full Backley 2011 inventory adds tonal elements |H| and |L|
-(omitted here — they belong with `Phonology.Autosegmental.RegisterTier`'s
+(omitted here — they belong with `Tone`'s
 TRN substrate when needed). Charm ([kaye-lowenstamm-vergnaud-1985])
 is omitted following [backley-2011]'s textbook synthesis, which
 abandoned charm in favour of headedness as the prominence-encoding

@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.OCP
 import Linglib.Fragments.Laal.Prosody
 
@@ -51,7 +51,7 @@ principle whose prohibition face lives in `Phonology.Subregular.OCP`.
 
 namespace Lionnet2022Laal
 
-open Phonology.Autosegmental.RegisterTier
+open Tone
 open Laal.Prosody
 
 /-! ### The subtonal featural analysis (§5.1) -/

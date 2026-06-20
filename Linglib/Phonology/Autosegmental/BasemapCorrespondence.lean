@@ -66,7 +66,7 @@ via a separate Hamming-distance implementation.
 namespace Phonology.Autosegmental.BasemapCorrespondence
 
 open Phonology.Autosegmental.GrammaticalTone
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory
 

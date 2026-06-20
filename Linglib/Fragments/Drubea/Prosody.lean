@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 
 
 /-!
@@ -19,7 +19,7 @@ Data from [lionnet-2025], building on [rivierre-1973] and
 
 namespace Drubea.Prosody
 
-open Phonology.Autosegmental.RegisterTier
+open Tone
 
 -- ============================================================================
 -- § 1: Stem Prosodic Patterns

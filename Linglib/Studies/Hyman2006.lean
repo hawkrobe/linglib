@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 import Linglib.Typology.Phonology
 
 /-!
@@ -47,7 +47,7 @@ Hyman's SA dimension.
 
 namespace Hyman2006
 
-open Phonology.Autosegmental.RegisterTier
+open Tone
 open Typology.Phonology
 
 -- ============================================================================

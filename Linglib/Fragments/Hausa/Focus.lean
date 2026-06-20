@@ -38,7 +38,7 @@ namespace Hausa.Focus
 
 open Hausa.Inflection (TAM Mode Subject PAC)
 open Hausa.Tone (polarOf)
-open Phonology.Autosegmental.RegisterTier (TRN)
+open _root_.Tone (TRN)
 
 -- ============================================================================
 -- § 1: Focus Strategy

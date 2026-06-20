@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Tone.Basic
 
 /-!
 # Hausa Verb Grades (Parsons System) — mathlib-style
@@ -35,7 +35,7 @@ Per-cell verifications appear as `example`s.
 
 namespace Hausa.VerbGrades
 
-open Phonology.Autosegmental.RegisterTier (TRN)
+open Tone (TRN)
 
 -- ============================================================================
 -- § 1: Form Inventory (A/B/C/D — [newman-2000] §74.2)
