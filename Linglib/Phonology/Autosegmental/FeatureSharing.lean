@@ -1,28 +1,35 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.Featural.Features
 import Linglib.Phonology.Featural.Geometry
 import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
-# Autosegmental Representations
+# Autosegmental feature sharing
 
 Autosegmental phonology adds **feature sharing** to segmental
 representations: when adjacent segments share a geometric node's features, they
-are linked to a single autosegmental element on that node's tier. This module
-builds on the feature geometry (`FeatureGeometry.lean`) and segment type
-(`Features.lean`) to provide feature agreement predicates,
-autosegmental representations with consistency checking, spread/delink
-operations, and a temporal derivation of the no-crossing constraint
-including the negative argument against simultaneity.
+are linked to a single autosegmental element on that node's tier. This is the
+**feature-geometry** representation (segments plus feature-sharing
+specifications over geometric nodes) — distinct from, and unconnected to, the
+bipartite tier-association object `AR` (`Graph.lean` / `AR.lean`). It builds on
+the feature geometry (`Featural/Geometry.lean`) and segment type
+(`Featural/Features.lean`) to provide feature agreement predicates,
+feature-sharing representations with consistency checking, and spread/delink
+operations.
 
 ## Main definitions
 
 * `agreeAt`, `placeAssimilation`, `totalAssimilation` — feature agreement
   predicates over a geometric node.
-* `Sharing`, `AutosegRep` — autosegmental representations as a segmental
+* `Sharing`, `AutosegRep` — feature-sharing representations: a segmental
   backbone plus a list of feature-sharing specifications.
 * `AutosegRep.inBounds`, `AutosegRep.consistent` — well-formedness checks.
 * `AutosegRep.spread`, `AutosegRep.delink`, `AutosegRep.spreadFeatures` —
-  atomic operations on autosegmental representations.
+  atomic operations on feature-sharing representations.
 * `copyFeaturesUnder` — replace features under a geometric node.
 
 The Sagey-1986 interval-overlap derivation of the No-Crossing Constraint
