@@ -2272,7 +2272,6 @@ import Linglib.Studies.AhnZhu2025
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Semantics.Measurement.Basic
 import Linglib.Semantics.Numerals.Basic
-import Linglib.Semantics.Numerals.Degree
 import Linglib.Semantics.Numerals.Precision
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Quantification.DomainRestriction

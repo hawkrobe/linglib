@@ -42,9 +42,7 @@ interval endpoint; see `Core.Order.Comparison.boundary_mem`.
 7. EXH–type-shift duality (Spector §6.2)
 8. GQT bridge (Bylinina & Nouwen)
 
-The `HasMeasure`-based numeral predicates and `CardinalityDegree` instance
-live in `Numerals/Degree.lean`; precision/halo machinery lives in
-`Numerals/Precision.lean`.
+Precision/halo machinery lives in `Numerals/Precision.lean`.
 -/
 
 namespace Semantics.Numerals
@@ -339,7 +337,7 @@ connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩) to the Kennedy
 maximality view (type ⟨d,t⟩). -/
 
 section GQTBridge
-open Classical Core.Logic.Intensional Quantification
+open Classical Intensional Quantification
 
 /-- GQT "at least `n`" agrees with `atLeastMeaning` on intersection cardinality. -/
 theorem gqt_atLeast_agrees {α : Type*} [Fintype α]
