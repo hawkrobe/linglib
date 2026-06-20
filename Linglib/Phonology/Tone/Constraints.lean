@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Phonology.OptimalityTheory.DirectionalTableau
 
 /-!
