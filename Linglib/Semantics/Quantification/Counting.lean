@@ -921,4 +921,28 @@ theorem not_qsymmetric_most_sem : ¬ QSymmetric (most_sem : GQ (Fin 3)) := by
     simp only [count, countOn]; decide
   rw [v0, v1, v2, v3] at key; revert key; decide
 
+/-! ### Whole-carrier recovery for `mostOn` and inherited proportionality
+
+`mostOn Finset.univ` is the `s = Finset.univ` fibre of the relativized
+`most`, matching the whole-carrier `most_sem` (modulo the
+`DecidablePred`-instance bridge `Finset.filter_congr_decidable`). The
+`Proportional` theorem proved for `most_sem` therefore transfers to it by
+inheritance, not re-proof — exhibiting "GEN-as-thresholded-most" as a
+specialization of the canonical proportional quantifier rather than a clone. -/
+
+omit [DecidableEq α] in
+@[simp] theorem mostOn_univ (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
+    mostOn Finset.univ R S ↔ most_sem R S := by
+  unfold mostOn most_sem
+  congr! 2
+
+omit [DecidableEq α] in
+/-- "GEN-as-most is proportional" — inherited from `most_proportional`, not
+    re-proved: at `s = Finset.univ` the relativized `mostOn` IS `most_sem`. -/
+theorem mostOn_univ_proportional :
+    Proportional (fun R S => mostOn (Finset.univ : Finset α) R S) := by
+  have h : (fun (R S : α → Prop) => mostOn (Finset.univ : Finset α) R S) = most_sem := by
+    funext R S; exact propext (mostOn_univ R S)
+  rw [h]; exact most_proportional
+
 end Quantification

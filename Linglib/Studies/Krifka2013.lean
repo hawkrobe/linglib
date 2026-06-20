@@ -138,9 +138,9 @@ theorem def_restricts_interps (cg : CommonGround) (φ : Denotation) :
     changes interpretations. Since threshold semantics measures world-prevalence,
     it cannot capture definitional generics that change truth value through DEF.
 
-    Since traditional GEN (a descriptive operator) reduces to threshold
-    semantics (`CovertQuantifier.reduces_to_threshold`), this theorem shows
-    definitional generics escape that reduction entirely. -/
+    Since traditional GEN (a descriptive operator) has a threshold reading
+    (`Generics.thresholdGeneric`, grounded on `Quantification.thresholdGtOn`),
+    this theorem shows definitional generics escape that reduction entirely. -/
 theorem def_invariant_world_measure {α : Type} (cg : CommonGround) (φ : Denotation)
     (f : List World → α) :
     f (def_ cg φ).worlds = f cg.worlds := by
