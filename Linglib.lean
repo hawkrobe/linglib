@@ -311,6 +311,7 @@ import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal
+import Linglib.Core.Computability.Language
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.PiecewiseTestable

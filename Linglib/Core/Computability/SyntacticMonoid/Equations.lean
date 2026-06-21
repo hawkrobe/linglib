@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Computability.Language
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Subregular.Definite
 
@@ -205,9 +206,8 @@ syntactic monoid satisfies the `k`-definite equation: prepending any
 syntactic-monoid element `s` to a length-`k` letter sequence `αs`
 preserves the syntactic class of `αs`. -/
 theorem IsDefinite.satisfies_kDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : IsDefinite k L) :
+    {L : Language α} {k : ℕ} (hL : L.IsDefinite k) :
     Language.kDefiniteEquation L k := by
-  obtain ⟨G, hG⟩ := hL
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
   rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
@@ -218,21 +218,16 @@ theorem IsDefinite.satisfies_kDefiniteEquation
   have hwmul : FreeMonoid.toList (w * FreeMonoid.ofList αs) =
                FreeMonoid.toList w ++ αs := rfl
   have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
-  rw [hwmul, hαsId, ← hG]
-  show Edge.right.takeAt k (x ++ (FreeMonoid.toList w ++ αs) ++ y) ∈ G.permitted ↔
-       Edge.right.takeAt k (x ++ αs ++ y) ∈ G.permitted
-  have hsuf_eq :
-      Edge.right.takeAt k (x ++ (FreeMonoid.toList w ++ αs) ++ y) =
-      Edge.right.takeAt k (x ++ αs ++ y) := by
-    rw [show x ++ (FreeMonoid.toList w ++ αs) ++ y =
-            (x ++ FreeMonoid.toList w) ++ (αs ++ y) by simp [List.append_assoc],
-        show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
-    have h_combined_len : k ≤ (αs ++ y).length := by
-      rw [List.length_append]; omega
-    rw [takeAt_right_append_left_absorb (x ++ FreeMonoid.toList w)
-          (αs ++ y) h_combined_len,
-        takeAt_right_append_left_absorb x (αs ++ y) h_combined_len]
-  rw [hsuf_eq]
+  rw [hwmul, hαsId]
+  refine hL.iff ?_
+  rw [show x ++ (FreeMonoid.toList w ++ αs) ++ y =
+          (x ++ FreeMonoid.toList w) ++ (αs ++ y) by simp [List.append_assoc],
+      show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
+  have h_combined_len : k ≤ (αs ++ y).length := by
+    rw [List.length_append]; omega
+  rw [takeAt_right_append_left_absorb (x ++ FreeMonoid.toList w)
+        (αs ++ y) h_combined_len,
+      takeAt_right_append_left_absorb x (αs ++ y) h_combined_len]
 
 /-- **Lambert Prop 53 (reverse direction)**: if a language's syntactic
 monoid satisfies the `k`-definite equation, then the language is
@@ -257,63 +252,22 @@ interesting direction `G.lang ⊆ L`: if `w ∈ G.lang`, there is some
 theorem isDefinite_of_satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ}
     (h : Language.kDefiniteEquation L k) :
-    IsDefinite k L := by
-  refine ⟨{ permitted := { ks | ∃ w ∈ L, Edge.right.takeAt k w = ks } }, ?_⟩
-  ext w
-  refine ⟨?_, fun hw => ⟨w, hw, rfl⟩⟩
-  rintro ⟨u, hu, hsuf⟩
-  by_cases hu_short : u.length ≤ k
-  · have hu_eq : Edge.right.takeAt k u = u := takeAt_right_of_short hu_short
-    by_cases hw_short : w.length ≤ k
-    · -- (1) both short: takeAts are u, w themselves; equality forces w = u
-      have hw_eq : Edge.right.takeAt k w = w := takeAt_right_of_short hw_short
-      rw [hu_eq, hw_eq] at hsuf
-      rw [← hsuf]; exact hu
-    · -- (2) u short, w long: u must have length k
-      push_neg at hw_short
-      have hw_len_suf : (Edge.right.takeAt k w).length = k :=
-        takeAt_right_length_of_long (le_of_lt hw_short)
-      rw [← hsuf, hu_eq] at hw_len_suf
-      rw [hu_eq] at hsuf
-      have hw_decomp : w = w.take (w.length - k) ++ u := by
-        rw [hsuf]
-        exact decompose_at_right_takeAt (le_of_lt hw_short)
-      have hequiv : SyntacticEquiv L w u := by
-        rw [hw_decomp]
-        exact syntacticEquiv_of_kDefiniteEquation h _ _ hw_len_suf
-      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
-  · push_neg at hu_short
-    have hu_len_suf : (Edge.right.takeAt k u).length = k :=
-      takeAt_right_length_of_long (le_of_lt hu_short)
-    by_cases hw_short : w.length ≤ k
-    · -- (3) u long, w short: w must have length k
-      have hw_eq : Edge.right.takeAt k w = w := takeAt_right_of_short hw_short
-      rw [hw_eq] at hsuf
-      rw [hsuf] at hu_len_suf
-      have hu_decomp : u = u.take (u.length - k) ++ w := by
-        rw [← hsuf]
-        exact decompose_at_right_takeAt (le_of_lt hu_short)
-      have hequiv : SyntacticEquiv L u w := by
-        rw [hu_decomp]
-        exact syntacticEquiv_of_kDefiniteEquation h _ _ hu_len_suf
-      exact (mem_iff_of_syntacticEquiv hequiv).mp hu
-    · -- (4) both long: shared length-k suffix
-      push_neg at hw_short
-      have hw_len_suf : (Edge.right.takeAt k w).length = k :=
-        takeAt_right_length_of_long (le_of_lt hw_short)
-      have hequiv_u : SyntacticEquiv L u (Edge.right.takeAt k u) := by
+    L.IsDefinite k := by
+  -- Membership equals membership of the length-`k` suffix: short words are their
+  -- own suffix; long words are syntactically equivalent to it via the equation.
+  have key : ∀ w : List α, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
+    intro w
+    by_cases hw : w.length ≤ k
+    · rw [takeAt_right_of_short hw]
+    · push_neg at hw
+      have hlen : (Edge.right.takeAt k w).length = k :=
+        takeAt_right_length_of_long (le_of_lt hw)
+      have hequiv : SyntacticEquiv L w (Edge.right.takeAt k w) := by
         have base := syntacticEquiv_of_kDefiniteEquation h
-          (u.take (u.length - k)) (Edge.right.takeAt k u) hu_len_suf
-        rwa [← decompose_at_right_takeAt (le_of_lt hu_short)] at base
-      have hequiv_w : SyntacticEquiv L w (Edge.right.takeAt k w) := by
-        have base := syntacticEquiv_of_kDefiniteEquation h
-          (w.take (w.length - k)) (Edge.right.takeAt k w) hw_len_suf
-        rwa [← decompose_at_right_takeAt (le_of_lt hw_short)] at base
-      have hequiv : SyntacticEquiv L w u := by
-        apply hequiv_w.trans
-        rw [← hsuf]
-        exact hequiv_u.symm
-      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
+          (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
+        rwa [← decompose_at_right_takeAt (le_of_lt hw)] at base
+      exact mem_iff_of_syntacticEquiv hequiv
+  exact Language.invariantUnder_iff.mpr fun a b hab => by rw [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
 syntactic monoid satisfies the `k`-definite equation. Bidirectional
@@ -321,7 +275,7 @@ bundling of `IsDefinite.satisfies_kDefiniteEquation` and
 `isDefinite_of_satisfies_kDefiniteEquation`. -/
 theorem isDefinite_iff_satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ} :
-    IsDefinite k L ↔ Language.kDefiniteEquation L k :=
+    L.IsDefinite k ↔ Language.kDefiniteEquation L k :=
   ⟨IsDefinite.satisfies_kDefiniteEquation,
    isDefinite_of_satisfies_kDefiniteEquation⟩
 
@@ -394,9 +348,8 @@ lemma syntacticEquiv_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
 /-- **Lambert Prop 57 (forward direction)**: a reverse-`k`-definite
 language's syntactic monoid satisfies the reverse-`k`-definite equation. -/
 theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : IsReverseDefinite k L) :
+    {L : Language α} {k : ℕ} (hL : L.IsReverseDefinite k) :
     Language.kReverseDefiniteEquation L k := by
-  obtain ⟨G, hG⟩ := hL
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
   rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
@@ -407,24 +360,16 @@ theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
   have hwmul : FreeMonoid.toList (FreeMonoid.ofList αs * w) =
                αs ++ FreeMonoid.toList w := rfl
   have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
-  rw [hwmul, hαsId, ← hG]
-  show Edge.left.takeAt k (x ++ (αs ++ FreeMonoid.toList w) ++ y) ∈ G.permitted ↔
-       Edge.left.takeAt k (x ++ αs ++ y) ∈ G.permitted
-  -- We need takeAt_left of (x ++ αs ++ FreeMonoid.toList w ++ y)
-  --      = takeAt_left of (x ++ αs ++ y)
-  -- Both have x ++ αs as a prefix. If |x ++ αs| ≥ k, takeAt only sees x ++ αs.
-  have hpre_eq :
-      Edge.left.takeAt k (x ++ (αs ++ FreeMonoid.toList w) ++ y) =
-      Edge.left.takeAt k (x ++ αs ++ y) := by
-    rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
-            (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
-        show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
-    have h_combined_len : k ≤ (x ++ αs).length := by
-      rw [List.length_append]; omega
-    rw [takeAt_left_append_right_absorb (x ++ αs)
-          (FreeMonoid.toList w ++ y) h_combined_len,
-        takeAt_left_append_right_absorb (x ++ αs) y h_combined_len]
-  rw [hpre_eq]
+  rw [hwmul, hαsId]
+  refine hL.iff ?_
+  rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
+          (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
+      show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
+  have h_combined_len : k ≤ (x ++ αs).length := by
+    rw [List.length_append]; omega
+  rw [takeAt_left_append_right_absorb (x ++ αs)
+        (FreeMonoid.toList w ++ y) h_combined_len,
+      takeAt_left_append_right_absorb (x ++ αs) y h_combined_len]
 
 /-- **Lambert Prop 57 (reverse direction)**: if a language's syntactic
 monoid satisfies the reverse-`k`-definite equation, then the language is
@@ -432,65 +377,26 @@ reverse-`k`-definite. Mirror of `isDefinite_of_satisfies_kDefiniteEquation`. -/
 theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ}
     (h : Language.kReverseDefiniteEquation L k) :
-    IsReverseDefinite k L := by
-  refine ⟨{ permitted := { ks | ∃ w ∈ L, Edge.left.takeAt k w = ks } }, ?_⟩
-  ext w
-  refine ⟨?_, fun hw => ⟨w, hw, rfl⟩⟩
-  rintro ⟨u, hu, hpre⟩
-  by_cases hu_short : u.length ≤ k
-  · have hu_eq : Edge.left.takeAt k u = u := takeAt_left_of_short hu_short
-    by_cases hw_short : w.length ≤ k
-    · have hw_eq : Edge.left.takeAt k w = w := takeAt_left_of_short hw_short
-      rw [hu_eq, hw_eq] at hpre
-      rw [← hpre]; exact hu
-    · push_neg at hw_short
-      have hw_len_pre : (Edge.left.takeAt k w).length = k :=
-        takeAt_left_length_of_long (le_of_lt hw_short)
-      rw [← hpre, hu_eq] at hw_len_pre
-      rw [hu_eq] at hpre
-      have hw_decomp : w = u ++ w.drop k := by
-        rw [hpre]
-        exact decompose_at_left_takeAt (le_of_lt hw_short)
-      have hequiv : SyntacticEquiv L w u := by
-        rw [hw_decomp]
-        exact syntacticEquiv_of_kReverseDefiniteEquation h _ _ hw_len_pre
-      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
-  · push_neg at hu_short
-    have hu_len_pre : (Edge.left.takeAt k u).length = k :=
-      takeAt_left_length_of_long (le_of_lt hu_short)
-    by_cases hw_short : w.length ≤ k
-    · have hw_eq : Edge.left.takeAt k w = w := takeAt_left_of_short hw_short
-      rw [hw_eq] at hpre
-      rw [hpre] at hu_len_pre
-      have hu_decomp : u = w ++ u.drop k := by
-        rw [← hpre]
-        exact decompose_at_left_takeAt (le_of_lt hu_short)
-      have hequiv : SyntacticEquiv L u w := by
-        rw [hu_decomp]
-        exact syntacticEquiv_of_kReverseDefiniteEquation h _ _ hu_len_pre
-      exact (mem_iff_of_syntacticEquiv hequiv).mp hu
-    · push_neg at hw_short
-      have hw_len_pre : (Edge.left.takeAt k w).length = k :=
-        takeAt_left_length_of_long (le_of_lt hw_short)
-      have hequiv_u : SyntacticEquiv L u (Edge.left.takeAt k u) := by
+    L.IsReverseDefinite k := by
+  have key : ∀ w : List α, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
+    intro w
+    by_cases hw : w.length ≤ k
+    · rw [takeAt_left_of_short hw]
+    · push_neg at hw
+      have hlen : (Edge.left.takeAt k w).length = k :=
+        takeAt_left_length_of_long (le_of_lt hw)
+      have hequiv : SyntacticEquiv L w (Edge.left.takeAt k w) := by
         have base := syntacticEquiv_of_kReverseDefiniteEquation h
-          (Edge.left.takeAt k u) (u.drop k) hu_len_pre
-        rwa [← decompose_at_left_takeAt (le_of_lt hu_short)] at base
-      have hequiv_w : SyntacticEquiv L w (Edge.left.takeAt k w) := by
-        have base := syntacticEquiv_of_kReverseDefiniteEquation h
-          (Edge.left.takeAt k w) (w.drop k) hw_len_pre
-        rwa [← decompose_at_left_takeAt (le_of_lt hw_short)] at base
-      have hequiv : SyntacticEquiv L w u := by
-        apply hequiv_w.trans
-        rw [← hpre]
-        exact hequiv_u.symm
-      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
+          (Edge.left.takeAt k w) (w.drop k) hlen
+        rwa [← decompose_at_left_takeAt (le_of_lt hw)] at base
+      exact mem_iff_of_syntacticEquiv hequiv
+  exact Language.invariantUnder_iff.mpr fun a b hab => by rw [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
 its syntactic monoid satisfies the reverse-`k`-definite equation. -/
 theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ} :
-    IsReverseDefinite k L ↔ Language.kReverseDefiniteEquation L k :=
+    L.IsReverseDefinite k ↔ Language.kReverseDefiniteEquation L k :=
   ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
    isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
 
@@ -546,7 +452,7 @@ Proof: apply `IsGeneralizedDefinite` to the pair
 length-`k` left-prefix (both have `x ++ αs` as prefix) and the
 length-`k` right-suffix (both have `αs ++ y` as suffix). -/
 theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : IsGeneralizedDefinite k L) :
+    {L : Language α} {k : ℕ} (hL : L.IsGeneralizedDefinite k) :
     Language.kGeneralizedDefiniteEquation L k := by
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
@@ -565,7 +471,7 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
   have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
   rw [hwmul, hαsId]
   -- Apply IsGenDef to (x ++ αs ++ toList w ++ αs ++ y, x ++ αs ++ y).
-  apply hL
+  apply isGeneralizedDefinite_iff_edges.mp hL
   · -- takeAt_left k matches: both have x ++ αs as prefix.
     show (x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y).take k =
          (x ++ αs ++ y).take k
@@ -617,7 +523,8 @@ The short case (`|w₁| < k` or `|w₂| < k`) is forced trivial: equal
 theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ}
     (h : Language.kGeneralizedDefiniteEquation L k) :
-    IsGeneralizedDefinite k L := by
+    L.IsGeneralizedDefinite k := by
+  refine isGeneralizedDefinite_iff_edges.mpr ?_
   intro w₁ w₂ hpre hsuf
   by_cases hw₁_long : k ≤ w₁.length
   · -- Both `|wᵢ| ≥ k`: the matching length-`k` prefix forces `|w₂| ≥ k` too,
@@ -707,7 +614,7 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
 iff its syntactic monoid satisfies the LI equation. -/
 theorem isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ} :
-    IsGeneralizedDefinite k L ↔
+    L.IsGeneralizedDefinite k ↔
     Language.kGeneralizedDefiniteEquation L k :=
   ⟨IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation,
    isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation⟩

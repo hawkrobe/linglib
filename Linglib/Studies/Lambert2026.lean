@@ -119,62 +119,44 @@ The two-letter alphabet of Lambert (2026) §2.1. -/
 inductive IbanSyl | unstressed | stressed
   deriving DecidableEq, Repr
 
-/-- The Iban stress-final language: a word is well-formed iff its final
-syllable is stressed [omar-1969]. As a `DefiniteGrammar 1`: the
-permitted length-1 right-edge substring is `[stressed]`. -/
-def ibanGrammar : DefiniteGrammar 1 IbanSyl where
-  permitted := { [.stressed] }
+/-- The Iban stress-final language [omar-1969]: the right-edge `D_1` language whose
+permitted length-1 suffix is `[stressed]`. -/
+def ibanLang : Language IbanSyl :=
+  {w | Edge.right.takeAt 1 w ∈ ({[.stressed]} : Set (List IbanSyl))}
 
-/-- The Iban stress-final language as a `Language IbanSyl`. -/
-def ibanLang : Language IbanSyl := ibanGrammar.lang
-
-/-- **Iban stress-final ∈ D_1** (Lambert 2026 §2.1, paper p. 4 example
-(2)). Definitional witness: the `DefiniteGrammar 1` whose permitted
-final 1-suffix is `[stressed]`. The general k-definite Proposition (4)
-characterizes this class abstractly; the Iban witness is the
-specialisation for k = 1. -/
-theorem iban_isDefinite_one : IsDefinite 1 ibanLang :=
-  ⟨ibanGrammar, rfl⟩
+/-- **Iban stress-final ∈ D_1** (Lambert 2026 §2.1, paper p. 4 example (2)). -/
+theorem iban_isDefinite_one : ibanLang.IsDefinite 1 :=
+  Language.isDefinite_setOf_right 1 _
 
 -- ============================================================================
 -- § 2. Amara (Austronesian): stress-penult ∈ D_2
 -- ============================================================================
 
 /-- Amara stress [thurston-1966]: penultimate-syllable stress with the
-monosyllabic exception (single syllable bears stress). -/
-def amaraGrammar : DefiniteGrammar 2 IbanSyl where
-  -- Permitted length-2 right-edge substrings: stressed monosyllable, or
-  -- 2-suffix beginning with stressed (penult).
-  permitted := { [.stressed], [.stressed, .unstressed] }
+monosyllabic exception (single syllable bears stress). The `D_2` language whose
+permitted length-2 suffixes are a stressed monosyllable or a stressed-then-
+unstressed penult. -/
+def amaraLang : Language IbanSyl :=
+  {w | Edge.right.takeAt 2 w ∈
+    ({[.stressed], [.stressed, .unstressed]} : Set (List IbanSyl))}
 
-/-- The Amara stress-penult language. -/
-def amaraLang : Language IbanSyl := amaraGrammar.lang
-
-/-- **Amara stress-penult ∈ D_2** (Lambert 2026 §2.1). Witnessed by the
-2-grammar permitting either a stressed monosyllable or a stressed-then-
-unstressed 2-suffix. -/
-theorem amara_isDefinite_two : IsDefinite 2 amaraLang :=
-  ⟨amaraGrammar, rfl⟩
+/-- **Amara stress-penult ∈ D_2** (Lambert 2026 §2.1). -/
+theorem amara_isDefinite_two : amaraLang.IsDefinite 2 :=
+  Language.isDefinite_setOf_right 2 _
 
 -- ============================================================================
 -- § 2b. Finnish (Uralic): stress-initial ∈ K_1
 -- ============================================================================
 
-/-- Finnish stress [suomi-toivanen-ylitalo-2008]: primary stress is
-fixed to the initial syllable. The reverse-definite dual of Iban
-stress-final, witnessing the `IsReverseDefinite 1` class [lambert-2026]
-§2.2. -/
-def finnishGrammar : ReverseDefiniteGrammar 1 IbanSyl where
-  permitted := { [.stressed] }
+/-- The Finnish stress-initial language [suomi-toivanen-ylitalo-2008]: primary stress
+fixed to the initial syllable — the reverse-definite dual of Iban, the left-edge
+`RD_1` language whose permitted length-1 prefix is `[stressed]` [lambert-2026] §2.2. -/
+def finnishLang : Language IbanSyl :=
+  {w | Edge.left.takeAt 1 w ∈ ({[.stressed]} : Set (List IbanSyl))}
 
-/-- The Finnish stress-initial language. -/
-def finnishLang : Language IbanSyl := finnishGrammar.lang
-
-/-- **Finnish stress-initial ∈ K_1** (Lambert 2026 §2.2, paper p. 5
-example (6)). Definitional witness: the `ReverseDefiniteGrammar 1`
-whose permitted initial 1-prefix is `[stressed]`. -/
-theorem finnish_isReverseDefinite_one : IsReverseDefinite 1 finnishLang :=
-  ⟨finnishGrammar, rfl⟩
+/-- **Finnish stress-initial ∈ K_1** (Lambert 2026 §2.2, paper p. 5 example (6)). -/
+theorem finnish_isReverseDefinite_one : finnishLang.IsReverseDefinite 1 :=
+  Language.isReverseDefinite_setOf_left 1 _
 
 -- ============================================================================
 -- § 3. Uyghur backness harmony ∈ BTD
@@ -223,8 +205,8 @@ def isSuffixBack : UyghurSeg → Bool
 /-! ### Atomic tier-projected definite languages
 
 Each of the four atomic predicates in (35) is a `IsTierBased
-(IsDefinite 1)` test. We build them as `DefiniteGrammar 1` instances
-on the filtered tier and lift via `IsTierBased`. -/
+(Language.IsDefinite · 1)` test: a single permitted length-1 suffix set on
+the filtered tier (`Language.isDefinite_setOf_right`), lifted via `IsTierBased`. -/
 
 /-- The language "tier `T` is empty": after filtering by `T`, the word
 is `[]`. Encoded as `IsTierBased (IsDefinite 1)` via the singleton
@@ -260,25 +242,25 @@ private lemma takeAt_right_one_eq_nil_iff (xs : List UyghurSeg) :
 1-definite language is the singleton `{[]}` (only `[]` has right-1-
 suffix `[]`). -/
 lemma tierEmptyLang_isTierBased (T : UyghurSeg → Bool) :
-    IsTierBased (IsDefinite 1) (tierEmptyLang T) := by
-  refine ⟨T, ({ permitted := {[]} } : DefiniteGrammar 1 UyghurSeg).lang, ?_,
-          ⟨_, rfl⟩⟩
+    IsTierBased (Language.IsDefinite · 1) (tierEmptyLang T) := by
+  refine ⟨T, {w | Edge.right.takeAt 1 w ∈ ({[]} : Set (List UyghurSeg))}, ?_,
+          Language.isDefinite_setOf_right 1 _⟩
   ext w
   show (w.filter T = []) ↔
-       w.filter T ∈ ({ permitted := {[]} } : DefiniteGrammar 1 UyghurSeg).lang
-  simp only [EdgeDefiniteGrammar.mem_lang, Set.mem_singleton_iff]
+       Edge.right.takeAt 1 (w.filter T) ∈ ({[]} : Set (List UyghurSeg))
+  simp only [Set.mem_singleton_iff]
   exact (takeAt_right_one_eq_nil_iff _).symm
 
 /-- `tierEndsWithLang T x` is in `IsTierBased (IsDefinite 1)`. The
 base 1-definite language is the singleton `{[x]}`. -/
 lemma tierEndsWithLang_isTierBased (T : UyghurSeg → Bool) (x : UyghurSeg) :
-    IsTierBased (IsDefinite 1) (tierEndsWithLang T x) := by
-  refine ⟨T, ({ permitted := {[x]} } : DefiniteGrammar 1 UyghurSeg).lang, ?_,
-          ⟨_, rfl⟩⟩
+    IsTierBased (Language.IsDefinite · 1) (tierEndsWithLang T x) := by
+  refine ⟨T, {w | Edge.right.takeAt 1 w ∈ ({[x]} : Set (List UyghurSeg))}, ?_,
+          Language.isDefinite_setOf_right 1 _⟩
   ext w
   show ((w.filter T).drop ((w.filter T).length - 1) = [x]) ↔
-       w.filter T ∈ ({ permitted := {[x]} } : DefiniteGrammar 1 UyghurSeg).lang
-  simp only [EdgeDefiniteGrammar.mem_lang, Set.mem_singleton_iff]
+       Edge.right.takeAt 1 (w.filter T) ∈ ({[x]} : Set (List UyghurSeg))
+  simp only [Set.mem_singleton_iff]
   rfl
 
 /-! ### The Uyghur backness language as conjunction of (35a)-(35b)
@@ -399,7 +381,8 @@ form; we unfold via `show` at the top of each proof. -/
 xs.length`. Proof: same `k`-prefix on both words determines the
 `xs.length`-prefix via `List.take_take`. α-generic. -/
 lemma startsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
-    (hk : xs.length ≤ k) : IsGeneralizedDefinite k (startsWithLang xs) := by
+    (hk : xs.length ≤ k) : (startsWithLang xs).IsGeneralizedDefinite k := by
+  rw [Language.isGeneralizedDefinite_iff_edges]
   intro w₁ w₂ hpre _
   -- Unfold Edge.left.takeAt to List.take.
   change w₁.take k = w₂.take k at hpre
@@ -417,7 +400,8 @@ identity is `w.drop (w.length - xs.length) = (w.drop (w.length - k)).drop
 (k - xs.length)` when `xs.length ≤ k ≤ w.length`. The general case
 splits on whether `w` is shorter than `k`. -/
 lemma endsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
-    (hk : xs.length ≤ k) : IsGeneralizedDefinite k (endsWithLang xs) := by
+    (hk : xs.length ≤ k) : (endsWithLang xs).IsGeneralizedDefinite k := by
+  rw [Language.isGeneralizedDefinite_iff_edges]
   intro w₁ w₂ _ hsuf
   -- Unfold Edge.right.takeAt to List.drop.
   change w₁.drop (w₁.length - k) = w₂.drop (w₂.length - k) at hsuf
@@ -466,7 +450,7 @@ not GeneralizedDefinite 2 since `[h, h, h]` and `[h, h]` share both
 2-prefix and 2-suffix). -/
 lemma tierEqualLang_isTierBased {α : Type*} (T : α → Bool) (xs : List α)
     (k : ℕ) (hk : xs.length < k) :
-    IsTierBased (IsGeneralizedDefinite k) (tierEqualLang T xs) := by
+    IsTierBased (Language.IsGeneralizedDefinite · k) (tierEqualLang T xs) := by
   refine ⟨T, {xs}, ?_, ?_⟩
   · ext w; show (w.filter T = xs) ↔ w.filter T ∈ ({xs} : Set _)
     simp [Set.mem_singleton_iff]
@@ -494,6 +478,7 @@ lemma tierEqualLang_isTierBased {α : Type*} (T : α → Bool) (xs : List α)
       have hv_take : v.take k = v := List.take_of_length_le (le_of_lt hv_lt)
       rw [hv_take] at hv
       exact hv.symm
+    refine Language.isGeneralizedDefinite_iff_edges.mpr ?_
     intro w₁ w₂ hpre _
     change w₁.take k = w₂.take k at hpre
     show w₁ ∈ ({xs} : Set _) ↔ w₂ ∈ ({xs} : Set _)
@@ -518,7 +503,8 @@ def phi_F : Language KShoTone := { w | w ∈ kshonaSevenWords }
 words with same 5-prefix and length ≤ 4 are equal; any word with
 length > 4 has a 5-prefix of length 5 (or whole) which differs from
 any short word's 5-prefix. -/
-lemma phi_F_isGenDef : IsGeneralizedDefinite 5 phi_F := by
+lemma phi_F_isGenDef : phi_F.IsGeneralizedDefinite 5 := by
+  rw [Language.isGeneralizedDefinite_iff_edges]
   intro w₁ w₂ hpre _
   change w₁.take 5 = w₂.take 5 at hpre
   show w₁ ∈ phi_F ↔ w₂ ∈ phi_F

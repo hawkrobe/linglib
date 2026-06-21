@@ -187,21 +187,21 @@ def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyPiecewi
 languages. Lambert (2026) §4.3 places Uyghur backness harmony in this
 class — strictly stronger than the multiple-tier-based strictly-local
 class of [de-santo-graf-2019]. -/
-def IsBTD (k : ℕ) : Language α → Prop := IsBTC (IsDefinite k)
+def IsBTD (k : ℕ) : Language α → Prop := IsBTC (Language.IsDefinite · k)
 
 /-- **Multitier reverse definite** (BTK): Boolean closure of tier-projected
 RD_k languages. -/
-def IsBTK (k : ℕ) : Language α → Prop := IsBTC (IsReverseDefinite k)
+def IsBTK (k : ℕ) : Language α → Prop := IsBTC (Language.IsReverseDefinite · k)
 
 /-- **Multitier generalized definite** (BTLI): Boolean closure of
 tier-projected ℒℐ_k languages. Lambert (2026) §5.6 places Karanga Shona
 tone in this class (verb-stem domain) — refining [jardine-2020]. -/
-def IsBTLI (k : ℕ) : Language α → Prop := IsBTC (IsGeneralizedDefinite k)
+def IsBTLI (k : ℕ) : Language α → Prop := IsBTC (Language.IsGeneralizedDefinite · k)
 
 /-- **Multitier finite-or-cofinite** (BTN): Boolean closure of
 tier-projected co/finite languages. Captures culminativity-style
 constraints when projected to the stress tier. -/
-def IsBTN : Language α → Prop := IsBTC IsFiniteOrCofinite
+def IsBTN : Language α → Prop := IsBTC Language.IsFiniteOrCofinite
 
 /-! ## Cross-class inclusions
 
@@ -213,12 +213,12 @@ inclusions BTSL ⊆ BTSP, BTD ⊆ BTLI, BTK ⊆ BTLI, BTN ⊆ BTLI (per Lambert
 /-- **D_k ⊆ ℒℐ_k** lifts to **BTD_k ⊆ BTLI_k**. -/
 theorem IsBTD.toIsBTLI {k : ℕ} {L : Language α} (h : IsBTD k L) :
     IsBTLI k L :=
-  IsBTC.mono (fun _ => IsDefinite.toIsGeneralizedDefinite) h
+  IsBTC.mono (fun _ => Language.IsDefinite.toIsGeneralizedDefinite) h
 
 /-- **RD_k ⊆ ℒℐ_k** lifts to **BTK_k ⊆ BTLI_k**. -/
 theorem IsBTK.toIsBTLI {k : ℕ} {L : Language α} (h : IsBTK k L) :
     IsBTLI k L :=
-  IsBTC.mono (fun _ => IsReverseDefinite.toIsGeneralizedDefinite) h
+  IsBTC.mono (fun _ => Language.IsReverseDefinite.toIsGeneralizedDefinite) h
 
 /-! ## Bridge: TSL ↔ tier-based SL -/
 
@@ -316,7 +316,7 @@ theorem not_isBTC_of_indist {𝒞 : Language α → Prop}
   fun hL => h_w₂ ((IsBTC.mem_iff_of_indist hL h_indist).mp h_w₁)
 
 /-- Shared length-`k` prefix-and-suffix on every Bool-tier projection
-implies `IsBTC.Indist (IsGeneralizedDefinite k)`. This is the standard
+implies `IsBTC.Indist (Language.IsGeneralizedDefinite · k)`. This is the standard
 specialization Lambert (2026) §4.2 / §5.1 use for refuting `IsBTLI k`
 membership: producing two words with matching tier-affixes on every
 tier reduces to providing a `Bool`-tier-parameterised pair of equalities. -/
@@ -324,9 +324,9 @@ theorem IsBTC.indist_isGenDef_of_tierAffixes {k : ℕ} {w₁ w₂ : List α}
     (h : ∀ T : α → Bool,
       Edge.left.takeAt k (w₁.filter T) = Edge.left.takeAt k (w₂.filter T) ∧
       Edge.right.takeAt k (w₁.filter T) = Edge.right.takeAt k (w₂.filter T)) :
-    IsBTC.Indist (IsGeneralizedDefinite k) w₁ w₂ := by
+    IsBTC.Indist (Language.IsGeneralizedDefinite · k) w₁ w₂ := by
   intro T L' hL'
   obtain ⟨h_pre, h_suf⟩ := h T
-  exact hL' (w₁.filter T) (w₂.filter T) h_pre h_suf
+  exact Language.isGeneralizedDefinite_iff_edges.mp hL' h_pre h_suf
 
 end Subregular
