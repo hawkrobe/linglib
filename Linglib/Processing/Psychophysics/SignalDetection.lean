@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.GumbelLuce
+import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Gaussian
 
 /-!

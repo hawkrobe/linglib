@@ -1,5 +1,5 @@
 import Mathlib.CategoryTheory.Category.Basic
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # Category of Rational Action Agents

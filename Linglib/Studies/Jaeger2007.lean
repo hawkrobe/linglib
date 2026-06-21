@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.Learning
+import Linglib.Core.Probability.Choice.Learning
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.MaxEnt

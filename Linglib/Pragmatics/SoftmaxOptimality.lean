@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Pragmatics.RSA.Limits

@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.DecisionTheory.ChoiceApproximations
+import Linglib.Core.Probability.Choice.ChoiceApproximations
 
 /-!
 # Speaker Discrimination: JND/Trace on S1
