@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Language
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Subregular.Definite
+import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Data.List.DropRight
 
 /-!
