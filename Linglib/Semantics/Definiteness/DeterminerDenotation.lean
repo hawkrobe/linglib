@@ -227,13 +227,7 @@ theorem Possessive.denote_isSome_iff_iotaPresupposition (p : Possessive) :
           (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit := by
   rw [Possessive.denote_selector]
   show (russellIota (fun x => R g gs x ∧ rel g gs (possessor g gs) x)).isSome ↔ _
-  rw [russellIota_isSome_iff_existsUnique]
-  unfold existsUnique Existence Uniqueness iotaPresupposition
-  constructor
-  · rintro ⟨⟨x, hx⟩, huniq⟩
-    exact ⟨x, hx, fun y hy => huniq y x hy hx⟩
-  · rintro ⟨x, hx, huniq⟩
-    exact ⟨⟨x, hx⟩, fun a b ha hb => (huniq a ha).trans (huniq b hb).symm⟩
+  rw [russellIota_isSome_iff_exists_unique]
 
 /-- At a context where its presupposition holds, the possessive determiner
 assembles into a `Possessive.Definite` carrier (over the trivial situation) whose

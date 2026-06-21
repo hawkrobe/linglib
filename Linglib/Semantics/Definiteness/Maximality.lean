@@ -66,16 +66,19 @@ def Existence {E : Type*} (P : E → Prop) : Prop :=
 def Uniqueness {E : Type*} (P : E → Prop) : Prop :=
   ∀ x y : E, P x → P y → x = y
 
-/-- The classical Russellian condition: `∃!x. P x`. By construction the
-    conjunction of [coppock-beaver-2015]'s two components. -/
-def existsUnique {E : Type*} (P : E → Prop) : Prop :=
-  Existence P ∧ Uniqueness P
-
-/-- Russellian existence-and-uniqueness is exactly the conjunction of
-    Coppock–Beaver Existence and Uniqueness. By definition. -/
-theorem existsUnique_iff_existence_and_uniqueness
-    {E : Type*} (P : E → Prop) :
-    existsUnique P ↔ (Existence P ∧ Uniqueness P) := Iff.rfl
+/-- The Russellian condition `∃! x, P x` factors into Coppock–Beaver's two
+    components: `Existence` (asserted) and `Uniqueness` (presupposed). A genuine
+    iff, not `rfl` — mathlib's `∃!` bundles the components under one existential,
+    CB splits them. Uniqueness is mathlib `∃!` *everywhere* in this subsystem
+    (there is no separate `existsUnique` def); this theorem is the bridge to the
+    CB components, and `Relational.iotaPresupposition` is `∃!` by `abbrev`. -/
+theorem existsUnique_iff_existence_and_uniqueness {E : Type*} (P : E → Prop) :
+    (∃! x, P x) ↔ (Existence P ∧ Uniqueness P) := by
+  constructor
+  · rintro ⟨x, hx, huniq⟩
+    exact ⟨⟨x, hx⟩, fun a b ha hb => (huniq a ha).trans (huniq b hb).symm⟩
+  · rintro ⟨⟨x, hx⟩, huniq⟩
+    exact ⟨x, hx, fun y hy => huniq y x hy hx⟩
 
 /-- Existence and Uniqueness are logically independent. The empty predicate
     `λ _ => False` satisfies Uniqueness (vacuously) but not Existence —
@@ -92,17 +95,15 @@ theorem uniqueness_does_not_imply_existence {E : Type*} :
     is exactly one P-satisfier. Order-free version usable when no preorder is
     declared on `E`. -/
 noncomputable def russellIota {E : Type*} (P : E → Prop) : Option E :=
-  letI := Classical.dec (existsUnique P)
-  if h : existsUnique P then some h.1.choose else none
+  letI := Classical.dec (∃! x, P x)
+  if h : ∃! x, P x then some h.choose else none
 
-/-- `russellIota` returns `some` exactly when Russellian existence-and-
-    uniqueness holds. -/
-theorem russellIota_isSome_iff_existsUnique
-    {E : Type*} (P : E → Prop) :
-    (russellIota P).isSome ↔ existsUnique P := by
+/-- `russellIota` returns `some` exactly when mathlib's `∃!` holds. -/
+theorem russellIota_isSome_iff_exists_unique {E : Type*} (P : E → Prop) :
+    (russellIota P).isSome ↔ ∃! x, P x := by
   classical
   unfold russellIota
-  by_cases h : existsUnique P
+  by_cases h : ∃! x, P x
   · simp [h]
   · simp [h]
 
@@ -112,10 +113,10 @@ theorem russellIota_witness_satisfies
     (h : russellIota P = some e) : P e := by
   classical
   unfold russellIota at h
-  by_cases hexu : existsUnique P
+  by_cases hexu : ∃! x, P x
   · rw [dif_pos hexu] at h
-    have heq : hexu.1.choose = e := Option.some_inj.mp h
-    rw [← heq]; exact hexu.1.choose_spec
+    have heq : hexu.choose = e := Option.some_inj.mp h
+    rw [← heq]; exact hexu.choose_spec.1
   · rw [dif_neg hexu] at h; cases h
 
 /-- Two witnesses returned by `russellIota` (over the same predicate) must

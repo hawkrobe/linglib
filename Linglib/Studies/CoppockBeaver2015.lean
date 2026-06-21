@@ -102,17 +102,19 @@ theorem theSun_existence_and_uniqueness :
 
 /-- For `theSun`, the Russellian condition holds: `existsUnique` is by
     construction the conjunction of Existence and Uniqueness. -/
-theorem theSun_existsUnique : existsUnique theSun :=
-  theSun_existence_and_uniqueness
+theorem theSun_existsUnique : ∃! x, theSun x :=
+  (existsUnique_iff_existence_and_uniqueness _).mpr theSun_existence_and_uniqueness
 
 /-- For `kingOfFrance`, `existsUnique` fails — Existence is the missing
     conjunct. The factorization explains *which* component fails. -/
-theorem kingOfFrance_not_existsUnique : ¬ existsUnique kingOfFrance := by
+theorem kingOfFrance_not_existsUnique : ¬ ∃! x, kingOfFrance x := by
+  rw [existsUnique_iff_existence_and_uniqueness]
   rintro ⟨hExist, _⟩
   exact kingOfFrance_uniqueness_without_existence.2 hExist
 
 /-- For `planet`, `existsUnique` fails — Uniqueness is the missing conjunct. -/
-theorem planet_not_existsUnique : ¬ existsUnique planet := by
+theorem planet_not_existsUnique : ¬ ∃! x, planet x := by
+  rw [existsUnique_iff_existence_and_uniqueness]
   rintro ⟨_, hUniq⟩
   exact planet_existence_without_uniqueness.2 hUniq
 
@@ -127,11 +129,11 @@ def gs₀ : SitAssignment Unit := fun _ => ()
     interprets to `none` — the shared engine behind the Existence-failure
     and Uniqueness-failure diagnostics below. -/
 private theorem interpret_unique_const_none_of_not_existsUnique
-    (R : Denot Body Unit .et) (h : ¬ existsUnique R) :
+    (R : Denot Body Unit .et) (h : ¬ ∃! x, R x) :
     interpret (.unique (DenotGS.const R) 0) g₀ gs₀ = none := by
   rw [interpret_unique]
   have hns : ¬ (russellIota (fun x => (DenotGS.const R) g₀ gs₀ x)).isSome := by
-    rw [russellIota_isSome_iff_existsUnique]; exact h
+    rw [russellIota_isSome_iff_exists_unique]; exact h
   rcases hr : russellIota (fun x => (DenotGS.const R) g₀ gs₀ x) with _ | e
   · rfl
   · exact absurd (hr ▸ rfl) hns
