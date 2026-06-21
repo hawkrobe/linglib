@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Computability.Subregular.Defs
+import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
 # Side-determinacy: myopia and unbounded circumambience
