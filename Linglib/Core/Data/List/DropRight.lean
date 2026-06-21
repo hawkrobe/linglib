@@ -20,6 +20,7 @@ under-developed corner of mathlib and are candidates for
 ## Main results
 
 * `List.length_rtake` — `(l.rtake n).length = min n l.length`.
+* `List.length_rtake_le` — `(l.rtake n).length ≤ n`.
 * `List.rtake_of_length_le` — a short list is its own tail-take.
 * `List.rtake_append_of_le_length` — a tail-take long enough to fit in the right
   summand ignores the left one.
@@ -35,6 +36,10 @@ variable {α : Type*}
 @[simp] theorem length_rtake (l : List α) (n : ℕ) :
     (l.rtake n).length = min n l.length := by
   simp [rtake_eq_reverse_take_reverse]
+
+/-- A tail-take has length at most `n` — the tail analog of `List.length_take_le`. -/
+theorem length_rtake_le (l : List α) (n : ℕ) : (l.rtake n).length ≤ n := by
+  rw [length_rtake]; exact min_le_left _ _
 
 /-- A list no longer than `n` is its own tail-take — the tail analog of
 `List.take_of_length_le`. -/

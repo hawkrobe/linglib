@@ -203,14 +203,14 @@ lone output symbol as the letter. This extends the chain to
 
 /-- A length-preserving (single-symbol) left-ISL rule as a synchronous transducer: the
 bounded input window is the state, the lone output symbol the letter. -/
-def ISLRule.toLetterSFST {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+def ISLRule.toLetterSFST {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     LetterSFST {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩,
+  step w x := (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
-theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
   rw [← r.toFinSFST_run_eq_apply]
   funext input
@@ -227,20 +227,20 @@ theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype α] 
     exact congrArg (a :: ·) (ih _)
 
 /-- **Single-symbol left-ISL ⊆ left-subsequential.** -/
-theorem isLetterLeftSubsequential_of_ISLRule {α β : Type} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+theorem isLetterLeftSubsequential_of_ISLRule {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  ⟨_, fintypeListLengthLE _, r.toLetterSFST hs, r.toLetterSFST_run_eq_apply hs⟩
+  by rw [← r.toLetterSFST_run_eq_apply hs]; exact (r.toLetterSFST hs).isLetterLeftSubsequential
 
 /-- A length-preserving (single-symbol) left-OSL rule as a synchronous transducer: the
 bounded output window is the state. -/
-def OSLRule.toLetterSFST {α β : Type} {k : ℕ} (r : OSLRule k α β)
+def OSLRule.toLetterSFST {α β : Type*} {k : ℕ} (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     LetterSFST {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x), lastN_length_le _ _⟩,
+  step w x := (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
-theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
   rw [← r.toFinSFST_run_eq_apply]
   funext input
@@ -257,18 +257,18 @@ theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type} {k : ℕ} [Fintype β] 
     exact congrArg (a :: ·) (ih _)
 
 /-- **Single-symbol left-OSL ⊆ left-subsequential.** -/
-theorem isLetterLeftSubsequential_of_OSLRule {α β : Type} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+theorem isLetterLeftSubsequential_of_OSLRule {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  ⟨_, fintypeListLengthLE _, r.toLetterSFST hs, r.toLetterSFST_run_eq_apply hs⟩
+  by rw [← r.toLetterSFST_run_eq_apply hs]; exact (r.toLetterSFST hs).isLetterLeftSubsequential
 
 /-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through subsequential. -/
-theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type} {k : ℕ} [Fintype α] [DecidableEq α]
+theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
     (r : ISLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     IsBimachineWeaklyDeterministic r.apply :=
   .of_letterLeftSubsequential (isLetterLeftSubsequential_of_ISLRule r hs)
 
 /-- **Single-symbol left-OSL ⊆ WD**. -/
-theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type} {k : ℕ} [Fintype α] [DecidableEq α]
+theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
     (r : OSLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     IsBimachineWeaklyDeterministic r.apply :=
   .of_letterLeftSubsequential (isLetterLeftSubsequential_of_OSLRule r hs)
