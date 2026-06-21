@@ -57,7 +57,9 @@ divergence as a theorem against `cohenGEN`.
 namespace Cohen1999
 
 open Semantics.Genericity.Generics (Situation)
-open Quantification (prevalenceOn countOn everyOn thresholdGtOn thresholdGtOn_iff_prevalenceOn)
+open Quantification (prevalenceOn countOn everyOn thresholdGtOn thresholdGtOn_iff_prevalenceOn
+  mostOn thresholdGtOn_one_two_iff_mostOn Proportional mostOn_univ_proportional
+  count count_decompose)
 
 /-! ### Cohen's Probability-Based GEN
 
@@ -83,6 +85,47 @@ theorem cohen_iff_thresholdGt {α : Type*} (domain : Finset α) (restrictor scop
     cohenGEN domain restrictor scope ↔ thresholdGtOn domain restrictor scope 1 2 := by
   rw [cohenGEN, thresholdGtOn_iff_prevalenceOn domain restrictor scope 1 2 (by norm_num) hR]
   norm_num
+
+/-! ### Cohen's GEN is proportional majority quantification
+
+Cohen's θ = 1/2 GEN is, over a non-empty restrictor domain, **exactly** the
+canonical majority quantifier `mostOn` — the θ = 1/2 threshold is the cutpoint
+*at* the `1 : 1` cell ratio. It therefore inherits `Proportional` from the GQ
+substrate. This is the precise content of "generics as majority quantification"
+— and exactly the claim the genericity literature rejects: real generics are
+**not** majority statements (`cohen_wrong_on_mosquitoes`; [nickel-2009];
+[leslie-2008]; [tessler-goodman-2019]). The theorems below state what is *true
+of Cohen's operator*, not of generics in general. -/
+
+/-- Cohen's GEN over a non-empty restrictor domain is exactly the canonical
+    majority quantifier `mostOn` (strictly more `R∧S` than `R∧¬S`): θ = 1/2 is
+    the `1 : 1` cell-ratio cutpoint (`thresholdGtOn_one_two_iff_mostOn`). -/
+theorem cohen_iff_mostOn {α : Type*} (domain : Finset α) (restrictor scope : α → Prop)
+    [DecidablePred restrictor] [DecidablePred scope] (hR : 0 < countOn domain restrictor) :
+    cohenGEN domain restrictor scope ↔ mostOn domain restrictor scope :=
+  (cohen_iff_thresholdGt domain restrictor scope hR).trans
+    (thresholdGtOn_one_two_iff_mostOn domain restrictor scope)
+
+open Classical in
+/-- Cohen's majority GEN over the whole (finite) carrier is a **proportional**
+    quantifier ([peters-westerstahl-2006]): its truth depends only on the ratio
+    |R∩S| : |R∖S|. Inherited from `mostOn_univ_proportional` via `cohen_iff_mostOn`,
+    not re-proved.
+
+    This proportionality is a property of Cohen's *majority* operator, **not** of
+    generics in general — the prevalence asymmetry ([leslie-2008];
+    `TesslerGoodman2019.same_prevalence_opposite_endorsement`) shows real generic
+    endorsement is *not* ratio-determined. -/
+theorem cohen_proportional {α : Type*} [Fintype α] :
+    Proportional (fun (R S : α → Prop) => cohenGEN Finset.univ R S) := by
+  intro R₁ S₁ R₂ S₂ tt₁ tf₁ tt₂ tf₂ h1 h2 hcross
+  show cohenGEN Finset.univ R₁ S₁ ↔ cohenGEN Finset.univ R₂ S₂
+  have hR1 : 0 < countOn Finset.univ R₁ := by
+    show 0 < count (fun x => R₁ x); rw [count_decompose R₁ S₁]; exact h1
+  have hR2 : 0 < countOn Finset.univ R₂ := by
+    show 0 < count (fun x => R₂ x); rw [count_decompose R₂ S₂]; exact h2
+  rw [cohen_iff_mostOn Finset.univ R₁ S₁ hR1, cohen_iff_mostOn Finset.univ R₂ S₂ hR2]
+  exact mostOn_univ_proportional R₁ S₁ R₂ S₂ h1 h2 hcross
 
 /-- Cohen's "always": no exceptions — every restrictor-element satisfies the scope.
     For a non-empty restrictor domain this is exactly P(Q | P) = 1; stated as the
