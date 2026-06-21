@@ -22,8 +22,10 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 
 - `IsTowerMonster`: a shift where apply c != c for some c
 - `kaplansThesisAsTower`: English embedding verbs push identity shifts
-- `sayM`: Schlenker's monster operator, rewritten via tower push + fold
-- Bridge: old `IsMonster` concept <-> `IsTowerMonster`
+
+Schlenker's monstrous `Say_m` operator lives in `Attitudes/ContextQuantification.lean`
+as `sayM` (with `ctxBox` its context-meaning specialization); this file is about the
+monster *predicate* and Kaplan's thesis, not the operator.
 
 -/
 
@@ -89,38 +91,5 @@ theorem kaplansThesisAsTower {W : Type*} {E : Type*} {P : Type*} {T : Type*} :
   simp only [List.mem_cons, List.mem_nil_iff, or_false] at hMem
   rw [hMem]
   exact identityShift_not_monster
-
--- ════════════════════════════════════════════════════════════════
--- § Schlenker's Say_m (Tower Formulation)
--- ════════════════════════════════════════════════════════════════
-
-/-- Schlenker's monstrous `Say_m`, rewritten via tower push.
-
-    Standard analysis: "John says that phi" quantifies over worlds compatible
-    with John's assertion. Schlenker's monster analysis: "John says that phi"
-    pushes an attitude shift onto the tower, making the embedded clause
-    see John as the agent.
-
-    `sayMTower assert attHolder phi t w` pushes `attitudeShift attHolder w'`
-    for each compatible world w', evaluating phi against the shifted tower. -/
-def sayMTower {W E P T : Type*}
-    (assert : E → W → W → Prop)
-    (attHolder : E)
-    (φ : ContextTower (KContext W E P T) → W → Prop)
-    (t : ContextTower (KContext W E P T)) (w : W) : Prop :=
-  ∀ w', assert attHolder w w' →
-    φ (t.push (attitudeShift attHolder w')) w'
-
-/-- `sayMTower` accesses shifted contexts: the embedded clause is evaluated
-    with the attitude holder as agent at the compatible world. -/
-theorem sayMTower_shifts_agent {W E P T : Type*}
-    (assert : E → W → W → Prop)
-    (attHolder : E) (w w' : W)
-    (hCompat : assert attHolder w w')
-    (φ : ContextTower (KContext W E P T) → W → Prop)
-    (t : ContextTower (KContext W E P T))
-    (h : sayMTower assert attHolder φ t w) :
-    φ (t.push (attitudeShift attHolder w')) w' :=
-  h w' hCompat
 
 end Semantics.Reference.Monsters
