@@ -37,7 +37,7 @@ The cast `IsStrictlyPiecewise k L → IsPiecewiseTestable k L` lives at
 the end of the file (mathlib convention: cast lives with the larger class).
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 open List
 
@@ -92,4 +92,4 @@ theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
   · exact (subseqSet_eq_iff heq hlen.le).mpr hs
   · exact (subseqSet_eq_iff heq hlen.le).mp hs
 
-end Core.Computability.Subregular
+end Subregular

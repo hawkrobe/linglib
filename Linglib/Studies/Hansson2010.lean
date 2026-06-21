@@ -123,7 +123,7 @@ place — the TSL_2 instance of `TSLGrammar.agree`.
 
 namespace Phonology.Studies.Hansson2010
 
-open Core Core.Computability.Subregular Phonology.Subregular
+open _root_.Subregular Phonology.Subregular
 
 -- ============================================================================
 -- § 1: A toy Navajo segmental alphabet
@@ -209,16 +209,16 @@ made by the `navajoSibilantHarmony : TSLGrammar 2 NSeg` grammar — the
 co-extensiveness of "the surface phonotactic" and "TSL_2 stringset" was
 asserted in the file docstring; this theorem types that assertion. -/
 theorem navajoSibilantHarmony_lang_isTSL2 :
-    Core.Computability.Subregular.IsTierStrictlyLocal 2
+    Subregular.IsTierStrictlyLocal 2
       navajoSibilantHarmony.lang :=
   ⟨navajoSibilantHarmony, rfl⟩
 
 /-- **BTSL_2 corollary** (via the PR-4 bridge `IsTierStrictlyLocal.toIsBTSL`
-in `Core.Computability.Subregular.Multitier`): the Navajo sibilant harmony
+in `Subregular.Multitier`): the Navajo sibilant harmony
 stringset lies in the multitier (Boolean) closure of strictly local languages —
 immediate from the TSL_2 result. -/
 theorem navajoSibilantHarmony_lang_isBTSL2 :
-    Core.Computability.Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
+    Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
   navajoSibilantHarmony_lang_isTSL2.toIsBTSL
 
 /-- The pre-harmony underlying form is **rejected**: it contains a
@@ -307,7 +307,7 @@ def navajoSibilantHarmonySP : SPGrammar 2 NSeg where
 [mcmullin-2016] characterisation. Explicit `IsStrictlyPiecewise 2`
 typing of the SP_2 grammar's implicit complexity claim. -/
 theorem navajoSibilantHarmonySP_lang_isSP2 :
-    Core.Computability.Subregular.IsStrictlyPiecewise 2
+    Subregular.IsStrictlyPiecewise 2
       navajoSibilantHarmonySP.lang :=
   ⟨navajoSibilantHarmonySP, rfl⟩
 

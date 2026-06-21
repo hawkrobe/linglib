@@ -36,7 +36,7 @@ The companion cast `LT_k ⊆ LTT_{k,t}` for `t ≥ 1` lives inside the
 `DecidableEq`-scoped section with `IsLocallyThresholdTestable`.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α : Type*}
 
@@ -100,4 +100,4 @@ theorem IsLocallyTestable.toIsLocallyThresholdTestable
 
 end
 
-end Core.Computability.Subregular
+end Subregular

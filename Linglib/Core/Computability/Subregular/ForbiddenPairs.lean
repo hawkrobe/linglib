@@ -39,7 +39,7 @@ in `Subregular/Defs.lean`. Phonological-constraint bridges
 `Phonology/Subregular/`.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α : Type*}
 
@@ -346,4 +346,4 @@ The natural way to combine constraints across tiers is the multi-tier
 strictly local (MTSL) family, which is *not* a special case of this
 constructor. -/
 
-end Core.Computability.Subregular
+end Subregular

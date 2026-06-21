@@ -385,7 +385,7 @@ def empiricalTableIV : List (ℚ × ℚ) :=
 /-! ### The categorical-at-threshold model
 
 Any TSL_2 grammar of the form
-`Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs
+`Subregular.TSLGrammar.ofForbiddenPairs
    (fun a b => similarity la b ≥ t) p` makes a **two-valued** prediction
 about each consonant pair: forbidden (membership rejected) if similarity
 ≥ t, permitted (accepted) otherwise. As an O/E predictor, this becomes a
@@ -412,11 +412,11 @@ theorem fpb_three_distinct_OE_levels :
 /-- **The substrate connection**: a TSL_2 grammar over Arabic whose
 forbidden-pair relation is "similarity at or above threshold `t`",
 restricted to the labial tier. Instantiates
-`Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs` directly,
+`Subregular.TSLGrammar.ofForbiddenPairs` directly,
 making the connection from FPB's similarity metric to the substrate
 machinery true by construction (rather than docstring-only). -/
-def thresholdedTSL (xs : List (Finset Arabic)) (t : ℚ) : Core.Computability.Subregular.TSLGrammar 2 Arabic :=
-  Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs
+def thresholdedTSL (xs : List (Finset Arabic)) (t : ℚ) : Subregular.TSLGrammar 2 Arabic :=
+  Subregular.TSLGrammar.ofForbiddenPairs
     (λ x y => similarity xs x y ≥ t) Arabic.isLabial
 
 /-- **Every threshold-induced FPB grammar is TSL_2.** Explicit
@@ -425,15 +425,15 @@ the `thresholdedTSL` constructor — the substrate-classification "any
 two-valued threshold model is TSL_2" is now a typed theorem rather than
 docstring prose. -/
 theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
-    Core.Computability.Subregular.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
+    Subregular.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
   ⟨thresholdedTSL xs t, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
-`Core.Computability.Subregular.Multitier`): every threshold-induced FPB
+`Subregular.Multitier`): every threshold-induced FPB
 grammar's stringset is in the multitier closure of strictly local
 languages, hence consumed by the [lambert-2026] BTC framework. -/
 theorem thresholdedTSL_lang_isBTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
-    Core.Computability.Subregular.IsBTSL 2 (thresholdedTSL xs t).lang :=
+    Subregular.IsBTSL 2 (thresholdedTSL xs t).lang :=
   (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
 
 /-- **The TSL_2 grammar makes a binary step-function decision on labial
@@ -447,7 +447,7 @@ theorem thresholdedTSL_pair_iff (xs : List (Finset Arabic)) (t : ℚ)
     (x y : Arabic) (hx : Arabic.isLabial x) (hy : Arabic.isLabial y) :
     [x, y] ∈ (thresholdedTSL xs t).lang ↔ similarity xs x y < t := by
   unfold thresholdedTSL
-  rw [Core.Computability.Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  rw [Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
   have hfx : decide (Arabic.isLabial x) = true := decide_eq_true hx
   have hfy : decide (Arabic.isLabial y) = true := decide_eq_true hy
   simp only [List.filter_cons, hfx, hfy, ↓reduceIte, List.filter_nil,

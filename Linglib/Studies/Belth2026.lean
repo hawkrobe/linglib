@@ -304,16 +304,16 @@ theorem latinDissimRule_tolerated_on_examples :
     grounds Belth's tier in the TSL_k subregular hierarchy. -/
 theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     LatSeg.consTier.apply xs =
-      Core.Computability.Subregular.tierProject LatSeg.IsCons xs := by
+      Subregular.tierProject LatSeg.IsCons xs := by
   show Tier.apply (Tier.byClass LatSeg.IsCons) xs = _
-  rw [Tier.apply_byClass, Core.Computability.Subregular.tierProject_eq_filter]
+  rw [Tier.apply_byClass, Subregular.tierProject_eq_filter]
 
 /-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
     tier-based subregular language: project to the `[+cons]` tier, then
     forbid adjacent identical symbols. Lambert's [lambert-2022]
     TSL_k schema, instantiated with `IsCons` as the tier predicate and
     the OCP forbidden 2-factor `[some x, some x]`. -/
-def latinTSLGrammar : Core.Computability.Subregular.TSLGrammar 2 LatSeg :=
+def latinTSLGrammar : Subregular.TSLGrammar 2 LatSeg :=
   Phonology.Subregular.TSLGrammar.ocp LatSeg.IsCons
 
 -- ============================================================================
@@ -570,15 +570,15 @@ suffices to demonstrate the schema, the empirical-limit pattern
 /-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
 at window-size 2. -/
 theorem latinTSLGrammar_lang_isTSL2 :
-    Core.Computability.Subregular.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
+    Subregular.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
   ⟨latinTSLGrammar, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
-`Core.Computability.Subregular.Multitier`): Latin liquid dissimilation
+`Subregular.Multitier`): Latin liquid dissimilation
 is in the multitier closure of strictly local languages, hence consumed
 by the [lambert-2026] BTC framework. -/
 theorem latinTSLGrammar_lang_isBTSL2 :
-    Core.Computability.Subregular.IsBTSL 2 latinTSLGrammar.lang :=
+    Subregular.IsBTSL 2 latinTSLGrammar.lang :=
   latinTSLGrammar_lang_isTSL2.toIsBTSL
 
 end Belth2026

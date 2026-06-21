@@ -47,7 +47,7 @@ formalisations but the constraint and a retraction onto it, both characterising
 namespace Phonology.Subregular
 
 open OptimalityTheory
-open Core Core.Computability.Subregular
+open _root_.Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0.

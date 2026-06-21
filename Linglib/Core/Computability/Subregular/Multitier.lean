@@ -60,7 +60,7 @@ monoid). The decidability story lives in a separate `DFA.isBTC` style
 classifier, deferred to PR-3+.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α : Type*}
 
@@ -327,4 +327,4 @@ theorem IsBTC.indist_isGenDef_of_tierAffixes {k : ℕ} {w₁ w₂ : List α}
   obtain ⟨h_pre, h_suf⟩ := h T
   exact hL' (w₁.filter T) (w₂.filter T) h_pre h_suf
 
-end Core.Computability.Subregular
+end Subregular
