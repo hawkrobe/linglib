@@ -191,8 +191,9 @@ instance : CommitmentGrade Prop where
   complement := Not
 
 -- No `Bool` instance by default — consumers needing decidable grades
--- declare locally. Anderson 2021's distributional CommonGround provides
--- `HasSupport ℝ` at its own site.
+-- declare locally. Anderson 2021's distributional CommonGround is a genuine
+-- distribution (`PMF W`, in `Discourse/DistributionalCG.lean`), not a graded
+-- commitment, so it does not instantiate this hierarchy.
 
 /-! ### Speaker-Indexed Commitments -/
 

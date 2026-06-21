@@ -53,10 +53,12 @@ Out of scope (would need substrate extensions):
 - **Time-indexed commitments** (Lauer 2013 PB/PEP carry a `t` index): the
   substrate has no time index; `rejectFirst` is the closest proxy for
   rescission. True time-indexed commitment dynamics need a separate layer.
-- **Anderson 2021 distributional CommonGround**: requires `weight_nonneg` on the
-  per-world weight. Hosting Anderson via `CommitmentSpace W ℝ` would need
-  an `[OrderedAddCommMonoid G]` constraint or an Anderson wrapper —
-  current substrate does not enforce non-negativity.
+- **Anderson 2021 distributional CommonGround**: a probability distribution
+  over worlds, hosted as `PMF W` in `Discourse/DistributionalCG.lean`. It is
+  *not* routed through the commitment-space substrate: a `CommitmentSpace W ℝ`
+  would carry unconstrained per-world reals (no sum-to-one, no normalisation),
+  losing exactly the structure Anderson's entropy/KL criteria depend on. The
+  two models of the conversational scoreboard are kept distinct.
 
 ## Citation discipline
 
@@ -759,8 +761,7 @@ open CommonGround in
 /-- A polymorphic commitment space projects to a context set via its root,
     using the `[HasSupport G]` typeclass's `support` projection. Recovers
     the binary case at `G = Prop` definitionally (via `support := id` in
-    the `Prop` instance). Anderson 2021's distributional CommonGround (`G = ℝ`)
-    becomes a consumer via `HasSupport ℝ` provided in `Anderson2021.lean`. -/
+    the `Prop` instance). -/
 instance {W G : Type*} [HasSupport G] :
     HasContextSet (CommitmentSpace W G) W where
   toContextSet := CommitmentSpace.toContextSet
