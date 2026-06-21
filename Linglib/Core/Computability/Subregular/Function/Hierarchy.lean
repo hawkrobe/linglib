@@ -207,7 +207,7 @@ def ISLRule.toLetterSFST {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k �
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     LetterSFST {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩,
+  step w x := (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
 theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
@@ -237,7 +237,7 @@ def OSLRule.toLetterSFST {α β : Type*} {k : ℕ} (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     LetterSFST {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x), lastN_length_le _ _⟩,
+  step w x := (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
 theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
