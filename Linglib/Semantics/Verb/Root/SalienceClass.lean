@@ -1,5 +1,5 @@
-import Linglib.Semantics.Lexical.Roots.Typology
-import Linglib.Semantics.Lexical.Roots.Arity
+import Linglib.Semantics.Verb.Root.Typology
+import Linglib.Semantics.Verb.Root.Arity
 
 /-!
 # Lexical Salience Classes

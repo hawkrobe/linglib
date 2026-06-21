@@ -1,5 +1,5 @@
 import Linglib.Morphology.Derivation
-import Linglib.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Verb.Root.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
 /-!

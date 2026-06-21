@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.OutcomeCardinality
+import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.ArgumentStructure.Defs
 

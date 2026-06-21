@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Denotation
 import Linglib.Semantics.Lexical.EventStructure
 

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.Operators
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Verb.Root.SalienceClass
 
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison

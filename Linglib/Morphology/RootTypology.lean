@@ -1,10 +1,10 @@
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Lexical.LevinTheory
-import Linglib.Semantics.Lexical.Roots.Template
-import Linglib.Semantics.Lexical.Roots.Arity
-import Linglib.Semantics.Lexical.Roots.Profile
-import Linglib.Semantics.Lexical.Roots.Outcomes
+import Linglib.Semantics.Verb.Root.Template
+import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Semantics.Verb.Root.Profile
+import Linglib.Semantics.Verb.Root.Outcomes
 
 open Semantics.Lexical
 open Verb

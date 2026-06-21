@@ -1,6 +1,6 @@
-import Linglib.Semantics.Lexical.Roots.Signature
-import Linglib.Semantics.Lexical.Roots.OutcomeCardinality
-import Linglib.Semantics.Lexical.Roots.Profile
+import Linglib.Semantics.Verb.Root.Signature
+import Linglib.Semantics.Verb.Root.OutcomeCardinality
+import Linglib.Semantics.Verb.Root.Profile
 
 /-!
 # Atomic Lexical Entailments and Roots

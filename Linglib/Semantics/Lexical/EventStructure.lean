@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Verb.Root.Closure
 
 /-!
 # Event Structure Templates

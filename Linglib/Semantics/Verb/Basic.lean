@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Defs
-import Linglib.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Verb.Root.Closure
 
 /-! # Verb entry — derived API
 
