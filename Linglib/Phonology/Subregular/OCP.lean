@@ -55,9 +55,9 @@ variable {α : Type}
 
 /-- Forbidden 2-factors for the OCP: pairs `[some x, some x]` of two identical
 non-boundary symbols. The identity-relation specialization of
-`forbiddenPairsSet`. -/
+`forbiddenPairs`. -/
 def ocpForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
-  forbiddenPairsSet (α := α) (· = ·)
+  forbiddenPairs (α := α) (· = ·)
 
 /-- The TSL_2 grammar capturing "no two adjacent identical symbols on the
 tier defined by `p`". The identity-relation specialization of
