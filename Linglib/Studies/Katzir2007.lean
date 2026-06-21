@@ -147,19 +147,18 @@ def φ'' : Tree Cat String :=
       (.node .S [.trace 1 .NP, .node .VP [.terminal .V "sleeps"]])]
 
 /-- φ contains no ConjP anywhere in its structure. -/
-theorem no_conjp : φ.containsCat Cat.ConjP = false := by decide
+theorem no_conjp : ¬ φ.ContainsCat Cat.ConjP := by decide
 
 /-- φ contains no NegP anywhere in its structure. -/
-theorem no_negp : φ.containsCat Cat.NegP = false := by decide
+theorem no_negp : ¬ φ.ContainsCat Cat.NegP := by decide
 
 /-- No item in `L(φ) = katzirLex ∪ subtrees(φ)` contains ConjP: the
 lexicon is flat Det/N/V terminals and φ's subtrees are ConjP-free. -/
 theorem source_lacks_conjp :
-    (substitutionSource katzirLex φ).all
-      (fun t => !t.containsCat Cat.ConjP) = true := by decide
+    ∀ t ∈ substitutionSource katzirLex φ, ¬ t.ContainsCat Cat.ConjP := by decide
 
 /-- φ'' does contain ConjP. -/
-theorem φ''_has_conjp : φ''.containsCat Cat.ConjP = true := by decide
+theorem φ''_has_conjp : φ''.ContainsCat Cat.ConjP := by decide
 
 /-- **The symmetry problem, solved through the substrate.** φ'' is NOT a
 structural alternative to φ: by `category_preservation`, every tree in
@@ -171,13 +170,8 @@ the argument from `containsCat`. -/
 theorem symmetric_not_structural :
     φ'' ∉ structuralAlternatives katzirLex φ := by
   intro h
-  have h_pres := category_preservation
+  exact category_preservation
     (substitutionSource katzirLex φ) Cat.ConjP φ φ''
-    (by intro s hs
-        have := List.all_eq_true.mp source_lacks_conjp s hs
-        simp at this; exact this)
-    no_conjp
-    h
-  exact absurd φ''_has_conjp (by rw [h_pres]; decide)
+    source_lacks_conjp no_conjp h φ''_has_conjp
 
 end Katzir2007
