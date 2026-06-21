@@ -99,6 +99,18 @@ theorem thresholdGtOn_iff_prevalenceOn {α : Type*} (s : Finset α) (R S : α �
       mul_comm (countOn s (fun x => R x ∧ S x) : ℚ) (denom : ℚ),
       ← Nat.cast_mul, ← Nat.cast_mul, Nat.cast_lt]
 
+/-- "More than half" is exactly "most": `thresholdGtOn s R S 1 2` (more than `1/2`
+    of the `R`'s in `s` are `S`) coincides with `mostOn s R S` (strictly more
+    `R∧S` than `R∧¬S`). Both are division-free `Nat` comparisons; the bridge is
+    `countOn_decompose`. The threshold `1/2` is special because it is the cutpoint
+    *at* the `1 : 1` cell ratio. -/
+theorem thresholdGtOn_one_two_iff_mostOn {α : Type*} (s : Finset α) (R S : α → Prop)
+    [DecidablePred R] [DecidablePred S] :
+    thresholdGtOn s R S 1 2 ↔ mostOn s R S := by
+  unfold thresholdGtOn mostOn
+  rw [countOn_decompose s R S]
+  omega
+
 /-! The relativized `∀`/`∃` companions of `Basic`'s whole-carrier `every_sem`/
 `some_sem`/`no_sem`: bounded over an explicit `Finset`, hence decidable with no
 `Fintype` (`Finset.decidableDforallFinset`). They are *not* duplicates of the
@@ -927,8 +939,7 @@ theorem not_qsymmetric_most_sem : ¬ QSymmetric (most_sem : GQ (Fin 3)) := by
 `most`, matching the whole-carrier `most_sem` (modulo the
 `DecidablePred`-instance bridge `Finset.filter_congr_decidable`). The
 `Proportional` theorem proved for `most_sem` therefore transfers to it by
-inheritance, not re-proof — exhibiting "GEN-as-thresholded-most" as a
-specialization of the canonical proportional quantifier rather than a clone. -/
+inheritance, not re-proof. -/
 
 omit [DecidableEq α] in
 @[simp] theorem mostOn_univ (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
@@ -937,8 +948,9 @@ omit [DecidableEq α] in
   congr! 2
 
 omit [DecidableEq α] in
-/-- "GEN-as-most is proportional" — inherited from `most_proportional`, not
-    re-proved: at `s = Finset.univ` the relativized `mostOn` IS `most_sem`. -/
+/-- `mostOn` at the whole carrier is proportional — inherited from
+    `most_proportional`, not re-proved: at `s = Finset.univ` the relativized
+    `mostOn` IS `most_sem`. -/
 theorem mostOn_univ_proportional :
     Proportional (fun R S => mostOn (Finset.univ : Finset α) R S) := by
   have h : (fun (R S : α → Prop) => mostOn (Finset.univ : Finset α) R S) = most_sem := by
