@@ -29,15 +29,15 @@ claims:
   more complex than the default-to-opposite unbounded stress patterns,
   refining the melody-local analysis of [jardine-2020].
 
-The propositional logic is `BoolClosure (IsTierBased 𝒞)` for `𝒞` in
-{`IsDefinite k`, `IsGeneralizedDefinite k`, `Language.IsStrictlyLocal · k`,
+The propositional logic is `IsBTC 𝒞` — the Boolean closure of `IsTierBased 𝒞` —
+for `𝒞` in {`IsDefinite k`, `IsGeneralizedDefinite k`, `Language.IsStrictlyLocal · k`,
 `Language.IsStrictlyPiecewise · k`, `IsFiniteOrCofinite`}; the algebraic side is
 the syntactic-semigroup characterization of each class via Eilenberg
 [eilenberg-1976] variety equations (e.g., `D = ⟦sx̄ = x̄⟧`,
 `ℒℐ = ⟦x^ω y x^ω z x^ω = x^ω y x^ω⟧` per [straubing-1985] and
-[almeida-1995]). The Lean substrate (`BoolClosure`, `IsBTC`,
-`IsTierBased`) lives in `Subregular/Multitier.lean`; the algebraic
-characterization is queued for a future `SyntacticMonoid` PR.
+[almeida-1995]). The Lean substrate (`IsBTC`, `IsTierBased`) lives in
+`Subregular/Multitier.lean`; the algebraic characterization is queued for a
+future `SyntacticMonoid` PR.
 
 ## Disclaimer 1: McCollum (2019) Uyghur gradience (linglib audit)
 
@@ -283,7 +283,7 @@ refining [mayer-major-2018]). Constructive witness: the
 formalised `uyghurBacknessLang` is the intersection of four
 implications, each `Aᶜ ⊔ B` where `A` and `B` are
 `IsTierBased (IsDefinite 1)` (each is a tier-projected single-suffix
-test). The BTD membership follows from `BoolClosure.{base, compl,
+test). The BTD membership follows from `IsBTC.{base, compl,
 union, inter}` applied to the four atomic tier-projected definite
 languages. -/
 theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
@@ -552,7 +552,7 @@ def karangaShonaVerbStemLang : Language KShoTone :=
 refining [jardine-2020]). Constructive witness for the disjunction
 `φ_F ∨ L_m ∨ H_m` at uniform `k = 5`. Each disjunct lifts to
 `IsBTC (IsGeneralizedDefinite 5)` via `IsTierBased.of_class` +
-`BoolClosure.base`; the disjunction is closed by `BoolClosure.union`. -/
+`IsBTC.base`; the disjunction is closed by `IsBTC.union`. -/
 theorem karanga_shona_verb_stem_isBTLI :
     ∃ k, IsBTLI k karangaShonaVerbStemLang := by
   refine ⟨5, ?_⟩
