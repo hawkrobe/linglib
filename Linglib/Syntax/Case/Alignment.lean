@@ -1,5 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Alignment Case-Assignment Functions
@@ -152,62 +158,130 @@ def assignCase : ArgumentRole → Case
 end invertedErgative
 
 -- ============================================================================
--- § Universal Alignment Properties
+-- § Alignment as a partition of the core roles — Bell(3) = 5
 -- ============================================================================
 
-theorem ergative_distinguishes_A :
-    ergative.assignCase .A ≠ ergative.assignCase .S := by decide
+/-! An *alignment* is which of the core monotransitive roles {S, A, P} an
+analysis groups together — the partition of {S, A, P} that
+`assign : ArgumentRole → Case` induces (the kernel of `assign`, *restricted to
+the three core roles*: the full `Setoid.ker` over `ArgumentRole` would also
+constrain the ditransitive scaffolding roles R, T, which alignment does not).
+This is a point in the partition lattice of a three-element set, orthogonal to
+the Case *labels* used — `nominativeAccusative`, `extendedErgative`, and
+`invertedErgative` induce the *same* partition with different cases. A
+three-element set has exactly five partitions (`Bell 3 = 5`), hence five
+monotransitive alignments; `coreSig` is the decidable code for the partition.
 
-theorem ergative_groups_S_with_P :
-    ergative.assignCase .S = ergative.assignCase .P := rfl
+This partition object **replaces** the scattered per-alignment
+`_groups_S_with_X` / `_distinguishes_P` theorems this file used to carry
+(restatements of it, now retired); only `tripartite_distinguishes_all` is kept,
+as it is re-exported by downstream consumers. -/
 
-theorem accusative_distinguishes_P :
-    nominativeAccusative.assignCase .P ≠ nominativeAccusative.assignCase .S := by decide
-
-theorem accusative_groups_S_with_A :
-    nominativeAccusative.assignCase .S = nominativeAccusative.assignCase .A := rfl
-
-theorem extendedErgative_groups_S_with_A :
-    extendedErgative.assignCase .S = extendedErgative.assignCase .A := rfl
-
-theorem extendedErgative_distinguishes_P :
-    extendedErgative.assignCase .P ≠ extendedErgative.assignCase .A := by decide
-
-theorem invertedErgative_groups_S_with_A :
-    invertedErgative.assignCase .S = invertedErgative.assignCase .A := rfl
-
-theorem invertedErgative_distinguishes_P :
-    invertedErgative.assignCase .P ≠ invertedErgative.assignCase .A := by decide
-
-/-- Inverted ergative is the mirror image of extended ergative on the A/P
-    axis: where extended-ergative gives A → GEN and P → ABS, inverted
-    gives A → ABS and P → GEN. The S/A grouping is the same in both. -/
-theorem invertedErgative_swaps_extendedErgative_on_AP :
-    invertedErgative.assignCase .A = extendedErgative.assignCase .P ∧
-    invertedErgative.assignCase .P = extendedErgative.assignCase .A := ⟨rfl, rfl⟩
-
-/-- Tripartite distinguishes all three SAP arguments — the
-    distinguishing property of tripartite alignment vs the others
-    (which all collapse at least one pair). -/
+/-- Tripartite distinguishes all three SAP arguments — the defining property of
+    tripartite alignment. Re-exported as the case-distinctness fact by
+    `Scott2023.voice_based_tripartite` and `Mam.Agreement.tripartite_alignment`;
+    the general partition picture is `assignCase_partitions` below. -/
 theorem tripartite_distinguishes_all :
     tripartite.assignCase .A ≠ tripartite.assignCase .P ∧
     tripartite.assignCase .A ≠ tripartite.assignCase .S ∧
     tripartite.assignCase .P ≠ tripartite.assignCase .S := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The five alignments are pairwise distinct on the agent: each picks
-    a different case for A (erg, nom, gen, abs, erg). Tripartite shares
-    A → ERG with canonical ergative — they differ on P (acc vs abs). -/
-theorem alignments_distinct_on_A :
-    ergative.assignCase .A = .erg ∧
-    nominativeAccusative.assignCase .A = .nom ∧
-    extendedErgative.assignCase .A = .gen ∧
-    invertedErgative.assignCase .A = .abs ∧
-    tripartite.assignCase .A = .erg := ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- The core-role signature `(S≈A, S≈P, A≈P)` of an alignment — a faithful code
+    for its partition of {S, A, P}: transitivity makes the three pairwise
+    relations determine, and be determined by, the partition. -/
+def coreSig (assign : ArgumentRole → Case) : Bool × Bool × Bool :=
+  (decide (assign .S = assign .A),
+   decide (assign .S = assign .P),
+   decide (assign .A = assign .P))
 
-/-- Tripartite is distinguished from canonical ergative by P: tripartite
-    gives P → ACC, canonical gives P → ABS (grouping with S). -/
-theorem tripartite_differs_from_ergative_on_P :
-    tripartite.assignCase .P ≠ ergative.assignCase .P := by decide
+/-- A signature is **consistent** (realizable as a partition) iff, by
+    transitivity, any two of the three role-equalities force the third — ruling
+    out the three "exactly two true" triples. -/
+def ConsistentSig (s : Bool × Bool × Bool) : Bool :=
+  (!(s.1 && s.2.1) || s.2.2) && (!(s.1 && s.2.2) || s.2.1) && (!(s.2.1 && s.2.2) || s.1)
+
+/-- Every alignment's signature is consistent: it really is a partition. -/
+theorem coreSig_consistent (assign : ArgumentRole → Case) :
+    ConsistentSig (coreSig assign) = true := by
+  by_cases h1 : assign .S = assign .A <;> by_cases h2 : assign .S = assign .P <;>
+    by_cases h3 : assign .A = assign .P <;> simp_all [coreSig, ConsistentSig]
+
+/-- **Bell(3) = 5.** Exactly five signatures are consistent — the five partitions
+    of a three-element set: neutral `(T,T,T)`, accusative `(T,F,F)`, ergative
+    `(F,T,F)`, horizontal `(F,F,T)`, tripartite `(F,F,F)`. The three "exactly two
+    equalities" triples are forbidden by transitivity. -/
+theorem consistent_sigs :
+    Finset.univ.filter (fun s : Bool × Bool × Bool => ConsistentSig s = true) =
+      {(true, true, true), (true, false, false), (false, true, false),
+       (false, false, true), (false, false, false)} := by decide
+
+theorem bell_three_eq_five :
+    (Finset.univ.filter (fun s : Bool × Bool × Bool => ConsistentSig s = true)).card = 5 := by
+  rw [consistent_sigs]; decide
+
+/-- The five `assignCase` functions realize only **three** of the five
+    partitions: `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
+    all induce the accusative partition `{S,A}|{P}` — they differ only in Case
+    *labels*, not alignment (the kernel generalizing the one instance noticed in
+    `Dixon1994.extendedErgative_groups_S_with_A_like_accusative`). -/
+theorem assignCase_partitions :
+    coreSig nominativeAccusative.assignCase = (true, false, false) ∧
+    coreSig extendedErgative.assignCase    = (true, false, false) ∧
+    coreSig invertedErgative.assignCase    = (true, false, false) ∧
+    coreSig ergative.assignCase            = (false, true, false) ∧
+    coreSig tripartite.assignCase          = (false, false, false) := by decide
+
+/-- The horizontal partition `{A,P}|{S}` (A and P align, S apart — attested,
+    Pamir-type) is a genuine partition of {S, A, P} realized by **none** of the
+    `assignCase` functions here. (It is also absent from `Typology.AlignmentType`.) -/
+theorem horizontal_unrealized :
+    ConsistentSig (false, false, true) = true ∧
+    coreSig nominativeAccusative.assignCase ≠ (false, false, true) ∧
+    coreSig ergative.assignCase            ≠ (false, false, true) ∧
+    coreSig tripartite.assignCase          ≠ (false, false, true) ∧
+    coreSig extendedErgative.assignCase    ≠ (false, false, true) ∧
+    coreSig invertedErgative.assignCase    ≠ (false, false, true) := by decide
+
+-- ============================================================================
+-- § Ditransitive alignment ([haspelmath-2005])
+-- ============================================================================
+
+/-- Ditransitive alignment: how R (recipient) and T (theme) are coded relative
+    to monotransitive P — the ditransitive analogue of the monotransitive
+    alignment above, hence co-located with it (used by `Dixon1994` and
+    `Haspelmath2021`). -/
+inductive DitransitiveAlignment where
+  /-- R = T = P: no distinction among non-agent arguments. -/
+  | neutral
+  /-- T = P ≠ R: R distinctly marked, T patterns with P (indirective;
+      analogous to accusative — English "give the book TO Mary"). -/
+  | indirective
+  /-- R = P ≠ T: T distinctly marked, R patterns with P (secundative;
+      analogous to ergative — many Bantu applicatives). -/
+  | secundative
+  /-- R ≠ T ≠ P: all three roles distinctly marked. -/
+  | tripartite
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether this ditransitive alignment marks R distinctly from P. -/
+def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
+  | .indirective => true
+  | .tripartite  => true
+  | _            => false
+
+/-- Whether this ditransitive alignment marks T distinctly from P. -/
+def DitransitiveAlignment.marksT : DitransitiveAlignment → Bool
+  | .secundative => true
+  | .tripartite  => true
+  | _            => false
+
+/-- A language's ditransitive alignment profile. -/
+structure DitransitiveProfile where
+  name : String
+  iso639 : String
+  alignment : DitransitiveAlignment
+  notes : String := ""
+  deriving Repr, DecidableEq
 
 end Alignment

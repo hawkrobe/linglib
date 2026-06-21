@@ -3,7 +3,7 @@ import Linglib.Features.Givenness
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Marantz1991
-import Linglib.Typology.Alignment
+import Linglib.Syntax.Case.Alignment
 
 /-!
 # [haspelmath-2021]: Role-reference associations and the explanation of argument coding splits
@@ -85,7 +85,7 @@ open Core.Optimization.Evaluation
 open Constraint Pragmatics.Bidirectional
 open Aissen2003
 open DeHoopMalchukov2008
-open Typology.Alignment
+open Alignment
 
 -- ============================================================================
 -- § 0: Form-Frequency Apparatus (paper-specific substrate, co-located)
