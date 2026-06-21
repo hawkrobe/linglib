@@ -246,17 +246,16 @@ def PathDir.rank : PathDir → Fin 4
     heads its structure contains ([pantcheva-2011]'s nested
     [Route [Source [Goal [Place]]]]). **Derived** as the down-set `Iic` of
     `PathDir.rank`, not stipulated alongside it; `lt_iff_shells_ssubset` is
-    then the structural shadow fact (`Core.Order.Iic_ssubset_Iic`). -/
+    then the structural shadow fact (mathlib's `Finset.Iic_ssubset_Iic`). -/
 def PathDir.shells (d : PathDir) : Finset (Fin 4) := Finset.Iic d.rank
 
 /-- **The order is the shadow of the decomposition**: directional
     containment (strict rank) coincides with strict inclusion of shell
-    stacks — the directional analogue of `cahaLT_iff_kshells_ssubset`,
-    here just `Core.Order.Iic_ssubset_Iic` since the shells *are* `Iic` of
-    the rank. -/
+    stacks — the directional analogue of `cahaLT_iff_kshells_ssubset`, here
+    just `Finset.Iic_ssubset_Iic` since the shells *are* `Iic` of the rank. -/
 theorem PathDir.lt_iff_shells_ssubset (d₁ d₂ : PathDir) :
     d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
-  unfold PathDir.shells; exact Core.Order.Iic_ssubset_Iic.symm
+  simp [PathDir.shells]
 
 /-! ### Directional denotation ([pantcheva-2011] Ch. 5)
 
