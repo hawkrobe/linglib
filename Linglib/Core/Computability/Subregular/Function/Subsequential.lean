@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
+import Linglib.Core.Computability.Subregular.Function.Direction
 
 /-!
 # Subsequential Functions and Finite-State Transducers
@@ -21,7 +22,6 @@ reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq
 
 ## Main definitions
 
-* `Direction` — `.left` or `.right`; orientation of the FST scan.
 * `SFST σ α β` — a deterministic finite-state transducer with state
   space `σ`, input alphabet `α`, output alphabet `β`, total transition
   emitting an output block, plus a state-indexed `finalOutput` emitted
@@ -40,17 +40,6 @@ reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq
 -/
 
 namespace Subregular.Function
-
-/-! ## Direction of FST scan -/
-
-/-- The orientation of an FST scan: `left` consumes input head-first, `right`
-tail-first (via `List.reverse` conjugation). The two scan modes give rise to
-distinct function classes — isomorphic under reversal but not equal as
-subclasses of the regular functions over un-reversed strings. -/
-inductive Direction
-  | left
-  | right
-  deriving DecidableEq, Repr
 
 /-- A **subsequential finite-state transducer** with state space `σ`,
 input alphabet `α`, output alphabet `β`. The scan is total deterministic

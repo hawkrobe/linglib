@@ -323,6 +323,7 @@ import Linglib.Core.Computability.Subregular.Language.Multitier
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential

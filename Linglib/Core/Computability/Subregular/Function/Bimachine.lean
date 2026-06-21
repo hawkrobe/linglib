@@ -95,24 +95,6 @@ theorem run_getElem? (B : Bimachine L R α β) (x : List α) (i : ℕ) :
 
 end Bimachine
 
-/-! ### Locality of the context states -/
-
-/-- Prefixes agreeing below `i` have equal `i`-truncations. -/
-theorem take_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, k < i → u[k]? = v[k]?) :
-    u.take i = v.take i := by
-  apply List.ext_getElem?
-  intro k
-  rcases lt_or_ge k i with hk | hk
-  · simpa only [List.getElem?_take_of_lt hk] using h k hk
-  · simp [List.getElem?_take_eq_none hk]
-
-/-- Lists agreeing from `i` upward have equal `i`-suffixes. -/
-theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]? = v[k]?) :
-    u.drop i = v.drop i := by
-  apply List.ext_getElem?
-  intro k
-  simpa only [List.getElem?_drop] using h (i + k) (Nat.le_add_right i k)
-
 /-! ### Weak determinism -/
 
 /-- Computability by a finite bimachine (the length-preserving regular functions). -/
