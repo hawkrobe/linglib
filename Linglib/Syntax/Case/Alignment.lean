@@ -244,4 +244,45 @@ theorem horizontal_unrealized :
     coreSig extendedErgative.assignCase    ≠ (false, false, true) ∧
     coreSig invertedErgative.assignCase    ≠ (false, false, true) := by decide
 
+-- ============================================================================
+-- § Ditransitive alignment ([haspelmath-2005])
+-- ============================================================================
+
+/-- Ditransitive alignment: how R (recipient) and T (theme) are coded relative
+    to monotransitive P — the ditransitive analogue of the monotransitive
+    alignment above, hence co-located with it (used by `Dixon1994` and
+    `Haspelmath2021`). -/
+inductive DitransitiveAlignment where
+  /-- R = T = P: no distinction among non-agent arguments. -/
+  | neutral
+  /-- T = P ≠ R: R distinctly marked, T patterns with P (indirective;
+      analogous to accusative — English "give the book TO Mary"). -/
+  | indirective
+  /-- R = P ≠ T: T distinctly marked, R patterns with P (secundative;
+      analogous to ergative — many Bantu applicatives). -/
+  | secundative
+  /-- R ≠ T ≠ P: all three roles distinctly marked. -/
+  | tripartite
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether this ditransitive alignment marks R distinctly from P. -/
+def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
+  | .indirective => true
+  | .tripartite  => true
+  | _            => false
+
+/-- Whether this ditransitive alignment marks T distinctly from P. -/
+def DitransitiveAlignment.marksT : DitransitiveAlignment → Bool
+  | .secundative => true
+  | .tripartite  => true
+  | _            => false
+
+/-- A language's ditransitive alignment profile. -/
+structure DitransitiveProfile where
+  name : String
+  iso639 : String
+  alignment : DitransitiveAlignment
+  notes : String := ""
+  deriving Repr, DecidableEq
+
 end Alignment

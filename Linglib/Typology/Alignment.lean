@@ -119,10 +119,6 @@ structure AlignmentProfile where
   notes : String := ""
   deriving Repr, DecidableEq
 
-/-- Whether NP and pronoun alignment match (no split ergativity in case). -/
-def AlignmentProfile.caseUniform (p : AlignmentProfile) : Bool :=
-  p.npAlignment == p.pronAlignment
-
 /-- Whether the language shows the classic NP-ergative / pronoun-accusative
     split ([dixon-1994]'s generalization). -/
 def AlignmentProfile.dixonSplit (p : AlignmentProfile) : Bool :=
@@ -132,94 +128,8 @@ def AlignmentProfile.dixonSplit (p : AlignmentProfile) : Bool :=
 def AlignmentProfile.fullyUniform (p : AlignmentProfile) : Bool :=
   p.npAlignment == p.pronAlignment && p.pronAlignment == p.verbAlignment
 
-/-- Whether the language has any ergative alignment in any domain. -/
-def AlignmentProfile.hasAnyErgative (p : AlignmentProfile) : Bool :=
-  p.npAlignment == .ergative || p.pronAlignment == .ergative ||
-  p.verbAlignment == .ergative
-
-/-- Whether the language has accusative alignment in both NP and pronoun
-    case-marking domains. -/
-def AlignmentProfile.accusativeCase (p : AlignmentProfile) : Bool :=
-  p.npAlignment == .accusative && p.pronAlignment == .accusative
-
 -- ============================================================================
--- §3. Ditransitive alignment (Haspelmath 2005)
--- ============================================================================
-
-/-- Ditransitive alignment classifies how R (recipient) and T (theme) are
-    coded relative to monotransitive P ([haspelmath-2005]). -/
-inductive DitransitiveAlignment where
-  /-- R = T = P: no distinction among non-agent arguments. -/
-  | neutral
-  /-- T = P ≠ R: R distinctly marked, T patterns with P. Indirective —
-      analogous to accusative for monotransitives.
-      E.g. English "give the book TO Mary". -/
-  | indirective
-  /-- R = P ≠ T: T distinctly marked, R patterns with P. Secundative —
-      analogous to ergative. E.g. many Bantu applicatives. -/
-  | secundative
-  /-- R ≠ T ≠ P: all three roles distinctly marked. -/
-  | tripartite
-  deriving DecidableEq, BEq, Repr
-
-/-- Whether this ditransitive alignment marks R distinctly from P. -/
-def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
-  | .indirective => true
-  | .tripartite  => true
-  | _            => false
-
-/-- Whether this ditransitive alignment marks T distinctly from P. -/
-def DitransitiveAlignment.marksT : DitransitiveAlignment → Bool
-  | .secundative => true
-  | .tripartite  => true
-  | _            => false
-
-/-- A language's ditransitive alignment profile. -/
-structure DitransitiveProfile where
-  name : String
-  iso639 : String
-  alignment : DitransitiveAlignment
-  notes : String := ""
-  deriving Repr, DecidableEq
-
--- ============================================================================
--- §4. WALS converters
--- ============================================================================
-
-/-- WALS Ch 98A → `AlignmentType`. WALS distinguishes standard and marked-
-    nominative accusative; we merge both. -/
-def fromWALS98A : Data.WALS.F98A.NPCaseAlignment → AlignmentType
-  | .neutral                => .neutral
-  | .nominativeAccusative   => .accusative
-  | .nominativeAccusative_3 => .accusative
-  | .ergativeAbsolutive     => .ergative
-  | .tripartite             => .tripartite
-  | .activeInactive         => .active
-
-/-- WALS Ch 99A → `AlignmentType`. WALS has a `.none` value (no pronouns or
-    no case on pronouns); we map it to `.neutral`. -/
-def fromWALS99A : Data.WALS.F99A.PronounCaseAlignment → AlignmentType
-  | .neutral                => .neutral
-  | .nominativeAccusative   => .accusative
-  | .nominativeAccusative_3 => .accusative
-  | .ergativeAbsolutive     => .ergative
-  | .tripartite             => .tripartite
-  | .activeInactive         => .active
-  | .none                   => .neutral
-
-/-- WALS Ch 100A → `Option AlignmentType`. The `.hierarchical` and `.split`
-    values don't map cleanly to our 5-way enum and return `none`. -/
-def fromWALS100A :
-    Data.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
-  | .neutral      => some .neutral
-  | .accusative   => some .accusative
-  | .ergative     => some .ergative
-  | .active       => some .active
-  | .hierarchical => none
-  | .split        => none
-
--- ============================================================================
--- Theory-neutral WALS distribution facts
+-- §3. Theory-neutral WALS distribution facts
 -- ============================================================================
 
 /-- Ch 98: neutral NP alignment is the modal pattern (no case marking). -/

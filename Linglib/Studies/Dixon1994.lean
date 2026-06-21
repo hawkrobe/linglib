@@ -45,6 +45,7 @@ set_option autoImplicit false
 namespace Dixon1994
 
 open Typology.Alignment
+open Alignment (DitransitiveAlignment DitransitiveProfile)
 
 -- ============================================================================
 -- §1. The 22-language exemplar sample
