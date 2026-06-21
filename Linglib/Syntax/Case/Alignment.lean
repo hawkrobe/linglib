@@ -154,65 +154,6 @@ def assignCase : ArgumentRole → Case
 end invertedErgative
 
 -- ============================================================================
--- § Universal Alignment Properties
--- ============================================================================
-
-theorem ergative_distinguishes_A :
-    ergative.assignCase .A ≠ ergative.assignCase .S := by decide
-
-theorem ergative_groups_S_with_P :
-    ergative.assignCase .S = ergative.assignCase .P := rfl
-
-theorem accusative_distinguishes_P :
-    nominativeAccusative.assignCase .P ≠ nominativeAccusative.assignCase .S := by decide
-
-theorem accusative_groups_S_with_A :
-    nominativeAccusative.assignCase .S = nominativeAccusative.assignCase .A := rfl
-
-theorem extendedErgative_groups_S_with_A :
-    extendedErgative.assignCase .S = extendedErgative.assignCase .A := rfl
-
-theorem extendedErgative_distinguishes_P :
-    extendedErgative.assignCase .P ≠ extendedErgative.assignCase .A := by decide
-
-theorem invertedErgative_groups_S_with_A :
-    invertedErgative.assignCase .S = invertedErgative.assignCase .A := rfl
-
-theorem invertedErgative_distinguishes_P :
-    invertedErgative.assignCase .P ≠ invertedErgative.assignCase .A := by decide
-
-/-- Inverted ergative is the mirror image of extended ergative on the A/P
-    axis: where extended-ergative gives A → GEN and P → ABS, inverted
-    gives A → ABS and P → GEN. The S/A grouping is the same in both. -/
-theorem invertedErgative_swaps_extendedErgative_on_AP :
-    invertedErgative.assignCase .A = extendedErgative.assignCase .P ∧
-    invertedErgative.assignCase .P = extendedErgative.assignCase .A := ⟨rfl, rfl⟩
-
-/-- Tripartite distinguishes all three SAP arguments — the
-    distinguishing property of tripartite alignment vs the others
-    (which all collapse at least one pair). -/
-theorem tripartite_distinguishes_all :
-    tripartite.assignCase .A ≠ tripartite.assignCase .P ∧
-    tripartite.assignCase .A ≠ tripartite.assignCase .S ∧
-    tripartite.assignCase .P ≠ tripartite.assignCase .S := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- The five alignments are pairwise distinct on the agent: each picks
-    a different case for A (erg, nom, gen, abs, erg). Tripartite shares
-    A → ERG with canonical ergative — they differ on P (acc vs abs). -/
-theorem alignments_distinct_on_A :
-    ergative.assignCase .A = .erg ∧
-    nominativeAccusative.assignCase .A = .nom ∧
-    extendedErgative.assignCase .A = .gen ∧
-    invertedErgative.assignCase .A = .abs ∧
-    tripartite.assignCase .A = .erg := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Tripartite is distinguished from canonical ergative by P: tripartite
-    gives P → ACC, canonical gives P → ABS (grouping with S). -/
-theorem tripartite_differs_from_ergative_on_P :
-    tripartite.assignCase .P ≠ ergative.assignCase .P := by decide
-
--- ============================================================================
 -- § Alignment as a partition of the core roles (`Setoid.ker`) — Bell(3) = 5
 -- ============================================================================
 
@@ -220,10 +161,23 @@ theorem tripartite_differs_from_ergative_on_P :
 analysis groups together: the kernel `Setoid.ker assign`, a point in the
 partition lattice of `ArgumentRole`. This is orthogonal to the Case *labels* an
 analysis uses — `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
-above induce the *same* partition with different cases. A three-element set has
-exactly five partitions (`Bell 3 = 5`), hence five monotransitive alignments;
-the per-alignment `_groups_`/`_distinguishes_` theorems above are pairwise
-fragments of this one kernel object. -/
+induce the *same* partition with different cases. A three-element set has exactly
+five partitions (`Bell 3 = 5`), hence five monotransitive alignments.
+
+This kernel object **replaces** the scattered per-alignment
+`_groups_S_with_X` / `_distinguishes_P` theorems this file used to carry
+(restatements of the kernel, now retired); only `tripartite_distinguishes_all`
+is kept, as it is re-exported by downstream consumers. -/
+
+/-- Tripartite distinguishes all three SAP arguments — the defining property of
+    tripartite alignment. Re-exported as the case-distinctness fact by
+    `Scott2023.voice_based_tripartite` and `Mam.Agreement.tripartite_alignment`;
+    the general partition picture is `assignCase_partitions` below. -/
+theorem tripartite_distinguishes_all :
+    tripartite.assignCase .A ≠ tripartite.assignCase .P ∧
+    tripartite.assignCase .A ≠ tripartite.assignCase .S ∧
+    tripartite.assignCase .P ≠ tripartite.assignCase .S := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The alignment a case-assignment induces: the kernel `Setoid.ker assign`.
     Two roles align iff they receive the same case. A point in the partition

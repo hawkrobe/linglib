@@ -99,18 +99,6 @@ def AlignmentType.marksPatient : AlignmentType → Bool
   | .tripartite => true
   | _           => false
 
-/-- Whether this alignment groups S with A (nominative-accusative pattern). -/
-def AlignmentType.IsNomAcc (a : AlignmentType) : Prop := a = .accusative
-
-instance : DecidablePred AlignmentType.IsNomAcc :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Whether this alignment groups S with P (absolutive-ergative pattern). -/
-def AlignmentType.IsAbsErg (a : AlignmentType) : Prop := a = .ergative
-
-instance : DecidablePred AlignmentType.IsAbsErg :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
 -- ============================================================================
 -- §2. AlignmentProfile (Fragment-side joint)
 -- ============================================================================
