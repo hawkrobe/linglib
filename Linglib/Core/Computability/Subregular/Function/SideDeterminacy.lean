@@ -10,16 +10,14 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 /-!
 # Side-determinacy: myopia and unbounded circumambience
 
-Locality predicates on string functions, used to classify phonological maps in the
-function-level subregular hierarchy. The kernel `OutputDependsOn f i K` says output
-coordinate `i` of `f` is fixed by the input positions in `K`.
+Locality predicates on string functions for the function-level subregular hierarchy.
+The kernel `OutputDependsOn f i K` says output coordinate `i` of `f` is fixed by the
+input positions in `K`. Two notions are instances:
 
-The two phonological notions both papers in this line center are instances:
-
-* **Myopia** ([wilson-2006]; the "no look-ahead" generalisation): a side's influence
-  on the output is *bounded*.
-* **Unbounded circumambience** ([mccollum-bakovic-mai-meinhardt-2020] def. 13): some
-  target depends on input *arbitrarily far on both sides at once*.
+* **Myopia** (the "no look-ahead" condition): a side's influence on the output is
+  *bounded*.
+* **Unbounded circumambience**: some target depends on input *arbitrarily far on both
+  sides at once*.
 
 ## Main definitions
 
@@ -27,8 +25,8 @@ The two phonological notions both papers in this line center are instances:
 * `UnboundedDependence f s` — for every distance `d`, some output flips under a
   perturbation strictly beyond `d` on side `s`.
 * `IsMyopicTowards f s` — the negation: dependence on side `s` is bounded.
-* `IsUnboundedCircumambient` — co-located form of def. 13: for every `d`, ONE base
-  word with a target that flips under both a far-left and a far-right perturbation.
+* `IsUnboundedCircumambient` — co-located form: for every `d`, ONE base word with a
+  target that flips under both a far-left and a far-right perturbation.
 
 ## Implementation notes
 
@@ -36,15 +34,15 @@ The predicates are **distance-based** (`∀ d, ∃ word + target`), not fixed-in
 fixed target index has only finitely many positions to its left, so a fixed-index
 "unbounded left dependence" is unsatisfiable; the unbounded distance must be witnessed
 by ever-longer words. The co-located `IsUnboundedCircumambient` keeps both
-perturbations on a single shared base (so any computing automaton hits one context
-where neither side alone fixes the output) — the hook for the deferred
-"circumambient ⟹ non-deterministic" classification.
+perturbations on a single shared base, so any computing automaton hits one context
+where neither side alone fixes the output.
 
-## Todo
-
-* The machine-level "`IsUnboundedCircumambient` ⟹ not weakly-deterministic" theorem,
-  bridging to `Function/Bimachine.lean`'s `IsBimachineWeaklyDeterministic`, with the
-  co-located base as its automaton-context witness.
+Circumambience is *not* the weak-determinism boundary: a map can be
+`IsUnboundedCircumambient` yet weakly deterministic (a two-sided *union* spread is
+perturbed at one output by either side, but neither side alone reverts it). The
+not-weakly-deterministic classification is driven by the strictly stronger
+`RequiresBothSides` (in `Bimachine.lean`), where perturbing either far side reverts
+the target to the identity.
 -/
 
 namespace Subregular.Function
@@ -76,14 +74,14 @@ def UnboundedDependence (f : List α → List β) : Direction → Prop
   | .right => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
                 AgreeUpto u v (i + d) ∧ (f u)[i]? ≠ (f v)[i]?
 
-/-- **Myopia towards `s`** ([wilson-2006]): dependence on side `s` is bounded. -/
+/-- **Myopia towards `s`**: dependence on side `s` is bounded. -/
 def IsMyopicTowards (f : List α → List β) (s : Direction) : Prop :=
   ¬ UnboundedDependence f s
 
-/-- **Unbounded circumambience** ([mccollum-bakovic-mai-meinhardt-2020] def. 13),
-co-located: for every `d`, one base word with a target `i` whose output flips under
-BOTH a far-left perturbation (agreeing from `i - d`) and a far-right one (agreeing up
-to `i + d`). Co-location keeps both flips on a single base (one automaton context). -/
+/-- **Unbounded circumambience**, co-located: for every `d`, one base word with a
+target `i` whose output flips under BOTH a far-left perturbation (agreeing from
+`i - d`) and a far-right one (agreeing up to `i + d`). Co-location keeps both flips on
+a single base (one automaton context). -/
 def IsUnboundedCircumambient (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
     (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
@@ -130,8 +128,6 @@ theorem IsMyopicTowards.right_of_prefixDetermined {f : List α → List β}
 /-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}` (the right side is
 irrelevant) — the footprint shape of a left-to-right transducer. -/
 def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | k ≤ i}
-/-- Dually, fixed by the suffix `{k | i ≤ k}`. -/
-def RightDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | i ≤ k}
 
 /-- **Left-determined everywhere ⟹ right-myopic.** If every output coordinate is fixed
 by its prefix `{k | k ≤ i}`, the map has no rightward look-ahead. -/

@@ -14,11 +14,10 @@ using **both** directions of context: a left automaton scans `→` and assigns a
 to each position, a right automaton scans `←` and assigns a right state, and the output at
 position `i` is `out (leftState before i) (input i) (rightState after i)`.
 
-Following [meinhardt-mai-bakovic-mccollum-2024] (Def. 5), a bimachine over a single
-alphabet is **non-interacting** when its output is a *union of one-sided change-rules over
-the identity*: each side may add its own change, but neither can suppress the other's.
-`IsBimachineWeaklyDeterministic` is computability by such a bimachine — the
-weakly-deterministic functions of [heinz-lai-2013].
+A bimachine over a single alphabet is **non-interacting** when its output is a *union of
+one-sided change-rules over the identity*: each side may add its own change, but neither
+can suppress the other's. `IsBimachineWeaklyDeterministic` is computability by such a
+bimachine — the weakly-deterministic functions.
 
 ## Main results
 
@@ -26,9 +25,9 @@ weakly-deterministic functions of [heinz-lai-2013].
 * `not_isBimachineWeaklyDeterministic_of_requiresBothSides` — a map with an unbounded
   *interaction* (`RequiresBothSides`: the target is changed, yet perturbing either far side
   reverts it) is **not** weakly deterministic. The far perturbations force both one-sided
-  rules inert at the witness cell while the base needs one to fire — the faithful McCollum
-  et al. teeth ([meinhardt-mai-bakovic-mccollum-2024] Def. 2). Conjunctive blocking
-  (Tutrugbu) satisfies it; union-spreading (Maasai) does not.
+  rules inert at the witness cell while the base needs one to fire — no union of one-sided
+  rules can produce the change. A conjunctive change satisfies it; a two-sided union does
+  not.
 -/
 
 namespace Subregular.Function
@@ -134,11 +133,10 @@ def unite (cL cR a : α) : α := if cL = a then (if cR = a then a else cR) else 
 theorem unite_eq_default {cL cR a : α} (h : unite cL cR a = a) : cL = a ∧ cR = a := by
   unfold unite at h; split_ifs at h with h1 h2 <;> simp_all
 
-/-- **Non-interaction** (faithful to [meinhardt-mai-bakovic-mccollum-2024] Def. 5): the cell
-output is a *union of one-sided change-rules over the identity default* — `ωL`/`ωR` each
-propose a change for their side, and the output takes whichever fires, else leaves the
-symbol unchanged. Neither side can *suppress* the other's change; that asymmetry is
-exactly what blocking (interaction) would require. -/
+/-- **Non-interaction**: the cell output is a *union of one-sided change-rules over the
+identity default* — `ωL`/`ωR` each propose a change for their side, and the output takes
+whichever fires, else leaves the symbol unchanged. Neither side can *suppress* the other's
+change; that asymmetry is exactly what interaction would require. -/
 def Bimachine.IsNonInteracting (B : Bimachine L R α α) : Prop :=
   ∃ (ωL : L → α → α) (ωR : R → α → α), ∀ l a r, B.out l a r = unite (ωL l a) (ωR r a) a
 
@@ -147,11 +145,10 @@ def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
 
-/-- A target whose spread **requires both sides**: `f` changes `base[i]` from its input,
-but perturbing either far side reverts it to identity. The suppression/conjunction
-structure of unbounded interaction ([meinhardt-mai-bakovic-mccollum-2024] Def. 2). Unlike
-`IsUnboundedCircumambient`, union-spreading (Maasai) does *not* satisfy it: removing one
-trigger leaves the other, so the output stays changed. -/
+/-- A target that **requires both sides**: `f` changes `base[i]` from its input, but
+perturbing either far side reverts it to identity. The suppression/conjunction structure of
+unbounded interaction. Unlike `IsUnboundedCircumambient`, a two-sided union does *not*
+satisfy it: removing one trigger leaves the other, so the output stays changed. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
     (∃ uL : List α, uL.length = base.length ∧ AgreeFrom base uL (i - d) ∧
@@ -159,11 +156,10 @@ def RequiresBothSides (f : List α → List α) : Prop :=
     (∃ uR : List α, uR.length = base.length ∧ AgreeUpto base uR (i + d) ∧
       uR[i]? = base[i]? ∧ (f uR)[i]? = uR[i]?)
 
-/-- **Unbounded interaction ⟹ not weakly deterministic** — the faithful McCollum et al.
-teeth. At the witness, the base spreads but each far perturbation reverts: the right
-perturbation keeps the left state, forcing `ωL` inert at this cell; the left perturbation
-keeps the right state, forcing `ωR` inert; yet the base needs one of them to fire — no
-union of one-sided rules can produce the spread. -/
+/-- **Unbounded interaction ⟹ not weakly deterministic.** At the witness, the base changes
+but each far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
+inert at this cell; the left perturbation keeps the right state, forcing `ωR` inert; yet the
+base needs one of them to fire — no union of one-sided rules can produce the change. -/
 theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
   rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
@@ -194,8 +190,8 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
   rw [B.run_getElem?, hbi, Option.map_some, hω, hωL, hωR, unite_self]
 
 /-- Non-vacuity: any bimachine whose cell output is literally a `unite` of independent
-one-sided rules is non-interacting — the class genuinely admits two-sided union-spreading
-(the Maasai shape), which the per-cell notion wrongly excluded. -/
+one-sided rules is non-interacting — the class genuinely admits two-sided union changes,
+which a naive per-cell notion would wrongly exclude. -/
 example (ωL : L → α → α) (ωR : R → α → α) (lInit : L) (lStep : L → α → L)
     (rInit : R) (rStep : R → α → R) :
     (Bimachine.mk lInit lStep rInit rStep

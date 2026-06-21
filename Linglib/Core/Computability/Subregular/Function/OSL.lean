@@ -11,13 +11,10 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 A function `f : List α → List β` is **k-Output Strictly Local** when each
 output block depends only on the last `k - 1` *output* symbols plus the
-current input symbol. OSL captures iterative spreading processes —
-progressive nasal harmony, vowel harmony, tone spreading — where the
-decision at position *i* feeds forward to the decision at position
+current input symbol. OSL captures iterative processes where the output
+already emitted at position *i* feeds forward to the decision at position
 *i + 1*. The function-level subregular hierarchy at this layer is
-ISL ⊊ OSL ⊊ Subsequential; bidirectional iterative harmony (Maasai,
-Turkana ATR) is Weakly Deterministic (composition of two
-opposite-direction subsequentials) rather than OSL in either direction.
+ISL ⊊ OSL ⊊ Subsequential.
 
 ## Main definitions
 
@@ -50,13 +47,6 @@ window-length truncation in `applyAux` is what enforces it semantically.
 `OSLRule.toSFST` deliberately repeats `r.windowOutput outputWindow x`
 in the two tuple components of `step` rather than `let`-binding it, so
 that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
-
-## References
-
-* [chandlee-eyraud-heinz-2015]
-* [aksenova-rawski-graf-heinz-2020]
-* [heinz-lai-2013]
-* [meinhardt-mai-bakovic-mccollum-2024]
 -/
 
 namespace Subregular.Function
@@ -71,7 +61,7 @@ emits an output block.
 In contrast to `ISLRule` (whose window is over input symbols), the
 window here is over **already-emitted output symbols**. This lets the
 rule see what it has just produced and react accordingly — the
-mechanism behind iterative spreading.
+mechanism behind iterative output dependence.
 
 The `k` parameter is a type-level annotation; semantic enforcement
 happens in `apply`'s window threading. -/

@@ -45,14 +45,6 @@ The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
 `StrictlyLocal.lean`. The `k` parameter is a type-level annotation only:
 `windowOutput` is unconstrained at the type level; `applyAux` truncates the
 threaded window to length `k - 1`.
-
-## References
-
-* [chandlee-2014]
-* [chandlee-heinz-2018]
-* [chandlee-eyraud-heinz-2015]
-* [heinz-lai-2013]
-* [jardine-2016]
 -/
 
 namespace Subregular.Function
@@ -246,8 +238,7 @@ theorem flatMap_isLeftInputStrictlyLocal_one (h : α → List β) :
 
 /-- **Every erasing letterwise projection is 1-Left-ISL.** `List.filterMap g`
 (for `g : α → Option β`) is letterwise erasing, hence a special case of
-`ISLRule.ofStringHom` via `fun x => (g x).toList`. Phonological tier projections
-are the instance where `g` is a tier-membership map. -/
+`ISLRule.ofStringHom` via `fun x => (g x).toList`. -/
 theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
     IsLeftInputStrictlyLocal 1 (List.filterMap g) := by
   -- filterMap g = List.flatMap (fun x => (g x).toList)
@@ -270,9 +261,9 @@ theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
 
 `ISLRule.toFinSFST` projects an ISL rule into a finite-state SFST whose
 state space is the bounded input window `{l : List α // l.length ≤ k - 1}`.
-The `[Fintype α]` constraint matches the source literature
-([mohri-1997]; [chandlee-2014]): every subsequential model has
-a finite alphabet and finite state by definition. The inclusion theorem
+The `[Fintype α]` constraint matches the source literature [mohri-1997]:
+every subsequential model has a finite alphabet and finite state by
+definition. The inclusion theorem
 rides on the run-equality. Co-located on the source side because the
 dependency direction (SFST in `Subsequential.lean`; ISL projects into
 it) forces both construction and cast into this file. -/
