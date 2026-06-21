@@ -438,7 +438,6 @@ import Linglib.Data.PHOIBLE.Inventories.Swahili
 import Linglib.Data.PHOIBLE.Inventories.Turkish
 import Linglib.Data.PHOIBLE.Inventories.Yoruba
 import Linglib.Data.PHOIBLE.Inventories.Zulu
-import Linglib.Data.WALS.AlignmentDistribution
 import Linglib.Data.WALS.Datapoint
 import Linglib.Data.WALS.Languages
 import Linglib.Data.WALS.Features.F1A

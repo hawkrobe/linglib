@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Alignment
 
@@ -134,8 +139,8 @@ theorem hindi_imperfective_acc :
 -- ============================================================================
 
 /-! `AlignmentType` is a hand-maintained enum in this `Typology` drawer; its
-content is the partition of the core roles {S, A, P} — the kernel
-`Setoid.ker` of a case-assignment, formalized as the partition object in
+content is the partition of the core roles {S, A, P} that a case-assignment
+induces — the partition object (`Alignment.coreSig`) formalized in
 `Syntax/Case/Alignment.lean`. Grounding the enum in that object (below) is a
 first step toward retiring this enum in favour of the principled partition
 layer. -/

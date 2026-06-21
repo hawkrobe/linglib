@@ -1,6 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
-import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Fintype.Prod
 
 /-!
@@ -154,20 +158,24 @@ def assignCase : ArgumentRole → Case
 end invertedErgative
 
 -- ============================================================================
--- § Alignment as a partition of the core roles (`Setoid.ker`) — Bell(3) = 5
+-- § Alignment as a partition of the core roles — Bell(3) = 5
 -- ============================================================================
 
 /-! An *alignment* is which of the core monotransitive roles {S, A, P} an
-analysis groups together: the kernel `Setoid.ker assign`, a point in the
-partition lattice of `ArgumentRole`. This is orthogonal to the Case *labels* an
-analysis uses — `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
-induce the *same* partition with different cases. A three-element set has exactly
-five partitions (`Bell 3 = 5`), hence five monotransitive alignments.
+analysis groups together — the partition of {S, A, P} that
+`assign : ArgumentRole → Case` induces (the kernel of `assign`, *restricted to
+the three core roles*: the full `Setoid.ker` over `ArgumentRole` would also
+constrain the ditransitive scaffolding roles R, T, which alignment does not).
+This is a point in the partition lattice of a three-element set, orthogonal to
+the Case *labels* used — `nominativeAccusative`, `extendedErgative`, and
+`invertedErgative` induce the *same* partition with different cases. A
+three-element set has exactly five partitions (`Bell 3 = 5`), hence five
+monotransitive alignments; `coreSig` is the decidable code for the partition.
 
-This kernel object **replaces** the scattered per-alignment
+This partition object **replaces** the scattered per-alignment
 `_groups_S_with_X` / `_distinguishes_P` theorems this file used to carry
-(restatements of the kernel, now retired); only `tripartite_distinguishes_all`
-is kept, as it is re-exported by downstream consumers. -/
+(restatements of it, now retired); only `tripartite_distinguishes_all` is kept,
+as it is re-exported by downstream consumers. -/
 
 /-- Tripartite distinguishes all three SAP arguments — the defining property of
     tripartite alignment. Re-exported as the case-distinctness fact by
@@ -178,15 +186,6 @@ theorem tripartite_distinguishes_all :
     tripartite.assignCase .A ≠ tripartite.assignCase .S ∧
     tripartite.assignCase .P ≠ tripartite.assignCase .S := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- The alignment a case-assignment induces: the kernel `Setoid.ker assign`.
-    Two roles align iff they receive the same case. A point in the partition
-    lattice of `ArgumentRole`, separate from the Case labels used. -/
-abbrev alignmentKer (assign : ArgumentRole → Case) : Setoid ArgumentRole :=
-  Setoid.ker assign
-
-theorem aligns_iff (assign : ArgumentRole → Case) (x y : ArgumentRole) :
-    (alignmentKer assign) x y ↔ assign x = assign y := Iff.rfl
 
 /-- The core-role signature `(S≈A, S≈P, A≈P)` of an alignment — a faithful code
     for its partition of {S, A, P}: transitivity makes the three pairwise
@@ -219,7 +218,7 @@ theorem consistent_sigs :
 
 theorem bell_three_eq_five :
     (Finset.univ.filter (fun s : Bool × Bool × Bool => ConsistentSig s = true)).card = 5 := by
-  decide
+  rw [consistent_sigs]; decide
 
 /-- The five `assignCase` functions realize only **three** of the five
     partitions: `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
