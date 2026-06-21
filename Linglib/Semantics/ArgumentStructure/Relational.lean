@@ -98,10 +98,11 @@ section Definites
 
 variable {E S : Type*}
 
-/-- Russellian uniqueness presupposition: there exists a unique `x` satisfying
-`P`. -/
-def iotaPresupposition (P : Pred1 E S) (s : S) : Prop :=
-  ∃ x : E, P x s ∧ ∀ y : E, P y s → y = x
+/-- Russellian uniqueness presupposition: `∃! x, P x s`. This *is* mathlib's
+`ExistsUnique` (the body unfolds to `∃ x, P x s ∧ ∀ y, P y s → y = x`), so the
+full `ExistsUnique.*` API is available; the name records the linguistic role —
+the presupposition a definite description carries. -/
+abbrev iotaPresupposition (P : Pred1 E S) (s : S) : Prop := ∃! x, P x s
 
 /-- Demonstrative-headed nominal: `π` applied to a sortal noun with the
 demonstrative supplying the relatum. -/
