@@ -3,14 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.EquivFin
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 
 /-!
 # Synchronous (letter) left-subsequential functions
 
-A `LetterSFST` is a deterministic left-to-right transducer emitting exactly one output
-symbol per input symbol — the Mealy / synchronous case, length-preserving by
+A `Mealy` machine is a deterministic left-to-right transducer emitting exactly one
+output symbol per input symbol — the synchronous case, length-preserving by
 construction. Its output coordinate `i` is a function of the input prefix `[0..i]`, so
 the class is cleanly characterised by the `OutputDependsOn` footprint
 (`SideDeterminacy.lean`): `IsLetterLeftSubsequential f → ∀ i, LeftDetermined f i`, hence
@@ -24,12 +24,12 @@ machine view.
 
 ## Main definitions
 
-* `LetterSFST` — synchronous one-symbol-per-step transducer; `run` is length-preserving.
-* `IsLetterLeftSubsequential` — computed by a finite-state `LetterSFST`.
+* `Mealy` — synchronous one-symbol-per-step transducer; `run` is length-preserving.
+* `IsLetterLeftSubsequential` — computed by a finite-state `Mealy`.
 
 ## Main results
 
-* `LetterSFST.runFrom_getElem?` — output `i` is `(step (state-after-prefix) (input i)).2`.
+* `Mealy.runFrom_getElem?` — output `i` is `(step (state-after-prefix) (input i)).2`.
 * `IsLetterLeftSubsequential.leftDetermined` / `.isRightMyopic` — synchronous
   left-subsequential maps are prefix-determined, hence right-myopic.
 
@@ -45,45 +45,45 @@ variable {σ α β : Type*}
 
 /-- A synchronous letter-to-letter left-to-right transducer: exactly one output symbol
 per input symbol (length-preserving by construction). -/
-structure LetterSFST (σ α β : Type*) where
+structure Mealy (σ α β : Type*) where
   initial : σ
   step : σ → α → σ × β
 
-namespace LetterSFST
+namespace Mealy
 
 /-- State reached after consuming a prefix. -/
-def stateAfter (T : LetterSFST σ α β) : σ → List α → σ
+def stateAfter (T : Mealy σ α β) : σ → List α → σ
   | s, [] => s
   | s, x :: xs => T.stateAfter (T.step s x).1 xs
 
 /-- Run from a state: one output symbol per input symbol. -/
-def runFrom (T : LetterSFST σ α β) : σ → List α → List β
+def runFrom (T : Mealy σ α β) : σ → List α → List β
   | _, [] => []
   | s, x :: xs => (T.step s x).2 :: T.runFrom (T.step s x).1 xs
 
 /-- Run from the initial state. -/
-def run (T : LetterSFST σ α β) : List α → List β := T.runFrom T.initial
+def run (T : Mealy σ α β) : List α → List β := T.runFrom T.initial
 
-@[simp] theorem runFrom_nil (T : LetterSFST σ α β) (s : σ) : T.runFrom s [] = [] := rfl
-@[simp] theorem runFrom_cons (T : LetterSFST σ α β) (s : σ) (x : α) (xs : List α) :
+@[simp] theorem runFrom_nil (T : Mealy σ α β) (s : σ) : T.runFrom s [] = [] := rfl
+@[simp] theorem runFrom_cons (T : Mealy σ α β) (s : σ) (x : α) (xs : List α) :
     T.runFrom s (x :: xs) = (T.step s x).2 :: T.runFrom (T.step s x).1 xs := rfl
-@[simp] theorem stateAfter_nil (T : LetterSFST σ α β) (s : σ) : T.stateAfter s [] = s := rfl
-@[simp] theorem stateAfter_cons (T : LetterSFST σ α β) (s : σ) (x : α) (xs : List α) :
+@[simp] theorem stateAfter_nil (T : Mealy σ α β) (s : σ) : T.stateAfter s [] = s := rfl
+@[simp] theorem stateAfter_cons (T : Mealy σ α β) (s : σ) (x : α) (xs : List α) :
     T.stateAfter s (x :: xs) = T.stateAfter (T.step s x).1 xs := rfl
 
 /-- The run is length-preserving (one output symbol per input symbol). -/
-theorem runFrom_length (T : LetterSFST σ α β) (s : σ) (xs : List α) :
+theorem runFrom_length (T : Mealy σ α β) (s : σ) (xs : List α) :
     (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s with
   | nil => rfl
   | cons x xs ih => simp [ih]
 
-theorem run_length (T : LetterSFST σ α β) (xs : List α) :
+theorem run_length (T : Mealy σ α β) (xs : List α) :
     (T.run xs).length = xs.length := T.runFrom_length T.initial xs
 
 /-- **The coordinate characterization**: output `i` is the step output at
 `(state after the prefix [0..i-1], input i)`. -/
-theorem runFrom_getElem? (T : LetterSFST σ α β) (s : σ) (xs : List α) (i : ℕ) :
+theorem runFrom_getElem? (T : Mealy σ α β) (s : σ) (xs : List α) (i : ℕ) :
     (T.runFrom s xs)[i]?
       = (xs[i]?).map (fun x => (T.step (T.stateAfter s (xs.take i)) x).2) := by
   induction xs generalizing s i with
@@ -93,15 +93,15 @@ theorem runFrom_getElem? (T : LetterSFST σ α β) (s : σ) (xs : List α) (i : 
     | zero => simp
     | succ j => simp [ih, List.take_succ_cons]
 
-/-- Transfer a `LetterSFST` along a state-space equivalence `σ ≃ τ`, preserving `run`.
+/-- Transfer a `Mealy` along a state-space equivalence `σ ≃ τ`, preserving `run`.
 Mirrors `SFST.transferEquiv`; the use case is bringing a `Type*` finite state down to
 `Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness the
 `Type 0`-state existential of `IsLetterLeftSubsequential`. -/
-def transferEquiv {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ) : LetterSFST τ α β where
+def transferEquiv {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ) : Mealy τ α β where
   initial := e T.initial
   step t x := (e (T.step (e.symm t) x).1, (T.step (e.symm t) x).2)
 
-theorem transferEquiv_runFrom {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ)
+theorem transferEquiv_runFrom {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ)
     (s : σ) (xs : List α) :
     (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
   induction xs generalizing s with
@@ -113,23 +113,23 @@ theorem transferEquiv_runFrom {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃
     rw [e.symm_apply_apply, ih]
 
 /-- The transferred machine computes the same string function. -/
-@[simp] theorem transferEquiv_run {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ) :
+@[simp] theorem transferEquiv_run {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ) :
     (T.transferEquiv e).run = T.run := by
   funext xs; exact T.transferEquiv_runFrom e T.initial xs
 
-end LetterSFST
+end Mealy
 
-/-- The synchronous left-subsequential class: computed by a finite-state `LetterSFST`. -/
+/-- The synchronous left-subsequential class: computed by a finite-state `Mealy`. -/
 def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
-  ∃ (σ : Type) (_ : Fintype σ) (T : LetterSFST σ α β), T.run = f
+  ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- **Constructor lemma**: every finite-state `LetterSFST` witnesses
+/-- **Constructor lemma**: every finite-state `Mealy` witnesses
 `IsLetterLeftSubsequential` for its `run`. The state `σ` is accepted at arbitrary
 `Type*` and brought down to `Fin (Fintype.card σ) : Type 0` via `transferEquiv` and
 `Fintype.equivFin`, so bounded-window ISL/OSL states at the alphabet's universe can
 witness the predicate (mirrors `SFST.isLeftSubsequential`). -/
-theorem LetterSFST.isLetterLeftSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
-    (T : LetterSFST σ α β) : IsLetterLeftSubsequential T.run :=
+theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
+    (T : Mealy σ α β) : IsLetterLeftSubsequential T.run :=
   ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ),
    T.transferEquiv_run _⟩
 
@@ -141,15 +141,11 @@ theorem IsLetterLeftSubsequential.leftDetermined {f : List α → List β}
   obtain ⟨σ, _, T, rfl⟩ := hf
   intro u v hlen hag
   have hi : u[i]? = v[i]? := hag i (by simp)
-  have htake : u.take i = v.take i := by
-    apply List.ext_getElem?
-    intro k
-    rcases lt_or_ge k i with hk | hk
-    · simpa only [List.getElem?_take_of_lt hk] using hag k (by simp only [Set.mem_setOf_eq]; omega)
-    · simp [List.getElem?_take_eq_none hk]
+  have htake : u.take i = v.take i :=
+    take_eq_of_agree fun k hk => hag k (by simp only [Set.mem_setOf_eq]; omega)
   show (T.runFrom T.initial u)[i]? = (T.runFrom T.initial v)[i]?
-  rw [LetterSFST.runFrom_getElem? T T.initial u i,
-      LetterSFST.runFrom_getElem? T T.initial v i, hi, htake]
+  rw [Mealy.runFrom_getElem? T T.initial u i,
+      Mealy.runFrom_getElem? T T.initial v i, hi, htake]
 
 /-- A synchronous left-subsequential map is **right-myopic** — it has no look-ahead. -/
 theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
@@ -175,13 +171,13 @@ theorem isLetterLeftSubsequential_of_stateSummary
     (hlen : ∀ xs, (f xs).length = xs.length) :
     IsLetterLeftSubsequential f := by
   refine ⟨σ, inferInstance, { initial := state [], step := fun s x => (δ s x, out s x) }, ?_⟩
-  set T : LetterSFST σ α β := { initial := state [], step := fun s x => (δ s x, out s x) }
+  set T : Mealy σ α β := { initial := state [], step := fun s x => (δ s x, out s x) }
   have hstate : ∀ (p₀ ps : List α), T.stateAfter (state p₀) ps = state (p₀ ++ ps) := by
     intro p₀ ps
     induction ps generalizing p₀ with
     | nil => simp
     | cons x xs ih =>
-      rw [LetterSFST.stateAfter_cons]
+      rw [Mealy.stateAfter_cons]
       show T.stateAfter (δ (state p₀) x) xs = state (p₀ ++ x :: xs)
       rw [← hδ p₀ x, ih (p₀ ++ [x])]
       simp
@@ -189,7 +185,7 @@ theorem isLetterLeftSubsequential_of_stateSummary
   apply List.ext_getElem?
   intro i
   show (T.runFrom T.initial xs)[i]? = (f xs)[i]?
-  rw [LetterSFST.runFrom_getElem? T T.initial xs i]
+  rw [Mealy.runFrom_getElem? T T.initial xs i]
   show (xs[i]?).map (fun x => out (T.stateAfter (state []) (xs.take i)) x) = (f xs)[i]?
   rw [hstate [] (xs.take i), List.nil_append]
   rcases lt_or_ge i xs.length with hi | hi

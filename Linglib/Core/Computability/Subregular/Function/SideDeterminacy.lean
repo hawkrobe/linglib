@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subregular.Function.Direction
 
 /-!
 # Side-determinacy: myopia and unbounded circumambience
@@ -64,6 +64,22 @@ theorem OutputDependsOn.mono {f : List α → List β} {i : ℕ} {K K' : Set ℕ
 def AgreeFrom (u v : List α) (j : ℕ) : Prop := ∀ k, j ≤ k → u[k]? = v[k]?
 /-- `u` and `v` agree at every index `≤ j`. -/
 def AgreeUpto (u v : List α) (j : ℕ) : Prop := ∀ k, k ≤ j → u[k]? = v[k]?
+
+/-- Prefixes agreeing below `i` have equal `i`-truncations. -/
+theorem take_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, k < i → u[k]? = v[k]?) :
+    u.take i = v.take i := by
+  apply List.ext_getElem?
+  intro k
+  rcases lt_or_ge k i with hk | hk
+  · simpa only [List.getElem?_take_of_lt hk] using h k hk
+  · simp [List.getElem?_take_eq_none hk]
+
+/-- Lists agreeing from `i` upward have equal `i`-suffixes. -/
+theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]? = v[k]?) :
+    u.drop i = v.drop i := by
+  apply List.ext_getElem?
+  intro k
+  simpa only [List.getElem?_drop] using h (i + k) (Nat.le_add_right i k)
 
 /-- **Unbounded dependence on side `s`**: for every distance `d`, some target output
 position flips under a perturbation strictly beyond `d` on side `s` (the perturbed

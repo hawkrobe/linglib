@@ -26,7 +26,7 @@ trivial, so its cell output is a *one-sided* rule — non-interacting.
 * `IsBimachineComputable.of_weaklyDeterministic` — WD ⊆ regular.
 * `weaklyDeterministic_strict_subset_regular` — the second inclusion is *proper*.
 * `isLetterLeftSubsequential_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
-  subsequential (the bounded window as a `LetterSFST` state); `.of_ISLRule` / `.of_OSLRule`
+  subsequential (the bounded window as a `Mealy` state); `.of_ISLRule` / `.of_OSLRule`
   extend the chain to WD.
 
 ## Strictness
@@ -48,12 +48,12 @@ private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
   unfold unite; split_ifs <;> simp_all
 
 omit [DecidableEq α] in
-private theorem letterSFST_stateAfter_eq_foldl {σ : Type*} (T : LetterSFST σ α α)
+private theorem mealy_stateAfter_eq_foldl {σ : Type*} (T : Mealy σ α α)
     (s : σ) (pre : List α) :
     T.stateAfter s pre = pre.foldl (fun l a => (T.step l a).1) s := by
   induction pre generalizing s with
   | nil => rfl
-  | cons x xs ih => simp only [LetterSFST.stateAfter, List.foldl_cons, ih]
+  | cons x xs ih => simp only [Mealy.stateAfter, List.foldl_cons, ih]
 
 /-- **Subsequential ⊆ weakly deterministic.** A synchronous left-subsequential function is
 computed by a non-interacting bimachine: the left automaton *is* the transducer, the right
@@ -72,7 +72,7 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
         (fun a => (T.step ((xs.take i).foldl (fun l a => (T.step l a).1) T.initial) a).2)
       = (T.run xs)[i]?
     rw [show T.run xs = T.runFrom T.initial xs from rfl, T.runFrom_getElem?,
-        letterSFST_stateAfter_eq_foldl]
+        mealy_stateAfter_eq_foldl]
   · exact ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
 
 /-- **Weakly deterministic ⊆ regular.** A non-interacting bimachine is a bimachine. -/
@@ -194,30 +194,30 @@ theorem weaklyDeterministic_strict_subset_regular :
 
 The ISL/OSL classes are block-output (length-changing) in general, so they sit outside the
 length-preserving lattice. Their **single-symbol** (length-preserving) fragment embeds: the
-same bounded window that makes `toFinSFST` finite-state serves as a `LetterSFST` state, with
+same bounded window that makes `toFinSFST` finite-state serves as a `Mealy` state, with
 the lone output symbol as the letter. This extends the chain to
 `single-symbol ISL/OSL ⊆ subsequential ⊆ WD ⊆ regular`. -/
 
 /-- A length-preserving (single-symbol) left-ISL rule as a synchronous transducer: the
 bounded input window is the state, the lone output symbol the letter. -/
-def ISLRule.toLetterSFST {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+def ISLRule.toMealy {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
-    LetterSFST {l : List α // l.length ≤ k - 1} α β where
+    Mealy {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
   step w x := (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
-theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
+theorem ISLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
   rw [← r.toFinSFST_run_eq_apply]
   funext input
   suffices h : ∀ w : {l : List α // l.length ≤ k - 1},
-      LetterSFST.runFrom (r.toLetterSFST hs) w input = SFST.runFrom r.toFinSFST w input from h _
+      Mealy.runFrom (r.toMealy hs) w input = SFST.runFrom r.toFinSFST w input from h _
   intro w
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    simp only [LetterSFST.runFrom_cons, SFST.runFrom_cons, ISLRule.toLetterSFST,
+    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, ISLRule.toMealy,
       ISLRule.toFinSFST]
     obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
     simp only [ha, List.head_cons, List.singleton_append]
@@ -226,28 +226,28 @@ theorem ISLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α]
 /-- **Single-symbol left-ISL ⊆ left-subsequential.** -/
 theorem isLetterLeftSubsequential_of_ISLRule {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  by rw [← r.toLetterSFST_run_eq_apply hs]; exact (r.toLetterSFST hs).isLetterLeftSubsequential
+  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isLetterLeftSubsequential
 
 /-- A length-preserving (single-symbol) left-OSL rule as a synchronous transducer: the
 bounded output window is the state. -/
-def OSLRule.toLetterSFST {α β : Type*} {k : ℕ} (r : OSLRule k α β)
+def OSLRule.toMealy {α β : Type*} {k : ℕ} (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
-    LetterSFST {l : List β // l.length ≤ k - 1} α β where
+    Mealy {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
   step w x := (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
     (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
 
-theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toLetterSFST hs).run = r.apply := by
+theorem OSLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
   rw [← r.toFinSFST_run_eq_apply]
   funext input
   suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
-      LetterSFST.runFrom (r.toLetterSFST hs) w input = SFST.runFrom r.toFinSFST w input from h _
+      Mealy.runFrom (r.toMealy hs) w input = SFST.runFrom r.toFinSFST w input from h _
   intro w
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    simp only [LetterSFST.runFrom_cons, SFST.runFrom_cons, OSLRule.toLetterSFST,
+    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, OSLRule.toMealy,
       OSLRule.toFinSFST]
     obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
     simp only [ha, List.head_cons, List.singleton_append]
@@ -256,7 +256,7 @@ theorem OSLRule.toLetterSFST_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β]
 /-- **Single-symbol left-OSL ⊆ left-subsequential.** -/
 theorem isLetterLeftSubsequential_of_OSLRule {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  by rw [← r.toLetterSFST_run_eq_apply hs]; exact (r.toLetterSFST hs).isLetterLeftSubsequential
+  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isLetterLeftSubsequential
 
 /-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through subsequential. -/
 theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
