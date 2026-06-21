@@ -253,26 +253,39 @@ theorem opActually_shift_invariant
 -- § Kaplan's Thesis (Tower Formulation)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Kaplan's thesis as a tower property: an access pattern is Kaplan-compliant
-    iff its depth is `.origin`. This means it reads from the speech-act context
-    and is unaffected by any embedding operators. -/
+/-- Kaplan's thesis as a tower property: an access pattern is *Kaplan-compliant*
+    when it is stable under every embedding shift — pushing any operator leaves
+    its resolution unchanged. This is the ∀-over-operators projection of
+    `AccessPattern.Stable`, dual to monsterhood's ∃-over-operators projection
+    (`Reference/Monsters.lean`).
+
+    Reading from the origin (`depth =.origin`) is the canonical sufficient
+    condition (`isKaplanCompliant_of_depth_origin`): an origin-reading
+    expression sees the speech-act context regardless of embedding. -/
 def IsKaplanCompliant {C R : Type*} (ap : AccessPattern C R) : Prop :=
-  ap.depth = .origin
+  ∀ σ, ap.Stable σ
+
+/-- An origin-reading access pattern is Kaplan-compliant. -/
+theorem isKaplanCompliant_of_depth_origin {C R : Type*} (ap : AccessPattern C R)
+    (hd : ap.depth = .origin) : IsKaplanCompliant ap :=
+  fun σ => ap.Stable_of_depth_origin hd σ
 
 /-- All English pure indexicals are Kaplan-compliant: they all read from
     the origin (speech-act context).
 
-    This is the tower formulation of [kaplan-1989] §VIII: natural language
-    (English) operators cannot shift the context of utterance. In tower
-    terms, English indexicals have `depth =.origin`, so embedding (pushing
-    shifts) has no effect on their resolution. -/
+    This is the tower formulation of [kaplan-1989]'s anti-monster thesis:
+    natural language (English) operators cannot shift the context of utterance.
+    In tower terms, English indexicals have `depth =.origin`, so embedding
+    (pushing shifts) has no effect on their resolution. -/
 theorem kaplansThesisTower :
     IsKaplanCompliant (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
     IsKaplanCompliant (pronYou_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
     IsKaplanCompliant (opNow_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
     IsKaplanCompliant (opHere_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
     IsKaplanCompliant (opActually_access (W' := W') (E' := E') (P' := P') (T' := T')) :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+  ⟨isKaplanCompliant_of_depth_origin _ rfl, isKaplanCompliant_of_depth_origin _ rfl,
+   isKaplanCompliant_of_depth_origin _ rfl, isKaplanCompliant_of_depth_origin _ rfl,
+   isKaplanCompliant_of_depth_origin _ rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § Resolution in Root Tower

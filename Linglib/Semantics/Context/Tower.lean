@@ -226,6 +226,33 @@ theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local)
   rw [← ContextTower.push_depth, ContextTower.contextAt_depth,
       ContextTower.push_innermost]
 
+/-- An access pattern is *stable* under a shift when pushing that shift onto any
+    tower leaves its resolution unchanged. This relation underlies both
+    Kaplan-compliance (`Reference/Kaplan.lean`: an expression stable under
+    *every* shift) and monsterhood (`Reference/Monsters.lean`: a shift that
+    destabilizes *some* expression) — the two are its ∀-over-shifts and
+    ∃-over-expressions projections. -/
+def Stable (ap : AccessPattern C R) (σ : ContextShift C) : Prop :=
+  ∀ t, ap.resolve (t.push σ) = ap.resolve t
+
+/-- Origin-depth access is stable under every shift — the access-pattern form
+    of `origin_stable`, and the sufficient condition for Kaplan-compliance. -/
+theorem Stable_of_depth_origin (ap : AccessPattern C R) (hd : ap.depth = .origin)
+    (σ : ContextShift C) : ap.Stable σ :=
+  fun t => origin_stable ap hd t σ
+
+/-- The canonical *innermost reader*: returns the innermost context verbatim
+    (`.local` depth, identity projection). It is the universal witness for
+    instability — a shift destabilizes some access pattern iff it destabilizes
+    this one, because a push only ever changes the innermost context — so
+    monsterhood is defined as its instability (`Reference/Monsters.lean`). -/
+def innermostReader (C : Type*) : AccessPattern C C := ⟨.local, id⟩
+
+@[simp] theorem innermostReader_resolve (t : ContextTower C) :
+    (innermostReader C).resolve t = t.innermost := by
+  simp only [innermostReader, resolve, DepthSpec.local_resolve,
+    ContextTower.contextAt_depth, id_eq]
+
 /-- Bridge to the substrate's `Intension` framework: an `AccessPattern`
     IS an `Intension (ContextTower C) R` via its `resolve` method. The
     substrate's `Intension`-based machinery (`Intensional.Intension.IsRigid`,
