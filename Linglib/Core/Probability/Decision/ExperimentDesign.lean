@@ -1,6 +1,6 @@
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Semantics.Questions.DecisionTheory
-import Linglib.Core.DecisionTheory.BayesianUpdate
+import Linglib.Core.Probability.BayesianUpdate
 import Mathlib.Analysis.Convex.Jensen
 
 /-!
@@ -47,7 +47,7 @@ EIG with deterministic observations recovers EUV.
 
 The `ObservationModel`, `posterior`, `marginalObs`, and their basic properties
 (`posterior_nonneg`, `posterior_sum_one`, `posterior_marginalizes_to_prior`)
-live in `Core.Agent.BayesianUpdate` and are re-exported here.
+live in `Core/Probability/BayesianUpdate.lean` and are re-exported here.
 
 -/
 

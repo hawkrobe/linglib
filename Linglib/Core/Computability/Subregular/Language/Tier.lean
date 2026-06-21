@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.StrictlyLocal
+import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Mathlib.Data.List.Basic
 import Mathlib.Computability.Language
 import Linglib.Core.Data.List.Factors

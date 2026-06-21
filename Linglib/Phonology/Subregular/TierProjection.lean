@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Tier
-import Linglib.Core.Computability.Subregular.Tier
+import Linglib.Core.Computability.Subregular.Language.Tier
 
 /-!
 # Bridge: Autosegmental Tier ↔ TSL Tier Projection

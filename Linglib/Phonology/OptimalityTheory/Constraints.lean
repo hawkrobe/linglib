@@ -2,7 +2,7 @@ import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.Constraint.Weighted
 import Linglib.Phonology.Tier
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 
 /-!
 # Shared Phonological Constraint Library

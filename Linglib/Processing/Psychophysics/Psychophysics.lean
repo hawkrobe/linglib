@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # Psychophysics: Stevens' Power Law and Multidimensional Stimuli [luce-1959]
