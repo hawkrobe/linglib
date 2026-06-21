@@ -47,9 +47,9 @@ variable {α : Type}
 
 /-- Forbidden 2-factors for AGREE: pairs `[some x, some y]` of two distinct
 non-boundary symbols. The inequality-relation specialization of
-`forbiddenPairsSet`. -/
+`forbiddenPairs`. -/
 def agreeForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
-  forbiddenPairsSet (α := α) (· ≠ ·)
+  forbiddenPairs (α := α) (· ≠ ·)
 
 /-- The TSL_2 grammar capturing "no two adjacent distinct symbols on the
 tier defined by `p`" — equivalently, every tier-adjacent pair agrees.

@@ -16,8 +16,8 @@ Alphabet-generic `List.IsChain` facts not currently in mathlib, mirroring
 * `List.isChain_top` — every list is a chain for the always-true relation.
 * `List.isChain_cons_iff_of_forall_rel` / `List.isChain_append_singleton_iff_of_forall_rel`
   — prepending/appending an element related to (or from) everything preserves `IsChain`.
-* `List.IsChain.and` — two chains on the same list combine into a chain for the
-  conjunction relation (the companion of mathlib's `List.IsChain.imp`).
+* `List.IsChain.and` / `List.isChain_and_iff` — a chain for a conjunction relation
+  is exactly a chain for each conjunct (the meet law; companion of `List.IsChain.imp`).
 -/
 
 namespace List
@@ -66,5 +66,13 @@ lemma and {S T : α → α → Prop} : ∀ {l : List α},
     exact ⟨⟨hS.1, hT.1⟩, hS.2.and hT.2⟩
 
 end IsChain
+
+/-- A list is a chain for a conjunction relation iff it is a chain for each
+conjunct — the `Iff` strengthening of `IsChain.and` (the meet law for `IsChain`
+over its relation argument). -/
+lemma isChain_and_iff {S T : α → α → Prop} {l : List α} :
+    l.IsChain (fun a b => S a b ∧ T a b) ↔ l.IsChain S ∧ l.IsChain T :=
+  ⟨fun h => ⟨h.imp fun _ _ => And.left, h.imp fun _ _ => And.right⟩,
+   fun ⟨hS, hT⟩ => hS.and hT⟩
 
 end List
