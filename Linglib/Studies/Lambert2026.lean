@@ -861,8 +861,8 @@ length-3 `[h, ℓ, h]`, the length-2 `[h, ℓ]`, and the length-1 `[h]`.
 The proof reduces each conjunct of `lugandaPred` to the corresponding
 `subseqSet 3` membership question, then transfers via
 `subseqSet_eq_iff`. -/
-theorem luganda_isPT : IsPiecewiseTestable 3 lugandaLang := by
-  intro w₁ w₂ heq
+theorem luganda_isPT : lugandaLang.IsPiecewiseTestable 3 := by
+  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
   simp only [mem_lugandaLang, lugandaPred]
   -- Bridge: `LugandaTone.high ∈ w` ↔ `[high] <+ w`
   have mem_iff_sublist : ∀ (w : List LugandaTone),
@@ -1035,8 +1035,8 @@ def prinmiLang : Language LugandaTone := { w | prinmiPred w }
 /-- **Prinmi pitch-accent ∈ PT_3** (Lambert 2026 (39)). All three
 conjuncts depend only on length-≤-3 subsequence presence: the length-1
 `[h]` and the two length-3 patterns. -/
-theorem prinmi_isPT : IsPiecewiseTestable 3 prinmiLang := by
-  intro w₁ w₂ heq
+theorem prinmi_isPT : prinmiLang.IsPiecewiseTestable 3 := by
+  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
   simp only [mem_prinmiLang, prinmiPred]
   have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
     subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
@@ -1107,8 +1107,8 @@ def arigibiLang : Language LugandaTone :=
 
 /-- **Arigibi pitch-accent ∈ PT_2** (Lambert 2026 §5.3, formula `¬h..h`).
 The constraint depends only on length-2 subseq `[h, h]`. -/
-theorem arigibi_isPT : IsPiecewiseTestable 2 arigibiLang := by
-  intro w₁ w₂ heq
+theorem arigibi_isPT : arigibiLang.IsPiecewiseTestable 2 := by
+  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
   show ¬ ([LugandaTone.high, .high] <+ w₁) ↔ ¬ ([LugandaTone.high, .high] <+ w₂)
   exact not_congr (subseqSet_eq_iff heq (le_refl 2))
 
@@ -1205,8 +1205,8 @@ def chuaveLang : Language LugandaTone := { w | LugandaTone.high ∈ w }
 
 /-- **Chuave obligatoriness ∈ PT_1** (Lambert 2026 §5.5). The constraint
 `high ∈ w` is the singleton subseq presence `[high] <+ w`. -/
-theorem chuave_isPT : IsPiecewiseTestable 1 chuaveLang := by
-  intro w₁ w₂ heq
+theorem chuave_isPT : chuaveLang.IsPiecewiseTestable 1 := by
+  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
   show LugandaTone.high ∈ w₁ ↔ LugandaTone.high ∈ w₂
   rw [← List.singleton_sublist, ← List.singleton_sublist]
   exact subseqSet_eq_iff heq (le_refl 1)
@@ -1294,8 +1294,8 @@ def kagoshimaLang : Language LugandaTone := { w | kagoshimaPred w }
 /-- **Kagoshima Japanese pitch-accent ∈ PT_3** (Lambert 2026 (42)).
 All three conjuncts depend only on length-≤-3 subseq presence:
 length-1 `[h]`, length-2 `[h, h]`, length-3 `[h, ℓ, ℓ]`. -/
-theorem kagoshima_isPT : IsPiecewiseTestable 3 kagoshimaLang := by
-  intro w₁ w₂ heq
+theorem kagoshima_isPT : kagoshimaLang.IsPiecewiseTestable 3 := by
+  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
   simp only [mem_kagoshimaLang, kagoshimaPred]
   have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
     subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
