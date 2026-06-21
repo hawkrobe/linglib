@@ -71,7 +71,7 @@ open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
   sd_off_diagonal_iff_outranks)
 open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
   ergativeMarker oagrOnSMarker objectSyntaxLicit)
-open Syntax.Case (NPInDomain assignCases getCaseOf)
+open Syntax.Case (NPInDomain CasedNP CaseSource assignCases getCaseOf getSourceOf)
 
 -- ============================================================================
 -- § 1: Mapping Shawi to Deal-2024
@@ -120,6 +120,45 @@ def objectVisible : Person → ObjectPosition → Bool
        descending grammar. -/
 def predictsErgative (subj obj : Person) (pos : ObjectPosition) : Bool :=
   objectVisible obj pos && isLicit shawiGrammar subj obj
+
+-- ============================================================================
+-- § 2b: Typed case output — lifting the prediction into `CasedNP`
+-- ============================================================================
+
+/-- The case borne by the Shawi transitive subject, as a typed `CasedNP` in
+    the shared `Syntax.Case` vocabulary. [clem-deal-2024]'s thesis is that
+    ergative `-ri` is `Case.erg` whose *source* is **Agree** — the spell-out
+    of a goal-flag bundle deposited on the subject as the probe's second goal
+    — as opposed to the configurational `.dependent` source of [baker-2015]'s
+    rule. A non-ergative subject is unmarked nominative ([clem-deal-2024] (5),
+    (10): "Otherwise, subjects are nominative").
+
+    This lifts the `Bool` predicate `predictsErgative` into the type that
+    `Syntax.Case.assignCases` and the dependent-case studies already speak, so
+    the two theories of ergative can be compared cell-for-cell rather than as
+    incomparable Booleans. -/
+def shawiSubjectCase (subj obj : Person) (pos : ObjectPosition) : CasedNP :=
+  if predictsErgative subj obj pos = true
+  then { label := "subj", case := .erg, source := .agree }
+  else { label := "subj", case := .nom, source := .unmarked }
+
+/-- `predictsErgative` is exactly the `.erg` projection of `shawiSubjectCase`:
+    the Bool predicate is the shadow of the typed assignment. -/
+theorem predictsErgative_iff_shawiSubjectCase_erg
+    (subj obj : Person) (pos : ObjectPosition) :
+    predictsErgative subj obj pos = true ↔
+      (shawiSubjectCase subj obj pos).case = .erg := by
+  unfold shawiSubjectCase
+  cases predictsErgative subj obj pos <;> simp
+
+/-- Whenever ergative surfaces, the analysis sources it from Agree, never from
+    configuration ([clem-deal-2024] §3.3; the goal-flagging mechanism itself
+    is the §11 follow-up). -/
+theorem shawiSubjectCase_source_agree
+    (subj obj : Person) (pos : ObjectPosition)
+    (h : predictsErgative subj obj pos = true) :
+    (shawiSubjectCase subj obj pos).source = .agree := by
+  simp [shawiSubjectCase, h]
 
 -- ============================================================================
 -- § 3: Feature-geometry-grounded characterizations
@@ -304,6 +343,29 @@ theorem augmented_config_blind_to_object_position :
     augmentedConfigErg .third .third = true ∧
     predictsErgative .third .third .high = true ∧
     predictsErgative .third .third .low = false := by decide
+
+/-- The disagreement stated in the **shared** `CasedNP` type. On the 1→2 cell
+    both theories value the subject `Case.erg`, but they differ on *source*:
+    [clem-deal-2024]'s analysis sources it from `Agree`, [baker-2015]'s
+    configurational `assignCases` from c-command (`.dependent`). This is the
+    modality disagreement that is [clem-deal-2024]'s thesis — now a
+    `getSourceOf` disagreement over one type, in the vein of
+    `Baker2015.dependent_source_distinct_from_inherent`. -/
+theorem shawi_erg_is_agree_not_dependent :
+    (shawiSubjectCase .first .second .high).case = .erg ∧
+    (shawiSubjectCase .first .second .high).source = .agree ∧
+    getCaseOf "subj" (assignCases .ergative (shawiDomain .first .second)) = some .erg ∧
+    getSourceOf "subj" (assignCases .ergative (shawiDomain .first .second))
+      = some .dependent := by decide
+
+/-- And where the two theories diverge on the *case* itself: on 2→1 the Agree
+    analysis assigns plain nominative (the subject is never a second goal),
+    while the configurational rule still values it ergative — the typed form
+    of `configurational_rule_overgenerates_2_to_1`. -/
+theorem shawi_nom_where_configurational_overgenerates :
+    (shawiSubjectCase .second .first .high).case = .nom ∧
+    getCaseOf "subj" (assignCases .ergative (shawiDomain .second .first))
+      = some .erg := by decide
 
 -- ============================================================================
 -- § 8: Object syntax — overt-postverbal blocked under ergative
