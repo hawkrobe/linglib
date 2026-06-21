@@ -33,13 +33,11 @@ trivial, so its cell output is a *one-sided* rule — non-interacting.
 
 Both inclusions are proper:
 
-* **WD ⊊ regular** — `weaklyDeterministic_strict_subset_regular`: the conjunctive spread
+* **WD ⊊ regular** — `weaklyDeterministic_strict_subset_regular`: the conjunctive change
   `conjBM` (a target raised iff a trigger occurs on *both* sides) is bimachine-computable
-  but `RequiresBothSides`. Tutrugbu ATR is the attested instance
-  (`McCollumEtAl2020.tutrugbu_not_weaklyDeterministic`).
-* **subsequential ⊊ WD** — Maasai ATR (`MeinhardtEtAl2024.maasai_not_letterLeftSubsequential`)
-  is a genuinely two-sided union, `IsUnboundedCircumambient` hence not right-myopic hence
-  not left-subsequential, yet WD.
+  but `RequiresBothSides`.
+* **subsequential ⊊ WD** — a genuinely two-sided union is `IsUnboundedCircumambient`,
+  hence not right-myopic, hence not left-subsequential, yet WD.
 -/
 
 namespace Subregular.Function
@@ -85,11 +83,11 @@ theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
 
 /-! ### Strictness: WD ⊊ regular
 
-A *conjunctive* spread — a target raised iff a trigger occurs on **both** sides — is
+A *conjunctive* change — a target raised iff a trigger occurs on **both** sides — is
 bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
-it. (Tutrugbu ATR is the attested instance; `McCollumEtAl2020.tutrugbu_not_weaklyDeterministic`.) -/
+it. -/
 
-/-- Toy alphabet for the conjunctive-spread witness: a trigger, a recessive target, and
+/-- Toy alphabet for the conjunctive-change witness: a trigger, a recessive target, and
 its raised form. -/
 inductive ConjSym | trig | tgt | raised
   deriving DecidableEq, Repr
@@ -195,10 +193,9 @@ theorem weaklyDeterministic_strict_subset_regular :
 /-! ### The strictly-local lower end: single-symbol ISL/OSL ⊆ subsequential
 
 The ISL/OSL classes are block-output (length-changing) in general, so they sit outside the
-length-preserving lattice. Their **single-symbol** (length-preserving) fragment — the
-harmony-relevant case (e.g. `MeinhardtEtAl2024.rightwardATR_osl`) — embeds: the same
-bounded window that makes `toFinSFST` finite-state serves as a `LetterSFST` state, with the
-lone output symbol as the letter. This extends the chain to
+length-preserving lattice. Their **single-symbol** (length-preserving) fragment embeds: the
+same bounded window that makes `toFinSFST` finite-state serves as a `LetterSFST` state, with
+the lone output symbol as the letter. This extends the chain to
 `single-symbol ISL/OSL ⊆ subsequential ⊆ WD ⊆ regular`. -/
 
 /-- A length-preserving (single-symbol) left-ISL rule as a synchronous transducer: the
