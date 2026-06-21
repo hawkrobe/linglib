@@ -38,7 +38,7 @@ this substrate.
 ## References
 
 * [barker-2011]: Possessives and relational nouns
-  (§6 of Portner/Heusinger/Maienborn handbook; π and Ex on pp. 184–189).
+  (von Heusinger/Maienborn/Portner handbook, pp. 1109–1130; π and Ex at p. 1114).
 
 ## Tags
 
