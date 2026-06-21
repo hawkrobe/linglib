@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
-import Linglib.Core.Computability.Subregular.Defs
+import Linglib.Core.Computability.Subregular.Boundary
 import Linglib.Core.Data.List.Factors
 
 /-!
