@@ -150,33 +150,30 @@ theorem interpret_unique_witness_satisfies
     is the unique satisfier, `.unique` returns it. Closes the standard
     Russellian-iota extraction in one line — without it, every concrete
     `interpret_*` instance needs the six-step ritual of
-    `interpret_unique` → `russellIota_isSome_iff_existsUnique` → `Option.isSome_iff_exists` →
+    `interpret_unique` → `russellIota_isSome_iff_exists_unique` → `Option.isSome_iff_exists` →
     `russellIota_witness_satisfies` → case analysis. -/
 theorem interpret_unique_eq_some_of_existsUnique
     (R : DenotGS E W .et) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W) (e : E)
     (hSat : R g gs e) (hUniq : ∀ y, R g gs y → y = e) :
     interpret (.unique R sIdx) g gs = some e := by
-  have hExU : existsUnique (fun x => R g gs x) :=
-    ⟨⟨e, hSat⟩, fun x y hx hy => (hUniq x hx).trans (hUniq y hy).symm⟩
+  have hExU : ∃! x, R g gs x := ⟨e, hSat, hUniq⟩
   rw [interpret_unique]
   obtain ⟨e', he'⟩ : ∃ e', russellIota (fun x => R g gs x) = some e' :=
-    Option.isSome_iff_exists.mp ((russellIota_isSome_iff_existsUnique _).mpr hExU)
+    Option.isSome_iff_exists.mp ((russellIota_isSome_iff_exists_unique _).mpr hExU)
   rw [he']
   congr 1
   exact hUniq e' (russellIota_witness_satisfies _ _ he')
 
 /-- Specialization of `interpret_unique_eq_some_of_existsUnique` to a packaged
-    `existsUnique` hypothesis, with the witness extracted. The first projection
-    of `existsUnique` gives the entity; the second proves uniqueness. -/
+    `∃!` hypothesis, with the witness extracted via `Exists.choose`. -/
 theorem interpret_unique_eq_some_choose
     (R : DenotGS E W .et) (sIdx : Nat)
     (g : Assignment E) (gs : SitAssignment W)
-    (hExU : existsUnique (fun x => R g gs x)) :
-    interpret (.unique R sIdx) g gs = some hExU.1.choose :=
-  interpret_unique_eq_some_of_existsUnique R sIdx g gs hExU.1.choose
-    hExU.1.choose_spec
-    (fun y hy => hExU.2 y _ hy hExU.1.choose_spec)
+    (hExU : ∃! x, R g gs x) :
+    interpret (.unique R sIdx) g gs = some hExU.choose :=
+  interpret_unique_eq_some_of_existsUnique R sIdx g gs hExU.choose
+    hExU.choose_spec.1 hExU.choose_spec.2
 
 /-- An anaphoric definite that returns a witness must return the indexed
     entity — it never picks anything else. -/
@@ -202,6 +199,17 @@ theorem interpret_anaphoric_isSome_iff
   by_cases h : R g gs (g d)
   · simp [h]
   · simp [h]
+
+/-- A possessive definite returns a referent iff its `π`-modified restrictor has
+    a unique satisfier — the typed-world form of the relational definite's
+    uniqueness presupposition (`Relational.iotaPresupposition`, = `∃!`). -/
+theorem interpret_possessive_isSome_iff_exists_unique
+    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+    (g : Assignment E) (gs : SitAssignment W) :
+    (interpret (.possessive R possessor rel) g gs).isSome
+      ↔ ∃! x, R g gs x ∧ rel g gs (possessor g gs) x := by
+  rw [interpret_possessive]
+  exact russellIota_isSome_iff_exists_unique _
 
 /-- [patel-grosz-grosz-2017]'s "DEM = PER + index": the **strong** article
     (`anaphoric` at index `i`) and the **weak** article (`unique`) over a shared

@@ -109,20 +109,18 @@ def gsLiving : SitAssignment Room := fun _ => Room.living
 /-- Restrictor uniqueness in the kitchen situation: only `tableKitchen`
     satisfies `tableAtSit0`. -/
 theorem tableAtSit0_existsUnique_kitchen :
-    existsUnique (E := Item) (fun x => tableAtSit0 g₀ gsKitchen x) := by
-  refine ⟨⟨Item.tableKitchen, trivial⟩, ?_⟩
-  intro x y hx hy
-  cases x <;> cases y <;>
-    simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen]
+    ∃! x : Item, tableAtSit0 g₀ gsKitchen x := by
+  refine ⟨Item.tableKitchen, trivial, ?_⟩
+  intro y hy
+  cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen]
 
 /-- Restrictor uniqueness in the living-room situation: only
     `tableLiving` satisfies `tableAtSit0`. -/
 theorem tableAtSit0_existsUnique_living :
-    existsUnique (E := Item) (fun x => tableAtSit0 g₀ gsLiving x) := by
-  refine ⟨⟨Item.tableLiving, trivial⟩, ?_⟩
-  intro x y hx hy
-  cases x <;> cases y <;>
-    simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving]
+    ∃! x : Item, tableAtSit0 g₀ gsLiving x := by
+  refine ⟨Item.tableLiving, trivial, ?_⟩
+  intro y hy
+  cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving]
 
 /-- Witness extraction for the kitchen case: the unique satisfier is
     `tableKitchen`. -/
