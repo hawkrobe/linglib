@@ -39,8 +39,8 @@ forms are the **unbounded** versions: a single `k`-free equation in
 the syntactic monoid characterizes membership in the variety. The
 `omegaPow` substrate is what eliminates the `k` parameter.
 
-The two characterizations cohere: `IsDefinite k L → kDefiniteEquation L k`
-is the finite-`k` half; `(∃ k, IsDefinite k L) ↔ pinDefiniteEquation L`
+The two characterizations cohere: `L.IsDefinite k → kDefiniteEquation L k`
+is the finite-`k` half; `(∃ k, L.IsDefinite k) ↔ pinDefiniteEquation L`
 is the unbounded half. The unbounded form is the natural Pin/Eilenberg
 form used throughout algebraic automata theory.
 
@@ -157,7 +157,7 @@ case forces the syntactic monoid to be trivial, so the equation holds
 vacuously. -/
 theorem IsDefinite.satisfies_pinDefiniteEquation
     {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
-    (hk : IsDefinite k L) : pinDefiniteEquation L := by
+    (hk : L.IsDefinite k) : pinDefiniteEquation L := by
   intro s w hw
   set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
   have hkEq := IsDefinite.satisfies_kDefiniteEquation hk
@@ -299,7 +299,7 @@ syntactic monoid satisfies Pin's omega-power equation, then `L` is
 theorem exists_isDefinite_of_satisfies_pinDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid]
     (h : pinDefiniteEquation L) :
-    ∃ k, IsDefinite k L := by
+    ∃ k, L.IsDefinite k := by
   refine ⟨Nat.card L.syntacticMonoid, ?_⟩
   apply isDefinite_of_satisfies_kDefiniteEquation
   intro s αs hαs_len
@@ -310,7 +310,7 @@ theorem exists_isDefinite_of_satisfies_pinDefiniteEquation
 equation. -/
 theorem exists_isDefinite_iff_satisfies_pinDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid] :
-    (∃ k, IsDefinite k L) ↔ pinDefiniteEquation L := by
+    (∃ k, L.IsDefinite k) ↔ pinDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ => IsDefinite.satisfies_pinDefiniteEquation hk, ?_⟩
   exact exists_isDefinite_of_satisfies_pinDefiniteEquation
 
@@ -358,7 +358,7 @@ language's syntactic monoid satisfies Pin's right-absorbing
 omega-power equation. Mirror of `IsDefinite.satisfies_pinDefiniteEquation`. -/
 theorem IsReverseDefinite.satisfies_pinReverseDefiniteEquation
     {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
-    (hk : IsReverseDefinite k L) : pinReverseDefiniteEquation L := by
+    (hk : L.IsReverseDefinite k) : pinReverseDefiniteEquation L := by
   intro s w hw
   set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
   have hkEq := IsReverseDefinite.satisfies_kReverseDefiniteEquation hk
@@ -507,7 +507,7 @@ then `L` is reverse-`k`-definite for some `k`. -/
 theorem exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid]
     (h : pinReverseDefiniteEquation L) :
-    ∃ k, IsReverseDefinite k L := by
+    ∃ k, L.IsReverseDefinite k := by
   refine ⟨Nat.card L.syntacticMonoid, ?_⟩
   apply isReverseDefinite_of_satisfies_kReverseDefiniteEquation
   intro s αs hαs_len
@@ -518,7 +518,7 @@ theorem exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation
 reverse-definite omega-power equation. -/
 theorem exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid] :
-    (∃ k, IsReverseDefinite k L) ↔ pinReverseDefiniteEquation L := by
+    (∃ k, L.IsReverseDefinite k) ↔ pinReverseDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ => IsReverseDefinite.satisfies_pinReverseDefiniteEquation hk, ?_⟩
   exact exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation
 
@@ -593,14 +593,14 @@ def pinGeneralizedDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] 
 language's syntactic monoid satisfies the LI omega-power equation.
 
 Strategy: pick `v = w^(N·k)` long enough (length `≥ k`); apply
-`IsGeneralizedDefinite k L` directly to the pair
+`L.IsGeneralizedDefinite k` directly to the pair
 `(v ++ s' ++ v, v)` — both have the same length-`k` left-prefix (the
 first `k` chars of `v`) and same length-`k` right-suffix (the last
 `k` chars of `v`). The omega-power identity `[w]^N · s · [w]^N = [w]^N`
 follows by lifting through `[w]^(N·k) = omegaPow [w]`. -/
 theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
-    (hk : IsGeneralizedDefinite k L) :
+    (hk : L.IsGeneralizedDefinite k) :
     pinGeneralizedDefiniteEquation L := by
   intro s w hw
   set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
@@ -619,7 +619,7 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
       apply Quotient.sound
       intro p q
       show p ++ FreeMonoid.toList u ++ q ∈ L ↔ p ++ FreeMonoid.toList 1 ++ q ∈ L
-      apply hk
+      apply isGeneralizedDefinite_iff_edges.mp hk
       · -- takeAt_left 0 : both .take 0 = []
         rfl
       · -- takeAt_right 0 : both = []
@@ -662,7 +662,7 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
     have hvId : FreeMonoid.toList (FreeMonoid.ofList v) = v := rfl
     rw [hwmul, hvId]
     -- Apply IsGenDef k L to (x ++ v ++ toList s' ++ v ++ y, x ++ v ++ y).
-    apply hk
+    apply isGeneralizedDefinite_iff_edges.mp hk
     · -- takeAt_left k matches: both have x ++ v as prefix; |x ++ v| ≥ k.
       show (x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y).take k =
            (x ++ v ++ y).take k
@@ -806,11 +806,11 @@ generalized-`k`-definite for some `k` (specifically,
 Proof: `sandwich_absorbing_of_pinGeneralizedDefiniteEquation` lifts the
 omega-power equation to a finite-`k` sandwich on length-`k` words; this
 is exactly `kGeneralizedDefiniteEquation L k`, which by Lambert Prop 58
-(reverse direction in `Equations.lean`) gives `IsGeneralizedDefinite k L`. -/
+(reverse direction in `Equations.lean`) gives `L.IsGeneralizedDefinite k`. -/
 theorem exists_isGeneralizedDefinite_of_satisfies_pinGeneralizedDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid]
     (h : pinGeneralizedDefiniteEquation L) :
-    ∃ k, IsGeneralizedDefinite k L := by
+    ∃ k, L.IsGeneralizedDefinite k := by
   refine ⟨Nat.card L.syntacticMonoid, ?_⟩
   apply isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
   intro s αs hαs_len
@@ -821,7 +821,7 @@ some `k` iff its syntactic monoid satisfies Pin's LI omega-power
 equation. -/
 theorem exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid] :
-    (∃ k, IsGeneralizedDefinite k L) ↔ pinGeneralizedDefiniteEquation L := by
+    (∃ k, L.IsGeneralizedDefinite k) ↔ pinGeneralizedDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ =>
     IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation hk, ?_⟩
   exact exists_isGeneralizedDefinite_of_satisfies_pinGeneralizedDefiniteEquation
