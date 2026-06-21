@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Order.Interval.Finset.Fin
 import Linglib.Core.Order.PartialRank
 import Linglib.Features.Case.Basic
 /-!
@@ -123,25 +124,22 @@ rank encoding above is the shadow of that decomposition. -/
 
 /-- The shell stack of an on-hierarchy case: the downward-closed set of
     case shells its representation contains ([caha-2009]'s nested
-    functional sequence, with shells indexed abstractly). Stipulated
-    independently of `containmentRank`; `cahaLT_iff_kshells_ssubset`
-    certifies the two agree. -/
-def kshells : Case → Option (Finset (Fin 5))
-  | .nom => some {0}
-  | .acc => some {0, 1}
-  | .gen => some {0, 1, 2}
-  | .dat => some {0, 1, 2, 3}
-  | .loc => some {0, 1, 2, 3, 4}
-  | _ => none
+    functional sequence). **Derived** as the down-set `Iic` of the
+    containment rank (`Core.Order.rankShells`), not stipulated alongside
+    `containmentRank` — so the two cannot drift, and
+    `cahaLT_iff_kshells_ssubset` is the structural shadow fact rather than a
+    coincidence to be `decide`d. -/
+def kshells : Case → Option (Finset (Fin 5)) :=
+  Core.Order.rankShells containmentRank
 
-/-- **The order is the shadow of the decomposition**: the containment
-    order through the numeric rank coincides with the partial-rank order
-    through the shell stacks (`<` on `Finset` is strict inclusion `⊂`).
-    The rank encoding is certified against the structural containment
-    claim, not stipulated alongside it. -/
+/-- **The order is the shadow of the decomposition**: the containment order
+    through the numeric rank coincides with the partial-rank order through the
+    shell stacks (`<` on `Finset` is strict inclusion `⊂`). Now an instance of
+    the generic `Core.Order.rankLT_iff_rankShells`, since `kshells` *is* the
+    rank's down-set decomposition. -/
 theorem cahaLT_iff_kshells_ssubset (c₁ c₂ : Case) :
     cahaLT c₁ c₂ ↔ RankLT kshells c₁ c₂ := by
-  revert c₁ c₂; decide
+  unfold kshells; exact Core.Order.rankLT_iff_rankShells containmentRank c₁ c₂
 
 /-! ### The Caha order as scoped instances
 
@@ -246,20 +244,19 @@ def PathDir.rank : PathDir → Fin 4
 
 /-- The shell stack of a path direction: the downward-closed set of path
     heads its structure contains ([pantcheva-2011]'s nested
-    [Route [Source [Goal [Place]]]]). Stipulated independently of `rank`;
-    `lt_iff_shells_ssubset` certifies they agree. -/
-def PathDir.shells : PathDir → Finset (Fin 4)
-  | .place => {0}
-  | .goal => {0, 1}
-  | .source => {0, 1, 2}
-  | .route => {0, 1, 2, 3}
+    [Route [Source [Goal [Place]]]]). **Derived** as the down-set `Iic` of
+    `PathDir.rank`, not stipulated alongside it; `lt_iff_shells_ssubset` is
+    then the structural shadow fact (`Core.Order.Iic_ssubset_Iic`). -/
+def PathDir.shells (d : PathDir) : Finset (Fin 4) := Finset.Iic d.rank
 
 /-- **The order is the shadow of the decomposition**: directional
     containment (strict rank) coincides with strict inclusion of shell
-    stacks — the directional analogue of `cahaLT_iff_kshells_ssubset`. -/
+    stacks — the directional analogue of `cahaLT_iff_kshells_ssubset`,
+    here just `Core.Order.Iic_ssubset_Iic` since the shells *are* `Iic` of
+    the rank. -/
 theorem PathDir.lt_iff_shells_ssubset (d₁ d₂ : PathDir) :
     d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
-  revert d₁ d₂; decide
+  unfold PathDir.shells; exact Core.Order.Iic_ssubset_Iic.symm
 
 /-! ### Directional denotation ([pantcheva-2011] Ch. 5)
 
