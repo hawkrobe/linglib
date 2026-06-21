@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Language
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Subregular.Definite
+import Linglib.Core.Data.List.DropRight
 
 /-!
 # Equational characterizations of subregular language classes
@@ -139,37 +140,13 @@ variable {α : Type*}
 -- §1. Helper lemmas on `Edge.right.takeAt`
 -- ============================================================================
 
-/-- The right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix
-of `rest` whenever `rest.length ≥ k`. -/
+/-- The right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix of `rest`
+whenever `rest.length ≥ k` — the `Edge.takeAt` view of
+`List.rtake_append_of_le_length`. -/
 lemma takeAt_right_append_left_absorb {α : Type*}
     (x rest : List α) {k : ℕ} (h : k ≤ rest.length) :
-    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest := by
-  show (x ++ rest).drop ((x ++ rest).length - k) =
-       rest.drop (rest.length - k)
-  rw [List.length_append,
-      show x.length + rest.length - k = x.length + (rest.length - k) by omega,
-      List.drop_length_add_append]
-
-/-- When `xs.length ≤ k`, the right-`k`-suffix of `xs` is `xs` itself. -/
-private lemma takeAt_right_of_short {α : Type*} {k : ℕ} {xs : List α}
-    (h : xs.length ≤ k) : Edge.right.takeAt k xs = xs := by
-  show xs.drop (xs.length - k) = xs
-  have : xs.length - k = 0 := by omega
-  rw [this, List.drop_zero]
-
-/-- When `xs.length ≥ k`, the right-`k`-suffix of `xs` has length exactly `k`. -/
-private lemma takeAt_right_length_of_long {α : Type*} {k : ℕ} {xs : List α}
-    (h : k ≤ xs.length) : (Edge.right.takeAt k xs).length = k := by
-  show (xs.drop (xs.length - k)).length = k
-  rw [List.length_drop]; omega
-
-/-- A list `xs` of length `≥ k` decomposes as
-`xs.take (xs.length - k) ++ Edge.right.takeAt k xs`. -/
-private lemma decompose_at_right_takeAt {α : Type*} {k : ℕ} {xs : List α}
-    (_h : k ≤ xs.length) :
-    xs = xs.take (xs.length - k) ++ Edge.right.takeAt k xs := by
-  show xs = xs.take (xs.length - k) ++ xs.drop (xs.length - k)
-  exact (List.take_append_drop _ _).symm
+    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
+  List.rtake_append_of_le_length x rest h
 
 -- ============================================================================
 -- §2. Lifting the equation to `SyntacticEquiv`
@@ -258,14 +235,16 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
   have key : ∀ w : List α, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
     intro w
     by_cases hw : w.length ≤ k
-    · rw [takeAt_right_of_short hw]
+    · rw [Edge.takeAt_right, List.rtake_of_length_le hw]
     · push_neg at hw
-      have hlen : (Edge.right.takeAt k w).length = k :=
-        takeAt_right_length_of_long (le_of_lt hw)
+      have hlen : (Edge.right.takeAt k w).length = k := by
+        rw [Edge.takeAt_right, List.length_rtake]; omega
       have hequiv : SyntacticEquiv L w (Edge.right.takeAt k w) := by
         have base := syntacticEquiv_of_kDefiniteEquation h
           (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
-        rwa [← decompose_at_right_takeAt (le_of_lt hw)] at base
+        have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
+          (List.rdrop_append_rtake w k).symm
+        rwa [← decomp] at base
       exact mem_iff_of_syntacticEquiv hequiv
   exact Language.invariantUnder_iff.mpr fun a b hab => by rw [key a, key b, hab]
 
