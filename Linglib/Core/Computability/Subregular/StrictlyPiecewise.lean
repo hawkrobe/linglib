@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Defs
 import Mathlib.Data.List.Sublists
+import Mathlib.Computability.Language
 
 /-!
 # Strictly Piecewise Languages (SP_k)

@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Tier
+import Linglib.Core.Data.List.Factors
+import Linglib.Core.Data.List.Chain
 
 /-!
 # Forbidden-Pair TSL_2 Grammars
@@ -83,21 +85,21 @@ iff it is a chain for `CleanPair R`. The factor-membership/chain bridge
 underlying `mem_forbidPairs_lang_iff_filter_isChain`. -/
 lemma forall_kFactors_two_not_forbiddenPairsSet_iff_isChain
     (R : α → α → Prop) (xs : List (Option α)) :
-    (∀ f ∈ kFactors 2 xs, f ∉ forbiddenPairsSet R) ↔
+    (∀ f ∈ List.kFactors 2 xs, f ∉ forbiddenPairsSet R) ↔
       xs.IsChain (CleanPair R) := by
   induction xs with
   | nil =>
     refine ⟨fun _ => List.isChain_nil, ?_⟩
     intro _ f hf
-    simp only [kFactors_two_nil, List.not_mem_nil] at hf
+    simp only [List.kFactors_two_nil, List.not_mem_nil] at hf
   | cons a rest ih =>
     cases rest with
     | nil =>
       refine ⟨fun _ => List.isChain_singleton _, ?_⟩
       intro _ f hf
-      simp only [kFactors_two_singleton, List.not_mem_nil] at hf
+      simp only [List.kFactors_two_singleton, List.not_mem_nil] at hf
     | cons b rest' =>
-      rw [kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons,
+      rw [List.kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons,
           ih]
       refine and_congr_left' ?_
       constructor

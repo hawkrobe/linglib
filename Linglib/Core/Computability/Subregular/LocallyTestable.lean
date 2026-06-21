@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.StrictlyLocal
+import Mathlib.Computability.Language
+import Linglib.Core.Data.List.Factors
 
 /-!
 # Locally Testable Languages (LT_k, LTT_{k,t})
@@ -44,10 +46,10 @@ variable {α : Type*}
 indistinguishability relation `w₁ ~_LT w₂` is exactly equality of
 `factorSet k w₁` and `factorSet k w₂`. -/
 def factorSet (k : ℕ) (w : List α) : Set (Augmented α) :=
-  {f | f ∈ kFactors k (boundary k w)}
+  {f | f ∈ List.kFactors k (boundary k w)}
 
 @[simp] lemma mem_factorSet {k : ℕ} {f : Augmented α} {w : List α} :
-    f ∈ factorSet k w ↔ f ∈ kFactors k (boundary k w) :=
+    f ∈ factorSet k w ↔ f ∈ List.kFactors k (boundary k w) :=
   Iff.rfl
 
 /-- A language is **locally `k`-testable** iff strings with the same set of
@@ -73,7 +75,7 @@ variable [DecidableEq α]
 boundary-augmented form, capped at threshold `t`. The cap is what makes
 LTT a *finite* test even on infinite-input families. -/
 def factorCount (k t : ℕ) (f : Augmented α) (w : List α) : ℕ :=
-  min t ((kFactors k (boundary k w)).count f)
+  min t ((List.kFactors k (boundary k w)).count f)
 
 /-- A language is **locally `(k,t)`-threshold-testable** iff strings with
 the same `t`-saturated factor counts agree on membership. Specializing to
