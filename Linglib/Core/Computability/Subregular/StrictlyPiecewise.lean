@@ -7,33 +7,26 @@ import Mathlib.Computability.Language
 import Mathlib.Data.List.Sublists
 
 /-!
-# Strictly Piecewise Languages (SP_k)
+# Strictly piecewise languages (SP_k)
 
 A language `L` is **strictly `k`-piecewise** when membership is determined by which
-length-`k` *subsequences* (scattered, non-contiguous selections) the input contains
-[rogers-pullum-2011] [lambert-2022]. Whereas SL_k constrains adjacent material via
-*factors* (contiguous infixes), SP_k constrains long-distance co-occurrence via
-*subsequences*.
-
-## Why subsequences (not factors)
-
-The two locality dimensions in the subregular hierarchy are *adjacency-based*
-(SL/LT/LTT, contiguous `k`-factors) and *precedence-based* (SP, `k`-element
-subsequences). A long-distance pattern such as sibilant harmony — *sasi* but not
-*saʃi* — is naturally SP_2: the forbidden length-2 subsequence is `[s, ʃ]`,
-regardless of intervening material. No boundary augmentation is needed: subsequences
-are blind to position, so edge markers add no information [heinz-rogers-2010].
+length-`k` *subsequences* (scattered, non-contiguous selections) the input contains.
+Where SL_k constrains adjacent material via contiguous factors, SP_k constrains
+long-distance co-occurrence via subsequences — so no boundary augmentation is needed
+(subsequences are blind to position).
 
 ## Main definitions
 
-* `Subregular.SPGrammar α` — a grammar is a set of permitted length-`k`
-  subsequences; the width `k` is supplied to `language`.
+* `Subregular.SPGrammar α` — a set of permitted subsequences; the width `k` is
+  supplied to `language`, not baked into the carrier.
 * `Subregular.SPGrammar.language k` — the `Language α` it generates: every length-`k`
   subsequence of `w` must be permitted.
 * `Language.IsStrictlyPiecewise L k` — `L` is strictly `k`-piecewise.
 
-The relation `List.Sublist` (`<+`) is mathlib's "is a (non-contiguous) subsequence
-of" — exactly what SP needs.
+## Implementation notes
+
+`List.Sublist` (`<+`) is mathlib's non-contiguous "is a subsequence of", exactly the
+SP primitive.
 -/
 
 namespace Subregular
@@ -71,14 +64,17 @@ instance decidableMemLanguage (k : ℕ) (G : SPGrammar α)
 
 end SPGrammar
 
+end Subregular
+
+namespace Language
+
+variable {α : Type*}
+
+open Subregular
+
 /-- A language `L` is **strictly `k`-piecewise** iff some `SPGrammar α` generates it
 at width `k`. -/
-def _root_.Language.IsStrictlyPiecewise (L : Language α) (k : ℕ) : Prop :=
+def IsStrictlyPiecewise (L : Language α) (k : ℕ) : Prop :=
   ∃ G : SPGrammar α, G.language k = L
 
-/-- Every SP grammar witnesses `Language.IsStrictlyPiecewise` for its language. -/
-lemma SPGrammar.isStrictlyPiecewise_language (k : ℕ) (G : SPGrammar α) :
-    (G.language k).IsStrictlyPiecewise k :=
-  ⟨G, rfl⟩
-
-end Subregular
+end Language

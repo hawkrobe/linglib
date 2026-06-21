@@ -8,13 +8,12 @@ import Linglib.Core.Computability.Subregular.Boundary
 import Linglib.Core.Data.List.Factors
 
 /-!
-# Strictly Local Languages (SL_k)
+# Strictly local languages (SL_k)
 
 A language `L` is **strictly `k`-local** when membership is determined by the
-length-`k` substrings of the boundary-augmented input [rogers-pullum-2011]
-[lambert-2022]: a grammar is a set `G` of permitted `k`-factors, and `w ∈ L` iff
-every `k`-factor of `boundary k w` lies in `G`. Phonology usually states the
-*forbidden* dual (`G = Fᶜ`), finite even over an infinite alphabet.
+length-`k` substrings of the boundary-augmented input: a grammar is a set `G` of
+permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies in
+`G`. The forbidden-factor dual (`G = Fᶜ`) is finite even over an infinite alphabet.
 
 ## Main definitions
 
@@ -58,15 +57,18 @@ def ofForbidden (forbidden : Set (Augmented α)) : SLGrammar α := forbiddenᶜ
 
 end SLGrammar
 
+end Subregular
+
+namespace Language
+
+variable {α : Type*}
+
+open Subregular
+
 /-- A language `L` is **strictly `k`-local** iff some `SLGrammar α` generates it at
 width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree`
 ("L is regular iff some DFA accepts L"). -/
-def _root_.Language.IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
+def IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
   ∃ G : SLGrammar α, G.language k = L
 
-/-- Every SL grammar witnesses `Language.IsStrictlyLocal` for its language. -/
-lemma SLGrammar.isStrictlyLocal_language (k : ℕ) (G : SLGrammar α) :
-    (G.language k).IsStrictlyLocal k :=
-  ⟨G, rfl⟩
-
-end Subregular
+end Language
