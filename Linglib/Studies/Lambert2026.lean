@@ -3,12 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.Definite
-import Linglib.Core.Computability.Subregular.PiecewiseTestable
+import Linglib.Core.Computability.Subregular.Language.Definite
+import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Data.List.Bookend
-import Linglib.Core.Computability.Subregular.Tier
-import Linglib.Core.Computability.Subregular.Multitier
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Core.Computability.Subregular.Language.Tier
+import Linglib.Core.Computability.Subregular.Language.Multitier
+import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
 
@@ -36,7 +36,7 @@ the syntactic-semigroup characterization of each class via Eilenberg
 [eilenberg-1976] variety equations (e.g., `D = ⟦sx̄ = x̄⟧`,
 `ℒℐ = ⟦x^ω y x^ω z x^ω = x^ω y x^ω⟧` per [straubing-1985] and
 [almeida-1995]). The Lean substrate (`IsBTC`, `IsTierBased`) lives in
-`Subregular/Multitier.lean`; the algebraic characterization is queued for a
+`Subregular/Language/Multitier.lean`; the algebraic characterization is queued for a
 future `SyntacticMonoid` PR.
 
 ## Disclaimer 1: McCollum (2019) Uyghur gradience (linglib audit)
