@@ -162,8 +162,8 @@ theorem collapse_isISL [DecidableEq α] :
     | nil => simp [Function.ISLRule.applyAux, List.destutter'_nil]
     | cons b l ih =>
       rw [Function.ISLRule.applyAux_cons]
-      have hwin : Function.lastN (2 - 1) ([a] ++ [b]) = [b] := by
-        simp [Function.lastN]
+      have hwin : ([a] ++ [b]).rtake (2 - 1) = [b] := by
+        simp [List.rtake]
       rw [hwin, List.destutter'_cons]
       show a :: ((if [a] = [b] then [] else [b]) ++ r.applyAux [b] l) = _
       by_cases hab : a = b
@@ -178,8 +178,8 @@ theorem collapse_isISL [DecidableEq α] :
   | cons x rest =>
     show r.applyAux [] (x :: rest) = Phonology.OCP.collapse (x :: rest)
     rw [Function.ISLRule.applyAux_cons]
-    have hwin : Function.lastN (2 - 1) ([] ++ [x]) = [x] := by
-      simp [Function.lastN]
+    have hwin : ([] ++ [x]).rtake (2 - 1) = [x] := by
+      simp [List.rtake]
     rw [hwin]
     show ((if ([] : List α) = [x] then [] else [x]) ++ r.applyAux [x] rest) = _
     rw [if_neg (by simp), List.cons_append, List.nil_append]

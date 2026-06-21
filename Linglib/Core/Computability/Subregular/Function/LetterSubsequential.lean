@@ -93,11 +93,45 @@ theorem runFrom_getElem? (T : LetterSFST σ α β) (s : σ) (xs : List α) (i : 
     | zero => simp
     | succ j => simp [ih, List.take_succ_cons]
 
+/-- Transfer a `LetterSFST` along a state-space equivalence `σ ≃ τ`, preserving `run`.
+Mirrors `SFST.transferEquiv`; the use case is bringing a `Type*` finite state down to
+`Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness the
+`Type 0`-state existential of `IsLetterLeftSubsequential`. -/
+def transferEquiv {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ) : LetterSFST τ α β where
+  initial := e T.initial
+  step t x := (e (T.step (e.symm t) x).1, (T.step (e.symm t) x).2)
+
+theorem transferEquiv_runFrom {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ)
+    (s : σ) (xs : List α) :
+    (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons x xs ih =>
+    show (T.step (e.symm (e s)) x).2
+            :: (T.transferEquiv e).runFrom (e (T.step (e.symm (e s)) x).1) xs
+         = (T.step s x).2 :: T.runFrom (T.step s x).1 xs
+    rw [e.symm_apply_apply, ih]
+
+/-- The transferred machine computes the same string function. -/
+@[simp] theorem transferEquiv_run {τ : Type*} (T : LetterSFST σ α β) (e : σ ≃ τ) :
+    (T.transferEquiv e).run = T.run := by
+  funext xs; exact T.transferEquiv_runFrom e T.initial xs
+
 end LetterSFST
 
 /-- The synchronous left-subsequential class: computed by a finite-state `LetterSFST`. -/
 def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : LetterSFST σ α β), T.run = f
+
+/-- **Constructor lemma**: every finite-state `LetterSFST` witnesses
+`IsLetterLeftSubsequential` for its `run`. The state `σ` is accepted at arbitrary
+`Type*` and brought down to `Fin (Fintype.card σ) : Type 0` via `transferEquiv` and
+`Fintype.equivFin`, so bounded-window ISL/OSL states at the alphabet's universe can
+witness the predicate (mirrors `SFST.isLeftSubsequential`). -/
+theorem LetterSFST.isLetterLeftSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
+    (T : LetterSFST σ α β) : IsLetterLeftSubsequential T.run :=
+  ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ),
+   T.transferEquiv_run _⟩
 
 /-- **Forward footprint bridge.** A letter-left-subsequential map is left-determined at
 every coordinate — output `i` depends only on the prefix `{k | k ≤ i}`. (The *block*
