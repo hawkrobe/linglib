@@ -91,7 +91,7 @@ Frameworks without movement (CCG, HPSG) simply never construct these.
 
 For category-free trees (`C = Unit`), use the convenience constructors
 `leaf`, `bin`, `un`, `tr`, `binder` which hide the `Unit` parameter. -/
-inductive Tree (C : Type) (W : Type) where
+inductive Tree (C : Type*) (W : Type*) where
   | terminal : C → W → Tree C W
   | node     : C → List (Tree C W) → Tree C W
   | trace    : Nat → C → Tree C W
@@ -100,7 +100,7 @@ inductive Tree (C : Type) (W : Type) where
 
 namespace Tree
 
-variable {C W : Type}
+variable {C W : Type*}
 
 -- ── Convenience constructors for C = Unit ─────────────────────────
 -- Category-free trees (for H&K composition, Minimalism, etc.) use
@@ -122,24 +122,16 @@ def cat : Tree C W → C
   | .trace _ c => c
   | .bind _ c _ => c
 
-/-! ### Structural equality -/
+/-! ### Decidable equality
 
-/-- Structural equality for trees (mutual recursion through List). -/
-def beq [BEq C] [BEq W] : Tree C W → Tree C W → Bool
-  | .terminal c₁ w₁, .terminal c₂ w₂ => c₁ == c₂ && w₁ == w₂
-  | .node c₁ cs₁, .node c₂ cs₂ => c₁ == c₂ && beqList cs₁ cs₂
-  | .trace n₁ c₁, .trace n₂ c₂ => n₁ == n₂ && c₁ == c₂
-  | .bind n₁ c₁ b₁, .bind n₂ c₂ b₂ => n₁ == n₂ && c₁ == c₂ && beq b₁ b₂
-  | _, _ => false
-where
-  beqList : List (Tree C W) → List (Tree C W) → Bool
-  | [], [] => true
-  | a :: as, b :: bs => beq a b && beqList as bs
-  | _, _ => false
+`DecidableEq` is the single source of truth for tree equality; `BEq` and
+`LawfulBEq (Tree C W)` come for free (and coherently) from the global
+`instBEqOfDecidableEq`. A hand-rolled `beq`/`BEq` instance used to shadow
+this — it left `LawfulBEq (Tree C W)` unsynthesizable and was a second,
+unproven-coherent notion of tree equality, so it was removed. -/
 
-instance [BEq C] [BEq W] : BEq (Tree C W) := ⟨beq⟩
-
--- ── Decidable equality (manual: nested-inductive `deriving` fails) ──
+-- ── Manual `decEq` (nested-inductive `deriving DecidableEq` fails: Lean
+-- core's `mkDecEq` bails on nested inductives, `isNested → return false`) ──
 
 mutual
   /-- Decidable equality on `Tree C W`, mutually recursive with the
@@ -197,7 +189,7 @@ mutual
       | _, isFalse has => isFalse fun h => by cases h; exact has rfl
 end
 
-instance [DecidableEq C] [DecidableEq W] : DecidableEq (Tree C W) := decEq
+instance instDecidableEq [DecidableEq C] [DecidableEq W] : DecidableEq (Tree C W) := decEq
 
 /-! ### Size -/
 
@@ -314,7 +306,7 @@ is valid (binders have a single body); terminals and traces have no
 children. Positions inherit mathlib's rooted-tree order stack from
 `TreePath`: root `⊥`, parent `Order.pred`, least common ancestor `⊓`. -/
 
-instance {C W : Type} : Core.Order.Branching (Tree C W) where
+instance {C W : Type*} : Core.Order.Branching (Tree C W) where
   children
     | .terminal _ _ => []
     | .node _ cs => cs
@@ -327,7 +319,7 @@ generic recursion API (`Branching.size`, `subtrees`, `yield`,
 `sizeOf`, whose nested-`List` IR the LCNF boxing pass cannot compile;
 the measure is only a termination witness, and `yield`/`size` reduce
 symbolically via their `_def` lemmas. -/
-instance {C W : Type} : Core.Order.IsFiniteBranching (Tree C W) :=
+instance {C W : Type*} : Core.Order.IsFiniteBranching (Tree C W) :=
   .ofMeasure sizeOf fun {c t} hc => by
     cases t with
     | terminal _ _ => simp [Core.Order.Branching.children] at hc
@@ -346,7 +338,7 @@ instance {C W : Type} : Core.Order.IsFiniteBranching (Tree C W) :=
 /-- Terminal content: the word at a `terminal`; traces, binders, and
 internal nodes are contentless, so `Branching.yield` computes the
 frontier string. -/
-instance {C W : Type} : Core.Order.HasContent (Tree C W) W where
+instance {C W : Type*} : Core.Order.HasContent (Tree C W) W where
   content?
     | .terminal _ w => some w
     | _ => none
@@ -357,33 +349,33 @@ Make the generic `Branching.yield` reduce by `simp`/`decide` at
 concrete `Tree` constructors — the prerequisite for consumers (Studies
 files) to replace bespoke yield computations with the generic API. -/
 
-@[simp] theorem branching_content_terminal {C W : Type} (c : C) (w : W) :
+@[simp] theorem branching_content_terminal {C W : Type*} (c : C) (w : W) :
     Core.Order.HasContent.content? (Tree.terminal c w) = some w := rfl
 
-@[simp] theorem branching_content_node {C W : Type} (c : C)
+@[simp] theorem branching_content_node {C W : Type*} (c : C)
     (cs : List (Tree C W)) :
     Core.Order.HasContent.content? (Tree.node c cs) = (none : Option W) := rfl
 
-@[simp] theorem branching_content_trace {C W : Type} (n : Nat) (c : C) :
+@[simp] theorem branching_content_trace {C W : Type*} (n : Nat) (c : C) :
     Core.Order.HasContent.content? (Tree.trace (W := W) n c) = none := rfl
 
-@[simp] theorem branching_content_bind {C W : Type} (n : Nat) (c : C)
+@[simp] theorem branching_content_bind {C W : Type*} (n : Nat) (c : C)
     (body : Tree C W) :
     Core.Order.HasContent.content? (Tree.bind n c body) = none := rfl
 
-@[simp] theorem branching_yield_terminal {C W : Type} (c : C) (w : W) :
+@[simp] theorem branching_yield_terminal {C W : Type*} (c : C) (w : W) :
     Core.Order.Branching.yield (Tree.terminal c w) = [w] := by
   rw [Core.Order.Branching.yield_def]; rfl
 
-@[simp] theorem branching_yield_node {C W : Type} (c : C) (cs : List (Tree C W)) :
+@[simp] theorem branching_yield_node {C W : Type*} (c : C) (cs : List (Tree C W)) :
     Core.Order.Branching.yield (W := W) (Tree.node c cs) = cs.flatMap Core.Order.Branching.yield := by
   rw [Core.Order.Branching.yield_def]; rfl
 
-@[simp] theorem branching_yield_trace {C W : Type} (n : Nat) (c : C) :
+@[simp] theorem branching_yield_trace {C W : Type*} (n : Nat) (c : C) :
     Core.Order.Branching.yield (Tree.trace (W := W) n c) = [] := by
   rw [Core.Order.Branching.yield_def]; rfl
 
-@[simp] theorem branching_yield_bind {C W : Type} (n : Nat) (c : C)
+@[simp] theorem branching_yield_bind {C W : Type*} (n : Nat) (c : C)
     (body : Tree C W) :
     Core.Order.Branching.yield (W := W) (Tree.bind n c body)
       = Core.Order.Branching.yield body := by
@@ -408,9 +400,8 @@ By composition with `Core.Order.Branching.toTreeOrder`, every
 making B&P's framework-agnostic command-relation library
 (`Linglib.Core.Order.Command`) directly applicable.
 
-Universe note: capped at `α : Type` because `Syntax.Tree` is monomorphic
-in `Type 0`; sufficient for `LIToken`-indexed `SyntacticObject`. -/
-def toTree {α : Type} : FreeMagma α → Syntax.Tree Unit α
+Universe-polymorphic in `α`, matching `Syntax.Tree`. -/
+def toTree {α : Type*} : FreeMagma α → Syntax.Tree Unit α
   | .of a => .terminal () a
   | .mul l r => .node () [l.toTree, r.toTree]
 
