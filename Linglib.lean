@@ -213,6 +213,7 @@ import Linglib.Semantics.Questions.DecisionTheory
 import Linglib.Semantics.Questions.PartitionDT
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Decision.ExperimentDesign
+import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Core.Optimization.Decoder
