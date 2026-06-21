@@ -49,7 +49,7 @@ open Verb
 def flat : Root := ⟨"flat", {.hasState "flat"}, none, {}⟩
 
 /-- √jog — pure manner of motion. -/
-def jog : Root := ⟨"jog", {.hasManner "jogging-gait", .motion}, none, {}⟩
+def jog : Root := ⟨"jog", {.hasManner "jogging-gait"}, none, {}⟩
 
 /-- √blossom — result with no specified manner or cause (an
     internally caused change of state). -/
