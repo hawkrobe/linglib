@@ -357,12 +357,13 @@ theorem weak_article_fails_on_multi :
     interpret (E := Student) (W := Unit) (.unique studentRestr 0) gAlice gs0 = none := by
   classical
   rw [interpret_unique]
-  have hExU : ¬ existsUnique (fun x : Student => studentRestr gAlice gs0 x) := by
+  have hExU : ¬ ∃! x : Student, studentRestr gAlice gs0 x := by
+    rw [existsUnique_iff_existence_and_uniqueness]
     rintro ⟨_, h⟩
     have : Student.alice = Student.bob := h .alice .bob trivial trivial
     cases this
   by_contra h
-  exact hExU ((russellIota_isSome_iff_existsUnique _).mp
+  exact hExU ((russellIota_isSome_iff_exists_unique _).mp
     (Option.ne_none_iff_isSome.mp h))
 
 /-- The strong article succeeds — it returns the discourse-indexed

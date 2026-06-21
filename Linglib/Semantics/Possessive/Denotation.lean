@@ -15,7 +15,7 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 * the possessor's φ-features (when it is a pronoun) **ride along** to the whole
   possessive, by `applyTo_presup`;
 * the existence/uniqueness presupposition is **selector definedness**
-  (`russellIota_isSome_iff_existsUnique`), not a separate intrinsic presup.
+  (`russellIota_isSome_iff_exists_unique`), not a separate intrinsic presup.
 
 ## Main declarations
 
@@ -35,7 +35,7 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 namespace Possessive
 
 open Semantics.Reference (NominalDenot)
-open Semantics.Definiteness (russellIota russellIota_isSome_iff_existsUnique existsUnique)
+open Semantics.Definiteness (russellIota)
 
 variable {Ctx : Type*} {W E : Type}
 
