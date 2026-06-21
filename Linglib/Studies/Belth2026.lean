@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Core.Computability.Subregular.Language.Tier
+import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.Multitier
 
 /-!
