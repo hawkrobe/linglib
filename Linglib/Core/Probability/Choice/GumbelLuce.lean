@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv

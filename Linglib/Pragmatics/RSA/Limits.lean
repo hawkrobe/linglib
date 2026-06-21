@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 import Mathlib.Order.Filter.Basic
 import Mathlib.Topology.Order.Basic
 import Mathlib.Topology.Order.Real
