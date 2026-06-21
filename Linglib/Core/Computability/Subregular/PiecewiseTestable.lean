@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
+import Mathlib.Computability.Language
 
 /-!
 # Piecewise Testable Languages (PT_k)
