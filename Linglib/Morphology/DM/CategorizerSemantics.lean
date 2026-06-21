@@ -109,10 +109,6 @@ theorem nBodyPartDenot_eq_pi {E S : Type}
     (rootPred : Pred1 E S) (bodyPartOf : Pred2 E S) :
     nBodyPartDenot rootPred bodyPartOf = π rootPred bodyPartOf := rfl
 
-/-- n_{sortal} IS Barker's bare semantics: identity on the root predicate. -/
-theorem nSortalDenot_eq_bare {E S : Type} (rootPred : Pred1 E S) :
-    nSortalDenot rootPred = bareSemantics rootPred := rfl
-
 /-- n_{alienator} is the argument-flipped version of Barker's Ex.
 
     Barker's Ex closes the second argument of R(x,y):

@@ -49,7 +49,7 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 
 open Typology.Possession
 open Grammaticalization
-open Semantics.ArgumentStructure.Relational (Pred1 Pred2 SemType)
+open Semantics.ArgumentStructure.Relational (Pred1 Pred2 NominalInterpType)
 
 namespace Heine1997
 
@@ -325,7 +325,7 @@ theorem location_not_permanent :
     constructions: the possessee is the sole core argument, and the
     possessor is an oblique adjunct. The possessive predicate is Pred1,
     with the possessor introduced by Ex closure or case marking. -/
-def schemaArity : PossessionSource → SemType
+def schemaArity : PossessionSource → NominalInterpType
   | .action    => .pred2  -- X takes Y: two core arguments
   | .companion => .pred2  -- X is with Y: two core arguments
   | _          => .pred1  -- Y exists/is-at/...: one core argument + oblique
@@ -378,7 +378,7 @@ structure SchemaPrediction where
   yieldsHave : Bool
   yieldsBelong : Bool
   possessorIsSubject : Bool
-  arity : SemType
+  arity : NominalInterpType
 
 /-- Derive predictions from a schema. -/
 def predictionsFor (s : PossessionSource) : SchemaPrediction :=

@@ -204,16 +204,15 @@ def priorContextLex : List (Tree Cat EWord) :=
 
 /-- The epithet sentence contains a DP node. -/
 theorem epithet_has_dp :
-    bastardJohnArrived.containsCat .DP = true := by decide
+    bastardJohnArrived.ContainsCat .DP := by decide
 
 /-- The bare sentence has no DP node. -/
 theorem bare_lacks_dp :
-    johnArrived.containsCat .DP = false := by decide
+    ¬ johnArrived.ContainsCat .DP := by decide
 
 /-- The OOTB substitution source contains no DP. -/
 theorem source_lacks_dp :
-    (substitutionSource epithetLex johnArrived).all
-      (fun t => !t.containsCat .DP) = true := by decide
+    ∀ t ∈ substitutionSource epithetLex johnArrived, ¬ t.ContainsCat .DP := by decide
 
 /-- The OOTB epithet sentence is NOT a structural alternative.
 Discharged by `category_preservation`: no source item has a DP, the
@@ -222,15 +221,10 @@ does. -/
 theorem epithet_not_alternative_outOfBlue :
     bastardJohnArrived ∉ structuralAlternatives epithetLex johnArrived := by
   intro h
-  have h_preserved := category_preservation
+  exact category_preservation
     (substitutionSource epithetLex johnArrived) .DP
     johnArrived bastardJohnArrived
-    (by intro s hs
-        have := List.all_eq_true.mp source_lacks_dp s hs
-        simpa using this)
-    bare_lacks_dp
-    h
-  exact absurd epithet_has_dp (by rw [h_preserved]; decide)
+    source_lacks_dp bare_lacks_dp h epithet_has_dp
 
 /-! ### CI content via felicity-set semantics
 
@@ -251,7 +245,7 @@ def speakerBelievesJohnBastard : World → Prop := fun w => w = true
 proxy for "the epithet construction is present"; see Implementation
 notes). -/
 abbrev hasEpithetStructure (φ : Tree Cat EWord) : Prop :=
-  φ.containsCat .DP = true
+  φ.ContainsCat .DP
 
 /-- Felicity-set CI content ([gutzmann-2015] / [kaplan-1999];
 adopted by Lo Guercio (paper def 12, p. 9)).
@@ -271,15 +265,11 @@ theorem epithet_ciStronger_than_bare :
     (∃ w, expressiveCI johnArrived w ∧ ¬ expressiveCI bastardJohnArrived w) := by
   refine ⟨?_, ?_⟩
   · intro w _
-    left
-    show ¬ johnArrived.containsCat .DP = true
-    rw [bare_lacks_dp]; decide
-  · refine ⟨false, ?_, ?_⟩
-    · left; show ¬ johnArrived.containsCat .DP = true
-      rw [bare_lacks_dp]; decide
-    · rintro (h | h)
-      · exact h epithet_has_dp
-      · exact Bool.false_ne_true h
+    exact Or.inl bare_lacks_dp
+  · refine ⟨false, Or.inl bare_lacks_dp, ?_⟩
+    rintro (h | h)
+    · exact h epithet_has_dp
+    · exact Bool.false_ne_true h
 
 /-! ### Thesis discharge — the OOTB / priorMention contrast -/
 
@@ -301,17 +291,12 @@ theorem outOfBlue_no_ACI :
     by_contra hNoStruct
     exact h_alt (Or.inl hNoStruct)
   -- But category_preservation forbids DP in any reachable tree
-  have h_preserved : φ'.containsCat .DP = false :=
+  have h_preserved : ¬ φ'.ContainsCat .DP :=
     category_preservation
       (substitutionSource epithetLex johnArrived) .DP
       johnArrived φ'
-      (by intro s hs
-          have := List.all_eq_true.mp source_lacks_dp s hs
-          simpa using this)
-      bare_lacks_dp
-      hφ'
-  exact absurd hStruct (by rw [show hasEpithetStructure φ' = (φ'.containsCat .DP = true) from rfl,
-                              h_preserved]; decide)
+      source_lacks_dp bare_lacks_dp hφ'
+  exact h_preserved hStruct
 
 /-- **Prior mention** (paper (20a)): when an alternative source
 makes the epithet variant `bastardJohnArrived` reachable (by Fox-Katzir

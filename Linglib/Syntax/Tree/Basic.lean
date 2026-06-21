@@ -253,18 +253,50 @@ where
   | [] => []
   | t :: ts => subtrees t ++ subtreesList ts
 
+theorem subtreesList_eq_flatMap (cs : List (Tree C W)) :
+    subtrees.subtreesList cs = cs.flatMap subtrees := by
+  induction cs with
+  | nil => rfl
+  | cons t ts ih => simp [subtrees.subtreesList, ih, List.flatMap_cons]
+
+theorem subtrees_node (cat : C) (cs : List (Tree C W)) :
+    subtrees (.node cat cs) = .node cat cs :: cs.flatMap subtrees := by
+  rw [subtrees, subtreesList_eq_flatMap]
+
 /-! ### Category queries -/
 
-/-- Whether a category appears anywhere in the tree. -/
-def containsCat [BEq C] (target : C) : Tree C W → Bool
-  | .terminal c _ => target == c
-  | .node c cs => target == c || containsCatList target cs
-  | .trace _ c => target == c
-  | .bind _ c body => target == c || containsCat target body
-where
-  containsCatList (target : C) : List (Tree C W) → Bool
-  | [] => false
-  | t :: ts => containsCat target t || containsCatList target ts
+/-- `ContainsCat target t` holds when category `target` appears on some
+subtree of `t`. A `Prop` predicate (with a kernel-reducible `Decidable`
+instance from `List` membership, so `decide` closes concrete goals) over
+the file's own structurally-recursive `subtrees` — not a `Bool` function. -/
+def ContainsCat [DecidableEq C] (target : C) (t : Tree C W) : Prop :=
+  target ∈ (subtrees t).map cat
+
+instance [DecidableEq C] (target : C) (t : Tree C W) :
+    Decidable (ContainsCat target t) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-- `ContainsCat` at a node: it is the node's own category, or appears in
+some child. -/
+theorem containsCat_node_iff [DecidableEq C] (target cat : C)
+    (cs : List (Tree C W)) :
+    ContainsCat target (.node cat cs) ↔
+      target = cat ∨ ∃ t ∈ cs, ContainsCat target t := by
+  simp only [ContainsCat, subtrees_node, List.map_cons, List.mem_cons, List.mem_map,
+    List.mem_flatMap, Tree.cat]
+  constructor
+  · rintro (h | ⟨s, ⟨t, ht, hts⟩, rfl⟩)
+    · exact Or.inl h
+    · exact Or.inr ⟨t, ht, s, hts, rfl⟩
+  · rintro (rfl | ⟨t, ht, s, hs, rfl⟩)
+    · exact Or.inl rfl
+    · exact Or.inr ⟨s, ⟨t, ht, hs⟩, rfl⟩
+
+/-- `ContainsCat` at a binder: the binder's category, or inside the body. -/
+theorem containsCat_bind_iff [DecidableEq C] (target c : C) (n : Nat)
+    (body : Tree C W) :
+    ContainsCat target (.bind n c body) ↔ target = c ∨ ContainsCat target body := by
+  simp only [ContainsCat, subtrees, List.map_cons, List.mem_cons, Tree.cat]
 
 /-! ### Leaf substitution -/
 
