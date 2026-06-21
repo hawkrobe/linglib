@@ -1903,8 +1903,8 @@ import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.SyntacticMonoid.Equations
-import Linglib.Core.Computability.SyntacticMonoid.Pin
+import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
+import Linglib.Core.Computability.Subregular.Language.Algebra.Pin
 import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
