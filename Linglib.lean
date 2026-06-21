@@ -311,14 +311,12 @@ import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal
-import Linglib.Core.Computability.Subregular.LocallyTestable
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -326,7 +324,6 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
-import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
 import Linglib.Phonology.Tier
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case.Basic

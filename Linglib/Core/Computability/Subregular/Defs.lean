@@ -87,4 +87,17 @@ lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
 
 end IsBoundaryVacuous
 
+/-! ### Scan direction -/
+
+namespace Function
+
+/-- The orientation of a subregular transducer's scan: left-to-right or
+right-to-left. -/
+inductive Direction
+  | left
+  | right
+  deriving DecidableEq, Repr
+
+end Function
+
 end Subregular

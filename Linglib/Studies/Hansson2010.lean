@@ -297,18 +297,17 @@ Rwanda and Berber ([hansson-2010] ch. 3) — and are not formalised here. -/
 length-2 subsequences are everything except mixed-place sibilant pairs.
 Note this is a forbidden *subsequence* (non-contiguous), not a
 forbidden *factor* (contiguous), so transparency to intervening
-material is built in. The `permitted` field is given as a function
-(rather than `{s | ...}` set-builder) so that `Decidable` synthesis sees
-through to the underlying decidable equalities on `NSeg` lists. -/
-def navajoSibilantHarmonySP : SPGrammar 2 NSeg where
-  permitted s := s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
+material is built in. The grammar is written as a function (rather than a
+`{s | ...}` set-builder) so that `Decidable` synthesis sees through to the
+underlying decidable equalities on `NSeg` lists. -/
+def navajoSibilantHarmonySP : SPGrammar NSeg :=
+  fun s => s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
 
 /-- **Navajo sibilant harmony stringset is SP_2** under the alternative
-[mcmullin-2016] characterisation. Explicit `IsStrictlyPiecewise 2`
+[mcmullin-2016] characterisation. Explicit `Language.IsStrictlyPiecewise`
 typing of the SP_2 grammar's implicit complexity claim. -/
 theorem navajoSibilantHarmonySP_lang_isSP2 :
-    Subregular.IsStrictlyPiecewise 2
-      navajoSibilantHarmonySP.lang :=
+    (navajoSibilantHarmonySP.language 2).IsStrictlyPiecewise 2 :=
   ⟨navajoSibilantHarmonySP, rfl⟩
 
 /-! ### § 6.2 Agreement on Navajo's transparent inputs
@@ -331,7 +330,7 @@ forbidden subsequences `[antSib, postSib]` and `[postSib, antSib]` both
 require *both* sibilant classes, so the absence of either suffices. -/
 theorem sp_lang_of_one_sibilant_class_absent {w : List NSeg}
     (h : NSeg.antSib ∉ w ∨ NSeg.postSib ∉ w) :
-    w ∈ navajoSibilantHarmonySP.lang := by
+    w ∈ navajoSibilantHarmonySP.language 2 := by
   intro s _ hsub
   refine ⟨?_, ?_⟩ <;> intro heq <;> subst heq <;>
     rcases h with hAnt | hPost
@@ -344,7 +343,7 @@ theorem sp_lang_of_one_sibilant_class_absent {w : List NSeg}
 mixed-place subsequence `[antSib, postSib]` is present at positions
 0 and 2 (separated by a vowel), violating the forbidden-subsequence
 ban. The witness is exhibited explicitly. -/
-theorem preSiDze_violates_SP : preSiDze ∉ navajoSibilantHarmonySP.lang := by
+theorem preSiDze_violates_SP : preSiDze ∉ navajoSibilantHarmonySP.language 2 := by
   intro h
   have hwit : List.Sublist [NSeg.antSib, NSeg.postSib] preSiDze := by
     -- preSiDze = [antSib, vowel, postSib, vowel, neutralC]; pick positions 0 and 2.
@@ -354,19 +353,19 @@ theorem preSiDze_violates_SP : preSiDze ∉ navajoSibilantHarmonySP.lang := by
 /-- Post-harmony surface form is accepted by SP_2 too — `postSib`
 appears but `antSib` does not, so the forbidden mixed-place
 subsequences cannot occur. Direct corollary of the structural helper. -/
-theorem postShiDze_legal_SP : postShiDze ∈ navajoSibilantHarmonySP.lang :=
+theorem postShiDze_legal_SP : postShiDze ∈ navajoSibilantHarmonySP.language 2 :=
   sp_lang_of_one_sibilant_class_absent (.inl (by decide))
 
 /-- Only-anterior control is accepted by SP_2 too — symmetrically,
 `antSib` appears but `postSib` does not. -/
 theorem controlOnlyAnterior_legal_SP :
-    controlOnlyAnterior ∈ navajoSibilantHarmonySP.lang :=
+    controlOnlyAnterior ∈ navajoSibilantHarmonySP.language 2 :=
   sp_lang_of_one_sibilant_class_absent (.inr (by decide))
 
 /-- No-sibilant control is accepted by SP_2 too — the input has neither
 sibilant class, so the structural helper applies trivially. -/
 theorem controlNoSibilants_legal_SP :
-    controlNoSibilants ∈ navajoSibilantHarmonySP.lang :=
+    controlNoSibilants ∈ navajoSibilantHarmonySP.language 2 :=
   sp_lang_of_one_sibilant_class_absent (.inl (by decide))
 
 end Phonology.Studies.Hansson2010

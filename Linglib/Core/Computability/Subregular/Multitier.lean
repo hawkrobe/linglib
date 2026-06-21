@@ -177,11 +177,11 @@ from `BoolClosure`'s constructors; class injection from
 
 /-- **Multitier strictly local** (BTSL): Boolean closure of tier-projected
 SL_k languages. -/
-def IsBTSL (k : ℕ) : Language α → Prop := IsBTC (IsStrictlyLocal k)
+def IsBTSL (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyLocal · k)
 
 /-- **Multitier strictly piecewise** (BTSP): Boolean closure of
 tier-projected SP_k languages. -/
-def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (IsStrictlyPiecewise k)
+def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyPiecewise · k)
 
 /-- **Multitier definite** (BTD): Boolean closure of tier-projected D_k
 languages. Lambert (2026) §4.3 places Uyghur backness harmony in this
@@ -229,10 +229,10 @@ on `Language α`. The bridge gives every existing `IsTierStrictlyLocal`
 witness a free `IsBTSL` corollary via `BoolClosure.base`. -/
 theorem isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal {k : ℕ}
     {L : Language α} :
-    IsTierStrictlyLocal k L ↔ IsTierBased (IsStrictlyLocal k) L := by
+    IsTierStrictlyLocal k L ↔ IsTierBased (Language.IsStrictlyLocal · k) L := by
   refine ⟨?_, ?_⟩
   · rintro ⟨G, rfl⟩
-    refine ⟨fun x => decide (G.tier x), (⟨G.permitted⟩ : SLGrammar k α).lang,
+    refine ⟨fun x => decide (G.tier x), SLGrammar.language k G.permitted,
             ?_, ⟨_, rfl⟩⟩
     ext w
     show (∀ f ∈ List.kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
@@ -241,14 +241,14 @@ theorem isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal {k : ℕ}
   · rintro ⟨T, L', hL_eq, ⟨G', rfl⟩⟩
     let tier_pred : α → Prop := fun x => T x = true
     have dec : DecidablePred tier_pred := fun x => Bool.decEq (T x) true
-    refine ⟨{ tier := tier_pred, decTier := dec, permitted := G'.permitted }, ?_⟩
+    refine ⟨{ tier := tier_pred, decTier := dec, permitted := G' }, ?_⟩
     have hT : (fun x => decide (tier_pred x)) = T := by
       funext x
       show decide (T x = true) = T x
       exact Bool.decide_eq_true
     ext w
     show (∀ f ∈ List.kFactors k (boundary k (tierProject tier_pred w)),
-            f ∈ G'.permitted) ↔ w ∈ L
+            f ∈ G') ↔ w ∈ L
     rw [hL_eq, tierProject_eq_filter, hT]
     rfl
 
