@@ -826,10 +826,22 @@ abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
     (weaklyAssertable : Tree C W → Prop) : Prop :=
   violatesMaximize src meaning φ weaklyAssertable
 
-/-- Maximize Presupposition ([schlenker-2012]): `violatesMaximize`
-applied to presuppositional content. Do not use φ if there is a
-competitor φ' (from `src`) with the same assertive content but stronger
-presupposition.
+/-- Maximize Presupposition (the principle: [heim-1991]; reconstructed
+from Gricean reasoning by [schlenker-2012]): `violatesMaximize` applied
+to presuppositional content. Do not use φ if there is a competitor φ'
+(from `src`) with the same assertive content but stronger presupposition.
+
+Modeling note on the same-assertion clause. `assertionFn φ' w ↔
+assertionFn φ w` is required at *every* world. This is the right notion
+when `assertionFn` is the total at-issue content with presupposition
+factored out. If instead `assertionFn` were partial (undefined where φ'`s
+stronger presupposition fails), the standard antipresupposition condition
+asks for assertion-agreement only *where φ' is defined*, i.e.
+`∀ w, presupFn φ' w → (assertionFn φ' w ↔ assertionFn φ w)`. The
+unconditional form here is retained because the consumer
+`Studies/JereticEtAl2025.lean` (`tous_violatesMP_via_indirect`) supplies
+total `Prop`-valued content; switch to the guarded form if a partial
+`assertionFn` is ever used.
 
 Pass `katzirSource lex` for Katzir alternatives;
 `Indirect.indirectFrom (katzirSource lex) pron` for indirect alternatives
