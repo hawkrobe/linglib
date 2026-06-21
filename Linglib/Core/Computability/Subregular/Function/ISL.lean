@@ -41,10 +41,10 @@ function-level subregular hierarchy.
 ## Implementation notes
 
 The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
-`IsStrictlyLocal k L := ∃ G, G.lang = L` from `StrictlyLocal.lean`. The
-`k` parameter is a type-level annotation only: `windowOutput` is
-unconstrained at the type level (compare `SLGrammar k α`); `applyAux`
-truncates the threaded window to length `k - 1`.
+`Language.IsStrictlyLocal L k := ∃ G, G.language k = L` from
+`StrictlyLocal.lean`. The `k` parameter is a type-level annotation only:
+`windowOutput` is unconstrained at the type level; `applyAux` truncates the
+threaded window to length `k - 1`.
 
 ## References
 

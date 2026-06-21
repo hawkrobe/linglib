@@ -30,7 +30,7 @@ claims:
   refining the melody-local analysis of [jardine-2020].
 
 The propositional logic is `BoolClosure (IsTierBased 𝒞)` for `𝒞` in
-{`IsDefinite k`, `IsGeneralizedDefinite k`, `IsStrictlyLocal k`,
+{`IsDefinite k`, `IsGeneralizedDefinite k`, `Language.IsStrictlyLocal · k`,
 `IsStrictlyPiecewise k`, `IsFiniteOrCofinite`}; the algebraic side is
 the syntactic-semigroup characterization of each class via Eilenberg
 [eilenberg-1976] variety equations (e.g., `D = ⟦sx̄ = x̄⟧`,

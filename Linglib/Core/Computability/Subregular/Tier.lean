@@ -26,7 +26,7 @@ other tiers.
 A TSL grammar with the universal tier (every symbol on tier) reduces to
 an SL grammar — projection is the identity. This gives the inclusion
 `IsStrictlyLocal ⊆ IsTierStrictlyLocal` (proved below as
-`IsStrictlyLocal.toIsTierStrictlyLocal`).
+`Language.IsStrictlyLocal.toIsTierStrictlyLocal`).
 
 ## Note on terminology
 
@@ -110,11 +110,11 @@ def IsTierStrictlyLocal (k : ℕ) (L : Language α) : Prop :=
 /-- **SL_k ⊆ TSL_k**: take the universal tier (every symbol on tier), so
 projection is the identity and the TSL grammar's `lang` reduces to the
 underlying SL grammar's `lang`. -/
-theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
-    (h : IsStrictlyLocal k L) : IsTierStrictlyLocal k L := by
+theorem _root_.Language.IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
+    (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h
-  refine ⟨{ tier := fun _ => True, permitted := G.permitted }, ?_⟩
+  refine ⟨{ tier := fun _ => True, permitted := G }, ?_⟩
   ext w
-  simp only [TSLGrammar.mem_lang, SLGrammar.mem_lang, tierProject_univ]
+  simp only [TSLGrammar.mem_lang, SLGrammar.mem_language, tierProject_univ]
 
 end Subregular
