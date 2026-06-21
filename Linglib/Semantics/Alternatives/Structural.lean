@@ -341,97 +341,44 @@ def someButNotAllSentence : Tree Cat ExWord :=
 
 /-- φ'' contains ConjP — a category absent from φ and L(φ). -/
 theorem symmetric_has_conjp :
-    someButNotAllSentence.containsCat .ConjP = true := by decide
+    ContainsCat .ConjP someButNotAllSentence := by decide
 
 /-- φ does not contain ConjP. -/
 theorem some_lacks_conjp :
-    someSentence.containsCat .ConjP = false := by decide
+    ¬ ContainsCat .ConjP someSentence := by decide
 
 /-- No item in L(someSentence) contains ConjP: the lexicon consists
 of terminal leaves (which have no internal structure) and the subtrees
 of φ are {S[...], N(john), VP[...], V(ate), Det(some), N(cake)} —
 none contain ConjP. -/
 theorem source_lacks_conjp :
-    (substitutionSource exLexicon someSentence).all
-      (fun t => !t.containsCat .ConjP) = true := by decide
+    ∀ t ∈ substitutionSource exLexicon someSentence, ¬ ContainsCat .ConjP t := by decide
 
--- ── Private helpers for category_preservation ──────────────────
+-- ── Single-step preservation (subtrees-based, via `Tree.ContainsCat`) ──
 
-private theorem containsCatList_false_of_mem {C W : Type} [BEq C] (c : C)
-    (cs : List (Tree C W)) (t : Tree C W)
-    (h : Tree.containsCat.containsCatList c cs = false)
-    (ht : t ∈ cs) :
-    t.containsCat c = false := by
-  induction cs with
-  | nil => exact absurd ht List.not_mem_nil
-  | cons x xs ih =>
-    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
-    cases List.mem_cons.mp ht with
-    | inl heq => subst heq; exact h.1
-    | inr hmem => exact ih h.2 hmem
-
-private theorem containsCatList_eraseIdx {C W : Type} [BEq C] (c : C)
-    (cs : List (Tree C W)) (i : Nat) (hi : i < cs.length)
-    (h : Tree.containsCat.containsCatList c cs = false) :
-    Tree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
-  induction cs generalizing i with
-  | nil => simp at hi
-  | cons x xs ih =>
-    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
-    cases i with
-    | zero => simp [List.eraseIdx]; exact h.2
-    | succ n =>
-      have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.eraseIdx, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
-      exact ⟨h.1, ih n hn h.2⟩
-
-private theorem containsCatList_set {C W : Type} [BEq C] (c : C)
-    (cs : List (Tree C W)) (i : Nat) (hi : i < cs.length)
-    (t : Tree C W)
-    (h_cs : Tree.containsCat.containsCatList c cs = false)
-    (h_t : t.containsCat c = false) :
-    Tree.containsCat.containsCatList c (cs.set i t) = false := by
-  induction cs generalizing i with
-  | nil => simp at hi
-  | cons x xs ih =>
-    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
-    cases i with
-    | zero =>
-      simp only [List.set, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
-      exact ⟨h_t, h_cs.2⟩
-    | succ n =>
-      have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.set, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
-      exact ⟨h_cs.1, ih n hn h_cs.2⟩
-
-private theorem structOp_preserves_no_cat {C W : Type} [BEq C]
+private theorem structOp_preserves_no_cat {C W : Type} [DecidableEq C]
     (source : List (Tree C W)) (c : C)
     (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, s.containsCat c = false)
-    (h_φ : φ.containsCat c = false)
+    (h_source : ∀ s ∈ source, ¬ ContainsCat c s)
+    (h_φ : ¬ ContainsCat c φ)
     (h_step : StructOp source φ ψ) :
-    ψ.containsCat c = false := by
+    ¬ ContainsCat c ψ := by
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
   | @delete cat cs i =>
-    unfold Tree.containsCat at h_φ ⊢
-    simp only [Bool.or_eq_false_iff] at h_φ ⊢
-    exact ⟨h_φ.1, containsCatList_eraseIdx c cs i i.isLt h_φ.2⟩
+    rw [Tree.containsCat_node_iff] at h_φ ⊢; push_neg at h_φ ⊢
+    exact ⟨h_φ.1, fun t ht => h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
   | @contract cat cs child h_mem _ =>
-    unfold Tree.containsCat at h_φ
-    simp only [Bool.or_eq_false_iff] at h_φ
-    exact containsCatList_false_of_mem c cs child h_φ.2 h_mem
+    rw [Tree.containsCat_node_iff] at h_φ; push_neg at h_φ; exact h_φ.2 child h_mem
   | @inChild cat cs i ψ_child _ ih =>
-    unfold Tree.containsCat at h_φ ⊢
-    simp only [Bool.or_eq_false_iff] at h_φ ⊢
-    constructor
-    · exact h_φ.1
-    · exact containsCatList_set c cs i i.isLt ψ_child h_φ.2
-        (ih (containsCatList_false_of_mem c cs (cs.get i) h_φ.2
-          (List.get_mem cs i)))
+    rw [Tree.containsCat_node_iff] at h_φ ⊢; push_neg at h_φ ⊢
+    have hih := ih (h_φ.2 (cs.get i) (List.get_mem cs i))
+    refine ⟨h_φ.1, fun t ht => ?_⟩
+    rcases List.mem_or_eq_of_mem_set ht with ht' | rfl
+    · exact h_φ.2 t ht'
+    · exact hih
   | @inBind n cat body body' _ ih =>
-    unfold Tree.containsCat at h_φ ⊢
-    simp only [Bool.or_eq_false_iff] at h_φ ⊢
+    rw [Tree.containsCat_bind_iff] at h_φ ⊢; push_neg at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
 -- ── Main invariant ──────────────────────────────────────────────
@@ -449,13 +396,13 @@ contains `c`. This is because:
 Proof by induction on `ReflTransGen`, reducing to the single-step
 `structOp_preserves_no_cat` which case-splits on the five `StructOp`
 constructors. -/
-theorem category_preservation {C W : Type} [BEq C]
+theorem category_preservation {C W : Type} [DecidableEq C]
     (source : List (Tree C W)) (c : C)
     (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, s.containsCat c = false)
-    (h_φ : φ.containsCat c = false)
+    (h_source : ∀ s ∈ source, ¬ ContainsCat c s)
+    (h_φ : ¬ ContainsCat c φ)
     (h_reach : atMostAsComplex source ψ φ) :
-    ψ.containsCat c = false := by
+    ¬ ContainsCat c ψ := by
   unfold atMostAsComplex at h_reach
   induction h_reach with
   | refl => exact h_φ
@@ -485,15 +432,10 @@ theorem symmetry_problem_solved :
     someButNotAllSentence ∉ structuralAlternatives exLexicon
       someSentence := by
   intro h
-  have h_preserved := category_preservation
+  exact category_preservation
     (substitutionSource exLexicon someSentence) .ConjP
     someSentence someButNotAllSentence
-    (by intro s hs
-        have := List.all_eq_true.mp source_lacks_conjp s hs
-        simp at this; exact this)
-    (by decide)
-    h
-  exact absurd symmetric_has_conjp (by rw [h_preserved]; decide)
+    source_lacks_conjp some_lacks_conjp h symmetric_has_conjp
 
 end SymmetryProblem
 
