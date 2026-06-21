@@ -130,7 +130,13 @@ inductive StructOp {C W : Type} (source : List (Tree C W)) :
 transformed into ψ by a finite chain of structural operations
 using items from `source`.
 
-Formally: the reflexive-transitive closure of `StructOp source`. -/
+Formally: the reflexive-transitive closure of `StructOp source`. This is
+the *reachability preorder* underlying [katzir-2007]'s ≲, which suffices
+for `A_str` as a set (def 20) and for the worked examples. It is *not* a
+graded operation-count: two mutually-reachable trees need not take the
+same number of steps, so `equalComplexity` (mutual reachability) is
+coarser than Katzir's "equal complexity" ∼, and the strict orderings the
+paper uses in §4.2–§4.3 are reachability-strict, not count-strict. -/
 def atMostAsComplex {C W : Type} (source : List (Tree C W))
     (ψ φ : Tree C W) : Prop :=
   Relation.ReflTransGen (StructOp source) φ ψ
@@ -191,6 +197,12 @@ theorem trans {a b c : Tree C W}
   ⟨Relation.ReflTransGen.trans h₂.1 h₁.1,
    Relation.ReflTransGen.trans h₁.2 h₂.2⟩
 
+/-- `equalComplexity source` is an equivalence relation — the equivalence
+kernel of the `atMostAsComplex source` preorder. Bundled so consumers can
+take a `Setoid`/quotient or feed mathlib's `Equivalence` API. -/
+theorem equivalence : Equivalence (equalComplexity source) :=
+  ⟨refl, symm, trans⟩
+
 end equalComplexity
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -208,12 +220,15 @@ theorem equalComplexity_terminal_subst {C W : Type}
   ⟨Relation.ReflTransGen.single (StructOp.subst rfl h_old),
    Relation.ReflTransGen.single (StructOp.subst rfl h_new)⟩
 
--- TODO: `reflTransGen_StructOp_inChild` + `equalComplexity_inChild`
--- (the "lift through inChild navigation" infrastructure that would let
--- consumers chain leaf substitutions at arbitrary tree paths) belong
--- here. The proof requires `Relation.ReflTransGen.lift` plus list-set
--- API (`List.length_set`, `List.get_set`, set-set idempotency) and is
--- non-trivial. Deferred until the next consumer wants it.
+-- The `≲`-direction lift through `inChild` navigation now exists in §8 as
+-- `lift_at_position` (single position) and `mapChildren_reachable` (all
+-- positions), built from `Relation.ReflTransGen` + list-set API exactly as
+-- once sketched here. Still genuinely deferred: `equalComplexity_inChild`,
+-- the *both-directions* wrapper that would let a consumer lift an
+-- `equalComplexity` (not just a one-way `atMostAsComplex`) chain through a
+-- tree path — it pairs two `lift_at_position` calls. Deferred until a
+-- consumer needs it (`Studies/BaleKhanjian2014.lean` currently hand-rolls
+-- the navigation it would replace).
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §4  Worked Example: Some/All (§4.1)
@@ -454,9 +469,18 @@ Proof sketch: L(φ) contains no item with category ConjP
 so by `category_preservation` every tree in A_str(φ) lacks ConjP.
 But φ'' contains ConjP (`symmetric_has_conjp`) — contradiction.
 
-This is the paper's central result: structure alone excludes the
-symmetric alternative, solving the symmetry problem without lexical
-stipulation of which alternatives are "good." -/
+This exhibits the symmetry solution on the paper's canonical example:
+structure alone excludes the symmetric alternative, no lexical
+stipulation of which alternatives are "good." Scope note: [katzir-2007]
+excludes φ'' because it is *strictly more complex* / unreachable; the
+proof here uses a *sufficient* witness — φ'' needs a phrasal category
+(ConjP) absent from L(φ), and `category_preservation` shows the
+operations never introduce a novel category. The category-absence proxy
+coincides with Katzir's criterion whenever the symmetric alternative
+requires new structure (true here), but is narrower than the general
+strict-complexity exclusion, which `atMostAsComplex` (bare reachability,
+not graded operation-count) does not formalize. The general result is
+the target of `Studies/FoxKatzir2011.lean`. -/
 theorem symmetry_problem_solved :
     someButNotAllSentence ∉ structuralAlternatives exLexicon
       someSentence := by
@@ -612,14 +636,14 @@ private theorem lift_at_position {C W : Type} {source : List (Tree C W)}
     have hget : (cs.set i b).get ⟨i, hlen⟩ = b := List.getElem_set_self ..
     rw [hget]; exact hbd
 
-/-- Lift a ReflTransGen chain through a bind constructor. -/
+/-- Lift a ReflTransGen chain through a bind constructor: a special case of
+`Relation.ReflTransGen.lift` with the homomorphism `StructOp.inBind`. -/
 private theorem lift_bind {C W : Type} {source : List (Tree C W)}
     {n : Nat} {cat : C} {body body' : Tree C W}
     (h : Relation.ReflTransGen (StructOp source) body body') :
-    Relation.ReflTransGen (StructOp source) (.bind n cat body) (.bind n cat body') := by
-  induction h with
-  | refl => exact Relation.ReflTransGen.refl
-  | tail _ h_last ih => exact ih.trans (Relation.ReflTransGen.single (StructOp.inBind h_last))
+    Relation.ReflTransGen (StructOp source) (.bind n cat body) (.bind n cat body') :=
+  Relation.ReflTransGen.lift (fun t => Tree.bind n cat t)
+    (fun _ _ h => StructOp.inBind h) h
 
 /-- leafSubstList is just List.map. -/
 private theorem leafSubstList_eq_map {C W : Type} [BEq C] [BEq W]
@@ -684,7 +708,6 @@ private theorem mapChildren_reachable {C W : Type} {source : List (Tree C W)}
           simp [htk1_len, htk_len, List.getElem_drop]
           congr 1; omega
 
-set_option maxHeartbeats 400000 in
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
 private theorem leafSubst_reachable {C W : Type} [BEq C] [LawfulBEq C] [BEq W]
@@ -781,7 +804,8 @@ flow from a Pottsian compositional interpretation into the operator.
 The competitor set is supplied as an `AlternativeSource` parameter so
 that the same operator works for Katzir alternatives
 (`katzirSource lex`), indirect alternatives
-(`Indirect.indirectFromKatzir`, [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]),
+(`Indirect.indirectFrom (katzirSource lex) …`,
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]),
 or any other source. -/
 def violatesMaximize {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
@@ -802,13 +826,25 @@ abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
     (weaklyAssertable : Tree C W → Prop) : Prop :=
   violatesMaximize src meaning φ weaklyAssertable
 
-/-- Maximize Presupposition ([schlenker-2012]): `violatesMaximize`
-applied to presuppositional content. Do not use φ if there is a
-competitor φ' (from `src`) with the same assertive content but stronger
-presupposition.
+/-- Maximize Presupposition (the principle: [heim-1991]; reconstructed
+from Gricean reasoning by [schlenker-2012]): `violatesMaximize` applied
+to presuppositional content. Do not use φ if there is a competitor φ'
+(from `src`) with the same assertive content but stronger presupposition.
+
+Modeling note on the same-assertion clause. `assertionFn φ' w ↔
+assertionFn φ w` is required at *every* world. This is the right notion
+when `assertionFn` is the total at-issue content with presupposition
+factored out. If instead `assertionFn` were partial (undefined where φ'`s
+stronger presupposition fails), the standard antipresupposition condition
+asks for assertion-agreement only *where φ' is defined*, i.e.
+`∀ w, presupFn φ' w → (assertionFn φ' w ↔ assertionFn φ w)`. The
+unconditional form here is retained because the consumer
+`Studies/JereticEtAl2025.lean` (`tous_violatesMP_via_indirect`) supplies
+total `Prop`-valued content; switch to the guarded form if a partial
+`assertionFn` is ever used.
 
 Pass `katzirSource lex` for Katzir alternatives;
-`Indirect.indirectFromKatzir lex pron` for indirect alternatives
+`Indirect.indirectFrom (katzirSource lex) pron` for indirect alternatives
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
 def violatesMP {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
@@ -822,9 +858,11 @@ def violatesMP {C W : Type} {World : Type*}
     (∃ w, presupFn φ w ∧ ¬ presupFn φ' w) ∧
     weaklyAssertable φ'
 
-/-- Maximize Conventional Implicatures ([lo-guercio-2025] def 15):
+/-- Maximize Conventional Implicatures ([lo-guercio-2025]):
 `violatesMaximize` applied to CI content. Unlike MP!, does NOT require
 the same assertive content — CI content is independent of truth conditions.
+UNVERIFIED: the specific numbered definition in [lo-guercio-2025] (was
+cited as "def 15" from memory) is not checked against the PDF.
 
 Do not use φ if there is a formal alternative φ' ∈ F(φ) such that:
 a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger, in [gutzmann-2015]/[kaplan-1999]
@@ -878,18 +916,22 @@ theorem violatesMP_of_violatesMaximize_sameAssertion {C W : Type} {World : Type*
 φ ≲ ψ iff φ ≲_struct ψ ∧ ⟦φ⟧ ⊆ ⟦ψ⟧.
 
 This combines structural complexity (from def 19) with semantic
-entailment. It is the relation that [katzir-singh-2015] use as
-the basis for the Answer Condition in `KatzirSingh2015.lean`, where
-it appears as `Scenario.atLeastAsGood`.
+entailment. It is the relation [katzir-singh-2015] use as the basis for
+the Answer Condition in `KatzirSingh2015.lean`, where the structural
+component appears abstractly as `Scenario.atLeastAsGood`'s
+`complexity : U → ℕ` comparison.
 
-The key insight: in `KatzirSingh2015.lean`, complexity is an abstract
-`ℕ` parameter. Here, structural complexity gives that parameter its
-intended content — the number of structural operations needed. -/
-def atLeastAsGoodAs {C W World : Type}
+Caveat: the structural component here is the *reachability* preorder
+`atMostAsComplex`, not a numeric operation-count, so this gives
+`KatzirSingh2015.lean`'s abstract `ℕ` parameter only its *qualitative*
+ordering content (which structures are at most as complex), not a literal
+step-count. A faithful numeric bridge would need a graded metric (see the
+`atMostAsComplex` docstring on why reachability ≠ count). -/
+def atLeastAsGoodAs {C W : Type} {World : Type*}
     (lex : List (Tree C W))
-    (meaning : Tree C W → World → Bool)
+    (meaning : Tree C W → World → Prop)
     (φ ψ : Tree C W) : Prop :=
   atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
-  ∀ w, meaning φ w = true → meaning ψ w = true
+  ∀ w, meaning φ w → meaning ψ w
 
 end Alternatives.Structural
