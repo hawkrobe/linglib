@@ -36,7 +36,7 @@ SL_1 substrate is in `Subregular/StrictlyLocal.lean` (the `k = 1` case).
 The single bridge theorem `mem_ofForbiddenPairs_lang_iff_filter_isChain`
 characterizes language membership as an `IsChain` check on the projected
 string. This is the chain-side payoff of the boundary-vacuity machinery
-in `Subregular/Defs.lean`. Phonological-constraint bridges
+in `Subregular/Boundary.lean`. Phonological-constraint bridges
 (`mkForbidPairsOnTier_zero_iff_in_lang`) layer on top in
 `Phonology/Subregular/`.
 -/
