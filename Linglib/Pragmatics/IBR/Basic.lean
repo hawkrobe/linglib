@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Pigeonhole
-import Linglib.Core.DecisionTheory.RationalAction
+import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # Iterated Best Response: Core Definitions
