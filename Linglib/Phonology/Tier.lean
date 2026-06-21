@@ -31,7 +31,7 @@ Home: `Phonology/` (not `Core/`) because the `Tier` abstraction — the
 autosegmental Kleisli morphism with `byClass`/`lastWith`/`firstWith` — is a
 linguistics concept, not upstreamable to `mathlib/Computability`. The
 formal-language tier (a subalphabet, projection = `List.filter`) lives
-separately in `Core/Computability/Subregular/Tier.lean` (the TSL class), which
+separately in `Core/Computability/Subregular/Language/Tier.lean` (the TSL class), which
 no longer depends on this morphism.
 
 [goldsmith-1976] [belth-2026]

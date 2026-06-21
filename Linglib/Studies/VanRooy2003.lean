@@ -1,11 +1,11 @@
 import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.DecisionTheory
-import Linglib.Semantics.Questions.DecisionTheoretic
+import Linglib.Semantics.Questions.Relevance
 
 /-!
 # [van-rooy-2003]: Questioning to Resolve Decision Problems
 [groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999]
+[blackwell-1953]
 
 Single-paper formalisation of [van-rooy-2003], "Questioning to
 Resolve Decision Problems", *Linguistics and Philosophy* 26.6:
@@ -16,19 +16,20 @@ optimal action in the questioner's decision problem.
 ## Substrate identification
 
 The decision-theoretic machinery — `EU`, `UV`, `VSI`, `DecisionProblem`
-— is already in `Core/Agent/DecisionTheory.lean`. Van Rooy's notation
-maps to the substrate as:
+— is already in `Semantics/Questions/DecisionTheory.lean`. Van Rooy's
+notation maps to the substrate as:
 
 | [van-rooy-2003]                             | substrate                                  |
 |--------------------------------------------------|--------------------------------------------|
-| `EU(a) = ∑_w P(w) · U(a, w)`                     | `Core.DecisionTheory.expectedUtility`      |
-| `UV(Choose now) = max_a EU(a)`                   | `Core.DecisionTheory.dpValue`              |
-| `EU(a, C) = ∑_w P_C(w) · U(a, w)`                | `Core.DecisionTheory.conditionalEU`        |
+| `EU(a) = ∑_w P(w) · U(a, w)` (p. 733)            | `Core.DecisionTheory.expectedUtility`      |
+| `UV(Choose now) = max_a EU(a)` (p. 734)          | `Core.DecisionTheory.dpValue`              |
+| `EU(a, C) = ∑_w P_C(w) · U(a, w)` (p. 735)       | `Core.DecisionTheory.conditionalEU`        |
 | `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.valueAfterLearning`   |
-| `UV(C) = UV(L C, c later) − UV(C now)`           | `Core.DecisionTheory.utilityValue`         |
-| `UV*(C) = VSI(C)` ≥ 0                            | `Core.DecisionTheory.valueSampleInfo`      |
-| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt)            | `Question.questionEntails`            |
-| `C resolves DP`                                  | `Core.DecisionTheory.IsResolved`           |
+| `UV(C) = UV(L C, c later) − UV(C now)` (p. 735)  | `Core.DecisionTheory.utilityValue`         |
+| `UV*(C) = VSI(C)` ≥ 0 (p. 735)                   | `Core.DecisionTheory.valueSampleInfo`      |
+| `EUV(Q) = ∑_q P(q) · UV(q)` (p. 742)             | `Core.DecisionTheory.questionUtility`      |
+| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt) (p. 741)   | `Question.questionEntails`                 |
+| `C resolves DP` (p. 736)                         | `Core.DecisionTheory.IsResolved`           |
 
 ## What this file proves
 
@@ -37,13 +38,17 @@ maps to the substrate as:
 * **§3.1 *C* resolves DP** (p. 736): the substrate's
   `Core.DecisionTheory.IsResolved dp acts C` — some action weakly
   dominates every other on every world in C.
-* **§4.1 Blackwell-style ordering** (p. 741): the "Q is more
-  informative than Q'" notion is `Question.questionEntails Q Q'`
-  (no paper-specific alias needed).
-* **§4.1 Decision-relevance preservation**: under the *strong*
-  Blackwell condition (`CoversAltsOf` from substrate), preservation
-  holds. The substrate's `CoversAltsOf.preserves_decisionRelevant`
-  IS the [van-rooy-2003] theorem.
+* **§3.1/§4.1 decision-relevance** (`IsDecisionRelevant`): the
+  qualitative, prior-free core of van Rooy's relevance — a question is
+  *completely irrelevant* exactly when `EUV(Q) = EVSI(Q) = 0`, i.e. no
+  answer changes the optimal action (p. 742). `alts_resolve_distinct`
+  recasts a witness in the substrate's `IsResolved` vocabulary.
+* **§4.1 Blackwell-style ordering** (p. 741, 743): "Q is more
+  informative than Q'" is `Question.questionEntails Q Q'` (= van Rooy's
+  `Q ⊑ Q'`). Van Rooy's §4.1 theorem (p. 743, "a special case of
+  [blackwell-1953]") is the quantitative *iff*
+  `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')`; `decisionRelevance_preserved_under_cover`
+  is a qualitative one-directional surrogate (see its docstring).
 
 ## What this file does NOT replicate
 
@@ -56,12 +61,21 @@ maps to the substrate as:
   natural target for the next refinement; it is
   `gs1984_mentionsome_italian_newspaper` in
   `Data.Examples.GroenendijkStokhof1984`.
+
+## Provenance
+
+The `IsDecisionRelevant` family and the decision-relevance
+preservation theorem were consolidated here from the former
+`Semantics/Questions/DecisionTheoretic.lean` (a single-paper
+formalisation that did not meet the theory-layer ≥2-Studies admission
+bar). The reusable substrate it relied on stays one layer down:
+`Question.questionEntails`/`CoversAltsOf` in `Relevance.lean`, the
+`Core.DecisionTheory` value vocabulary in `DecisionTheory.lean`.
 -/
 
 namespace VanRooy2003
 
 open Core Core.DecisionTheory Question
-open Semantics.Questions.DecisionTheoretic
 
 variable {W A : Type*}
 
@@ -73,9 +87,14 @@ propositions. We can relate each action a ∈ A to the set of worlds
 in which there is no other action b in A that is strictly better.
 We will denote the proposition corresponding with a by a*". -/
 
-/-- The **optimality cell** of action `a` (van Rooy's `a*`): the set
-    of worlds where `a` strictly dominates every other action in
-    `acts`. [van-rooy-2003] p. 736. -/
+/-- The **optimality cell** of action `a`: the worlds where `a`
+    *strictly* dominates every other action in `acts`.
+
+    [van-rooy-2003]'s `a*` (p. 736-737) is the weaker "no other action
+    is strictly better" region; this strict version is van Rooy's
+    *partition condition* (p. 737: "exactly one action a ∈ A such that
+    ∀b ∈ A−{a}: U(a,w) > U(b,w)"), which is what makes `actionPartition`
+    genuinely disjoint (`optimalityCell_pairwise_disjoint`). -/
 def optimalityCell (dp : DecisionProblem W A) (acts : Set A) (a : A) : Set W :=
   {w | ∀ b ∈ acts, b ≠ a → dp.utility w a > dp.utility w b}
 
@@ -110,59 +129,130 @@ This is exactly `Core.DecisionTheory.IsResolved dp acts C`. We do not
 introduce a paper-vocabulary alias — consumers should use the
 substrate predicate directly. -/
 
+/-! ### §3.1/§4.1 Decision-relevance
+
+A question is *completely irrelevant* exactly when `EUV(Q) = EVSI(Q) = 0`
+— when no answer would change the agent's decision (p. 742). The
+qualitative core below exhibits a witness pair of answers that *do*
+change it. -/
+
+/-- `Q` is **decision-relevant** to `dp` (relative to action set `acts`):
+    there exist two **nonempty** alternatives `p, p' ∈ alt Q` and two
+    actions `a, a'` such that `a` strictly dominates `a'` on every world
+    of `p` while `a'` strictly dominates `a` on every world of `p'`.
+    Learning *which* alternative obtains then shifts the optimal action.
+
+    This is the qualitative, prior-independent core of [van-rooy-2003]'s
+    relevance: a question is *completely irrelevant* exactly when
+    `EUV(Q) = EVSI(Q) = 0`, i.e. no answer changes the agent's decision
+    (p. 742); `IsDecisionRelevant` exhibits a witness pair of answers
+    that *do* change it. It is therefore a **sufficient condition** for
+    `EUV(Q) > 0` that holds for *any* prior assigning positive mass to
+    both cells, and is strictly stronger than van Rooy's prior-weighted
+    `EUV(Q) > 0` / `UV(C) > 0` relevance (pp. 735-736, 742).
+
+    The nonemptiness clauses rule out the degenerate `Q = ⊥` case where
+    the dominance conditions hold vacuously over empty witnesses. -/
+def IsDecisionRelevant
+    (Q : Question W) (dp : DecisionProblem W A) (acts : Set A) : Prop :=
+  ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
+    ∃ a ∈ acts, ∃ a' ∈ acts,
+      (∀ w ∈ p,  dp.utility w a  > dp.utility w a') ∧
+      (∀ w ∈ p', dp.utility w a' > dp.utility w a)
+
+/-- A `IsDecisionRelevant` witness exhibits two `Q`-alts whose two-action
+    restriction `{a, a'}` is `IsResolved` (p. 736) to *distinct* actions:
+    on `p`, action `a` resolves `(dp, {a, a'})`; on `p'`, `a'` does. So
+    decision-relevance is precisely "two `Q`-alts resolve to distinct
+    actions" in the substrate's `IsResolved` vocabulary. -/
+theorem IsDecisionRelevant.alts_resolve_distinct
+    {Q : Question W} {dp : DecisionProblem W A} {acts : Set A}
+    (h : IsDecisionRelevant Q dp acts) :
+    ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
+      ∃ a ∈ acts, ∃ a' ∈ acts, a ≠ a' ∧
+        IsResolved dp {a, a'} p ∧ IsResolved dp {a, a'} p' := by
+  obtain ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', hpa, hpa'⟩ := h
+  refine ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', ?_, ?_, ?_⟩
+  · -- a ≠ a': follows from strict-domination on a nonempty p.
+    intro heq
+    obtain ⟨w, hw⟩ := hpne
+    have h1 : dp.utility w a > dp.utility w a' := hpa w hw
+    rw [heq] at h1
+    exact absurd h1 (lt_irrefl _)
+  · -- IsResolved dp {a, a'} p: action a weakly dominates a' on p
+    refine ⟨a, by simp, ?_⟩
+    intro b hb w hw
+    rcases hb with rfl | hb'
+    · exact le_refl _
+    · rw [Set.mem_singleton_iff] at hb'
+      subst hb'
+      exact le_of_lt (hpa w hw)
+  · -- IsResolved dp {a, a'} p': action a' weakly dominates a on p'
+    refine ⟨a', by simp, ?_⟩
+    intro b hb w hw
+    rcases hb with rfl | hb'
+    · exact le_of_lt (hpa' w hw)
+    · rw [Set.mem_singleton_iff] at hb'
+      subst hb'
+      exact le_refl _
+
+/-- A question with at most one alternative is not decision-relevant:
+    a single answer carries no decision value (`EVSI = 0`, p. 742). -/
+theorem not_isDecisionRelevant_of_subsingleton_alt
+    {Q : Question W} {dp : DecisionProblem W A} {acts : Set A}
+    (hSingle : ∀ p p', p ∈ alt Q → p' ∈ alt Q → p = p') :
+    ¬ IsDecisionRelevant Q dp acts := by
+  rintro ⟨p, hp, hpne, p', hp', _, a, _, a', _, hpa, hpa'⟩
+  rcases hSingle p p' hp hp' with rfl
+  obtain ⟨w, hw⟩ := hpne
+  exact absurd (hpa w hw) (not_lt_of_gt (hpa' w hw))
+
 /-! ### §4.1 Question ordering (p. 741)
 
 [van-rooy-2003] p. 741: "Q is a *better* question than Q' [...]
-in terms of [groenendijk-stokhof-1984] partition semantics this
-comes down to the natural requirement that for every element of Q
-there must be an element of Q' such that the former entails the
-latter, i.e., `Q ⊑ Q'`:
+In terms of [groenendijk-stokhof-1984] partition semantics this comes
+down to the natural requirement that for every element of Q there must
+be an element of Q' such that the former entails the latter, i.e.,
+`Q ⊑ Q'`:
 
     Q ⊑ Q' iff ∀q ∈ Q : ∃q' ∈ Q' : q ⊆ q'."
 
-This is exactly `Question.questionEntails Q Q'`. We do not
-introduce a paper-vocabulary alias — consumers should write
-`questionEntails Q Q'` (or use `≤` on `Question W`'s lattice
-instance) directly. The relation is reflexive (`questionEntails_refl`)
-and transitive (`questionEntails_trans`). -/
+This is exactly `Question.questionEntails Q Q'`. We do not introduce a
+paper-vocabulary alias — consumers should write `questionEntails Q Q'`
+(or use `≤` on `Question W`'s lattice instance) directly. The relation
+is reflexive (`questionEntails_refl`) and transitive
+(`questionEntails_trans`). -/
 
-/-! ### §4.1 Decision-relevance preservation
+/-! ### §4.1 Decision-relevance preservation -/
 
-[van-rooy-2003] §4.1 asserts that a finer (more informative)
-question is at least as decision-useful as a coarser one. The
-substrate-level claim: under the strong Blackwell condition
-`CoversAltsOf` (every nonempty Q'-alt is covered by a nonempty
-Q-alt), the inquisitive `IsDecisionRelevant Q' dp acts` lifts to
-`Q`. The bare `questionEntails` (P-alts ⊆ Q-alts) gives only one
-half of the correspondence; for the inquisitive substrate the dual
-must be supplied separately.
+/-- **Qualitative monotonicity of decision-relevance** (substrate
+    corollary in the spirit of [van-rooy-2003]'s §4.1 relevance
+    ordering): when `Q` covers `Q'`'s alternatives (`CoversAltsOf`), a
+    decision-relevance witness for `Q'` lifts to one for `Q`.
 
-For *partition* questions (where every alternative is non-empty and
-the alternatives jointly cover the state space), `questionEntails`
-and `CoversAltsOf` coincide, recovering [van-rooy-2003]'s
-partition-based theorem. -/
+    This is **not** van Rooy's §4.1 Blackwell theorem itself. That
+    theorem (p. 743, "a special case of [blackwell-1953]") is the
+    quantitative *iff* `questionEntails Q Q' ↔ ∀ dp, EUV(Q) ≥ EUV(Q')`
+    over the expected utility value `EUV` (= substrate `questionUtility`,
+    with `EUV = EVSI` available as `euv_eq_evsi`). The result here is a
+    one-directional, prior-free Prop transfer over the *dual* condition
+    `CoversAltsOf`: on a general inquisitive (non-partition) `Question W`,
+    `questionEntails` (P-alts ⊆ Q-alts) does not transfer the qualitative
+    witness, but its dual does. On partition questions the two coincide,
+    recovering [van-rooy-2003]'s partition-based argument.
 
-/-- [van-rooy-2003] §4.1 **decision-relevance preservation
-    under the strong Blackwell condition**: when `Q` covers `Q'`'s
-    alternatives, decision-relevance lifts. Direct re-export of the
-    substrate's `CoversAltsOf.preserves_decisionRelevant`. -/
+    TODO: prove the faithful EUV-monotonicity Blackwell Fact (p. 743)
+    against `Core.DecisionTheory.questionUtility`. -/
 theorem decisionRelevance_preserved_under_cover
     {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
     {dp : DecisionProblem W A} {acts : Set A}
     (hQ' : IsDecisionRelevant Q' dp acts) :
-    IsDecisionRelevant Q dp acts :=
-  hCover.preserves_decisionRelevant hQ'
-
-/-! ### Substrate gap note
-
-The bare [van-rooy-2003] `Q ⊑ Q'` ordering does **not** suffice
-for decision-relevance preservation on the inquisitive substrate:
-`questionEntails` says only that `Q`-alts ⊆ `Q'`-alts, not the dual
-"every `Q'`-alt is covered by a `Q`-alt". On a partition `Question W`
-the two directions coincide and [van-rooy-2003]'s informal
-argument goes through; on a general inquisitive `Question W` they
-split. The substrate exposes the dual as `CoversAltsOf` and proves
-preservation against that direction. See the docstring of
-`Semantics.Questions.DecisionTheoretic.CoversAltsOf`. -/
+    IsDecisionRelevant Q dp acts := by
+  obtain ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', hpa, hpa'⟩ := hQ'
+  obtain ⟨pP, hpP, hpP_ne, hpP_sub⟩ := hCover p hp hpne
+  obtain ⟨p'P, hp'P, hp'P_ne, hp'P_sub⟩ := hCover p' hp' hp'ne
+  exact ⟨pP, hpP, hpP_ne, p'P, hp'P, hp'P_ne, a, ha, a', ha',
+         fun w hw => hpa w (hpP_sub hw),
+         fun w hw => hpa' w (hp'P_sub hw)⟩
 
 end VanRooy2003

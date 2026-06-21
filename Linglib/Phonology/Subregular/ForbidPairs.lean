@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 
 /-!
 # Bridge: Forbidden-Pair Markedness ↔ TSL_2
@@ -13,7 +13,7 @@ The single generic bridge connecting Optimality-theoretic forbidden-pair
 markedness constraints (`mkForbidPairsOnTier`, defined in
 `OptimalityTheory/Constraints.lean`) to tier-based strictly 2-local
 languages (`TSLGrammar.ofForbiddenPairs`, defined in
-`Core/Computability/Subregular/ForbiddenPairs.lean`).
+`Core/Computability/Subregular/Language/ForbiddenPairs.lean`).
 
 A candidate's `mkForbidPairsOnTier` score is zero iff its raw string
 belongs to the corresponding TSL_2 language — for any choice of
