@@ -11,7 +11,7 @@ import Linglib.Core.Computability.Subregular.Tier
 
 The autosegmental tier formalism (`Tier`, the Kleisli morphism
 `α → Option β` lifted via `List.filterMap`, now in `Phonology/Tier.lean`) and
-the subregular TSL formalism (`Core.Computability.Subregular.tierProject`,
+the subregular TSL formalism (`Subregular.tierProject`,
 `List.filter`) compute the same projection. Since the two now live in different
 layers (Phonology vs Core) they no longer coincide *by definition*, so this file
 records the bridge as an explicit lemma and provides a thin adapter for building
@@ -30,7 +30,7 @@ projections in one line.
 
 namespace Phonology.Subregular
 
-open Core Core.Computability.Subregular
+open _root_.Subregular
 
 variable {α : Type*}
 

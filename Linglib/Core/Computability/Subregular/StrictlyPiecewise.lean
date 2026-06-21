@@ -41,7 +41,7 @@ The relation `List.Sublist` (`<+`) is mathlib's "is a (non-contiguous)
 subsequence of" — exactly what SP needs.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 open List
 
@@ -96,4 +96,4 @@ instance SPGrammar.decidableMemLang {k : ℕ} (G : SPGrammar k α)
     Decidable (w ∈ G.lang) :=
   decidable_of_iff _ (G.mem_lang_iff_forall_sublists w).symm
 
-end Core.Computability.Subregular
+end Subregular

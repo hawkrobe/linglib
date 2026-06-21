@@ -25,12 +25,12 @@ corollary.
 namespace Phonology.Subregular
 
 open OptimalityTheory
-open Core Core.Computability.Subregular
+open _root_.Subregular
 
 variable {α : Type}
 
 -- `countAdjacent_eq_zero_iff_isChain` lives in
--- `Core.Computability.Subregular.ForbiddenPairs` (alongside `countAdjacent`
+-- `Subregular.ForbiddenPairs` (alongside `countAdjacent`
 -- itself) since it is alphabet-generic.
 
 /-- **Bridge** (relational form): a candidate's forbidden-pair score is zero

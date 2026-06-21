@@ -44,7 +44,7 @@ reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq
   variation/optionality with multiple outputs per input.
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 /-! ## Direction of FST scan
 
@@ -430,4 +430,4 @@ theorem IsSubsequential.comp {α β γ : Type*} {d : Direction}
   | left => exact IsLeftSubsequential.comp hg hf
   | right => exact IsRightSubsequential.comp hg hf
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

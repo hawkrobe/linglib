@@ -38,7 +38,7 @@ downstream consumers reference.
 namespace Phonology.Subregular
 
 open OptimalityTheory
-open Core Core.Computability.Subregular
+open _root_.Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0. See

@@ -31,7 +31,7 @@ weakly-deterministic functions of [heinz-lai-2013].
   (Tutrugbu) satisfies it; union-spreading (Maasai) does not.
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {L R α β : Type*}
 
@@ -204,4 +204,4 @@ example (ωL : L → α → α) (ωR : R → α → α) (lInit : L) (lStep : L �
 
 end NonInteraction
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

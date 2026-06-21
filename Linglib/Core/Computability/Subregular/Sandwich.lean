@@ -37,7 +37,7 @@ The symmetric specialisation `aL = aR`, `kL = kR` is handled by passing
 the same arguments twice; no separate definition is provided.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 open List  -- for `<+` (List.Sublist) infix
 
@@ -158,4 +158,4 @@ lemma not_sublist_sandwich {pat mid : List α} {aL aR : α}
   rw [← ht_eq] at ht₂_sub
   exact h_inner ht₂_sub
 
-end Core.Computability.Subregular
+end Subregular

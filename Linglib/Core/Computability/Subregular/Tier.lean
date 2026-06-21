@@ -37,7 +37,7 @@ concept and lives in `Phonology/`; the bridge `tierProject = Tier.apply
 (Tier.byClass T)` is re-established there as an explicit lemma.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α : Type*}
 
@@ -114,4 +114,4 @@ theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
   ext w
   simp only [TSLGrammar.mem_lang, SLGrammar.mem_lang, tierProject_univ]
 
-end Core.Computability.Subregular
+end Subregular

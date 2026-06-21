@@ -48,7 +48,7 @@ circumambience proved here is exactly what that argument consumes.
 
 namespace McCollumEtAl2020
 
-open Core.Computability.Subregular.Function
+open Subregular.Function
 open Core (Direction)
 
 /-! ### Alphabet and the conditional-blocking rule -/

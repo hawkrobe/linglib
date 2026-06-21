@@ -55,7 +55,7 @@ truncates the threaded window to length `k - 1`.
 * [jardine-2016]
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {α β : Type*}
 
@@ -359,4 +359,4 @@ theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
   | left => exact isLeftInputStrictlyLocal_left_subsequential h
   | right => exact isRightInputStrictlyLocal_right_subsequential h
 
-end Core.Computability.Subregular.Function
+end Subregular.Function
