@@ -226,17 +226,11 @@ def tierEndsWithLang (T : UyghurSeg → Bool) (x : UyghurSeg) :
 Helper for `tierEmptyLang_isTierBased`. -/
 private lemma takeAt_right_one_eq_nil_iff (xs : List UyghurSeg) :
     Edge.right.takeAt 1 xs = [] ↔ xs = [] := by
-  cases xs with
-  | nil => simp [Edge.takeAt]
-  | cons a as =>
-    simp only [Edge.takeAt, List.length_cons, Nat.add_sub_cancel]
-    constructor
-    · intro h
-      have : ((a :: as).drop as.length).length = 1 := by
-        rw [List.length_drop]; simp
-      rw [h] at this
-      simp at this
-    · intro h; exact absurd h (List.cons_ne_nil _ _)
+  rw [Edge.takeAt_right]
+  refine ⟨fun h => ?_, fun h => by rw [h]; simp⟩
+  have hlen := List.length_rtake xs 1
+  rw [h, List.length_nil] at hlen
+  exact List.eq_nil_of_length_eq_zero (by omega)
 
 /-- `tierEmptyLang T` is in `IsTierBased (IsDefinite 1)`. The base
 1-definite language is the singleton `{[]}` (only `[]` has right-1-
