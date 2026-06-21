@@ -12,11 +12,11 @@ returns the relational predicate `fun x y ↦ P y ∧ R x y`. Its quasi-adjoint
 `Ex` collapses a relation back to a property by existentially closing the
 second argument.
 
-The structural condition *having a relatum slot* controls three surface
-phenomena — possessor licensing, antecedent bridging, and demonstrative
-anaphora. They are tracked as separate predicates (`hasRelatumSlot`,
-`canTakePossessor`, `canBridge`) over `NominalInterpType` because they
-describe distinct linguistic facts, even though they coincide by construction.
+The structural condition *having a relatum slot* controls two surface
+phenomena — possessor licensing and demonstrative anaphora. They are tracked
+as separate predicates (`hasRelatumSlot`, `canTakePossessor`) over
+`NominalInterpType` because they describe distinct linguistic facts, even
+though they coincide by construction.
 
 The possessive-specific carriers, capability mixins, and quantificational layer
 live in the unified `Possessive` namespace (`Semantics/Possessive/`), built on
@@ -55,16 +55,6 @@ abbrev Pred1 (E S : Type*) := E → S → Prop
 /-- Two-place predicate over entities and states. -/
 abbrev Pred2 (E S : Type*) := E → E → S → Prop
 
-/-- Semantic arity of a nominal expression. -/
-inductive SemType where
-  /-- Property `Pred1`. -/
-  | pred1
-  /-- Relation `Pred2`. -/
-  | pred2
-  /-- Bare individual. -/
-  | entity
-  deriving DecidableEq, Repr
-
 /-! ### Type shifters -/
 
 section TypeShifters
@@ -74,8 +64,6 @@ variable {E S : Type*}
 /-- Barker's relationalizer: `π P R x y s ↔ P y s ∧ R x y s`. -/
 def π (P : Pred1 E S) (R : Pred2 E S) : Pred2 E S :=
   λ x y s => P y s ∧ R x y s
-
-@[inherit_doc] scoped notation "relationalizer(" P ", " R ")" => π P R
 
 /-- Existential closure of a relation in its second argument:
 `Ex R x s ↔ ∃ y, R x y s`. -/
@@ -106,9 +94,8 @@ abbrev iotaPresupposition (P : Pred1 E S) (s : S) : Prop := ∃! x, P x s
 
 /-- Demonstrative-headed nominal: `π` applied to a sortal noun with the
 demonstrative supplying the relatum. -/
-def naSemantics (nounPred : Pred1 E S) (R : Pred2 E S) (relatum : E) :
-    Pred1 E S :=
-  λ x s => π nounPred R relatum x s
+def naSemantics (nounPred : Pred1 E S) (R : Pred2 E S) (relatum : E) : Pred1 E S :=
+  π nounPred R relatum
 
 /-- Bare nominal: identity on the predicate (no relatum slot). -/
 def bareSemantics (nounPred : Pred1 E S) : Pred1 E S :=
@@ -164,14 +151,6 @@ def canTakePossessor : NominalInterpType → Prop
 
 instance : DecidablePred canTakePossessor := λ t => by
   cases t <;> unfold canTakePossessor <;> infer_instance
-
-/-- Whether the interpretation type can accommodate bridging. -/
-def canBridge : NominalInterpType → Prop
-  | .pred1 => False
-  | .pred2 => True
-
-instance : DecidablePred canBridge := λ t => by
-  cases t <;> unfold canBridge <;> infer_instance
 
 end NominalInterpType
 
