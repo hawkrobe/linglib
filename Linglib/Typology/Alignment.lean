@@ -2,6 +2,7 @@ import Linglib.Data.WALS.Features.F98A
 import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F100A
 import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Alignment
 
 /-!
 # Typology.Alignment
@@ -304,5 +305,49 @@ theorem hindi_perfective_erg :
 
 theorem hindi_imperfective_acc :
     hindiSplit.alignment .imperfective = .accusative := rfl
+
+-- ============================================================================
+-- § Grounding `AlignmentType` in the partition object (retirement seam)
+-- ============================================================================
+
+/-! `AlignmentType` is a hand-maintained enum in this `Typology` drawer; its
+content is the partition of the core roles {S, A, P} — the kernel
+`Setoid.ker` of a case-assignment, formalized as the partition object in
+`Syntax/Case/Alignment.lean`. Grounding the enum in that object (below) is a
+first step toward retiring this enum in favour of the principled partition
+layer. -/
+
+/-- `AlignmentType` as the core-role signature `(S≈A, S≈P, A≈P)` of the
+    partition it denotes (`Alignment.coreSig` vocabulary). `active` is **not** a
+    partition of {S,A,P} — it splits S into agent-like/patient-like — so it has
+    no signature (`none`); that is the principled reason it sits apart from the
+    four genuine partitions. -/
+def AlignmentType.partitionSig : AlignmentType → Option (Bool × Bool × Bool)
+  | .neutral    => some (true, true, true)
+  | .accusative => some (true, false, false)
+  | .ergative   => some (false, true, false)
+  | .tripartite => some (false, false, false)
+  | .active     => none
+
+/-- The four partition-denoting `AlignmentType`s agree with the partitions the
+    corresponding `Alignment.X.assignCase` functions induce — grounding the enum
+    in the kernel object rather than maintaining it independently. -/
+theorem partitionSig_grounded :
+    AlignmentType.accusative.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.nominativeAccusative.assignCase) ∧
+    AlignmentType.ergative.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.ergative.assignCase) ∧
+    AlignmentType.tripartite.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.tripartite.assignCase) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- The enum denotes only four of the five partitions of {S, A, P}: it is missing
+    horizontal `{A,P}|{S}` (`Alignment.horizontal_unrealized`), and its fifth
+    value `active` is split-S, not a partition (`none`). -/
+theorem alignmentType_misses_horizontal_and_active_is_split :
+    AlignmentType.active.partitionSig = none ∧
+    (∀ a : AlignmentType, a.partitionSig ≠ some (false, false, true)) := by
+  refine ⟨rfl, fun a => ?_⟩
+  cases a <;> decide
 
 end Typology.Alignment

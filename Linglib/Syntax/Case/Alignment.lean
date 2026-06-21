@@ -1,5 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
+import Mathlib.Data.Setoid.Basic
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Alignment Case-Assignment Functions
@@ -209,5 +211,83 @@ theorem alignments_distinct_on_A :
     gives P → ACC, canonical gives P → ABS (grouping with S). -/
 theorem tripartite_differs_from_ergative_on_P :
     tripartite.assignCase .P ≠ ergative.assignCase .P := by decide
+
+-- ============================================================================
+-- § Alignment as a partition of the core roles (`Setoid.ker`) — Bell(3) = 5
+-- ============================================================================
+
+/-! An *alignment* is which of the core monotransitive roles {S, A, P} an
+analysis groups together: the kernel `Setoid.ker assign`, a point in the
+partition lattice of `ArgumentRole`. This is orthogonal to the Case *labels* an
+analysis uses — `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
+above induce the *same* partition with different cases. A three-element set has
+exactly five partitions (`Bell 3 = 5`), hence five monotransitive alignments;
+the per-alignment `_groups_`/`_distinguishes_` theorems above are pairwise
+fragments of this one kernel object. -/
+
+/-- The alignment a case-assignment induces: the kernel `Setoid.ker assign`.
+    Two roles align iff they receive the same case. A point in the partition
+    lattice of `ArgumentRole`, separate from the Case labels used. -/
+abbrev alignmentKer (assign : ArgumentRole → Case) : Setoid ArgumentRole :=
+  Setoid.ker assign
+
+theorem aligns_iff (assign : ArgumentRole → Case) (x y : ArgumentRole) :
+    (alignmentKer assign) x y ↔ assign x = assign y := Iff.rfl
+
+/-- The core-role signature `(S≈A, S≈P, A≈P)` of an alignment — a faithful code
+    for its partition of {S, A, P}: transitivity makes the three pairwise
+    relations determine, and be determined by, the partition. -/
+def coreSig (assign : ArgumentRole → Case) : Bool × Bool × Bool :=
+  (decide (assign .S = assign .A),
+   decide (assign .S = assign .P),
+   decide (assign .A = assign .P))
+
+/-- A signature is **consistent** (realizable as a partition) iff, by
+    transitivity, any two of the three role-equalities force the third — ruling
+    out the three "exactly two true" triples. -/
+def ConsistentSig (s : Bool × Bool × Bool) : Bool :=
+  (!(s.1 && s.2.1) || s.2.2) && (!(s.1 && s.2.2) || s.2.1) && (!(s.2.1 && s.2.2) || s.1)
+
+/-- Every alignment's signature is consistent: it really is a partition. -/
+theorem coreSig_consistent (assign : ArgumentRole → Case) :
+    ConsistentSig (coreSig assign) = true := by
+  by_cases h1 : assign .S = assign .A <;> by_cases h2 : assign .S = assign .P <;>
+    by_cases h3 : assign .A = assign .P <;> simp_all [coreSig, ConsistentSig]
+
+/-- **Bell(3) = 5.** Exactly five signatures are consistent — the five partitions
+    of a three-element set: neutral `(T,T,T)`, accusative `(T,F,F)`, ergative
+    `(F,T,F)`, horizontal `(F,F,T)`, tripartite `(F,F,F)`. The three "exactly two
+    equalities" triples are forbidden by transitivity. -/
+theorem consistent_sigs :
+    Finset.univ.filter (fun s : Bool × Bool × Bool => ConsistentSig s = true) =
+      {(true, true, true), (true, false, false), (false, true, false),
+       (false, false, true), (false, false, false)} := by decide
+
+theorem bell_three_eq_five :
+    (Finset.univ.filter (fun s : Bool × Bool × Bool => ConsistentSig s = true)).card = 5 := by
+  decide
+
+/-- The five `assignCase` functions realize only **three** of the five
+    partitions: `nominativeAccusative`, `extendedErgative`, and `invertedErgative`
+    all induce the accusative partition `{S,A}|{P}` — they differ only in Case
+    *labels*, not alignment (the kernel generalizing the one instance noticed in
+    `Dixon1994.extendedErgative_groups_S_with_A_like_accusative`). -/
+theorem assignCase_partitions :
+    coreSig nominativeAccusative.assignCase = (true, false, false) ∧
+    coreSig extendedErgative.assignCase    = (true, false, false) ∧
+    coreSig invertedErgative.assignCase    = (true, false, false) ∧
+    coreSig ergative.assignCase            = (false, true, false) ∧
+    coreSig tripartite.assignCase          = (false, false, false) := by decide
+
+/-- The horizontal partition `{A,P}|{S}` (A and P align, S apart — attested,
+    Pamir-type) is a genuine partition of {S, A, P} realized by **none** of the
+    `assignCase` functions here. (It is also absent from `Typology.AlignmentType`.) -/
+theorem horizontal_unrealized :
+    ConsistentSig (false, false, true) = true ∧
+    coreSig nominativeAccusative.assignCase ≠ (false, false, true) ∧
+    coreSig ergative.assignCase            ≠ (false, false, true) ∧
+    coreSig tripartite.assignCase          ≠ (false, false, true) ∧
+    coreSig extendedErgative.assignCase    ≠ (false, false, true) ∧
+    coreSig invertedErgative.assignCase    ≠ (false, false, true) := by decide
 
 end Alignment
