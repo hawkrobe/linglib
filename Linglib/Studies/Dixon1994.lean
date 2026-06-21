@@ -45,6 +45,40 @@ set_option autoImplicit false
 namespace Dixon1994
 
 open Typology.Alignment
+open Alignment (DitransitiveAlignment DitransitiveProfile)
+
+-- ============================================================================
+-- §0. AlignmentProfile: the bundled per-language record (with its data here)
+-- ============================================================================
+
+/-- A language's morphosyntactic alignment across the three case/agreement
+    domains (WALS Chs 98/99/100). The bundled per-language record for the
+    exemplar sample below; lives here with its data and analysis (relocated from
+    the former `Typology/Alignment.lean` drawer — its only consumers are this
+    file and `Comrie1989`, which imports it). -/
+structure AlignmentProfile where
+  /-- Language name. -/
+  name : String
+  /-- ISO 639-3 code. -/
+  iso639 : String
+  /-- Ch 98: alignment of case marking of full NPs. -/
+  npAlignment : AlignmentType
+  /-- Ch 99: alignment of case marking of pronouns. -/
+  pronAlignment : AlignmentType
+  /-- Ch 100: alignment of verbal person marking. -/
+  verbAlignment : AlignmentType
+  /-- Notes on the alignment system. -/
+  notes : String := ""
+  deriving Repr, DecidableEq
+
+/-- Whether the language shows the classic NP-ergative / pronoun-accusative
+    split (Dixon's generalization). -/
+def AlignmentProfile.dixonSplit (p : AlignmentProfile) : Bool :=
+  p.npAlignment == .ergative && p.pronAlignment == .accusative
+
+/-- Whether all three alignment domains agree. -/
+def AlignmentProfile.fullyUniform (p : AlignmentProfile) : Bool :=
+  p.npAlignment == p.pronAlignment && p.pronAlignment == p.verbAlignment
 
 -- ============================================================================
 -- §1. The 22-language exemplar sample

@@ -130,44 +130,35 @@ end Preorder
 
 section Shells
 
-variable {ι : Type*} [LinearOrder ι] [LocallyFiniteOrderBot ι]
+variable {ι : Type*} [Preorder ι] [LocallyFiniteOrderBot ι]
 
 /-- The canonical **down-set decomposition** of a partial rank: an element's
-    content is the initial segment `Finset.Iic` of its rank (its "shell
-    stack"). For a rank into a chain an element *is* this down-set, and the
-    rank order is the shadow of inclusion between the down-sets
-    (`rankLT_iff_rankShells`). This is the order-theoretic content behind
+    content is the initial segment `Finset.Iic` of its rank (its "shell stack";
+    cf. the order-theoretic primitive `LowerSet.Iic`). For a rank into a chain an
+    element *is* this down-set, and the rank order is the shadow of inclusion
+    between the down-sets (`rankLT_iff_rankShells`). The structure behind
     nanosyntactic feature-stack decompositions (`Syntax/Case/Order.lean`). -/
 def rankShells (r : α → Option ι) (a : α) : Option (Finset ι) :=
   (r a).map Finset.Iic
 
-/-- `Finset.Iic` is strictly monotone: `Iic a ⊂ Iic b ↔ a < b`. -/
-theorem Iic_ssubset_Iic {a b : ι} : Finset.Iic a ⊂ Finset.Iic b ↔ a < b := by
-  rw [Finset.ssubset_iff_subset_ne, Finset.Iic_subset_Iic, lt_iff_le_and_ne]
-  refine and_congr_right (fun hab => ?_)
-  constructor
-  · intro hne he; exact hne (by rw [he])
-  · intro hne he
-    refine hne (le_antisymm hab ?_)
-    exact Finset.mem_Iic.mp (he ▸ Finset.mem_Iic.mpr le_rfl)
-
 /-- **The rank order is the shadow of its down-set decomposition.** Strict-rank
     comparison through `r` coincides with strict inclusion of the shell stacks
-    `rankShells r`. Generic over any rank into a chain — replacing per-instance
-    "stipulate a shells table + `decide` it agrees with the rank" with one
-    structural fact. -/
+    `rankShells r` — `Finset.Iic` being strictly monotone
+    (`Finset.Iic_ssubset_Iic`). Generic over any rank into a locally-finite-below
+    preorder, replacing per-instance "stipulate a shells table + `decide` it
+    agrees with the rank". -/
 theorem rankLT_iff_rankShells (r : α → Option ι) (a b : α) :
     RankLT r a b ↔ RankLT (rankShells r) a b := by
   rw [rankLT_iff, rankLT_iff]
   constructor
   · rintro ⟨x, y, hx, hy, hxy⟩
     exact ⟨Finset.Iic x, Finset.Iic y, by rw [rankShells, hx]; rfl,
-      by rw [rankShells, hy]; rfl, Iic_ssubset_Iic.mpr hxy⟩
+      by rw [rankShells, hy]; rfl, Finset.Iic_ssubset_Iic.mpr hxy⟩
   · rintro ⟨X, Y, hX, hY, hXY⟩
     simp only [rankShells, Option.map_eq_some_iff] at hX hY
     obtain ⟨x, hx, rfl⟩ := hX
     obtain ⟨y, hy, rfl⟩ := hY
-    exact ⟨x, y, hx, hy, Iic_ssubset_Iic.mp hXY⟩
+    exact ⟨x, y, hx, hy, Finset.Iic_ssubset_Iic.mp hXY⟩
 
 end Shells
 

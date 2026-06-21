@@ -1,7 +1,10 @@
-import Linglib.Data.WALS.Features.F98A
-import Linglib.Data.WALS.Features.F99A
-import Linglib.Data.WALS.Features.F100A
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Alignment
 
 /-!
 # Typology.Alignment
@@ -59,10 +62,6 @@ set_option autoImplicit false
 
 namespace Typology.Alignment
 
-private abbrev ch98  := Data.WALS.F98A.allData
-private abbrev ch99  := Data.WALS.F99A.allData
-private abbrev ch100 := Data.WALS.F100A.allData
-
 -- ============================================================================
 -- §1. Alignment types (Ch 98/99/100)
 -- ============================================================================
@@ -98,180 +97,10 @@ def AlignmentType.marksPatient : AlignmentType → Bool
   | .tripartite => true
   | _           => false
 
-/-- Whether this alignment groups S with A (nominative-accusative pattern). -/
-def AlignmentType.IsNomAcc (a : AlignmentType) : Prop := a = .accusative
-
-instance : DecidablePred AlignmentType.IsNomAcc :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Whether this alignment groups S with P (absolutive-ergative pattern). -/
-def AlignmentType.IsAbsErg (a : AlignmentType) : Prop := a = .ergative
-
-instance : DecidablePred AlignmentType.IsAbsErg :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
--- ============================================================================
--- §2. AlignmentProfile (Fragment-side joint)
--- ============================================================================
-
-/-- A language's alignment profile across WALS Chs 98/99/100. -/
-structure AlignmentProfile where
-  /-- Language name. -/
-  name : String
-  /-- ISO 639-3 code. -/
-  iso639 : String
-  /-- Ch 98: alignment of case marking of full NPs. -/
-  npAlignment : AlignmentType
-  /-- Ch 99: alignment of case marking of pronouns. -/
-  pronAlignment : AlignmentType
-  /-- Ch 100: alignment of verbal person marking. -/
-  verbAlignment : AlignmentType
-  /-- Notes on the alignment system. -/
-  notes : String := ""
-  deriving Repr, DecidableEq
-
-/-- Whether NP and pronoun alignment match (no split ergativity in case). -/
-def AlignmentProfile.caseUniform (p : AlignmentProfile) : Bool :=
-  p.npAlignment == p.pronAlignment
-
-/-- Whether the language shows the classic NP-ergative / pronoun-accusative
-    split ([dixon-1994]'s generalization). -/
-def AlignmentProfile.dixonSplit (p : AlignmentProfile) : Bool :=
-  p.npAlignment == .ergative && p.pronAlignment == .accusative
-
-/-- Whether all three domains have the same alignment. -/
-def AlignmentProfile.fullyUniform (p : AlignmentProfile) : Bool :=
-  p.npAlignment == p.pronAlignment && p.pronAlignment == p.verbAlignment
-
-/-- Whether the language has any ergative alignment in any domain. -/
-def AlignmentProfile.hasAnyErgative (p : AlignmentProfile) : Bool :=
-  p.npAlignment == .ergative || p.pronAlignment == .ergative ||
-  p.verbAlignment == .ergative
-
-/-- Whether the language has accusative alignment in both NP and pronoun
-    case-marking domains. -/
-def AlignmentProfile.accusativeCase (p : AlignmentProfile) : Bool :=
-  p.npAlignment == .accusative && p.pronAlignment == .accusative
-
--- ============================================================================
--- §3. Ditransitive alignment (Haspelmath 2005)
--- ============================================================================
-
-/-- Ditransitive alignment classifies how R (recipient) and T (theme) are
-    coded relative to monotransitive P ([haspelmath-2005]). -/
-inductive DitransitiveAlignment where
-  /-- R = T = P: no distinction among non-agent arguments. -/
-  | neutral
-  /-- T = P ≠ R: R distinctly marked, T patterns with P. Indirective —
-      analogous to accusative for monotransitives.
-      E.g. English "give the book TO Mary". -/
-  | indirective
-  /-- R = P ≠ T: T distinctly marked, R patterns with P. Secundative —
-      analogous to ergative. E.g. many Bantu applicatives. -/
-  | secundative
-  /-- R ≠ T ≠ P: all three roles distinctly marked. -/
-  | tripartite
-  deriving DecidableEq, BEq, Repr
-
-/-- Whether this ditransitive alignment marks R distinctly from P. -/
-def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
-  | .indirective => true
-  | .tripartite  => true
-  | _            => false
-
-/-- Whether this ditransitive alignment marks T distinctly from P. -/
-def DitransitiveAlignment.marksT : DitransitiveAlignment → Bool
-  | .secundative => true
-  | .tripartite  => true
-  | _            => false
-
-/-- A language's ditransitive alignment profile. -/
-structure DitransitiveProfile where
-  name : String
-  iso639 : String
-  alignment : DitransitiveAlignment
-  notes : String := ""
-  deriving Repr, DecidableEq
-
--- ============================================================================
--- §4. WALS converters
--- ============================================================================
-
-/-- WALS Ch 98A → `AlignmentType`. WALS distinguishes standard and marked-
-    nominative accusative; we merge both. -/
-def fromWALS98A : Data.WALS.F98A.NPCaseAlignment → AlignmentType
-  | .neutral                => .neutral
-  | .nominativeAccusative   => .accusative
-  | .nominativeAccusative_3 => .accusative
-  | .ergativeAbsolutive     => .ergative
-  | .tripartite             => .tripartite
-  | .activeInactive         => .active
-
-/-- WALS Ch 99A → `AlignmentType`. WALS has a `.none` value (no pronouns or
-    no case on pronouns); we map it to `.neutral`. -/
-def fromWALS99A : Data.WALS.F99A.PronounCaseAlignment → AlignmentType
-  | .neutral                => .neutral
-  | .nominativeAccusative   => .accusative
-  | .nominativeAccusative_3 => .accusative
-  | .ergativeAbsolutive     => .ergative
-  | .tripartite             => .tripartite
-  | .activeInactive         => .active
-  | .none                   => .neutral
-
-/-- WALS Ch 100A → `Option AlignmentType`. The `.hierarchical` and `.split`
-    values don't map cleanly to our 5-way enum and return `none`. -/
-def fromWALS100A :
-    Data.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
-  | .neutral      => some .neutral
-  | .accusative   => some .accusative
-  | .ergative     => some .ergative
-  | .active       => some .active
-  | .hierarchical => none
-  | .split        => none
-
--- ============================================================================
--- Theory-neutral WALS distribution facts
--- ============================================================================
-
-/-- Ch 98: neutral NP alignment is the modal pattern (no case marking). -/
-theorem ch98_neutral_modal :
-    let neutral := (ch98.filter (·.value == .neutral)).length
-    neutral > (ch98.filter (·.value == .ergativeAbsolutive)).length ∧
-    neutral > (ch98.filter (·.value == .tripartite)).length ∧
-    neutral > (ch98.filter (·.value == .activeInactive)).length := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
-
-/-- Ch 98: among case-marking systems, accusative outnumbers ergative. -/
-theorem ch98_accusative_gt_ergative :
-    (ch98.filter (·.value == .nominativeAccusative)).length +
-    (ch98.filter (·.value == .nominativeAccusative_3)).length >
-    (ch98.filter (·.value == .ergativeAbsolutive)).length := by
-  native_decide
-
-/-- Ch 99: accusative outnumbers ergative for pronoun case marking. -/
-theorem ch99_accusative_gt_ergative :
-    (ch99.filter (·.value == .nominativeAccusative)).length +
-    (ch99.filter (·.value == .nominativeAccusative_3)).length >
-    (ch99.filter (·.value == .ergativeAbsolutive)).length := by
-  native_decide
-
-/-- Ch 100: accusative is the dominant verbal-person-marking pattern. -/
-theorem ch100_accusative_dominant :
-    (ch100.filter (·.value == .accusative)).length >
-    (ch100.filter (·.value == .ergative)).length ∧
-    (ch100.filter (·.value == .accusative)).length >
-    (ch100.filter (·.value == .active)).length := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Ch 98: tripartite NP alignment is extremely rare. -/
-theorem ch98_tripartite_rare :
-    (ch98.filter (·.value == .tripartite)).length * 30 < ch98.length := by
-  native_decide
-
-/-- Ch 99: tripartite pronoun alignment is extremely rare. -/
-theorem ch99_tripartite_rare :
-    (ch99.filter (·.value == .tripartite)).length * 30 < ch99.length := by
-  native_decide
+-- `AlignmentProfile` (the bundled per-language record) now lives with its data
+-- and analysis in `Studies/Dixon1994.lean`; the theory-neutral WALS alignment
+-- distribution facts now live with the WALS data in
+-- `Data/WALS/AlignmentDistribution.lean`.
 
 /-! ### Split Ergativity [blake-1994] [dixon-1994]
 
@@ -304,5 +133,49 @@ theorem hindi_perfective_erg :
 
 theorem hindi_imperfective_acc :
     hindiSplit.alignment .imperfective = .accusative := rfl
+
+-- ============================================================================
+-- § Grounding `AlignmentType` in the partition object (retirement seam)
+-- ============================================================================
+
+/-! `AlignmentType` is a hand-maintained enum in this `Typology` drawer; its
+content is the partition of the core roles {S, A, P} that a case-assignment
+induces — the partition object (`Alignment.coreSig`) formalized in
+`Syntax/Case/Alignment.lean`. Grounding the enum in that object (below) is a
+first step toward retiring this enum in favour of the principled partition
+layer. -/
+
+/-- `AlignmentType` as the core-role signature `(S≈A, S≈P, A≈P)` of the
+    partition it denotes (`Alignment.coreSig` vocabulary). `active` is **not** a
+    partition of {S,A,P} — it splits S into agent-like/patient-like — so it has
+    no signature (`none`); that is the principled reason it sits apart from the
+    four genuine partitions. -/
+def AlignmentType.partitionSig : AlignmentType → Option (Bool × Bool × Bool)
+  | .neutral    => some (true, true, true)
+  | .accusative => some (true, false, false)
+  | .ergative   => some (false, true, false)
+  | .tripartite => some (false, false, false)
+  | .active     => none
+
+/-- The four partition-denoting `AlignmentType`s agree with the partitions the
+    corresponding `Alignment.X.assignCase` functions induce — grounding the enum
+    in the kernel object rather than maintaining it independently. -/
+theorem partitionSig_grounded :
+    AlignmentType.accusative.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.nominativeAccusative.assignCase) ∧
+    AlignmentType.ergative.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.ergative.assignCase) ∧
+    AlignmentType.tripartite.partitionSig
+        = some (_root_.Alignment.coreSig _root_.Alignment.tripartite.assignCase) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- The enum denotes only four of the five partitions of {S, A, P}: it is missing
+    horizontal `{A,P}|{S}` (`Alignment.horizontal_unrealized`), and its fifth
+    value `active` is split-S, not a partition (`none`). -/
+theorem alignmentType_misses_horizontal_and_active_is_split :
+    AlignmentType.active.partitionSig = none ∧
+    (∀ a : AlignmentType, a.partitionSig ≠ some (false, false, true)) := by
+  refine ⟨rfl, fun a => ?_⟩
+  cases a <;> decide
 
 end Typology.Alignment

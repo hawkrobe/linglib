@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.PiecewiseTestable
-import Linglib.Core.Computability.Subregular.Sandwich
+import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
@@ -109,6 +109,68 @@ open _root_.Subregular
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
 open Phonology (Sibilant)
 open Phonology.Subregular  -- for `TSLGrammar.agree`
+
+/-! ### Sandwich-word helpers
+
+The Tsuut'ina/Luganda counterexamples below are *bookended* words
+`replicate kL aL ++ mid ++ replicate kR aR`. These thin local wrappers specialise the
+generic `List` bookend lemmas (`Core/Data/List/Bookend.lean`) to the `Edge`-projection
+view used in the proofs. -/
+
+section Sandwich
+variable {α : Type*}
+
+/-- A bookended word: `kL` copies of `aL`, then `mid`, then `kR` copies of `aR`. -/
+private abbrev sandwich (kL : ℕ) (aL : α) (mid : List α) (kR : ℕ) (aR : α) : List α :=
+  List.replicate kL aL ++ mid ++ List.replicate kR aR
+
+private lemma takeAt_left_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
+    (h : k ≤ kL) : Edge.left.takeAt k (sandwich kL aL mid kR aR) = List.replicate k aL := by
+  show (List.replicate kL aL ++ mid ++ List.replicate kR aR).take k = List.replicate k aL
+  rw [List.append_assoc, List.take_replicate_append h]
+
+private lemma takeAt_right_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
+    (h : k ≤ kR) : Edge.right.takeAt k (sandwich kL aL mid kR aR) = List.replicate k aR := by
+  show (List.replicate kL aL ++ mid ++ List.replicate kR aR).rtake k = List.replicate k aR
+  rw [List.rtake_append_replicate h]
+
+private lemma filter_sandwich_of_pos_pos {T : α → Bool} {aL aR : α} (hL : T aL = true)
+    (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
+    (sandwich kL aL mid kR aR).filter T = sandwich kL aL (mid.filter T) kR aR := by
+  unfold sandwich
+  rw [List.filter_replicate_append_replicate, if_pos hL, if_pos hR]
+
+private lemma filter_sandwich_of_neg_pos {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
+    (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
+    (sandwich kL aL mid kR aR).filter T = mid.filter T ++ List.replicate kR aR := by
+  unfold sandwich
+  rw [List.filter_replicate_append_replicate, if_neg hL, if_pos hR, List.replicate_zero,
+    List.nil_append]
+
+private lemma filter_sandwich_of_pos_neg {T : α → Bool} {aL aR : α} (hL : T aL = true)
+    (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
+    (sandwich kL aL mid kR aR).filter T = List.replicate kL aL ++ mid.filter T := by
+  unfold sandwich
+  rw [List.filter_replicate_append_replicate, if_pos hL, if_neg hR, List.replicate_zero,
+    List.append_nil]
+
+private lemma filter_sandwich_of_neg_neg {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
+    (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
+    (sandwich kL aL mid kR aR).filter T = mid.filter T := by
+  unfold sandwich
+  rw [List.filter_replicate_append_replicate, if_neg hL, if_neg hR, List.replicate_zero,
+    List.replicate_zero, List.nil_append, List.append_nil]
+
+private lemma sublist_sandwich_of_sublist_mid {pat mid : List α} (h : pat <+ mid)
+    (kL : ℕ) (aL : α) (kR : ℕ) (aR : α) : pat <+ sandwich kL aL mid kR aR :=
+  List.sublist_replicate_append_replicate h kL aL kR aR
+
+private lemma not_sublist_sandwich {pat mid : List α} {aL aR : α}
+    (h_first : pat.head? ≠ some aL) (h_last : pat.getLast? ≠ some aR)
+    (h_inner : ¬ pat <+ mid) (kL kR : ℕ) : ¬ pat <+ sandwich kL aL mid kR aR :=
+  List.not_sublist_replicate_append_replicate h_first h_last h_inner kL kR
+
+end Sandwich
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -680,8 +742,8 @@ witnesses (`k+1` for accepted, `k` for rejected). The 8-tier
 enumeration (3 alphabet classes × 2 keep/drop) collapses to 4 since the
 witnesses contain no neutrals.
 
-The substrate `Sandwich` (in `Core/Computability/Subregular/Sandwich.lean`)
-handles the (true, true) case directly via `takeAt_*_sandwich` (the
+The local `sandwich` helpers (over `Core/Data/List/Bookend.lean`)
+handle the (true, true) case directly via `takeAt_*_sandwich` (the
 bookends are wide enough); the other three cases reduce to filtered
 words being equal (after a `replicate_succ` rewrite to merge the middle
 contribution into the bookend). -/
@@ -885,8 +947,8 @@ Lambert (2026) §5.1 parameterised counterexample: for every `k`, the words
 `ℓᵏ ℓ h h ℓ ℓᵏ` (accepted) and `ℓᵏ ℓ h ℓ h ℓ ℓᵏ` (rejected) share the
 length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
 Both witnesses are sandwiches with bookend `low` and width `k`; the
-substrate `Sandwich` (in `Core/Computability/Subregular/Sandwich.lean`)
-handles the bookend-keeps-tier-affix case directly, leaving only the
+local `sandwich` helpers (over `Core/Data/List/Bookend.lean`)
+handle the bookend-keeps-tier-affix case directly, leaving only the
 small filtered-middle equality as per-witness work.
 
 Membership separation is **predicate-level** (not TSL-grammar level):
