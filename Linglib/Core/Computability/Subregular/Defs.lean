@@ -34,7 +34,7 @@ positions by construction.
   `(xs.tails.filter (k ≤ ·.length)).map (·.take k)`.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α β : Type*}
 
@@ -142,7 +142,7 @@ lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
 
 end IsBoundaryVacuous
 
-end Core.Computability.Subregular
+end Subregular
 
 /-! ## Generic `List.IsChain` helpers
 

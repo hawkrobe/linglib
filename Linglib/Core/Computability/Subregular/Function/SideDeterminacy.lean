@@ -47,7 +47,7 @@ where neither side alone fixes the output) — the hook for the deferred
   the co-located base as its automaton-context witness).
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 open Core (Direction)
 
@@ -142,4 +142,4 @@ theorem IsMyopicTowards.right_of_leftDetermined {f : List α → List β}
   obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
   exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

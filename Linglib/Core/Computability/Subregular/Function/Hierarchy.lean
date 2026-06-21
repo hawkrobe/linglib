@@ -42,7 +42,7 @@ Both inclusions are proper:
   not left-subsequential, yet WD.
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {α : Type*} [DecidableEq α]
 
@@ -273,4 +273,4 @@ theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type} {k : ℕ} [Fintype
     IsBimachineWeaklyDeterministic r.apply :=
   .of_letterLeftSubsequential (isLetterLeftSubsequential_of_OSLRule r hs)
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

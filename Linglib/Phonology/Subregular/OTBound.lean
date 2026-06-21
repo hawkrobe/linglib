@@ -54,7 +54,7 @@ subregular hierarchy.
 namespace Phonology.Subregular.OTBound
 
 open OptimalityTheory
-open Core Core.Computability.Subregular
+open _root_.Subregular
 open Constraint OptimalityTheory
 
 -- ============================================================================

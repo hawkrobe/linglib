@@ -222,7 +222,7 @@ Land the general witness here once a Studies file consumes it. -/
 namespace Phonology.Subregular.TierRule
 
 open Core
-open Core.Computability.Subregular.Function
+open Subregular.Function
 
 variable {α : Type}
 

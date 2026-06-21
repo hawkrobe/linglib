@@ -39,7 +39,7 @@ machine view.
   IsLetterLeftSubsequential f` (build the transducer from the prefix-congruence quotient).
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {σ α β : Type*}
 
@@ -174,4 +174,4 @@ example : IsLetterLeftSubsequential (id : List α → List α) :=
     (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
     (fun _ _ => rfl) (fun u x w => by simp) (fun _ => rfl)
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

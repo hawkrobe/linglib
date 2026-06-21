@@ -91,7 +91,7 @@ suffices for both:
   `Studies/MeinhardtEtAl2024.lean`).
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {α : Type*}
 
@@ -178,4 +178,4 @@ theorem IsSubsequential.isWeaklyDeterministic {d : Direction}
   | left => exact IsLeftSubsequential.isWeaklyDeterministic hf
   | right => exact IsRightSubsequential.isWeaklyDeterministic hf
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

@@ -59,7 +59,7 @@ that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
 * [meinhardt-mai-bakovic-mccollum-2024]
 -/
 
-namespace Core.Computability.Subregular.Function
+namespace Subregular.Function
 
 variable {α β : Type*}
 
@@ -253,4 +253,4 @@ theorem isOutputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
   | left => exact isLeftOutputStrictlyLocal_left_subsequential h
   | right => exact isRightOutputStrictlyLocal_right_subsequential h
 
-end Core.Computability.Subregular.Function
+end Subregular.Function

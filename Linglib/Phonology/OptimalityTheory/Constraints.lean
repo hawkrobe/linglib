@@ -152,10 +152,10 @@ export Constraint (mkMark mkFaith mkMarkGrad mkFaithGrad)
 -- ============================================================================
 
 -- `countAdjacent` lives at the substrate layer in
--- `Core.Computability.Subregular.ForbiddenPairs` since it is alphabet-generic
+-- `Subregular.ForbiddenPairs` since it is alphabet-generic
 -- list combinatorics with nothing OT-specific. Re-exported here so consumers
 -- of `OptimalityTheory` see it under the conventional name.
-export Core.Computability.Subregular (countAdjacent)
+export Subregular (countAdjacent)
 
 /-- Build a markedness constraint penalizing tier-adjacent forbidden pairs.
     The candidate's raw symbol list is extracted by `extract`, the tier `T`

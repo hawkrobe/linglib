@@ -32,7 +32,7 @@ is infinite.
   `k`-local for a given `k`.
 -/
 
-namespace Core.Computability.Subregular
+namespace Subregular
 
 variable {α : Type*}
 
@@ -85,4 +85,4 @@ lemma SLGrammar.isStrictlyLocal_lang {k : ℕ} (G : SLGrammar k α) :
     IsStrictlyLocal k G.lang :=
   ⟨G, rfl⟩
 
-end Core.Computability.Subregular
+end Subregular

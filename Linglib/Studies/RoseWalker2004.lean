@@ -91,7 +91,7 @@ are transparent), then forbid any tier-adjacent pair `(C₁, C₂)` where
 
 namespace Phonology.Studies.RoseWalker2004
 
-open Core Core.Computability.Subregular Phonology.Subregular
+open _root_.Subregular Phonology.Subregular
 
 -- ============================================================================
 -- § 1: A toy Kikongo segmental alphabet
@@ -236,7 +236,7 @@ theorem kikongoNasalHarmony_lang_isTSL2 :
   ⟨kikongoNasalHarmony, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
-`Core.Computability.Subregular.Multitier`): Kikongo nasal harmony is in
+`Subregular.Multitier`): Kikongo nasal harmony is in
 the multitier closure of strictly local languages, hence consumed by
 the [lambert-2026] BTC framework. -/
 theorem kikongoNasalHarmony_lang_isBTSL2 : IsBTSL 2 kikongoNasalHarmony.lang :=
