@@ -314,7 +314,7 @@ import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Language
-import Linglib.Core.Computability.Subregular.Language.Tier
+import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.Definite
