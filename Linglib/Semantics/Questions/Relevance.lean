@@ -71,9 +71,9 @@ def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Pro
     On partition questions this is equivalent to `questionEntails P Q`;
     for general inquisitive `Question W`, the two directions are
     independent. The decision-relevance preservation theorem in
-    `Semantics.Questions.DecisionTheoretic` requires this
+    `Studies.VanRooy2003` requires this
     dual form, not `questionEntails`. The nonempty clause matches
-    `IsDecisionRelevant`'s requirement that witnessing alternatives
+    `VanRooy2003.IsDecisionRelevant`'s requirement that witnessing alternatives
     be substantive — without it, `⊥`-style questions trivially
     "cover" anything via the empty set. -/
 def CoversAltsOf (P Q : Question W) : Prop :=
