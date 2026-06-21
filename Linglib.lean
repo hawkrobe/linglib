@@ -307,6 +307,8 @@ import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.OntologicalCategory
 import Linglib.Features.Genericity
+import Linglib.Core.Data.List.Chain
+import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal
 import Linglib.Core.Computability.Subregular.LocallyTestable

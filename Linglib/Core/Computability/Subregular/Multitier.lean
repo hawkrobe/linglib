@@ -7,6 +7,8 @@ import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
+import Mathlib.Computability.Language
+import Linglib.Core.Data.List.Factors
 
 /-!
 # Multitier Extensions of Subregular Classes
@@ -233,8 +235,8 @@ theorem isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal {k : ℕ}
     refine ⟨fun x => decide (G.tier x), (⟨G.permitted⟩ : SLGrammar k α).lang,
             ?_, ⟨_, rfl⟩⟩
     ext w
-    show (∀ f ∈ kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
-         ∀ f ∈ kFactors k (boundary k (List.filter _ w)), f ∈ G.permitted
+    show (∀ f ∈ List.kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
+         ∀ f ∈ List.kFactors k (boundary k (List.filter _ w)), f ∈ G.permitted
     rw [tierProject_eq_filter]
   · rintro ⟨T, L', hL_eq, ⟨G', rfl⟩⟩
     let tier_pred : α → Prop := fun x => T x = true
@@ -245,7 +247,7 @@ theorem isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal {k : ℕ}
       show decide (T x = true) = T x
       exact Bool.decide_eq_true
     ext w
-    show (∀ f ∈ kFactors k (boundary k (tierProject tier_pred w)),
+    show (∀ f ∈ List.kFactors k (boundary k (tierProject tier_pred w)),
             f ∈ G'.permitted) ↔ w ∈ L
     rw [hL_eq, tierProject_eq_filter, hT]
     rfl

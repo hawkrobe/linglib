@@ -7,6 +7,7 @@ import Linglib.Core.Computability.Subregular.Defs
 import Mathlib.Data.Set.Finite.Lemmas
 import Mathlib.Data.Set.Finite.List
 import Mathlib.Data.Fintype.Order
+import Mathlib.Computability.Language
 
 /-!
 # Definite and Reverse-Definite Languages (D_k, RD_k)
