@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.Basic
+import Linglib.Semantics.Verb.Root.Basic
 
 /-!
 # Bifurcation and Manner/Result Complementarity for Roots

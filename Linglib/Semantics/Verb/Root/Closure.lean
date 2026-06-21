@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.Roots.Typology
+import Linglib.Semantics.Verb.Root.Typology
 
 /-!
 # Entailment Closure on Roots

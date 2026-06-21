@@ -3,7 +3,7 @@ import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
-import Linglib.Semantics.Lexical.Roots.Signature
+import Linglib.Semantics.Verb.Root.Signature
 import Linglib.Semantics.Lexical.EventStructure
 
 /-!

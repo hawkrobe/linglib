@@ -13,8 +13,8 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Semantics.Lexical.Roots.Basic
-import Linglib.Semantics.Lexical.Roots.Profile
+import Linglib.Semantics.Verb.Root.Basic
+import Linglib.Semantics.Verb.Root.Profile
 
 /-! # Verb entry — core type
 
