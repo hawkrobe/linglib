@@ -216,36 +216,29 @@ where
   | [] => 0
   | t :: ts => leafCount t + leafCountList ts
 
-/-! ### Binary-tree recursor (for `Tree Unit W`) -/
+/-! ### Induction principle -/
 
-/-- Custom recursor for binary trees over `Tree Unit W`. The default
-`induction` tactic refuses nested inductives like `Tree`; this recursor
-expands the `node`-case enumeration so each non-binary arity (0, 1, ≥3
-children) gets its own branch, separate from the binary `binNode` case
-that carries inductive hypotheses. With `@[elab_as_elim]`, used as
-`induction t using Tree.binRec with | term … | binNode … | tr … | bd … | nilNode | singletonNode … | manyNode …`. -/
+/-- Membership-based recursor/induction principle for `Tree`. The default
+`induction` tactic refuses nested inductives, and the raw two-motive
+`Tree.rec` forces a parallel `List` motive; this principle hands the
+`node` case the hypothesis proofs actually want — `∀ t ∈ cs, motive t` —
+so structural inductions read directly. With `@[elab_as_elim]`, used as
+`induction t using Tree.recAux with | terminal … | node c cs ih | trace … | bind …`. -/
 @[elab_as_elim]
-def binRec {W : Type} {motive : Tree Unit W → Sort*}
-    (term : ∀ w, motive (.terminal () w))
-    (binNode : ∀ l r, motive l → motive r → motive (.node () [l, r]))
-    (tr : ∀ n, motive (.trace n ()))
-    (bd : ∀ n body, motive body → motive (.bind n () body))
-    (nilNode : motive (.node () []))
-    (singletonNode : ∀ c, motive (.node () [c]))
-    (manyNode : ∀ c1 c2 c3 cs, motive (.node () (c1 :: c2 :: c3 :: cs)))
-    : ∀ t, motive t
-  | .terminal () w => term w
-  | .node () [] => nilNode
-  | .node () [c] => singletonNode c
-  | .node () [l, r] => binNode l r
-      (binRec term binNode tr bd nilNode singletonNode manyNode l)
-      (binRec term binNode tr bd nilNode singletonNode manyNode r)
-  | .node () (c1 :: c2 :: c3 :: cs) => manyNode c1 c2 c3 cs
-  | .trace n () => tr n
-  | .bind n () body => bd n body
-      (binRec term binNode tr bd nilNode singletonNode manyNode body)
-termination_by t => t.size
-decreasing_by all_goals (simp only [Tree.size, Tree.size.sizeList]; omega)
+def recAux {motive : Tree C W → Sort*}
+    (terminal : ∀ c w, motive (.terminal c w))
+    (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (.node c cs))
+    (trace : ∀ n c, motive (.trace n c))
+    (bind : ∀ n c b, motive b → motive (.bind n c b)) : ∀ t, motive t
+  | .terminal c w => terminal c w
+  | .node c cs    => node c cs (fun t _ => recAux terminal node trace bind t)
+  | .trace n c    => trace n c
+  | .bind n c b   => bind n c b (recAux terminal node trace bind b)
+  termination_by t => sizeOf t
+  decreasing_by
+    · rename_i ht; have := List.sizeOf_lt_of_mem ht
+      simp only [Tree.node.sizeOf_spec]; omega
+    · simp only [Tree.bind.sizeOf_spec]; omega
 
 /-! ### Subtrees -/
 
