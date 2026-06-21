@@ -538,6 +538,21 @@ prevalence). [leslie-2008] documents the empirical observation;
 
 `laysEggs_endorsed` and `isFemale_borderline` (above) derive the predictions. -/
 
+/-- **Generic endorsement is not prevalence-functional** — at the *same* referent
+    prevalence (50%), "robins lay eggs" is endorsed but "robins are female" is not.
+    The verdict is fixed by the property-specific prior, not by the prevalence
+    ratio. This is the prevalence asymmetry ([leslie-2008]) as a structural fact:
+    no generalized quantifier whose truth depends only on the cell ratio
+    |R∩S| : |R∖S| — i.e. no `Proportional` quantifier, every counting quantifier
+    in `Quantification.Counting` including `mostOn` — can capture generic
+    endorsement. This is exactly where the majority view fails: contrast
+    `Cohen1999.cohen_proportional`, which shows Cohen's θ = 1/2 GEN *is* proportional
+    (and hence cannot exhibit this asymmetry). -/
+theorem same_prevalence_opposite_endorsement :
+    (laysEggsCfg.S1 () (prevPct 50) .generic > laysEggsCfg.S1 () (prevPct 50) .silent) ∧
+    ¬(isFemaleCfg.S1 () (prevPct 50) .generic > isFemaleCfg.S1 () (prevPct 50) .silent) :=
+  ⟨laysEggs_endorsed, isFemale_borderline⟩
+
 -- ============================================================================
 -- § 9. Infinite-Rationality Limit: Generics as Categorical Defaults
 -- ============================================================================
