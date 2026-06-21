@@ -94,7 +94,7 @@ def applyAux (r : OSLRule k α β) :
   | _, [] => []
   | outputWindow, x :: xs =>
     r.windowOutput outputWindow x
-      ++ applyAux r (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs
+      ++ applyAux r ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
 
 /-- Apply a k-OSL rule to an input string, scanning left-to-right. -/
 def apply (r : OSLRule k α β) (input : List α) : List β :=
@@ -107,7 +107,7 @@ def apply (r : OSLRule k α β) (input : List α) : List β :=
     (x : α) (xs : List α) :
     r.applyAux outputWindow (x :: xs)
       = r.windowOutput outputWindow x
-          ++ r.applyAux (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs :=
+          ++ r.applyAux ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs :=
   rfl
 
 @[simp] lemma apply_nil (r : OSLRule k α β) : r.apply [] = [] := rfl
@@ -198,7 +198,7 @@ def OSLRule.toFinSFST {k : ℕ} (r : OSLRule k α β) :
     SFST {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
   step w x :=
-    (⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x), lastN_length_le _ _⟩,
+    (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
      r.windowOutput w.val x)
   finalOutput _ := []
 
@@ -216,11 +216,11 @@ theorem OSLRule.toFinSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
   | cons x xs ih =>
     change r.windowOutput w.val x
               ++ SFST.runFrom r.toFinSFST
-                  ⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x),
-                   lastN_length_le _ _⟩ xs
+                  ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1),
+                   List.length_rtake_le _ _⟩ xs
          = r.windowOutput w.val x
               ++ OSLRule.applyAux r
-                  (lastN (k - 1) (w.val ++ r.windowOutput w.val x)) xs
+                  ((w.val ++ r.windowOutput w.val x).rtake (k - 1)) xs
     exact congrArg _ (ih _)
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).

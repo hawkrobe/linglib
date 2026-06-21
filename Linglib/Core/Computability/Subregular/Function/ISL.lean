@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Fintype.Vector
+import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
@@ -58,25 +59,6 @@ namespace Subregular.Function
 
 variable {α β : Type*}
 
-/-- The last `n` elements of a list. Defined as `xs.drop (xs.length - n)`;
-when `n ≥ xs.length`, returns `xs` (since `Nat` subtraction truncates).
-
-Equivalent to `String.takeRight` and `Substring.takeRight` in Lean core
-but no `List.takeRight` exists yet (batteries flags `-- TODO: takeRight,
-dropRight` in `Batteries/Data/String/Lemmas.lean`). Promote upstream
-once a `List.takeRight` lands. -/
-def lastN (n : ℕ) (xs : List α) : List α := xs.drop (xs.length - n)
-
-@[simp] lemma lastN_nil (n : ℕ) : lastN n ([] : List α) = [] := by
-  simp [lastN]
-
-/-- `lastN n xs` has length at most `n`: the drop count is
-`xs.length - n`, so what remains is `min n xs.length ≤ n`. -/
-lemma lastN_length_le (n : ℕ) (xs : List α) : (lastN n xs).length ≤ n := by
-  unfold lastN
-  rw [List.length_drop]
-  omega
-
 /-- The "list of length at most `n`" subtype is finite when `α` is. The
 witness is a surjection from `Σ m : Fin (n + 1), List.Vector α m` (which
 has a `Fintype` instance via `Mathlib.Data.Fintype.{Sigma,Vector}`). Used
@@ -125,7 +107,7 @@ def applyAux (r : ISLRule k α β) :
     (window : List α) → (rest : List α) → List β
   | _, [] => []
   | window, x :: xs =>
-    r.windowOutput window x ++ applyAux r (lastN (k - 1) (window ++ [x])) xs
+    r.windowOutput window x ++ applyAux r ((window ++ [x]).rtake (k - 1)) xs
 
 /-- Apply a k-ISL rule to an input string. Scans left-to-right; at each
 position emits `r.windowOutput window x` where `window` is the (last
@@ -139,7 +121,7 @@ def apply (r : ISLRule k α β) (input : List α) : List β :=
 @[simp] lemma applyAux_cons (r : ISLRule k α β) (window : List α)
     (x : α) (xs : List α) :
     r.applyAux window (x :: xs)
-      = r.windowOutput window x ++ r.applyAux (lastN (k - 1) (window ++ [x])) xs :=
+      = r.windowOutput window x ++ r.applyAux ((window ++ [x]).rtake (k - 1)) xs :=
   rfl
 
 @[simp] lemma apply_nil (r : ISLRule k α β) : r.apply [] = [] := rfl
@@ -304,7 +286,7 @@ def ISLRule.toFinSFST {k : ℕ} [Fintype α] (r : ISLRule k α β) :
     SFST {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
   step w x :=
-    (⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩,
+    (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
      r.windowOutput w.val x)
   finalOutput _ := []
 
@@ -323,9 +305,9 @@ theorem ISLRule.toFinSFST_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α 
   | cons x xs ih =>
     change r.windowOutput w.val x
               ++ SFST.runFrom r.toFinSFST
-                  ⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩ xs
+                  ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩ xs
          = r.windowOutput w.val x
-              ++ ISLRule.applyAux r (lastN (k - 1) (w.val ++ [x])) xs
+              ++ ISLRule.applyAux r ((w.val ++ [x]).rtake (k - 1)) xs
     exact congrArg _ (ih _)
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
