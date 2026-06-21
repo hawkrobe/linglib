@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Computability.Subregular.Function.Direction
+import Linglib.Core.Computability.Subregular.Defs
 
 /-!
 # Side-determinacy: myopia and unbounded circumambience
@@ -42,14 +42,13 @@ where neither side alone fixes the output) — the hook for the deferred
 
 ## Todo
 
-* The machine-level `IsUnboundedCircumambient f → ¬ IsWeaklyDeterministic f` theorem
-  (the bridge to `Function/WeaklyDeterministic.lean`; needs bimachine substrate, with
-  the co-located base as its automaton-context witness).
+* The machine-level "`IsUnboundedCircumambient` ⟹ not weakly-deterministic" theorem,
+  bridging to `Function/Bimachine.lean`'s `IsBimachineWeaklyDeterministic`, with the
+  co-located base as its automaton-context witness.
 -/
 
 namespace Subregular.Function
 
-open Core (Direction)
 
 variable {α β : Type*}
 

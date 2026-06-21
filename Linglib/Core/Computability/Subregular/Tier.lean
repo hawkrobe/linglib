@@ -25,7 +25,8 @@ other tiers.
 
 A TSL grammar with the universal tier (every symbol on tier) reduces to
 an SL grammar — projection is the identity. This gives the inclusion
-`IsStrictlyLocal ⊆ IsTierStrictlyLocal` (proved in `Hierarchy.lean`).
+`IsStrictlyLocal ⊆ IsTierStrictlyLocal` (proved below as
+`IsStrictlyLocal.toIsTierStrictlyLocal`).
 
 ## Note on terminology
 

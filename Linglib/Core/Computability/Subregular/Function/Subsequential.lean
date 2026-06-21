@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
-import Linglib.Core.Computability.Subregular.Function.Direction
+import Linglib.Core.Computability.Subregular.Defs
 
 /-!
 # Subsequential Functions and Finite-State Transducers
@@ -57,7 +57,6 @@ functions over un-reversed strings.
 Re-exported from `Core/Direction.lean` so the classification predicates
 below can use `.left`/`.right` unqualified. -/
 
-export Core (Direction)
 
 /-- A **subsequential finite-state transducer** with state space `σ`,
 input alphabet `α`, output alphabet `β`. The scan is total deterministic
