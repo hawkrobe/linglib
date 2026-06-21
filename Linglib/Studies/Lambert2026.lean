@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Data.List.Bookend
-import Linglib.Core.Computability.Subregular.Language.Tier
+import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.Multitier
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Subregular.Sibilant

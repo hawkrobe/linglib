@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.SyntacticMonoid.Equations
+import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
 import Linglib.Core.Computability.Subregular.Language.Definite
 import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.SetTheory.Cardinal.Finite

@@ -315,7 +315,7 @@ import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Language
-import Linglib.Core.Computability.Subregular.Language.Tier
+import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.Definite
@@ -1904,8 +1904,8 @@ import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.SyntacticMonoid.Equations
-import Linglib.Core.Computability.SyntacticMonoid.Pin
+import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
+import Linglib.Core.Computability.Subregular.Language.Algebra.Pin
 import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut

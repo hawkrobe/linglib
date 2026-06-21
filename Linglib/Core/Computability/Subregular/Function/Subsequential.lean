@@ -12,12 +12,10 @@ import Mathlib.Data.Fintype.Prod
 A function `f : List α → List β` is **subsequential** when it is computed
 by a deterministic finite-state transducer with state-based final output
 [mohri-1997]. Subsequential functions form a proper subclass of the
-regular relations (= rational functions) and a proper superclass of the
-Output Strictly Local class [aksenova-rawski-graf-heinz-2020].
+regular relations (= rational functions).
 
 The class comes in **left** and **right** variants depending on whether
-the FST consumes input left-to-right or right-to-left
-[meinhardt-mai-bakovic-mccollum-2024]. The right-subsequential
+the FST consumes input left-to-right or right-to-left. The right-subsequential
 class equals the image of the left-subsequential class under input/output
 reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq`.
 
@@ -36,11 +34,9 @@ reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq
 ## What this file does NOT cover
 
 * **Finite-state minimisation**, canonical forms, equivalence of SFSTs
-  (Choffrut 1979, Mohri 1997 §5).
-* **Two-way subsequential** functions (extended class for some
-  reduplication patterns, Dolatian-Heinz 2020).
-* **p-subsequential** functions (Mohri 1997 footnote 7) — handle
-  variation/optionality with multiple outputs per input.
+  (Choffrut, [mohri-1997]).
+* **Two-way subsequential** functions (two-way deterministic transducers).
+* **p-subsequential** functions [mohri-1997] — multiple outputs per input.
 -/
 
 namespace Subregular.Function
@@ -219,10 +215,10 @@ end SFST
 
 /-! ### Composition
 
-Subsequential functions are closed under composition (Mohri 1997 §3,
+Subsequential functions are closed under composition ([mohri-1997],
 back to Schützenberger and Choffrut). This is the load-bearing fact
-that makes the Heinz-Lai 2013 Weakly Deterministic class definition
-work (compositions of two subsequentials).
+that makes the weakly-deterministic class (compositions of two
+subsequentials) well-defined.
 
 Construction: the **product SFST** with state `σ_f × σ_g` threads both
 machines, where the consumer FST `T_g` walks over each output block
@@ -281,10 +277,9 @@ The witness-style predicates below follow mathlib's `Language.IsRegular`
 shape: the state space `σ` is existentially quantified at `Type` with a
 `Fintype σ` instance, while the alphabets `α β` are universe-polymorphic
 at `Type*`. The `Fintype` constraint matches the source literature
-([mohri-1997] §3; [heinz-lai-2013]; [chandlee-2014]),
-where every SFST has finitely many states by definition, and also lets
-the universe parameter for state collapse cleanly without `universe`
-declarations or `ULift` coercions.
+([mohri-1997]), where every SFST has finitely many states by definition,
+and also lets the universe parameter for state collapse cleanly without
+`universe` declarations or `ULift` coercions.
 
 Constructor lemmas (`SFST.isLeftSubsequential`, `SFST.isRightSubsequential`
 below) hide the existential-over-types shape so future redesigns
@@ -295,8 +290,7 @@ witness the predicate (`Function/{ISL,OSL}.lean`). -/
 
 /-- A function `f : List α → List β` is **left-subsequential** iff some
 SFST with a finite state space computes it via left-to-right scan. The
-`Fintype σ` constraint matches the source literature
-([mohri-1997]; [chandlee-2014]). -/
+`Fintype σ` constraint matches the source literature [mohri-1997]. -/
 def IsLeftSubsequential {α β : Type*} (f : List α → List β) : Prop :=
   ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.run = f
 
@@ -379,12 +373,12 @@ theorem isRightSubsequential_iff_left_reverse {α β : Type*}
     rw [List.reverse_reverse] at h
     rw [h, List.reverse_reverse]
 
-/-- **Subsequential functions are closed under composition** (Mohri 1997
-§3, originally Schützenberger and Choffrut). The load-bearing fact that
-makes the Heinz-Lai 2013 Weakly Deterministic class definition work as
-the composition of two subsequential functions reading from opposite
-directions. The product state `σf × σg` inherits `Fintype` automatically
-from `Mathlib.Data.Fintype.Prod`. -/
+/-- **Subsequential functions are closed under composition** ([mohri-1997],
+originally Schützenberger and Choffrut). The load-bearing fact that makes
+the weakly-deterministic class — the composition of two subsequential
+functions reading from opposite directions — well-defined. The product
+state `σf × σg` inherits `Fintype` automatically from
+`Mathlib.Data.Fintype.Prod`. -/
 theorem IsLeftSubsequential.comp {α β γ : Type*}
     {g : List β → List γ} (hg : IsLeftSubsequential g)
     {f : List α → List β} (hf : IsLeftSubsequential f) :
