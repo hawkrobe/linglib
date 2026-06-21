@@ -34,7 +34,7 @@ substrate sits adjacent to `Multitier.lean` and is composed via
 * `subseqSet k w` — the set of length-`k` subsequences of `w`.
 * `IsPiecewiseTestable k L` — closure of `L` under equality of `subseqSet`.
 
-The cast `IsStrictlyPiecewise k L → IsPiecewiseTestable k L` lives at
+The cast `Language.IsStrictlyPiecewise L k → IsPiecewiseTestable k L` lives at
 the end of the file (mathlib convention: cast lives with the larger class).
 -/
 
@@ -85,8 +85,8 @@ lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
 /-- **SP_k ⊆ PT_k**: every strictly-`k`-piecewise language is piecewise
 `k`-testable. The SP test ("every length-`k` subsequence is permitted")
 trivially depends only on the *set* of subsequences of that length. -/
-theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
-    (h : IsStrictlyPiecewise k L) : IsPiecewiseTestable k L := by
+theorem _root_.Language.IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
+    (h : L.IsStrictlyPiecewise k) : IsPiecewiseTestable k L := by
   obtain ⟨G, rfl⟩ := h
   intro w₁ w₂ heq
   refine ⟨fun hw s hlen hs => hw s hlen ?_, fun hw s hlen hs => hw s hlen ?_⟩

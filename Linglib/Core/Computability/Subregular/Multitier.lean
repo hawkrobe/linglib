@@ -181,7 +181,7 @@ def IsBTSL (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyLocal �
 
 /-- **Multitier strictly piecewise** (BTSP): Boolean closure of
 tier-projected SP_k languages. -/
-def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (IsStrictlyPiecewise k)
+def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (Language.IsStrictlyPiecewise · k)
 
 /-- **Multitier definite** (BTD): Boolean closure of tier-projected D_k
 languages. Lambert (2026) §4.3 places Uyghur backness harmony in this
