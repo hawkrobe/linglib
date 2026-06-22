@@ -617,6 +617,7 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
           show (1 : L.syntacticMonoid) = L.toSyntacticMonoid 1 from
             (L.toSyntacticMonoid.map_one).symm]
       apply Quotient.sound
+      refine (syntacticCon_iff L).mpr ?_
       intro p q
       show p ++ FreeMonoid.toList u ++ q ∈ L ↔ p ++ FreeMonoid.toList 1 ++ q ∈ L
       apply isGeneralizedDefinite_iff_edges.mp hk
@@ -654,6 +655,7 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
         L.toSyntacticMonoid (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) by
       rw [MonoidHom.map_mul, MonoidHom.map_mul]]
     apply Quotient.sound
+    refine (syntacticCon_iff L).mpr ?_
     intro x y
     show x ++ FreeMonoid.toList (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) ++ y ∈ L ↔
          x ++ FreeMonoid.toList (FreeMonoid.ofList v) ++ y ∈ L
