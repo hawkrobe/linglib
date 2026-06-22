@@ -43,12 +43,18 @@ notation maps to the substrate as:
   *completely irrelevant* exactly when `EUV(Q) = EVSI(Q) = 0`, i.e. no
   answer changes the optimal action (p. 742). `alts_resolve_distinct`
   recasts a witness in the substrate's `IsResolved` vocabulary.
-* **§4.1 Blackwell-style ordering** (p. 741, 743): "Q is more
-  informative than Q'" is `Question.questionEntails Q Q'` (= van Rooy's
-  `Q ⊑ Q'`). Van Rooy's §4.1 theorem (p. 743, "a special case of
-  [blackwell-1953]") is the quantitative *iff*
-  `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')`; `decisionRelevance_preserved_under_cover`
-  is a qualitative one-directional surrogate (see its docstring).
+* **§4.1 Blackwell Fact** (p. 741, 743): "Q is more informative than Q'" is van
+  Rooy's `Q ⊑ Q'`. Van Rooy's §4.1 theorem (p. 743, "a special case of
+  [blackwell-1953]") is the quantitative *iff* `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')`,
+  stated over partition cells as `blackwell_euv_fact`. Its `⟹` ("only if")
+  direction — a finer partition weakly dominates a coarser one for every decision
+  problem — is the data-processing inequality `blackwell_euv_fact_forward`
+  (deriving the substrate refinement map from `⊑` and applying
+  `Core.DecisionTheory.questionUtility_mono_of_refines`). The `⟸` direction is the
+  [blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`
+  (finite, kernel-level; the deep direction, currently open).
+  `decisionRelevance_preserved_under_cover` is a separate, qualitative
+  one-directional transfer (see its docstring).
 
 ## What this file does NOT replicate
 
@@ -241,8 +247,13 @@ is reflexive (`questionEntails_refl`) and transitive
     witness, but its dual does. On partition questions the two coincide,
     recovering [van-rooy-2003]'s partition-based argument.
 
-    TODO: prove the faithful EUV-monotonicity Blackwell Fact (p. 743)
-    against `Core.DecisionTheory.questionUtility`. -/
+    For the *quantitative* §4.1 Fact (p. 743), the EUV-monotonicity ("only if")
+    direction is now `Core.DecisionTheory.questionUtility_split_ge` (a finer
+    partition has `EUV ≥` the coarser one, for every decision problem). The
+    remaining gap to the full `questionEntails`-level *iff* is (i) a
+    `Question W → Finset (Finset W)` partition-cell bridge via `HasAltList`, and
+    (ii) the [blackwell-1953] converse
+    `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`. -/
 theorem decisionRelevance_preserved_under_cover
     {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
     {dp : DecisionProblem W A} {acts : Set A}
@@ -254,5 +265,91 @@ theorem decisionRelevance_preserved_under_cover
   exact ⟨pP, hpP, hpP_ne, p'P, hp'P, hp'P_ne, a, ha, a', ha',
          fun w hw => hpa w (hpP_sub hw),
          fun w hw => hpa' w (hp'P_sub hw)⟩
+
+/-! ### §4.1 The Blackwell Fact (p. 743): partition-cell form
+
+[van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special case
+of [blackwell-1953]". We state it over [groenendijk-stokhof-1984] partition cells — the
+`Finset (Finset W)` that `Core.DecisionTheory.questionUtility` consumes. There, van Rooy's
+`Q ⊑ Q'` (p. 741: "∀ q ∈ Q : ∃ q' ∈ Q' : q ⊆ q'") is the cell-level refinement
+`∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c`, and the value side ranges over every decision problem
+with a proper prior.
+
+(The lift to the type-level `Question.questionEntails`/`Question W` is the remaining
+mechanical step: a `HasAltList Q → Finset (Finset W)` adapter via `Set.Finite.toFinset`,
+discharging `questionEntails` against this cell refinement.) -/
+
+/-- **[van-rooy-2003] §4.1 Fact, the `⟹` ("only if") direction** (p. 743): a finer question
+is weakly better than a coarser one for *every* decision problem (the data-processing
+inequality). Van Rooy's refinement `fine ⊑ coarse` (each fine cell `⊆` some coarse cell,
+p. 741) plus the partition structure furnish the substrate refinement map — each fine cell's
+containing coarse cell — and `Core.DecisionTheory.questionUtility_mono_of_refines` concludes.
+
+`hfine_cover` and the disjointness hypotheses encode that `fine`, `coarse` are genuine
+[groenendijk-stokhof-1984] partitions of the world set. -/
+theorem blackwell_euv_fact_forward [Fintype W] [DecidableEq W] [DecidableEq A]
+    {fine coarse : Finset (Finset W)}
+    (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
+    (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
+    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f)
+    (href : ∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c)
+    (dp : DecisionProblem W A) (acts : Finset A) (hprior : ∀ w, 0 ≤ dp.prior w) :
+    questionUtility dp acts coarse ≤ questionUtility dp acts fine := by
+  classical
+  set g : Finset W → Finset W :=
+    fun f => if h : ∃ c ∈ coarse, f ⊆ c then h.choose else ∅ with hg_def
+  have hgspec : ∀ f ∈ fine, g f ∈ coarse ∧ f ⊆ g f := by
+    intro f hf
+    have h : ∃ c ∈ coarse, f ⊆ c := href f hf
+    have hgf : g f = h.choose := by rw [hg_def]; exact dif_pos h
+    rw [hgf]; exact h.choose_spec
+  refine questionUtility_mono_of_refines dp acts g
+    (fun f hf => (hgspec f hf).1) ?_ hfine_disj hprior
+  -- hcover: every coarse cell is the union of the fine cells mapping to it
+  intro c hc
+  refine le_antisymm ?_ ?_
+  · -- c ⊆ ⨆ fiber
+    intro w hw
+    obtain ⟨f, hf, hwf⟩ := hfine_cover w
+    have hwgf : w ∈ g f := (hgspec f hf).2 hwf
+    have hgfc : g f = c := by
+      by_contra hne
+      exact absurd hw (Finset.disjoint_left.mp
+        (hcoarse_disj (g f) (hgspec f hf).1 c hc hne) hwgf)
+    rw [Finset.mem_sup]
+    exact ⟨f, Finset.mem_filter.mpr ⟨hf, hgfc⟩, hwf⟩
+  · -- ⨆ fiber ⊆ c
+    refine Finset.sup_le (fun f hf => ?_)
+    rw [Finset.mem_filter] at hf
+    exact hf.2 ▸ (hgspec f hf.1).2
+
+/-- **[van-rooy-2003] §4.1 Fact** (p. 743), partition-cell form. For two
+[groenendijk-stokhof-1984] partitions `fine`, `coarse` of the worlds, van Rooy's refinement
+order `fine ⊑ coarse` (every fine cell is contained in some coarse cell, p. 741) is
+equivalent to: the finer question has expected utility value `≥` the coarser one for
+*every* decision problem (with a proper, nonnegative prior). Van Rooy calls this "a special
+case of [blackwell-1953]".
+
+The `⟹` direction is `blackwell_euv_fact_forward` (the data-processing inequality). The
+`⟸` direction (EUV-dominance across all decision problems forces refinement) is the
+[blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le` — the
+deep direction, currently open. -/
+theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
+    {fine coarse : Finset (Finset W)}
+    (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
+    (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
+    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f) :
+    (∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c) ↔
+      (∀ (dp : DecisionProblem W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
+        questionUtility dp acts coarse ≤ questionUtility dp acts fine) := by
+  refine ⟨fun href dp acts hprior =>
+    blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩
+  -- ⟸ : EUV-dominance across all decision problems forces refinement.
+  -- The finite [blackwell-1953] converse at the partition-cell level
+  -- (`ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`), the deep direction.
+  -- TODO: instantiate the Blackwell converse with the deterministic (partition-cell)
+  -- experiments of `fine`/`coarse`; when refinement fails, the separating decision problem
+  -- reverses the EUV ordering.
+  sorry
 
 end VanRooy2003
