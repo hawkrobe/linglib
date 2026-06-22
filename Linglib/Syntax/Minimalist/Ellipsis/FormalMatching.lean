@@ -189,15 +189,15 @@ instance (sl : SluicingLicense) : Decidable sl.isLicensed := by
     [anand-hardt-mccloskey-2021]: voice mismatches ARE blocked by the SIC because
     v[agentive] ≠ v[nonThematic] within the argument domain. -/
 theorem voice_flavor_in_argdomain :
-    isInArgumentDomain .Voice .C = true := by decide
+    isInArgumentDomain .Voice .C := by decide
 
 /-- T is not within the argument domain of a CP. -/
 theorem t_outside_argdomain :
-    isInArgumentDomain .T .C = false := by decide
+    ¬ isInArgumentDomain .T .C := by decide
 
 /-- C is not within the argument domain. -/
 theorem c_outside_argdomain :
-    isInArgumentDomain .C .C = false := by decide
+    ¬ isInArgumentDomain .C .C := by decide
 
 /-- Head pairs for an active (agentive) transitive vP.
     v[agentive] selects VP, V selects DP. -/
@@ -224,11 +224,11 @@ theorem voice_match_licenses_sluicing :
 
 /-- V is within the argument domain of a CP (F0 ≤ F1). -/
 theorem v_lexical_in_argdomain :
-    isInArgumentDomain .V .C = true := by decide
+    isInArgumentDomain .V .C := by decide
 
 /-- v is within the argument domain of a CP (F1 ≤ F1). -/
 theorem v_functional_in_argdomain :
-    isInArgumentDomain .v .C = true := by decide
+    isInArgumentDomain .v .C := by decide
 
 -- Small clause predictions
 
@@ -240,7 +240,7 @@ theorem small_clause_argdomain_is_self :
 /-- In a small clause, v is NOT in the argument domain
     (since the top is V at F0, and v is F1). -/
 theorem small_clause_excludes_v :
-    isInArgumentDomain .v .V = false := by decide
+    ¬ isInArgumentDomain .v .V := by decide
 
 -- Cross-categorial SC argument domains ([anand-hardt-mccloskey-2025] Def 4)
 
@@ -513,10 +513,10 @@ theorem verbframe_argdomain_wellformed :
 /-- The verbal argument domain contains exactly F0 (.V) and F1 (.v).
     Everything above (T, C, Mod, ...) is outside. -/
 theorem verbframe_argdomain_complete :
-    isInArgumentDomain .V .C = true ∧
-    isInArgumentDomain .v .C = true ∧
-    isInArgumentDomain .T .C = false ∧
-    isInArgumentDomain .C .C = false := by decide
+    isInArgumentDomain .V .C ∧
+    isInArgumentDomain .v .C ∧
+    ¬ isInArgumentDomain .T .C ∧
+    ¬ isInArgumentDomain .C .C := by decide
 
 -- ── Concrete tree verification ─────────────────────────────────
 -- The following examples verify at compile time that the
