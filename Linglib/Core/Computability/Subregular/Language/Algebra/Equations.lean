@@ -114,24 +114,25 @@ theorem isDefinite_iff_satisfies_kDefiniteEquation :
 
 /-! ### Reverse-definite (`𝒦`) — by reverse duality -/
 
+/-- A class is a **right zero** iff prepending any word fixes it. -/
+private lemma isRightZero_syntacticClass_iff {αs : List α} :
+    IsRightZero (L.syntacticClass αs) ↔ ∀ v, L.syntacticClass (v ++ αs) = L.syntacticClass αs := by
+  refine ⟨fun h v => by rw [syntacticClass_append]; exact h _, fun h a => ?_⟩
+  obtain ⟨v, rfl⟩ := L.syntacticClass_surjective a; rw [← syntacticClass_append]; exact h v
+
+/-- A class is a **left zero** iff appending any word fixes it. -/
+private lemma isLeftZero_syntacticClass_iff {αs : List α} :
+    IsLeftZero (L.syntacticClass αs) ↔ ∀ v, L.syntacticClass (αs ++ v) = L.syntacticClass αs := by
+  refine ⟨fun h v => by rw [syntacticClass_append]; exact h _, fun h a => ?_⟩
+  obtain ⟨v, rfl⟩ := L.syntacticClass_surjective a; rw [← syntacticClass_append]; exact h v
+
 /-- Reverse duality, element form: a class is a right zero in `L.reverse` iff the
-reversed-word class is a left zero in `L`. -/
+reversed-word class is a left zero in `L` (reindex the absorbed word by `reverse`). -/
 private lemma isRightZero_reverse_syntacticClass {αs : List α} :
     IsRightZero (L.reverse.syntacticClass αs) ↔ IsLeftZero (L.syntacticClass αs.reverse) := by
-  constructor
-  · intro h a
-    obtain ⟨v, rfl⟩ := L.syntacticClass_surjective a
-    rw [← syntacticClass_append]
-    have hb := h (L.reverse.syntacticClass v.reverse)
-    rw [← syntacticClass_append, syntacticClass_reverse_eq_iff, List.reverse_append,
-      List.reverse_reverse] at hb
-    exact hb
-  · intro h a
-    obtain ⟨v, rfl⟩ := L.reverse.syntacticClass_surjective a
-    rw [← syntacticClass_append, syntacticClass_reverse_eq_iff, List.reverse_append]
-    have hb := h (L.syntacticClass v.reverse)
-    rw [← syntacticClass_append] at hb
-    exact hb
+  rw [isRightZero_syntacticClass_iff, isLeftZero_syntacticClass_iff]
+  simp only [syntacticClass_reverse_eq_iff, List.reverse_append]
+  exact ⟨fun h v => by simpa using h v.reverse, fun h v => by simpa using h v.reverse⟩
 
 /-- The `𝒦` equation for `L` is the `𝒟` equation for `L.reverse`. -/
 theorem kReverseDefiniteEquation_iff_reverse :
