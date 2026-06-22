@@ -1,6 +1,7 @@
 import Linglib.Typology.TemporalConnectives
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Tense.TemporalConnectives.Projection
 import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -86,13 +87,12 @@ variable {Time : Type*} [LinearOrder Time]
 abbrev impfDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
   { i | UNBOUNDED P () i }
 
-/-- PRFV denotation: the set of exact event runtimes.
-    Unlike the `Aspect.Core.PRFV` operator (which gives intervals CONTAINING
-    the runtime: TSit ⊆ TT), this gives the τ-image {τ(e) | P(e)} — the
-    interval set that directly characterizes the event's temporal extent.
-    This matches the `eventDenotation` pattern from `EventBridge.lean`. -/
+/-- PRFV denotation: the set of exact event runtimes — the `eventDenotation`
+    τ-image (`Projection.lean`) of `P ()`. Unlike the `Aspect.Core.PRFV` operator
+    (whose intervals CONTAIN the runtime: TSit ⊆ TT), this gives the runtime itself,
+    directly characterizing the event's temporal extent. -/
 def prfvDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
-  { i | ∃ e : Event Time, P () e ∧ e.τ = i }
+  eventDenotation (P ())
 
 -- ============================================================================
 -- § 2: Homogeneity
@@ -205,7 +205,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
     prfvDen (fun () (e : Event Time) => e.τ = i) =
     accomplishmentDenotation i := by
   ext j
-  simp only [prfvDen, accomplishmentDenotation,
+  simp only [prfvDen, mem_eventDenotation, accomplishmentDenotation,
     Set.mem_setOf_eq, Event.τ]
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
