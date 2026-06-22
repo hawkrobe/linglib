@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.EquivFin
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 
 /-!
@@ -51,8 +51,8 @@ def lState (B : Bimachine L R α β) (pre : List α) : L := pre.foldl B.lStep B.
 /-- Right state after scanning a suffix right-to-left. -/
 def rState (B : Bimachine L R α β) (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
 
-@[simp] theorem lState_nil (B : Bimachine L R α β) : B.lState [] = B.lInit := rfl
-@[simp] theorem rState_nil (B : Bimachine L R α β) : B.rState [] = B.rInit := rfl
+theorem lState_nil (B : Bimachine L R α β) : B.lState [] = B.lInit := rfl
+theorem rState_nil (B : Bimachine L R α β) : B.rState [] = B.rInit := rfl
 
 /-- Run threading the left state; each tail's right state is read on the spot. -/
 def runAux (B : Bimachine L R α β) : L → List α → List β
@@ -93,6 +93,67 @@ theorem run_getElem? (B : Bimachine L R α β) (x : List α) (i : ℕ) :
       = (x[i]?).map (fun a => B.out (B.lState (x.take i)) a (B.rState (x.drop (i + 1)))) := by
   rw [run, runAux_getElem?]; rfl
 
+variable {L' R' : Type*}
+
+/-- Transfer a bimachine along state-space equivalences `L ≃ L'` and `R ≃ R'`,
+preserving `run`. Mirrors `SFST.transferEquiv`/`Mealy.transferEquiv`; the use case is
+bringing `Type*` finite states down to `Fin (Fintype.card ·) : Type 0` so a
+universe-polymorphic machine can witness the `Type 0`-state existentials of
+`IsBimachineComputable`/`IsBimachineWeaklyDeterministic`. -/
+def transferEquiv (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R') :
+    Bimachine L' R' α β where
+  lInit := eL B.lInit
+  lStep l a := eL (B.lStep (eL.symm l) a)
+  rInit := eR B.rInit
+  rStep r a := eR (B.rStep (eR.symm r) a)
+  out l a r := B.out (eL.symm l) a (eR.symm r)
+
+theorem transferEquiv_lState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+    (l : L) (pre : List α) :
+    pre.foldl (B.transferEquiv eL eR).lStep (eL l) = eL (pre.foldl B.lStep l) := by
+  induction pre generalizing l with
+  | nil => rfl
+  | cons x xs ih =>
+    show xs.foldl (B.transferEquiv eL eR).lStep (eL (B.lStep (eL.symm (eL l)) x)) = _
+    rw [eL.symm_apply_apply, ih]; rfl
+
+theorem transferEquiv_rState_from (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+    (r : R) (suf : List α) :
+    suf.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)
+      = eR (suf.foldr (fun a r => B.rStep r a) r) := by
+  induction suf with
+  | nil => rfl
+  | cons x xs ih =>
+    show (B.transferEquiv eL eR).rStep
+        (xs.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)) x = _
+    rw [ih]
+    show eR (B.rStep (eR.symm (eR _)) x) = _
+    rw [eR.symm_apply_apply]; rfl
+
+theorem transferEquiv_lState (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+    (pre : List α) : (B.transferEquiv eL eR).lState pre = eL (B.lState pre) :=
+  transferEquiv_lState_from B eL eR B.lInit pre
+
+theorem transferEquiv_rState (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+    (suf : List α) : (B.transferEquiv eL eR).rState suf = eR (B.rState suf) :=
+  transferEquiv_rState_from B eL eR B.rInit suf
+
+theorem transferEquiv_runAux (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R')
+    (l : L) (xs : List α) :
+    (B.transferEquiv eL eR).runAux (eL l) xs = B.runAux l xs := by
+  induction xs generalizing l with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [runAux_cons, runAux_cons]
+    show B.out (eL.symm (eL l)) x (eR.symm ((B.transferEquiv eL eR).rState xs)) ::
+        (B.transferEquiv eL eR).runAux (eL (B.lStep (eL.symm (eL l)) x)) xs = _
+    rw [eL.symm_apply_apply, transferEquiv_rState, eR.symm_apply_apply, ih]
+
+/-- The transferred bimachine computes the same string function. -/
+@[simp] theorem transferEquiv_run (B : Bimachine L R α β) (eL : L ≃ L') (eR : R ≃ R') :
+    (B.transferEquiv eL eR).run = B.run := by
+  funext xs; exact transferEquiv_runAux B eL eR B.lInit xs
+
 end Bimachine
 
 /-! ### Weak determinism -/
@@ -100,6 +161,15 @@ end Bimachine
 /-- Computability by a finite bimachine (the length-preserving regular functions). -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β), B.run = f
+
+/-- **Constructor lemma**: every finite-state bimachine witnesses `IsBimachineComputable`
+for its `run`. States are accepted at arbitrary `Type*` and brought down to
+`Fin (Fintype.card ·) : Type 0` via `transferEquiv` + `Fintype.equivFin`, so consumers stop
+spelling the `∃ (L R : Type)` quadruple. Mirrors `SFST.isLeftSubsequential`. -/
+theorem isBimachineComputable {L R : Type*} [Fintype L] [Fintype R] {α β : Type*}
+    (B : Bimachine L R α β) : IsBimachineComputable B.run :=
+  ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
+    B.transferEquiv (Fintype.equivFin L) (Fintype.equivFin R), B.transferEquiv_run _ _⟩
 
 section NonInteraction
 
@@ -126,6 +196,21 @@ def Bimachine.IsNonInteracting (B : Bimachine L R α α) : Prop :=
 def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
+
+/-- **Constructor lemma**: a non-interacting finite-state bimachine witnesses
+`IsBimachineWeaklyDeterministic` for its `run`. The one-sided rules survive the
+state-space transfer by composing with `e.symm`. -/
+theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
+    (B : Bimachine L R α α) (h : B.IsNonInteracting) :
+    IsBimachineWeaklyDeterministic B.run := by
+  obtain ⟨ωL, ωR, hω⟩ := h
+  refine ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
+    B.transferEquiv (Fintype.equivFin L) (Fintype.equivFin R), B.transferEquiv_run _ _,
+    fun l a => ωL ((Fintype.equivFin L).symm l) a,
+    fun r a => ωR ((Fintype.equivFin R).symm r) a, ?_⟩
+  intro l a r
+  show B.out _ a _ = _
+  rw [hω]
 
 /-- A target that **requires both sides**: `f` changes `base[i]` from its input, but
 perturbing either far side reverts it to identity. The suppression/conjunction structure of
