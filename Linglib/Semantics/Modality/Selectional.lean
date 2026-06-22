@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Probability.Finite
@@ -118,7 +123,7 @@ theorem will_excluded_middle (s : SelectionFunction W) (A : W → Prop)
     willSem s A f w ∨ willSem s (fun w' => ¬ A w') f w :=
   s.sel_em A f w
 
-/-- **Unembedded collapse** [cariani-santorio-2018] eq. (17):
+/-- **Unembedded collapse** [cariani-santorio-2018] eq. (18):
     when the evaluation world is itself in the modal parameter,
     Centering forces the selected world to be `w`, so `will A`
     reduces to `A w`.
@@ -290,9 +295,10 @@ def willHistorical {Time : Type*} (s : SelectionFunction W)
     (w : W) (t : Time) : Prop :=
   willSem s A (metaphysicalBase history w t) w
 
-/-- When the world-history relation is reflexive (the standard case
-    [condoravdi-2002] §4.1 condition (i)), `willHistorical`
-    collapses to its prejacent: `will_t A` at `w` reduces to `A w`. -/
+/-- When the world-history relation is reflexive (the standard
+    assumption that a world is among its own historical alternatives,
+    [condoravdi-2002]), `willHistorical` collapses to its prejacent:
+    `will_t A` at `w` reduces to `A w`. -/
 theorem willHistorical_reflexive_collapse {Time : Type*}
     (s : SelectionFunction W) {history : HistoricalAlternatives W Time}
     (hRefl : history.reflexive) (A : W → Prop) (w : W) (t : Time) :

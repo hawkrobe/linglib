@@ -74,6 +74,26 @@ theorem sel_neg_swap (s : SelectionFunction W) (A : W → Prop) (f : Set W)
 
 end SelectionFunction
 
+/-- **Selection conditional** [stalnaker-1968]: "if `p`, `q`" is true at
+`w` iff `q` holds at the world `s` selects from the `p`-worlds. This is the
+bare selection-conditional clause of the selection-function framework. The
+indicative refinement ([stalnaker-1975], via a pragmatic constraint on `s`)
+and the counterfactual reading ([stalnaker-1981]/[lewis-1973], via a
+similarity-induced `s`) share this single clause and differ only in which
+selection functions are admissible — so both `Stalnaker.moodedConditional`
+and `Counterfactual.stalnakerCounterfactual` specialize it here rather than
+re-stating the truth-condition. -/
+def selectionConditional {W : Type*} (s : SelectionFunction W)
+    (p q : W → Prop) : W → Prop :=
+  fun w => q (s.sel w {w' | p w'})
+
+/-- `selectionConditional` is decidable when its consequent is. The single
+decidability instance the indicative and counterfactual readings inherit. -/
+instance selectionConditional_decidable {W : Type*} (s : SelectionFunction W)
+    (p q : W → Prop) [DecidablePred q] (w : W) :
+    Decidable (selectionConditional s p q w) :=
+  inferInstanceAs (Decidable (q _))
+
 /-- **Pairwise preference induced by a selection function.**
 
 `w₁` is preferred to `w₂` from center `w₀` iff when choosing between
