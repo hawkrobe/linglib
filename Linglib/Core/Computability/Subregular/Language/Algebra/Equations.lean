@@ -67,11 +67,6 @@ def kGeneralizedDefiniteEquation : Prop :=
 
 variable {L} {k}
 
-/-- `(· ∈ L)` factors through `f` when `f` preserves membership pointwise. -/
-private lemma factorsThrough_of_mem_iff {f : List α → List α}
-    (key : ∀ w, w ∈ L ↔ f w ∈ L) : Function.FactorsThrough (· ∈ L) f :=
-  fun a b hab => by simp only [key a, key b, hab]
-
 /-! ### Definite (`𝒟`) -/
 
 /-- Under the `𝒟` equation, prepending any prefix to a length-`k` word fixes its class. -/
@@ -93,22 +88,24 @@ theorem IsDefinite.satisfies_kDefiniteEquation (hL : L.IsDefinite k) :
       show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc],
       Edge.takeAt_right_append_of_le_length _ _ h, Edge.takeAt_right_append_of_le_length _ _ h]
 
+/-- Under the `𝒟` equation a word and its length-`k` suffix share a syntactic class
+("the class is memoryless past the `k`-suffix") — the pivot for the reverse direction. -/
+private lemma syntacticClass_eq_takeAt (h : kDefiniteEquation L k) (w : List α) :
+    L.syntacticClass w = L.syntacticClass (Edge.right.takeAt k w) := by
+  by_cases hw : w.length ≤ k
+  · rw [Edge.takeAt_of_length_le _ hw]
+  · have hlen : (Edge.right.takeAt k w).length = k := by rw [Edge.length_takeAt]; omega
+    have base := syntacticClass_of_kDefiniteEquation h
+      (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
+    have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
+      (List.rdrop_append_rtake w k).symm
+    rwa [← decomp] at base
+
 /-- Reverse: the `𝒟` equation forces `k`-definiteness. -/
 theorem isDefinite_of_satisfies_kDefiniteEquation (h : kDefiniteEquation L k) :
-    L.IsDefinite k := by
-  -- short words are their own `k`-suffix; long words are syntactically equivalent to it.
-  have key : ∀ w : List α, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
-    intro w
-    by_cases hw : w.length ≤ k
-    · rw [Edge.takeAt_of_length_le _ hw]
-    · have hlen : (Edge.right.takeAt k w).length = k := by rw [Edge.length_takeAt]; omega
-      refine mem_iff_of_syntacticClass_eq ?_
-      have base := syntacticClass_of_kDefiniteEquation h
-        (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
-      have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
-        (List.rdrop_append_rtake w k).symm
-      rwa [← decomp] at base
-  exact factorsThrough_of_mem_iff key
+    L.IsDefinite k :=
+  isDefinite_iff_mem_takeAt.mpr fun w =>
+    mem_iff_of_syntacticClass_eq (syntacticClass_eq_takeAt h w)
 
 /-- `k`-definite ↔ the `𝒟` equation. -/
 theorem isDefinite_iff_satisfies_kDefiniteEquation :
