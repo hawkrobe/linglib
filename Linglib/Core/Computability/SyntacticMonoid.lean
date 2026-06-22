@@ -114,6 +114,18 @@ theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L := by
   simpa using syntacticClass_eq_iff.mp h [] []
 
+variable {L} in
+/-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the same as the
+reversed-word equality in `L`. The syntactic monoid of `L.reverse` is `L`'s, opposite. -/
+theorem syntacticClass_reverse_eq_iff {u v : List α} :
+    L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
+      L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
+  rw [syntacticClass_eq_iff, syntacticClass_eq_iff]
+  refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;>
+    · have := h y.reverse x.reverse
+      simpa only [Language.mem_reverse, List.reverse_append, List.reverse_reverse,
+        List.append_assoc] using this
+
 /-! ### Universal property -/
 
 variable {L}
