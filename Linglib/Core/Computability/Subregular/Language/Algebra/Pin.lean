@@ -136,10 +136,9 @@ private lemma left_absorbing_of_kDefiniteEquation {L : Language α} {k : ℕ}
     exact (List.take_append_drop _ _).symm
   have hvM_eq_sufM : vM = sufM := by
     rw [hvM_def, hv_decomp, syntacticClass_append]
-    exact hkEq (L.syntacticClass (v.take (v.length - k)))
-                suf hsuf_len
+    exact hkEq suf hsuf_len (L.syntacticClass (v.take (v.length - k)))
   rw [hvM_eq_sufM]
-  exact hkEq s suf hsuf_len
+  exact hkEq suf hsuf_len s
 
 -- ============================================================================
 -- §3. Pin's theorem (forward direction)
@@ -164,7 +163,7 @@ theorem IsDefinite.satisfies_pinDefiniteEquation
   by_cases hk0 : k = 0
   · subst hk0
     have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := fun x => by
-      have := hkEq x [] rfl
+      have := hkEq [] rfl x
       simpa using this
     rw [hM_triv s, hM_triv (Monoid.omegaPow wM), one_mul]
   · set N := Monoid.omegaPowExponent wM with hN_def
@@ -302,7 +301,7 @@ theorem exists_isDefinite_of_satisfies_pinDefiniteEquation
     ∃ k, L.IsDefinite k := by
   refine ⟨Nat.card L.syntacticMonoid, ?_⟩
   apply isDefinite_of_satisfies_kDefiniteEquation
-  intro s αs hαs_len
+  intro αs hαs_len s
   exact left_absorbing_of_pinDefiniteEquation h (by rw [hαs_len]) s
 
 /-- **Pin's theorem**: a language is `k`-definite for some `k` iff its
@@ -349,9 +348,9 @@ private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k :
     exact (List.take_append_drop _ _).symm
   have hvM_eq_preM : vM = preM := by
     rw [hvM_def, hv_decomp, syntacticClass_append]
-    exact hkEq (L.syntacticClass (v.drop k)) pre hpre_len
+    exact hkEq pre hpre_len (L.syntacticClass (v.drop k))
   rw [hvM_eq_preM]
-  exact hkEq s pre hpre_len
+  exact hkEq pre hpre_len s
 
 /-- **Pin's K-theorem (forward direction)**: a reverse-`k`-definite
 language's syntactic monoid satisfies Pin's right-absorbing
@@ -365,7 +364,7 @@ theorem IsReverseDefinite.satisfies_pinReverseDefiniteEquation
   by_cases hk0 : k = 0
   · subst hk0
     have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := fun x => by
-      have := hkEq x [] rfl
+      have := hkEq [] rfl x
       simpa using this
     rw [hM_triv s, hM_triv (Monoid.omegaPow wM), mul_one]
   · set N := Monoid.omegaPowExponent wM with hN_def
@@ -511,7 +510,7 @@ theorem exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation
     ∃ k, L.IsReverseDefinite k := by
   refine ⟨Nat.card L.syntacticMonoid, ?_⟩
   apply isReverseDefinite_of_satisfies_kReverseDefiniteEquation
-  intro s αs hαs_len
+  intro αs hαs_len s
   exact right_absorbing_of_pinReverseDefiniteEquation h (by rw [hαs_len]) s
 
 /-- **Pin's K-theorem**: a language is reverse-`k`-definite for some

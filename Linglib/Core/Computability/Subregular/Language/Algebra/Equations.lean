@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Logic.Function.Basic
+import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Data.List.DropRight
@@ -29,7 +30,7 @@ classical ω-power forms in `Pin.lean` are derived from them.
 * `Language.isDefinite_iff_satisfies_kDefiniteEquation`,
   `Language.isReverseDefinite_iff_satisfies_kReverseDefiniteEquation`,
   `Language.isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation`
-  ([lambert-2026], Props 53, 57, 58) — each class equals the languages whose
+  ([lambert-2026]) — each class equals the languages whose
   syntactic monoid satisfies the corresponding equation.
 
 ## Implementation notes
@@ -45,26 +46,35 @@ open Subregular
 
 namespace Language
 
-variable {α : Type*}
+variable {α : Type*} (L : Language α) (k : ℕ)
 
-/-- **Lambert Prop 53 equation** (`𝒟`): `s * [αs] = [αs]` for any length-`k` word `αs`. -/
-def kDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
+/-! ### The equations -/
+
+/-- The definite (`𝒟`) equation: every length-`k` word's class is a right zero
+(`∀ s, s * [αs] = [αs]`). -/
+def kDefiniteEquation : Prop :=
+  ∀ αs : List α, αs.length = k → IsRightZero (L.syntacticClass αs)
+
+/-- The reverse-definite (`𝒦`) equation: every length-`k` word's class is a left zero
+(`∀ s, [αs] * s = [αs]`). -/
+def kReverseDefiniteEquation : Prop :=
+  ∀ αs : List α, αs.length = k → IsLeftZero (L.syntacticClass αs)
+
+/-- The generalized-definite (`ℒℐ`) equation: `[αs] * s * [αs] = [αs]` (`|αs| = k`). -/
+def kGeneralizedDefiniteEquation : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    s * L.syntacticClass αs = L.syntacticClass αs
+    L.syntacticClass αs * s * L.syntacticClass αs = L.syntacticClass αs
 
-/-- A membership predicate `(· ∈ L)` factors through `f` as soon as `f`
-preserves membership pointwise. The shared reverse-direction engine for the
-`Is*Definite` characterizations, which each reduce to a per-word
-`w ∈ L ↔ edge w ∈ L`. -/
-private lemma factorsThrough_of_mem_iff {L : Language α} {f : List α → List α}
+variable {L} {k}
+
+/-- `(· ∈ L)` factors through `f` when `f` preserves membership pointwise. -/
+private lemma factorsThrough_of_mem_iff {f : List α → List α}
     (key : ∀ w, w ∈ L ↔ f w ∈ L) : Function.FactorsThrough (· ∈ L) f :=
   fun a b hab => by simp only [key a, key b, hab]
 
 /-! ### Helper lemmas on `Edge.right.takeAt` -/
 
-/-- The right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix of `rest`
-whenever `rest.length ≥ k` — the `Edge.takeAt` view of
-`List.rtake_append_of_le_length`. -/
+/-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
 lemma takeAt_right_append_left_absorb {α : Type*}
     (x rest : List α) {k : ℕ} (h : k ≤ rest.length) :
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
@@ -72,25 +82,21 @@ lemma takeAt_right_append_left_absorb {α : Type*}
 
 /-! ### Lifting the equation to a syntactic-class equality -/
 
-/-- Under the `k`-definite equation, prepending any prefix to a length-`k` word
-preserves its syntactic class — the algebraic heart of the reverse direction. -/
-lemma syntacticClass_of_kDefiniteEquation {L : Language α} {k : ℕ}
+/-- Under the `𝒟` equation, prepending any prefix to a length-`k` word fixes its class. -/
+lemma syntacticClass_of_kDefiniteEquation
     (h : Language.kDefiniteEquation L k)
     (w αs : List α) (hαs_len : αs.length = k) :
     L.syntacticClass (w ++ αs) = L.syntacticClass αs := by
   rw [syntacticClass_append]
-  exact h (L.syntacticClass w) αs hαs_len
+  exact h αs hαs_len (L.syntacticClass w)
 
-/-! ### Lambert Prop 53 — both directions -/
+/-! ### Definite (`𝒟`) -/
 
-/-- **Lambert Prop 53 (forward direction)**: a `k`-definite language's
-syntactic monoid satisfies the `k`-definite equation: prepending any
-syntactic-monoid element `s` to a length-`k` letter sequence `αs`
-preserves the syntactic class of `αs`. -/
+/-- Forward: a `k`-definite language satisfies the `𝒟` equation. -/
 theorem IsDefinite.satisfies_kDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : L.IsDefinite k) :
+    (hL : L.IsDefinite k) :
     Language.kDefiniteEquation L k := by
-  intro s αs hαs_len
+  intro αs hαs_len s
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
   rw [← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
@@ -101,29 +107,8 @@ theorem IsDefinite.satisfies_kDefiniteEquation
   rw [takeAt_right_append_left_absorb (x ++ w) (αs ++ y) h_combined_len,
       takeAt_right_append_left_absorb x (αs ++ y) h_combined_len]
 
-/-- **Lambert Prop 53 (reverse direction)**: if a language's syntactic
-monoid satisfies the `k`-definite equation, then the language is
-`k`-definite.
-
-Construction: `G.permitted := {Edge.right.takeAt k w | w ∈ L}`. The
-trivial direction `L ⊆ G.lang` holds with witness `w' = w`. The
-interesting direction `G.lang ⊆ L`: if `w ∈ G.lang`, there is some
-`u ∈ L` with the same length-`k` right-suffix; case-split on
-`u.length`, `w.length` vs `k`:
-
-1. Both `u.length ≤ k`, `w.length ≤ k`: their `takeAt k`-suffixes are
-   `u`, `w` themselves; equality forces `w = u ∈ L`.
-2. `u.length ≤ k`, `w.length > k`: the suffix-length match forces
-   `u.length = k`, so `u` is the length-`k` right-suffix of `w`. Apply
-   the equation to get `[w] = [u]` in the syntactic monoid; saturation
-   closes.
-3. `u.length > k`, `w.length ≤ k`: symmetric to (2).
-4. Both `u.length > k`, `w.length > k`: both decompose as
-   `prefix ++ ks` for the shared length-`k` suffix `ks`. Apply
-   equation to both, getting `[w] = [ks]` and `[u] = [ks]`; chain by
-   transitivity, then saturation. -/
+/-- Reverse: the `𝒟` equation forces `k`-definiteness. -/
 theorem isDefinite_of_satisfies_kDefiniteEquation
-    {L : Language α} {k : ℕ}
     (h : Language.kDefiniteEquation L k) :
     L.IsDefinite k := by
   -- Membership equals membership of the length-`k` suffix: short words are their
@@ -144,141 +129,74 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
       exact mem_iff_of_syntacticClass_eq hcon
   exact factorsThrough_of_mem_iff key
 
-/-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
-syntactic monoid satisfies the `k`-definite equation. Bidirectional
-bundling of `IsDefinite.satisfies_kDefiniteEquation` and
-`isDefinite_of_satisfies_kDefiniteEquation`. -/
-theorem isDefinite_iff_satisfies_kDefiniteEquation
-    {L : Language α} {k : ℕ} :
+/-- `k`-definite ↔ the `𝒟` equation. -/
+theorem isDefinite_iff_satisfies_kDefiniteEquation :
     L.IsDefinite k ↔ Language.kDefiniteEquation L k :=
   ⟨IsDefinite.satisfies_kDefiniteEquation,
    isDefinite_of_satisfies_kDefiniteEquation⟩
 
-/-! ### Lambert Prop 57 — reverse-definite (mirror of D) -/
+/-! ### Reverse-definite (`𝒦`) — by reverse duality -/
 
-/-- **Lambert (2026) Prop 57 equation** for **reverse-definite**
-languages (length-`k` letter-sequence, monoid form): for any element
-`s` of the syntactic monoid and any length-`k` letter sequence `αs`,
-**post**-multiplying `[αs]` by `s` preserves it. Mirror of
-`kDefiniteEquation` with right-multiplication instead of left.
+/-- Reverse duality, element form: a class is a right zero in `L.reverse` iff the
+reversed-word class is a left zero in `L`. -/
+private lemma isRightZero_reverse_syntacticClass {αs : List α} :
+    IsRightZero (L.reverse.syntacticClass αs) ↔ IsLeftZero (L.syntacticClass αs.reverse) := by
+  constructor
+  · intro h a
+    obtain ⟨v, rfl⟩ := L.syntacticClass_surjective a
+    rw [← syntacticClass_append]
+    have hb := h (L.reverse.syntacticClass v.reverse)
+    rw [← syntacticClass_append, syntacticClass_reverse_eq_iff, List.reverse_append,
+      List.reverse_reverse] at hb
+    exact hb
+  · intro h a
+    obtain ⟨v, rfl⟩ := L.reverse.syntacticClass_surjective a
+    rw [← syntacticClass_append, syntacticClass_reverse_eq_iff, List.reverse_append]
+    have hb := h (L.syntacticClass v.reverse)
+    rw [← syntacticClass_append] at hb
+    exact hb
 
-Lambert's notation: `𝒦_k = ⟦x₁ ⋯ xₖ s = x₁ ⋯ xₖ⟧` (paper Prop 57). -/
-def kReverseDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
-  ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    L.syntacticClass αs * s = L.syntacticClass αs
+/-- The `𝒦` equation for `L` is the `𝒟` equation for `L.reverse`. -/
+theorem kReverseDefiniteEquation_iff_reverse :
+    kReverseDefiniteEquation L k ↔ kDefiniteEquation L.reverse k := by
+  refine ⟨fun h αs hlen => ?_, fun h αs hlen => ?_⟩
+  · rw [isRightZero_reverse_syntacticClass]; exact h αs.reverse (by simpa using hlen)
+  · have := h αs.reverse (by simpa using hlen)
+    rw [isRightZero_reverse_syntacticClass, List.reverse_reverse] at this; exact this
 
-/-! #### Helper lemmas on `Edge.left.takeAt` (mirror of `Edge.right`) -/
+/-- reverse-`k`-definite ↔ the `𝒦` equation (reverse duality with `𝒟`). -/
+theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation :
+    L.IsReverseDefinite k ↔ kReverseDefiniteEquation L k := by
+  rw [isReverseDefinite_iff_isDefinite_reverse, isDefinite_iff_satisfies_kDefiniteEquation,
+    kReverseDefiniteEquation_iff_reverse]
 
-/-- The left-`k`-prefix of `xs ++ y` equals the left-`k`-prefix of
-`xs` whenever `xs.length ≥ k`. -/
-private lemma takeAt_left_append_right_absorb {α : Type*}
-    (xs y : List α) {k : ℕ} (h : k ≤ xs.length) :
-    Edge.left.takeAt k (xs ++ y) = Edge.left.takeAt k xs := by
-  show (xs ++ y).take k = xs.take k
-  exact List.take_append_of_le_length h
+/-- Forward: a reverse-`k`-definite language satisfies the `𝒦` equation. -/
+theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation (hL : L.IsReverseDefinite k) :
+    kReverseDefiniteEquation L k :=
+  isReverseDefinite_iff_satisfies_kReverseDefiniteEquation.mp hL
 
-/-! #### Lifting the K equation to a syntactic-class equality -/
-
-/-- Under the reverse-`k`-definite equation, **appending** any suffix to a length-`k`
-word preserves its syntactic class. Mirror of `syntacticClass_of_kDefiniteEquation`. -/
-lemma syntacticClass_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
-    (h : Language.kReverseDefiniteEquation L k)
-    (αs w : List α) (hαs_len : αs.length = k) :
-    L.syntacticClass (αs ++ w) = L.syntacticClass αs := by
-  rw [syntacticClass_append]
-  exact h (L.syntacticClass w) αs hαs_len
-
-/-! #### Lambert Prop 57 — both directions -/
-
-/-- **Lambert Prop 57 (forward direction)**: a reverse-`k`-definite
-language's syntactic monoid satisfies the reverse-`k`-definite equation. -/
-theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : L.IsReverseDefinite k) :
-    Language.kReverseDefiniteEquation L k := by
-  intro s αs hαs_len
-  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
-  rw [← syntacticClass_append, syntacticClass_eq_iff]
-  intro x y
-  refine iff_of_eq (hL ?_)
-  rw [show x ++ (αs ++ w) ++ y = (x ++ αs) ++ (w ++ y) by simp [List.append_assoc],
-      show x ++ αs ++ y = (x ++ αs) ++ y by simp [List.append_assoc]]
-  have h_combined_len : k ≤ (x ++ αs).length := by rw [List.length_append]; omega
-  rw [takeAt_left_append_right_absorb (x ++ αs) (w ++ y) h_combined_len,
-      takeAt_left_append_right_absorb (x ++ αs) y h_combined_len]
-
-/-- **Lambert Prop 57 (reverse direction)**: if a language's syntactic
-monoid satisfies the reverse-`k`-definite equation, then the language is
-reverse-`k`-definite. Mirror of `isDefinite_of_satisfies_kDefiniteEquation`. -/
+/-- Reverse: the `𝒦` equation forces reverse-`k`-definiteness. -/
 theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
-    {L : Language α} {k : ℕ}
-    (h : Language.kReverseDefiniteEquation L k) :
-    L.IsReverseDefinite k := by
-  have key : ∀ w : List α, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
-    intro w
-    by_cases hw : w.length ≤ k
-    · rw [Edge.takeAt_of_length_le _ hw]
-    · push Not at hw
-      have hlen : (Edge.left.takeAt k w).length = k := by
-        rw [Edge.length_takeAt]; omega
-      have hcon : L.syntacticClass w = L.syntacticClass (Edge.left.takeAt k w) := by
-        have base := syntacticClass_of_kReverseDefiniteEquation h
-          (Edge.left.takeAt k w) (w.drop k) hlen
-        have decomp : w = Edge.left.takeAt k w ++ w.drop k :=
-          (List.take_append_drop k w).symm
-        rwa [← decomp] at base
-      exact mem_iff_of_syntacticClass_eq hcon
-  exact factorsThrough_of_mem_iff key
+    (h : kReverseDefiniteEquation L k) : L.IsReverseDefinite k :=
+  isReverseDefinite_iff_satisfies_kReverseDefiniteEquation.mpr h
 
-/-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
-its syntactic monoid satisfies the reverse-`k`-definite equation. -/
-theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
-    {L : Language α} {k : ℕ} :
-    L.IsReverseDefinite k ↔ Language.kReverseDefiniteEquation L k :=
-  ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
-   isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
-
-/-! ### Lambert Prop 58 — generalized definite (sandwich form) -/
-
-/-- **Lambert (2026) Prop 58 equation** for **generalized `k`-definite**
-languages (length-`k` letter-sequence, sandwich monoid form): for any
-`s` and any length-`k` letter sequence `αs`, sandwiching `s` between
-two copies of `[αs]` absorbs `s`:
-`[αs] · s · [αs] = [αs]`.
-
-Lambert's notation: `ℒℐ_k = ⟦x₁ ⋯ xₖ s x₁ ⋯ xₖ = x₁ ⋯ xₖ⟧`
-([lambert-2026] Prop 58; [straubing-1985]). The two `αs`
-instances are bound to the **same** letter sequence; this is the
-"simplified" form of the more general two-variable equation
-`[αs · s · βs] = [αs · βs]` that [lambert-2026] remarks defines
-the same class. -/
-def kGeneralizedDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
-  ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    L.syntacticClass αs * s * L.syntacticClass αs = L.syntacticClass αs
-
+/-! ### Generalized definite (`ℒℐ`) -/
 
 /-! #### Lifting the LI equation to a syntactic-class equality -/
 
-/-- Under the LI equation, sandwiching any word `w` between two copies of a length-`k`
-word `αs` preserves the syntactic class of `αs`. -/
+/-- Under the `ℒℐ` equation, sandwiching a word inside a length-`k` word fixes its class. -/
 lemma syntacticClass_of_kGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ}
     (h : Language.kGeneralizedDefiniteEquation L k)
     (αs w : List α) (hαs_len : αs.length = k) :
     L.syntacticClass (αs ++ w ++ αs) = L.syntacticClass αs := by
   rw [syntacticClass_append, syntacticClass_append]
   exact h (L.syntacticClass w) αs hαs_len
 
-/-! #### Lambert Prop 58 — forward direction -/
+/-! #### Forward direction -/
 
-/-- **Lambert Prop 58 (forward direction)**: a generalized-`k`-definite
-language's syntactic monoid satisfies the LI equation.
-
-Proof: apply `IsGeneralizedDefinite` to the pair
-`(x ++ αs ++ s ++ αs ++ y, x ++ αs ++ y)`. They share the
-length-`k` left-prefix (both have `x ++ αs` as prefix) and the
-length-`k` right-suffix (both have `αs ++ y` as suffix). -/
+/-- Forward: a generalized-`k`-definite language satisfies the `ℒℐ` equation. -/
 theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ} (hL : L.IsGeneralizedDefinite k) :
+    (hL : L.IsGeneralizedDefinite k) :
     Language.kGeneralizedDefiniteEquation L k := by
   intro s αs hαs_len
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
@@ -302,32 +220,10 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
     rw [takeAt_right_append_left_absorb (x ++ αs ++ w) (αs ++ y) h_αsy_len,
         takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
 
-/-! #### Lambert Prop 58 — reverse direction -/
+/-! #### Reverse direction -/
 
-/-- **Lambert Prop 58 (reverse direction)**: if a language's syntactic
-monoid satisfies the LI equation, then `L` is generalized `k`-definite.
-
-**Strategy** (double-sandwich on `[w₁ · w₂]`): for `w₁`, `w₂` of length
-`≥ k` with shared length-`k` prefix `αs` and length-`k` suffix `βs`,
-both decompose two ways: `wᵢ = αs ++ bᵢ = cᵢ ++ βs`. Then in the
-syntactic monoid:
-
-* `[w₁ · w₂] = [αs · b₁ · αs · b₂] = [αs · b₂] = [w₂]`
-  (αs-sandwich applied with `s := [b₁]`)
-* `[w₁ · w₂] = [c₁ · βs · c₂ · βs] = [c₁ · βs] = [w₁]`
-  (βs-sandwich applied with `s := [c₂]`)
-
-so `[w₁] = [w₂]` and hence `w₁ ≡_L w₂`. This single double-sandwich
-move handles both the long case (`|wᵢ| ≥ 2k`, `αs` and `βs` disjoint)
-and the overlap case (`k ≤ |wᵢ| < 2k`, `αs` and `βs` overlap in `wᵢ`)
-uniformly — the algebra in `M_L` is identical because the absorption
-acts on the `[bᵢ]`/`[cᵢ]` factors regardless of their length.
-
-The short case (`|w₁| < k` or `|w₂| < k`) is forced trivial: equal
-`takeAt_left k` requires equal lengths when one side is shorter than
-`k`, so `w₁ = w₂` directly. -/
+/-- Reverse: the `ℒℐ` equation forces generalized-`k`-definiteness. -/
 theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ}
     (h : Language.kGeneralizedDefiniteEquation L k) :
     L.IsGeneralizedDefinite k := by
   refine isGeneralizedDefinite_iff_edges.mpr ?_
@@ -408,10 +304,8 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
       rw [h_w₂_pre] at hpre
       rw [hpre]
 
-/-- **Lambert (2026) Prop 58**: a language is generalized `k`-definite
-iff its syntactic monoid satisfies the LI equation. -/
-theorem isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ} :
+/-- generalized-`k`-definite ↔ the `ℒℐ` equation. -/
+theorem isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation :
     L.IsGeneralizedDefinite k ↔
     Language.kGeneralizedDefiniteEquation L k :=
   ⟨IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation,
