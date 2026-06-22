@@ -46,33 +46,23 @@ universe u
 
 namespace Language
 
-variable {α : Type u} {L : Language α}
-
-/-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along a word `w` lands on the
-left quotient of `s` by `w`. -/
-@[simp]
-theorem evalFrom_toDFA (L : Language α) (s : Set.range L.leftQuotient) (w : List α) :
-    (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
-  induction w using List.reverseRecOn with
-  | nil => simp
-  | append_singleton x a ih =>
-    rw [DFA.evalFrom_append_singleton, step_toDFA, ih, ← leftQuotient_append]
+variable {α : Type u} (L : Language α)
 
 /-! ### The syntactic congruence and monoid -/
 
 /-- The *syntactic congruence* of `L`, obtained as the kernel of the transition action of `L.toDFA`
 (the transition monoid of the minimal DFA). -/
-def syntacticCon (L : Language α) : Con (FreeMonoid α) := Con.ker L.toDFA.transitionHom
+def syntacticCon : Con (FreeMonoid α) := Con.ker L.toDFA.transitionHom
 
 /-! ### Syntactic equivalence on words -/
 
 /-- `u` and `v` are *syntactically equivalent* in `L`: no two-sided context distinguishes them. -/
-def SyntacticEquiv (L : Language α) (u v : List α) : Prop :=
+def SyntacticEquiv (u v : List α) : Prop :=
   ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
 
 namespace SyntacticEquiv
 
-variable {u v w : List α}
+variable {L} {u v w : List α}
 
 @[refl] protected theorem refl (u : List α) : SyntacticEquiv L u u := fun _ _ => Iff.rfl
 
@@ -103,9 +93,19 @@ theorem mem_iff (h : SyntacticEquiv L u v) : u ∈ L ↔ v ∈ L := by simpa usi
 
 end SyntacticEquiv
 
+/-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along a word `w` lands on the
+left quotient of `s` by `w`. -/
+@[simp]
+theorem evalFrom_toDFA (s : Set.range L.leftQuotient) (w : List α) :
+    (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
+  induction w using List.reverseRecOn with
+  | nil => simp
+  | append_singleton x a ih =>
+    rw [DFA.evalFrom_append_singleton, step_toDFA, ih, ← leftQuotient_append]
+
 /-- The kernel of the transition monoid of the minimal DFA is exactly the two-sided syntactic
 congruence: `u` and `v` are congruent iff they are interchangeable in every two-sided context. -/
-theorem syntacticCon_iff (L : Language α) {u v : FreeMonoid α} :
+theorem syntacticCon_iff {u v : FreeMonoid α} :
     L.syntacticCon u v ↔ SyntacticEquiv L u v := by
   rw [syntacticCon, Con.ker_apply, DFA.transitionHom_eq_iff]
   -- `SyntacticEquiv L u v` is defeq to `∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L`
@@ -125,14 +125,16 @@ theorem syntacticCon_iff (L : Language α) {u v : FreeMonoid α} :
     exact h x y
 
 /-- The *syntactic monoid* of `L`: the quotient of `FreeMonoid α` by the syntactic congruence. -/
-def syntacticMonoid (L : Language α) : Type u := (syntacticCon L).Quotient
+def syntacticMonoid : Type u := (syntacticCon L).Quotient
 
 instance : Monoid (syntacticMonoid L) := inferInstanceAs (Monoid (syntacticCon L).Quotient)
 
 /-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
-def toSyntacticMonoid (L : Language α) : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
+def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
 
 /-! ### Universal property -/
+
+variable {L}
 
 /-- `φ` *recognises* `L` when `L` is a union of `φ`-fibres, i.e. `L = φ ⁻¹' S` for some `S ⊆ M`. -/
 def Recognises {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
