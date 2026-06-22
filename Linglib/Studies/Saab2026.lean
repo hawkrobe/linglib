@@ -68,13 +68,13 @@ theorem argdomain_boundary_parallel :
     Both exclude inflectional heads (T/Num at F2). -/
 theorem verbal_nominal_argdomain_symmetric :
     -- Verbal: V and v are in, T is out
-    isInArgumentDomain .V .C = true ∧
-    isInArgumentDomain .v .C = true ∧
-    isInArgumentDomain .T .C = false ∧
+    isInArgumentDomain .V .C ∧
+    isInArgumentDomain .v .C ∧
+    ¬ isInArgumentDomain .T .C ∧
     -- Nominal: N and n are in, Q (first head above n) is out
-    isInArgumentDomain .N .D = true ∧
-    isInArgumentDomain .n .D = true ∧
-    isInArgumentDomain .Q .D = false := by decide
+    isInArgumentDomain .N .D ∧
+    isInArgumentDomain .n .D ∧
+    ¬ isInArgumentDomain .Q .D := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 3: NP-Ellipsis Licensing via Num[E]

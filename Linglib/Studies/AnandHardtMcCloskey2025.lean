@@ -1,6 +1,8 @@
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
+import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 import Linglib.Syntax.Minimalist.Copula
 import Linglib.Studies.AnandHardtMcCloskey2021
+import Linglib.Data.Examples.Merchant2001
 import Linglib.Data.Examples.AnandHardtMcCloskey2025
 
 /-!
@@ -162,11 +164,11 @@ theorem sc_strictly_smaller_than_clause :
     differ freely between antecedent and ellipsis site. The SIC is
     agnostic to these categories. -/
 theorem outside_argdomain_free :
-    isInArgumentDomain .T .C = false ∧
-    isInArgumentDomain .Mod .C = false ∧
-    isInArgumentDomain .Neg .C = false ∧
-    isInArgumentDomain .C .C = false ∧
-    isInArgumentDomain .Fin .C = false := by decide
+    ¬ isInArgumentDomain .T .C ∧
+    ¬ isInArgumentDomain .Mod .C ∧
+    ¬ isInArgumentDomain .Neg .C ∧
+    ¬ isInArgumentDomain .C .C ∧
+    ¬ isInArgumentDomain .Fin .C := by decide
 
 -- ============================================================================
 -- § 3: Active–Passive Voice Mismatch Blocking (paper §3, ex. 10–11)
@@ -353,11 +355,11 @@ theorem sic_checks_heads_not_nodes :
     This imports and extends the bridge theorems from
     [anand-hardt-mccloskey-2021]. -/
 theorem consistent_with_2021_corpus :
-    isInArgumentDomain .v .C = true ∧
+    isInArgumentDomain .v .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .argumentStructure = 0 ∧
-    isInArgumentDomain .T .C = false ∧
+    ¬ isInArgumentDomain .T .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .tense > 0 ∧
-    isInArgumentDomain .Mod .C = false ∧
+    ¬ isInArgumentDomain .Mod .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .modality > 0 :=
   ⟨by decide, rfl, by decide, by decide, by decide, by decide⟩
 
@@ -381,7 +383,82 @@ theorem stranded_prep_prediction :
   refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- § 8: Collected Data
+-- § 8: Merchant 2001 Case-Matching Bridge
+-- ============================================================================
+
+-- The SIC's case-matching prediction grounds out against a real annotated
+-- example: [merchant-2001]'s German *wem*/*wen* contrast, stored as
+-- `Merchant2001.Examples.german_case_match`. Case is assigned within the
+-- argument domain, so the SIC requires it to match between antecedent and
+-- ellipsis site. These theorems state the prediction over the canonical
+-- substrate frames (`dativeFrame`/`accusativeFrame`), not local re-stipulations.
+
+/-- The SIC correctly predicts `Merchant2001.Examples.german_case_match`
+    ("Er will jemandem schmeicheln, aber sie wissen nicht, wem") is acceptable:
+    the dative wh-phrase *wem* matches the dative correlate *jemandem*, and the
+    argument domains are structurally identical (both assign dative). -/
+theorem sic_predicts_germanCaseMatch :
+    Merchant2001.Examples.german_case_match.judgment = .acceptable ∧
+    frameSluicingLicensed dativeFrame dativeFrame :=
+  ⟨rfl, same_case_from_frames⟩
+
+/-- The SIC correctly predicts the *wen*-variant — the sole `alternatives`
+    entry of `Merchant2001.Examples.german_case_match` — is ungrammatical:
+    accusative *wen* does not match the dative correlate, so structural identity
+    fails within the argument domain ([merchant-2001]: German *wem*/*wen* data). -/
+theorem sic_predicts_germanCaseMismatch :
+    Merchant2001.Examples.german_case_match.alternatives.map Prod.snd
+      = [.ungrammatical] ∧
+    ¬ frameSluicingLicensed dativeFrame accusativeFrame :=
+  ⟨rfl, case_mismatch_from_frames⟩
+
+-- ============================================================================
+-- § 9: Relation to Merchant's [E]-Feature Deletion Domain ([merchant-2013])
+-- ============================================================================
+
+-- Two formal-matching theories of the sluicing voice gap coexist in the
+-- library: the argument-domain SIC above, and [merchant-2013]'s [E]-feature
+-- deletion-domain account (`Ellipsis.DeletionDomain`). They CONVERGE on
+-- sluicing but DIVERGE on VP-ellipsis — making the comparison legible rather
+-- than letting two notations pass for one theory.
+
+/-- Merchant's deletion-domain theory converges with the 2021 corpus: sluicing
+    ([E] on C) predicts both voice and transitivity mismatches are blocked, and
+    the data set finds exactly 0 attestations of each. This is a convergent
+    prediction with the SIC (`consistent_with_2021_corpus`): both the SIC
+    (structural identity within the argument domain) and the deletion-domain
+    analysis ([E] on C → Voice inside TP) independently block these mismatches
+    in sluicing. -/
+theorem merchant_deletion_domain_matches_corpus :
+    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+      Minimalist.Ellipsis.voiceMismatch = false ∧
+    AnandHardtMcCloskey2021.MismatchDimension.corpusCount .voice = 0 ∧
+    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+      Minimalist.Ellipsis.transitivityMismatch = false ∧
+    AnandHardtMcCloskey2021.MismatchDimension.corpusCount .argumentStructure = 0 :=
+  ⟨by decide, rfl, by decide, rfl⟩
+
+/-- The SIC and Merchant's deletion-domain account AGREE on sluicing but DIVERGE
+    on VP-ellipsis. Merchant's [E]-on-Voice tolerates voice mismatch under VPE —
+    the active/passive asymmetry that motivates [merchant-2013] "Voice and
+    ellipsis." The SIC's `structurallyIdentical` is **height-blind** (it takes no
+    [E]-position argument), so it blocks the very same active/passive head pairs
+    regardless of ellipsis type, and cannot express the VPE-vs-sluicing contrast.
+    The convergence on sluicing is therefore real but local; off the sluicing
+    data the two theories make different predictions. -/
+theorem sic_merchant_diverge_on_vpe :
+    -- Sluicing: both block voice mismatch (convergence)
+    (Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+        Minimalist.Ellipsis.voiceMismatch = false ∧
+      ¬ structurallyIdentical activeVP passiveVP) ∧
+    -- VP-ellipsis: Merchant tolerates, the height-blind SIC still blocks (divergence)
+    (Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.englishVPE
+        Minimalist.Ellipsis.voiceMismatch = true ∧
+      ¬ structurallyIdentical activeVP passiveVP) :=
+  ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
+
+-- ============================================================================
+-- § 10: Collected Data
 -- ============================================================================
 
 def scSluicingData : List SCSluicingDatum :=

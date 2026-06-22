@@ -231,8 +231,9 @@ theorem end_to_end_causative_chain :
 
 /-- Convergent prediction: Merchant's theory correctly predicts that
     sluicing (C[E]) blocks voice mismatches — Voice is inside TP, the
-    deletion domain of sluicing. The SCSS corpus ([anand-hardt-mccloskey-2021],
-    §5.5) independently confirms this: across 4,700 annotated sluices, zero
+    deletion domain of sluicing. The Santa Cruz sluicing data set
+    ([anand-hardt-mccloskey-2021], §5.5) independently confirms this: across
+    4,700 annotated sluices, zero
     antecedent–ellipsis site pairings exhibit active/passive voice mismatches.
     The same theoretical apparatus that Kalyakin extends to vVPE
     already works for sluicing. -/

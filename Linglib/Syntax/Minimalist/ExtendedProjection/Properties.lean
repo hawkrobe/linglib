@@ -179,8 +179,11 @@ def argumentDomainCat (topCat : Cat) : Cat :=
 
 /-- Is a category within the argument domain of a given top category?
     The argument domain includes all F-levels ≤ the boundary. -/
-def isInArgumentDomain (c topCat : Cat) : Bool :=
+def isInArgumentDomain (c topCat : Cat) : Prop :=
   fValue c ≤ fValue (argumentDomainCat topCat)
+
+instance (c topCat : Cat) : Decidable (isInArgumentDomain c topCat) := by
+  unfold isInArgumentDomain; infer_instance
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 6: Bridge Theorems
@@ -266,19 +269,19 @@ theorem nump_argdomain :
 
 /-- V is within the argument domain of a full clause. -/
 theorem v_in_argdomain :
-    isInArgumentDomain .V .C = true := by decide
+    isInArgumentDomain .V .C := by decide
 
 /-- v is within the argument domain of a full clause. -/
 theorem v_head_in_argdomain :
-    isInArgumentDomain .v .C = true := by decide
+    isInArgumentDomain .v .C := by decide
 
 /-- T is NOT within the argument domain of a full clause. -/
 theorem t_not_in_argdomain :
-    isInArgumentDomain .T .C = false := by decide
+    ¬ isInArgumentDomain .T .C := by decide
 
 /-- C is NOT within the argument domain (it's the top). -/
 theorem c_not_in_argdomain :
-    isInArgumentDomain .C .C = false := by decide
+    ¬ isInArgumentDomain .C .C := by decide
 
 /-- The argument domain boundary is always in the property-or-intermediate zone.
 

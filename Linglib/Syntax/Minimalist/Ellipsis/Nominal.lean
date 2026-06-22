@@ -43,23 +43,23 @@ def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=
 
 /-- N is within the nominal argument domain (F0 ≤ F1 = n). -/
 theorem n_lexical_in_nominal_argdomain :
-    isInArgumentDomain .N .D = true := by decide
+    isInArgumentDomain .N .D := by decide
 
 /-- n is within the nominal argument domain (F1 ≤ F1). -/
 theorem n_functional_in_nominal_argdomain :
-    isInArgumentDomain .n .D = true := by decide
+    isInArgumentDomain .n .D := by decide
 
 /-- Num is NOT in the nominal argument domain (F2 > F1 = n). -/
 theorem num_not_in_nominal_argdomain :
-    isInArgumentDomain .Num .D = false := by decide
+    ¬ isInArgumentDomain .Num .D := by decide
 
 /-- Q is NOT in the nominal argument domain (F3 > F1 = n). -/
 theorem q_not_in_nominal_argdomain :
-    isInArgumentDomain .Q .D = false := by decide
+    ¬ isInArgumentDomain .Q .D := by decide
 
 /-- D is NOT in the nominal argument domain (F4 > F1 = n). -/
 theorem d_not_in_nominal_argdomain :
-    isInArgumentDomain .D .D = false := by decide
+    ¬ isInArgumentDomain .D .D := by decide
 
 /-- NP-ellipsis with Num[E]: pseudo-partitive/quantificational
     binominals license deletion of the nominal argument domain. -/
