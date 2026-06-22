@@ -25,7 +25,6 @@ equivalence via `Language.syntacticCon_iff`. This is the two-sided refinement of
 
 * `Language.syntacticCon L : Con (FreeMonoid α)`: the syntactic congruence, the kernel of the
   transition action of `L.toDFA`.
-* `Language.SyntacticEquiv L u v`: the two-sided context equivalence on words.
 * `Language.syntacticMonoid L`: the quotient monoid `(syntacticCon L).Quotient`.
 * `Language.toSyntacticMonoid L`: the projection `FreeMonoid α →* L.syntacticMonoid`.
 * `Language.Recognises φ L`: `φ` recognises `L`, i.e. `L` is a union of `φ`-fibres.
@@ -33,8 +32,8 @@ equivalence via `Language.syntacticCon_iff`. This is the two-sided refinement of
 ## Main results
 
 * `Language.syntacticCon_iff`: the syntactic congruence is exactly the two-sided context
-  equivalence.
-* `Language.SyntacticEquiv.mem_iff`: `L` is saturated by syntactic equivalence.
+  equivalence `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
+* `Language.mem_iff_of_syntacticCon`: `L` is saturated by the syntactic congruence.
 * `Language.ker_le_syntacticCon_of_recognises`: the syntactic congruence is the coarsest congruence
   recognising `L`, so every recognising hom factors through `toSyntacticMonoid` via `Con.lift`.
 * `Language.isRegular_iff_finite_syntacticMonoid`: the Myhill–Nerode theorem in monoid form.
@@ -46,71 +45,27 @@ universe u
 
 namespace Language
 
-variable {α : Type u} {L : Language α}
-
-/-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along a word `w` lands on the
-left quotient of `s` by `w`. -/
-@[simp]
-theorem evalFrom_toDFA (L : Language α) (s : Set.range L.leftQuotient) (w : List α) :
-    (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
-  induction w using List.reverseRecOn with
-  | nil => simp
-  | append_singleton x a ih =>
-    rw [DFA.evalFrom_append_singleton, step_toDFA, ih, ← leftQuotient_append]
+variable {α : Type u} (L : Language α)
 
 /-! ### The syntactic congruence and monoid -/
 
 /-- The *syntactic congruence* of `L`, obtained as the kernel of the transition action of `L.toDFA`
 (the transition monoid of the minimal DFA). -/
-def syntacticCon (L : Language α) : Con (FreeMonoid α) := Con.ker L.toDFA.transitionHom
+def syntacticCon : Con (FreeMonoid α) := Con.ker L.toDFA.transitionHom
 
-/-! ### Syntactic equivalence on words -/
+/-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along a word `w` lands on the
+left quotient of `s` by `w`. -/
+@[simp]
+theorem evalFrom_toDFA (s : Set.range L.leftQuotient) (w : List α) :
+    (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
+  induction w using List.reverseRecOn <;>
+    simp_all [DFA.evalFrom_append_singleton, step_toDFA, leftQuotient_append]
 
-/-- `u` and `v` are *syntactically equivalent* in `L`: no two-sided context distinguishes them. -/
-def SyntacticEquiv (L : Language α) (u v : List α) : Prop :=
-  ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
-
-namespace SyntacticEquiv
-
-variable {u v w : List α}
-
-@[refl] protected theorem refl (u : List α) : SyntacticEquiv L u u := fun _ _ => Iff.rfl
-
-@[symm] protected theorem symm (h : SyntacticEquiv L u v) : SyntacticEquiv L v u :=
-  fun x y => (h x y).symm
-
-@[trans] protected theorem trans (h₁ : SyntacticEquiv L u v) (h₂ : SyntacticEquiv L v w) :
-    SyntacticEquiv L u w := fun x y => (h₁ x y).trans (h₂ x y)
-
-/-- Syntactic equivalence is a two-sided congruence for concatenation. -/
-protected theorem append {u₁ u₂ v₁ v₂ : List α} (h₁ : SyntacticEquiv L u₁ v₁)
-    (h₂ : SyntacticEquiv L u₂ v₂) : SyntacticEquiv L (u₁ ++ u₂) (v₁ ++ v₂) := fun x y => by
-  have e₁ := h₁ x (u₂ ++ y)
-  have e₂ := h₂ (x ++ v₁) y
-  simp only [List.append_assoc] at e₁ e₂ ⊢
-  exact e₁.trans e₂
-
-/-- Left concatenation by a fixed word preserves syntactic equivalence. -/
-protected theorem append_left (w : List α) (h : SyntacticEquiv L u v) :
-    SyntacticEquiv L (w ++ u) (w ++ v) := (SyntacticEquiv.refl w).append h
-
-/-- Equivalent words have the same `leftQuotient`: the two-sided test specialised to `x = []`. -/
-theorem leftQuotient_eq (h : SyntacticEquiv L u v) : L.leftQuotient u = L.leftQuotient v := by
-  ext y; simpa using h [] y
-
-/-- Syntactically equivalent words agree on membership of `L`. -/
-theorem mem_iff (h : SyntacticEquiv L u v) : u ∈ L ↔ v ∈ L := by simpa using h [] []
-
-end SyntacticEquiv
-
-/-- The kernel of the transition monoid of the minimal DFA is exactly the two-sided syntactic
-congruence: `u` and `v` are congruent iff they are interchangeable in every two-sided context. -/
-theorem syntacticCon_iff (L : Language α) {u v : FreeMonoid α} :
-    L.syntacticCon u v ↔ SyntacticEquiv L u v := by
+/-- The kernel of the transition monoid of the minimal DFA is exactly the two-sided context
+equivalence: `u` and `v` are congruent iff they are interchangeable in every two-sided context. -/
+theorem syntacticCon_iff {u v : FreeMonoid α} :
+    L.syntacticCon u v ↔ ∀ x y : List α, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L := by
   rw [syntacticCon, Con.ker_apply, DFA.transitionHom_eq_iff]
-  -- `SyntacticEquiv L u v` is defeq to `∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L`
-  -- (since `u.toList = u` for `FreeMonoid`); make the `.toList` form explicit for `mem_leftQuotient`.
-  show _ ↔ ∀ x y : List α, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L
   constructor
   · intro h x y
     have h' := congrArg Subtype.val (h ⟨L.leftQuotient x, ⟨x, rfl⟩⟩)
@@ -124,15 +79,25 @@ theorem syntacticCon_iff (L : Language α) {u v : FreeMonoid α} :
     rw [mem_leftQuotient, mem_leftQuotient]
     exact h x y
 
+variable {L} in
+/-- Words congruent under the syntactic congruence agree on membership of `L`: `L` is saturated by
+`syntacticCon L` (take the empty two-sided context). -/
+theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) : u ∈ L ↔ v ∈ L := by
+  have := (syntacticCon_iff L).mp h [] []
+  simp only [List.nil_append, List.append_nil] at this
+  exact this
+
 /-- The *syntactic monoid* of `L`: the quotient of `FreeMonoid α` by the syntactic congruence. -/
-def syntacticMonoid (L : Language α) : Type u := (syntacticCon L).Quotient
+def syntacticMonoid : Type u := (syntacticCon L).Quotient
 
 instance : Monoid (syntacticMonoid L) := inferInstanceAs (Monoid (syntacticCon L).Quotient)
 
 /-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
-def toSyntacticMonoid (L : Language α) : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
+def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
 
 /-! ### Universal property -/
+
+variable {L}
 
 /-- `φ` *recognises* `L` when `L` is a union of `φ`-fibres, i.e. `L = φ ⁻¹' S` for some `S ⊆ M`. -/
 def Recognises {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
@@ -142,7 +107,7 @@ def Recognises {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language 
 theorem ker_le_syntacticCon_of_recognises {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
     (hrec : Recognises φ L) : Con.ker φ ≤ syntacticCon L := by
   intro u v huv
-  rw [show syntacticCon L u v ↔ SyntacticEquiv L u v from syntacticCon_iff L]
+  rw [syntacticCon_iff]
   obtain ⟨S, rfl⟩ := hrec
   change ∀ x y : FreeMonoid α, x * u * y ∈ φ ⁻¹' S ↔ x * v * y ∈ φ ⁻¹' S
   intro x y
@@ -167,12 +132,10 @@ theorem isRegular_of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.I
     intro u v huv
     rw [syntacticCon_iff] at huv
     ext y; rw [mem_leftQuotient, mem_leftQuotient]; exact huv [] y
-  set g : L.syntacticMonoid → Language α :=
-    Quot.lift (fun w => L.leftQuotient w.toList) (fun u v huv => factor u v huv) with hg
-  have hrange : Set.range L.leftQuotient ⊆ Set.range g := by
-    rintro _ ⟨x, rfl⟩
-    exact ⟨Quot.mk _ (FreeMonoid.ofList x), rfl⟩
-  exact (Set.finite_range g).subset hrange
+  let g : L.syntacticMonoid → Language α := Quot.lift (fun w => L.leftQuotient w.toList) factor
+  refine (Set.finite_range g).subset ?_
+  rintro _ ⟨x, rfl⟩
+  exact ⟨Quot.mk _ (FreeMonoid.ofList x), rfl⟩
 
 /-- Myhill–Nerode (syntactic-monoid form): `L` is regular iff `L.syntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
