@@ -39,7 +39,7 @@ reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq
 * **p-subsequential** functions [mohri-1997] — multiple outputs per input.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 /-- A **subsequential finite-state transducer** with state space `σ`,
 input alphabet `α`, output alphabet `β`. The scan is total deterministic
@@ -410,4 +410,4 @@ theorem IsSubsequential.comp {α β γ : Type*} {d : Direction}
   | left => exact IsLeftSubsequential.comp hg hf
   | right => exact IsRightSubsequential.comp hg hf
 
-end Subregular.Function
+end Subregular

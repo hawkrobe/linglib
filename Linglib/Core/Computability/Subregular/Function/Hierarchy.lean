@@ -40,7 +40,7 @@ Both inclusions are proper:
   hence not right-myopic, hence not left-subsequential, yet WD.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 variable {α : Type*} [DecidableEq α]
 
@@ -270,4 +270,4 @@ theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type*} {k : ℕ} [Fintyp
     IsBimachineWeaklyDeterministic r.apply :=
   .of_letterLeftSubsequential (isLetterLeftSubsequential_of_OSLRule r hs)
 
-end Subregular.Function
+end Subregular

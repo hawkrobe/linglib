@@ -55,7 +55,7 @@ land it once a Studies file needs to invoke the bridge concretely.
 
 namespace Phonology.Subregular
 
-open Subregular.Function
+open _root_.Subregular
 
 -- ============================================================================
 -- § 1: Schema
@@ -81,12 +81,12 @@ def Relation.flip : Relation → Relation
     - `.left` — `Rel(A, F) / C __` : context precedes the target
     - `.right` — `Rel(A, F) / __ C` : context follows the target
 
-    Aliased to `Subregular.Function.Direction` so the same `.left` / `.right` cases used
+    Aliased to `Subregular.Direction` so the same `.left` / `.right` cases used
     by `Function/Subsequential.lean::Direction` (FST scan direction) and
     by this file (context side of a tier rule) reduce to one inductive
     type. The two roles read differently in prose but are isomorphic in
     Lean. -/
-abbrev Side := _root_.Subregular.Function.Direction
+abbrev Side := _root_.Subregular.Direction
 
 /-- A tier-based alternation rule over alphabet `α`.
 
@@ -220,7 +220,7 @@ predicate-evaluation state); the identity-tier case is discharged below.
 Land the general witness here once a Studies file consumes it. -/
 namespace Phonology.Subregular.TierRule
 
-open Subregular.Function
+open _root_.Subregular
 
 variable {α : Type}
 

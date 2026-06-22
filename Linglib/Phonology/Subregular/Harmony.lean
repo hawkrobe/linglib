@@ -29,7 +29,7 @@ tier projects out transparent segments; `relation` is `.agree` (dissimilatory
 tier patterns use `Disagree` and live outside this typology).
 
 **Harmony is grounded on the subregular transducer hierarchy.** The harmonized
-string `System.transduce` is an `OSLRule` (`Subregular.Function`),
+string `System.transduce` is an `OSLRule` (`Subregular`),
 so its Output-Strictly-Local class membership is a *theorem* by construction
 (`System.transduce_isLeftOSL`), not a post-hoc classification of a hand-rolled
 walk ([chandlee-eyraud-heinz-2015]).
@@ -66,7 +66,7 @@ namespace Phonology.Harmony
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology.Subregular
-open Subregular.Function (OSLRule IsLeftOutputStrictlyLocal)
+open _root_.Subregular (OSLRule IsLeftOutputStrictlyLocal)
 
 -- ============================================================================
 -- § 1: Direction

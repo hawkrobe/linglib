@@ -53,7 +53,7 @@ end Subregular
 
 namespace Language
 
-open Subregular
+open _root_.Subregular
 
 variable {α : Type*}
 

@@ -70,7 +70,7 @@ namespace Language
 
 variable {α : Type*}
 
-open Subregular
+open _root_.Subregular
 
 /-- A language `L` is **strictly `k`-piecewise** iff some `SPGrammar α` generates it
 at width `k`. -/

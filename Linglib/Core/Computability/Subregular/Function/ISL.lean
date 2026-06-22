@@ -47,7 +47,7 @@ The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
 threaded window to length `k - 1`.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 variable {α β : Type*}
 
@@ -331,4 +331,4 @@ theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
   | left => exact isLeftInputStrictlyLocal_left_subsequential h
   | right => exact isRightInputStrictlyLocal_right_subsequential h
 
-end Subregular.Function
+end Subregular

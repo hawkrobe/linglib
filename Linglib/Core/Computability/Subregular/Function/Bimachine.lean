@@ -30,7 +30,7 @@ bimachine — the weakly-deterministic functions.
   not.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 variable {L R α β : Type*}
 
@@ -182,4 +182,4 @@ example (ωL : L → α → α) (ωR : R → α → α) (lInit : L) (lStep : L �
 
 end NonInteraction
 
-end Subregular.Function
+end Subregular

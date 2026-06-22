@@ -14,7 +14,7 @@ Extracted to its own leaf so the footprint-predicate file (`SideDeterminacy.lean
 not have to depend on the transducer machine file just to name a `left`/`right` tag.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 /-- The orientation of an FST scan: `left` consumes input head-first, `right`
 tail-first (via `List.reverse` conjugation). The two scan modes give rise to
@@ -25,4 +25,4 @@ inductive Direction
   | right
   deriving DecidableEq, Repr
 
-end Subregular.Function
+end Subregular
