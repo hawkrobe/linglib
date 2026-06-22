@@ -46,6 +46,13 @@ theorem not_factorsThroughOn_iff_exists_witness {g : α → γ} {f : α → β} 
     ∃ a b, a ∈ s ∧ b ∈ s ∧ f a = f b ∧ g a ≠ g b := by
   simp only [FactorsThroughOn, not_forall, exists_prop]
 
+/-- For an **idempotent** `f`, `g` factors through `f` iff `g` is `f`-invariant
+(pointwise `g = g ∘ f`). -/
+theorem factorsThrough_iff_of_idempotent {g : α → γ} {f : α → α} (hf : ∀ a, f (f a) = f a) :
+    FactorsThrough g f ↔ ∀ a, g a = g (f a) :=
+  ⟨fun h a => h (hf a).symm,
+   fun h a b hab => (h a).trans ((congrArg g hab).trans (h b).symm)⟩
+
 instance {g : α → γ} {f : α → β} {s : Set α}
     [Fintype α] [DecidablePred (· ∈ s)] [DecidableEq β] [DecidableEq γ] :
     Decidable (FactorsThroughOn g f s) := by
