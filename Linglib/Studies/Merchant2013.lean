@@ -134,20 +134,20 @@ def ex11a : VoiceMismatchDatum :=
 
 /-- VP-ellipsis data matches canMismatch. -/
 theorem vpe_voice_predicted :
-    ex1a.grammatical = canMismatch englishVPE voiceMismatch ∧
-    ex2a.grammatical = canMismatch englishVPE voiceMismatch := ⟨rfl, rfl⟩
+    (ex1a.grammatical = true ↔ canMismatch englishVPE voiceMismatch) ∧
+    (ex2a.grammatical = true ↔ canMismatch englishVPE voiceMismatch) := by decide
 
 /-- Sluicing data matches canMismatch across three languages. -/
 theorem sluicing_voice_predicted :
-    ex5.grammatical  = canMismatch sluicing voiceMismatch ∧
-    ex6a.grammatical = canMismatch sluicing voiceMismatch ∧
-    ex25a.grammatical = canMismatch sluicing voiceMismatch := ⟨rfl, rfl, rfl⟩
+    (ex5.grammatical = true ↔ canMismatch sluicing voiceMismatch) ∧
+    (ex6a.grammatical = true ↔ canMismatch sluicing voiceMismatch) ∧
+    (ex25a.grammatical = true ↔ canMismatch sluicing voiceMismatch) := by decide
 
 /-- All high ellipsis types block voice mismatches. -/
 theorem high_ellipsis_voice_predicted :
-    ex9a.grammatical  = canMismatch fragmentAnswers voiceMismatch ∧
-    ex10a.grammatical = canMismatch gapping voiceMismatch ∧
-    ex11a.grammatical = canMismatch stripping voiceMismatch := ⟨rfl, rfl, rfl⟩
+    (ex9a.grammatical = true ↔ canMismatch fragmentAnswers voiceMismatch) ∧
+    (ex10a.grammatical = true ↔ canMismatch gapping voiceMismatch) ∧
+    (ex11a.grammatical = true ↔ canMismatch stripping voiceMismatch) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Argument Structure Alternation Data (§3.3)
@@ -220,14 +220,14 @@ def ex44 : ArgStructureDatum :=
 /-- Per-datum verification: each datum's grammaticality equals the
     canMismatch prediction for its alternation type and ellipsis type. -/
 theorem argStructure_data_predicted :
-    ex30a.grammatical = canMismatch ex30a.ellipsisType ex30a.alternationType ∧
-    ex31a.grammatical = canMismatch ex31a.ellipsisType ex31a.alternationType ∧
-    ex35a.grammatical = canMismatch ex35a.ellipsisType ex35a.alternationType ∧
-    ex36a.grammatical = canMismatch ex36a.ellipsisType ex36a.alternationType ∧
-    ex39a.grammatical = canMismatch ex39a.ellipsisType ex39a.alternationType ∧
-    ex43a.grammatical = canMismatch ex43a.ellipsisType ex43a.alternationType ∧
-    ex44.grammatical  = canMismatch ex44.ellipsisType ex44.alternationType := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    (ex30a.grammatical = true ↔ canMismatch ex30a.ellipsisType ex30a.alternationType) ∧
+    (ex31a.grammatical = true ↔ canMismatch ex31a.ellipsisType ex31a.alternationType) ∧
+    (ex35a.grammatical = true ↔ canMismatch ex35a.ellipsisType ex35a.alternationType) ∧
+    (ex36a.grammatical = true ↔ canMismatch ex36a.ellipsisType ex36a.alternationType) ∧
+    (ex39a.grammatical = true ↔ canMismatch ex39a.ellipsisType ex39a.alternationType) ∧
+    (ex43a.grammatical = true ↔ canMismatch ex43a.ellipsisType ex43a.alternationType) ∧
+    (ex44.grammatical = true ↔ canMismatch ex44.ellipsisType ex44.alternationType) := by
+  decide
 
 /-- All v-level alternations are blocked under high-[E] ellipsis types
     (sluicing, VPE, fragment answers, gapping, pseudogapping) — because
@@ -235,16 +235,16 @@ theorem argStructure_data_predicted :
     Under vVPE ([E] on v), these alternations ARE tolerated
     ([kalyakin-2026]). -/
 theorem v_alternations_blocked_high_ellipsis :
-    canMismatch sluicing dativeAlternation = false ∧
-    canMismatch sluicing prepAlternation = false ∧
-    canMismatch sluicing middleAlternation = false ∧
-    canMismatch englishVPE dativeAlternation = false ∧
-    canMismatch englishVPE prepAlternation = false ∧
-    canMismatch englishVPE middleAlternation = false ∧
-    canMismatch fragmentAnswers dativeAlternation = false ∧
-    canMismatch gapping middleAlternation = false ∧
-    canMismatch pseudogapping prepAlternation = false := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    ¬ canMismatch sluicing dativeAlternation ∧
+    ¬ canMismatch sluicing prepAlternation ∧
+    ¬ canMismatch sluicing middleAlternation ∧
+    ¬ canMismatch englishVPE dativeAlternation ∧
+    ¬ canMismatch englishVPE prepAlternation ∧
+    ¬ canMismatch englishVPE middleAlternation ∧
+    ¬ canMismatch fragmentAnswers dativeAlternation ∧
+    ¬ canMismatch gapping middleAlternation ∧
+    ¬ canMismatch pseudogapping prepAlternation := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Key Theoretical Claims
@@ -253,38 +253,36 @@ theorem v_alternations_blocked_high_ellipsis :
 /-- The uneven distribution: voice mismatches are tolerated in VP-ellipsis
     (low [E]) but blocked in all clausal ellipses (high [E]). -/
 theorem uneven_distribution :
-    canMismatch englishVPE voiceMismatch = true ∧
-    canMismatch sluicing voiceMismatch = false ∧
-    canMismatch fragmentAnswers voiceMismatch = false ∧
-    canMismatch gapping voiceMismatch = false ∧
-    canMismatch stripping voiceMismatch = false ∧
-    canMismatch pseudogapping voiceMismatch = false := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    canMismatch englishVPE voiceMismatch ∧
+    ¬ canMismatch sluicing voiceMismatch ∧
+    ¬ canMismatch fragmentAnswers voiceMismatch ∧
+    ¬ canMismatch gapping voiceMismatch ∧
+    ¬ canMismatch stripping voiceMismatch ∧
+    ¬ canMismatch pseudogapping voiceMismatch := by
+  decide
 
 /-- Voice is the discriminating dimension: the only mismatch that
     distinguishes VP-ellipsis from sluicing. All v-level and V-level
     dimensions are blocked under both. -/
 theorem voice_uniquely_discriminates :
-    canMismatch englishVPE voiceMismatch ≠ canMismatch sluicing voiceMismatch ∧
-    canMismatch englishVPE transitivityMismatch =
-      canMismatch sluicing transitivityMismatch ∧
-    canMismatch englishVPE dativeAlternation =
-      canMismatch sluicing dativeAlternation ∧
-    canMismatch englishVPE lexicalMismatch =
-      canMismatch sluicing lexicalMismatch := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro h; cases h
-  · native_decide
-  · native_decide
-  · native_decide
+    -- voice DISCRIMINATES: VPE tolerates it, sluicing does not
+    (canMismatch englishVPE voiceMismatch ∧ ¬ canMismatch sluicing voiceMismatch) ∧
+    -- all other dimensions AGREE between VPE and sluicing
+    (canMismatch englishVPE transitivityMismatch ↔
+      canMismatch sluicing transitivityMismatch) ∧
+    (canMismatch englishVPE dativeAlternation ↔
+      canMismatch sluicing dativeAlternation) ∧
+    (canMismatch englishVPE lexicalMismatch ↔
+      canMismatch sluicing lexicalMismatch) := by
+  decide
 
 /-- Merchant's negative prediction: if voice mismatches were tolerated
     in sluicing (high [E]), monotonicity would force them to be tolerated
     in VP-ellipsis (low [E]) too. No language can have the reverse of
     the attested pattern. -/
 theorem no_inverse_language :
-    canMismatch sluicing voiceMismatch = true →
-    canMismatch englishVPE voiceMismatch = true :=
+    canMismatch sluicing voiceMismatch →
+    canMismatch englishVPE voiceMismatch :=
   fun h => mismatch_monotone voiceMismatch sluicing englishVPE h rfl
 
 /-- Voice's discriminating power follows from its spine position:
@@ -318,11 +316,11 @@ theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
     VoiceFlavor.agentive ≠ VoiceFlavor.passive ∧
     -- Step 2: Voice is external to VPE's deletion domain
-    canMismatch englishVPE voiceMismatch = true ∧
+    canMismatch englishVPE voiceMismatch ∧
     -- Step 3: Empirical data matches
     ex1a.grammatical = true ∧
     ex2a.grammatical = true := by
-  refine ⟨?_, rfl, rfl, rfl⟩
+  refine ⟨?_, by decide, rfl, rfl⟩
   intro h; cases h
 
 /-- The *again* diagnostic (§4): under VPE, only repetitive *again*
@@ -330,7 +328,7 @@ theorem end_to_end_voice_chain :
     VP-adjunction) is inside the deletion domain. This confirms
     that VPE targets vP, not VP. -/
 theorem again_confirms_vp_boundary :
-    againSurvives .vP_adjunction englishVPE = true ∧
-    againSurvives .VP_adjunction englishVPE = false := by native_decide
+    againSurvives .vP_adjunction englishVPE ∧
+    ¬ againSurvives .VP_adjunction englishVPE := by decide
 
 end Merchant2013

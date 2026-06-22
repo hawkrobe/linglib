@@ -58,15 +58,15 @@ open Minimalist.Ellipsis
 /-- The core prediction: vVPE tolerates both voice and transitivity
     mismatches while blocking lexical verb mismatches. -/
 theorem vVPE_mismatch_profile :
-    canMismatch vVPE voiceMismatch = true ∧
-    canMismatch vVPE transitivityMismatch = true ∧
-    canMismatch vVPE lexicalMismatch = false := ⟨rfl, rfl, rfl⟩
+    canMismatch vVPE voiceMismatch ∧
+    canMismatch vVPE transitivityMismatch ∧
+    ¬ canMismatch vVPE lexicalMismatch := by decide
 
 /-- English VPE has a strictly more restrictive profile than vVPE:
     it additionally blocks transitivity mismatches. -/
 theorem englishVPE_more_restrictive :
-    canMismatch englishVPE transitivityMismatch = false ∧
-    canMismatch vVPE transitivityMismatch = true := ⟨rfl, rfl⟩
+    ¬ canMismatch englishVPE transitivityMismatch ∧
+    canMismatch vVPE transitivityMismatch := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Causative Alternation Under vVPE
@@ -130,12 +130,12 @@ theorem alternation_same_root :
 /-- The causative alternation is tolerated under vVPE because
     transitivity mismatches are allowed. -/
 theorem causative_alternation_ok_under_vVPE :
-    canMismatch vVPE transitivityMismatch = true := rfl
+    canMismatch vVPE transitivityMismatch := by decide
 
 /-- The causative alternation is blocked under English VPE because
     transitivity mismatches are blocked. -/
 theorem causative_alternation_blocked_english :
-    canMismatch englishVPE transitivityMismatch = false := rfl
+    ¬ canMismatch englishVPE transitivityMismatch := by decide
 
 /-- The same root structure is used in both alternants — the complement
     of v (= VP) is identical. This is why vVPE succeeds: it only
@@ -154,10 +154,10 @@ theorem shared_vp_core :
     to match the empirical judgment; `canMismatch` derives the same value
     from spine positions. -/
 theorem alternation_predicted_by_merchant :
-    inchoativeToCausative.grammatical = canMismatch vVPE transitivityMismatch ∧
-    causativeToInchoative.grammatical = canMismatch vVPE transitivityMismatch ∧
-    englishAlternationBlocked.grammatical = canMismatch englishVPE transitivityMismatch :=
-  ⟨rfl, rfl, rfl⟩
+    (inchoativeToCausative.grammatical = true ↔ canMismatch vVPE transitivityMismatch) ∧
+    (causativeToInchoative.grammatical = true ↔ canMismatch vVPE transitivityMismatch) ∧
+    (englishAlternationBlocked.grammatical = true ↔
+      canMismatch englishVPE transitivityMismatch) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Antipassive Blocking
@@ -167,12 +167,12 @@ theorem alternation_predicted_by_merchant :
     placing them outside vVPE's deletion domain. They therefore
     cannot be elided under vVPE. -/
 theorem antipassive_blocks_vVPE :
-    rootInVVPEDomain .adjoined = false := rfl
+    ¬ rootInVVPEDomain .adjoined := by decide
 
 /-- Change-of-state roots (object-adjoined) ARE inside vVPE's
     deletion domain — they can be elided. -/
 theorem change_of_state_allows_vVPE :
-    rootInVVPEDomain .complement = true := rfl
+    rootInVVPEDomain .complement := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Cross-Linguistic Predictions
@@ -183,21 +183,21 @@ theorem change_of_state_allows_vVPE :
     Each step down tolerates strictly more mismatches. -/
 theorem mismatch_hierarchy :
     -- Sluicing: blocks both voice and transitivity
-    canMismatch sluicing voiceMismatch = false ∧
-    canMismatch sluicing transitivityMismatch = false ∧
+    ¬ canMismatch sluicing voiceMismatch ∧
+    ¬ canMismatch sluicing transitivityMismatch ∧
     -- English VPE: allows voice, blocks transitivity
-    canMismatch englishVPE voiceMismatch = true ∧
-    canMismatch englishVPE transitivityMismatch = false ∧
+    canMismatch englishVPE voiceMismatch ∧
+    ¬ canMismatch englishVPE transitivityMismatch ∧
     -- vVPE: allows both voice and transitivity
-    canMismatch vVPE voiceMismatch = true ∧
-    canMismatch vVPE transitivityMismatch = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    canMismatch vVPE voiceMismatch ∧
+    canMismatch vVPE transitivityMismatch := by
+  decide
 
 /-- vVPE's [E] position (v) is strictly below English VPE's (Voice).
     By monotonicity, any mismatch tolerated by English VPE is also
     tolerated by vVPE. -/
 theorem vVPE_below_englishVPE :
-    SpinePos.v.isBelow SpinePos.Voice = true := rfl
+    inDomain SpinePos.v SpinePos.Voice := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. End-to-End Argumentation Chain
@@ -224,10 +224,10 @@ theorem end_to_end_causative_chain :
     isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
     isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true ∧
     -- Step 2: vVPE tolerates the transitivity difference (Merchant)
-    canMismatch vVPE transitivityMismatch = true ∧
+    canMismatch vVPE transitivityMismatch ∧
     -- Step 3: Alternation under vVPE is grammatical (Kalyakin)
     inchoativeToCausative.grammatical = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, by decide, rfl⟩
 
 /-- Convergent prediction: Merchant's theory correctly predicts that
     sluicing (C[E]) blocks voice mismatches — Voice is inside TP, the
@@ -238,7 +238,7 @@ theorem end_to_end_causative_chain :
     The same theoretical apparatus that Kalyakin extends to vVPE
     already works for sluicing. -/
 theorem sluicing_voice_blocked_convergent :
-    canMismatch sluicing voiceMismatch = false := rfl
+    ¬ canMismatch sluicing voiceMismatch := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Again Diagnostic
@@ -253,20 +253,20 @@ theorem sluicing_voice_blocked_convergent :
     [toosarvandani-2009] (ex. 90) independently shows both readings
     available for Persian vVPE. -/
 theorem vVPE_both_again :
-    againSurvives .vP_adjunction vVPE = true ∧
-    againSurvives .VP_adjunction vVPE = true := by native_decide
+    againSurvives .vP_adjunction vVPE ∧
+    againSurvives .VP_adjunction vVPE := by decide
 
 /-- English VPE deletes restitutive *again*: only repetitive survives.
     ([merchant-2013], building on Johnson 2004, von Stechow 1996). -/
 theorem englishVPE_only_repetitive :
-    againSurvives .vP_adjunction englishVPE = true ∧
-    againSurvives .VP_adjunction englishVPE = false := by native_decide
+    againSurvives .vP_adjunction englishVPE ∧
+    ¬ againSurvives .VP_adjunction englishVPE := by decide
 
 /-- The *again* contrast directly distinguishes vVPE from English VPE:
     same test, different result — proving different deletion domains. -/
 theorem again_distinguishes_vVPE_from_englishVPE :
-    againSurvives .VP_adjunction vVPE = true ∧
-    againSurvives .VP_adjunction englishVPE = false := by native_decide
+    againSurvives .VP_adjunction vVPE ∧
+    ¬ againSurvives .VP_adjunction englishVPE := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Fragment Integration: NV Root Position → vVPE
@@ -278,17 +278,20 @@ open Dargwa.ComplexPredicates in
     The fragment's `AnnotatedCPr` stores `Root.Position` (from
     `Semantics/Lexical/Roots/Template.lean`); this function bridges to the
     Minimalist `rootInVVPEDomain` from `DeletionDomain.lean`. -/
-def cprInVVPEDomain (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Bool :=
+def cprInVVPEDomain (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Prop :=
   rootInVVPEDomain cpr.rootPosition
+
+instance (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Decidable (cprInVVPEDomain cpr) := by
+  unfold cprInVVPEDomain; infer_instance
 
 open Dargwa.ComplexPredicates in
 
 /-- Change-of-state NVs (complement position) are inside vVPE's
     deletion domain: they can be elided. -/
 theorem cos_in_domain :
-    cprInVVPEDomain warmUp = true ∧ cprInVVPEDomain openCPr = true ∧
-    cprInVVPEDomain calmCPr = true ∧ cprInVVPEDomain praiseCPr = true ∧
-    cprInVVPEDomain repairCPr = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    cprInVVPEDomain warmUp ∧ cprInVVPEDomain openCPr ∧
+    cprInVVPEDomain calmCPr ∧ cprInVVPEDomain praiseCPr ∧
+    cprInVVPEDomain repairCPr := by decide
 
 open Dargwa.ComplexPredicates in
 
@@ -296,7 +299,7 @@ open Dargwa.ComplexPredicates in
     deletion domain: they survive ellipsis. This is why antipassive
     roots (coerced to adjunction) block vVPE. -/
 theorem manner_outside_domain :
-    cprInVVPEDomain runCPr = false ∧ cprInVVPEDomain jumpCPr = false := ⟨rfl, rfl⟩
+    ¬ cprInVVPEDomain runCPr ∧ ¬ cprInVVPEDomain jumpCPr := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. NV-Drop Test (vVPE vs Argument Ellipsis)
