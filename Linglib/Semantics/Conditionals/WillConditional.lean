@@ -1,13 +1,19 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Modality.Selectional
 
 /-!
 # Selectional `will`-Conditionals
 [cariani-santorio-2018]
 
-[cariani-santorio-2018] §5.3.1 (eq. 20) lifts the selectional
-analysis of *will* to conditionals via Kratzerian restriction: an
-*if*-clause restricts the modal parameter `f` to its intersection with
-the antecedent's truth set.
+[cariani-santorio-2018] §5.3.1 lifts the selectional analysis of *will*
+to conditionals via Kratzerian restriction: an *if*-clause restricts the
+modal parameter `f` to its intersection with the antecedent's truth set.
+The restriction rule is paper eq. (21); eq. (20) is the LF of the example
+sentence and eq. (23) its informal English gloss.
 
 `⟦if A, will B⟧^{w,s,g} = ⟦will B⟧^{w,s,g[f ↦ g(f) ∩ ‖A‖]}`
                        `= B (s(w, g(f) ∩ ‖A‖))`
@@ -19,6 +25,8 @@ single-valuedness.
 
 ## What's here
 
+- `restrict`: the Kratzer restriction operation `f ∩ ‖A‖` shared by
+  every will-conditional construction in this file.
 - `willConditional`: the restrictor analysis applied to the selectional
   `will`. The if-clause intersects the modal parameter.
 - `compositional_CEM`: `if A, will B ∨ if A, will ¬B` is valid₂ —
@@ -40,14 +48,21 @@ open Semantics.Modality.Selectional
 
 variable {W : Type*}
 
+/-- **Kratzer restriction** [cariani-santorio-2018] §5.3.1: the if-clause
+    `A` restricts the modal parameter `f` to the alternatives that also
+    satisfy `A`, i.e. `f ∩ ‖A‖`. Every will-conditional construction in
+    this file feeds the selection function this restricted parameter. -/
+def restrict (A : W → Prop) (f : Set W) : Set W :=
+  f ∩ {w' | A w'}
+
 /-- **Selectional `will`-conditional** [cariani-santorio-2018]
-    §5.3.1 (eq. 20): the if-clause `A` Kratzer-restricts the modal
-    parameter `f` to `f ∩ ‖A‖` before evaluating the *will*-prejacent
-    `B`. (Eq. 22 in the paper is the informal English gloss of this
-    rule; eq. 20 is the actual semantic clause.) -/
+    §5.3.1: the if-clause `A` Kratzer-`restrict`s the modal parameter
+    `f` to `f ∩ ‖A‖` before evaluating the *will*-prejacent `B`. The
+    restriction rule is paper eq. (21); eq. (23) is its informal English
+    gloss. -/
 def willConditional (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) : Prop :=
-  willSem s B (f ∩ {w' | A w'}) w
+  willSem s B (restrict A f) w
 
 @[simp] theorem willConditional_def (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) :
@@ -66,7 +81,7 @@ theorem compositional_CEM (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) :
     willConditional s A B f w ∨
     willConditional s A (fun w' => ¬ B w') f w :=
-  s.sel_em B (f ∩ {w' | A w'}) w
+  s.sel_em B (restrict A f) w
 
 /-- **Compositional CEM** is valid₂ (paper §7): holds at every
     ⟨s, f, w⟩ index. -/
@@ -86,7 +101,7 @@ theorem narrow_negation_swap (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) :
     willConditional s A (fun w' => ¬ B w') f w ↔
     ¬ willConditional s A B f w :=
-  s.sel_neg_swap B (f ∩ {w' | A w'}) w
+  s.sel_neg_swap B (restrict A f) w
 
 /-- **Narrow Negation Swap** is valid₂. -/
 theorem valid2_narrow_negation_swap (A B : W → Prop) :
@@ -97,13 +112,12 @@ theorem valid2_narrow_negation_swap (A B : W → Prop) :
 
 /-- **Wide Negation Swap in Conditionals** [cariani-santorio-2018]
     §7: under the *wide* reading where negation scopes over the entire
-    conditional, `¬ (if A, will B) ↔ (if A, will ¬B)`. Definitionally
-    equal to the narrow biconditional in the selectional setting, since
-    selection-function single-valuedness collapses the LF-position
-    distinction: regardless of where negation attaches, the truth
-    condition reduces to `¬ B (s.sel w (f ∩ ‖A‖))`. The paper highlights
-    that this collapse is a positive prediction of the selectional
-    analysis — universal-base treatments scope-distinguish the two. -/
+    conditional, `¬ (if A, will B) ↔ (if A, will ¬B)`. In the selectional
+    setting this is definitionally the converse of `narrow_negation_swap`:
+    selection-function single-valuedness reduces both LF positions to the
+    same truth condition `¬ B (s.sel w (f ∩ ‖A‖))`, so C&S derive Wide
+    Negation Swap from Narrow plus the matrix Negation Swap (paper §7).
+    The wide/narrow collapse is internal to the selectional analysis. -/
 theorem wide_negation_swap (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) :
     ¬ willConditional s A B f w ↔
@@ -126,12 +140,12 @@ theorem valid2_wide_negation_swap (A B : W → Prop) :
     separates Validity₁ from Validity₂. -/
 theorem postsemantic_CEM (A B : W → Prop) (sCtx : SelectionFunction W)
     (fCtx : Set W) (wCtx : W) :
-    Semantics.Modality.Selectional.Valid1 (W := W)
+    Valid1 (W := W)
       (fun s f w =>
         willConditional s A B f w ∨
         willConditional s A (fun w' => ¬ B w') f w)
       sCtx fCtx wCtx :=
-  Semantics.Modality.Selectional.valid2_implies_valid1
+  valid2_implies_valid1
     (fun s f w => compositional_CEM s A B f w) sCtx fCtx wCtx
 
 /-- **Conditional collapse**: when the evaluation world `w` is in the
@@ -140,9 +154,8 @@ theorem postsemantic_CEM (A B : W → Prop) (sCtx : SelectionFunction W)
     consequent `B w` by Centering. -/
 theorem willConditional_collapse (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) (hw_f : w ∈ f) (hw_A : A w) :
-    willConditional s A B f w ↔ B w := by
-  unfold willConditional
-  exact unembedded_collapse s B (f ∩ {w' | A w'}) w ⟨hw_f, hw_A⟩
+    willConditional s A B f w ↔ B w :=
+  unembedded_collapse s B (restrict A f) w ⟨hw_f, hw_A⟩
 
 /-- **Restriction is idempotent under satisfaction**: if `f ⊆ ‖A‖`,
     restricting by `A` is a no-op, so `will A → will A` and
@@ -150,11 +163,34 @@ theorem willConditional_collapse (s : SelectionFunction W) (A B : W → Prop)
 theorem willConditional_redundant (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) (h_subset : ∀ w' ∈ f, A w') :
     willConditional s A B f w ↔ willSem s B f w := by
-  have h_eq : f ∩ {w' | A w'} = f := by
+  have h_eq : restrict A f = f := by
     ext w'
     exact ⟨fun ⟨hf, _⟩ => hf, fun hf => ⟨hf, h_subset w' hf⟩⟩
-  unfold willConditional willSem
+  unfold willConditional
   rw [h_eq]
+
+/-! ## The universal-base foil for will-conditionals
+
+The Lewis-style universal-quantifier reading lifts to conditionals the
+same way the selectional one does — by Kratzer-restricting the modal
+parameter — but evaluates the prejacent *universally* over the restricted
+parameter instead of at the single selected world. This is the
+conditional image of [cariani-santorio-2018]'s matrix foil
+`Selectional.universalWill`. It is the natural-language analogue of
+[lewis-1973]'s counterfactual semantics, and it falsifies Compositional
+CEM: when the restricted parameter contains both a `B`-world and a
+`¬B`-world, neither `(if A, will B)` nor `(if A, will ¬B)` is universally
+true. The concrete refutation is `CarianiSantorio2018`'s
+`universal_will_conditional_cem_fails`, the will-conditional analogue of
+`Stalnaker1981.bizet_cem_fails_universal`. -/
+
+/-- **Universal-base will-conditional** (the foil): the if-clause
+    Kratzer-restricts the parameter to `f ∩ ‖A‖`, then *will B* is read
+    as universal quantification over that restricted parameter. Unlike
+    `willConditional`, this validates neither Compositional CEM nor
+    Negation Swap. -/
+def universalWillConditional (A B : W → Prop) (f : Set W) (w : W) : Prop :=
+  universalWill B (restrict A f) w
 
 /-! ## *Would*-conditionals — the past-tense morphological derivative
 
@@ -173,40 +209,38 @@ def wouldConditional (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) : Prop :=
   willConditional s A B f w
 
-@[simp] theorem wouldConditional_def (s : SelectionFunction W) (A B : W → Prop)
-    (f : Set W) (w : W) :
-    wouldConditional s A B f w ↔ B (s.sel w (f ∩ {w' | A w'})) := Iff.rfl
-
 /-- **Past-tense morphology = parameter shift** for conditionals:
     *would*-conditionals and *will*-conditionals share their semantic
-    clause. -/
-theorem wouldConditional_eq_willConditional (s : SelectionFunction W)
+    clause (the conditional analogue of `wouldSem_eq_willSem`). Tagged
+    `@[simp]` so `wouldConditional` reduces to the canonical
+    `willConditional` normal form. -/
+@[simp] theorem wouldConditional_eq_willConditional (s : SelectionFunction W)
     (A B : W → Prop) (f : Set W) (w : W) :
     wouldConditional s A B f w = willConditional s A B f w := rfl
 
 /-! ## Modal subordination
 
-[cariani-santorio-2018] §5.3.1: "If A, will B. Will C." reads with
-modal subordination — the second sentence's *will* inherits the first
-sentence's restricted parameter `f ∩ ‖A‖` rather than starting fresh
-from `f`. The selectional analysis predicts this for free: a discourse
-of two will-utterances under a shared restricted parameter is just the
-conjunction of two `willSem` calls at that parameter.
-
-The selection function picks the *same* world for both prejacents
-because `s.sel w (f ∩ ‖A‖)` is single-valued. This is the discourse
-analogue of `compositional_CEM` and `narrow_negation_swap`: structural
-single-valuedness, not propositional content, drives the prediction. -/
+[cariani-santorio-2018] §5.3.1 models modal subordination in a
+discourse "If A, will B. Will C." by *coindexing* the second sentence's
+*will* to the same restricted modal-base variable the if-clause
+introduces, so both *will*s are interpreted under the antecedent's
+supposition `f ∩ ‖A‖` rather than the second starting fresh from `f`.
+C&S treat the coindexing as a discourse assumption (following Klecha),
+not as something the semantics forces. Under that coindexing the
+selection function picks the *same* world for both prejacents, because
+`s.sel w (f ∩ ‖A‖)` is single-valued — the discourse analogue of the
+single-valuedness behind `compositional_CEM` and `narrow_negation_swap`. -/
 
 /-- **Modally-subordinated will-discourse** [cariani-santorio-2018]
-    §5.3.1: a two-sentence discourse "If A, will B. Will C." where the
-    second *will* inherits the if-clause's restricted parameter
-    `f ∩ ‖A‖`. The discourse holds iff both prejacents hold at the
-    Stalnaker-selected world from the restricted parameter. -/
+    §5.3.1: the minimal two-*will* instance of C&S's coindexing
+    analysis — "If A, will B. Will C." with the second *will*'s modal
+    base coindexed to the if-clause's restricted parameter `f ∩ ‖A‖`.
+    Holds iff both prejacents hold at the Stalnaker-selected world from
+    the restricted parameter. -/
 def subordinatedWillDiscourse (s : SelectionFunction W) (A B C : W → Prop)
     (f : Set W) (w : W) : Prop :=
   willConditional s A B f w ∧
-  willSem s C (f ∩ {w' | A w'}) w
+  willSem s C (restrict A f) w
 
 /-- **Modal subordination = shared selected world**: the subordinated
     discourse picks the *same* world for both prejacents, because
@@ -219,17 +253,19 @@ theorem subordinatedWillDiscourse_eq_conj (s : SelectionFunction W)
     (B (s.sel w (f ∩ {w' | A w'})) ∧ C (s.sel w (f ∩ {w' | A w'}))) :=
   Iff.rfl
 
-/-- **Subordination ≠ unrestricted continuation**: the modally-
-    subordinated reading `f ∩ ‖A‖` differs in general from a fresh
-    *will* at the original parameter `f`. The two coincide only when
-    `s.sel w f = s.sel w (f ∩ ‖A‖)` — i.e. when restricting by `A`
-    does not shift the selected world. -/
-theorem subordinated_eq_unrestricted_iff (s : SelectionFunction W)
+/-- **Subordination coincides with an unrestricted continuation exactly
+    when the if-clause does not shift the selected world.** The
+    modally-subordinated reading evaluates the continuation *will C* at
+    the restricted parameter `f ∩ ‖A‖`, whereas a fresh, non-subordinated
+    *will C* would evaluate it at `f`. The two readings agree precisely
+    when restricting by `A` leaves the selected world fixed
+    (`s.sel w f = s.sel w (f ∩ ‖A‖)`); in general they diverge. -/
+theorem subordinated_eq_unrestricted_of_no_shift (s : SelectionFunction W)
     (A B C : W → Prop) (f : Set W) (w : W)
-    (hB : willConditional s A B f w) :
+    (h_no_shift : s.sel w f = s.sel w (restrict A f)) :
     subordinatedWillDiscourse s A B C f w ↔
-    (willConditional s A B f w ∧ C (s.sel w (f ∩ {w' | A w'}))) := by
-  unfold subordinatedWillDiscourse willSem
-  exact ⟨fun ⟨_, h⟩ => ⟨hB, h⟩, fun ⟨_, h⟩ => ⟨hB, h⟩⟩
+    (willConditional s A B f w ∧ willSem s C f w) := by
+  unfold subordinatedWillDiscourse willConditional willSem
+  rw [h_no_shift]
 
 end Semantics.Conditionals.WillConditional
