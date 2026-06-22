@@ -29,8 +29,8 @@ direction is proved; the converse is the deep direction and is currently a `sorr
   greater than `P'` for every decision problem (the data-processing direction).
 * `isGarblingOf_of_forall_bayesRisk_le`: conversely, if `P` has Bayes risk no greater than `P'`
   for *every* decision problem, then `P'` is a garbling of `P` (the Blackwell–Sherman–Stein
-  direction, finite case; currently `sorry`). False without finiteness/standard-Borel
-  hypotheses.
+  direction, finite case; currently `sorry`). Requires finite spaces and that both `P` and
+  `P'` are Markov kernels — false otherwise (see the theorem docstring for counterexamples).
 * `isGarblingOf_iff_forall_bayesRisk_le`: the two directions combined.
 
 ## Implementation notes
@@ -73,6 +73,15 @@ namespace ProbabilityTheory
 variable {Θ 𝓧 𝓧' : Type*} {mΘ : MeasurableSpace Θ}
   {m𝓧 : MeasurableSpace 𝓧} {m𝓧' : MeasurableSpace 𝓧'}
 
+/-- On finite kernels, `comp` evaluated on a singleton is matrix multiplication:
+`(η ∘ₖ P) θ {x'} = ∑ₓ η x {x'} · P θ {x}`. The first brick of the finite Blackwell
+bridge (kernels ↔ stochastic matrices). -/
+lemma comp_singleton_eq_sum [Fintype 𝓧] [MeasurableSingletonClass 𝓧]
+    [MeasurableSingletonClass 𝓧']
+    (η : Kernel 𝓧 𝓧') (P : Kernel Θ 𝓧) (θ : Θ) (x' : 𝓧') :
+    (η ∘ₖ P) θ {x'} = ∑ x, η x {x'} * P θ {x} := by
+  rw [Kernel.comp_apply' η P θ (measurableSet_singleton x'), lintegral_fintype]
+
 /-- `P'` is a **garbling** of `P` (Blackwell): there is a Markov post-processing
 kernel `η` with `P' = η ∘ₖ P`. Read "`P` is at least as informative as `P'`". -/
 def Kernel.IsGarblingOf (P' : Kernel Θ 𝓧') (P : Kernel Θ 𝓧) : Prop :=
@@ -94,18 +103,28 @@ theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
 larger than `P'` for *every* decision problem (loss `ℓ` over an arbitrary measurable action
 space `𝓨`, and prior `π`), then `P'` is a garbling of `P`.
 
-Stated for finite parameter and sample spaces. The converse is **false** for general
-measurable spaces — this is the finite Blackwell equivalence ([blackwell-1953]); the
-standard-Borel version additionally requires the experiments to be dominated. The
-quantification over *all* decision problems is essential: dominance for a single one does
-not force garbling.
+Stated for finite parameter and sample spaces, with both experiments Markov kernels. All
+three hypotheses are essential:
+
+* The converse is **false** for general measurable spaces — this is the *finite* Blackwell
+  equivalence ([blackwell-1953]); the standard-Borel version additionally requires the
+  experiments to be dominated.
+* `[IsMarkovKernel P]` is necessary: a defective `P` can attain low risk without being
+  informative. E.g. the zero kernel `P = 0` has `bayesRisk ℓ 0 π = 0` for every loss (the
+  least possible value), so it dominates every `P'`, yet `η ∘ₖ 0 = 0` forces `P' = 0`.
+* `[IsMarkovKernel P']` is necessary: an over-massed `P'` inflates every risk. E.g. over a
+  one-point sample space with `P' = 2 • P` one has `bayesRisk ℓ P' π = 2 • bayesRisk ℓ P π
+  ≥ bayesRisk ℓ P π` for every loss, yet `P'` (mass `2`) is not `η ∘ₖ P` for any Markov `η`.
+
+The quantification over *all* decision problems is likewise essential: dominance for a
+single one does not force garbling.
 
 A proof requires convex geometry on the (finite-dimensional) space of garblings of `P`,
 which Mathlib does not yet expose for kernels — see the module `TODO`. -/
 theorem isGarblingOf_of_forall_bayesRisk_le
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧']
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
-    {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'}
+    {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} [IsMarkovKernel P] [IsMarkovKernel P']
     (h : ∀ {𝓨 : Type u} [MeasurableSpace 𝓨] (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ),
       bayesRisk ℓ P π ≤ bayesRisk ℓ P' π) :
     P'.IsGarblingOf P := by
@@ -114,11 +133,12 @@ theorem isGarblingOf_of_forall_bayesRisk_le
 /-- **[blackwell-1953]** (finite case). `P` is at least as informative as `P'` (`P'` is a
 garbling of `P`) iff `P` attains a Bayes risk no larger than `P'` across every decision
 problem. The forward direction (`bayesRisk_le_of_isGarblingOf`) holds for arbitrary spaces;
-the reverse (`isGarblingOf_of_forall_bayesRisk_le`) needs finiteness. -/
+the reverse (`isGarblingOf_of_forall_bayesRisk_le`) needs finiteness and that both
+experiments are Markov kernels. -/
 theorem isGarblingOf_iff_forall_bayesRisk_le
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧']
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
-    {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} :
+    {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} [IsMarkovKernel P] [IsMarkovKernel P'] :
     P'.IsGarblingOf P ↔
       ∀ {𝓨 : Type u} [MeasurableSpace 𝓨] (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ),
         bayesRisk ℓ P π ≤ bayesRisk ℓ P' π := by
