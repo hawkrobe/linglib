@@ -85,20 +85,13 @@ def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
       (fun w₁ w₂ w₃ => h_coherent w₀ w₁ w₂ w₃)
   decClose w₀ w₁ w₂ := by exact inferInstanceAs (Decidable (s.sel w₀ {w₁, w₂} = w₁))
 
-/-! ## Selection conditional + Stalnakerian mood machinery -/
+/-! ## Stalnakerian mood machinery
 
-/-- **Selection-based conditional**: "if p, then q" is true at `w` iff
-    `q` holds at the world selected by `s` from the p-worlds. The common
-    semantic core of [stalnaker-1975] indicatives and subjunctives. -/
-def selectionConditional {W : Type*} (s : SelectionFunction W)
-    (p q : W → Prop) : W → Prop :=
-  λ w => q (s.sel w {w' | p w'})
-
-/-- `selectionConditional` is decidable when its consequent is. -/
-instance selectionConditional_decidable {W : Type*} (s : SelectionFunction W)
-    (p q : W → Prop) [DecidablePred q] (w : W) :
-    Decidable (selectionConditional s p q w) :=
-  inferInstanceAs (Decidable (q _))
+The bare selection-conditional clause `selectionConditional` and its
+decidability instance now live in `SelectionFunction.lean` — the
+[stalnaker-1968] substrate shared with the counterfactual reading
+(`Counterfactual.stalnakerCounterfactual`). This section adds the
+[stalnaker-1975] indicative refinements on top of that shared clause. -/
 
 /-- **Pragmatic constraint on selection** ([stalnaker-1975] §III).
 

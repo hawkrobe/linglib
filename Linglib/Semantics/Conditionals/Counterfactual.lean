@@ -544,12 +544,14 @@ selection function, the supervaluation analysis (`Truth3`) reduces to the
 single-function analysis (`Bool`) under `Truth3.ofBool`. -/
 
 /-- **Stalnaker's single-selection-function counterfactual** [stalnaker-1968].
-    `A □→ B` is true at `w` iff `B` holds at `s(w, ‖A‖)`. This reuses the
-    same `Semantics.Conditionals.SelectionFunction` infrastructure that [cariani-santorio-2018]
-    apply to *will* — the mechanism is identical across the two papers. -/
+    `A □→ B` is true at `w` iff `B` holds at `s(w, ‖A‖)`. The counterfactual
+    reading is the `Semantics.Conditionals.selectionConditional` clause
+    (shared substrate) supplied with a similarity-induced selection function;
+    it is the *same* truth-condition as the indicative
+    `Stalnaker.moodedConditional`, differing only in admissible `s`. -/
 def stalnakerCounterfactual {W : Type*} (s : Semantics.Conditionals.SelectionFunction W)
     (A B : W → Prop) (w : W) : Prop :=
-  B (s.sel w {w' | A w'})
+  Semantics.Conditionals.selectionConditional s A B w
 
 instance stalnakerCounterfactual_decidable {W : Type*} (s : Semantics.Conditionals.SelectionFunction W)
     (A B : W → Prop) [DecidablePred B] (w : W) :
@@ -571,6 +573,7 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
     selectionalCounterfactual sim A B w =
     Truth3.ofBool (decide (stalnakerCounterfactual s A B w)) := by
   unfold selectionalCounterfactual stalnakerCounterfactual
+    Semantics.Conditionals.selectionConditional
   rw [h_singleton]
   by_cases hB : B (s.sel w {w' | A w'})
   · -- Both sides equal .true
@@ -608,8 +611,8 @@ set, recovering Stalnaker's `s(w, ‖A‖)`. -/
 [cariani-santorio-2018] §5.3.2 + §5.3.1: when the modal parameter
 of the will-conditional is taken to be `Set.univ`, the Kratzer
 restriction `Set.univ ∩ ‖A‖ = ‖A‖` recovers Stalnaker's selection
-target. The Bool-valued `stalnakerCounterfactual` and the Prop-valued
-`willConditional` thus coincide modulo the `· = true` reflection.
+target. The `stalnakerCounterfactual` and `willConditional`
+truth-conditions thus coincide (`↔`).
 
 This is the formal payoff of the unification: bare *will* (`willSem`),
 will-conditionals (`willConditional`), Stalnaker counterfactuals, and
@@ -622,6 +625,7 @@ theorem stalnakerCounterfactual_eq_willConditional_universe
     Semantics.Conditionals.WillConditional.willConditional
       s A B Set.univ w := by
   unfold stalnakerCounterfactual
+    Semantics.Conditionals.selectionConditional
     Semantics.Conditionals.WillConditional.willConditional
     Semantics.Conditionals.WillConditional.restrict
     Semantics.Modality.Selectional.willSem
