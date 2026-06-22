@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Probability.Decision.Risk.Basic
+import Mathlib.Analysis.Convex.StdSimplex
+import Mathlib.Analysis.LocallyConvex.Separation
+import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Blackwell comparison of experiments
@@ -70,8 +73,8 @@ open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory
 
-variable {Θ 𝓧 𝓧' : Type*} {mΘ : MeasurableSpace Θ}
-  {m𝓧 : MeasurableSpace 𝓧} {m𝓧' : MeasurableSpace 𝓧'}
+variable {Θ 𝓧 𝓧' : Type*} [mΘ : MeasurableSpace Θ]
+  [m𝓧 : MeasurableSpace 𝓧] [m𝓧' : MeasurableSpace 𝓧']
 
 /-- On finite kernels, `comp` evaluated on a singleton is matrix multiplication:
 `(η ∘ₖ P) θ {x'} = ∑ₓ η x {x'} · P θ {x}`. The first brick of the finite Blackwell
@@ -98,6 +101,129 @@ theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
   obtain ⟨η, hη, rfl⟩ := h
   haveI := hη
   exact bayesRisk_le_bayesRisk_comp ℓ P π η
+
+/-! ### The garbling polytope (finite case)
+
+Over finite spaces, the Markov garblings `{η ∘ₖ P | η Markov}` of `P`, encoded by their
+singleton masses as vectors in `Θ → 𝓧' → ℝ`, form a compact convex polytope `garblingSet P`.
+It is the linear image of the product of standard simplices — the stochastic matrices `η` —
+under `garblingMap P`. This is the geometric substrate for the Blackwell–Sherman–Stein
+converse: if `encode P'` lies outside the polytope, a separating functional realizes a
+decision problem on which `P'` is strictly worse than `P`. -/
+
+section GarblingPolytope
+
+variable [Fintype 𝓧] [Fintype 𝓧'] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
+
+-- The finite-space instances below are shared across the section; not every lemma uses all.
+set_option linter.unusedSectionVars false
+
+/-- Encode an experiment `Q : Kernel Θ 𝓧'` as the real vector of its singleton masses
+`(θ, x') ↦ (Q θ {x'}).toReal`. Injective on Markov (more generally finite) kernels. -/
+private noncomputable def encode (Q : Kernel Θ 𝓧') : Θ → 𝓧' → ℝ :=
+  fun θ x' => (Q θ {x'}).toReal
+
+/-- The stochastic matrices `𝓧 → 𝓧' → ℝ`: each row is a probability vector. The encodings
+of the Markov kernels `η : Kernel 𝓧 𝓧'`. -/
+private def stochasticMatrices : Set (𝓧 → 𝓧' → ℝ) :=
+  Set.univ.pi fun _ => stdSimplex ℝ 𝓧'
+
+/-- Post-composition by a stochastic matrix, as a linear map on the matrix space:
+`M ↦ (θ, x') ↦ ∑ₓ M x x' · (P θ {x}).toReal`. On `M = encode η` this is `encode (η ∘ₖ P)`
+(`encode_comp`). -/
+private noncomputable def garblingMap (P : Kernel Θ 𝓧) :
+    (𝓧 → 𝓧' → ℝ) →ₗ[ℝ] (Θ → 𝓧' → ℝ) where
+  toFun M := fun θ x' => ∑ x, M x x' * (P θ {x}).toReal
+  map_add' M N := by ext θ x'; simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib]
+  map_smul' c M := by
+    ext θ x'
+    simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum, mul_assoc]
+
+/-- The garbling polytope of `P`: the encodings of all Markov garblings `η ∘ₖ P`, realized as
+the linear image of the stochastic-matrix simplex. -/
+private noncomputable def garblingSet (P : Kernel Θ 𝓧) : Set (Θ → 𝓧' → ℝ) :=
+  garblingMap (𝓧' := 𝓧') P '' stochasticMatrices
+
+private theorem convex_garblingSet (P : Kernel Θ 𝓧) :
+    Convex ℝ (garblingSet (𝓧' := 𝓧') P) :=
+  (convex_pi fun _ _ => convex_stdSimplex ℝ 𝓧').linear_image _
+
+private theorem isCompact_garblingSet (P : Kernel Θ 𝓧) :
+    IsCompact (garblingSet (𝓧' := 𝓧') P) :=
+  (isCompact_univ_pi fun _ => isCompact_stdSimplex ℝ 𝓧').image
+    (garblingMap P).continuous_of_finiteDimensional
+
+private theorem isClosed_garblingSet (P : Kernel Θ 𝓧) :
+    IsClosed (garblingSet (𝓧' := 𝓧') P) :=
+  (isCompact_garblingSet P).isClosed
+
+/-- The stochastic matrix `(x, x') ↦ (η x {x'}).toReal` of a kernel `η : Kernel 𝓧 𝓧'`. -/
+private noncomputable def encodeMatrix (η : Kernel 𝓧 𝓧') : 𝓧 → 𝓧' → ℝ :=
+  fun x x' => (η x {x'}).toReal
+
+/-- Encoding intertwines kernel composition with the linear garbling map:
+`encode (η ∘ₖ P) = garblingMap P (encodeMatrix η)`. -/
+private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
+    (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
+    encode (η ∘ₖ P) = garblingMap P (encodeMatrix η) := by
+  ext θ x'
+  show ((η ∘ₖ P) θ {x'}).toReal = ∑ x, (η x {x'}).toReal * (P θ {x}).toReal
+  have hne : ∀ x ∈ Finset.univ, η x {x'} * P θ {x} ≠ ∞ := fun x _ =>
+    ENNReal.mul_ne_top (measure_ne_top (η x) _) (measure_ne_top (P θ) _)
+  rw [comp_singleton_eq_sum, ENNReal.toReal_sum hne]
+  exact Finset.sum_congr rfl fun x _ => ENNReal.toReal_mul
+
+/-- `encode` is injective on finite kernels: singleton masses determine the kernel. -/
+private theorem encode_injective {Q Q' : Kernel Θ 𝓧'}
+    [IsFiniteKernel Q] [IsFiniteKernel Q'] (hQ : encode Q = encode Q') : Q = Q' := by
+  refine Kernel.ext fun θ => Measure.ext_of_singleton fun x' => ?_
+  have hx := congrFun (congrFun hQ θ) x'
+  simp only [encode] at hx
+  rwa [ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)] at hx
+
+/-- Build a kernel `𝓧 → 𝓧'` from a real matrix `M`: row `x` is the measure with mass
+`ENNReal.ofReal (M x x')` on each `x'`. On a stochastic matrix it is Markov and inverts
+`encodeMatrix`. -/
+private noncomputable def buildKernel (M : 𝓧 → 𝓧' → ℝ) : Kernel 𝓧 𝓧' :=
+  Kernel.ofFunOfCountable fun x => ∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x'
+
+private lemma buildKernel_apply (M : 𝓧 → 𝓧' → ℝ) (x : 𝓧) (y : 𝓧') :
+    buildKernel M x {y} = ENNReal.ofReal (M x y) := by
+  classical
+  show (∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x') {y} = ENNReal.ofReal (M x y)
+  rw [Measure.finsetSum_apply]
+  simp only [Measure.smul_apply, Measure.dirac_apply, smul_eq_mul, Set.indicator_apply,
+    Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero]
+  rw [Finset.sum_ite_eq' Finset.univ y fun x' => ENNReal.ofReal (M x x')]
+  simp
+
+private theorem isMarkovKernel_buildKernel {M : 𝓧 → 𝓧' → ℝ}
+    (hM : M ∈ stochasticMatrices) : IsMarkovKernel (buildKernel M) := by
+  refine ⟨fun x => ⟨?_⟩⟩
+  have hx := Set.mem_univ_pi.mp hM x
+  show (∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x') Set.univ = 1
+  rw [Measure.finsetSum_apply]
+  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [← ENNReal.ofReal_sum_of_nonneg fun x' _ => hx.1 x', hx.2, ENNReal.ofReal_one]
+
+private theorem encodeMatrix_buildKernel {M : 𝓧 → 𝓧' → ℝ}
+    (hM : M ∈ stochasticMatrices) : encodeMatrix (buildKernel M) = M := by
+  ext x x'
+  show (buildKernel M x {x'}).toReal = M x x'
+  rw [buildKernel_apply, ENNReal.toReal_ofReal ((Set.mem_univ_pi.mp hM x).1 x')]
+
+/-- **Step 6 of the converse.** If `encode P'` lies in the garbling polytope of `P`, its
+witness stochastic matrix builds a Markov kernel `η` with `η ∘ₖ P = P'`, so `P'` is a
+garbling of `P`. -/
+private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel P]
+    {P' : Kernel Θ 𝓧'} [IsMarkovKernel P'] (hmem : encode P' ∈ garblingSet P) :
+    P'.IsGarblingOf P := by
+  obtain ⟨M, hM, hMeq⟩ := hmem
+  haveI := isMarkovKernel_buildKernel hM
+  refine ⟨buildKernel M, inferInstance, encode_injective ?_⟩
+  rw [encode_comp, encodeMatrix_buildKernel hM, hMeq]
+
+end GarblingPolytope
 
 /-- **Blackwell–Sherman–Stein converse** (finite case). If `P` attains a Bayes risk no
 larger than `P'` for *every* decision problem (loss `ℓ` over an arbitrary measurable action
@@ -128,7 +254,22 @@ theorem isGarblingOf_of_forall_bayesRisk_le
     (h : ∀ {𝓨 : Type u} [MeasurableSpace 𝓨] (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ),
       bayesRisk ℓ P π ≤ bayesRisk ℓ P' π) :
     P'.IsGarblingOf P := by
-  sorry
+  by_cases hmem : encode P' ∈ garblingSet P
+  · -- `encode P'` lies in the garbling polytope: its witness stochastic matrix builds the
+    -- Markov garbling `η` with `η ∘ₖ P = P'`.
+    exact isGarblingOf_of_encode_mem P hmem
+  · -- `encode P'` lies outside the (compact, convex) garbling polytope, so a continuous
+    -- linear functional `f` strictly separates it from every garbling of `P`.
+    exfalso
+    obtain ⟨f, u, hf_lt, hf_gt⟩ :=
+      geometric_hahn_banach_point_closed (convex_garblingSet P) (isClosed_garblingSet P) hmem
+    -- `f` is the separating hyperplane: `f (encode P') < u < f (encode (η ∘ₖ P))` for every
+    -- Markov `η`. Realizing `f` as a decision problem `(𝓨, ℓ, π)` yields
+    -- `bayesRisk ℓ P π > bayesRisk ℓ P' π`, contradicting `h`.
+    -- TODO (step 5): the signed `f` must be split into a nonnegative loss, and the
+    -- `bayesRisk`-as-infimum reconciled with the linear `f` via Sion's minimax theorem
+    -- (`Mathlib/Topology/Sion.lean`); this is the mathematical core of the converse.
+    sorry
 
 /-- **[blackwell-1953]** (finite case). `P` is at least as informative as `P'` (`P'` is a
 garbling of `P`) iff `P` attains a Bayes risk no larger than `P'` across every decision
