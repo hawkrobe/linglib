@@ -1903,6 +1903,7 @@ import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.IdempotentPower
+import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
 import Linglib.Core.Computability.Subregular.Language.Algebra.Pin

@@ -172,7 +172,7 @@ lemma syntacticEquiv_of_kDefiniteEquation {L : Language α} {k : ℕ}
       L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
     rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
     exact h_eq
-  exact Quotient.exact h_pre
+  exact (syntacticCon_iff L).mp (Quotient.exact h_pre)
 
 -- ============================================================================
 -- §3. Lambert Prop 53 — both directions
@@ -189,6 +189,7 @@ theorem IsDefinite.satisfies_kDefiniteEquation
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
   rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
   apply Quotient.sound
+  refine (syntacticCon_iff L).mpr ?_
   intro x y
   show x ++ FreeMonoid.toList (w * FreeMonoid.ofList αs) ++ y ∈ L ↔
        x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
@@ -245,7 +246,7 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
         have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
           (List.rdrop_append_rtake w k).symm
         rwa [← decomp] at base
-      exact mem_iff_of_syntacticEquiv hequiv
+      exact hequiv.mem_iff
   exact fun a b hab => by simp only [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
@@ -320,7 +321,7 @@ lemma syntacticEquiv_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
       L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
     rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
     exact h_eq
-  exact Quotient.exact h_pre
+  exact (syntacticCon_iff L).mp (Quotient.exact h_pre)
 
 -- §4.3. Lambert Prop 57 — both directions
 
@@ -333,6 +334,7 @@ theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
   rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
   apply Quotient.sound
+  refine (syntacticCon_iff L).mpr ?_
   intro x y
   show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w) ++ y ∈ L ↔
        x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
@@ -368,7 +370,7 @@ theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
         have base := syntacticEquiv_of_kReverseDefiniteEquation h
           (Edge.left.takeAt k w) (w.drop k) hlen
         rwa [← decompose_at_left_takeAt (le_of_lt hw)] at base
-      exact mem_iff_of_syntacticEquiv hequiv
+      exact hequiv.mem_iff
   exact fun a b hab => by simp only [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
@@ -419,7 +421,7 @@ lemma syntacticEquiv_of_kGeneralizedDefiniteEquation
     rw [FreeMonoid.ofList_append, FreeMonoid.ofList_append, MonoidHom.map_mul,
         MonoidHom.map_mul]
     exact h_eq
-  exact Quotient.exact h_pre
+  exact (syntacticCon_iff L).mp (Quotient.exact h_pre)
 
 -- §5.2. Lambert Prop 58 — forward direction
 
@@ -441,6 +443,7 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
       L.toSyntacticMonoid (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) by
     rw [MonoidHom.map_mul, MonoidHom.map_mul]]
   apply Quotient.sound
+  refine (syntacticCon_iff L).mpr ?_
   intro x y
   show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) ++ y ∈ L ↔
        x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
@@ -565,7 +568,7 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
       exact h_inner
     -- Combine: w₁ ≡_L w₂.
     have hequiv : SyntacticEquiv L w₁ w₂ := h_βs_eq.symm.trans h_αs_eq
-    exact mem_iff_of_syntacticEquiv hequiv
+    exact hequiv.mem_iff
   · -- Short case: `|w₁| < k`. Then `Edge.left.takeAt k w₁ = w₁`, so
     -- the prefix equality yields `w₁ = Edge.left.takeAt k w₂`, which
     -- forces `|w₂| ≤ k` (otherwise the takeAt has length `k > |w₁|`).
