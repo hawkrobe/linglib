@@ -239,14 +239,14 @@ def ePositionFromContrast (nounContrastive : Bool) : NomSpinePos :=
 /-- When N is contrastive, [E] is on n. The n head (to which N has moved)
     is external → the noun survives via its moved copy at n. -/
 theorem contrastive_nHead_survives :
-    nomSurvives .n ⟨ePositionFromContrast true, ""⟩ = true := rfl
+    nomSurvives .n ⟨ePositionFromContrast true, ""⟩ := by decide
 
 /-- When N is not contrastive, [E] is on Num. Both N (base position)
     and n are in the deletion domain — the noun is deleted along with
     all NP-internal and nP-internal material. -/
 theorem nonContrastive_noun_deleted :
-    nomInDeletionDomain .N ⟨ePositionFromContrast false, ""⟩ = true ∧
-    nomInDeletionDomain .n ⟨ePositionFromContrast false, ""⟩ = true := ⟨rfl, rfl⟩
+    nomInDeletionDomain .N ⟨ePositionFromContrast false, ""⟩ ∧
+    nomInDeletionDomain .n ⟨ePositionFromContrast false, ""⟩ := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Predictions — Prenominal vs. Postnominal Asymmetry
@@ -262,13 +262,13 @@ theorem nonContrastive_noun_deleted :
     under n[E], only material below n (= NP-internal) is deleted. -/
 theorem prenominal_postnominal_asymmetry :
     -- Postnominal material (NP-internal = below n): deleted under n[E]
-    nomInDeletionDomain .N nStrandingNPE = true ∧
+    nomInDeletionDomain .N nStrandingNPE ∧
     -- Prenominal adjectives (nP-internal = above NP): survive n[E]
-    nomSurvives .NP_adj nStrandingNPE = true ∧
+    nomSurvives .NP_adj nStrandingNPE ∧
     -- Numerals (at Num level): survive n[E]
-    nomSurvives .Num nStrandingNPE = true ∧
+    nomSurvives .Num nStrandingNPE ∧
     -- D (determiner): always survives
-    nomSurvives .D nStrandingNPE = true := ⟨rfl, rfl, rfl, rfl⟩
+    nomSurvives .D nStrandingNPE := by decide
 
 /-- Individual prenominal deletion is impossible: any [E] position that
     puts the prenominal adjective in the deletion domain also puts N
@@ -300,11 +300,11 @@ theorem no_individual_numeral_deletion (p : NomSpinePos) :
     which deletes the entire NP. -/
 theorem all_or_nothing_postnominal :
     -- Under N-stranding: ALL NP-internal material is deleted
-    nomInDeletionDomain .N nStrandingNPE = true ∧
+    nomInDeletionDomain .N nStrandingNPE ∧
     -- Under nP-ellipsis: NP-internal material PLUS n-level material deleted
-    nomInDeletionDomain .N nPEllipsis = true ∧
-    nomInDeletionDomain .NP_adj nPEllipsis = true ∧
-    nomInDeletionDomain .n nPEllipsis = true := ⟨rfl, rfl, rfl, rfl⟩
+    nomInDeletionDomain .N nPEllipsis ∧
+    nomInDeletionDomain .NP_adj nPEllipsis ∧
+    nomInDeletionDomain .n nPEllipsis := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: N-Stranding as X-Stranding
@@ -319,14 +319,14 @@ theorem all_or_nothing_postnominal :
     (VP/NP) is deleted while the moved head survives. -/
 theorem n_stranding_parallels_v_stranding :
     -- N-stranding: n external under n[E], N's base deleted under n[E]
-    nomSurvives .n nStrandingNPE = true ∧
-    nomInDeletionDomain .N nStrandingNPE = true ∧
+    nomSurvives .n nStrandingNPE ∧
+    nomInDeletionDomain .N nStrandingNPE ∧
     -- V-stranding: v external under v[E], V deleted under v[E]
-    (isInDeletionDomain .v vVPE = false) ∧
-    isInDeletionDomain .V vVPE = true ∧
+    (¬ isInDeletionDomain .v vVPE) ∧
+    isInDeletionDomain .V vVPE ∧
     -- Same structural reason: lexical head below categorizer in both spines
-    NomSpinePos.N.isBelow NomSpinePos.n = true ∧
-    SpinePos.V.isBelow SpinePos.v = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    inDomain NomSpinePos.N NomSpinePos.n ∧
+    inDomain SpinePos.V SpinePos.v := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Connection to Saab (2026)
@@ -351,9 +351,9 @@ theorem german_spanish_e_height :
     Adjectives survive German n[E] but not Spanish Num[E]. -/
 theorem german_more_survivors_than_spanish :
     -- Adjective survives German N-stranding
-    nomSurvives .NP_adj nStrandingNPE = true ∧
+    nomSurvives .NP_adj nStrandingNPE ∧
     -- Adjective does NOT survive Spanish nP-ellipsis
-    nomSurvives .NP_adj nPEllipsis = false := ⟨rfl, rfl⟩
+    ¬ nomSurvives .NP_adj nPEllipsis := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Gender Mismatch Parallel
@@ -377,12 +377,12 @@ theorem german_more_survivors_than_spanish :
     do become possible in our N-stranding NP-ellipsis data." -/
 theorem gender_voice_parallel :
     -- n external under n[E] → gender mismatch tolerated
-    nomSurvives .n nStrandingNPE = true ∧
+    nomSurvives .n nStrandingNPE ∧
     -- Voice external under Voice[E] → voice mismatch tolerated
-    canMismatch englishVPE voiceMismatch = true ∧
+    canMismatch englishVPE voiceMismatch ∧
     -- n internal under Num[E] → gender mismatch blocked
-    nomInDeletionDomain .n nPEllipsis = true ∧
+    nomInDeletionDomain .n nPEllipsis ∧
     -- Voice internal under C[E] → voice mismatch blocked
-    canMismatch sluicing voiceMismatch = false := ⟨rfl, rfl, rfl, rfl⟩
+    ¬ canMismatch sluicing voiceMismatch := by decide
 
 end BenzSalzmann2025
