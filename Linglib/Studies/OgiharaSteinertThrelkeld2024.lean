@@ -1,7 +1,7 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.BeaverCondoravdi2003
-import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
+import Linglib.Semantics.Tense.TemporalConnectives.Projection
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
