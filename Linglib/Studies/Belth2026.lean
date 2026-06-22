@@ -19,7 +19,7 @@ tier and tries again, until either a tolerated rule is found or no further
 deletion helps.
 
 The output of D2L is a tier-based alternation rule, modelled here by the
-canonical `Phonology.Subregular.TierRule` schema (in
+canonical `Phonology.TierRule` schema (in
 `Phonology/Alternation.lean`); the closely-related SPE
 non-tier `Phonology.LocalRewrite.Rule` schema in
 `Phonology/Subregular/LocalRewrite.lean` is the right substrate
@@ -81,7 +81,7 @@ licenses convergence.
 namespace Belth2026
 
 open Core
-open Phonology.Subregular
+open Phonology
 
 -- ============================================================================
 -- § 1: A Minimal Latin Alphabet
@@ -314,7 +314,7 @@ theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     TSL_k schema, instantiated with `IsCons` as the tier predicate and
     the OCP forbidden 2-factor `[some x, some x]`. -/
 def latinTSLGrammar : Subregular.TSLGrammar 2 LatSeg :=
-  Phonology.Subregular.TSLGrammar.ocp LatSeg.IsCons
+  Phonology.TSLGrammar.ocp LatSeg.IsCons
 
 -- ============================================================================
 -- § 9: OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976])
@@ -336,12 +336,12 @@ theorem latinOCP_is_markedness :
 
 /-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
     that candidate is in `latinTSLGrammar.lang`. Specialization of
-    `Phonology.Subregular.mkOCPOnTier_zero_iff_in_ocp_lang` to the Latin
+    `Phonology.mkOCPOnTier_zero_iff_in_ocp_lang` to the Latin
     grammar. The two perspectives — markedness constraint with zero
     violations and TSL_2 grammar membership — coincide. -/
 theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
     latinOCP.eval c = 0 ↔ c ∈ latinTSLGrammar.lang :=
-  Phonology.Subregular.mkOCPOnTier_zero_iff_in_ocp_lang
+  Phonology.mkOCPOnTier_zero_iff_in_ocp_lang
     "OCP/[+cons]" LatSeg.IsCons id c
 
 /-! The OT analysis uses a minimal two-constraint inventory:
@@ -534,7 +534,7 @@ D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
   — voicing assimilation: the projection component is the *trivial*
   identity tier (every segment projects). This is the strict-locality
   case captured generically by
-  `Phonology.Subregular.TierRule.id_tier_left_is_strict_local`.
+  `Phonology.TierRule.id_tier_left_is_strict_local`.
 
 D2L's reported test accuracy on the two corpora exceeds 0.98, beating
 [hayes-wilson-2008] generative phonotactic learners and LSTM

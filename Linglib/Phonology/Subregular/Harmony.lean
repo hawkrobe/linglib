@@ -65,8 +65,8 @@ theory-neutral harmony profile consumed by rival accounts is future work.
 namespace Phonology.Harmony
 
 open Phonology (Segment Feature FeatureVal)
-open Phonology.Subregular
-open _root_.Subregular (OSLRule IsLeftOutputStrictlyLocal)
+open Phonology
+open Subregular (OSLRule IsLeftOutputStrictlyLocal)
 
 -- ============================================================================
 -- § 1: Direction

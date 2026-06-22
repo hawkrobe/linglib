@@ -44,10 +44,10 @@ formalisations but the constraint and a retraction onto it, both characterising
 `Phonology.OCP.IsClean`, both subregular.
 -/
 
-namespace Phonology.Subregular
+namespace Phonology
 
 open OptimalityTheory
-open _root_.Subregular
+open Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0.
@@ -186,4 +186,4 @@ theorem collapse_isISL [DecidableEq α] :
     rw [Phonology.OCP.collapse_eq_destutter, List.destutter_cons']
     exact key x rest
 
-end Phonology.Subregular
+end Phonology

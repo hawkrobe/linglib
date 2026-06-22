@@ -63,7 +63,7 @@ namespace Language
 
 variable {α : Type*}
 
-open _root_.Subregular
+open Subregular
 
 /-- A language `L` is **strictly `k`-local** iff some `SLGrammar α` generates it at
 width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree`

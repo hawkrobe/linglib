@@ -107,7 +107,7 @@ namespace Language
 
 variable {α : Type*}
 
-open _root_.Subregular
+open Subregular
 
 /-! ### The definite family -/
 

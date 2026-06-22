@@ -48,8 +48,8 @@ circumambience proved here is exactly what that argument consumes.
 
 namespace McCollumEtAl2020
 
-open _root_.Subregular
-open _root_.Subregular (Direction)
+open Subregular
+open Subregular (Direction)
 
 /-! ### Alphabet and the conditional-blocking rule -/
 

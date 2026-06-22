@@ -80,7 +80,7 @@ regular, by `IsRegular.finite_syntacticMonoid`).
 * [lambert-2026] §6.2 (finite-`k` companion in `Equations.lean`).
 -/
 
-open _root_.Subregular
+open Subregular
 
 namespace Language
 

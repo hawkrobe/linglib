@@ -46,7 +46,7 @@ M-lowering proper is `[−raised]` *assimilation*, not OCP-merger; and `*MX/XM` 
 The `Phonology.OCP` API is consumed only for the merger of (53–55)/(58), which
 Lionnet presents explicitly as optional ("not necessary in the present analysis" /
 "or fusion"). It is included because it is the merger face of the same OCP
-principle whose prohibition face lives in `Phonology.Subregular.OCP`.
+principle whose prohibition face lives in `Phonology.OCP`.
 -/
 
 namespace Lionnet2022Laal
@@ -142,7 +142,7 @@ theorem ocp_raised_is_tier_relative :
 leaves the `[raised]`-projected tier OCP-clean — the faithful tier-relative reading
 of Lionnet (ex. 54–55, 58), via the substrate retraction `collapse_clean`. The
 merger face of the same OCP principle whose prohibition (TSL₂) face lives in
-`Phonology.Subregular.OCP`. -/
+`Phonology.OCP`. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
     Phonology.OCP.IsClean (Phonology.OCP.collapse (tier.map (·.raised))) :=
   Phonology.OCP.collapse_clean _

@@ -123,7 +123,7 @@ place — the TSL_2 instance of `TSLGrammar.agree`.
 
 namespace Phonology.Studies.Hansson2010
 
-open _root_.Subregular Phonology.Subregular
+open Subregular Phonology
 
 -- ============================================================================
 -- § 1: A toy Navajo segmental alphabet
