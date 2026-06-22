@@ -22,7 +22,7 @@ classical ω-power forms in `Pin.lean` are derived from them.
   `Language.kGeneralizedDefiniteEquation` — for every syntactic-monoid element `s`
   and length-`k` word `αs`, prepending, appending, resp. sandwiching `s` around the
   class of `αs` fixes it (`s * [αs] = [αs]`, `[αs] * s = [αs]`, `[αs] * s * [αs] = [αs]`),
-  where `[αs]` is `L.toSyntacticMonoid (FreeMonoid.ofList αs)`.
+  where `[αs]` is `L.syntacticClass αs`.
 
 ## Main results
 
