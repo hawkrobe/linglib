@@ -24,20 +24,19 @@ trivial, so its cell output is a *one-sided* rule — non-interacting.
 
 * `IsBimachineWeaklyDeterministic.of_letterLeftSubsequential` — subsequential ⊆ WD.
 * `IsBimachineComputable.of_weaklyDeterministic` — WD ⊆ regular.
-* `weaklyDeterministic_strict_subset_regular` — the second inclusion is *proper*.
+* `weaklyDeterministic_strict_subset_regular` — WD ⊊ regular is *proper*: the conjunctive
+  change `conjBM` (a target raised iff a trigger occurs on both sides) is bimachine-computable
+  but `RequiresBothSides`.
 * `isLetterLeftSubsequential_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
   subsequential (the bounded window as a `Mealy` state); `.of_ISLRule` / `.of_OSLRule`
   extend the chain to WD.
 
-## Strictness
+## TODO
 
-Both inclusions are proper:
-
-* **WD ⊊ regular** — `weaklyDeterministic_strict_subset_regular`: the conjunctive change
-  `conjBM` (a target raised iff a trigger occurs on *both* sides) is bimachine-computable
-  but `RequiresBothSides`.
-* **subsequential ⊊ WD** — a genuinely two-sided union is `IsUnboundedCircumambient`,
-  hence not right-myopic, hence not left-subsequential, yet WD.
+* subsequential ⊊ WD is also proper, but a witness is not yet formalized here: a genuinely
+  two-sided union is `IsUnboundedCircumambient`, hence not right-myopic
+  (`IsLetterLeftSubsequential.isRightMyopic`), hence not left-subsequential, yet weakly
+  deterministic.
 -/
 
 namespace Subregular
@@ -119,12 +118,18 @@ private theorem conjBM_lState (xs : List ConjSym) :
 private theorem conjBM_rState (xs : List ConjSym) :
     conjBM.rState xs = xs.any (· == .trig) := by
   show xs.foldr (fun s r => r || (s == .trig)) false = _
-  induction xs with
-  | nil => rfl
-  | cons y ys ih => simp [ih, Bool.or_comm]
+  induction xs <;> simp_all [Bool.or_comm]
 
-/-- Witness word at distance `d`: a medial `tgt` flanked by `d` neutral fillers and a
-`trig` on each end. -/
+/-- Output of `conjBM` at a `.tgt` position: `.raised` iff a trigger appears on both the
+left prefix and the right suffix, else `.tgt`. -/
+private theorem conjBM_run_at {w : List ConjSym} {i : ℕ} (h : w[i]? = some .tgt) :
+    (conjBM.run w)[i]?
+      = some (if (w.take i).any (· == .trig) && (w.drop (i + 1)).any (· == .trig)
+          then .raised else .tgt) := by
+  rw [conjBM.run_getElem?, h, conjBM_lState, conjBM_rState]; simp [conjBM]
+
+/-- Witness word at distance `d`: a medial `.tgt` flanked by `d` neutral fillers and a
+`.trig` on each end. The two perturbations replace one end's `.trig` with a filler. -/
 def conjBase (d : ℕ) : List ConjSym :=
   .trig :: List.replicate d .raised ++ .tgt :: List.replicate d .raised ++ [.trig]
 
@@ -141,51 +146,36 @@ private theorem conjBase_drop (d : ℕ) :
   simp only [show d + 2 - (d + 1) = 1 from by omega]
   simp
 
-/-- The conjunctive spread requires both sides: the base raises a medial target (trigger
-on each side), but removing either far trigger reverts it. -/
+/-- The conjunctive spread requires both sides: the base raises a medial target (a trigger
+on each side), but flipping either far trigger to a filler reverts it. The perturbations are
+`List.set`s of the base, so they agree with it off the flipped index (`getElem?_set_ne`),
+and the reverting cell output is read off via `conjBM_run_at`. -/
 theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run := by
   intro d
   refine ⟨conjBase d, d + 1, by simp [conjBase], ?_,
     ⟨(conjBase d).set 0 .raised, by simp [conjBase], ?_, ?_, ?_⟩,
     ⟨(conjBase d).set (2 * d + 2) .raised, by simp [conjBase], ?_, ?_, ?_⟩⟩
-  -- Goal 1: base changes at d+1 (both sides have a trigger → tgt raises to .raised ≠ .tgt)
-  · rw [conjBM.run_getElem?, conjBM_lState, conjBM_rState,
-        conjBase_getElem_tgt, conjBase_take d, conjBase_drop d]
-    simp [List.any_cons, List.any_replicate, List.any_append, conjBM]
-  -- Goal 2: uL AgreeFrom — set at 0 differs only at 0, so agree from (d+1)-d = 1 ≤ k
-  · intro k hk
-    exact (List.getElem?_set_ne (by omega)).symm
-  -- Goal 3: uL[d+1]? = base[d+1]? since d+1 ≠ 0
+  -- base changes: both sides carry a trigger, so the medial `tgt` raises (`.raised ≠ .tgt`)
+  · rw [conjBM_run_at (conjBase_getElem_tgt d), conjBase_take, conjBase_drop, conjBase_getElem_tgt]
+    simp [List.any_cons, List.any_replicate, List.any_append]
+  · intro k hk; exact (List.getElem?_set_ne (by omega)).symm
   · rw [List.getElem?_set_ne (by omega)]
-  -- Goal 4: uL revert — lState = false (no trigger in take) → cell outputs .tgt
-  · have htake_uL : ((conjBase d).set 0 .raised).take (d + 1) = List.replicate (d + 1) .raised := by
-      rw [List.take_set, conjBase_take]
-      simp [List.set_cons_zero, List.replicate_succ]
-    have hdrop_uL : ((conjBase d).set 0 .raised).drop (d + 2) =
-        List.replicate d .raised ++ [.trig] := by
-      rw [List.drop_set_of_lt (by omega), conjBase_drop]
-    rw [conjBM.run_getElem?, conjBM_lState, conjBM_rState,
-        List.getElem?_set_ne (by omega : (0 : ℕ) ≠ d + 1), conjBase_getElem_tgt,
-        htake_uL, hdrop_uL]
-    simp [List.any_replicate, List.any_append, List.any_cons, conjBM]
-  -- Goal 5: uR AgreeUpto — set at 2*d+2 differs only there, so agree upto (d+1)+d = 2*d+1 < 2*d+2
-  · intro k hk
-    exact (List.getElem?_set_ne (by omega)).symm
-  -- Goal 6: uR[d+1]? = base[d+1]? since d+1 ≠ 2*d+2
+  -- uL reverts: the left perturbation empties the prefix of triggers (`take.any = false`)
+  · have h : ((conjBase d).set 0 .raised)[d + 1]? = some .tgt := by
+      rw [List.getElem?_set_ne (by omega : (0 : ℕ) ≠ d + 1)]; exact conjBase_getElem_tgt d
+    have htake : ((conjBase d).set 0 .raised).take (d + 1) = List.replicate (d + 1) .raised := by
+      rw [List.take_set, conjBase_take]; simp [List.set_cons_zero, List.replicate_succ]
+    rw [conjBM_run_at h, h, htake]; simp [List.any_replicate]
+  · intro k hk; exact (List.getElem?_set_ne (by omega)).symm
   · rw [List.getElem?_set_ne (by omega)]
-  -- Goal 7: uR revert — rState = false (no trigger in drop) → cell outputs .tgt
-  · have htake_uR : ((conjBase d).set (2 * d + 2) .raised).take (d + 1) =
-        .trig :: List.replicate d .raised := by
-      rw [List.take_set_of_le (by omega), conjBase_take]
-    have hdrop_uR : ((conjBase d).set (2 * d + 2) .raised).drop (d + 2) =
-        List.replicate (d + 1) .raised := by
-      rw [show (2 * d + 2 : ℕ) = d + 2 + d from by omega, ← List.set_drop, conjBase_drop]
-      rw [List.set_append_right d ConjSym.raised (by simp)]
+  -- uR reverts: the right perturbation empties the suffix of triggers (`drop.any = false`)
+  · have h : ((conjBase d).set (2 * d + 2) .raised)[d + 1]? = some .tgt := by
+      rw [List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]; exact conjBase_getElem_tgt d
+    have hdrop : ((conjBase d).set (2 * d + 2) .raised).drop (d + 2) = List.replicate (d + 1) .raised := by
+      rw [show (2 * d + 2 : ℕ) = d + 2 + d from by omega, ← List.set_drop, conjBase_drop,
+          List.set_append_right d ConjSym.raised (by simp)]
       simp [List.replicate_succ']
-    rw [conjBM.run_getElem?, conjBM_lState, conjBM_rState,
-        List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1), conjBase_getElem_tgt,
-        htake_uR, hdrop_uR]
-    simp [List.any_replicate, List.any_cons, conjBM]
+    rw [conjBM_run_at h, h, hdrop]; simp [List.any_replicate]
 
 theorem weaklyDeterministic_strict_subset_regular :
     ∃ f : List ConjSym → List ConjSym,
