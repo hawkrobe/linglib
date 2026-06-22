@@ -274,8 +274,8 @@ and whose `finalOutput` is empty. The state is manifestly finite via
 `fintypeListLengthLE`, witnessing ISL ⊆ Subsequential under the source
 literature's finite-state assumption. -/
 def ISLRule.toFinSFST {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    SFST {l : List α // l.length ≤ k - 1} α β where
-  initial := ⟨[], Nat.zero_le _⟩
+    SFST α β {l : List α // l.length ≤ k - 1} where
+  start := ⟨[], Nat.zero_le _⟩
   step w x :=
     (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
      r.windowOutput w.val x)
