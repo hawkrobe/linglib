@@ -9,132 +9,49 @@ import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Data.List.DropRight
 
 /-!
-# Equational characterizations of subregular language classes
+# Equational characterizations of the definite subregular classes
 
-[lambert-2026] §6.2 (paper p. 22-25, with summary in Table 6 p. 28)
-characterizes each base-class of subregular languages by a system of
-equations on the *syntactic semigroup*: `D = ⟦sx^ω = x^ω⟧`,
-`K = ⟦x^ω y = x^ω⟧`, `LI = ⟦x^ω y x^ω = x^ω⟧`, `N = ⟦x^ω y = x^ω;
-yx^ω = x^ω⟧` (definite, reverse-definite, generalized-definite,
-co/finite, respectively).
-
-This file lands the **`k`-definite case** (Lambert Prop 53, p. 23) as a
-feasibility probe — the simplest entry into Lambert's algebraic story
-because it requires no `omegaPow` (idempotent power) machinery.
-Lambert's claim:
-
-> A language is `k`-definite if and only if it is in
-> `⟦sx₁ … xₖ = x₁ … xₖ⟧`.
-
-## Mathlib precedent: monoid + length-`k` letter-sequence variables
-
-Lambert's syntactic *semigroup* excludes the empty word; our
-`Language.syntacticMonoid L` (built via `Con (FreeMonoid α)`, see
-`SyntacticMonoid.lean`) includes the identity (the class of the empty
-word). Mathlib's `Con.Quotient` precedent gives us a `Monoid`, not a
-`Semigroup`; there is no established mathlib `syntacticSemigroup`
-pattern. **We follow mathlib precedent and keep the `Monoid` setting.**
-
-### Letter-sequence quantification (not arbitrary monoid elements)
-
-To recover Lambert's intended characterization in the monoid setting,
-the equation quantifies `x₁, …, xₖ` over **length-`k` letter sequences**
-in the alphabet `α` rather than over arbitrary syntactic-monoid
-elements. This is the "generators" interpretation: the equation says
-"prepending any prefix to a length-`k` letter sequence preserves its
-syntactic class".
-
-The naïve pure-monoid form
-`∀ s ≠ 1, ∀ xs : List M of length k, (∀ x ∈ xs, x ≠ 1) →
-   s * xs.prod = xs.prod`
-is **strictly weaker** and does not characterize `k`-definite. Concrete
-counterexample: take `L = (a|b)*` over the alphabet `{a, b, c}` —
-membership is "no `c` anywhere". Then `[a] = [b] = 1` in the syntactic
-monoid (inserting `a` or `b` anywhere preserves "no `c`"), and the
-syntactic monoid is the rank-2 lattice `M = {1, 0}` with `0 = [c]`
-absorbing. The pure-monoid equation trivially holds: the only
-non-identity element is `0`, and `0 * 0 = 0`. Yet `L` is not
-`k`-definite for any `k` — the words `c·a^k` and `a^k` share the
-length-`k` suffix `a^k` but only the latter is in `L`.
-
-The letter-sequence formulation rules this out: for `αs = [a]` of
-length 1, the syntactic class of `αs` is `1` in `M`, and the equation
-`s * 1 = 1` forces `s = 1`, which fails for `s = [c] = 0`. So the
-equation correctly detects that `L` is not 1-definite.
-
-(Lambert's semigroup version sidesteps the trivial-letter issue
-because his syntactic semigroup is generated only by the *non-trivial*
-letter classes, implicitly ignoring L-trivial letters in the alphabet.
-The letter-sequence monoid form makes this explicit.)
+[lambert-2026] characterizes base classes of subregular languages by equations on
+the syntactic semigroup. This file gives the finite-`k` forms for the **definite**
+(`𝒟`), **reverse-definite** (`𝒦`), and **generalized definite** (`ℒℐ`) classes; the
+classical ω-power forms in `Pin.lean` are derived from them.
 
 ## Main definitions
 
-* `Language.kDefiniteEquation L k` — the equation
-  `∀ s ∈ L.syntacticMonoid, ∀ αs : List α with αs.length = k,
-  s * [αs] = [αs]`. The product on the left is monoid multiplication
-  in `L.syntacticMonoid`; `[αs]` denotes
-  `L.toSyntacticMonoid (FreeMonoid.ofList αs)`.
+* `Language.kDefiniteEquation`, `Language.kReverseDefiniteEquation`,
+  `Language.kGeneralizedDefiniteEquation` — for every syntactic-monoid element `s`
+  and length-`k` word `αs`, prepending, appending, resp. sandwiching `s` around the
+  class of `αs` fixes it (`s * [αs] = [αs]`, `[αs] * s = [αs]`, `[αs] * s * [αs] = [αs]`),
+  where `[αs]` is `L.toSyntacticMonoid (FreeMonoid.ofList αs)`.
 
 ## Main results
 
-* `Language.IsDefinite.satisfies_kDefiniteEquation` — **forward
-  direction**: a `k`-definite language's syntactic monoid satisfies
-  the equation. Proof: extract a `FreeMonoid α` representative `w` of
-  `s`; the equation reduces to `L.syntacticCon (w ++ αs) αs`, which
-  follows from `takeAt_right_append_left_absorb` (since `|αs| = k`,
-  the length-`k` suffix of `x ++ w ++ αs ++ y` already discards `w`).
+* `Language.isDefinite_iff_satisfies_kDefiniteEquation`,
+  `Language.isReverseDefinite_iff_satisfies_kReverseDefiniteEquation`,
+  `Language.isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation`
+  ([lambert-2026], Props 53, 57, 58) — each class equals the languages whose
+  syntactic monoid satisfies the corresponding equation.
 
-* `Language.isDefinite_of_satisfies_kDefiniteEquation` — **reverse
-  direction**: the equation implies `k`-definiteness. Construction:
-  `G.permitted := { Edge.right.takeAt k w | w ∈ L }`. The trivial
-  inclusion `L ⊆ G.lang` holds with witness `w' = w`. The reverse
-  inclusion `G.lang ⊆ L` is by case analysis on word length: short
-  words equal their own suffix (forcing equality); long words decompose
-  as `prefix ++ ks` and the equation gives `L.syntacticCon w ks`,
-  then `L`-saturation closes the case.
+## Implementation notes
 
-* `Language.isDefinite_iff_satisfies_kDefiniteEquation` — Lambert
-  Prop 53 bidirectional bundling.
-
-In the same file, Lambert Prop 57 (reverse-definite, K) and Prop 58
-(generalized definite, ℒℐ) are also landed using the same letter-sequence
-template. The Pin omega-power forms (`Pin.lean`) consume these finite-`k`
-iffs to derive their own iffs.
-
-## Out of scope (queued for follow-up files)
-
-* `multitier ℬ𝒯C` extensions ([lambert-2026] §6.3, Table 6 right
-  column).
-
-## References
-
-* [lambert-2026] §6.2, Prop 53 (paper p. 23).
-* [straubing-1985], [almeida-1995] — the equational-class
-  framework Lambert builds on.
+The `xᵢ` range over length-`k` **letter sequences** (`αs : List α`), not arbitrary
+monoid elements: the latter is strictly weaker, ignoring `L`-trivial letters (e.g.
+`(a|b)*` over `{a, b, c}` would spuriously qualify). [lambert-2026] works in the
+syntactic *semigroup* (no empty word); we keep mathlib's `Con (FreeMonoid α)` monoid
+and recover the characterization through this letter-sequence quantification.
 -/
 
 open Subregular
 
 namespace Language
 
-/-- **Lambert (2026) Prop 53 equation** (length-`k` letter-sequence form):
-for any element `s` of `L.syntacticMonoid` and any length-`k` letter
-sequence `αs : List α`, prepending `s` to the syntactic class of `αs`
-preserves it.
+variable {α : Type*}
 
-The variables `x₁, …, xₖ` of Lambert's notation
-`⟦sx₁ … xₖ = x₁ … xₖ⟧` are instantiated by the letters of `αs`,
-each `xᵢ` as the syntactic class of a single letter, so the product
-`x₁ ⋯ xₖ` corresponds to the syntactic class of `αs`. See file
-docstring for the rationale: the alternative pure-monoid form
-quantifying over arbitrary `xs : List M` is strictly weaker and
-fails to characterize `k`-definite. -/
-def kDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
+/-- **Lambert Prop 53 equation** (`𝒟`): `s * [αs] = [αs]` for any length-`k` word `αs`. -/
+def kDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
     s * L.toSyntacticMonoid (FreeMonoid.ofList αs) =
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
-
-variable {α : Type*}
 
 /-- A membership predicate `(· ∈ L)` factors through `f` as soon as `f`
 preserves membership pointwise. The shared reverse-direction engine for the
