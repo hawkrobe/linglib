@@ -39,8 +39,8 @@ not the structural level.
 -/
 
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Pragmatics.RSA.EmbeddedSI
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -48,7 +48,45 @@ import Mathlib.Tactic.Ring
 namespace RSA.Compositional
 
 open Exhaustification
-open RSA.EmbeddedSI
+
+-- SECTION 0: Embedded SI scenario
+-- The "Every student read some book" scenario [chemla-spector-2011]: 2 students
+-- (Alice, Bob), each reading "some but not all" (S) or "all" (A). The empirical
+-- crux is whether the embedded/local reading is available — localism
+-- ([chierchia-2004], [fox-2007], [chierchia-fox-spector-2012]) vs globalism
+-- ([geurts-pouscoulous-2009]). A probabilistic rival deriving the same readings
+-- without a grammatical EXH operator is lexical-uncertainty RSA
+-- ([bergen-levy-goodman-2016]).
+
+/-- World states for the embedded SI scenario.
+    Each student either read "some but not all" (S) or "all" (A). -/
+inductive EmbeddedSIWorld where
+  | SS : EmbeddedSIWorld  -- Alice: some, Bob: some
+  | SA : EmbeddedSIWorld  -- Alice: some, Bob: all
+  | AS : EmbeddedSIWorld  -- Alice: all, Bob: some
+  | AA : EmbeddedSIWorld  -- Alice: all, Bob: all
+  deriving DecidableEq, Fintype, Repr
+
+/-- Truth conditions under global EXH (EXH > ∀):
+    "every student read some" ∧ ¬"every student read all"
+
+    True at: SS, SA, AS (not AA). The negated alternative is the whole "every
+    student read all", so a world where one student read all still satisfies it. -/
+def globalExhMeaning : EmbeddedSIWorld → Bool
+  | .SS => true   -- ∀some ∧ ¬∀all: ✓
+  | .SA => true   -- ∀some ∧ ¬∀all: ✓ (Bob read all, but not everyone)
+  | .AS => true   -- ∀some ∧ ¬∀all: ✓ (Alice read all, but not everyone)
+  | .AA => false  -- ∀some ∧ ¬∀all: ✗ (everyone read all)
+
+/-- Truth conditions under local EXH (∀ > EXH):
+    "every student [read some but not all]"
+
+    True at: SS only -/
+def localExhMeaning : EmbeddedSIWorld → Bool
+  | .SS => true   -- both read some-but-not-all: ✓
+  | .SA => false  -- Bob read all: ✗
+  | .AS => false  -- Alice read all: ✗
+  | .AA => false  -- both read all: ✗
 
 -- SECTION 1: Local Alternatives at a Node
 
@@ -493,7 +531,7 @@ inductive NestedAristotelian where
   deriving DecidableEq, Repr
 
 /-- Literal (global) meaning of nested Aristotelians.
-    Using the same world type as RSAExhExpressivity. -/
+    Reuses the `EmbeddedSIWorld` scenario type from Section 0. -/
 def nestedMeaning : NestedAristotelian → EmbeddedSIWorld → Bool
   -- "none...X" sentences: false when any student drank something
   | .NN, _ => false  -- none drank none (contradictory in our setup)
