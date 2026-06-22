@@ -16,7 +16,7 @@ sets (Level 1). This is the lower half of the three-level projection chain:
 
 ```
 Level 3: Event Time → Prop (event predicates)
-    ↓ eventDenotation (see EventBridge.lean)
+    ↓ eventDenotation (see Projection.lean)
 Level 2: SentDenotation Time (interval sets — this file)
     ↓ timeTrace
 Level 1: Set Time (point sets)
@@ -42,26 +42,23 @@ abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval
 def timeTrace (p : SentDenotation Time) : Set Time :=
   { t | ∃ i ∈ p, t ∈ i }
 
-/-- Stative denotation: the maximal interval `i` plus all its subintervals.
-    Captures the subinterval (homogeneity) property of states/activities. -/
-def stativeDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
-  { j | j ≤ i }
+/-- Stative denotation: the maximal interval `i` plus all its subintervals — the
+    principal downset `Set.Iic i`. It is therefore an `IsLowerSet` (`isLowerSet_Iic`),
+    which *is* the subinterval-closure property.
 
-/-- Accomplishment denotation: exactly the singleton interval `i`.
+    This models the idealized *stative* subinterval property (homogeneous down to
+    instants). The *activity* case has a minimal-parts floor — a single step is not
+    "running" — which is the proper-subinterval *stratified reference* of
+    `Aspect/Stratified` / [champollion-2017], not this lower set. -/
+def stativeDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
+  Set.Iic i
+
+/-- Accomplishment denotation: exactly the singleton interval `i` (`{i}`).
     Captures the quantized property of telic events. -/
 def accomplishmentDenotation (i : NonemptyInterval Time) : SentDenotation Time :=
-  { j | j = i }
+  {i}
 
 /-! ### Basic Properties -/
-
-/-- Stative denotations are closed under subintervals (the subinterval property).
-    This connects to Krifka's CUM (cumulative reference): if an interval is in
-    the denotation, all its subintervals are too. -/
-theorem stative_denotation_subinterval_closed (i : NonemptyInterval Time) :
-    ∀ j ∈ stativeDenotation i,
-      ∀ k, k ≤ j → k ∈ stativeDenotation i := by
-  intro j hj k hkj
-  exact ⟨le_trans hj.1 hkj.1, le_trans hkj.2 hj.2⟩
 
 /-- Every point subinterval of a stative denotation's maximal interval is in the set. -/
 theorem stativeDenotation_contains_point (i : NonemptyInterval Time) (t : Time)
@@ -83,7 +80,7 @@ theorem stativeDenotation_self (i : NonemptyInterval Time) :
 theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
     timeTrace (stativeDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.mem_def, NonemptyInterval.le_def]
+  simp only [timeTrace, stativeDenotation, Set.mem_Iic, Set.mem_setOf_eq, NonemptyInterval.mem_def, NonemptyInterval.le_def]
   constructor
   · rintro ⟨j, ⟨hjs, hjf⟩, hjt_s, hjt_f⟩
     exact ⟨le_trans hjs hjt_s, le_trans hjt_f hjf⟩
@@ -95,7 +92,7 @@ theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
 theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
     timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, accomplishmentDenotation, Set.mem_setOf_eq, NonemptyInterval.mem_def]
+  simp only [timeTrace, accomplishmentDenotation, Set.mem_singleton_iff, Set.mem_setOf_eq, NonemptyInterval.mem_def]
   constructor
   · rintro ⟨j, rfl, hs, hf⟩
     exact ⟨hs, hf⟩

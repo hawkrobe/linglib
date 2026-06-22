@@ -1,4 +1,5 @@
-import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
+import Linglib.Semantics.Tense.TemporalConnectives.Projection
+import Linglib.Core.Order.AllenRelation
 
 /-!
 # [anscombe-1964] / [krifka-2010b]: Under-specification Semantics
@@ -274,7 +275,7 @@ true when no Q-event exists). The same ` /` pattern present in
 ## Level
 
 **Level 3 (event predicates)**: operates on `Event Time → Prop`. Projects to
-Level 2 via `eventDenotation` (EventBridge.lean).
+Level 2 via `eventDenotation` (Projection.lean).
 
 ## Cross-Level Comparison
 
@@ -314,6 +315,31 @@ def AnscombeEvent.after (P Q : Event Time → Prop) : Prop :=
     This is [anscombe-1964]'s `` lifted from points to event runtimes. -/
 def AnscombeEvent.before (P Q : Event Time → Prop) : Prop :=
   ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
+
+-- ============================================================================
+-- Allen grounding
+-- ============================================================================
+
+/-- The event precedence underlying *after* is exactly the Allen `precedes` atom
+    on run-times (`precedesSet = {precedes}`) — the relation
+    `Semantics/Tense/Reichenbach.lean` already grounds tense in. Routing through
+    `Core/Order/AllenRelation` reads the connective's temporal relation as a named
+    atom-set rather than an ad-hoc inequality (and distinguishes it from
+    `Event.precedes` of `Semantics/Events/Adjacency.lean`, which is the weaker
+    `{precedes, meets}` that also admits abutment). -/
+theorem AnscombeEvent.after_iff_allen (P Q : Event Time → Prop) :
+    AnscombeEvent.after P Q ↔
+      ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧
+        AllenRelation.holdsIn AllenRelation.precedesSet e₂.τ e₁.τ := by
+  simp only [AnscombeEvent.after, precedes_iff_allen]
+
+/-- Dually, *before* relates the main event to every subordinate event by the same
+    Allen `precedes` atom. -/
+theorem AnscombeEvent.before_iff_allen (P Q : Event Time → Prop) :
+    AnscombeEvent.before P Q ↔
+      ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ →
+        AllenRelation.holdsIn AllenRelation.precedesSet e₁.τ e₂.τ := by
+  simp only [AnscombeEvent.before, precedes_iff_allen]
 
 -- ============================================================================
 -- ` 2: Veridicality
