@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Events.Basic
+import Linglib.Semantics.Aspect.SubintervalProperty
 
 /-!
 # The event→interval projection
@@ -128,5 +129,25 @@ theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time 
     eventDenotation P ⊆ stativeDenotation i := by
   rintro j ⟨e, he, rfl⟩
   exact hP e he
+
+/-! ### Homogeneity from the closed subinterval property -/
+
+open Semantics.Aspect.SubintervalProperty in
+/-- If `P` has the **closed** subinterval property (CSUB,
+    `Aspect/SubintervalProperty.lean`) at world `w`, its run-time denotation is a lower
+    set — homogeneous / subinterval-closed in the sense of `IsLowerSet`.
+
+    This is the complement to `eventDenotation_sub_stative`: that gives only `⊆`
+    (subintervals that are nobody's run-time are absent), and CSUB is exactly what
+    closes the gap — it guarantees a witness event for every subinterval, populating the
+    denotation. The *closed* variant is necessary: plain `HasSubintervalProp` only
+    constrains hypothetical witnesses and cannot place an event at each subinterval. -/
+theorem isLowerSet_eventDenotation_of_csub {W : Type*}
+    (P : W → Event Time → Prop) (w : W) (hP : HasClosedSubintervalProp P) :
+    IsLowerSet (eventDenotation (fun e => P w e)) := by
+  intro a b hba ha
+  obtain ⟨e₁, hPe₁, rfl⟩ := ha
+  obtain ⟨e₂, he₂τ, hPe₂⟩ := hP e₁ w hPe₁ b hba
+  exact ⟨e₂, hPe₂, he₂τ⟩
 
 end Tense.TemporalConnectives
