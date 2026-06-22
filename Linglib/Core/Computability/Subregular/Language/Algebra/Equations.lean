@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Language
+import Mathlib.Logic.Function.Basic
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Data.List.DropRight
@@ -196,7 +196,7 @@ theorem IsDefinite.satisfies_kDefiniteEquation
                FreeMonoid.toList w ++ αs := rfl
   have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
   rw [hwmul, hαsId]
-  refine hL.iff ?_
+  refine iff_of_eq (hL ?_)
   rw [show x ++ (FreeMonoid.toList w ++ αs) ++ y =
           (x ++ FreeMonoid.toList w) ++ (αs ++ y) by simp [List.append_assoc],
       show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
@@ -246,7 +246,7 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
           (List.rdrop_append_rtake w k).symm
         rwa [← decomp] at base
       exact mem_iff_of_syntacticEquiv hequiv
-  exact Language.invariantUnder_iff.mpr fun a b hab => by rw [key a, key b, hab]
+  exact fun a b hab => by simp only [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
 syntactic monoid satisfies the `k`-definite equation. Bidirectional
@@ -340,7 +340,7 @@ theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
                αs ++ FreeMonoid.toList w := rfl
   have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
   rw [hwmul, hαsId]
-  refine hL.iff ?_
+  refine iff_of_eq (hL ?_)
   rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
           (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
       show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
@@ -369,7 +369,7 @@ theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
           (Edge.left.takeAt k w) (w.drop k) hlen
         rwa [← decompose_at_left_takeAt (le_of_lt hw)] at base
       exact mem_iff_of_syntacticEquiv hequiv
-  exact Language.invariantUnder_iff.mpr fun a b hab => by rw [key a, key b, hab]
+  exact fun a b hab => by simp only [key a, key b, hab]
 
 /-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
 its syntactic monoid satisfies the reverse-`k`-definite equation. -/
