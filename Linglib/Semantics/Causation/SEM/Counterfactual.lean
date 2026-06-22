@@ -1,3 +1,4 @@
+import Linglib.Core.Probability.Finite
 import Linglib.Semantics.Causation.SEM.Basic
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Deterministic
@@ -177,11 +178,11 @@ noncomputable def cfSeed [DecidableEq V]
     Subsumes (with appropriate derived predicates):
     - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
     - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
-    - Lassiter probabilistic counterfactuals with overt probability operators
-
-    `probabilisticSuf` ([cao-white-lassiter-2025]) is **not** a special
-    case — it's interventional probability without observation conditioning;
-    lives in `Interventional.lean`. -/
+    - `CaoWhiteLassiter2025.probSufficiency` — [cao-white-lassiter-2025]'s
+      SUF, i.e. Pearl's probability of sufficiency ([pearl-2019]): the
+      counterfactual probability of the effect under intervening the cause,
+      via abduction–action–prediction (not plain interventional probability)
+    - Lassiter probabilistic counterfactuals with overt probability operators -/
 noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
@@ -195,7 +196,9 @@ noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableV
 /-- **Whether-causation** ([beller-gerstenberg-2025] Eq 1):
     `W(A → e) = P(e' ≠ e | s, remove(A))`. Probability that the counterfactual
     outcome differs from the actual outcome `xEff_actual` if the antecedent
-    were `xAnt_alt` instead of its actual value.
+    were `xAnt_alt` instead of its actual value — the canonical `PMF.probOfSet`
+    of the complement event `{v | ¬ v.hasValue effect xEff_actual}` under the
+    counterfactual distribution.
 
     For deterministic SEMs, collapses to a {0,1} indicator (see
     `whetherCause_eq_indicator_of_deterministic`). -/
@@ -203,9 +206,8 @@ noncomputable def whetherCause [Fintype V] [DecidableEq V] [DecidableValuation �
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
     (effect : V) (xEff_actual : α effect) : ENNReal :=
-  ∑' v : Valuation α, if v.hasValue effect xEff_actual
-                      then 0
-                      else (counterfactualSimulate M observed antecedent xAnt_alt) v
+  (counterfactualSimulate M observed antecedent xAnt_alt).probOfSet
+    {v | ¬ v.hasValue effect xEff_actual}
 
 /-- **Sufficient-causation** ([beller-gerstenberg-2025] Eq 3):
     `S(A → e) = P(W(A → e') | s, remove(\A))`. Probability that A would
@@ -254,12 +256,9 @@ theorem whetherCause_eq_indicator_of_deterministic
         then 0 else 1 := by
   unfold whetherCause
   rw [counterfactualSimulate_eq_pure_of_deterministic]
-  rw [tsum_eq_single (M.developDet (cfSeed M observed antecedent xAnt_alt))
-      (fun v hv => by
-        rw [PMF.pure_apply_of_ne _ _ hv]; simp)]
-  by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual
-  · simp [h]
-  · simp [h]
+  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
+  by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual <;>
+    simp [h]
 
 end Causation.SEM
 
