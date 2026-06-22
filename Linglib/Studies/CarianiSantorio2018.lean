@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Modality.HistoricalAlternatives
@@ -55,9 +60,11 @@ applying (paper §8.2 footnote 32).
 | 5 | Speaker with w in modal base ⇒ collapse | `member_collapses` |
 | 6 | Selectional `will`: μ(‖will Warriors-cap‖) = 1/3 | `cynthia_credence_one_third` |
 | 7 | Universal `will`: μ(‖∀Warriors-cap‖) = 0 (collapse) | `universal_will_credence_zero` |
-| 8 | "If Robin wears a cap, Robin'll wear a Warriors cap" — credence 1/2 (paper eq. 30, §8.1)| `cap_warriors_credence_one_half` |
+| 8 | "If Robin wears a cap, Robin'll wear a Warriors cap" — *conditional* credence 1/2 (paper ex. (31)/eq. (32), §8)| `cap_warriors_credence_one_half` |
 | 9 | Hájek triviality fails: no proposition has probability 1/2 unconditionally (§8.2 fn 32) | `no_unconditional_one_half` |
 | 10| `cynthiaSel` is coherent (§5.1: selection induces a well-ordering) | `cynthiaSel_coherent` |
+| 11| Selectional will-conditional validates Compositional CEM (§7) | `cap_will_conditional_cem` |
+| 12| Universal-base will-conditional refutes CEM (the Lewis side) | `universal_will_conditional_cem_fails` |
 -/
 
 set_option autoImplicit false
@@ -66,7 +73,8 @@ namespace CarianiSantorio2018
 
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Modality.Selectional
-open Semantics.Conditionals.WillConditional (wouldConditional willConditional)
+open Semantics.Conditionals.WillConditional
+  (wouldConditional willConditional universalWillConditional compositional_CEM)
 open scoped ENNReal
 
 -- ============================================================================
@@ -199,7 +207,7 @@ theorem nonmember_no_collapse :
   unfold selFn counterfactualAlt
   simp [warriorsCap]
 
-/-- **Prediction 5** (= [cariani-santorio-2018] eq. (17) collapse):
+/-- **Prediction 5** (= [cariani-santorio-2018] eq. (18) collapse):
     when `w` is in the modal parameter, `will A` collapses to `A w`. -/
 theorem member_collapses (A : W → Prop) (w : W) (hw : w ∈ histAlt) :
     willSem cynthiaSel A histAlt w ↔ A w :=
@@ -280,27 +288,29 @@ theorem universal_will_credence_zero :
   rw [hempty, PMF.probOfSet_empty]
 
 -- ============================================================================
--- §5. The cap-conditional (paper eq. (30), §8.1)
+-- §5. The cap-conditional (paper ex. (31)/eq. (32), §8)
 -- ============================================================================
 
-/-- **Prediction 8** (will-conditional, paper eq. (30) §8.1):
+/-- **Prediction 8** (will-conditional, paper ex. (31)/eq. (32) §8):
     *If Robin wears a cap, Robin'll wear a Warriors cap*. The Kratzer
-    restriction sends the modal parameter from `histAlt = {cw, cg, cn}`
-    to `histAlt ∩ ‖cap‖ = {cw, cg}` — the cap-wearing alternatives.
-    Inside this restricted parameter, both `cw` and `cg` are equally
-    open, but the antecedent's truth-set assigns positive mass to `cw`
-    only.
+    restriction (`willConditional`) sends the modal parameter from
+    `histAlt = {cw, cg, cn}` to `histAlt ∩ ‖cap‖ = {cw, cg}` — the
+    cap-wearing alternatives.
 
-    Cynthia's credence in this conditional is 1/2 (paper §8.1):
-    of the cap-wearing worlds (total mass 2/3), the Warriors-cap world
-    has mass 1/3, so the conditional credence is 1/3 ÷ 2/3 = 1/2. The
-    next theorem proves the *unconditional* credence in the world
-    where the cap-conditional is true: the world `cw`, which has
-    mass 1/3 ÷ (1/3 + 1/3) = 1/2 of the cap-wearing mass.
+    The theorem records the **conditional** (Bayesian) credence
+    `P(Warriors-cap | cap) = 1/2`: of the cap-wearing worlds (mass 2/3),
+    the Warriors-cap world has mass 1/3, so `1/3 ÷ 2/3 = 1/2`. This is
+    the intuitive Adams-thesis value.
 
-    This exercises [cariani-santorio-2018] §5.3.1 + §5.3.2: the
-    conditional uses `willConditional`, which Kratzer-restricts the
-    modal parameter. -/
+    Note [cariani-santorio-2018] §8 are explicit that the selectional
+    will-conditional *proposition* itself does **not** reach 1/2 in this
+    3-world model — it gets 1/3 or 2/3, since "no proposition can have
+    probability 1/2" when every world has probability 1/3. Standard
+    conditional semantics "fails to vindicate the intuitive assignments
+    of probabilities to conditional sentences"; recovering 1/2 for the
+    proposition needs the §8 refinement to a finer world-algebra. The
+    theorem here captures the Bayesian conditional ratio (the value that
+    refinement targets), not the selectional proposition's probability. -/
 theorem cap_warriors_credence_one_half :
     cynthiaPMF.probOfSet wearsCap ≠ 0 ∧
     cynthiaPMF.condProbSet wearsCap warriorsCap = 1/2 := by
@@ -337,6 +347,65 @@ theorem cap_would_eq_will (w : W) :
     wouldConditional cynthiaSel wearsCap warriorsCap histAlt w =
     willConditional cynthiaSel wearsCap warriorsCap histAlt w :=
   rfl
+
+-- ============================================================================
+-- §5b. Conditional Excluded Middle: selectional validates, universal refutes
+-- ============================================================================
+
+/-! ## The Stalnaker/Lewis CEM fault line, lifted to will-conditionals
+
+[cariani-santorio-2018] §7 derive Compositional CEM —
+`(if A, will B) ∨ (if A, will ¬B)` — from selection single-valuedness.
+The Lewis-style universal-base reading (`universalWillConditional`)
+refutes it, exactly as Lewis's universal counterfactual refutes
+Conditional Excluded Middle for counterfactuals (cf.
+`Stalnaker1981.bizet_cem_fails_universal`). The contrast below exhibits
+that fault line at the future-modal layer, on the Sports Fan model: the
+restricted parameter `histAlt ∩ ‖cap‖ = {cw, cg}` contains both a
+Warriors-cap world (`cw`) and a non-Warriors-cap world (`cg`). -/
+
+/-- **Selectional will-conditionals validate Compositional CEM**
+    (paper §7): for the cap-conditional on the Sports Fan model,
+    `(if cap, will Warriors) ∨ (if cap, will ¬Warriors)` holds. Inherited
+    from the generic `WillConditional.compositional_CEM`. -/
+theorem cap_will_conditional_cem :
+    willConditional cynthiaSel wearsCap warriorsCap histAlt .cw ∨
+    willConditional cynthiaSel wearsCap (fun w => ¬ warriorsCap w) histAlt .cw :=
+  compositional_CEM cynthiaSel wearsCap warriorsCap histAlt .cw
+
+/-- **The universal-base reading refutes Compositional CEM** — the
+    will-conditional analogue of `Stalnaker1981.bizet_cem_fails_universal`.
+    On the restricted parameter `histAlt ∩ ‖cap‖ = {cw, cg}`, neither
+    `(if cap, will Warriors)` nor `(if cap, will ¬Warriors)` is
+    universally true: `cg` is a cap-world that is not a Warriors-world
+    (killing the first disjunct) and `cw` is a Warriors-world (killing the
+    second). So the Lewis-style universal future-conditional falsifies the
+    CEM that the selectional analysis validates. -/
+theorem universal_will_conditional_cem_fails :
+    ¬ universalWillConditional wearsCap warriorsCap histAlt .cw ∧
+    ¬ universalWillConditional wearsCap (fun w => ¬ warriorsCap w) histAlt .cw := by
+  unfold universalWillConditional _root_.Semantics.Modality.Selectional.universalWill
+    _root_.Semantics.Conditionals.WillConditional.restrict
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · have hcg : (W.cg) ∈ warriorsCap :=
+      h .cg ⟨by simp [histAlt], show (W.cg) ∈ wearsCap by decide⟩
+    exact absurd hcg (by decide)
+  · have hcw : ¬ (W.cw) ∈ warriorsCap :=
+      h .cw ⟨by simp [histAlt], show (W.cw) ∈ wearsCap by decide⟩
+    exact absurd (show (W.cw) ∈ warriorsCap by decide) hcw
+
+/-- **The CEM split at the future-modal layer**: the selectional
+    will-conditional validates Compositional CEM while the universal-base
+    reading refutes it. This is the future-tense image of the Stalnaker /
+    Lewis dispute that `Stalnaker1981` records for counterfactuals — one
+    structural divergence, surfaced at both the counterfactual and the
+    will-conditional layer. -/
+theorem will_conditional_cem_split :
+    (willConditional cynthiaSel wearsCap warriorsCap histAlt .cw ∨
+     willConditional cynthiaSel wearsCap (fun w => ¬ warriorsCap w) histAlt .cw) ∧
+    (¬ universalWillConditional wearsCap warriorsCap histAlt .cw ∧
+     ¬ universalWillConditional wearsCap (fun w => ¬ warriorsCap w) histAlt .cw) :=
+  ⟨cap_will_conditional_cem, universal_will_conditional_cem_fails⟩
 
 -- ============================================================================
 -- §6. Hájek triviality fails (paper §8.2 footnote 32)

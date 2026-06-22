@@ -27,9 +27,10 @@ Key distinction from [lewis-1973]: Lewis universally quantifies
 over closest A-worlds; Stalnaker selects a single A-world (with
 supervaluation for ties — see `Conditionals/Counterfactual.lean`).
 
-`SelectionFunction` itself lives in `Core/SelectionFunction.lean` and
-is shared with [cariani-santorio-2018]'s selectional *will* in
-`WillConditional.lean`.
+`SelectionFunction` itself lives in
+`Semantics/Conditionals/SelectionFunction.lean` and is shared with
+[cariani-santorio-2018]'s selectional *will* (`Semantics/Modality/Selectional.lean`)
+and will-conditionals (`Semantics/Conditionals/WillConditional.lean`).
 
 ## Selection ↔ Similarity Bridge ([stalnaker-1981])
 

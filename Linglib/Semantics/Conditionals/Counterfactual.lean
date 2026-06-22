@@ -623,6 +623,7 @@ theorem stalnakerCounterfactual_eq_willConditional_universe
       s A B Set.univ w := by
   unfold stalnakerCounterfactual
     Semantics.Conditionals.WillConditional.willConditional
+    Semantics.Conditionals.WillConditional.restrict
     Semantics.Modality.Selectional.willSem
   rw [Set.univ_inter]
 
