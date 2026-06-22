@@ -82,8 +82,8 @@ are verified at the rate level.
   SomeAllWorld` map indicating, for each letter, whether the letter is
   connected with no / some-but-not-all / all of its circles.
 - Reading extensions (literal, global, local) are `Picture → Bool`
-  functions matching the established pattern in
-  `Pragmatics.RSA.EmbeddedSI`.
+  functions, the same pattern used for the 2-student scenario in
+  `RSA.Compositional`.
 - The §3.2 monotonicity conjecture is captured locally as
   `RatingsMonotone`; promotion to shared substrate is deferred until a
   second graded-TVJ consumer materializes (Beltrama-Schwarz 2024,

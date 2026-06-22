@@ -2625,7 +2625,6 @@ import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Monotonicity
 import Linglib.Pragmatics.RSA.Compositional
-import Linglib.Pragmatics.RSA.EmbeddedSI
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.Ranking
 import Linglib.Pragmatics.RSA.Limits
