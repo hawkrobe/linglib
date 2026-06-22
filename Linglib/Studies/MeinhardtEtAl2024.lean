@@ -368,7 +368,7 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
 /-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
 the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
 theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
-  ⟨Bool, Bool, inferInstance, inferInstance, maasaiBM, maasaiBM_run, maasaiBM_isNonInteracting⟩
+  maasaiBM_run ▸ isBimachineWeaklyDeterministic maasaiBM maasaiBM_isNonInteracting
 
 /-- **Maasai is unbounded-circumambient *as covariation*** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right. The

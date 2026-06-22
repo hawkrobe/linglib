@@ -61,10 +61,11 @@ automaton is trivial, so the cell output is a one-sided rule (`ωR` is the ident
 theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α → List α}
     (h : IsLetterLeftSubsequential f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
-  refine ⟨σ, Unit, inferInstance, inferInstance,
+  set B : Bimachine σ Unit α α :=
     { lInit := T.initial, lStep := fun l a => (T.step l a).1,
-      rInit := (), rStep := fun _ _ => (), out := fun l a _ => (T.step l a).2 }, ?_, ?_⟩
-  · funext xs
+      rInit := (), rStep := fun _ _ => (), out := fun l a _ => (T.step l a).2 } with hB
+  have hrun : B.run = T.run := by
+    funext xs
     apply List.ext_getElem?
     intro i
     rw [Bimachine.run_getElem?]
@@ -73,13 +74,15 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
       = (T.run xs)[i]?
     rw [show T.run xs = T.runFrom T.initial xs from rfl, T.runFrom_getElem?,
         mealy_stateAfter_eq_foldl]
-  · exact ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
+  have hni : B.IsNonInteracting :=
+    ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
+  exact hrun ▸ isBimachineWeaklyDeterministic B hni
 
 /-- **Weakly deterministic ⊆ regular.** A non-interacting bimachine is a bimachine. -/
 theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
     (h : IsBimachineWeaklyDeterministic f) : IsBimachineComputable f := by
-  obtain ⟨L, R, _, _, B, hrun, _⟩ := h
-  exact ⟨L, R, inferInstance, inferInstance, B, hrun⟩
+  obtain ⟨L, R, _, _, B, rfl, _⟩ := h
+  exact isBimachineComputable B
 
 /-! ### Strictness: WD ⊊ regular
 
@@ -187,7 +190,7 @@ theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run := by
 theorem weaklyDeterministic_strict_subset_regular :
     ∃ f : List ConjSym → List ConjSym,
       IsBimachineComputable f ∧ ¬ IsBimachineWeaklyDeterministic f :=
-  ⟨conjBM.run, ⟨Bool, Bool, inferInstance, inferInstance, conjBM, rfl⟩,
+  ⟨conjBM.run, isBimachineComputable conjBM,
    not_isBimachineWeaklyDeterministic_of_requiresBothSides conjBM_requiresBothSides⟩
 
 /-! ### The strictly-local lower end: single-symbol ISL/OSL ⊆ subsequential
