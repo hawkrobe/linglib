@@ -113,7 +113,7 @@ theorem timeTrace_eventDenotation (P : Event Time → Prop) :
 theorem eventDenotation_singleton (e₀ : Event Time) :
     eventDenotation (fun e => e = e₀) = accomplishmentDenotation e₀.τ := by
   ext i
-  simp only [mem_eventDenotation, accomplishmentDenotation, Set.mem_setOf_eq]
+  simp only [mem_eventDenotation, accomplishmentDenotation, Set.mem_singleton_iff]
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
   · intro h; exact ⟨e₀, rfl, h.symm⟩
