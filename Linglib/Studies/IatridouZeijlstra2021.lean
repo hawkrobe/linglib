@@ -241,7 +241,7 @@ theorem nonNPI_no_domainAlts :
     (entailed by it), because if a culminated event took place in a
     subinterval of τ, it also took place in τ. -/
 def SubdomainAlternatives (τ : NonemptyInterval Time) : Set (NonemptyInterval Time) :=
-  { τ' | τ' ≤ τ }
+  Set.Iic τ
 
 /-- Subdomain alternatives of τ include τ itself. -/
 theorem self_in_subdomain (τ : NonemptyInterval Time) :

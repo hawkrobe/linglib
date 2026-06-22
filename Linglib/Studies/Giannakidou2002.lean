@@ -98,11 +98,10 @@ def prfvDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
 -- § 2: Homogeneity
 -- ============================================================================
 
-/-- A sentence denotation is homogeneous (subinterval-closed) when membership
-    is preserved under subintervals. This is Karttunen's selectional restriction
-    for durative *until*: the main clause must be homogeneous. -/
-def IsHomogeneous (D : SentDenotation Time) : Prop :=
-  ∀ t ∈ D, ∀ t', t' ≤ t → t' ∈ D
+/-! A sentence denotation is *homogeneous* (subinterval-closed) when membership is
+    preserved under subintervals — Karttunen's selectional restriction for durative
+    *until*. This is exactly mathlib's `IsLowerSet` over the interval `≤` (subinterval
+    containment), so we state homogeneity directly as `IsLowerSet` below. -/
 
 /-- IMPF denotation satisfies the subinterval property.
 
@@ -155,18 +154,20 @@ theorem prfvDen_not_subinterval_closed :
 -- § 3: Scope Pattern (Derived from Homogeneity)
 -- ============================================================================
 
-/-- IMPF denotation is homogeneous — wide scope is available. -/
+/-- IMPF denotation is homogeneous (a lower set / subinterval-closed) — wide scope
+    is available. -/
 theorem impfDen_homogeneous (P : Unit → Event Time → Prop) :
-    IsHomogeneous (impfDen P) :=
-  impfDen_subinterval_closed P
+    IsLowerSet (impfDen P) := by
+  intro a b hba ha
+  exact impfDen_subinterval_closed P a ha b hba
 
 /-- PRFV denotation is not always homogeneous — wide scope is not always
     available. This is derived from the subinterval-closure failure, not
     stipulated as a Bool field. -/
 theorem prfvDen_not_always_homogeneous :
-    ¬ ∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P) := by
+    ¬ ∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P) := by
   intro h
-  exact prfvDen_not_subinterval_closed fun P t ht t' ht' => h P t ht t' ht'
+  exact prfvDen_not_subinterval_closed fun P t ht t' ht' => h P ht' ht
 
 /-- [giannakidou-2002]'s scope generalization, derived from homogeneity:
     wide-scope negation requires a homogeneous main clause, which IMPF provides
@@ -174,9 +175,9 @@ theorem prfvDen_not_always_homogeneous :
     PRFV's failure of subinterval-closure, not from a stipulated constraint. -/
 theorem scope_pattern_derived :
     -- IMPF always permits wide scope (homogeneous)
-    (∀ (P : Unit → Event Time → Prop), IsHomogeneous (impfDen P)) ∧
+    (∀ (P : Unit → Event Time → Prop), IsLowerSet (impfDen P)) ∧
     -- PRFV does not always permit wide scope (not always homogeneous)
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) :=
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) :=
   ⟨impfDen_homogeneous, prfvDen_not_always_homogeneous⟩
 
 -- ============================================================================
@@ -192,7 +193,7 @@ theorem impfDen_singleton_eq_stativeDenotation
     impfDen (fun () (e : Event Time) => e.τ = i) =
     stativeDenotation i := by
   ext j
-  simp only [UNBOUNDED, stativeDenotation, Set.mem_setOf_eq, Event.τ]
+  simp only [UNBOUNDED, stativeDenotation, Set.mem_Iic, Set.mem_setOf_eq, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
     -- sort defaults to .action; the proof doesn't reference .sort
@@ -621,7 +622,7 @@ theorem veridicality_split :
     would always be homogeneous. But we proved in §2 that PRFV is NOT
     always homogeneous (`prfvDen_not_subinterval_closed`). -/
 theorem stativizer_false_for_perfective :
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) :=
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) :=
   prfvDen_not_always_homogeneous
 
 /-- The five stativizer diagnostics and their results for negated
@@ -691,9 +692,9 @@ theorem stativizer_all_wrong :
     from PRFV (not IMPF), which is why wide-scope is unavailable. -/
 theorem english_past_perfective_default :
     -- PRFV lacks homogeneity → wide scope unavailable
-    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) ∧
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (prfvDen P)) ∧
     -- IMPF has homogeneity → wide scope would be available if past were imperfective
-    (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (impfDen P)) :=
+    (∀ (P : Unit → Event ℤ → Prop), IsLowerSet (impfDen P)) :=
   ⟨prfvDen_not_always_homogeneous, impfDen_homogeneous⟩
 
 -- ============================================================================
