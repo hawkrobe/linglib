@@ -164,11 +164,11 @@ theorem sc_strictly_smaller_than_clause :
     differ freely between antecedent and ellipsis site. The SIC is
     agnostic to these categories. -/
 theorem outside_argdomain_free :
-    isInArgumentDomain .T .C = false ∧
-    isInArgumentDomain .Mod .C = false ∧
-    isInArgumentDomain .Neg .C = false ∧
-    isInArgumentDomain .C .C = false ∧
-    isInArgumentDomain .Fin .C = false := by decide
+    ¬ isInArgumentDomain .T .C ∧
+    ¬ isInArgumentDomain .Mod .C ∧
+    ¬ isInArgumentDomain .Neg .C ∧
+    ¬ isInArgumentDomain .C .C ∧
+    ¬ isInArgumentDomain .Fin .C := by decide
 
 -- ============================================================================
 -- § 3: Active–Passive Voice Mismatch Blocking (paper §3, ex. 10–11)
@@ -355,11 +355,11 @@ theorem sic_checks_heads_not_nodes :
     This imports and extends the bridge theorems from
     [anand-hardt-mccloskey-2021]. -/
 theorem consistent_with_2021_corpus :
-    isInArgumentDomain .v .C = true ∧
+    isInArgumentDomain .v .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .argumentStructure = 0 ∧
-    isInArgumentDomain .T .C = false ∧
+    ¬ isInArgumentDomain .T .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .tense > 0 ∧
-    isInArgumentDomain .Mod .C = false ∧
+    ¬ isInArgumentDomain .Mod .C ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .modality > 0 :=
   ⟨by decide, rfl, by decide, by decide, by decide, by decide⟩
 
