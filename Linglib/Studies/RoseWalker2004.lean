@@ -91,7 +91,7 @@ are transparent), then forbid any tier-adjacent pair `(C₁, C₂)` where
 
 namespace Phonology.Studies.RoseWalker2004
 
-open Subregular Phonology
+open Subregular Phonology Language
 
 -- ============================================================================
 -- § 1: A toy Kikongo segmental alphabet

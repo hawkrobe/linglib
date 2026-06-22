@@ -43,7 +43,9 @@ tier projection.
 `tierProject`/`TSLGrammar` converts via `T x ↔ tier x = true`.
 -/
 
-namespace Subregular
+namespace Language
+
+open Subregular
 
 variable {α : Type*} {𝒞 𝒟 : Language α → Prop} {L L₁ L₂ : Language α} {k : ℕ}
   {w₁ w₂ : List α}
@@ -239,4 +241,4 @@ theorem IsBTC.indist_isGenDef_of_tierAffixes
   obtain ⟨h_pre, h_suf⟩ := h T
   exact Language.isGeneralizedDefinite_iff_edges.mp hL' h_pre h_suf
 
-end Subregular
+end Language

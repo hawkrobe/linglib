@@ -570,7 +570,7 @@ suffices to demonstrate the schema, the empirical-limit pattern
 /-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
 at window-size 2. -/
 theorem latinTSLGrammar_lang_isTSL2 :
-    Subregular.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
+    Language.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
   ⟨latinTSLGrammar, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
@@ -578,7 +578,7 @@ theorem latinTSLGrammar_lang_isTSL2 :
 is in the multitier closure of strictly local languages, hence consumed
 by the [lambert-2026] BTC framework. -/
 theorem latinTSLGrammar_lang_isBTSL2 :
-    Subregular.IsBTSL 2 latinTSLGrammar.lang :=
+    Language.IsBTSL 2 latinTSLGrammar.lang :=
   latinTSLGrammar_lang_isTSL2.toIsBTSL
 
 end Belth2026

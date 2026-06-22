@@ -106,6 +106,7 @@ docstrings.
 namespace Lambert2026
 
 open Subregular
+open Language
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
 open Phonology (Sibilant)
 open Phonology  -- for `TSLGrammar.agree`
