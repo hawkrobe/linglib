@@ -136,9 +136,15 @@ def kDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
 
 variable {α : Type*}
 
--- ============================================================================
--- §1. Helper lemmas on `Edge.right.takeAt`
--- ============================================================================
+/-- A membership predicate `(· ∈ L)` factors through `f` as soon as `f`
+preserves membership pointwise. The shared reverse-direction engine for the
+`Is*Definite` characterizations, which each reduce to a per-word
+`w ∈ L ↔ edge w ∈ L`. -/
+private lemma factorsThrough_of_mem_iff {L : Language α} {f : List α → List α}
+    (key : ∀ w, w ∈ L ↔ f w ∈ L) : Function.FactorsThrough (· ∈ L) f :=
+  fun a b hab => by simp only [key a, key b, hab]
+
+/-! ### Helper lemmas on `Edge.right.takeAt` -/
 
 /-- The right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix of `rest`
 whenever `rest.length ≥ k` — the `Edge.takeAt` view of
@@ -148,9 +154,7 @@ lemma takeAt_right_append_left_absorb {α : Type*}
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
   List.rtake_append_of_le_length x rest h
 
--- ============================================================================
--- §2. Lifting the equation to a syntactic-class equality
--- ============================================================================
+/-! ### Lifting the equation to a syntactic-class equality -/
 
 /-- Under the `k`-definite equation, prepending any prefix to a
 length-`k` word preserves its syntactic class.
@@ -168,9 +172,7 @@ lemma syntacticCon_of_kDefiniteEquation {L : Language α} {k : ℕ}
   rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
   exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
 
--- ============================================================================
--- §3. Lambert Prop 53 — both directions
--- ============================================================================
+/-! ### Lambert Prop 53 — both directions -/
 
 /-- **Lambert Prop 53 (forward direction)**: a `k`-definite language's
 syntactic monoid satisfies the `k`-definite equation: prepending any
@@ -231,10 +233,10 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
   have key : ∀ w : List α, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
     intro w
     by_cases hw : w.length ≤ k
-    · rw [Edge.takeAt_right, List.rtake_of_length_le hw]
-    · push_neg at hw
+    · rw [Edge.takeAt_of_length_le _ hw]
+    · push Not at hw
       have hlen : (Edge.right.takeAt k w).length = k := by
-        rw [Edge.takeAt_right, List.length_rtake]; omega
+        rw [Edge.length_takeAt]; omega
       have hcon : L.toSyntacticMonoid (FreeMonoid.ofList w) =
           L.toSyntacticMonoid (FreeMonoid.ofList (Edge.right.takeAt k w)) := by
         have base := syntacticCon_of_kDefiniteEquation h
@@ -243,7 +245,7 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
           (List.rdrop_append_rtake w k).symm
         rwa [← decomp] at base
       exact mem_iff_of_syntacticCon (Quotient.exact hcon)
-  exact fun a b hab => by simp only [key a, key b, hab]
+  exact factorsThrough_of_mem_iff key
 
 /-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
 syntactic monoid satisfies the `k`-definite equation. Bidirectional
@@ -255,9 +257,7 @@ theorem isDefinite_iff_satisfies_kDefiniteEquation
   ⟨IsDefinite.satisfies_kDefiniteEquation,
    isDefinite_of_satisfies_kDefiniteEquation⟩
 
--- ============================================================================
--- §4. Lambert Prop 57 — reverse-definite (mirror of D)
--- ============================================================================
+/-! ### Lambert Prop 57 — reverse-definite (mirror of D) -/
 
 /-- **Lambert (2026) Prop 57 equation** for **reverse-definite**
 languages (length-`k` letter-sequence, monoid form): for any element
@@ -271,7 +271,7 @@ def kReverseDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
     L.toSyntacticMonoid (FreeMonoid.ofList αs) * s =
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
 
--- §4.1. Helper lemmas on `Edge.left.takeAt` (mirror of §1)
+/-! #### Helper lemmas on `Edge.left.takeAt` (mirror of `Edge.right`) -/
 
 /-- The left-`k`-prefix of `xs ++ y` equals the left-`k`-prefix of
 `xs` whenever `xs.length ≥ k`. -/
@@ -281,27 +281,7 @@ private lemma takeAt_left_append_right_absorb {α : Type*}
   show (xs ++ y).take k = xs.take k
   exact List.take_append_of_le_length h
 
-/-- When `xs.length ≤ k`, the left-`k`-prefix of `xs` is `xs` itself. -/
-private lemma takeAt_left_of_short {α : Type*} {k : ℕ} {xs : List α}
-    (h : xs.length ≤ k) : Edge.left.takeAt k xs = xs := by
-  show xs.take k = xs
-  exact List.take_of_length_le h
-
-/-- When `xs.length ≥ k`, the left-`k`-prefix of `xs` has length exactly `k`. -/
-private lemma takeAt_left_length_of_long {α : Type*} {k : ℕ} {xs : List α}
-    (h : k ≤ xs.length) : (Edge.left.takeAt k xs).length = k := by
-  show (xs.take k).length = k
-  rw [List.length_take]; omega
-
-/-- A list `xs` of length `≥ k` decomposes as
-`Edge.left.takeAt k xs ++ xs.drop k`. -/
-private lemma decompose_at_left_takeAt {α : Type*} {k : ℕ} {xs : List α}
-    (_h : k ≤ xs.length) :
-    xs = Edge.left.takeAt k xs ++ xs.drop k := by
-  show xs = xs.take k ++ xs.drop k
-  exact (List.take_append_drop _ _).symm
-
--- §4.2. Lifting the K equation to a syntactic-class equality
+/-! #### Lifting the K equation to a syntactic-class equality -/
 
 /-- Under the reverse-`k`-definite equation, **appending** any suffix to
 a length-`k` word preserves its syntactic class. Mirror of
@@ -314,7 +294,7 @@ lemma syntacticCon_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
   rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
   exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
 
--- §4.3. Lambert Prop 57 — both directions
+/-! #### Lambert Prop 57 — both directions -/
 
 /-- **Lambert Prop 57 (forward direction)**: a reverse-`k`-definite
 language's syntactic monoid satisfies the reverse-`k`-definite equation. -/
@@ -336,7 +316,7 @@ theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
   refine iff_of_eq (hL ?_)
   rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
           (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
-      show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
+      show x ++ αs ++ y = (x ++ αs) ++ y by simp [List.append_assoc]]
   have h_combined_len : k ≤ (x ++ αs).length := by
     rw [List.length_append]; omega
   rw [takeAt_left_append_right_absorb (x ++ αs)
@@ -353,17 +333,19 @@ theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
   have key : ∀ w : List α, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
     intro w
     by_cases hw : w.length ≤ k
-    · rw [takeAt_left_of_short hw]
-    · push_neg at hw
-      have hlen : (Edge.left.takeAt k w).length = k :=
-        takeAt_left_length_of_long (le_of_lt hw)
+    · rw [Edge.takeAt_of_length_le _ hw]
+    · push Not at hw
+      have hlen : (Edge.left.takeAt k w).length = k := by
+        rw [Edge.length_takeAt]; omega
       have hcon : L.toSyntacticMonoid (FreeMonoid.ofList w) =
           L.toSyntacticMonoid (FreeMonoid.ofList (Edge.left.takeAt k w)) := by
         have base := syntacticCon_of_kReverseDefiniteEquation h
           (Edge.left.takeAt k w) (w.drop k) hlen
-        rwa [← decompose_at_left_takeAt (le_of_lt hw)] at base
+        have decomp : w = Edge.left.takeAt k w ++ w.drop k :=
+          (List.take_append_drop k w).symm
+        rwa [← decomp] at base
       exact mem_iff_of_syntacticCon (Quotient.exact hcon)
-  exact fun a b hab => by simp only [key a, key b, hab]
+  exact factorsThrough_of_mem_iff key
 
 /-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
 its syntactic monoid satisfies the reverse-`k`-definite equation. -/
@@ -373,9 +355,7 @@ theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
   ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
    isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
 
--- ============================================================================
--- §5. Lambert Prop 58 — generalized definite (sandwich form)
--- ============================================================================
+/-! ### Lambert Prop 58 — generalized definite (sandwich form) -/
 
 /-- **Lambert (2026) Prop 58 equation** for **generalized `k`-definite**
 languages (length-`k` letter-sequence, sandwich monoid form): for any
@@ -396,7 +376,7 @@ def kGeneralizedDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
 
 
--- §5.1. Lifting LI equation to a syntactic-class equality
+/-! #### Lifting the LI equation to a syntactic-class equality -/
 
 /-- Under the LI equation, sandwiching any word `w` between two copies
 of a length-`k` word `αs` preserves the syntactic class of `αs`. -/
@@ -410,7 +390,7 @@ lemma syntacticCon_of_kGeneralizedDefiniteEquation
       MonoidHom.map_mul]
   exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
 
--- §5.2. Lambert Prop 58 — forward direction
+/-! #### Lambert Prop 58 — forward direction -/
 
 /-- **Lambert Prop 58 (forward direction)**: a generalized-`k`-definite
 language's syntactic monoid satisfies the LI equation.
@@ -447,7 +427,7 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
     rw [show x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y =
             (x ++ αs) ++ (FreeMonoid.toList w ++ αs ++ y) by
           simp [List.append_assoc],
-        show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
+        show x ++ αs ++ y = (x ++ αs) ++ y by simp [List.append_assoc]]
     have h_xαs_len : k ≤ (x ++ αs).length := by
       rw [List.length_append]; omega
     rw [List.take_append_of_le_length h_xαs_len,
@@ -465,7 +445,7 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
           (αs ++ y) h_αsy_len,
         takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
 
--- §5.3. Lambert Prop 58 — reverse direction
+/-! #### Lambert Prop 58 — reverse direction -/
 
 /-- **Lambert Prop 58 (reverse direction)**: if a language's syntactic
 monoid satisfies the LI equation, then `L` is generalized `k`-definite.
@@ -499,24 +479,22 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
   · -- Both `|wᵢ| ≥ k`: the matching length-`k` prefix forces `|w₂| ≥ k` too,
     -- since otherwise `Edge.left.takeAt k w₂` would be shorter than `k`.
     have h_pre_len_w₁ : (Edge.left.takeAt k w₁).length = k := by
-      show (w₁.take k).length = k
-      rw [List.length_take]; omega
+      rw [Edge.length_takeAt]; omega
     have hw₂_long : k ≤ w₂.length := by
       have h_pre_len_w₂ : (Edge.left.takeAt k w₂).length = k := by
         rw [← hpre]; exact h_pre_len_w₁
-      have : (w₂.take k).length = k := h_pre_len_w₂
-      rw [List.length_take] at this; omega
+      rw [Edge.length_takeAt] at h_pre_len_w₂; omega
     -- Set up αs, βs, b_i, c_i and the two decompositions of each wᵢ.
-    set αs := Edge.left.takeAt k w₁ with hαs_def
-    set βs := Edge.right.takeAt k w₁ with hβs_def
+    set αs := Edge.left.takeAt k w₁
+    set βs := Edge.right.takeAt k w₁
     have hαs_len : αs.length = k := h_pre_len_w₁
     have hβs_len : βs.length = k := by
       show (w₁.drop (w₁.length - k)).length = k
       rw [List.length_drop]; omega
-    set b₁ := w₁.drop k with hb₁_def
-    set b₂ := w₂.drop k with hb₂_def
-    set c₁ := w₁.take (w₁.length - k) with hc₁_def
-    set c₂ := w₂.take (w₂.length - k) with hc₂_def
+    set b₁ := w₁.drop k
+    set b₂ := w₂.drop k
+    set c₁ := w₁.take (w₁.length - k)
+    set c₂ := w₂.take (w₂.length - k)
     -- αs-decompositions: wᵢ = αs ++ bᵢ.
     have hw₁_αs : w₁ = αs ++ b₁ := by
       show w₁ = w₁.take k ++ w₁.drop k
@@ -560,23 +538,20 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
   · -- Short case: `|w₁| < k`. Then `Edge.left.takeAt k w₁ = w₁`, so
     -- the prefix equality yields `w₁ = Edge.left.takeAt k w₂`, which
     -- forces `|w₂| ≤ k` (otherwise the takeAt has length `k > |w₁|`).
-    push_neg at hw₁_long
-    have h_w₁_pre : Edge.left.takeAt k w₁ = w₁ := by
-      show w₁.take k = w₁
-      exact List.take_of_length_le (le_of_lt hw₁_long)
+    push Not at hw₁_long
+    have h_w₁_pre : Edge.left.takeAt k w₁ = w₁ :=
+      Edge.takeAt_of_length_le _ (le_of_lt hw₁_long)
     rw [h_w₁_pre] at hpre
     -- Now hpre : w₁ = Edge.left.takeAt k w₂.
     by_cases hw₂_long : k ≤ w₂.length
     · -- Length-`k` takeAt of `w₂` has length `k > |w₁|`. Contradicts hpre.
       have h_pre_len : (Edge.left.takeAt k w₂).length = k := by
-        show (w₂.take k).length = k
-        rw [List.length_take]; omega
+        rw [Edge.length_takeAt]; omega
       rw [← hpre] at h_pre_len
       omega
-    · push_neg at hw₂_long
-      have h_w₂_pre : Edge.left.takeAt k w₂ = w₂ := by
-        show w₂.take k = w₂
-        exact List.take_of_length_le (le_of_lt hw₂_long)
+    · push Not at hw₂_long
+      have h_w₂_pre : Edge.left.takeAt k w₂ = w₂ :=
+        Edge.takeAt_of_length_le _ (le_of_lt hw₂_long)
       rw [h_w₂_pre] at hpre
       rw [hpre]
 
