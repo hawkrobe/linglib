@@ -74,6 +74,11 @@ lemma takeAt_of_length_le {k : ℕ} {xs : List α} (h : xs.length ≤ k) :
   | left => exact List.take_of_length_le h
   | right => exact List.rtake_of_length_le h
 
+/-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
+lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ rest.length) :
+    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
+  List.rtake_append_of_le_length x rest h
+
 end Edge
 
 /-! ### Edge-bridge identities
