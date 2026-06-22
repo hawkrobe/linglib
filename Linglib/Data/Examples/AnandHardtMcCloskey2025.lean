@@ -27,7 +27,7 @@ def ex_13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")]
-    comment := "UNVERIFIED paperLabel: ex. (13a) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13a, not checked against the published paper. SCSS corpus ID [138195] per the Lean source field. The stranded 'in' marks a nonargument PP merged above vP, outside the argument domain, so the Structural Identity Condition does not require it to match. Lean fields: antecedent = 'government regulation is necessary'; innerAntecedent = 'a one-size-fits-all approach'; whPhrase = 'what form'; elided = 'government regulation is necessary in'."
+    comment := "UNVERIFIED paperLabel: ex. (13a) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13a, not checked against the published paper. SCEP corpus ID [138195] per the Lean source field. The stranded 'in' marks a nonargument PP merged above vP, outside the argument domain, so the Structural Identity Condition does not require it to match. Lean fields: antecedent = 'government regulation is necessary'; innerAntecedent = 'a one-size-fits-all approach'; whPhrase = 'what form'; elided = 'government regulation is necessary in'."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -45,7 +45,7 @@ def ex_13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")]
-    comment := "UNVERIFIED paperLabel: ex. (13b) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13b, not checked against the published paper. SCSS corpus ID [F38] per the Lean source field. Lean fields: antecedent = 'I remembered meeting her'; innerAntecedent = 'her'; whPhrase = 'what date'; elided = 'I met her on'."
+    comment := "UNVERIFIED paperLabel: ex. (13b) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13b, not checked against the published paper. SCEP corpus ID [F38] per the Lean source field. Lean fields: antecedent = 'I remembered meeting her'; innerAntecedent = 'her'; whPhrase = 'what date'; elided = 'I met her on'."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
