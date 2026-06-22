@@ -50,8 +50,7 @@ variable {α : Type*}
 /-- **Lambert Prop 53 equation** (`𝒟`): `s * [αs] = [αs]` for any length-`k` word `αs`. -/
 def kDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    s * L.toSyntacticMonoid (FreeMonoid.ofList αs) =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs)
+    s * L.syntacticClass αs = L.syntacticClass αs
 
 /-- A membership predicate `(· ∈ L)` factors through `f` as soon as `f`
 preserves membership pointwise. The shared reverse-direction engine for the
@@ -73,21 +72,14 @@ lemma takeAt_right_append_left_absorb {α : Type*}
 
 /-! ### Lifting the equation to a syntactic-class equality -/
 
-/-- Under the `k`-definite equation, prepending any prefix to a
-length-`k` word preserves its syntactic class.
-
-This is the algebraic heart of the reverse direction: applying the
-equation at `s = [w]` and unfolding
-`L.toSyntacticMonoid (w * αs) = L.toSyntacticMonoid w *
-L.toSyntacticMonoid αs` gives the syntactic-monoid equality
-`[w * αs] = [αs]`. -/
-lemma syntacticCon_of_kDefiniteEquation {L : Language α} {k : ℕ}
+/-- Under the `k`-definite equation, prepending any prefix to a length-`k` word
+preserves its syntactic class — the algebraic heart of the reverse direction. -/
+lemma syntacticClass_of_kDefiniteEquation {L : Language α} {k : ℕ}
     (h : Language.kDefiniteEquation L k)
     (w αs : List α) (hαs_len : αs.length = k) :
-    L.toSyntacticMonoid (FreeMonoid.ofList (w ++ αs)) =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
-  rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
-  exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
+    L.syntacticClass (w ++ αs) = L.syntacticClass αs := by
+  rw [syntacticClass_append]
+  exact h (L.syntacticClass w) αs hαs_len
 
 /-! ### Lambert Prop 53 — both directions -/
 
@@ -99,25 +91,14 @@ theorem IsDefinite.satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ} (hL : L.IsDefinite k) :
     Language.kDefiniteEquation L k := by
   intro s αs hαs_len
-  obtain ⟨w, hw⟩ := Quotient.exists_rep s
-  rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
-  apply Quotient.sound
-  refine (syntacticCon_iff L).mpr ?_
+  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
+  rw [← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
-  show x ++ FreeMonoid.toList (w * FreeMonoid.ofList αs) ++ y ∈ L ↔
-       x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
-  have hwmul : FreeMonoid.toList (w * FreeMonoid.ofList αs) =
-               FreeMonoid.toList w ++ αs := rfl
-  have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
-  rw [hwmul, hαsId]
   refine iff_of_eq (hL ?_)
-  rw [show x ++ (FreeMonoid.toList w ++ αs) ++ y =
-          (x ++ FreeMonoid.toList w) ++ (αs ++ y) by simp [List.append_assoc],
+  rw [show x ++ (w ++ αs) ++ y = (x ++ w) ++ (αs ++ y) by simp [List.append_assoc],
       show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
-  have h_combined_len : k ≤ (αs ++ y).length := by
-    rw [List.length_append]; omega
-  rw [takeAt_right_append_left_absorb (x ++ FreeMonoid.toList w)
-        (αs ++ y) h_combined_len,
+  have h_combined_len : k ≤ (αs ++ y).length := by rw [List.length_append]; omega
+  rw [takeAt_right_append_left_absorb (x ++ w) (αs ++ y) h_combined_len,
       takeAt_right_append_left_absorb x (αs ++ y) h_combined_len]
 
 /-- **Lambert Prop 53 (reverse direction)**: if a language's syntactic
@@ -154,14 +135,13 @@ theorem isDefinite_of_satisfies_kDefiniteEquation
     · push Not at hw
       have hlen : (Edge.right.takeAt k w).length = k := by
         rw [Edge.length_takeAt]; omega
-      have hcon : L.toSyntacticMonoid (FreeMonoid.ofList w) =
-          L.toSyntacticMonoid (FreeMonoid.ofList (Edge.right.takeAt k w)) := by
-        have base := syntacticCon_of_kDefiniteEquation h
+      have hcon : L.syntacticClass w = L.syntacticClass (Edge.right.takeAt k w) := by
+        have base := syntacticClass_of_kDefiniteEquation h
           (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
         have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
           (List.rdrop_append_rtake w k).symm
         rwa [← decomp] at base
-      exact mem_iff_of_syntacticCon (Quotient.exact hcon)
+      exact mem_iff_of_syntacticClass_eq hcon
   exact factorsThrough_of_mem_iff key
 
 /-- **Lambert (2026) Prop 53**: a language is `k`-definite iff its
@@ -185,8 +165,7 @@ languages (length-`k` letter-sequence, monoid form): for any element
 Lambert's notation: `𝒦_k = ⟦x₁ ⋯ xₖ s = x₁ ⋯ xₖ⟧` (paper Prop 57). -/
 def kReverseDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) * s =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs)
+    L.syntacticClass αs * s = L.syntacticClass αs
 
 /-! #### Helper lemmas on `Edge.left.takeAt` (mirror of `Edge.right`) -/
 
@@ -200,16 +179,14 @@ private lemma takeAt_left_append_right_absorb {α : Type*}
 
 /-! #### Lifting the K equation to a syntactic-class equality -/
 
-/-- Under the reverse-`k`-definite equation, **appending** any suffix to
-a length-`k` word preserves its syntactic class. Mirror of
-`syntacticCon_of_kDefiniteEquation`. -/
-lemma syntacticCon_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
+/-- Under the reverse-`k`-definite equation, **appending** any suffix to a length-`k`
+word preserves its syntactic class. Mirror of `syntacticClass_of_kDefiniteEquation`. -/
+lemma syntacticClass_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
     (h : Language.kReverseDefiniteEquation L k)
     (αs w : List α) (hαs_len : αs.length = k) :
-    L.toSyntacticMonoid (FreeMonoid.ofList (αs ++ w)) =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
-  rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
-  exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
+    L.syntacticClass (αs ++ w) = L.syntacticClass αs := by
+  rw [syntacticClass_append]
+  exact h (L.syntacticClass w) αs hαs_len
 
 /-! #### Lambert Prop 57 — both directions -/
 
@@ -219,25 +196,14 @@ theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ} (hL : L.IsReverseDefinite k) :
     Language.kReverseDefiniteEquation L k := by
   intro s αs hαs_len
-  obtain ⟨w, hw⟩ := Quotient.exists_rep s
-  rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
-  apply Quotient.sound
-  refine (syntacticCon_iff L).mpr ?_
+  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
+  rw [← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
-  show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w) ++ y ∈ L ↔
-       x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
-  have hwmul : FreeMonoid.toList (FreeMonoid.ofList αs * w) =
-               αs ++ FreeMonoid.toList w := rfl
-  have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
-  rw [hwmul, hαsId]
   refine iff_of_eq (hL ?_)
-  rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
-          (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
+  rw [show x ++ (αs ++ w) ++ y = (x ++ αs) ++ (w ++ y) by simp [List.append_assoc],
       show x ++ αs ++ y = (x ++ αs) ++ y by simp [List.append_assoc]]
-  have h_combined_len : k ≤ (x ++ αs).length := by
-    rw [List.length_append]; omega
-  rw [takeAt_left_append_right_absorb (x ++ αs)
-        (FreeMonoid.toList w ++ y) h_combined_len,
+  have h_combined_len : k ≤ (x ++ αs).length := by rw [List.length_append]; omega
+  rw [takeAt_left_append_right_absorb (x ++ αs) (w ++ y) h_combined_len,
       takeAt_left_append_right_absorb (x ++ αs) y h_combined_len]
 
 /-- **Lambert Prop 57 (reverse direction)**: if a language's syntactic
@@ -254,14 +220,13 @@ theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
     · push Not at hw
       have hlen : (Edge.left.takeAt k w).length = k := by
         rw [Edge.length_takeAt]; omega
-      have hcon : L.toSyntacticMonoid (FreeMonoid.ofList w) =
-          L.toSyntacticMonoid (FreeMonoid.ofList (Edge.left.takeAt k w)) := by
-        have base := syntacticCon_of_kReverseDefiniteEquation h
+      have hcon : L.syntacticClass w = L.syntacticClass (Edge.left.takeAt k w) := by
+        have base := syntacticClass_of_kReverseDefiniteEquation h
           (Edge.left.takeAt k w) (w.drop k) hlen
         have decomp : w = Edge.left.takeAt k w ++ w.drop k :=
           (List.take_append_drop k w).symm
         rwa [← decomp] at base
-      exact mem_iff_of_syntacticCon (Quotient.exact hcon)
+      exact mem_iff_of_syntacticClass_eq hcon
   exact factorsThrough_of_mem_iff key
 
 /-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
@@ -288,24 +253,20 @@ instances are bound to the **same** letter sequence; this is the
 the same class. -/
 def kGeneralizedDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) * s *
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs)
+    L.syntacticClass αs * s * L.syntacticClass αs = L.syntacticClass αs
 
 
 /-! #### Lifting the LI equation to a syntactic-class equality -/
 
-/-- Under the LI equation, sandwiching any word `w` between two copies
-of a length-`k` word `αs` preserves the syntactic class of `αs`. -/
-lemma syntacticCon_of_kGeneralizedDefiniteEquation
+/-- Under the LI equation, sandwiching any word `w` between two copies of a length-`k`
+word `αs` preserves the syntactic class of `αs`. -/
+lemma syntacticClass_of_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ}
     (h : Language.kGeneralizedDefiniteEquation L k)
     (αs w : List α) (hαs_len : αs.length = k) :
-    L.toSyntacticMonoid (FreeMonoid.ofList (αs ++ w ++ αs)) =
-    L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
-  rw [FreeMonoid.ofList_append, FreeMonoid.ofList_append, MonoidHom.map_mul,
-      MonoidHom.map_mul]
-  exact h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
+    L.syntacticClass (αs ++ w ++ αs) = L.syntacticClass αs := by
+  rw [syntacticClass_append, syntacticClass_append]
+  exact h (L.syntacticClass w) αs hαs_len
 
 /-! #### Lambert Prop 58 — forward direction -/
 
@@ -320,46 +281,25 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ} (hL : L.IsGeneralizedDefinite k) :
     Language.kGeneralizedDefiniteEquation L k := by
   intro s αs hαs_len
-  obtain ⟨w, hw⟩ := Quotient.exists_rep s
-  rw [show s = L.toSyntacticMonoid w from hw.symm]
-  rw [show L.toSyntacticMonoid (FreeMonoid.ofList αs) * L.toSyntacticMonoid w *
-        L.toSyntacticMonoid (FreeMonoid.ofList αs) =
-      L.toSyntacticMonoid (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) by
-    rw [MonoidHom.map_mul, MonoidHom.map_mul]]
-  apply Quotient.sound
-  refine (syntacticCon_iff L).mpr ?_
+  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
+  rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
-  show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) ++ y ∈ L ↔
-       x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
-  -- Both sides reduce to checking IsGeneralizedDefinite on appropriate words.
-  have hwmul : FreeMonoid.toList (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) =
-               αs ++ FreeMonoid.toList w ++ αs := rfl
-  have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
-  rw [hwmul, hαsId]
-  -- Apply IsGenDef to (x ++ αs ++ toList w ++ αs ++ y, x ++ αs ++ y).
   apply isGeneralizedDefinite_iff_edges.mp hL
   · -- takeAt_left k matches: both have x ++ αs as prefix.
-    show (x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y).take k =
-         (x ++ αs ++ y).take k
-    rw [show x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y =
-            (x ++ αs) ++ (FreeMonoid.toList w ++ αs ++ y) by
+    show (x ++ (αs ++ w ++ αs) ++ y).take k = (x ++ αs ++ y).take k
+    rw [show x ++ (αs ++ w ++ αs) ++ y = (x ++ αs) ++ (w ++ αs ++ y) by
           simp [List.append_assoc],
         show x ++ αs ++ y = (x ++ αs) ++ y by simp [List.append_assoc]]
-    have h_xαs_len : k ≤ (x ++ αs).length := by
-      rw [List.length_append]; omega
-    rw [List.take_append_of_le_length h_xαs_len,
-        List.take_append_of_le_length h_xαs_len]
+    have h_xαs_len : k ≤ (x ++ αs).length := by rw [List.length_append]; omega
+    rw [List.take_append_of_le_length h_xαs_len, List.take_append_of_le_length h_xαs_len]
   · -- takeAt_right k matches: both end with αs ++ y.
-    show Edge.right.takeAt k (x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y) =
+    show Edge.right.takeAt k (x ++ (αs ++ w ++ αs) ++ y) =
          Edge.right.takeAt k (x ++ αs ++ y)
-    rw [show x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y =
-            (x ++ αs ++ FreeMonoid.toList w) ++ (αs ++ y) by
+    rw [show x ++ (αs ++ w ++ αs) ++ y = (x ++ αs ++ w) ++ (αs ++ y) by
           simp [List.append_assoc],
         show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
-    have h_αsy_len : k ≤ (αs ++ y).length := by
-      rw [List.length_append]; omega
-    rw [takeAt_right_append_left_absorb (x ++ αs ++ FreeMonoid.toList w)
-          (αs ++ y) h_αsy_len,
+    have h_αsy_len : k ≤ (αs ++ y).length := by rw [List.length_append]; omega
+    rw [takeAt_right_append_left_absorb (x ++ αs ++ w) (αs ++ y) h_αsy_len,
         takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
 
 /-! #### Lambert Prop 58 — reverse direction -/
@@ -432,26 +372,22 @@ theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
       rw [← h_w₂_drop]; exact (List.take_append_drop _ _).symm
     -- Way 1: αs-sandwich gives `[w₁ ++ w₂] = [w₂]`, by absorbing
     -- the `αs ++ b₁ ++ αs` block into `αs`.
-    have h_αs_eq : L.toSyntacticMonoid (FreeMonoid.ofList (w₁ ++ w₂)) =
-        L.toSyntacticMonoid (FreeMonoid.ofList w₂) := by
+    have h_αs_eq : L.syntacticClass (w₁ ++ w₂) = L.syntacticClass w₂ := by
       conv_lhs => rw [hw₁_αs, hw₂_αs,
         show (αs ++ b₁) ++ (αs ++ b₂) = (αs ++ b₁ ++ αs) ++ b₂ by
           simp [List.append_assoc]]
-      rw [FreeMonoid.ofList_append, MonoidHom.map_mul,
-        syntacticCon_of_kGeneralizedDefiniteEquation h αs b₁ hαs_len,
-        ← MonoidHom.map_mul, ← FreeMonoid.ofList_append, ← hw₂_αs]
+      rw [syntacticClass_append, syntacticClass_of_kGeneralizedDefiniteEquation h αs b₁ hαs_len,
+        ← syntacticClass_append, ← hw₂_αs]
     -- Way 2: βs-sandwich gives `[w₁ ++ w₂] = [w₁]`, by absorbing
     -- the `βs ++ c₂ ++ βs` block into `βs`.
-    have h_βs_eq : L.toSyntacticMonoid (FreeMonoid.ofList (w₁ ++ w₂)) =
-        L.toSyntacticMonoid (FreeMonoid.ofList w₁) := by
+    have h_βs_eq : L.syntacticClass (w₁ ++ w₂) = L.syntacticClass w₁ := by
       conv_lhs => rw [hw₁_βs, hw₂_βs,
         show (c₁ ++ βs) ++ (c₂ ++ βs) = c₁ ++ (βs ++ c₂ ++ βs) by
           simp [List.append_assoc]]
-      rw [FreeMonoid.ofList_append, MonoidHom.map_mul,
-        syntacticCon_of_kGeneralizedDefiniteEquation h βs c₂ hβs_len,
-        ← MonoidHom.map_mul, ← FreeMonoid.ofList_append, ← hw₁_βs]
+      rw [syntacticClass_append, syntacticClass_of_kGeneralizedDefiniteEquation h βs c₂ hβs_len,
+        ← syntacticClass_append, ← hw₁_βs]
     -- Combine: `[w₁] = [w₂]`, hence `w₁ ≡_L w₂`.
-    exact mem_iff_of_syntacticCon (Quotient.exact (h_βs_eq.symm.trans h_αs_eq))
+    exact mem_iff_of_syntacticClass_eq (h_βs_eq.symm.trans h_αs_eq)
   · -- Short case: `|w₁| < k`. Then `Edge.left.takeAt k w₁ = w₁`, so
     -- the prefix equality yields `w₁ = Edge.left.takeAt k w₂`, which
     -- forces `|w₂| ≤ k` (otherwise the takeAt has length `k > |w₁|`).

@@ -24,7 +24,7 @@ syntactic monoid:
 | `𝒩` (co/finite) | both `𝒟`'s and `𝒦`'s | both-sided absorbing |
 | `ℒℐ` (generalized definite) | `[w]^ω · s · [w]^ω = [w]^ω` | sandwich-absorbing |
 
-Where `[w]^ω = Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))`
+Where `[w]^ω = Monoid.omegaPow (L.syntacticClass w)`
 is the unique idempotent in the cyclic submonoid of `[w]` (see
 `Linglib/Core/Algebra/IdempotentPower.lean`). The variables `s` range
 over `L.syntacticMonoid` and `w` over non-empty `List α`
@@ -97,8 +97,8 @@ omega-power equation, not Lambert-specific — hence the namespace is
 `Language` (no author-named namespace). -/
 def pinDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
   ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
-    s * Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) =
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))
+    s * Monoid.omegaPow (L.syntacticClass w) =
+    Monoid.omegaPow (L.syntacticClass w)
 
 -- ============================================================================
 -- §1. FreeMonoid power length
@@ -123,11 +123,11 @@ of length `≥ k` is **left-absorbing**. -/
 private lemma left_absorbing_of_kDefiniteEquation {L : Language α} {k : ℕ}
     (hkEq : Language.kDefiniteEquation L k)
     {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
-    s * L.toSyntacticMonoid (FreeMonoid.ofList v) =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
-  set vM := L.toSyntacticMonoid (FreeMonoid.ofList v) with hvM_def
+    s * L.syntacticClass v =
+    L.syntacticClass v := by
+  set vM := L.syntacticClass v with hvM_def
   set suf := Edge.right.takeAt k v with hsuf_def
-  set sufM := L.toSyntacticMonoid (FreeMonoid.ofList suf) with hsufM_def
+  set sufM := L.syntacticClass suf with hsufM_def
   have hsuf_len : suf.length = k := by
     show (v.drop (v.length - k)).length = k
     rw [List.length_drop]; omega
@@ -135,8 +135,8 @@ private lemma left_absorbing_of_kDefiniteEquation {L : Language α} {k : ℕ}
     show v = v.take (v.length - k) ++ v.drop (v.length - k)
     exact (List.take_append_drop _ _).symm
   have hvM_eq_sufM : vM = sufM := by
-    rw [hvM_def, hv_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
-    exact hkEq (L.toSyntacticMonoid (FreeMonoid.ofList (v.take (v.length - k))))
+    rw [hvM_def, hv_decomp, syntacticClass_append]
+    exact hkEq (L.syntacticClass (v.take (v.length - k)))
                 suf hsuf_len
   rw [hvM_eq_sufM]
   exact hkEq s suf hsuf_len
@@ -159,7 +159,7 @@ theorem IsDefinite.satisfies_pinDefiniteEquation
     {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
     (hk : L.IsDefinite k) : pinDefiniteEquation L := by
   intro s w hw
-  set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
+  set wM := L.syntacticClass w with hwM_def
   have hkEq := IsDefinite.satisfies_kDefiniteEquation hk
   by_cases hk0 : k = 0
   · subst hk0
@@ -181,10 +181,10 @@ theorem IsDefinite.satisfies_pinDefiniteEquation
       have h1 : k ≤ N * k := Nat.le_mul_of_pos_left k hN_pos
       have h2 : N * k ≤ N * k * w.length := Nat.le_mul_of_pos_right (N * k) hw_len
       omega
-    have hv_eq : L.toSyntacticMonoid (FreeMonoid.ofList v) = wM ^ (N * k) := by
-      have h_id : (FreeMonoid.ofList v : FreeMonoid α) =
-                  (FreeMonoid.ofList w) ^ (N * k) := rfl
-      rw [h_id, MonoidHom.map_pow]
+    have hv_eq : L.syntacticClass v = wM ^ (N * k) := by
+      rw [hwM_def]
+      simp only [syntacticClass]
+      rw [show FreeMonoid.ofList v = (FreeMonoid.ofList w) ^ (N * k) from rfl, map_pow]
     rw [← hv_eq]
     exact left_absorbing_of_kDefiniteEquation hkEq hv_len s
 
@@ -200,11 +200,11 @@ private lemma left_absorbing_of_pin_pigeonhole
     (h : pinDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
-    (h_eq : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_lo)) =
-            L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)))
+    (h_eq : L.syntacticClass (v.take i_lo) =
+            L.syntacticClass (v.take i_hi))
     (s : L.syntacticMonoid) :
-    s * L.toSyntacticMonoid (FreeMonoid.ofList v) =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+    s * L.syntacticClass v =
+    L.syntacticClass v := by
   -- Decompose v = pre ++ middle ++ suf, where pre has length i_lo,
   -- middle has length (i_hi - i_lo), suf is the rest.
   set pre := v.take i_lo with hpre_def
@@ -226,13 +226,13 @@ private lemma left_absorbing_of_pin_pigeonhole
   have h_v_decomp : v = pre ++ middle ++ suf := by
     rw [show pre ++ middle = v.take i_hi from h_take_j_decomp.symm, hsuf_def,
         List.take_append_drop]
-  set preM := L.toSyntacticMonoid (FreeMonoid.ofList pre) with hpreM_def
-  set middleM := L.toSyntacticMonoid (FreeMonoid.ofList middle) with hmiddleM_def
-  set sufM := L.toSyntacticMonoid (FreeMonoid.ofList suf) with hsufM_def
+  set preM := L.syntacticClass pre with hpreM_def
+  set middleM := L.syntacticClass middle with hmiddleM_def
+  set sufM := L.syntacticClass suf with hsufM_def
   -- [v.take i_hi] = preM * middleM
-  have h_take_j_M : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)) =
+  have h_take_j_M : L.syntacticClass (v.take i_hi) =
                     preM * middleM := by
-    rw [h_take_j_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
+    rw [h_take_j_decomp, syntacticClass_append]
   -- preM = preM * middleM (from pigeonhole)
   have h_pre_idemp : preM = preM * middleM := h_eq.trans h_take_j_M
   -- preM = preM * middleM^n for all n ≥ 0
@@ -250,12 +250,12 @@ private lemma left_absorbing_of_pin_pigeonhole
   -- preM = omegaPow middleM
   have h_pre_eq : preM = Monoid.omegaPow middleM := h_pre_omega.trans h_pin
   -- [v] = preM * middleM * sufM
-  have h_v_M : L.toSyntacticMonoid (FreeMonoid.ofList v) = preM * middleM * sufM := by
-    rw [h_v_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul,
-        FreeMonoid.ofList_append, MonoidHom.map_mul]
+  have h_v_M : L.syntacticClass v = preM * middleM * sufM := by
+    rw [h_v_decomp, syntacticClass_append,
+        syntacticClass_append]
   -- preM * middleM = preM (h_pre_idemp reversed)
   -- So [v] = preM * sufM = omegaPow middleM * sufM
-  have h_v_omega : L.toSyntacticMonoid (FreeMonoid.ofList v) =
+  have h_v_omega : L.syntacticClass v =
                    Monoid.omegaPow middleM * sufM := by
     rw [h_v_M, ← h_pre_idemp, h_pre_eq]
   -- s * [v] = s * (omegaPow middleM * sufM) = (s * omegaPow middleM) * sufM
@@ -269,8 +269,8 @@ private lemma left_absorbing_of_pinDefiniteEquation
     (h : pinDefiniteEquation L)
     {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
     (s : L.syntacticMonoid) :
-    s * L.toSyntacticMonoid (FreeMonoid.ofList v) =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+    s * L.syntacticClass v =
+    L.syntacticClass v := by
   classical
   haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
@@ -283,7 +283,7 @@ private lemma left_absorbing_of_pinDefiniteEquation
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
       (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
-        L.toSyntacticMonoid (FreeMonoid.ofList (v.take n.val)))
+        L.syntacticClass (v.take n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
   -- Bound on j.val (and i.val): ≤ |M| ≤ v.length.
@@ -326,8 +326,8 @@ Mirror of `pinDefiniteEquation` with right-multiplication instead of
 left. Same alphabet-relativized non-empty `w` quantifier. -/
 def pinReverseDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
   ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) * s =
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))
+    Monoid.omegaPow (L.syntacticClass w) * s =
+    Monoid.omegaPow (L.syntacticClass w)
 
 /-- **Right-absorbing from `kReverseDefiniteEquation`**: mirror of
 `left_absorbing_of_kDefiniteEquation`. The syntactic class of any word
@@ -336,11 +336,11 @@ of length `≥ k` is right-absorbing, decomposing `v = pre ++ suf` with
 private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
     (hkEq : Language.kReverseDefiniteEquation L k)
     {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
-    L.toSyntacticMonoid (FreeMonoid.ofList v) * s =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
-  set vM := L.toSyntacticMonoid (FreeMonoid.ofList v) with hvM_def
+    L.syntacticClass v * s =
+    L.syntacticClass v := by
+  set vM := L.syntacticClass v with hvM_def
   set pre := Edge.left.takeAt k v with hpre_def
-  set preM := L.toSyntacticMonoid (FreeMonoid.ofList pre) with hpreM_def
+  set preM := L.syntacticClass pre with hpreM_def
   have hpre_len : pre.length = k := by
     show (v.take k).length = k
     rw [List.length_take]; omega
@@ -348,8 +348,8 @@ private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k :
     show v = v.take k ++ v.drop k
     exact (List.take_append_drop _ _).symm
   have hvM_eq_preM : vM = preM := by
-    rw [hvM_def, hv_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
-    exact hkEq (L.toSyntacticMonoid (FreeMonoid.ofList (v.drop k))) pre hpre_len
+    rw [hvM_def, hv_decomp, syntacticClass_append]
+    exact hkEq (L.syntacticClass (v.drop k)) pre hpre_len
   rw [hvM_eq_preM]
   exact hkEq s pre hpre_len
 
@@ -360,7 +360,7 @@ theorem IsReverseDefinite.satisfies_pinReverseDefiniteEquation
     {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
     (hk : L.IsReverseDefinite k) : pinReverseDefiniteEquation L := by
   intro s w hw
-  set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
+  set wM := L.syntacticClass w with hwM_def
   have hkEq := IsReverseDefinite.satisfies_kReverseDefiniteEquation hk
   by_cases hk0 : k = 0
   · subst hk0
@@ -382,10 +382,10 @@ theorem IsReverseDefinite.satisfies_pinReverseDefiniteEquation
       have h1 : k ≤ N * k := Nat.le_mul_of_pos_left k hN_pos
       have h2 : N * k ≤ N * k * w.length := Nat.le_mul_of_pos_right (N * k) hw_len
       omega
-    have hv_eq : L.toSyntacticMonoid (FreeMonoid.ofList v) = wM ^ (N * k) := by
-      have h_id : (FreeMonoid.ofList v : FreeMonoid α) =
-                  (FreeMonoid.ofList w) ^ (N * k) := rfl
-      rw [h_id, MonoidHom.map_pow]
+    have hv_eq : L.syntacticClass v = wM ^ (N * k) := by
+      rw [hwM_def]
+      simp only [syntacticClass]
+      rw [show FreeMonoid.ofList v = (FreeMonoid.ofList w) ^ (N * k) from rfl, map_pow]
     rw [← hv_eq]
     exact right_absorbing_of_kReverseDefiniteEquation hkEq hv_len s
 
@@ -402,12 +402,13 @@ private lemma right_absorbing_of_pin_pigeonhole
     (h : pinReverseDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
-    (h_eq : L.toSyntacticMonoid (FreeMonoid.ofList (v.drop i_lo)) =
-            L.toSyntacticMonoid (FreeMonoid.ofList (v.drop i_hi)))
+    (h_eq : L.syntacticClass (v.drop i_lo) =
+            L.syntacticClass (v.drop i_hi))
     (s : L.syntacticMonoid) :
-    L.toSyntacticMonoid (FreeMonoid.ofList v) * s =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
-  -- v = pre ++ middle ++ suf, where pre = v.take i_lo, middle = v.drop i_lo .take (i_hi - i_lo), suf = v.drop i_hi.
+    L.syntacticClass v * s =
+    L.syntacticClass v := by
+  -- v = pre ++ middle ++ suf, where pre = v.take i_lo,
+  -- middle = (v.drop i_lo).take (i_hi - i_lo), suf = v.drop i_hi.
   set pre := v.take i_lo with hpre_def
   set middle := (v.drop i_lo).take (i_hi - i_lo) with hmiddle_def
   set suf := v.drop i_hi with hsuf_def
@@ -433,13 +434,13 @@ private lemma right_absorbing_of_pin_pigeonhole
     rw [show pre ++ middle ++ suf = pre ++ (middle ++ suf) by simp [List.append_assoc],
         ← h_drop_lo_decomp]
     exact (List.take_append_drop _ _).symm
-  set preM := L.toSyntacticMonoid (FreeMonoid.ofList pre) with hpreM_def
-  set middleM := L.toSyntacticMonoid (FreeMonoid.ofList middle) with hmiddleM_def
-  set sufM := L.toSyntacticMonoid (FreeMonoid.ofList suf) with hsufM_def
+  set preM := L.syntacticClass pre with hpreM_def
+  set middleM := L.syntacticClass middle with hmiddleM_def
+  set sufM := L.syntacticClass suf with hsufM_def
   -- [v.drop i_lo] = middleM * sufM
-  have h_drop_lo_M : L.toSyntacticMonoid (FreeMonoid.ofList (v.drop i_lo)) =
+  have h_drop_lo_M : L.syntacticClass (v.drop i_lo) =
                      middleM * sufM := by
-    rw [h_drop_lo_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
+    rw [h_drop_lo_decomp, syntacticClass_append]
   -- Pigeonhole gives [v.drop i_lo] = [v.drop i_hi] = sufM. With h_drop_lo_M
   -- expressing [v.drop i_lo] as middleM * sufM, transitivity closes.
   have h_mid_idemp : middleM * sufM = sufM := h_drop_lo_M.symm.trans h_eq
@@ -458,14 +459,14 @@ private lemma right_absorbing_of_pin_pigeonhole
   -- So sufM = omegaPow middleM.
   have h_suf_eq : sufM = Monoid.omegaPow middleM := h_omega_idemp.symm.trans h_pin
   -- [v] = preM * middleM * sufM
-  have h_v_M : L.toSyntacticMonoid (FreeMonoid.ofList v) = preM * middleM * sufM := by
-    rw [h_v_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul,
-        FreeMonoid.ofList_append, MonoidHom.map_mul]
+  have h_v_M : L.syntacticClass v = preM * middleM * sufM := by
+    rw [h_v_decomp, syntacticClass_append,
+        syntacticClass_append]
   -- Substitute h_suf_eq → preM * middleM * omegaPow middleM
   -- Simplify middleM * omegaPow middleM = ? Hmm.
   -- Actually: [v] = preM * (middleM * sufM) = preM * sufM (by h_mid_idemp).
   -- And sufM = omegaPow middleM, so [v] = preM * omegaPow middleM.
-  have h_v_omega : L.toSyntacticMonoid (FreeMonoid.ofList v) =
+  have h_v_omega : L.syntacticClass v =
                    preM * Monoid.omegaPow middleM := by
     rw [h_v_M, mul_assoc, h_mid_idemp, h_suf_eq]
   -- For any s: [v] * s = preM * omegaPow middleM * s = preM * omegaPow middleM = [v]
@@ -478,8 +479,8 @@ private lemma right_absorbing_of_pinReverseDefiniteEquation
     (h : pinReverseDefiniteEquation L)
     {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
     (s : L.syntacticMonoid) :
-    L.toSyntacticMonoid (FreeMonoid.ofList v) * s =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+    L.syntacticClass v * s =
+    L.syntacticClass v := by
   classical
   haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
@@ -492,7 +493,7 @@ private lemma right_absorbing_of_pinReverseDefiniteEquation
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
       (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
-        L.toSyntacticMonoid (FreeMonoid.ofList (v.drop n.val)))
+        L.syntacticClass (v.drop n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
   have hi_le : i.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp i.isLt) hv
@@ -585,9 +586,9 @@ equivalent to the more general two-variable form
 omega-power idempotence. -/
 def pinGeneralizedDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
   ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) * s *
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) =
-    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))
+    Monoid.omegaPow (L.syntacticClass w) * s *
+    Monoid.omegaPow (L.syntacticClass w) =
+    Monoid.omegaPow (L.syntacticClass w)
 
 /-- **Pin's ℒℐ-theorem (forward direction)**: a generalized-`k`-definite
 language's syntactic monoid satisfies the LI omega-power equation.
@@ -603,7 +604,7 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
     (hk : L.IsGeneralizedDefinite k) :
     pinGeneralizedDefiniteEquation L := by
   intro s w hw
-  set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
+  set wM := L.syntacticClass w with hwM_def
   by_cases hk0 : k = 0
   · -- k = 0: IsGenDef 0 L means ∀ w₁ w₂, w₁ ∈ L ↔ w₂ ∈ L (vacuous prefix/suffix).
     -- So L is constant: L = ∅ or L = univ. Either way M is trivial.
@@ -641,52 +642,29 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
       have h1 : k ≤ N * k := Nat.le_mul_of_pos_left k hN_pos
       have h2 : N * k ≤ N * k * w.length := Nat.le_mul_of_pos_right (N * k) hw_len
       omega
-    have hv_eq : L.toSyntacticMonoid (FreeMonoid.ofList v) = wM ^ (N * k) := by
-      have h_id : (FreeMonoid.ofList v : FreeMonoid α) =
-                  (FreeMonoid.ofList w) ^ (N * k) := rfl
-      rw [h_id, MonoidHom.map_pow]
+    have hv_eq : L.syntacticClass v = wM ^ (N * k) := by
+      rw [hwM_def]
+      simp only [syntacticClass]
+      rw [show FreeMonoid.ofList v = (FreeMonoid.ofList w) ^ (N * k) from rfl, map_pow]
     rw [← hv_eq]
     -- Goal: [v] · s · [v] = [v]. Apply IsGenDef k L directly via context-extension.
-    obtain ⟨s', hs'⟩ := Quotient.exists_rep s
-    rw [show s = L.toSyntacticMonoid s' from hs'.symm]
-    rw [show L.toSyntacticMonoid (FreeMonoid.ofList v) *
-            L.toSyntacticMonoid s' *
-            L.toSyntacticMonoid (FreeMonoid.ofList v) =
-        L.toSyntacticMonoid (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) by
-      rw [MonoidHom.map_mul, MonoidHom.map_mul]]
-    apply Quotient.sound
-    refine (syntacticCon_iff L).mpr ?_
+    obtain ⟨s', rfl⟩ := L.syntacticClass_surjective s
+    rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff]
     intro x y
-    show x ++ FreeMonoid.toList (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) ++ y ∈ L ↔
-         x ++ FreeMonoid.toList (FreeMonoid.ofList v) ++ y ∈ L
-    have hwmul : FreeMonoid.toList (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) =
-                 v ++ FreeMonoid.toList s' ++ v := rfl
-    have hvId : FreeMonoid.toList (FreeMonoid.ofList v) = v := rfl
-    rw [hwmul, hvId]
-    -- Apply IsGenDef k L to (x ++ v ++ toList s' ++ v ++ y, x ++ v ++ y).
+    -- Apply IsGenDef k L to (x ++ v ++ s' ++ v ++ y, x ++ v ++ y).
     apply isGeneralizedDefinite_iff_edges.mp hk
     · -- takeAt_left k matches: both have x ++ v as prefix; |x ++ v| ≥ k.
-      show (x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y).take k =
-           (x ++ v ++ y).take k
-      rw [show x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y =
-              (x ++ v) ++ (FreeMonoid.toList s' ++ v ++ y) by
-            simp [List.append_assoc],
-          show x ++ v ++ y = (x ++ v) ++ y from by simp [List.append_assoc]]
-      have h_xv_len : k ≤ (x ++ v).length := by
-        rw [List.length_append]; omega
-      rw [List.take_append_of_le_length h_xv_len,
-          List.take_append_of_le_length h_xv_len]
+      show (x ++ (v ++ s' ++ v) ++ y).take k = (x ++ v ++ y).take k
+      rw [show x ++ (v ++ s' ++ v) ++ y = (x ++ v) ++ (s' ++ v ++ y) by simp [List.append_assoc],
+          show x ++ v ++ y = (x ++ v) ++ y by simp [List.append_assoc]]
+      have h_xv_len : k ≤ (x ++ v).length := by rw [List.length_append]; omega
+      rw [List.take_append_of_le_length h_xv_len, List.take_append_of_le_length h_xv_len]
     · -- takeAt_right k matches: both end with v ++ y; |v ++ y| ≥ k.
-      show Edge.right.takeAt k (x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y) =
-           Edge.right.takeAt k (x ++ v ++ y)
-      rw [show x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y =
-              (x ++ v ++ FreeMonoid.toList s') ++ (v ++ y) by
-            simp [List.append_assoc],
+      show Edge.right.takeAt k (x ++ (v ++ s' ++ v) ++ y) = Edge.right.takeAt k (x ++ v ++ y)
+      rw [show x ++ (v ++ s' ++ v) ++ y = (x ++ v ++ s') ++ (v ++ y) by simp [List.append_assoc],
           show x ++ v ++ y = x ++ (v ++ y) by simp [List.append_assoc]]
-      have h_vy_len : k ≤ (v ++ y).length := by
-        rw [List.length_append]; omega
-      rw [takeAt_right_append_left_absorb (x ++ v ++ FreeMonoid.toList s')
-            (v ++ y) h_vy_len,
+      have h_vy_len : k ≤ (v ++ y).length := by rw [List.length_append]; omega
+      rw [takeAt_right_append_left_absorb (x ++ v ++ s') (v ++ y) h_vy_len,
           takeAt_right_append_left_absorb x (v ++ y) h_vy_len]
 
 /-- Helper for the LI reverse direction: given a pigeonhole pair
@@ -710,12 +688,12 @@ private lemma sandwich_absorbing_of_pin_pigeonhole
     (h : pinGeneralizedDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
-    (h_eq : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_lo)) =
-            L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)))
+    (h_eq : L.syntacticClass (v.take i_lo) =
+            L.syntacticClass (v.take i_hi))
     (s : L.syntacticMonoid) :
-    L.toSyntacticMonoid (FreeMonoid.ofList v) * s *
-    L.toSyntacticMonoid (FreeMonoid.ofList v) =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+    L.syntacticClass v * s *
+    L.syntacticClass v =
+    L.syntacticClass v := by
   set pre := v.take i_lo with hpre_def
   set middle := (v.drop i_lo).take (i_hi - i_lo) with hmiddle_def
   set suf := v.drop i_hi with hsuf_def
@@ -735,12 +713,12 @@ private lemma sandwich_absorbing_of_pin_pigeonhole
   have h_v_decomp : v = pre ++ middle ++ suf := by
     rw [show pre ++ middle = v.take i_hi from h_take_j_decomp.symm, hsuf_def,
         List.take_append_drop]
-  set preM := L.toSyntacticMonoid (FreeMonoid.ofList pre) with hpreM_def
-  set middleM := L.toSyntacticMonoid (FreeMonoid.ofList middle) with hmiddleM_def
-  set sufM := L.toSyntacticMonoid (FreeMonoid.ofList suf) with hsufM_def
-  have h_take_j_M : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)) =
+  set preM := L.syntacticClass pre with hpreM_def
+  set middleM := L.syntacticClass middle with hmiddleM_def
+  set sufM := L.syntacticClass suf with hsufM_def
+  have h_take_j_M : L.syntacticClass (v.take i_hi) =
                     preM * middleM := by
-    rw [h_take_j_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
+    rw [h_take_j_decomp, syntacticClass_append]
   have h_pre_idemp : preM = preM * middleM := h_eq.trans h_take_j_M
   have h_iter : ∀ n : ℕ, preM = preM * middleM ^ n := by
     intro n
@@ -750,10 +728,10 @@ private lemma sandwich_absorbing_of_pin_pigeonhole
   have h_pre_omega : preM = preM * Monoid.omegaPow middleM := by
     rw [Monoid.omegaPow_eq_pow]; exact h_iter _
   -- [v] = preM * middleM * sufM = preM * sufM = preM * ω(middleM) * sufM.
-  have h_v_omega : L.toSyntacticMonoid (FreeMonoid.ofList v) =
+  have h_v_omega : L.syntacticClass v =
                    preM * Monoid.omegaPow middleM * sufM := by
-    rw [h_v_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul,
-        FreeMonoid.ofList_append, MonoidHom.map_mul,
+    rw [h_v_decomp, syntacticClass_append,
+        syntacticClass_append,
         ← h_pre_idemp, ← h_pre_omega]
   -- Apply Pin LI: ω · (sufM * s * preM) · ω = ω.
   have h_pin := h (sufM * s * preM) middle h_middle_ne
@@ -776,9 +754,9 @@ private lemma sandwich_absorbing_of_pinGeneralizedDefiniteEquation
     (h : pinGeneralizedDefiniteEquation L)
     {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
     (s : L.syntacticMonoid) :
-    L.toSyntacticMonoid (FreeMonoid.ofList v) * s *
-    L.toSyntacticMonoid (FreeMonoid.ofList v) =
-    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+    L.syntacticClass v * s *
+    L.syntacticClass v =
+    L.syntacticClass v := by
   classical
   haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
@@ -791,7 +769,7 @@ private lemma sandwich_absorbing_of_pinGeneralizedDefiniteEquation
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
       (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
-        L.toSyntacticMonoid (FreeMonoid.ofList (v.take n.val)))
+        L.syntacticClass (v.take n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
   have hi_le : i.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp i.isLt) hv

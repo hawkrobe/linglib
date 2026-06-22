@@ -97,6 +97,10 @@ def syntacticClass (w : List α) : L.syntacticMonoid := L.toSyntacticMonoid (Fre
     L.syntacticClass (u ++ v) = L.syntacticClass u * L.syntacticClass v := by
   simp [syntacticClass, FreeMonoid.ofList_append]
 
+theorem syntacticClass_surjective : Function.Surjective L.syntacticClass := fun s => by
+  obtain ⟨u, rfl⟩ := Quotient.exists_rep s
+  exact ⟨u.toList, congrArg L.toSyntacticMonoid (FreeMonoid.ofList_toList u)⟩
+
 variable {L} in
 /-- Word-level form of `syntacticCon_iff`: two words share a syntactic class iff no two-sided
 context distinguishes them as `L`-members. -/
