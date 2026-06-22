@@ -11,7 +11,7 @@ import Mathlib.Data.List.Destutter
 The categorical, strict-identity, single-tier OCP: the ban on two *identical* adjacent
 autosegments on one tier ([mccarthy-1986]), on a projected tier for `IsCleanOn`
 ([chandlee-jardine-2019]). As a stringset the constraint is tier-based strictly local
-(TSL₂, [heinz-rawal-tanner-2011]), characterised in `Phonology.Subregular.OCP`. The
+(TSL₂, [heinz-rawal-tanner-2011]), characterised in `Phonology.OCP`. The
 fusion repair `collapse` is mathlib's
 `List.destutter (· ≠ ·)` ([goldsmith-1976], [mccarthy-prince-1995]) — a retraction onto
 cleanness, input-strictly-local ([chandlee-heinz-2018]); the blocking repair `block` is

@@ -49,7 +49,7 @@ in the two tuple components of `step` rather than `let`-binding it, so
 that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 variable {α β : Type*}
 
@@ -243,4 +243,4 @@ theorem isOutputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
   | left => exact isLeftOutputStrictlyLocal_left_subsequential h
   | right => exact isRightOutputStrictlyLocal_right_subsequential h
 
-end Subregular.Function
+end Subregular

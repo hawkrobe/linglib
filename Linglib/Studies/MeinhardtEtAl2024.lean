@@ -112,7 +112,7 @@ discontinuous case.
 
 namespace MeinhardtEtAl2024
 
-open Subregular.Function
+open Subregular
 
 -- ============================================================================
 -- § 1: Dominant/Recessive Alphabet
@@ -289,7 +289,7 @@ unboundedly far on either side, so `maasai` *also* satisfies `IsUnboundedCircuma
 The contrast is exactly the WD/ND boundary the paper draws: both maps are circumambient
 *as covariation*, but only Tutrugbu `RequiresBothSides` (suppression/conjunction). -/
 
-open Subregular.Function
+open Subregular
 
 /-- The word contains a dominant trigger. -/
 def hasDom (xs : List Seg) : Bool := xs.any (· == .dom)

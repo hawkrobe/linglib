@@ -78,7 +78,7 @@ Two co-equal headline contributions (paper §1, eq. 2):
 ## Convention
 
 Predicates in this file are `Prop`-valued with `Decidable` instances,
-matching mathlib + the existing `Phonology.Subregular.OCP` style.
+matching mathlib + the existing `Phonology.OCP` style.
 Worked examples are checked via `decide` rather than `rfl` where
 appropriate.
 -/

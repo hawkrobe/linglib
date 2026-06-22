@@ -123,7 +123,7 @@ place — the TSL_2 instance of `TSLGrammar.agree`.
 
 namespace Phonology.Studies.Hansson2010
 
-open _root_.Subregular Phonology.Subregular
+open Subregular Phonology
 
 -- ============================================================================
 -- § 1: A toy Navajo segmental alphabet
@@ -209,7 +209,7 @@ made by the `navajoSibilantHarmony : TSLGrammar 2 NSeg` grammar — the
 co-extensiveness of "the surface phonotactic" and "TSL_2 stringset" was
 asserted in the file docstring; this theorem types that assertion. -/
 theorem navajoSibilantHarmony_lang_isTSL2 :
-    Subregular.IsTierStrictlyLocal 2
+    Language.IsTierStrictlyLocal 2
       navajoSibilantHarmony.lang :=
   ⟨navajoSibilantHarmony, rfl⟩
 
@@ -218,7 +218,7 @@ in `Subregular.Multitier`): the Navajo sibilant harmony
 stringset lies in the multitier (Boolean) closure of strictly local languages —
 immediate from the TSL_2 result. -/
 theorem navajoSibilantHarmony_lang_isBTSL2 :
-    Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
+    Language.IsBTSL 2 navajoSibilantHarmony.lang :=
   navajoSibilantHarmony_lang_isTSL2.toIsBTSL
 
 /-- The pre-harmony underlying form is **rejected**: it contains a

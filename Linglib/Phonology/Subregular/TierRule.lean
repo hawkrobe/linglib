@@ -53,9 +53,9 @@ is straightforward but requires careful threading of the trivial tier;
 land it once a Studies file needs to invoke the bridge concretely.
 -/
 
-namespace Phonology.Subregular
+namespace Phonology
 
-open Subregular.Function
+open Subregular
 
 -- ============================================================================
 -- § 1: Schema
@@ -81,12 +81,12 @@ def Relation.flip : Relation → Relation
     - `.left` — `Rel(A, F) / C __` : context precedes the target
     - `.right` — `Rel(A, F) / __ C` : context follows the target
 
-    Aliased to `Subregular.Function.Direction` so the same `.left` / `.right` cases used
+    Aliased to `Subregular.Direction` so the same `.left` / `.right` cases used
     by `Function/Subsequential.lean::Direction` (FST scan direction) and
     by this file (context side of a tier rule) reduce to one inductive
     type. The two roles read differently in prose but are isomorphic in
     Lean. -/
-abbrev Side := _root_.Subregular.Function.Direction
+abbrev Side := Subregular.Direction
 
 /-- A tier-based alternation rule over alphabet `α`.
 
@@ -197,7 +197,7 @@ where
 
 end TierRule
 
-end Phonology.Subregular
+end Phonology
 
 /-! ## Function-level subregular classification
 
@@ -218,9 +218,9 @@ The non-trivial-tier classification is **deferred** (the SFST witness
 needs to thread the tier projection's state alongside the
 predicate-evaluation state); the identity-tier case is discharged below.
 Land the general witness here once a Studies file consumes it. -/
-namespace Phonology.Subregular.TierRule
+namespace Phonology.TierRule
 
-open Subregular.Function
+open Subregular
 
 variable {α : Type}
 
@@ -358,4 +358,4 @@ theorem applyToString_isRightMyopic (r : TierRule α) :
     IsMyopicTowards r.applyToString .right :=
   IsMyopicTowards.right_of_prefixDetermined (applyToString_prefixDetermined r)
 
-end Phonology.Subregular.TierRule
+end Phonology.TierRule

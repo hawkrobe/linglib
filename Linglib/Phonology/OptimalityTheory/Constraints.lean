@@ -166,7 +166,7 @@ export Subregular (countAdjacent)
     Generic markedness constructor for adjacency-based phonological
     constraints over a single tier. OCP is the case `R := (· = ·)`
     (`mkOCPOnTier` below). The TSL_2 bridge
-    `Phonology.Subregular.mkForbidPairsOnTier_zero_iff_in_lang` characterizes
+    `Phonology.mkForbidPairsOnTier_zero_iff_in_lang` characterizes
     zero-violation candidates as members of the corresponding tier-based
     strictly 2-local language for any choice of `R`. -/
 def mkForbidPairsOnTier {C α β : Type} (name : String) (R : β → β → Prop)

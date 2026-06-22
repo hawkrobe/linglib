@@ -113,7 +113,7 @@ iffs to derive their own iffs.
   framework Lambert builds on.
 -/
 
-open _root_.Subregular
+open Subregular
 
 namespace Language
 

@@ -28,9 +28,9 @@ grammars — the bridge `apply_byClass_eq_tierProject` reconnects the two
 projections in one line.
 -/
 
-namespace Phonology.Subregular
+namespace Phonology
 
-open _root_.Subregular
+open Subregular
 
 variable {α : Type*}
 
@@ -67,4 +67,4 @@ def TSLGrammar.ofByClass (k : ℕ) (p : α → Bool)
   show decide (p x = true) = p x
   cases p x <;> rfl
 
-end Phonology.Subregular
+end Phonology

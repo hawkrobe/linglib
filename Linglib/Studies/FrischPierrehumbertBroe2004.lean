@@ -425,7 +425,7 @@ the `thresholdedTSL` constructor — the substrate-classification "any
 two-valued threshold model is TSL_2" is now a typed theorem rather than
 docstring prose. -/
 theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
-    Subregular.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
+    Language.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
   ⟨thresholdedTSL xs t, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
@@ -433,7 +433,7 @@ theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
 grammar's stringset is in the multitier closure of strictly local
 languages, hence consumed by the [lambert-2026] BTC framework. -/
 theorem thresholdedTSL_lang_isBTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
-    Subregular.IsBTSL 2 (thresholdedTSL xs t).lang :=
+    Language.IsBTSL 2 (thresholdedTSL xs t).lang :=
   (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
 
 /-- **The TSL_2 grammar makes a binary step-function decision on labial

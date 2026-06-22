@@ -45,7 +45,7 @@ not-weakly-deterministic classification is driven by the strictly stronger
 the target to the identity.
 -/
 
-namespace Subregular.Function
+namespace Subregular
 
 
 variable {α β : Type*}
@@ -153,4 +153,4 @@ theorem IsMyopicTowards.right_of_leftDetermined {f : List α → List β}
   obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
   exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
 
-end Subregular.Function
+end Subregular

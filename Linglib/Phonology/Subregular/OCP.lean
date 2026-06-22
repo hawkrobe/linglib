@@ -44,10 +44,10 @@ formalisations but the constraint and a retraction onto it, both characterising
 `Phonology.OCP.IsClean`, both subregular.
 -/
 
-namespace Phonology.Subregular
+namespace Phonology
 
 open OptimalityTheory
-open _root_.Subregular
+open Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0.
@@ -148,9 +148,9 @@ window, delete a symbol iff it equals its predecessor. This completes the subreg
 *repair* face (the constraint side is the TSL₂ result above); cf. the autosegmental
 A-ISL classification of tonal OCP processes in [chandlee-jardine-2019]. -/
 theorem collapse_isISL [DecidableEq α] :
-    Function.IsLeftInputStrictlyLocal 2 (Phonology.OCP.collapse (α := α)) := by
+    IsLeftInputStrictlyLocal 2 (Phonology.OCP.collapse (α := α)) := by
   refine ⟨{ windowOutput := fun window x => if window = [x] then [] else [x] }, ?_⟩
-  set r : Function.ISLRule 2 α α :=
+  set r : ISLRule 2 α α :=
     { windowOutput := fun window x => if window = [x] then [] else [x] } with hr
   funext xs
   -- The window after reading one symbol is always the singleton of that symbol,
@@ -159,9 +159,9 @@ theorem collapse_isISL [DecidableEq α] :
       a :: r.applyAux [a] rest = List.destutter' (· ≠ ·) a rest := by
     intro a rest
     induction rest generalizing a with
-    | nil => simp [Function.ISLRule.applyAux, List.destutter'_nil]
+    | nil => simp [ISLRule.applyAux, List.destutter'_nil]
     | cons b l ih =>
-      rw [Function.ISLRule.applyAux_cons]
+      rw [ISLRule.applyAux_cons]
       have hwin : ([a] ++ [b]).rtake (2 - 1) = [b] := by
         simp [List.rtake]
       rw [hwin, List.destutter'_cons]
@@ -177,7 +177,7 @@ theorem collapse_isISL [DecidableEq α] :
   | nil => simp [Phonology.OCP.collapse]
   | cons x rest =>
     show r.applyAux [] (x :: rest) = Phonology.OCP.collapse (x :: rest)
-    rw [Function.ISLRule.applyAux_cons]
+    rw [ISLRule.applyAux_cons]
     have hwin : ([] ++ [x]).rtake (2 - 1) = [x] := by
       simp [List.rtake]
     rw [hwin]
@@ -186,4 +186,4 @@ theorem collapse_isISL [DecidableEq α] :
     rw [Phonology.OCP.collapse_eq_destutter, List.destutter_cons']
     exact key x rest
 
-end Phonology.Subregular
+end Phonology

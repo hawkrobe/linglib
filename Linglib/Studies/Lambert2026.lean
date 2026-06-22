@@ -105,10 +105,11 @@ docstrings.
 
 namespace Lambert2026
 
-open _root_.Subregular
+open Subregular
+open Language
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
 open Phonology (Sibilant)
-open Phonology.Subregular  -- for `TSLGrammar.agree`
+open Phonology  -- for `TSLGrammar.agree`
 
 /-! ### Sandwich-word helpers
 
