@@ -72,68 +72,48 @@ private lemma factorsThrough_of_mem_iff {f : List α → List α}
     (key : ∀ w, w ∈ L ↔ f w ∈ L) : Function.FactorsThrough (· ∈ L) f :=
   fun a b hab => by simp only [key a, key b, hab]
 
-/-! ### Helper lemmas on `Edge.right.takeAt` -/
-
-/-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
-lemma takeAt_right_append_left_absorb {α : Type*}
-    (x rest : List α) {k : ℕ} (h : k ≤ rest.length) :
-    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
-  List.rtake_append_of_le_length x rest h
-
-/-! ### Lifting the equation to a syntactic-class equality -/
-
-/-- Under the `𝒟` equation, prepending any prefix to a length-`k` word fixes its class. -/
-lemma syntacticClass_of_kDefiniteEquation
-    (h : Language.kDefiniteEquation L k)
-    (w αs : List α) (hαs_len : αs.length = k) :
-    L.syntacticClass (w ++ αs) = L.syntacticClass αs := by
-  rw [syntacticClass_append]
-  exact h αs hαs_len (L.syntacticClass w)
-
 /-! ### Definite (`𝒟`) -/
 
+/-- Under the `𝒟` equation, prepending any prefix to a length-`k` word fixes its class. -/
+private lemma syntacticClass_of_kDefiniteEquation
+    (h : kDefiniteEquation L k) (w αs : List α) (hαs_len : αs.length = k) :
+    L.syntacticClass (w ++ αs) = L.syntacticClass αs := by
+  rw [syntacticClass_append]; exact h αs hαs_len (L.syntacticClass w)
+
 /-- Forward: a `k`-definite language satisfies the `𝒟` equation. -/
-theorem IsDefinite.satisfies_kDefiniteEquation
-    (hL : L.IsDefinite k) :
-    Language.kDefiniteEquation L k := by
+theorem IsDefinite.satisfies_kDefiniteEquation (hL : L.IsDefinite k) :
+    kDefiniteEquation L k := by
   intro αs hαs_len s
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
   rw [← syntacticClass_append, syntacticClass_eq_iff]
   intro x y
   refine iff_of_eq (hL ?_)
+  have h : k ≤ (αs ++ y).length := by rw [List.length_append]; omega
   rw [show x ++ (w ++ αs) ++ y = (x ++ w) ++ (αs ++ y) by simp [List.append_assoc],
-      show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
-  have h_combined_len : k ≤ (αs ++ y).length := by rw [List.length_append]; omega
-  rw [takeAt_right_append_left_absorb (x ++ w) (αs ++ y) h_combined_len,
-      takeAt_right_append_left_absorb x (αs ++ y) h_combined_len]
+      show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc],
+      Edge.takeAt_right_append_of_le_length _ _ h, Edge.takeAt_right_append_of_le_length _ _ h]
 
 /-- Reverse: the `𝒟` equation forces `k`-definiteness. -/
-theorem isDefinite_of_satisfies_kDefiniteEquation
-    (h : Language.kDefiniteEquation L k) :
+theorem isDefinite_of_satisfies_kDefiniteEquation (h : kDefiniteEquation L k) :
     L.IsDefinite k := by
-  -- Membership equals membership of the length-`k` suffix: short words are their
-  -- own suffix; long words are syntactically equivalent to it via the equation.
+  -- short words are their own `k`-suffix; long words are syntactically equivalent to it.
   have key : ∀ w : List α, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
     intro w
     by_cases hw : w.length ≤ k
     · rw [Edge.takeAt_of_length_le _ hw]
-    · push Not at hw
-      have hlen : (Edge.right.takeAt k w).length = k := by
-        rw [Edge.length_takeAt]; omega
-      have hcon : L.syntacticClass w = L.syntacticClass (Edge.right.takeAt k w) := by
-        have base := syntacticClass_of_kDefiniteEquation h
-          (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
-        have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
-          (List.rdrop_append_rtake w k).symm
-        rwa [← decomp] at base
-      exact mem_iff_of_syntacticClass_eq hcon
+    · have hlen : (Edge.right.takeAt k w).length = k := by rw [Edge.length_takeAt]; omega
+      refine mem_iff_of_syntacticClass_eq ?_
+      have base := syntacticClass_of_kDefiniteEquation h
+        (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
+      have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
+        (List.rdrop_append_rtake w k).symm
+      rwa [← decomp] at base
   exact factorsThrough_of_mem_iff key
 
 /-- `k`-definite ↔ the `𝒟` equation. -/
 theorem isDefinite_iff_satisfies_kDefiniteEquation :
-    L.IsDefinite k ↔ Language.kDefiniteEquation L k :=
-  ⟨IsDefinite.satisfies_kDefiniteEquation,
-   isDefinite_of_satisfies_kDefiniteEquation⟩
+    L.IsDefinite k ↔ kDefiniteEquation L k :=
+  ⟨IsDefinite.satisfies_kDefiniteEquation, isDefinite_of_satisfies_kDefiniteEquation⟩
 
 /-! ### Reverse-definite (`𝒦`) — by reverse duality -/
 
@@ -217,8 +197,8 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
           simp [List.append_assoc],
         show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
     have h_αsy_len : k ≤ (αs ++ y).length := by rw [List.length_append]; omega
-    rw [takeAt_right_append_left_absorb (x ++ αs ++ w) (αs ++ y) h_αsy_len,
-        takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
+    rw [Edge.takeAt_right_append_of_le_length (x ++ αs ++ w) (αs ++ y) h_αsy_len,
+        Edge.takeAt_right_append_of_le_length x (αs ++ y) h_αsy_len]
 
 /-! #### Reverse direction -/
 
