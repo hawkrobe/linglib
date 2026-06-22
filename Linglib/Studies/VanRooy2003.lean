@@ -51,8 +51,9 @@ notation maps to the substrate as:
   problem — is the data-processing inequality `blackwell_euv_fact_forward`
   (deriving the substrate refinement map from `⊑` and applying
   `Core.DecisionTheory.questionUtility_mono_of_refines`). The `⟸` direction is the
-  [blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`
-  (finite, kernel-level; the deep direction, currently open).
+  [blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_blackwellDominates`
+  (finite, kernel-level — now proved; the partition-cell bridge to `questionUtility`
+  is the remaining Layer-2 work, so this direction is still `sorry`).
   `decisionRelevance_preserved_under_cover` is a separate, qualitative
   one-directional transfer (see its docstring).
 
@@ -253,7 +254,7 @@ is reflexive (`questionEntails_refl`) and transitive
     remaining gap to the full `questionEntails`-level *iff* is (i) a
     `Question W → Finset (Finset W)` partition-cell bridge via `HasAltList`, and
     (ii) the [blackwell-1953] converse
-    `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`. -/
+    `ProbabilityTheory.isGarblingOf_of_blackwellDominates`. -/
 theorem decisionRelevance_preserved_under_cover
     {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
     {dp : DecisionProblem W A} {acts : Set A}
@@ -331,9 +332,12 @@ equivalent to: the finer question has expected utility value `≥` the coarser o
 case of [blackwell-1953]".
 
 The `⟹` direction is `blackwell_euv_fact_forward` (the data-processing inequality). The
-`⟸` direction (EUV-dominance across all decision problems forces refinement) is the
-[blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le` — the
-deep direction, currently open. -/
+`⟸` direction (EUV-dominance across all decision problems forces refinement) follows from
+the now-proved [blackwell-1953] *converse*,
+`ProbabilityTheory.isGarblingOf_of_blackwellDominates`, once the partition-cell bridge is in
+place: the deterministic experiments of `fine`/`coarse` as Markov kernels, deterministic
+garbling ↔ refinement, and `questionUtility ↔ bayesRisk`. That bridge (Layer 2) is the
+remaining work; this direction stays `sorry` until it lands. -/
 theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
     {fine coarse : Finset (Finset W)}
     (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
@@ -346,7 +350,7 @@ theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
     blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩
   -- ⟸ : EUV-dominance across all decision problems forces refinement.
   -- The finite [blackwell-1953] converse at the partition-cell level
-  -- (`ProbabilityTheory.isGarblingOf_of_forall_bayesRisk_le`), the deep direction.
+  -- (`ProbabilityTheory.isGarblingOf_of_blackwellDominates`), the deep direction.
   -- TODO: instantiate the Blackwell converse with the deterministic (partition-cell)
   -- experiments of `fine`/`coarse`; when refinement fails, the separating decision problem
   -- reverses the EUV ordering.
