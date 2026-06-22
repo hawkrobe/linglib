@@ -3,6 +3,8 @@ import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.GroupWithZero.Finset
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Linglib.Semantics.Questions.Relevance
@@ -241,6 +243,233 @@ theorem euv_eq_evsi {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     | none => simp
     | some a => exact hLTE a
   rw [hLHS, hRHS]
+
+/-! ### Refinement monotonicity (Blackwell forward direction / [van-rooy-2003] §4.1)
+
+[van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special
+case of [blackwell-1953]". The `⟹` ("only if") direction is the data-processing /
+Jensen inequality: a *finer* question can only raise question utility. We prove it
+directly at the `questionUtility` level.
+
+The mathematical core is the **unnormalized cell value** `maxₐ ∑_{w∈c} P(w)·U(w,a)`,
+which equals `P(c)·V(D|c)` (`cellProb_mul_valueAfterLearning_eq_uValue`) and is
+**superadditive** under splitting a cell into disjoint pieces
+(`uValue_union_le`): the max of a sum is at most the sum of the maxes. Summed over a
+partition, this gives `questionUtility (finer) ≥ questionUtility (coarser)`. -/
+
+/-- The **unnormalized cell value** of `cell`: the best, over actions, of the
+*unnormalized* expected utility `∑_{w∈cell} P(w)·U(w,a)`. This linearizes the
+probability-weighted conditional value `P(cell)·V(D|cell)` (see
+`cellProb_mul_valueAfterLearning_eq_uValue`), turning Van Rooy's question utility into
+a sum that splitting a cell can only increase. -/
+private def uValue {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) (cell : Finset W) : ℚ :=
+  if h : acts.Nonempty then
+    acts.sup' h (fun a => ∑ w ∈ cell, dp.prior w * dp.utility w a)
+  else 0
+
+/-- `P(cell)·V(D|cell) = maxₐ ∑_{w∈cell} P(w)·U(w,a)`: the probability-weighted
+conditional value equals the unnormalized cell value. The normalizing `1/P(cell)` in
+`conditionalEU` cancels against the `P(cell)` weight; when `P(cell) = 0`, a nonnegative
+prior forces every `P(w) = 0` on the cell, so both sides vanish. -/
+private lemma cellProb_mul_valueAfterLearning_eq_uValue {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) (cell : Finset W)
+    (hprior : ∀ w, 0 ≤ dp.prior w) :
+    cellProbability dp cell * valueAfterLearning dp acts cell = uValue dp acts cell := by
+  unfold uValue valueAfterLearning
+  by_cases hne : acts.Nonempty
+  · rw [dif_pos hne, dif_pos hne]
+    have htp_nonneg : 0 ≤ cellProbability dp cell :=
+      Finset.sum_nonneg (fun w _ => hprior w)
+    by_cases htp : cellProbability dp cell = 0
+    · rw [htp, zero_mul]
+      have hpw : ∀ w ∈ cell, dp.prior w = 0 :=
+        (Finset.sum_eq_zero_iff_of_nonneg (fun w _ => hprior w)).mp htp
+      have hz : ∀ a ∈ acts, (∑ w ∈ cell, dp.prior w * dp.utility w a) = 0 := by
+        intro a _; exact Finset.sum_eq_zero (fun w hw => by rw [hpw w hw, zero_mul])
+      rw [Finset.sup'_congr hne rfl hz, Finset.sup'_const]
+    · rw [Finset.mul₀_sup' htp_nonneg (conditionalEU dp cell) acts hne]
+      refine Finset.sup'_congr hne rfl (fun a _ => ?_)
+      have htp' : cell.sum dp.prior ≠ 0 := htp
+      have hcEU : conditionalEU dp cell a
+          = cell.sum (fun w => dp.prior w / cell.sum dp.prior * dp.utility w a) := by
+        show (if cell.sum dp.prior = 0 then (0 : ℚ) else
+              cell.sum (fun w => dp.prior w / cell.sum dp.prior * dp.utility w a)) = _
+        rw [if_neg htp']
+      show cell.sum dp.prior * conditionalEU dp cell a
+          = ∑ w ∈ cell, dp.prior w * dp.utility w a
+      rw [hcEU, Finset.mul_sum]
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ htp']
+  · rw [dif_neg hne, dif_neg hne, mul_zero]
+
+/-- **Superadditivity of unnormalized cell value under splitting**: when `cell` is the
+disjoint union of `c₁` and `c₂`, splitting it can only raise the best-action value,
+`uValue (c₁ ∪ c₂) ≤ uValue c₁ + uValue c₂` (max of a sum ≤ sum of maxes). This is the
+combinatorial heart of [blackwell-1953]'s forward direction. -/
+private lemma uValue_union_le {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) {c₁ c₂ : Finset W}
+    (hdisj : Disjoint c₁ c₂) :
+    uValue dp acts (c₁ ∪ c₂) ≤ uValue dp acts c₁ + uValue dp acts c₂ := by
+  unfold uValue
+  by_cases hne : acts.Nonempty
+  · rw [dif_pos hne, dif_pos hne, dif_pos hne]
+    refine Finset.sup'_le hne _ (fun a ha => ?_)
+    rw [Finset.sum_union hdisj]
+    exact add_le_add (Finset.le_sup' (fun a => ∑ w ∈ c₁, dp.prior w * dp.utility w a) ha)
+      (Finset.le_sup' (fun a => ∑ w ∈ c₂, dp.prior w * dp.utility w a) ha)
+  · rw [dif_neg hne, dif_neg hne, dif_neg hne, add_zero]
+
+/-- **Splitting a cell never decreases its decision value**: for disjoint cells `c₁`, `c₂`
+and a nonnegative prior,
+`P(c₁)·V(D|c₁) + P(c₂)·V(D|c₂) ≥ P(c₁ ∪ c₂)·V(D|c₁ ∪ c₂)`.
+This is [blackwell-1953]'s data-processing inequality for a single binary refinement, the
+building block of [van-rooy-2003]'s §4.1 question-utility monotonicity (p. 743). -/
+theorem cellProb_valueAfterLearning_split_ge {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) {c₁ c₂ : Finset W}
+    (hdisj : Disjoint c₁ c₂) (hprior : ∀ w, 0 ≤ dp.prior w) :
+    cellProbability dp (c₁ ∪ c₂) * valueAfterLearning dp acts (c₁ ∪ c₂) ≤
+    cellProbability dp c₁ * valueAfterLearning dp acts c₁ +
+    cellProbability dp c₂ * valueAfterLearning dp acts c₂ := by
+  rw [cellProb_mul_valueAfterLearning_eq_uValue dp acts _ hprior,
+    cellProb_mul_valueAfterLearning_eq_uValue dp acts _ hprior,
+    cellProb_mul_valueAfterLearning_eq_uValue dp acts _ hprior]
+  exact uValue_union_le dp acts hdisj
+
+/-- **Question utility rises under refinement (binary split)** — the `⟹` ("only if")
+direction of [van-rooy-2003]'s §4.1 Fact (p. 743), in its elementary case. Splitting one
+cell `c₁ ∪ c₂` of a question into the two disjoint cells `c₁`, `c₂` can only increase the
+expected utility value `EUV`. This is the finite-partition instance of [blackwell-1953]'s
+data-processing inequality; any finite refinement of one partition by another is a
+composition of such binary splits, so iterating gives the full §4.1 monotonicity. -/
+theorem questionUtility_split_ge {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (acts : Finset A)
+    {c₁ c₂ : Finset W} (rest : Finset (Finset W))
+    (hdisj : Disjoint c₁ c₂) (hprior : ∀ w, 0 ≤ dp.prior w)
+    (hc₁ : c₁ ∉ rest) (hc₂ : c₂ ∉ rest) (hne12 : c₁ ≠ c₂) (hcrest : c₁ ∪ c₂ ∉ rest) :
+    questionUtility dp acts (insert (c₁ ∪ c₂) rest) ≤
+    questionUtility dp acts (insert c₁ (insert c₂ rest)) := by
+  have hc₁' : c₁ ∉ insert c₂ rest := by
+    simp only [Finset.mem_insert, not_or]; exact ⟨hne12, hc₁⟩
+  have hcp : cellProbability dp (c₁ ∪ c₂)
+      = cellProbability dp c₁ + cellProbability dp c₂ := Finset.sum_union hdisj
+  have hcpd : cellProbability dp (c₁ ∪ c₂) * dpValue dp acts
+      = cellProbability dp c₁ * dpValue dp acts
+        + cellProbability dp c₂ * dpValue dp acts := by rw [hcp]; ring
+  have hsplit := cellProb_valueAfterLearning_split_ge dp acts hdisj hprior
+  unfold questionUtility
+  rw [Finset.sum_insert hcrest, Finset.sum_insert hc₁', Finset.sum_insert hc₂]
+  simp only [utilityValue, mul_sub]
+  linarith [hsplit, hcpd]
+
+/-! #### General partition refinement
+
+The binary `questionUtility_split_ge` lifts to an arbitrary refinement of one partition by
+another, via general superadditivity of `uValue` and a fiberwise regrouping. The refinement
+is presented by a map `assign` sending each finer cell to the coarser cell containing it,
+with each coarser cell the union (`Finset.sup`) of its fiber. -/
+
+private lemma uValue_empty {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) : uValue dp acts ∅ = 0 := by
+  unfold uValue
+  by_cases h : acts.Nonempty
+  · rw [dif_pos h]; simp only [Finset.sum_empty, Finset.sup'_const]
+  · rw [dif_neg h]
+
+/-- **General superadditivity of `uValue`**: splitting a union of pairwise-disjoint cells
+into its pieces never lowers the best-action value, `uValue (⨆ parts) ≤ ∑ uValue`. The
+`Finset.induction` engine for the refinement monotonicity below. -/
+private lemma uValue_sup_le {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) (acts : Finset A) :
+    ∀ {parts : Finset (Finset W)},
+      (∀ p₁ ∈ parts, ∀ p₂ ∈ parts, p₁ ≠ p₂ → Disjoint p₁ p₂) →
+      uValue dp acts (parts.sup id) ≤ ∑ p ∈ parts, uValue dp acts p := by
+  intro parts
+  induction parts using Finset.induction with
+  | empty => intro _; simp [uValue_empty]
+  | insert p s hp ih =>
+    intro hdisj
+    have hsub : ∀ p₁ ∈ s, ∀ p₂ ∈ s, p₁ ≠ p₂ → Disjoint p₁ p₂ :=
+      fun a ha b hb hab =>
+        hdisj a (Finset.mem_insert_of_mem ha) b (Finset.mem_insert_of_mem hb) hab
+    have hdp : Disjoint p (s.sup id) :=
+      Finset.disjoint_sup_right.mpr fun q hq =>
+        hdisj p (Finset.mem_insert_self p s) q (Finset.mem_insert_of_mem hq)
+          (fun h => hp (h ▸ hq))
+    rw [Finset.sup_insert, Finset.sum_insert hp, id_eq]
+    calc uValue dp acts (p ⊔ s.sup id)
+        ≤ uValue dp acts p + uValue dp acts (s.sup id) := uValue_union_le dp acts hdp
+      _ ≤ uValue dp acts p + ∑ q ∈ s, uValue dp acts q := by linarith [ih hsub]
+
+/-- Cell probability is additive over a union of pairwise-disjoint cells. -/
+private lemma cellProb_sup {W A : Type*} [DecidableEq W]
+    (dp : DecisionProblem W A) :
+    ∀ {parts : Finset (Finset W)},
+      (∀ p₁ ∈ parts, ∀ p₂ ∈ parts, p₁ ≠ p₂ → Disjoint p₁ p₂) →
+      cellProbability dp (parts.sup id) = ∑ p ∈ parts, cellProbability dp p := by
+  intro parts
+  induction parts using Finset.induction with
+  | empty => intro _; simp [cellProbability, Finset.sup_empty, Finset.bot_eq_empty]
+  | insert p s hp ih =>
+    intro hdisj
+    have hsub : ∀ p₁ ∈ s, ∀ p₂ ∈ s, p₁ ≠ p₂ → Disjoint p₁ p₂ :=
+      fun a ha b hb hab =>
+        hdisj a (Finset.mem_insert_of_mem ha) b (Finset.mem_insert_of_mem hb) hab
+    have hdp : Disjoint p (s.sup id) :=
+      Finset.disjoint_sup_right.mpr fun q hq =>
+        hdisj p (Finset.mem_insert_self p s) q (Finset.mem_insert_of_mem hq)
+          (fun h => hp (h ▸ hq))
+    rw [Finset.sup_insert, Finset.sum_insert hp, id_eq, ← ih hsub]
+    exact Finset.sum_union hdp
+
+/-- `questionUtility` in linearized form: total best-action value minus the baseline value
+weighted by total cell mass. Lets refinement monotonicity reduce to `∑ uValue` superadditivity
+once total mass is shown invariant. -/
+private lemma questionUtility_eq {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (acts : Finset A) (cells : Finset (Finset W))
+    (hprior : ∀ w, 0 ≤ dp.prior w) :
+    questionUtility dp acts cells
+      = (∑ c ∈ cells, uValue dp acts c)
+        - dpValue dp acts * (∑ c ∈ cells, cellProbability dp c) := by
+  unfold questionUtility
+  rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl (fun c _ => ?_)
+  unfold utilityValue
+  rw [mul_sub, cellProb_mul_valueAfterLearning_eq_uValue dp acts c hprior]
+  ring
+
+/-- **Question utility is monotone under partition refinement** — the `⟹` direction of
+[van-rooy-2003]'s §4.1 Fact (p. 743), in full generality. A finer partition `fine`
+(presented as a refinement of `coarse` via `assign`, with each coarse cell the disjoint
+union of its fiber) has `EUV ≥` the coarser one. By [blackwell-1953]: post-processing the
+finer experiment cannot raise the convex value. Generalizes `questionUtility_split_ge`. -/
+theorem questionUtility_mono_of_refines {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (acts : Finset A)
+    {fine coarse : Finset (Finset W)} (assign : Finset W → Finset W)
+    (hmaps : ∀ f ∈ fine, assign f ∈ coarse)
+    (hcover : ∀ c ∈ coarse, c = (fine.filter (fun f => assign f = c)).sup id)
+    (hdisj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
+    (hprior : ∀ w, 0 ≤ dp.prior w) :
+    questionUtility dp acts coarse ≤ questionUtility dp acts fine := by
+  have hfdisj : ∀ c ∈ coarse, ∀ f₁ ∈ fine.filter (fun f => assign f = c),
+      ∀ f₂ ∈ fine.filter (fun f => assign f = c), f₁ ≠ f₂ → Disjoint f₁ f₂ :=
+    fun c _ f₁ hf₁ f₂ hf₂ hne =>
+      hdisj f₁ (Finset.mem_of_mem_filter _ hf₁) f₂ (Finset.mem_of_mem_filter _ hf₂) hne
+  have hcell : ∑ c ∈ coarse, cellProbability dp c = ∑ f ∈ fine, cellProbability dp f := by
+    rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun f => cellProbability dp f)]
+    refine Finset.sum_congr rfl (fun c hc => ?_)
+    rw [← cellProb_sup dp (hfdisj c hc)]
+    exact congrArg (cellProbability dp) (hcover c hc)
+  have huv : ∑ c ∈ coarse, uValue dp acts c ≤ ∑ f ∈ fine, uValue dp acts f := by
+    calc ∑ c ∈ coarse, uValue dp acts c
+        = ∑ c ∈ coarse, uValue dp acts ((fine.filter (fun f => assign f = c)).sup id) :=
+          Finset.sum_congr rfl (fun c hc => congrArg (uValue dp acts) (hcover c hc))
+      _ ≤ ∑ c ∈ coarse, ∑ f ∈ fine.filter (fun f => assign f = c), uValue dp acts f :=
+          Finset.sum_le_sum (fun c hc => uValue_sup_le dp acts (hfdisj c hc))
+      _ = ∑ f ∈ fine, uValue dp acts f :=
+          Finset.sum_fiberwise_of_maps_to hmaps (fun f => uValue dp acts f)
+  rw [questionUtility_eq dp acts coarse hprior, questionUtility_eq dp acts fine hprior, hcell]
+  linarith [huv]
 
 /-! ### Maximin Monotonicity
 
