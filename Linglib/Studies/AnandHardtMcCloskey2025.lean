@@ -430,11 +430,11 @@ theorem sic_predicts_germanCaseMismatch :
     analysis ([E] on C → Voice inside TP) independently block these mismatches
     in sluicing. -/
 theorem merchant_deletion_domain_matches_corpus :
-    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
-      Minimalist.Ellipsis.voiceMismatch = false ∧
+    ¬ Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+        Minimalist.Ellipsis.voiceMismatch ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .voice = 0 ∧
-    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
-      Minimalist.Ellipsis.transitivityMismatch = false ∧
+    ¬ Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+        Minimalist.Ellipsis.transitivityMismatch ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .argumentStructure = 0 :=
   ⟨by decide, rfl, by decide, rfl⟩
 
@@ -448,12 +448,12 @@ theorem merchant_deletion_domain_matches_corpus :
     data the two theories make different predictions. -/
 theorem sic_merchant_diverge_on_vpe :
     -- Sluicing: both block voice mismatch (convergence)
-    (Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
-        Minimalist.Ellipsis.voiceMismatch = false ∧
+    (¬ Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+        Minimalist.Ellipsis.voiceMismatch ∧
       ¬ structurallyIdentical activeVP passiveVP) ∧
     -- VP-ellipsis: Merchant tolerates, the height-blind SIC still blocks (divergence)
     (Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.englishVPE
-        Minimalist.Ellipsis.voiceMismatch = true ∧
+        Minimalist.Ellipsis.voiceMismatch ∧
       ¬ structurallyIdentical activeVP passiveVP) :=
   ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
 
