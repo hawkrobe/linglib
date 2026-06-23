@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.HPSG.HeadFiller
+import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003Extraction
 import Linglib.Features.ClauseForm
@@ -320,6 +321,39 @@ The `declarative-cl` membership of topicalization follows [sag-2010]'s
 Appendix-B hierarchy; construction (61) states only `↑filler-head-cxt` explicitly. -/
 theorem topicalized_theClause_share_clauseType :
     (fgParams .topicalized).clauseType = (fgParams .theClause).clauseType := rfl
+
+/-! ### Grounding in the RSRL construct hierarchy ([sag-etal-2020] Figs. 6–7)
+
+The five clause types are sorts in the RSRL construct hierarchy (`Syntax/HPSG/Construction`), where
+the filler-head inheritance and the clausal cross-classification above are *theorems about the sort
+order* — the model-theoretic substrate ([richter-2000]) under the `fgParams` record. -/
+
+/-- Each filler-gap clause type as a construct sort in the RSRL hierarchy. -/
+def fgSort : FGClauseType → HPSG.Construction.FHSort
+  | .whInterrogative => .nsWhIntCl
+  | .whExclamative => .whExclCl
+  | .topicalized => .topCl
+  | .whRelative => .whRelCl
+  | .theClause => .theCl
+
+/-- Every clause type is a filler-head construct in the RSRL hierarchy, so it inherits
+`filler-head-cxt`'s constraints (head verbal, filler↔gap token identity) proved in `Construction.lean`
+— the model-theoretic ground of `fg_inherits_nonverbal_filler`. -/
+theorem fgSort_filler_head (c : FGClauseType) :
+    fgSort c ≤ HPSG.Construction.FHSort.headFillerCxt := by cases c <;> decide
+
+/-- The local `ClauseType` as the matching RSRL clausal sort (Fig. 7). -/
+def clauseTypeSort : ClauseType → HPSG.Construction.FHSort
+  | .interrogativeCl => .interrogativeCl
+  | .relativeCl => .relativeCl
+  | .exclamativeCl => .exclamativeCl
+  | .declarativeCl => .declarativeCl
+
+/-- The RSRL clausal cross-classification agrees with the local `clauseType` assignment: each clause
+type's construct sits below the RSRL clausal sort matching `(fgParams c).clauseType`. The
+cross-classification of this section is thus the same fact as the RSRL sort order. -/
+theorem fgSort_matches_clauseType (c : FGClauseType) :
+    fgSort c ≤ clauseTypeSort (fgParams c).clauseType := by cases c <;> decide
 
 /-! ### Inversion ((28)) -/
 
