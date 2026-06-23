@@ -24,7 +24,7 @@ Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
 [goldsmith-2011] [berent-2026]
 -/
 
-namespace Phonology.Syllable
+namespace Prosody.Syllable
 
 open Phonology (Segment Feature)
 
@@ -256,4 +256,4 @@ theorem cvc_is_heavy (σ : Syllable) (h1 : σ.nucleus.length = 1)
     σ.weight = .heavy := by
   simp only [Syllable.weight, Syllable.moraCount, h1, h2, ite_true]
 
-end Phonology.Syllable
+end Prosody.Syllable

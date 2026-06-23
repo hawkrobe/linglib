@@ -36,7 +36,7 @@ are from the paper's word list / online appendix.
 
 namespace Tarifit.Inventory
 
-open Phonology.Syllable
+open Prosody.Syllable
 
 -- ============================================================================
 -- § 1: Word Type

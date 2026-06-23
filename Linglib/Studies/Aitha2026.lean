@@ -55,7 +55,7 @@ namespace Aitha2026
 
 open Core Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Morphology.DM.VI
-open Phonology.Syllable
+open Prosody.Syllable
 
 -- ============================================================================
 -- § 1: Telugu Case System and Paradigm Data
@@ -498,7 +498,7 @@ theorem stem_optimal :
 section WordLevel
 
 open OptimalityTheory.Stratal
-open Phonology.ProsodicWord
+open Prosody.ProsodicWord
 
 -- ────────────────────────────────────────────────────────────────────
 -- Rich phonological exponent substrate ([alderete-1999])
@@ -848,7 +848,7 @@ end CrossStratumReranking
 
 section PrWdIntegration
 
-open Phonology.ProsodicWord
+open Prosody.ProsodicWord
 
 /-- Predict the weak stem form from the following morphological element.
     Uses `MorphElement.triggersLongForm` from `ProsodicWord`: the long
@@ -983,8 +983,8 @@ theorem central_argument :
 section MoraicCLConnection
 
 open Phonology (Segment)
-open Phonology.Moraic (MoraicParams syllableToMoraic MoraicSyllable)
-open Phonology.Moraic.CL (deleteMoraic spreadToFill)
+open Prosody.Moraic (MoraicParams syllableToMoraic MoraicSyllable)
+open Prosody.Moraic.CL (deleteMoraic spreadToFill)
 
 /-- Telugu has Weight by Position: coda consonants bear morae, making
     CVC syllables heavy. This is assumed by the Stem-level parse, where
