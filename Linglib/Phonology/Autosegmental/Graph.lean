@@ -44,7 +44,7 @@ Two well-formedness conditions are formalised as separable `Prop`s:
   ([pulleyblank-1986]): the *sole* structural WF requirement,
   applying universally to autosegmental representations.
 * `IsSaturatedUpper` / `IsSaturatedLower` — every in-bounds tier
-  position is linked. **Goldsmith** ([goldsmith-1979] p. 27)
+  position is linked. **Goldsmith** ([goldsmith-1979])
   bundled these into WFC; [pulleyblank-1986] reanalysed them as
   the role of *language-particular* association conventions, not
   structural well-formedness. Floating elements ([bird-1966]
@@ -76,11 +76,13 @@ relational composition `{(0,0), (0,1), (1,0), (1,1)}` has the crossing
 
 Goldsmith's 1976 dissertation treated autosegmental tiers as
 "conceptually equal" (cf. [leben-2018-autoseg] §1). The modern picture
-([leben-2018-autoseg] §3, after [clements-1985]) privileges *one
-basic tier* connected to multiple branch tiers (feature geometry,
-templatic CV-skeleton with root + vowel branches). A full multi-tier
-representation is then a paper-specific record of multiple `Graph`s
-sharing the basic tier on one side. The bilateral case below is the
+([leben-2018-autoseg] §3, after [clements-1985], [clements-hume-1995])
+privileges *one basic tier* connected to multiple branch tiers (feature
+geometry, templatic CV-skeleton with root + vowel branches). A full
+multi-tier representation is then a paper-specific record of multiple
+`Graph`s sharing the basic tier on one side — feature geometry is one
+such bundle, with spreading as association of a node to multiple anchors
+([clements-hume-1995]). The bilateral case below is the
 building block.
 
 ## Specializations
@@ -237,7 +239,7 @@ instance (r : Graph α β) (j : Nat) : Decidable (r.IsFloatingLower j) :=
 
 /-! ### Saturation and Goldsmith's WFC
 
-[goldsmith-1979] (p. 27) bundled saturation with non-crossing
+[goldsmith-1979] bundled saturation with non-crossing
 into a single Well-Formedness Condition; [pulleyblank-1986]
 weakened WFC to non-crossing alone, with saturation devolved to
 language-particular association conventions. The post-1986 view is

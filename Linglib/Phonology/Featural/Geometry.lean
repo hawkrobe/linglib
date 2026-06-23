@@ -4,7 +4,8 @@ import Linglib.Phonology.Featural.Features
 # Feature Geometry [clements-1985] [sagey-1986]
 
 Hierarchical organization of phonological features following the standard
-feature geometry model. The tree synthesizes three sources:
+feature geometry model — the hierarchical organization of autosegmental
+tiers ([clements-hume-1995]). The tree synthesizes three sources:
 
 - **[clements-1985]**: root, laryngeal, supralaryngeal, and place nodes
 - **[sagey-1986]**: articulator sub-nodes under Place (labial, coronal, dorsal);
