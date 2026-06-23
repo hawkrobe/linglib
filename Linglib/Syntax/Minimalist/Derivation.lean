@@ -151,4 +151,121 @@ theorem replace_self (so replacement : SyntacticObject) :
   | trace _ => simp only [SyntacticObject.replace_trace, if_true]
   | mul l r _ _ => simp only [SyntacticObject.replace_mul, if_true]
 
+/-! ## Derivation-grounded externalization (computable PF order)
+[marcolli-chomsky-berwick-2025]
+
+A `SyntacticObject` is unordered (`FreeCommMagma`), so the surface left-to-right
+order is *not* recoverable from `Derivation.final` alone. But a `Derivation`
+*records* the planarization choices: `emL`/`im` place material on the LEFT edge,
+`emR` on the right. This is exactly MCB's externalization section `σ_L`
+(§1.12), here determined by the derivation ("the language `L`") instead of by a
+noncanonical `Quot.out`. The fold below replays the steps on an **ordered**
+`FreeMagma` accumulator, giving a fully **computable** PF — no `Quot.out`, so
+surface orders are `decide`/`#eval`-checkable.
+
+Merged items and the initial seed are leaves/traces in canonical derivations;
+complex merged items return `none` (flagged) in this version. Movers may be
+phrasal: `im` locates the *ordered* subtree of the accumulator that projects to
+the (unordered) mover and moves it left, mirroring `Step.apply`'s
+`replace`. -/
+
+/-- Planar form of a leaf/trace SO (the only items merged in canonical
+    derivations). `none` for a complex SO (no recorded internal order). -/
+def SyntacticObject.toPlanarLeaf? (so : SyntacticObject) :
+    Option (FreeMagma (LIToken ⊕ Nat)) :=
+  match so.getLIToken, isTrace so with
+  | some tok, _ => some (.of (.inl tok))
+  | _, some n => some (.of (.inr n))
+  | _, _ => none
+
+/-- Replace every ordered subtree of `t` that projects to `target` with `rep`.
+    The planar mirror of `SyntacticObject.replace` (matches by SO-equality of
+    the projection `FreeCommMagma.mk`). -/
+def planarReplaceSO (target : SyntacticObject) (rep : FreeMagma (LIToken ⊕ Nat)) :
+    FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat)
+  | a@(.of _) => if (FreeCommMagma.mk a : SyntacticObject) = target then rep else a
+  | a@(.mul l r) =>
+      if (FreeCommMagma.mk a : SyntacticObject) = target then rep
+      else .mul (planarReplaceSO target rep l) (planarReplaceSO target rep r)
+
+/-- Find the (leftmost) ordered subtree of `t` projecting to `target`. -/
+def findOrderedSubtree? (target : SyntacticObject) :
+    FreeMagma (LIToken ⊕ Nat) → Option (FreeMagma (LIToken ⊕ Nat))
+  | a@(.of _) => if (FreeCommMagma.mk a : SyntacticObject) = target then some a else none
+  | a@(.mul l r) =>
+      if (FreeCommMagma.mk a : SyntacticObject) = target then some a
+      else (findOrderedSubtree? target l).or (findOrderedSubtree? target r)
+
+/-- Internal Merge on the ordered accumulator: raise the ordered subtree
+    projecting to `mover` to the LEFT edge, leaving a trace. Mirrors
+    `Step.apply (.im mover tid)`. `none` if `mover` isn't found. -/
+def moveLeftPlanar (acc : FreeMagma (LIToken ⊕ Nat)) (mover : SyntacticObject)
+    (tid : Nat) : Option (FreeMagma (LIToken ⊕ Nat)) :=
+  (findOrderedSubtree? mover acc).map fun s =>
+    .mul s (planarReplaceSO mover (.of (.inr tid)) acc)
+
+/-- The derivation's ordered planar representative (MCB `σ_L` for this
+    derivation), or `none` if a merged item is complex / a mover is missing. -/
+def Derivation.externalizeP? (d : Derivation) :
+    Option (FreeMagma (LIToken ⊕ Nat)) :=
+  (d.initial.toPlanarLeaf?).bind fun init =>
+    d.steps.foldl (fun acc? step => acc?.bind fun acc =>
+      match step with
+      | .emL item => (item.toPlanarLeaf?).map (fun p => .mul p acc)
+      | .emR item => (item.toPlanarLeaf?).map (fun p => .mul acc p)
+      | .im mover tid => moveLeftPlanar acc mover tid) (some init)
+
+/-- Surface (pronounced) tokens of a derivation, left-to-right. Traces are
+    dropped (`linearizePlanar` skips `Sum.inr`). Empty if externalization
+    fails. -/
+def Derivation.surfaceTokens (d : Derivation) : List LIToken :=
+  (d.externalizeP?.map linearizePlanar).getD []
+
+/-- Surface category sequence — the readout used by word-order studies
+    (e.g. Cinque's Dem/Num/A/N orders). -/
+def Derivation.surfaceCats (d : Derivation) : List Cat :=
+  d.surfaceTokens.map (·.item.outerCat)
+
+/-! ### Faithfulness (Π bridge) and verification
+
+**Faithfulness:** whenever `externalizeP?` succeeds, its ordered representative
+projects back to the unordered `Derivation.final` — `externalizeP?` is a genuine
+planar representative of the narrow-syntax output, not an independent
+re-derivation. Stated concretely below by `decide`; the general theorem
+`∀ fm, d.externalizeP? = some fm → (FreeCommMagma.mk fm) = d.final` is provable
+by induction on `d.steps` via `mk (planarReplaceSO t rep a) = (mk a).replace t
+(mk rep)` plus the leaf/trace projection lemmas (deferred).
+
+The checks below also pin the substantive content: phrasal **pied-piping
+preserves the moved constituent's internal order**, so deriving Dem-N-A-Num
+(raise N around A, then pied-pipe `[N A]` around Num) is distinct from
+Dem-A-N-Num (pied-pipe `[A N]` around Num) — the [cinque-2005] o-vs-n contrast.
+(`.D` stands in for the demonstrative pending a `Cat.Dem` constructor.) -/
+
+private def vN : SyntacticObject := mkLeaf .N [] 1
+private def vA : SyntacticObject := mkLeaf .A [] 2
+private def vNum : SyntacticObject := mkLeaf .Num [] 3
+private def vD : SyntacticObject := mkLeaf .D [] 4
+
+/-- No movement: `Dem Num A N`. -/
+private def derivBase : Derivation :=
+  { initial := vN, steps := [.emL vA, .emL vNum, .emL vD] }
+/-- Raise N around A, pied-pipe `[N A]` around Num: `Dem N A Num`. -/
+private def derivO : Derivation :=
+  { initial := vN
+    steps := [.emL vA, .im vN 10, .emL vNum, .im (vN * (vA * mkTrace 10)) 11, .emL vD] }
+/-- Pied-pipe `[A N]` around Num, no sub-raise: `Dem A N Num`. -/
+private def derivN : Derivation :=
+  { initial := vN, steps := [.emL vA, .emL vNum, .im (vA * vN) 11, .emL vD] }
+
+example : derivBase.surfaceCats = [.D, .Num, .A, .N] := by decide
+example : derivO.surfaceCats = [.D, .N, .A, .Num] := by decide
+example : derivN.surfaceCats = [.D, .A, .N, .Num] := by decide
+/-- Pied-piping preserves internal order: o and n diverge. -/
+example : derivO.surfaceCats ≠ derivN.surfaceCats := by decide
+/-- Concrete Π bridge: externalization projects to `final`. -/
+example :
+    derivO.externalizeP?.map (FreeCommMagma.mk (α := LIToken ⊕ Nat)) = some derivO.final := by
+  decide
+
 end Minimalist
