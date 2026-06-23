@@ -339,10 +339,7 @@ theorem nonDP_unrestricted :
     - [cole-hermon-2008]: VP moves to Spec,TP; subject stranded in Spec,vP
     - [erlewine-2018]: vP moves to Spec,CP; subject stranded in Spec,TP -/
 theorem predicate_fronting_yields_vi_order :
-    (HeadFunction.leftSpine.phonYield ColeHermon2008.tobaBatakVOS.final).head?
-      = some "mangatuk" := by
-  -- TODO Phase 2: blocked on noncomputable phonYield
-  sorry
+    ColeHermon2008.tobaBatakVOS.surfacePhon.head? = some "mangatuk" := by decide
 
 -- ============================================================================
 -- § 10: vP-to-Spec,CP Derivation
@@ -398,15 +395,11 @@ def erlewineDerivation : Derivation :=
 
 /-- Erlewine's derivation yields VOS word order. -/
 theorem erlewine_yields_vos :
-    HeadFunction.leftSpine.phonYield erlewineDerivation.final = ["mangatuk", "biangi", "dakdanakan"] := by
-  -- TODO Phase 2: blocked on noncomputable phonYield
-  sorry
+    erlewineDerivation.surfacePhon = ["mangatuk", "biangi", "dakdanakan"] := by decide
 
 /-- Both analyses agree on VOS surface order despite different structural heights. -/
 theorem cole_erlewine_agree_on_order :
-    HeadFunction.leftSpine.phonYield tobaBatakVOS.final = HeadFunction.leftSpine.phonYield erlewineDerivation.final := by
-  -- TODO Phase 2: blocked on noncomputable phonYield
-  sorry
+    tobaBatakVOS.surfacePhon = erlewineDerivation.surfacePhon := by decide
 
 /-- Erlewine has TWO movements (Subj → Spec,TP + vP → Spec,CP) vs
     [cole-hermon-2008]'s ONE (VP → Spec,TP). -/

@@ -158,15 +158,11 @@ def englishSVO : Derivation :=
 
 /-- VP-raising yields Verb-Object-Subject surface order. -/
 theorem toba_batak_is_vos :
-    HeadFunction.leftSpine.phonYield tobaBatakVOS.final = ["mangatuk", "biangi", "dakdanakan"] := by
-  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
-  sorry
+    tobaBatakVOS.surfacePhon = ["mangatuk", "biangi", "dakdanakan"] := by decide
 
 /-- Subject-raising yields Subject-Verb-Object surface order. -/
 theorem english_is_svo :
-    HeadFunction.leftSpine.phonYield englishSVO.final = ["John", "saw", "Mary"] := by
-  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
-  sorry
+    englishSVO.surfacePhon = ["John", "saw", "Mary"] := by decide
 
 /-- Both derivations have the same tree shape before the movement step
     (stage 4). The only parametric difference is *what* moves in step 5.
@@ -493,16 +489,13 @@ def tobaBatakSVO : Derivation :=
 
 /-- The VOS Hypothesis derives SVO surface order. -/
 theorem toba_batak_svo_order :
-    HeadFunction.leftSpine.phonYield tobaBatakSVO.final = ["dakdanakan", "mangatuk", "biangi"] := by
-  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
-  sorry
+    tobaBatakSVO.surfacePhon = ["dakdanakan", "mangatuk", "biangi"] := by decide
 
 /-- SVO goes through VOS: at stage 5 (before subject-raising), the
     intermediate tree has VOS order — the same as `tobaBatakVOS.final`. -/
 theorem svo_passes_through_vos :
-    HeadFunction.leftSpine.phonYield (tobaBatakSVO.stageAt 5) = HeadFunction.leftSpine.phonYield tobaBatakVOS.final := by
-  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
-  sorry
+    (⟨tobaBatakSVO.initial, tobaBatakSVO.steps.take 5⟩ : Derivation).surfacePhon
+      = tobaBatakVOS.surfacePhon := by decide
 
 /-- The VOS Hypothesis predicts identical extraction restrictions for SVO:
     the DO is still inside the fronted VP, regardless of whether the
@@ -573,9 +566,7 @@ def englishPassive : Derivation :=
 
 /-- English passive yields patient-verb-agent surface order. -/
 theorem english_passive_order :
-    HeadFunction.leftSpine.phonYield englishPassive.final = ["the-boy", "was-injured", "by-himself"] := by
-  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
-  sorry
+    englishPassive.surfacePhon = ["the-boy", "was-injured", "by-himself"] := by decide
 
 -- ============================================================================
 -- § 13: Cross-Linguistic Binding Contrast (§7 of the paper)
