@@ -38,9 +38,9 @@ theory needs separate slopes per constraint — which it has, and so
 remains a viable account.
 -/
 
-namespace Phonology.ItemSpecificity.Scaled
+namespace Constraint.ItemSpecificity.Scaled
 
-open Phonology.ItemSpecificity
+open Constraint.ItemSpecificity
 open Constraint OptimalityTheory
 
 -- ============================================================================
@@ -92,4 +92,4 @@ theorem scaledWeight_monotone_in_freq
   unfold scaledWeight
   exact (add_le_add_iff_left baseWeight).mpr (mul_le_mul_of_nonneg_left hab h)
 
-end Phonology.ItemSpecificity.Scaled
+end Constraint.ItemSpecificity.Scaled

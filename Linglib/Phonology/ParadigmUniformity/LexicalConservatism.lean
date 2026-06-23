@@ -53,7 +53,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
   `mismatch f f = 0` (well-formedness on the diagonal).
 -/
 
-namespace Phonology.ParadigmUniformity
+namespace OptimalityTheory.ParadigmUniformity
 
 open Constraint OptimalityTheory
 open OptimalityTheory.Correspondence (Corr)
@@ -134,4 +134,4 @@ theorem lc_unanchored_zero {Form : Type} (name : String)
     (mkLCFaith name mismatch).eval (lcParadigm candidate none) = 0 := by
   simp [mkLCFaith, lcParadigm, liftPairwise, List.product, h_diagonal]
 
-end Phonology.ParadigmUniformity
+end OptimalityTheory.ParadigmUniformity

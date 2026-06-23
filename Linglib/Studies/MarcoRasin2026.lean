@@ -45,7 +45,7 @@ namespace MarcoRasin2026
 
 open Core.Optimization Constraint OptimalityTheory
 open OptimalityTheory
-open Phonology.ParadigmUniformity
+open OptimalityTheory.ParadigmUniformity
 open Prosody.Syllable (SonorityRank)
 
 -- ============================================================================
