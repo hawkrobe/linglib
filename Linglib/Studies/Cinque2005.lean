@@ -208,27 +208,16 @@ private def fmHasN : FM → Bool
   | .of (.inr _) => false
   | .mul l r => fmHasN l || fmHasN r
 
-/-- All subtrees of a planar structure. -/
-private def fmSub : FM → List FM
-  | .of x => [.of x]
-  | .mul l r => .mul l r :: (fmSub l ++ fmSub r)
-
-/-- Replace every occurrence of `target` with `rep`. -/
-private def fmRepl (target rep : FM) : FM → FM
-  | .mul l r => if (.mul l r : FM) == target then rep
-                else .mul (fmRepl target rep l) (fmRepl target rep r)
-  | .of x => if (.of x : FM) == target then rep else .of x
-
-/-- Raise `s` to the left edge, leaving a trace. -/
-private def fmMove (s cur : FM) : FM := .mul s (fmRepl s fmTr cur)
-
 /-- Eligible movers: N-containing proper subtrees (no remnant movement; can't
-    raise the whole node to its own spec). -/
+    raise the whole node to its own spec). Uses the shared planar-tree toolkit
+    (`planarSubtrees`, `Syntax/Minimalist/Derivation.lean`). -/
 private def fmMovers (cur : FM) : List FM :=
-  (fmSub cur).filter (fun s => fmHasN s && s != cur)
+  (planarSubtrees cur).filter (fun s => fmHasN s && s != cur)
 
-/-- At a spec: keep, or raise one eligible mover. -/
-private def fmOpt (cur : FM) : List FM := cur :: (fmMovers cur).map (fmMove · cur)
+/-- At a spec: keep, or raise one eligible mover (leftward, via the shared
+    `planarMoveLeft`). -/
+private def fmOpt (cur : FM) : List FM :=
+  cur :: (fmMovers cur).filterMap (fun s => planarMoveLeft (· == s) fmTr cur)
 
 /-- The whole legal derivation space (planar externalizations): merge A, Num, Dem
     head-initially with an optional raise at each spec. -/
