@@ -46,7 +46,7 @@ Iterative spreading lies in the strictly larger Output Strictly Local class
   (cf. `Core/Computability/Subregular/Function/ISL.lean`).
 -/
 
-namespace Phonology.LocalRewrite
+namespace Subregular.LocalRewrite
 
 open Phonology
 
@@ -145,4 +145,4 @@ previous rule (extrinsic ordering, the SPE convention). -/
 def derive (rules : List Rule) (input : List Segment) : List Segment :=
   rules.foldl (fun s r => r.apply s) input
 
-end Phonology.LocalRewrite
+end Subregular.LocalRewrite

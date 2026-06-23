@@ -6,7 +6,7 @@ import Linglib.Phonology.Subregular.LocalRewrite
 [hayes-2009] [zuraw-2010]
 
 Segment inventory and the nasal substitution process for Tagalog,
-defined using the SPE formalism from `Phonology.LocalRewrite`.
+defined using the SPE formalism from `Subregular.LocalRewrite`.
 
 ## Nasal substitution
 
@@ -46,7 +46,7 @@ the independent rule of homorganic-nasal-place assimilation, which
 -/
 
 open Phonology
-open Phonology.LocalRewrite
+open Subregular.LocalRewrite
 
 namespace Tagalog.Phonology
 

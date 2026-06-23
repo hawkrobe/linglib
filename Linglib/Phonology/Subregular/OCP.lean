@@ -44,7 +44,7 @@ formalisations but the constraint and a retraction onto it, both characterising
 `Phonology.OCP.IsClean`, both subregular.
 -/
 
-namespace Phonology
+namespace Subregular
 
 open OptimalityTheory
 open Subregular
@@ -186,4 +186,4 @@ theorem collapse_isISL [DecidableEq α] :
     rw [Phonology.OCP.collapse_eq_destutter, List.destutter_cons']
     exact key x rest
 
-end Phonology
+end Subregular

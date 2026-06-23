@@ -40,7 +40,7 @@ namespace Finnish.VowelHarmony
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
 open Phonology.Autosegmental (AutosegRep agreeAt)
-open Phonology.Harmony (System HarmonyDir triggerValue
+open Subregular.Harmony (System HarmonyDir triggerValue
   harmonizeOne spreadSuffix)
 
 -- ============================================================================
