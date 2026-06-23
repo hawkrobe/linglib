@@ -27,9 +27,10 @@ than graph planarity (which mathlib lacks and which would over-model it).
 
 ## Main results
 
-* `monovaryOn_insert` / `monovaryOn_singleton`: the `Monovary` analogues of
-  `Set.pairwise_insert` / `Set.pairwise_singleton`, absent from mathlib
-  (`[UPSTREAM]` candidates). The structural keystones the rest derive from.
+* `monovaryOn_union` / `monovaryOn_insert` / `monovaryOn_singleton`: the
+  `Monovary` analogues of mathlib's `Set.pairwise_union` / `_insert` /
+  `_singleton`, absent from the `MonovaryOn` API (`[UPSTREAM]` candidates). The
+  structural keystones the rest derive from (`union` is the fundamental lemma).
 * `isNonCrossing_iff`: the elementary `∀∀→` form of `IsNonCrossing`.
 * `IsNonCrossing.subset`: subset closure.
 * `isNonCrossing_insert_iff'`: the insert-algebra — `insert p` stays
@@ -41,12 +42,13 @@ than graph planarity (which mathlib lacks and which would over-model it).
 
 namespace Autosegmental
 
-/-! ### `MonovaryOn` on `insert` and singletons
+/-! ### `MonovaryOn` on `union`, `insert`, and singletons
 
-`monovaryOn_insert` is the `Monovary` analogue of mathlib's
-`Set.pairwise_insert` (which mathlib has, while the `MonovaryOn` version is
-absent); both this and `monovaryOn_singleton` are `[UPSTREAM]` candidates for
-`Mathlib/Order/Monotone/Monovary.lean`. -/
+`monovaryOn_union` / `monovaryOn_insert` are the `Monovary` analogues of
+mathlib's `Set.pairwise_union` / `Set.pairwise_insert`, which the `MonovaryOn`
+API lacks; together with `monovaryOn_singleton` they are `[UPSTREAM]` candidates
+for `Mathlib/Order/Monotone/Monovary.lean`. As in mathlib, `union` is the
+fundamental lemma and `insert` derives from it via `Set.insert_eq`. -/
 
 section Monovary
 variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β}
@@ -56,16 +58,22 @@ variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι 
   rintro i rfl j rfl h
   exact absurd h (lt_irrefl _)
 
-/-- `MonovaryOn` on `insert a s`: monovary on `s`, plus `a` does not invert the
-    order against any element of `s`. The `Monovary` analogue of
-    `Set.pairwise_insert` (the `a = b` diagonal is vacuous, so no `≠` guard). -/
+/-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
+    order against the other. The `Monovary` analogue of `Set.pairwise_union` (the
+    `a = b` diagonal is vacuous, so no `≠` guard). -/
+theorem monovaryOn_union {s t : Set ι} :
+    MonovaryOn f g (s ∪ t) ↔
+      MonovaryOn f g s ∧ MonovaryOn f g t ∧
+        ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
+  grind [MonovaryOn]
+
+/-- `MonovaryOn` on `insert a s`, derived from `monovaryOn_union` (as mathlib
+    derives `Set.pairwise_insert` from `Set.pairwise_union` via `Set.insert_eq`). -/
 theorem monovaryOn_insert {s : Set ι} {a : ι} :
     MonovaryOn f g (insert a s) ↔
       MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
-  refine ⟨fun h => ⟨h.subset (Set.subset_insert _ _),
-      fun b hb => ⟨h (.inl rfl) (.inr hb), h (.inr hb) (.inl rfl)⟩⟩, ?_⟩
-  rintro ⟨hs, hc⟩ i (rfl | hi) j (rfl | hj) hlt
-  exacts [absurd hlt (lt_irrefl _), (hc j hj).1 hlt, (hc i hi).2 hlt, hs hi hj hlt]
+  simp only [Set.insert_eq, monovaryOn_union, monovaryOn_singleton, Set.mem_singleton_iff,
+    forall_eq, true_and]
 
 end Monovary
 
