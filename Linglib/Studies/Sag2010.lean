@@ -47,8 +47,9 @@ would live in the HPSG theory layer.
 
 ## Bridges (true by construction, not by prose)
 
-* islands reground on `HPSG.GapRestriction`: islandhood is derived from
-  `IsAbsoluteIsland` (`[GAP ⟨⟩]`), not a boolean stipulation;
+* islands reground on the canonical RSRL signature (`Syntax/HPSG/Construction`):
+  islandhood is a `Models` fact — a topicalized/exclamative construct rejects a
+  second, undischarged gap (`[GAP ⟨⟩]` plus amalgamation), not a boolean stipulation;
 * agreement with [sag-wasow-bender-2003]'s SLASH model on the topicalization
   island;
 * divergence from [ross-1967]'s configurational Complex-NP Constraint on
@@ -59,7 +60,6 @@ would live in the HPSG theory layer.
 
 namespace Sag2010
 
-open HPSG (GapRestriction)
 open Features (ClauseForm)
 
 /-! ### Syntactic categories -/
@@ -164,9 +164,11 @@ inductive Composition
 /-! ### The construction bundle -/
 
 /-- The constraints a filler-gap construction imposes, indexed by [sag-2010]'s
-seven parameters of variation ((6)). Models the descriptive parameter table of
-§2.1; `clauseType` records the cross-classifying supertype from which the
-semantic type is inherited. -/
+parameters of variation ((6)). Models the descriptive parameter table of §2.1;
+`clauseType` records the cross-classifying supertype from which the semantic type
+is inherited. The (6f) island parameter is *not* a field here — islandhood is a
+`Models` fact about the construction's RSRL sort (`FGClauseType.IsIsland`), derived
+from the `[GAP ⟨⟩]` principle plus amalgamation, not stored as a tag. -/
 structure FGConstruction where
   /-- (6b) Allowed syntactic categories of the filler daughter ((25)). -/
   fillerCategories : List SynCat
@@ -178,9 +180,6 @@ structure FGConstruction where
   headInversion : InversionPolicy
   /-- (6d) Whether the head daughter may be infinitival ((29)). -/
   headFiniteness : Finiteness
-  /-- (6f) Island status as an HPSG GAP restriction: `[GAP ⟨⟩]` (`noGap`) is an
-  absolute extraction island ((67), (73), (74)). -/
-  gapRestriction : GapRestriction
   /-- (6e) The cross-classifying clause-type supertype, which determines the
   semantic type ((30)). -/
   clauseType : ClauseType
@@ -193,14 +192,6 @@ structure FGConstruction where
 /-- The semantic type of a construction, inherited from its clause supertype. -/
 def FGConstruction.semType (k : FGConstruction) : SemType :=
   k.clauseType.semType
-
-/-- A construction is an absolute extraction island iff its mother carries
-`[GAP ⟨⟩]`. Derived from the HPSG `GapRestriction`, not stipulated. -/
-def FGConstruction.IsIsland (k : FGConstruction) : Prop :=
-  k.gapRestriction.IsAbsoluteIsland
-
-instance : DecidablePred FGConstruction.IsIsland :=
-  fun k => inferInstanceAs (Decidable k.gapRestriction.IsAbsoluteIsland)
 
 /-! ### The five constructions -/
 
@@ -226,7 +217,6 @@ def fgParams : FGClauseType → FGConstruction
         headCategory := .s                            -- (27a)
         headInversion := .iffIndependent              -- (28a), (84): matrix inverts, embedded does not
         headFiniteness := .infinitivalPossible        -- (29b)
-        gapRestriction := .unrestricted               -- §5.3: not an extraction island
         clauseType := .interrogativeCl                -- (30a) → question
         ic := .unconstrained                          -- (78): matrix or embedded
         composition := .clausal }
@@ -236,7 +226,6 @@ def fgParams : FGClauseType → FGConstruction
         headCategory := .s
         headInversion := .prohibited                  -- (28b)
         headFiniteness := .finiteOnly                 -- (29a)
-        gapRestriction := .noGap                      -- (74): absolute island
         clauseType := .exclamativeCl                  -- (30c) → fact
         ic := .unconstrained                          -- (71): independent or embedded
         composition := .clausal }
@@ -246,7 +235,6 @@ def fgParams : FGClauseType → FGConstruction
         headCategory := .s
         headInversion := .prohibited                  -- (28b)
         headFiniteness := .finiteOnly                 -- (29a)
-        gapRestriction := .noGap                      -- (67): absolute island
         clauseType := .declarativeCl                  -- (30e) → austinean
         ic := .mainClause                             -- (61): [IC +], embeddable in MCP contexts
         composition := .clausal }
@@ -256,8 +244,6 @@ def fgParams : FGClauseType → FGConstruction
         headCategory := .s
         headInversion := .prohibited                  -- (28b)
         headFiniteness := .infinitivalPossible        -- (29b), (97)
-        gapRestriction := .unrestricted               -- no constructional [GAP ⟨⟩]; CNPC effect is
-                                                       -- processing, not grammar ([hofmeister-sag-2010])
         clauseType := .relativeCl                     -- (30b) → proposition
         ic := .embeddedOnly                           -- (91): [IC −]
         composition := .cnpModifier }                 -- (90): λPλx[…] modifies a CNP
@@ -267,7 +253,6 @@ def fgParams : FGClauseType → FGConstruction
         headCategory := .sOrCP                         -- (27b): S or CP
         headInversion := .optional                    -- (28c)
         headFiniteness := .finiteOnly                 -- (29a)
-        gapRestriction := .unrestricted               -- not an island
         clauseType := .declarativeCl                  -- (30d) → austinean
         ic := .unconstrained
         composition := .clausal }
@@ -366,34 +351,61 @@ theorem inversionPolicies :
       = [.iffIndependent, .prohibited, .prohibited, .prohibited, .optional] := by
   decide
 
-/-! ### Islands as GAP restrictions (bridge to `HPSG.GapRestriction`)
+/-! ### Islands as a property of the construction type ([sag-2010] §5.1)
 
 [sag-2010] argues islandhood is a construction-specific `[GAP ⟨⟩]` restriction,
-not universal Subjacency. The island parameter regrounds on the HPSG
-`GapRestriction`, so islandhood is *derived* from `IsAbsoluteIsland`. -/
+not universal Subjacency. Here islandhood is a **`Models` fact** about the
+construction's sort in the canonical RSRL signature (`Syntax/HPSG/Construction`):
+a construction is an absolute island iff its construct cannot host a second,
+undischarged gap — the `[GAP ⟨⟩]` principle plus amalgamation reject it. -/
 
-/-- Topicalization is an absolute island because its mother carries `[GAP ⟨⟩]`
-((67)) — a theorem about the HPSG `GapRestriction`, not a stipulation. -/
-theorem topicalized_isIsland : (fgParams .topicalized).IsIsland := rfl
+/-- A filler-gap construction is an **absolute extraction island** iff its
+construct cannot host a second, undischarged gap — a `Models` fact about the RSRL
+sort ((67), (73), (74)), derived from the `[GAP ⟨⟩]` principle plus amalgamation,
+not stored as a tag. Each case is `¬ Models` of the construction's two-gap RSRL
+worked model (`Syntax/HPSG/Construction`): an island rejects the second gap, a
+non-island admits it. -/
+def FGClauseType.IsIsland : FGClauseType → Prop
+  | .whInterrogative => ¬ HPSG.Construction.nsWhIntSecondGap.Models HPSG.Construction.fhGrammar
+  | .whExclamative   => ¬ HPSG.Construction.whExclSecondGap.Models HPSG.Construction.fhGrammar
+  | .topicalized     => ¬ HPSG.Construction.topClSecondGap.Models HPSG.Construction.fhGrammar
+  | .whRelative      => ¬ HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar
+  | .theClause       => ¬ HPSG.Construction.theClSecondGap.Models HPSG.Construction.fhGrammar
+
+instance : DecidablePred FGClauseType.IsIsland
+  | .whInterrogative =>
+      inferInstanceAs (Decidable (¬ HPSG.Construction.nsWhIntSecondGap.Models HPSG.Construction.fhGrammar))
+  | .whExclamative =>
+      inferInstanceAs (Decidable (¬ HPSG.Construction.whExclSecondGap.Models HPSG.Construction.fhGrammar))
+  | .topicalized =>
+      inferInstanceAs (Decidable (¬ HPSG.Construction.topClSecondGap.Models HPSG.Construction.fhGrammar))
+  | .whRelative =>
+      inferInstanceAs (Decidable (¬ HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar))
+  | .theClause =>
+      inferInstanceAs (Decidable (¬ HPSG.Construction.theClSecondGap.Models HPSG.Construction.fhGrammar))
+
+/-- Topicalization is an absolute island ((67)): a topicalized construct with a
+second gap is rejected by the `[GAP ⟨⟩]` principle. -/
+theorem topicalized_isIsland : FGClauseType.topicalized.IsIsland := by decide
 
 /-- Wh-exclamatives are absolute islands ((74)). -/
-theorem exclamative_isIsland : (fgParams .whExclamative).IsIsland := rfl
+theorem exclamative_isIsland : FGClauseType.whExclamative.IsIsland := by decide
 
 /-- Wh-interrogatives, wh-relatives, and the-clauses are not constructional
-islands: their constructions impose no `[GAP ⟨⟩]`. For wh-relatives this diverges
-from the classic Complex-NP Constraint — [sag-2010] re-attributes the residual
-degradation to processing ([hofmeister-sag-2010]), not grammar. -/
+islands: a second gap amalgamates freely (no `[GAP ⟨⟩]`). For wh-relatives this
+diverges from the classic Complex-NP Constraint — [sag-2010] re-attributes the
+residual degradation to processing ([hofmeister-sag-2010]), not grammar. -/
 theorem interrogative_relative_theClause_not_islands :
-    ¬ (fgParams .whInterrogative).IsIsland ∧
-      ¬ (fgParams .whRelative).IsIsland ∧
-      ¬ (fgParams .theClause).IsIsland := by
+    ¬ FGClauseType.whInterrogative.IsIsland ∧
+      ¬ FGClauseType.whRelative.IsIsland ∧
+      ¬ FGClauseType.theClause.IsIsland := by
   decide
 
 /-- The filler-gap constructions that are absolute extraction islands — exactly
-those whose mother carries `[GAP ⟨⟩]` ((67), (73), (74)). Computed from the GAP
-restriction, not stipulated. -/
+those whose construct rejects a second gap ((67), (73), (74)). Computed from the
+RSRL `Models` verdict, not stipulated. -/
 def islandConstructions : List FGClauseType :=
-  allTypes.filter (fun c => decide (fgParams c).IsIsland)
+  allTypes.filter (fun c => decide c.IsIsland)
 
 /-- Exactly wh-exclamatives and topicalization are filler-gap islands. -/
 theorem islandConstructions_eq :
@@ -416,21 +428,22 @@ theorem island_grounded_in_rsrl :
   SagWasowBender2003.islands_rsrl_grounded.2.1
 
 /-- Agreement with [sag-wasow-bender-2003]: the topicalization island is the same
-datum in two analyses — Sag's `[GAP ⟨⟩]` construction and the HPSG SLASH model
-both block extraction from a topicalized clause. -/
+datum in two analyses — Sag's `[GAP ⟨⟩]` topicalization construct and the generic
+HPSG SLASH model both block a second gap. -/
 theorem topicalized_island_agrees_swb :
-    (fgParams .topicalized).gapRestriction
-      = SagWasowBender2003.topicIslandExtraction.restriction := rfl
+    FGClauseType.topicalized.IsIsland ∧
+      ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
+  ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
 /-- The sharpest divergence from [ross-1967]: the relative clause is Ross's
 paradigm Complex-NP-Constraint island, yet [sag-2010]'s wh-relative construction
-imposes no `[GAP ⟨⟩]`. Where [sag-wasow-bender-2003] maps the CNPC to an absolute
-`noGap` restriction, Sag's wh-relative construction is `unrestricted` — the
-residual effect is processing, not grammar ([hofmeister-sag-2010]). -/
+is no grammatical island — its construct *admits* a second gap, whereas a
+configurational island (Ross's CNPC domain, modeled as a generic absolute island)
+blocks it. The residual effect is processing, not grammar ([hofmeister-sag-2010]). -/
 theorem relative_diverges_from_cnpc :
-    (fgParams .whRelative).gapRestriction = .unrestricted ∧
-      SagWasowBender2003.islandToGapRestriction .complexNP = .noGap := by
-  decide
+    HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar ∧
+      ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
+  ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
 /-! ### Surface clause form (bridge to `Features.ClauseForm`) -/
 

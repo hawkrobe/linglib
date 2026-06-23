@@ -139,41 +139,14 @@ end Binding
 
 /-! ### Long-Distance Dependencies: extraction and islands (Ch. 15)
 
-The Head-Filler Schema and SLASH mechanism, with the empirical island taxonomy of `Studies/Ross1967`
-mapped to GAP feature values. -/
+The Head-Filler Schema and SLASH mechanism. The empirical island taxonomy is stated **model-
+theoretically** over the canonical RSRL signature (`islands_rsrl_grounded` below), which subsumes the
+former coarse `GapRestriction` enum — a dependency penetrates a domain iff its `GAP` survives
+amalgamation. -/
 
 section Extraction
 
 open HPSG
-
-/-- Model of a filler-gap dependency: a wh-filler, a gapped clause,
-and an optional island restriction on the embedded domain. -/
-structure ExtractionConfig where
-  /-- Category of the filler (wh-phrase) -/
-  fillerCat : UD.UPOS
-  /-- Category of the gap (missing complement) -/
-  gapCat : UD.UPOS
-  /-- GAP restriction on intervening domain (if any) -/
-  restriction : GapRestriction := .unrestricted
-
-/-- Extraction from a topicalized clause is blocked ("*What did this book, John read ___?"). Retained
-as the `[GAP ⟨⟩]` datum `Studies/Sag2010` cross-references; the licensing itself is the model-theoretic
-`islands_rsrl_grounded` below, which subsumes the former coarse `extractionLicensed` predicate (filler-gap
-category matching is RSRL amalgamation; island survival is the island/weak-island principles). -/
-def topicIslandExtraction : ExtractionConfig :=
-  { fillerCat := .PRON, gapCat := .NOUN, restriction := .noGap }
-
-/-- Map island constraint types to HPSG GAP restrictions ([ross-1967]'s taxonomy → `[GAP ⟨⟩]`/weak),
-cross-referenced by `Studies/Sag2010`'s divergence theorem. -/
-def islandToGapRestriction : ConstraintType → GapRestriction
-  | .embeddedQuestion  => .noGap     -- absolute barrier (but see weak island analysis)
-  | .complexNP         => .noGap     -- absolute barrier
-  | .adjunct           => .noGap     -- absolute barrier
-  | .coordinate        => .noGap     -- absolute barrier
-  | .subject           => .npOnly    -- weak: some NP extraction ok
-  | .sententialSubject => .noGap     -- absolute barrier
-  | .mannerOfSpeaking  => .npOnly    -- weak: ameliorable with focus
-  | .definiteNominal   => .npOnly    -- weak: ameliorated by VOCs ([shen-huang-2026])
 
 /-- The gap introduction mechanism correctly removes complements. -/
 theorem gap_removes_complement :
@@ -188,15 +161,13 @@ theorem gap_removes_complement :
 Extraction licensing is stated directly over the **model-theoretic** RSRL list-valued `GAP`
 (the canonical `Syntax/HPSG/Construction` signature): filler-gap category matching is gap amalgamation,
 and island permeability is the island/weak-island principles. The whole taxonomy is *derived* from
-amalgamation
-([sag-2010] (67); after [bouma-malouf-sag-2001]), not stipulated as Subjacency — a dependency penetrates
-a domain iff its `GAP` survives amalgamation. The `GapRestriction` tags above are retained only as the
-`Studies/Ross1967` taxonomy map that `Studies/Sag2010` cross-references. -/
+amalgamation ([sag-2010] (67); after [bouma-malouf-sag-2001]), not stipulated as Subjacency — a
+dependency penetrates a domain iff its `GAP` survives amalgamation. -/
 
-/-- The island taxonomy as RSRL `Models` facts (superseding the former coarse `extractionLicensed`
-predicate). A free filler-head construct licenses extraction; an absolute island (`[GAP ⟨⟩]`) blocks a
-second gap; a weak island lets an NP gap pass but blocks a PP gap — the `unrestricted`/`noGap`/`npOnly`
-cases of `GapRestriction`, each over the canonical construction grammar. -/
+/-- The island taxonomy as RSRL `Models` facts (the three cases of the now-retired coarse
+`GapRestriction` enum: unrestricted / absolute / weak). A free filler-head construct licenses
+extraction; an absolute island (`[GAP ⟨⟩]`) blocks a second gap; a weak island lets an NP gap pass but
+blocks a PP gap — each over the canonical construction grammar. -/
 theorem islands_rsrl_grounded :
     HPSG.Construction.goodTwoGap.Models HPSG.Construction.fhGrammar ∧
     ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar ∧
