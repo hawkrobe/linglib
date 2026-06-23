@@ -9,15 +9,15 @@ HPSG's third combination schema: the Head-Filler Schema handles long-distance
 dependencies (extraction, wh-movement). A filler XP combines with a sentence
 containing a gap (SLASH feature) of matching category.
 
-Together with Head-Complement and Head-Subject (in Basic.lean), this completes
-HPSG's three immediate dominance schemata.
+This schema is realized **dynamically** through the SLASH feature: a gap is introduced
+(`gapComplement`), amalgamated up the tree (`amalgamateHead*`), and discharged when a filler
+combines with the gapped clause (`SlashValue.dischargeCompatible`). The head-complement and
+head-subject schemata are the model-theoretic construct hierarchy of `Syntax/HPSG/Construction`.
 
 ## Key types
 
 - `SlashValue` — the set of categories expected to fill gaps
 - `SynsemSlash` — extends `Synsem` with SLASH
-- `HeadFillerRule` — filler combines with `S[SLASH {XP}]`, discharging the gap
-- `HPSGSchema` — unifies all three schemata
 - `TrackedSign` — sign paired with its SLASH value
 
 Islands are **not** modeled here: the model-theoretic `[GAP ⟨⟩]` island taxonomy lives over the
@@ -98,66 +98,6 @@ structure SynsemSlash where
 /-- Get the category from an extended synsem. -/
 def SynsemSlash.cat (ss : SynsemSlash) : UD.UPOS := ss.local_.cat
 
-/-! ## Head-Filler Schema -/
-
-/-- Head-Filler Schema: filler XP combines with a clause containing a gap.
-
-Schema 3:
-```
-       S
-      / \
-   XP S[SLASH {XP}]
-(filler) (head)
-```
-
-The filler's category must match one of the gaps in the head's SLASH set.
-The result has that gap discharged from SLASH. -/
-structure HeadFillerRule where
-  /-- The filler phrase (the extracted constituent) -/
-  filler : Sign
-  /-- The head phrase (sentence with a gap) -/
-  headPhrase : Sign
-  /-- The SLASH value on the head phrase before combination -/
-  headSlash : SlashValue
-  /-- The result phrase -/
-  result : Sign
-  /-- The filler's category matches a gap in the head -/
-  slashMatch : headSlash.contains (filler.synsem.cat) = true
-  /-- The result has the gap discharged -/
-  resultSlash : SlashValue := headSlash.discharge (filler.synsem.cat)
-
-/-! ## Unified schema type -/
-
-/-- All four HPSG immediate dominance schemata, unified.
-
-This inductive covers the complete set of phrase structure schemata
-needed for HPSG phrase building. [mueller-2013] argues the first three
-correspond to three universal combination modes; Head-Modifier handles
-adjunction (relative clauses, adjective/PP modification). -/
-inductive HPSGSchema where
-  /-- Head-Complement: head combines with complements (Schema 1) -/
-  | headComp : HeadCompRule → HPSGSchema
-  /-- Head-Subject: subject combines with head phrase (Schema 2) -/
-  | headSubj : HeadSubjRule → HPSGSchema
-  /-- Head-Filler: filler combines with gapped clause (Schema 3) -/
-  | headFiller : HeadFillerRule → HPSGSchema
-  /-- Head-Modifier: head combines with a modifier (Schema 4) -/
-  | headMod : HeadModRule → HPSGSchema
-
-/-- Get the result sign from any schema application. -/
-def HPSGSchema.result : HPSGSchema → Sign
-  | .headComp r => r.result
-  | .headSubj r => r.result
-  | .headFiller r => r.result
-  | .headMod r => r.result
-
-/-- Get the head sign from any schema application. -/
-def HPSGSchema.head : HPSGSchema → Sign
-  | .headComp r => r.head
-  | .headSubj r => r.headPhrase
-  | .headFiller r => r.headPhrase
-  | .headMod r => r.headSign
-
 /-! ## Gap Introduction (Argument Realization Principle)
 
 Per [sag-wasow-bender-2003] Ch. 6, a gap arises when one of a word's
@@ -208,26 +148,6 @@ def amalgamateHeadComp (head comp : TrackedSign) : TrackedSign :=
 def amalgamateHeadSubj (subj head : TrackedSign) : TrackedSign :=
   { sign := head.sign
     slash := subj.slash.union head.slash }
-
--- ============================================================================
--- Key Properties
--- ============================================================================
-
-/-- The head's category propagates to the result (Head Feature Principle).
-
-In all three schemata, the category of the result phrase equals the
-category of the head daughter. This is the HPSG analogue of the
-Minimalist labeling algorithm. -/
-theorem head_determines_cat_headComp (r : HeadCompRule) :
-    r.result.synsem.cat = r.head.synsem.cat :=
-  r.hfp
-
-/-- When constructing a HeadFillerRule with the default resultSlash,
-the gap matching the filler is discharged. -/
-theorem slash_discharged_default (filler headPhrase result : Sign) (headSlash : SlashValue)
-    (slashMatch : headSlash.contains (filler.synsem.cat) = true) :
-    ({ filler, headPhrase, headSlash, result, slashMatch : HeadFillerRule}).resultSlash
-      = headSlash.discharge (filler.synsem.cat) := rfl
 
 -- ============================================================================
 -- GAP Restrictions and Island Constraints ([hofmeister-sag-2010])
