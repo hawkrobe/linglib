@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
-import Linglib.Studies.SagWasowBender2003Extraction
+import Linglib.Studies.SagWasowBender2003
 import Linglib.Features.ClauseForm
 
 set_option autoImplicit false
@@ -411,7 +411,7 @@ datum in two analyses — Sag's `[GAP ⟨⟩]` construction and the HPSG SLASH m
 both block extraction from a topicalized clause. -/
 theorem topicalized_island_agrees_swb :
     (fgParams .topicalized).gapRestriction
-      = SagWasowBender2003Extraction.topicIslandExtraction.restriction := rfl
+      = SagWasowBender2003.topicIslandExtraction.restriction := rfl
 
 /-- The sharpest divergence from [ross-1967]: the relative clause is Ross's
 paradigm Complex-NP-Constraint island, yet [sag-2010]'s wh-relative construction
@@ -420,7 +420,7 @@ imposes no `[GAP ⟨⟩]`. Where [sag-wasow-bender-2003] maps the CNPC to an abs
 residual effect is processing, not grammar ([hofmeister-sag-2010]). -/
 theorem relative_diverges_from_cnpc :
     (fgParams .whRelative).gapRestriction = .unrestricted ∧
-      SagWasowBender2003Extraction.islandToGapRestriction .complexNP = .noGap := by
+      SagWasowBender2003.islandToGapRestriction .complexNP = .noGap := by
   decide
 
 /-! ### Surface clause form (bridge to `Features.ClauseForm`) -/
