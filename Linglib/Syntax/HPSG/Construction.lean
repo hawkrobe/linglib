@@ -81,84 +81,64 @@ inductive FHSort
   | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | interrogativeSAI
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"). **Must be written transitively
-closed by hand** — every transitive consequence is listed explicitly (e.g. `noun ≤ nominal` *and*
-`noun ≤ nonverbal` *and* `noun ≤ cat`), and the `PartialOrder` instance's `le_trans`/`le_antisymm`
-`decide`s verify the closure is correct and acyclic. When adding a sort or edge, add all its downstream
-transitive arms or `le_trans` fails. The two arms for `nsWhIntCl` — below both `fillerHeadCxt` and
-`interrogativeCl` — are the multiple inheritance. -/
-def fhLe : FHSort → FHSort → Bool
-  | _, .top => true
+/-- Direct subsumption ("covers"): the **DAG edges** (a is *directly* more specific than b), not the
+transitive closure. The order is `ReflTransGen fhCovers`, so transitivity is structural and there is no
+hand-maintained closure or `|FHSort|³` `decide`. Each filler-gap construction covers **two** parents —
+its `headed-cxt` subtype and its clausal type — the multiple inheritance. -/
+def fhCovers : FHSort → FHSort → Bool
   -- categories (nonverbal > {nominal, adj}; nominal > {noun, prep})
-  | .verbal, .cat => true
-  | .nonverbal, .cat => true
-  | .verb, .verbal => true | .verb, .cat => true
-  | .comp, .verbal => true | .comp, .cat => true
-  | .nominal, .nonverbal => true | .nominal, .cat => true
-  | .noun, .nominal => true | .noun, .nonverbal => true | .noun, .cat => true
-  | .prep, .nominal => true | .prep, .nonverbal => true | .prep, .cat => true
-  | .adj, .nonverbal => true | .adj, .cat => true
+  | .verbal, .cat => true | .nonverbal, .cat => true
+  | .verb, .verbal => true | .comp, .verbal => true
+  | .nominal, .nonverbal => true | .adj, .nonverbal => true
+  | .noun, .nominal => true | .prep, .nominal => true
   -- semantic types
-  | .austinean, .semType => true
-  | .question, .semType => true
-  | .fact, .semType => true
-  | .proposition, .semType => true
+  | .austinean, .semType => true | .question, .semType => true
+  | .fact, .semType => true | .proposition, .semType => true
   -- inversion values
-  | .invPlus, .invVal => true
-  | .invMinus, .invVal => true
+  | .invPlus, .invVal => true | .invMinus, .invVal => true
+  -- the maximal sorts, directly below top
+  | .cat, .top => true | .semType, .top => true | .invVal, .top => true
+  | .sign, .top => true | .construct, .top => true
   -- construct backbone
-  | .phrasalCxt, .construct => true
-  | .lexicalCxt, .construct => true
-  | .headedCxt, .phrasalCxt => true | .headedCxt, .construct => true
-  | .clause, .phrasalCxt => true | .clause, .construct => true
-  | .fillerHeadCxt, .headedCxt => true | .fillerHeadCxt, .phrasalCxt => true
-  | .fillerHeadCxt, .construct => true
-  | .auxInitialCxt, .headedCxt => true | .auxInitialCxt, .phrasalCxt => true
-  | .auxInitialCxt, .construct => true
-  -- clausal
-  | .coreCl, .clause => true | .coreCl, .phrasalCxt => true | .coreCl, .construct => true
-  | .relativeCl, .clause => true | .relativeCl, .phrasalCxt => true | .relativeCl, .construct => true
-  | .declarativeCl, .coreCl => true | .declarativeCl, .clause => true
-  | .declarativeCl, .phrasalCxt => true | .declarativeCl, .construct => true
-  | .interrogativeCl, .coreCl => true | .interrogativeCl, .clause => true
-  | .interrogativeCl, .phrasalCxt => true | .interrogativeCl, .construct => true
-  | .exclamativeCl, .coreCl => true | .exclamativeCl, .clause => true
-  | .exclamativeCl, .phrasalCxt => true | .exclamativeCl, .construct => true
-  -- filler-gap constructions: each < filler-head-cxt (+ headed-cxt) AND its clausal type ([sag-2010]
-  -- §5). Note relative-cl is directly under clause (Fig. 7), so whRelCl does not pass through core-cl.
-  | .topCl, .fillerHeadCxt => true | .topCl, .headedCxt => true
-  | .topCl, .declarativeCl => true | .topCl, .coreCl => true
-  | .topCl, .clause => true | .topCl, .phrasalCxt => true | .topCl, .construct => true
-  | .whExclCl, .fillerHeadCxt => true | .whExclCl, .headedCxt => true
-  | .whExclCl, .exclamativeCl => true | .whExclCl, .coreCl => true
-  | .whExclCl, .clause => true | .whExclCl, .phrasalCxt => true | .whExclCl, .construct => true
-  | .nsWhIntCl, .fillerHeadCxt => true | .nsWhIntCl, .headedCxt => true
-  | .nsWhIntCl, .interrogativeCl => true | .nsWhIntCl, .coreCl => true
-  | .nsWhIntCl, .clause => true | .nsWhIntCl, .phrasalCxt => true | .nsWhIntCl, .construct => true
-  | .whRelCl, .fillerHeadCxt => true | .whRelCl, .headedCxt => true
-  | .whRelCl, .relativeCl => true
-  | .whRelCl, .clause => true | .whRelCl, .phrasalCxt => true | .whRelCl, .construct => true
-  | .theCl, .fillerHeadCxt => true | .theCl, .headedCxt => true
-  | .theCl, .declarativeCl => true | .theCl, .coreCl => true
-  | .theCl, .clause => true | .theCl, .phrasalCxt => true | .theCl, .construct => true
-  -- the interrogative SAI: < aux-initial-cxt (headed dim.) AND < interrogative-cl (clausal)
-  | .interrogativeSAI, .auxInitialCxt => true | .interrogativeSAI, .headedCxt => true
-  | .interrogativeSAI, .interrogativeCl => true | .interrogativeSAI, .coreCl => true
-  | .interrogativeSAI, .clause => true | .interrogativeSAI, .phrasalCxt => true
-  | .interrogativeSAI, .construct => true
-  | a, b => decide (a = b)
+  | .phrasalCxt, .construct => true | .lexicalCxt, .construct => true
+  | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true
+  | .fillerHeadCxt, .headedCxt => true | .auxInitialCxt, .headedCxt => true
+  | .coreCl, .clause => true | .relativeCl, .clause => true
+  | .declarativeCl, .coreCl => true | .interrogativeCl, .coreCl => true
+  | .exclamativeCl, .coreCl => true
+  -- filler-gap constructions and the interrogative SAI: each covers its headed parent AND its clausal
+  -- type ([sag-2010] §5; whRelCl's clausal parent is relative-cl, directly under clause, Fig. 7)
+  | .topCl, .fillerHeadCxt => true | .topCl, .declarativeCl => true
+  | .whExclCl, .fillerHeadCxt => true | .whExclCl, .exclamativeCl => true
+  | .nsWhIntCl, .fillerHeadCxt => true | .nsWhIntCl, .interrogativeCl => true
+  | .whRelCl, .fillerHeadCxt => true | .whRelCl, .relativeCl => true
+  | .theCl, .fillerHeadCxt => true | .theCl, .declarativeCl => true
+  | .interrogativeSAI, .auxInitialCxt => true | .interrogativeSAI, .interrogativeCl => true
+  | _, _ => false
 
--- The transitivity check is `decide` over `FHSort³`; the proof term's nesting depth is intrinsic to
--- the hierarchy *size* (the fold over `|FHSort|³` triples), so it exceeds the default elaborator
--- recursion depth of 512 (a stack limit, not a compute budget — distinct from `maxHeartbeats`).
--- Empirically the default fails and ~1000 suffices; this scales with `|FHSort|`, so adding sorts may
--- require a bump. (An edge-list/closure encoding of `fhLe` would not help — the depth is the `decide`
--- fold, not `fhLe`'s match.)
-set_option maxRecDepth 1000 in
+/-- Specificity depth; every covers edge strictly increases it, giving antisymmetry. The filler-gap
+constructions sit at depth 6, above *both* their depth-4 headed parent and their depth-5 clausal type. -/
+def fhRank : FHSort → Nat
+  | .top => 0
+  | .cat => 1 | .semType => 1 | .invVal => 1 | .sign => 1 | .construct => 1
+  | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
+  | .invPlus => 2 | .invMinus => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
+  | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .headedCxt => 3 | .clause => 3
+  | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .coreCl => 4 | .relativeCl => 4
+  | .declarativeCl => 5 | .interrogativeCl => 5 | .exclamativeCl => 5
+  | .topCl => 6 | .whExclCl => 6 | .nsWhIntCl => 6 | .whRelCl => 6 | .theCl => 6 | .interrogativeSAI => 6
+
 instance : PartialOrder FHSort :=
-  partialOrderOfBool fhLe (by decide) (by decide) (by decide)
+  partialOrderOfCovers (fhCovers · · = true) fhRank (by decide)
 
-instance : DecidableLE FHSort := fun a b => inferInstanceAs (Decidable (fhLe a b = true))
+instance : DecidableLE FHSort := fun a b =>
+  decidableLEOfCovers (covers := (fhCovers · · = true))
+    [.top, .cat, .verbal, .nonverbal, .verb, .comp, .nominal, .noun, .prep, .adj,
+     .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus, .sign,
+     .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
+     .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
+     .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .interrogativeSAI]
+    (by decide) a b
 
 /-! ### Attributes and the signature -/
 

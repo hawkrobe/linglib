@@ -54,19 +54,34 @@ inductive GSort
   | construct | fillerHeadCxt | islandCxt
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption (`gLe a b` = "`a` at least as specific as `b`"), transitively closed. -/
-def gLe : GSort → GSort → Bool
-  | _, .top => true
+/-- Direct subsumption ("covers"): the `~|GSort|` **DAG edges** (a is *directly* more specific than b),
+not the transitive closure. The order is `ReflTransGen gCovers`. -/
+def gCovers : GSort → GSort → Bool
+  | .cat, .top => true
+  | .list, .top => true
+  | .sign, .top => true
+  | .construct, .top => true
   | .elist, .list => true
   | .nelist, .list => true
   | .fillerHeadCxt, .construct => true
-  | .islandCxt, .fillerHeadCxt => true | .islandCxt, .construct => true
-  | a, b => decide (a = b)
+  | .islandCxt, .fillerHeadCxt => true
+  | _, _ => false
+
+/-- Specificity depth; every covers edge strictly increases it (so `gCovers a b → gRank b < gRank a`),
+giving antisymmetry. -/
+def gRank : GSort → Nat
+  | .top => 0
+  | .cat => 1 | .list => 1 | .sign => 1 | .construct => 1
+  | .elist => 2 | .nelist => 2 | .fillerHeadCxt => 2
+  | .islandCxt => 3
 
 instance : PartialOrder GSort :=
-  partialOrderOfBool gLe (by decide) (by decide) (by decide)
+  partialOrderOfCovers (gCovers · · = true) gRank (by decide)
 
-instance : DecidableLE GSort := fun a b => inferInstanceAs (Decidable (gLe a b = true))
+instance : DecidableLE GSort := fun a b =>
+  decidableLEOfCovers (covers := (gCovers · · = true))
+    [.top, .cat, .list, .elist, .nelist, .sign, .construct, .fillerHeadCxt, .islandCxt]
+    (by decide) a b
 
 /-! ### Attributes and the signature -/
 
