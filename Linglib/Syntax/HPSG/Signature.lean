@@ -66,4 +66,18 @@ inductive Term {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) where
 def Term.path {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt} (p : Path Sig) : Term Sig :=
   p.foldl Term.feat Term.colon
 
+/-- Derive the `Signature.approp_inherits` obligation from an `isSome`-gated **propagation** lemma.
+When appropriateness values do not refine down the order (a sort and its subsorts carry the *same*
+value for an attribute — the common case), the inherited value is `τ₁` itself, so the propagation
+`σ₂ ≤ σ₁ → (approp σ₁ α).isSome → approp σ₂ α = approp σ₁ α` suffices. A large signature proves that
+propagation by `decide` (no `∃`-search, no `τ₁` quantifier — far cheaper) and feeds it here. -/
+theorem approp_inh_of_propagates {Srt : Type u} [PartialOrder Srt] {Attr : Type u}
+    {approp : Srt → Attr → Option Srt}
+    (h : ∀ (σ₁ σ₂ : Srt) (α : Attr),
+      σ₂ ≤ σ₁ → (approp σ₁ α).isSome = true → approp σ₂ α = approp σ₁ α)
+    {σ₁ σ₂ : Srt} {α : Attr} {τ₁ : Srt} (hle : σ₂ ≤ σ₁) (happ : approp σ₁ α = some τ₁) :
+    ∃ τ₂, approp σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by
+  have hsome : (approp σ₁ α).isSome = true := by rw [happ]; rfl
+  exact ⟨τ₁, (h σ₁ σ₂ α hle hsome).trans happ, le_refl τ₁⟩
+
 end HPSG.RSRL

@@ -81,8 +81,12 @@ inductive FHSort
   | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | interrogativeSAI
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. The two arms
-for `nsWhIntCl` — below both `fillerHeadCxt` and `interrogativeCl` — are the multiple inheritance. -/
+/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"). **Must be written transitively
+closed by hand** — every transitive consequence is listed explicitly (e.g. `noun ≤ nominal` *and*
+`noun ≤ nonverbal` *and* `noun ≤ cat`), and the `PartialOrder` instance's `le_trans`/`le_antisymm`
+`decide`s verify the closure is correct and acyclic. When adding a sort or edge, add all its downstream
+transitive arms or `le_trans` fails. The two arms for `nsWhIntCl` — below both `fillerHeadCxt` and
+`interrogativeCl` — are the multiple inheritance. -/
 def fhLe : FHSort → FHSort → Bool
   | _, .top => true
   -- categories (nonverbal > {nominal, adj}; nominal > {noun, prep})
@@ -144,10 +148,13 @@ def fhLe : FHSort → FHSort → Bool
   | .interrogativeSAI, .construct => true
   | a, b => decide (a = b)
 
--- The reflexivity/transitivity/antisymmetry checks are `decide` over `FHSort³`; at this hierarchy
--- size the proof term exceeds the default elaborator recursion depth (a stack limit, not a compute
--- budget — distinct from `maxHeartbeats`).
-set_option maxRecDepth 4000 in
+-- The transitivity check is `decide` over `FHSort³`; the proof term's nesting depth is intrinsic to
+-- the hierarchy *size* (the fold over `|FHSort|³` triples), so it exceeds the default elaborator
+-- recursion depth of 512 (a stack limit, not a compute budget — distinct from `maxHeartbeats`).
+-- Empirically the default fails and ~1000 suffices; this scales with `|FHSort|`, so adding sorts may
+-- require a bump. (An edge-list/closure encoding of `fhLe` would not help — the depth is the `decide`
+-- fold, not `fhLe`'s match.)
+set_option maxRecDepth 1000 in
 instance : PartialOrder FHSort :=
   partialOrderOfBool fhLe (by decide) (by decide) (by decide)
 
@@ -209,16 +216,11 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | _, _ => none
 
 -- Appropriateness values never refine down this hierarchy (a sort and its subsorts carry the *same*
--- value for an attribute), so the inherited value is `τ₁` itself. Proving this propagation over just
--- `(σ₁, σ₂, α)` — without the `τ₁` quantifier or the `∃`-search — keeps the `decide` within budget.
+-- value for an attribute); proving this propagation over just `(σ₁, σ₂, α)` — without the `τ₁`
+-- quantifier or `∃`-search — keeps the `decide` within budget, and `approp_inh_of_propagates` derives
+-- the `Signature.approp_inherits` obligation from it.
 private theorem fhApprop_propagates : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr),
     σ₂ ≤ σ₁ → (fhApprop σ₁ α).isSome = true → fhApprop σ₂ α = fhApprop σ₁ α := by decide
-
-private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ : FHSort),
-    σ₂ ≤ σ₁ → fhApprop σ₁ α = some τ₁ → ∃ τ₂, fhApprop σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by
-  intro σ₁ σ₂ α τ₁ hle happ
-  have hsome : (fhApprop σ₁ α).isSome = true := by rw [happ]; rfl
-  exact ⟨τ₁, (fhApprop_propagates σ₁ σ₂ α hle hsome).trans happ, le_refl τ₁⟩
 
 /-- The fragment's signature (no relations). -/
 @[reducible] def fhSig : Signature FHSort where
@@ -226,9 +228,7 @@ private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ :
   Rel := Empty
   arity := fun e => e.elim
   approp := fhApprop
-  approp_inherits := fun {σ₁ σ₂ α τ₁} => fhApprop_inh σ₁ σ₂ α τ₁
-
-instance (I : Interpretation fhSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
+  approp_inherits := fun hle happ => approp_inh_of_propagates fhApprop_propagates hle happ
 
 /-! ### Principles (constructions as `τ ⇒ D`)
 
