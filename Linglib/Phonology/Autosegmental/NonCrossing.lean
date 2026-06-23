@@ -57,16 +57,8 @@ theorem isNonCrossing_iff : IsNonCrossing links ↔
 
 /-- A pair is non-crossing iff its two links agree in tier- and backbone-order. -/
 theorem isNonCrossing_pair [DecidableEq ι] [DecidableEq κ] (a b : ι × κ) :
-    IsNonCrossing {a, b} ↔
-      (a.fst < b.fst → a.snd ≤ b.snd) ∧ (b.fst < a.fst → b.snd ≤ a.snd) := by
-  simp only [isNonCrossing_iff, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · refine fun h => ⟨h a ?_ b ?_, h b ?_ a ?_⟩ <;> tauto
-  · rintro ⟨h1, h2⟩ _ (rfl | rfl) _ (rfl | rfl) hlt
-    · exact absurd hlt (lt_irrefl _)
-    · exact h1 hlt
-    · exact h2 hlt
-    · exact absurd hlt (lt_irrefl _)
+    IsNonCrossing {a, b} ↔ (a.1 < b.1 → a.2 ≤ b.2) ∧ (b.1 < a.1 → b.2 ≤ a.2) := by
+  simp [isNonCrossing_iff]
 
 /-- A subset of a non-crossing link set is non-crossing. -/
 theorem IsNonCrossing.subset {s t : Finset (ι × κ)} (hst : s ⊆ t)
