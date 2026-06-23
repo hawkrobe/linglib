@@ -11,10 +11,17 @@ set_option autoImplicit false
 /-!
 # The canonical SBCG construct hierarchy with list-valued GAP in RSRL
 [sag-2010] [sag-etal-2020] [sag-2012] [bouma-malouf-sag-2001] [richter-2000] [richter-2024]
+[pullum-scholz-2001]
 
 The **single canonical RSRL signature** for the Sign-Based Construction Grammar fragment, formalized on
-the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`). One
-`Signature` (`sig`) carries, in one feature-structure language:
+the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`). HPSG is a
+**model-theoretic** (not generative-enumerative) framework [pullum-scholz-2001]: a grammar is a
+signature plus principles, and grammaticality is *satisfaction* — membership in the class of structures
+that are well-formed in every component with respect to every principle (`Models`) — not derivation from
+a start symbol ([richter-2024] Ch. 3, on the RSRL model theory of [richter-2000]).
+The relational component of the signature is `Empty` here: RSRL's relations (set/list membership, the
+`R` in RSRL) are the deferred extension a genuinely set-valued `GAP` would need. One `Signature` (`sig`)
+carries, in one feature-structure language:
 
 * the **construct type hierarchy with monotonic multiple inheritance** ([sag-etal-2020] Figs. 6–7);
 * a **list-valued `GAP` (SLASH) feature** with gap **amalgamation** ([sag-2010] §4, after
