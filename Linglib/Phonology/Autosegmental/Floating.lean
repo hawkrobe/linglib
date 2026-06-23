@@ -121,7 +121,7 @@ instance {S T : Type*} [Repr S] [Repr T] : Repr (FloatingForm S T) where
 
 namespace FloatingForm
 
-variable {S T : Type*} (f : FloatingForm S T)
+variable {S T : Type*} [DecidableEq S] [DecidableEq T] (f : FloatingForm S T)
 
 /-! ### Surface graph (derived view) -/
 
@@ -219,7 +219,7 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
     insert-and-associate and shift. The no-crossing filter ([goldsmith-1976])
     enforces well-formedness: without it a floating tone could dock across an
     intervening linked tone. -/
-def gen [DecidableEq S] [DecidableEq T] : Finset (FloatingForm S T) :=
+def gen : Finset (FloatingForm S T) :=
   let aliveIdxs := (Finset.range f.upper.length).filter (λ k => f.IsAlive k)
   let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
   let segIdxs := Finset.range f.lower.length
