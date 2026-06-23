@@ -24,8 +24,6 @@ articulator; labio-velars are possible because labial and dorsal are
 independent.
 -/
 
--- Define `isArticulator` in the FeatureGeometry namespace so dot notation
--- works on GeomNode values across the codebase.
 namespace Phonology.FeatureGeometry
 
 /-- Is this a place articulator node? The three place articulators —
@@ -43,13 +41,6 @@ def GeomNode.IsArticulator : GeomNode → Prop
 instance : DecidablePred GeomNode.IsArticulator := fun n => by
   cases n <;> unfold GeomNode.IsArticulator <;> infer_instance
 
-end Phonology.FeatureGeometry
-
-namespace Phonology.ComplexSegments
-
-open Phonology (Segment Feature FeatureVal)
-open Phonology.FeatureGeometry (GeomNode)
-
 -- ============================================================================
 -- § 1: Articulator Nodes
 -- ============================================================================
@@ -61,47 +52,7 @@ def articulatorNodes : List GeomNode :=
 theorem articulatorNodes_count : articulatorNodes.length = 3 := rfl
 
 -- ============================================================================
--- § 2: Active Articulators
--- ============================================================================
-
-/-- Which articulator nodes have at least one specified feature in segment `s`? -/
-def activeArticulators (s : Segment) : List GeomNode :=
-  articulatorNodes.filter λ n =>
-    n.features.any λ f => s.spec f |>.isSome
-
-/-- Number of active articulator nodes in a segment. -/
-def articulatorCount (s : Segment) : Nat :=
-  (activeArticulators s).length
-
--- ============================================================================
--- § 3: Segment Classification
--- ============================================================================
-
-/-- A complex segment has two or more simultaneously active articulator
-    nodes — e.g., labiovelars [k͡p] (labial + dorsal). -/
-def IsComplex (s : Segment) : Prop :=
-  articulatorCount s ≥ 2
-
-instance : DecidablePred IsComplex := fun _ =>
-  inferInstanceAs (Decidable (_ ≥ _))
-
--- ============================================================================
--- § 4: Well-Formedness
--- ============================================================================
-
-/-- Complex segment well-formedness: active articulators must be distinct
-    nodes. This is trivially satisfied by `activeArticulators` (which returns
-    a duplicate-free sublist of `articulatorNodes`), but we state it
-    explicitly as the standard WFC. -/
-def ComplexWF (s : Segment) : Prop :=
-  let aa := activeArticulators s
-  aa.length = aa.eraseDups.length
-
-instance : DecidablePred ComplexWF := fun _ =>
-  inferInstanceAs (Decidable (_ = _))
-
--- ============================================================================
--- § 5: Verification
+-- § 4: Geometry of articulators (verification)
 -- ============================================================================
 
 /-- Articulators are exactly the leaf-level nodes (no children). -/
@@ -140,4 +91,46 @@ theorem place_articulators_distinct :
 theorem articulators_under_place :
     ∀ n ∈ articulatorNodes, GeomNode.Dominates .place n := by decide
 
-end Phonology.ComplexSegments
+end Phonology.FeatureGeometry
+
+namespace Phonology
+
+open Phonology.FeatureGeometry (GeomNode articulatorNodes)
+
+-- ============================================================================
+-- § 2: Active articulators of a segment
+-- ============================================================================
+
+/-- Which articulator nodes have at least one specified feature in segment `s`? -/
+def Segment.activeArticulators (s : Segment) : List GeomNode :=
+  articulatorNodes.filter λ n =>
+    n.features.any λ f => s.spec f |>.isSome
+
+/-- Number of active articulator nodes in a segment. -/
+def Segment.articulatorCount (s : Segment) : Nat :=
+  s.activeArticulators.length
+
+-- ============================================================================
+-- § 3: Segment classification + well-formedness
+-- ============================================================================
+
+/-- A complex segment has two or more simultaneously active articulator
+    nodes — e.g., labiovelars [k͡p] (labial + dorsal). -/
+def Segment.IsComplex (s : Segment) : Prop :=
+  s.articulatorCount ≥ 2
+
+instance : DecidablePred Segment.IsComplex := fun _ =>
+  inferInstanceAs (Decidable (_ ≥ _))
+
+/-- Complex segment well-formedness: active articulators must be distinct
+    nodes. This is trivially satisfied by `activeArticulators` (which returns
+    a duplicate-free sublist of `articulatorNodes`), but we state it
+    explicitly as the standard WFC. -/
+def Segment.ComplexWF (s : Segment) : Prop :=
+  let aa := s.activeArticulators
+  aa.length = aa.eraseDups.length
+
+instance : DecidablePred Segment.ComplexWF := fun _ =>
+  inferInstanceAs (Decidable (_ = _))
+
+end Phonology
