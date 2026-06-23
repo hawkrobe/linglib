@@ -127,41 +127,4 @@ partial def Sign.yield : Sign → List Word
 
 end Signs
 
-section Schemata
-
-/-- Head-Complement Schema: head combines with its complements. -/
-structure HeadCompRule where
-  head : Sign
-  comps : List Sign
-  result : Sign
-  compsMatch : (head.synsem.val.comps = comps.map (·.synsem.cat))
-  /-- Head Feature Principle: result category = head category -/
-  hfp : result.synsem.cat = head.synsem.cat
-
-/-- Head-Subject Schema: phrase combines with its subject. -/
-structure HeadSubjRule where
-  subj : Sign
-  headPhrase : Sign
-  result : Sign
-  subjMatch : (headPhrase.synsem.val.subj = [subj.synsem.cat])
-  /-- Head Feature Principle: result category = head phrase category -/
-  hfp : result.synsem.cat = headPhrase.synsem.cat
-
-/-- Head-Modifier Schema: head combines with a modifier.
-
-Per [sag-wasow-bender-2003] (46), a saturated head combines with
-a modifier whose MOD value matches the head's category. Used for
-adjective modification ("tall boy"), PP modification ("book on the table"),
-and relative clauses ("book that John read"). -/
-structure HeadModRule where
-  headSign : Sign
-  modifier : Sign
-  result : Sign
-  /-- The modifier's MOD value must match the head's category -/
-  modMatch : modifier.synsem.mod = some (headSign.synsem.cat)
-  /-- Head Feature Principle: result category = head category -/
-  hfp : result.synsem.cat = headSign.synsem.cat
-
-end Schemata
-
 end HPSG
