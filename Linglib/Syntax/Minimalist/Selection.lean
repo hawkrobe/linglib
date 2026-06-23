@@ -258,6 +258,26 @@ def selHead (so : SyntacticObject) : Option LIToken := (selCheck so).map (·.1)
 
 @[simp] theorem selHead_leaf (tok : LIToken) : selHead (.leaf tok) = some tok := rfl
 
+/-- The projecting head's **outer category** on `Dom(h)`, computed by
+    c-selection ([adger-2003] eq. 137 / [marcolli-chomsky-berwick-2025]
+    Lemma 1.13.7: "the item that projects becomes the head"). `none` at
+    exocentric/symmetric nodes outside the endocentric domain.
+
+    This is the computable, section-free counterpart of
+    `HeadFunction.outerCat` (= the old `Quot.out`-based `leftSpine.outerCat`).
+    Unlike the latter — which returns the *arbitrary* leftmost leaf of a
+    `Quot.out` planar representative — `outerCatC` returns the category of the
+    genuine **selector** head, so the value is MCB-faithful rather than an
+    artifact of representative choice. Agrees with the old value on leaves
+    (`outerCatC_leaf`). -/
+def outerCatC (so : SyntacticObject) : Option Cat := (selHead so).map (·.item.outerCat)
+
+@[simp] theorem outerCatC_leaf (tok : LIToken) :
+    outerCatC (.leaf tok) = some tok.item.outerCat := rfl
+
+@[simp] theorem outerCatC_trace (n : Nat) :
+    outerCatC (.trace n) = some (mkTraceToken n).item.outerCat := rfl
+
 /-- Computable, section-free c-selection between SOs: `a` selects `b` iff `a`'s
     projecting head c-selects `b`'s (both on `Dom(h)`). The computable
     counterpart of `HeadFunction.selects` — no `Quot.out`/`classical`. -/
@@ -293,6 +313,18 @@ theorem selHead_mul {a b : SyntacticObject} {h : LIToken}
     selHead a = some h ∨ selHead b = some h := by
   simp only [selHead, selCheck_mul] at hab ⊢
   exact selStep_fst hab
+
+/-- On a Merge node, the MCB-exact head category is the head category of
+    whichever daughter projects (the selector), mirroring the Head Feature
+    Principle `selHead_mul` ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
+theorem outerCatC_mul {a b : SyntacticObject} {c : Cat}
+    (hab : outerCatC (a * b) = some c) :
+    outerCatC a = some c ∨ outerCatC b = some c := by
+  simp only [outerCatC, Option.map_eq_some_iff] at hab ⊢
+  obtain ⟨tok, htok, hcat⟩ := hab
+  rcases selHead_mul htok with h | h
+  · exact Or.inl ⟨tok, h, hcat⟩
+  · exact Or.inr ⟨tok, h, hcat⟩
 
 /-- Apply a `Step` under c-selection ([adger-2003] eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
@@ -412,13 +444,13 @@ no new `Cat` constructor required. -/
 def nullN (id : Nat) : SyntacticObject :=
   mkLeafPhon .n [] "" id
 
-@[simp] theorem nullN_outerCat_leftSpine (id : Nat) :
-    HeadFunction.leftSpine.outerCat (nullN id) = .n := by
-  simp [nullN, mkLeafPhon, LexicalItem.outerCat, LexicalItem.simple]
+@[simp] theorem nullN_outerCatC (id : Nat) :
+    outerCatC (nullN id) = some .n := by
+  simp [nullN, mkLeafPhon, outerCatC, LexicalItem.outerCat, LexicalItem.simple]
 
-@[simp] theorem nullN_checkedSel_leftSpine (id : Nat) :
-    checkedSelWith? HeadFunction.leftSpine (nullN id) = some [] := by
-  simp [nullN, mkLeafPhon, LexicalItem.outerSel, LexicalItem.simple]
+@[simp] theorem nullN_checkedSel (id : Nat) :
+    checkedSel (nullN id) = some [] := by
+  simp [nullN, mkLeafPhon, checkedSel, LexicalItem.outerSel, LexicalItem.simple]
 
 /-! ## Step-level lemmas
 

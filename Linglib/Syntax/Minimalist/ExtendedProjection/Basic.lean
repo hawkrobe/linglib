@@ -275,9 +275,11 @@ def allFMonotone : List Cat → Bool
   | c₁ :: c₂ :: rest => fMonotone c₁ c₂ && allFMonotone (c₂ :: rest)
 
 /-- Underlying planar EP-spine computation on a `FreeMagma`
-    representative. Phase 1.0: the EP spine is intrinsically planar
-    (left-spine head chain), so this lifts noncomputably via `Quot.out`. -/
-private noncomputable def computeEPSpinePlanar :
+    representative. The EP spine is intrinsically planar (left-spine head
+    chain), so each node's head category is read **structurally** from the
+    planar rep in hand (`leftmostLeafPlanar`) rather than round-tripping
+    through a `Quot.out` section. -/
+private def computeEPSpinePlanar :
     FreeMagma (LIToken ⊕ Nat) → List (SyntacticObject × Cat)
   | .of (.inl tok) =>
     [((FreeCommMagma.mk (.of (.inl tok)) : SyntacticObject), tok.item.outerCat)]
@@ -286,17 +288,17 @@ private noncomputable def computeEPSpinePlanar :
   | .mul a b =>
     computeEPSpinePlanar a ++
       [((FreeCommMagma.mk (.mul a b) : SyntacticObject),
-         HeadFunction.leftSpine.outerCat (FreeCommMagma.mk (.mul a b)))]
+         (leftmostLeafPlanar (.mul a b)).item.outerCat)]
 
 /-- Compute the EP spine from a syntactic object by walking the
-    leftmost-leaf head chain (= `HeadFunction.leftSpine` per
+    leftmost-leaf head chain (harmonic head-initial convention per
     [marcolli-chomsky-berwick-2025] §1.13). Returns pairs of
     (SO, Cat) from the deepest lexical head up to the root.
 
     For a non-leftmost-headed analysis, replace the recursion's `a`
-    with the daughter whose head leaf matches `HeadFunction.leftSpine.outerCat so` under the
-    chosen head function, or rewrite this helper to take a
-    `HeadFunction` parameter. Phase 1.0 noncomputable. -/
+    with the daughter whose head leaf is the selector (`selHead`), or
+    rewrite this helper to take a head-side convention. Noncomputable
+    only because it picks a planar representative via `Quot.out`. -/
 noncomputable def computeEPSpine (so : SyntacticObject) :
     List (SyntacticObject × Cat) :=
   computeEPSpinePlanar so.out

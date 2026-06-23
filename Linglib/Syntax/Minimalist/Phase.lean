@@ -18,29 +18,25 @@ Formalization of derivational phases following [chomsky-2000],
 
 ## Design
 
-`isPhaseHeadOf c so` is derived from `HeadFunction.leftSpine.outerCat so` —
-the leftmost leaf's outer category under the harmonic head-initial convention.
-For head-final analyses (Korean, Japanese), supply a head function with
-`headSide := .final` (e.g. `HeadFunction.rightSpine`) and lift via
-`Minimalist.Labeling.labelRoot h so` directly. A latent trap: any head-final
-consumer that calls `isPhaseHeadOf` will silently misfire — flagged for
-h-parameterization in a future session.
+`isPhaseHeadOf c so` is derived from `outerCatC so` — the **projecting
+(selection-driven) head**'s outer category ([marcolli-chomsky-berwick-2025]
+Lemma 1.13.7). It is convention-independent (the selector projects regardless
+of head side), so the former head-final trap no longer applies; the test is
+also computable (no `Quot.out`), so concrete phase-head checks `decide`.
 -/
 
 namespace Minimalist
 
 -- ============================================================================
--- Part 1: Phase Head Identification (derived from leftSpine head function)
+-- Part 1: Phase Head Identification (derived from the selection-driven head)
 -- ============================================================================
 
-/-- Generic phase-head test: is the head of `so` (under `leftSpine`)
-    exactly `c`? Uses `SyntacticObject.outerCat = leftmostLeaf.outerCat`,
-    which [marcolli-chomsky-berwick-2025] §1.13 frames as the
-    `leftSpine` head function applied to `so`. For non-leftmost-headed
-    analyses, use `Minimalist.Labeling.labelRoot h so == some c` with
-    the study's chosen `h : HeadFunction`. -/
-noncomputable def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
-  HeadFunction.leftSpine.outerCat so == c
+/-- Generic phase-head test: is the **projecting (selection-driven) head**
+    of `so` exactly `c`? Uses `outerCatC` ([marcolli-chomsky-berwick-2025]
+    Lemma 1.13.7 — the selector projects), so it is computable and
+    convention-independent; `none` (≠ `some c`) at exocentric nodes. -/
+def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
+  outerCatC so == some c
 
 /-! ### Phase-head selectors
 
@@ -388,10 +384,9 @@ projecting independently.
 This models the effect described by [davies-dubinsky-2003] and
 [shen-huang-2026]: VOCs neutralize the PIC for definite DPs.
 
-Note: the `wasPhase` default `isPhaseHeadOf .D dHead` from the prior
-planar substrate is Phase-1.0 unavailable as a default (since
-`isPhaseHeadOf` is now noncomputable). Callers must supply the field
-explicitly. -/
+The `wasPhase` field can be computed as `isPhaseHeadOf .D dHead` (now
+computable via `outerCatC`), but is stored explicitly so a derivation can
+record a phasehood decision that diverges from the bare categorial test. -/
 structure DPPhaseStatus where
   /-- The D head (before incorporation) -/
   dHead : SyntacticObject

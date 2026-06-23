@@ -71,13 +71,14 @@ private def toLFTreePlanar : FreeMagma (LIToken ⊕ Nat) → Tree Unit String
 noncomputable def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
   toLFTreePlanar so.out
 
-/-- The PF branch of Spell-Out is `HeadFunction.linearize` parameterized
-    over a head function: `h.linearize : SyntacticObject → List LIToken`.
-    This alias pins to `HeadFunction.leftSpine` (= `Quot.out`-based
-    representative under harmonic head-initial), matching the legacy
-    `linearize` semantics. -/
-noncomputable abbrev SyntacticObject.toPF : SyntacticObject → List LIToken :=
-  HeadFunction.leftSpine.linearize
+/-- The PF branch of Spell-Out: the leaf tokens of `so` in the
+    left-to-right order of a planar representative (harmonic head-initial).
+    Reads the order off a `Quot.out` representative — a Phase 1.0
+    placeholder, awaiting the selection-induced computable linearization
+    (MCB Lemma 1.13.5). For derivation-based PF that recovers movement
+    order, use `Derivation.surfaceTokens` instead. -/
+noncomputable def SyntacticObject.toPF (so : SyntacticObject) : List LIToken :=
+  linearizePlanar so.out
 
 /-! ## Structural preservation — Phase 2 TODO
 

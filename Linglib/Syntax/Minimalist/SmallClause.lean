@@ -105,27 +105,28 @@ Use this companion to characterize SC encodings written as raw
 like `HaddicanEtAl2026`, `Studies/Dendikken1995`)
 without forcing them through the `SmallClause` constructor. -/
 
-/-- Head category of a syntactic object: the leftmost terminal's outer
-    category. By the Minimalist projection convention used in our
-    encodings, the head precedes its complement, so the LEFT child
-    of any non-leaf projects.
+/-- Head category of a syntactic object: the outer category of the
+    **projecting (selection-driven) head** ([adger-2003] eq. 137 /
+    [marcolli-chomsky-berwick-2025] Lemma 1.13.7 — "the item that projects
+    becomes head"). `none` at exocentric/symmetric nodes outside the
+    endocentric domain `Dom(h)`.
 
-    Phase 1.0: noncomputable via `outerCat` (which is itself
-    `Quot.out`-based after the FreeCommMagma migration).
-    The simp lemmas `headCat_leaf` / `headCat_node` no longer
-    hold by `rfl` and have been removed; consumers should use
-    `SyntacticObject.outerCat` directly. -/
-noncomputable abbrev SyntacticObject.headCat (so : SyntacticObject) : Cat :=
-  HeadFunction.leftSpine.outerCat so
+    Computable, section-free alias of `outerCatC` for the SC-domain reading.
+    Supersedes the former `Quot.out`-based `leftSpine.outerCat` (arbitrary
+    leftmost leaf): the value now tracks the genuine selector, not the
+    representative choice. -/
+abbrev SyntacticObject.headCat (so : SyntacticObject) : Option Cat :=
+  outerCatC so
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of [dendikken-1995]'s four SC-licensed
     lexical categories (P/A/V/N). -/
 def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
-  so.headCat = .P ∨ so.headCat = .A ∨ so.headCat = .V ∨ so.headCat = .N
+  so.headCat = some .P ∨ so.headCat = some .A ∨
+    so.headCat = some .V ∨ so.headCat = some .N
 
-noncomputable instance : DecidablePred IsSmallClausePredicate :=
-  fun so => by unfold IsSmallClausePredicate; classical exact inferInstance
+instance : DecidablePred IsSmallClausePredicate :=
+  fun so => by unfold IsSmallClausePredicate; infer_instance
 
 /-- The "right daughter" of an SO under planar `Quot.out`. Phase 1.0
     placeholder — Phase 2 will replace with an `HeadFunction`-aware
@@ -192,7 +193,7 @@ theorem isSmallClause_merge (l r : SyntacticObject) :
     use `mkLeafPhon` matching `predCat.toCat`, the hypothesis discharges
     by `rfl`. -/
 theorem SmallClause.toSO_isSmallClause (sc : SmallClause)
-    (h : sc.predicate.headCat = sc.predCat.toCat) :
+    (h : sc.predicate.headCat = some sc.predCat.toCat) :
     IsSmallClause sc.toSO := by
   unfold SmallClause.toSO
   rw [isSmallClause_merge]
