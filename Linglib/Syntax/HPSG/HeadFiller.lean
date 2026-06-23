@@ -1,4 +1,5 @@
 import Linglib.Syntax.HPSG.Basic
+import Linglib.Syntax.HPSG.Categories
 
 /-!
 # Head-Filler Schema and SLASH Feature
@@ -69,15 +70,8 @@ instance : BEq SlashValue where
 
 /-! ## Nominal Category Compatibility
 
-In HPSG, all nominals share a single head type (noun). Our UD-based system
-distinguishes NOUN, PRON, and PROPN. For SLASH matching, these are compatible. -/
-
-/-- Are two categories compatible for SLASH matching?
-All nominal categories (NOUN, PRON, PROPN) match each other. -/
-def categoriesMatch (c1 c2 : UD.UPOS) : Bool :=
-  let isNom (c : UD.UPOS) : Bool := c == .NOUN || c == .PRON || c == .PROPN
-  if isNom c1 && isNom c2 then true
-  else c1 == c2
+Category compatibility for SLASH matching is `categoriesMatch` (`Syntax/HPSG/Categories`), grounded in
+the HPSG cat hierarchy via `udToCat`: all nominals (`NOUN`/`PRON`/`PROPN` → `noun`) match each other. -/
 
 /-- Check if SLASH contains a compatible category (using nominal matching). -/
 def SlashValue.containsCompatible (sv : SlashValue) (c : UD.UPOS) : Bool :=
