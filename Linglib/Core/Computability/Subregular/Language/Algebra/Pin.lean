@@ -69,6 +69,25 @@ regular, by `IsRegular.finite_syntacticMonoid`).
   template as `𝒟`/`𝒦`, replacing one-sided absorption with the LI
   sandwich identity (`sandwich_absorbing_of_pin_pigeonhole`).
 
+## Future work: replace the pigeonhole proofs with the kernel structure
+
+The `*_pin_pigeonhole` lemmas reprove by hand, for special cases, the structure of the
+minimal ideal (kernel) of a finite syntactic monoid. Once Green's relations and the
+Rees–Sushkevich theorem land in mathlib (in progress upstream: the
+`Mathlib.Algebra.Group.GreensRelations` development plus idempotent powers in finite
+semigroups), these characterizations should be rewritten as corollaries of the kernel
+being a band, which dissolves the pigeonhole entirely:
+
+* `𝒟` (definite) ⟺ the kernel is a right-zero band;
+* `𝒦` (reverse-definite) ⟺ the kernel is a left-zero band;
+* `ℒℐ` (generalized definite) ⟺ the kernel is a rectangular band;
+* `𝒩` (co/finite) ⟺ the kernel is trivial.
+
+Reference points for that rewrite: Rees–Sushkevich (`[pin-mfa]` Ch. V Thm 3.33), the
+minimal ideal of a finite semigroup (`[pin-mfa]` Ch. V Prop 4.37), and the
+aperiodic-simple = rectangular-band classification (`[pin-mfa]` Ch. V Cor 3.34). Do not
+fork that substrate here; consume it from mathlib when it merges.
+
 ## References
 
 * [pin-mfa].
