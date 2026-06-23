@@ -2131,7 +2131,6 @@ import Linglib.Syntax.HPSG.Basic
 import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.HPSG.Interpretation
 import Linglib.Syntax.HPSG.Description
-import Linglib.Syntax.HPSG.GapAmalgamation
 import Linglib.Syntax.HPSG.Model
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.LexicalRules
