@@ -223,13 +223,10 @@ theorem min_selector_projects
     (hs : Minimalist.selects h a b)
     (h_resp : IsSelectionRespectingAt h a b) :
     Minimalist.HeadFunction.head h (Minimalist.merge a b) =
-    Minimalist.HeadFunction.head h a := by
-  -- Phase 1.0 sorry: under MCB nonplanar SOs (FreeCommMagma carrier),
-  -- `merge` no longer reduces to `.node a b`; `HeadFunction.head` is
-  -- noncomputable via `Quot.out` on a planar representative. The
-  -- selection-respecting property still holds in spirit but needs
-  -- restatement against the LCA-derived head function. TODO Phase 2.
-  sorry
+    Minimalist.HeadFunction.head h a :=
+  -- `merge a b` is defeq to `.node a b`, so this is exactly the
+  -- selection-respecting property applied to `hs`.
+  h_resp hs
 
 /-- **The substantive refutation theorem MCB's framework now makes statable**:
     selection and projection are independent properties. There exist a
