@@ -1,13 +1,7 @@
-import Linglib.Syntax.HPSG.Coreference
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Ross1967
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Features.MinimalPairs
 
 /-!
 # Sag, Wasow & Bender (2003) — Syntactic Theory: A Formal Introduction
@@ -16,10 +10,11 @@ import Linglib.Features.MinimalPairs
 Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Formal Introduction*
 (2nd ed.):
 
-- **Binding Theory** (Ch. 7) — the `MODE`-based reduction of the Chomskyan three-way
-  anaphor/pronoun/R-expression classification (Principles A/B/C) to two ARG-ST outranking principles,
-  verified against the [chomsky-1981] minimal-pair paradigm (`Studies/Chomsky1981`) via the
-  `Features.MinimalPairs` vocabulary. Implementation: `Syntax/HPSG/Coreference`.
+- **Binding Theory** (Ch. 7) — the reduction of the Chomskyan three-way anaphor/pronoun/R-expression
+  classification (Principles A/B/C) to local o-command, grounded **model-theoretically** in the RSRL
+  Binding theory (`Syntax/HPSG/Binding`): Principle A (a locally o-commanded anaphor is locally o-bound,
+  agreeing in φ) and Principle B (a pronoun is locally o-free), instantiating the [chomsky-1981]
+  minimal-pair paradigm (`Studies/Chomsky1981`).
 - **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and the list-valued `GAP`/SLASH
   mechanism, with the island taxonomy of `Studies/Ross1967` mapped to GAP restrictions, and the
   island-blocking grounded **model-theoretically** in the RSRL gap-list (the canonical
@@ -43,89 +38,19 @@ Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes Princi
 
 section Binding
 
-open Features.MinimalPairs
-open HPSG.Coreference
-open Chomsky1981 (reflexiveCoreferenceData pronominalDisjointReferenceData
-  complementaryDistributionData reciprocalCoreferenceData)
+/-! ### Binding Theory (Principles A & B), model-theoretic in RSRL
 
-/-- English binding under HPSG (ARG-ST outranking): the framework-neutral engine
-    (`Binding.grammaticalForCoreference`) applied with HPSG's `CommandRelation`
-    instance (in scope via `open HPSG.Coreference`) and English's binding-class
-    classifier. `Bool`-valued for `capturesPhenomenonData`. -/
-private def grammaticalForCoreference (ws : List Word) : Bool :=
-  decide (Binding.grammaticalForCoreference Binding.bindingClassOf ws)
+[sag-wasow-bender-2003]'s HPSG Binding Theory as RSRL descriptions over `Syntax/HPSG/Binding`:
+**Principle A** (a locally o-commanded anaphor is locally o-bound, agreeing in φ) and **Principle B** (a
+personal pronoun is locally o-free). The diagnostic reflexive / pronoun / φ-agreement contrasts hold as
+`Models` facts over the model theory; the [chomsky-1981] minimal-pair paradigm they instantiate lives in
+`Studies/Chomsky1981`. Reciprocal binding (*each other*, requiring a semantically plural antecedent) is a
+deferred RSRL addition — the principle needs a plurality-of-binder condition not yet in the substrate. -/
 
-/-- Coverage of a `PhenomenonData` set under HPSG binding. -/
-def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
-  capturesPhenomenonData grammaticalForCoreference phenom
-
-/-- HPSG captures `reflexiveCoreferenceData`. -/
-theorem captures_reflexive_coreference :
-    capturesCoreferenceData reflexiveCoreferenceData = true := by
-  decide
-
-/-- HPSG captures `complementaryDistributionData`. -/
-theorem captures_complementary_distribution :
-    capturesCoreferenceData complementaryDistributionData = true := by
-  decide
-
-/-- HPSG captures `pronominalDisjointReferenceData`. -/
-theorem captures_pronominal_disjoint_reference :
-    capturesCoreferenceData pronominalDisjointReferenceData = true := by
-  decide
-
-private abbrev john := English.Nouns.john.toWordSg
-private abbrev mary := English.Nouns.mary.toWordSg
-private abbrev they := English.Pronouns.they.toWord
-private abbrev sees := English.Predicates.Verbal.see.toWord3sg
-private abbrev see := English.Predicates.Verbal.see.toWordPl
-private abbrev himself := English.Pronouns.himself.toWord
-private abbrev herself := English.Pronouns.herself.toWord
-private abbrev themselves := English.Pronouns.themselves.toWord
-private abbrev them := English.Pronouns.them.toWord
-private abbrev eachOther := English.Pronouns.eachOther.toWord
-
-/-- Per-pair verification of reflexive binding judgments. -/
-theorem reflexive_pairs_captured :
-    -- Pair 1: john sees himself vs himself sees john
-    (grammaticalForCoreference [john, sees, himself] = true ∧
-     grammaticalForCoreference [himself, sees, john] = false) ∧
-    -- Pair 2: mary sees herself vs herself sees mary
-    (grammaticalForCoreference [mary, sees, herself] = true ∧
-     grammaticalForCoreference [herself, sees, mary] = false) ∧
-    -- Pair 3: they see themselves vs themselves see them
-    (grammaticalForCoreference [they, see, themselves] = true ∧
-     grammaticalForCoreference [themselves, see, them] = false) ∧
-    -- Pair 4: agreement - john sees himself vs john sees herself
-    (grammaticalForCoreference [john, sees, himself] = true ∧
-     grammaticalForCoreference [john, sees, herself] = false) ∧
-    -- Pair 5: agreement - they see themselves vs they see himself
-    (grammaticalForCoreference [they, see, themselves] = true ∧
-     grammaticalForCoreference [they, see, himself] = false) := by
-  decide
-
-/-- Reciprocal binding: plural antecedent required, singular blocked.
-    (Pairs 1–2 of `reciprocalCoreferenceData` use 5-word coordinated
-    sentences that exceed the simple clause parser.) -/
-theorem reciprocal_plural_antecedent :
-    grammaticalForCoreference [they, see, eachOther] = true ∧
-    grammaticalForCoreference [john, sees, eachOther] = false := by
-  decide
-
-/-! #### Model-theoretic grounding (RSRL Principles A/B)
-
-The ARG-ST outranking judgments above are the parser-facing shadow of the **model-theoretic** Binding
-Theory (`Syntax/HPSG/Binding`): Principles A and B as RSRL descriptions (`Desc`) over a sort hierarchy
-of anaphors/pronouns/indices with a local-o-command relation. The two formalizations — computational
-ARG-ST outranking here, model-theoretic `Models` there — agree on the diagnostic cases. -/
-
-/-- The reflexive (Principle A) judgments are grounded in the RSRL model theory: the computational
-ARG-ST account (a coindexed reflexive object is bound, a reflexive subject is not) and the RSRL
-Principle-A model (a coindexed, φ-agreeing anaphor satisfies the grammar; a disjoint one violates it)
-agree. -/
+/-- The reflexive (Principle A) judgments grounded in the RSRL model theory: a coindexed, φ-agreeing
+anaphor object satisfies the whole grammar (*John likes himself*), while a disjoint-indexed anaphor is
+locally o-commanded but not locally o-bound, violating Principle A (*himself likes John*). -/
 theorem reflexive_binding_grounded_in_rsrl :
-    grammaticalForCoreference [john, sees, himself] = true ∧
-    grammaticalForCoreference [himself, sees, john] = false ∧
     (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gMasc .nSing).Models
       _root_.HPSG.RSRL.Binding.bindingGrammar ∧
     ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iObj .gMasc .nSing).Models
