@@ -663,8 +663,8 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
       rw [show x ++ (v ++ s' ++ v) ++ y = (x ++ v ++ s') ++ (v ++ y) by simp [List.append_assoc],
           show x ++ v ++ y = x ++ (v ++ y) by simp [List.append_assoc]]
       have h_vy_len : k ≤ (v ++ y).length := by rw [List.length_append]; omega
-      rw [takeAt_right_append_left_absorb (x ++ v ++ s') (v ++ y) h_vy_len,
-          takeAt_right_append_left_absorb x (v ++ y) h_vy_len]
+      rw [Edge.takeAt_right_append_of_le_length (x ++ v ++ s') (v ++ y) h_vy_len,
+          Edge.takeAt_right_append_of_le_length x (v ++ y) h_vy_len]
 
 /-- Helper for the LI reverse direction: given a pigeonhole pair
 `i_lo < i_hi` of indices into `v` whose prefixes have the same

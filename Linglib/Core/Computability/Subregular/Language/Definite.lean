@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
 import Mathlib.Logic.Function.Basic
+import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Data.List.DropRight
 import Mathlib.Data.Fintype.Order
 import Mathlib.Data.Set.Finite.Lemmas
@@ -74,6 +75,20 @@ lemma takeAt_of_length_le {k : ℕ} {xs : List α} (h : xs.length ≤ k) :
   | left => exact List.take_of_length_le h
   | right => exact List.rtake_of_length_le h
 
+/-- The left-`k`-prefix of `p ++ rest` is that of `p`, when `k ≤ p.length`. -/
+lemma takeAt_left_append_of_le_length {k : ℕ} (p rest : List α) (h : k ≤ p.length) :
+    Edge.left.takeAt k (p ++ rest) = Edge.left.takeAt k p :=
+  List.take_append_of_le_length h
+
+/-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
+lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ rest.length) :
+    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
+  List.rtake_append_of_le_length x rest h
+
+/-- `takeAt k` is idempotent: its output already has length `≤ k`. -/
+lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
+  takeAt_of_length_le e (by rw [length_takeAt]; exact min_le_left _ _)
+
 end Edge
 
 /-! ### Edge-bridge identities
@@ -130,6 +145,14 @@ lemma isGeneralizedDefinite_iff_edges {k : ℕ} {L : Language α} :
         Edge.right.takeAt k a = Edge.right.takeAt k b → (a ∈ L ↔ b ∈ L) :=
   ⟨fun h _ _ hpre hsuf => iff_of_eq (h (by simp only [hpre, hsuf])),
    fun h _ _ hpair => propext (h (congrArg Prod.fst hpair) (congrArg Prod.snd hpair))⟩
+
+/-- Definiteness in membership form: a word and its length-`k` suffix are
+`L`-equivalent (single-edge analogue of `isGeneralizedDefinite_iff_edges`). -/
+lemma isDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
+    L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
+  unfold IsDefinite
+  rw [Function.factorsThrough_iff_of_idempotent (fun a => Edge.right.takeAt_idem k a)]
+  simp only [eq_iff_iff]
 
 /-- A language is **finite-or-cofinite** (Lambert's 𝒩): `L` or its complement is
 finite (equivalently `L.Finite ∨ L ∈ Filter.cofinite`). -/
