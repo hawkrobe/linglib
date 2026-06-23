@@ -85,8 +85,8 @@ building block.
 
 ## Specializations
 
-* `Graph (SegSpec S) ToneSpec` — tonal-segmental autosegmental form
-  (the structure `FloatingForm` recovers once tier-generalised).
+* `Graph (TierSpec T) (SegSpec S)` — tonal/featural autosegmental form
+  (the structure `FloatingForm`).
 * `Graph Segment SkeletonSlot` — melodic tier docking onto a
   CV-skeleton, as in [laoide-kemp-2026] Figs. 1–2.
 * `Graph (Root α) CVSlot` — McCarthy-style root-template
