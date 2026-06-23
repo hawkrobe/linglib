@@ -160,7 +160,7 @@ def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
 /-- MAX-Tone (per autosegment): count of deleted ulTier entries.
     Matches paper p. 26 per-autosegment counting. -/
 def maxToneAuto (f : MwaghavulForm) : Nat :=
-  (List.range f.upper.length).countP (fun k => decide (f.IsDeleted k))
+  f.countUpper f.IsDeleted
 
 /-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
 def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm :=
