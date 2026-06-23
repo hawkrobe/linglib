@@ -121,7 +121,7 @@ def System.mk' (feature : Feature)
     (direction : HarmonyDir := .rightward)
     (isBlocker : Segment → Bool := fun _ => false) : System where
   toTierRule :=
-    { tier := Tier.byClass (fun s => !isTransparent s = true)
+    { tier := TierProjection.byClass (fun s => !isTransparent s = true)
       side := direction.toSide
       targetIsContext := fun s => isTrigger s = true
       relation := .agree

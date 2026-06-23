@@ -34,16 +34,16 @@ variable {α : Type}
 -- itself) since it is alphabet-generic.
 
 /-- **Bridge** (relational form): a candidate's forbidden-pair score is zero
-iff its raw string projects (under `Tier.byClass p`) to a list with no
+iff its raw string projects (under `TierProjection.byClass p`) to a list with no
 two adjacent elements related by `R`. The chain-side payoff of the
 generic forbidden-pair design. -/
 theorem mkForbidPairsOnTier_zero_iff_isChain {C : Type} (name : String)
     (R : α → α → Prop) [DecidableRel R] (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkForbidPairsOnTier name R (Tier.byClass p) extract).eval c = 0 ↔
+    (mkForbidPairsOnTier name R (TierProjection.byClass p) extract).eval c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (fun a b => ¬ R a b) := by
-  show countAdjacent R (Tier.apply (Tier.byClass p) (extract c)) = 0 ↔ _
-  rw [Tier.apply_byClass]
+  show countAdjacent R (TierProjection.apply (TierProjection.byClass p) (extract c)) = 0 ↔ _
+  rw [TierProjection.apply_byClass]
   exact countAdjacent_eq_zero_iff_isChain _ _
 
 /-- **Bridge** (TSL_2 language form): a candidate's forbidden-pair score is
@@ -55,7 +55,7 @@ language characterization `mem_ofForbiddenPairs_lang_iff_filter_isChain`. -/
 theorem mkForbidPairsOnTier_zero_iff_in_lang {C : Type} (name : String)
     (R : α → α → Prop) [DecidableRel R] (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkForbidPairsOnTier name R (Tier.byClass p) extract).eval c = 0 ↔
+    (mkForbidPairsOnTier name R (TierProjection.byClass p) extract).eval c = 0 ↔
       extract c ∈ (TSLGrammar.ofForbiddenPairs R p).lang := by
   rw [mkForbidPairsOnTier_zero_iff_isChain,
       mem_ofForbiddenPairs_lang_iff_filter_isChain]

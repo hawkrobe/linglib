@@ -255,7 +255,7 @@ a `NamedConstraint` via the `mkAgreeOnTier` specialization. The TSL
 grammar characterizes the *language*; this constraint *evaluates* it. -/
 def navajoAgree : Constraint.NamedConstraint (List NSeg) :=
   OptimalityTheory.mkAgreeOnTier
-    "AGREE-[ant]/CC" (Tier.byClass NSeg.onTier) id
+    "AGREE-[ant]/CC" (TierProjection.byClass NSeg.onTier) id
 
 /-- `navajoAgree` is a markedness constraint by construction. -/
 theorem navajoAgree_is_markedness :

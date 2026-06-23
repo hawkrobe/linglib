@@ -124,7 +124,7 @@ def isLat : LatSeg → Option Bool
 
 /-- The consonantal tier (Belth's learned tier for Latin, rule 54).
     Every `[+cons]` segment projects. -/
-def consTier : Tier LatSeg LatSeg := Tier.byClass IsCons
+def consTier : TierProjection LatSeg LatSeg := TierProjection.byClass IsCons
 
 end LatSeg
 
@@ -305,8 +305,8 @@ theorem latinDissimRule_tolerated_on_examples :
 theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     LatSeg.consTier.apply xs =
       Subregular.tierProject LatSeg.IsCons xs := by
-  show Tier.apply (Tier.byClass LatSeg.IsCons) xs = _
-  rw [Tier.apply_byClass, Subregular.tierProject_eq_filter]
+  show TierProjection.apply (TierProjection.byClass LatSeg.IsCons) xs = _
+  rw [TierProjection.apply_byClass, Subregular.tierProject_eq_filter]
 
 /-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
     tier-based subregular language: project to the `[+cons]` tier, then

@@ -72,7 +72,7 @@ zero-set side directly. -/
 theorem mkForbidPairsOnTier_zeroSet_eq
     (name : String) (R : α → α → Prop) [DecidableRel R]
     (p : α → Prop) [DecidablePred p] :
-    (mkForbidPairsOnTier name R (Tier.byClass p) (id : List α → List α)).zeroSet =
+    (mkForbidPairsOnTier name R (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.ofForbiddenPairs R p).lang := by
   ext w
   exact mkForbidPairsOnTier_zero_iff_in_lang name R p id w

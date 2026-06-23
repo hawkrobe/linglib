@@ -77,13 +77,13 @@ lemma AgreeCleanPair.isBoundaryVacuous [DecidableEq α] :
   CleanPair.isBoundaryVacuous
 
 /-- **Bridge** (relational form): a candidate's AGREE score is zero iff its
-raw string projects (under `Tier.byClass p`) to a list with no two
+raw string projects (under `TierProjection.byClass p`) to a list with no two
 adjacent distinct elements — i.e. all on-tier elements are equal.
 Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkAgreeOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+    (mkAgreeOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (fun a b => ¬ a ≠ b) :=
   mkForbidPairsOnTier_zero_iff_isChain name (· ≠ ·) p extract c
 
@@ -95,7 +95,7 @@ Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
 theorem mkAgreeOnTier_zero_iff_in_agree_lang [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+    (mkAgreeOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
       extract c ∈ (TSLGrammar.agree p).lang :=
   mkForbidPairsOnTier_zero_iff_in_lang name (· ≠ ·) p extract c
 
@@ -107,7 +107,7 @@ corresponding AGREE-TSL_2 language. Sibling of
 `mkOCPOnTier_zeroSet_eq` in OCP.lean. -/
 theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
     (name : String) (p : α → Prop) [DecidablePred p] :
-    (mkAgreeOnTier name (Tier.byClass p) (id : List α → List α)).zeroSet =
+    (mkAgreeOnTier name (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.agree p).lang := by
   ext w
   exact mkAgreeOnTier_zero_iff_in_agree_lang name p id w

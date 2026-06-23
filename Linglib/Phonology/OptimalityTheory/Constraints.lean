@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Phonology.Tier
+import Linglib.Phonology.TierProjection
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 
 /-!
@@ -170,9 +170,9 @@ export Subregular (countAdjacent)
     zero-violation candidates as members of the corresponding tier-based
     strictly 2-local language for any choice of `R`. -/
 def mkForbidPairsOnTier {C α β : Type} (name : String) (R : β → β → Prop)
-    [DecidableRel R] (T : Tier α β) (extract : C → List α) :
+    [DecidableRel R] (T : TierProjection α β) (extract : C → List α) :
     NamedConstraint C :=
-  mkMarkGrad name (fun c => countAdjacent R (Tier.apply T (extract c)))
+  mkMarkGrad name (fun c => countAdjacent R (TierProjection.apply T (extract c)))
 
 -- ---- SL_1 helper for forbidden singletons ---------------------------------
 
@@ -185,10 +185,10 @@ def mkForbidPairsOnTier {C α β : Type} (name : String) (R : β → β → Prop
     not yet wired; the constructor exists to keep SL_1 phenomena from
     silently masquerading as TSL_2. -/
 def mkForbidSingletonOnTier {C α β : Type} (name : String) (P : β → Prop)
-    [DecidablePred P] (T : Tier α β) (extract : C → List α) :
+    [DecidablePred P] (T : TierProjection α β) (extract : C → List α) :
     NamedConstraint C :=
   mkMarkGrad name
-    (fun c => (Tier.apply T (extract c)).countP (fun x => decide (P x)))
+    (fun c => (TierProjection.apply T (extract c)).countP (fun x => decide (P x)))
 
 -- ---- OCP as the identity-relation instance --------------------------------
 
@@ -210,12 +210,12 @@ def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List �
     NamedConstraint C :=
   mkMarkGrad name (λ c => adjacentIdentical (project c))
 
-/-- Build an OCP constraint from a `Tier` projection. The candidate's
+/-- Build an OCP constraint from a `TierProjection` projection. The candidate's
     raw symbol list is extracted by `extract`, and the tier `T` projects
     that string onto the relevant tier alphabet (an erasing string
     homomorphism — see `Core.StringHom`).
 
-    This is the constraint-algebra adapter for the unified `Tier` interface:
+    This is the constraint-algebra adapter for the unified `TierProjection` interface:
     autosegmental tonal-tier OCP, sibilant-harmony OCP, and learned-tier
     OCP (à la [belth-2026]) all factor through this constructor.
 
@@ -225,13 +225,13 @@ def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List �
 
     [goldsmith-1976] [berent-2026] -/
 def mkOCPOnTier {C α β : Type} [DecidableEq β]
-    (name : String) (T : Tier α β) (extract : C → List α) :
+    (name : String) (T : TierProjection α β) (extract : C → List α) :
     NamedConstraint C :=
   mkForbidPairsOnTier name (· = ·) T extract
 
 -- ---- AGREE as the inequality-relation instance ----------------------------
 
-/-- Build an AGREE constraint from a `Tier` projection: penalizes
+/-- Build an AGREE constraint from a `TierProjection` projection: penalizes
     each tier-adjacent pair `(a, b)` with `a ≠ b`. The non-identity dual of
     `mkOCPOnTier`. AGREE-style markedness in OT phonology is the symmetric
     specialization of `mkForbidPairsOnTier` with `R := (· ≠ ·)`, just as the
@@ -240,7 +240,7 @@ def mkOCPOnTier {C α β : Type} [DecidableEq β]
     harmony, dissimilation, anti-OCP) use the same machinery up to the
     choice of `R`. -/
 def mkAgreeOnTier {C α β : Type} [DecidableEq β]
-    (name : String) (T : Tier α β) (extract : C → List α) :
+    (name : String) (T : TierProjection α β) (extract : C → List α) :
     NamedConstraint C :=
   mkForbidPairsOnTier name (· ≠ ·) T extract
 
@@ -298,18 +298,18 @@ theorem mkMaxCtx_is_faithfulness {C : Type} (name : String)
 
 /-- Forbidden-pair constraints are markedness constraints. -/
 theorem mkForbidPairsOnTier_is_markedness {C α β : Type} (name : String)
-    (R : β → β → Prop) [DecidableRel R] (T : Tier α β)
+    (R : β → β → Prop) [DecidableRel R] (T : TierProjection α β)
     (extract : C → List α) :
     (mkForbidPairsOnTier name R T extract).family = .markedness := rfl
 
 /-- AGREE constraints are markedness constraints. -/
 theorem mkAgreeOnTier_is_markedness {C α β : Type} [DecidableEq β]
-    (name : String) (T : Tier α β) (extract : C → List α) :
+    (name : String) (T : TierProjection α β) (extract : C → List α) :
     (mkAgreeOnTier name T extract).family = .markedness := rfl
 
 /-- Forbidden-singleton constraints are markedness constraints. -/
 theorem mkForbidSingletonOnTier_is_markedness {C α β : Type} (name : String)
-    (P : β → Prop) [DecidablePred P] (T : Tier α β)
+    (P : β → Prop) [DecidablePred P] (T : TierProjection α β)
     (extract : C → List α) :
     (mkForbidSingletonOnTier name P T extract).family = .markedness := rfl
 
@@ -318,9 +318,9 @@ theorem mkOCP_is_markedness {C α : Type} [DecidableEq α] (name : String)
     (project : C → List α) :
     (mkOCP name project).family = .markedness := rfl
 
-/-- Tier-driven OCP constraints are markedness constraints. -/
+/-- TierProjection-driven OCP constraints are markedness constraints. -/
 theorem mkOCPOnTier_is_markedness {C α β : Type} [DecidableEq β] (name : String)
-    (T : Tier α β) (extract : C → List α) :
+    (T : TierProjection α β) (extract : C → List α) :
     (mkOCPOnTier name T extract).family = .markedness := rfl
 
 /-- ALIGN constraints are markedness constraints
