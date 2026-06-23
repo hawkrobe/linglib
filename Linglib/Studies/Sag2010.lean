@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.HPSG.HeadFiller
+import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003Extraction
 import Linglib.Features.ClauseForm
@@ -69,15 +70,6 @@ categories (`NP`, `PP`, `AP`, `AdvP`) appear as fillers; verbal projections
 inductive SynCat
   | NP | PP | AP | AdvP | S | CP | VP
   deriving DecidableEq, Repr
-
-/-- A category is *nonverbal* when it is not a verbal projection. [sag-2010]'s
-filler-head construction constrains every filler daughter to be `[CAT nonverbal]`
-((25), p. 492). -/
-def SynCat.IsNonverbal (c : SynCat) : Prop :=
-  c = .NP ∨ c = .PP ∨ c = .AP ∨ c = .AdvP
-
-instance : DecidablePred SynCat.IsNonverbal :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
 /-! ### Parameters of variation ((6)) -/
 
@@ -271,26 +263,57 @@ def fgParams : FGClauseType → FGConstruction
         ic := .unconstrained
         composition := .clausal }
 
-/-! ### Inheritance from the `filler-head-cxt` supertype
+/-! ### Inheritance from the `filler-head-cxt` supertype (`HPSG.Construction`)
 
-[sag-2010] derives the shared properties of filler-gap clauses from constraints
-on the superordinate `filler-head-cxt`, inherited by all five subtypes — not
-stipulated five times. We state the supertype constraint once and verify every
-construction inherits it. -/
+[sag-2010] derives the shared properties of filler-gap clauses from constraints on the superordinate
+`filler-head-cxt`, inherited by all five subtypes — not stipulated five times. Each F-G clause type
+maps to an `HPSG.Construction` construct that *refines* `filler-head-cxt`; the `[CAT nonverbal]`
+filler and `[CAT verbal]` head constraints then follow by **inheritance** — the substrate's single
+`refiner_filler_nonverbal`/`refiner_head_verbal`, not a per-construction check. -/
 
-/-- The filler-daughter constraint imposed by the `filler-head-cxt` supertype:
-the filler is `[CAT nonverbal]` ((25), p. 492). -/
-def FGConstruction.FillerIsNonverbal (k : FGConstruction) : Prop :=
-  ∀ cat ∈ k.fillerCategories, cat.IsNonverbal
+open HPSG.Construction (Cat Construct Position fillerHeadCxt Refines)
 
-instance : DecidablePred FGConstruction.FillerIsNonverbal :=
-  fun k => inferInstanceAs (Decidable (∀ cat ∈ k.fillerCategories, cat.IsNonverbal))
+/-- Sag's filler/head categories as the HPSG `Cat` subsumption sorts. -/
+def synCatToCat : SynCat → Cat
+  | .NP => .nominal
+  | .PP => .prepositional
+  | .AP => .adjectival
+  | .AdvP => .adverbial
+  | .S => .s
+  | .CP => .cp
+  | .VP => .vp
 
-/-- Every filler-gap construction inherits the `[CAT nonverbal]` filler
-constraint from `filler-head-cxt` — proved once for the whole family, never a
-verbal projection ((25)). -/
+/-- The category backbone of each F-G construction as an HPSG construct: the head daughter is a
+verbal projection (the finite `s` for the finite-only constructions, the `verbal` supertype where an
+infinitival VP head is possible, (29)), and the filler daughter is nonverbal (refined to `nominal`
+for the wh-relative, whose filler is an NP/PP, (25b)). -/
+def fgConstruct : FGClauseType → Construct
+  | .whInterrogative => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nonverbal
+  | .whExclamative   => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
+  | .topicalized     => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
+  | .whRelative      => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nominal
+  | .theClause       => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
+
+/-- Every F-G clause type is a `filler-head-cxt`: its category backbone refines the supertype. -/
+theorem fgConstruct_refines (c : FGClauseType) : Refines (fgConstruct c) fillerHeadCxt := by
+  cases c <;> (intro i; cases i <;> decide)
+
+/-- **Inheritance, not stipulation**: every F-G construction has a nonverbal filler daughter —
+inherited once from `filler-head-cxt` via `HPSG.Construction.refiner_filler_nonverbal`, replacing the
+former per-construction `decide` over a flat record ((25)). -/
 theorem fg_inherits_nonverbal_filler (c : FGClauseType) :
-    (fgParams c).FillerIsNonverbal := by
+    (Cat.nonverbal : Cat) ≤ fgConstruct c Position.fillerDtr :=
+  HPSG.Construction.refiner_filler_nonverbal (fgConstruct_refines c)
+
+/-- Likewise the head daughter is a verbal projection, inherited from `filler-head-cxt`. -/
+theorem fg_head_verbal (c : FGClauseType) :
+    (Cat.verbal : Cat) ≤ fgConstruct c Position.hdDtr :=
+  HPSG.Construction.refiner_head_verbal (fgConstruct_refines c)
+
+/-- The textbook filler-category sets ((25)) realize the inherited constraint: every allowed filler
+category is a subtype of `nonverbal`, agreeing with the `fgConstruct` backbone. -/
+theorem fillerCategories_nonverbal (c : FGClauseType) :
+    ∀ cat ∈ (fgParams c).fillerCategories, (Cat.nonverbal : Cat) ≤ synCatToCat cat := by
   cases c <;> decide
 
 /-! ### Cross-classification and inherited semantics ((30)) -/
