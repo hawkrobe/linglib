@@ -60,13 +60,13 @@ have observable consequences.
   nasalisation; this file stays abstract.
 -/
 
-namespace Phonology.ItemSpecificity.Separation
+namespace Constraint.ItemSpecificity.Separation
 
-open Phonology.ItemSpecificity
-open Phonology.ItemSpecificity.Indexed
-open Phonology.ItemSpecificity.Scaled
-open Phonology.ItemSpecificity.UseListed
-open Phonology.ItemSpecificity.RepStrength
+open Constraint.ItemSpecificity
+open Constraint.ItemSpecificity.Indexed
+open Constraint.ItemSpecificity.Scaled
+open Constraint.ItemSpecificity.UseListed
+open Constraint.ItemSpecificity.RepStrength
 open Constraint OptimalityTheory
 
 -- ============================================================================
@@ -337,4 +337,4 @@ theorem sep_repstrength_vs_indexed_within_stratum :
       show (10 : ℝ) ≥ 3; norm_num
     simp [mkCoreOnly, h_lo, h_hi, baseOne]
 
-end Phonology.ItemSpecificity.Separation
+end Constraint.ItemSpecificity.Separation
