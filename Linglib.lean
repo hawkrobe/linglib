@@ -2132,7 +2132,6 @@ import Linglib.Syntax.HPSG.Signature
 import Linglib.Syntax.HPSG.Interpretation
 import Linglib.Syntax.HPSG.Description
 import Linglib.Syntax.HPSG.HeadFiller
-import Linglib.Syntax.HPSG.LexicalRules
 import Linglib.Syntax.HPSG.Coreference
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Categories
