@@ -19,7 +19,8 @@ forbidden-substructure analyses are stated over: an autosegmental representation
 `G` is well-formed with respect to a forbidden set `{Fᵢ}` exactly when no `Fᵢ`
 subgraph-embeds into `G`. It is defined on the raw `Graph` object, with no
 morphism machinery, so consumers need only the object layer rather than
-`GraphHom`. The mathlib analogue is `SimpleGraph.IsContained` / `SimpleGraph.Free`,
+the `AR` morphism layer. The mathlib analogue is `SimpleGraph.IsContained` /
+`SimpleGraph.Free`,
 likewise kept out of the homomorphism file.
 
 ## Main definitions
