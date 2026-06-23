@@ -30,10 +30,8 @@ non-reduction, and verb-coding.
 
 This is the genuine syntactic treatment that **computes** a
 `RelativeClause.Realization` from the reified derivation — the consumer the
-substrate's projection hook was built for, and the honest counterpart to the
-HPSG `RelClauseDerivation.realization` (which `RelativeClause.Realization`
-already serves). [de-vries-2018] surveys the framework-neutral typology
-this single structure is meant to cover.
+substrate's projection hook was built for. [de-vries-2018] surveys the
+framework-neutral typology this single structure is meant to cover.
 
 ## Main declarations
 * `Cinque2020.RC` — the reified double-Headed relative clause.
@@ -239,9 +237,8 @@ def englishThatObject : RC :=
 
 example : englishThatObject.WellFormed := by decide
 
-/-- It **computes** to the substrate realization `(directObject, gap)` — the same
-    value HPSG's `RelClauseDerivation.realization` computes for this sentence,
-    now from Cinque's derivation rather than stipulated. -/
+/-- It **computes** to the substrate realization `(directObject, gap)` — from Cinque's
+    derivation rather than stipulated. -/
 theorem englishThatObject_realization :
     englishThatObject.realization = { position := .directObject, npRel := .gap } := rfl
 
