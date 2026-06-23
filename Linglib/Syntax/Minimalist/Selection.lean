@@ -175,6 +175,89 @@ def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
 -- The parameterized `checkedSelWith?_trace` above (h : HeadFunction) subsumes it
 -- via the keystone `Section.σ_of` helper.
 
+/-! ### Computable selection-driven head function (MCB `Dom(h)`)
+
+`selCheck` is the order-independent, fully **computable** counterpart of
+`checkedSelWith?`. It identifies the projecting head by c-selection
+([adger-2003] eq. 133 "the head is the SO that selects"; eq. 137 "the item that
+projects is the item that selects" = [marcolli-chomsky-berwick-2025] Lemma
+1.13.7) rather than by planar position, so it needs **no** `section_`/`Quot.out`.
+It returns `some (head, residual)` on the endocentric domain `Dom(h)`
+([marcolli-chomsky-berwick-2025] Def 1.13.6) and `none` at exocentric/symmetric
+nodes where neither sister uniquely selects the other — exactly MCB's
+partial-domain restriction (book p. 128, p. 131). This is what makes
+`Derivation.WellFormed` genuinely `Decidable` without `classical`. -/
+
+/-- Combine two sisters' selection-check results. Order-independent (symmetric,
+    `selStep_comm`): whichever sister's head c-selects the *saturated* other
+    projects, yielding its residual stack; `none` at exocentric nodes (neither
+    or both qualify). -/
+def selStep : Option (LIToken × List Cat) → Option (LIToken × List Cat) →
+    Option (LIToken × List Cat)
+  | some (ha, c :: rest), some (hb, []) =>
+      if hb.item.outerCat = c then some (ha, rest) else none
+  | some (ha, []), some (hb, c :: rest) =>
+      if ha.item.outerCat = c then some (hb, rest) else none
+  | _, _ => none
+
+theorem selStep_comm (x y : Option (LIToken × List Cat)) :
+    selStep x y = selStep y x := by
+  cases x with
+  | none =>
+    cases y with
+    | none => rfl
+    | some py => cases py with | mk hy sy => cases sy <;> rfl
+  | some px =>
+    cases px with
+    | mk hx sx =>
+      cases y with
+      | none => cases sx <;> rfl
+      | some py =>
+        cases py with
+        | mk hy sy => cases sx <;> cases sy <;> rfl
+
+/-- Underlying selection check on a planar `FreeMagma` representative. -/
+def selCheckAux : FreeMagma (LIToken ⊕ Nat) → Option (LIToken × List Cat)
+  | .of (.inl tok) => some (tok, tok.item.outerSel)
+  | .of (.inr n) => some (mkTraceToken n, [])
+  | .mul l r => selStep (selCheckAux l) (selCheckAux r)
+
+theorem selCheckAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : selCheckAux a = selCheckAux b := by
+  induction h with
+  | swap a b => exact selStep_comm _ _
+  | mul_left _ _ ih => simp only [selCheckAux, ih]
+  | mul_right _ _ ih => simp only [selCheckAux, ih]
+
+/-- Computable selection-driven head function ([marcolli-chomsky-berwick-2025]
+    Def 1.13.6 on `Dom(h)`): `some (projecting head, residual pending features)`,
+    or `none` outside the endocentric domain. No `section_`/`Quot.out`. -/
+def selCheck : SyntacticObject → Option (LIToken × List Cat) :=
+  FreeCommMagma.lift selCheckAux selCheckAux_respects
+
+@[simp] theorem selCheck_leaf (tok : LIToken) :
+    selCheck (.leaf tok) = some (tok, tok.item.outerSel) := rfl
+
+@[simp] theorem selCheck_trace (n : Nat) :
+    selCheck (.trace n) = some (mkTraceToken n, []) := rfl
+
+@[simp] theorem selCheck_mul (l r : SyntacticObject) :
+    selCheck (l * r) = selStep (selCheck l) (selCheck r) := by
+  induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
+
+/-- Residual pending selectional features under `selCheck` (`some []` =
+    saturated). The computable counterpart of `checkedSelWith?`. -/
+def checkedSel (so : SyntacticObject) : Option (List Cat) := (selCheck so).map (·.2)
+
+/-- The projecting head's lexical item on `Dom(h)`, computed by c-selection.
+    Computable counterpart of `HeadFunction.head` for the endocentric case. -/
+def selHead (so : SyntacticObject) : Option LIToken := (selCheck so).map (·.1)
+
+@[simp] theorem checkedSel_leaf (tok : LIToken) :
+    checkedSel (.leaf tok) = some tok.item.outerSel := rfl
+
+@[simp] theorem selHead_leaf (tok : LIToken) : selHead (.leaf tok) = some tok := rfl
+
 /-- Apply a `Step` under c-selection ([adger-2003] eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
     is preserved across all step constructors — this matches M-C-B §1.15
@@ -191,13 +274,11 @@ def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
 
     Returns `none` when checking fails (no pending feature, category
     mismatch, or unsaturated complement). -/
-noncomputable def Step.applyChecked : Step → SelectionalState → Option SelectionalState
+def Step.applyChecked : Step → SelectionalState → Option SelectionalState
   | .emR item, ⟨so, head, c :: rest⟩ =>
-    match checkedSelWith? HeadFunction.leftSpine item with
-    | some [] =>
-      if HeadFunction.leftSpine.outerCat item = c then
-        some ⟨.node so item, head, rest⟩
-      else none
+    match selCheck item with
+    | some (ihead, []) =>
+      if ihead.item.outerCat = c then some ⟨.node so item, head, rest⟩ else none
     | _ => none
   | .emR _, ⟨_, _, []⟩ => none
   | .emL item, ⟨so, head, sel⟩ => some ⟨.node item so, head, sel⟩
@@ -209,11 +290,11 @@ noncomputable def Step.applyChecked : Step → SelectionalState → Option Selec
     node-initial derivations falls back to `HeadFunction.leftSpine.head`.
     Returns `none` if the initial is ill-built or any step violates
     c-selection. -/
-noncomputable def Derivation.checkedFinal? (d : Derivation) : Option SelectionalState := do
-  let pending ← checkedSelWith? HeadFunction.leftSpine d.initial
+def Derivation.checkedFinal? (d : Derivation) : Option SelectionalState := do
+  let (h0, pending) ← selCheck d.initial
   d.steps.foldl
     (fun st? step => st?.bind (Step.applyChecked step))
-    (some ⟨d.initial, HeadFunction.leftSpine.head d.initial, pending⟩)
+    (some ⟨d.initial, h0, pending⟩)
 
 /-- A derivation is **well-formed** (Adger's Full Interpretation,
     [adger-2003] eq. 104+161) iff it completes with no unchecked
@@ -221,8 +302,8 @@ noncomputable def Derivation.checkedFinal? (d : Derivation) : Option Selectional
 def Derivation.WellFormed (d : Derivation) : Prop :=
   d.checkedFinal?.map (·.pending) = some []
 
-noncomputable instance (d : Derivation) : Decidable d.WellFormed := by
-  unfold Derivation.WellFormed; classical infer_instance
+instance (d : Derivation) : Decidable d.WellFormed := by
+  unfold Derivation.WellFormed; infer_instance
 
 /-! ## M-C-B-aligned head accessors
 
@@ -239,13 +320,13 @@ canonical Minimalist derivations). -/
     This is the M-C-B §1.13.3 head function specialized to derivation
     history — **total** for leaf-initial well-formed derivations, with no
     leftmost-leaf heuristic. -/
-noncomputable def Derivation.headLI? (d : Derivation) : Option LIToken :=
+def Derivation.headLI? (d : Derivation) : Option LIToken :=
   d.checkedFinal?.map (·.head)
 
 /-- The projecting head's outer categorial feature (Adger eq. 110 [F]),
     derived from the tracked head. Total for leaf-initial well-formed
     derivations. -/
-noncomputable def Derivation.outerCat? (d : Derivation) : Option Cat :=
+def Derivation.outerCat? (d : Derivation) : Option Cat :=
   d.headLI?.map (·.item.outerCat)
 
 /-! ## Adger ch. 7: silent D for bare nominal arguments
@@ -314,12 +395,12 @@ reason about specific derivations without unfolding `foldl`. -/
     `HeadFunction.leftSpine` (the default head function used by
     `Step.applyChecked`). -/
 @[simp] theorem applyChecked_emR_match
-    (so item : SyntacticObject) (head : LIToken) (c : Cat) (rest : List Cat)
-    (hsat : checkedSelWith? HeadFunction.leftSpine item = some [])
-    (hcat : HeadFunction.leftSpine.outerCat item = c) :
+    (so item : SyntacticObject) (head ihead : LIToken) (c : Cat) (rest : List Cat)
+    (hsel : selCheck item = some (ihead, []))
+    (hcat : ihead.item.outerCat = c) :
     Step.applyChecked (.emR item) ⟨so, head, c :: rest⟩
       = some ⟨.node so item, head, rest⟩ := by
-  simp [Step.applyChecked, hsat, hcat]
+  simp [Step.applyChecked, hsel, hcat]
 
 /-- `emR` on an empty pending stack fails (no feature to check). -/
 theorem applyChecked_emR_empty (so item : SyntacticObject) (head : LIToken) :
@@ -337,19 +418,20 @@ theorem wellFormed_initial_no_sel (tok : LIToken)
     (h : tok.item.outerSel = []) :
     Derivation.WellFormed ⟨.leaf tok, []⟩ := by
   unfold Derivation.WellFormed Derivation.checkedFinal?
-  simp only [checkedSelWith?_leaf, h, List.foldl_nil, Option.bind, Option.map]
+  rw [selCheck_leaf, h]
   rfl
 
-/-- `nullDWrap` of any leaf whose `outerCat = .N` is saturated.
-
-    TODO Phase 3.B+: requires an externalize-respect hypothesis on the
-    `.node (nullD id) n` merge to rewrite `checkedSelWith? leftSpine` past
-    the binary node. The substantive fact (nullD wraps a saturated N to
-    yield a saturated DP) is correct; the proof is queued. -/
-theorem checkedSel_nullDWrap_leaf (n : SyntacticObject) (id : Nat)
-    (_hN : HeadFunction.leftSpine.outerCat n = .N)
-    (_hsat : checkedSelWith? HeadFunction.leftSpine n = some []) :
-    checkedSelWith? HeadFunction.leftSpine (nullDWrap n id) = some [] := by
-  sorry
+/-- `nullDWrap` of any `selCheck`-saturated SO whose projecting head is category
+    N is itself saturated under the computable `checkedSel` (Adger ch. 7: silent
+    D wraps a saturated N to yield a saturated DP). Discharges the former
+    `checkedSelWith?`/`Quot.out`-bound `sorry` — the selection-driven `selCheck`
+    reduces structurally through the binary node. -/
+theorem checkedSel_nullDWrap (n : SyntacticObject) (id : Nat) (nhead : LIToken)
+    (hsel : selCheck n = some (nhead, [])) (hcat : nhead.item.outerCat = .N) :
+    checkedSel (nullDWrap n id) = some [] := by
+  show (selCheck (nullD id * n)).map (·.2) = some []
+  rw [selCheck_mul, hsel,
+      show selCheck (nullD id) = some (⟨.simple .D [.N] "", id⟩, [.N]) from rfl]
+  simp [selStep, hcat]
 
 end Minimalist

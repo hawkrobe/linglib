@@ -4,19 +4,32 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Image
-import Mathlib.Algebra.Group.Defs
-import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Graph
 
 /-!
 # Autosegmental graph homomorphisms — the category `Graph_AR`
 
-The morphism / category layer of `Autosegmental.Graph`, split out of
-`Graph.lean` (the object layer): label- and link-preserving `Hom`s, the
-category laws, the monoidal `concatMap` bifunctor, and the
-forbidden- and sub-graph embedding API ([jardine-2017]). The object layer
-(structure, planarity, concatenation monoid) lives in `Graph.lean`;
-only `AR.lean` and embedding consumers need this file.
+The morphism layer of `Autosegmental.Graph` (object layer in `Graph.lean`):
+label- and link-preserving homomorphisms between bipartite autosegmental graphs,
+their category laws, and the monoidal `concatMap` bifunctor. The monoidal
+structure (`concat` as `⊗`, `empty` as unit) is assembled in `AR.lean`; the
+forbidden-subgraph embedding API lives in `Subgraph.lean`.
+
+## Main definitions
+
+* `Autosegmental.Graph.Hom A B` is a label- and link-preserving vertex map between
+  graphs `A` and `B`; `Hom.id` and `Hom.comp` make `Graph α β` a category.
+* `Autosegmental.Graph.Hom.concatMap` is the concatenation bifunctor on
+  homomorphisms — the tensor underlying the `MonoidalCategory` instance on `AR`.
+
+## TODO
+
+`Hom`'s `fUpper`/`fLower : ℕ → ℕ` plus the `*_canonical` junk-normalization fields
+recover the extensionality that the honest finite domain
+(`Fin A.upper.length → Fin B.upper.length`, or a `FunLike` bundling) would give
+for free, and the hand-rolled `id`/`comp`/laws shadow `CategoryTheory.Category`.
+Both are blocked behind `Graph`'s raw-`ℕ` `links` carrier; refound once the object
+layer's indexing migrates.
 -/
 
 namespace Autosegmental
@@ -27,25 +40,9 @@ variable {α β : Type*}
 
 /-! ### Graph homomorphisms (the category `Graph_AR`)
 
-A `Hom A B` is a label-preserving, link-preserving map between two
-bipartite autosegmental graphs. Composition is function composition on
-vertex indices; identity is the identity on indices. Together,
-`(Graph α β, Hom, id, comp)` forms a category — the **category of
-autosegmental graphs** for fixed tier-element types.
-
-* **Forbidden subgraphs** ([jardine-2017]): an AR `G` is well-formed
-  with respect to a constraint set `{F_i}` iff no `F_i` embeds (via an
-  injective `Hom`) into `G`. `Embeds F G` captures this.
-
-* **Tier projections / erasure morphisms** ([burness-mcmullin-2020]):
-  tier-based subregular constructions arise as particular morphisms;
-  the morphism layer is where the subregular machinery (TSL, MTSL,
-  ITSL, OTSL) lives. Encoded as specific `Hom`s in consumer files.
-
-* **Monoidal structure**: `concat` (Jardine-Heinz 2015) extends to a
-  functorial operation on `Hom` via `Hom.concatMap`, making
-  `Graph_AR` a monoidal category with `empty` as the unit object.
--/
+A `Hom A B` preserves labels and association lines; composition is function
+composition on vertex indices, identity is the identity. Together
+`(Graph α β, Hom, id, comp)` forms a category. -/
 
 /-- A graph homomorphism between two bipartite ARs. Maps upper-tier
     indices to upper-tier indices, lower-tier indices to lower-tier
@@ -190,7 +187,7 @@ def concatMap {A A' B B' : Graph α β}
       exact h2
     · -- Case 2: i in B's shifted part.
       simp only [hib, if_false]
-      push_neg at hib
+      push Not at hib
       have hib' : i - A.upper.length < B.upper.length := by omega
       obtain ⟨h1, h2⟩ := g.upper_label (i - A.upper.length) hib'
       refine ⟨by simp [upper_concat, List.length_append]; omega, ?_⟩
@@ -213,7 +210,7 @@ def concatMap {A A' B B' : Graph α β}
       rw [List.getElem?_append_left h1, List.getElem?_append_left hjb]
       exact h2
     · simp only [hjb, if_false]
-      push_neg at hjb
+      push Not at hjb
       have hjb' : j - A.lower.length < B.lower.length := by omega
       obtain ⟨h1, h2⟩ := g.lower_label (j - A.lower.length) hjb'
       refine ⟨by simp [lower_concat, List.length_append]; omega, ?_⟩
@@ -310,91 +307,6 @@ theorem concatMap_comp {A A' A'' B B' B'' : Graph α β}
       simp [comp, concatMap, hi, hshift]
 
 end Hom
-
-/-! ### Forbidden-subgraph embedding ([jardine-2017])
-
-Two notions of embedding are formalised:
-
-* **`Embeds F G`** — the weaker, *category-theoretic* notion: there is
-  a label-and-link-preserving injective `Hom F G`. The morphism need
-  not preserve precedence (list order); F's positions can be mapped to
-  any positions of G as long as labels and association lines match.
-* **`SubgraphEmbeds F G`** — the stronger, *autosegmental* notion that
-  [jardine-2017] actually uses: there exist offsets `(δᵤ, δₗ)`
-  such that F's upper and lower tiers appear as a *contiguous block*
-  of G's tiers at those offsets, and F's links match G's links
-  shifted by the offset. Equivalently: the embedding is a *translation*
-  that preserves precedence edges (implicit in list order).
-
-For Jardine 2017-style forbidden-subgraph analyses
-([chandlee-jardine-2019], [burness-mcmullin-2020]), use
-`SubgraphEmbeds`. The weaker `Embeds` is the underlying category-
-theoretic structure.
--/
-
-/-- `F` **embeds** into `G` iff there is an injective homomorphism
-    `F → G`. Category-theoretic notion: label-and-link-preserving
-    injection on indices. Does not preserve precedence. -/
-def Embeds (F G : Graph α β) : Prop :=
-  ∃ h : Hom F G, Function.Injective h.fUpper ∧ Function.Injective h.fLower
-
-/-- Embedding is reflexive: every AR embeds into itself via the
-    identity. -/
-theorem Embeds.refl (G : Graph α β) : Embeds G G :=
-  ⟨Hom.id G, Function.injective_id, Function.injective_id⟩
-
-/-- Embedding is transitive: a composition of injective homomorphisms
-    is injective. -/
-theorem Embeds.trans {F G H : Graph α β}
-    (hFG : Embeds F G) (hGH : Embeds G H) : Embeds F H := by
-  obtain ⟨f, hfU, hfL⟩ := hFG
-  obtain ⟨g, hgU, hgL⟩ := hGH
-  refine ⟨f.comp g, ?_, ?_⟩
-  · exact hgU.comp hfU
-  · exact hgL.comp hfL
-
-/-! ### Subgraph embedding (precedence-preserving translation)
-
-The autosegmental notion of "F is a connected subgraph of G" used in
-[jardine-2017]: F appears as a contiguous block of G at some
-offset. Equivalently, the embedding is a translation by `(δᵤ, δₗ)`.
--/
-
-/-- F's upper tier appears at offset `δᵤ` in G's upper tier, F's
-    lower tier appears at offset `δₗ` in G's lower tier, and all of
-    F's association lines are present in G at the appropriate offset.
-    The `IsSubgraphAt` formulation of [jardine-2017]'s
-    connected-subgraph embedding. -/
-def IsSubgraphAt (F G : Graph α β) (δᵤ δₗ : Nat) : Prop :=
-  (∀ i, i < F.upper.length → G.upper[i + δᵤ]? = F.upper[i]?) ∧
-  (∀ j, j < F.lower.length → G.lower[j + δₗ]? = F.lower[j]?) ∧
-  (∀ p ∈ F.links, (p.fst + δᵤ, p.snd + δₗ) ∈ G.links)
-
-instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) (δᵤ δₗ : Nat) :
-    Decidable (IsSubgraphAt F G δᵤ δₗ) := by
-  unfold IsSubgraphAt; infer_instance
-
-/-- `F` **subgraph-embeds** into `G` iff there is an offset
-    `(δᵤ, δₗ)` placing F as a contiguous block inside G. The
-    autosegmental connected-subgraph embedding of [jardine-2017]. -/
-def SubgraphEmbeds (F G : Graph α β) : Prop :=
-  ∃ δᵤ ∈ Finset.range (G.upper.length + 1),
-  ∃ δₗ ∈ Finset.range (G.lower.length + 1),
-    IsSubgraphAt F G δᵤ δₗ
-
-instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) :
-    Decidable (SubgraphEmbeds F G) := by
-  unfold SubgraphEmbeds; infer_instance
-
-/-- `SubgraphEmbeds` is reflexive: F is a subgraph of itself at
-    offset `(0, 0)`. -/
-theorem SubgraphEmbeds.refl (G : Graph α β) : SubgraphEmbeds G G := by
-  refine ⟨0, ?_, 0, ?_, ?_, ?_, ?_⟩
-  · simp
-  · simp
-  · intro i hi; simp
-  · intro j hj; simp
-  · intro p hp; simpa using hp
 
 end Graph
 
