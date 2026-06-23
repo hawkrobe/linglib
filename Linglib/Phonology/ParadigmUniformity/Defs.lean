@@ -45,7 +45,7 @@ Breiss-Katsuda-Kawahara compound study
 which pairing best fits Japanese velar nasalisation.
 -/
 
-namespace Phonology.ParadigmUniformity
+namespace OptimalityTheory.ParadigmUniformity
 
 open Constraint OptimalityTheory
 
@@ -76,4 +76,4 @@ def liftPairwise {Form : Type} (name : String) (family : ConstraintFamily)
     eval := fun paradigm =>
       ((paradigm.product paradigm).map (fun (a, b) => compare a b)).sum }
 
-end Phonology.ParadigmUniformity
+end OptimalityTheory.ParadigmUniformity

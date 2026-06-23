@@ -119,9 +119,9 @@ favouring a paradigm-anchored account.
 namespace BreissKatsudaKawahara2026
 
 open Japanese.Prosody
-open Phonology.ItemSpecificity
-open Phonology.ItemSpecificity.Scaled (scaledWeight)
-open Phonology.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
+open Constraint.ItemSpecificity
+open Constraint.ItemSpecificity.Scaled (scaledWeight)
+open OptimalityTheory.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
 open Morphology.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency
   novelGradient_inconsistent_with_invariance)
