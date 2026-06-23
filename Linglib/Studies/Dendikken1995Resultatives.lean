@@ -153,15 +153,12 @@ theorem path_res_shares_cat_with_pvc :
 so the well-formedness invariant `predicate.headCat = predCat.toCat`
 holds by `rfl`. -/
 
-/-- The well-formedness invariant for `datumToSC` holds by construction.
-    Discharged via the `outerCat_leaf` substrate simp on the
-    `mkLeafPhon`-built predicate. -/
+/-- The well-formedness invariant for `datumToSC` holds by construction:
+    the `mkLeafPhon`-built predicate is a leaf, so the computable
+    `outerCatC` head category reduces definitionally to its stored `predCat`. -/
 theorem datumToSC_consistent (d : ResultativeDatum) (dpId predId : Nat) :
     (datumToSC d dpId predId).predicate.headCat =
-      (datumToSC d dpId predId).predCat.toCat := by
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+      some (datumToSC d dpId predId).predCat.toCat := rfl
 
 /-- Resultative SCs satisfy the `IsSmallClause` companion predicate
     over raw `SyntacticObject`s. -/

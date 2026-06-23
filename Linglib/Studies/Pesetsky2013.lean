@@ -284,7 +284,7 @@ where
         caseStackAtPlanar head tok
       else if containsLeafAux tok body then
         let bodyStack := caseStackAtPlanar body tok
-        match POSCat.ofCat? (Minimalist.HeadFunction.leftSpine.outerCat (FreeCommMagma.mk head)) with
+        match POSCat.ofCat? (Minimalist.leftmostLeafPlanar head).item.outerCat with
         | some c => c :: bodyStack
         | none => bodyStack
       else []

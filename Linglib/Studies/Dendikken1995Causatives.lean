@@ -274,13 +274,10 @@ indistinguishable. -/
     *en-*, *a-*, *dé-* prefixes (which would have head category P too,
     but as distinct lexical particles, not via the *faire* X-slot). -/
 theorem affixal_particles_share_category :
-    X_dutch_ver.headCat = .P ∧
-    X_sanuma_ma.headCat = .P ∧
-    X_indonesian_kan.headCat = .P := by
-  refine ⟨?_, ?_, ?_⟩ <;>
-    (show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-     simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
-     rfl)
+    X_dutch_ver.headCat = some .P ∧
+    X_sanuma_ma.headCat = some .P ∧
+    X_indonesian_kan.headCat = some .P := by
+  decide
 
 /-! ## §9. Structural assimilation theorem (book ex. 47/48)
 
@@ -321,32 +318,23 @@ direct import of the Pylkkanen2008 study file. -/
 /-- The Dutch *ver-* affixal particle and a Pylkkänen low-recipient
     applicative head share SC predicate category P. -/
 theorem dutch_ver_matches_low_recipient_appl :
-    X_dutch_ver.headCat = .P ∧
+    X_dutch_ver.headCat = some .P ∧
     ApplType.toSCPredCategory .lowRecipient = some .P := by
-  refine ⟨?_, rfl⟩
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+  decide
 
 /-- The Sanuma *-ma* affixal particle and a Pylkkänen low-source
     applicative head share SC predicate category P. -/
 theorem sanuma_ma_matches_low_source_appl :
-    X_sanuma_ma.headCat = .P ∧
+    X_sanuma_ma.headCat = some .P ∧
     ApplType.toSCPredCategory .lowSource = some .P := by
-  refine ⟨?_, rfl⟩
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+  decide
 
 /-- High applicatives DO NOT match the affixal-particle X — they project
     no SC at all in den Dikken's framework. The substrate's
     `high_appl_no_SC` theorem (in `SmallClause.lean`) records this. -/
 theorem high_appl_not_affixal_particle :
     ApplType.toSCPredCategory .high = none ∧
-    X_indonesian_kan.headCat = .P := by
-  refine ⟨rfl, ?_⟩
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+    X_indonesian_kan.headCat = some .P := by
+  decide
 
 end Dendikken1995Causatives

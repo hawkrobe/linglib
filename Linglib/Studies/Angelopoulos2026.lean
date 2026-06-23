@@ -185,7 +185,7 @@ instance : DecidablePred hkIncorporable := fun c => by
     a coarse abstraction over the actual checked-Merge dual that
     a future `AdjunctSelection.lean` substrate would expose. -/
 def adjunctSelects (adj : SyntacticObject) (host : Cat) : Prop :=
-  HeadFunction.leftSpine.outerCat adj = host
+  outerCatC adj = some host
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Greek empirical landscape
@@ -199,11 +199,11 @@ def adjunctSelects (adj : SyntacticObject) (host : Cat) : Prop :=
     fact, NOT axiomatized to imply argumenthood. Cf. fn 4 of the
     paper acknowledging [angelopoulos-michelioudakis-2023]
     on doubling-as-Agree. -/
-noncomputable def doubledByClitic (xp : SyntacticObject) : Bool :=
+def doubledByClitic (xp : SyntacticObject) : Bool :=
   -- Placeholder: actual diagnostic would test for an Agreeing
   -- clitic in the matrix clause. Surface-level Boolean, opaque
   -- to substrate.
-  HeadFunction.leftSpine.outerCat xp = .C
+  outerCatC xp == some .C
 
 /-- The bare *oti*-clause yields the *explanans* reading:
     "Maria explained well that the Earth is round" — the embedded

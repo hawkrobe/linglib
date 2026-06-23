@@ -455,37 +455,15 @@ BE+P decomposition / Predicate Inversion) in
     LCA-based head selection lands, restore `by decide`. -/
 theorem pvc_sc_inner_isSmallClause :
     IsSmallClause (merge DP_hsu Prt_up) := by
-  rw [isSmallClause_merge]
-  right
-  -- Prt_up has outerCat = .P
-  show IsSmallClausePredicate Prt_up
-  unfold IsSmallClausePredicate
-  left
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [Prt_up, mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+  rw [isSmallClause_merge]; decide
 
 theorem resultative_sc_inner_isSmallClause :
     IsSmallClause (merge DP_metal AP_flat) := by
-  rw [isSmallClause_merge]
-  right
-  show IsSmallClausePredicate AP_flat
-  unfold IsSmallClausePredicate
-  right; left
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [AP_flat, mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+  rw [isSmallClause_merge]; decide
 
 theorem causative_sc_inner_isSmallClause :
     IsSmallClause (merge DP_child VP_laugh) := by
-  rw [isSmallClause_merge]
-  right
-  show IsSmallClausePredicate VP_laugh
-  unfold IsSmallClausePredicate
-  right; right; left
-  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [VP_laugh, mkLeafPhon, HeadFunction.outerCat_leaf]
-  rfl
+  rw [isSmallClause_merge]; decide
 
 /-- Diagnostic: the flat DP–DP DOC encoding does NOT satisfy
     `IsSmallClause` — neither child is in the SC predicate set
@@ -496,18 +474,6 @@ theorem causative_sc_inner_isSmallClause :
     predicate. -/
 theorem doc_sc_flat_inner_not_smallClause :
     ¬ IsSmallClause (merge DP_hsu DP_book) := by
-  rw [isSmallClause_merge]
-  rintro (hl | hr)
-  · -- DP_hsu has outerCat = .D, not in {P,A,V,N}
-    unfold IsSmallClausePredicate at hl
-    have hhsu : DP_hsu.headCat = .D := by
-      show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-      simp only [DP_hsu, mkLeafPhon, HeadFunction.outerCat_leaf]; rfl
-    rcases hl with h | h | h | h <;> rw [hhsu] at h <;> contradiction
-  · unfold IsSmallClausePredicate at hr
-    have hbook : DP_book.headCat = .D := by
-      show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
-      simp only [DP_book, mkLeafPhon, HeadFunction.outerCat_leaf]; rfl
-    rcases hr with h | h | h | h <;> rw [hbook] at h <;> contradiction
+  rw [isSmallClause_merge]; decide
 
 end HaddicanEtAl2026
