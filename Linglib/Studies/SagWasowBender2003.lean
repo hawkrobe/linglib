@@ -1,7 +1,6 @@
 import Linglib.Syntax.HPSG.Coreference
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.HeadFiller
-import Linglib.Syntax.HPSG.RelativeClauses
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Ross1967
@@ -25,8 +24,9 @@ Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Fo
   mechanism, with the island taxonomy of `Studies/Ross1967` mapped to GAP restrictions, and the
   island-blocking grounded **model-theoretically** in the RSRL gap-list (the canonical
   `Syntax/HPSG/Construction` signature).
-- **Relative Clauses** — the `MOD` + Head-Modifier mechanism for object/subject/PP relatives
-  (`Syntax/HPSG/RelativeClauses`).
+- **Relative Clauses** — a relative clause modifies a head noun via the Head-Modifier Schema, grounded
+  **model-theoretically** in the RSRL `head-modifier-cxt` (the canonical `Syntax/HPSG/Construction`
+  signature); category preservation falls out of the Head Feature Principle.
 -/
 
 namespace SagWasowBender2003
@@ -176,108 +176,21 @@ theorem islands_rsrl_grounded :
 
 end Extraction
 
-/-! ### Relative Clauses
+/-! ### Relative Clauses (Ch. 14)
 
-The `MOD` feature + SLASH/GAP + Head-Modifier Schema for object/subject/PP relatives
-([sag-wasow-bender-2003]; [pollard-sag-1994]). -/
+SWB2003 defers relative-clause analysis ("beyond the scope of this text", p. 442). The standard HPSG
+treatment — a relative clause is a filler-gap construct that modifies a head noun via the Head-Modifier
+Schema — is grounded **model-theoretically** in the canonical RSRL signature (`Syntax/HPSG/Construction`:
+`head-modifier-cxt` for the modification, `wh-rel-cl` for the clause-internal gap). The relativizer
+inventory and the Keenan–Comrie accessibility-hierarchy typology live, framework-neutrally, in
+`Fragments/English/Relativization` and `Typology/RelativeClause`, not here. -/
 
 section RelativeClauses
-
-open HPSG
-open HPSG.RelativeClauses
-
-/-- Configuration for a relative clause dependency. -/
-structure RelClauseConfig where
-  /-- Category of the head noun being modified -/
-  headCat : UD.UPOS
-  /-- Category of the gap inside the clause -/
-  gapCat : UD.UPOS
-  /-- The relativizer used -/
-  rel : Relativizer
-
-/-- Is this relative clause configuration licensed?
-
-A relative clause is licensed when:
-1. There is a gap in the clause (modeled by gapCat)
-2. The relativizer produces a modifier for the head noun's category
-3. The MOD value matches the head noun -/
-def relClauseLicensed (cfg : RelClauseConfig) : Bool :=
-  -- The relativizer must target the right category
-  categoriesMatch cfg.rel.modifiesCat cfg.headCat &&
-  -- There must be a gap to fill
-  cfg.gapCat != .X
-
-/-- Object relative with "that": "the book that John read ___"
-NP head, NP gap in object position, "that" relativizer. -/
-def objectRelThat : RelClauseConfig :=
-  { headCat := .NOUN, gapCat := .NOUN, rel := relThat }
-
-/-- Object relative with "which": "the book which John read ___" -/
-def objectRelWhich : RelClauseConfig :=
-  { headCat := .NOUN, gapCat := .NOUN, rel := relWhich }
-
-/-- Subject relative with "who": "the boy who saw Mary"
-NP head, NP gap in subject position, "who" relativizer. -/
-def subjectRelWho : RelClauseConfig :=
-  { headCat := .NOUN, gapCat := .NOUN, rel := relWho }
-
-/-- Subject relative with "that": "the boy that saw Mary" -/
-def subjectRelThat : RelClauseConfig :=
-  { headCat := .NOUN, gapCat := .NOUN, rel := relThat }
-
-/-- PP relative: "the person who(m) John talked to ___"
-NP head, PP gap (prep stranded), "who" relativizer. -/
-def ppRelWho : RelClauseConfig :=
-  { headCat := .NOUN, gapCat := .ADP, rel := relWho }
-
--- PP relatives are licensed (gap is PP but head is still NP); object/subject relatives are covered by
--- `object_relative_licensed`/`subject_relative_licensed` below.
-example : relClauseLicensed ppRelWho = true := by decide
-
-/-- Object relative clause data matches HPSG derivation.
-
-  "the book that John reads" ✓
-is licensed by the HPSG derivation:
-  gap(read, obj) → S[GAP ⟨NP⟩] → that + S[GAP ⟨NP⟩] → [MOD NP]
-  → book + [MOD NP] → NP -/
-theorem object_relative_licensed :
-    relClauseLicensed objectRelThat = true ∧
-    relClauseLicensed objectRelWhich = true := by
-  decide
-
-/-- Subject relative clause data matches HPSG derivation.
-
-The empirical observation:
-  "the boy that sees Mary" ✓
-is licensed by the HPSG derivation:
-  gap(see, subj) → S[GAP ⟨NP⟩] → that + S[GAP ⟨NP⟩] → [MOD NP]
-  → boy + [MOD NP] → NP -/
-theorem subject_relative_licensed :
-    relClauseLicensed subjectRelWho = true ∧
-    relClauseLicensed subjectRelThat = true := by
-  decide
-
-/-- Every relative clause derivation produces a modifier (has MOD set). -/
-theorem relClause_always_modifies (d : RelClauseDerivation) :
-    d.result.sign.synsem.mod.isSome = true := by
-  simp [RelClauseDerivation.result, Sign.synsem]
-
-/-- The Head-Modifier Schema preserves the head noun's category.
-
-This is the Head Feature Principle applied to Head-Modifier structures:
-when a relative clause modifies a noun, the result is still a noun. -/
-theorem modification_preserves_head_cat (headNoun : Sign)
-    (relClause : TrackedSign) (result : Sign)
-    (hMod : relClauseModifies headNoun relClause = some result) :
-    result.synsem.cat = headNoun.synsem.cat :=
-  headMod_preserves_cat headNoun relClause result hMod
 
 /-- **Model-theoretic grounding (RSRL head-modifier).** The relative-clause head-modification above is
 grounded in the canonical RSRL signature (`Syntax/HPSG/Construction`'s `head-modifier-cxt`): a relative
 clause whose `MOD` value selects the noun head is licensed and the mother is a noun (modification
-preserves category — `headModifierPrinciple`); a modifier selecting the wrong category is rejected. The
-computational `relClauseModifies`/`modification_preserves_head_cat` are the parser-facing shadow of these
-`Models` facts. -/
+preserves category — `headModifierPrinciple`); a modifier selecting the wrong category is rejected. -/
 theorem relatives_rsrl_grounded :
     HPSG.Construction.goodHeadMod.Models HPSG.Construction.grammar ∧
     ¬ HPSG.Construction.headModWrongCat.Models HPSG.Construction.grammar := by decide
