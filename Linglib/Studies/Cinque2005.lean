@@ -180,17 +180,91 @@ theorem derived_orders_attested :
       (fun d => (table.filter (·.attested)).any (·.order = d.surfaceCats)) := by
   decide
 
+/-! ### The restrictive result: reachable orders = exactly the 14 attested
+
+The constructive theorems above derive specific attested orders. Here we
+enumerate the **whole** legal derivation space and show its surface orders are
+*exactly* the 14 attested ones — so the 10 unattested orders are **underivable**
+(each would require a "wrong Merge order"; [cinque-2005], cf. Abels & Neeleman
+2012's leftward-movement characterization).
+
+The enumeration runs on the substrate's planar externalization type
+`FreeMagma (LIToken ⊕ Nat)` (what `Derivation.externalizeP?` produces) with
+`linearizePlanar` (the substrate's planar yield). Building the base bottom-up,
+at each of the three specs (around A, Num, Dem) we optionally raise an
+N-containing **proper** subtree to the left edge — leftward movement of an
+N-containing constituent, no remnant movement. Fully computable; `decide`-checked. -/
+
+private abbrev FM := FreeMagma (LIToken ⊕ Nat)
+private def tokN : LIToken := ⟨.simple .N [], 1⟩
+private def tokA : LIToken := ⟨.simple .A [], 2⟩
+private def tokNum : LIToken := ⟨.simple .Num [], 3⟩
+private def tokD : LIToken := ⟨.simple .D [], 4⟩
+private def fmTr : FM := .of (.inr 0)
+
+/-- Does the planar structure contain the noun leaf? -/
+private def fmHasN : FM → Bool
+  | .of (.inl t) => t == tokN
+  | .of (.inr _) => false
+  | .mul l r => fmHasN l || fmHasN r
+
+/-- All subtrees of a planar structure. -/
+private def fmSub : FM → List FM
+  | .of x => [.of x]
+  | .mul l r => .mul l r :: (fmSub l ++ fmSub r)
+
+/-- Replace every occurrence of `target` with `rep`. -/
+private def fmRepl (target rep : FM) : FM → FM
+  | .mul l r => if (.mul l r : FM) == target then rep
+                else .mul (fmRepl target rep l) (fmRepl target rep r)
+  | .of x => if (.of x : FM) == target then rep else .of x
+
+/-- Raise `s` to the left edge, leaving a trace. -/
+private def fmMove (s cur : FM) : FM := .mul s (fmRepl s fmTr cur)
+
+/-- Eligible movers: N-containing proper subtrees (no remnant movement; can't
+    raise the whole node to its own spec). -/
+private def fmMovers (cur : FM) : List FM :=
+  (fmSub cur).filter (fun s => fmHasN s && s != cur)
+
+/-- At a spec: keep, or raise one eligible mover. -/
+private def fmOpt (cur : FM) : List FM := cur :: (fmMovers cur).map (fmMove · cur)
+
+/-- The whole legal derivation space (planar externalizations): merge A, Num, Dem
+    head-initially with an optional raise at each spec. -/
+private def space : List FM :=
+  ([(.of (.inl tokN) : FM)].map (fun c => .mul (.of (.inl tokA)) c)).flatMap fmOpt
+    |>.map (fun c => .mul (.of (.inl tokNum)) c) |>.flatMap fmOpt
+    |>.map (fun c => .mul (.of (.inl tokD)) c)   |>.flatMap fmOpt
+
+/-- The distinct surface orders reachable by Cinque's movement. -/
+def reachableOrders : List (List Cat) :=
+  (space.map (fun fm => (linearizePlanar fm).map (·.item.outerCat))).eraseDups
+
+/-- The 14 attested orders. -/
+def attestedOrders : List (List Cat) := (table.filter (·.attested)).map (·.order)
+
+/-- Exactly 14 orders are reachable. -/
+theorem reachable_count : reachableOrders.length = 14 := by decide
+
+/-- **Universal 20 (restrictive core):** an order is reachable by Cinque's
+    constrained NP-movement **iff** it is attested — over all 24 orders. The 14
+    attested are derivable; the 10 unattested are underivable. -/
+theorem u20_reachable_iff_attested :
+    table.all (fun r => decide (r.order ∈ reachableOrders) = r.attested) := by decide
+
+/-- The reachable set is exactly the attested set. -/
+theorem reachable_eq_attested :
+    reachableOrders.all (· ∈ attestedOrders) ∧ attestedOrders.all (· ∈ reachableOrders) := by
+  decide
+
 /-! ### TODO (follow-up)
 
-- **Full 14/10 split**: enumerate the bounded legal-derivation space (fixed base +
-  leftward NP-containing movements, ≤3 notches × pied-piping modes × partial/total)
-  as a `List Derivation`, and prove its `surfaceCats` image equals exactly the 14
-  attested orders — i.e. derive the remaining attested orders (k, l, p, r, s, w)
-  *and* the underivability of the 10 unattested ones. This is the restrictive core
-  of [cinque-2005] (the "wrong Merge order" diagnostic).
 - **Markedness ⇒ frequency**: encode the paper's markedness ordering (whose-picture
   < bare < picture-of-who; total < partial) and show cheapest-derivation cost is
   monotone in the `Freq` bucket.
+- A `Cat.Dem` constructor (replacing the `.D` stand-in) once its extended-projection
+  F-level / ±V±N features are settled.
 -/
 
 end Cinque2005
