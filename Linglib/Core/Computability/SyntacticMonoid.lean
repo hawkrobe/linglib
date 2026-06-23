@@ -145,6 +145,27 @@ theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoi
   intro x y
   simp only [Set.mem_preimage, map_mul, Con.ker_apply.mp huv]
 
+/-- Conversely, any hom whose kernel refines `syntacticCon L` recognizes `L`
+(witness `S = φ '' L`). -/
+theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
+    (h : Con.ker φ ≤ syntacticCon L) : Recognizes φ L := by
+  refine ⟨φ '' L, Set.ext fun w => ⟨fun hw => ⟨w, hw, rfl⟩, ?_⟩⟩
+  rintro ⟨u, hu, hφ⟩
+  exact (mem_iff_of_syntacticCon (h (Con.ker_apply.mpr hφ))).mp hu
+
+/-- **Universal property of the syntactic monoid**: a hom recognizes `L` exactly when its
+kernel refines the syntactic congruence — `syntacticCon L` is the coarsest `L`-recognizing
+congruence, so every recognizer factors through `toSyntacticMonoid`. -/
+theorem recognizes_iff_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M} :
+    Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
+  ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
+
+/-- The syntactic morphism is itself an `L`-recognizer (the canonical one). -/
+theorem recognizes_toSyntacticMonoid : Recognizes L.toSyntacticMonoid L := by
+  apply recognizes_of_ker_le_syntacticCon
+  intro u v h
+  exact (Con.eq _).mp (Con.ker_apply.mp h)
+
 /-! ### Connection to the minimal DFA -/
 
 /-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along `w` lands on the left
