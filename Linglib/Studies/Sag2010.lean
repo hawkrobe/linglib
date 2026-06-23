@@ -61,6 +61,7 @@ would live in the HPSG theory layer.
 namespace Sag2010
 
 open Features (ClauseForm)
+open HPSG
 
 /-! ### Syntactic categories -/
 
@@ -314,7 +315,7 @@ the filler-head inheritance and the clausal cross-classification above are *theo
 order* — the model-theoretic substrate ([richter-2000]) under the `fgParams` record. -/
 
 /-- Each filler-gap clause type as a construct sort in the RSRL hierarchy. -/
-def fgSort : FGClauseType → HPSG.Construction.FHSort
+def fgSort : FGClauseType → Construction.ConstructSort
   | .whInterrogative => .nsWhIntCl
   | .whExclamative => .whExclCl
   | .topicalized => .topCl
@@ -325,10 +326,10 @@ def fgSort : FGClauseType → HPSG.Construction.FHSort
 `filler-head-cxt`'s constraints (head verbal, filler↔gap token identity) proved in `Construction.lean`
 — the model-theoretic ground of `fg_inherits_nonverbal_filler`. -/
 theorem fgSort_filler_head (c : FGClauseType) :
-    fgSort c ≤ HPSG.Construction.FHSort.fillerHeadCxt := by cases c <;> decide
+    fgSort c ≤ Construction.ConstructSort.fillerHeadCxt := by cases c <;> decide
 
 /-- The local `ClauseType` as the matching RSRL clausal sort (Fig. 7). -/
-def clauseTypeSort : ClauseType → HPSG.Construction.FHSort
+def clauseTypeSort : ClauseType → Construction.ConstructSort
   | .interrogativeCl => .interrogativeCl
   | .relativeCl => .relativeCl
   | .exclamativeCl => .exclamativeCl
@@ -366,23 +367,23 @@ not stored as a tag. Each case is `¬ Models` of the construction's two-gap RSRL
 worked model (`Syntax/HPSG/Construction`): an island rejects the second gap, a
 non-island admits it. -/
 def FGClauseType.IsIsland : FGClauseType → Prop
-  | .whInterrogative => ¬ HPSG.Construction.nsWhIntSecondGap.Models HPSG.Construction.fhGrammar
-  | .whExclamative   => ¬ HPSG.Construction.whExclSecondGap.Models HPSG.Construction.fhGrammar
-  | .topicalized     => ¬ HPSG.Construction.topClSecondGap.Models HPSG.Construction.fhGrammar
-  | .whRelative      => ¬ HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar
-  | .theClause       => ¬ HPSG.Construction.theClSecondGap.Models HPSG.Construction.fhGrammar
+  | .whInterrogative => ¬ Construction.nsWhIntSecondGap.Models Construction.constructGrammar
+  | .whExclamative   => ¬ Construction.whExclSecondGap.Models Construction.constructGrammar
+  | .topicalized     => ¬ Construction.topClSecondGap.Models Construction.constructGrammar
+  | .whRelative      => ¬ Construction.whRelSecondGap.Models Construction.constructGrammar
+  | .theClause       => ¬ Construction.theClSecondGap.Models Construction.constructGrammar
 
 instance : DecidablePred FGClauseType.IsIsland
   | .whInterrogative =>
-      inferInstanceAs (Decidable (¬ HPSG.Construction.nsWhIntSecondGap.Models HPSG.Construction.fhGrammar))
+      inferInstanceAs (Decidable (¬ Construction.nsWhIntSecondGap.Models Construction.constructGrammar))
   | .whExclamative =>
-      inferInstanceAs (Decidable (¬ HPSG.Construction.whExclSecondGap.Models HPSG.Construction.fhGrammar))
+      inferInstanceAs (Decidable (¬ Construction.whExclSecondGap.Models Construction.constructGrammar))
   | .topicalized =>
-      inferInstanceAs (Decidable (¬ HPSG.Construction.topClSecondGap.Models HPSG.Construction.fhGrammar))
+      inferInstanceAs (Decidable (¬ Construction.topClSecondGap.Models Construction.constructGrammar))
   | .whRelative =>
-      inferInstanceAs (Decidable (¬ HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar))
+      inferInstanceAs (Decidable (¬ Construction.whRelSecondGap.Models Construction.constructGrammar))
   | .theClause =>
-      inferInstanceAs (Decidable (¬ HPSG.Construction.theClSecondGap.Models HPSG.Construction.fhGrammar))
+      inferInstanceAs (Decidable (¬ Construction.theClSecondGap.Models Construction.constructGrammar))
 
 /-- Topicalization is an absolute island ((67)): a topicalized construct with a
 second gap is rejected by the `[GAP ⟨⟩]` principle. -/
@@ -424,7 +425,7 @@ second gap. Derived from [sag-wasow-bender-2003]'s authoritative `islands_rsrl_g
 canonical `Syntax/HPSG/Construction` signature), not re-stated — the construction-tag level and the
 gap-list mechanism agree. -/
 theorem island_grounded_in_rsrl :
-    ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
+    ¬ Construction.islandTwoGap.Models Construction.constructGrammar :=
   SagWasowBender2003.islands_rsrl_grounded.2.1
 
 /-- Agreement with [sag-wasow-bender-2003]: the topicalization island is the same
@@ -432,7 +433,7 @@ datum in two analyses — Sag's `[GAP ⟨⟩]` topicalization construct and the 
 HPSG SLASH model both block a second gap. -/
 theorem topicalized_island_agrees_swb :
     FGClauseType.topicalized.IsIsland ∧
-      ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
+      ¬ Construction.islandTwoGap.Models Construction.constructGrammar :=
   ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
 /-- The sharpest divergence from [ross-1967]: the relative clause is Ross's
@@ -441,8 +442,8 @@ is no grammatical island — its construct *admits* a second gap, whereas a
 configurational island (Ross's CNPC domain, modeled as a generic absolute island)
 blocks it. The residual effect is processing, not grammar ([hofmeister-sag-2010]). -/
 theorem relative_diverges_from_cnpc :
-    HPSG.Construction.whRelSecondGap.Models HPSG.Construction.fhGrammar ∧
-      ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
+    Construction.whRelSecondGap.Models Construction.constructGrammar ∧
+      ¬ Construction.islandTwoGap.Models Construction.constructGrammar :=
   ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
 /-! ### Surface clause form (bridge to `Features.ClauseForm`) -/
