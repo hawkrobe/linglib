@@ -43,7 +43,7 @@ namespace HarmonicGrammar
 open Core.Optimization
 
 
-open Constraint OptimalityTheory Core Constraint
+open Constraint OptimalityTheory Core
 
 -- ============================================================================
 -- § 1: MaxEnt Grammar (Classical — Individual Mappings)
