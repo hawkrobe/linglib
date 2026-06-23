@@ -60,7 +60,7 @@ The value type `V` is parametric:
   morphism (`TierProjection`) that the bundle algebra slots into.
 -/
 
-namespace Phonology.Featural
+namespace Phonology
 
 universe u v
 
@@ -153,4 +153,4 @@ end AlgebraicOps
 
 end FeatureBundle
 
-end Phonology.Featural
+end Phonology

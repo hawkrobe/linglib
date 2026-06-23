@@ -63,7 +63,7 @@ SPE-style structural-change rules.
 
 namespace Phonology
 
-open Phonology.Featural
+open Phonology
 
 namespace Segment
 

@@ -55,7 +55,6 @@ land it once a Studies file needs to invoke the bridge concretely.
 
 namespace Subregular
 
-open Subregular
 
 -- ============================================================================
 -- § 1: Schema
@@ -220,7 +219,6 @@ predicate-evaluation state); the identity-tier case is discharged below.
 Land the general witness here once a Studies file consumes it. -/
 namespace Subregular.TierRule
 
-open Subregular
 
 variable {α : Type}
 
