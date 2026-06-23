@@ -1483,6 +1483,7 @@ import Linglib.Studies.Charlow2020
 import Linglib.Studies.LuPanDegen2025
 import Linglib.Studies.Osborne2019Islands
 import Linglib.Studies.Sag2010
+import Linglib.Studies.SagEtAl2020
 import Linglib.Studies.SagWasowBender2003Extraction
 import Linglib.Studies.SagWasowBender2003RelativeClauses
 import Linglib.Studies.Scott2021
