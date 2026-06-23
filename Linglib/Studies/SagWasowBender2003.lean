@@ -155,63 +155,15 @@ structure ExtractionConfig where
   /-- GAP restriction on intervening domain (if any) -/
   restriction : GapRestriction := .unrestricted
 
-/-- Is extraction licensed under HPSG?
-
-1. The filler's category must be compatible with the gap
-2. The SLASH value must survive any island restrictions -/
-def extractionLicensed (cfg : ExtractionConfig) : Bool :=
-  -- The filler must match the gap
-  categoriesMatch cfg.fillerCat cfg.gapCat &&
-  -- SLASH must survive island restrictions
-  (propagateSlash ⟨[cfg.gapCat]⟩ cfg.restriction).isEmpty == false
-
-/-- Object wh-question: "What did John see ___?"
-NP gap, NP filler, no island → licensed. -/
-def objectWhQuestion : ExtractionConfig :=
-  { fillerCat := .PRON, gapCat := .NOUN, restriction := .unrestricted }
-
-/-- Subject wh-question: "Who saw Mary?"
-In HPSG, subject questions don't need extraction — the wh-word IS the
-subject. But we can model it as NP gap + NP filler for uniformity. -/
-def subjectWhQuestion : ExtractionConfig :=
-  { fillerCat := .PRON, gapCat := .NOUN, restriction := .unrestricted }
-
--- Object and subject extraction are both licensed
-example : extractionLicensed objectWhQuestion = true := rfl
-example : extractionLicensed subjectWhQuestion = true := rfl
-
-/-- Extraction from an embedded question (wh-island): blocked.
-"*What did John wonder who saw ___?" -/
-def whIslandExtraction : ExtractionConfig :=
-  { fillerCat := .PRON, gapCat := .NOUN, restriction := .noGap }
-
-/-- Extraction from a topicalized clause: blocked.
-"*What did this book, John read ___?" -/
+/-- Extraction from a topicalized clause is blocked ("*What did this book, John read ___?"). Retained
+as the `[GAP ⟨⟩]` datum `Studies/Sag2010` cross-references; the licensing itself is the model-theoretic
+`islands_rsrl_grounded` below, which subsumes the former coarse `extractionLicensed` predicate (filler-gap
+category matching is RSRL amalgamation; island survival is the island/weak-island principles). -/
 def topicIslandExtraction : ExtractionConfig :=
   { fillerCat := .PRON, gapCat := .NOUN, restriction := .noGap }
 
--- Island extractions are blocked
-example : extractionLicensed whIslandExtraction = false := rfl
-example : extractionLicensed topicIslandExtraction = false := rfl
-
-/-- NP extraction from a weak island: allowed.
-"Which employee did Albert learn whether they dismissed ___?" -/
-def weakIslandNP : ExtractionConfig :=
-  { fillerCat := .PRON, gapCat := .NOUN, restriction := .npOnly }
-
-/-- PP extraction from a weak island: blocked.
-"*In which city did you wonder whether John lives ___?" -/
-def weakIslandPP : ExtractionConfig :=
-  { fillerCat := .ADP, gapCat := .ADP, restriction := .npOnly }
-
--- NP extraction from weak island: ok; PP extraction: blocked
-example : extractionLicensed weakIslandNP = true := rfl
-example : extractionLicensed weakIslandPP = false := rfl
-
-/-- Map island constraint types to HPSG GAP restrictions.
-
-This is the key connection: empirical island classifications map to
-specific GAP feature values in HPSG. -/
+/-- Map island constraint types to HPSG GAP restrictions ([ross-1967]'s taxonomy → `[GAP ⟨⟩]`/weak),
+cross-referenced by `Studies/Sag2010`'s divergence theorem. -/
 def islandToGapRestriction : ConstraintType → GapRestriction
   | .embeddedQuestion  => .noGap     -- absolute barrier (but see weak island analysis)
   | .complexNP         => .noGap     -- absolute barrier
@@ -222,16 +174,6 @@ def islandToGapRestriction : ConstraintType → GapRestriction
   | .mannerOfSpeaking  => .npOnly    -- weak: ameliorable with focus
   | .definiteNominal   => .npOnly    -- weak: ameliorated by VOCs ([shen-huang-2026])
 
-/-- HPSG predicts all absolute islands block extraction. -/
-theorem absolute_islands_block :
-    let cnpc : ExtractionConfig := ⟨.PRON, .NOUN, islandToGapRestriction .complexNP⟩
-    let adj : ExtractionConfig := ⟨.PRON, .NOUN, islandToGapRestriction .adjunct⟩
-    let coord : ExtractionConfig := ⟨.PRON, .NOUN, islandToGapRestriction .coordinate⟩
-    extractionLicensed cnpc = false ∧
-    extractionLicensed adj = false ∧
-    extractionLicensed coord = false := by
-  decide
-
 /-- The gap introduction mechanism correctly removes complements. -/
 theorem gap_removes_complement :
     let see_ss : Synsem := { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
@@ -240,18 +182,19 @@ theorem gap_removes_complement :
       (fun p => p.1.synsem.val.comps.isEmpty && p.2.gaps == [.NOUN]) = some true := by
   decide
 
-/-! #### Model-theoretic grounding (RSRL) — the full island taxonomy
+/-! #### Long-distance dependencies in the RSRL model theory — the full island taxonomy
 
-The computational `extractionLicensed`/`GapRestriction` predicates above are the parser-facing shadow
-of the **model-theoretic** RSRL list-valued `GAP` (`Syntax/HPSG/GapAmalgamation`), where the whole
-island taxonomy is *derived* from gap amalgamation ([sag-2010] (67); after [bouma-malouf-sag-2001]),
-not stipulated as Subjacency: a dependency penetrates a domain iff its `GAP` survives amalgamation. -/
+Extraction licensing is stated directly over the **model-theoretic** RSRL list-valued `GAP`
+(`Syntax/HPSG/GapAmalgamation`): filler-gap category matching is gap amalgamation, and island
+permeability is the island/weak-island principles. The whole taxonomy is *derived* from amalgamation
+([sag-2010] (67); after [bouma-malouf-sag-2001]), not stipulated as Subjacency — a dependency penetrates
+a domain iff its `GAP` survives amalgamation. The `GapRestriction` tags above are retained only as the
+`Studies/Ross1967` taxonomy map that `Studies/Sag2010` cross-references. -/
 
-/-- The island taxonomy, grounded in the RSRL model theory — the authoritative statement of which the
-computational `extractionLicensed` cases above are the coarse shadow. A free filler-head construct
-licenses extraction; an absolute island (`[GAP ⟨⟩]`) blocks a second gap; a weak island lets an NP gap
-pass but blocks a PP gap — the `unrestricted`/`noGap`/`npOnly` cases of `GapRestriction`, each a
-`Models` fact over the gap-amalgamation grammar. -/
+/-- The island taxonomy as RSRL `Models` facts (superseding the former coarse `extractionLicensed`
+predicate). A free filler-head construct licenses extraction; an absolute island (`[GAP ⟨⟩]`) blocks a
+second gap; a weak island lets an NP gap pass but blocks a PP gap — the `unrestricted`/`noGap`/`npOnly`
+cases of `GapRestriction`, each over the gap-amalgamation grammar. -/
 theorem islands_rsrl_grounded :
     HPSG.GapAmalgamation.goodTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
     ¬ HPSG.GapAmalgamation.islandTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
