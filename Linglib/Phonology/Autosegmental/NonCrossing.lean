@@ -51,7 +51,7 @@ for `Mathlib/Order/Monotone/Monovary.lean`. As in mathlib, `union` is the
 fundamental lemma and `insert` derives from it via `Set.insert_eq`. -/
 
 section Monovary
-variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β}
+variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β} {s t : Set ι}
 
 /-- `MonovaryOn` holds vacuously on a singleton: there is only one index. -/
 @[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
@@ -61,15 +61,13 @@ variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι 
 /-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
     order against the other. The `Monovary` analogue of `Set.pairwise_union` (the
     `a = b` diagonal is vacuous, so no `≠` guard). -/
-theorem monovaryOn_union {s t : Set ι} :
-    MonovaryOn f g (s ∪ t) ↔
-      MonovaryOn f g s ∧ MonovaryOn f g t ∧
-        ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
+theorem monovaryOn_union : MonovaryOn f g (s ∪ t) ↔ MonovaryOn f g s ∧ MonovaryOn f g t ∧
+    ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   grind [MonovaryOn]
 
 /-- `MonovaryOn` on `insert a s`, derived from `monovaryOn_union` (as mathlib
     derives `Set.pairwise_insert` from `Set.pairwise_union` via `Set.insert_eq`). -/
-theorem monovaryOn_insert {s : Set ι} {a : ι} :
+theorem monovaryOn_insert {a : ι} :
     MonovaryOn f g (insert a s) ↔
       MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   simp only [Set.insert_eq, monovaryOn_union, monovaryOn_singleton, Set.mem_singleton_iff,
