@@ -39,14 +39,14 @@ namespace Autosegmental
 /-! ### Set-level non-crossing property (via mathlib `MonovaryOn`) -/
 
 section
-variable {ι κ : Type*} [Preorder ι] [Preorder κ]
+variable {ι κ : Type*} [Preorder ι] [Preorder κ] (links : Finset (ι × κ))
 
 /-- The link set has no crossings: its two index coordinates monovary. -/
-def IsNonCrossing (links : Finset (ι × κ)) : Prop :=
+def IsNonCrossing : Prop :=
   MonovaryOn Prod.snd Prod.fst (↑links : Set (ι × κ))
 
 /-- `IsNonCrossing` in elementary form. -/
-theorem isNonCrossing_iff (links : Finset (ι × κ)) : IsNonCrossing links ↔
+theorem isNonCrossing_iff : IsNonCrossing links ↔
     ∀ l₁ ∈ links, ∀ l₂ ∈ links, l₁.fst < l₂.fst → l₁.snd ≤ l₂.snd := Iff.rfl
 
 @[simp] theorem isNonCrossing_empty : IsNonCrossing (∅ : Finset (ι × κ)) := by
@@ -73,7 +73,7 @@ theorem IsNonCrossing.subset {s t : Finset (ι × κ)} (hst : s ⊆ t)
     (h : IsNonCrossing t) : IsNonCrossing s :=
   MonovaryOn.subset (Finset.coe_subset.mpr hst) h
 
-instance [DecidableLT ι] [DecidableLE κ] (links : Finset (ι × κ)) :
+instance [DecidableLT ι] [DecidableLE κ] :
     Decidable (IsNonCrossing links) :=
   decidable_of_iff _ (isNonCrossing_iff links).symm
 
