@@ -91,7 +91,7 @@ def IsConcatStable (P : Graph α β → Prop) : Prop :=
     `Graph.concat` preserves planarity, so the well-formed ARs are
     closed under `⊗`. -/
 theorem ncc_isConcatStable : IsConcatStable (α := α) (β := β) Graph.IsPlanar :=
-  ⟨Graph.isPlanar_empty, fun A B hA hPA hPB => Graph.isPlanar_concat A B hA hPA hPB⟩
+  ⟨Graph.isPlanar_empty, fun _ _ hA hPA hPB => Graph.isPlanar_concat hA hPA hPB⟩
 
 /-! ### The OCP is not modular -/
 

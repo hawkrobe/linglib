@@ -89,7 +89,7 @@ def empty : AR α β where
 def concat (A B : AR α β) : AR α β where
   toGraph := A.toGraph.concat B.toGraph
   inBounds := Graph.inBounds_concat A.inBounds B.inBounds
-  planar := Graph.isPlanar_concat _ _ A.inBounds A.planar B.planar
+  planar := Graph.isPlanar_concat A.inBounds A.planar B.planar
 
 /-! ### Morphisms -/
 

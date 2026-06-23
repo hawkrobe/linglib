@@ -276,18 +276,19 @@ instance instMonoid : Monoid (Graph α β) where
 
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
-/-- Concatenation preserves planarity, given `A.InBounds`. -/
-theorem isPlanar_concat (A B : Graph α β)
-    (hAib : A.InBounds) (hA : A.IsPlanar) (hB : B.IsPlanar) :
+/-- Shifting a link set preserves non-crossing: `shiftLink` is a coordinatewise
+    order-embedding, so by `monovaryOn_image` it preserves monovariance. -/
+theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δᵤ δₗ : ℕ) :
+    IsNonCrossing (s.image (shiftLink δᵤ δₗ)) ↔ IsNonCrossing s := by
+  grind [IsNonCrossing, Finset.coe_image, monovaryOn_image, MonovaryOn, shiftLink]
+
+/-- Concatenation preserves planarity, given `A.InBounds`: `A.links` and the
+    shifted `B.links` are each non-crossing (`monovaryOn_union` +
+    `isNonCrossing_image_shiftLink`), and `A` sits entirely before `B`. -/
+theorem isPlanar_concat {A B : Graph α β} (hAib : A.InBounds) (hA : A.IsPlanar) (hB : B.IsPlanar) :
     (A.concat B).IsPlanar := by
-  rw [IsPlanar, isNonCrossing_iff] at hA hB ⊢
-  intro l₁ hl₁ l₂ hl₂ hlt
-  simp only [links_concat, Finset.mem_union, Finset.mem_image] at hl₁ hl₂
-  obtain hl₁ | ⟨b₁, hb₁, rfl⟩ := hl₁ <;> obtain hl₂ | ⟨b₂, hb₂, rfl⟩ := hl₂
-  · exact hA l₁ hl₁ l₂ hl₂ hlt
-  · have := hAib l₁ hl₁; simp only [shiftLink] at *; omega
-  · have := hAib l₂ hl₂; simp only [shiftLink] at *; omega
-  · simp only [shiftLink] at *; have := hB b₁ hb₁ b₂ hb₂ (by omega); omega
+  grind [IsPlanar, IsNonCrossing, InBounds, MonovaryOn, links_concat, Finset.coe_union,
+    monovaryOn_union, isNonCrossing_image_shiftLink, shiftLink]
 
 /-- Concatenation preserves in-bounds. -/
 theorem inBounds_concat {A B : Graph α β}
