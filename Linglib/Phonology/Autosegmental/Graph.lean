@@ -42,7 +42,7 @@ not (it breaks planarity).
 
 ## Implementation notes
 
-`links : Finset (Nat × Nat)` uses raw natural-number indexing (matching the
+`links : Finset (ℕ × ℕ)` uses raw natural-number indexing (matching the
 `MonovaryOn`-based `NonCrossing` substrate); in-bounds is a `Prop` (`InBounds`),
 not a structural invariant, and well-formedness conditions are separate `Prop`s
 rather than bundled invariants. A `Finset` permits multi-edges natively
@@ -64,7 +64,7 @@ structure Graph (α β : Type*) where
   lower : List β
   /-- Association lines as a finite set of index pairs
       `(upper-index, lower-index)`. -/
-  links : Finset (Nat × Nat)
+  links : Finset (ℕ × ℕ)
   deriving DecidableEq
 
 namespace Graph
@@ -93,37 +93,37 @@ def IsPlanar : Prop := IsNonCrossing r.links
 
 /-- The upper-tier element at index `i` is **linked** to some lower-tier
     position. No in-bounds check. -/
-def IsLinkedUpper (i : Nat) : Prop :=
+def IsLinkedUpper (i : ℕ) : Prop :=
   ∃ p ∈ r.links, p.fst = i
 
 /-- The lower-tier element at index `j` is **linked** to some upper-tier
     position. No in-bounds check. -/
-def IsLinkedLower (j : Nat) : Prop :=
+def IsLinkedLower (j : ℕ) : Prop :=
   ∃ p ∈ r.links, p.snd = j
 
 /-- The upper-tier element at index `i` is **floating**: in-bounds but
     not linked to any lower position. -/
-def IsFloatingUpper (i : Nat) : Prop :=
+def IsFloatingUpper (i : ℕ) : Prop :=
   i < r.upper.length ∧ ¬ r.IsLinkedUpper i
 
 /-- The lower-tier element at index `j` is **floating**: in-bounds but
     not linked to any upper position. The paper calls a lower slot
     with this property *segmentally empty*. -/
-def IsFloatingLower (j : Nat) : Prop :=
+def IsFloatingLower (j : ℕ) : Prop :=
   j < r.lower.length ∧ ¬ r.IsLinkedLower j
 
 /-! ### Decidability of index predicates -/
 
-instance (i : Nat) : Decidable (r.IsLinkedUpper i) :=
+instance (i : ℕ) : Decidable (r.IsLinkedUpper i) :=
   inferInstanceAs (Decidable (∃ p ∈ r.links, p.fst = i))
 
-instance (j : Nat) : Decidable (r.IsLinkedLower j) :=
+instance (j : ℕ) : Decidable (r.IsLinkedLower j) :=
   inferInstanceAs (Decidable (∃ p ∈ r.links, p.snd = j))
 
-instance (i : Nat) : Decidable (r.IsFloatingUpper i) :=
+instance (i : ℕ) : Decidable (r.IsFloatingUpper i) :=
   inferInstanceAs (Decidable (i < r.upper.length ∧ ¬ r.IsLinkedUpper i))
 
-instance (j : Nat) : Decidable (r.IsFloatingLower j) :=
+instance (j : ℕ) : Decidable (r.IsFloatingLower j) :=
   inferInstanceAs (Decidable (j < r.lower.length ∧ ¬ r.IsLinkedLower j))
 
 /-! ### Saturation and Goldsmith's WFC
@@ -166,45 +166,45 @@ instance : Decidable r.IsSaturatedLower :=
 /-- Insert the association line `(i, j)`. Does not check planarity; use
     `isPlanar_insertLink` to preserve it. Naming mirrors
     `Floating.lean`'s `insertLink`. -/
-def insertLink (i j : Nat) : Graph α β :=
+def insertLink (i j : ℕ) : Graph α β :=
   { r with links := insert (i, j) r.links }
 
 /-- Erase the association line `(i, j)`. Naming mirrors
     `Floating.lean`'s `deleteLink`. -/
-def eraseLink (i j : Nat) : Graph α β :=
+def eraseLink (i j : ℕ) : Graph α β :=
   { r with links := r.links.erase (i, j) }
 
 /-! ### Basic properties -/
 
-@[simp] theorem upper_insertLink (i j : Nat) :
+@[simp] theorem upper_insertLink (i j : ℕ) :
     (r.insertLink i j).upper = r.upper := rfl
 
-@[simp] theorem lower_insertLink (i j : Nat) :
+@[simp] theorem lower_insertLink (i j : ℕ) :
     (r.insertLink i j).lower = r.lower := rfl
 
-@[simp] theorem links_insertLink (i j : Nat) :
+@[simp] theorem links_insertLink (i j : ℕ) :
     (r.insertLink i j).links = insert (i, j) r.links := rfl
 
-@[simp] theorem upper_eraseLink (i j : Nat) :
+@[simp] theorem upper_eraseLink (i j : ℕ) :
     (r.eraseLink i j).upper = r.upper := rfl
 
-@[simp] theorem lower_eraseLink (i j : Nat) :
+@[simp] theorem lower_eraseLink (i j : ℕ) :
     (r.eraseLink i j).lower = r.lower := rfl
 
-@[simp] theorem links_eraseLink (i j : Nat) :
+@[simp] theorem links_eraseLink (i j : ℕ) :
     (r.eraseLink i j).links = r.links.erase (i, j) := rfl
 
 /-- `insertLink` preserves planarity iff the inserted link does not
     cross any existing link. Lifts
     `IsNonCrossing.insert_of_not_indexCrosses`. -/
-theorem isPlanar_insertLink {i j : Nat}
+theorem isPlanar_insertLink {i j : ℕ}
     (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links i j) :
     (r.insertLink i j).IsPlanar :=
   IsNonCrossing.insert_of_not_indexCrosses hP hNX
 
 /-- `eraseLink` preserves planarity: removing a link from a no-crossing
     set leaves a no-crossing subset. -/
-theorem isPlanar_eraseLink (i j : Nat)
+theorem isPlanar_eraseLink (i j : ℕ)
     (hP : r.IsPlanar) : (r.eraseLink i j).IsPlanar :=
   IsNonCrossing.subset (Finset.erase_subset _ _) hP
 
@@ -221,7 +221,7 @@ theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
 
 /-- A `Graph` is **in bounds** if every link's indices fall within
     the bounds of its tiers. The substrate does not enforce this
-    structurally (`links : Finset (Nat × Nat)` permits any indices);
+    structurally (`links : Finset (ℕ × ℕ)` permits any indices);
     `InBounds` is required as a hypothesis for theorems that depend on
     it (e.g. `isPlanar_concat`, where the cross-case of A-link vs
     shifted B-link needs to know A's links don't reach past A's
@@ -255,18 +255,18 @@ paper-specific quotient on top of this primitive.
 /-- Shift a link `(i, j)` by `(δᵤ, δₗ)` upper- and lower-tier positions.
     Not marked `@[simp]` (would over-unfold); explicit `simp [shiftLink]`
     invocations in proofs. -/
-def shiftLink (δᵤ δₗ : Nat) (p : Nat × Nat) : Nat × Nat :=
+def shiftLink (δᵤ δₗ : ℕ) (p : ℕ × ℕ) : ℕ × ℕ :=
   (p.1 + δᵤ, p.2 + δₗ)
 
 /-! #### Shift algebra -/
 
-@[simp] theorem shiftLink_apply (δᵤ δₗ : Nat) (p : Nat × Nat) :
+@[simp] theorem shiftLink_apply (δᵤ δₗ : ℕ) (p : ℕ × ℕ) :
     shiftLink δᵤ δₗ p = (p.1 + δᵤ, p.2 + δₗ) := rfl
 
-@[simp] theorem shiftLink_zero : shiftLink 0 0 = (id : Nat × Nat → Nat × Nat) := by
+@[simp] theorem shiftLink_zero : shiftLink 0 0 = (id : ℕ × ℕ → ℕ × ℕ) := by
   funext p; simp
 
-theorem shiftLink_comp (a₁ a₂ b₁ b₂ : Nat) :
+theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
     shiftLink a₁ a₂ ∘ shiftLink b₁ b₂ = shiftLink (a₁ + b₁) (a₂ + b₂) := by
   funext p
   simp only [Function.comp_apply, shiftLink_apply, Prod.mk.injEq]
