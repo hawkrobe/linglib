@@ -9,63 +9,99 @@ import Mathlib.Tactic.DeriveFintype
 set_option autoImplicit false
 
 /-!
-# The filler-head construction in RSRL
-[sag-2010] [sag-2012] [richter-2000] [carpenter-1992]
+# The SBCG construct type hierarchy in RSRL
+[sag-2010] [sag-etal-2020] [sag-2012] [richter-2000] [richter-2024]
 
-The Sign-Based Construction Grammar filler-head construction, formalized properly on the RSRL
-feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`), the same way
-`Model.lean` formalizes the Head Feature Principle. A construction is a **constraint** (a `Desc`
-implication on a `construct` feature structure), not a category lattice. The filler-head
-construction's content — which an ad-hoc per-position category bundle cannot express — is:
+The Sign-Based Construction Grammar **construct type hierarchy with monotonic multiple inheritance**,
+formalized on the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,
+Description}`). A construction is a constraint `τ ⇒ D` ([sag-2012] (44)) on a `construct = [MTR, DTRS]`
+([sag-2012] (46)); inheritance is the **sort order plus the implication semantics** — a construct
+whose sort sits below several supersorts satisfies *all* their principles, with no per-construction
+restatement. This is exactly the monotonic (no-overriding) inheritance SBCG commits to ([sag-2012]
+fn. 17; [sag-etal-2020]'s "category restriction operation").
 
-* the filler daughter is `[CAT nonverbal]` and the head daughter is `[CAT verbal]` ([sag-2010] (25),
-  (61)), as **subsumption** constraints over a category type hierarchy (so "NP or PP" is the type
-  `nominal`, [sag-2010] (92), not a powerset disjunction);
-* the filler–gap dependency is **token identity** (`pathEq`) between the filler daughter's category
-  and the head daughter's `GAP` value — the structure sharing (the boxed tags) that *is* the
-  construction, [sag-2010] (61).
+The hierarchy is the authoritative two-dimensional one of [sag-etal-2020] (Figs. 6–7):
 
-Two worked constructs show the principle filters: a well-formed one (nonverbal filler, verbal head,
-GAP token-shared with the filler) satisfies it; one with a mismatched GAP and one with a verbal
-filler each violate it.
+* **construct backbone** (Fig. 6): `construct > {phrasal-cxt, lexical-cxt}`;
+  `phrasal-cxt > {headed-cxt, clause}`;
+  `headed-cxt > {head-filler-cxt, subject-head-cxt, aux-initial-cxt, …}`;
+* **clausal dimension** (Fig. 7): `clause > {core-cl, relative-cl}`;
+  `core-cl > {declarative-cl, interrogative-cl, exclamative-cl}`.
+
+The **cross-classification** (Fig. 5) is a lower bound across the two dimensions: [sag-2010]'s
+nonsubject wh-interrogative `ns-wh-int-cl` is a subtype of *both* `head-filler-cxt` (headed dim.) and
+`interrogative-cl` (clausal dim.), so it inherits the filler-head constraints (head verbal, filler
+nonverbal, filler↔gap token identity) **and** the interrogative semantics (`MTR` `SEM` a question) from
+one sort assignment — the keystone theorem below.
 
 ## Scope
 
-`GAP` is modeled as a single category (single-gap), not the HPSG list; the full sign feature geometry
-(SEM composition, WH/REL/IC/INV/VFORM), n-ary `DTRS`, and the cross-classifying construction type
-hierarchy (`interrogative-cl` etc.) are deferred. This is the filler-head supertype only.
+This file establishes the hierarchy and the `ns-wh-int-cl` cross-classification keystone. The full five
+filler-gap constructions ([sag-2010]) and the inversion construction (`aux-initial-cxt`, [sag-etal-2020]
+(39)) are paper-anchored consumers built on this substrate; n-ary `DTRS`, GAP amalgamation, islands,
+and compositional `SEM` are deferred. Decidability stays inside `Models` over fixed finite
+interpretations (Kepser 2004: full RSRL model-checking is undecidable).
 -/
 
 namespace HPSG.Construction
 
 open HPSG.RSRL
 
-/-! ### Sorts: a category type hierarchy plus signs and constructs
+/-! ### Sorts: categories, semantic types, signs, and the construct/clausal hierarchy -/
 
-`nonverbal` resolves to `nominal`/`adj`/`adv`; `nominal` to `noun`/`prep` (so "NP or PP" is the type
-`nominal`, [sag-2010] (92)); `verbal` to `verb`/`comp`. -/
-
-/-- Sorts of the fragment: the category hierarchy, plus `sign`, `construct`, and the
-`fillerHeadCxt` construction type. -/
+/-- Sorts of the fragment: a category hierarchy, a semantic-type hierarchy, `sign`, and the
+[sag-etal-2020] construct (Fig. 6) and clausal (Fig. 7) type hierarchies, with `ns-wh-int-cl` as the
+worked cross-classified subtype (Fig. 5). -/
 inductive FHSort
   | top
-  | cat | verbal | nonverbal | nominal | verb | comp | noun | prep | adj | adv
-  | sign | construct | fillerHeadCxt
+  -- category hierarchy (head-filler-cxt keys on verbal/nonverbal)
+  | cat | verbal | nonverbal | verb | noun
+  -- semantic-type hierarchy (clause types key on the MTR's SEM type)
+  | semType | austinean | question | fact | proposition
+  -- signs
+  | sign
+  -- construct backbone (Fig. 6)
+  | construct | phrasalCxt | lexicalCxt | headedCxt | clause | headFillerCxt
+  -- clausal hierarchy (Fig. 7)
+  | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
+  -- the cross-classified construct (Fig. 5): < head-filler-cxt AND < interrogative-cl
+  | nsWhIntCl
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. -/
+/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. The two arms
+for `nsWhIntCl` — below both `headFillerCxt` and `interrogativeCl` — are the multiple inheritance. -/
 def fhLe : FHSort → FHSort → Bool
   | _, .top => true
+  -- categories
   | .verbal, .cat => true
   | .nonverbal, .cat => true
   | .verb, .verbal => true | .verb, .cat => true
-  | .comp, .verbal => true | .comp, .cat => true
-  | .nominal, .nonverbal => true | .nominal, .cat => true
-  | .adj, .nonverbal => true | .adj, .cat => true
-  | .adv, .nonverbal => true | .adv, .cat => true
-  | .noun, .nominal => true | .noun, .nonverbal => true | .noun, .cat => true
-  | .prep, .nominal => true | .prep, .nonverbal => true | .prep, .cat => true
-  | .fillerHeadCxt, .construct => true
+  | .noun, .nonverbal => true | .noun, .cat => true
+  -- semantic types
+  | .austinean, .semType => true
+  | .question, .semType => true
+  | .fact, .semType => true
+  | .proposition, .semType => true
+  -- construct backbone
+  | .phrasalCxt, .construct => true
+  | .lexicalCxt, .construct => true
+  | .headedCxt, .phrasalCxt => true | .headedCxt, .construct => true
+  | .clause, .phrasalCxt => true | .clause, .construct => true
+  | .headFillerCxt, .headedCxt => true | .headFillerCxt, .phrasalCxt => true
+  | .headFillerCxt, .construct => true
+  -- clausal
+  | .coreCl, .clause => true | .coreCl, .phrasalCxt => true | .coreCl, .construct => true
+  | .relativeCl, .clause => true | .relativeCl, .phrasalCxt => true | .relativeCl, .construct => true
+  | .declarativeCl, .coreCl => true | .declarativeCl, .clause => true
+  | .declarativeCl, .phrasalCxt => true | .declarativeCl, .construct => true
+  | .interrogativeCl, .coreCl => true | .interrogativeCl, .clause => true
+  | .interrogativeCl, .phrasalCxt => true | .interrogativeCl, .construct => true
+  | .exclamativeCl, .coreCl => true | .exclamativeCl, .clause => true
+  | .exclamativeCl, .phrasalCxt => true | .exclamativeCl, .construct => true
+  -- cross-classified: ns-wh-int-cl < head-filler-cxt (headed dim.) AND < interrogative-cl (clausal)
+  | .nsWhIntCl, .headFillerCxt => true | .nsWhIntCl, .headedCxt => true
+  | .nsWhIntCl, .interrogativeCl => true | .nsWhIntCl, .coreCl => true
+  | .nsWhIntCl, .clause => true | .nsWhIntCl, .phrasalCxt => true | .nsWhIntCl, .construct => true
   | a, b => decide (a = b)
 
 instance : PartialOrder FHSort :=
@@ -75,29 +111,45 @@ instance : DecidableLE FHSort := fun a b => inferInstanceAs (Decidable (fhLe a b
 
 /-! ### Attributes and the signature -/
 
-/-- Attributes: a construct's daughters (`MTR`, `HDDTR`, `FILLERDTR`); a sign's `CAT` and (single)
-`GAP` category. -/
+/-- Attributes: a construct's mother (`MTR`) and head/filler daughters (`HDDTR`/`FILLERDTR`); a sign's
+`CAT`, (single) `GAP` category, and `SEM` type. -/
 inductive FHAttr
-  | MTR | HDDTR | FILLERDTR | CAT | GAP
+  | MTR | HDDTR | FILLERDTR | CAT | GAP | SEM
   deriving DecidableEq, Fintype, Repr
 
-/-- Appropriateness: constructs have the three daughter attributes (value `sign`); signs have `CAT`
-and `GAP` (value `cat`); categories are attributeless. -/
+/-- Appropriateness: every construct has a `MTR` (a sign); `headed-cxt` and its subtypes additionally
+have `HDDTR`/`FILLERDTR`; a `sign` has `CAT`/`GAP` (categories) and `SEM` (a semantic type). Respects
+feature inheritance ([richter-2024]): an attribute appropriate to a sort is appropriate to its
+subsorts (so `ns-wh-int-cl`, below `headed-cxt`, has daughters, and below `interrogative-cl`, a
+mother). -/
 def fhApprop : FHSort → FHAttr → Option FHSort
   | .construct, .MTR => some .sign
-  | .construct, .HDDTR => some .sign
-  | .construct, .FILLERDTR => some .sign
-  | .fillerHeadCxt, .MTR => some .sign
-  | .fillerHeadCxt, .HDDTR => some .sign
-  | .fillerHeadCxt, .FILLERDTR => some .sign
+  | .phrasalCxt, .MTR => some .sign
+  | .lexicalCxt, .MTR => some .sign
+  | .headedCxt, .MTR => some .sign
+  | .clause, .MTR => some .sign
+  | .headFillerCxt, .MTR => some .sign
+  | .coreCl, .MTR => some .sign
+  | .relativeCl, .MTR => some .sign
+  | .declarativeCl, .MTR => some .sign
+  | .interrogativeCl, .MTR => some .sign
+  | .exclamativeCl, .MTR => some .sign
+  | .nsWhIntCl, .MTR => some .sign
+  | .headedCxt, .HDDTR => some .sign
+  | .headedCxt, .FILLERDTR => some .sign
+  | .headFillerCxt, .HDDTR => some .sign
+  | .headFillerCxt, .FILLERDTR => some .sign
+  | .nsWhIntCl, .HDDTR => some .sign
+  | .nsWhIntCl, .FILLERDTR => some .sign
   | .sign, .CAT => some .cat
   | .sign, .GAP => some .cat
+  | .sign, .SEM => some .semType
   | _, _ => none
 
 private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ : FHSort),
     σ₂ ≤ σ₁ → fhApprop σ₁ α = some τ₁ → ∃ τ₂, fhApprop σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by decide
 
-/-- The filler-head fragment's signature (no relations). -/
+/-- The fragment's signature (no relations). -/
 @[reducible] def fhSig : Signature FHSort where
   Attr := FHAttr
   Rel := Empty
@@ -107,100 +159,156 @@ private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ :
 
 instance (I : Interpretation fhSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
 
-/-! ### The filler-head construction as a principle
+/-! ### Principles (constructions as `τ ⇒ D`)
 
-`fillerHeadCxt ⇒ FILLERDTR is [CAT nonverbal] ∧ HDDTR is [CAT verbal] ∧ FILLERDTR's CAT is
-token-identical to HDDTR's GAP`. The last conjunct (`pathEq`) is the filler–gap dependency — the
-structure sharing that distinguishes a filler-head construct from an arbitrary binary phrase. -/
-def fillerHead : Desc fhSig :=
-  .imp (.sortAssign .colon .fillerHeadCxt)
+Each principle constrains every feature structure whose sort is `≤` its antecedent — so a construct
+inherits a principle exactly when its sort sits below the principle's type. -/
+
+/-- The **filler-head construction** ([sag-2010] (61), [sag-etal-2020] Fig. 6): the filler daughter is
+`[CAT nonverbal]`, the head daughter is `[CAT verbal]`, and the filler's category is **token-identical**
+(`pathEq`) to the head daughter's `GAP` value — the filler-gap structure sharing. -/
+def headFillerPrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .headFillerCxt)
     (.and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
       (.and (.sortAssign (.path [.HDDTR, .CAT]) .verbal)
         (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP]))))
 
-/-- The one-principle grammar. -/
-def fhGrammar : Grammar fhSig := [fillerHead]
+/-- Clausal semantics ([sag-etal-2020] Fig. 7, following G&S 2000): the mother's `SEM` type is fixed
+by the clausal type — `declarative-cl` ⇒ austinean, `interrogative-cl` ⇒ question,
+`exclamative-cl` ⇒ fact, `relative-cl` ⇒ proposition. -/
+def declarativePrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .declarativeCl) (.sortAssign (.path [.MTR, .SEM]) .austinean)
+def interrogativePrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .interrogativeCl) (.sortAssign (.path [.MTR, .SEM]) .question)
+def exclamativePrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .exclamativeCl) (.sortAssign (.path [.MTR, .SEM]) .fact)
+def relativePrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .relativeCl) (.sortAssign (.path [.MTR, .SEM]) .proposition)
 
-/-! ### Worked constructs (entities: the construct, its two daughters, two category objects) -/
+/-- The grammar: the filler-head construction and the four clausal-type principles. -/
+def fhGrammar : Grammar fhSig :=
+  [headFillerPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
+    relativePrinciple]
 
-/-- Entities of a worked filler-head construct. -/
+/-! ### Multiple inheritance: `ns-wh-int-cl` is a lower bound across the two dimensions -/
+
+/-- `ns-wh-int-cl` sits below **both** `head-filler-cxt` (the headed dimension) and `interrogative-cl`
+(the clausal dimension) — the cross-classification of [sag-2010] (80) / [sag-etal-2020] Fig. 5. -/
+theorem nsWhIntCl_inherits :
+    (FHSort.nsWhIntCl ≤ .headFillerCxt) ∧ (FHSort.nsWhIntCl ≤ .interrogativeCl) := by decide
+
+/-! ### Worked constructs -/
+
+/-- Entities shared by the worked constructs: the construct, its mother and two daughters, two
+category objects, and one semantic object. -/
 inductive Ent
-  | cxt | head | filler | npCat | vpCat
+  | cxt | mtr | hd | fl | npCat | vpCat | sem
   deriving DecidableEq, Fintype, Repr
 
-/-- A well-formed filler-head construct: a nonverbal (`noun`) filler, a verbal (`verb`) head, and the
-head's `GAP` pointing at the *same* category object as the filler's `CAT` — token identity. -/
-def goodModel : Interpretation fhSig where
+/-- A well-formed filler-head construct (sort `head-filler-cxt`): nonverbal filler, verbal head, and
+the head's `GAP` token-identical to the filler's `CAT`. -/
+def goodFillerHead : Interpretation fhSig where
   U := Ent
   S := fun
-    | .cxt => .fillerHeadCxt
-    | .head => .sign
-    | .filler => .sign
+    | .cxt => .headFillerCxt
+    | .hd => .sign
+    | .fl => .sign
     | .npCat => .noun
     | .vpCat => .verb
+    | .mtr => .sign
+    | .sem => .semType
   A := fun a u => match a, u with
-    | .HDDTR, .cxt => some .head
-    | .FILLERDTR, .cxt => some .filler
-    | .CAT, .filler => some .npCat
-    | .CAT, .head => some .vpCat
-    | .GAP, .head => some .npCat   -- token-identical to the filler's CAT
+    | .HDDTR, .cxt => some .hd
+    | .FILLERDTR, .cxt => some .fl
+    | .CAT, .fl => some .npCat
+    | .CAT, .hd => some .vpCat
+    | .GAP, .hd => some .npCat
     | _, _ => none
   R := fun e => e.elim
 
-instance : Fintype goodModel.U := inferInstanceAs (Fintype Ent)
-instance : DecidableEq goodModel.U := inferInstanceAs (DecidableEq Ent)
+instance : Fintype goodFillerHead.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq goodFillerHead.U := inferInstanceAs (DecidableEq Ent)
 
-/-- The well-formed construct satisfies the filler-head construction. -/
-example : goodModel.Models fhGrammar := by decide
+/-- The well-formed filler-head construct satisfies the grammar (the clausal principles are vacuous —
+`head-filler-cxt` is not below any clausal type). -/
+example : goodFillerHead.Models fhGrammar := by decide
 
-/-- An ill-formed construct: the head's `GAP` is a *different* object (`vpCat`) from the filler's
-`CAT`, so the token-identity (filler–gap) conjunct fails — the gap is not filled by the filler. -/
-def gapMismatchModel : Interpretation fhSig where
+/-- Breaking the filler↔gap token identity (head `GAP` ≠ filler `CAT`) violates the filler-head
+principle. -/
+def gapMismatch : Interpretation fhSig where
+  U := Ent
+  S := goodFillerHead.S
+  A := fun a u => match a, u with
+    | .HDDTR, .cxt => some .hd
+    | .FILLERDTR, .cxt => some .fl
+    | .CAT, .fl => some .npCat
+    | .CAT, .hd => some .vpCat
+    | .GAP, .hd => some .vpCat    -- ≠ filler's CAT
+    | _, _ => none
+  R := fun e => e.elim
+
+instance : Fintype gapMismatch.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq gapMismatch.U := inferInstanceAs (DecidableEq Ent)
+
+example : ¬ gapMismatch.Models fhGrammar := by decide
+
+/-! ### The keystone: cross-classification by inheritance
+
+A single `ns-wh-int-cl` construct satisfies the filler-head principle **and** the interrogative
+principle — both inherited via `nsWhIntCl_inherits`, neither stipulated on `ns-wh-int-cl`. -/
+
+/-- A well-formed nonsubject wh-interrogative construct (sort `ns-wh-int-cl`): nonverbal filler,
+verbal head, filler↔gap token identity (from `head-filler-cxt`), and the mother's `SEM` a question
+(from `interrogative-cl`). -/
+def goodNsWhInt : Interpretation fhSig where
   U := Ent
   S := fun
-    | .cxt => .fillerHeadCxt
-    | .head => .sign
-    | .filler => .sign
+    | .cxt => .nsWhIntCl
+    | .mtr => .sign
+    | .hd => .sign
+    | .fl => .sign
     | .npCat => .noun
     | .vpCat => .verb
+    | .sem => .question
   A := fun a u => match a, u with
-    | .HDDTR, .cxt => some .head
-    | .FILLERDTR, .cxt => some .filler
-    | .CAT, .filler => some .npCat
-    | .CAT, .head => some .vpCat
-    | .GAP, .head => some .vpCat    -- ≠ the filler's CAT: the filler–gap link is broken
+    | .MTR, .cxt => some .mtr
+    | .HDDTR, .cxt => some .hd
+    | .FILLERDTR, .cxt => some .fl
+    | .SEM, .mtr => some .sem
+    | .CAT, .fl => some .npCat
+    | .CAT, .hd => some .vpCat
+    | .GAP, .hd => some .npCat
     | _, _ => none
   R := fun e => e.elim
 
-instance : Fintype gapMismatchModel.U := inferInstanceAs (Fintype Ent)
-instance : DecidableEq gapMismatchModel.U := inferInstanceAs (DecidableEq Ent)
+instance : Fintype goodNsWhInt.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq goodNsWhInt.U := inferInstanceAs (DecidableEq Ent)
 
-/-- The gap-mismatch construct violates the filler-head construction — `pathEq` genuinely filters. -/
-example : ¬ gapMismatchModel.Models fhGrammar := by decide
+/-- **Keystone.** The `ns-wh-int-cl` construct satisfies the whole grammar — in particular both the
+inherited filler-head constraints and the inherited interrogative semantics, from its single sort
+assignment (`nsWhIntCl_inherits`). No filler-head or interrogative constraint is restated on
+`ns-wh-int-cl`; both fire because its sort lies below both supersorts. -/
+example : goodNsWhInt.Models fhGrammar := by decide
 
-/-- An ill-formed construct: the filler daughter is `verb` (verbal), not nonverbal, so the
-`[CAT nonverbal]` conjunct fails. -/
-def verbalFillerModel : Interpretation fhSig where
+/-- The inherited interrogative constraint genuinely binds: an `ns-wh-int-cl` construct whose mother's
+`SEM` is austinean (not a question) violates the **inherited** interrogative principle — even though
+nothing about interrogativity is stated on `ns-wh-int-cl` directly. -/
+def nsWhIntWrongSem : Interpretation fhSig where
   U := Ent
   S := fun
-    | .cxt => .fillerHeadCxt
-    | .head => .sign
-    | .filler => .sign
-    | .npCat => .verb       -- the filler's category is verbal — a category violation
+    | .cxt => .nsWhIntCl
+    | .mtr => .sign
+    | .hd => .sign
+    | .fl => .sign
+    | .npCat => .noun
     | .vpCat => .verb
-  A := fun a u => match a, u with
-    | .HDDTR, .cxt => some .head
-    | .FILLERDTR, .cxt => some .filler
-    | .CAT, .filler => some .npCat
-    | .CAT, .head => some .vpCat
-    | .GAP, .head => some .npCat
-    | _, _ => none
+    | .sem => .austinean    -- not a question
+  A := goodNsWhInt.A
   R := fun e => e.elim
 
-instance : Fintype verbalFillerModel.U := inferInstanceAs (Fintype Ent)
-instance : DecidableEq verbalFillerModel.U := inferInstanceAs (DecidableEq Ent)
+instance : Fintype nsWhIntWrongSem.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq nsWhIntWrongSem.U := inferInstanceAs (DecidableEq Ent)
 
-/-- The verbal-filler construct violates the filler-head construction — `[CAT nonverbal]` filters. -/
-example : ¬ verbalFillerModel.Models fhGrammar := by decide
+example : ¬ nsWhIntWrongSem.Models fhGrammar := by decide
 
 end HPSG.Construction
