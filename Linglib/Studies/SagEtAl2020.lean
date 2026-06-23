@@ -42,18 +42,18 @@ open HPSG.RSRL HPSG.Construction
 (`[INV +]`) word — an invertible finite auxiliary. Unlike the filler-gap constructions it carries no
 shared semantics (Fillmore 1999, [sag-etal-2020] fn. 34); its clausal meaning comes only from
 cross-classification. -/
-def auxInitialPrinciple : Desc fhSig :=
+def auxInitialPrinciple : Desc sig :=
   .imp (.sortAssign .colon .auxInitialCxt) (.sortAssign (.path [.HDDTR, .INV]) .invPlus)
 
 /-- The filler-gap grammar of `Construction.lean` extended with the inversion construction. -/
-def saiGrammar : Grammar fhSig := fhGrammar ++ [auxInitialPrinciple]
+def saiGrammar : Grammar sig := grammar ++ [auxInitialPrinciple]
 
 /-- `aux-initial-cxt` is a sibling of `filler-head-cxt` under `headed-cxt`, and the interrogative SAI
 cross-classifies it with `interrogative-cl` — the same machinery as [sag-2010]'s filler-gap
 constructions, now for the second paper's construction. -/
 theorem sai_cross_classify :
-    ((FHSort.auxInitialCxt ≤ .headedCxt) ∧ (FHSort.fillerHeadCxt ≤ .headedCxt)) ∧
-      ((FHSort.interrogativeSAI ≤ .auxInitialCxt) ∧ (FHSort.interrogativeSAI ≤ .interrogativeCl)) := by
+    ((Srt.auxInitialCxt ≤ .headedCxt) ∧ (Srt.fillerHeadCxt ≤ .headedCxt)) ∧
+      ((Srt.interrogativeSAI ≤ .auxInitialCxt) ∧ (Srt.interrogativeSAI ≤ .interrogativeCl)) := by
   decide
 
 /-! ### A worked interrogative SAI -/
@@ -65,7 +65,7 @@ inductive SAIEnt
   deriving DecidableEq, Fintype, Repr
 
 /-- A well-formed interrogative SAI (sort `interrogative-SAI`): inverted head, interrogative mother. -/
-def goodInterrogativeSAI : Interpretation fhSig where
+def goodInterrogativeSAI : Interpretation sig where
   U := SAIEnt
   S := fun
     | .cxt => .interrogativeSAI
@@ -90,7 +90,7 @@ example : goodInterrogativeSAI.Models saiGrammar := by decide
 
 /-- The inverted-head restriction binds: an aux-initial construct with an `[INV −]` head violates the
 aux-initial principle. -/
-def saiUninverted : Interpretation fhSig where
+def saiUninverted : Interpretation sig where
   U := SAIEnt
   S := fun
     | .cxt => .interrogativeSAI
