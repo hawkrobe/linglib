@@ -19,7 +19,7 @@ namespace Clements1985
 
 open Phonology
 open Phonology.FeatureGeometry (GeomNode)
-open Phonology.Autosegmental
+open Autosegmental
 open English.Phonology
 
 -- ============================================================================

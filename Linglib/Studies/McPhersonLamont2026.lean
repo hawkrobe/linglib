@@ -257,7 +257,7 @@ theorem weighted_HG_inadequate :
 
 /-! Paper, fig. 3 with the full constraint inventory and faithful
     autosegmental candidate type. Builds on three substrate pieces:
-    - `Phonology.Autosegmental.Floating` for `FloatingForm` + GEN
+    - `Autosegmental.Floating` for `FloatingForm` + GEN
       (autosegmental rep with multi-tone TBUs, no-crossing GEN)
     - `Phonology.Tone.Constraints` for the generic constraint constructors
     - `Poko.Tone` for Poko-specific syllables and morpheme IDs
@@ -283,7 +283,7 @@ theorem weighted_HG_inadequate :
 namespace Fig3
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
@@ -583,7 +583,7 @@ end Fig3
 namespace Eq24
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
@@ -665,7 +665,7 @@ end Eq24
 namespace Eq21
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
@@ -733,7 +733,7 @@ end Eq21
 namespace Eq27
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
@@ -803,7 +803,7 @@ end Eq27
 namespace Eq30
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone starMlessL)
@@ -886,7 +886,7 @@ end Eq30
 namespace Eq22
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
@@ -995,7 +995,7 @@ substrate, theorem-level not editorial.
 References: [rolle-2018] (replacive-dominant GT via `tonalOverwrite`),
 [mcpherson-lamont-2026] (multi-tone TBUs in Poko), [wolf-2007] (*TAUTDOCK). -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 open Tone (TBU)
 open Tone (TRN)
@@ -1060,4 +1060,4 @@ theorem FloatingForm.exists_multi_tone_TBU :
       surfaceLinks := {(0, 0), (1, 0)} }
   · decide
 
-end Phonology.Autosegmental
+end Autosegmental

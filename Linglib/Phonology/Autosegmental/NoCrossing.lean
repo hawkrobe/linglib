@@ -45,7 +45,7 @@ Its body is the existential index-ordering formulation
 * [sagey-1986] — temporal derivation of NCC from interval overlap
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 
 /-! ### Candidate-level crossing predicate -/
@@ -108,4 +108,4 @@ theorem IsNoCrossing.insert_of_not_indexCrosses
     · exact h
   · exact hNC l₁ hl₁ l₂ hl₂ hlt
 
-end Phonology.Autosegmental
+end Autosegmental

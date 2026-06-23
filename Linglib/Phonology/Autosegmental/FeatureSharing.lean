@@ -50,7 +50,7 @@ two distinct elements cannot be identical to the same time point.
   argument against simultaneity.
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
@@ -198,4 +198,4 @@ theorem spread_delink_not_present (r : AutosegRep) (pos : Nat) (n : GeomNode)
   exact ⟨trivial, filter_all_pass shs _ h⟩
 
 
-end Phonology.Autosegmental
+end Autosegmental

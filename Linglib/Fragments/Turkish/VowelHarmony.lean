@@ -51,7 +51,7 @@ Turkish VH decomposes into two `System` instances:
 namespace Turkish.VowelHarmony
 
 open Phonology (Segment Feature)
-open Phonology.Autosegmental (agreeAt)
+open Autosegmental (agreeAt)
 open Subregular.Harmony (System HarmonyDir triggerValue)
 
 -- ============================================================================

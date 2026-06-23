@@ -10,7 +10,7 @@ import Linglib.Phonology.OCP
 # Constraint modularity as monoidal-subcategory closure
 
 The monoidal product of the category of autosegmental representations
-(`Phonology.Autosegmental.AR`) is **morpheme concatenation**
+(`Autosegmental.AR`) is **morpheme concatenation**
 (`Graph.concat`, [jardine-heinz-2015]). This file gives that product
 its linguistic meaning: it classifies phonological well-formedness
 constraints by how they interact with concatenation.
@@ -60,7 +60,7 @@ construction.
   a concatenation boundary.
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 variable {α β : Type*}
 
@@ -140,4 +140,4 @@ theorem collapse_repairs_boundary [DecidableEq α] (A B : Graph α β) :
     Phonology.OCP.IsClean (Phonology.OCP.collapse (A.concat B).upper) :=
   Phonology.OCP.collapse_clean _
 
-end Phonology.Autosegmental
+end Autosegmental

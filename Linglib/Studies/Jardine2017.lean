@@ -32,7 +32,7 @@ left-edge pattern. Hirosaki Japanese (§5.3), Northern Karanga Shona
 docstring as future extensions — each follows the same `Graph`-
 based forbidden-subgraph schema.
 
-Second consumer of `Phonology.Autosegmental.Graph` after
+Second consumer of `Autosegmental.Graph` after
 `Studies/LaoideKemp2026.lean`. Exercises the `SubgraphEmbeds`
 predicate (precedence-preserving translation embedding), which
 Laoide-Kemp doesn't touch.
@@ -68,7 +68,7 @@ to consecutive positions in G).
 
 namespace Jardine2017
 
-open Phonology.Autosegmental Phonology.Autosegmental.Graph
+open Autosegmental Autosegmental.Graph
 
 /-! ## §1 Label types
 
