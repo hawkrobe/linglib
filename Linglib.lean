@@ -1967,7 +1967,6 @@ import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
-import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
@@ -2729,6 +2728,7 @@ import Linglib.Phonology.Tone.Constraints
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.AR
+import Linglib.Phonology.Autosegmental.WellFormed
 import Linglib.Phonology.Autosegmental.Modularity
 import Linglib.Phonology.Autosegmental.Subgraph
 import Linglib.Phonology.Prosodic.Syllable
