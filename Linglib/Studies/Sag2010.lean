@@ -283,16 +283,21 @@ def synCatToCat : SynCat → Cat
   | .CP => .cp
   | .VP => .vp
 
-/-- The category backbone of each F-G construction as an HPSG construct: the head daughter is a
-verbal projection (the finite `s` for the finite-only constructions, the `verbal` supertype where an
-infinitival VP head is possible, (29)), and the filler daughter is nonverbal (refined to `nominal`
-for the wh-relative, whose filler is an NP/PP, (25b)). -/
+/-- The category backbone of each F-G construction as an HPSG construct. The head daughter is a
+verbal projection: the finite `s` for the always-finite exclamative and topicalized ((27a), (29a)),
+and the `verbal` supertype where the head may also be an infinitival VP ((29b): wh-interrogative,
+wh-relative) or a CP ((27b): the-clause). The filler daughter is `nonverbal` ((25)).
+
+The finer category restrictions the subsumption sorts cannot express — the relative's NP/PP-only
+filler ((25b)), the-clause's finite S-or-CP head ((27b)/(29a)) — need a category-set and a finiteness
+feature; they are recorded in `FGConstruction.fillerCategories`/`headCategory` and deferred to the
+multi-feature port. -/
 def fgConstruct : FGClauseType → Construct
   | .whInterrogative => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nonverbal
   | .whExclamative   => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
   | .topicalized     => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
-  | .whRelative      => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nominal
-  | .theClause       => fun | .mtr => .any | .hdDtr => .s      | .fillerDtr => .nonverbal
+  | .whRelative      => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nonverbal
+  | .theClause       => fun | .mtr => .any | .hdDtr => .verbal | .fillerDtr => .nonverbal
 
 /-- Every F-G clause type is a `filler-head-cxt`: its category backbone refines the supertype. -/
 theorem fgConstruct_refines (c : FGClauseType) : Refines (fgConstruct c) fillerHeadCxt := by
