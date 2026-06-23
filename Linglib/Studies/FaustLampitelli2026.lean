@@ -85,7 +85,7 @@ appropriate.
 
 namespace FaustLampitelli2026
 
-open Phonology.ElementTheory
+open ElementTheory
 
 /-! ## §0 Strict-CV Government Phonology substrate
 [kaye-lowenstamm-vergnaud-1985] [kaye-lowenstamm-vergnaud-1990]

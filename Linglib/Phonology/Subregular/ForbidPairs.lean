@@ -25,7 +25,6 @@ corollary.
 namespace Subregular
 
 open OptimalityTheory
-open Subregular
 
 variable {α : Type}
 

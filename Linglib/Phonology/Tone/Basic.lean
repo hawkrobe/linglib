@@ -71,7 +71,7 @@ be **underspecified** (`none`), with surface values filled in by default.
 
 namespace Tone
 
-open Phonology.Featural
+open Phonology
 
 /-! ### Subtonal features -/
 
