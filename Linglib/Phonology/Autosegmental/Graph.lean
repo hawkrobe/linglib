@@ -12,7 +12,7 @@ import Linglib.Phonology.Autosegmental.NoCrossing
 [goldsmith-1976] [pulleyblank-1986] [jardine-heinz-2015]
 [jardine-2017] [leben-2018-autoseg] [coleman-local-1991]
 
-A `Phonology.Autosegmental.Graph α β` is a finite ordered bipartite
+A `Autosegmental.Graph α β` is a finite ordered bipartite
 labeled relation between two tiers: an `upper` sequence of `α`-elements,
 a `lower` sequence of `β`-elements, and a `Finset` of association lines
 between them. It is the standard *autosegmental representation* (AR;
@@ -24,11 +24,11 @@ phonology tradition ([jardine-2017], [chandlee-jardine-2019],
 
 Mathlib pattern: directory-qualified object name + short category symbol.
 
-* **Object**: `Phonology.Autosegmental.Graph α β` — the path supplies
+* **Object**: `Autosegmental.Graph α β` — the path supplies
   the "autosegmental" qualifier; the type itself is just `Graph`.
   Matches mathlib's `Mathlib.Combinatorics.SimpleGraph` / `SimpleGraph V`
   and `Mathlib.Topology.MetricSpace` / `MetricSpace X` pattern.
-* **Category** (reserved): `Phonology.Autosegmental.AR α β` — the
+* **Category** (reserved): `Autosegmental.AR α β` — the
   literature-canonical symbol used uniformly in [coleman-local-1991],
   [jardine-2017], [chandlee-jardine-2019], and the entire
   Heinz-Jardine-Chandlee tradition. Mirrors mathlib's `Group`/`Grp`,
@@ -38,7 +38,7 @@ Mathlib pattern: directory-qualified object name + short category symbol.
 Two well-formedness conditions are formalised as separable `Prop`s:
 
 * `IsPlanar` — Goldsmith's **no-crossing constraint**
-  ([goldsmith-1976]; lifted from `Phonology.Autosegmental.IsNoCrossing`
+  ([goldsmith-1976]; lifted from `Autosegmental.IsNoCrossing`
   so the existing mathlib `MonovaryOn` lemma library applies directly).
   This is **Pulleyblank**'s reformulated Well-Formedness Condition
   ([pulleyblank-1986]): the *sole* structural WF requirement,
@@ -160,7 +160,7 @@ intuitive role of `upper`/`lower`; the type is just a list.
   upper tier is `Quantum`-typed.
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 /-- A bipartite autosegmental representation: two ordered tiers and a
     finite set of association lines between them. Generic over both
@@ -874,4 +874,4 @@ theorem SubgraphEmbeds.refl (G : Graph α β) : SubgraphEmbeds G G := by
 
 end Graph
 
-end Phonology.Autosegmental
+end Autosegmental

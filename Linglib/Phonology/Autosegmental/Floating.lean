@@ -69,10 +69,10 @@ well-formedness ([goldsmith-1976]).
 * [lieber-1983] — floating features in autosegmental morphology
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 -- Re-export `Morpheme` so autosegmental consumers see it unqualified
--- after `open Phonology.Autosegmental`.
+-- after `open Autosegmental`.
 export Morphology.WordStructure (Morpheme)
 
 /-! ### Tier and link primitives -/
@@ -278,4 +278,4 @@ def countTBUs (f : FloatingForm S T) (p : SegIdx → Prop) [DecidablePred p] : N
 
 end FloatingForm
 
-end Phonology.Autosegmental
+end Autosegmental

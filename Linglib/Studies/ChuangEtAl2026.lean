@@ -99,7 +99,7 @@ tonal categories are statistical generalisations across token-level
 pitch contours, not stored cognitive objects.
 
 This file's claims live on continuous f0 vectors (`PitchContour` below),
-deliberately *not* on `Phonology.Autosegmental.FloatingForm`. The two
+deliberately *not* on `Autosegmental.FloatingForm`. The two
 substrates coexist as competing analyses of overlapping data; this file
 does not bridge them. The decision is methodological: bridging would
 require committing to a translation between continuous contours and

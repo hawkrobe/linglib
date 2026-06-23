@@ -46,7 +46,7 @@ fields.
 
 namespace Poko
 
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 
 -- ============================================================================

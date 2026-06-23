@@ -43,9 +43,9 @@ the consensus geometry:
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
 open Phonology.ComplexSegments
-open Phonology.Autosegmental (agreeAt)
+open Autosegmental (agreeAt)
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 /-! ### Interval-overlap semantics for association lines
 
@@ -272,7 +272,7 @@ def contourTone (ts tf m1s m1f m2s m2f : T)
 
 end NoCrossing
 
-end Phonology.Autosegmental
+end Autosegmental
 
 namespace Sagey1986
 
@@ -452,7 +452,7 @@ concrete integer-valued time instances. -/
 
 section NoCrossing
 
-open Phonology.Autosegmental (Association TierPosition
+open Autosegmental (Association TierPosition
   validAssociation crosses no_crossing)
 
 /-- Helper: build a ℤ interval. -/

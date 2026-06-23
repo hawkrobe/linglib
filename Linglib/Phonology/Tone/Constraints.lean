@@ -46,7 +46,7 @@ intent and selects vector reversal for the right-to-left case.
 
 namespace Tone
 
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Constraint OptimalityTheory
 

@@ -44,7 +44,7 @@ broader Heinz-Jardine-Chandlee tradition.
   object-monoid.
 -/
 
-namespace Phonology.Autosegmental
+namespace Autosegmental
 
 /-! ### The bundled type `AR`
 
@@ -297,4 +297,4 @@ instance : MonoidalCategory (AR α β) :=
 
 end AR
 
-end Phonology.Autosegmental
+end Autosegmental

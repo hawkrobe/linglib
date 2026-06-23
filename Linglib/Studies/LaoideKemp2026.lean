@@ -40,7 +40,7 @@ past-tense impersonal mutation resistance (§6.2).
 
 ## Grounding: `FloatingForm` over a CV backbone
 
-This file is founded on `Phonology.Autosegmental.FloatingForm CVKind
+This file is founded on `Autosegmental.FloatingForm CVKind
 Segment` — the project's floating-autosegmental substrate, which
 [laoide-kemp-2026]'s floating consonants are a named motivating
 consumer of. Three substrate features carry the analysis directly:
@@ -110,7 +110,7 @@ is modelled as a genuine floating melodic segment (`Segment.dPrime`).
 
 namespace LaoideKemp2026
 
-open Phonology.Autosegmental
+open Autosegmental
 
 /-! ## §1 Segment inventory and CV skeleton
 
@@ -424,7 +424,7 @@ theorem laoideKemp_fig1_fig5 :
 /-! ## §10 Modularity: the analysis lives in the monoidal subcategory
 
 [laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-`IsConcatStable` framework (`Phonology.Autosegmental.Modularity`).
+`IsConcatStable` framework (`Autosegmental.Modularity`).
 Three theorems, one per modular commitment: the morpheme is *composed*
 by the monoidal product `⊗ = Graph.concat` (not inserted by a non-local
 rule); the composition *preserves well-formedness* because the

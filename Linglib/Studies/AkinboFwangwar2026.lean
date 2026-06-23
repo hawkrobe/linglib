@@ -41,7 +41,7 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 
 ## Substrate
 
-The OT analysis is built on `Phonology.Autosegmental.FloatingForm Syl TRN`
+The OT analysis is built on `Autosegmental.FloatingForm Syl TRN`
 (Goldsmith-style autosegmental representation; built originally for
 [mcpherson-lamont-2026]). Each `ulTier` entry is one
 autosegment; `surfaceLinks` records associations between tier and
@@ -71,7 +71,7 @@ anchor combinators defined in §2 below.
 namespace AkinboFwangwar2026
 
 open Constraint OptimalityTheory
-open Phonology.Autosegmental
+open Autosegmental
 open Tone (TRN)
 open Tone (integrityTone)
 open Mwaghavul
