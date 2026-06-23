@@ -1,4 +1,5 @@
 import Mathlib.Order.Basic
+import Mathlib.Data.Set.Image
 import Linglib.Core.Order.Interval
 import Linglib.Features.Aktionsart
 
@@ -167,6 +168,46 @@ def Manner.sharedBy (m : Manner Time) (e₁ e₂ : Event Time) : Prop :=
   m.exhibits e₁ ∧ m.exhibits e₂
 
 end Event
+
+/-! ### Run-time projection (event predicate → interval set)
+
+The event→interval projection: the set of run-time intervals of the events
+satisfying `P`, i.e. the image of `P` under the temporal trace τ
+([krifka-1989], [krifka-1998]). This is neutral event substrate — the upper
+rung of the projection ladder whose tense-specific lower rungs (`timeTrace`,
+the canonical denotation patterns) live in
+`Semantics/Tense/TemporalConnectives/`. It is homed here, upstream of all
+aspect/tense theories, so that subinterval/homogeneity properties can be
+stated as order-theoretic facts about it (see
+`Semantics/Aspect/SubintervalProperty.lean`). -/
+
+section Denotation
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- The event→interval projection: the set of run-time intervals of events
+    satisfying `P`, i.e. the image of `P` under the temporal trace τ. Every
+    event-level temporal theory projects to the interval level through this map. -/
+def eventDenotation (P : Event Time → Prop) : Set (NonemptyInterval Time) :=
+  Event.τ '' { e | P e }
+
+/-- Membership in `eventDenotation`: an interval is a run-time of some `P`-event. -/
+@[simp]
+theorem mem_eventDenotation {P : Event Time → Prop} {i : NonemptyInterval Time} :
+    i ∈ eventDenotation P ↔ ∃ e, P e ∧ e.τ = i := Iff.rfl
+
+/-- No events satisfy `P` ↔ the denotation is empty. -/
+theorem eventDenotation_eq_empty {P : Event Time → Prop} :
+    eventDenotation P = ∅ ↔ ∀ e, ¬ P e := by
+  rw [eventDenotation, Set.image_eq_empty]
+  exact Set.eq_empty_iff_forall_notMem
+
+/-- The run-time of any `P`-event is in the denotation. -/
+theorem mem_eventDenotation_of {P : Event Time → Prop} {e : Event Time} (he : P e) :
+    e.τ ∈ eventDenotation P :=
+  Set.mem_image_of_mem _ he
+
+end Denotation
 
 /-! ### Concrete examples (ℤ-time events) -/
 
