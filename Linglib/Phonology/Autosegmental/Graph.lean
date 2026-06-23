@@ -35,10 +35,10 @@ are well-formed.
 
 `concat` forms a `Monoid` with `empty` as unit ([jardine-heinz-2015] Thms 1, 3)
 and preserves planarity and in-bounds (`isPlanar_concat`/`inBounds_concat`,
-Thm 4). The well-formed ARs form the analogous monoidal category — see `AR.lean`,
-which also reserves the bundled symbol `AR α β`. Concatenation is the
-autosegmentally meaningful join; relational composition through a shared tier is
-not (it breaks planarity).
+Thm 4). The in-bounds graphs form the analogous monoidal category `AR α β`
+(`AR.lean`), and the planar ones its full monoidal subcategory `WellFormedAR`
+(`WellFormed.lean`). Concatenation is the autosegmentally meaningful join;
+relational composition through a shared tier is not (it breaks planarity).
 
 ## Implementation notes
 
