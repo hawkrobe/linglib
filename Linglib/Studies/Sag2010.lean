@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Syntax.HPSG.GapAmalgamation
 import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003
 import Linglib.Features.ClauseForm
@@ -409,11 +408,11 @@ chronologically-later account (Sag) draws the comparison. -/
 
 /-- The construction-typed `IsIsland` verdicts are grounded in the same RSRL gap mechanism as the SLASH
 analysis: the model-theoretic content of an absolute island is `[GAP ⟨⟩]` plus amalgamation blocking a
-second gap. Derived from [sag-wasow-bender-2003]'s authoritative `islands_rsrl_grounded`
-(`Syntax/HPSG/GapAmalgamation`), not re-stated — the construction-tag level and the gap-list mechanism
-agree. -/
+second gap. Derived from [sag-wasow-bender-2003]'s authoritative `islands_rsrl_grounded` (over the
+canonical `Syntax/HPSG/Construction` signature), not re-stated — the construction-tag level and the
+gap-list mechanism agree. -/
 theorem island_grounded_in_rsrl :
-    ¬ HPSG.GapAmalgamation.islandTwoGap.Models HPSG.GapAmalgamation.gGrammar :=
+    ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar :=
   SagWasowBender2003.islands_rsrl_grounded.2.1
 
 /-- Agreement with [sag-wasow-bender-2003]: the topicalization island is the same
