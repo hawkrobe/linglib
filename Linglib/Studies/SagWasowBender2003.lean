@@ -121,18 +121,33 @@ ARG-ST outranking here, model-theoretic `Models` there — agree on the diagnost
 
 /-- The reflexive (Principle A) judgments are grounded in the RSRL model theory: the computational
 ARG-ST account (a coindexed reflexive object is bound, a reflexive subject is not) and the RSRL
-Principle-A model (a coindexed anaphor satisfies the grammar; a disjoint anaphor violates it) agree. -/
+Principle-A model (a coindexed, φ-agreeing anaphor satisfies the grammar; a disjoint one violates it)
+agree. -/
 theorem reflexive_binding_grounded_in_rsrl :
     grammaticalForCoreference [john, sees, himself] = true ∧
     grammaticalForCoreference [himself, sees, john] = false ∧
-    (_root_.HPSG.RSRL.Binding.clause .ana .i1).Models _root_.HPSG.RSRL.Binding.bindingGrammar ∧
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .i2).Models [_root_.HPSG.RSRL.Binding.principleA] := by
+    (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gMasc .nSing).Models
+      _root_.HPSG.RSRL.Binding.bindingGrammar ∧
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iObj .gMasc .nSing).Models
+      [_root_.HPSG.RSRL.Binding.principleA] := by
   decide
 
 /-- Principle B grounded in RSRL: a coindexed personal pronoun violates the model-theoretic
 Principle B (a pronoun must be locally o-free), the counterpart of the ARG-ST disjoint-reference data. -/
 theorem pronoun_binding_grounded_in_rsrl :
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ppro .i1).Models [_root_.HPSG.RSRL.Binding.principleB] := by
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ppro .iSubj .gMasc .nSing).Models
+      [_root_.HPSG.RSRL.Binding.principleB] := by
+  decide
+
+/-- **φ-agreement grounded in RSRL.** The gender/number agreement of binding (the `Word.Agree` check in
+the computational engine) is the model-theoretic requirement that the bound anaphor's `GEND`/`NUM` are
+token-identical to the binder's: a *coindexed but φ-clashing* anaphor (feminine — *John likes herself*;
+or plural — *they like himself*) is not locally o-bound, violating Principle A. -/
+theorem agreement_binding_grounded_in_rsrl :
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gFem .nSing).Models
+      [_root_.HPSG.RSRL.Binding.principleA] ∧
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .iSubj .gMasc .nPlur).Models
+      [_root_.HPSG.RSRL.Binding.principleA] := by
   decide
 
 end Binding
