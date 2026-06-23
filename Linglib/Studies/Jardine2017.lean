@@ -167,6 +167,11 @@ def forbidden_nonfinal_contour : AR where
   lower := [.σ, .σ]
   links := {(0, 0), (1, 0)}
 
+/-- The Mende grammar's forbidden block patterns ([jardine-2017] (21a–c)): a
+    form is well-formed iff it is `Graph.Free` of all three. -/
+def mendeForbidden : List AR :=
+  [forbidden_nonfinal_H, forbidden_nonfinal_L, forbidden_nonfinal_contour]
+
 /-! ### §2.2 Attested forms satisfy the Mende grammar
 
 Each attested form is well-formed under the Mende grammar iff it
@@ -193,22 +198,12 @@ theorem félàmà_no_nonfinal_L : ¬ SubgraphEmbeds forbidden_nonfinal_L félàm
 theorem félàmà_no_nonfinal_contour :
     ¬ SubgraphEmbeds forbidden_nonfinal_contour félàmà := by decide
 
-/-- All three Mende attested forms satisfy the full Mende grammar
-    (none of the three forbidden subgraphs embeds into any of them).
-    [jardine-2017] §5.1, the main empirical claim. -/
+/-- All three Mende attested forms satisfy the full Mende grammar: each is
+    `Graph.Free` of `mendeForbidden` (none of the three forbidden subgraphs
+    embeds into any of them). [jardine-2017] §5.1, the main empirical claim. -/
 theorem mende_grammar_admits_attested :
-    (¬ SubgraphEmbeds forbidden_nonfinal_H mbû ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_L mbû ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_contour mbû) ∧
-    (¬ SubgraphEmbeds forbidden_nonfinal_H ngìlà ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_L ngìlà ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_contour ngìlà) ∧
-    (¬ SubgraphEmbeds forbidden_nonfinal_H félàmà ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_L félàmà ∧
-     ¬ SubgraphEmbeds forbidden_nonfinal_contour félàmà) := by
-  exact ⟨⟨mbû_no_nonfinal_H, mbû_no_nonfinal_L, mbû_no_nonfinal_contour⟩,
-         ⟨ngìlà_no_nonfinal_H, ngìlà_no_nonfinal_L, ngìlà_no_nonfinal_contour⟩,
-         ⟨félàmà_no_nonfinal_H, félàmà_no_nonfinal_L, félàmà_no_nonfinal_contour⟩⟩
+    mbû.Free mendeForbidden ∧ ngìlà.Free mendeForbidden ∧ félàmà.Free mendeForbidden := by
+  decide
 
 end Mende
 

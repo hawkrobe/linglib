@@ -75,6 +75,7 @@ def lowerIdx (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) : Fin A.lower.
 /-- A label- and link-preserving morphism, `Fin`-indexed on the tiers. The
     label conditions use total `getElem` (no `Option`); link preservation reads
     the endpoints as `Fin` indices via `upperIdx`/`lowerIdx`. -/
+@[ext]
 structure Hom (A B : AR α β) where
   /-- Vertex map on the upper tier. -/
   fUpper : Fin A.upper.length → Fin B.upper.length
@@ -90,9 +91,6 @@ structure Hom (A B : AR α β) where
 
 namespace Hom
 variable {A B C : AR α β}
-
-@[ext] theorem ext {f g : Hom A B} (hu : f.fUpper = g.fUpper) (hl : f.fLower = g.fLower) :
-    f = g := by cases f; cases g; congr
 
 /-- The identity morphism. -/
 def id (A : AR α β) : Hom A A where
