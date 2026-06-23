@@ -52,15 +52,11 @@ open Constraint OptimalityTheory
 
 variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
 
-/-! ### Predicate Helpers -/
+/-! ### Tone-value predicate
 
-/-- The link `(k, i)` was inserted by GEN (in surface but not in underlying). -/
-abbrev IsInsertedLink (l : Link) : Prop :=
-  l ∈ f.surfaceLinks ∧ l ∉ f.links
-
-/-- The link `(k, i)` was deleted by GEN (in underlying but not in surface). -/
-abbrev IsDeletedLink (l : Link) : Prop :=
-  l ∈ f.links ∧ l ∉ f.surfaceLinks
+Link faithfulness (`FloatingForm.IsInsertedLink` / `IsDeletedLink`) and the morpheme
+accessors (`upperMorpheme?` / `lowerMorpheme?` / `morphemes`) are tone-agnostic and live
+on `FloatingForm`; only the `TRN`-reading predicate is here. -/
 
 /-- The tone at index `k` has value `t`. -/
 abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
@@ -88,37 +84,24 @@ def starFloatCount : DirectionalConstraint (FloatingForm S TRN) :=
     per GEN-inserted tautomorphic surface link. -/
 def starTautDock : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount "*TAUTDOCK" .markedness
-    (fun f => (f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ f.IsTautomorphic l)).card)
+    (fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphic l)).card)
 
 /-! ### *CROWD (per-morpheme tone count) -/
 
-/-- The tone at index `k` belongs to morpheme `m`. -/
-abbrev ToneInMorpheme (k : TierIdx) (m : Morpheme) : Prop :=
-  (f.upper[k]?).map TierSpec.morpheme = some m
-
-/-- The TBU at index `i` belongs to morpheme `m`. -/
-abbrev SegInMorpheme (i : SegIdx) (m : Morpheme) : Prop :=
-  (f.lower[i]?).map SegSpec.morpheme = some m
-
-/-- The set of tone indices counting toward morpheme `m`'s tonal mass:
-    surviving underlying tones of `m`, plus tones surface-linked to
-    TBUs of `m`. -/
+/-- The tone indices counting toward morpheme `m`'s tonal mass: surviving
+    underlying tones of `m`, plus tones surface-linked to TBUs of `m`. -/
 def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
   let ownAlive := (Finset.range f.upper.length).filter fun k =>
-    f.IsAlive k ∧ ToneInMorpheme f k m
-  let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
+    f.IsAlive k ∧ f.upperMorpheme? k = some m
+  let docked := (f.surfaceLinks.filter fun l => f.lowerMorpheme? l.snd = some m).image Prod.fst
   ownAlive ∪ docked
-
-/-- All morphemes occurring in `f`, on either tier. -/
-def morphemes : Finset Morpheme :=
-  (f.lower.map SegSpec.morpheme).toFinset ∪ (f.upper.map TierSpec.morpheme).toFinset
 
 /-- `*CROWD` (paper eq. 5): one violation per morpheme with more than `threshold`
     tones (default 2), counting its surviving underlying tones plus tones docked onto
     its TBUs from other morphemes. -/
 def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"*CROWD({threshold})" .markedness
-    (fun f => ((morphemes f).filter (fun m => threshold < (tonesForMorpheme f m).card)).card)
+    (fun f => (f.morphemes.filter (fun m => threshold < (tonesForMorpheme f m).card)).card)
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
 
@@ -177,13 +160,13 @@ def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
     inserted by GEN whose linked tone has value `t`. -/
 def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"DEP(link)/{reprStr t}" .faithfulness
-    (fun f => (f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ ToneHasValue f l.fst t)).card)
+    (fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
 def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"MAX(link)/{reprStr t}" .faithfulness
-    (fun f => (f.links.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card)
+    (fun f => (f.links.filter (fun l => f.IsDeletedLink l ∧ ToneHasValue f l.fst t)).card)
 
 /-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
     multiple output correspondents — here, alive `ulTier` entries sharing tone value `t`
@@ -192,6 +175,6 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
 def integrityTone (m : Morpheme) (t : TRN) :
     DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"INTEGRITY-{reprStr t}({m.form})" .faithfulness
-    (fun f => f.countTones (fun k => f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t) - 1)
+    (fun f => f.countTones (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1)
 
 end Tone

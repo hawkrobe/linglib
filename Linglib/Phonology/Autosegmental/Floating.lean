@@ -143,6 +143,18 @@ def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
     deletedTier := ∅
     surfaceLinks := links }
 
+/-! ### Morphemic structure -/
+
+/-- The morpheme of the `k`-th upper-tier element, or `none` if out of range. -/
+def upperMorpheme? (k : TierIdx) : Option Morpheme := (f.upper[k]?).map TierSpec.morpheme
+
+/-- The morpheme of the `i`-th lower-tier element, or `none` if out of range. -/
+def lowerMorpheme? (i : SegIdx) : Option Morpheme := (f.lower[i]?).map SegSpec.morpheme
+
+/-- Every morpheme occurring on either tier. -/
+def morphemes : Finset Morpheme :=
+  (f.lower.map SegSpec.morpheme).toFinset ∪ (f.upper.map TierSpec.morpheme).toFinset
+
 /-! ### Predicates on tones and links -/
 
 /-- The tone at index `k` is alive (not deleted). The structural
@@ -163,9 +175,15 @@ abbrev IsFloating (k : TierIdx) : Prop := f.IsAlive k ∧ ¬ f.IsLinked k
     false. Used by *TAUTDOCK and the tautomorphic vs heteromorphic
     distinction discussed in the module docstring. -/
 abbrev IsTautomorphic (l : Link) : Prop :=
-  (f.upper[l.fst]?).map TierSpec.morpheme =
-    (f.lower[l.snd]?).map SegSpec.morpheme ∧
-  (f.upper[l.fst]?).isSome
+  f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper[l.fst]?).isSome
+
+/-! ### Faithfulness: surface vs underlying -/
+
+/-- A surface link absent underlyingly — inserted by GEN (`DEP` / `*TAUTDOCK` source). -/
+abbrev IsInsertedLink (l : Link) : Prop := l ∈ f.surfaceLinks ∧ l ∉ f.links
+
+/-- An underlying link absent on the surface — deleted by GEN (`MAX` source). -/
+abbrev IsDeletedLink (l : Link) : Prop := l ∈ f.links ∧ l ∉ f.surfaceLinks
 
 /-! ### Atomic GEN operations -/
 
@@ -242,8 +260,7 @@ def aliveTierIdxs : List TierIdx :=
 /-- Segment indices belonging to morpheme `m`, in segmental order.
     Out-of-range indices are excluded by construction. -/
 def segsOfMorpheme (m : Morpheme) : List SegIdx :=
-  (List.range f.lower.length).filter (λ i =>
-    (f.lower[i]?).map SegSpec.morpheme = some m)
+  (List.range f.lower.length).filter (λ i => f.lowerMorpheme? i = some m)
 
 /-! ### Position counts -/
 
