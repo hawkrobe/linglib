@@ -35,7 +35,7 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 4. **Expressiveness survives integration.** Derived ideophonic verbs
    retain expressive properties (affective meaning,
    nondisplaceability, ineffability) despite full morphosyntactic
-   integration ([potts-2005]-style secondary meanings),
+   integration ([potts-2007]-style secondary meanings),
    challenging the inverse correlation predicted by
    [dingemanse-akita-2017].
 
@@ -684,11 +684,11 @@ theorem deadjectival_ideophone_verb :
     Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §9: Expressiveness Preservation (after [potts-2005])
+-- §9: Expressiveness Preservation (after [potts-2007])
 -- ============================================================================
 
 /-! [akinbo-fwangwar-2026] §4.2 argues that derived ideophonic
-    verbs retain [potts-2005]-style expressive properties despite
+    verbs retain [potts-2007]-style expressive properties despite
     morphosyntactic integration: affective meaning, nondisplaceability,
     descriptive ineffability, context-dependence. This challenges
     [dingemanse-akita-2017]'s prediction of inverse correlation
