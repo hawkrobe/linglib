@@ -15,15 +15,12 @@ when `k₁ < k₂ → i₁ ≤ i₂` for any two links `(k₁, i₁)`, `(k₂, i
 index coordinates monovary, which in a two-layer drawing is exactly the
 absence of crossing segments. This is the discrete-index
 [goldsmith-1976] / [sagey-1986] No-Crossing Constraint and the canonical
-filter on autosegmental GEN. It is built on mathlib's `MonovaryOn` rather
-than graph planarity (which mathlib lacks and which would over-model it).
+filter on autosegmental GEN.
 
 ## Main declarations
 
 * `IsNonCrossing links`: the link set monovaries (`[Preorder]`-general).
-* `IndexCrosses links k i`: candidate `(k, i)` forms a crossing pair with
-  some existing link — a 2-link set that fails `IsNonCrossing`. The
-  decidable, `ℕ`-indexed GEN filter.
+* `IndexCrosses links k i`: `(k, i)` crosses an existing link — decidable, `ℕ`-indexed GEN filter.
 
 ## Main results
 
