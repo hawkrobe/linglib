@@ -121,7 +121,7 @@ instance {S T : Type*} [Repr S] [Repr T] : Repr (FloatingForm S T) where
 
 namespace FloatingForm
 
-variable {S T : Type*} [DecidableEq S] [DecidableEq T] (f : FloatingForm S T)
+variable {S T : Type*} (f : FloatingForm S T)
 
 /-! ### Surface graph (derived view) -/
 
@@ -155,25 +155,25 @@ def lowerMorpheme? (i : SegIdx) : Option Morpheme := (f.lower[i]?).map SegSpec.m
 def morphemes : Finset Morpheme :=
   (f.lower.map SegSpec.morpheme).toFinset ∪ (f.upper.map TierSpec.morpheme).toFinset
 
-/-! ### Predicates on tones and links -/
+/-! ### Predicates on tier elements and links -/
 
-/-- The tone at index `k` is alive (not deleted). The structural
+/-- The upper-tier element at index `k` is alive (not deleted). The structural
     primitive; `IsDeleted` is its negation. -/
 abbrev IsAlive (k : TierIdx) : Prop := k ∉ f.deletedTier
 
-/-- The tone at index `k` is deleted. Sugar for `¬ IsAlive`. -/
+/-- The upper-tier element at index `k` is deleted. Sugar for `¬ IsAlive`. -/
 abbrev IsDeleted (k : TierIdx) : Prop := ¬ f.IsAlive k
 
-/-- The tone at index `k` is linked to some TBU on the surface. -/
+/-- The upper-tier element at index `k` is linked to a backbone position
+    on the surface. -/
 abbrev IsLinked (k : TierIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.fst = k
 
-/-- The tone at index `k` is floating (alive but unlinked). -/
+/-- The upper-tier element at index `k` is floating (alive but unlinked). -/
 abbrev IsFloating (k : TierIdx) : Prop := f.IsAlive k ∧ ¬ f.IsLinked k
 
-/-- A surface link `(k, i)` is **tautomorphic** iff its tone and TBU
-    share a morpheme. Out-of-range indices on either side make this
-    false. Used by *TAUTDOCK and the tautomorphic vs heteromorphic
-    distinction discussed in the module docstring. -/
+/-- A surface link `(k, i)` is **tautomorphic** iff its upper- and lower-tier
+    endpoints share a morpheme. Out-of-range indices on either side make this
+    false. -/
 abbrev IsTautomorphic (l : Link) : Prop :=
   f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper[l.fst]?).isSome
 
@@ -187,8 +187,8 @@ abbrev IsDeletedLink (l : Link) : Prop := l ∈ f.links ∧ l ∉ f.surfaceLinks
 
 /-! ### Atomic GEN operations -/
 
-/-- Delete the underlying tone at index `k`. Cascades to remove any
-    surface link referencing it. -/
+/-- Delete the underlying upper-tier element at index `k`. Cascades to remove
+    any surface link referencing it. -/
 def deleteTierElem (k : TierIdx) : FloatingForm S T :=
   { f with
     deletedTier := insert k f.deletedTier
@@ -219,7 +219,7 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
     insert-and-associate and shift. The no-crossing filter ([goldsmith-1976])
     enforces well-formedness: without it a floating tone could dock across an
     intervening linked tone. -/
-def gen : Finset (FloatingForm S T) :=
+def gen [DecidableEq S] [DecidableEq T] : Finset (FloatingForm S T) :=
   let aliveIdxs := (Finset.range f.upper.length).filter (λ k => f.IsAlive k)
   let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
   let segIdxs := Finset.range f.lower.length
@@ -230,17 +230,16 @@ def gen : Finset (FloatingForm S T) :=
 
 /-! ### Indicator vectors for constraint evaluation -/
 
-/-- Indicator vector for floating-tone presence at each tier position, in
-    tier order. Entry `k` is `1` iff `upper[k]` is currently floating, else
-    `0`. Used by directional `*FLOAT`. -/
+/-- Indicator vector of floating upper-tier elements, in tier order: entry `k`
+    is `1` iff `upper[k]` is currently floating, else `0`. Drives directional
+    floating constraints (e.g. `*FLOAT`). -/
 def floatIndicator : List ℕ :=
   (List.range f.upper.length).map λ k => if f.IsFloating k then 1 else 0
 
-/-- Surface tones linked to TBU `i`, returned in tier order (smallest
-    tone index first). Used by *FALL and *CROWD. We iterate over
-    `List.range f.upper.length` so the result is naturally sorted
-    and reduces well via kernel `decide` (avoiding `Finset.sort`,
-    which doesn't unfold structurally). -/
+/-- Upper-tier elements surface-linked to backbone position `i`, in tier order
+    (smallest index first). `List.range`-based so the result is naturally sorted
+    and reduces under kernel `decide` (avoiding `Finset.sort`, which doesn't
+    unfold structurally). -/
 def linksTo (i : SegIdx) : List TierIdx :=
   (List.range f.upper.length).filter λ k => (k, i) ∈ f.surfaceLinks
 
@@ -251,25 +250,24 @@ def tierValues (i : SegIdx) : List T :=
 
 /-! ### Tier and morpheme subsequences -/
 
-/-- Indices of alive (non-deleted) underlying tones, in tier order.
-    Iterates `List.range f.upper.length` so the result is naturally
-    sorted and reduces well via kernel `decide`. -/
+/-- Indices of alive (non-deleted) underlying upper-tier elements, in tier
+    order; `List.range`-based so it reduces under kernel `decide`. -/
 def aliveTierIdxs : List TierIdx :=
   (List.range f.upper.length).filter (λ k => f.IsAlive k)
 
-/-- Segment indices belonging to morpheme `m`, in segmental order.
+/-- Lower-tier (backbone) indices belonging to morpheme `m`, in order.
     Out-of-range indices are excluded by construction. -/
 def segsOfMorpheme (m : Morpheme) : List SegIdx :=
   (List.range f.lower.length).filter (λ i => f.lowerMorpheme? i = some m)
 
 /-! ### Position counts -/
 
-/-- Count tier (tone) positions satisfying decidable `p`. `List.range`-based so it
+/-- Count upper-tier positions satisfying decidable `p`. `List.range`-based so it
     reduces under kernel `decide` (avoiding `Finset` pipelines). -/
 def countTones (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.upper.length).countP (λ k => decide (p k))
 
-/-- Count backbone (TBU) positions satisfying decidable `p`. -/
+/-- Count lower-tier (backbone) positions satisfying decidable `p`. -/
 def countTBUs (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.lower.length).countP (λ i => decide (p i))
 
