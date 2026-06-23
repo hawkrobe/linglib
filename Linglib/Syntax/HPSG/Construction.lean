@@ -81,8 +81,12 @@ inductive FHSort
   | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | interrogativeSAI
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. The two arms
-for `nsWhIntCl` — below both `fillerHeadCxt` and `interrogativeCl` — are the multiple inheritance. -/
+/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"). **Must be written transitively
+closed by hand** — every transitive consequence is listed explicitly (e.g. `noun ≤ nominal` *and*
+`noun ≤ nonverbal` *and* `noun ≤ cat`), and the `PartialOrder` instance's `le_trans`/`le_antisymm`
+`decide`s verify the closure is correct and acyclic. When adding a sort or edge, add all its downstream
+transitive arms or `le_trans` fails. The two arms for `nsWhIntCl` — below both `fillerHeadCxt` and
+`interrogativeCl` — are the multiple inheritance. -/
 def fhLe : FHSort → FHSort → Bool
   | _, .top => true
   -- categories (nonverbal > {nominal, adj}; nominal > {noun, prep})
@@ -144,10 +148,13 @@ def fhLe : FHSort → FHSort → Bool
   | .interrogativeSAI, .construct => true
   | a, b => decide (a = b)
 
--- The reflexivity/transitivity/antisymmetry checks are `decide` over `FHSort³`; at this hierarchy
--- size the proof term exceeds the default elaborator recursion depth (a stack limit, not a compute
--- budget — distinct from `maxHeartbeats`).
-set_option maxRecDepth 4000 in
+-- The transitivity check is `decide` over `FHSort³`; the proof term's nesting depth is intrinsic to
+-- the hierarchy *size* (the fold over `|FHSort|³` triples), so it exceeds the default elaborator
+-- recursion depth of 512 (a stack limit, not a compute budget — distinct from `maxHeartbeats`).
+-- Empirically the default fails and ~1000 suffices; this scales with `|FHSort|`, so adding sorts may
+-- require a bump. (An edge-list/closure encoding of `fhLe` would not help — the depth is the `decide`
+-- fold, not `fhLe`'s match.)
+set_option maxRecDepth 1000 in
 instance : PartialOrder FHSort :=
   partialOrderOfBool fhLe (by decide) (by decide) (by decide)
 
