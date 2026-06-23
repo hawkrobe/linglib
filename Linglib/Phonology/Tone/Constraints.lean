@@ -127,7 +127,7 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
     (HM, HL, ML). -/
 def starFall : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount "*FALL" .markedness
-    (fun f => f.countTBUs (fun i => HasFall (f.tierValues i)))
+    (fun f => f.countLower (fun i => HasFall (f.tierValues i)))
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
 
@@ -146,7 +146,7 @@ def starMlessL : DirectionalConstraint (FloatingForm S TRN) :=
     associated to any tone. -/
 def haveTone : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount "HAVETONE" .markedness
-    (fun f => f.countTBUs (fun i => (f.linksTo i).isEmpty = true))
+    (fun f => f.countLower (fun i => (f.linksTo i).isEmpty = true))
 
 /-! ### Faithfulness — Generic over Tone Value -/
 
@@ -154,7 +154,7 @@ def haveTone : DirectionalConstraint (FloatingForm S TRN) :=
     value `t` deleted by GEN. -/
 def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"MAX({reprStr t})" .faithfulness
-    (fun f => f.countTones (fun k => f.IsDeleted k ∧ ToneHasValue f k t))
+    (fun f => f.countUpper (fun k => f.IsDeleted k ∧ ToneHasValue f k t))
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
@@ -175,6 +175,6 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) :=
 def integrityTone (m : Morpheme) (t : TRN) :
     DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount s!"INTEGRITY-{reprStr t}({m.form})" .faithfulness
-    (fun f => f.countTones (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1)
+    (fun f => f.countUpper (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1)
 
 end Tone

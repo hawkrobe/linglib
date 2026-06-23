@@ -17,11 +17,11 @@ offset — equivalently, the embedding is a precedence-preserving translation.
 This is the object-level containment relation that [jardine-2017]'s
 forbidden-substructure analyses are stated over: an autosegmental representation
 `G` is well-formed with respect to a forbidden set `{Fᵢ}` exactly when no `Fᵢ`
-subgraph-embeds into `G`. It is defined on the raw `Graph` object, with no
-morphism machinery, so consumers need only the object layer rather than
-the `AR` morphism layer. The mathlib analogue is `SimpleGraph.IsContained` /
-`SimpleGraph.Free`,
-likewise kept out of the homomorphism file.
+subgraph-embeds into `G` (`Graph.Free`). It is defined on the raw `Graph` object,
+with no morphism machinery, so consumers need only the object layer rather than
+the `AR` morphism layer. This is the *positional* (contiguous-block-at-an-offset)
+analogue of mathlib's `SimpleGraph.IsContained` / `SimpleGraph.Free` — which are
+up-to-isomorphism — and like them is kept out of the homomorphism file.
 
 ## Main definitions
 
@@ -29,6 +29,9 @@ likewise kept out of the homomorphism file.
   a contiguous block of `G` at offset `(δᵤ, δₗ)`.
 * `Autosegmental.Graph.SubgraphEmbeds F G` is the (decidable) relation that `F`
   subgraph-embeds into `G` at some offset.
+* `Autosegmental.Graph.Free G fs` is the (decidable) relation that `G` contains
+  none of the forbidden block patterns `fs` — the forbidden-substructure
+  well-formedness predicate.
 -/
 
 namespace Autosegmental
@@ -68,6 +71,18 @@ theorem SubgraphEmbeds.refl (G : Graph α β) : SubgraphEmbeds G G := by
   · intro i hi; simp
   · intro j hj; simp
   · intro p hp; simpa using hp
+
+/-- `G` is **free of** the forbidden block patterns `fs`: no `F ∈ fs`
+    subgraph-embeds into `G`. This is [jardine-2017]'s forbidden-substructure
+    well-formedness predicate — the positional analogue of `G` being
+    `SimpleGraph.Free` of a family of patterns — letting a consumer write
+    `G.Free forbidden` for the whole set rather than conjoining one
+    `¬ SubgraphEmbeds Fᵢ G` per pattern. -/
+def Free (G : Graph α β) (fs : List (Graph α β)) : Prop :=
+  ∀ F ∈ fs, ¬ SubgraphEmbeds F G
+
+instance [DecidableEq α] [DecidableEq β] (G : Graph α β) (fs : List (Graph α β)) :
+    Decidable (G.Free fs) := by unfold Free; infer_instance
 
 end Graph
 

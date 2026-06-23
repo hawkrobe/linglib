@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Autosegmental.Modularity
+import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Autosegmental.Subgraph
 
 /-!
@@ -425,7 +425,7 @@ theorem laoideKemp_fig1_fig5 :
 /-! ## §10 Modularity: the analysis lives in the monoidal subcategory
 
 [laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-monoidal-subcategory framework (`Autosegmental.Modularity`).
+monoidal-subcategory framework (`Autosegmental.WellFormedAR`).
 Three theorems, one per modular commitment: the morpheme is *composed*
 by the monoidal product `⊗ = concat` (not inserted by a non-local
 rule); the composition *preserves well-formedness* because the

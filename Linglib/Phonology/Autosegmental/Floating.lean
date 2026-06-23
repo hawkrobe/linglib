@@ -264,11 +264,11 @@ def segsOfMorpheme (m : Morpheme) : List SegIdx :=
 
 /-- Count upper-tier positions satisfying decidable `p`. `List.range`-based so it
     reduces under kernel `decide` (avoiding `Finset` pipelines). -/
-def countTones (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
+def countUpper (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.upper.length).countP (λ k => decide (p k))
 
 /-- Count lower-tier (backbone) positions satisfying decidable `p`. -/
-def countTBUs (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
+def countLower (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.lower.length).countP (λ i => decide (p i))
 
 end FloatingForm

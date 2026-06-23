@@ -65,7 +65,7 @@ inductive SAIEnt
   deriving DecidableEq, Fintype, Repr
 
 /-- A well-formed interrogative SAI (sort `interrogative-SAI`): inverted head, interrogative mother. -/
-def goodInterrogativeSAI : Interpretation sig where
+@[reducible] def goodInterrogativeSAI : Interpretation sig where
   U := SAIEnt
   S := fun
     | .cxt => .interrogativeSAI
@@ -78,7 +78,7 @@ def goodInterrogativeSAI : Interpretation sig where
     | .INV, .hd => some .invE     -- head is [INV +]
     | .SEM, .mtr => some .semE    -- interrogative semantics, inherited from interrogative-cl
     | _, _ => none
-  R := fun e => e.elim
+  R := noRel
 
 instance : Fintype goodInterrogativeSAI.U := inferInstanceAs (Fintype SAIEnt)
 instance : DecidableEq goodInterrogativeSAI.U := inferInstanceAs (DecidableEq SAIEnt)
@@ -90,7 +90,7 @@ example : goodInterrogativeSAI.Models saiGrammar := by decide
 
 /-- The inverted-head restriction binds: an aux-initial construct with an `[INV −]` head violates the
 aux-initial principle. -/
-def saiUninverted : Interpretation sig where
+@[reducible] def saiUninverted : Interpretation sig where
   U := SAIEnt
   S := fun
     | .cxt => .interrogativeSAI
@@ -98,7 +98,7 @@ def saiUninverted : Interpretation sig where
     | .invE => .invMinus    -- head not inverted
     | .semE => .question
   A := goodInterrogativeSAI.A
-  R := fun e => e.elim
+  R := noRel
 
 instance : Fintype saiUninverted.U := inferInstanceAs (Fintype SAIEnt)
 instance : DecidableEq saiUninverted.U := inferInstanceAs (DecidableEq SAIEnt)
