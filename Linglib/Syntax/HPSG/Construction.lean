@@ -3,245 +3,204 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Order.PartialUnify
-import Linglib.Syntax.HPSG.Signature
+import Linglib.Syntax.HPSG.Description
 import Mathlib.Tactic.DeriveFintype
 
 set_option autoImplicit false
 
 /-!
-# Sign-Based Construction Grammar: the construct type hierarchy
-[carpenter-1992] [richter-2024] [sag-2012]
+# The filler-head construction in RSRL
+[sag-2010] [sag-2012] [richter-2000] [carpenter-1992]
 
-The substrate for SBCG-style **construction type hierarchies with multiple inheritance**, built on
-the project's Carpenter unification layer (`Core.Order.PartialUnify`, `Core.Order.Flat`) rather than
-a bespoke lattice. A construction constrains a mother–daughter configuration (`MTR` + `HD-DTR` +
-filler `DTR`); construction types are ordered by **subsumption** (more specific = higher, the
-information order); and **multiple inheritance is unification** (`PartialUnify.unify`, the partial
-least-upper-bound). A subtype's constraints are the join of its supertypes', so each supertype's
-constraint is *inherited* — and inheritance is just the pointwise `≤` of the join.
+The Sign-Based Construction Grammar filler-head construction, formalized properly on the RSRL
+feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`), the same way
+`Model.lean` formalizes the Head Feature Principle. A construction is a **constraint** (a `Desc`
+implication on a `construct` feature structure), not a category lattice. The filler-head
+construction's content — which an ad-hoc per-position category bundle cannot express — is:
 
-## Foundations (reused, not re-derived)
+* the filler daughter is `[CAT nonverbal]` and the head daughter is `[CAT verbal]` ([sag-2010] (25),
+  (61)), as **subsumption** constraints over a category type hierarchy (so "NP or PP" is the type
+  `nominal`, [sag-2010] (92), not a powerset disjunction);
+* the filler–gap dependency is **token identity** (`pathEq`) between the filler daughter's category
+  and the head daughter's `GAP` value — the structure sharing (the boxed tags) that *is* the
+  construction, [sag-2010] (61).
 
-* `Core.Order.PartialUnify` is [carpenter-1992]'s bounded-complete partial order with the join as
-  primitive (Ch. 2, Def. 2.1): `unify` is the partial LUB, **`unify = none` is unification failure**
-  (inconsistency), and `Compat` is consistency. The unification laws (`unify_comm`/`assoc`/`mono`)
-  and the **`Pi` instance** (componentwise unification = feature bundles) are proved there once.
-* `Core.Order.Flat` is the atomic discrete feature slot (clause type, agreement); this file adds the
-  *subsumption* carrier `Cat` (`nonverbal ≤ nominal`), the partial join of a category **forest** —
-  the piece `Flat` (discrete) does not cover.
-* Orientation is Carpenter's: `⊥` (`Cat.any`) is the unconstrained/least-informative category,
-  more-specific categories are higher, and unification climbs toward more information.
+Two worked constructs show the principle filters: a well-formed one (nonverbal filler, verbal head,
+GAP token-shared with the filler) satisfies it; one with a mismatched GAP and one with a verbal
+filler each violate it.
 
 ## Scope
 
-`Construct := Position → Cat` (a binary headed construct: `MTR`, `HD-DTR`, one filler `DTR`) gets its
-`PartialOrder`/`PartialUnify` from the `Pi` instance for free. General n-ary `DTRS`, multi-feature
-sign constraints (a second `Flat`-valued clause-type dimension, etc.), and the Sag2010 port follow.
+`GAP` is modeled as a single category (single-gap), not the HPSG list; the full sign feature geometry
+(SEM composition, WH/REL/IC/INV/VFORM), n-ary `DTRS`, and the cross-classifying construction type
+hierarchy (`interrogative-cl` etc.) are deferred. This is the filler-head supertype only.
 -/
 
 namespace HPSG.Construction
 
-open HPSG.RSRL (partialOrderOfBool)
+open HPSG.RSRL
 
-/-! ### The category subsumption forest
+/-! ### Sorts: a category type hierarchy plus signs and constructs
 
-A small HEAD/category sort hierarchy in the information order: `any` is the unconstrained `⊥`;
-`verbal`/`nonverbal` are its immediate refinements; `s`/`cp`/`vp` refine `verbal` and
-`nominal`/`prepositional`/`adjectival`/`adverbial` refine `nonverbal`. -/
+`nonverbal` resolves to `nominal`/`adj`/`adv`; `nominal` to `noun`/`prep` (so "NP or PP" is the type
+`nominal`, [sag-2010] (92)); `verbal` to `verb`/`comp`. -/
 
-/-- Syntactic categories as a subsumption forest (`any` = unconstrained `⊥`). -/
-inductive Cat
-  | any
-  | verbal | nonverbal
-  | s | cp | vp
-  | nominal | prepositional | adjectival | adverbial
+/-- Sorts of the fragment: the category hierarchy, plus `sign`, `construct`, and the
+`fillerHeadCxt` construction type. -/
+inductive FHSort
+  | top
+  | cat | verbal | nonverbal | nominal | verb | comp | noun | prep | adj | adv
+  | sign | construct | fillerHeadCxt
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption as a boolean order: `catLe a b` is "`b` is at least as specific as `a`" (`a`
-subsumes `b`). The information order, so `any` (unconstrained) is below everything. -/
-def catLe : Cat → Cat → Bool
-  | .any, _ => true
-  | .verbal, .s => true
-  | .verbal, .cp => true
-  | .verbal, .vp => true
-  | .nonverbal, .nominal => true
-  | .nonverbal, .prepositional => true
-  | .nonverbal, .adjectival => true
-  | .nonverbal, .adverbial => true
+/-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. -/
+def fhLe : FHSort → FHSort → Bool
+  | _, .top => true
+  | .verbal, .cat => true
+  | .nonverbal, .cat => true
+  | .verb, .verbal => true | .verb, .cat => true
+  | .comp, .verbal => true | .comp, .cat => true
+  | .nominal, .nonverbal => true | .nominal, .cat => true
+  | .adj, .nonverbal => true | .adj, .cat => true
+  | .adv, .nonverbal => true | .adv, .cat => true
+  | .noun, .nominal => true | .noun, .nonverbal => true | .noun, .cat => true
+  | .prep, .nominal => true | .prep, .nonverbal => true | .prep, .cat => true
+  | .fillerHeadCxt, .construct => true
   | a, b => decide (a = b)
 
-instance : PartialOrder Cat :=
-  partialOrderOfBool catLe (by decide) (by decide) (by decide)
+instance : PartialOrder FHSort :=
+  partialOrderOfBool fhLe (by decide) (by decide) (by decide)
 
-instance : DecidableLE Cat := fun a b => inferInstanceAs (Decidable (catLe a b = true))
+instance : DecidableLE FHSort := fun a b => inferInstanceAs (Decidable (fhLe a b = true))
 
-/-- The `PartialOrder` `≤` is the boolean subsumption `catLe` (the join below uses `catLe`
-directly). -/
-theorem cat_le_iff (a b : Cat) : a ≤ b ↔ catLe a b = true := Iff.rfl
+/-! ### Attributes and the signature -/
 
-instance : OrderBot Cat where
-  bot := .any
-  bot_le := by decide
-
-/-- Unification of categories: the more specific of two comparable categories (their least upper
-bound in the subsumption order), or `none` when they are incomparable (no common refinement —
-unification failure, [carpenter-1992] Ch. 2). -/
-def catUnify (a b : Cat) : Option Cat :=
-  if catLe a b then some b else if catLe b a then some a else none
-
-/-- Comparable-or-incomparable is decidable on the finite forest; a common upper bound forces
-comparability (ancestors in a forest form a chain). -/
-private theorem cat_common_ub_comparable :
-    ∀ a b u : Cat, catLe a u → catLe b u → catLe a b ∨ catLe b a := by decide
-
-/-- `Cat` is a Carpenter unification domain: the partial join is `catUnify`. -/
-instance : PartialUnify Cat where
-  unify := catUnify
-  isLUB_of_unify_eq_some := by
-    intro a b c h
-    unfold catUnify at h
-    split at h
-    · rename_i hab
-      obtain rfl := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨(cat_le_iff a b).mpr hab, le_rfl⟩,
-        fun _ hu => (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
-    · split at h
-      · rename_i hba
-        obtain rfl := Option.some.inj h
-        exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, (cat_le_iff b a).mpr hba⟩,
-          fun _ hu => (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
-      · exact absurd h (by simp)
-  isSome_unify_of_bddAbove := by
-    intro a b hbdd
-    obtain ⟨u, hu⟩ := hbdd
-    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
-    have comp := cat_common_ub_comparable a b u ((cat_le_iff a u).mp hau) ((cat_le_iff b u).mp hbu)
-    unfold catUnify
-    rcases comp with h | h
-    · rw [if_pos h]; rfl
-    · by_cases hab : catLe a b = true
-      · rw [if_pos hab]; rfl
-      · rw [if_neg hab, if_pos h]; rfl
-
-/-! ### Constructions
-
-A `Construct` constrains a binary headed configuration: the mother (`MTR`), the head daughter
-(`HD-DTR`), and the filler daughter. As a `Pi` type over the finite `Position` index it inherits its
-`PartialOrder` and `PartialUnify` (unification = multiple inheritance) from `Core.Order.PartialUnify`. -/
-
-/-- The positions of a binary headed construct. -/
-inductive Position
-  | mtr | hdDtr | fillerDtr
+/-- Attributes: a construct's daughters (`MTR`, `HDDTR`, `FILLERDTR`); a sign's `CAT` and (single)
+`GAP` category. -/
+inductive FHAttr
+  | MTR | HDDTR | FILLERDTR | CAT | GAP
   deriving DecidableEq, Fintype, Repr
 
-/-- A construction: a category constraint at each position. Subsumption, unification, and `Compat`
-come from the `Pi` instance. -/
-abbrev Construct := Position → Cat
+/-- Appropriateness: constructs have the three daughter attributes (value `sign`); signs have `CAT`
+and `GAP` (value `cat`); categories are attributeless. -/
+def fhApprop : FHSort → FHAttr → Option FHSort
+  | .construct, .MTR => some .sign
+  | .construct, .HDDTR => some .sign
+  | .construct, .FILLERDTR => some .sign
+  | .fillerHeadCxt, .MTR => some .sign
+  | .fillerHeadCxt, .HDDTR => some .sign
+  | .fillerHeadCxt, .FILLERDTR => some .sign
+  | .sign, .CAT => some .cat
+  | .sign, .GAP => some .cat
+  | _, _ => none
 
-/-- `c` refines `s` (`c` is a subtype: at least as specific at every position). The information
-order, so refinement is `s ≤ c`. -/
-def Refines (c s : Construct) : Prop := s ≤ c
+private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ : FHSort),
+    σ₂ ≤ σ₁ → fhApprop σ₁ α = some τ₁ → ∃ τ₂, fhApprop σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by decide
 
-/-! ### The filler-head construction and subtypes -/
+/-- The filler-head fragment's signature (no relations). -/
+@[reducible] def fhSig : Signature FHSort where
+  Attr := FHAttr
+  Rel := Empty
+  arity := fun e => e.elim
+  approp := fhApprop
+  approp_inherits := fun {σ₁ σ₂ α τ₁} => fhApprop_inh σ₁ σ₂ α τ₁
 
-/-- `filler-head-cxt`: the head daughter is `[CAT verbal]` ([sag-2012] (139)) and the filler daughter
-is `[CAT nonverbal]` (following [sag-2010]'s superordinate constraint); the mother is unconstrained. -/
-def fillerHeadCxt : Construct
-  | .mtr => .any
-  | .hdDtr => .verbal
-  | .fillerDtr => .nonverbal
+instance (I : Interpretation fhSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
 
-/-- A subtype refining the filler to a nominal (NP) — a typed-category refinement that the
-value-equality core could not express, since `nominal ≠ nonverbal`. -/
-def nominalFillerCxt : Construct
-  | .mtr => .any
-  | .hdDtr => .verbal
-  | .fillerDtr => .nominal
+/-! ### The filler-head construction as a principle
 
-/-- A finite-clause head subtype: the head daughter refined to `s` (a verbal subtype). Cross-
-classifies with `filler-head-cxt`. -/
-def finiteHeadCxt : Construct
-  | .mtr => .any
-  | .hdDtr => .s
-  | .fillerDtr => .any
+`fillerHeadCxt ⇒ FILLERDTR is [CAT nonverbal] ∧ HDDTR is [CAT verbal] ∧ FILLERDTR's CAT is
+token-identical to HDDTR's GAP`. The last conjunct (`pathEq`) is the filler–gap dependency — the
+structure sharing that distinguishes a filler-head construct from an arbitrary binary phrase. -/
+def fillerHead : Desc fhSig :=
+  .imp (.sortAssign .colon .fillerHeadCxt)
+    (.and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
+      (.and (.sortAssign (.path [.HDDTR, .CAT]) .verbal)
+        (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP]))))
 
-/-- A common refinement of `filler-head-cxt` and `finiteHeadCxt`: head `s`, filler `nonverbal`. -/
-def fhFiniteUB : Construct
-  | .mtr => .any
-  | .hdDtr => .s
-  | .fillerDtr => .nonverbal
+/-- The one-principle grammar. -/
+def fhGrammar : Grammar fhSig := [fillerHead]
 
-/-! ### Inheritance is the pointwise order of the join
+/-! ### Worked constructs (entities: the construct, its two daughters, two category objects) -/
 
-A subtype refines its supertype, so at every position it is at least as specific — inheritance is
-`Pi` `≤`, no enumeration of feature values. -/
+/-- Entities of a worked filler-head construct. -/
+inductive Ent
+  | cxt | head | filler | npCat | vpCat
+  deriving DecidableEq, Fintype, Repr
 
-/-- Every refiner of `filler-head-cxt` has a head daughter that is (a subtype of) `verbal` —
-inherited, for the whole family, from the pointwise order. -/
-theorem refiner_head_verbal {c : Construct} (h : Refines c fillerHeadCxt) :
-    (Cat.verbal : Cat) ≤ c Position.hdDtr :=
-  h Position.hdDtr
+/-- A well-formed filler-head construct: a nonverbal (`noun`) filler, a verbal (`verb`) head, and the
+head's `GAP` pointing at the *same* category object as the filler's `CAT` — token identity. -/
+def goodModel : Interpretation fhSig where
+  U := Ent
+  S := fun
+    | .cxt => .fillerHeadCxt
+    | .head => .sign
+    | .filler => .sign
+    | .npCat => .noun
+    | .vpCat => .verb
+  A := fun a u => match a, u with
+    | .HDDTR, .cxt => some .head
+    | .FILLERDTR, .cxt => some .filler
+    | .CAT, .filler => some .npCat
+    | .CAT, .head => some .vpCat
+    | .GAP, .head => some .npCat   -- token-identical to the filler's CAT
+    | _, _ => none
+  R := fun e => e.elim
 
-/-- Every refiner of `filler-head-cxt` has a filler daughter that is (a subtype of) `nonverbal` —
-the SBCG inheritance the Sag2010 flattening could not express. -/
-theorem refiner_filler_nonverbal {c : Construct} (h : Refines c fillerHeadCxt) :
-    (Cat.nonverbal : Cat) ≤ c Position.fillerDtr :=
-  h Position.fillerDtr
+instance : Fintype goodModel.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq goodModel.U := inferInstanceAs (DecidableEq Ent)
 
-/-- The NP-filler subtype refines `filler-head-cxt` precisely because `nominal` refines
-`nonverbal` (`nonverbal ≤ nominal` in the subsumption order). -/
-theorem nominalFillerCxt_refines : Refines nominalFillerCxt fillerHeadCxt := by
-  intro i; cases i <;> decide
+/-- The well-formed construct satisfies the filler-head construction. -/
+example : goodModel.Models fhGrammar := by decide
 
-/-- ...and it therefore inherits a nonverbal filler — by the theorem above, not by reading its
-filler value. -/
-theorem nominalFillerCxt_filler_nonverbal :
-    (Cat.nonverbal : Cat) ≤ nominalFillerCxt Position.fillerDtr :=
-  refiner_filler_nonverbal nominalFillerCxt_refines
+/-- An ill-formed construct: the head's `GAP` is a *different* object (`vpCat`) from the filler's
+`CAT`, so the token-identity (filler–gap) conjunct fails — the gap is not filled by the filler. -/
+def gapMismatchModel : Interpretation fhSig where
+  U := Ent
+  S := fun
+    | .cxt => .fillerHeadCxt
+    | .head => .sign
+    | .filler => .sign
+    | .npCat => .noun
+    | .vpCat => .verb
+  A := fun a u => match a, u with
+    | .HDDTR, .cxt => some .head
+    | .FILLERDTR, .cxt => some .filler
+    | .CAT, .filler => some .npCat
+    | .CAT, .head => some .vpCat
+    | .GAP, .head => some .vpCat    -- ≠ the filler's CAT: the filler–gap link is broken
+    | _, _ => none
+  R := fun e => e.elim
 
-/-! ### Multiple inheritance is unification
+instance : Fintype gapMismatchModel.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq gapMismatchModel.U := inferInstanceAs (DecidableEq Ent)
 
-A subtype built as the unification of two supertypes refines both — the least-upper-bound property,
-free from `PartialUnify`. -/
+/-- The gap-mismatch construct violates the filler-head construction — `pathEq` genuinely filters. -/
+example : ¬ gapMismatchModel.Models fhGrammar := by decide
 
-/-- Cross-classification: `filler-head-cxt` and the finite-head construction unify (they are
-compatible), and the result refines both — multiple inheritance composes. -/
-theorem cross_classification :
-    ∃ d : Construct, PartialUnify.unify fillerHeadCxt finiteHeadCxt = some d ∧
-      Refines d fillerHeadCxt ∧ Refines d finiteHeadCxt := by
-  have hcompat : Compat fillerHeadCxt finiteHeadCxt :=
-    Compat.of_le (u := fhFiniteUB)
-      (by intro i; cases i <;> decide) (by intro i; cases i <;> decide)
-  obtain ⟨d, hd⟩ := Option.isSome_iff_exists.mp (compat_iff_isSome_unify.mp hcompat)
-  refine ⟨d, hd, ?_, ?_⟩
-  · exact (PartialUnify.isLUB_of_unify_eq_some hd).1 (Set.mem_insert _ _)
-  · exact (PartialUnify.isLUB_of_unify_eq_some hd).1 (Set.mem_insert_of_mem _ rfl)
+/-- An ill-formed construct: the filler daughter is `verb` (verbal), not nonverbal, so the
+`[CAT nonverbal]` conjunct fails. -/
+def verbalFillerModel : Interpretation fhSig where
+  U := Ent
+  S := fun
+    | .cxt => .fillerHeadCxt
+    | .head => .sign
+    | .filler => .sign
+    | .npCat => .verb       -- the filler's category is verbal — a category violation
+    | .vpCat => .verb
+  A := fun a u => match a, u with
+    | .HDDTR, .cxt => some .head
+    | .FILLERDTR, .cxt => some .filler
+    | .CAT, .filler => some .npCat
+    | .CAT, .head => some .vpCat
+    | .GAP, .head => some .npCat
+    | _, _ => none
+  R := fun e => e.elim
 
-/-! ### Conflict is unification failure ([carpenter-1992])
+instance : Fintype verbalFillerModel.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq verbalFillerModel.U := inferInstanceAs (DecidableEq Ent)
 
-Pinning the filler to `verbal` conflicts with `filler-head-cxt`'s `nonverbal`: no common refinement,
-so the constructs are incompatible and do not unify. -/
-
-/-- A construct pinning the filler daughter to `verbal`. -/
-def verbalFillerCxt : Construct
-  | .fillerDtr => .verbal
-  | _ => .any
-
-/-- `verbal` and `nonverbal` have no common refinement. -/
-private theorem no_common_refinement (u : Cat) : ¬ ((Cat.nonverbal : Cat) ≤ u ∧ (Cat.verbal : Cat) ≤ u) := by
-  revert u; decide
-
-/-- `filler-head-cxt` and the verbal-filler construct are incompatible — the conflict is detectable,
-not silently inherited. -/
-theorem fillerHead_verbalFiller_incompatible : ¬ Compat fillerHeadCxt verbalFillerCxt := by
-  intro ⟨u, hu⟩
-  obtain ⟨h1, h2⟩ := PartialUnify.mem_upperBounds_pair.mp hu
-  exact no_common_refinement (u Position.fillerDtr) ⟨h1 Position.fillerDtr, h2 Position.fillerDtr⟩
-
-/-- Equivalently, their unification fails. -/
-theorem fillerHead_verbalFiller_unify_none :
-    PartialUnify.unify fillerHeadCxt verbalFillerCxt = none :=
-  PartialUnify.unify_eq_none_iff.mpr fillerHead_verbalFiller_incompatible
+/-- The verbal-filler construct violates the filler-head construction — `[CAT nonverbal]` filters. -/
+example : ¬ verbalFillerModel.Models fhGrammar := by decide
 
 end HPSG.Construction
