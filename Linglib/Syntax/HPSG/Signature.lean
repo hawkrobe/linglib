@@ -1,5 +1,6 @@
 import Mathlib.Order.Basic
 import Mathlib.Order.Max
+import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # RSRL signatures
@@ -15,16 +16,52 @@ namespace HPSG.RSRL
 
 universe u
 
-/-- Build a `PartialOrder` from a decidable boolean order whose laws hold (typically `by decide`
-on a finite type). Reducible so `≤` unfolds to `leB · · = true` in instance search. -/
-@[reducible] def partialOrderOfBool {α : Type u} (leB : α → α → Bool)
-    (le_refl : ∀ a, leB a a = true)
-    (le_trans : ∀ a b c, leB a b = true → leB b c = true → leB a c = true)
-    (le_antisymm : ∀ a b, leB a b = true → leB b a = true → a = b) : PartialOrder α where
-  le a b := leB a b = true
-  le_refl := le_refl
-  le_trans := le_trans
-  le_antisymm := le_antisymm
+/-! ### Structural subsumption order from a covers relation
+
+The sort hierarchy's `≤` is the **reflexive-transitive closure** of a *direct-subsumption* (`covers`)
+relation, so transitivity is structural (`ReflTransGen.trans`) and never a proof obligation — and, since
+the order is not decided by a Bool predicate, there is no `|α|³` transitivity `decide` to exceed the
+elaborator recursion depth on a large hierarchy. Antisymmetry follows from a `rank` function every edge
+strictly decreases; the author declares the `~|α|`-edge DAG and a depth function, not the closure. -/
+
+private theorem rankLe_of_reflTransGen {α : Type u} {covers : α → α → Prop} {rank : α → ℕ}
+    (hrank : ∀ a b, covers a b → rank b < rank a)
+    {a b : α} (hab : Relation.ReflTransGen covers a b) : rank b ≤ rank a := by
+  induction hab with
+  | refl => exact le_refl _
+  | tail _ hr ih => exact le_of_lt (lt_of_lt_of_le (hrank _ _ hr) ih)
+
+private theorem eq_of_reflTransGen_rank_eq {α : Type u} {covers : α → α → Prop} {rank : α → ℕ}
+    (hrank : ∀ a b, covers a b → rank b < rank a)
+    {a b : α} (hab : Relation.ReflTransGen covers a b) (h : rank a = rank b) : a = b := by
+  cases hab with
+  | refl => rfl
+  | tail hac hcb =>
+    exfalso
+    have h1 := rankLe_of_reflTransGen hrank hac
+    have h2 := hrank _ _ hcb
+    omega
+
+/-- Build a `PartialOrder` from a **direct-subsumption ("covers") relation** and a `rank` that every
+edge strictly decreases. `≤` is `ReflTransGen covers`; transitivity is structural and antisymmetry
+follows from `rank` — no `decide` over the order, so it scales to large hierarchies. -/
+@[reducible] def partialOrderOfCovers {α : Type u} (covers : α → α → Prop) (rank : α → ℕ)
+    (hrank : ∀ a b, covers a b → rank b < rank a) : PartialOrder α where
+  le a b := Relation.ReflTransGen covers a b
+  le_refl _ := Relation.ReflTransGen.refl
+  le_trans _ _ _ := Relation.ReflTransGen.trans
+  le_antisymm _ _ hab hba :=
+    eq_of_reflTransGen_rank_eq hrank hab
+      (Nat.le_antisymm (rankLe_of_reflTransGen hrank hba) (rankLe_of_reflTransGen hrank hab))
+
+/-- `Decidable (a ≤ b)` for `partialOrderOfCovers`, via finite reachability over an explicit list of
+all sorts (`Core.Relation.ReflTransGen.decidable_of_finite` — mathlib has no `Decidable (ReflTransGen
+…)`; the **`List`**-based variant kernel-reduces under `decide` where the `Finset`/`Quotient` one does
+not). `allSorts` need only contain every `covers`-target; pass the sort enumeration. -/
+@[reducible] def decidableLEOfCovers {α : Type u} [DecidableEq α] {covers : α → α → Prop}
+    [DecidableRel covers] (allSorts : List α) (complete : ∀ a b, covers a b → b ∈ allSorts)
+    (a b : α) : Decidable (Relation.ReflTransGen covers a b) :=
+  Relation.ReflTransGen.decidable_of_finite allSorts complete a b
 
 /-- An RSRL signature ([richter-2000], Def. 47) over a sort hierarchy `Srt`. -/
 structure Signature (Srt : Type u) [PartialOrder Srt] where

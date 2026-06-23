@@ -33,23 +33,34 @@ inductive HAttr where
   | CAT | HD
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption as a boolean relation: `hleB a b` is "`a` is at least as specific as `b`". -/
-def hleB : HSort → HSort → Bool
-  | _, .top => true
-  | .word, .sign => true
+/-- Direct subsumption ("covers"): the DAG edges (a *directly* more specific than b). The order is
+`ReflTransGen hCovers`. -/
+def hCovers : HSort → HSort → Bool
+  | .sign, .top => true
+  | .category, .top => true
   | .phrase, .sign => true
+  | .word, .sign => true
   | .headedPhrase, .phrase => true
-  | .headedPhrase, .sign => true
   | .nounCat, .category => true
   | .verbCat, .category => true
   | .otherCat, .category => true
-  | a, b => decide (a = b)
+  | _, _ => false
+
+/-- Specificity depth; every covers edge strictly increases it (giving antisymmetry). -/
+def hRank : HSort → Nat
+  | .top => 0
+  | .sign => 1 | .category => 1
+  | .phrase => 2 | .word => 2 | .nounCat => 2 | .verbCat => 2 | .otherCat => 2
+  | .headedPhrase => 3
 
 /-- The sort hierarchy as a `PartialOrder` (`a ≤ b` = "`a` at least as specific as `b`"). -/
 instance : PartialOrder HSort :=
-  partialOrderOfBool hleB (by decide) (by decide) (by decide)
+  partialOrderOfCovers (hCovers · · = true) hRank (by decide)
 
-instance : DecidableLE HSort := fun a b => inferInstanceAs (Decidable (hleB a b = true))
+instance : DecidableLE HSort := fun a b =>
+  decidableLEOfCovers (covers := (hCovers · · = true))
+    [.top, .sign, .phrase, .headedPhrase, .word, .category, .nounCat, .verbCat, .otherCat]
+    (by decide) a b
 
 /-- Appropriateness: `CAT` is appropriate to every sign (value `category`); `HD` to headed
 phrases (value `sign`). Categories are attributeless. -/

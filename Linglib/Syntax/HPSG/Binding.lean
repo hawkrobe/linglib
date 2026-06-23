@@ -34,18 +34,30 @@ inductive BAttr | SUBJ | OBJ | IDX deriving DecidableEq, Fintype, Repr
 /-- One relation: local o-command, `locO` (arity 2). -/
 inductive BRel | locO deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption: the nom-obj species are `≤ synsem`; everything `≤ top`. -/
-def bleB : BSort → BSort → Bool
-  | _, .top => true
+/-- Direct subsumption ("covers"): the DAG edges. The nom-obj species (`ana`/`ppro`/`npro`) cover
+`synsem`; `sign`/`synsem`/`idx` cover `top`. The order is `ReflTransGen bCovers`. -/
+def bCovers : BSort → BSort → Bool
+  | .sign, .top => true
+  | .synsem, .top => true
+  | .idx, .top => true
   | .ana, .synsem => true
   | .ppro, .synsem => true
   | .npro, .synsem => true
-  | a, b => decide (a = b)
+  | _, _ => false
+
+/-- Specificity depth; every covers edge strictly increases it (giving antisymmetry). -/
+def bRank : BSort → Nat
+  | .top => 0
+  | .sign => 1 | .synsem => 1 | .idx => 1
+  | .ana => 2 | .ppro => 2 | .npro => 2
 
 instance : PartialOrder BSort :=
-  partialOrderOfBool bleB (by decide) (by decide) (by decide)
+  partialOrderOfCovers (bCovers · · = true) bRank (by decide)
 
-instance : DecidableLE BSort := fun a b => inferInstanceAs (Decidable (bleB a b = true))
+instance : DecidableLE BSort := fun a b =>
+  decidableLEOfCovers (covers := (bCovers · · = true))
+    [.top, .sign, .synsem, .ana, .ppro, .npro, .idx]
+    (by decide) a b
 
 /-- Appropriateness: a sign has `SUBJ`/`OBJ` synsems; every synsem species has an `IDX`. -/
 def bapprop : BSort → BAttr → Option BSort
