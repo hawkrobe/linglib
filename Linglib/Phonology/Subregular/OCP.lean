@@ -47,7 +47,6 @@ formalisations but the constraint and a retraction onto it, both characterising
 namespace Subregular
 
 open OptimalityTheory
-open Subregular
 
 -- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`
 -- and `Core.Optimization.eval`, which are monomorphic in universe 0.
