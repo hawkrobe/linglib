@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Insert
-import Mathlib.Order.Monotone.Monovary
+import Linglib.Core.Order.Monotone.Monovary
 
 /-!
 # Non-crossing constraint for two-layer association lines
@@ -34,35 +34,6 @@ filter on autosegmental GEN.
 -/
 
 namespace Autosegmental
-
-/-! ### `MonovaryOn` on `union`, `insert`, and singletons
-
-`monovaryOn_union` / `monovaryOn_insert` / `monovaryOn_singleton` are the
-`Monovary` analogues of mathlib's `Set.pairwise_union` / `_insert` /
-`_singleton`, which the `MonovaryOn` API lacks — `[UPSTREAM]` candidates for
-`Mathlib/Order/Monotone/Monovary.lean`. -/
-
-section Monovary
-variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β} {s t : Set ι}
-
-/-- `MonovaryOn` holds vacuously on a singleton: there is only one index. -/
-@[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
-  simp [MonovaryOn]
-
-/-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
-    order against the other. The `Monovary` analogue of `Set.pairwise_union` (the
-    `a = b` diagonal is vacuous, so no `≠` guard). -/
-theorem monovaryOn_union : MonovaryOn f g (s ∪ t) ↔ MonovaryOn f g s ∧ MonovaryOn f g t ∧
-    ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
-  grind [MonovaryOn]
-
-/-- `MonovaryOn` on `insert a s`. The `Monovary` analogue of `Set.pairwise_insert`. -/
-theorem monovaryOn_insert {a : ι} :
-    MonovaryOn f g (insert a s) ↔
-      MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
-  grind [MonovaryOn]
-
-end Monovary
 
 /-! ### Set-level non-crossing property (via mathlib `MonovaryOn`) -/
 

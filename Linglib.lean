@@ -108,6 +108,7 @@ import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.Markedness
+import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Flat
