@@ -424,8 +424,8 @@ have Studies-level Chinese formalizations they currently lack):
 
 - **HPSG** (`Syntax/HPSG/Basic.lean`): no clausal spine, no
   AspP, no ICH. The "you-skipping" pattern would naturally be a *lexical
-  rule on argument structure* (compare `LexicalRules.lean:36-95`'s
-  `passiveRule`, `dativeShiftRule`, `resultativeRule`). [liu-yip-2026]'s
+  rule on argument structure* (an argument-structure–changing `lexical-cxt`,
+  in the RSRL terms of `Syntax/HPSG/Construction`). [liu-yip-2026]'s
   movement+reconstruction has no HPSG analog. SILENT DIVERGENCE.
 
 - **Dependency Grammar** (`Studies/Osborne2019Control.lean`):

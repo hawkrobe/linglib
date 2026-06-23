@@ -105,6 +105,8 @@ inductive Srt
   | construct | phrasalCxt | lexicalCxt | headedCxt | clause | fillerHeadCxt | auxInitialCxt
   -- head-modifier-cxt (Fig. 6): a relative clause or other adjunct modifies a head ([sag-2010] §6)
   | headModifierCxt
+  -- lexical constructs (Fig. 6): inflectional-cxt = a category-preserving lexical rule (e.g. passive)
+  | inflectionalCxt
   -- generic island demonstrations (Ross domains, not Sag construction types) under filler-head-cxt
   | islandCxt | weakIslandCxt
   -- clausal hierarchy (Fig. 7)
@@ -136,6 +138,7 @@ def covers : Srt → Srt → Bool
   | .sign, .top => true | .construct, .top => true
   -- construct backbone
   | .phrasalCxt, .construct => true | .lexicalCxt, .construct => true
+  | .inflectionalCxt, .lexicalCxt => true
   | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true
   | .fillerHeadCxt, .headedCxt => true | .auxInitialCxt, .headedCxt => true
   | .headModifierCxt, .headedCxt => true
@@ -161,6 +164,7 @@ def rank : Srt → Nat
   | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
   | .invPlus => 2 | .invMinus => 2 | .elist => 2 | .nelist => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
   | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .headedCxt => 3 | .clause => 3
+  | .inflectionalCxt => 3
   | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .headModifierCxt => 4
   | .coreCl => 4 | .relativeCl => 4
   | .islandCxt => 5 | .weakIslandCxt => 5
@@ -176,7 +180,7 @@ instance : DecidableLE Srt := fun a b =>
      .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus,
      .list, .elist, .nelist, .sign,
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
-     .headModifierCxt, .islandCxt, .weakIslandCxt,
+     .headModifierCxt, .inflectionalCxt, .islandCxt, .weakIslandCxt,
      .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
      .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .interrogativeSAI]
     (by decide) a b
@@ -187,7 +191,7 @@ instance : DecidableLE Srt := fun a b =>
 `CAT`, (list-valued) `GAP`, `SEM` type, and `INV` value; a nonempty list's `FIRST` (a category) and
 `REST` (a list). -/
 inductive Feat
-  | MTR | HDDTR | FILLERDTR | MODDTR | CAT | GAP | SEM | INV | MOD | FIRST | REST
+  | MTR | HDDTR | FILLERDTR | MODDTR | BASE | CAT | GAP | SEM | INV | MOD | FIRST | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- Appropriateness: every construct has a `MTR` (a sign); `headed-cxt` and its subtypes additionally
@@ -198,6 +202,7 @@ def approp : Srt → Feat → Option Srt
   | .construct, .MTR => some .sign
   | .phrasalCxt, .MTR => some .sign
   | .lexicalCxt, .MTR => some .sign
+  | .inflectionalCxt, .MTR => some .sign
   | .headedCxt, .MTR => some .sign
   | .clause, .MTR => some .sign
   | .fillerHeadCxt, .MTR => some .sign
@@ -240,6 +245,8 @@ def approp : Srt → Feat → Option Srt
   | .theCl, .FILLERDTR => some .sign
   | .headModifierCxt, .HDDTR => some .sign
   | .headModifierCxt, .MODDTR => some .sign
+  -- a lexical rule's input base (inflectional-cxt: a category-preserving rule like passive)
+  | .inflectionalCxt, .BASE => some .sign
   | .sign, .CAT => some .cat
   | .sign, .GAP => some .list
   | .sign, .SEM => some .semType
@@ -345,16 +352,26 @@ def headModifierPrinciple : Desc sig :=
     (.and (.pathEq (.path [.MODDTR, .MOD]) (.path [.HDDTR, .CAT]))
       (.pathEq (.path [.MTR, .CAT]) (.path [.HDDTR, .CAT])))
 
+/-- The **inflectional lexical rule** ([sag-2012] (48) `inflectional-cxt`; [pollard-sag-1994] lexical
+rules): a category-preserving lexical rule (e.g. passive: V ⤳ V) relates a mother to its input base,
+with the mother's `CAT` **token-identical** to the base's `CAT` — the Head Feature Principle for the
+lexicon. Two outputs of the same rule from same-category bases share a category, which is why (e.g.)
+passivized verbs coordinate. Category-*changing* derivation (nominalization) is a separate
+`derivational-cxt`, deferred. -/
+def inflectionalPrinciple : Desc sig :=
+  .imp (.sortAssign .colon .inflectionalCxt) (.pathEq (.path [.MTR, .CAT]) (.path [.BASE, .CAT]))
+
 /-- The grammar: the filler-head construction (with gap amalgamation), the four clausal-type
 principles, the filler-gap construction-specific restrictions (topicalization's verb head, wh-relative's
 nominal filler), the generic absolute/weak island constraints, the absolute-island status of
-topicalization and wh-exclamatives, and the head-modifier construction. The aux-initial / inversion
-construction is paper-anchored in `Studies/SagEtAl2020.lean`, which extends this grammar. -/
+topicalization and wh-exclamatives, the head-modifier construction, and the inflectional lexical rule.
+The aux-initial / inversion construction is paper-anchored in `Studies/SagEtAl2020.lean`, which extends
+this grammar. -/
 def grammar : Grammar sig :=
   [fillerHeadPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
     relativePrinciple, whRelPrinciple, topPrinciple,
     islandPrinciple, weakIslandPrinciple, topIslandPrinciple, whExclIslandPrinciple,
-    headModifierPrinciple]
+    headModifierPrinciple, inflectionalPrinciple]
 
 /-! ### Multiple inheritance: `ns-wh-int-cl` is a lower bound across the two dimensions -/
 
@@ -694,5 +711,67 @@ head, so the construct is rejected. -/
 abbrev headModWrongCat : Interpretation sig := headModConstruct .vpCat
 
 example : ¬ headModWrongCat.Models grammar := by decide
+
+/-! ### Inflectional lexical-rule constructs ([sag-2012] (48))
+
+A category-preserving lexical rule (e.g. passive) relating an output mother to its input base; the
+mother's `CAT` is the base's `CAT`. These ground `Studies/Mueller2013`'s claim that HPSG lexical rules
+preserve category (so e.g. passivized verbs coordinate). -/
+
+/-- An inflectional lexical-rule construct family: mother and base of category `baseCat`. When the
+mother's category equals the base's (the entity is shared), the rule is category-preserving. -/
+def inflectionalConstruct (mtrCat : Ent) : Interpretation sig where
+  U := Ent
+  S := fun u => match u with | .cxt => .inflectionalCxt | u => baseS u
+  A := fun a u => match a, u with
+    | .MTR, .cxt => some .mtr
+    | .BASE, .cxt => some .hd          -- the input base (e.g. the active verb)
+    | .CAT, .hd => some .vpCat          -- base is a verb
+    | .CAT, .mtr => some mtrCat          -- mother category
+    | _, _ => none
+  R := fun e => e.elim
+
+instance (mtrCat : Ent) : Fintype (inflectionalConstruct mtrCat).U := inferInstanceAs (Fintype Ent)
+instance (mtrCat : Ent) : DecidableEq (inflectionalConstruct mtrCat).U :=
+  inferInstanceAs (DecidableEq Ent)
+
+/-- A passive-like inflectional rule: the output verb has the base verb's category (V ⤳ V) — category
+preserved, so the output coordinates with other same-category outputs. -/
+abbrev goodInflectional : Interpretation sig := inflectionalConstruct .vpCat
+
+example : goodInflectional.Models grammar := by decide
+
+/-- The category-preservation constraint binds: a lexical rule whose output category differs from the
+base's (here a noun output from a verb base) violates `inflectionalPrinciple`. -/
+abbrev inflectionalWrongCat : Interpretation sig := inflectionalConstruct .npCat
+
+example : ¬ inflectionalWrongCat.Models grammar := by decide
+
+/-- Entities of a two-step lexical-rule chain (e.g. double passivization, [mueller-2013] §11): two
+inflectional constructs where the first's output (`mid`) is the second's input base. -/
+inductive ChainEnt
+  | cxt1 | cxt2 | base0 | mid | out | vCat
+  deriving DecidableEq, Fintype, Repr
+
+/-- **Lexical rules iterate freely, preserving category** ([mueller-2013] §11): a chain of two
+inflectional rules — the first maps `base0 ⤳ mid`, the second `mid ⤳ out` — keeps the category
+throughout (`out`'s `CAT` = `base0`'s, via two `inflectionalPrinciple` steps), so double passivization
+works with no phrasal machinery. -/
+def iterationChain : Interpretation sig where
+  U := ChainEnt
+  S := fun u => match u with
+    | .cxt1 => .inflectionalCxt | .cxt2 => .inflectionalCxt
+    | .base0 => .sign | .mid => .sign | .out => .sign | .vCat => .verb
+  A := fun a u => match a, u with
+    | .MTR, .cxt1 => some .mid  | .BASE, .cxt1 => some .base0
+    | .MTR, .cxt2 => some .out  | .BASE, .cxt2 => some .mid
+    | .CAT, .base0 => some .vCat | .CAT, .mid => some .vCat | .CAT, .out => some .vCat
+    | _, _ => none
+  R := fun e => e.elim
+
+instance : Fintype iterationChain.U := inferInstanceAs (Fintype ChainEnt)
+instance : DecidableEq iterationChain.U := inferInstanceAs (DecidableEq ChainEnt)
+
+example : iterationChain.Models grammar := by decide
 
 end HPSG.Construction
