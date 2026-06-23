@@ -478,13 +478,13 @@ The following theorems make this structural parallel precise. -/
     from existential (not universal) quantificational structure.
 
     Formally: CSIP(P) → IMPF(P)(w)(t) → PRFV(P)(w)(t). This is
-    `impf_entails_prfv_of_csip` from SubintervalProperty.lean. -/
+    `impf_entails_prfv_of_csub` from SubintervalProperty.lean. -/
 theorem csip_entails_completion
     {W Time : Type*} [LinearOrder Time]
     (P : W → Event Time → Prop) (hCSIP : HasClosedSubintervalProp P)
     (w : W) (t : NonemptyInterval Time) :
     IMPF P w t → PRFV P w t :=
-  fun h => impf_entails_prfv_of_csip P hCSIP w t h
+  fun h => impf_entails_prfv_of_csub P hCSIP w t h
 
 /-- **Non-CSIP predicates may lack completion**: the imperfective paradox shows
     that not all predicates support the IMPF→PRFV entailment.
@@ -542,7 +542,7 @@ theorem csip_determines_modal_need
       -- Modal resolution needed: must appeal to alternative worlds
       ∃ e, t < e.τ ∧ P w e) := by
   constructor
-  · intro hCSIP; exact impf_entails_prfv_of_csip P hCSIP w t
+  · intro hCSIP; exact impf_entails_prfv_of_csub P hCSIP w t
   · intro ⟨e, hSub, hP⟩ _ _
     exact ⟨e, hSub, hP⟩
 

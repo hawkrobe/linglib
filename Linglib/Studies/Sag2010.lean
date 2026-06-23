@@ -1,11 +1,26 @@
 /-
-# Filler-Gap Construction Typology
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Syntax.HPSG.HeadFiller
+import Linglib.Studies.Ross1967
+import Linglib.Studies.SagWasowBender2003Extraction
+import Linglib.Features.ClauseForm
 
-Parametric variation across the five types of English filler-gap clauses,
-following [sag-2010]. The core empirical contribution: F-G clauses share
-a common filler–gap structure but differ systematically along 7 parameters.
+set_option autoImplicit false
 
-## The Five F-G Clause Types
+/-!
+# English Filler-Gap Constructions
+[sag-2010]
+
+Parametric variation across the five types of English filler-gap (F-G) clause,
+following [sag-2010]. The clauses share a common filler-head structure but
+differ systematically along the seven parameters of variation listed in the
+paper, and they cross-classify with clause-type supertypes from which their
+semantics is inherited.
+
+## The five F-G clause types
 
 1. Wh-interrogative: "How foolish is he?" / "I wonder how foolish he is."
 2. Wh-exclamative: "What a fool he is!" / "It's amazing how odd it is."
@@ -13,305 +28,458 @@ a common filler–gap structure but differ systematically along 7 parameters.
 4. Wh-relative: "the person who they nominated"
 5. The-clause: "The more people I met, the happier I became."
 
--/
+## What is modeled
 
-import Linglib.Studies.Ross1967
-import Linglib.Features.ClauseForm
+This file formalizes the *descriptive parameter table* of [sag-2010] §2.1 plus
+the inheritance skeleton of the Sign-Based Construction Grammar analysis:
+
+* a `FGConstruction` constraint bundle for each clause type, one field per
+  parameter of variation;
+* a cross-classifying `clauseType` supertype that *determines* the semantic
+  type — so semantics is inherited, not stipulated per construction;
+* the `filler-head-cxt` filler constraint (`[CAT nonverbal]`) stated once and
+  proved inherited by all five constructions, rather than re-stipulated.
+
+The full SBCG feature-structure unification engine (signs, MTR/DTRS feature
+geometry, multiple-inheritance lattice) is out of scope for a study file; it
+would live in the HPSG theory layer.
+
+## Bridges (true by construction, not by prose)
+
+* islands reground on `HPSG.GapRestriction`: islandhood is derived from
+  `IsAbsoluteIsland` (`[GAP ⟨⟩]`), not a boolean stipulation;
+* agreement with [sag-wasow-bender-2003]'s SLASH model on the topicalization
+  island;
+* divergence from [ross-1967]'s configurational Complex-NP Constraint on
+  wh-relatives, which [sag-2010] re-attributes to processing
+  ([hofmeister-sag-2010]);
+* the surface-form correspondents map to `Features.ClauseForm`.
+-/
 
 namespace Sag2010
 
-open Features
+open HPSG (GapRestriction)
+open Features (ClauseForm)
 
--- ============================================================================
--- F-G Clause Types
--- ============================================================================
+/-! ### Syntactic categories -/
 
-/-- The five types of English filler-gap clause. -/
-inductive FGClauseType where
-  | whInterrogative  -- "Who did they visit?" / "I wonder who they visited."
-  | whExclamative    -- "What a fool he is!" / "It's amazing how odd it is."
-  | topicalized      -- "The bagels, I like."
-  | whRelative       -- "the person who they nominated"
-  | theClause        -- "The more people I met, the happier I became."
-  deriving Repr, DecidableEq
+/-- Syntactic categories relevant to F-G filler and head daughters. Nonverbal
+categories (`NP`, `PP`, `AP`, `AdvP`) appear as fillers; verbal projections
+(`S`, `CP`, `VP`) appear in the head daughter. -/
+inductive SynCat
+  | NP | PP | AP | AdvP | S | CP | VP
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- Parameters of Variation (§2.1, example 6)
--- ============================================================================
+/-- A category is *nonverbal* when it is not a verbal projection. [sag-2010]'s
+filler-head construction constrains every filler daughter to be `[CAT nonverbal]`
+((25), p. 492). -/
+def SynCat.IsNonverbal (c : SynCat) : Prop :=
+  c = .NP ∨ c = .PP ∨ c = .AP ∨ c = .AdvP
 
-/-- What kind of distinguished wh-element appears in the filler daughter.
-(§2.1, parameter 6a) -/
-inductive FillerWhType where
-  | none           -- No wh-element (topicalization)
-  | interrogative  -- Interrogative wh (who, what, which N, how)
-  | exclamative    -- Exclamative wh (what!, how!)
-  | relative       -- Relative wh (who, whose, which, where)
-  | the            -- Definite degree marker "the" (the-clause)
-  deriving Repr, DecidableEq
+instance : DecidablePred SynCat.IsNonverbal :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
-/-- Constraints on head daughter inversion (§2.1, parameter 6d / example 28). -/
-inductive InversionRequirement where
-  | required     -- Must be inverted (matrix wh-interrogatives)
-  | prohibited   -- Must not be inverted (topicalization, relative, exclamative)
-  | optional     -- Optionally inverted (noninitial the-clause)
-  deriving Repr, DecidableEq
+/-! ### Parameters of variation ((6)) -/
 
-/-- Whether head daughter can be infinitival (§2.1, parameter 6d / example 29). -/
-inductive Finiteness where
-  | finiteOnly           -- Always finite (topicalization, exclamative, the-clause)
-  | infinitivalPossible  -- VP[inf] head daughter possible (interrogative, relative)
-  deriving Repr, DecidableEq
+/-- The distinguished wh-element a construction requires in its filler daughter
+((6a), (7)). -/
+inductive FillerWh
+  | noWh           -- topicalization
+  | interrogative
+  | exclamative
+  | relative
+  | degreeThe      -- the definite degree marker `the` (the-clause)
+  deriving DecidableEq, Repr
 
-/-- Semantic type of the clause (§2.1, example 30; follows [ginzburg-sag-2000]). -/
-inductive FGSemanticType where
-  | question   -- Set of propositions (wh-interrogative)
-  | fact       -- Fact: related to but distinct from proposition (exclamative)
-  | austinean  -- Proposition or outcome (topicalization, the-clause)
-  | modifier   -- Property: λx[...] (wh-relative modifies a CNP)
-  deriving Repr, DecidableEq
+/-- Inversion policy on the head daughter ((28)). Wh-interrogatives invert *iff*
+the clause is independent — the IC/INV identity constraint of construction (80),
+not an unconditional requirement. -/
+inductive InversionPolicy
+  | iffIndependent   -- INV = IC: inverted exactly when independent ((28a), (84))
+  | prohibited       -- never inverted ((28b))
+  | optional         -- noninitial the-clause ((28c))
+  deriving DecidableEq, Repr
 
-/-- Whether the clause must/can be independent (§2.1, parameter 6g / example 31). -/
-inductive Independence where
-  | required    -- Must be independent (topicalized, matrix wh-interrogative)
-  | prohibited  -- Must be embedded (relative)
-  | either      -- Can be either (exclamative, embedded interrogative, the-clause)
-  deriving Repr, DecidableEq
+/-- Whether the head daughter may be infinitival ((29)). -/
+inductive Finiteness
+  | finiteOnly           -- always finite ((29a))
+  | infinitivalPossible  -- infinitival head daughter possible ((29b))
+  deriving DecidableEq, Repr
 
-/-- The 7 parameters of variation across F-G clause types (§2.1, example 6).
+/-- Syntactic category of the head daughter ((6c), (27)). -/
+inductive HeadCat
+  | s        -- S
+  | sOrCP    -- S or CP (the-clause, (27b))
+  deriving DecidableEq, Repr
 
-Each parameter corresponds to a feature already formalized elsewhere in linglib;
-the bridge theorems below verify consistency. -/
-structure FGParameters where
-  /-- (6a) What wh-element in the filler? -/
-  fillerWhType : FillerWhType
-  /-- (6d) Must/can head be inverted? -/
-  headInversion : InversionRequirement
-  /-- (6d) Can head be infinitival? -/
+/-- The `[IC ±]` (independent-clause) status a construction imposes, with its
+embedding profile ((31); §5.1, §5.3). -/
+inductive ICStatus
+  | mainClause     -- [IC +]: root, or embedded where main-clause phenomena are licensed
+  | embeddedOnly   -- [IC −]: must be embedded (wh-relative, (91))
+  | unconstrained  -- IC value free (exclamative (70), interrogative (80), the-clause)
+  deriving DecidableEq, Repr
+
+/-! ### Clause-type supertype and inherited semantics ((30)) -/
+
+/-- The clause-type supertype an F-G construction cross-classifies with in
+[sag-2010]'s type hierarchy (§3, Appendix B). A nonsubject wh-interrogative
+construct is *simultaneously* a `filler-head-cxt` and an `interrogative-cl`; its
+semantic type is inherited from the latter and shared with non-F-G clauses of
+the same type. -/
+inductive ClauseType
+  | interrogativeCl
+  | relativeCl
+  | exclamativeCl
+  | declarativeCl
+  deriving DecidableEq, Repr
+
+/-- Semantic type of a clause ((30), following [ginzburg-sag-2000]'s Vendlerian
+typology of facts, propositions, questions, and outcomes). -/
+inductive SemType
+  | question     -- (30a) wh-interrogative
+  | proposition  -- (30b) wh-relative
+  | fact         -- (30c) wh-exclamative
+  | austinean    -- (30d), (30e) the-clause and topicalization (proposition or outcome)
+  deriving DecidableEq, Repr
+
+/-- The semantic type is a property of the clause-type *supertype* ((30)): it is
+determined by the clause type, not stipulated per construction. -/
+def ClauseType.semType : ClauseType → SemType
+  | interrogativeCl => .question
+  | relativeCl      => .proposition
+  | exclamativeCl   => .fact
+  | declarativeCl   => .austinean
+
+/-- The compositional contribution of a construction, kept distinct from the
+clause's semantic type. The wh-relative clause denotes a *proposition* ((30b)),
+but the wh-relative *construction* contributes a common-noun-phrase modifier
+`λPλx[…]` ((90)) — two things [sag-2010] keeps separate. -/
+inductive Composition
+  | clausal      -- the clause's own denotation
+  | cnpModifier  -- modifies a common-noun phrase (wh-relative, (90))
+  deriving DecidableEq, Repr
+
+/-! ### The construction bundle -/
+
+/-- The constraints a filler-gap construction imposes, indexed by [sag-2010]'s
+seven parameters of variation ((6)). Models the descriptive parameter table of
+§2.1; `clauseType` records the cross-classifying supertype from which the
+semantic type is inherited. -/
+structure FGConstruction where
+  /-- (6b) Allowed syntactic categories of the filler daughter ((25)). -/
+  fillerCategories : List SynCat
+  /-- (6a) The distinguished wh-element in the filler ((6a), (7)). -/
+  fillerWh : FillerWh
+  /-- (6c) Syntactic category of the head daughter ((27)). -/
+  headCategory : HeadCat
+  /-- (6d) Inversion policy on the head daughter ((28)). -/
+  headInversion : InversionPolicy
+  /-- (6d) Whether the head daughter may be infinitival ((29)). -/
   headFiniteness : Finiteness
-  /-- (6e) Semantic type of the clause -/
-  semanticType : FGSemanticType
-  /-- (6f) Is this an extraction island? -/
-  isIsland : Bool
-  /-- (6g) Must this be independent? -/
-  independence : Independence
-  /-- (6b) Allowed filler categories (NP, PP, AP, AdvP, etc.) -/
-  fillerIsNonverbal : Bool  -- true for all 5; topicalization also allows AdvP
-  deriving Repr, DecidableEq
+  /-- (6f) Island status as an HPSG GAP restriction: `[GAP ⟨⟩]` (`noGap`) is an
+  absolute extraction island ((67), (73), (74)). -/
+  gapRestriction : GapRestriction
+  /-- (6e) The cross-classifying clause-type supertype, which determines the
+  semantic type ((30)). -/
+  clauseType : ClauseType
+  /-- (6g) The `[IC ±]` status and embedding profile ((31)). -/
+  ic : ICStatus
+  /-- Compositional contribution; `cnpModifier` for wh-relatives ((90)). -/
+  composition : Composition
+  deriving Repr
 
--- ============================================================================
--- Parameter Values for Each Construction
--- ============================================================================
+/-- The semantic type of a construction, inherited from its clause supertype. -/
+def FGConstruction.semType (k : FGConstruction) : SemType :=
+  k.clauseType.semType
 
-/-- Wh-interrogative parameters (§5.3, constructions 80–81).
-"Who did they visit?" — interrogative wh, inverted in matrix, question semantics. -/
-def whInterrogativeParams : FGParameters :=
-  { fillerWhType := .interrogative
-    headInversion := .required     -- (28a): inverted only in independent clause
-    headFiniteness := .infinitivalPossible  -- (29b): "I know how much time to take"
-    semanticType := .question      -- (30a)
-    isIsland := false              -- Sag: wh-interrogatives not extraction islands
-    independence := .either        -- matrix: "Who left?" / embedded: "I wonder who left"
-    fillerIsNonverbal := true }    -- (25a): NP, PP, AP, AdvP
+/-- A construction is an absolute extraction island iff its mother carries
+`[GAP ⟨⟩]`. Derived from the HPSG `GapRestriction`, not stipulated. -/
+def FGConstruction.IsIsland (k : FGConstruction) : Prop :=
+  k.gapRestriction.IsAbsoluteIsland
 
-/-- Wh-exclamative parameters (§5.2, construction 70).
-"What a fool he is!" — exclamative wh, uninverted, fact semantics. -/
-def whExclamativeParams : FGParameters :=
-  { fillerWhType := .exclamative
-    headInversion := .prohibited   -- (28b): never inverted
-    headFiniteness := .finiteOnly  -- (29a): always finite
-    semanticType := .fact          -- (30c): fact ([ginzburg-sag-2000])
-    isIsland := true               -- (73–74): extraction island
-    independence := .either        -- (71a): independent or embedded
-    fillerIsNonverbal := true }    -- (76): NP, AP, AdvP, PP; not VP
+instance : DecidablePred FGConstruction.IsIsland :=
+  fun k => inferInstanceAs (Decidable k.gapRestriction.IsAbsoluteIsland)
 
-/-- Topicalization parameters (§5.1, construction 61).
-"The bagels, I like." — no wh, uninverted, austinean semantics. -/
-def topicalizedParams : FGParameters :=
-  { fillerWhType := .none
-    headInversion := .prohibited   -- (28b): never inverted
-    headFiniteness := .finiteOnly  -- (29a): always finite
-    semanticType := .austinean     -- (30e): austinean (proposition or outcome)
-    isIsland := true               -- (67): extraction island per [GAP ⟨⟩]
-    independence := .required      -- (61): [IC +] required
-    fillerIsNonverbal := true }    -- (25a/63): NP, PP, AP, AdvP
+/-! ### The five constructions -/
 
-/-- Wh-relative parameters (§5.4, constructions 90–92).
-"the person who they nominated" — relative wh, uninverted, modifier semantics. -/
-def whRelativeParams : FGParameters :=
-  { fillerWhType := .relative
-    headInversion := .prohibited   -- (28b): never inverted
-    headFiniteness := .infinitivalPossible  -- (29b/97): infinitival wh-relatives
-    semanticType := .modifier      -- (30b/90): λPλx[...], modifies CNP
-    isIsland := false              -- relatives allow further extraction (variable)
-    independence := .prohibited    -- (91): must be embedded (modifies a noun)
-    fillerIsNonverbal := true }    -- (25b/92): NP, PP (finite); PP only (infinitival)
+/-- The five types of English filler-gap clause ((1)-(5)). -/
+inductive FGClauseType
+  | whInterrogative   -- (1) "How foolish is he?" / "I wonder how foolish he is."
+  | whExclamative     -- (2) "What a fool he is!" / "It's amazing how odd it is."
+  | topicalized       -- (3) "The bagels, I like."
+  | whRelative        -- (4) "the person who they nominated"
+  | theClause         -- (5) "The more people I met, the happier I became."
+  deriving DecidableEq, Repr
 
-/-- The-clause parameters (§5.5, construction 108).
-"The more you read, the more you understand." — degree marker the, optional
-inversion, austinean semantics. -/
-def theClauseParams : FGParameters :=
-  { fillerWhType := .the
-    headInversion := .optional     -- (28c): optional inversion in noninitial clause
-    headFiniteness := .finiteOnly  -- (29a): always finite
-    semanticType := .austinean     -- (30d): austinean
-    isIsland := false              -- no island constraint mentioned
-    independence := .either        -- can be independent or embedded paratactically
-    fillerIsNonverbal := true }    -- (25a): NP, PP, AP, AdvP
+/-- The five filler-gap clause types, in canonical order. -/
+def allTypes : List FGClauseType :=
+  [.whInterrogative, .whExclamative, .topicalized, .whRelative, .theClause]
 
-/-- Map each F-G clause type to its parameters. -/
-def fgParams : FGClauseType → FGParameters
-  | .whInterrogative => whInterrogativeParams
-  | .whExclamative   => whExclamativeParams
-  | .topicalized     => topicalizedParams
-  | .whRelative      => whRelativeParams
-  | .theClause       => theClauseParams
+/-- The parameter bundle of each filler-gap construction, with every value
+sourced from [sag-2010] §2.1 and §5. -/
+def fgParams : FGClauseType → FGConstruction
+  | .whInterrogative =>
+      { fillerCategories := [.NP, .PP, .AP, .AdvP]   -- (25a), (86)
+        fillerWh := .interrogative
+        headCategory := .s                            -- (27a)
+        headInversion := .iffIndependent              -- (28a), (84): matrix inverts, embedded does not
+        headFiniteness := .infinitivalPossible        -- (29b)
+        gapRestriction := .unrestricted               -- §5.3: not an extraction island
+        clauseType := .interrogativeCl                -- (30a) → question
+        ic := .unconstrained                          -- (78): matrix or embedded
+        composition := .clausal }
+  | .whExclamative =>
+      { fillerCategories := [.NP, .PP, .AP, .AdvP]   -- (76)
+        fillerWh := .exclamative
+        headCategory := .s
+        headInversion := .prohibited                  -- (28b)
+        headFiniteness := .finiteOnly                 -- (29a)
+        gapRestriction := .noGap                      -- (74): absolute island
+        clauseType := .exclamativeCl                  -- (30c) → fact
+        ic := .unconstrained                          -- (71): independent or embedded
+        composition := .clausal }
+  | .topicalized =>
+      { fillerCategories := [.NP, .PP, .AP, .AdvP]   -- (25a), (63)
+        fillerWh := .noWh
+        headCategory := .s
+        headInversion := .prohibited                  -- (28b)
+        headFiniteness := .finiteOnly                 -- (29a)
+        gapRestriction := .noGap                      -- (67): absolute island
+        clauseType := .declarativeCl                  -- (30e) → austinean
+        ic := .mainClause                             -- (61): [IC +], embeddable in MCP contexts
+        composition := .clausal }
+  | .whRelative =>
+      { fillerCategories := [.NP, .PP]               -- (25b): finite relative NP/PP
+        fillerWh := .relative
+        headCategory := .s
+        headInversion := .prohibited                  -- (28b)
+        headFiniteness := .infinitivalPossible        -- (29b), (97)
+        gapRestriction := .unrestricted               -- no constructional [GAP ⟨⟩]; CNPC effect is
+                                                       -- processing, not grammar ([hofmeister-sag-2010])
+        clauseType := .relativeCl                     -- (30b) → proposition
+        ic := .embeddedOnly                           -- (91): [IC −]
+        composition := .cnpModifier }                 -- (90): λPλx[…] modifies a CNP
+  | .theClause =>
+      { fillerCategories := [.NP, .PP, .AP, .AdvP]   -- (25a)
+        fillerWh := .degreeThe
+        headCategory := .sOrCP                         -- (27b): S or CP
+        headInversion := .optional                    -- (28c)
+        headFiniteness := .finiteOnly                 -- (29a)
+        gapRestriction := .unrestricted               -- not an island
+        clauseType := .declarativeCl                  -- (30d) → austinean
+        ic := .unconstrained
+        composition := .clausal }
 
--- ============================================================================
--- Per-Datum Verification Theorems
--- ============================================================================
+/-! ### Inheritance from the `filler-head-cxt` supertype
 
-/-! ### Semantic type distinctions (§2.1, example 30)
-Each clause type has a distinct semantic type — this is one of Sag's
-key arguments that F-G constructions are not uniform. -/
+[sag-2010] derives the shared properties of filler-gap clauses from constraints
+on the superordinate `filler-head-cxt`, inherited by all five subtypes — not
+stipulated five times. We state the supertype constraint once and verify every
+construction inherits it. -/
 
-theorem interrogative_denotes_question :
-    (fgParams .whInterrogative).semanticType = .question := rfl
-theorem exclamative_denotes_fact :
-    (fgParams .whExclamative).semanticType = .fact := rfl
-theorem topicalized_denotes_austinean :
-    (fgParams .topicalized).semanticType = .austinean := rfl
-theorem relative_denotes_modifier :
-    (fgParams .whRelative).semanticType = .modifier := rfl
-theorem theClause_denotes_austinean :
-    (fgParams .theClause).semanticType = .austinean := rfl
+/-- The filler-daughter constraint imposed by the `filler-head-cxt` supertype:
+the filler is `[CAT nonverbal]` ((25), p. 492). -/
+def FGConstruction.FillerIsNonverbal (k : FGConstruction) : Prop :=
+  ∀ cat ∈ k.fillerCategories, cat.IsNonverbal
 
-/-! ### Inversion parameter (§2.1, example 28)
-Only wh-interrogatives require inversion; topicalization/relatives/exclamatives
-prohibit it; the-clauses allow it optionally. -/
+instance : DecidablePred FGConstruction.FillerIsNonverbal :=
+  fun k => inferInstanceAs (Decidable (∀ cat ∈ k.fillerCategories, cat.IsNonverbal))
 
-theorem only_interrogative_requires_inversion :
-    (fgParams .whInterrogative).headInversion = .required ∧
-    (fgParams .whExclamative).headInversion = .prohibited ∧
-    (fgParams .topicalized).headInversion = .prohibited ∧
-    (fgParams .whRelative).headInversion = .prohibited ∧
-    (fgParams .theClause).headInversion = .optional := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- Every filler-gap construction inherits the `[CAT nonverbal]` filler
+constraint from `filler-head-cxt` — proved once for the whole family, never a
+verbal projection ((25)). -/
+theorem fg_inherits_nonverbal_filler (c : FGClauseType) :
+    (fgParams c).FillerIsNonverbal := by
+  cases c <;> decide
 
-/-! ### Island status
-Topicalization and wh-exclamatives are extraction islands (§5.1 ex. 67, §5.2
-ex. 73–74). Wh-interrogatives, relatives, and the-clauses are not. -/
+/-! ### Cross-classification and inherited semantics ((30)) -/
 
-theorem topicalized_is_island :
-    (fgParams .topicalized).isIsland = true := rfl
-theorem exclamative_is_island :
-    (fgParams .whExclamative).isIsland = true := rfl
-theorem interrogative_not_island :
-    (fgParams .whInterrogative).isIsland = false := rfl
-theorem relative_not_island :
-    (fgParams .whRelative).isIsland = false := rfl
+/-- The semantic type is inherited from the clause-type supertype: it is not an
+independent per-construction stipulation. -/
+theorem semType_inherited (c : FGClauseType) :
+    (fgParams c).semType = (fgParams c).clauseType.semType := rfl
 
-/-! ### Independence constraints (§2.1 / example 31)
-Topicalization requires independence; relatives require embedding. -/
+/-- The five constructions realize all four semantic types, with topicalization
+and the-clause sharing `austinean` — [sag-2010]'s point that F-G clauses are not
+semantically uniform ((30)). -/
+theorem semTypes :
+    allTypes.map (fun c => (fgParams c).semType)
+      = [.question, .fact, .austinean, .proposition, .austinean] := by
+  decide
 
-theorem topicalized_requires_independence :
-    (fgParams .topicalized).independence = .required := rfl
-theorem relative_requires_embedding :
-    (fgParams .whRelative).independence = .prohibited := rfl
+/-- Wh-interrogatives inherit `question` semantics from `interrogative-cl`, the
+supertype they share with non-filler-gap (e.g. subject) interrogatives. -/
+theorem interrogative_question_via_clauseType :
+    (fgParams .whInterrogative).clauseType = .interrogativeCl ∧
+      ClauseType.interrogativeCl.semType = .question := ⟨rfl, rfl⟩
 
-/-! ### All fillers are nonverbal
+/-- Topicalization and the-clause share the `declarative-cl` supertype, hence the
+same austinean semantics — one shared fact, not two stipulations ((30d), (30e)).
+The `declarative-cl` membership of topicalization follows [sag-2010]'s
+Appendix-B hierarchy; construction (61) states only `↑filler-head-cxt` explicitly. -/
+theorem topicalized_theClause_share_clauseType :
+    (fgParams .topicalized).clauseType = (fgParams .theClause).clauseType := rfl
 
-[sag-2010]: the filler daughter is always nonverbal across all five
-F-G clause types. This is a constraint on the superordinate filler-head
-construction, not construction-specific. -/
+/-! ### Inversion ((28)) -/
 
-theorem all_fillers_nonverbal :
-    [FGClauseType.whInterrogative, .whExclamative, .topicalized,
-     .whRelative, .theClause].all
-      (λ c => (fgParams c).fillerIsNonverbal) = true := by decide
+/-- Inversion policy across the family: only wh-interrogatives covary with
+independence (the IC/INV identity of (80)); topicalization, exclamatives, and
+relatives never invert ((28b)); noninitial the-clauses invert optionally
+((28c)). -/
+theorem inversionPolicies :
+    allTypes.map (fun c => (fgParams c).headInversion)
+      = [.iffIndependent, .prohibited, .prohibited, .prohibited, .optional] := by
+  decide
 
--- ============================================================================
--- Bridge: Island Parameter ↔ Islands/Data.lean
--- ============================================================================
+/-! ### Islands as GAP restrictions (bridge to `HPSG.GapRestriction`)
 
-/-! ### Connection to `ConstraintType` in Islands/Data
+[sag-2010] argues islandhood is a construction-specific `[GAP ⟨⟩]` restriction,
+not universal Subjacency. The island parameter regrounds on the HPSG
+`GapRestriction`, so islandhood is *derived* from `IsAbsoluteIsland`. -/
 
-[sag-2010] argues that island constraints are construction-specific
-GAP restrictions, not universal Subjacency. The topicalization construction
-has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
-matches the `ConstraintType` classification from Islands/Data. -/
+/-- Topicalization is an absolute island because its mother carries `[GAP ⟨⟩]`
+((67)) — a theorem about the HPSG `GapRestriction`, not a stipulation. -/
+theorem topicalized_isIsland : (fgParams .topicalized).IsIsland := rfl
 
-/-- The island constructions in [sag-2010] correspond to specific constraint
-types in the island classification system. The CNPC (complexNP) is the
-island tested empirically; Sag's topicalization and exclamative islands
-are additional construction-specific cases. -/
+/-- Wh-exclamatives are absolute islands ((74)). -/
+theorem exclamative_isIsland : (fgParams .whExclamative).IsIsland := rfl
+
+/-- Wh-interrogatives, wh-relatives, and the-clauses are not constructional
+islands: their constructions impose no `[GAP ⟨⟩]`. For wh-relatives this diverges
+from the classic Complex-NP Constraint — [sag-2010] re-attributes the residual
+degradation to processing ([hofmeister-sag-2010]), not grammar. -/
+theorem interrogative_relative_theClause_not_islands :
+    ¬ (fgParams .whInterrogative).IsIsland ∧
+      ¬ (fgParams .whRelative).IsIsland ∧
+      ¬ (fgParams .theClause).IsIsland := by
+  decide
+
+/-- The filler-gap constructions that are absolute extraction islands — exactly
+those whose mother carries `[GAP ⟨⟩]` ((67), (73), (74)). Computed from the GAP
+restriction, not stipulated. -/
 def islandConstructions : List FGClauseType :=
-  [FGClauseType.whInterrogative, .whExclamative, .topicalized,
-   .whRelative, .theClause].filter (λ c => (fgParams c).isIsland)
+  allTypes.filter (fun c => decide (fgParams c).IsIsland)
 
-/-- Exactly topicalization and wh-exclamatives are F-G island constructions. -/
-theorem island_constructions_are :
-    islandConstructions = [.whExclamative, .topicalized] := by decide
+/-- Exactly wh-exclamatives and topicalization are filler-gap islands. -/
+theorem islandConstructions_eq :
+    islandConstructions = [.whExclamative, .topicalized] := by
+  decide
 
--- ============================================================================
--- Bridge: Semantic Type ↔ ClauseForm
--- ============================================================================
+/-! ### Reconciliation with the Ross taxonomy and the HPSG mechanism
 
-/-! ### Connection to `ClauseForm` in Core/Basic
+[sag-2010]'s construction-typed islands classify *whole construction types*,
+orthogonal to [ross-1967]'s configurational island *domains*. The
+chronologically-later account (Sag) draws the comparison. -/
 
-Sag's semantic types map to the existing `ClauseForm` for the clause types
-that have direct correspondences. -/
+/-- Agreement with [sag-wasow-bender-2003]: the topicalization island is the same
+datum in two analyses — Sag's `[GAP ⟨⟩]` construction and the HPSG SLASH model
+both block extraction from a topicalized clause. -/
+theorem topicalized_island_agrees_swb :
+    (fgParams .topicalized).gapRestriction
+      = SagWasowBender2003Extraction.topicIslandExtraction.restriction := rfl
 
-/-- Wh-interrogatives correspond to matrixQuestion or embeddedQuestion
-depending on independence. -/
-theorem interrogative_maps_to_question_clause :
-    (fgParams .whInterrogative).semanticType = .question ∧
-    (fgParams .whInterrogative).independence = .either := by
-  exact ⟨rfl, rfl⟩
+/-- The sharpest divergence from [ross-1967]: the relative clause is Ross's
+paradigm Complex-NP-Constraint island, yet [sag-2010]'s wh-relative construction
+imposes no `[GAP ⟨⟩]`. Where [sag-wasow-bender-2003] maps the CNPC to an absolute
+`noGap` restriction, Sag's wh-relative construction is `unrestricted` — the
+residual effect is processing, not grammar ([hofmeister-sag-2010]). -/
+theorem relative_diverges_from_cnpc :
+    (fgParams .whRelative).gapRestriction = .unrestricted ∧
+      SagWasowBender2003Extraction.islandToGapRestriction .complexNP = .noGap := by
+  decide
 
-/-- Topicalization corresponds to declarative clauses (austinean semantics,
-independent, uninverted). -/
-theorem topicalized_maps_to_declarative :
-    (fgParams .topicalized).semanticType = .austinean ∧
-    (fgParams .topicalized).headInversion = .prohibited ∧
-    (fgParams .topicalized).independence = .required := by
-  exact ⟨rfl, rfl, rfl⟩
+/-! ### Surface clause form (bridge to `Features.ClauseForm`) -/
 
--- ============================================================================
--- Wh-Word Inventory (Table 1)
--- ============================================================================
+/-- Surface clause form, where a construction has a direct correspondent in
+`Features.ClauseForm`. Wh-interrogatives map to the independent (matrix) form;
+topicalization and the-clause are declarative; exclamatives and relatives have no
+`ClauseForm` correspondent. -/
+def clauseForm : FGClauseType → Option ClauseForm
+  | .whInterrogative => some .matrixQuestion
+  | .topicalized     => some .declarative
+  | .theClause       => some .declarative
+  | .whExclamative   => none
+  | .whRelative      => none
 
-/-- Functions of wh-words across construction types.
+/-- Topicalization corresponds to a declarative surface form. -/
+theorem topicalized_is_declarative_form :
+    clauseForm .topicalized = some .declarative := rfl
 
-Each wh-word is classified by which F-G clause types it participates.
-'+' = full participant, '%' = for some speakers, '-' = excluded. -/
+/-- Wh-interrogatives correspond to the matrix-question surface form. -/
+theorem interrogative_is_question_form :
+    clauseForm .whInterrogative = some .matrixQuestion := rfl
+
+/-! ### Wh-word inventory (Table 1)
+
+[sag-2010]'s Table 1 classifies each wh-form *by syntactic category* with a
+three-valued judgment (`+` full, `%` for some speakers, `-` excluded) across the
+three wh-construction types. The category splits carry Sag's central claim that
+'wh-expression' is not a unitary category (§2.1). Where Table 1 and the worked
+examples diverge (e.g. `what`·NP relative is `-` in the table but `%` at (11c)),
+this transcribes the printed table. -/
+
+/-- A three-valued participation judgment (Table 1: `+`, `%`, `-`). -/
+inductive WhStatus
+  | full          -- +
+  | someSpeakers  -- %
+  | excluded      -- -
+  deriving DecidableEq, Repr
+
+/-- The wh-forms of Table 1. -/
+inductive WhForm
+  | who | whose | what | whatA | which | how | when | whereWh | why
+  deriving DecidableEq, Repr
+
+/-- The syntactic categories a wh-form bears in Table 1. -/
+inductive WhCategory
+  | np | det | detSing | detPl | degree | advpManner | ap | ppTime | ppPlace | ppReason
+  deriving DecidableEq, Repr
+
+/-- One row of Table 1: a wh-form in a given category, with its participation in
+each of the three wh-construction types. -/
 structure WhWordProfile where
-  form : String
-  interrogative : Bool
-  exclamative : Bool
-  relative : Bool
-  deriving Repr, DecidableEq
+  form : WhForm
+  category : WhCategory
+  interrogative : WhStatus
+  exclamative : WhStatus
+  relative : WhStatus
+  deriving DecidableEq, Repr
 
-def whWordProfiles : List WhWordProfile := [
-  { form := "who",    interrogative := true,  exclamative := false, relative := true },
-  { form := "whose",  interrogative := true,  exclamative := false, relative := true },
-  { form := "what",   interrogative := true,  exclamative := false, relative := false },
-  { form := "which",  interrogative := false, exclamative := false, relative := true },
-  { form := "how",    interrogative := true,  exclamative := true,  relative := false },
-  { form := "when",   interrogative := true,  exclamative := false, relative := true },
-  { form := "where",  interrogative := true,  exclamative := false, relative := true },
-  { form := "why",    interrogative := true,  exclamative := false, relative := true }
-]
+/-- [sag-2010] Table 1, faithful to its category splits and three-valued
+judgments. -/
+def whWordProfiles : List WhWordProfile :=
+  [ { form := .who,     category := .np,         interrogative := .full,     exclamative := .excluded,     relative := .full }
+  , { form := .whose,   category := .det,        interrogative := .full,     exclamative := .excluded,     relative := .full }
+  , { form := .what,    category := .np,         interrogative := .full,     exclamative := .excluded,     relative := .excluded }
+  , { form := .what,    category := .detSing,    interrogative := .full,     exclamative := .someSpeakers, relative := .excluded }
+  , { form := .what,    category := .detPl,      interrogative := .full,     exclamative := .full,         relative := .excluded }
+  , { form := .what,    category := .degree,     interrogative := .full,     exclamative := .full,         relative := .excluded }
+  , { form := .whatA,   category := .detSing,    interrogative := .excluded, exclamative := .full,         relative := .excluded }
+  , { form := .which,   category := .np,         interrogative := .excluded, exclamative := .excluded,     relative := .full }
+  , { form := .which,   category := .det,        interrogative := .full,     exclamative := .excluded,     relative := .someSpeakers }
+  , { form := .how,     category := .advpManner, interrogative := .full,     exclamative := .full,         relative := .someSpeakers }
+  , { form := .how,     category := .ap,         interrogative := .full,     exclamative := .excluded,     relative := .excluded }
+  , { form := .how,     category := .degree,     interrogative := .full,     exclamative := .full,         relative := .excluded }
+  , { form := .when,    category := .ppTime,     interrogative := .full,     exclamative := .excluded,     relative := .full }
+  , { form := .whereWh, category := .ppPlace,    interrogative := .full,     exclamative := .excluded,     relative := .full }
+  , { form := .why,     category := .ppReason,   interrogative := .full,     exclamative := .excluded,     relative := .full }
+  ]
 
-/-- No wh-word participates in all three construction types uniformly.
-This supports Sag's claim that 'wh-expression' is not a unitary category. -/
+/-- No wh-form/category row is a `full` participant in all three construction
+types — [sag-2010]'s point that 'wh-expression' is not a unitary category
+(§2.1). The closest cases (e.g. manner `how`) are only `%` in the relative
+column. -/
 theorem no_universal_wh_word :
-    whWordProfiles.all (λ w =>
-      w.interrogative && w.exclamative && w.relative) = false := by decide
+    ∀ w ∈ whWordProfiles,
+      ¬ (w.interrogative = .full ∧ w.exclamative = .full ∧ w.relative = .full) := by
+  decide
 
-/-- 'how' participates in both interrogatives and exclamatives — one of the
-few wh-words that crosses this boundary (examples 18–20). -/
-theorem how_crosses_interrog_exclam :
-    (whWordProfiles.filter (λ w =>
-      w.interrogative && w.exclamative)).length ≥ 1 := by decide
+/-- The manner wh-word `how` participates fully in both interrogatives and
+exclamatives — one of the few wh-forms crossing that boundary ((18)-(20)). -/
+theorem how_crosses_interrogative_exclamative :
+    ∃ w ∈ whWordProfiles,
+      w.form = .how ∧ w.interrogative = .full ∧ w.exclamative = .full := by
+  decide
 
 end Sag2010

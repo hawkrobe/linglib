@@ -827,8 +827,8 @@ are disjoint from [hofmeister-sag-2010]'s processing-based islands
 discourse-based islands (MoS). The three accounts cover different cases
 under different mechanisms. -/
 theorem complementary_coverage :
-    (fgParams .topicalized).isIsland = true ∧
-    (fgParams .whExclamative).isIsland = true ∧
+    (fgParams .topicalized).IsIsland ∧
+    (fgParams .whExclamative).IsIsland ∧
     mosIslandSources = [.discourse] := ⟨rfl, rfl, rfl⟩
 
 /-- MoS islands are discourse-sourced and so distinct from the syntactic

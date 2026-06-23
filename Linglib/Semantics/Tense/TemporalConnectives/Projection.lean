@@ -11,15 +11,16 @@ import Linglib.Semantics.Aspect.SubintervalProperty
 # The event→interval projection
 [krifka-1989] [krifka-1998] [parsons-1990] [champollion-2017]
 
-`eventDenotation` projects a (neo-Davidsonian, [parsons-1990]) event predicate to the
-set of run-time intervals of its events: the image of the predicate under the temporal
-trace τ ([krifka-1989], [krifka-1998]). It is the upper rung of the three-level
-projection ladder whose lower rungs (`timeTrace`, the denotation patterns) live in
-`Basic.lean`:
+`eventDenotation` (defined upstream in `Semantics/Events/Basic.lean`) projects a
+(neo-Davidsonian, [parsons-1990]) event predicate to the set of run-time intervals of
+its events: the image of the predicate under the temporal trace τ ([krifka-1989],
+[krifka-1998]). It is the upper rung of the three-level projection ladder; this file
+supplies the rung that connects it to the tense-layer denotation patterns and the
+`timeTrace` lower rung in `Basic.lean`:
 
 ```
 Level 3: Event Time → Prop   (event predicates — O&ST, future theories)
-    ↓ eventDenotation (this file)
+    ↓ eventDenotation (Events/Basic.lean)
 Level 2: SentDenotation Time (interval sets — Anscombe, Rett)
     ↓ timeTrace (Basic.lean)
 Level 1: Set Time            (point sets)
@@ -64,34 +65,14 @@ namespace Tense.TemporalConnectives
 
 variable {Time : Type*} [LinearOrder Time]
 
-/-! ### The projection -/
+/-! ### Time trace factoring
 
-/-- The event→interval projection: the set of run-time intervals of events satisfying
-    `P`, i.e. the image of `P` under the temporal trace τ. Every event-level temporal
-    connective theory projects down to the interval level through this map, where it can
-    be compared with the Anscombe and Rett accounts. -/
-def eventDenotation (P : Event Time → Prop) : SentDenotation Time :=
-  Event.τ '' { e | P e }
-
-/-- Membership in `eventDenotation`: an interval is a run-time of some `P`-event. -/
-@[simp]
-theorem mem_eventDenotation {P : Event Time → Prop} {i : NonemptyInterval Time} :
-    i ∈ eventDenotation P ↔ ∃ e, P e ∧ e.τ = i := Iff.rfl
-
-/-! ### Basic properties -/
-
-/-- No events satisfy `P` ↔ the denotation is empty. -/
-theorem eventDenotation_eq_empty {P : Event Time → Prop} :
-    eventDenotation P = ∅ ↔ ∀ e, ¬ P e := by
-  rw [eventDenotation, Set.image_eq_empty]
-  exact Set.eq_empty_iff_forall_notMem
-
-/-- The run-time of any `P`-event is in the denotation. -/
-theorem mem_eventDenotation_of {P : Event Time → Prop} {e : Event Time} (he : P e) :
-    e.τ ∈ eventDenotation P :=
-  Set.mem_image_of_mem _ he
-
-/-! ### Time trace factoring -/
+    The `eventDenotation` projection itself (`Event.τ '' {e | P e}`) and its
+    basic membership/emptiness API now live upstream in
+    `Semantics/Events/Basic.lean` — it is neutral event substrate, not
+    tense-specific. The lemmas below connect it to the *tense-layer*
+    denotation patterns (`timeTrace`, `stativeDenotation`,
+    `accomplishmentDenotation`) defined in `Basic.lean`. -/
 
 /-- The time trace of an event denotation factors through τ: a time is in the trace iff
     some event satisfying `P` has a run-time containing it. This is the composition
@@ -137,17 +118,16 @@ open Semantics.Aspect.SubintervalProperty in
     `Aspect/SubintervalProperty.lean`) at world `w`, its run-time denotation is a lower
     set — homogeneous / subinterval-closed in the sense of `IsLowerSet`.
 
-    This is the complement to `eventDenotation_sub_stative`: that gives only `⊆`
-    (subintervals that are nobody's run-time are absent), and CSUB is exactly what
-    closes the gap — it guarantees a witness event for every subinterval, populating the
-    denotation. The *closed* variant is necessary: plain `HasSubintervalProp` only
-    constrains hypothetical witnesses and cannot place an event at each subinterval. -/
+    Since CSUB is now *defined* as "`eventDenotation` is a lower set at every world"
+    (`Aspect/SubintervalProperty.lean`), this Tense-layer accessor is the bare
+    per-world projection `hP w`. It is the complement to `eventDenotation_sub_stative`:
+    that gives only `⊆` (subintervals that are nobody's run-time are absent), and CSUB
+    is exactly what closes the gap — a witness event at every subinterval. The *closed*
+    variant is necessary: plain `HasSubintervalProp` only constrains hypothetical
+    witnesses and cannot place an event at each subinterval. -/
 theorem isLowerSet_eventDenotation_of_csub {W : Type*}
     (P : W → Event Time → Prop) (w : W) (hP : HasClosedSubintervalProp P) :
-    IsLowerSet (eventDenotation (fun e => P w e)) := by
-  intro a b hba ha
-  obtain ⟨e₁, hPe₁, rfl⟩ := ha
-  obtain ⟨e₂, he₂τ, hPe₂⟩ := hP e₁ w hPe₁ b hba
-  exact ⟨e₂, hPe₂, he₂τ⟩
+    IsLowerSet (eventDenotation (fun e => P w e)) :=
+  hP w
 
 end Tense.TemporalConnectives
