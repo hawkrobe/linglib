@@ -32,7 +32,7 @@ constraint or the lift — it is in the **evaluation discipline** (recursive
 base-priority), which is captured in `TCT.TCTGrammar`'s type signatures.
 -/
 
-namespace Phonology.ParadigmUniformity.Transderivational
+namespace OptimalityTheory.ParadigmUniformity.Transderivational
 
 open OptimalityTheory.Correspondence (Corr)
 open OptimalityTheory.TCT (Role)
@@ -141,4 +141,4 @@ theorem identOO_when_equal {α : Type} [DecidableEq α]
   simp only [not_not]
   exact congrArg (fun i : Fin shared.length => shared[i]) (Fin.ext hpq)
 
-end Phonology.ParadigmUniformity.Transderivational
+end OptimalityTheory.ParadigmUniformity.Transderivational

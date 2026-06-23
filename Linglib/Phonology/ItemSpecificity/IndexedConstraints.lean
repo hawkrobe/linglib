@@ -29,9 +29,9 @@ theory under-fits relative to `ScaledWeights` /
 `RepresentationStrength`.
 -/
 
-namespace Phonology.ItemSpecificity.Indexed
+namespace Constraint.ItemSpecificity.Indexed
 
-open Phonology.ItemSpecificity
+open Constraint.ItemSpecificity
 open Constraint OptimalityTheory
 
 -- ============================================================================
@@ -86,4 +86,4 @@ theorem mkCoreOnly_constant_within_stratum
     (mkCoreOnly cutoff base).eval c1 = (mkCoreOnly cutoff base).eval c2 := by
   simp [mkCoreOnly, h1, h2, hbase]
 
-end Phonology.ItemSpecificity.Indexed
+end Constraint.ItemSpecificity.Indexed

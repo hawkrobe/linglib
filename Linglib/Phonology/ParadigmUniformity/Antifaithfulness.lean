@@ -45,7 +45,7 @@ counts pairs where they *differ*. Together they partition the edge:
   `identViol c r₁ r₂ + antifaithViol c r₁ r₂ = (edge r₁ r₂).card`
 -/
 
-namespace Phonology.ParadigmUniformity.Antifaithfulness
+namespace OptimalityTheory.ParadigmUniformity.Antifaithfulness
 
 open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory
@@ -112,4 +112,4 @@ def toAntifaithConstraint {Role α : Type} [DecidableEq α] (r₁ r₂ : Role)
   family := .faithfulness
   eval c := antifaithViol c r₁ r₂
 
-end Phonology.ParadigmUniformity.Antifaithfulness
+end OptimalityTheory.ParadigmUniformity.Antifaithfulness
