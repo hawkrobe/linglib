@@ -333,19 +333,20 @@ noncomputable instance (h : HeadFunction) (a b : SyntacticObject) :
     Decidable (selects h a b) := by
   unfold selects; classical infer_instance
 
-/-- Head Feature Principle (MCB §1.13.6 / Minimalist analogue): under
-    any head function `h` and the externalize choice it supplies,
-    `h.head (.node a b)` is one of `h.head a` or `h.head b`.
+/-! ### Head Feature Principle: not unconditional for a general head function
 
-    TODO: with `headAt h so := leftmostLeafPlanar (h.section_.σ so)`,
-    proving this requires reasoning about what `h.section_.σ (a*b)`
-    looks like — concretely, that it's some planar tree whose leftmost
-    leaf descends from either `a` or `b`. This needs a coherence lemma
-    about how externalize interacts with binary nodes, which is part of
-    the Tier A cascade. -/
-theorem head_node_eq_daughter (h : HeadFunction) (a b : SyntacticObject) :
-    h.head (.node a b) = h.head a ∨ h.head (.node a b) = h.head b := by
-  sorry
+There is deliberately **no** `head_node_eq_daughter : h.head (.node a b) = h.head a
+∨ h.head (.node a b) = h.head b` here. For an *arbitrary* `HeadFunction` (an
+arbitrary externalization section `σ_L`), this is **false**: the leftmost leaf of
+an arbitrary planar representative of `{a, b}` need not descend consistently from
+`a` or `b`. This is exactly [marcolli-chomsky-berwick-2025]'s "selection ≠
+projection" position (book §1.13) — which `Studies/Mueller2013.lean` formalizes
+via the *property* `IsSelectionRespectingAt h a b` (a head function may or may not
+have it) rather than as a structural law.
+
+The genuine, provable HFP holds for the **computable selection-driven** head
+function: see `selHead_mul` in `Selection.lean`, where `selHead` projects the
+*selector* by construction and so always respects selection. -/
 
 -- ============================================================================
 -- § 4.5: Planar-leaf structural lemmas (substrate for §5 coherence proofs)

@@ -258,6 +258,42 @@ def selHead (so : SyntacticObject) : Option LIToken := (selCheck so).map (·.1)
 
 @[simp] theorem selHead_leaf (tok : LIToken) : selHead (.leaf tok) = some tok := rfl
 
+/-- Computable, section-free c-selection between SOs: `a` selects `b` iff `a`'s
+    projecting head c-selects `b`'s (both on `Dom(h)`). The computable
+    counterpart of `HeadFunction.selects` — no `Quot.out`/`classical`. -/
+def selectsC (a b : SyntacticObject) : Prop :=
+  match selHead a, selHead b with
+  | some ha, some hb => ha.selects hb
+  | _, _ => False
+
+instance (a b : SyntacticObject) : Decidable (selectsC a b) := by
+  unfold selectsC; split <;> infer_instance
+
+@[simp] theorem selectsC_leaf (s t : LIToken) :
+    selectsC (.leaf s) (.leaf t) ↔ s.selects t := by
+  simp only [selectsC, selHead_leaf]
+
+/-- The head of `selStep x y` (when defined) is one of `x`/`y`'s heads. -/
+theorem selStep_fst {x y : Option (LIToken × List Cat)} {r : LIToken}
+    (h : (selStep x y).map (·.1) = some r) :
+    x.map (·.1) = some r ∨ y.map (·.1) = some r := by
+  unfold selStep at h
+  split at h
+  · split_ifs at h <;> simp_all
+  · split_ifs at h <;> simp_all
+  · simp at h
+
+/-- Head Feature Principle (computable): a Merge node's head is one of its
+    daughters' heads ([adger-2003] eq. 137 / [marcolli-chomsky-berwick-2025]
+    Lemma 1.13.7). Holds for `selHead` because it projects the *selector* by
+    construction — cf. the deliberately-absent unconditional version for a
+    general section in `HeadFunction.lean`. -/
+theorem selHead_mul {a b : SyntacticObject} {h : LIToken}
+    (hab : selHead (a * b) = some h) :
+    selHead a = some h ∨ selHead b = some h := by
+  simp only [selHead, selCheck_mul] at hab ⊢
+  exact selStep_fst hab
+
 /-- Apply a `Step` under c-selection ([adger-2003] eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
     is preserved across all step constructors — this matches M-C-B §1.15
