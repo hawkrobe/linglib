@@ -33,9 +33,9 @@ Harmonic Grammar, but **does** yield to directional Harmonic Serialism
 2. **Positive**: directional HS, with `*FLOAT` evaluated left-to-right,
    selects the leftmost-floating-H deletion at each derivational step
    and converges on the attested form. Right-to-left evaluation yields
-   the wrong `*[kāk rī dó]` (paper, fig. 3); standard HS produces a
+   the wrong `*[kāk rī dó]` (paper, eq. (61); fig. 3); standard HS produces a
    divergent tie ([pruitt-2009] sense — the term is from Pruitt's
-   2009 manuscript, cited at fig. 3 caption).
+   2009 manuscript, cited in the §4 text accompanying fig. 3).
 
 The eq. 59 support uses only four of the ~20 constraints in the paper's
 Hasse diagram (fig. 2) because the paradox comparison is restricted to
@@ -969,7 +969,7 @@ central trifecta argument. Coverage extensions not in this file:
   immutable-`ulTier` invariant.
 - **Boundary tone L%**: currently omitted (sits at right edge after
   existing L tones, doesn't affect the M-then-L adjacency analyses
-  here). Needed for paper §3.3 LH-rising-tone tableaux (eq. 33–50).
+  here). Needed for paper §3.3 LH-rising-tone tableaux (eq. (33) onward).
 - **Other Hasse constraints**: `*LongTone`, `*L̃T̃<L`, `DEP(H)`,
   `DEP(M)`, `DEP(link)/L`, `DEP(link)/L%`. Marginal value for the
   central argument; needed for some §3.3 / §3.4 tableaux.
