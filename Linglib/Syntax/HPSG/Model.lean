@@ -7,14 +7,14 @@ import Linglib.Syntax.HPSG.Basic
 
 A minimal HPSG signature fragment over the RSRL substrate, the **Head Feature Principle** as a
 description, two worked head-complement models (one satisfying, one violating the HFP) showing
-the principle genuinely filters, and a deliberately partial bridge from the project's
-*computational* HPSG core (`HPSG.HeadCompRule.hfp`) to a sort-agreement description.
+the principle genuinely filters, and a faithful **structure-sharing** bridge from the project's
+*computational* HPSG core (`HPSG.HeadCompRule.hfp`) to the token-identity HFP.
 
 The HFP here works at **CAT** granularity (what `HeadCompRule.hfp` exposes), a valence-free
-stand-in for the canonical **HEAD**-value sharing ([pollard-sag-1994]). The bridge is
-partial: `HeadCompRule.hfp` is value equality, the grammar's `pathEq` HFP is token identity —
-genuinely different notions, so the bridge proves only sort-agreement (see that theorem). Only
-`hpsgSig` is `@[reducible]`; the models are plain `def`s with explicit carrier instances.
+stand-in for the canonical **HEAD**-value sharing ([pollard-sag-1994]). The bridge is subtle:
+`HeadCompRule.hfp` is value equality while the grammar's `pathEq` HFP is token identity, so the
+induced model must structure-share the category object for the principle to hold (`toInterpShared`).
+Only `hpsgSig` is `@[reducible]`; the models are plain `def`s with explicit carrier instances.
 -/
 
 namespace HPSG.RSRL
@@ -33,23 +33,34 @@ inductive HAttr where
   | CAT | HD
   deriving DecidableEq, Fintype, Repr
 
-/-- Subsumption as a boolean relation: `hleB a b` is "`a` is at least as specific as `b`". -/
-def hleB : HSort → HSort → Bool
-  | _, .top => true
-  | .word, .sign => true
+/-- Direct subsumption ("covers"): the DAG edges (a *directly* more specific than b). The order is
+`ReflTransGen hCovers`. -/
+def hCovers : HSort → HSort → Bool
+  | .sign, .top => true
+  | .category, .top => true
   | .phrase, .sign => true
+  | .word, .sign => true
   | .headedPhrase, .phrase => true
-  | .headedPhrase, .sign => true
   | .nounCat, .category => true
   | .verbCat, .category => true
   | .otherCat, .category => true
-  | a, b => decide (a = b)
+  | _, _ => false
+
+/-- Specificity depth; every covers edge strictly increases it (giving antisymmetry). -/
+def hRank : HSort → Nat
+  | .top => 0
+  | .sign => 1 | .category => 1
+  | .phrase => 2 | .word => 2 | .nounCat => 2 | .verbCat => 2 | .otherCat => 2
+  | .headedPhrase => 3
 
 /-- The sort hierarchy as a `PartialOrder` (`a ≤ b` = "`a` at least as specific as `b`"). -/
 instance : PartialOrder HSort :=
-  partialOrderOfBool hleB (by decide) (by decide) (by decide)
+  partialOrderOfCovers (hCovers · · = true) hRank (by decide)
 
-instance : DecidableLE HSort := fun a b => inferInstanceAs (Decidable (hleB a b = true))
+instance : DecidableLE HSort := fun a b =>
+  decidableLEOfCovers (covers := (hCovers · · = true))
+    [.top, .sign, .phrase, .headedPhrase, .word, .category, .nounCat, .verbCat, .otherCat]
+    (by decide) a b
 
 /-- Appropriateness: `CAT` is appropriate to every sign (value `category`); `HD` to headed
 phrases (value `sign`). Categories are attributeless. -/
@@ -146,54 +157,19 @@ example : ¬ negModel.Models hpsgGrammar := by decide
 /-- It is nonetheless well-typed: it only violates the *principle*, not the signature. -/
 example : negModel.WellTyped := by decide
 
-/-! ### A partial bridge to the computational HPSG core -/
+/-! ### A faithful structure-sharing bridge to the computational HPSG core
+
+`HPSG.HeadCompRule.hfp` is value equality (the mother and head daughter agree in category *value*),
+while the grammar's `pathEq` HFP is *token identity*. Value equality does not entail token identity, so
+a naive induced model with *distinct* category entities would satisfy only sort agreement, not the HFP.
+The faithful bridge therefore **structure-shares** the category object — the mother and head daughter
+point at one entity — which the rule's value-equality HFP (`r.hfp`) justifies. -/
 
 /-- A category species for each UD category. -/
 def catSpecies : UD.UPOS → HSort
   | .NOUN => .nounCat
   | .VERB => .verbCat
   | _ => .otherCat
-
-/-- The interpretation induced by a head-complement rule: a mother and a head daughter, each
-with its own category entity whose species is `catSpecies` of the rule's category value. -/
-def toInterp (r : HPSG.HeadCompRule) : Interpretation hpsgSig where
-  U := Ent
-  S := fun
-    | .mother => .headedPhrase
-    | .headDtr => .word
-    | .catM => catSpecies r.result.synsem.cat
-    | .catH => catSpecies r.head.synsem.cat
-  A := fun a u => match a, u with
-    | .CAT, .mother => some .catM
-    | .CAT, .headDtr => some .catH
-    | .HD, .mother => some .headDtr
-    | _, _ => none
-  R := fun e => e.elim
-
-/-- From the project's computational HFP (`HPSG.HeadCompRule.hfp`: a head-complement rule's
-mother and head daughter share their category *value*), the induced interpretation satisfies a
-category **sort-agreement** description — the head daughter's category sort is the mother's.
-The proof discharges on `r.hfp`.
-
-**This is strictly weaker than, and distinct from, the grammar's Head Feature Principle**
-(`hfp`), which is **token identity** (`pathEq`). Value equality does not entail token identity,
-so this does NOT establish `(toInterp r).Models hpsgGrammar`: `toInterp` gives the mother and
-head daughter *distinct* category entities (`catM`/`catH`), which the grammar's `pathEq` HFP
-rejects even when their sorts agree. The faithful computational↔token-identity bridge — where the
-induced model structure-shares the category object — is `toInterpShared` below. -/
-theorem toInterp_categoryAgreement_of_hfp (r : HPSG.HeadCompRule)
-    (ass : Nat → (toInterp r).U) :
-    (toInterp r).satisfies ass .mother
-      (.sortAssign (.path [.HD, .CAT]) (catSpecies r.result.synsem.cat)) := by
-  show catSpecies r.head.synsem.cat ≤ catSpecies r.result.synsem.cat
-  rw [r.hfp]
-
-/-! ### A faithful structure-sharing bridge
-
-`toInterp` mapped a head-complement rule to a model with *distinct* category entities, so the
-token-identity HFP could not hold (only sort agreement). `toInterpShared` instead **structure-shares**
-the category object — the mother and head daughter point at one entity — so the grammar's `pathEq` HFP
-is realized, and that sharing is justified by the rule's value-equality HFP (`r.hfp`). -/
 
 /-- A category species is never a phrase sort, so it can never trigger the headed-phrase HFP. -/
 private theorem catSpecies_not_headedPhrase (c : UD.UPOS) :
@@ -202,7 +178,7 @@ private theorem catSpecies_not_headedPhrase (c : UD.UPOS) :
 
 /-- The interpretation induced by a head-complement rule that **structure-shares** the category
 object: the mother and head daughter both point at one category entity (`catM`, species from the head
-daughter). Unlike `toInterp`'s distinct `catM`/`catH`, this realizes the token-identity HFP. -/
+daughter), realizing the token-identity HFP. -/
 def toInterpShared (r : HPSG.HeadCompRule) : Interpretation hpsgSig where
   U := Ent
   S := fun
@@ -219,7 +195,7 @@ def toInterpShared (r : HPSG.HeadCompRule) : Interpretation hpsgSig where
 
 /-- **The faithful bridge.** The structure-sharing induced model satisfies the grammar's
 token-identity Head Feature Principle — the mother and head daughter genuinely share one category
-object, not merely agree in sort — which `toInterp` could not establish. -/
+object, not merely agree in sort. -/
 theorem toInterpShared_models_hfp (r : HPSG.HeadCompRule) :
     (toInterpShared r).Models hpsgGrammar := by
   intro u d hd
@@ -234,8 +210,7 @@ theorem toInterpShared_models_hfp (r : HPSG.HeadCompRule) :
 
 /-- The structure-sharing is *justified* by the computational value-equality HFP (`r.hfp`): the
 mother's and head daughter's category species coincide, so collapsing them to one object loses no
-information. Where `toInterp` recovers only sort agreement (`toInterp_categoryAgreement_of_hfp`), this
-recovers genuine token identity. -/
+information — recovering genuine token identity from value equality. -/
 theorem toInterpShared_faithful_of_hfp (r : HPSG.HeadCompRule) :
     catSpecies r.result.synsem.cat = catSpecies r.head.synsem.cat := by
   rw [r.hfp]
