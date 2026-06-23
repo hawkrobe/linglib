@@ -68,4 +68,11 @@ structure WellTyped (I : Interpretation Sig) : Prop where
 
 end Interpretation
 
+/-- For a **relation-free** signature, every relation symbol's membership is vacuously decidable — the
+hypothesis the `satisfies`/`Models` decision procedure needs. Replaces the per-signature
+`fun ρ => nomatch ρ` instance for every `Rel = Empty` fragment. -/
+instance instDecidablePredR_of_isEmpty {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
+    [IsEmpty Sig.Rel] (I : Interpretation Sig) : ∀ ρ, DecidablePred (I.R ρ) :=
+  fun ρ => isEmptyElim ρ
+
 end HPSG.RSRL

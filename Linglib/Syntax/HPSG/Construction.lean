@@ -216,16 +216,11 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | _, _ => none
 
 -- Appropriateness values never refine down this hierarchy (a sort and its subsorts carry the *same*
--- value for an attribute), so the inherited value is `τ₁` itself. Proving this propagation over just
--- `(σ₁, σ₂, α)` — without the `τ₁` quantifier or the `∃`-search — keeps the `decide` within budget.
+-- value for an attribute); proving this propagation over just `(σ₁, σ₂, α)` — without the `τ₁`
+-- quantifier or `∃`-search — keeps the `decide` within budget, and `approp_inh_of_propagates` derives
+-- the `Signature.approp_inherits` obligation from it.
 private theorem fhApprop_propagates : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr),
     σ₂ ≤ σ₁ → (fhApprop σ₁ α).isSome = true → fhApprop σ₂ α = fhApprop σ₁ α := by decide
-
-private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ : FHSort),
-    σ₂ ≤ σ₁ → fhApprop σ₁ α = some τ₁ → ∃ τ₂, fhApprop σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by
-  intro σ₁ σ₂ α τ₁ hle happ
-  have hsome : (fhApprop σ₁ α).isSome = true := by rw [happ]; rfl
-  exact ⟨τ₁, (fhApprop_propagates σ₁ σ₂ α hle hsome).trans happ, le_refl τ₁⟩
 
 /-- The fragment's signature (no relations). -/
 @[reducible] def fhSig : Signature FHSort where
@@ -233,9 +228,7 @@ private theorem fhApprop_inh : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr) (τ₁ :
   Rel := Empty
   arity := fun e => e.elim
   approp := fhApprop
-  approp_inherits := fun {σ₁ σ₂ α τ₁} => fhApprop_inh σ₁ σ₂ α τ₁
-
-instance (I : Interpretation fhSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
+  approp_inherits := fun hle happ => approp_inh_of_propagates fhApprop_propagates hle happ
 
 /-! ### Principles (constructions as `τ ⇒ D`)
 
