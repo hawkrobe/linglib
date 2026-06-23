@@ -169,10 +169,10 @@ dependency penetrates a domain iff its `GAP` survives amalgamation. -/
 extraction; an absolute island (`[GAP ⟨⟩]`) blocks a second gap; a weak island lets an NP gap pass but
 blocks a PP gap — each over the canonical construction grammar. -/
 theorem islands_rsrl_grounded :
-    Construction.goodTwoGap.Models Construction.constructGrammar ∧
-    ¬ Construction.islandTwoGap.Models Construction.constructGrammar ∧
-    Construction.weakIslandNPGap.Models Construction.constructGrammar ∧
-    ¬ Construction.weakIslandPPGap.Models Construction.constructGrammar := by decide
+    Construction.goodTwoGap.Models Construction.grammar ∧
+    ¬ Construction.islandTwoGap.Models Construction.grammar ∧
+    Construction.weakIslandNPGap.Models Construction.grammar ∧
+    ¬ Construction.weakIslandPPGap.Models Construction.grammar := by decide
 
 end Extraction
 
