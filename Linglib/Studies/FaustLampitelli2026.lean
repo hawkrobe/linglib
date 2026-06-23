@@ -52,7 +52,7 @@ Two co-equal headline contributions (paper §1, eq. 2):
   * `T4_walker_rose_2015_overshoots` — divergence with witness
     `/mismaʕa/`.
 * §4 The OCP-merger reading: |A|+|A| → |A| as instance of the
-  shared `Phonology.OCP.collapse` substrate.
+  shared `OCP.collapse` substrate.
 * §5 Paper self-flagged limits as LIMITATION-tagged comments.
 
 ## What this file does NOT formalize
@@ -68,7 +68,7 @@ Two co-equal headline contributions (paper §1, eq. 2):
 ## Cross-framework engagement
 
 * §3 T4 makes explicit the divergence with [walker-rose-2015-amp].
-* The OCP merger operation (`Phonology.OCP.collapse`) unifies
+* The OCP merger operation (`OCP.collapse`) unifies
   this paper's |A|+|A| fusion with [lionnet-2022]'s TRN merger
   (Laal subtonal phonology). They are instances of one operation
   on different feature spaces; the framework choice (binary-feature
@@ -78,7 +78,7 @@ Two co-equal headline contributions (paper §1, eq. 2):
 ## Convention
 
 Predicates in this file are `Prop`-valued with `Decidable` instances,
-matching mathlib + the existing `Phonology.OCP` style.
+matching mathlib + the existing `OCP` style.
 Worked examples are checked via `decide` rather than `rfl` where
 appropriate.
 -/
@@ -474,7 +474,7 @@ theorem identicalVowel_synersis_overshoots_walker_rose :
 -/
 
 /-- The |A|+|A| → fused |A| operation of paper eq. (26) is an
-    instance of `Phonology.OCP.collapse` over a tier of
+    instance of `OCP.collapse` over a tier of
     `Headedness` values (the |A| element's headedness signature).
     Two adjacent bare-|A| markers collapse to one.
 
@@ -483,15 +483,15 @@ theorem identicalVowel_synersis_overshoots_walker_rose :
     Laal tones, just instantiated over a different value space
     (`Headedness` vs binary-feature `TRN`). -/
 theorem fusion_is_collapse_instance :
-    Phonology.OCP.collapse [Headedness.bare, Headedness.bare] = [Headedness.bare] := by
+    OCP.collapse [Headedness.bare, Headedness.bare] = [Headedness.bare] := by
   decide
 
 /-- The OCP-merger output is OCP-clean: no two adjacent identical
     elements remain. Direct application of the substrate theorem
-    `Phonology.OCP.collapse_clean`. -/
+    `OCP.collapse_clean`. -/
 theorem fusion_output_is_ocp_clean (xs : List Headedness) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse xs) :=
-  Phonology.OCP.collapse_clean xs
+    OCP.IsClean (OCP.collapse xs) :=
+  OCP.collapse_clean xs
 
 /-! ## §8 Paper-acknowledged scope limits
 

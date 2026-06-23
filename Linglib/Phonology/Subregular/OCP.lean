@@ -34,14 +34,14 @@ points downstream consumers reference.
 ## The subregular face of the OCP
 
 This file is the **subregular characterization** of the OCP — one face of the
-unified `Phonology.OCP` principle. It proves that the prohibition reading (a
+unified `OCP` principle. It proves that the prohibition reading (a
 stringset rejecting adjacent identical tier-projected autosegments) is a TSL₂
-language, and that its satisfaction predicate is exactly `Phonology.OCP.IsClean`
-(`mkOCPOnTier_zero_iff_isClean`). The dual fusion repair `Phonology.OCP.collapse`
+language, and that its satisfaction predicate is exactly `OCP.IsClean`
+(`mkOCPOnTier_zero_iff_isClean`). The dual fusion repair `OCP.collapse`
 lands in the same `IsClean` set, and is itself a 2-Input-Strictly-Local map
 (`collapse_isISL`) — so prohibition and merger are not two coexisting
 formalisations but the constraint and a retraction onto it, both characterising
-`Phonology.OCP.IsClean`, both subregular.
+`OCP.IsClean`, both subregular.
 -/
 
 namespace Subregular
@@ -94,25 +94,25 @@ theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
   mkForbidPairsOnTier_zero_iff_isChain name (· = ·) p extract c
 
 /-- **Shared satisfaction predicate**: a candidate's OCP score is zero iff its
-tier-projection is `Phonology.OCP.IsClean`. This is what makes the prohibition
-reading (here) and the fusion repair (`Phonology.OCP.collapse`) two faces of
+tier-projection is `OCP.IsClean`. This is what makes the prohibition
+reading (here) and the fusion repair (`OCP.collapse`) two faces of
 one principle rather than parallel formalisations — both characterise
-`Phonology.OCP.IsClean`. -/
+`OCP.IsClean`. -/
 theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
     (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
-      Phonology.OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
+      OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
   mkOCPOnTier_zero_iff_isChain name p extract c
 
 /-- **Shared satisfaction predicate** (off-tier): the optimality-theoretic OCP
 markedness constraint `mkOCP` scores zero iff its projection is
-`Phonology.OCP.IsClean` — routing `OptimalityTheory.adjacentIdentical` (the
+`OCP.IsClean` — routing `OptimalityTheory.adjacentIdentical` (the
 `countAdjacent` form behind `mkOCP`, consumed by Berent2026/Belth2026) through the
 unified predicate. The flat-string companion of `mkOCPOnTier_zero_iff_isClean`. -/
 theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
     (name : String) (project : C → List α) (c : C) :
-    (mkOCP name project).eval c = 0 ↔ Phonology.OCP.IsClean (project c) := by
+    (mkOCP name project).eval c = 0 ↔ OCP.IsClean (project c) := by
   show countAdjacent (· = ·) (project c) = 0 ↔ _
   rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
   rfl
@@ -142,13 +142,13 @@ theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
 
 /-! ### The repair is subregular -/
 
-/-- The OCP fusion repair `Phonology.OCP.collapse` is a **2-Input-Strictly-Local**
+/-- The OCP fusion repair `OCP.collapse` is a **2-Input-Strictly-Local**
 string function ([chandlee-heinz-2018]): scanning left-to-right with a one-symbol
 window, delete a symbol iff it equals its predecessor. This completes the subregular
 *repair* face (the constraint side is the TSL₂ result above); cf. the autosegmental
 A-ISL classification of tonal OCP processes in [chandlee-jardine-2019]. -/
 theorem collapse_isISL [DecidableEq α] :
-    IsLeftInputStrictlyLocal 2 (Phonology.OCP.collapse (α := α)) := by
+    IsLeftInputStrictlyLocal 2 (OCP.collapse (α := α)) := by
   refine ⟨{ windowOutput := fun window x => if window = [x] then [] else [x] }, ?_⟩
   set r : ISLRule 2 α α :=
     { windowOutput := fun window x => if window = [x] then [] else [x] } with hr
@@ -174,16 +174,16 @@ theorem collapse_isISL [DecidableEq α] :
         rw [List.cons_append, List.nil_append]
         exact congrArg (a :: ·) (ih b)
   cases xs with
-  | nil => simp [Phonology.OCP.collapse]
+  | nil => simp [OCP.collapse]
   | cons x rest =>
-    show r.applyAux [] (x :: rest) = Phonology.OCP.collapse (x :: rest)
+    show r.applyAux [] (x :: rest) = OCP.collapse (x :: rest)
     rw [ISLRule.applyAux_cons]
     have hwin : ([] ++ [x]).rtake (2 - 1) = [x] := by
       simp [List.rtake]
     rw [hwin]
     show ((if ([] : List α) = [x] then [] else [x]) ++ r.applyAux [x] rest) = _
     rw [if_neg (by simp), List.cons_append, List.nil_append]
-    rw [Phonology.OCP.collapse_eq_destutter, List.destutter_cons']
+    rw [OCP.collapse_eq_destutter, List.destutter_cons']
     exact key x rest
 
 end Subregular
