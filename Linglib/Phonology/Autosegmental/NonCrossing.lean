@@ -24,10 +24,6 @@ filter on autosegmental GEN.
 
 ## Main results
 
-* `monovaryOn_union` / `monovaryOn_insert` / `monovaryOn_singleton`: the
-  `Monovary` analogues of mathlib's `Set.pairwise_union` / `_insert` /
-  `_singleton`, absent from the `MonovaryOn` API (`[UPSTREAM]` candidates). The
-  structural keystones the rest derive from (`union` is the fundamental lemma).
 * `isNonCrossing_iff`: the elementary `∀∀→` form of `IsNonCrossing`.
 * `IsNonCrossing.subset`: subset closure.
 * `isNonCrossing_insert_iff'`: the insert-algebra — `insert p` stays
@@ -52,8 +48,7 @@ variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι 
 
 /-- `MonovaryOn` holds vacuously on a singleton: there is only one index. -/
 @[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
-  rintro i rfl j rfl h
-  exact absurd h (lt_irrefl _)
+  simp [MonovaryOn]
 
 /-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
     order against the other. The `Monovary` analogue of `Set.pairwise_union` (the
@@ -107,8 +102,7 @@ theorem IsNonCrossing.subset {s t : Finset (ι × κ)} (hst : s ⊆ t)
 theorem isNonCrossing_insert_iff' [DecidableEq ι] [DecidableEq κ] (p : ι × κ) :
     IsNonCrossing (insert p links) ↔
       IsNonCrossing links ∧ ∀ q ∈ links, IsNonCrossing {p, q} := by
-  simp only [IsNonCrossing, Finset.coe_insert, Finset.coe_singleton, monovaryOn_insert,
-    monovaryOn_singleton, Finset.mem_coe, Set.mem_singleton_iff, forall_eq, true_and]
+  simp [IsNonCrossing, monovaryOn_insert]
 
 instance [DecidableLT ι] [DecidableLE κ] :
     Decidable (IsNonCrossing links) :=
