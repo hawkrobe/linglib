@@ -528,18 +528,14 @@ private def activeTree := activeFrame.tree 1 2 3
 /-- Passive transitive tree: [vP v[nonTh] [VP V DP]] -/
 private def passiveTree := passiveFrame.tree 1 2 3
 
--- Tree labels match expected categories under the leftSpine head function.
--- TODO Phase 2: `Labeling.labelRoot` and `selects` are now noncomputable
--- (they depend on `outerCat`/`headAt` which are Quot.out-based after the
--- FreeCommMagma migration). The decide-based examples no longer reduce.
-example : Labeling.labelRoot HeadFunction.leftSpine activeTree = some .v := by sorry
-example : Labeling.labelRoot HeadFunction.leftSpine passiveTree = some .v := by sorry
+-- Tree labels match expected categories, via the computable selection-driven
+-- labeling (`Labeling.labelC`) / c-selection (`selectsC`) — `decide`-checked.
+example : Labeling.labelC activeTree = some .v := by decide
+example : Labeling.labelC passiveTree = some .v := by decide
 
--- Selection holds: v selects VP, V selects DP (under leftSpine).
-example : selects HeadFunction.leftSpine
-    (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)) := by sorry
-example : selects HeadFunction.leftSpine
-    (mkLeaf .V [.D] 2) (mkLeaf .D [] 3) := by sorry
+-- Selection holds: v selects VP, V selects DP.
+example : selectsC (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)) := by decide
+example : selectsC (mkLeaf .V [.D] 2) (mkLeaf .D [] 3) := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Nonargument PPs and Chung's Generalization
