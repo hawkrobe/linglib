@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.LexicalRules
+import Linglib.Syntax.HPSG.Model
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
@@ -317,6 +318,15 @@ theorem external_merge_is_head_complement :
   · intro _; rfl
   · intro _ _; rfl
   · rfl
+
+/-- **Model-theoretic grounding (RSRL).** The HPSG Head-Complement schema compared to External Merge
+above carries the Head Feature Principle (`HeadCompRule.hfp`: mother and head daughter share their
+category *value*). On the RSRL substrate that value-equality is the shadow of genuine **token
+identity**: the structure-sharing induced model satisfies the model-theoretic HFP, so each schema
+instance is grounded in `Syntax/HPSG/Model`'s `toInterpShared_models_hfp`. -/
+theorem headComp_hfp_rsrl_grounded (r : HPSG.HeadCompRule) :
+    (HPSG.RSRL.toInterpShared r).Models HPSG.RSRL.hpsgGrammar :=
+  HPSG.RSRL.toInterpShared_models_hfp r
 
 /-- External Merge without selection is Head-Specifier across theories
     (Minimalist clause parametric over the head function `h`). -/
