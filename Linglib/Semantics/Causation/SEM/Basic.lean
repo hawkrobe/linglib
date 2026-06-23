@@ -689,9 +689,9 @@ private theorem Mechanism.toFun_eq_of_mech_eq
     extending the valuation with `cause = xC` and developing under the
     original mechanisms.
 
-    Load-bearing substrate fact connecting `probabilisticSuf`
-    (intervene-based) to `causallySufficient` (extend-based). The proof
-    goes by `IsDAG.wf.induction` on vertices: at `cause` both sides
+    Substrate fact connecting `intervene`-based development to
+    `extend`-based development (the latter underlies `causallySufficient`).
+    The proof goes by `IsDAG.wf.induction` on vertices: at `cause` both sides
     produce `xC` (LHS via the constant intervention mechanism; RHS via
     `developDetVtx_extended` short-circuit on the extended valuation);
     off-cause both sides reduce to the same mechanism applied to

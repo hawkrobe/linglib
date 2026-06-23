@@ -147,6 +147,29 @@ theorem isReverseDefinite_setOf_left (k : ℕ) (P : Set (List α)) :
     IsReverseDefinite {w | Edge.left.takeAt k w ∈ P} k :=
   fun _ _ hab => congrArg (· ∈ P) hab
 
+/-! ### Reverse duality -/
+
+private lemma takeAt_left_reverse (k : ℕ) (l : List α) :
+    Edge.left.takeAt k l.reverse = (Edge.right.takeAt k l).reverse := by
+  simp [Edge.takeAt_left, Edge.takeAt_right, List.rtake_eq_reverse_take_reverse]
+
+private lemma takeAt_right_reverse (k : ℕ) (l : List α) :
+    Edge.right.takeAt k l.reverse = (Edge.left.takeAt k l).reverse := by
+  simp [Edge.takeAt_left, Edge.takeAt_right, List.rtake_eq_reverse_take_reverse]
+
+/-- **Reverse duality**: reverse-`k`-definite is `k`-definite of the reversed language. -/
+theorem isReverseDefinite_iff_isDefinite_reverse {k : ℕ} {L : Language α} :
+    L.IsReverseDefinite k ↔ L.reverse.IsDefinite k := by
+  constructor
+  · intro h a b hab
+    have key : Edge.left.takeAt k a.reverse = Edge.left.takeAt k b.reverse := by
+      rw [takeAt_left_reverse, takeAt_left_reverse, hab]
+    simpa only [Language.mem_reverse] using h key
+  · intro h a b hab
+    have key : Edge.right.takeAt k a.reverse = Edge.right.takeAt k b.reverse := by
+      rw [takeAt_right_reverse, takeAt_right_reverse, hab]
+    simpa only [Language.reverse_mem_reverse] using h key
+
 /-! ### Inclusions into ℒℐ_k -/
 
 /-- **D_k ⊆ ℒℐ_k**: the suffix alone determines membership, so the joint
