@@ -14,8 +14,14 @@ Autosegmental phonology adds **feature sharing** to segmental
 representations: when adjacent segments share a geometric node's features, they
 are linked to a single autosegmental element on that node's tier. This is the
 **feature-geometry** representation (segments plus feature-sharing
-specifications over geometric nodes) — distinct from, and unconnected to, the
-bipartite tier-association object `AR` (`Graph.lean` / `AR.lean`). It builds on
+specifications over geometric nodes). Feature geometry is an *extension of*
+autosegmental phonology ([clements-1985], [clements-hume-1995]): spreading is
+the association of one node to multiple anchors ([clements-1985]). So this
+`SharingRep` is a flattened, adjacency-indexed special case of the bipartite
+tier-association object `AR` (`Graph.lean` / `AR.lean`) — a single segment
+backbone with a feature-agreement-consistency law, not two materialized tiers.
+A faithful re-grounding of feature spreading as `AR` association is future work;
+for now the two are kept as separate carriers. It builds on
 the feature geometry (`Featural/Geometry.lean`) and segment type
 (`Featural/Features.lean`) to provide feature agreement predicates,
 feature-sharing representations with consistency checking, and spread/delink
@@ -46,6 +52,10 @@ two distinct elements cannot be identical to the same time point.
 ## References
 
 * [goldsmith-1976] — autosegmental phonology, original NCC.
+* [clements-1985] — feature geometry as an extension of autosegmental
+  phonology; spreading = association of one node to multiple anchors.
+* [clements-hume-1995] — handbook synthesis of autosegmental phonology
+  and feature geometry.
 * [sagey-1986] — temporal derivation of NCC and the negative
   argument against simultaneity.
 -/
@@ -111,9 +121,10 @@ def SharingRep.delink (r : SharingRep) (pos : Nat) (n : GeomNode) :
 /-! ### Feature spreading -/
 
 /-- Replace all features under geometric node `n` in `tgt` with `src`'s values.
-    This models autosegmental node replacement: when a place node spreads,
-    the entire node (including unspecified features) is copied, not just
-    the specified ones. -/
+    This models **node spreading** specifically ([clements-1985]'s class-node
+    assimilation): the entire node — including features `src` leaves
+    unspecified — is copied. (The node-spreading analysis; single-feature
+    spreading and underspecification-sensitive variants behave differently.) -/
 def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment where
   spec f := if decide (f.DominatedBy n) then src.spec f else tgt.spec f
 
