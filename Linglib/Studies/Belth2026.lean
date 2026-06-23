@@ -81,7 +81,6 @@ licenses convergence.
 namespace Belth2026
 
 open Core
-open Phonology
 open Subregular
 
 -- ============================================================================
