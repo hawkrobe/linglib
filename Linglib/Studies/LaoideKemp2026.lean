@@ -425,11 +425,11 @@ theorem laoideKemp_fig1_fig5 :
 /-! ## §10 Modularity: the analysis lives in the monoidal subcategory
 
 [laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-`IsConcatStable` framework (`Autosegmental.Modularity`).
+monoidal-subcategory framework (`Autosegmental.Modularity`).
 Three theorems, one per modular commitment: the morpheme is *composed*
-by the monoidal product `⊗ = Graph.concat` (not inserted by a non-local
+by the monoidal product `⊗ = concat` (not inserted by a non-local
 rule); the composition *preserves well-formedness* because the
-No-Crossing Constraint is morpheme-modular (`ncc_isConcatStable`); and
+No-Crossing Constraint is morpheme-modular (`ncc_isMonoidal`); and
 the `(d)`-surfacing decision is *left-edge local* — invariant under
 material appended on the right (no look-ahead, the apparent paradox
 dissolved). -/
@@ -453,13 +453,12 @@ private theorem historicExponent_isPlanar : historicExponent.IsPlanar :=
 
 /-- Composing the historic-tense morpheme preserves autosegmental
     well-formedness — a direct consequence of the No-Crossing
-    Constraint being morpheme-modular (`ncc_isConcatStable`). The
+    Constraint being morpheme-modular (`ncc_isMonoidal`). The
     floating `(d)` is prefixed without ever creating a crossing
     association line, for any planar stem. -/
 theorem withHist_isPlanar (stem : FloatingForm CVKind Segment)
     (hP : stem.toGraph.IsPlanar) : (withHist stem).toGraph.IsPlanar :=
-  ncc_isConcatStable.2 historicExponent stem.toGraph
-    historicExponent_inBounds historicExponent_isPlanar hP
+  Graph.isPlanar_concat historicExponent_inBounds historicExponent_isPlanar hP
 
 /-- A concrete suffix used to probe right-insensitivity. -/
 private def someSuffix : FloatingForm CVKind Segment :=
@@ -746,9 +745,9 @@ theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind 
 
 The deepest categorical content: morpheme *prefixation* is not merely a
 function on representations but an **endofunctor on the monoidal
-category** `AR` — mathlib's `tensorLeft`. This consumes the full
-`MonoidalCategory (AR α β)` instance (not merely the `concat`
-operation), and the **associativity of prefixation** is `AR`'s
+category** `WellFormedAR` — mathlib's `tensorLeft`. This consumes the full
+`MonoidalCategory (WellFormedAR α β)` instance (not merely the `concat`
+operation), and the **associativity of prefixation** is `WellFormedAR`'s
 associator, exhibited by `tensorLeftTensor` — a natural isomorphism
 that does not exist without coherence (pentagon + triangle).
 
@@ -757,30 +756,28 @@ not right: the categorical encoding of the morpheme's **directionality**
 as a preverbal particle rather than a suffix.
 
 The remaining Layer-2 frontier — modelling *lenition* and *docking*
-themselves as functors `AR ⥤ AR` (acting on morphisms, not just
+themselves as functors `WellFormedAR ⥤ WellFormedAR` (acting on morphisms, not just
 objects) — is left open. The conjecture is that they are functorial
 only over the precedence-preserving `Graph.SubgraphEmbeds`, not over
-all of `Graph.Hom`; settling it either way is a genuine result. The
+all of `AR.Hom`; settling it either way is a genuine result. The
 extensional content (no look-ahead) is fully captured by
 `dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
 `(d)` surfaces depends only on the stem's left edge. -/
 
 open CategoryTheory MonoidalCategory in
 /-- The historic-tense exponent as an object of the monoidal category
-    `AR` (well-formed: no links, hence in-bounds and planar). -/
-def historicExponentAR : AR (TierSpec Segment) (SegSpec CVKind) where
-  toGraph := historicExponent
-  inBounds := historicExponent_inBounds
-  planar := historicExponent_isPlanar
+    `WellFormedAR` (well-formed: no links, hence in-bounds and planar). -/
+def historicExponentAR : WellFormedAR (TierSpec Segment) (SegSpec CVKind) :=
+  WellFormedAR.mk ⟨historicExponent, historicExponent_inBounds⟩ historicExponent_isPlanar
 
 open CategoryTheory MonoidalCategory in
-/-- **The historic morpheme is an endofunctor on `AR`.** Prefixing `(d)`
+/-- **The historic morpheme is an endofunctor on `WellFormedAR`.** Prefixing `(d)`
     is left-tensoring by `historicExponentAR` — mathlib's `tensorLeft`,
-    which exists only because `AR` is a `MonoidalCategory`. Left- rather
+    which exists only because `WellFormedAR` is a `MonoidalCategory`. Left- rather
     than right-tensoring encodes the morpheme's directionality as a
     preverbal particle. -/
-def withHistFunctor : AR (TierSpec Segment) (SegSpec CVKind) ⥤
-    AR (TierSpec Segment) (SegSpec CVKind) :=
+def withHistFunctor : WellFormedAR (TierSpec Segment) (SegSpec CVKind) ⥤
+    WellFormedAR (TierSpec Segment) (SegSpec CVKind) :=
   tensorLeft historicExponentAR
 
 open CategoryTheory MonoidalCategory in
@@ -788,17 +785,17 @@ open CategoryTheory MonoidalCategory in
     with `withHist` at the level of the underlying graph
     (`withHist_eq_concat`). -/
 theorem withHistFunctor_obj_toGraph
-    (X : AR (TierSpec Segment) (SegSpec CVKind)) :
-    (withHistFunctor.obj X).toGraph = historicExponent.concat X.toGraph := rfl
+    (X : WellFormedAR (TierSpec Segment) (SegSpec CVKind)) :
+    (withHistFunctor.obj X).obj.toGraph = historicExponent.concat X.obj.toGraph := rfl
 
 open CategoryTheory MonoidalCategory in
 /-- **Associativity of prefixation is the associator.** This natural
     isomorphism — prefixing the compound `(d) ⊗ X` equals prefixing `X`
-    then prefixing `(d)` — is built from `AR`'s associator, so it does
+    then prefixing `(d)` — is built from `WellFormedAR`'s associator, so it does
     not exist unless the monoidal structure is *coherent* (pentagon +
-    triangle). It is the concrete artifact that makes `AR`'s coherence
+    triangle). It is the concrete artifact that makes `WellFormedAR`'s coherence
     load-bearing rather than decorative. -/
-noncomputable def prefixAssoc (X : AR (TierSpec Segment) (SegSpec CVKind)) :
+noncomputable def prefixAssoc (X : WellFormedAR (TierSpec Segment) (SegSpec CVKind)) :
     tensorLeft (historicExponentAR ⊗ X) ≅
       tensorLeft X ⋙ tensorLeft historicExponentAR :=
   tensorLeftTensor historicExponentAR X
@@ -812,8 +809,8 @@ objects. At the graph level, lenition is `delinkInitial`: erase the
 association lines to the leftmost (word-initial) skeletal slot.
 
 The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
-the full category `Graph α β`: a label-preserving reindexing
-(`Graph.Hom`) can move a non-initial element into initial position, after
+the full category `AR α β`: a label-preserving reindexing
+(`AR.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
 (`delinkInitial_not_functorial`). But over the morphisms that **preserve
 which element is initial** — `fLower j = 0 → j = 0`, satisfied by every
@@ -826,72 +823,65 @@ process respects exactly the structural maps that preserve precedence. -/
 section Frontier
 variable {α β : Type*}
 
-/-- The graph-level model of `{L}`-lenition: erase the association lines
-    to the leftmost (slot-0) skeletal position. -/
-def delinkInitial (g : Graph α β) : Graph α β :=
-  { g with links := g.links.filter (fun p => p.snd ≠ 0) }
+/-- The model of `{L}`-lenition: erase the association lines to the
+    leftmost (slot-0) skeletal position. Erasing links preserves
+    in-boundedness, so it is an endomap of `AR`. -/
+def delinkInitial (A : AR α β) : AR α β where
+  toGraph := { A.toGraph with links := A.links.filter (fun p => p.snd ≠ 0) }
+  inBounds p hp := A.inBounds p (Finset.mem_of_mem_filter p hp)
+
+@[simp] theorem delinkInitial_links (A : AR α β) :
+    (delinkInitial A).links = A.links.filter (fun p => p.snd ≠ 0) := rfl
 
 /-- **`delinkInitial` is functorial over precedence-preserving morphisms.**
-    A `Graph.Hom` that *reflects slot 0* (never maps a non-initial slot to
+    An `AR.Hom` that *reflects slot 0* (never maps a non-initial slot to
     slot 0) lifts to a morphism between the delinked graphs, with the same
     index maps. Precedence-preserving `SubgraphEmbeds` translations satisfy
     the hypothesis: a translation sends slot `j` to `j + δ`, which is `0`
     only when `j = 0`. -/
-def delinkInitial_map {A B : Graph α β} (f : Graph.Hom A B)
-    (hf : ∀ j, f.fLower j = 0 → j = 0) :
-    Graph.Hom (delinkInitial A) (delinkInitial B) where
+def delinkInitial_map {A B : AR α β} (f : AR.Hom A B)
+    (hf : ∀ j, (f.fLower j : ℕ) = 0 → (j : ℕ) = 0) :
+    AR.Hom (delinkInitial A) (delinkInitial B) where
   fUpper := f.fUpper
   fLower := f.fLower
   upper_label := f.upper_label
   lower_label := f.lower_label
-  links_preserve := by
-    intro p hp
-    simp only [delinkInitial, Finset.mem_filter] at hp ⊢
-    exact ⟨f.links_preserve p hp.1, fun h0 => hp.2 (hf p.snd h0)⟩
-  upper_canonical := f.upper_canonical
-  lower_canonical := f.lower_canonical
+  links_preserve {p} hp := by
+    have hpA : p ∈ A.links := Finset.mem_of_mem_filter p hp
+    refine Finset.mem_filter.mpr ⟨f.links_preserve hpA, fun h0 => ?_⟩
+    exact (Finset.mem_filter.mp hp).2 (hf ((delinkInitial A).lowerIdx hp) h0)
 
 /-- Functor law: `delinkInitial_map` preserves identities. -/
-theorem delinkInitial_map_id (A : Graph α β) :
-    delinkInitial_map (Graph.Hom.id A) (fun _ h => h) = Graph.Hom.id (delinkInitial A) := by
-  apply Graph.Hom.ext <;> rfl
+theorem delinkInitial_map_id (A : AR α β) :
+    delinkInitial_map (AR.Hom.id A) (fun _ h => h) = AR.Hom.id (delinkInitial A) := by
+  apply AR.Hom.ext <;> rfl
 
 /-- Functor law: `delinkInitial_map` preserves composition. -/
-theorem delinkInitial_map_comp {A B C : Graph α β} (f : Graph.Hom A B) (g : Graph.Hom B C)
-    (hf : ∀ j, f.fLower j = 0 → j = 0) (hg : ∀ j, g.fLower j = 0 → j = 0)
-    (hfg : ∀ j, (f.comp g).fLower j = 0 → j = 0) :
+theorem delinkInitial_map_comp {A B C : AR α β} (f : AR.Hom A B) (g : AR.Hom B C)
+    (hf : ∀ j, (f.fLower j : ℕ) = 0 → (j : ℕ) = 0)
+    (hg : ∀ j, (g.fLower j : ℕ) = 0 → (j : ℕ) = 0)
+    (hfg : ∀ j, ((f.comp g).fLower j : ℕ) = 0 → (j : ℕ) = 0) :
     delinkInitial_map (f.comp g) hfg =
       (delinkInitial_map f hf).comp (delinkInitial_map g hg) := by
-  apply Graph.Hom.ext <;> rfl
+  apply AR.Hom.ext <;> rfl
 
 end Frontier
 
 /-! ### The negative counterexample -/
 
-private def negA : Graph ℕ ℕ := ⟨[0], [0, 1], {(0, 1)}⟩
-private def negB : Graph ℕ ℕ := ⟨[0], [1, 0], {(0, 0)}⟩
+private def negA : AR ℕ ℕ := ⟨⟨[0], [0, 1], {(0, 1)}⟩, by decide⟩
+private def negB : AR ℕ ℕ := ⟨⟨[0], [1, 0], {(0, 0)}⟩, by decide⟩
 
 /-- A label-preserving reindexing that **swaps** the two skeletal slots,
-    moving the slot-1 element into initial position. A valid `Graph.Hom`
-    that does *not* reflect slot 0 (`fLower 1 = 0`). -/
-private def negSwap : Graph.Hom negA negB where
+    moving the slot-1 element into initial position. A valid `AR.Hom`
+    that does *not* reflect slot 0 (`fLower 1 = 0`). The `Fin`-indexed maps
+    need no canonical-shift bookkeeping. -/
+private def negSwap : AR.Hom negA negB where
   fUpper := _root_.id
-  fLower := fun j => if j = 0 then 1 else if j = 1 then 0 else j
+  fLower := fun j => if (j : ℕ) = 0 then ⟨1, by decide⟩ else ⟨0, by decide⟩
   upper_label := by decide
   lower_label := by decide
   links_preserve := by decide
-  upper_canonical := by
-    intro i hi
-    simp only [negA, negB, List.length_cons, List.length_nil, id_eq] at hi ⊢
-    omega
-  lower_canonical := by
-    intro j hj
-    simp only [negA, List.length_cons, List.length_nil] at hj
-    show (if j = 0 then 1 else if j = 1 then 0 else j) =
-      j - negA.lower.length + negB.lower.length
-    rw [if_neg (by omega : j ≠ 0), if_neg (by omega : j ≠ 1)]
-    simp only [negA, negB, List.length_cons, List.length_nil]
-    omega
 
 /-- **`delinkInitial` is not a functor on the full category.** `negSwap`
     is a morphism `negA → negB`, yet after delinking there is *no* morphism
@@ -902,10 +892,11 @@ private def negSwap : Graph.Hom negA negB where
     `delinkInitial_map` shows the obstruction is exactly the failure to
     preserve precedence. -/
 theorem delinkInitial_not_functorial :
-    ∃ (A B : Graph ℕ ℕ) (_ : Graph.Hom A B),
-      IsEmpty (Graph.Hom (delinkInitial A) (delinkInitial B)) :=
+    ∃ (A B : AR ℕ ℕ) (_ : AR.Hom A B),
+      IsEmpty (AR.Hom (delinkInitial A) (delinkInitial B)) :=
   ⟨negA, negB, negSwap, ⟨fun g => by
-    have h := g.links_preserve (0, 1) (by decide)
+    have hp : ((0, 1) : ℕ × ℕ) ∈ (delinkInitial negA).links := by decide
+    have h := g.links_preserve hp
     have hempty : (delinkInitial negB).links = ∅ := by decide
     rw [hempty] at h
     simp at h⟩⟩
