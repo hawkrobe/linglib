@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.Selection
 
 /-!
 # Minimalist Labeling ([marcolli-chomsky-berwick-2025] §1.15)
@@ -130,6 +131,26 @@ theorem internal_vertex_labelable_in_dom
   unfold isLabelable labelVertex
   rw [if_pos hT, if_pos (Minimalist.SyntacticObject.isNode_mul a b)]
   exact rfl
+
+-- ============================================================================
+-- § 1.5: Computable labeling (canonical, via the selection-driven head)
+-- ============================================================================
+
+/-- The **canonical computable** label of a vertex: the outer category of the
+    selection-driven projecting head (`selHead`), on the endocentric domain.
+
+    The section-parameterized `labelVertex`/`labelRoot` above quantify over a
+    general (noncomputable, `Quot.out`-based) head function; `labelC` fixes the
+    head to the selection-driven one ([adger-2003] eq. 133/137 = MCB Lemma
+    1.13.7) and is fully computable (`decide`-checkable) — no `Quot.out`.
+    Returns `none` on leaves (which carry their own category) and at
+    exocentric nodes (outside `Dom(h)`). -/
+def labelC (v : SyntacticObject) : Option Cat :=
+  if Minimalist.SyntacticObject.isNode v then (Minimalist.selHead v).map (·.item.outerCat)
+  else none
+
+@[simp] theorem labelC_leaf (tok : LIToken) : labelC (.leaf tok) = none := by
+  simp [labelC]
 
 -- ============================================================================
 -- § 2: Relational predicates (parametric over the head function)
