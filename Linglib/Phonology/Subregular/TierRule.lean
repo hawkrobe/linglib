@@ -244,8 +244,8 @@ def lastContextOf (r : TierRule α) (xs : List α) : Option α :=
 
 /-- SFST witness for the identity-tier, left-side `applyToString`:
 state tracks the last `targetIsContext`-matching input segment. -/
-def toIdTierSFST (r : TierRule α) : SFST (Option α) α (Option Bool) where
-  initial := none
+def toIdTierSFST (r : TierRule α) : SFST α (Option Bool) (Option α) where
+  start := none
   step st s :=
     let newSt := if r.targetIsContext s then some s else st
     (newSt, [predictFromCtx r st])

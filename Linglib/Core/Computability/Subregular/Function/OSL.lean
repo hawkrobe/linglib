@@ -185,8 +185,8 @@ The `windowOutput` call is repeated in the two tuple components rather
 than `let`-bound so that `(step ow x).2` reduces definitionally to
 `r.windowOutput ow x` for the proof of `toFinSFST_run_eq_apply`. -/
 def OSLRule.toFinSFST {k : ℕ} (r : OSLRule k α β) :
-    SFST {l : List β // l.length ≤ k - 1} α β where
-  initial := ⟨[], Nat.zero_le _⟩
+    SFST α β {l : List β // l.length ≤ k - 1} where
+  start := ⟨[], Nat.zero_le _⟩
   step w x :=
     (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
      r.windowOutput w.val x)
