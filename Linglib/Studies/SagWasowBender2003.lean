@@ -2,7 +2,7 @@ import Linglib.Syntax.HPSG.Coreference
 import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.RelativeClauses
-import Linglib.Syntax.HPSG.GapAmalgamation
+import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Ross1967
 import Linglib.Fragments.English.Nouns
@@ -23,7 +23,8 @@ Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Fo
   `Features.MinimalPairs` vocabulary. Implementation: `Syntax/HPSG/Coreference`.
 - **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and the list-valued `GAP`/SLASH
   mechanism, with the island taxonomy of `Studies/Ross1967` mapped to GAP restrictions, and the
-  island-blocking grounded **model-theoretically** in the RSRL gap-list (`Syntax/HPSG/GapAmalgamation`).
+  island-blocking grounded **model-theoretically** in the RSRL gap-list (the canonical
+  `Syntax/HPSG/Construction` signature).
 - **Relative Clauses** — the `MOD` + Head-Modifier mechanism for object/subject/PP relatives
   (`Syntax/HPSG/RelativeClauses`).
 -/
@@ -185,8 +186,9 @@ theorem gap_removes_complement :
 /-! #### Long-distance dependencies in the RSRL model theory — the full island taxonomy
 
 Extraction licensing is stated directly over the **model-theoretic** RSRL list-valued `GAP`
-(`Syntax/HPSG/GapAmalgamation`): filler-gap category matching is gap amalgamation, and island
-permeability is the island/weak-island principles. The whole taxonomy is *derived* from amalgamation
+(the canonical `Syntax/HPSG/Construction` signature): filler-gap category matching is gap amalgamation,
+and island permeability is the island/weak-island principles. The whole taxonomy is *derived* from
+amalgamation
 ([sag-2010] (67); after [bouma-malouf-sag-2001]), not stipulated as Subjacency — a dependency penetrates
 a domain iff its `GAP` survives amalgamation. The `GapRestriction` tags above are retained only as the
 `Studies/Ross1967` taxonomy map that `Studies/Sag2010` cross-references. -/
@@ -194,12 +196,12 @@ a domain iff its `GAP` survives amalgamation. The `GapRestriction` tags above ar
 /-- The island taxonomy as RSRL `Models` facts (superseding the former coarse `extractionLicensed`
 predicate). A free filler-head construct licenses extraction; an absolute island (`[GAP ⟨⟩]`) blocks a
 second gap; a weak island lets an NP gap pass but blocks a PP gap — the `unrestricted`/`noGap`/`npOnly`
-cases of `GapRestriction`, each over the gap-amalgamation grammar. -/
+cases of `GapRestriction`, each over the canonical construction grammar. -/
 theorem islands_rsrl_grounded :
-    HPSG.GapAmalgamation.goodTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
-    ¬ HPSG.GapAmalgamation.islandTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
-    HPSG.GapAmalgamation.weakIslandNPGap.Models HPSG.GapAmalgamation.gGrammar ∧
-    ¬ HPSG.GapAmalgamation.weakIslandPPGap.Models HPSG.GapAmalgamation.gGrammar := by decide
+    HPSG.Construction.goodTwoGap.Models HPSG.Construction.fhGrammar ∧
+    ¬ HPSG.Construction.islandTwoGap.Models HPSG.Construction.fhGrammar ∧
+    HPSG.Construction.weakIslandNPGap.Models HPSG.Construction.fhGrammar ∧
+    ¬ HPSG.Construction.weakIslandPPGap.Models HPSG.Construction.fhGrammar := by decide
 
 end Extraction
 

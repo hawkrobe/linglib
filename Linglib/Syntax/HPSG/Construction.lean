@@ -9,16 +9,23 @@ import Mathlib.Tactic.DeriveFintype
 set_option autoImplicit false
 
 /-!
-# The SBCG construct type hierarchy in RSRL
-[sag-2010] [sag-etal-2020] [sag-2012] [richter-2000] [richter-2024]
+# The canonical SBCG construct hierarchy with list-valued GAP in RSRL
+[sag-2010] [sag-etal-2020] [sag-2012] [bouma-malouf-sag-2001] [richter-2000] [richter-2024]
 
-The Sign-Based Construction Grammar **construct type hierarchy with monotonic multiple inheritance**,
-formalized on the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,
-Description}`). A construction is a constraint `τ ⇒ D` ([sag-2012] (44)) on a `construct = [MTR, DTRS]`
-([sag-2012] (46)); inheritance is the **sort order plus the implication semantics** — a construct
-whose sort sits below several supersorts satisfies *all* their principles, with no per-construction
-restatement. This is exactly the monotonic (no-overriding) inheritance SBCG commits to ([sag-2012]
-fn. 17; the "category restriction operation" of [sag-etal-2020]).
+The **single canonical RSRL signature** for the Sign-Based Construction Grammar fragment, formalized on
+the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`). One
+`Signature` (`fhSig`) carries, in one feature-structure language:
+
+* the **construct type hierarchy with monotonic multiple inheritance** ([sag-etal-2020] Figs. 6–7);
+* a **list-valued `GAP` (SLASH) feature** with gap **amalgamation** ([sag-2010] §4, after
+  [bouma-malouf-sag-2001]); and
+* **islands** as `[GAP ⟨⟩]` constraints on the construction types themselves ([sag-2010] §5.1).
+
+A construction is a constraint `τ ⇒ D` ([sag-2012] (44)) on a `construct = [MTR, DTRS]` ([sag-2012]
+(46)); inheritance is the **sort order plus the implication semantics** — a construct whose sort sits
+below several supersorts satisfies *all* their principles, with no per-construction restatement. This
+is the monotonic (no-overriding) inheritance SBCG commits to ([sag-2012] fn. 17; the "category
+restriction operation" of [sag-etal-2020]).
 
 The hierarchy is the authoritative two-dimensional one of [sag-etal-2020] (Figs. 6–7):
 
@@ -33,47 +40,71 @@ The **cross-classification** is a lower bound across the two dimensions — the 
 Fig. 5 illustrates for `subj-pred-cl` (`declarative-cl ⊓ subject-head-cxt`). Here [sag-2010]'s
 nonsubject wh-interrogative `ns-wh-int-cl` ((80), Fig. 8) is a subtype of *both* `filler-head-cxt`
 (headed dim.) and `interrogative-cl` (clausal dim.), so it inherits the filler-head constraints (head
-verbal, filler nonverbal, filler↔gap token identity) **and** the interrogative semantics (`MTR` `SEM` a
-question) from one sort assignment — the keystone theorem below.
+verbal, filler nonverbal, filler↔gap token identity, gap amalgamation) **and** the interrogative
+semantics (`MTR` `SEM` a question) from one sort assignment — the keystone theorem below.
+
+## The list-valued GAP and islands
+
+A sign's `GAP` value is a genuine HPSG list — `elist` (empty) or `nelist` with `FIRST`/`REST`
+([sag-2010]'s `⟨…⟩` notation). The **filler-head construction** binds the head daughter's *first* gap
+(token identity between the filler's category and `GAP|FIRST`) and **amalgamates the rest** onto the
+mother (`MTR|GAP = HD-DTR|GAP|REST`), so a clause with two undischarged gaps passes the second up
+([sag-2010] (53), (59)). **Islands fall out** of this: an island construction (topicalization (67),
+wh-exclamative (74)) additionally constrains its mother to `[GAP ⟨⟩]` (`elist`); a would-be *second*
+gap then makes the amalgamated mother `GAP` non-empty, contradicting `[GAP ⟨⟩]`, so the construct is
+rejected — the model-theoretic content of "topicalization is an absolute extraction island", a theorem
+about `Models`, not a universal Subjacency. Weak islands (`weak-island-cxt`) are *selectively* permeable
+(NP passes, PP blocked), the NP/PP asymmetry of [sag-wasow-bender-2003] Ch. 15.
 
 ## Scope
 
-This file is the **substrate**: the type hierarchy, the cross-classification keystone, and **all five
-filler-gap constructions** ([sag-2010] §5: topicalization, wh-exclamative, nonsubject wh-interrogative,
-wh-relative, the-clause), distinguished by their clausal semantics, wh-relative's nominal filler, and
-the topicalization/the-clause head contrast (verb vs CP). The hierarchy also carries the
+This file is the **substrate**: the type hierarchy, the cross-classification keystone, all five
+filler-gap constructions ([sag-2010] §5: topicalization, wh-exclamative, nonsubject wh-interrogative,
+wh-relative, the-clause), and the gap/island mechanism. The hierarchy also carries the
 `aux-initial-cxt`/`interrogative-SAI` sort nodes and the `INV` feature ([sag-etal-2020] Fig. 6); the
 **inversion construction**'s own principle and worked constructs are paper-anchored in
-`Studies/SagEtAl2020.lean`, which consumes this substrate as a second study — the two-consumer
-justification for the theory-layer home.
+`Studies/SagEtAl2020.lean`, and the island/extraction taxonomy theorems in `Studies/SagWasowBender2003`
+and `Studies/Sag2010`, which consume this substrate.
 
-n-ary `DTRS`, GAP amalgamation, islands, the `WH`/`REL`/`IC`/`VFORM` finer variation, and compositional
-`SEM` are deferred. Decidability stays inside `Models` over fixed finite interpretations (Kepser 2004:
-full RSRL model-checking is undecidable).
+The minimal HFP-bridge signature `hpsgSig` (`Model.lean`, value-equality↔token-identity bridge to the
+computational core) and the relational binding signature `bindingSig` (`Binding.lean`, the only signature
+with a non-empty `Rel`) stay **separate example signatures** over the same RSRL framework — mathlib keeps
+many example structures over one framework, and folding them in would force a non-empty `Rel` (losing the
+empty-relation decidability shortcut) for marginal gain.
+
+`GAP` elements are bare categories (not full local objects); n-ary `DTRS`, the `WH`/`REL`/`IC`/`VFORM`
+finer variation, and compositional `SEM` are deferred. Decidability stays inside `Models` over fixed
+finite interpretations (Kepser 2004: full RSRL model-checking is undecidable).
 -/
 
 namespace HPSG.Construction
 
 open HPSG.RSRL
 
-/-! ### Sorts: categories, semantic types, signs, and the construct/clausal hierarchy -/
+/-! ### Sorts: categories, semantic types, GAP lists, signs, and the construct/clausal hierarchy -/
 
-/-- Sorts of the fragment: a category hierarchy, a semantic-type hierarchy, `sign`, and the
-[sag-etal-2020] construct (Fig. 6) and clausal (Fig. 7) type hierarchies, with `ns-wh-int-cl` as the
-worked cross-classified subtype ([sag-2010] (80), Fig. 8). -/
+/-- Sorts of the fragment: a category hierarchy, a semantic-type hierarchy, the `GAP`-list sorts
+(`list > {elist, nelist}`), `sign`, and the [sag-etal-2020] construct (Fig. 6) and clausal (Fig. 7)
+type hierarchies, with `ns-wh-int-cl` as the worked cross-classified subtype ([sag-2010] (80), Fig. 8)
+and the generic `island-cxt`/`weak-island-cxt` demonstration subtypes of `filler-head-cxt`. -/
 inductive FHSort
   | top
-  -- category hierarchy (filler-head-cxt keys on verbal/nonverbal; wh-rel on nominal; the-cl on comp)
+  -- category hierarchy (filler-head-cxt keys on verbal/nonverbal; wh-rel on nominal; the-cl on comp;
+  -- the noun/prep split is the NP/PP distinction weak islands are sensitive to)
   | cat | verbal | nonverbal | verb | comp | nominal | noun | prep | adj
   -- semantic-type hierarchy (clause types key on the MTR's SEM type)
   | semType | austinean | question | fact | proposition
   -- inversion-value hierarchy (aux-initial-cxt keys on the head's INV value, [sag-etal-2020] (39))
   | invVal | invPlus | invMinus
+  -- GAP-list sorts ([sag-2010]'s ⟨…⟩): a list is empty (elist) or has a FIRST and a REST (nelist)
+  | list | elist | nelist
   -- signs
   | sign
   -- construct backbone (Fig. 6; filler-head-cxt per [sag-2010] Fig. A2): filler-head-cxt and
   -- aux-initial-cxt are sibling headed-cxt subtypes
   | construct | phrasalCxt | lexicalCxt | headedCxt | clause | fillerHeadCxt | auxInitialCxt
+  -- generic island demonstrations (Ross domains, not Sag construction types) under filler-head-cxt
+  | islandCxt | weakIslandCxt
   -- clausal hierarchy (Fig. 7)
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
   -- the filler-gap constructions ([sag-2010] §5) and the interrogative SAI ([sag-etal-2020]), each
@@ -96,13 +127,16 @@ def fhCovers : FHSort → FHSort → Bool
   | .fact, .semType => true | .proposition, .semType => true
   -- inversion values
   | .invPlus, .invVal => true | .invMinus, .invVal => true
+  -- GAP lists
+  | .elist, .list => true | .nelist, .list => true
   -- the maximal sorts, directly below top
-  | .cat, .top => true | .semType, .top => true | .invVal, .top => true
+  | .cat, .top => true | .semType, .top => true | .invVal, .top => true | .list, .top => true
   | .sign, .top => true | .construct, .top => true
   -- construct backbone
   | .phrasalCxt, .construct => true | .lexicalCxt, .construct => true
   | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true
   | .fillerHeadCxt, .headedCxt => true | .auxInitialCxt, .headedCxt => true
+  | .islandCxt, .fillerHeadCxt => true | .weakIslandCxt, .fillerHeadCxt => true
   | .coreCl, .clause => true | .relativeCl, .clause => true
   | .declarativeCl, .coreCl => true | .interrogativeCl, .coreCl => true
   | .exclamativeCl, .coreCl => true
@@ -120,11 +154,12 @@ def fhCovers : FHSort → FHSort → Bool
 constructions sit at depth 6, above *both* their depth-4 headed parent and their depth-5 clausal type. -/
 def fhRank : FHSort → Nat
   | .top => 0
-  | .cat => 1 | .semType => 1 | .invVal => 1 | .sign => 1 | .construct => 1
+  | .cat => 1 | .semType => 1 | .invVal => 1 | .list => 1 | .sign => 1 | .construct => 1
   | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
-  | .invPlus => 2 | .invMinus => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
+  | .invPlus => 2 | .invMinus => 2 | .elist => 2 | .nelist => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
   | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .headedCxt => 3 | .clause => 3
   | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .coreCl => 4 | .relativeCl => 4
+  | .islandCxt => 5 | .weakIslandCxt => 5
   | .declarativeCl => 5 | .interrogativeCl => 5 | .exclamativeCl => 5
   | .topCl => 6 | .whExclCl => 6 | .nsWhIntCl => 6 | .whRelCl => 6 | .theCl => 6 | .interrogativeSAI => 6
 
@@ -134,8 +169,10 @@ instance : PartialOrder FHSort :=
 instance : DecidableLE FHSort := fun a b =>
   decidableLEOfCovers (covers := (fhCovers · · = true))
     [.top, .cat, .verbal, .nonverbal, .verb, .comp, .nominal, .noun, .prep, .adj,
-     .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus, .sign,
+     .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus,
+     .list, .elist, .nelist, .sign,
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
+     .islandCxt, .weakIslandCxt,
      .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
      .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .interrogativeSAI]
     (by decide) a b
@@ -143,16 +180,16 @@ instance : DecidableLE FHSort := fun a b =>
 /-! ### Attributes and the signature -/
 
 /-- Attributes: a construct's mother (`MTR`) and head/filler daughters (`HDDTR`/`FILLERDTR`); a sign's
-`CAT`, (single) `GAP` category, and `SEM` type. -/
+`CAT`, (list-valued) `GAP`, `SEM` type, and `INV` value; a nonempty list's `FIRST` (a category) and
+`REST` (a list). -/
 inductive FHAttr
-  | MTR | HDDTR | FILLERDTR | CAT | GAP | SEM | INV
+  | MTR | HDDTR | FILLERDTR | CAT | GAP | SEM | INV | FIRST | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- Appropriateness: every construct has a `MTR` (a sign); `headed-cxt` and its subtypes additionally
-have `HDDTR`/`FILLERDTR`; a `sign` has `CAT`/`GAP` (categories) and `SEM` (a semantic type). Respects
-feature inheritance ([richter-2024]): an attribute appropriate to a sort is appropriate to its
-subsorts (so `ns-wh-int-cl`, below `headed-cxt`, has daughters, and below `interrogative-cl`, a
-mother). -/
+have `HDDTR` (and `filler-head-cxt` a `FILLERDTR`); a `sign` has `CAT`/`SEM`/`INV` and a list-valued
+`GAP`; a `nelist` has `FIRST` (a category) and `REST` (a list). Respects feature inheritance
+([richter-2024]): an attribute appropriate to a sort is appropriate to its subsorts. -/
 def fhApprop : FHSort → FHAttr → Option FHSort
   | .construct, .MTR => some .sign
   | .phrasalCxt, .MTR => some .sign
@@ -160,6 +197,8 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | .headedCxt, .MTR => some .sign
   | .clause, .MTR => some .sign
   | .fillerHeadCxt, .MTR => some .sign
+  | .islandCxt, .MTR => some .sign
+  | .weakIslandCxt, .MTR => some .sign
   | .coreCl, .MTR => some .sign
   | .relativeCl, .MTR => some .sign
   | .declarativeCl, .MTR => some .sign
@@ -179,6 +218,10 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | .interrogativeSAI, .HDDTR => some .sign
   | .fillerHeadCxt, .HDDTR => some .sign
   | .fillerHeadCxt, .FILLERDTR => some .sign
+  | .islandCxt, .HDDTR => some .sign
+  | .islandCxt, .FILLERDTR => some .sign
+  | .weakIslandCxt, .HDDTR => some .sign
+  | .weakIslandCxt, .FILLERDTR => some .sign
   | .nsWhIntCl, .HDDTR => some .sign
   | .nsWhIntCl, .FILLERDTR => some .sign
   | .topCl, .HDDTR => some .sign
@@ -190,9 +233,11 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | .theCl, .HDDTR => some .sign
   | .theCl, .FILLERDTR => some .sign
   | .sign, .CAT => some .cat
-  | .sign, .GAP => some .cat
+  | .sign, .GAP => some .list
   | .sign, .SEM => some .semType
   | .sign, .INV => some .invVal
+  | .nelist, .FIRST => some .cat
+  | .nelist, .REST => some .list
   | _, _ => none
 
 -- Appropriateness values never refine down this hierarchy (a sort and its subsorts carry the *same*
@@ -215,17 +260,20 @@ private theorem fhApprop_propagates : ∀ (σ₁ σ₂ : FHSort) (α : FHAttr),
 Each principle constrains every feature structure whose sort is `≤` its antecedent — so a construct
 inherits a principle exactly when its sort sits below the principle's type. -/
 
-/-- The **filler-head construction** ([sag-2010] (58); placed under `headed-cxt` in [sag-2010] Fig. A2):
-the head daughter is `[CAT verbal]`, and the filler's category is **token-identical** (`pathEq`) to the
-head daughter's `GAP` value — the filler-gap structure sharing. The `[CAT nonverbal]` filler is, in the
-paper, a per-subtype generalization (each F-G construction's (25)-style parameter, refined to `nominal`
-for wh-relative, (25b)) rather than a constraint of (58) itself; it is stated here once on the supertype
+/-- The **filler-head construction** ([sag-2010] (58); placed under `headed-cxt` in [sag-2010] Fig. A2;
+amalgamation after [bouma-malouf-sag-2001]): the head daughter is `[CAT verbal]`, the filler is
+`[CAT nonverbal]`, the filler's category is **token-identical** (`pathEq`) to the head daughter's
+*first* gap (`GAP|FIRST` — the bound dependency), and the mother's `GAP` is the head daughter's
+`GAP|REST` (the remaining gaps amalgamate up). The `[CAT nonverbal]` filler is, in the paper, a
+per-subtype generalization (each F-G construction's (25)-style parameter, refined to `nominal` for
+wh-relative, (25b)) rather than a constraint of (58) itself; it is stated here once on the supertype
 because every subtype satisfies it. -/
 def fillerHeadPrinciple : Desc fhSig :=
   .imp (.sortAssign .colon .fillerHeadCxt)
     (.and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
       (.and (.sortAssign (.path [.HDDTR, .CAT]) .verbal)
-        (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP]))))
+        (.and (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP, .FIRST]))
+          (.pathEq (.path [.MTR, .GAP]) (.path [.HDDTR, .GAP, .REST])))))
 
 /-- Clausal semantics ([sag-etal-2020] Fig. 7, following G&S 2000): the mother's `SEM` type is fixed
 by the clausal type — `declarative-cl` ⇒ austinean, `interrogative-cl` ⇒ question,
@@ -251,13 +299,42 @@ otherwise-similar (also austinean) the-clause allows ((27b): the-clause head is 
 def topPrinciple : Desc fhSig :=
   .imp (.sortAssign .colon .topCl) (.sortAssign (.path [.HDDTR, .CAT]) .verb)
 
-/-- The grammar: the filler-head construction, the four clausal-type principles, and the
-filler-gap construction-specific restrictions (topicalization's verb head, wh-relative's nominal
-filler). The aux-initial / inversion construction is paper-anchored in `Studies/SagEtAl2020.lean`,
-which extends this grammar. -/
+/-- **Absolute island** ([sag-2010] (67)): a generic island construct's mother is `[GAP ⟨⟩]` — no
+dependency penetrates beyond the one its filler binds. This generic `island-cxt` demonstrates the
+mechanism for Ross's island *domains* (`Studies/SagWasowBender2003`); the F-G constructions that are
+absolute islands carry their own `[GAP ⟨⟩]` principle below. -/
+def islandPrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .islandCxt) (.sortAssign (.path [.MTR, .GAP]) .elist)
+
+/-- **Weak-island constraint**: a weak island is *selectively* permeable — an NP dependency passes
+through, a PP (more generally, non-nominal) dependency does not ([sag-wasow-bender-2003] Ch. 15). Stated
+on the *passing* gap: if a weak-island construct's mother `GAP|FIRST` is a `prep` (PP), the mother must
+be `[GAP ⟨⟩]` — so a PP cannot penetrate, while a `noun` (NP) mother gap is unconstrained and passes. -/
+def weakIslandPrinciple : Desc fhSig :=
+  .imp (.and (.sortAssign .colon .weakIslandCxt)
+             (.sortAssign (.path [.MTR, .GAP, .FIRST]) .prep))
+    (.sortAssign (.path [.MTR, .GAP]) .elist)
+
+/-- **Topicalization is an absolute island** ([sag-2010] (67)): a topicalization construct's mother is
+`[GAP ⟨⟩]`. Stated directly on `top-cl` (as [sag-2010] does, not via a generic island supertype the
+paper lacks), so a topicalized clause with a second, undischarged gap is rejected. -/
+def topIslandPrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .topCl) (.sortAssign (.path [.MTR, .GAP]) .elist)
+
+/-- **Wh-exclamatives are absolute islands** ([sag-2010] (74)): a wh-exclamative construct's mother is
+`[GAP ⟨⟩]`. -/
+def whExclIslandPrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .whExclCl) (.sortAssign (.path [.MTR, .GAP]) .elist)
+
+/-- The grammar: the filler-head construction (with gap amalgamation), the four clausal-type
+principles, the filler-gap construction-specific restrictions (topicalization's verb head, wh-relative's
+nominal filler), the generic absolute/weak island constraints, and the absolute-island status of
+topicalization and wh-exclamatives. The aux-initial / inversion construction is paper-anchored in
+`Studies/SagEtAl2020.lean`, which extends this grammar. -/
 def fhGrammar : Grammar fhSig :=
   [fillerHeadPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
-    relativePrinciple, whRelPrinciple, topPrinciple]
+    relativePrinciple, whRelPrinciple, topPrinciple,
+    islandPrinciple, weakIslandPrinciple, topIslandPrinciple, whExclIslandPrinciple]
 
 /-! ### Multiple inheritance: `ns-wh-int-cl` is a lower bound across the two dimensions -/
 
@@ -278,56 +355,86 @@ theorem fg_cross_classify :
       ((FHSort.whRelCl ≤ .fillerHeadCxt) ∧ (FHSort.whRelCl ≤ .relativeCl)) ∧
       ((FHSort.theCl ≤ .fillerHeadCxt) ∧ (FHSort.theCl ≤ .declarativeCl)) := by decide
 
-/-! ### Worked constructs -/
+/-! ### Worked constructs
 
-/-- Entities shared by the worked constructs: the construct, its mother and two daughters, two
-category objects, and one semantic object. -/
+Entities shared by the worked constructs: the construct (`cxt`), its mother (`mtr`) and two daughters
+(`hd`, `fl`); the category objects (`npCat`/`vpCat`/`adjCat`/`compCat`, of species `noun`/`verb`/`adj`/
+`comp`); the `GAP`-list cells (`g1` the head's gap list, `g2` its tail cell, `nil` the empty list); the
+passing second-gap category `c2`; and the semantic object `sem`. A `GAP` list `⟨c⟩` is
+`g1[FIRST c, REST nil]`; `⟨c₁, c₂⟩` is `g1[FIRST c₁, REST g2]`, `g2[FIRST c₂, REST nil]`. -/
+
+/-- Entities of the worked constructs. -/
 inductive Ent
-  | cxt | mtr | hd | fl | npCat | vpCat | adjCat | compCat | sem
+  | cxt | mtr | hd | fl | npCat | vpCat | adjCat | compCat | g1 | g2 | nil | c2 | sem
   deriving DecidableEq, Fintype, Repr
 
-/-- A well-formed filler-head construct (sort `filler-head-cxt`): nonverbal filler, verbal head, and
-the head's `GAP` token-identical to the filler's `CAT`. -/
+/-- Common species assignment: the cells are `nelist`, `nil` is `elist`, `c2` defaults to `noun` (NP),
+`sem` defaults to `austinean`, `cxt` defaults to `filler-head-cxt`; each model overrides `cxt` (its
+construction type) and, where the clausal type demands, `sem`/`c2`. -/
+def baseS : Ent → FHSort
+  | .cxt => .fillerHeadCxt
+  | .mtr => .sign | .hd => .sign | .fl => .sign
+  | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
+  | .g1 => .nelist | .g2 => .nelist | .nil => .elist
+  | .c2 => .noun
+  | .sem => .austinean
+
+/-- Single-gap filler-head geometry: head `GAP ⟨c⟩` (`g1`), filler binds `c` (token-identical to the
+head's first gap `npCat`), mother `GAP ⟨⟩`; verbal head, nonverbal (NP) filler, mother `SEM` `sem`. -/
+def singleGapA : FHAttr → Ent → Option Ent := fun a u => match a, u with
+  | .MTR, .cxt => some .mtr
+  | .HDDTR, .cxt => some .hd
+  | .FILLERDTR, .cxt => some .fl
+  | .CAT, .fl => some .npCat
+  | .CAT, .hd => some .vpCat
+  | .GAP, .hd => some .g1
+  | .FIRST, .g1 => some .npCat     -- bound gap = filler category (token identity)
+  | .REST, .g1 => some .nil        -- head GAP = ⟨npCat⟩
+  | .GAP, .mtr => some .nil         -- mother GAP = head GAP REST = ⟨⟩
+  | .SEM, .mtr => some .sem
+  | _, _ => none
+
+/-- Two-gap amalgamation geometry: head `GAP ⟨npCat, c2⟩`, the filler binds the first gap, and the
+second gap `c2` passes up — mother `GAP ⟨c2⟩` (`g2`). -/
+def twoGapA : FHAttr → Ent → Option Ent := fun a u => match a, u with
+  | .MTR, .cxt => some .mtr
+  | .HDDTR, .cxt => some .hd
+  | .FILLERDTR, .cxt => some .fl
+  | .CAT, .fl => some .npCat
+  | .CAT, .hd => some .vpCat
+  | .GAP, .hd => some .g1
+  | .FIRST, .g1 => some .npCat
+  | .REST, .g1 => some .g2          -- head GAP = ⟨npCat, c2⟩
+  | .FIRST, .g2 => some .c2
+  | .REST, .g2 => some .nil
+  | .GAP, .mtr => some .g2           -- mother GAP = ⟨c2⟩ (the amalgamated second dependency)
+  | .SEM, .mtr => some .sem
+  | _, _ => none
+
+/-- A well-formed filler-head construct (sort `filler-head-cxt`): nonverbal filler, verbal head, the
+head's first `GAP` token-identical to the filler's `CAT`, the (empty) rest amalgamated to the mother. -/
 def goodFillerHead : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .fillerHeadCxt
-    | .hd => .sign
-    | .fl => .sign
-    | .npCat => .noun
-    | .vpCat => .verb
-    | .adjCat => .adj
-    | .compCat => .comp
-    | .mtr => .sign
-    | .sem => .semType
-  A := fun a u => match a, u with
-    | .HDDTR, .cxt => some .hd
-    | .FILLERDTR, .cxt => some .fl
-    | .CAT, .fl => some .npCat
-    | .CAT, .hd => some .vpCat
-    | .GAP, .hd => some .npCat
-    | _, _ => none
+  S := baseS
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype goodFillerHead.U := inferInstanceAs (Fintype Ent)
 instance : DecidableEq goodFillerHead.U := inferInstanceAs (DecidableEq Ent)
 
-/-- The well-formed filler-head construct satisfies the grammar (the clausal principles are vacuous —
-`filler-head-cxt` is not below any clausal type). -/
+/-- The well-formed filler-head construct satisfies the grammar (the clausal/island principles are
+vacuous — `filler-head-cxt` is below no clausal type or island type). -/
 example : goodFillerHead.Models fhGrammar := by decide
 
-/-- Breaking the filler↔gap token identity (head `GAP` ≠ filler `CAT`) violates the filler-head
-principle. -/
+/-- Breaking the filler↔gap token identity (filler `CAT` ≠ head `GAP|FIRST`) violates the filler-head
+principle. The filler is an AP (nonverbal, so the nonverbal constraint still holds) while the head's
+bound gap is an NP — isolating the token-identity failure. -/
 def gapMismatch : Interpretation fhSig where
   U := Ent
-  S := goodFillerHead.S
+  S := baseS
   A := fun a u => match a, u with
-    | .HDDTR, .cxt => some .hd
-    | .FILLERDTR, .cxt => some .fl
-    | .CAT, .fl => some .npCat
-    | .CAT, .hd => some .vpCat
-    | .GAP, .hd => some .vpCat    -- ≠ filler's CAT
-    | _, _ => none
+    | .CAT, .fl => some .adjCat       -- filler AP ≠ head's NP gap
+    | _, _ => singleGapA a u
   R := fun e => e.elim
 
 instance : Fintype gapMismatch.U := inferInstanceAs (Fintype Ent)
@@ -340,30 +447,13 @@ example : ¬ gapMismatch.Models fhGrammar := by decide
 A single `ns-wh-int-cl` construct satisfies the filler-head principle **and** the interrogative
 principle — both inherited via `nsWhIntCl_inherits`, neither stipulated on `ns-wh-int-cl`. -/
 
-/-- A well-formed nonsubject wh-interrogative construct (sort `ns-wh-int-cl`): nonverbal filler,
-verbal head, filler↔gap token identity (from `filler-head-cxt`), and the mother's `SEM` a question
-(from `interrogative-cl`). -/
+/-- A well-formed nonsubject wh-interrogative construct (sort `ns-wh-int-cl`): nonverbal filler, verbal
+head, filler↔gap token identity (from `filler-head-cxt`), and the mother's `SEM` a question (from
+`interrogative-cl`). -/
 def goodNsWhInt : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .nsWhIntCl
-    | .mtr => .sign
-    | .hd => .sign
-    | .fl => .sign
-    | .npCat => .noun
-    | .vpCat => .verb
-    | .adjCat => .adj
-    | .compCat => .comp
-    | .sem => .question
-  A := fun a u => match a, u with
-    | .MTR, .cxt => some .mtr
-    | .HDDTR, .cxt => some .hd
-    | .FILLERDTR, .cxt => some .fl
-    | .SEM, .mtr => some .sem
-    | .CAT, .fl => some .npCat
-    | .CAT, .hd => some .vpCat
-    | .GAP, .hd => some .npCat
-    | _, _ => none
+  S := fun u => match u with | .cxt => .nsWhIntCl | .sem => .question | u => baseS u
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype goodNsWhInt.U := inferInstanceAs (Fintype Ent)
@@ -380,17 +470,8 @@ example : goodNsWhInt.Models fhGrammar := by decide
 nothing about interrogativity is stated on `ns-wh-int-cl` directly. -/
 def nsWhIntWrongSem : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .nsWhIntCl
-    | .mtr => .sign
-    | .hd => .sign
-    | .fl => .sign
-    | .npCat => .noun
-    | .vpCat => .verb
-    | .adjCat => .adj
-    | .compCat => .comp
-    | .sem => .austinean    -- not a question
-  A := goodNsWhInt.A
+  S := fun u => match u with | .cxt => .nsWhIntCl | u => baseS u    -- sem = austinean (baseS default)
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype nsWhIntWrongSem.U := inferInstanceAs (Fintype Ent)
@@ -400,22 +481,17 @@ example : ¬ nsWhIntWrongSem.Models fhGrammar := by decide
 
 /-! ### The five filler-gap constructions ([sag-2010] §5)
 
-A worked construct of each sort. By `fg_cross_classify`, each satisfies the inherited filler-head
-constraints and its clausal semantics; wh-relative additionally satisfies its nominal-filler
-restriction and topicalization its verb-head restriction. The constructions are distinguished here by
-their clausal `SEM` (austinean / fact / question / proposition), wh-relative's nominal filler, and the
-topicalization-vs-the-clause head contrast (verb vs CP); the finer parametric variation (`WH`/`REL`,
-head `IC`/`INV`/`VFORM`) is deferred. -/
+A worked single-gap construct of each sort. By `fg_cross_classify`, each satisfies the inherited
+filler-head constraints and its clausal semantics; wh-relative additionally satisfies its nominal-filler
+restriction and topicalization its verb-head restriction. Single-gap topicalization and wh-exclamative
+also satisfy their absolute-island principle (the one bound gap leaves the mother `[GAP ⟨⟩]`); the
+two-gap island theorems below show the constraint genuinely binds. -/
 
-/-- Topicalization ([sag-2010] (61)): a declarative (austinean) filler-head construct. -/
+/-- Topicalization ([sag-2010] (61)): a declarative (austinean) filler-head construct, verb head. -/
 def goodTopCl : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .topCl
-    | .mtr => .sign | .hd => .sign | .fl => .sign
-    | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
-    | .sem => .austinean
-  A := goodNsWhInt.A
+  S := fun u => match u with | .cxt => .topCl | u => baseS u
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype goodTopCl.U := inferInstanceAs (Fintype Ent)
@@ -426,12 +502,8 @@ example : goodTopCl.Models fhGrammar := by decide
 /-- Wh-exclamative ([sag-2010] (70)): an exclamative (fact) filler-head construct. -/
 def goodWhExcl : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .whExclCl
-    | .mtr => .sign | .hd => .sign | .fl => .sign
-    | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
-    | .sem => .fact
-  A := goodNsWhInt.A
+  S := fun u => match u with | .cxt => .whExclCl | .sem => .fact | u => baseS u
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype goodWhExcl.U := inferInstanceAs (Fintype Ent)
@@ -443,12 +515,8 @@ example : goodWhExcl.Models fhGrammar := by decide
 nominal (NP/PP). -/
 def goodWhRel : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .whRelCl
-    | .mtr => .sign | .hd => .sign | .fl => .sign
-    | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
-    | .sem => .proposition
-  A := goodNsWhInt.A
+  S := fun u => match u with | .cxt => .whRelCl | .sem => .proposition | u => baseS u
+  A := singleGapA
   R := fun e => e.elim
 
 instance : Fintype goodWhRel.U := inferInstanceAs (Fintype Ent)
@@ -457,20 +525,15 @@ instance : DecidableEq goodWhRel.U := inferInstanceAs (DecidableEq Ent)
 example : goodWhRel.Models fhGrammar := by decide
 
 /-- The wh-relative filler restriction genuinely binds: an AP filler (`adj` — nonverbal but not
-nominal) satisfies the inherited filler-head constraint (and its token identity) yet violates the
+nominal), token-identical to the head's gap so the filler-head constraint holds, violates the
 relative-specific `[CAT nominal]` restriction, so the construct is rejected. -/
 def whRelAdjFiller : Interpretation fhSig where
   U := Ent
-  S := goodWhRel.S
+  S := fun u => match u with | .cxt => .whRelCl | .sem => .proposition | u => baseS u
   A := fun a u => match a, u with
-    | .MTR, .cxt => some .mtr
-    | .HDDTR, .cxt => some .hd
-    | .FILLERDTR, .cxt => some .fl
-    | .SEM, .mtr => some .sem
-    | .CAT, .fl => some .adjCat    -- AP filler: nonverbal but not nominal
-    | .CAT, .hd => some .vpCat
-    | .GAP, .hd => some .adjCat     -- token-identical to the filler, so only the nominal restriction fails
-    | _, _ => none
+    | .CAT, .fl => some .adjCat       -- AP filler: nonverbal but not nominal
+    | .FIRST, .g1 => some .adjCat     -- head's bound gap token-identical to the filler
+    | _, _ => singleGapA a u
   R := fun e => e.elim
 
 instance : Fintype whRelAdjFiller.U := inferInstanceAs (Fintype Ent)
@@ -483,20 +546,10 @@ complementizer-headed CP (`comp`) — distinguishing it from topicalization, who
 projection ((27a) vs (27b)). -/
 def goodTheCl : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .theCl
-    | .mtr => .sign | .hd => .sign | .fl => .sign
-    | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
-    | .sem => .austinean
+  S := fun u => match u with | .cxt => .theCl | u => baseS u
   A := fun a u => match a, u with
-    | .MTR, .cxt => some .mtr
-    | .HDDTR, .cxt => some .hd
-    | .FILLERDTR, .cxt => some .fl
-    | .SEM, .mtr => some .sem
-    | .CAT, .fl => some .npCat
-    | .CAT, .hd => some .compCat    -- a CP head, licensed for the-clauses
-    | .GAP, .hd => some .npCat
-    | _, _ => none
+    | .CAT, .hd => some .compCat      -- a CP head, licensed for the-clauses
+    | _, _ => singleGapA a u
   R := fun e => e.elim
 
 instance : Fintype goodTheCl.U := inferInstanceAs (Fintype Ent)
@@ -509,17 +562,152 @@ filler-head constraint holds) but violates topicalization's `[CAT verb]` restric
 constraint separating topicalization from the otherwise-identical (austinean) the-clause. -/
 def topClCompHead : Interpretation fhSig where
   U := Ent
-  S := fun
-    | .cxt => .topCl
-    | .mtr => .sign | .hd => .sign | .fl => .sign
-    | .npCat => .noun | .vpCat => .verb | .adjCat => .adj | .compCat => .comp
-    | .sem => .austinean
-  A := goodTheCl.A
+  S := fun u => match u with | .cxt => .topCl | u => baseS u
+  A := fun a u => match a, u with
+    | .CAT, .hd => some .compCat
+    | _, _ => singleGapA a u
   R := fun e => e.elim
 
 instance : Fintype topClCompHead.U := inferInstanceAs (Fintype Ent)
 instance : DecidableEq topClCompHead.U := inferInstanceAs (DecidableEq Ent)
 
 example : ¬ topClCompHead.Models fhGrammar := by decide
+
+/-! ### Gap amalgamation and islands ([sag-2010] §4–§5.1, after [bouma-malouf-sag-2001])
+
+The two-gap models exercise amalgamation: the filler binds the first gap and the second passes up to the
+mother. Whether the second gap survives is what distinguishes a free filler-head construct, an absolute
+island, and a (selectively permeable) weak island. These named models ground the island taxonomy
+theorems of `Studies/SagWasowBender2003` and `Studies/Sag2010`. -/
+
+/-- **Amalgamation of overlapping dependencies** ([sag-2010] (53), (59)): a generic filler-head head
+with two gaps `⟨c₁, c₂⟩`; the filler binds `c₁` and the second gap `c₂` passes up — the mother's `GAP`
+is `⟨c₂⟩`. -/
+def goodTwoGap : Interpretation fhSig where
+  U := Ent
+  S := baseS
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype goodTwoGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq goodTwoGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : goodTwoGap.Models fhGrammar := by decide
+
+/-- **The absolute-island theorem** ([sag-2010] (67)–(68)). A *second* gap cannot penetrate a generic
+absolute island (`island-cxt`): a two-gap head amalgamates a non-empty mother `GAP ⟨c₂⟩`, contradicting
+the island's `[GAP ⟨⟩]` — so the construct is rejected. Topicalization is an absolute extraction island
+(`topClSecondGap` below), derived from the `[GAP ⟨⟩]` constraint plus amalgamation, not from Subjacency. -/
+def islandTwoGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .islandCxt | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype islandTwoGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq islandTwoGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : ¬ islandTwoGap.Models fhGrammar := by decide
+
+/-- **NP extraction through a weak island is licensed.** A weak-island construct whose passing (second)
+gap is an NP (`noun`) amalgamates a non-empty mother `GAP ⟨NP⟩`; the weak-island antecedent (a `prep`
+mother gap) is false, so the constraint is vacuous and the structure is well-formed. -/
+def weakIslandNPGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .weakIslandCxt | u => baseS u    -- c2 = noun (baseS default)
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype weakIslandNPGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq weakIslandNPGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : weakIslandNPGap.Models fhGrammar := by decide
+
+/-- **PP extraction through a weak island is blocked.** The same geometry with a `prep` (PP) passing gap
+makes the mother `GAP ⟨PP⟩`; the weak-island constraint then forces `[GAP ⟨⟩]`, contradicting the
+non-empty mother gap — so the construct is rejected. The NP/PP asymmetry, derived from the constraint,
+not stipulated. -/
+def weakIslandPPGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .weakIslandCxt | .c2 => .prep | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype weakIslandPPGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq weakIslandPPGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : ¬ weakIslandPPGap.Models fhGrammar := by decide
+
+/-! ### Islands as a property of the construction type ([sag-2010] §5.1)
+
+The five F-G constructions carry their island status *as constructions*: topicalization and
+wh-exclamative are absolute islands (their two-gap variants are rejected), while the nonsubject
+wh-interrogative, wh-relative, and the-clause are not (their two-gap variants pass). These ground
+`Studies/Sag2010`'s `IsIsland` verdicts as `Models` facts about the construction sorts. -/
+
+/-- **Topicalization blocks a second gap** ([sag-2010] (67)): a `top-cl` construct with two gaps
+amalgamates a non-empty mother `GAP`, contradicting `topIslandPrinciple`'s `[GAP ⟨⟩]` — rejected. -/
+def topClSecondGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .topCl | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype topClSecondGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq topClSecondGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : ¬ topClSecondGap.Models fhGrammar := by decide
+
+/-- **Wh-exclamatives block a second gap** ([sag-2010] (74)): same as topicalization, via
+`whExclIslandPrinciple`. -/
+def whExclSecondGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .whExclCl | .sem => .fact | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype whExclSecondGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq whExclSecondGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : ¬ whExclSecondGap.Models fhGrammar := by decide
+
+/-- **Nonsubject wh-interrogatives are not islands** ([sag-2010] §5.3): a `ns-wh-int-cl` construct with
+a second gap passes — no `[GAP ⟨⟩]` constraint applies, so the second dependency amalgamates freely. -/
+def nsWhIntSecondGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .nsWhIntCl | .sem => .question | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype nsWhIntSecondGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq nsWhIntSecondGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : nsWhIntSecondGap.Models fhGrammar := by decide
+
+/-- **Wh-relatives are not constructional islands** ([sag-2010], pace the Complex-NP Constraint): a
+`wh-rel-cl` construct with a second gap passes; the residual degradation is processing, not grammar
+([hofmeister-sag-2010]). -/
+def whRelSecondGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .whRelCl | .sem => .proposition | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype whRelSecondGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq whRelSecondGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : whRelSecondGap.Models fhGrammar := by decide
+
+/-- **The-clauses are not islands**: a `the-cl` construct with a second gap passes. -/
+def theClSecondGap : Interpretation fhSig where
+  U := Ent
+  S := fun u => match u with | .cxt => .theCl | u => baseS u
+  A := twoGapA
+  R := fun e => e.elim
+
+instance : Fintype theClSecondGap.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq theClSecondGap.U := inferInstanceAs (DecidableEq Ent)
+
+example : theClSecondGap.Models fhGrammar := by decide
 
 end HPSG.Construction
