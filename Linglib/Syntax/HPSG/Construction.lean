@@ -103,6 +103,8 @@ inductive Srt
   -- construct backbone (Fig. 6; filler-head-cxt per [sag-2010] Fig. A2): filler-head-cxt and
   -- aux-initial-cxt are sibling headed-cxt subtypes
   | construct | phrasalCxt | lexicalCxt | headedCxt | clause | fillerHeadCxt | auxInitialCxt
+  -- head-modifier-cxt (Fig. 6): a relative clause or other adjunct modifies a head ([sag-2010] §6)
+  | headModifierCxt
   -- generic island demonstrations (Ross domains, not Sag construction types) under filler-head-cxt
   | islandCxt | weakIslandCxt
   -- clausal hierarchy (Fig. 7)
@@ -136,6 +138,7 @@ def covers : Srt → Srt → Bool
   | .phrasalCxt, .construct => true | .lexicalCxt, .construct => true
   | .headedCxt, .phrasalCxt => true | .clause, .phrasalCxt => true
   | .fillerHeadCxt, .headedCxt => true | .auxInitialCxt, .headedCxt => true
+  | .headModifierCxt, .headedCxt => true
   | .islandCxt, .fillerHeadCxt => true | .weakIslandCxt, .fillerHeadCxt => true
   | .coreCl, .clause => true | .relativeCl, .clause => true
   | .declarativeCl, .coreCl => true | .interrogativeCl, .coreCl => true
@@ -158,7 +161,8 @@ def rank : Srt → Nat
   | .verbal => 2 | .nonverbal => 2 | .austinean => 2 | .question => 2 | .fact => 2 | .proposition => 2
   | .invPlus => 2 | .invMinus => 2 | .elist => 2 | .nelist => 2 | .phrasalCxt => 2 | .lexicalCxt => 2
   | .verb => 3 | .comp => 3 | .nominal => 3 | .adj => 3 | .headedCxt => 3 | .clause => 3
-  | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .coreCl => 4 | .relativeCl => 4
+  | .noun => 4 | .prep => 4 | .fillerHeadCxt => 4 | .auxInitialCxt => 4 | .headModifierCxt => 4
+  | .coreCl => 4 | .relativeCl => 4
   | .islandCxt => 5 | .weakIslandCxt => 5
   | .declarativeCl => 5 | .interrogativeCl => 5 | .exclamativeCl => 5
   | .topCl => 6 | .whExclCl => 6 | .nsWhIntCl => 6 | .whRelCl => 6 | .theCl => 6 | .interrogativeSAI => 6
@@ -172,7 +176,7 @@ instance : DecidableLE Srt := fun a b =>
      .semType, .austinean, .question, .fact, .proposition, .invVal, .invPlus, .invMinus,
      .list, .elist, .nelist, .sign,
      .construct, .phrasalCxt, .lexicalCxt, .headedCxt, .clause, .fillerHeadCxt, .auxInitialCxt,
-     .islandCxt, .weakIslandCxt,
+     .headModifierCxt, .islandCxt, .weakIslandCxt,
      .coreCl, .relativeCl, .declarativeCl, .interrogativeCl, .exclamativeCl,
      .topCl, .whExclCl, .nsWhIntCl, .whRelCl, .theCl, .interrogativeSAI]
     (by decide) a b
@@ -183,7 +187,7 @@ instance : DecidableLE Srt := fun a b =>
 `CAT`, (list-valued) `GAP`, `SEM` type, and `INV` value; a nonempty list's `FIRST` (a category) and
 `REST` (a list). -/
 inductive Feat
-  | MTR | HDDTR | FILLERDTR | CAT | GAP | SEM | INV | FIRST | REST
+  | MTR | HDDTR | FILLERDTR | MODDTR | CAT | GAP | SEM | INV | MOD | FIRST | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- Appropriateness: every construct has a `MTR` (a sign); `headed-cxt` and its subtypes additionally
@@ -211,8 +215,10 @@ def approp : Srt → Feat → Option Srt
   | .theCl, .MTR => some .sign
   | .auxInitialCxt, .MTR => some .sign
   | .interrogativeSAI, .MTR => some .sign
+  | .headModifierCxt, .MTR => some .sign
   -- HDDTR is common to all headed constructs; FILLERDTR is specific to filler-head-cxt (an
-  -- aux-initial construct has head + valent daughters, no filler)
+  -- aux-initial construct has head + valent daughters, no filler); MODDTR (the modifier) to
+  -- head-modifier-cxt
   | .headedCxt, .HDDTR => some .sign
   | .auxInitialCxt, .HDDTR => some .sign
   | .interrogativeSAI, .HDDTR => some .sign
@@ -232,10 +238,13 @@ def approp : Srt → Feat → Option Srt
   | .whRelCl, .FILLERDTR => some .sign
   | .theCl, .HDDTR => some .sign
   | .theCl, .FILLERDTR => some .sign
+  | .headModifierCxt, .HDDTR => some .sign
+  | .headModifierCxt, .MODDTR => some .sign
   | .sign, .CAT => some .cat
   | .sign, .GAP => some .list
   | .sign, .SEM => some .semType
   | .sign, .INV => some .invVal
+  | .sign, .MOD => some .cat
   | .nelist, .FIRST => some .cat
   | .nelist, .REST => some .list
   | _, _ => none
@@ -326,15 +335,26 @@ def topIslandPrinciple : Desc sig :=
 def whExclIslandPrinciple : Desc sig :=
   .imp (.sortAssign .colon .whExclCl) (.sortAssign (.path [.MTR, .GAP]) .elist)
 
+/-- The **head-modifier construction** ([sag-2010] §6; [pollard-sag-1994] Head-Adjunct Schema): an
+adjunct (e.g. a relative clause) modifies a head daughter. The modifier daughter's `MOD` value is
+**token-identical** to the head daughter's `CAT` (the modifier selects exactly that category), and the
+mother's `CAT` is the head daughter's `CAT` (the Head Feature Principle: modification preserves the
+head's category). So a relative clause modifying a noun yields a noun. -/
+def headModifierPrinciple : Desc sig :=
+  .imp (.sortAssign .colon .headModifierCxt)
+    (.and (.pathEq (.path [.MODDTR, .MOD]) (.path [.HDDTR, .CAT]))
+      (.pathEq (.path [.MTR, .CAT]) (.path [.HDDTR, .CAT])))
+
 /-- The grammar: the filler-head construction (with gap amalgamation), the four clausal-type
 principles, the filler-gap construction-specific restrictions (topicalization's verb head, wh-relative's
-nominal filler), the generic absolute/weak island constraints, and the absolute-island status of
-topicalization and wh-exclamatives. The aux-initial / inversion construction is paper-anchored in
-`Studies/SagEtAl2020.lean`, which extends this grammar. -/
+nominal filler), the generic absolute/weak island constraints, the absolute-island status of
+topicalization and wh-exclamatives, and the head-modifier construction. The aux-initial / inversion
+construction is paper-anchored in `Studies/SagEtAl2020.lean`, which extends this grammar. -/
 def grammar : Grammar sig :=
   [fillerHeadPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
     relativePrinciple, whRelPrinciple, topPrinciple,
-    islandPrinciple, weakIslandPrinciple, topIslandPrinciple, whExclIslandPrinciple]
+    islandPrinciple, weakIslandPrinciple, topIslandPrinciple, whExclIslandPrinciple,
+    headModifierPrinciple]
 
 /-! ### Multiple inheritance: `ns-wh-int-cl` is a lower bound across the two dimensions -/
 
@@ -634,5 +654,45 @@ abbrev theClSecondGap : Interpretation sig :=
   twoGapConstruct .theCl .austinean .noun
 
 example : theClSecondGap.Models grammar := by decide
+
+/-! ### Head-modifier constructs ([sag-2010] §6)
+
+A head (e.g. a noun) modified by an adjunct (e.g. a relative clause). The modifier's `MOD` value
+selects the head's category and the mother inherits it. These ground `Studies/SagWasowBender2003`'s
+relative-clause licensing as `Models` facts: a relative clause modifies a noun and the result is a noun;
+a modifier selecting the wrong category is rejected. The relative clause's *internal* gap is the
+filler-gap `wh-rel-cl` construct above. -/
+
+/-- Head-modifier construct family: a head daughter of category `noun`, an adjunct (modifier) daughter
+whose `MOD` value is the entity `modTarget`, and a mother of the head's category. When `modTarget` is the
+head's category (`npCat`) the modifier correctly selects the head. -/
+def headModConstruct (modTarget : Ent) : Interpretation sig where
+  U := Ent
+  S := fun u => match u with | .cxt => .headModifierCxt | u => baseS u
+  A := fun a u => match a, u with
+    | .MTR, .cxt => some .mtr
+    | .HDDTR, .cxt => some .hd
+    | .MODDTR, .cxt => some .fl        -- the modifier (e.g. a relative clause)
+    | .CAT, .hd => some .npCat          -- head is a noun
+    | .CAT, .mtr => some .npCat          -- mother category = head's (preserved)
+    | .MOD, .fl => some modTarget        -- the modifier selects `modTarget`
+    | _, _ => none
+  R := fun e => e.elim
+
+instance (modTarget : Ent) : Fintype (headModConstruct modTarget).U := inferInstanceAs (Fintype Ent)
+instance (modTarget : Ent) : DecidableEq (headModConstruct modTarget).U :=
+  inferInstanceAs (DecidableEq Ent)
+
+/-- A relative clause modifying a noun: the modifier's `MOD` is the noun head's category, and the mother
+is a noun — modification preserves the head's category. -/
+abbrev goodHeadMod : Interpretation sig := headModConstruct .npCat
+
+example : goodHeadMod.Models grammar := by decide
+
+/-- The head-modifier constraint binds: a modifier selecting a *verb* category does not modify the noun
+head, so the construct is rejected. -/
+abbrev headModWrongCat : Interpretation sig := headModConstruct .vpCat
+
+example : ¬ headModWrongCat.Models grammar := by decide
 
 end HPSG.Construction
