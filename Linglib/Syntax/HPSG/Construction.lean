@@ -11,7 +11,7 @@ set_option autoImplicit false
 /-!
 # The canonical SBCG construct hierarchy with list-valued GAP in RSRL
 [sag-2010] [sag-etal-2020] [sag-2012] [bouma-malouf-sag-2001] [richter-2000] [richter-2024]
-[pullum-scholz-2001]
+[pullum-scholz-2001] [borsley-crysmann-2024]
 
 The **single canonical RSRL signature** for the Sign-Based Construction Grammar fragment, formalized on
 the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Description}`). HPSG is a
@@ -19,13 +19,14 @@ the RSRL feature-structure substrate (`Syntax/HPSG/{Signature,Interpretation,Des
 signature plus principles, and grammaticality is *satisfaction* — membership in the class of structures
 that are well-formed in every component with respect to every principle (`Models`) — not derivation from
 a start symbol ([richter-2024] Ch. 3, on the RSRL model theory of [richter-2000]).
-The relational component of the signature is `Empty` here: RSRL's relations (set/list membership, the
-`R` in RSRL) are the deferred extension a genuinely set-valued `GAP` would need. One `Signature` (`sig`)
-carries, in one feature-structure language:
+The signature carries RSRL's **`member` relation** (the "R" in RSRL): list membership giving `GAP`
+genuine **set** semantics, so a filler discharges *any* member, not only `GAP|FIRST` (final section). One
+`Signature` (`sig`) carries, in one feature-structure language:
 
 * the **construct type hierarchy with monotonic multiple inheritance** ([sag-etal-2020] Figs. 6–7);
 * a **list-valued `GAP` (SLASH) feature** with gap **amalgamation** ([sag-2010] §4, after
-  [bouma-malouf-sag-2001]); and
+  [bouma-malouf-sag-2001]), plus the `member` relation for the genuinely **set-valued** reading
+  ([borsley-crysmann-2024] (9)); and
 * **islands** as `[GAP ⟨⟩]` constraints on the construction types themselves ([sag-2010] §5.1).
 
 A construction is a constraint `τ ⇒ D` ([sag-2012] (44)) on a `construct = [MTR, DTRS]` ([sag-2012]
@@ -73,11 +74,10 @@ wh-relative, the-clause), and the gap/island mechanism. The hierarchy also carri
 `Studies/SagEtAl2020.lean`, and the island/extraction taxonomy theorems in `Studies/SagWasowBender2003`
 and `Studies/Sag2010`, which consume this substrate.
 
-The minimal HFP-bridge signature `hpsgSig` (`Model.lean`, value-equality↔token-identity bridge to the
-computational core) and the relational binding signature `bindingSig` (`Binding.lean`, the only signature
-with a non-empty `Rel`) stay **separate example signatures** over the same RSRL framework — mathlib keeps
-many example structures over one framework, and folding them in would force a non-empty `Rel` (losing the
-empty-relation decidability shortcut) for marginal gain.
+The relational binding signature `bindingSig` (`Binding.lean`) stays a **separate example signature** over
+the same RSRL framework — it has its own binding-specific sort hierarchy (anaphor/pronoun/index) and the
+`locO` relation; mathlib keeps many example structures over one framework. Both signatures now carry
+relations (`member` here, `locO` there).
 
 `GAP` elements are bare categories (not full local objects); n-ary `DTRS`, the `WH`/`REL`/`IC`/`VFORM`
 finer variation, and compositional `SEM` are deferred. Decidability stays inside `Models` over fixed
@@ -270,13 +270,26 @@ def approp : Srt → Feat → Option Srt
 private theorem approp_propagates : ∀ (σ₁ σ₂ : Srt) (α : Feat),
     σ₂ ≤ σ₁ → (approp σ₁ α).isSome = true → approp σ₂ α = approp σ₁ α := by decide
 
-/-- The fragment's signature (no relations). -/
+/-- The fragment's one relation symbol: **list membership**, `member(x, L)` — the category `x` is an
+element of the `GAP` list `L`. This is the RSRL relation (the "R" of RSRL, [richter-2024] Ch. 3) that
+gives `GAP` genuine **set** semantics: membership is order-independent, so a filler may discharge *any*
+gap in the set, not only `GAP|FIRST` — the handbook's set-valued SLASH ([bouma-malouf-sag-2001]). -/
+inductive CRel | member deriving DecidableEq, Repr
+
+/-- The fragment's signature, with the `member` relation (`arity 2`). -/
 @[reducible] def sig : Signature Srt where
   Attr := Feat
-  Rel := Empty
-  arity := fun e => e.elim
+  Rel := CRel
+  arity := fun _ => 2
   approp := approp
   approp_inherits := fun hle happ => approp_inh_of_propagates approp_propagates hle happ
+
+/-- The empty relation interpretation — `member` holds of nothing. Used by every construct that states
+no `GAP`-membership facts (its principles never mention `member`); the genuine membership interpretation
+is `memberOf` on the set-valued worked model below. -/
+def noRel {U : Type} : CRel → List U → Prop := fun _ _ => False
+
+instance {U : Type} : ∀ ρ : CRel, DecidablePred (@noRel U ρ) := fun _ _ => instDecidableFalse
 
 /-! ### Principles (constructions as `τ ⇒ D`)
 
@@ -466,11 +479,11 @@ metavariable unification, so the carrier is fixed per family — the `Binding.cl
 
 /-- Single-gap construct family: construction sort `cxtSort`, mother `SEM` `semSort`, attribute map `a`
 (`singleGapA` for the standard filler-head geometry; a custom `a` for the head/filler variants). -/
-def singleConstruct (cxtSort semSort : Srt) (a : Feat → Ent → Option Ent) : Interpretation sig where
+@[reducible] def singleConstruct (cxtSort semSort : Srt) (a : Feat → Ent → Option Ent) : Interpretation sig where
   U := Ent
   S := fun u => match u with | .cxt => cxtSort | .sem => semSort | u => baseS u
   A := a
-  R := fun e => e.elim
+  R := noRel
 
 instance (cxtSort semSort : Srt) (a : Feat → Ent → Option Ent) :
     Fintype (singleConstruct cxtSort semSort a).U := inferInstanceAs (Fintype Ent)
@@ -479,11 +492,11 @@ instance (cxtSort semSort : Srt) (a : Feat → Ent → Option Ent) :
 
 /-- Two-gap construct family (amalgamation geometry `twoGapA`): construction sort `cxtSort`, mother
 `SEM` `semSort`, passing second-gap category `c2Sort`. -/
-def twoGapConstruct (cxtSort semSort c2Sort : Srt) : Interpretation sig where
+@[reducible] def twoGapConstruct (cxtSort semSort c2Sort : Srt) : Interpretation sig where
   U := Ent
   S := fun u => match u with | .cxt => cxtSort | .sem => semSort | .c2 => c2Sort | u => baseS u
   A := twoGapA
-  R := fun e => e.elim
+  R := noRel
 
 instance (cxtSort semSort c2Sort : Srt) :
     Fintype (twoGapConstruct cxtSort semSort c2Sort).U := inferInstanceAs (Fintype Ent)
@@ -690,7 +703,7 @@ filler-gap `wh-rel-cl` construct above. -/
 /-- Head-modifier construct family: a head daughter of category `noun`, an adjunct (modifier) daughter
 whose `MOD` value is the entity `modTarget`, and a mother of the head's category. When `modTarget` is the
 head's category (`npCat`) the modifier correctly selects the head. -/
-def headModConstruct (modTarget : Ent) : Interpretation sig where
+@[reducible] def headModConstruct (modTarget : Ent) : Interpretation sig where
   U := Ent
   S := fun u => match u with | .cxt => .headModifierCxt | u => baseS u
   A := fun a u => match a, u with
@@ -701,7 +714,7 @@ def headModConstruct (modTarget : Ent) : Interpretation sig where
     | .CAT, .mtr => some .npCat          -- mother category = head's (preserved)
     | .MOD, .fl => some modTarget        -- the modifier selects `modTarget`
     | _, _ => none
-  R := fun e => e.elim
+  R := noRel
 
 instance (modTarget : Ent) : Fintype (headModConstruct modTarget).U := inferInstanceAs (Fintype Ent)
 instance (modTarget : Ent) : DecidableEq (headModConstruct modTarget).U :=
@@ -727,7 +740,7 @@ preserve category (so e.g. passivized verbs coordinate). -/
 
 /-- An inflectional lexical-rule construct family: mother and base of category `baseCat`. When the
 mother's category equals the base's (the entity is shared), the rule is category-preserving. -/
-def inflectionalConstruct (mtrCat : Ent) : Interpretation sig where
+@[reducible] def inflectionalConstruct (mtrCat : Ent) : Interpretation sig where
   U := Ent
   S := fun u => match u with | .cxt => .inflectionalCxt | u => baseS u
   A := fun a u => match a, u with
@@ -736,7 +749,7 @@ def inflectionalConstruct (mtrCat : Ent) : Interpretation sig where
     | .CAT, .hd => some .vpCat          -- base is a verb
     | .CAT, .mtr => some mtrCat          -- mother category
     | _, _ => none
-  R := fun e => e.elim
+  R := noRel
 
 instance (mtrCat : Ent) : Fintype (inflectionalConstruct mtrCat).U := inferInstanceAs (Fintype Ent)
 instance (mtrCat : Ent) : DecidableEq (inflectionalConstruct mtrCat).U :=
@@ -764,7 +777,7 @@ inductive ChainEnt
 inflectional rules — the first maps `base0 ⤳ mid`, the second `mid ⤳ out` — keeps the category
 throughout (`out`'s `CAT` = `base0`'s, via two `inflectionalPrinciple` steps), so double passivization
 works with no phrasal machinery. -/
-def iterationChain : Interpretation sig where
+@[reducible] def iterationChain : Interpretation sig where
   U := ChainEnt
   S := fun u => match u with
     | .cxt1 => .inflectionalCxt | .cxt2 => .inflectionalCxt
@@ -774,11 +787,105 @@ def iterationChain : Interpretation sig where
     | .MTR, .cxt2 => some .out  | .BASE, .cxt2 => some .mid
     | .CAT, .base0 => some .vCat | .CAT, .mid => some .vCat | .CAT, .out => some .vCat
     | _, _ => none
-  R := fun e => e.elim
+  R := noRel
 
 instance : Fintype iterationChain.U := inferInstanceAs (Fintype ChainEnt)
 instance : DecidableEq iterationChain.U := inferInstanceAs (DecidableEq ChainEnt)
 
-example : iterationChain.Models grammar := by decide
+/-! ### Genuinely set-valued `GAP` via the `member` relation
+
+The list-valued `GAP` + `fillerHeadPrinciple` above is **order-committed**: a filler may only discharge
+`GAP|FIRST`. The handbook's SLASH is a *set* of `local` objects ([borsley-crysmann-2024] (9), after
+[bouma-malouf-sag-2001]), so a filler discharges *any* member, order-independently. The RSRL way to
+recover that ([richter-2024] Ch. 3: relations for set/list membership) is the `member` relation,
+**defined** by the recursive principle `memberDef` and interpreted as genuine list membership
+(`memberOf`). The payoff theorem below: a construct whose filler matches the *second* gap is **rejected**
+by the order-committed `fillerHeadPrinciple` yet its filler **is** a `member` of the head's `GAP` set —
+the list-vs-set distinction, made model-theoretic. -/
+
+/-- Entities of the set-valued worked construct: a filler-head construct whose head has the two-gap
+`GAP ⟨gNP, gPP⟩`, and whose **filler is a `gPP`** — i.e. it discharges the *non-first* gap. -/
+inductive GapEnt
+  | cxt | mtr | hd | fl | gVerb | gNP | gPP | gAdj | l1 | l2 | lnil
+  deriving DecidableEq, Fintype, Repr
+
+/-- Attribute geometry: head `GAP ⟨gNP, gPP⟩` (`l1 = ⟨gNP | l2⟩`, `l2 = ⟨gPP | lnil⟩`); the filler's
+`CAT` is `gPP` (the second gap); the mother's `GAP` is `l2`. -/
+def gapSetA : Feat → GapEnt → Option GapEnt := fun a u => match a, u with
+  | .MTR, .cxt => some .mtr | .HDDTR, .cxt => some .hd | .FILLERDTR, .cxt => some .fl
+  | .CAT, .hd => some .gVerb | .CAT, .fl => some .gPP | .CAT, .mtr => some .gAdj
+  | .GAP, .hd => some .l1 | .GAP, .mtr => some .l2
+  | .FIRST, .l1 => some .gNP | .REST, .l1 => some .l2
+  | .FIRST, .l2 => some .gPP | .REST, .l2 => some .lnil
+  | _, _ => none
+
+/-- Membership in the `GAP` list rooted at `l` under attribute map `a`: collect the `FIRST`s down the
+`REST` chain (fuel `11` ≥ the carrier size bounds it; the lists here are acyclic, length ≤ 2). -/
+def gapElems (a : Feat → GapEnt → Option GapEnt) : Nat → GapEnt → List GapEnt
+  | 0, _ => []
+  | n + 1, l => match a .FIRST l with
+      | some f => f :: (match a .REST l with | some r => gapElems a n r | none => [])
+      | none => []
+
+/-- `e` is a genuine member of the `GAP` set rooted at `l`. -/
+def memberOf (e l : GapEnt) : Prop := e ∈ gapElems gapSetA 11 l
+
+instance (e l : GapEnt) : Decidable (memberOf e l) :=
+  inferInstanceAs (Decidable (e ∈ gapElems gapSetA 11 l))
+
+/-- The `member` relation's interpretation: genuine list membership on the two argument entities. -/
+def gapSetR : CRel → List GapEnt → Prop := fun _ args =>
+  match args with | [e, l] => memberOf e l | _ => False
+
+instance (ρ : CRel) : DecidablePred (gapSetR ρ) := fun args => by
+  unfold gapSetR; split <;> infer_instance
+
+/-- The set-valued worked construct: a `filler-head-cxt` whose filler (`gPP`) matches the **second**
+gap of the head's `GAP ⟨gNP, gPP⟩`. -/
+@[reducible] def gapSetModel : Interpretation sig where
+  U := GapEnt
+  S := fun u => match u with
+    | .cxt => .fillerHeadCxt | .mtr => .sign | .hd => .sign | .fl => .sign
+    | .gVerb => .verb | .gNP => .noun | .gPP => .prep | .gAdj => .adj
+    | .l1 => .nelist | .l2 => .nelist | .lnil => .elist
+  A := gapSetA
+  R := gapSetR
+
+instance : Fintype gapSetModel.U := inferInstanceAs (Fintype GapEnt)
+instance : DecidableEq gapSetModel.U := inferInstanceAs (DecidableEq GapEnt)
+
+/-- **`member` defined relationally** ([richter-2024] Ch. 3, the RSRL way to define list/set relations):
+`x` is a member of `L` iff `L` is a `nelist` and `x` is its `FIRST` or a member of its `REST`. -/
+def memberDef : Desc sig :=
+  .all 0 (.all 1
+    (.and
+      (.imp (.rel .member [.var 0, .var 1])
+        (.and (.sortAssign (.var 1) .nelist)
+          (.or (.pathEq (.var 0) (.feat (.var 1) .FIRST))
+            (.rel .member [.var 0, .feat (.var 1) .REST]))))
+      (.imp
+        (.and (.sortAssign (.var 1) .nelist)
+          (.or (.pathEq (.var 0) (.feat (.var 1) .FIRST))
+            (.rel .member [.var 0, .feat (.var 1) .REST])))
+        (.rel .member [.var 0, .var 1]))))
+
+/-- The model's `member` interpretation **is** genuine membership: it satisfies the recursive
+`memberDef`. -/
+example : gapSetModel.Models [memberDef] := by decide
+
+/-- Set membership is **order-independent**: the *second* gap `gPP` is a member of `GAP ⟨gNP, gPP⟩`
+(the first gap `gNP` is too), but `gAdj` is not. -/
+example : memberOf .gNP .l1 ∧ memberOf .gPP .l1 ∧ ¬ memberOf .gAdj .l1 := by decide
+
+/-- The filler's category is a `member` of the head's `GAP` set — the filler discharges the **non-first**
+gap, expressible only because `GAP` is now set-valued. -/
+example : gapSetModel.satisfies (fun _ => .cxt) .cxt
+    (.rel .member [.path [.FILLERDTR, .CAT], .path [.HDDTR, .GAP]]) := by decide
+
+/-- **List vs set, made model-theoretic.** The very same construct is **rejected** by the order-committed
+`fillerHeadPrinciple` (which demands `FILLERDTR|CAT ≈ GAP|FIRST = gNP`, but the filler is `gPP`), even
+though its filler is a genuine `member` of the head's `GAP` set. The set semantics licenses what the list
+semantics cannot. -/
+example : ¬ gapSetModel.Models [fillerHeadPrinciple] := by decide
 
 end HPSG.Construction
