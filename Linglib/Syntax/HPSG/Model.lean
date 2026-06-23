@@ -73,9 +73,6 @@ instance search; the models below are plain `def`s. -/
   approp := happrop
   approp_inherits := fun {σ₁ σ₂ α τ₁} => happrop_inh σ₁ σ₂ α τ₁
 
-/-- `hpsgSig` has no relations, so relation membership is vacuously decidable — needed by the
-`satisfies`/`Models` decision procedure. -/
-instance (I : Interpretation hpsgSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
 
 /-! ### The Head Feature Principle -/
 

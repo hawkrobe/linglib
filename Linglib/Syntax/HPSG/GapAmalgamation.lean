@@ -98,21 +98,13 @@ def gApprop : GSort → GAttr → Option GSort
 private theorem gApprop_propagates : ∀ (σ₁ σ₂ : GSort) (α : GAttr),
     σ₂ ≤ σ₁ → (gApprop σ₁ α).isSome = true → gApprop σ₂ α = gApprop σ₁ α := by decide
 
-private theorem gApprop_inh : ∀ (σ₁ σ₂ : GSort) (α : GAttr) (τ₁ : GSort),
-    σ₂ ≤ σ₁ → gApprop σ₁ α = some τ₁ → ∃ τ₂, gApprop σ₂ α = some τ₂ ∧ τ₂ ≤ τ₁ := by
-  intro σ₁ σ₂ α τ₁ hle happ
-  have hsome : (gApprop σ₁ α).isSome = true := by rw [happ]; rfl
-  exact ⟨τ₁, (gApprop_propagates σ₁ σ₂ α hle hsome).trans happ, le_refl τ₁⟩
-
 /-- The gap-amalgamation signature (no relations). -/
 @[reducible] def gSig : Signature GSort where
   Attr := GAttr
   Rel := Empty
   arity := fun e => e.elim
   approp := gApprop
-  approp_inherits := fun {σ₁ σ₂ α τ₁} => gApprop_inh σ₁ σ₂ α τ₁
-
-instance (I : Interpretation gSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
+  approp_inherits := fun hle happ => approp_inh_of_propagates gApprop_propagates hle happ
 
 /-! ### Principles -/
 
