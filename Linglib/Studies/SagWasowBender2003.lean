@@ -1,4 +1,5 @@
 import Linglib.Syntax.HPSG.Coreference
+import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.RelativeClauses
 import Linglib.Syntax.HPSG.GapAmalgamation
@@ -108,6 +109,29 @@ theorem reflexive_pairs_captured :
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] = true ∧
     grammaticalForCoreference [john, sees, eachOther] = false := by
+  decide
+
+/-! #### Model-theoretic grounding (RSRL Principles A/B)
+
+The ARG-ST outranking judgments above are the parser-facing shadow of the **model-theoretic** Binding
+Theory (`Syntax/HPSG/Binding`): Principles A and B as RSRL descriptions (`Desc`) over a sort hierarchy
+of anaphors/pronouns/indices with a local-o-command relation. The two formalizations — computational
+ARG-ST outranking here, model-theoretic `Models` there — agree on the diagnostic cases. -/
+
+/-- The reflexive (Principle A) judgments are grounded in the RSRL model theory: the computational
+ARG-ST account (a coindexed reflexive object is bound, a reflexive subject is not) and the RSRL
+Principle-A model (a coindexed anaphor satisfies the grammar; a disjoint anaphor violates it) agree. -/
+theorem reflexive_binding_grounded_in_rsrl :
+    grammaticalForCoreference [john, sees, himself] = true ∧
+    grammaticalForCoreference [himself, sees, john] = false ∧
+    (_root_.HPSG.RSRL.Binding.clause .ana .i1).Models _root_.HPSG.RSRL.Binding.bindingGrammar ∧
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .i2).Models [_root_.HPSG.RSRL.Binding.principleA] := by
+  decide
+
+/-- Principle B grounded in RSRL: a coindexed personal pronoun violates the model-theoretic
+Principle B (a pronoun must be locally o-free), the counterpart of the ARG-ST disjoint-reference data. -/
+theorem pronoun_binding_grounded_in_rsrl :
+    ¬ (_root_.HPSG.RSRL.Binding.clause .ppro .i1).Models [_root_.HPSG.RSRL.Binding.principleB] := by
   decide
 
 end Binding
