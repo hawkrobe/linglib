@@ -197,8 +197,8 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
 active. Demonstrates that the rule has both an OSL representation
 (above) and a Subsequential representation (here) — the latter being
 the umbrella class. -/
-def rightwardATR : SFST Bool Seg Seg where
-  initial := false
+def rightwardATR : SFST Seg Seg Bool where
+  start := false
   step spreading s :=
     match s with
     | .a => (false, [.a])
