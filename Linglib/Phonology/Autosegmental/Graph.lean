@@ -282,48 +282,22 @@ theorem isPlanar_concat (A B : Graph α β)
     (A.concat B).IsPlanar := by
   rw [IsPlanar, isNonCrossing_iff] at hA hB ⊢
   intro l₁ hl₁ l₂ hl₂ hlt
-  rw [links_concat, Finset.mem_union] at hl₁ hl₂
-  rcases hl₁ with hl₁ | hl₁
-  · rcases hl₂ with hl₂ | hl₂
-    · -- Both from A.
-      exact hA l₁ hl₁ l₂ hl₂ hlt
-    · -- l₁ from A, l₂ from shifted B.
-      rw [Finset.mem_image] at hl₂
-      obtain ⟨b₂, _, rfl⟩ := hl₂
-      have := hAib l₁ hl₁
-      simp only [shiftLink] at *
-      omega
-  · rw [Finset.mem_image] at hl₁
-    obtain ⟨b₁, hb₁, rfl⟩ := hl₁
-    rcases hl₂ with hl₂ | hl₂
-    · -- l₁ from shifted B, l₂ from A. Vacuous under hAib:
-      -- hlt says (b₁.fst + A.upper.length) < l₂.fst, but hAib says
-      -- l₂.fst < A.upper.length, contradiction.
-      have := hAib l₂ hl₂
-      simp only [shiftLink] at hlt
-      omega
-    · -- Both from shifted B.
-      rw [Finset.mem_image] at hl₂
-      obtain ⟨b₂, hb₂, rfl⟩ := hl₂
-      simp only [shiftLink] at hlt ⊢
-      have hltB : b₁.fst < b₂.fst := by omega
-      have := hB b₁ hb₁ b₂ hb₂ hltB
-      omega
+  simp only [links_concat, Finset.mem_union, Finset.mem_image] at hl₁ hl₂
+  obtain hl₁ | ⟨b₁, hb₁, rfl⟩ := hl₁ <;> obtain hl₂ | ⟨b₂, hb₂, rfl⟩ := hl₂
+  · exact hA l₁ hl₁ l₂ hl₂ hlt
+  · have := hAib l₁ hl₁; simp only [shiftLink] at *; omega
+  · have := hAib l₂ hl₂; simp only [shiftLink] at *; omega
+  · simp only [shiftLink] at *; have := hB b₁ hb₁ b₂ hb₂ (by omega); omega
 
 /-- Concatenation preserves in-bounds. -/
 theorem inBounds_concat {A B : Graph α β}
     (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
-  intro p hp
-  rw [links_concat, Finset.mem_union] at hp
-  simp only [upper_concat, lower_concat, List.length_append]
-  rcases hp with hp | hp
-  · have := hA p hp
-    refine ⟨?_, ?_⟩ <;> omega
-  · rw [Finset.mem_image] at hp
-    obtain ⟨q, hq, rfl⟩ := hp
-    have := hB q hq
-    simp only [shiftLink]
-    refine ⟨?_, ?_⟩ <;> omega
+  rintro p hp
+  simp only [links_concat, Finset.mem_union, Finset.mem_image, upper_concat, lower_concat,
+    List.length_append] at hp ⊢
+  obtain hp | ⟨q, hq, rfl⟩ := hp
+  · have := hA p hp; omega
+  · have := hB q hq; simp only [shiftLink]; omega
 
 end Graph
 
