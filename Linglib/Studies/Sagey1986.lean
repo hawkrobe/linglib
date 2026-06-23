@@ -1,7 +1,7 @@
 import Linglib.Phonology.Featural.ComplexSegments
 import Linglib.Phonology.Featural.Geometry
 import Linglib.Phonology.Featural.Sharing
-import Linglib.Phonology.Autosegmental.NoCrossing
+import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Core.Order.Interval
 import Mathlib.Data.Set.Pairwise.Basic
@@ -171,8 +171,8 @@ end Association
 
 /-! ### Grounding the combinatorial No-Crossing Constraint
 
-[goldsmith-1976]'s index-level NCC (`IsNoCrossing` over `Finset (ℕ × ℕ)` in
-`Autosegmental/NoCrossing.lean`) is *stipulated* as the filter on autosegmental
+[goldsmith-1976]'s index-level NCC (`IsNonCrossing` over `Finset (ℕ × ℕ)` in
+`Autosegmental/NonCrossing.lean`) is *stipulated* as the filter on autosegmental
 GEN. [sagey-1986] §5.4 argues it should instead be *derived* from the
 temporal-overlap semantics of association lines (§5.3). This section makes the
 derivation load-bearing: an order-respecting assignment of time intervals to
@@ -198,14 +198,14 @@ def TierRealization.assoc (R : TierRealization T) (k i : ℕ) : Association T :=
     is realized as a *valid* (temporally overlapping) association under some
     order-respecting interval assignment, the set automatically satisfies
     [goldsmith-1976]'s index-level No-Crossing Constraint. The stipulated GEN
-    filter (`IsNoCrossing`) is exactly the discrete shadow of [sagey-1986]'s
+    filter (`IsNonCrossing`) is exactly the discrete shadow of [sagey-1986]'s
     overlap derivation (`no_crossing`): a crossing pair of links would realize
     two associations that cross, which cannot both overlap-validly. -/
-theorem isNoCrossing_of_validRealization (R : TierRealization T)
+theorem isNonCrossing_of_validRealization (R : TierRealization T)
     {links : Finset (ℕ × ℕ)}
     (hValid : ∀ p ∈ links, validAssociation (R.assoc p.1 p.2)) :
-    IsNoCrossing links := by
-  rw [isNoCrossing_iff]
+    IsNonCrossing links := by
+  rw [isNonCrossing_iff]
   intro l₁ hl₁ l₂ hl₂ hlt
   by_contra hgt
   push_neg at hgt
@@ -224,7 +224,7 @@ def TierRealization.canonical : TierRealization ℤ where
 
 /-- Under the canonical realization every diagonal link `(n, n)` is valid — a
     position overlaps itself — so the grounding theorem's hypothesis is
-    satisfiable (any diagonal link set is `IsNoCrossing` through it), not
+    satisfiable (any diagonal link set is `IsNonCrossing` through it), not
     vacuously true. -/
 theorem canonical_diagonal_valid (n : ℕ) :
     validAssociation (TierRealization.canonical.assoc n n) := by

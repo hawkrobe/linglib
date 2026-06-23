@@ -2731,7 +2731,7 @@ import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OCP
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Studies.Rolle2018
-import Linglib.Phonology.Autosegmental.NoCrossing
+import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Modularity
 import Linglib.Phonology.Prosodic.Syllable

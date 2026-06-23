@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Morphology.MorphWord
 import Linglib.Phonology.Autosegmental.Graph
-import Linglib.Phonology.Autosegmental.NoCrossing
+import Linglib.Phonology.Autosegmental.NonCrossing
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Insert
@@ -210,7 +210,7 @@ def deleteLink (f : FloatingForm S T) (k : TierIdx) (i : SegIdx) : FloatingForm 
 
 /-- A candidate link `(k, i)` would **cross** an existing surface link.
     Wraps the substrate `IndexCrosses` defined over `Finset (ℕ × ℕ)`;
-    `IsNoCrossing` (via mathlib's `MonovaryOn`) provides the set-level
+    `IsNonCrossing` (via mathlib's `MonovaryOn`) provides the set-level
     NCC and inherits mathlib's lemma library. -/
 abbrev Crosses (f : FloatingForm S T) (k : TierIdx) (i : SegIdx) : Prop :=
   IndexCrosses f.surfaceLinks k i
