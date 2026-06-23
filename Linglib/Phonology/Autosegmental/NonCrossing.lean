@@ -76,8 +76,7 @@ end
 section
 variable (links : Finset (ℕ × ℕ)) (k i : ℕ)
 
-/-- `(k, i)` forms a crossing pair (a 2-link set failing `IsNonCrossing`)
-    with some link in `links` — the decidable GEN filter. -/
+/-- `(k, i)` crosses some link in `links` — the decidable GEN filter. -/
 def IndexCrosses : Prop :=
   ∃ l ∈ links, ¬ IsNonCrossing {(k, i), l}
 
@@ -99,24 +98,16 @@ variable {links : Finset (ℕ × ℕ)} {k i : ℕ}
 theorem isNonCrossing_insert_iff :
     IsNonCrossing (insert (k, i) links) ↔
       IsNonCrossing links ∧ ¬ IndexCrosses links k i := by
+  simp only [isNonCrossing_iff, indexCrosses_iff, Finset.mem_insert,
+    not_exists, not_or, not_and, not_lt]
   constructor
   · intro h
-    refine ⟨h.subset (Finset.subset_insert _ _), ?_⟩
-    rw [indexCrosses_iff]
-    rw [isNonCrossing_iff] at h
-    have hki : ((k, i) : ℕ × ℕ) ∈ insert (k, i) links := Finset.mem_insert_self _ _
-    rintro ⟨l, hl, ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
-    · exact absurd (h (k, i) hki l (Finset.mem_insert_of_mem hl) h1) (not_le.mpr h2)
-    · exact absurd (h l (Finset.mem_insert_of_mem hl) (k, i) hki h1) (not_le.mpr h2)
-  · rintro ⟨hNC, hNX⟩
-    rw [isNonCrossing_iff] at hNC ⊢
-    simp only [indexCrosses_iff, not_exists, not_or, not_and, not_lt] at hNX
-    intro l₁ hl₁ l₂ hl₂ hlt
-    simp only [Finset.mem_insert] at hl₁ hl₂
-    rcases hl₁ with rfl | hl₁ <;> rcases hl₂ with rfl | hl₂
+    exact ⟨fun l₁ hl₁ l₂ hl₂ => h l₁ (.inr hl₁) l₂ (.inr hl₂),
+      fun l hl => ⟨h (k, i) (.inl rfl) l (.inr hl), h l (.inr hl) (k, i) (.inl rfl)⟩⟩
+  · rintro ⟨hNC, hX⟩ l₁ (rfl | hl₁) l₂ (rfl | hl₂) hlt
     · omega
-    · exact (hNX l₂ hl₂).1 hlt
-    · exact (hNX l₁ hl₁).2 hlt
+    · exact (hX l₂ hl₂).1 hlt
+    · exact (hX l₁ hl₁).2 hlt
     · exact hNC l₁ hl₁ l₂ hl₂ hlt
 
 /-- GEN direction of `isNonCrossing_insert_iff`. -/
