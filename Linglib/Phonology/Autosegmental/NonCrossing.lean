@@ -73,24 +73,30 @@ end
 
 /-! ### Candidate-level crossing predicate (`ℕ`-indexed GEN filter) -/
 
+section
+variable (links : Finset (ℕ × ℕ)) (k i : ℕ)
+
 /-- `(k, i)` forms a crossing pair (a 2-link set failing `IsNonCrossing`)
     with some link in `links` — the decidable GEN filter. -/
-def IndexCrosses (links : Finset (ℕ × ℕ)) (k i : ℕ) : Prop :=
+def IndexCrosses : Prop :=
   ∃ l ∈ links, ¬ IsNonCrossing {(k, i), l}
 
-instance (links : Finset (ℕ × ℕ)) (k i : ℕ) :
-    Decidable (IndexCrosses links k i) := by
-  unfold IndexCrosses; infer_instance
+instance : Decidable (IndexCrosses links k i) := by unfold IndexCrosses; infer_instance
 
 /-- `IndexCrosses` in elementary index-ordering form. -/
-theorem indexCrosses_iff (links : Finset (ℕ × ℕ)) (k i : ℕ) :
+theorem indexCrosses_iff :
     IndexCrosses links k i ↔
       ∃ l ∈ links, (k < l.fst ∧ l.snd < i) ∨ (l.fst < k ∧ i < l.snd) := by
   simp only [IndexCrosses, isNonCrossing_pair]
   exact exists_congr fun _ => and_congr_right fun _ => by omega
 
+end
+
+section
+variable {links : Finset (ℕ × ℕ)} {k i : ℕ}
+
 /-- Adding `(k, i)` keeps non-crossing iff it crosses no existing link. -/
-theorem isNonCrossing_insert_iff {links : Finset (ℕ × ℕ)} {k i : ℕ} :
+theorem isNonCrossing_insert_iff :
     IsNonCrossing (insert (k, i) links) ↔
       IsNonCrossing links ∧ ¬ IndexCrosses links k i := by
   constructor
@@ -115,9 +121,10 @@ theorem isNonCrossing_insert_iff {links : Finset (ℕ × ℕ)} {k i : ℕ} :
 
 /-- GEN direction of `isNonCrossing_insert_iff`. -/
 theorem IsNonCrossing.insert_of_not_indexCrosses
-    {links : Finset (ℕ × ℕ)} {k i : ℕ}
     (hNC : IsNonCrossing links) (hNX : ¬ IndexCrosses links k i) :
     IsNonCrossing (insert (k, i) links) :=
   isNonCrossing_insert_iff.mpr ⟨hNC, hNX⟩
+
+end
 
 end Autosegmental
