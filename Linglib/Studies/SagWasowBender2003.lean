@@ -272,6 +272,16 @@ theorem modification_preserves_head_cat (headNoun : Sign)
     result.synsem.cat = headNoun.synsem.cat :=
   headMod_preserves_cat headNoun relClause result hMod
 
+/-- **Model-theoretic grounding (RSRL head-modifier).** The relative-clause head-modification above is
+grounded in the canonical RSRL signature (`Syntax/HPSG/Construction`'s `head-modifier-cxt`): a relative
+clause whose `MOD` value selects the noun head is licensed and the mother is a noun (modification
+preserves category — `headModifierPrinciple`); a modifier selecting the wrong category is rejected. The
+computational `relClauseModifies`/`modification_preserves_head_cat` are the parser-facing shadow of these
+`Models` facts. -/
+theorem relatives_rsrl_grounded :
+    HPSG.Construction.goodHeadMod.Models HPSG.Construction.grammar ∧
+    ¬ HPSG.Construction.headModWrongCat.Models HPSG.Construction.grammar := by decide
+
 end RelativeClauses
 
 end SagWasowBender2003
