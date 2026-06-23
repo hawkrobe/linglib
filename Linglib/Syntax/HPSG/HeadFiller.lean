@@ -18,7 +18,10 @@ HPSG's three immediate dominance schemata.
 - `HeadFillerRule` — filler combines with `S[SLASH {XP}]`, discharging the gap
 - `HPSGSchema` — unifies all three schemata
 - `TrackedSign` — sign paired with its SLASH value
-- `GapRestriction` — island constraints via GAP restrictions
+
+Islands are **not** modeled here: the model-theoretic `[GAP ⟨⟩]` island taxonomy lives over the
+canonical RSRL signature (`Syntax/HPSG/Construction`, consumed by `Studies/SagWasowBender2003` and
+`Studies/Sag2010`), which subsumes the former coarse `GapRestriction` enum.
 
 ## Connection to [mueller-2013]
 
@@ -248,44 +251,6 @@ the need for a separate island module in the grammar.
   (e.g., wh-islands allow NP extraction but not PP)
 - **Unrestricted**: any GAP value permeates (no island constraint) -/
 
-/-- GAP restriction on a construction.
-
-This classifies constructions by what kinds of gaps they permit,
-deriving island effects from the same feature system used for
-non-island dependencies. -/
-inductive GapRestriction where
-  | unrestricted  -- Any GAP value (not an island)
-  | npOnly        -- [GAP list(NP)] — weak island (only NP extraction)
-  | noGap         -- [GAP ⟨⟩] — absolute barrier to extraction
-  deriving Repr, DecidableEq
-
-/-- Does this GAP restriction block all extraction? -/
-def GapRestriction.IsAbsoluteIsland (g : GapRestriction) : Prop :=
-  g = .noGap
-
-instance : DecidablePred GapRestriction.IsAbsoluteIsland :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Does this GAP restriction allow NP extraction? -/
-def GapRestriction.AllowsNPExtraction (g : GapRestriction) : Prop :=
-  g = .unrestricted ∨ g = .npOnly
-
-instance : DecidablePred GapRestriction.AllowsNPExtraction :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- A SLASH value satisfies a GAP restriction if all its gaps are
-permitted by the restriction. -/
-def SlashValue.satisfiesRestriction (sv : SlashValue) (r : GapRestriction) : Bool :=
-  match r with
-  | .unrestricted => true
-  | .npOnly => sv.gaps.all (· == .NOUN)
-  | .noGap => sv.gaps.isEmpty
-
-/-- Empty SLASH always satisfies any restriction. -/
-theorem empty_satisfies_any_restriction (r : GapRestriction) :
-    SlashValue.empty.satisfiesRestriction r = true := by
-  cases r <;> rfl
-
 -- ============================================================================
 -- Derivation Examples
 -- ============================================================================
@@ -361,55 +326,5 @@ theorem extraction_complete :
   decide
 
 end DerivationExamples
-
--- ============================================================================
--- Island Blocking
--- ============================================================================
-
-/-! ### Islands block SLASH propagation
-
-When a construction has a GAP restriction of `.noGap`, no SLASH values
-can percolate through it. This blocks extraction from islands.
-
-Example: "*What did John wonder who saw ___?"
-- The embedded question "who saw ___" has SLASH {NP}
-- But the embedded question construction has [GAP ⟨⟩] (`.noGap`)
-- SLASH cannot pass through → extraction blocked
--/
-
-section IslandBlocking
-
-/-- Check that a SLASH value can propagate through a construction.
-Returns the SLASH that survives the restriction. -/
-def propagateSlash (sv : SlashValue) (restriction : GapRestriction) : SlashValue :=
-  if sv.satisfiesRestriction restriction then sv
-  else .empty
-
--- Extraction from a non-island succeeds: SLASH passes through
-#guard (propagateSlash ⟨[.NOUN]⟩ .unrestricted).gaps == [.NOUN]
-
--- Extraction from an absolute island fails: SLASH is blocked
-#guard (propagateSlash ⟨[.NOUN]⟩ .noGap).isEmpty
-
--- Extraction of NP from a weak island succeeds
-#guard (propagateSlash ⟨[.NOUN]⟩ .npOnly).gaps == [.NOUN]
-
--- But extraction of PP from a weak island fails
-#guard (propagateSlash ⟨[.ADP]⟩ .npOnly).isEmpty
-
-/-- Extraction from a non-island construction always succeeds. -/
-theorem extraction_from_nonisland (c : UD.UPOS) :
-    (propagateSlash ⟨[c]⟩ .unrestricted).gaps = [c] := by
-  simp [propagateSlash, SlashValue.satisfiesRestriction]
-
-/-- Extraction from an absolute island is always blocked. -/
-theorem extraction_blocked_by_island (gaps : List UD.UPOS) (h : gaps ≠ []) :
-    (propagateSlash ⟨gaps⟩ .noGap).isEmpty = true := by
-  simp [propagateSlash, SlashValue.satisfiesRestriction, SlashValue.isEmpty]
-  cases gaps with
-  | nil => exact absurd rfl h
-  | cons _ _ => rfl
-
-end IslandBlocking
 
 end HPSG

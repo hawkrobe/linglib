@@ -813,7 +813,7 @@ grammar-based islands (those with `[GAP ⟨⟩]` on the mother).
 effects. [lu-pan-degen-2025]'s MoS islands are a third mechanism.
 Together the three accounts cover disjoint islands. -/
 
-open Sag2010 (FGClauseType fgParams islandConstructions)
+open Sag2010 (FGClauseType islandConstructions)
 
 /-- [sag-2010]'s two island constructions are a proper subset of all
 F-G types. The non-island types (interrogative, relative, the-clause)
@@ -827,9 +827,9 @@ are disjoint from [hofmeister-sag-2010]'s processing-based islands
 discourse-based islands (MoS). The three accounts cover different cases
 under different mechanisms. -/
 theorem complementary_coverage :
-    (fgParams .topicalized).IsIsland ∧
-    (fgParams .whExclamative).IsIsland ∧
-    mosIslandSources = [.discourse] := ⟨rfl, rfl, rfl⟩
+    FGClauseType.topicalized.IsIsland ∧
+    FGClauseType.whExclamative.IsIsland ∧
+    mosIslandSources = [.discourse] := ⟨by decide, by decide, rfl⟩
 
 /-- MoS islands are discourse-sourced and so distinct from the syntactic
 baseline assumed for traditional islands. -/
