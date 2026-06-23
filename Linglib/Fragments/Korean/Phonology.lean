@@ -5,7 +5,7 @@ import Linglib.Phonology.Subregular.LocalRewrite
 # Korean Phonological Inventory
 
 Korean segments and the stop nasalization rule, using the SPE formalism
-from `Phonology.LocalRewrite`.
+from `Subregular.LocalRewrite`.
 
 ## Segments
 
@@ -21,7 +21,7 @@ target feature for the nasalization rule.
 -/
 
 open Phonology
-open Phonology.LocalRewrite
+open Subregular.LocalRewrite
 
 namespace Korean.Phonology
 

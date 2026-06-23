@@ -35,7 +35,7 @@ forbidden-pair infrastructure to `R := (· ≠ ·)`. The AGREE-specific names
 downstream consumers reference.
 -/
 
-namespace Phonology
+namespace Subregular
 
 open OptimalityTheory
 open Subregular
@@ -112,4 +112,4 @@ theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
   ext w
   exact mkAgreeOnTier_zero_iff_in_agree_lang name p id w
 
-end Phonology
+end Subregular

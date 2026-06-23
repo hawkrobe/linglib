@@ -62,7 +62,7 @@ theory-neutral harmony profile consumed by rival accounts is future work.
   non-neutral suffix vowels; neutral vowels (/i, í, e, é/) are transparent
 -/
 
-namespace Phonology.Harmony
+namespace Subregular.Harmony
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology
@@ -293,4 +293,4 @@ theorem spreadSuffix_blocker (sys : System) (val : Bool)
     spreadSuffix sys val (s :: rest) = s :: rest := by
   simp [spreadSuffix, hb]
 
-end Phonology.Harmony
+end Subregular.Harmony

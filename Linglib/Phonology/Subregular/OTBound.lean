@@ -51,7 +51,7 @@ subregular hierarchy.
 --       in PR-7d to make it visible to non-phonology consumers.)
 -- ============================================================================
 
-namespace Phonology.OTBound
+namespace Subregular.OTBound
 
 open OptimalityTheory
 open Subregular
@@ -120,4 +120,4 @@ theorem exists_namedConstraint_zeroSet_not_isRegular :
   rw [supraregularConstraint_zeroSet]
   exact balancedAB_not_isRegular
 
-end Phonology.OTBound
+end Subregular.OTBound

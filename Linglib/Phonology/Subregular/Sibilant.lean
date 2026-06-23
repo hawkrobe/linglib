@@ -17,7 +17,7 @@ over this alphabet — symmetric (`TSLGrammar.agree`) or asymmetric
 (`TSLGrammar.ofForbiddenPairs`) — and keeps its language-specific data and citations.
 -/
 
-namespace Phonology
+namespace Subregular
 
 /-- The three sibilant-harmony classes: `anterior` (`s`-class), `posterior` (`ʃ`-class),
 and `neutral` (off the harmony tier). -/
@@ -34,4 +34,4 @@ instance : DecidablePred Sibilant.onTier
   | .anterior | .posterior => isTrue trivial
   | .neutral => isFalse not_false
 
-end Phonology
+end Subregular

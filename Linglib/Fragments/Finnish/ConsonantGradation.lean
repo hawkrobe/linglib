@@ -32,7 +32,7 @@ right context: a following consonant signals a closed syllable.
 namespace Finnish.ConsonantGradation
 
 open Phonology (Segment Feature Segment.ofSpecs)
-open Phonology.LocalRewrite
+open Subregular.LocalRewrite
 
 -- ============================================================================
 -- § 1: Natural Classes

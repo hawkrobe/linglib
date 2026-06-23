@@ -6,7 +6,7 @@ import Linglib.Data.PHOIBLE.Inventories.English
 # English Phonological Inventory
 
 Concrete English segments and language-specific phonological rules,
-defined using the SPE formalism from `Phonology.LocalRewrite`.
+defined using the SPE formalism from `Subregular.LocalRewrite`.
 
 ## Segments
 
@@ -21,7 +21,7 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 -/
 
 open Phonology
-open Phonology.LocalRewrite
+open Subregular.LocalRewrite
 
 namespace English.Phonology
 

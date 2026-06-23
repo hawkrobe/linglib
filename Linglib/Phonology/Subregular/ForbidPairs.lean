@@ -22,7 +22,7 @@ forbidden-pair relation `R`. The OCP-specific specialization (with
 corollary.
 -/
 
-namespace Phonology
+namespace Subregular
 
 open OptimalityTheory
 open Subregular
@@ -60,4 +60,4 @@ theorem mkForbidPairsOnTier_zero_iff_in_lang {C : Type} (name : String)
   rw [mkForbidPairsOnTier_zero_iff_isChain,
       mem_ofForbiddenPairs_lang_iff_filter_isChain]
 
-end Phonology
+end Subregular

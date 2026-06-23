@@ -108,8 +108,7 @@ namespace Lambert2026
 open Subregular
 open Language
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
-open Phonology (Sibilant)
-open Phonology  -- for `TSLGrammar.agree`
+-- `Sibilant` and `TSLGrammar.agree` now live in the shared `Subregular` namespace (opened above)
 
 /-! ### Sandwich-word helpers
 
@@ -651,7 +650,7 @@ theorem karanga_shona_verb_stem_isBTLI :
 /-! ### Sibilant-harmony grammars over the shared `Sibilant` alphabet
 
 Both asymmetric directions plus the symmetric foil, over the shared
-`Phonology.Sibilant` substrate. Lambert's classification draws the
+`Subregular.Sibilant` substrate. Lambert's classification draws the
 symmetric-vs-asymmetric comparison: the symmetric grammar is the [hansson-2010]
 Navajo profile (`TSLGrammar.agree`, disagreement forbidden in both directions),
 the anterior-first asymmetric grammar the [cook-1978] Tsuut'ina profile. -/
@@ -713,7 +712,7 @@ theorem symmetricHarmony_lang_subset_asymPostFirst :
     Sibilant.onTier
 
 /-- The Tsuut'ina sibilant alphabet ([cook-1978]) is the shared three-class
-`Phonology.Sibilant` (anterior `s`, posterior `ʃ`, neutral non-sibilant). -/
+`Subregular.Sibilant` (anterior `s`, posterior `ʃ`, neutral non-sibilant). -/
 abbrev TsuutinaSeg := Sibilant
 
 /-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony ([cook-1978];

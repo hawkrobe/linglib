@@ -145,7 +145,7 @@ inductive NSeg where
   deriving DecidableEq, Repr
 
 /-- `NSeg`'s sibilant class, grounding the tier predicate in the shared
-`Phonology.Sibilant` substrate: the two sibilant series map to `anterior` and
+`Subregular.Sibilant` substrate: the two sibilant series map to `anterior` and
 `posterior`, the transparent material (non-sibilant consonants, vowels) to `neutral`. -/
 @[reducible] def NSeg.toSibilant : NSeg → Sibilant
   | .antSib => .anterior

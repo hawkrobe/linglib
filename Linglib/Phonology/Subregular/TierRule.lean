@@ -26,7 +26,7 @@ This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
 dissimilation, Turkish vowel harmony, Finnish backness harmony with
 neutral-vowel transparency — see [belth-2026]), Rose-Walker harmony
 systems (which structurally **contain** a `TierRule` as their value-prediction
-core — see `Phonology.Harmony.System` in `Subregular/Harmony.lean`), and
+core — see `Subregular.Harmony.System` in `Subregular/Harmony.lean`), and
 any SPE rule whose context is a single tier-adjacent segment.
 
 The schema does **not** cover:
@@ -53,7 +53,7 @@ is straightforward but requires careful threading of the trivial tier;
 land it once a Studies file needs to invoke the bridge concretely.
 -/
 
-namespace Phonology
+namespace Subregular
 
 open Subregular
 
@@ -197,7 +197,7 @@ where
 
 end TierRule
 
-end Phonology
+end Subregular
 
 /-! ## Function-level subregular classification
 
@@ -218,7 +218,7 @@ The non-trivial-tier classification is **deferred** (the SFST witness
 needs to thread the tier projection's state alongside the
 predicate-evaluation state); the identity-tier case is discharged below.
 Land the general witness here once a Studies file consumes it. -/
-namespace Phonology.TierRule
+namespace Subregular.TierRule
 
 open Subregular
 
@@ -358,4 +358,4 @@ theorem applyToString_isRightMyopic (r : TierRule α) :
     IsMyopicTowards r.applyToString .right :=
   IsMyopicTowards.right_of_prefixDetermined (applyToString_prefixDetermined r)
 
-end Phonology.TierRule
+end Subregular.TierRule

@@ -43,7 +43,7 @@ goals. One type system, no enum wrappers.
 namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
-open Phonology.Harmony
+open Subregular.Harmony
 open OptimalityTheory.Correspondence (Corr)
 open Constraint OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
