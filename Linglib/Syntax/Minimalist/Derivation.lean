@@ -178,42 +178,64 @@ def SyntacticObject.toPlanarLeaf? (so : SyntacticObject) :
   | _, some n => some (.of (.inr n))
   | _, _ => none
 
-/-- Replace every ordered subtree of `t` that projects to `target` with `rep`.
-    The planar mirror of `SyntacticObject.replace` (matches by SO-equality of
-    the projection `FreeCommMagma.mk`). -/
-def planarReplaceSO (target : SyntacticObject) (rep : FreeMagma (LIToken ⊕ Nat)) :
-    FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat)
-  | a@(.of _) => if (FreeCommMagma.mk a : SyntacticObject) = target then rep else a
-  | a@(.mul l r) =>
-      if (FreeCommMagma.mk a : SyntacticObject) = target then rep
-      else .mul (planarReplaceSO target rep l) (planarReplaceSO target rep r)
+/-! #### Planar-tree toolkit
 
-/-- Find the (leftmost) ordered subtree of `t` projecting to `target`. -/
-def findOrderedSubtree? (target : SyntacticObject) :
+Basic operations on the ordered externalization tree, **predicate-driven** so the
+same toolkit serves `externalize` (predicate = "projects to the mover") and
+word-order enumerations such as `Studies/Cinque2005` (predicate = structural
+equality). -/
+
+/-- Subtrees of a planar tree (root-first, left-to-right). -/
+def planarSubtrees : FreeMagma (LIToken ⊕ Nat) → List (FreeMagma (LIToken ⊕ Nat))
+  | .of x => [.of x]
+  | .mul l r => .mul l r :: (planarSubtrees l ++ planarSubtrees r)
+
+/-- Leftmost (root-first) subtree satisfying `p`. -/
+def planarFind? (p : FreeMagma (LIToken ⊕ Nat) → Bool) :
     FreeMagma (LIToken ⊕ Nat) → Option (FreeMagma (LIToken ⊕ Nat))
-  | a@(.of _) => if (FreeCommMagma.mk a : SyntacticObject) = target then some a else none
-  | a@(.mul l r) =>
-      if (FreeCommMagma.mk a : SyntacticObject) = target then some a
-      else (findOrderedSubtree? target l).or (findOrderedSubtree? target r)
+  | a@(.of _) => if p a then some a else none
+  | a@(.mul l r) => if p a then some a else (planarFind? p l).or (planarFind? p r)
 
-/-- Internal Merge on the ordered accumulator: raise the ordered subtree
-    projecting to `mover` to the LEFT edge, leaving a trace. Mirrors
-    `Step.apply (.im mover tid)`. `none` if `mover` isn't found. -/
+/-- Replace every subtree satisfying `p` with `rep`. -/
+def planarReplaceWhere (p : FreeMagma (LIToken ⊕ Nat) → Bool)
+    (rep : FreeMagma (LIToken ⊕ Nat)) :
+    FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat)
+  | a@(.of _) => if p a then rep else a
+  | a@(.mul l r) =>
+      if p a then rep
+      else planarReplaceWhere p rep l * planarReplaceWhere p rep r
+
+/-- Raise the leftmost `p`-subtree to the LEFT edge, leaving `rep` (a trace) in
+    its place. `none` if no subtree satisfies `p`. The planar form of movement. -/
+def planarMoveLeft (p : FreeMagma (LIToken ⊕ Nat) → Bool)
+    (rep cur : FreeMagma (LIToken ⊕ Nat)) : Option (FreeMagma (LIToken ⊕ Nat)) :=
+  (planarFind? p cur).map fun s => s * planarReplaceWhere p rep cur
+
+/-- "Projects to `target`": a planar subtree whose `FreeCommMagma` projection
+    equals the unordered SO `target` — the predicate `externalize` uses to locate
+    a mover. -/
+def projEq (target : SyntacticObject) (s : FreeMagma (LIToken ⊕ Nat)) : Bool :=
+  (FreeCommMagma.mk s : SyntacticObject) == target
+
+/-- Internal Merge on the ordered accumulator: raise the subtree projecting to
+    `mover` to the LEFT edge, leaving a trace. Mirrors `Step.apply (.im …)`. -/
 def moveLeftPlanar (acc : FreeMagma (LIToken ⊕ Nat)) (mover : SyntacticObject)
     (tid : Nat) : Option (FreeMagma (LIToken ⊕ Nat)) :=
-  (findOrderedSubtree? mover acc).map fun s =>
-    .mul s (planarReplaceSO mover (.of (.inr tid)) acc)
+  planarMoveLeft (projEq mover) (.of (.inr tid)) acc
+
+/-- One externalization step on the ordered accumulator. -/
+def externStep (acc? : Option (FreeMagma (LIToken ⊕ Nat))) (step : Step) :
+    Option (FreeMagma (LIToken ⊕ Nat)) :=
+  acc?.bind fun acc => match step with
+    | .emL item => item.toPlanarLeaf?.map (fun p => p * acc)
+    | .emR item => item.toPlanarLeaf?.map (fun p => acc * p)
+    | .im mover tid => moveLeftPlanar acc mover tid
 
 /-- The derivation's ordered planar representative (MCB `σ_L` for this
     derivation), or `none` if a merged item is complex / a mover is missing. -/
 def Derivation.externalizeP? (d : Derivation) :
     Option (FreeMagma (LIToken ⊕ Nat)) :=
-  (d.initial.toPlanarLeaf?).bind fun init =>
-    d.steps.foldl (fun acc? step => acc?.bind fun acc =>
-      match step with
-      | .emL item => (item.toPlanarLeaf?).map (fun p => .mul p acc)
-      | .emR item => (item.toPlanarLeaf?).map (fun p => .mul acc p)
-      | .im mover tid => moveLeftPlanar acc mover tid) (some init)
+  d.initial.toPlanarLeaf?.bind fun init => d.steps.foldl externStep (some init)
 
 /-- Surface (pronounced) tokens of a derivation, left-to-right. Traces are
     dropped (`linearizePlanar` skips `Sum.inr`). Empty if externalization
@@ -226,21 +248,170 @@ def Derivation.surfaceTokens (d : Derivation) : List LIToken :=
 def Derivation.surfaceCats (d : Derivation) : List Cat :=
   d.surfaceTokens.map (·.item.outerCat)
 
-/-! ### Faithfulness (Π bridge) and verification
+/-! ### Faithfulness: `externalize` projects to `final` (the Π bridge)
 
-**Faithfulness:** whenever `externalizeP?` succeeds, its ordered representative
-projects back to the unordered `Derivation.final` — `externalizeP?` is a genuine
-planar representative of the narrow-syntax output, not an independent
-re-derivation. Stated concretely below by `decide`; the general theorem
-`∀ fm, d.externalizeP? = some fm → (FreeCommMagma.mk fm) = d.final` is provable
-by induction on `d.steps` via `mk (planarReplaceSO t rep a) = (mk a).replace t
-(mk rep)` plus the leaf/trace projection lemmas (deferred).
+Whenever `externalizeP?` succeeds, projecting it back (`FreeCommMagma.mk`)
+recovers `Derivation.final` — so the computable PF is the externalization of the
+very SO that Merge builds, not an independent re-derivation. -/
 
-The checks below also pin the substantive content: phrasal **pied-piping
-preserves the moved constituent's internal order**, so deriving Dem-N-A-Num
-(raise N around A, then pied-pipe `[N A]` around Num) is distinct from
-Dem-A-N-Num (pied-pipe `[A N]` around Num) — the [cinque-2005] o-vs-n contrast.
-(`.D` stands in for the demonstrative pending a `Cat.Dem` constructor.) -/
+private theorem getLIToken_eq_leaf {so : SyntacticObject} {tok : LIToken} :
+    so.getLIToken = some tok → so = .leaf tok := by
+  induction so with
+  | leaf t => intro h; simp only [SyntacticObject.getLIToken_leaf, Option.some.injEq] at h
+              exact congrArg _ h
+  | trace n => intro h; simp at h
+  | mul l r _ _ => intro h; simp at h
+
+private theorem isTrace_eq_trace {so : SyntacticObject} {n : Nat} :
+    isTrace so = some n → so = .trace n := by
+  induction so with
+  | leaf t => intro h; simp at h
+  | trace m => intro h; simp only [isTrace_trace, Option.some.injEq] at h
+               exact congrArg _ h
+  | mul l r _ _ => intro h; simp at h
+
+private theorem mk_toPlanarLeaf? {so : SyntacticObject}
+    {fm : FreeMagma (LIToken ⊕ Nat)} (h : so.toPlanarLeaf? = some fm) :
+    (FreeCommMagma.mk fm : SyntacticObject) = so := by
+  unfold SyntacticObject.toPlanarLeaf? at h
+  cases hg : so.getLIToken with
+  | some tok =>
+      simp only [hg, Option.some.injEq] at h; subst h; rw [getLIToken_eq_leaf hg]
+  | none =>
+      cases ht : isTrace so with
+      | some n => simp only [hg, ht, Option.some.injEq] at h; subst h; rw [isTrace_eq_trace ht]
+      | none => simp [hg, ht] at h
+
+/-- `mk` distributes over a planar `mul`. -/
+private theorem mk_mul (l r : FreeMagma (LIToken ⊕ Nat)) :
+    (FreeCommMagma.mk (l * r) : SyntacticObject)
+      = FreeCommMagma.mk l * FreeCommMagma.mk r :=
+  rfl
+
+private theorem planarFind?_projEq {target : SyntacticObject} :
+    ∀ {a s : FreeMagma (LIToken ⊕ Nat)},
+      planarFind? (projEq target) a = some s → (FreeCommMagma.mk s : SyntacticObject) = target := by
+  intro a
+  induction a with
+  | ih1 x =>
+      intro s h; simp only [planarFind?] at h
+      split at h
+      · next hp => simp only [Option.some.injEq] at h; subst h
+                   simpa [projEq] using hp
+      · simp at h
+  | ih2 l r ihl ihr =>
+      intro s h; simp only [planarFind?] at h
+      split at h
+      · next hp => simp only [Option.some.injEq] at h; subst h; simpa [projEq] using hp
+      · next =>
+          cases hl : planarFind? (projEq target) l with
+          | some s' => rw [hl, Option.some_or, Option.some.injEq] at h; subst h; exact ihl hl
+          | none => rw [hl, Option.none_or] at h; exact ihr h
+
+private theorem mk_planarReplaceWhere_projEq (target : SyntacticObject)
+    (rep : FreeMagma (LIToken ⊕ Nat)) :
+    ∀ a : FreeMagma (LIToken ⊕ Nat),
+      (FreeCommMagma.mk (planarReplaceWhere (projEq target) rep a) : SyntacticObject)
+        = SyntacticObject.replace (FreeCommMagma.mk a) target (FreeCommMagma.mk rep) := by
+  intro a
+  induction a with
+  | ih1 x =>
+      simp only [planarReplaceWhere]
+      by_cases hx : (FreeCommMagma.mk (.of x) : SyntacticObject) = target
+      · rw [if_pos (by simpa [projEq] using hx), hx, replace_self]
+      · rw [if_neg (by simpa [projEq] using hx)]
+        cases x with
+        | inl t => rw [show (FreeCommMagma.mk (.of (.inl t)) : SyntacticObject)
+                         = SyntacticObject.leaf t from rfl,
+                       SyntacticObject.replace_leaf, if_neg hx]
+        | inr n => rw [show (FreeCommMagma.mk (.of (.inr n)) : SyntacticObject)
+                         = SyntacticObject.trace n from rfl,
+                       SyntacticObject.replace_trace, if_neg hx]
+  | ih2 l r ihl ihr =>
+      simp only [planarReplaceWhere]
+      by_cases hx : (FreeCommMagma.mk (l * r) : SyntacticObject) = target
+      · rw [if_pos (by simpa [projEq] using hx), hx, replace_self]
+      · rw [if_neg (by simpa [projEq] using hx), mk_mul, ihl, ihr, mk_mul,
+            SyntacticObject.replace_mul, if_neg (by rw [← mk_mul]; exact hx)]
+
+private theorem mk_externStep {acc acc' : FreeMagma (LIToken ⊕ Nat)} {step : Step}
+    (h : externStep (some acc) step = some acc') :
+    (FreeCommMagma.mk acc' : SyntacticObject)
+      = step.apply (FreeCommMagma.mk acc) := by
+  cases step with
+  | emL item =>
+      cases hp : item.toPlanarLeaf? with
+      | some p =>
+          change (item.toPlanarLeaf?).map (fun p => p * acc) = some acc' at h
+          rw [hp] at h; change some (p * acc) = some acc' at h
+          injection h with h; subst h
+          show (FreeCommMagma.mk (p * acc) : SyntacticObject)
+            = item * FreeCommMagma.mk acc
+          rw [mk_mul, mk_toPlanarLeaf? hp]
+      | none => simp [externStep, hp] at h
+  | emR item =>
+      cases hp : item.toPlanarLeaf? with
+      | some p =>
+          change (item.toPlanarLeaf?).map (fun p => acc * p) = some acc' at h
+          rw [hp] at h; change some (acc * p) = some acc' at h
+          injection h with h; subst h
+          show (FreeCommMagma.mk (acc * p) : SyntacticObject)
+            = FreeCommMagma.mk acc * item
+          rw [mk_mul, mk_toPlanarLeaf? hp]
+      | none => simp [externStep, hp] at h
+  | im mover tid =>
+      cases hf : planarFind? (projEq mover) acc with
+      | some s =>
+          change (planarFind? (projEq mover) acc).map
+            (fun s => s * planarReplaceWhere (projEq mover) (.of (.inr tid)) acc)
+            = some acc' at h
+          rw [hf] at h
+          change some (s * planarReplaceWhere (projEq mover) (.of (.inr tid)) acc)
+            = some acc' at h
+          injection h with h; subst h
+          rw [mk_mul, planarFind?_projEq hf, mk_planarReplaceWhere_projEq]
+          rfl
+      | none => simp [externStep, moveLeftPlanar, planarMoveLeft, hf] at h
+
+private theorem externStep_none (steps : List Step) :
+    steps.foldl externStep none = none := by
+  induction steps with
+  | nil => rfl
+  | cons s rest ih => simpa [externStep] using ih
+
+private theorem mk_foldl_externStep :
+    ∀ (steps : List Step) {acc acc' : FreeMagma (LIToken ⊕ Nat)},
+      steps.foldl externStep (some acc) = some acc' →
+      (FreeCommMagma.mk acc' : SyntacticObject)
+        = steps.foldl (fun so st => st.apply so) (FreeCommMagma.mk acc) := by
+  intro steps
+  induction steps with
+  | nil => intro acc acc' h; simp only [List.foldl_nil] at h ⊢; rw [Option.some.inj h]
+  | cons step rest ih =>
+      intro acc acc' h
+      simp only [List.foldl_cons] at h ⊢
+      cases hs : externStep (some acc) step with
+      | some acc1 => rw [hs] at h; rw [ih h, mk_externStep hs]
+      | none => rw [hs, externStep_none] at h; simp at h
+
+/-- **Π bridge:** the ordered externalization projects to the unordered
+    `Derivation.final`. -/
+theorem Derivation.mk_externalizeP? {d : Derivation}
+    {fm : FreeMagma (LIToken ⊕ Nat)} (h : d.externalizeP? = some fm) :
+    (FreeCommMagma.mk fm : SyntacticObject) = d.final := by
+  unfold Derivation.externalizeP? at h
+  cases hi : d.initial.toPlanarLeaf? with
+  | some init =>
+      rw [hi] at h
+      rw [mk_foldl_externStep d.steps h, mk_toPlanarLeaf? hi]; rfl
+  | none => rw [hi] at h; simp at h
+
+/-! ### Verification (the [cinque-2005] o-vs-n contrast)
+
+Phrasal **pied-piping preserves the moved constituent's internal order**, so
+deriving Dem-N-A-Num (raise N around A, then pied-pipe `[N A]` around Num) is
+distinct from Dem-A-N-Num (pied-pipe `[A N]` around Num). (`.D` stands in for the
+demonstrative pending a `Cat.Dem` constructor.) -/
 
 private def vN : SyntacticObject := mkLeaf .N [] 1
 private def vA : SyntacticObject := mkLeaf .A [] 2
