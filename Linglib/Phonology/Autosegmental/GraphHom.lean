@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Image
 import Mathlib.Algebra.Group.Defs
-import Linglib.Phonology.Autosegmental.NoCrossing
+import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Graph
 
 /-!

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Image
 import Mathlib.Algebra.Group.Defs
-import Linglib.Phonology.Autosegmental.NoCrossing
+import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # Autosegmental graph (the AR object)
@@ -38,7 +38,7 @@ Mathlib pattern: directory-qualified object name + short category symbol.
 Two well-formedness conditions are formalised as separable `Prop`s:
 
 * `IsPlanar` — Goldsmith's **no-crossing constraint**
-  ([goldsmith-1976]; lifted from `Autosegmental.IsNoCrossing`
+  ([goldsmith-1976]; lifted from `Autosegmental.IsNonCrossing`
   so the existing mathlib `MonovaryOn` lemma library applies directly).
   This is **Pulleyblank**'s reformulated Well-Formedness Condition
   ([pulleyblank-1986]): the *sole* structural WF requirement,
@@ -196,9 +196,9 @@ def ofTiers (upper : List α) (lower : List β) : Graph α β :=
 
 /-- The bipartite representation is **planar** (no-crossing) iff its
     link set satisfies [goldsmith-1976]'s NCC. Lifted from
-    `NoCrossing.IsNoCrossing` so mathlib's `MonovaryOn` lemma library
+    `NonCrossing.IsNonCrossing` so mathlib's `MonovaryOn` lemma library
     applies directly. -/
-def IsPlanar (r : Graph α β) : Prop := IsNoCrossing r.links
+def IsPlanar (r : Graph α β) : Prop := IsNonCrossing r.links
 
 /-! ### Index predicates -/
 
@@ -307,28 +307,28 @@ def eraseLink (r : Graph α β) (i j : Nat) : Graph α β :=
 
 /-- `insertLink` preserves planarity iff the inserted link does not
     cross any existing link. Lifts
-    `IsNoCrossing.insert_of_not_indexCrosses`. -/
+    `IsNonCrossing.insert_of_not_indexCrosses`. -/
 theorem isPlanar_insertLink (r : Graph α β) {i j : Nat}
     (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links i j) :
     (r.insertLink i j).IsPlanar :=
-  IsNoCrossing.insert_of_not_indexCrosses hP hNX
+  IsNonCrossing.insert_of_not_indexCrosses hP hNX
 
 /-- `eraseLink` preserves planarity: removing a link from a no-crossing
     set leaves a no-crossing subset. -/
 theorem isPlanar_eraseLink (r : Graph α β) (i j : Nat)
     (hP : r.IsPlanar) : (r.eraseLink i j).IsPlanar :=
-  IsNoCrossing.subset (Finset.erase_subset _ _) hP
+  IsNonCrossing.subset (Finset.erase_subset _ _) hP
 
 /-- The empty representation is planar (vacuously). -/
 theorem isPlanar_empty : (empty : Graph α β).IsPlanar := by
-  unfold IsPlanar empty IsNoCrossing
+  unfold IsPlanar empty IsNonCrossing
   intro l₁ hl₁
   simp at hl₁
 
 /-- `ofTiers` produces a planar representation (no links to cross). -/
 theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
     (ofTiers upper lower).IsPlanar := by
-  unfold IsPlanar ofTiers IsNoCrossing
+  unfold IsPlanar ofTiers IsNonCrossing
   intro l₁ hl₁
   simp at hl₁
 
@@ -456,7 +456,7 @@ instance instMonoid : Monoid (Graph α β) where
 theorem isPlanar_concat (A B : Graph α β)
     (hAib : A.InBounds) (hA : A.IsPlanar) (hB : B.IsPlanar) :
     (A.concat B).IsPlanar := by
-  rw [IsPlanar, isNoCrossing_iff] at hA hB ⊢
+  rw [IsPlanar, isNonCrossing_iff] at hA hB ⊢
   intro l₁ hl₁ l₂ hl₂ hlt
   rw [links_concat, Finset.mem_union] at hl₁ hl₂
   rcases hl₁ with hl₁ | hl₁
