@@ -29,12 +29,12 @@ open English.Phonology
 section VelarAssimilation
 
 /-- Underlying representation: /nk/ with no sharing. -/
-def ur_nk : AutosegRep where
+def ur_nk : SharingRep where
   segments := [n, k]
   sharing := []
 
 /-- Surface representation: result of spreading place from /k/ onto /n/. -/
-def sr_nk : AutosegRep := ur_nk.spreadFeatures 0 .place
+def sr_nk : SharingRep := ur_nk.spreadFeatures 0 .place
 
 /-- /n/ and /k/ disagree at the place node in the UR. -/
 theorem n_k_disagree_at_place : agreeAt n k .place = false := by decide
@@ -63,12 +63,12 @@ end VelarAssimilation
 section LabialAssimilation
 
 /-- Underlying representation: /np/ with no sharing. -/
-def ur_np : AutosegRep where
+def ur_np : SharingRep where
   segments := [n, p]
   sharing := []
 
 /-- Surface representation: result of spreading place from /p/ onto /n/. -/
-def sr_np : AutosegRep := ur_np.spreadFeatures 0 .place
+def sr_np : SharingRep := ur_np.spreadFeatures 0 .place
 
 /-- /n/ and /p/ disagree at the place node in the UR. -/
 theorem n_p_disagree_at_place : agreeAt n p .place = false := by decide

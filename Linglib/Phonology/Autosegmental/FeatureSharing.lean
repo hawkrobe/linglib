@@ -25,10 +25,10 @@ operations.
 
 * `agreeAt`, `placeAssimilation`, `totalAssimilation` — feature agreement
   predicates over a geometric node.
-* `Sharing`, `AutosegRep` — feature-sharing representations: a segmental
+* `Sharing`, `SharingRep` — feature-sharing representations: a segmental
   backbone plus a list of feature-sharing specifications.
-* `AutosegRep.inBounds`, `AutosegRep.consistent` — well-formedness checks.
-* `AutosegRep.spread`, `AutosegRep.delink`, `AutosegRep.spreadFeatures` —
+* `SharingRep.inBounds`, `SharingRep.consistent` — well-formedness checks.
+* `SharingRep.spread`, `SharingRep.delink`, `SharingRep.spreadFeatures` —
   atomic operations on feature-sharing representations.
 * `copyFeaturesUnder` — replace features under a geometric node.
 
@@ -80,16 +80,16 @@ structure Sharing where
 
 /-- An autosegmental representation: a sequence of segments with an explicit
     record of which adjacent pairs share features under which geometric nodes. -/
-structure AutosegRep where
+structure SharingRep where
   segments : List Segment
   sharing  : List Sharing
 
 /-- Are all sharing specifications within bounds? -/
-def AutosegRep.inBounds (r : AutosegRep) : Bool :=
+def SharingRep.inBounds (r : SharingRep) : Bool :=
   r.sharing.all fun s => decide (s.left + 1 < r.segments.length)
 
 /-- Is each sharing specification consistent with the segments' feature values? -/
-def AutosegRep.consistent (r : AutosegRep) : Bool :=
+def SharingRep.consistent (r : SharingRep) : Bool :=
   r.sharing.all fun sh =>
     match r.segments[sh.left]?, r.segments[sh.left + 1]? with
     | some seg1, some seg2 => agreeAt seg1 seg2 sh.node
@@ -98,13 +98,13 @@ def AutosegRep.consistent (r : AutosegRep) : Bool :=
 /-! ### Operations -/
 
 /-- Spread node `n` rightward from position `pos`. -/
-def AutosegRep.spread (r : AutosegRep) (pos : Nat) (n : GeomNode) :
-    AutosegRep :=
+def SharingRep.spread (r : SharingRep) (pos : Nat) (n : GeomNode) :
+    SharingRep :=
   { r with sharing := ⟨pos, n⟩ :: r.sharing }
 
 /-- Remove sharing at position `pos` for node `n`. -/
-def AutosegRep.delink (r : AutosegRep) (pos : Nat) (n : GeomNode) :
-    AutosegRep :=
+def SharingRep.delink (r : SharingRep) (pos : Nat) (n : GeomNode) :
+    SharingRep :=
   { r with sharing := r.sharing.filter fun s =>
       !(s.left == pos && s.node == n) }
 
@@ -120,8 +120,8 @@ def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment where
 /-- Spread node `n` from position `pos + 1` onto position `pos`, replacing
     the target's features under `n` with the trigger's values and recording
     the sharing link. -/
-def AutosegRep.spreadFeatures (r : AutosegRep) (pos : Nat) (n : GeomNode) :
-    AutosegRep :=
+def SharingRep.spreadFeatures (r : SharingRep) (pos : Nat) (n : GeomNode) :
+    SharingRep :=
   match r.segments[pos]?, r.segments[pos + 1]? with
   | some tgt, some src =>
     let newTgt := copyFeaturesUnder tgt src n
@@ -186,11 +186,11 @@ private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
 
 /-- Spreading and then delinking returns the original representation when the
     position/node pair was not already present in the sharing list. -/
-theorem spread_delink_not_present (r : AutosegRep) (pos : Nat) (n : GeomNode)
+theorem spread_delink_not_present (r : SharingRep) (pos : Nat) (n : GeomNode)
     (h : (r.sharing.all fun s => !(s.left == pos && s.node == n)) = true) :
     (r.spread pos n).delink pos n = r := by
   cases r with | mk segs shs =>
-  simp only [AutosegRep.spread, AutosegRep.delink, AutosegRep.mk.injEq]
+  simp only [SharingRep.spread, SharingRep.delink, SharingRep.mk.injEq]
   -- Head ⟨pos, n⟩ fails the filter: !(pos == pos && n == n) = false
   have hnn : (n == n) = true := by cases n <;> rfl
   have hcond : (!(pos == pos && n == n)) = false := by rw [beq_self_eq_true, hnn]; rfl

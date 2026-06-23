@@ -39,7 +39,7 @@ namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
-open Autosegmental (AutosegRep agreeAt)
+open Autosegmental (SharingRep agreeAt)
 open Subregular.Harmony (System HarmonyDir triggerValue
   harmonizeOne spreadSuffix)
 
