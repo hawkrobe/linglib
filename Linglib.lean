@@ -2722,7 +2722,7 @@ import Linglib.Phonology.Featural.ComplexSegments
 import Linglib.Phonology.Featural.Bundle
 import Linglib.Phonology.Featural.Underspecification
 import Linglib.Phonology.Featural.ElementTheory
-import Linglib.Phonology.Autosegmental.FeatureSharing
+import Linglib.Phonology.Featural.Sharing
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
