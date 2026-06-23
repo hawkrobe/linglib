@@ -42,9 +42,9 @@ Two NonFinality constraints from [prince-smolensky-1993]:
 - **NonFinality(Ft)**: penalizes the head foot in word-final position.
 -/
 
-namespace Phonology.Accent
+namespace Prosody.Accent
 
-open Phonology.Syllable (SyllWeight MetricalParse ParseElement footMorae)
+open Prosody.Syllable (SyllWeight MetricalParse ParseElement footMorae)
 
 -- ============================================================================
 -- § 1: Syllable-from-Mora Lookup
@@ -277,4 +277,4 @@ theorem nonfin_sigma_nonfinal :
 theorem nonfin_sigma_unaccented :
     nonFinalitySigma none 3 = 0 := rfl
 
-end Phonology.Accent
+end Prosody.Accent

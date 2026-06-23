@@ -58,7 +58,7 @@ paper notes these as partly idiosyncratic (Table 7).
 namespace AfkirZellou2025
 
 open Core.Optimization Constraint OptimalityTheory
-open Phonology.Syllable
+open Prosody.Syllable
 open Tarifit.Inventory
 open Core.Optimization Constraint OptimalityTheory
 

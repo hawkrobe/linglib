@@ -55,10 +55,10 @@ jointly resolves three Semitic puzzles:
 This file consumes and exercises the shared infrastructure:
 
 - `Morphology.Root` — polymorphic consonantal-root carrier.
-- `Phonology.Templates` — `CVSlot`, `Template`, `Association`,
+- `Prosody.Templates` — `CVSlot`, `Template`, `Association`,
   `RootTemplateMatch`, with derived `isMisaligned`, `allCSlotsFilled`,
   `satisfies`.
-- `Phonology.Templates.starMisalign` — the \*Misalignment alignment
+- `Prosody.Templates.starMisalign` — the \*Misalignment alignment
   constraint, built via the generic `mkAlign` constructor.
 - `OptimalityTheory.adjacentIdentical` — drives the root-level
   OCP, used to verify [faust-2026]'s OCP-related reanalysis.
@@ -73,7 +73,7 @@ type level rather than restated in prose.
 namespace Faust2026
 
 open Morphology
-open Phonology.Templates
+open Prosody.Templates
 
 -- ============================================================================
 -- § 1: Hebrew templates ([faust-2026] (1), (3), (9)–(10))
