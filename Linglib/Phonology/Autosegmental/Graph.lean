@@ -53,9 +53,8 @@ underlying/surface split are paper-specific and live in consumers, not here.
 
 namespace Autosegmental
 
-/-- A bipartite autosegmental representation: two ordered tiers and a
-    finite set of association lines between them. Generic over both
-    tier-element types. -/
+/-- A bipartite autosegmental representation: two ordered tiers and a finite
+    set of association lines (index pairs) between them. -/
 @[ext]
 structure Graph (α β : Type*) where
   /-- The upper tier (e.g., tonal tier, melodic tier, root). -/
@@ -76,39 +75,30 @@ variable {α β : Type*} (r : Graph α β)
 /-- The empty bipartite representation with no tiers and no links. -/
 def empty : Graph α β := ⟨[], [], ∅⟩
 
-/-- A bipartite representation with the given tiers and no links —
-    the canonical *underlying* form before any docking has applied. -/
+/-- Tiers with no links — the underlying form before any docking. -/
 def ofTiers (upper : List α) (lower : List β) : Graph α β :=
   ⟨upper, lower, ∅⟩
 
 /-! ### Planarity (no-crossing) -/
 
-/-- The bipartite representation is **planar** (no-crossing) iff its
-    link set satisfies [goldsmith-1976]'s NCC. Lifted from
-    `NonCrossing.IsNonCrossing` so mathlib's `MonovaryOn` lemma library
-    applies directly. -/
+/-- **Planar** (no-crossing): the link set satisfies [goldsmith-1976]'s NCC. -/
 def IsPlanar : Prop := IsNonCrossing r.links
 
 /-! ### Index predicates -/
 
-/-- The upper-tier element at index `i` is **linked** to some lower-tier
-    position. No in-bounds check. -/
+/-- Upper index `i` is **linked** to some lower position (no in-bounds check). -/
 def IsLinkedUpper (i : ℕ) : Prop :=
   ∃ p ∈ r.links, p.fst = i
 
-/-- The lower-tier element at index `j` is **linked** to some upper-tier
-    position. No in-bounds check. -/
+/-- Lower index `j` is **linked** to some upper position (no in-bounds check). -/
 def IsLinkedLower (j : ℕ) : Prop :=
   ∃ p ∈ r.links, p.snd = j
 
-/-- The upper-tier element at index `i` is **floating**: in-bounds but
-    not linked to any lower position. -/
+/-- Upper index `i` is **floating**: in-bounds but unlinked. -/
 def IsFloatingUpper (i : ℕ) : Prop :=
   i < r.upper.length ∧ ¬ r.IsLinkedUpper i
 
-/-- The lower-tier element at index `j` is **floating**: in-bounds but
-    not linked to any upper position. The paper calls a lower slot
-    with this property *segmentally empty*. -/
+/-- Lower index `j` is **floating**: in-bounds but unlinked (*segmentally empty*). -/
 def IsFloatingLower (j : ℕ) : Prop :=
   j < r.lower.length ∧ ¬ r.IsLinkedLower j
 
@@ -126,32 +116,18 @@ instance (i : ℕ) : Decidable (r.IsFloatingUpper i) :=
 instance (j : ℕ) : Decidable (r.IsFloatingLower j) :=
   inferInstanceAs (Decidable (j < r.lower.length ∧ ¬ r.IsLinkedLower j))
 
-/-! ### Saturation and Goldsmith's WFC
+/-! ### Saturation and Goldsmith's WFC -/
 
-[goldsmith-1979] bundled saturation with non-crossing
-into a single Well-Formedness Condition; [pulleyblank-1986]
-weakened WFC to non-crossing alone, with saturation devolved to
-language-particular association conventions. The post-1986 view is
-the modern default — it admits floating elements
-([bird-1966], [laoide-kemp-2026]) as structurally
-well-formed.
--/
-
-/-- The upper tier is **saturated**: every in-bounds upper-tier index
-    is linked to some lower-tier position. -/
+/-- **Saturated**: every in-bounds upper index is linked. -/
 def IsSaturatedUpper : Prop :=
   ∀ i, i < r.upper.length → r.IsLinkedUpper i
 
-/-- The lower tier is **saturated**: every in-bounds lower-tier index
-    is linked to some upper-tier position. -/
+/-- **Saturated**: every in-bounds lower index is linked. -/
 def IsSaturatedLower : Prop :=
   ∀ j, j < r.lower.length → r.IsLinkedLower j
 
-/-- [goldsmith-1979]'s original Well-Formedness Condition: both
-    tiers fully saturated *and* no association lines cross. Modern
-    usage (post-[pulleyblank-1986]) treats only `IsPlanar` as
-    structurally required and demotes saturation to language-particular
-    association conventions. -/
+/-- [goldsmith-1979]'s original WFC: planar *and* both tiers saturated.
+    Post-[pulleyblank-1986], only `IsPlanar` is structural. -/
 def IsGoldsmithWFC : Prop :=
   r.IsPlanar ∧ r.IsSaturatedUpper ∧ r.IsSaturatedLower
 
@@ -163,14 +139,11 @@ instance : Decidable r.IsSaturatedLower :=
 
 /-! ### Link-set operations -/
 
-/-- Insert the association line `(i, j)`. Does not check planarity; use
-    `isPlanar_insertLink` to preserve it. Naming mirrors
-    `Floating.lean`'s `insertLink`. -/
+/-- Insert the association line `(i, j)`. -/
 def insertLink (i j : ℕ) : Graph α β :=
   { r with links := insert (i, j) r.links }
 
-/-- Erase the association line `(i, j)`. Naming mirrors
-    `Floating.lean`'s `deleteLink`. -/
+/-- Erase the association line `(i, j)`. -/
 def eraseLink (i j : ℕ) : Graph α β :=
   { r with links := r.links.erase (i, j) }
 
@@ -194,16 +167,13 @@ def eraseLink (i j : ℕ) : Graph α β :=
 @[simp] theorem links_eraseLink (i j : ℕ) :
     (r.eraseLink i j).links = r.links.erase (i, j) := rfl
 
-/-- `insertLink` preserves planarity iff the inserted link does not
-    cross any existing link. Lifts
-    `IsNonCrossing.insert_of_not_indexCrosses`. -/
+/-- `insertLink` preserves planarity if the new link crosses nothing. -/
 theorem isPlanar_insertLink {i j : ℕ}
     (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links i j) :
     (r.insertLink i j).IsPlanar :=
   IsNonCrossing.insert_of_not_indexCrosses hP hNX
 
-/-- `eraseLink` preserves planarity: removing a link from a no-crossing
-    set leaves a no-crossing subset. -/
+/-- `eraseLink` preserves planarity (a subset of a no-crossing set). -/
 theorem isPlanar_eraseLink (i j : ℕ)
     (hP : r.IsPlanar) : (r.eraseLink i j).IsPlanar :=
   IsNonCrossing.subset (Finset.erase_subset _ _) hP
@@ -219,14 +189,7 @@ theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
 
 /-! ### In-bounds predicate -/
 
-/-- A `Graph` is **in bounds** if every link's indices fall within
-    the bounds of its tiers. The substrate does not enforce this
-    structurally (`links : Finset (ℕ × ℕ)` permits any indices);
-    `InBounds` is required as a hypothesis for theorems that depend on
-    it (e.g. `isPlanar_concat`, where the cross-case of A-link vs
-    shifted B-link needs to know A's links don't reach past A's
-    length). Real ARs always satisfy this — the substrate just doesn't
-    bake it in. -/
+/-- Every link's indices fall within the tier lengths. -/
 def InBounds : Prop :=
   ∀ p ∈ r.links, p.fst < r.upper.length ∧ p.snd < r.lower.length
 
@@ -240,21 +203,9 @@ theorem inBounds_ofTiers (upper : List α) (lower : List β) :
     (ofTiers upper lower).InBounds := by
   simp [InBounds, ofTiers]
 
-/-! ### Concatenation (Jardine-Heinz 2015 §5)
+/-! ### Concatenation ([jardine-heinz-2015]) -/
 
-The autosegmentally-meaningful join operation. Concatenates the two
-tiers and the link sets, with B's link indices shifted past A's tier
-lengths. Preserves planarity. Forms a monoid with `empty` as identity.
-
-This is the *disjoint-union* concatenation — no label-based merging.
-The merging variant of [jardine-heinz-2015] (which derives
-spreading by merging adjacent identical melody-tier nodes) is a
-paper-specific quotient on top of this primitive.
--/
-
-/-- Shift a link `(i, j)` by `(δᵤ, δₗ)` upper- and lower-tier positions.
-    Not marked `@[simp]` (would over-unfold); explicit `simp [shiftLink]`
-    invocations in proofs. -/
+/-- Shift a link by `(δᵤ, δₗ)`. -/
 def shiftLink (δᵤ δₗ : ℕ) (p : ℕ × ℕ) : ℕ × ℕ :=
   (p.1 + δᵤ, p.2 + δₗ)
 
@@ -311,10 +262,7 @@ theorem concat_assoc (A B C : Graph α β) :
                Finset.image_union, Finset.image_image, shiftLink_comp]
     rw [Finset.union_assoc]
 
-/-- **The monoid of autosegmental representations** ([jardine-heinz-2015]
-    Theorems 1, 3): graphs form a `Monoid` under concatenation, with `empty`
-    as the unit. `A * B = A.concat B`, `1 = empty`; the monoid laws are
-    `empty_concat`/`concat_empty`/`concat_assoc`. -/
+/-- Graphs form a `Monoid` under `concat` with `empty` as unit. -/
 instance instMonoid : Monoid (Graph α β) where
   mul := concat
   one := empty
@@ -328,10 +276,7 @@ instance instMonoid : Monoid (Graph α β) where
 
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
-/-- Concatenation preserves planarity, given `A` is in-bounds. The
-    cross-case (an `A`-link vs a shifted `B`-link) needs `A.InBounds`
-    to bound `A`'s lower-tier indices below `A.lower.length`, which is
-    not structural on `Graph`. -/
+/-- Concatenation preserves planarity, given `A.InBounds`. -/
 theorem isPlanar_concat (A B : Graph α β)
     (hAib : A.InBounds) (hA : A.IsPlanar) (hB : B.IsPlanar) :
     (A.concat B).IsPlanar := by
@@ -365,9 +310,7 @@ theorem isPlanar_concat (A B : Graph α β)
       have := hB b₁ hb₁ b₂ hb₂ hltB
       omega
 
-/-- Concatenation preserves in-bounds: links from `A` stay in `A`'s
-    tier range (which is a prefix of `(A.concat B)`'s range), and
-    shifted links from `B` land in the suffix `B`'s range adds. -/
+/-- Concatenation preserves in-bounds. -/
 theorem inBounds_concat {A B : Graph α β}
     (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
   intro p hp
