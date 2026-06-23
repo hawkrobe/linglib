@@ -53,9 +53,7 @@ theorem isNonCrossing_iff (links : Finset (ι × κ)) : IsNonCrossing links ↔
   simp [IsNonCrossing]
 
 @[simp] theorem isNonCrossing_singleton (p : ι × κ) : IsNonCrossing {p} := by
-  simp only [isNonCrossing_iff, Finset.mem_singleton]
-  rintro _ rfl _ rfl h
-  exact absurd h (lt_irrefl _)
+  simp [isNonCrossing_iff]
 
 /-- A pair is non-crossing iff its two links agree in tier- and backbone-order. -/
 theorem isNonCrossing_pair [DecidableEq ι] [DecidableEq κ] (a b : ι × κ) :
