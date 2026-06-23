@@ -73,7 +73,7 @@ inductive SynCat
 
 /-- A category is *nonverbal* when it is not a verbal projection. [sag-2010]'s
 filler-head construction constrains every filler daughter to be `[CAT nonverbal]`
-((25), p. 492). -/
+((25)). -/
 def SynCat.IsNonverbal (c : SynCat) : Prop :=
   c = .NP ∨ c = .PP ∨ c = .AP ∨ c = .AdvP
 
@@ -280,7 +280,7 @@ stipulated five times. We state the supertype constraint once and verify every
 construction inherits it. -/
 
 /-- The filler-daughter constraint imposed by the `filler-head-cxt` supertype:
-the filler is `[CAT nonverbal]` ((25), p. 492). -/
+the filler is `[CAT nonverbal]` ((25)). -/
 def FGConstruction.FillerIsNonverbal (k : FGConstruction) : Prop :=
   ∀ cat ∈ k.fillerCategories, cat.IsNonverbal
 
@@ -340,7 +340,7 @@ def fgSort : FGClauseType → HPSG.Construction.FHSort
 `filler-head-cxt`'s constraints (head verbal, filler↔gap token identity) proved in `Construction.lean`
 — the model-theoretic ground of `fg_inherits_nonverbal_filler`. -/
 theorem fgSort_filler_head (c : FGClauseType) :
-    fgSort c ≤ HPSG.Construction.FHSort.headFillerCxt := by cases c <;> decide
+    fgSort c ≤ HPSG.Construction.FHSort.fillerHeadCxt := by cases c <;> decide
 
 /-- The local `ClauseType` as the matching RSRL clausal sort (Fig. 7). -/
 def clauseTypeSort : ClauseType → HPSG.Construction.FHSort

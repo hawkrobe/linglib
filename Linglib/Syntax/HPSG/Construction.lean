@@ -18,33 +18,38 @@ Description}`). A construction is a constraint `τ ⇒ D` ([sag-2012] (44)) on a
 ([sag-2012] (46)); inheritance is the **sort order plus the implication semantics** — a construct
 whose sort sits below several supersorts satisfies *all* their principles, with no per-construction
 restatement. This is exactly the monotonic (no-overriding) inheritance SBCG commits to ([sag-2012]
-fn. 17; [sag-etal-2020]'s "category restriction operation").
+fn. 17; the "category restriction operation" of [sag-etal-2020]).
 
 The hierarchy is the authoritative two-dimensional one of [sag-etal-2020] (Figs. 6–7):
 
 * **construct backbone** (Fig. 6): `construct > {phrasal-cxt, lexical-cxt}`;
   `phrasal-cxt > {headed-cxt, clause}`;
-  `headed-cxt > {head-filler-cxt, subject-head-cxt, aux-initial-cxt, …}`;
+  `headed-cxt > {subject-head-cxt, pred-head-comp-cxt, aux-initial-cxt, …}` — with `filler-head-cxt`
+  the further `headed-cxt` subtype of [sag-2010] Fig. A2 (elided behind Fig. 6's "…");
 * **clausal dimension** (Fig. 7): `clause > {core-cl, relative-cl}`;
   `core-cl > {declarative-cl, interrogative-cl, exclamative-cl}`.
 
-The **cross-classification** (Fig. 5) is a lower bound across the two dimensions: [sag-2010]'s
-nonsubject wh-interrogative `ns-wh-int-cl` is a subtype of *both* `head-filler-cxt` (headed dim.) and
-`interrogative-cl` (clausal dim.), so it inherits the filler-head constraints (head verbal, filler
-nonverbal, filler↔gap token identity) **and** the interrogative semantics (`MTR` `SEM` a question) from
-one sort assignment — the keystone theorem below.
+The **cross-classification** is a lower bound across the two dimensions — the mechanism [sag-etal-2020]
+Fig. 5 illustrates for `subj-pred-cl` (`declarative-cl ⊓ subject-head-cxt`). Here [sag-2010]'s
+nonsubject wh-interrogative `ns-wh-int-cl` ((80), Fig. 8) is a subtype of *both* `filler-head-cxt`
+(headed dim.) and `interrogative-cl` (clausal dim.), so it inherits the filler-head constraints (head
+verbal, filler nonverbal, filler↔gap token identity) **and** the interrogative semantics (`MTR` `SEM` a
+question) from one sort assignment — the keystone theorem below.
 
 ## Scope
 
-This file establishes the hierarchy, the cross-classification keystone, **all five filler-gap
-constructions** ([sag-2010] §5: topicalization, wh-exclamative, nonsubject wh-interrogative,
-wh-relative, the-clause), and the **inversion construction** (`aux-initial-cxt`, [sag-etal-2020] (39))
-with the interrogative SAI — two papers' constructions on one hierarchy. The filler-gap constructions
-are distinguished by their clausal semantics, wh-relative's nominal filler, and the
-topicalization/the-clause head contrast (verb vs CP); the SAI by its inverted (`[INV +]`) head. n-ary
-`DTRS`, GAP amalgamation, islands, the `WH`/`REL`/`IC`/`VFORM` finer variation, and compositional `SEM`
-are deferred. Decidability stays inside `Models` over fixed finite interpretations (Kepser 2004: full
-RSRL model-checking is undecidable).
+This file is the **substrate**: the type hierarchy, the cross-classification keystone, and **all five
+filler-gap constructions** ([sag-2010] §5: topicalization, wh-exclamative, nonsubject wh-interrogative,
+wh-relative, the-clause), distinguished by their clausal semantics, wh-relative's nominal filler, and
+the topicalization/the-clause head contrast (verb vs CP). The hierarchy also carries the
+`aux-initial-cxt`/`interrogative-SAI` sort nodes and the `INV` feature ([sag-etal-2020] Fig. 6); the
+**inversion construction**'s own principle and worked constructs are paper-anchored in
+`Studies/SagEtAl2020.lean`, which consumes this substrate as a second study — the two-consumer
+justification for the theory-layer home.
+
+n-ary `DTRS`, GAP amalgamation, islands, the `WH`/`REL`/`IC`/`VFORM` finer variation, and compositional
+`SEM` are deferred. Decidability stays inside `Models` over fixed finite interpretations (Kepser 2004:
+full RSRL model-checking is undecidable).
 -/
 
 namespace HPSG.Construction
@@ -55,10 +60,10 @@ open HPSG.RSRL
 
 /-- Sorts of the fragment: a category hierarchy, a semantic-type hierarchy, `sign`, and the
 [sag-etal-2020] construct (Fig. 6) and clausal (Fig. 7) type hierarchies, with `ns-wh-int-cl` as the
-worked cross-classified subtype (Fig. 5). -/
+worked cross-classified subtype ([sag-2010] (80), Fig. 8). -/
 inductive FHSort
   | top
-  -- category hierarchy (head-filler-cxt keys on verbal/nonverbal; wh-rel on nominal; the-cl on comp)
+  -- category hierarchy (filler-head-cxt keys on verbal/nonverbal; wh-rel on nominal; the-cl on comp)
   | cat | verbal | nonverbal | verb | comp | nominal | noun | prep | adj
   -- semantic-type hierarchy (clause types key on the MTR's SEM type)
   | semType | austinean | question | fact | proposition
@@ -66,17 +71,18 @@ inductive FHSort
   | invVal | invPlus | invMinus
   -- signs
   | sign
-  -- construct backbone (Fig. 6): head-filler-cxt and aux-initial-cxt are sibling headed-cxt subtypes
-  | construct | phrasalCxt | lexicalCxt | headedCxt | clause | headFillerCxt | auxInitialCxt
+  -- construct backbone (Fig. 6; filler-head-cxt per [sag-2010] Fig. A2): filler-head-cxt and
+  -- aux-initial-cxt are sibling headed-cxt subtypes
+  | construct | phrasalCxt | lexicalCxt | headedCxt | clause | fillerHeadCxt | auxInitialCxt
   -- clausal hierarchy (Fig. 7)
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
   -- the filler-gap constructions ([sag-2010] §5) and the interrogative SAI ([sag-etal-2020]), each
-  -- cross-classifying a clausal type (Fig. 5)
+  -- cross-classifying a clausal type
   | topCl | whExclCl | nsWhIntCl | whRelCl | theCl | interrogativeSAI
   deriving DecidableEq, Fintype, Repr
 
 /-- Subsumption (`fhLe a b` = "`a` at least as specific as `b`"), transitively closed. The two arms
-for `nsWhIntCl` — below both `headFillerCxt` and `interrogativeCl` — are the multiple inheritance. -/
+for `nsWhIntCl` — below both `fillerHeadCxt` and `interrogativeCl` — are the multiple inheritance. -/
 def fhLe : FHSort → FHSort → Bool
   | _, .top => true
   -- categories (nonverbal > {nominal, adj}; nominal > {noun, prep})
@@ -101,8 +107,8 @@ def fhLe : FHSort → FHSort → Bool
   | .lexicalCxt, .construct => true
   | .headedCxt, .phrasalCxt => true | .headedCxt, .construct => true
   | .clause, .phrasalCxt => true | .clause, .construct => true
-  | .headFillerCxt, .headedCxt => true | .headFillerCxt, .phrasalCxt => true
-  | .headFillerCxt, .construct => true
+  | .fillerHeadCxt, .headedCxt => true | .fillerHeadCxt, .phrasalCxt => true
+  | .fillerHeadCxt, .construct => true
   | .auxInitialCxt, .headedCxt => true | .auxInitialCxt, .phrasalCxt => true
   | .auxInitialCxt, .construct => true
   -- clausal
@@ -114,22 +120,21 @@ def fhLe : FHSort → FHSort → Bool
   | .interrogativeCl, .phrasalCxt => true | .interrogativeCl, .construct => true
   | .exclamativeCl, .coreCl => true | .exclamativeCl, .clause => true
   | .exclamativeCl, .phrasalCxt => true | .exclamativeCl, .construct => true
-  -- filler-gap constructions: each < head-filler-cxt (+ headed-cxt) AND its clausal type ([sag-2010]
-  -- §5; the cross-classification of Fig. 5). Note relative-cl is directly under clause (Fig. 7), so
-  -- whRelCl does not pass through core-cl.
-  | .topCl, .headFillerCxt => true | .topCl, .headedCxt => true
+  -- filler-gap constructions: each < filler-head-cxt (+ headed-cxt) AND its clausal type ([sag-2010]
+  -- §5). Note relative-cl is directly under clause (Fig. 7), so whRelCl does not pass through core-cl.
+  | .topCl, .fillerHeadCxt => true | .topCl, .headedCxt => true
   | .topCl, .declarativeCl => true | .topCl, .coreCl => true
   | .topCl, .clause => true | .topCl, .phrasalCxt => true | .topCl, .construct => true
-  | .whExclCl, .headFillerCxt => true | .whExclCl, .headedCxt => true
+  | .whExclCl, .fillerHeadCxt => true | .whExclCl, .headedCxt => true
   | .whExclCl, .exclamativeCl => true | .whExclCl, .coreCl => true
   | .whExclCl, .clause => true | .whExclCl, .phrasalCxt => true | .whExclCl, .construct => true
-  | .nsWhIntCl, .headFillerCxt => true | .nsWhIntCl, .headedCxt => true
+  | .nsWhIntCl, .fillerHeadCxt => true | .nsWhIntCl, .headedCxt => true
   | .nsWhIntCl, .interrogativeCl => true | .nsWhIntCl, .coreCl => true
   | .nsWhIntCl, .clause => true | .nsWhIntCl, .phrasalCxt => true | .nsWhIntCl, .construct => true
-  | .whRelCl, .headFillerCxt => true | .whRelCl, .headedCxt => true
+  | .whRelCl, .fillerHeadCxt => true | .whRelCl, .headedCxt => true
   | .whRelCl, .relativeCl => true
   | .whRelCl, .clause => true | .whRelCl, .phrasalCxt => true | .whRelCl, .construct => true
-  | .theCl, .headFillerCxt => true | .theCl, .headedCxt => true
+  | .theCl, .fillerHeadCxt => true | .theCl, .headedCxt => true
   | .theCl, .declarativeCl => true | .theCl, .coreCl => true
   | .theCl, .clause => true | .theCl, .phrasalCxt => true | .theCl, .construct => true
   -- the interrogative SAI: < aux-initial-cxt (headed dim.) AND < interrogative-cl (clausal)
@@ -167,7 +172,7 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | .lexicalCxt, .MTR => some .sign
   | .headedCxt, .MTR => some .sign
   | .clause, .MTR => some .sign
-  | .headFillerCxt, .MTR => some .sign
+  | .fillerHeadCxt, .MTR => some .sign
   | .coreCl, .MTR => some .sign
   | .relativeCl, .MTR => some .sign
   | .declarativeCl, .MTR => some .sign
@@ -180,13 +185,13 @@ def fhApprop : FHSort → FHAttr → Option FHSort
   | .theCl, .MTR => some .sign
   | .auxInitialCxt, .MTR => some .sign
   | .interrogativeSAI, .MTR => some .sign
-  -- HDDTR is common to all headed constructs; FILLERDTR is specific to head-filler-cxt (an
+  -- HDDTR is common to all headed constructs; FILLERDTR is specific to filler-head-cxt (an
   -- aux-initial construct has head + valent daughters, no filler)
   | .headedCxt, .HDDTR => some .sign
   | .auxInitialCxt, .HDDTR => some .sign
   | .interrogativeSAI, .HDDTR => some .sign
-  | .headFillerCxt, .HDDTR => some .sign
-  | .headFillerCxt, .FILLERDTR => some .sign
+  | .fillerHeadCxt, .HDDTR => some .sign
+  | .fillerHeadCxt, .FILLERDTR => some .sign
   | .nsWhIntCl, .HDDTR => some .sign
   | .nsWhIntCl, .FILLERDTR => some .sign
   | .topCl, .HDDTR => some .sign
@@ -230,11 +235,14 @@ instance (I : Interpretation fhSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ =
 Each principle constrains every feature structure whose sort is `≤` its antecedent — so a construct
 inherits a principle exactly when its sort sits below the principle's type. -/
 
-/-- The **filler-head construction** ([sag-2010] (61), [sag-etal-2020] Fig. 6): the filler daughter is
-`[CAT nonverbal]`, the head daughter is `[CAT verbal]`, and the filler's category is **token-identical**
-(`pathEq`) to the head daughter's `GAP` value — the filler-gap structure sharing. -/
-def headFillerPrinciple : Desc fhSig :=
-  .imp (.sortAssign .colon .headFillerCxt)
+/-- The **filler-head construction** ([sag-2010] (58); placed under `headed-cxt` in [sag-2010] Fig. A2):
+the head daughter is `[CAT verbal]`, and the filler's category is **token-identical** (`pathEq`) to the
+head daughter's `GAP` value — the filler-gap structure sharing. The `[CAT nonverbal]` filler is, in the
+paper, a per-subtype generalization (each F-G construction's (25)-style parameter, refined to `nominal`
+for wh-relative, (25b)) rather than a constraint of (58) itself; it is stated here once on the supertype
+because every subtype satisfies it. -/
+def fillerHeadPrinciple : Desc fhSig :=
+  .imp (.sortAssign .colon .fillerHeadCxt)
     (.and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
       (.and (.sortAssign (.path [.HDDTR, .CAT]) .verbal)
         (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP]))))
@@ -263,46 +271,32 @@ otherwise-similar (also austinean) the-clause allows ((27b): the-clause head is 
 def topPrinciple : Desc fhSig :=
   .imp (.sortAssign .colon .topCl) (.sortAssign (.path [.HDDTR, .CAT]) .verb)
 
-/-- The **Aux-Initial Construction** ([sag-etal-2020] (39)): the head daughter is an inverted
-(`[INV +]`) word — an invertible finite auxiliary. Unlike the filler-gap constructions, it carries no
-shared semantics (Fillmore 1999); its clausal meaning comes only from cross-classification (e.g. an
-interrogative SAI is an `interrogative-cl`). It is a sibling of `head-filler-cxt` under `headed-cxt`. -/
-def auxInitialPrinciple : Desc fhSig :=
-  .imp (.sortAssign .colon .auxInitialCxt) (.sortAssign (.path [.HDDTR, .INV]) .invPlus)
-
 /-- The grammar: the filler-head construction, the four clausal-type principles, and the
-construction-specific restrictions (topicalization's verb head, wh-relative's nominal filler,
-aux-initial's inverted head). -/
+filler-gap construction-specific restrictions (topicalization's verb head, wh-relative's nominal
+filler). The aux-initial / inversion construction is paper-anchored in `Studies/SagEtAl2020.lean`,
+which extends this grammar. -/
 def fhGrammar : Grammar fhSig :=
-  [headFillerPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
-    relativePrinciple, whRelPrinciple, topPrinciple, auxInitialPrinciple]
+  [fillerHeadPrinciple, declarativePrinciple, interrogativePrinciple, exclamativePrinciple,
+    relativePrinciple, whRelPrinciple, topPrinciple]
 
 /-! ### Multiple inheritance: `ns-wh-int-cl` is a lower bound across the two dimensions -/
 
-/-- `ns-wh-int-cl` sits below **both** `head-filler-cxt` (the headed dimension) and `interrogative-cl`
-(the clausal dimension) — the cross-classification of [sag-2010] (80) / [sag-etal-2020] Fig. 5. -/
+/-- `ns-wh-int-cl` sits below **both** `filler-head-cxt` (the headed dimension) and `interrogative-cl`
+(the clausal dimension) — the cross-classification of [sag-2010] (80), Fig. 8 (the cross-classification
+mechanism being the one [sag-etal-2020] Fig. 5 illustrates for `subj-pred-cl`). -/
 theorem nsWhIntCl_inherits :
-    (FHSort.nsWhIntCl ≤ .headFillerCxt) ∧ (FHSort.nsWhIntCl ≤ .interrogativeCl) := by decide
+    (FHSort.nsWhIntCl ≤ .fillerHeadCxt) ∧ (FHSort.nsWhIntCl ≤ .interrogativeCl) := by decide
 
-/-- All four filler-gap constructions cross-classify: each is below `head-filler-cxt` (so inherits the
-filler-head constraints) **and** below the clausal type fixing its semantics ([sag-2010] §5,
-[sag-etal-2020] Fig. 5) — topicalization/declarative, wh-exclamative/exclamative,
-nonsubject-wh-interrogative/interrogative, wh-relative/relative. -/
+/-- All four filler-gap constructions cross-classify: each is below `filler-head-cxt` (so inherits the
+filler-head constraints) **and** below the clausal type fixing its semantics ([sag-2010] §5) —
+topicalization/declarative, wh-exclamative/exclamative, nonsubject-wh-interrogative/interrogative,
+wh-relative/relative. -/
 theorem fg_cross_classify :
-    ((FHSort.topCl ≤ .headFillerCxt) ∧ (FHSort.topCl ≤ .declarativeCl)) ∧
-      ((FHSort.whExclCl ≤ .headFillerCxt) ∧ (FHSort.whExclCl ≤ .exclamativeCl)) ∧
-      ((FHSort.nsWhIntCl ≤ .headFillerCxt) ∧ (FHSort.nsWhIntCl ≤ .interrogativeCl)) ∧
-      ((FHSort.whRelCl ≤ .headFillerCxt) ∧ (FHSort.whRelCl ≤ .relativeCl)) ∧
-      ((FHSort.theCl ≤ .headFillerCxt) ∧ (FHSort.theCl ≤ .declarativeCl)) := by decide
-
-/-- **Second consumer** ([sag-etal-2020]). `aux-initial-cxt` is a sibling of `head-filler-cxt` under
-`headed-cxt`, and the interrogative SAI cross-classifies it with `interrogative-cl` by the *same*
-machinery as the filler-gap constructions — so one construct hierarchy now hosts two papers'
-constructions, confirming its theory-layer home. -/
-theorem sai_cross_classify :
-    ((FHSort.auxInitialCxt ≤ .headedCxt) ∧ (FHSort.headFillerCxt ≤ .headedCxt)) ∧
-      ((FHSort.interrogativeSAI ≤ .auxInitialCxt) ∧ (FHSort.interrogativeSAI ≤ .interrogativeCl)) := by
-  decide
+    ((FHSort.topCl ≤ .fillerHeadCxt) ∧ (FHSort.topCl ≤ .declarativeCl)) ∧
+      ((FHSort.whExclCl ≤ .fillerHeadCxt) ∧ (FHSort.whExclCl ≤ .exclamativeCl)) ∧
+      ((FHSort.nsWhIntCl ≤ .fillerHeadCxt) ∧ (FHSort.nsWhIntCl ≤ .interrogativeCl)) ∧
+      ((FHSort.whRelCl ≤ .fillerHeadCxt) ∧ (FHSort.whRelCl ≤ .relativeCl)) ∧
+      ((FHSort.theCl ≤ .fillerHeadCxt) ∧ (FHSort.theCl ≤ .declarativeCl)) := by decide
 
 /-! ### Worked constructs -/
 
@@ -312,12 +306,12 @@ inductive Ent
   | cxt | mtr | hd | fl | npCat | vpCat | adjCat | compCat | sem
   deriving DecidableEq, Fintype, Repr
 
-/-- A well-formed filler-head construct (sort `head-filler-cxt`): nonverbal filler, verbal head, and
+/-- A well-formed filler-head construct (sort `filler-head-cxt`): nonverbal filler, verbal head, and
 the head's `GAP` token-identical to the filler's `CAT`. -/
 def goodFillerHead : Interpretation fhSig where
   U := Ent
   S := fun
-    | .cxt => .headFillerCxt
+    | .cxt => .fillerHeadCxt
     | .hd => .sign
     | .fl => .sign
     | .npCat => .noun
@@ -339,7 +333,7 @@ instance : Fintype goodFillerHead.U := inferInstanceAs (Fintype Ent)
 instance : DecidableEq goodFillerHead.U := inferInstanceAs (DecidableEq Ent)
 
 /-- The well-formed filler-head construct satisfies the grammar (the clausal principles are vacuous —
-`head-filler-cxt` is not below any clausal type). -/
+`filler-head-cxt` is not below any clausal type). -/
 example : goodFillerHead.Models fhGrammar := by decide
 
 /-- Breaking the filler↔gap token identity (head `GAP` ≠ filler `CAT`) violates the filler-head
@@ -367,7 +361,7 @@ A single `ns-wh-int-cl` construct satisfies the filler-head principle **and** th
 principle — both inherited via `nsWhIntCl_inherits`, neither stipulated on `ns-wh-int-cl`. -/
 
 /-- A well-formed nonsubject wh-interrogative construct (sort `ns-wh-int-cl`): nonverbal filler,
-verbal head, filler↔gap token identity (from `head-filler-cxt`), and the mother's `SEM` a question
+verbal head, filler↔gap token identity (from `filler-head-cxt`), and the mother's `SEM` a question
 (from `interrogative-cl`). -/
 def goodNsWhInt : Interpretation fhSig where
   U := Ent
@@ -547,58 +541,5 @@ instance : Fintype topClCompHead.U := inferInstanceAs (Fintype Ent)
 instance : DecidableEq topClCompHead.U := inferInstanceAs (DecidableEq Ent)
 
 example : ¬ topClCompHead.Models fhGrammar := by decide
-
-/-! ### The inversion construction ([sag-etal-2020] (39))
-
-A worked interrogative SAI ("Has Lee eaten apples?"): an aux-initial construct cross-classifying
-`interrogative-cl`. It inherits the inverted head (`[INV +]`) from `aux-initial-cxt` and the question
-semantics from `interrogative-cl` — the second paper's construction, on the same hierarchy. -/
-
-/-- Entities of a worked aux-initial construct: the construct, its mother and (inverted) head daughter,
-and the inversion- and semantic-value objects. (Aux-initial constructs have no filler daughter.) -/
-inductive SAIEnt
-  | cxt | mtr | hd | invE | semE
-  deriving DecidableEq, Fintype, Repr
-
-/-- A well-formed interrogative SAI (sort `interrogative-SAI`): inverted head, interrogative mother. -/
-def goodInterrogativeSAI : Interpretation fhSig where
-  U := SAIEnt
-  S := fun
-    | .cxt => .interrogativeSAI
-    | .mtr => .sign | .hd => .sign
-    | .invE => .invPlus
-    | .semE => .question
-  A := fun a u => match a, u with
-    | .MTR, .cxt => some .mtr
-    | .HDDTR, .cxt => some .hd
-    | .INV, .hd => some .invE     -- head is [INV +]
-    | .SEM, .mtr => some .semE    -- interrogative semantics, inherited from interrogative-cl
-    | _, _ => none
-  R := fun e => e.elim
-
-instance : Fintype goodInterrogativeSAI.U := inferInstanceAs (Fintype SAIEnt)
-instance : DecidableEq goodInterrogativeSAI.U := inferInstanceAs (DecidableEq SAIEnt)
-
-/-- The interrogative SAI satisfies the grammar — the inverted head (from `aux-initial-cxt`) and the
-question semantics (from `interrogative-cl`) are both inherited from one sort, like the filler-gap
-keystone but for the second paper's construction. -/
-example : goodInterrogativeSAI.Models fhGrammar := by decide
-
-/-- The inverted-head restriction binds: an aux-initial construct with an `[INV −]` head violates the
-inherited aux-initial principle. -/
-def saiUninverted : Interpretation fhSig where
-  U := SAIEnt
-  S := fun
-    | .cxt => .interrogativeSAI
-    | .mtr => .sign | .hd => .sign
-    | .invE => .invMinus    -- head not inverted
-    | .semE => .question
-  A := goodInterrogativeSAI.A
-  R := fun e => e.elim
-
-instance : Fintype saiUninverted.U := inferInstanceAs (Fintype SAIEnt)
-instance : DecidableEq saiUninverted.U := inferInstanceAs (DecidableEq SAIEnt)
-
-example : ¬ saiUninverted.Models fhGrammar := by decide
 
 end HPSG.Construction
