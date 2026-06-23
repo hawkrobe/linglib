@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Modularity
+import Linglib.Phonology.Autosegmental.Subgraph
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
