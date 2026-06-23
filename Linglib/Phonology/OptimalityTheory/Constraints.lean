@@ -47,7 +47,6 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 namespace OptimalityTheory
 
 open Constraint
-open Constraint OptimalityTheory
 
 -- ============================================================================
 -- § 1: Faithfulness Constraint Constructors
