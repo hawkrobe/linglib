@@ -98,10 +98,10 @@ theorem ncc_isConcatStable : IsConcatStable (α := α) (β := β) Graph.IsPlanar
 /-- The OCP ([mccarthy-1986]) as a constraint on autosegmental
     representations: the autosegmental (upper) tier has no adjacent
     identical elements. -/
-def UpperOCPClean (g : Graph α β) : Prop := Phonology.OCP.IsClean g.upper
+def UpperOCPClean (g : Graph α β) : Prop := OCP.IsClean g.upper
 
 instance [DecidableEq α] (g : Graph α β) : Decidable (UpperOCPClean g) :=
-  inferInstanceAs (Decidable (Phonology.OCP.IsClean g.upper))
+  inferInstanceAs (Decidable (OCP.IsClean g.upper))
 
 /-- The OCP is **not** morpheme-modular: concatenation can create an
     adjacent identical autosegment pair at the morpheme boundary —
@@ -137,7 +137,7 @@ theorem ncc_modular_ocp_not :
     set. The non-modularity of the OCP (`ocp_not_isConcatStable`) is
     what makes a repair *necessary*; this theorem exhibits one. -/
 theorem collapse_repairs_boundary [DecidableEq α] (A B : Graph α β) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse (A.concat B).upper) :=
-  Phonology.OCP.collapse_clean _
+    OCP.IsClean (OCP.collapse (A.concat B).upper) :=
+  OCP.collapse_clean _
 
 end Autosegmental

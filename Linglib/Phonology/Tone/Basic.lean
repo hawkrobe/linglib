@@ -411,7 +411,7 @@ def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
     features into one, taking each feature from the left TRN where it is specified and
     falling back to the right (`FeatureBundle.merge`). Models the autosegmental fusion
     of two associated tones ([goldsmith-1976]); the tier-level OCP merger that
-    collapses a run of identical tones is `Phonology.OCP.collapse`. -/
+    collapses a run of identical tones is `OCP.collapse`. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
 

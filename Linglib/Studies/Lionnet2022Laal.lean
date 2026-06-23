@@ -30,7 +30,7 @@ exclusivity (`*MX/XM`) and its instability (M-lowering).
   (`dockFloating`).
 * §5.6 the `[+upper, +raised]` gap (Table-4 type-A system).
 * §5.2 (ex. 53–55, 58) the **optional** OCP-`[raised]` merger — consuming the
-  `Phonology.OCP` fusion repair.
+  `OCP` fusion repair.
 
 ## What this does NOT formalize
 
@@ -43,10 +43,10 @@ exclusivity (`*MX/XM`) and its instability (M-lowering).
 
 M-lowering proper is `[−raised]` *assimilation*, not OCP-merger; and `*MX/XM` is an
 *agreement* constraint (`*[α raised][β raised]`), the opposite of the identity-OCP.
-The `Phonology.OCP` API is consumed only for the merger of (53–55)/(58), which
+The `OCP` API is consumed only for the merger of (53–55)/(58), which
 Lionnet presents explicitly as optional ("not necessary in the present analysis" /
 "or fusion"). It is included because it is the merger face of the same OCP
-principle whose prohibition face lives in `Phonology.OCP`.
+principle whose prohibition face lives in `OCP`.
 -/
 
 namespace Lionnet2022Laal
@@ -125,26 +125,26 @@ theorem superHigh_is_the_gap : TRN.superHigh ∉ laalToneInventory := by decide
 /-- Lionnet (ex. 54–55, 58) notes — but explicitly does *not* adopt — an optional
 OCP-`[raised]` economy under which two adjacent identical `[−raised]` autosegments
 fuse into one multiply-linked autosegment. When two adjacent tones are *fully*
-identical, that fusion is `Phonology.OCP.collapse`: two adjacent L tones collapse to
+identical, that fusion is `OCP.collapse`: two adjacent L tones collapse to
 one. -/
 theorem ocp_raised_merge_LL :
-    Phonology.OCP.collapse [TRN.L, TRN.L] = [TRN.L] := by decide
+    OCP.collapse [TRN.L, TRN.L] = [TRN.L] := by decide
 
 /-- OCP-`[raised]` is **tier-relative** ([chandlee-jardine-2019]): it constrains the
 `[raised]`-projected tier (`IsCleanOn` reading `.raised`), not whole TRNs. H and L
 are distinct *tones* but both `[−raised]`, so adjacent they violate OCP-`[raised]`
 even though `[TRN.H, TRN.L]` is clean as a whole-TRN tier. -/
 theorem ocp_raised_is_tier_relative :
-    ¬ Phonology.OCP.IsCleanOn (fun _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
-      Phonology.OCP.IsClean [TRN.H, TRN.L] := by decide
+    ¬ OCP.IsCleanOn (fun _ : TRN => True) (·.raised) [TRN.H, TRN.L] ∧
+      OCP.IsClean [TRN.H, TRN.L] := by decide
 
 /-- Under the optional economy, fusing adjacent identical `[raised]` autosegments
 leaves the `[raised]`-projected tier OCP-clean — the faithful tier-relative reading
 of Lionnet (ex. 54–55, 58), via the substrate retraction `collapse_clean`. The
 merger face of the same OCP principle whose prohibition (TSL₂) face lives in
-`Phonology.OCP`. -/
+`OCP`. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse (tier.map (·.raised))) :=
-  Phonology.OCP.collapse_clean _
+    OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
+  OCP.collapse_clean _
 
 end Lionnet2022Laal

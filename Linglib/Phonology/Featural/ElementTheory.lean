@@ -51,7 +51,7 @@ the instantiation `F := Feature`, `V := Bool` (after a thin
 `Segment` wrapper).
 
 The shared OCP-merger operation lives at the tier level
-(`Phonology.OCP.collapse`) and works
+(`OCP.collapse`) and works
 uniformly for all three instantiations. The framework-divergence
 between Hayes binary, Lionnet subtonal, and ET privative-with-head
 lives at the *segment representation* level — different `(F, V)`
@@ -214,9 +214,9 @@ def projectIU (b : ETBundle) : ETBundle :=
 /-- The element-tier OCP merger lands in the OCP-clean set: collapsing runs of
     identical `Headedness` markers (the |A|+|A| guttural fusion of
     [faust-lampitelli-2026]) leaves no two adjacent identicals. ET's instantiation of
-    `Phonology.OCP.collapse_clean`. -/
+    `OCP.collapse_clean`. -/
 theorem element_tier_collapse_clean (xs : List Headedness) :
-    Phonology.OCP.IsClean (Phonology.OCP.collapse xs) :=
-  Phonology.OCP.collapse_clean xs
+    OCP.IsClean (OCP.collapse xs) :=
+  OCP.collapse_clean xs
 
 end Phonology.ElementTheory

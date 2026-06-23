@@ -69,14 +69,14 @@ def segmentAt (r : Root α) (i : Nat) : Option α := r.segments[i]?
 /-- **Root-level OCP** ([mccarthy-1981], [faust-2026]): a consonantal root has no two
     adjacent identical segments. Segment-level and theory-neutral — it commits to no
     tier projection or feature decomposition (stronger tier-relative variants go
-    through `Phonology.OCP.IsCleanOn`). Definitionally the segment tier being
-    `Phonology.OCP.IsClean`. -/
+    through `OCP.IsCleanOn`). Definitionally the segment tier being
+    `OCP.IsClean`. -/
 def IsOCPClean [DecidableEq α] (r : Root α) : Prop :=
-  Phonology.OCP.IsClean r.segments
+  OCP.IsClean r.segments
 
 instance instDecidablePredIsOCPClean [DecidableEq α] :
     DecidablePred (IsOCPClean (α := α)) :=
-  fun r => inferInstanceAs (Decidable (Phonology.OCP.IsClean r.segments))
+  fun r => inferInstanceAs (Decidable (OCP.IsClean r.segments))
 
 end Root
 end Morphology
