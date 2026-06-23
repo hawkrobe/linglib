@@ -44,14 +44,15 @@ open HPSG.RSRL
 
 /-! ### Sorts: categories, `GAP` lists, signs, and the filler-head / island constructs -/
 
-/-- Sorts: a category, the `GAP`-list sorts (`list > {elist, nelist}`), `sign`, and the construct
-types (`island-cxt < filler-head-cxt < construct`). -/
+/-- Sorts: categories (`cat > {nominal-cat, prep-cat}`, the NP/PP distinction weak islands are
+sensitive to), the `GAP`-list sorts (`list > {elist, nelist}`), `sign`, and the construct types
+(`{island-cxt, weak-island-cxt} < filler-head-cxt < construct`). -/
 inductive GSort
   | top
-  | cat
+  | cat | nominalCat | prepCat
   | list | elist | nelist
   | sign
-  | construct | fillerHeadCxt | islandCxt
+  | construct | fillerHeadCxt | islandCxt | weakIslandCxt
   deriving DecidableEq, Fintype, Repr
 
 /-- Direct subsumption ("covers"): the `~|GSort|` **DAG edges** (a is *directly* more specific than b),
@@ -61,10 +62,13 @@ def gCovers : GSort → GSort → Bool
   | .list, .top => true
   | .sign, .top => true
   | .construct, .top => true
+  | .nominalCat, .cat => true
+  | .prepCat, .cat => true
   | .elist, .list => true
   | .nelist, .list => true
   | .fillerHeadCxt, .construct => true
   | .islandCxt, .fillerHeadCxt => true
+  | .weakIslandCxt, .fillerHeadCxt => true
   | _, _ => false
 
 /-- Specificity depth; every covers edge strictly increases it (so `gCovers a b → gRank b < gRank a`),
@@ -73,14 +77,16 @@ def gRank : GSort → Nat
   | .top => 0
   | .cat => 1 | .list => 1 | .sign => 1 | .construct => 1
   | .elist => 2 | .nelist => 2 | .fillerHeadCxt => 2
-  | .islandCxt => 3
+  | .nominalCat => 2 | .prepCat => 2
+  | .islandCxt => 3 | .weakIslandCxt => 3
 
 instance : PartialOrder GSort :=
   partialOrderOfCovers (gCovers · · = true) gRank (by decide)
 
 instance : DecidableLE GSort := fun a b =>
   decidableLEOfCovers (covers := (gCovers · · = true))
-    [.top, .cat, .list, .elist, .nelist, .sign, .construct, .fillerHeadCxt, .islandCxt]
+    [.top, .cat, .nominalCat, .prepCat, .list, .elist, .nelist, .sign,
+     .construct, .fillerHeadCxt, .islandCxt, .weakIslandCxt]
     (by decide) a b
 
 /-! ### Attributes and the signature -/
@@ -104,6 +110,9 @@ def gApprop : GSort → GAttr → Option GSort
   | .islandCxt, .MTR => some .sign
   | .islandCxt, .HDDTR => some .sign
   | .islandCxt, .FILLERDTR => some .sign
+  | .weakIslandCxt, .MTR => some .sign
+  | .weakIslandCxt, .HDDTR => some .sign
+  | .weakIslandCxt, .FILLERDTR => some .sign
   | .sign, .CAT => some .cat
   | .sign, .GAP => some .list
   | .nelist, .FIRST => some .cat
@@ -137,8 +146,18 @@ dependency penetrates beyond the one its filler binds. -/
 def islandPrinciple : Desc gSig :=
   .imp (.sortAssign .colon .islandCxt) (.sortAssign (.path [.MTR, .GAP]) .elist)
 
-/-- The grammar: amalgamation and the island constraint. -/
-def gGrammar : Grammar gSig := [amalgamationPrinciple, islandPrinciple]
+/-- **Weak-island constraint**: a weak island is *selectively* permeable — an NP dependency passes
+through, a PP (more generally, non-nominal) dependency does not ([sag-wasow-bender-2003] Ch. 15 on weak
+islands; the `npOnly` case of the computational `GapRestriction`). Stated on the *passing* gap: if a
+weak-island construct's mother `GAP|FIRST` is a `prep-cat`, the mother must be `[GAP ⟨⟩]` — so a PP
+cannot penetrate, while a `nominal-cat` mother gap is unconstrained and passes. -/
+def weakIslandPrinciple : Desc gSig :=
+  .imp (.and (.sortAssign .colon .weakIslandCxt)
+             (.sortAssign (.path [.MTR, .GAP, .FIRST]) .prepCat))
+    (.sortAssign (.path [.MTR, .GAP]) .elist)
+
+/-- The grammar: amalgamation, the absolute-island and the weak-island constraints. -/
+def gGrammar : Grammar gSig := [amalgamationPrinciple, islandPrinciple, weakIslandPrinciple]
 
 /-! ### Worked constructs
 
@@ -229,5 +248,40 @@ instance : Fintype islandTwoGap.U := inferInstanceAs (Fintype GEnt)
 instance : DecidableEq islandTwoGap.U := inferInstanceAs (DecidableEq GEnt)
 
 example : ¬ islandTwoGap.Models gGrammar := by decide
+
+/-! ### Weak islands: the NP/PP asymmetry
+
+A *weak* island (`weak-island-cxt`) is selectively permeable. The constructs below reuse the two-gap
+amalgamation geometry of `goodTwoGap` — the filler binds the first gap, the second passes up — but the
+passing gap's category decides whether it survives the weak-island constraint. -/
+
+/-- **NP extraction through a weak island is licensed.** A weak-island construct whose passing
+(second) gap is a `nominal-cat` amalgamates a non-empty mother `GAP ⟨NP⟩`; the weak-island antecedent
+(`prep-cat` mother gap) is false, so the constraint is vacuous and the structure is well-formed. -/
+def weakIslandNPGap : Interpretation gSig where
+  U := GEnt
+  S := fun u => match u with | .cxt => .weakIslandCxt | .c2 => .nominalCat | u => baseS u
+  A := goodTwoGap.A
+  R := fun e => e.elim
+
+instance : Fintype weakIslandNPGap.U := inferInstanceAs (Fintype GEnt)
+instance : DecidableEq weakIslandNPGap.U := inferInstanceAs (DecidableEq GEnt)
+
+example : weakIslandNPGap.Models gGrammar := by decide
+
+/-- **PP extraction through a weak island is blocked.** The same geometry with a `prep-cat` passing
+gap makes the mother `GAP ⟨PP⟩`; the weak-island constraint then forces `[GAP ⟨⟩]`, contradicting the
+non-empty mother gap — so the construct is rejected. The NP/PP asymmetry, derived from the constraint,
+not stipulated. -/
+def weakIslandPPGap : Interpretation gSig where
+  U := GEnt
+  S := fun u => match u with | .cxt => .weakIslandCxt | .c2 => .prepCat | u => baseS u
+  A := goodTwoGap.A
+  R := fun e => e.elim
+
+instance : Fintype weakIslandPPGap.U := inferInstanceAs (Fintype GEnt)
+instance : DecidableEq weakIslandPPGap.U := inferInstanceAs (DecidableEq GEnt)
+
+example : ¬ weakIslandPPGap.Models gGrammar := by decide
 
 end HPSG.GapAmalgamation
