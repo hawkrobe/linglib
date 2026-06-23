@@ -1231,6 +1231,7 @@ import Linglib.Studies.Pantcheva2011
 import Linglib.Studies.Pesetsky2013
 import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
+import Linglib.Studies.Cinque2005
 import Linglib.Studies.Cinque2020
 import Linglib.Typology.ClauseChaining
 import Linglib.Studies.SarvasyAikhenvald2025
