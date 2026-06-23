@@ -181,7 +181,7 @@ end ETBundle
     headedness); the I/U-tier registers |I|/|U| presence.
 
     This is exactly the parametric tier-projection idea of
-    `Rolle2018.tonalTier` (the tonal tier, via `Tier.total`)
+    `Rolle2018.tonalTier` (the tonal tier, via `TierProjection.total`)
     for tones, instantiated for ET. -/
 def aTier (b : ETBundle) : Option Headedness := b .A
 

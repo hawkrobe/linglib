@@ -212,7 +212,7 @@ specialization) because Kikongo's forbidden pair is asymmetric — see the
 "What this file formalizes" docstring above. -/
 def kikongoAgree : Constraint.NamedConstraint (List KSeg) :=
   OptimalityTheory.mkForbidPairsOnTier
-    "AGREE-[nas]/CC" KSeg.forbidNasalStop (Tier.byClass KSeg.onTier) id
+    "AGREE-[nas]/CC" KSeg.forbidNasalStop (TierProjection.byClass KSeg.onTier) id
 
 /-- `kikongoAgree` is a markedness constraint by construction. -/
 theorem kikongoAgree_is_markedness :

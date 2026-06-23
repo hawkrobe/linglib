@@ -83,13 +83,13 @@ lemma OCPCleanPair.isBoundaryVacuous [DecidableEq α] :
   CleanPair.isBoundaryVacuous
 
 /-- **Bridge** (relational form): a candidate's OCP score is zero iff its
-raw string projects (under `Tier.byClass p`) to a list with no two
+raw string projects (under `TierProjection.byClass p`) to a list with no two
 adjacent identical elements. Identity-relation specialization of
 `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
       ((extract c).filter (fun x => decide (p x))).IsChain (· ≠ ·) :=
   mkForbidPairsOnTier_zero_iff_isChain name (· = ·) p extract c
 
@@ -101,7 +101,7 @@ one principle rather than parallel formalisations — both characterise
 theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
       OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
   mkOCPOnTier_zero_iff_isChain name p extract c
 
@@ -125,7 +125,7 @@ specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
 theorem mkOCPOnTier_zero_iff_in_ocp_lang [DecidableEq α] {C : Type}
     (name : String) (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
+    (mkOCPOnTier name (TierProjection.byClass p) extract).eval c = 0 ↔
       extract c ∈ (TSLGrammar.ocp p).lang :=
   mkForbidPairsOnTier_zero_iff_in_lang name (· = ·) p extract c
 
@@ -135,7 +135,7 @@ markedness constraint's zero-set *is* the corresponding OCP-TSL_2
 language. Sibling of `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean. -/
 theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
     (name : String) (p : α → Prop) [DecidablePred p] :
-    (mkOCPOnTier name (Tier.byClass p) (id : List α → List α)).zeroSet =
+    (mkOCPOnTier name (TierProjection.byClass p) (id : List α → List α)).zeroSet =
       (TSLGrammar.ocp p).lang := by
   ext w
   exact mkOCPOnTier_zero_iff_in_ocp_lang name p id w

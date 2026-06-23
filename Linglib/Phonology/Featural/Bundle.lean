@@ -37,7 +37,7 @@ The value type `V` is parametric:
    the feature *space* is data, not built into the type.
 
 2. The autosegmental tier is just a sequence of bundles
-   (`Tier F V := List (FeatureBundle F V)`). Association to bearers and
+   (`List (FeatureBundle F V)`). Association to bearers and
    no-crossing constraints can be added on top without changing the bundle
    algebra.
 
@@ -52,11 +52,12 @@ The value type `V` is parametric:
 ## Connection to existing infrastructure
 
 - `Core/Computability/StringHom.lean` (Kleisli morphisms of `Option`) is exactly the
-  type of tier-projection homomorphisms `Tier F V → Tier F' V'`.
+  type of tier-projection homomorphisms
+  `List (FeatureBundle F V) → List (FeatureBundle F' V')`.
 - `Core/Order/PullbackPreorder.lean` gives the satisfaction preorder on
   bundles when `V` carries an order.
-- `Phonology/Autosegmental/Tier.lean` (already present) collects
-  tier-rule infrastructure that the bundle algebra slots into.
+- `Phonology/TierProjection.lean` provides the erasing tier-projection
+  morphism (`TierProjection`) that the bundle algebra slots into.
 -/
 
 namespace Phonology.Featural
@@ -73,13 +74,6 @@ section Definitions
     (presence vs absence). -/
 abbrev FeatureBundle (F : Type u) (V : Type v) : Type (max u v) :=
   F → Option V
-
-/-- A **tier** is a sequence of bundles over the same feature space. The
-    sequence captures *paradigmatic* feature content; *syntagmatic*
-    relations (adjacency, no-crossing, association to a TBU tier) are
-    layered on top. -/
-abbrev Tier (F : Type u) (V : Type v) : Type (max u v) :=
-  List (FeatureBundle F V)
 
 end Definitions
 
@@ -158,20 +152,5 @@ def set [DecidableEq F]
 end AlgebraicOps
 
 end FeatureBundle
-
-namespace Tier
-
-variable {F : Type u} {V : Type v}
-
-/-- **Local assimilation along a tier** at feature `f`: each bundle takes
-    its value at `f` from its left neighbour (when the left neighbour
-    specifies `f`). Models leftward-trigger spreading. -/
-def assimilateLeftward [DecidableEq F] (f : F) : Tier F V → Tier F V
-  | []               => []
-  | [b]              => [b]
-  | b₁ :: b₂ :: rest =>
-      b₁ :: assimilateLeftward f (FeatureBundle.assimilate f b₁ b₂ :: rest)
-
-end Tier
 
 end Phonology.Featural

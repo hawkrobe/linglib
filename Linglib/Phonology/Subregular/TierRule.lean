@@ -1,10 +1,10 @@
 import Mathlib.Data.Fintype.Option
-import Linglib.Phonology.Tier
+import Linglib.Phonology.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 
 /-!
-# Tier-based rules (`TierRule`)
+# TierProjection-based rules (`TierRule`)
 [belth-2026] [goldsmith-1976]
 
 The canonical operational schema for SPE-style phonological alternations
@@ -15,7 +15,7 @@ that factor through a tier projection. A rule has the shape
 
 where:
 
-- `T ⊆ α` is a tier (an erasing string-homomorphism — see `Tier`);
+- `T ⊆ α` is a tier (an erasing string-homomorphism — see `TierProjection`);
 - `C ⊆ T` is the natural class of the *triggering* tier-adjacent segment;
 - `A ⊆ α` is the natural class of *targets* (here: a single underspecified
   position identified by index, à la [belth-2026]);
@@ -106,7 +106,7 @@ abbrev Side := Subregular.Direction
       fallback). `none` means *no* default — when no context is found,
       `applyAt` returns `none`. `some v` is the concrete fallback. -/
 structure TierRule (α : Type) where
-  tier : Tier α α
+  tier : TierProjection α α
   side : Side := .left
   targetIsContext : α → Prop
   [decTarget : DecidablePred targetIsContext]
@@ -129,8 +129,8 @@ attribute [instance] TierRule.decTarget
 def apply (r : TierRule α) (pre post : List α) : Option Bool :=
   let ctx? :=
     match r.side with
-    | .left  => Tier.lastWith  r.tier r.targetIsContext pre
-    | .right => Tier.firstWith r.tier r.targetIsContext post
+    | .left  => TierProjection.lastWith  r.tier r.targetIsContext pre
+    | .right => TierProjection.firstWith r.tier r.targetIsContext post
   match ctx? with
   | none     => r.default
   | some ctx =>
@@ -165,7 +165,7 @@ def flipRelation (r : TierRule α) : TierRule α :=
     `Agree([?voice], {voice}) / [*] __` over the trivial projection —
     [belth-2026]). -/
 theorem id_tier_left_is_strict_local (r : TierRule α)
-    (h_id : r.tier = Tier.id) (h_side : r.side = .left) (pre : List α) :
+    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) (pre : List α) :
     apply r pre [] =
       (match (pre.filter (fun x => decide (r.targetIsContext x))).getLast? with
         | none => r.default
@@ -173,9 +173,9 @@ theorem id_tier_left_is_strict_local (r : TierRule α)
                       | none => r.default
                       | some v => some (match r.relation with
                                         | .agree => v | .disagree => !v)) := by
-  unfold apply Tier.lastWith
+  unfold apply TierProjection.lastWith
   rw [h_side, h_id]
-  simp [Tier.apply_id]
+  simp [TierProjection.apply_id]
 
 /-- Reify a `TierRule` as a string-to-string function: at each input
 position, predict the feature value for the implicit "hole" using the
@@ -209,7 +209,7 @@ per [aksenova-rawski-graf-heinz-2020]:
 * Identity-tier `TierRule`s → **Left-Subsequential** (the trivial-tier
   case lemma `id_tier_left_is_strict_local` above shows the structural
   equivalence to scanning the raw input for the context class).
-* Non-trivial-tier `TierRule`s → **Tier-Subsequential** (a strictly
+* Non-trivial-tier `TierRule`s → **TierProjection-Subsequential** (a strictly
   larger class than Left-Subsequential, captured by the standard
   Heinz-Rawski-Tanner 2011 tier-strictly-local family applied to
   function classes).
@@ -275,7 +275,7 @@ lemma lastContextOf_append_singleton (r : TierRule α) (past : List α) (x : α)
 `predictFromCtx ∘ lastContextOf` — the structural rephrasing of
 `id_tier_left_is_strict_local`. -/
 lemma applyAt_eq_predictFromCtx (r : TierRule α)
-    (h_id : r.tier = Tier.id) (h_side : r.side = .left) (past : List α) :
+    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) (past : List α) :
     r.applyAt past = predictFromCtx r (r.lastContextOf past) := by
   unfold applyAt predictFromCtx lastContextOf
   exact id_tier_left_is_strict_local r h_id h_side past
@@ -284,7 +284,7 @@ lemma applyAt_eq_predictFromCtx (r : TierRule α)
 starting state (which represents the lastContextOf of some virtual
 past) and the corresponding past. -/
 lemma toIdTierSFST_runFrom_eq_applyToStringAux (r : TierRule α)
-    (h_id : r.tier = Tier.id) (h_side : r.side = .left)
+    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left)
     (past : List α) (input : List α) :
     r.toIdTierSFST.runFrom (r.lastContextOf past) input
       = applyToString.applyToStringAux r input past := by
@@ -307,7 +307,7 @@ functions.** Closes audit D6 with a real witness construction (not a
 sorry): the SFST has state `Option α` (last-context-matching segment
 seen) and emits the rule's prediction at each step. -/
 theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
-    (r : TierRule α) (h_id : r.tier = Tier.id) (h_side : r.side = .left) :
+    (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
     IsLeftSubsequential r.applyToString := by
   have h_run : r.toIdTierSFST.run = r.applyToString := by
     funext input
