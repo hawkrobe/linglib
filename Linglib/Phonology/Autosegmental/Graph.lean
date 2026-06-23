@@ -180,7 +180,7 @@ structure Graph (α β : Type*) where
 
 namespace Graph
 
-variable {α β : Type*}
+variable {α β : Type*} (r : Graph α β)
 
 /-! ### Construction -/
 
@@ -198,43 +198,43 @@ def ofTiers (upper : List α) (lower : List β) : Graph α β :=
     link set satisfies [goldsmith-1976]'s NCC. Lifted from
     `NonCrossing.IsNonCrossing` so mathlib's `MonovaryOn` lemma library
     applies directly. -/
-def IsPlanar (r : Graph α β) : Prop := IsNonCrossing r.links
+def IsPlanar : Prop := IsNonCrossing r.links
 
 /-! ### Index predicates -/
 
 /-- The upper-tier element at index `i` is **linked** to some lower-tier
     position. No in-bounds check. -/
-def IsLinkedUpper (r : Graph α β) (i : Nat) : Prop :=
+def IsLinkedUpper (i : Nat) : Prop :=
   ∃ p ∈ r.links, p.fst = i
 
 /-- The lower-tier element at index `j` is **linked** to some upper-tier
     position. No in-bounds check. -/
-def IsLinkedLower (r : Graph α β) (j : Nat) : Prop :=
+def IsLinkedLower (j : Nat) : Prop :=
   ∃ p ∈ r.links, p.snd = j
 
 /-- The upper-tier element at index `i` is **floating**: in-bounds but
     not linked to any lower position. -/
-def IsFloatingUpper (r : Graph α β) (i : Nat) : Prop :=
+def IsFloatingUpper (i : Nat) : Prop :=
   i < r.upper.length ∧ ¬ r.IsLinkedUpper i
 
 /-- The lower-tier element at index `j` is **floating**: in-bounds but
     not linked to any upper position. The paper calls a lower slot
     with this property *segmentally empty*. -/
-def IsFloatingLower (r : Graph α β) (j : Nat) : Prop :=
+def IsFloatingLower (j : Nat) : Prop :=
   j < r.lower.length ∧ ¬ r.IsLinkedLower j
 
 /-! ### Decidability of index predicates -/
 
-instance (r : Graph α β) (i : Nat) : Decidable (r.IsLinkedUpper i) :=
+instance (i : Nat) : Decidable (r.IsLinkedUpper i) :=
   inferInstanceAs (Decidable (∃ p ∈ r.links, p.fst = i))
 
-instance (r : Graph α β) (j : Nat) : Decidable (r.IsLinkedLower j) :=
+instance (j : Nat) : Decidable (r.IsLinkedLower j) :=
   inferInstanceAs (Decidable (∃ p ∈ r.links, p.snd = j))
 
-instance (r : Graph α β) (i : Nat) : Decidable (r.IsFloatingUpper i) :=
+instance (i : Nat) : Decidable (r.IsFloatingUpper i) :=
   inferInstanceAs (Decidable (i < r.upper.length ∧ ¬ r.IsLinkedUpper i))
 
-instance (r : Graph α β) (j : Nat) : Decidable (r.IsFloatingLower j) :=
+instance (j : Nat) : Decidable (r.IsFloatingLower j) :=
   inferInstanceAs (Decidable (j < r.lower.length ∧ ¬ r.IsLinkedLower j))
 
 /-! ### Saturation and Goldsmith's WFC
@@ -250,12 +250,12 @@ well-formed.
 
 /-- The upper tier is **saturated**: every in-bounds upper-tier index
     is linked to some lower-tier position. -/
-def IsSaturatedUpper (r : Graph α β) : Prop :=
+def IsSaturatedUpper : Prop :=
   ∀ i, i < r.upper.length → r.IsLinkedUpper i
 
 /-- The lower tier is **saturated**: every in-bounds lower-tier index
     is linked to some upper-tier position. -/
-def IsSaturatedLower (r : Graph α β) : Prop :=
+def IsSaturatedLower : Prop :=
   ∀ j, j < r.lower.length → r.IsLinkedLower j
 
 /-- [goldsmith-1979]'s original Well-Formedness Condition: both
@@ -263,13 +263,13 @@ def IsSaturatedLower (r : Graph α β) : Prop :=
     usage (post-[pulleyblank-1986]) treats only `IsPlanar` as
     structurally required and demotes saturation to language-particular
     association conventions. -/
-def IsGoldsmithWFC (r : Graph α β) : Prop :=
+def IsGoldsmithWFC : Prop :=
   r.IsPlanar ∧ r.IsSaturatedUpper ∧ r.IsSaturatedLower
 
-instance (r : Graph α β) : Decidable r.IsSaturatedUpper :=
+instance : Decidable r.IsSaturatedUpper :=
   Nat.decidableBallLT _ _
 
-instance (r : Graph α β) : Decidable r.IsSaturatedLower :=
+instance : Decidable r.IsSaturatedLower :=
   Nat.decidableBallLT _ _
 
 /-! ### Link-set operations -/
@@ -277,60 +277,56 @@ instance (r : Graph α β) : Decidable r.IsSaturatedLower :=
 /-- Insert the association line `(i, j)`. Does not check planarity; use
     `isPlanar_insertLink` to preserve it. Naming mirrors
     `Floating.lean`'s `insertLink`. -/
-def insertLink (r : Graph α β) (i j : Nat) : Graph α β :=
+def insertLink (i j : Nat) : Graph α β :=
   { r with links := insert (i, j) r.links }
 
 /-- Erase the association line `(i, j)`. Naming mirrors
     `Floating.lean`'s `deleteLink`. -/
-def eraseLink (r : Graph α β) (i j : Nat) : Graph α β :=
+def eraseLink (i j : Nat) : Graph α β :=
   { r with links := r.links.erase (i, j) }
 
 /-! ### Basic properties -/
 
-@[simp] theorem upper_insertLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem upper_insertLink (i j : Nat) :
     (r.insertLink i j).upper = r.upper := rfl
 
-@[simp] theorem lower_insertLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem lower_insertLink (i j : Nat) :
     (r.insertLink i j).lower = r.lower := rfl
 
-@[simp] theorem links_insertLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem links_insertLink (i j : Nat) :
     (r.insertLink i j).links = insert (i, j) r.links := rfl
 
-@[simp] theorem upper_eraseLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem upper_eraseLink (i j : Nat) :
     (r.eraseLink i j).upper = r.upper := rfl
 
-@[simp] theorem lower_eraseLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem lower_eraseLink (i j : Nat) :
     (r.eraseLink i j).lower = r.lower := rfl
 
-@[simp] theorem links_eraseLink (r : Graph α β) (i j : Nat) :
+@[simp] theorem links_eraseLink (i j : Nat) :
     (r.eraseLink i j).links = r.links.erase (i, j) := rfl
 
 /-- `insertLink` preserves planarity iff the inserted link does not
     cross any existing link. Lifts
     `IsNonCrossing.insert_of_not_indexCrosses`. -/
-theorem isPlanar_insertLink (r : Graph α β) {i j : Nat}
+theorem isPlanar_insertLink {i j : Nat}
     (hP : r.IsPlanar) (hNX : ¬ IndexCrosses r.links i j) :
     (r.insertLink i j).IsPlanar :=
   IsNonCrossing.insert_of_not_indexCrosses hP hNX
 
 /-- `eraseLink` preserves planarity: removing a link from a no-crossing
     set leaves a no-crossing subset. -/
-theorem isPlanar_eraseLink (r : Graph α β) (i j : Nat)
+theorem isPlanar_eraseLink (i j : Nat)
     (hP : r.IsPlanar) : (r.eraseLink i j).IsPlanar :=
   IsNonCrossing.subset (Finset.erase_subset _ _) hP
 
 /-- The empty representation is planar (vacuously). -/
 theorem isPlanar_empty : (empty : Graph α β).IsPlanar := by
-  unfold IsPlanar empty IsNonCrossing
-  intro l₁ hl₁
-  simp at hl₁
+  simp [IsPlanar, empty]
 
 /-- `ofTiers` produces a planar representation (no links to cross). -/
 theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
     (ofTiers upper lower).IsPlanar := by
-  unfold IsPlanar ofTiers IsNonCrossing
-  intro l₁ hl₁
-  simp at hl₁
+  simp [IsPlanar, ofTiers]
 
 /-! ### In-bounds predicate -/
 
@@ -342,18 +338,18 @@ theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
     shifted B-link needs to know A's links don't reach past A's
     length). Real ARs always satisfy this — the substrate just doesn't
     bake it in. -/
-def InBounds (r : Graph α β) : Prop :=
+def InBounds : Prop :=
   ∀ p ∈ r.links, p.fst < r.upper.length ∧ p.snd < r.lower.length
 
-instance (r : Graph α β) : Decidable r.InBounds := by
+instance : Decidable r.InBounds := by
   unfold InBounds; infer_instance
 
 theorem inBounds_empty : (empty : Graph α β).InBounds := by
-  intro p hp; simp [empty] at hp
+  simp [InBounds, empty]
 
 theorem inBounds_ofTiers (upper : List α) (lower : List β) :
     (ofTiers upper lower).InBounds := by
-  intro p hp; simp [ofTiers] at hp
+  simp [InBounds, ofTiers]
 
 /-! ### Concatenation (Jardine-Heinz 2015 §5)
 
@@ -410,17 +406,11 @@ def concat (A B : Graph α β) : Graph α β where
 
 /-- `empty` is a left identity for `concat`. -/
 theorem empty_concat (A : Graph α β) : empty.concat A = A := by
-  ext
-  · simp [empty]
-  · simp [empty]
-  · simp [empty, shiftLink_zero]
+  ext <;> simp [empty, shiftLink_zero]
 
 /-- `empty` is a right identity for `concat`. -/
 theorem concat_empty (A : Graph α β) : A.concat empty = A := by
-  ext
-  · simp [empty]
-  · simp [empty]
-  · simp [empty]
+  ext <;> simp [empty]
 
 /-- `concat` is associative. -/
 theorem concat_assoc (A B C : Graph α β) :
