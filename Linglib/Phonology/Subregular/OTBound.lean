@@ -54,7 +54,6 @@ subregular hierarchy.
 namespace Subregular.OTBound
 
 open OptimalityTheory
-open Subregular
 open Constraint OptimalityTheory
 
 -- ============================================================================

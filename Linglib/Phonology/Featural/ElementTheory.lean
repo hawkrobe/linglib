@@ -74,9 +74,9 @@ abandoned charm in favour of headedness as the prominence-encoding
 device.
 -/
 
-namespace Phonology.ElementTheory
+namespace ElementTheory
 
-open Phonology.Featural
+open Phonology
 
 -- ============================================================================
 -- § 1: Elements and Headedness
@@ -219,4 +219,4 @@ theorem element_tier_collapse_clean (xs : List Headedness) :
     OCP.IsClean (OCP.collapse xs) :=
   OCP.collapse_clean xs
 
-end Phonology.ElementTheory
+end ElementTheory
