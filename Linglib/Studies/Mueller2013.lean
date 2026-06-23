@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.HPSG.HeadFiller
-import Linglib.Syntax.HPSG.LexicalRules
+import Linglib.Syntax.HPSG.Construction
 import Linglib.Syntax.HPSG.Description
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
@@ -620,15 +620,14 @@ theorem ccg_coordination_mismatch (c1 c2 : CCG.Cat) (h : c1 ≠ c2) :
     intro heq; exact h (beq_iff_eq.mp heq)
   simp [this]
 
-/-- HPSG lexical rules preserve head features, enabling coordination.
-
-When two signs undergo the same lexical rule, they retain the same
-category — which is why passivized verbs can coordinate with each other. -/
-theorem hpsg_lexrule_enables_coordination (rule : HPSG.LexicalRule)
-    (s1 s2 : HPSG.Sign) (h : s1.synsem.cat = s2.synsem.cat) :
-    (HPSG.applyLexRule rule s1).synsem.cat =
-    (HPSG.applyLexRule rule s2).synsem.cat :=
-  HPSG.same_rule_same_cat rule s1 s2 h
+/-- HPSG lexical rules preserve head features, enabling coordination — grounded **model-theoretically**
+in the RSRL `inflectional-cxt` (`Syntax/HPSG/Construction`): a category-preserving lexical rule's output
+shares the base's category (`inflectionalPrinciple`, the Head Feature Principle for the lexicon), so two
+same-category outputs of the rule coordinate (e.g. passivized verbs); an output whose category differs
+from the base is rejected. -/
+theorem hpsg_lexrule_enables_coordination :
+    HPSG.Construction.goodInflectional.Models HPSG.Construction.grammar ∧
+    ¬ HPSG.Construction.inflectionalWrongCat.Models HPSG.Construction.grammar := by decide
 
 /-! ## §6. Directional MG ≈ CCG (§2.3)
 
@@ -895,13 +894,11 @@ end MonovalentVerbProblem
 Lexical rules compose freely, capturing double passivization (Turkish,
 Özkaragöz 1986; Lithuanian, Timberlake 1982) without phrasal machinery. -/
 
-/-- Any chain of lexical rules preserves head features. -/
+/-- Any chain of lexical rules preserves head features, grounded **model-theoretically** in the RSRL
+`inflectional-cxt`: a two-step chain (double passivization) keeps the category through both steps, so
+lexical rules iterate freely with no phrasal machinery ([mueller-2013] §11). -/
 theorem valence_iteration_works :
-    ∀ s : HPSG.Sign,
-      (HPSG.applyLexRule HPSG.passiveRule
-        (HPSG.applyLexRule HPSG.passiveRule s)).synsem.head =
-      s.synsem.head :=
-  HPSG.double_passive_preserves_head
+    HPSG.Construction.iterationChain.Models HPSG.Construction.grammar := by decide
 
 /-! ## Summary Table
 
