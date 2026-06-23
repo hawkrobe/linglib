@@ -51,7 +51,7 @@ markedness constraint M₂ is satisfied or violated by the base output.
 
 Consumes:
 - `Phonology.OptimalityTheory.TCT.Role` and `TetruSchema`
-- `Phonology.ParadigmUniformity.Transderivational.diagramWithEdge`
+- `OptimalityTheory.ParadigmUniformity.Transderivational.diagramWithEdge`
   (general 3-role correspondence with explicit OO alignment)
 - `Phonology.OptimalityTheory.Correspondence.Corr.identViol` (segmental)
   and `Corr.identViolFeature` (featural)
@@ -66,7 +66,7 @@ namespace Benua1997
 
 open OptimalityTheory.Correspondence (Corr)
 open OptimalityTheory.TCT (Role TetruSchema)
-open Phonology.ParadigmUniformity.Transderivational
+open OptimalityTheory.ParadigmUniformity.Transderivational
   (diagramWithEdge identOOViol)
 open Constraint OptimalityTheory
 

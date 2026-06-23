@@ -40,7 +40,7 @@ that phonological behavior tracks paradigm structure. See
 `Studies/MarcoRasin2026.lean`.
 -/
 
-namespace Phonology.ParadigmUniformity
+namespace OptimalityTheory.ParadigmUniformity
 
 open Constraint OptimalityTheory
 open OptimalityTheory.Correspondence (Corr)
@@ -107,4 +107,4 @@ theorem majority_minimizes_violations (a b : Nat) (h : a > b) :
     (a + 1) * b < a * (b + 1) := by
   rw [Nat.add_mul, Nat.mul_add]; omega
 
-end Phonology.ParadigmUniformity
+end OptimalityTheory.ParadigmUniformity
