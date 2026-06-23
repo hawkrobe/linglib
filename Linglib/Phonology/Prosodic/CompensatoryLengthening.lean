@@ -24,10 +24,10 @@ line rearrangements.
 [hayes-1989]
 -/
 
-namespace Phonology.Moraic.CL
+namespace Prosody.Moraic.CL
 
 open Phonology (Segment)
-open Phonology.Moraic
+open Prosody.Moraic
 
 -- ============================================================================
 -- § 1: CL Typology
@@ -196,4 +196,4 @@ theorem no_wbp_params_disable_cl (o n c : Segment) :
     let σ := syllableToMoraic { wbp := false } ⟨[o], [n], [c]⟩
     (deleteMoraic σ 1).2 = 0 := rfl
 
-end Phonology.Moraic.CL
+end Prosody.Moraic.CL

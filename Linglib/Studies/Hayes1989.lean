@@ -40,8 +40,8 @@ over segmental prosodic theories (X theory, CV theory).
 namespace Hayes1989
 
 open Phonology (Segment Feature Segment.ofSpecs)
-open Phonology.Moraic
-open Phonology.Moraic.CL
+open Prosody.Moraic
+open Prosody.Moraic.CL
 
 -- ============================================================================
 -- § 1: Segment Inventory (minimal, for derivations)
