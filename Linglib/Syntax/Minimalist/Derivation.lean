@@ -248,6 +248,14 @@ def Derivation.surfaceTokens (d : Derivation) : List LIToken :=
 def Derivation.surfaceCats (d : Derivation) : List Cat :=
   d.surfaceTokens.map (·.item.outerCat)
 
+/-- Surface phonological string of a derivation: pronounced forms left-to-right
+    (empty forms dropped). The derivation-grounded **computable** counterpart of
+    `HeadFunction.leftSpine.phonYield d.final` — and unlike the latter, it
+    recovers the *movement* order (it replays the steps), so word-order theorems
+    over moved structures are `decide`-checkable. -/
+def Derivation.surfacePhon (d : Derivation) : List String :=
+  d.surfaceTokens.filterMap fun t => let p := t.phonForm; if p.isEmpty then none else some p
+
 /-! ### Faithfulness: `externalize` projects to `final` (the Π bridge)
 
 Whenever `externalizeP?` succeeds, projecting it back (`FreeCommMagma.mk`)

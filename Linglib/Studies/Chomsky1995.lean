@@ -26,15 +26,9 @@ def john_sees_mary : Derivation :=
 
 /-- The phonological yield of `john_sees_mary` is the SVO string
     "John sees Mary": the Minimalist derivation (built by `emR` then
-    `emL` over `verbToSO`/`nounToSO`) linearizes subject-verb-object.
-
-    Phase 1.0 sorry: blocked on `phonYield` being `noncomputable`
-    (Phase 1.0 placeholder via `Quot.out`). TODO Phase 2: restore once
-    LCA-based linearization lands. -/
+    `emL` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
+    derivation-grounded computable externalization (`Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
-    String.intercalate " "
-      (HeadFunction.leftSpine.phonYield john_sees_mary.final)
-    = "John sees Mary" := by
-  sorry
+    String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide
 
 end Chomsky1995
