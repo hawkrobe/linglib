@@ -206,11 +206,10 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
     prfvDen (fun () (e : Event Time) => e.τ = i) =
     accomplishmentDenotation i := by
   ext j
-  simp only [prfvDen, mem_eventDenotation, accomplishmentDenotation,
-    Set.mem_setOf_eq, Event.τ]
+  simp only [prfvDen, mem_eventDenotation, accomplishmentDenotation, Event.τ]
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
-    -- sort defaults to .action; the proof doesn't reference .sort
+    -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
   · intro h; exact ⟨⟨i, .dynamic⟩, rfl, h.symm⟩
 
 -- ============================================================================
