@@ -240,29 +240,23 @@ theorem gap_removes_complement :
       (fun p => p.1.synsem.val.comps.isEmpty && p.2.gaps == [.NOUN]) = some true := by
   decide
 
-/-- End-to-end: extraction is licensed iff not blocked by an island. -/
-theorem extraction_and_island_complementary :
-    let free : ExtractionConfig := ⟨.PRON, .NOUN, .unrestricted⟩  -- no island → licensed
-    let abs  : ExtractionConfig := ⟨.PRON, .NOUN, .noGap⟩         -- absolute island → blocked
-    let weakNP : ExtractionConfig := ⟨.PRON, .NOUN, .npOnly⟩      -- weak island + NP → licensed
-    let weakPP : ExtractionConfig := ⟨.ADP, .ADP, .npOnly⟩        -- weak island + PP → blocked
-    extractionLicensed free = true ∧
-    extractionLicensed abs = false ∧
-    extractionLicensed weakNP = true ∧
-    extractionLicensed weakPP = false := by
-  decide
+/-! #### Model-theoretic grounding (RSRL) — the full island taxonomy
 
-/-! #### Model-theoretic grounding (RSRL)
+The computational `extractionLicensed`/`GapRestriction` predicates above are the parser-facing shadow
+of the **model-theoretic** RSRL list-valued `GAP` (`Syntax/HPSG/GapAmalgamation`), where the whole
+island taxonomy is *derived* from gap amalgamation ([sag-2010] (67); after [bouma-malouf-sag-2001]),
+not stipulated as Subjacency: a dependency penetrates a domain iff its `GAP` survives amalgamation. -/
 
-The computational island-blocking above (`extractionLicensed = false` for an island-restricted
-configuration) is the parser-facing shadow of a **model-theoretic** result on the RSRL list-valued
-`GAP` (`Syntax/HPSG/GapAmalgamation`): a second gap cannot penetrate a `[GAP ⟨⟩]` construct, derived
-from amalgamation ([sag-2010] (67)), not stipulated as Subjacency. -/
-
-/-- The absolute-island blocking is grounded in the RSRL model theory: an island construct with a
-second un-bound gap is rejected by the gap-amalgamation grammar (`GapAmalgamation.islandTwoGap`). -/
-theorem absolute_island_rsrl_grounded :
-    ¬ HPSG.GapAmalgamation.islandTwoGap.Models HPSG.GapAmalgamation.gGrammar := by decide
+/-- The island taxonomy, grounded in the RSRL model theory — the authoritative statement of which the
+computational `extractionLicensed` cases above are the coarse shadow. A free filler-head construct
+licenses extraction; an absolute island (`[GAP ⟨⟩]`) blocks a second gap; a weak island lets an NP gap
+pass but blocks a PP gap — the `unrestricted`/`noGap`/`npOnly` cases of `GapRestriction`, each a
+`Models` fact over the gap-amalgamation grammar. -/
+theorem islands_rsrl_grounded :
+    HPSG.GapAmalgamation.goodTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
+    ¬ HPSG.GapAmalgamation.islandTwoGap.Models HPSG.GapAmalgamation.gGrammar ∧
+    HPSG.GapAmalgamation.weakIslandNPGap.Models HPSG.GapAmalgamation.gGrammar ∧
+    ¬ HPSG.GapAmalgamation.weakIslandPPGap.Models HPSG.GapAmalgamation.gGrammar := by decide
 
 end Extraction
 
