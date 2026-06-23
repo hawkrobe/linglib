@@ -125,14 +125,14 @@ Principle-A model (a coindexed anaphor satisfies the grammar; a disjoint anaphor
 theorem reflexive_binding_grounded_in_rsrl :
     grammaticalForCoreference [john, sees, himself] = true ∧
     grammaticalForCoreference [himself, sees, john] = false ∧
-    (_root_.HPSG.RSRL.Binding.clause .ana .i1).Models _root_.HPSG.RSRL.Binding.bindingGrammar ∧
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ana .i2).Models [_root_.HPSG.RSRL.Binding.principleA] := by
+    (_root_.HPSG.Binding.clause .ana .i1).Models _root_.HPSG.Binding.bindingGrammar ∧
+    ¬ (_root_.HPSG.Binding.clause .ana .i2).Models [_root_.HPSG.Binding.principleA] := by
   decide
 
 /-- Principle B grounded in RSRL: a coindexed personal pronoun violates the model-theoretic
 Principle B (a pronoun must be locally o-free), the counterpart of the ARG-ST disjoint-reference data. -/
 theorem pronoun_binding_grounded_in_rsrl :
-    ¬ (_root_.HPSG.RSRL.Binding.clause .ppro .i1).Models [_root_.HPSG.RSRL.Binding.principleB] := by
+    ¬ (_root_.HPSG.Binding.clause .ppro .i1).Models [_root_.HPSG.Binding.principleB] := by
   decide
 
 end Binding

@@ -18,7 +18,9 @@ modeled via `SUBJ`/`OBJ` attributes and `locO` interpreted per model (deriving `
 value-vs-token gap as the HFP bridge.
 -/
 
-namespace HPSG.RSRL.Binding
+namespace HPSG.Binding
+
+open HPSG.RSRL
 
 /-! ### Signature: nom-obj hierarchy, INDEX, and the o-command relation -/
 
@@ -149,4 +151,4 @@ example : ¬ (clause .ana .i2).Models [principleA] := by decide
 o-free — Principle B violated. -/
 example : ¬ (clause .ppro .i1).Models [principleB] := by decide
 
-end HPSG.RSRL.Binding
+end HPSG.Binding
