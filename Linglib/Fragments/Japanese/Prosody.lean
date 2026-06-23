@@ -34,9 +34,9 @@ affix typology from [kawahara-2015].
 namespace Japanese.Prosody
 
 open Features.Prosody
-open Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
+open Prosody.Accent (defaultAccentAAR latinStressRule accentToTones
   LevelTone shortN2CompoundAccent longN2CompoundAccent)
-open Phonology.Syllable (SyllWeight)
+open Prosody.Syllable (SyllWeight)
 open BeckmanPierrehumbert1986
 
 -- ============================================================================

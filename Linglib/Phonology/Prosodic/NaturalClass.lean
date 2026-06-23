@@ -29,7 +29,7 @@ phenomena such as intrusive vowel insertion in Tarifit Berber
 ([afkir-zellou-2025]).
 -/
 
-namespace Phonology.Syllable
+namespace Prosody.Syllable
 
 open Phonology (Segment Feature)
 
@@ -101,4 +101,4 @@ theorem parker_strictly_monotone (a b : NatClass) (h : a ≠ b) :
     NatClass.parkerSonority a > NatClass.parkerSonority b := by
   cases a <;> cases b <;> simp_all [NatClass.parkerSonority]
 
-end Phonology.Syllable
+end Prosody.Syllable

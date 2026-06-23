@@ -29,7 +29,7 @@ are exempt from *Misalignment because the intruder is not a root segment in
 the first place — the central analytical move of [faust-2026] §4.
 -/
 
-namespace Phonology.Templates
+namespace Prosody.Templates
 
 open Morphology
 open Constraint OptimalityTheory
@@ -365,4 +365,4 @@ def noCross {α : Type} : NamedConstraint (RootTemplateMatch α) :=
 theorem noCross_is_markedness {α : Type} :
     (noCross (α := α)).family = .markedness := rfl
 
-end Phonology.Templates
+end Prosody.Templates

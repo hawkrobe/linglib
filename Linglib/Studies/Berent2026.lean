@@ -51,7 +51,7 @@ data supporting the doubling reversal is in
 [berent-2026]
 -/
 
-open Phonology.Syllable (SonorityRank)
+open Prosody.Syllable (SonorityRank)
 open OptimalityTheory
 open OptimalityTheory.Doubling
 

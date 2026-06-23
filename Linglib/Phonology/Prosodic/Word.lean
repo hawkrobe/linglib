@@ -43,9 +43,9 @@ profiles, minimal word constraints, and the morphosyntax-prosody
 mapping that determines PrWd boundaries.
 -/
 
-namespace Phonology.ProsodicWord
+namespace Prosody.ProsodicWord
 
-open Phonology.Syllable
+open Prosody.Syllable
 
 -- ============================================================================
 -- § 1: Morphological Status and PrWd Membership
@@ -263,4 +263,4 @@ theorem postp_lo_no_long :
 theorem postp_gurinci_no_long :
     (MorphElement.mk "-gurinci" .postposition .light).triggersLongForm = false := rfl
 
-end Phonology.ProsodicWord
+end Prosody.ProsodicWord
