@@ -15,20 +15,23 @@ when `k₁ < k₂ → i₁ ≤ i₂` for any two links `(k₁, i₁)`, `(k₂, i
 index coordinates monovary, which in a two-layer drawing is exactly the
 absence of crossing segments. This is the discrete-index
 [goldsmith-1976] / [sagey-1986] No-Crossing Constraint and the canonical
-filter on autosegmental GEN. It is built on mathlib's `MonovaryOn` rather
-than graph planarity (which mathlib lacks and which would over-model it).
+filter on autosegmental GEN.
 
 ## Main declarations
 
 * `IsNonCrossing links`: the link set monovaries (`[Preorder]`-general).
-* `IndexCrosses links k i`: candidate `(k, i)` forms a crossing pair with
-  some existing link — a 2-link set that fails `IsNonCrossing`. The
-  decidable, `ℕ`-indexed GEN filter.
+* `IndexCrosses links k i`: `(k, i)` crosses an existing link — decidable, `ℕ`-indexed GEN filter.
 
 ## Main results
 
+* `monovaryOn_union` / `monovaryOn_insert` / `monovaryOn_singleton`: the
+  `Monovary` analogues of mathlib's `Set.pairwise_union` / `_insert` /
+  `_singleton`, absent from the `MonovaryOn` API (`[UPSTREAM]` candidates). The
+  structural keystones the rest derive from (`union` is the fundamental lemma).
 * `isNonCrossing_iff`: the elementary `∀∀→` form of `IsNonCrossing`.
 * `IsNonCrossing.subset`: subset closure.
+* `isNonCrossing_insert_iff'`: the insert-algebra — `insert p` stays
+  non-crossing iff `p` is pairwise non-crossing with every existing link.
 * `indexCrosses_iff`: the elementary index-ordering form of `IndexCrosses`.
 * `isNonCrossing_insert_iff`: a candidate may be added iff it crosses
   nothing; `IsNonCrossing.insert_of_not_indexCrosses` is the GEN direction.
@@ -36,46 +39,78 @@ than graph planarity (which mathlib lacks and which would over-model it).
 
 namespace Autosegmental
 
+/-! ### `MonovaryOn` on `union`, `insert`, and singletons
+
+`monovaryOn_union` / `monovaryOn_insert` are the `Monovary` analogues of
+mathlib's `Set.pairwise_union` / `Set.pairwise_insert`, which the `MonovaryOn`
+API lacks; together with `monovaryOn_singleton` they are `[UPSTREAM]` candidates
+for `Mathlib/Order/Monotone/Monovary.lean`. As in mathlib, `union` is the
+fundamental lemma and `insert` derives from it via `Set.insert_eq`. -/
+
+section Monovary
+variable {ι α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β} {s t : Set ι}
+
+/-- `MonovaryOn` holds vacuously on a singleton: there is only one index. -/
+@[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
+  rintro i rfl j rfl h
+  exact absurd h (lt_irrefl _)
+
+/-- `MonovaryOn` on a union: monovary on each part, plus neither part inverts the
+    order against the other. The `Monovary` analogue of `Set.pairwise_union` (the
+    `a = b` diagonal is vacuous, so no `≠` guard). -/
+theorem monovaryOn_union : MonovaryOn f g (s ∪ t) ↔ MonovaryOn f g s ∧ MonovaryOn f g t ∧
+    ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
+  grind [MonovaryOn]
+
+/-- `MonovaryOn` on `insert a s`, derived from `monovaryOn_union` (as mathlib
+    derives `Set.pairwise_insert` from `Set.pairwise_union` via `Set.insert_eq`). -/
+theorem monovaryOn_insert {a : ι} :
+    MonovaryOn f g (insert a s) ↔
+      MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
+  simp only [Set.insert_eq, monovaryOn_union, monovaryOn_singleton, Set.mem_singleton_iff,
+    forall_eq, true_and]
+
+end Monovary
+
 /-! ### Set-level non-crossing property (via mathlib `MonovaryOn`) -/
 
 section
-variable {ι κ : Type*} [Preorder ι] [Preorder κ]
+variable {ι κ : Type*} [Preorder ι] [Preorder κ] (links : Finset (ι × κ))
 
 /-- The link set has no crossings: its two index coordinates monovary. -/
-def IsNonCrossing (links : Finset (ι × κ)) : Prop :=
+def IsNonCrossing : Prop :=
   MonovaryOn Prod.snd Prod.fst (↑links : Set (ι × κ))
 
 /-- `IsNonCrossing` in elementary form. -/
-theorem isNonCrossing_iff (links : Finset (ι × κ)) : IsNonCrossing links ↔
+theorem isNonCrossing_iff : IsNonCrossing links ↔
     ∀ l₁ ∈ links, ∀ l₂ ∈ links, l₁.fst < l₂.fst → l₁.snd ≤ l₂.snd := Iff.rfl
 
 @[simp] theorem isNonCrossing_empty : IsNonCrossing (∅ : Finset (ι × κ)) := by
   simp [IsNonCrossing]
 
 @[simp] theorem isNonCrossing_singleton (p : ι × κ) : IsNonCrossing {p} := by
-  simp only [isNonCrossing_iff, Finset.mem_singleton]
-  rintro _ rfl _ rfl h
-  exact absurd h (lt_irrefl _)
+  simp [IsNonCrossing]
 
 /-- A pair is non-crossing iff its two links agree in tier- and backbone-order. -/
 theorem isNonCrossing_pair [DecidableEq ι] [DecidableEq κ] (a b : ι × κ) :
-    IsNonCrossing {a, b} ↔
-      (a.fst < b.fst → a.snd ≤ b.snd) ∧ (b.fst < a.fst → b.snd ≤ a.snd) := by
-  simp only [isNonCrossing_iff, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · refine fun h => ⟨h a ?_ b ?_, h b ?_ a ?_⟩ <;> tauto
-  · rintro ⟨h1, h2⟩ _ (rfl | rfl) _ (rfl | rfl) hlt
-    · exact absurd hlt (lt_irrefl _)
-    · exact h1 hlt
-    · exact h2 hlt
-    · exact absurd hlt (lt_irrefl _)
+    IsNonCrossing {a, b} ↔ (a.1 < b.1 → a.2 ≤ b.2) ∧ (b.1 < a.1 → b.2 ≤ a.2) := by
+  simp [IsNonCrossing, monovaryOn_insert]
 
 /-- A subset of a non-crossing link set is non-crossing. -/
 theorem IsNonCrossing.subset {s t : Finset (ι × κ)} (hst : s ⊆ t)
     (h : IsNonCrossing t) : IsNonCrossing s :=
   MonovaryOn.subset (Finset.coe_subset.mpr hst) h
 
-instance [DecidableLT ι] [DecidableLE κ] (links : Finset (ι × κ)) :
+/-- Inserting `p` keeps non-crossing iff `p` crosses no existing link: the
+    insert-algebra form, `Set.pairwise_insert` specialised to `IsNonCrossing`
+    via `monovaryOn_insert`. -/
+theorem isNonCrossing_insert_iff' [DecidableEq ι] [DecidableEq κ] (p : ι × κ) :
+    IsNonCrossing (insert p links) ↔
+      IsNonCrossing links ∧ ∀ q ∈ links, IsNonCrossing {p, q} := by
+  simp only [IsNonCrossing, Finset.coe_insert, Finset.coe_singleton, monovaryOn_insert,
+    monovaryOn_singleton, Finset.mem_coe, Set.mem_singleton_iff, forall_eq, true_and]
+
+instance [DecidableLT ι] [DecidableLE κ] :
     Decidable (IsNonCrossing links) :=
   decidable_of_iff _ (isNonCrossing_iff links).symm
 
@@ -83,51 +118,46 @@ end
 
 /-! ### Candidate-level crossing predicate (`ℕ`-indexed GEN filter) -/
 
-/-- `(k, i)` forms a crossing pair (a 2-link set failing `IsNonCrossing`)
-    with some link in `links` — the decidable GEN filter. -/
-def IndexCrosses (links : Finset (ℕ × ℕ)) (k i : ℕ) : Prop :=
+section
+variable (links : Finset (ℕ × ℕ)) (k i : ℕ)
+
+/-- `(k, i)` crosses some link in `links` — the decidable GEN filter. -/
+def IndexCrosses : Prop :=
   ∃ l ∈ links, ¬ IsNonCrossing {(k, i), l}
 
-instance (links : Finset (ℕ × ℕ)) (k i : ℕ) :
-    Decidable (IndexCrosses links k i) := by
-  unfold IndexCrosses; infer_instance
+instance : Decidable (IndexCrosses links k i) := by unfold IndexCrosses; infer_instance
 
 /-- `IndexCrosses` in elementary index-ordering form. -/
-theorem indexCrosses_iff (links : Finset (ℕ × ℕ)) (k i : ℕ) :
+theorem indexCrosses_iff :
     IndexCrosses links k i ↔
       ∃ l ∈ links, (k < l.fst ∧ l.snd < i) ∨ (l.fst < k ∧ i < l.snd) := by
   simp only [IndexCrosses, isNonCrossing_pair]
   exact exists_congr fun _ => and_congr_right fun _ => by omega
 
-/-- Adding `(k, i)` keeps non-crossing iff it crosses no existing link. -/
-theorem isNonCrossing_insert_iff {links : Finset (ℕ × ℕ)} {k i : ℕ} :
+end
+
+section
+variable {links : Finset (ℕ × ℕ)} {k i : ℕ}
+
+/-- `(k, i)` crosses nothing iff it is pairwise non-crossing with every link. -/
+theorem not_indexCrosses_iff :
+    ¬ IndexCrosses links k i ↔ ∀ l ∈ links, IsNonCrossing {(k, i), l} := by
+  simp only [IndexCrosses, not_exists, not_and, not_not]
+
+/-- Adding `(k, i)` keeps non-crossing iff it crosses no existing link. The two
+    structural facts: `isNonCrossing_insert_iff'` (the insert-algebra) and
+    `not_indexCrosses_iff` (the De Morgan dual of the GEN filter). -/
+theorem isNonCrossing_insert_iff :
     IsNonCrossing (insert (k, i) links) ↔
       IsNonCrossing links ∧ ¬ IndexCrosses links k i := by
-  constructor
-  · intro h
-    refine ⟨h.subset (Finset.subset_insert _ _), ?_⟩
-    rw [indexCrosses_iff]
-    rw [isNonCrossing_iff] at h
-    have hki : ((k, i) : ℕ × ℕ) ∈ insert (k, i) links := Finset.mem_insert_self _ _
-    rintro ⟨l, hl, ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
-    · exact absurd (h (k, i) hki l (Finset.mem_insert_of_mem hl) h1) (not_le.mpr h2)
-    · exact absurd (h l (Finset.mem_insert_of_mem hl) (k, i) hki h1) (not_le.mpr h2)
-  · rintro ⟨hNC, hNX⟩
-    rw [isNonCrossing_iff] at hNC ⊢
-    simp only [indexCrosses_iff, not_exists, not_or, not_and, not_lt] at hNX
-    intro l₁ hl₁ l₂ hl₂ hlt
-    simp only [Finset.mem_insert] at hl₁ hl₂
-    rcases hl₁ with rfl | hl₁ <;> rcases hl₂ with rfl | hl₂
-    · omega
-    · exact (hNX l₂ hl₂).1 hlt
-    · exact (hNX l₁ hl₁).2 hlt
-    · exact hNC l₁ hl₁ l₂ hl₂ hlt
+  rw [isNonCrossing_insert_iff', not_indexCrosses_iff]
 
 /-- GEN direction of `isNonCrossing_insert_iff`. -/
 theorem IsNonCrossing.insert_of_not_indexCrosses
-    {links : Finset (ℕ × ℕ)} {k i : ℕ}
     (hNC : IsNonCrossing links) (hNX : ¬ IndexCrosses links k i) :
     IsNonCrossing (insert (k, i) links) :=
   isNonCrossing_insert_iff.mpr ⟨hNC, hNX⟩
+
+end
 
 end Autosegmental
