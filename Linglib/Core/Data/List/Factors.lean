@@ -54,7 +54,7 @@ lemma mem_kFactors : f ∈ kFactors k xs ↔ f <:+: xs ∧ f.length = k := by
     refine List.mem_map.mpr ⟨f ++ t, List.mem_filter.mpr ⟨?_, ?_⟩, ?_⟩
     · rw [List.mem_tails, List.append_assoc]; exact List.suffix_append s (f ++ t)
     · simp
-    · simp [List.take_left]
+    · simp
 
 /-- Every member of `kFactors k xs` has length exactly `k`. -/
 lemma length_of_mem_kFactors (h : f ∈ kFactors k xs) : f.length = k :=
