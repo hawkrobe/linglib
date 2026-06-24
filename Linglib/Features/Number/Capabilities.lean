@@ -57,16 +57,6 @@ variable {α : Type*} {β : Type*} [HasNumber α] [HasNumber β]
 abbrev Compatible (a : α) (b : β) : Prop :=
   Compat (α := Flat Number) (numberOf a) (numberOf b)
 
-theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
-    Compatible b a :=
-  h.symm
-
-/-- An unvalued carrier is compatible with everything. -/
-theorem compatible_of_none {a : α} (h : numberOf a = none) (b : β) :
-    Compatible a b := by
-  show Compat (α := Flat Number) (numberOf a) (numberOf b)
-  rw [h]; exact bot_compat _
-
 end HasNumber
 
 /-- φ-compatibility entails number compatibility: the `HasNumber` mixin never
@@ -75,7 +65,4 @@ end HasNumber
 theorem UD.MorphFeatures.compatible_hasNumber {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasNumber.Compatible f1 f2 :=
-  Features.compat_of_clause Number.fromUD <| by
-    unfold UD.MorphFeatures.compatible at h
-    simp only [Bool.and_eq_true] at h
-    tauto
+  Features.compat_of_clause Number.fromUD (UD.MorphFeatures.compatible_number h)

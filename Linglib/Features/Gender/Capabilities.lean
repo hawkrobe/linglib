@@ -50,16 +50,6 @@ variable {α : Type*} {β : Type*} [HasGender α] [HasGender β]
 abbrev Compatible (a : α) (b : β) : Prop :=
   Compat (α := Flat Gender) (genderOf a) (genderOf b)
 
-theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
-    Compatible b a :=
-  h.symm
-
-/-- An unvalued carrier is compatible with everything. -/
-theorem compatible_of_none {a : α} (h : genderOf a = none) (b : β) :
-    Compatible a b := by
-  show Compat (α := Flat Gender) (genderOf a) (genderOf b)
-  rw [h]; exact bot_compat _
-
 end HasGender
 
 /-- φ-compatibility entails gender compatibility: the `HasGender` mixin never
@@ -68,7 +58,4 @@ end HasGender
 theorem UD.MorphFeatures.compatible_hasGender {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasGender.Compatible f1 f2 :=
-  Features.compat_of_clause_map Gender.fromUD <| by
-    unfold UD.MorphFeatures.compatible at h
-    simp only [Bool.and_eq_true] at h
-    tauto
+  Features.compat_of_clause_map Gender.fromUD (UD.MorphFeatures.compatible_gender h)

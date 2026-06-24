@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Insert
 import Linglib.Core.Order.Monotone.Monovary
 
@@ -62,6 +63,23 @@ theorem isNonCrossing_pair [DecidableEq ι] [DecidableEq κ] (a b : ι × κ) :
 theorem IsNonCrossing.subset {s t : Finset (ι × κ)} (hst : s ⊆ t)
     (h : IsNonCrossing t) : IsNonCrossing s :=
   MonovaryOn.subset (Finset.coe_subset.mpr hst) h
+
+/-- Pushing a non-crossing link set forward along a **monotone** map on the upper
+    (first) coordinate keeps it non-crossing: the autosegmental analogue of
+    `SimpleGraph.map` along a monotone vertex map. The upper index needs a
+    `LinearOrder` (the run-collapse domain is `ℕ`) so that `ρ` reflects `<`. Used to
+    lift planarity through the OCP run-collapse `ρ` (`Autosegmental/Collapse.lean`). -/
+theorem IsNonCrossing.image_monotone {ι ι' κ : Type*} [LinearOrder ι] [Preorder ι']
+    [Preorder κ] [DecidableEq ι'] [DecidableEq κ] {links : Finset (ι × κ)}
+    {ρ : ι → ι'} (hρ : Monotone ρ) (h : IsNonCrossing links) :
+    IsNonCrossing (links.image (Prod.map ρ id)) := by
+  rw [isNonCrossing_iff] at h ⊢
+  rintro _ hl₁ _ hl₂ hlt
+  simp only [Finset.mem_image, Prod.exists, Prod.map_apply, id_eq] at hl₁ hl₂
+  obtain ⟨k₁, i₁, hp₁, rfl⟩ := hl₁
+  obtain ⟨k₂, i₂, hp₂, rfl⟩ := hl₂
+  have hlt' : ρ k₁ < ρ k₂ := hlt
+  exact h _ hp₁ _ hp₂ (hρ.reflect_lt hlt')
 
 /-- Inserting `p` keeps non-crossing iff `p` crosses no existing link: the
     insert-algebra form, `Set.pairwise_insert` specialised to `IsNonCrossing`

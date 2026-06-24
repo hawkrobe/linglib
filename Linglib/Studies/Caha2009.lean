@@ -108,95 +108,38 @@ theorem slavicCore_respectsCaha :
 theorem slavicSeven_respectsCaha :
     RespectsCahaContainment Slavic.Case.sevenCaseInventory := by decide
 
-/-! ## § 1: Conformers (non-Slavic) -/
+/-! ## § 1: Conformers
 
-theorem german_respectsCaha :
-    RespectsCahaContainment German.Case.caseInventory := by decide
+Every Fragment case inventory below is downward-closed under Caha's
+containment hierarchy. Checked as one `decide` over a study-local sample
+(the field-by-field consumer pattern) rather than one named theorem per
+language: no codebase consumer referenced the individual lemmas, and a new
+conforming language is now one list entry, not a new theorem. The three
+*principled* exceptions are in § 3.
 
-theorem greek_respectsCaha :
-    RespectsCahaContainment Greek.Case.caseInventory := by decide
+The ten Slavic inventories each `abbrev`-alias `Slavic.Case.coreInventory`
+(`slavicCore_respectsCaha`), so their conformance is structural, not
+coincidental — the list covers every modern Slavic language with productive
+case morphology (Bulgarian and Macedonian, which lost noun case, have no
+`Case.lean` file). -/
 
-theorem hindi_respectsCaha :
-    RespectsCahaContainment Hindi.Case.caseInventory := by decide
+/-- The conforming Fragment case inventories. Quantified over by
+    `conformers_respectCaha`; extend by adding a `caseInventory` here. -/
+def conformers : List (Finset Case) :=
+  [ -- non-Slavic
+    German.Case.caseInventory, Greek.Case.caseInventory, Hindi.Case.caseInventory,
+    Icelandic.Case.caseInventory, Japanese.Case.caseInventory, Korean.Case.caseInventory,
+    Latin.Case.caseInventory, Mongolian.Case.caseInventory, SwissGerman.Case.caseInventory,
+    Tamil.Case.caseInventory, Telugu.Case.caseInventory, Turkish.Case.caseInventory,
+    Yakut.Case.caseInventory,
+    -- Slavic (each aliases Slavic.Case.coreInventory)
+    Belarusian.Case.caseInventory, Cassubian.Case.caseInventory, Czech.Case.caseInventory,
+    Polish.Case.caseInventory, Russian.Case.caseInventory, Serbian.Case.caseInventory,
+    Slovak.Case.caseInventory, Slovenian.Case.caseInventory, Sorbian.Case.caseInventory,
+    Ukrainian.Case.caseInventory ]
 
-theorem icelandic_respectsCaha :
-    RespectsCahaContainment Icelandic.Case.caseInventory := by decide
-
-theorem japanese_respectsCaha :
-    RespectsCahaContainment Japanese.Case.caseInventory := by decide
-
-theorem korean_respectsCaha :
-    RespectsCahaContainment Korean.Case.caseInventory := by decide
-
-theorem latin_respectsCaha :
-    RespectsCahaContainment Latin.Case.caseInventory := by decide
-
-theorem mongolian_respectsCaha :
-    RespectsCahaContainment Mongolian.Case.caseInventory := by decide
-
-theorem swissgerman_respectsCaha :
-    RespectsCahaContainment SwissGerman.Case.caseInventory := by decide
-
-theorem tamil_respectsCaha :
-    RespectsCahaContainment Tamil.Case.caseInventory := by decide
-
-theorem telugu_respectsCaha :
-    RespectsCahaContainment Telugu.Case.caseInventory := by decide
-
-theorem turkish_respectsCaha :
-    RespectsCahaContainment Turkish.Case.caseInventory := by decide
-
-theorem yakut_respectsCaha :
-    RespectsCahaContainment Yakut.Case.caseInventory := by decide
-
-/-! ## § 2: Slavic conformers (one substrate proof, ten aliases)
-
-Each per-language `caseInventory` `abbrev`-aliases `coreInventory`,
-so the ten theorems below all reduce to `slavicCore_respectsCaha`.
-Cross-Slavic agreement is structural, not coincidental — covers
-every modern Slavic language with productive case morphology
-(Bulgarian and Macedonian, which lost case in the noun system, have
-no `Case.lean` file). -/
-
-theorem belarusian_respectsCaha :
-    RespectsCahaContainment Belarusian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem cassubian_respectsCaha :
-    RespectsCahaContainment Cassubian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem czech_respectsCaha :
-    RespectsCahaContainment Czech.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem polish_respectsCaha :
-    RespectsCahaContainment Polish.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem russian_respectsCaha :
-    RespectsCahaContainment Russian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem serbian_respectsCaha :
-    RespectsCahaContainment Serbian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem slovak_respectsCaha :
-    RespectsCahaContainment Slovak.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem slovenian_respectsCaha :
-    RespectsCahaContainment Slovenian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem sorbian_respectsCaha :
-    RespectsCahaContainment Sorbian.Case.caseInventory :=
-  slavicCore_respectsCaha
-
-theorem ukrainian_respectsCaha :
-    RespectsCahaContainment Ukrainian.Case.caseInventory :=
-  slavicCore_respectsCaha
+theorem conformers_respectCaha :
+    ∀ inv ∈ conformers, RespectsCahaContainment inv := by decide
 
 /-! ## § 3: Predicted violators -/
 
