@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.OCP
+import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Fragments.Laal.Prosody
 
 /-!
@@ -146,5 +147,63 @@ merger face of the same OCP principle whose prohibition (TSL₂) face lives in
 theorem ocp_raised_merge_clean (tier : List TRN) :
     OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
   OCP.collapse_clean _
+
+/-! ### The register-tier geometry on the multi-tier substrate (§5–§6)
+
+[lionnet-2022]'s geometry (ex. 52) is a hub-and-spoke around the **Tonal Root Node**:
+the `[±upper]` register tier, the `[±raised]` tier, and the mora (TBU) tier each
+associate to the TRN. On the general substrate `Autosegmental.MultiAR` this is a
+four-tier graph. Its point over the `TRN` *bundle* used above: each subtonal feature
+is a tier of its own, so it can be manipulated **independently of the whole TRN** —
+[lionnet-2022]'s *partial activity* (§5, e.g. `[−raised]` assimilation) — which a
+bundled `TRN` record cannot structurally express. Whole-TRN operations (§6) act on
+the TRN↔mora layer; both live on one object. -/
+
+open Autosegmental
+
+/-- The four Laal tone tiers: `[±upper]` register, `[±raised]`, the TRN, the mora. -/
+abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
+
+/-- A one-TRN M-toned form (`M = [−upper, +raised]`, [lionnet-2022] ex. 51): the
+    register `[−upper]` and `[+raised]` features and the single mora each associate to
+    the one TRN. -/
+def mForm : MultiAR laalTier where
+  tiers := Fin.cons (.ofList [some false]) (Fin.cons (.ofList [some true])
+    (Fin.cons (.ofList [()]) (Fin.cons (.ofList [()]) finZeroElim)))
+  links i j := match i, j with
+    | 0, 2 => {(0, 0)}    -- register ↔ TRN
+    | 1, 2 => {(0, 0)}    -- [raised] ↔ TRN
+    | 2, 3 => {(0, 0)}    -- TRN ↔ mora
+    | _, _ => ∅
+  inBounds := by decide
+
+/-- The form is planar — each spoke's single association is non-crossing (per-pair NCC). -/
+theorem mForm_planar : mForm.IsPlanar := by decide
+
+/-- The links of `delinkRaised`: the `[raised]`↔TRN pair `(1,2)` emptied. -/
+private def delinkedLinks (G : MultiAR laalTier) (i j : Fin 4) : Finset (ℕ × ℕ) :=
+  if (i, j) = (1, 2) then ∅ else G.links i j
+
+/-- **Partial activity** (§5): delinking the `[−raised]` feature acts on the
+    `[raised]`↔TRN layer (tier-pair `(1,2)`) alone. -/
+def delinkRaised (G : MultiAR laalTier) : MultiAR laalTier where
+  toMultiGraph := { G.toMultiGraph with links := delinkedLinks G }
+  inBounds := by
+    intro i j p hp
+    simp only [delinkedLinks] at hp
+    split_ifs at hp with h
+    · exact absurd hp (by simp)
+    · exact G.inBounds i j p hp
+
+/-- Delinking the subtonal `[−raised]` feature leaves the **whole-TRN** layer
+    (TRN↔mora, tier-pair `(2,3)`) untouched: partial activity is independent of full
+    activity — the structural content of [lionnet-2022]'s subtonal-feature autonomy,
+    impossible to state on a bundled `TRN`. -/
+theorem partial_indep_of_full (G : MultiAR laalTier) :
+    (delinkRaised G).links 2 3 = G.links 2 3 := by simp [delinkRaised, delinkedLinks]
+
+/-- And it does remove the `[raised]`↔TRN association. -/
+theorem delinkRaised_erases (G : MultiAR laalTier) :
+    (delinkRaised G).links 1 2 = ∅ := by simp [delinkRaised, delinkedLinks]
 
 end Lionnet2022Laal

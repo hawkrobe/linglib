@@ -2733,6 +2733,9 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.WellFormedAR
 import Linglib.Phonology.Autosegmental.Embedding
+import Linglib.Phonology.Autosegmental.MultiGraph
+import Linglib.Phonology.Autosegmental.Inclusion
+import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Prosodic.Foot
 import Linglib.Phonology.Prosodic.NaturalClass
