@@ -342,6 +342,7 @@ import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Case.Order
 import Linglib.Typology.Alignment
 import Linglib.Features.Case.Grammaticalization
+import Linglib.Features.Case.Source
 import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
@@ -2159,7 +2160,7 @@ import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.Case.CaseFilter
+import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Minimalist.LateMerger

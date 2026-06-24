@@ -1,5 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
+import Linglib.Features.Case.Source
 /-!
 # Dependent Case Theory
 [marantz-1991] [baker-2015]
@@ -86,6 +87,23 @@ inductive CaseSource where
   | agree      -- Assigned by Agree with a functional head T or D
                -- ([chomsky-2000]; NOM/GEN in [baker-vinokurova-2010])
   deriving DecidableEq, Repr
+
+/-- The neutral provenance (`Case.Source`) of a dependent-case source:
+    configural and Agree-valued cases are `structural`, lexical is
+    `inherent`, unmarked is `default`. Dependent case is total, so it never
+    maps to `uncased` (`CaseSource.toNeutral_ne_uncased`). -/
+def CaseSource.toNeutral : CaseSource → _root_.Case.Source
+  | .lexical => .inherent
+  | .dependent => .structural
+  | .unmarked => .default
+  | .agree => .structural
+
+/-- Marantz dependent case is **total**: no source it produces is the crash
+    (`uncased`). The provenance-level contrast with Kalin hybrid licensing,
+    which can crash (`Licensing.LicensingOutcome.toNeutral_uncased_iff`). -/
+theorem CaseSource.toNeutral_ne_uncased (s : CaseSource) :
+    s.toNeutral ≠ _root_.Case.Source.uncased := by
+  cases s <;> decide
 
 -- ============================================================================
 -- § 2: Language Typology
