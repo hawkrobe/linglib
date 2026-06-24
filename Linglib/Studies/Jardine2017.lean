@@ -118,22 +118,22 @@ namespace Mende
 /-- `mbû` 'owl' (1σ, HL contour). Both H and L associate to the
     single syllable. Contour at the right edge — the only edge. -/
 def mbû : AR where
-  upper := [.H, .L]
-  lower := [.σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ]
   links := {(0, 0), (1, 0)}
 
 /-- `ngìlà` 'dog' (2σ, HL melody, one tone per syllable). -/
 def ngìlà : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(0, 0), (1, 1)}
 
 /-- `félàmà` 'junction' (3σ, HL melody with L-spread to right two
     syllables: HLL surface). The diagnostic case for Mende: L
     spreads at the *right* edge. -/
 def félàmà : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ, .σ]
   links := {(0, 0), (1, 1), (1, 2)}
 
 /-! ### §2.1 Forbidden subgraphs ([jardine-2017] eq. 21)
@@ -148,23 +148,23 @@ appear in any well-formed Mende AR.
     tier. The L's presence is what makes the H "non-final" — there's
     another tone to its right. -/
 def forbidden_nonfinal_H : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(0, 0), (0, 1)}
 
 /-- **(21b) non-final L spreading**: `¬ L→H : σ σ`. An L tone linked
     to two consecutive σs, with an H tone following. -/
 def forbidden_nonfinal_L : AR where
-  upper := [.L, .H]
-  lower := [.σ, .σ]
+  upper := .ofList [.L, .H]
+  lower := .ofList [.σ, .σ]
   links := {(0, 0), (0, 1)}
 
 /-- **(21c) non-final contour**: `¬ H L : σ→σ`. A contour (H and L
     both linked to one σ), with another σ following on the TBU tier.
     The trailing σ makes the contour-bearing σ "non-final". -/
 def forbidden_nonfinal_contour : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(0, 0), (1, 0)}
 
 /-- The Mende grammar's forbidden block patterns ([jardine-2017] (21a–c)): a
@@ -219,15 +219,15 @@ namespace Hausa
 
 /-- `fáadi` 'fall' (2σ, HL melody one-to-one). -/
 def fáadi : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(0, 0), (1, 1)}
 
 /-- `háantúnàa` 'noses' (3σ, HHL — H spreads at the *left* edge to
     the first two syllables). The Hausa diagnostic. -/
 def háantúnàa : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ, .σ]
   links := {(0, 0), (0, 1), (1, 2)}
 
 /-! ### §3.1 Forbidden subgraphs ([jardine-2017] eq. 22)
@@ -242,21 +242,21 @@ mirror; the third forbids a non-initial contour.
     tonal tier followed by an H linked to two σs — the H is
     non-initial (preceded by L). -/
 def forbidden_noninitial_H : AR where
-  upper := [.L, .H]
-  lower := [.σ, .σ]
+  upper := .ofList [.L, .H]
+  lower := .ofList [.σ, .σ]
   links := {(1, 0), (1, 1)}
 
 /-- **(22b) non-initial L spreading** (mirror). -/
 def forbidden_noninitial_L : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(1, 0), (1, 1)}
 
 /-- **(22c) non-initial contour**: a σ preceded by another σ on
     the TBU tier, with a contour H L linked to the second σ. -/
 def forbidden_noninitial_contour : AR where
-  upper := [.H, .L]
-  lower := [.σ, .σ]
+  upper := .ofList [.H, .L]
+  lower := .ofList [.σ, .σ]
   links := {(0, 1), (1, 1)}
 
 /-! ### §3.2 Attested Hausa forms satisfy the Hausa grammar -/

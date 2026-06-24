@@ -117,7 +117,7 @@ structure FloatingForm (S T : Type*)
     prints only segments and underlying tier elements; debug-only. -/
 instance {S T : Type*} [Repr S] [Repr T] : Repr (FloatingForm S T) where
   reprPrec f _ :=
-    f!"⟨lower={repr (f.lower.map SegSpec.seg)}, upper={repr f.upper}⟩"
+    f!"⟨lower={repr (f.lower.toList.map SegSpec.seg)}, upper={repr f.upper.toList}⟩"
 
 namespace FloatingForm
 
@@ -137,8 +137,8 @@ variable {S T : Type*} [DecidableEq S] [DecidableEq T] (f : FloatingForm S T)
     nothing deleted, all underlying links intact. -/
 def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
     (links : Finset Link) : FloatingForm S T :=
-  { lower := lower
-    upper := upper
+  { lower := .ofList lower
+    upper := .ofList upper
     links := links
     deletedTier := ∅
     surfaceLinks := links }
@@ -146,14 +146,14 @@ def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
 /-! ### Morphemic structure -/
 
 /-- The morpheme of the `k`-th upper-tier element, or `none` if out of range. -/
-def upperMorpheme? (k : TierIdx) : Option Morpheme := (f.upper[k]?).map TierSpec.morpheme
+def upperMorpheme? (k : TierIdx) : Option Morpheme := (f.upper.get? (k)).map TierSpec.morpheme
 
 /-- The morpheme of the `i`-th lower-tier element, or `none` if out of range. -/
-def lowerMorpheme? (i : SegIdx) : Option Morpheme := (f.lower[i]?).map SegSpec.morpheme
+def lowerMorpheme? (i : SegIdx) : Option Morpheme := (f.lower.get? (i)).map SegSpec.morpheme
 
 /-- Every morpheme occurring on either tier. -/
 def morphemes : Finset Morpheme :=
-  (f.lower.map SegSpec.morpheme).toFinset ∪ (f.upper.map TierSpec.morpheme).toFinset
+  (f.lower.toList.map SegSpec.morpheme).toFinset ∪ (f.upper.toList.map TierSpec.morpheme).toFinset
 
 /-! ### Predicates on tier elements and links -/
 
@@ -175,7 +175,7 @@ abbrev IsFloating (k : TierIdx) : Prop := f.IsAlive k ∧ ¬ f.IsLinked k
     endpoints share a morpheme. Out-of-range indices on either side make this
     false. -/
 abbrev IsTautomorphic (l : Link) : Prop :=
-  f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper[l.fst]?).isSome
+  f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper.get? (l.fst)).isSome
 
 /-! ### Faithfulness: surface vs underlying -/
 
@@ -220,9 +220,9 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
     enforces well-formedness: without it a floating tone could dock across an
     intervening linked tone. -/
 def gen : Finset (FloatingForm S T) :=
-  let aliveIdxs := (Finset.range f.upper.length).filter (λ k => f.IsAlive k)
+  let aliveIdxs := (Finset.range f.upper.len).filter (λ k => f.IsAlive k)
   let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
-  let segIdxs := Finset.range f.lower.length
+  let segIdxs := Finset.range f.lower.len
   let deleteOps := aliveIdxs.image (λ k => f.deleteTierElem k)
   let insertOps := ((floatIdxs ×ˢ segIdxs).filter
     (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
@@ -234,42 +234,42 @@ def gen : Finset (FloatingForm S T) :=
     is `1` iff `upper[k]` is currently floating, else `0`. Drives directional
     floating constraints (e.g. `*FLOAT`). -/
 def floatIndicator : List ℕ :=
-  (List.range f.upper.length).map λ k => if f.IsFloating k then 1 else 0
+  (List.range f.upper.len).map λ k => if f.IsFloating k then 1 else 0
 
 /-- Upper-tier elements surface-linked to backbone position `i`, in tier order
     (smallest index first). `List.range`-based so the result is naturally sorted
     and reduces under kernel `decide` (avoiding `Finset.sort`, which doesn't
     unfold structurally). -/
 def linksTo (i : SegIdx) : List TierIdx :=
-  (List.range f.upper.length).filter λ k => (k, i) ∈ f.surfaceLinks
+  (List.range f.upper.len).filter λ k => (k, i) ∈ f.surfaceLinks
 
 /-- Sequence of tier values linked to backbone position `i`, in tier
     order. -/
 def tierValues (i : SegIdx) : List T :=
-  (f.linksTo i).filterMap λ k => f.upper[k]?.map TierSpec.value
+  (f.linksTo i).filterMap λ k => (f.upper.get? k).map TierSpec.value
 
 /-! ### Tier and morpheme subsequences -/
 
 /-- Indices of alive (non-deleted) underlying upper-tier elements, in tier
     order; `List.range`-based so it reduces under kernel `decide`. -/
 def aliveTierIdxs : List TierIdx :=
-  (List.range f.upper.length).filter (λ k => f.IsAlive k)
+  (List.range f.upper.len).filter (λ k => f.IsAlive k)
 
 /-- Lower-tier (backbone) indices belonging to morpheme `m`, in order.
     Out-of-range indices are excluded by construction. -/
 def segsOfMorpheme (m : Morpheme) : List SegIdx :=
-  (List.range f.lower.length).filter (λ i => f.lowerMorpheme? i = some m)
+  (List.range f.lower.len).filter (λ i => f.lowerMorpheme? i = some m)
 
 /-! ### Position counts -/
 
 /-- Count upper-tier positions satisfying decidable `p`. `List.range`-based so it
     reduces under kernel `decide` (avoiding `Finset` pipelines). -/
 def countUpper (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
-  (List.range f.upper.length).countP (λ k => decide (p k))
+  (List.range f.upper.len).countP (λ k => decide (p k))
 
 /-- Count lower-tier (backbone) positions satisfying decidable `p`. -/
 def countLower (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
-  (List.range f.lower.length).countP (λ i => decide (p i))
+  (List.range f.lower.len).countP (λ i => decide (p i))
 
 end FloatingForm
 

@@ -97,15 +97,15 @@ theorem ncc_isMonoidal : (isPlanar (α := α) (β := β)).IsMonoidal := inferIns
 
 /-- The OCP ([mccarthy-1986]) as a property of `AR`: the autosegmental (upper)
     tier has no adjacent identical elements. -/
-def upperOCPClean : ObjectProperty (AR α β) := fun A => OCP.IsClean A.upper
+def upperOCPClean : ObjectProperty (AR α β) := fun A => OCP.IsClean A.upper.toList
 
 instance [DecidableEq α] (A : AR α β) : Decidable (upperOCPClean A) :=
-  inferInstanceAs (Decidable (OCP.IsClean A.upper))
+  inferInstanceAs (Decidable (OCP.IsClean A.upper.toList))
 
 /-- A single-autosegment representation `⟨[true], [], ∅⟩`; concatenating it with
     itself produces the OCP-violating tier `[true, true]`. `Bool`/`Unit` is the
     smallest label/backbone pair admitting two equal upper elements. -/
-private def ocpWitness : AR Bool Unit := ⟨⟨[true], [], ∅⟩, by decide⟩
+private def ocpWitness : AR Bool Unit := ⟨⟨.ofList [true], .empty, ∅⟩, by decide⟩
 
 /-- The OCP is **not** morpheme-modular: concatenation can create an adjacent
     identical autosegment pair at the morpheme boundary — a violation present in
@@ -140,7 +140,7 @@ theorem ncc_modular_ocp_not :
     (`ocp_not_isMonoidal`) is what makes a repair *necessary*; this theorem
     exhibits one. -/
 theorem collapse_repairs_boundary [DecidableEq α] (A B : Graph α β) :
-    OCP.IsClean (OCP.collapse (A.concat B).upper) :=
+    OCP.IsClean (OCP.collapse (A.concat B).upper.toList) :=
   OCP.collapse_clean _
 
 end Autosegmental

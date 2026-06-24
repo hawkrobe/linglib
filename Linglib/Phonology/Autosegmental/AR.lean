@@ -3,49 +3,31 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.CategoryTheory.EqToHom
 import Mathlib.CategoryTheory.Monoidal.Category
+import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Phonology.Autosegmental.Graph
 
 /-!
 # The monoidal category of autosegmental representations
 
 `Autosegmental.AR α β` is the base object of the autosegmental category: an
-in-bounds `Graph α β` (an `upper` tier of `α`s, a `lower` tier of `β`s, and a
-finite set of association lines, with every line falling within the tier
-lengths). In-boundedness is *constitutive* — a graph with an out-of-range link
-is junk, not an object — whereas planarity ([goldsmith-1976]'s No-Crossing
-Constraint) is a *constraint* that carves out a full monoidal subcategory
-(`WellFormedAR`, in `WellFormed.lean`).
-
-Morphisms are `Fin`-indexed, label- and link-preserving vertex maps
-(`AR.Hom`). The monoidal product is morpheme concatenation
-([jardine-heinz-2015]), with the empty representation as unit; the associator
-and unitors are `eqToIso` of the underlying object `Monoid` laws, so `AR` is
-strict monoidal over its object-monoid.
+in-bounds `Graph α β`. In-boundedness is constitutive; planarity
+([goldsmith-1976]'s No-Crossing Constraint) is the *constraint* carving out the
+full monoidal subcategory `WellFormedAR` (`WellFormedAR.lean`). The monoidal
+product is morpheme concatenation ([jardine-heinz-2015]) with the empty
+representation as unit; associator and unitors are `eqToIso` of the object
+`Monoid` laws, so `AR` is strict monoidal over its object-monoid.
 
 ## Main definitions
 
 * `AR α β` — the in-bounds autosegmental graph; the base object.
-* `AR.Hom A B` — a `Fin`-indexed label- and link-preserving morphism;
-  `Hom.id`/`Hom.comp` make `AR α β` a `Category`.
-* `AR.concat` — morpheme concatenation; `AR.empty` the unit
-  (`Monoid (AR α β)`).
-* `AR.Hom.concatMap` — the concatenation bifunctor on morphisms (`tensorHom`).
+* `AR.Hom A B` — a label/link-preserving morphism whose tier maps are
+  `LabeledTuple.Hom`s; `Category (AR α β)` via `id`/`comp`.
+* `AR.concat` — morpheme concatenation; `AR.empty` the unit (`Monoid (AR α β)`).
+* `AR.Hom.concatMap` — the concatenation bifunctor on morphisms (`tensorHom`);
+  its tier action delegates to `LabeledTuple.Hom.concatMap`.
 * `MonoidalCategory (AR α β)` — `concat` as `⊗`, `empty` as `𝟙_`.
-
-## Implementation notes
-
-Tiers are `Fin`-indexed in the *morphisms* (`fUpper : Fin A.upper.length →
-Fin B.upper.length`), giving extensionality for free, while the *object*'s
-`links : Finset (ℕ × ℕ)` stays raw-`ℕ`-indexed (matching the `MonovaryOn`-based
-planarity substrate). The bridge between the two is `AR.upperIdx`/`lowerIdx`,
-which read a link's in-bounds endpoints as `Fin` indices via the `inBounds`
-field. `concatMap`'s index maps are assembled from `finSumFinEquiv` and
-`finCongr` (the non-definitional `(A.concat B).length = A.length + B.length`);
-their behaviour is pinned by the value-characterisation lemmas
-`concatUpper_val`/`concatLower_val`.
 -/
 
 namespace Autosegmental
@@ -63,50 +45,56 @@ structure AR (α β : Type*) extends Graph α β where
 namespace AR
 
 /-- `Fin` index of a link's upper endpoint (in bounds by `A.inBounds`). -/
-def upperIdx (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) : Fin A.upper.length :=
+def upperIdx (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) : Fin A.upper.len :=
   ⟨p.1, (A.inBounds p hp).1⟩
 
 /-- `Fin` index of a link's lower endpoint. -/
-def lowerIdx (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) : Fin A.lower.length :=
+def lowerIdx (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) : Fin A.lower.len :=
   ⟨p.2, (A.inBounds p hp).2⟩
+
+@[simp] theorem upperIdx_val (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) :
+    (A.upperIdx hp : ℕ) = p.1 := rfl
+
+@[simp] theorem lowerIdx_val (A : AR α β) {p : ℕ × ℕ} (hp : p ∈ A.links) :
+    (A.lowerIdx hp : ℕ) = p.2 := rfl
 
 /-! ### Morphisms -/
 
-/-- A label- and link-preserving morphism, `Fin`-indexed on the tiers. The
-    label conditions use total `getElem` (no `Option`); link preservation reads
-    the endpoints as `Fin` indices via `upperIdx`/`lowerIdx`. -/
+/-- A label- and link-preserving morphism. The tier maps are `LabeledTuple.Hom`s
+    (each bundles a position map with its label-preservation `b.label ∘ f = a.label`);
+    link preservation routes a link's (in-bounds) endpoints through those maps. -/
 @[ext]
 structure Hom (A B : AR α β) where
-  /-- Vertex map on the upper tier. -/
-  fUpper : Fin A.upper.length → Fin B.upper.length
+  /-- Vertex map on the upper tier (a label-preserving `LabeledTuple` morphism). -/
+  fU : LabeledTuple.Hom A.upper B.upper
   /-- Vertex map on the lower tier. -/
-  fLower : Fin A.lower.length → Fin B.lower.length
-  /-- The upper map preserves labels. -/
-  upper_label : ∀ i, B.upper[fUpper i] = A.upper[i]
-  /-- The lower map preserves labels. -/
-  lower_label : ∀ j, B.lower[fLower j] = A.lower[j]
+  fL : LabeledTuple.Hom A.lower B.lower
   /-- Association lines are preserved. -/
-  links_preserve : ∀ {p : ℕ × ℕ} (hp : p ∈ A.links),
-    ((fUpper (A.upperIdx hp) : ℕ), (fLower (A.lowerIdx hp) : ℕ)) ∈ B.links
+  links_preserve : ∀ {i j : ℕ} (hi : i < A.upper.len) (hj : j < A.lower.len),
+    (i, j) ∈ A.links → ((fU.toFun ⟨i, hi⟩ : ℕ), (fL.toFun ⟨j, hj⟩ : ℕ)) ∈ B.links
 
 namespace Hom
 variable {A B C : AR α β}
 
 /-- The identity morphism. -/
 def id (A : AR α β) : Hom A A where
-  fUpper := _root_.id
-  fLower := _root_.id
-  upper_label _ := rfl
-  lower_label _ := rfl
-  links_preserve hp := hp
+  fU := LabeledTuple.Hom.id A.upper
+  fL := LabeledTuple.Hom.id A.lower
+  links_preserve _ _ h := h
 
-/-- Composition of morphisms (diagrammatic order: `f.comp g` is `f` then `g`). -/
+/-- Composition of morphisms (diagrammatic: `f` then `g`). -/
 def comp (f : Hom A B) (g : Hom B C) : Hom A C where
-  fUpper := g.fUpper ∘ f.fUpper
-  fLower := g.fLower ∘ f.fLower
-  upper_label i := by simp only [Function.comp_apply, g.upper_label, f.upper_label]
-  lower_label j := by simp only [Function.comp_apply, g.lower_label, f.lower_label]
-  links_preserve hp := g.links_preserve (f.links_preserve hp)
+  fU := f.fU.comp g.fU
+  fL := f.fL.comp g.fL
+  links_preserve hi hj h := by
+    have key := g.links_preserve (f.fU.toFun ⟨_, hi⟩).isLt (f.fL.toFun ⟨_, hj⟩).isLt
+      (f.links_preserve hi hj h)
+    simpa [LabeledTuple.Hom.comp] using key
+
+@[simp] theorem id_fU (A : AR α β) : (Hom.id A).fU = LabeledTuple.Hom.id A.upper := rfl
+@[simp] theorem id_fL (A : AR α β) : (Hom.id A).fL = LabeledTuple.Hom.id A.lower := rfl
+@[simp] theorem comp_fU (f : Hom A B) (g : Hom B C) : (f.comp g).fU = f.fU.comp g.fU := rfl
+@[simp] theorem comp_fL (f : Hom A B) (g : Hom B C) : (f.comp g).fL = f.fL.comp g.fL := rfl
 
 end Hom
 
@@ -120,6 +108,13 @@ instance : Category (AR α β) where
   comp_id _ := by apply Hom.ext <;> rfl
   assoc _ _ _ := by apply Hom.ext <;> rfl
 
+@[simp] theorem id_fU' (A : AR α β) : (𝟙 A : Hom A A).fU = 𝟙 A.upper := rfl
+@[simp] theorem id_fL' (A : AR α β) : (𝟙 A : Hom A A).fL = 𝟙 A.lower := rfl
+@[simp] theorem comp_fU' {A B C : AR α β} (f : A ⟶ B) (g : B ⟶ C) :
+    (f ≫ g).fU = f.fU.comp g.fU := rfl
+@[simp] theorem comp_fL' {A B C : AR α β} (f : A ⟶ B) (g : B ⟶ C) :
+    (f ≫ g).fL = f.fL.comp g.fL := rfl
+
 /-! ### Concatenation: the tensor object -/
 
 /-- Morpheme concatenation ([jardine-heinz-2015]): the tier-concatenated,
@@ -128,176 +123,73 @@ def concat (A B : AR α β) : AR α β where
   toGraph := A.toGraph.concat B.toGraph
   inBounds := Graph.inBounds_concat A.inBounds B.inBounds
 
-theorem concat_upper_len (A B : AR α β) :
-    (A.concat B).upper.length = A.upper.length + B.upper.length := by
-  show (A.toGraph.concat B.toGraph).upper.length = _
-  simp [Graph.upper_concat]
+@[simp] theorem concat_toGraph (A B : AR α β) :
+    (A.concat B).toGraph = A.toGraph.concat B.toGraph := rfl
 
-theorem concat_lower_len (A B : AR α β) :
-    (A.concat B).lower.length = A.lower.length + B.lower.length := by
-  show (A.toGraph.concat B.toGraph).lower.length = _
-  simp [Graph.lower_concat]
+@[simp] theorem concat_upper (A B : AR α β) :
+    (A.concat B).upper = A.upper.concat B.upper := rfl
 
-theorem upper_concat (A B : AR α β) : (A.concat B).upper = A.upper ++ B.upper := rfl
-
-theorem lower_concat (A B : AR α β) : (A.concat B).lower = A.lower ++ B.lower := rfl
+@[simp] theorem concat_lower (A B : AR α β) :
+    (A.concat B).lower = A.lower.concat B.lower := rfl
 
 theorem links_concat (A B : AR α β) :
     (A.concat B).links =
-      A.links ∪ B.links.image (shiftLink A.upper.length A.lower.length) := rfl
+      A.links ∪ B.links.image (shiftLink A.upper.len A.lower.len) := rfl
 
-/-! ### The concatenation bifunctor `concatMap` (the tensor on morphisms) -/
+/-! ### The concatenation bifunctor `concatMap` (the tensor on morphisms)
+
+The tier action delegates to the keystone `LabeledTuple.Hom.concatMap`; only link
+preservation is bespoke, routing the A-block through `f` (unshifted) and the
+B-block through `g` (shifted past `A'`) via `Fin.appendMap_val`. -/
 
 namespace Hom
 variable {A A' B B' : AR α β}
 
-/-- Underlying upper index map of the concat bifunctor: `f` on the A-block,
-    `g` (shifted) on the B-block, via `finSumFinEquiv`. -/
-def concatUpper (f : Hom A A') (g : Hom B B') :
-    Fin (A.concat B).upper.length → Fin (A'.concat B').upper.length :=
-  finCongr (concat_upper_len A' B').symm ∘ finSumFinEquiv ∘
-    Sum.map f.fUpper g.fUpper ∘ finSumFinEquiv.symm ∘ finCongr (concat_upper_len A B)
-
-/-- Underlying lower index map of the concat bifunctor. -/
-def concatLower (f : Hom A A') (g : Hom B B') :
-    Fin (A.concat B).lower.length → Fin (A'.concat B').lower.length :=
-  finCongr (concat_lower_len A' B').symm ∘ finSumFinEquiv ∘
-    Sum.map f.fLower g.fLower ∘ finSumFinEquiv.symm ∘ finCongr (concat_lower_len A B)
-
-/-- Value characterisation of `concatUpper`: A-indices route through `f`,
-    B-indices (shifted) through `g`. -/
-theorem concatUpper_val (f : Hom A A') (g : Hom B B')
-    (i : Fin (A.concat B).upper.length) :
-    (concatUpper f g i : ℕ) =
-      if h : (i : ℕ) < A.upper.length then (f.fUpper ⟨i, h⟩ : ℕ)
-      else (g.fUpper ⟨(i : ℕ) - A.upper.length,
-        by have e := concat_upper_len A B; have := i.2; omega⟩ : ℕ) + A'.upper.length := by
-  obtain ⟨i', rfl⟩ : ∃ i', i = (finCongr (concat_upper_len A B)).symm i' :=
-    ⟨finCongr (concat_upper_len A B) i, by simp⟩
-  refine Fin.addCases (fun a => ?_) (fun b => ?_) i'
-  · rw [dif_pos (by simp)]; simp [concatUpper]
-  · rw [dif_neg (by simp)]; simp [concatUpper]; omega
-
-theorem concatLower_val (f : Hom A A') (g : Hom B B')
-    (j : Fin (A.concat B).lower.length) :
-    (concatLower f g j : ℕ) =
-      if h : (j : ℕ) < A.lower.length then (f.fLower ⟨j, h⟩ : ℕ)
-      else (g.fLower ⟨(j : ℕ) - A.lower.length,
-        by have e := concat_lower_len A B; have := j.2; omega⟩ : ℕ) + A'.lower.length := by
-  obtain ⟨j', rfl⟩ : ∃ j', j = (finCongr (concat_lower_len A B)).symm j' :=
-    ⟨finCongr (concat_lower_len A B) j, by simp⟩
-  refine Fin.addCases (fun a => ?_) (fun b => ?_) j'
-  · rw [dif_pos (by simp)]; simp [concatLower]
-  · rw [dif_neg (by simp)]; simp [concatLower]; omega
-
-/-- `concatUpper` routes an A-tier index through `f`. -/
-theorem concatUpper_lt (f : Hom A A') (g : Hom B B')
-    (i : Fin (A.concat B).upper.length) (h : (i : ℕ) < A.upper.length) :
-    (concatUpper f g i : ℕ) = (f.fUpper ⟨i, h⟩ : ℕ) := by
-  rw [concatUpper_val, dif_pos h]
-
-/-- `concatUpper` routes a B-tier index through `g`, shifted past `A'`. -/
-theorem concatUpper_ge (f : Hom A A') (g : Hom B B')
-    (i : Fin (A.concat B).upper.length) (h : ¬ (i : ℕ) < A.upper.length) :
-    (concatUpper f g i : ℕ) =
-      (g.fUpper ⟨(i : ℕ) - A.upper.length,
-        by have e := concat_upper_len A B; have := i.2; omega⟩ : ℕ) + A'.upper.length := by
-  rw [concatUpper_val, dif_neg h]
-
-theorem concatLower_lt (f : Hom A A') (g : Hom B B')
-    (j : Fin (A.concat B).lower.length) (h : (j : ℕ) < A.lower.length) :
-    (concatLower f g j : ℕ) = (f.fLower ⟨j, h⟩ : ℕ) := by
-  rw [concatLower_val, dif_pos h]
-
-theorem concatLower_ge (f : Hom A A') (g : Hom B B')
-    (j : Fin (A.concat B).lower.length) (h : ¬ (j : ℕ) < A.lower.length) :
-    (concatLower f g j : ℕ) =
-      (g.fLower ⟨(j : ℕ) - A.lower.length,
-        by have e := concat_lower_len A B; have := j.2; omega⟩ : ℕ) + A'.lower.length := by
-  rw [concatLower_val, dif_neg h]
-
 /-- The concatenation bifunctor on morphisms (`f ⊗ g`): `f` on the A-block,
-    `g` (shifted) on the B-block. -/
+    `g` (shifted) on the B-block. Tiers via `LabeledTuple.Hom.concatMap`. -/
 def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') where
-  fUpper := concatUpper f g
-  fLower := concatLower f g
-  upper_label i := by
-    show (A'.upper ++ B'.upper)[concatUpper f g i] = (A.upper ++ B.upper)[i]
-    rw [Fin.getElem_fin, Fin.getElem_fin]
-    rcases lt_or_ge (i : ℕ) A.upper.length with h | h
-    · have hb : (concatUpper f g i : ℕ) < A'.upper.length := by
-        rw [concatUpper_lt f g i h]; exact (f.fUpper ⟨i, h⟩).isLt
-      rw [List.getElem_append_left hb, List.getElem_append_left h]
-      have hl := f.upper_label ⟨i, h⟩
-      rw [Fin.getElem_fin, Fin.getElem_fin] at hl
-      rw [← hl]; congr 1; exact concatUpper_lt f g i h
-    · have hb : A'.upper.length ≤ (concatUpper f g i : ℕ) := by
-        rw [concatUpper_ge f g i (by omega)]; omega
-      rw [List.getElem_append_right hb, List.getElem_append_right h]
-      have hl := g.upper_label ⟨(i : ℕ) - A.upper.length, by
-        have e := concat_upper_len A B; have := i.2; omega⟩
-      rw [Fin.getElem_fin, Fin.getElem_fin] at hl
-      rw [← hl]; congr 1; rw [concatUpper_ge f g i (by omega)]; omega
-  lower_label j := by
-    show (A'.lower ++ B'.lower)[concatLower f g j] = (A.lower ++ B.lower)[j]
-    rw [Fin.getElem_fin, Fin.getElem_fin]
-    rcases lt_or_ge (j : ℕ) A.lower.length with h | h
-    · have hb : (concatLower f g j : ℕ) < A'.lower.length := by
-        rw [concatLower_lt f g j h]; exact (f.fLower ⟨j, h⟩).isLt
-      rw [List.getElem_append_left hb, List.getElem_append_left h]
-      have hl := f.lower_label ⟨j, h⟩
-      rw [Fin.getElem_fin, Fin.getElem_fin] at hl
-      rw [← hl]; congr 1; exact concatLower_lt f g j h
-    · have hb : A'.lower.length ≤ (concatLower f g j : ℕ) := by
-        rw [concatLower_ge f g j (by omega)]; omega
-      rw [List.getElem_append_right hb, List.getElem_append_right h]
-      have hl := g.lower_label ⟨(j : ℕ) - A.lower.length, by
-        have e := concat_lower_len A B; have := j.2; omega⟩
-      rw [Fin.getElem_fin, Fin.getElem_fin] at hl
-      rw [← hl]; congr 1; rw [concatLower_ge f g j (by omega)]; omega
-  links_preserve {p} hp := by
-    show ((concatUpper f g ((A.concat B).upperIdx hp) : ℕ),
-          (concatLower f g ((A.concat B).lowerIdx hp) : ℕ)) ∈ (A'.concat B').links
-    have hmem : p ∈ A.links ∪ B.links.image (shiftLink A.upper.length A.lower.length) := hp
-    rw [Finset.mem_union] at hmem
-    rw [links_concat, Finset.mem_union]
-    rcases hmem with hA | hB
-    · left
-      obtain ⟨hAu, hAl⟩ := A.inBounds p hA
-      rw [concatUpper_lt f g _ hAu, concatLower_lt f g _ hAl]
-      exact f.links_preserve hA
-    · right
-      rw [Finset.mem_image] at hB ⊢
-      obtain ⟨q, hq, rfl⟩ := hB
-      refine ⟨(↑(g.fUpper (B.upperIdx hq)), ↑(g.fLower (B.lowerIdx hq))),
-        g.links_preserve hq, ?_⟩
-      rw [concatUpper_ge f g _ (by simp [AR.upperIdx, shiftLink]),
-        concatLower_ge f g _ (by simp [AR.lowerIdx, shiftLink])]
-      simp only [shiftLink, Prod.mk.injEq]
-      refine ⟨?_, ?_⟩ <;>
-        · congr 2
-          apply Fin.ext
-          simp [AR.upperIdx, AR.lowerIdx]
+  fU := LabeledTuple.Hom.concatMap f.fU g.fU
+  fL := LabeledTuple.Hom.concatMap f.fL g.fL
+  links_preserve {i j} hi hj h := by
+    simp only [links_concat, Finset.mem_union, Finset.mem_image, shiftLink,
+      Prod.exists, Prod.mk.injEq, LabeledTuple.Hom.concatMap_toFun] at h ⊢
+    rcases h with hA | ⟨a, b, hab, hai, hbj⟩
+    · obtain ⟨hiu, hjl⟩ := A.inBounds (i, j) hA
+      left
+      rw [Fin.appendMap_val, dif_pos hiu, Fin.appendMap_val, dif_pos hjl]
+      exact f.links_preserve hiu hjl hA
+    · obtain ⟨hau, hbl⟩ := B.inBounds (a, b) hab
+      subst hai hbj
+      right
+      refine ⟨(g.fU.toFun ⟨a, hau⟩ : ℕ), (g.fL.toFun ⟨b, hbl⟩ : ℕ),
+        g.links_preserve hau hbl hab, ?_, ?_⟩
+      · rw [Fin.appendMap_val, dif_neg (show ¬ (a + A.upper.len) < A.upper.len by omega)]
+        congr 2; apply Fin.ext; simp
+      · rw [Fin.appendMap_val, dif_neg (show ¬ (b + A.lower.len) < A.lower.len by omega)]
+        congr 2; apply Fin.ext; simp
 
-@[simp] theorem concatMap_fUpper (f : Hom A A') (g : Hom B B') :
-    (concatMap f g).fUpper = concatUpper f g := rfl
+@[simp] theorem concatMap_fU (f : Hom A A') (g : Hom B B') :
+    (concatMap f g).fU = LabeledTuple.Hom.concatMap f.fU g.fU := rfl
 
-@[simp] theorem concatMap_fLower (f : Hom A A') (g : Hom B B') :
-    (concatMap f g).fLower = concatLower f g := rfl
+@[simp] theorem concatMap_fL (f : Hom A A') (g : Hom B B') :
+    (concatMap f g).fL = LabeledTuple.Hom.concatMap f.fL g.fL := rfl
 
 /-- The concat bifunctor preserves identities (`tensor_id`). -/
 theorem concatMap_id (A B : AR α β) :
     concatMap (Hom.id A) (Hom.id B) = Hom.id (A.concat B) := by
   apply Hom.ext <;>
-    · funext x; apply Fin.ext; simp [concatMap, concatUpper, concatLower, Hom.id]
+    simp only [concatMap_fU, concatMap_fL, id_fU, id_fL, LabeledTuple.Hom.concatMap_id,
+      concat_upper, concat_lower]
 
 /-- The concat bifunctor preserves composition (`tensor_comp`). -/
 theorem concatMap_comp {A A' A'' B B' B'' : AR α β}
     (f : Hom A A') (f' : Hom A' A'') (g : Hom B B') (g' : Hom B' B'') :
     (concatMap f g).comp (concatMap f' g') = concatMap (f.comp f') (g.comp g') := by
-  apply Hom.ext <;>
-    · funext x; apply Fin.ext
-      simp [concatMap, concatUpper, concatLower, comp, Function.comp_def, Sum.map_map]
+  apply Hom.ext
+  · simp only [comp_fU, concatMap_fU]
+    exact (LabeledTuple.Hom.concatMap_comp f.fU f'.fU g.fU g'.fU).symm
+  · simp only [comp_fL, concatMap_fL]
+    exact (LabeledTuple.Hom.concatMap_comp f.fL f'.fL g.fL g'.fL).symm
 
 end Hom
 
@@ -337,22 +229,15 @@ algebra (pentagon, triangle) or `Fin`-index arithmetic (naturalities).
 
 open CategoryTheory MonoidalCategory
 
-@[simp] theorem id_fUpper (A : AR α β) : (𝟙 A : Hom A A).fUpper = _root_.id := rfl
-@[simp] theorem id_fLower (A : AR α β) : (𝟙 A : Hom A A).fLower = _root_.id := rfl
-
-@[simp] theorem comp_fUpper {A B C : AR α β} (f : A ⟶ B) (g : B ⟶ C) :
-    (f ≫ g).fUpper = g.fUpper ∘ f.fUpper := rfl
-@[simp] theorem comp_fLower {A B C : AR α β} (f : A ⟶ B) (g : B ⟶ C) :
-    (f ≫ g).fLower = g.fLower ∘ f.fLower := rfl
-
-/-- The upper index map of an `eqToHom` is the length-cast `finCongr`. -/
-@[simp] theorem eqToHom_fUpper {A B : AR α β} (h : A = B) :
-    (eqToHom h).fUpper = finCongr (congrArg (fun X => X.upper.length) h) := by
+/-- The upper tier map of an `eqToHom`, as a function: the length-cast `Fin.cast`
+    (goes straight to the `len` level, avoiding a nested `LabeledTuple` `eqToHom`). -/
+@[simp] theorem eqToHom_fU_toFun {A B : AR α β} (h : A = B) :
+    (eqToHom h).fU.toFun = Fin.cast (congrArg (fun X => X.upper.len) h) := by
   cases h; rfl
 
-/-- The lower index map of an `eqToHom` is the length-cast `finCongr`. -/
-@[simp] theorem eqToHom_fLower {A B : AR α β} (h : A = B) :
-    (eqToHom h).fLower = finCongr (congrArg (fun X => X.lower.length) h) := by
+/-- The lower tier map of an `eqToHom`, as a function. -/
+@[simp] theorem eqToHom_fL_toFun {A B : AR α β} (h : A = B) :
+    (eqToHom h).fL.toFun = Fin.cast (congrArg (fun X => X.lower.len) h) := by
   cases h; rfl
 
 /-- Tensoring an identity (left) with an `eqToHom` (right) is an `eqToHom`. -/
@@ -386,31 +271,26 @@ instance : MonoidalCategory (AR α β) :=
     (associator_naturality := by
       intro X₁ X₂ X₃ Y₁ Y₂ Y₃ f₁ f₂ f₃
       apply Hom.ext <;>
-        · funext x
+        · apply LabeledTuple.Hom.ext
+          funext x
           apply Fin.ext
-          simp [Hom.concatUpper_val, Hom.concatLower_val, concat_upper_len,
-            concat_lower_len, Nat.sub_sub]
+          simp [Fin.appendMap_val, Nat.sub_sub]
           split_ifs <;> omega)
     (leftUnitor_naturality := by
       intro X Y f
       apply Hom.ext <;>
-        · funext x
+        · apply LabeledTuple.Hom.ext
+          funext x
           apply Fin.ext
-          simp [Hom.concatUpper_val, Hom.concatLower_val, empty, Graph.empty]
+          simp [Fin.appendMap_val, empty, Graph.empty]
           rfl)
     (rightUnitor_naturality := by
       intro X Y f
-      apply Hom.ext
-      · funext x
-        apply Fin.ext
-        simp [Hom.concatUpper_val, empty, Graph.empty]
-        rw [dif_pos (lt_of_lt_of_eq x.isLt (by simp [upper_concat, empty, Graph.empty]))]
-        rfl
-      · funext x
-        apply Fin.ext
-        simp [Hom.concatLower_val, empty, Graph.empty]
-        rw [dif_pos (lt_of_lt_of_eq x.isLt (by simp [lower_concat, empty, Graph.empty]))]
-        rfl)
+      apply Hom.ext <;>
+        · apply LabeledTuple.Hom.ext
+          funext x
+          apply Fin.ext
+          simp [Fin.appendMap_val, empty, Graph.empty])
     (pentagon := by intros; simp [eqToHom_trans])
     (triangle := by intros; simp [eqToHom_trans])
 
