@@ -265,7 +265,18 @@ later) but **marked** ("without pied-piping") in (6c), where they never are. The
 `markedOptions` transcribes the holistic per-order analysis (6a–6x) — paper data,
 like the attestation `table` — and `markedMoves` below is a genuinely **derived**
 *local* proxy that we prove is *insufficient* (it neither matches Cinque's count
-nor predicts frequency), justifying the transcription. -/
+nor predicts frequency), justifying the transcription.
+
+**Caveat — these counts are not mechanically verified against Cinque.** They are
+read from his prose; the `decide` theorems check only internal consistency and the
+frequency correlation, not fidelity (re-reading is how the original (6b) error was
+caught, not a theorem). Reverse-engineering a rule — *(# distinct marked
+pied-piping parameters) + (1 if partial)* — reproduces 11–12 of the 14, but
+diverges at (6k) (rule 3, Cinque 2: he does not add the partial penalty) and (6w)
+(rule 2, Cinque 1; hedged in fn 28). Whether those two are the rule's limitation
+or a transcription artifact is open — a fully **derived** markedness (computing the
+count from the enumerated derivation *histories*, not just surface forms) would
+settle it by making any disagreement with the paper an explicit, checkable claim. -/
 
 /-- Cinque's holistic marked-option count for each **attested** order, transcribed
     from the per-order analysis (6a–6x) ([cinque-2005] (7b)); `none` for the 10
