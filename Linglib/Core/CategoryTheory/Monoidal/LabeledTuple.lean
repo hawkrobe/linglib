@@ -85,6 +85,14 @@ def comp (f : Hom a b) (g : Hom b c) : Hom a c :=
 @[simp] theorem comp_toFun (f : Hom a b) (g : Hom b c) :
     (f.comp g).toFun = g.toFun ∘ f.toFun := rfl
 
+/-- A `Hom` is a label-preserving position map; bundle it as `FunLike` so `f i`
+    applies it and the mathlib hom machinery (`DFunLike.ext`, …) is available. -/
+instance : FunLike (Hom a b) (Fin a.len) (Fin b.len) where
+  coe := Hom.toFun
+  coe_injective _ _ h := Hom.ext h
+
+@[simp] theorem coe_toFun (f : Hom a b) : ⇑f = f.toFun := rfl
+
 end Hom
 
 instance : Category (LabeledTuple α) where
