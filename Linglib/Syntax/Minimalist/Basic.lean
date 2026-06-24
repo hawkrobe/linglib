@@ -99,12 +99,12 @@ def SyntacticObject.Acc (so : SyntacticObject) : Multiset SyntacticObject :=
   show ({SyntacticObject.trace n} : Multiset _) - {SyntacticObject.trace n} = 0
   simp
 
-/-! ### Terminal nodes — planar `List` (order matters for LCA)
+/-! ### Terminal nodes — planar `List`
 
-`terminalNodes` returns a `List` because the leftmost-to-rightmost
-order is the input to LCA-derived linearization. Phase 1.0 placeholder
-via `Quot.out` (planar representative); Phase 2 will replace with
-LCA + head-directionality. -/
+`terminalNodesPlanar` enumerates the leaf-position subterms of a planar
+`FreeMagma` representative, left-to-right. The selection-induced order is
+recovered downstream by `HeadFunction.terminalNodes` (`leftSpine`/`rightSpine`),
+computably and with no `Quot.out`. -/
 
 /-- Underlying terminal-node enumeration on a planar `FreeMagma`
     representative. Public so `HeadFunction.terminalNodesWith` can compose
@@ -113,78 +113,6 @@ def terminalNodesPlanar : FreeMagma (LIToken ⊕ Nat) →
     List (FreeMagma (LIToken ⊕ Nat))
   | a@(.of _) => [a]
   | .mul l r => terminalNodesPlanar l ++ terminalNodesPlanar r
-
-/-- The terminal (leaf-position) SOs of a `SyntacticObject`. Order
-    depends on the chosen planar representative. -/
-noncomputable def terminalNodes (so : SyntacticObject) : List SyntacticObject :=
-  (terminalNodesPlanar so.out).map (Quot.mk _)
-
-private theorem terminalNodesPlanar_are_leaves
-    {fm t : FreeMagma (LIToken ⊕ Nat)} (h : t ∈ terminalNodesPlanar fm) :
-    SyntacticObject.isLeaf (Quot.mk _ t) := by
-  induction fm with
-  | ih1 _ =>
-    simp only [terminalNodesPlanar, List.mem_singleton] at h
-    subst h; trivial
-  | ih2 l r ihl ihr =>
-    simp only [terminalNodesPlanar, List.mem_append] at h
-    exact h.elim ihl ihr
-
-/-- Every terminal node is leaf-position. -/
-theorem terminalNodes_are_leaves {so t : SyntacticObject}
-    (h : t ∈ terminalNodes so) : t.isLeaf := by
-  simp only [terminalNodes, List.mem_map] at h
-  obtain ⟨a, ha_mem, ha_eq⟩ := h
-  rw [← ha_eq]
-  exact terminalNodesPlanar_are_leaves ha_mem
-
-/-- For a leaf SO, `terminalNodes` is the singleton list `[.leaf tok]`.
-    Same singleton-class argument as `leftmostLeaf_leaf`. -/
-@[simp] theorem terminalNodes_leaf (tok : LIToken) :
-    terminalNodes (SyntacticObject.leaf tok) = [SyntacticObject.leaf tok] := by
-  show (terminalNodesPlanar (SyntacticObject.leaf tok).out).map _ = _
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.leaf tok).out with
-  | .of x =>
-    rw [h] at hmk
-    show (terminalNodesPlanar (.of x)).map _ = _
-    cases x with
-    | inl t =>
-      simp only [terminalNodesPlanar, List.map_cons, List.map_nil]
-      exact congrArg (fun y => [SyntacticObject.leaf y])
-        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
-
-private theorem terminalNodesPlanar_mem_subtreesAux
-    {fm t : FreeMagma (LIToken ⊕ Nat)} (h : t ∈ terminalNodesPlanar fm) :
-    (FreeCommMagma.mk t : SyntacticObject) ∈ subtreesAux fm := by
-  induction fm with
-  | ih1 _ =>
-    simp only [terminalNodesPlanar, List.mem_singleton] at h
-    subst h; simp [subtreesAux]
-  | ih2 l r ihl ihr =>
-    simp only [terminalNodesPlanar, List.mem_append] at h
-    simp only [subtreesAux, Multiset.mem_cons, Multiset.mem_add]
-    exact h.elim (fun hl => Or.inr (Or.inl (ihl hl)))
-                 (fun hr => Or.inr (Or.inr (ihr hr)))
-
-/-- Every terminal is a subtree. -/
-theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
-    (h : t ∈ terminalNodes so) : t ∈ so.subtrees := by
-  simp only [terminalNodes, List.mem_map] at h
-  obtain ⟨a, ha_mem, ha_eq⟩ := h
-  rw [← ha_eq]
-  show (FreeCommMagma.mk a : SyntacticObject) ∈
-    FreeCommMagma.lift subtreesAux subtreesAux_respects so
-  rw [show so = FreeCommMagma.mk so.out from (Quot.out_eq so).symm]
-  simp only [FreeCommMagma.lift_mk]
-  exact terminalNodesPlanar_mem_subtreesAux ha_mem
 
 /-- The root is always in its own subtrees. -/
 theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
