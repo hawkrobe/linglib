@@ -80,26 +80,15 @@ def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
 def SyntacticObject.toPF (so : SyntacticObject) : List LIToken :=
   linearizePlanar (selLinearize .initial so)
 
-/-! ## Structural preservation — Phase 2 TODO
+/-! ## Structural preservation — re-proof TODO
 
-The previous structural preservation theorems (`toLFTree_leaf`,
-`toLFTree_trace`, `toLFTree_node`, `toLFTree_merge` and the YModelDemo
-end-to-end test) were written when `SyntacticObject` was a planar
-inductive (`TraceTree`) — they relied on `rfl` against the planar
-constructor pattern. After the nonplanar migration (Phase 1.0), `Tree`
-remains planar (`.bin a b ≠ .bin b a`) while `SyntacticObject` is
-nonplanar; `toLFTree` therefore goes through `Quot.out` (a noncomputable
-representative choice). The preservation theorems are not provable by
-`rfl` against an arbitrary representative.
-
-**Phase 2 plan.** Replace `Quot.out`-based `toLFTree` with an
-LCA-derived linearization parameterized by head directionality, then
-restate preservation as "for the canonical planar representative
-(per the LCA), the structural correspondence holds". The YModelDemo
-end-to-end test will then be re-proved against that canonical form.
-
-Keeping `toLFTree` itself as a noncomputable placeholder until that
-work lands. The constructor on the LF side (`.leaf`/`.tr`/`.bin`) is
-unchanged; the change is purely on the *order* preserved. -/
+`toLFTree`/`toPF` now linearize through the **computable** selection-induced
+embedding `selLinearize .initial` (no `Quot.out`). The previous structural
+preservation theorems (`toLFTree_leaf`/`_trace`/`_node`/`_merge` and the
+YModelDemo end-to-end test) were deleted in the nonplanar migration — they
+had relied on `rfl` against the old planar `TraceTree` constructor pattern.
+They can now be re-proven against the canonical `selLinearize` representative;
+that re-proof remains open. The LF-side constructors (`.leaf`/`.tr`/`.bin`)
+are unchanged. -/
 
 end Minimalist

@@ -39,8 +39,9 @@ This file is the shared foundation of two layers that build on
 - the **practical Minimalist syntax** (Voice, Agree, Phase, Probe, …), which
   operates on this `FreeCommMagma` carrier directly; and
 - the **MCB algebraic Merge** (`Merge/`), the Connes–Kreimer bialgebra on
-  `Nonplanar` forests, joined to this carrier only by the noncomputable `toHc`
-  projection (`Merge/Defs.lean`).
+  `Nonplanar` forests, joined to this carrier only by the
+  `SyntacticObject.toNonplanar` projection (`Merge/Defs.lean`), which orients
+  each node via the selection-induced embedding `selLinearize` (`Selection.lean`).
 
 -/
 
