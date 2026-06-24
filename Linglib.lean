@@ -2741,6 +2741,7 @@ import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Realization
+import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Prosodic.Foot
