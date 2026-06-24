@@ -41,7 +41,7 @@ This study file is the canonical home for:
 
 namespace Dayal2025
 
-open Syntax.Minimalist.LeftPeriphery
+open Minimalist.LeftPeriphery
 open BhattDayal2020
 
 -- ============================================================================
