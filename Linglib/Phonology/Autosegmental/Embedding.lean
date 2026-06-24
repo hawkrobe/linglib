@@ -76,6 +76,60 @@ theorem SubgraphEmbeds.refl (G : Graph α β) : SubgraphEmbeds G G := by
   · intro j hj; simp
   · intro p hp; simpa using hp
 
+/-! #### Monotonicity under concatenation
+
+A subgraph that embeds in `A` still embeds in `A` concatenated with anything: the
+[jardine-heinz-2015] `concat` only *appends* tier positions and *index-shifts*
+links, so an existing block-embedding survives — at the same offset on the left
+(`concat_left`, the left block is an unshifted prefix), shifted by the prepended
+block's tier lengths on the right (`concat_right`, via `get?_concat_right` and the
+`shiftLink` image). These are the embedding-side of `realize`'s monoid
+homomorphism: the realization of a contiguous symbol window embeds in the
+realization of the whole string. -/
+
+/-- A `get?` returning `some` is in-range (contrapositive of the out-of-range
+    `none`). -/
+private theorem lt_len_of_get?_isSome {a : LabeledTuple α} {i : ℕ}
+    (h : (a.get? i).isSome) : i < a.len := by
+  by_contra hc; rw [LabeledTuple.get?, dif_neg hc] at h; exact absurd h (by simp)
+
+/-- **Left concat-monotonicity**: an embedding into `A` survives appending `C` on
+    the right, at the same offset (`A`'s tier positions and links are an unshifted
+    prefix of `A.concat C`'s). -/
+theorem SubgraphEmbeds.concat_left {F A : Graph α β} (C : Graph α β)
+    (h : SubgraphEmbeds F A) : SubgraphEmbeds F (A.concat C) := by
+  obtain ⟨δᵤ, hδᵤ, δₗ, hδₗ, hu, hl, hlinks⟩ := h
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hδᵤ hδₗ
+  refine ⟨δᵤ, ?_, δₗ, ?_, fun i hi => ?_, fun j hj => ?_, fun p hp => ?_⟩
+  · simp only [Finset.mem_range, upper_concat, LabeledTuple.concat_len]; omega
+  · simp only [Finset.mem_range, lower_concat, LabeledTuple.concat_len]; omega
+  · have hin : i + δᵤ < A.upper.len :=
+      lt_len_of_get?_isSome (by rw [hu i hi]; simp [LabeledTuple.get?, hi])
+    rw [upper_concat, LabeledTuple.get?_concat_left hin]; exact hu i hi
+  · have hin : j + δₗ < A.lower.len :=
+      lt_len_of_get?_isSome (by rw [hl j hj]; simp [LabeledTuple.get?, hj])
+    rw [lower_concat, LabeledTuple.get?_concat_left hin]; exact hl j hj
+  · rw [links_concat]; exact Finset.mem_union_left _ (hlinks p hp)
+
+/-- **Right concat-monotonicity**: an embedding into `A` survives prepending `C` on
+    the left, shifted by `C`'s tier lengths (`A` becomes the index-shifted right
+    block of `C.concat A`). -/
+theorem SubgraphEmbeds.concat_right {F A : Graph α β} (C : Graph α β)
+    (h : SubgraphEmbeds F A) : SubgraphEmbeds F (C.concat A) := by
+  obtain ⟨δᵤ, hδᵤ, δₗ, hδₗ, hu, hl, hlinks⟩ := h
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hδᵤ hδₗ
+  refine ⟨δᵤ + C.upper.len, ?_, δₗ + C.lower.len, ?_, fun i hi => ?_, fun j hj => ?_,
+    fun p hp => ?_⟩
+  · simp only [Finset.mem_range, upper_concat, LabeledTuple.concat_len]; omega
+  · simp only [Finset.mem_range, lower_concat, LabeledTuple.concat_len]; omega
+  · rw [upper_concat, show i + (δᵤ + C.upper.len) = C.upper.len + (i + δᵤ) by omega,
+      LabeledTuple.get?_concat_right]; exact hu i hi
+  · rw [lower_concat, show j + (δₗ + C.lower.len) = C.lower.len + (j + δₗ) by omega,
+      LabeledTuple.get?_concat_right]; exact hl j hj
+  · rw [links_concat]
+    exact Finset.mem_union_right _ (Finset.mem_image.mpr
+      ⟨(p.1 + δᵤ, p.2 + δₗ), hlinks p hp, by simp [shiftLink]; omega⟩)
+
 /-- `G` is **free of** the forbidden block patterns `fs`: no `F ∈ fs`
     subgraph-embeds into `G`. This is [jardine-2017]'s forbidden-substructure
     well-formedness predicate — the positional analogue of `G` being
