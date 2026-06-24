@@ -347,7 +347,7 @@ def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
 private theorem MorphFeatures.compatible_clause_comm {α : Type _} [BEq α] [LawfulBEq α]
     (a b : Option α) :
     (a.isNone || b.isNone || a == b) = (b.isNone || a.isNone || b == a) := by
-  cases a <;> cases b <;> simp [beq_iff_eq, eq_comm]
+  cases a <;> cases b <;> simp [eq_comm]
 
 /-- Feature compatibility is symmetric. -/
 theorem MorphFeatures.compatible_comm (f1 f2 : MorphFeatures) :
@@ -360,6 +360,39 @@ theorem MorphFeatures.compatible_comm (f1 f2 : MorphFeatures) :
       compatible_clause_comm f1.tense, compatible_clause_comm f1.aspect,
       compatible_clause_comm f1.mood, compatible_clause_comm f1.voice,
       compatible_clause_comm f1.polarity]
+
+/-! ### Per-slot projections of `compatible`
+
+φ-compatibility is a conjunction over all slots; these project it onto a single
+slot's clause. They confine the coupling to `compatible`'s clause layout to this
+one site, beside the definition, so the per-feature faithfulness theorems
+(`HasX.compatible_hasX` in `Features/{Person,Number,Gender,Case}/Capabilities.lean`)
+consume a named edge rather than each re-`unfold`ing the definition. Only the
+four φ-slots that carry a `HasX` mixin are projected. -/
+
+/-- Project φ-compatibility onto its number clause. -/
+theorem MorphFeatures.compatible_number {f1 f2 : MorphFeatures}
+    (h : f1.compatible f2 = true) :
+    (f1.number.isNone || f2.number.isNone || f1.number == f2.number) = true := by
+  grind [MorphFeatures.compatible]
+
+/-- Project φ-compatibility onto its gender clause. -/
+theorem MorphFeatures.compatible_gender {f1 f2 : MorphFeatures}
+    (h : f1.compatible f2 = true) :
+    (f1.gender.isNone || f2.gender.isNone || f1.gender == f2.gender) = true := by
+  grind [MorphFeatures.compatible]
+
+/-- Project φ-compatibility onto its case clause. -/
+theorem MorphFeatures.compatible_case {f1 f2 : MorphFeatures}
+    (h : f1.compatible f2 = true) :
+    (f1.case_.isNone || f2.case_.isNone || f1.case_ == f2.case_) = true := by
+  grind [MorphFeatures.compatible]
+
+/-- Project φ-compatibility onto its person clause. -/
+theorem MorphFeatures.compatible_person {f1 f2 : MorphFeatures}
+    (h : f1.compatible f2 = true) :
+    (f1.person.isNone || f2.person.isNone || f1.person == f2.person) = true := by
+  grind [MorphFeatures.compatible]
 
 /-- The information-join of two bundles, field-by-field: keep every committed value
     (left-biased per field, which on `compatible` inputs is symmetric since doubly
