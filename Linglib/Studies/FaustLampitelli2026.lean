@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Featural.ElementTheory
+import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.OCP
 import Linglib.Fragments.Tigrinya.Phonology
 import Linglib.Fragments.Tigre.Phonology
@@ -237,37 +237,37 @@ by |A|, laryngeals (ʔ, h) have |A| as operator.
 
 /-- Element-Theoretic decomposition of Tigrinya/Tigre vowels per
     [faust-lampitelli-2026] eq. 20-22. -/
-def vowelET : Tigrinya.Phonology.Vowel → ETBundle
-  | .a     => ETBundle.headOnly .A           -- [a]: headed |A|
-  | .aBare => ETBundle.bareOnly .A           -- [ʌ]: non-headed |A|
-  | .i     => ETBundle.headOnly .I           -- [i]: headed |I|
-  | .u     => ETBundle.headOnly .U           -- [u]: headed |U|
-  | .e     => ETBundle.headPlusOp .I .A      -- [e]: head |I|, op |A|
-  | .o     => ETBundle.headPlusOp .U .A      -- [o]: head |U|, op |A|
-  | .weak  => ETBundle.empty                  -- [ɨ]: empty (eq. 22)
+def vowelET : Tigrinya.Phonology.Vowel → MR
+  | .a     => MR.headedSimplex .A            -- [a]: headed |A|
+  | .aBare => MR.simplex .A                  -- [ʌ]: non-headed |A|
+  | .i     => MR.headedSimplex .I            -- [i]: headed |I|
+  | .u     => MR.headedSimplex .U            -- [u]: headed |U|
+  | .e     => MR.headPlusOp .I .A            -- [e]: head |I|, op |A|
+  | .o     => MR.headPlusOp .U .A            -- [o]: head |U|, op |A|
+  | .weak  => MR.empty                       -- [ɨ]: empty (eq. 22)
 
 /-- Element-Theoretic decomposition of Tigrinya/Tigre gutturals per
     paper eq. 20. All gutturals contain |A|; pharyngeals (ħ, ʕ) have
     |A| as head, laryngeals (ʔ, h) have |A| as operator. -/
-def gutturalET : Tigrinya.Phonology.Guttural → ETBundle
-  | .glottalStop         => ETBundle.headPlusOp .glottal .A
-  | .h                   => ETBundle.headPlusOp .noise .A
-  | .pharyngealVoiced    => ETBundle.headPlusOp .A .glottal
-  | .pharyngealVoiceless => ETBundle.headPlusOp .A .noise
+def gutturalET : Tigrinya.Phonology.Guttural → MR
+  | .glottalStop         => MR.headPlusOp .glottal .A
+  | .h                   => MR.headPlusOp .H .A
+  | .pharyngealVoiced    => MR.headPlusOp .A .glottal
+  | .pharyngealVoiceless => MR.headPlusOp .A .H
 
 /-- Vowel `v` contains the |A| element. -/
 def VowelHasA (v : Tigrinya.Phonology.Vowel) : Prop :=
-  ETBundle.HasElement (vowelET v) .A
+  MR.HasElement (vowelET v) .A
 
 instance : DecidablePred VowelHasA :=
-  fun v => inferInstanceAs (Decidable (ETBundle.HasElement (vowelET v) .A))
+  fun v => inferInstanceAs (Decidable (MR.HasElement (vowelET v) .A))
 
 /-- Guttural `g` contains |A|. By paper eq. 20, all four do. -/
 def GutturalHasA (g : Tigrinya.Phonology.Guttural) : Prop :=
-  ETBundle.HasElement (gutturalET g) .A
+  MR.HasElement (gutturalET g) .A
 
 instance : DecidablePred GutturalHasA :=
-  fun g => inferInstanceAs (Decidable (ETBundle.HasElement (gutturalET g) .A))
+  fun g => inferInstanceAs (Decidable (MR.HasElement (gutturalET g) .A))
 
 /-- All four attested gutturals contain |A| (paper eq. 20). -/
 theorem all_gutturals_have_A :
@@ -277,15 +277,15 @@ theorem all_gutturals_have_A :
 /-- Pharyngeals are headed by |A| (paper eq. 20: ħ, ʕ have A
     underlined as head). -/
 theorem pharyngeals_A_headed :
-    ETBundle.IsHead (gutturalET .pharyngealVoiced) .A ∧
-    ETBundle.IsHead (gutturalET .pharyngealVoiceless) .A := by
+    MR.IsHead (gutturalET .pharyngealVoiced) .A ∧
+    MR.IsHead (gutturalET .pharyngealVoiceless) .A := by
   decide
 
 /-- Laryngeals (glottals) are NOT headed by |A| (their |A| is operator,
     not head; paper eq. 20). -/
 theorem laryngeals_A_not_headed :
-    ¬ ETBundle.IsHead (gutturalET .glottalStop) .A ∧
-    ¬ ETBundle.IsHead (gutturalET .h) .A := by
+    ¬ MR.IsHead (gutturalET .glottalStop) .A ∧
+    ¬ MR.IsHead (gutturalET .h) .A := by
   decide
 
 /-! ## §2 Gutturals are low glides (the paper's headline structural claim)
@@ -474,22 +474,21 @@ theorem identicalVowel_synersis_overshoots_walker_rose :
 -/
 
 /-- The |A|+|A| → fused |A| operation of paper eq. (26) is an
-    instance of `OCP.collapse` over a tier of
-    `Headedness` values (the |A| element's headedness signature).
-    Two adjacent bare-|A| markers collapse to one.
+    instance of `OCP.collapse` over a tier of `Element` values: two
+    adjacent |A| elements collapse to one.
 
     This makes structurally explicit that F&L's "fusion" mechanism
     is the same operation as [lionnet-2022]'s `mergeTRN` for
     Laal tones, just instantiated over a different value space
-    (`Headedness` vs binary-feature `TRN`). -/
+    (privative `Element` vs binary-feature `TRN`). -/
 theorem fusion_is_collapse_instance :
-    OCP.collapse [Headedness.bare, Headedness.bare] = [Headedness.bare] := by
+    OCP.collapse [Element.A, Element.A] = [Element.A] := by
   decide
 
 /-- The OCP-merger output is OCP-clean: no two adjacent identical
     elements remain. Direct application of the substrate theorem
     `OCP.collapse_clean`. -/
-theorem fusion_output_is_ocp_clean (xs : List Headedness) :
+theorem fusion_output_is_ocp_clean (xs : List Element) :
     OCP.IsClean (OCP.collapse xs) :=
   OCP.collapse_clean xs
 

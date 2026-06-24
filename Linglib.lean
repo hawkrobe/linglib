@@ -1831,6 +1831,7 @@ import Linglib.Studies.Clements1985
 import Linglib.Studies.CoetzeePater2011
 import Linglib.Studies.Flemming2021
 import Linglib.Studies.FaustLampitelli2026
+import Linglib.Studies.CaviraniVandenWyngaerd2026
 import Linglib.Studies.FrischPierrehumbertBroe2004
 import Linglib.Studies.GahlBaayen2024
 import Linglib.Studies.GoldwaterJohnson2003
@@ -2720,7 +2721,7 @@ import Linglib.Phonology.Featural.Geometry
 import Linglib.Phonology.Featural.ComplexSegments
 import Linglib.Phonology.Featural.Bundle
 import Linglib.Phonology.Featural.Underspecification
-import Linglib.Phonology.Featural.ElementTheory
+import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.Featural.Sharing
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
