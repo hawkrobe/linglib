@@ -417,6 +417,17 @@ def selLinearize (s : ConventionDir) :
     SyntacticObject → FreeMagma (LIToken ⊕ Nat) :=
   FreeCommMagma.lift (selLinearizeAux s) (selLinearizeAux_respects s)
 
+/-- The selection-induced embedding distributes over Merge: the projecting
+    (selector) daughter is placed on the `s`-convention side, with the exocentric
+    fallback `smallerFirst`. Mirrors `selCheck_mul`. -/
+theorem selLinearize_mul (s : ConventionDir) (l r : SyntacticObject) :
+    selLinearize s (l * r) =
+      match selSide (selCheck l) (selCheck r) with
+      | some true  => placeHead s (selLinearize s l) (selLinearize s r)
+      | some false => placeHead s (selLinearize s r) (selLinearize s l)
+      | none       => smallerFirst (selLinearize s l) (selLinearize s r) := by
+  induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
+
 /-- When `selStep` returns a head, that head is the projecting daughter's head,
     and `selSide` agrees on which daughter projects. The bridge between the
     residual-tracking `selStep` and the order-determining `selSide`. -/
