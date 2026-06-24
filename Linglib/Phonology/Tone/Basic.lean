@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Forall2
 import Mathlib.Data.List.Count
 import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Phonology.FeatureBundle
+import Linglib.Features.Basic
 
 /-!
 # Tonal Root Nodes and Subtonal Features
@@ -24,7 +24,7 @@ is shared with [snider-1999], but the features themselves are
 * `Subtonal` — the two paradigmatic subtonal feature dimensions
   `[±upper]` and `[±raised]`.
 * `TRN` — Tonal Root Node, a bundle of `Option Bool` values for the two
-  subtonal features. Linked to its `FeatureBundle Subtonal Bool` view by
+  subtonal features. Linked to its `Subtonal → Option Bool` view by
   `TRN.toBundle` / `TRN.ofBundle`.
 * `TRN.empty`, `TRN.downstep`, `TRN.upstep` — register-only TRNs for
   Drubea/Numèè-style systems.
@@ -71,8 +71,6 @@ be **underspecified** (`none`), with surface values filled in by default.
 
 namespace Tone
 
-open Phonology
-
 /-! ### Subtonal features -/
 
 /-- The two paradigmatic subtonal feature dimensions
@@ -99,7 +97,7 @@ inductive Subtonal where
     register-only Drubea/Numèè system the `upper` field is uniformly
     `none`; for full 3-tone Laal both fields are usually specified.
 
-    Implemented as a structure rather than `FeatureBundle Subtonal Bool`
+    Implemented as a structure rather than `Subtonal → Option Bool`
     so that `DecidableEq` and `Repr` derive automatically (and `BEq`
     follows from `DecidableEq`, below) and so that `decide`-based proofs
     over concrete TRN literals reduce cleanly. The bundle view is
@@ -154,17 +152,17 @@ def L : TRN := ⟨some false, some false⟩
     language or a different 3-tone gap would use this. -/
 def superHigh : TRN := ⟨some true, some true⟩
 
-/-- View a TRN as a `FeatureBundle Subtonal Bool` (the parametric
-    foundation in `Phonology.FeatureBundle`). The bundle algebra
+/-- View a TRN as a `Subtonal → Option Bool` (the parametric
+    foundation in `Features.Bundle`). The bundle algebra
     (merge, assimilate, delete, set, refines) is then directly available
     via this view. -/
-def toBundle (t : TRN) : FeatureBundle Subtonal Bool
+def toBundle (t : TRN) : Subtonal → Option Bool
   | .upper  => t.upper
   | .raised => t.raised
 
 /-- Recover a TRN from a generic subtonal-feature bundle. Inverse of
     `toBundle`. -/
-def ofBundle (b : FeatureBundle Subtonal Bool) : TRN :=
+def ofBundle (b : Subtonal → Option Bool) : TRN :=
   ⟨b .upper, b .raised⟩
 
 @[simp] theorem toBundle_upper  (t : TRN) : t.toBundle .upper  = t.upper  := rfl
@@ -405,27 +403,27 @@ def hEpenthesisSpread : List TRN → List TRN
     value spreads from `src` to `tgt`, so a target M (`⟨-u, +r⟩`)
     becomes L (`⟨-u, -r⟩`) without altering its `[upper]` value. -/
 def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
-  TRN.ofBundle (FeatureBundle.assimilate f src.toBundle tgt.toBundle)
+  TRN.ofBundle (Features.Bundle.assimilate f src.toBundle tgt.toBundle)
 
 /-- **Binary TRN merger** ([lionnet-2022] ex. 53–54): merge two TRNs' subtonal
     features into one, taking each feature from the left TRN where it is specified and
-    falling back to the right (`FeatureBundle.merge`). Models the autosegmental fusion
+    falling back to the right (`Features.Bundle.merge`). Models the autosegmental fusion
     of two associated tones ([goldsmith-1976]); the tier-level OCP merger that
     collapses a run of identical tones is `OCP.collapse`. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
-  TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
+  TRN.ofBundle (Features.Bundle.merge t₁.toBundle t₂.toBundle)
 
 /-- Merging a TRN with itself is the identity: `mergeTRN` is idempotent on equal
     tones. -/
 @[simp] theorem mergeTRN_self (t : TRN) : mergeTRN t t = t := by
-  simp only [mergeTRN, FeatureBundle.merge_self, TRN.ofBundle_toBundle]
+  simp only [mergeTRN, Features.Bundle.merge_self, TRN.ofBundle_toBundle]
 
 /-- **Floating-feature docking** ([lionnet-2022] §5.3): a free
     `[±f]` subtonal feature docks onto a target TRN, overwriting
     whatever value it had at `f`. Used for the morphosyntactic
     `[-raised]` suffix in Laal that triggers M-lowering. -/
 def dockFloating (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
-  TRN.ofBundle (FeatureBundle.set f v t.toBundle)
+  TRN.ofBundle (Features.Bundle.set f v t.toBundle)
 
 /-! ### Verification: Laal subtonal identities -/
 
