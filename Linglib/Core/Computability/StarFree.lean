@@ -23,6 +23,8 @@ treatment of regularity (`Language.isRegular_iff_finite_syntacticMonoid`).
 ## Main results
 
 * `Language.IsStarFree.compl` — star-free languages are closed under complement.
+* `Language.IsStarFree.inter` — star-free languages are closed under intersection (`⊓`).
+* `Language.IsStarFree.union` — star-free languages are closed under union (`⊔`, via De Morgan).
 -/
 
 namespace Language
@@ -59,5 +61,56 @@ theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree := by
   show Monoid.IsAperiodic (syntacticCon Lᶜ).Quotient
   rw [syntacticCon_compl]
   exact h.2
+
+/-! ### Closure under intersection and union
+
+`Language α` carries its `BooleanAlgebra`, so intersection/union are the lattice meet/join
+`⊓`/`⊔` (defeq to set intersection/union); these are the forms `Language.IsRegular.inf` uses. -/
+
+variable (L) in
+/-- The meet of the two syntactic congruences refines that of the intersection: if no `L`-context
+and no `M`-context distinguishes `u` from `v`, then no `(L ⊓ M)`-context does either. -/
+theorem inf_syntacticCon_le_syntacticCon_inf (M : Language α) :
+    L.syntacticCon ⊓ M.syntacticCon ≤ (L ⊓ M).syntacticCon := by
+  rw [Con.le_def]
+  intro u v huv x y
+  rw [Con.inf_iff_and, syntacticCon_iff, syntacticCon_iff] at huv
+  exact and_congr (huv.1 x y) (huv.2 x y)
+
+variable (L) in
+/-- The kernel of the pairing of the two syntactic morphisms is exactly the meet of the two
+syntactic congruences (a word's class in the product is the pair of its classes). -/
+theorem ker_prod_toSyntacticMonoid (M : Language α) :
+    Con.ker ((L.toSyntacticMonoid).prod M.toSyntacticMonoid) =
+      L.syntacticCon ⊓ M.syntacticCon :=
+  Con.ext fun u v => by
+    rw [Con.ker_apply, MonoidHom.prod_apply, MonoidHom.prod_apply, Prod.ext_iff,
+      toSyntacticMonoid_eq_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
+
+/-- **Star-free languages are closed under intersection.** The syntactic monoid of `L ⊓ M`
+is a quotient of a submonoid of `L.syntacticMonoid × M.syntacticMonoid`, which is aperiodic
+(`Monoid.IsAperiodic.prod`); regularity is `Language.IsRegular.inf`. -/
+theorem IsStarFree.inter {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
+    (L ⊓ M).IsStarFree := by
+  refine ⟨hL.1.inf hM.1, ?_⟩
+  set φ := (L.toSyntacticMonoid).prod M.toSyntacticMonoid with hφ
+  -- The product is aperiodic, hence so is its range submonoid, hence `(Con.ker φ).Quotient`.
+  have hprod : Monoid.IsAperiodic (L.syntacticMonoid × M.syntacticMonoid) := hL.2.prod hM.2
+  have hrange : Monoid.IsAperiodic (MonoidHom.mrange φ) :=
+    hprod.of_injective (MonoidHom.mrange φ).subtype_injective
+  have hker : Monoid.IsAperiodic (Con.ker φ).Quotient :=
+    hrange.of_mulEquiv (Con.quotientKerEquivRange φ).symm
+  -- The quotient map for `Con.ker φ ≤ (L ⊓ M).syntacticCon` is surjective.
+  have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
+    rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf L M
+  refine hker.of_surjective (f := Con.map (Con.ker φ) _ hle) (fun y => ?_)
+  obtain ⟨a, rfl⟩ := Con.mk'_surjective y
+  exact ⟨(Con.ker φ).mk' a, rfl⟩
+
+/-- **Star-free languages are closed under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
+theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
+    (L ⊔ M).IsStarFree := by
+  rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
+  exact (hL.compl.inter hM.compl).compl
 
 end Language
