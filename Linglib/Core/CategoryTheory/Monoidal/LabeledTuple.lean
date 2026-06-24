@@ -211,6 +211,12 @@ theorem ext {a b : LabeledTuple α} (hlen : a.len = b.len)
   simp only [Fin.cast_refl, Function.comp_id] at hlabel
   subst hlabel; rfl
 
+@[simp] theorem ofList_toList (a : LabeledTuple α) : ofList a.toList = a := by
+  apply ext (by simp [ofList, toList])
+  funext i
+  simp only [ofList_label, toList, List.get_ofFn]
+  congr 1
+
 theorem concat_assoc (a b c : LabeledTuple α) :
     (a.concat b).concat c = a.concat (b.concat c) :=
   ext (Nat.add_assoc ..) (by simp only [concat_label]; exact Fin.append_assoc ..)

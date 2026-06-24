@@ -20,6 +20,9 @@ proofs go through `destutter'` boundary scaffolding. Candidates for
   before appending does not change the destuttered result.
 * `List.destutter_append_destutter` — the congruence: `destutter (· ≠ ·)` of an append
   equals `destutter (· ≠ ·)` of the destuttered operands.
+* `List.destutter_head?` — `destutter` preserves the head.
+* `List.destutter_append_length_clean` — the clean-clean boundary length: two `(· ≠ ·)`
+  chains concatenated and destuttered merge exactly one element iff the seam matches.
 -/
 
 namespace List
@@ -116,5 +119,71 @@ theorem destutter_append_destutter (l m : List α) :
     (l ++ m).destutter (· ≠ ·) =
       (l.destutter (· ≠ ·) ++ m.destutter (· ≠ ·)).destutter (· ≠ ·) := by
   rw [destutter_append_left, destutter_append_right]
+
+/-! ### Head and the clean-clean boundary -/
+
+omit [DecidableEq α] in
+/-- `destutter` preserves the head: the running element is the input's head. -/
+theorem destutter_head? {R : α → α → Prop} [DecidableRel R] (l : List α) :
+    (l.destutter R).head? = l.head? := by
+  cases l with
+  | nil => simp
+  | cons a l =>
+    obtain ⟨t, ht⟩ := destutter'_head_cons (R := R) a l
+    rw [destutter_cons', ht]; simp
+
+/-- The destutter of a chain `a :: l` appended to anything is `a :: l` followed by the
+right operand destuttered against the chain's last element (with the duplicated head
+dropped). The structural form behind `destutter_append_length_clean`. -/
+private theorem destutter'_append_clean {a : α} {l m : List α}
+    (h1 : (a :: l).IsChain (· ≠ ·)) :
+    (l ++ m).destutter' (· ≠ ·) a =
+      a :: l ++ (m.destutter' (· ≠ ·) ((a :: l).getLast (cons_ne_nil a l))).tail := by
+  induction l generalizing a with
+  | nil =>
+    simp only [nil_append, getLast_singleton]
+    obtain ⟨t, ht⟩ := destutter'_head_cons (R := (· ≠ ·)) a m
+    rw [ht]; rfl
+  | cons b l ih =>
+    have hab : a ≠ b := (isChain_cons_cons.mp h1).1
+    rw [cons_append, destutter'_cons_pos (h := hab), ih (isChain_cons_cons.mp h1).2,
+      getLast_cons (cons_ne_nil b l)]
+    rfl
+
+/-- For a chain `m`, the tail of `m.destutter' (· ≠ ·) z` has length `m.length` minus one
+when the running element `z` already heads `m` (the seam merge), else `m.length`. -/
+private theorem destutter'_tail_length_clean {z : α} {m : List α} (h2 : m.IsChain (· ≠ ·)) :
+    ((m.destutter' (· ≠ ·) z).tail).length =
+      m.length - (if some z = m.head? then 1 else 0) := by
+  cases m with
+  | nil => simp [destutter'_nil]
+  | cons b m =>
+    have hbm : m.destutter' (· ≠ ·) b = b :: m := destutter'_of_isChain_cons _ _ h2
+    by_cases hzb : z ≠ b
+    · rw [destutter'_cons_pos (h := hzb), hbm]
+      simp only [tail_cons, length_cons, head?_cons, Option.some.injEq, if_neg hzb, Nat.sub_zero]
+    · obtain rfl : z = b := not_not.mp hzb
+      rw [destutter'_cons_neg (h := by simp), hbm]; simp
+
+/-- **The clean-clean boundary length.** Two chains concatenated and destuttered merge only
+at the seam: the length is the sum of lengths minus one exactly when the last element of `l`
+equals the first of `m`. The numerical core of the autosegmental OCP quotient
+(`Phonology/Autosegmental/Collapse.lean`). -/
+theorem destutter_append_length_clean {l m : List α}
+    (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
+    ((l ++ m).destutter (· ≠ ·)).length =
+      l.length + m.length - (if l.getLast? = m.head? then 1 else 0) := by
+  cases l with
+  | nil =>
+    cases m with
+    | nil => simp
+    | cons b m => simp [destutter_of_isChain _ _ h2]
+  | cons a l =>
+    rw [cons_append, destutter_cons', destutter'_append_clean h1, length_append, length_cons,
+      destutter'_tail_length_clean h2, getLast?_eq_getLast_of_ne_nil (cons_ne_nil a l)]
+    split_ifs with h
+    · have := length_pos_of_ne_nil (l := m) (by rintro rfl; simp at h)
+      omega
+    · omega
 
 end List
