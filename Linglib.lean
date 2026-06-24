@@ -2732,7 +2732,7 @@ import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.WellFormedAR
-import Linglib.Phonology.Autosegmental.Subgraph
+import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Prosodic.Foot
 import Linglib.Phonology.Prosodic.NaturalClass
