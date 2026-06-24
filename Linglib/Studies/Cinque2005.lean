@@ -249,22 +249,31 @@ theorem reachable_eq_attested :
 
 /-! ### Markedness tracks frequency ([cinque-2005] (7b), (6))
 
-Each derivable order has a count of **marked options** in its cheapest derivation.
 Cinque's (7b) ranks the movement parameters: *no movement*, *whose-picture*
-pied-piping, and *total* movement are **unmarked**; *partial* movement,
-movement *without pied-piping*, and *picture-of-who* pied-piping are **marked**.
-The counts below are transcribed from the per-order analysis (6a–6x). Cinque's
-claim is that markedness **tracks** frequency — cleanly at the extremes (zero
-marked options ⇒ most frequent; two ⇒ rarest), with a mixed one-marked-option
-middle (the residual exceptions Universal 20 leaves; cf. the per-order footnotes). -/
+pied-piping, and *total* movement are **unmarked**; *partial* movement, movement
+*without pied-piping*, and *picture-of-who* pied-piping are **marked**. Each
+attested order's cheapest derivation has a count of **marked options**, and the
+claim is that this count tracks cross-linguistic frequency.
 
-/-- The number of marked movement options ([cinque-2005] (7b)) in the cheapest
-    derivation of each **attested** order, transcribed from the per-order analysis
-    (6a–6x); `none` for the 10 unattested orders (no derivation). (6p) is the
-    paper's "especially marked"/possibly-spurious case (fn 27), encoded as 2. -/
+**Why `markedOptions` is transcribed, not derived.** Cinque's count is *not* a
+locally-compositional function of the derivation: whether a given step is marked
+depends on the whole derivation. The sharpest case is the first bare NP-raise
+around the lowest modifier A — **unmarked** when it begins the roll-up (6x)
+(vacuous *whose-picture* pied-piping, since the stranded modifiers are picked up
+later) but **marked** ("without pied-piping") in (6c), where they never are. The
+*same step* is marked or not depending on global derivation shape. So
+`markedOptions` transcribes the holistic per-order analysis (6a–6x) — paper data,
+like the attestation `table` — and `markedMoves` below is a genuinely **derived**
+*local* proxy that we prove is *insufficient* (it neither matches Cinque's count
+nor predicts frequency), justifying the transcription. -/
+
+/-- Cinque's holistic marked-option count for each **attested** order, transcribed
+    from the per-order analysis (6a–6x) ([cinque-2005] (7b)); `none` for the 10
+    unattested (no derivation). (6p) is the "especially marked"/possibly-spurious
+    case (fn 27). Not locally derivable — see `markedMoves`. -/
 def markedOptions : List Cat → Option Nat
   | [.D, .Num, .A, .N] => some 0   -- (6a) no marked option
-  | [.D, .Num, .N, .A] => some 0   -- (6b) unmarked (vacuous whose-picture) deriv
+  | [.D, .Num, .N, .A] => some 1   -- (6b) partial movement (pied-piping vacuous/unmarked)
   | [.D, .N, .Num, .A] => some 2   -- (6c) partial + without-pied-piping
   | [.N, .D, .Num, .A] => some 1   -- (6d) without-pied-piping (total)
   | [.A, .N, .D, .Num] => some 2   -- (6k) picture-of-who + without-pied-piping
@@ -279,19 +288,71 @@ def markedOptions : List Cat → Option Nat
   | [.N, .A, .Num, .D] => some 0   -- (6x) successive whose-picture (roll-up)
   | _ => none
 
-/-- Markedness is defined exactly on the derivable orders: every attested order
-    has a marked-option count, every unattested order has none. -/
+/-- Markedness is defined exactly on the derivable orders. -/
 theorem markedOptions_isSome_iff_attested :
     table.all (fun r => (markedOptions r.order).isSome = r.attested) := by decide
 
 /-- **Markedness predicts frequency at the extremes** ([cinque-2005] (6)–(7)):
-    the most frequent orders (very many) are derivable with **no** marked option,
-    and any order needing **two** marked options is rare (few / very few). The
-    one-marked-option middle is mixed — Universal 20's residual exceptions. -/
+    an order is derivable with **no** marked option **iff** it is the most frequent
+    (very many) — orders (6a), (6x) — and any order needing **two** marked options
+    is rare (few / very few). The one-marked-option middle is mixed (Universal 20's
+    residual exceptions). -/
 theorem markedness_extremes :
     (table.filter (·.attested)).all (fun r =>
-      (r.freq = .veryMany → markedOptions r.order = some 0) ∧
+      (markedOptions r.order = some 0 ↔ r.freq = .veryMany) ∧
       (markedOptions r.order = some 2 → r.freq = .few ∨ r.freq = .veryFew)) := by
+  decide
+
+/-! ### A derived local proxy — and why it is insufficient
+
+`markedMoves` is computed from the substrate: the **minimum**, over the enumerated
+derivations producing an order, of the number of *locally* marked moves (a raise
+of a bare NP or of a *picture-of-who* constituent is marked; a *whose-picture*
+raise — NP leftmost in the moved constituent — is unmarked). This is what a naive
+compositional reading of (7b) gives. The two theorems below show it is **not**
+Cinque's count and does **not** track frequency. -/
+
+/-- Local markedness of a single raise: `0` for *whose-picture* pied-piping
+    (NP leftmost in the mover), `1` for a bare raise or *picture-of-who*. -/
+private def moveMark : FM → Nat
+  | .of _ => 1
+  | .mul l r => if leftmostLeafPlanar (.mul l r) == tokN then 0 else 1
+
+/-- The legal derivation space (as in `space`) carrying accumulated local
+    marked-move cost. -/
+private def spaceCost : List (FM × Nat) :=
+  ([((.of (.inl tokN) : FM), 0)].map (fun p => ((.of (.inl tokA)) * p.1, p.2))).flatMap
+      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
+        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
+    |>.map (fun p => ((.of (.inl tokNum)) * p.1, p.2)) |>.flatMap
+      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
+        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
+    |>.map (fun p => ((.of (.inl tokD)) * p.1, p.2)) |>.flatMap
+      (fun p => p :: (fmMovers p.1).filterMap (fun s =>
+        (planarMoveLeft (· == s) fmTr p.1).map (fun m => (m, p.2 + moveMark s))))
+
+/-- **Derived** local proxy: the minimum number of locally-marked moves over the
+    derivations producing `ord` (`none` if unreachable). -/
+def markedMoves (ord : List Cat) : Option Nat :=
+  ((spaceCost.filter (fun p => (linearizePlanar p.1).map (·.item.outerCat) == ord)).map (·.2)).foldl
+    (fun acc n => some (acc.elim n (Nat.min · n))) none
+
+/-- The derived local proxy **disagrees** with Cinque's holistic count: the
+    roll-up (6x) has one locally-marked move (its first bare N-raise), yet Cinque
+    counts it unmarked (that raise is vacuous pied-piping, resolved by later
+    raises). -/
+theorem markedMoves_ne_markedOptions :
+    markedMoves [.N, .A, .Num, .D] = some 1 ∧ markedOptions [.N, .A, .Num, .D] = some 0 := by
+  decide
+
+/-- The local proxy does **not** predict frequency: (6x) and (6c) both have one
+    locally-marked move, but (6x) is the most frequent (very many) and (6c) the
+    rarest (very few). Cinque's frequency correlation needs the *holistic*
+    markedness, not a local move-count — hence `markedOptions` is transcribed. -/
+theorem markedMoves_underdetermines_frequency :
+    markedMoves [.N, .A, .Num, .D] = markedMoves [.D, .N, .Num, .A] ∧
+    (table.find? (·.order = [.N, .A, .Num, .D])).map (·.freq) = some .veryMany ∧
+    (table.find? (·.order = [.D, .N, .Num, .A])).map (·.freq) = some .veryFew := by
   decide
 
 /-! ### TODO (follow-up)
