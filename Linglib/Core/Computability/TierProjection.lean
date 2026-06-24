@@ -1,4 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Data.List.Basic
+import Mathlib.Algebra.FreeMonoid.Basic
 
 /-!
 # Tier Projections (erasing letterwise homomorphisms)
@@ -19,20 +25,24 @@ This module provides:
 
 - `TierProjection α β := α → Option β` — the erasing case.
 - `TierProjection.apply` — lift to `List α → List β` (the projection itself).
-- `TierProjection.id`, `TierProjection.empty`, `TierProjection.byClass`, `TierProjection.total` — constructors.
+- `TierProjection.applyHom` — that lift bundled as a `FreeMonoid α →* FreeMonoid β`.
+- `id`, `empty`, `byClass`, `total` — constructors.
 
 The monoid-homomorphism law (`TierProjection.apply_append`) holds **definitionally**
 via `List.filterMap_append`; this is what licenses tier projections in OT
-and HG constraint evaluation (`mkOCP` in `Phonology/Constraints.lean`
-already takes a generic `project : C → List α`, so `TierProjection.apply T` plugs in
-directly).
+and HG constraint evaluation (`mkForbidPairsOnTier` in
+`Phonology/OptimalityTheory/Constraints.lean` takes a generic `TierProjection`, so
+`TierProjection.apply T` plugs in directly).
 
-Home: `Phonology/` (not `Core/`) because the `TierProjection` abstraction — the
-autosegmental Kleisli morphism with `byClass`/`lastWith`/`firstWith` — is a
-linguistics concept, not upstreamable to `mathlib/Computability`. The
-formal-language tier (a subalphabet, projection = `List.filter`) lives
-separately in `Core/Computability/Subregular/Language/TierStrictlyLocal.lean` (the TSL class), which
-no longer depends on this morphism.
+Home: `Core/Computability/` — the content is pure `List`/`Option` combinatorics
+(the `Option`-Kleisli morphism on free monoids), with no linguistic content in
+any type signature; the linguistic interpretation lives entirely in the
+`Phonology/` and `Studies/` consumers. The subregular projection
+`Subregular.tierProject` (`List.filter`) and its monoid-hom packaging
+`Subregular.tierProjectHom`, both in
+`Core/Computability/Subregular/Language/`, are the single-alphabet `byClass`
+specialization of this morphism; unifying the three onto this keystone (so they
+coincide by `rfl`) is a follow-up.
 
 [goldsmith-1976] [belth-2026]
 -/
@@ -84,6 +94,18 @@ def apply (T : TierProjection α β) : List α → List β := List.filterMap T
 
 /-- Tier projection sends the empty word to the empty word. -/
 @[simp] theorem apply_nil (T : TierProjection α β) : apply T [] = [] := rfl
+
+/-- The tier projection bundled as a **monoid homomorphism** `FreeMonoid α →* FreeMonoid β`
+of strings: `apply` preserves `1` (`apply_nil`) and `*` (`apply_append`). Named
+specializations — e.g. `Subregular.tierProjectHom` — are defined as `applyHom` of a
+particular projection, inheriting the hom laws by construction rather than re-proving them. -/
+def applyHom (T : TierProjection α β) : FreeMonoid α →* FreeMonoid β where
+  toFun := apply T
+  map_one' := apply_nil T
+  map_mul' := apply_append T
+
+@[simp] theorem applyHom_apply (T : TierProjection α β) (w : FreeMonoid α) :
+    applyHom T w = apply T w := rfl
 
 -- ---- Constructor lemmas ----------------------------------------------------
 

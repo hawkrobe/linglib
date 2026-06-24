@@ -334,7 +334,7 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
-import Linglib.Phonology.TierProjection
+import Linglib.Core.Computability.TierProjection
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
@@ -2757,7 +2757,6 @@ import Linglib.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phonology.OptimalityTheory.Doubling
-import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Phonology.Subregular.Agree

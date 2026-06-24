@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Option
-import Linglib.Phonology.TierProjection
+import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 

@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraint.Defs
 import Linglib.Phonology.OptimalityTheory.Optimality
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Phonology.TierProjection
+import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 
 /-!
@@ -159,7 +159,7 @@ export Subregular (countAdjacent)
 /-- Build a markedness constraint penalizing tier-adjacent forbidden pairs.
     The candidate's raw symbol list is extracted by `extract`, the tier `T`
     projects it onto the relevant tier alphabet (an erasing string
-    homomorphism — see `Core.StringHom`), and each tier-adjacent pair `(a, b)`
+    homomorphism — see `Core.Computability.TierProjection`), and each tier-adjacent pair `(a, b)`
     with `R a b` contributes one violation.
 
     Generic markedness constructor for adjacency-based phonological
@@ -212,7 +212,7 @@ def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List �
 /-- Build an OCP constraint from a `TierProjection` projection. The candidate's
     raw symbol list is extracted by `extract`, and the tier `T` projects
     that string onto the relevant tier alphabet (an erasing string
-    homomorphism — see `Core.StringHom`).
+    homomorphism — see `Core.Computability.TierProjection`).
 
     This is the constraint-algebra adapter for the unified `TierProjection` interface:
     autosegmental tonal-tier OCP, sibilant-harmony OCP, and learned-tier
