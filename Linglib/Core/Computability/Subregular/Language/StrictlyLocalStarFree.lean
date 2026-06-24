@@ -76,10 +76,6 @@ private noncomputable def scanDFA : DFA (Option α) (Option (Win α n)) where
   | nil => rfl
   | cons a xs ih => rw [DFA.evalFrom_cons]; simpa [step] using ih
 
-private lemma take_append_take {β : Type*} (X Y : List β) :
-    (X ++ Y.take n).take n = (X ++ Y).take n := by
-  rw [take_append, take_append, take_take, min_eq_left (by omega)]
-
 /-- Window after an alive run of `xs`: the reversed window is the last `n` symbols of
 `xs.reverse ++ w` (most recent first). -/
 private lemma evalFrom_alive_window (w : Win α n) (xs : List (Option α)) :
@@ -97,7 +93,8 @@ private lemma evalFrom_alive_window (w : Win α n) (xs : List (Option α)) :
       simpa using take_append_take n xs.reverse (a :: w.val)
 
 /-- A forbidden completed window: some `(n+1)`-factor of `S` is not permitted. -/
-private def BadF (S : List (Option α)) : Prop := ∃ f, f <:+: S ∧ f.length = n + 1 ∧ f ∉ G
+private def IsForbiddenWindow (S : List (Option α)) : Prop :=
+  ∃ f, f <:+: S ∧ f.length = n + 1 ∧ f ∉ G
 
 variable {β : Type*}
 
@@ -105,13 +102,6 @@ variable {β : Type*}
 private lemma scanned_step_lt (w : List β) (a : β) (xs : List β) (h : w.length < n) :
     (take n (a :: w)).reverse ++ xs = w.reverse ++ a :: xs := by
   rw [List.take_of_length_le (by simp; omega)]; simp
-
-/-- A nonempty infix is a prefix or an infix of the tail. -/
-private lemma infix_prefix_or_tail (f S : List β) (hf : f <:+: S) (hne : f ≠ []) :
-    f <+: S ∨ f <:+: S.tail := by
-  match S, hf with
-  | [], hf => exact absurd (List.eq_nil_of_infix_nil hf) hne
-  | _ :: _, hf => simpa using List.infix_cons_iff.mp hf
 
 /-- For a full window, the `(n+1)`-prefix of the scanned string is the completed window. -/
 private lemma take_prefix_full (w : List β) (a : β) (xs : List β) (h : w.length = n) :
@@ -134,7 +124,7 @@ private lemma scanned_step_eq (w : List β) (a : β) (xs : List β) (h : w.lengt
 /-- Dead-status: scanning `xs` from window `w` dies iff some forbidden `(n+1)`-window is
 completed — exactly the forbidden `(n+1)`-factors of `w.reverse ++ xs`. -/
 private lemma evalFrom_eq_none_iff (w : Win α n) (xs : List (Option α)) :
-    (scanDFA G n).evalFrom (some w) xs = none ↔ BadF G n (w.val.reverse ++ xs) := by
+    (scanDFA G n).evalFrom (some w) xs = none ↔ IsForbiddenWindow G n (w.val.reverse ++ xs) := by
   induction xs generalizing w with
   | nil =>
     simp only [DFA.evalFrom_nil, append_nil]
@@ -155,7 +145,8 @@ private lemma evalFrom_eq_none_iff (w : Win α n) (xs : List (Option α)) :
       exact List.prefix_append _ _
     · rename_i halive
       rw [ih]
-      show BadF G n ((take n (a :: w.val)).reverse ++ xs) ↔ BadF G n (w.val.reverse ++ a :: xs)
+      show IsForbiddenWindow G n ((take n (a :: w.val)).reverse ++ xs)
+        ↔ IsForbiddenWindow G n (w.val.reverse ++ a :: xs)
       rcases lt_or_eq_of_le w.2 with hlt | heq
       · rw [scanned_step_lt n w.val a xs hlt]
       · rw [scanned_step_eq n w.val a xs heq]
@@ -163,7 +154,12 @@ private lemma evalFrom_eq_none_iff (w : Win α n) (xs : List (Option α)) :
           by_contra hc; exact halive ⟨hc, by simpa using heq⟩
         refine ⟨fun ⟨f, hf, hlen, hbad⟩ => ⟨f, hf.trans (List.tail_suffix _).isInfix, hlen, hbad⟩,
           fun ⟨f, hf, hlen, hbad⟩ => ?_⟩
-        rcases infix_prefix_or_tail f _ hf (by rw [← List.length_pos_iff]; omega) with hpre | hinf
+        have hsplit : f <+: (w.val.reverse ++ a :: xs)
+            ∨ f <:+: (w.val.reverse ++ a :: xs).tail := by
+          match w.val.reverse ++ a :: xs, hf with
+          | [], hf => simp [List.eq_nil_of_infix_nil hf] at hlen
+          | _ :: _, hf => simpa using List.infix_cons_iff.mp hf
+        rcases hsplit with hpre | hinf
         · refine absurd ?_ hbad
           rw [List.prefix_iff_eq_take.mp hpre, hlen, take_prefix_full n w.val a xs heq]
           exact hgood
@@ -259,8 +255,10 @@ private noncomputable def scanHom : FreeMonoid α →* (scanDFA G n).transitionM
 private def startWin : Win α n := ⟨List.replicate n none, by simp⟩
 
 @[simp] private lemma scanHom_unop_apply (w : List α) (s : Option (Win α n)) :
-    ((scanHom G n (FreeMonoid.ofList w)).val.unop) s = (scanDFA G n).evalFrom s (w.map Option.some) := by
-  simp only [scanHom, MonoidHom.codRestrict_apply, MonoidHom.comp_apply, DFA.unop_transitionHom_apply]
+    ((scanHom G n (FreeMonoid.ofList w)).val.unop) s
+      = (scanDFA G n).evalFrom s (w.map Option.some) := by
+  simp only [scanHom, MonoidHom.codRestrict_apply, MonoidHom.comp_apply,
+    DFA.unop_transitionHom_apply]
   congr 1
 
 /-- The scanner run over `w` (with both boundaries folded in) is alive iff `w` lies in the
@@ -270,8 +268,8 @@ private lemma alive_iff_mem_language (w : List α) :
     (scanDFA G n).evalFrom (some (startWin n)) (w.map Option.some ++ List.replicate n none) ≠ none
       ↔ w ∈ G.language (n + 1) := by
   rw [Ne, evalFrom_eq_none_iff]
-  simp only [startWin, List.reverse_replicate, SLGrammar.mem_language, BadF, not_exists, not_and,
-    not_not]
+  simp only [startWin, List.reverse_replicate, SLGrammar.mem_language, IsForbiddenWindow,
+    not_exists, not_and, not_not]
   rw [show List.replicate n none ++ (w.map Option.some ++ List.replicate n none)
         = boundary (n + 1) w by simp [boundary]]
   refine ⟨fun h f hf => ?_, fun h f hinf hlen => h f (List.mem_kFactors.mpr ⟨hinf, hlen⟩)⟩
