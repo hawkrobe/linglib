@@ -288,9 +288,9 @@ theorem lds_agrees_with_fragment_subj :
     bleeds Condition C, regardless of the binder's height. -/
 theorem lds_cp_edge_irrelevant :
     wlmForcesReconstruction
-      (successiveCyclicChain [⟨.C, 4, false⟩]) (binderHeight .io) = true ∧
+      (successiveCyclicChain [{ height := 4, admissible := false, phaseCat := .C }]) (binderHeight .io) = true ∧
     wlmForcesReconstruction
-      (successiveCyclicChain [⟨.C, 4, false⟩]) (binderHeight .subject) = true := by
+      (successiveCyclicChain [{ height := 4, admissible := false, phaseCat := .C }]) (binderHeight .subject) = true := by
   exact ⟨lds_cp_edge_alone_no_bleed 4 (binderHeight .io),
           lds_cp_edge_alone_no_bleed 4 (binderHeight .subject)⟩
 
