@@ -45,29 +45,21 @@ open Minimalist
 -- § 1. Degree-Clause Late-Merger Admissibility
 -- ════════════════════════════════════════════════════
 
-/-- A position on a movement chain that could host a degree clause.
-    `height` is structural position; `scopeOK` records whether merging
-    the degree clause at this position would yield a Heim-Kennedy-
-    compliant LF (i.e., DegP-scope is at or above any QP whose trace
-    it contains). -/
-structure DegreeChainPosition where
-  height : Nat
-  scopeOK : Bool
-  deriving DecidableEq, Repr
-
 /-- The B&P specialization of `lateMergerBleeds` for degree clauses:
     the degree clause can late-merge above a Condition-C-relevant
-    binder iff there is a *scope-licit* chain position above the
-    binder. -/
+    binder iff there is a *scope-licit* chain position above the binder.
+    Chain positions are the shared `ChainPosition`; here `admissible`
+    reads as "scope-licit" (Heim-Kennedy-compliant DegP scope) rather
+    than "case-available". -/
 def degreeClauseLateMergerBleeds
-    (chain : List DegreeChainPosition) (binderHeight : Nat) : Bool :=
-  lateMergerBleeds (·.scopeOK) DegreeChainPosition.height chain binderHeight
+    (chain : List ChainPosition) (binderHeight : Nat) : Bool :=
+  lateMergerBleeds (·.admissible) ChainPosition.height chain binderHeight
 
 /-- A scope-licit position above the binder bleeds Condition C for
     degree-clause late merger. Specialization of
     `admissible_above_binder_bleeds`. -/
 theorem scopeOK_above_binder_bleeds
-    (chain : List DegreeChainPosition) (binderHeight h : Nat)
+    (chain : List ChainPosition) (binderHeight h : Nat)
     (hgt : h > binderHeight) :
     degreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight = true :=
   admissible_above_binder_bleeds _ _ chain ⟨h, true⟩ binderHeight rfl hgt
@@ -75,8 +67,8 @@ theorem scopeOK_above_binder_bleeds
 /-- If no chain position is scope-licit, the degree clause is forced to
     reconstruct. Specialization of `no_admissible_no_bleed`. -/
 theorem no_scopeOK_forces_reconstruction
-    (chain : List DegreeChainPosition) (binderHeight : Nat)
-    (h : ∀ p ∈ chain, p.scopeOK = false) :
+    (chain : List ChainPosition) (binderHeight : Nat)
+    (h : ∀ p ∈ chain, p.admissible = false) :
     degreeClauseLateMergerBleeds chain binderHeight = false :=
   no_admissible_no_bleed _ _ chain binderHeight h
 
