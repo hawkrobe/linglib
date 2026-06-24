@@ -30,9 +30,9 @@ verified by `decide`.
 **Eight of the fourteen attested orders are derived explicitly here** (the
 bare-NP-raising series a–d and the pied-piping cases n, o, t, x), demonstrating
 the mechanism end-to-end on the substrate. The full enumeration of the legal
-derivation space (to prove the **remaining** attested orders derivable *and the
-10 unattested ones underivable*), and the markedness-tracks-frequency result, are
-flagged TODOs below — they require generating the complete bounded movement space.
+derivation space proves **reachable = exactly the 14 attested** (so the 10
+unattested are underivable: `u20_reachable_iff_attested`). The
+markedness-tracks-frequency result ([cinque-2005] (7b)) is the final section.
 
 ## Encoding note
 
@@ -247,13 +247,57 @@ theorem reachable_eq_attested :
     reachableOrders.all (· ∈ attestedOrders) ∧ attestedOrders.all (· ∈ reachableOrders) := by
   decide
 
+/-! ### Markedness tracks frequency ([cinque-2005] (7b), (6))
+
+Each derivable order has a count of **marked options** in its cheapest derivation.
+Cinque's (7b) ranks the movement parameters: *no movement*, *whose-picture*
+pied-piping, and *total* movement are **unmarked**; *partial* movement,
+movement *without pied-piping*, and *picture-of-who* pied-piping are **marked**.
+The counts below are transcribed from the per-order analysis (6a–6x). Cinque's
+claim is that markedness **tracks** frequency — cleanly at the extremes (zero
+marked options ⇒ most frequent; two ⇒ rarest), with a mixed one-marked-option
+middle (the residual exceptions Universal 20 leaves; cf. the per-order footnotes). -/
+
+/-- The number of marked movement options ([cinque-2005] (7b)) in the cheapest
+    derivation of each **attested** order, transcribed from the per-order analysis
+    (6a–6x); `none` for the 10 unattested orders (no derivation). (6p) is the
+    paper's "especially marked"/possibly-spurious case (fn 27), encoded as 2. -/
+def markedOptions : List Cat → Option Nat
+  | [.D, .Num, .A, .N] => some 0   -- (6a) no marked option
+  | [.D, .Num, .N, .A] => some 0   -- (6b) unmarked (vacuous whose-picture) deriv
+  | [.D, .N, .Num, .A] => some 2   -- (6c) partial + without-pied-piping
+  | [.N, .D, .Num, .A] => some 1   -- (6d) without-pied-piping (total)
+  | [.A, .N, .D, .Num] => some 2   -- (6k) picture-of-who + without-pied-piping
+  | [.N, .A, .D, .Num] => some 1   -- (6l) without-pied-piping past Dem
+  | [.D, .A, .N, .Num] => some 2   -- (6n) partial + picture-of-who
+  | [.D, .N, .A, .Num] => some 1   -- (6o) partial
+  | [.N, .D, .A, .Num] => some 2   -- (6p) especially marked (fn 27)
+  | [.Num, .A, .N, .D] => some 2   -- (6r) partial + picture-of-who
+  | [.Num, .N, .A, .D] => some 2   -- (6s) partial + picture-of-who (fn 32)
+  | [.N, .Num, .A, .D] => some 1   -- (6t) without-pied-piping (partial)
+  | [.A, .N, .Num, .D] => some 1   -- (6w) picture-of-who
+  | [.N, .A, .Num, .D] => some 0   -- (6x) successive whose-picture (roll-up)
+  | _ => none
+
+/-- Markedness is defined exactly on the derivable orders: every attested order
+    has a marked-option count, every unattested order has none. -/
+theorem markedOptions_isSome_iff_attested :
+    table.all (fun r => (markedOptions r.order).isSome = r.attested) := by decide
+
+/-- **Markedness predicts frequency at the extremes** ([cinque-2005] (6)–(7)):
+    the most frequent orders (very many) are derivable with **no** marked option,
+    and any order needing **two** marked options is rare (few / very few). The
+    one-marked-option middle is mixed — Universal 20's residual exceptions. -/
+theorem markedness_extremes :
+    (table.filter (·.attested)).all (fun r =>
+      (r.freq = .veryMany → markedOptions r.order = some 0) ∧
+      (markedOptions r.order = some 2 → r.freq = .few ∨ r.freq = .veryFew)) := by
+  decide
+
 /-! ### TODO (follow-up)
 
-- **Markedness ⇒ frequency**: encode the paper's markedness ordering (whose-picture
-  < bare < picture-of-who; total < partial) and show cheapest-derivation cost is
-  monotone in the `Freq` bucket.
-- A `Cat.Dem` constructor (replacing the `.D` stand-in) once its extended-projection
-  F-level / ±V±N features are settled.
--/
+A `Cat.Dem` constructor (replacing the `.D` stand-in) once its
+extended-projection F-level / ±V±N features are settled — a substrate refinement
+orthogonal to the combinatorial and markedness results above. -/
 
 end Cinque2005
