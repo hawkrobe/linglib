@@ -322,6 +322,7 @@ import Linglib.Core.Computability.Subregular.Language.StrictlyLocalStarFree
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocalStarFree
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
+import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewiseStarFree
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.Definite
 import Linglib.Core.Computability.Subregular.Language.Multitier
