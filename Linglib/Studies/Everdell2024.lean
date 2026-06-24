@@ -751,7 +751,7 @@ def odam_appl : Pylkkanen2008.LangApplProfile :=
 
 /-- O'dam patterns as high by the cluster classifier. -/
 theorem odam_diagnostics_predict_high :
-    Minimalist.classifyByDiagnostics odam_appl.diagnostics = some .high := by decide
+    Pylkkanen2008.classifyByDiagnostics odam_appl.diagnostics = some .high := by decide
 
 /-- But O'dam also performs promotion (a low-like function). The
     dissertation shows this dual behavior is NOT ambiguity — the

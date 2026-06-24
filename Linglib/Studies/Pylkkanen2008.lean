@@ -1,8 +1,7 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Applicative
-import Linglib.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Syntax.Minimalist.Voice
-import Linglib.Syntax.Minimalist.VoiceProjection
+import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Data.WALS.Features.F109A
@@ -52,7 +51,7 @@ Test 3 is *conditional* on the language having depictive secondary
 predicates with the English distribution. Korean lacks them entirely,
 and Venda/Albanian have too-broad depictives — in those languages
 Test 3 is *inapplicable*, not "fails." See `ApplDiagnosticResult`
-in `Syntax/Minimalism/ApplicativeDiagnostics.lean`.
+in the "Applicative diagnostics" section below.
 
 ## Cross-references
 
@@ -66,6 +65,284 @@ in `Syntax/Minimalism/ApplicativeDiagnostics.lean`.
 namespace Pylkkanen2008
 
 open Minimalist
+
+/-! ### Voice projection (relocated from Minimalist/VoiceProjection.lean)
+
+# What is Voice? Two competing views
+[kratzer-1996] [pylkkanen-2008] [collins-2005] [storment-2026]
+
+A formalizer-side meta-bridge surfacing a substantive theoretical
+disagreement neither paper sets up directly: what is the *job* of the
+syntactic head called Voice?
+
+## The two views
+
+**Pylkkänen / Kratzer view** ([kratzer-1996], [pylkkanen-2008]):
+Voice is the head that *introduces the external argument*. Its job is
+thematic — it bears a θ-relation between the external argument and the
+event described by the verb (Event Identification, [kratzer-1996]
+eq. 10). All argument-structure theory follows from where Voice projects
+and what it bundles with (Cause-Voice bundling, [pylkkanen-2008]
+Ch. 3 §3.3). Without Voice, no external argument is introduced at all.
+
+**Collins / Storment view** ([collins-2005], [storment-2026]):
+Voice is the *smuggling projection*. Its job is structural — it provides
+the landing site (Spec,VoiceP) into which a constituent can move,
+licensing A-movement past an in-situ external argument. The external
+argument itself is introduced by *v*, not Voice
+([storment-2026] §4.3). Voice's status as a non-phase head is what
+permits smuggling. The voice-as-smuggling-projection conception is "a
+notable departure from the view of Voice⁰ as an applicative head that
+introduces the external argument" ([storment-2026], §4.3).
+
+## The disagreement is partly substantive, partly terminological
+
+The two camps do not disagree about *the empirical phenomena*. They
+disagree about *which functional head does which job*. Pylkkänen
+attributes external-argument introduction to Voice and structural
+licensing to higher functional projections (`T⁰`, `Infl`). Collins
+attributes external-argument introduction to *v* and structural
+licensing (Case + smuggling) to Voice. The label "Voice" denotes
+different positions in the two systems.
+
+The orthogonality of the two predicates `IsExternalArgIntroducer` and
+`IsSmugglingProjection` (defined below) reflects this: a `VoiceHead`
+instance can satisfy one, both, or neither. Linglib's `VoiceHead`
+structure encodes both axes (`assignsTheta` and `permitsSmuggling`)
+independently, accommodating both views simultaneously.
+
+## Where this meta-bridge sits
+
+Per the CLAUDE.md cross-theory-meta-bridges convention, this is a
+formalizer-side synthesis (neither Pylkkänen nor Collins/Storment
+formulates the contrast in these exact terms). Both views are pure-theory
+positions about a syntactic head, with no specific empirical phenomenon
+at stake.
+-/
+
+/-! #### Two predicates over Voice heads
+
+The Pylkkänen view and the Collins/Storment view make different claims
+about what makes a Voice head "well-formed Voice." -/
+
+/-- **Pylkkänen / Kratzer view**: a Voice head is "doing its job" iff
+    it introduces an external argument (assigns external θ).
+    [kratzer-1996]: Voice = the head bearing the θ-relation. -/
+def IsExternalArgIntroducer (v : VoiceHead) : Prop :=
+  v.AssignsTheta
+
+instance (v : VoiceHead) : Decidable (IsExternalArgIntroducer v) := by
+  unfold IsExternalArgIntroducer; infer_instance
+
+/-- **Collins / Storment view**: a Voice head is "doing its job" iff
+    it permits smuggling (it is the structural landing site for a
+    constituent moving past an in-situ external argument).
+    [collins-2005], [storment-2026]. -/
+def IsSmugglingProjection (v : VoiceHead) : Prop :=
+  v.permitsSmuggling = true
+
+instance (v : VoiceHead) : Decidable (IsSmugglingProjection v) := by
+  unfold IsSmugglingProjection; infer_instance
+
+/-! #### The two views are orthogonal
+
+Linglib's `VoiceHead` already encodes both axes. The question is
+whether they coincide for the canonical Voice instances.
+**Answer: they don't.** A Voice head can satisfy either one, both, or
+neither — the four corners of the orthogonality square. -/
+
+/-- `voiceAgent` satisfies the Pylkkänen view (it introduces the agent
+    external argument) but **fails** the Collins/Storment view
+    (agentive Voice is a strong phase head; smuggling is blocked). -/
+theorem voiceAgent_pylkkanen_yes_collins_no :
+    IsExternalArgIntroducer voiceAgent ∧ ¬ IsSmugglingProjection voiceAgent := by
+  decide
+
+/-- `voicePassive` satisfies the Collins view (it is the smuggling
+    landing site) but **fails** the Pylkkänen view (it does not
+    introduce an external argument — the external arg is in Spec,vP
+    per [collins-2005] §2 UTAH). The passive Voice head is
+    *puzzling* on Pylkkänen's view: a Voice head with no θ-role to
+    assign. -/
+theorem voicePassive_collins_yes_pylkkanen_no :
+    IsSmugglingProjection voicePassive ∧ ¬ IsExternalArgIntroducer voicePassive := by
+  decide
+
+/-- `voiceAnticausative` similarly fits the Collins view (smuggling
+    target for the unaccusative-like derivation Storment uses for QI
+    and LI) and fails the Pylkkänen view (no external argument). -/
+theorem voiceAnticausative_collins_yes_pylkkanen_no :
+    IsSmugglingProjection voiceAnticausative ∧
+    ¬ IsExternalArgIntroducer voiceAnticausative := by
+  decide
+
+/-- The two views are not equivalent: there exist Voice heads
+    distinguishing them (in fact, the canonical instances above all do). -/
+theorem views_not_equivalent :
+    ¬ (∀ v : VoiceHead, IsExternalArgIntroducer v ↔ IsSmugglingProjection v) := by
+  intro h
+  -- voiceAgent introduces external arg but blocks smuggling
+  have hExt : IsExternalArgIntroducer voiceAgent := by decide
+  have hSmug : IsSmugglingProjection voiceAgent := (h voiceAgent).mp hExt
+  exact absurd hSmug (by decide)
+
+/-! #### What the disagreement amounts to
+
+In Pylkkänen's framework, every Voice head should be an
+`IsExternalArgIntroducer`. The fact that linglib's `voicePassive` and
+`voiceAnticausative` are not means *Pylkkänen would not call these
+"Voice"* — she would attribute the structural-licensing function to a
+different (perhaps unnamed) head.
+
+In Collins/Storment's framework, every Voice head should be an
+`IsSmugglingProjection`. The fact that linglib's `voiceAgent` is not
+means *Collins/Storment would not call this "Voice"* — they would call
+it *v* (which `voiceAgent`'s thematic role and phase status more
+closely match in their system).
+
+The disagreement is therefore partly *labeling*: which functional head
+gets the name "Voice." But it is also partly *substantive*: whether the
+same syntactic position can simultaneously introduce an external
+argument *and* serve as a smuggling target. Pylkkänen's framework
+requires Voice to do (a); Collins/Storment's framework requires Voice
+to do (b); and the two functions are made structurally incompatible by
+the phase/θ-role correlations Storment defends in §4 of his paper. -/
+
+/-- The substantive incompatibility: a Voice head cannot simultaneously
+    satisfy both views. (Equivalently: introducing an external argument
+    requires being a phase head, which blocks smuggling.) -/
+theorem views_jointly_unsatisfiable_for_canonical_voices :
+    ¬ (IsExternalArgIntroducer voiceAgent ∧ IsSmugglingProjection voiceAgent) ∧
+    ¬ (IsExternalArgIntroducer voicePassive ∧ IsSmugglingProjection voicePassive) ∧
+    ¬ (IsExternalArgIntroducer voiceAnticausative ∧ IsSmugglingProjection voiceAnticausative) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-! ### Applicative diagnostics (relocated from Minimalist/ApplicativeDiagnostics.lean)
+
+# Applicative diagnostics
+[pylkkanen-2008]
+
+Cluster-based diagnostic classifier for the high/low applicative
+distinction ([pylkkanen-2008], Table 2.1). Three diagnostics:
+
+1. Can unergative verbs be applicativized? (Ch. 2 §2.1.2)
+2. Can static verbs be applicativized? (Ch. 2 §2.1.2)
+3. *If the language has English-style depictive secondary predicates*,
+   is the applied argument available for depictive modification?
+   (Ch. 2 §2.1.3)
+
+## Cluster-based classification
+
+A high applicative passes *all* tests; a low applicative fails *all*
+tests. Test 3 is conditional — when a language lacks English-style
+depictives (e.g., Korean) or has too-broad depictives (Venda, Albanian),
+the test is *inapplicable* (`.inapplicable`), not "fails." The
+classifier ignores inapplicable tests and classifies on the cluster of
+applicable ones.
+
+This is stricter than an OR-based classifier (which would misclassify
+a language passing one test by accident). Languages that don't pattern
+cleanly with either cluster yield `none`, requiring further
+investigation rather than a forced classification.
+-/
+
+/-- The result of running a single Pylkkänen diagnostic on a language. -/
+inductive ApplDiagnosticResult where
+  /-- The diagnostic is applicable and the language passes
+      (the construction in question is grammatical). -/
+  | passes
+  /-- The diagnostic is applicable and the language fails
+      (the construction is ungrammatical). -/
+  | fails
+  /-- The diagnostic is *inapplicable* in this language — e.g., Korean
+      lacks English-style depictives entirely, so Test 3 cannot be run.
+      Distinct from `.fails`: an inapplicable test contributes no
+      classification evidence. -/
+  | inapplicable
+  deriving DecidableEq, Repr
+
+/-- A bundle of Pylkkänen Table 2.1's three diagnostic results for a
+    given language. Test 3's `inapplicable` value handles the
+    language-conditional cases (Korean lacks depictives; Venda and
+    Albanian have too-broad depictives to test). -/
+structure ApplDiagnosticBundle where
+  /-- Test 1: can unergative verbs be applicativized? -/
+  unergative : ApplDiagnosticResult
+  /-- Test 2: can static verbs be applicativized? -/
+  staticVerb : ApplDiagnosticResult
+  /-- Test 3: depictive modification of applied argument
+      (conditional on language having English-style depictives). -/
+  depictive : ApplDiagnosticResult
+  deriving Repr
+
+/-- The list of diagnostic results in a bundle, for cluster checks. -/
+def ApplDiagnosticBundle.results (b : ApplDiagnosticBundle) : List ApplDiagnosticResult :=
+  [b.unergative, b.staticVerb, b.depictive]
+
+/-- The applicable (non-`.inapplicable`) results in a bundle. -/
+def ApplDiagnosticBundle.applicableResults (b : ApplDiagnosticBundle) :
+    List ApplDiagnosticResult :=
+  b.results.filter (· ≠ .inapplicable)
+
+/-- Cluster-based classification ([pylkkanen-2008], Table 2.1):
+    a language has *high* applicatives iff every applicable diagnostic
+    passes; *low* iff every applicable diagnostic fails; otherwise the
+    pattern is mixed and the classifier returns `none`, requiring
+    further investigation rather than forcing a classification.
+
+    Note: this returns `Option ApplType` collapsed to `.high` or
+    `.lowRecipient` — distinguishing recipient from source low
+    applicatives requires *additional* diagnostics (transfer
+    directionality, §2.2 + §2.3) not in Table 2.1. -/
+def classifyByDiagnostics (b : ApplDiagnosticBundle) : Option ApplType :=
+  let applicable := b.applicableResults
+  if applicable.isEmpty then none
+  else if applicable.all (· = .passes) then some .high
+  else if applicable.all (· = .fails) then some .lowRecipient
+  else none
+
+/-! #### Soundness theorems
+
+The classifier returns `.high` only on all-pass bundles, `.lowRecipient`
+only on all-fail bundles. Mixed bundles and empty/all-inapplicable
+bundles yield `none`. Soundness is checked structurally on the four
+canonical bundle shapes below. -/
+
+/-- A bundle with all three results `.passes` classifies as high. -/
+theorem all_pass_classifies_high :
+    classifyByDiagnostics
+      { unergative := .passes, staticVerb := .passes, depictive := .passes } =
+        some .high := by decide
+
+/-- A bundle with all three results `.fails` classifies as low. -/
+theorem all_fail_classifies_low :
+    classifyByDiagnostics
+      { unergative := .fails, staticVerb := .fails, depictive := .fails } =
+        some .lowRecipient := by decide
+
+/-- A bundle with mixed results does not classify. -/
+theorem mixed_does_not_classify :
+    classifyByDiagnostics
+      { unergative := .passes, staticVerb := .fails, depictive := .fails } = none := by decide
+
+/-- An all-inapplicable bundle does not classify. -/
+theorem all_inapplicable_does_not_classify :
+    classifyByDiagnostics
+      { unergative := .inapplicable, staticVerb := .inapplicable, depictive := .inapplicable } =
+        none := by decide
+
+/-- Inapplicable tests are excluded from the cluster: a bundle with
+    one `.inapplicable` and two `.passes` still classifies as high. -/
+theorem inapplicable_excluded :
+    classifyByDiagnostics
+      { unergative := .passes, staticVerb := .passes, depictive := .inapplicable } =
+        some .high := by decide
+
+/-- Inapplicable + all-fails still classifies as low. -/
+theorem inapplicable_with_fails_classifies_low :
+    classifyByDiagnostics
+      { unergative := .fails, staticVerb := .fails, depictive := .inapplicable } =
+        some .lowRecipient := by decide
 
 -- ============================================================================
 -- § 1: Lexical Items
@@ -185,13 +462,13 @@ theorem benefactive_uses_high :
 /-! [pylkkanen-2008] tests the high/low distinction in six languages
 using three diagnostics (Table 2.1, p. 33). The diagnostics cluster
 into two groups, confirming the typological split. The classifier
-`Minimalist.classifyByDiagnostics` derives the high/low classification
+`classifyByDiagnostics` derives the high/low classification
 from the diagnostic results; we verify that for each language, the
 classifier output matches Pylkkänen's annotated classification. -/
 
 /-- A language's diagnostic profile and Pylkkänen's annotated
     classification. The diagnostic results live in
-    `Minimalist.ApplDiagnosticBundle`; `classification` records
+    `ApplDiagnosticBundle`; `classification` records
     Pylkkänen's analytical conclusion. -/
 structure LangApplProfile where
   language : String
@@ -375,17 +652,18 @@ the verb itself but by a separate Voice head, following
 the event described by the verb.
 
 This is one of the two competing views of Voice surveyed in
-`Syntax/Minimalism/VoiceProjection.lean`. The other view,
+the "Voice projection" section above. The other view,
 defended by [collins-2005] and [storment-2026], treats Voice
 as a *structural* head (the smuggling projection) and assigns
 external-argument introduction to *v* instead. The two views are
-orthogonal — see `VoiceProjection.lean` for the substantive contrast. -/
+orthogonal — see the "Voice projection" section for the substantive
+contrast. -/
 
 /-- Pylkkänen's view applied to the canonical agentive Voice: it
     satisfies `IsExternalArgIntroducer` (it does the job Pylkkänen
     attributes to Voice). -/
 theorem voice_introduces_external_arg_pylkkanen :
-    Minimalist.IsExternalArgIntroducer Minimalist.voiceAgent := by decide
+    IsExternalArgIntroducer Minimalist.voiceAgent := by decide
 
 /-! ## §8. Voice-bundling for the English zero-causative
     ([pylkkanen-2008] Ch. 3 §3.3; -- UNVERIFIED: eq. number)
@@ -756,8 +1034,8 @@ theorem luganda_phase_predictions :
 
 /-! ## §14. Broader Voice taxonomy under Pylkkänen's view
 
-Pylkkänen's Voice = external-argument introducer. Per
-`Syntax/Minimalism/VoiceProjection.lean`, this is one of two
+Pylkkänen's Voice = external-argument introducer. Per the "Voice
+projection" section above, this is one of two
 competing views of Voice (the other being Collins/Storment's smuggling
 projection). Test Pylkkänen's view against the broader `VoiceHead`
 taxonomy in `Syntax/Minimalism/Voice.lean`: which Voice flavors
@@ -772,14 +1050,14 @@ taxonomy in `Syntax/Minimalism/Voice.lean`: which Voice flavors
     Voice taxonomy but lacks a canonical `voiceAntipassive` constant
     in `Voice.lean`.) -/
 theorem pylkkanen_view_partitions_voice_flavors :
-    Minimalist.IsExternalArgIntroducer Minimalist.voiceAgent ∧
-    Minimalist.IsExternalArgIntroducer Minimalist.voiceCauser ∧
-    Minimalist.IsExternalArgIntroducer Minimalist.voiceReflexive ∧
-    Minimalist.IsExternalArgIntroducer Minimalist.voiceExperiencer ∧
-    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceMiddle ∧
-    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceImpersonal ∧
-    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceAnticausative ∧
-    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voicePassive := by
+    IsExternalArgIntroducer Minimalist.voiceAgent ∧
+    IsExternalArgIntroducer Minimalist.voiceCauser ∧
+    IsExternalArgIntroducer Minimalist.voiceReflexive ∧
+    IsExternalArgIntroducer Minimalist.voiceExperiencer ∧
+    ¬ IsExternalArgIntroducer Minimalist.voiceMiddle ∧
+    ¬ IsExternalArgIntroducer Minimalist.voiceImpersonal ∧
+    ¬ IsExternalArgIntroducer Minimalist.voiceAnticausative ∧
+    ¬ IsExternalArgIntroducer Minimalist.voicePassive := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §15. Transitivity restriction grounded in EntailmentProfile
