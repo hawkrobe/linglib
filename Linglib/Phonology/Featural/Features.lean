@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Phonology.Featural.Bundle
 
 /-!
 # Phonological Features
@@ -144,10 +145,10 @@ instance : DecidablePred Feature.IsDorsal := fun f => by
 -- § 3: Segment Representation
 -- ============================================================================
 
-/-- A segment represented as a (partial) specification of features.
-    Unspecified features return `none`. -/
+/-- A segment: a `FeatureBundle Feature Bool` — a partial binary-feature
+    specification (`none` = unspecified). -/
 structure Segment where
-  spec : Feature → FeatureVal
+  spec : FeatureBundle Feature Bool
 
 /-- Is feature `f` specified (either [+F] or [−F])? -/
 def Segment.Specified (s : Segment) (f : Feature) : Prop :=
@@ -186,11 +187,6 @@ theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
 -- ============================================================================
 -- § 5: Segment Equality
 -- ============================================================================
-
-/-- Segment equality by checking all 26 features.
-    Two segments are BEq-equal iff they agree on every feature value. -/
-instance : BEq Segment where
-  beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
 
 /-- Decidable equality on segments via exhaustive feature comparison.
     Enables `decide` on segment-level goals and OT tableaux
@@ -237,10 +233,8 @@ instance (s p : Segment) : Decidable (Segment.MatchesPattern s p) :=
     `change` override `s`'s values; unspecified features in `change` are
     preserved. Implements the SPE structural change `A → B` when `B` is a
     partial feature bundle. -/
-def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
-  spec f := match change.spec f with
-    | some v => some v
-    | none => s.spec f
+def Segment.applyChanges (s change : Segment) : Segment :=
+  ⟨FeatureBundle.merge change.spec s.spec⟩
 
 /-- Two segments are equal iff their `spec` functions agree on every feature. -/
 @[ext] theorem Segment.ext {s t : Segment} (h : ∀ f, s.spec f = t.spec f) :
@@ -260,15 +254,13 @@ def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
 /-- Applying the empty change list is the identity. -/
 @[simp] theorem Segment.applyChanges_ofSpecs_nil (s : Segment) :
     s.applyChanges (Segment.ofSpecs []) = s := by
-  ext f
-  unfold Segment.applyChanges Segment.ofSpecs
-  rfl
+  ext f; simp [Segment.applyChanges, Segment.ofSpecs, FeatureBundle.merge]
 
 /-- Applying the same change twice equals applying it once. -/
 @[simp] theorem Segment.applyChanges_idem (s change : Segment) :
     (s.applyChanges change).applyChanges change = s.applyChanges change := by
   ext f
-  simp only [Segment.applyChanges]
+  simp only [Segment.applyChanges, FeatureBundle.merge]
   cases change.spec f <;> rfl
 
 end Phonology
