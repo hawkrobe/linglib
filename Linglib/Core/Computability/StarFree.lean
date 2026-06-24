@@ -113,4 +113,32 @@ theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFre
   rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
   exact (hL.compl.inter hM.compl).compl
 
+/-! ### Recognition by a finite aperiodic monoid -/
+
+/-- **A language recognized by a finite aperiodic monoid is star-free** — the algebraic
+characterization of star-free ([schutzenberger-1965]). When `η : FreeMonoid α →* M` with `M`
+finite and aperiodic and `L = η ⁻¹' P`, the syntactic congruence is coarser than `ker η`
+(`η`-equal words share every context), so `L.syntacticMonoid` is a quotient of a submonoid of
+`M` — hence finite and aperiodic. This is the engine for placing a constraint class inside
+`SF`: exhibit a finite aperiodic recognizer. -/
+theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
+    (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
+    (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
+  have hle : Con.ker η ≤ L.syntacticCon := by
+    rw [Con.le_def]
+    intro u v huv x y
+    rw [Con.ker_apply] at huv
+    rw [hL, hL, show η (FreeMonoid.ofList (x ++ u.toList ++ y))
+      = η (FreeMonoid.ofList (x ++ v.toList ++ y)) by
+        simp only [FreeMonoid.ofList_append, map_mul, FreeMonoid.ofList_toList, huv]]
+  have hker : Monoid.IsAperiodic (Con.ker η).Quotient :=
+    (hM.of_injective (MonoidHom.mrange η).subtype_injective).of_mulEquiv
+      (Con.quotientKerEquivRange η).symm
+  have hfin : Finite (Con.ker η).Quotient :=
+    Finite.of_equiv _ (Con.quotientKerEquivRange η).symm.toEquiv
+  have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) := fun y => by
+    obtain ⟨a, rfl⟩ := Con.mk'_surjective y; exact ⟨(Con.ker η).mk' a, rfl⟩
+  exact ⟨isRegular_of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
+    hker.of_surjective hsurj⟩
+
 end Language
