@@ -128,17 +128,14 @@ def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
 instance : DecidablePred IsSmallClausePredicate :=
   fun so => by unfold IsSmallClausePredicate; infer_instance
 
-/-- The "right daughter" of an SO under planar `Quot.out`. Phase 1.0
-    placeholder — Phase 2 will replace with an `HeadFunction`-aware
-    selection of the predicate-side daughter.
-
-    Retained as a noncomputable accessor for downstream code that
-    actively wants the planar choice. The `IsSmallClause` predicate
-    no longer routes through this — see below for the swap-respecting
-    Multiset reformulation. -/
-noncomputable def SyntacticObject.rightDaughter? (so : SyntacticObject) :
+/-- The "right daughter" of an SO: the **complement** side of the
+    selection-induced head-initial embedding (`selLinearize .initial`,
+    [marcolli-chomsky-berwick-2025] Lemma 1.13.5) — the head is the left
+    daughter, so the right daughter is its complement. Computable; supersedes
+    the arbitrary `Quot.out` planar choice. -/
+def SyntacticObject.rightDaughter? (so : SyntacticObject) :
     Option SyntacticObject :=
-  match so.out with
+  match selLinearize .initial so with
   | .of _ => none
   | .mul _ r => some (FreeCommMagma.mk r)
 

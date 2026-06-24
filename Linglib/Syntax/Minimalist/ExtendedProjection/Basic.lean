@@ -290,18 +290,14 @@ private def computeEPSpinePlanar :
       [((FreeCommMagma.mk (.mul a b) : SyntacticObject),
          (leftmostLeafPlanar (.mul a b)).item.outerCat)]
 
-/-- Compute the EP spine from a syntactic object by walking the
-    leftmost-leaf head chain (harmonic head-initial convention per
-    [marcolli-chomsky-berwick-2025] §1.13). Returns pairs of
-    (SO, Cat) from the deepest lexical head up to the root.
-
-    For a non-leftmost-headed analysis, replace the recursion's `a`
-    with the daughter whose head leaf is the selector (`selHead`), or
-    rewrite this helper to take a head-side convention. Noncomputable
-    only because it picks a planar representative via `Quot.out`. -/
-noncomputable def computeEPSpine (so : SyntacticObject) :
+/-- Compute the EP spine from a syntactic object by walking the head chain of
+    the **selection-induced** head-initial embedding (`selLinearize .initial`,
+    [marcolli-chomsky-berwick-2025] Lemma 1.13.5). Returns pairs of (SO, Cat)
+    from the deepest lexical head up to the root. Computable, selection-faithful;
+    supersedes the arbitrary `Quot.out` representative. -/
+def computeEPSpine (so : SyntacticObject) :
     List (SyntacticObject × Cat) :=
-  computeEPSpinePlanar so.out
+  computeEPSpinePlanar (selLinearize .initial so)
 
 /-- Build an ExtendedProjection from a syntactic object using the
     leftmost-leaf head chain. -/

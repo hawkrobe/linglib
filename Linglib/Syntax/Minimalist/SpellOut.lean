@@ -40,6 +40,7 @@ for the full admissibility conditions.
 
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Tree.Cat
 
 namespace Minimalist
@@ -64,21 +65,20 @@ private def toLFTreePlanar : FreeMagma (LIToken ⊕ Nat) → Tree Unit String
     - Binary nodes → `Tree.bin left right` (preserving structure)
 
     `Tree` is planar (`.bin a b ≠ .bin b a` in general); this transfer
-    therefore depends on a planar representative of the underlying
-    `FreeCommMagma`. Phase 1.0 placeholder via `Quot.out`; Phase 2 will
-    replace with LCA-derived linearization parameterized by head
-    directionality. -/
-noncomputable def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
-  toLFTreePlanar so.out
+    therefore depends on a planar representative. We use the **selection-induced**
+    head-initial embedding (`selLinearize .initial`,
+    [marcolli-chomsky-berwick-2025] Lemma 1.13.5) — computable, selection-faithful,
+    superseding the arbitrary `Quot.out` representative. -/
+def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
+  toLFTreePlanar (selLinearize .initial so)
 
-/-- The PF branch of Spell-Out: the leaf tokens of `so` in the
-    left-to-right order of a planar representative (harmonic head-initial).
-    Reads the order off a `Quot.out` representative — a Phase 1.0
-    placeholder, awaiting the selection-induced computable linearization
-    (MCB Lemma 1.13.5). For derivation-based PF that recovers movement
-    order, use `Derivation.surfaceTokens` instead. -/
-noncomputable def SyntacticObject.toPF (so : SyntacticObject) : List LIToken :=
-  linearizePlanar so.out
+/-- The PF branch of Spell-Out: the leaf tokens of `so` in the left-to-right
+    order of the **selection-induced** head-initial embedding (`selLinearize
+    .initial`, [marcolli-chomsky-berwick-2025] Lemma 1.13.5) — computable,
+    selection-faithful. For derivation-based PF that recovers movement order,
+    use `Derivation.surfaceTokens` instead. -/
+def SyntacticObject.toPF (so : SyntacticObject) : List LIToken :=
+  linearizePlanar (selLinearize .initial so)
 
 /-! ## Structural preservation — Phase 2 TODO
 
