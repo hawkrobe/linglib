@@ -2155,6 +2155,7 @@ import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
+import Linglib.Syntax.Minimalist.Probe.Tree
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.NestedAgree
