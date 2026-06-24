@@ -135,4 +135,19 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
   exact ⟨isRegular_of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
     hker.of_surjective hsurj⟩
 
+/-- **Star-free languages are closed under inverse homomorphism.** If `L` over `β` is star-free
+and `φ : FreeMonoid α →* FreeMonoid β` is any monoid hom, then the preimage language
+`{w | φ w ∈ L}` over `α` is star-free. The recognizer is `L.toSyntacticMonoid.comp φ` into the
+finite aperiodic `L.syntacticMonoid`, with `P` the set of `L`-classes containing a word of `L`
+(saturation of `L` by its syntactic congruence). This is the engine for transferring a star-free
+upper bound across a string-rewriting projection (e.g. tier erasure: `TSL ⊆ SF`). -/
+theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
+    (φ : FreeMonoid α →* FreeMonoid β) :
+    Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
+  have : Finite L.syntacticMonoid := finite_syntacticMonoid h.1
+  refine IsStarFree.of_recognizes (M := L.syntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
+    {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
+  refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
+  exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+
 end Language
