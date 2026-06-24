@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.Selection
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 
 /-!
@@ -46,16 +47,17 @@ noncomputable def planarToNonplanar (side : ConventionDir) :
   | .mul l r       => Nonplanar.node (Sum.inl (headLeafPlanar side (.mul l r)))
                         {planarToNonplanar side l, planarToNonplanar side r}
 
-/-- Project a `SyntacticObject` directly to the bialgebra carrier
-    `Nonplanar (LIToken ⊕ Unit)`.
-
-    Since `SyntacticObject := FreeCommMagma (LIToken ⊕ Nat)`, this picks a
-    representative via `Quot.out` and projects under the head-initial
-    convention. Noncomputable; the parameterized `HeadFunction.toNonplanarWith`
-    takes an explicit section + side. -/
+/-- Project a `SyntacticObject` to the bialgebra carrier
+    `Nonplanar (LIToken ⊕ Unit)`, under the **selection-induced** head-initial
+    embedding `selLinearize .initial` (= `HeadFunction.leftSpine.toNonplanarWith`):
+    each internal node is labeled with the genuine **selector** head
+    ([marcolli-chomsky-berwick-2025] Lemma 1.13.5/1.13.7), not an arbitrary
+    `Quot.out` representative, so the orientation is canonical and `toNonplanar_mul`
+    holds. Noncomputable only because `Nonplanar.node` is a noncomputable smart
+    constructor. -/
 noncomputable def SyntacticObject.toNonplanar (so : SyntacticObject) :
     Nonplanar (LIToken ⊕ Unit) :=
-  planarToNonplanar .initial so.out
+  planarToNonplanar .initial (selLinearize .initial so)
 
 /-- Parameterized projection: `toNonplanar` under head function `h`, using
     `h.section_.σ` to pick the planar representative and `h.headSide` for
@@ -64,56 +66,18 @@ noncomputable def HeadFunction.toNonplanarWith (h : HeadFunction) (so : Syntacti
     Nonplanar (LIToken ⊕ Unit) :=
   planarToNonplanar h.headSide (h.section_.σ so)
 
-/-! ### Singleton-class simp lemmas
+/-! ### Reduction lemmas
 
-`toNonplanar_leaf` / `toNonplanar_trace` are recoverable as `simp` lemmas because
-leaf-only equivalence classes under `FreeMagma.CommRel` are singletons
-(no `swap` constructor fires on `.of _`). The proof routes through
-`Quot.out_eq` + `mk_eq_iff_commEqv` + the singleton structure of `.of`.
-
-`toNonplanar_mul` does NOT recover at this level: `(l * r).out` may pick
-either `mul l.out r.out` or `mul r.out l.out`, and `Nonplanar.node`'s
-head label depends on which planar representative is chosen. The
-`HeadFunction`-parameterized `toNonplanarWith` canonicalizes the orientation. -/
+With the selection-induced section, leaves/traces reduce **definitionally**
+(`selLinearize .initial` of a singleton class is that singleton), and
+`toNonplanar_mul` (below) now holds — the orientation is canonical, not a
+`Quot.out` artifact. -/
 
 @[simp] theorem SyntacticObject.toNonplanar_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).toNonplanar = Nonplanar.leaf (Sum.inl tok) := by
-  show planarToNonplanar .initial (SyntacticObject.leaf tok).out = _
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.leaf tok).out with
-  | .of x =>
-    rw [h] at hmk
-    show planarToNonplanar .initial (.of x) = _
-    cases x with
-    | inl t =>
-      simp only [planarToNonplanar]
-      exact congrArg (fun tk => Nonplanar.leaf (Sum.inl tk))
-        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
+    (SyntacticObject.leaf tok).toNonplanar = Nonplanar.leaf (Sum.inl tok) := rfl
 
 @[simp] theorem SyntacticObject.toNonplanar_trace (n : Nat) :
-    (SyntacticObject.trace n).toNonplanar = Nonplanar.leaf (Sum.inr ()) := by
-  show planarToNonplanar .initial (SyntacticObject.trace n).out = _
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.trace n).out with
-  | .of x =>
-    rw [h] at hmk
-    show planarToNonplanar .initial (.of x) = _
-    cases x with
-    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
-    | inr m => simp only [planarToNonplanar]
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
+    (SyntacticObject.trace n).toNonplanar = Nonplanar.leaf (Sum.inr ()) := rfl
 
 /-! ### Singleton-class simp lemmas for `toNonplanarWith` (parameterized)
 
