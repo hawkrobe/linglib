@@ -152,12 +152,13 @@ structure Phase where
 -- Part 4: Phase Impenetrability Condition
 -- ============================================================================
 
-/-- The phase complement is the right daughter of the phase node, picked
-    via the planar `Quot.out` representative. Phase 1.0 noncomputable
-    placeholder; the parameterized version `phaseComplementWith?` below
-    takes a `HeadFunction` for explicit externalize choice. -/
-noncomputable def phaseComplement? : SyntacticObject → Option SyntacticObject :=
-  fun so => match so.out with
+/-- The phase complement is the right daughter of the phase node under the
+    **selection-induced** head-initial embedding (`selLinearize .initial`,
+    [marcolli-chomsky-berwick-2025] Lemma 1.13.5): the phase head is the left
+    daughter, its complement the right. Computable; supersedes the arbitrary
+    `Quot.out` choice. `phaseComplementWith?` below takes an explicit head fn. -/
+def phaseComplement? : SyntacticObject → Option SyntacticObject :=
+  fun so => match selLinearize .initial so with
     | .of _ => none
     | .mul _ r => some (FreeCommMagma.mk r)
 

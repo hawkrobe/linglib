@@ -146,29 +146,21 @@ open Minimalist
     (the D lexical item) and `b` is the complement. PIC freezes the
     complement domain, not the head/edge.
 
-    **Phase 1.0 status.** The proof previously used `exact hcontains`
-    because under the planar `TraceTree` carrier `phaseComplement?`
-    reduced definitionally on `.node (leaf _) b` to `some b`. With the
-    nonplanar `FreeCommMagma` carrier, `phaseComplement?` picks the
-    right daughter of the `Quot.out` representative — which may be
-    either child after the swap quotient. The theorem statement
-    presupposes a planar choice that the substrate cannot make.
-
-    **Phase 2 plan.** Replace `phaseComplement?` with a head-function-
-    parameterized variant that picks the *complement* (the non-head
-    daughter) rather than "the right daughter of an arbitrary
-    representative." Once that lands, `dp_phase_barrier_from_pic` can
-    be re-proved by a head-function argument: if `tok` is the head,
-    the complement is `b`, so PIC freezes `b`'s contents. -/
+    **Status.** `phaseComplement?` is now the **selection-induced** complement
+    (right daughter of `selLinearize .initial`, [marcolli-chomsky-berwick-2025]
+    Lemma 1.13.5): when `tok` is the projecting head it returns `some b`. The
+    remaining gap to discharge this is connecting the hypothesis
+    `isPhaseHeadOf .D (node (leaf tok) b)` to *`tok` is the selector* (i.e. `tok`
+    c-selects `b`, so `selSide` picks the left/head daughter) — at which point
+    `phaseComplement? (node (leaf tok) b) = some b` and PIC freezes `b`. -/
 theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
     (_h_phase : isPhaseHeadOf .D (.node (.leaf tok) b) = true) :
     ∀ (goal : SyntacticObject),
       contains b goal →
       phaseImpenetrable (.node (.leaf tok) b) goal := by
   intro goal _hcontains
-  -- TODO Phase 2: blocked on head-function-aware `phaseComplement?`;
-  -- current `Quot.out`-based version doesn't reduce on a specific
-  -- planar shape.
+  -- TODO: needs `tok` selects `b` (so `selSide` picks the head-left daughter and
+  -- `phaseComplement? (node (leaf tok) b) = some b`) from `isPhaseHeadOf .D`.
   sorry
 
 end PhaseBridge
