@@ -1334,6 +1334,7 @@ import Linglib.Studies.Veltman1996
 import Linglib.Studies.Moroney2021
 import Linglib.Studies.Jenks2018
 import Linglib.Studies.Jardine2016
+import Linglib.Studies.Jardine2019
 import Linglib.Studies.DongEtAl2026PMF
 import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Studies.Anderson2021
@@ -2738,6 +2739,8 @@ import Linglib.Phonology.Autosegmental.MultiGraph
 import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.Correspondence
+import Linglib.Phonology.Autosegmental.Realization
+import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Prosodic.Syllable
 import Linglib.Phonology.Prosodic.Foot
 import Linglib.Phonology.Prosodic.NaturalClass
