@@ -21,11 +21,19 @@ domain content; used by the subregular hierarchy and a candidate for
 
 * `List.mem_kFactors` — `f` is a `k`-factor of `xs` iff it is a length-`k` infix
   (the infix analog of `List.mem_sublistsLen`).
+* `List.take_append_take` — truncating the right operand of an append before taking
+  a length-`n` prefix is a no-op (a candidate for `Mathlib/Data/List/`).
 -/
 
 namespace List
 
 variable {α : Type*}
+
+/-- Truncating the right operand to length `n` before taking the length-`n` prefix of an
+append is a no-op: the prefix already ignores everything past position `n`. -/
+lemma take_append_take (n : ℕ) (X Y : List α) :
+    (X ++ Y.take n).take n = (X ++ Y).take n := by
+  rw [take_append, take_append, take_take, min_eq_left (by omega)]
 
 section KFactors
 
