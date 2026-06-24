@@ -94,6 +94,56 @@ original names for backward compatibility with this file's own proofs
 and consumers.
 -/
 
+namespace UD
+
+/-- The 14-case feature-type index for `MorphFeatures` — the signature
+of UD's Feats column treated as a fixed finite type family. -/
+inductive MorphFeatureType where
+  | number | gender | case_ | definite | degree | pronType
+  | reflex
+  | person | verbForm | tense | aspect | mood | voice | polarity
+  deriving DecidableEq, Repr, Fintype
+
+namespace MorphFeatureType
+
+/-- Per-slot value space. The reflex slot is privative (`Unit`); all
+other slots take their concrete UD enum. -/
+def Val : MorphFeatureType → Type
+  | .number   => Number
+  | .gender   => Gender
+  | .case_    => Case
+  | .definite => Definite
+  | .degree   => Degree
+  | .pronType => PronType
+  | .reflex   => Unit
+  | .person   => Person
+  | .verbForm => VerbForm
+  | .tense    => Tense
+  | .aspect   => Aspect
+  | .mood     => Mood
+  | .voice    => Voice
+  | .polarity => Polarity
+
+instance : ∀ t, DecidableEq (Val t)
+  | .number   => inferInstanceAs (DecidableEq Number)
+  | .gender   => inferInstanceAs (DecidableEq Gender)
+  | .case_    => inferInstanceAs (DecidableEq Case)
+  | .definite => inferInstanceAs (DecidableEq Definite)
+  | .degree   => inferInstanceAs (DecidableEq Degree)
+  | .pronType => inferInstanceAs (DecidableEq PronType)
+  | .reflex   => inferInstanceAs (DecidableEq Unit)
+  | .person   => inferInstanceAs (DecidableEq Person)
+  | .verbForm => inferInstanceAs (DecidableEq VerbForm)
+  | .tense    => inferInstanceAs (DecidableEq Tense)
+  | .aspect   => inferInstanceAs (DecidableEq Aspect)
+  | .mood     => inferInstanceAs (DecidableEq Mood)
+  | .voice    => inferInstanceAs (DecidableEq Voice)
+  | .polarity => inferInstanceAs (DecidableEq Polarity)
+
+end MorphFeatureType
+
+end UD
+
 namespace UD.MorphFeatures
 
 /-! ### Subsumption is a partial order with bottom -/
@@ -108,30 +158,110 @@ def Subsumes (f g : MorphFeatures) : Prop :=
   f.aspect.FlatLE g.aspect ∧ f.mood.FlatLE g.mood ∧ f.voice.FlatLE g.voice ∧
   f.polarity.FlatLE g.polarity
 
-private theorem bool_le_antisymm {x y : Bool}
-    (h1 : x = true → y = true) (h2 : y = true → x = true) : x = y := by
-  cases x <;> cases y <;> simp_all
+/-! ### `MorphFeatures` as a feature bundle, and the derived order
+
+`MorphFeatures` realizes `BundleLike` over the 14-case signature
+`MorphFeatureType` ([carpenter-1992]'s abstract feature structure): each
+slot projects to a `Flat` value, with the `reflex` flag normalized
+`false ↦ none`, `true ↦ some ()` (the privative `Unit` case). The
+valuation is injective, so `MorphFeatures` is `LawfulBundleLike`, and the
+subsumption order *is* the per-slot `Flat` order pulled back along `val`
+(`subsumes_iff_val_le`) — the `PartialOrder`/`OrderBot` laws derive from
+the bundle embedding rather than being proved field by field. -/
+
+/-- The valuation: project each slot as a `Flat` value, normalizing
+`reflex : Bool` to a privative `Flat Unit`. -/
+def val (f : MorphFeatures) :
+    (t : MorphFeatureType) → Flat (MorphFeatureType.Val t)
+  | .number   => f.number
+  | .gender   => f.gender
+  | .case_    => f.case_
+  | .definite => f.definite
+  | .degree   => f.degree
+  | .pronType => f.pronType
+  | .reflex   => if f.reflex then some () else none
+  | .person   => f.person
+  | .verbForm => f.verbForm
+  | .tense    => f.tense
+  | .aspect   => f.aspect
+  | .mood     => f.mood
+  | .voice    => f.voice
+  | .polarity => f.polarity
+
+instance : BundleLike MorphFeatures MorphFeatureType
+    (fun t => Flat (MorphFeatureType.Val t)) where
+  val := MorphFeatures.val
+
+private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
+    (h : (if b1 then some () else none) = (if b2 then some () else none)) :
+    b1 = b2 := by
+  cases b1 <;> cases b2 <;> simp_all
+
+/-- The valuation is injective: a `MorphFeatures` bundle is determined by
+its per-slot assignments (with `reflex` reconstructed from `Option Unit`). -/
+theorem val_injective : Function.Injective MorphFeatures.val := by
+  intro f g h
+  cases f; cases g
+  simp only [mk.injEq]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact congrFun h .number
+  · exact congrFun h .gender
+  · exact congrFun h .case_
+  · exact congrFun h .definite
+  · exact congrFun h .degree
+  · exact congrFun h .pronType
+  · exact reflex_eq_of_val_reflex_eq (congrFun h .reflex)
+  · exact congrFun h .person
+  · exact congrFun h .verbForm
+  · exact congrFun h .tense
+  · exact congrFun h .aspect
+  · exact congrFun h .mood
+  · exact congrFun h .voice
+  · exact congrFun h .polarity
+
+instance : LawfulBundleLike MorphFeatures :=
+  ⟨val_injective⟩
+
+private theorem reflex_val_le_iff {b1 b2 : Bool} :
+    Option.FlatLE (if b1 then some () else none) (if b2 then some () else none)
+      ↔ (b1 = true → b2 = true) := by
+  cases b1 <;> cases b2 <;> simp [Option.FlatLE]
+
+/-- Subsumption is exactly the bundle order: the field-wise 14-conjunct form
+coincides with the per-slot `Flat` order on the valuation `val`. -/
+theorem subsumes_iff_val_le (f g : MorphFeatures) : Subsumes f g ↔ val f ≤ val g := by
+  rw [Pi.le_def]
+  constructor
+  · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ t
+    cases t
+    · exact h1
+    · exact h2
+    · exact h3
+    · exact h4
+    · exact h5
+    · exact h6
+    · exact reflex_val_le_iff.mpr h7
+    · exact h8
+    · exact h9
+    · exact h10
+    · exact h11
+    · exact h12
+    · exact h13
+    · exact h14
+  · intro h
+    exact ⟨h .number, h .gender, h .case_, h .definite, h .degree, h .pronType,
+           reflex_val_le_iff.mp (h .reflex), h .person, h .verbForm, h .tense,
+           h .aspect, h .mood, h .voice, h .polarity⟩
 
 instance : PartialOrder MorphFeatures where
   le := Subsumes
-  le_refl f :=
-    ⟨.refl _, .refl _, .refl _, .refl _, .refl _, .refl _, id,
-     .refl _, .refl _, .refl _, .refl _, .refl _, .refl _, .refl _⟩
-  le_trans f g h hfg hgh := by
-    obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hfg
-    obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hgh
-    exact ⟨a1.trans b1, a2.trans b2, a3.trans b3, a4.trans b4, a5.trans b5,
-           a6.trans b6, fun hr => b7 (a7 hr), a8.trans b8, a9.trans b9,
-           a10.trans b10, a11.trans b11, a12.trans b12, a13.trans b13, a14.trans b14⟩
-  le_antisymm f g hfg hgf := by
-    obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hfg
-    obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hgf
-    cases f; cases g
-    simp only [mk.injEq]
-    exact ⟨a1.antisymm b1, a2.antisymm b2, a3.antisymm b3, a4.antisymm b4,
-           a5.antisymm b5, a6.antisymm b6, bool_le_antisymm a7 b7,
-           a8.antisymm b8, a9.antisymm b9, a10.antisymm b10, a11.antisymm b11,
-           a12.antisymm b12, a13.antisymm b13, a14.antisymm b14⟩
+  le_refl f := (subsumes_iff_val_le f f).mpr le_rfl
+  le_trans f g h hfg hgh :=
+    (subsumes_iff_val_le f h).mpr
+      (((subsumes_iff_val_le f g).mp hfg).trans ((subsumes_iff_val_le g h).mp hgh))
+  le_antisymm f g hfg hgf :=
+    val_injective (le_antisymm ((subsumes_iff_val_le f g).mp hfg)
+      ((subsumes_iff_val_le g f).mp hgf))
 
 instance (f g : MorphFeatures) : Decidable (Subsumes f g) := by
   unfold Subsumes; infer_instance
@@ -144,13 +274,8 @@ instance (f g : MorphFeatures) : Decidable (f ≤ g) :=
 other feature structures … they contain no information at all" (§3.2.2). -/
 instance : OrderBot MorphFeatures where
   bot := {}
-  bot_le f := show Subsumes {} f from
-    ⟨Option.FlatLE.none_le _, Option.FlatLE.none_le _, Option.FlatLE.none_le _,
-     Option.FlatLE.none_le _, Option.FlatLE.none_le _, Option.FlatLE.none_le _,
-     (fun h => nomatch h : ({} : MorphFeatures).reflex = true → f.reflex = true),
-     Option.FlatLE.none_le _, Option.FlatLE.none_le _, Option.FlatLE.none_le _,
-     Option.FlatLE.none_le _, Option.FlatLE.none_le _, Option.FlatLE.none_le _,
-     Option.FlatLE.none_le _⟩
+  bot_le f := (subsumes_iff_val_le {} f).mpr (by
+    intro t; cases t <;> exact Option.FlatLE.none_le _)
 
 /-! ### Compatibility is boundedness above; unification is the least upper bound -/
 
@@ -445,133 +570,3 @@ theorem unify_mono {f₁ f₂ g₁ g₂ u₂ : MorphFeatures} (hf : f₁ ≤ f�
   exact ⟨u₁, unify_eq_partialUnify _ _ ▸ hu₁, hle⟩
 
 end UD.MorphFeatures
-
-/-! ## `BundleLike` instance: `MorphFeatures` as a feature bundle
-
-`MorphFeatures` realizes the `BundleLike` interface ([carpenter-1992]'s
-abstract feature structure over a fixed signature): the 14-case index
-`MorphFeatureType` is the signature, and the value family
-`MorphFeatureType.Val` is per-slot. Each value space is itself a finite
-enum, so the slot order coincides with `Flat`. The reflex flag is
-normalized at the valuation: `false ↦ none`, `true ↦ some ()` — the
-privative `V t := Unit` case of [shieber-1986]'s atomic-feature
-fragment, matching the file docstring's intent ("`reflex = false`
-= feature absent").
-
-This makes `MorphFeatures` `LawfulBundleLike` (the valuation is
-injective on bundles), which means the
-`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances
-proved above can in principle be derived from the shared
-`Features.Bundle` stack via `Function.Injective.partialOrder` /
-`Injective.semilatticeInf` and friends. That derivation is left for a
-future PR; this file's hand-rolled stack stays in place to keep the
-existing API (`unify_isLUB`, `unify_comm`, `unify_assoc`, …) stable for
-its consumers. -/
-
-namespace UD
-
-/-- The 14-case feature-type index for `MorphFeatures` — the signature
-of UD's Feats column treated as a fixed finite type family. -/
-inductive MorphFeatureType where
-  | number | gender | case_ | definite | degree | pronType
-  | reflex
-  | person | verbForm | tense | aspect | mood | voice | polarity
-  deriving DecidableEq, Repr, Fintype
-
-namespace MorphFeatureType
-
-/-- Per-slot value space. The reflex slot is privative (`Unit`); all
-other slots take their concrete UD enum. -/
-def Val : MorphFeatureType → Type
-  | .number   => Number
-  | .gender   => Gender
-  | .case_    => Case
-  | .definite => Definite
-  | .degree   => Degree
-  | .pronType => PronType
-  | .reflex   => Unit
-  | .person   => Person
-  | .verbForm => VerbForm
-  | .tense    => Tense
-  | .aspect   => Aspect
-  | .mood     => Mood
-  | .voice    => Voice
-  | .polarity => Polarity
-
-instance : ∀ t, DecidableEq (Val t)
-  | .number   => inferInstanceAs (DecidableEq Number)
-  | .gender   => inferInstanceAs (DecidableEq Gender)
-  | .case_    => inferInstanceAs (DecidableEq Case)
-  | .definite => inferInstanceAs (DecidableEq Definite)
-  | .degree   => inferInstanceAs (DecidableEq Degree)
-  | .pronType => inferInstanceAs (DecidableEq PronType)
-  | .reflex   => inferInstanceAs (DecidableEq Unit)
-  | .person   => inferInstanceAs (DecidableEq Person)
-  | .verbForm => inferInstanceAs (DecidableEq VerbForm)
-  | .tense    => inferInstanceAs (DecidableEq Tense)
-  | .aspect   => inferInstanceAs (DecidableEq Aspect)
-  | .mood     => inferInstanceAs (DecidableEq Mood)
-  | .voice    => inferInstanceAs (DecidableEq Voice)
-  | .polarity => inferInstanceAs (DecidableEq Polarity)
-
-end MorphFeatureType
-
-namespace MorphFeatures
-
-/-- The valuation: project each slot as a `Flat` value, normalizing
-`reflex : Bool` to a privative `Flat Unit`. -/
-def val (f : MorphFeatures) :
-    (t : MorphFeatureType) → Flat (MorphFeatureType.Val t)
-  | .number   => f.number
-  | .gender   => f.gender
-  | .case_    => f.case_
-  | .definite => f.definite
-  | .degree   => f.degree
-  | .pronType => f.pronType
-  | .reflex   => if f.reflex then some () else none
-  | .person   => f.person
-  | .verbForm => f.verbForm
-  | .tense    => f.tense
-  | .aspect   => f.aspect
-  | .mood     => f.mood
-  | .voice    => f.voice
-  | .polarity => f.polarity
-
-instance : BundleLike MorphFeatures MorphFeatureType
-    (fun t => Flat (MorphFeatureType.Val t)) where
-  val := MorphFeatures.val
-
-private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
-    (h : (if b1 then some () else none) = (if b2 then some () else none)) :
-    b1 = b2 := by
-  cases b1 <;> cases b2 <;> simp_all
-
-/-- The valuation is injective: a `MorphFeatures` bundle is determined
-by its per-slot assignments (with `reflex` reconstructed from
-`Option Unit`). -/
-theorem val_injective : Function.Injective MorphFeatures.val := by
-  intro f g h
-  cases f; cases g
-  simp only [mk.injEq]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact congrFun h .number
-  · exact congrFun h .gender
-  · exact congrFun h .case_
-  · exact congrFun h .definite
-  · exact congrFun h .degree
-  · exact congrFun h .pronType
-  · exact reflex_eq_of_val_reflex_eq (congrFun h .reflex)
-  · exact congrFun h .person
-  · exact congrFun h .verbForm
-  · exact congrFun h .tense
-  · exact congrFun h .aspect
-  · exact congrFun h .mood
-  · exact congrFun h .voice
-  · exact congrFun h .polarity
-
-instance : LawfulBundleLike MorphFeatures :=
-  ⟨val_injective⟩
-
-end MorphFeatures
-
-end UD
