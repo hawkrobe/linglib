@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Featural.Bundle
+import Linglib.Phonology.Features
+import Linglib.Phonology.FeatureBundle
 
 /-!
 # Underspecification of Features on Segments
@@ -12,7 +12,7 @@ import Linglib.Phonology.Featural.Bundle
 
 A segment is **underspecified** for a feature `f` when its specification
 function returns `none` at `f`. This file lifts the underspecification
-operations defined generically in `Featural/Bundle.lean` to the segment
+operations defined generically in `FeatureBundle.lean` to the segment
 level, and provides the `Prop` predicates and `Decidable` instances that
 consumers work with.
 
@@ -43,10 +43,10 @@ vowel.
 
 ## Implementation notes
 
-`FeatureVal := Option Bool` from `Featural/Features.lean` already encodes
+`FeatureVal := Option Bool` from `Features.lean` already encodes
 the ternary `+ / − / ∅` distinction; this file does not introduce a
 separate `Ternary` enum. The same `Option`-valued partial-function shape
-is the generic `FeatureBundle F V` algebra in `Featural/Bundle.lean`, so
+is the generic `FeatureBundle F V` algebra in `FeatureBundle.lean`, so
 the operations here are thin segment-level lifts of bundle operations.
 
 `fillFeature` uses the bundle's `merge` (which preserves the

@@ -1,7 +1,7 @@
-import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Featural.Geometry
+import Linglib.Phonology.Features
+import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Featural.Sharing
+import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Subregular.Harmony
 
 /-!

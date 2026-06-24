@@ -1,4 +1,4 @@
-import Linglib.Phonology.Featural.Sharing
+import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Fragments.English.Phonology
 
 /-!

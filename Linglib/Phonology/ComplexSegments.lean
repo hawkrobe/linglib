@@ -1,4 +1,4 @@
-import Linglib.Phonology.Featural.Geometry
+import Linglib.Phonology.FeatureGeometry
 
 /-!
 # Complex and Contour Segments [sagey-1986]

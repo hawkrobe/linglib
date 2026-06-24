@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Forall2
 import Mathlib.Data.List.Count
 import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Phonology.Featural.Bundle
+import Linglib.Phonology.FeatureBundle
 
 /-!
 # Tonal Root Nodes and Subtonal Features
@@ -155,7 +155,7 @@ def L : TRN := ⟨some false, some false⟩
 def superHigh : TRN := ⟨some true, some true⟩
 
 /-- View a TRN as a `FeatureBundle Subtonal Bool` (the parametric
-    foundation in `Phonology.Featural.Bundle`). The bundle algebra
+    foundation in `Phonology.FeatureBundle`). The bundle algebra
     (merge, assimilate, delete, set, refines) is then directly available
     via this view. -/
 def toBundle (t : TRN) : FeatureBundle Subtonal Bool

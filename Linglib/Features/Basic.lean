@@ -73,7 +73,7 @@ instantiates `BundleLike` in its own file.
 
 ## Todo
 
-* Instantiate at the existing carriers: `Phonology/Featural/Bundle.lean`
+* Instantiate at the existing carriers: `Phonology/FeatureBundle.lean`
   (lawful; its `FeatureBundle F V` is definitionally
   `Features.Bundle F (λ _ => V)`) and the Minimalist `FeatureBundle`
   (lawful only after the planned list-to-assignment retype).
