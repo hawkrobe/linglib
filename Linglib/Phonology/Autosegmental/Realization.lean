@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.BigOperators.Group.List.Basic
+import Mathlib.Algebra.FreeMonoid.Basic
 import Linglib.Phonology.Autosegmental.AR
 
 /-!
@@ -41,5 +42,53 @@ def realize (g₀ : S → AR α β) (w : List S) : AR α β := (w.map g₀).prod
 theorem realize_append (g₀ : S → AR α β) (xs ys : List S) :
     realize g₀ (xs ++ ys) = (realize g₀ xs).concat (realize g₀ ys) := by
   simp only [realize, List.map_append, List.prod_append]; rfl
+
+/-! ### Tier projections
+
+The realization composed with a tier accessor is itself a free-monoid hom into that
+tier's free monoid: `upperProj g₀` sends a string to the concatenation of its symbols'
+upper tiers (the underlying list of `realize g₀ w`'s upper tier), and likewise
+`lowerProj`. These factor the realization's tier content through `FreeMonoid` and are
+the bridge used to place link-free `ASL` sets in `SF` (`Studies.Jardine2019`): a
+per-tier factor constraint on the realization is the `comap` of a factor language along
+the tier projection. -/
+
+/-- The upper-tier realization as a free-monoid hom `FreeMonoid S →* FreeMonoid α`:
+each symbol maps to its primitive's upper tier, concatenated. -/
+def upperProj (g₀ : S → AR α β) : FreeMonoid S →* FreeMonoid α :=
+  FreeMonoid.lift (fun s => FreeMonoid.ofList (g₀ s).upper.toList)
+
+/-- The lower-tier realization as a free-monoid hom `FreeMonoid S →* FreeMonoid β`. -/
+def lowerProj (g₀ : S → AR α β) : FreeMonoid S →* FreeMonoid β :=
+  FreeMonoid.lift (fun s => FreeMonoid.ofList (g₀ s).lower.toList)
+
+@[simp] theorem upperProj_of (g₀ : S → AR α β) (s : S) :
+    upperProj g₀ (FreeMonoid.of s) = FreeMonoid.ofList (g₀ s).upper.toList :=
+  FreeMonoid.lift_eval_of _ _
+
+@[simp] theorem lowerProj_of (g₀ : S → AR α β) (s : S) :
+    lowerProj g₀ (FreeMonoid.of s) = FreeMonoid.ofList (g₀ s).lower.toList :=
+  FreeMonoid.lift_eval_of _ _
+
+/-- The upper tier of a realization is its upper projection: `(realize g₀ w).upper`'s
+underlying list is `upperProj g₀ w`. -/
+theorem realize_upper_toList (g₀ : S → AR α β) (w : List S) :
+    (realize g₀ w).upper.toList = upperProj g₀ (FreeMonoid.ofList w) := by
+  induction w with
+  | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
+  | cons s w ih =>
+    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+      map_mul, upperProj_of]
+    rfl
+
+/-- The lower tier of a realization is its lower projection. -/
+theorem realize_lower_toList (g₀ : S → AR α β) (w : List S) :
+    (realize g₀ w).lower.toList = lowerProj g₀ (FreeMonoid.ofList w) := by
+  induction w with
+  | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
+  | cons s w ih =>
+    rw [realize_cons, AR.concat_lower, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+      map_mul, lowerProj_of]
+    rfl
 
 end Autosegmental

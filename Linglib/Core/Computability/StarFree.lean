@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Algebra.Group.Aperiodic
+import Mathlib.Algebra.Group.PUnit
 
 /-!
 # Star-free languages
@@ -149,5 +150,11 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
   exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+
+/-- **The full language is star-free** — it is recognized by the trivial (one-element)
+monoid, which is aperiodic. -/
+theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
+  IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1 Set.univ
+    (fun _ => iff_of_true (Set.mem_univ _) (Set.mem_univ _))
 
 end Language

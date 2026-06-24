@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 
 /-!
 # Jardine (2019): the expressivity of autosegmental grammars
@@ -28,8 +29,72 @@ Two realizations are checked, against the same forbidden tone melody `*HLH`:
   plateau widths, because the plateaus collapse to single nodes before the melody is
   read (`hlhTier_merged_excludes_plateau` vs `hlhTier_unmerged_admits_plateau`).
 
+## Subregular placement
+
+[jardine-2019] places the bridge-only class `ASL` strictly inside the star-free
+languages. We prove the **link-free fragment**: when no forbidden subgraph carries
+association lines, `ASL g₀ B` is star-free (`Autosegmental.ASL.isStarFree_of_links_empty`)
+— over any alphabet, no `[Finite S]` needed — because such a grammar is a Boolean
+combination of per-tier factor constraints, each the inverse image of a star-free
+contains-factor language ([schutzenberger-1965] [mcnaughton-papert-1971]) along a tier
+projection. The `*HLH` tonal-tier melody `hlhTier` is one such constraint
+(`hlhTier_isStarFree`).
+
+The genuinely autosegmental case — links coupling the two tiers — is deeper: a forbidden
+subgraph can match with an unlinked run-end arbitrarily far from its linked core, so a
+bounded sliding-window scanner over the realization is unsound; a two-tape synchronising
+aperiodic recognizer is needed, and is left to future work.
+
 The relation-level `L = ASL^{gT}` equivalences ([jardine-2019]) remain future work.
 -/
+
+namespace Autosegmental
+
+open Graph
+
+variable {S α β : Type*}
+
+/-- For a single **link-free** forbidden subgraph `F`, the strings whose realization
+contains `F` form a star-free language: the intersection of two per-tier
+factor-occurrence constraints, each the inverse image (`comap`) of a star-free
+contains-factor language along a tier projection. -/
+theorem isStarFree_occur_of_links_empty (g₀ : S → AR α β) (F : Graph α β) (hF : F.links = ∅) :
+    Language.IsStarFree {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph} := by
+  have hset : {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph}
+      = {w : List S | F.upper.toList <:+: upperProj g₀ (FreeMonoid.ofList w)}
+        ∩ {w : List S | F.lower.toList <:+: lowerProj g₀ (FreeMonoid.ofList w)} := by
+    ext w
+    simp only [Set.mem_setOf_eq, Set.mem_inter_iff]
+    rw [subgraphEmbeds_iff_infix_of_links_empty F (realize g₀ w).toGraph hF,
+      realize_upper_toList, realize_lower_toList]
+  rw [hset]
+  exact ((Language.isStarFree_containsFactor F.upper.toList).comap (upperProj g₀)).inter
+        ((Language.isStarFree_containsFactor F.lower.toList).comap (lowerProj g₀))
+
+/-- **Link-free autosegmental SL sets are star-free.** When every forbidden subgraph in
+`B` has no association lines, `ASL g₀ B` is star-free — over *any* symbol alphabet, with
+no `[Finite S]` hypothesis, since each tier's contains-factor recognizer is a fixed
+finite aperiodic monoid. A link-free forbidden grammar is exactly a Boolean combination
+of per-tier factor constraints; the genuinely autosegmental case (links coupling the
+tiers) is the deeper part of [jardine-2019]'s placement and is not covered here. -/
+theorem ASL.isStarFree_of_links_empty (g₀ : S → AR α β) (B : List (Graph α β))
+    (hB : ∀ F ∈ B, F.links = ∅) : (ASL g₀ B).IsStarFree := by
+  induction B with
+  | nil =>
+    have : ASL g₀ [] = Set.univ := by ext w; simp [ASL, isFreeOf, Graph.Free]
+    rw [this]; exact Language.isStarFree_univ
+  | cons F B' ih =>
+    have hFmem : F.links = ∅ := hB F (List.mem_cons_self ..)
+    have ih' := ih (fun F' hF' => hB F' (List.mem_cons_of_mem _ hF'))
+    have hset : ASL g₀ (F :: B') =
+        {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph}ᶜ ∩ ASL g₀ B' := by
+      ext w
+      show (∀ G ∈ F :: B', ¬ SubgraphEmbeds G (realize g₀ w).toGraph) ↔ _
+      rw [List.forall_mem_cons]; exact Iff.rfl
+    rw [hset]
+    exact (isStarFree_occur_of_links_empty g₀ F hFmem).compl.inter ih'
+
+end Autosegmental
 
 namespace Jardine2019
 
@@ -113,5 +178,13 @@ theorem hlhTier_merged_excludes_plateau :
     expressivity OCP merging adds — the local `hlh_excluded` constraint cannot see it. -/
 theorem hlhTier_unmerged_admits_plateau :
     [ToneSym.H, .H, .L, .L, .H, .H] ∈ ASL gT [hlhTier] := by decide
+
+/-- **The `*HLH` tonal-tier melody set is star-free.** `hlhTier` carries no association
+lines, so `ASL gT [hlhTier]` falls in the link-free fragment
+(`ASL.isStarFree_of_links_empty`): a concrete instance of [jardine-2019]'s `ASL ⊊ SF`
+placement that the bridge-only realization already settles. -/
+theorem hlhTier_isStarFree : (ASL gT [hlhTier]).IsStarFree :=
+  ASL.isStarFree_of_links_empty gT [hlhTier] (fun F hF => by
+    rw [List.mem_singleton] at hF; subst hF; rfl)
 
 end Jardine2019
