@@ -2189,6 +2189,7 @@ import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.RepOrder
 import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Applicative
