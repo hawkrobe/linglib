@@ -99,15 +99,21 @@ def englishGovRequirements : List GovRequirement :=
 
 /-- Does the word `w` carry the value `reqVal` of feature `feat`?
     Returns `true` when the relevant feature slot is unspecified
-    (vacuous satisfaction). -/
+    (vacuous satisfaction); a *marked* slot whose value differs from the
+    requirement fails. -/
 def matchGovFeature (w : Word) (feat : GovernedFeature) (reqVal : GovernedValue) : Bool :=
   match feat with
   | .Case =>
-    match w.features.case_ with
-    | some .Acc => reqVal = .acc
-    | some .Nom => reqVal = .nom
-    | some .Gen => reqVal = .gen
-    | _ => true
+    -- Route case extraction through the `HasCase` mixin (analytical
+    -- inventory), not raw UD constructors. An unmarked slot is vacuously
+    -- satisfied; a marked case that differs from the requirement fails — so
+    -- e.g. a dative object does *not* satisfy an accusative requirement.
+    match HasCase.caseOf w, reqVal with
+    | none, _ => true
+    | some c, .acc => c = .acc
+    | some c, .nom => c = .nom
+    | some c, .gen => c = .gen
+    | some _, _ => true
   | .VForm =>
     match w.features.verbForm with
     | some .Inf => reqVal = .infinitive
@@ -169,6 +175,16 @@ def exWithHe : DepTree :=
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 
+/-- Regression guard for `matchGovFeature`: a preposition's `obj` bearing a
+    *marked* case other than the required accusative (here dative) violates
+    government. The earlier checker fell through to `true` for any case outside
+    {nom, acc, gen}, so a dative object spuriously satisfied `govPrepAcc`. -/
+def exPrepDatObj : DepTree :=
+  { words := [ { form :="with", cat := .ADP, features := {}}
+             , { form :="X", cat := .PRON, features := { case_ := some .Dat }} ]
+    deps := [⟨0, 1, .obj⟩]
+    rootIdx := 0 }
+
 /-! ### Checker behaviour on the fixtures -/
 
 theorem withHim_govOk :
@@ -176,6 +192,9 @@ theorem withHim_govOk :
 
 theorem withHe_govFail :
     checkGovernment exWithHe [govPrepAcc] = false := by decide
+
+theorem prepDatObj_govFail :
+    checkGovernment exPrepDatObj [govPrepAcc] = false := by decide
 
 theorem wantsToGo_govOk :
     checkGovernment exSheWantsToGo [govVerbInfinitive] = true := by decide
