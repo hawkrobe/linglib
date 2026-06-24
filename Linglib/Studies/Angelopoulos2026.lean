@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Selection
-import Linglib.Syntax.Minimalist.CategorialFeatures
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Semantics.Verb.Basic
@@ -263,12 +263,13 @@ def lightNounInSpec (cHead : SyntacticObject) (id : Nat) : SyntacticObject :=
   .node (nullN id) cHead
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. In/out asymmetry — derived from CategorialFeatures
+-- § 4. In/out asymmetry — derived from categorial features
 -- ════════════════════════════════════════════════════════════════
 --
 -- Per integration auditor F7: the impossibility of incorporating
 -- the light n from Spec,TP follows from the lexical/functional
--- partition in `CategorialFeatures.lean` (Panagiotidis 2015).
+-- partition in `ExtendedProjection/Basic.lean` (`categorialFeatures`,
+-- [panagiotidis-2015]).
 -- T bears uninterpretable categorial features and so is functional;
 -- it cannot host Hale-Keyser noun-incorporation.
 

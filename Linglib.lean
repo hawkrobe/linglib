@@ -1944,7 +1944,6 @@ import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
 import Linglib.Studies.Mueller2013
-import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
 import Linglib.Studies.Ferreira2023
@@ -2151,8 +2150,6 @@ import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
 import Linglib.Syntax.Minimalist.SpeechActs
-import Linglib.Syntax.Minimalist.Polarity
-import Linglib.Syntax.Minimalist.Questions
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
