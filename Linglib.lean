@@ -2729,7 +2729,6 @@ import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OCP
-import Linglib.Phonology.OCPQuotient
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.NonCrossing
