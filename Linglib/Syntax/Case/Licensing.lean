@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.CaseFilter
+import Linglib.Syntax.Case.Filter
 
 /-!
 # Hybrid Licensing
