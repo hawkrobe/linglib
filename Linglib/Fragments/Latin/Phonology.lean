@@ -1,5 +1,5 @@
-import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Featural.NaturalClasses
+import Linglib.Phonology.Features
+import Linglib.Phonology.NaturalClasses
 
 /-!
 # Latin Phonology — Fragment
@@ -12,7 +12,7 @@ allophony, inverse compensatory lengthening, syllabification).
 
 The Fragment provides the consensus consonant and vowel inventory plus
 enumeration lists. Natural-class membership reuses the substrate predicates
-from `Phonology.Featural.NaturalClasses` (`Segment.IsVowel`,
+from `Phonology.NaturalClasses` (`Segment.IsVowel`,
 `Segment.IsConsonant`, …); theoretical apparatus (moraic encoding,
 tier projections, conjugation classes) lives downstream in study files
 that consume this Fragment.
@@ -30,7 +30,7 @@ that consume this Fragment.
 ## Implementation notes
 
 **Vowel length is prosodic, not segmental.** The `[long]` feature is not
-in the `Phonology.Featural.Features` inventory (which follows
+in the `Phonology.Features` inventory (which follows
 [hayes-2009]'s decision to treat duration as a syllable-level
 property). Long vowels are encoded as two morae in `Prosody.Moraic`
 rather than as distinct segments; consumers needing a surface short-vs-long
@@ -217,7 +217,7 @@ def allSegments : List Segment := vowels ++ consonants
 /-! ### Sanity theorems
 
 Natural-class predicates (`IsVowel`, `IsConsonant`, …) come from
-`Phonology.Featural.NaturalClasses`. The theorems below confirm
+`Phonology.NaturalClasses`. The theorems below confirm
 the Fragment's segments inhabit the expected classes. -/
 
 /-- The five vowel segments satisfy `Segment.IsVowel`. -/

@@ -1,5 +1,5 @@
-import Linglib.Phonology.Featural.ComplexSegments
-import Linglib.Phonology.Featural.Geometry
+import Linglib.Phonology.ComplexSegments
+import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Subregular.LocalRewrite

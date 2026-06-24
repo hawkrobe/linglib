@@ -1,4 +1,4 @@
-import Linglib.Phonology.Featural.Underspecification
+import Linglib.Phonology.Underspecification
 import Linglib.Fragments.Latin.Phonology
 
 /-!

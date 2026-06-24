@@ -1,4 +1,4 @@
-import Linglib.Phonology.Featural.Features
+import Linglib.Phonology.Features
 
 /-!
 # Natural-Class Predicates on Segments

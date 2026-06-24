@@ -2717,12 +2717,12 @@ import Linglib.Discourse.KOS.RepriseContent
 import Linglib.Discourse.KOS.Austinian
 import Linglib.Discourse.KOS.CooperInfoState
 -- Theories: Phonology
-import Linglib.Phonology.Featural.Features
-import Linglib.Phonology.Featural.NaturalClasses
-import Linglib.Phonology.Featural.Geometry
-import Linglib.Phonology.Featural.ComplexSegments
-import Linglib.Phonology.Featural.Bundle
-import Linglib.Phonology.Featural.Underspecification
+import Linglib.Phonology.Features
+import Linglib.Phonology.NaturalClasses
+import Linglib.Phonology.FeatureGeometry
+import Linglib.Phonology.ComplexSegments
+import Linglib.Phonology.FeatureBundle
+import Linglib.Phonology.Underspecification
 import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Tone.Basic

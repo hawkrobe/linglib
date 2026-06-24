@@ -1,4 +1,4 @@
-import Linglib.Phonology.Featural.Features
+import Linglib.Phonology.Features
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Core.Computability.Subregular.Function.OSL
 
