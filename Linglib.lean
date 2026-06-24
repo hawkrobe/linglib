@@ -354,7 +354,6 @@ import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
-import Linglib.Typology.ClassifierSystem
 import Linglib.Semantics.Numerals.Roundness
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Comparison
@@ -2277,7 +2276,6 @@ import Linglib.Semantics.Gradability.AntonymQuadruplet
 import Linglib.Semantics.Gradability.ClauseEmbedding
 import Linglib.Semantics.Gradability.Classification
 import Linglib.Semantics.Gradability.Intensification
-import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
@@ -2610,7 +2608,6 @@ import Linglib.Studies.Gajewski2002
 import Linglib.Studies.Gajewski2011
 import Linglib.Studies.Israel2001
 import Linglib.Studies.KadmonLandman1993
-import Linglib.Studies.Wang2025
 import Linglib.Studies.Chierchia2004
 import Linglib.Studies.FoxSpector2018
 import Linglib.Studies.Spector2007
@@ -2670,7 +2667,6 @@ import Linglib.Studies.TesslerGoodman2022
 import Linglib.Studies.Horn1984
 import Linglib.Studies.Kennedy2007Licensing
 import Linglib.Studies.Morzycki2009
-import Linglib.Studies.Rouillard2026
 import Linglib.Studies.DAmbrosioHedden2024
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
@@ -2718,12 +2714,9 @@ import Linglib.Discourse.KOS.RepriseContent
 import Linglib.Discourse.KOS.Austinian
 import Linglib.Discourse.KOS.CooperInfoState
 -- Theories: Phonology
-import Linglib.Phonology.Features
-import Linglib.Phonology.NaturalClasses
+import Linglib.Phonology.Feature
+import Linglib.Phonology.Segment
 import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.ComplexSegments
-import Linglib.Phonology.FeatureBundle
-import Linglib.Phonology.Underspecification
 import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Tone.Basic

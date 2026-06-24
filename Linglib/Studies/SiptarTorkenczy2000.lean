@@ -11,7 +11,7 @@ import Linglib.Fragments.Hungarian.VowelHarmony
 
 End-to-end OT analysis of Hungarian vowel harmony, connecting:
 
-1. **Segment features** (`Features.lean`) — Hayes binary feature inventory
+1. **Segment features** (`Feature.lean`) — Hayes binary feature inventory
 2. **Harmony system** (`Subregular.Harmony`) — trigger/target/transparent predicates
 3. **OT constraints** (below) — SPREAD and IDENT derived from
    `System` (folded in from the former `Harmony/OT.lean`, this file's sole consumer)

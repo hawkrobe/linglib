@@ -68,14 +68,16 @@ unrelated to mathlib's fiber-bundle `Bundle` namespace; qualify when
 both are in scope.
 
 Instances live with their carriers, not here: this file imports only
-`Core` and mathlib, and e.g. the phonological partial-assignment carrier
-instantiates `BundleLike` in its own file.
+`Core` and mathlib, and e.g. `Morphology.UD.MorphFeatures` instantiates
+`BundleLike` in its own file.
+
+The phonological carrier uses `Bundle` directly: `Phonology.Segment`'s `spec`
+field is `Features.Bundle Feature (fun _ => Bool)` (in unfolded `Feature →
+Option Bool` form), with the shared `merge`/`set`/`delete` algebra below.
 
 ## Todo
 
-* Instantiate at the existing carriers: `Phonology/FeatureBundle.lean`
-  (lawful; its `FeatureBundle F V` is definitionally
-  `Features.Bundle F (λ _ => V)`) and the Minimalist `FeatureBundle`
+* Instantiate `BundleLike` at the Minimalist `FeatureBundle`
   (lawful only after the planned list-to-assignment retype).
 * Per-slot generality: `Bundle` fixes the flat slot order. UD-practice
   pressure (multivalued features as `Finset`-superset slots, layered
@@ -240,6 +242,35 @@ theorem specifies_single [DecidableEq F] {s t : F} (v : V t) :
   · rintro rfl
     intro h
     exact Option.some_ne_none v (val_single_self s v ▸ h)
+
+/-! ### Mutation algebra
+
+`Function.update`/`orElse`-based operations for building and combining
+bundles, dual to the order/lattice stack above. General over any
+`Bundle F V`; the phonological `Segment` and tonal `TRN` specialize them
+at `V := fun _ => Bool`. -/
+
+/-- **Override merge**: take `b₁`'s value where specified, else `b₂`'s. -/
+def merge (b₁ b₂ : Bundle F V) : Bundle F V :=
+  fun t => match b₁ t with
+    | some v => some v
+    | none => b₂ t
+
+@[simp] theorem merge_self (b : Bundle F V) : merge b b = b := by
+  funext t; simp only [merge]; cases b t <;> rfl
+
+/-- **Override**: set feature `t` to `some v`, regardless of current value. -/
+def set [DecidableEq F] (t : F) (v : V t) (b : Bundle F V) : Bundle F V :=
+  Function.update b t (some v)
+
+/-- **Deletion**: return feature `t` to underspecified (`none`). -/
+def delete [DecidableEq F] (t : F) (b : Bundle F V) : Bundle F V :=
+  Function.update b t none
+
+/-- **Single-feature assimilation**: `tgt` adopts `src`'s value at `t`,
+leaving every other feature untouched. -/
+def assimilate [DecidableEq F] (t : F) (src tgt : Bundle F V) : Bundle F V :=
+  Function.update tgt t (src t)
 
 end Bundle
 

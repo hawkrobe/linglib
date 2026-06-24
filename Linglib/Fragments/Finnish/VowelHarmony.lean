@@ -1,4 +1,4 @@
-import Linglib.Phonology.Features
+import Linglib.Phonology.Segment
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Autosegmental.Sharing
