@@ -2160,6 +2160,7 @@ import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment
+import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
