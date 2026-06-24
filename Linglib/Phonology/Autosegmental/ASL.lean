@@ -24,7 +24,8 @@ local base condition along a free-monoid homomorphism**.
   ASL  =  realize g₀  ⁻¹' { A | isFreeOf B A } -- string→AR realization
 ```
 
-`tierProject` (`Phonology/TierProjection.lean`) and `realize` (`Realization.lean`) are
+`tierProject` (`Core/Computability/Subregular/Language/TierStrictlyLocal.lean`) and
+`realize` (`Realization.lean`) are
 both concat-distributing free-monoid homs; the difference is only the codomain — a
 tier string (discarding off-tier material) vs an AR (keeping the association lines).
 That extra structure is why [jardine-2019] finds `ASL` and `TSL` incomparable.

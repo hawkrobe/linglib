@@ -600,12 +600,12 @@ namespace Subregular
 
 variable {α : Type*} (T : α → Prop) [DecidablePred T]
 
-/-- **Tier erasure as a monoid hom** `FreeMonoid α →* FreeMonoid α`: `tierProject T` is
-`List.filter`, which preserves `1` (`[]`) and `*` (`++`, via `List.filter_append`). -/
-def tierProjectHom : FreeMonoid α →* FreeMonoid α where
-  toFun := tierProject T
-  map_one' := tierProject_nil T
-  map_mul' u v := List.filter_append u v
+/-- **Tier erasure as a monoid hom** `FreeMonoid α →* FreeMonoid α`: the `byClass T`
+specialization of the keystone bundled hom `TierProjection.applyHom`. The monoid-hom laws
+are inherited from `applyHom` rather than re-proved, since `tierProject T` is by definition
+`TierProjection.apply (TierProjection.byClass T)`. -/
+def tierProjectHom : FreeMonoid α →* FreeMonoid α :=
+  TierProjection.applyHom (TierProjection.byClass T)
 
 @[simp] lemma tierProjectHom_apply (w : FreeMonoid α) :
     tierProjectHom T w = tierProject T w := rfl

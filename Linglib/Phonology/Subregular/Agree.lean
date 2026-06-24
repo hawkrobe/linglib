@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Phonology.Subregular.TierProjection
+import Linglib.Core.Computability.TierProjection
 
 /-!
 # AGREE ↔ TSL_2 — the inequality instance (dual of OCP)
