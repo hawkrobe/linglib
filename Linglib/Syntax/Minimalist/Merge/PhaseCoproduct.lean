@@ -23,17 +23,17 @@ The phase substrate (`Merge/Phase.lean`) names the inaccessibility set `Y_ℓ` a
 `Multiset SyntacticObject`; the carrier is `ConnesKreimer ℤ (Nonplanar (LIToken ⊕
 Unit))`. To ask whether an admissible cut extracts an inaccessible subtree we
 compare on the **carrier** side: map `Y_ℓ` forward through the total embedding
-`SyntacticObject.toHc` and test crown membership there. This avoids any partial
+`SyntacticObject.toNonplanar` and test crown membership there. This avoids any partial
 `Nonplanar → SyntacticObject` recovery (which is ill-defined past binary trees,
 since `SyntacticObject = FreeCommMagma _` is commutative but non-associative);
-`toHc` is total and clean.
+`toNonplanar` is total and clean.
 
 ## Implementation
 
 `comulPhaseC` routes through the substrate primitive `comulTreeNFiltered`
 (`Core/Algebra/RootedTree/Coproduct/PruningNonplanar.lean`), the filtered Δ^ρ
 that also yields `comulTreeN` in the `pred = always-true` limit. The phase case
-filters `cutSummandsN T.toHc` by `cutPhaseCompatible`.
+filters `cutSummandsN T.toNonplanar` by `cutPhaseCompatible`.
 
 ## Coassociativity (MCB Lemma 1.14.6) — deferred
 
@@ -61,16 +61,16 @@ open Minimalist (HeadFunction ComplementedHeadFunction SyntacticObject LIToken P
 
 /-! ### Phase-compatibility predicate on cut summands -/
 
-/-- A Δ^ρ cut summand `p` of `T.toHc` is **phase-compatible** with phase `Φ_ℓ`
-    on `T` iff none of its crown components `p.1` is the `toHc`-image of an
+/-- A Δ^ρ cut summand `p` of `T.toNonplanar` is **phase-compatible** with phase `Φ_ℓ`
+    on `T` iff none of its crown components `p.1` is the `toNonplanar`-image of an
     inaccessible term (a vertex in `Y_ℓ`).
 
-    This is the predicate that filters `cutSummandsN T.toHc` to obtain Δ^c_Φ
+    This is the predicate that filters `cutSummandsN T.toNonplanar` to obtain Δ^c_Φ
     ([marcolli-chomsky-berwick-2025] Definition 1.14.5 eq 1.14.6). -/
 noncomputable def cutPhaseCompatible (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) (p : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit)) :
     Prop :=
-  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms h T ℓ).map SyntacticObject.toHc
+  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms h T ℓ).map SyntacticObject.toNonplanar
 
 /-- `inaccessibleTerms` is noncomputable, so phase-compatibility is decided
     classically (the phase coproduct is noncomputable regardless). -/
@@ -81,29 +81,29 @@ noncomputable instance (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) 
 
 /-- The **tree-level phase coproduct** Δ^c_Φ
     ([marcolli-chomsky-berwick-2025] Definition 1.14.5 eq 1.14.6), as the
-    `comulTreeNFiltered` of `T.toHc` filtered by `cutPhaseCompatible`. Sums the
+    `comulTreeNFiltered` of `T.toNonplanar` filtered by `cutPhaseCompatible`. Sums the
     `T ⊗ 1` primitive plus the phase-compatible cut summands; cuts extracting an
     inaccessible (`Y_ℓ`) subtree are dropped. -/
 noncomputable def comulPhaseC (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
     ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) ⊗[ℤ]
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
-  comulTreeNFiltered T.toHc (cutPhaseCompatible h T ℓ)
+  comulTreeNFiltered T.toNonplanar (cutPhaseCompatible h T ℓ)
 
 /-- **Unrestricted-limit recovery**: when every cut is phase-compatible, Δ^c_Φ
     recovers the full Δ^ρ `comulTreeN`. Δ^c_Φ is a *restriction* of the
     coproduct, not a parallel definition. -/
 theorem comulPhaseC_eq_comulTreeN_of_no_filter
     (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken)
-    (hAll : ∀ p ∈ cutSummandsN T.toHc, cutPhaseCompatible h T ℓ p) :
-    comulPhaseC h T ℓ = comulTreeN T.toHc :=
-  comulTreeNFiltered_eq_comulTreeN T.toHc (cutPhaseCompatible h T ℓ) hAll
+    (hAll : ∀ p ∈ cutSummandsN T.toNonplanar, cutPhaseCompatible h T ℓ p) :
+    comulPhaseC h T ℓ = comulTreeN T.toNonplanar :=
+  comulTreeNFiltered_eq_comulTreeN T.toNonplanar (cutPhaseCompatible h T ℓ) hAll
 
 /-- Unrestricted Δ^ρ on `T`'s embedding, in the same shape as `comulPhaseC`.
     The `.linearizationBound` PIC mode and the comparison baseline. -/
 noncomputable def comulC_unrestricted (T : SyntacticObject) :
     ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) ⊗[ℤ]
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
-  comulTreeN T.toHc
+  comulTreeN T.toNonplanar
 
 /-! ### PICStrength dispatch (weak PIC) -/
 
@@ -124,7 +124,7 @@ noncomputable def inaccessibleTerms_weak (h : HeadFunction) (T : SyntacticObject
 noncomputable def cutPhaseCompatible_weak (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) (p : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit)) :
     Prop :=
-  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms_weak h T ℓ).map SyntacticObject.toHc
+  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms_weak h T ℓ).map SyntacticObject.toNonplanar
 
 noncomputable instance (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
     DecidablePred (cutPhaseCompatible_weak h T ℓ) := Classical.decPred _
@@ -133,7 +133,7 @@ noncomputable instance (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) 
 noncomputable def comulPhaseC_weak (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
     ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) ⊗[ℤ]
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
-  comulTreeNFiltered T.toHc (cutPhaseCompatible_weak h T ℓ)
+  comulTreeNFiltered T.toNonplanar (cutPhaseCompatible_weak h T ℓ)
 
 /-- The phase-coproduct under `PICStrength` dispatch.
 
