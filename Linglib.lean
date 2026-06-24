@@ -2156,6 +2156,7 @@ import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
