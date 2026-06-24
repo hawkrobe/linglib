@@ -37,10 +37,11 @@ linglib follows this discipline:
   history** in `SelectionalState.head`. `Derivation.headLI?` and
   `Derivation.outerCat?` are then **total** for leaf-initial derivations
   (no heuristic involved).
-- For arbitrary `FreeMagma LIToken` values not coming from a derivation,
-  the leftmost-leaf heuristic in `Basic.lean`'s `outerCat` provides a
-  partial extension. This is `HeadFunction.leftSpine` in
-  `HeadFunction.lean`.
+- For arbitrary `SyntacticObject` values not coming from a derivation, the
+  selection-driven `selCheck`/`selHead`/`outerCatC` (below) compute the head on
+  the endocentric domain `Dom(h)`, and the selection-induced head function
+  `HeadFunction.leftSpine` (defined below) realises this as a planar embedding
+  (MCB Lemma 1.13.5).
 
 `Step.emR item` is **first Merge** (complement): the head's outermost
 selectional feature is checked against `item.outerCat`, and the complement
@@ -326,6 +327,293 @@ theorem outerCatC_mul {a b : SyntacticObject} {c : Cat}
   · exact Or.inl ⟨tok, h, hcat⟩
   · exact Or.inr ⟨tok, h, hcat⟩
 
+/-! ### Selection-induced planar embedding (MCB Lemma 1.13.5)
+
+[marcolli-chomsky-berwick-2025] Lemma 1.13.5: head functions on a tree are in
+bijection with its planar embeddings. The externalization section σ_L realising a
+given head function places the **projecting (selector) daughter** on the
+convention side of each endocentric node. On `Dom(h)` (every node endocentric)
+this embedding is canonical and selection-driven; at exocentric XP–YP nodes —
+which MCB place *outside* `Dom(h)` and where σ_L is explicitly **noncanonical** —
+we fall back to the classical representative (`Quot.out`, which is comm-invariant
+here because `mk` collapses the swap). The head leaf of the resulting embedding is
+the selector (`selInduced_outerCat`), the formal content of Lemma 1.13.7. -/
+
+/-- Which daughter projects at a binary node under c-selection: `some true` = the
+    **left** sister is the selector, `some false` = the **right**, `none` =
+    exocentric (neither uniquely selects the saturated other). Mirrors `selStep`. -/
+def selSide : Option (LIToken × List Cat) → Option (LIToken × List Cat) → Option Bool
+  | some (_, c :: _), some (hb, []) => if hb.item.outerCat = c then some true else none
+  | some (ha, []), some (_, c :: _) => if ha.item.outerCat = c then some false else none
+  | _, _ => none
+
+theorem selSide_comm (x y : Option (LIToken × List Cat)) :
+    selSide x y = (selSide y x).map Bool.not := by
+  cases x with
+  | none => cases y with
+    | none => rfl
+    | some py => obtain ⟨hy, sy⟩ := py; cases sy <;> rfl
+  | some px => obtain ⟨hx, sx⟩ := px; cases y with
+    | none => cases sx <;> rfl
+    | some py => obtain ⟨hy, sy⟩ := py
+                 cases sx <;> cases sy <;> simp only [selSide, Option.map] <;>
+                   split <;> rfl
+
+/-- Place the head daughter on the convention side: `.initial` (head-initial) →
+    head to the LEFT, `.final` (head-final) → head to the RIGHT. -/
+def placeHead (s : ConventionDir) (head other : FreeMagma (LIToken ⊕ Nat)) :
+    FreeMagma (LIToken ⊕ Nat) :=
+  match s with
+  | .initial => head * other
+  | .final   => other * head
+
+/-- Forgetting order, `placeHead` is just the product of its two arguments
+    (commutativity of `FreeCommMagma`). -/
+theorem mk_placeHead (s : ConventionDir) (head other : FreeMagma (LIToken ⊕ Nat)) :
+    (FreeCommMagma.mk (placeHead s head other) : SyntacticObject)
+      = FreeCommMagma.mk head * FreeCommMagma.mk other := by
+  cases s
+  · rfl
+  · exact FreeCommMagma.swap other head
+
+/-- The selection-induced planar embedding on a `FreeMagma` representative
+    (MCB Lemma 1.13.5): at each endocentric node the projecting (selector) daughter
+    is placed on the `s`-convention side; exocentric nodes — off `Dom(h)`, where
+    σ_L is noncanonical — keep the classical `Quot.out` representative. -/
+noncomputable def selLinearizeAux (s : ConventionDir) :
+    FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat)
+  | .of x => .of x
+  | .mul l r =>
+    match selSide (selCheckAux l) (selCheckAux r) with
+    | some true  => placeHead s (selLinearizeAux s l) (selLinearizeAux s r)
+    | some false => placeHead s (selLinearizeAux s r) (selLinearizeAux s l)
+    | none       => Quot.out (FreeCommMagma.mk (l * r))
+
+theorem selLinearizeAux_respects (s : ConventionDir) (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : selLinearizeAux s a = selLinearizeAux s b := by
+  induction h with
+  | swap a b =>
+    show selLinearizeAux s (a * b) = selLinearizeAux s (b * a)
+    simp only [selLinearizeAux, selSide_comm (selCheckAux b) (selCheckAux a)]
+    cases selSide (selCheckAux a) (selCheckAux b) with
+    | none => exact congrArg Quot.out (FreeCommMagma.swap a b)
+    | some s' => cases s' <;> rfl
+  | mul_left hr c ih =>
+    rename_i a a'
+    show selLinearizeAux s (a * c) = selLinearizeAux s (a' * c)
+    simp only [selLinearizeAux, selCheckAux_respects a a' hr, ih]
+    cases selSide (selCheckAux a') (selCheckAux c) with
+    | none => exact congrArg Quot.out (FreeCommMagma.sound (.mul_left hr c))
+    | some s' => cases s' <;> rfl
+  | mul_right a hr ih =>
+    rename_i b c
+    show selLinearizeAux s (a * b) = selLinearizeAux s (a * c)
+    simp only [selLinearizeAux, selCheckAux_respects b c hr, ih]
+    cases selSide (selCheckAux a) (selCheckAux c) with
+    | none => exact congrArg Quot.out (FreeCommMagma.sound (.mul_right a hr))
+    | some s' => cases s' <;> rfl
+
+/-- The selection-induced section σ_L (MCB §1.12.1 / Lemma 1.13.5), as a function
+    on `SyntacticObject`. Computable on `Dom(h)` (endocentric); `Quot.out`-backed
+    at exocentric nodes. -/
+noncomputable def selLinearize (s : ConventionDir) :
+    SyntacticObject → FreeMagma (LIToken ⊕ Nat) :=
+  FreeCommMagma.lift (selLinearizeAux s) (selLinearizeAux_respects s)
+
+/-- When `selStep` returns a head, that head is the projecting daughter's head,
+    and `selSide` agrees on which daughter projects. The bridge between the
+    residual-tracking `selStep` and the order-determining `selSide`. -/
+theorem selStep_eq_some {x y : Option (LIToken × List Cat)} {hd : LIToken}
+    {res : List Cat} (h : selStep x y = some (hd, res)) :
+    (selSide x y = some true ∧ x.map (·.1) = some hd) ∨
+    (selSide x y = some false ∧ y.map (·.1) = some hd) := by
+  match x, y with
+  | some (ha, c :: rest'), some (hb, []) =>
+    simp only [selStep] at h
+    by_cases hcat : hb.item.outerCat = c
+    · rw [if_pos hcat] at h
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inl ⟨by simp [selSide, hcat], by simp [h.1]⟩
+    · rw [if_neg hcat] at h; exact absurd h (by simp)
+  | some (ha, []), some (hb, c :: rest') =>
+    simp only [selStep] at h
+    by_cases hcat : ha.item.outerCat = c
+    · rw [if_pos hcat] at h
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inr ⟨by simp [selSide, hcat], by simp [h.1]⟩
+    · rw [if_neg hcat] at h; exact absurd h (by simp)
+  | some (_, []), some (_, []) => simp [selStep] at h
+  | some (_, _ :: _), some (_, _ :: _) => simp [selStep] at h
+  | none, _ => simp [selStep] at h
+  | some _, none => simp [selStep] at h
+
+/-- The head leaf of the selection-induced head-initial embedding is the
+    **selector** ([marcolli-chomsky-berwick-2025] Lemma 1.13.5/1.13.7): the
+    leftmost leaf of `selLinearizeAux .initial fm` is `selCheckAux fm`'s
+    projecting head (or `fm` is exocentric, off `Dom(h)`). -/
+theorem selLinearizeAux_initial_leftmost (fm : FreeMagma (LIToken ⊕ Nat)) :
+    (selCheckAux fm).map (·.1)
+        = some (leftmostLeafPlanar (selLinearizeAux .initial fm))
+      ∨ selCheckAux fm = none := by
+  induction fm with
+  | ih1 x => exact Or.inl (by cases x <;> rfl)
+  | ih2 l r ihl ihr =>
+    have hmul : selCheckAux (l * r) = selStep (selCheckAux l) (selCheckAux r) := rfl
+    cases hstep : selStep (selCheckAux l) (selCheckAux r) with
+    | none => exact Or.inr (by rw [hmul, hstep])
+    | some p =>
+      obtain ⟨hd, res⟩ := p
+      refine Or.inl ?_
+      rw [hmul, hstep, Option.map_some]
+      obtain ⟨hsT, hxhd⟩ | ⟨hsF, hyhd⟩ := selStep_eq_some hstep
+      · simp only [selLinearizeAux, hsT, placeHead, leftmostLeafPlanar]
+        rcases ihl with hl | hl
+        · rw [hxhd] at hl; exact hl
+        · rw [hl] at hxhd; simp at hxhd
+      · simp only [selLinearizeAux, hsF, placeHead, leftmostLeafPlanar]
+        rcases ihr with hr | hr
+        · rw [hyhd] at hr; exact hr
+        · rw [hr] at hyhd; simp at hyhd
+
+theorem selLinearizeAux_isSection (s : ConventionDir)
+    (fm : FreeMagma (LIToken ⊕ Nat)) :
+    (FreeCommMagma.mk (selLinearizeAux s fm) : SyntacticObject) = FreeCommMagma.mk fm := by
+  have key : ∀ x y : FreeMagma (LIToken ⊕ Nat),
+      (FreeCommMagma.mk (x * y) : SyntacticObject)
+        = FreeCommMagma.mk x * FreeCommMagma.mk y := fun _ _ => rfl
+  induction fm with
+  | ih1 x => rfl
+  | ih2 l r ihl ihr =>
+    cases hs : selSide (selCheckAux l) (selCheckAux r) with
+    | none =>
+      show (FreeCommMagma.mk (selLinearizeAux s (l * r)) : SyntacticObject)
+        = FreeCommMagma.mk (l * r)
+      simp only [selLinearizeAux, hs]; exact Quot.out_eq _
+    | some b => cases b with
+      | true =>
+        show (FreeCommMagma.mk (selLinearizeAux s (l * r)) : SyntacticObject)
+          = FreeCommMagma.mk (l * r)
+        simp only [selLinearizeAux, hs, mk_placeHead, ihl, ihr, key]
+      | false =>
+        show (FreeCommMagma.mk (selLinearizeAux s (l * r)) : SyntacticObject)
+          = FreeCommMagma.mk (l * r)
+        simp only [selLinearizeAux, hs, mk_placeHead, ihl, ihr, key]
+        exact mul_comm _ _
+
+theorem selLinearize_isSection (s : ConventionDir) :
+    Function.LeftInverse
+      (FreeCommMagma.mk : FreeMagma (LIToken ⊕ Nat) → SyntacticObject) (selLinearize s) :=
+  fun T => Quot.inductionOn T (fun fm => selLinearizeAux_isSection s fm)
+
+/-- The selection-induced externalization section ([marcolli-chomsky-berwick-2025]
+    §1.12.1 / Lemma 1.13.5) for a given head-side convention. The genuine,
+    selection-driven replacement for the retired `Quot.out` placeholder
+    `FreeCommMagma.Section.out`. -/
+noncomputable def selSection (s : ConventionDir) :
+    FreeCommMagma.Section (LIToken ⊕ Nat) where
+  σ := selLinearize s
+  isSection := selLinearize_isSection s
+
+namespace HeadFunction
+
+/-- The default **harmonic head-initial** head function, realised by the
+    selection-induced planar embedding ([marcolli-chomsky-berwick-2025]
+    Lemma 1.13.5/1.13.7): the head leaf is the genuine **selector**
+    (`leftSpine_outerCat`), and the domain is the endocentric `Dom(h)` where
+    c-selection resolves. Supersedes the retired `Quot.out` placeholder. -/
+noncomputable def leftSpine : HeadFunction where
+  section_ := selSection .initial
+  headSide := .initial
+  Dom so := (selCheck so).isSome = true
+  decDom := fun _ => inferInstance
+
+/-- Right-headed dual of `leftSpine`: harmonic **head-final** (Japanese/Korean/
+    Turkish), the selector placed to the right of the selection-induced embedding. -/
+noncomputable def rightSpine : HeadFunction where
+  section_ := selSection .final
+  headSide := .final
+  Dom so := (selCheck so).isSome = true
+  decDom := fun _ => inferInstance
+
+end HeadFunction
+
+/-- On `Dom(h)`, the head leaf of `leftSpine`'s selection-induced embedding is
+    exactly the `selHead` selector — the planar-embedding ⇒ selection direction
+    of [marcolli-chomsky-berwick-2025] Lemma 1.13.5/1.13.7. -/
+theorem leftmost_selLinearize_eq_selHead (so : SyntacticObject) (h : LIToken)
+    (hc : selHead so = some h) :
+    leftmostLeafPlanar (selLinearize .initial so) = h := by
+  induction so using Quot.inductionOn with
+  | _ fm =>
+    have hsel : selHead (FreeCommMagma.mk fm) = (selCheckAux fm).map (·.1) := rfl
+    rw [hsel] at hc
+    rcases selLinearizeAux_initial_leftmost fm with hl | hl
+    · rw [hl] at hc; exact Option.some.inj hc
+    · rw [hl] at hc; simp at hc
+
+/-- The head function `leftSpine` evaluated on `Dom(h)` returns the `selHead`
+    selector (MCB Lemma 1.13.7 — "the item that projects becomes the head"). -/
+theorem leftSpine_head (so : SyntacticObject) (h : LIToken)
+    (hc : selHead so = some h) : HeadFunction.leftSpine.head so = h :=
+  leftmost_selLinearize_eq_selHead so h hc
+
+/-- **Lemma 1.13.5/1.13.7 (head category).** On `Dom(h)`, the head category read
+    off `leftSpine`'s selection-induced planar embedding equals the genuine
+    selector's category `outerCatC` — the planar-embedding head function and the
+    selection-driven head function coincide. -/
+theorem leftSpine_outerCat_eq_outerCatC (so : SyntacticObject)
+    (hso : (selCheck so).isSome) :
+    some (HeadFunction.leftSpine.outerCat so) = outerCatC so := by
+  obtain ⟨⟨hd, res⟩, hhd⟩ := Option.isSome_iff_exists.mp hso
+  have hsh : selHead so = some hd := by rw [selHead, hhd]; rfl
+  show some ((HeadFunction.leftSpine.head so).item.outerCat) = _
+  rw [leftSpine_head so hd hsh, outerCatC, hsh, Option.map_some]
+
+/-- Head-final mirror of `selLinearizeAux_initial_leftmost`: the **rightmost**
+    leaf of the head-final embedding is the selector. -/
+theorem selLinearizeAux_final_rightmost (fm : FreeMagma (LIToken ⊕ Nat)) :
+    (selCheckAux fm).map (·.1)
+        = some (rightmostLeafPlanar (selLinearizeAux .final fm))
+      ∨ selCheckAux fm = none := by
+  induction fm with
+  | ih1 x => exact Or.inl (by cases x <;> rfl)
+  | ih2 l r ihl ihr =>
+    have hmul : selCheckAux (l * r) = selStep (selCheckAux l) (selCheckAux r) := rfl
+    cases hstep : selStep (selCheckAux l) (selCheckAux r) with
+    | none => exact Or.inr (by rw [hmul, hstep])
+    | some p =>
+      obtain ⟨hd, res⟩ := p
+      refine Or.inl ?_
+      rw [hmul, hstep, Option.map_some]
+      obtain ⟨hsT, hxhd⟩ | ⟨hsF, hyhd⟩ := selStep_eq_some hstep
+      · simp only [selLinearizeAux, hsT, placeHead, rightmostLeafPlanar]
+        rcases ihl with hl | hl
+        · rw [hxhd] at hl; exact hl
+        · rw [hl] at hxhd; simp at hxhd
+      · simp only [selLinearizeAux, hsF, placeHead, rightmostLeafPlanar]
+        rcases ihr with hr | hr
+        · rw [hyhd] at hr; exact hr
+        · rw [hr] at hyhd; simp at hyhd
+
+/-- Head-final dual of `leftSpine_outerCat_eq_outerCatC`: the head category of
+    `rightSpine`'s head-final embedding equals the selector's. -/
+theorem rightSpine_outerCat_eq_outerCatC (so : SyntacticObject)
+    (hso : (selCheck so).isSome) :
+    some (HeadFunction.rightSpine.outerCat so) = outerCatC so := by
+  obtain ⟨⟨hd, res⟩, hhd⟩ := Option.isSome_iff_exists.mp hso
+  have hsh : selHead so = some hd := by rw [selHead, hhd]; rfl
+  have hrm : HeadFunction.rightSpine.head so = hd := by
+    show rightmostLeafPlanar (selLinearize .final so) = hd
+    induction so using Quot.inductionOn with
+    | _ fm =>
+      have hsel : selHead (FreeCommMagma.mk fm) = (selCheckAux fm).map (·.1) := rfl
+      rw [hsel] at hsh
+      rcases selLinearizeAux_final_rightmost fm with hl | hl
+      · rw [hl] at hsh; exact Option.some.inj hsh
+      · rw [hl] at hsh; simp at hsh
+  show some ((HeadFunction.rightSpine.head so).item.outerCat) = _
+  rw [hrm, outerCatC, hsh, Option.map_some]
+
 /-- Apply a `Step` under c-selection ([adger-2003] eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
     is preserved across all step constructors — this matches M-C-B §1.15
@@ -459,9 +747,8 @@ constructor. Front-loaded so consumers (paper-replication study files) can
 reason about specific derivations without unfolding `foldl`. -/
 
 /-- `emR` with a saturated, category-matching item consumes the first
-    selectional feature; head is preserved. Stated against
-    `HeadFunction.leftSpine` (the default head function used by
-    `Step.applyChecked`). -/
+    selectional feature; head is preserved. The category match is computed by
+    the section-free `selCheck` (the head function `Step.applyChecked` uses). -/
 @[simp] theorem applyChecked_emR_match
     (so item : SyntacticObject) (head ihead : LIToken) (c : Cat) (rest : List Cat)
     (hsel : selCheck item = some (ihead, []))

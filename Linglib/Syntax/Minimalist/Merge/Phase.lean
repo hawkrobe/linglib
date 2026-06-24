@@ -314,9 +314,8 @@ noncomputable def phaseInterior (h : HeadFunction) (T : SyntacticObject)
 
     Note: this signature takes a `ComplementedHeadFunction` (extending
     `HeadFunction` with complement info per MCB Def 1.14.2). For consumers
-    holding only a bare `HeadFunction`, lift via
-    `ComplementedHeadFunction.leftSpine` (or supply a custom
-    `complementOf`). -/
+    holding only a bare `HeadFunction`, extend it with a `complementOf`
+    field (e.g. over the selection-induced `HeadFunction.leftSpine`). -/
 noncomputable def phaseEdgeWith (h : ComplementedHeadFunction)
     (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
   match maximalProjection h.toHeadFunction T ℓ with

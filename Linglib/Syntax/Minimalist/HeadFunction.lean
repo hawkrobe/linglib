@@ -177,44 +177,16 @@ theorem externalize_injective (h : HeadFunction) :
 
 end HeadFunction
 
--- ============================================================================
--- § 2: Standard instances (leafOnly, leftSpine, rightSpine)
--- ============================================================================
+/-! ### Standard instances
 
-namespace HeadFunction
-
-/-- The trivial head function: defined only on leaves, where every vertex is
-    its own head. The section choice is irrelevant since the only SOs in
-    `Dom` are leaves (which have a unique planar representative via the
-    singleton-class structure). Convention is `.initial` by default
-    (irrelevant on leaves). -/
-noncomputable def leafOnly : HeadFunction where
-  section_  := FreeCommMagma.Section.out
-  headSide  := .initial
-  Dom so    := so.isLeaf
-  decDom    := inferInstance
-
-/-- Default head function: harmonic head-initial with planar representative
-    via `Quot.out`. Defined on **all** SOs. Use a custom `section_` for
-    linguistically-meaningful planar choices. -/
-noncomputable def leftSpine : HeadFunction where
-  section_  := FreeCommMagma.Section.out
-  headSide  := .initial
-  Dom _     := True
-  decDom _  := isTrue trivial
-
-/-- Right-headed dual to `leftSpine`: same `Quot.out` section, but
-    `.final` head-side convention. Models a harmonic head-final language
-    (Japanese, Korean, Turkish). Genuinely distinct from `leftSpine` —
-    `rightSpine.head` returns the rightmost-leaf where `leftSpine.head`
-    returns the leftmost-leaf of the same planar representative. -/
-noncomputable def rightSpine : HeadFunction where
-  section_  := FreeCommMagma.Section.out
-  headSide  := .final
-  Dom _     := True
-  decDom _  := isTrue trivial
-
-end HeadFunction
+The genuine, computable, **selection-induced** instances `HeadFunction.leftSpine`
+(harmonic head-initial) and `HeadFunction.rightSpine` (head-final) live in
+`Selection.lean` — they require the c-selection machinery (`selCheck`) to build
+the head-determined planar embedding ([marcolli-chomsky-berwick-2025] Lemma 1.13.5)
+and so cannot be defined here (this module is upstream of `Selection`). The retired
+`Quot.out` placeholders (`Section.out`-based `leafOnly`/`leftSpine`/`rightSpine`)
+are gone: a head function's planar embedding *is* its selection structure (Lemma
+1.13.7), not an arbitrary classical representative. -/
 
 -- ============================================================================
 -- § 3: Singleton-class simp lemmas (via Section.σ_of keystone)
@@ -705,27 +677,13 @@ def IsRaisingClauseII (h : HeadFunction) : Prop :=
 def IsRaising (h : HeadFunction) : Prop :=
   h.IsRaisingClauseI ∧ h.IsRaisingClauseII
 
-/-- The trivial `leafOnly` head function satisfies clause (ii) **vacuously**:
-    the IM result is always a `.node`, never a leaf, so the `Dom (.node ...)`
-    precondition fails for `leafOnly.Dom = isLeaf`. -/
-theorem leafOnly_isRaisingClauseII : leafOnly.IsRaisingClauseII := by
-  intro T v traceId hIM _hD
-  exact absurd hIM (by
-    show ¬ SyntacticObject.isLeaf (v * (T.replace v (mkTrace traceId)))
-    exact SyntacticObject.isLeaf_mul _ _)
-
-/-! **Note on clause (i) for `leafOnly`**: `leafOnly` does NOT satisfy
-clause (i). Counterexample: when T is a leaf and v doesn't occur in T,
-`T.replace v (mkTrace _) = T` (no occurrence to replace), so the
-precondition `head T = head (T/^d v)` holds vacuously, but the
-conclusion `Dom (.node v T)` requires `isLeaf (v * T)` which is False.
-`leafOnly` violates the Dom-closure aspect of clause (i): its domain
-is not closed under the IM construction.
-
-This is a substantive linguistic fact, not a formalization artifact:
-Internal Merge always produces a node, but `leafOnly` only labels leaves.
-Honest head functions for §1.15.2 Labeling will define `Dom` to be
-IM-closed. -/
+/-! **Note on `Dom`-closure**: a head function is raising only when its `Dom`
+is closed under the Internal Merge construction (the IM result is always a
+`.node`, so a leaf-only domain would fail clause (i)'s `Dom (.node ...)`
+conclusion). This is a substantive linguistic fact: honest head functions for
+§1.15.2 Labeling define `Dom` to be IM-closed. The selection-induced
+`leftSpine`/`rightSpine` (in `Selection.lean`) take `Dom` to be the endocentric
+domain, which is IM-closed up to selection. -/
 
 end HeadFunction
 
@@ -769,29 +727,10 @@ structure ComplementedHeadFunction extends HeadFunction where
 
 -- `decDom` instance is inherited via `extends HeadFunction` and the
 -- existing `attribute [instance] HeadFunction.decDom` at the top of this file.
-
-namespace ComplementedHeadFunction
-
-/-- The trivial complemented head function: extends `leafOnly` with
-    `complementOf := fun _ _ => none` (no complement, since leaves have
-    no complement structure to begin with). -/
-noncomputable def leafOnly : ComplementedHeadFunction where
-  toHeadFunction := HeadFunction.leafOnly
-  complementOf _ _ := none
-
-/-- The trivial complemented version of `leftSpine`: assumes no complement
-    structure beyond the planar embedding (consumers needing complements
-    should supply a custom `complementOf`). -/
-noncomputable def leftSpine : ComplementedHeadFunction where
-  toHeadFunction := HeadFunction.leftSpine
-  complementOf _ _ := none
-
-/-- The complemented version of `rightSpine`. -/
-noncomputable def rightSpine : ComplementedHeadFunction where
-  toHeadFunction := HeadFunction.rightSpine
-  complementOf _ _ := none
-
-end ComplementedHeadFunction
+--
+-- Concrete complemented instances (over the selection-induced
+-- `HeadFunction.leftSpine`/`rightSpine`) are built downstream in `Selection.lean`
+-- with a custom `complementOf`; no `Quot.out`-based defaults are provided here.
 
 -- ============================================================================
 -- § 9: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)
