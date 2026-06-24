@@ -1,6 +1,6 @@
 import Linglib.Discourse.KOS.Defs
 import Linglib.Discourse.KOS.Grounding
-import Linglib.Syntax.HPSG.HeadFiller
+import Linglib.Syntax.HPSG.Basic
 
 /-!
 # KOS–Grammar Integration
@@ -155,24 +155,5 @@ theorem who_no_grounding_needed : who.toLocProp.isFullyResolved := by decide
 
 /-- "left" has no dialogue features. -/
 theorem left_plain : left.dgbParams = [] ∧ left.qParams = [] := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 5. SLASH–CPARAMS Structural Analogy
--- ════════════════════════════════════════════════════
-
-/-- Structural analogy: discharging a SLASH gap and resolving a C-PARAM
-    both reduce the count of outstanding dependencies.
-
-    Both SLASH (filler-gap) and C-PARAMS (grounding) are sets of outstanding
-    dependencies discharged by similar mechanisms. This theorem makes the
-    isomorphism explicit. -/
-theorem slash_cparams_both_decrease
-    (sv : HPSG.SlashValue) (cat : UD.UPOS)
-    (ps : CParamSet) (idx : String) :
-    (sv.discharge cat).gaps.length ≤ sv.gaps.length ∧
-    (ps.filter (·.index != idx)).length ≤ ps.length := by
-  constructor
-  · simp only [HPSG.SlashValue.discharge]; exact List.length_erase_le
-  · exact List.length_filter_le _ _
 
 end Discourse.KOS.Grammar
