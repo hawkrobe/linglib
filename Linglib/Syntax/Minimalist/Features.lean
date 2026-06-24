@@ -1,7 +1,9 @@
+import Linglib.Features.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Features.Number.Basic
+import Linglib.Features.Slot
 
 /-!
 # Feature Infrastructure for Minimalist Agree
@@ -211,6 +213,151 @@ def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
     Uses `sameType` for type-level matching. -/
 def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
   fb.find? λ f => f.isValued && f.featureType.sameType ftype
+
+-- ============================================================================
+-- § 5b: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
+-- ============================================================================
+
+/-! The list representation `FeatureBundle = List GramFeature` admits
+junk — duplicate dimensions, conflicting values — and is not extensional,
+so it cannot be a `LawfulBundleLike` (the `Features/Basic.lean` Todo). The
+canonical bundle is instead a **total assignment** from feature dimensions
+to three-state checking slots (`Features.FeatureSlot`): one slot per
+dimension, `absent` / `unvalued` (probe) / `valued v`. This is the
+Agree-layer structure; per [marcolli-chomsky-berwick-2025] (book p. 13)
+the free-Merge core keeps `SO₀` features atomic, so the slot apparatus is
+decoupled from the `SyntacticObject` carrier and lives in `Features/Slot.lean`.
+
+`FeatureAssignment` is the replacement carrier; `ofGramFeatures` bridges
+the legacy list form for incremental migration. -/
+
+/-- The feature *dimensions* checked via Agree — the equivalence classes of
+`FeatureVal.sameType`. φ-features split into their three sub-dimensions
+(`person`, `number`, `gender`) so each is a slot in its own right. -/
+inductive FeatureType where
+  | person | number | gender
+  | case | wh | q | epp | tense | hon | finite | factive | neg | rel
+  | oblique | ellipsis | catN | catV | foc | pol | pov
+  | atomic | minimal | participant | author
+  deriving Repr, DecidableEq, Fintype
+
+/-- The dimension a feature value belongs to. Two values share a dimension
+iff `FeatureVal.sameType` holds. -/
+def FeatureVal.dimension : FeatureVal → FeatureType
+  | .phi (.person _) => .person
+  | .phi (.number _) => .number
+  | .phi (.gender _) => .gender
+  | .case _ => .case
+  | .wh _ => .wh
+  | .q _ => .q
+  | .epp _ => .epp
+  | .tense _ => .tense
+  | .hon _ => .hon
+  | .finite _ => .finite
+  | .factive _ => .factive
+  | .neg _ => .neg
+  | .rel _ => .rel
+  | .oblique _ => .oblique
+  | .ellipsis _ => .ellipsis
+  | .catN _ => .catN
+  | .catV _ => .catV
+  | .foc _ => .foc
+  | .pol _ => .pol
+  | .pov _ => .pov
+  | .atomic _ => .atomic
+  | .minimal _ => .minimal
+  | .participant _ => .participant
+  | .author _ => .author
+
+/-- The value space of a dimension: the canonical type a slot at that
+dimension carries (`person ↦ Person`, `number ↦ Number`, `gender ↦ Nat`,
+`case ↦ Case`, `hon ↦ HonLevel`, every binary dimension `↦ Bool`). -/
+@[reducible] def FeatureType.ValueOf : FeatureType → Type
+  | .person => Person
+  | .number => Number
+  | .gender => Nat
+  | .case => Case
+  | .hon => HonLevel
+  | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
+  | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
+  | .atomic | .minimal | .participant | .author => Bool
+
+instance (t : FeatureType) : DecidableEq t.ValueOf := by
+  cases t <;> exact inferInstance
+
+/-- The value carried by a feature value, in its dimension's value space. -/
+def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
+  | .phi (.person p) => p
+  | .phi (.number n) => n
+  | .phi (.gender g) => g
+  | .case c => c
+  | .wh b => b
+  | .q b => b
+  | .epp b => b
+  | .tense b => b
+  | .hon hl => hl
+  | .finite b => b
+  | .factive b => b
+  | .neg b => b
+  | .rel b => b
+  | .oblique b => b
+  | .ellipsis b => b
+  | .catN b => b
+  | .catV b => b
+  | .foc b => b
+  | .pol b => b
+  | .pov b => b
+  | .atomic b => b
+  | .minimal b => b
+  | .participant b => b
+  | .author b => b
+
+/-- A feature bundle as a total assignment: each dimension maps to a
+three-state checking slot. The canonical extensional carrier — replacing
+`List GramFeature` — that is `LawfulBundleLike`. -/
+abbrev FeatureAssignment := (t : FeatureType) → Features.FeatureSlot t.ValueOf
+
+namespace FeatureAssignment
+
+instance : BundleLike FeatureAssignment FeatureType (λ t => Features.FeatureSlot t.ValueOf) :=
+  ⟨λ b => b⟩
+
+instance : LawfulBundleLike FeatureAssignment :=
+  ⟨λ _ _ h => h⟩
+
+/-- The bundle has a valued feature of the given dimension. -/
+def hasValuedFeature (a : FeatureAssignment) (t : FeatureType) : Bool :=
+  (a t).isValued
+
+/-- The bundle has an unvalued (probe) feature of the given dimension. -/
+def hasUnvaluedFeature (a : FeatureAssignment) (t : FeatureType) : Bool :=
+  (a t).isUnvalued
+
+/-- The value at the given dimension, when valued. -/
+def getValuedFeature (a : FeatureAssignment) (t : FeatureType) : Option t.ValueOf :=
+  (a t).value?
+
+/-- The assignment specifying exactly one valued dimension, all others absent. -/
+def single (t : FeatureType) (v : t.ValueOf) : FeatureAssignment :=
+  Function.update (⊥ : FeatureAssignment) t (.valued v)
+
+@[simp] theorem single_self (t : FeatureType) (v : t.ValueOf) :
+    single t v t = .valued v := by
+  simp [single]
+
+end FeatureAssignment
+
+/-- The checking slot a single grammatical feature contributes at its own
+dimension: `valued v ↦ valued v.value`, `unvalued _ ↦ unvalued`. -/
+def GramFeature.toSlot : (gf : GramFeature) → Features.FeatureSlot gf.featureType.dimension.ValueOf
+  | .valued v => .valued v.value
+  | .unvalued _ => .unvalued
+
+/-- Bridge from the legacy list representation: fold each feature into its
+dimension's slot, the list head taking precedence on duplicate dimensions
+(matching `getValuedFeature`/`find?` first-match semantics). -/
+def FeatureAssignment.ofGramFeatures (l : List GramFeature) : FeatureAssignment :=
+  l.foldr (λ gf a => Function.update a gf.featureType.dimension gf.toSlot) ⊥
 
 -- ============================================================================
 -- § 6: ±Interpretable Features
