@@ -1,17 +1,23 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Data.List.Forall2
 import Mathlib.Logic.Function.Basic
 
 /-!
 # Featural Bundles
 [lionnet-2022] [pulleyblank-1986] [yip-1980]
-[clements-1985] [reiss-2017]
+[clements-1985] [mielke-2008]
 
-A **feature bundle** is a partial assignment over a feature index space.
-This is the most general primitive of autosegmental / featural phonology:
-every concrete feature theory (Snider Register Tier Theory [snider-1999]
-[snider-1990]; Lionnet's subtonal features [lionnet-2022]; vowel
-or consonant harmony; nasal, laryngeal, place tiers) is a specialization
-of `FeatureBundle F V` for some feature index `F` and value type `V`.
+A **feature bundle** is a partial assignment over a feature index space — a
+general primitive of autosegmental / featural phonology: many feature theories
+(Snider Register Tier Theory [snider-1999] [snider-1990]; Lionnet's subtonal
+features [lionnet-2022]; vowel or consonant harmony; nasal, laryngeal, place
+tiers) specialize `FeatureBundle F V` for some feature index `F` and value type
+`V`. (Element Theory's privative elements fit as a finite `F`, but its
+headedness is *extra* structure carried separately — see `ElementTheory.lean`.)
 
 ## Design
 
@@ -32,9 +38,10 @@ The value type `V` is parametric:
 
 ## Why this is the right primitive
 
-1. [reiss-2017]'s Substance-Free Phonology argues features are
-   language-particular. Parameterising over `F` is exactly the right move:
-   the feature *space* is data, not built into the type.
+1. [mielke-2008]'s Emergent Feature Theory argues feature inventories are
+   language-particular (emergent from the contrasts a language draws).
+   Parameterising over `F` is exactly the right move: the feature *space* is
+   data, not built into the type.
 
 2. The autosegmental tier is just a sequence of bundles
    (`List (FeatureBundle F V)`). Association to bearers and

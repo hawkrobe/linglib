@@ -1,3 +1,10 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Phonology.Featural.Bundle
+
 /-!
 # Phonological Features
 
@@ -38,41 +45,41 @@ namespace Phonology
     The flat `isMajorClass` predicate has no single geometric counterpart
     — see subsumption theorems in `FeatureGeometry.lean` §6.
 
-    The sonority hierarchy (Hayes Table 4.1) is decomposed as:
+    A feature decomposition consistent with Hayes's sonority discussion:
     [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],
     yielding 5 natural classes (obstruent, nasal, liquid, glide, vowel). -/
 inductive Feature where
   -- Manner / root
-  | syllabic         -- [+syll] = vowels (Hayes §4.4.3)
-  | consonantal      -- [+cons] = oral constriction (Hayes §4.4.2)
-  | sonorant         -- [+son] = spontaneous voicing (Hayes §4.4.1)
-  | approximant      -- [+approx] = no turbulence (Hayes §4.4.1)
-  | continuant       -- [+cont] = airflow continues (Hayes §4.4.5)
-  | delayedRelease   -- [+del.rel.] = affricates (Hayes §4.4.7)
-  | nasal            -- [+nasal] = lowered velum (Hayes §4.4.8)
-  | lateral          -- [+lat] = lateral airflow (Hayes §4.4.9)
-  | strident         -- [+strid] = high-amplitude noise (Hayes §4.4.10)
-  | tap              -- [+tap] = ballistic gesture (Hayes §4.4.6)
-  | trill            -- [+trill] = aerodynamic vibration (Hayes §4.4.6)
+  | syllabic         -- [+syll] = vowels
+  | consonantal      -- [+cons] = oral constriction
+  | sonorant         -- [+son] = spontaneous voicing
+  | approximant      -- [+approx] = no turbulence
+  | continuant       -- [+cont] = airflow continues
+  | delayedRelease   -- [+del.rel.] = affricates
+  | nasal            -- [+nasal] = lowered velum
+  | lateral          -- [+lat] = lateral airflow
+  | strident         -- [+strid] = high-amplitude noise
+  | tap              -- [+tap] = ballistic gesture
+  | trill            -- [+trill] = aerodynamic vibration
   -- Laryngeal
-  | voice            -- [+voice] = vocal cord vibration (Hayes §4.7)
-  | spreadGlottis    -- [+s.g.] = aspiration (Hayes §4.7)
-  | constrGlottis    -- [+c.g.] = glottal constriction (Hayes §4.7)
+  | voice            -- [+voice] = vocal cord vibration
+  | spreadGlottis    -- [+s.g.] = aspiration
+  | constrGlottis    -- [+c.g.] = glottal constriction
   -- Place: Labial
-  | labial           -- [+lab] = lips involved (Hayes §4.6.1)
-  | round            -- [+round] = lip rounding (Hayes §4.6.1)
-  | labiodental      -- [+labiodental] = lower lip to upper teeth (Hayes §4.6.1)
+  | labial           -- [+lab] = lips involved
+  | round            -- [+round] = lip rounding
+  | labiodental      -- [+labiodental] = lower lip to upper teeth
   -- Place: Coronal
-  | coronal          -- [+cor] = tongue blade/tip (Hayes §4.6.2)
-  | anterior         -- [+ant] = alveolar ridge or forward (Hayes §4.6.2)
-  | distributed      -- [+dist] = laminal contact (Hayes §4.6.2)
+  | coronal          -- [+cor] = tongue blade/tip
+  | anterior         -- [+ant] = alveolar ridge or forward
+  | distributed      -- [+dist] = laminal contact
   -- Place: Dorsal
-  | dorsal           -- [+dor] = tongue body (Hayes §4.6.3)
-  | high             -- tongue body raised (Hayes §4.5.1)
-  | low              -- tongue body lowered (Hayes §4.5.1)
-  | front            -- tongue body fronted (Hayes §4.5.1)
-  | back             -- tongue body backed (Hayes §4.5.1)
-  | tense            -- tense vowel quality (Hayes §4.5.3)
+  | dorsal           -- [+dor] = tongue body
+  | high             -- tongue body raised
+  | low              -- tongue body lowered
+  | front            -- tongue body fronted
+  | back             -- tongue body backed
+  | tense            -- tense vowel quality
   deriving DecidableEq, Repr
 
 /-- A feature value: `some true` = [+F], `some false` = [−F], `none` = unspecified. -/
@@ -138,10 +145,10 @@ instance : DecidablePred Feature.IsDorsal := fun f => by
 -- § 3: Segment Representation
 -- ============================================================================
 
-/-- A segment represented as a (partial) specification of features.
-    Unspecified features return `none`. -/
+/-- A segment: a `FeatureBundle Feature Bool` — a partial binary-feature
+    specification (`none` = unspecified). -/
 structure Segment where
-  spec : Feature → FeatureVal
+  spec : FeatureBundle Feature Bool
 
 /-- Is feature `f` specified (either [+F] or [−F])? -/
 def Segment.Specified (s : Segment) (f : Feature) : Prop :=
@@ -180,11 +187,6 @@ theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
 -- ============================================================================
 -- § 5: Segment Equality
 -- ============================================================================
-
-/-- Segment equality by checking all 26 features.
-    Two segments are BEq-equal iff they agree on every feature value. -/
-instance : BEq Segment where
-  beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
 
 /-- Decidable equality on segments via exhaustive feature comparison.
     Enables `decide` on segment-level goals and OT tableaux
@@ -231,10 +233,8 @@ instance (s p : Segment) : Decidable (Segment.MatchesPattern s p) :=
     `change` override `s`'s values; unspecified features in `change` are
     preserved. Implements the SPE structural change `A → B` when `B` is a
     partial feature bundle. -/
-def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
-  spec f := match change.spec f with
-    | some v => some v
-    | none => s.spec f
+def Segment.applyChanges (s change : Segment) : Segment :=
+  ⟨FeatureBundle.merge change.spec s.spec⟩
 
 /-- Two segments are equal iff their `spec` functions agree on every feature. -/
 @[ext] theorem Segment.ext {s t : Segment} (h : ∀ f, s.spec f = t.spec f) :
@@ -254,15 +254,13 @@ def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
 /-- Applying the empty change list is the identity. -/
 @[simp] theorem Segment.applyChanges_ofSpecs_nil (s : Segment) :
     s.applyChanges (Segment.ofSpecs []) = s := by
-  ext f
-  unfold Segment.applyChanges Segment.ofSpecs
-  rfl
+  ext f; simp [Segment.applyChanges, Segment.ofSpecs, FeatureBundle.merge]
 
 /-- Applying the same change twice equals applying it once. -/
 @[simp] theorem Segment.applyChanges_idem (s change : Segment) :
     (s.applyChanges change).applyChanges change = s.applyChanges change := by
   ext f
-  simp only [Segment.applyChanges]
+  simp only [Segment.applyChanges, FeatureBundle.merge]
   cases change.spec f <;> rfl
 
 end Phonology

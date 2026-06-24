@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.Featural.Features
 import Linglib.Phonology.Featural.Bundle
 
@@ -107,14 +112,13 @@ def fillFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
     targets and features other than `f` are untouched. When `ctx` is
     itself unspecified for `f`, the target stays unspecified.
 
-    This is a [keating-1988] *context rule* (§1.2, p. 277) — case
-    (b) of her schema (2) p. 287, where the target acquires a categorical
+    This is a [keating-1988] *context rule*: the target acquires a categorical
     feature value from its neighbour and that value blocks further
-    interactions. It is **distinct from** her case (c) gradient phonetic
-    interpolation (the /h/ example in §3.1), in which an unspecified
-    segment remains unspecified and the phonetics builds a continuous
-    trajectory through it; gradient phonetic interpolation is out of
-    scope at this categorical-featural substrate. -/
+    interactions. It is **distinct from** her gradient phonetic interpolation
+    (her unspecified /h/ example), in which an unspecified segment stays
+    unspecified and the phonetics builds a continuous trajectory through it;
+    gradient phonetic interpolation is out of scope at this categorical-featural
+    substrate. -/
 def fillFromContext (s : Segment) (f : Feature) (ctx : Segment) : Segment :=
   ⟨FeatureBundle.merge s.spec
     (Function.update (FeatureBundle.empty : FeatureBundle Feature Bool)
