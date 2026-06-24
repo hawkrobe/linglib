@@ -160,7 +160,7 @@ open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
 open SprouseEtAl2012
   (FactorialCondition DDResult AccountPredictions)
-open Syntax.Minimalist.LeftPeriphery (SelectionClass)
+open Minimalist.LeftPeriphery (SelectionClass)
 
 -- ============================================================================
 -- §1. The licensing predicate — derived from mechanism
@@ -397,7 +397,7 @@ def theHellSelectionClass : SelectionClass := .rogativePerspP
     entail knowledge of the answer — matching *the-hell*'s ignorance
     component ([martin-2020]). Bridge from `LeftPeriphery`. -/
 theorem theHell_no_knowledge :
-    Syntax.Minimalist.LeftPeriphery.entailsKnowledge
+    Minimalist.LeftPeriphery.entailsKnowledge
       theHellSelectionClass = false := rfl
 
 /-- The PerspP-selecting class is consistent with the possible-ignorance
@@ -405,7 +405,7 @@ theorem theHell_no_knowledge :
     *the-hell*'s negative attitude ([rawlins-2008],
     [ippolito-2024]). -/
 theorem theHell_persp_consistent :
-    Syntax.Minimalist.LeftPeriphery.perspPConsistent
+    Minimalist.LeftPeriphery.perspPConsistent
       theHellSelectionClass false false = true := rfl
 
 -- ============================================================================

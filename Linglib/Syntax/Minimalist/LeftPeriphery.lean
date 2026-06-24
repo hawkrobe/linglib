@@ -22,7 +22,7 @@ import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
-namespace Syntax.Minimalist.LeftPeriphery
+namespace Minimalist.LeftPeriphery
 
 open Semantics.Questions
 
@@ -570,4 +570,4 @@ is no unique strongest answer, and the question licenses mention-some
 readings; in such cases `Ans(Q)` is not well-defined in Dayal's sense,
 though [xiang-2022]'s Relativized Exhaustivity may still hold. -/
 
-end Syntax.Minimalist.LeftPeriphery
+end Minimalist.LeftPeriphery

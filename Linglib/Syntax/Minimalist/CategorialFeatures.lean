@@ -48,7 +48,7 @@ anchoring (because [V]) and sortal perspective (because [N]). For Chomsky,
 the co-presence of [+V] and [+N] is a notational fact without semantic content.
 -/
 
-namespace Comparisons.CategorialFeatures
+namespace Minimalist.CategorialFeatures
 
 open Minimalist
 
@@ -158,4 +158,4 @@ theorem catFamily_from_panagiotidis (c1 c2 : Cat) :
     (categorialFeatures c1 == categorialFeatures c2) = (catFamily c1 == catFamily c2) := by
   cases c1 <;> cases c2 <;> decide
 
-end Comparisons.CategorialFeatures
+end Minimalist.CategorialFeatures
