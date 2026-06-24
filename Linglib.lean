@@ -1236,6 +1236,7 @@ import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.Dekker2012
 import Linglib.Studies.PatelGroszGrosz2017
 import Linglib.Studies.Spector2025
+import Linglib.Studies.SpeasTenny2003
 import Linglib.Studies.Charlow2018
 import Linglib.Studies.DalrympleHaug2024
 import Linglib.Studies.Rakosi2019
@@ -1446,6 +1447,7 @@ import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.Amato2025
+import Linglib.Studies.Amato2025.NestedAgree
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.Erlewine2018
 import Linglib.Studies.ElkinsTorrenceBrown2026
@@ -2123,7 +2125,6 @@ import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
-import Linglib.Syntax.Minimalist.NestedAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.PConstraint
@@ -2149,13 +2150,11 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
-import Linglib.Syntax.Minimalist.SpeechActs
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
-import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation

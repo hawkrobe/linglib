@@ -36,7 +36,7 @@ c-commands content.
 -/
 
 
-namespace Minimalist.SpeechActs
+namespace SpeasTenny2003
 
 open Minimalist
 open Semantics.Context (KContext)
@@ -365,4 +365,4 @@ theorem sentience_domain_bridges_to_epistemicity :
     -- EvalP specifier for interrogative = hearer = allocutive authority
     evalPSpecifier .interrogative = .hearer := ⟨rfl, rfl⟩
 
-end Minimalist.SpeechActs
+end SpeasTenny2003

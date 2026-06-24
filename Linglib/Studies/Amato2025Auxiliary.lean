@@ -1,6 +1,6 @@
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Studies.Olivier2026Auxiliary
-import Linglib.Syntax.Minimalist.NestedAgree
+import Linglib.Studies.Amato2025.NestedAgree
 
 /-!
 # [amato-2025] mechanism applied to Italian restructuring AS
@@ -66,7 +66,7 @@ namespace Amato2025Auxiliary
 open Typology.AuxiliaryVerbs
 open Olivier2026Auxiliary
 open Minimalist
-open Minimalist.NestedAgree
+open Amato2025.NestedAgree
 
 /-! ## Probe stack (Nested Agree on Perf) -/
 

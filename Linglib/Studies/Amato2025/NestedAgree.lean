@@ -71,7 +71,9 @@ in the design space; we keep them as independent Layer-2 patterns
 that consumers select by phenomenon.
 -/
 
-namespace Minimalist.NestedAgree
+namespace Amato2025.NestedAgree
+
+open Minimalist
 
 -- ============================================================================
 -- § 1: Probe stack
@@ -373,4 +375,4 @@ theorem italianAuxExample_excludes_apparent_intervener :
   apparent_intervener_excluded italianAuxExample 0 (.leaf aDPsubj)
     (by decide) (by decide)
 
-end Minimalist.NestedAgree
+end Amato2025.NestedAgree
