@@ -35,6 +35,31 @@ lemma take_append_take (n : ℕ) (X Y : List α) :
     (X ++ Y.take n).take n = (X ++ Y).take n := by
   rw [take_append, take_append, take_take, min_eq_left (by omega)]
 
+/-- A list is an infix of another iff some shift aligns every position of `S` with
+`A` (`getElem?`-wise): `S <:+: A` exactly when there is an offset `δ ≤ A.length` with
+`A[i + δ]? = S[i]?` for every `i < S.length`. The positional companion of
+`mem_kFactors`. -/
+theorem isInfix_iff_exists_offset (S A : List α) :
+    S <:+: A ↔ ∃ δ ≤ A.length, ∀ i < S.length, A[i + δ]? = S[i]? := by
+  constructor
+  · rintro ⟨s, t, rfl⟩
+    refine ⟨s.length, by simp, fun i hi => ?_⟩
+    rw [List.append_assoc, List.getElem?_append_right (by omega), Nat.add_sub_cancel,
+      List.getElem?_append_left hi]
+  · rintro ⟨δ, hδ, hmatch⟩
+    rcases Nat.eq_zero_or_pos S.length with h0 | hpos
+    · obtain rfl : S = [] := List.length_eq_zero_iff.mp h0
+      exact List.nil_infix
+    · have hS : (A.drop δ).take S.length = S := by
+        apply List.ext_getElem?
+        intro i
+        rcases lt_or_ge i S.length with hi | hi
+        · rw [List.getElem?_take_of_lt hi, List.getElem?_drop, Nat.add_comm δ i]; exact hmatch i hi
+        · rw [List.getElem?_take_eq_none hi, List.getElem?_eq_none hi]
+      refine ⟨A.take δ, A.drop (δ + S.length), ?_⟩
+      conv_rhs => rw [← List.take_append_drop δ A, ← List.take_append_drop S.length (A.drop δ)]
+      rw [hS, List.drop_drop, List.append_assoc]
+
 section KFactors
 
 variable (k : ℕ) (xs : List α)
