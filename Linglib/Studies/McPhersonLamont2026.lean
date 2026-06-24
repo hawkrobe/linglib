@@ -1007,8 +1007,8 @@ open Tone (TRN)
     `(i, i)` connects them. All resulting links are tautomorphic. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
     FloatingForm S TRN where
-  lower := host.map (fun tbu => { seg := tbu.seg, morpheme := m })
-  upper := host.map (fun tbu => { value := tbu.tone, morpheme := m })
+  lower := .ofList (host.map (fun tbu => { seg := tbu.seg, morpheme := m }))
+  upper := .ofList (host.map (fun tbu => { value := tbu.tone, morpheme := m }))
   links := ((List.range host.length).map (fun i => (i, i))).toFinset
   deletedTier := ∅
   surfaceLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
@@ -1051,9 +1051,9 @@ theorem FloatingForm.exists_multi_tone_TBU :
     ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
-    { lower := [{ seg := (), morpheme := { form := "m" } }]
+    { lower := .ofList [{ seg := (), morpheme := { form := "m" } }]
       upper :=
-        [{ value := TRN.H, morpheme := { form := "m" } },
+        .ofList [{ value := TRN.H, morpheme := { form := "m" } },
          { value := TRN.L, morpheme := { form := "m" } }]
       links := ∅
       deletedTier := ∅

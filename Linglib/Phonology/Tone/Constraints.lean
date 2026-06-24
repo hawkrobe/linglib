@@ -60,7 +60,7 @@ on `FloatingForm`; only the `TRN`-reading predicate is here. -/
 
 /-- The tone at index `k` has value `t`. -/
 abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
-  (f.upper[k]?).map TierSpec.value = some t
+  (f.upper.get? k).map TierSpec.value = some t
 
 /-! ### *FLOAT (Directional) -/
 
@@ -91,7 +91,7 @@ def starTautDock : DirectionalConstraint (FloatingForm S TRN) :=
 /-- The tone indices counting toward morpheme `m`'s tonal mass: surviving
     underlying tones of `m`, plus tones surface-linked to TBUs of `m`. -/
 def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
-  let ownAlive := (Finset.range f.upper.length).filter fun k =>
+  let ownAlive := (Finset.range f.upper.len).filter fun k =>
     f.IsAlive k ∧ f.upperMorpheme? k = some m
   let docked := (f.surfaceLinks.filter fun l => f.lowerMorpheme? l.snd = some m).image Prod.fst
   ownAlive ∪ docked
@@ -137,7 +137,7 @@ def starFall : DirectionalConstraint (FloatingForm S TRN) :=
 def starMlessL : DirectionalConstraint (FloatingForm S TRN) :=
   .ofCount "*M<L" .markedness (fun f =>
     let aliveValues : List TRN :=
-      f.aliveTierIdxs.filterMap (f.upper[·]?.map TierSpec.value)
+      f.aliveTierIdxs.filterMap (fun k => (f.upper.get? k).map TierSpec.value)
     (aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L))))
 
 /-! ### HAVETONE -/

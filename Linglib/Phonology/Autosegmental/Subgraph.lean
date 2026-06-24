@@ -44,8 +44,8 @@ variable {α β : Type*}
     offset `δₗ` in G's lower tier, and all of F's association lines are present
     in G shifted by `(δᵤ, δₗ)`. -/
 def IsSubgraphAt (F G : Graph α β) (δᵤ δₗ : Nat) : Prop :=
-  (∀ i, i < F.upper.length → G.upper[i + δᵤ]? = F.upper[i]?) ∧
-  (∀ j, j < F.lower.length → G.lower[j + δₗ]? = F.lower[j]?) ∧
+  (∀ i, i < F.upper.len → G.upper.get? (i + δᵤ) = F.upper.get? i) ∧
+  (∀ j, j < F.lower.len → G.lower.get? (j + δₗ) = F.lower.get? j) ∧
   (∀ p ∈ F.links, (p.fst + δᵤ, p.snd + δₗ) ∈ G.links)
 
 instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) (δᵤ δₗ : Nat) :
@@ -55,8 +55,8 @@ instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) (δᵤ δₗ : Na
 /-- `F` **subgraph-embeds** into `G` iff some offset `(δᵤ, δₗ)` places F as a
     contiguous block inside G — [jardine-2017]'s connected-subgraph embedding. -/
 def SubgraphEmbeds (F G : Graph α β) : Prop :=
-  ∃ δᵤ ∈ Finset.range (G.upper.length + 1),
-  ∃ δₗ ∈ Finset.range (G.lower.length + 1),
+  ∃ δᵤ ∈ Finset.range (G.upper.len + 1),
+  ∃ δₗ ∈ Finset.range (G.lower.len + 1),
     IsSubgraphAt F G δᵤ δₗ
 
 instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) :

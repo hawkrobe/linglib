@@ -5,14 +5,16 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Image
 import Mathlib.Algebra.Group.Defs
+import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # Autosegmental graph (the AR object)
 
 A `Autosegmental.Graph α β` is a finite ordered bipartite labeled relation
-between two tiers: an `upper` list of `α`s, a `lower` list of `β`s, and a
-`Finset` of association lines (index pairs). It is the standard *autosegmental
+between two tiers: an `upper` tier of `α`s, a `lower` tier of `β`s (each a
+`LabeledTuple` — a length plus a positional labeling), and a `Finset` of
+association lines (index pairs). It is the standard *autosegmental
 representation* (AR) of [goldsmith-1976] and the computational-phonology
 tradition ([jardine-2017], [chandlee-jardine-2019], [burness-mcmullin-2020]).
 
@@ -45,25 +47,30 @@ through a shared tier is not (it breaks planarity).
 
 ## Implementation notes
 
-`links : Finset (ℕ × ℕ)` uses raw natural-number indexing (matching the
-`MonovaryOn`-based `NonCrossing` substrate); in-bounds is a `Prop` (`InBounds`),
-not a structural invariant, and well-formedness conditions are separate `Prop`s
-rather than bundled invariants. A `Finset` permits multi-edges natively
-(spreading, geminates, contour tones). The label-merging variant of `concat`
-(unbounded spreading), multi-tier feature geometry, and the OT
+Tiers are `LabeledTuple`s (a length plus a labeling `Fin len → ·`), so the tier
+algebra — concatenation, the `Fin`-indexed morphism maps in `AR.lean` — delegates
+to the `LabeledTuple` keystone. `links : Finset (ℕ × ℕ)` keeps raw
+natural-number indexing (matching the `MonovaryOn`-based `NonCrossing` substrate,
+and keeping the monoid laws free of dependent-type casts); in-bounds is a `Prop`
+(`InBounds`), not a structural invariant, and well-formedness conditions are
+separate `Prop`s rather than bundled invariants. A `Finset` permits multi-edges
+natively (spreading, geminates, contour tones). The label-merging variant of
+`concat` (unbounded spreading), multi-tier feature geometry, and the OT
 underlying/surface split are paper-specific and live in consumers, not here.
 -/
 
 namespace Autosegmental
 
-/-- A bipartite autosegmental representation: two ordered tiers and a finite
-    set of association lines (index pairs) between them. -/
+open scoped CategoryTheory
+
+/-- A bipartite autosegmental representation: two ordered labeled tiers and a
+    finite set of association lines (index pairs) between them. -/
 @[ext]
 structure Graph (α β : Type*) where
   /-- The upper tier (e.g., tonal tier, melodic tier, root). -/
-  upper : List α
+  upper : LabeledTuple α
   /-- The lower tier (e.g., segmental backbone, skeleton, template). -/
-  lower : List β
+  lower : LabeledTuple β
   /-- Association lines as a finite set of index pairs
       `(upper-index, lower-index)`. -/
   links : Finset (ℕ × ℕ)
@@ -76,10 +83,10 @@ variable {α β : Type*} (r : Graph α β)
 /-! ### Construction -/
 
 /-- The empty bipartite representation with no tiers and no links. -/
-def empty : Graph α β := ⟨[], [], ∅⟩
+def empty : Graph α β := ⟨LabeledTuple.empty, LabeledTuple.empty, ∅⟩
 
 /-- Tiers with no links — the underlying form before any docking. -/
-def ofTiers (upper : List α) (lower : List β) : Graph α β :=
+def ofTiers (upper : LabeledTuple α) (lower : LabeledTuple β) : Graph α β :=
   ⟨upper, lower, ∅⟩
 
 /-! ### Planarity (no-crossing) -/
@@ -99,11 +106,11 @@ def IsLinkedLower (j : ℕ) : Prop :=
 
 /-- Upper index `i` is **floating**: in-bounds but unlinked. -/
 def IsFloatingUpper (i : ℕ) : Prop :=
-  i < r.upper.length ∧ ¬ r.IsLinkedUpper i
+  i < r.upper.len ∧ ¬ r.IsLinkedUpper i
 
 /-- Lower index `j` is **floating**: in-bounds but unlinked (*segmentally empty*). -/
 def IsFloatingLower (j : ℕ) : Prop :=
-  j < r.lower.length ∧ ¬ r.IsLinkedLower j
+  j < r.lower.len ∧ ¬ r.IsLinkedLower j
 
 /-! ### Decidability of index predicates -/
 
@@ -114,20 +121,20 @@ instance (j : ℕ) : Decidable (r.IsLinkedLower j) :=
   inferInstanceAs (Decidable (∃ p ∈ r.links, p.snd = j))
 
 instance (i : ℕ) : Decidable (r.IsFloatingUpper i) :=
-  inferInstanceAs (Decidable (i < r.upper.length ∧ ¬ r.IsLinkedUpper i))
+  inferInstanceAs (Decidable (i < r.upper.len ∧ ¬ r.IsLinkedUpper i))
 
 instance (j : ℕ) : Decidable (r.IsFloatingLower j) :=
-  inferInstanceAs (Decidable (j < r.lower.length ∧ ¬ r.IsLinkedLower j))
+  inferInstanceAs (Decidable (j < r.lower.len ∧ ¬ r.IsLinkedLower j))
 
 /-! ### Saturation and Goldsmith's WFC -/
 
 /-- **Saturated**: every in-bounds upper index is linked. -/
 def IsSaturatedUpper : Prop :=
-  ∀ i, i < r.upper.length → r.IsLinkedUpper i
+  ∀ i, i < r.upper.len → r.IsLinkedUpper i
 
 /-- **Saturated**: every in-bounds lower index is linked. -/
 def IsSaturatedLower : Prop :=
-  ∀ j, j < r.lower.length → r.IsLinkedLower j
+  ∀ j, j < r.lower.len → r.IsLinkedLower j
 
 /-- [goldsmith-1979]'s original WFC: planar *and* both tiers saturated.
     Post-[pulleyblank-1986], only `IsPlanar` is structural. -/
@@ -186,7 +193,7 @@ theorem isPlanar_empty : (empty : Graph α β).IsPlanar := by
   simp [IsPlanar, empty]
 
 /-- `ofTiers` produces a planar representation (no links to cross). -/
-theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
+theorem isPlanar_ofTiers (upper : LabeledTuple α) (lower : LabeledTuple β) :
     (ofTiers upper lower).IsPlanar := by
   simp [IsPlanar, ofTiers]
 
@@ -194,7 +201,7 @@ theorem isPlanar_ofTiers (upper : List α) (lower : List β) :
 
 /-- Every link's indices fall within the tier lengths. -/
 def InBounds : Prop :=
-  ∀ p ∈ r.links, p.fst < r.upper.length ∧ p.snd < r.lower.length
+  ∀ p ∈ r.links, p.fst < r.upper.len ∧ p.snd < r.lower.len
 
 instance : Decidable r.InBounds := by
   unfold InBounds; infer_instance
@@ -202,7 +209,7 @@ instance : Decidable r.InBounds := by
 theorem inBounds_empty : (empty : Graph α β).InBounds := by
   simp [InBounds, empty]
 
-theorem inBounds_ofTiers (upper : List α) (lower : List β) :
+theorem inBounds_ofTiers (upper : LabeledTuple α) (lower : LabeledTuple β) :
     (ofTiers upper lower).InBounds := by
   simp [InBounds, ofTiers]
 
@@ -231,39 +238,39 @@ theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
 /-- [jardine-heinz-2015] concatenation: tier-concatenation plus
     index-shifted link-set union. -/
 def concat (A B : Graph α β) : Graph α β where
-  upper := A.upper ++ B.upper
-  lower := A.lower ++ B.lower
-  links := A.links ∪ B.links.image (shiftLink A.upper.length A.lower.length)
+  upper := A.upper.concat B.upper
+  lower := A.lower.concat B.lower
+  links := A.links ∪ B.links.image (shiftLink A.upper.len A.lower.len)
 
 @[simp] theorem upper_concat (A B : Graph α β) :
-    (A.concat B).upper = A.upper ++ B.upper := rfl
+    (A.concat B).upper = A.upper.concat B.upper := rfl
 
 @[simp] theorem lower_concat (A B : Graph α β) :
-    (A.concat B).lower = A.lower ++ B.lower := rfl
+    (A.concat B).lower = A.lower.concat B.lower := rfl
 
 @[simp] theorem links_concat (A B : Graph α β) :
     (A.concat B).links =
-      A.links ∪ B.links.image (shiftLink A.upper.length A.lower.length) := rfl
+      A.links ∪ B.links.image (shiftLink A.upper.len A.lower.len) := rfl
 
 /-! #### Monoid laws ([jardine-heinz-2015] Theorems 1, 3) -/
 
 /-- `empty` is a left identity for `concat`. -/
-theorem empty_concat (A : Graph α β) : empty.concat A = A := by
-  ext <;> simp [empty, shiftLink_zero]
+theorem empty_concat (A : Graph α β) : empty.concat A = A :=
+  Graph.ext (LabeledTuple.empty_concat A.upper) (LabeledTuple.empty_concat A.lower)
+    (by simp [empty, shiftLink_zero])
 
 /-- `empty` is a right identity for `concat`. -/
-theorem concat_empty (A : Graph α β) : A.concat empty = A := by
-  ext <;> simp [empty]
+theorem concat_empty (A : Graph α β) : A.concat empty = A :=
+  Graph.ext (LabeledTuple.concat_empty A.upper) (LabeledTuple.concat_empty A.lower)
+    (by simp [empty])
 
 /-- `concat` is associative. -/
 theorem concat_assoc (A B C : Graph α β) :
-    (A.concat B).concat C = A.concat (B.concat C) := by
-  ext
-  · simp [List.append_assoc]
-  · simp [List.append_assoc]
-  · simp only [links_concat, upper_concat, lower_concat, List.length_append,
-               Finset.image_union, Finset.image_image, shiftLink_comp]
-    rw [Finset.union_assoc]
+    (A.concat B).concat C = A.concat (B.concat C) :=
+  Graph.ext (LabeledTuple.concat_assoc A.upper B.upper C.upper)
+    (LabeledTuple.concat_assoc A.lower B.lower C.lower)
+    (by simp only [links_concat, upper_concat, lower_concat, LabeledTuple.concat_len,
+          Finset.image_union, Finset.image_image, shiftLink_comp]; rw [Finset.union_assoc])
 
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
@@ -286,7 +293,7 @@ theorem inBounds_concat {A B : Graph α β}
     (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
   rintro p hp
   simp only [links_concat, Finset.mem_union, Finset.mem_image, upper_concat, lower_concat,
-    List.length_append] at hp ⊢
+    LabeledTuple.concat_len] at hp ⊢
   obtain hp | ⟨q, hq, rfl⟩ := hp
   · have := hA p hp; omega
   · have := hB q hq; simp only [shiftLink]; omega

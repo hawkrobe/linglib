@@ -141,21 +141,21 @@ section SingleRoot
 /-- Does TBU `i` bear a tone of value `t` from morpheme `m`? -/
 def isGramTbu (t : TRN) (m : Morpheme) (f : MwaghavulForm) (i : SegIdx) : Bool :=
   (f.linksTo i).any fun k =>
-    (f.upper[k]?).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
+    (f.upper.get? k).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
 
 /-- L-ANCHOR-`t`-from-`m`: number of TBUs (in tier order) before the
     leftmost gram-`t`-from-`m` TBU. If no such TBU exists, every TBU
     counts (full TBU count). -/
 def lAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
-  match (List.range f.lower.length).findIdx? (isGramTbu t m f) with
+  match (List.range f.lower.len).findIdx? (isGramTbu t m f) with
   | some i => i
-  | none   => f.lower.length
+  | none   => f.lower.len
 
 /-- R-ANCHOR-`t`-from-`m`: counted from the right edge. -/
 def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
-  match (List.range f.lower.length).reverse.findIdx? (isGramTbu t m f) with
+  match (List.range f.lower.len).reverse.findIdx? (isGramTbu t m f) with
   | some i => i
-  | none   => f.lower.length
+  | none   => f.lower.len
 
 /-- MAX-Tone (per autosegment): count of deleted ulTier entries.
     Matches paper p. 26 per-autosegment counting. -/
@@ -293,7 +293,7 @@ def candE : MwaghavulForm :=
     INTEGRITY-Mᵥ fatally penalises this copying. -/
 def candF : MwaghavulForm :=
   { input with
-    upper := [rootL, vbzM, vbzM]
+    upper := .ofList [rootL, vbzM, vbzM]
     deletedTier := {0}
     surfaceLinks := {(1, 0), (2, 1)} }
 

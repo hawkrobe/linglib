@@ -309,6 +309,8 @@ import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.OntologicalCategory
 import Linglib.Features.Genericity
+import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
+import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.DropRight
