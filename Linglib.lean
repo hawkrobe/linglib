@@ -313,6 +313,7 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
+import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Computability.Subregular.Language.Boundary
