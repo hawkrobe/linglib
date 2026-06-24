@@ -137,11 +137,13 @@ theorem no_admissible_no_bleed {α : Type*}
 
 /-- A position on a movement chain.
     `height` encodes structural position (higher = larger Nat).
-    `caseAvailable` records whether case can be assigned at this position
-    (i.e., whether the Case Filter can be satisfied here). -/
+    `admissible` records whether this position is admissible for the
+    relevant late-merger licensing — case assignment (WLM / Condition C,
+    `wlmBleedsCondC`) or scope licensing (degree clauses,
+    `DegreeMovement.degreeClauseLateMergerBleeds`). -/
 structure ChainPosition where
   height : Nat
-  caseAvailable : Bool
+  admissible : Bool
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -158,7 +160,7 @@ structure ChainPosition where
     movement chain permits a case position higher than the pronoun
     binder. -/
 def wlmBleedsCondC (chain : List ChainPosition) (binderHeight : Nat) : Bool :=
-  lateMergerBleeds (·.caseAvailable) ChainPosition.height chain binderHeight
+  lateMergerBleeds (·.admissible) ChainPosition.height chain binderHeight
 
 /-- WLM forces Condition C reconstruction when no case position
     on the chain is above the binder. The NP restrictor must merge
@@ -209,10 +211,10 @@ theorem wlm_bleeding_monotone
     regardless of heights. Specialization of `no_admissible_no_bleed`. -/
 theorem no_case_forces_reconstruction
     (chain : List ChainPosition) (binderHeight : Nat)
-    (h : ∀ cp ∈ chain, cp.caseAvailable = false) :
+    (h : ∀ cp ∈ chain, cp.admissible = false) :
     wlmForcesReconstruction chain binderHeight = true := by
   simp [wlmForcesReconstruction, wlmBleedsCondC,
-        no_admissible_no_bleed (·.caseAvailable) ChainPosition.height
+        no_admissible_no_bleed (·.admissible) ChainPosition.height
           chain binderHeight h]
 
 -- ============================================================================
@@ -244,15 +246,9 @@ def conditionCSatisfied (tree binder rExpr : SyntacticObject) : Bool :=
     phase edge the mover passes through ([chomsky-2000]).
     Whether case is available at the edge determines whether WLM
     can target that position ([gong-2022]). -/
-structure PhaseEdgePosition where
+structure PhaseEdgePosition extends ChainPosition where
   phaseCat : Cat
-  height : Nat
-  caseAvailable : Bool
   deriving DecidableEq, Repr
-
-/-- Convert a phase edge position to a chain position for WLM. -/
-def PhaseEdgePosition.toChainPosition (p : PhaseEdgePosition) : ChainPosition :=
-  ⟨p.height, p.caseAvailable⟩
 
 /-- Derive chain positions from successive-cyclic movement through
     phase edges. Each phase edge the mover passes through becomes a
@@ -264,7 +260,8 @@ def successiveCyclicChain (edges : List PhaseEdgePosition) : List ChainPosition 
     case; it passes tense/agreement features to T via Feature Inheritance
     ([chomsky-2008]). -/
 theorem cp_edge_no_case (h : Nat) :
-    (PhaseEdgePosition.mk .C h false).toChainPosition.caseAvailable = false := rfl
+    ({ height := h, admissible := false, phaseCat := .C : PhaseEdgePosition
+      }).toChainPosition.admissible = false := rfl
 
 /-- LDS chain template: movement from an embedded clause through the
     CP edge to a matrix clause position. The CP edge provides no case,
@@ -276,14 +273,14 @@ theorem cp_edge_no_case (h : Nat) :
 def ldsChainTemplate (cpEdgeHeight matrixHeight : Nat) (matrixCaseAvailable : Bool)
     : List ChainPosition :=
   successiveCyclicChain [
-    ⟨.C, cpEdgeHeight, false⟩,
-    ⟨.v, matrixHeight, matrixCaseAvailable⟩
+    { height := cpEdgeHeight, admissible := false, phaseCat := .C },
+    { height := matrixHeight, admissible := matrixCaseAvailable, phaseCat := .v }
   ]
 
 /-- A CP edge alone never bleeds Condition C: case is unavailable. -/
 theorem lds_cp_edge_alone_no_bleed (cpEdgeHeight binderHeight : Nat) :
     wlmForcesReconstruction
-      (successiveCyclicChain [⟨.C, cpEdgeHeight, false⟩])
+      (successiveCyclicChain [{ height := cpEdgeHeight, admissible := false, phaseCat := .C }])
       binderHeight = true := by
   apply no_case_forces_reconstruction
   simp [successiveCyclicChain, List.map, PhaseEdgePosition.toChainPosition]

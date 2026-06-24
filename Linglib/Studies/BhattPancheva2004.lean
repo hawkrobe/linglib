@@ -70,7 +70,7 @@ open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
 open Heim2001 (IntensionalVerbDatum intensionalVerbData)
 open Minimalist (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
 open Minimalist.DegreeMovement
-  (DegreeChainPosition degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
+  (degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
@@ -96,7 +96,7 @@ variable {Entity : Type*}
     encoding the §5.1 stimulus contrasts. We do not formalize those
     contrasts here. -/
 theorem degree_lm_bleeds_iff_scope_position_above
-    (chain : List DegreeChainPosition) (binderHeight h : Nat)
+    (chain : List ChainPosition) (binderHeight h : Nat)
     (hgt : h > binderHeight) :
     degreeClauseLateMergerBleeds (⟨h, true⟩ :: chain) binderHeight = true :=
   scopeOK_above_binder_bleeds chain binderHeight h hgt
