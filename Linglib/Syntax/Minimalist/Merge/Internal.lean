@@ -168,9 +168,10 @@ private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
     the IM composition `mergeOp (Sum.inl L) mover.toNonplanar Q ∘ mergeOpUnit mover.toNonplanar`
     reproduces `((Step.im mover traceId).apply current).toNonplanar`.
 
-    `L` is the head label of the re-merged node; `h_coh` factors
-    `(mover * traced).toNonplanar` as `Nonplanar.node (Sum.inl L) {mover.toNonplanar, traced.toNonplanar}`
-    (the `planarToNonplanar` labeling convention), the same `L` that `mergeOp` grafts. -/
+    `L` is the head label of the re-merged node. The externalize-respect factoring of
+    `(mover * traced).toNonplanar` as `Nonplanar.node (Sum.inl L) {mover.toNonplanar,
+    traced.toNonplanar}` is now a *theorem* (`toNonplanar_mul_selHead`); the consumer
+    supplies only the simple `selHead (mover * traced) = some L`. -/
 theorem mergeOp_im_matches_Step
     (current mover : Minimalist.SyntacticObject) (traceId : Nat) (L : LIToken)
     (p0 : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit))
@@ -178,9 +179,8 @@ theorem mergeOp_im_matches_Step
         (fun p => p.1 = ({mover.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))) = {p0})
     (h_remainder : p0.2 = (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar)
     (h_curr_ne_mover : current.toNonplanar ≠ mover.toNonplanar)
-    (h_coh : (mover * (current.replace mover (Minimalist.mkTrace traceId))).toNonplanar =
-      Nonplanar.node (Sum.inl L)
-        {mover.toNonplanar, (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar}) :
+    (hsel : Minimalist.selHead
+      (mover * (current.replace mover (Minimalist.mkTrace traceId))) = some L) :
     mergeOp (R := ℤ) (Sum.inl L) mover.toNonplanar
         (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar
         (mergeOpUnit (R := ℤ) mover.toNonplanar
@@ -197,6 +197,7 @@ theorem mergeOp_im_matches_Step
         : Forest (Nonplanar (LIToken ⊕ Unit)))
     = of' (R := ℤ) ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toNonplanar}
         : Forest (Nonplanar (LIToken ⊕ Unit)))
-  rw [← h_coh]
+  rw [← Minimalist.SyntacticObject.toNonplanar_mul_selHead
+        mover (current.replace mover (Minimalist.mkTrace traceId)) L hsel]
 
 end Minimalist.Merge
