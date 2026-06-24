@@ -58,7 +58,7 @@ counts can differ even when both are well-formed inventories.
 
 WALS Ch 7 (glottalized consonants) could derive from a PHOIBLE inventory
 + a presence-of-`[+constricted glottis]` predicate
-(`Linglib/Phonology/Features.lean`). Same for Ch 8
+(`Linglib/Phonology/Feature.lean`). Same for Ch 8
 (`[+lateral]`), Ch 9 (`[+nasal, +dorsal]`), Ch 11 (`[+front, +round]`).
 Bridge theorems of that form are deferred — would require a uniform
 "inventory has any phoneme with feature F" helper.

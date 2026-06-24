@@ -1,4 +1,3 @@
-import Linglib.Phonology.ComplexSegments
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Autosegmental.NonCrossing
@@ -17,7 +16,7 @@ vocal tract articulator, establishing the labial, coronal, dorsal, and
 soft palate nodes that are now standard in phonological theory
 (`Phonology/FeatureGeometry.lean`). The geometry predicts which
 multiply-articulated (complex) segments are possible in human language
-(`Phonology/ComplexSegments.lean`).
+(`Phonology/FeatureGeometry.lean`).
 
 This study file formalizes Sagey-specific contributions that go beyond
 the consensus geometry:
