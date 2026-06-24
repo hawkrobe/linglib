@@ -9,7 +9,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 /-!
 # Star-free languages
 
-A language is **star-free** when its syntactic monoid is finite and aperiodic
+A language is **star-free** when it is regular with an aperiodic syntactic monoid
 ([schutzenberger-1965]) — the algebraic characterization of the star-free regular
 expressions (built from finite sets by `∪`, `·`, complement, *no* Kleene star),
 equivalently the counter-free / `FO[<]`-definable stringsets ([mcnaughton-papert-1971]).
@@ -103,9 +103,8 @@ theorem IsStarFree.inter {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFre
   -- The quotient map for `Con.ker φ ≤ (L ⊓ M).syntacticCon` is surjective.
   have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
     rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf L M
-  refine hker.of_surjective (f := Con.map (Con.ker φ) _ hle) (fun y => ?_)
-  obtain ⟨a, rfl⟩ := Con.mk'_surjective y
-  exact ⟨(Con.ker φ).mk' a, rfl⟩
+  exact hker.of_surjective (f := Con.map (Con.ker φ) _ hle)
+    (Con.lift_surjective_of_surjective _ Con.mk'_surjective)
 
 /-- **Star-free languages are closed under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
 theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
@@ -124,20 +123,15 @@ finite and aperiodic and `L = η ⁻¹' P`, the syntactic congruence is coarser 
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
-  have hle : Con.ker η ≤ L.syntacticCon := by
-    rw [Con.le_def]
-    intro u v huv x y
-    rw [Con.ker_apply] at huv
-    rw [hL, hL, show η (FreeMonoid.ofList (x ++ u.toList ++ y))
-      = η (FreeMonoid.ofList (x ++ v.toList ++ y)) by
-        simp only [FreeMonoid.ofList_append, map_mul, FreeMonoid.ofList_toList, huv]]
+  have hle : Con.ker η ≤ L.syntacticCon :=
+    ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
   have hker : Monoid.IsAperiodic (Con.ker η).Quotient :=
     (hM.of_injective (MonoidHom.mrange η).subtype_injective).of_mulEquiv
       (Con.quotientKerEquivRange η).symm
   have hfin : Finite (Con.ker η).Quotient :=
     Finite.of_equiv _ (Con.quotientKerEquivRange η).symm.toEquiv
-  have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) := fun y => by
-    obtain ⟨a, rfl⟩ := Con.mk'_surjective y; exact ⟨(Con.ker η).mk' a, rfl⟩
+  have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
+    Con.lift_surjective_of_surjective _ Con.mk'_surjective
   exact ⟨isRegular_of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
     hker.of_surjective hsurj⟩
 
