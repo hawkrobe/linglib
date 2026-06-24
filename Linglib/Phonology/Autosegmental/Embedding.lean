@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.CategoryTheory.Widesubcategory
+import Linglib.Core.Data.List.Factors
 import Linglib.Phonology.Autosegmental.AR
 
 /-!
@@ -141,6 +142,37 @@ def Free (G : Graph α β) (fs : List (Graph α β)) : Prop :=
 
 instance [DecidableEq α] [DecidableEq β] (G : Graph α β) (fs : List (Graph α β)) :
     Decidable (G.Free fs) := by unfold Free; infer_instance
+
+/-! #### Link-free embedding reduces to per-tier factor occurrence
+
+A forbidden subgraph with no association lines decouples: the two tiers impose
+independent contiguous-factor constraints, with no link to fix their relative offset.
+This is the structural fact behind the link-free fragment of the autosegmental →
+star-free placement (`Studies.Jardine2019`): a link-free forbidden grammar reads as a
+Boolean combination of per-tier factor constraints. -/
+
+/-- A `LabeledTuple` offset-match is exactly a `toList` infix (positional companion
+`List.isInfix_iff_exists_offset`). -/
+private theorem exists_offset_iff_infix {γ : Type*} (a b : LabeledTuple γ) :
+    (∃ δ ≤ b.len, ∀ i < a.len, b.get? (i + δ) = a.get? i) ↔ a.toList <:+: b.toList := by
+  rw [List.isInfix_iff_exists_offset]
+  simp only [LabeledTuple.get?_eq_getElem?, LabeledTuple.toList_length]
+
+/-- For a forbidden subgraph **with no association lines**, embedding reduces to two
+independent tier-factor occurrences: `F` subgraph-embeds in `G` iff `F`'s upper tier is
+a contiguous factor of `G`'s upper tier and `F`'s lower tier is a contiguous factor of
+`G`'s lower tier. The tiers are unconstrained relative to each other precisely because
+there are no links to couple their offsets. -/
+theorem subgraphEmbeds_iff_infix_of_links_empty (F G : Graph α β) (hF : F.links = ∅) :
+    SubgraphEmbeds F G ↔
+      F.upper.toList <:+: G.upper.toList ∧ F.lower.toList <:+: G.lower.toList := by
+  unfold SubgraphEmbeds IsSubgraphAt
+  simp only [Finset.mem_range, Nat.lt_succ_iff, hF, Finset.notMem_empty, false_implies,
+    forall_const, and_true]
+  rw [← exists_offset_iff_infix F.upper G.upper, ← exists_offset_iff_infix F.lower G.lower]
+  constructor
+  · rintro ⟨δᵤ, hδᵤ, δₗ, hδₗ, hu, hl⟩; exact ⟨⟨δᵤ, hδᵤ, hu⟩, ⟨δₗ, hδₗ, hl⟩⟩
+  · rintro ⟨⟨δᵤ, hδᵤ, hu⟩, ⟨δₗ, hδₗ, hl⟩⟩; exact ⟨δᵤ, hδᵤ, δₗ, hδₗ, hu, hl⟩
 
 end Graph
 
