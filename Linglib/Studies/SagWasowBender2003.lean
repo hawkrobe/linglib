@@ -1,5 +1,4 @@
 import Linglib.Syntax.HPSG.Binding
-import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 
@@ -15,10 +14,10 @@ Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Fo
   Binding theory (`Syntax/HPSG/Binding`): Principle A (a locally o-commanded anaphor is locally o-bound,
   agreeing in φ) and Principle B (a pronoun is locally o-free), instantiating the [chomsky-1981]
   minimal-pair paradigm (`Studies/Chomsky1981`).
-- **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and the list-valued `GAP`/SLASH
-  mechanism, with the island taxonomy of `Studies/Ross1967` mapped to GAP restrictions, and the
-  island-blocking grounded **model-theoretically** in the RSRL gap-list (the canonical
-  `Syntax/HPSG/Construction` signature).
+- **Long-Distance Dependencies** (Ch. 15) — the Head-Filler Schema and `GAP`/SLASH mechanism, grounded
+  **model-theoretically** in the RSRL `GAP` (the canonical `Syntax/HPSG/Construction` signature: a set of
+  `loc` objects with amalgamation), with the island taxonomy of `Studies/Ross1967` derived from gap
+  amalgamation, not stipulated as Subjacency.
 - **Relative Clauses** — a relative clause modifies a head noun via the Head-Modifier Schema, grounded
   **model-theoretically** in the RSRL `head-modifier-cxt` (the canonical `Syntax/HPSG/Construction`
   signature); category preservation falls out of the Head Feature Principle.
@@ -79,22 +78,14 @@ end Binding
 
 /-! ### Long-Distance Dependencies: extraction and islands (Ch. 15)
 
-The Head-Filler Schema and SLASH mechanism. The empirical island taxonomy is stated **model-
-theoretically** over the canonical RSRL signature (`islands_rsrl_grounded` below), which subsumes the
-former coarse `GapRestriction` enum — a dependency penetrates a domain iff its `GAP` survives
-amalgamation. -/
+The Head-Filler Schema and SLASH mechanism, stated **model-theoretically** over the canonical RSRL
+signature (`islands_rsrl_grounded` below) — gap introduction, amalgamation, and the island taxonomy are
+all the RSRL list-valued `GAP`, which subsumes the former computational `SlashValue`/`gapComplement`
+shadow: a dependency penetrates a domain iff its `GAP` survives amalgamation. -/
 
 section Extraction
 
 open HPSG
-
-/-- The gap introduction mechanism correctly removes complements. -/
-theorem gap_removes_complement :
-    let see_ss : Synsem := { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
-    let see_w : Word := { form :="see", cat := .VERB, features := {}}
-    (gapComplement see_w see_ss 0).map
-      (fun p => p.1.synsem.val.comps.isEmpty && p.2.gaps == [.NOUN]) = some true := by
-  decide
 
 /-! #### Long-distance dependencies in the RSRL model theory — the full island taxonomy
 

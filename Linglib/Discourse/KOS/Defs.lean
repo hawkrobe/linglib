@@ -138,7 +138,7 @@ structure CParam where
   restriction : String
   deriving Repr, DecidableEq
 
-/-- A set of contextual parameters, analogous to `HPSG.SlashValue`.
+/-- A set of contextual parameters, analogous to the RSRL `GAP` set (`Syntax/HPSG/Construction`).
 
 Both are non-local features (sets of outstanding dependencies):
 - SLASH tracks syntactic gaps (filler-gap dependencies)

@@ -40,9 +40,9 @@ from the gap-host word to the filler.
 
 * Consume the Ross-1967 `ConstraintType` enum (`Studies/Ross1967.lean`) here
   and in `Formal/Islands.lean` so the two files share a single inventory.
-* Build a cross-framework `FillerGap` abstraction so `HPSG.SlashValue`,
-  `LongDistance.GapType`, and Minimalist movement labels all specialise a
-  shared interface.
+* Build a cross-framework `FillerGap` abstraction so the RSRL `GAP`
+  (`Syntax/HPSG/Construction`), `LongDistance.GapType`, and Minimalist movement
+  labels all specialise a shared interface.
 -/
 
 namespace DepGrammar.LongDistance
