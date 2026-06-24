@@ -269,8 +269,8 @@ theorem concat_assoc (A B C : Graph α β) :
     (A.concat B).concat C = A.concat (B.concat C) :=
   Graph.ext (LabeledTuple.concat_assoc A.upper B.upper C.upper)
     (LabeledTuple.concat_assoc A.lower B.lower C.lower)
-    (by simp only [links_concat, upper_concat, lower_concat, LabeledTuple.concat_len,
-          Finset.image_union, Finset.image_image, shiftLink_comp]; rw [Finset.union_assoc])
+    (by grind [links_concat, upper_concat, lower_concat, LabeledTuple.concat_len,
+          Finset.image_union, Finset.image_image, shiftLink_comp])
 
 /-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
@@ -291,12 +291,7 @@ theorem isPlanar_concat {A B : Graph α β} (hAib : A.InBounds) (hA : A.IsPlanar
 /-- Concatenation preserves in-bounds. -/
 theorem inBounds_concat {A B : Graph α β}
     (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
-  rintro p hp
-  simp only [links_concat, Finset.mem_union, Finset.mem_image, upper_concat, lower_concat,
-    LabeledTuple.concat_len] at hp ⊢
-  obtain hp | ⟨q, hq, rfl⟩ := hp
-  · have := hA p hp; omega
-  · have := hB q hq; simp only [shiftLink]; omega
+  grind [InBounds, links_concat, upper_concat, lower_concat, LabeledTuple.concat_len, shiftLink]
 
 end Graph
 
