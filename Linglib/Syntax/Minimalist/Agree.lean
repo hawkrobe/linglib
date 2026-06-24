@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.Probe.Transmission
 
 /-!
 # Agree (Minimalist Feature Checking)
@@ -411,5 +412,31 @@ theorem neg_features_match :
 
 theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
+
+-- ============================================================================
+-- § N: `applyAgree` as a Probe transmission (retire into the Probe API)
+-- ============================================================================
+
+/-- The φ-probe: relativized search ([bejar-rezac-2003]/[preminger-2014]) for a
+    goal bearing a valued `ftype` feature. -/
+def phiProbe (ftype : FeatureVal) : Probe FeatureBundle :=
+  Probe.ofVis (fun gf => (getValuedFeature gf ftype).isSome)
+
+/-- **`applyAgree` is the φ goal→probe transmission.** A φ-Agree is
+    `Probe.transmit` of the φ-probe with the valuation `applyAgree`: search the
+    goal sequence for a `ftype`-bearing goal, then value the probe's features
+    from it. This recognizes the standalone `applyAgree` as the transmission
+    step of the unified Agree operation (`Probe/Transmission.lean`), rather than
+    a parallel mechanism. (The probe→goal direction — dependent case — and a
+    full clause's worth of valuations are *folds* of `transmit`s: the
+    composition axis, not a single transmit.) -/
+theorem applyAgree_is_phi_transmit (probeFeats : FeatureBundle) (ftype : FeatureVal)
+    {goals : List FeatureBundle} {gf : FeatureBundle}
+    (h : (phiProbe ftype).search goals = some gf) :
+    (phiProbe ftype).transmit (fun g pf => (applyAgree pf g ftype).getD pf)
+        probeFeats goals
+      = (applyAgree probeFeats gf ftype).getD probeFeats := by
+  unfold phiProbe at h ⊢
+  exact Probe.transmit_ofVis_eq_of_search h
 
 end Minimalist
