@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.WellFormedAR
-import Linglib.Phonology.Autosegmental.Subgraph
+import Linglib.Phonology.Autosegmental.Embedding
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
@@ -838,13 +838,15 @@ The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
 the full category `AR α β`: a label-preserving reindexing
 (`AR.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
-(`delinkInitial_not_functorial`). But over the morphisms that **preserve
-which element is initial** — `fL j = 0 → j = 0`, satisfied by every
-precedence-preserving `SubgraphEmbeds` translation — it lifts to a genuine
-functor (`delinkInitial_map`, with `delinkInitial_map_id` /
-`delinkInitial_map_comp`). This is the categorical content of the
+(`delinkInitial_not_functorial`). But over `PrecAR`, the
+**precedence-preserving wide subcategory** (`Autosegmental/Embedding.lean`:
+order-embedding tier maps; `SubgraphEmbeds` translations are canonical
+instances), it lifts to a genuine endofunctor `delinkInitialFunctor`
+(built from `delinkInitial_map` / `_id` / `_comp`; precedence-preservation
+discharges the reflects-initial-slot hypothesis via
+`precPreserving.reflects_zero`). This is the categorical content of the
 linguistic fact that lenition targets the *word-initial* consonant: the
-process respects exactly the structural maps that preserve precedence. -/
+process is functorial over exactly the maps that preserve precedence. -/
 
 section Frontier
 variable {α β : Type*}
@@ -888,6 +890,26 @@ theorem delinkInitial_map_comp {A B C : AR α β} (f : AR.Hom A B) (g : AR.Hom B
     delinkInitial_map (f.comp g) hfg =
       (delinkInitial_map f hf).comp (delinkInitial_map g hg) := by
   apply AR.Hom.ext <;> rfl
+
+open CategoryTheory in
+/-- **`delinkInitial` is an endofunctor of the precedence-preserving subcategory
+    `PrecAR`** (`Autosegmental/Embedding.lean`). Lenition lifts to a morphism
+    exactly when the reindexing preserves precedence — `delinkInitial_not_functorial`
+    shows it fails on the full `AR`. The object endomap is `delinkInitial`, the
+    morphism action `delinkInitial_map`; precedence-preservation transports for free
+    because `delinkInitial_map` keeps the tier maps unchanged. This makes "lenition
+    respects linear adjacency" a typed theorem ([jardine-2017] Ch. 7's process-as-
+    graph-relation view, here in categorical form). -/
+def delinkInitialFunctor : PrecAR α β ⥤ PrecAR α β where
+  obj A := ⟨delinkInitial A.obj⟩
+  map {_ _} f := ⟨delinkInitial_map f.hom (precPreserving.reflects_zero f.property), f.property⟩
+  map_id A := by apply WideSubcategory.hom_ext; exact delinkInitial_map_id A.obj
+  map_comp f g := by
+    apply WideSubcategory.hom_ext
+    exact delinkInitial_map_comp f.hom g.hom
+      (precPreserving.reflects_zero f.property)
+      (precPreserving.reflects_zero g.property)
+      (precPreserving.reflects_zero (precPreserving.comp_mem _ _ f.property g.property))
 
 end Frontier
 
