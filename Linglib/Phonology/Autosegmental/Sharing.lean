@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Segment
-import Linglib.Phonology.FeatureGeometry
 import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
@@ -22,7 +21,7 @@ tier-association object `AR` (`Graph.lean` / `AR.lean`) — a single segment
 backbone with a feature-agreement-consistency law, not two materialized tiers.
 A faithful re-grounding of feature spreading as `AR` association is future work;
 for now the two are kept as separate carriers. It builds on
-the feature geometry (`FeatureGeometry.lean`) and segment type
+the feature geometry (`Segment.lean`) and segment type
 (`Segment.lean`) to provide feature agreement predicates,
 feature-sharing representations with consistency checking, and spread/delink
 operations.

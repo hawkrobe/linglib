@@ -37,11 +37,11 @@ namespace Phonology
     - **Place (Dorsal)**: dorsal, high, low, front, back, tense
 
     **Note**: The grouping above follows Hayes's flat classification.
-    The hierarchical feature geometry (`FeatureGeometry.lean`) re-maps
+    The hierarchical feature geometry (`Segment.lean`) re-maps
     some of these features to different nodes: [nasal] → soft palate,
     [continuant] → supralaryngeal, [lateral]/[strident] → coronal.
     The flat `isMajorClass` predicate has no single geometric counterpart
-    — see subsumption theorems in `FeatureGeometry.lean` §6.
+    — see subsumption theorems in `Segment.lean` §6.
 
     A feature decomposition consistent with Hayes's sonority discussion:
     [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],

@@ -2716,7 +2716,6 @@ import Linglib.Discourse.KOS.CooperInfoState
 -- Theories: Phonology
 import Linglib.Phonology.Feature
 import Linglib.Phonology.Segment
-import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.ElementTheory
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Tone.Basic
