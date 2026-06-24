@@ -1263,6 +1263,7 @@ import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.Dekker2012
 import Linglib.Studies.PatelGroszGrosz2017
 import Linglib.Studies.Spector2025
+import Linglib.Studies.SpeasTenny2003
 import Linglib.Studies.Charlow2018
 import Linglib.Studies.DalrympleHaug2024
 import Linglib.Studies.Rakosi2019
@@ -1475,6 +1476,7 @@ import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.Amato2025
+import Linglib.Studies.Amato2025.NestedAgree
 import Linglib.Studies.Erlewine2016
 import Linglib.Studies.Erlewine2018
 import Linglib.Studies.ElkinsTorrenceBrown2026
@@ -1977,8 +1979,6 @@ import Linglib.Syntax.CCG.GenerativeCapacity
 import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
--- Cross-theory comparisons (distributed into theory directories)
-import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
 import Linglib.Studies.Ferreira2023
@@ -2157,10 +2157,8 @@ import Linglib.Syntax.Minimalist.Probe.Transmission
 import Linglib.Syntax.Minimalist.Probe.Tree
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
-import Linglib.Syntax.Minimalist.NestedAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
-import Linglib.Syntax.Minimalist.Phi.Articulation
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment
@@ -2171,10 +2169,7 @@ import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
-import Linglib.Syntax.Minimalist.Ellipsis.Nominal
 import Linglib.Syntax.Minimalist.Amalgamation
-import Linglib.Syntax.Minimalist.Coreference
-import Linglib.Syntax.Minimalist.GenHM
 import Linglib.Syntax.Minimalist.VerbMovementParameter
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Syntax.Minimalist.Movement.Smuggling
@@ -2188,18 +2183,13 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
-import Linglib.Syntax.Minimalist.SpeechActs
-import Linglib.Syntax.Minimalist.Polarity
-import Linglib.Syntax.Minimalist.Questions
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
-import Linglib.Syntax.Minimalist.Multidominance
 import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
-import Linglib.Syntax.Minimalist.Scope
-import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
@@ -2207,7 +2197,6 @@ import Linglib.Syntax.Minimalist.RepOrder
 import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Applicative
-import Linglib.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Syntax.Minimalist.Copula
 import Linglib.Syntax.Minimalist.Cascade
@@ -2801,7 +2790,6 @@ import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.
-import Linglib.Syntax.Minimalist.VoiceProjection
 -- Per-language Gender Fragments (Corbett 1991 sample)
 -- Per-language Evidentiality Fragments (Aikhenvald 2004 sample)
 import Linglib.Fragments.English.Evidentiality

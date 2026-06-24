@@ -406,7 +406,7 @@ theorem literal_is_genuine_question {W E : Type*}
 
 /-! ### Left Periphery bridge (Semantics.ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE -/
 
-open Syntax.Minimalist.LeftPeriphery
+open Minimalist.LeftPeriphery
 
 /-- WXDY has a +WH feature on C (it is syntactically interrogative). -/
 def wxdyWHFeature : WHFeature := .plusWH

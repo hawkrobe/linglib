@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.NestedAgree
+import Linglib.Studies.Amato2025.NestedAgree
 import Linglib.Studies.Marantz1991
 
 /-!
@@ -47,7 +47,7 @@ analysis to Amato's feature-ordering analysis are future work.
 namespace Amato2025Agreement
 
 open Minimalist
-open Minimalist.NestedAgree
+open Amato2025.NestedAgree
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Part A: §4.1.2 — Icelandic DAT-NOM intervention

@@ -36,7 +36,7 @@ namespace Noonan2007
 
 open Typology.Complementation
 open English.Predicates.Verbal
-open Syntax.Minimalist.LeftPeriphery
+open Minimalist.LeftPeriphery
 open Semantics.Mood
 
 -- ============================================================================
