@@ -850,7 +850,7 @@ noncomputable def out : Section α where
     `FreeMagma.of a` shape: `s.σ (of a) = of a`.
 
     **Why this lemma exists**: downstream consumers (e.g. `HeadFunction.head_leaf`,
-    `outerCat_leaf`, `checkedSel_leaf`, `toHc_leaf`, ...) repeatedly need to prove
+    `outerCat_leaf`, `checkedSel_leaf`, `toNonplanar_leaf`, ...) repeatedly need to prove
     `f (s.σ (of a)) = expected` by case-analysis on `s.σ (of a)`'s `FreeMagma`
     shape — leveraging that the equivalence class of `of a` under `CommRel` is a
     singleton (no swap fires on `.of _`). Without this lemma, every consumer

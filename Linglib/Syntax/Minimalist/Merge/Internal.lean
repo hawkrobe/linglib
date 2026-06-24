@@ -24,7 +24,7 @@ performs External Merge between mover and the deletion-quotient.
   theorem. Under the unique-cut hypothesis, the two-stage pipeline reduces to EM
   Case 1 (`mergeOp_pair`).
 - `mergeOp_im_matches_Step`: bridge to linguistic `Step.im` via
-  `((Step.im mover traceId).apply current).toHc`.
+  `((Step.im mover traceId).apply current).toNonplanar`.
 
 ## Deferred (substrate gap)
 
@@ -163,39 +163,39 @@ private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
   Classical.decEq _
 
 /-- **Step.im algebraic bridge (M-C-B Prop 1.4.2 specialization).** Given the cut
-    data `p0` linking the algebraic Δ^ρ deletion-quotient on `current.toHc` to the
-    trace-replaced linguistic quotient `(current.replace mover (mkTrace traceId)).toHc`,
-    the IM composition `mergeOp (Sum.inl L) mover.toHc Q ∘ mergeOpUnit mover.toHc`
-    reproduces `((Step.im mover traceId).apply current).toHc`.
+    data `p0` linking the algebraic Δ^ρ deletion-quotient on `current.toNonplanar` to the
+    trace-replaced linguistic quotient `(current.replace mover (mkTrace traceId)).toNonplanar`,
+    the IM composition `mergeOp (Sum.inl L) mover.toNonplanar Q ∘ mergeOpUnit mover.toNonplanar`
+    reproduces `((Step.im mover traceId).apply current).toNonplanar`.
 
     `L` is the head label of the re-merged node; `h_coh` factors
-    `(mover * traced).toHc` as `Nonplanar.node (Sum.inl L) {mover.toHc, traced.toHc}`
-    (the `toHcPlanarN` labeling convention), the same `L` that `mergeOp` grafts. -/
+    `(mover * traced).toNonplanar` as `Nonplanar.node (Sum.inl L) {mover.toNonplanar, traced.toNonplanar}`
+    (the `planarToNonplanar` labeling convention), the same `L` that `mergeOp` grafts. -/
 theorem mergeOp_im_matches_Step
     (current mover : Minimalist.SyntacticObject) (traceId : Nat) (L : LIToken)
     (p0 : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit))
-    (h_filter : (cutSummandsN current.toHc).filter
-        (fun p => p.1 = ({mover.toHc} : Forest (Nonplanar (LIToken ⊕ Unit)))) = {p0})
-    (h_remainder : p0.2 = (current.replace mover (Minimalist.mkTrace traceId)).toHc)
-    (h_curr_ne_mover : current.toHc ≠ mover.toHc)
-    (h_coh : (mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc =
+    (h_filter : (cutSummandsN current.toNonplanar).filter
+        (fun p => p.1 = ({mover.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))) = {p0})
+    (h_remainder : p0.2 = (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar)
+    (h_curr_ne_mover : current.toNonplanar ≠ mover.toNonplanar)
+    (h_coh : (mover * (current.replace mover (Minimalist.mkTrace traceId))).toNonplanar =
       Nonplanar.node (Sum.inl L)
-        {mover.toHc, (current.replace mover (Minimalist.mkTrace traceId)).toHc}) :
-    mergeOp (R := ℤ) (Sum.inl L) mover.toHc
-        (current.replace mover (Minimalist.mkTrace traceId)).toHc
-        (mergeOpUnit (R := ℤ) mover.toHc
-          (of' ({current.toHc} : Forest (Nonplanar (LIToken ⊕ Unit)))))
-      = of' (R := ℤ) ({((Step.im mover traceId).apply current).toHc}
+        {mover.toNonplanar, (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar}) :
+    mergeOp (R := ℤ) (Sum.inl L) mover.toNonplanar
+        (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar
+        (mergeOpUnit (R := ℤ) mover.toNonplanar
+          (of' ({current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))))
+      = of' (R := ℤ) ({((Step.im mover traceId).apply current).toNonplanar}
         : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  rw [mergeOp_im_composition_moverLeft (Sum.inl L) mover.toHc current.toHc
-        (current.replace mover (Minimalist.mkTrace traceId)).toHc
+  rw [mergeOp_im_composition_moverLeft (Sum.inl L) mover.toNonplanar current.toNonplanar
+        (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar
         p0 h_filter h_remainder h_curr_ne_mover]
   -- (Step.im mover traceId).apply current = mover * (current.replace mover (mkTrace traceId))
   show of' (R := ℤ)
       ({Nonplanar.node (Sum.inl L)
-          {mover.toHc, (current.replace mover (Minimalist.mkTrace traceId)).toHc}}
+          {mover.toNonplanar, (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar}}
         : Forest (Nonplanar (LIToken ⊕ Unit)))
-    = of' (R := ℤ) ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc}
+    = of' (R := ℤ) ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toNonplanar}
         : Forest (Nonplanar (LIToken ⊕ Unit)))
   rw [← h_coh]
 

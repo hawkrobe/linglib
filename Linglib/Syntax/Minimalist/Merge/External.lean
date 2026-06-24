@@ -37,9 +37,9 @@ w`, isolating the surviving empty-cut summand of `comulTreeN T` via
 
 The Minimalism-specific bridges (`mergeOp_emR/emL_matches_Step`) specialize to
 `R = ℤ`, `α = LIToken ⊕ Unit`. They take the **head label** `L` of the merged
-node and a coherence hypothesis `h_coh` factoring `(current * item).toHc` as
-`Nonplanar.node (Sum.inl L) {current.toHc, item.toHc}` — the labeling convention
-fixed in `Merge.Defs`'s `toHcPlanarN` (each internal node decorated with its head
+node and a coherence hypothesis `h_coh` factoring `(current * item).toNonplanar` as
+`Nonplanar.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}` — the labeling convention
+fixed in `Merge.Defs`'s `planarToNonplanar` (each internal node decorated with its head
 leaf). This is the coupling point that validates the carrier bridge's design.
 
 ## Deferred (substrate gap)
@@ -316,44 +316,44 @@ private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
   Classical.decEq _
 
 /-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.4.1, F̂ = ∅).
-    `mergeOp (Sum.inl L) current.toHc item.toHc` applied to the 2-tree workspace
-    `{current.toHc, item.toHc}` yields the singleton workspace of
-    `.node (Sum.inl L) {current.toHc, item.toHc}` = `(Step.emR item).apply current`.
+    `mergeOp (Sum.inl L) current.toNonplanar item.toNonplanar` applied to the 2-tree workspace
+    `{current.toNonplanar, item.toNonplanar}` yields the singleton workspace of
+    `.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}` = `(Step.emR item).apply current`.
 
     `L` is the **head label** of the merged node; `h_coh` is the
-    externalize-respect property: the `Quot.out`-based `toHc` on `current * item`
-    factors as `Nonplanar.node (Sum.inl L) {current.toHc, item.toHc}`, with the
+    externalize-respect property: the `Quot.out`-based `toNonplanar` on `current * item`
+    factors as `Nonplanar.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}`, with the
     SAME head label `L` that `mergeOp` grafts. Per MCB §1.12.3, this is the
     local-coherence condition some sections satisfy at the merged node; consumers
     supply it when the section is built to respect the merge. -/
 theorem mergeOp_emR_matches_Step
     (current item : Minimalist.SyntacticObject) (L : LIToken)
-    (h_coh : (current * item).toHc =
-      Nonplanar.node (Sum.inl L) {current.toHc, item.toHc}) :
-    mergeOp (R := ℤ) (Sum.inl L) current.toHc item.toHc
-        (of' ({current.toHc, item.toHc} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({((Step.emR item).apply current).toHc}
+    (h_coh : (current * item).toNonplanar =
+      Nonplanar.node (Sum.inl L) {current.toNonplanar, item.toNonplanar}) :
+    mergeOp (R := ℤ) (Sum.inl L) current.toNonplanar item.toNonplanar
+        (of' ({current.toNonplanar, item.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
+      = of' (R := ℤ) ({((Step.emR item).apply current).toNonplanar}
         : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  show mergeOp (R := ℤ) (Sum.inl L) current.toHc item.toHc
-        (of' ({current.toHc, item.toHc} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({(current * item).toHc} : Forest (Nonplanar (LIToken ⊕ Unit)))
+  show mergeOp (R := ℤ) (Sum.inl L) current.toNonplanar item.toNonplanar
+        (of' ({current.toNonplanar, item.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
+      = of' (R := ℤ) ({(current * item).toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))
   rw [mergeOp_pair, ← h_coh]
 
 /-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, F̂ = ∅,
-    symmetric pair). `mergeOp (Sum.inl L) item.toHc current.toHc` applied to
-    `{item.toHc, current.toHc}` yields `.node (Sum.inl L) {item.toHc, current.toHc}`
+    symmetric pair). `mergeOp (Sum.inl L) item.toNonplanar current.toNonplanar` applied to
+    `{item.toNonplanar, current.toNonplanar}` yields `.node (Sum.inl L) {item.toNonplanar, current.toNonplanar}`
     = `(Step.emL item).apply current`. -/
 theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) (L : LIToken)
-    (h_coh : (item * current).toHc =
-      Nonplanar.node (Sum.inl L) {item.toHc, current.toHc}) :
-    mergeOp (R := ℤ) (Sum.inl L) item.toHc current.toHc
-        (of' ({item.toHc, current.toHc} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({((Step.emL item).apply current).toHc}
+    (h_coh : (item * current).toNonplanar =
+      Nonplanar.node (Sum.inl L) {item.toNonplanar, current.toNonplanar}) :
+    mergeOp (R := ℤ) (Sum.inl L) item.toNonplanar current.toNonplanar
+        (of' ({item.toNonplanar, current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
+      = of' (R := ℤ) ({((Step.emL item).apply current).toNonplanar}
         : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  show mergeOp (R := ℤ) (Sum.inl L) item.toHc current.toHc
-        (of' ({item.toHc, current.toHc} : Forest (Nonplanar (LIToken ⊕ Unit))))
-      = of' (R := ℤ) ({(item * current).toHc} : Forest (Nonplanar (LIToken ⊕ Unit)))
+  show mergeOp (R := ℤ) (Sum.inl L) item.toNonplanar current.toNonplanar
+        (of' ({item.toNonplanar, current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit))))
+      = of' (R := ℤ) ({(item * current).toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))
   rw [mergeOp_pair, ← h_coh]
 
 end Minimalist.Merge
