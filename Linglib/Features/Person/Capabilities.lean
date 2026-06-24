@@ -40,15 +40,6 @@ variable {α β : Type*} [HasPerson α] [HasPerson β]
 abbrev Compatible (a : α) (b : β) : Prop :=
   Compat (α := Flat Person) (personOf a) (personOf b)
 
-theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
-    Compatible b a :=
-  h.symm
-
-theorem compatible_of_none {a : α} (h : personOf a = none) (b : β) :
-    Compatible a b := by
-  show Compat (α := Flat Person) (personOf a) (personOf b)
-  rw [h]; exact bot_compat _
-
 end HasPerson
 
 /-- φ-compatibility entails person compatibility: the `HasPerson` mixin
@@ -58,7 +49,4 @@ end HasPerson
 theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasPerson.Compatible f1 f2 :=
-  Features.compat_of_clause_map Person.fromUD <| by
-    unfold UD.MorphFeatures.compatible at h
-    simp only [Bool.and_eq_true] at h
-    tauto
+  Features.compat_of_clause_map Person.fromUD (UD.MorphFeatures.compatible_person h)
