@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.RepOrder
 
 /-!
 # C-Selection and Derivation Well-Formedness
@@ -335,9 +336,10 @@ given head function places the **projecting (selector) daughter** on the
 convention side of each endocentric node. On `Dom(h)` (every node endocentric)
 this embedding is canonical and selection-driven; at exocentric XP–YP nodes —
 which MCB place *outside* `Dom(h)` and where σ_L is explicitly **noncanonical** —
-we fall back to the classical representative (`Quot.out`, which is comm-invariant
-here because `mk` collapses the swap). The head leaf of the resulting embedding is
-the selector (`selInduced_outerCat`), the formal content of Lemma 1.13.7. -/
+the subtrees are ordered by the canonical structural comparison `smallerFirst`
+(`RepOrder.lean`), which is comm-invariant, keeping the section **fully
+computable** (no `Quot.out`). The head leaf of the resulting embedding is the
+selector (`leftSpine_outerCat_eq_outerCatC`), the formal content of Lemma 1.13.7. -/
 
 /-- Which daughter projects at a binary node under c-selection: `some true` = the
     **left** sister is the selector, `some false` = the **right**, `none` =
@@ -379,15 +381,16 @@ theorem mk_placeHead (s : ConventionDir) (head other : FreeMagma (LIToken ⊕ Na
 /-- The selection-induced planar embedding on a `FreeMagma` representative
     (MCB Lemma 1.13.5): at each endocentric node the projecting (selector) daughter
     is placed on the `s`-convention side; exocentric nodes — off `Dom(h)`, where
-    σ_L is noncanonical — keep the classical `Quot.out` representative. -/
-noncomputable def selLinearizeAux (s : ConventionDir) :
+    σ_L is noncanonical — are ordered by the canonical structural comparison
+    `smallerFirst` (`RepOrder.lean`). Fully **computable**: no `Quot.out`. -/
+def selLinearizeAux (s : ConventionDir) :
     FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat)
   | .of x => .of x
   | .mul l r =>
     match selSide (selCheckAux l) (selCheckAux r) with
     | some true  => placeHead s (selLinearizeAux s l) (selLinearizeAux s r)
     | some false => placeHead s (selLinearizeAux s r) (selLinearizeAux s l)
-    | none       => Quot.out (FreeCommMagma.mk (l * r))
+    | none       => smallerFirst (selLinearizeAux s l) (selLinearizeAux s r)
 
 theorem selLinearizeAux_respects (s : ConventionDir) (a b : FreeMagma (LIToken ⊕ Nat))
     (h : FreeMagma.CommRel a b) : selLinearizeAux s a = selLinearizeAux s b := by
@@ -396,27 +399,21 @@ theorem selLinearizeAux_respects (s : ConventionDir) (a b : FreeMagma (LIToken �
     show selLinearizeAux s (a * b) = selLinearizeAux s (b * a)
     simp only [selLinearizeAux, selSide_comm (selCheckAux b) (selCheckAux a)]
     cases selSide (selCheckAux a) (selCheckAux b) with
-    | none => exact congrArg Quot.out (FreeCommMagma.swap a b)
+    | none => exact smallerFirst_comm _ _
     | some s' => cases s' <;> rfl
   | mul_left hr c ih =>
     rename_i a a'
     show selLinearizeAux s (a * c) = selLinearizeAux s (a' * c)
     simp only [selLinearizeAux, selCheckAux_respects a a' hr, ih]
-    cases selSide (selCheckAux a') (selCheckAux c) with
-    | none => exact congrArg Quot.out (FreeCommMagma.sound (.mul_left hr c))
-    | some s' => cases s' <;> rfl
   | mul_right a hr ih =>
     rename_i b c
     show selLinearizeAux s (a * b) = selLinearizeAux s (a * c)
     simp only [selLinearizeAux, selCheckAux_respects b c hr, ih]
-    cases selSide (selCheckAux a) (selCheckAux c) with
-    | none => exact congrArg Quot.out (FreeCommMagma.sound (.mul_right a hr))
-    | some s' => cases s' <;> rfl
 
 /-- The selection-induced section σ_L (MCB §1.12.1 / Lemma 1.13.5), as a function
-    on `SyntacticObject`. Computable on `Dom(h)` (endocentric); `Quot.out`-backed
-    at exocentric nodes. -/
-noncomputable def selLinearize (s : ConventionDir) :
+    on `SyntacticObject`. Fully **computable** — selection-driven on `Dom(h)`,
+    structural-comparison-ordered (`smallerFirst`) at exocentric nodes. -/
+def selLinearize (s : ConventionDir) :
     SyntacticObject → FreeMagma (LIToken ⊕ Nat) :=
   FreeCommMagma.lift (selLinearizeAux s) (selLinearizeAux_respects s)
 
@@ -488,7 +485,7 @@ theorem selLinearizeAux_isSection (s : ConventionDir)
     | none =>
       show (FreeCommMagma.mk (selLinearizeAux s (l * r)) : SyntacticObject)
         = FreeCommMagma.mk (l * r)
-      simp only [selLinearizeAux, hs]; exact Quot.out_eq _
+      simp only [selLinearizeAux, hs, mk_smallerFirst, ihl, ihr, key]
     | some b => cases b with
       | true =>
         show (FreeCommMagma.mk (selLinearizeAux s (l * r)) : SyntacticObject)
@@ -509,7 +506,7 @@ theorem selLinearize_isSection (s : ConventionDir) :
     §1.12.1 / Lemma 1.13.5) for a given head-side convention. The genuine,
     selection-driven replacement for the retired `Quot.out` placeholder
     `FreeCommMagma.Section.out`. -/
-noncomputable def selSection (s : ConventionDir) :
+def selSection (s : ConventionDir) :
     FreeCommMagma.Section (LIToken ⊕ Nat) where
   σ := selLinearize s
   isSection := selLinearize_isSection s
@@ -521,7 +518,7 @@ namespace HeadFunction
     Lemma 1.13.5/1.13.7): the head leaf is the genuine **selector**
     (`leftSpine_outerCat`), and the domain is the endocentric `Dom(h)` where
     c-selection resolves. Supersedes the retired `Quot.out` placeholder. -/
-noncomputable def leftSpine : HeadFunction where
+def leftSpine : HeadFunction where
   section_ := selSection .initial
   headSide := .initial
   Dom so := (selCheck so).isSome = true
@@ -529,7 +526,7 @@ noncomputable def leftSpine : HeadFunction where
 
 /-- Right-headed dual of `leftSpine`: harmonic **head-final** (Japanese/Korean/
     Turkish), the selector placed to the right of the selection-induced embedding. -/
-noncomputable def rightSpine : HeadFunction where
+def rightSpine : HeadFunction where
   section_ := selSection .final
   headSide := .final
   Dom so := (selCheck so).isSome = true
