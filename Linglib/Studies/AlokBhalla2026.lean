@@ -158,12 +158,12 @@ structure AllocAgree where
 
 /-- Probe features for allocutive agreement: unvalued [uHON]. -/
 def allocProbeFeatures (level : HonLevel) : FeatureBundle :=
-  [.unvalued (.hon level)]
+  .ofGramFeatures [.unvalued (.hon level)]
 
 /-- Addressee DP features: valued [iHON] and [person:2].
     The addressee is always 2nd person. -/
 def addresseeDPFeatures (level : HonLevel) : FeatureBundle :=
-  [.valued (.hon level), .valued (.phi (.person .second))]
+  .ofGramFeatures [.valued (.hon level), .valued (.phi (.person .second))]
 
 -- ============================================================================
 -- Section B: Embeddability from Probe Location
@@ -282,7 +282,7 @@ theorem hon_features_match (level : HonLevel) :
     with [uHON] against an addressee with [iHON] values the probe. -/
 theorem hon_agree_values (level : HonLevel) :
     applyAgree (allocProbeFeatures level) (addresseeDPFeatures level) (.hon level)
-      = some [.valued (.hon level)] := by
+      = some (.ofGramFeatures [.valued (.hon level)]) := by
   cases level <;> native_decide
 
 /-- Bridge to Studies/BhattDayal2020: SAP unembeddability

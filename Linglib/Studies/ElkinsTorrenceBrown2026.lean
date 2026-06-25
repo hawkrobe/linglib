@@ -153,7 +153,7 @@ the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
 def mamVoice : VoiceHead :=
   { flavor := .agentive
   , hasD := true
-  , features := [.unvalued (.oblique false)] }
+  , features := .ofGramFeatures [.unvalued (.oblique false)] }
 
 /-- Mam transitive clause spine: full CP with Voice. -/
 def mamTransitiveSpine : ClauseSpine := ClauseSpine.cP
@@ -182,7 +182,7 @@ structure MamDirHead where
 
 /-- Dir⁰'s probe features when it carries [uOblique]. -/
 def MamDirHead.features (d : MamDirHead) : FeatureBundle :=
-  if d.hasUOblique then [.unvalued (.oblique false)] else []
+  if d.hasUOblique then .ofGramFeatures [.unvalued (.oblique false)] else ⊥
 
 /-- Cislocative directional with [uOblique]. -/
 def dirCis : MamDirHead := { cislocative := true, hasUOblique := true }
@@ -192,7 +192,7 @@ def dirTrans : MamDirHead := { cislocative := false, hasUOblique := true }
 
 /-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to "=(y)a'". -/
 def eqYaVocab : VocabEntry :=
-  { features := [.valued (.oblique true)]
+  { features := .ofGramFeatures [.valued (.oblique true)]
   , exponent := "=(y)a'"
   , context := some .Voice }
 
@@ -205,14 +205,14 @@ def mamVoiceVocab : Vocabulary := [eqYaVocab]
 def mamPassiveVoice : VoiceHead :=
   { flavor := .nonThematic
   , hasD := false
-  , features := [.unvalued (.oblique false)] }
+  , features := .ofGramFeatures [.unvalued (.oblique false)] }
 
 /-- Mam antipassive Voice head ([scott-2023] §2.5.4.1).
     Subject gets ABS not ERG; not a phase head. -/
 def mamAntipassiveVoice : VoiceHead :=
   { flavor := .antipassive
   , hasD := true
-  , features := [] }
+  , features := ⊥ }
 
 -- ── Substrate-level theorems ─────────────────────────────────────────
 
@@ -274,18 +274,18 @@ theorem antipassive_vs_agentive :
 
 /-- Valued [+oblique] on Voice spells out as =(y)a'. -/
 theorem spellout_oblique_voice :
-    spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
   decide
 
 /-- Without [+oblique], Voice has no exponent from this vocabulary. -/
 theorem spellout_no_oblique :
-    spellout mamVoiceVocab [.valued (.oblique false)] (some .Voice) = none := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique false)]) (some .Voice) = none := by
   decide
 
 /-- [+oblique] on a non-Voice head does not yield =(y)a'
     (context restriction blocks insertion). -/
 theorem spellout_oblique_wrong_context :
-    spellout mamVoiceVocab [.valued (.oblique true)] (some .T) = none := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .T) = none := by
   decide
 
 -- ============================================================================
@@ -433,7 +433,7 @@ theorem dir_probe_matches_voice :
 
 /-- Dir⁰ with valued [+oblique] also spells out as =(y)a'. -/
 theorem dir_spellout_eqya :
-    spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
   decide
 
 -- ============================================================================
@@ -461,17 +461,17 @@ theorem voice_has_uOblique :
     hasUnvaluedFeature mamVoice.features (.oblique false) = true := by
   decide
 
-private def oblique_goal_features : FeatureBundle := [.valued (.oblique true)]
+private def oblique_goal_features : FeatureBundle := .ofGramFeatures [.valued (.oblique true)]
 
 /-- Agree at Voice: [uOblique] valued by oblique DP's [+oblique]. -/
 theorem voice_agree_values_oblique :
     applyAgree mamVoice.features oblique_goal_features (.oblique false) =
-    some [.valued (.oblique true)] := by
+    some (.ofGramFeatures [.valued (.oblique true)]) := by
   decide
 
 /-- Spellout: valued [+oblique] on Voice maps to "=(y)a'". -/
 theorem voice_spellout_eqya :
-    spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) =
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) =
     some "=(y)a'" := by
   decide
 
@@ -511,8 +511,8 @@ private def voiceOblProbe : FeatureBundle := mamVoice.features
 
 /-- Both Voice probes are unvalued features. -/
 theorem both_probes_unvalued :
-    voiceProbe.all GramFeature.isUnvalued = true ∧
-    voiceOblProbe.all GramFeature.isUnvalued = true := by
+    (Minimalist.FeatureBundle.toGramFeatures voiceProbe).all GramFeature.isUnvalued = true ∧
+    (Minimalist.FeatureBundle.toGramFeatures voiceOblProbe).all GramFeature.isUnvalued = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- φ-Agree (Scott 2023) and oblique-Agree (this paper) are parallel
@@ -524,9 +524,9 @@ theorem phi_and_oblique_agree_parallel :
       (λ fb => applyAgree fb dp3sg (.phi (.number .singular))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Oblique-Agree pipeline: value oblique, then spellout
-    applyAgree voiceOblProbe [.valued (.oblique true)] (.oblique false) =
-      some [.valued (.oblique true)] ∧
-    spellout [eqYaVocab] [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
+    applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) (.oblique false) =
+      some (.ofGramFeatures [.valued (.oblique true)]) ∧
+    spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 end UnifiedAgree

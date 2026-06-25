@@ -616,18 +616,18 @@ def keSatisfaction : SatisfactionCond :=
     `sameType` matching in Agree.lean). -/
 theorem ke_satisfied_by_phi :
     keSatisfaction.isSatisfied
-      [.valued (.phi (.person .first))]
-      none = true := by rfl
+      (.ofGramFeatures [.valued (.phi (.person .first))])
+      none = true := by decide
 
 /-- *ke* is satisfied by encountering the TP boundary even with no φ-features
     on the goal — the disjunctive escape that yields null surface agreement. -/
 theorem ke_satisfied_by_head_encounter :
-    keSatisfaction.isSatisfied [] (some .T) = true := by rfl
+    keSatisfaction.isSatisfied ⊥ (some .T) = true := by decide
 
 /-- The head-encounter satisfaction copies no features (default null surface
     agreement when subject lacks φ). -/
 theorem ke_head_encounter_no_copy :
-    keSatisfaction.copiedFeatures [] (some .T) = false := by rfl
+    keSatisfaction.copiedFeatures ⊥ (some .T) = false := by decide
 
 -- ============================================================================
 -- §7. Internal-Ā-dependency profile

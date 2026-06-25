@@ -150,7 +150,7 @@ structure AspHead where
   probe : Option Probe.Profile := none
   /-- Agree-relevant features on the head (e.g., `[+EXP]` for experiential AspO,
       `[uD]` for the AspO that triggers *you*-movement). -/
-  features : FeatureBundle := []
+  features : FeatureBundle := ⊥
   deriving Repr
 
 /-- Convenience constructor: a bare outer-aspect head with no selectional

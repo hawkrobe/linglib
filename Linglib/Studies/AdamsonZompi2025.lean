@@ -465,12 +465,12 @@ theorem pconstraint_allows_imposter :
 /-- A feature bundle for a 3rd person DP (LEI's agreement features).
     The probe sees [Person:3rd]. -/
 private def lei_agreement_bundle : Minimalist.FeatureBundle :=
-  [.valued (.phi (.person .third))]
+  .ofGramFeatures [.valued (.phi (.person .third))]
 
 /-- A feature bundle for a 2nd person DP (LEI's interpretable features).
     The probe sees [Person:2nd]. -/
 private def lei_interpretable_bundle : Minimalist.FeatureBundle :=
-  [.valued (.phi (.person .second))]
+  .ofGramFeatures [.valued (.phi (.person .second))]
 
 /-- A probe seeking person features finds them on both bundles — the
     probe can Agree with either. The issue is WHICH person value it sees. -/

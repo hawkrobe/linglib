@@ -95,13 +95,13 @@ namespace Sample
     (`phaseOverride := some true`); the variation is on the EPP feature. -/
 def voiceWithEPP : VoiceHead :=
   { flavor := .agentive, hasD := true, phaseOverride := some true
-  , features := [.valued (.epp true)] }
+  , features := .ofGramFeatures [.valued (.epp true)] }
 
 /-- Voice without EPP: subject trapped in vP, invisible to higher probes
     via PIC at the Voice phase boundary. -/
 def voiceWithoutEPP : VoiceHead :=
   { flavor := .agentive, hasD := true, phaseOverride := some true
-  , features := [] }
+  , features := ⊥ }
 
 /-- Token id namespace (each lexical position in the derivation
     gets a distinct id; needed because `LIToken` distinguishes

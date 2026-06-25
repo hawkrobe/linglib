@@ -135,9 +135,10 @@ def syntagmatic (cond : Neighborhood → Bool) (target : FeatureVal) :
 -- § 5: Applying Impoverishment
 -- ============================================================================
 
-/-- Delete all features matching `target` from a bundle. -/
+/-- Delete all features matching `target` from a bundle: set its dimension's
+slot to `absent`. -/
 def deleteFeature (fb : FeatureBundle) (target : FeatureVal) : FeatureBundle :=
-  fb.filter (λ f => !f.featureType.sameType target)
+  Function.update fb target.dimension .absent
 
 /-- Apply an Impoverishment rule at a neighborhood: when the condition
     holds, return the focus with `target` deleted; otherwise return the
@@ -208,7 +209,7 @@ def allRecoverable (recoverable pronFeatures : List FeatureVal) : Bool :=
 def redundancyRule (source : List FeatureVal) (target : FeatureVal) :
     ImpoverishmentRule :=
   paradigmatic
-    (λ fb => allRecoverable source (fb.map GramFeature.featureType))
+    (λ fb => allRecoverable source ((FeatureBundle.toGramFeatures fb).map GramFeature.featureType))
     target
 
 /-- Redundancy rules are paradigmatic. -/
@@ -224,9 +225,6 @@ theorem redundancyRule_isParadigmatic (source : List FeatureVal)
     (Filter is idempotent when the predicate is stable.) -/
 theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureVal) :
     deleteFeature (deleteFeature fb target) target = deleteFeature fb target := by
-  simp only [deleteFeature, List.filter_filter]
-  congr 1
-  ext f
-  simp only [Bool.and_self]
+  simp only [deleteFeature, Function.update_idem]
 
 end Morphology.DM.Impoverishment
