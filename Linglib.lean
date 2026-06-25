@@ -2195,6 +2195,7 @@ import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.Workspace
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Basic
