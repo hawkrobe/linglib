@@ -2197,6 +2197,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Phase
+import Linglib.Syntax.Minimalist.SyntacticObject.Externalization
 import Linglib.Syntax.Minimalist.Workspace
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Basic
