@@ -145,4 +145,130 @@ def SO : Type := { t : Nonplanar SOLabel // IsSO t }
 
 instance : DecidableEq SO := Subtype.instDecidableEq
 
+/-! ### Smart constructors: leaves and the bare binary node
+
+The three faithful shapes (§1.1.3.1): a **lexical leaf** (`Sum.inl tok`), a
+**trace leaf** (bare `Sum.inr ()`, index-free — chain identity is workspace-level,
+MCB Def 1.2.1), and a **bare binary node** (`Sum.inr ()`, internal). `SO.node` is the
+structural binary constructor; `Workspace.lean`'s `SO.merge`/`SO.intMerge` are its
+Merge semantics. -/
+
+/-- A **lexical leaf**: a childless `Sum.inl tok` (an SO₀ item). -/
+def SO.lexLeaf (tok : LIToken) : SO := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
+
+/-- The **trace leaf**: a childless, **bare** `Sum.inr ()` vertex
+    ([marcolli-chomsky-berwick-2025] Def 1.2.7's ρ-vertex), index-free. -/
+def SO.traceLeaf : SO := ⟨Nonplanar.leaf (Sum.inr ()), by decide⟩
+
+/-- `isSO` of a bare binary node is the conjunction of `isSO` on the two children:
+    `Sum.inr ()` at arity 2 is well-formed exactly when both daughters are.
+    `Quotient.inductionOn₂` reduces the smart `node` to a planar `.node` via
+    `node_mk_planar_list`, then unfolds `isSOPlanar`'s binary arm. -/
+theorem isSO_node_pair (a b : Nonplanar SOLabel) :
+    isSO (Nonplanar.node (Sum.inr ()) ({a, b} : Multiset (Nonplanar SOLabel)))
+      = (isSO a && isSO b) := by
+  refine Quotient.inductionOn₂ a b fun pa pb => ?_
+  show isSO (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
+      = (isSO (Nonplanar.mk pa) && isSO (Nonplanar.mk pb))
+  rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
+        = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl,
+      Nonplanar.node_mk_planar_list]
+  simp only [isSO_mk, isSOPlanar, isSOPlanarList, List.length_cons, List.length_nil,
+             Nat.reduceAdd, Nat.reduceBEq, Bool.or_true, Bool.true_and, Bool.and_true]
+
+/-- The **bare binary node** ([marcolli-chomsky-berwick-2025] §1.1.3.1): the
+    well-formed internal vertex over two syntactic objects, with no head label.
+    Noncomputable (it uses the smart `Nonplanar.node`); build concrete results via
+    `node_mk` + `decide`. -/
+noncomputable def SO.node (l r : SO) : SO :=
+  ⟨Nonplanar.node (Sum.inr ()) {l.val, r.val}, by
+    show isSO (Nonplanar.node (Sum.inr ()) {l.val, r.val}) = true
+    have hl : isSO l.val = true := l.2
+    have hr : isSO r.val = true := r.2
+    rw [isSO_node_pair, hl, hr, Bool.and_self]⟩
+
+@[simp] theorem SO.node_val (l r : SO) :
+    (SO.node l r).val = Nonplanar.node (Sum.inr ()) {l.val, r.val} := rfl
+
+/-- **Construction bridge**: a `node` of two `mk`-built objects is the single planar
+    binary node `mk (.node (inr ()) [pl, pr])` — built *without* the smart `node`'s
+    `Quotient.out`, so concrete results are `decide`-able. -/
+theorem SO.node_mk (pl pr : Planar SOLabel)
+    (hl : IsSO (Nonplanar.mk pl)) (hr : IsSO (Nonplanar.mk pr)) :
+    (SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩).val
+      = Nonplanar.mk (.node (Sum.inr ()) [pl, pr]) := by
+  rw [SO.node_val,
+      show ({Nonplanar.mk pl, Nonplanar.mk pr} : Multiset (Nonplanar SOLabel))
+        = Multiset.ofList ([pl, pr].map Nonplanar.mk) from rfl,
+      Nonplanar.node_mk_planar_list]
+
+/-! ### Induction and case analysis -/
+
+/-- Every member of an `isSOPlanarList`-true list is itself `isSOPlanar`: the
+    children of a well-formed node are well-formed. -/
+theorem isSOPlanar_of_mem {cs : List (Planar SOLabel)} (h : isSOPlanarList cs = true) :
+    ∀ c ∈ cs, isSOPlanar c = true := by
+  induction cs with
+  | nil => intro _ hc; exact absurd hc List.not_mem_nil
+  | cons hd tl ih =>
+    rw [isSOPlanarList, Bool.and_eq_true] at h
+    intro c hc
+    rcases List.mem_cons.mp hc with rfl | hmem
+    · exact h.1
+    · exact ih h.2 c hmem
+
+/-- **Induction on syntactic objects** ([marcolli-chomsky-berwick-2025] §1.1.3.1).
+    Every `SO` is a lexical leaf, the (bare) trace leaf, or a bare binary node of two
+    syntactic objects — the faithful analogue of the legacy `SyntacticObject.ind`
+    (leaf/trace/mul), with the `mul` case the bare `SO.node`. Proved by strong
+    induction on the planar weight (the two daughters of a binary node are strictly
+    smaller). -/
+@[elab_as_elim]
+theorem SO.ind {motive : SO → Prop}
+    (lex : ∀ tok, motive (SO.lexLeaf tok))
+    (trace : motive SO.traceLeaf)
+    (node : ∀ l r : SO, motive l → motive r → motive (SO.node l r))
+    (s : SO) : motive s := by
+  suffices H : ∀ n (p : Planar SOLabel) (hp : IsSO (Nonplanar.mk p)),
+      p.weight = n → motive ⟨Nonplanar.mk p, hp⟩ by
+    obtain ⟨t, ht⟩ := s
+    refine Quotient.inductionOn (motive := fun t => ∀ (ht : IsSO t), motive ⟨t, ht⟩)
+      t (fun p ht => H p.weight p ht rfl) ht
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n IH =>
+    rintro ⟨lbl, cs⟩ hp hw
+    have hpl : isSOPlanar (Planar.node lbl cs) = true := hp
+    cases lbl with
+    | inl tok =>
+      rw [isSOPlanar] at hpl
+      rcases cs with _ | ⟨c, cs'⟩
+      · exact lex tok
+      · simp at hpl
+    | inr u =>
+      cases u
+      rw [isSOPlanar, Bool.and_eq_true] at hpl
+      obtain ⟨hlen, hlist⟩ := hpl
+      rcases cs with _ | ⟨pl, _ | ⟨pr, _ | ⟨x, rest⟩⟩⟩
+      · exact trace
+      · simp at hlen
+      · have hl : isSOPlanar pl = true := isSOPlanar_of_mem hlist pl (by simp)
+        have hr : isSOPlanar pr = true := isSOPlanar_of_mem hlist pr (by simp)
+        have hnode : (⟨Nonplanar.mk (Planar.node (Sum.inr ()) [pl, pr]), hp⟩ : SO)
+            = SO.node ⟨Nonplanar.mk pl, hl⟩ ⟨Nonplanar.mk pr, hr⟩ :=
+          Subtype.ext (SO.node_mk pl pr hl hr).symm
+        rw [hnode]
+        simp only [Planar.weight, Planar.weightList] at hw
+        exact node _ _ (IH pl.weight (by omega) pl hl rfl) (IH pr.weight (by omega) pr hr rfl)
+      · simp at hlen
+
+/-- **Case analysis** ([marcolli-chomsky-berwick-2025] §1.1.3.1): every syntactic
+    object is a lexical leaf, the bare trace leaf, or a bare binary node. -/
+theorem SO.exists_form (s : SO) :
+    (∃ tok, s = SO.lexLeaf tok) ∨ s = SO.traceLeaf ∨ (∃ l r, s = SO.node l r) := by
+  induction s using SO.ind with
+  | lex tok => exact Or.inl ⟨tok, rfl⟩
+  | trace => exact Or.inr (Or.inl rfl)
+  | node l r _ _ => exact Or.inr (Or.inr ⟨l, r, rfl⟩)
+
 end Minimalist
