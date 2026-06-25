@@ -152,6 +152,28 @@ instance : DecidableEq LIToken := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact hid rfl)
 
+/-! ### Head-side convention (MCB Lemma 1.13.5) -/
+
+/-- The harmonic head-side convention ([marcolli-chomsky-berwick-2025]
+    Lemma 1.13.5, book p. 127): head functions on a tree are in bijection with
+    its planar embeddings, under one of two conventions:
+
+    - `.initial` (harmonic head-initial): the head daughter is to the LEFT of
+      each binary node (English-like).
+    - `.final` (harmonic head-final): the head daughter is to the RIGHT
+      (Japanese/Korean/Turkish).
+
+    A carrier-free parameter (it names a directionality, not a tree shape), so it
+    lives in the alphabet layer alongside `Cat`. Consumed by the selection-induced
+    externalization (`SyntacticObject/Externalization.lean`) and the legacy
+    section-based `HeadFunction`. Mixed-direction languages (German head-final VP +
+    head-initial CP) need a `headSide : Cat → ConventionDir` refinement, out of
+    scope for §1.13-§1.16. -/
+inductive ConventionDir where
+  | initial
+  | final
+  deriving Repr, DecidableEq, Inhabited
+
 /-- Syntactic object: nonplanar binary tree over `LIToken ⊕ Nat`,
     realized as `FreeCommMagma (LIToken ⊕ Nat)`.
 

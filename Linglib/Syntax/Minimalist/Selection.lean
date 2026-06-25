@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Syntax.Minimalist.RepOrder
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # C-Selection and Derivation Well-Formedness
@@ -188,35 +189,10 @@ It returns `some (head, residual)` on the endocentric domain `Dom(h)`
 ([marcolli-chomsky-berwick-2025] Def 1.13.6) and `none` at exocentric/symmetric
 nodes where neither sister uniquely selects the other — exactly MCB's
 partial-domain restriction (book p. 128, p. 131). This is what makes
-`Derivation.WellFormed` genuinely `Decidable` without `classical`. -/
-
-/-- Combine two sisters' selection-check results. Order-independent (symmetric,
-    `selStep_comm`): whichever sister's head c-selects the *saturated* other
-    projects, yielding its residual stack; `none` at exocentric nodes (neither
-    or both qualify). -/
-def selStep : Option (LIToken × List Cat) → Option (LIToken × List Cat) →
-    Option (LIToken × List Cat)
-  | some (ha, c :: rest), some (hb, []) =>
-      if hb.item.outerCat = c then some (ha, rest) else none
-  | some (ha, []), some (hb, c :: rest) =>
-      if ha.item.outerCat = c then some (hb, rest) else none
-  | _, _ => none
-
-theorem selStep_comm (x y : Option (LIToken × List Cat)) :
-    selStep x y = selStep y x := by
-  cases x with
-  | none =>
-    cases y with
-    | none => rfl
-    | some py => cases py with | mk hy sy => cases sy <;> rfl
-  | some px =>
-    cases px with
-    | mk hx sx =>
-      cases y with
-      | none => cases sx <;> rfl
-      | some py =>
-        cases py with
-        | mk hy sy => cases sx <;> cases sy <;> rfl
+`Derivation.WellFormed` genuinely `Decidable` without `classical`. The
+carrier-free combinators `selStep`/`selSide` (+ `selStep_comm`/`selSide_comm`/
+`selStep_fst`/`selStep_eq_some`) now live in `SyntacticObject/Selection.lean`
+(shared with the `SO`-carrier selection check) and are imported here. -/
 
 /-- Underlying selection check on a planar `FreeMagma` representative. -/
 def selCheckAux : FreeMagma (LIToken ⊕ Nat) → Option (LIToken × List Cat)
@@ -295,16 +271,6 @@ instance (a b : SyntacticObject) : Decidable (selectsC a b) := by
     selectsC (.leaf s) (.leaf t) ↔ s.selects t := by
   simp only [selectsC, selHead_leaf]
 
-/-- The head of `selStep x y` (when defined) is one of `x`/`y`'s heads. -/
-theorem selStep_fst {x y : Option (LIToken × List Cat)} {r : LIToken}
-    (h : (selStep x y).map (·.1) = some r) :
-    x.map (·.1) = some r ∨ y.map (·.1) = some r := by
-  unfold selStep at h
-  split at h
-  · split_ifs at h <;> simp_all
-  · split_ifs at h <;> simp_all
-  · simp at h
-
 /-- Head Feature Principle (computable): a Merge node's head is one of its
     daughters' heads ([adger-2003] eq. 137 / [marcolli-chomsky-berwick-2025]
     Lemma 1.13.7). Holds for `selHead` because it projects the *selector* by
@@ -339,27 +305,9 @@ which MCB place *outside* `Dom(h)` and where σ_L is explicitly **noncanonical**
 the subtrees are ordered by the canonical structural comparison `smallerFirst`
 (`RepOrder.lean`), which is comm-invariant, keeping the section **fully
 computable** (no `Quot.out`). The head leaf of the resulting embedding is the
-selector (`leftSpine_outerCat_eq_outerCatC`), the formal content of Lemma 1.13.7. -/
-
-/-- Which daughter projects at a binary node under c-selection: `some true` = the
-    **left** sister is the selector, `some false` = the **right**, `none` =
-    exocentric (neither uniquely selects the saturated other). Mirrors `selStep`. -/
-def selSide : Option (LIToken × List Cat) → Option (LIToken × List Cat) → Option Bool
-  | some (_, c :: _), some (hb, []) => if hb.item.outerCat = c then some true else none
-  | some (ha, []), some (_, c :: _) => if ha.item.outerCat = c then some false else none
-  | _, _ => none
-
-theorem selSide_comm (x y : Option (LIToken × List Cat)) :
-    selSide x y = (selSide y x).map Bool.not := by
-  cases x with
-  | none => cases y with
-    | none => rfl
-    | some py => obtain ⟨hy, sy⟩ := py; cases sy <;> rfl
-  | some px => obtain ⟨hx, sx⟩ := px; cases y with
-    | none => cases sx <;> rfl
-    | some py => obtain ⟨hy, sy⟩ := py
-                 cases sx <;> cases sy <;> simp only [selSide, Option.map] <;>
-                   split <;> rfl
+selector (`leftSpine_outerCat_eq_outerCatC`), the formal content of Lemma 1.13.7.
+`selSide` (which daughter projects) is imported from
+`SyntacticObject/Selection.lean`. -/
 
 /-- Place the head daughter on the convention side: `.initial` (head-initial) →
     head to the LEFT, `.final` (head-final) → head to the RIGHT. -/
@@ -427,33 +375,6 @@ theorem selLinearize_mul (s : ConventionDir) (l r : SyntacticObject) :
       | some false => placeHead s (selLinearize s r) (selLinearize s l)
       | none       => smallerFirst (selLinearize s l) (selLinearize s r) := by
   induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
-
-/-- When `selStep` returns a head, that head is the projecting daughter's head,
-    and `selSide` agrees on which daughter projects. The bridge between the
-    residual-tracking `selStep` and the order-determining `selSide`. -/
-theorem selStep_eq_some {x y : Option (LIToken × List Cat)} {hd : LIToken}
-    {res : List Cat} (h : selStep x y = some (hd, res)) :
-    (selSide x y = some true ∧ x.map (·.1) = some hd) ∨
-    (selSide x y = some false ∧ y.map (·.1) = some hd) := by
-  match x, y with
-  | some (ha, c :: rest'), some (hb, []) =>
-    simp only [selStep] at h
-    by_cases hcat : hb.item.outerCat = c
-    · rw [if_pos hcat] at h
-      simp only [Option.some.injEq, Prod.mk.injEq] at h
-      exact Or.inl ⟨by simp [selSide, hcat], by simp [h.1]⟩
-    · rw [if_neg hcat] at h; exact absurd h (by simp)
-  | some (ha, []), some (hb, c :: rest') =>
-    simp only [selStep] at h
-    by_cases hcat : ha.item.outerCat = c
-    · rw [if_pos hcat] at h
-      simp only [Option.some.injEq, Prod.mk.injEq] at h
-      exact Or.inr ⟨by simp [selSide, hcat], by simp [h.1]⟩
-    · rw [if_neg hcat] at h; exact absurd h (by simp)
-  | some (_, []), some (_, []) => simp [selStep] at h
-  | some (_, _ :: _), some (_, _ :: _) => simp [selStep] at h
-  | none, _ => simp [selStep] at h
-  | some _, none => simp [selStep] at h
 
 /-- The head leaf of the selection-induced head-initial embedding is the
     **selector** ([marcolli-chomsky-berwick-2025] Lemma 1.13.5/1.13.7): the

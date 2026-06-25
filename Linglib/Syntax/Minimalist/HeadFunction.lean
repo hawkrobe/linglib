@@ -81,25 +81,12 @@ Per Lemma 1.13.5, the head leaf at vertex v is:
 
 namespace Minimalist
 
-/-! ### Convention direction (MCB Lemma 1.13.5) -/
+/-! ### Convention direction (MCB Lemma 1.13.5)
 
-/-- The harmonic head-side convention. Per [marcolli-chomsky-berwick-2025]
-    Lemma 1.13.5 (book p. 127), head functions on T are in bijection with planar
-    embeddings of T, under one of two equally valid conventions:
-
-    - `.initial` (harmonic head-initial): the head daughter is to the LEFT of
-      each binary node. The head leaf is the leftmost-leaf of the planar tree.
-      Canonical for English-like analyses.
-    - `.final` (harmonic head-final): the head daughter is to the RIGHT.
-      The head leaf is the rightmost-leaf. Canonical for Japanese/Korean/Turkish.
-
-    A head function bundles a planar section + a side convention. Mixed-direction
-    languages (e.g. German with head-final VP and head-initial CP) require a
-    refinement (`headSide : Cat → ConventionDir`) that is currently out of scope. -/
-inductive ConventionDir where
-  | initial
-  | final
-  deriving Repr, DecidableEq, Inhabited
+`ConventionDir` (harmonic head-side, `.initial`/`.final`) now lives in `Defs.lean`
+alongside the SO₀ alphabet — it is a carrier-free directionality parameter shared
+by the section-based `HeadFunction` here and the selection-induced externalization
+on the `SO` carrier. -/
 
 -- ============================================================================
 -- § 1: HeadFunction (MCB §1.12.1 + §1.13.5 + Def 1.13.6)

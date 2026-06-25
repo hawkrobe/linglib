@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # A canonical total order on `SyntacticObject` representatives

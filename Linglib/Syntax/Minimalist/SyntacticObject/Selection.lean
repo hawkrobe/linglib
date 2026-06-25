@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject
-import Linglib.Syntax.Minimalist.Selection
 
 /-!
 # The selection-driven head on the `SO` carrier
@@ -15,20 +14,112 @@ section-free, computable head ([adger-2003] "the item that projects is the item
 that selects"). Re-homes `selCheck`/`selHead`/`outerCatC` onto `SO`, the foundation
 the Phase API consumes (`isPhaseHeadOf`, P3b).
 
-The combinator `selStep` (carrier-agnostic, commutative — `selStep_comm`) is reused
-from the legacy `Selection`; only the tree recursion is re-homed onto `Planar SOLabel`
-+ the `SO` lift, exactly as `subtreesN` (P2a-ii). **Index-free traces** (P1): a bare
-trace leaf gets the canonical saturated value `(mkTraceToken 0, [])` — `selCheck`
-reads only the token's category (`.N`) and `outerSel` (`[]`), both index-independent,
-so this is behaviour-equivalent to the legacy `(mkTraceToken n, [])`.
-
-Out of scope (later phases): the planar `section_`/externalization (`linearize`/
-`phonYield`) — research-grade and co-dependent with the flip (P3c/P4).
+The carrier-free selection combinators `selStep`/`selSide` (commutative —
+`selStep_comm`/`selSide_comm`) live here: they operate purely on selection states
+(`Option (LIToken × List Cat)`), so they are shared by the `SO`-carrier tree
+recursion below and the legacy section-based `Selection.lean`. Only the tree
+recursion is re-homed onto `Planar SOLabel` + the `SO` lift, exactly as `subtreesN`
+(P2a-ii). **Index-free traces** (P1): a bare trace leaf gets the canonical saturated
+value `(mkTraceToken 0, [])` — `selCheck` reads only the token's category (`.N`) and
+`outerSel` (`[]`), both index-independent, so this is behaviour-equivalent to the
+legacy `(mkTraceToken n, [])`.
 -/
 
 namespace Minimalist
 
 open RootedTree
+
+/-! ### Carrier-free selection combinators
+
+`selStep`/`selSide` combine two sisters' selection-check results into the node's
+projecting head (`selStep`) and which daughter projects (`selSide`). Both are
+order-independent (`selStep_comm`/`selSide_comm`) — the formal content of Merge's
+unordered output — so they descend through the nonplanar quotient. -/
+
+/-- Combine two sisters' selection-check results. Order-independent (symmetric,
+    `selStep_comm`): whichever sister's head c-selects the *saturated* other
+    projects, yielding its residual stack; `none` at exocentric nodes (neither
+    or both qualify). -/
+def selStep : Option (LIToken × List Cat) → Option (LIToken × List Cat) →
+    Option (LIToken × List Cat)
+  | some (ha, c :: rest), some (hb, []) =>
+      if hb.item.outerCat = c then some (ha, rest) else none
+  | some (ha, []), some (hb, c :: rest) =>
+      if ha.item.outerCat = c then some (hb, rest) else none
+  | _, _ => none
+
+theorem selStep_comm (x y : Option (LIToken × List Cat)) :
+    selStep x y = selStep y x := by
+  cases x with
+  | none =>
+    cases y with
+    | none => rfl
+    | some py => cases py with | mk hy sy => cases sy <;> rfl
+  | some px =>
+    cases px with
+    | mk hx sx =>
+      cases y with
+      | none => cases sx <;> rfl
+      | some py =>
+        cases py with
+        | mk hy sy => cases sx <;> cases sy <;> rfl
+
+/-- The head of `selStep x y` (when defined) is one of `x`/`y`'s heads. -/
+theorem selStep_fst {x y : Option (LIToken × List Cat)} {r : LIToken}
+    (h : (selStep x y).map (·.1) = some r) :
+    x.map (·.1) = some r ∨ y.map (·.1) = some r := by
+  unfold selStep at h
+  split at h
+  · split_ifs at h <;> simp_all
+  · split_ifs at h <;> simp_all
+  · simp at h
+
+/-- Which daughter projects at a binary node under c-selection: `some true` = the
+    **left** sister is the selector, `some false` = the **right**, `none` =
+    exocentric (neither uniquely selects the saturated other). Mirrors `selStep`. -/
+def selSide : Option (LIToken × List Cat) → Option (LIToken × List Cat) → Option Bool
+  | some (_, c :: _), some (hb, []) => if hb.item.outerCat = c then some true else none
+  | some (ha, []), some (_, c :: _) => if ha.item.outerCat = c then some false else none
+  | _, _ => none
+
+theorem selSide_comm (x y : Option (LIToken × List Cat)) :
+    selSide x y = (selSide y x).map Bool.not := by
+  cases x with
+  | none => cases y with
+    | none => rfl
+    | some py => obtain ⟨hy, sy⟩ := py; cases sy <;> rfl
+  | some px => obtain ⟨hx, sx⟩ := px; cases y with
+    | none => cases sx <;> rfl
+    | some py => obtain ⟨hy, sy⟩ := py
+                 cases sx <;> cases sy <;> simp only [selSide, Option.map] <;>
+                   split <;> rfl
+
+/-- When `selStep` returns a head, that head is the projecting daughter's head,
+    and `selSide` agrees on which daughter projects. The bridge between the
+    residual-tracking `selStep` and the order-determining `selSide`. -/
+theorem selStep_eq_some {x y : Option (LIToken × List Cat)} {hd : LIToken}
+    {res : List Cat} (h : selStep x y = some (hd, res)) :
+    (selSide x y = some true ∧ x.map (·.1) = some hd) ∨
+    (selSide x y = some false ∧ y.map (·.1) = some hd) := by
+  match x, y with
+  | some (ha, c :: rest'), some (hb, []) =>
+    simp only [selStep] at h
+    by_cases hcat : hb.item.outerCat = c
+    · rw [if_pos hcat] at h
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inl ⟨by simp [selSide, hcat], by simp [h.1]⟩
+    · rw [if_neg hcat] at h; exact absurd h (by simp)
+  | some (ha, []), some (hb, c :: rest') =>
+    simp only [selStep] at h
+    by_cases hcat : ha.item.outerCat = c
+    · rw [if_pos hcat] at h
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      exact Or.inr ⟨by simp [selSide, hcat], by simp [h.1]⟩
+    · rw [if_neg hcat] at h; exact absurd h (by simp)
+  | some (_, []), some (_, []) => simp [selStep] at h
+  | some (_, _ :: _), some (_, _ :: _) => simp [selStep] at h
+  | none, _ => simp [selStep] at h
+  | some _, none => simp [selStep] at h
 
 /-! ### Selection check on the planar carrier -/
 
