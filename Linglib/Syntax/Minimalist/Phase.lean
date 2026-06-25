@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # Phase Theory
@@ -106,15 +107,13 @@ and [pietraszko-2026] (Ndebele, A-movement & φ-agreement). -/
     proposal that PIC strength is parametrized per interface module) are
     not yet operationalized in this enum.
 
-    TODO: the strong/weak distinction is not yet operationalized in
-    `phaseImpenetrable`, which currently models only the structural
-    "goal sits in the complement" check shared by both variants. The
-    real distinction lies in *when* the check fires relative to merge
-    of the next phase head — that requires a derivational timeline
-    that this static API doesn't yet expose. Callers using `strong`
-    or `weak` get the same structural answer; callers using
-    `linearizationBound` should consult `Cyclic.SpelloutAndCheck`
-    rather than `phaseImpenetrable`. -/
+    The mode is **load-bearing**: `strong`/`weak` select between
+    `Phase.inaccessible (strong := true)` (heads of lower phases also frozen,
+    MCB Remark 1.14.4) and the default `Phase.inaccessible` (heads in the edge);
+    `linearizationBound` drops structural opacity entirely (`admitsExtraction` is
+    then vacuously `True`, with locality delegated to Cyclic Linearization). The
+    cross-phase strong/weak split lives in `Phase.inaccessible`; the single-phase
+    complement check is `Phase.Impenetrable`. -/
 inductive PICStrength where
   | strong              -- PIC₁: complement frozen immediately
   | weak                -- PIC₂: complement accessible until next phase
@@ -122,147 +121,145 @@ inductive PICStrength where
   deriving Repr, DecidableEq
 
 -- The mode-aware extraction predicate `admitsExtraction` is defined in
--- §4 below, after `phaseImpenetrable` (which it dispatches on for the
--- strict-PIC modes).
+-- §4 below, after the `Phase` API (which it dispatches on for the strict modes).
 
 -- ============================================================================
--- Part 3: Phase Structure
+-- Part 3: Phase (MCB §1.14 — grounded in the head function)
 -- ============================================================================
 
-/-- A phase: a derivational cycle with head, complement, and edge.
+/-- A **phase** ([marcolli-chomsky-berwick-2025] §1.14): a phase-head leaf `head`
+    together with its grounding — the head function `h` (which determines
+    projection, head, and complement) and the containing tree `tree`. Phases are
+    tree-relative; nothing is stipulated. Every phase notion — complement `Z_ℓ`
+    (Def 1.14.2), interior `Φ°_ℓ` (eq 1.14.3), edge `∂Φ_ℓ` (eq 1.14.4),
+    inaccessibility `Υ_ℓ` (eq 1.14.5) — is a **derived accessor** over the
+    substrate in `Merge/Phase.lean`.
 
-    The phase head determines the domain boundary. Material in the
-    complement is shipped to PF/LF; material at the edge remains
-    accessible for further operations.
-
-    Per-analysis discipline determines which heads count as phase heads
-    — Keine 2020 (C-only), Chomsky 2000/2001 (C + v), Pietraszko 2026 +
-    Erlewine & Sommerlot 2025 (also Voice via `VoiceHead.IsPhasal`),
-    Citko 2014 (also D). The struct is intentionally permissive about
-    `head`'s category so all four can register `Phase` instances. -/
+    This replaces the earlier free-floating `{head, complement, edge}` record,
+    which stipulated a phase with no tree or head function and so had to guess the
+    complement structurally. Per-analysis discipline (Keine 2020 C-only; Chomsky
+    2000/2001 C+v; Pietraszko 2026 / Erlewine & Sommerlot 2025 also Voice; Citko
+    2014 also D) is expressed by *which leaf* a study supplies as `head`. -/
 structure Phase where
-  /-- The phase head (per-analysis: C, v, Voice, D, …) -/
-  head : SyntacticObject
-  /-- The complement domain (shipped to interfaces) -/
-  complement : SyntacticObject
-  /-- The edge (specifier, accessible for further operations) -/
-  edge : SyntacticObject
+  /-- The head function determining projection / head / complement. -/
+  h : HeadFunction
+  /-- The containing tree `T` (phases are `T`-relative, MCB §1.14). -/
+  tree : SyntacticObject
+  /-- The phase-head leaf `ℓ`; its maximal projection delimits the phase. -/
+  head : LIToken
+
+namespace Phase
+
+/-- The complement `Z_ℓ` — the head's sister at its mother node (MCB Def 1.14.2).
+    Computable when `φ.h`'s section is (e.g. `HeadFunction.leftSpine`). -/
+def complement (φ : Phase) : Option SyntacticObject :=
+  phaseComplementZ φ.h φ.tree φ.head
+
+/-- The whole phase `Φ_ℓ` — all accessible terms in the maximal projection
+    (MCB eq 1.14.2). -/
+noncomputable def content (φ : Phase) : Multiset SyntacticObject :=
+  phase φ.h φ.tree φ.head
+
+/-- The interior `Φ°_ℓ` — the complement and its accessible terms; the part the
+    PIC freezes (MCB eq 1.14.3, "Z is the interior of the phase"). Computable when
+    `φ.h`'s section is — so concrete PIC checks `decide`. -/
+def interior (φ : Phase) : Multiset SyntacticObject :=
+  phaseInterior φ.h φ.tree φ.head
+
+/-- The edge `∂Φ_ℓ` — head, specifiers, and modifiers; stays accessible
+    (MCB eq 1.14.4). -/
+noncomputable def edge (φ : Phase) : Multiset SyntacticObject :=
+  phaseEdge φ.h φ.tree φ.head
+
+/-- The inaccessibility set `Υ_ℓ` — terms frozen in the interiors of strictly
+    lower phases (MCB eq 1.14.5). With `strong := true`, also freezes the lower
+    phase heads (MCB Remark 1.14.4 — the head-movement-banning variant). -/
+noncomputable def inaccessible (φ : Phase) (strong : Bool := false) :
+    Multiset SyntacticObject :=
+  if strong then inaccessibleTerms_strong φ.h φ.tree φ.head
+  else inaccessibleTerms φ.h φ.tree φ.head
+
+/-- **Phase Impenetrability Condition**: `goal` is frozen in this phase iff it
+    lies in the interior (= the complement). True by construction — no bridge
+    theorem needed: the PIC *is* interior membership
+    ([marcolli-chomsky-berwick-2025] §1.14). -/
+def Impenetrable (φ : Phase) (goal : SyntacticObject) : Prop :=
+  goal ∈ φ.interior
+
+instance (φ : Phase) (goal : SyntacticObject) :
+    Decidable (φ.Impenetrable goal) :=
+  inferInstanceAs (Decidable (goal ∈ φ.interior))
+
+/-- A genuine phase: its head projects nontrivially — `head ∈ L_Φ(T)`, i.e. `γ_ℓ`
+    contains an internal vertex (MCB Def 1.14.3 eq 1.14.1). -/
+def IsWellFormed (φ : Phase) : Prop :=
+  φ.head ∈ phaseHeadLeaves φ.h φ.tree
+
+end Phase
 
 -- ============================================================================
--- Part 4: Phase Impenetrability Condition
+-- Part 4: Extraction under a PIC regime
 -- ============================================================================
 
-/-- The phase complement is the right daughter of the phase node under the
-    **selection-induced** head-initial embedding (`selLinearize .initial`,
-    [marcolli-chomsky-berwick-2025] Lemma 1.13.5): the phase head is the left
-    daughter, its complement the right. Computable; supersedes the arbitrary
-    `Quot.out` choice. `phaseComplementWith?` below takes an explicit head fn. -/
-def phaseComplement? : SyntacticObject → Option SyntacticObject :=
-  fun so => match selLinearize .initial so with
-    | .of _ => none
-    | .mul _ r => some (FreeCommMagma.mk r)
-
-/-- Parameterized phase-complement accessor: under harmonic head-initial
-    convention (head daughter to the LEFT of the planar representative),
-    the complement is the RIGHT daughter of `h.section_.σ so`. Computable
-    when `h.section_.σ` is.
-
-    Returns `none` when `h.section_.σ so` is a leaf or trace (no daughter
-    structure). For nodes, returns the right daughter as a `SyntacticObject`. -/
-def phaseComplementWith? (h : HeadFunction) (so : SyntacticObject) :
-    Option SyntacticObject :=
-  match h.section_.σ so with
-  | .of _ => none
-  | .mul _ r => some (FreeCommMagma.mk r)
-
-/-- Phase Impenetrability Condition: material inside a phase complement
-    is inaccessible to operations outside the phase.
-
-    The strong/weak (PIC₁/PIC₂) distinction is about *when* the check
-    fires relative to the merge of the next phase head; structurally
-    both variants ask the same question — is the goal sitting inside
-    the phase's complement? — so this predicate is currently
-    strength-agnostic. See `PICStrength` for the TODO. -/
-def phaseImpenetrable (phase goal : SyntacticObject) : Prop :=
-  match phaseComplement? phase with
-  | some complement => contains complement goal
-  | none => False
-
-noncomputable instance (phase goal : SyntacticObject) :
-    Decidable (phaseImpenetrable phase goal) := by
-  unfold phaseImpenetrable
-  cases phaseComplement? phase <;> classical infer_instance
-
-/-- A phase admits movement of `goal` out of `phase.complement` under
-    `strength`. For `strong`/`weak`, this is the negation of
-    `phaseImpenetrable`. For `linearizationBound`, the predicate is
-    vacuously `True` — actual constraint comes from the Cyclic
-    Linearization table, not from phasehood per se.
-
-    The point of the predicate is to make the SCD-2026 stance ("PIC
-    is too strong, Cyclic Linearization is enough") expressible as a
-    different `PICStrength` argument rather than a different theorem
-    statement. Callers who pick `linearizationBound` should also
-    feed the derivation through
-    `Minimalist.Linearization.SpelloutAndCheck` to confirm it does
-    not crash on ordering grounds. -/
-def admitsExtraction (strength : PICStrength)
-    (phase goal : SyntacticObject) : Prop :=
+/-- Phase `φ` admits extraction of `goal` under `strength`:
+    - `strong`/`weak`: `goal` is not frozen — `¬ φ.Impenetrable goal` (the
+      single-phase complement check; the strong/weak distinction of Remark 1.14.4
+      is *cross-phase* and lives in `Phase.inaccessible`, consumed by Agree).
+    - `linearizationBound`: vacuously `True` — no structural opacity; movement is
+      constrained only by Cyclic Linearization ([sande-clem-dabkowski-2026],
+      [fox-pesetsky-2005]). -/
+def admitsExtraction (strength : PICStrength) (φ : Phase)
+    (goal : SyntacticObject) : Prop :=
   match strength with
-  | .strong | .weak => ¬ phaseImpenetrable phase goal
+  | .strong | .weak => ¬ φ.Impenetrable goal
   | .linearizationBound => True
 
-noncomputable instance (strength : PICStrength) (phase goal : SyntacticObject) :
-    Decidable (admitsExtraction strength phase goal) := by
-  unfold admitsExtraction
-  cases strength <;> classical infer_instance
+noncomputable instance (strength : PICStrength) (φ : Phase) (goal : SyntacticObject) :
+    Decidable (admitsExtraction strength φ goal) := by
+  unfold admitsExtraction; cases strength <;> classical infer_instance
 
-/-- Under `linearizationBound`, every phase admits extraction at the
-    phasehood layer. Concrete crashes come from the linearization
-    table (see `Minimalist.Linearization.SpelloutAndCheck`). This is the
-    formal content of [sande-clem-dabkowski-2026]'s rejection of
-    strict PIC. -/
-theorem linearizationBound_admits_all (phase goal : SyntacticObject) :
-    admitsExtraction .linearizationBound phase goal := trivial
+/-- Under `linearizationBound`, every phase admits extraction at the phasehood
+    layer; concrete crashes come from the linearization table. This is the formal
+    content of [sande-clem-dabkowski-2026]'s rejection of strict PIC. -/
+theorem linearizationBound_admits_all (φ : Phase) (goal : SyntacticObject) :
+    admitsExtraction .linearizationBound φ goal := trivial
 
-/-- Strict PIC₁/PIC₂ both block extraction from a phase complement.
-    The mode-as-data design lets a study file pick its locality regime
-    by passing the `PICStrength` argument explicitly. -/
+/-- Strict PIC₁/PIC₂ both block extraction of a goal frozen in the phase interior. -/
 theorem strict_PIC_blocks {strength : PICStrength}
     (h : strength = .strong ∨ strength = .weak)
-    {phase goal : SyntacticObject}
-    (hp : phaseImpenetrable phase goal) :
-    ¬ admitsExtraction strength phase goal := by
+    {φ : Phase} {goal : SyntacticObject} (hp : φ.Impenetrable goal) :
+    ¬ admitsExtraction strength φ goal := by
   rcases h with h | h <;> simp [admitsExtraction, h, hp]
 
 -- ============================================================================
 -- Part 5: Transfer
 -- ============================================================================
 
-/-- Transfer: ship a phase complement to the interfaces (PF and LF).
+/-- Transfer: ship a phase's interior to the interfaces (PF and LF).
 
-    When a phase is complete, its complement domain is transferred:
+    When a phase is complete, its interior `Φ°_ℓ` (= the complement domain, MCB
+    eq 1.14.3) is transferred:
     - To PF for phonological computation (linearization, prosody)
     - To LF for semantic interpretation -/
 structure Transfer where
   /-- The phase being transferred -/
   phase : Phase
   /-- Material sent to PF (phonological form) -/
-  toPF : SyntacticObject
+  toPF : Multiset SyntacticObject
   /-- Material sent to LF (logical form) -/
-  toLF : SyntacticObject
-  /-- PF domain = complement -/
-  pf_is_complement : toPF = phase.complement
-  /-- LF domain = complement -/
-  lf_is_complement : toLF = phase.complement
+  toLF : Multiset SyntacticObject
+  /-- PF domain = interior -/
+  pf_is_interior : toPF = phase.interior
+  /-- LF domain = interior -/
+  lf_is_interior : toLF = phase.interior
 
-/-- Create a transfer from a phase (PF and LF receive the complement) -/
-def Transfer.fromPhase (ph : Phase) : Transfer :=
+/-- Create a transfer from a phase (PF and LF receive the interior). -/
+noncomputable def Transfer.fromPhase (ph : Phase) : Transfer :=
   { phase := ph
-    toPF := ph.complement
-    toLF := ph.complement
-    pf_is_complement := rfl
-    lf_is_complement := rfl }
+    toPF := ph.interior
+    toLF := ph.interior
+    pf_is_interior := rfl
+    lf_is_interior := rfl }
 
 -- ============================================================================
 -- Part 6: Feature Inheritance / Transfer ([chomsky-2008], [ouali-2008],
@@ -336,20 +333,19 @@ structure FeatureInheritance where
 -- Part 7: Phase-Bounded Locality
 -- ============================================================================
 
-/-- A movement is phase-bounded iff the mover does not cross a phase boundary.
+/-- A movement is phase-bounded iff the mover is not frozen in the interior of
+    any of the given phases.
 
-    Under PIC, an element inside a phase complement is inaccessible.
-    This means movement must target the edge before the phase is complete. -/
-def isPhaseBounded (mover target : SyntacticObject)
-    (phases : List Phase) : Prop :=
-  ¬∃ ph ∈ phases, phaseImpenetrable ph.head mover ∧
-    contains target ph.head
+    Under PIC, an element inside a phase interior (= complement) is inaccessible;
+    movement must reach the edge before the phase is complete. -/
+def isPhaseBounded (mover : SyntacticObject) (phases : List Phase) : Prop :=
+  ¬ ∃ ph ∈ phases, ph.Impenetrable mover
 
 -- Phase-bounded locality subsumes Relativized Minimality ([rizzi-1990])
 -- for Agree: if a goal is inside a phase complement, no probe outside can
 -- reach it. The actual blocking-of-Agree statement lives downstream of the
 -- Agree relation (see `Agree.validAgreeWithPIC`); a standalone theorem here
--- would just restate `phaseImpenetrable` as itself.
+-- would just restate `Phase.Impenetrable` as itself.
 
 -- ============================================================================
 -- Part 8: N/D-Incorporation and Phase Deactivation

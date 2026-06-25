@@ -337,17 +337,17 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
 
 /-- Valid Agree with Phase Impenetrability Condition.
 
-    Agree is blocked if the goal is inside a phase complement
-    (and thus inaccessible under PIC). The `strength` parameter
-    selects the PIC variant (PIC₁ vs PIC₂); see `PICStrength`. It is
-    not yet consumed by `phaseImpenetrable` itself but is retained on
-    the Agree-level interface so that derivational variants can wire
-    it in without breaking call sites. -/
+    Agree is blocked if the goal is frozen in a phase interior
+    (`Phase.Impenetrable`, MCB eq 1.14.3). The `strength` parameter is
+    **load-bearing**: `strong`/`weak` apply the PIC block, while
+    `linearizationBound` ([sande-clem-dabkowski-2026]) drops it (locality is then
+    enforced by Cyclic Linearization, not phasehood). -/
 def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
     (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
-  let _ := strength
   validAgree rel root ∧
-    ¬∃ ph ∈ phases, phaseImpenetrable ph.head rel.goal
+    match strength with
+    | .linearizationBound => True
+    | .strong | .weak => ¬∃ ph ∈ phases, ph.Impenetrable rel.goal
 
 /-- PIC-bounded Agree with Activity Condition.
 
@@ -356,9 +356,10 @@ def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
     See `validAgreeWithPIC` for the role of `strength`. -/
 def fullAgree (strength : PICStrength) (phases : List Phase)
     (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
-  let _ := strength
   validAgreeWithActivity rel root ∧
-    ¬∃ ph ∈ phases, phaseImpenetrable ph.head rel.goal
+    match strength with
+    | .linearizationBound => True
+    | .strong | .weak => ¬∃ ph ∈ phases, ph.Impenetrable rel.goal
 
 -- ============================================================================
 -- § 13: Clause-Typing Agree Configurations

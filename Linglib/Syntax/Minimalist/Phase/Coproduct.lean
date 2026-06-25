@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Merge.External
-import Linglib.Syntax.Minimalist.Merge.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Phase
 
 /-!
@@ -47,13 +47,14 @@ bijection in Lean is the substantive remaining work.
 ## PICStrength dispatch
 
 `comulPICStrength` selects the variant per `Phase.lean`'s `PICStrength`:
-`.strong` → strict `Y_ℓ` (`comulPhaseC`); `.weak` → relaxed `Y_ℓ` with phase-heads
-accessible per [marcolli-chomsky-berwick-2025] Remark 1.14.4 (`comulPhaseC_weak`);
-`.linearizationBound` → unrestricted Δ^c (`comulC_unrestricted`), with the
-linearization gate enforced separately at externalization.
+`.weak` → the default `Y_ℓ` (eq 1.14.5, heads in the edge — `comulPhaseC`);
+`.strong` → lower-phase heads also frozen per [marcolli-chomsky-berwick-2025]
+Remark 1.14.4 (`comulPhaseC_strong`); `.linearizationBound` → unrestricted Δ^c
+(`comulC_unrestricted`), with the linearization gate enforced separately at
+externalization.
 -/
 
-namespace Minimalist.Merge
+namespace Minimalist.Phase
 
 open RootedTree RootedTree.ConnesKreimer
 open scoped TensorProduct
@@ -105,41 +106,40 @@ noncomputable def comulC_unrestricted (T : SyntacticObject) :
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
   comulTreeN T.toNonplanar
 
-/-! ### PICStrength dispatch (weak PIC) -/
+/-! ### PICStrength dispatch (strong PIC, Remark 1.14.4)
 
-/-- The **inaccessibility set `Y_ℓ` under WEAK PIC** ([marcolli-chomsky-berwick-2025]
-    Remark 1.14.4, book p. 136): the strict `Y_ℓ` minus the head leaves of the
-    lower phases, which remain accessible under the relaxed condition. -/
-noncomputable def inaccessibleTerms_weak (h : HeadFunction) (T : SyntacticObject)
-    (ℓ : LIToken) : Multiset SyntacticObject :=
-  let strict := inaccessibleTerms h T ℓ
-  let phaseHeadSOs : Multiset SyntacticObject :=
-    (phaseHeadLeaves h T).filter (fun ℓ' => isLowerPhaseThan h T ℓ' ℓ)
-      |>.map (fun ℓ' => SyntacticObject.leaf ℓ')
-      |> List.toFinset |>.val
-  strict.filter (fun Tv => decide (Tv ∉ phaseHeadSOs))
+The default `comulPhaseC` already uses the MCB default `Y_ℓ` (eq 1.14.5) where the
+*interior is the complement* (`Phase/Basic.lean`), so lower-phase **heads are in the
+edge and stay accessible** — this is the WEAK PIC. The STRONG variant additionally
+freezes those heads ([marcolli-chomsky-berwick-2025] Remark 1.14.4) via the
+substrate's `inaccessibleTerms_strong`. -/
 
-/-- WEAK-PIC analogue of `cutPhaseCompatible`: phase-heads of lower phases stay
-    accessible (`inaccessibleTerms_weak`). -/
-noncomputable def cutPhaseCompatible_weak (h : HeadFunction) (T : SyntacticObject)
+/-- STRONG-PIC analogue of `cutPhaseCompatible` ([marcolli-chomsky-berwick-2025]
+    Remark 1.14.4): the *more restrictive* condition that also freezes the head
+    leaves of the lower phases (`inaccessibleTerms_strong`), banning head movement
+    out of a closed phase. -/
+noncomputable def cutPhaseCompatible_strong (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) (p : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit)) :
     Prop :=
-  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms_weak h T ℓ).map SyntacticObject.toNonplanar
+  ∀ sub ∈ p.1, sub ∉ (inaccessibleTerms_strong h T ℓ).map SyntacticObject.toNonplanar
 
 noncomputable instance (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
-    DecidablePred (cutPhaseCompatible_weak h T ℓ) := Classical.decPred _
+    DecidablePred (cutPhaseCompatible_strong h T ℓ) := Classical.decPred _
 
-/-- The **WEAK** tree-level phase coproduct Δ^c_Φ_weak (phase heads accessible). -/
-noncomputable def comulPhaseC_weak (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
+/-- The **STRONG** tree-level phase coproduct Δ^c_Φ: a further restriction of
+    `comulPhaseC` that also drops cuts extracting a lower-phase head (Remark 1.14.4). -/
+noncomputable def comulPhaseC_strong (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken) :
     ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) ⊗[ℤ]
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
-  comulTreeNFiltered T.toNonplanar (cutPhaseCompatible_weak h T ℓ)
+  comulTreeNFiltered T.toNonplanar (cutPhaseCompatible_strong h T ℓ)
 
-/-- The phase-coproduct under `PICStrength` dispatch.
+/-- The phase-coproduct under `PICStrength` dispatch ([marcolli-chomsky-berwick-2025]
+    Remark 1.14.4).
 
-    - `.strong`: strict `Y_ℓ` (`comulPhaseC`).
-    - `.weak`: relaxed `Y_ℓ` with phase-heads accessible (`comulPhaseC_weak`),
-      per [marcolli-chomsky-berwick-2025] Remark 1.14.4.
+    - `.strong`: lower-phase heads also frozen (`comulPhaseC_strong`,
+      `inaccessibleTerms_strong`).
+    - `.weak`: the default `Y_ℓ` (eq 1.14.5) — heads in the edge, accessible
+      (`comulPhaseC`).
     - `.linearizationBound`: unrestricted Δ^c (`comulC_unrestricted`); the
       linearization gate is enforced separately at externalization. -/
 noncomputable def comulPICStrength (mode : PICStrength)
@@ -147,8 +147,8 @@ noncomputable def comulPICStrength (mode : PICStrength)
     ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) ⊗[ℤ]
       ConnesKreimer ℤ (Nonplanar (LIToken ⊕ Unit)) :=
   match mode with
-  | .strong              => comulPhaseC h T ℓ
-  | .weak                => comulPhaseC_weak h T ℓ
+  | .strong              => comulPhaseC_strong h T ℓ
+  | .weak                => comulPhaseC h T ℓ
   | .linearizationBound  => comulC_unrestricted T
 
-end Minimalist.Merge
+end Minimalist.Phase

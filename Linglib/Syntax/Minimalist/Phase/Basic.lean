@@ -1,12 +1,15 @@
 import Linglib.Syntax.Minimalist.HeadFunction
-import Linglib.Syntax.Minimalist.Merge.Defs
 
 /-!
-# Algebraic Phase Theory
+# Phase Theory — MCB §1.14 substrate
 [marcolli-chomsky-berwick-2025] §1.14
 
-Implements the MCB algebraic formulation of Phase Theory, building on
-the **vertex-keyed head function** `headAtVertex` from `HeadFunction.lean`.
+The head-function-derived foundation for Phase Theory: the `(h, T, ℓ)`-indexed
+primitives (`maximalProjection`, `phaseComplementZ`, `phaseInterior`, `phaseEdge`,
+`inaccessibleTerms`, …) that the bundled `Phase` API (`Syntax/Minimalist/Phase.lean`)
+and the phase coproduct Δ^c_Φ (`Phase/Coproduct.lean`) are built on. Everything is
+*derived* from the **vertex-keyed head function** `headAtVertex` (`HeadFunction.lean`),
+not stipulated.
 
 ## What MCB §1.14 says
 
@@ -43,18 +46,24 @@ Condition. Lemma 1.14.6 proves Δ^c_Φ is well-defined and coassociative.
 - **§1**: Lemma 1.14.1 substrate — `projectionPath`, `maximalProjection`,
   the chain-on-γ theorem (statement; proof requires §1.13.3 coherence).
 - **§2**: `phaseHeadLeaves` (L_Φ(T) of Def 1.14.3 eq 1.14.1).
-- **§3**: `phaseInterior` (Φ°_ℓ, eq 1.14.3) and `phaseEdge` (∂Φ_ℓ, eq 1.14.4).
-- **§4**: `inaccessibleTerms` (Y_ℓ, eq 1.14.5) and `phaseAccessibleAt`.
+- **§3**: `phaseComplementZ` (the head's complement Z_ℓ via `complementInPlanar`,
+  Def 1.14.2 / Def 1.14.3 step 3), `phase` (Φ_ℓ, eq 1.14.2), `phaseInterior`
+  (Φ°_ℓ = the complement, eq 1.14.3), `phaseEdge` (∂Φ_ℓ, eq 1.14.4).
+- **§4**: `inaccessibleTerms` (Υ_ℓ, eq 1.14.5), `inaccessibleTerms_strong`
+  (Remark 1.14.4), and `phaseAccessibleAt` (Φ_ℓ ∖ Υ_ℓ).
 
-## Out of scope (queued for Phase 3.C)
+## Notes
 
-- The **algebraic phase coproduct** Δ^c_Φ (Def 1.14.5 eq 1.14.6)
-- Coassociativity (Lemma 1.14.6)
-- Connection to `PICStrength` (Phase.lean's PIC strength enum)
-- `ComplementedHeadFunction` (Def 1.14.2) is in `HeadFunction.lean` (Phase 3.B.2)
+- The **interior is the complement** (MCB Def 1.14.3, "Z is the interior of the
+  phase"), via `phaseComplementZ` = the head's sister at its mother node. This
+  supersedes the earlier `T_{v_ℓ}` over-approximation (now `phase`, eq 1.14.2).
+- The **algebraic phase coproduct** Δ^c_Φ (Def 1.14.5 eq 1.14.6) + coassociativity
+  (Lemma 1.14.6) live downstream in `Merge/PhaseCoproduct.lean`.
+- `ComplementedHeadFunction` (Def 1.14.2) is in `HeadFunction.lean`; its canonical
+  structural realization is `HeadFunction.complementDaughter?`/`.complemented`.
 -/
 
-namespace Minimalist.Merge
+namespace Minimalist.Phase
 
 open Minimalist (HeadFunction ComplementedHeadFunction SyntacticObject LIToken)
 
@@ -273,70 +282,71 @@ noncomputable def phaseHeadLeaves (h : HeadFunction) (T : SyntacticObject) : Lis
 -- § 3: Phase Interior Φ°_ℓ and Edge ∂Φ_ℓ (Definitions 1.14.3, 1.14.4)
 -- ============================================================================
 
-/-- [marcolli-chomsky-berwick-2025] Definition 1.14.3 (eq 1.14.3):
-    For ℓ ∈ L_Φ(T) with maximal projection v_ℓ, the **interior** of
-    the phase Φ_ℓ is
+/-- Search a planar representative for the **complement** of head leaf `ℓ`: the
+    sister of `ℓ` at its mother node — the (unique) node on whose head side `ℓ`
+    appears as the direct leaf daughter. `side` says which daughter is the head
+    (left for `.initial`, right for `.final`); the complement is the other.
+    Returns the complement as a planar `FreeMagma`, or `none` if `ℓ` heads no
+    internal node. **Computable** — it walks the fixed planar embedding by
+    structural recursion, with no `Multiset`/`Quot` choice. -/
+def complementInPlanar (side : ConventionDir) (ℓ : LIToken) :
+    FreeMagma (LIToken ⊕ Nat) → Option (FreeMagma (LIToken ⊕ Nat))
+  | .of _ => none
+  | .mul l r =>
+    match side, l, r with
+    | .initial, .of (.inl t), _ =>
+        if t = ℓ then some r
+        else (complementInPlanar side ℓ l) <|> (complementInPlanar side ℓ r)
+    | .final, _, .of (.inl t) =>
+        if t = ℓ then some l
+        else (complementInPlanar side ℓ l) <|> (complementInPlanar side ℓ r)
+    | _, _, _ => (complementInPlanar side ℓ l) <|> (complementInPlanar side ℓ r)
 
-      Φ°_ℓ := {T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ}}
+/-- The **complement** Z_ℓ of phase head `ℓ` ([marcolli-chomsky-berwick-2025]
+    Def 1.14.2, Def 1.14.3 step 3): the head's sister at its mother node — the
+    structure `ℓ` first selects. `none` for an empty complement (`ℓ` heads no
+    internal node). Head-side-aware, so correct under both head-initial and
+    head-final `h`. **Computable** when the section is (e.g. the selection-induced
+    `HeadFunction.leftSpine`), since it walks `h.section_.σ T` directly — so
+    concrete phase complements `decide`. -/
+def phaseComplementZ (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) : Option SyntacticObject :=
+  (complementInPlanar h.headSide ℓ (h.section_.σ T)).map FreeCommMagma.mk
 
-    — the accessible terms strictly inside the maximal projection.
-    Per MCB Remark 1.14.4, this is the part of the phase that becomes
-    inaccessible to further computation once a higher phase is built
-    via External Merge.
-
-    NB: the "complemented" version of this definition (Def 1.14.3 step 4,
-    using the complement Z_v from `ComplementedHeadFunction.complementOf`)
-    refines the interior to T_{s_ℓ} (the head's complement-side sister)
-    rather than all of T_{v_ℓ}. The simpler T_{v_ℓ} form here is the
-    bare-head version; the complemented refinement is Phase 3.B.3 work. -/
-noncomputable def phaseInterior (h : HeadFunction) (T : SyntacticObject)
+/-- [marcolli-chomsky-berwick-2025] Def 1.14.3 (eq 1.14.2): the **phase** Φ_ℓ =
+    {T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ}} — all accessible terms within the maximal
+    projection `v_ℓ`. This is the *whole* phase; its interior is the complement
+    (`phaseInterior`) and its edge is head + specifiers + modifiers (`phaseEdge`). -/
+noncomputable def phase (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) : Multiset SyntacticObject :=
   match maximalProjection h T ℓ with
   | none    => 0
-  | some vℓ =>
-    -- Acc'(T): all subtrees of T (per MCB notation)
-    -- restricted to those contained in T_{v_ℓ}
-    T.subtrees.filter (fun Tv => decide (Minimalist.contains vℓ Tv))
+  | some vℓ => T.subtrees.filter (fun Tv => decide (Minimalist.contains vℓ Tv))
 
-/-- [marcolli-chomsky-berwick-2025] Definition 1.14.3 (eq 1.14.4):
-    The **edge** ∂Φ_ℓ of phase Φ_ℓ, parameterized over a
-    `ComplementedHeadFunction`.
+/-- [marcolli-chomsky-berwick-2025] Def 1.14.3 (eq 1.14.3): the **interior**
+    Φ°_ℓ = {T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} — the complement `Z_ℓ` and all of its
+    accessible terms; `∅` when the complement is empty.
 
-    For ℓ ∈ L_Φ(T) with maximal projection v_ℓ and complement
-    `h.complementOf T v_ℓ = some Z_v` (non-empty case): the edge consists
-    of accessible terms contained in T_{v_ℓ} but NOT in `Z_v` (the complement
-    of the head):
+    Per MCB ("if H is a phase head with complement Z, then Z is the interior of
+    the phase"), the interior **is the complement** — NOT the whole maximal
+    projection. The head and any specifiers/modifiers sit at the *edge*. (This
+    corrects the earlier `T_{v_ℓ}` over-approximation, which is the *phase* Φ_ℓ
+    of eq 1.14.2, now named `phase`.) **Computable** (built on the computable
+    `phaseComplementZ` + subtree filter) — so concrete PIC checks `decide`. -/
+def phaseInterior (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
+  match phaseComplementZ h T ℓ with
+  | none   => 0
+  | some Z => T.subtrees.filter (fun Tv => decide (Minimalist.containsOrEq Z Tv))
 
-      ∂Φ_ℓ := { T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ Z_v }
-
-    For `h.complementOf T v_ℓ = none` (exocentric head, no complement):
-    ∂Φ_ℓ = Φ_ℓ (the entire phase content is at the edge).
-
-    Note: this signature takes a `ComplementedHeadFunction` (extending
-    `HeadFunction` with complement info per MCB Def 1.14.2). For consumers
-    holding only a bare `HeadFunction`, extend it with a `complementOf`
-    field (e.g. over the selection-induced `HeadFunction.leftSpine`). -/
-noncomputable def phaseEdgeWith (h : ComplementedHeadFunction)
-    (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
-  match maximalProjection h.toHeadFunction T ℓ with
-  | none    => 0
-  | some vℓ =>
-    let phaseContent := T.subtrees.filter
-      (fun Tv => decide (Minimalist.contains vℓ Tv))
-    match h.complementOf T vℓ with
-    | none =>
-      -- Empty-complement case: edge = entire phase content
-      phaseContent
-    | some Zv =>
-      -- Non-empty complement: edge = phase content minus Zv-interior
-      phaseContent.filter (fun Tv => decide (¬ Minimalist.contains Zv Tv))
-
-/-- Bare `phaseEdge` for `HeadFunction`-only consumers: lifts to the trivial
-    `ComplementedHeadFunction` with `complementOf = none` (exocentric).
-    Returns the entire phase content per the empty-complement case. -/
+/-- [marcolli-chomsky-berwick-2025] Def 1.14.3 (eq 1.14.4): the **edge** ∂Φ_ℓ =
+    {T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ T_{s_ℓ}} — the phase content not in the
+    interior: the head, specifiers, and modifiers. `= Φ_ℓ` when the complement is
+    empty (everything is then at the edge). Computed as `phase ∖ interior`. -/
 noncomputable def phaseEdge (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) : Multiset SyntacticObject :=
-  phaseEdgeWith ⟨h, fun _ _ => none⟩ T ℓ
+  let interior := phaseInterior h T ℓ
+  (phase h T ℓ).filter (fun Tv => decide (Tv ∉ interior))
 
 -- ============================================================================
 -- § 4: Inaccessibility Set Y_ℓ (eq 1.14.5)
@@ -366,17 +376,28 @@ noncomputable def inaccessibleTerms (h : HeadFunction) (T : SyntacticObject)
   -- Union of interiors of all lower phases (Multiset sum)
   (lowerPhases.map (phaseInterior h T)).foldr (· + ·) 0
 
-/-- The **accessible terms in phase Φ_ℓ**: the phase content minus the
-    inaccessibility set. These are the terms available for further
-    Merge computation when phase Φ_ℓ is being built or extended.
+/-- [marcolli-chomsky-berwick-2025] Remark 1.14.4: the **more restrictive**
+    inaccessibility set — the default `inaccessibleTerms` Υ_ℓ together with the
+    head leaves of all strictly-lower phases. MCB's default (eq 1.14.5) counts the
+    head in the *edge* (accessible, permitting head movement); the restrictive
+    Phase Theory that also bans head movement additionally freezes the lower heads.
+    Since the corrected `phaseInterior` (= complement) already excludes the head,
+    the head must be added back explicitly for the strong variant. -/
+noncomputable def inaccessibleTerms_strong (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
+  let lowerHeads : Multiset SyntacticObject :=
+    ((phaseHeadLeaves h T).filter (fun ℓ' => isLowerPhaseThan h T ℓ' ℓ)).map
+      (fun ℓ' => SyntacticObject.leaf ℓ')
+  inaccessibleTerms h T ℓ + lowerHeads
 
-    This is the set summed over by the algebraic phase coproduct
-    Δ^c_Φ (Definition 1.14.5 eq 1.14.6) — the algebraic-side substrate
-    is queued for Phase 3.C. -/
+/-- The **accessible terms in phase Φ_ℓ**: the *phase* content minus the
+    inaccessibility set (MCB Def 1.14.5 eq 1.14.6: `Φ_ℓ ∖ Υ_ℓ`). These are the
+    terms available for further Merge computation when phase Φ_ℓ is being built or
+    extended; this is the set summed over by the algebraic phase coproduct
+    Δ^c_Φ (`Merge/PhaseCoproduct.lean`). -/
 noncomputable def phaseAccessibleAt (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) : Multiset SyntacticObject :=
-  let interior := phaseInterior h T ℓ
   let inaccessible := inaccessibleTerms h T ℓ
-  interior.filter (fun Tv => decide (Tv ∉ inaccessible))
+  (phase h T ℓ).filter (fun Tv => decide (Tv ∉ inaccessible))
 
-end Minimalist.Merge
+end Minimalist.Phase

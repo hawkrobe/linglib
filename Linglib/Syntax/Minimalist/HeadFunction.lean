@@ -727,10 +727,34 @@ structure ComplementedHeadFunction extends HeadFunction where
 
 -- `decDom` instance is inherited via `extends HeadFunction` and the
 -- existing `attribute [instance] HeadFunction.decDom` at the top of this file.
---
--- Concrete complemented instances (over the selection-induced
--- `HeadFunction.leftSpine`/`rightSpine`) are built downstream in `Selection.lean`
--- with a custom `complementOf`; no `Quot.out`-based defaults are provided here.
+
+/-- The **complement daughter** of `v` under `h` — the structural realization of
+    MCB's `Z_v` ([marcolli-chomsky-berwick-2025] Def 1.14.2). At a binary node,
+    the head is one daughter (leftmost leaf under `.initial`, rightmost under
+    `.final`), and the complement is the **sister** — the other daughter. Leaves
+    and traces have no complement (`none`). Computable when `h.section_.σ` is.
+
+    This is the head-aware generalization of the right-daughter pick: `.initial`
+    returns the right daughter (head is left), `.final` the left daughter (head is
+    right), so it never misfires on head-final analyses. -/
+def HeadFunction.complementDaughter? (h : HeadFunction) (v : SyntacticObject) :
+    Option SyntacticObject :=
+  match h.section_.σ v with
+  | .of _ => none
+  | .mul l r =>
+    match h.headSide with
+    | .initial => some (FreeCommMagma.mk r)
+    | .final   => some (FreeCommMagma.mk l)
+
+/-- The **canonical complemented extension** of a head function: realizes the
+    abstract `complementOf` (MCB Def 1.14.2 `Z_v`) as the structural
+    `complementDaughter?` (the head's sister). The `T` index is ignored — the
+    complement of `v` depends only on `v` and `h`. This supersedes the deleted
+    `Quot.out`-based trivial instances: every head function now has a canonical,
+    head-side-aware complemented form. -/
+def HeadFunction.complemented (h : HeadFunction) : ComplementedHeadFunction where
+  toHeadFunction := h
+  complementOf _T v := h.complementDaughter? v
 
 -- ============================================================================
 -- § 9: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)

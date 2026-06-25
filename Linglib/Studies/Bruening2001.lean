@@ -167,41 +167,28 @@ def economyBlocksQR (e : ScopeEconomy) : Bool :=
 -- Phase Theory Derivation of QR Barriers
 -- ============================================================================
 
-/-- DP-as-barrier follows from PIC: D is a phase head (under the extended
-    phase inventory), so material inside DP's complement is frozen for QR.
+/-- DP-as-barrier follows from PIC: if `φ` is the D-phase whose complement is `b`
+    (D being a phase head under the extended inventory), then any `goal` contained
+    in `b` is frozen — `φ.Impenetrable goal`.
 
-    This derives the previously-stipulated `QRBarrier.dpPhase` from
-    deeper principles: if D is a phase head, then PIC makes
-    DP-internal material inaccessible to operations outside DP.
-
-    The SO is decomposed as `node (leaf tok) b` — the head is a leaf
-    (the D lexical item) and `b` is the complement. PIC freezes the
-    complement domain, not the head/edge.
-
-    **Phase 1.0 status.** The proof previously used `exact hcontains`
-    because under the planar `TraceTree` carrier `phaseComplement?`
-    reduced definitionally on `.node (leaf _) b` to `some b`. With the
-    nonplanar `FreeCommMagma` carrier, `phaseComplement?` picks the
-    right daughter of the `Quot.out` representative — which may be
-    either child after the swap quotient. The theorem statement
-    presupposes a planar choice that the substrate cannot make.
-
-    **Phase 2 plan.** Replace `phaseComplement?` with a head-function-
-    parameterized variant that picks the *complement* (the non-head
-    daughter) rather than "the right daughter of an arbitrary
-    representative." Once that lands, `dp_phase_barrier_from_pic` can
-    be re-proved by a head-function argument: if `tok` is the head,
-    the complement is `b`, so PIC freezes `b`'s contents. -/
-theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
-    (_h_phase : isPhaseHeadOf .D (.node (.leaf tok) b) = true) :
-    ∀ (goal : SyntacticObject),
-      contains b goal →
-      phaseImpenetrable (.node (.leaf tok) b) goal := by
-  intro goal _hcontains
-  -- TODO Phase 2: blocked on head-function-aware `phaseComplement?`;
-  -- current `Quot.out`-based version doesn't reduce on a specific
-  -- planar shape.
-  sorry
+    This derives the previously-stipulated `QRBarrier.dpPhase` from deeper
+    principles: PIC makes DP-internal material inaccessible to operations outside
+    DP. **The former head-function-aware-complement TODO is now discharged**: the
+    MCB-faithful `Phase.complement` is the head's sister (Def 1.14.2) and the
+    interior *is* the complement (eq 1.14.3), so "goal in the complement ⟹ goal in
+    the interior" is immediate. The complement `b` is a hypothesis here because,
+    for an arbitrary `(head, complement)` pair, which daughter is the complement
+    is fixed by the head function's planar embedding, not by the bare tree. -/
+theorem dp_phase_barrier_from_pic (φ : Phase) {b goal : SyntacticObject}
+    (hZ : φ.complement = some b)
+    (hmem : goal ∈ φ.tree.subtrees)
+    (hgoal : containsOrEq b goal) :
+    φ.Impenetrable goal := by
+  have hZ' : Phase.phaseComplementZ φ.h φ.tree φ.head = some b := hZ
+  show goal ∈ φ.interior
+  unfold Phase.interior Phase.phaseInterior
+  rw [hZ', Multiset.mem_filter]
+  exact ⟨hmem, by simpa using hgoal⟩
 
 end Scope
 

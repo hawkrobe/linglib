@@ -299,9 +299,10 @@ def guebiePICMode : PICStrength := .linearizationBound
     goal at the phasehood layer; concrete crashes come from
     `SpelloutAndCheck` instead. The four-derivation theorem above
     confirms no derivation crashes. -/
-theorem guebie_PIC_admits_remnant_movement (phase goal : Minimalist.SyntacticObject) :
-    Minimalist.admitsExtraction guebiePICMode phase goal := by
-  unfold guebiePICMode; exact Minimalist.linearizationBound_admits_all phase goal
+theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
+    (goal : Minimalist.SyntacticObject) :
+    Minimalist.admitsExtraction guebiePICMode φ goal := by
+  unfold guebiePICMode; exact Minimalist.linearizationBound_admits_all φ goal
 
 -- ============================================================================
 -- § 7: Verb doubling diagnosed as syntactic (refutes Landau 2006 for Guébie)
@@ -411,7 +412,7 @@ theorem guebieVPCophonology_applies_to_v :
     let vTok : LIToken := ⟨.simple .v [], 99⟩
     let vHead : SyntacticObject := .leaf vTok
     let vPhase : Minimalist.Phase :=
-      { head := vHead, complement := vHead, edge := vHead }
+      { h := Minimalist.HeadFunction.leftSpine, tree := vHead, head := vTok }
     guebieVPCophonology.appliesTo vPhase = true := by decide
 
 /-! ### Guébie as a positive instance of `VerbDoublingIsSyntactic`
