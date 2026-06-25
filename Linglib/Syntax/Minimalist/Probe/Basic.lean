@@ -45,8 +45,6 @@ a separate concern (`Agree.applyAgree`). This is the general core: the
   add a direction parameter for Bjorkman & Zeijlstra (2019)-style upward Agree.
 - **`Preorder (Probe α)`** by pointwise `vis`-refinement, so
   `outcome_valued_mono` / `Deal2024.probe_vis_antitone` become order facts.
-- **`Articulated.toProbes` ↔ `cascade` bridge**: prove an articulated
-  probe's behaviour is the cascade of its segment probes.
 - **`HalpertHammerly2026.agreementClass`**: re-stipulated relativized
   search; should be two `Probe` searches with a `_eq_derived` theorem.
 -/

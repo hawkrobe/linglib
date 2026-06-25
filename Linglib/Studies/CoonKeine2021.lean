@@ -226,6 +226,20 @@ def Probe.Articulated.toProbes {α : Type*} (P : Probe.Articulated)
     (bears : Segment → α → Bool) : List (Probe α) :=
   P.segments.map (fun s => .ofVis (bears s))
 
+/-- **An articulated probe's behaviour is the cascade of its segment probes.**
+Cascading the denoted segment probes (`toProbes`) reduces to a segment-ordered
+search: the first segment in articulation order that bears some goal delivers
+that goal ([bejar-rezac-2009]; [coon-keine-2021] (14)). This connects the
+bundled specification (`Probe.Articulated`) to the substrate cascade semantics
+(`Probe.cascade`). -/
+theorem Probe.Articulated.toProbes_cascade {α : Type*} (P : Probe.Articulated)
+    (bears : Segment → α → Bool) (goals : List α) :
+    Probe.cascade (P.toProbes bears) goals
+      = P.segments.findSome? (fun s => goals.find? (bears s)) := by
+  unfold Probe.cascade Probe.Articulated.toProbes
+  rw [List.findSome?_map]
+  rfl
+
 /-! #### The probe-specification hierarchy ([coon-keine-2021] (40)) -/
 
 /-- The (40) hierarchy as a type:
