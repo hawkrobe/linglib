@@ -97,10 +97,10 @@ structure PhrasalCophonology (C : Type) where
   name          : String := ""
 
 /-- A phrasal cophonology activates on a phase iff its `phaseSelector`
-    matches the phase head. -/
+    matches the phase head (the head leaf `ph.head`, as a leaf SO). -/
 def PhrasalCophonology.appliesTo {C : Type}
     (pc : PhrasalCophonology C) (ph : Phase) : Bool :=
-  pc.phaseSelector ph.head
+  pc.phaseSelector (SyntacticObject.leaf ph.head)
 
 -- ============================================================================
 -- § 2: Phrasal Cophonological Evaluation

@@ -178,22 +178,18 @@ def voiceP_noSpec : SyntacticObject :=
 def voiceP_withSpec : SyntacticObject :=
   .node subjectAtSpecVoiceP (.node (.leaf voiceToken) vP_subjectMoved)
 
-/-- The Voice phase corresponding to `voiceP_noSpec`. Per substrate
-    intent (`Phase.head` = the lexical phase head terminal, `complement`
-    = the spelled-out domain), the head is the Voice token and the
-    complement is the entire vP. -/
+/-- The Voice phase for `voiceP_noSpec`: phase head `voiceToken`, tree
+    `voiceP_noSpec`. Its complement (the spelled-out vP), interior, and edge are
+    now **derived** from the head function (MCB §1.14), not stipulated — the
+    derived `complement` is `vP_subjectInSitu`. -/
 def voicePhase_noSpec : Phase :=
-  { head := .leaf voiceToken
-  , complement := vP_subjectInSitu
-  , edge := .leaf voiceToken }  -- vacuous edge when no Spec is projected
+  { h := HeadFunction.leftSpine, tree := voiceP_noSpec, head := voiceToken }
 
-/-- The Voice phase corresponding to `voiceP_withSpec`: head is the Voice
-    token, complement is the post-movement vP (containing only the
-    trace), edge is the moved subject at Spec,VoiceP. -/
+/-- The Voice phase for `voiceP_withSpec`: phase head `voiceToken`, whose maximal
+    projection is the inner VoiceP. The derived complement is the post-movement vP
+    (`vP_subjectMoved`); the moved subject at Spec,VoiceP is on the derived edge. -/
 def voicePhase_withSpec : Phase :=
-  { head := .leaf voiceToken
-  , complement := vP_subjectMoved
-  , edge := subjectAtSpecVoiceP }
+  { h := HeadFunction.leftSpine, tree := voiceP_withSpec, head := voiceToken }
 
 /-- The full Aux-V tree (T > Asp > Voice > vP) with subject in situ. -/
 def auxVTree_inSitu : SyntacticObject :=
@@ -213,19 +209,20 @@ end Sample
 The substantive content of Pietraszko 2026's analysis is that the
 *subject's accessibility to a higher probe* is determined by whether
 the subject sits inside the Voice-phase complement. We derive this
-from `phaseImpenetrable` rather than stipulate it. -/
+from the MCB-grounded `Phase.Impenetrable` (the interior = complement,
+eq 1.14.3) rather than stipulate it. -/
 
 open Sample
 
-/-- The subject is accessible to a probe above the Voice phase iff it is
-    NOT inside the phase's spelled-out complement (PIC). Reads `Phase`'s
-    `complement` field directly, per substrate intent. -/
+/-- The subject is accessible to a probe above the Voice phase iff it is NOT
+    frozen in the phase interior (= the spelled-out complement, PIC). This is the
+    negation of the MCB-derived `Phase.Impenetrable` — no stipulated complement. -/
 def IsSubjectAccessibleAcross (voicePhase : Phase) (subj : SyntacticObject) : Prop :=
-  ¬ contains voicePhase.complement subj
+  ¬ voicePhase.Impenetrable subj
 
 instance (vp : Phase) (s : SyntacticObject) :
     Decidable (IsSubjectAccessibleAcross vp s) :=
-  inferInstanceAs (Decidable (¬ contains vp.complement s))
+  inferInstanceAs (Decidable (¬ vp.Impenetrable s))
 
 /-- When subject is in situ (in vP, the Voice-phase complement), it is
     NOT accessible across the phase. Derived from `voicePhase_noSpec`'s

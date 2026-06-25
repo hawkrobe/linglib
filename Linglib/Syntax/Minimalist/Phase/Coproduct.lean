@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Merge.External
-import Linglib.Syntax.Minimalist.Merge.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Phase
 
 /-!
@@ -53,7 +53,7 @@ accessible per [marcolli-chomsky-berwick-2025] Remark 1.14.4 (`comulPhaseC_weak`
 linearization gate enforced separately at externalization.
 -/
 
-namespace Minimalist.Merge
+namespace Minimalist.Phase
 
 open RootedTree RootedTree.ConnesKreimer
 open scoped TensorProduct
@@ -151,4 +151,4 @@ noncomputable def comulPICStrength (mode : PICStrength)
   | .weak                => comulPhaseC_weak h T ℓ
   | .linearizationBound  => comulC_unrestricted T
 
-end Minimalist.Merge
+end Minimalist.Phase
