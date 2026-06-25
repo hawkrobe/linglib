@@ -1,0 +1,121 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Syntax.Minimalist.SyntacticObject
+
+/-!
+# Construction DSL and accessors for syntactic objects
+
+[marcolli-chomsky-berwick-2025] §1.1. The computable construction layer and the
+read-back accessors for the `SO` carrier, completing P2's API parity with the legacy
+`FreeCommMagma (LIToken ⊕ Nat)` surface. Imports only the carrier skeleton.
+
+## Construction discipline
+
+The Merge operator (`SO.node`/`SO.merge`) is `noncomputable` (the smart
+`Nonplanar.node` round-trips through `Quotient.out`). So concrete syntactic objects
+— the ones studies `decide` over — are built **planar-first** and quotiented once:
+`SO.ofPlanar (SO.nodeP (SO.leafP tok₁) (SO.leafP tok₂))`. `SO.node_mk` (skeleton)
+relates such a build to `SO.node`, so theorems stated over `node`/`*` still apply.
+
+## Index-free traces
+
+A trace is a bare `Sum.inr ()` leaf with **no index** (MCB Def 1.2.1: chain identity
+is workspace-level), so there is exactly **one** trace leaf — `SO.isTrace` is just
+`· = SO.traceLeaf`.
+-/
+
+namespace Minimalist
+
+open RootedTree
+
+/-! ### Computable planar construction DSL -/
+
+/-- Planar builder: a lexical leaf. -/
+abbrev SO.leafP (tok : LIToken) : Planar SOLabel := .node (Sum.inl tok) []
+/-- Planar builder: the bare trace leaf. -/
+abbrev SO.traceP : Planar SOLabel := .node (Sum.inr ()) []
+/-- Planar builder: a bare binary node. -/
+abbrev SO.nodeP (l r : Planar SOLabel) : Planar SOLabel := .node (Sum.inr ()) [l, r]
+
+/-- Build a syntactic object from a planar tree, discharging well-formedness by
+    `decide` (concrete trees) — the computable entry point for `decide`-based studies. -/
+def SO.ofPlanar (p : Planar SOLabel) (h : isSOPlanar p = true := by first | rfl | decide) : SO :=
+  ⟨Nonplanar.mk p, h⟩
+
+@[simp] theorem SO.ofPlanar_leafP (tok : LIToken) :
+    SO.ofPlanar (SO.leafP tok) = SO.lexLeaf tok := rfl
+
+@[simp] theorem SO.ofPlanar_traceP : SO.ofPlanar SO.traceP = SO.traceLeaf := rfl
+
+/-! ### Merge as multiplication -/
+
+/-- `*` is (External) Merge: the bare binary node. Noncomputable — build concrete
+    trees with the planar DSL above, not `*`. -/
+noncomputable instance : Mul SO := ⟨SO.node⟩
+
+@[simp] theorem SO.mul_def (l r : SO) : l * r = SO.node l r := rfl
+
+theorem SO.mul_comm (l r : SO) : l * r = r * l := by
+  apply Subtype.ext
+  rw [SO.mul_def, SO.mul_def, SO.node_val, SO.node_val, Multiset.pair_comm]
+
+/-! ### Lexical-leaf construction (the legacy `mkLeaf` API) -/
+
+/-- A lexical leaf from a category and selectional stack. -/
+def SO.mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SO :=
+  SO.lexLeaf ⟨.simple cat sel, id⟩
+
+/-- A lexical leaf with a phonological form. -/
+def SO.mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SO :=
+  SO.lexLeaf ⟨.simple cat sel (phonForm := phon), id⟩
+
+/-! ### Accessors -/
+
+/-- The lexical token at the root, if the root is a lexical leaf. -/
+def SO.getLIToken (s : SO) : Option LIToken :=
+  match Nonplanar.rootLabel s.val with
+  | .inl tok => some tok
+  | .inr () => none
+
+@[simp] theorem SO.getLIToken_lexLeaf (tok : LIToken) :
+    (SO.lexLeaf tok).getLIToken = some tok := rfl
+
+@[simp] theorem SO.getLIToken_traceLeaf : SO.traceLeaf.getLIToken = none := rfl
+
+@[simp] theorem SO.getLIToken_node (l r : SO) : (SO.node l r).getLIToken = none := by
+  rw [SO.getLIToken, SO.node_val, Nonplanar.rootLabel_node]
+
+/-- A trace is the unique bare trace leaf (chain identity is workspace-level). -/
+def SO.isTrace (s : SO) : Prop := s = SO.traceLeaf
+
+instance (s : SO) : Decidable (SO.isTrace s) := inferInstanceAs (Decidable (_ = _))
+
+@[simp] theorem SO.isTrace_traceLeaf : SO.isTrace SO.traceLeaf := rfl
+
+/-- Leaf count (number of leaves + traces). -/
+def SO.leafCount (s : SO) : Nat := Nonplanar.leafCount s.val
+
+/-- Internal-node count = leaf count − 1 (full binary tree). -/
+def SO.nodeCount (s : SO) : Nat := Nonplanar.leafCount s.val - 1
+
+@[simp] theorem SO.leafCount_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).leafCount = 1 := rfl
+@[simp] theorem SO.leafCount_traceLeaf : SO.traceLeaf.leafCount = 1 := rfl
+
+/-! ### `decide` demonstrations -/
+
+private def demoVP : SO :=
+  SO.ofPlanar (SO.nodeP (SO.leafP (mkTraceToken 0)) (SO.leafP (mkTraceToken 1)))
+
+/-- The DSL-built tree is a genuine syntactic object. -/
+example : IsSO demoVP.val := by decide
+/-- Its head token reads back via `getLIToken` of the left leaf. -/
+example : (SO.lexLeaf (mkTraceToken 0)).getLIToken = some (mkTraceToken 0) := by decide
+/-- It has two leaves and one internal node. -/
+example : demoVP.leafCount = 2 ∧ demoVP.nodeCount = 1 := by decide
+/-- The trace leaf is recognized; a lexical leaf is not a trace. -/
+example : SO.isTrace SO.traceLeaf ∧ ¬ SO.isTrace (SO.lexLeaf (mkTraceToken 0)) := by decide
+
+end Minimalist
