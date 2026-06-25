@@ -20,44 +20,56 @@ P0's carrier skeleton: the well-formed subset of `Nonplanar (LIToken ⊕ Unit)`.
 MCB's SO is a **binary, nonplanar** rooted tree with **leaves labelled by SO₀**
 (lexical items + features) and **internal vertices bare** — the head is *not* on
 the tree; it comes from a separate labelling algorithm (§1.15, the head function).
-So on `Nonplanar (LIToken ⊕ Unit)`:
+So on `Nonplanar (LIToken ⊕ Unit)` (the algebra's `α ⊕ β`, `β = Unit`), **role by arity**:
 
-- a **leaf** carries `Sum.inl tok` — a lexical item (`LIToken` ≈ SO₀);
-- an **internal node** carries `Sum.inr ()` — **bare**, no head label.
+- a **lexical leaf** carries `Sum.inl tok` — a lexical item (`LIToken` ≈ SO₀);
+- a **trace leaf** carries `Sum.inr ()` — bare (chain identity is workspace-level,
+  MCB Def 1.2.1, not a per-leaf index; this replaces the legacy `⊕ Nat`);
+- an **internal node** carries `Sum.inr ()` — **bare**, no head label (§1.15 supplies it).
 
-`IsSO` pins exactly this discipline (binary + leaf↔`inl`, internal↔`inr ()`).
-This is the deliberate departure from the legacy `toNonplanar` image, which
-decorated internal nodes with the head (`Sum.inl headLeaf`) — that decoration is
-the head function applied, not part of the object.
+`Sum.inr ()` is the single structural/bare marker; trace-leaf vs. internal is
+childless vs. binary. `IsSO` pins this. This is the deliberate departure from the
+legacy `toNonplanar` image, which decorated internal nodes with the head
+(`Sum.inl headLeaf`) — that decoration is the head function applied, not the object.
 
-## Scope of this skeleton
+## Scope
 
-Just the carrier + `IsSO` + decidability + the `SO` subtype. **Out of scope (later
-phases):** MCB-faithful traces (the `T/c`–`T/d`–`T/ρ` forms + workspace chains, P1;
-`SO₀` here is `LIToken` only, no trace alphabet yet), the syntactic operations
-(`contains`/`subtrees`/Merge on the carrier, P2), the head function + Phase API
-re-home (P3), retiring `FreeCommMagma`/`toNonplanar` (P2/P4).
+The carrier + `IsSO` + decidability + the `SO` subtype, with the faithful three-role
+alphabet (lexical/trace leaves + bare internals). **Out of scope (later phases):**
+workspaces + Merge on the carrier (EM + IM-via-coproduct, MCB Prop 1.4.2 — uses the
+existing `comul{D,C}N`; P1 continued), the structural ops (`contains`/`subtrees` =
+`Acc'`) + flip `SyntacticObject := SO` (P2), the head function + Phase API re-home
+(P3), retiring `FreeCommMagma`/`toNonplanar` (P4). See `scratch/p1-spec-and-audit.md`.
 -/
 
 namespace Minimalist
 
 open RootedTree
 
-/-- The SO label alphabet: a leaf carries a lexical item (`Sum.inl`), an internal
-    vertex is **bare** (`Sum.inr ()`). MCB SO₀ ≈ `LIToken`; traces (a richer leaf
-    alphabet, MCB Def 1.2.4) are deferred to P1. -/
+/-- The SO label alphabet, in the algebra's `α ⊕ β` form (`α = LIToken` lexical,
+    `β = Unit` bare). Each **role is fixed by arity**, not by a third label:
+
+    - `Sum.inl tok` on a **leaf** — a lexical item (`LIToken` ≈ SO₀);
+    - `Sum.inr ()` on a **leaf** — a **trace** (bare; chain identity is workspace-level,
+      MCB Def 1.2.1, not a per-leaf index — this replaces the legacy `⊕ Nat`);
+    - `Sum.inr ()` on an **internal** node — **bare** (no head; §1.15 supplies it).
+
+    `Sum.inr ()` is the single "structural/bare" marker; a trace and an internal
+    vertex are the childless vs. binary occurrences of it. This is exactly the
+    `Nonplanar (α ⊕ β)` (β = `Unit`) alphabet the existing `τ`-parameterised trace
+    coproducts (`comul{D,C}N`) already speak. -/
 abbrev SOLabel : Type := LIToken ⊕ Unit
 
-/-! ### Well-formedness `IsSO` (binary + bare-internal discipline) -/
+/-! ### Well-formedness `IsSO` (binary, lexical/trace leaves, bare internals) -/
 
 mutual
-/-- Structural check that a *planar* tree is a well-formed syntactic object:
-    a lexical-labelled node must be a leaf, a bare node must be binary with
-    well-formed children. Permutation-friendly (`length`/`all`-shaped) so it lifts
-    to the nonplanar quotient. -/
+/-- Structural well-formedness of a *planar* syntactic object: a lexical node must
+    be a leaf; a bare (`inr ()`) node is either a **trace leaf** (childless) or a
+    **binary internal** node with well-formed children. Permutation-friendly so it
+    lifts to the nonplanar quotient. -/
 def isSOPlanar : Planar SOLabel → Bool
   | .node (.inl _) cs  => cs.isEmpty
-  | .node (.inr ()) cs => cs.length == 2 && isSOPlanarList cs
+  | .node (.inr ()) cs => (cs.length == 0 || cs.length == 2) && isSOPlanarList cs
 /-- Auxiliary: all children well-formed. -/
 def isSOPlanarList : List (Planar SOLabel) → Bool
   | []      => true
@@ -90,16 +102,16 @@ private theorem isSOPlanar_planarStep {t s : Planar SOLabel} (h : Planar.PlanarS
     rename_i a l r pre post
     cases a with
     | inl _ => simp only [isSOPlanar]; cases pre <;> simp [List.isEmpty_cons]
-    | inr u => cases u; show (decide _ && _) = (decide _ && _)
-               rw [List.length_append, List.length_append,
+    | inr u => cases u
+               simp only [isSOPlanar, List.length_append, List.length_cons,
                  isSOPlanarList_perm _ _ (List.Perm.append_left pre (.swap r l post))]
-               simp
   | recurse _ ih =>
     rename_i a pre old new post _hstep
     cases a with
     | inl _ => simp only [isSOPlanar]; cases pre <;> simp [List.isEmpty_cons]
-    | inr u => cases u; show (decide _ && _) = (decide _ && _)
-               rw [List.length_append, List.length_append, isSOPlanarList_replace pre post ih]; rfl
+    | inr u => cases u
+               simp only [isSOPlanar, List.length_append, List.length_cons,
+                 isSOPlanarList_replace pre post ih]
 
 /-- `isSOPlanar` is invariant under `PlanarEquiv`, hence descends to the quotient. -/
 theorem isSOPlanar_planarEquiv {t s : Planar SOLabel} (h : Planar.PlanarEquiv t s) :
@@ -119,8 +131,9 @@ def isSO : Nonplanar SOLabel → Bool :=
 @[simp] theorem isSO_mk (t : Planar SOLabel) : isSO (Nonplanar.mk t) = isSOPlanar t := rfl
 
 /-- A tree on the carrier is a **syntactic object** ([marcolli-chomsky-berwick-2025]
-    §1.1): binary, nonplanar, leaves lexical (`Sum.inl`), internal vertices bare
-    (`Sum.inr ()`). Decidable (and `decide`-able, via `Core/…/DecEq`). -/
+    §1.1): binary, nonplanar; leaves are lexical (`Sum.inl tok`) or traces
+    (`Sum.inr ()`), internal vertices bare (`Sum.inr ()`). Decidable (and
+    `decide`-able, via `Core/…/DecEq`). -/
 def IsSO (t : Nonplanar SOLabel) : Prop := isSO t = true
 
 instance : DecidablePred IsSO := fun t => inferInstanceAs (Decidable (isSO t = true))
