@@ -159,7 +159,7 @@ theorem isParticipant_of_isAuthor (c : Agreement.Cell) :
 /-- The valued feature bundle a probe carries after agreeing with a
     DP in cell `c`. -/
 private def cellBundle (c : Agreement.Cell) : FeatureBundle :=
-  c.toPhiFeatures.map (λ p => .valued (.phi p))
+  .ofGramFeatures (c.toPhiFeatures.map (λ p => .valued (.phi p)))
 
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
     All six cells have overt exponents. -/
@@ -175,7 +175,7 @@ def setBVocab : Vocabulary :=
   makePersonVocab (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
     Agreement.Cell.toPhiFeatures
     (fun c => (setBExponent.realize c).getD "") (some .T) ++
-  [{ features := [], exponent := "∅", context := some .T }]
+  [{ features := ⊥, exponent := "∅", context := some .T }]
 
 /-- Vocabulary insertion recovers the fragment's paradigms: spelling
     out each cell's valued bundle yields the fragment's exponent — for
@@ -275,7 +275,7 @@ def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
 def afMarker (subj obj : Agreement.Cell) : Option String :=
   if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
     ((afAgreementTarget subj obj).bind setBExponent.realize) <|>
-      spellout setBVocab [] (some .T)
+      spellout setBVocab ⊥ (some .T)
   else none
 
 /-- The rank encoding (`probeResolutionRank`, [bejar-rezac-2003]
@@ -400,7 +400,7 @@ theorem failed_agree_tolerated :
       (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)) = true ∧
     (afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing)).pfRealization
       = .elsewhere ∧
-    spellout setBVocab [] (some .T) = some "∅" ∧
+    spellout setBVocab ⊥ (some .T) = some "∅" ∧
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" := by
   decide
 

@@ -356,27 +356,40 @@ open Minimalist (FeatureBundle)
 
 /-- A goal `G` is **defective** w.r.t. a probe `P` iff `G`'s formal
     features are a proper subset of `P`'s, so checking is incomplete
-    ([roberts-2010], ch. 2; eq. (49) in [storment-2026]). -/
+    ([roberts-2010], ch. 2; eq. (49) in [storment-2026]). The feature
+    comparison is over the bundles' grammatical-feature lists
+    (`FeatureBundle.toGramFeatures`). -/
 def DefectiveGoal (probe goal : FeatureBundle) : Prop :=
-  goal ⊆ probe ∧ ∃ f ∈ probe, f ∉ goal
+  goal.toGramFeatures ⊆ probe.toGramFeatures ∧
+    ∃ f ∈ probe.toGramFeatures, f ∉ goal.toGramFeatures
 
 instance (probe goal : FeatureBundle) : Decidable (DefectiveGoal probe goal) := by
   unfold DefectiveGoal; infer_instance
 
 /-- The empty goal is defective w.r.t. any nonempty probe. -/
 theorem DefectiveGoal.empty_of_nonempty (probe : FeatureBundle)
-    (h : probe ≠ []) : DefectiveGoal probe [] := by
+    (h : probe ≠ ⊥) : DefectiveGoal probe ⊥ := by
   refine ⟨List.nil_subset _, ?_⟩
-  match probe, h with
+  have hne : probe.toGramFeatures ≠ [] := by
+    intro he
+    refine h (funext λ t => ?_)
+    have hnone := (List.filterMap_eq_nil_iff.mp he) t (by cases t <;> decide)
+    cases hp : probe t with
+    | absent => rfl
+    | unvalued => rw [hp] at hnone; exact absurd hnone (by simp)
+    | valued v => rw [hp] at hnone; exact absurd hnone (by simp)
+  match hp : probe.toGramFeatures, hne with
   | f :: _, _ => exact ⟨f, List.mem_cons_self, List.not_mem_nil⟩
 
 /-- A defective goal is missing some feature the probe has. -/
 theorem DefectiveGoal.exists_missing {probe goal : FeatureBundle}
-    (h : DefectiveGoal probe goal) : ∃ f ∈ probe, f ∉ goal := h.2
+    (h : DefectiveGoal probe goal) :
+    ∃ f ∈ probe.toGramFeatures, f ∉ goal.toGramFeatures := h.2
 
 /-- A defective goal's features are all in the probe. -/
 theorem DefectiveGoal.subset {probe goal : FeatureBundle}
-    (h : DefectiveGoal probe goal) : goal ⊆ probe := h.1
+    (h : DefectiveGoal probe goal) :
+    goal.toGramFeatures ⊆ probe.toGramFeatures := h.1
 
 /-- No goal is defective w.r.t. itself. -/
 theorem DefectiveGoal.irrefl (fb : FeatureBundle) : ¬ DefectiveGoal fb fb := by

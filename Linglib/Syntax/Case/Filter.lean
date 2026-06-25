@@ -32,19 +32,19 @@ open Features.Prominence
 /-- Nominative Case is assigned by T.
     T has [uCase:nom], assigns to closest DP in Spec-TP. -/
 def tAssignsNominative : FeatureBundle :=
-  [.unvalued (.case .nom)]
+  .ofGramFeatures [.unvalued (.case .nom)]
 
 /-- Accusative Case is assigned by v (transitive light verb).
     v has [uCase:acc], assigns to closest DP (object). -/
 def vAssignsAccusative : FeatureBundle :=
-  [.unvalued (.case .acc)]
+  .ofGramFeatures [.unvalued (.case .acc)]
 
 /-- DP needs Case (Case Filter).
     All DPs have [uCase], must be valued by Agree. The `.dat` value here
     is a placeholder — `featuresMatch` ignores values for unvalued probes,
     so any `Case` would work; `.dat` is conventional. -/
 def dpNeedsCase : FeatureBundle :=
-  [.unvalued (.case .dat)]
+  .ofGramFeatures [.unvalued (.case .dat)]
 
 -- ============================================================================
 -- § 2: DP Feature Structures
@@ -80,7 +80,7 @@ def satisfiesCaseFilter (dp : DPFeatures) : Bool :=
 
 /-- Convert DPFeatures to a FeatureBundle. -/
 def DPFeatures.toBundle (dp : DPFeatures) : FeatureBundle :=
-  dp.phi.map (λ p => .valued (.phi p)) ++ [dp.caseFeature]
+  .ofGramFeatures (dp.phi.map (λ p => .valued (.phi p)) ++ [dp.caseFeature])
 
 -- ============================================================================
 -- § 3: Case Filter Predicate

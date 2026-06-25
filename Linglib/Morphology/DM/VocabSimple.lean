@@ -54,7 +54,8 @@ structure VocabEntry where
     type) in the target bundle. This is subset matching — the entry
     need not specify all features of the target. -/
 def VocabEntry.MatchesFeatures (entry : VocabEntry) (target : FeatureBundle) : Prop :=
-  entry.features.all (λ ef => target.any (λ tf => ef == tf)) = true
+  (FeatureBundle.toGramFeatures entry.features).all
+    (λ ef => (FeatureBundle.toGramFeatures target).any (λ tf => ef == tf)) = true
 
 instance (entry : VocabEntry) (target : FeatureBundle) :
     Decidable (entry.MatchesFeatures target) :=
@@ -75,7 +76,7 @@ instance (entry : VocabEntry) (target : FeatureBundle) (ctx : Option Cat) :
 /-- Specificity of a vocabulary entry: the number of features it specifies.
     Used for Elsewhere ordering — more specific entries take priority. -/
 def VocabEntry.specificity (entry : VocabEntry) : Nat :=
-  entry.features.length
+  (FeatureBundle.toGramFeatures entry.features).length
 
 -- ============================================================================
 -- § 2: Vocabulary and Spellout
@@ -113,9 +114,10 @@ def spellout (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) : 
 
 /-- A vocabulary entry with no features matches any target (Elsewhere entry). -/
 theorem empty_features_matches_any (entry : VocabEntry)
-    (h : entry.features = []) (target : FeatureBundle) :
+    (h : entry.features = ⊥) (target : FeatureBundle) :
     entry.MatchesFeatures target := by
-  simp only [VocabEntry.MatchesFeatures, h, List.all_nil]
+  have hb : FeatureBundle.toGramFeatures entry.features = [] := by rw [h]; rfl
+  simp only [VocabEntry.MatchesFeatures, hb, List.all_nil]
 
 -- ============================================================================
 -- § 4: Vocabulary Builders
@@ -138,7 +140,7 @@ def _root_.Agreement.Cell.toPhiFeatures (c : Agreement.Cell) : List PhiFeature :
 def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeature)
     (exponentOf : PN → String) (ctx : Option Cat := none) : Vocabulary :=
   cells.map λ pn =>
-    { features := (toPhi pn).map (λ p => .valued (.phi p))
+    { features := .ofGramFeatures ((toPhi pn).map (λ p => .valued (.phi p)))
     , exponent := exponentOf pn
     , context := ctx }
 

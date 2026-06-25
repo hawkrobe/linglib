@@ -126,7 +126,7 @@ structure VoiceHead where
   checksCase : Bool := false
   /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
       Default empty — most Voice heads carry no probe features. -/
-  features : FeatureBundle := []
+  features : FeatureBundle := ⊥
   deriving DecidableEq, Repr
 
 /-! ### Predicate API (mathlib-style, Prop with `Decidable`)

@@ -330,7 +330,7 @@ structure FeatureInheritance where
       [chomsky-2008] donate). -/
   style : TransferStyle := .donate
   /-- The features transferred (default: none specified at this layer). -/
-  transferred : FeatureBundle := []
+  transferred : FeatureBundle := ⊥
 
 -- ============================================================================
 -- Part 7: Phase-Bounded Locality

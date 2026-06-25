@@ -48,22 +48,24 @@ open Minimalist
     The trigger of [middleton-2026] (16) Participant
     Dissimilation. -/
 def abs1pAuthor : FeatureBundle :=
-  [.valued (.case .abs),
-   .valued (.participant true),
-   .valued (.author true)]
+  .ofGramFeatures
+    [.valued (.case .abs),
+     .valued (.participant true),
+     .valued (.author true)]
 
 /-- A 2nd-person ergative clitic: `[CL ERG +participant −author]`.
     The right-context of [middleton-2026] (16) — the participant
     ergative that licenses deletion of `abs1pAuthor`. -/
 def erg2s : FeatureBundle :=
-  [.valued (.case .erg),
-   .valued (.participant true),
-   .valued (.author false)]
+  .ofGramFeatures
+    [.valued (.case .erg),
+     .valued (.participant true),
+     .valued (.author false)]
 
 /-- A T head with `[+tense]`. The leftmost-position trigger and
     swap-source of [middleton-2026] (13) Ergative Metathesis. -/
 def tPast : FeatureBundle :=
-  [.valued (.tense true)]
+  .ofGramFeatures [.valued (.tense true)]
 
 -- ============================================================================
 -- § 2: Terminal Predicates
@@ -71,30 +73,29 @@ def tPast : FeatureBundle :=
 
 /-- Does the bundle bear `[+tense]`? Diagnoses a T head. -/
 def isT (fb : FeatureBundle) : Bool :=
-  fb.any (λ f => f.featureType.sameType (.tense true))
+  (fb .tense).isSpecified
 
 /-- Does the bundle bear an ergative case marker? Diagnoses an ERG
-    clitic. -/
+    clitic. (Matching is by dimension — any valued/unvalued case feature.) -/
 def isErgClitic (fb : FeatureBundle) : Bool :=
-  fb.any (λ f => f.featureType.sameType (.case .erg))
+  (fb .case).isSpecified
 
 /-- Does the bundle bear an absolutive case marker? Diagnoses an ABS
-    clitic. -/
+    clitic. (Matching is by dimension — any valued/unvalued case feature.) -/
 def isAbsClitic (fb : FeatureBundle) : Bool :=
-  fb.any (λ f => f.featureType.sameType (.case .abs))
+  (fb .case).isSpecified
 
 /-- Does the bundle bear `[+participant]`? -/
 def isParticipant (fb : FeatureBundle) : Bool :=
-  hasValuedFeature fb (.participant true) &&
-  fb.any (λ f => match f with
-    | .valued (.participant true) => true
-    | _ => false)
+  match fb .participant with
+  | .valued true => true
+  | _ => false
 
 /-- Does the bundle bear `[+author]`? -/
 def isAuthor (fb : FeatureBundle) : Bool :=
-  fb.any (λ f => match f with
-    | .valued (.author true) => true
-    | _ => false)
+  match fb .author with
+  | .valued true => true
+  | _ => false
 
 /-- A 1st-person absolutive clitic — `[CL ABS +participant +author]`,
     the deletion target of Participant Dissimilation. -/

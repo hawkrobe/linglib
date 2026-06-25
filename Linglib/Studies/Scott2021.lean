@@ -187,32 +187,41 @@ def terminalToFeature : DPCat → String → Option FeatureVal
   | _, _ => none
 
 mutual
-/-- Collect all features from a tree's terminals.
+/-- Collect all features from a tree's terminals as a list of `GramFeature`s,
+    in depth-first traversal order. The list traversal is the natural shape;
+    `extractFeatures` wraps it into a `FeatureBundle` assignment.
     Uses mutual recursion for definitional reduction. -/
-def extractFeatures : Tree DPCat String → FeatureBundle
+def extractFeatureList : Tree DPCat String → List Minimalist.GramFeature
   | .terminal c w => match terminalToFeature c w with
     | some fv => [.valued fv]
     | none => []
-  | .node _ children => extractFeaturesList children
+  | .node _ children => extractFeatureListAux children
   | .trace _ _ => []
-  | .bind _ _ body => extractFeatures body
+  | .bind _ _ body => extractFeatureList body
 
-private def extractFeaturesList : List (Tree DPCat String) → FeatureBundle
+private def extractFeatureListAux :
+    List (Tree DPCat String) → List Minimalist.GramFeature
   | [] => []
-  | t :: ts => extractFeatures t ++ extractFeaturesList ts
+  | t :: ts => extractFeatureList t ++ extractFeatureListAux ts
 end
+
+/-- The feature bundle of a pronoun tree: fold its terminal features into the
+    total assignment. Each pronoun structure has at most one feature per
+    dimension, so no information is lost in the fold. -/
+def extractFeatures (t : Tree DPCat String) : FeatureBundle :=
+  Minimalist.FeatureBundle.ofGramFeatures (extractFeatureList t)
 
 /-- 1SG pronoun has features: [number:sg, gender:anim, person:1].
     (Order follows depth-first tree traversal.) -/
 theorem features_1sg :
-    extractFeatures pronTree1sg =
+    extractFeatureList pronTree1sg =
     [.valued (.phi (.number .singular)),
      .valued (.phi (.gender 1)),
      .valued (.phi (.person .first))] := by decide
 
 /-- After PersP deletion, features are: [number:sg, gender:anim] — no person. -/
 theorem features_after_deletion :
-    extractFeatures (deletePersP pronTree1sg) =
+    extractFeatureList (deletePersP pronTree1sg) =
     [.valued (.phi (.number .singular)),
      .valued (.phi (.gender 1))] := by decide
 
@@ -222,25 +231,25 @@ theorem features_after_deletion :
 
 /-- Helper: does a feature bundle contain a person feature? -/
 def hasPerson (fb : FeatureBundle) : Bool :=
-  fb.any fun f => match f with
+  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
     | .valued (.phi (.person _)) => true
     | _ => false
 
 /-- Helper: extract the person level if present. -/
 def getPerson (fb : FeatureBundle) : Option Person :=
-  fb.findSome? fun f => match f with
+  (Minimalist.FeatureBundle.toGramFeatures fb).findSome? fun f => match f with
     | .valued (.phi (.person p)) => some p
     | _ => none
 
 /-- Helper: is the number singular? -/
 def isSg (fb : FeatureBundle) : Bool :=
-  fb.any fun f => match f with
+  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
     | .valued (.phi (.number .singular)) => true
     | _ => false
 
 /-- Helper: does the bundle contain animacy? -/
 def isAnim (fb : FeatureBundle) : Bool :=
-  fb.any fun f => match f with
+  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
     | .valued (.phi (.gender 1)) => true
     | _ => false
 
@@ -466,8 +475,8 @@ theorem bound_retains_person :
     the movement resumptive is featurally a proper subset of the
     bound resumptive (chain reduction only deletes). -/
 theorem movement_is_subset :
-    let fullFeats := extractFeatures pronTree1sg
-    let reducedFeats := extractFeatures (deletePersP pronTree1sg)
+    let fullFeats := extractFeatureList pronTree1sg
+    let reducedFeats := extractFeatureList (deletePersP pronTree1sg)
     reducedFeats.length < fullFeats.length ∧
     reducedFeats.all (· ∈ fullFeats) := by
   constructor <;> decide

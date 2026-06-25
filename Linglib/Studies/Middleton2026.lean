@@ -96,9 +96,9 @@ def focusRule (focusCheck : FeatureBundle → Bool)
   swapFst := swapFst
   swapSnd := swapSnd
 
-/-- Index of the first feature in `fb` whose type matches `fv`. -/
-def indexOfType (fb : FeatureBundle) (fv : FeatureVal) : Option Nat :=
-  fb.findIdx? (λ f => f.featureType.sameType fv)
+/-- Index of the first feature in `l` whose type matches `fv`. -/
+def indexOfType (l : List GramFeature) (fv : FeatureVal) : Option Nat :=
+  l.findIdx? (λ f => f.featureType.sameType fv)
 
 /-- Swap the elements at positions `i` and `j` in a list. Out-of-bounds
     indices leave the list unchanged. -/
@@ -107,15 +107,33 @@ def swapAt {α : Type _} (l : List α) (i j : Nat) : List α :=
   | some xi, some xj => (l.set i xj).set j xi
   | _, _ => l
 
-/-- Apply a metathesis rule at a neighborhood: when the condition holds,
-    locate the first occurrences of `swapFst` and `swapSnd` in the focus
-    and exchange their positions; otherwise return the focus unchanged. -/
+/-- Reorder the focus exponents by swapping the first occurrences of
+    `swapFst` and `swapSnd` (their *linear positions* in the terminal's
+    exponent string). Metathesis is inherently an operation on linear
+    order, so it acts on the ordered `toGramFeatures` view. -/
+def swapInBundle (fb : FeatureBundle) (swapFst swapSnd : FeatureVal) :
+    List GramFeature :=
+  let l := FeatureBundle.toGramFeatures fb
+  match indexOfType l swapFst, indexOfType l swapSnd with
+  | some i, some j => swapAt l i j
+  | _, _ => l
+
+/-- Apply a metathesis rule at a neighborhood, returning the resulting
+    *bundle*. When the condition holds, swap the positions of `swapFst`
+    and `swapSnd` in the focus exponent string.
+
+    NB: the canonical `FeatureBundle` is a total assignment keyed by feature
+    *dimension*, hence order-insensitive; folding the swapped exponent list
+    back via `ofGramFeatures` therefore launders the reordering away. The
+    bundle-level result is thus a no-op whenever the swapped types differ,
+    which is correct for the *pipeline* below (`runStrict`/`runInterleaved`
+    only ever carry an empty metathesis chain). The empirically contentful,
+    order-sensitive focus-level metathesis of [middleton-2026] is stated on
+    the exponent-string view directly (`derivIM`/`derivMI`). -/
 def applyMetathesis (rule : MetathesisRule) (n : Neighborhood) :
     FeatureBundle :=
   if rule.condition n then
-    match indexOfType n.focus rule.swapFst, indexOfType n.focus rule.swapSnd with
-    | some i, some j => swapAt n.focus i j
-    | _, _ => n.focus
+    FeatureBundle.ofGramFeatures (swapInBundle n.focus rule.swapFst rule.swapSnd)
   else n.focus
 
 /-- Apply a sequence of metathesis rules left-to-right. Each rule sees
@@ -294,8 +312,8 @@ theorem runImpov_neq_runMeta_of_diverges
 def paraAtomicRule : ImpoverishmentRule :=
   paradigmatic
     (λ fb =>
-      fb.any (λ f => f.featureType.sameType (fAuthor true)) &&
-      fb.any (λ f => f.featureType.sameType (fMinimal true)))
+      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
+      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fMinimal true)))
     (fAtomic true)
 
 theorem paraAtomicRule_isParadigmatic : Paradigmatic paraAtomicRule :=
@@ -310,7 +328,7 @@ theorem paraAtomicRule_isParadigmatic : Paradigmatic paraAtomicRule :=
     proves it. -/
 def synMinimalRule : ImpoverishmentRule where
   condition n :=
-    (n.focus.any (λ f => f.featureType.sameType (fAtomic true)) = true)
+    ((FeatureBundle.toGramFeatures n.focus).any (λ f => f.featureType.sameType (fAtomic true)) = true)
     ∧ (n.rightCtx.length > 0)
   decCond _ := inferInstance
   target := fMinimal true
@@ -321,7 +339,8 @@ def synMinimalRule : ImpoverishmentRule where
     `rightCtx`. -/
 theorem synMinimalRule_isSyntagmatic : Syntagmatic synMinimalRule := by
   intro hPara
-  let fb : FeatureBundle := [.valued (fAtomic true), .valued (fMinimal true)]
+  let fb : FeatureBundle :=
+    .ofGramFeatures [.valued (fAtomic true), .valued (fMinimal true)]
   let n₁ : Neighborhood :=
     { focus := fb, leftCtx := [], rightCtx := [argBundle person3 numSg] }
   let n₂ : Neighborhood := { focus := fb, leftCtx := [], rightCtx := [] }
@@ -336,9 +355,10 @@ theorem synMinimalRule_isSyntagmatic : Syntagmatic synMinimalRule := by
 /-- Witness focus: a 1s-style bundle `[+author, +atomic, +minimal]`
     (suppressing `[+participant]`, which is irrelevant to either rule). -/
 def witnessFocus : FeatureBundle :=
-  [.valued (fAuthor true),
-   .valued (fAtomic true),
-   .valued (fMinimal true)]
+  .ofGramFeatures
+    [.valued (fAuthor true),
+     .valued (fAtomic true),
+     .valued (fMinimal true)]
 
 /-- Witness neighborhood: the 1s-style focus, with a real 3s
     bundle to the right standing in for the Taos object slot
@@ -364,7 +384,7 @@ def stripSynPara : FeatureBundle :=
     The `[+minimal]` survives. -/
 theorem stripParaSyn_eq :
     stripParaSyn =
-      [.valued (fAuthor true), .valued (fMinimal true)] := by
+      .ofGramFeatures [.valued (fAuthor true), .valued (fMinimal true)] := by
   decide
 
 /-- Syn-then-para (= Middleton): `synMinimalRule` fires first (focus
@@ -373,7 +393,7 @@ theorem stripParaSyn_eq :
     The `[+atomic]` survives instead. -/
 theorem stripSynPara_eq :
     stripSynPara =
-      [.valued (fAuthor true), .valued (fAtomic true)] := by
+      .ofGramFeatures [.valued (fAuthor true), .valued (fAtomic true)] := by
   decide
 
 /-- The two orders produce different feature bundles at this
@@ -402,7 +422,7 @@ def middletonPostsyntax : InterleavedPostsyntax :=
 /-- A&N's pipeline computes the para-first answer at the witness. -/
 theorem arregiNevins_witness :
     runStrict arregiNevinsPostsyntax witness =
-      [.valued (fAuthor true), .valued (fMinimal true)] := by
+      .ofGramFeatures [.valued (fAuthor true), .valued (fMinimal true)] := by
   show runStrict { paradigmatic := [paraAtomicRule]
                    syntagmatic := [synMinimalRule]
                    metathesis := [] } witness = _
@@ -412,7 +432,7 @@ theorem arregiNevins_witness :
 /-- Middleton's pipeline computes the (different) syn-first answer. -/
 theorem middleton_witness :
     runInterleaved middletonPostsyntax witness =
-      [.valued (fAuthor true), .valued (fAtomic true)] := by
+      .ofGramFeatures [.valued (fAuthor true), .valued (fAtomic true)] := by
   show runInterleaved { impoverishment := [synMinimalRule, paraAtomicRule]
                         metathesis := [] } witness = _
   rw [runInterleaved_admits_synPara paraAtomicRule synMinimalRule witness]
@@ -444,26 +464,63 @@ theorem arregiNevins_neq_middleton_at_witness :
 def authorAtomicMetathesis : MetathesisRule :=
   focusRule
     (λ fb =>
-      fb.any (λ f => f.featureType.sameType (fAuthor true)) &&
-      fb.any (λ f => f.featureType.sameType (fAtomic true)) &&
-      fb.any (λ f => f.featureType.sameType (fMinimal true)))
+      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
+      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAtomic true)) &&
+      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fMinimal true)))
     (fAuthor true)
     (fAtomic true)
 
-/-- Impoverishment-then-metathesis (Middleton's and A&N's shared
-    order). -/
-def derivIM : FeatureBundle :=
-  applyMetathesisChain [authorAtomicMetathesis]
-    { witness with focus := applyImpoverishmentChain [synMinimalRule] witness }
+/-! Metathesis reorders the *exponent string* of a terminal; the canonical
+`FeatureBundle` (a dimension-keyed total assignment) is order-insensitive
+and cannot witness that reordering. The order-sensitive content of
+[middleton-2026]'s "metathesis must follow impoverishment" claim is
+therefore stated on the ordered exponent view `List GramFeature`. (The
+whole-terminal Basque half below, where order lives at the *phrase* level
+in `List FeatureBundle`, is unaffected and witnesses the same claim with a
+different rule shape.) -/
 
-/-- Metathesis-then-impoverishment (the order both authors reject). -/
-def derivMI : FeatureBundle :=
-  applyImpoverishmentChain [synMinimalRule]
-    { witness with focus := applyMetathesisChain [authorAtomicMetathesis] witness }
+/-- Apply a metathesis rule to an ordered exponent string: when the rule's
+    condition holds at the corresponding bundle, swap the first occurrences
+    of `swapFst` and `swapSnd` in the list; otherwise leave it unchanged. -/
+def applyMetathesisExp (rule : MetathesisRule) (l : List GramFeature) :
+    List GramFeature :=
+  if rule.condition (Neighborhood.ofBundle (.ofGramFeatures l)) then
+    match indexOfType l rule.swapFst, indexOfType l rule.swapSnd with
+    | some i, some j => swapAt l i j
+    | _, _ => l
+  else l
+
+/-- Apply an impoverishment rule to an ordered exponent string in the
+    witness context: when the rule fires, drop every exponent of the
+    target's dimension, preserving the order of the survivors. -/
+def applyImpovExp (rule : ImpoverishmentRule) (l : List GramFeature) :
+    List GramFeature :=
+  if rule.condition { witness with focus := .ofGramFeatures l } then
+    l.filter (λ f => ! f.featureType.sameType rule.target)
+  else l
+
+/-- Witness exponent string: `[+author, +atomic, +minimal]`, the ordered
+    view of `witnessFocus`. -/
+def witnessExp : List GramFeature :=
+  FeatureBundle.toGramFeatures witnessFocus
+
+/-- Impoverishment-then-metathesis (Middleton's and A&N's shared
+    order), on the exponent string. -/
+def derivIM : List GramFeature :=
+  applyMetathesisExp authorAtomicMetathesis (applyImpovExp synMinimalRule witnessExp)
+
+/-- Metathesis-then-impoverishment (the order both authors reject), on the
+    exponent string. -/
+def derivMI : List GramFeature :=
+  applyImpovExp synMinimalRule (applyMetathesisExp authorAtomicMetathesis witnessExp)
 
 /-- The two orders of impoverishment vs. metathesis genuinely diverge
     at the witness, witnessing the architectural fact that metathesis
-    must follow impoverishment. -/
+    must follow impoverishment. In `derivIM`, `synMinimalRule` first
+    deletes `[+minimal]`, bleeding the metathesis condition, so the
+    exponents stay in `[+author, +atomic]` order; in `derivMI`,
+    metathesis fires first and swaps them to `[+atomic, +author]` before
+    `[+minimal]` is deleted. -/
 theorem impov_before_meta_diverges_from_meta_before_impov :
     derivIM ≠ derivMI := by
   decide
@@ -498,7 +555,8 @@ def viSet : List (FeatureVI FeatureVal String) :=
     Principle selects the `[+author, +minimal]` entry over the
     elsewhere `ô`. Surface form: `n`. -/
 theorem arregiNevinsOutput_inserts_n :
-    subsetPrinciple viSet (arregiNevinsOutput.map GramFeature.featureType) =
+    subsetPrinciple viSet
+        ((FeatureBundle.toGramFeatures arregiNevinsOutput).map GramFeature.featureType) =
       some Morpheme.n.surface := by
   decide
 
@@ -508,7 +566,8 @@ theorem arregiNevinsOutput_inserts_n :
     the same input — the empirical bite of the architectural
     divergence. -/
 theorem middletonOutput_inserts_o :
-    subsetPrinciple viSet (middletonOutput.map GramFeature.featureType) =
+    subsetPrinciple viSet
+        ((FeatureBundle.toGramFeatures middletonOutput).map GramFeature.featureType) =
       some Morpheme.o.surface := by
   decide
 
@@ -516,8 +575,10 @@ theorem middletonOutput_inserts_o :
     exponents, not just feature bundles: the same input neighborhood
     yields different morphemes under the two pipelines. -/
 theorem arregiNevins_vs_middleton_surface :
-    subsetPrinciple viSet (arregiNevinsOutput.map GramFeature.featureType) ≠
-      subsetPrinciple viSet (middletonOutput.map GramFeature.featureType) := by
+    subsetPrinciple viSet
+        ((FeatureBundle.toGramFeatures arregiNevinsOutput).map GramFeature.featureType) ≠
+      subsetPrinciple viSet
+        ((FeatureBundle.toGramFeatures middletonOutput).map GramFeature.featureType) := by
   rw [arregiNevinsOutput_inserts_n, middletonOutput_inserts_o]
   decide
 

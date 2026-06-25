@@ -93,7 +93,7 @@ def numPl : List FeatureVal := [fAtomic false, fMinimal false]
     aligned per the Taos ordering convention `[±part]:[±auth]:[±atom]:[±min]`
     ([middleton-2026] ex. 4 and 5). -/
 def argBundle (person number : List FeatureVal) : FeatureBundle :=
-  (person ++ number).map .valued
+  .ofGramFeatures ((person ++ number).map .valued)
 
 -- ============================================================================
 -- § 4: Diagnostic Prefixes (Middleton 2026, Tables 1, 22, 25)

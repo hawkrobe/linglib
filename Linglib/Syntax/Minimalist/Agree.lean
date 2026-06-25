@@ -63,7 +63,7 @@ def ExtendedLI.fromSimple (cat : Cat) (sel : SelStack) (feats : FeatureBundle) :
 
 /-- Is this LI a probe (has unvalued features)? -/
 def ExtendedLI.isProbe (li : ExtendedLI) : Bool :=
-  li.features.any GramFeature.isUnvalued
+  FeatureType.all.any λ t => (li.features t).isUnvalued
 
 /-- Is this LI a potential goal for a given feature type? -/
 def ExtendedLI.isGoalFor (li : ExtendedLI) (ftype : FeatureVal) : Bool :=
@@ -169,27 +169,19 @@ def behindHorizonB (root probe target : SyntacticObject)
 -- § 4: Feature Valuation
 -- ============================================================================
 
-/-- Value an unvalued feature by copying from a valued one -/
-def valueFeature (unvalued valued : GramFeature) : Option GramFeature :=
-  match unvalued, valued with
-  | .unvalued _, .valued v => some (.valued v)
-  | _, _ => none
-
 /-- Apply Agree: value the probe's feature from the goal.
-    Uses `sameType` for matching, so a probe with [uPerson:_] will
-    be valued by a goal with [Person:3rd] — the placeholder value is
-    irrelevant, only the feature type matters. -/
+    Matching is by *dimension* (`ftype.dimension`), so a probe with
+    `[uPerson:_]` is valued by a goal with `[Person:3rd]` — the placeholder
+    value is irrelevant. If the goal has a valued feature at the dimension and
+    the probe's slot there is unvalued, the probe's slot is set to that value. -/
 def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
     Option FeatureBundle :=
   match getValuedFeature goalFeats ftype with
   | none => none
-  | some goalFeat =>
-    some (probeFeats.map λ f =>
-      if f.isUnvalued && f.featureType.sameType ftype then
-        match valueFeature f goalFeat with
-        | some v => v
-        | none => f
-      else f)
+  | some v =>
+    some <| if (probeFeats ftype.dimension).isUnvalued
+            then Function.update probeFeats ftype.dimension (.valued v)
+            else probeFeats
 
 -- ============================================================================
 -- § 5: Common Agree Configurations
@@ -235,10 +227,10 @@ structure CAgree where
     When a head has [EPP], Agree is not enough - the goal must MOVE
     to the specifier position of the agreeing head. -/
 def hasEPP (fb : FeatureBundle) : Bool :=
-  fb.any λ f => match f with
-    | .valued (.epp true) => true
-    | .unvalued (.epp true) => true
-    | _ => false
+  match fb .epp with
+  | .valued b => b
+  | .unvalued => true
+  | .absent => false
 
 /-- T-to-C movement is triggered by [uQ] + [EPP] on C
 
@@ -255,11 +247,11 @@ def tToCTriggered (cFeats : FeatureBundle) : Bool :=
 
 /-- Matrix C features: [uQ, EPP] -/
 def matrixCFeatures : FeatureBundle :=
-  [.unvalued (.q false), .valued (.epp true)]
+  .ofGramFeatures [.unvalued (.q false), .valued (.epp true)]
 
 /-- Embedded C features: [uQ] only (satisfied by wh-movement) -/
 def embeddedCFeatures : FeatureBundle :=
-  [.unvalued (.q false)]
+  .ofGramFeatures [.unvalued (.q false)]
 
 /-- Matrix C triggers T-to-C -/
 theorem matrix_triggers_t_to_c : tToCTriggered matrixCFeatures = true := rfl
@@ -276,19 +268,15 @@ theorem embedded_no_t_to_c : tToCTriggered embeddedCFeatures = false := rfl
     An element is active iff it has at least one unvalued feature.
     Typically, DPs are active when they have unvalued Case. -/
 def isActive (fb : FeatureBundle) : Bool :=
-  fb.any GramFeature.isUnvalued
+  FeatureType.all.any λ t => (fb t).isUnvalued
 
 /-- An element needs Case (has unvalued Case feature) -/
 def needsCase (fb : FeatureBundle) : Bool :=
-  fb.any λ f => f.isUnvalued && match f.featureType with
-    | .case _ => true
-    | _ => false
+  (fb .case).isUnvalued
 
 /-- An element has valued Case -/
 def hasCase (fb : FeatureBundle) : Bool :=
-  fb.any λ f => f.isValued && match f.featureType with
-    | .case _ => true
-    | _ => false
+  (fb .case).isValued
 
 /-- Activity is typically determined by Case:
     A DP is active iff it lacks Case
@@ -296,25 +284,17 @@ def hasCase (fb : FeatureBundle) : Bool :=
     When a feature bundle contains only Case features, the bundle is active
     (has unvalued features) iff it needs Case (has unvalued Case). -/
 theorem activity_via_case (fb : FeatureBundle)
-    (h : fb.all λ f => match f.featureType with | .case _ => true | _ => false) :
+    (h : ∀ t, t ≠ .case → fb t = .absent) :
     isActive fb ↔ needsCase fb := by
+  unfold isActive needsCase
+  simp only [List.any_eq_true]
   constructor
-  · intro hActive
-    simp only [isActive, List.any_eq_true] at hActive
-    simp only [needsCase, List.any_eq_true]
-    obtain ⟨f, hfMem, hfUnval⟩ := hActive
-    use f, hfMem
-    simp only [Bool.and_eq_true]
-    constructor
-    · exact hfUnval
-    · simp only [List.all_eq_true] at h
-      exact h f hfMem
+  · rintro ⟨t, _, hUnval⟩
+    by_cases ht : t = .case
+    · exact ht ▸ hUnval
+    · rw [h t ht] at hUnval; simp [Features.FeatureSlot.isUnvalued] at hUnval
   · intro hNeeds
-    simp only [needsCase, List.any_eq_true] at hNeeds
-    simp only [isActive, List.any_eq_true]
-    obtain ⟨f, hfMem, hfCond⟩ := hNeeds
-    simp only [Bool.and_eq_true] at hfCond
-    exact ⟨f, hfMem, hfCond.1⟩
+    exact ⟨.case, by decide, hNeeds⟩
 
 -- ============================================================================
 -- § 9: Active Goal (for Agree with Activity)
@@ -386,19 +366,19 @@ def fullAgree (strength : PICStrength) (phases : List Phase)
 
 /-- Fin-Agree: Fin probes for [±finite] on its complement (TP). -/
 def finAgreeFeatures (isFinite : Bool) : FeatureBundle :=
-  [.unvalued (.finite isFinite)]
+  .ofGramFeatures [.unvalued (.finite isFinite)]
 
 /-- Force-Fin-Agree: Force/C probes for clause-type features on Fin. -/
 def forceFinAgreeFeatures (isFactive : Bool) : FeatureBundle :=
-  [.unvalued (.factive isFactive)]
+  .ofGramFeatures [.unvalued (.factive isFactive)]
 
 /-- Neg-Agree: Neg probes for [±neg], licensing sentential negation. -/
 def negAgreeFeatures : FeatureBundle :=
-  [.unvalued (.neg true)]
+  .ofGramFeatures [.unvalued (.neg true)]
 
 /-- Rel-Agree: Rel probes for [±rel], licensing relative clause formation. -/
 def relAgreeFeatures : FeatureBundle :=
-  [.unvalued (.rel true)]
+  .ofGramFeatures [.unvalued (.rel true)]
 
 /-- Clause-typing features match correctly. -/
 theorem finite_features_match :

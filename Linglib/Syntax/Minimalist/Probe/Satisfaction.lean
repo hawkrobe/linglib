@@ -117,23 +117,23 @@ def mamInflSatisfaction : SatisfactionCond :=
     (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
 theorem mam_intransitive_satisfied :
     mamInflSatisfaction.isSatisfied
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-      none = true := by rfl
+      (.ofGramFeatures [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
+      none = true := by decide
 
 /-- Transitive environment: the probe encounters Voice_TR (category.v).
     Head encounter is satisfied → probe stops without copying features. -/
 theorem mam_transitive_satisfied :
-    mamInflSatisfaction.isSatisfied [] (some .v) = true := by rfl
+    mamInflSatisfaction.isSatisfied ⊥ (some .v) = true := by decide
 
 /-- In the transitive case, no features are copied — yielding default. -/
 theorem mam_transitive_no_copy :
-    mamInflSatisfaction.copiedFeatures [] (some .v) = false := by rfl
+    mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false := by decide
 
 /-- In the intransitive case, features ARE copied — yielding real agreement. -/
 theorem mam_intransitive_copies :
     mamInflSatisfaction.copiedFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-      none = true := by rfl
+      (.ofGramFeatures [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
+      none = true := by decide
 
 /-- Infl's satisfaction condition, unfolded: φ-match or Voice_TR encounter. -/
 theorem mamInflSatisfaction_isSatisfied (fb : FeatureBundle) (ctx : Option Cat) :

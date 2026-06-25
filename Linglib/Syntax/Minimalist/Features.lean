@@ -193,43 +193,24 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   f1.featureType.sameType f2.featureType
 
 -- ============================================================================
--- § 5: Feature Bundles
+-- § 5: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
 -- ============================================================================
 
-/-- A feature bundle: list of grammatical features -/
-abbrev FeatureBundle := List GramFeature
+/-! A feature bundle is a **total assignment** from feature dimensions to
+three-state checking slots (`Features.FeatureSlot`): one slot per dimension,
+`absent` / `unvalued` (probe) / `valued v`. This replaces the earlier list
+representation (`List GramFeature`), which admitted junk — duplicate
+dimensions, conflicting values — and was not extensional, so it could not be
+a `LawfulBundleLike` (the `Features/Basic.lean` Todo).
 
-/-- Does the bundle have an unvalued feature of a given type?
-    Uses `sameType` so that e.g. [uPerson:_] matches ftype [Person:_]. -/
-def hasUnvaluedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isUnvalued && f.featureType.sameType ftype
+This is the Agree-layer structure; per [marcolli-chomsky-berwick-2025] (book
+p. 13) the free-Merge core keeps `SO₀` features atomic, so the slot apparatus
+is decoupled from the `SyntacticObject` carrier and lives in
+`Features/Slot.lean`.
 
-/-- Does the bundle have a valued feature of a given type?
-    Uses `sameType` so that e.g. [Person:3] matches ftype [Person:_]. -/
-def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isValued && f.featureType.sameType ftype
-
-/-- Get the valued feature of a given type (if present).
-    Uses `sameType` for type-level matching. -/
-def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
-  fb.find? λ f => f.isValued && f.featureType.sameType ftype
-
--- ============================================================================
--- § 5b: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
--- ============================================================================
-
-/-! The list representation `FeatureBundle = List GramFeature` admits
-junk — duplicate dimensions, conflicting values — and is not extensional,
-so it cannot be a `LawfulBundleLike` (the `Features/Basic.lean` Todo). The
-canonical bundle is instead a **total assignment** from feature dimensions
-to three-state checking slots (`Features.FeatureSlot`): one slot per
-dimension, `absent` / `unvalued` (probe) / `valued v`. This is the
-Agree-layer structure; per [marcolli-chomsky-berwick-2025] (book p. 13)
-the free-Merge core keeps `SO₀` features atomic, so the slot apparatus is
-decoupled from the `SyntacticObject` carrier and lives in `Features/Slot.lean`.
-
-`FeatureAssignment` is the replacement carrier; `ofGramFeatures` bridges
-the legacy list form for incremental migration. -/
+`GramFeature` survives as a literal-builder DSL: `ofGramFeatures` folds a list
+of valued/unvalued features into the assignment, the list head winning on
+duplicate dimensions. -/
 
 /-- The feature *dimensions* checked via Agree — the equivalence classes of
 `FeatureVal.sameType`. φ-features split into their three sub-dimensions
@@ -240,6 +221,13 @@ inductive FeatureType where
   | oblique | ellipsis | catN | catV | foc | pol | pov
   | atomic | minimal | participant | author
   deriving Repr, DecidableEq, Fintype
+
+/-- All feature dimensions, for computable enumeration
+(`Finset.univ.toList` is noncomputable). -/
+def FeatureType.all : List FeatureType :=
+  [.person, .number, .gender, .case, .wh, .q, .epp, .tense, .hon, .finite,
+   .factive, .neg, .rel, .oblique, .ellipsis, .catN, .catV, .foc, .pol, .pov,
+   .atomic, .minimal, .participant, .author]
 
 /-- The dimension a feature value belongs to. Two values share a dimension
 iff `FeatureVal.sameType` holds. -/
@@ -285,6 +273,9 @@ dimension carries (`person ↦ Person`, `number ↦ Number`, `gender ↦ Nat`,
 instance (t : FeatureType) : DecidableEq t.ValueOf := by
   cases t <;> exact inferInstance
 
+instance (t : FeatureType) : Repr t.ValueOf := by
+  cases t <;> exact inferInstance
+
 /-- The value carried by a feature value, in its dimension's value space. -/
 def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
   | .phi (.person p) => p
@@ -315,37 +306,51 @@ def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
 /-- A feature bundle as a total assignment: each dimension maps to a
 three-state checking slot. The canonical extensional carrier — replacing
 `List GramFeature` — that is `LawfulBundleLike`. -/
-abbrev FeatureAssignment := (t : FeatureType) → Features.FeatureSlot t.ValueOf
+abbrev FeatureBundle := (t : FeatureType) → Features.FeatureSlot t.ValueOf
 
-namespace FeatureAssignment
+namespace FeatureBundle
 
-instance : BundleLike FeatureAssignment FeatureType (λ t => Features.FeatureSlot t.ValueOf) :=
+instance : BundleLike FeatureBundle FeatureType (λ t => Features.FeatureSlot t.ValueOf) :=
   ⟨λ b => b⟩
 
-instance : LawfulBundleLike FeatureAssignment :=
+instance : LawfulBundleLike FeatureBundle :=
   ⟨λ _ _ h => h⟩
 
 /-- The bundle has a valued feature of the given dimension. -/
-def hasValuedFeature (a : FeatureAssignment) (t : FeatureType) : Bool :=
+def hasValuedFeature (a : FeatureBundle) (t : FeatureType) : Bool :=
   (a t).isValued
 
 /-- The bundle has an unvalued (probe) feature of the given dimension. -/
-def hasUnvaluedFeature (a : FeatureAssignment) (t : FeatureType) : Bool :=
+def hasUnvaluedFeature (a : FeatureBundle) (t : FeatureType) : Bool :=
   (a t).isUnvalued
 
 /-- The value at the given dimension, when valued. -/
-def getValuedFeature (a : FeatureAssignment) (t : FeatureType) : Option t.ValueOf :=
+def getValuedFeature (a : FeatureBundle) (t : FeatureType) : Option t.ValueOf :=
   (a t).value?
 
 /-- The assignment specifying exactly one valued dimension, all others absent. -/
-def single (t : FeatureType) (v : t.ValueOf) : FeatureAssignment :=
-  Function.update (⊥ : FeatureAssignment) t (.valued v)
+def single (t : FeatureType) (v : t.ValueOf) : FeatureBundle :=
+  Function.update (⊥ : FeatureBundle) t (.valued v)
 
 @[simp] theorem single_self (t : FeatureType) (v : t.ValueOf) :
     single t v t = .valued v := by
   simp [single]
 
-end FeatureAssignment
+/-- The everywhere-`absent` bundle is the default. -/
+instance : Inhabited FeatureBundle := ⟨⊥⟩
+
+instance : DecidableEq FeatureBundle :=
+  inferInstanceAs (DecidableEq ((t : FeatureType) → Features.FeatureSlot t.ValueOf))
+
+/-- Render a bundle by its specified (non-`absent`) dimensions. The function
+carrier has no structural `Repr`, so containing structures that `deriving Repr`
+rely on this. -/
+instance : Repr FeatureBundle where
+  reprPrec fb _ :=
+    repr <| FeatureType.all.filterMap λ t =>
+      if (fb t).isSpecified then some (reprStr t, reprStr (fb t)) else none
+
+end FeatureBundle
 
 /-- The checking slot a single grammatical feature contributes at its own
 dimension: `valued v ↦ valued v.value`, `unvalued _ ↦ unvalued`. -/
@@ -356,8 +361,77 @@ def GramFeature.toSlot : (gf : GramFeature) → Features.FeatureSlot gf.featureT
 /-- Bridge from the legacy list representation: fold each feature into its
 dimension's slot, the list head taking precedence on duplicate dimensions
 (matching `getValuedFeature`/`find?` first-match semantics). -/
-def FeatureAssignment.ofGramFeatures (l : List GramFeature) : FeatureAssignment :=
+def FeatureBundle.ofGramFeatures (l : List GramFeature) : FeatureBundle :=
   l.foldr (λ gf a => Function.update a gf.featureType.dimension gf.toSlot) ⊥
+
+/-- Reconstruct a `FeatureVal` at dimension `t` from a value. -/
+def FeatureType.toFeatureVal : (t : FeatureType) → t.ValueOf → FeatureVal
+  | .person, p => .phi (.person p)
+  | .number, n => .phi (.number n)
+  | .gender, g => .phi (.gender g)
+  | .case, c => .case c
+  | .hon, hl => .hon hl
+  | .wh, b => .wh b
+  | .q, b => .q b
+  | .epp, b => .epp b
+  | .tense, b => .tense b
+  | .finite, b => .finite b
+  | .factive, b => .factive b
+  | .neg, b => .neg b
+  | .rel, b => .rel b
+  | .oblique, b => .oblique b
+  | .ellipsis, b => .ellipsis b
+  | .catN, b => .catN b
+  | .catV, b => .catV b
+  | .foc, b => .foc b
+  | .pol, b => .pol b
+  | .pov, b => .pov b
+  | .atomic, b => .atomic b
+  | .minimal, b => .minimal b
+  | .participant, b => .participant b
+  | .author, b => .author b
+
+/-- A conventional placeholder value per dimension (for `unvalued`-feature
+reconstruction, where the value is semantically irrelevant). -/
+def FeatureType.placeholderValue : (t : FeatureType) → t.ValueOf
+  | .person => .third
+  | .number => .singular
+  | .gender => 0
+  | .case => .nom
+  | .hon => .nh
+  | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
+  | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
+  | .atomic | .minimal | .participant | .author => false
+
+/-- Bridge back to the legacy list representation: one `GramFeature` per
+specified dimension. The placeholder value on `unvalued` features is
+semantically inert (`ofGramFeatures` discards it via `toSlot`), so
+`ofGramFeatures ∘ toGramFeatures` round-trips. -/
+def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
+  FeatureType.all.filterMap λ t =>
+    match fb t with
+    | .absent => none
+    | .unvalued => some (.unvalued (t.toFeatureVal t.placeholderValue))
+    | .valued v => some (.valued (t.toFeatureVal v))
+
+/-! ### `FeatureVal`-keyed query wrappers
+
+Convenience over the `FeatureType`-keyed methods: pass a sample `FeatureVal`
+(its carried value is ignored, only the dimension matters — the old
+`sameType` semantics). These keep probe-spec call sites that pass a
+placeholder feature (`.phi (.person .third)`) unchanged. -/
+
+/-- The bundle has a valued feature of `fv`'s dimension. -/
+def hasValuedFeature (fb : FeatureBundle) (fv : FeatureVal) : Bool :=
+  FeatureBundle.hasValuedFeature fb fv.dimension
+
+/-- The bundle has an unvalued (probe) feature of `fv`'s dimension. -/
+def hasUnvaluedFeature (fb : FeatureBundle) (fv : FeatureVal) : Bool :=
+  FeatureBundle.hasUnvaluedFeature fb fv.dimension
+
+/-- The value at `fv`'s dimension, when valued. -/
+def getValuedFeature (fb : FeatureBundle) (fv : FeatureVal) : Option fv.dimension.ValueOf :=
+  FeatureBundle.getValuedFeature fb fv.dimension
 
 -- ============================================================================
 -- § 6: ±Interpretable Features

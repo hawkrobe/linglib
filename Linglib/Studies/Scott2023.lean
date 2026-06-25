@@ -194,7 +194,7 @@ def setAVocab : Vocabulary :=
 def setBVocab : Vocabulary :=
   makePersonVocab setBSpecificCells Agreement.Cell.toPhiFeatures
     (fun c => (setBExponent.realize c).getD "") (some .T) ++
-    [{ features := [], exponent := defaultSetB, context := some .T }]
+    [{ features := ⊥, exponent := defaultSetB, context := some .T }]
 
 /-- Which Minimalist head φ-Agrees with each argument position.
     Ditransitive R/T default to none (not modeled). -/
@@ -212,13 +212,13 @@ def agreeProbe : ArgPosition → Option Cat
     Placeholder values (.third, .Sing) are irrelevant — `sameType` matching
     ensures any Person/Number goal is found regardless. -/
 def voiceProbe : FeatureBundle :=
-  [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
+  .ofGramFeatures [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
 
 /-- Infl's probe features: [uPerson, uNumber].
     In intransitives, these are valued by S. In transitives, the probe
     is blocked by Voice_TR before reaching any DP. -/
 def inflProbe : FeatureBundle :=
-  [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
+  .ofGramFeatures [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
 
 -- ============================================================================
 -- § 2: Goal Feature Bundles (3SG test case)
@@ -226,7 +226,7 @@ def inflProbe : FeatureBundle :=
 
 /-- A 3SG DP's features: [Person:3, Number:sg]. -/
 def dp3sg : FeatureBundle :=
-  [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
+  .ofGramFeatures [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
 
 -- ============================================================================
 -- § 3: Agree Valuation — Voice agrees with agent
@@ -235,20 +235,23 @@ def dp3sg : FeatureBundle :=
 /-- Voice's [uPerson] is valued as [Person:3] from a 3SG agent. -/
 theorem voice_agrees_person :
     applyAgree voiceProbe dp3sg (.phi (.person .third)) =
-    some [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))] := by
+    some (.ofGramFeatures
+      [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]) := by
   native_decide
 
 /-- After person agreement, Voice's [uNumber] is valued as [Number:sg].
     This is the second step of φ-Agree: person first, then number. -/
 theorem voice_agrees_number :
-    let afterPerson := [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
+    let afterPerson : FeatureBundle := .ofGramFeatures
+      [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
     applyAgree afterPerson dp3sg (.phi (.number .singular)) =
-    some [.valued (.phi (.person .third)), .valued (.phi (.number .singular))] := by
+    some (.ofGramFeatures
+      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) := by
   native_decide
 
 /-- Full φ-valuation of Voice by a 3SG agent: both person and number valued. -/
 def voiceFullyAgreed : FeatureBundle :=
-  [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
+  .ofGramFeatures [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
 
 /-- The two-step Agree pipeline produces a fully valued bundle. -/
 theorem voice_agree_pipeline :
@@ -268,7 +271,7 @@ theorem setA_spellout_3sg :
 
 /-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields A1SG marker. -/
 theorem setA_spellout_1sg :
-    let v1sg : FeatureBundle :=
+    let v1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setAVocab v1sg (some .v) = some "n-/w-" := by
   native_decide
@@ -282,7 +285,7 @@ theorem setA_spellout_1sg :
     (1SG=chin, 1PL=qo, 2/3PL=chi — none match 3SG), so the Elsewhere
     entry is selected: "tz'=". -/
 theorem setB_intransitive_3sg :
-    let inflAgreed : FeatureBundle :=
+    let inflAgreed : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
     spellout setBVocab inflAgreed (some .T) = some "tz'=" := by
   native_decide
@@ -295,7 +298,7 @@ theorem setB_intransitive_3sg :
     This is the DEFAULT Set B — it appears in transitives regardless of
     the object's person/number features. -/
 theorem setB_transitive_default :
-    let inflBlocked : FeatureBundle := []
+    let inflBlocked : FeatureBundle := ⊥
     spellout setBVocab inflBlocked (some .T) = some "tz'=" := by
   native_decide
 
@@ -303,9 +306,9 @@ theorem setB_transitive_default :
     identical even though the underlying mechanism differs (real agreement
     vs. probe failure). -/
 theorem setB_same_surface :
-    let inflAgreed3sg : FeatureBundle :=
+    let inflAgreed3sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-    let inflBlocked : FeatureBundle := []
+    let inflBlocked : FeatureBundle := ⊥
     spellout setBVocab inflAgreed3sg (some .T) =
     spellout setBVocab inflBlocked (some .T) := by
   native_decide
@@ -314,7 +317,7 @@ theorem setB_same_surface :
     from S, yielding "chin" — NOT the Elsewhere form. This is real
     agreement, producing a distinct exponent. -/
 theorem setB_intransitive_1sg :
-    let t1sg : FeatureBundle :=
+    let t1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setBVocab t1sg (some .T) = some "chin" := by
   native_decide
@@ -324,10 +327,10 @@ theorem setB_intransitive_1sg :
     so the object's 1SG features are never copied to Infl. -/
 theorem setB_transitive_ignores_object :
     -- Even though the object is 1SG, Infl shows default "tz'=", not "chin"
-    let inflBlocked : FeatureBundle := []
+    let inflBlocked : FeatureBundle := ⊥
     spellout setBVocab inflBlocked (some .T) = some "tz'=" ∧
     -- Compare: a 1SG intransitive S would trigger "chin"
-    let inflAgreed1sg : FeatureBundle :=
+    let inflAgreed1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setBVocab inflAgreed1sg (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
@@ -352,10 +355,11 @@ theorem setB_transitive_ignores_object :
     table below for the search-level statement). -/
 theorem probe_restriction_yields_default :
     -- Transitive: probe blocked → empty → Elsewhere
-    spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
+    spellout setBVocab (⊥ : FeatureBundle) (some .T) = some "tz'=" ∧
     -- Intransitive 1SG: probe succeeds → "chin" (not default)
     spellout setBVocab
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
 
@@ -369,15 +373,19 @@ theorem probe_restriction_yields_default :
 theorem intransitive_pipeline_1sg :
     -- Infl Agrees with 1SG S
     (applyAgree inflProbe
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (.phi (.person .third))).bind
       (λ fb => applyAgree fb
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+        (.ofGramFeatures
+          [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
         (.phi (.number .singular))) =
-    some [.valued (.phi (.person .first)), .valued (.phi (.number .singular))] ∧
+    some (.ofGramFeatures
+      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) ∧
     -- Spells out as "chin" (not default "tz'=")
     spellout setBVocab
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
 
@@ -398,7 +406,7 @@ theorem full_pipeline_3sg_transitive :
       (λ fb => applyAgree fb dp3sg (.phi (.number .singular))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Step 3-4: Infl probe blocked → default Set B
-    spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
+    spellout setBVocab (⊥ : FeatureBundle) (some .T) = some "tz'=" ∧
     -- Step 5: patient is not eligible for reduction → overt pronoun
     ¬ ArgPosition.CanBeReduced .P := by
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -478,14 +486,15 @@ theorem different_probe_heads :
     DP with matching φ-features. `attemptAgree` maps the `none` result from
     `applyAgree` to `Probe.Outcome.unvalued`. -/
 theorem transitive_is_probe_failure :
-    attemptAgree inflProbe [] (.phi (.person .third)) = .unvalued := by
+    attemptAgree inflProbe ⊥ (.phi (.person .third)) = .unvalued := by
   native_decide
 
 /-- The intransitive case is real agreement: Infl's probe finds S and copies
     its φ-features. `attemptAgree` maps the `some _` result to `.valued`. -/
 theorem intransitive_is_real_agreement :
     attemptAgree inflProbe
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (.phi (.person .third)) = .valued := by
   native_decide
 
@@ -515,15 +524,16 @@ theorem probe_failure_converges_with_elsewhere :
     (head encounter .v) and copies no features — matching the Fragment's
     `¬ IsPhiAgreed .P`. -/
 theorem satisfaction_derives_patient_no_agree :
-    mamInflSatisfaction.isSatisfied [] (some .v) = true ∧
-    mamInflSatisfaction.copiedFeatures [] (some .v) = false ∧
+    mamInflSatisfaction.isSatisfied ⊥ (some .v) = true ∧
+    mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false ∧
     ¬ ArgPosition.IsPhiAgreed .P :=
   ⟨by native_decide, by native_decide, by decide⟩
 
 /-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
     φ-features and DOES copy them — matching `IsPhiAgreed .S`. -/
 theorem satisfaction_derives_intranS_agree :
-    let dp1sg := [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+    let dp1sg : FeatureBundle := .ofGramFeatures
+      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     mamInflSatisfaction.isSatisfied dp1sg none = true ∧
     mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
     ArgPosition.IsPhiAgreed .S :=
@@ -534,10 +544,11 @@ theorem satisfaction_derives_intranS_agree :
     - patient (transitive): copiedFeatures = false ↔ ¬ IsPhiAgreed .P
     - intranS (intransitive): copiedFeatures = true ↔ IsPhiAgreed .S -/
 theorem satisfaction_matches_fragment :
-    (mamInflSatisfaction.copiedFeatures [] (some .v) = true ↔
+    (mamInflSatisfaction.copiedFeatures ⊥ (some .v) = true ↔
       ArgPosition.IsPhiAgreed .P) ∧
     (mamInflSatisfaction.copiedFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       none = true ↔
       ArgPosition.IsPhiAgreed .S) := by
   refine ⟨?_, ?_⟩
@@ -586,7 +597,7 @@ def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
 
 /-- Transitive Voice as an encounter: a head of category `.v`, no
     φ-features visible to the probe. -/
-def voiceTR : Encounter := ⟨none, [], some .v⟩
+def voiceTR : Encounter := ⟨none, ⊥, some .v⟩
 
 /-- A DP goal realizing position `p` with φ-bundle `φ`. -/
 def dpGoal (p : ArgPosition) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
@@ -736,7 +747,7 @@ def mamImpoverishmentRule : Morphology.DM.Impoverishment.ImpoverishmentRule :=
     -- Check for [+author] (= valued first person): the F diacritic
     -- condition is modeled by this rule only being applied in
     -- agreed-with contexts (subj/poss position, not objects).
-    (λ fb => fb.any (λ f => match f with
+    (λ fb => (Minimalist.FeatureBundle.toGramFeatures fb).any (λ f => match f with
       | .valued (.phi (.person .first)) => true
       | _ => false))
     (.phi (.number .singular))
@@ -750,29 +761,34 @@ theorem mamImpoverishment_paradigmatic :
 theorem impoverishment_fires_1sg :
     mamImpoverishmentRule.condition
       (Morphology.DM.Impoverishment.Neighborhood.ofBundle
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) := by
+        (.ofGramFeatures
+          [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])) := by
   decide
 
 /-- The impoverishment rule does NOT fire for 3rd person bundles. -/
 theorem impoverishment_blocked_3sg :
     ¬ mamImpoverishmentRule.condition
         (Morphology.DM.Impoverishment.Neighborhood.ofBundle
-          [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) := by
+          (.ofGramFeatures
+            [.valued (.phi (.person .third)), .valued (.phi (.number .singular))])) := by
   decide
 
 /-- After impoverishment, the number feature is deleted from 1st
     person bundles, bleeding insertion of the base morpheme *qin*. -/
 theorem impoverishment_deletes_number :
     mamImpoverishmentRule.applyToBundle
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))] =
-    [.valued (.phi (.person .first))] := by
+      (.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) =
+    .ofGramFeatures [.valued (.phi (.person .first))] := by
   decide
 
 /-- Without impoverishment (3rd person), the number feature survives. -/
 theorem no_impoverishment_preserves :
     mamImpoverishmentRule.applyToBundle
-      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))] =
-    [.valued (.phi (.person .third)), .valued (.phi (.number .singular))] := by
+      (.ofGramFeatures
+        [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) =
+    .ofGramFeatures
+      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))] := by
   decide
 
 end AgreeSpellout
