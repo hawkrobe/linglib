@@ -215,4 +215,230 @@ theorem SO.subtrees_subset_of_mem {w s : SO} (h : w ∈ s.subtrees) :
     · intro z hz; rw [SO.mem_subtrees_node]; exact Or.inr (Or.inl (ihl hl hz))
     · intro z hz; rw [SO.mem_subtrees_node]; exact Or.inr (Or.inr (ihr hr hz))
 
+/-! ### Cardinality (MCB's vertex/accessible-term counts, Def 1.2.2 eq. 1.2.5) -/
+
+mutual
+/-- `subtreesN` has one element per vertex: its cardinality is the weight. -/
+theorem subtreesNPlanar_card (p : Planar SOLabel) :
+    (subtreesNPlanar p).card = p.weight := by
+  obtain ⟨a, cs⟩ := p
+  rw [subtreesNPlanar, Multiset.card_cons, subtreesNPlanarList_card, Planar.weight]; omega
+/-- Auxiliary list version. -/
+theorem subtreesNPlanarList_card (cs : List (Planar SOLabel)) :
+    (subtreesNPlanarList cs).card = Planar.weightList cs := by
+  match cs with
+  | [] => rfl
+  | c :: cs => rw [subtreesNPlanarList, Multiset.card_add, subtreesNPlanar_card,
+                   subtreesNPlanarList_card, Planar.weightList]
+end
+
+theorem subtreesN_card (u : Nonplanar SOLabel) :
+    (subtreesN u).card = Nonplanar.weight u :=
+  Quotient.inductionOn u subtreesNPlanar_card
+
+/-- **`subtrees` enumerates the vertices** ([marcolli-chomsky-berwick-2025] Def 1.2.2:
+    `subtrees = Acc'(T)`, so its size is `#V(T)`, the MCB workspace-size primitive). -/
+theorem SO.subtrees_card (s : SO) : (s.subtrees).card = Nonplanar.weight s.val := by
+  rw [SO.subtrees, Multiset.card_pmap, subtreesN_card]
+
+/-! ### Accessible terms `Acc(T)` (Def 1.2.2) -/
+
+/-- MCB's accessible-terms operator `Acc(T)` ([marcolli-chomsky-berwick-2025]
+    Def 1.2.2, eq. 1.2.2): the subtrees at **all non-root vertices** (leaves
+    included — the counting identity eq. 1.2.5 `#V = b₀ + #Acc` forces this).
+    Defined as `subtrees − {self}` (`Acc'(T) = {T} ∪ Acc(T)`, eq. 1.2.3). -/
+def SO.Acc (s : SO) : Multiset SO := s.subtrees - {s}
+
+/-- **MCB counting identity** (eq. 1.2.5, one-component case): `#Acc(T) = #V(T) − 1`. -/
+theorem SO.Acc_card (s : SO) : (s.Acc).card = Nonplanar.weight s.val - 1 := by
+  rw [SO.Acc, Multiset.card_sub (Multiset.singleton_le.mpr (SO.self_mem_subtrees s)),
+      SO.subtrees_card, Multiset.card_singleton]
+
+@[simp] theorem SO.Acc_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).Acc = 0 := by
+  rw [← Multiset.card_eq_zero, SO.Acc_card,
+      show (SO.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl, Nonplanar.weight_leaf]
+
+@[simp] theorem SO.Acc_traceLeaf : SO.traceLeaf.Acc = 0 := by
+  rw [← Multiset.card_eq_zero, SO.Acc_card,
+      show SO.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl, Nonplanar.weight_leaf]
+
+/-! ### Containment / dominance -/
+
+/-- Weight of a bare binary node is one more than the sum of its daughters'. -/
+theorem weight_node_pair (a b : Nonplanar SOLabel) :
+    Nonplanar.weight (Nonplanar.node (Sum.inr ()) {a, b})
+      = Nonplanar.weight a + Nonplanar.weight b + 1 := by
+  refine Quotient.inductionOn₂ a b fun pa pb => ?_
+  have key : Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb}
+           = Nonplanar.mk (Planar.node (Sum.inr ()) [pa, pb]) := by
+    rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
+          = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl, Nonplanar.node_mk_planar_list]
+  show Nonplanar.weight (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
+      = Nonplanar.weight (Nonplanar.mk pa) + Nonplanar.weight (Nonplanar.mk pb) + 1
+  rw [key]
+  show (Planar.node (Sum.inr ()) [pa, pb]).weight = pa.weight + pb.weight + 1
+  simp only [Planar.weight, Planar.weightList]; omega
+
+/-- **Containment (dominance)** is the transitive closure of immediate containment
+    ([marcolli-chomsky-berwick-2025] §1.1; the legacy `contains`). -/
+inductive SO.contains : SO → SO → Prop
+  | imm : ∀ x y, SO.immediatelyContains x y → SO.contains x y
+  | trans : ∀ x y z, SO.immediatelyContains x z → SO.contains z y → SO.contains x y
+
+theorem SO.imm_implies_contains {x y : SO} (h : SO.immediatelyContains x y) :
+    SO.contains x y := .imm x y h
+
+theorem SO.contains_trans {x y z : SO} (hxy : SO.contains x y) (hyz : SO.contains y z) :
+    SO.contains x z := by
+  induction hxy with
+  | imm x y himm => exact .trans x z y himm hyz
+  | trans x y w himm _ ih => exact .trans x z w himm (ih hyz)
+
+/-- Immediate containment strictly decreases weight. -/
+theorem SO.immediatelyContains_lt_weight {x y : SO} (h : SO.immediatelyContains x y) :
+    Nonplanar.weight y.val < Nonplanar.weight x.val := by
+  rcases SO.exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  · exact absurd h (SO.immediatelyContains_lexLeaf tok y)
+  · exact absurd h (SO.immediatelyContains_traceLeaf y)
+  · rw [SO.immediatelyContains_node] at h
+    rw [SO.node_val, weight_node_pair]
+    rcases h with rfl | rfl <;> omega
+
+/-- Containment strictly decreases weight; hence it is irreflexive. -/
+theorem SO.contains_lt_weight {x y : SO} (h : SO.contains x y) :
+    Nonplanar.weight y.val < Nonplanar.weight x.val := by
+  induction h with
+  | imm _ _ himm => exact SO.immediatelyContains_lt_weight himm
+  | trans _ _ _ himm _ ih => exact lt_trans ih (SO.immediatelyContains_lt_weight himm)
+
+theorem SO.contains_irrefl (x : SO) : ¬ SO.contains x x :=
+  fun h => absurd (SO.contains_lt_weight h) (lt_irrefl _)
+
+/-! ### Subtree ↔ containment bridge -/
+
+theorem SO.mem_subtrees_of_immediatelyContains {x y : SO} (h : SO.immediatelyContains x y) :
+    y ∈ x.subtrees := by
+  rcases SO.exists_form x with ⟨tok, rfl⟩ | rfl | ⟨l, r, rfl⟩
+  · exact absurd h (SO.immediatelyContains_lexLeaf tok y)
+  · exact absurd h (SO.immediatelyContains_traceLeaf y)
+  · rw [SO.immediatelyContains_node] at h
+    rcases h with heq | heq
+    · rw [heq, SO.mem_subtrees_node]; exact Or.inr (Or.inl (SO.self_mem_subtrees l))
+    · rw [heq, SO.mem_subtrees_node]; exact Or.inr (Or.inr (SO.self_mem_subtrees r))
+
+theorem SO.mem_subtrees_of_contains {x y : SO} (h : SO.contains x y) : y ∈ x.subtrees := by
+  induction h with
+  | imm x y himm => exact SO.mem_subtrees_of_immediatelyContains himm
+  | trans x y w himm _ ih =>
+    exact SO.subtrees_subset_of_mem (SO.mem_subtrees_of_immediatelyContains himm) ih
+
+/-- A subtree of `x` is either `x` itself or properly contained in `x`. -/
+theorem SO.mem_subtrees_iff_eq_or_contains {x y : SO} :
+    y ∈ x.subtrees ↔ y = x ∨ SO.contains x y := by
+  refine ⟨fun h => ?_, fun h => h.elim (fun he => he ▸ SO.self_mem_subtrees x)
+    SO.mem_subtrees_of_contains⟩
+  induction x using SO.ind with
+  | lex tok =>
+    rw [SO.mem_subtrees, show (SO.lexLeaf tok).val = Nonplanar.leaf (Sum.inl tok) from rfl,
+        mem_subtreesN_leaf] at h
+    exact Or.inl (Subtype.ext h)
+  | trace =>
+    rw [SO.mem_subtrees, show SO.traceLeaf.val = Nonplanar.leaf (Sum.inr ()) from rfl,
+        mem_subtreesN_leaf] at h
+    exact Or.inl (Subtype.ext h)
+  | node l r ihl ihr =>
+    rw [SO.mem_subtrees_node] at h
+    rcases h with rfl | hl | hr
+    · exact Or.inl rfl
+    · refine Or.inr ?_
+      rcases ihl hl with heq | hc
+      · rw [heq]; exact .imm _ _ ((SO.immediatelyContains_node l r l).mpr (Or.inl rfl))
+      · exact .trans _ _ l ((SO.immediatelyContains_node l r l).mpr (Or.inl rfl)) hc
+    · refine Or.inr ?_
+      rcases ihr hr with heq | hc
+      · rw [heq]; exact .imm _ _ ((SO.immediatelyContains_node l r r).mpr (Or.inr rfl))
+      · exact .trans _ _ r ((SO.immediatelyContains_node l r r).mpr (Or.inr rfl)) hc
+
+/-- **Containment ↔ proper subtree membership.** Gives a decision procedure for
+    `contains` without well-founded recursion: `y` is properly contained in `x` iff
+    it is a subtree distinct from `x`. -/
+theorem SO.contains_iff_mem_subtrees_and_ne {x y : SO} :
+    SO.contains x y ↔ y ∈ x.subtrees ∧ y ≠ x := by
+  constructor
+  · intro h
+    exact ⟨SO.mem_subtrees_of_contains h, fun he => SO.contains_irrefl x (he ▸ h)⟩
+  · rintro ⟨hmem, hne⟩
+    rcases SO.mem_subtrees_iff_eq_or_contains.mp hmem with rfl | hc
+    · exact absurd rfl hne
+    · exact hc
+
+instance (x y : SO) : Decidable (SO.contains x y) :=
+  decidable_of_iff _ SO.contains_iff_mem_subtrees_and_ne.symm
+
+/-! ### Term-of and reflexive containment -/
+
+/-- `x` is a **term of** `y`: `x = y` or `y` contains `x`. -/
+def SO.isTermOf (x y : SO) : Prop := x = y ∨ SO.contains y x
+
+instance (x y : SO) : Decidable (SO.isTermOf x y) := inferInstanceAs (Decidable (_ ∨ _))
+
+theorem SO.isTermOf_iff_mem_subtrees (x y : SO) : SO.isTermOf x y ↔ x ∈ y.subtrees :=
+  SO.mem_subtrees_iff_eq_or_contains.symm
+
+/-- Reflexive containment. -/
+def SO.containsOrEq (x y : SO) : Prop := x = y ∨ SO.contains x y
+
+instance (x y : SO) : Decidable (SO.containsOrEq x y) := inferInstanceAs (Decidable (_ ∨ _))
+
+theorem SO.containsOrEq_trans {x y z : SO}
+    (hxy : SO.containsOrEq x y) (hyz : SO.containsOrEq y z) : SO.containsOrEq x z := by
+  rcases hxy with rfl | hxy
+  · exact hyz
+  · rcases hyz with rfl | hyz
+    · exact Or.inr hxy
+    · exact Or.inr (SO.contains_trans hxy hyz)
+
+/-! ### Tree-relative c-command ([reinhart-1976]) -/
+
+/-- `x` and `y` are **sisters in** `root`: distinct co-daughters of some subtree. -/
+def SO.areSistersIn (root x y : SO) : Prop :=
+  ∃ z ∈ root.subtrees, SO.immediatelyContains z x ∧ SO.immediatelyContains z y ∧ x ≠ y
+
+instance (root x y : SO) : Decidable (SO.areSistersIn root x y) :=
+  Multiset.decidableExistsMultiset
+
+/-- `x` **c-commands** `y` in `root`: `x` has a sister (in `root`) that
+    contains-or-equals `y`. -/
+def SO.cCommandsIn (root x y : SO) : Prop :=
+  ∃ z ∈ root.subtrees, SO.areSistersIn root x z ∧ SO.containsOrEq z y
+
+instance (root x y : SO) : Decidable (SO.cCommandsIn root x y) :=
+  Multiset.decidableExistsMultiset
+
+/-- `x` **asymmetrically** c-commands `y` in `root`. -/
+def SO.asymCCommandsIn (root x y : SO) : Prop :=
+  SO.cCommandsIn root x y ∧ ¬ SO.cCommandsIn root y x
+
+instance (root x y : SO) : Decidable (SO.asymCCommandsIn root x y) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-! ### `decide` demonstrations
+
+The containment / c-command decision procedures reduce on concrete trees built
+via `Nonplanar.mk ∘ Planar.node` (not the noncomputable `SO.node`), confirming the
+"state result trees directly" discipline carries through to the relational layer. -/
+
+private def demoL : SO := ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 0)) []), by decide⟩
+private def demoR : SO := ⟨Nonplanar.mk (.node (Sum.inl (mkTraceToken 1)) []), by decide⟩
+private def demoT : SO :=
+  ⟨Nonplanar.mk (.node (Sum.inr ())
+    [.node (Sum.inl (mkTraceToken 0)) [], .node (Sum.inl (mkTraceToken 1)) []]), by decide⟩
+
+/-- The root properly contains its left daughter; the daughter does not contain the root. -/
+example : SO.contains demoT demoL ∧ ¬ SO.contains demoL demoT := by decide
+/-- The two daughters c-command each other in the root. -/
+example : SO.cCommandsIn demoT demoL demoR := by decide
+/-- A node has one more vertex than the sum of its daughters' (eq. 1.2.5 witness). -/
+example : (demoT.subtrees).card = 3 := by decide
+
 end Minimalist
