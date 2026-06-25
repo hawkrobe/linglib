@@ -1929,6 +1929,7 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
 import Linglib.Core.Combinatorics.RootedTree.Counting
 import Linglib.Core.Combinatorics.RootedTree.TraceCounting
