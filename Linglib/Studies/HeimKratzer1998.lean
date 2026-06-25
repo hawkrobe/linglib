@@ -1,5 +1,5 @@
 import Linglib.Syntax.Tree.Cat
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Fragments.English.Toy
@@ -275,9 +275,12 @@ Traces left by movement are interpreted as variables bound by
 
 #### Trace convention
 
-Traces are encoded as `SyntacticObject.leaf` with id ≥ 10000.
-The trace index is `id - 10000`. Created via `mkTrace n`,
-detected via `isTrace so`.
+On the index-free `SO` carrier ([marcolli-chomsky-berwick-2025] Def 1.2.1,
+chain identity is workspace-level) a trace is the **single** bare trace leaf
+`SO.traceLeaf`, recognized by `SO.isTrace`. The semantic trace *index* `n` is
+not carried by the leaf: it is supplied by the binder (λ-abstraction) at the
+landing site, exactly as in the H&K rule ⟦t_n⟧^g = g(n). The interpretation
+functions below therefore take the index as an explicit argument.
 -/
 
 -- ============================================================================
@@ -324,73 +327,36 @@ structure InterpContext (E : Type) where
 /--
 The semantic type corresponding to a syntactic object.
 
-- Traces have type e (they denote entities)
+- A trace leaf has type e (it denotes an entity)
 - Other SOs need lexical lookup
 -/
 def soSemanticType (so : Minimalist.SyntacticObject) : Option Ty :=
-  match Minimalist.isTrace so with
-  | some _ => some .e
-  | none => none  -- depends on lexical entry / composition
+  if Minimalist.SO.isTrace so then some .e else none
 
 /--
-Interpret a trace in a syntactic object.
+Interpret a trace leaf in a syntactic object at a given index.
 
-This extracts the trace index and interprets it via the assignment.
+On the index-free `SO` carrier the trace leaf carries no index; the binder at
+the landing site supplies `n` (H&K's ⟦t_n⟧^g = g(n)). Returns `none` when `so`
+is not the trace leaf.
 -/
-def interpSOTrace {E : Type} (so : Minimalist.SyntacticObject) : Option (DenotG E Unit .e) :=
-  match Minimalist.isTrace so with
-  | some n => some (interpTrace n)
-  | none => none
+def interpSOTrace {E : Type} (n : ℕ) (so : Minimalist.SyntacticObject) :
+    Option (DenotG E Unit .e) :=
+  if Minimalist.SO.isTrace so then some (interpTrace n) else none
 
-/-- Collect ALL trace indices in a syntactic object, as a `Multiset Nat`.
+/-- The trace leaf is recognized as type `e`. -/
+@[simp] theorem soSemanticType_traceLeaf :
+    soSemanticType Minimalist.SO.traceLeaf = some .e := rfl
 
-    Returning a multiset (rather than `Option Nat`) is what makes the
-    operation swap-respecting: `Multiset` addition is commutative, so
-    enumerating both children's traces and combining via `+` is order-
-    independent. The previous `Option`-valued version with `<|>` was
-    *unsoundly* sorried because `Option.orElse` is left-biased — for
-    multi-trace SOs `getTraceIndexAux (mul a b)` and
-    `getTraceIndexAux (mul b a)` return different values, so the
-    `_respects` proposition was false-by-construction.
-
-    Single-trace consumers should use `traceIndex?` (defined below) to
-    extract the unique index. -/
-private def traceIndicesAux : FreeMagma (Minimalist.LIToken ⊕ Nat) → Multiset ℕ
-  | .of (.inl _) => 0  -- empty multiset
-  | .of (.inr n) => {n}
-  | .mul a b => traceIndicesAux a + traceIndicesAux b
-
-private theorem traceIndicesAux_respects (a b : FreeMagma (Minimalist.LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : traceIndicesAux a = traceIndicesAux b := by
-  induction h with
-  | swap _ _ => simp only [traceIndicesAux]; exact add_comm _ _
-  | mul_left _ _ ih => simp only [traceIndicesAux, ih]
-  | mul_right _ _ ih => simp only [traceIndicesAux, ih]
-
-/-- All trace indices appearing in an SO, as a `Multiset` (multiplicity
-    preserved, order-blind). -/
-def traceIndices : Minimalist.SyntacticObject → Multiset ℕ :=
-  FreeCommMagma.lift traceIndicesAux traceIndicesAux_respects
-
-@[simp] theorem traceIndices_leaf (tok : Minimalist.LIToken) :
-    traceIndices (Minimalist.SyntacticObject.leaf tok) = 0 := rfl
-
-@[simp] theorem traceIndices_trace (n : Nat) :
-    traceIndices (Minimalist.SyntacticObject.trace n) = {n} := rfl
-
-@[simp] theorem traceIndices_mul (l r : Minimalist.SyntacticObject) :
-    traceIndices (l * r) = traceIndices l + traceIndices r := by
-  induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
-
-/-- Extract a trace index, returning `none` if the SO has no traces.
-    For single-trace SOs returns the unique index; for multi-trace SOs,
-    returns *some* index (the first in `Multiset.toList`'s arbitrary
-    enumeration). Use `traceIndices` directly for the canonical
-    multiset.
-
-    Noncomputable because `Multiset.toList` is. -/
-noncomputable def getTraceIndex (so : Minimalist.SyntacticObject) : Option ℕ :=
-  (traceIndices so).toList.head?
+/-- A lexical leaf is not a trace, so it gets no carrier-level type. -/
+@[simp] theorem soSemanticType_lexLeaf (tok : Minimalist.LIToken) :
+    soSemanticType (Minimalist.SO.lexLeaf tok) = none := by
+  have hne : ¬ Minimalist.SO.isTrace (Minimalist.SO.lexLeaf tok) := by
+    intro h
+    have hg := congrArg Minimalist.SO.getLIToken h
+    rw [Minimalist.SO.getLIToken_lexLeaf, Minimalist.SO.getLIToken_traceLeaf] at hg
+    exact Option.some_ne_none tok hg
+  simp only [soSemanticType, if_neg hne]
 
 -- ============================================================================
 -- Theorems about Movement Interpretation

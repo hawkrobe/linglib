@@ -22,7 +22,7 @@ Standard EPs:
 
 -/
 
-import Linglib.Syntax.Minimalist.Labeling
+import Linglib.Syntax.Minimalist.SyntacticObject
 import Linglib.Typology.Profile
 import Linglib.Syntax.Clause.Basic
 
@@ -273,41 +273,6 @@ def allFMonotone : List Cat → Bool
   | [] => true
   | [_] => true
   | c₁ :: c₂ :: rest => fMonotone c₁ c₂ && allFMonotone (c₂ :: rest)
-
-/-- Underlying planar EP-spine computation on a `FreeMagma`
-    representative. The EP spine is intrinsically planar (left-spine head
-    chain), so each node's head category is read **structurally** from the
-    planar rep in hand (`leftmostLeafPlanar`) rather than round-tripping
-    through a `Quot.out` section. -/
-private def computeEPSpinePlanar :
-    FreeMagma (LIToken ⊕ Nat) → List (SyntacticObject × Cat)
-  | .of (.inl tok) =>
-    [((FreeCommMagma.mk (.of (.inl tok)) : SyntacticObject), tok.item.outerCat)]
-  | .of (.inr n) =>
-    [((FreeCommMagma.mk (.of (.inr n)) : SyntacticObject), .N)]
-  | .mul a b =>
-    computeEPSpinePlanar a ++
-      [((FreeCommMagma.mk (.mul a b) : SyntacticObject),
-         (leftmostLeafPlanar (.mul a b)).item.outerCat)]
-
-/-- Compute the EP spine from a syntactic object by walking the head chain of
-    the **selection-induced** head-initial embedding (`selLinearize .initial`,
-    [marcolli-chomsky-berwick-2025] Lemma 1.13.5). Returns pairs of (SO, Cat)
-    from the deepest lexical head up to the root. Computable, selection-faithful;
-    supersedes the arbitrary `Quot.out` representative. -/
-def computeEPSpine (so : SyntacticObject) :
-    List (SyntacticObject × Cat) :=
-  computeEPSpinePlanar (selLinearize .initial so)
-
-/-- Build an ExtendedProjection from a syntactic object using the
-    leftmost-leaf head chain. -/
-noncomputable def mkExtendedProjection (so : SyntacticObject) : ExtendedProjection :=
-  let spinePairs := computeEPSpine so
-  let cats := spinePairs.map Prod.snd
-  { root := so
-    spine := cats
-    catConsistent := allCategoryConsistent cats
-    fMonotoneChain := allFMonotone cats }
 
 /-- Is this EP well-formed? (category consistent AND F-monotone) -/
 def ExtendedProjection.isWellFormed (ep : ExtendedProjection) : Bool :=

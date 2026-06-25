@@ -7,7 +7,6 @@ import Linglib.Fragments.Greek.StandardModern.Possession
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
 import Linglib.Studies.Myler2016
-import Linglib.Studies.AissenPolian2025
 import Linglib.Studies.Heine1997
 
 /-!

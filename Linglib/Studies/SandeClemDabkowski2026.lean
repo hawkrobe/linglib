@@ -329,21 +329,22 @@ theorem guebie_PIC_admits_remnant_movement (φ : Minimalist.Phase)
     What it does establish is that the substrate is *usable*: the
     `properRemnant` predicate is decidable on the witness. -/
 
-open Minimalist (SyntacticObject LIToken LexicalItem)
+open Minimalist (SyntacticObject LIToken LexicalItem SO)
 open Minimalist.Movement (RemnantFronting PredicateDoubling properRemnant)
 
 /-- A schematic verb leaf for the `PredicateDoubling` witness. -/
 private def guebieVerbTok : LIToken := ⟨.simple .V [], 1⟩
-private def guebieVerbLeaf : SyntacticObject := .leaf guebieVerbTok
+private def guebieVerbLeaf : SyntacticObject := SO.lexLeaf guebieVerbTok
 
 /-- A schematic remnant-VP node containing the verb leaf as a trace
-    pronounced for recoverability. -/
+    pronounced for recoverability. Built planar-first (the smart
+    `SO.node` is noncomputable) so the `decide` proofs below reduce. -/
 private def guebieFrontedVP : SyntacticObject :=
-  .node guebieVerbLeaf guebieVerbLeaf
+  SO.ofPlanar (SO.nodeP (SO.leafP guebieVerbTok) (SO.leafP guebieVerbTok))
 
 /-- A schematic landing-site leaf (Spec,CP). -/
 private def guebieLandingTok : LIToken := ⟨.simple .C [], 2⟩
-private def guebieLandingSite : SyntacticObject := .leaf guebieLandingTok
+private def guebieLandingSite : SyntacticObject := SO.lexLeaf guebieLandingTok
 
 /-- The Guébie predicate-fronting witness: V evacuates the VP, and
     the remnant VP fronts to Spec,CP. The trace is pronounced — verb
@@ -372,27 +373,14 @@ candidate type the OT machinery uses, which we don't instantiate
 inline). -/
 
 /-- The phase-selector for Guébie's vP cophonology: matches v heads
-    (and only v heads).
-
-    Phase 1.0 substrate: lifted through `FreeCommMagma.lift`. Since
-    only the `.leaf` case yields `true` and `.mul`/`.trace` cases all
-    yield `false`, the swap-respects proof is by structural unfolding. -/
-private def guebieVPPhaseSelectorAux : FreeMagma (LIToken ⊕ Nat) → Bool
-  | .of (.inl tok) => match tok.item with
-    | .simple .v _ _ => true
-    | _ => false
-  | .of (.inr _) => false
-  | .mul _ _ => false
-
-private theorem guebieVPPhaseSelectorAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : guebieVPPhaseSelectorAux a = guebieVPPhaseSelectorAux b := by
-  induction h with
-  | swap _ _ => rfl
-  | mul_left _ _ _ => rfl
-  | mul_right _ _ _ => rfl
-
-def guebieVPPhaseSelector : SyntacticObject → Bool :=
-  FreeCommMagma.lift guebieVPPhaseSelectorAux guebieVPPhaseSelectorAux_respects
+    (and only v heads). On the `SO` carrier the selector reads the root
+    leaf's token (`PhrasalCophonology.appliesTo` only ever applies it to a
+    `SO.lexLeaf` of the phase head), so a v head is detected by its
+    outer category. -/
+def guebieVPPhaseSelector : SyntacticObject → Bool := fun s =>
+  match s.getLIToken with
+  | some tok => tok.item.outerCat == .v
+  | none => false
 
 /-- The Guébie vP-cophonology bundle. The `subranking` is left as an
     empty list of constraints over `Unit` candidates because the
@@ -410,9 +398,8 @@ def guebieVPCophonology : PhrasalCophonology Unit :=
     SO whose token's category is `.v`.) -/
 theorem guebieVPCophonology_applies_to_v :
     let vTok : LIToken := ⟨.simple .v [], 99⟩
-    let vHead : SyntacticObject := .leaf vTok
-    let vPhase : Minimalist.Phase :=
-      { h := Minimalist.HeadFunction.leftSpine, tree := vHead, head := vTok }
+    let vHead : SyntacticObject := SO.lexLeaf vTok
+    let vPhase : Minimalist.Phase := { tree := vHead, head := vTok }
     guebieVPCophonology.appliesTo vPhase = true := by decide
 
 /-! ### Guébie as a positive instance of `VerbDoublingIsSyntactic`
@@ -437,9 +424,9 @@ open Minimalist (VerbDoublingIsSyntacticIn)
 /-- A schematic Guébie Derivation: the verb undergoes Internal Merge
     in the predicate-fronting derivation (per SCD 2026 §3 island
     diagnostics establishing this is narrow-syntactic, not PF). -/
-def guebieFrontingDerivation : Minimalist.Derivation :=
+def guebieFrontingDerivation : Minimalist.SO.Derivation :=
   { initial := guebieFrontedVP
-    steps   := [.im guebieVerbLeaf 0] }
+    steps   := [.im guebieVerbLeaf] }
 
 /-- Guébie predicate-fronting verb doubling registered as a positive
     instance of `VerbDoublingIsSyntacticIn`: the verb is among

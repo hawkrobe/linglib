@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # Verb Movement Parameter

@@ -83,7 +83,7 @@ structure AgreeRelation where
 
 /-- The probe c-commands the goal within a given tree -/
 def AgreeRelation.probeCommands (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  cCommandsIn root a.probe a.goal
+  SO.cCommandsIn root a.probe a.goal
 
 /-- The goal has the relevant valued feature -/
 def AgreeRelation.goalHasFeature (a : AgreeRelation) : Bool :=
@@ -116,11 +116,11 @@ def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
     `pred`-matching node c-commanded by `probe` c-commanding `goal`. -/
 def closestGoalB (root probe goal : SyntacticObject)
     (pred : SyntacticObject → Bool) : Bool :=
-  decide (cCommandsIn root probe goal) &&
+  decide (SO.cCommandsIn root probe goal) &&
   pred goal &&
   (! @decide (∃ x ∈ root.subtrees,
     x ≠ goal ∧ pred x = true ∧
-    cCommandsIn root probe x ∧ cCommandsIn root x goal)
+    SO.cCommandsIn root probe x ∧ SO.cCommandsIn root x goal)
     Multiset.decidableExistsMultiset)
 
 -- ============================================================================
@@ -129,14 +129,14 @@ def closestGoalB (root probe goal : SyntacticObject)
 
 /-- Per-vertex horizon predicate: leaf with category = horizonCat. -/
 private def isHorizonLeafFor (horizonCat : Cat) (n : SyntacticObject) : Prop :=
-  match SyntacticObject.getLIToken n with
+  match SO.getLIToken n with
   | some tok => tok.item.outerCat = horizonCat
   | none => False
 
 instance (horizonCat : Cat) (n : SyntacticObject) :
     Decidable (isHorizonLeafFor horizonCat n) := by
   unfold isHorizonLeafFor
-  cases SyntacticObject.getLIToken n <;> infer_instance
+  cases SO.getLIToken n <;> infer_instance
 
 /-- Is `target` behind a horizon of category `horizonCat` relative to
     `probe` in tree `root`?
@@ -161,8 +161,8 @@ def behindHorizonB (root probe target : SyntacticObject)
     (horizonCat : Cat) : Bool :=
   @decide (∃ n ∈ root.subtrees,
     isHorizonLeafFor horizonCat n ∧
-    cCommandsIn root n target ∧
-    cCommandsIn root probe n)
+    SO.cCommandsIn root n target ∧
+    SO.cCommandsIn root probe n)
     Multiset.decidableExistsMultiset
 
 -- ============================================================================
@@ -305,7 +305,6 @@ structure ActiveGoal where
   goal : SyntacticObject
   goalFeatures : FeatureBundle
   isActive : isActive goalFeatures = true
-  deriving Repr
 
 /-- Create an ActiveGoal if the features are indeed active -/
 def mkActiveGoal (goal : SyntacticObject) (feats : FeatureBundle) : Option ActiveGoal :=

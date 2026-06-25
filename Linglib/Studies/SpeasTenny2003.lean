@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Basic
@@ -208,9 +209,9 @@ theorem deriveMood_finite :
 --     SAP → root-only follows from SAP = highest phase.
 --     (Proved in Allocutivity.lean: `sa_based_aa_root_only`)
 theorem sa_is_phase_head (so : SyntacticObject)
-    (h : outerCatC so = some .SA) :
+    (h : so.outerCatC = some .SA) :
     isPhaseHeadOf .SA so = true := by
-  simp only [isPhaseHeadOf, h, beq_self_eq_true]
+  simp only [isPhaseHeadOf, SO.isPhaseHeadOf, h, beq_self_eq_true]
 
 -- E8: Bridge to YoonEtAl2020 — the HEARER P-role (structural, S&T)
 --     corresponds to the addressee in social utility φ-weighting (pragmatic,
@@ -223,7 +224,7 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 -- E9: Bridge to Phase.lean — `isPhaseHeadOf .SA` identifies SA as a phase.
 --     SAP is derivation-final (highest phase).
 theorem sa_phase_derivation_final :
-    isPhaseHeadOf .SA (mkLeaf .SA [] 0) = true := by
+    isPhaseHeadOf .SA (SO.mkLeaf .SA [] 0) = true := by
   decide
 
 -- E10: fValue is injective on the canonical verbal EP spine (one head per

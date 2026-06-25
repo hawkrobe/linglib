@@ -90,8 +90,10 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 - `JudgmentType` from `Discourse/InformationStructure.lean`
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
-- `Probe.Profile`, `closestGoalB`, `behindHorizonB`, `liftFM` from
-  `Syntax/Minimalist/{Agree, Basic}.lean`
+- `Probe.Profile`, `closestGoalB`, `behindHorizonB` from
+  `Syntax/Minimalist/Agree.lean`; `SO` construction DSL (`SO.ofPlanar`,
+  `SO.leafP`, `SO.nodeP`, `SO.lexLeaf`) from
+  `Syntax/Minimalist/SyntacticObject/Build.lean`
 -/
 
 namespace AissenPolian2025
@@ -850,6 +852,7 @@ theorem tseltalan_case_locus :
 section AttractClosest
 
 open Minimalist
+open RootedTree
 
 /-! ### Attract Closest on Concrete Trees
 
@@ -876,30 +879,37 @@ geometry and which nodes carry D features:
     Matching criterion for T°'s [EPP:D] probe: D-bearing elements
     (possessor DPs, D° heads, agent DPs) are potential goals.
 
-    Lifted to `SyntacticObject` via `Minimalist.liftFM`. Only leaf SOs
-    can carry features; `.mul` cases are universally false (no
-    structural-position-dependent feature lookup is needed). -/
-private def hasDFeaturesAux : FreeMagma (LIToken ⊕ Nat) → Bool
-  | .of (.inl tok) => tok.item.outerCat == .D
-  | .of (.inr _) => false  -- traces are not D-bearing
-  | .mul _ _ => false
+    Reads the root token via `SO.getLIToken`. Only leaf SOs carry a
+    token; internal (`SO.node`) nodes and traces return `none` and are
+    not D-bearing (no structural-position-dependent feature lookup is
+    needed). -/
+private def hasDFeatures (s : SyntacticObject) : Bool :=
+  match s.getLIToken with
+  | some tok => tok.item.outerCat == .D
+  | none => false
 
-private theorem hasDFeaturesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : hasDFeaturesAux a = hasDFeaturesAux b := by
-  induction h <;> rfl
+/-! ### Leaf Tokens and Nodes
 
-private def hasDFeatures : SyntacticObject → Bool :=
-  Minimalist.liftFM hasDFeaturesAux hasDFeaturesAux_respects
+Concrete trees are built **planar-first** (`SO.ofPlanar`/`SO.nodeP`/`SO.leafP`)
+because Merge (`SO.node`) is noncomputable; `closestGoalB`/`behindHorizonB` then
+reduce under `decide`. Each leaf `SO` is `SO.lexLeaf` of its token, and the trees
+reference the same tokens via `SO.leafP` so the two match definitionally. -/
 
-/-! ### Leaf Nodes -/
+private def tT₀  : LIToken := ⟨.simple .T [], 1⟩   -- T° head ([EPP:D] probe)
+private def tV₀  : LIToken := ⟨.simple .V [], 2⟩   -- V° (lexical verb)
+private def tv₀  : LIToken := ⟨.simple .v [], 3⟩   -- v° (introduces agent)
+private def tPsr : LIToken := ⟨.simple .D [], 4⟩   -- Possessor DP (D-bearing)
+private def tPsm : LIToken := ⟨.simple .N [], 5⟩   -- Possessum (not D-bearing)
+private def tD₀  : LIToken := ⟨.simple .D [], 6⟩   -- D° head of specific nominal
+private def tAgt : LIToken := ⟨.simple .D [], 7⟩   -- Agent DP (D-bearing)
 
-private def T₀  := mkLeaf .T [] 1   -- T° head (carries [EPP:D] probe)
-private def V₀  := mkLeaf .V [] 2   -- V° (lexical verb)
-private def v₀  := mkLeaf .v [] 3   -- v° (light verb, introduces agent)
-private def Psr := mkLeaf .D [] 4   -- Possessor DP (D-bearing)
-private def Psm := mkLeaf .N [] 5   -- Possessum (noun, not D-bearing)
-private def D₀  := mkLeaf .D [] 6   -- D° head of specific nominal
-private def Agt := mkLeaf .D [] 7   -- Agent DP (D-bearing)
+private def T₀  : SyntacticObject := SO.lexLeaf tT₀
+private def V₀  : SyntacticObject := SO.lexLeaf tV₀
+private def v₀  : SyntacticObject := SO.lexLeaf tv₀
+private def Psr : SyntacticObject := SO.lexLeaf tPsr
+private def Psm : SyntacticObject := SO.lexLeaf tPsm
+private def D₀  : SyntacticObject := SO.lexLeaf tD₀
+private def Agt : SyntacticObject := SO.lexLeaf tAgt
 
 /-! ### Clause Trees ([aissen-polian-2025] (9a-c))
 
@@ -912,34 +922,34 @@ private def Agt := mkLeaf .D [] 7   -- Agent DP (D-bearing)
 Object is PossP (non-specific) or DP (specific). -/
 
 -- Non-specific possessive object: [PossP Psr Psm]
-private def possP' := SyntacticObject.node Psr Psm
+private def possPp : Planar SOLabel := SO.nodeP (SO.leafP tPsr) (SO.leafP tPsm)
 
 -- Specific possessive object: [DP D° [PossP Psr Psm]]
-private def dpObj := SyntacticObject.node D₀ possP'
+private def dpObjp : Planar SOLabel := SO.nodeP (SO.leafP tD₀) possPp
 
 -- (9a) Unaccusative + non-specific: [TP T° [VP V° [PossP Psr Psm]]]
-private def treeUnaccPossP :=
-  SyntacticObject.node T₀ (SyntacticObject.node V₀ possP')
+private def treeUnaccPossP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) possPp))
 
 -- (9a') Unaccusative + specific: [TP T° [VP V° [DP D° [PossP Psr Psm]]]]
-private def treeUnaccDP :=
-  SyntacticObject.node T₀ (SyntacticObject.node V₀ dpObj)
+private def treeUnaccDP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) dpObjp))
 
 -- (9b) Transitive + non-specific:
 -- [TP T° [vP Agt [v' v° [VP V° [PossP Psr Psm]]]]]
-private def treeTransPossP :=
-  SyntacticObject.node T₀
-    (SyntacticObject.node Agt
-      (SyntacticObject.node v₀
-        (SyntacticObject.node V₀ possP')))
+private def treeTransPossP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tT₀)
+    (SO.nodeP (SO.leafP tAgt)
+      (SO.nodeP (SO.leafP tv₀)
+        (SO.nodeP (SO.leafP tV₀) possPp))))
 
 -- (9b') Transitive + specific:
 -- [TP T° [vP Agt [v' v° [VP V° [DP D° [PossP Psr Psm]]]]]]
-private def treeTransDP :=
-  SyntacticObject.node T₀
-    (SyntacticObject.node Agt
-      (SyntacticObject.node v₀
-        (SyntacticObject.node V₀ dpObj)))
+private def treeTransDP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tT₀)
+    (SO.nodeP (SO.leafP tAgt)
+      (SO.nodeP (SO.leafP tv₀)
+        (SO.nodeP (SO.leafP tV₀) dpObjp))))
 
 /-! ### Core Predictions
 
@@ -1029,15 +1039,24 @@ are now derived from tree geometry:
 - **Selective opacity** → `behindHorizonB` (§ 16)
 -/
 
-private def C₀ := mkLeaf .C [] 8
+private def tC₀ : LIToken := ⟨.simple .C [], 8⟩
+private def C₀ : SyntacticObject := SO.lexLeaf tC₀
+
+-- Planar bodies of the unaccusative trees, reused under the CP node.
+private def treeUnaccDPp : Planar SOLabel :=
+  SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) dpObjp)
+private def treeUnaccPossPp : Planar SOLabel :=
+  SO.nodeP (SO.leafP tT₀) (SO.nodeP (SO.leafP tV₀) possPp)
 
 -- CP wrapping unaccusative + DP:
 -- [CP C° [TP T° [VP V° [DP D° [PossP Psr Psm]]]]]
-private def treeCPUnaccDP := SyntacticObject.node C₀ treeUnaccDP
+private def treeCPUnaccDP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tC₀) treeUnaccDPp)
 
 -- CP wrapping unaccusative + PossP:
 -- [CP C° [TP T° [VP V° [PossP Psr Psm]]]]
-private def treeCPUnaccPossP := SyntacticObject.node C₀ treeUnaccPossP
+private def treeCPUnaccPossP : SyntacticObject :=
+  SO.ofPlanar (SO.nodeP (SO.leafP tC₀) treeUnaccPossPp)
 
 /-! ### Core Predictions -/
 

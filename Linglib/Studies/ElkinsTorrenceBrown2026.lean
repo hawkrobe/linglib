@@ -4,6 +4,7 @@ import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Studies.Scott2023
 
@@ -442,18 +443,28 @@ theorem dir_spellout_eqya :
 
 section Derivation
 
-private def oblique_dp := mkLeafPhon .D [] "jawu'" 1
-private def verb_root := mkLeafPhon .V [.D] "loq'" 2
-private def object_dp := mkLeafPhon .D [] "wääy" 3
-private def voice_head := mkLeafPhon .Voice [.V] "" 4
-private def t_head := mkLeafPhon .T [.Voice] "" 5
-private def c_head := mkLeafPhon .C [.T] "" 6
+open RootedTree
 
-private def vp := merge verb_root object_dp
-private def voiceP := merge voice_head vp
-private def voiceP_obl := merge oblique_dp voiceP
-private def tp := merge t_head voiceP_obl
-private def cp := merge oblique_dp (merge c_head tp)
+/-- Leaf tokens for the SJO Mam transitive-CP derivation. -/
+private def obliqueTok : LIToken := ⟨.simple .D [] "jawu'", 1⟩
+private def verbTok    : LIToken := ⟨.simple .V [.D] "loq'", 2⟩
+private def objectTok  : LIToken := ⟨.simple .D [] "wääy", 3⟩
+private def voiceTok   : LIToken := ⟨.simple .Voice [.V] "", 4⟩
+private def tTok       : LIToken := ⟨.simple .T [.Voice] "", 5⟩
+private def cTok       : LIToken := ⟨.simple .C [.T] "", 6⟩
+
+/-- The full CP derivation, built planar-first (Merge `SO.node` is noncomputable,
+    so concrete `decide`-able trees use the planar DSL): the oblique DP undergoes
+    successive-cyclic Ā-movement, surfacing at Spec,CP with a trace lower down.
+    Structure: `[CP oblique [C' C [TP T [VoiceP oblique [Voice' Voice [VP V obj]]]]]]`. -/
+private def cp : SO :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP obliqueTok)
+      (SO.nodeP (SO.leafP cTok)
+        (SO.nodeP (SO.leafP tTok)
+          (SO.nodeP (SO.leafP obliqueTok)
+            (SO.nodeP (SO.leafP voiceTok)
+              (SO.nodeP (SO.leafP verbTok) (SO.leafP objectTok)))))))
 
 theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 

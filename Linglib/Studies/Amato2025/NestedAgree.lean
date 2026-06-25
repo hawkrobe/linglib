@@ -1,4 +1,6 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Nested Agree [amato-2025]
@@ -117,7 +119,7 @@ def length (c : NestedAgreeConfig) : Nat := c.stack.length
     `List` flavor. -/
 def initialDomain (c : NestedAgreeConfig) : Multiset SyntacticObject :=
   c.root.subtrees.filter (fun y =>
-    decide (cCommandsIn c.root c.probingHead y) && c.validGoal y)
+    decide (SO.cCommandsIn c.root c.probingHead y) && c.validGoal y)
 
 /-- The shared goal's daughters: the goal itself plus everything it
     c-commands, filtered by phi-activity. The reflexive inclusion of
@@ -125,7 +127,7 @@ def initialDomain (c : NestedAgreeConfig) : Multiset SyntacticObject :=
     probe must be able to find the goal again. -/
 def daughters (c : NestedAgreeConfig) : Multiset SyntacticObject :=
   c.root.subtrees.filter (fun y =>
-    (y == c.goalHead || decide (cCommandsIn c.root c.goalHead y)) &&
+    (y == c.goalHead || decide (SO.cCommandsIn c.root c.goalHead y)) &&
       c.validGoal y)
 
 /-- Search domain at probe `i`: derived from the structural
@@ -311,9 +313,9 @@ tree, the 2-probe stack — is captured by `standardConfig`. -/
     Shared template across the landed Amato 2025 case studies. -/
 def standardLinearTree (probeHd intervener midNode terminal : LIToken) :
     SyntacticObject :=
-  .node (.leaf probeHd)
-    (.node (.leaf intervener)
-      (.node (.leaf midNode) (.leaf terminal)))
+  SO.ofPlanar (SO.nodeP (SO.leafP probeHd)
+    (SO.nodeP (SO.leafP intervener)
+      (SO.nodeP (SO.leafP midNode) (SO.leafP terminal))))
 
 /-- A `NestedAgreeConfig` over the standard linear tree, with a
     2-probe stack on `probeHd`. The `goalHd` selects which leaf
@@ -324,8 +326,8 @@ def standardConfig (probeProfile : Probe.Profile)
     NestedAgreeConfig where
   stack := [probeProfile, probeProfile]
   root := standardLinearTree probeHd intervener midNode terminal
-  probingHead := .leaf probeHd
-  goalHead := .leaf goalHd
+  probingHead := SO.lexLeaf probeHd
+  goalHead := SO.lexLeaf goalHd
   validGoal := vg
 
 -- ============================================================================
@@ -342,7 +344,7 @@ from probe 1 — encoding [amato-2025]'s resolution of the
 apparent minimality violation.
 
 `validGoal` is `true` everywhere here (transitive case); the
-unaccusative case (`validGoal (.leaf aV) = false`) is the one tested
+unaccusative case (`validGoal (SO.lexLeaf aV) = false`) is the one tested
 in `Studies/Amato2025.lean`. -/
 
 private def aT : LIToken := ⟨LexicalItem.simple .T [], 0⟩
@@ -360,19 +362,19 @@ theorem italianAuxExample_is_nested :
     IsNestedAgreeConfig italianAuxExample := by decide
 
 theorem italianAuxExample_runStack_0 :
-    runStack italianAuxExample 0 = some (.leaf aV) := by decide
+    runStack italianAuxExample 0 = some (SO.lexLeaf aV) := by decide
 
 theorem italianAuxExample_runStack_1 :
-    runStack italianAuxExample 1 = some (.leaf aV) := by decide
+    runStack italianAuxExample 1 = some (SO.lexLeaf aV) := by decide
 
 /-- DPsubj is in probe 0's c-command (Perf c-commands DPsubj) but
     not in probe 1's truncated domain (v doesn't c-command DPsubj).
     Real strict-truncation content from the Minimalist c-command
     primitive. -/
 theorem italianAuxExample_excludes_apparent_intervener :
-    SyntacticObject.leaf aDPsubj ∈ italianAuxExample.searchDomain 0 ∧
-    SyntacticObject.leaf aDPsubj ∉ italianAuxExample.searchDomain 1 :=
-  apparent_intervener_excluded italianAuxExample 0 (.leaf aDPsubj)
+    SO.lexLeaf aDPsubj ∈ italianAuxExample.searchDomain 0 ∧
+    SO.lexLeaf aDPsubj ∉ italianAuxExample.searchDomain 1 :=
+  apparent_intervener_excluded italianAuxExample 0 (SO.lexLeaf aDPsubj)
     (by decide) (by decide)
 
 end Amato2025.NestedAgree

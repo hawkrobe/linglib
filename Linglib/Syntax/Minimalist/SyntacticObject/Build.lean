@@ -50,6 +50,10 @@ def SO.ofPlanar (p : Planar SOLabel) (h : isSOPlanar p = true := by first | rfl 
 
 @[simp] theorem SO.ofPlanar_traceP : SO.ofPlanar SO.traceP = SO.traceLeaf := rfl
 
+/-- Default syntactic object: the bare trace leaf. Lets structures with an `SO`
+    field be `Inhabited`/`deriving Repr`-free of bespoke witnesses. -/
+instance : Inhabited SO := ⟨SO.traceLeaf⟩
+
 /-! ### Merge as multiplication -/
 
 /-- `*` is (External) Merge: the bare binary node. Noncomputable — build concrete
@@ -97,6 +101,25 @@ instance (s : SO) : Decidable (SO.isTrace s) := inferInstanceAs (Decidable (_ = 
 
 /-- Leaf count (number of leaves + traces). -/
 def SO.leafCount (s : SO) : Nat := Nonplanar.leafCount s.val
+
+/-- Is `s` a leaf (lexical or trace)? A leaf has a single vertex; a bare binary node
+    has ≥ 2 leaves. -/
+def SO.isLeaf (s : SO) : Bool := s.leafCount == 1
+
+/-- Is `s` a (bare binary) internal node? The complement of `SO.isLeaf`. -/
+def SO.isNode (s : SO) : Bool := !s.isLeaf
+
+@[simp] theorem SO.isLeaf_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).isLeaf = true := rfl
+@[simp] theorem SO.isLeaf_traceLeaf : SO.traceLeaf.isLeaf = true := rfl
+@[simp] theorem SO.isNode_lexLeaf (tok : LIToken) : (SO.lexLeaf tok).isNode = false := rfl
+
+/-- A lightweight `Repr` so structures with an `SO` field can `deriving Repr`. The full
+    tree is a `Nonplanar` quotient (no faithful structural readout without `Quot.out`);
+    for debugging surface order use `SO.linearize`. -/
+instance : Repr SO where
+  reprPrec s _ := match s.getLIToken with
+    | some tok => f!"SO.lexLeaf {repr tok}"
+    | none => if s.isLeaf then f!"SO.traceLeaf" else f!"⟨SO node, {s.leafCount} leaves⟩"
 
 /-- Internal-node count = leaf count − 1 (full binary tree). -/
 def SO.nodeCount (s : SO) : Nat := Nonplanar.leafCount s.val - 1

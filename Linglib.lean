@@ -1234,7 +1234,6 @@ import Linglib.Studies.Karlsson2017
 import Linglib.Studies.Woolford1997
 import Linglib.Studies.Marantz1991
 import Linglib.Studies.Pantcheva2011
-import Linglib.Studies.Pesetsky2013
 import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
 import Linglib.Studies.Cinque2005
@@ -1280,12 +1279,9 @@ import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.Bohnemeyer2004
 import Linglib.Studies.Storment2026
-import Linglib.Studies.Adger2003
 import Linglib.Studies.Landman2020
 import Linglib.Studies.Levin1993
 import Linglib.Studies.Osborne2019
-import Linglib.Studies.HaddicanEtAl2026
-import Linglib.Studies.Dendikken1995
 import Linglib.Studies.Collins2005
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Dowty1991
@@ -1352,7 +1348,6 @@ import Linglib.Studies.Nadathur2023
 import Linglib.Studies.Osborne2019Control
 import Linglib.Studies.TheilerRoelofsenAloni2018
 import Linglib.Studies.Bondarenko2022
-import Linglib.Studies.Angelopoulos2026
 import Linglib.Studies.Chierchia1984
 import Linglib.Studies.Landau2015
 import Linglib.Studies.Ostrove2026
@@ -1370,7 +1365,6 @@ import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Studies.Dendikken1995Resultatives
 import Linglib.Studies.Levin2026
 import Linglib.Studies.Tay2024
-import Linglib.Studies.Dendikken1995Causatives
 import Linglib.Studies.BeaversEtAl2021
 import Linglib.Studies.MartinRoseNichols2025
 import Linglib.Studies.MartinSchaeferKastner2025
@@ -1391,7 +1385,6 @@ import Linglib.Studies.FutrellEtAl2020
 import Linglib.Studies.BenzSalzmann2025
 import Linglib.Studies.Saab2026
 import Linglib.Studies.AnandHardtMcCloskey2021
-import Linglib.Studies.AnandHardtMcCloskey2025
 import Linglib.Studies.GinzburgCooper2004
 import Linglib.Studies.Landau2026
 import Linglib.Studies.CitkoGracaninYuksek2025
@@ -1480,7 +1473,6 @@ import Linglib.Studies.Lucy1994
 import Linglib.Studies.Amato2025
 import Linglib.Studies.Amato2025.NestedAgree
 import Linglib.Studies.Erlewine2016
-import Linglib.Studies.Erlewine2018
 import Linglib.Studies.ElkinsTorrenceBrown2026
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.KeenanComrie1977
@@ -2157,7 +2149,6 @@ import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Transmission
-import Linglib.Syntax.Minimalist.Probe.Tree
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
@@ -2171,7 +2162,6 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
-import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Syntax.Minimalist.Amalgamation
 import Linglib.Syntax.Minimalist.VerbMovementParameter
 import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -2186,7 +2176,6 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
-import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
@@ -2202,10 +2191,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.Workspace
 import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Derivation
-import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Syntax.Minimalist.RepOrder
-import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Syntax.Minimalist.SmallClause
@@ -2240,10 +2226,7 @@ import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.Phase.Coproduct
 import Linglib.Syntax.Minimalist.Merge.MinimalSearch
-import Linglib.Syntax.Minimalist.SpellOut
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.MereologicalSyntax.Basic

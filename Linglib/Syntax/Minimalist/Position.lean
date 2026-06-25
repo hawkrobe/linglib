@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Features
 
 /-!
@@ -125,7 +126,7 @@ def compToSpecAntiLocality
 def specToSpecAntiLocality
     (events : List MergeEvent) (mover xP yP : SyntacticObject) : Prop :=
   isSpecIn events mover xP →
-  immediatelyContains yP xP →
+  SO.immediatelyContains yP xP →
   ¬movedToSpecOf events mover yP
 
 -- ============================================================================
@@ -151,20 +152,20 @@ structure PredicateFronting where
     NOT inside the fronted predicate. Stranded elements remain accessible
     for further operations (e.g., extraction by a higher probe). -/
 def isStranded (pf : PredicateFronting) (x : SyntacticObject) : Prop :=
-  ¬contains pf.predicate x
+  ¬SO.contains pf.predicate x
 
 /-- After predicate fronting, a constituent X is "trapped" if it IS
     inside the fronted predicate. Trapped elements are inaccessible:
     the fronted phrase is a moved constituent and acts as a freezing
     domain. -/
 def isTrapped (pf : PredicateFronting) (x : SyntacticObject) : Prop :=
-  contains pf.predicate x
+  SO.contains pf.predicate x
 
 /-- Stranded and trapped are complementary: every constituent of the
     clause is either stranded or trapped (tertium non datur). -/
 theorem stranded_or_trapped (pf : PredicateFronting) (x : SyntacticObject) :
     isStranded pf x ∨ isTrapped pf x :=
-  em (contains pf.predicate x) |>.elim (Or.inr) (Or.inl)
+  em (SO.contains pf.predicate x) |>.elim (Or.inr) (Or.inl)
 
 -- ============================================================================
 -- § 6: Extraction Restriction ([erlewine-2018])
@@ -193,14 +194,14 @@ structure Pivot where
     (outside the fronted predicate), hence extractable. -/
 theorem pivot_is_stranded
     (pf : PredicateFronting) (pivot : Pivot)
-    (h_outside : ¬contains pf.predicate pivot.element) :
+    (h_outside : ¬SO.contains pf.predicate pivot.element) :
     extractionRestriction pf pivot.element := h_outside
 
 /-- Non-pivot arguments are trapped (inside the fronted predicate),
     hence not extractable. -/
 theorem nonpivot_trapped
     (pf : PredicateFronting) (x : SyntacticObject)
-    (h_inside : contains pf.predicate x) :
+    (h_inside : SO.contains pf.predicate x) :
     ¬extractionRestriction pf x := by
   intro h_stranded
   exact h_stranded h_inside
@@ -214,7 +215,7 @@ theorem nonpivot_trapped
 theorem pivot_blocked_by_anti_locality
     (events : List MergeEvent) (pivot tP cP : SyntacticObject)
     (h_spec : isSpecIn events pivot tP)
-    (h_imm : immediatelyContains cP tP)
+    (h_imm : SO.immediatelyContains cP tP)
     (h_anti : specToSpecAntiLocality events pivot tP cP) :
     ¬movedToSpecOf events pivot cP :=
   h_anti h_spec h_imm

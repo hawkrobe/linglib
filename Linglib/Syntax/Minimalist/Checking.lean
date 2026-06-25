@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Agree
 
 /-!

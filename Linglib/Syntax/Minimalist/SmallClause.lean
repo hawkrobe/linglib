@@ -1,4 +1,7 @@
 import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.Workspace
 
 /-!
 # Small Clause Predication
@@ -73,13 +76,13 @@ structure SmallClause where
   deriving Repr
 
 /-- Build the syntactic object for a small clause: `[SC Subj Pred]`. -/
-def SmallClause.toSO (sc : SmallClause) : SyntacticObject :=
-  merge sc.subject sc.predicate
+noncomputable def SmallClause.toSO (sc : SmallClause) : SyntacticObject :=
+  SO.merge sc.subject sc.predicate
 
 /-- Embed a small clause under a verb: `V [SC Subj Pred]`. -/
-def SmallClause.embedUnderV (v : SyntacticObject) (sc : SmallClause) :
+noncomputable def SmallClause.embedUnderV (v : SyntacticObject) (sc : SmallClause) :
     SyntacticObject :=
-  merge v sc.toSO
+  SO.merge v sc.toSO
 
 /-- The construction type name for each SC predicate category. -/
 def SCPredCategory.constructionName : SCPredCategory → String
@@ -115,8 +118,43 @@ without forcing them through the `SmallClause` constructor. -/
     Supersedes the former `Quot.out`-based `leftSpine.outerCat` (arbitrary
     leftmost leaf): the value now tracks the genuine selector, not the
     representative choice. -/
-abbrev SyntacticObject.headCat (so : SyntacticObject) : Option Cat :=
-  outerCatC so
+abbrev SO.headCat (so : SyntacticObject) : Option Cat :=
+  SO.outerCatC so
+
+/-! ## Binary-node leaf/node counts
+
+`SO.merge` / `SO.node` are noncomputable (the `Nonplanar` carrier
+round-trips through `Quotient.out`), so `decide`/`rfl` can't read back the
+shape of a `merge`-built tree. These two lemmas give the structural facts
+study files need — a binary node has the summed leaf count of its children
+and exactly one more internal node — by quotient induction, mirroring
+`Nonplanar.weight_node`. -/
+
+open RootedTree in
+private theorem Nonplanar.leafCount_node_pair {α : Type*} (a : α)
+    (c d : Nonplanar α) :
+    (Nonplanar.node a {c, d}).leafCount = c.leafCount + d.leafCount := by
+  refine Quotient.inductionOn₂ c d fun pc pd => ?_
+  show (Nonplanar.mk
+    (.node a [Quotient.out (Nonplanar.mk pc), Quotient.out (Nonplanar.mk pd)])).leafCount = _
+  rw [Nonplanar.leafCount_mk, Planar.leafCount_node_of_ne_nil _ _ (by simp),
+    Planar.leafCountList_cons, Planar.leafCountList_cons, Planar.leafCountList_nil,
+    show (Quotient.out (Nonplanar.mk pc)).leafCount = Nonplanar.leafCount (Nonplanar.mk pc) from
+      (Nonplanar.leafCount_mk _).symm.trans (congrArg Nonplanar.leafCount (Quotient.out_eq _)),
+    show (Quotient.out (Nonplanar.mk pd)).leafCount = Nonplanar.leafCount (Nonplanar.mk pd) from
+      (Nonplanar.leafCount_mk _).symm.trans (congrArg Nonplanar.leafCount (Quotient.out_eq _)),
+    Nat.add_zero]
+  rfl
+
+/-- Leaf count of a binary Merge node is the sum of its children's. -/
+theorem SO.leafCount_node (l r : SyntacticObject) :
+    (SO.node l r).leafCount = l.leafCount + r.leafCount := by
+  rw [SO.leafCount, SO.node_val, Nonplanar.leafCount_node_pair]; rfl
+
+/-- Leaf count of a Merge is the sum of its children's (`SO.merge = SO.node`). -/
+@[simp] theorem SO.leafCount_merge (l r : SyntacticObject) :
+    (SO.merge l r).leafCount = l.leafCount + r.leafCount :=
+  SO.leafCount_node l r
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of [dendikken-1995]'s four SC-licensed
@@ -127,17 +165,6 @@ def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
 
 instance : DecidablePred IsSmallClausePredicate :=
   fun so => by unfold IsSmallClausePredicate; infer_instance
-
-/-- The "right daughter" of an SO: the **complement** side of the
-    selection-induced head-initial embedding (`selLinearize .initial`,
-    [marcolli-chomsky-berwick-2025] Lemma 1.13.5) — the head is the left
-    daughter, so the right daughter is its complement. Computable; supersedes
-    the arbitrary `Quot.out` planar choice. -/
-def SyntacticObject.rightDaughter? (so : SyntacticObject) :
-    Option SyntacticObject :=
-  match selLinearize .initial so with
-  | .of _ => none
-  | .mul _ r => some (FreeCommMagma.mk r)
 
 /-- A syntactic object IS a small clause when it is a binary node
     (subject + predicate) **some** immediate daughter of which satisfies
@@ -153,33 +180,32 @@ def SyntacticObject.rightDaughter? (so : SyntacticObject) :
     of which Quot.out representative was chosen. Computable via
     `immediatelyContains` (which is decidable and Multiset-based). -/
 def IsSmallClause (so : SyntacticObject) : Prop :=
-  ∃ pred, immediatelyContains so pred ∧ IsSmallClausePredicate pred
+  ∃ pred, SO.immediatelyContains so pred ∧ IsSmallClausePredicate pred
 
 noncomputable instance : DecidablePred IsSmallClause := fun so => by
   unfold IsSmallClause; classical infer_instance
 
-/-- `merge`-form rewrite for `IsSmallClause`. Symmetric — by the swap-
+/-- `SO.merge`-form rewrite for `IsSmallClause`. Symmetric — by the swap-
     invariant existential, the predicate can be either the left or the
     right child. -/
 theorem isSmallClause_merge (l r : SyntacticObject) :
-    IsSmallClause (merge l r) ↔
+    IsSmallClause (SO.merge l r) ↔
       (IsSmallClausePredicate l ∨ IsSmallClausePredicate r) := by
   unfold IsSmallClause
   constructor
   · rintro ⟨pred, himm, hpred⟩
-    -- merge l r = l * r; immediatelyContains_mul: pred = l ∨ pred = r
-    rw [show merge l r = l * r from rfl] at himm
-    rw [immediatelyContains_mul] at himm
+    -- SO.merge l r = SO.node l r; immediatelyContains_node: pred = l ∨ pred = r
+    rw [show SO.merge l r = SO.node l r from rfl, SO.immediatelyContains_node] at himm
     rcases himm with rfl | rfl
     · exact Or.inl hpred
     · exact Or.inr hpred
   · intro h
     rcases h with hl | hr
     · refine ⟨l, ?_, hl⟩
-      rw [show merge l r = l * r from rfl, immediatelyContains_mul]
+      rw [show SO.merge l r = SO.node l r from rfl, SO.immediatelyContains_node]
       exact Or.inl rfl
     · refine ⟨r, ?_, hr⟩
-      rw [show merge l r = l * r from rfl, immediatelyContains_mul]
+      rw [show SO.merge l r = SO.node l r from rfl, SO.immediatelyContains_node]
       exact Or.inr rfl
 
 /-- Round-trip: any `SmallClause` whose stored `predCat` agrees with

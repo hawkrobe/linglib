@@ -1,6 +1,5 @@
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Features.ScopeTypes
-import Linglib.Studies.Pylkkanen2008
 
 /-!
 # [bruening-2001] — QR Obeys Superiority
@@ -140,7 +139,7 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
-  decide (asymCCommandsIn tree q1 q2)
+  decide (SO.asymCCommandsIn tree q1 q2)
 
 -- Scope Economy ([fox-2000])
 
@@ -167,28 +166,20 @@ def economyBlocksQR (e : ScopeEconomy) : Bool :=
 -- Phase Theory Derivation of QR Barriers
 -- ============================================================================
 
-/-- DP-as-barrier follows from PIC: if `φ` is the D-phase whose complement is `b`
-    (D being a phase head under the extended inventory), then any `goal` contained
-    in `b` is frozen — `φ.Impenetrable goal`.
+/-- DP-as-barrier follows from PIC: if `φ` is the D-phase (D being a phase head
+    under the extended inventory) and `goal` is an accessible term sitting in the
+    phase head's c-command domain, then `goal` is frozen — `φ.Impenetrable goal`.
 
     This derives the previously-stipulated `QRBarrier.dpPhase` from deeper
     principles: PIC makes DP-internal material inaccessible to operations outside
-    DP. **The former head-function-aware-complement TODO is now discharged**: the
-    MCB-faithful `Phase.complement` is the head's sister (Def 1.14.2) and the
-    interior *is* the complement (eq 1.14.3), so "goal in the complement ⟹ goal in
-    the interior" is immediate. The complement `b` is a hypothesis here because,
-    for an arbitrary `(head, complement)` pair, which daughter is the complement
-    is fixed by the head function's planar embedding, not by the bare tree. -/
-theorem dp_phase_barrier_from_pic (φ : Phase) {b goal : SyntacticObject}
-    (hZ : φ.complement = some b)
-    (hmem : goal ∈ φ.tree.subtrees)
-    (hgoal : containsOrEq b goal) :
-    φ.Impenetrable goal := by
-  have hZ' : Phase.phaseComplementZ φ.h φ.tree φ.head = some b := hZ
-  show goal ∈ φ.interior
-  unfold Phase.interior Phase.phaseInterior
-  rw [hZ', Multiset.mem_filter]
-  exact ⟨hmem, by simpa using hgoal⟩
+    DP. On the MCB-faithful `SO` phase API the **interior Φ°_ℓ *is* the head's
+    c-command domain** (Def 1.14.3, "Z is the interior of the phase"), so a goal
+    in that domain is impenetrable by construction (`SO.mem_phaseInterior`). -/
+theorem dp_phase_barrier_from_pic (φ : Phase) {goal : SyntacticObject}
+    (hacc : goal ∈ φ.tree.Acc)
+    (hcc : φ.tree.cCommandsIn (SO.lexLeaf φ.head) goal) :
+    φ.Impenetrable goal :=
+  SO.mem_phaseInterior.mpr ⟨hacc, hcc⟩
 
 end Scope
 
@@ -597,27 +588,55 @@ theorem baseline_is_ambiguous :
 -- DOC Scope Freezing — superiority derived from c-command
 -- ============================================================================
 
-/-! [pylkkanen-2008]'s low-Appl tree (`ditransitiveTree`) produces
-the DOC structure where V takes ApplP as complement, so the goal in
-Spec-ApplP asymmetrically c-commands the theme in complement of Appl.
-QR of the theme over the goal is blocked by superiority, derived
-from c-command rather than stipulated. -/
+/-! [pylkkanen-2008]'s low-Appl tree produces the DOC structure where V
+takes ApplP as complement, so the goal in Spec-ApplP asymmetrically
+c-commands the theme in complement of Appl. QR of the theme over the goal
+is blocked by superiority, derived from c-command rather than stipulated.
 
-open Pylkkanen2008 in
-/-- DOC scope freezing config with [pylkkanen-2008]'s tree:
+The Voice + low-Appl tree is rebuilt locally (planar-first, since the smart
+Merge `SO.node` is noncomputable) so this study stays self-contained and the
+`decide` proof reduces. It mirrors `Pylkkanen2008.ditransitiveTree`'s
+structure (`[John [Voice [sent [Mary [Appl letter]]]]]`); a future dedup can
+re-point at that tree once the `SO`-carrier flip reaches `Studies/Pylkkanen2008`. -/
+
+/-- Voice[AG] head (introduces the external argument, [kratzer-1996]). -/
+def voice_ag_t  : Minimalist.LIToken := ⟨.simple .Voice [.V] "Voice[AG]", 400⟩
+/-- Low applicative head: takes the theme DP as complement. -/
+def appl_low_t  : Minimalist.LIToken := ⟨.simple .Appl [.D] "Appl[LOW]", 402⟩
+/-- The ditransitive verb, selecting ApplP. -/
+def V_sent_t    : Minimalist.LIToken := ⟨.simple .V [.Appl] "sent", 404⟩
+/-- The agent DP. -/
+def DP_john_t   : Minimalist.LIToken := ⟨.simple .D [] "John", 406⟩
+/-- The goal DP (Spec,ApplP). -/
+def DP_mary_t   : Minimalist.LIToken := ⟨.simple .D [] "Mary", 407⟩
+/-- The theme DP (complement of Appl). -/
+def DP_letter_t : Minimalist.LIToken := ⟨.simple .D [] "a letter", 408⟩
+
+/-- The Voice + low-Appl ditransitive tree
+    `[John [Voice [sent [Mary [Appl letter]]]]]`. The goal (Mary) in
+    Spec-ApplP asymmetrically c-commands the theme (a letter) in the
+    complement of Appl — the [barss-lasnik-1986] asymmetry, structural. -/
+def ditransitiveTree : Minimalist.SyntacticObject :=
+  SO.ofPlanar
+    (SO.nodeP (SO.leafP DP_john_t)
+      (SO.nodeP (SO.leafP voice_ag_t)
+        (SO.nodeP (SO.leafP V_sent_t)
+          (SO.nodeP (SO.leafP DP_mary_t)
+            (SO.nodeP (SO.leafP appl_low_t) (SO.leafP DP_letter_t))))))
+
+/-- DOC scope freezing config with the local low-Appl tree:
     superiority is derived from goal asymmetrically c-commanding theme
     in the Voice + low-Appl structure. -/
 def docScopeConfig : MinimalistScopeConfig :=
   { q1 := { quantifier := "every worker"
            , position := .specVP
-           , so := some DP_mary_t }
+           , so := some (SO.lexLeaf DP_mary_t) }
   , q2 := { quantifier := "a paycheck"
            , position := .specVP
-           , so := some DP_letter_t }
+           , so := some (SO.lexLeaf DP_letter_t) }
   , freezingContext := .doubleObject
   , tree := some ditransitiveTree }
 
-open Pylkkanen2008 in
 /-- Superiority in the DOC is DERIVED from c-command in
 [pylkkanen-2008]'s tree: goal (Mary) asymmetrically c-commands
 theme (a letter) via low Appl, so QR of theme over goal is blocked. -/

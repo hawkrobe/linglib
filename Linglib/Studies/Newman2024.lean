@@ -1,6 +1,8 @@
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.ObligatoryOperations
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 
 /-!
 # Newman (2024) — When Arguments Merge [newman-2024]
@@ -360,35 +362,24 @@ def DPType.subsumes : DPType → DPType → Bool
     Requires checking [·D·] on T. -/
 def DPType.canAMove (n : DPType) : Bool := n.checksMerge .D
 
-/-- Test whether a single FreeMagma branch is a K-headed leaf. -/
-private def isKLeaf : FreeMagma (LIToken ⊕ Nat) → Bool
-  | .of (.inl tok) => tok.item.outerCat == .K
-  | _ => false
+/-- Test whether a syntactic object is a K-headed lexical leaf. -/
+private def isKLeaf (s : SyntacticObject) : Bool :=
+  match s.getLIToken with
+  | some tok => tok.item.outerCat == .K
+  | none => false
 
 /-- A KP is a DP wrapped in an inherent case shell (K head). At the
     immediate-child level: a node is "KP" iff *some* immediate daughter
-    is a K-headed leaf. Symmetric in left/right by construction (`||`),
-    so swap-respect is trivial.
+    is a K-headed leaf.
 
-    Phase 1.0 substrate caveat: under MCB nonplanar SOs (FreeCommMagma
-    carrier), `merge` is unordered, so the head's identity is not
-    structurally distinguished — we settle for "some daughter is K".
-    Under MCB this is the natural unordered analogue. TODO Phase 2:
-    refine via head-function-aware projection. -/
-private def isKPAux : FreeMagma (LIToken ⊕ Nat) → Bool
-  | .of _ => false
-  | .mul a b => isKLeaf a || isKLeaf b
-
-private theorem isKPAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : isKPAux a = isKPAux b := by
-  induction h with
-  | swap _ _ => simp only [isKPAux]; exact Bool.or_comm _ _
-  | @mul_left a' b' h_inner c _ =>
-    -- h_inner : CommRel a' b' — both sides are .mul (CommRel only relates .muls);
-    -- so isKLeaf a' = isKLeaf b' = false (isKLeaf returns false on .mul).
-    cases h_inner <;> rfl
-  | @mul_right a' b' c h_inner _ =>
-    cases h_inner <;> rfl
+    Under the MCB nonplanar `SO` carrier, Merge is unordered (`SO.mul_comm`),
+    so the head's identity is not structurally distinguished — we settle for
+    "some daughter is K", the natural unordered analogue. The predicate
+    quantifies over the immediate daughters (`SO.immediatelyContains`), so
+    left/right symmetry is automatic. TODO Phase 2: refine via
+    head-function-aware projection (`SO.selHead`). -/
+private def isKP (s : SyntacticObject) : Prop :=
+  ∃ d, SO.immediatelyContains s d ∧ isKLeaf d
 
 -- ============================================================================
 -- § 9: Anti-Redundancy in Agreement
@@ -574,11 +565,11 @@ def doToSubjectWh : PendingOp where
 
 /-- Weak Economy prefers IO-to-subject (checks more features). -/
 theorem doma_prefers_io : weakEconomyValid [ioToSubjectWh, doToSubjectWh] 0 = true := by
-  native_decide
+  decide
 
 /-- Weak Economy disprefers DO-to-subject when IO checks more. -/
 theorem doma_disprefers_do : weakEconomyValid [ioToSubjectWh, doToSubjectWh] 1 = false := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 6: Anti-Redundancy and Agent Focus
@@ -599,16 +590,16 @@ def mayanAFCopies : List AgreeCopy :=
 
 /-- Anti-redundancy identifies the lower copy as redundant. -/
 theorem af_lower_is_redundant :
-    (redundantCopies mayanAFCopies).length = 1 := by native_decide
+    (redundantCopies mayanAFCopies).length = 1 := by decide
 
 /-- After anti-redundancy, only the higher copy (C's agreement)
     survives. -/
 theorem af_surviving_copy :
-    (applyAntiRedundancy mayanAFCopies).length = 1 := by native_decide
+    (applyAntiRedundancy mayanAFCopies).length = 1 := by decide
 
 /-- The surviving copy is the one on C (height 3). -/
 theorem af_c_probe_survives :
-    (applyAntiRedundancy mayanAFCopies).head? = some ⟨3, 0⟩ := by native_decide
+    (applyAntiRedundancy mayanAFCopies).head? = some ⟨3, 0⟩ := by decide
 
 -- ============================================================================
 -- § 7: Weak Economy and Optional Clitic Doubling (Greek)
@@ -639,11 +630,11 @@ def mergeSubject : PendingOp where
 
 /-- Clitic doubling is valid under Weak Economy. -/
 theorem greek_cd_valid :
-    weakEconomyValid [cliticDouble, mergeVP, mergeSubject] 0 = true := by native_decide
+    weakEconomyValid [cliticDouble, mergeVP, mergeSubject] 0 = true := by decide
 
 /-- Merging the subject is also valid (bleeding licenses either order). -/
 theorem greek_subject_valid :
-    weakEconomyValid [cliticDouble, mergeVP, mergeSubject] 2 = true := by native_decide
+    weakEconomyValid [cliticDouble, mergeVP, mergeSubject] 2 = true := by decide
 
 -- ============================================================================
 -- § 8: Feature Bundle Comparison with Existing Voice Typology
@@ -734,34 +725,47 @@ theorem impersonal_passive_converges :
 -- structure (VP is specifier of v), neither internal argument
 -- c-commands the other → symmetric binding (either can passivize).
 
+-- Concrete trees are built **planar-first** (`SO.ofPlanar`/`SO.nodeP`/`SO.leafP`)
+-- because Merge (`SO.node`) is noncomputable; the c-command decision procedure
+-- then reduces under `decide`. Each leaf is a lexical leaf over a token, and the
+-- tree references the same tokens via the planar DSL so the two match
+-- definitionally.
+
+/-- A phonologically-marked lexical-leaf token. -/
+private def tok (cat : Cat) (phon : String) (id : Nat) : LIToken :=
+  ⟨.simple cat [] (phonForm := phon), id⟩
+
 -- Low-XP ditransitive: V: [·D·][·X·], v: [·D·][·V·]
 -- Structure: [vP agent [v' v [VP DO [V' V XP]]]]
 -- VP is complement of v because v lacks [·X·].
 
-private def v₁ := mkLeafPhon .v [] "v" 10
-private def V₁ := mkLeafPhon .V [] "V" 11
-private def agent₁ := mkLeafPhon .D [] "agent" 12
-private def DO₁ := mkLeafPhon .D [] "DO" 13
-private def XP₁ := mkLeafPhon .P [] "to-Mary" 14
+private def v₁ : LIToken := tok .v "v" 10
+private def V₁ : LIToken := tok .V "V" 11
+private def agent₁ : LIToken := tok .D "agent" 12
+private def DO₁ : LIToken := tok .D "DO" 13
+private def XP₁ : LIToken := tok .P "to-Mary" 14
 
 def lowXPTree : SyntacticObject :=
-  .node agent₁ (.node v₁ (.node DO₁ (.node V₁ XP₁)))
+  SO.ofPlanar (SO.nodeP (SO.leafP agent₁)
+    (SO.nodeP (SO.leafP v₁)
+      (SO.nodeP (SO.leafP DO₁)
+        (SO.nodeP (SO.leafP V₁) (SO.leafP XP₁)))))
 
 -- DOC ditransitive: V: [·D·], v: [·D·][·X·][·V·]
 -- Structure: [vP VP [vP agent [v' v IO]]]
 -- VP is specifier of v because v bears [·X·].
 -- Agent tucks in below VP (Generalized Tucking In).
 
-private def v₂ := mkLeafPhon .v [] "v" 20
-private def V₂ := mkLeafPhon .V [] "V" 21
-private def agent₂ := mkLeafPhon .D [] "agent" 22
-private def DO₂ := mkLeafPhon .D [] "DO" 23
-private def IO₂ := mkLeafPhon .D [] "IO" 24
-
-private def VP₂ : SyntacticObject := .node V₂ DO₂
+private def v₂ : LIToken := tok .v "v" 20
+private def V₂ : LIToken := tok .V "V" 21
+private def agent₂ : LIToken := tok .D "agent" 22
+private def DO₂ : LIToken := tok .D "DO" 23
+private def IO₂ : LIToken := tok .D "IO" 24
 
 def docTree : SyntacticObject :=
-  .node VP₂ (.node agent₂ (.node v₂ IO₂))
+  SO.ofPlanar (SO.nodeP (SO.nodeP (SO.leafP V₂) (SO.leafP DO₂))
+    (SO.nodeP (SO.leafP agent₂)
+      (SO.nodeP (SO.leafP v₂) (SO.leafP IO₂))))
 
 -- § 10a: Internal argument binding asymmetry
 
@@ -769,50 +773,50 @@ def docTree : SyntacticObject :=
     DO (specifier of V, by Non-DP First) c-commands into the
     complement position. -/
 theorem low_xp_DO_ccommands_XP :
-    cCommandsIn lowXPTree DO₁ XP₁ := by native_decide
+    SO.cCommandsIn lowXPTree (SO.lexLeaf DO₁) (SO.lexLeaf XP₁) := by decide
 
 theorem low_xp_XP_not_ccommands_DO :
-    ¬ cCommandsIn lowXPTree XP₁ DO₁ := by native_decide
+    ¬ SO.cCommandsIn lowXPTree (SO.lexLeaf XP₁) (SO.lexLeaf DO₁) := by decide
 
 /-- DOC: neither internal argument c-commands the other — symmetric.
     DO is inside VP (outer specifier), IO is complement of v.
     They are in separate branches. -/
 theorem doc_DO_not_ccommands_IO :
-    ¬ cCommandsIn docTree DO₂ IO₂ := by native_decide
+    ¬ SO.cCommandsIn docTree (SO.lexLeaf DO₂) (SO.lexLeaf IO₂) := by decide
 
 theorem doc_IO_not_ccommands_DO :
-    ¬ cCommandsIn docTree IO₂ DO₂ := by native_decide
+    ¬ SO.cCommandsIn docTree (SO.lexLeaf IO₂) (SO.lexLeaf DO₂) := by decide
 
 /-- The structural asymmetry derived from VP-as-specifier:
     VP-as-complement gives binding asymmetry between internal
     arguments; VP-as-specifier gives symmetric binding. -/
 theorem binding_asymmetry_iff_vp_complement :
     -- Low-XP (VP complement): DO c-commands XP, not vice versa
-    (cCommandsIn lowXPTree DO₁ XP₁ ∧
-     ¬ cCommandsIn lowXPTree XP₁ DO₁) ∧
+    (SO.cCommandsIn lowXPTree (SO.lexLeaf DO₁) (SO.lexLeaf XP₁) ∧
+     ¬ SO.cCommandsIn lowXPTree (SO.lexLeaf XP₁) (SO.lexLeaf DO₁)) ∧
     -- DOC (VP specifier): neither c-commands the other
-    (¬ cCommandsIn docTree DO₂ IO₂ ∧
-     ¬ cCommandsIn docTree IO₂ DO₂) := by
-  exact ⟨⟨by native_decide, by native_decide⟩, ⟨by native_decide, by native_decide⟩⟩
+    (¬ SO.cCommandsIn docTree (SO.lexLeaf DO₂) (SO.lexLeaf IO₂) ∧
+     ¬ SO.cCommandsIn docTree (SO.lexLeaf IO₂) (SO.lexLeaf DO₂)) := by
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> decide
 
 -- § 10b: Agent c-command differences
 
 /-- In the low-XP structure, the agent c-commands both internal
     arguments (VP is complement, fully inside agent's sister). -/
 theorem low_xp_agent_ccommands_DO :
-    cCommandsIn lowXPTree agent₁ DO₁ := by native_decide
+    SO.cCommandsIn lowXPTree (SO.lexLeaf agent₁) (SO.lexLeaf DO₁) := by decide
 
 theorem low_xp_agent_ccommands_XP :
-    cCommandsIn lowXPTree agent₁ XP₁ := by native_decide
+    SO.cCommandsIn lowXPTree (SO.lexLeaf agent₁) (SO.lexLeaf XP₁) := by decide
 
 /-- In the DOC structure with Tucking In, the agent (inner specifier)
     c-commands IO (complement of v) but NOT DO (inside VP, the outer
     specifier). The agent and VP are in separate branches — a direct
     consequence of VP being a specifier rather than a complement. -/
 theorem doc_agent_ccommands_IO :
-    cCommandsIn docTree agent₂ IO₂ := by native_decide
+    SO.cCommandsIn docTree (SO.lexLeaf agent₂) (SO.lexLeaf IO₂) := by decide
 
 theorem doc_agent_not_ccommands_DO :
-    ¬ cCommandsIn docTree agent₂ DO₂ := by native_decide
+    ¬ SO.cCommandsIn docTree (SO.lexLeaf agent₂) (SO.lexLeaf DO₂) := by decide
 
 end Newman2024

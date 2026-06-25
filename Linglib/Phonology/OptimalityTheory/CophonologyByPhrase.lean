@@ -100,7 +100,7 @@ structure PhrasalCophonology (C : Type) where
     matches the phase head (the head leaf `ph.head`, as a leaf SO). -/
 def PhrasalCophonology.appliesTo {C : Type}
     (pc : PhrasalCophonology C) (ph : Phase) : Bool :=
-  pc.phaseSelector (SyntacticObject.leaf ph.head)
+  pc.phaseSelector (Minimalist.SO.lexLeaf ph.head)
 
 -- ============================================================================
 -- § 2: Phrasal Cophonological Evaluation

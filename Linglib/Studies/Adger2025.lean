@@ -1,7 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
-import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Defs
 
 set_option autoImplicit false
 
