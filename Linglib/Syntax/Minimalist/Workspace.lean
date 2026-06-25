@@ -49,63 +49,20 @@ namespace Minimalist
 
 open RootedTree RootedTree.ConnesKreimer
 
-/-! ### Leaves: lexical items and the index-free trace -/
+/-! ### The Merge primitive: a bare binary node
 
-/-- A **lexical leaf** on the carrier: a childless `Sum.inl tok` (an SO₀ item). -/
-def SO.lexLeaf (tok : LIToken) : SO := ⟨Nonplanar.leaf (Sum.inl tok), rfl⟩
+`SO.node` (the bare binary constructor), `SO.lexLeaf`, and the index-free
+`SO.traceLeaf` live in `SyntacticObject.lean`; here the node acquires its **Merge
+semantics**. -/
 
-/-- The **trace leaf**: a childless, **bare** `Sum.inr ()` vertex
-    ([marcolli-chomsky-berwick-2025] Def 1.2.7's ρ-vertex). This is the carrier's
-    faithful replacement for the legacy indexed `mkTrace : Nat → SyntacticObject`
-    (`⊕ Nat`): a trace carries **no index**, and chain identity is recovered at the
-    workspace level (`Workspace.chainMultiplicity`), exactly as MCB Def 1.2.1
-    intends. -/
-def SO.traceLeaf : SO := ⟨Nonplanar.leaf (Sum.inr ()), by decide⟩
-
-/-! ### The Merge primitive: a bare binary node -/
-
-/-- `isSO` of a bare binary node is the conjunction of `isSO` on the two children:
-    `Sum.inr ()` at arity 2 is well-formed exactly when both daughters are. The
-    `Quotient.inductionOn₂` reduces the (noncomputable) smart `node` to a planar
-    `.node` via `node_mk_planar_list`, then unfolds `isSOPlanar`'s binary arm. -/
-theorem isSO_node_pair (a b : Nonplanar SOLabel) :
-    isSO (Nonplanar.node (Sum.inr ()) ({a, b} : Multiset (Nonplanar SOLabel)))
-      = (isSO a && isSO b) := by
-  refine Quotient.inductionOn₂ a b fun pa pb => ?_
-  show isSO (Nonplanar.node (Sum.inr ()) {Nonplanar.mk pa, Nonplanar.mk pb})
-      = (isSO (Nonplanar.mk pa) && isSO (Nonplanar.mk pb))
-  rw [show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-        = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl,
-      Nonplanar.node_mk_planar_list]
-  simp only [isSO_mk, isSOPlanar, isSOPlanarList, List.length_cons, List.length_nil,
-             Nat.reduceAdd, Nat.reduceBEq, Bool.or_true, Bool.true_and, Bool.and_true]
-
-/-- **Merge on the carrier** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): build a
-    **bare** binary node over the two syntactic objects. This single primitive is
-    both External Merge (when the arguments are distinct workspace items) and the
-    re-merge stage of Internal Merge (`SO.intMerge`). Noncomputable (it uses the
-    smart `Nonplanar.node`); build concrete results via `merge_mk` + `decide`. -/
-noncomputable def SO.merge (S S' : SO) : SO :=
-  ⟨Nonplanar.node (Sum.inr ()) {S.val, S'.val}, by
-    show isSO (Nonplanar.node (Sum.inr ()) {S.val, S'.val}) = true
-    have hS : isSO S.val = true := S.2
-    have hS' : isSO S'.val = true := S'.2
-    rw [isSO_node_pair, hS, hS', Bool.and_self]⟩
+/-- **Merge on the carrier** ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): the bare
+    binary node `SO.node` *is* External Merge (when the arguments are distinct
+    workspace items) and the re-merge stage of Internal Merge (`SO.intMerge`).
+    Noncomputable; build concrete results via `SO.node_mk` + `decide`. -/
+noncomputable def SO.merge (S S' : SO) : SO := SO.node S S'
 
 @[simp] theorem SO.merge_val (S S' : SO) :
     (SO.merge S S').val = Nonplanar.node (Sum.inr ()) {S.val, S'.val} := rfl
-
-/-- **Construction bridge**: the Merge of two `mk`-built objects is the single
-    planar binary node `mk (.node (inr ()) [pa, pb])` — built *without* the smart
-    `node`'s `Quotient.out`, so concrete results are `decide`-able. -/
-theorem SO.merge_mk (pa pb : Planar SOLabel)
-    (ha : IsSO (Nonplanar.mk pa)) (hb : IsSO (Nonplanar.mk pb)) :
-    (SO.merge ⟨Nonplanar.mk pa, ha⟩ ⟨Nonplanar.mk pb, hb⟩).val
-      = Nonplanar.mk (.node (Sum.inr ()) [pa, pb]) := by
-  rw [SO.merge_val,
-      show ({Nonplanar.mk pa, Nonplanar.mk pb} : Multiset (Nonplanar SOLabel))
-        = Multiset.ofList ([pa, pb].map Nonplanar.mk) from rfl,
-      Nonplanar.node_mk_planar_list]
 
 /-! ### Workspaces (MCB Def 1.2.1) -/
 
