@@ -2202,7 +2202,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.Workspace
 import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Syntax.Minimalist.RepOrder
@@ -2235,7 +2234,6 @@ import Linglib.Studies.Pylkkanen2008
 import Linglib.Studies.Larson1988
 import Linglib.Studies.Bruening2021
 import Linglib.Studies.Newman2024
-import Linglib.Syntax.Minimalist.Merge.Defs
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal

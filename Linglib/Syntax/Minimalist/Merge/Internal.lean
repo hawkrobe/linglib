@@ -162,42 +162,11 @@ theorem mergeOp_im_composition
 private noncomputable instance : DecidableEq (Nonplanar (LIToken ⊕ Unit)) :=
   Classical.decEq _
 
-/-- **Step.im algebraic bridge (M-C-B Prop 1.4.2 specialization).** Given the cut
-    data `p0` linking the algebraic Δ^ρ deletion-quotient on `current.toNonplanar` to the
-    trace-replaced linguistic quotient `(current.replace mover (mkTrace traceId)).toNonplanar`,
-    the IM composition `mergeOp (Sum.inl L) mover.toNonplanar Q ∘ mergeOpUnit mover.toNonplanar`
-    reproduces `((Step.im mover traceId).apply current).toNonplanar`.
-
-    `L` is the head label of the re-merged node. The externalize-respect factoring of
-    `(mover * traced).toNonplanar` as `Nonplanar.node (Sum.inl L) {mover.toNonplanar,
-    traced.toNonplanar}` is now a *theorem* (`toNonplanar_mul_selHead`); the consumer
-    supplies only the simple `selHead (mover * traced) = some L`. -/
-theorem mergeOp_im_matches_Step
-    (current mover : Minimalist.SyntacticObject) (traceId : Nat) (L : LIToken)
-    (p0 : Forest (Nonplanar (LIToken ⊕ Unit)) × Nonplanar (LIToken ⊕ Unit))
-    (h_filter : (cutSummandsN current.toNonplanar).filter
-        (fun p => p.1 = ({mover.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))) = {p0})
-    (h_remainder : p0.2 = (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar)
-    (h_curr_ne_mover : current.toNonplanar ≠ mover.toNonplanar)
-    (hsel : Minimalist.selHead
-      (mover * (current.replace mover (Minimalist.mkTrace traceId))) = some L) :
-    mergeOp (R := ℤ) (Sum.inl L) mover.toNonplanar
-        (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar
-        (mergeOpUnit (R := ℤ) mover.toNonplanar
-          (of' ({current.toNonplanar} : Forest (Nonplanar (LIToken ⊕ Unit)))))
-      = of' (R := ℤ) ({((Step.im mover traceId).apply current).toNonplanar}
-        : Forest (Nonplanar (LIToken ⊕ Unit))) := by
-  rw [mergeOp_im_composition_moverLeft (Sum.inl L) mover.toNonplanar current.toNonplanar
-        (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar
-        p0 h_filter h_remainder h_curr_ne_mover]
-  -- (Step.im mover traceId).apply current = mover * (current.replace mover (mkTrace traceId))
-  show of' (R := ℤ)
-      ({Nonplanar.node (Sum.inl L)
-          {mover.toNonplanar, (current.replace mover (Minimalist.mkTrace traceId)).toNonplanar}}
-        : Forest (Nonplanar (LIToken ⊕ Unit)))
-    = of' (R := ℤ) ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toNonplanar}
-        : Forest (Nonplanar (LIToken ⊕ Unit)))
-  rw [← Minimalist.SyntacticObject.toNonplanar_mul_selHead
-        mover (current.replace mover (Minimalist.mkTrace traceId)) L hsel]
+/-! The linguistic Internal-Merge bridge `mergeOp_im_matches_Step` (which related the
+`mergeOp ∘ mergeOpUnit` composition on the head-decorated `toNonplanar` projection to
+the legacy `Step.im` + `⊕ Nat` trace index) has been retired by the single-carrier
+migration. On the bare `SO` carrier the bridge is `Workspace.lean`'s
+`SO.intMerge_toForest` (`mergeOp_im_composition` with the bare `Sum.inr ()` label and
+the index-free `SO.traceLeaf`). -/
 
 end Minimalist.Merge

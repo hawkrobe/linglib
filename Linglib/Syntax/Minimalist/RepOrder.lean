@@ -1,22 +1,20 @@
 import Linglib.Syntax.Minimalist.Defs
 
 /-!
-# A canonical total order on `SyntacticObject` representatives
+# Canonical comparison on the SO₀ alphabet
 
-To make the selection-induced externalization section
-([marcolli-chomsky-berwick-2025] §1.12.1 / Lemma 1.13.5) **fully computable**,
-exocentric nodes — off `Dom(h)`, where c-selection does not pick a head and the
-section is noncanonical — are linearised by a canonical *structural* comparison
-`cmpFM` rather than the classical (noncomputable) `Quot.out` representative.
+A carrier-free family of strict-total comparisons on the lexical alphabet
+(`Cat`, `SimpleLI`, `LexicalItem`, `LIToken`) and on lists thereof. Each `cmp*`
+satisfies two laws:
 
-`cmpFM` is a strict-total comparison on `FreeMagma (LIToken ⊕ Nat)`:
+- `cmp*_swap`: `cmp a b = (cmp b a).swap` (antisymmetry)
+- `cmp*_eq`:  `cmp a b = .eq → a = b` (distinct values compare unequal)
 
-- `cmpFM_swap`: `cmpFM a b = (cmpFM b a).swap` (antisymmetry of the comparison)
-- `cmpFM_eq`:  `cmpFM a b = .eq → a = b` (distinct reps compare unequal)
-
-These two facts make `smallerFirst` (place the `cmpFM`-smaller subtree first)
-**commutative**, which is exactly what `FreeCommMagma.lift` needs to lift the
-embedding to the quotient. No `Quot.out`, hence computable.
+These make the comparison usable as a commutative tie-break: the `SO`-carrier
+externalization ([marcolli-chomsky-berwick-2025] §1.12.1 / Lemma 1.13.5) orders
+exocentric nodes — off `Dom(h)`, where c-selection does not pick a head — by
+`cmpList cmpTok` (`SyntacticObject/Externalization.lean`'s `exoYield`), keeping
+the section computable with no `Quot.out`.
 
 The leaf comparators reuse mathlib's `compare` (and its `Std.OrientedOrd.eq_swap`
 / `Std.compare_eq_iff_eq` laws) on `ℕ`/`String`; `Cat` is compared via its
@@ -116,84 +114,5 @@ theorem cmpTok_eq {t₁ t₂ : LIToken} (h : cmpTok t₁ t₂ = .eq) : t₁ = t�
   have ei := Std.compare_eq_iff_eq.mp hi
   have el := cmpLexItem_eq hl
   cases t₁; cases t₂; simp_all
-
-/-! ### Leaf and tree comparison -/
-
-/-- Comparison on a planar leaf label `LIToken ⊕ Nat` (lexical token vs trace). -/
-def cmpLeaf : LIToken ⊕ Nat → LIToken ⊕ Nat → Ordering
-  | .inl t₁, .inl t₂ => cmpTok t₁ t₂
-  | .inl _, .inr _ => .lt
-  | .inr _, .inl _ => .gt
-  | .inr m, .inr n => compare m n
-
-theorem cmpLeaf_swap (x y : LIToken ⊕ Nat) : cmpLeaf x y = (cmpLeaf y x).swap := by
-  cases x with
-  | inl t₁ => cases y with
-    | inl t₂ => exact cmpTok_swap t₁ t₂
-    | inr n => rfl
-  | inr m => cases y with
-    | inl t₂ => rfl
-    | inr n => exact Std.OrientedOrd.eq_swap
-
-theorem cmpLeaf_eq {x y : LIToken ⊕ Nat} (h : cmpLeaf x y = .eq) : x = y := by
-  cases x with
-  | inl t₁ => cases y with
-    | inl t₂ => exact congrArg Sum.inl (cmpTok_eq h)
-    | inr n => simp [cmpLeaf] at h
-  | inr m => cases y with
-    | inl t₂ => simp [cmpLeaf] at h
-    | inr n => exact congrArg Sum.inr (Std.compare_eq_iff_eq.mp h)
-
-/-- Structural comparison on planar representatives: leaves before nodes,
-    then lexicographic on `(left, right)`. -/
-def cmpFM : FreeMagma (LIToken ⊕ Nat) → FreeMagma (LIToken ⊕ Nat) → Ordering
-  | .of x, .of y => cmpLeaf x y
-  | .of _, .mul _ _ => .lt
-  | .mul _ _, .of _ => .gt
-  | .mul a b, .mul c d => (cmpFM a c).then (cmpFM b d)
-
-theorem cmpFM_swap : ∀ a b : FreeMagma (LIToken ⊕ Nat),
-    cmpFM a b = (cmpFM b a).swap
-  | .of x, .of y => cmpLeaf_swap x y
-  | .of _, .mul _ _ => rfl
-  | .mul _ _, .of _ => rfl
-  | .mul a b, .mul c d => by
-      simp only [cmpFM, cmpFM_swap a c, cmpFM_swap b d, Ordering.swap_then]
-
-theorem cmpFM_eq : ∀ {a b : FreeMagma (LIToken ⊕ Nat)},
-    cmpFM a b = .eq → a = b
-  | .of _, .of _, h => congrArg _ (cmpLeaf_eq h)
-  | .of _, .mul _ _, h => by simp [cmpFM] at h
-  | .mul _ _, .of _, h => by simp [cmpFM] at h
-  | .mul a b, .mul c d, h => by
-      obtain ⟨h1, h2⟩ := then_eq_eq.mp h
-      rw [cmpFM_eq h1, cmpFM_eq h2]
-
-/-! ### Commutative tie-breaker -/
-
-/-- Place the `cmpFM`-smaller subtree first. Commutative (`smallerFirst_comm`)
-    because `cmpFM` is an antisymmetric strict-total comparison, so this is a
-    well-defined choice independent of argument order — the computable,
-    `Quot.out`-free tie-break for exocentric nodes. -/
-def smallerFirst (x y : FreeMagma (LIToken ⊕ Nat)) : FreeMagma (LIToken ⊕ Nat) :=
-  if cmpFM x y = .gt then y * x else x * y
-
-theorem smallerFirst_comm (x y : FreeMagma (LIToken ⊕ Nat)) :
-    smallerFirst x y = smallerFirst y x := by
-  unfold smallerFirst
-  rw [cmpFM_swap y x]
-  cases hxy : cmpFM x y
-  · simp [Ordering.swap]
-  · rw [cmpFM_eq hxy]; simp [Ordering.swap]
-  · simp [Ordering.swap]
-
-/-- Forgetting order, `smallerFirst` is the product of its arguments. -/
-theorem mk_smallerFirst (x y : FreeMagma (LIToken ⊕ Nat)) :
-    (FreeCommMagma.mk (smallerFirst x y) : SyntacticObject)
-      = FreeCommMagma.mk x * FreeCommMagma.mk y := by
-  unfold smallerFirst
-  split
-  · exact FreeCommMagma.swap y x
-  · rfl
 
 end Minimalist

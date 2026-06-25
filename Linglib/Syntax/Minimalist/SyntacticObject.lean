@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Linglib.Core.Combinatorics.RootedTree.DecEq
 import Linglib.Syntax.Minimalist.Defs
 
@@ -270,5 +271,15 @@ theorem SO.exists_form (s : SO) :
   | lex tok => exact Or.inl ⟨tok, rfl⟩
   | trace => exact Or.inr (Or.inl rfl)
   | node l r _ _ => exact Or.inr (Or.inr ⟨l, r, rfl⟩)
+
+/-! ### The `SyntacticObject` carrier
+
+`SyntacticObject` is the linguistic-facing name for the MCB-faithful `SO` carrier
+([marcolli-chomsky-berwick-2025] §1.1.3.1: binary, nonplanar, rooted trees with
+bare internal vertices). It is a reducible abbreviation, so dot-notation on a value
+`s : SyntacticObject` dispatches to the `SO.*` API for free. The former
+`FreeCommMagma (LIToken ⊕ Nat)` carrier (with head-decorated nodes and `⊕ Nat`
+trace indices) has been retired in favour of this one. -/
+abbrev SyntacticObject : Type := SO
 
 end Minimalist
