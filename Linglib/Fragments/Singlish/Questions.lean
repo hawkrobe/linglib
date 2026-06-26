@@ -1,6 +1,6 @@
 import Linglib.Typology.Question
 import Linglib.Studies.ShenHuang2026
-import Linglib.Typology.ExpressiveModifier
+import Linglib.Syntax.ExpressiveModifier
 
 /-!
 # Singlish Question Formation Strategies
@@ -42,7 +42,7 @@ namespace Singlish.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open ShenHuang2026 (WhDependencyType)
-open Typology.ExpressiveModifier
+open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 
 -- ============================================================================
@@ -188,7 +188,7 @@ def ah : SentenceFinalParticle :=
 
     Parametric values: parasitic movement (must adjoin to wh-phrase;
     cannot move on its own), matrix-scope host requirement. -/
-def theHell : Typology.ExpressiveModifier.ExpressiveWhModifier :=
+def theHell : ExpressiveModifier.ExpressiveWhModifier :=
   { form := "the hell"
   , gloss := "the-hell (ANDL intensifier)"
   , movementType := .parasitic

@@ -1,5 +1,5 @@
 /-!
-# Typology.ExpressiveModifier
+# Expressive wh-modifiers: ANDL typology
 
 [pesetsky-1987] [chou-2012] [merchant-2002]
 [hoeksema-napoli-2008] [jackendoff-audring-2020]
@@ -48,7 +48,7 @@ possible-ignorance presupposition) lives in `Pragmatics/Expressives/`
 lexemes import only this file.
 -/
 
-namespace Typology.ExpressiveModifier
+namespace ExpressiveModifier
 
 /-- How an ANDL modifier reaches its scope-taking position.
 
@@ -137,4 +137,4 @@ theorem independent_matrix_always_licensed
     Licensed m P :=
   Or.inr ⟨hMov, hHost⟩
 
-end Typology.ExpressiveModifier
+end ExpressiveModifier

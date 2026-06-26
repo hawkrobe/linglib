@@ -1,5 +1,5 @@
 import Linglib.Typology.Question
-import Linglib.Typology.ExpressiveModifier
+import Linglib.Syntax.ExpressiveModifier
 
 /-!
 # Mandarin Wh-Question Formation
@@ -34,7 +34,7 @@ the lexical entries with their typological parameters.
 namespace Mandarin.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
-open Typology.ExpressiveModifier
+open ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 
 -- ============================================================================
