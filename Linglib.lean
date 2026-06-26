@@ -2897,10 +2897,8 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Typology.Indefinite
-import Linglib.Typology.Modality
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Typology.NegativeConcord
