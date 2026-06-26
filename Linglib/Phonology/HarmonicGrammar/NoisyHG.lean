@@ -176,14 +176,6 @@ theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
 -- § 5: Harmony Difference Decomposition
 -- ============================================================================
 
-/-- Helper: foldl with subtraction equals initial value minus the sum. -/
-private lemma foldl_sub_eq_init_sub_sum {α : Type*} (f : α → ℚ)
-    (l : List α) (init : ℚ) :
-    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
-  induction l generalizing init with
-  | nil => simp
-  | cons _ _ ih => simp only [List.foldl, List.map, List.sum_cons]; rw [ih]; ring
-
 /-- **Harmony difference decomposition**: the harmony score difference
     equals the negated weighted sum of violation differences.
 
@@ -196,7 +188,7 @@ theorem harmonyScore_diff {C : Type*}
     harmonyScore constraints a - harmonyScore constraints b =
     -(constraints.map (fun con =>
         con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum := by
-  simp only [harmonyScore, foldl_sub_eq_init_sub_sum, zero_sub]
+  simp only [harmonyScore_eq_neg_sum]
   have h_sum : ∀ (l : List (WeightedConstraint C)),
       (l.map (fun con => con.weight * (con.eval a : ℚ))).sum -
       (l.map (fun con => con.weight * (con.eval b : ℚ))).sum =
