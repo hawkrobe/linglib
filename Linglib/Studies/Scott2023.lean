@@ -4,7 +4,6 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.Impoverishment
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -482,30 +481,23 @@ theorem different_probe_heads :
 -- ============================================================================
 
 /-- The transitive Set B default is an instance of Preminger's probe failure:
-    Infl's probe searches an empty domain (blocked by Voice_TR) and finds no
-    DP with matching φ-features. `attemptAgree` maps the `none` result from
-    `applyAgree` to `Probe.Outcome.unvalued`. -/
+    Infl's φ-probe searches an empty domain (blocked by Voice_TR) and finds no
+    DP with matching φ-features, so its outcome is `unvalued` ([preminger-2014]
+    Ch. 5). Under the obligatory-operations model this does not crash; the
+    unvalued (empty) bundle spells out as the Elsewhere entry — the Set B "tz'="
+    observed in Mam transitives. -/
 theorem transitive_is_probe_failure :
-    attemptAgree inflProbe ⊥ (.phi (.person .third)) = .unvalued := by
+    (phiProbe (.phi (.person .third))).outcome [⊥] = .unvalued := by
   native_decide
 
-/-- The intransitive case is real agreement: Infl's probe finds S and copies
-    its φ-features. `attemptAgree` maps the `some _` result to `.valued`. -/
+/-- The intransitive case is real agreement: Infl's φ-probe finds S, so its
+    outcome is `valued`. -/
 theorem intransitive_is_real_agreement :
-    attemptAgree inflProbe
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      (.phi (.person .third)) = .valued := by
+    (phiProbe (.phi (.person .third))).outcome
+      [.ofGramFeatures
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]]
+      = .valued := by
   native_decide
-
-/-- Under Preminger's obligatory-no-crash model, probe failure converges
-    and produces Elsewhere morphology — exactly the Set B "tz'=" we observe
-    in Mam transitives. This connects the abstract failure model to the
-    concrete spellout: `Probe.Outcome.unvalued` → `PFRealization.elsewhere`
-    → the Elsewhere Vocabulary entry → "tz'=". -/
-theorem probe_failure_converges_with_elsewhere :
-    derivationConverges .obligatoryNocrash .unvalued = true ∧
-    Probe.Outcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
@@ -698,9 +690,7 @@ def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
     derived from the goal sequence rather than from a stipulated
     empty bundle. -/
 theorem transitive_unvalued_elsewhere (rest : List Encounter) :
-    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued ∧
-    (valuationOutcome mamInflSatisfaction (voiceTR :: rest)).pfRealization
-      = .elsewhere := ⟨rfl, rfl⟩
+    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued := rfl
 
 /-- Contrast: `Probe.outcome` relativized to the satisfaction condition
     reports `.valued` in the transitive — the search DID find a halting

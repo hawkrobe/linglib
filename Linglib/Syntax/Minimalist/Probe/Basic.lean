@@ -62,8 +62,10 @@ structure Probe (α : Type*) where
       ([deal-2024] satisfaction); defaults to always-active. -/
   act : α → Bool := fun _ => true
 
-/-- The outcome of an obligatory probing operation; the PF/convergence
-    reading (crash vs. default morphology) is in `ObligatoryOperations`. -/
+/-- The outcome of an obligatory probing operation ([preminger-2014] Ch. 5):
+    `valued` iff the search found a goal. An `unvalued` outcome is *failed Agree*
+    — under the obligatory-operations model it is tolerated (no crash) and spells
+    out as the Elsewhere/default entry; study files read it off `Probe.outcome`. -/
 inductive Probe.Outcome where
   /-- The search found a goal. -/
   | valued

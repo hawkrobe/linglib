@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 /-!
 # Halpert 2012 — Argument Licensing and Agreement in Zulu [halpert-2012]
@@ -82,9 +81,9 @@ def lOutcome (vp : List Nominal) : Probe.Outcome :=
     valuation ([preminger-2014] Ch. 6 notes the parallel with English
     non-past -Ø vs. *-z*). -/
 def lSpellout (vp : List Nominal) : String :=
-  match (lOutcome vp).pfRealization with
-  | .agreement => "∅-"
-  | .elsewhere => "ya-"
+  match lOutcome vp with
+  | .valued => "∅-"
+  | .unvalued => "ya-"
 
 /-! ### The conjoint/disjoint distribution -/
 
@@ -149,8 +148,6 @@ theorem augmentless_distribution :
     conjoint ∅- surfaces. -/
 theorem failed_agree_spells_disjoint :
     lOutcome [] = .unvalued ∧
-    derivationConverges .obligatoryNocrash (lOutcome []) = true ∧
-    (lOutcome []).pfRealization = .elsewhere ∧
     lSpellout [] = "ya-" ∧
     lOutcome [⟨5, true⟩] = .valued ∧
     lSpellout [⟨5, true⟩] = "∅-" := by

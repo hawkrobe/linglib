@@ -22,8 +22,9 @@ Agree is the mechanism by which features are checked/valued:
 This file contains the Agree *operation* and its structural conditions
 (locality, activity, phase-boundedness, defective intervention). For
 the feature *types* (PhiFeature, FeatureVal, etc.), see `Features.lean`.
-For the *failure model* (what happens when Agree fails), see
-`ObligatoryOperations.lean`. For the Case Filter, see `CaseFilter.lean`.
+For the *failure model* (what happens when Agree fails — a `Probe.outcome` of
+`unvalued`, tolerated per [preminger-2014] Ch. 5), see `Probe/Basic.lean`. For
+the Case Filter, see `CaseFilter.lean`.
 
 ## Satisfaction Conditions
 

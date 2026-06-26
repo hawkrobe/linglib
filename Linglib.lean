@@ -2152,7 +2152,6 @@ import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.PConstraint
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Filter
