@@ -15,14 +15,12 @@ Swahili also has locative noun classes 16 (`pa-`), 17 (`ku-`), and 18 (`mu-`)
 that are relevant to possession via the Location Schema, and an Equation
 Schema belong-construction using the associative `-a`.
 
-PossessionProfile bundle for Swahili (ISO `swh`), per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
+Per-language possession defs for Swahili (ISO `swh`). Substrate enums live in
 `Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
-Swahili lives in `Studies/Heine1997.lean`. The
-`PossessionProfile.adnominalStrategy = .headMarking` here flattens the
-[nichols-1986] categorisation; Swahili's Bantu noun-class concord is
-strictly head-marking only in the agreement sense, with the associative
-particle `a` carrying class agreement to the possessum.
+Swahili lives in `Studies/Heine1997.lean`. The `adnominalStrategy := .headMarking`
+here flattens the [nichols-1986] categorisation; Swahili's Bantu noun-class
+concord is strictly head-marking only in the agreement sense, with the
+associative particle `a` carrying class agreement to the possessum.
 
 ## Possessive paradigm
 
@@ -117,27 +115,16 @@ theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
 
 -- ============================================================================
--- §6. Swahili Possession Profile (PossessionProfile bundle)
+-- §6. Remaining typological dimensions
 -- ============================================================================
 
-/-- Swahili possession profile.
-
-    Adnominal strategy is encoded as `.headMarking` to match Bantu
-    noun-class concord (the associative particle `a` agrees with the
-    possessum in class). The strict [nichols-1986] typology would
-    classify it differently in some descriptions; we follow the WALS
-    convention here. -/
-def possession : PossessionProfile :=
-  { language := "Swahili"
-  , family := "Niger-Congo"
-  , iso := "swh"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .comitative
-  , adnominalStrategy := .headMarking
-  , affixPosition := some .suffixes
-  , examples := ["nina kitabu", "kitabu ch-angu"]
-  , notes := "Comitative na- for predicative possession; " ++
-             "noun-class agreement on possessive for adnominal" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+/-- Bantu noun-class concord: the associative particle `a` agrees with the
+    possessum in class, so we follow WALS in coding adnominal as head-marking
+    (the strict [nichols-1986] typology classifies it differently in some
+    descriptions). -/
+def adnominalStrategy : AdnominalMarking := .headMarking
+def affixPosition : Option AffixPosition := some .suffixes
 
 end Swahili.Possession

@@ -2,14 +2,14 @@ import Linglib.Features.Possession
 
 /-!
 # Mandarin possession profile
-[stassen-2009] [nichols-1986] [heine-1997] 
+[stassen-2009] [nichols-1986] [heine-1997]
 
-PossessionProfile bundle for Mandarin (ISO `cmn`), per the
-project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
-…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consuming this profile live in
-`Studies/NicholsBickel2013.lean`.
+Per-language possession values for Mandarin (Sino-Tibetan, ISO `cmn`): forms
+`wo you yi-ben shu`, `wo de shu`, `wo mama`; have-verb `you`, and `de` marks
+adnominal possession but drops with inalienable/close relations. Substrate types
+(`PredicativeStrategy`, `AdnominalMarking`, …) live in
+`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
+values live in `Studies/NicholsBickel2013.lean`.
 -/
 
 set_option autoImplicit false
@@ -18,17 +18,10 @@ namespace Mandarin.Possession
 
 open _root_.Possession
 
-/-- Mandarin possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Mandarin"
-  , family := "Sino-Tibetan"
-  , iso := "cmn"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .haveVerb
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := some .noAffix
-  , examples := ["wo you yi-ben shu", "wo de shu", "wo mama"]
-  , notes := "Have-verb you; de marks adnominal possession but drops with inalienable/close relations" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .haveVerb
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Mandarin.Possession

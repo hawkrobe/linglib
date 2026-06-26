@@ -47,8 +47,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   (`toGramStage`), and WALS Ch 112 (`toNegMorphemeType`).
 - `NegationProfile` — sibling per-language schema bundling Ch 112-115 +
   Greco's `negIsHead` + JinKoenig's `enAttested`. Each Fragment exposes
-  `def negationProfile : NegationProfile` alongside `def negationSystem`.
-  Sibling pattern (mirrors `Features/Possession.lean::PossessionProfile`):
+  `def negationProfile : NegationProfile` alongside `def negationSystem`:
   the marker-side joint is independent from the typology-feature joint.
 - `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters.
 - `countByMorphemeType`/`countBySymmetry` sample-counting helpers (consumed by
@@ -250,8 +249,7 @@ structure NegationSystem where
     `Fragments/{Lang}/Negation.lean` exposes `def negationProfile :
     NegationProfile`. The two joints are independent because the data
     partition is real: `negationSystem.markers` is consumed by lexical
-    code; `negationProfile` is consumed by typology studies. Mirrors
-    `Features/Possession.lean::PossessionProfile`. -/
+    code; `negationProfile` is consumed by typology studies. -/
 structure NegationProfile where
   /-- Language name. -/
   language : String

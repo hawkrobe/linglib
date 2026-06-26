@@ -15,8 +15,7 @@ Schema** ("X's Y exists" → "X has Y"). The construction consists of:
 Turkish also has a Goal Schema variant using dative (`-A`) with
 existential `var`, and the Equation Schema for belong-constructions.
 
-PossessionProfile bundle for Turkish (ISO `tur`), per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
+Per-language possession defs for Turkish (ISO `tur`). Substrate enums live in
 `Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Turkish lives in `Studies/Heine1997.lean`.
 
@@ -135,25 +134,14 @@ theorem location_not_inalienable :
     ¬locationNotions.contains .inalienable := by decide
 
 -- ============================================================================
--- §6. Turkish Possession Profile (PossessionProfile bundle)
+-- §6. Remaining typological dimensions
 -- ============================================================================
 
-/-- Turkish possession profile.
-
-    Note: Turkish's primary construction (`Hasan-ın inek-i var`) is
-    [heine-1997]'s Genitive Schema, encoded as `.genitive`
-    in [stassen-2009]'s WALS Ch 117 typology. -/
-def possession : PossessionProfile :=
-  { language := "Turkish"
-  , family := "Turkic"
-  , iso := "tur"
-  , obligatoryPossession := .exists_
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .genitive
-  , adnominalStrategy := .doubleMarking
-  , affixPosition := some .suffixes
-  , examples := ["(benim) kitab-im var", "Ali-nin kitab-i"]
-  , notes := "var/yok existential predicate; GEN on possessor + " ++
-             "possessive suffix on head (double-marking)" }
+/-- Obligatory possessive inflection (the `-(s)I` suffix on the possessum). -/
+def obligatoryPossession : Obligatoriness := .exists_
+def possessiveClassification : Classification := .noClassification
+/-- GEN on possessor + possessive suffix on the head (`Ali-nin kitab-i`). -/
+def adnominalStrategy : AdnominalMarking := .doubleMarking
+def affixPosition : Option AffixPosition := some .suffixes
 
 end Turkish.Possession

@@ -9,8 +9,8 @@ Authors: Robert Hawkins
 [stassen-2009] [stassen-2013b] [nichols-1986] [nichols-bickel-2013]
 [nichols-bickel-2013c] [heine-1997] [heine-2009] [aikhenvald-2012] [wals-2013]
 
-Theory-neutral classification enums for possession plus a per-language
-`PossessionProfile`, typed by Fragment data and consumed by
+Theory-neutral classification enums for possession. Per-language values are
+bare `def`s in `Fragments/<Lang>/Possession.lean`, consumed by
 `Studies/NicholsBickel2013`, `Studies/Heine1997`, and
 `Studies/KampanarouAlexiadou2026`. Bare-root `Possession` namespace under
 `Features/`, like `Features/Case`.
@@ -20,7 +20,9 @@ Theory-neutral classification enums for possession plus a per-language
 `Obligatoriness` (WALS 58A), `Classification` (59A), `AffixPosition` (57A),
 `PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] adds Genitive),
 `AdnominalMarking` ([nichols-1986]), `Notion` and `Source` ([heine-1997]),
-`InalienabilityRank`, the neutral `Alienability` cut, and `PossessionProfile`.
+`InalienabilityRank`, and the neutral `Alienability` cut. Per-language values
+are bare `def`s in `Fragments/<Lang>/Possession.lean`; cross-linguistic
+aggregation uses a study-local row in `Studies/NicholsBickel2013.lean`.
 
 ## Notes
 
@@ -181,56 +183,5 @@ def Classification.drawsAlienabilityCut : Classification → Bool
 def InalienabilityRank.alienabilityAt (cut : InalienabilityRank) :
     InalienabilityRank → Alienability :=
   fun r => if cut.toNat ≤ r.toNat then .inalienable else .alienable
-
-/-! ### Per-language profile -/
-
-/-- A language's possession profile across WALS 57–59, predicative
-    ([stassen-2009]), and adnominal ([nichols-1986]) dimensions. -/
-structure PossessionProfile where
-  /-- Language name. -/
-  language : String
-  /-- Language family. -/
-  family : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- WALS 58A: obligatory possessive inflection. -/
-  obligatoryPossession : Obligatoriness
-  /-- WALS 59A: morphosyntactic possession classification. -/
-  possessiveClassification : Classification
-  /-- Predicative strategy ("I have X"). -/
-  predicativeStrategy : PredicativeStrategy
-  /-- Adnominal marking ("my book"). -/
-  adnominalStrategy : AdnominalMarking
-  /-- WALS 57A: pronominal possessive affix position, if attested. -/
-  affixPosition : Option AffixPosition := .none
-  /-- Illustrative forms. -/
-  examples : List String := []
-  /-- Notes on the possession system. -/
-  notes : String := ""
-  deriving Repr, DecidableEq
-
-/-- Has obligatory possessive inflection? -/
-def PossessionProfile.hasObligatoryPossession (p : PossessionProfile) : Bool :=
-  p.obligatoryPossession == .exists_
-
-/-- Morphosyntactically classifies possession? -/
-def PossessionProfile.hasClassification (p : PossessionProfile) : Bool :=
-  p.possessiveClassification != .noClassification
-
-/-- Uses a have-verb predicative strategy? -/
-def PossessionProfile.usesHaveVerb (p : PossessionProfile) : Bool :=
-  p.predicativeStrategy == .haveVerb
-
-/-- Uses a locational/existential predicative strategy? -/
-def PossessionProfile.usesLocational (p : PossessionProfile) : Bool :=
-  p.predicativeStrategy == .locational
-
-/-- Uses head-marking for adnominal possession? -/
-def PossessionProfile.isHeadMarking (p : PossessionProfile) : Bool :=
-  p.adnominalStrategy == .headMarking
-
-/-- Uses dependent-marking for adnominal possession? -/
-def PossessionProfile.isDependentMarking (p : PossessionProfile) : Bool :=
-  p.adnominalStrategy == .dependentMarking
 
 end Possession
