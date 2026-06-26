@@ -16,6 +16,8 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.BMinus
+import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
@@ -51,6 +53,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
+import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
@@ -2848,6 +2851,7 @@ import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Checking
+import Linglib.Syntax.Minimalist.Agree.Consistency
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
