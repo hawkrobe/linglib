@@ -2909,6 +2909,4 @@ import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Pronoun.WALS
-
-import Linglib.Typology.TemporalConnectives
 import Linglib.Morphology.TenseAspect
