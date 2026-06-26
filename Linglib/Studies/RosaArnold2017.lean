@@ -323,8 +323,8 @@ theorem pronoun_more_reduced :
   native_decide
 
 theorem pronoun_at_most_as_heavy :
-    ReferentialForm.typicalWeight .unstressedPron ≤
-    ReferentialForm.typicalWeight .fullName := by
+    AccessibilityLevel.typicalWeight .unstressedPron ≤
+    AccessibilityLevel.typicalWeight .fullName := by
   native_decide
 
 -- ════════════════════════════════════════════════════
