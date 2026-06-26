@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 
 /-!
 # Italian Polarity-Marking Strategies
@@ -67,7 +67,7 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 
 namespace Italian.PolarityMarking
 
-open Typology.PolarityMarking (Entry Strategy Env)
+open Semantics.Polarity.Marking (Entry Strategy Env)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like or left-peripheral PolP structure (analyses contested):
