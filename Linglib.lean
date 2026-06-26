@@ -2894,7 +2894,6 @@ import Linglib.Syntax.Minimalist.Amalgamation
 import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.Checking
-import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.DegreeMovement
