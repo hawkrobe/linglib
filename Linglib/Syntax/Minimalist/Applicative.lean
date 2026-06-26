@@ -1,6 +1,7 @@
 import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Applicative Heads
@@ -51,12 +52,24 @@ inductive ApplType where
   | lowSource     -- Below VP: transfer FROM applied arg ([pylkkanen-2008] §2.2, §2.3)
   deriving DecidableEq, Repr
 
-/-- Is this a low applicative (either recipient or source)? -/
+/-- The category of the constituent an applicative Merges with — its complement.
+    This **is** [pylkkanen-2008]'s high/low distinction (Merge position): a high
+    applicative merges with the event projection (the `v`P, `[+V]`); a low
+    applicative merges with the theme (a `D`P, `[+N]`). The structural predicates
+    below are read off this complement via `catFeatures`, not stipulated from the
+    constructor — Pylkkänen's typology *follows from* attachment height. -/
+def ApplType.complement : ApplType → Cat
+  | .high         => .v    -- the event (vP)
+  | .lowRecipient => .D    -- the theme (DP)
+  | .lowSource    => .D    -- the theme (DP)
+
+/-- Low iff the applicative merges with a nominal (theme) complement; high iff
+    it merges with the verbal (event) projection. -/
 def ApplType.IsLow (a : ApplType) : Prop :=
-  a = .lowRecipient ∨ a = .lowSource
+  (catFeatures a.complement).plusN = true
 
 instance : DecidablePred ApplType.IsLow :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+  fun _ => inferInstanceAs (Decidable (_ = true))
 
 -- ============================================================================
 -- § 2: Semantic Relations
@@ -80,14 +93,15 @@ def ApplType.semantics : ApplType → ApplSemantics
   | .lowSource    => .possessionFrom
 
 /-- Does this applicative type require event-level semantics from Voice?
-    High applicatives relate to the event, so they need Voice to contribute
-    event semantics. Low applicatives relate to the theme and are
-    independent of Voice. -/
+    A high applicative merges with the event projection (a `[+V]` complement),
+    so it needs Voice to contribute event semantics; a low applicative merges
+    with the theme and is independent of Voice. Derived from the complement
+    category, not the constructor. -/
 def ApplType.RequiresEventSemantics (a : ApplType) : Prop :=
-  a = .high
+  (catFeatures a.complement).plusV = true
 
 instance : DecidablePred ApplType.RequiresEventSemantics :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
+  fun _ => inferInstanceAs (Decidable (_ = true))
 
 /-- Does this applicative type require its complement to provide an
     unsaturated theme argument? Low applicatives do — they relate the
