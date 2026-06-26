@@ -1,6 +1,6 @@
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # [olivier-2026] — Auxiliary Switch in Romance restructuring

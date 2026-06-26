@@ -34,7 +34,7 @@ where honorification surfaces (`HonDomain`).
 
 -/
 
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
