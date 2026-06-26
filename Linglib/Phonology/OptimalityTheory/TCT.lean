@@ -99,7 +99,7 @@ def Role.label : Role → String
     is *encoded* in the type signatures: `baseEval : List α → List α`
     cannot mention the derivative; `derivativeEval : List α → List α → List α`
     takes the base output as a frozen parameter. -/
-structure TCTGrammar (α : Type) where
+structure TCTGrammar (α : Type*) where
   /-- Optimal base form, computed from the input alone. The signature
       `List α → List α` *encodes* the architectural commitment that no
       derivative is in scope — a modeling choice that reflects but does
@@ -142,7 +142,7 @@ theorem TCTGrammar.base_invariant_under_derivative_eval {α} (input : List α)
       pattern is overridden by OO-Ident in the derivative.
     * `ioFaith` — Input-Output faithfulness. Lowest-ranked; can be violated
       to satisfy `m2` or `ooIdent`. -/
-structure TetruSchema (C : Type) where
+structure TetruSchema (C : Type*) where
   m1 : NamedConstraint C
   ooIdent : NamedConstraint C
   m2 : NamedConstraint C
@@ -150,28 +150,28 @@ structure TetruSchema (C : Type) where
 
 /-- Convert a `TetruSchema` to a ranked list of constraints in dominance
     order: `[m1, ooIdent, m2, ioFaith]`. -/
-def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
+def TetruSchema.toRanking {C : Type*} (s : TetruSchema C) :
     List (NamedConstraint C) :=
   [s.m1, s.ooIdent, s.m2, s.ioFaith]
 
-@[simp] theorem TetruSchema.toRanking_length {C : Type} (s : TetruSchema C) :
+@[simp] theorem TetruSchema.toRanking_length {C : Type*} (s : TetruSchema C) :
     s.toRanking.length = 4 := rfl
 
 /-- The TETRU schema places `m1` at the top of the ranking. -/
-@[simp] theorem TetruSchema.toRanking_get_zero {C : Type} (s : TetruSchema C) :
+@[simp] theorem TetruSchema.toRanking_get_zero {C : Type*} (s : TetruSchema C) :
     s.toRanking[0]? = some s.m1 := rfl
 
 /-- OO-Ident sits at position 1 of the TETRU ranking — strictly above
     `m2` and `ioFaith`. The load-bearing structural fact: under TETRU,
     OO-Ident dominates the markedness constraint that would otherwise
     block misapplication. -/
-@[simp] theorem TetruSchema.toRanking_get_one {C : Type} (s : TetruSchema C) :
+@[simp] theorem TetruSchema.toRanking_get_one {C : Type*} (s : TetruSchema C) :
     s.toRanking[1]? = some s.ooIdent := rfl
 
-@[simp] theorem TetruSchema.toRanking_get_two {C : Type} (s : TetruSchema C) :
+@[simp] theorem TetruSchema.toRanking_get_two {C : Type*} (s : TetruSchema C) :
     s.toRanking[2]? = some s.m2 := rfl
 
-@[simp] theorem TetruSchema.toRanking_get_three {C : Type} (s : TetruSchema C) :
+@[simp] theorem TetruSchema.toRanking_get_three {C : Type*} (s : TetruSchema C) :
     s.toRanking[3]? = some s.ioFaith := rfl
 
 -- ============================================================================
@@ -190,7 +190,7 @@ def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
     violates OO-Ident. Under TETRU, the misapplied candidate strictly
     beats the canonical one at the OO-Ident level — this is what makes
     overapplication and underapplication duals of one mechanism. -/
-theorem TetruSchema.misapplication_wins {C : Type} (s : TetruSchema C)
+theorem TetruSchema.misapplication_wins {C : Type*} (s : TetruSchema C)
     (canonical misapplied : C)
     (hM1 : s.m1.eval canonical = s.m1.eval misapplied)
     (hOO : s.ooIdent.eval misapplied < s.ooIdent.eval canonical) :

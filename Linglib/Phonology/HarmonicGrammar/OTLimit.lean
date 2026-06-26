@@ -52,19 +52,19 @@ open Core Constraints Core.Optimization.Evaluation Real Finset
 
     The `eval` function is preserved: the weighted constraint evaluates
     candidates identically to the original named constraint. -/
-def otToWeighted {C : Type} (ranking : List (NamedConstraint C)) (M : Nat) :
+def otToWeighted {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
     List (WeightedConstraint C) :=
   ranking.mapIdx fun i con =>
     { toNamedConstraint := con
       weight := ((M + 1 : ℚ) ^ (ranking.length - 1 - i)) }
 
 /-- The weighted constraints have the same length as the ranking. -/
-theorem otToWeighted_length {C : Type} (ranking : List (NamedConstraint C)) (M : Nat) :
+theorem otToWeighted_length {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat) :
     (otToWeighted ranking M).length = ranking.length := by
   simp [otToWeighted]
 
 /-- Each weighted constraint preserves the original eval function. -/
-theorem otToWeighted_eval {C : Type} (ranking : List (NamedConstraint C)) (M : Nat)
+theorem otToWeighted_eval {C : Type*} (ranking : List (NamedConstraint C)) (M : Nat)
     (i : Fin ranking.length) (c : C) :
     ((otToWeighted ranking M).get (i.cast (otToWeighted_length ranking M).symm)).eval c =
     (ranking.get i).eval c := by
@@ -293,7 +293,7 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
-private lemma mapIdx_sum_eq_fin_sum {α : Type} (l : List α) (f : ℕ → α → ℚ) :
+private lemma mapIdx_sum_eq_fin_sum {α : Type*} (l : List α) (f : ℕ → α → ℚ) :
     (l.mapIdx f).sum = ∑ i : Fin l.length, f i (l.get i) := by
   induction l generalizing f with
   | nil => simp
@@ -303,14 +303,14 @@ private lemma mapIdx_sum_eq_fin_sum {α : Type} (l : List α) (f : ℕ → α �
          ∑ i : Fin (xs.length + 1), (fun j : Fin (xs.length + 1) => f (↑j) ((x :: xs).get j)) i
     rw [Fin.sum_univ_succ]; simp
 
-private lemma map_mapIdx_sum {α β : Type} (l : List α) (f : ℕ → α → β) (g : β → ℚ) :
+private lemma map_mapIdx_sum {α β : Type*} (l : List α) (f : ℕ → α → β) (g : β → ℚ) :
     (l.mapIdx f |>.map g).sum = (l.mapIdx (fun i x => g (f i x))).sum := by
   congr 1
   induction l generalizing f with
   | nil => simp
   | cons x xs ih => simp only [List.mapIdx_cons, List.map_cons]; congr 1; exact ih _
 
-private lemma harmonyScore_otToWeighted_eq {C : Type}
+private lemma harmonyScore_otToWeighted_eq {C : Type*}
     (ranking : List (NamedConstraint C)) (M : Nat) (c : C) :
     harmonyScore (otToWeighted ranking M) c =
     -(weightedViolations (expWeights ranking.length M)
@@ -324,7 +324,7 @@ private lemma harmonyScore_otToWeighted_eq {C : Type}
     lexicographically beats `b` on the violation profile induced by `ranking`,
     then `a` has strictly higher harmony under `otToWeighted ranking M`,
     provided M bounds all violation counts. -/
-theorem ot_lex_imp_higher_harmony {C : Type}
+theorem ot_lex_imp_higher_harmony {C : Type*}
     (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
     (a b : C)
     (hbound : ∀ con ∈ ranking, con.eval a ≤ M ∧ con.eval b ≤ M)
@@ -352,7 +352,7 @@ theorem ot_lex_imp_higher_harmony {C : Type}
     This is `softmax_argmax_limit` instantiated with harmony scores.
     The interesting content is in the *hypotheses*: showing that the
     HG winner equals the OT winner (§4). -/
-theorem maxent_concentrates_on_hg_winner {C : Type} [Fintype C] [Nonempty C]
+theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     [DecidableEq C]
     (constraints : List (WeightedConstraint C))
     (c_opt : C)
@@ -372,7 +372,7 @@ theorem maxent_concentrates_on_hg_winner {C : Type} [Fintype C] [Nonempty C]
     The proof combines:
     1. `ot_lex_imp_higher_harmony`: lex-better ⟹ higher harmony (HG–OT agreement)
     2. `softmax_argmax_limit`: MaxEnt concentrates on harmony maximizer -/
-theorem maxent_ot_limit {C : Type} [Fintype C] [Nonempty C] [DecidableEq C]
+theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     (ranking : List (NamedConstraint C)) (M : Nat) (hM : 0 < M)
     (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con.eval c ≤ M)
