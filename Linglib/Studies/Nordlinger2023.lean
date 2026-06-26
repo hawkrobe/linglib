@@ -1,4 +1,4 @@
-import Linglib.Typology.ArgumentStructure
+import Linglib.Syntax.ArgumentStructure.Reciprocal
 import Linglib.Studies.Siloni2012
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
@@ -30,7 +30,6 @@ import a 2023 paper).
 - Strategy-valency correlation theorems (§3.2)
 - Siloni's discontinuity prediction (§3.3)
 - WALS Ch 106 grounding for `RecipProfile` (via `lookupISO`)
-- `ValenceProfile`/`RecipProfile` cross-validation
 - `ReciprocityType` Dalrymple-et-al/Evans-et-al semantic 6-way classification (§4)
 - `RecipMarkerPolysemy` extended readings (§4.2)
 - Fragment grounding for English reciprocals
@@ -38,7 +37,7 @@ import a 2023 paper).
 
 namespace Nordlinger2023
 
-open Typology.ArgumentStructure
+open Reciprocal
 
 -- ============================================================================
 -- Reciprocal Profiles ([nordlinger-2023])
