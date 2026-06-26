@@ -1288,9 +1288,11 @@ import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Morphology.Nanosyntax.TreeSpellout
+import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology
+import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.Typology
 import Linglib.Morphology.Unification
@@ -2694,6 +2696,7 @@ import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Studies.TurcoBraunDimroth2014
 import Linglib.Studies.TurkHirsch2026
 import Linglib.Studies.Umbach2004
+import Linglib.Studies.VanDerAuweraVanAlsenoy2016
 import Linglib.Studies.VanDerLeer2026
 import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.VanRooy2003
@@ -2910,5 +2913,3 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 
 
-import Linglib.Morphology.Number
-import Linglib.Morphology.TenseAspect
