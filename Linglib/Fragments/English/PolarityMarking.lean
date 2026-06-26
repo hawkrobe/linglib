@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 
 /-!
 # English Polarity-Marking Strategies
@@ -35,7 +35,7 @@ German Verum focus.
 
 namespace English.PolarityMarking
 
-open Typology.PolarityMarking (Entry Strategy Env)
+open Semantics.Polarity.Marking (Entry Strategy Env)
 
 /-- Emphatic *do* (Verum-focus use) — English polarity-marking strategy.
     Pitch accent on auxiliary *do* in an affirmative sentence contradicting

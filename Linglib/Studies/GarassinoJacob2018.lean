@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.French.PolarityMarking
@@ -55,7 +55,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 namespace GarassinoJacob2018
 
-open Typology.PolarityMarking (Entry Strategy
+open Semantics.Polarity.Marking (Entry Strategy
   Env)
 open Italian.PolarityMarking (siChe)
 open Spanish.PolarityMarking (siQue)

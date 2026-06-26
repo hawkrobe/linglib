@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 
 /-!
 # Spanish Polarity-Marking Strategies
@@ -38,7 +38,7 @@ clause-initial and targets polarity directly via a dedicated particle.
 
 namespace Spanish.PolarityMarking
 
-open Typology.PolarityMarking (Entry Strategy Env)
+open Semantics.Polarity.Marking (Entry Strategy Env)
 
 /-- *sí (que)* — Spanish emphatic polarity affirmation particle.
     Clause-initial EPPA. [batllori-hernanz-2013]: merges with

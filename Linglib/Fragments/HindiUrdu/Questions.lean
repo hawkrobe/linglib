@@ -1,4 +1,4 @@
-import Linglib.Typology.Question
+import Linglib.Syntax.Question
 
 /-!
 # Hindi-Urdu question profile
@@ -20,7 +20,7 @@ set_option autoImplicit false
 
 namespace HindiUrdu.Questions
 
-open _root_.Typology.Question
+open _root_.Syntax.Question
 
 /-- Hindi-Urdu question profile. -/
 def question : QuestionProfile :=
