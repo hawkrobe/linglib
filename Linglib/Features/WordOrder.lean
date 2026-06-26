@@ -3,57 +3,37 @@ import Linglib.Data.WALS.Features.F82A
 import Linglib.Data.WALS.Features.F83A
 
 /-!
-# Word-order typology: per-language profile substrate
+# Word-order typology
+
 [dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
-Framework-agnostic substrate for storing per-language word-order data
-(WALS Chs 81–83), under a bare-root `WordOrder` namespace in `Features/`
-(graduated from the dissolving `Typology/`), like `Features/Case`.
+Framework-agnostic per-language word-order substrate (WALS chapters 81–83), under
+a bare-root `WordOrder` namespace in `Features/`.
 
-The key record is `WordOrderProfile`, a flat bundle of three orthogonal WALS
-classifications constrained by the cross-field `WordOrderProfile.IsConsistent`
-invariant; `WordOrderProfile.ofWALS` derives it from WALS by ISO lookup.
+## Main definitions
 
-## Epistemic distinction: `noDominant` vs `notInWALS`
+* `BasicOrder`, `SVOrder`, `OVOrder` : the WALS Ch 81/82/83 constituent-order
+  classifications.
+* `WordOrderProfile` : the three classifications bundled per language, with the
+  cross-field invariant `WordOrderProfile.IsConsistent` and the ISO-639-3 lookup
+  constructor `WordOrderProfile.ofWALS`.
+* `HeadDirection` : head-initial vs head-final (root-named; used for FOFC and the like).
+* `BasicOrder.IsSubjectBeforeObject` : the antecedent of [greenberg-1963] Universal 1.
+* `OVOrder.verbPosition` : the verb position a basic order projects to.
 
-The three enums each carry both `.noDominant` (WALS-attested
-nondominance, e.g., German Ch 81 — *itself a finding* about the
-language) and `.notInWALS` (the language is not coded in this WALS
-chapter). A consumer that filtered on `≠ .noDominant` would otherwise
-silently include unencoded languages as "genuinely nondominant".
+## Implementation notes
 
-## Independence assumption and `IsConsistent`
-
-The three fields are bundled *independently* even though they are
-not logically independent: SOV basicOrder entails sv + ov projections,
-etc. WALS codes them independently for empirical-coverage reasons (a
-language can be Ch 81 nondominant but Ch 82 dominant — German is
-exactly this), so the substrate mirrors WALS rather than collapsing
-fields. The `WordOrderProfile.IsConsistent` predicate rules out
-internally contradictory combinations.
-
-## Greenbergian vs Dryerian primacy
-
-The substrate is *neutral* on which classification is theoretically
-primary. [greenberg-1963] treated `BasicOrder` as primary;
-[dryer-1992] explicitly demoted SOV/SVO/VSO in favour of OV/VO
-(Branching Direction Theory). Consumers downstream choose which
-fields to read.
-
-## Scope
-
-Covers WALS Chs 81–83 (clausal word-order features). Sibling
-substrates carry adjacent typology: `Typology/Adposition.lean` for
-Ch 85; nominal-internal and correlation-pair profiles can be added
-when consumers demand them. Cross-tabulation primitives for
-correlation tables (Gibson 2025-style 2×2 head-direction tables) live
-in their consuming Studies file (`Studies/
-Gibson2025.lean`) until a second framework consumer materialises.
+Each enum carries both `.noDominant` (a WALS-attested *finding* of no dominant order,
+e.g. German Ch 81) and `.notInWALS` (uncoded in that chapter); filtering on
+`≠ .noDominant` would otherwise misread uncoded languages as nondominant. The three
+fields are bundled independently because WALS codes them independently (German is Ch 81
+nondominant yet Ch 82 dominant), so `WordOrderProfile.IsConsistent` — not the type —
+enforces their entailments. The substrate is neutral on primacy: [greenberg-1963] takes
+`BasicOrder` as primary, [dryer-1992] the OV/VO cut.
 -/
 
-/-- Head direction of a syntactic construction: head-initial (VO, prepositions,
-head-initial FocP, …) vs head-final. Used for word-order typology and constraints
-like FOFC. Root-named (consumed across Fragments, Studies, Syntax). -/
+/-- Head direction of a construction: head-initial (VO, prepositions) vs head-final.
+Root-named (consumed across Fragments, Studies, Syntax); used for FOFC and the like. -/
 inductive HeadDirection where
   | headInitial
   | headFinal
@@ -61,15 +41,9 @@ inductive HeadDirection where
 
 namespace WordOrder
 
--- ============================================================================
--- Enums
--- ============================================================================
+/-! ### Classifications -/
 
-/-- WALS Ch 81: six-way classification of basic constituent order.
-    `noDominant` is WALS's "lacking a dominant word order" code (a
-    substantive finding about the language); `notInWALS` is absence
-    from the chapter. The two are epistemically different and must
-    not be conflated. -/
+/-- WALS Ch 81: the six-way classification of basic constituent order. -/
 inductive BasicOrder where
   | sov | svo | vso | vos | ovs | osv
   /-- WALS-attested "lacking a dominant word order" (Ch 81). -/
@@ -96,19 +70,14 @@ inductive OVOrder where
   | notInWALS
   deriving DecidableEq, Repr
 
-/-- A bundle of WALS-style word-order classifications for a single
-    language. The three fields are bundled independently because
-    WALS codes them independently; the `IsConsistent` predicate
-    captures the logical entailments between them. -/
+/-- A language's WALS Ch 81/82/83 word-order classifications, bundled. -/
 structure WordOrderProfile where
   basicOrder : BasicOrder
   svOrder : SVOrder
   ovOrder : OVOrder
   deriving Repr, DecidableEq
 
--- ============================================================================
--- WALS converters and ISO lookups
--- ============================================================================
+/-! ### WALS converters and ISO lookups -/
 
 namespace BasicOrder
 
@@ -165,24 +134,18 @@ def ofWALS (iso : String) : OVOrder :=
 
 end OVOrder
 
-/-- Construct a `WordOrderProfile` for a language by ISO 639-3 lookup
-    against WALS chapters 81/82/83. Each field independently falls
-    back to `.notInWALS` if its WALS chapter has no entry. Use this as
-    the default backend in Fragment files; override per-field when
-    grammar-grounded sources disagree with WALS or fill its gaps. -/
+/-- Derive a `WordOrderProfile` by ISO-639-3 lookup against WALS Ch 81/82/83; each
+    field falls back to `.notInWALS` when its chapter has no entry. The default
+    Fragment backend — override per field where grammars disagree with or extend WALS. -/
 def WordOrderProfile.ofWALS (iso : String) : WordOrderProfile :=
   { basicOrder := BasicOrder.ofWALS iso
     svOrder := SVOrder.ofWALS iso
     ovOrder := OVOrder.ofWALS iso }
 
--- ============================================================================
--- BasicOrder → SVOrder/OVOrder projections (and consistency)
--- ============================================================================
+/-! ### Projections and consistency -/
 
-/-- The SVOrder a basic order entails (`none` if basic order is
-    itself uninformative). Subject precedes verb in SOV, SVO, OSV
-    (V is final or last in those orders); verb precedes subject in
-    VSO, VOS, OVS. -/
+/-- The `SVOrder` a basic order entails (`none` if the basic order is uninformative):
+    subject precedes verb in SOV/SVO/OSV, verb precedes subject in VSO/VOS/OVS. -/
 def BasicOrder.entailedSV : BasicOrder → Option SVOrder
   | .sov | .svo | .osv => some .sv
   | .vso | .vos | .ovs => some .vs
@@ -194,12 +157,9 @@ def BasicOrder.entailedOV : BasicOrder → Option OVOrder
   | .svo | .vso | .vos => some .vo
   | .noDominant | .notInWALS => none
 
-/-- A profile is consistent if its `svOrder` and `ovOrder` either
-    match what `basicOrder` entails, or are themselves uninformative
-    (`.noDominant` / `.notInWALS`). The latter accommodates languages
-    coded in some WALS chapters but not others (e.g., German has
-    nondominant Ch 81 but dominant Ch 82). When `basicOrder` itself
-    is uninformative, no constraint is imposed on the projections. -/
+/-- A profile is consistent when `svOrder` and `ovOrder` each either match what
+    `basicOrder` entails or are uninformative (`.noDominant` / `.notInWALS`) — the
+    latter for languages coded in some WALS chapters but not others. -/
 def WordOrderProfile.IsConsistent (p : WordOrderProfile) : Prop :=
   (match p.basicOrder.entailedSV with
    | none => True
@@ -215,13 +175,9 @@ instance (p : WordOrderProfile) : Decidable p.IsConsistent := by
   cases p.basicOrder.entailedSV <;> cases p.basicOrder.entailedOV <;>
     infer_instance
 
--- ============================================================================
--- Classification predicates over BasicOrder
--- ============================================================================
--- These are abbrevs (transparent) so `Decidable` resolves automatically
--- via `BasicOrder`'s `DecidableEq`. Add new predicates here when a
--- second consumer materialises (rather than letting individual studies
--- re-stipulate them).
+/-! ### Classification predicates
+
+`abbrev`s (transparent, so `Decidable` resolves via `BasicOrder`'s `DecidableEq`). -/
 
 namespace BasicOrder
 
@@ -257,13 +213,10 @@ abbrev IsVO (o : OVOrder) : Prop := o = .vo
 
 end OVOrder
 
--- ============================================================================
--- Verb position (theory-neutral OVOrder projection)
--- ============================================================================
+/-! ### Verb position -/
 
-/-- Verb position in the clause as derived from object–verb order.
-    Theory-neutral: VO ⇒ post-verbal object (verb precedes
-    complement), OV ⇒ pre-verbal object (verb follows complement). -/
+/-- Verb position in the clause, projected from object–verb order: VO ⇒ verb
+    precedes complement (head-initial), OV ⇒ verb follows complement (head-final). -/
 inductive VerbPosition where
   /-- Verb precedes complement (head-initial VP). -/
   | postverbal
