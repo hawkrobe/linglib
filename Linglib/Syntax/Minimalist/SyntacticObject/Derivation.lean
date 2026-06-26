@@ -12,12 +12,19 @@ P4-pre-b of the single-carrier program: the ordered **derivation** layer on the 
 carrier — the sequence of Merge/Move operations producing a syntactic object — replacing
 the legacy `FreeCommMagma`-based `Step`/`Derivation`.
 
-This is the *transformational* view (External/Internal Merge as tree operations), which
-the paper-anchored study files are written in. **Index-free traces (D2):** Internal Merge
-leaves the bare `SO.traceLeaf`; chain identity is **workspace-level** (`Workspace`,
-`chainMultiplicity`, #795, MCB Def 1.2.1), not a per-step `Nat`. The canonical MCB
-Internal Merge stays the workspace coproduct composition (`SO.intMerge`, #795); `Step.im`
-is the derived transformational realization, built on `SO.replace` (#804) + `SO.node`.
+**The derivation's Merge *is* the workspace Merge by construction.** Each step applies a
+canonical MCB Merge operator (`Workspace.lean`): External Merge is `SO.merge` (Lemma
+1.4.1), Internal Merge is `SO.intMerge` (Prop 1.4.2's `M_{T/β,β}`) on the deletion
+remainder `SO.deleteAccessible mover current` (= `T/mover`). So `Step.apply` *unfolds*
+to the coproduct operators (`SO.Step.apply_emL`/`apply_im`); the Δ^ρ-coproduct identity
+is `SO.merge_toForest`/`SO.intMerge_toForest` — nothing is independently stipulated then
+bridged.
+
+**Index-free traces (D2):** Internal Merge leaves the bare `SO.traceLeaf`; chain identity
+is **workspace-level** (`Workspace`, `chainMultiplicity`, #795, MCB Def 1.2.1), not a
+per-step `Nat`. The deletion remainder is realized by `SO.replace` (#804): for a
+uniquely-accessible mover this is exactly the Δ^ρ cut remainder `SO.intMerge_toForest`
+extracts, and `replace`-all is its total extension to the multi-occurrence (chain) case.
 
 Because `SO.node` is noncomputable, so are `Step.apply`/`Derivation.final` — concrete
 trees are reasoned about structurally, not by `decide`. The **computable, `decide`-able
@@ -43,16 +50,49 @@ inductive SO.Step where
   /-- Internal Merge: raise `mover`, leaving the bare trace in its place. -/
   | im (mover : SO)
 
-/-- Apply a derivation step to the current tree. External Merge adjoins `item`;
-    Internal Merge extracts `mover` (replacing it by `SO.traceLeaf`, #804) and re-merges
-    it. Since `SO.node` is commutative (the carrier is unordered), `emL` and `emR` give
-    the *same* `SO` (`apply_emL_eq_emR`); the left/right distinction matters only for the
-    surface (PF) order, recovered downstream by the externalization replay. -/
+/-- **Internal-Merge deletion remainder** `T/mover` ([marcolli-chomsky-berwick-2025]
+    Def 1.2.7, the ρ-form): the syntactic object left when the moved constituent's
+    accessible occurrence is cut, with the bare `SO.traceLeaf` in its place. For a
+    uniquely-accessible `mover` this is the Δ^ρ deletion remainder `p0.2` that
+    `SO.intMerge_toForest` extracts from `cutSummandsN`; `SO.replace` (replace-all) is
+    its total extension to the multi-occurrence case (the chain is then read at the
+    workspace level, Def 1.2.1). -/
+noncomputable def SO.deleteAccessible (mover current : SO) : SO :=
+  current.replace mover SO.traceLeaf
+
+@[simp] theorem SO.deleteAccessible_val (mover current : SO) :
+    (SO.deleteAccessible mover current).val
+      = replaceN mover.val SO.traceLeaf.val current.val := rfl
+
+/-- Apply a derivation step to the current tree. **The derivation Merge *is* the
+    workspace Merge by construction:** External Merge is `SO.merge` (Lemma 1.4.1),
+    Internal Merge is `SO.intMerge` (Prop 1.4.2's `M_{T/β,β}`) applied to the deletion
+    remainder `SO.deleteAccessible mover current` (= `T/mover`). The coproduct identity
+    of each is `SO.merge_toForest`/`SO.intMerge_toForest`. Since `SO.merge` is commutative
+    (`SO.mul_comm`), `emL`/`emR` and the mover-left/remainder-left orders give the *same*
+    `SO` (`apply_emL_eq_emR`); the left/right distinction matters only for the surface
+    (PF) order, recovered downstream by the externalization replay. -/
 noncomputable def SO.Step.apply (step : SO.Step) (current : SO) : SO :=
   match step with
-  | .emL item  => SO.node item current
-  | .emR item  => SO.node current item
-  | .im mover  => SO.node mover (current.replace mover SO.traceLeaf)
+  | .emL item  => SO.merge item current
+  | .emR item  => SO.merge current item
+  | .im mover  => SO.intMerge mover (SO.deleteAccessible mover current)
+
+/-- External Merge unfolds to the canonical workspace EM `SO.merge` (Lemma 1.4.1). -/
+theorem SO.Step.apply_emL (item current : SO) :
+    (SO.Step.emL item).apply current = SO.merge item current := rfl
+
+/-- External Merge unfolds to the canonical workspace EM `SO.merge` (Lemma 1.4.1). -/
+theorem SO.Step.apply_emR (item current : SO) :
+    (SO.Step.emR item).apply current = SO.merge current item := rfl
+
+/-- **Internal Merge unfolds to the coproduct operator by construction.** The `im` step
+    *is* the canonical workspace IM `SO.intMerge` (MCB Prop 1.4.2) on the deletion
+    remainder — definitionally, not via a bridge. Composing with `SO.intMerge_toForest`
+    gives the Δ^ρ-coproduct identity on the workspace. -/
+theorem SO.Step.apply_im (mover current : SO) :
+    (SO.Step.im mover).apply current = SO.intMerge mover (SO.deleteAccessible mover current) :=
+  rfl
 
 /-- External Merge is side-indifferent on the unordered carrier: `emL` and `emR` build
     the same syntactic object (they diverge only at externalization). -/
@@ -378,7 +418,7 @@ private theorem externStepP_step {acc : SO} {accp p' : Planar SOLabel} {step : S
       obtain rfl := Option.some.inj h
       obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
       refine ⟨isSOPlanar_nodeP hwfip hwf, ?_⟩
-      rw [SO.Step.apply, SO.node_val, mk_nodeP, hmkip, hmk]
+      rw [SO.Step.apply, SO.merge_val, mk_nodeP, hmkip, hmk]
   | emR item =>
     change item.toPlanarLeaf?.map (fun p => SO.nodeP accp p) = some p' at h
     rcases hip : item.toPlanarLeaf? with _ | ip
@@ -387,7 +427,7 @@ private theorem externStepP_step {acc : SO} {accp p' : Planar SOLabel} {step : S
       obtain rfl := Option.some.inj h
       obtain ⟨hmkip, hwfip⟩ := toPlanarLeaf?_mk hip
       refine ⟨isSOPlanar_nodeP hwf hwfip, ?_⟩
-      rw [SO.Step.apply, SO.node_val, mk_nodeP, hmkip, hmk]
+      rw [SO.Step.apply, SO.merge_val, mk_nodeP, hmkip, hmk]
   | im mover =>
     change moveLeftPlanarP accp mover = some p' at h
     rw [moveLeftPlanarP] at h
@@ -399,7 +439,8 @@ private theorem externStepP_step {acc : SO} {accp p' : Planar SOLabel} {step : S
       have hwfs : isSOPlanar s = true := planarFindP?_isSOPlanar hfind hwf
       obtain ⟨hrwe, hrws⟩ := replaceWhereP_mk mover hwf
       refine ⟨isSOPlanar_nodeP hwfs hrws, ?_⟩
-      rw [SO.Step.apply, SO.node_val, SO.replace_val, mk_nodeP, hmks, hrwe, hmk]
+      rw [SO.Step.apply, SO.intMerge_val, SO.deleteAccessible_val, mk_nodeP, hmks, hrwe, hmk]
+      exact congrArg (Nonplanar.node (Sum.inr ())) (Multiset.cons_swap _ _ _)
 
 /-- `none` is absorbing for the replay fold: once externalization fails, it stays failed. -/
 private theorem foldl_externStepP_none (steps : List SO.Step) :
