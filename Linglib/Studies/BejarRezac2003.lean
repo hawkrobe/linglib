@@ -107,8 +107,8 @@ instance (cycles : List (List Argument)) (args : List Argument) :
 /-- A dative absorbs the [π]-probe without valuing it: the closest
     goal matches but is inactive, so the cycle Agrees with nothing —
     "remaining unvalued, it gets a default value". The default is not
-    a crash (cf. `ObligatoryOperations`); ungrammaticality comes only
-    from the PLC. -/
+    a crash (a `Probe.outcome` of `unvalued`, tolerated per [preminger-2014]
+    Ch. 5); ungrammaticality comes only from the PLC. -/
 theorem piAgree_absorbed (dat acc : Argument) (hd : dat.fLicensed = true) :
     piAgree [dat, acc] = none :=
   Probe.agree_eq_none_of_inactive rfl (by simp [pi, hd])

@@ -1,6 +1,5 @@
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 
@@ -716,37 +715,22 @@ theorem voice_hasD_ne_assignsTheta :
 -- - Robust convergence: the grammar attempts Merge but tolerates
 --   failure, yielding default (expletive or pro) rather than crash
 
-/-- The CMH adopts the obligatory-no-crash model for Merge features.
-    This is [newman-2024]'s Assumption 19c: features can go
-    unchecked without crashing. -/
-def cmhFeatureModel : AgreementModel := .obligatoryNocrash
+/-! The CMH adopts Preminger's obligatory-operations model for Merge features
+([newman-2024] Assumption 19c, generalizing [preminger-2014] Ch. 5 from
+φ-agreement to Merge features): an unchecked `[·D·]` is *Feature Failure* —
+tolerated without crashing, unlike the derivational-time-bombs model where it
+would crash at the interface. The theorems below record the zero-argument
+configurations where that tolerance is what lets the derivation converge. -/
 
-/-- Under Feature Failure, unchecked Merge features do not crash. -/
-theorem feature_failure_converges (outcome : Probe.Outcome) :
-    derivationConverges cmhFeatureModel outcome = true :=
-  obligatory_always_converges outcome
+/-- Weather verbs introduce zero DP arguments. In pro-drop languages without
+    expletives, T's `[·D·]` goes unchecked — Feature Failure prevents a crash
+    (under the time-bombs model an expletive would be required). -/
+theorem weather_needs_feature_failure : weatherVerb.totalDP = 0 := rfl
 
-/-- The crash model would reject derivations with unchecked features.
-    Feature Failure is what separates the CMH from standard Minimalism
-    on this point. -/
-theorem feature_failure_vs_crash :
-    derivationConverges cmhFeatureModel .unvalued = true ∧
-    derivationConverges .crashOnFailure .unvalued = false := ⟨rfl, rfl⟩
-
-/-- Weather verbs introduce zero DP arguments. In pro-drop languages
-    without expletives, T's [·D·] goes unchecked — Feature Failure
-    prevents a crash. Under the crash model, an expletive would be
-    required to check T's [·D·]. -/
-theorem weather_needs_feature_failure :
-    weatherVerb.totalDP = 0 ∧
-    derivationConverges cmhFeatureModel .unvalued = true := ⟨rfl, rfl⟩
-
-/-- Passive v lacks [·D·], so no external argument merges. If no
-    internal argument is available for A-movement to Spec,TP (impersonal
-    passives), T's [·D·] goes unchecked — tolerated by Feature Failure. -/
-theorem impersonal_passive_converges :
-    passiveV.features.hasD = false ∧
-    derivationConverges cmhFeatureModel .unvalued = true := ⟨rfl, rfl⟩
+/-- Passive v lacks `[·D·]`, so no external argument merges. With no internal
+    argument for A-movement to Spec,TP (impersonal passives), T's `[·D·]` goes
+    unchecked — tolerated by Feature Failure. -/
+theorem impersonal_passive_converges : passiveV.features.hasD = false := rfl
 
 -- ============================================================================
 -- § 10: Binding Predictions from VP-as-Specifier

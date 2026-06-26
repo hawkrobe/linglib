@@ -13,7 +13,7 @@ Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to
 separate the feature *types* (what can be checked) from the Agree
 *operation* (how checking works) and the *failure model* (what happens
-when checking fails; see `ObligatoryOperations.lean`).
+when checking fails — a `Probe.outcome` of `unvalued`; see `Probe/Basic.lean`).
 
 ## ±Interpretable Features ([chomsky-1995] Ch 4 §4.5)
 
