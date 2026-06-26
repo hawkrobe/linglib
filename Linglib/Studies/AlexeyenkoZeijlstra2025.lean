@@ -1,6 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Features.F87A
-import Linglib.Syntax.Minimalist.Modification
+import Linglib.Typology.WordOrder
+import Linglib.Morphology.MorphRule
 import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.AdjAgreement
@@ -55,9 +56,79 @@ cannot linearly intervene between A and N. When Attr is a clitic or free
 word, the ICP does not apply. For null affixes, the Affix Continuity
 Constraint (Ackema-Neeleman §70) extends the ICP. -/
 
+namespace AlexeyenkoZeijlstra2025
+
+open Morphology (MorphStatus)
+
+/-! ## The Attr head and modification routes ([alexeyenko-zeijlstra-2025] §5)
+
+Formerly `Syntax/Minimalist/Modification.lean` — relocated here as this paper's own
+analysis (it had a single consumer, this study). The theory-neutral substrate it used
+(`MAGFeatureType`/`AdjAgreementEntry`) is now `Syntax/Agreement/AdjAgreement.lean`,
+imported theory-neutrally by the `Fragments/*/AdjAgreement` files. -/
+
+/-- Morphophonological status of the attributivizer (Attr head, §5.2). Determines
+    whether Attr imposes linear adjacency with the adjective. -/
+inductive AttrStatus where
+  | affix | clitic | freeWord | null
+  deriving DecidableEq, Repr
+
+/-- Position of attributive adjectives relative to the modified noun. -/
+inductive AdjPosition where
+  | prenominal | postnominal | both
+  deriving DecidableEq, Repr
+
+/-- Morphosyntactic profile of adjectives in a language — the MAG (34) factors:
+    agreement identity (pred = attr), φ/κ-completeness, and the attributivizer's status. -/
+structure AdjMorphProfile where
+  adjPosition               : AdjPosition
+  apDirection               : HeadDirection
+  predAttrSameAgreement     : Bool
+  agreementPhiKappaComplete : Bool
+  attrStatus                : AttrStatus
+  deriving DecidableEq, Repr
+
+/-- The two routes to nominal modification (§5.1): `direct` (adjective carries
+    `[N, uN]`) vs `attrMediated` (an Attr head converts features). -/
+inductive ModificationRoute where
+  | direct | attrMediated
+  deriving DecidableEq, Repr
+
+/-- φ/κ-complete languages modify directly; all others require an Attr head. -/
+def modificationRoute (prof : AdjMorphProfile) : ModificationRoute :=
+  if prof.predAttrSameAgreement && prof.agreementPhiKappaComplete then .direct
+  else .attrMediated
+
+/-- φ/κ-complete languages use direct modification. -/
+theorem phiKappaComplete_implies_direct (prof : AdjMorphProfile)
+    (hSame : prof.predAttrSameAgreement = true)
+    (hComplete : prof.agreementPhiKappaComplete = true) :
+    modificationRoute prof = .direct := by simp [modificationRoute, hSame, hComplete]
+
+/-- Languages with pred ≠ attr require Attr. -/
+theorem predNeAttr_implies_attrMediated (prof : AdjMorphProfile)
+    (h : prof.predAttrSameAgreement = false) :
+    modificationRoute prof = .attrMediated := by simp [modificationRoute, h]
+
+/-- Languages with incomplete φ/κ require Attr. -/
+theorem incomplete_implies_attrMediated (prof : AdjMorphProfile)
+    (h : prof.agreementPhiKappaComplete = false) :
+    modificationRoute prof = .attrMediated := by simp [modificationRoute, h]
+
+/-- Map the framework-agnostic `MorphStatus` (Zwicky-Pullum clitic-affix cline) to
+    the MAG's `AttrStatus`: affixes impose adjacency, clitics are independent. -/
+def morphStatusToAttrStatus : MorphStatus → AttrStatus
+  | .freeWord      => .freeWord
+  | .simpleClitic  => .clitic
+  | .specialClitic => .clitic
+  | .inflAffix     => .affix
+  | .derivAffix    => .affix
+
+end AlexeyenkoZeijlstra2025
+
 namespace Morphology.ICP
 
-open Minimalist.Modification (AttrStatus)
+open AlexeyenkoZeijlstra2025 (AttrStatus)
 
 /-- Does the morphophonological status of Attr impose adjacency between
     Attr and the adjective head? The ICP applies to affixes (overt and
@@ -90,9 +161,6 @@ end Morphology.ICP
 namespace AlexeyenkoZeijlstra2025
 
 open Data.WALS.F87A
-open Minimalist.Modification (AttrStatus AdjPosition AdjMorphProfile
-  ModificationRoute MAGFeatureType AdjAgreementEntry
-  modificationRoute morphStatusToAttrStatus)
 open Morphology.ICP (icpBlocksIntervention)
 
 -- ============================================================================

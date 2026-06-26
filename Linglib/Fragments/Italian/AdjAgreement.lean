@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Modification
+import Linglib.Syntax.Agreement.AdjAgreement
 
 /-!
 # Italian Adjective Agreement
@@ -17,16 +17,16 @@ analysis is given in (72).
 
 namespace Italian.AdjAgreement
 
-open Minimalist.Modification
+open Agreement
 
 /-- Italian adjective φ-features: number and gender only. -/
-def phiFeatures : List MAGFeatureType :=
-  [ .phi (.number .plural), .phi (.number .singular)
-  , .phi (.gender 0), .phi (.gender 1) ]
+def phiFeatures : List AgrFeature :=
+  [ .number .plural, .number .singular
+  , .gender 0, .gender 1 ]
 
 /-- Italian DP features include κ (case is always a DP feature per fn 17,
     even when not morphologically realized on adjectives). -/
-def dpFeatures : List MAGFeatureType :=
+def dpFeatures : List AgrFeature :=
   phiFeatures ++ [.kappa .nom, .kappa .acc]
 
 def entry : AdjAgreementEntry where
