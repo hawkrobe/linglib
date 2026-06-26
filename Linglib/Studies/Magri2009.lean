@@ -3,6 +3,7 @@ import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Quantification.Counting
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Fragments.German.BarePluralWordOrder
 
@@ -82,6 +83,29 @@ namespace Magri2009
 
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Semantics.Kinds.SortedOntology (PredicateLevel)
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §0  Homogeneity presupposition (framework-level, assumption (70))
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-- **Homogeneity presupposition** — the framework-level form of [magri-2009]'s
+assumption (70). The nuclear scope holds of *all* restrictor-satisfying elements
+of `domain` (the YES branch) or of *none* (the NO branch): the all-or-none
+partition that makes the homogeneous (GEN/`always`) alternative either definitely
+true or definitely false.
+
+[magri-2009] §4.6 extends this to overt *always*: "#John is always tall" is odd
+because the blind mandatory implicature that homogeneity *fails* contradicts the
+common-knowledge presupposition. The concrete instantiation for the running
+scenario is `QAdverb.homogeneity .individualLevel` — `alwaysTall` is the YES
+world, `neverTall` the NO world, and the mixed `sometimesOnly` is excluded.
+
+Detectable by negation ([von-fintel-1997]): "It's false that John smokes" conveys
+"he never smokes," not merely "he doesn't always smoke." -/
+def homogeneityPresup {D : Type*} [DecidableEq D]
+    (domain : List D) (restrictor scope : D → Prop) : Prop :=
+  Quantification.everyOn domain.toFinset restrictor scope ∨
+  Quantification.noOn domain.toFinset restrictor scope
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Blind Strengthening Framework
