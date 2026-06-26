@@ -1,4 +1,4 @@
-import Linglib.Typology.Phonology
+import Linglib.Phonology.Inventory
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.German.Phonology
 import Linglib.Fragments.Finnish.Phonology
@@ -69,7 +69,7 @@ set_option autoImplicit false
 
 namespace Maddieson2013
 
-open Typology.Phonology
+open Phonology.Inventory
 open Data.PHOIBLE
 
 /-- Whether a consonant count falls in the WALS Ch 1 bin for a given

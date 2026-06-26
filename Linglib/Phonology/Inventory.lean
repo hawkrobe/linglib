@@ -89,7 +89,7 @@ Bridge theorems WALS↔PHOIBLE live in
 
 set_option autoImplicit false
 
-namespace Typology.Phonology
+namespace Phonology.Inventory
 
 private abbrev ch1   := Data.WALS.F1A.allData
 private abbrev ch2   := Data.WALS.F2A.allData
