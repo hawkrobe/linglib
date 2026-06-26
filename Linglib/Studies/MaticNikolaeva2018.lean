@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityMarking
+import Linglib.Semantics.Polarity.Marking
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.German.PolarityMarking
 
@@ -55,7 +55,7 @@ docstring) with a back-pointer here.
 
 namespace MaticNikolaeva2018
 
-open Typology.PolarityMarking (Strategy Entry)
+open Semantics.Polarity.Marking (Strategy Entry)
 open English.PolarityMarking (emphaticDo)
 open German.PolarityMarking (verumFocus dochPreUtterance)
 

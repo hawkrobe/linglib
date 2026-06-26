@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Typology.PolarityMarking
+# Polarity marking: strategy typology
 [turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
 [hohle-1992] [holmberg-2016]
 
@@ -63,7 +63,7 @@ with the form-class encoding for different reasons; the
 incompatibilities are recorded, not silently resolved.
 -/
 
-namespace Typology.PolarityMarking
+namespace Semantics.Polarity.Marking
 
 /-- How a language marks polarity switches (neg → affirm). See module
     docstring for the framework-commitment note. -/
@@ -128,4 +128,4 @@ structure Entry where
   /-- The polarity-marking strategy category -/
   strategy : Strategy
 
-end Typology.PolarityMarking
+end Semantics.Polarity.Marking

@@ -1786,6 +1786,7 @@ import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.Israel
 import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Semantics.Possessive.Basic
@@ -2906,7 +2907,7 @@ import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Morphology.Number
 import Linglib.Typology.PolarityItem
-import Linglib.Typology.PolarityMarking
+
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Question
 import Linglib.Typology.TemporalConnectives
