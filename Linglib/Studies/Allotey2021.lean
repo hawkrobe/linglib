@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Fragments.Ga.Predicates
-import Linglib.Typology.NullSubject
+import Linglib.Syntax.NullSubject
 import Linglib.Studies.Landau2015
 import Linglib.Syntax.Clause.Complementation
 
@@ -61,7 +61,7 @@ namespace Allotey2021
 
 open Minimalist.MinimalPronoun
 open Landau2015
-open Typology.NullSubject (ProDropProfile)
+open NullSubject (ProDropProfile)
 open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
                    complementizer_isFinite_eq_finiteFlag
                    Complementizer Control CTP)
