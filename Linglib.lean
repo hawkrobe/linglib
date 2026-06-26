@@ -726,7 +726,6 @@ import Linglib.Fragments.Dutch.VerbParticles
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Binominals
-import Linglib.Fragments.English.BodyParts
 import Linglib.Fragments.English.Color
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.English.Complementizers
@@ -774,7 +773,6 @@ import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.Fering.Definiteness
 import Linglib.Fragments.Fijian.Possession
-import Linglib.Fragments.Finnish.BodyParts
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.Comparison
 import Linglib.Fragments.Finnish.ConsonantGradation
@@ -795,7 +793,6 @@ import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.TenseAspect
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.French.Binominals
-import Linglib.Fragments.French.BodyParts
 import Linglib.Fragments.French.ClassifierSystem
 import Linglib.Fragments.French.Color
 import Linglib.Fragments.French.Comparison
@@ -826,7 +823,6 @@ import Linglib.Fragments.Georgian.PolarityItems
 import Linglib.Fragments.Georgian.Possession
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.BarePluralWordOrder
-import Linglib.Fragments.German.BodyParts
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.Color
@@ -908,7 +904,6 @@ import Linglib.Fragments.HindiUrdu.WordOrder
 import Linglib.Fragments.Hixkaryana.Adposition
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Hixkaryana.WordOrder
-import Linglib.Fragments.Hungarian.BodyParts
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.Directives
@@ -961,7 +956,6 @@ import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Adposition
-import Linglib.Fragments.Japanese.BodyParts
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.ClassifierSystem
@@ -998,7 +992,6 @@ import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Kashaya.Evidentiality
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 import Linglib.Fragments.Korean.Adposition
-import Linglib.Fragments.Korean.BodyParts
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Korean.Color
 import Linglib.Fragments.Korean.Comparison
@@ -1042,7 +1035,6 @@ import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Mandarin.AspectComparison
-import Linglib.Fragments.Mandarin.BodyParts
 import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Color
@@ -1155,7 +1147,6 @@ import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.VerbalPrefixes
 import Linglib.Fragments.Slavic.Russian.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.Adposition
-import Linglib.Fragments.Slavic.Russian.BodyParts
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Fragments.Slavic.Russian.Color
 import Linglib.Fragments.Slavic.Russian.Comparison
@@ -1186,7 +1177,6 @@ import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
 import Linglib.Fragments.Spanish.Binominals
-import Linglib.Fragments.Spanish.BodyParts
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Color
 import Linglib.Fragments.Spanish.Gender
@@ -1204,7 +1194,6 @@ import Linglib.Fragments.Spanish.TenseAspect
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Adposition
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Fragments.Swahili.BodyParts
 import Linglib.Fragments.Swahili.ClassifierSystem
 import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Swahili.Directives
@@ -1221,7 +1210,6 @@ import Linglib.Fragments.Swahili.WordOrder
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.SwissGerman.Case
-import Linglib.Fragments.Tagalog.BodyParts
 import Linglib.Fragments.Tagalog.Comparison
 import Linglib.Fragments.Tagalog.Directives
 import Linglib.Fragments.Tagalog.Morph
@@ -1255,7 +1243,6 @@ import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Turkish.Adposition
 import Linglib.Fragments.Turkish.Anaphors
-import Linglib.Fragments.Turkish.BodyParts
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.Coordination
@@ -2940,6 +2927,7 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.BodyParts
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.ClauseChaining
