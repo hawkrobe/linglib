@@ -591,6 +591,7 @@ private def tok_injured    : LIToken := ⟨.simple .V [] (phonForm := "was-injur
 private def tok_boy        : LIToken := ⟨.simple .N [] (phonForm := "the-boy"), 22⟩
 private def tok_by_himself : LIToken := ⟨.simple .N [] (phonForm := "by-himself"), 23⟩
 private def tok_v_pass     : LIToken := ⟨.simple .v [.V], 24⟩
+private def tok_t_pass     : LIToken := ⟨.simple .T [.v], 25⟩
 
 /-- The passive VP: `[VP patient [V' V agent-PP]]`. Built planar-first. -/
 def vp_passive : SyntacticObject :=
@@ -622,7 +623,7 @@ def englishPassive : SO.Derivation :=
 def englishPassiveDerivedTree : SyntacticObject :=
   SO.ofPlanar
     (SO.nodeP (SO.leafP tok_boy)
-      (SO.nodeP (SO.leafP tok_t)
+      (SO.nodeP (SO.leafP tok_t_pass)
         (SO.nodeP (SO.leafP tok_v_pass)
           (SO.nodeP SO.traceP
             (SO.nodeP (SO.leafP tok_injured) (SO.leafP tok_by_himself))))))

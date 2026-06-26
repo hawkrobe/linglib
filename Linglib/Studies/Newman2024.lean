@@ -381,6 +381,39 @@ private def isKLeaf (s : SyntacticObject) : Bool :=
 private def isKP (s : SyntacticObject) : Prop :=
   ∃ d, SO.immediatelyContains s d ∧ isKLeaf d
 
+/-! #### `isKP` detection — positive and negative witnesses
+
+`isKP`'s existential ranges over *all* `SO` (no `DecidablePred` instance), so it
+is exercised by explicit witnesses rather than `decide`. A KP node `[K DP]` is
+detected; a non-K node `[V DP]` and a bare K leaf (no daughters) are rejected.
+The tokens are local probes (ids 900–902) for these checks only. -/
+
+private def kProbeK  : LIToken := ⟨.simple .K [.D] (phonForm := "K"), 900⟩
+private def kProbeD  : LIToken := ⟨.simple .D [] (phonForm := "the dog"), 901⟩
+private def kProbeV  : LIToken := ⟨.simple .V [.D] (phonForm := "see"), 902⟩
+
+/-- A K-headed leaf is detected by `isKLeaf`; a D-headed leaf is not. -/
+private theorem isKLeaf_detects :
+    isKLeaf (SO.lexLeaf kProbeK) = true ∧ isKLeaf (SO.lexLeaf kProbeD) = false := by
+  decide
+
+/-- Positive: `[K DP]` (a K daughter present) is a KP. -/
+private theorem isKP_detects_kp :
+    isKP (SO.node (SO.lexLeaf kProbeK) (SO.lexLeaf kProbeD)) :=
+  ⟨SO.lexLeaf kProbeK, (SO.immediatelyContains_node _ _ _).mpr (Or.inl rfl), by decide⟩
+
+/-- Negative: `[V DP]` (no K daughter) is not a KP. -/
+private theorem isKP_rejects_non_kp :
+    ¬ isKP (SO.node (SO.lexLeaf kProbeV) (SO.lexLeaf kProbeD)) := by
+  rintro ⟨d, hd, hk⟩
+  rw [SO.immediatelyContains_node] at hd
+  rcases hd with rfl | rfl <;> exact absurd hk (by decide)
+
+/-- Negative: a bare K *leaf* is a K head, not a KP — it has no daughters. -/
+private theorem isKP_rejects_bare_K_leaf : ¬ isKP (SO.lexLeaf kProbeK) := by
+  rintro ⟨d, hd, _⟩
+  exact (SO.immediatelyContains_lexLeaf kProbeK d) hd
+
 -- ============================================================================
 -- § 9: Anti-Redundancy in Agreement
 -- ============================================================================

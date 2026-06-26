@@ -469,14 +469,23 @@ def indirectPassive : SO.Derivation :=
       .im DP_mary2     -- PASSIVE: Mary to outer Spec (subject)
     ] }
 
-/-- The indirect-passive result tree: Mary (twice-promoted) at the top
-    edge, above the stranded direct object. `[Mary [letter [sent [to t]]]]`. -/
+/-- The indirect-passive result tree, exactly as `indirectPassive` produces it.
+    Mary moves successive-cyclically (Dative Shift then Passive), so each
+    `SO.Step.im` leaves a trace at its extraction site: one at the inner Spec
+    (the intermediate Dative-Shift landing site) and one in the *to*-complement.
+    `[Mary [t [letter [sent [to t]]]]]` — Mary at the top edge above the
+    intermediate trace and the stranded direct object.
+
+    (The single-trace abbreviation `[Mary [letter [sent [to t]]]]` collapses the
+    intermediate landing site; it gives the same Mary-c-commands-letter
+    asymmetry but is *not* what the two-step derivation emits.) -/
 def indirectPassiveTree : SO :=
   SO.ofPlanar
     (SO.nodeP (SO.leafP tok_mary2)
-      (SO.nodeP (SO.leafP tok_letter2)
-        (SO.nodeP (SO.leafP tok_sent)
-          (SO.nodeP (SO.leafP tok_to2) SO.traceP))))
+      (SO.nodeP SO.traceP
+        (SO.nodeP (SO.leafP tok_letter2)
+          (SO.nodeP (SO.leafP tok_sent)
+            (SO.nodeP (SO.leafP tok_to2) SO.traceP)))))
 
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/
