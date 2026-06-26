@@ -2930,7 +2930,6 @@ import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Typology.Coordination
-import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
 import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier
