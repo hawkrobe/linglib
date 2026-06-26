@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Arabic (Egyptian) tense-aspect profile (WALS Chs 65–69)
@@ -11,7 +11,7 @@ namespace Arabic.Egyptian
     (*katab*/*yiktib*); inflectional past (perfective form encodes past);
     no inflectional future (uses preverbal particles); no distinct perfect;
     suffixing. -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Arabic (Egyptian)", iso := "arz", family := "Afro-Asiatic"
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .none, affixPosition := .suffixing }

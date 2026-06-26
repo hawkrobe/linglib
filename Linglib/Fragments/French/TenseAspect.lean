@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # French tense-aspect profile (WALS Chs 65–69)
@@ -11,7 +11,7 @@ namespace French
     distinction; inflectional past (*passé simple*); inflectional future
     (*-ai*, *-as*, *-a*…); 'have'-perfect (*avoir* + past participle);
     suffixing. -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "French", iso := "fra", family := "Indo-European"
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .fromPossessive, affixPosition := .suffixing }

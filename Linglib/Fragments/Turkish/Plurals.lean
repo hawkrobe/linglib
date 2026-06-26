@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Turkish plurality profile (WALS Chs 33–36)
@@ -11,7 +11,7 @@ namespace Turkish
     all nouns (except after numerals); person-number stems in pronouns
     (*ben*/*biz*, *sen*/*siz*); associative plural uses the same `-ler` marker
     (*Ali-ler* 'Ali and associates'). -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Turkish"
   , iso := "tur"
   , coding := .suffix

@@ -37,7 +37,7 @@ round-tripping should use `Aikhenvald2004.EvidentialCoding`.
 
 set_option autoImplicit false
 
-namespace Typology
+namespace Morphology.TenseAspect
 
 -- ============================================================================
 -- WALS Ch 65: Perfective/imperfective aspect
@@ -369,4 +369,4 @@ theorem remoteness_uncommon :
 theorem extreme_remoteness_very_rare :
     walsCh66.markedRemoteness4plus = 2 := by decide
 
-end Typology
+end Morphology.TenseAspect

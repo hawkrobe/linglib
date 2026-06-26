@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Mandarin tense-aspect profile (WALS Chs 65–69, 78)
@@ -11,7 +11,7 @@ namespace Mandarin
     particles (not inflectional); no inflectional past or future; no distinct
     perfect; no tense-aspect inflection (quintessential isolating language);
     no grammatical evidentiality. -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Mandarin Chinese", iso := "cmn", family := "Sino-Tibetan"
   , aspect := .grammatical, past := .none, future := .none
   , perfect := .none, affixPosition := .noInflection

@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Mandarin plurality profile (WALS Chs 33–36)
@@ -10,7 +10,7 @@ namespace Mandarin
 /-- Mandarin Chinese: no morphological plural on common nouns (bare nouns are
     number-neutral); person stem + nominal plural affix `-men` on pronouns
     (*wo* / *wo-men* 'I/we'); associative plural uses the same `-men` marker. -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Mandarin"
   , iso := "cmn"
   , coding := .noPlural

@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # English tense-aspect profile (WALS Chs 65–69, 78)
@@ -11,7 +11,7 @@ namespace English
     vs progressive); inflectional past (*-ed*); no inflectional future
     (uses *will*); 'have'-perfect; suffixing (*-ed*, *-ing*); no grammatical
     evidentiality. -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "English", iso := "eng", family := "Indo-European"
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .fromPossessive, affixPosition := .suffixing

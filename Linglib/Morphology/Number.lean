@@ -1,7 +1,7 @@
 import Linglib.Typology.Pronoun.WALS
 
 /-!
-# Plural-marking typology — substrate types
+# Number: nominal plurality typology (WALS Chs 33-36)
 [wals-2013] (Chs 33-36)
 
 Type-level enums + per-language profile struct for nominal and pronominal
@@ -33,7 +33,7 @@ No Fragment imports.
 
 set_option autoImplicit false
 
-namespace Typology
+namespace Morphology.Number
 
 /-- WALS Ch 33: how plurality is morphologically coded on full nouns.
     Nine values cross morphological strategy with absence-of-marking. -/
@@ -101,9 +101,9 @@ structure PluralityProfile where
   /-- Ch 34: when plural marking occurs. -/
   occurrence : PluralOccurrence
   /-- Ch 35: pronoun plurality type (canonical type in `Typology/Pronoun/WALS.lean`). -/
-  pronounPlurality : Pronoun.Plurality
+  pronounPlurality : _root_.Pronoun.Plurality
   /-- Ch 36: associative plural strategy. -/
   associativePlural : AssociativePlural
   deriving Repr, DecidableEq
 
-end Typology
+end Morphology.Number

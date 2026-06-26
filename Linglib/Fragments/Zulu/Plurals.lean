@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # Zulu plurality profile (WALS Chs 33–36)
@@ -10,7 +10,7 @@ namespace Zulu
 /-- Zulu (Bantu): prefix plural (class prefixes: *umu-ntu*/*aba-ntu*),
     obligatory on all nouns; person-number stems in pronouns; associative
     plural uses the same prefix system (*o-Faku* 'Faku and company'). -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "Zulu"
   , iso := "zul"
   , coding := .prefix

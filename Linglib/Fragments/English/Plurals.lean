@@ -1,4 +1,4 @@
-import Linglib.Typology.Plurals
+import Linglib.Morphology.Number
 
 /-!
 # English plurality profile (WALS Chs 33–36)
@@ -9,7 +9,7 @@ namespace English
 
 /-- English: suffix plural (-s), obligatory on all nouns, person-number
     stems in pronouns, no productive associative plural. -/
-def pluralityProfile : Typology.PluralityProfile :=
+def pluralityProfile : Morphology.Number.PluralityProfile :=
   { language := "English"
   , iso := "eng"
   , coding := .suffix

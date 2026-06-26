@@ -1,4 +1,4 @@
-import Linglib.Typology.TenseAspect
+import Linglib.Morphology.TenseAspect
 
 /-!
 # Quechua tense-aspect profile (WALS Chs 65–69, 78)
@@ -12,7 +12,7 @@ namespace Quechua
     inflectional future (*-saq*); other perfect (*-sqa* resultative);
     suffixing. Evidentiality via verbal suffixes (*-mi* direct, *-si*
     hearsay, *-chá* conjecture). -/
-def tenseAspectProfile : Typology.TAProfile :=
+def tenseAspectProfile : Morphology.TenseAspect.TAProfile :=
   { language := "Quechua", iso := "que", family := "Quechuan"
   , aspect := .none, past := .markedRemoteness2_3, future := .inflectional
   , perfect := .other, affixPosition := .suffixing
