@@ -39,7 +39,7 @@ study can adopt or refute.
 * The bivalent [±feminine, ±neuter] presentation ([sauerland-2003]):
   `Gender.Features`, a `ContainmentPairLike` label scheme for sex-based
   three-gender systems — one edge of the φ-feature iso-web
-  (`Features/PhiKernel.lean`), parallel to `Person.Features` and
+  (`phiKernelEquiv, Studies/Harbour2016.lean`), parallel to `Person.Features` and
   `Number.Features`. Its `no_fourth_gender` is a claim about this scheme,
   not about gender writ large (Fula has 20 controller genders).
 * [hammerly-2019] rejects both interpretability schemes (masculine = bare
@@ -149,7 +149,7 @@ def masculineF : Features := ⟨false, false⟩
 
 /-- The `[±feminine, ±neuter]` decomposition is carrier-equivalent to the
     containment pair: `outer` = feminine, `inner` = neuter — one edge of the
-    φ-feature iso-web (`Features/PhiKernel.lean`). -/
+    φ-feature iso-web (`phiKernelEquiv, Studies/Harbour2016.lean`). -/
 def featuresEquiv : Features ≃ ContainmentPair where
   toFun f := ⟨f.isFeminine, f.isNeuter⟩
   invFun p := ⟨p.outer, p.inner⟩

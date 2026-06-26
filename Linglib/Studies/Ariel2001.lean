@@ -236,41 +236,12 @@ theorem strength_coarsening_agrees :
 -- § 5. Givenness Hierarchy ([gundel-hedberg-zacharski-1993])
 -- ════════════════════════════════════════════════════
 
--- `GivennessStatus` and `GivennessStatus.rank` were promoted to
--- `Features/Givenness.lean` (the substrate layer) so Centering and
--- other substrate-level consumers can import them. The Ariel-specific
--- `toAccessibility` projection below remains here as the
--- study-specific bridge.
-
-end Ariel2001
-
-namespace Features
-
-/-- Prototypical accessibility level for each givenness status —
-    Ariel's GHZ→AccessibilityLevel projection. Lives in `Features`
-    namespace so dot notation `(g : GivennessStatus).toAccessibility`
-    works after the `Features/Givenness.lean` substrate promotion.
-
-    **Caveat**: Gundel et al.'s lower statuses (`referential` =
-    "indefinite this N", `typeIdentifiable` = "a N") correspond to
-    **indefinite** expressions, which do not appear on Ariel's
-    accessibility marking scale (which covers Given/definite
-    referential forms). The mapping for these two is by approximate
-    accessibility degree, not by form identity. [ariel-2001]
-    (p. 63) notes that the Givenness Hierarchy's coverage is
-    "suspiciously compatible with the distribution of just those
-    referring expressions linguists have tended to focus on." -/
-def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
-  | .inFocus              => .unstressedPron
-  | .activated            => .proxDem
-  | .familiar             => .distalDemNP
-  | .uniquelyIdentifiable => .shortDefDescription
-  | .referential          => .longDefDescription
-  | .typeIdentifiable     => .fullNameMod
-
-end Features
-
-namespace Ariel2001
+-- `GivennessStatus`, `GivennessStatus.rank`, and the Ariel-specific
+-- `GivennessStatus.toAccessibility` projection were promoted to the
+-- substrate layer (`Features/Givenness.lean`,
+-- `Features/Accessibility.lean`) so Centering and other substrate
+-- consumers can import them. The theorems below consume the promoted
+-- projection.
 
 open Features.Prominence (DefinitenessLevel)
 open Features
