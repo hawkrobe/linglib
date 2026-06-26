@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Features.Case.Basic
 import Linglib.Fragments.English.Comparison
@@ -78,9 +78,9 @@ set_option autoImplicit false
 
 namespace Stassen1985
 
-open Typology.Comparison
+open Comparative
 open Features (CaseAssignment FixedCaseEncoding)
-open Typology.Comparison (ComparativeEntry)
+open Comparative (ComparativeEntry)
 
 -- ════════════════════════════════════════════════════
 -- § 0. The Stassen 1985 six-way typology
@@ -88,7 +88,7 @@ open Typology.Comparison (ComparativeEntry)
 
 /-- The six comparative construction types of [stassen-1985] Ch 2.
 
-    Finer than the WALS 2013 types (`Typology.Comparison.ComparativeType`):
+    Finer than the WALS 2013 types (`Comparative.ComparativeType`):
     the three adverbial subtypes (separative, allative, locative) are
     collapsed into a single "locational" category in WALS. The six types
     form a hierarchy based on case assignment and syntactic encoding:
@@ -107,9 +107,9 @@ inductive ComparativeType1985 where
   deriving DecidableEq, BEq, Repr
 
 /-- Map [stassen-1985] types to the coarser WALS 2013 types
-    (`Typology.Comparison.ComparativeType`). -/
+    (`Comparative.ComparativeType`). -/
 def ComparativeType1985.toWALS :
-    ComparativeType1985 → Typology.Comparison.ComparativeType
+    ComparativeType1985 → Comparative.ComparativeType
   | .separative => .locational
   | .allative   => .locational
   | .locative   => .locational

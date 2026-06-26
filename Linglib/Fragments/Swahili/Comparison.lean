@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Swahili comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Swahili.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Swahili comparative profile. -/
 def comparison : ComparativeProfile :=

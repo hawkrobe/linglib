@@ -1,4 +1,4 @@
-import Linglib.Typology.Comparison
+import Linglib.Syntax.Comparative
 
 /-!
 # Mandarin comparative profile
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Mandarin.Comparison
 
-open _root_.Typology.Comparison
+open Comparative
 
 /-- Mandarin comparative profile. -/
 def comparison : ComparativeProfile :=
