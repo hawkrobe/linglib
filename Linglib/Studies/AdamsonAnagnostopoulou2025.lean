@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Agreement.GenderResolution
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Features.Gender.Basic
@@ -51,7 +51,7 @@ The derivation follows the Minimalist Y-model:
 
 ## Formalization
 
-Resolution uses `GenderResolution.resolve` — the single compositional
+Resolution uses `resolve` — the single compositional
 endpoint — instantiated with `GenderNode` as the feature type. Each
 prediction is a verified theorem.
 -/
@@ -60,7 +60,107 @@ namespace AdamsonAnagnostopoulou2025
 
 open _root_.Minimalist (Interpretability)
 
-open Minimalist.Agreement.GenderResolution
+-- ============================================================================
+-- § 0: The Resolution Mechanism (percolation + intersection)
+-- ============================================================================
+
+/-! [adamson-anagnostopoulou-2025]'s gender-resolution mechanism: i(nterpretable)
+features percolate from each conjunct to the coordination; the shared i-features (the
+intersection) form its gender, an empty intersection being a language-specific default.
+Parameterized over the feature type, so it applies across language families. (Formerly
+`Syntax/Minimalist/Agreement/GenderResolution.lean` — relocated here as paper-specific
+apparatus; MCB's core models Merge, not φ-agreement.) -/
+
+/-- A gender feature annotated with interpretability ([kramer-2015]: gender on a
+    categorizing head n is interpretable (natural) or uninterpretable (arbitrary); only
+    i-features enter the resolution calculus). -/
+structure AnnotatedFeature (F : Type) where
+  value : F
+  interp : Interpretability
+  deriving DecidableEq, Repr
+
+/-- A conjunct's annotated feature list, ordered outermost (highest nP) to innermost. -/
+abbrev AnnotatedFeatures (F : Type) := List (AnnotatedFeature F)
+
+/-- Percolation: extract the interpretable feature values; u-features are excluded. -/
+def percolateI {F : Type} (fs : AnnotatedFeatures F) : List F :=
+  (fs.filter (·.interp == .interpretable)).map (·.value)
+
+/-- Intersection of two percolated feature lists (order from the first). -/
+def intersectFeatures {F : Type} [BEq F] (xs ys : List F) : List F :=
+  xs.filter (ys.contains ·)
+
+/-- Resolve gender for two conjoined DPs: percolate, intersect, `some` if the
+    intersection is non-empty (matching agreement) else `none` (language-specific
+    default). The compositional endpoint; language-specific resolutions project from it. -/
+def resolve {F : Type} [BEq F]
+    (fs1 fs2 : AnnotatedFeatures F) : Option (List F) :=
+  match intersectFeatures (percolateI fs1) (percolateI fs2) with
+  | [] => none
+  | xs => some xs
+
+/-- When multiple i-features survive (stacked nPs), the language selects which one
+    determines the agreement class ([carstens-2026] §5.1). -/
+inductive SelectionGrammar where
+  /-- The outermost (highest) nP layer wins — the first surviving feature. -/
+  | highestWins
+  /-- The most specific semantic match wins. -/
+  | bestSemanticMatch
+  deriving DecidableEq, Repr
+
+/-- Select the determining feature from a non-empty intersection; `specificity` ranks
+    features (higher = more specific). -/
+def selectFeature {F : Type}
+    (grammar : SelectionGrammar) (specificity : F → Nat)
+    (features : List F) : Option F :=
+  match grammar with
+  | .highestWins => features.head?
+  | .bestSemanticMatch =>
+    features.foldl (init := none) fun acc f =>
+      match acc with
+      | none => some f
+      | some best =>
+        match Nat.blt (specificity best) (specificity f) with
+        | true => some f
+        | false => some best
+
+/-- N-ary resolution: iterated intersection over all conjuncts' percolated features. -/
+def resolveN {F : Type} [BEq F] (bundles : List (AnnotatedFeatures F)) : Option (List F) :=
+  match bundles.map percolateI with
+  | [] => none
+  | first :: rest =>
+    match rest.foldl intersectFeatures first with
+    | [] => none
+    | xs => some xs
+
+/-- N-ary resolution subsumes binary. -/
+theorem resolveN_binary {F : Type} [BEq F] (fs1 fs2 : AnnotatedFeatures F) :
+    resolveN [fs1, fs2] = resolve fs1 fs2 := by
+  simp only [resolveN, resolve, List.map_cons, List.map_nil, List.foldl_cons, List.foldl_nil]
+
+/-- A set of bundles **satisfies MRH** (Mismatch Resolution Hypothesis) if resolution
+    succeeds for every pair — no empty intersection, no default insertion needed
+    ([adamson-anagnostopoulou-2025]: Greek satisfies MRH; Bantu does not). -/
+def satisfiesMRH {F : Type} [BEq F] (bundles : List (AnnotatedFeatures F)) : Bool :=
+  bundles.all fun fs1 =>
+    bundles.all fun fs2 =>
+      (resolve fs1 fs2).isSome
+
+/-- A feature geometry: the nodes and, per node, its full i-feature bundle (itself plus
+    everything it entails). Cross-linguistic variation in resolution follows from
+    differences in geometry ([adamson-anagnostopoulou-2025]). -/
+structure FeatureOrder (F : Type) [BEq F] where
+  nodes : List F
+  bundle : F → AnnotatedFeatures F
+
+/-- `f₁` entails `f₂` iff every i-feature in `f₂`'s bundle is in `f₁`'s. -/
+def FeatureOrder.entails {F : Type} [BEq F]
+    (order : FeatureOrder F) (f₁ f₂ : F) : Bool :=
+  (percolateI (order.bundle f₂)).all ((percolateI (order.bundle f₁)).contains ·)
+
+/-- A feature order satisfies MRH if all its bundles produce non-empty intersections. -/
+def FeatureOrder.satisfiesMRH' {F : Type} [BEq F] (order : FeatureOrder F) : Bool :=
+  satisfiesMRH (order.nodes.map order.bundle)
 
 -- ============================================================================
 -- § 1: Gender Feature Nodes
@@ -167,24 +267,24 @@ def bcsVI (fs : List GenderNode) : Infl :=
 
 /-- Human feminine (*gineka* 'woman'): iFs = {CLASS, MASC, FEM}.
     Conceptual gender — all features interpretable. -/
-private abbrev gkHF : FeatureBundle GenderNode :=
+private abbrev gkHF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- Human masculine (*andras* 'man'): iFs = {CLASS, MASC}. -/
-private abbrev gkHM : FeatureBundle GenderNode :=
+private abbrev gkHM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- Inanimate feminine (*karekla* 'chair'): iCLASS + uMASC, uFEM.
     Only CLASS is interpretable; MASC and FEM are arbitrary. -/
-private abbrev gkIF : FeatureBundle GenderNode :=
+private abbrev gkIF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- Inanimate masculine (*pinakas* 'blackboard'): iCLASS + uMASC. -/
-private abbrev gkIM : FeatureBundle GenderNode :=
+private abbrev gkIM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
 
 /-- Inanimate neuter (*piruni* 'fork'): iCLASS only. -/
-private abbrev gkIN : FeatureBundle GenderNode :=
+private abbrev gkIN : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩]
 
 -- ============================================================================
@@ -246,13 +346,13 @@ theorem gk_no_default_inanim :
 
 /-- *megalofiia* 'genius' referring to a man.
     uF = {CLASS, MASC, FEM} (arbitrary feminine), iF = {CLASS, MASC}. -/
-private abbrev gkFixedFemMale : FeatureBundle GenderNode :=
+private abbrev gkFixedFemMale : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩,
    ⟨cls, .uninterpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- *thima* 'victim' referring to a woman.
     uF = {CLASS} (arbitrary neuter), iF = {CLASS, MASC, FEM}. -/
-private abbrev gkFixedNeutFemale : FeatureBundle GenderNode :=
+private abbrev gkFixedNeutFemale : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩, ⟨cls, .uninterpretable⟩]
 
 /-- (36) *megalofiia* (male referent) + sister → masculine (M♂ + F♀ = M).
@@ -404,24 +504,24 @@ theorem gk_clausal_default : greekVI [] = .neut := by native_decide
 
 /-- Icelandic human feminine: iFs = {CLASS, FEM}.
     No iMASC — FEM is independent of MASC in this geometry. -/
-private abbrev isHF : FeatureBundle GenderNode :=
+private abbrev isHF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- Icelandic human masculine: iFs = {CLASS, MASC}. -/
-private abbrev isHM : FeatureBundle GenderNode :=
+private abbrev isHM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- Icelandic inanimate feminine (*skeið* 'spoon'): iCLASS + uFEM.
     Only CLASS is interpretable; FEM is arbitrary. -/
-private abbrev isIF : FeatureBundle GenderNode :=
+private abbrev isIF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- Icelandic inanimate masculine (*stóll* 'chair'): iCLASS + uMASC. -/
-private abbrev isIM : FeatureBundle GenderNode :=
+private abbrev isIM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
 
 /-- Icelandic inanimate neuter (*epli* 'apple'): iCLASS only. -/
-private abbrev isIN : FeatureBundle GenderNode :=
+private abbrev isIN : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩]
 
 /-- (60) Mismatched humans → {CLASS} → neuter.
@@ -477,28 +577,28 @@ theorem geometry_drives_variation :
     masculine via the Subset Principle. -/
 
 /-- BCS human feminine: iFs = {CLASS, INDIV, MASC, ANIM, FEM}. -/
-private abbrev bcsHF : FeatureBundle GenderNode :=
+private abbrev bcsHF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- BCS human masculine: iFs = {CLASS, INDIV, MASC, ANIM}. -/
-private abbrev bcsHM : FeatureBundle GenderNode :=
+private abbrev bcsHM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩]
 
 /-- BCS inanimate masculine (*pesak* 'sand'): iFs = {CLASS, INDIV, MASC}.
     MASC without ANIM → inanimate interpretation. -/
-private abbrev bcsIM : FeatureBundle GenderNode :=
+private abbrev bcsIM : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- BCS inanimate feminine (*knjiga* 'book'): iFs = {CLASS, INDIV, MASC},
     uFs include ANIM + FEM (arbitrary feminine). -/
-private abbrev bcsIF : FeatureBundle GenderNode :=
+private abbrev bcsIF : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩,
    ⟨anim, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- BCS neuter noun (*mleko* 'milk'): iFs = {CLASS} only.
     Neuter = mass in BCS: no INDIV. This is why neuter nouns cannot
     form count plurals — they lack the individuation feature. -/
-private abbrev bcsN : FeatureBundle GenderNode :=
+private abbrev bcsN : AnnotatedFeatures GenderNode :=
   [⟨cls, .interpretable⟩]
 
 /-- (68) Mismatched humans → {CLASS, INDIV, MASC, ANIM} → masculine.
@@ -629,7 +729,7 @@ theorem no_aba_syncretism :
 
 /-- Greek geometry (17): CLASS > MASC > FEM (linear chain).
     FEM entails MASC entails CLASS. -/
-def greekGeometry : GenderNode → FeatureBundle GenderNode
+def greekGeometry : GenderNode → AnnotatedFeatures GenderNode
   | .fem  => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
   | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
   | .cls  => [⟨cls, .interpretable⟩]
@@ -637,7 +737,7 @@ def greekGeometry : GenderNode → FeatureBundle GenderNode
 
 /-- Icelandic geometry (63): CLASS > {MASC, FEM} (independent siblings).
     Neither FEM nor MASC entails the other. -/
-def icelandicGeometry : GenderNode → FeatureBundle GenderNode
+def icelandicGeometry : GenderNode → AnnotatedFeatures GenderNode
   | .fem  => [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
   | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
   | .cls  => [⟨cls, .interpretable⟩]
@@ -784,7 +884,7 @@ theorem greek_order_cls_not_entails_masc :
     non-empty intersections — no default insertion is ever needed.
 
     We verify this via the `satisfiesMRH` predicate from
-    `GenderResolution`, instantiated with the geometry-derived bundles. -/
+    the §0 resolution mechanism, instantiated with the geometry-derived bundles. -/
 
 /-- Greek satisfies MRH: all pairwise resolutions succeed. -/
 theorem greek_satisfies_mrh :

@@ -20,10 +20,9 @@ language has."
 - `Number.resolveIn` composes the two; `Number.System.resolve` is the
   system-typed entry point.
 
-Consumers: `Syntax/Minimalist/Agreement/CoordinateResolution.lean` wraps
-`resolveIn` as the number `ResolutionOp` of φ-resolution and proves closure
-over [harbour-2014] Table 3; `Studies/Corbett2000.lean` states the book's
-resolution data over its language systems.
+Consumers: `Studies/Carstens2026.lean` calls `resolveIn` as the number dimension of
+its coordinate φ-resolution; `Studies/Corbett2000.lean` states the book's resolution
+data over its language systems.
 -/
 
 set_option autoImplicit false
@@ -83,9 +82,9 @@ theorem resolve_assoc :
 
     The superordinate map is hand-specified: it is *not* monotone in the
     markedness order (`Number.instPartialOrder`), whose direction is
-    implicational (b presupposes a), not referent-containment. Its closure
-    over every [harbour-2014] Table 3 system is verified in
-    `Minimalist.Agreement.CoordinateResolution.resolution_closure_table3`. -/
+    implicational (b presupposes a), not referent-containment. By construction it
+    returns a value in `system` (or the input unchanged), so `resolveIn` is closed
+    over every [harbour-2014] Table 3 system. -/
 def coarsenTo (system : List Number) (c : Number) : Number :=
   if system.contains c then c else
   match c with
