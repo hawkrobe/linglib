@@ -29,10 +29,14 @@ values so as to incorporate the consistency checking over all substructures."
 - `RotaBaxter.rangeMulClosed`: `R a * R b ∈ range R` — the range is closed under multiplication.
 - `RotaBaxter.complement`: for weight `-1`, `1 - R` is again a weight-`-1` Rota–Baxter operator
   (the complementary projection that gives the splitting `A = range R ⊕ range (1 - R)`).
+- `RotaBaxterSemiring ℛ`: the **weight `+1`** operator on a commutative semiring
+  ([marcolli-chomsky-berwick-2025] Def. 3.1.2), for settings where addition is not invertible
+  (tropical, Viterbi, Boolean parsing) — here the divergence term `op (a * b)` cannot be moved
+  across the identity, so weight `+1` and weight `-1` are genuinely distinct.
 
 ## References
 
-[marcolli-chomsky-berwick-2025] (Def. 3.1.1, Prop. 3.1.7)
+[marcolli-chomsky-berwick-2025] (Def. 3.1.1, Def. 3.1.2, Prop. 3.1.7)
 -/
 
 variable (k A : Type*) [CommRing k] [CommRing A] [Algebra k A]
@@ -94,3 +98,44 @@ def complement (R : RotaBaxter k A (-1)) : RotaBaxter k A (-1) where
     linear_combination hR
 
 end RotaBaxter
+
+/-! ### Rota–Baxter operators on semirings -/
+
+section Semiring
+
+variable (ℛ : Type*) [CommSemiring ℛ]
+
+/-- A **Rota–Baxter operator of weight `+1` on a commutative semiring**
+    ([marcolli-chomsky-berwick-2025] Def. 3.1.2): an additive `op : ℛ → ℛ` satisfying
+    `op a * op b = op (a * op b) + op (op a * b) + op (a * b)`. The semiring analogue of
+    `RotaBaxter` (weight `-1`) for settings where addition is not invertible — tropical
+    `(ℝ ∪ {−∞}, max, +)`, Viterbi, and Boolean parsing semirings. Because there is no subtraction,
+    the divergence term `op (a * b)` cannot be moved across the identity, so the weight `+1` and
+    weight `-1` semiring operators are genuinely different operators. -/
+structure RotaBaxterSemiring where
+  /-- The underlying additive operator. -/
+  op : ℛ →+ ℛ
+  /-- The weight-`+1` Rota–Baxter identity. -/
+  rotaBaxter : ∀ a b : ℛ, op a * op b = op (a * op b) + op (op a * b) + op (a * b)
+
+namespace RotaBaxterSemiring
+
+variable {ℛ}
+
+theorem op_mul_op (R : RotaBaxterSemiring ℛ) (a b : ℛ) :
+    R.op a * R.op b = R.op (a * R.op b) + R.op (R.op a * b) + R.op (a * b) := R.rotaBaxter a b
+
+/-- The range of a weight-`+1` Rota–Baxter semiring operator is closed under multiplication:
+    `R a * R b ∈ range R`, since `R a * R b = R (a * R b + R a * b + a * b)`. The semiring analogue
+    of `RotaBaxter.rangeMulClosed` — the algebraic heart of the splitting into "meaningful" and
+    "meaningless" subsemirings. -/
+theorem rangeMulClosed (R : RotaBaxterSemiring ℛ) {a b : ℛ}
+    (ha : a ∈ Set.range R.op) (hb : b ∈ Set.range R.op) :
+    a * b ∈ Set.range R.op := by
+  obtain ⟨x, rfl⟩ := ha
+  obtain ⟨y, rfl⟩ := hb
+  exact ⟨x * R.op y + R.op x * y + x * y, by rw [map_add, map_add]; exact (R.rotaBaxter x y).symm⟩
+
+end RotaBaxterSemiring
+
+end Semiring
