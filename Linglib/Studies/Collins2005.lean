@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Collins2005
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 
@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Movement.InverseVoice
 
 Connects Collins's §3 diagnostic rows (`Data/Examples/Collins2005.json`)
 to the smuggling theory in `Syntax.Minimalist.Movement.Smuggling`
-and the Voice/phase infrastructure in `Syntax.Minimalist.Voice`.
+and the Voice/phase infrastructure in `Syntax.Minimalist.Verbal.Voice`.
 
 ## Collins's central claims
 

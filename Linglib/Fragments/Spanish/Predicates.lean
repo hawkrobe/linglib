@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
 
 /-!
 # Spanish Verb Entries for the Causative Alternation

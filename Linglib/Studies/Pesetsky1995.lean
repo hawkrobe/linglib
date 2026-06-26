@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.Causation.Psych
 import Linglib.Fragments.English.Predicates.Verbal
 

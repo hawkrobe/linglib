@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!

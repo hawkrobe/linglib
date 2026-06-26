@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Typology.Extraction
 import Linglib.Fragments.Mayan.Params
 

@@ -2,7 +2,7 @@ import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.Lexical.VerbSmuggling
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Features

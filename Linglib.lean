@@ -2892,8 +2892,6 @@ import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Amalgamation
-import Linglib.Syntax.Minimalist.Applicative
-import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Defs
@@ -2930,7 +2928,6 @@ import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
 import Linglib.Syntax.Minimalist.Probe.Transmission
 import Linglib.Syntax.Minimalist.RepOrder
-import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Syntax.Minimalist.SyntacticObject
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
@@ -2940,8 +2937,11 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.VerbMovementParameter
-import Linglib.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Applicative
+import Linglib.Syntax.Minimalist.Verbal.Aspect
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
+import Linglib.Syntax.Minimalist.Verbal.SmallClause
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities

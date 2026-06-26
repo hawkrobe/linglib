@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.ProductionDependence
-import Linglib.Syntax.Minimalist.Voice
-import Linglib.Syntax.Minimalist.Applicative
-import Linglib.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Verbal.Voice
+import Linglib.Syntax.Minimalist.Verbal.Applicative
+import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation

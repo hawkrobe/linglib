@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Smuggling [collins-2005]

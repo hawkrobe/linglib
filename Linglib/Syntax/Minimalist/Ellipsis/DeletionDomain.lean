@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Syntax.Anaphora.Basic
 

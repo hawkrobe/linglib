@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.Phase

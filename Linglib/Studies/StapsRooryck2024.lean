@@ -3,7 +3,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Features.Aktionsart
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Staps & Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions

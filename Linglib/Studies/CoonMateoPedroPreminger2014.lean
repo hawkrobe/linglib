@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Fragments.Mayan.Qanjobal.Agreement

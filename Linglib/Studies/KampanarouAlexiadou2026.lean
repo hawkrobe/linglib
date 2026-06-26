@@ -1,8 +1,8 @@
 import Linglib.Features.Possession
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.Allosemy
-import Linglib.Syntax.Minimalist.SmallClause
-import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.Verbal.SmallClause
+import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Fragments.Greek.StandardModern.Possession
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
