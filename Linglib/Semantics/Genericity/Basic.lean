@@ -2,74 +2,56 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Quantification.Counting
 
 /-!
-# Traditional Generic Semantics (GEN Operator)
+# Traditional generic semantics: the GEN operator
 
-[tessler-goodman-2019] [chierchia-1995] [krifka-etal-1995]
+The traditional covert GEN operator posited for generic sentences such as
+"Dogs bark", grounded on the generalized-quantifier substrate in
+`Quantification/Counting.lean`.
 
-This module formalizes the traditional covert GEN operator posited for
-generic sentences like "Dogs bark", "Birds fly", etc.
+## Main definitions
 
-GEN is grounded on the canonical generalized-quantifier substrate in
-`Quantification/Counting.lean`: `traditionalGEN` is `Quantification.everyOn`
-over the situation domain with restriction `normal ∧ restrictor` and nuclear
-scope `scope` (true by construction — see the definition). The prevalence-based alternative is the
-ℚ view `Quantification.prevalenceOn` (`prevalence`), with the threshold
-reading `Quantification.thresholdGtOn` (`thresholdGeneric`).
+* `traditionalGEN`: GEN as a normalcy-restricted universal — `Quantification.everyOn`
+  with restriction `normal ∧ restrictor`.
+* `traditionalGEN_existential`: the equivalent no-counterexample formulation.
+* `prevalence`: the proportion of restrictor-satisfying cases that satisfy scope (ℚ).
+* `thresholdGeneric`: the prevalence-exceeds-threshold reading, on
+  `Quantification.thresholdGtOn`.
 
-## The Traditional Account
+## Main statements
 
-In the standard analysis, generics involve:
-1. A covert quantifier GEN over situations/cases
-2. A restrictor (the kind)
-3. A nuclear scope (the property)
-4. A hidden normalcy parameter
+* `gen_formulations_equiv`: the universal and no-counterexample formulations agree.
 
-Structure: GEN_s [Restrictor(s)] [NuclearScope(s)]
+## Notes
 
-Example: "Dogs bark"
-  → GEN_s [dog(x,s)] [bark(x,s)]
-  → "In normal situations s where there's a dog x, x barks in s"
+The `normal` parameter carries the account's empirical content: it is unobservable,
+context-dependent, and the locus of exception-tolerance — hence also its critics'
+main target ([nickel-2009]). `thresholdGeneric` replaces it with observable
+prevalence (the *absolute* reading of [cohen-1999a]), but per [krifka-2013] this
+eliminates GEN only for **descriptive** generics ("Dogs bark"), not **definitional**
+ones ("A madrigal is polyphonic"), which restrict the interpretation index rather
+than the world index. [chierchia-1995] instead *posits* a generic operator
+(individual-level predicates as inherent generics). [tessler-goodman-2019] keeps a
+threshold but makes it uncertain and pragmatically inferred; see
+`Studies/TesslerGoodman2019.lean` and `Studies/Krifka2013.lean`.
 
-## The Problem with GEN
+## References
 
-The `normal` parameter does all the explanatory work but is (1) not observable
-(covert), (2) context-dependent (varies by property), and (3) essentially
-circular (stipulated to give right results). The threshold-based alternative
-below (`thresholdGeneric`, grounded on `Quantification.thresholdGtOn`)
-eliminates it.
+* [krifka-etal-1995], [chierchia-1995], [cohen-1999a], [nickel-2009], [krifka-2013],
+  [tessler-goodman-2019]
 
-## Descriptive vs Definitional ([krifka-2013])
+## Tags
 
-[krifka-2013] distinguishes **descriptive** generics ("Dogs bark") from
-**definitional** generics ("A madrigal is polyphonic"). Only descriptive
-generics are eliminable via threshold semantics; definitional generics
-restrict the interpretation index, not the world index. See
-`Studies/Krifka2013.lean` for the two-index formalization.
-
-## Comparison with RSA Treatment
-
-[tessler-goodman-2019] and [chierchia-1995] eliminate GEN via threshold semantics:
-- Generic is true iff prevalence exceeds threshold
-- Threshold is uncertain, inferred pragmatically
-- Prior over prevalence varies by property
-
-See `Studies/TesslerGoodman2019.lean` for the RSA account.
-
+genericity, generic, GEN, characterizing sentence, normalcy, prevalence, threshold
 -/
 
 namespace Semantics.Genericity
 
--- Core Types
+/-! ### Core types -/
 
-/-- A situation/case — the entities GEN quantifies over.
-
-    In situation semantics, situations are parts of worlds that can be
-    evaluated for truth of basic propositions. For generics, situations
-    represent "cases" or "occasions" where the kind appears.
-
-    For "Dogs bark", each situation s is a case where there is a dog
-    that either barks or doesn't bark.
--/
+/-- A situation (case) — what GEN quantifies over. In situation semantics a
+situation is a part of a world evaluable for basic propositions; for generics it is
+a "case" where the kind appears (for "Dogs bark", a case with a dog that barks or
+doesn't). Modelled here as an opaque index. -/
 structure Situation where
   /-- Identifier for the situation -/
   id : Nat
@@ -86,45 +68,23 @@ abbrev Scope := Situation → Bool
 /-- A normalcy predicate picks out "normal" or "characteristic" situations -/
 abbrev NormalcyPredicate := Situation → Bool
 
--- The Traditional GEN Operator
+/-! ### The traditional GEN operator -/
 
-/--
-Traditional GEN as a quantifier over situations.
-
-    GEN[restrictor][scope] is true iff
-    in all NORMAL situations where restrictor holds, scope holds.
-
-    This is essentially a restricted universal quantifier:
-      ∀s. (normal(s) ∧ restrictor(s)) → scope(s)
-
-    Equivalently, `Quantification.everyOn situations.toFinset
-    (λ s => normal s && restrictor s) scope`, where the restriction is the
-    conjunction of normalcy and restrictor — the canonical relativized
-    restricted universal.
-
-    The key parameters:
-    - `situations`: the domain of quantification (possible cases)
-    - `normal`: which situations count as "normal" (the hidden parameter!)
-    - `restrictor`: the kind property (e.g., "is a dog in s")
-    - `scope`: the predicated property (e.g., "barks in s")
-
-    The `normal` parameter is where all the
-    context-sensitivity and exception-tolerance is hidden.
--/
+/-- Traditional GEN as a normalcy-restricted universal over situations:
+`GEN[restrictor][scope]` holds iff `scope` holds in every *normal* situation
+satisfying `restrictor`, i.e. `∀ s, normal s ∧ restrictor s → scope s`. The hidden
+`normal` parameter is where context-sensitivity and exception-tolerance live. -/
 @[reducible] def traditionalGEN
     (situations : List Situation)
-    (normal : NormalcyPredicate)      -- THE HIDDEN PARAMETER
+    (normal : NormalcyPredicate)
     (restrictor : Restrictor)
     (scope : Scope)
     : Prop :=
   Quantification.everyOn situations.toFinset
     (fun s => (normal s && restrictor s) = true) (fun s => scope s = true)
 
-/--
-Alternative formulation: existential test for counterexamples.
-
-GEN is true iff there's no normal restrictor-situation that fails the scope.
--/
+/-- Existential formulation of `traditionalGEN`: there is no normal
+restrictor-situation that fails `scope`. -/
 def traditionalGEN_existential
     (situations : List Situation)
     (normal : NormalcyPredicate)
@@ -134,8 +94,8 @@ def traditionalGEN_existential
   ¬ Quantification.someOn situations.toFinset
       (fun s => (normal s && restrictor s) = true) (fun s => scope s ≠ true)
 
-/-- The two formulations are equivalent: the relativized restricted universal
-    is exactly the absence of a (normal restrictor) counterexample to scope. -/
+/-- The two formulations agree: the normalcy-restricted universal is exactly the
+absence of a normal restrictor-counterexample to `scope`. -/
 theorem gen_formulations_equiv
     (situations : List Situation)
     (normal : NormalcyPredicate)
@@ -147,16 +107,12 @@ theorem gen_formulations_equiv
   push_neg
   rfl
 
--- Prevalence-Based Alternative
+/-! ### Prevalence-based alternative -/
 
-/--
-Prevalence: the proportion of restrictor-satisfying cases where scope holds.
-
-Polymorphic over the domain type — works for situation-based models
-([cohen-1999a], [tessler-goodman-2019]) and entity-based models
-([nickel-2009]) alike. The genericity-named view of the canonical
-`Quantification.prevalenceOn` (the ℚ analogue of `Rel.edgeDensity`).
--/
+/-- The proportion of restrictor-satisfying cases of `domain` that satisfy `scope`
+(ℚ). The genericity-named view of `Quantification.prevalenceOn` (the ℚ analogue of
+`Rel.edgeDensity`); polymorphic over the domain, so it serves situation-based
+([cohen-1999a], [tessler-goodman-2019]) and entity-based ([nickel-2009]) models. -/
 def prevalence {D : Type} [DecidableEq D]
     (domain : List D)
     (restrictor : D → Bool)
@@ -165,14 +121,12 @@ def prevalence {D : Type} [DecidableEq D]
   Quantification.prevalenceOn domain.toFinset
     (fun d => restrictor d = true) (fun d => scope d = true)
 
-/--
-Threshold-based generic (a la [tessler-goodman-2019]).
-
-The generic is true iff prevalence exceeds the threshold `num/denom`.
-This replaces the hidden "normalcy" with observable prevalence. The canonical
-cross-multiplied `Quantification.thresholdGtOn` (division-free `Nat`
-comparison) so the truth value is kernel-`decide`-able.
--/
+/-- Threshold generic: holds iff prevalence exceeds the fixed threshold `num/denom`
+— the *absolute* reading of [cohen-1999a], replacing the hidden `normal` with
+observable prevalence. Uses the cross-multiplied `Quantification.thresholdGtOn`
+(division-free `Nat` comparison), so the truth value is kernel-`decide`-able.
+[tessler-goodman-2019] instead makes the threshold uncertain and pragmatically
+inferred (see `Studies/TesslerGoodman2019.lean`). -/
 @[reducible] def thresholdGeneric {D : Type} [DecidableEq D]
     (domain : List D)
     (restrictor : D → Bool)
@@ -182,16 +136,7 @@ comparison) so the truth value is kernel-`decide`-able.
   Quantification.thresholdGtOn domain.toFinset
     (fun d => restrictor d = true) (fun d => scope d = true) num denom
 
-/-!
-GEN is eliminable via threshold semantics — but only for **descriptive** generics
-([krifka-2013]). Definitional generics ("A madrigal is polyphonic") restrict
-the interpretation index, not the world index, and cannot be reduced to a
-prevalence threshold. See `Studies/TesslerGoodman2019.lean` for the RSA
-account that makes the threshold uncertain and pragmatically inferred, and
-`Studies/Krifka2013.lean` for the descriptive/definitional split.
--/
-
--- Example: Dogs Bark
+/-! ### Example: dogs bark -/
 
 /-- Example situations for "Dogs bark" -/
 def dogSituations : List Situation := [
@@ -215,13 +160,12 @@ def dogBarks : Scope := λ s =>
 def normalDogSituation : NormalcyPredicate := λ s =>
   s.id != 2  -- Sleeping is not "normal" for purposes of barking
 
-/-- "Dogs bark" is true on the traditional (normalcy-restricted universal)
-    reading: every normal dog-situation has the dog barking. -/
+/-- "Dogs bark" holds on the traditional (normalcy-restricted) reading: every normal
+dog-situation has the dog barking. -/
 example : traditionalGEN dogSituations normalDogSituation isDogSituation dogBarks := by decide
 
-/-- Prevalence of barking among the (all-dog) situations is 4/5: four of the
-    five dogs bark. Routed through the count form (ℚ division is not
-    kernel-`decide`-able). -/
+/-- Prevalence of barking among the (all-dog) situations is `4/5`. Routed through the
+count form (ℚ division is not kernel-`decide`-able). -/
 theorem dogBarks_prevalence :
     prevalence dogSituations isDogSituation dogBarks = 4/5 := by
   have hR : Quantification.countOn dogSituations.toFinset
@@ -231,16 +175,8 @@ theorem dogBarks_prevalence :
   unfold prevalence Quantification.prevalenceOn
   rw [hR, hRS]; norm_num
 
-/-- On the threshold reading the generic holds at θ = 1/2: prevalence 4/5
-    exceeds one half. Kernel-`decide`-able via the cross-multiplied count form. -/
+/-- On the threshold reading the generic holds at θ = 1/2: prevalence `4/5` exceeds
+one half, kernel-`decide`-able via the cross-multiplied count form. -/
 example : thresholdGeneric dogSituations isDogSituation dogBarks 1 2 := by decide
-
-/-!
-## Related Theory
-
-- `Semantics/Lexical/Noun/Kind/NMP.lean` - Kind reference, bare plurals, DKP
-- `Studies/TesslerGoodman2019.lean` - RSA treatment of generics
-
--/
 
 end Semantics.Genericity
