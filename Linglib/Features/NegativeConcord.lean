@@ -30,7 +30,7 @@ namespace Features.NegativeConcord
     NPI licensed by a null negation); this enum records only the distributional class,
     which [van-der-auwera-van-alsenoy-2016] take as the basis of the NC typology.
     Lets a strict-NC n-word (Russian никто, Italian *nessuno*) be classified honestly
-    rather than borrowing a strong-NPI slot in `Typology.PolarityItem`. -/
+    rather than borrowing a strong-NPI slot in `Semantics.Polarity`. -/
 inductive NWordStatus where
   /-- N-word: occurs in negative-concord structures (Romance *nessuno*, Slavic никто,
       Greek *típota*, Hungarian *semmi*); licenses a negative fragment answer ("Nothing.")

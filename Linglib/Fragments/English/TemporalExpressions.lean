@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Tense.TemporalAdverbials
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.FunctionWords
 
 /-!
@@ -34,7 +34,7 @@ namespace English.TemporalExpressions
 
 open Features
 open Tense.TemporalAdverbials (AdverbialType)
-open Typology.PolarityItem (PolarityType)
+open Semantics.Polarity (PolarityType)
 
 -- ============================================================================
 -- § 1: Shared Types

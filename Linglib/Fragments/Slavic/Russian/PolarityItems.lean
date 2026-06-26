@@ -1,11 +1,11 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Russian Polarity-Sensitive Items
 [haspelmath-1997] [zeijlstra-2004] [giannakidou-1998]
 
 Russian indefinite-pronoun polarity items, typed by the theory-neutral
-categories from `Typology.PolarityItem`. The classification follows
+categories from `Semantics.Polarity`. The classification follows
 [haspelmath-1997]'s implicational map for the Russian series: the
 *-либо* series spans the weak-NPI functions (irrealis non-specific,
 question, conditional, comparative, indirect negation), while the *ни-*
@@ -27,7 +27,7 @@ Czech sibling fragment makes for its cognate *ni-* series.
 
 namespace Russian.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 /-! ### Weak NPI (the *-либо* series) -/
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Fragments.English.Toy
@@ -15,7 +15,7 @@ NPI licensing to downward entailingness (DE). The core claim:
 
 This file bridges the GQ monotonicity proofs from `Quantification` and
 `Quantification.Quantifier` to the NPI licensing classification
-indexed by `Typology.PolarityItem.LicensingContext`, making the DE ↔ NPI
+indexed by `Semantics.Polarity.LicensingContext`, making the DE ↔ NPI
 connection formally explicit.
 
 ## Key connections
@@ -32,7 +32,7 @@ connection formally explicit.
 namespace Ladusaw1979
 
 open Quantification
-open Typology.PolarityItem (LicensingContext)
+open Semantics.Polarity (LicensingContext)
 open Intensional
 open Semantics.Montague (ToyEntity)
 

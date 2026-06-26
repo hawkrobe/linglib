@@ -69,7 +69,7 @@ open Pragmatics.Bias
    noContradictionProfile questionedProfile matrixNegatedProfile
    preciseProfile imperativeProfile)
 open Italian.PolarityItems (pur affatto neanche)
-open Typology.PolarityItem (LicensingContext PolarityItemEntry)
+open Semantics.Polarity (LicensingContext PolarityItemEntry)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Dario/Paolo dialogue paradigm (§2)

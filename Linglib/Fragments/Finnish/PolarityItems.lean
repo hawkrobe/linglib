@@ -1,11 +1,11 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Finnish Polarity-Sensitive Items
 [haspelmath-1997], [karlsson-2017]
 
 Finnish indefinite pronoun polarity items, typed by the categories from
-`Typology.PolarityItem`.
+`Semantics.Polarity`.
 
 Unlike Russian *nikto*, Italian *nessuno*, German *niemand*, or Hungarian
 *senki* — all single-word negative quantifiers ("n-words") that have their own
@@ -23,7 +23,7 @@ combination, not a single lexical entry.
 
 namespace Finnish.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 -- ============================================================================
 -- NPI

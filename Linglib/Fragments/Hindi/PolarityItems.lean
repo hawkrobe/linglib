@@ -1,11 +1,11 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Hindi Polarity-Sensitive Items
 [haspelmath-1997]
 
 Hindi indefinite pronoun polarity items, typed by the categories from
-`Typology.PolarityItem`.
+`Semantics.Polarity`.
 
 Hindi builds polarity items from the general indefinite *koii* + particles:
 - **koii nahiiN**: koii + negation → NPI (nobody)
@@ -14,7 +14,7 @@ Hindi builds polarity items from the general indefinite *koii* + particles:
 
 namespace Hindi.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 -- ============================================================================
 -- NPI
