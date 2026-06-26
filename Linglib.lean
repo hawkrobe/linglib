@@ -2968,4 +2968,3 @@ import Linglib.Typology.Question
 import Linglib.Typology.Reference
 import Linglib.Typology.TemporalConnectives
 import Linglib.Typology.TenseAspect
-import Linglib.Typology.Universal
