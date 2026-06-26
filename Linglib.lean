@@ -2877,6 +2877,7 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 import Linglib.Syntax.Pronoun.Indefinite
+import Linglib.Syntax.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Pronoun.Logophoric
 import Linglib.Syntax.Question
 import Linglib.Syntax.RelativeClause.Basic
@@ -2901,7 +2902,7 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Indefinite
+
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
 
