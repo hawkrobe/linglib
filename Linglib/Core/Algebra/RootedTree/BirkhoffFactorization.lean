@@ -67,6 +67,21 @@ noncomputable def birkhoffMinusMonoidHom :
 noncomputable def birkhoffMinus : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ :=
   AddMonoidAlgebra.lift R ℛ (Forest (Nonplanar α)) (birkhoffMinusMonoidHom φ RB)
 
+/-- `φ₋` on a forest basis element is the product of `φ₋` over its trees. Mirrors
+    `antipodeAlgHomN_apply_of'`. -/
+@[simp] theorem birkhoffMinus_apply_of' (F : Forest (Nonplanar α)) :
+    birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod := by
+  show AddMonoidAlgebra.lift R _ _ (birkhoffMinusMonoidHom φ RB) (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+/-- `φ₋` on a single tree generator agrees with `birkhoffMinusTree`. Mirrors
+    `antipodeAlgHomN_apply_ofTree`. -/
+@[simp] theorem birkhoffMinus_apply_ofTree (T : Nonplanar α) :
+    birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T := by
+  unfold ofTree
+  rw [birkhoffMinus_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
+
 /-! ### The Bogolyubov preparation and the renormalized part -/
 
 /-- **The Bogolyubov preparation `φ̃`** ([marcolli-chomsky-berwick-2025] Rem. 3.1.8):
@@ -75,6 +90,27 @@ noncomputable def birkhoffMinus : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ :
 noncomputable def birkhoffPrepTree (T : Nonplanar α) : ℛ :=
   ((cutSummandsN T).attach.map (fun ⟨pf, _⟩ =>
       (pf.1.attach.map (fun ⟨T_i, _⟩ => birkhoffMinusTree φ RB T_i)).prod * φ (ofTree pf.2))).sum
+
+/-- The Bogolyubov preparation in non-`attach`-decorated form: the `attach` def keeps the
+    membership info for well-foundedness, this strips it for downstream proofs. Mirrors
+    `antipodeTreeN_unfold`. -/
+theorem birkhoffPrepTree_unfold (T : Nonplanar α) :
+    birkhoffPrepTree φ RB T = ((cutSummandsN T).map
+      (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))).sum := by
+  rw [birkhoffPrepTree]
+  rw [show (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
+            (pf.val.1.attach.map (fun (T_i : { x // x ∈ pf.val.1 }) =>
+              birkhoffMinusTree φ RB T_i.val)).prod * φ (ofTree pf.val.2)) =
+          (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
+            (pf.val.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree pf.val.2)) from by
+    refine Multiset.map_congr rfl (fun ⟨pf, _⟩ _ => ?_)
+    show (pf.1.attach.map (fun T_i => birkhoffMinusTree φ RB T_i.val)).prod * _ =
+         (pf.1.map (birkhoffMinusTree φ RB)).prod * _
+    congr 1
+    exact congrArg Multiset.prod (Multiset.attach_map_val' _ _)]
+  exact congrArg Multiset.sum (@Multiset.attach_map_val'
+    (Forest (Nonplanar α) × Nonplanar α) _ (cutSummandsN T)
+    (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)))
 
 /-- `φ₋(T) = −R(φ̃(T))`: the negative part is `−R` applied to the Bogolyubov preparation. -/
 theorem birkhoffMinusTree_eq_neg_op_prep (T : Nonplanar α) :
@@ -98,17 +134,21 @@ theorem birkhoffPlusTree_eq_prep_add_minus (T : Nonplanar α) :
     `mul' ∘ (φ₋ ⊗ φ) ∘ comul` (`LinearMap.convMul_apply`) — recovers the renormalized part `φ₊`.
     Needs `φ` unital (`φ 1 = 1`), as characters are.
 
-    Proof route (verified): `comul` on `ConnesKreimer (Nonplanar α)` is defeq the cut coproduct
-    `comulAlgHomN`, so `comul (ofTree T) = ofTree T ⊗ 1 + Σ_{(cf,rem) ∈ cutSummandsN T} of' cf ⊗
-    ofTree rem`. Pushing `mul' ∘ map φ₋ φ` through that sum gives `φ₋(ofTree T)·φ(1) + Σ φ₋(of' cf)
-    ·φ(ofTree rem) = birkhoffMinusTree T + birkhoffPrepTree T`, which is `birkhoffPlusTree T` by
-    `birkhoffPlusTree_eq_prep_add_minus`. TODO: thread `LinearMap.map_sum` / `TensorProduct.map_tmul`
-    / `LinearMap.mul'_apply` through the `Multiset.sum`, plus `birkhoffMinus`-on-`ofTree`/`of'`
-    (multiplicativity of the `AddMonoidAlgebra.lift`). -/
+    Proof route: `comulAlgHomN (ofTree T) = comulTreeN T = ofTree T ⊗ 1 + Σ_{(cf,rem) ∈
+    cutSummandsN T} of' cf ⊗ ofTree rem`. Pushing `mul' ∘ map φ₋ φ` through that sum (via
+    `map_multiset_sum` / `TensorProduct.map_tmul` / `LinearMap.mul'_apply`, with `birkhoffMinus`
+    on `ofTree`/`of'` from the `AddMonoidAlgebra.lift`) gives `φ₋(ofTree T)·φ(1) + Σ φ₋(of' cf)·
+    φ(ofTree rem) = birkhoffMinusTree T + birkhoffPrepTree T`, which is `birkhoffPlusTree T` by
+    `birkhoffPlusTree_eq_prep_add_minus`. -/
 theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : Nonplanar α) :
     LinearMap.mul' R ℛ
         ((TensorProduct.map (birkhoffMinus φ RB).toLinearMap φ) (comulAlgHomN (ofTree T)))
       = birkhoffPlusTree φ RB T := by
-  sorry
+  rw [comulAlgHomN_apply_ofTree, comulTreeN]
+  simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
+    TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
+    birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]
+  rw [← birkhoffPrepTree_unfold, birkhoffPlusTree_eq_prep_add_minus]
+  exact add_comm _ _
 
 end RootedTree.ConnesKreimer
