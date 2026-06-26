@@ -1,4 +1,4 @@
-import Linglib.Semantics.Genericity.GenericsDynamic
+import Linglib.Semantics.Genericity.Dynamic
 
 /-!
 # [kirkpatrick-2024]: The Dynamics of Generics
@@ -41,7 +41,7 @@ makes exceptional individuals salient before the general claim is assessed.
 
 namespace Kirkpatrick2024
 
-open Semantics.Genericity.GenericsDynamic
+open Semantics.Genericity.Dynamic
 
 
 -- ═══ Toy Model: Ravens ═══
@@ -320,7 +320,7 @@ theorem mixed_consistent_structural :
 arises: the subset relation between restrictors (albino raven ⊆ raven)
 creates asymmetric blocking in horizon evolution. The abstract
 impossibility theorem (`commutative_implies_equal_verdicts` in
-`Generics.lean`) then rules out ANY commutative framework — including
+`Genericity/Basic.lean`) then rules out ANY commutative framework — including
 [veltman-1996]'s `normallyUpdate` — from modeling this asymmetry.
 
 [veltman-1996]'s `normallyUpdate` is commutative
@@ -407,7 +407,7 @@ is commutative. If both generics are independently true, both orders
 yield `true ∧ true = true`.
 
 This is a special case of `commutative_implies_equal_verdicts` from
-`Generics.lean`: any evaluation where each generic's truth value is
+`Genericity/Basic.lean`: any evaluation where each generic's truth value is
 determined independently of discourse position is trivially commutative. -/
 
 /-- Any state-independent evaluation assigns the same conjunction

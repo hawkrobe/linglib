@@ -15,7 +15,7 @@ The *semantics* these wrap is the canonical generalized-quantifier substrate
 in `Quantification/Counting.lean` (`everyOn`, `mostOn`, `thresholdOn`,
 `prevalenceOn`, …). GEN's threshold reading is `genThreshold`, whose
 denotation is `Quantification.thresholdOn` over the atom domain; the
-universal reading is `Generics.traditionalGEN`, grounded on
+universal reading is `Genericity.traditionalGEN`, grounded on
 `Quantification.everyOn`. Earlier versions of this file re-implemented those
 quantifiers in an inferior `Bool`/`List`/ℚ representation
 (`covertQ`/`measure`/`thresholdQ`); those clones are retired in favour of the
@@ -46,7 +46,7 @@ open Semantics.Montague (LexEntry Lexicon)
 
     `generally` encodes the truth conditions — different theories
     instantiate it differently (threshold, normalcy, probabilistic).
-    `traditionalGEN` (in `Generics.lean`, grounded on
+    `traditionalGEN` (in `Genericity/Basic.lean`, grounded on
     `Quantification.everyOn`) and `Quantification.thresholdOn` are specific
     instantiations. -/
 def gen (E W : Type)

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Genericity
 
@@ -53,7 +53,7 @@ namespace BonehDoron2013
 open Intensional (WorldTimeIndex)
 
 open Quantification
-open Semantics.Genericity.Generics (Situation traditionalGEN)
+open Semantics.Genericity (Situation traditionalGEN)
 open Semantics.Aspect (ViewpointAspectB)
 
 -- ═══ Operator Distinction ═══

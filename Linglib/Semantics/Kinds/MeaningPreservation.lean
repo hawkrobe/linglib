@@ -733,7 +733,7 @@ theorem meaning_preservation_derives_kind_preference :
 ## Related Theory
 
 - `Semantics/Lexical/Noun/Kind/NMP.lean` - Chierchia's NMP, ∩/∪ operators, DKP
-- `Semantics/Lexical/Noun/Kind/Generics.lean` - GEN operator for generic readings
+- `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
 
 -/
 

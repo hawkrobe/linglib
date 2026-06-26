@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Normality
-import Linglib.Semantics.Genericity.Generics
 import Linglib.Core.Logic.TweetyNixon
 
 /-!
@@ -35,7 +34,7 @@ fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
    per-individual normality is a normality ordering *per entity and
    restrictor class*.
 
-2. **`traditionalGEN`** (`Lexical/Noun/Kind/Generics.lean`): GEN's `normal`
+2. **`traditionalGEN`** (`Semantics/Genericity/Basic.lean`): GEN's `normal`
    parameter is the Bool-level projection of a normality ordering.
 
 3. **`TweetyNixon`** (`Core/Logic/TweetyNixon.lean`):

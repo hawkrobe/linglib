@@ -639,7 +639,7 @@ Beta mixtures that capture the qualitative predictions:
 
 The paper reports a model fit of r²(93) = 0.894 on habitual endorsement data.
 
-See also: `Generics.thresholdGeneric` (grounded on the canonical
+See also: `Genericity.thresholdGeneric` (grounded on the canonical
 `Quantification.thresholdGtOn`) for the threshold reading of GEN, completing
 the pipeline:
 GEN → threshold → uncertain threshold → RSA endorsement.
@@ -899,7 +899,7 @@ This unification is structural (by construction), not proven post hoc.
 The integration pipeline is:
 
 1. **Traditional operator** (GEN/HAB) reduces to threshold semantics
-   (`Generics.thresholdGeneric`, on `Quantification.thresholdGtOn`)
+   (`Genericity.thresholdGeneric`, on `Quantification.thresholdGtOn`)
 2. **Threshold semantics** with uncertain threshold → marginalized L0
 3. **RSA endorsement** (`mkGenericCfg`) decides between generic and silence
 4. **Endorsement ≈ cue validity** (`endorsed_iff_cue_validity_gt_one`)

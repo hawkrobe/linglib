@@ -1,4 +1,3 @@
-import Linglib.Semantics.Genericity.Generics
 import Linglib.Features.Genericity
 
 /-!
@@ -139,7 +138,7 @@ theorem def_restricts_interps (cg : CommonGround) (φ : Denotation) :
     it cannot capture definitional generics that change truth value through DEF.
 
     Since traditional GEN (a descriptive operator) has a threshold reading
-    (`Generics.thresholdGeneric`, grounded on `Quantification.thresholdGtOn`),
+    (`Genericity.thresholdGeneric`, grounded on `Quantification.thresholdGtOn`),
     this theorem shows definitional generics escape that reduction entirely. -/
 theorem def_invariant_world_measure {α : Type} (cg : CommonGround) (φ : Denotation)
     (f : List World → α) :

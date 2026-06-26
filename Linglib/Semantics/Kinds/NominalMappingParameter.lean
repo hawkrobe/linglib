@@ -551,7 +551,7 @@ example : downDefinedFor .mass false = true := rfl
 
 - `Semantics/Lexical/Noun/Kind/Krifka2004.lean` - Alternative: Bare NPs as properties
 - `Semantics/Lexical/Noun/Kind/MeaningPreservation.lean` - Meaning Preservation, singular kinds
-- `Semantics/Lexical/Noun/Kind/Generics.lean` - GEN operator for generic readings
+- `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
 
 ## Empirical Data
 
