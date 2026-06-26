@@ -1,21 +1,21 @@
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Turkish relativization profile
 
-Typological-summary `RelativeClause.Profile` for Turkish (ISO `tur`).
+Typological-summary relativization fields for Turkish (ISO `tur`), as a
+`Turkish.Relativization` namespace of bare `RelativeClause.*` defs.
 -/
 
 namespace Turkish
 
-/-- Turkish relativization: gap throughout; participial suffixes *-en*
-    (SU) and *-dik* (non-SU); pre-nominal RC. -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .gap
-  , rcPosition := .preNominal
-  , lowestRelativizable := .oblique
-  , notes := "Gap strategy; participial suffixes -en (SU), -dik (non-SU); "
-          ++ "pre-nominal RC" }
+/-! Turkish relativization: gap throughout; participial suffixes *-en*
+(SU) and *-dik* (non-SU); pre-nominal RC. -/
+namespace Relativization
+def subjStrategy : RelativeClause.SubjStrategy := .gap
+def oblStrategy : RelativeClause.OblStrategy := .gap
+def rcPosition : RelativeClause.RCPosition := .preNominal
+def lowestRelativizable : RelativeClause.AHPosition := .oblique
+end Relativization
 
 end Turkish

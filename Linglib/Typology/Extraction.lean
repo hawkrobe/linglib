@@ -125,10 +125,7 @@ inductive Extractee where
 
 /-- A language's extraction morphology profile: what strategy it uses,
     which positions are marked, and whether the marking distinguishes
-    between different extracted positions.
-
-    Follows the `RelativeClause.Profile` pattern from
-    `Typology/RelativeClause/WALS.lean`. -/
+    between different extracted positions. -/
 structure ExtractionProfile where
   /-- Language name -/
   language : String

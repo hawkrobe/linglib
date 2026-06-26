@@ -1,4 +1,4 @@
-import Linglib.Typology.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.Basic
 
 /-!
 # Cinque (2020): a unified double-Headed analysis of relative clauses

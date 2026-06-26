@@ -1,5 +1,5 @@
-import Linglib.Typology.RelativeClause.Basic
-import Linglib.Typology.RelativeClause.WALS
+import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Toba Batak Relativization Fragment
@@ -45,16 +45,16 @@ def relResumptive : Marker :=
 /-- All Toba Batak relative clause markers. -/
 def relMarkers : List Marker := [relGap, relResumptive]
 
-/-- Toba Batak relativization profile (typological summary). The
-    `subjStrategy = .gap` + `oblStrategy = .pronounRetention` pair is
-    K&C's canonical "DO-gap-with-resumptive-elsewhere" datapoint; DO is
-    a genuine gap in AH coverage (neither strategy can relativize it). -/
-def relativization : RelativeClause.Profile :=
-  { subjStrategy := .gap
-  , oblStrategy := .pronounRetention
-  , rcPosition := .postNominal
-  , lowestRelativizable := .genitive
-  , notes := "Gap on subject; resumptive on IO/OBL/GEN; "
-          ++ "DO genuinely cannot be relativized; [keenan-comrie-1977] §1.3.2" }
+/-! Toba Batak relativization profile (typological summary). The
+`subjStrategy = .gap` + `oblStrategy = .pronounRetention` pair is
+K&C's canonical "DO-gap-with-resumptive-elsewhere" datapoint; gap on
+subject, resumptive on IO/OBL/GEN, and DO genuinely cannot be
+relativized (a genuine gap in AH coverage). [keenan-comrie-1977] §1.3.2. -/
+namespace Relativization
+def subjStrategy : SubjStrategy := .gap
+def oblStrategy : OblStrategy := .pronounRetention
+def rcPosition : RCPosition := .postNominal
+def lowestRelativizable : AHPosition := .genitive
+end Relativization
 
 end TobaBatak
