@@ -1,6 +1,4 @@
-import Linglib.Typology.Alignment
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Alignment
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Dargwa.Case
@@ -35,7 +33,7 @@ This study file holds:
    `marksAgent`/`marksPatient` projections agree with the case-assignment
    functions on canonical S/A/P inputs.
 
-WALS aggregate distribution theorems live in `Linglib/Typology/Alignment.lean`.
+WALS aggregate distribution theorems are kept with the WALS data, not here.
 Per-language Fragment-vs-WALS data-equality theorems are deliberately absent
 — see `feedback_no_per_lang_wals_grounding_in_studies` for the rationale.
 -/
@@ -44,8 +42,7 @@ set_option autoImplicit false
 
 namespace Dixon1994
 
-open Typology.Alignment
-open Alignment (DitransitiveAlignment DitransitiveProfile)
+open Alignment
 
 -- ============================================================================
 -- §0. AlignmentProfile: the bundled per-language record (with its data here)
@@ -53,8 +50,8 @@ open Alignment (DitransitiveAlignment DitransitiveProfile)
 
 /-- A language's morphosyntactic alignment across the three case/agreement
     domains (WALS Chs 98/99/100). The bundled per-language record for the
-    exemplar sample below; lives here with its data and analysis (relocated from
-    the former `Typology/Alignment.lean` drawer — its only consumers are this
+    exemplar sample below; lives here with its data and analysis (relocated out
+    of the dissolved `Typology/Alignment.lean` — its only consumers are this
     file and `Comrie1989`, which imports it). -/
 structure AlignmentProfile where
   /-- Language name. -/
@@ -527,7 +524,7 @@ theorem silverstein_predicts_dixon :
 
 /-- [dixon-1972] Dyirbal split: human/animate → accusative,
     inanimate → ergative. -/
-def dyirbalSplit : Typology.Alignment.SplitErgativity AnimacyLevel :=
+def dyirbalSplit : Alignment.SplitErgativity AnimacyLevel :=
   { ergCondition := fun a => a == .inanimate }
 
 theorem dyirbal_human_acc :
@@ -637,15 +634,15 @@ theorem japanese_fragment_bridge :
 /-- Hindi: Fragment split-ergative system perfective → ERG matches
     Typology's ergative NP alignment. -/
 theorem hindi_fragment_bridge :
-    Typology.Alignment.hindiSplit.alignment .perfective = .ergative ∧
-    toAlignmentType (Typology.Alignment.hindiSplit.alignment .perfective)
+    Alignment.hindiSplit.alignment .perfective = .ergative ∧
+    toAlignmentType (Alignment.hindiSplit.alignment .perfective)
       = hindiUrdu.npAlignment := ⟨rfl, rfl⟩
 
 /-- Hindi: Fragment imperfective → ACC matches Typology's accusative
     pronoun alignment. -/
 theorem hindi_split_bridge :
-    Typology.Alignment.hindiSplit.alignment .imperfective = .accusative ∧
-    toAlignmentType (Typology.Alignment.hindiSplit.alignment .imperfective)
+    Alignment.hindiSplit.alignment .imperfective = .accusative ∧
+    toAlignmentType (Alignment.hindiSplit.alignment .imperfective)
       = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
 
 -- ============================================================================

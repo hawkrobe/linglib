@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Western Armenian noun-categorization system
@@ -25,7 +25,7 @@ namespace Armenian
 /-- Western Armenian noun-categorization system: non-obligatory per
     [bale-khanjian-2014] eq. 10. Empty inventory; plurals are
     incompatible with classifiers. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Indo-European"
   , classifierType := .numeralClassifier  -- Aikhenvald misfit, see docstring
   , scopes := [.numeralNP]

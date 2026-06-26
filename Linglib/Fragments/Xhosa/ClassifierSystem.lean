@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Xhosa noun-categorization system
@@ -12,7 +12,7 @@ namespace Xhosa
 
 /-- Xhosa Bantu noun-class system: 11-class inventory, prefix
     realization, agreement-rich. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Bantu"
   , classifierType := .nounClass
   , scopes := [.headModifierNP, .predicateArgument]

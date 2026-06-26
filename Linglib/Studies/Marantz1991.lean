@@ -293,7 +293,7 @@ open Georgian.Agreement
 -- ============================================================================
 
 /-- Map alignment family to dependent case language type.
-    Bridges the typological description (`Typology.Alignment.SplitErgativity`) to
+    Bridges the typological description (`Alignment.SplitErgativity`) to
     the case algorithm (`DependentCase`). -/
 def alignmentToLangType : Features.AlignmentFamily → CaseLanguageType
   | .accusative => .accusative
@@ -492,8 +492,8 @@ theorem anticausative_one_np : npCount voiceAnticausative 1 = 1 := rfl
     obligatory on transitives. The unaccusative prohibition follows from
     dependent case: a sole argument has no competitor. -/
 
-def hindiTransitive (aspect : Typology.Alignment.Aspect) : List CasedNP :=
-  assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment aspect))
+def hindiTransitive (aspect : Alignment.Aspect) : List CasedNP :=
+  assignCases (alignmentToLangType (Alignment.hindiSplit.alignment aspect))
     [⟨"agent", none⟩, ⟨"theme", none⟩]
 
 theorem hindi_perfective_erg :
@@ -515,7 +515,7 @@ theorem hindi_split_is_algorithmic :
     Derives *siitta (\*ne) aayii* — ERG is prohibited on unaccusatives
     because there is no caseless competitor for dependent case. -/
 theorem hindi_perfective_unaccusative_no_erg :
-    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
       [⟨"theme", none⟩]
     getCaseOf "theme" result = some .abs ∧
     getSourceOf "theme" result = some .unmarked := by
@@ -525,7 +525,7 @@ theorem hindi_perfective_unaccusative_no_erg :
     may or may not count as a competitor, yielding optional ERG.
     With a phantom position (Georgian-style), ERG appears. -/
 theorem hindi_perfective_unergative_with_phantom :
-    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
       [⟨"subj", none⟩, ⟨"empty", none⟩]
     getCaseOf "subj" result = some .erg := by
   native_decide
@@ -534,7 +534,7 @@ theorem hindi_perfective_unergative_with_phantom :
     (= no ERG). This models the optionality as a parameter: does the
     language count unfilled positions for dependent case? -/
 theorem hindi_perfective_unergative_without_phantom :
-    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
       [⟨"subj", none⟩]
     getCaseOf "subj" result = some .abs ∧
     getSourceOf "subj" result = some .unmarked := by

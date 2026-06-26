@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Features.Case.Basic
-import Linglib.Typology.Alignment
+import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 /-!
 # Georgian Agreement Fragment [just-2024]
@@ -103,8 +103,8 @@ inductive TenseSeries where
     uses ergative alignment. Present uses NOM-DAT framing and evidential
     uses DAT-NOM "inversion" — both non-ergative.
 
-    This instantiates `Typology.Alignment.SplitErgativity` from [blake-1994]'s typology of tense/aspect-conditioned splits. -/
-def georgianSplit : Typology.Alignment.SplitErgativity TenseSeries :=
+    This instantiates `Alignment.SplitErgativity` from [blake-1994]'s typology of tense/aspect-conditioned splits. -/
+def georgianSplit : Alignment.SplitErgativity TenseSeries :=
   { ergCondition := fun ts => ts == .aorist }
 
 /-- Aorist triggers ergative alignment. -/

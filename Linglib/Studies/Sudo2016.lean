@@ -306,13 +306,13 @@ theorem nin_ne_hiki :
 /-! ## §7: Sudo's Per-Language Strategy Assignment + Cross-Paper Engagement
 
 Per-language strategy assignments live in study files (not as metadata on
-`NounCategorizationSystem`). Sudo's view is now a first-class constructor
+`System`). Sudo's view is now a first-class constructor
 of `ClassifierStrategy` (`.sudoBlocking`), so the disagreement with
 [chierchia-1998] reduces to a single decidable inequality. -/
 
 /-- Sudo's strategy assignment for Japanese: classifier blocks the silent
     ∪-operator on numerals (Sudo §3, eqs. 15–16). -/
-def japaneseStrategy : Typology.ClassifierStrategy := .sudoBlocking
+def japaneseStrategy : NounCategorization.ClassifierStrategy := .sudoBlocking
 
 /-- Sudo and Chierchia disagree about which strategy Japanese exhibits:
     Chierchia's analysis assigns `.forNoun` (CLF atomizes a kind-denoting
@@ -330,14 +330,14 @@ theorem sudo_disagrees_with_chierchia_on_japanese :
 Sudo's blocking-principle account (eqs. 10/15/16) presupposes that the
 target language has *obligatory overt classifiers in the lexicon* —
 that is what blocks the silent ∪-operator.
-`NounCategorizationSystem.IsObligatory` is the input-shape requirement;
+`System.IsObligatory` is the input-shape requirement;
 Sudo's framework applies iff it holds. Languages where numerals combine
 with bare nouns (no obligatory CL) do not provide the right input. -/
 
 /-- Sudo's framework applies to a language with classifier system `cs`
     iff `cs.IsObligatory` — the lexical input that Sudo's silent
     ∪-operator gets blocked by. -/
-abbrev frameworkApplies (cs : Typology.NounCategorizationSystem) : Prop :=
+abbrev frameworkApplies (cs : NounCategorization.System) : Prop :=
   cs.IsObligatory
 
 end Sudo2016

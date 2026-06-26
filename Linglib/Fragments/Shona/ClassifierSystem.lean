@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Shona noun-categorization system
@@ -12,7 +12,7 @@ namespace Shona
 
 /-- Shona Bantu noun-class system: 14-class inventory, prefix
     realization, agreement-rich. -/
-def classifierSystem : Typology.NounCategorizationSystem :=
+def classifierSystem : NounCategorization.System :=
   { family := "Bantu"
   , classifierType := .nounClass
   , scopes := [.headModifierNP, .predicateArgument]
