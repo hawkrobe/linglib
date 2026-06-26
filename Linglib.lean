@@ -2876,7 +2876,7 @@ import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Checking
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
@@ -2884,7 +2884,7 @@ import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.FromFragments
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
+import Linglib.Syntax.Minimalist.Linearization
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
