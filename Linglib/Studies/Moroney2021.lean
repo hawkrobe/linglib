@@ -647,7 +647,7 @@ theorem demonstrative_adds_spatial_info {E : Type}
 theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
     Semantics.Classifier.classifierDenot
-      Typology.ClassifierStrategy.forNoun P
+      NounCategorization.ClassifierStrategy.forNoun P
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
     = Semantics.Classifier.clfForNoun P := rfl
 

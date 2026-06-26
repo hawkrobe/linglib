@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Semantics.Kinds.NominalMappingParameter
 

@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Japanese Numeral Classifier Inventory
@@ -36,7 +36,7 @@ every projection function and every consumer that pattern-matches on
 ## Bridge to legacy
 
 `Classifier.toEntry : Classifier → ClassifierEntry` is the migration seam
-to the old `Typology.ClassifierEntry` record type that
+to the old `NounCategorization.ClassifierEntry` record type that
 sibling fragments (Mandarin, Shan, Chol) and `Typology/ClassifierSystem`
 still consume. Once those fragments are migrated to the same enum pattern,
 both this bridge and `ClassifierEntry` itself can be retired.
@@ -54,7 +54,7 @@ both this bridge and `ClassifierEntry` itself can be retired.
 
 namespace Japanese
 
-open Typology (SemanticParameter ShapeDimension ClassifierEntry)
+open NounCategorization (SemanticParameter ShapeDimension ClassifierEntry)
 
 /-- The closed inventory of Japanese numeral classifiers. Constructors are
     named by Hepburn romanization, with kanji-distinct homophones
@@ -267,7 +267,7 @@ def allEncodedParams : List SemanticParameter :=
 /-! ## §5: Bridge to legacy `ClassifierEntry`
 
 Migration seam: `Typology/ClassifierSystem.lean` and the sibling
-fragments (Mandarin, Shan, Chol) still consume `Typology.
+fragments (Mandarin, Shan, Chol) still consume `NounCategorization.
 ClassifierEntry`. `toEntry` projects a typed `Classifier` back to the
 legacy record so cross-language aggregations continue to work during
 the transitional period. -/

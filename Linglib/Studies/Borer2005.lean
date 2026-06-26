@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mereology
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.MassCount
 
@@ -222,7 +222,7 @@ theorem great_divide_semantic_invariance
     Borer's syntactic CL# at Q(F2) in the nominal EP. -/
 structure ClassifierAsQ where
   /-- The classifier morpheme (from Aikhenvald's typology) -/
-  classifier : Typology.ClassifierEntry
+  classifier : NounCategorization.ClassifierEntry
   /-- The syntactic position is Q (F2 in the nominal EP) -/
   position : Minimalist.Cat := .Q
 

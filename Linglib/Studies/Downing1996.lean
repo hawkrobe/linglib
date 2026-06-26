@@ -1,4 +1,4 @@
-import Linglib.Typology.ClassifierSystem
+import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Studies.Aikhenvald2000

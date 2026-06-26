@@ -1,12 +1,8 @@
 import Linglib.Pragmatics.Efficiency
-import Linglib.Fragments.English.Color
-import Linglib.Fragments.French.Color
-import Linglib.Fragments.German.Color
-import Linglib.Fragments.Japanese.Color
-import Linglib.Fragments.Korean.Color
-import Linglib.Fragments.Mandarin.Color
-import Linglib.Fragments.Spanish.Color
-import Linglib.Fragments.Slavic.Russian.Color
+import Linglib.Data.WALS.Features.F132A
+import Linglib.Data.WALS.Features.F133A
+import Linglib.Data.WALS.Features.F134A
+import Linglib.Data.WALS.Features.F135A
 
 /-!
 # Zaslavsky, Kemp, Regier & Tishby (2018): efficient compression in color naming
@@ -21,14 +17,14 @@ single trade-off parameter β, and the Berlin & Kay evolutionary sequence
 falls out as motion *up the complexity axis* — successive systems carve color
 space more finely, paying complexity for accuracy.
 
-This file is the consumer that makes the per-language WALS color profiles
-(`Fragments/{Lang}/Color.lean`, typed by `Typology.ColorProfile`) observable
+This file formalizes the per-language WALS color profiles (the eight
+WALS-sourced `ColorProfile`s below, derived via `ColorProfile.fromWALS`) observable
 through the efficient-communication framework in `Pragmatics.Efficiency`
 (`CostPair`, `weightedCost = cost₂ + β·cost₁`, `efficiencyLossAt`).
 
 ## What is derived vs. cited
 
-* **Derived** (from the WALS-sourced Fragment profiles): the Berlin-Kay
+* **Derived** (from the WALS-sourced color profiles): the Berlin-Kay
   *complexity coordinate* of each sampled language — the number of basic color
   categories (WALS Ch 133). The IB complexity `I(M;W)` of a deterministic
   K-word system is bounded by `log K`, so the category count is a monotone
@@ -54,7 +50,162 @@ through the efficient-communication framework in `Pragmatics.Efficiency`
 
 namespace ZaslavskyKempRegierTishby2018
 
-open Typology Pragmatics.Efficiency
+open Pragmatics.Efficiency
+/-! ### WALS Ch 132: Number of non-derived basic color categories -/
+
+/-- Number of non-derived basic color categories (WALS Ch 132,
+    [kay-maffi-2013]). Ranges from 3 to 6 along the Berlin & Kay
+    sequence; transitional half-values represent languages with one
+    composite category undergoing splitting. -/
+inductive NonDerivedColorCount where
+  | three
+  | threeHalf
+  | four
+  | fourHalf
+  | five
+  | fiveHalf
+  | six
+  deriving DecidableEq, Repr
+
+/-! ### WALS Ch 133: Total number of basic color categories -/
+
+/-- Total number of basic color categories including derived ones
+    (WALS Ch 133, [kay-maffi-2013a]). Ranges from 3–4 (minimal systems)
+    to the top bucket, WALS's "more than 10" — canonically 11 basic terms,
+    the Berlin & Kay Stage-VII maximum (e.g., English, Russian). -/
+inductive BasicColorCount where
+  | v3to4
+  | v4to5
+  | v6to6h
+  | v7to7h
+  | v8to8h
+  | v9to10
+  | v11
+  deriving DecidableEq, Repr
+
+/-! ### WALS Ch 134: Green and blue -/
+
+/-- How a language treats the green-blue region of color space
+    (WALS Ch 134, [kay-maffi-2013b]). The classic *grue* / green-blue
+    composite distinction, with several other composite patterns
+    (with black, with yellow). -/
+inductive GreenBlueRelation where
+  /-- Separate terms for green and blue. -/
+  | distinct
+  /-- A single *grue* term covering both green and blue. -/
+  | merged
+  /-- A single term covering black, green, and blue. -/
+  | blackGreenBlue
+  /-- Black/blue merged, green separate. -/
+  | blackBlueVsGreen
+  /-- Yellow, green, blue all merged. -/
+  | yellowGreenBlue
+  /-- Yellow/green merged, blue separate. -/
+  | yellowGreenVsBlue
+  /-- No green or blue term at all. -/
+  | noTerm
+  deriving DecidableEq, Repr
+
+/-! ### WALS Ch 135: Red and yellow -/
+
+/-- How a language treats the red-yellow region of color space
+    (WALS Ch 135, [kay-maffi-2013c]). -/
+inductive RedYellowRelation where
+  /-- Separate terms for red and yellow. -/
+  | distinct
+  /-- A single term covering both red and yellow. -/
+  | merged
+  /-- Yellow/green/blue merged, vs red. -/
+  | yellowGreenBlueVsRed
+  /-- Yellow/green merged, vs red. -/
+  | yellowGreenVsRed
+  /-- No red or yellow term at all. -/
+  | noTerm
+  deriving DecidableEq, Repr
+
+/-! ### Per-language profile -/
+
+/-- A language's color-naming profile across [wals-2013] Chs 132–135.
+    Coverage is sparse (~120 languages); fields are optional. -/
+structure ColorProfile where
+  language : String
+  iso : String := ""
+  family : String := ""
+  /-- Ch 132: non-derived basic color categories. -/
+  nonDerived : Option NonDerivedColorCount := none
+  /-- Ch 133: total basic color categories. -/
+  basic : Option BasicColorCount := none
+  /-- Ch 134: green-blue relation. -/
+  greenBlue : Option GreenBlueRelation := none
+  /-- Ch 135: red-yellow relation. -/
+  redYellow : Option RedYellowRelation := none
+  deriving Repr
+
+/-! ### WALS converters -/
+
+/-- Convert WALS 132A non-derived-color-count values into the substrate enum. -/
+def fromWALS132A : Data.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColorCount
+  | .v3  => .three
+  | .v35 => .threeHalf
+  | .v4  => .four
+  | .v45 => .fourHalf
+  | .v5  => .five
+  | .v55 => .fiveHalf
+  | .v6  => .six
+
+/-- Convert WALS 133A basic-color-count values into the substrate enum. -/
+def fromWALS133A : Data.WALS.F133A.NumberOfBasicColourCategories → BasicColorCount
+  | .v34   => .v3to4
+  | .v4555 => .v4to5
+  | .v665  => .v6to6h
+  | .v775  => .v7to7h
+  | .v885  => .v8to8h
+  | .v910  => .v9to10
+  | .v11   => .v11
+
+/-- Convert WALS 134A green-blue values into the substrate enum. -/
+def fromWALS134A : Data.WALS.F134A.GreenAndBlue → GreenBlueRelation
+  | .greenVsBlue       => .distinct
+  | .greenBlue         => .merged
+  | .blackGreenBlue    => .blackGreenBlue
+  | .blackBlueVsGreen  => .blackBlueVsGreen
+  | .yellowGreenBlue   => .yellowGreenBlue
+  | .yellowGreenVsBlue => .yellowGreenVsBlue
+  | .none              => .noTerm
+
+/-- Convert WALS 135A red-yellow values into the substrate enum. -/
+def fromWALS135A : Data.WALS.F135A.RedAndYellow → RedYellowRelation
+  | .redVsYellow          => .distinct
+  | .redYellow            => .merged
+  | .yellowGreenBlueVsRed => .yellowGreenBlueVsRed
+  | .yellowGreenVsRed     => .yellowGreenVsRed
+  | .none                 => .noTerm
+
+/-- Build a `ColorProfile` from the WALS Chs 132–135 rows for an ISO 639-3
+    code, mapping each chapter's datapoint through its converter; a field for
+    which WALS has no row is `none`. Makes the per-language Fragment profiles
+    true-by-construction from the auto-generated WALS tables rather than
+    hand-transcribed literals. -/
+def ColorProfile.fromWALS (language iso family : String) : ColorProfile :=
+  { language := language
+  , iso := iso
+  , family := family
+  , nonDerived := (Data.WALS.F132A.lookupISO iso).map (λ d => fromWALS132A d.value)
+  , basic := (Data.WALS.F133A.lookupISO iso).map (λ d => fromWALS133A d.value)
+  , greenBlue := (Data.WALS.F134A.lookupISO iso).map (λ d => fromWALS134A d.value)
+  , redYellow := (Data.WALS.F135A.lookupISO iso).map (λ d => fromWALS135A d.value) }
+
+/-! ### The eight WALS-sourced sample profiles -/
+
+def english : ColorProfile := ColorProfile.fromWALS "English" "eng" "Indo-European"
+def french : ColorProfile := ColorProfile.fromWALS "French" "fra" "Indo-European"
+def german : ColorProfile := ColorProfile.fromWALS "German" "deu" "Indo-European"
+def japanese : ColorProfile := ColorProfile.fromWALS "Japanese" "jpn" "Japonic"
+def korean : ColorProfile := ColorProfile.fromWALS "Korean" "kor" "Koreanic"
+def mandarin : ColorProfile := ColorProfile.fromWALS "Mandarin Chinese" "cmn" "Sino-Tibetan"
+def russian : ColorProfile := ColorProfile.fromWALS "Russian" "rus" "Indo-European"
+def spanish : ColorProfile := ColorProfile.fromWALS "Spanish" "spa" "Indo-European"
+
 
 /-! ### The Berlin-Kay complexity coordinate -/
 
@@ -118,9 +269,7 @@ theorem optimal_system_zero_loss (c : CostPair) (β : ℝ) :
 /-- The eight WALS-sourced color profiles formalized as Fragments. All are
     industrialized-language systems near the top of the Berlin & Kay sequence. -/
 def sample : List ColorProfile :=
-  [English.colorProfile, French.colorProfile, German.colorProfile,
-   Japanese.colorProfile, Korean.colorProfile, Mandarin.colorProfile,
-   Spanish.colorProfile, Russian.colorProfile]
+  [english, french, german, japanese, korean, mandarin, spanish, russian]
 
 /-- Every sampled language draws both the warm (red/yellow) and cool
     (green/blue) boundaries — all are high-complexity, late-sequence systems,
@@ -132,14 +281,14 @@ theorem sample_all_warm_and_cool_split :
 /-- Concrete complexity contrast: English (11 basic terms) sits higher on the IB
     complexity axis than Mandarin (8–8.5), as the Berlin-Kay sequence predicts. -/
 theorem english_more_complex_than_mandarin :
-    ibComplexity Mandarin.colorProfile < ibComplexity English.colorProfile := by
+    ibComplexity mandarin < ibComplexity english := by
   decide
 
 /-- The contrast lifts to the IB objective: for every β ≥ 0 (and any fixed
     accuracy), English's β-scalarized complexity cost is at least Mandarin's. -/
 theorem english_weightedCost_ge_mandarin (acc β : ℝ) (hβ : 0 ≤ β) :
-    weightedCost (ibCost Mandarin.colorProfile acc) β ≤
-    weightedCost (ibCost English.colorProfile acc) β :=
+    weightedCost (ibCost mandarin acc) β ≤
+    weightedCost (ibCost english acc) β :=
   weightedCost_mono_in_complexity acc β hβ
     (le_of_lt english_more_complex_than_mandarin)
 
