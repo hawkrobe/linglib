@@ -33,7 +33,7 @@ Per-person predicates (`allowsProDropAt`, `hasOvertPROAt`,
 require.
 -/
 
-namespace Typology.NullSubject
+namespace NullSubject
 
 /-! ### Subject-context vocabulary -/
 
@@ -318,4 +318,4 @@ instance (a : SubjectAssignment) : Decidable a.Satisfies :=
 
 end SubjectAssignment
 
-end Typology.NullSubject
+end NullSubject

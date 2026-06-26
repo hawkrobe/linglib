@@ -169,7 +169,7 @@ end
     comes from the fact that `cf`'s trees are subtrees of children of `T`
     (whose depth is `T.depth - 1`), and via the empty-cut term `(0, T)`'s
     `cf = 0` (no `T_i` to consider). -/
-private theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
+theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
     (cf : Forest (Nonplanar α)) (rem : Nonplanar α)
     (h_mem : (cf, rem) ∈ cutSummandsN T)
     (T_i : Nonplanar α) (h_T_i : T_i ∈ cf) : T_i.depth < T.depth := by

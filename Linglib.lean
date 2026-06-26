@@ -16,6 +16,8 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.BMinus
+import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
@@ -51,6 +53,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
+import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
@@ -2849,6 +2852,7 @@ import Linglib.Syntax.MereologicalSyntax.Bridge
 import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Checking
+import Linglib.Syntax.Minimalist.Agree.Consistency
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
@@ -2899,6 +2903,7 @@ import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
+import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
@@ -2926,7 +2931,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
 import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier
@@ -2935,7 +2939,6 @@ import Linglib.Typology.Modality
 import Linglib.Typology.Negation
 import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Typology.NegativeConcord
-import Linglib.Typology.NullSubject
 import Linglib.Typology.Numeral.Basic
 import Linglib.Typology.Phonology
 import Linglib.Typology.Plurals
