@@ -79,6 +79,16 @@ theorem polarHahn_sub (x y : LaurentSeries A) :
   HahnSeries.coeff_inj.mp <| funext fun i => by
     simp only [coeff_polarHahn, HahnSeries.coeff_sub]; split_ifs <;> simp
 
+/-- `R` is **idempotent**: projecting onto the polar part twice is projecting once. -/
+@[simp] theorem polarHahn_polarHahn (s : LaurentSeries A) :
+    polarHahn (polarHahn s) = polarHahn s :=
+  HahnSeries.coeff_inj.mp <| funext fun i => by simp only [coeff_polarHahn]; split_ifs <;> rfl
+
+/-- The complement `(1 − R) s = s − R s` is **nonpolar**: `R` annihilates it. So `1 − R` projects
+    onto the nonpolar subring `DM[[t]]`. -/
+@[simp] theorem polarHahn_sub_self (s : LaurentSeries A) : polarHahn (s - polarHahn s) = 0 := by
+  rw [polarHahn_sub, polarHahn_polarHahn, sub_self]
+
 /-! ### The two subalgebras of the splitting -/
 
 /-- `R` fixes a series supported on strictly-negative degrees. -/
@@ -96,6 +106,31 @@ theorem polarHahn_eq_zero (s : LaurentSeries A) (h : ∀ i : ℤ, i < 0 → s.co
     rw [coeff_polarHahn, HahnSeries.coeff_zero]; split_ifs with hlt
     · exact h i hlt
     · rfl
+
+/-- `1 = t⁰` is nonpolar. -/
+@[simp] theorem polarHahn_one : polarHahn (1 : LaurentSeries A) = 0 :=
+  polarHahn_eq_zero _ fun i hi => by rw [HahnSeries.coeff_one, if_neg (by omega)]
+
+/-- A nonpolar series (`R s = 0`) is supported on non-negative degrees. -/
+theorem support_subset_nonneg (s : LaurentSeries A) (hs : polarHahn s = 0) :
+    s.support ⊆ {i : ℤ | 0 ≤ i} := fun i hi => by
+  show 0 ≤ i
+  by_contra h
+  have hc : s.coeff i = (polarHahn s).coeff i := by rw [coeff_polarHahn, if_pos (not_le.mp h)]
+  rw [hs, HahnSeries.coeff_zero] at hc
+  exact (HahnSeries.mem_support _ _).mp hi hc
+
+/-- The **nonpolar series form a subalgebra**: a product of nonpolar series is nonpolar. -/
+theorem polarHahn_mul (a b : LaurentSeries A) (ha : polarHahn a = 0) (hb : polarHahn b = 0) :
+    polarHahn (a * b) = 0 :=
+  polarHahn_eq_zero _ fun i hi => by
+    by_contra hne
+    obtain ⟨j, hj, l, hl, hjl⟩ :=
+      Set.mem_add.mp (HahnSeries.support_mul_subset ((HahnSeries.mem_support _ _).mpr hne))
+    have hja := support_subset_nonneg a ha hj
+    have hlb := support_subset_nonneg b hb hl
+    simp only [Set.mem_setOf_eq] at hja hlb
+    omega
 
 /-- The polar part is supported on strictly-negative degrees. -/
 theorem support_polarHahn_subset (s : LaurentSeries A) :
