@@ -1,4 +1,3 @@
-import Linglib.Syntax.Minimalist.Cascade
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.PsychLink
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
