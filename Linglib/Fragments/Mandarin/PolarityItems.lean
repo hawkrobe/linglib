@@ -1,11 +1,11 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Mandarin Polarity-Sensitive Items
 [haspelmath-1997]
 
 Mandarin indefinite pronoun polarity items, typed by the categories from
-`Typology.PolarityItem`.
+`Semantics.Polarity`.
 
 Mandarin wh-words (*shéi* 谁, *shénme* 什么) double as indefinites in
 non-interrogative uses, covering an exceptionally wide range on
@@ -15,7 +15,7 @@ non-interrogative uses, covering an exceptionally wide range on
 
 namespace Mandarin.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 -- ============================================================================
 -- NPI/FCI

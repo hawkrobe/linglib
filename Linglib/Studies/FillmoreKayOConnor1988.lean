@@ -2,7 +2,7 @@ import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Features.Acceptability
 import Linglib.Features.Polarity
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Sum
 
@@ -236,9 +236,9 @@ inductive LetAloneNPITrigger where
   | anyoneWhod            -- ex. 70: "Anyone who'd been to HIGH SCHOOL, let alone GRADUATE students in MATH, should be able to solve that problem"
   deriving DecidableEq, Repr
 
-open Typology.PolarityItem in
+open Semantics.Polarity in
 /-- Map the *let alone* licensing environments to the licensing contexts
-catalogued in `Typology.PolarityItem`. -/
+catalogued in `Semantics.Polarity`. -/
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .simpleNegation         => .negation
   | .tooComplementation     => .tooTo

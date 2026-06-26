@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
@@ -9,7 +9,9 @@ import Mathlib.Data.Fintype.Basic
 
 Pre-Fragment typological substrate for expletive negation (EN):
 framework-agnostic classification types that Fragments and Studies
-import to type their per-language EN data.
+import to type their per-language EN data. The trigger-class /
+licensing apparatus traces to [espinal-1992]'s logical-absorption
+account, on which the [greco-2020] / [rett-2026] refinements build.
 
 Two orthogonal classifications:
 
@@ -26,7 +28,7 @@ without committing to a syntactic analysis. The syntactic derivation
 
 namespace Semantics.Negation
 
-open Typology.PolarityItem (PolarityType)
+open Semantics.Polarity (PolarityType)
 
 /-! ### EN blocking reasons -/
 

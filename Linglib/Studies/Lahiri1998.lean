@@ -1,7 +1,7 @@
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Polarity
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
@@ -40,7 +40,7 @@ namespace Lahiri1998
 
 open Semantics.Focus.Particles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
 open Entailment (World allWorlds entails pnot)
-open Typology.PolarityItem
+open Semantics.Polarity
 
 /-- A judged Hindi NPI sentence, paired with the licensing context (if any). -/
 structure HindiNPIDatum where

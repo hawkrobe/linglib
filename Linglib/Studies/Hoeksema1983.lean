@@ -5,7 +5,7 @@ import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Hoeksema (1983): Negative Polarity and the Comparative
@@ -97,7 +97,7 @@ open Semantics.Polarity.Licensing
 open Entailment
 open Core.Order (Comparison)
 open Semantics.Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
-open Typology.PolarityItem (LicensingContext)
+open Semantics.Polarity (LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]

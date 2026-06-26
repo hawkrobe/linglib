@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Semantics.Polarity.Israel
@@ -50,7 +50,7 @@ enum — that's the wrong direction; the refutation work is genuinely
 deferred.
 -/
 
-namespace Typology.PolarityItem
+namespace Semantics.Polarity
 
 /-- Israel's prediction ([israel-2001]): for emphatic polarity items,
     canonical/inverted is determined principally by likelihood effect
@@ -91,4 +91,4 @@ abbrev PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Prop :=
   p.likelihoodEffect = .unknown ∨
   p.canonicity = predictCanonicity p.likelihoodEffect p.polarityType
 
-end Typology.PolarityItem
+end Semantics.Polarity

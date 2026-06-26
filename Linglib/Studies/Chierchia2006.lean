@@ -1,5 +1,5 @@
 import Linglib.Studies.Haspelmath1997Polarity
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
@@ -427,13 +427,13 @@ theorem pureNPI_no_rescue :
 /-!
 ## Bridging PSI profiles to Fragment entries
 
-`Typology.PolarityItem.PolarityType` is a 5-way distributional
+`Semantics.Polarity.PolarityType` is a 5-way distributional
 classification. `PSIProfile` is a 4-parameter theoretical decomposition.
 Each PSI class predicts exactly one `PolarityType`, and each Fragment
 entry's `polarityType` should match its PSI profile's predicted type.
 -/
 
-open Typology.PolarityItem
+open Semantics.Polarity
 open English.PolarityItems (any ever)
 open Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)

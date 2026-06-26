@@ -3,7 +3,7 @@ import Linglib.Features.NegativeConcord
 import Linglib.Semantics.NaturalLogic
 
 /-!
-# Typology.PolarityItem
+# Polarity items: NPI/PPI typology
 [lahiri-1998] [haspelmath-1997]
 [chierchia-2006] [israel-1996] [israel-2001]
 [israel-2011] [schwab-2022]
@@ -93,7 +93,7 @@ facilitates or impedes the event — to predict **Canonicity**
 (canonical vs inverted). See `Studies/Israel2001.lean`.
 -/
 
-namespace Typology.PolarityItem
+namespace Semantics.Polarity
 
 open Features (LicensingContext)
 
@@ -337,13 +337,13 @@ to `Semantics/Polarity/Israel.lean` (sibling of
 the substrate enums Fragments populate, not Israel's predictions about
 how those enum-valued fields relate. -/
 
-end Typology.PolarityItem
+end Semantics.Polarity
 
--- Re-export `LicensingContext` from `Features/` into `Typology.PolarityItem`
--- so consumers doing `open Typology.PolarityItem` see it in scope without
+-- Re-export `LicensingContext` from `Features/` into `Semantics.Polarity`
+-- so consumers doing `open Semantics.Polarity` see it in scope without
 -- a separate `open Features`. (35 PolarityItem consumers reference
 -- LicensingContext via constructors like `.negation`, `.modalPossibility`
 -- in `PolarityItemEntry.licensingContexts` field initialization.)
-namespace Typology.PolarityItem
+namespace Semantics.Polarity
 export Features (LicensingContext)
-end Typology.PolarityItem
+end Semantics.Polarity

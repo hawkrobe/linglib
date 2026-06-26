@@ -1,11 +1,11 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 
 /-!
 # Yoruba Polarity-Sensitive Items
 [haspelmath-1997]
 
 Yoruba indefinite pronoun polarity items, typed by the categories from
-`Typology.PolarityItem`.
+`Semantics.Polarity`.
 
 Yoruba has a minimally differentiated system with a single polarity-sensitive
 form covering both NPI and FCI functions:
@@ -15,7 +15,7 @@ form covering both NPI and FCI functions:
 
 namespace Yoruba.PolarityItems
 
-open Typology.PolarityItem
+open Semantics.Polarity
 
 -- ============================================================================
 -- NPI/FCI

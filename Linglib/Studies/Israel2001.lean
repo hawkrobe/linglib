@@ -1,4 +1,4 @@
-import Linglib.Typology.PolarityItem
+import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Israel
 import Linglib.Fragments.English.PolarityItems
 
@@ -34,7 +34,7 @@ Formalizes the core contributions of Israel's Scalar Model of Polarity:
 
 namespace Israel2001
 
-open Typology.PolarityItem
+open Semantics.Polarity
 open English.PolarityItems
 
 -- ════════════════════════════════════════════════════

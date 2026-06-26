@@ -17,6 +17,7 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
@@ -54,6 +55,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
+import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
@@ -1288,9 +1290,11 @@ import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Morphology.Nanosyntax.TreeSpellout
+import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology
+import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.Typology
 import Linglib.Morphology.Unification
@@ -1788,6 +1792,7 @@ import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Operator
@@ -2693,6 +2698,7 @@ import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Studies.TurcoBraunDimroth2014
 import Linglib.Studies.TurkHirsch2026
 import Linglib.Studies.Umbach2004
+import Linglib.Studies.VanDerAuweraVanAlsenoy2016
 import Linglib.Studies.VanDerLeer2026
 import Linglib.Studies.VanDerSandtMaier2003
 import Linglib.Studies.VanRooy2003
@@ -2840,6 +2846,10 @@ import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldPsi
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
@@ -2909,7 +2919,3 @@ import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
 
 
-import Linglib.Morphology.Number
-import Linglib.Typology.PolarityItem
-
-import Linglib.Morphology.TenseAspect
