@@ -41,6 +41,23 @@ structure WeightedConstraint (C : Type*) extends NamedConstraint C where
 def harmonyScore {C : Type*} (constraints : List (WeightedConstraint C)) (c : C) : ℚ :=
   constraints.foldl (λ acc con => acc - con.weight * (con.eval c : ℚ)) 0
 
+/-- A left-fold of subtractions telescopes to the initial value minus the
+    mapped sum. The shared algebraic identity behind `harmonyScore`. -/
+private theorem foldl_sub {α : Type*} (f : α → ℚ) (l : List α) (init : ℚ) :
+    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
+  induction l generalizing init with
+  | nil => simp
+  | cons x xs ih => simp only [List.foldl_cons, List.map_cons, List.sum_cons, ih, sub_sub]
+
+/-- `harmonyScore` as a negated `List.sum`: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`. Exposes
+    the score's `List.sum` structure so HG/MaxEnt/NHG proofs reason with
+    `List.sum` algebra instead of re-deriving the defining fold. -/
+theorem harmonyScore_eq_neg_sum {C : Type*}
+    (constraints : List (WeightedConstraint C)) (c : C) :
+    harmonyScore constraints c =
+      -(constraints.map (fun con => con.weight * (con.eval c : ℚ))).sum := by
+  rw [harmonyScore, foldl_sub, zero_sub]
+
 /-- Harmony score as a real number, for interfacing with `softmax` and
     other ℝ-valued machinery (rate-distortion bounds, `Real.exp`, etc.). -/
 noncomputable def harmonyScoreR {C : Type*}
