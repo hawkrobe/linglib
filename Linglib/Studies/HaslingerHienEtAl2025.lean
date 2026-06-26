@@ -3,24 +3,10 @@ import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
-import Linglib.Typology.UniversalQuantifier
 import Linglib.Fragments.German.Distributives
 import Linglib.Fragments.English.Distributives
-import Linglib.Fragments.Dagara.UniversalQuantifier
-import Linglib.Fragments.Moore.UniversalQuantifier
-import Linglib.Fragments.Gourmantchema.UniversalQuantifier
-import Linglib.Fragments.Wolof.UniversalQuantifier
-import Linglib.Fragments.Arabic.Syrian.UniversalQuantifier
-import Linglib.Fragments.English.UniversalQuantifier
-import Linglib.Fragments.German.UniversalQuantifier
-import Linglib.Fragments.Hindi.UniversalQuantifier
-import Linglib.Fragments.Slavic.Russian.UniversalQuantifier
-import Linglib.Fragments.Quechua.Imbabura.UniversalQuantifier
-import Linglib.Fragments.Turkish.UniversalQuantifier
-import Linglib.Fragments.Basque.UniversalQuantifier
-import Linglib.Fragments.Telugu.UniversalQuantifier
-import Linglib.Fragments.Hausa.UniversalQuantifier
-import Linglib.Fragments.Logoori.UniversalQuantifier
+import Linglib.Fragments.English.Determiners
+import Mathlib.Data.List.Basic
 
 /-!
 # [haslinger-etal-2025-nllt]: A unified semantics for universal quantifiers
@@ -59,9 +45,8 @@ both consume `Semantics/Plurality/Distributivity.lean` substrate.
 
 - `UnifiedUniversal.lean`: `Q_∀`, `maxNonOverlap`, DNG theorems.
 - `ONEModifiers.lean`: `ONE_∅`, `ONE_AT`, English every/each decomposition.
-- `Typology/UniversalQuantifier.lean`: the 1-form/2-form `UQProfile` substrate.
-- The cross-linguistic sample below is *derived* from the per-language Fragment
-  profiles (`Fragments/{Language}/UniversalQuantifier.lean`), not hand-typed.
+- The 1-form/2-form `UQProfile` survey schema is study-local (single-paper data;
+  the per-language forms derive from the determiner Fragments, not hand-typed).
 - Bridge theorems connect `Q_∀` to existing `distMaximal`/`allViaForallH`.
 -/
 
@@ -72,35 +57,144 @@ open Quantification.ONEModifiers
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent
-open Typology.UniversalQuantifier
 open _root_.Mereology
 
 /-! ### Cross-linguistic typology
 
-The 1-form vs 2-form split assembled from the per-language Fragment profiles.
-1-form languages are [haslinger-etal-2025-nllt] Table 2; 2-form languages are
-its Table 1. Each row *is* a Fragment `UQProfile`, so the forms are not restated
-here — they are read off `Fragments/{Language}/UniversalQuantifier.lean`. -/
+The 1-form vs 2-form survey of [haslinger-etal-2025-nllt] (1-form = its Table 2,
+2-form = its Table 1). The schema is study-local — this is single-paper survey
+data — and the English/German forms are read off the determiner Fragments
+(`every`/`all`, `jeder`/`alle`) rather than restated. -/
 
-/-- Typological sample, derived from the Fragment UQ profiles. -/
+/-- Whether a language lexicalizes one UQ lexeme whose reading is fixed by
+complement number (`oneForm`), or two distinct [+dist]/[−dist] forms (`twoForm`).
+[haslinger-etal-2025-nllt] -/
+inductive SystemType where
+  /-- Single UQ lexeme; reading determined by complement number. -/
+  | oneForm
+  /-- Distinct [+dist] and [−dist] UQ lexemes. -/
+  | twoForm
+  deriving DecidableEq, Repr
+
+/-- A language's DP-internal universal-quantifier inventory, as compiled in
+[haslinger-etal-2025-nllt] (Table 1 for 2-form, Table 2 for 1-form languages). -/
+structure UQProfile where
+  /-- Language name. -/
+  language : String
+  /-- Genealogical family (the survey's label). -/
+  family : String
+  /-- 1-form vs 2-form classification. -/
+  systemType : SystemType
+  /-- The [+dist] exponent; in 1-form languages, the sole UQ exponent. -/
+  distForm : String
+  /-- The [−dist] exponent; empty in 1-form languages. -/
+  nonDistForm : String := ""
+  /-- Data provenance the survey attributes the row to. -/
+  source : String := ""
+  deriving Repr, DecidableEq
+
+/-- A 1-form language: one UQ lexeme, reading fixed by complement number. -/
+def UQProfile.isOneForm (p : UQProfile) : Prop := p.systemType = .oneForm
+
+/-- A 2-form language: distinct [+dist]/[−dist] UQ lexemes. -/
+def UQProfile.isTwoForm (p : UQProfile) : Prop := p.systemType = .twoForm
+
+instance (p : UQProfile) : Decidable p.isOneForm := by
+  unfold UQProfile.isOneForm; infer_instance
+
+instance (p : UQProfile) : Decidable p.isTwoForm := by
+  unfold UQProfile.isTwoForm; infer_instance
+
+/-- Typological sample (inlined from the paper's Tables 1–2). The English/German
+[+dist]/[−dist] forms derive from the determiner Fragments; the rest are the
+survey's reported exponents. -/
 def typologicalSample : List UQProfile :=
-  [ -- 1-form languages (single UQ; reading fixed by complement number) — Table 2
-    Dagara.universalQuantifier
-  , Moore.universalQuantifier
-  , Gourmantchema.universalQuantifier
-  , Wolof.universalQuantifier
-  , Arabic.Syrian.universalQuantifier
-    -- 2-form languages (distinct [+dist]/[−dist] forms) — Table 1
-  , English.universalQuantifier
-  , German.universalQuantifier
-  , Hindi.universalQuantifier
-  , Russian.universalQuantifier
-  , Quechua.Imbabura.universalQuantifier
-  , Turkish.universalQuantifier
-  , Basque.universalQuantifier
-  , Telugu.universalQuantifier
-  , Hausa.universalQuantifier
-  , Logoori.universalQuantifier ]
+  [ { language := "Dagara"
+    , family := "Mabia"
+    , systemType := .oneForm
+    , distForm := "'hà"
+    , source := "[haslinger-etal-2025-nllt] (author elicitation; one author is a native speaker)" }
+  , { language := "Moore"
+    , family := "Mabia"
+    , systemType := .oneForm
+    , distForm := "fãa"
+    , source := "[haslinger-etal-2025-nllt] (elicited, two native-speaker consultants)" }
+  , { language := "Gourmantchema"
+    , family := "Mabia"
+    , systemType := .oneForm
+    , distForm := "kuli"
+    , source := "[haslinger-etal-2025-nllt] (elicited, native-speaker consultant)" }
+  , { language := "Wolof"
+    , family := "Atlantic"
+    , systemType := .oneForm
+    , distForm := "-epp"
+    , source := "[haslinger-etal-2025-nllt] (Tamba, Torrence & Zribi-Hertz 2012)" }
+  , { language := "Syrian Arabic"
+    , family := "Semitic"
+    , systemType := .oneForm
+    , distForm := "kul"
+    , source := "[haslinger-etal-2025-nllt] (native-speaker consultant; cf. Fassi Fehri 2020 for Standard Arabic kull)" }
+  , { language := "English"
+    , family := "Indo-European (Germanic)"
+    , systemType := .twoForm
+    , distForm := English.Determiners.every.form
+    , nonDistForm := English.Determiners.all.form
+    , source := "[haslinger-etal-2025-nllt] Table 1" }
+  , { language := "German"
+    , family := "Indo-European (Germanic)"
+    , systemType := .twoForm
+    , distForm := German.Distributives.jederEntry.form
+    , nonDistForm := German.Distributives.alleEntry.form
+    , source := "[haslinger-etal-2025-nllt] Table 1 (author elicitation)" }
+  , { language := "Hindi"
+    , family := "Indo-European (Indic)"
+    , systemType := .twoForm
+    , distForm := "praty-ek"
+    , nonDistForm := "saar-"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Mahajan 2017)" }
+  , { language := "Russian"
+    , family := "Indo-European (Slavic)"
+    , systemType := .twoForm
+    , distForm := "každyj"
+    , nonDistForm := "vse"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Paperno 2012)" }
+  , { language := "Imbabura Quichua"
+    , family := "Quechuan"
+    , systemType := .twoForm
+    , distForm := "kada"
+    , nonDistForm := "tukuy(-lla)"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Barchas-Lichtenstein et al. 2017)" }
+  , { language := "Turkish"
+    , family := "Turkic"
+    , systemType := .twoForm
+    , distForm := "her"
+    , nonDistForm := "bütün, hepsi"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Özyıldız 2017)" }
+  , { language := "Basque"
+    , family := "isolate"
+    , systemType := .twoForm
+    , distForm := "bakoitz"
+    , nonDistForm := "guzti, den, oro"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Etxeberria 2012)" }
+  , { language := "Telugu"
+    , family := "Dravidian"
+    , systemType := .twoForm
+    , distForm := "prɨti"
+    , nonDistForm := "ăndărŭ"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Ponangi 2012)" }
+  , { language := "Hausa"
+    , family := "Afro-Asiatic (West Chadic)"
+    , systemType := .twoForm
+    , distForm := "koowànè"
+    , nonDistForm := "duk"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Zimmermann 2008)" }
+  , { language := "Logoori"
+    , family := "Niger-Congo (Bantu)"
+    , systemType := .twoForm
+    , distForm := "vuri"
+    , nonDistForm := "-oosi"
+    , source := "[haslinger-etal-2025-nllt] Table 1 (Landman 2016)" }
+  ]
 
 /-- The survey samples 15 languages. -/
 theorem sample_size : typologicalSample.length = 15 := by decide
