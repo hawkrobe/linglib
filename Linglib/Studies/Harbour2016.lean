@@ -410,4 +410,12 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
     naam.toPronoun.category.map Category.toFeatures
       = naangaL.toPronoun.category.map Category.toFeatures := by decide
 
+/-- Person and number feature carriers are the same containment-pair
+skeleton, composed through the `ContainmentPair` hub: `1st ↔ singular`,
+`2nd ↔ dual`, `3rd ↔ plural`. One edge of the φ-feature iso-web; equates
+carriers, not denotations ([harbour-2016] §9.5.1 — the two domains'
+feature values denote differently). -/
+def phiKernelEquiv : Person.Features ≃ Number.Features :=
+  Person.featuresEquiv.trans Number.featuresEquiv.symm
+
 end Harbour2016

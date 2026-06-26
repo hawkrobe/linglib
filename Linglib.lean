@@ -308,7 +308,6 @@ import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
-import Linglib.Features.OntologicalCategory
 import Linglib.Features.Genericity
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Data.Fin.Tuple.Basic
@@ -346,6 +345,7 @@ import Linglib.Typology.Alignment
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
 import Linglib.Typology.Comparison
+import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Syntax.Agreement.Paradigm
@@ -383,7 +383,6 @@ import Linglib.Features.Person.Decomposition
 import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Features.Person.Interp
 import Linglib.Features.Person.Resolve
-import Linglib.Features.PhiKernel
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
@@ -2176,7 +2175,6 @@ import Linglib.Studies.Ochs1992
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Coordination
 import Linglib.Syntax.Minimalist.Economy
-import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Modification
+import Linglib.Syntax.Agreement.AdjAgreement
 
 /-!
 # Russian Adjective Agreement
@@ -17,16 +17,16 @@ the HFF: A–XP–N is attested (24).
 
 namespace Russian.AdjAgreement
 
-open Minimalist.Modification
+open Agreement
 
 /-- Russian long-form features: φ (number, gender) + κ (6-case). -/
-def longFormFeatures : List MAGFeatureType :=
-  [ .phi (.number .plural), .phi (.number .singular)
-  , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2)
+def longFormFeatures : List AgrFeature :=
+  [ .number .plural, .number .singular
+  , .gender 0, .gender 1, .gender 2
   , .kappa .nom, .kappa .acc, .kappa .dat
   , .kappa .gen, .kappa .abl ]
 
-def dpFeatures : List MAGFeatureType := longFormFeatures
+def dpFeatures : List AgrFeature := longFormFeatures
 
 /-- Russian: long forms are identical in pred and attr. -/
 def entry : AdjAgreementEntry where
