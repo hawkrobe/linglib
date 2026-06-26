@@ -17,7 +17,7 @@ Per-language typological substrate for the standard sentential negation
 marker of a language: form, morphological status, position, symmetric/
 asymmetric status, asymmetry subtype, and negative-indefinite strategy.
 
-Mirrors the `Linglib/Typology/Possession.lean` (Possession), `Question.lean`
+Mirrors the `Linglib/Features/Possession.lean` (Possession), `Question.lean`
 (Question), and `Case.lean` (Case) substrate-extension pattern: the
 substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
 `NegationSystem`), (b) the WALS-bundled per-language `NegationProfile`,
@@ -48,7 +48,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
 - `NegationProfile` — sibling per-language schema bundling Ch 112-115 +
   Greco's `negIsHead` + JinKoenig's `enAttested`. Each Fragment exposes
   `def negationProfile : NegationProfile` alongside `def negationSystem`.
-  Sibling pattern (mirrors `Typology/Possession.lean::PossessionProfile`):
+  Sibling pattern (mirrors `Features/Possession.lean::PossessionProfile`):
   the marker-side joint is independent from the typology-feature joint.
 - `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters.
 - `countByMorphemeType`/`countBySymmetry` sample-counting helpers (consumed by
@@ -251,7 +251,7 @@ structure NegationSystem where
     NegationProfile`. The two joints are independent because the data
     partition is real: `negationSystem.markers` is consumed by lexical
     code; `negationProfile` is consumed by typology studies. Mirrors
-    `Typology/Possession.lean::PossessionProfile`. -/
+    `Features/Possession.lean::PossessionProfile`. -/
 structure NegationProfile where
   /-- Language name. -/
   language : String

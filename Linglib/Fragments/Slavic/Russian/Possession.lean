@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Russian Possessive Constructions
@@ -20,7 +20,7 @@ using `imet'` 'to have' (< `*em-` 'take'), where the possessor is subject.
 
 PossessionProfile bundle for Russian (ISO `rus`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Russian lives in `Studies/Heine1997.lean`.
 
 ## Examples
@@ -34,17 +34,17 @@ set_option autoImplicit false
 
 namespace Russian.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
 -- ============================================================================
 
 /-- Russian's primary possessive construction uses the Location Schema. -/
-def sourceSchema : PossessionSource := .location
+def sourceSchema : Source := .location
 
 /-- Russian's predicative strategy is locational/existential. -/
-def predicativeStrategy : PredicativePossession := .locational
+def predicativeStrategy : PredicativeStrategy := .locational
 
 /-- The strategy matches the schema via `predicativeSource`. -/
 theorem strategy_matches_schema :
@@ -78,7 +78,7 @@ def primaryConstruction : RuPossessive := {}
     (< Proto-Slavic `*jьmati`, related to `*em-` 'take, seize').
     This is restricted to formal/abstract possession and is much less common
     than the `u` + GEN construction. -/
-def secondarySchema : PossessionSource := .action
+def secondarySchema : Source := .action
 
 /-- `imet'` is transitive: possessor = subject, possessee = object.
     This matches [heine-1997]'s prediction for the Action Schema. -/
@@ -92,10 +92,10 @@ def imetPossessorIsSubject : Bool := true
     However, physical/temporary possession is its prototypical use (matching
     Location Schema predictions), and abstract possession often prefers
     `imet'` (Action Schema). -/
-def uGenNotions : List PossessiveNotion :=
+def uGenNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable]
 
-def imetNotions : List PossessiveNotion :=
+def imetNotions : List Notion :=
   [.abstract, .permanent]
 
 -- ============================================================================

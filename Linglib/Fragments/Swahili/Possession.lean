@@ -1,5 +1,5 @@
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Swahili Possessive Constructions
@@ -17,7 +17,7 @@ Schema belong-construction using the associative `-a`.
 
 PossessionProfile bundle for Swahili (ISO `swh`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+`Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Swahili lives in `Studies/Heine1997.lean`. The
 `PossessionProfile.adnominalStrategy = .headMarking` here flattens the
 [nichols-1986] categorisation; Swahili's Bantu noun-class concord is
@@ -43,7 +43,7 @@ set_option autoImplicit false
 
 namespace Swahili.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
@@ -51,10 +51,10 @@ open _root_.Typology.Possession
 
 /-- Swahili uses the Companion Schema for have-constructions:
     subject prefix + `na` (< `-wa na` 'be with'). -/
-def sourceSchema : PossessionSource := .companion
+def sourceSchema : Source := .companion
 
 /-- Swahili's predicative strategy is comitative. -/
-def predicativeStrategy : PredicativePossession := .comitative
+def predicativeStrategy : PredicativeStrategy := .comitative
 
 /-- The strategy matches the schema via `predicativeSource`. -/
 theorem strategy_matches_schema :
@@ -94,7 +94,7 @@ theorem locative_uses_na :
 /-- Swahili's belong-construction uses the associative marker `-a`,
     with class-conditioned agreement: `ni y-angu` 'is of-me' (cl9).
     This is an instance of the Equation Schema: "Y is X's (property)". -/
-def belongSchema : PossessionSource := .equation
+def belongSchema : Source := .equation
 
 /-- The have- and belong-schemas are distinct in Swahili, as predicted
     by Table 2.4: Companion → have only; Equation → belong only. -/
@@ -108,7 +108,7 @@ theorem have_belong_distinct :
 /-- Swahili `-na` covers all seven possessive notions — it is not restricted
     to a subset. This is characteristic of highly grammaticalized have-markers
     ([heine-1997] §2.3). -/
-def expressibleNotions : List PossessiveNotion :=
+def expressibleNotions : List Notion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 

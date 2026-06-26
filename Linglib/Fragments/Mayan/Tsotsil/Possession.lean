@@ -1,4 +1,4 @@
-import Linglib.Typology.Possession
+import Linglib.Features.Possession
 
 /-!
 # Tsotsil possession profile
@@ -6,8 +6,8 @@ import Linglib.Typology.Possession
 
 PossessionProfile bundle for Tsotsil (ISO `tzo`), per the
 project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
-…) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
+types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
+…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
 consuming this profile live in
 `Studies/NicholsBickel2013.lean`.
 -/
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Tsotsil.Possession
 
-open _root_.Typology.Possession
+open _root_.Possession
 
 /-- Tsotsil possession profile. -/
 def possession : PossessionProfile :=

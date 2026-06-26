@@ -654,6 +654,7 @@ import Linglib.Features.Person.Interp
 import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Features.Person.Resolve
 import Linglib.Features.Polarity
+import Linglib.Features.Possession
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Prosody
@@ -2993,7 +2994,6 @@ import Linglib.Typology.Phonology
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.PolarityMarking
-import Linglib.Typology.Possession
 import Linglib.Typology.Profile
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Question
