@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Syntax.Minimalist.Voice
@@ -6,256 +11,179 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
-# Applicative Heads
-[cuervo-2003] [pylkkanen-2008] [wood-2015]
+# Applicative heads
 
-Applicative heads introduce applied arguments (benefactives, goals,
-sources) into the verbal structure. The high/low distinction determines
-whether the applied argument relates to the event as a whole (high)
-or to the theme (low).
+Applicative heads introduce applied arguments (benefactives, goals, sources). Following
+[pylkkanen-2008], a **high** applicative Merges with the event and relates the applied argument
+to it; a **low** applicative Merges with the theme (recipient = transfer *to*, source = transfer
+*from*). High applicatives need Voice to supply event semantics, so they are blocked under
+semantically null Voice (middles, anticausatives); low applicatives are Voice-independent.
 
-Low applicatives further split into **recipient** (transfer *to*) and
-**source** (transfer *from*), following [pylkkanen-2008] Table 1.1.
+The high/low distinction is read off the Merge complement's category via the head function
+`SO.outerCatC`, so the typology follows from attachment height by construction.
 
-## Semantic Denotations ([pylkkanen-2008])
+## Main definitions
 
-- **High Appl**: λx.λe. Appl(e, x) — relates individual to event
-  (ethical datives: "he ate food on-me")
-- **Low Appl (recipient)**: λx.λy. HAVE(x, y) — transfer TO
-  (English DOC: "I sent him a letter")
-- **Low Appl (source)**: λx.λy. HAVE-FROM(y, x) — transfer FROM
-  (possessive datives: "they broke his arm")
+- `ApplType`, `ApplType.complement`: the high/low typology and the complement it Merges with.
+- `ApplType.RequiresEventSemantics`, `IsLow`: structural predicates read off the complement.
+- `ApplHead.Licensed`: licensing of an applicative by a Voice head.
+- `ApplHead.SpecCanBearCase`: case-based blocking of SpecApplP ([wood-2015]).
+- `ApplType.toSO`: the applicative realized as an actual `SO.merge`.
 
-## High/Low Asymmetry ([pylkkanen-2008], [schaefer-2008])
+## References
 
-High applicatives require Voice with event semantics; low applicatives
-are independent of Voice. This predicts high Appl is blocked when
-Voice is semantically null (middles, anticausatives).
-
-Note: [wood-2015] Ch. 5 argues that Icelandic lacks true high
-applicatives entirely. The high/low interaction modeled here follows
-the cross-linguistic typology of [pylkkanen-2008].
+[cuervo-2003], [pylkkanen-2008], [wood-2015]
 -/
 
 namespace Minimalist
 
-/-- High vs low applicatives ([pylkkanen-2008], Table 1.1).
+/-! ### Applicative type and its Merge complement -/
 
-    - **High**: Above VP, relates applied argument to the event
-      (benefactive: Chaga "he ate food for wife")
-    - **Low recipient**: Below VP, transfer-of-possession *to* the
-      applied argument (English DOC: "I sent him a letter")
-    - **Low source**: Below VP, transfer-of-possession *from* the
-      applied argument (Korean, Hebrew possessor datives, Japanese
-      adversity passives) -/
+/-- High vs low applicatives ([pylkkanen-2008]): high relates to the event, low to the theme. -/
 inductive ApplType where
-  | high          -- Above VP: individual-event relation ([pylkkanen-2008])
-  | lowRecipient  -- Below VP: transfer TO applied arg ([pylkkanen-2008])
-  | lowSource     -- Below VP: transfer FROM applied arg ([pylkkanen-2008] §2.2, §2.3)
+  /-- Above VP: relates the applied argument to the event. -/
+  | high
+  /-- Below VP: transfer-of-possession *to* the applied argument. -/
+  | lowRecipient
+  /-- Below VP: transfer-of-possession *from* the applied argument. -/
+  | lowSource
   deriving DecidableEq, Repr
 
-/-- The category of the constituent an applicative Merges with — its complement.
-    This **is** [pylkkanen-2008]'s high/low distinction (Merge position): a high
-    applicative merges with the event projection (the `v`P, `[+V]`); a low
-    applicative merges with the theme (a `D`P, `[+N]`). The structural predicates
-    below are read off this complement via `catFeatures`, not stipulated from the
-    constructor — Pylkkänen's typology *follows from* attachment height. -/
+/-- The category an applicative Merges with: the event `v` (high) or the theme `D` (low). -/
 def ApplType.complement : ApplType → Cat
-  | .high         => .v    -- the event (vP)
-  | .lowRecipient => .D    -- the theme (DP)
-  | .lowSource    => .D    -- the theme (DP)
+  | .high         => .v
+  | .lowRecipient => .D
+  | .lowSource    => .D
 
-/-- The complement an applicative Merges with, as an actual `SO` constituent: a leaf
-    headed by `a.complement` (the event for high, the theme for low). The Merge itself is
-    `ApplType.toSO`, whose right child is this. -/
+/-- The complement constituent an applicative Merges with — a leaf headed by `a.complement`. -/
 def ApplType.complementSO (a : ApplType) (id : Nat := 0) : SO :=
   SO.mkLeaf a.complement [] id
 
-/-- The categorial features of the actual Merge complement, **read off the `SO` via the
-    §1.13 head function** `SO.outerCatC`. The high/low typology below is this read, by
-    construction — Pylkkänen's attachment claim is the definition, not a `Cat` table and
-    not a separate predicate bridged to the structure. -/
+/-- The Merge complement's categorial features, read via the §1.13 head function `SO.outerCatC`. -/
 def ApplType.complementFeatures (a : ApplType) : CatFeatures :=
   a.complementSO.outerCatC.elim ⟨false, false⟩ catFeatures
 
-/-- Low iff the applicative Merges with a nominal (theme) complement. -/
-def ApplType.IsLow (a : ApplType) : Prop :=
-  a.complementFeatures.plusN = true
+/-- `a.IsLow`: the applicative Merges with a nominal (theme) complement. -/
+def ApplType.IsLow (a : ApplType) : Prop := a.complementFeatures.plusN = true
 
-instance : DecidablePred ApplType.IsLow :=
+instance : DecidablePred ApplType.IsLow := fun _ => inferInstanceAs (Decidable (_ = true))
+
+/-- `a.RequiresEventSemantics`: `a` Merges with the verbal (event) complement. -/
+def ApplType.RequiresEventSemantics (a : ApplType) : Prop := a.complementFeatures.plusV = true
+
+instance : DecidablePred ApplType.RequiresEventSemantics :=
   fun _ => inferInstanceAs (Decidable (_ = true))
 
--- ============================================================================
--- § 2: Semantic Relations
--- ============================================================================
+/-- `a.RequiresThemeInComplement`: low applicatives need an unsaturated theme in the complement. -/
+def ApplType.RequiresThemeInComplement (a : ApplType) : Prop := a.IsLow
 
-/-- The semantic relation an applicative head contributes.
+instance : DecidablePred ApplType.RequiresThemeInComplement :=
+  fun a => inferInstanceAs (Decidable a.IsLow)
 
-    - `eventRelation`: λx.λe. R(e, x) — relates individual to event (high Appl)
-    - `possessionTo`: λx.λy. HAVE(x, y) — transfer-to (low recipient)
-    - `possessionFrom`: λx.λy. HAVE-FROM(y, x) — transfer-from (low source) -/
+/-! ### Semantic relations -/
+
+/-- The semantic relation an applicative head contributes ([pylkkanen-2008]). -/
 inductive ApplSemantics where
-  | eventRelation   -- High: individual-event (ethical dative, benefactive)
-  | possessionTo    -- Low recipient: HAVE relation
-  | possessionFrom  -- Low source: HAVE-FROM relation
+  /-- Individual–event relation (high Appl). -/
+  | eventRelation
+  /-- `HAVE` relation (low recipient). -/
+  | possessionTo
+  /-- `HAVE-FROM` relation (low source). -/
+  | possessionFrom
   deriving DecidableEq, Repr
 
-/-- Map each applicative type to its semantic contribution. -/
+/-- The semantic contribution of each applicative type. -/
 def ApplType.semantics : ApplType → ApplSemantics
   | .high         => .eventRelation
   | .lowRecipient => .possessionTo
   | .lowSource    => .possessionFrom
 
-/-- Does this applicative type require event-level semantics from Voice?
-    A high applicative Merges with the event projection (a `[+V]` complement), so it needs
-    Voice to contribute event semantics; a low applicative Merges with the theme and is
-    independent of Voice. Read off the Merge complement (`complementFeatures`). -/
-def ApplType.RequiresEventSemantics (a : ApplType) : Prop :=
-  a.complementFeatures.plusV = true
+/-! ### The applicative head -/
 
-instance : DecidablePred ApplType.RequiresEventSemantics :=
-  fun _ => inferInstanceAs (Decidable (_ = true))
-
-/-- Does this applicative type require its complement to provide an
-    unsaturated theme argument? Low applicatives do — they relate the
-    applied argument to the theme via transfer-of-possession. High
-    applicatives don't — they relate the applied argument to the event
-    described by the verb, not to a theme.
-
-    This predicate is the source of [pylkkanen-2008]'s
-    transitivity restriction (Diagnostic 1, eq. 17 of book): low
-    applicatives cannot combine with unergatives because unergative
-    VPs lack an unsaturated theme. The semantic mismatch is shown
-    in eq. 103 (page 55): combining low Appl with an unergative VP
-    yields `agent(e, x) ∧ theme(e, x)` — a contradiction. -/
-def ApplType.RequiresThemeInComplement (a : ApplType) : Prop :=
-  a.IsLow
-
-instance : DecidablePred ApplType.RequiresThemeInComplement :=
-  fun a => inferInstanceAs (Decidable a.IsLow)
-
--- ============================================================================
--- § 3: Applicative Head Structure
--- ============================================================================
-
-/-- An applicative head with its type and properties. -/
+/-- An applicative head: its type, and whether it assigns dative case to its specifier. -/
 structure ApplHead where
-  /-- High or low (recipient/source) -/
+  /-- High or low (recipient/source). -/
   applType : ApplType
-  /-- Does the applied argument get dative case? -/
+  /-- Whether the applied argument receives dative case. -/
   assignsDative : Bool := true
   deriving DecidableEq, Repr
 
 /-- Canonical high applicative (ethical dative). -/
-def applHigh : ApplHead :=
-  { applType := .high }
+def applHigh : ApplHead := { applType := .high }
 
 /-- Canonical low recipient applicative (DOC, possessive dative). -/
-def applLowRecipient : ApplHead :=
-  { applType := .lowRecipient }
+def applLowRecipient : ApplHead := { applType := .lowRecipient }
 
 /-- Canonical low source applicative. -/
-def applLowSource : ApplHead :=
-  { applType := .lowSource }
+def applLowSource : ApplHead := { applType := .lowSource }
 
--- ============================================================================
--- § 4: Voice–Applicative Interaction ([pylkkanen-2008], [schaefer-2008])
--- ============================================================================
+/-! ### Voice–applicative licensing ([pylkkanen-2008], [schaefer-2008]) -/
 
-/-- Is this applicative licensed in the context of a given Voice head?
+/-- `appl.Licensed voice`: if `appl` requires event semantics, `voice` supplies them. -/
+def ApplHead.Licensed (appl : ApplHead) (voice : VoiceHead) : Prop :=
+  appl.applType.RequiresEventSemantics → voice.HasSemantics
 
-    High applicatives require Voice with event semantics; when Voice is
-    semantically null (middles, anticausatives), high Appl is blocked.
-    Low applicatives relate to the theme and are always licensed
-    ([pylkkanen-2008]). -/
-def ApplHead.licensedWith (appl : ApplHead) (voice : VoiceHead) : Bool :=
-  if appl.applType.RequiresEventSemantics then decide voice.HasSemantics
-  else true
+instance (appl : ApplHead) (voice : VoiceHead) : Decidable (appl.Licensed voice) :=
+  inferInstanceAs (Decidable (_ → _))
 
--- ============================================================================
--- § 5: Verification Theorems
--- ============================================================================
+/-! ### Licensing predictions -/
+
+variable (v : VoiceHead)
 
 /-- High applicatives require event semantics. -/
-theorem high_requires_event :
-    ApplType.RequiresEventSemantics .high := by decide
+theorem high_requires_event : ApplType.RequiresEventSemantics .high := by decide
 
 /-- Low applicatives do not require event semantics. -/
 theorem low_no_event_requirement :
     ¬ ApplType.RequiresEventSemantics .lowRecipient ∧
-    ¬ ApplType.RequiresEventSemantics .lowSource := ⟨by decide, by decide⟩
+    ¬ ApplType.RequiresEventSemantics .lowSource := by decide
 
 /-- Low applicatives are licensed under any Voice head ([pylkkanen-2008]). -/
-theorem low_licensed_with_any (v : VoiceHead) :
-    applLowRecipient.licensedWith v = true ∧
-    applLowSource.licensedWith v = true := ⟨rfl, rfl⟩
+theorem low_licensed_with_any :
+    applLowRecipient.Licensed v ∧ applLowSource.Licensed v :=
+  ⟨fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
 
-/-- θ-assigning Voice licenses high applicatives: θ-assignment entails event
-    semantics (`VoiceHead.AssignsTheta.hasSemantics`), which is all high Appl
-    requires. -/
-theorem high_licensed_of_assignsTheta (v : VoiceHead) (h : v.AssignsTheta) :
-    applHigh.licensedWith v = true := by
-  unfold ApplHead.licensedWith
-  split
-  · exact decide_eq_true h.hasSemantics
-  · rfl
+/-- θ-assigning Voice licenses high applicatives (θ-assignment entails event semantics). -/
+theorem high_licensed_of_assignsTheta (h : v.AssignsTheta) : applHigh.Licensed v :=
+  fun _ => h.hasSemantics
 
 /-- Ethical datives (high Appl) are licensed with agentive Voice. -/
-theorem ethical_dative_with_agent :
-    applHigh.licensedWith voiceAgent = true := rfl
+theorem ethical_dative_with_agent : applHigh.Licensed voiceAgent := by decide
 
-/-- High Appl is BLOCKED with middle Voice (no event semantics)
-    ([pylkkanen-2008]). -/
-theorem ethical_dative_blocked_in_middle :
-    applHigh.licensedWith voiceMiddle = false := rfl
+/-- High Appl is blocked with middle Voice (no event semantics) ([pylkkanen-2008]). -/
+theorem ethical_dative_blocked_in_middle : ¬ applHigh.Licensed voiceMiddle := by decide
 
 /-- Possessive datives (low Appl) survive in middles. -/
-theorem possessive_dative_survives_middle :
-    applLowRecipient.licensedWith voiceMiddle = true := rfl
+theorem possessive_dative_survives_middle : applLowRecipient.Licensed voiceMiddle := by decide
 
 /-- Possessive datives survive in anticausatives. -/
 theorem possessive_dative_survives_anticausative :
-    applLowRecipient.licensedWith voiceAnticausative = true := rfl
+    applLowRecipient.Licensed voiceAnticausative := by decide
 
 /-- The asymmetry: ethical blocked but possessive survives in middles. -/
 theorem ethical_possessive_middle_asymmetry :
-    applHigh.licensedWith voiceMiddle = false ∧
-    applLowRecipient.licensedWith voiceMiddle = true := ⟨rfl, rfl⟩
+    ¬ applHigh.Licensed voiceMiddle ∧ applLowRecipient.Licensed voiceMiddle := by decide
 
--- ============================================================================
--- § 6: Case-Based Blocking of SpecApplP ([wood-2015] Ch. 5, §5.3.2)
--- ============================================================================
+/-! ### Case-based blocking of SpecApplP ([wood-2015]) -/
 
-/-- Can a given element merge in SpecApplP?
+/-- `appl.SpecCanBearCase x`: if `appl` assigns dative, `x` must bear case ([wood-2015]). -/
+def ApplHead.SpecCanBearCase {α : Type*} [HasCase α] (appl : ApplHead) (x : α) : Prop :=
+  appl.assignsDative = true → (HasCase.caseOf x).isSome = true
 
-    [wood-2015] Ch. 5 (§5.3.2): Appl assigns **dative case** to its
-    specifier. Therefore only case-bearing elements (`HasCase` carriers
-    with `caseOf ≠ none`) can merge in SpecApplP. The Icelandic clitic
-    -st lacks case features and is thus blocked from SpecApplP, even
-    though it can merge in SpecVoiceP and SpecpP (where no case is
-    assigned to the specifier). -/
-def ApplHead.specCanBearCase {α : Type*} [HasCase α] (appl : ApplHead)
-    (x : α) : Bool :=
-  if appl.assignsDative then (HasCase.caseOf x).isSome
-  else true
+instance {α : Type*} [HasCase α] (appl : ApplHead) (x : α) :
+    Decidable (appl.SpecCanBearCase x) := inferInstanceAs (Decidable (_ → _))
 
-/-- -st (caseless: `caseOf = none`) cannot merge in SpecApplP
-    ([wood-2015] §5.3.2). -/
+/-- The caseless clitic -st (`caseOf = none`) cannot occupy SpecApplP ([wood-2015]). -/
 theorem caseless_blocked_in_specAppl :
-    applLowRecipient.specCanBearCase (none : Option Case) = false := rfl
+    ¬ applLowRecipient.SpecCanBearCase (none : Option Case) := by decide
 
-/-- A case-bearing DP CAN merge in SpecApplP. -/
+/-- A case-bearing DP can occupy SpecApplP. -/
 theorem caseful_ok_in_specAppl :
-    applLowRecipient.specCanBearCase (some Case.dat) = true := rfl
+    applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
 
--- ============================================================================
--- § 7: The applicative as an actual Merge
--- ============================================================================
+/-! ### The applicative as a Merge -/
 
-/-- An applicative of type `a` realized as an actual Merge: the `Appl` head (selecting
-    `a.complement`) `SO.merge`d with its complement. Its right child is `a.complementSO`,
-    the very constituent whose head category `RequiresEventSemantics`/`IsLow` read off —
-    so the typology *is* a property of this derivation, by construction. -/
+/-- An applicative as an actual Merge: the `Appl` head `SO.merge`d with `a.complementSO`. -/
 noncomputable def ApplType.toSO (a : ApplType) (applId complId : Nat := 0) : SO :=
   SO.merge (SO.mkLeaf .Appl [a.complement] applId) (a.complementSO complId)
 
