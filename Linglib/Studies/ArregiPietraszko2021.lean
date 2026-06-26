@@ -1,5 +1,5 @@
-import Linglib.Syntax.Minimalist.VerbMovementParameter
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Movement.VerbMovementParameter
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Amalgamation
 import Linglib.Data.Examples.ArregiPietraszko2021
 

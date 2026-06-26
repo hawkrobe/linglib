@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.Probe.Transmission
 

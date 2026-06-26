@@ -1,6 +1,6 @@
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004
-import Linglib.Syntax.Minimalist.DegreeMovement
+import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 
 /-!
 # Bhatt & Takahashi 2011: Reduced and Unreduced Phrasal Comparatives

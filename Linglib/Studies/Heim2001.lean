@@ -1,7 +1,7 @@
 import Linglib.Studies.Kennedy1999
 import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Syntax.Minimalist.DegreeMovement
+import Linglib.Syntax.Minimalist.Movement.DegreeMovement
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Interval.Set.Disjoint
 

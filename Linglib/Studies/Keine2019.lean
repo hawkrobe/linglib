@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Probe.Profile
 

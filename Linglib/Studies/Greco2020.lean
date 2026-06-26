@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Semantics.Negation.CzechNegation
