@@ -18,8 +18,7 @@ Schema encodes the possessee as subject.
 Russian also has a secondary, less common Action Schema construction
 using `imet'` 'to have' (< `*em-` 'take'), where the possessor is subject.
 
-PossessionProfile bundle for Russian (ISO `rus`), per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
+Per-language possession defs for Russian (ISO `rus`). Substrate enums live in
 `Linglib/Features/Possession.lean`. Heine 1997 prediction verification for
 Russian lives in `Studies/Heine1997.lean`.
 
@@ -99,20 +98,13 @@ def imetNotions : List Notion :=
   [.abstract, .permanent]
 
 -- ============================================================================
--- §5. Russian Possession Profile (PossessionProfile bundle)
+-- §5. Remaining typological dimensions
 -- ============================================================================
 
-/-- Russian possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Russian"
-  , family := "Indo-European"
-  , iso := "rus"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .locational
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := some .noAffix
-  , examples := ["u menja est' kniga", "kniga Ivana"]
-  , notes := "Locational: u + GEN + est'; adnominal: NP-GEN" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+/-- Adnominal NP-GEN (`kniga Ivana`): dependent-marking. -/
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := some .noAffix
 
 end Russian.Possession

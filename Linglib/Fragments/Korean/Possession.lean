@@ -2,14 +2,14 @@ import Linglib.Features.Possession
 
 /-!
 # Korean possession profile
-[stassen-2009] [nichols-1986] [heine-1997] 
+[stassen-2009] [nichols-1986] [heine-1997]
 
-PossessionProfile bundle for Korean (ISO `kor`), per the
-project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
-…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consuming this profile live in
-`Studies/NicholsBickel2013.lean`.
+Per-language possession values for Korean (Koreanic, ISO `kor`): forms
+`na-ege chaek-i iss-da`, `Yeonghui-ui chaek`; dative possessor plus existential
+`iss-da`, with genitive -ui for adnominal possession. Substrate types
+(`PredicativeStrategy`, `AdnominalMarking`, …) live in
+`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
+values live in `Studies/NicholsBickel2013.lean`.
 -/
 
 set_option autoImplicit false
@@ -18,17 +18,10 @@ namespace Korean.Possession
 
 open _root_.Possession
 
-/-- Korean possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Korean"
-  , family := "Koreanic"
-  , iso := "kor"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .locational
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := Option.none
-  , examples := ["na-ege chaek-i iss-da", "Yeonghui-ui chaek"]
-  , notes := "Dative possessor + existential iss-da; genitive -ui for adnominal possession" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .locational
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := Option.none
 
 end Korean.Possession

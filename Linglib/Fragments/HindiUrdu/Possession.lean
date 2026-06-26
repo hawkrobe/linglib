@@ -2,13 +2,14 @@ import Linglib.Features.Possession
 
 /-!
 # Hindiurdu possession profile
-[stassen-2009] [nichols-1986] [heine-1997] 
+[stassen-2009] [nichols-1986] [heine-1997]
 
-PossessionProfile bundle for Hindiurdu (ISO `hin`), per the
-project's "per-language data flows through Fragments" rule. Substrate
-types (`PossessionProfile`, `PredicativeStrategy`, `AdnominalMarking`,
-…) live in `Linglib/Features/Possession.lean`. Cross-linguistic theorems
-consuming this profile live in
+Per-language possession values for Hindi-Urdu (Indo-European, ISO `hin`): forms
+`mere paas kitaab hai`, `Raam kaa ghar`; postposition `paas` 'near' for
+predicative possession, and the agreeing genitive postposition kaa ~ ke ~ kii
+for adnominal possession. Substrate types (`PredicativeStrategy`,
+`AdnominalMarking`, …) live in `Linglib/Features/Possession.lean`.
+Cross-linguistic theorems consuming these values live in
 `Studies/NicholsBickel2013.lean`.
 -/
 
@@ -18,17 +19,10 @@ namespace HindiUrdu.Possession
 
 open _root_.Possession
 
-/-- Hindiurdu possession profile. -/
-def possession : PossessionProfile :=
-  { language := "Hindiurdu"
-  , family := "Indo-European"
-  , iso := "hin"
-  , obligatoryPossession := .noObligatory
-  , possessiveClassification := .noClassification
-  , predicativeStrategy := .locational
-  , adnominalStrategy := .dependentMarking
-  , affixPosition := Option.none
-  , examples := ["mere paas kitaab hai", "Raam kaa ghar"]
-  , notes := "Postposition paas 'near' for predicative; kaa/ke/kii agreeing genitive postposition for adnominal" }
+def obligatoryPossession : Obligatoriness := .noObligatory
+def possessiveClassification : Classification := .noClassification
+def predicativeStrategy : PredicativeStrategy := .locational
+def adnominalStrategy : AdnominalMarking := .dependentMarking
+def affixPosition : Option AffixPosition := Option.none
 
 end HindiUrdu.Possession
