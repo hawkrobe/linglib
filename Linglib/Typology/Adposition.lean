@@ -1,6 +1,6 @@
 import Linglib.Data.WALS.Features.F85A
 import Linglib.Data.UD.Basic
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Adposition typology: shared substrate type
@@ -11,7 +11,7 @@ Framework-agnostic enum for storing per-language adposition order
 profiles) and `Studies/` (cross-linguistic generalisations) can
 import without violating the layered dependency hierarchy.
 
-Sister substrate to `Typology.WordOrder` — same shape (enum with
+Sister substrate to `WordOrder` — same shape (enum with
 WALS-attested cases plus epistemic-distinction cases, namespaced
 `AdpositionOrder.ofWALS{85A,}` converters, classification predicates,
 head-direction projection).
@@ -24,7 +24,7 @@ a finding*). `AdpositionOrder.notInWALS` is absence from Ch 85 — the
 language was not coded. A consumer that filtered on `≠ .noDominant`
 would otherwise silently include unencoded languages as "genuinely
 nondominant". The two cases are kept distinct, mirroring
-`Typology.WordOrder`'s post-refactor design.
+`WordOrder`'s post-refactor design.
 
 ## `noAdpositions` as a category
 

@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # German word-order profile
@@ -10,8 +10,8 @@ classified as having no dominant word order in WALS Ch 81/83.
 namespace German
 
 /-- German word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "deu"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "deu"
 
 
 set_option maxRecDepth 4096 in

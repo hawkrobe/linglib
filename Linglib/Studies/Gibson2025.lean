@@ -1,7 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 import Linglib.Morphology.Word
 
 /-!
@@ -27,7 +27,7 @@ The `AlignmentCell` / `CrossTab` 2×2 head-direction tabulation types are
 defined here as paper-anchored apparatus rather than substrate, since the
 only consumers are this paper plus the Levshina-style gradient extension
 (`Studies/LevshinaEtAl2023.lean`). They will be promoted to
-`Typology/WordOrder.lean` substrate when a second paper-independent
+`Features/WordOrder.lean` substrate when a second paper-independent
 consumer materialises (e.g., a `FOFC.lean`, a `Hawkins1983.lean`, or a
 systematic WALS Ch 95/96/97 ingestion that needs the type at substrate
 level).

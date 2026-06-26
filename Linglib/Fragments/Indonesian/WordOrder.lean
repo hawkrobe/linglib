@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 
 /-!
 # Indonesian word-order profile
@@ -9,8 +9,8 @@ WALS-derived word-order profile for Indonesian (ISO `ind`).
 namespace Indonesian
 
 /-- Indonesian word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
-def wordOrder : Typology.WordOrder.WordOrderProfile :=
-  Typology.WordOrder.WordOrderProfile.ofWALS "ind"
+def wordOrder : WordOrder.WordOrderProfile :=
+  WordOrder.WordOrderProfile.ofWALS "ind"
 
 
 set_option maxRecDepth 4096 in

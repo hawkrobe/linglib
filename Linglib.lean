@@ -666,6 +666,7 @@ import Linglib.Features.Subjectivity
 import Linglib.Features.Topic
 import Linglib.Features.Valence
 import Linglib.Features.VerbCluster
+import Linglib.Features.WordOrder
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Abkhaz.Evidentiality
@@ -3006,4 +3007,3 @@ import Linglib.Typology.Universal
 import Linglib.Typology.UniversalQuantifier
 import Linglib.Typology.Voice
 import Linglib.Typology.VoiceSystem
-import Linglib.Typology.WordOrder

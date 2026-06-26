@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Features.F87A
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 import Linglib.Morphology.MorphRule
 import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement

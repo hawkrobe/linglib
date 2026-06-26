@@ -26,7 +26,7 @@ implicational universals to their tetrachoric form.
 
 The language type is left abstract (`α`); concrete samples instantiate it
 to the appropriate Fragment-derived profile type
-(`Typology.WordOrder.WordOrderProfile`, etc.).
+(`WordOrder.WordOrderProfile`, etc.).
 
 ## Decidability over literal samples
 

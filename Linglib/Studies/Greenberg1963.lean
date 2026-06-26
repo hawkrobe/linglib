@@ -1,4 +1,4 @@
-import Linglib.Typology.WordOrder
+import Linglib.Features.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.Universal
 import Linglib.Fragments.English.WordOrder
@@ -78,7 +78,7 @@ open _root_.Typology (ImplicationalUniversal)
 structure SampleEntry where
   iso : String
   name : String
-  wordOrder : _root_.Typology.WordOrder.WordOrderProfile
+  wordOrder : _root_.WordOrder.WordOrderProfile
   adposition : _root_.Typology.Adposition.AdpositionOrder
   deriving Repr, DecidableEq
 
@@ -194,7 +194,7 @@ set_option maxRecDepth 4096 in
     hold over the curated sample; they would diverge on a language with
     `BasicOrder.noDominant` Ch 81 + dominant `.ov` Ch 83 — exactly the
     Greenbergian-vs-Dryerian primacy choice flagged in
-    `Typology.WordOrder`'s module docstring. -/
+    `WordOrder`'s module docstring. -/
 theorem dryer_bdt_ov_postp :
     ImplicationalUniversal isOV isPostpositional fragmentSample := by
   decide
