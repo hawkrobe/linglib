@@ -2,6 +2,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Case.Allomorphy
+import Linglib.Phonology.OptimalityTheory.Basic
 import Linglib.Phonology.OptimalityTheory.Predict
 import Linglib.Phonology.Prosodic.Foot
 import Linglib.Morphology.DM.VocabularyInsertion

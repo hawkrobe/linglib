@@ -61,17 +61,6 @@ constraints. The fixed-length analog of the profile computation inside
 tableau context. -/
 def mkProfile {C : Type*} (ranking : List (NamedConstraint C)) (c : C) :
     ViolationProfile ranking.length :=
-  buildViolationProfile (fun i c => (ranking.get i).eval c) c
-
-/-- Create a `ViolationProfile n` from a `List Nat` literal.
-
-The length proof defaults to `by decide`, so study files can write readable
-profile comparisons without an explicit proof:
-```
-theorem t24a_profile : mkProfile ranking c = vpOfList [2, 2, 0] := by decide
-``` -/
-def vpOfList {n : Nat} (vs : List Nat) (h : vs.length = n := by decide) :
-    ViolationProfile n :=
-  toLex fun (i : Fin n) => vs.get ⟨i.val, by omega⟩
+  buildViolationProfile (fun i => (ranking.get i).eval) c
 
 end Constraints
