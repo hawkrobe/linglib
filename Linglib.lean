@@ -17,6 +17,7 @@ import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Conservation
@@ -54,6 +55,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
+import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
@@ -2844,6 +2846,10 @@ import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
 import Linglib.Syntax.Minimalist.Merge.MinimalSearch
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldPsi
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldCharacter
+import Linglib.Syntax.Minimalist.Merge.MinimalYieldBirkhoff
 import Linglib.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Merge.Sideward
 import Linglib.Syntax.Minimalist.MinimalPronoun
