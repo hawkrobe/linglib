@@ -4,11 +4,11 @@ import Linglib.Semantics.Polarity.Item
 
 /-!
 # Semantics.Polarity.Licensing
-[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998]
+[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998] [vanderwouden-1997]
 [von-fintel-1999] [chierchia-2006]
 [horn-1996] [hoeksema-1983] [bhatt-pancheva-2004]
 [heim-2006] [iatridou-2000] [dayal-1996]
-[van-rooy-2003]
+[van-rooy-2003-npi]
 
 Monotonicity-based licensing infrastructure for polarity-sensitive items:
 the `LicensingContext` enum (~22 contexts), the `LicensingMechanism`
@@ -49,7 +49,7 @@ substantively distinct cases:
 - `byGenericIndefinite`: non-DE FC any (modals, generics, free relatives).
 - `byStrawsonDE`: licensing via Strawson entailment (superlatives) —
   [von-fintel-1999] / Herdan & Sharvit (UNVERIFIED — bib entry missing).
-- `byEntropy`: entropy-based licensing (questions per [van-rooy-2003]).
+- `byEntropy`: entropy-based licensing (questions per [van-rooy-2003-npi]).
 - `strengtheningFails`: contexts that *don't* license despite surface
   appearance (e.g., NP-comparatives that lack covert clausal structure).
 
@@ -91,7 +91,7 @@ open Features (LicensingContext)
     - `byStrawsonDE` — Strawson-DE licensing (superlatives per
       Herdan & Sharvit's superlative-NPI work [UNVERIFIED — bib entry
       missing] and [von-fintel-1999]).
-    - `byEntropy` — Entropy-based licensing (questions per [van-rooy-2003]).
+    - `byEntropy` — Entropy-based licensing (questions per [van-rooy-2003-npi]).
     - `strengtheningFails` — contexts that *don't* license despite surface
       appearance (e.g., NP-comparatives that lack covert clausal structure).
       Used by study files (e.g., `KadmonLandman1993.lean`) for ungrammatical
@@ -241,7 +241,7 @@ def contextProperties : LicensingContext → ContextProperties
   | .question =>
       { strawsonSignature := .mono, mechanism := .byEntropy
       , prototype := "Did anyone call?"
-      , citations := ["van-rooy-2003"] }
+      , citations := ["van-rooy-2003-npi"] }
   | .superlative =>
       -- Strawson row `.anti` per [von-fintel-1999]
       -- (`superlative_isStrawsonDE`); previously a `.mono` placeholder.

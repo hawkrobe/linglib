@@ -6,14 +6,14 @@ import Mathlib.Data.Fintype.Basic
 [stankova-2025] [zeijlstra-2004]
 
 Pure type definitions for the three-way negation distinction in Czech polar
-questions (Staňková 2026), kept free of empirical data so that Fragment files
+questions (Staňková 2025), kept free of empirical data so that Fragment files
 can reference these types without importing it.
 
 -/
 
 namespace Semantics.Negation.CzechNegation
 
-/-- The three LF positions for negation in Czech PQs (Staňková 2026 §3, ex. 16).
+/-- The three LF positions for negation in Czech PQs (Staňková 2025 §3, ex. 16).
 
   [CP... [PolP ne- [ModP ne- [TP ne-]]]]
               OUTER MEDIAL INNER
@@ -87,7 +87,7 @@ def Diagnostic.equivFin : Diagnostic ≃ Fin 5 where
 
 instance : Fintype Diagnostic := Fintype.ofEquiv _ Diagnostic.equivFin.symm
 
-/-- Table 1 from Staňková (2026 §3): compatibility of each negation reading
+/-- Table 1 from Staňková (2025 §3): compatibility of each negation reading
 with polarity items and particles.
 
 This is the core empirical fingerprint: each negation position has a unique
