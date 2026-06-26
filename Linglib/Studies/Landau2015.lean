@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Semantics.Verb.Basic
-import Linglib.Typology.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Noonan2007
 
@@ -800,7 +800,7 @@ end VerbVerification
 -- § 14: Noonan CTP → Landau Tier Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Typology.Complementation
+open Clause.Complementation
 
 /-- Map [noonan-2007]'s CTP classes to [landau-2015]'s
     control tiers.

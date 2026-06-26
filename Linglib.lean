@@ -2805,6 +2805,7 @@ import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
@@ -2924,7 +2925,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Complementation
 import Linglib.Typology.Coordination
 import Linglib.Typology.Copulas
 import Linglib.Typology.Directives
