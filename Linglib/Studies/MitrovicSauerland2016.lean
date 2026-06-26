@@ -49,7 +49,7 @@ heads are overtly pronounced; the predictions are:
 
 namespace MitrovicSauerland2016
 
-open Typology.Coordination
+open Syntax.Coordination
 open Haspelmath2007
 
 /-! ### Triadic-exponency predicate -/

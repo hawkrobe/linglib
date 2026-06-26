@@ -1,4 +1,4 @@
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Coordination
 
@@ -57,7 +57,7 @@ set_option autoImplicit false
 
 namespace Stassen2000
 
-open Typology.Coordination
+open Syntax.Coordination
 
 -- ============================================================================
 -- §1. Conjunction Encoding Strategies

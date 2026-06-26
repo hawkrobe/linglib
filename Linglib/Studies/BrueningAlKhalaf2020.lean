@@ -1,5 +1,5 @@
 import Linglib.Features.WordOrder
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic
@@ -50,7 +50,7 @@ rather than stipulating it. Apparent mismatches in predication and modification
 
 namespace BrueningAlKhalaf2020
 
-open Typology.Coordination (CoordSymmetry)
+open Syntax.Coordination (CoordSymmetry)
 open Syntax (Cat)
 open Syntax.Cat (NP VP AdjP AdvP PP)
 open WordOrder
