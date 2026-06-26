@@ -3,7 +3,7 @@ import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
 import Linglib.Features.WordOrder
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -77,7 +77,7 @@ The competing analyses make different predictions for the preverbal
 -/
 
 open Minimalist (ForceHead)
-open Typology.Coordination (CoordSymmetry)
+open Syntax.Coordination (CoordSymmetry)
 open German (german)
 
 /-- German has V2 in root declaratives: the finite verb moves to C°,

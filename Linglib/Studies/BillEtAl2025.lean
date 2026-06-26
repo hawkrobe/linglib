@@ -3,7 +3,7 @@ import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Boundness
 import Linglib.Semantics.Coordination.Defs
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
 
@@ -54,7 +54,7 @@ so the M&S derivation is the definition itself, not a theorem.
 
 namespace BillEtAl2025
 
-open Typology.Coordination
+open Syntax.Coordination
 
 -- Conjunction Particle Typology
 
@@ -580,7 +580,7 @@ theorem ms_universality_challenged :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 open Haspelmath2007 (georgian hungarian) in
-open Typology.Coordination (ConjunctionSystem.muBoundness) in
+open Syntax.Coordination (ConjunctionSystem.muBoundness) in
 /--
 **The boundness confound.**
 

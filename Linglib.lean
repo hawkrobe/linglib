@@ -2817,6 +2817,7 @@ import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Coordination
 import Linglib.Syntax.DependencyGrammar.Coreference
@@ -2930,7 +2931,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Coordination
 import Linglib.Typology.Directives
 import Linglib.Typology.Evidentiality
 import Linglib.Typology.ExpressiveModifier

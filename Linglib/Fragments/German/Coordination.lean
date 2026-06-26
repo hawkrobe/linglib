@@ -1,5 +1,5 @@
 import Linglib.Semantics.Coordination.Defs
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 
 /-!
 # German Coordination Morphology
@@ -15,7 +15,7 @@ are adversative.
 
 namespace German.Coordination
 
-open Typology.Coordination (ConjunctionStrategy)
+open Syntax.Coordination (ConjunctionStrategy)
 
 /-- *und* — conjunction proper (J particle, free word).
     "Die Stadt beendet [DP die Überarbeitung] und [CP dass für

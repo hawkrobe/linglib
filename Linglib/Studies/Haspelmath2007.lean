@@ -1,4 +1,4 @@
-import Linglib.Typology.Coordination
+import Linglib.Syntax.Coordination
 import Linglib.Fragments.English.Coordination
 import Linglib.Fragments.Farsi.Coordination
 import Linglib.Fragments.Finnish.Coordination
@@ -64,7 +64,7 @@ language sample below to formalise the J-μ predictions; the `iso` and
 
 namespace Haspelmath2007
 
-open Typology.Coordination
+open Syntax.Coordination
 /-! ### M&S focus languages -/
 
 /-- English only has J ("and"). "Both...and" is sometimes analyzed as J-MU,

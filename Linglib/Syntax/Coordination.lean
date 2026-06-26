@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F63A
 import Linglib.Data.WALS.Features.F64A
 
 /-!
-# Typology.Coordination
+# Coordination: morphosyntactic typology
 [haspelmath-2007] [stassen-2000] [mitrovic-sauerland-2016]
 [dryer-haspelmath-2013] [wals-2013]
 
@@ -52,7 +52,7 @@ language WALS sample).
   authors (e.g. Mauri 2008) argue for a finer multi-way split.
 -/
 
-namespace Typology.Coordination
+namespace Syntax.Coordination
 
 /-! ### [mitrovic-sauerland-2014] conjunction strategy -/
 
@@ -311,4 +311,4 @@ inductive CoordSymmetry where
   | asymmetric
   deriving DecidableEq, Repr, BEq
 
-end Typology.Coordination
+end Syntax.Coordination
