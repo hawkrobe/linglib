@@ -1,6 +1,3 @@
-import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Typology.NullSubject
-
 /-!
 # Minimal Pronoun Theory
 [kratzer-1998] [kratzer-2009] [safir-2014] [landau-2015]
@@ -135,60 +132,15 @@ inductive PronForm where
   deriving DecidableEq, Repr
 
 /-- Whether a language's minimal-pronoun inventory realizes the
-    controlled-subject context with an overt form. This is the
-    Minimalism-side bridge to `Typology.NullSubject.ProDropProfile.hasOvertPRO`.
-    The typological criterion is non-nullness, not specifically `.pronoun`:
-    [ostrove-2026]'s universal is about overt-vs-null PRO, so an
-    inventory whose controlled-subject form is `.reflexive` would also
-    count as overt PRO. -/
+    controlled-subject context with an overt form. The criterion is
+    non-nullness, not specifically `.pronoun`: [ostrove-2026]'s universal
+    is about overt-vs-null PRO, so an inventory whose controlled-subject
+    form is `.reflexive` also counts as overt PRO. -/
 def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Prop :=
   inv.controlForm ≠ .null
 
 instance (inv : MinPronInventory PronForm) : Decidable inv.hasOvertPRO :=
   inferInstanceAs (Decidable (_ ≠ _))
-
--- ════════════════════════════════════════════════════════════════
--- § 3.5: Bridge to `Typology.NullSubject.SubjectAssignment`
--- ════════════════════════════════════════════════════════════════
-
-open Typology.NullSubject in
-/-- Project a `PronForm` to the framework-agnostic `Exponent` (null vs
-    overt). Both `.pronoun` and `.reflexive` count as overt — the
-    typological criterion in `Typology.NullSubject` is non-nullness. -/
-def PronForm.toExponent : PronForm → Typology.NullSubject.Exponent
-  | .null      => .null
-  | .pronoun   => .overt
-  | .reflexive => .overt
-
-open Typology.NullSubject in
-/-- Project a Minimalist `MinPronInventory` to the framework-agnostic
-    `SubjectAssignment`. The `BVAContext` axis maps `controlled
-    SubjectContext`s to `controlledSubject`; all other contexts get
-    the elsewhere/free realization, since the minimal-pronoun
-    inventory does not directly track person, finiteness, or
-    Ā-status. Refinements (per-person inventories, anti-agreement
-    inventories) extend this projection. -/
-def MinPronInventory.toSubjectAssignment
-    (inv : MinPronInventory PronForm) : SubjectAssignment :=
-  fun ctx =>
-    let bva : BVAContext := match ctx.clauseRole with
-      | .controlSubject => .controlledSubject
-      | _               => .free
-    (inv.realize bva).toExponent
-
-open Typology.NullSubject in
-/-- Bridge theorem: the abstract `hasOvertPRO` over the projected
-    assignment agrees with the inventory's own `hasOvertPRO`. This is
-    the Minimalism→Core grounding: changing the inventory propagates
-    to the abstract universal by construction. -/
-theorem MinPronInventory.subjectAssignment_overtPRO_iff
-    (inv : MinPronInventory PronForm) :
-    inv.toSubjectAssignment.hasOvertPRO ↔ inv.hasOvertPRO := by
-  unfold SubjectAssignment.hasOvertPRO MinPronInventory.toSubjectAssignment
-    MinPronInventory.hasOvertPRO MinPronInventory.controlForm
-    SubjectAssignment.hasOvertPROAt
-  simp [thematicPersons, SubjectContext.controlled, PronForm.toExponent]
-  cases h : inv.realize .controlledSubject <;> simp
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Obligatory Control Signature
@@ -200,27 +152,14 @@ theorem MinPronInventory.subjectAssignment_overtPRO_iff
     (a) the controller(s) must be codependent(s) of S
     (b) PRO (or part of it) must be interpreted as a bound variable
 
-    Two additional diagnostics are **derived** from (a):
-    - Sloppy-only under VPE (from (a): controller must be local codependent
-      of the elided clause, forcing sloppy construal; Morgan 1970)
-    - Local c-commanding antecedent required (from (a): codependency
-      excludes arbitrary, long-distance, and non-c-commanding control)
-
-    Note: partial control IS a subspecies of OC per [landau-2013] —
-    (74b) says "PRO (or part of it)", explicitly accommodating it. -/
+    Partial control is a subspecies of OC per [landau-2013] — "PRO (or part
+    of it)" explicitly accommodates it. -/
 structure OCSignature where
   /-- (a): Controller must be argument of the matrix predicate -/
   controllerCodependent : Bool
   /-- (b): Embedded subject interpreted as bound variable -/
   boundVariable : Bool
   deriving DecidableEq, Repr
-
-/-- Derived: VPE allows only sloppy, not strict readings (from codependency:
-    controller must be local codependent of elided clause). -/
-def OCSignature.sloppyOnly (sig : OCSignature) : Bool := sig.controllerCodependent
-
-/-- Derived: Antecedent must locally c-command (from codependency). -/
-def OCSignature.localCCommand (sig : OCSignature) : Bool := sig.controllerCodependent
 
 /-- The full OC signature: both core diagnostics positive. -/
 def ocFull : OCSignature where
@@ -235,31 +174,5 @@ def ocNone : OCSignature where
 /-- Does a clause type show obligatory control? -/
 def OCSignature.isOC (sig : OCSignature) : Bool :=
   sig.controllerCodependent && sig.boundVariable
-
--- ════════════════════════════════════════════════════════════════
--- § 5: DM Vocabulary Insertion Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-- Convert a `MinPronInventory` to a list of DM `VocabItem`s.
-
-    Each context-specific item becomes a DM rule with `specificity = 1`,
-    and the elsewhere form becomes a DM rule with `specificity = 0`.
-    This preserves the Elsewhere Condition: DM's specificity-sorted
-    insertion will select the context-specific rule when it matches,
-    falling back to the elsewhere rule otherwise.
-
-    The `Form` type is rendered to `String` via the supplied function. -/
-def MinPronInventory.toDMRules {Form : Type}
-    (inv : MinPronInventory Form) (render : Form → String)
-    : List (Morphology.DM.VI.VocabItem BVAContext Unit) :=
-  let contextRules := inv.items.map fun item =>
-    { exponent := render item.form
-      contextMatch := fun ctx => ctx == item.context
-      specificity := 1 }
-  let elsewhereRule : Morphology.DM.VI.VocabItem BVAContext Unit :=
-    { exponent := render inv.elsewhere
-      contextMatch := fun _ => true
-      specificity := 0 }
-  contextRules ++ [elsewhereRule]
 
 end Minimalist.MinimalPronoun

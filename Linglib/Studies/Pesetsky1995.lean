@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Syntax.Minimalist.Cascade
+import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Semantics.Causation.Psych
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -36,6 +36,197 @@ adjunction through the Cascade spine, and nonaffixal overt prepositions
 -/
 
 set_option autoImplicit false
+
+/-! ## Cascade structures ([pesetsky-1995])
+
+Binary-branching PP spines where each node is a (possibly null) preposition that
+θ-selects its specifier — the geometry behind the T/SM restriction (Ch. 6), backward
+binding (§6.2.2), the dative alternation (Ch. 5), and heavy NP shift (§7.2). Formerly
+`Syntax/Minimalist/Cascade.lean`, dissolved here as this paper's apparatus.
+
+**CAUS ≠ vCAUSE.** Pesetsky's `caus` is a syntactic zero morpheme (a null P⁰ that creates
+causatives by incorporating into V via the HMC); distinct from [cuervo-2003]'s event-
+structural `VerbHead.vCAUSE` (present in both causative and anticausative). -/
+
+namespace Minimalist
+
+/-- A preposition head in a Cascade. `affixal` determines HMC passthrough: when a lower
+    head Z adjoins to this head Y, the complex [Z+Y] can move on only if Y is affixal. -/
+structure CascadeHead where
+  label : String
+  overt : Bool := true
+  affixal : Bool
+  deriving DecidableEq, Repr
+
+/-- Is this a zero morpheme (phonologically unrealized)? -/
+def CascadeHead.isZero (h : CascadeHead) : Bool := !h.overt
+
+/-- A Cascade: a binary-branching recursive PP spine. Each layer is a P head, its
+    specifier-DP label, and a complement (another layer or the terminal). -/
+inductive Cascade where
+  | terminal : Cascade
+  | layer : CascadeHead → String → Cascade → Cascade
+  deriving Repr
+
+/-- The spine of P heads, closest-to-V (index 0) to deepest. -/
+def Cascade.spine : Cascade → List CascadeHead
+  | .terminal => []
+  | .layer h _ rest => h :: rest.spine
+
+/-- The argument labels, closest-to-V to deepest. -/
+def Cascade.arguments : Cascade → List String
+  | .terminal => []
+  | .layer _ arg rest => arg :: rest.arguments
+
+/-- Number of PP layers. -/
+def Cascade.depth : Cascade → Nat
+  | .terminal => 0
+  | .layer _ _ rest => 1 + rest.depth
+
+theorem spine_length_eq_depth (c : Cascade) : c.spine.length = c.depth := by
+  induction c with
+  | terminal => rfl
+  | layer _ _ _ ih => simp [Cascade.spine, Cascade.depth, ih]; omega
+
+/-- Can a head at spine position `idx` reach V via successive head adjunction? It must
+    adjoin to each intermediate head (positions `idx−1 … 0`); blocked if any is nonaffixal
+    ([pesetsky-1995] §6.2). -/
+def canReachV (spine : List CascadeHead) (idx : Nat) : Bool :=
+  (spine.take idx).all (·.affixal)
+
+/-- Index of the head with the given label, if present. -/
+def findInSpine (spine : List CascadeHead) (label : String) : Option Nat :=
+  go spine 0
+where
+  go : List CascadeHead → Nat → Option Nat
+    | [], _ => none
+    | h :: rest, i => if h.label == label then some i else go rest (i + 1)
+
+/-- Can a head with the given label reach V in this cascade? -/
+def Cascade.headCanReachV (c : Cascade) (label : String) : Option Bool :=
+  (findInSpine c.spine label).map (canReachV c.spine ·)
+
+/-- Does this cascade contain a head with the given label? -/
+def Cascade.hasHead (c : Cascade) (label : String) : Bool :=
+  c.spine.any (·.label == label)
+
+/-- CAUS: zero causative morpheme; affixal, incorporates into V via the HMC. -/
+def caus : CascadeHead := ⟨"CAUS", false, true⟩
+/-- G: zero preposition for Theme/Patient in double object constructions (§5.3); affixal. -/
+def headG : CascadeHead := ⟨"G", false, true⟩
+/-- Overt "at" — Target stimulus; nonaffixal (blocks CAUS movement through it). -/
+def headAt : CascadeHead := ⟨"at", true, false⟩
+/-- Overt "about" — Subject Matter stimulus; nonaffixal. -/
+def headAbout : CascadeHead := ⟨"about", true, false⟩
+/-- Overt "to" — dative/goal; nonaffixal. -/
+def headTo : CascadeHead := ⟨"to", true, false⟩
+/-- Overt "of" — partitive/possessive; nonaffixal. -/
+def headOf : CascadeHead := ⟨"of", true, false⟩
+
+/-- [pesetsky-1995] (522): only affixation of a semantically contentful morpheme to a verb
+    with an external argument lets that argument go unexpressed (CAUS suppresses √annoy's
+    Agent; vacuous affixes like anticausative SE do not). -/
+def thetaSuppressed (causAffixed : Bool) (rootHasExtArg : Bool) : Bool :=
+  causAffixed && rootHasExtArg
+
+/-- The two occurrences of CAUS in Experiencer predicates ([pesetsky-1995] §6.2.2):
+    `affixal` (CAUS_aff, strong features) vs `prepositional` (CAUS_p, independent P). -/
+inductive CausVariant where
+  | affixal | prepositional
+  deriving DecidableEq, Repr
+
+/-- CAUS_aff bears strong features that must be discharged at PF. -/
+def CausVariant.hasStrongFeatures : CausVariant → Bool
+  | .affixal => true
+  | .prepositional => false
+
+/-- Causative-verb classification by relation to CAUS ([pesetsky-1995] §6.3):
+    `strong` (A-Causer suppressed), `weak` (CAUS, no suppression), `absent`. -/
+inductive CausStrength where
+  | strong | weak | absent
+  deriving DecidableEq, Repr
+
+/-- Strong causation iff the cascade contains CAUS; else absent. (Weak CAUS needs further
+    verbal decomposition beyond cascade presence.) -/
+def Cascade.causStrength (c : Cascade) : CausStrength :=
+  if c.hasHead "CAUS" then .strong else .absent
+
+/-- Position of an argument label (0 = outermost PP = structurally highest). -/
+def Cascade.argPosition : Cascade → String → Option Nat
+  | .terminal, _ => none
+  | .layer _ arg rest, target =>
+    if arg == target then some 0
+    else (rest.argPosition target).map (· + 1)
+
+/-- Spec of position `i` c-commands spec of position `j` iff `i < j` (outer c-commands
+    inner). -/
+def Cascade.specCCommands (c : Cascade) (commander commanded : String) : Bool :=
+  match c.argPosition commander, c.argPosition commanded with
+  | some i, some j => i < j
+  | _, _ => false
+
+/-- Heavy-NP-shift landing sites: one per cascade layer ([pesetsky-1995] Ch. 7). -/
+def Cascade.shiftSites (c : Cascade) : Nat := c.depth
+
+section CascadeVerification
+
+theorem caus_is_zero : caus.isZero = true := rfl
+theorem g_is_zero : headG.isZero = true := rfl
+theorem at_is_overt : headAt.isZero = false := rfl
+theorem about_is_overt : headAbout.isZero = false := rfl
+theorem caus_affixal : caus.affixal = true := rfl
+theorem g_affixal : headG.affixal = true := rfl
+theorem at_nonaffixal : headAt.affixal = false := rfl
+theorem about_nonaffixal : headAbout.affixal = false := rfl
+theorem to_nonaffixal : headTo.affixal = false := rfl
+
+/-- A head at position 0 always reaches V. -/
+theorem position_zero_reachable (spine : List CascadeHead) :
+    canReachV spine 0 = true := by simp [canReachV]
+
+private theorem all_take_of_all {α : Type} {p : α → Bool} {l : List α}
+    (h : l.all p = true) (n : Nat) : (l.take n).all p = true := by
+  induction l generalizing n with
+  | nil => simp
+  | cons hd tl ih =>
+    cases n with
+    | zero => simp
+    | succ m =>
+      simp only [List.take, List.all]
+      have hcons := h
+      simp only [List.all] at hcons
+      rw [Bool.and_eq_true] at hcons
+      rw [Bool.and_eq_true]
+      exact ⟨hcons.1, ih hcons.2 m⟩
+
+/-- If every spine head is affixal, any position reaches V. -/
+theorem all_affixal_reachable (spine : List CascadeHead) (idx : Nat)
+    (h : spine.all (·.affixal) = true) : canReachV spine idx = true :=
+  all_take_of_all h idx
+
+/-- A nonaffixal head at position 0 blocks anything below it. -/
+theorem nonaffixal_blocks (h : CascadeHead) (rest : List CascadeHead) (idx : Nat)
+    (hna : h.affixal = false) (hidx : idx > 0) :
+    canReachV (h :: rest) idx = false := by
+  simp only [canReachV]
+  cases idx with
+  | zero => omega
+  | succ n => simp [List.take, hna]
+
+theorem terminal_spine : Cascade.terminal.spine = [] := rfl
+theorem single_layer_spine (h : CascadeHead) (arg : String) :
+    (Cascade.layer h arg .terminal).spine = [h] := rfl
+theorem two_layer_spine (h₁ h₂ : CascadeHead) (a₁ a₂ : String) :
+    (Cascade.layer h₁ a₁ (.layer h₂ a₂ .terminal)).spine = [h₁, h₂] := rfl
+
+/-- CAUS is a syntactic zero morpheme present only in causatives; [cuervo-2003]'s
+    event-structural `vCAUSE` appears in anticausatives too — they are distinct. -/
+theorem vcause_in_anticausative_but_not_caus :
+    isAnticausative [.vCAUSE, .vGO, .vBE] = true := by decide
+
+end CascadeVerification
+
+end Minimalist
 
 namespace Pesetsky1995.PsychVerbs
 
