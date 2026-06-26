@@ -188,18 +188,6 @@ def derive (D : HSDerivation C) (pick : Finset C → Option C) (c : C)
 
 end HSDerivation
 
-/-- Canonical tie-breaker for `HSDerivation.derive` when `C` carries a
-    `LinearOrder`: pick the order-minimal element of the optimal set.
-    The ordering is typically incidental (a paper-grounded
-    `LinearOrder.lift'` through a `toNat` injection) since vanilla HS
-    doesn't specify how to break ties; directional HS replaces this with
-    `EvalMode.directional` once the `DirectionalTableau` consumer
-    arrives. Promoted out of the `HSDerivation` namespace because it
-    operates on bare `Finset C` and is reusable wherever an HS-style
-    iteration needs a canonical tie-breaker. -/
-def pickByOrder {C : Type*} [LinearOrder C] (s : Finset C) : Option C :=
-  if h : s.Nonempty then some (s.min' h) else none
-
 namespace HSDerivation
 
 variable {C : Type*} [DecidableEq C]
@@ -296,8 +284,8 @@ instance (D : DirectionalHSDerivation C) (c : C) : Decidable (D.Converged c) :=
     and `D.evalFilter`. The caller supplies a `pick : Finset C → Option C`
     tie-breaker; under directional EVAL ties should be rare or absent
     (that's the whole point of using directional), but `pick` is still
-    needed for the fallback path. The substrate utility `pickByOrder`
-    (above) suffices when `C` carries a `LinearOrder`. -/
+    needed for the fallback path — e.g. the order-minimal element when
+    `C` carries a `LinearOrder`. -/
 def derive (D : DirectionalHSDerivation C) (pick : Finset C → Option C)
     (c : C) (steps : Nat) : Option C :=
   iterateGen D.gen D.evalFilter pick c steps

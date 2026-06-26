@@ -137,25 +137,25 @@ instance : DecidableRel adjacentStrata := fun a b => by
 /-- A stratal derivation as a 4-role `Corr StratalRole α`, with parallel-pair
     feeding edges along the adjacent-strata chain (via `Corr.diagram` with
     the `adjacentStrata` predicate). -/
-def stratalDerivToCorr {α : Type}
+def stratalDerivToCorr {α : Type*}
     (input stemOut wordOut phraseOut : List α) : Corr StratalRole α :=
   Corr.diagram
     (fun | .sIn => input | .sOut => stemOut | .wOut => wordOut | .pOut => phraseOut)
     adjacentStrata
 
-@[simp] theorem stratalDerivToCorr_form_sIn {α : Type}
+@[simp] theorem stratalDerivToCorr_form_sIn {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .sIn = input := rfl
 
-@[simp] theorem stratalDerivToCorr_form_sOut {α : Type}
+@[simp] theorem stratalDerivToCorr_form_sOut {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .sOut = stemOut := rfl
 
-@[simp] theorem stratalDerivToCorr_form_wOut {α : Type}
+@[simp] theorem stratalDerivToCorr_form_wOut {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .wOut = wordOut := rfl
 
-@[simp] theorem stratalDerivToCorr_form_pOut {α : Type}
+@[simp] theorem stratalDerivToCorr_form_pOut {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .pOut = phraseOut := rfl
 
@@ -200,7 +200,7 @@ def stratalToTCTRole : StratalRole → Option Role
     between `c.form .sOut` and `c.form .pOut` (truncated by `min`).
 
     Defined via `Corr.diagram` with off-diagonal edge predicate. -/
-def project {α : Type}
+def project {α : Type*}
     (input stemOut wordOut phraseOut : List α) : Corr Role α :=
   Corr.diagram
     (fun | .input => input | .base => stemOut | .derivative => phraseOut)
@@ -220,7 +220,7 @@ def project {α : Type}
     surface forms agree under the translation — requires the deferred
     `stratalToTCT : StratalGrammar → TCTGrammar` constructive
     translation. -/
-theorem project_preserves_phrase_as_derivative {α : Type}
+theorem project_preserves_phrase_as_derivative {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (project input stemOut wordOut phraseOut).form .derivative = phraseOut :=
   rfl
@@ -228,13 +228,13 @@ theorem project_preserves_phrase_as_derivative {α : Type}
 /-- The stem output of a stratal derivation equals the base form of its
     TCT projection. The other half of Benua's identification:
     stratal's stem-stratum result *is* TCT's frozen base. -/
-theorem project_preserves_stem_as_base {α : Type}
+theorem project_preserves_stem_as_base {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (project input stemOut wordOut phraseOut).form .base = stemOut :=
   rfl
 
 /-- The underlying form (stem input) maps to TCT's input. -/
-theorem project_preserves_underlying_as_input {α : Type}
+theorem project_preserves_underlying_as_input {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (project input stemOut wordOut phraseOut).form .input = input :=
   rfl
@@ -245,7 +245,7 @@ theorem project_preserves_underlying_as_input {α : Type}
     content of "stem-output IS the OO-base for the phrase output" —
     Benua's claim that the OO-correspondence in TCT *replaces* the
     chain of cycles in stratal. -/
-theorem project_oo_edge_eq_parallel {α : Type}
+theorem project_oo_edge_eq_parallel {α : Type*}
     (input stemOut wordOut phraseOut : List α) :
     (project input stemOut wordOut phraseOut).edge .base .derivative =
       parallelEdge stemOut phraseOut := by
