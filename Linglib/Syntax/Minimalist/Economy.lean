@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
-import Linglib.Syntax.Minimalist.Checking
+import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Data.DFinsupp.WellFounded
 
