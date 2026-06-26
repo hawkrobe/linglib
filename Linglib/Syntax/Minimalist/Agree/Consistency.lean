@@ -11,8 +11,8 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 # Feature consistency as Birkhoff renormalization
 
 [marcolli-chomsky-berwick-2025]'s account of the syntax–semantics interface replaces a per-feature
-checking *lifecycle* (activate → check → erase, with a `convergesAtLF`/`convergesAtSpellOut`
-verdict) by a **single recursive map** `φ₊` — the renormalized character of a Birkhoff
+checking *lifecycle* (the retired activate → check → erase state machine with a Boolean
+`convergesAtLF`-style verdict) by a **single recursive map** `φ₊` — the renormalized character of a Birkhoff
 factorization over the Connes–Kreimer Hopf algebra of the syntactic object, which "recursively
 modifies an initially chosen assignment of semantic values so as to incorporate the consistency
 checking over all substructures" (§3.1.5).
@@ -117,7 +117,7 @@ open scoped TensorProduct
     character `φ` (with weight-`+1` Rota–Baxter operator `R`) at the SO. This is
     [marcolli-chomsky-berwick-2025]'s "single recursive map [that] recursively modifies an
     initially chosen assignment of semantic values so as to incorporate the consistency checking
-    over all substructures" — superseding the per-feature `convergesAtLF` lifecycle. -/
+    over all substructures" — superseding the retired per-feature checking lifecycle. -/
 noncomputable def featureConsistency
     (φ : ConnesKreimer ℕ (Nonplanar SOLabel) →ₗ[ℕ] Consistency)
     (RB : RotaBaxterSemiring Consistency) (S : SyntacticObject) : Consistency :=
@@ -191,7 +191,7 @@ theorem headProbeChar_one (Υ : LIToken → Consistency) : headProbeChar Υ 1 = 
     §3.1.5, Lemma 3.2.5/3.2.7): the Birkhoff renormalization (with `R = id`) of the head-following
     feature character `ϕ_{Υ,s,h}`, evaluated at `S`. This *is* the "single recursive map [that]
     incorporates the consistency checking over all substructures" — the replacement for the
-    `convergesAtLF` lifecycle. `consistent` iff the head-probe agreements cohere across all
+    retired checking lifecycle. `consistent` iff the head-probe agreements cohere across all
     substructures of `S`. -/
 noncomputable def headConsistency (Υ : LIToken → Consistency) (S : SyntacticObject) : Consistency :=
   featureConsistency (headProbeChar Υ).toLinearMap Consistency.rbId S
