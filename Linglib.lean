@@ -2790,6 +2790,7 @@ import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Syntax.Adposition.Basic
+import Linglib.Syntax.Adposition.Order
 import Linglib.Syntax.Adposition.Spatial
 import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Syntax.Agreement.Basic
@@ -2936,7 +2937,6 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.RSABuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Typology.Adposition
 import Linglib.Typology.Alignment
 import Linglib.Typology.ArgumentStructure
 import Linglib.Typology.AuxiliaryVerbs

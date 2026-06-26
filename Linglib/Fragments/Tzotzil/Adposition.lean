@@ -1,4 +1,4 @@
-import Linglib.Typology.Adposition
+import Linglib.Syntax.Adposition.Order
 
 /-!
 # Tzotzil adposition order
@@ -10,7 +10,7 @@ classifies Tzotzil as prepositional.
 namespace Tzotzil
 
 /-- Tzotzil adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.AdpositionOrder.ofWALS "tzo"
+def adposition : Adposition.AdpositionOrder :=
+  Adposition.AdpositionOrder.ofWALS "tzo"
 
 end Tzotzil

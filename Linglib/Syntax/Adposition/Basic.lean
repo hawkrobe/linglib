@@ -51,7 +51,7 @@ inductive RelationType where
 
 /-- A linearization of an adposition with respect to its complement
     (criterion 4). The per-lexeme companion to the language-level
-    `Typology.Adposition.AdpositionOrder`. -/
+    `Adposition.AdpositionOrder`. -/
 inductive Linearization where
   /-- Preposition: P precedes the complement. -/
   | pre
